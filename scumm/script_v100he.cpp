@@ -92,7 +92,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o100_drawObject),
 		/* 28 */
 		OPCODE(o6_dup),
-		OPCODE(o90_dup),
+		OPCODE(o90_dup_n),
 		OPCODE(o6_endCutscene),
 		OPCODE(o6_stopObjectCode),
 		/* 2C */

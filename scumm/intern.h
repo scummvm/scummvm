@@ -1013,7 +1013,7 @@ public:
 
 protected:
 	/* HE version 90 script opcodes */
-	void o90_dup();
+	void o90_dup_n();
 	void o90_min();
 	void o90_max();
 	void o90_sin();

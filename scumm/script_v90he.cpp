@@ -53,7 +53,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		/* 08 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o90_dup),
+		OPCODE(o90_dup_n),
 		OPCODE(o6_wordArrayIndexedRead),
 		/* 0C */
 		OPCODE(o6_dup),
@@ -374,14 +374,16 @@ const char *ScummEngine_v90he::getOpcodeDesc(byte i) {
 	return _opcodesV90he[i].desc;
 }
 
-void ScummEngine_v90he::o90_dup() {
-	int a, num;
+void ScummEngine_v90he::o90_dup_n() {
+	int num;
+	int args[16];
 
-	num = fetchScriptWord();
-	for (int i = 0; i < num; i++) {
-		a = pop();
-		push(a);
-		push(a);
+	push(fetchScriptWord());
+	num = getStackList(args, ARRAYSIZE(args));
+
+	for (int i = 0; i < 2; i++) {
+		for (int j = 0; j < num; j++)
+			push(args[j]);
 	}
 }
 
