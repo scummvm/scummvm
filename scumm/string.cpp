@@ -160,7 +160,7 @@ void Scumm::CHARSET_1() {
 		if ((_gameId == GID_CMI || _gameId == GID_DIG) && (_sound->_talkChannel > 0))
 			return;
 
-		if (_sound->_sfxMode == 0)
+		if ((_sound->_sfxMode & 2) == 0)
 			stopTalk();
 		return;
 	}
