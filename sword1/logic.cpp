@@ -84,7 +84,7 @@ void SwordLogic::newScreen(uint32 screen) {
 }
 
 void SwordLogic::engine(void) {
-	debug(5, "\n\nNext logic cycle");
+	debug(8, "\n\nNext logic cycle");
 	_eventMan->serviceGlobalEventList();
 
 	for (uint16 sectCnt = 0; sectCnt < TOTAL_SECTIONS; sectCnt++) {
@@ -861,13 +861,12 @@ int SwordLogic::fnCheckFade(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, 
 }
 
 int SwordLogic::fnSetSpritePalette(BsObject *cpt, int32 id, int32 spritePal, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	_screen->fnSetPalette(184, 72, id, false);
-	_resMan->resClose(spritePal);
+	_screen->fnSetPalette(184, 72, spritePal, false);
 	return SCRIPT_CONT;
 }
 
 int SwordLogic::fnSetWholePalette(BsObject *cpt, int32 id, int32 spritePal, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	_screen->fnSetPalette(0, 256, id, false);
+	_screen->fnSetPalette(0, 256, spritePal, false);
 	return SCRIPT_CONT;
 }
 
@@ -875,16 +874,17 @@ int SwordLogic::fnSetFadeTargetPalette(BsObject *cpt, int32 id, int32 spritePal,
 	uint8 *pal = (uint8*)_resMan->openFetchRes(spritePal);
 	pal[0] = pal[1] = pal[2] = 0;
 	_resMan->resClose(spritePal);
+	warning("fnSetFadeTargetPalette(xx, %d, %X, %d)", id, spritePal, d);
 	return SCRIPT_CONT;
 }
 
 int SwordLogic::fnSetPaletteToFade(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	warning("called unknown routine: fnSetPaletteToFade()");
+	warning("fnSetPaletteToFade(xx, %d, %d, %d, %d)", id, c, d, e);
 	return SCRIPT_CONT;
 }
 
 int SwordLogic::fnSetPaletteToCut(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	warning("Called unknown routine: fnSetPaletteToCut()");
+	warning("fnSetPaletteToCut(xx, %d, %d, %d, %d)", id, c, d, e);
 	return SCRIPT_CONT;
 }
 
