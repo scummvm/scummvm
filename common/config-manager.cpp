@@ -239,6 +239,18 @@ bool ConfigManager::hasKey(const String &key, const String &dom) const {
 }
 
 
+void ConfigManager::removeKey(const String &key, const String &dom) {
+	assert(!dom.isEmpty());
+
+	if (_gameDomains.contains(dom))
+		_gameDomains[dom].remove(key);
+	else if (_globalDomains.contains(dom))
+		_globalDomains[dom].remove(key);
+	else
+		error("Removing key '%s' from non-existant domain '%s'", key.c_str(), dom.c_str());
+}
+
+
 #pragma mark -
 
 

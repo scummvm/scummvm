@@ -63,6 +63,8 @@ public:
 	bool				hasKey(const String &key) const;
 	bool				hasKey(const String &key, const String &dom) const;
 
+	void				removeKey(const String &key, const String &dom);
+
 	const String &		get(const String &key) const;
 	const String &		get(const String &key, const String &dom) const;
 	int					getInt(const String &key, const String &dom = String::emptyString) const;
