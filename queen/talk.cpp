@@ -1231,8 +1231,6 @@ TalkSelected *Talk::talkSelected() {
 
 int Talk::splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]) {
 
-//	debug(0, "splitOption(\"%s\") width=%d", str, _vm->display()->textWidth(str));
-
 	// Check to see if option fits on one line, and exit early
 
 	if (_vm->resource()->getLanguage() == ENGLISH || 
@@ -1254,19 +1252,15 @@ int Talk::splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]) {
 			width += _vm->display()->textWidth(str, len);
 			if (width > maxTextLen) {
 				strncat(optionText[optionLines], str, len - 1);
-//debug(0, "1optionLines=%d optionText='%s'", optionLines, optionText[optionLines]);
 				++optionLines;
 				width = 0;
 				maxTextLen = MAX_TEXT_WIDTH - 16; // compensate left margin
 			} else {
 				strncat(optionText[optionLines], str, len);
-//debug(0,"2optionLines=%d optionText='%s' width=%d", optionLines, optionText[optionLines], width);
 			}
-//debug(0, "3str=%s p+1=%s", str, p+1);
 			str = p + 1;
 		}
 	}
-//debug(0, "str='%s'", str);
 	width += _vm->display()->textWidth(str);
 	if (width > maxTextLen) {
 		++optionLines;
