@@ -24,8 +24,10 @@
 
 #include "config.h"
 
-#include "rect.h"
+#include "common/rect.h"
 
+using ScummVM::Point;
+using ScummVM::Rect;
 class Blitter;
 class Chunk;
 

@@ -167,7 +167,6 @@ static void checkName(GameDetector *d, Game &game)
   if(d->detectGame()) {
     char *n = d->getGameName();
     strcpy(game.text, n);
-    free(n);
   } else
     strcpy(game.text, game.filename_base);
   d->_exe_name = NULL;

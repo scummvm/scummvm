@@ -35,7 +35,7 @@
 #endif
 
 #include "brenderer.h"
-#include "rect.h"
+#include "common/util.h"
 #include "blitter.h"
 
 /*!	@brief ::renderer implementation specifically designed for font files.

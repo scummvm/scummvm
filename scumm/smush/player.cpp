@@ -21,6 +21,8 @@
 
 #include <stdafx.h>
 #include "common/util.h"
+#include "common/engine.h" // for debug, warning, error
+
 #include "player.h"
 
 #include "mixer.h"
@@ -28,7 +30,6 @@
 #include "frenderer.h"
 #include "channel.h"
 #include "chunk_type.h"
-#include "rect.h"
 #include "blitter.h"
 
 #include <assert.h>

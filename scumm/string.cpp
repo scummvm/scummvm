@@ -951,8 +951,6 @@ void CharsetRenderer::printChar(int chr)
 	_mask_ptr = _vm->getResourceAddress(rtBuffer, 9)
 		+ _drawTop * 40 + _left / 8 + _vm->_screenStartStrip;
 
-	_revBitMask = revBitMask[_left & 7];
-
 	_virtScreenHeight = vs->height;
 	_charPtr += 4;
 
@@ -992,7 +990,7 @@ void CharsetRenderer::drawBits()
 	y = 0;
 
 	for (y = 0; y < _height && y + _drawTop < _virtScreenHeight;) {
-		maskmask = _revBitMask;
+		maskmask = revBitMask[_left & 7];
 		maskpos = 0;
 
 		for (x = 0; x < _width; x++) {

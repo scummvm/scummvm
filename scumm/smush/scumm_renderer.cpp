@@ -25,6 +25,7 @@
 #include "channel.h"
 #include "mixer.h"
 #include "sound/mixer.h"
+#include "scumm/scumm.h"
 #include "scumm/sound.h"
 
 class scumm_mixer : public Mixer {

@@ -23,6 +23,7 @@
 #define CHANNEL_H
 
 #include "config.h"
+#include "common/engine.h" // for debug, warning, error
 
 #ifdef DEBUG
 # ifndef NO_DEBUG_CHANNEL

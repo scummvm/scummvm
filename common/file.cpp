@@ -21,19 +21,6 @@
 
 #include "file.h"
 
-#ifdef NEED_STRDUP
-char *strdup(const char *s) {
-	if (s) {
-		int len = strlen(s) + 1;
-		char *d = (char *)malloc(len);
-		if (d)
-			memcpy(d, s, len);
-		return d;
-	}
-	return NULL;
-}
-#endif /* NEED_STRDUP */
-
 File::File() {
 	_handle = NULL;
 	_readFailed = false;
@@ -45,28 +32,35 @@ File::~File() {
 }
 
 bool File::open(const char *filename, int mode, byte encbyte) {
-	char * buf;
+	char buf[256], *ptr;
 	if (_handle) {
 		debug(2, "File %s already opened", filename);
 		return false;
 	}
 
 	clearReadFailed();
-	buf = strdup(filename);
+	strcpy(buf, filename);
 	if (mode == 1) {
 		_handle = fopen(buf, "rb");
 		if (_handle == NULL) {
-			_handle = fopen(strupr(buf), "rb");
-			if (_handle == NULL) {
-				_handle = fopen(strlwr(buf), "rb");
-			}
-			else {
-				debug(2, "File %s not found", filename);
-				return false;
-			}
+			ptr = buf;
+			do
+				*ptr++ = toupper(*ptr);
+			while (*ptr);
+			_handle = fopen(buf, "rb");
 		}
-	}
-	else {
+		if (_handle == NULL) {
+			ptr = buf;
+			do
+				*ptr++ = tolower(*ptr);
+			while (*ptr);
+			_handle = fopen(buf, "rb");
+		}
+		if (_handle == NULL) {
+			debug(2, "File %s not found", filename);
+			return false;
+		}
+	} else {
 		warning("Only read mode supported!");
 		return false;
 	}

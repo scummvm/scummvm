@@ -21,9 +21,9 @@
 
 #include <stdafx.h>
 #include "common/util.h"
+#include "common/engine.h" // for debug, warning, error
 
 #include "frenderer.h"
-#include "rect.h"
 
 #include <assert.h>
 #include <string.h>

@@ -29,6 +29,9 @@
 #include "common/config-file.h"
 
 
+extern uint16 _debugLevel;
+
+
 #define CHECK_OPTION() if ((current_option != NULL) || (*s != '\0')) goto ShowHelpAndExit
 #define HANDLE_OPTION() if ((*s == '\0') && (current_option == NULL)) goto ShowHelpAndExit;  \
                         if ((*s != '\0') && (current_option != NULL)) goto ShowHelpAndExit; \
@@ -450,14 +453,14 @@ bool GameDetector::detectGame()
 	return true;
 }
 
-char *GameDetector::getGameName()
+const char *GameDetector::getGameName()
 {
 	if (_gameText == NULL) {
 		char buf[256];
 		sprintf(buf, "Unknown game: \"%s\"", _exe_name);
-		return strdup(buf);
+		_gameText = strdup(buf);
 	}
-	return strdup(_gameText);
+	return _gameText;
 }
 
 int GameDetector::detectMain(int argc, char **argv)

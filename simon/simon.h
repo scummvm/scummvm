@@ -813,9 +813,6 @@ public:
 };
 
 
-void NORETURN CDECL error(const char *errmsg, ...);
-void CDECL warning(const char *errmsg, ...);
-
 void palette_fadeout(uint32 *pal_values, uint num);
 
 #endif

@@ -208,7 +208,7 @@ struct CharsetRenderer {
 	byte *_charPtr;
 	int _width, _height;
 	int _offsX, _offsY;
-	byte _bitMask, _revBitMask;
+	byte _bitMask;
 	int _bottom;
 	int _virtScreenHeight;
 
@@ -368,7 +368,7 @@ public:
 
 	/* Init functions, etc */
 	byte _fastMode;
-	char *getGameName();
+	const char *getGameName();
 
 	/* video buffer */
 	byte *_videoBuffer;
@@ -835,8 +835,9 @@ public:
 	void unkScreenEffect3();
 	void unkScreenEffect4();
 	void unkScreenEffect5(int a);
-	void transitionEffect(int a);		// former unkScreenEffect7
-	void dissolveEffect(int width, int height);	// former unkScreenEffect5(0) and unkScreenEffect6
+	void transitionEffect(int a);
+	void dissolveEffect(int width, int height);
+	void scrollEffect(int dir);
 
 	void decompressBomp(byte *dst, byte *src, int w, int h);
 	uint _shakeFrame;
@@ -1397,20 +1398,8 @@ public:
 	Scumm_v7(GameDetector *detector, OSystem *syst) : Scumm(detector, syst) {}
 };
 
-extern uint16 _debugLevel;
-
+// This is a constant lookup table of reverse bit masks
 extern const byte revBitMask[8];
-//void blitToScreen(Scumm *s, byte *src, int x, int y, int w, int h);
-
-#if defined(__GNUC__)
-void CDECL error(const char *s, ...) NORETURN;
-#else
-void CDECL NORETURN error(const char *s, ...);
-#endif
-
-void CDECL warning(const char *s, ...);
-void CDECL debug(int level, const char *s, ...);
-void checkHeap();
 
 /* Direction conversion functions (between old dir and new dir format) */
 int newDirToOldDir(int dir);

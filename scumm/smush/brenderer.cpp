@@ -22,6 +22,8 @@
 #include <stdafx.h>
 #include "brenderer.h"
 
+#include "common/engine.h" // for debug, warning, error
+
 #include <assert.h>
 
 void BaseRenderer::clean() {

@@ -31,7 +31,7 @@ public:
 	int detectMain(int argc, char **argv);
 	void parseCommandLine(int argc, char **argv);
 	bool detectGame(void);
-	char *getGameName(void);
+	const char *getGameName(void);
 
 	bool _fullScreen;
 	byte _gameId;

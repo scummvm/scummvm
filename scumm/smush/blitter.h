@@ -34,7 +34,10 @@
 # endif
 #endif
 
-#include "rect.h"
+#include "common/rect.h"
+
+using ScummVM::Point;
+using ScummVM::Rect;
 
 class Chunk;
 /*! 	@brief class for handling blitting on a frame buffer

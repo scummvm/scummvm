@@ -22,6 +22,8 @@
 #include <stdafx.h>
 #include "chunk.h"
 
+#include "common/engine.h" // for debug, warning, error
+
 #include <stdio.h> // for FILE, fopen, fclose, fseek and ftell
 #include <string.h> // for memcpy
 

@@ -23,7 +23,7 @@
 #define SMUSH_CONFIG_H
 
 #include <stdafx.h>
-#include <scumm.h>
+#include <scummsys.h>
 
 #ifndef NDEBUG
 #define DEBUG

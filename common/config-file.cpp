@@ -30,6 +30,19 @@
 
 #define xfree(p) {if (p) free(p);}
 
+#ifdef NEED_STRDUP
+char *strdup(const char *s) {
+	if (s) {
+		int len = strlen(s) + 1;
+		char *d = (char *)malloc(len);
+		if (d)
+			memcpy(d, s, len);
+		return d;
+	}
+	return NULL;
+}
+#endif /* NEED_STRDUP */
+
 
 static char *ltrim(char *t)
 {

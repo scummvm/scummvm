@@ -24,6 +24,8 @@
 #include "chunk.h"
 #include "blitter.h"
 
+#include "common/engine.h" // for debug, warning, error
+
 #include <assert.h>
 #include <string.h>
 

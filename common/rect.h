@@ -19,10 +19,12 @@
  *
  */
 
-#ifndef SMUSH_RECT_H
-#define SMUSH_RECT_H
+#ifndef COMMON_RECT_H
+#define COMMON_RECT_H
 
-#include "config.h"
+#include "scummsys.h"
+
+namespace ScummVM {
 
 /*! 	@brief simple class for handling both 2D position and size
 
@@ -96,5 +98,7 @@ public:
 
 	bool clip(Rect & r) const;
 };
+
+};	// End of namespace ScummVM
 
 #endif

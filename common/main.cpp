@@ -130,12 +130,10 @@ int main(int argc, char *argv[])
 	OSystem *system = detector.createSystem();
 
 	{
-		char *s = detector.getGameName();
 		OSystem::Property prop;
 
-		prop.caption = s;
+		prop.caption = detector.getGameName();
 		system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
-		free(s);
 	}
 
 	// Create the game engine

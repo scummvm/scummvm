@@ -69,9 +69,7 @@ static vmsaveResult trySave(GameDetector *d, const char *data, int size,
 
   memset(&header, 0, sizeof(header));
   strncpy(header.shortdesc, "ScummVM savegame", 16);
-  char *game_name = d->getGameName();
-  strncpy(header.longdesc, game_name, 32);
-  free(game_name);
+  strncpy(header.longdesc, d->getGameName(), 32);
   strncpy(header.id, "ScummVM", 16);
   icon.create_vmicon(iconbuffer);
   header.numicons = 1;

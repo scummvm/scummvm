@@ -25,8 +25,10 @@
 #include "config.h"
 
 #include "palette.h"
-#include "rect.h"
+#include "common/rect.h"
 
+using ScummVM::Point;
+using ScummVM::Rect;
 class Mixer;
 	
 /*! 	@brief interface for general output (rendering)

@@ -100,7 +100,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_gui->init(this);
 	
 	_newgui = new NewGui(this);
-	_bundle = new Bundle(this);
+	_bundle = new Bundle();
 	_timer = new Timer(this);
 	_sound = new Sound(this);
 
@@ -1464,7 +1464,7 @@ void Scumm::launch()
 	_maxHeapThreshold = 450000;
 	_minHeapThreshold = 400000;
 
-	/* Create a primary virtual screen */
+	// Create a primary virtual screen
 	_videoBuffer = (byte *)calloc(328*200, 1);
 
 	allocResTypeData(rtBuffer, MKID('NONE'), 10, "buffer", 0);
@@ -1514,8 +1514,6 @@ void Scumm::launch()
 	_sound->setupSound();
 
 	runScript(1, 0, 0, &_bootParam);
-
-//  _scummTimer = 0;
 }
 
 void Scumm::go() {

@@ -24,7 +24,7 @@
 
 #include "config.h"
 
-#include "rect.h"
+#include "common/util.h"
 #include "chunk.h"
 #include "palette.h"
 #include "codec1.h"
