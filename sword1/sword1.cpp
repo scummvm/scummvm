@@ -1070,20 +1070,37 @@ void SwordEngine::startPositions(int32 startNumber) {
 }
 
 void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or what...
+	const char *speechFiles[] = {
+#ifdef USE_MAD
+		"SPEECH%d.CL3",
+#endif
+#ifdef USE_VORBIS
+		"SPEECH%d.CLV",
+#endif
+		"SPEECH%d.CLU"
+	};
+	int numFiles = 0;
 	File test;
 
 	_systemVars.playSpeech = true;
-	if (test.open("SPEECH1.CLU")) {
-		test.close();
-		if (test.open("SPEECH2.CLU")) {
-			// both files exist, assume running from HDD and everything's fine.
-			test.close();
-			_systemVars.runningFromCd = false;
-			_systemVars.playSpeech = true;
-			return ;
-		} else {
+
+	for (int i = 1; i <= 2; i++) {
+		for (int j = 0; j < ARRAYSIZE(speechFiles); j++) {
+			char fileName[12];
+			sprintf(fileName, speechFiles[j], i);
+			if (test.open(fileName)) {
+				test.close();
+				numFiles++;
+				break;
+			}
 		}
-	} else { // speech1.clu & speech2.clu not present. are we running from cd?
+	}
+
+	if (numFiles == 2) {
+		// both files exist, assume running from HDD and everything's fine.
+		_systemVars.runningFromCd = false;
+		_systemVars.playSpeech = true;
+	} else { // speech1 & speech2 not present. are we running from cd?
 		if (test.open("cd1.id")) {
 			_systemVars.runningFromCd = true;
 			_systemVars.currentCD = 1;
