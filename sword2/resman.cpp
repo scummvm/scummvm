@@ -285,9 +285,10 @@ static void convertEndian(uint8 *file, uint32 len) {
 				_frameHeader *frameHeader = (_frameHeader *) (file + cdtEntry->frameOffset);
 				// Quick trick to prevent us from incorrectly applying the endian
 				// fixes multiple times. This assumes that frames are less than 1 MB
-				// (which seems reasonable) and also that their (swapped) sizes are
-				// not a multiple of 4096 (which also seems reasonable).
-				if (frameHeader->compSize & 0xFFF00000) {
+				// and have height/width less than 4096.
+				if ((frameHeader->compSize & 0xFFF00000) ||
+					(frameHeader->width & 0xF000) ||
+					(frameHeader->height & 0xF000)) {
 					frameHeader->compSize = SWAP_BYTES_32(frameHeader->compSize);
 					frameHeader->width = SWAP_BYTES_16(frameHeader->width);
 					frameHeader->height = SWAP_BYTES_16(frameHeader->height);
@@ -422,10 +423,10 @@ uint8 *resMan::Res_open(uint32 res) {	//BHTony30May96
 
 	uint32	table_offset;
 
-#ifdef _SWORD2_DEBUG
+//#ifdef _SWORD2_DEBUG
 	if (res >= total_res_files)
 		Con_fatal_error("Res_open illegal resource %d (there are %d resources 0-%d)", res, total_res_files, total_res_files - 1);
-#endif
+//#endif
 
 	// is the resource in memory already?
 	// if the file is not in memory then age should and MUST be 0
@@ -437,10 +438,10 @@ uint8 *resMan::Res_open(uint32 res) {	//BHTony30May96
 		// points to the number of the ascii filename
 		parent_res_file = res_conv_table[res * 2];
 
-#ifdef _SWORD2_DEBUG
+//#ifdef _SWORD2_DEBUG
 		if (parent_res_file == 0xffff)
 			Con_fatal_error("Res_open tried to open null & void resource number %d", res);
-#endif
+//#endif
 
 		// relative resource within the file
 		actual_res = res_conv_table[(res * 2) + 1];
@@ -603,14 +604,14 @@ void resMan::Res_close(uint32 res) {		//Tony30May96
 	// decrements the count
 	// resource floats when count = 0
 
-#ifdef _SWORD2_DEBUG
+//#ifdef _SWORD2_DEBUG
 	if (res >= total_res_files)
 		Con_fatal_error("Res_closeing illegal resource %d (there are %d resources 0-%d)", res, total_res_files, total_res_files - 1);
 
 	//closing but isnt open?
 	if (!(count[res]))
 		Con_fatal_error("Res_close closing %d but it isn't open", res);
-#endif
+//#endif
 
 	//one less has it open
 	count[res]--;
@@ -854,13 +855,13 @@ void resMan::Kill_res(uint8 *input) {	//Tony23Oct96
 	if (!input[j]) {
 		res = atoi((char*) input);
 
-#ifdef _SWORD2_DEBUG
+//#ifdef _SWORD2_DEBUG
 		if (!res)
 			Print_to_console("illegal resource");
 
 		if (res >= total_res_files)
 			Con_fatal_error(" llegal resource %d (there are %d resources 0-%d)", res, total_res_files, total_res_files - 1);
-#endif
+//#endif
 
 		// if noone has the file open then unlock and allow to float
 		if (!count[res]) {
