@@ -23,12 +23,13 @@
 #include <PalmOS.h>
 #include <SonyClie.h>
 
+#include "palmdefs.h"
 #include "start.h"
 #include "games.h"
 #include "globals.h"
+#include "modules.h"
 
 #include "forms.h"
-
 /***********************************************************************
  *
  *	Internal Structures
@@ -46,6 +47,7 @@ GlobalsDataPtr gVars;
 
 Boolean bDirectMode = false;
 Boolean bStartScumm = false;
+Boolean bLaunched	= false;
 
 /***********************************************************************
  *
@@ -198,16 +200,16 @@ static Boolean AppHandleEvent(EventPtr eventP)
 				FrmSetEventHandler(frmP, MiscFormHandleEvent);
 				break;
 
-			case SystemInfoForm:
-				FrmSetEventHandler(frmP, SystemInfoFormHandleEvent);
-				break;
-
 			case CardSlotForm:
 				FrmSetEventHandler(frmP, CardSlotFormHandleEvent);
 				break;
 
 			case MusicForm:
 				FrmSetEventHandler(frmP, MusicFormHandleEvent);
+				break;
+
+			case InfoForm:
+				FrmSetEventHandler(frmP, InfoFormHandleEvent);
 				break;
 
 			default:
@@ -347,7 +349,12 @@ static UInt32 ScummVMPalmMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 			AppLaunchCmdNotify(launchFlags, (SysNotifyParamType *) cmdPBP);
 			break;
 
-		case sysAppLaunchCmdNormalLaunch:
+
+		case sysAppLaunchCustomDeleteEngine:
+			ModDelete();
+			break;
+
+		case sysAppLaunchCmdNormalLaunch:	
 			error = AppStart();
 			if (error) 
 				goto end;
@@ -390,13 +397,4 @@ end:
 UInt32 PilotMain( UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 {
 	return ScummVMPalmMain(cmd, cmdPBP, launchFlags);
-}
-
-// This is now required since ScummEngine are now very big :)
-#include "MemGlue.h"
-
-void *operator new(UInt32 size) {
-	void *ptr = MemGluePtrNew(size);
-	MemSet(ptr, 0, size);
-	return ptr;
 }
