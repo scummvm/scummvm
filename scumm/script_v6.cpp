@@ -2429,17 +2429,34 @@ void Scumm_v6::o6_kernelSetFunctions() {
 			break;
 		case 16:
 			if (_gameId == GID_DIG) {
-				byte buf[200];
-				_msgPtrToAdd = buf;
+				byte buf_input[300], buf_output[300], buf_trans[300], *ptr = buf_input;
+				char *t_ptr = (char *)ptr;
+				_msgPtrToAdd = buf_input;
+				buf_output[0] = 0;
 				setStringVars(0);
 				addMessageToStack(getStringAddressVar(VAR_STRING2DRAW));
-				if (strncmp("/SYSTEM.007/ /", (char *)buf, 14) == 0) {
-					translateText(buf + 13, _charsetBuffer);
-					//description();
-				}	else if (strncmp("/SYSTEM.007/ ", (char *)buf, 13) == 0) {
-					strcpy((char *)_charsetBuffer, (char *)buf + 13);
-					//description();
+				while (true) {
+					if (*t_ptr == '/') {
+						translateText((byte *)t_ptr, buf_trans);
+						strcat((char *)buf_output, (char *)buf_trans);
+					}
+					t_ptr = strchr((char *)t_ptr + 1, '/');
+					if (t_ptr == NULL)
+						break;
+					t_ptr = strchr((char *)t_ptr + 1, '/');
+					if (t_ptr == NULL)
+						break;
 				}
+				_string[0].charset = (byte)args[1];
+				_string[0].color = (byte)args[2];
+				_string[0].xpos = args[3];
+				_string[0].ypos = args[4];
+				_charset->setCurID(_string[0].charset);
+				_string[0].xpos -= _charset->getStringWidth(0, buf_output) >> 1;
+				if (_string[0].xpos < 0) {
+					_string[0].xpos = 0;
+				}
+				drawDescString(buf_output);
 			} else { 
 				setStringVars(0);
 
