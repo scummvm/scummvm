@@ -755,7 +755,7 @@ int Script::SF_playMusic(R_SCRIPTFUNC_PARAMS) {
 	param = thread->pop();
 
 	if (/* param >= 0 && */ param < ARRAYSIZE(musicTable))
-		_vm->_music->play(musicTable[param], 0);
+		_vm->_music->play(musicTable[param]);
 	else
 		_vm->_music->stop();
 

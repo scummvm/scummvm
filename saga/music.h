@@ -34,12 +34,18 @@
 
 namespace Saga {
 enum MUSIC_FLAGS {
-	R_MUSIC_LOOP = 0x01
+	R_MUSIC_LOOP = 0x0001,
+	R_MUSIC_DEFAULT = 0xffff
 };
 
 struct MUSIC_MIDITABLE {
 	const char *filename;
 	int flags;
+};
+
+struct MUSIC_DIGITABLE {
+	uint32 start;
+	uint32 length;
 };
 
 class MusicPlayer : public MidiDriver {
@@ -95,11 +101,11 @@ protected:
 class Music {
 public:
 
-	Music(MidiDriver *driver, int enabled);
+	Music(SoundMixer *mixer, MidiDriver *driver, int enabled);
 	~Music(void);
 	void hasNativeMT32(bool b)		{ _player->hasNativeMT32(b); }
 
-	int play(uint32 music_rn, uint16 flags);
+	int play(uint32 music_rn, uint16 flags = R_MUSIC_DEFAULT);
 	int pause(void);
 	int resume(void);
 	int stop(void);
@@ -109,11 +115,14 @@ private:
 	SoundMixer *_mixer;
 
 	MusicPlayer *_player;
+	PlayingSoundHandle _musicHandle;
 
 	static const MUSIC_MIDITABLE _midiTableITECD[26];
+	MUSIC_DIGITABLE _digiTableITECD[27];
 
 	int _musicInitialized;
 	int _enabled;
+	bool _hasDigiMusic;
 };
 
 } // End of namespace Saga

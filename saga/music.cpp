@@ -25,6 +25,7 @@
 #include "saga/music.h"
 #include "saga/rscfile_mod.h"
 #include "saga/game_mod.h"
+#include "sound/audiostream.h"
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
 #include "common/config-manager.h"
@@ -44,6 +45,139 @@ static const byte mt32_to_gm[128] = {
 	 61,  11,  11,  98,  14,   9,  14,  13,  12, 107, 107,  77,  78,  78,  76,  76, // 6x
 	 47, 117, 127, 118, 118, 116, 115, 119, 115, 112,  55, 124, 123,   0,  14, 117  // 7x
 };
+
+#define BUFFER_SIZE 4096
+
+// I haven't decided yet if it's a good idea to make looping part of the audio
+// stream class, or if I should use a "wrapper" class, like I did for Broken
+// Sword 2, to make it easier to add support for compressed music... but I'll
+// worry about that later.
+
+class RAWInputStream : public AudioStream {
+private:
+	File *_file;
+	uint32 _file_pos;
+	uint32 _start_pos;
+	uint32 _end_pos;
+	bool _finished;
+	bool _looping;
+	int16 _buf[BUFFER_SIZE];
+	const int16 *_bufferEnd;
+	const int16 *_pos;
+
+	void refill();
+	inline bool eosIntern() const;
+
+public:
+	RAWInputStream(File *file, int size, bool looping);
+	~RAWInputStream();
+
+	int readBuffer(int16 *buffer, const int numSamples);
+
+	int16 read();
+	bool endOfData() const	{ return eosIntern(); }
+	bool isStereo() const	{ return true; }
+	int getRate() const	{ return 11025; }
+};
+
+RAWInputStream::RAWInputStream(File *file, int size, bool looping)
+	: _file(file), _finished(false), _looping(looping),
+	  _bufferEnd(_buf + BUFFER_SIZE) {
+
+	_file->incRef();
+
+	// Determine the end position
+	_file_pos = _file->pos();
+	_start_pos = _file_pos;
+	_end_pos = _file_pos + size;
+
+	// Read in initial data
+	refill();
+}
+
+RAWInputStream::~RAWInputStream() {
+	_file->decRef();
+}
+
+inline int16 RAWInputStream::read() {
+	assert(!eosIntern());
+
+	int16 sample = *_pos++;
+	if (_pos >= _bufferEnd) {
+		refill();
+	}
+	return sample;
+}
+
+inline bool RAWInputStream::eosIntern() const {
+	return _pos >= _bufferEnd;
+}
+
+int RAWInputStream::readBuffer(int16 *buffer, const int numSamples) {
+	int samples = 0;
+	while (samples < numSamples && !eosIntern()) {
+		const int len = MIN(numSamples - samples, (int) (_bufferEnd - _pos));
+		memcpy(buffer, _pos, len * 2);
+		buffer += len;
+		_pos += len;
+		samples += len;
+		if (_pos >= _bufferEnd) {
+			refill();
+		}
+	}
+	return samples;
+}
+
+void RAWInputStream::refill() {
+	if (_finished)
+		return;
+
+	uint32 len_left;
+	byte *ptr = (byte *) _buf;
+
+	_file->seek(_file_pos, SEEK_SET);
+
+	if (_looping)
+		len_left = 2 * BUFFER_SIZE;
+	else
+		len_left = MIN((uint32) (2 * BUFFER_SIZE), _end_pos - _file_pos);
+
+	while (len_left > 0) {
+		uint32 len = _file->read(ptr, MIN(len_left, _end_pos - _file->pos()));
+
+		if (len & 1)
+			len--;
+
+		len_left -= len;
+		ptr += len;
+
+		if (len_left > 0)
+			_file->seek(_start_pos);
+	}
+
+	_file_pos = _file->pos();
+	_pos = _buf;
+	_bufferEnd = (int16 *)ptr;
+
+	if (!_looping && _file_pos >= _end_pos)
+		_finished = true;
+}
+
+AudioStream *makeRAWStream(const char *filename, uint32 pos, int size, bool looping) {
+	File *file = new File();
+
+	if (!file->open(filename)) {
+		delete file;
+		return NULL;
+	}
+
+	file->seek(pos);
+
+	AudioStream *audioStream = new RAWInputStream(file, size, looping);
+
+	file->decRef();
+	return audioStream;
+}
 
 MusicPlayer::MusicPlayer(MidiDriver *driver) : _parser(0), _driver(driver), _looping(false), _isPlaying(false)  {
 	memset(_channel, 0, sizeof(_channel));
@@ -121,14 +255,21 @@ void MusicPlayer::send(uint32 b) {
 }
 
 void MusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
-	//Only thing we care about is End of Track.
-	if (type != 0x2F)
-		return;
+	// FIXME: The "elkfanfare" is played much too quickly. There are some
+	//        meta events that we don't handle. Perhaps there is a
+	//        connection...?
 
-	if (_looping)
-		_parser->jumpToTick(0);
-	else
-		stopMusic();
+	switch (type) {
+	case 0x2F:	// End of Track
+		if (_looping)
+			_parser->jumpToTick(0);
+		else
+			stopMusic();
+		break;
+	default:
+		warning("Unhandled meta event: %02x", type);
+		break;
+	}
 }
 
 void MusicPlayer::onTimer(void *refCon) {
@@ -150,9 +291,39 @@ void MusicPlayer::stopMusic() {
 	}
 }
 
-Music::Music(MidiDriver *driver, int enabled) : _enabled(enabled) {
+Music::Music(SoundMixer *mixer, MidiDriver *driver, int enabled) : _mixer(mixer), _enabled(enabled) {
 	_player = new MusicPlayer(driver);
 	_musicInitialized = 1;
+	_mixer->setMusicVolume(ConfMan.getInt("music_volume"));
+
+	if (GAME_GetGameType() == GID_ITE) {
+		File file;
+
+		// The lookup table is stored at the end of music.rsc. I don't
+		// know why it has 27 elements, but the last one represents a
+		// very short tune. Perhaps it's a dummy?
+		//
+		// TODO: The demo uses compressed music?
+
+		if (file.open("music.rsc")) {
+			_hasDigiMusic = true;
+			file.seek(-ARRAYSIZE(_digiTableITECD) * 8, SEEK_END);
+
+			for (int i = 0; i < ARRAYSIZE(_digiTableITECD); i++) {
+				_digiTableITECD[i].start = file.readUint32LE();
+				_digiTableITECD[i].length = file.readUint32LE();
+			}
+
+			file.close();
+
+			// The "birdchrp" is just a short, high-pitched
+			// whining. Use the MIDI/XMIDI version instead.
+			_digiTableITECD[6].length = 0;
+		} else {
+			_hasDigiMusic = false;
+			memset(_digiTableITECD, 0, sizeof(_digiTableITECD));
+		}
+	}
 }
 
 Music::~Music() {
@@ -165,32 +336,32 @@ Music::~Music() {
 // reset.mid seems to be unused.
 
 const MUSIC_MIDITABLE Music::_midiTableITECD[26] = {
-	{"cave.mid", R_MUSIC_LOOP},		// 9
-	{"intro.mid", R_MUSIC_LOOP},	// 10
-	{"fvillage.mid", R_MUSIC_LOOP},	// 11
-	{"elkhall.mid", R_MUSIC_LOOP},	// 12
-	{"mouse.mid", 0},				// 13
-	{"darkclaw.mid", R_MUSIC_LOOP},	// 14
-	{"birdchrp.mid", R_MUSIC_LOOP},	// 15
-	{"orbtempl.mid", R_MUSIC_LOOP},	// 16
-	{"spooky.mid", R_MUSIC_LOOP},	// 17
-	{"catfest.mid", R_MUSIC_LOOP},	// 18
-	{"elkfanfare.mid", 0},			// 19
-	{"bcexpl.mid", R_MUSIC_LOOP},	// 20
-	{"boargtnt.mid", R_MUSIC_LOOP},	// 21
-	{"boarking.mid", R_MUSIC_LOOP},	// 22
-	{"explorea.mid", R_MUSIC_LOOP},	// 23
-	{"exploreb.mid", R_MUSIC_LOOP},	// 24
-	{"explorec.mid", R_MUSIC_LOOP},	// 25
-	{"sunstatm.mid", R_MUSIC_LOOP},	// 26
-	{"nitstrlm.mid", R_MUSIC_LOOP},	// 27
-	{"humruinm.mid", R_MUSIC_LOOP},	// 28
-	{"damexplm.mid", R_MUSIC_LOOP},	// 29
-	{"tychom.mid", R_MUSIC_LOOP},	// 30
-	{"kitten.mid", R_MUSIC_LOOP},	// 31
-	{"sweet.mid", R_MUSIC_LOOP},	// 32
-	{"brutalmt.mid", R_MUSIC_LOOP},	// 33
-	{"shiala.mid", R_MUSIC_LOOP}	// 34
+	{ "cave.mid",       R_MUSIC_LOOP },	// 9
+	{ "intro.mid",      R_MUSIC_LOOP },	// 10
+	{ "fvillage.mid",   R_MUSIC_LOOP },	// 11
+	{ "elkhall.mid",    R_MUSIC_LOOP },	// 12
+	{ "mouse.mid",      0            },	// 13
+	{ "darkclaw.mid",   R_MUSIC_LOOP },	// 14
+	{ "birdchrp.mid",   R_MUSIC_LOOP },	// 15
+	{ "orbtempl.mid",   R_MUSIC_LOOP },	// 16
+	{ "spooky.mid",     R_MUSIC_LOOP },	// 17
+	{ "catfest.mid",    R_MUSIC_LOOP },	// 18
+	{ "elkfanfare.mid", 0            },	// 19
+	{ "bcexpl.mid",     R_MUSIC_LOOP },	// 20
+	{ "boargtnt.mid",   R_MUSIC_LOOP },	// 21
+	{ "boarking.mid",   R_MUSIC_LOOP },	// 22
+	{ "explorea.mid",   R_MUSIC_LOOP },	// 23
+	{ "exploreb.mid",   R_MUSIC_LOOP },	// 24
+	{ "explorec.mid",   R_MUSIC_LOOP },	// 25
+	{ "sunstatm.mid",   R_MUSIC_LOOP },	// 26
+	{ "nitstrlm.mid",   R_MUSIC_LOOP },	// 27
+	{ "humruinm.mid",   R_MUSIC_LOOP },	// 28
+	{ "damexplm.mid",   R_MUSIC_LOOP },	// 29
+	{ "tychom.mid",     R_MUSIC_LOOP },	// 30
+	{ "kitten.mid",     R_MUSIC_LOOP },	// 31
+	{ "sweet.mid",      R_MUSIC_LOOP },	// 32
+	{ "brutalmt.mid",   R_MUSIC_LOOP },	// 33
+	{ "shiala.mid",     R_MUSIC_LOOP }	// 34
 };
 
 int Music::play(uint32 music_rn, uint16 flags) {
@@ -207,25 +378,54 @@ int Music::play(uint32 music_rn, uint16 flags) {
 		return R_SUCCESS;
 	}
 
-	File f_midi;
+	_player->stopMusic();
+
+	if (_musicHandle.isActive())
+		_mixer->stopHandle(_musicHandle);
+
+	AudioStream *audioStream = NULL;
 	MidiParser *parser;
+	File midiFile;
 
 	if (GAME_GetGameType() == GID_ITE) {
 		if (music_rn >= 9 && music_rn <= 34) {
-			f_midi.open(_midiTableITECD[music_rn - 9].filename);
+			if (flags == R_MUSIC_DEFAULT) {
+				flags = _midiTableITECD[music_rn - 9].flags;
+			}
+
+			if (_hasDigiMusic) {
+				uint32 start = _digiTableITECD[music_rn - 9].start;
+				uint32 length = _digiTableITECD[music_rn - 9].length;
+
+				if (length > 0) {
+					audioStream = makeRAWStream("music.rsc", start, length, flags == R_MUSIC_LOOP);
+				}
+			}
+
+			// No digitized music - try standalone MIDI.
+			if (!audioStream)
+				midiFile.open(_midiTableITECD[music_rn - 9].filename);
 		}
 	}
 
-	_player->stopMusic();
+	if (flags == R_MUSIC_DEFAULT) {
+		flags = 0;
+	}
+
+	if (audioStream) {
+		debug(0, "Playing digitized music");
+		_mixer->playInputStream(&_musicHandle, audioStream, true);
+		return R_SUCCESS;
+	}
 
 	// FIXME: Is resource_data ever freed?
 
-	if (f_midi.isOpen()) {
-		debug(0, "Using external MIDI file: %s", f_midi.name());
-		resource_size = f_midi.size();
+	if (midiFile.isOpen()) {
+		debug(0, "Using external MIDI file: %s", midiFile.name());
+		resource_size = midiFile.size();
 		resource_data = (byte *) malloc(resource_size);
-		f_midi.read(resource_data, resource_size);
-		f_midi.close();
+		midiFile.read(resource_data, resource_size);
+		midiFile.close();
 
 		_player->setGM(true);
 		parser = MidiParser::createParser_SMF();
@@ -233,7 +433,8 @@ int Music::play(uint32 music_rn, uint16 flags) {
 		// FIXME: Is this really the case or we receive correct parameter?
 		flags = _midiTableITECD[music_rn - 9].flags;
 	} else {
-		/* Load XMI resource data */
+		// Load XMI resource data
+
 		GAME_GetFileContext(&rsc_ctxt, R_GAME_RESOURCEFILE, 0);
 
 		if (RSC_LoadResource(rsc_ctxt, music_rn, &resource_data, 

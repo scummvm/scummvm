@@ -1003,6 +1003,7 @@ int Scene::defaultScene(int param, R_SCENE_INFO *scene_info) {
 			event.type = R_ONESHOT_EVENT;
 			event.code = R_MUSIC_EVENT;
 			event.param = _desc.musicRN;
+			event.param2 = R_MUSIC_DEFAULT;
 			event.op = EVENT_PLAY;
 			event.time = 0;
 

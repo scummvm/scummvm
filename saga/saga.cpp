@@ -170,7 +170,7 @@ void SagaEngine::go() {
 	else if (ConfMan.getBool("native_mt32"))
 		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
-	_music = new Music(driver, _musicEnabled);
+	_music = new Music(_mixer, driver, _musicEnabled);
 	_music->hasNativeMT32(ConfMan.getBool("native_mt32"));
 
 	if (!_musicEnabled) {

@@ -664,6 +664,7 @@ int Scene::ITEIntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_MUSIC_EVENT;
 		event.param = MUSIC_2;
+		event.param2 = 0;
 		event.op = EVENT_PLAY;
 		event.time = 0;
 
