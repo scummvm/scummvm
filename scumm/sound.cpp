@@ -464,6 +464,10 @@ void Sound::playSound(int soundID) {
 	}
 
 	if (_scumm->_gameId == GID_MONKEY_VGA || _scumm->_gameId == GID_MONKEY_EGA) {
+		// Sound is currently not supported at all in the amiga versions of these games
+		if (_scumm->_features & GF_AMIGA)
+			return;
+
 		// FIXME: This evil hack works around the fact that in some
 		// places in MonkeyVGA, the music is never explicitly stopped.
 		// Rather it seems that starting a new music is supposed to 
@@ -471,9 +475,7 @@ void Sound::playSound(int soundID) {
 		// This hack relays on the fact that we currently don't support SFX
 		// in these games, only music. Once we add SFX support, we'll have to
 		// revise it / replace it by a proper fix.
-		if (_scumm->_features & GF_AMIGA)
-			return;
-		else if (ptr) {
+		if (ptr) {
 			_scumm->_imuse->stop_all_sounds();
 		}
 	}
