@@ -1413,6 +1413,8 @@ void Scumm::waitForTimer(int msec_delay) {
 						g_debugger.attach(this);
 					else if (event.kbd.keycode=='s')
 						resourceStats();
+					else
+						_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
 				} else
 					_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
 				break;
