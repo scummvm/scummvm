@@ -487,6 +487,10 @@ void ScummEngine_v90he::o90_unknown1C() {
 		_wizY1 = pop();
 		_wizX1 = pop();
 		break;
+	case 20:
+		pop();
+		pop();
+		break;
 	case 21:
 		pop();
 		pop();
@@ -508,6 +512,10 @@ void ScummEngine_v90he::o90_unknown1C() {
 	case 200:
 		_wizFlag |= 64;
 		_wizY1 = _wizX1 = pop();
+		break;
+	case 203: // HE98+
+		pop();
+		pop();
 		break;
 	case 209:
 		if (_fullRedraw) {
