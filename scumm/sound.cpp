@@ -685,20 +685,17 @@ void Sound::clearSoundQue() {
 }
 
 void Sound::soundKludge(int *list, int num) {
-	int16 *ptr;
 	int i;
 
 	if (list[0] == -1) {
 		processSoundQues();
 		return;
 	}
-	_soundQue[_soundQuePos++] = 8;
+	_soundQue[_soundQuePos++] = num;
+	
+	for (i = 0; i < num; i++)
+		_soundQue[_soundQuePos++] = list[i];
 
-	ptr = _soundQue + _soundQuePos;
-	_soundQuePos += 8;
-
-	for (i = 0; i < 8; i++)
-		*ptr++ = list[i];
 	if (_soundQuePos > 0x100)
 		error("Sound que buffer overflow");
 }
