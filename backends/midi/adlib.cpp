@@ -849,8 +849,6 @@ int MidiDriver_ADLIB::open() {
 	_adlib_reg_cache = (byte *)calloc(256, 1);
 
 	// We need to emulate one YM3812 chip
-//	if (0 != YM3812Init(1, 3579545, g_system->property(OSystem::PROP_GET_SAMPLE_RATE, 0)))
-//		error("Error initialising YM3812 sound chip emulation");
 	int env_bits = g_system->property(OSystem::PROP_GET_FMOPL_ENV_BITS, NULL);   
 	int eg_ent = g_system->property(OSystem::PROP_GET_FMOPL_EG_ENT, NULL);   
 	OPLBuildTables((env_bits ? env_bits : FMOPL_ENV_BITS_HQ), (eg_ent ? eg_ent : FMOPL_EG_ENT_HQ));
@@ -991,8 +989,6 @@ void MidiDriver_ADLIB::adlib_write(byte port, byte value) {
 		return;
 	_adlib_reg_cache[port] = value;
 
-//	YM3812Write(0, 0, port);
-//	YM3812Write(0, 1, value);
 	OPLWriteReg (_opl, port, value);
 }
 
@@ -1003,7 +999,6 @@ void MidiDriver_ADLIB::generate_samples(int16 *data, int len) {
 		step = len;
 		if (step > _next_tick)
 			step = _next_tick;
-//		YM3812UpdateOne(0, data, step);
 		YM3812UpdateOne (_opl, data, step);
 
 		_next_tick -= step;
