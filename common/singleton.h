@@ -60,7 +60,7 @@ public:
 		// order might become an issue. There are various approaches
 		// to solve that problem, but for now this is sufficient
 		if (!_singleton)
-			_singleton = makeInstance();
+			_singleton = T::makeInstance();
 		return *_singleton;
 	}
 protected:

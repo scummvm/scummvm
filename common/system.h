@@ -42,7 +42,7 @@
  */
 class OSystem : public Common::Singleton<OSystem> {
 protected:
-	static OSystem *createSystem();
+	static OSystem *makeInstance();
 	friend class Common::Singleton<SingletonBaseType>;
 
 public:
@@ -677,12 +677,6 @@ public:
 
 	//@}
 };
-
-/**
- * Custom object factory for OSystem.
- */
-template <>
-OSystem *Common::Singleton<OSystem>::makeInstance();
 
 
 
