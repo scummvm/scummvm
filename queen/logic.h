@@ -155,8 +155,8 @@ public:
 	void inventorySetup();
 	uint16 findInventoryItem(int invSlot) const;
 	void inventoryRefresh();
-	int16 previousInventoryItem(int16 start) const;
-	int16 nextInventoryItem(int16 start) const;
+	int16 previousInventoryItem(int16 first) const;
+	int16 nextInventoryItem(int16 first) const;
 	void removeDuplicateItems();
 	uint16 numItemsInventory() const;
 	void inventoryInsertItem(uint16 itemNum, bool refresh = true);
@@ -196,6 +196,8 @@ public:
 	void startCredits(const char *filename);
 	void stopCredits();
 
+	void start();
+
 	enum {
 		JOE_RESPONSE_MAX    = 40,
 		DEFAULT_TALK_SPEED  = 7 * 3,
@@ -204,8 +206,6 @@ public:
 	};
 
 protected:
-
-	void initialise();
 
 	void asmMakeJoeUseDress();
 	void asmMakeJoeUseNormalClothes();

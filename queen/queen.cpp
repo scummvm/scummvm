@@ -289,6 +289,7 @@ void QueenEngine::errorString(const char *buf1, char *buf2) {
 }
 
 int QueenEngine::go() {
+	_logic->start();
 	_logic->oldRoom(0);
 	_logic->newRoom(_logic->currentRoom());
 

@@ -58,14 +58,15 @@ static Common::String trim(const Common::String &s) {
 }
 
 Logic::Logic(QueenEngine *vm)
-	: _credits(NULL), _vm(vm) {
+	: _credits(NULL), _objectData(NULL), _roomData(NULL), _sfxName(NULL), 
+	_itemData(NULL), _graphicData(NULL), _walkOffData(NULL), _objectDescription(NULL),
+	_furnitureData(NULL), _actorData(NULL), _graphicAnim(NULL), _vm(vm) {
 	_joe.x = _joe.y = 0;
 	_joe.scale = 100;
 	_joe.walk = JWM_NORMAL;
 	memset(_gameState, 0, sizeof(_gameState));
 	memset(_talkSelected, 0, sizeof(_talkSelected));
 	_puzzleAttemptCount = 0;
-	initialise();
 	_journal = new Journal(vm);
 }
 
@@ -84,7 +85,7 @@ Logic::~Logic() {
 	delete[] _graphicAnim;
 }
 
-void Logic::initialise() {	
+void Logic::start() {	
 	int16 i;
 
 	uint8 *jas = _vm->resource()->loadFile("QUEEN.JAS", 20);
@@ -929,24 +930,24 @@ void Logic::inventoryRefresh() {
 	}
 }
 
-int16 Logic::previousInventoryItem(int16 start) const {
+int16 Logic::previousInventoryItem(int16 first) const {
 	int i;
-	for (i = start - 1; i >= 1; i--)
+	for (i = first - 1; i >= 1; i--)
 		if (_itemData[i].name > 0)
 			return i;
-	for (i = _numItems; i > start; i--)
+	for (i = _numItems; i > first; i--)
 		if (_itemData[i].name > 0)
 			return i;
 
 	return 0;	//nothing found
 }
 
-int16 Logic::nextInventoryItem(int16 start) const {
+int16 Logic::nextInventoryItem(int16 first) const {
 	int i;
-	for (i = start + 1; i < _numItems; i++)
+	for (i = first + 1; i < _numItems; i++)
 		if (_itemData[i].name > 0)
 			return i;
-	for (i = 1; i < start; i++)
+	for (i = 1; i < first; i++)
 		if (_itemData[i].name > 0)
 			return i;
 
