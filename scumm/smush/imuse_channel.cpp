@@ -323,6 +323,9 @@ void ImuseChannel::getSoundData(int16 *snd, int32 size) {
 	if (_channels == 2) size *= 2;
 	byte * buf = (byte*)snd;
 	if (_rate == 11025) {
+		// TODO / FIXME: Instead of upsampling here in the worst possible way
+		// (by repeating samples), we should pass the 11khz data to the mixer,
+		// and leave the upsampling to the mixer.
 		for (int32 i = 0; i < size; i++) {
 			byte sample1 = *(_sbuffer + i * 2);
 			byte sample2 = *(_sbuffer + i * 2 + 1);
@@ -352,6 +355,9 @@ void ImuseChannel::getSoundData(int8 *snd, int32 size) {
 	if (_dataSize <= 0 || _bitsize > 8) error("invalid call to imuse_channel::read_sound_data()");
 	if (_channels == 2) size *= 2;
 	if (_rate == 11025) {
+		// TODO / FIXME: Instead of upsampling here in the worst possible way
+		// (by repeating samples), we should pass the 11khz data to the mixer,
+		// and leave the upsampling to the mixer.
 		for (int32 i = 0; i < size; i++) {
 			snd[i * 2] = (int8)(((int8)(_sbuffer[i] ^ 0x80) * _volume) >> 8) ^ 0x80;
 			snd[i * 2 + 1] = snd[i * 2];
