@@ -23,9 +23,9 @@
 
 #ifdef USE_MT32EMU
 
-#include "backends/midi/mt32/mt32emu.h"
+#include "sound/softsynth/mt32/mt32emu.h"
 
-#include "backends/midi/emumidi.h"
+#include "sound/softsynth/emumidi.h"
 #include "sound/mpu401.h"
 
 #include "common/util.h"

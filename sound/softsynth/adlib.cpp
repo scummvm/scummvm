@@ -18,7 +18,7 @@
  * $Header$
  */
 
-#include "emumidi.h"
+#include "sound/softsynth/emumidi.h"
 #include "common/util.h"
 #include "sound/fmopl.h"
 

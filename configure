@@ -811,7 +811,6 @@ if test "$_mt32emu" = no ; then
 else
 	_def_mt32emu='#define USE_MT32EMU'
 	_mak_mt32emu='USE_MT32EMU = 1'
-	INCLUDES="$INCLUDES -I\$(srcdir)/backends/midi/mt32"
 fi
 
 #

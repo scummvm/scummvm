@@ -90,7 +90,7 @@ MODULES += \
 	common
 
 ifdef USE_MT32EMU
-MODULES += backends/midi/mt32
+MODULES += sound/softsynth/mt32
 endif
 
 ######################################################################

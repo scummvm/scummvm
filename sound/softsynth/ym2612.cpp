@@ -22,7 +22,7 @@
  * $Header$
  */
 
-#include "emumidi.h"
+#include "sound/softsynth/emumidi.h"
 
 #include <math.h>
 

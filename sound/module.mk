@@ -14,11 +14,14 @@ MODULE_OBJS := \
 	sound/rate.o \
 	sound/voc.o \
 	sound/vorbis.o \
-	sound/flac.o
-#	sound/resample.o \
+	sound/flac.o \
+	sound/softsynth/adlib.o \
+	sound/softsynth/ym2612.o \
+	sound/softsynth/mt32.o \
 
 MODULE_DIRS += \
-	sound
+	sound \
+	sound/softsynth
 
 # Include common rules 
 include $(srcdir)/common.rules

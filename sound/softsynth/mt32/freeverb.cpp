@@ -31,7 +31,7 @@
 // This code is public domain
 
 #include "stdafx.h"
-#include "backends/midi/mt32/freeverb.h"
+#include "sound/softsynth/mt32/freeverb.h"
 
 comb::comb() {
 	filterstore = 0;
