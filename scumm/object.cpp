@@ -1328,27 +1328,29 @@ void Scumm::nukeFlObjects(int min, int max) {
 }
 
 void Scumm::enqueueObject(int objectNumber, int objectX, int objectY, int objectWidth,
-													int objectHeight, int scaleX, int scaleY, int image, int mode) {
+                          int objectHeight, int scaleX, int scaleY, int image, int mode) {
 	BlastObject *eo;
 	ObjectData *od;
 
-	if (_blastObjectQueuePos == sizeof(_blastObjectQueue) / sizeof(_blastObjectQueue[0])) {
+	if (_blastObjectQueuePos >= (int)ARRAYSIZE(_blastObjectQueue)) {
 		warning("enqueueObject: overflow");
 		return;
 	}
+	
+	int idx = getObjectIndex(objectNumber);
 
 	eo = &_blastObjectQueue[_blastObjectQueuePos++];
 	eo->number = objectNumber;
 	eo->posX = objectX + (camera._cur.x & 7);
 	eo->posY = objectY + (camera._cur.y - (_screenHeight / 2));
 	if (objectWidth == 0) {
-		od = &_objs[getObjectIndex(objectNumber)];
+		od = &_objs[idx];
 		eo->width = od->width;
 	} else {
 		eo->width = objectWidth;
 	}
 	if (objectHeight == 0) {
-		od = &_objs[getObjectIndex(objectNumber)];
+		od = &_objs[idx];
 		eo->height = od->height;
 	} else {
 		eo->height = objectHeight;
@@ -1662,7 +1664,7 @@ void Scumm::removeBlastObject(BlastObject *eo) {
 		right = vs->width;
 
 	left_strip = left >> 3;
-	right_strip = (right >> 3) + 1;
+	right_strip = (right - 1) >> 3;
 
 	if (left_strip < 0)
 		left_strip = 0;
