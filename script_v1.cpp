@@ -84,7 +84,7 @@ void Scumm::setupOpcodes() {
 	&Scumm::o5_cursorCommand,
 	&Scumm::o5_putActorInRoom,
 	&Scumm::o5_delay,
-	&Scumm::o5_badOpcode,
+	&Scumm::o5_getObjectState,
 	/* 30 */
 	&Scumm::o5_matrixOps,
 	&Scumm::o5_getInventoryCount,
@@ -1293,8 +1293,15 @@ void Scumm::o5_getObjectOwner() {
 }
 
 void Scumm::o5_getObjectState() {
-	getResultPos();
-	setResult(getState(getVarOrDirectWord(0x80)));
+	if(_features & GF_SMALL_HEADER) {
+		if((getState(getVarOrDirectWord(0x80)) &0x0F >>4) != getVarOrDirectByte(0x40))
+			o5_jumpRelative();
+		else
+			ignoreScriptWord();
+	} else {
+		getResultPos();
+		setResult(getState(getVarOrDirectWord(0x80)));
+	}
 }
 
 void Scumm::o5_getRandomNr() {
@@ -1476,6 +1483,12 @@ void Scumm::o5_loadRoomWithEgo() {
 void Scumm::o5_matrixOps() {
 	int a,b;
 
+	if(_features & GF_OLD256) { /* FIXME: missing function call*/
+		a=getVarOrDirectByte(0x80);
+		b=fetchScriptByte();
+		return;
+	}
+	
 	_opcode = fetchScriptByte();
 	switch(_opcode & 0x1F) {
 	case 1:
