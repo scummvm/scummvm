@@ -229,6 +229,8 @@ void GameDetector::updateconfig() {
 
 	_cdrom = g_config->getInt("cdrom", _cdrom);
 
+	_bootParam = g_config->getInt("boot_param", _bootParam);
+	
 	if ((val = g_config->get("music_driver")))
 		if (!parseMusicDriver(val)) {
 			printf("Error in the config file: invalid music_driver.\n");
