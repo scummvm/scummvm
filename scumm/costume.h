@@ -43,21 +43,29 @@ protected:
 
 
 class CostumeRenderer {
+public:
+	byte _dirty_id;
+
+	byte _shadow_mode;
+	byte *_shadow_table;
+
+	int _actorX, _actorY;
+	byte _zbuf;
+	uint _scaleX, _scaleY;
+
+	int draw_top, draw_bottom;
+
+	uint _outheight;
+
 protected:
 	Scumm *_vm;
 	int32 _numStrips;
 	
 	LoadedCostume _loaded;
 	
-public:
-	byte *_shadow_table;
-
 	byte *_frameptr;
 	byte *_srcptr;
 	byte *_bgbak_ptr, *_backbuff_ptr, *_mask_ptr, *_mask_ptr_dest;
-	int _actorX, _actorY;
-	byte _zbuf;
-	uint _scaleX, _scaleY;
 	int _xmove, _ymove;
 	bool _mirror;
 	byte _maskval;
@@ -68,7 +76,6 @@ public:
 	int _height;
 	int _xpos, _ypos;
 
-	uint _outheight;
 	int _scaleIndexXStep;
 	int _scaleIndexYStep;
 	byte _scaleIndexX;						/* must wrap at 256 */
@@ -84,6 +91,18 @@ public:
 	byte _replen;
 	byte _palette[32];
 
+public:
+	CostumeRenderer(Scumm *vm) : _vm(vm), _numStrips(vm->gdi._numStrips), _loaded(vm) {}
+
+	void setPalette(byte *palette);
+	void setFacing(uint16 facing);
+	void setCostume(int costume);
+
+	byte drawCostume(const CostumeData &cost);
+
+protected:
+	byte drawLimb(const CostumeData &cost, int limb);
+
 	void proc6();
 	void proc5();
 	void proc4();
@@ -96,19 +115,9 @@ public:
 	void proc3_ami();
 	void proc2_ami();
 	void proc1_ami();
-	void proc_special(Actor *a, byte mask);
-	byte mainRoutine(Actor *a, int slot, int frame);
+	void proc_special(byte mask);
+	byte mainRoutine(int limb, int frame);
 	void ignorePakCols(int num);
-
-	byte drawOneSlot(Actor *a, int slot);
-	byte drawCostume(Actor *a);
-
-	void setPalette(byte *palette);
-	void setFacing(uint16 facing);
-	void setCostume(int costume);
-
-public:
-	CostumeRenderer(Scumm *vm) : _vm(vm), _numStrips(vm->gdi._numStrips), _loaded(vm) {}
 };
 
 #endif

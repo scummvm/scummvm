@@ -920,12 +920,12 @@ void Actor::drawActorCostume()
 	if (!(_vm->_features & GF_AFTER_V7)) {
 		CostumeRenderer cr(_vm);
 
-		cr._actorX = x - _vm->virtscr->xstart;
+		cr._actorX = x - _vm->virtscr[0].xstart;
 		cr._actorY = y - elevation;
 		cr._scaleX = scalex;
 		cr._scaleY = scaley;
 
-		cr._outheight = _vm->virtscr->height;
+		cr._outheight = _vm->virtscr[0].height;
 
 		// FIXME - Hack to fix two glitches in the scene where Bobbin
 		// heals Rusty: Bobbin's feet get masked when Rusty shows him
@@ -980,28 +980,32 @@ void Actor::drawActorCostume()
 		else if (cr._zbuf > _vm->gdi._numZBuffer)
 			cr._zbuf = (byte)_vm->gdi._numZBuffer;
 
+		cr._shadow_mode = shadow_mode;
 		cr._shadow_table = _vm->_shadowPalette;
 
 		cr.setCostume(costume);
 		cr.setPalette(palette);
 		cr.setFacing(facing);
 
-		top = 0xFF;
+		cr.draw_top = top = 0xFF;
+		cr.draw_bottom = bottom = 0;
 
-		bottom = 0;
+		cr._dirty_id = number;
 
 		/* if the actor is partially hidden, redraw it next frame */
-		if (cr.drawCostume(this) & 1) {
+		if (cr.drawCostume(cost) & 1) {
 			needBgReset = true;
 			needRedraw = true;
 		}
+		top = cr.draw_top;
+		bottom = cr.draw_bottom;
 	} else {
 		AkosRenderer ar(_vm);
 		ar.charsetmask = true;
-		ar._x = x - _vm->virtscr->xstart;
+		ar._x = x - _vm->virtscr[0].xstart;
 		ar._y = y - elevation;
-		ar.scale_x = scalex;
-		ar.scale_y = scaley;
+		ar._scaleX = scalex;
+		ar._scaleY = scaley;
 		ar.clipping = forceClip;
 		if (ar.clipping == 100) {
 			ar.clipping = _vm->getMaskFromBox(walkbox);
@@ -1009,9 +1013,9 @@ void Actor::drawActorCostume()
 				ar.clipping = _vm->gdi._numZBuffer;
 		}
 
-		ar.outptr = _vm->virtscr->screenPtr + _vm->virtscr->xstart;
-		ar.outwidth = _vm->virtscr->width;
-		ar.outheight = _vm->virtscr->height;
+		ar.outptr = _vm->virtscr[0].screenPtr + _vm->virtscr[0].xstart;
+		ar.outwidth = _vm->virtscr[0].width;
+		ar.outheight = _vm->virtscr[0].height;
 
 		ar.shadow_mode = shadow_mode;
 		ar.shadow_table = _vm->_shadowPalette;
@@ -1020,13 +1024,12 @@ void Actor::drawActorCostume()
 		ar.setPalette(palette);
 		ar.setFacing(this);
 
-		ar.dirty_id = number;
-
-		ar.cd = &cost;
+		ar._dirty_id = number;
 
 		ar.draw_top = top = 0x7fffffff;
 		ar.draw_bottom = bottom = 0;
-		if (ar.drawCostume()) {
+
+		if (ar.drawCostume(cost)) {
 			needBgReset = true;
 			needRedraw = true;
 		}

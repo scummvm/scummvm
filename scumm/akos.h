@@ -20,6 +20,8 @@
  *
  */
 
+#ifndef AKOS_H
+#define AKOS_H
 
 
 #if !defined(__GNUC__)
@@ -53,19 +55,28 @@ struct AkosCI {
 #endif
 
 struct AkosRenderer {
-//protected:
-	CostumeData *cd;
-	int _x, _y;											/* where to draw costume */
-	byte scale_x, scale_y;				/* scaling */
-	byte clipping;								/* clip mask */
-	bool charsetmask;	// FIXME - it seems charsetmask is only set once, in actor.cpp, to true. So can we get rid of it?!?
+public:
+	byte _dirty_id;
+
 	byte shadow_mode;
-	uint16 codec;
-	bool mirror;									/* draw actor mirrored */
-	byte dirty_id;
+	byte *shadow_table;
+
+	int _x, _y;
+	byte _scaleX, _scaleY;
+	byte clipping;
+	bool charsetmask;	// FIXME - it seems charsetmask is only set once, in actor.cpp, to true. So can we get rid of it?!?
+
+	int draw_top, draw_bottom;
+
 	byte *outptr;
 	uint outwidth, outheight;
+
+protected:
+	Scumm *_vm;
 	int32 _numStrips;
+
+	uint16 codec;
+	bool mirror;									/* draw actor mirrored */
 
 	/* pointer to various parts of the costume resource */
 	byte *akos;
@@ -79,18 +90,12 @@ struct AkosRenderer {
 	int _width, _height;
 
 	byte *srcptr;
-	byte *shadow_table;
 
-	/* put less used stuff at the bottom to optimize opcodes */
-	int draw_top, draw_bottom;
-protected:
 	byte *akpl, *akci, *aksq;
 	AkosOffset *akof;
 	byte *akcd;
 
 	byte palette[256];
-
-	Scumm *_vm;
 
 	struct {
 		/* codec stuff */
@@ -117,25 +122,27 @@ protected:
 		byte shift;
 		uint16 bits;
 		byte numbits;
-		byte * dataptr;
+		byte *dataptr;
 		byte buffer[336];
 	} akos16;
 
 public:
-
 	// Constructor, sets all data to 0
 	AkosRenderer(Scumm *scumm) {
 		memset(this, 0, sizeof(AkosRenderer));
 		_vm = scumm;
 		_numStrips = _vm->gdi._numStrips;
 	}
-	bool drawCostume();
+
 	void setPalette(byte *palette);
+	void setFacing(Actor *a);
 	void setCostume(int costume);
-	void setFacing(Actor * a);
+
+	bool drawCostume(const CostumeData &cost);
 
 protected:
-	bool drawCostumeChannel(int chan);
+	bool drawLimb(const CostumeData &cost, int limb);
+
 	void codec1();
 	void codec1_spec1();
 	void codec1_spec2();
@@ -147,52 +154,12 @@ protected:
 
 	void codec16();
 	void akos16SetupBitReader(byte *src);
-	void akos16PutOnScreen(byte * dest, byte * src, byte transparency, int32 count);
+	void akos16PutOnScreen(byte *dest, byte *src, byte transparency, int32 count);
 	void akos16SkipData(int32 numskip);
 	void akos16DecodeLine(byte *buf, int32 numbytes, int32 dir);
-	void akos16ApplyMask(byte * dest, byte * maskptr, byte bits, int32 count, byte fillwith);
-	void akos16Decompress(byte * dest, int32 pitch, byte * src, int32 t_width, int32 t_height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency);
-	void akos16DecompressMask(byte * dest, int32 pitch, byte * src, int32 t_width, int32 t_height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency, byte * maskptr, int32 bitpos_start);
+	void akos16ApplyMask(byte *dest, byte *maskptr, byte bits, int32 count, byte fillwith);
+	void akos16Decompress(byte *dest, int32 pitch, byte *src, int32 t_width, int32 t_height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency);
+	void akos16DecompressMask(byte *dest, int32 pitch, byte *src, int32 t_width, int32 t_height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency, byte *maskptr, int32 bitpos_start);
 };
 
-enum AkosOpcodes {
-	AKC_Return = 0xC001,
-	AKC_SetVar = 0xC010,
-	AKC_CmdQue3 = 0xC015,
-	AKC_ComplexChan = 0xC020,
-	AKC_Jump = 0xC030,
-	AKC_JumpIfSet = 0xC031,
-	AKC_AddVar = 0xC040,
-	AKC_Ignore = 0xC050,
-	AKC_IncVar = 0xC060,
-	AKC_CmdQue3Quick = 0xC061,
-	AKC_SkipStart = 0xC070,
-	AKC_SkipE = 0xC070,
-	AKC_SkipNE = 0xC071,
-	AKC_SkipL = 0xC072,
-	AKC_SkipLE = 0xC073,
-	AKC_SkipG = 0xC074,
-	AKC_SkipGE = 0xC075,
-	AKC_StartAnim = 0xC080,
-	AKC_StartVarAnim = 0xC081,
-	AKC_Random = 0xC082,
-	AKC_SetActorClip = 0xC083,
-	AKC_StartAnimInActor = 0xC084,
-	AKC_SetVarInActor = 0xC085,
-	AKC_HideActor = 0xC086,
-	AKC_SetDrawOffs = 0xC087,
-	AKC_JumpTable = 0xC088,
-	AKC_SoundStuff = 0xC089,
-	AKC_Flip = 0xC08A,
-	AKC_Cmd3 = 0xC08B,
-	AKC_Ignore3 = 0xC08C,
-	AKC_Ignore2 = 0xC08D,
-	AKC_JumpStart = 0xC090,
-	AKC_JumpE = 0xC090,
-	AKC_JumpNE = 0xC091,
-	AKC_JumpL = 0xC092,
-	AKC_JumpLE = 0xC093,
-	AKC_JumpG = 0xC094,
-	AKC_JumpGE = 0xC095,
-	AKC_ClearFlag = 0xC09F
-};
+#endif
