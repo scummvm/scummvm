@@ -379,29 +379,29 @@ const char *ScummEngine_v70he::getOpcodeDesc(byte i) {
 	return _opcodesv70he[i].desc;
 }
 
-void ScummEngine_v70he::arrrays_unk2(int dst, int src, int len2, int len) {
-	int edi, value;
+void ScummEngine_v70he::arrrays_unk2(int dst, int src, int srcOffs, int len) {
+	int dstOffs, value;
 	int i = 0;
 
 	if (len == -1) {
 		len = resStrLen(getStringAddress(src));
-		len2 = 0;
+		srcOffs = 0;
 	}
 
-	edi = resStrLen(getStringAddress(dst));
+	dstOffs = resStrLen(getStringAddress(dst));
 
-	len -= len2;
+	len -= srcOffs;
 	len++;
 
 	while (i < len) {
 		writeVar(0, src);
-		value = readArray(0, 0, len2 + i);
+		value = readArray(0, 0, srcOffs + i);
 		writeVar(0, dst);
-		writeArray(0, 0, edi + i, value);
+		writeArray(0, 0, dstOffs + i, value);
 		i++;
 	}
 
-	writeArray(0, 0, edi + i, 0);
+	writeArray(0, 0, dstOffs + i, 0);
 }
 
 int ScummEngine_v70he::findObject(int x, int y, int num, int *args) {
@@ -720,7 +720,7 @@ void ScummEngine_v70he::o70_quitPauseRestart() {
 
 void ScummEngine_v70he::o70_unknownED() {
 	int array, pos, len;
-	int chr, result = 0;
+	int chr, width = 0;
 
 	len = pop();
 	pos = pop();
@@ -734,12 +734,14 @@ void ScummEngine_v70he::o70_unknownED() {
 	writeVar(0, array);
 	while (pos <= len) {
 		chr = readArray(0, 0, pos);
-		result += _charset->getCharWidth(chr);
+		if (chr == 0)
+			break;
+		width += _charset->getCharWidth(chr);
 		pos++;
 	}
 
-	push(result);
-	debug(1,"stub o70_unknownED");
+	push(width);
+	debug(1,"stub o70_unknownED (%d)", width);
 }
 
 void ScummEngine_v70he::o70_kernelSetFunctions() {
@@ -935,7 +937,8 @@ void ScummEngine_v70he::o70_writeINI() {
 
 void ScummEngine_v70he::o70_unknownF5() {
 	int chr, max;
-	int array, len, pos, result = 0;
+	int array, len, pos, width = 0;
+
 	max = pop();
 	pos = pop();
 	array = pop();
@@ -945,8 +948,8 @@ void ScummEngine_v70he::o70_unknownF5() {
 	writeVar(0, array);
 	while (pos <= len) {
 		chr = readArray(0, 0, pos);
-		result += _charset->getCharWidth(chr);
-		if (result >= max) {
+		width += _charset->getCharWidth(chr);
+		if (width >= max) {
 			push(pos);
 			return;
 		}
@@ -954,30 +957,31 @@ void ScummEngine_v70he::o70_unknownF5() {
 	}
 
 	push(len);
-	debug(1,"stub o70_unknownF5 (%d)", result);
+	debug(1,"stub o70_unknownF5 (%d)", len);
 }
 
 void ScummEngine_v70he::o70_unknownF6() {
-	int len, edi, pos, value, id;
-	value = pop();
-	edi = pop();
-	pos = pop();
-	id = pop();
+	int array, end, len, pos, value;
 
-	if (edi >= 0) {
-		len = resStrLen(getStringAddress(id));
-		if (len < edi)
-			edi = len;
+	value = pop();
+	end = pop();
+	pos = pop();
+	array = pop();
+
+	if (end >= 0) {
+		len = resStrLen(getStringAddress(array));
+		if (len < end)
+			end = len;
 	} else {
-		edi = 0;
+		end = 0;
 	}
 
 	if (pos < 0)
 		pos = 0;
 
-	writeVar(0, id);
-	if (edi > pos) {
-		while (edi >= pos) {
+	writeVar(0, array);
+	if (end > pos) {
+		while (end >= pos) {
 			if (readArray(0, 0, pos) == value) {
 				push(pos);
 				return;
@@ -985,7 +989,7 @@ void ScummEngine_v70he::o70_unknownF6() {
 			pos++;
 		}
 	} else {
-		while (edi <= pos) {
+		while (end <= pos) {
 			if (readArray(0, 0, pos) == value) {
 				push(pos);
 				return;
