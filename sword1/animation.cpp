@@ -40,8 +40,10 @@ AnimationState::~AnimationState() {
 	delete sndfile;
 #ifndef BACKEND_8BIT
 	_sys->hide_overlay();
-	delete overlay;
+	free(overlay);
 #endif
+	if (bgSoundStream)
+		delete bgSoundStream;
 #endif
 }
 
@@ -137,7 +139,7 @@ bool AnimationState::init(const char *basename) {
 	sprintf(tempFile, "%s.ogg", basename);
 	if (sndfile->open(tempFile)) {
 		bgSoundStream = makeVorbisStream(sndfile, sndfile->size());
-		_snd->playInputStream(&bgSound, bgSoundStream, false, 255, 0, -1);
+		_snd->playInputStream(&bgSound, bgSoundStream, false, 255, 0, -1, false);
 	}
 
 #endif
@@ -315,8 +317,6 @@ bool AnimationState::decodeFrame() {
 				 * events are processed.
 				 */
 
-				OSystem::Event event;
-
 #ifdef BACKEND_8BIT
 				if (checkPaletteSwitch() || (bgSoundStream == NULL) ||
                                     (bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < (framenum+3)){
@@ -330,7 +330,6 @@ bool AnimationState::decodeFrame() {
 						while (_sys->get_msecs() < ticks)
 							_sys->delay_msecs(10);
 					}
-					_sys->poll_event(&event);
 
 				} else
 					warning("dropped frame %i", framenum);
@@ -350,7 +349,6 @@ bool AnimationState::decodeFrame() {
 						while (_sys->get_msecs() < ticks)
 							_sys->delay_msecs(10);
 					}
-					_sys->poll_event(&event);
 
 				} else
 					warning("dropped frame %i", framenum);
@@ -388,6 +386,16 @@ void MoviePlayer::play(const char *filename) {
 			_sys->update_screen();
 #endif
 			// FIXME: check for ESC and abbort animation be just returning from the function
+			OSystem::Event event;
+			while (_sys->poll_event(&event)) {
+				if ((event.event_code == OSystem::EVENT_KEYDOWN) &&
+				    (event.kbd.keycode == 27)) {
+					delete anim;
+					return;
+				}
+				if (event.event_code == OSystem::EVENT_QUIT)
+					_sys->quit();
+			}
 		}
 	}
 
