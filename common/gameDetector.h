@@ -108,6 +108,9 @@ public:
 
 public:
 	GameDetector();
+#ifdef __PALM_OS__
+	~GameDetector();
+#endif
 
 	void parseCommandLine(int argc, char **argv);
 	int detectMain();

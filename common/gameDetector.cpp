@@ -267,6 +267,15 @@ GameDetector::GameDetector() {
 	}
 }
 
+#ifdef __PALM_OS__
+GameDetector::~GameDetector() {
+	// This is a previously allocated chunck (line 224)
+	// so we need to free it to prevent memory leak
+	VersionSettings *v = (VersionSettings *)version_settings;
+	free(v);
+}
+#endif
+
 void GameDetector::updateconfig() {
 	const char *val;
 
