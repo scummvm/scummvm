@@ -33,6 +33,7 @@
  */
 #define TICKS_PER_BEAT 480
 
+// #define FORCE_MT32_SOUNDS // Use only if you are driving an actual MT-32 or compatible
 #define IMUSE_SYSEX_ID 0x7D
 #define ROLAND_SYSEX_ID 0x41
 #define PERCUSSION_CHANNEL 9
@@ -43,6 +44,19 @@
 #define MDPG_TAG "MDpg"
 #define MDHD_TAG "MDhd"
 
+#ifdef FORCE_MT32_SOUNDS
+static const byte mt32_to_gmidi[128] = {
+//    0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F
+	  0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14,  15, // 0x
+	 16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  26,  27,  28,  29,  30,  31, // 1x
+	 32,  33,  34,  35,  36,  37,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47, // 2x
+	 48,  49,  50,  51,  52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  62,  63, // 3x
+	 64,  65,  66,  67,  68,  69,  70,  71,  72,  73,  74,  75,  76,  77,  78,  79, // 4x
+	 80,  81,  82,  83,  84,  85,  86,  87,  88,  89,  90,  91,  92,  93,  94,  95, // 5x
+	 96,  97,  98,  99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, // 6x
+	112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127  // 7x
+};
+#else
 /* Roland to General Midi patch table. Still needs some work. */
 static const byte mt32_to_gmidi[128] = {
 //    0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F
@@ -55,11 +69,45 @@ static const byte mt32_to_gmidi[128] = {
 	 61,  11,  11,  98,  14,   9,  14,  13,  12, 107, 107,  77,  78,  78,  76,  76, // 6x
 	 47, 117, 127, 118, 118, 116, 115, 119, 115, 112,  55, 124, 123,   0,  14, 117  // 7x
 };
+#endif
 
 
 /* Put IMUSE specific classes here, instead of in a .h file
  * they will only be used from this file, so it will reduce
  * compile time */
+
+// IMuseMonitor serves as a front-end to IMuseInternal and
+// ensures that only one thread accesses the object at a time.
+// This is necessary to prevent scripts and the MIDI parser
+// from yanking objects out from underneath each other.
+class IMuseMonitor : public IMuse {
+private:
+	OSystem *_system;
+	IMuse *_target;
+	void *_mutex;
+
+	void in() { _system->lock_mutex (_mutex); }
+	void out() { _system->unlock_mutex (_mutex); }
+public:
+	IMuseMonitor (OSystem *system, IMuse *target) : _system (system), _target (target) { _mutex = system->create_mutex(); }
+	virtual ~IMuseMonitor() { _system->delete_mutex (_mutex); };
+
+	void on_timer() { in(); _target->on_timer(); out(); }
+	void pause(bool paused) { in(); _target->pause (paused); out(); }
+	int save_or_load(Serializer *ser, Scumm *scumm) { in(); int ret = _target->save_or_load (ser, scumm); out(); return ret; }
+	int set_music_volume(uint vol) { in(); int ret = _target->set_music_volume (vol); out(); return ret; }
+	int get_music_volume() { in(); int ret = _target->get_music_volume(); out(); return ret; }
+	int set_master_volume(uint vol) { in(); int ret = _target->set_master_volume (vol); out(); return ret; }
+	int get_master_volume() { in(); int ret = _target->get_master_volume(); out(); return ret; }
+	bool start_sound(int sound) { in(); bool ret = _target->start_sound (sound); out(); return ret; }
+	int stop_sound(int sound) { in(); int ret = _target->stop_sound (sound); out(); return ret; }
+	int stop_all_sounds() { in(); int ret = _target->stop_all_sounds(); out(); return ret; }
+	int get_sound_status(int sound) { in(); int ret = _target->get_sound_status (sound); out(); return ret; }
+	int32 do_command(int a, int b, int c, int d, int e, int f, int g, int h) { in(); int32 ret = _target->do_command (a,b,c,d,e,f,g,h); out(); return ret; }
+	int clear_queue() { in(); int ret = _target->clear_queue(); out(); return ret; }
+	void setBase(byte **base) { in(); _target->setBase (base); out(); }
+	uint32 property(int prop, uint32 value) { in(); uint32 ret = _target->property (prop, value); out(); return ret; }
+};
 
 class IMuseDriver;
 
@@ -4734,7 +4782,8 @@ int IMuseGM::midi_driver_thread(void *param)
 		cur_time = mid->_system->get_msecs();
 		while (old_time < cur_time) {
 			old_time += 10;
-			mid->_se->on_timer();
+			//mid->_se->on_timer();
+			g_scumm->_imuse->on_timer();
 		}
 	}
 
@@ -4962,7 +5011,8 @@ void IMuseGM::part_off(Part *part)
 // to the client.
 IMuse *IMuse::create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer)
 {
-	return (IMuse *) IMuseInternal::create (syst, midi, mixer);
+	IMuse *engine = (IMuse *) IMuseInternal::create (syst, midi, mixer);
+	return (IMuse *) new IMuseMonitor (syst, engine);
 }
 
 
