@@ -763,6 +763,7 @@ protected:
 	void print_char_helper_1(const byte *src, uint len);
 	void print_char_helper_5(FillOrCopyStruct *fcs);
 
+	void quick_load_or_save();
 	void shutdown();
 
 	byte *vc_10_depack_swap(byte *src, uint w, uint h);

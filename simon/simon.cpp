@@ -4761,6 +4761,46 @@ void SimonEngine::shutdown() {
 	_system->quit();
 }
 
+void SimonEngine::quick_load_or_save() {
+	bool success;
+	char buf[256];
+
+	if (_saveLoadFlag == 2) {
+		Subroutine *sub;
+		success = load_game(_saveLoadSlot);
+		if (!success) {
+			sprintf(buf, "Failed to save game state to file:\n\n%s", _saveLoadName);
+		} else {
+			// Redraw Inventory
+			lock();
+			fcs_unk_proc_1(2, getItem1Ptr(), 0, 0);
+			unlock();
+			// Reset engine?
+			vc_set_bit_to(97, true);
+			sub = getSubroutineByID(100);
+			startSubroutine(sub);
+		}
+	} else {
+		success = save_game(_saveLoadSlot, _saveLoadName);
+		if (!success)
+			sprintf(buf, "Failed to load game state to file:\n\n%s", _saveLoadName);
+	}
+
+	if (!success) {
+		GUI::MessageDialog dialog(buf, "OK");
+		dialog.runModal();
+
+	} else if (_saveLoadFlag == 1) {
+		sprintf(buf, "Successfully saved game state in file:\n\n%s", _saveLoadName);
+		GUI::TimedMessageDialog dialog(buf, 1500);
+		dialog.runModal();
+
+	}
+
+	_saveLoadFlag = 0;
+}
+
+
 void SimonEngine::delay(uint amount) {
 	OSystem::Event event;
 
@@ -4797,7 +4837,6 @@ void SimonEngine::delay(uint amount) {
 					&& (event.kbd.flags == OSystem::KBD_ALT ||
 						event.kbd.flags == OSystem::KBD_CTRL)) {
 					_saveLoadSlot = event.kbd.keycode - '0';
-
 					sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
 					_saveLoadFlag = (event.kbd.flags == OSystem::KBD_ALT) ? 1 : 2;
 
@@ -4805,25 +4844,9 @@ void SimonEngine::delay(uint amount) {
 					// This stops load/save during cutscenes
 					// But can still load/save during converstation
 					// TODO: Add dialog to confirm game was saved.
-					if (!_lock_counter) {
-						if (_saveLoadFlag == 2) {
-							Subroutine *sub;
-							load_game(_saveLoadSlot);
-							// Redraw Inventory
-							lock();
-							fcs_unk_proc_1(2, getItem1Ptr(), 0, 0);
-							unlock();
-							// Reset engine?
-							vc_set_bit_to(97, true);
-							sub = getSubroutineByID(100);
-							startSubroutine(sub);
-						} else {
-							save_game(_saveLoadSlot, _saveLoadName);
-						}
-						_saveLoadFlag = 0;
-					}
-				}
-				if (event.kbd.flags == OSystem::KBD_CTRL) {
+					if (!_lock_counter)
+						quick_load_or_save();
+				} else if (event.kbd.flags == OSystem::KBD_CTRL) {
 					if (event.kbd.keycode == 'f')
 						_fast_mode ^= 1;
 				}
