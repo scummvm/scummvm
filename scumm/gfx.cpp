@@ -3097,6 +3097,11 @@ void Scumm::setCursorHotspot2(int x, int y)
 {
 	_cursor.hotspotX = x;
 	_cursor.hotspotY = y;
+	// FIXME this hacks around offset cursor in the humongous games
+	if (_features & GF_HUMONGOUS) {
+		_cursor.hotspotX += 15;
+		_cursor.hotspotY += 15;
+	}
 }
 
 void Scumm::updateCursor()
