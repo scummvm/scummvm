@@ -1173,140 +1173,148 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 	int     fade;
 
 	for (i = 0; i < MAXMUS; i++) {
-		if (musStreaming[i]) {
-			if (musFading[i] < 0) {
-				if (++musFading[i] == 0) {
-					g_engine->_mixer->stopHandle(soundHandleMusic[i]);
-					musStreaming[i] = 0;
-					musLooping[i] = 0;
-				} else {
-		    			//  Modify the volume according to the master volume and music mute state
-					if (musicMuted)
-						v0 = v1 = 0;
-					else {
-						v0 = (volMusic[0] * (0 - musFading[i]) / 16);
-			    			v1 = (volMusic[1] * (0 - musFading[i]) / 16);
-					}
+		if (!musStreaming[i])
+			continue;
 
-					byte volume;
-					int8 pan;
+		// If the music is fading, adjust the volume for it.
 
-					if (v0 > v1) {
-						volume = musicVolTable[v0];
-						pan = (musicVolTable[v1 * 16 / v0] / 2) - 127;
-					}
-					if (v1 > v0) {
-						volume = musicVolTable[v1];
-						pan = (musicVolTable[v0 * 16 / v1] / 2) + 127;
-					} else {
-						volume = musicVolTable[v1];
-						pan = 0;
-					}
-					g_engine->_mixer->setChannelVolume(soundHandleMusic[i], volume);
-					g_engine->_mixer->setChannelPan(soundHandleMusic[i], pan);
-					// FIXME: hack. this need cleanup. 
-					// originaly it has 3 second buffer ahead enought for fading
-					// that why it's need play music for time while fading is going
-
-					// Temporary disabled this because it
-					// causes a crash whenever music is
-					// allowed to finish on its own (i.e.
-					// not by being replaced with another
-					// piece of music.)
-					// goto label1;
-				}
-			} else {
-//label1:
-				len = bufferSizeMusic;
-
-				// Reduce length if it requires reading past the end of the music
-				if (musFilePos[i] + len >= musEnd[i]) {
-					len = musEnd[i] - musFilePos[i];
-					fade = 1;		// End of music reaced so we'll need to fade and repeat
-				} else
-					fade = 0;
-
-				if (len > 0) {
-					data8 = (uint8*)malloc(len / 2);
-					// Allocate a compressed data buffer
-					if (data8 == NULL) {
-						fpMus.close();
-						musFading[i] = -16;
-						return;
-					}
-
-					// Seek to update position of compressed music when neccassary (probably never occurs)
-					if ((int32) fpMus.pos() != musFilePos[i]) {
-						fpMus.seek(musFilePos[i], SEEK_SET);
-					}
-					// Read the compressed data in to the buffer
-					if ((int32)fpMus.read(data8, len / 2) != (len / 2)) {
-						fpMus.close();
-						free(data8);
-						musFading[i] = -16;
-						return;
-					}
-
-					// Update the current position in the file for future streaming
-					musFilePos[i] = fpMus.pos();
-
-					// decompress the music into the music buffer.
-					data16 = (uint16*)malloc(len);
-
-					// Decompress the first byte using the last decompressed sample
-					if (GetCompressedSign(data8[0]))
-						data16[0] = musLastSample[i] - (GetCompressedAmplitude(data8[0]) << GetCompressedShift(data8[0]));
-					else
-						data16[0] = musLastSample[i] + (GetCompressedAmplitude(data8[0]) << GetCompressedShift(data8[0]));
-
-					j = 1;
-
-					while (j < (uint32)len / 2) {
-						if (GetCompressedSign(data8[j]))
-							data16[j] = data16[j - 1] - (GetCompressedAmplitude(data8[j]) << GetCompressedShift(data8[j]));
-						else
-							data16[j] = data16[j - 1] + (GetCompressedAmplitude(data8[j]) << GetCompressedShift(data8[j]));
-						j++;
-					}
-
-					musLastSample[i] = data16[j - 1];
-
-					//Until the mixer supports LE samples natively, we need to convert our LE ones to BE
-					for (int32 y = 0; y < (len / 2); y++) {
-						data16[y] = TO_BE_16(data16[y]);
-					}
-
-					// Paranoid check that seems to
-					// be necessary.
-					if (len & 1)
-						len--;
-
-					g_engine->_mixer->appendStream(soundHandleMusic[i], data16, len);
-					
-					free(data16);
-
-					// Free the compressed data buffer and unlock the sound buffer.
-					free(data8);
-
-					// End of the music so we need to start fading and start the music again
-					if (fade) {
-						g_engine->_mixer->stopHandle(soundHandleMusic[i]);
-						musFading[i] = -16;		// Fade the old music
-
-						// Close the music cluster if it's open
-						if (fpMus.isOpen()) {
-							fpMus.close();
-						}
-
-						// Loop if neccassary
-						if (musLooping[i]) {
-							StreamCompMusicFromLock(musFilename[i], musId[i], musLooping[i]);
-						}
-					}
-				}
+		if (musFading[i] < 0) {
+			if (++musFading[i] == 0) {
+				g_engine->_mixer->stopHandle(soundHandleMusic[i]);
+				musStreaming[i] = 0;
+				musLooping[i] = 0;
+				continue;
 			}
+
+    			// Modify the volume according to the master volume
+			// and music mute state
+			if (musicMuted)
+				v0 = v1 = 0;
+			else {
+				v0 = (volMusic[0] * (0 - musFading[i]) / 16);
+	    			v1 = (volMusic[1] * (0 - musFading[i]) / 16);
+			}
+
+			byte volume;
+			int8 pan;
+
+			if (v0 > v1) {
+				volume = musicVolTable[v0];
+				pan = (musicVolTable[v1 * 16 / v0] / 2) - 127;
+			}
+			if (v1 > v0) {
+				volume = musicVolTable[v1];
+				pan = (musicVolTable[v0 * 16 / v1] / 2) + 127;
+			} else {
+				volume = musicVolTable[v1];
+				pan = 0;
+			}
+			g_engine->_mixer->setChannelVolume(soundHandleMusic[i], volume);
+			g_engine->_mixer->setChannelPan(soundHandleMusic[i], pan);
+		}
+
+		// Re-fill the audio buffer.
+
+		len = bufferSizeMusic;
+
+		// Reduce length if it requires reading past the end of the
+		// music
+
+		if (musFilePos[i] + len >= musEnd[i]) {
+			// End of music reached so we'll need to fade and
+			// repeat
+			len = musEnd[i] - musFilePos[i];
+			fade = 1;
+		} else
+			fade = 0;
+
+		if (len > 0) {
+			data8 = (uint8*) malloc(len / 2);
+			// Allocate a compressed data buffer
+			if (data8 == NULL) {
+				g_engine->_mixer->stopHandle(soundHandleMusic[i]);
+				musStreaming[i] = 0;
+				musLooping[i] = 0;
+				continue;
+			}
+
+			// Seek to update position of compressed music when
+			// neccassary (probably never occurs)
+			if ((int32) fpMus.pos() != musFilePos[i])
+				fpMus.seek(musFilePos[i], SEEK_SET);
+
+			// Read the compressed data in to the buffer
+			if ((int32) fpMus.read(data8, len / 2) != (len / 2)) {
+				g_engine->_mixer->stopHandle(soundHandleMusic[i]);
+				free(data8);
+				musStreaming[i] = 0;
+				musLooping[i] = 0;
+				continue;
+			}
+
+			// Update the current position in the file for future
+			// streaming
+
+			musFilePos[i] = fpMus.pos();
+
+			// decompress the music into the music buffer.
+			data16 = (uint16*) malloc(len);
+
+			// Decompress the first byte using the last
+			// decompressed sample
+			if (GetCompressedSign(data8[0]))
+				data16[0] = musLastSample[i] - (GetCompressedAmplitude(data8[0]) << GetCompressedShift(data8[0]));
+			else
+				data16[0] = musLastSample[i] + (GetCompressedAmplitude(data8[0]) << GetCompressedShift(data8[0]));
+
+			j = 1;
+
+			while (j < (uint32)len / 2) {
+				if (GetCompressedSign(data8[j]))
+					data16[j] = data16[j - 1] - (GetCompressedAmplitude(data8[j]) << GetCompressedShift(data8[j]));
+				else
+					data16[j] = data16[j - 1] + (GetCompressedAmplitude(data8[j]) << GetCompressedShift(data8[j]));
+				j++;
+			}
+
+			musLastSample[i] = data16[j - 1];
+
+			// Until the mixer supports LE samples natively, we
+			// need to convert our LE ones to BE
+			for (int32 y = 0; y < (len / 2); y++)
+				data16[y] = TO_BE_16(data16[y]);
+
+			// Paranoid check that seems to be necessary.
+			if (len & 1)
+				len--;
+
+			g_engine->_mixer->appendStream(soundHandleMusic[i], data16, len);
+					
+			free(data16);
+			free(data8);
+		}
+
+		// End of the music so we need to start fading and start the
+		// music again
+		if (fade) {
+			g_engine->_mixer->stopHandle(soundHandleMusic[i]);
+
+			// FIXME: The original code faded the music here, but
+			// to do that we need to start before we reach the end
+			// of the file.
+
+			// Fade the old music
+			// musFading[i] = -16;
+
+			// Loop if neccassary
+			if (musLooping[i])
+				StreamCompMusicFromLock(musFilename[i], musId[i], musLooping[i]);
 		}
 	}
+
+	if (!musStreaming[0] && !musStreaming[1] && fpMus.isOpen())
+		fpMus.close();
+
 	DipMusic();
 }
 
