@@ -1,0 +1,28 @@
+[General]
+AMChanged=false
+author=
+configure_args=
+email=
+kdevprj_version=1.3
+lfv_open_groups=
+make_options=
+makefiles=
+project_name=Residual
+project_type=normal_empty
+sub_dir=
+version=
+version_control=None
+workspace=1
+
+[LFV Groups]
+Headers=*.h,*.hh,*.hxx,*.hpp,*.H
+Others=*
+Sources=*.cpp,*.c,*.cc,*.C,*.cxx,*.ec,*.ecpp,*.lxx,*.l++,*.ll,*.l
+User Interface=*.kdevdlg,*.ui,*.rc,*.dlg
+groups=Headers,Sources,User Interface,Others
+
+[residual.kdevprj]
+dist=true
+install=false
+install_location=
+type=DATA
