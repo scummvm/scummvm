@@ -36,6 +36,7 @@
 
 #include "stdafx.h"
 #include "scumm/scumm.h"
+#include "sound/mididrv.h"
 #include "morphos.h"
 #include "morphos_scaler.h"
 #include "morphos_sound.h"
@@ -51,6 +52,7 @@ static RDArgs *ScummArgs = NULL;
 static char*ScummStory = NULL;
 static char*ScummPath = NULL;
 	  STRPTR ScummMusicDriver = NULL;
+MidiDriver* EtudeMidiDriver = NULL;
 		 LONG ScummMidiUnit = 0;
 static LONG ScummMidiVolume = 0;
 static LONG ScummMidiTempo = 0;
@@ -92,6 +94,9 @@ OSystem *OSystem_MorphOS_create(int game_id, int gfx_mode, bool full_screen)
 
 void close_resources()
 {
+	if (EtudeMidiDriver)
+		EtudeMidiDriver->close();
+
 	if (TheSystem)
 		delete TheSystem;
 

@@ -506,9 +506,12 @@ uint32 MidiDriver_ETUDE::property(int prop, uint32 param)
 	return 0;
 }
 
+extern MidiDriver* EtudeMidiDriver;
+
 MidiDriver *MidiDriver_ETUDE_create()
 {
-	return new MidiDriver_ETUDE();
+	EtudeMidiDriver = new MidiDriver_ETUDE();
+	return EtudeMidiDriver;
 }
 
 #endif // __MORPHOS__
