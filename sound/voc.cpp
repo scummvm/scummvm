@@ -43,22 +43,22 @@ int getSampleRateFromVOCRate(int vocSR) {
 	}
 }
 
-byte *loadVOCFromStream(Common::ReadStream *stream, int &size, int &rate) {
+byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate) {
 	int loops, begin_loop, end_loop;
 	return loadVOCFromStream(stream, size, rate, loops, begin_loop, end_loop);
 }
 
-byte *loadVOCFromStream(Common::ReadStream *stream, int &size, int &rate, int &loops, int &begin_loop, int &end_loop) {
+byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate, int &loops, int &begin_loop, int &end_loop) {
 	VocFileHeader fileHeader;
 
-	if (stream->read(&fileHeader, 8) != 8)
+	if (stream.read(&fileHeader, 8) != 8)
 		goto invalid;
 
 	if (!memcmp(&fileHeader, "VTLK", 4)) {
-		if (stream->read(&fileHeader, sizeof(VocFileHeader)) != sizeof(VocFileHeader))
+		if (stream.read(&fileHeader, sizeof(VocFileHeader)) != sizeof(VocFileHeader))
 			goto invalid;
 	} else if (!memcmp(&fileHeader, "Creative", 8)) {
-		if (stream->read(((byte *)&fileHeader) + 8, sizeof(VocFileHeader) - 8) != sizeof(VocFileHeader) - 8)
+		if (stream.read(((byte *)&fileHeader) + 8, sizeof(VocFileHeader) - 8) != sizeof(VocFileHeader) - 8)
 			goto invalid;
 	} else {
 	invalid:;
@@ -86,15 +86,15 @@ byte *loadVOCFromStream(Common::ReadStream *stream, int &size, int &rate, int &l
 	begin_loop = 0;
 	end_loop = 0;
 
-	while ((code = stream->readByte())) {
-		len = stream->readByte();
-		len |= stream->readByte() << 8;
-		len |= stream->readByte() << 16;
+	while ((code = stream.readByte())) {
+		len = stream.readByte();
+		len |= stream.readByte() << 8;
+		len |= stream.readByte() << 16;
 
 		switch(code) {
 		case 1: {
-			int time_constant = stream->readByte();
-			int packing = stream->readByte();
+			int time_constant = stream.readByte();
+			int packing = stream.readByte();
 			len -= 2;
 			rate = getSampleRateFromVOCRate(time_constant);
 			debug(9, "VOC Data Block: %d, %d, %d", rate, packing, len);
@@ -104,7 +104,7 @@ byte *loadVOCFromStream(Common::ReadStream *stream, int &size, int &rate, int &l
 				} else {
 					ret_sound = (byte *)malloc(len);
 				}
-				stream->read(ret_sound + size, len);
+				stream.read(ret_sound + size, len);
 				size += len;
 				begin_loop = size;
 				end_loop = size;
@@ -114,7 +114,7 @@ byte *loadVOCFromStream(Common::ReadStream *stream, int &size, int &rate, int &l
 			} break;
 		case 6:	// begin of loop
 			assert(len == 2);
-			loops = stream->readUint16LE();
+			loops = stream.readUint16LE();
 			break;
 		case 7:	// end of loop
 			assert(len == 0);
@@ -128,7 +128,7 @@ byte *loadVOCFromStream(Common::ReadStream *stream, int &size, int &rate, int &l
 	return ret_sound;
 }
 
-AudioStream *makeVOCStream(Common::ReadStream *stream) {
+AudioStream *makeVOCStream(Common::ReadStream &stream) {
 	int size, rate;
 	byte *data = loadVOCFromStream(stream, size, rate);
 

@@ -181,7 +181,7 @@ void VocSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
 	_file->seek(_offsets[sound], SEEK_SET);
 
 	int size, samples_per_sec;
-	byte *buffer = loadVOCFromStream(_file, size, samples_per_sec);
+	byte *buffer = loadVOCFromStream(*_file, size, samples_per_sec);
 
 	_mixer->playRaw(handle, buffer, size, samples_per_sec, flags | SoundMixer::FLAG_AUTOFREE);
 }

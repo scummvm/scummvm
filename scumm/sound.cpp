@@ -1017,7 +1017,7 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle,
 #endif
 		break;
 	default:
-		input = makeVOCStream(_sfxFile);
+		input = makeVOCStream(*_sfxFile);
 	}
 	
 	if (!input) {

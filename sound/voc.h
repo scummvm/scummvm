@@ -63,9 +63,9 @@ struct VocBlockHeader {
  */
 extern int getSampleRateFromVOCRate(int vocSR);
 
-extern byte *loadVOCFromStream(Common::ReadStream *stream, int &size, int &rate, int &loops, int &begin_loop, int &end_loop);
-extern byte *loadVOCFromStream(Common::ReadStream *stream, int &size, int &rate);
+extern byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate, int &loops, int &begin_loop, int &end_loop);
+extern byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate);
 
-AudioStream *makeVOCStream(Common::ReadStream *stream);
+AudioStream *makeVOCStream(Common::ReadStream &stream);
 
 #endif
