@@ -377,7 +377,7 @@ Command Line Options:
         -w[<file>]     - Write configuration file
         -v             - Show version information and exit
         -z             - Display list of games
-        -b<num>        - Start in room <num>.
+        -b<num>        - Pass number to the boot script (boot param)
         -d[<num>]      - Set debug verbosity to <num>
         -u             - Dump scripts if a directory called 'dumps' exists in
                          current directory
