@@ -158,7 +158,7 @@ BSC32=bscmake.exe
 # PROP Target_Dir ""
 CPP=clarm.exe
 # ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /Oxs /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../" /I "../../.." /I "../../../common" /I "../../../scumm" /I "../missing" /D "_LIB" /D "ARM" /D "_ARM_" /D "NDEBUG" /D "WIN32" /D UNDER_CE=$(CEVersion) /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /O2 /I "../" /I "../../.." /I "../../../common" /I "../../../scumm" /I "../missing" /D "_LIB" /D "ARM" /D "_ARM_" /D "NDEBUG" /D "WIN32" /D UNDER_CE=$(CEVersion) /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /FR /YX /Oxs /M$(CECrtMT) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -267,26 +267,29 @@ SOURCE=..\..\..\simon\debug.cpp
 
 DEP_CPP_DEBUG=\
 	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\simon\debug.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
 	"..\..\..\simon\vga.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
+	"..\portdefs.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\macos.h"\
+	"..\..\..\simon\simonsound.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE MIPS) Debug"
 
 NODEP_CPP_DEBUG=\
+	"..\..\..\simon\simon\debug.h"\
 	"..\..\..\simon\simon\intern.h"\
 	"..\..\..\simon\simon\simon.h"\
 	"..\..\..\simon\simon\vga.h"\
@@ -297,26 +300,29 @@ NODEP_CPP_DEBUG=\
 
 DEP_CPP_DEBUG=\
 	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\simon\debug.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
 	"..\..\..\simon\vga.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
+	"..\portdefs.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\macos.h"\
+	"..\..\..\simon\simonsound.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
 
 NODEP_CPP_DEBUG=\
+	"..\..\..\simon\simon\debug.h"\
 	"..\..\..\simon\simon\intern.h"\
 	"..\..\..\simon\simon\simon.h"\
 	"..\..\..\simon\simon\vga.h"\
@@ -327,16 +333,19 @@ NODEP_CPP_DEBUG=\
 
 DEP_CPP_DEBUG=\
 	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\simon\debug.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
 	"..\..\..\simon\vga.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
+	"..\portdefs.h"\
 	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
@@ -367,6 +376,7 @@ NODEP_CPP_DEBUG=\
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE x86em) Release"
 
 NODEP_CPP_DEBUG=\
+	"..\..\..\simon\simon\debug.h"\
 	"..\..\..\simon\simon\intern.h"\
 	"..\..\..\simon\simon\simon.h"\
 	"..\..\..\simon\simon\vga.h"\
@@ -376,6 +386,7 @@ NODEP_CPP_DEBUG=\
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE x86em) Debug"
 
 NODEP_CPP_DEBUG=\
+	"..\..\..\simon\simon\debug.h"\
 	"..\..\..\simon\simon\intern.h"\
 	"..\..\..\simon\simon\simon.h"\
 	"..\..\..\simon\simon\vga.h"\
@@ -397,7 +408,6 @@ SOURCE=..\..\..\simon\items.cpp
 
 DEP_CPP_ITEMS=\
 	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
@@ -406,11 +416,13 @@ DEP_CPP_ITEMS=\
 	"..\..\..\simon\simon.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
+	"..\portdefs.h"\
 	
 NODEP_CPP_ITEMS=\
 	"..\..\..\common\macos.h"\
+	"..\..\..\simon\simonsound.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE MIPS) Debug"
@@ -425,7 +437,6 @@ NODEP_CPP_ITEMS=\
 
 DEP_CPP_ITEMS=\
 	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
@@ -434,11 +445,13 @@ DEP_CPP_ITEMS=\
 	"..\..\..\simon\simon.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
+	"..\portdefs.h"\
 	
 NODEP_CPP_ITEMS=\
 	"..\..\..\common\macos.h"\
+	"..\..\..\simon\simonsound.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
@@ -453,15 +466,17 @@ NODEP_CPP_ITEMS=\
 
 DEP_CPP_ITEMS=\
 	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
+	"..\portdefs.h"\
 	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
@@ -520,25 +535,30 @@ DEP_CPP_MIDI_=\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
 	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midistreamer.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
+	"..\portdefs.h"\
 	
 NODEP_CPP_MIDI_=\
 	"..\..\..\common\macos.h"\
+	"..\..\..\simon\simonsound.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE MIPS) Debug"
 
 NODEP_CPP_MIDI_=\
+	"..\..\..\simon\common\file.h"\
 	"..\..\..\simon\common\system.h"\
 	"..\..\..\simon\scummsys.h"\
 	"..\..\..\simon\simon\simon.h"\
-	"..\..\..\simon\sound\mididrv.h"\
+	"..\..\..\simon\sound\midistreamer.h"\
 	"..\..\..\simon\sound\mixer.h"\
 	"..\..\..\simon\stdafx.h"\
 	
@@ -551,25 +571,30 @@ DEP_CPP_MIDI_=\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
 	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midistreamer.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
+	"..\portdefs.h"\
 	
 NODEP_CPP_MIDI_=\
 	"..\..\..\common\macos.h"\
+	"..\..\..\simon\simonsound.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
 
 NODEP_CPP_MIDI_=\
+	"..\..\..\simon\common\file.h"\
 	"..\..\..\simon\common\system.h"\
 	"..\..\..\simon\scummsys.h"\
 	"..\..\..\simon\simon\simon.h"\
-	"..\..\..\simon\sound\mididrv.h"\
+	"..\..\..\simon\sound\midistreamer.h"\
 	"..\..\..\simon\sound\mixer.h"\
 	"..\..\..\simon\stdafx.h"\
 	
@@ -582,11 +607,16 @@ DEP_CPP_MIDI_=\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
 	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midistreamer.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
+	"..\portdefs.h"\
 	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
@@ -617,10 +647,11 @@ NODEP_CPP_MIDI_=\
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE x86em) Release"
 
 NODEP_CPP_MIDI_=\
+	"..\..\..\simon\common\file.h"\
 	"..\..\..\simon\common\system.h"\
 	"..\..\..\simon\scummsys.h"\
 	"..\..\..\simon\simon\simon.h"\
-	"..\..\..\simon\sound\mididrv.h"\
+	"..\..\..\simon\sound\midistreamer.h"\
 	"..\..\..\simon\sound\mixer.h"\
 	"..\..\..\simon\stdafx.h"\
 	
@@ -628,10 +659,11 @@ NODEP_CPP_MIDI_=\
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE x86em) Debug"
 
 NODEP_CPP_MIDI_=\
+	"..\..\..\simon\common\file.h"\
 	"..\..\..\simon\common\system.h"\
 	"..\..\..\simon\scummsys.h"\
 	"..\..\..\simon\simon\simon.h"\
-	"..\..\..\simon\sound\mididrv.h"\
+	"..\..\..\simon\sound\midistreamer.h"\
 	"..\..\..\simon\sound\mixer.h"\
 	"..\..\..\simon\stdafx.h"\
 	
@@ -660,16 +692,19 @@ DEP_CPP_RES_C=\
 	"..\..\..\simon\simon.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
+	"..\portdefs.h"\
 	
 NODEP_CPP_RES_C=\
 	"..\..\..\common\macos.h"\
+	"..\..\..\simon\simonsound.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE MIPS) Debug"
 
 NODEP_CPP_RES_C=\
+	"..\..\..\simon\common\file.h"\
 	"..\..\..\simon\simon\intern.h"\
 	"..\..\..\simon\simon\simon.h"\
 	"..\..\..\simon\stdafx.h"\
@@ -688,16 +723,19 @@ DEP_CPP_RES_C=\
 	"..\..\..\simon\simon.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
+	"..\portdefs.h"\
 	
 NODEP_CPP_RES_C=\
 	"..\..\..\common\macos.h"\
+	"..\..\..\simon\simonsound.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
 
 NODEP_CPP_RES_C=\
+	"..\..\..\simon\common\file.h"\
 	"..\..\..\simon\simon\intern.h"\
 	"..\..\..\simon\simon\simon.h"\
 	"..\..\..\simon\stdafx.h"\
@@ -711,11 +749,14 @@ DEP_CPP_RES_C=\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
+	"..\portdefs.h"\
 	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
@@ -746,6 +787,7 @@ NODEP_CPP_RES_C=\
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE x86em) Release"
 
 NODEP_CPP_RES_C=\
+	"..\..\..\simon\common\file.h"\
 	"..\..\..\simon\simon\intern.h"\
 	"..\..\..\simon\simon\simon.h"\
 	"..\..\..\simon\stdafx.h"\
@@ -754,6 +796,7 @@ NODEP_CPP_RES_C=\
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE x86em) Debug"
 
 NODEP_CPP_RES_C=\
+	"..\..\..\simon\common\file.h"\
 	"..\..\..\simon\simon\intern.h"\
 	"..\..\..\simon\simon\simon.h"\
 	"..\..\..\simon\stdafx.h"\
@@ -784,16 +827,19 @@ DEP_CPP_SIMON=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
+	"..\portdefs.h"\
 	
 NODEP_CPP_SIMON=\
 	"..\..\..\common\macos.h"\
+	"..\..\..\simon\simonsound.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE MIPS) Debug"
 
 NODEP_CPP_SIMON=\
+	"..\..\..\simon\common\file.h"\
 	"..\..\..\simon\common\gameDetector.h"\
 	"..\..\..\simon\simon\intern.h"\
 	"..\..\..\simon\simon\simon.h"\
@@ -820,16 +866,19 @@ DEP_CPP_SIMON=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
+	"..\portdefs.h"\
 	
 NODEP_CPP_SIMON=\
 	"..\..\..\common\macos.h"\
+	"..\..\..\simon\simonsound.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
 
 NODEP_CPP_SIMON=\
+	"..\..\..\simon\common\file.h"\
 	"..\..\..\simon\common\gameDetector.h"\
 	"..\..\..\simon\simon\intern.h"\
 	"..\..\..\simon\simon\simon.h"\
@@ -849,13 +898,16 @@ DEP_CPP_SIMON=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
 	"..\..\..\simon\vga.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
+	"..\portdefs.h"\
 	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
@@ -890,6 +942,7 @@ NODEP_CPP_SIMON=\
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE x86em) Release"
 
 NODEP_CPP_SIMON=\
+	"..\..\..\simon\common\file.h"\
 	"..\..\..\simon\common\gameDetector.h"\
 	"..\..\..\simon\simon\intern.h"\
 	"..\..\..\simon\simon\simon.h"\
@@ -901,6 +954,7 @@ NODEP_CPP_SIMON=\
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE x86em) Debug"
 
 NODEP_CPP_SIMON=\
+	"..\..\..\simon\common\file.h"\
 	"..\..\..\simon\common\gameDetector.h"\
 	"..\..\..\simon\simon\intern.h"\
 	"..\..\..\simon\simon\simon.h"\
@@ -918,13 +972,131 @@ SOURCE=..\..\..\simon\simon.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\simon\sound.cpp
+
+!IF  "$(CFG)" == "simon - Win32 (WCE MIPS) Release"
+
+DEP_CPP_SOUND=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_SOUND=\
+	"..\..\..\common\macos.h"\
+	
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_SOUND=\
+	"..\..\..\simon\common\engine.h"\
+	"..\..\..\simon\common\file.h"\
+	"..\..\..\simon\simon\sound.h"\
+	
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Release"
+
+DEP_CPP_SOUND=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_SOUND=\
+	"..\..\..\common\macos.h"\
+	
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_SOUND=\
+	"..\..\..\simon\common\engine.h"\
+	"..\..\..\simon\common\file.h"\
+	"..\..\..\simon\simon\sound.h"\
+	
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Release"
+
+DEP_CPP_SOUND=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_SOUND=\
+	"..\..\..\common\macos.h"\
+	
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
+
+DEP_CPP_SOUND=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_SOUND=\
+	"..\..\..\common\macos.h"\
+	
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE x86em) Release"
+
+NODEP_CPP_SOUND=\
+	"..\..\..\simon\common\engine.h"\
+	"..\..\..\simon\common\file.h"\
+	"..\..\..\simon\simon\sound.h"\
+	
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE x86em) Debug"
+
+NODEP_CPP_SOUND=\
+	"..\..\..\simon\common\engine.h"\
+	"..\..\..\simon\common\file.h"\
+	"..\..\..\simon\simon\sound.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\simon\sound.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\simon\verb.cpp
 
 !IF  "$(CFG)" == "simon - Win32 (WCE MIPS) Release"
 
 DEP_CPP_VERB_=\
 	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
@@ -933,11 +1105,13 @@ DEP_CPP_VERB_=\
 	"..\..\..\simon\simon.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
+	"..\portdefs.h"\
 	
 NODEP_CPP_VERB_=\
 	"..\..\..\common\macos.h"\
+	"..\..\..\simon\simonsound.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE MIPS) Debug"
@@ -952,7 +1126,6 @@ NODEP_CPP_VERB_=\
 
 DEP_CPP_VERB_=\
 	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
@@ -961,11 +1134,13 @@ DEP_CPP_VERB_=\
 	"..\..\..\simon\simon.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
+	"..\portdefs.h"\
 	
 NODEP_CPP_VERB_=\
 	"..\..\..\common\macos.h"\
+	"..\..\..\simon\simonsound.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
@@ -980,15 +1155,17 @@ NODEP_CPP_VERB_=\
 
 DEP_CPP_VERB_=\
 	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
+	"..\portdefs.h"\
 	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
@@ -1043,7 +1220,6 @@ SOURCE=..\..\..\simon\vga.cpp
 
 DEP_CPP_VGA_C=\
 	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
@@ -1053,11 +1229,13 @@ DEP_CPP_VGA_C=\
 	"..\..\..\simon\vga.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
+	"..\portdefs.h"\
 	
 NODEP_CPP_VGA_C=\
 	"..\..\..\common\macos.h"\
+	"..\..\..\simon\simonsound.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE MIPS) Debug"
@@ -1073,7 +1251,6 @@ NODEP_CPP_VGA_C=\
 
 DEP_CPP_VGA_C=\
 	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
@@ -1083,11 +1260,13 @@ DEP_CPP_VGA_C=\
 	"..\..\..\simon\vga.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
+	"..\portdefs.h"\
 	
 NODEP_CPP_VGA_C=\
 	"..\..\..\common\macos.h"\
+	"..\..\..\simon\simonsound.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
@@ -1103,16 +1282,18 @@ NODEP_CPP_VGA_C=\
 
 DEP_CPP_VGA_C=\
 	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
 	"..\..\..\simon\vga.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
+	"..\portdefs.h"\
 	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
