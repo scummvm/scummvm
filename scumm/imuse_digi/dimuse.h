@@ -52,9 +52,11 @@ private:
 		bool volFadeUsed;	//
 
 		int soundId;
+		char soundName[15];
 		bool used;
 		bool toBeRemoved;
 		bool started;
+		bool souStream;
 		int priority;
 		int32 regionOffset;
 		int32 trackOffset;
@@ -62,6 +64,7 @@ private:
 		int curRegion;
 		int curHookId;
 		int volGroupId;
+		int soundType;
 		int iteration;
 		int mod;
 		int32 mixerFlags;

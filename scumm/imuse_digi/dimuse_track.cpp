@@ -107,13 +107,18 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 			_track[l]->mixerPan = 0;
 			_track[l]->mixerVol = volume;
 			_track[l]->toBeRemoved = false;
+			_track[l]->soundType = soundType;
 
 			int bits = 0, freq = 0, channels = 0;
 
 			if (input) {
 				_track[l]->iteration = 0;
+				_track[l]->souStream = true;
+				_track[l]->soundName[0] = 0;
 				// Do nothing here, we already have an audio stream
 			} else {
+				_track[l]->souStream = false;
+				strcpy(_track[l]->soundName, soundName);
 				_track[l]->soundHandle = _sound->openSound(soundId, soundName, soundType, volGroupId);
 
 				if (_track[l]->soundHandle == NULL)
@@ -150,7 +155,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 			}
 
 			if (input) {
-				_track[l]->stream2 = input;
+				_track[l]->stream2 = NULL;
 				_track[l]->stream = NULL;
 				_track[l]->started = false;
 			} else {

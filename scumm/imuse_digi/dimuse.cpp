@@ -102,8 +102,10 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 		MKLINE(Track, volFadeDelay, sleInt32, VER(31)),
 		MKLINE(Track, volFadeUsed, sleByte, VER(31)),
 		MKLINE(Track, soundId, sleInt32, VER(31)),
+		MKARRAY(Track, soundName, sleByte, 15, VER(31)),
 		MKLINE(Track, used, sleByte, VER(31)),
 		MKLINE(Track, toBeRemoved, sleByte, VER(31)),
+		MKLINE(Track, souStream, sleByte, VER(31)),
 		MKLINE(Track, started, sleByte, VER(31)),
 		MKLINE(Track, priority, sleInt32, VER(31)),
 		MKLINE(Track, regionOffset, sleInt32, VER(31)),
@@ -112,6 +114,7 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 		MKLINE(Track, curRegion, sleInt32, VER(31)),
 		MKLINE(Track, curHookId, sleInt32, VER(31)),
 		MKLINE(Track, volGroupId, sleInt32, VER(31)),
+		MKLINE(Track, soundType, sleInt32, VER(31)),
 		MKLINE(Track, iteration, sleInt32, VER(31)),
 		MKLINE(Track, mod, sleInt32, VER(31)),
 		MKLINE(Track, mixerFlags, sleInt32, VER(31)),
@@ -124,8 +127,25 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 
 	ser->_ref_me = this;
 	ser->saveLoadEntries(this, mainEntries);
-	for (i = 0; i < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; i++)
+	for (i = 0; i < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; i++) {
 		ser->saveLoadEntries(_track[i], trackEntries);
+		if (!ser->isSaving()) {
+			if (_track[i]->souStream) {
+				_track[i]->stream2 = NULL;
+				_track[i]->stream = NULL;
+				_track[i]->used = false;
+			} else {
+				_track[i]->soundHandle = _sound->openSound(_track[i]->soundId,
+										_track[i]->soundName, _track[i]->soundType,
+										_track[i]->volGroupId);
+				int32 streamBufferSize = _track[i]->iteration;
+				int	freq = _sound->getFreq(_track[i]->soundHandle);
+				_track[i]->stream2 = NULL;
+				_track[i]->stream = makeAppendableAudioStream(freq, _track[i]->mixerFlags, streamBufferSize);
+				_vm->_mixer->playInputStream(&_track[i]->handle, _track[i]->stream, false, _track[i]->vol / 1000, _track[i]->pan, -1);
+			}
+		}
+	}
 }
 
 void IMuseDigital::callback() {
