@@ -31,11 +31,6 @@ struct Box {				/* Internal walkbox file format */
 	uint16 scale;
 } GCC_PACK;
 
-struct gate_location {
-	int     x;
-	int     y;
-};
-
 struct AdjustBoxResult {	/* Result type of AdjustBox functions */
 	int16 x,y;
 	uint16 dist;

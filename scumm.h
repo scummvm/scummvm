@@ -20,14 +20,9 @@
  */
 
 #include "scummsys.h"
+#include "system.h"
 #ifdef COMPRESSED_SOUND_FILE
 #include <mad.h>
-#endif
-
-#include "system.h"
-
-#if defined(macintosh) && !defined(__APPLE__CW)
-	#define Point SCUMM_Point
 #endif
 
 #define SCUMMVM_VERSION "0.2.0 devel"
@@ -38,8 +33,8 @@
 
 class Scumm;
 struct Actor;
-
-#include "smush.h"
+struct ScummDebugger;
+struct Serializer;
 
 typedef void (Scumm::*OpcodeProc)();
 
@@ -54,8 +49,6 @@ enum {
     MAX_ACTORS = 30,
     KEY_SET_OPTIONS = 3456 // WinCE
 };
-
-
 
 /* Script status type (slot.status) */
 enum {
@@ -99,31 +92,6 @@ struct RoomHeader {
 			uint16 numObjects;
 		} GCC_PACK old;
 	} GCC_PACK;
-} GCC_PACK;
-
-struct BompHeader {
-	uint16 unk;
-	uint16 width,height;
-} GCC_PACK;
-
-struct AkosHeader {
-	byte x_1[2];
-	byte flags;
-	byte x_2;
-	uint16 num_anims;
-	uint16 x_3;
-	uint16 codec;
-} GCC_PACK;
-
-struct AkosOffset {
-	uint32 akcd;
-	uint16 akci;
-} GCC_PACK;
-
-struct AkosCI {
-	uint16 width,height;
-	int16 rel_x, rel_y;
-	int16 move_x, move_y;
 } GCC_PACK;
 
 struct CodeHeader {
@@ -233,28 +201,6 @@ struct CostumeData {
 	uint16 frame[16];
 };
 
-struct EnqueuedObject {
-	uint16 a,b,c,d,e;
-	int16 x,y;
-	uint16 width,height;
-	uint16 j,k,l;
-};
-
-struct VirtScreen {
-	int number;
-	uint16 unk1;
-	uint16 topline;
-	uint16 width,height;
-	uint16 size;
-	byte alloctwobuffers;
-	byte scrollable;
-	uint16 xstart;
-	byte tdirty[40];
-	byte bdirty[40];
-	byte *screenPtr;
-	byte *backBuf;
-};
-
 struct ActorWalkData {
 	int16 destx,desty;
 	byte destbox;
@@ -264,12 +210,6 @@ struct ActorWalkData {
 	int32 XYFactor, YXFactor;
 	uint16 xfrac,yfrac;
 	int point3x, point3y;
-};
-
-struct MouseCursor {
-	int8 hotspot_x, hotspot_y;
-	byte colors[4];
-	byte data[32];
 };
 
 struct ScriptSlot {
@@ -327,13 +267,6 @@ enum {
 	OF_STATE_MASK = 0xF0,
 	
 	OF_STATE_SHL = 4
-};
-
-/* Camera Modes */
-enum {
-	CM_NORMAL = 1,
-	CM_FOLLOW_ACTOR = 2,
-	CM_PANNING = 3
 };
 
 enum {
@@ -423,68 +356,6 @@ struct CharsetRenderer {
 	int getSpacing(char chr);
 	int getStringWidth(int a, byte *str, int pos);
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
-};
-
-struct AkosRenderer {
-	CostumeData *cd;
-	int x,y; /* where to draw costume */
-	byte scale_x, scale_y; /* scaling */
-	byte clipping; /* clip mask */
-	bool charsetmask;
-	byte shadow_mode;
-	uint16 codec;
-	bool mirror; /* draw actor mirrored */
-	byte dirty_id;
-	byte *outptr;
-	uint outwidth, outheight;
-	
-	/* pointer to various parts of the costume resource */
-	byte *akos;
-	AkosHeader *akhd;
-	
-	/* current move offset */
-	int move_x, move_y;
-	/* movement of cel to decode */
-	int move_x_cur, move_y_cur;
-	/* width and height of cel to decode */
-	int width,height;
-	
-	byte *srcptr;
-	byte *shadow_table;
-
-	struct {
-		/* codec stuff */
-		const byte *scaletable;
-		byte mask,shl;
-		bool doContinue;
-		byte repcolor;
-		byte replen;
-		int scaleXstep;
-		int x,y;
-		int tmp_x, tmp_y;
-		int y_pitch;
-		int skip_width;
-		byte *destptr;
-		byte *mask_ptr;
-		int imgbufoffs;
-	} v1;
-
-	/* put less used stuff at the bottom to optimize opcodes */
-	int draw_top, draw_bottom;
-	byte *akpl,*akci,*aksq;
-	AkosOffset *akof;
-	byte *akcd;
-
-	byte palette[256];
-};
-
-struct BompDrawData {
-	byte *out;
-	int outwidth, outheight;
-	int x,y;
-	byte scale_x, scale_y;
-	byte *dataptr;
-	int srcwidth, srcheight;
 };
 
 struct LoadedCostume {
@@ -584,16 +455,6 @@ struct Actor {
 	byte palette[64];
 };
 
-struct CameraData {
-	ScummPoint _cur;
-	ScummPoint _dest;
-	ScummPoint _accel;
-	ScummPoint _last;
-	int _leftTrigger, _rightTrigger;
-	byte _follows, _mode;
-	bool _movingToActor;
-};
-
 #define ARRAY_HDR_SIZE 6
 struct ArrayHeader {
 	int16 dim1_size;
@@ -622,92 +483,6 @@ struct StringTab {
 	bool overhead, t_overhead;
 	bool no_talk_anim,t_no_talk_anim;
 };
-
-struct ColorCycle {
-	uint16 delay;
-	uint16 counter;
-	uint16 flags;
-	byte start;
-	byte end;
-};
-
-struct Gdi {
-	Scumm *_vm;
-
-	byte *_readPtr;
-	uint _readOffs;
-
-	int8 _cursorActive;
-
-	int _numZBuffer;
-	int _imgBufOffs[4];
-	byte _disable_zbuffer;
-
-	bool _useOrDecompress;
-	byte _numLinesToProcess;
-	byte _tempNumLines;
-	byte _currentX;
-	byte _hotspot_x;
-	byte _hotspot_y;
-	int16 _drawMouseX;
-	int16 _drawMouseY;
-	int16 _mask_top, _mask_bottom, _mask_right, _mask_left;
-	byte _currentCursor;
-	byte _mouseColors[4];
-	byte _mouseColor;
-	byte _mouseClipMask1, _mouseClipMask2, _mouseClipMask3;
-	byte _mouseColorIndex;
-	byte *_mouseMaskPtr;
-	byte *_smap_ptr;
-	byte *_backbuff_ptr;
-	byte *_bgbak_ptr;
-	byte *_mask_ptr;
-	byte *_mask_ptr_dest;
-	byte *_z_plane_ptr;
-
-	byte _decomp_shr, _decomp_mask;
-	byte _transparency;
-	uint16 _vertStripNextInc;
-	byte *_backupIsWhere;
-	
-	void unkDecode1();
-	void unkDecode2();
-	void unkDecode3();
-	void unkDecode4();
-	void unkDecode5();
-	void unkDecode6();
-	void unkDecode7();
-        void unkDecode8();
-        void unkDecode9();
-        void unkDecode10();
-        void unkDecode11();
-
-	void decompressBitmap();
-
-	void drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h, int stripnr, int numstrip, byte flag);
-	void clearUpperMask();
-
-	void disableZBuffer() { _disable_zbuffer++; }
-	void enableZBuffer() { _disable_zbuffer--; }
-
-	void draw8ColWithMasking();
-	void clear8ColWithMasking();
-	void clear8Col();
-	void decompressMaskImgOr();
-	void decompressMaskImg();
-
-	void resetBackground(byte top, byte bottom, int strip);
-	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
-	void updateDirtyScreen(VirtScreen *vs);
-
-
-	enum DrawBitmapFlags {
-		dbAllowMaskOr = 1,
-		dbDrawMaskOnBoth = 2,
-		dbClear = 4
-	};
-};
-
 
 enum GameId {
 	GID_TENTACLE = 1,
@@ -746,9 +521,6 @@ enum GameFeatures {
 	GF_NO_SCALLING = 2048
 };
 
-struct ScummDebugger;
-struct Serializer;
-
 enum WhereIsObject {
 	WIO_NOT_FOUND = -1,
 	WIO_INVENTORY = 0,
@@ -763,15 +535,12 @@ enum MouseButtonStatus {
 	msClicked = 2
 };
 
-enum VideoMode {
-	VIDEO_SCALE = 0,
-	VIDEO_2XSAI = 1,
-	VIDEO_SUPERSAI = 2,
-	VIDEO_SUPEREAGLE = 3
-};
-
+#include "gfx.h"
 #include "boxes.h"
 #include "sound.h"
+#include "akos.h"
+#include "smush.h"
+
 class Scumm {
 public:
 
@@ -1124,8 +893,6 @@ public:
 	byte *getOBCDFromObject(int obj);	
 	int getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e, int f);
 
-
-
 	/* Should be in akos class */
 	bool akos_drawCostume(AkosRenderer *ar);
 	void akos_setPalette(AkosRenderer *ar, byte *palette);
@@ -1444,12 +1211,10 @@ public:
 
 
 	/* Walkbox / Navigation class */
-	int _maxBoxVertexHeap;
-	byte *_boxMatrixPtr4, *_boxMatrixPtr1, *_boxMatrixPtr3;
-	int _boxPathVertexHeapIndex;
-	int _boxMatrixItem;
+	int _maxBoxVertexHeap, _boxPathVertexHeapIndex, _boxMatrixItem;
+	byte *_boxMatrixPtr4, *_boxMatrixPtr1, *_boxMatrixPtr3;	
 
-	gate_location p[5];
+	ScummPoint p[5];	/* Gate locations */
 	int gate1ax, gate1ay, gate1bx, gate1by, gate2ax, gate2ay, gate2bx, gate2by;
 	uint16 _extraBoxFlags[65];
 	int16 _foundPathX, _foundPathY;
@@ -1484,7 +1249,6 @@ public:
 	void setBoxFlags(int box, int val);
 	void setBoxScale(int box, int b);
 	void createBoxMatrix();
-
 
 
 	/* String class */
@@ -1898,49 +1662,6 @@ public:
 
 	byte VAR_DEFAULT_TALK_DELAY;
 	byte VAR_CHARSET_MASK;
-};
-
-
-enum AkosOpcodes{
-	AKC_Return  = 0xC001,
-	AKC_SetVar  = 0xC010,
-	AKC_CmdQue3  = 0xC015,
-	AKC_ComplexChan  = 0xC020,
-	AKC_Jump  = 0xC030,
-	AKC_JumpIfSet  = 0xC031,
-	AKC_AddVar  = 0xC040,
-	AKC_Ignore  = 0xC050,
-	AKC_IncVar  = 0xC060,
-	AKC_CmdQue3Quick  = 0xC061,
-	AKC_SkipStart = 0xC070,
-	AKC_SkipE  = 0xC070,
-	AKC_SkipNE  = 0xC071,
-	AKC_SkipL  = 0xC072,
-	AKC_SkipLE  = 0xC073,
-	AKC_SkipG  = 0xC074,
-	AKC_SkipGE  = 0xC075,
-	AKC_StartAnim  = 0xC080,
-	AKC_StartVarAnim  = 0xC081,
-	AKC_Random  = 0xC082,
-	AKC_SetActorClip  = 0xC083,
-	AKC_StartAnimInActor  = 0xC084,
-	AKC_SetVarInActor  = 0xC085,
-	AKC_HideActor  = 0xC086,
-	AKC_SetDrawOffs  = 0xC087,
-	AKC_JumpTable  = 0xC088,
-	AKC_SoundStuff  = 0xC089,
-	AKC_Flip  = 0xC08A,
-	AKC_Cmd3  = 0xC08B,
-	AKC_Ignore3  = 0xC08C,
-	AKC_Ignore2  = 0xC08D,
-	AKC_JumpStart = 0xC090,
-	AKC_JumpE  = 0xC090,
-	AKC_JumpNE  = 0xC091,
-	AKC_JumpL  = 0xC092,
-	AKC_JumpLE  = 0xC093,
-	AKC_JumpG  = 0xC094,
-	AKC_JumpGE  = 0xC095,
-	AKC_ClearFlag  = 0xC09F
 };
 
 
