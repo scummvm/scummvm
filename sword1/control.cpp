@@ -19,20 +19,23 @@
  *
  */
 
-#include "stdafx.h"
-#include "control.h"
-#include "common/util.h"
 #include "common/file.h"
-#include "logic.h"
-#include "sworddefs.h"
-#include "swordres.h"
-#include "resman.h"
-#include "objectman.h"
-#include "sword1.h"
+#include "common/stdafx.h"
 #include "common/util.h"
-#include "mouse.h"
-#include "music.h"
-#include "sound.h"
+#include "common/util.h"
+
+#include "gui/message.h"
+
+#include "sword1/control.h"
+#include "sword1/logic.h"
+#include "sword1/mouse.h"
+#include "sword1/music.h"
+#include "sword1/objectman.h"
+#include "sword1/resman.h"
+#include "sword1/sound.h"
+#include "sword1/sword1.h"
+#include "sword1/sworddefs.h"
+#include "sword1/swordres.h"
 
 namespace Sword1 {
 
@@ -669,10 +672,33 @@ void Control::readSavegameDescriptions(void) {
 	delete mgr;
 }
 
+int Control::displayMessage(const char *altButton, const char *message, ...) {
+#ifdef __PALM_OS__
+	char buf[256]; // 1024 is too big overflow the stack
+#else
+	char buf[1024];
+#endif
+	va_list va;
+
+	va_start(va, message);
+	vsnprintf(buf, sizeof(buf), message, va);
+	va_end(va);
+
+	GUI::MessageDialog dialog(buf, "OK", altButton);
+	return dialog.runModal();
+}
+
 void Control::writeSavegameDescriptions(void) {
 	SaveFileManager *mgr = _system->get_savefile_manager();
 	SaveFile *outf;
 	outf = mgr->open_savefile("SAVEGAME.INF", _savePath, SAVEFILE_WRITE);
+	
+	if (!outf) {
+		// Display an error message, and do nothing
+		displayMessage(0, "Unable to write to path '%s'", _savePath);
+		return;
+	}
+	
 	// if the player accidently clicked the last slot and then deselected it again,
 	// we'd still have _saveFiles == 64, so get rid of the empty end.
 	while (strlen((char*)_saveNames[_saveFiles - 1]) == 0)
@@ -845,8 +871,11 @@ void Control::saveGameToFile(uint8 slot) {
 	SaveFileManager *mgr = _system->get_savefile_manager();
 	SaveFile *outf;
 	outf = mgr->open_savefile(fName, _savePath, SAVEFILE_WRITE);
-	if (!outf->isOpen())
-		error("unable to create file %s", fName);
+	if (!outf || !outf->isOpen()) {
+		// Display an error message, and do nothing
+		displayMessage(0, "Unable to create file '%s' in directory '%s'", fName, _savePath);
+		return;
+	}
 
 	_objMan->saveLiveList(liveBuf);
 	for (cnt = 0; cnt < TOTAL_SECTIONS; cnt++)
@@ -877,8 +906,9 @@ bool Control::restoreGameFromFile(uint8 slot) {
 	SaveFileManager *mgr = _system->get_savefile_manager();
 	SaveFile *inf;
 	inf = mgr->open_savefile(fName, _savePath, SAVEFILE_READ);
-	if ((!inf) || (!inf->isOpen())) {
-		warning("Can't open file %s in directory %s", fName, _savePath);
+	if (!inf || !inf->isOpen()) {
+		// Display an error message, and do nothing
+		displayMessage(0, "Can't open file '%s' in directory '%s'", fName, _savePath);
 		delete mgr;
 		return false;
 	}
