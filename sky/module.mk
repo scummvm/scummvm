@@ -15,7 +15,7 @@ MODULE_OBJS = \
 	sky/sky.o \
 	sky/sound.o \
 	sky/text.o \
-	sky/introimg.cpp \
+	sky/introimg.o \
 	sky/music/adlibchannel.o \
 	sky/music/adlibmusic.o \
 	sky/music/gmchannel.o \
