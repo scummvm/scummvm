@@ -234,10 +234,13 @@ static int findGames(Scumm *s, Game *games, int max)
 		if(games[curr_game].dir[i]=='/')
 		  break;
 	      if(i>=0) {
-		games[curr_game].dir[strlen(games[curr_game].dir)-1]='\0';
 		strcpy(games[curr_game].filename_base,
 		       games[curr_game].dir+i+1);
+		games[curr_game].filename_base[strlen(games[curr_game].
+						      filename_base)-1]='\0';
+#if 0
 		games[curr_game].dir[i+1]='\0';
+#endif
 	      }
 	    }
 	    checkName(s, games[curr_game]);
@@ -412,7 +415,7 @@ int gameMenu(Game *games, int num_games)
   }
 }
 
-bool selectGame(Scumm *s, char *&ret, Icon &icon)
+bool selectGame(Scumm *s, char *&ret, char *&dir_ret, Icon &icon)
 {
   Game *games = new Game[MAX_GAMES];
   int selected, num_games;
@@ -449,10 +452,13 @@ bool selectGame(Scumm *s, char *&ret, Icon &icon)
   delete games;
 
   if(selected>=0) {
-#if 1
+#if 0
     chdir(the_game.dir);
 #else
     chdir("/");
+    static char dirarg[258];
+    sprintf(dirarg, "-p%s", the_game.dir);
+    dir_ret = dirarg;
 #endif
     ret = the_game.filename_base;
     icon = the_game.icon;
