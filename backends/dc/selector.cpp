@@ -160,7 +160,7 @@ static bool checkName(const char *base, char *text = 0)
   return false;
 }
 
-static const char *checkDetect(const FilesystemNode *entry, bool unique)
+static bool isGame(const FilesystemNode *entry, char *base)
 {
   FSList files;
   files.push_back(*entry);
@@ -172,62 +172,11 @@ static const char *checkDetect(const FilesystemNode *entry, bool unique)
     candidates.push_back((*iter)->detectGames(files));
   }
   if (candidates.isEmpty())
-    return NULL;
-  if (unique && candidates.size() > 1)
-    return NULL;
-  return candidates[0].name;
-}
-
-static bool isGame(const FilesystemNode *entry, char *base)
-{
-  const char *fn = entry->displayName().c_str();
-  if(const char *dtct = checkDetect(entry, true)) {
-    strcpy(base, dtct);
-    return true;
-  }
-  if(!strcasecmp(fn, "00.LFL") ||
-     !strcasecmp(fn, "000.LFL")) {
-    *base = '\0';
-    return true;
-  }
-  if(const char *dtct = checkDetect(entry, false)) {
-    strcpy(base, dtct);
-    return true;
-  }
-#if 0
-  int l = strlen(fn);
-  if(l>4 && (!strcasecmp(fn+l-4, ".000") ||
-	     !strcasecmp(fn+l-4, ".SM0") ||
-	     !strcasecmp(fn+l-4, ".HE0") ||
-	     !strcasecmp(fn+l-4, ".LA0"))) {
-    strcpy(base, fn);
-    base[l-4]='\0';
-    return true;
-  }
-#elsif 0
-  char *dot;
-  if(!stricmp(fn, "LOOM.EXE"))
     return false;
-  if((dot = strchr(fn, '.'))!=NULL) {
-    if(!strcasecmp(dot, ".SAN"))
-      return false;
-    strcpy(base, fn);
-    base[dot-fn]='\0';
-    if(checkName(base))
-      return true;
-  }
-#endif  
-  return false;
-}
-
-static bool checkExe(const char *dir, const char *f)
-{
-  char fn[520];
-  int fd;
-  sprintf(fn, "%s%s.EXE", dir, f);
-  if((fd = open(fn, O_RDONLY))<0)
+  if (candidates.size() > 1)
     return false;
-  close(fd);
+
+  strcpy(base, candidates[0].name);
   return true;
 }
 
@@ -298,25 +247,6 @@ static int findGames(Game *games, int max)
 	  else if(curr_game < max &&
 		  isGame(&*entry, games[curr_game].filename_base)) {
 	    strcpy(games[curr_game].dir, dirs[curr_dir-1].name);
-	    if(!*games[curr_game].filename_base) {
-	      int i;
-	      for(i=strlen(games[curr_game].dir)-1; --i>=0; )
-		if(games[curr_game].dir[i]=='/')
-		  break;
-	      if(i>=0) {
-		strcpy(games[curr_game].filename_base,
-		       games[curr_game].dir+i+1);
-		games[curr_game].filename_base[strlen(games[curr_game].
-						      filename_base)-1]='\0';
-#if 0
-		games[curr_game].dir[i+1]='\0';
-#endif
-	      }
-#if 0
-	      if(checkExe(games[curr_game].dir, "loom"))
-		strcpy(games[curr_game].filename_base, "loomcd");
-#endif
-	    }
 	    if(uniqueGame(games[curr_game].filename_base,
 			  games[curr_game].dir, games, curr_game)) {
 
