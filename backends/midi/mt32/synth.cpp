@@ -230,7 +230,7 @@ void szxform(
 
 
 #ifdef HAVE_X86
-#if defined(WIN32) && !(defined(__CYGWIN__) || defined(__MINGW__))
+#if defined(WIN32) && !(defined(__CYGWIN__) || defined(__MINGW32__))
 bool DetectSIMD()
 {
 
@@ -760,7 +760,7 @@ section */
 
 iir_filter_type usefilter;
 
-#if defined(WIN32) && !(defined(__CYGWIN__) || defined(__MINGW__))
+#if defined(WIN32) && !(defined(__CYGWIN__) || defined(__MINGW32__))
 float iir_filter_sse(float input,float *hist1_ptr, float *coef_ptr, int revLevel)
 {
     float *hist2_ptr;

@@ -57,7 +57,7 @@ static inline void LOG_MSG(char *fmt, ...)
 	fflush(stdout);
 }
 
-#if defined(WIN32) && !(defined(__CYGWIN__) || defined(__MINGW__))
+#if defined(WIN32) && !(defined(__CYGWIN__) || defined(__MINGW32__))
 
 #define ALIGN_PACKED
 
