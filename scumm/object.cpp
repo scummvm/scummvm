@@ -250,6 +250,7 @@ int Scumm::getObjActToObjActDist(int a, int b) {
 int Scumm::findObject(int x, int y) {
 	int i, b;
 	byte a;
+	const int mask = (_features & GF_AFTER_V2) ? 0x8 : 0xF;
 
 	for (i = 1; i < _numLocalObjects; i++) {
 		if ((_objs[i].obj_nr < 1) || getClass(_objs[i].obj_nr, 32))
@@ -264,7 +265,7 @@ int Scumm::findObject(int x, int y) {
 					return _objs[i].obj_nr;
 				break;
 			}
-		} while (_objs[b].state == a);
+		} while ((_objs[b].state & mask) == a);
 	}
 	return 0;
 }
@@ -272,6 +273,7 @@ int Scumm::findObject(int x, int y) {
 void Scumm::drawRoomObject(int i, int arg) {
 	ObjectData *od;
 	byte a;
+	const int mask = (_features & GF_AFTER_V2) ? 0x8 : 0xF;
 
 	od = &_objs[i];
 	if ((i < 1) || (od->obj_nr < 1) || !od->state)
@@ -284,11 +286,12 @@ void Scumm::drawRoomObject(int i, int arg) {
 			break;
 		}
 		od = &_objs[od->parent];
-	} while (od->state == a);
+	} while ((od->state & mask) == a);
 }
 
 void Scumm::drawRoomObjects(int arg) {
 	int i;
+	const int mask = (_features & GF_AFTER_V2) ? 0x8 : 0xF;
 
 	if (_features & GF_DRAWOBJ_OTHER_ORDER) {
 		for (i = 1; i < _numLocalObjects; i++)
@@ -296,8 +299,9 @@ void Scumm::drawRoomObjects(int arg) {
 				drawRoomObject(i, arg);
 	} else {
 		for (i = (_numLocalObjects-1); i > 0; i--)
-			if (_objs[i].obj_nr > 0)
+			if (_objs[i].obj_nr > 0 && (_objs[i].state & mask)) {
 				drawRoomObject(i, arg);
+			}
 	}
 }
 
@@ -636,8 +640,8 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room, byte *searchptr) {
 		od->y_pos = ((*(ptr + 10)) & 0x7F) << 3;
 
 		od->parentstate = (*(ptr + 10) & 0x80) ? 1 : 0;
-		if (_features & GF_OLD_BUNDLE)
-			od->parentstate <<= 4;
+		if (_features & GF_AFTER_V2)
+			od->parentstate <<= 3;
 
 		od->width = *(ptr + 11) << 3;
 
