@@ -86,7 +86,6 @@ public:
 		FLAG_LOOP = 1 << 5              // loop the audio
 	};
 	int playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id = -1);
-	int playStream(void *sound, uint32 size, uint rate, byte flags, int32 buffer_size);
 #ifdef USE_MAD
 	int playMP3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags);
 	int playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration);
@@ -110,8 +109,14 @@ public:
 	/** stop playing a specific sound */
 	void stopID(int id);
 
-	/** append to existing sound */
-	int append(int index, void * sound, uint32 size);
+	/** Start a new stream. */
+	int newStream(void *sound, uint32 size, uint rate, byte flags, int32 buffer_size);
+
+	/** Append to an existing stream. */
+	void appendStream(int index, void * sound, uint32 size);
+
+	/** Mark a stream as finished - it will play all its remaining data, then stop. */
+	void endStream(int index);
 
 	/** Check whether any SFX channel is active.*/
 	bool hasActiveSFXChannel();

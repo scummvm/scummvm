@@ -109,6 +109,8 @@ bool SmushMixer::handleFrame() {
 				delete _channels[i].chan;
 				_channels[i].id = -1;
 				_channels[i].chan = NULL;
+				if (_channels[i].mixer_index != -1)
+					_mixer->endStream(_channels[i].mixer_index);
 			} else {
 				int32 rate;
 				bool stereo, is_short;
@@ -135,9 +137,9 @@ bool SmushMixer::handleFrame() {
 
 				if (_silentMixer == false) {
 					if (_channels[i].mixer_index == -1) {
-						_channels[i].mixer_index = _mixer->playStream(data, size, rate, flags, 2000000);
+						_channels[i].mixer_index = _mixer->newStream(data, size, rate, flags, 2000000);
 					} else {
-						_mixer->append(_channels[i].mixer_index, data, size);
+						_mixer->appendStream(_channels[i].mixer_index, data, size);
 					}
 				}
 				free(data);

@@ -73,6 +73,7 @@ class ChannelStream : public Channel {
 	uint32 _bufferSize;
 	uint32 _rate;
 	byte _flags;
+	bool _finished;
 
 public:
 	ChannelStream(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags, int32 buffer_size);
@@ -83,6 +84,7 @@ public:
 	bool isMusicChannel() {
 		return true;
 	}
+	void finish() { _finished = true; }
 };
 
 #ifdef USE_MAD
@@ -170,18 +172,30 @@ SoundMixer::~SoundMixer() {
 	_syst->delete_mutex(_mutex);
 }
 
-int SoundMixer::append(int index, void *sound, uint32 size) {
+void SoundMixer::appendStream(int index, void *sound, uint32 size) {
 	_syst->lock_mutex(_mutex);
 
-	Channel *chan = _channels[index];
+	ChannelStream *chan = dynamic_cast<ChannelStream *>(_channels[index]);
 	if (!chan) {
-		error("Trying to stream to a nonexistant streamer : %d", index);
+		error("Trying to append to a nonexistant stream %d", index);
 	} else {
-		dynamic_cast<ChannelStream *>(chan)->append(sound, size);
+		chan->append(sound, size);
 	}
 
 	_syst->unlock_mutex(_mutex);
-	return 1;
+}
+
+void SoundMixer::endStream(int index) {
+	_syst->lock_mutex(_mutex);
+
+	ChannelStream *chan = dynamic_cast<ChannelStream *>(_channels[index]);
+	if (!chan) {
+		error("Trying to end a nonexistant streamer : %d", index);
+	} else {
+		chan->finish();
+	}
+
+	_syst->unlock_mutex(_mutex);
 }
 
 int SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
@@ -209,7 +223,7 @@ int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, ui
 	return insertChannel(handle, new ChannelRaw(this, sound, size, rate, flags, id));
 }
 
-int SoundMixer::playStream(void *sound, uint32 size, uint rate, byte flags, int32 buffer_size) {
+int SoundMixer::newStream(void *sound, uint32 size, uint rate, byte flags, int32 buffer_size) {
 	return insertChannel(NULL, new ChannelStream(this, sound, size, rate, flags, buffer_size));
 }
 
@@ -717,6 +731,7 @@ ChannelStream::ChannelStream(SoundMixer *mixer, void *sound, uint32 size, uint r
 	_pos = _ptr;
 	_fpPos = 0;
 	_fpSpeed = (1 << 16) * rate / mixer->_outputRate;
+	_finished = false;
 
 	// adjust the magnitude to prevent division error
 	while (size & 0xFFFF0000)
@@ -757,6 +772,13 @@ void ChannelStream::mix(int16 *data, uint len) {
 	const int16 *vol_tab = _mixer->_volumeTable;
 
 	if (_pos == _endOfData) {
+		// Normally, the stream stays around even if all its data is used up.
+		// This is in case more data is streamed into it. To make the stream
+		// go away, one can either stop() it (which takes effect immediately,
+		// ignoring any remaining sound data), or finish() it, which means
+		// it will finish playing before it terminates itself.
+		if (_finished)
+			destroy();
 		return;
 	}
 

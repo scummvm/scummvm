@@ -223,7 +223,7 @@ SmushPlayer::SmushPlayer(Scumm *scumm, int speed, bool subtitles) {
 	_storeFrame = false;
 	_width = 0;
 	_height = 0;
-	_IACTchannel = -1,
+	_IACTchannel = -1;
 	_IACTpos = 0;
 	_soundFrequency = 22050;
 	_speed = speed;
@@ -282,6 +282,11 @@ void SmushPlayer::deinit() {
 	if (_base) {
 		delete _base;
 		_base = NULL;
+	}
+	
+	if (_IACTchannel != -1) {
+		_scumm->_mixer->stop(_IACTchannel);
+		_IACTchannel = -1;
 	}
 
 	_scumm->_insaneState = false;
@@ -451,10 +456,10 @@ void SmushPlayer::handleImuseAction(Chunk &b) {
 					} while (--count);
 
 					if (_IACTchannel == -1) {
-						_IACTchannel = _scumm->_mixer->playStream(output_data, 0x1000, 22050,
+						_IACTchannel = _scumm->_mixer->newStream(output_data, 0x1000, 22050,
 															SoundMixer::FLAG_STEREO | SoundMixer::FLAG_16BITS, 200000);
 					} else {
-						_scumm->_mixer->append(_IACTchannel, output_data, 0x1000);
+						_scumm->_mixer->appendStream(_IACTchannel, output_data, 0x1000);
 					}
 
 					bsize -= len;

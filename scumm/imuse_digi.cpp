@@ -715,7 +715,7 @@ void IMuseDigital::handler() {
 		if (_channel[l]._used) {
 			if (_channel[l]._toBeRemoved == true) {
 				if (_channel[l]._mixerChannel != -1) {
-					_scumm->_mixer->stop(_channel[l]._mixerChannel);
+					_scumm->_mixer->endStream(_channel[l]._mixerChannel);
 					_channel[l]._mixerChannel = -1;
 				}
 				if (_scumm->_mixer->_channels[l] == NULL) {
@@ -824,10 +824,10 @@ void IMuseDigital::handler() {
 
 			if (_scumm->_silentDigitalImuse == false) {
 				if (_channel[l]._mixerChannel == -1) {
-					_channel[l]._mixerChannel = _scumm->_mixer->playStream(buf, mixer_size,
+					_channel[l]._mixerChannel = _scumm->_mixer->newStream(buf, mixer_size,
 					                           _channel[l]._freq, _channel[l]._mixerFlags, 100000);
 				} else {
-					_scumm->_mixer->append(_channel[l]._mixerChannel, buf, mixer_size);
+					_scumm->_mixer->appendStream(_channel[l]._mixerChannel, buf, mixer_size);
 				}
 			}
 			free(buf);
