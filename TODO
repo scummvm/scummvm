@@ -374,6 +374,18 @@ X11 backend
 # Tools
 #######################################################################
 
+General
+=======
+* Keep only tools which are directly useful for our "regular" users in the
+  tools module; all dev-only tools (like convbdf) shall be moved to a new
+  location (either a new CVS module "devtools", or into a subdirectory
+  "tools" of the "scummvm" CVS module).
+* Rename the various compression tools in a consistent fashion (e.g.
+  "compress_FOO"). 
+* Also try to unify the usage of said tools.
+* Add my credits.pl and ./dist-scummvm.sh scripts to the new devtools module/
+  directory.
+
 Descumm
 =======
 * Turn it into a library, to be used by a command line frontend (like now),
