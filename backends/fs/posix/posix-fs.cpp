@@ -45,7 +45,7 @@
  * Implementation of the ScummVM file system API based on POSIX.
  */
 
-class POSIXFilesystemNode : public FilesystemNode {
+class POSIXFilesystemNode : public AbstractFilesystemNode {
 protected:
 	String _displayName;
 	bool _isDirectory;
@@ -62,9 +62,8 @@ public:
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual String path() const { return _path; }
 
-	virtual FSList *listDir(ListMode mode = kListDirectoriesOnly) const;
-	virtual FilesystemNode *parent() const;
-	virtual FilesystemNode *clone() const { return new POSIXFilesystemNode(this); }
+	virtual FSList listDir(ListMode mode = kListDirectoriesOnly) const;
+	virtual AbstractFilesystemNode *parent() const;
 };
 
 
@@ -79,12 +78,12 @@ static const char *lastPathComponent(const Common::String &str) {
 	return cur+1;
 }
 
-FilesystemNode *FilesystemNode::getRoot() {
+AbstractFilesystemNode *FilesystemNode::getRoot() {
 	return new POSIXFilesystemNode();
 }
 
 #ifdef MACOSX
-FilesystemNode *FilesystemNode::getNodeForPath(const String &path) {
+AbstractFilesystemNode *FilesystemNode::getNodeForPath(const String &path) {
 	return new POSIXFilesystemNode(path);
 }
 #endif
@@ -140,15 +139,16 @@ POSIXFilesystemNode::POSIXFilesystemNode(const POSIXFilesystemNode *node) {
 	_path = node->_path;
 }
 
-FSList *POSIXFilesystemNode::listDir(ListMode mode) const {
+FSList POSIXFilesystemNode::listDir(ListMode mode) const {
 	assert(_isDirectory);
 	DIR *dirp = opendir(_path.c_str());
 	struct stat st;
 
 	struct dirent *dp;
-	FSList *myList = new FSList();
+	FSList myList;
 
-	if (dirp == NULL) return myList;
+	if (dirp == NULL)
+		return myList;
 
 	// ... loop over dir entries using readdir
 	while ((dp = readdir(dirp)) != NULL) {
@@ -178,13 +178,13 @@ FSList *POSIXFilesystemNode::listDir(ListMode mode) const {
 
 		if (entry._isDirectory)
 			entry._path += "/";
-		myList->push_back(entry);
+		myList.push_back(wrap(new POSIXFilesystemNode(&entry)));
 	}
 	closedir(dirp);
 	return myList;
 }
 
-FilesystemNode *POSIXFilesystemNode::parent() const {
+AbstractFilesystemNode *POSIXFilesystemNode::parent() const {
 	POSIXFilesystemNode *p = new POSIXFilesystemNode();
 
 	// Root node is its own parent. Still we can't just return this

@@ -31,7 +31,7 @@
  * Implementation of the ScummVM file system API based on Windows API.
  */
 
-class WindowsFilesystemNode : public FilesystemNode {
+class WindowsFilesystemNode : public AbstractFilesystemNode {
 protected:
 	String _displayName;
 	bool _isDirectory;
@@ -49,14 +49,13 @@ public:
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual String path() const { return _path; }
 
-	virtual FSList *listDir(ListMode) const;
-	virtual FilesystemNode *parent() const;
-	virtual FilesystemNode *clone() const { return new WindowsFilesystemNode(this); }
+	virtual FSList listDir(ListMode) const;
+	virtual AbstractFilesystemNode *parent() const;
 
 private:
 	static char *toAscii(TCHAR *x);
 	static TCHAR* toUnicode(char *x);
-	static void addFile (FSList* list, ListMode mode, const char *base, WIN32_FIND_DATA* find_data);
+	static void addFile (FSList &list, ListMode mode, const char *base, WIN32_FIND_DATA* find_data);
 };
 
 
@@ -82,7 +81,7 @@ TCHAR* WindowsFilesystemNode::toUnicode(char *x) {
 #endif
 }
 
-void WindowsFilesystemNode::addFile(FSList* list, ListMode mode, const char *base, WIN32_FIND_DATA* find_data) {
+void WindowsFilesystemNode::addFile(FSList &list, ListMode mode, const char *base, WIN32_FIND_DATA* find_data) {
 	WindowsFilesystemNode entry;
 	char *asciiName = toAscii(find_data->cFileName);
 	bool isDirectory;
@@ -106,10 +105,10 @@ void WindowsFilesystemNode::addFile(FSList* list, ListMode mode, const char *bas
 	entry._isValid = true;	
 	entry._isPseudoRoot = false;
 
-	list->push_back(entry);
+	list.push_back(wrap(new WindowsFilesystemNode(&entry)));
 }
 
-FilesystemNode *FilesystemNode::getRoot() {
+AbstractFilesystemNode *FilesystemNode::getRoot() {
 	return new WindowsFilesystemNode();
 }
 
@@ -137,10 +136,10 @@ WindowsFilesystemNode::WindowsFilesystemNode(const WindowsFilesystemNode *node) 
 	_path = node->_path;
 }
 
-FSList *WindowsFilesystemNode::listDir(ListMode mode) const {
+FSList WindowsFilesystemNode::listDir(ListMode mode) const {
 	assert(_isDirectory);
 
-	FSList *myList = new FSList();
+	FSList myList;
 
 	if (_isPseudoRoot) {
 #ifndef _WIN32_WCE
@@ -160,7 +159,7 @@ FSList *WindowsFilesystemNode::listDir(ListMode mode) const {
 				entry._isValid = true;
 				entry._isPseudoRoot = false;
 				entry._path = toAscii(current_drive);
-				myList->push_back(entry);
+				myList.push_back(wrap(new WindowsFilesystemNode(&entry)));
 		}
 #endif
 	}
@@ -196,7 +195,7 @@ const char *lastPathComponent(const Common::String &str) {
 	return cur + 1;
 }
 
-FilesystemNode *WindowsFilesystemNode::parent() const {
+AbstractFilesystemNode *WindowsFilesystemNode::parent() const {
 	assert(_isValid || _isPseudoRoot);
 	WindowsFilesystemNode *p = new WindowsFilesystemNode();
 	if (!_isPseudoRoot && _path.size() > 3) {

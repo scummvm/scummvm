@@ -23,13 +23,11 @@
 
 #include "gui/dialog.h"
 #include "common/str.h"
+#include "backends/fs/fs.h"
 
 #ifdef MACOSX
 #include <Carbon/Carbon.h>
 #endif
-
-class FilesystemNode;
-class FSList;
 
 namespace GUI {
 
@@ -41,17 +39,16 @@ class BrowserDialog : public Dialog {
 	typedef Common::StringList StringList;
 public:
 	BrowserDialog(const char *title);
-	virtual ~BrowserDialog();
 
 #ifdef MACOSX
+	~BrowserDialog();
 	virtual int runModal();
 #else
 	virtual void open();
-	virtual void close();
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 #endif
 
-	FilesystemNode	*getResult() { return _choice; };
+	const FilesystemNode	&getResult() { return _choice; };
 
 
 protected:
@@ -60,10 +57,10 @@ protected:
 #else
 	ListWidget		*_fileList;
 	StaticTextWidget*_currentPath;
-	FilesystemNode	*_node;
-	FSList			*_nodeContent;
+	FilesystemNode	_node;
+	FSList			_nodeContent;
 #endif
-	FilesystemNode	*_choice;
+	FilesystemNode	_choice;
 
 #ifndef MACOSX
 	void updateListing();

@@ -34,12 +34,10 @@ namespace GUI {
 
 BrowserDialog::BrowserDialog(const char *title)
 	: Dialog(20, 10, 320 -2 * 20, 200 - 2 * 10) {
-	_choice = NULL;
 	_titleRef = CFStringCreateWithCString(0, title, CFStringGetSystemEncoding());
 }
 
 BrowserDialog::~BrowserDialog() {
-	delete _choice;
 	CFRelease(_titleRef);
 }
 
@@ -50,9 +48,7 @@ int BrowserDialog::runModal() {
 	NavUserAction result;
 	NavReplyRecord reply;
 	OSStatus err;
-	
-	delete _choice;
-	_choice = 0;
+	bool choiceMade = false;
 	
 	// If in fullscreen mode, switch to windowed mode
 	bool wasFullscreen = g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
@@ -97,7 +93,8 @@ int BrowserDialog::runModal() {
 			err = FSRefMakePath(&ref, (UInt8*)buf, sizeof(buf)-1);
 			assert(err == noErr);
 			
-			_choice = FilesystemNode::getNodeForPath(buf);
+			_choice = FilesystemNode(buf);
+			choiceMade = true;
 		}
  
 		err = NavDisposeReply(&reply);
@@ -110,7 +107,7 @@ int BrowserDialog::runModal() {
 	if (wasFullscreen)
 		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, true);
 
-	return (_choice != 0);
+	return choiceMade;
 }
 
 #else
@@ -127,14 +124,11 @@ enum {
 };
 
 BrowserDialog::BrowserDialog(const char *title)
-	: Dialog(20, 10, 320 -2 * 20, 200 - 2 * 10),
-	  _node(0), _nodeContent(0) {
+	: Dialog(20, 10, 320 -2 * 20, 200 - 2 * 10)
+	{
 
 	_fileList = NULL;
 	_currentPath = NULL;
-	_node = NULL;
-	_nodeContent = NULL;
-	_choice = NULL;
 
 	// Headline - TODO: should be customizable during creation time
 	new StaticTextWidget(this, 10, 8, _w - 2 * 10, kLineHeight, title, kTextAlignCenter);
@@ -153,67 +147,41 @@ BrowserDialog::BrowserDialog(const char *title)
 	addButton(_w - (kButtonWidth+10), _h - 24, "Choose", kChooseCmd, 0);
 }
 
-BrowserDialog::~BrowserDialog() {
-	delete _node;
-	delete _nodeContent;
-	delete _choice;
-}
-
 void BrowserDialog::open() {
 	// If no node has been set, or the last used one is now invalid,
 	// go back to the root/default dir.
-	if (_node == NULL || !_node->isValid()) {
-		delete _node;
-		_node = FilesystemNode::getRoot();
-		assert(_node != NULL);
+	if (!_node.isValid()) {
+		_node = FilesystemNode();
 	}
 
 	// Alway refresh file list
 	updateListing();
-
-	// Nothing chosen by default
-	delete _choice;
-	_choice = 0;
 	
 	// Call super implementation
 	Dialog::open();
 }
 
-void BrowserDialog::close() {
-	delete _nodeContent;
-	_nodeContent = 0;
-
-	// Call super implementation
-	Dialog::close();
-}
-
 void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	FilesystemNode *tmp;
-
 	switch (cmd) {
 	case kChooseCmd: {
 			// If nothing is selected in the list widget, choose the current dir.
 			// Else, choose the dir that is selected.
 			int selection = _fileList->getSelected();
 			if (selection >= 0) {
-				_choice = (*_nodeContent)[selection].clone();
+				_choice = _nodeContent[selection];
 			} else {
-				_choice = _node->clone();
+				_choice = _node;
 			}
 			setResult(1);
 			close();
 		}
 		break;
 	case kGoUpCmd:
-		tmp = _node->parent();
-		delete _node;
-		_node = tmp;
+		_node = _node.getParent();
 		updateListing();
 		break;
 	case kListItemDoubleClickedCmd:
-		tmp = (*_nodeContent)[data].clone();
-		delete _node;
-		_node = tmp;
+		_node = _nodeContent[data];
 		updateListing();
 		break;
 	default:
@@ -222,21 +190,17 @@ void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 }
 
 void BrowserDialog::updateListing() {
-	assert(_node != NULL);
-
 	// Update the path display
-	_currentPath->setLabel(_node->path());
+	_currentPath->setLabel(_node.path());
 
 	// Read in the data from the file system
-	delete _nodeContent;
-	_nodeContent = _node->listDir();
-	assert(_nodeContent != NULL);
+	_nodeContent = _node.listDir();
 
 	// Populate the ListWidget
 	Common::StringList list;
-	int size = _nodeContent->size();
+	int size = _nodeContent.size();
 	for (int i = 0; i < size; i++) {
-		list.push_back((*_nodeContent)[i].displayName());
+		list.push_back(_nodeContent[i].displayName());
 	}
 	_fileList->setList(list);
 	_fileList->scrollTo(0);

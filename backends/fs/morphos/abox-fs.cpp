@@ -31,7 +31,7 @@
  * Implementation of the ScummVM file system API based on the MorphOS A-Box API.
  */
 
-class ABoxFilesystemNode : public FilesystemNode {
+class ABoxFilesystemNode : public AbstractFilesystemNode {
 	protected:
 		BPTR _lock;
 		String _displayName;
@@ -50,14 +50,14 @@ class ABoxFilesystemNode : public FilesystemNode {
 		virtual bool isDirectory() const { return _isDirectory; }
 		virtual String path() const { return _path; }
 
-		virtual FSList *listDir(ListMode mode = kListDirectoriesOnly) const;
-		static  FSList *listRoot();
-		virtual FilesystemNode *parent() const;
-		virtual FilesystemNode *clone() const { return new ABoxFilesystemNode(this); }
+		virtual FSList listDir(ListMode mode = kListDirectoriesOnly) const;
+		static  FSList listRoot();
+		virtual AbstractFilesystemNode *parent() const;
+		virtual AbstractFilesystemNode *clone() const { return new ABoxFilesystemNode(this); }
 };
 
 
-FilesystemNode *FilesystemNode::getRoot()
+AbstractFilesystemNode *FilesystemNode::getRoot()
 {
 	return new ABoxFilesystemNode();
 }
@@ -137,9 +137,9 @@ ABoxFilesystemNode::~ABoxFilesystemNode()
 	}
 }
 
-FSList *ABoxFilesystemNode::listDir(ListMode mode) const
+FSList ABoxFilesystemNode::listDir(ListMode mode) const
 {
-	FSList *myList = new FSList();
+	FSList myList;
         
 	if (!_isValid)
 		error("listDir() called on invalid node");
@@ -182,8 +182,9 @@ FSList *ABoxFilesystemNode::listDir(ListMode mode) const
 					if (entry)
 					{
 						if (entry->isValid())
-							myList->push_back(*entry);
-						delete entry;
+							myList.push_back(wrap(entry));
+						else
+							delete entry;
 					}
 					UnLock(lock);
 				}
@@ -199,9 +200,9 @@ FSList *ABoxFilesystemNode::listDir(ListMode mode) const
 	return myList;
 }
 
-FilesystemNode *ABoxFilesystemNode::parent() const
+AbstractFilesystemNode *ABoxFilesystemNode::parent() const
 {
-	FilesystemNode *node = NULL;
+	AbstractFilesystemNode *node = NULL;
 
 	if (!_isDirectory)
 		error("parent() called on file node");
@@ -224,9 +225,9 @@ FilesystemNode *ABoxFilesystemNode::parent() const
 	return node;
 }
 
-FSList *ABoxFilesystemNode::listRoot()
+FSList ABoxFilesystemNode::listRoot()
 {
-	FSList *myList = new FSList();
+	FSList myList;
 	DosList *dosList;
 	CONST ULONG lockDosListFlags = LDF_READ | LDF_VOLUMES;
 	char name[256];
@@ -261,8 +262,9 @@ FSList *ABoxFilesystemNode::listRoot()
 				if (entry)
 				{
 					if (entry->isValid())
-						myList->push_back(*entry);
-					delete entry;
+						myList.push_back(wrap(entry));
+					else
+						delete entry;
 				}
 				UnLock(volume_lock);
 			}

@@ -58,14 +58,39 @@
 #include "common/array.h"
 #include "common/str.h"
 
-class FSList;
+class FilesystemNode;
+
+
+/**
+ * List of multiple file system nodes. E.g. the contents of a given directory.
+ */
+class FSList : public Common::Array<FilesystemNode> {
+};
+
 
 /**
  * File system node.
  */
-class FilesystemNode {
+class AbstractFilesystemNode {
 protected:
+	friend class FilesystemNode;
 	typedef Common::String String;
+
+	/**
+	 * The parent node of this directory.
+	 * The parent of the root is the root itself.
+	 */
+	virtual AbstractFilesystemNode *parent() const = 0;
+
+	/**
+	 * This method is a rather ugly hack which is used internally by the 
+	 * actual node implementions to wrap up raw nodes inside FilesystemNode
+	 * objects. We probably want to get rid of this eventually and replace it
+	 * with a cleaner / more elegant solution, but for now it works.
+	 * @note This takes over ownership of node. Do not delete it yourself,
+	 *       else you'll get ugly crashes. You've been warned!
+	 */
+	static FilesystemNode wrap(AbstractFilesystemNode *node);
 
 public:
 
@@ -78,25 +103,7 @@ public:
 		kListAll = 3
 	} ListMode;
 
-	/**
-	 * Returns a special node representing the FS root. The starting point for
-	 * any file system browsing.
-	 * On Unix, this will be simply the node for / (the root directory).
-	 * On Windows, it will be a special node which "contains" all drives (C:, D:, E:).
-	 */
-	static FilesystemNode *getRoot();
-
-#ifdef MACOSX
-	/*
-	 * Construct a node based on a path; the path is in the same format as it
-	 * would be for calls to fopen().
-	 *
-	 * I.e. getNodeForPath(oldNode.path()) should create a new node identical to oldNode.
-	 */
-	static FilesystemNode *getNodeForPath(const String &path);
-#endif
-
-	virtual ~FilesystemNode() {}
+	virtual ~AbstractFilesystemNode() {}
 
 	/**
 	 * Return display name, used by e.g. the GUI to present the file in the file browser.
@@ -123,78 +130,69 @@ public:
 	 * List the content of this directory node.
 	 * If this node is not a directory, throw an exception or call error().
 	 */
-	virtual FSList *listDir(ListMode mode = kListDirectoriesOnly) const = 0;
+	virtual FSList listDir(ListMode mode = kListDirectoriesOnly) const = 0;
 
-	/**
-	 * The parent node of this directory.
-	 * The parent of the root is the root itself
-	 */
-	virtual FilesystemNode *parent() const = 0;
-
-	/**
-	 * Return a clone of this node allocated with new().
-	 */
-	virtual FilesystemNode *clone() const = 0;
-	
 	/**
 	 * Compare the name of this node to the name of another.
 	 */
-	virtual bool operator< (const FilesystemNode& node) const
+	virtual bool operator< (const AbstractFilesystemNode& node) const
 	{
 		return scumm_stricmp(displayName().c_str(), node.displayName().c_str()) < 0;
 	}
 };
 
+class FilesystemNode : public AbstractFilesystemNode {
+	friend class AbstractFilesystemNode;
 
-/**
- * Sorted list of multiple file system nodes. E.g. the contents of a given directory.
- */
-class FSList : private Common::Array<FilesystemNode *> {
+	typedef Common::String String;
+private:
+	AbstractFilesystemNode *_realNode;
+	int *_refCount;
+
+	/**
+	 * Returns a special node representing the FS root. The starting point for
+	 * any file system browsing.
+	 * On Unix, this will be simply the node for / (the root directory).
+	 * On Windows, it will be a special node which "contains" all drives (C:, D:, E:).
+	 */
+	static AbstractFilesystemNode *getRoot();
+
+#ifdef MACOSX
+	/*
+	 * Construct a node based on a path; the path is in the same format as it
+	 * would be for calls to fopen().
+	 *
+	 * I.e. getNodeForPath(oldNode.path()) should create a new node identical to oldNode.
+	 */
+	static AbstractFilesystemNode *getNodeForPath(const String &path);
+#endif
+
+
 public:
-	class const_iterator {
-		friend class FSList;
-		FilesystemNode **_data;
-		const_iterator(FilesystemNode **data) : _data(data) { }
-	public:
-		const FilesystemNode &operator *() const { return **_data; }
-		const FilesystemNode *operator->() const { return *_data; }
-		bool operator !=(const const_iterator &iter) const { return _data != iter._data; }
-		void operator ++() { ++_data; }
-	};
+	FilesystemNode();
+	FilesystemNode(const FilesystemNode &node);
+#ifdef MACOSX
+	FilesystemNode(const String &path);
+#endif
+	~FilesystemNode();
 
-	~FSList() {
-		for (int i = 0; i < _size; i++)
-			delete _data[i];
-	}
+	FilesystemNode &operator  =(const FilesystemNode &node);
 
-	void push_back(const FilesystemNode &element) {
-		ensureCapacity(_size + 1);
-		// Determine where to insert the item.
-		// TODO this is inefficient, should use binary search instead
-		int i = 0;
-		while (i < _size && *_data[i] < element)
-			i++;
-		if (i < _size)
-			memmove(&_data[i + 1], &_data[i], (_size - i) * sizeof(FilesystemNode *));
-		_data[i] = element.clone();
-		_size++;
-	}
+	FilesystemNode getParent() const;
 
-	const FilesystemNode& operator [](int idx) const {
-		assert(idx >= 0 && idx < _size);
-		return *_data[idx];
-	}
 
-	int size() const	{ return _size; }
+	virtual String displayName() const { return _realNode->displayName(); }
+	virtual bool isValid() const { return _realNode->isValid(); }
+	virtual bool isDirectory() const { return _realNode->isDirectory(); }
+	virtual String path() const { return _realNode->path(); }
 
-	const_iterator	begin() const {
-		return const_iterator(_data);
-	}
+	virtual FSList listDir(ListMode mode = kListDirectoriesOnly) const { return _realNode->listDir(mode); }
 
-	const_iterator	end() const {
-		return const_iterator(_data + _size);
-	}
+protected:
+	void decRefCount();
 
+	virtual AbstractFilesystemNode *parent() const { return 0; }
 };
+
 
 #endif

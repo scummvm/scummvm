@@ -330,15 +330,15 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	// Change path for the game
 	case kCmdGameBrowser: {
 		BrowserDialog *_browser = new BrowserDialog("Select additional game directory");
-	        if (_browser->runModal() > 0) {
-        	        // User made his choice...
-                	FilesystemNode *dir = _browser->getResult();
+		if (_browser->runModal() > 0) {
+			// User made his choice...
+			FilesystemNode dir(_browser->getResult());
 
 			// TODO: Verify the game can be found in the new directory... Best
 			// done with optional specific gameid to pluginmgr detectgames?
-			// FSList *files = dir->listDir(FilesystemNode::kListFilesOnly);
+			// FSList files = dir.listDir(FilesystemNode::kListFilesOnly);
 
-			_gamePathWidget->setLabel(dir->path());
+			_gamePathWidget->setLabel(dir.path());
 		}
 		draw();
 		break;
@@ -347,10 +347,10 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	// Change path for extra game data (eg, using sword cutscenes when playing via CD)
 	case kCmdExtraBrowser: { 
 		BrowserDialog *_browser = new BrowserDialog("Select additional game directory");
-	        if (_browser->runModal() > 0) {
-        	        // User made his choice...
-                	FilesystemNode *dir = _browser->getResult();
-			_extraPathWidget->setLabel(dir->path());
+		if (_browser->runModal() > 0) {
+			// User made his choice...
+			FilesystemNode dir(_browser->getResult());
+			_extraPathWidget->setLabel(dir.path());
 		}
 		draw();
 		break;
@@ -358,10 +358,10 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	// Change path for stored save game (perm and temp) data
 	case kCmdSaveBrowser: {
 		BrowserDialog *_browser = new BrowserDialog("Select directory for saved games");
-	        if (_browser->runModal() > 0) {
-        	        // User made his choice...
-                	FilesystemNode *dir = _browser->getResult();
-			_savePathWidget->setLabel(dir->path());
+		if (_browser->runModal() > 0) {
+			// User made his choice...
+			FilesystemNode dir(_browser->getResult());
+			_savePathWidget->setLabel(dir.path());
 		}
 		draw();
 		break;
@@ -505,16 +505,13 @@ void LauncherDialog::addGame() {
 
 	if (_browser->runModal() > 0) {
 		// User made his choice...
-		FilesystemNode *dir = _browser->getResult();
-		FSList *files = dir->listDir(FilesystemNode::kListFilesOnly);
+		FilesystemNode dir(_browser->getResult());
+		FSList files = dir.listDir(FilesystemNode::kListFilesOnly);
 
 		// ...so let's determine a list of candidates, games that
 		// could be contained in the specified directory.
-		DetectedGameList candidates(PluginManager::instance().detectGames(*files));
+		DetectedGameList candidates(PluginManager::instance().detectGames(files));
 		
-		delete files;
-		files = 0;
-
 		int idx;
 		if (candidates.isEmpty()) {
 			// No game was found in the specified directory
@@ -553,7 +550,7 @@ void LauncherDialog::addGame() {
 				ConfMan.set("gameid", result.name, domain);
 				ConfMan.set("description", result.description, domain);
 			}
-			ConfMan.set("path", dir->path(), domain);
+			ConfMan.set("path", dir.path(), domain);
 			
 			const bool customLanguage = (result.language != Common::UNK_LANG);
 			const bool customPlatform = (result.platform != Common::kPlatformUnknown);

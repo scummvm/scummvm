@@ -29,7 +29,7 @@
  * Implementation of the ScummVM file system API based on PalmOS VFS API.
  */
 
-class PalmOSFilesystemNode : public FilesystemNode {
+class PalmOSFilesystemNode : public AbstractFilesystemNode {
 protected:
 	String _displayName;
 	bool _isDirectory;
@@ -47,15 +47,14 @@ public:
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual String path() const { return _path; }
 
-	virtual FSList *listDir(ListMode) const;
-	virtual FilesystemNode *parent() const;
-	virtual FilesystemNode *clone() const { return new PalmOSFilesystemNode(this); }
+	virtual FSList listDir(ListMode) const;
+	virtual AbstractFilesystemNode *parent() const;
 
 private:
-	static void addFile (FSList* list, ListMode mode, const Char *base, FileInfoType* find_data);
+	static void addFile (FSList &list, ListMode mode, const Char *base, FileInfoType* find_data);
 };
 
-void PalmOSFilesystemNode::addFile(FSList* list, ListMode mode, const char *base, FileInfoType* find_data) {
+void PalmOSFilesystemNode::addFile(FSList &list, ListMode mode, const char *base, FileInfoType* find_data) {
 	PalmOSFilesystemNode entry;
 	bool isDirectory;
 
@@ -74,10 +73,10 @@ void PalmOSFilesystemNode::addFile(FSList* list, ListMode mode, const char *base
 
 	entry._isValid = true;	
 	entry._isPseudoRoot = false;
-	list->push_back(entry);
+	list.push_back(wrap(new PalmOSFilesystemNode(&entry)));
 }
 
-FilesystemNode *FilesystemNode::getRoot() {
+AbstractFilesystemNode *FilesystemNode::getRoot() {
 	return new PalmOSFilesystemNode();
 }
 
@@ -97,9 +96,9 @@ PalmOSFilesystemNode::PalmOSFilesystemNode(const PalmOSFilesystemNode *node) {
 	_path = node->_path;
 }
 
-FSList *PalmOSFilesystemNode::listDir(ListMode mode) const {
+FSList PalmOSFilesystemNode::listDir(ListMode mode) const {
 
-	FSList *myList = new FSList();
+	FSList myList;
 	Err e;
 	Char nameP[256];
 	FileInfoType desc;
@@ -136,7 +135,7 @@ const char *lastPathComponent(const Common::String &str) {
 	return cur+1;
 }
 
-FilesystemNode *PalmOSFilesystemNode::parent() const {
+AbstractFilesystemNode *PalmOSFilesystemNode::parent() const {
 
 	PalmOSFilesystemNode *p = new PalmOSFilesystemNode();
 

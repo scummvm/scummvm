@@ -476,16 +476,16 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	case kChooseSaveDirCmd:
 		if (_browser->runModal() > 0) {
 			// User made his choice...
-			FilesystemNode *dir = _browser->getResult();
-			_savePath->setLabel(dir->path());
+			FilesystemNode dir(_browser->getResult());
+			_savePath->setLabel(dir.path());
 			// TODO - we should check if the directory is writeable before accepting it
 		}
 		break;
 	case kChooseExtraDirCmd:
 		if (_browser->runModal() > 0) {
 			// User made his choice...
-			FilesystemNode *dir = _browser->getResult();
-			_extraPath->setLabel(dir->path());
+			FilesystemNode dir(_browser->getResult());
+			_extraPath->setLabel(dir.path());
 		}
 		break;
 	default:
