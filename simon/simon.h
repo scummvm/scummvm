@@ -174,7 +174,6 @@ protected:
 	byte _video_var_8;
 	bool _use_palette_delay;
 	bool _sync_flag_2;
-	bool _hitarea_unk_6;
 	bool _in_callback;
 	bool _cepe_flag;
 	byte _copy_partial_mode;

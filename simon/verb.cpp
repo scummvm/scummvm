@@ -26,7 +26,92 @@
 
 namespace Simon {
 
-static const char *const verb_names[] = {
+static const char *const hebrew_verb_names[] = {
+	"LJ @L",
+	"DQZKL RL",
+	"TZG",
+	"DFF",
+
+	"@KEL",
+	"DXM",
+	"QBEX",
+	"DYZNY",
+
+	"CAX @L",
+	"DQX",
+	"LAY",
+	"ZO"
+};
+
+static const char *const spanish_verb_names[] = {
+	"Caminar",
+	"Mirar",
+	"Abrir",
+	"Mover",
+
+	"Consumir",
+	"Coger",
+	"Cerrar",
+	"Usar",
+
+	"Hablar",
+	"Quitar",
+	"Llevar",
+	"Dar"
+};
+
+static const char *const italian_verb_names[] = {
+	"Vai verso",
+	"Osserva",
+	"Apri",
+	"Sposta",
+
+	"Mangia",
+	"Raccogli",
+	"Chiudi",
+	"Usa",
+
+	"Parla a",
+	"Togli",
+	"Indossa",
+	"Dai"
+};
+
+static const char *const french_verb_names[] = {
+	"Aller vers",
+	"Regarder",
+	"Ouvrir",
+	"D/placer",
+
+	"Consommer",
+	"Prendre",
+	"Fermer",
+	"Utiliser",
+
+	"Parler ;",
+	"Enlever",
+	"Mettre",
+	"Donner"
+};
+
+static const char *const german_verb_names[] = {
+	"Gehe zu",
+	"Schau an",
+	";ffne",
+	"Bewege",
+
+	"Verzehre",
+	"Nimm",
+	"Schlie+e",
+	"Benutze",
+
+	"Rede mit",
+	"Entferne",
+	"Trage",
+	"Gib"
+};
+
+static const char *const english_verb_names[] = {
 	"Walk to",
 	"Look at",
 	"Open",
@@ -99,14 +184,14 @@ void SimonEngine::defocusHitarea() {
 	hitareaChangedHelper();
 	_hitarea_ptr_7 = last;
 
-	if (last != NULL && _hitarea_unk_6 &&
-			(ha = findHitAreaByID(200)) && (ha->flags & 0x40) && !(last->flags & 0x40))
+	if (last != NULL && (ha = findHitAreaByID(200)) && (ha->flags & 0x40) && !(last->flags & 0x40))
 		focusVerb(last->id);
 }
 
 void SimonEngine::focusVerb(uint hitarea_id) {
 	uint x;
 	const char *txt;
+	const char * const *verb_names;
 	const char * const *verb_prep_names;
 
 	hitarea_id -= 101;
@@ -123,7 +208,15 @@ void SimonEngine::focusVerb(uint hitarea_id) {
 		CHECK_BOUNDS(hitarea_id, english_verb_prep_names);
 		txt = verb_prep_names[hitarea_id];
 	} else {
-		CHECK_BOUNDS(hitarea_id, verb_names);
+		switch (_language) {
+		case 20: verb_names = hebrew_verb_names; break;
+		case  5: verb_names = spanish_verb_names; break;
+		case  3: verb_names = italian_verb_names; break;
+		case  2: verb_names = french_verb_names; break;
+		case  1: verb_names = german_verb_names; break;
+		default: verb_names = english_verb_names; break;
+		}
+		CHECK_BOUNDS(hitarea_id, english_verb_names);
 		txt = verb_names[hitarea_id];
 	}
 	x = (53 - strlen(txt)) * 3;

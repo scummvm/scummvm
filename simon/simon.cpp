@@ -284,7 +284,6 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_video_var_8 = 0;
 	_use_palette_delay = 0;
 	_sync_flag_2 = 0;
-	_hitarea_unk_6 = 0;
 	_in_callback = 0;
 	_cepe_flag = 0;
 	_copy_partial_mode = 0;
@@ -1379,7 +1378,6 @@ void SimonEngine::setup_cond_c_helper() {
 
 	_last_hitarea = 0;
 	_hitarea_object_item = NULL;
-	_hitarea_unk_6 = true;
 
 	last = _last_hitarea_2_ptr;
 	defocusHitarea();
@@ -1415,7 +1413,6 @@ out_of_here:
 	_last_hitarea_3 = 0;
 	_last_hitarea = 0;
 	_last_hitarea_2_ptr = NULL;
-	_hitarea_unk_6 = false;
 }
 
 void SimonEngine::startSubroutine170() {
