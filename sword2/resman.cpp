@@ -758,6 +758,12 @@ void ResourceManager::remove(int res) {
  */
 
 void ResourceManager::removeAll(void) {
+	// We need to clear the FX queue, because otherwise the sound system
+	// will still believe that the sound resources are in memory, and that
+	// it's ok to close them.
+
+	_vm->clearFxQueue();
+
 	for (uint i = 0; i < _totalResFiles; i++)
 		remove(i);
 }
