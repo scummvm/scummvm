@@ -539,7 +539,7 @@ static int16 *mix_unsigned_stereo_8(int16 *data, uint *len_ptr, byte **s_ptr, ui
 
 	do {
 		do {
-			if (reverse_stereo == false) {
+			if (!reverse_stereo) {
 				*data = clamped_add_16(*data, left.interpolate(fp_pos));
 				data++;
 				*data = clamped_add_16(*data, right.interpolate(fp_pos));
@@ -577,11 +577,11 @@ static int16 *mix_unsigned_stereo_8(int16 *data, uint *len_ptr, byte **s_ptr, ui
 static int16 *mix_signed_mono_16(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
 										 int fp_speed, const int16 *vol_tab, byte *s_end, bool reverse_stereo) {
 	uint32 fp_pos = *fp_pos_ptr;
-	unsigned char volume = ((int)vol_tab[1]) / 8;
+	unsigned char volume = ((int)vol_tab[1]);
 	byte *s = *s_ptr;
 	uint len = *len_ptr;
 	do {
-		int16 sample = (((int16)(*s << 8) | *(s + 1)) * volume) / 32;
+		int16 sample = ((int16)READ_BE_UINT16(s) * volume) / 256;
 		fp_pos += fp_speed;
 
 		*data = clamped_add_16(*data, sample);
@@ -608,21 +608,24 @@ static int16 *mix_unsigned_mono_16(int16 *data, uint *len_ptr, byte **s_ptr, uin
 static int16 *mix_signed_stereo_16(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
 										 int fp_speed, const int16 *vol_tab, byte *s_end, bool reverse_stereo) {
 	uint32 fp_pos = *fp_pos_ptr;
-	unsigned char volume = ((int)vol_tab[1]) / 8;
+	unsigned char volume = (int)vol_tab[1];
 	byte *s = *s_ptr;
 	uint len = *len_ptr;
+
 	do {
+		int16 leftS = ((int16)READ_BE_UINT16(s) * volume) / 256;
+		int16 rightS = ((int16)READ_BE_UINT16(s+2) * volume) / 256;
 		fp_pos += fp_speed;
 
-		if (reverse_stereo == false) {
-			*data = clamped_add_16(*data, (((int16)(*(s) << 8) | *(s + 1)) * volume) / 32);
+		if (!reverse_stereo) {
+			*data = clamped_add_16(*data, leftS);
 			data++;
-			*data = clamped_add_16(*data, (((int16)(*(s + 2) << 8) | *(s + 3)) * volume) / 32);
+			*data = clamped_add_16(*data, rightS);
 			data++;
 		} else {
-			*data = clamped_add_16(*data, (((int16)(*(s + 2) << 8) | *(s + 3)) * volume) / 32);
+			*data = clamped_add_16(*data, rightS);
 			data++;
-			*data = clamped_add_16(*data, (((int16)(*(s) << 8) | *(s + 1)) * volume) / 32);
+			*data = clamped_add_16(*data, leftS);
 			data++;
 		}
 		s += (fp_pos >> 16) << 2;
