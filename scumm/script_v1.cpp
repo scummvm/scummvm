@@ -1887,7 +1887,7 @@ void Scumm::o5_setObjectName()
 		i = size - 1;
 	}
 
-	strcpy((char *)name, (char *)work);
+	memcpy(name, work, i+1);
 	runHook(0);
 }
 
