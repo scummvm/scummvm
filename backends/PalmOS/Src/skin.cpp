@@ -94,7 +94,7 @@ static void SknCopyBits(DmOpenRef skinDBP, DmResID bitmapID, const RectangleType
 				}
 
 				if (ch) {
-					Coord picth = gVars->screenFullWidth;
+					Coord picth = gVars->screenPitch;
 					dst = (UInt8 *)BmpGetBits(WinGetBitmap(WinGetDisplayWindow()));
 				
 					dst+= destX + destY * picth;
@@ -120,8 +120,10 @@ void SknApplySkin() {
 	RectangleType r;
 	FormPtr frmP = FrmGetActiveForm();
 
-	WinScreenLock(winLockErase);
+	WinScreenLock(winLockDontCare);
 	//SknSetPalette();
+	RctSetRectangle(&r,0,0,160,160);
+	WinEraseRectangle(&r,0);
 	FrmDrawForm(frmP);
 
 	if (gPrefs->card.volRefNum != sysInvalidRefNum)
