@@ -189,11 +189,11 @@ EVENT *Scene::ITEQueueCredits(SCENE_INFO *scene_info, int delta_time, int durati
 	// The assumption here is that all WyrmKeep versions have the same
 	// credits, regardless of which operating system they're for.
 
-	if (_vm->_features & GF_WYRMKEEP) {
+	if (_vm->getFeatures() & GF_WYRMKEEP) {
 		game = kITEWyrmKeep;
-	} else if (_vm->_features & GF_MAC_RESOURCES) {
+	} else if (_vm->getFeatures() & GF_MAC_RESOURCES) {
 		game = kITEMac;
-	} else if (_vm->_gameId == GID_ITE_CD_G) {
+	} else if (_vm->getGameId() == GID_ITE_CD_G) {
 		game = kITEPCCD;
 	} else {
 		game = kITEPC;
@@ -324,14 +324,14 @@ int Scene::ITEIntroAnimProc(int param, SCENE_INFO *scene_info) {
 		// playback
 		int lastAnim;
 
-		if (_vm->_features & GF_WYRMKEEP) {
-			if (_vm->_features & GF_MAC_RESOURCES) {
+		if (_vm->getFeatures() & GF_WYRMKEEP) {
+			if (_vm->getFeatures() & GF_MAC_RESOURCES) {
 				lastAnim = 3;
 			} else {
 				lastAnim = 2;
 			}
 		} else {
-			if (_vm->_features & GF_MAC_RESOURCES) {
+			if (_vm->getFeatures() & GF_MAC_RESOURCES) {
 				lastAnim = 4;
 			} else {
 				lastAnim = 5;

@@ -166,7 +166,7 @@ int Sound::playSoundBuffer(PlayingSoundHandle *handle, SOUNDBUFFER *buf, int vol
 
 	if (buf->s_samplebits == 16) {
 		flags |= SoundMixer::FLAG_16BITS;
-		if (!(_vm->_features & GF_BIG_ENDIAN_DATA))
+		if (!(_vm->getFeatures() & GF_BIG_ENDIAN_DATA))
 			flags |= SoundMixer::FLAG_LITTLE_ENDIAN;
 	}
 	if (buf->s_stereo)

@@ -94,7 +94,7 @@ int Anim::load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_i
 	new_anim->maxframe = ah.maxframe;
 	new_anim->loopframe = ah.loopframe;
 
-	if (_vm->_gameType == GType_ITE) {
+	if (_vm->getGameType() == GType_ITE) {
 		// Cache frame offsets
 		new_anim->frame_offsets = (size_t *)malloc((new_anim->maxframe + 1) * sizeof(*new_anim->frame_offsets));
 		if (new_anim->frame_offsets == NULL) {
@@ -200,7 +200,7 @@ int Anim::play(uint16 anim_id, int vector_time, bool playing) {
 
 	if (anim->completed < anim->cycles) {
 		frame = anim->current_frame;
-		if (_vm->_gameType == GType_ITE) {
+		if (_vm->getGameType() == GType_ITE) {
 			// FIXME: if start > 0, then this works incorrectly
 			result = ITE_DecodeFrame(anim->resdata, anim->resdata_len, anim->frame_offsets[frame], display_buf,
 									_vm->getDisplayWidth() * _vm->getDisplayHeight());
@@ -401,7 +401,7 @@ int Anim::freeId(uint16 anim_id) {
 		return FAILURE;
 	}
 
-	if (_vm->_gameType == GType_ITE) {
+	if (_vm->getGameType() == GType_ITE) {
 		free(anim->frame_offsets);
 		anim->frame_offsets = NULL;
 	}
@@ -482,7 +482,7 @@ int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_
 
 
 	fh.x_start = readS.readUint16BE();
-	if (_vm->_features & GF_BIG_ENDIAN_DATA)
+	if (_vm->getFeatures() & GF_BIG_ENDIAN_DATA)
 		fh.y_start = readS.readUint16BE();
 	else
 		fh.y_start = readS.readByte();
@@ -537,7 +537,7 @@ int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_
 		case SAGA_FRAME_ROW_END: // End of row
 			x_vector = readS.readSint16BE();
 			
-			if (_vm->_features & GF_BIG_ENDIAN_DATA)
+			if (_vm->getFeatures() & GF_BIG_ENDIAN_DATA)
 				new_row = readS.readSint16BE();
 			else
 				new_row = readS.readByte();
@@ -877,7 +877,7 @@ int Anim::getFrameOffset(const byte *resdata, size_t resdata_len, uint16 find_fr
 				break;
 			case SAGA_FRAME_ROW_END: // End of row marker
 				readS.readSint16BE();
-				if (_vm->_features & GF_BIG_ENDIAN_DATA)
+				if (_vm->getFeatures() & GF_BIG_ENDIAN_DATA)
 					readS.readSint16BE();
 				else
 					readS.readByte();

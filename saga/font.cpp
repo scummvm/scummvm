@@ -43,15 +43,15 @@ Font::Font(SagaEngine *vm) : _vm(vm), _initialized(false) {
 
 	assert(_vm->getFontsCount() > 0);
 
-	_nFonts = _vm->getFontsCount();
+	_nFonts = 0;
 
-	_fonts = (FONT **)malloc(_nFonts * sizeof(*_fonts));
+	_fonts = (FONT **)malloc(_vm->getFontsCount() * sizeof(*_fonts));
 	if (_fonts == NULL) {
 		error("Font::Font(): Memory allocation failure.");
 	}
 
-	for (i = 0; i < _nFonts; i++) {
-		loadFont(_vm->getFontDescription(i)->font_rn, _vm->getFontDescription(i)->font_id);
+	for (i = 0; i < _vm->getFontsCount(); i++) {
+		loadFont(_vm->getFontDescription(i)->fontResourceId);
 	}
 
 	_initialized = true;
@@ -80,7 +80,7 @@ Font::~Font(void) {
 */
 }
 
-int Font::loadFont(uint32 font_rn, int font_id) {
+int Font::loadFont(uint32 fontResourceId) {
 	FONT_HEADER fh;
 	FONT *font;
 	FONT_STYLE *normal_font;
@@ -89,12 +89,8 @@ int Font::loadFont(uint32 font_rn, int font_id) {
 	int nbits;
 	int c;
 
-	if ((font_id < 0) || (font_id >= _nFonts)) {
-		return FAILURE;
-	}
-
 	// Load font resource
-	if (RSC_LoadResource(_fontContext, font_rn, &fontres_p, &fontres_len) != SUCCESS) {
+	if (RSC_LoadResource(_fontContext, fontResourceId, &fontres_p, &fontres_len) != SUCCESS) {
 		error("Font::loadFont(): Couldn't load font resource.");
 	}
 
@@ -116,7 +112,7 @@ int Font::loadFont(uint32 font_rn, int font_id) {
 	fh.c_width = readS.readUint16();
 	fh.row_length = readS.readUint16();
 
-	debug(1, "Font::loadFont(): Reading font resource #%d...", font_rn);
+	debug(1, "Font::loadFont(): Reading fontResourceId %d...", fontResourceId);
 
 	debug(2, "Character width: %d", fh.c_width);
 	debug(2, "Character height: %d", fh.c_height);
@@ -165,7 +161,7 @@ int Font::loadFont(uint32 font_rn, int font_id) {
 	font->outline_loaded = 1;
 
 	// Set font data 
-	_fonts[font_id] = font;
+	_fonts[_nFonts++] = font;
 
 	return SUCCESS;
 }

@@ -758,7 +758,7 @@ void Script::runThread(SCRIPT_THREAD *thread, int instr_limit) {
 				}
 				// now data contains last string index
 
-				if (_vm->_gameId == GID_ITE_DISK_G) { // special ITE dos
+				if (_vm->getGameId() == GID_ITE_DISK_G) { // special ITE dos
 					if ((_vm->_scene->currentSceneNumber() == ITE_DEFAULT_SCENE) && (data >= 288) && (data <= (RID_SCENE1_VOICE_138 - RID_SCENE1_VOICE_009 + 288))) {
 						sampleResourceId = RID_SCENE1_VOICE_009 + data - 288;
 					}

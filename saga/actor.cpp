@@ -136,7 +136,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	ActorData *actor;
 	debug(9, "Actor::Actor()");
 
-	if (_vm->_gameType == GType_IHNM) {
+	if (_vm->getGameType() == GType_IHNM) {
 		warning("Actors aren't implemented for IHNM yet");
 		return;
 	}
@@ -155,7 +155,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_centerActor = _protagonist = NULL;
 	_lastTickMsec = 0;
 
-	_yCellCount = _vm->getStatusYOffset() + 1;
+	_yCellCount = _vm->getSceneHeight();
 	_xCellCount = _vm->getDisplayWidth();
 
 	_pathCell = (int8*) malloc(_yCellCount * _xCellCount * sizeof(*_pathCell));
@@ -163,8 +163,8 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 
 	_pathRect.left = 0;
 	_pathRect.right = _vm->getDisplayWidth();
-	_pathRect.top = _vm->getPathYOffset();
-	_pathRect.bottom = _vm->getStatusYOffset();
+	_pathRect.top = _vm->getDisplayInfo().pathStartY;
+	_pathRect.bottom = _vm->getSceneHeight();
 
 	// Get actor resource file context
 	_actorContext = _vm->getFileContext(GAME_RESOURCEFILE, 0);
@@ -395,7 +395,7 @@ bool Actor::validFollowerLocation(const ActorLocation &location) {
 	location.toScreenPointXY(point);
 	
 	if ((point.x < 5) || (point.x >= _vm->getDisplayWidth() - 5) ||
-		(point.y < 0) || (point.y > _vm->getStatusYOffset())) {
+		(point.y < 0) || (point.y > _vm->getSceneHeight())) {
 		return false;
 	}
 	
@@ -410,7 +410,7 @@ void Actor::updateActorsScene() {
 	ActorLocation possibleLocation;
 	Point delta;
 	
-	if (_vm->_gameType == GType_IHNM) {
+	if (_vm->getGameType() == GType_IHNM) {
 		warning("Actors aren't implemented for IHNM yet");
 		return;
 	}
@@ -883,7 +883,7 @@ void Actor::calcActorScreenPosition(ActorData *actor) {
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 		//todo: it
 	} else {
-		middle = _vm->getStatusYOffset() - actor->location.y / ACTOR_LMULT;
+		middle = _vm->getSceneHeight() - actor->location.y / ACTOR_LMULT;
 
 		_vm->_scene->getSlopes(beginSlope, endSlope);
 

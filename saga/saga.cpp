@@ -42,7 +42,6 @@
 #include "saga/console.h"
 #include "saga/events.h"
 #include "saga/font.h"
-#include "saga/game.h"
 #include "saga/interface.h"
 #include "saga/isomap.h"
 #include "saga/script.h"
@@ -93,6 +92,8 @@ SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 	: Engine(syst) {
 
 	_console = NULL;
+	_gameFileContexts = NULL;
+	_quit = false;
 
 	// The Linux version of Inherit the Earth puts all data files in an
 	// 'itedata' sub-directory, except for voices.rsc
@@ -119,6 +120,32 @@ SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 }
 
 SagaEngine::~SagaEngine() {
+	int i;
+
+	delete _scene;
+	delete _actor;
+	delete _script;
+	delete _sprite;
+	delete _font;
+	delete _console;
+	delete _events;
+	delete _palanim;
+
+	delete _interface;
+	delete _render;
+	delete _isoMap;
+	delete _sndRes;
+	// Shutdown system modules */
+	delete _music;
+	delete _sound;
+	delete _anim;
+
+	if (_gameFileContexts != NULL) {
+		for (i = 0; i < _gameDescription->filesCount; i++) {
+			RSC_DestroyContext(_gameFileContexts[i]);
+		}
+	}
+	free(_gameFileContexts);
 }
 
 void SagaEngine::errorString(const char *buf1, char *buf2) {
@@ -224,7 +251,7 @@ int SagaEngine::go() {
 	_scene->startScene();
 	uint32 currentTicks;
 
-	for (;;) {
+	while(!_quit) {
 		if (_console->isAttached())
 			_console->onFrame();
 
@@ -244,7 +271,7 @@ int SagaEngine::go() {
 				msec = MAX_TIME_DELTA;
 			}
 
-			if (!_vm->_scene->isInDemo() && _gameType == GType_ITE)
+			if (!_vm->_scene->isInDemo() && getGameType() == GType_ITE)
 				if (_vm->_interface->getMode() == kPanelMain ||
 						 _vm->_interface->getMode() == kPanelConverse ||
 						 _vm->_interface->getMode() == kPanelNull)
@@ -258,29 +285,7 @@ int SagaEngine::go() {
 		_system->delayMillis(10);
 	}
 	
-	//return 0;
-}
-
-void SagaEngine::shutdown() {
-	delete _scene;
-	delete _actor;
-	delete _script;
-	delete _sprite;
-	delete _font;
-	delete _console;
-	delete _events;
-	delete _palanim;
-
-	delete _interface;
-	delete _render;
-	delete _isoMap;
-	delete _sndRes;
-	// Shutdown system modules */
-	delete _music;
-	delete _sound;
-	delete _anim;
-
-	_system->quit();
+	return 0;
 }
 
 void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPointer, size_t stringsLength) {

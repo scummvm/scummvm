@@ -253,7 +253,7 @@ int RSC_LoadResource(RSCFILE_CONTEXT *rsc, uint32 res_num, byte **res_p, size_t 
 			break;
 		}
 
-	if (!(_vm->_features & GF_WYRMKEEP))
+	if (!(_vm->getFeatures() & GF_WYRMKEEP))
 		substnum = -1;
 
 	if (substnum != -1) {
@@ -305,7 +305,7 @@ int RSC_FreeResource(byte *resource_ptr) {
 int RSC_ConvertID(int id) {
 	int res = id;
 
-	if (_vm->_features & GF_MAC_RESOURCES) {
+	if (_vm->getFeatures() & GF_MAC_RESOURCES) {
 		if (res > 1537)
 			res -= 2;
 		else if (res == 1535 || res == 1536) {

@@ -50,37 +50,6 @@ static VERB_DATA I_VerbData[] = {
 	{I_VERB_GIVE, "verb_give", "Give", kVerbGive}
 };
 
-static INTERFACE_DESC ITE_interface = {
-	ITE_STATUS_Y,
-	ITE_STATUS_W,
-	ITE_STATUS_H,
-	ITE_STATUS_TEXT_Y,
-	ITE_STATUS_TXTCOL,
-	ITE_STATUS_BGCOL,
-
-	ITE_CMD_TEXT_COL,
-	ITE_CMD_TEXT_SHADOWCOL,
-	ITE_CMD_TEXT_HILITECOL,
-
-	COMMAND_DEFAULT_BUTTON,
-
-	ITE_LPORTRAIT_X,
-	ITE_LPORTRAIT_Y,
-	ITE_RPORTRAIT_X,
-	ITE_RPORTRAIT_Y,
-
-	ITE_INVENTORY_XSTART,
-	ITE_INVENTORY_YSTART,
-	ITE_INVENTORY_ROWS,
-	ITE_INVENTORY_COLUMNS,
-	ITE_INVENTORY_ICON_WIDTH,
-	ITE_INVENTORY_ICON_HEIGHT,
-	ITE_INVENTORY_ICON_XOFFSET,
-	ITE_INVENTORY_ICON_YOFFSET,
-	ITE_INVENTORY_XSPACING,
-	ITE_INVENTORY_YSPACING
-};
-
 static InterfaceButton ITEMainPanel[] = {
 	{5, 4, 46, 47, "Portrait", 0, 0, BUTTON_NONE, 0}, //TODO: remove?
 	// "Walk To" and "Talk To" share button sprites
@@ -105,36 +74,6 @@ static InterfaceButton ITEMainPanel[] = {
 	{306, 41, 314, 45, "InvDown", 0, 0, BUTTON_NONE, 0}
 };
 
-static INTERFACE_DESC IHNM_interface = {
-	IHNM_STATUS_Y,
-	IHNM_STATUS_W,
-	IHNM_STATUS_H,
-	IHNM_STATUS_TEXT_Y,
-	IHNM_STATUS_TXTCOL,
-	IHNM_STATUS_BGCOL,
-
-	IHNM_CMD_TEXT_COL,
-	IHNM_CMD_TEXT_SHADOWCOL,
-	IHNM_CMD_TEXT_HILITECOL,
-
-	COMMAND_DEFAULT_BUTTON,
-
-	IHNM_LPORTRAIT_X,
-	IHNM_LPORTRAIT_Y,
-	IHNM_RPORTRAIT_X,
-	IHNM_RPORTRAIT_Y,
-
-	IHNM_INVENTORY_XSTART,
-	IHNM_INVENTORY_YSTART,
-	IHNM_INVENTORY_ROWS,
-	IHNM_INVENTORY_COLUMNS,
-	IHNM_INVENTORY_ICON_WIDTH,
-	IHNM_INVENTORY_ICON_HEIGHT,
-	IHNM_INVENTORY_ICON_XOFFSET,
-	IHNM_INVENTORY_ICON_YOFFSET,
-	IHNM_INVENTORY_XSPACING,
-	IHNM_INVENTORY_YSPACING
-};
 
 static InterfaceButton IHNMMainPanel[] = {
 	{5, 4, 46, 47, "Portrait", 0, 0, 0, 0}
@@ -179,17 +118,15 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	}
 
 	// Initialize interface data by game type
-	if (_vm->_gameType == GType_ITE) {
+	if (_vm->getGameType() == GType_ITE) {
 		// Load Inherit the Earth interface desc
 		_mainPanel.buttons = ITEMainPanel;
 		_mainPanel.nbuttons = ARRAYSIZE(ITEMainPanel);
 
-		_iDesc = ITE_interface;
-	} else if (_vm->_gameType == GType_IHNM) {
+	} else if (_vm->getGameType() == GType_IHNM) {
 		// Load I Have No Mouth interface desc
 		_mainPanel.buttons = IHNMMainPanel;
 		_mainPanel.nbuttons = ARRAYSIZE(IHNMMainPanel);
-		_iDesc = IHNM_interface;
 	} else {
 		return;
 	}
@@ -229,7 +166,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	_conversePanel.x = 0;
 	_conversePanel.y = 149;
 
-	_mainPanel.set_button = COMMAND_DEFAULT_BUTTON;
+	_mainPanel.set_button = 1;
 	_leftPortrait = 0;
 	_rightPortrait = 0;
 
@@ -394,15 +331,15 @@ int Interface::draw() {
 
 	if (_panelMode == kPanelMain || _panelMode == kPanelConverse ||
 		_lockedMode == kPanelMain || _lockedMode == kPanelConverse) {
-			leftPortraitPoint.x = base.x + _iDesc.lportrait_x;
-			leftPortraitPoint.y = base.y + _iDesc.lportrait_y;
+			leftPortraitPoint.x = base.x + _vm->getDisplayInfo().leftPortraitX;
+			leftPortraitPoint.y = base.y + _vm->getDisplayInfo().leftPortraitY;
 			_vm->_sprite->draw(backBuffer, _defPortraits, _leftPortrait, leftPortraitPoint, 256);
 		}
 		
 
-	if (!_inMainMode && _iDesc.rportrait_x >= 0) {
-		rightPortraitPoint.x = base.x + _iDesc.rportrait_x;
-		rightPortraitPoint.y = base.y + _iDesc.rportrait_y;
+	if (!_inMainMode && _vm->getDisplayInfo().rightPortraitX >= 0) {
+		rightPortraitPoint.x = base.x + _vm->getDisplayInfo().rightPortraitX;
+		rightPortraitPoint.y = base.y + _vm->getDisplayInfo().rightPortraitY;
 
 		_vm->_sprite->draw(backBuffer, _scenePortraits, _rightPortrait, rightPortraitPoint, 256);
 	}
@@ -429,7 +366,7 @@ int Interface::update(const Point& imousePt, int update_flag) {
 
 	if (_panelMode == kPanelMain) { // FIXME: HACK
 		// Update playfield space ( only if cursor is inside )
-		if (imouse_y < _vm->getStatusYOffset()) {
+		if (imouse_y < _vm->getSceneHeight()) {
 			// Mouse is in playfield space
 			if (update_flag == UPDATE_MOUSEMOVE) {
 				handlePlayfieldUpdate(back_buf, imousePt);
@@ -459,23 +396,23 @@ int Interface::drawStatusBar(SURFACE *ds) {
 	// Disable this for IHNM for now, since that game uses the full screen
 	// in some cases.
 
-	if (_vm->_gameType == GType_IHNM) {
+	if (_vm->getGameType() == GType_IHNM) {
 		return SUCCESS;
 	}
 
 
 	// Erase background of status bar
 	rect.left = 0;
-	rect.top = _iDesc.status_y;
+	rect.top = _vm->getDisplayInfo().statusY;
 	rect.right = _vm->getDisplayWidth();
-	rect.bottom = _iDesc.status_y + _iDesc.status_h;
+	rect.bottom = _vm->getDisplayInfo().statusY + _vm->getDisplayInfo().statusHeight;
 
-	drawRect(ds, &rect, _iDesc.status_bgcol);
+	drawRect(ds, &rect, _vm->getDisplayInfo().statusBGColor);
 
 	string_w = _vm->_font->getStringWidth(SMALL_FONT_ID, _statusText, 0, 0);
 
-	_vm->_font->draw(SMALL_FONT_ID, ds, _statusText, 0, (_iDesc.status_w / 2) - (string_w / 2),
-			_iDesc.status_y + _iDesc.status_txt_y, _iDesc.status_txt_col, 0, 0);
+	_vm->_font->draw(SMALL_FONT_ID, ds, _statusText, 0, (_vm->getDisplayInfo().statusWidth / 2) - (string_w / 2),
+			_vm->getDisplayInfo().statusY + _vm->getDisplayInfo().statusTextY, _vm->getDisplayInfo().statusTextColor, 0, 0);
 
 	return SUCCESS;
 }
@@ -733,10 +670,10 @@ void Interface::drawInventory() {
 	int row = 0;
 	int col = 0;
 
-	int x = _iDesc.inv_xstart + _iDesc.inv_icon_xoffset;
-	int y = _iDesc.inv_ystart + _iDesc.inv_icon_yoffset;
-	int width = _iDesc.inv_icon_width + _iDesc.inv_xspacing;
-	int height = _iDesc.inv_icon_height + _iDesc.inv_yspacing;
+	int x = _vm->getDisplayInfo().inventoryX + _vm->getDisplayInfo().inventoryIconX;
+	int y = _vm->getDisplayInfo().inventoryY + _vm->getDisplayInfo().inventoryIconY;
+	int width = _vm->getDisplayInfo().inventoryIconWidth + _vm->getDisplayInfo().inventoryXSpacing;
+	int height = _vm->getDisplayInfo().inventoryIconHeight + _vm->getDisplayInfo().inventoryYSpacing;
 	Point drawPoint;
 
 	for (int i = 0; i < _inventoryCount; i++) {
@@ -750,8 +687,8 @@ void Interface::drawInventory() {
 			ObjectTable[_inventory[i]].spritelistRn,
 			drawPoint, 256);
 
-		if (++col >= _iDesc.inv_columns) {
-			if (++row >= _iDesc.inv_rows) {
+		if (++col >= _vm->getDisplayInfo().inventoryColumns) {
+			if (++row >= _vm->getDisplayInfo().inventoryRows) {
 				break;
 			}
 			col = 0;
@@ -763,22 +700,22 @@ int Interface::inventoryTest(const Point& imousePt, int *ibutton) {
 	int row = 0;
 	int col = 0;
 
-	int xbase = _iDesc.inv_xstart;
-	int ybase = _iDesc.inv_ystart;
-	int width = _iDesc.inv_icon_width + _iDesc.inv_xspacing;
-	int height = _iDesc.inv_icon_height + _iDesc.inv_yspacing;
+	int xbase = _vm->getDisplayInfo().inventoryX;
+	int ybase = _vm->getDisplayInfo().inventoryY;
+	int width = _vm->getDisplayInfo().inventoryIconWidth + _vm->getDisplayInfo().inventoryXSpacing;
+	int height = _vm->getDisplayInfo().inventoryIconHeight + _vm->getDisplayInfo().inventoryYSpacing;
 
 	for (int i = 0; i < _inventoryCount; i++) {
 		int x = xbase + col * width;
 		int y = ybase + row * height;
 
-		if (imousePt.x >= x && imousePt.x < x + _iDesc.inv_icon_width && imousePt.y >= y && imousePt.y < y + _iDesc.inv_icon_height) {
+		if (imousePt.x >= x && imousePt.x < x + _vm->getDisplayInfo().inventoryIconWidth && imousePt.y >= y && imousePt.y < y + _vm->getDisplayInfo().inventoryIconHeight) {
 			*ibutton = i;
 			return SUCCESS;
 		}
 
-		if (++col >= _iDesc.inv_columns) {
-			if (++row >= _iDesc.inv_rows) {
+		if (++col >= _vm->getDisplayInfo().inventoryColumns) {
+			if (++row >= _vm->getDisplayInfo().inventoryRows) {
 				break;
 			}
 			col = 0;
@@ -954,7 +891,7 @@ void Interface::converseDisplayTextLine(int textcolor, bool btnDown, bool rebuil
 
 		if (_converseTextCount > i) {
 			const char *str = _converseText[relpos].text;
-			char bullet[] = { 0xb7, 0 };
+			char bullet[] = { (char)0xb7, 0 };
 			int scry = i * CONVERSE_TEXT_HEIGHT + _conversePanel.y + y;
 			byte tcolor, bcolor;
 

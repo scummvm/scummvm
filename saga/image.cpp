@@ -24,7 +24,6 @@
 // SAGA Image resource management routines
 #include "saga/saga.h"
 
-#include "saga/image.h"
 #include "saga/stream.h"
 
 namespace Saga {
@@ -92,7 +91,7 @@ int SagaEngine::decodeBGImage(const byte *image_data, size_t image_size,
 	unbankBGImage(out_buf, decode_buf, hdr.width, hdr.height);
 
 	// For some reason bg images in IHNM are upside down
-	if (_vm->_gameType == GType_IHNM) {
+	if (_vm->getGameType() == GType_IHNM) {
 		flipImage(out_buf, hdr.width, hdr.height);
 	}
 

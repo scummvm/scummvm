@@ -33,7 +33,7 @@ namespace Saga {
 #define MAX_ANIMATIONS 7
 #define DEFAULT_FRAME_TIME 140
 
-#define SAGA_FRAME_HEADER_LEN (_vm->_features & GF_MAC_RESOURCES ? 13 : 12)
+#define SAGA_FRAME_HEADER_LEN (_vm->getFeatures() & GF_MAC_RESOURCES ? 13 : 12)
 
 #define SAGA_FRAME_START 0xF
 #define SAGA_FRAME_END 0x3F

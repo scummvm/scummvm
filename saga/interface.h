@@ -42,65 +42,6 @@ enum INTERFACE_UPDATE_FLAGS {
 
 #define STATUS_TEXT_LEN 128
 
-#define COMMAND_DEFAULT_BUTTON 1
-
-// Inherit the Earth interface values
-#define ITE_STATUS_Y      137
-#define ITE_STATUS_W      320
-#define ITE_STATUS_H      12
-#define ITE_STATUS_TEXT_Y 2
-#define ITE_STATUS_TXTCOL 186
-#define ITE_STATUS_BGCOL  15
-
-#define ITE_CMD_TEXT_COL       147
-#define ITE_CMD_TEXT_SHADOWCOL 15
-#define ITE_CMD_TEXT_HILITECOL 96
-
-#define ITE_LPORTRAIT_X 5
-#define ITE_LPORTRAIT_Y 4
-#define ITE_RPORTRAIT_X 274
-#define ITE_RPORTRAIT_Y 4
-
-#define ITE_INVENTORY_XSTART 181
-#define ITE_INVENTORY_YSTART 155
-#define ITE_INVENTORY_ROWS 2
-#define ITE_INVENTORY_COLUMNS 4
-#define ITE_INVENTORY_ICON_WIDTH 29
-#define ITE_INVENTORY_ICON_HEIGHT 20
-#define ITE_INVENTORY_ICON_XOFFSET 1
-#define ITE_INVENTORY_ICON_YOFFSET 0
-#define ITE_INVENTORY_XSPACING 3
-#define ITE_INVENTORY_YSPACING 1
-
-// IHNMAIMS interface values
-#define IHNM_STATUS_Y      304
-#define IHNM_STATUS_W      640
-#define IHNM_STATUS_H      24
-#define IHNM_STATUS_TEXT_Y 8
-#define IHNM_STATUS_TXTCOL 186
-#define IHNM_STATUS_BGCOL  11
-
-#define IHNM_CMD_TEXT_COL       147
-#define IHNM_CMD_TEXT_SHADOWCOL 15
-#define IHNM_CMD_TEXT_HILITECOL 96
-
-#define IHNM_LPORTRAIT_X 5
-#define IHNM_LPORTRAIT_Y 4
-#define IHNM_RPORTRAIT_X -1
-#define IHNM_RPORTRAIT_Y -1
-
-// TODO
-#define IHNM_INVENTORY_XSTART 0
-#define IHNM_INVENTORY_YSTART 0
-#define IHNM_INVENTORY_ROWS 0
-#define IHNM_INVENTORY_COLUMNS 0
-#define IHNM_INVENTORY_ICON_WIDTH 0
-#define IHNM_INVENTORY_ICON_HEIGHT 0
-#define IHNM_INVENTORY_ICON_XOFFSET 0
-#define IHNM_INVENTORY_ICON_YOFFSET 0
-#define IHNM_INVENTORY_XSPACING 0
-#define IHNM_INVENTORY_YSPACING 0
-
 // Converse-specific stuff
 #define CONVERSE_MAX_TEXTS      64
 #define CONVERSE_MAX_TEXT_WIDTH (256 - 60)
@@ -127,10 +68,9 @@ enum BUTTON_FLAGS {
 	BUTTON_NONE = 0x0,
 	BUTTON_LABEL = 0x01,
 	BUTTON_BITMAP = 0x02,
-	BUTTON_SET = 0x04
+	BUTTON_SET = 0x04,
+	BUTTON_VERB = BUTTON_LABEL | BUTTON_BITMAP | BUTTON_SET
 };
-
-#define BUTTON_VERB ( BUTTON_LABEL | BUTTON_BITMAP | BUTTON_SET )
 
 struct InterfaceButton {
 	int x1;
@@ -153,40 +93,10 @@ struct InterfacePanel {
 	size_t img_len;
 	int img_w;
 	int img_h;
-	int set_button;
+	int set_button;//TODO: remove
 	int nbuttons;
 	InterfaceButton *buttons;
 	SpriteList sprites;
-};
-
-struct INTERFACE_DESC {
-	int status_y;
-	int status_w;
-	int status_h;
-	int status_txt_y;
-	int status_txt_col;
-	int status_bgcol;
-	int cmd_txt_col;
-	int cmd_txt_shadowcol;
-	int cmd_txt_hilitecol;
-	int cmd_defaultbutton;
-	int lportrait_x;
-	int lportrait_y;
-	int rportrait_x;
-	int rportrait_y;
-	int inv_xstart;
-	int inv_ystart;
-	int inv_rows;
-	int inv_columns;
-	int inv_icon_width;
-	int inv_icon_height;
-	int inv_icon_xoffset;
-	int inv_icon_yoffset;
-	int inv_xspacing;
-	int inv_yspacing;
-};
-
-struct INTERFACE_MODULE {
 };
 
 enum INTERFACE_VERBS {
@@ -270,7 +180,6 @@ private:
 	bool _initialized;
 	bool _active;
 	RSCFILE_CONTEXT *_interfaceContext;
-	INTERFACE_DESC _iDesc;
 	int _panelMode;
 	int _savedMode;
 	int _lockedMode;

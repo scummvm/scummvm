@@ -138,7 +138,7 @@ void RAWInputStream::refill() {
 		if (len & 1)
 			len--;
 
-		if (_vm->_features & GF_BIG_ENDIAN_DATA) {			
+		if (_vm->getFeatures() & GF_BIG_ENDIAN_DATA) {			
 			uint16 *ptr16 = (uint16 *)ptr;
 			for (uint32 i = 0; i < (len / 2); i++)
 				ptr16[i] = TO_BE_16(ptr16[i]);
@@ -297,7 +297,7 @@ Music::Music(SoundMixer *mixer, MidiDriver *driver, int enabled) : _mixer(mixer)
 	_musicInitialized = 1;
 	_mixer->setVolumeForSoundType(SoundMixer::kMusicAudioDataType, ConfMan.getInt("music_volume"));
 
-	if (_vm->_gameType == GType_ITE) {
+	if (_vm->getGameType() == GType_ITE) {
 		File file;
 		byte footerBuf[ARRAYSIZE(_digiTableITECD) * 8];
 
@@ -406,7 +406,7 @@ int Music::play(uint32 music_rn, uint16 flags) {
 	MidiParser *parser;
 	File midiFile;
 
-	if (_vm->_gameType == GType_ITE) {
+	if (_vm->getGameType() == GType_ITE) {
 		if (music_rn >= 9 && music_rn <= 34) {
 			if (flags == MUSIC_DEFAULT) {
 				flags = _midiTableITECD[music_rn - 9].flags;
@@ -456,7 +456,7 @@ int Music::play(uint32 music_rn, uint16 flags) {
 	} else {
 		// Load MIDI/XMI resource data
 
-		if (_vm->_gameType == GType_ITE) {
+		if (_vm->getGameType() == GType_ITE) {
 			rsc_ctxt = _vm->getFileContext(GAME_RESOURCEFILE, 0);
 		} else {
 			// I've listened to music from both the FM and the GM

@@ -78,7 +78,7 @@ int SndRes::playVoice(uint32 voice_rn) {
 
 	debug(0, "SndRes::playVoice(%ld)", voice_rn);
 
-	if (_vm->_gameType == GType_ITE && voice_rn == 4) {
+	if (_vm->getGameType() == GType_ITE && voice_rn == 4) {
 		// The Wyrmkeep release of Inherit the Earth provides a
 		// separate file (p2_a.voc or P2_A.iaf), to correct voice 4 in
 		// the intro. Use that, if available.
@@ -122,7 +122,7 @@ int SndRes::playVoice(uint32 voice_rn) {
 		return FAILURE;
 	}
 
-	if (_vm->_features & GF_VOX_VOICES && !voiceFile)
+	if (_vm->getFeatures() & GF_VOX_VOICES && !voiceFile)
 		_vm->_sound->playVoxVoice(&snd_buffer);
 	else
 		_vm->_sound->playVoice(&snd_buffer);
@@ -241,7 +241,7 @@ int SndRes::getVoiceLength(uint32 voice_rn) {
 	// (p2_a.voc or P2_A.iaf), to correct voice 4 in the intro. Use that,
 	// if available.
 
-	if (_vm->_gameType == GType_ITE && voice_rn == 4) {
+	if (_vm->getGameType() == GType_ITE && voice_rn == 4) {
 		if (f.open("p2_a.voc")) {
 			result = SUCCESS;
 			length = f.size();
@@ -265,7 +265,7 @@ int SndRes::getVoiceLength(uint32 voice_rn) {
 		}
 	}
 
-	if (_vm->_features & GF_VOX_VOICES && !voiceFile) {
+	if (_vm->getFeatures() & GF_VOX_VOICES && !voiceFile) {
 		// Rough hack, fix this to be accurate
 		ms_f = (double)length / 22050 * 2000.0;
 		ms_i = (int)ms_f;

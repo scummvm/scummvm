@@ -1054,7 +1054,7 @@ int Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	event.data = back_buf;
 	event.param = 138;
 	event.param2 = 0;
-	event.param3 = _vm->getStatusYOffset();
+	event.param3 = _vm->getSceneHeight();
 	event.param4 = 0;
 	event.param5 = _vm->getDisplayWidth();
 
@@ -1074,7 +1074,7 @@ int Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	text_entry.color = _vm->_gfx->getWhite();
 	text_entry.effect_color = _vm->_gfx->getBlack();
 	text_entry.text_x = _vm->getDisplayWidth() / 2;
-	text_entry.text_y = (_vm->getStatusYOffset() - _vm->_font->getHeight(MEDIUM_FONT_ID)) / 2;
+	text_entry.text_y = (_vm->getSceneHeight() - _vm->_font->getHeight(MEDIUM_FONT_ID)) / 2;
 	text_entry.font_id = MEDIUM_FONT_ID;
 	text_entry.flags = FONT_OUTLINE | FONT_CENTERED;
 	text_entry.string = getScriptString(stringId);

@@ -106,7 +106,7 @@ int Sprite::loadList(int resourceId, SpriteList &spriteList) {
 
 	for (i = oldSpriteCount; i < spriteList.spriteCount; i++) {
 		spriteInfo = &spriteList.infoList[i];
-		if (_vm->_features & GF_MAC_RESOURCES)
+		if (_vm->getFeatures() & GF_MAC_RESOURCES)
 			offset = readS.readUint32();
 		else
 			offset = readS.readUint16();
@@ -118,9 +118,9 @@ int Sprite::loadList(int resourceId, SpriteList &spriteList) {
 		spritePointer = spriteListData;
 		spritePointer += offset;
 
-		MemoryReadStream readS2(spritePointer, (_vm->_features & GF_MAC_RESOURCES) ? 8 : 4);
+		MemoryReadStream readS2(spritePointer, (_vm->getFeatures() & GF_MAC_RESOURCES) ? 8 : 4);
 
-		if (!(_vm->_features & GF_MAC_RESOURCES)) {
+		if (!(_vm->getFeatures() & GF_MAC_RESOURCES)) {
 			spriteInfo->xAlign = readS2.readSByte();
 			spriteInfo->yAlign = readS2.readSByte();
 

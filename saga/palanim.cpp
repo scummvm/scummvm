@@ -56,7 +56,7 @@ int PalAnim::loadPalAnim(const byte *resdata, size_t resdata_len) {
 
 	MemoryReadStreamEndian readS(resdata, resdata_len, IS_BIG_ENDIAN);
 
-	if (_vm->_gameType == GType_IHNM) {
+	if (_vm->getGameType() == GType_IHNM) {
 		return SUCCESS;
 	}
 

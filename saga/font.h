@@ -108,7 +108,7 @@ class Font {
 
  private:
 
-	int loadFont(uint32 font_rn, int font_id);
+	int loadFont(uint32 fontResourceId);
 	FONT_STYLE *createOutline(FONT_STYLE * src_font);
 	int outFont(FONT_STYLE *font, SURFACE * ds, const char *draw_str, size_t draw_str_ct,
 				int text_x, int text_y, int color, int flags);

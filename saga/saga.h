@@ -28,6 +28,7 @@
 #include "common/scummsys.h"
 #include "base/engine.h"
 #include "base/gameDetector.h"
+#include "base/plugins.h"
 
 #include "common/stream.h"
 #include "common/rect.h"
@@ -62,10 +63,16 @@ class PalAnim;
 #define GAME_ITE_LANG_PREFIX "ite_"
 #define GAME_LANG_EXT "lng"
 
+#define MIN_IMG_RLECODE    3
+#define MODEX_SCANLINE_LIMIT 200
+
+#define SAGA_IMAGE_DATA_OFFSET 776
+#define SAGA_IMAGE_HEADER_LEN  8
+
 #define PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
 #define MAXPATH 512
 
-#define IS_BIG_ENDIAN ((_vm->_features & GF_BIG_ENDIAN_DATA) != 0)
+#define IS_BIG_ENDIAN ((_vm->getFeatures() & GF_BIG_ENDIAN_DATA) != 0)
 
 #define ID_NOTHING 0
 #define ID_PROTAG 1
@@ -122,6 +129,12 @@ enum HitZoneFlags {
 
 	//	zone activates only when character stops walking
 	kHitZoneTerminus = (1 << 3)
+};
+
+
+struct IMAGE_HEADER {
+	int width;
+	int height;
 };
 
 struct StringsTable {
@@ -201,16 +214,6 @@ enum GameSoundTypes {
 	GAME_SOUND_VOX
 };
 
-enum GameFontIds {
-	GAME_FONT_SMALL = 0,
-	GAME_FONT_MEDIUM,
-	GAME_FONT_LARGE,
-	GAME_FONT_SMALL2,
-	GAME_FONT_MEDIUM2,
-	GAME_FONT_LARGE2,
-	GAME_FONT_LARGE3
-};
-
 enum GameFeatures {
 	GF_VOX_VOICES      = 1 << 0,
 	GF_BIG_ENDIAN_DATA = 1 << 1,
@@ -227,8 +230,7 @@ struct GameSoundInfo {
 };
 
 struct GameFontDescription {
-	uint16 font_id;
-	uint32 font_rn;
+	uint32 fontResourceId;
 };
 
 struct GameResourceDescription {
@@ -246,7 +248,36 @@ struct GameFileDescription {
 struct GameDisplayInfo {
 	int logicalWidth;
 	int logicalHeight;
-	int scene_h;
+	
+	int pathStartY;
+	int sceneHeight;
+
+	int statusY;
+	int statusWidth;
+	int statusHeight;
+	int statusTextY;
+	int statusTextColor;
+	int statusBGColor;
+
+	int verbTextColor;
+	int verbTextShadowColor;
+	int verbTextActiveColor;
+
+	int leftPortraitX;
+	int leftPortraitY;
+	int rightPortraitX;
+	int rightPortraitY;
+
+	int inventoryX;
+	int inventoryY;
+	int inventoryRows;
+	int inventoryColumns;
+	int inventoryIconWidth;
+	int inventoryIconHeight;
+	int inventoryIconX;
+	int inventoryIconY;
+	int inventoryXSpacing;
+	int inventoryYSpacing;
 };
 
 struct GameDescription {
@@ -254,9 +285,7 @@ struct GameDescription {
 	SAGAGameType gameType;
 	GameIds gameId;
 	const char *title;
-	int gd_logical_w;
-	int gd_logical_h;
-	int gd_scene_h;
+	GameDisplayInfo *gameDisplayInfo;
 	int startSceneNumber;
 	GameResourceDescription *resourceDescription;
 	int filesCount;
@@ -297,6 +326,8 @@ inline int objectIdType(uint16 objectId) {
 	return objectId >> 13;
 }
 
+DetectedGameList GAME_ProbeGame(const FSList &fslist);
+
 class SagaEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
 
@@ -307,22 +338,12 @@ protected:
 public:
 	SagaEngine(GameDetector * detector, OSystem * syst);
 	virtual ~SagaEngine();
-
-	void shutdown();
+	void shutDown() { _quit = true; }
 
 	int _soundEnabled;
 	int _musicEnabled;
+
 	
-	char _gameLanguage[GAME_LANGSTR_LIMIT];
-	RSCFILE_CONTEXT **_gameFileContexts;
-
-//current game description
-	int _gameId;
-	int _gameType;
-	uint32 _features;
-	int _gameNumber;
-	GameDescription *_gameDescription;
-
 	SndRes *_sndRes;
 	Sound *_sound;
 	Music *_music;
@@ -379,23 +400,39 @@ public:
  private:
 	Point _mousePos;
 
+	bool _quit;
+	char _gameLanguage[GAME_LANGSTR_LIMIT];
+	RSCFILE_CONTEXT **_gameFileContexts;
+
+//current game description
+	int _gameNumber;
+	GameDescription *_gameDescription;
+	GameDisplayInfo _gameDisplayInfo;
+
 public:
 	int initGame(void);
 	RSCFILE_CONTEXT *getFileContext(uint16 type, int param);
 public:
 	const GameResourceDescription *getResourceDescription() { return _gameDescription->resourceDescription; }
 	const GameSoundInfo *getSoundInfo() { return _gameDescription->soundInfo; }
+
 	const GameFontDescription *getFontDescription(int index) { 
 		assert(index < _gameDescription->fontsCount);
 		return &_gameDescription->fontDescriptions[index];
 	}
 	int getFontsCount() const { return _gameDescription->fontsCount; }
 
-	int getStartSceneNumber() { return _gameDescription->startSceneNumber; }
-	int getDisplayWidth() { return _gameDescription->gd_logical_w; }
-	int getDisplayHeight() { return _gameDescription->gd_logical_h;}
-	int getStatusYOffset();
-	int getPathYOffset();
+	int getGameId() const { return _gameDescription->gameId; }
+	int getGameType() const { return _gameDescription->gameType; }
+	uint32 getFeatures() const { return _gameDescription->features; }
+	int getGameNumber() const { return _gameNumber; }
+	int getStartSceneNumber() const { return _gameDescription->startSceneNumber; }
+
+
+	int getDisplayWidth() const { return _gameDisplayInfo.logicalWidth; }
+	int getDisplayHeight() const { return _gameDisplayInfo.logicalHeight;}
+	int getSceneHeight() const { return _gameDisplayInfo.sceneHeight; }
+	const GameDisplayInfo & getDisplayInfo() { return _gameDisplayInfo; }
 private:
 	int loadLanguage(void);
 	int loadGame(int gameNumber);

@@ -36,14 +36,46 @@
 #include "saga/interface.h"
 #include "saga/scene.h"
 
-#include "saga/game.h"
-
 namespace Saga {
 
 static int detectGame(const FSList &fslist, bool mode = false);
 
-// Inherit the Earth - DOS Demo version
+// ITE section
+static GameDisplayInfo ITE_DisplayInfo = {
+	320, 200,
+	
+	35,
+	137,
 
+	137,
+	320,
+	12,
+	2,
+	186,
+	15,
+
+	147,
+	15,
+	96,
+	
+	5, 4,
+	274, 4,
+
+	181, 155,
+	2, 4,
+	29, 20,
+	1, 0,
+	3, 1
+};
+
+static GameResourceDescription ITE_Resources = {
+	RID_ITE_SCENE_LUT,  // Scene lookup table RN
+	RID_ITE_SCRIPT_LUT, // Script lookup table RN
+	RID_ITE_COMMAND_PANEL,
+	RID_ITE_DIALOGUE_PANEL
+};
+
+// Inherit the Earth - DOS Demo version
 static GameFileDescription ITEDEMO_GameFiles[] = {
 	{"ite.rsc", GAME_RESOURCEFILE},
 	{"ite.dmo", GAME_DEMOFILE},
@@ -52,8 +84,8 @@ static GameFileDescription ITEDEMO_GameFiles[] = {
 };
 
 static GameFontDescription ITEDEMO_GameFonts[] = {
-	{GAME_FONT_SMALL, 0},
-	{GAME_FONT_MEDIUM, 1}
+	{0},
+	{1}
 }; 
 
 static GameSoundInfo ITEDEMO_GameSound = {
@@ -61,8 +93,8 @@ static GameSoundInfo ITEDEMO_GameSound = {
 };
 
 static GameFontDescription ITEMACDEMO_GameFonts[] = {
-	{GAME_FONT_MEDIUM, 0},
-	{GAME_FONT_SMALL, 2}
+	{0},
+	{2}
 }; 
 
 // Inherit the Earth - Wyrmkeep Win32 Demo version
@@ -92,8 +124,8 @@ static GameFileDescription ITELINCD_GameFiles[] = {
 };
 
 static GameFontDescription ITEWINDEMO_GameFonts[] = {
-	{GAME_FONT_MEDIUM, 0},
-	{GAME_FONT_SMALL, 2}
+	{0},
+	{2}
 }; 
 
 // Inherit the Earth - Mac Wyrmkeep version
@@ -113,16 +145,9 @@ static GameFileDescription ITEDISK_GameFiles[] = {
 };
 
 static GameFontDescription ITEDISK_GameFonts[] = {
-	{GAME_FONT_MEDIUM, 0},
-	{GAME_FONT_LARGE, 1},
-	{GAME_FONT_SMALL, 2}
-};
-
-static GameResourceDescription ITE_Resources = {
-	RID_ITE_SCENE_LUT,  // Scene lookup table RN
-	RID_ITE_SCRIPT_LUT, // Script lookup table RN
-	RID_ITE_COMMAND_PANEL,
-	RID_ITE_DIALOGUE_PANEL
+	{2},
+	{0},
+	{1}
 };
 
 static GameSoundInfo ITE_GameSound = {
@@ -138,9 +163,9 @@ static GameFileDescription ITECD_GameFiles[] = {
 };
 
 static GameFontDescription ITECD_GameFonts[] = {
-	{GAME_FONT_MEDIUM, 0},
-	{GAME_FONT_LARGE, 1},
-	{GAME_FONT_SMALL, 2}
+	{2},
+	{0},
+	{1}
 };
 
 static GameSoundInfo ITECD_GameSound = {
@@ -148,6 +173,42 @@ static GameSoundInfo ITECD_GameSound = {
 	22050,
 	16,
 	0
+};
+
+// IHNM section
+
+static GameDisplayInfo IHNM_DisplayInfo = {
+	640, 480,
+	
+	0, //TODO: correct pathStartY
+	304, //TODO: correct sceneHeight
+
+	304,
+	640,
+	24,
+	8,
+	186,
+	11,
+
+	147,
+	15,
+	96,
+
+	5, 4,
+	-1, -1,
+
+	0, 0, //TODO: fill it all
+	0, 0,
+	0, 0,
+	0, 0,
+	0, 0
+};
+
+static GameResourceDescription IHNM_Resources = {
+	RID_IHNM_SCENE_LUT,  // Scene lookup table RN
+	RID_IHNM_SCRIPT_LUT, // Script lookup table RN
+	RID_IHNM_COMMAND_PANEL,
+	RID_IHNM_DIALOGUE_PANEL
 };
 
 // I Have No Mouth and I Must Scream - Demo version
@@ -192,20 +253,13 @@ static GameFileDescription IHNMCDDE_GameFiles[] = {
 };
 
 static GameFontDescription IHNMCD_GameFonts[] = {
-	{GAME_FONT_MEDIUM, 2},
-	{GAME_FONT_LARGE, 3},
-	{GAME_FONT_SMALL, 4},
-	{GAME_FONT_SMALL2, 5},
-	{GAME_FONT_MEDIUM2, 6},
-	{GAME_FONT_LARGE2, 7},
-	{GAME_FONT_LARGE3, 8}
-};
-
-static GameResourceDescription IHNM_Resources = {
-	RID_IHNM_SCENE_LUT,  // Scene lookup table RN
-	RID_IHNM_SCRIPT_LUT, // Script lookup table RN
-	RID_IHNM_COMMAND_PANEL,
-	RID_IHNM_DIALOGUE_PANEL
+	{2},
+	{3},
+	{4},
+	{5},
+	{6},
+	{7},
+	{8}
 };
 
 static GameSoundInfo IHNM_GameSound = {
@@ -332,8 +386,7 @@ static GameDescription gameDescriptions[] = {
 		GType_ITE,
 		GID_ITE_DEMO_G, // Game id
 		"Inherit the Earth (DOS Demo)", // Game title
-		320, 200, // Logical resolution
-		137, // Scene viewport height
+		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE, // Starting scene number
 		&ITE_Resources,
 		ARRAYSIZE(ITEDEMO_GameFiles), // Game datafiles
@@ -350,8 +403,7 @@ static GameDescription gameDescriptions[] = {
 		GType_ITE,
 		GID_ITE_MACDEMO2,
 		"Inherit the Earth (MAC Demo)",
-		320, 200,
-		137,
+		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFiles),
@@ -368,8 +420,7 @@ static GameDescription gameDescriptions[] = {
 		GType_ITE,
 		GID_ITE_MACDEMO1,
 		"Inherit the Earth (early MAC Demo)",
-		320, 200,
-		137,
+		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFiles),
@@ -386,8 +437,7 @@ static GameDescription gameDescriptions[] = {
 		GType_ITE,
 		GID_ITE_MACCD,
 		"Inherit the Earth (MAC CD)",
-		320, 200,
-		137,
+		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEMACCD_GameFiles),
@@ -405,8 +455,7 @@ static GameDescription gameDescriptions[] = {
 		GType_ITE,
 		GID_ITE_LINDEMO,
 		"Inherit the Earth (Linux Demo)",
-		320, 200,
-		137,
+		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITELINDEMO_GameFiles),
@@ -423,8 +472,7 @@ static GameDescription gameDescriptions[] = {
 		GType_ITE,
 		GID_ITE_WINDEMO2,
 		"Inherit the Earth (Win32 Demo)",
-		320, 200,
-		137,
+		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFiles),
@@ -441,8 +489,7 @@ static GameDescription gameDescriptions[] = {
 		GType_ITE,
 		GID_ITE_WINDEMO1,
 		"Inherit the Earth (early Win32 Demo)",
-		320, 200,
-		137,
+		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFiles),
@@ -460,8 +507,7 @@ static GameDescription gameDescriptions[] = {
 		GType_ITE,
 		GID_ITE_LINCD,
 		"Inherit the Earth (Linux CD Version)",
-		320, 200,
-		137,
+		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITELINCD_GameFiles),
@@ -478,8 +524,7 @@ static GameDescription gameDescriptions[] = {
 		GType_ITE,
 		GID_ITE_CD_G,
 		"Inherit the Earth (DOS CD Version)",
-		320, 200,
-		137,
+		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITECD_GameFiles),
@@ -496,8 +541,7 @@ static GameDescription gameDescriptions[] = {
 		GType_ITE,
 		GID_ITE_CD_DE,
 		"Inherit the Earth (De DOS CD Version)",
-		320, 200,
-		137,
+		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITECD_GameFiles),
@@ -514,8 +558,7 @@ static GameDescription gameDescriptions[] = {
 		GType_ITE,
 		GID_ITE_CD,
 		"Inherit the Earth (DOS/Win32 CD Version)",
-		320, 200,
-		137,
+		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITECD_GameFiles),
@@ -532,8 +575,7 @@ static GameDescription gameDescriptions[] = {
 		GType_ITE,
 		GID_ITE_DISK_DE,
 		"Inherit the Earth (De DOS Floppy)",
-		320, 200,
-		137,
+		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEDISK_GameFiles),
@@ -550,8 +592,7 @@ static GameDescription gameDescriptions[] = {
 		GType_ITE,
 		GID_ITE_DISK_G,
 		"Inherit the Earth (DOS Floppy)",
-		320, 200,
-		137,
+		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEDISK_GameFiles),
@@ -568,8 +609,7 @@ static GameDescription gameDescriptions[] = {
 		GType_IHNM,
 		GID_IHNM_DEMO,
 		"I Have No Mouth and I Must Scream (DOS Demo)",
-		640, 480,
-		7,
+		&IHNM_DisplayInfo,
 		0,
 		&IHNM_Resources,
 		ARRAYSIZE(IHNMDEMO_GameFiles),
@@ -586,8 +626,7 @@ static GameDescription gameDescriptions[] = {
 		GType_IHNM,
 		GID_IHNM_CD,
 		"I Have No Mouth and I Must Scream (DOS)",
-		640, 480,
-		7,
+		&IHNM_DisplayInfo,
 		152,
 		&IHNM_Resources,
 		ARRAYSIZE(IHNMCD_GameFiles),
@@ -604,8 +643,7 @@ static GameDescription gameDescriptions[] = {
 		GType_IHNM,
 		GID_IHNM_CD_DE,
 		"I Have No Mouth and I Must Scream (DE DOS)",
-		640, 480,
-		7,
+		&IHNM_DisplayInfo,
 		152,
 		&IHNM_Resources,
 		ARRAYSIZE(IHNMCDDE_GameFiles),
@@ -630,7 +668,6 @@ int SagaEngine::initGame(void) {
 		warning("Error loading game resource files.");
 		return FAILURE;
 	}
-
 	// Load dialogue file 
 	loadLanguage();
 
@@ -642,7 +679,7 @@ int SagaEngine::loadLanguage(void) {
 	File test_file;
 
 
-	if (_gameType == GType_ITE) {
+	if (getGameType() == GType_ITE) {
 		snprintf(lang_file, MAXPATH, "%s%s.%s", GAME_ITE_LANG_PREFIX, _gameLanguage, GAME_LANG_EXT);
 		if (!test_file.open(lang_file)) {
 			debug(0, "Couldn't open language file %s. Using default (US English)", lang_file);
@@ -825,14 +862,11 @@ int SagaEngine::loadGame(int gameNumber) {
 
 	_gameNumber = gameNumber;
 	_gameDescription = &gameDescriptions[gameNumber];
-
-	_gameId = _gameDescription->gameId;
-	_gameType = _gameDescription->gameType;
-	_features = _gameDescription->features;
+	_gameDisplayInfo = *_gameDescription->gameDisplayInfo;
 
 	gameFileCount = _gameDescription->filesCount;
 	
-	_gameFileContexts = (RSCFILE_CONTEXT **)malloc(gameFileCount * sizeof(*_gameFileContexts));
+	_gameFileContexts = (RSCFILE_CONTEXT **)realloc(_gameFileContexts, gameFileCount * sizeof(*_gameFileContexts));
 	//TODO: on exit - FREE!
 	if (_gameFileContexts == NULL) {
 		error("SagaEngine::loadGame not enough memory");
@@ -852,22 +886,6 @@ int SagaEngine::loadGame(int gameNumber) {
 	}
 
 	return SUCCESS;
-}
-
-int SagaEngine::getPathYOffset() { //fixme: should be in GameDesc
-	if (_gameType == GType_ITE) {
-		return 35;
-	} else {
-		return 35; //fixme i don't know exact value
-	}
-}
-
-int SagaEngine::getStatusYOffset() { //fixme: should be in GameDesc
-	if (_gameType == GType_ITE) {
-		return ITE_STATUS_Y;
-	} else {
-		return IHNM_STATUS_Y;
-	}
 }
 
 } // End of namespace Saga

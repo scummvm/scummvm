@@ -80,8 +80,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	_sceneMax = _sceneCount - 1;
 	_sceneLUT = (int *)malloc(_sceneMax * sizeof(*_sceneLUT));
 	if (_sceneLUT == NULL) {
-		warning("Scene::Scene(): Memory allocation failed");
-		return;
+		error("Scene::Scene(): Memory allocation failed");
 	}
 
 	MemoryReadStreamEndian readS(scene_lut_p, scene_lut_len, IS_BIG_ENDIAN);
@@ -171,7 +170,7 @@ int Scene::startScene() {
 	event.op = EVENT_HIDE;
 	_vm->_events->queue(&event);
 
-	switch (_vm->_gameType) {
+	switch (_vm->getGameType()) {
 	case GType_ITE:
 		ITEStartProc();
 		break;
@@ -310,8 +309,8 @@ int Scene::changeScene(int scene_num) {
 }
 
 void Scene::getSlopes(int &beginSlope, int &endSlope) {
-	beginSlope = _vm->getStatusYOffset() - _desc.beginSlope; 
-	endSlope = _vm->getStatusYOffset() - _desc.endSlope;
+	beginSlope = _vm->getSceneHeight() - _desc.beginSlope; 
+	endSlope = _vm->getSceneHeight() - _desc.endSlope;
 }
 
 int Scene::getBGInfo(SCENE_BGINFO *bginfo) {
@@ -332,8 +331,8 @@ int Scene::getBGInfo(SCENE_BGINFO *bginfo) {
 		x = (_vm->getDisplayWidth() - _bg.w) / 2;
 	}
 
-	if (_bg.h < _vm->getStatusYOffset()) {
-		y = (_vm->getStatusYOffset() - _bg.h) / 2;
+	if (_bg.h < _vm->getSceneHeight()) {
+		y = (_vm->getSceneHeight() - _bg.h) / 2;
 	}
 
 	bginfo->bg_x = x;
@@ -909,7 +908,7 @@ int Scene::draw(SURFACE *dst_s) {
 		_vm->_isoMap->draw(dst_s);
 	} else {
 		bufToSurface(dst_s, buf_info.bg_buf, _vm->getDisplayWidth(),
-						MAX(_vm->getStatusYOffset(), _bg.h), NULL, &bg_pt);
+						MAX(_vm->getSceneHeight(), _bg.h), NULL, &bg_pt);
 	}
 
 	return SUCCESS;
