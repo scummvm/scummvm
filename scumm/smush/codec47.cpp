@@ -28,18 +28,17 @@
 
 #define COPY_4X1_LINE(dst, src)			\
 	do {					\
-		int j;				\
-		for(j=0; j<4; j++)		\
-			(dst)[j] = (src)[j];	\
+		(dst)[0] = (src)[0];	\
+		(dst)[1] = (src)[1];	\
+		(dst)[2] = (src)[2];	\
+		(dst)[3] = (src)[3];	\
 	} while(0)
 
 #define COPY_2X1_LINE(dst, src)			\
 	do {					\
-		int j;				\
-		for(j=0; j<2; j++)		\
-			(dst)[j] = (src)[j];	\
+		(dst)[0] = (src)[0];	\
+		(dst)[1] = (src)[1];	\
 	} while(0)
-
 
 #else /* SCUMM_NEED_ALIGNMENT */
 
@@ -50,6 +49,20 @@
 	*(uint16 *)(dst) = *(uint16 *)(src)
 
 #endif
+
+#define FILL_4X1_LINE(dst, val)			\
+	do {					\
+		(dst)[0] = val;	\
+		(dst)[1] = val;	\
+		(dst)[2] = val;	\
+		(dst)[3] = val;	\
+	} while(0)
+
+#define FILL_2X1_LINE(dst, val)			\
+	do {					\
+		(dst)[0] = val;	\
+		(dst)[1] = val;	\
+	} while(0)
 
 static int32 codec37_table[] = {
        0,       1,       2,       3,       3,       3,
@@ -488,18 +501,16 @@ void Codec47Decoder::level3(byte *d_dst) {
 		_d_src += 4;
 	} else if (code == 0xFE) {
 		byte t = *_d_src++;
-		tmp = t | t << 8;
-		COPY_2X1_LINE(d_dst, (unsigned char*)&tmp);
-		COPY_2X1_LINE(d_dst + _d_pitch, (unsigned char*)&tmp);
+		FILL_2X1_LINE(d_dst, t);
+		FILL_2X1_LINE(d_dst + _d_pitch, t);
 	} else if (code == 0xFC) {
 		tmp = _offset2;
 		COPY_2X1_LINE(d_dst, d_dst + tmp);
 		COPY_2X1_LINE(d_dst + _d_pitch, d_dst + _d_pitch + tmp);
 	} else {
 		byte t = _paramPtr[code];
-		tmp = t | t << 8;
-		COPY_2X1_LINE(d_dst, (unsigned char*)&tmp);
-		COPY_2X1_LINE(d_dst + _d_pitch, (unsigned char*)&tmp);
+		FILL_2X1_LINE(d_dst, t);
+		FILL_2X1_LINE(d_dst + _d_pitch, t);
 	}
 }
 
@@ -526,9 +537,8 @@ void Codec47Decoder::level2(byte *d_dst) {
 		d_dst = tmp_dst;
 	} else if (code == 0xFE) {
 		byte t = *_d_src++;
-		uint32 val = t << 24 | t << 16 | t << 8 | t;
 		for (i = 0; i < 4; i++) {
-			COPY_4X1_LINE(d_dst, (unsigned char*)&val);
+			FILL_4X1_LINE(d_dst, t);
 			d_dst += _d_pitch;
 		}
 	} else if (code == 0xFD) {
@@ -555,9 +565,8 @@ void Codec47Decoder::level2(byte *d_dst) {
 		}
 	} else {
 		byte t = _paramPtr[code];
-		uint32 val = t << 24 | t << 16 | t << 8 | t;
 		for (i = 0; i < 4; i++) {
-			COPY_4X1_LINE(d_dst, (unsigned char*)&val);
+			FILL_4X1_LINE(d_dst, t);
 			d_dst += _d_pitch;
 		}
 	}
@@ -587,10 +596,9 @@ void Codec47Decoder::level1(byte *d_dst) {
 		d_dst = tmp_dst;
 	} else if (code == 0xFE) {
 		byte t = *_d_src++;
-		int32 val = t << 24 | t << 16 | t << 8 | t;
 		for (i = 0; i < 8; i++) {
-			COPY_4X1_LINE(d_dst, (unsigned char*)&val);
-			COPY_4X1_LINE(d_dst + 4, (unsigned char*)&val);
+			FILL_4X1_LINE(d_dst, t);
+			FILL_4X1_LINE(d_dst + 4, t);
 			d_dst += _d_pitch;
 		}
 	} else if (code == 0xFD) {
@@ -619,10 +627,9 @@ void Codec47Decoder::level1(byte *d_dst) {
 		}
 	} else {
 		byte t = _paramPtr[code];
-		int32 val = t << 24 | t << 16 | t << 8 | t;
 		for (i = 0; i < 8; i++) {
-			COPY_4X1_LINE(d_dst, (unsigned char*)&val);
-			COPY_4X1_LINE(d_dst + 4, (unsigned char*)&val);
+			FILL_4X1_LINE(d_dst, t);
+			FILL_4X1_LINE(d_dst + 4, t);
 			d_dst += _d_pitch;
 		}
 	}
