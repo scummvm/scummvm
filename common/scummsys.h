@@ -359,6 +359,8 @@ const bool true(1), false(0);
 
 
 /* Initialized operator new */
+// FIXME - get rid of these new/delete overrides!!! They conflict with the
+// Standard C++ library, and they are only there to support lazy programmers anyway.
 void * operator new(size_t size);
 void operator delete(void *ptr);
 
