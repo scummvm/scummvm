@@ -1,3 +1,4 @@
+
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001-2004 The ScummVM project
@@ -3124,7 +3125,7 @@ void ScummEngine_v6::o6_setBoxSet() {
 	if (!boxm)
 		error("ScummEngine_v6::o6_setBoxSet: Can't find mboxes for set %d", arg);
 
-	mboxSize = READ_BE_UINT32(boxd + 4);
+	mboxSize = READ_BE_UINT32(boxm + 4);
 	matrix = createResource(rtMatrix, 1, mboxSize);
 
 	assert(matrix);
