@@ -20,6 +20,7 @@
  */
 
 #include "sky/music/gmmusic.h"
+#include "sky/sky.h"
 
 void SkyGmMusic::passTimerFunc(void *param) {
 
@@ -69,8 +70,13 @@ void SkyGmMusic::timerCall(void) {
 
 void SkyGmMusic::setupPointers(void) {
 
-	_musicDataLoc = (_musicData[0x7DD] << 8) | _musicData[0x7DC];
-	_sysExSequence = ((_musicData[0x7E1] << 8) | _musicData[0x7E0]) + _musicData;
+	if (SkyState::_systemVars.gameVersion == 109) {
+		_musicDataLoc = (_musicData[0x79C] << 8) | _musicData[0x79B];
+		_sysExSequence = _musicData + 0x1EF2;
+	} else {
+		_musicDataLoc = (_musicData[0x7DD] << 8) | _musicData[0x7DC];
+		_sysExSequence = ((_musicData[0x7E1] << 8) | _musicData[0x7E0]) + _musicData;
+	}
 }
 
 void SkyGmMusic::setupChannels(uint8 *channelData) {
