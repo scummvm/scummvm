@@ -1688,6 +1688,8 @@ void ScummEngine_v6::o6_roomOps() {
 		_saveLoadCompatible = true;
 		_saveLoadSlot = pop();
 		_saveLoadFlag = pop();
+		if (_gameId == GID_TENTACLE)
+			_saveSound = (_saveLoadSlot != 0);
 		break;
 
 	case 181:		// SO_ROOM_FADE
