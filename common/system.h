@@ -169,6 +169,10 @@ public:
 	virtual void grab_overlay(int16 *buf, int pitch) = 0;
 	virtual void copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h) = 0;
 
+	// Low-level graphics access
+	virtual int16 get_height() {return 200;}
+	virtual int16 get_width() {return 320;}
+
 	// Methods that convert RBG to/from colors suitable for the overlay.
 	// Default implementation assumes 565 mode.
 	virtual int16 RBGToColor(uint8 r, uint8 g, uint8 b)
