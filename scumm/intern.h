@@ -209,6 +209,8 @@ protected:
 public:
 	ScummEngine_v2(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v3(detector, syst, gs, md5sum) {}
 
+	virtual void scummInit();
+
 protected:
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);
@@ -231,6 +233,8 @@ protected:
 	
 	void resetSentence();
 	void setUserState(byte state);
+
+	void initV2MouseOver();
 
 	/* Version 2 script opcodes */
 	void o2_actorFromPos();
@@ -566,6 +570,8 @@ protected:
 	
 public:
 	ScummEngine_v60he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v6(detector, syst, gs, md5sum) {}
+
+	virtual void scummInit();
 
 protected:
 	virtual void setupOpcodes();

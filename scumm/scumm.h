@@ -801,7 +801,7 @@ protected:
 	void redrawVerbs();
 	void checkExecVerbs();
 	void verbMouseOver(int verb);
-	int checkMouseOver(int x, int y) const;
+	int findVerbAtPos(int x, int y) const;
 	void drawVerb(int verb, int mode);
 	void runInputScript(int a, int cmd, int mode);
 	void restoreVerbBG(int verb);
@@ -815,7 +815,6 @@ protected:
 	V2MouseoverBox v2_mouseover_boxes[7];
 	int8 v2_mouseover_box;
 
-	void initV2MouseOver();
 	void checkV2MouseOver(Common::Point pos);
 	void checkV2Inventory(int x, int y);
 	void redrawV2Inventory();

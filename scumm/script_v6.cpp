@@ -1478,7 +1478,7 @@ void ScummEngine_v6::o6_getInventoryCount() {
 void ScummEngine_v6::o6_getVerbFromXY() {
 	int y = pop();
 	int x = pop();
-	int over = checkMouseOver(x, y);
+	int over = findVerbAtPos(x, y);
 	if (over)
 		over = _verbs[over].verbid;
 	push(over);

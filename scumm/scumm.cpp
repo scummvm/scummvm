@@ -1152,15 +1152,6 @@ void ScummEngine::scummInit() {
 			setupEGAPalette();
 	}
 
-	if (_version <= 2) {
-		initV2MouseOver();
-
-		// Seems in V2 there was only a single room effect (iris),
-		// so we set that here.
-		_switchRoomEffect2 = 1;
-		_switchRoomEffect = 5;
-	}
-	
 	if (_version > 3 && _version < 8)
 		loadCharset(1);
 	
@@ -1286,14 +1277,18 @@ void ScummEngine::scummInit() {
 	for (i = 0; i < 512; i++)
 		_keyDownMap[i] = false;
 
-	if (_heversion >= 70) {
-		if (_wizPolygons)
-			free (_wizPolygons);
-
-		_wizPolygons = (WizPolygon *)calloc(_wizNumPolygons, sizeof(WizPolygon));
-	}
-
 	_lastSaveTime = _system->get_msecs();
+}
+
+void ScummEngine_v2::scummInit() {
+	ScummEngine::scummInit();
+
+	initV2MouseOver();
+
+	// Seems in V2 there was only a single room effect (iris),
+	// so we set that here.
+	_switchRoomEffect2 = 1;
+	_switchRoomEffect = 5;
 }
 
 void ScummEngine_v6::scummInit() {
@@ -1310,6 +1305,16 @@ void ScummEngine_v6::scummInit() {
 	// setCursorHotspot(8, 7);
 	if (_gameId == GID_FUNPACK)
 		setCursorHotspot(16, 16);
+}
+
+void ScummEngine_v60he::scummInit() {
+	ScummEngine::scummInit();
+
+	if (_heversion >= 70) {
+		free(_wizPolygons);
+
+		_wizPolygons = (WizPolygon *)calloc(_wizNumPolygons, sizeof(WizPolygon));
+	}
 }
 
 void ScummEngine::setupMusic(int midi) {
@@ -1662,7 +1667,7 @@ load_game:
 		}
 
 		if (_cursor.state > 0)
-			verbMouseOver(checkMouseOver(_mouse.x, _mouse.y));
+			verbMouseOver(findVerbAtPos(_mouse.x, _mouse.y));
 
 		if (_version <= 2) {
 			if (oldEgo != VAR(VAR_EGO)) {

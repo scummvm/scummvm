@@ -22,6 +22,7 @@
 
 #include "stdafx.h"
 #include "scumm/charset.h"
+#include "scumm/intern.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
@@ -35,7 +36,7 @@ enum {
 	kSentenceLine = 6
 };
 
-void ScummEngine::initV2MouseOver() {
+void ScummEngine_v2::initV2MouseOver() {
 	int i;
 	int arrow_color, color, hi_color;
 
@@ -266,7 +267,7 @@ void ScummEngine::redrawVerbs() {
 
 	int i, verb = 0;
 	if (_cursor.state > 0)
-		verb = checkMouseOver(_mouse.x, _mouse.y);
+		verb = findVerbAtPos(_mouse.x, _mouse.y);
 
 	for (i = _numVerbs-1; i >= 0; i--) {
 		if (i == verb && _verbs[verb].hicolor)
@@ -308,7 +309,7 @@ void ScummEngine::checkExecVerbs() {
 			// Click into V2 inventory
 			checkV2Inventory(_mouse.x, _mouse.y);
 		} else {
-			over = checkMouseOver(_mouse.x, _mouse.y);
+			over = findVerbAtPos(_mouse.x, _mouse.y);
 			if (over != 0) {
 				// Verb was clicked
 				runInputScript(1, _verbs[over].verbid, code);
@@ -342,7 +343,7 @@ void ScummEngine::verbMouseOver(int verb) {
 	}
 }
 
-int ScummEngine::checkMouseOver(int x, int y) const {
+int ScummEngine::findVerbAtPos(int x, int y) const {
 	if (!_numVerbs)
 		return 0;
 
