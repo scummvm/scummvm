@@ -21,8 +21,8 @@
 
 #if defined(_MSC_VER)
 
-#pragma warning (disable: 4244)
-#pragma warning (disable: 4101)
+//#pragma warning (disable: 4244)
+//#pragma warning (disable: 4101)
 
 #define scumm_stricmp stricmp
 

@@ -321,6 +321,10 @@ SOURCE=.\sys.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\vars.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\verbs.cpp
 
 !IF  "$(CFG)" == "scummvm - Win32 Release"
