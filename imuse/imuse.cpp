@@ -177,16 +177,6 @@ void Imuse::callback() {
 					mixer_size -= result;
 					assert(mixer_size >= 0);
 				} while (mixer_size != 0);
-			} else if (track->stream2) {
-				if (_vm->_mixer->isReady()) {
-					if (!track->started) {
-						track->started = true;
-						g->_mixer->playInputStream(&track->handle, track->stream2, false, -1, vol, pan, false);
-					} else {
-						g->_mixer->setChannelVolume(track->handle, vol);
-						g->_mixer->setChannelBalance(track->handle, pan);
-					}
-				}
 			}
 		}
 	}
