@@ -2147,6 +2147,9 @@ void Scumm::destroy() {
 
 	if (_roomStrips)
 		free(_roomStrips);
+
+	if (_languageIndex)
+		free(_languageIndex);
 }
 
 //
