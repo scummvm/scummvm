@@ -1846,19 +1846,13 @@ void ScummEngine_v6::o6_actorOps() {
 		break;
 	case 95:		// SO_IGNORE_BOXES
 		a->ignoreBoxes = 1;
-		if (_version >= 7)
-			a->forceClip = 100;
-		else
-			a->forceClip = 0;
+		a->forceClip = (_version >= 7) ? 100 : 0;
 		if (a->isInCurrentRoom())
 			a->putActor(a->_pos.x, a->_pos.y, a->room);
 		break;
 	case 96:		// SO_FOLLOW_BOXES
 		a->ignoreBoxes = 0;
-		if (_version >= 7)
-			a->forceClip = 100;
-		else
-			a->forceClip = 0;
+		a->forceClip = (_version >= 7) ? 100 : 0;
 		if (a->isInCurrentRoom())
 			a->putActor(a->_pos.x, a->_pos.y, a->room);
 		break;

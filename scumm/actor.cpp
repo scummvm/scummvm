@@ -102,7 +102,7 @@ void Actor::initActor(int mode) {
 	animSpeed = 0;
 
 	ignoreBoxes = false;
-	forceClip = 0;
+	forceClip = (_vm->_version >= 7) ? 100 : 0;
 	ignoreTurns = false;
 	flip = 0;
 
