@@ -45,6 +45,7 @@ public:
 	void queueTuneList(int16 tuneList);
 	bool queueSong(uint16 songNum);
 	void queueClear();
+	void setPassThrough(bool b)		{ _passThrough = b; }
 	
 	//MidiDriver interface implementation
 	int open();
@@ -77,6 +78,7 @@ protected:
 	MidiChannel *_channel[16];
 	byte _channelVolume[16];
 	bool _nativeMT32;
+	bool _passThrough;
 	
 	Common::RandomSource _rnd;
 				
@@ -104,6 +106,7 @@ public:
 	void queueTuneList(int16 tuneList)	{ _player->queueTuneList(tuneList); }
 	void playMusic()			{ _player->playMusic(); }
 	void stopSong()				{ _player->stopMusic(); }
+	void setPassThrough(bool b)		{ _player->setPassThrough(b); }
 
 	void toggleVChange();	
 	void setVolume(int vol)			{ _player->setVolume(vol); }

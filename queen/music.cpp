@@ -42,7 +42,7 @@ static const byte mt32_to_gm[128] = {
 	 47, 117, 127, 118, 118, 116, 115, 119, 115, 112,  55, 124, 123,   0,  14, 117  // 7x
 };
 
-	MusicPlayer::MusicPlayer(MidiDriver *driver, byte *data, uint32 size) : _driver(driver), _isPlaying(false), _looping(false), _randomLoop(false), _masterVolume(192), _queuePos(0), _musicData(data), _musicDataSize(size) {
+	MusicPlayer::MusicPlayer(MidiDriver *driver, byte *data, uint32 size) : _driver(driver), _isPlaying(false), _looping(false), _randomLoop(false), _masterVolume(192), _queuePos(0), _musicData(data), _musicDataSize(size), _passThrough(false) {
 		memset(_channel, 0, sizeof(_channel));
 		queueClear();
 		_lastSong = _currentSong = 0;
@@ -123,6 +123,11 @@ static const byte mt32_to_gm[128] = {
 	}
 	
 	void MusicPlayer::send(uint32 b) {
+		if (_passThrough) {
+			_driver->send(b);
+			return;
+		}
+
 		byte channel = (byte)(b & 0x0F);
 		if ((b & 0xFFF0) == 0x07B0) {
 			// Adjust volume changes by master volume
