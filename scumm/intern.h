@@ -92,9 +92,11 @@ protected:
 	void o5_getObjectOwner();
 	void o5_getObjectState();
 	void o5_getRandomNr();
-	void o5_isScriptRunning();
+	void o5_getStringWidth();
 	void o5_getVerbEntrypoint();
 	void o5_ifClassOfIs();
+	void o5_ifNotState();
+	void o5_ifState();
 	void o5_increment();
 	void o5_isActorInBox();
 	void o5_isEqual();
@@ -102,8 +104,7 @@ protected:
 	void o5_isGreaterEqual();
 	void o5_isLess();
 	void o5_isNotEqual();
-	void o5_ifState();
-	void o5_ifNotState();
+	void o5_isScriptRunning();
 	void o5_isSoundRunning();
 	void o5_jumpRelative();
 	void o5_lessOrEqual();
@@ -114,10 +115,12 @@ protected:
 	void o5_move();
 	void o5_multiply();
 	void o5_notEqualZero();
+	void o5_oldRoomEffect();
 	void o5_or();
 	void o5_overRide();
 	void o5_panCameraTo();
 	void o5_pickupObject();
+	void o5_pickupObjectOld();
 	void o5_print();
 	void o5_printEgo();
 	void o5_pseudoRoom();
@@ -127,6 +130,7 @@ protected:
 	void o5_quitPauseRestart();
 	void o5_resourceRoutines();
 	void o5_roomOps();
+	void o5_saveLoadVars();
 	void o5_saveRestoreVerbs();
 	void o5_setCameraAt();
 	void o5_setClass();
@@ -151,8 +155,6 @@ protected:
 	void o5_walkActorTo();
 	void o5_walkActorToActor();
 	void o5_walkActorToObject();
-	void o5_oldRoomEffect();
-	void o5_pickupObjectOld();
 };
 
 // FIXME - maybe we should move the opcodes from v5 to v3, and change the inheritance 

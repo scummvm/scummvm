@@ -161,7 +161,7 @@ void Scumm_v5::setupOpcodes() {
 		OPCODE(o5_loadRoomWithEgo),
 		OPCODE(o5_pickupObject),
 		OPCODE(o5_getClosestObjActor),
-		OPCODE(o5_dummy),
+		OPCODE(o5_getStringWidth),
 		/* 68 */
 		OPCODE(o5_isScriptRunning),
 		OPCODE(o5_setOwnerOf),
@@ -241,7 +241,7 @@ void Scumm_v5::setupOpcodes() {
 		OPCODE(o5_loadRoomWithEgo),
 		OPCODE(o5_pickupObject),
 		OPCODE(o5_setVarRange),
-		OPCODE(o5_dummy),
+		OPCODE(o5_saveLoadVars),
 		/* A8 */
 		OPCODE(o5_notEqualZero),
 		OPCODE(o5_setOwnerOf),
@@ -321,7 +321,7 @@ void Scumm_v5::setupOpcodes() {
 		OPCODE(o5_loadRoomWithEgo),
 		OPCODE(o5_pickupObject),
 		OPCODE(o5_getClosestObjActor),
-		OPCODE(o5_dummy),
+		OPCODE(o5_getStringWidth),
 		/* E8 */
 		OPCODE(o5_isScriptRunning),
 		OPCODE(o5_setOwnerOf),
@@ -792,8 +792,26 @@ void Scumm_v5::o5_drawObject() {
 	putState(obj, state);
 }
 
+void Scumm_v5::o5_getStringWidth() {
+	// TODO - not sure if this is correct... needs testing
+	int a = getVarOrDirectByte(0x80);
+	byte *ptr = getResourceAddress(rtString, a);
+	int width = 0;
+	
+	if (ptr)
+		width = _charset->getStringWidth(0, ptr);
+	
+	setResult(width);
+	warning("o5_getStringWidth, result %d\n", width);
+}
+
+void Scumm_v5::o5_saveLoadVars() {
+	// TODO
+	error("o5_saveLoadVars not yet implemented");
+}
+
 void Scumm_v5::o5_dummy() {
-	/* nothing */
+	warning("o5_dummy invoked (opcode %d)", _opcode);
 }
 
 void Scumm_v5::o5_expression() {
@@ -1811,6 +1829,8 @@ void Scumm_v5::o5_roomOps() {
 		checkRange(16, 1, a, "o5_roomOps: 16: color cycle out of range (%d)");
 		_colorCycle[a - 1].delay = (b != 0) ? 0x4000 / (b * 0x4C) : 0;
 		break;
+	default:
+		error("o5_roomOps: unknown subopcode %d\n", _opcode & 0x1F);
 	}
 }
 
