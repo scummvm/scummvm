@@ -154,13 +154,12 @@ void Logic::initialise() {
 		
 		for (j = 1; j <= _areaMax[i]; j++)
 			for (k = 0; k < 8; k++) {
-				assert(j < 12);
+				assert(j < 11);
 				_area[i][j][k] = READ_BE_UINT16(ptr);
 				ptr += 2;
 			}
-				
-	}	
-	
+	}
+
 	_objectBox = new Box[_numObjects + 1];
 	for (i = 1; i <= _numObjects; i++) {
 		_objectBox[i].x1 = READ_BE_UINT16(ptr);
@@ -172,7 +171,7 @@ void Logic::initialise() {
 		_objectBox[i].y2 = READ_BE_UINT16(ptr);
 		ptr += 2;
 	}
-		
+
 	//Walk OFF Data
 
 	_numWalkOffs = READ_BE_UINT16(ptr);
