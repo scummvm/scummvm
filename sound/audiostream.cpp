@@ -132,7 +132,7 @@ public:
 
 	int16 read();
 	bool isStereo() const		{ return stereo; }
-	bool eos() const			{ return _finalized; }
+	bool eos() const			{ return _finalized && eosIntern(); }
 
 	int getRate() const			{ return _rate; }
 
@@ -143,7 +143,7 @@ public:
 
 template<bool stereo, bool is16Bit, bool isUnsigned>
 WrappedMemoryStream<stereo, is16Bit, isUnsigned>::WrappedMemoryStream(int rate, uint bufferSize)
- : _rate(rate) {
+ : _finalized(false), _rate(rate) {
 
 	// Verify the buffer size is sane
 	if (is16Bit && stereo)
@@ -154,8 +154,6 @@ WrappedMemoryStream<stereo, is16Bit, isUnsigned>::WrappedMemoryStream(int rate, 
 	_bufferStart = (byte *)malloc(bufferSize);
 	_pos = _end = _bufferStart;
 	_bufferEnd = _bufferStart + bufferSize;
-	
-	_finalized = false;
 }
 
 template<bool stereo, bool is16Bit, bool isUnsigned>
