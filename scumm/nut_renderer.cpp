@@ -327,7 +327,7 @@ void NutRenderer::drawChar(byte *dst, byte *mask, byte c, int x, int y, byte col
 	
 	for (int ty = minY; ty < height; ty++) {
 		maskmask = revBitMask[(x + minX) & 7];
-		maskpos = minX;
+		maskpos = (x%8 + minX) / 8;
 		for (int tx = minX; tx < width; tx++) {
 			if (src[tx] != 0) {
 				dst[tx] = color;
