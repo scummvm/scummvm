@@ -2906,7 +2906,7 @@ void Scumm_v6::o6_stopTalking() {
 }
 
 void Scumm_v6::o6_openFile() {
-	int a, b, len;
+	int a, len;
 	a = pop();
 	len = resStrLen(_scriptPointer);
 	warning("stub o6_openFile(\"%s\", %d)", _scriptPointer, a);
