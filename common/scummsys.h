@@ -153,7 +153,6 @@ typedef signed long int32;
 #include "macos.h"
 
 #define scumm_stricmp strcmp
-inline char* strdup(char *buf) {return (char*)buf;};
 
 #define CHECK_HEAP
 #define SCUMM_BIG_ENDIAN
