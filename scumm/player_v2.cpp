@@ -556,7 +556,7 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 	current_channel = channel;
 
 	if (channel->d.next_cmd == 0)
-		return;
+		goto check_stopped;
 	script_ptr = &_current_data[channel->d.next_cmd];
 
 	for (;;) {
@@ -597,7 +597,7 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 
 			case 0xfa: // clear current channel
 				if (opcode == 0xfa)
-					debug(9, "clear channel");
+					debug(7, "clear channel");
 				channel->d.next_cmd   = 0;
 				channel->d.base_freq  = 0;
 				channel->d.freq_delta = 0;
@@ -669,14 +669,20 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 					note = *script_ptr++;
 					is_last_note = note & 0x80;
 					note &= 0x7f;
-					if (note == 0x7f) 
+					if (note == 0x7f) {
+						debug(8, "channels[%d]: pause %d", 
+							  channel - _channels, channel->d.time_left);
 						goto end;
+					}
 				} else {
 
 					channel->d.time_left = ((opcode & 7) << 8) | *script_ptr++;
 
-					if ((opcode & 0x10))
+					if ((opcode & 0x10)) {
+						debug(8, "channels[%d]: pause %d", 
+							  channel - _channels, channel->d.time_left);
 						goto end;
+					}
 
 					is_last_note = 0;
 					note = (*script_ptr++) & 0x7f;
@@ -716,23 +722,23 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 
 end:
 	channel = current_channel;
-	if (channel->d.time_left)
-		goto finish;
+	if (channel->d.time_left) {
+		channel->d.next_cmd = script_ptr - _current_data;
+		return;
+	}
 
 	channel->d.next_cmd = 0;
+
+check_stopped:
 	int i;
 	for (i = 0; i < 4; i++) {
 		if (_channels[i].d.time_left)
-			goto finish;
+			return;
 	}
 
 	_current_nr = 0;
 	_current_data = 0;
 	chainNextSound();
-	return;
-
-finish:
-	channel->d.next_cmd = script_ptr - _current_data;
 	return;
 }
 
@@ -794,6 +800,11 @@ void Player_V2::do_mix(int16 *data, uint len) {
 	uint step;
 
 	do {
+		if (!(_next_tick >> FIXP_SHIFT)) {
+			_next_tick += _tick_len;
+			nextTick();
+		}
+
 		step = len;
 		if (step > (_next_tick >> FIXP_SHIFT))
 			step = (_next_tick >> FIXP_SHIFT);
@@ -803,11 +814,6 @@ void Player_V2::do_mix(int16 *data, uint len) {
 			generateSpkSamples(data, step);
 		data += 2 * step;
 		_next_tick -= step << FIXP_SHIFT;
-
-		if (!(_next_tick >> FIXP_SHIFT)) {
-			_next_tick += _tick_len;
-			nextTick();
-		}
 	} while (len -= step);
 
 	mutex_down();
