@@ -117,8 +117,6 @@ public:
 
 	void startVoice(int soundId, AudioStream *input)
 		{ debug(5, "startVoiceStream(%d)", soundId); startSound(soundId, NULL, 0, IMUSE_VOICE, input, false, 0, 127); }
-	void startVoice(int soundId)
-		{ debug(5, "startVoiceBundle(%d)", soundId); startSound(soundId, NULL, IMUSE_BUNDLE, IMUSE_VOICE, NULL, false, 0, 127); }
 	void startVoice(int soundId, const char *soundName)
 		{ debug(5, "startVoiceBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_VOICE, NULL, false, 0, 127); }
 	void startMusic(int soundId, bool sequence, int volume)
