@@ -23,6 +23,7 @@
 
 #include "scummsys.h"
 
+class Bundle;
 class DigitalTrackInfo;
 class File;
 class Scumm;
@@ -75,9 +76,13 @@ protected:
 	int num_sound_effects;		// SO3 MP3 compressed audio
 	bool _vorbis_mode;	// true if using SOG, false if using SO3
 
-	#define CACHE_TRACKS 10
+	enum {
+		CACHE_TRACKS = 10
+	};
 
 	/* used for mp3 CD music */
+
+	int _current_cd_sound;
 
 	int _cached_tracks[CACHE_TRACKS];
 	int _dig_cd_index;
@@ -99,6 +104,8 @@ public:
 	bool _soundsPaused;
 	int16 _sound_volume_master, _sound_volume_music, _sound_volume_sfx;
 	byte _sfxMode;
+
+	Bundle *_bundle;	// FIXME: should be protected but is used by Scumm::askForDisk
 
 public:
 	Sound(Scumm *parent);

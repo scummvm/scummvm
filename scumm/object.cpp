@@ -50,8 +50,7 @@ struct BompHeader {			/* Bomp header */
 #endif
 
 
-bool Scumm::getClass(int obj, int cls)
-{
+bool Scumm::getClass(int obj, int cls) const {
 	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in getClass");
 	cls &= 0x7F;
 	checkRange(32, 1, cls, "Class %d out of range in getClass");
@@ -78,8 +77,7 @@ bool Scumm::getClass(int obj, int cls)
 	return (_classData[obj] & (1 << (cls - 1))) != 0;
 }
 
-void Scumm::putClass(int obj, int cls, bool set)
-{
+void Scumm::putClass(int obj, int cls, bool set) {
 	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in putClass");
 	cls &= 0x7F;
 	checkRange(32, 1, cls, "Class %d out of range in putClass");
@@ -119,7 +117,7 @@ void Scumm::putClass(int obj, int cls, bool set)
 	}
 }
 
-int Scumm::getOwner(int obj) {
+int Scumm::getOwner(int obj) const {
 	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in getOwner");
 	return _objectOwnerTable[obj];
 }
@@ -160,12 +158,12 @@ void Scumm::putState(int obj, int state) {
 	_objectStateTable[obj] = state;
 }
 
-int Scumm::getObjectRoom(int obj) {
+int Scumm::getObjectRoom(int obj) const {
 	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in getObjectRoom");
 	return _objectRoomTable[obj];
 }
 
-int Scumm::getObjectIndex(int object) {
+int Scumm::getObjectIndex(int object) const {
 	int i;
 
 	if (object < 1)
@@ -178,7 +176,7 @@ int Scumm::getObjectIndex(int object) {
 	return -1;
 }
 
-int Scumm::whereIsObject(int object) {
+int Scumm::whereIsObject(int object) const {
 	int i;
 
 	if (object >= _numGlobalObjects)
@@ -941,7 +939,7 @@ const byte *Scumm::getObjOrActorName(int obj) {
 	return findResourceData(MKID('OBNA'), objptr);
 }
 
-uint32 Scumm::getOBCDOffs(int object) {
+uint32 Scumm::getOBCDOffs(int object) const {
 	int i;
 
 	if (_objectOwnerTable[object] != OF_OWNER_ROOM)

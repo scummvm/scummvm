@@ -93,6 +93,9 @@ Sound::Sound(Scumm *parent) {
 	_musicDisk = 0;
 	_talkChannel = -1;
 	_current_cache = 0;
+	_current_cd_sound = 0;
+
+	_bundle = new Bundle();
 }
 
 Sound::~Sound() {
@@ -100,6 +103,7 @@ Sound::~Sound() {
 		_sfxFile->close();
 		delete _sfxFile;
 	}
+	delete _bundle;
 }
 
 void Sound::addSoundToQueue(int sound) {
@@ -195,7 +199,7 @@ void Sound::playSound(int soundID) {
 			playCDTrack(ptr[16], ptr[17] == 0xff ? -1 : ptr[17],
 							(ptr[18] * 60 + ptr[19]) * 75 + ptr[20], 0);
 
-			_scumm->current_cd_sound = soundID;
+			_current_cd_sound = soundID;
 			return;
 		}
 		// Support for SFX in Monkey Island 1, Mac version
@@ -368,12 +372,12 @@ void Sound::playSound(int soundID) {
 			if (size == 30) {
 				int track = *(ptr + 0x16);
 
-				if (track == _scumm->current_cd_sound)
+				if (track == _current_cd_sound)
 					if (pollCD() == 1)
 						return;
 
 				playCDTrack(track, 1, 0, 0);
-				_scumm->current_cd_sound = track;
+				_current_cd_sound = track;
 				return;
 			}
 	
@@ -590,7 +594,7 @@ bool Sound::isMouthSyncOff(uint pos) {
 int Sound::isSoundRunning(int sound) {
 	int i;
 
-	if (sound == _scumm->current_cd_sound)
+	if (sound == _current_cd_sound)
 		return pollCD();
 	
 	if (_scumm->_features & GF_HUMONGOUS) {
@@ -634,7 +638,7 @@ int Sound::isSoundRunning(int sound) {
 bool Sound::isSoundActive(int sound) {
 	int i;
 
-	if (sound == _scumm->current_cd_sound)
+	if (sound == _current_cd_sound)
 		return pollCD() != 0;
 
 	i = _soundQue2Pos;
@@ -681,8 +685,8 @@ bool Sound::isSoundInQueue(int sound) {
 void Sound::stopSound(int a) {
 	int i;
 
-	if (a != 0 && a == _scumm->current_cd_sound) {
-		_scumm->current_cd_sound = 0;
+	if (a != 0 && a == _current_cd_sound) {
+		_current_cd_sound = 0;
 		stopCD();
 	}
 
@@ -700,8 +704,8 @@ void Sound::stopSound(int a) {
 }
 
 void Sound::stopAllSounds() {
-	if (_scumm->current_cd_sound != 0) {
-		_scumm->current_cd_sound = 0;
+	if (_current_cd_sound != 0) {
+		_current_cd_sound = 0;
 		stopCD();
 	}
 
@@ -1007,10 +1011,10 @@ void Sound::playBundleMusic(const char *song) {
 			char bunfile[20];
 			sprintf(bunfile, "musdisk%d.bun", _scumm->VAR(_scumm->VAR_CURRENTDISK));
 			if (_musicDisk != _scumm->VAR(_scumm->VAR_CURRENTDISK)) 
-				_scumm->_bundle->closeMusicFile();
+				_bundle->closeMusicFile();
 
-			if (_scumm->_bundle->openMusicFile(bunfile, _scumm->getGameDataPath()) == false) {
-				if (_scumm->_bundle->openMusicFile("music.bun", _scumm->getGameDataPath()) == false) {
+			if (_bundle->openMusicFile(bunfile, _scumm->getGameDataPath()) == false) {
+				if (_bundle->openMusicFile("music.bun", _scumm->getGameDataPath()) == false) {
 					_outputMixerSize = 0;
 					return;
 				}
@@ -1019,7 +1023,7 @@ void Sound::playBundleMusic(const char *song) {
 			_musicDisk = (byte)_scumm->VAR(_scumm->VAR_CURRENTDISK);
 			_outputMixerSize = 88140; // ((22050 * 2 * 2)
 		} else {
-			if (_scumm->_bundle->openMusicFile("digmusic.bun", _scumm->getGameDataPath()) == false)
+			if (_bundle->openMusicFile("digmusic.bun", _scumm->getGameDataPath()) == false)
 				return;
 		}
 		_musicBundleBufFinal = (byte *)malloc(_outputMixerSize);
@@ -1032,7 +1036,7 @@ void Sound::playBundleMusic(const char *song) {
 		_musicBundleToBeRemoved = false;
 		_musicBundleToBeChanged = false;
 		_bundleMusicTrack = -1;
-		_numberSamplesBundleMusic = _scumm->_bundle->getNumberOfMusicSamplesByName(song);
+		_numberSamplesBundleMusic = _bundle->getNumberOfMusicSamplesByName(song);
 		_nameBundleMusic = song;
 		_scumm->_timer->installProcedure(&music_handler, 1000000);
 		return;
@@ -1081,7 +1085,7 @@ void Sound::bundleMusicHandler(Scumm *scumm) {
 
 	if (_musicBundleToBeChanged == true) {
 		_nameBundleMusic = _newNameBundleMusic;
-		_numberSamplesBundleMusic = _scumm->_bundle->getNumberOfMusicSamplesByName(_nameBundleMusic);
+		_numberSamplesBundleMusic = _bundle->getNumberOfMusicSamplesByName(_nameBundleMusic);
 		_currentSampleBundleMusic = 0;
 		_offsetSampleBundleMusic = 0;
 		_offsetBufBundleMusic = 0;
@@ -1092,7 +1096,7 @@ void Sound::bundleMusicHandler(Scumm *scumm) {
 	ptr = _musicBundleBufOutput;
 
 	for (k = 0, l = _currentSampleBundleMusic; l < num; k++) {
-		length = _scumm->_bundle->decompressMusicSampleByName(_nameBundleMusic, l, (_musicBundleBufOutput + ((k * 0x2000) + _offsetBufBundleMusic)));
+		length = _bundle->decompressMusicSampleByName(_nameBundleMusic, l, (_musicBundleBufOutput + ((k * 0x2000) + _offsetBufBundleMusic)));
 		_offsetSampleBundleMusic += length;
 
 		if (l == 0) {
@@ -1196,15 +1200,15 @@ int Sound::playBundleSound(char *sound) {
 		char voxfile[20];
 		sprintf(voxfile, "voxdisk%d.bun", _scumm->VAR(_scumm->VAR_CURRENTDISK));
 		if (_voiceDisk != _scumm->VAR(_scumm->VAR_CURRENTDISK))
-			_scumm->_bundle->closeVoiceFile();
+			_bundle->closeVoiceFile();
 
-		result = _scumm->_bundle->openVoiceFile(voxfile, _scumm->getGameDataPath());
+		result = _bundle->openVoiceFile(voxfile, _scumm->getGameDataPath());
 
 		if (result == false) 
-			result = _scumm->_bundle->openVoiceFile("voice.bun", _scumm->getGameDataPath());
+			result = _bundle->openVoiceFile("voice.bun", _scumm->getGameDataPath());
 		_voiceDisk = (byte)_scumm->VAR(_scumm->VAR_CURRENTDISK);
 	} else if (_scumm->_gameId == GID_DIG)
-		result = _scumm->_bundle->openVoiceFile("digvoice.bun", _scumm->getGameDataPath());
+		result = _bundle->openVoiceFile("digvoice.bun", _scumm->getGameDataPath());
 	else
 		error("Don't know which bundle file to load");
 
@@ -1220,9 +1224,9 @@ int Sound::playBundleSound(char *sound) {
 		strcpy(name, sound);
 		if (_scumm->_maxRooms != 6) // CMI demo does not have .IMX for voice but does for music...
 			strcat(name, ".IMX");
-		output_size = _scumm->_bundle->decompressVoiceSampleByName(name, &ptr);
+		output_size = _bundle->decompressVoiceSampleByName(name, &ptr);
 	} else {
-		output_size = _scumm->_bundle->decompressVoiceSampleByName(sound, &ptr);
+		output_size = _bundle->decompressVoiceSampleByName(sound, &ptr);
 	}
 
 	orig_ptr = ptr;

@@ -23,7 +23,6 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "actor.h"
-#include "bundle.h"
 #include "charset.h"
 #include "debugger.h"
 #include "dialogs.h"
@@ -229,7 +228,6 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_verbs = NULL;
 	_objs = NULL;
 	_debugger = NULL;
-	_bundle = NULL;
 	_sound = NULL;
 	memset(&res, 0, sizeof(res));
 	memset(&vm, 0, sizeof(vm));
@@ -395,7 +393,6 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_silentDigitalImuse = 0;
 	_noDigitalSamples = 0;
 	_saveSound = 1;
-	current_cd_sound = 0;
 	memset(_extraBoxFlags, 0, sizeof(_extraBoxFlags));
 	memset(_scaleSlots, 0, sizeof(_scaleSlots));
 	_charset = NULL;
@@ -583,7 +580,6 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	gdi._numStrips = _screenWidth / 8;
 
 	_newgui = g_gui;
-	_bundle = new Bundle();
 	_sound = new Sound(this);
 
 	_sound->_sound_volume_master = detector->_master_volume;
@@ -721,7 +717,6 @@ Scumm::~Scumm () {
 	delete _optionsDialog;
 	delete _saveLoadDialog;
 
-	delete _bundle;
 	delete _sound;
 	delete _imuse;
 	delete _imuseDigital;
@@ -733,7 +728,23 @@ Scumm::~Scumm () {
 
 	free(_shadowPalette);
 	
-	destroy();
+	freeResources();
+
+	free(_objectStateTable);
+	free(_objectRoomTable);
+	free(_objectOwnerTable);
+	free(_inventory);
+	free(_verbs);
+	free(_objs);
+	free(_scummVars);
+	free(_bitVars);
+	free(_newNames);
+	free(_classData);
+	free(_exe_name);
+	free(_game_name);
+
+	free(_roomStrips);
+	free(_languageIndex);
 
 	delete g_debugger;
 }
@@ -959,7 +970,7 @@ void Scumm::initScummVars() {
 	VAR(VAR_TALK_ACTOR) = 0;
 }
 
-void Scumm::checkRange(int max, int min, int no, const char *str) {
+void Scumm::checkRange(int max, int min, int no, const char *str) const {
 	if (no < min || no > max) {
 #ifdef __PALM_OS__
 		char buf[256]; // 1024 is too big overflow the stack
@@ -2137,26 +2148,6 @@ void Scumm::setStringVars(int slot) {
 
 void Scumm::startManiac() {
 	warning("stub startManiac()");
-}
-
-void Scumm::destroy() {
-	freeResources();
-
-	free(_objectStateTable);
-	free(_objectRoomTable);
-	free(_objectOwnerTable);
-	free(_inventory);
-	free(_verbs);
-	free(_objs);
-	free(_scummVars);
-	free(_bitVars);
-	free(_newNames);
-	free(_classData);
-	free(_exe_name);
-	free(_game_name);
-
-	free(_roomStrips);
-	free(_languageIndex);
 }
 
 //

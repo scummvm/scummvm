@@ -222,8 +222,8 @@ void Scumm::askForDisk(const char *filename, int disknum) {
 	if (_version == 8) {
 		char result;
 
-		_bundle->closeVoiceFile();
-		_bundle->closeMusicFile();
+		_sound->_bundle->closeVoiceFile();
+		_sound->_bundle->closeMusicFile();
 
 #ifdef MACOSX
 		sprintf(buf, "Cannot find file: '%s'\nPlease insert disc %d.\nHit OK to retry, Cancel to exit", filename, disknum);

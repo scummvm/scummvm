@@ -969,27 +969,27 @@ void Scumm::decreaseScriptDelay(int amount) {
 	}
 }
 
-bool Scumm::isScriptInUse(int script) {
+bool Scumm::isScriptInUse(int script) const {
 	int i;
-	ScriptSlot *ss = vm.slot;
+	const ScriptSlot *ss = vm.slot;
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++)
 		if (ss->number == script)
 			return true;
 	return false;
 }
 
-bool Scumm::isScriptRunning(int script) {
+bool Scumm::isScriptRunning(int script) const {
 	int i;
-	ScriptSlot *ss = vm.slot;
+	const ScriptSlot *ss = vm.slot;
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++)
 		if (ss->number == script && (ss->where == WIO_GLOBAL || ss->where == WIO_LOCAL) && ss->status != ssDead)
 			return true;
 	return false;
 }
 
-bool Scumm::isRoomScriptRunning(int script) {
+bool Scumm::isRoomScriptRunning(int script) const {
 	int i;
-	ScriptSlot *ss = vm.slot;
+	const ScriptSlot *ss = vm.slot;
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++)
 		if (ss->number == script && ss->where == WIO_ROOM && ss->status != ssDead)
 			return true;

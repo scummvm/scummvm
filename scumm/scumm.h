@@ -32,22 +32,21 @@
 #include "gfx.h"
 #include "boxes.h"
 
+class Actor;
+class BaseCostumeRenderer;
 class CharsetRenderer;
-class GameDetector;
-class NewGui;
-class Dialog;
 class ConsoleDialog;
-class Scumm;
+class Dialog;
+class GameDetector;
 class IMuse;
 class IMuseDigital;
+class NewGui;
 class Player_V2;
-class Actor;
-class Sound;
-class Bundle;
+class Scumm;
 class ScummDebugger;
 class Serializer;
+class Sound;
 struct FindObjectInRoom;
-class BaseCostumeRenderer;
 
 typedef ScummVM::Map<ScummVM::String, int> ObjectIDMap;
 
@@ -296,17 +295,16 @@ public:
 	IMuse *_imuse;
 	IMuseDigital *_imuseDigital;
 	Player_V2 *_playerV2;
+	Sound *_sound;
+
+	VerbSlot *_verbs;
+	ObjectData *_objs;
+	ScummDebugger *_debugger;
 
 	byte _version;
 	
 	uint32 _features;						// Should only be accessed for reading (TODO enforce it compiler-wise with making it private and creating an accessor)
 	void setFeatures (uint32 newFeatures);	// Changes the features set. This allows some gamewide stuff to be precalculated/prepared (ie CostumeRenderer)
-
-	VerbSlot *_verbs;
-	ObjectData *_objs;
-	ScummDebugger *_debugger;
-	Bundle *_bundle;
-	Sound *_sound;
 
 	struct {
 		byte mode[rtNumTypes];
@@ -319,6 +317,7 @@ public:
 		uint32 *roomoffs[rtNumTypes];
 	} res;
 
+protected:
 	struct {
 		uint32 cutScenePtr[5];
 		byte cutSceneScript[5];
@@ -330,6 +329,7 @@ public:
 		int32 localvar[NUM_SCRIPT_SLOT][26];
 	} vm;
 
+public:
 	// Constructor / Destructor
 	Scumm(GameDetector *detector, OSystem *syst);
 	virtual ~Scumm();
@@ -361,7 +361,7 @@ public:
 	void clearClickedStatus();
 
 	// Misc utility functions
-	void checkRange(int max, int min, int no, const char *str);
+	void checkRange(int max, int min, int no, const char *str) const;
 	const char *getExeName() const { return _exe_name; }
 	const char *getGameDataPath() const;
 
@@ -544,7 +544,7 @@ protected:
 public:
 	void runScript(int script, bool freezeResistant, bool recursive, int *lvarptr);
 	void stopScript(int script);
-	bool isScriptRunning(int script);	// FIXME - should be protected, used by Sound::startTalkSound
+	bool isScriptRunning(int script) const;	// FIXME - should be protected, used by Sound::startTalkSound
 
 protected:
 	void runObjectScript(int script, int entry, bool freezeResistant, bool recursive, int *vars);
@@ -559,8 +559,8 @@ protected:
 	void freezeScripts(int scr);
 	void unfreezeScripts();
 
-	bool isScriptInUse(int script);
-	bool isRoomScriptRunning(int script);
+	bool isScriptInUse(int script) const;
+	bool isRoomScriptRunning(int script) const;
 
 	void killAllScriptsExceptCurrent();
 	void killScriptsAndResources();
@@ -669,7 +669,6 @@ protected:
 	void resourceStats();
 	void expireResources(uint32 size);
 	void freeResources();
-	void destroy();
 
 public:
 	/* Should be in Object class */
@@ -693,25 +692,25 @@ protected:
 	void addObjectToInventory(uint obj, uint room);
 	void fixObjectFlags();
 public:
-	bool getClass(int obj, int cls);		// Used in actor.cpp, hence public
+	bool getClass(int obj, int cls) const;		// Used in actor.cpp, hence public
 protected:
 	void putClass(int obj, int cls, bool set);
 	int getState(int obj);
 	void putState(int obj, int state);
 	void setObjectState(int obj, int state, int x, int y);
-	int getOwner(int obj);
+	int getOwner(int obj) const;
 	void putOwner(int obj, int owner);
 	void setOwnerOf(int obj, int owner);
 	void clearOwnerOf(int obj);
-	int getObjectRoom(int obj);
+	int getObjectRoom(int obj) const;
 	int getObjX(int obj);
 	int getObjY(int obj);
 	void getObjectXYPos(int object, int &x, int &y)	{ int dir; getObjectXYPos(object, x, y, dir); }
 	void getObjectXYPos(int object, int &x, int &y, int &dir);
 	int getObjOldDir(int obj);
 	int getObjNewDir(int obj);
-	int getObjectIndex(int object);
-	int whereIsObject(int object);
+	int getObjectIndex(int object) const;
+	int whereIsObject(int object) const;
 	int findObject(int x, int y);
 	void findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint object, uint room);	
 public:
@@ -724,8 +723,8 @@ protected:
 	void clearDrawObjectQueue();
 	void processDrawQue();
 
-	uint32 getOBCDOffs(int object);
-	byte *getOBCDFromObject(int obj);	
+	uint32 getOBCDOffs(int object) const;
+	byte *getOBCDFromObject(int obj);
 	int getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e, int f);
 
 
@@ -765,7 +764,7 @@ public:
 
 	uint32 *_classData;
 
-	int getAngleFromPos(int x, int y);
+	int getAngleFromPos(int x, int y) const;
 
 protected:
 	void walkActors();
@@ -1004,7 +1003,6 @@ protected:
 	int _saveSound;
 public:
 	bool _silentDigitalImuse, _noDigitalSamples;
-	int current_cd_sound;	// Used in class Sound
 
 public:
 	uint16 _extraBoxFlags[65];
