@@ -1915,7 +1915,8 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 		MKLINE(Actor, needRedraw, sleByte, VER(8)),
 		MKLINE(Actor, needBgReset, sleByte, VER(8)),
 		MKLINE(Actor, costumeNeedsInit, sleByte, VER(8)),
-	
+		MKLINE(Actor, condMask, sleUint32, VER(38)),
+
 		MKLINE(Actor, talkPosY, sleInt16, VER(8)),
 		MKLINE(Actor, talkPosX, sleInt16, VER(8)),
 		MKLINE(Actor, ignoreTurns, sleByte, VER(8)),
@@ -1924,7 +1925,7 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 	
 		MKLINE(Actor, talkScript, sleUint16, VER(8)),
 		MKLINE(Actor, walkScript, sleUint16, VER(8)),
-	
+
 		MKLINE(Actor, walkdata.dest.x, sleInt16, VER(8)),
 		MKLINE(Actor, walkdata.dest.y, sleInt16, VER(8)),
 		MKLINE(Actor, walkdata.destbox, sleByte, VER(8)),

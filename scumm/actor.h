@@ -123,7 +123,7 @@ public:
 	int8 layer;
 	uint16 sound[32];
 	CostumeData cost;
-	uint32 condMask; // XXX save/load
+	uint32 condMask;
 protected:
 	byte palette[256];
 	int elevation;

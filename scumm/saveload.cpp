@@ -776,6 +776,9 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	var120Backup = _scummVars[120];
 	var98Backup = _scummVars[98];
 
+	if (savegameVersion > VER(37))
+		s->saveLoadArrayOf(_roomVars, _numRoomVariables, sizeof(_roomVars[0]), sleInt32);
+
 	// The variables grew from 16 to 32 bit.
 	if (savegameVersion < VER(15))
 		s->saveLoadArrayOf(_scummVars, _numVariables, sizeof(_scummVars[0]), sleInt16);
