@@ -41,7 +41,7 @@ SwordMouse::SwordMouse(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	for (uint8 cnt = 0; cnt < 17; cnt++) {
         _pointers[cnt] = (MousePtr*)_resMan->openFetchRes(MSE_POINTER + cnt);
 #ifdef SCUMM_BIG_ENDIAN
-		uint16 *data = (uint16*)pointers[cnt];
+		uint16 *data = (uint16*)_pointers[cnt];
 		for (uint8 endCnt = 0; endCnt < 5; endCnt++)
 			data[endCnt] = READ_LE_UINT16(data + endCnt);
 #endif
