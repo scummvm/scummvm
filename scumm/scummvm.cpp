@@ -1168,13 +1168,13 @@ void Scumm::processKbd()
 		if (_imuse)
 			_imuse->set_music_volume (vol);
 	} else if (_lastKeyHit == '-') { // - text speed down
-		_defaultTalkDelay+=5;
+		_defaultTalkDelay += 5;
 		if (_defaultTalkDelay > 90)
 			_defaultTalkDelay = 90;
 
 		_vars[VAR_CHARINC] = _defaultTalkDelay / 20;
 	} else if (_lastKeyHit == '+') { // + text speed up
-		_defaultTalkDelay-=5;
+		_defaultTalkDelay -= 5;
 		if (_defaultTalkDelay < 5)
 			_defaultTalkDelay = 5;
 

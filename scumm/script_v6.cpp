@@ -1138,7 +1138,8 @@ void Scumm_v6::o6_doSentence()
 	int a, b, c;
 
 	a = pop();
-	pop();												//dummy pop
+	if (!(_features & GF_AFTER_V8))
+		pop();	// dummy pop
 	b = pop();
 	c = pop();
 
