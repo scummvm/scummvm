@@ -810,8 +810,10 @@ void Sound::playBundleMusic(int32 song) {
 
 	if (_numberBundleMusic == -1) {
 		sprintf(buf, "%s%smusic.bun", _scumm->getGameDataPath(), _scumm->_exe_name);
-		if (_scumm->_bundle->openMusicFile((char*)&buf) == false)
+		if (_scumm->_bundle->openMusicFile((char*)&buf) == false) {
 			return;
+		}
+
 		_musicBundleBufFinal = (byte*)malloc(OUTPUT_SIZE);
 		_musicBundleBufOutput = (byte*)malloc(10 * 0x2000);
 		_currentSampleBundleMusic = 0;
@@ -929,7 +931,10 @@ void Sound::playBundleSound(char *sound) {
 	byte * ptr;
 
 	sprintf(buf, "%s%svoice.bun", _scumm->getGameDataPath(), _scumm->_exe_name);
-	_scumm->_bundle->openVoiceFile((char*)&buf);
+	if (_scumm->_bundle->openVoiceFile((char*)&buf) == false) {
+		return;
+	}
+
 	ptr = (byte *)malloc(1000000);
 	if (_scumm->_bundle->decompressVoiceSampleByName(sound, ptr) == 0) {
 		delete ptr;

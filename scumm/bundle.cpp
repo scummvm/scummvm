@@ -22,45 +22,33 @@
 #include "scumm.h"
 #include "scummsys.h"
 #include "bundle.h"
+#include "file.h"
 
-Bundle::Bundle(Scumm *parent)
-{
-	_voiceFile = NULL;
-	_musicFile = NULL;
-	_scumm = parent;
+Bundle::Bundle() {
 	_lastSong = -1;
 }
 
-Bundle::~Bundle()
-{
-	if (_voiceFile != NULL)
-		fclose(_voiceFile);
-
-	if (_musicFile != NULL)
-		fclose(_musicFile);
+Bundle::~Bundle() {
 }
 
-bool Bundle::openVoiceFile(char *filename)
-{
+bool Bundle::openVoiceFile(char *filename) {
 	int32 tag, offset;
 
-	if (_voiceFile != NULL) {
-		return false;
-	}
+	if (_voiceFile.isOpen() == true)
+		return true;
 
-	_voiceFile = fopen(filename, "rb");
-	if (_voiceFile == NULL) {
+	if (_voiceFile.open(filename) == false) {
 		warning("Bundle: Can't open voice bundle file: %s", filename);
 		return false;
 	}
 
-	tag = _scumm->fileReadDwordBE(_voiceFile);
-	offset = _scumm->fileReadDwordBE(_voiceFile);
-	_numVoiceFiles = _scumm->fileReadDwordBE(_voiceFile);
+	tag = _voiceFile.readDwordBE();
+	offset = _voiceFile.readDwordBE();
+	_numVoiceFiles = _voiceFile.readDwordBE();
 
 	_bundleVoiceTable = (BundleAudioTable *) malloc(_numVoiceFiles * sizeof(BundleAudioTable));
 
-	_scumm->fileSeek(_voiceFile, offset, SEEK_SET);
+	_voiceFile.seek(offset, SEEK_SET);
 
 	for (int32 i = 0; i < _numVoiceFiles; i++) {
 		char name[13], c;
@@ -68,42 +56,39 @@ bool Bundle::openVoiceFile(char *filename)
 		int32 z2;
 
 		for (z2 = 0; z2 < 8; z2++)
-			if ((c = _scumm->fileReadByte(_voiceFile)) != 0)
+			if ((c = _voiceFile.readByte()) != 0)
 				name[z++] = c;
 		name[z++] = '.';
 		for (z2 = 0; z2 < 4; z2++)
-			if ((c = _scumm->fileReadByte(_voiceFile)) != 0)
+			if ((c = _voiceFile.readByte()) != 0)
 				name[z++] = c;
 		name[z] = '\0';
 		strcpy(_bundleVoiceTable[i].filename, name);
-		_bundleVoiceTable[i].offset = _scumm->fileReadDwordBE(_voiceFile);
-		_bundleVoiceTable[i].size = _scumm->fileReadDwordBE(_voiceFile);
+		_bundleVoiceTable[i].offset = _voiceFile.readDwordBE();
+		_bundleVoiceTable[i].size = _voiceFile.readDwordBE();
 	}
 
 	return true;
 }
 
-bool Bundle::openMusicFile(char *filename)
-{
+bool Bundle::openMusicFile(char *filename) {
 	int32 tag, offset;
 
-	if (_musicFile != NULL) {
-		return false;
-	}
+	if (_musicFile.isOpen() == true)
+		return true;
 
-	_musicFile = fopen(filename, "rb");
-	if (_musicFile == NULL) {
+	if (_musicFile.open(filename) == false) {
 		warning("Bundle: Can't open music bundle file: %s", filename);
 		return false;
 	}
 
-	tag = _scumm->fileReadDwordBE(_musicFile);
-	offset = _scumm->fileReadDwordBE(_musicFile);
-	_numMusicFiles = _scumm->fileReadDwordBE(_musicFile);
+	tag = _musicFile.readDwordBE();
+	offset = _musicFile.readDwordBE();
+	_numMusicFiles = _musicFile.readDwordBE();
 
 	_bundleMusicTable = (BundleAudioTable *) malloc(_numMusicFiles * sizeof(BundleAudioTable));
 
-	_scumm->fileSeek(_musicFile, offset, SEEK_SET);
+	_musicFile.seek(offset, SEEK_SET);
 
 	for (int32 i = 0; i < _numMusicFiles; i++) {
 		char name[13], c;
@@ -111,36 +96,35 @@ bool Bundle::openMusicFile(char *filename)
 		int z2;
 
 		for (z2 = 0; z2 < 8; z2++)
-			if ((c = _scumm->fileReadByte(_musicFile)) != 0)
+			if ((c = _musicFile.readByte()) != 0)
 				name[z++] = c;
 		name[z++] = '.';
 		for (z2 = 0; z2 < 4; z2++)
-			if ((c = _scumm->fileReadByte(_musicFile)) != 0)
+			if ((c = _musicFile.readByte()) != 0)
 				name[z++] = c;
 		name[z] = '\0';
 		strcpy(_bundleMusicTable[i].filename, name);
-		_bundleMusicTable[i].offset = _scumm->fileReadDwordBE(_musicFile);
-		_bundleMusicTable[i].size = _scumm->fileReadDwordBE(_musicFile);
+		_bundleMusicTable[i].offset = _musicFile.readDwordBE();
+		_bundleMusicTable[i].size = _musicFile.readDwordBE();
 	}
 
 	return true;
 }
 
-int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final)
-{
+int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final) {
 	int32 i, tag, num, final_size, output_size;
 	byte *comp_input, *comp_output;
 
-	if (_voiceFile == NULL) {
+	if (_voiceFile.isOpen() == false) {
 		warning("Bundle: voice file is not open!");
 		return 0;
 	}
 
-	_scumm->fileSeek(_voiceFile, _bundleVoiceTable[index].offset, SEEK_SET);
-	tag = _scumm->fileReadDwordBE(_voiceFile);
-	num = _scumm->fileReadDwordBE(_voiceFile);
-	_scumm->fileReadDwordBE(_voiceFile);
-	_scumm->fileReadDwordBE(_voiceFile);
+	_voiceFile.seek(_bundleVoiceTable[index].offset, SEEK_SET);
+	tag = _voiceFile.readDwordBE();
+	num = _voiceFile.readDwordBE();
+	_voiceFile.readDwordBE();
+	_voiceFile.readDwordBE();
 
 	if (tag != MKID_BE('COMP')) {
 		warning("Bundle: Compressed sound %d invalid (%c%c%c%c)", index, tag >> 24, tag >> 16, tag >> 8,
@@ -149,10 +133,10 @@ int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final)
 	}
 
 	for (i = 0; i < num; i++) {
-		_compVoiceTable[i].offset = _scumm->fileReadDwordBE(_voiceFile);
-		_compVoiceTable[i].size = _scumm->fileReadDwordBE(_voiceFile);
-		_compVoiceTable[i].codec = _scumm->fileReadDwordBE(_voiceFile);
-		_scumm->fileReadDwordBE(_voiceFile);
+		_compVoiceTable[i].offset = _voiceFile.readDwordBE();
+		_compVoiceTable[i].size = _voiceFile.readDwordBE();
+		_compVoiceTable[i].codec = _voiceFile.readDwordBE();
+		_voiceFile.readDwordBE();
 	}
 
 	final_size = 0;
@@ -161,8 +145,8 @@ int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final)
 	for (i = 0; i < num; i++) {
 		comp_input = (byte *)malloc(_compVoiceTable[i].size);
 
-		_scumm->fileSeek(_voiceFile, _bundleVoiceTable[index].offset + _compVoiceTable[i].offset, SEEK_SET);
-		_scumm->fileRead(_voiceFile, comp_input, _compVoiceTable[i].size);
+		_voiceFile.seek(_bundleVoiceTable[index].offset + _compVoiceTable[i].offset, SEEK_SET);
+		_voiceFile.read(comp_input, _compVoiceTable[i].size);
 
 		output_size =
 			decompressCodec(_compVoiceTable[i].codec, comp_input, comp_output, _compVoiceTable[i].size);
@@ -176,22 +160,21 @@ int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final)
 	return final_size;
 }
 
-int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp_final)
-{
+int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp_final) {
 	int32 i, tag, num, final_size;
 	byte *comp_input;
 
-	if (_musicFile == NULL) {
+	if (_musicFile.isOpen() == false) {
 		warning("Bundle: music file is not open!");
 		return 0;
 	}
 
 	if (_lastSong != index) {
-		_scumm->fileSeek(_musicFile, _bundleMusicTable[index].offset, SEEK_SET);
-		tag = _scumm->fileReadDwordBE(_musicFile);
-		num = _scumm->fileReadDwordBE(_musicFile);
-		_scumm->fileReadDwordBE(_musicFile);
-		_scumm->fileReadDwordBE(_musicFile);
+		_musicFile.seek(_bundleMusicTable[index].offset, SEEK_SET);
+		tag = _musicFile.readDwordBE();
+		num = _musicFile.readDwordBE();
+		_musicFile.readDwordBE();
+		_musicFile.readDwordBE();
 
 		if (tag != MKID_BE('COMP')) {
 			warning("Bundle: Compressed sound %d invalid (%c%c%c%c)", index, tag >> 24, tag >> 16, tag >> 8,
@@ -200,18 +183,17 @@ int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp
 		}
 
 		for (i = 0; i < num; i++) {
-			_compMusicTable[i].offset = _scumm->fileReadDwordBE(_musicFile);
-			_compMusicTable[i].size = _scumm->fileReadDwordBE(_musicFile);
-			_compMusicTable[i].codec = _scumm->fileReadDwordBE(_musicFile);
-			_scumm->fileReadDwordBE(_musicFile);
+			_compMusicTable[i].offset = _musicFile.readDwordBE();
+			_compMusicTable[i].size = _musicFile.readDwordBE();
+			_compMusicTable[i].codec = _musicFile.readDwordBE();
+			_musicFile.readDwordBE();
 		}
 	}
 
 	comp_input = (byte *)malloc(_compMusicTable[number].size);
 
-	_scumm->fileSeek(_musicFile, _bundleMusicTable[index].offset + _compMusicTable[number].offset,
-									 SEEK_SET);
-	_scumm->fileRead(_musicFile, comp_input, _compMusicTable[number].size);
+	_musicFile.seek(_bundleMusicTable[index].offset + _compMusicTable[number].offset, SEEK_SET);
+	_musicFile.read(comp_input, _compMusicTable[number].size);
 	final_size =
 		decompressCodec(_compMusicTable[number].codec, comp_input, comp_final, _compMusicTable[number].size);
 
@@ -222,12 +204,10 @@ int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp
 	return final_size;
 }
 
-
-int32 Bundle::decompressVoiceSampleByName(char *name, byte *comp_final)
-{
+int32 Bundle::decompressVoiceSampleByName(char *name, byte *comp_final) {
 	int32 final_size = 0, i;
 
-	if (_voiceFile == NULL) {
+	if (_voiceFile.isOpen() == false) {
 		warning("Bundle: voice file is not open!");
 		return 0;
 	}
@@ -241,12 +221,11 @@ int32 Bundle::decompressVoiceSampleByName(char *name, byte *comp_final)
 	return final_size;
 }
 
-int32 Bundle::decompressMusicSampleByName(char *name, int32 number, byte *comp_final)
-{
+int32 Bundle::decompressMusicSampleByName(char *name, int32 number, byte *comp_final) {
 	int32 final_size = 0, i;
 
-	if (_voiceFile == NULL) {
-		warning("Bundle: voice file is not open!");
+	if (_musicFile.isOpen() == false) {
+		warning("Bundle: music file is not open!");
 		return 0;
 	}
 
@@ -259,23 +238,21 @@ int32 Bundle::decompressMusicSampleByName(char *name, int32 number, byte *comp_f
 	return final_size;
 }
 
-int32 Bundle::getNumberOfMusicSamplesByIndex(int32 index)
-{
-	if (_musicFile == NULL) {
+int32 Bundle::getNumberOfMusicSamplesByIndex(int32 index) {
+	if (_musicFile.isOpen() == false) {
 		warning("Bundle: music file is not open!");
 		return 0;
 	}
 
-	_scumm->fileSeek(_musicFile, _bundleMusicTable[index].offset, SEEK_SET);
-	_scumm->fileReadDwordBE(_musicFile);
-	return _scumm->fileReadDwordBE(_musicFile);
+	_musicFile.seek(_bundleMusicTable[index].offset, SEEK_SET);
+	_musicFile.readDwordBE();
+	return _musicFile.readDwordBE();
 }
 
-int32 Bundle::getNumberOfMusicSamplesByName(char *name)
-{
+int32 Bundle::getNumberOfMusicSamplesByName(char *name) {
 	int32 number = 0, i;
 
-	if (_musicFile == NULL) {
+	if (_musicFile.isOpen() == false) {
 		warning("Bundle: music file is not open!");
 		return 0;
 	}
@@ -291,8 +268,7 @@ int32 Bundle::getNumberOfMusicSamplesByName(char *name)
 
 #define NextBit bit = mask & 1; mask >>= 1; if (!--bitsleft) {mask = READ_LE_UINT16(srcptr); srcptr += 2; bitsleft=16;}
 
-int32 Bundle::compDecode(byte *src, byte *dst)
-{
+int32 Bundle::compDecode(byte *src, byte *dst) {
 	byte *result, *srcptr = src, *dstptr = dst;
 	int data, size, bit, bitsleft = 16, mask = READ_LE_UINT16(srcptr);
 	srcptr += 2;
@@ -324,8 +300,7 @@ int32 Bundle::compDecode(byte *src, byte *dst)
 }
 #undef NextBit
 
-int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 input_size)
-{
+int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 input_size) {
 	int32 output_size = input_size;
 	int32 offset1, offset2, offset3, length, k, c, s, j, r, t, z;
 	byte *src, *t_table, *p, *ptr;

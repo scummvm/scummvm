@@ -22,8 +22,7 @@
 #define BUNDLE_H
 
 #include "scummsys.h"
-
-class Scumm;
+#include "file.h"
 
 class Bundle {
 
@@ -45,17 +44,16 @@ struct BundleAudioTable {
 	int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 size);
 	CompTable _compVoiceTable[50];
 	CompTable _compMusicTable[2500];
-	FILE *_voiceFile;
-	FILE *_musicFile;
+	File _voiceFile;
+	File _musicFile;
 	BundleAudioTable *_bundleVoiceTable;
 	BundleAudioTable *_bundleMusicTable;
 	int32 _numVoiceFiles;
 	int32 _numMusicFiles;
-	Scumm *_scumm;
 	int32 _lastSong;
 
 public:
-	  Bundle(Scumm *parent);
+	  Bundle();
 	 ~Bundle();
 
 	bool openVoiceFile(char *filename);

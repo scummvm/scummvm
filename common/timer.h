@@ -25,6 +25,8 @@
 
 #define MAX_TIMERS 5
 
+class Scumm;
+
 typedef void (*TimerProc)(Scumm *);
 
 #ifdef __MORPHOS__
