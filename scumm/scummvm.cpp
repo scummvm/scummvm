@@ -847,11 +847,9 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	else
 		_costumeRenderer = new CostumeRenderer(this);
 
-#ifdef INSANE
 	// Create FT INSANE object
 	if (_gameId == GID_FT)
 		_insane = new Insane(this);
-#endif
 }
 
 ScummEngine::~ScummEngine() {
@@ -1859,14 +1857,10 @@ void ScummEngine::processKbd() {
 		// normally use F4 for this, we add in a hack that makes escape work,
 		// too (just for convenience).
 		if (_insaneState) {
-#ifdef INSANE
 			if (_gameId == GID_FT)
 				_insane->escapeKeyHandler();
 			else
 				_videoFinished = true;
-#else
-			_videoFinished = true;
-#endif
 		}
 		if (!_insaneState || _videoFinished)
 			abortCutscene();

@@ -39,8 +39,6 @@
 #include "scumm/smush/chunk.h"
 #include "scumm/smush/insane.h"
 
-#ifdef INSANE
-
 // TODO (in no particular order):
 // o Ben's velocity don't get zeroed after crash
 // o TRS file support. Everything is in place, I just need to figure out function parameters
@@ -8185,4 +8183,3 @@ void Insane::smush_setFrameSteps(int32 step1, int32 step2) {
 }
 
 }
-#endif // INSANE

@@ -41,10 +41,6 @@
 #include "sound/mixer.h"
 
 #include "scumm/smush/insane.h"
-#ifndef INSANE
-#include "scumm/dialogs.h"		// FIXME: This is just for the FT-INSANE warning. 
-				// Remove when INSANE is implemented
-#endif
 
 namespace Scumm {
 
@@ -2437,70 +2433,10 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 				if (args[1] == 0) {
 					sp->play((char *)getStringAddressVar(VAR_VIDEONAME), getGameDataPath());
 				} else if (_gameId == GID_FT) {
-#ifdef INSANE
 					const int insaneVarNum = (_features & GF_DEMO) ? 232 : 233;
 
 					_insane->setSmushParams(speed);
 					_insane->runScene(insaneVarNum);
-				    
-#else
-					const int insaneVarNum = (_features & GF_DEMO) ? 232 : 233;
-					const int insaneMode = readArray(insaneVarNum,0,0);
-
-					// FIXME: FT Demo has different Insane
-					debug(1, "FT_INSANE Mode: %d", insaneMode);
-					switch (insaneMode) {
-					case 0:
-						sp->play("minedriv.san", getGameDataPath());
-						break;
-					case 1:
-						sp->play("tovista2.san", getGameDataPath());
-						break;
-					case 2:
-						sp->play("tovista1.san", getGameDataPath());
-						break;
-					case 3:
-						if (readArray(insaneVarNum,0,50) == 0) {
-							InfoDialog info(this, "Set MineRoad - You can now jump the gorge.");
-							runDialog(info);
-
-							writeArray(insaneVarNum, 0, 50, 1); // INSANE callback: Chain
-							writeArray(insaneVarNum, 0, 51, 1); // INSANE callback: Chainsaw
-							writeArray(insaneVarNum, 0, 52, 1); // INSANE callback: Mace
-							writeArray(insaneVarNum, 0, 53, 1); // INSANE callback: 2x4
-							writeArray(insaneVarNum, 0, 54, 1); // INSANE callback: Wrench
-							writeArray(insaneVarNum, 0, 55, 1); // INSANE callback: Dust
-
-							writeArray(insaneVarNum, 0, 8, 1);  // INSANE callback: Give Googles
-							writeArray(insaneVarNum, 0, 7, 1);  // INSANE callback: Give nitro fuel
-
-							putState(235, 1);	   // Cheat and activate Ramp
-							writeVar(142 | 0x8000, 1); // Cheat and activate auto-booster (fan)
-						}
-//							sp->play("minefite.san", getGameDataPath());
-						break;
-					case 4:
-						sp->play("rottopen.san", getGameDataPath());
-						break;
-					case 5:
-					case 6:
-					case 7:
-					case 8:
-						warning("FT_INSANE mode %d: Stub", args[1]);
-						break;
-					case 9:
-						sp->play("credits.san", getGameDataPath());
-						break;
-					default:
-					// Other INSANE modes
-						warning("Unknown FT_INSANE mode for %d", args[1]);
-						sp->play((char *)getStringAddressVar(VAR_VIDEONAME), getGameDataPath());
-					}
-				} else {
-					// Other INSANE modes
-					warning("Unknown insane mode for %d", args[1]);
-					sp->play((char *)getStringAddressVar(VAR_VIDEONAME), getGameDataPath());
-#endif
 				}
 				delete sp;
 			}

@@ -1006,10 +1006,8 @@ protected:
 	bool _demoMode;
 	bool _confirmExit;
 
-#ifdef INSANE
 public:
 	Insane *_insane;
-#endif
 
 public:
 	uint16 _extraBoxFlags[65];

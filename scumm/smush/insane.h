@@ -29,8 +29,6 @@
 #include "scumm/smush/smush_player.h"
 #include "scumm/smush/chunk.h"
 
-#ifdef INSANE
-
 namespace Scumm {
 
 #define INV_CHAIN    0
@@ -476,7 +474,5 @@ class Insane {
 	void proc64(int32);
 };
 } // End of namespace Insane
-
-#endif // INSANE
 
 #endif

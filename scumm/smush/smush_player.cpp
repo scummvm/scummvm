@@ -727,11 +727,9 @@ void SmushPlayer::handleFrame(Chunk &b) {
 	uint32 start_time, end_time;
 	start_time = _vm->_system->get_msecs();
 
-#ifdef INSANE
 	if (_insanity) {
 		_vm->_insane->procPreRendering();
 	}
-#endif
 
 	while (!b.eof()) {
 		Chunk *sub = b.subBlock();
@@ -753,15 +751,11 @@ void SmushPlayer::handleFrame(Chunk &b) {
 			handleDeltaPalette(*sub);
 			break;
 		case TYPE_IACT:
-#ifdef INSANE
 			// FIXME: check parameters
 			if (_insanity)
 				_vm->_insane->procIACT(_dst, 0, 0, 0, *sub, 0, 0);
 			else
 				handleIACT(*sub);
-#else
-			handleIACT(*sub);
-#endif
 			break;
 		case TYPE_STOR:
 			handleStore(*sub);
@@ -770,14 +764,10 @@ void SmushPlayer::handleFrame(Chunk &b) {
 			handleFetch(*sub);
 			break;
 		case TYPE_SKIP:
-#ifdef INSANE
 			if (_insanity)
 				_vm->_insane->procSKIP(*sub);
 			else
 				handleSkip(*sub);
-#else
-			handleSkip(*sub);
-#endif
 			break;
 		case TYPE_TEXT:
 			handleTextResource(*sub);
@@ -788,12 +778,10 @@ void SmushPlayer::handleFrame(Chunk &b) {
 		delete sub;
 	}
 
-#ifdef INSANE
 	// FIXME: Check either parameters are valid
 	if (_insanity) {
 		_vm->_insane->procPostRendering(_dst, 0, 0, 0, _frame, _nbframes-1);
 	}
-#endif
 
 	end_time = _vm->_system->get_msecs();
 
