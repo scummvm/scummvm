@@ -161,6 +161,7 @@ SaudChannel::SaudChannel(int32 track, int32 freq) :
 	_nbframes(0),
 	_dataSize(-1),
 	_frequency(freq),
+	_index(0),
 	_inData(false),
 	_markReached(false),
 	_tbuffer(0),
