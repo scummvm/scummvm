@@ -137,7 +137,7 @@ void ScummEngine::setCursorFromBuffer(byte *ptr, int width, int height, int pitc
 	for (; height; height--) {
 		memcpy(dst, ptr, width);
 		dst += width;
-		ptr += _screenWidth;
+		ptr += pitch;
 	}
 
 	updateCursor();
