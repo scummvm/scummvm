@@ -478,6 +478,7 @@ void Scumm::initBGBuffers(int height)
 
 	if (_features & GF_AFTER_V7) {
 		initVirtScreen(0, 0, virtscr[0].topline, _realWidth, height, 1, 1);
+
 	}
 
 	room = getResourceAddress(rtRoom, _roomResource);
@@ -495,6 +496,10 @@ void Scumm::initBGBuffers(int height)
 			ptr += off;
 			off = READ_LE_UINT16(ptr);
 		}
+	} else if (_features & GF_AFTER_V8) {
+		// in V8 there is no RMIH and num z buffers is in RMHD
+		ptr = findResource(MKID('RMHD'), room);
+		gdi._numZBuffer = READ_LE_UINT32(ptr + 24) + 1;
 	} else {
 		ptr = findResource(MKID('RMIH'), findResource(MKID('RMIM'), room));
 		gdi._numZBuffer = READ_LE_UINT16(ptr + 8) + 1;
