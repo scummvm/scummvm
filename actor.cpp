@@ -1141,6 +1141,7 @@ void Actor::startWalkAnim(int cmd, int angle)
 void Actor::walkActor()
 {
 	int j;
+	int16 foundPathX, foundPathY;
 
 	if (!moving)
 		return;
@@ -1186,9 +1187,9 @@ void Actor::walkActor()
 		}
 		walkdata.curbox = j;
 
-		if (_vm->findPathTowards(this, walkbox, j, walkdata.destbox))
+		if (_vm->findPathTowards(this, walkbox, j, walkdata.destbox, foundPathX, foundPathY))
 			break;
-		if (calcMovementFactor(_vm->_foundPathX, _vm->_foundPathY))
+		if (calcMovementFactor(foundPathX, foundPathY))
 			return;
 
 		setBox(walkdata.curbox);

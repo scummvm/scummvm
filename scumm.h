@@ -971,7 +971,6 @@ public:
 	byte *_boxMatrixPtr4, *_boxMatrixPtr1, *_boxMatrixPtr3;	
 
 	uint16 _extraBoxFlags[65];
-	int16 _foundPathX, _foundPathY;
 
 	PathNode *unkMatrixProc2(PathVertex *vtx, int i);
 	bool areBoxesNeighbours(int i, int j);
@@ -990,8 +989,8 @@ public:
 	byte getNumBoxes();
 	byte *getBoxMatrixBaseAddr();
 	int getPathToDestBox(byte from, byte to);
-	int findPathTowards(Actor *a, byte box, byte box2, byte box3);
-	int findPathTowardsOld(Actor *a, byte box, byte box2, byte box3, ScummPoint gateLoc[5]);
+	bool findPathTowards(Actor *a, byte box, byte box2, byte box3, int16 &foundPathX, int16 &foundPathY);
+	void findPathTowardsOld(Actor *a, byte box, byte box2, byte box3, ScummPoint gateLoc[5]);
 	void getGates(int trap1, int trap2, ScummPoint gateA[2], ScummPoint gateB[2]);
 	bool inBoxQuickReject(int box, int x, int y, int threshold);
 	AdjustBoxResult getClosestPtOnBox(int box, int x, int y);
