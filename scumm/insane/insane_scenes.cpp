@@ -306,6 +306,9 @@ void Insane::shutCurrentScene(void) {
 
 // insane_loadSceneData1 & insane_loadSceneData2
 int Insane::loadSceneData(int scene, int flag, int phase) {
+	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+		return 1;
+
 	int retvalue = 1;
 
 	debugC(DEBUG_INSANE, "Insane::loadSceneData(%d, %d, %d)", scene, flag, phase);

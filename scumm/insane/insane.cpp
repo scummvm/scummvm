@@ -804,8 +804,10 @@ void Insane::prepareScenePropScene(int32 scenePropNum, bool arg_4, bool arg_8) {
 
 	debugC(DEBUG_INSANE, "Insane::prepareScenePropScene(%d, %d, %d)", scenePropNum, arg_4, arg_8);
 
-	if (!loadScenePropSounds(idx))
-		return;
+	if (!((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))) {
+		if (!loadScenePropSounds(idx))
+			return;
+	}
 
 	_actor[0].defunct = arg_4;
 	_actor[1].defunct = arg_8;
@@ -1113,9 +1115,6 @@ bool Insane::actor0StateFlags2(int state) {
 
 // smlayer_loadSound1 && smlayer_loadSound2
 int Insane::smlayer_loadSound(int id, int flag, int phase) {
-	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
-		return 0;
-
 	int resid;
 	
 	if (phase == 1) {
@@ -1197,16 +1196,10 @@ void Insane::smlayer_setFluPalette(byte *pal, int shut_flag) {
 }
 
 bool Insane::smlayer_isSoundRunning(int32 sound) {
-	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
-		return 1;
-
 	return _vm->_imuseDigital->getSoundStatus(readArray(sound)) != 0;
 }
 
 bool Insane::smlayer_startSfx(int32 sound) {
-	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
-		return 1;
-
 	if (smlayer_loadSound(sound, 0, 2)) {
 		_vm->_imuseDigital->startSfx(readArray(sound), 40);
 		return true;
@@ -1215,9 +1208,6 @@ bool Insane::smlayer_startSfx(int32 sound) {
 }
 
 bool Insane::smlayer_startVoice(int32 sound) {
-	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
-		return 1;
-
 	if (smlayer_loadSound(sound, 0, 2)) {
 		_vm->_imuseDigital->startSfx(readArray(sound), 126);
 		return true;
