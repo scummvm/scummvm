@@ -199,7 +199,7 @@ GameDetector::GameDetector() {
 	// Game specifc
 	ConfMan.registerDefault("path", "");
 
-	ConfMan.registerDefault("amiga", false);
+//	ConfMan.registerDefault("amiga", false);
 	ConfMan.registerDefault("platform", kPlatformPC);
 	ConfMan.registerDefault("language", "en");
 	ConfMan.registerDefault("nosubtitles", false);
