@@ -7,6 +7,7 @@ MODULE_OBJS = \
 	sky/debug.o \
 	sky/disk.o \
 	sky/grid.o \
+	sky/hufftext.o \
 	sky/intro.o \
 	sky/logic.o \
 	sky/mouse.o \
