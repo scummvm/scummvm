@@ -280,27 +280,24 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	return drawFlag;
 }
 
-// FIXME: Call this something sensible, make sure it works
 void CostumeRenderer::c64_ignorePakCols(int num) {
 
+warning("c64_ignorePakCols(%d) - this needs testing", num);
 #if 1
-	// Fingolfin seez: this code is equivalent to codec1_ignorePakCols.
-	// And I wonder if that can be true, considering the different
-	// compressor used in procC64 vs. proc3 ?
-	codec1_ignorePakCols(num);
+	for (int x = 0; x < (num >> 3); x++) {
+		v1.repcolor = *_srcptr++;
+		if (v1.repcolor & 0x80) {
+			v1.replen = v1.repcolor & 0x7f;
+			v1.repcolor = *_srcptr++;
+		} else {
+			v1.replen = v1.repcolor;
+			for (int z = 0; z < v1.replen; z++) {
+				v1.repcolor = *_srcptr++;
+			}
+		}
+	}
 #else
-	int n = _height * num;
-	do {
-		v1.repcolor = *_srcptr >> 4;
-		v1.replen = *_srcptr++ & 0x0F;
-
-		if (v1.replen == 0)
-			v1.replen = *_srcptr++;
-
-		do {
-			if (!--n) return;
-		} while (--v1.replen);
-	} while (1);
+	codec1_ignorePakCols(num);
 #endif
 }
 
@@ -574,6 +571,9 @@ byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
 			const CostumeInfo *costumeInfo;
 			int xmoveCur, ymoveCur;
 
+//printf("costume %d, limb %d:\n", _loaded._id, limb);
+//printf("_srcptr:\n");
+//hexdump(_srcptr, 0x20);
 			if (_vm->_version == 1) {
 				_width = _srcptr[0] * 8;
 				_height = _srcptr[1];
@@ -583,10 +583,6 @@ byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
 				_ymove -= _srcptr[5];
 				_srcptr += 6;
 			} else {
-				// FIXME: those are here just in case... you never now...
-				assert(_srcptr[1] == 0);
-				assert(_srcptr[3] == 0);
-		
 				costumeInfo = (const CostumeInfo *)_srcptr;
 				_width = READ_LE_UINT16(&costumeInfo->width);
 				_height = READ_LE_UINT16(&costumeInfo->height);
@@ -596,7 +592,7 @@ byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
 				_ymove -= (int16)READ_LE_UINT16(&costumeInfo->move_y);
 				_srcptr += 12;
 			}
-//printf("costume %d, limb %d: _width %d, _height %d, xmoveCur %d, ymoveCur %d, _xmove %d, _ymove, %d\n", _loaded._id, limb, _width, _height, xmoveCur, ymoveCur, _xmove, _ymove);
+//printf(" _width %d, _height %d, xmoveCur %d, ymoveCur %d, _xmove %d, _ymove, %d\n", _width, _height, xmoveCur, ymoveCur, _xmove, _ymove);
 			return mainRoutine(xmoveCur, ymoveCur);
 		}
 	}
