@@ -4852,7 +4852,6 @@ void SimonState::playSound(uint sound)
 
 void SimonState::playMusic(uint music)
 {
-	warning ("play music point reached");
 	/* FIXME: not properly implemented */
 	/* Simon 1/2 dos talkie music aren't supported */
 	/* Simon 2 dos music isn't supported */
