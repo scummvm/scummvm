@@ -217,8 +217,19 @@ void Command::executeCurrentAction(bool walk) {
 		return;
 	}
 
-	// get the number of commands associated with Object/Item
-	uint16 comMax = countAssociatedCommands(_selCmd.action, _curCmd.subject1, _curCmd.subject2);
+	uint16 i;
+
+	// get the commands associated with object/item
+	uint16 comMax = 0;
+	uint16 matchingCmds[MAX_MATCHING_CMDS];
+	CmdListData *cmdList = &_cmdList[1];
+	for (i = 1; i <= _numCmdList; ++i, ++cmdList) {
+		if (cmdList->match(_selCmd.action, _curCmd.subject1, _curCmd.subject2)) {
+			matchingCmds[comMax] = i;
+			++comMax;
+		}
+	}
+
 	if (comMax == 0) {
 		// no command match was found, so exit
 		// pass ACTION2 as parameter, as a new Command (and a new ACTION2) 
@@ -233,24 +244,18 @@ void Command::executeCurrentAction(bool walk) {
 	int16 cond = 0;
 	CmdListData *com = &_cmdList[0];
 	uint16 comId = 0;
-	uint16 curCommand;
-	for (curCommand = 1; curCommand <= comMax; ++curCommand) {
-		++com;
-		++comId;
-		// try to find a match for the command in COM_LIST
-		for (; comId <= _numCmdList; ++comId, ++com) {
-			if (com->match(_selCmd.action, _curCmd.subject1, _curCmd.subject2)) {
-				break;
-			}
-		}
+	for (i = 1; i <= comMax; ++i) {
+
+		comId = matchingCmds[i - 1];
+		com = &_cmdList[comId];
 
 		// check the Gamestates and set them if necessary
 		cond = 0;
 		if (com->setConditions) {
-			cond = setConditions(comId, (curCommand == comMax));
+			cond = setConditions(comId, (i == comMax));
 		}
 
-		if (cond == -1 && curCommand == comMax) {
+		if (cond == -1 && i == comMax) {
 			// only exit on a condition fail if at last command
 			// Joe hasnt spoken, so do normal LOOK command
 			if (_selCmd.action.value() == VERB_LOOK_AT) {
@@ -260,7 +265,7 @@ void Command::executeCurrentAction(bool walk) {
 				return;
 			}
 		}
-		else if (cond == -2 && curCommand == comMax) {
+		else if (cond == -2 && i == comMax) {
 			// only exit on a condition fail if at last command
 			// Joe has spoken, so skip LOOK command
 			cleanupCurrentAction();
@@ -272,7 +277,7 @@ void Command::executeCurrentAction(bool walk) {
 		}
 	}
 
-	debug(0, "Command::executeCurrentAction() - cond = %X, com = %X", cond, curCommand);
+	debug(0, "Command::executeCurrentAction() - cond = %X, com = %X", cond, comId);
 
 	if (com->setAreas) {
 		setAreas(comId);
@@ -867,20 +872,6 @@ bool Command::executeIfDialog(const char *description) {
 	return false;
 }
 
-
-uint16 Command::countAssociatedCommands(const Verb& verb, int16 subj1, int16 subj2) {
-	
-	// l.145-150 execute.c
-	uint16 comMax = 0;
-	CmdListData *cmdList = &_cmdList[1];
-	uint16 i;
-	for (i = 1; i <= _numCmdList; ++i, ++cmdList) {
-		if (cmdList->match(verb, subj1, subj2)) {
-			++comMax;
-		}
-	}
-	return comMax;
-}
 
 
 bool Command::handleBadCommand(bool walk) {

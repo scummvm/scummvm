@@ -221,7 +221,7 @@ FIND_GRAPHIC()				Logic::graphicData
 FIND_SCALE()				Logic::findScale
 FIND_VERB()					Logic::findVerb
 P3_COPY_FROM()				Logic::objectCopy
-R_MAP()						(handle map 'm1')
+R_MAP()						Logic::handlePinnacleRoom
 REDISP_OBJECT()				Logic::roomRefreshObject
 restart_game()
 SETUP_BOBS()				Graphics::bobSetupControl
@@ -403,7 +403,7 @@ MOVE_OTHER()				Walk::personMove
 -
 AREALIST					Walk::_areaList
 AREASTRIKE					Walk::_areaStrike
-movdata						Walk::_moveData
+movdata						Walk::MOVE_DATA
 WALK_DATA					Walk::_walkData
 WALKI						Walk::_walkDataCount
 

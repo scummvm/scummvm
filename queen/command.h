@@ -104,6 +104,9 @@ public:
 	//! return true if command is ready to be executed
 	bool parse() const { return _parse; }
 
+	enum {
+		MAX_MATCHING_CMDS = 50
+	};
 
 private:
 
@@ -118,7 +121,6 @@ private:
 	bool executeIfCutaway(const char *description);
 	bool executeIfDialog(const char *description);
 	
-	uint16 countAssociatedCommands(const Verb& verb, int16 subj1, int16 subj2);
 	bool handleBadCommand(bool walk);
 	void executeStandardStuff(const Verb& action, int16 subj1, int16 subj2);
 	void changeObjectState(const Verb& action, int16 obj, int16 song, bool cutDone);

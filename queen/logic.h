@@ -263,6 +263,8 @@ public:
 
 	void customMoveJoe(int facing, uint16 areaNum, uint16 walkDataNum);
 
+	void handlePinnacleRoom();
+
 	void update();
 
 

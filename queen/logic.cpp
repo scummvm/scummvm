@@ -2192,6 +2192,98 @@ void Logic::customMoveJoe(int facing, uint16 areaNum, uint16 walkDataNum) {
 }
 
 
+void Logic::handlePinnacleRoom() {
+
+	// camera does not follow Joe anymore
+	_graphics->cameraBob(-1);
+	roomDisplay("m1", RDM_NOFADE_JOE, 100, 2, true);
+
+	BobSlot *joe   = _graphics->bob(6);
+	BobSlot *piton = _graphics->bob(7);
+
+	// set scrolling value to mouse position to avoid glitch
+	_display->horizontalScroll(_input->mousePosX());
+
+	joe->x = piton->x = 3 * _input->mousePosX() / 4 + 200;
+
+	joe->frameNum = _input->mousePosX() / 36 + 43 + FRAMES_JOE_XTRA;
+
+	// adjust bounding box for fullscreen
+	joe->box.y2 = piton->box.y2 = GAME_SCREEN_HEIGHT - 1;
+
+	// bobs have been unpacked from animating objects, we don't need them
+	// to animate anymore ; so turn animating off
+	joe->animating = piton->animating = false;
+
+	update();
+	_display->palFadeIn(0, 223, ROOM_JUNGLE_PINNACLE);
+
+	_entryObj = 0;
+	uint16 prevObj = 0;
+	while (_input->mouseButton() == 0 || _entryObj == 0) {
+
+		update();
+		int mx = _input->mousePosX();
+		int my = _input->mousePosY();
+
+		// update screen scrolling
+		_display->horizontalScroll(_input->mousePosX());
+
+		// update bobs position / frame
+		joe->x = piton->x = 3 * mx / 4 + 200;
+		joe->frameNum = mx / 36 + 43 + FRAMES_JOE_XTRA;
+
+		uint16 curObj = findObjectUnderCursor(mx, my);
+		if (curObj != 0 && curObj != prevObj) {
+			_entryObj = 0;
+			curObj += _roomData[_currentRoom]; // global object number
+			ObjectData *objData = &_objectData[curObj];
+			if (objData->name > 0) {
+				_entryObj = objData->entryObj;
+				char textCmd[CmdText::MAX_COMMAND_LEN];
+				sprintf(textCmd, "%s %s", Verb(VERB_WALK_TO).name(), _objName[objData->name]);
+				_graphics->textCurrentColor(INK_MAP7);
+				_graphics->textSetCentered(5, textCmd);
+			}
+			prevObj = curObj;
+		}
+	}
+	_input->clearMouseButton();
+
+	_newRoom = _objectData[_entryObj].room;
+	joe->active = piton->active = false;
+	_graphics->textClear(5, 5);
+
+	// There is quite a hack in original source code to handle properly this
+	// special room. The main problem is described in executed.c l.334-339.
+	//
+	// Below is how room switching is handled
+	//
+	//   ACTION2=10;
+	//   SUBJECT[1]=NOUN+ROOM_DATA[ROOM];
+	//   EXECUTE_ACTION(NO);
+	// 
+	// None of the following commands updates gamestate/areas/objects/items :
+	//  
+	// piton -> crash  : 0x216
+	// piton -> floda  : 0x217
+	// piton -> bob    : 0x219
+	// piton -> embark : 0x218
+	// piton -> jungle : 0x20B
+	// 
+	// But this list is surely not exhaustive...
+	//
+	// So basically, EXECUTE_ACTION only performs the playsong calls...
+	// XXX if (com->song > 0) { playsong(com->song); }
+
+	// camera follows Joe again
+	_graphics->cameraBob(0);
+
+	// XXX COMPANEL=1;
+	// XXX panelflag=1;
+}
+
+
 void Logic::update() {
 	_graphics->update(_currentRoom);
 	_input->delay();
