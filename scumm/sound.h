@@ -55,6 +55,8 @@ enum {
 	bool _musicBundleToBeChanged;
 	bool _musicBundleToBeRemoved;
 	int32 _bundleMusicSampleBits;
+	int32 _outputMixerSize;
+	int32 _bundleSampleChannels;
 
 	File *_sfxFile;
 	uint32 _talk_sound_a1, _talk_sound_a2, _talk_sound_b1, _talk_sound_b2;

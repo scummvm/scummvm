@@ -951,8 +951,6 @@ static void music_handler (void * engine) {
 	g_scumm->_sound->bundleMusicHandler(g_scumm);
 }
 
-#define OUTPUT_SIZE 66150 // ((22050 * 2 * 2) / 4) * 3
-
 void Sound::playBundleMusic(char * song) {
 
 	if (_scumm->_silentDigitalImuse == true) {
@@ -961,16 +959,18 @@ void Sound::playBundleMusic(char * song) {
 
 	if (_nameBundleMusic == NULL) {
 		// FIXME: we have MUSDISK1.BUN and MUSDISK2.BUN in COMI.
+		_outputMixerSize = 66150; // ((22050 * 2 * 2) / 4) * 3
 		if (_scumm->_gameId == GID_CMI) {
 			printf("Opening bundle\n");
 			if (_scumm->_bundle->openMusicFile("musdisk1.bun", _scumm->getGameDataPath()) == false)
 				return;
+			_outputMixerSize = 88140; // ((22050 * 2 * 2)
 		} else {
 			if (_scumm->_bundle->openMusicFile("digmusic.bun", _scumm->getGameDataPath()) == false)
 				return;
 		}
-		_musicBundleBufFinal = (byte*)malloc(OUTPUT_SIZE);
-		_musicBundleBufOutput = (byte*)malloc(10 * 0x2000);
+		_musicBundleBufFinal = (byte*)malloc(_outputMixerSize);
+		_musicBundleBufOutput = (byte*)malloc(((_outputMixerSize / 0x2000) + 1) * _outputMixerSize);
 		_currentSampleBundleMusic = 0;
 		_offsetSampleBundleMusic = 0;
 		_offsetBufBundleMusic = 0;
@@ -1001,7 +1001,7 @@ void Sound::stopBundleMusic() {
 void Sound::bundleMusicHandler(Scumm * scumm) {
 	byte * ptr;
 	int32 l, num = _numberSamplesBundleMusic, length, k;
-	int32 rate = 22050, channels;
+	int32 rate = 22050;
 	int32 tag, size = -1, header_size = 0;
 	
 	if (_pauseBundleMusic)
@@ -1037,7 +1037,7 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 	ptr = _musicBundleBufOutput;
 
 	for (k = 0, l = _currentSampleBundleMusic; l < num; k++) {
-		length = _scumm->_bundle->decompressMusicSampleByName(_nameBundleMusic, l, (_musicBundleBufOutput + ((k * 0x2000) + _offsetBufBundleMusic)), channels);
+		length = _scumm->_bundle->decompressMusicSampleByName(_nameBundleMusic, l, (_musicBundleBufOutput + ((k * 0x2000) + _offsetBufBundleMusic)), _bundleSampleChannels);
 		_offsetSampleBundleMusic += length;
 
 		if (l == 0) {
@@ -1056,7 +1056,7 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 					ptr += 12;
 					_bundleMusicSampleBits = READ_BE_UINT32(ptr); ptr += 4;
 					rate = READ_BE_UINT32(ptr); ptr += 4;
-					channels = READ_BE_UINT32(ptr); ptr += 4;
+					_bundleSampleChannels = READ_BE_UINT32(ptr); ptr += 4;
 				break;
 				case MKID_BE('TEXT'):
 				case MKID_BE('REGN'):
@@ -1083,10 +1083,10 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 		l++;
 		_currentSampleBundleMusic = l;
 
-		if (_offsetSampleBundleMusic >= OUTPUT_SIZE + header_size) {
-			memcpy(_musicBundleBufFinal, (_musicBundleBufOutput + header_size), OUTPUT_SIZE);
-			_offsetBufBundleMusic = _offsetSampleBundleMusic - OUTPUT_SIZE - header_size;
-			memcpy(_musicBundleBufOutput, (_musicBundleBufOutput + (OUTPUT_SIZE + header_size)), _offsetBufBundleMusic);
+		if (_offsetSampleBundleMusic >= _outputMixerSize + header_size) {
+			memcpy(_musicBundleBufFinal, (_musicBundleBufOutput + header_size), _outputMixerSize);
+			_offsetBufBundleMusic = _offsetSampleBundleMusic - _outputMixerSize - header_size;
+			memcpy(_musicBundleBufOutput, (_musicBundleBufOutput + (_outputMixerSize + header_size)), _offsetBufBundleMusic);
 			_offsetSampleBundleMusic = _offsetBufBundleMusic;
 			break;
 		}
@@ -1098,17 +1098,16 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 		_offsetBufBundleMusic = 0;
 	}
 
-	size = OUTPUT_SIZE;
 	ptr = _musicBundleBufFinal;
 
 	byte * buffer = NULL;
 	uint32 final_size;
 	if (_bundleMusicSampleBits == 12) {
-		final_size = decode12BitsSample(ptr, &buffer, size);
+		final_size = decode12BitsSample(ptr, &buffer, _outputMixerSize);
 	} else if (_bundleMusicSampleBits == 16) {
-		buffer = (byte*)malloc(size);
-		final_size = size;
-		memcpy(buffer, ptr, size);
+		buffer = (byte*)malloc(_outputMixerSize);
+		final_size = _outputMixerSize;
+		memcpy(buffer, ptr, _outputMixerSize);
 	} else {
 		warning("Sound::bundleMusicHandler  to do more playStream options...");
 		return;

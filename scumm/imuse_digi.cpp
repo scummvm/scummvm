@@ -1066,7 +1066,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					if ((_comiStateMusicTable[l].index == b)) {
 						debug(2, "Play imuse music: %s, %s, %s", _comiStateMusicTable[l].name, _comiStateMusicTable[l].title, _comiStateMusicTable[l].filename);
 						if (_comiStateMusicTable[l].filename[0] != 0) {
-//							_scumm->_sound->playBundleMusic((char*)&_comiStateMusicTable[l].filename);
+							_scumm->_sound->playBundleMusic((char*)&_comiStateMusicTable[l].filename);
 						}
 						return 0;
 					}
@@ -1113,7 +1113,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					if ((_comiSeqMusicTable[l].index == b)) {
 						debug(2, "Play imuse music: %s, %s, %s", _comiSeqMusicTable[l].name, _comiSeqMusicTable[l].title, _comiSeqMusicTable[l].filename);
 						if (_comiSeqMusicTable[l].filename[0] != 0) {
-//							_scumm->_sound->playBundleMusic((char*)&_comiSeqMusicTable[l].filename);
+							_scumm->_sound->playBundleMusic((char*)&_comiSeqMusicTable[l].filename);
 						}
 						return 0;
 					}
