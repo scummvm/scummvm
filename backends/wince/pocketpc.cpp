@@ -188,6 +188,8 @@ pseudoGAPI availablePseudoGAPI[] = {
 
 int _pseudoGAPI_device;
 
+int _thread_priority;
+
 extern char noGAPI;
 
 /* Default SDLAUDIO */
@@ -706,7 +708,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 	int version;
 	int result;
 	bool need_rescan = false;
-
+	
 	HMODULE aygshell_handle;
 	//HMODULE SDLAudio_handle;
 	HMODULE GAPI_handle;
@@ -815,6 +817,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 	version = g_config->getInt("GamesVersion", 0, "wince");
 	if (!version || version != CURRENT_GAMES_VERSION) 
 		need_rescan = true;
+
+	_thread_priority = g_config->getInt("SoundThreadPriority", -1, "wince");
+	if (_thread_priority < 0) {
+#ifdef SH3
+		_thread_priority = THREAD_PRIORITY_NORMAL;
+#else
+		_thread_priority = THREAD_PRIORITY_ABOVE_NORMAL;
+#endif
+		g_config->setInt("SoundThreadPriority", _thread_priority, "wince");
+		g_config->flush();
+	}
 
 	select_game = true;
 
@@ -1090,7 +1103,7 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			if (!processAction(GAPIKeysTranslate((unsigned int)(wParam))))
 			/*else*/ {
 				wm->_event.kbd.ascii = mapKey(wParam);
-				wm->_event.kbd.keycode = mapKey(wParam);
+				wm->_event.kbd.keycode = tolower(wm->_event.kbd.ascii);
 				wm->_event.event_code = EVENT_KEYDOWN;								
 			}
 		}
@@ -1162,7 +1175,7 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 					wm->_event.kbd.ascii = 
 						(y <= (220 + offset_y)? KEYBOARD_MAPPING_ALPHA_HIGH[((x + 10) / 14) - 1] :
 												KEYBOARD_MAPPING_ALPHA_LOW[((x + 10) / 14) - 1]);
-					wm->_event.kbd.keycode = wm->_event.kbd.ascii;
+					wm->_event.kbd.keycode = tolower(wm->_event.kbd.ascii);
 					break;
 				} 
 				else
@@ -1877,6 +1890,7 @@ bool OSystem_WINCE3::set_sound_proc(void *param, SoundProc *proc, byte format) {
 	desired.samples = 128;
 	desired.callback = own_soundProc;
 	desired.userdata = param;
+	desired.thread_priority = _thread_priority;
 	if (SDL_OpenAudio(&desired, NULL) != 0) {
 		return false;
 	}
