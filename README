@@ -217,9 +217,9 @@ These cutscenes are provided in MPEG2 format with OGG Vorbis audio.
 Viewing these cutscenes thus requires a version of ScummVM compiled 
 with both libmpeg2 (preferably 0.4.0 or greater) and libVorbis support.
 
-The cutscenes should be placed in the main game data directory. Note that
-currently this requires either copying the game to harddisk or reburning
-customised versions of the game CDs.
+The cutscenes should be placed in a harddisk directory, and the location
+to this can be specified using the 'Extra Path' setting under the 'Paths'
+tab of the game options screen ('Edit Game').
 
 3.4) Flight of the Amazon Queen notes
 ---- --------------------------------
@@ -237,14 +237,25 @@ OGG or FLAC.
 
 3.5) Known Problems in ScummVM 0.7.0
 ---- -------------------------------
-This release has the following known problems. There is no need to report them,
-although patches to fix them are welcome. If you discover a bug that is not
-listed here, nor in the compatibility table on the web site, please see
-the section on Reporting Bugs.
+This release has the following known problems and limitations. There is no
+need to report them, although patches to fix them are welcome. If you discover
+a bug that is not listed here, nor in the compatibility table on the web site,
+please see the section on Reporting Bugs.
 
-This is a development version. It probably has a LOT of problems. 
+     CD Audio Games:
+          - When playing games that use CD Audio (Towns varients, Loom CD, etc),
+            users of Microsoft Windows 2000/XP may experience random crashes.
+            This is due to a long-standing Windows bug, resulting in corrupt
+            game files being read from the CD. Please copy the game data to
+            your harddrive to avoid this.
 
-TODO/FIXME: Edit this before the final release!
+     Monkey Island 1 (EGA):
+     Loom (EGA):
+          - MIDI support requires the Roland update from LucasArts
+
+     Beneath a Steel Sky:
+          - Not a bug: CD version is missing speech for some dialog, this is
+            normal.
 
 
 4.0) Supported Platforms:
