@@ -314,6 +314,18 @@ void Scumm::scummInit() {
 		initScreens(0, 16, _realWidth, 144);
 	}
 
+	if (((_features & GF_AFTER_V2) || (_features & GF_AFTER_V3)) && !(_features & GF_OLD256)) {
+		byte pal16[16 * 4] = {
+			0,   0,  0,  0,   0,   0,  168, 0,   0,   168, 0,  0,   0,   168, 168, 0,
+			168, 0,  0,  0,   168, 0,  168, 0,   168, 84,  0,  0,   168, 168, 168, 0,
+			84,  84, 84, 0,   84,  84, 84,  0,   84,  252, 84, 0,   84,  252, 252, 0,
+			252, 84, 84, 0,   63,  84, 252, 0,   252, 252, 84, 0,   252, 252, 252, 0
+		};
+		memcpy (_currentPalette, pal16, 16 * 4);
+		setDirtyColors(0, 15);
+		updatePalette();
+	}
+	
 	if (_features & GF_AFTER_V3)
 		_charset = new CharsetRendererOld256(this);
 	else if (_features & GF_AFTER_V8)
