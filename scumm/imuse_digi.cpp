@@ -819,7 +819,7 @@ void IMuseDigital::startSound(int sound) {
 					*(_channel[l].data + t * 2 + 1) = *(_voiceVocData + t);
 				}
 
-				_voiceVocRate = NULL;
+				_voiceVocData = NULL;
 			} else if (READ_UINT32(ptr) == MKID('Crea')) {
 				byte *t_ptr= readCreativeVoc(ptr, size, _channel[l].freq);
 				_channel[l].mixerSize = _channel[l].freq * 2;
