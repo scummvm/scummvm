@@ -296,6 +296,10 @@ void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
 					_skyMouse->buttonPressed(2);					
 					break;
 
+				case OSystem::EVENT_QUIT:
+					_system->quit();
+					break;
+
 				default:
 					break;
 			}

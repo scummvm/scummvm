@@ -190,6 +190,9 @@ void NewGui::runLoop() {
 				case OSystem::EVENT_WHEELDOWN:
 					activeDialog->handleMouseWheel(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y, 1);
 					break;
+				case OSystem::EVENT_QUIT:
+					_system->quit();
+					break;
 			}
 		}
 

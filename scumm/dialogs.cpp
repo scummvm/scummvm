@@ -298,10 +298,8 @@ void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		_scumm->optionsDialog();
 		break;
 	case kQuitCmd:
-#ifdef __PALM_OS__
+		_scumm->_quit = true;
 		close();
-#endif
-		_scumm->_system->quit();
 		break;
 	default:
 		ScummDialog::handleCommand(sender, cmd, data);

@@ -4488,6 +4488,10 @@ void SimonEngine::delay(uint amount) {
 					else
 						_exit_cutscene = true;
  					break;
+
+				case OSystem::EVENT_QUIT:
+					_system->quit();
+					break;
 				
 				default:
 					break;

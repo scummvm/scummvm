@@ -354,9 +354,9 @@ public:
 	void shutDown();
 	void setOptions(void);
 
-#ifdef __PALM_OS__
-	bool _quit;		// try to exit properly
-#endif
+	/** We keep running until this is set to true. */
+	bool _quit;
+
 	// GUI
 	NewGui *_newgui;
 

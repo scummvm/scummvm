@@ -41,12 +41,6 @@
 #define JOY_BUT_SPACE 4
 #define JOY_BUT_F5 5
 
-bool atexit_proc_installed = false;
-void atexit_proc() {
-	SDL_ShowCursor(SDL_ENABLE);
-	SDL_Quit();
-}
-
 OSystem *OSystem_SDL_create(int gfx_mode, bool full_screen) {
 	return OSystem_SDL_Common::create(gfx_mode, full_screen);
 }
@@ -78,12 +72,6 @@ void OSystem_SDL_Common::init_intern(int gfx_mode, bool full_screen) {
 #ifndef MACOSX		// Don't set icon on OS X, as we use a nicer external icon there
 	// Setup the icon
 	setup_icon();
-#endif
-
-#ifndef MACOSX		// Work around a bug in OS X
-	// Clean up on exit
-	atexit_proc_installed = true;
-	atexit(atexit_proc);
 #endif
 
 	// enable joystick
@@ -118,11 +106,16 @@ OSystem_SDL_Common::OSystem_SDL_Common()
 }
 
 OSystem_SDL_Common::~OSystem_SDL_Common() {
+//	unload_gfx_mode();
+
 	if (_dirty_checksums)
 		free(_dirty_checksums);
 	free(_currentPalette);
 	free(_mouseBackup);
 	SDL_DestroyMutex(_mutex);
+
+	SDL_ShowCursor(SDL_ENABLE);
+	SDL_Quit();
 }
 
 void OSystem_SDL_Common::init_size(uint w, uint h) {
@@ -139,13 +132,6 @@ void OSystem_SDL_Common::init_size(uint w, uint h) {
 
 	unload_gfx_mode();
 	load_gfx_mode();
-
-#ifdef MACOSX		// Work around a bug in OS X 10.1 related to OpenGL in windowed mode
-	if (!atexit_proc_installed) {
-		atexit_proc_installed = true;
-		atexit(atexit_proc);
-	}
-#endif
 }
 
 void OSystem_SDL_Common::copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {
@@ -549,15 +535,15 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 
 			// Ctrl-z and Alt-X quit
 			if ((b == KBD_CTRL && ev.key.keysym.sym=='z') || (b == KBD_ALT && ev.key.keysym.sym=='x')) {
-				quit();
-				break;
+				event->event_code = EVENT_QUIT;
+				return true;;
 			}
 
 #ifdef MACOSX
 			// On Macintosh', Cmd-Q quits
 			if ((ev.key.keysym.mod & KMOD_META) && ev.key.keysym.sym=='q') {
-				quit();
-				break;
+				event->event_code = EVENT_QUIT;
+				return true;;
 			}
 #endif
 			// Ctr-Alt-<key> will change the GFX mode
@@ -578,8 +564,8 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 #ifdef QTOPIA
 			// quit on fn+backspace on zaurus
 			if (ev.key.keysym.sym == 127) {
-				quit();
-				break;
+				event->event_code = EVENT_QUIT;
+				return true;;
 			}
 
 			// map menu key (f11) to f5 (scumm menu)
@@ -825,8 +811,8 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 			break;
 
 		case SDL_QUIT:
-			quit();
-			break;
+			event->event_code = EVENT_QUIT;
+			return true;;
 		}
 	}
 	return false;
@@ -890,6 +876,10 @@ void OSystem_SDL_Common::quit() {
 		SDL_CDClose(_cdrom);
 	}
 	unload_gfx_mode();
+
+	SDL_ShowCursor(SDL_ENABLE);
+	SDL_Quit();
+
 	exit(0);
 }
 

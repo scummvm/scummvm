@@ -231,16 +231,14 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_objs = NULL;
 	_debugger = NULL;
 	_bundle = NULL;
-	_sound= NULL;
+	_sound = NULL;
 	memset(&res, 0, sizeof(res));
 	memset(&vm, 0, sizeof(vm));
 	_smushFrameRate = 0;
-	_insaneState = 0;
-	_videoFinished = 0;
-	_smushPlay = 0;
-#ifdef __PALM_OS__
+	_insaneState = false;
+	_videoFinished = false;
+	_smushPlay = false;
 	_quit = false;
-#endif
 	_newgui = NULL;
 	_pauseDialog = NULL;
 	_optionsDialog = NULL;
@@ -249,7 +247,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_fastMode = 0;
 	memset(&_rnd, 0, sizeof(RandomSource));
 	_gameId = 0;
-	memset(&gdi,0,sizeof(Gdi));
+	memset(&gdi, 0, sizeof(Gdi));
 	_actors = NULL;
 	_inventory = NULL;
 	_newNames = NULL;
@@ -1878,8 +1876,7 @@ char Scumm::displayError(bool showCancel, const char *message, ...) {
 }
 
 void Scumm::shutDown() {
-	// FIXME: This is ugly
-	_system->quit();
+	_quit = true;
 }
 
 void Scumm::restart() {
@@ -2342,6 +2339,10 @@ void Scumm::parseEvents() {
 			_rightBtnPressed &= ~msDown;
 			break;
 		
+		case OSystem::EVENT_QUIT:
+			_quit = true;
+			break;
+		
 		default:
 			break;
 		}
@@ -2403,11 +2404,8 @@ void Scumm::mainRun() {
 	int delta = 0;
 	int diff = _system->get_msecs();
 
-	for (;;) {
-#ifdef __PALM_OS__
-	if (_quit)	// palmfixme : need to check for autosave on exit
-		return;
-#endif
+	while (!_quit) {
+
 		updatePalette();
 		_system->update_screen();		
 
@@ -2418,6 +2416,11 @@ void Scumm::mainRun() {
 
 		if (delta < 1)	// Ensure we don't get into a loop
 			delta = 1;  // by not decreasing sleepers.
+
+		if (_quit) {
+			// TODO: Maybe perform an autosave on exit?
+			// TODO: Also, we could optionally show a "Do you really want to quit?" dialog here
+		}
 	}
 }
 
