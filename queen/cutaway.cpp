@@ -1364,16 +1364,18 @@ void Cutaway::run(char *nextFilename) {
 		// XXX CUTJOEF=0;
 		_comPanel = 0;
 
-		// XXX some string animations
 		int k = 0;
 		for (i = _logic->roomData(_logic->currentRoom());
 				i <= _logic->roomData(_logic->currentRoom() + 1); i++) {
 
-			ObjectData *object = _logic->objectData(i);
-			
+			ObjectData *object = _logic->objectData(i);			
 			if (object->image == -3 || object->image == -4) {
 				k++;
-				// XXX if (object->name > 0 && _logic->newAnim(
+				if (object->name > 0) {
+					BobSlot *bs = _graphics->bob(k);
+					bs->animating = true;
+					bs->animReset();
+				}
 			}
 		}
 
