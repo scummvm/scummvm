@@ -34,6 +34,7 @@
 #include "base/plugins.h"
 #include "common/config-file.h"
 #include "common/scaler.h"	// For GFX_NORMAL
+#include "common/timer.h"
 #include "gui/newgui.h"
 #include "gui/launcher.h"
 #include "gui/message.h"
@@ -84,6 +85,7 @@ const char *gScummVMFullVersion = "ScummVM 0.5.3cvs (" __DATE__ " " __TIME__ ")"
 
 Config	*g_config = 0;
 NewGui	*g_gui = 0;
+Timer   *g_timer = 0;
 
 #if defined(WIN32) && defined(NO_CONSOLE)
 #include <cstdio>
@@ -305,6 +307,9 @@ int main(int argc, char *argv[]) {
 			prop.gfx_mode = GFX_NORMAL;
 			system->property(OSystem::PROP_SET_GFX_MODE, &prop);
 		}
+		
+		// Create the timer services
+		g_timer = new Timer (system);
 
 		// Create the game engine
 		Engine *engine = detector.createEngine(system);

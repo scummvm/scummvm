@@ -41,7 +41,8 @@ Engine::Engine(GameDetector *detector, OSystem *syst)
 
 	g_system = _system; // FIXME - BIG HACK for MidiEmu
 
-	_timer = new Timer(_system);
+	extern Timer *g_timer;
+	_timer = g_timer;
 }
 
 Engine::~Engine() {

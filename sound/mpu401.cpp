@@ -24,6 +24,7 @@
 #include "common/timer.h"
 #include "common/util.h"	// for ARRAYSIZE
 
+extern Timer *g_timer;
 
 void MidiChannel_MPU401::init(MidiDriver_MPU401 *owner, byte channel) {
 	_owner = owner;
@@ -94,9 +95,8 @@ MidiDriver_MPU401::MidiDriver_MPU401() :
 }
 
 void MidiDriver_MPU401::close() {
-	// FIXME: I'd really prefer a g_timer instead of going through g_engine
 	if (_timer_proc)
-		g_engine->_timer->releaseProcedure (_timer_proc);
+		g_timer->releaseProcedure (_timer_proc);
 	_timer_proc = 0;
 	for (int i = 0; i < 16; ++i)
 		send (0x7B << 8 | 0xB0 | i);
@@ -129,12 +129,11 @@ MidiChannel *MidiDriver_MPU401::allocateChannel() {
 }
 
 void MidiDriver_MPU401::setTimerCallback (void *timer_param, TimerProc timer_proc) {
-	// FIXME: I'd really prefer a g_timer instead of going through g_engine
 	if (!_timer_proc || !timer_proc) {
 		if (_timer_proc)
-			g_engine->_timer->releaseProcedure (_timer_proc);
+			g_timer->releaseProcedure (_timer_proc);
 		_timer_proc = timer_proc;
 		if (timer_proc)
-			g_engine->_timer->installProcedure (timer_proc, 10000, timer_param);
+			g_timer->installProcedure (timer_proc, 10000, timer_param);
 	}
 }
