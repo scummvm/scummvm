@@ -1233,7 +1233,6 @@ void NORETURN CDECL error(const char *s, ...) {
 }
 
 void CDECL warning(const char *s, ...) {
-#if 0
 	char buf[1024];
 	va_list va;
 	
@@ -1242,11 +1241,9 @@ void CDECL warning(const char *s, ...) {
 	va_end(va);
 
 	fprintf(stderr, "WARNING: %s!\n", buf);
-#endif
 }
 
 void CDECL debug(int level, const char *s, ...) {
-#if 0
 	char buf[1024];
 	va_list va;
 
@@ -1258,7 +1255,6 @@ void CDECL debug(int level, const char *s, ...) {
 	va_end(va);
 	printf("%s\n", buf);
 	fflush(stdout);
-#endif
 }
 
 void checkHeap() {
