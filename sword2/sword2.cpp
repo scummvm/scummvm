@@ -26,6 +26,7 @@
 #include "driver/driver96.h"
 #include "driver/palette.h"
 #include "common/gameDetector.h"
+#include "common/config-file.h"
 #include "common/timer.h"
 #include "build_display.h"
 #include "console.h"
@@ -242,6 +243,7 @@ int32 GameCycle(void)
 // int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 void Sword2State::go()
 {
+	OSystem::Property prop;
 	uint32 rv;
 	uint8  breakOut = 0;
 	char	c;
@@ -274,9 +276,21 @@ void Sword2State::go()
 		return;
 	}
 
+	// Override global scaler with any game-specific define
+	if (g_config->get("gfx_mode")) {
+		prop.gfx_mode = _detector->parseGraphicsMode(g_config->get("gfx_mode"));
+		_system->property(OSystem::PROP_SET_GFX_MODE, &prop);
+	}
+
 	Zdebug("CALLING: InitialiseDisplay");
 	_system->init_size(640, 480);
 	rv = InitialiseDisplay(640, 480, 8, RD_FULLSCREEN);
+
+	// Override global fullscreen setting with any game-specific define
+	if (g_config->getBool("fullscreen", false)) {
+		if (!_system->property(OSystem::PROP_GET_FULLSCREEN, 0))
+			_system->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
+	}
 		
 	Zdebug("RETURNED with rv = %.8x", rv);
 	if (rv != RD_OK)
