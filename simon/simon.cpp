@@ -4985,12 +4985,7 @@ void SimonState::playMusic(uint music)
 	/* Simon 1 dos talkie music doesn't detect correct size of music data */
 	/* Simon 2 dos talkie music isn't supported */
 	/* Simon 2 dos music isn't supported */
-	const char *s2 = gss->wav_filename;
-	File music_file;
-	music_file.open(s2, _gameDataPath);
-	if (music_file.isOpen() == true) {	
-		midi.shutdown();
-		
+	if (_voice_type == FORMAT_WAV) {
 		if (_game & GAME_WIN) {
 			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
 			midi.read_all_songs(_game_file);
