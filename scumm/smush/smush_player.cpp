@@ -189,6 +189,10 @@ static StringResource *getStrings(const char *file, const char *directory, bool 
 SmushPlayer *player;
 
 void smush_callback(void *ptr) {
+	Scumm *scumm = (Scumm *)ptr;
+	if (scumm->_smushPlay == false)
+		return;
+
 	player->_smushProcessFrame = true;
 	player->parseNextFrame();
 	player->_smushProcessFrame = false;
@@ -252,8 +256,8 @@ void SmushPlayer::init() {
 
 void SmushPlayer::deinit() {
 	_scumm->_smushPlay = false;
-	_scumm->_timer->releaseProcedure(&smush_callback);
 	while (_smushProcessFrame) {}
+	_scumm->_timer->releaseProcedure(&smush_callback);
 
 	for(int i = 0; i < 5; i++) {
 		if (_sf[i]) {
@@ -824,9 +828,6 @@ void SmushPlayer::setupAnim(const char *file, const char *directory) {
 }
 
 void SmushPlayer::parseNextFrame() {
-	if (_scumm->_smushPlay == false)
-		return;
-
 	Chunk *sub = _base->subBlock();
 	if (_base->eof()) {
 		_scumm->_videoFinished = true;
