@@ -5,6 +5,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 - Curse of Monkey Island (comi) support (experimental)
 - Many important Simon the Sorcerer 1/2 improvements and fixes
 - Very pre-alpha Beneath a Steel Sky code. Don't expect it to do anything. 
+- Preliminary support for early Humongous Entertainment titles (very experimental)
 - New debug console and several GUI/Launcher enhancements (incomplete)
 - New Save/Load code (easier to expand while retaining compatability)
 - DreamCast port now works with new games added for 0.3.0b
