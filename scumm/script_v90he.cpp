@@ -87,11 +87,11 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o90_getSegmentAngle),
 		/* 24 */
 		OPCODE(o90_getDistanceBetweenPoints),
-		OPCODE(o90_unknown25), // o90_getSpriteInfo
-		OPCODE(o90_unknown26), // o90_setSpriteInfo
-		OPCODE(o90_unknown27), // o90_getSpriteGroupInfo
+		OPCODE(o90_getSpriteInfo),
+		OPCODE(o90_setSpriteInfo),
+		OPCODE(o90_getSpriteGroupInfo),
 		/* 28 */
-		OPCODE(o90_unknown28), // o90_setSpriteGroupInfo
+		OPCODE(o90_setSpriteGroupInfo),
 		OPCODE(o90_getWizData),
 		OPCODE(o6_invalid),
 		OPCODE(o90_startScriptUnk),
@@ -696,12 +696,12 @@ void ScummEngine_v90he::o90_getDistanceBetweenPoints() {
 	}
 }
 
-void ScummEngine_v90he::o90_unknown25() {
+void ScummEngine_v90he::o90_getSpriteInfo() {
 	int args[16];
 	byte subOp = fetchScriptByte();
 	subOp -= 30;
 
-	debug(1,"o90_unknown25 stub (%d)", subOp);
+	debug(1,"o90_getSpriteInfo stub (%d)", subOp);
 	switch (subOp) {
 	case 0:
 		pop();
@@ -791,12 +791,12 @@ void ScummEngine_v90he::o90_unknown25() {
 		pop();
 		break;
 	default:
-		error("o90_unknown25: Unknown case %d", subOp);
+		error("o90_getSpriteInfo: Unknown case %d", subOp);
 	}
 	push(0);
 }
 
-void ScummEngine_v90he::o90_unknown26() {
+void ScummEngine_v90he::o90_setSpriteInfo() {
 	int args[16];
 	byte subOp = fetchScriptByte();
 	subOp -= 34;
@@ -887,12 +887,12 @@ void ScummEngine_v90he::o90_unknown26() {
 	case 183:
 		break;
 	default:
-		error("o90_unknown26: Unknown case %d", subOp);
+		error("o90_setSpriteInfo: Unknown case %d", subOp);
 	}
-	debug(1,"o90_unknown26 stub (%d)", subOp);
+	debug(1,"o90_setSpriteInfo stub (%d)", subOp);
 }
 
-void ScummEngine_v90he::o90_unknown27() {
+void ScummEngine_v90he::o90_getSpriteGroupInfo() {
 	byte subOp = fetchScriptByte();
 	switch (subOp) {
 	case 8: // HE 99+
@@ -919,14 +919,14 @@ void ScummEngine_v90he::o90_unknown27() {
 		pop();
 		break;
 	default:
-		error("o90_unknown27: Unknown case %d", subOp);
+		error("o90_getSpriteGroupInfo: Unknown case %d", subOp);
 	}
 	push(0);
 
-	debug(1,"o90_unknown27 stub (%d)", subOp);
+	debug(1,"o90_getSpriteGroupInfo stub (%d)", subOp);
 }
 
-void ScummEngine_v90he::o90_unknown28() {
+void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 	byte subOp = fetchScriptByte();
 	subOp -= 37;
 
@@ -958,7 +958,7 @@ void ScummEngine_v90he::o90_unknown28() {
 			pop();
 			break;
 		default:
-			error("o90_unknown28 subOp 0: Unknown case %d", subOp);
+			error("o90_setSpriteGroupInfo subOp 0: Unknown case %d", subOp);
 		}
 		break;
 	case 5:
@@ -993,9 +993,9 @@ void ScummEngine_v90he::o90_unknown28() {
 	case 180:
 		break;
 	default:
-		error("o90_unknown28: Unknown case %d", subOp);
+		error("o90_setSpriteGroupInfo: Unknown case %d", subOp);
 	}
-	debug(1,"o90_unknown28 stub (%d)", subOp);
+	debug(1,"o90_setSpriteGroupInfo stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_getWizData() {

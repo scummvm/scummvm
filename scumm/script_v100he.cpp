@@ -103,7 +103,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		/* 30 */
 		OPCODE(o6_ge),
 		OPCODE(o6_getDateTime),
-		OPCODE(o100_unknown28),
+		OPCODE(o100_setSpriteGroupInfo),
 		OPCODE(o6_gt),
 		/* 34 */
 		OPCODE(o100_resourceRoutines),
@@ -192,7 +192,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o100_startSound),
 		/* 78 */
 		OPCODE(o6_invalid),
-		OPCODE(o100_unknown26),
+		OPCODE(o100_setSpriteInfo),
 		OPCODE(o6_stampObject),
 		OPCODE(o72_startObject),
 		/* 7C */
@@ -271,7 +271,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o72_checkGlobQueue),
 		OPCODE(o100_getResourceSize),
 		/* B8 */
-		OPCODE(o100_unknown27),
+		OPCODE(o100_getSpriteGroupInfo),
 		OPCODE(o6_invalid),
 		OPCODE(o100_getWizData),
 		OPCODE(o6_isActorInBox),
@@ -314,7 +314,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o72_getSoundElapsedTimeOfSound),
 		OPCODE(o6_isSoundRunning),
 		OPCODE(o80_getSoundVar),
-		OPCODE(o100_unknown25),
+		OPCODE(o100_getSpriteInfo),
 		/* DC */
 		OPCODE(o90_sqrt),
 		OPCODE(o6_startObjectQuick),
@@ -831,7 +831,7 @@ void ScummEngine_v100he::o100_drawObject() {
 	}
 }
 
-void ScummEngine_v100he::o100_unknown28() {
+void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 	byte string[260];
 
 	byte subOp = fetchScriptByte();
@@ -877,7 +877,7 @@ void ScummEngine_v100he::o100_unknown28() {
 			pop();
 			break;
 		default:
-			error("o100_unknown28 subOp 38: Unknown case %d", subOp);
+			error("o100_setSpriteGroupInfo subOp 38: Unknown case %d", subOp);
 		}
 		break;
 	case 40:
@@ -906,9 +906,9 @@ void ScummEngine_v100he::o100_unknown28() {
 	case 89:
 		break;
 	default:
-		error("o100_unknown28: Unknown case %d", subOp);
+		error("o100_setSpriteGroupInfo: Unknown case %d", subOp);
 	}
-	debug(1,"o100_unknown28 stub (%d)", subOp);
+	debug(1,"o100_setSpriteGroupInfo stub (%d)", subOp);
 }
 
 void ScummEngine_v100he::o100_resourceRoutines() {
@@ -1498,7 +1498,7 @@ void ScummEngine_v100he::o100_startSound() {
 	}
 }
 
-void ScummEngine_v100he::o100_unknown26() {
+void ScummEngine_v100he::o100_setSpriteInfo() {
 	int args[16];
 	byte string[80];
 
@@ -1597,9 +1597,9 @@ void ScummEngine_v100he::o100_unknown26() {
 	case 89:
 		break;
 	default:
-		error("o100_unknown26: Unknown case %d", subOp);
+		error("o100_setSpriteInfo: Unknown case %d", subOp);
 	}
-	debug(1,"o100_unknown26 stub (%d)", subOp);
+	debug(1,"o100_setSpriteInfo stub (%d)", subOp);
 }
 
 void ScummEngine_v100he::o100_quitPauseRestart() {
@@ -1788,7 +1788,7 @@ void ScummEngine_v100he::o100_getResourceSize() {
 	push(size);
 }
 
-void ScummEngine_v100he::o100_unknown27() {
+void ScummEngine_v100he::o100_getSpriteGroupInfo() {
 	byte subOp = fetchScriptByte();
 	switch (subOp) {
 	case 5:
@@ -1815,11 +1815,11 @@ void ScummEngine_v100he::o100_unknown27() {
 		pop();
 		break;
 	default:
-		error("o100_unknown27: Unknown case %d", subOp);
+		error("o100_getSpriteGroupInfo: Unknown case %d", subOp);
 	}
 	push(0);
 
-	debug(1,"o100_unknown27 stub (%d)", subOp);
+	debug(1,"o100_getSpriteGroupInfo stub (%d)", subOp);
 }
 
 void ScummEngine_v100he::o100_getWizData() {
@@ -1976,7 +1976,7 @@ void ScummEngine_v100he::o100_readFile() {
 	debug(1, "o100_readFile: slot %d, subOp %d val %d", slot, subOp, val);
 }
 
-void ScummEngine_v100he::o100_unknown25() {
+void ScummEngine_v100he::o100_getSpriteInfo() {
 	int args[16];
 
 	byte subOp = fetchScriptByte();
@@ -2072,10 +2072,10 @@ void ScummEngine_v100he::o100_unknown25() {
 		pop();
 		break;
 	default:
-		error("o100_unknown25: Unknown case %d", subOp);
+		error("o100_getSpriteInfo: Unknown case %d", subOp);
 	}
 	push(0);
-	debug(1,"o100_unknown25 stub (%d)", subOp);
+	debug(1,"o100_getSpriteInfo stub (%d)", subOp);
 }
 
 void ScummEngine_v100he::decodeParseString(int m, int n) {

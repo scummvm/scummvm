@@ -883,10 +883,10 @@ protected:
 	void o90_jumpToScriptUnk();
 	void o90_wizImageOps();
 	void o90_getDistanceBetweenPoints();
-	void o90_unknown25();
-	void o90_unknown26();
-	void o90_unknown27();
-	void o90_unknown28();
+	void o90_getSpriteInfo();
+	void o90_setSpriteInfo();
+	void o90_getSpriteGroupInfo();
+	void o90_setSpriteGroupInfo();
 	void o90_getWizData();
 	void o90_unknown2F();
 	void o90_mod();
@@ -933,7 +933,7 @@ protected:
 	void o100_redim2dimArray();
 	void o100_dimArray();
 	void o100_drawObject();
-	void o100_unknown28();
+	void o100_setSpriteGroupInfo();
 	void o100_resourceRoutines();
 	void o100_wizImageOps();
 	void o100_loadSBNG();
@@ -942,16 +942,16 @@ protected:
 	void o100_redimArray();
 	void o100_roomOps();
 	void o100_startSound();
-	void o100_unknown26();
+	void o100_setSpriteInfo();
 	void o100_quitPauseRestart();
 	void o100_cursorCommand();
 	void o100_wait();
 	void o100_writeFile();
 	void o100_getResourceSize();
-	void o100_unknown27();
+	void o100_getSpriteGroupInfo();
 	void o100_getPaletteData();
 	void o100_readFile();
-	void o100_unknown25();
+	void o100_getSpriteInfo();
 	void o100_getWizData();
 };
 
