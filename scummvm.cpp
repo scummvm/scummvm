@@ -1148,6 +1148,7 @@ void Scumm::waitForTimer(int msec_delay) {
 			}
 		}
 
+		_system->update_cdrom(); /* Loop CD Audio if needed */
 		if (_system->get_msecs() >= start_time + msec_delay)
 			break;
 		_system->delay_msecs(10);

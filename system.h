@@ -94,6 +94,19 @@ public:
 	// Get or set a property
 	virtual uint32 property(int param, uint32 value) = 0;
 		
+	// Poll cdrom status
+	// Returns true if cd audio is playing
+	virtual bool poll_cdrom();
+
+	// Play cdrom audio track
+	virtual void play_cdrom(int track, int num_loops, int start_frame, int end_frame);
+
+	// Stop cdrom audio track
+	virtual void stop_cdrom();
+
+	// Update cdrom audio status
+	virtual void update_cdrom();
+
 	// Quit
 	virtual void quit() = 0;
 };

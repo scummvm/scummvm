@@ -24,7 +24,6 @@
 #include "scumm.h"
 #include "mididrv.h"
 #include "imuse.h"
-#include "cdmusic.h"
 
 #ifdef _WIN32_WCE
 extern void *bsearch(const void *, const void *, size_t,
@@ -107,7 +106,7 @@ void Scumm::playSound(int sound)
 	ptr = getResourceAddress(rtSound, sound);
 	if (ptr != NULL && READ_UINT32_UNALIGNED(ptr) == MKID('SOUN')) {
 		ptr += 8;
-		cd_play(this, ptr[16], ptr[17] == 0xff ? -1 : ptr[17],
+		_system->play_cdrom(ptr[16], ptr[17] == 0xff ? -1 : ptr[17],
 						(ptr[18] * 60 + ptr[19]) * 75 + ptr[20], 0);
 		current_cd_sound = sound;
 		return;
@@ -257,7 +256,7 @@ int Scumm::isSoundRunning(int sound)
 	int i;
 
 	if (sound == current_cd_sound)
-		return cd_is_running();
+		return _system->poll_cdrom();
 
 	i = _soundQue2Pos;
 	while (i--) {
@@ -305,7 +304,7 @@ void Scumm::stopSound(int a)
 
 	if (a == current_cd_sound) {
 		current_cd_sound = 0;
-		cd_stop();
+		_system->stop_cdrom();
 	}
 
 	se = _imuse;
@@ -323,7 +322,7 @@ void Scumm::stopAllSounds()
 
 	if (current_cd_sound != 0) {
 		current_cd_sound = 0;
-		cd_stop();
+		_system->stop_cdrom();
 	}
 
 	if (se) {

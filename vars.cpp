@@ -97,13 +97,8 @@ void Scumm::setupScummVarsOld()
 	VAR_V5_DRAWFLAGS = 9;
 	VAR_MI1_TIMER = 14;
 
-	//if (_features & GF_OLD256) {
 	VAR_V5_OBJECT_LO = 15;
 	VAR_V5_OBJECT_HI = 16;
-	/*} else {
-	   VAR_V5_OBJECT_LO = 16;
-	   VAR_V5_OBJECT_HI = 15;
-	   } */
 
 	VAR_V5_TALK_STRING_Y = 54;
 	VAR_V5_CHARFLAG = 60;

@@ -20,10 +20,8 @@
  *
  */
 
-
 #include "stdafx.h"
 #include "scumm.h"
-#include "cdmusic.h"
 
 void Scumm::setupOpcodes()
 {
@@ -2362,6 +2360,31 @@ void Scumm::o5_verbOps()
 		case 5:										/* set xy */
 			vs->x = getVarOrDirectWord(0x80);
 			vs->y = getVarOrDirectWord(0x40);
+			// FIXME: hack loom notes into right spot
+			if (_gameId == GID_LOOM256) {
+				if ((verb >= 90) && (verb <= 97)) { // Notes
+					switch (verb) {
+						case 90:
+                        case 91:
+							vs->y -= 7;
+						break;
+						case 92:
+							vs->y -= 6;
+						break;
+						case 93:
+							vs->y -= 4;
+						break;
+						case 94:
+							vs->y -= 3;
+						break;
+						case 95:
+							vs->y -= 1;
+						break;
+						case 97:
+							vs->y -= 5;
+					}
+				}
+			}
 			break;
 		case 6:										/* set on */
 			vs->curmode = 1;
@@ -2645,7 +2668,7 @@ void Scumm::decodeParseString()
 					offset = 0;
 				delay = (int)((getVarOrDirectWord(0x40) & 0xffff) * 7.5);
 				if (_gameId == GID_LOOM256)
-					cd_play(this, 1, 0, offset, delay);
+					_system->play_cdrom(1, 0, offset, delay);
 				else
 					warning("parseString: 8");
 			}

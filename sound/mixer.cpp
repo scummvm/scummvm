@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "scumm.h"
-#include "cdmusic.h"
 
 void SoundMixer::uninsert(Channel *chan) {
 

@@ -4,7 +4,6 @@
 #include "SDL_thread.h"
 #include "gameDetector.h"
 
-#include "cdmusic.h"
 #include "mp3_cd.h"
 #include <SDL.h>
 
@@ -54,6 +53,19 @@ public:
 	// Set function that generates samples 
 	bool set_sound_proc(void *param, SoundProc *proc, byte sound);
 		
+	// Poll cdrom status
+	// Returns true if cd audio is playing
+	bool poll_cdrom();
+
+	// Play cdrom audio track
+	void play_cdrom(int track, int num_loops, int start_frame, int end_frame);
+
+	// Stop cdrom audio track
+	void stop_cdrom();
+
+	// Update cdrom audio status
+	void update_cdrom();
+
 	// Quit
 	void quit();
 
@@ -108,6 +120,10 @@ private:
 	uint32 *dirty_checksums;
 
 	int scaling;
+
+	/* CD Audio */
+	int cd_track, cd_num_loops, cd_start_frame, cd_end_frame;
+	Uint32 cd_end_time, cd_stop_time, cd_next_second;
 
 	struct MousePos {
 		int16 x,y,w,h;
@@ -1018,6 +1034,68 @@ void OSystem_SDL::undraw_mouse() {
 	SDL_UnlockSurface(sdl_screen);
 }
 
+void OSystem_SDL::stop_cdrom() {	/* Stop CD Audio in 1/10th of a second */
+	cd_stop_time = SDL_GetTicks() + 100;
+	cd_num_loops = 0;
+
+}
+
+void OSystem_SDL::play_cdrom(int track, int num_loops, int start_frame, int end_frame) {
+	/* Reset sync count */
+	g_scumm->_vars[g_scumm->VAR_MI1_TIMER] = 0;
+
+	if (!num_loops && !start_frame)
+		return;
+
+	if (!cdrom)
+		return;
+
+	cd_track = track;
+	cd_num_loops = num_loops;
+	cd_start_frame = start_frame;
+
+	SDL_CDStatus(cdrom);	
+	SDL_CDPlayTracks(cdrom, track, start_frame, 0, end_frame + 5);
+	cd_end_frame = end_frame;
+	cd_stop_time = 0;
+	cd_end_time = SDL_GetTicks() + cdrom->track[track].length * 1000 / CD_FPS;
+}
+
+bool OSystem_SDL::poll_cdrom() {
+	if (!cdrom)
+		return false;
+
+	return (cd_num_loops != 0 && (SDL_GetTicks() < cd_end_time || SDL_CDStatus(cdrom) != CD_STOPPED));
+}
+
+void OSystem_SDL::update_cdrom() {
+	if (!cdrom)
+		return;
+		
+	if (cd_stop_time != 0 && SDL_GetTicks() >= cd_stop_time) {
+		SDL_CDStop(cdrom);
+		cd_num_loops = 0;
+		cd_stop_time = 0;
+		return;
+	}
+
+	if (cd_num_loops == 0 || SDL_GetTicks() < cd_end_time)
+		return;
+
+	if (cd_num_loops != 1 && SDL_CDStatus(cdrom) != CD_STOPPED) {
+		// Wait another second for it to be done
+		cd_end_time += 1000;
+		return;
+	}
+
+	if (cd_num_loops > 0)
+		cd_num_loops--;
+
+	if (cd_num_loops != 0) {
+		SDL_CDPlayTracks(cdrom, cd_track, cd_start_frame, 0, cd_end_frame);
+		cd_end_time = SDL_GetTicks() + cdrom->track[cd_track].length * 1000 / CD_FPS;
+	}
+}
 
 #ifdef USE_NULL_DRIVER
 
@@ -1089,19 +1167,3 @@ OSystem *OSystem_NULL_create() {
 }
 
 #endif
-
-
-
-void cd_stop() {
-}
-
-void cd_play(Scumm *s, int track, int num_loops, int start_frame, int end_track) {
-}
-
-int cd_is_running() {
-	return 0;
-}
-
-void cd_music_loop() {
-}
-

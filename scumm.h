@@ -1820,4 +1820,4 @@ byte *findResourceSmall(uint32 tag, byte *searchin);
 //void setShakePos(Scumm *s, int shake_pos);
 void setWindowName(Scumm *s);
 uint16 newTag2Old(uint32 oldTag);
-//void cd_playtrack(int track, int offset, int delay);
+
