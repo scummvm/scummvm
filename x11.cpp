@@ -632,7 +632,11 @@ void OSystem_X11::set_shake_pos(int shake_pos) {
 }
 
 void *OSystem_X11::create_thread(ThreadProc *proc, void *param) {
-	error("Create_thread Should never be called ");
+	pthread_t *thread = (pthread_t *) malloc(sizeof(pthread_t));
+	if (pthread_create(thread, NULL, (void * (*)(void *)) proc, param))
+		return NULL;
+	else
+		return thread;
 }
 
 uint32 OSystem_X11::property(int param, uint32 value) {
