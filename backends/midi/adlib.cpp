@@ -29,11 +29,9 @@
  */
 
 #include "stdafx.h"
-#include "mididrv.h"
-#include "fmopl.h"
-#include "mixer.h"
-#include "scumm.h"
-#include "imuse.h"
+#include "sound/mididrv.h"
+#include "sound/fmopl.h"
+#include "sound/mixer.h"
 #include "common/engine.h"	// for warning/error/debug
 #include "common/util.h"
 
