@@ -1025,36 +1025,6 @@ void ScummEngine_v6::o6_setState() {
 void ScummEngine_v6::o6_setOwner() {
 	int owner = pop();
 	int obj = pop();
-
-	if ((owner == 2) && (_gameId == GID_SAMNMAX)) {
-		// TODO / FIXME: This hack was added a long time ago, in revision 1.28
-		// of object.cpp in the old CVS module (see also here:
-		// http://cvs.sourceforge.net/viewcvs.py/scummvm/scummvm-old/object.cpp?r1=1.27&r2=1.28
-		// Commited by Endy with message:
-		//  "Sam and Max inventory hack. Makes it work, but is nasty ;)"
-		//
-		// Sadly, it's not quite clear what exactly the hack fixes. In a quick
-		// test I didn't find any place where it is being used, but of course
-		// that means nothing.
-		//
-		// There aren't many places that invoke setOwner at all (in Sam and Max).
-		// I did a quick search of the script dumps I have here; in those I found
-		// seven calls to setOwner, and only one with owner == 2.
-
-		warning("Inside Sam and Max inventory hack! (obj %d)", obj);
-		for (int base = 6; base < 80; base++) {
-			int value = readArray(178, 0, base);
-			if (value == obj)
-				break;
-			if (value == 0) {
-				_scummVars[179]++;
-				writeArray(178, 0, base, obj);
-				break;
-			}
-			base++;
-		}
-	}
-
 	setOwnerOf(obj, owner);
 }
 

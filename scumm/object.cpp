@@ -1191,19 +1191,27 @@ int ScummEngine::getInventorySlot() {
 
 void ScummEngine::setOwnerOf(int obj, int owner) {
 	ScriptSlot *ss;
+
+	// In Sam & Max this is necessary, or you won't get your stuff back
+	// from the Lost and Found tent after riding the Cone of Tragedy. But
+	// it probably applies to all V6+ games. See bugs #493153 and #907113.
+	// FT disassembly is checked, behaviour is correct. [sev]
+
+	int arg = (_version >= 6) ? obj : 0;
+
 	if (owner == 0) {
 		clearOwnerOf(obj);
 		ss = &vm.slot[_currentScript];
 		if (ss->where == WIO_INVENTORY && _inventory[ss->number] == obj) {
 			putOwner(obj, 0);
-			runInventoryScript(0);
+			runInventoryScript(arg);
 			stopObjectCode();
 			return;
 		}
 	}
 
 	putOwner(obj, owner);
-	runInventoryScript(0);
+	runInventoryScript(arg);
 }
 
 int ScummEngine::getObjX(int obj) {
