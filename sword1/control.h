@@ -85,7 +85,6 @@ private:
 	uint8 _selectedSavegame;
 	uint8 _saveNames[64][32];
 	uint8 _oldName[32];
-	uint8 _confirmMode;
 
 	uint8 getClicks(uint8 mode, uint8 *retVal);
 	uint8 handleButtonClick(uint8 id, uint8 mode, uint8 *retVal);
