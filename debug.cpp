@@ -111,6 +111,7 @@ bool ScummDebugger::do_command() {
 			int num, i; BoxCoords box;		
 			num = _s->getNumBoxes();
 			for (i=0; i<num; i++) {
+				printf("bt %d\n", i);
 				BoxTest(i);
 				_s->getBoxCoordinates(i, &box);
 				printf("%d: [%d x %d] [%d x %d] [%d x %d] [%d x %d]\n", i, 
