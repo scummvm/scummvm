@@ -36,7 +36,10 @@ void ScummEngine_v2::readClassicIndexFile() {
 		if (!(_features & GF_AMIGA) && !(_features & GF_NES))
 			_musicEngine = new Player_V1(this, _midiDriver != MD_PCSPK);
 
-		_numGlobalObjects = 800;
+		if (_features & GF_NES)
+			_numGlobalObjects = 775;
+		else
+			_numGlobalObjects = 800;
 		_numRooms = 55;
 
 		if (_features & GF_NES)

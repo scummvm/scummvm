@@ -1431,7 +1431,7 @@ void ScummEngine_v2::o2_endCutscene() {
 	// Reset user state to values before cutscene
 	setUserState(vm.cutSceneData[0] | 7);
 	
-	if (_gameId == GID_MANIAC) {
+	if ((_gameId == GID_MANIAC) && !(_features & GF_NES)) {
 		camera._mode = (byte) vm.cutSceneData[3];
 		if (camera._mode == kFollowActorCameraMode) {
 			actorFollowCamera(VAR(VAR_EGO));
@@ -1453,7 +1453,7 @@ void ScummEngine_v2::o2_beginOverride() {
 }
 
 void ScummEngine_v2::o2_chainScript() {
-	int data = getVarOrDirectByte(0x80);
+	int data = getVarOrDirectByte(PARAM_1);
 	stopScript(vm.slot[_currentScript].number);
 	_currentScript = 0xFF;
 	runScript(data, 0, 0, 0);
@@ -1479,6 +1479,8 @@ void ScummEngine_v2::o2_pickupObject() {
 	clearDrawObjectQueue();
 
 	runInventoryScript(1);
+	if (_features & GF_NES)
+		_sound->addSoundToQueue(51);	// play 'pickup' sound
 }
 
 void ScummEngine_v2::o2_cursorCommand() {	// TODO: Define the magic numbers
@@ -1494,7 +1496,10 @@ void ScummEngine_v2::o2_cursorCommand() {	// TODO: Define the magic numbers
 
 void ScummEngine_v2::setUserState(byte state) {
 	if (state & 4) {						// Userface
-		_userState = state & (32 | 64 | 128);
+		if (_features & GF_NES)
+			_userState = (_userState & ~0xE0) | (state & 0xE0);
+		else
+			_userState = state & (32 | 64 | 128);
 	}
 
 	if (state & 1) {						// Freeze
@@ -1505,6 +1510,8 @@ void ScummEngine_v2::setUserState(byte state) {
 	}
 
 	if (state & 2) {						// Cursor Show/Hide
+		if (_features & GF_NES)
+			_userState = (_userState & ~0x10) | (state & 0x10);
 		if (state & 16) {
 			_userPut = 1;
 			_cursor.state = 1;
