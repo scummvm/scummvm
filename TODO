@@ -9,6 +9,7 @@ Residual TODO list:
  * Check sound decoder - it clips.. possible uint vs int casting issue, perhaps?
  * Add OpenGL lighting
  * Add SMUSH (aquadran is looking, Grim seems to uses CMI codecs + 2 new ones)
+ * Proper vsscanf implementation in textsplit.cpp for platforms without it (many!)
 
 MSVC notes:
  These things need doing (At least) for it to be compilable under MSVC..

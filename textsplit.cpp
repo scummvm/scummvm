@@ -22,6 +22,26 @@
 #include <cctype>
 #include <cstdarg>
 
+
+// FIXME: Replace this with a proper parser (this is just too dodgy :)
+int residual_vsscanf(const char *str, int field_count, const char *format, va_list ap) {
+    unsigned int f01 = va_arg(ap, long);
+    unsigned int f02 = va_arg(ap, long);
+    unsigned int f03 = va_arg(ap, long);
+    unsigned int f04 = va_arg(ap, long);
+    unsigned int f05 = va_arg(ap, long);
+    unsigned int f06 = va_arg(ap, long);
+    unsigned int f07 = va_arg(ap, long);
+    unsigned int f08 = va_arg(ap, long);
+    unsigned int f09 = va_arg(ap, long);
+    unsigned int f10 = va_arg(ap, long);
+
+    if (field_count > 10)
+	error("Too many fields requested of residual_vsscanf (%d)", field_count);
+
+    return sscanf(str, format, f01, f02, f03, f04, f05, f06, f07, f08, f09, f10);
+}
+
 TextSplitter::TextSplitter(const char *data, int len) {
   data_ = new char[len + 1];
   std::memcpy(data_, data, len);
@@ -45,7 +65,12 @@ void TextSplitter::scanString(const char *fmt, int field_count, ...) {
   std::va_list va;
 
   va_start(va, field_count);
+  
+  #ifdef WIN32
+  if (residual_vsscanf(currentLine(), field_count, fmt, va) < field_count)
+  #else
   if (std::vsscanf(currentLine(), fmt, va) < field_count)
+  #endif
     error("Expected line of format `%s', got `%s'\n", fmt, currentLine());
   va_end(va);
 
