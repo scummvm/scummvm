@@ -31,10 +31,15 @@
 
 #define VERSION "Build " POCKETSCUMM_BUILD " (VM " SCUMMVM_CVS ")"
 
+typedef int (*tTimeCallback)(int);
+
 GameDetector detector;
 Gui gui;
 Scumm *g_scumm;
 Config *scummcfg;
+tTimeCallback timer_callback;
+int timer_interval;
+
 
 extern void Cls();
 
@@ -113,6 +118,9 @@ public:
 
 	// Update cdrom audio status
 	void update_cdrom();
+
+	// Add a new callback timer
+	void set_timer(int timer, int (*callback)(int));
 
 	// Quit
 	void quit();
@@ -549,7 +557,7 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
       break;
 
 		case IDC_LANDSCAPE:
-			HWND taskbar;
+			//HWND taskbar;
 			//SHFullScreen (hWnd, SHFS_HIDESIPBUTTON | SHFS_HIDETASKBAR | SHFS_HIDESTARTICON);
 			//InvalidateRect(HWND_DESKTOP, NULL, TRUE);
 			SetScreenMode(!GetScreenMode());
@@ -732,6 +740,9 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 	case WM_LBUTTONDBLCLK:  // doesn't seem to work right now
 		//wm->_scumm->_rightBtnPressed |= msClicked | msDown;
 		break;
+	case WM_TIMER:
+		timer_callback(timer_interval);
+		break;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
    }
@@ -866,6 +877,10 @@ void action_skip() {
 
 void action_hide() {
 	hide_toolbar = !hide_toolbar;
+	if (hide_toolbar)
+		RestoreScreenGeometry();
+	else
+		LimitScreenGeometry();
 	Cls();
 	toolbar_drawn = hide_toolbar;
 	g_scumm->_system->update_screen();
@@ -976,6 +991,12 @@ OSystem *OSystem_WINCE3::create(int gfx_mode, bool full_screen) {
 
 OSystem *OSystem_WINCE3_create() {
 	return OSystem_WINCE3::create(0, 0);
+}
+
+void OSystem_WINCE3::set_timer(int timer, int (*callback)(int)) {
+	SetTimer(hWnd, 1, timer, NULL);
+	timer_interval = timer;
+	timer_callback = callback;
 }
 
 void OSystem_WINCE3::set_palette(const byte *colors, uint start, uint num) {

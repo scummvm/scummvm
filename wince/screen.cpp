@@ -86,6 +86,9 @@ void palette_update();
 static tCls        pCls        = NULL;
 static tBlt		   pBlt	       = NULL;
 
+static int _geometry_w;
+static int _geometry_h;  
+
 HWND hWndMain;
 
 
@@ -133,9 +136,25 @@ void SetScreenGeometry(int w, int h) {
 		MessageBox(NULL, TEXT("Unsupported screen geometry !"), TEXT("Error"), MB_OK);
 		exit(1);
 	}
-	geom[0].lineLimit = w*h;
-	geom[1].lineLimit = w*h;
-	geom[2].lineLimit = w*h;
+
+	_geometry_w = w;
+	_geometry_h = h;
+	RestoreScreenGeometry();
+}
+
+void LimitScreenGeometry() {
+
+	if (_geometry_h > 200) {
+		geom[0].lineLimit = _geometry_w*200;
+		geom[1].lineLimit = _geometry_w*200;
+		geom[1].lineLimit = _geometry_w*200;
+	}
+}
+
+void RestoreScreenGeometry() {
+	geom[0].lineLimit = _geometry_w * _geometry_h;
+	geom[1].lineLimit = _geometry_w * _geometry_h;
+	geom[2].lineLimit = _geometry_w * _geometry_h;
 }
 
 int GraphicsOn(HWND hWndMain_param)

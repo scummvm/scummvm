@@ -8,6 +8,8 @@
 #endif
 
 void SetScreenGeometry(int w, int h);
+void LimitScreenGeometry();
+void RestoreScreenGeometry();
 int GraphicsOn(HWND hWndMain);
 void GraphicsOff();
 void GraphicsSuspend();
