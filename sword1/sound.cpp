@@ -106,7 +106,7 @@ void SwordSound::fnStopFx(int32 fxNo) {
 
 bool SwordSound::amISpeaking(void) {
 	_waveVolPos++;
-    return _waveVolume[_waveVolPos - 1];
+	return _waveVolume[_waveVolPos - 1];
 }
 
 bool SwordSound::speechFinished(void) {
@@ -226,7 +226,7 @@ void SwordSound::calcWaveVolume(int16 *data, uint32 length) {
 		int32 average = 0;		
 		for (uint32 cnt = 0; cnt < 918; cnt++)
 			average += blkPos[cnt];
-        average /= 918;
+		average /= 918;
 		uint32 diff = 0;
 		for (uint32 cnt = 0; cnt < 918; cnt++) {
 			int16 smpDiff = *blkPos - average;
