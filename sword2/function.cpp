@@ -662,9 +662,9 @@ int32 Logic::fnPlayCredits(int32 *params) {
 
 		_vm->_graphics->updateDisplay();
 
-		KeyboardEvent ke;
+		KeyboardEvent *ke = _vm->keyboardEvent();
 
-		if (_vm->_input->readKey(&ke) == RD_OK && ke.keycode == 27) {
+		if (ke && ke->keycode == 27) {
 			if (!abortCredits) {
 				abortCredits = true;
 				_vm->_graphics->fadeDown();

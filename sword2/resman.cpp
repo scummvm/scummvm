@@ -860,14 +860,11 @@ void ResourceManager::getCd(int cd) {
 	// CD2: "RBSII2"
 
 	while (1) {
-		KeyboardEvent ke;
-		MouseEvent *me;
-
-		me = _vm->_input->mouseEvent();
+		MouseEvent *me = _vm->mouseEvent();
 		if (me && (me->buttons & (RD_LEFTBUTTONDOWN | RD_RIGHTBUTTONDOWN)))
 			break;
 
-		if (_vm->_input->readKey(&ke) == RD_OK)
+		if (_vm->keyboardEvent())
 			break;
 
 		_vm->_graphics->updateDisplay();

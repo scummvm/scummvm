@@ -24,49 +24,6 @@
 
 namespace Sword2 {
 
-// ---------------------------------------------------------------------------
-// OSystem Event Handler. Full of cross platform goodness and 99% fat free!
-// ---------------------------------------------------------------------------
-
-void Input::parseEvents(void) {
-	OSystem::Event event;
-	
-	while (_vm->_system->poll_event(&event)) {
-		switch (event.event_code) {
-		case OSystem::EVENT_KEYDOWN:
-			writeKey(event.kbd.ascii, event.kbd.keycode, event.kbd.flags);
-			break;
-		case OSystem::EVENT_MOUSEMOVE:
-			_mouseX = event.mouse.x;
-			_mouseY = event.mouse.y - MENUDEEP;
-			break;
-		case OSystem::EVENT_LBUTTONDOWN:
-			logMouseEvent(RD_LEFTBUTTONDOWN);
-			break;
-		case OSystem::EVENT_RBUTTONDOWN:
-			logMouseEvent(RD_RIGHTBUTTONDOWN);
-			break;
-		case OSystem::EVENT_LBUTTONUP:
-			logMouseEvent(RD_LEFTBUTTONUP);
-			break;
-		case OSystem::EVENT_RBUTTONUP:
-			logMouseEvent(RD_RIGHTBUTTONUP);
-			break;
-		case OSystem::EVENT_WHEELUP:
-			logMouseEvent(RD_WHEELUP);
-			break;
-		case OSystem::EVENT_WHEELDOWN:
-			logMouseEvent(RD_WHEELDOWN);
-			break;
-		case OSystem::EVENT_QUIT:
-			_vm->closeGame();
-			break;
-		default:
-			break;
-		}
-	}
-}
-
 /**
  * Tell updateDisplay() that the scene needs to be completely updated.
  */
@@ -100,7 +57,7 @@ void Graphics::markAsDirty(int16 x0, int16 y0, int16 x1, int16 y1) {
  */
 
 void Graphics::updateDisplay(bool redrawScene) {
-	_vm->_input->parseEvents();
+	_vm->parseEvents();
 	fadeServer();
 
 	if (redrawScene) {

@@ -183,14 +183,14 @@ void Debugger::buildDebugText(void) {
 
 		if (_vm->_mouseTouching)
 			sprintf(buf, "mouse %d,%d (id %d: %s)",
-				_vm->_input->_mouseX + _vm->_thisScreen.scroll_offset_x,
-				_vm->_input->_mouseY + _vm->_thisScreen.scroll_offset_y,
+				_vm->_mouseX + _vm->_thisScreen.scroll_offset_x,
+				_vm->_mouseY + _vm->_thisScreen.scroll_offset_y,
 				_vm->_mouseTouching,
 				_vm->fetchObjectName(_vm->_mouseTouching, name));
 		else
 			sprintf(buf, "mouse %d,%d (not touching)",
-				_vm->_input->_mouseX + _vm->_thisScreen.scroll_offset_x,
-				_vm->_input->_mouseY + _vm->_thisScreen.scroll_offset_y);
+				_vm->_mouseX + _vm->_thisScreen.scroll_offset_x,
+				_vm->_mouseY + _vm->_thisScreen.scroll_offset_y);
 
 		makeDebugTextBlock(buf, 0, 30);
 
@@ -311,7 +311,7 @@ void Debugger::drawDebugGraphics(void) {
 	// mouse marker & coords
 
 	if (_displayMouseMarker)
-		plotCrossHair(_vm->_input->_mouseX + _vm->_thisScreen.scroll_offset_x, _vm->_input->_mouseY + _vm->_thisScreen.scroll_offset_y, 215);
+		plotCrossHair(_vm->_mouseX + _vm->_thisScreen.scroll_offset_x, _vm->_mouseY + _vm->_thisScreen.scroll_offset_y, 215);
 
    	// mouse area rectangle / sprite box rectangle when testing anims
 

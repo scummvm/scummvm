@@ -135,11 +135,11 @@ int32 Logic::fnChoose(int32 *params) {
 	}
 
 	// The menu is there - we're just waiting for a click. We only care
-	// about left clicks and ignore mouse releases.
+	// about left clicks.
 
-	MouseEvent *me = _vm->_input->mouseEvent();
+	MouseEvent *me = _vm->mouseEvent();
 
-	if (!me || !(me->buttons & RD_LEFTBUTTONDOWN) || _vm->_input->_mouseY < 400)
+	if (!me || !(me->buttons & RD_LEFTBUTTONDOWN) || _vm->_mouseY < 400)
 		return IR_REPEAT;
 
 	// Check for click on a menu.
@@ -200,7 +200,7 @@ int32 Logic::fnEndConversation(int32 *params) {
 
 	_vm->_graphics->hideMenu(RDMENU_BOTTOM);
 
-	if (_vm->_input->_mouseY > 399) {
+	if (_vm->_mouseY > 399) {
 		// Will wait for cursor to move off the bottom menu
 		_vm->_mouseMode = MOUSE_holding;
 	}
@@ -995,8 +995,8 @@ int32 Logic::fnISpeak(int32 *params) {
 
 	// So that we can go to the options panel while text & speech is
 	// being tested
-	if (_scriptVars[SYSTEM_TESTING_TEXT] == 0 || _vm->_input->_mouseY > 0) {
-		MouseEvent *me = _vm->_input->mouseEvent();
+	if (_scriptVars[SYSTEM_TESTING_TEXT] == 0 || _vm->_mouseY > 0) {
+		MouseEvent *me = _vm->mouseEvent();
 
 		// Note that we now have TWO click-delays - one for LEFT
 		// button, one for RIGHT BUTTON
@@ -1004,7 +1004,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		if ((!_leftClickDelay && me && (me->buttons & RD_LEFTBUTTONDOWN)) ||
 		    (!_rightClickDelay && me && (me->buttons & RD_RIGHTBUTTONDOWN))) {
 			// Mouse click, after click_delay has expired -> end
-			// the speech. We ignore mouse releases
+			// the speech.
 
 			// if testing text & speech
 			if (_scriptVars[SYSTEM_TESTING_TEXT]) {
@@ -1017,10 +1017,6 @@ int32 Logic::fnISpeak(int32 *params) {
 					_scriptVars[SYSTEM_WANT_PREVIOUS_LINE] = 0;
 				}
 			}
-
-			// Trash anything that's buffered
-			while (_vm->_input->mouseEvent())
-				;
 
 			speechFinished = true;
 

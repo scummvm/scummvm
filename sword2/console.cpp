@@ -302,12 +302,17 @@ bool Debugger::Cmd_Var(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Rect(int argc, const char **argv) {
+	uint32 filter = _vm->setEventFilter(0);
+
 	_definingRectangles = !_definingRectangles;
 
-	if (_definingRectangles)
+	if (_definingRectangles) {
+		_vm->setEventFilter(filter & ~(RD_LEFTBUTTONUP | RD_RIGHTBUTTONUP));
 		DebugPrintf("Mouse rectangles enabled\n");
-	else
+	} else {
+		_vm->setEventFilter(filter | RD_LEFTBUTTONUP | RD_RIGHTBUTTONUP);
 		DebugPrintf("Mouse rectangles disabled\n");
+	}
 
 	_draggingRectangle = 0;
 	return true;

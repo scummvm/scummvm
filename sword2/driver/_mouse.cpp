@@ -25,45 +25,6 @@ namespace Sword2 {
 
 #define MOUSEFLASHFRAME 6
 
-/**
- * Logs the mouse button event passed in buttons. The button events were
- * originaly defined as RD_LEFTBUTTONDOWN, RD_LEFTBUTTONUP, RD_RIGHTBUTTONDOWN
- * and RD_RIGHTBUTTONUP. ScummVM adds RD_WHEELDOWN and RD_WHEELUP.
- */
-
-void Input::logMouseEvent(uint16 buttons) {
-	// We need to leave the one, which is the current event, alone!
-	if (_mouseBacklog == MAX_MOUSE_EVENTS - 1)
-		return;
-
-	_mouseLog[(_mouseBacklog + _mouseLogPos) % MAX_MOUSE_EVENTS].buttons = buttons;
-	_mouseBacklog++;
-}
-
-bool Input::checkForMouseEvents(void) {
-	return _mouseBacklog != 0;
-}
-
-/**
- * Get the next pending mouse event.
- * @return a pointer to the mouse event, or NULL of there is none
- */
-
-MouseEvent *Input::mouseEvent(void) {
-	MouseEvent *me;
-
-	if (_mouseBacklog) {
-		me = &_mouseLog[_mouseLogPos];
-		if (++_mouseLogPos == MAX_MOUSE_EVENTS)
-			_mouseLogPos = 0;
-
-		_mouseBacklog--;
-		return me;
-	}
-
-	return NULL;
-}
-
 void Graphics::decompressMouse(byte *decomp, byte *comp, int width, int height, int pitch, int xOff, int yOff) {
 	int32 size = width * height;
 	int32 i = 0;

@@ -107,7 +107,7 @@ void Sword2Engine::mouseEngine(void) {
 		systemMenuMouse();
 		break;
 	case MOUSE_holding:
-		if (_input->_mouseY < 400) {
+		if (_mouseY < 400) {
 			_mouseMode = MOUSE_normal;
 			debug(5, "   releasing");
 		}
@@ -118,13 +118,13 @@ void Sword2Engine::mouseEngine(void) {
 }
 
 int Sword2Engine::menuClick(int menu_items) {
-	if (_input->_mouseX < RDMENU_ICONSTART)
+	if (_mouseX < RDMENU_ICONSTART)
 		return -1;
 
-	if (_input->_mouseX > RDMENU_ICONSTART + menu_items * (RDMENU_ICONWIDE + RDMENU_ICONSPACING) - RDMENU_ICONSPACING)
+	if (_mouseX > RDMENU_ICONSTART + menu_items * (RDMENU_ICONWIDE + RDMENU_ICONSPACING) - RDMENU_ICONSPACING)
 		return -1;
 
-	return (_input->_mouseX - RDMENU_ICONSTART) / (RDMENU_ICONWIDE + RDMENU_ICONSPACING);
+	return (_mouseX - RDMENU_ICONSTART) / (RDMENU_ICONWIDE + RDMENU_ICONSPACING);
 }
 
 void Sword2Engine::systemMenuMouse(void) {
@@ -144,7 +144,7 @@ void Sword2Engine::systemMenuMouse(void) {
 	// If the mouse is moved off the menu, close it. Unless the player is
 	// dead, in which case the menu should always be visible.
 
-	if (_input->_mouseY > 0 && !Logic::_scriptVars[DEAD]) {
+	if (_mouseY > 0 && !Logic::_scriptVars[DEAD]) {
 		_mouseMode = MOUSE_normal;
 		_graphics->hideMenu(RDMENU_TOP);
 		return;
@@ -152,12 +152,12 @@ void Sword2Engine::systemMenuMouse(void) {
 
 	// Check if the user left-clicks anywhere in the menu area.
 
-	me = _input->mouseEvent();
+	me = mouseEvent();
 
 	if (!me || !(me->buttons & RD_LEFTBUTTONDOWN))
 		return;
 
-	if (_input->_mouseY > 0)
+	if (_mouseY > 0)
 		return;
 
 	hit = menuClick(ARRAYSIZE(icon_list));
@@ -266,7 +266,7 @@ void Sword2Engine::dragMouse(void) {
 	// objects in the scene, so if the mouse moves off the inventory menu,
 	// then close it.
 
-	if (_input->_mouseY < 400) {
+	if (_mouseY < 400) {
 		_mouseMode = MOUSE_normal;
 		_graphics->hideMenu(RDMENU_BOTTOM);
 		return;
@@ -278,7 +278,7 @@ void Sword2Engine::dragMouse(void) {
 
 	// Now do the normal click stuff
 
-	me = _input->mouseEvent();
+	me = mouseEvent();
 
 	if (!me)
 		return;
@@ -319,8 +319,8 @@ void Sword2Engine::dragMouse(void) {
 
 		// These might be required by the action script about to be run
 
-		Logic::_scriptVars[MOUSE_X] = _input->_mouseX + _thisScreen.scroll_offset_x;
-		Logic::_scriptVars[MOUSE_Y] = _input->_mouseY + _thisScreen.scroll_offset_y;
+		Logic::_scriptVars[MOUSE_X] = _mouseX + _thisScreen.scroll_offset_x;
+		Logic::_scriptVars[MOUSE_Y] = _mouseY + _thisScreen.scroll_offset_y;
 
 		// For scripts to know what's been clicked. First used for
 		// 'room_13_turning_script' in object 'biscuits_13'
@@ -387,13 +387,13 @@ void Sword2Engine::menuMouse(void) {
 
 	// If the mouse is moved off the menu, close it.
 
-	if (_input->_mouseY < 400) {
+	if (_mouseY < 400) {
 		_mouseMode = MOUSE_normal;
 		_graphics->hideMenu(RDMENU_BOTTOM);
 		return;
 	}
 
-	me = _input->mouseEvent();
+	me = mouseEvent();
 
 	if (!me)
 		return;
@@ -471,7 +471,7 @@ void Sword2Engine::normalMouse(void) {
 	// big-object menu lock situation, of if the player is dragging an
 	// object.
 
-	if (_input->_mouseY < 0 && !_mouseModeLocked && !Logic::_scriptVars[OBJECT_HELD]) {
+	if (_mouseY < 0 && !_mouseModeLocked && !Logic::_scriptVars[OBJECT_HELD]) {
 		_mouseMode = MOUSE_system_menu;
 
 		if (_mouseTouching) {
@@ -490,7 +490,7 @@ void Sword2Engine::normalMouse(void) {
 	// Check if the cursor has moved onto the inventory menu area. No
 	// inventory in big-object menu lock situation,
 
-	if (_input->_mouseY > 399 && !_mouseModeLocked) {
+	if (_mouseY > 399 && !_mouseModeLocked) {
 		// If an object is being held, i.e. if the mouse cursor has a
 		// luggage, go to drag mode instead of menu mode, but the menu
 		// is still opened.
@@ -523,7 +523,7 @@ void Sword2Engine::normalMouse(void) {
 
 	mouseOnOff();
 
-	me = _input->mouseEvent();
+	me = mouseEvent();
 
 	if (!me)
 		return;
@@ -539,8 +539,8 @@ void Sword2Engine::normalMouse(void) {
 
 			if (button_down) {
 				// set both (x1,y1) and (x2,y2) to this point
-				_debugger->_rectX1 = _debugger->_rectX2 = (uint32) _input->_mouseX + _thisScreen.scroll_offset_x;
-				_debugger->_rectY1 = _debugger->_rectY2 = (uint32) _input->_mouseY + _thisScreen.scroll_offset_y;
+				_debugger->_rectX1 = _debugger->_rectX2 = (uint32) _mouseX + _thisScreen.scroll_offset_x;
+				_debugger->_rectY1 = _debugger->_rectY2 = (uint32) _mouseY + _thisScreen.scroll_offset_y;
 				_debugger->_draggingRectangle = 1;
 			}
 		} else if (_debugger->_draggingRectangle == 1) {
@@ -552,8 +552,8 @@ void Sword2Engine::normalMouse(void) {
 				_debugger->_draggingRectangle = 2;
 			} else {
 				// drag rectangle
-				_debugger->_rectX2 = (uint32) _input->_mouseX + _thisScreen.scroll_offset_x;
-				_debugger->_rectY2 = (uint32) _input->_mouseY + _thisScreen.scroll_offset_y;
+				_debugger->_rectX2 = (uint32) _mouseX + _thisScreen.scroll_offset_x;
+				_debugger->_rectY2 = (uint32) _mouseY + _thisScreen.scroll_offset_y;
 			}
 		} else {
 			// currently locked to avoid knocking out of place
@@ -582,8 +582,7 @@ void Sword2Engine::normalMouse(void) {
 
 	// Now do the normal click stuff
 
-	// We only care about down clicks when the mouse is over an object. We
-	// ignore mouse releases
+	// We only care about down clicks when the mouse is over an object.
 
 	if (!_mouseTouching || !button_down)
 		return;
@@ -618,8 +617,8 @@ void Sword2Engine::normalMouse(void) {
 
 	// These might be required by the action script about to be run
 
-	Logic::_scriptVars[MOUSE_X] = _input->_mouseX + _thisScreen.scroll_offset_x;
-	Logic::_scriptVars[MOUSE_Y] = _input->_mouseY + _thisScreen.scroll_offset_y;
+	Logic::_scriptVars[MOUSE_X] = _mouseX + _thisScreen.scroll_offset_x;
+	Logic::_scriptVars[MOUSE_Y] = _mouseY + _thisScreen.scroll_offset_y;
 
 	if (_mouseTouching == Logic::_scriptVars[EXIT_CLICK_ID] && (me->buttons & RD_LEFTBUTTONDOWN)) {
 		// It's the exit double click situation. Let the existing
@@ -693,7 +692,7 @@ void Sword2Engine::mouseOnOff(void) {
 	// don't detect objects that are hidden behind the menu bars (ie. in
 	// the scrolled-off areas of the screen)
 
-	if (_input->_mouseY < 0 || _input->_mouseY > 399) {
+	if (_mouseY < 0 || _mouseY > 399) {
 		pointer_type = 0;
 		_mouseTouching = 0;
 	} else {
@@ -823,10 +822,10 @@ uint32 Sword2Engine::checkMouseList(void) {
 			// mouse-detection-box
 
 			if (_mouseList[i].priority == priority &&
-			    _input->_mouseX + _thisScreen.scroll_offset_x >= _mouseList[i].x1 &&
-			    _input->_mouseX + _thisScreen.scroll_offset_x <= _mouseList[i].x2 &&
-			    _input->_mouseY + _thisScreen.scroll_offset_y >= _mouseList[i].y1 &&
-			    _input->_mouseY + _thisScreen.scroll_offset_y <= _mouseList[i].y2) {
+			    _mouseX + _thisScreen.scroll_offset_x >= _mouseList[i].x1 &&
+			    _mouseX + _thisScreen.scroll_offset_x <= _mouseList[i].x2 &&
+			    _mouseY + _thisScreen.scroll_offset_y >= _mouseList[i].y1 &&
+			    _mouseY + _thisScreen.scroll_offset_y <= _mouseList[i].y2) {
 				// Record id
 				_mouseTouching = _mouseList[i].id;
 
@@ -994,8 +993,8 @@ void Sword2Engine::createPointerText(uint32 text_id, uint32 pointer_res) {
 	// line reference number
 
 	_pointerTextBlocNo = _fontRenderer->buildNewBloc(
-		text + 2, _input->_mouseX + xOffset,
-		_input->_mouseY + yOffset,
+		text + 2, _mouseX + xOffset,
+		_mouseY + yOffset,
 		POINTER_TEXT_WIDTH, POINTER_TEXT_PEN,
 		RDSPR_TRANS | RDSPR_DISPLAYALIGN,
 		_speechFontId, justification);
@@ -1066,7 +1065,7 @@ void Sword2Engine::registerMouse(ObjectMouse *ob_mouse) {
 
 void Sword2Engine::monitorPlayerActivity(void) {
 	// if there is at least one mouse event outstanding
-	if (_input->checkForMouseEvents()) {
+	if (checkForMouseEvents()) {
 		// reset activity delay counter
 		_playerActivityDelay = 0;
 	} else {
@@ -1133,7 +1132,7 @@ int32 Logic::fnAddHuman(int32 *params) {
 	}
 
 	// if mouse is over menu area
-	if (_vm->_input->_mouseY > 399) {
+	if (_vm->_mouseY > 399) {
 		if (_vm->_mouseMode != MOUSE_holding) {
 			// VITAL - reset things & rebuild the menu
 			_vm->_mouseMode = MOUSE_normal;

@@ -50,8 +50,37 @@ class FontRenderer;
 class Gui;
 class Debugger;
 
+enum {
+	RD_LEFTBUTTONDOWN		= 0x01,
+	RD_LEFTBUTTONUP			= 0x02,
+	RD_RIGHTBUTTONDOWN		= 0x04,
+	RD_RIGHTBUTTONUP		= 0x08,
+	RD_WHEELUP			= 0x10,
+	RD_WHEELDOWN			= 0x20,
+	RD_KEYDOWN			= 0x40,
+	RD_MOUSEMOVE			= 0x80
+};
+
+struct MouseEvent {
+	bool pending;
+	uint16 buttons;
+};
+
+struct KeyboardEvent {
+	bool pending;
+	uint16 ascii;
+	int keycode;
+	int modifiers;
+};
+
 class Sword2Engine : public Engine {
 private:
+	uint32 _eventFilter;
+
+	// The event "buffers"
+	MouseEvent _mouseEvent;
+	KeyboardEvent _keyboardEvent;
+
 	uint32 _bootParam;
 	int32 _saveSlot;
 
@@ -146,7 +175,6 @@ public:
 
 	MemoryManager *_memory;
 	ResourceManager	*_resman;
-	Input *_input;
 	Sound *_sound;
 	Graphics *_graphics;
 	Logic *_logic;
@@ -160,6 +188,17 @@ public:
 	uint32 _speechFontId;
 	uint32 _controlsFontId;
 	uint32 _redFontId;
+
+	int16 _mouseX;
+	int16 _mouseY;
+
+	uint32 setEventFilter(uint32 filter);
+
+	void parseEvents(void);
+
+	bool checkForMouseEvents(void);
+	MouseEvent *mouseEvent(void);
+	KeyboardEvent *keyboardEvent(void);
 
 	void resetRenderLists(void);
 	void buildDisplay(void);

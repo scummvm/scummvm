@@ -304,6 +304,8 @@ void Dialog::setResult(int result) {
 }
 
 int Dialog::run() {
+	uint32 oldFilter = _gui->_vm->setEventFilter(0);
+
 	int i;
 
 	paint();
@@ -316,17 +318,16 @@ int Dialog::run() {
 		_gui->_vm->_graphics->processMenu();
 		_gui->_vm->_graphics->updateDisplay(false);
 
-		int16 newMouseX = _gui->_vm->_input->_mouseX;
-		int16 newMouseY = _gui->_vm->_input->_mouseY + 40;
+		int16 newMouseX = _gui->_vm->_mouseX;
+		int16 newMouseY = _gui->_vm->_mouseY + 40;
 
-		MouseEvent *me = _gui->_vm->_input->mouseEvent();
-		KeyboardEvent ke;
-		int32 keyboardStatus = _gui->_vm->_input->readKey(&ke);
+		MouseEvent *me = _gui->_vm->mouseEvent();
+		KeyboardEvent *ke = _gui->_vm->keyboardEvent();
 
-		if (keyboardStatus == RD_OK) {
-			if (ke.keycode == 27)
+		if (ke) {
+			if (ke->keycode == 27)
 				setResult(0);
-			else if (ke.keycode == '\n' || ke.keycode == '\r')
+			else if (ke->keycode == '\n' || ke->keycode == '\r')
 				setResult(1);
 		}
 
@@ -391,8 +392,8 @@ int Dialog::run() {
 			if (newMouseX != oldMouseX || newMouseY != oldMouseY)
 				_widgets[i]->onMouseMove(newMouseX, newMouseY);
 
-			if (keyboardStatus == RD_OK)
-				_widgets[i]->onKey(&ke);
+			if (ke)
+				_widgets[i]->onKey(ke);
 
 			_widgets[i]->onTick();
 		}
@@ -406,6 +407,7 @@ int Dialog::run() {
 			setResult(0);
 	}
 
+	_gui->_vm->setEventFilter(oldFilter);
 	return _result;
 }
 
@@ -1480,19 +1482,13 @@ void SaveLoadDialog::saveLoadError(byte* text) {
 
 	// Wait for ESC or mouse click
 	while (1) {
-		MouseEvent *me;
-
 		_gui->_vm->_graphics->updateDisplay();
 
-		if (_gui->_vm->_input->keyWaiting()) {
-			KeyboardEvent ke;
+		KeyboardEvent *ke = _gui->_vm->keyboardEvent();
+		if (ke && ke->keycode == 27)
+			break;
 
-			_gui->_vm->_input->readKey(&ke);
-			if (ke.keycode == 27)
-				break;
-		}
-
-		me = _gui->_vm->_input->mouseEvent();
+		MouseEvent *me = _gui->_vm->mouseEvent();
 		if (me && (me->buttons & RD_LEFTBUTTONDOWN))
 			break;
 

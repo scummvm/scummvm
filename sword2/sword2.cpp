@@ -120,6 +120,11 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	_mixer->setVolume(256);
 	_mixer->setMusicVolume(256);
 
+	_keyboardEvent.pending = false;
+	_mouseEvent.pending = false;
+
+	_mouseX = _mouseY = 0;
+
 	// get some falling RAM and put it in your pocket, never let it slip
 	// away
 
@@ -137,7 +142,6 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	_logic = new Logic(this);
 	_fontRenderer = new FontRenderer(this);
 	_gui = new Gui(this);
-	_input = new Input(this);
 	_sound = new Sound(this);
 
 	_lastPaletteRes = 0;
@@ -194,7 +198,6 @@ Sword2Engine::~Sword2Engine() {
 	delete _debugger;
 	delete _graphics;
 	delete _sound;
-	delete _input;
 	delete _gui;
 	delete _fontRenderer;
 	delete _logic;
@@ -221,7 +224,9 @@ void Sword2Engine::errorString(const char *buf1, char *buf2) {
 }
 
 int32 Sword2Engine::initialiseGame(void) {
-	// init engine drivers
+	// During normal gameplay, we care neither about mouse button releases
+	// nor the scroll wheel.
+	setEventFilter(RD_LEFTBUTTONUP | RD_RIGHTBUTTONUP | RD_WHEELUP | RD_WHEELDOWN);
 
 	// initialise global script variables
 	// res 1 is the globals list
@@ -258,6 +263,101 @@ void Sword2Engine::closeGame(void) {
 	_quit = true;
 }
 
+bool Sword2Engine::checkForMouseEvents(void) {
+	return _mouseEvent.pending;
+}
+
+MouseEvent *Sword2Engine::mouseEvent(void) {
+	if (!_mouseEvent.pending)
+		return NULL;
+
+	_mouseEvent.pending = false;
+	return &_mouseEvent;
+}
+
+KeyboardEvent *Sword2Engine::keyboardEvent(void) {
+	if (!_keyboardEvent.pending)
+		return NULL;
+
+	_keyboardEvent.pending = false;
+	return &_keyboardEvent;
+}
+
+uint32 Sword2Engine::setEventFilter(uint32 filter) {
+	uint32 oldFilter = _eventFilter;
+
+	_eventFilter = filter;
+	return oldFilter;
+}
+
+/**
+ * OSystem Event Handler. Full of cross platform goodness and 99% fat free!
+ */
+
+void Sword2Engine::parseEvents(void) {
+	OSystem::Event event;
+	
+	while (_system->poll_event(&event)) {
+		switch (event.event_code) {
+		case OSystem::EVENT_KEYDOWN:
+			if (!(_eventFilter & RD_KEYDOWN)) {
+				_keyboardEvent.pending = true;
+				_keyboardEvent.ascii = event.kbd.ascii;
+				_keyboardEvent.keycode = event.kbd.keycode;
+				_keyboardEvent.modifiers = event.kbd.flags;
+			}
+			break;
+		case OSystem::EVENT_MOUSEMOVE:
+			if (!(_eventFilter & RD_KEYDOWN)) {
+				_mouseX = event.mouse.x;
+				_mouseY = event.mouse.y - RDMENU_MENUDEEP;
+			}
+			break;
+		case OSystem::EVENT_LBUTTONDOWN:
+			if (!(_eventFilter & RD_LEFTBUTTONDOWN)) {
+				_mouseEvent.pending = true;
+				_mouseEvent.buttons = RD_LEFTBUTTONDOWN;
+			}
+			break;
+		case OSystem::EVENT_RBUTTONDOWN:
+			if (!(_eventFilter & RD_RIGHTBUTTONDOWN)) {
+				_mouseEvent.pending = true;
+				_mouseEvent.buttons = RD_RIGHTBUTTONDOWN;
+			}
+			break;
+		case OSystem::EVENT_LBUTTONUP:
+			if (!(_eventFilter & RD_LEFTBUTTONUP)) {
+				_mouseEvent.pending = true;
+				_mouseEvent.buttons = RD_LEFTBUTTONUP;
+			}
+			break;
+		case OSystem::EVENT_RBUTTONUP:
+			if (!(_eventFilter & RD_RIGHTBUTTONUP)) {
+				_mouseEvent.pending = true;
+				_mouseEvent.buttons = RD_RIGHTBUTTONUP;
+			}
+			break;
+		case OSystem::EVENT_WHEELUP:
+			if (!(_eventFilter & RD_WHEELUP)) {
+				_mouseEvent.pending = true;
+				_mouseEvent.buttons = RD_WHEELUP;
+			}
+			break;
+		case OSystem::EVENT_WHEELDOWN:
+			if (!(_eventFilter & RD_WHEELDOWN)) {
+				_mouseEvent.pending = true;
+				_mouseEvent.buttons = RD_WHEELDOWN;
+			}
+			break;
+		case OSystem::EVENT_QUIT:
+			closeGame();
+			break;
+		default:
+			break;
+		}
+	}
+}
+
 void Sword2Engine::gameCycle(void) {
 	// do one game cycle
 
@@ -290,8 +390,6 @@ void Sword2Engine::gameCycle(void) {
 }
 
 void Sword2Engine::go() {
-	KeyboardEvent ke;
-
 	_quit = false;
 
 	debug(5, "CALLING: readOptionSettings");
@@ -354,13 +452,13 @@ void Sword2Engine::go() {
 		}
 #endif
 
-		if (_input->keyWaiting()) {
-			_input->readKey(&ke);
+		KeyboardEvent *ke = keyboardEvent();
 
-			if ((ke.modifiers == OSystem::KBD_CTRL && ke.keycode == 'd') || ke.ascii == '#' || ke.ascii == '~') {
+		if (ke) {
+			if ((ke->modifiers == OSystem::KBD_CTRL && ke->keycode == 'd') || ke->ascii == '#' || ke->ascii == '~') {
 				_debugger->attach();
-			} else if (ke.modifiers == 0 || ke.modifiers == OSystem::KBD_SHIFT) {
-				switch (ke.keycode) {
+			} else if (ke->modifiers == 0 || ke->modifiers == OSystem::KBD_SHIFT) {
+				switch (ke->keycode) {
 				case 'p':
 					if (_gamePaused)
 						unpauseGame();

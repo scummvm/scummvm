@@ -43,10 +43,6 @@ enum {
 
 	RDERR_OPENVERSIONFILE,
 
-	// Keyboard error codes
-
-	RDERR_NOKEYWAITING,
-
 	// Sprite drawing error codes
 
 	RDERR_NOTIMPLEMENTED,
@@ -75,17 +71,6 @@ enum {
 	RDERR_FXNOTOPEN,
 	RDERR_FXFUCKED,
 	RDERR_INVALIDID
-};
-
-// Mouse button defines
-
-enum {
-	RD_LEFTBUTTONDOWN		= 0x01,
-	RD_LEFTBUTTONUP			= 0x02,
-	RD_RIGHTBUTTONDOWN		= 0x04,
-	RD_RIGHTBUTTONUP		= 0x08,
-	RD_WHEELUP			= 0x10,
-	RD_WHEELDOWN			= 0x20
 };
 
 // Sprite defines
@@ -176,16 +161,6 @@ enum {
 
 // Structure definitions
 
-struct MouseEvent {
-	uint16 buttons;
-};
-
-struct KeyboardEvent {
-	uint16 ascii;
-	int keycode;
-	int modifiers;
-};
-
 #if !defined(__GNUC__)
 	#pragma START_PACK_STRUCTS
 #endif
@@ -230,52 +205,6 @@ struct MovieTextObject {
 	uint16 *speech;
 };
 
-// Input handling class
-
-// Mouse buffer size
-#define MAX_MOUSE_EVENTS 16
-
-// Key buffer size
-#define MAX_KEY_BUFFER 32
-
-class Input {
-private:
-	Sword2Engine *_vm;
-
-	uint8 _mouseBacklog;
-	uint8 _mouseLogPos;
-	MouseEvent _mouseLog[MAX_MOUSE_EVENTS];
-
-	void logMouseEvent(uint16 buttons);
-
-	// The number of key presses waiting to be processed.
-	uint8 _keyBacklog;
-
-	// Index of the next key to read from the buffer.
-	uint8 _keyLogPos;
-
-	// The keyboard buffer
-	KeyboardEvent _keyBuffer[MAX_KEY_BUFFER];
-
-	void writeKey(uint16 ascii, int keycode, int modifiers);
-
-public:
-	int16 _mouseX;
-	int16 _mouseY;
-
-	Input(Sword2Engine *vm) :
-		_vm(vm), _mouseBacklog(0), _mouseLogPos(0), _keyBacklog(0),
-		_keyLogPos(0), _mouseX(0), _mouseY(0) {};
-
-	void parseEvents(void);
-
-	MouseEvent *mouseEvent(void);
-	bool checkForMouseEvents(void);
-
-	bool keyWaiting(void);
-	int32 readKey(KeyboardEvent *ev);
-};
- 
 } // End of namespace Sword2
 
 #endif

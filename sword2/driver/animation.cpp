@@ -424,9 +424,9 @@ int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte
 
 			_vm->_graphics->updateDisplay();
 
-			KeyboardEvent ke;
+			KeyboardEvent *ke = _vm->keyboardEvent();
 
-			if ((_vm->_input->readKey(&ke) == RD_OK && ke.keycode == 27) || _vm->_quit) {
+			if ((ke && ke->keycode == 27) || _vm->_quit) {
 				_snd->stopHandle(handle);
 				skipCutscene = true;
 				break;
