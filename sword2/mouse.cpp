@@ -1273,7 +1273,6 @@ int32 FN_register_mouse(int32 *params)	//Tony29Oct96
 		mouse_list[cur_mouse].anim_pc		= 0;
 
 		//Zdebug("mouse id %d", mouse_list[cur_mouse].id);
-
 		cur_mouse++;
 	}
 

@@ -429,25 +429,25 @@ int32 Sword2Sound::PreFetchCompSpeech(const char *filename, uint32 speechid, uin
 
 	memset(pwf, 0, sizeof(_wavHeader));
 
-	*((uint32*)pwf->riff) = 'FFIR';
-	*((uint32*)pwf->wavID) = 'EVAW';
-	*((uint32*)pwf->format) = ' tmf';
+	pwf->riff = MKID('RIFF');
+	pwf->wavID = MKID('WAVE');
+	pwf->format = MKID('fmt ');
 
-	pwf->formatLen		= 0x00000010;
-	pwf->formatTag		= 0x0001;
-	pwf->channels		= 0x0001;
-	pwf->samplesPerSec	= 0x5622;
-	pwf->avgBytesPerSec = 0x0000;
-	pwf->blockAlign		= 0xAC44;
-	pwf->unknown1		= 0x0000;
-	pwf->unknown2		= 0x0002;
-	pwf->bitsPerSample	= 0x0010;
+	pwf->formatLen		= TO_LE_32(0x00000010);
+	pwf->formatTag		= TO_LE_16(0x0001);
+	pwf->channels		= TO_LE_16(0x0001);
+	pwf->samplesPerSec	= TO_LE_16(0x5622);
+	pwf->avgBytesPerSec = TO_LE_16(0x0000);
+	pwf->blockAlign		= TO_LE_16(0xAC44);
+	pwf->unknown1		= TO_LE_16(0x0000);
+	pwf->unknown2		= TO_LE_16(0x0002);
+	pwf->bitsPerSample	= TO_LE_16(0x0010);
 
-	*((uint32*)data16) = 'atad';
+	*((uint32*)data16) = MKID('data');
 
 	data16 += 2;
 
-	*((uint32*)data16) = (speechIndex[1] - 1) * 2;
+	*((uint32*)data16) = TO_LE_32((speechIndex[1] - 1) * 2);
 
 	data16 += 2;
 
@@ -465,17 +465,13 @@ int32 Sword2Sound::PreFetchCompSpeech(const char *filename, uint32 speechid, uin
 
 	fp.close();
 
-	// FIXME: potential endian problem, maybe this should be
-	///data16[0] = READ_LE_UINT16(data8);
-	data16[0] = *((int16*)data8);	// Starting Value
-	i = 1;
+	data16[0] = READ_LE_UINT16(data8);	// Starting Value
 
-	while (i < (speechIndex[1] - 1)) {
+	for (i = 1; i < (speechIndex[1] - 1); i++) {
 		if (GetCompressedSign(data8[i + 1]))
 			data16[i] = data16[i - 1] - (GetCompressedAmplitude(data8[i + 1]) << GetCompressedShift(data8[i + 1]));
 		else
 			data16[i] = data16[i - 1] + (GetCompressedAmplitude(data8[i + 1]) << GetCompressedShift(data8[i + 1]));
-		i++;
 	}
 
 	return(RD_OK);
@@ -530,18 +526,14 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 
 		// Decompress data into speech buffer.
 		data16 = (uint16*)malloc(bufferSize);
-			
-		// FIXME: potential endian problem, maybe this should be
-		///data16[0] = READ_LE_UINT16(data8);
-		data16[0] = *((int16*)data8);	// Starting Value
-		i = 1;
 
-		while (i < bufferSize / 2) {
+		data16[0] = READ_LE_UINT16(data8);	// Starting Value
+
+		for (i = 1; i < bufferSize / 2; i++) {
 			if (GetCompressedSign(data8[i + 1]))
 				data16[i] = data16[i - 1] - (GetCompressedAmplitude(data8[i + 1]) << GetCompressedShift(data8[i + 1]));
 			else
 				data16[i] = data16[i - 1] + (GetCompressedAmplitude(data8[i + 1]) << GetCompressedShift(data8[i + 1]));
-			i++;
 		}
 
 		free(data8);
@@ -701,7 +693,7 @@ int32 Sword2Sound::OpenFx(int32 id, uint8 *data) {
 		while (i < 100) {
 			if (*data == 'd') {
 				data32 = (uint32*)data;
-				if (READ_LE_UINT32(data32) == 'atad')
+				if (READ_BE_UINT32(data32) == MKID('data'))
 					break;
 			}
 			i += 1;
@@ -718,12 +710,12 @@ int32 Sword2Sound::OpenFx(int32 id, uint8 *data) {
 		bufferFx[fxi] = (uint16*)malloc(bufferSizeFx[fxi]);
 		memcpy(bufferFx[fxi], (uint8 *)(data32 + 2), bufferSizeFx[fxi]);
 		flagsFx[fxi] = SoundMixer::FLAG_16BITS;
-		if (wav->channels == 2)
+		if (FROM_LE_16(wav->channels) == 2)
 			flagsFx[fxi] |= SoundMixer::FLAG_STEREO;
 
-		fxRate[fxi] = wav->samplesPerSec;
+		fxRate[fxi] = FROM_LE_16(wav->samplesPerSec);
 
-		//Until the mixer supports LE samples natively, we need to convert our LE ones to BE
+		// Until the mixer supports LE samples natively, we need to convert our LE ones to BE
 		for (int32 j = 0; j < (bufferSizeFx[fxi] / 2); j++)
 			bufferFx[fxi][j] = TO_BE_16(bufferFx[fxi][j]);
 
@@ -1098,13 +1090,11 @@ int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId,
 
 	data16[0] = READ_LE_UINT16(data8);	// First sample value
 
-	i = 1;
-	while (i < (bufferSizeMusic / 2) - 1) {
+	for (i = 1; i < (bufferSizeMusic / 2) - 1; i++) {
 		if (GetCompressedSign(data8[i + 1]))
 			data16[i] = data16[i - 1] - (GetCompressedAmplitude(data8[i + 1]) << GetCompressedShift(data8[i + 1]));
 		else
 			data16[i] = data16[i - 1] + (GetCompressedAmplitude(data8[i + 1]) << GetCompressedShift(data8[i + 1]));
-		i++;
 	}
 
 	// Store the value of the last sample ready for next batch of
@@ -1137,11 +1127,13 @@ int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId,
 		pan = 0;
 	}
 
+#ifndef SCUMM_BIG_ENDIAN
 	// FIXME: Until the mixer supports LE samples natively, we need to
 	// convert our LE ones to BE
 	for (i = 0; i < (bufferSizeMusic / 2); i++) {
-		data16[i] = TO_BE_16(data16[i]);
+		data16[i] = SWAP_BYTES_16(data16[i]);
 	}
+#endif
 
 	g_engine->_mixer->newStream(&soundHandleMusic[primaryStream], data16,
 		bufferSizeMusic, 22050, SoundMixer::FLAG_16BITS, 100000, volume, pan);
@@ -1268,10 +1260,12 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 
 			musLastSample[i] = data16[j - 1];
 
+#ifndef SCUMM_BIG_ENDIAN
 			// Until the mixer supports LE samples natively, we
 			// need to convert our LE ones to BE
 			for (int32 y = 0; y < (len / 2); y++)
-				data16[y] = TO_BE_16(data16[y]);
+				data16[y] = SWAP_BYTES_16(data16[y]);
+#endif
 
 			// Paranoid check that seems to be necessary.
 			if (len & 1)

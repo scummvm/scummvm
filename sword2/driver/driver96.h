@@ -1267,10 +1267,10 @@ typedef struct
 // the size of the data is the data itself.
 typedef struct
 {
-	char riff[4];
+	uint32 riff;
 	uint32 fileLength;
-	char wavID[4];
-	char format[4];
+	uint32 wavID;
+	uint32 format;
 	uint32 formatLen;
 	uint16 formatTag;
 	uint16 channels;
