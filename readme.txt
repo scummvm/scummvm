@@ -103,16 +103,13 @@ listed here, nor in the compatibility table on the web site, please see below.
 
 
        Sam and Max:
-                - Subgames are not fully functional.
+                - Subgames are not all fully functional.
 
                 - The Wak-A-Rat game will appear to freeze at the end.
                   However, it hasn't really. Just hit Escape and wait.
 
                 - The intro credits will not play correctly if you let the
                   previous cutscene run (the Mad Doctor scene).
-
-                - The Mystery Vortex may hang the game if you hang around in
-                  the main room for too long. This is caused by a script race
 
 
        Zak McKracken Fm Towns:
