@@ -241,7 +241,7 @@ bool Actor::talking() {
 void Actor::shutUp() {
 	if (_lipSynch != NULL) {
 		g_imuse->stopSound(_talkSoundName.c_str());
-		if (_talkChore[_talkAnim] >= 0)
+		if ((_talkAnim != -1) && (_talkChore[_talkAnim] >= 0))
 			_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
 		_lipSynch = NULL;
 	} else if (_mumbleChore >= 0)
