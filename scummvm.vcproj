@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 /FIXED:NO"
-				AdditionalDependencies="sdl.lib winmm.lib wsock32.lib simon___Debug\simon.lib scumm___Debug\scumm.lib sky___Debug\sky.lib"
+				AdditionalDependencies="sdl.lib winmm.lib wsock32.lib simon___Debug\simon.lib scumm___Debug\scumm.lib sky___Debug\sky.lib bs2___Debug\bs2.lib"
 				OutputFile=".\scummvm___Debug/scummvm.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
@@ -98,7 +98,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="sdl.lib winmm.lib wsock32.lib simon___Release\simon.lib scumm___Release\scumm.lib sky___Release\sky.lib"
+				AdditionalDependencies="sdl.lib winmm.lib wsock32.lib simon___Release\simon.lib scumm___Release\scumm.lib sky___Release\sky.lib bs2___Release\bs2.lib"
 				OutputFile=".\scummvm___Release/scummvm.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -155,7 +155,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="sdl.lib winmm.lib wsock32.lib libmad.lib scumm___mad_mp3_Release\scumm.lib simon___mad_mp3_Release\simon.lib sky___mad_mp3_Release\sky.lib"
+				AdditionalDependencies="sdl.lib winmm.lib wsock32.lib libmad.lib scumm___mad_mp3_Release\scumm.lib simon___mad_mp3_Release\simon.lib sky___mad_mp3_Release\sky.lib bs2___mad_mp3_Release\bs2.lib"
 				OutputFile=".\scummvm___mad_mp3_Release/scummvm.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -212,7 +212,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 /FIXED:NO"
-				AdditionalDependencies="sdl.lib winmm.lib libmad.lib wsock32.lib scumm___mad_mp3_Debug\scumm.lib simon___mad_mp3_Debug\simon.lib sky___mad_mp3_Debug\sky.lib"
+				AdditionalDependencies="sdl.lib winmm.lib libmad.lib wsock32.lib scumm___mad_mp3_Debug\scumm.lib simon___mad_mp3_Debug\simon.lib sky___mad_mp3_Debug\sky.lib bs2___mad_mp3_Debug\bs2.lib"
 				OutputFile=".\scummvm___mad_mp3_Debug/scummvm.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
