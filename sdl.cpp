@@ -64,7 +64,7 @@ void updateScreen(Scumm *s);
 void updatePalette(Scumm *s) {
 	SDL_Color colors[256];
 	int first = s->_palDirtyMin;
-	int num = s->_palDirtyMax - first + 1;
+	int num = (s->_palDirtyMax) - first + 1;
 	int i;
 	byte *data = s->_currentPalette;
 	
@@ -979,8 +979,8 @@ int main(int argc, char* argv[]) {
 	scumm->_scummStackPos=0;
 	scumm->_verbMouseOver=0;
 
-	scumm->_palDirtyMax=0;
-	scumm->_palDirtyMin=0;
+	scumm->_palDirtyMax=-1;
+	scumm->_palDirtyMin=-1;
 	scumm->_debugger=0;
 	scumm->camera._cur.x=0;
 	scumm->camera._cur.y=0;
@@ -998,7 +998,12 @@ int main(int argc, char* argv[]) {
 
 	scumm->mouse.x=0;
 	scumm->mouse.y=0;
+	
+	scumm->_xPos = 0;
+	scumm->_yPos = 0;
+	scumm->_dir = 0;
 
+	scumm->_resultVarNumber = 0;
 	scumm->delta=0;
 	scumm->_soundEngine=0;
 	scumm->_gui=0;
@@ -1015,6 +1020,8 @@ int main(int argc, char* argv[]) {
 	scumm->_bitVars=0;
 
 	scumm->_talk_sound_mode=0;
+	scumm->_talk_sound_a = 0;
+	scumm->_talk_sound_b = 0;
 
 	scumm->_curActor = 0;
 	scumm->_curExecScript = 0;
@@ -1024,10 +1031,32 @@ int main(int argc, char* argv[]) {
 	scumm->_currentScript = 0;
 	scumm->_currentRoom = 0;
 
+	scumm->_midi_driver = 0;
+	scumm->_curSoundPos = 0;
 	scumm->_soundQuePos = 0;	
 	scumm->_soundQue2Pos = 0;
+	scumm->_soundParam = 0;
+	scumm->_soundParam2 = 0;
+	scumm->_soundParam3 = 0;
+	scumm->current_cd_sound = 0;
+	scumm->num_sound_effects = 0;
+	scumm->_noSubtitles = 0;
 
 	scumm->_screenEffectFlag = 0;
+	scumm->_switchRoomEffect = 0;
+	scumm->_switchRoomEffect2 = 0;
+	scumm->_screenLeft = 0;
+	scumm->_screenTop = 0;
+
+	scumm->_enqueue_b = 0;
+	scumm->_enqueue_c = 0;
+	scumm->_enqueue_d = 0;
+	scumm->_enqueue_e = 0;
+
+	scumm->_palManipCounter = 0;
+	scumm->_palManipStart = 0;
+	scumm->_palManipEnd = 0;
+
 	memset(scumm->_colorCycle, 0, sizeof(scumm->_colorCycle));
 /* */
 
