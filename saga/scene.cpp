@@ -377,8 +377,8 @@ bool Scene::canWalk(const Point &testPoint) {
 	if (!_bgMask.loaded) {
 		return true;
 	}
-	if ((testPoint.x < 0) || (testPoint.x > _bgMask.w) ||
-		(testPoint.y < 0) || (testPoint.y > _bgMask.h)) {
+	if ((testPoint.x < 0) || (testPoint.x >= _bgMask.w) ||
+		(testPoint.y < 0) || (testPoint.y >= _bgMask.h)) {
 			return true;
 		}
 	maskType = getBGMaskType(testPoint);
