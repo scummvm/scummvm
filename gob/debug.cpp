@@ -118,7 +118,7 @@ void dbg_dumpStaticScenery(Scen_Static * st) {
 
 			log_write
 			    ("destX = %d, destY = %d, transparency = %d\n",
-			    ptr->destX, ptr->destY, (char *)ptr->transp);
+			    ptr->destX, ptr->destY, ptr->transp);
 		}
 	}
 	log_write("----------\n\n");
