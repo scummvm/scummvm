@@ -413,16 +413,19 @@ void LoadedCostume::loadCostume(int id) {
 	_baseptr = _ptr;
 
 	switch (_ptr[7] & 0x7F) {
+	case 0x57:				// Only used in V1 games
+		_numColors = 0;
+		break;
 	case 0x58:
 		_numColors = 16;
 		break;
 	case 0x59:
 		_numColors = 32;
 		break;
-	case 0x60:										/* New since version 6 */
+	case 0x60:				// New since version 6
 		_numColors = 16;
 		break;
-	case 0x61:										/* New since version 6 */
+	case 0x61:				// New since version 6
 		_numColors = 32;
 		break;
 	default:
