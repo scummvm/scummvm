@@ -37,20 +37,20 @@ protected:
 	uint32 _inserted_delta; // Track simulated deltas for note-off events
 
 protected:
-	uint32 readVLQ2 (byte * &data);
+	uint32 readVLQ2(byte * &data);
 	void resetTracking();
-	void parseNextEvent (EventInfo &info);
+	void parseNextEvent(EventInfo &info);
 
 public:
 	MidiParser_XMIDI() : _inserted_delta(0) {}
 	~MidiParser_XMIDI() { }
 
-	bool loadMusic (byte *data, uint32 size);
+	bool loadMusic(byte *data, uint32 size);
 };
 
 
 // This is a special XMIDI variable length quantity
-uint32 MidiParser_XMIDI::readVLQ2 (byte * &pos) {
+uint32 MidiParser_XMIDI::readVLQ2(byte * &pos) {
 	uint32 value = 0;
 	int i;
 	
@@ -62,9 +62,9 @@ uint32 MidiParser_XMIDI::readVLQ2 (byte * &pos) {
 	return value;
 }
 
-void MidiParser_XMIDI::parseNextEvent (EventInfo &info) {
+void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 	info.start = _position._play_pos;
-	info.delta = readVLQ2 (_position._play_pos) - _inserted_delta;
+	info.delta = readVLQ2(_position._play_pos) - _inserted_delta;
 
 	// Process the next event.
 	_inserted_delta = 0;
@@ -73,7 +73,7 @@ void MidiParser_XMIDI::parseNextEvent (EventInfo &info) {
 	case 0x9: // Note On
 		info.basic.param1 = *(_position._play_pos++);
 		info.basic.param2 = *(_position._play_pos++);
-		info.length = readVLQ (_position._play_pos);
+		info.length = readVLQ(_position._play_pos);
 		if (info.basic.param2 == 0) {
 			info.event = info.channel() | 0x80;
 			info.length = 0;
@@ -107,14 +107,14 @@ void MidiParser_XMIDI::parseNextEvent (EventInfo &info) {
 			break;
 
 		case 0x0: // SysEx
-			info.length = readVLQ (_position._play_pos);
+			info.length = readVLQ(_position._play_pos);
 			info.ext.data = _position._play_pos;
 			_position._play_pos += info.length;
 			break;
 
 		case 0xF: // META event
 			info.ext.type = *(_position._play_pos++);
-			info.length = readVLQ (_position._play_pos);
+			info.length = readVLQ(_position._play_pos);
 			info.ext.data = _position._play_pos;
 			_position._play_pos += info.length;
 			if (info.ext.type == 0x51 && info.length == 3) {
@@ -128,7 +128,7 @@ void MidiParser_XMIDI::parseNextEvent (EventInfo &info) {
 	}
 }
 
-bool MidiParser_XMIDI::loadMusic (byte *data, uint32 size) {
+bool MidiParser_XMIDI::loadMusic(byte *data, uint32 size) {
 	uint32 i = 0;
 	byte *start;
 	uint32 len;
@@ -138,21 +138,21 @@ bool MidiParser_XMIDI::loadMusic (byte *data, uint32 size) {
 	unloadMusic();
 	byte *pos = data;
 
-	if (!memcmp (pos, "FORM", 4)) {
+	if (!memcmp(pos, "FORM", 4)) {
 		pos += 4;
 
 		// Read length of 
-		len = read4high (pos);
+		len = read4high(pos);
 		start = pos;
 
 		// XDIRless XMIDI, we can handle them here.
-		if (!memcmp (pos, "XMID", 4)) {	
-			printf ("Warning: XMIDI doesn't have XDIR\n");
+		if (!memcmp(pos, "XMID", 4)) {	
+			warning("XMIDI doesn't have XDIR");
 			pos += 4;
 			_num_tracks = 1;
-		} else if (memcmp (pos, "XDIR", 4)) {
+		} else if (memcmp(pos, "XDIR", 4)) {
 			// Not an XMIDI that we recognise
-			printf ("Expected 'XDIR' but found '%c%c%c%c'\n", pos[0], pos[1], pos[2], pos[3]);
+			warning("Expected 'XDIR' but found '%c%c%c%c'", pos[0], pos[1], pos[2], pos[3]);
 			return false;
 		} else {
 			// Seems Valid
@@ -161,16 +161,16 @@ bool MidiParser_XMIDI::loadMusic (byte *data, uint32 size) {
 
 			for (i = 4; i < len; i++) {
 				// Read 4 bytes of type
-				memcpy (buf, pos, 4);
+				memcpy(buf, pos, 4);
 				pos += 4;
 
 				// Read length of chunk
-				chunk_len = read4high (pos);
+				chunk_len = read4high(pos);
 
 				// Add eight bytes
 				i += 8;
 
-				if (memcmp (buf, "INFO", 4)) {
+				if (memcmp(buf, "INFO", 4)) {
 					// Must align
 					pos += (chunk_len + 1) & ~1;
 					i += (chunk_len + 1) & ~1;
@@ -179,14 +179,14 @@ bool MidiParser_XMIDI::loadMusic (byte *data, uint32 size) {
 
 				// Must be at least 2 bytes long
 				if (chunk_len < 2) {
-					printf ("Invalid chunk length %d for 'INFO' block!\n", (int) chunk_len);
+					warning("Invalid chunk length %d for 'INFO' block!", (int) chunk_len);
 					return false;
 				}
 
-				_num_tracks = (byte) read2low (pos);
+				_num_tracks = (byte) read2low(pos);
 
 				if (chunk_len > 2) {
-					printf ("Chunk length %d is greater than 2\n", (int) chunk_len);
+					warning("Chunk length %d is greater than 2", (int) chunk_len);
 					pos += chunk_len - 2;
 				}
 				break;
@@ -194,7 +194,7 @@ bool MidiParser_XMIDI::loadMusic (byte *data, uint32 size) {
 
 			// Didn't get to fill the header
 			if (_num_tracks == 0) {
-				printf ("Didn't find a valid track count\n");
+				warning("Didn't find a valid track count");
 				return false;
 			}
 
@@ -202,19 +202,19 @@ bool MidiParser_XMIDI::loadMusic (byte *data, uint32 size) {
 			// Goto the right place
 			pos = start + ((len + 1) & ~1);
 
-			if (memcmp (pos, "CAT ", 4)) {
+			if (memcmp(pos, "CAT ", 4)) {
 				// Not an XMID
-				printf ("Expected 'CAT ' but found '%c%c%c%c'\n", pos[0], pos[1], pos[2], pos[3]);
+				warning("Expected 'CAT ' but found '%c%c%c%c'", pos[0], pos[1], pos[2], pos[3]);
 				return false;
 			}
 			pos += 4;
 
 			// Now read length of this track
-			len = read4high (pos);
+			len = read4high(pos);
 
-			if (memcmp (pos, "XMID", 4)) {
+			if (memcmp(pos, "XMID", 4)) {
 				// Not an XMID
-				printf ("Expected 'XMID' but found '%c%c%c%c'\n", pos[0], pos[1], pos[2], pos[3]);
+				warning("Expected 'XMID' but found '%c%c%c%c'", pos[0], pos[1], pos[2], pos[3]);
 				return false;
 			}
 			pos += 4;
@@ -224,34 +224,34 @@ bool MidiParser_XMIDI::loadMusic (byte *data, uint32 size) {
 		// Ok it's an XMIDI.
 		// We're going to identify and store the location for each track.
 		if (_num_tracks > ARRAYSIZE(_tracks)) {
-			printf ("Can only handle %d tracks but was handed %d\n", (int) ARRAYSIZE(_tracks), (int) _num_tracks);
+			warning("Can only handle %d tracks but was handed %d", (int) ARRAYSIZE(_tracks), (int) _num_tracks);
 			return false;
 		}
 
 		int tracks_read = 0;
 		while (tracks_read < _num_tracks) {
-			if (!memcmp (pos, "FORM", 4)) {
+			if (!memcmp(pos, "FORM", 4)) {
 				// Skip this plus the 4 bytes after it.
 				pos += 8;
-			} else if (!memcmp (pos, "XMID", 4)) {
+			} else if (!memcmp(pos, "XMID", 4)) {
 				// Skip this.
 				pos += 4;
-			} else if (!memcmp (pos, "TIMB", 4)) {
+			} else if (!memcmp(pos, "TIMB", 4)) {
 				// Custom timbres?
 				// We don't support them.
 				// Read the length, skip it, and hope there was nothing there.
 				pos += 4;
-				len = read4high (pos);
+				len = read4high(pos);
 				pos += (len + 1) & ~1;
-			} else if (!memcmp (pos, "EVNT", 4)) {
+			} else if (!memcmp(pos, "EVNT", 4)) {
 				// Ahh! What we're looking for at last.
 				_tracks[tracks_read] = pos + 8; // Skip the EVNT and length bytes
 				pos += 4;
-				len = read4high (pos);
+				len = read4high(pos);
 				pos += (len + 1) & ~1;
 				++tracks_read;
 			} else {
-				printf ("Hit invalid block '%c%c%c%c' while scanning for track locations\n", pos[0], pos[1], pos[2], pos[3]);
+				warning("Hit invalid block '%c%c%c%c' while scanning for track locations", pos[0], pos[1], pos[2], pos[3]);
 				return false;
 			}
 		}
@@ -263,9 +263,9 @@ bool MidiParser_XMIDI::loadMusic (byte *data, uint32 size) {
 		// copy the data to our own buffer. Take warning....
 		_ppqn = 60;
 		resetTracking();
-		setTempo (500000);
+		setTempo(500000);
 		_inserted_delta = 0;
-		setTrack (0);
+		setTrack(0);
 		return true;
 	}
 
