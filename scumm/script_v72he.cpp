@@ -32,6 +32,7 @@
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/resource_v7he.h"
+#include "common/savefile.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 #include "scumm/verbs.h"
@@ -1554,13 +1555,27 @@ void ScummEngine_v72he::o72_jumpToScript() {
 }
 
 void ScummEngine_v72he::o72_openFile() {
-	int mode, slot, l;
+	int mode, slot, len, i, j;
 	byte filename[256];
 
 	mode = pop();
 	copyScriptString(filename);
 
 	debug(0,"Original filename %s", filename);
+
+	// HACK: Convert paths in lost/smaller
+	if (filename[0] == ':') {
+		len = resStrLen(filename) + 1;
+		j = 0;
+		for (i = 1; i < len; i++) {
+			if (filename[i] == ':')
+				filename[j++] = '/';
+			else
+				filename[j++] = filename[i];
+		}
+		filename[j] = 0;
+		debug(0,"Converted filename to %s", filename);
+	}
 
 	// Original games read path & filenames from INI file
 	// We only need to add the required game name
@@ -1591,37 +1606,44 @@ void ScummEngine_v72he::o72_openFile() {
 		strcpy((char *)filename, buf1);
 	}
 
-	// HACK: Convert paths
-	if (filename[0] == ':') {
-		int len = resStrLen(filename);
-		int i = 1, j = 0;
-		while(len--) {
-			if (filename[i] == ':')
-				filename[j] = '/';
-			else
-				filename[j] = filename[i];
-
-			i++;
-			j++;
+	int r = 0;
+	if (filename[0] == 'c' && filename[1] == ':') {
+		// Strip path
+		for (r = strlen((char*)filename); r != 0; r--) {
+			if (filename[r - 1] == '\\')
+				break;
 		}
-		debug(0,"Converted filename to %s", filename);
+	} else {
+		// Switch all \ to / for portablity
+		len = resStrLen(_scriptPointer) + 1;
+		for (i = 0; i < len; i++) {
+			if (filename[i] == '\\')
+				filename[i] = '/';
+		}
 	}
+	debug(0,"Final filename to %s", filename + r);
 
 	slot = -1;
-	for (l = 0; l < 17; l++) {
-		if (_hFileTable[l].isOpen() == false) {
-			slot = l;
+	for (i = 0; i < 17; i++) {
+		if (_hFileTable[i].isOpen() == false) {
+			slot = i;
 			break;
 		}
 	}
 
 	if (slot != -1) {
-		if (mode == 1)
-			_hFileTable[slot].open((char*)filename, File::kFileReadMode);
-		else if (mode == 2)
-			_hFileTable[slot].open((char*)filename, File::kFileWriteMode);
-		else
+		switch(mode) {
+		case 1:
+			_hFileTable[slot].open((char*)filename + r, File::kFileReadMode, _saveFileMan->getSavePath());
+			if (_hFileTable[slot].isOpen() == false)
+				_hFileTable[slot].open((char*)filename + r, File::kFileReadMode);
+			break;
+		case 2:
+			_hFileTable[slot].open((char*)filename + r, File::kFileWriteMode, _saveFileMan->getSavePath());
+			break;
+		default:
 			error("o72_openFile(): wrong open file mode %d", mode);
+		}
 
 		if (_hFileTable[slot].isOpen() == false)
 			slot = -1;
