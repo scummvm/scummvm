@@ -958,13 +958,16 @@ void Actor::drawActorCostume() {
 	bcr->_actorX = x - _vm->virtscr[0].xstart;
 	bcr->_actorY = y - elevation;
 
-	if (_vm->_version == 2) {
-		// FIXME: We have to adjust the x position by one strip (8 pixels) in V2 games
-		// However, it is not quite clear to me why. And to fully match the original,
-		// it seems we have to offset by 2 strips when facing left (270 degree).
+	if (_vm->_version <= 2) {
+		// HACK: We have to adjust the x position by one strip (8 pixels) in
+		// V2 games. However, it is not quite clear to me why. And to fully
+		// match the original, it seems we have to offset by 2 strips if the
+		// actor is facing left (270 degree).
+		// V1 games are once again slightly different, here we only have
+		// to adjust the 270 degree case...
 		if (facing == 270)
 			bcr->_actorX += 16;
-		else
+		else if (_vm->_version == 2)
 			bcr->_actorX += 8;
 	}
 
