@@ -229,7 +229,7 @@ protected:
 	byte _C64MaskMap[4096], _C64MaskChar[4096];
 	bool _C64ObjectMode;
 
-	byte _NESPatTable[4096], _NESNametable[16][64], _NESAttributes[64], _NESPalette[16];
+	byte _NESNametable[16][64], _NESAttributes[64];
 	byte _NESBaseTiles;
 	byte _NESNametableObj[16][64];
 	int _NESObj_x;

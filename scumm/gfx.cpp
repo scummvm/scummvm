@@ -184,8 +184,6 @@ Gdi::Gdi(ScummEngine *vm) {
 	_roomPalette = vm->_roomPalette;
 	if ((vm->_features & GF_AMIGA) && (vm->_version >= 4))
 		_roomPalette += 16;
-	if (vm->_features & GF_NES)
-		_NESBaseTiles = 0;
 	
 	_compositeBuf = 0;
 	_textSurface.pixels = 0;
@@ -1830,21 +1828,22 @@ void decodeNESTileData(const byte *src, byte *dest) {
 	}
 }
 
+void ScummEngine::decodeNESBaseTiles() {
+	byte *basetiles = getResourceAddress(rtCostume, 37);
+	_NESBaseTiles = basetiles[2];
+	decodeNESTileData(basetiles, _NESPatTable);
+}
+
 void Gdi::decodeNESGfx(const byte *room) {
-	if (_NESBaseTiles == 0) {
-		byte *basetiles = _vm->getResourceAddress(rtCostume,37);
-		_NESBaseTiles = basetiles[2];
-		decodeNESTileData(basetiles,_NESPatTable);
-	}
 	const byte *gdata = room + READ_LE_UINT16(room + 0x0A);
 	int tileset = *gdata++;
 	int width = READ_LE_UINT16(room + 0x04);
 	// int height = READ_LE_UINT16(room + 0x06);
 	int i, j, n;
 
-	decodeNESTileData(_vm->getResourceAddress(rtCostume, 37 + tileset), _NESPatTable + _NESBaseTiles * 16);
+	decodeNESTileData(_vm->getResourceAddress(rtCostume, 37 + tileset), _vm->_NESPatTable + _vm->_NESBaseTiles * 16);
 	for (i = 0; i < 16; i++)
-		_NESPalette[i] = *gdata++;
+		_vm->_NESPalette[i] = *gdata++;
 	for (i = 0; i < 16; i++) {
 		_NESNametable[i][0] = _NESNametable[i][1] = 0;
 		n = 0;
@@ -1908,10 +1907,10 @@ void Gdi::drawStripNES(byte *dst, int dstPitch, int stripnr, int top, int height
 		int tile = isObject ? _NESNametableObj[y][x] : _NESNametable[y][x];
 
 		for (int i = 0; i < 8; i++) {
-			byte c0 = _NESPatTable[tile * 16 + i];
-			byte c1 = _NESPatTable[tile * 16 + i + 8];
+			byte c0 = _vm->_NESPatTable[tile * 16 + i];
+			byte c1 = _vm->_NESPatTable[tile * 16 + i + 8];
 			for (int j = 0; j < 8; j++)
-				dst[j] = _NESPalette[((c0 >> (7 - j)) & 1) | (((c1 >> (7 - j)) & 1) << 1) | (palette << 2)];
+				dst[j] = _vm->_NESPalette[((c0 >> (7 - j)) & 1) | (((c1 >> (7 - j)) & 1) << 1) | (palette << 2)];
 			dst += dstPitch;
 		}
 	}

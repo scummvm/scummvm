@@ -1538,7 +1538,7 @@ void ScummEngine_v2::o2_switchCostumeSet() {
 	// NES version of maniac uses this to switch between the two
 	// groups of costumes it has
 	if (_features & GF_NES)
-		_v1MMNESCostumeSet = fetchScriptByte();
+		_NESCostumeSet = fetchScriptByte();
 	else
 		o2_dummy();
 }

@@ -598,7 +598,7 @@ void LoadedCostume::loadNEScostume(void) {
 	offset = src[(frameset * 4 + framenum) * 2];
 
 	// Lookup & desc
-	table = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_v1MMNESCostumeSet][0]);
+	table = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_NESCostumeSet][0]);
 	offset = READ_LE_UINT16(table + v1MMNESLookup[_id] * 2 + 2);
 
 	if (v1MMNESLookup[_id] * 2 >= READ_LE_UINT16(table)) {
@@ -686,17 +686,17 @@ void CostumeRenderer::drawNESCostume(const Actor *a, int limb) {
 	bool flipped = (newDirToOldDir(a->getFacing()) == 1);
 
 	// Lookup & desc
-	table = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_v1MMNESCostumeSet][0]) + 2;
+	table = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_NESCostumeSet][0]) + 2;
 	offset = READ_LE_UINT16(table + v1MMNESLookup[_loaded._id] * 2);
 
 	// lens
-	numSpritesTab = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_v1MMNESCostumeSet][1]) + 2 + offset;
+	numSpritesTab = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_NESCostumeSet][1]) + 2 + offset;
 	// offs
-	spritesOffsetTab = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_v1MMNESCostumeSet][2]) + 2 + offset*2;
+	spritesOffsetTab = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_NESCostumeSet][2]) + 2 + offset*2;
 	// data
-	spritesDefs = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_v1MMNESCostumeSet][3]) + 2;
+	spritesDefs = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_NESCostumeSet][3]) + 2;
 	// data
-	spritesPal = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_v1MMNESCostumeSet][5]) + 2;
+	spritesPal = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_NESCostumeSet][5]) + 2;
 
 	ptr = spritesDefs + READ_LE_UINT16(spritesOffsetTab + frame*2);
 	numSprites = numSpritesTab[frame] + 1;
@@ -717,8 +717,8 @@ void CostumeRenderer::drawNESCostume(const Actor *a, int limb) {
 		}
 
 		for (int ty = 0; ty < 8; ty++) {
-			byte c1 = _vm->_v1MMNESCostumeGfx[_vm->_v1MMNESCostumeSet][tile * 16 + ty];
-			byte c2 = _vm->_v1MMNESCostumeGfx[_vm->_v1MMNESCostumeSet][tile * 16 + ty + 8];
+			byte c1 = _vm->_NESCostumeGfx[_vm->_NESCostumeSet][tile * 16 + ty];
+			byte c2 = _vm->_NESCostumeGfx[_vm->_NESCostumeSet][tile * 16 + ty + 8];
 			for (int tx = 0; tx < 8; tx++) {
 				unsigned char c = ((c1 & mask) ? 1 : 0) | ((c2 & mask) ? 2 : 0) | palette;
 				if (mask == 0x01) {
@@ -816,8 +816,8 @@ void ScummEngine::cost_decodeNESCostumeGfx() {
 		int maxSprites = patTable[2];
 		if (maxSprites == 0)
 			maxSprites = 256;
-		_v1MMNESCostumeGfx[n] = (byte *)calloc(maxSprites * 16, 1);
-		decodeNESTileData(patTable,_v1MMNESCostumeGfx[n]);
+		_NESCostumeGfx[n] = (byte *)calloc(maxSprites * 16, 1);
+		decodeNESTileData(patTable,_NESCostumeGfx[n]);
 		// We will not need it anymore
 		nukeResource(rtCostume, v1MMNEScostTables[n][4]);
 	}

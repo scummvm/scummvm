@@ -471,8 +471,12 @@ public:
 
 	BaseCostumeRenderer* _costumeRenderer;
 
-	int _v1MMNESCostumeSet;
-	byte *_v1MMNESCostumeGfx[2];
+	int _NESCostumeSet;
+	byte *_NESCostumeGfx[2];
+
+	byte _NESPatTable[4096];
+	byte _NESPalette[16];
+	byte _NESBaseTiles;
 	
 	char *_audioNames;
 	int32 _numAudioNames;
@@ -915,6 +919,8 @@ protected:
 	void initVirtScreen(VirtScreenNumber slot, int number, int top, int width, int height, bool twobufs, bool scrollable);
 	void initBGBuffers(int height);
 	void initCycl(const byte *ptr);	// Color cycle
+
+	void decodeNESBaseTiles();
 
 	void drawObject(int obj, int arg);	
 	void drawRoomObjects(int arg);

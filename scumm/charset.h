@@ -130,6 +130,23 @@ public:
 	int getCharWidth(byte chr);
 };
 
+class CharsetRendererNES : public CharsetRendererCommon {
+protected:
+	byte *_trTable;
+
+	void drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height);
+
+public:
+	CharsetRendererNES(ScummEngine *vm, Common::Language language);
+	
+	void setCurID(byte id) {}
+	void printChar(int chr);
+	void drawChar(int chr, const Graphics::Surface &s, int x, int y);
+
+	int getFontHeight() { return 8; }
+	int getCharWidth(byte chr) { return 8; }
+};
+
 class CharsetRendererV3 : public CharsetRendererCommon {
 protected:
 	int _numChars;

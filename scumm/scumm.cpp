@@ -1232,7 +1232,9 @@ int ScummEngine::init(GameDetector &detector) {
 	loadCJKFont();
 
 	// Create the charset renderer
-	if (_version <= 2)
+	if (_features & GF_NES)
+		_charset = new CharsetRendererNES(this, _language);
+	else if (_version <= 2)
 		_charset = new CharsetRendererV2(this, _language);
 	else if (_version == 3)
 		_charset = new CharsetRendererV3(this);
@@ -1500,8 +1502,10 @@ void ScummEngine::scummInit() {
 
 	clearDrawObjectQueue();
 
-	if (_features & GF_NES)
+	if (_features & GF_NES) {
+		decodeNESBaseTiles();
 		cost_decodeNESCostumeGfx();
+	}
 
 	for (i = 0; i < 6; i++) {
 		if (_version == 3) { // FIXME - what is this?
