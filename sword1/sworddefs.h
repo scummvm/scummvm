@@ -1533,6 +1533,7 @@ enum ScriptVariableNames {
 	POCKET_52
 };
 
+#define GMASTER_79 5177345
 #define SCR_std_off (0*0x10000 + 6)
 #define SCR_exit0 (0*0x10000 + 7)
 #define SCR_exit1 (0*0x10000 + 8)

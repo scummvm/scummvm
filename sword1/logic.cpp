@@ -192,8 +192,15 @@ void SwordLogic::processLogic(BsObject *compact, uint32 id) {
 				break;
 			case LOGIC_bookmark:
 				memcpy(&(compact->o_tree.o_script_level), &(compact->o_bookmark.o_script_level), sizeof(ScriptTree));
-				compact->o_logic = LOGIC_script;
-				logicRet = 1;
+				if (id == GMASTER_79) {
+					// workaround for ending script.
+					// GMASTER_79 is not prepared for mega_interact receiving INS_quit
+                    fnSuicide(compact, id, 0, 0, 0, 0, 0, 0);
+					logicRet = 0;
+				} else {
+					compact->o_logic = LOGIC_script;
+					logicRet = 1;
+				}
 				break;
 			case LOGIC_speech:
 				logicRet = speechDriver(compact);
@@ -600,7 +607,7 @@ int SwordLogic::interpretScript(BsObject *compact, int id, Header *scriptModule,
 				}
 				break;
 			case IT_SKIPONTRUE:     // skip if expression true
-				debug(9, "IT_SKIPONFALSE: %d (%s)", scriptCode[pc], (stack[stackIdx-1] ? "IS TRUE (SKIPPED)" : "IS FALSE (NOT SKIPPED)"));
+				debug(9, "IT_SKIPONTRUE: %d (%s)", scriptCode[pc], (stack[stackIdx-1] ? "IS TRUE (SKIPPED)" : "IS FALSE (NOT SKIPPED)"));
 				stackIdx--;
 				if (stack[stackIdx])
 					pc += scriptCode[pc];
@@ -856,8 +863,7 @@ int SwordLogic::fnFadeDown(BsObject *cpt, int32 id, int32 speed, int32 d, int32 
 }
 
 int SwordLogic::fnFadeUp(BsObject *cpt, int32 id, int32 speed, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	warning("fnFadeUp speed = %d", speed);
-	//_screen->fadeUpPalette();
+	_scriptVars[NEW_PALETTE] = 1;
 	return SCRIPT_CONT;
 }
 
