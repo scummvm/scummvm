@@ -20,6 +20,7 @@
  */
 
 #include <stdafx.h>
+#include "common/util.h"
 #include "player.h"
 
 #include "renderer.h"
@@ -33,10 +34,6 @@
 #include <stdio.h> // for FILE, fopen, fclose, fread, fseek, ftell
 #include <string.h> // for strchr, strrchr
 #include <ctype.h> // for isdigit
-
-#ifndef max
-#define max(x, y) ((x) > (y) ? (x) : (y))
-#endif
 
 const int WAIT = 100;
 
@@ -371,7 +368,7 @@ void SmushPlayer::handleTextResource(Chunk & b) {
 	if(flags == 0 || flags == 4) {
 		fr->drawStringAbsolute(str, _curBuffer, _frameSize, pos_x, pos_y);
 	} else {
-		fr->drawStringCentered(str, _curBuffer, _frameSize, max(pos_y, top), left, width, pos_x);
+		fr->drawStringCentered(str, _curBuffer, _frameSize, MAX(pos_y, top), left, width, pos_x);
 	}
 }
 

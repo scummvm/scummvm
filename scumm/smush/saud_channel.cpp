@@ -26,9 +26,6 @@
 
 #include <assert.h>
 #include <string.h> // for memcpy.h
-#ifndef min
-#define min(x, y) ((x) > (y) ? (y) : (x))
-#endif
 
 void SaudChannel::handleStrk(Chunk & b) {
 	int size = b.getSize();

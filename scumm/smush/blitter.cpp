@@ -19,16 +19,13 @@
  *
  */
 
-#include <stdafx.h>
+#include "stdafx.h"
+#include "common/util.h"
 #include "blitter.h"
 #include "chunk.h"
 
 #include <assert.h>
 #include <string.h> // for memcpy
-
-#ifndef min
-#define min(x, y) ((x) > (y) ? (y) : (x))
-#endif
 
 Blitter::Blitter(char * ptr, const Point & dstsize, const Rect & src) : 
 			_ptr(ptr), 
@@ -91,7 +88,7 @@ void Blitter::put(char data, unsigned int len) {
 #endif
 			break;
 		}
-		int l = min((int)len, min(_clip.getX() - _cur.getX(), _src.right() - _cur.getX()));
+		int l = MIN((int)len, MIN(_clip.getX() - _cur.getX(), _src.right() - _cur.getX()));
 		len -= l;
 		memset(_offset, data, l);
 		advance(l);
@@ -106,7 +103,7 @@ void Blitter::blit(char * ptr, unsigned int len) {
 #endif
 			break;
 		}
-		int l = min((int)len, min(_clip.getX() - _cur.getX(), _src.right() - _cur.getX()));
+		int l = MIN((int)len, MIN(_clip.getX() - _cur.getX(), _src.right() - _cur.getX()));
 		len -= l;
 		memcpy(_offset, ptr, l);
 		ptr += l;
@@ -122,7 +119,7 @@ void Blitter::blit(Chunk & src, unsigned int len) {
 #endif
 			break;
 		}
-		int l = min((int)len, min(_clip.getX() -_cur.getX(), _src.right() - _cur.getX()));
+		int l = MIN((int)len, MIN(_clip.getX() -_cur.getX(), _src.right() - _cur.getX()));
 		len -= l;
 		src.read(_offset, l);
 		advance(l);
@@ -134,6 +131,7 @@ void Blitter::putBlock(unsigned int data) {
 		assert((_clip.getX() & 3) == 0);
 		unsigned int * dst = (unsigned int *)_offset;
 		int line_size = _clip.getX() >> 2;
+		data = TO_LE_32(data);
 
 		*dst = data; dst += line_size;
 		*dst = data; dst += line_size;
@@ -154,10 +152,10 @@ void Blitter::putBlock(unsigned int d1, unsigned int d2, unsigned int d3, unsign
 		unsigned int * dst = (unsigned int *)_offset;
 		int line_size = _clip.getX() >> 2;
 
-		*dst = d4; dst += line_size;
-		*dst = d3; dst += line_size;
-		*dst = d2; dst += line_size;
-		*dst = d1;
+		*dst = TO_LE_32(d4); dst += line_size;
+		*dst = TO_LE_32(d3); dst += line_size;
+		*dst = TO_LE_32(d2); dst += line_size;
+		*dst = TO_LE_32(d1);
 
 #ifdef DEBUG_CLIPPER
 	} else {
@@ -173,10 +171,10 @@ void Blitter::putBlock(unsigned char * data) {
 		unsigned int * dst =  (unsigned int *)_offset;
 		int line_size = _clip.getX() >> 2;
 		unsigned int * src =  (unsigned int *)data;
-		*dst = *src++; dst += line_size; 
-		*dst = *src++; dst += line_size;
-		*dst = *src++; dst += line_size;
-		*dst = *src++;
+		*dst = TO_LE_32(*src++); dst += line_size; 
+		*dst = TO_LE_32(*src++); dst += line_size;
+		*dst = TO_LE_32(*src++); dst += line_size;
+		*dst = TO_LE_32(*src++);
 #ifdef DEBUG_CLIPPER
 	} else {
 		_clippedBlock ++;
@@ -190,10 +188,10 @@ void Blitter::putBlock(Chunk & src) {
 		assert((_clip.getX() & 3) == 0);
 		unsigned int * dst =  (unsigned int *)_offset;
 		int line_size = _clip.getX() >> 2;
-		*dst = src.getDword(); dst += line_size;
-		*dst = src.getDword(); dst += line_size;
-		*dst = src.getDword(); dst += line_size;
-		*dst = src.getDword();
+		*dst = TO_LE_32(src.getDword()); dst += line_size;
+		*dst = TO_LE_32(src.getDword()); dst += line_size;
+		*dst = TO_LE_32(src.getDword()); dst += line_size;
+		*dst = TO_LE_32(src.getDword());
 #ifdef DEBUG_CLIPPER
 	} else {
 		_clippedBlock ++;

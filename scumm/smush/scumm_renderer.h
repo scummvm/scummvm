@@ -39,10 +39,6 @@
 #include "rect.h"
 #include "blitter.h"
 
-#ifndef min
-#define min(x, y) ((x) > (y) ? (y) : (x))
-#endif
-
 class scumm_mixer;
 
 class ScummRenderer : public BaseRenderer {

@@ -60,7 +60,7 @@ public:
 	void setList(const StringList& list)		{ _list = list; scrollBarRecalc(); }
 	const StringList& getList()	const			{ return _list; }
 	int getSelected() const						{ return _selectedItem; }
-	const ScummVM::String& getSelectedString() const	{ return _list[_selectedItem]; }
+	const String& getSelectedString() const		{ return _list[_selectedItem]; }
 	void setNumberingMode(int numberingMode)	{ _numberingMode = numberingMode; }
 	
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);

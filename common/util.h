@@ -23,6 +23,19 @@
 
 #include "scummsys.h"
 
+#ifndef ABS
+#define ABS(x) ((x)>=0?(x):-(x))
+#endif
+
+#ifndef MIN
+#define	MIN(a,b) (((a)<(b))?(a):(b))
+#endif
+
+#ifndef MAX
+#define	MAX(a,b) (((a)>(b))?(a):(b))
+#endif
+
+
 int RGBMatch(byte *palette, int r, int g, int b);
 int Blend(int src, int dst, byte *palette);
 void ClearBlendCache(byte *palette, int weight);

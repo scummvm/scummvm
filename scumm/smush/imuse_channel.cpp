@@ -26,9 +26,6 @@
 
 #include <assert.h>
 #include <string.h> // for memcpy.h
-#ifndef min
-#define min(x, y) ((x) > (y) ? (y) : (x))
-#endif
 
 ImuseChannel::ImuseChannel(int track, int freq) : 
 			_track(track), 

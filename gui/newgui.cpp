@@ -36,8 +36,6 @@
  * - ...
  */
 
-#define ABS(x)	((x) < 0 ? -(x) : (x))
-
 NewGui::NewGui(Scumm *s) : _s(s), _use_alpha_blending(false),
 	_need_redraw(false),_prepare_for_gui(true),
 	_pauseDialog(0), _saveLoadDialog(0), _aboutDialog(0), _optionsDialog(0),

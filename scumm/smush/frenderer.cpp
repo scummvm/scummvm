@@ -20,15 +20,13 @@
  */
 
 #include <stdafx.h>
+#include "common/util.h"
+
 #include "frenderer.h"
 #include "rect.h"
 
 #include <assert.h>
 #include <string.h> // for memcpy, strcat, strdup
-
-#ifndef max
-#define max(x, y) ((x) > (y) ? (x) : (y))
-#endif
 
 FontRenderer::FontRenderer(bool use_original_colors) : _nbChars(0), _color(-1), _original(use_original_colors) {
 }
@@ -75,7 +73,7 @@ int FontRenderer::stringHeight(const char * str) const {
 
 	for(int i = 0; str[i] != 0; i++) {
 		int h = charHeight(str[i]);
-		ret = max(ret, h);
+		ret = MAX(ret, h);
 	}
 
 	return ret;

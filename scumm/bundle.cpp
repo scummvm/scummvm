@@ -50,7 +50,7 @@ bool Bundle::openVoiceFile(char *filename)
 
 	_voiceFile = fopen(filename, "rb");
 	if (_voiceFile == NULL) {
-		printf("Bundle: Can't open voice bundle file: %s\n", filename);
+		warning("Bundle: Can't open voice bundle file: %s", filename);
 		return false;
 	}
 
@@ -93,7 +93,7 @@ bool Bundle::openMusicFile(char *filename)
 
 	_musicFile = fopen(filename, "rb");
 	if (_musicFile == NULL) {
-		printf("Bundle: Can't open music bundle file: %s\n", filename);
+		warning("Bundle: Can't open music bundle file: %s", filename);
 		return false;
 	}
 
@@ -132,7 +132,7 @@ int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final)
 	byte *comp_input, *comp_output;
 
 	if (_voiceFile == NULL) {
-		printf("Bundle: voice file is not open !\n");
+		warning("Bundle: voice file is not open!");
 		return 0;
 	}
 
@@ -182,7 +182,7 @@ int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp
 	byte *comp_input;
 
 	if (_musicFile == NULL) {
-		printf("Bundle: music file is not open !\n");
+		warning("Bundle: music file is not open!");
 		return 0;
 	}
 
@@ -228,7 +228,7 @@ int32 Bundle::decompressVoiceSampleByName(char *name, byte *comp_final)
 	int32 final_size = 0, i;
 
 	if (_voiceFile == NULL) {
-		printf("Bundle: voice file is not open !\n");
+		warning("Bundle: voice file is not open!");
 		return 0;
 	}
 
@@ -246,7 +246,7 @@ int32 Bundle::decompressMusicSampleByName(char *name, int32 number, byte *comp_f
 	int32 final_size = 0, i;
 
 	if (_voiceFile == NULL) {
-		printf("Bundle: voice file is not open !\n");
+		warning("Bundle: voice file is not open!");
 		return 0;
 	}
 
@@ -262,7 +262,7 @@ int32 Bundle::decompressMusicSampleByName(char *name, int32 number, byte *comp_f
 int32 Bundle::getNumberOfMusicSamplesByIndex(int32 index)
 {
 	if (_musicFile == NULL) {
-		printf("Bundle: music file is not open !\n");
+		warning("Bundle: music file is not open!");
 		return 0;
 	}
 
@@ -276,7 +276,7 @@ int32 Bundle::getNumberOfMusicSamplesByName(char *name)
 	int32 number = 0, i;
 
 	if (_musicFile == NULL) {
-		printf("Bundle: music file is not open !\n");
+		warning("Bundle: music file is not open!");
 		return 0;
 	}
 
@@ -651,7 +651,7 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 		break;
 
 	default:
-		printf("Bundle: Unknown codec %d!\n", (int)codec);
+		warning("Bundle: Unknown codec %d!", (int)codec);
 		output_size = 0;
 		break;
 	}
