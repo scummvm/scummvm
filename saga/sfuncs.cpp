@@ -37,6 +37,8 @@
 #include "saga/script.h"
 #include "saga/sdata.h"
 
+#include "saga/scene.h"
+
 namespace Saga {
 
 #define OPCODE(x) &Script::x
@@ -74,7 +76,7 @@ void Script::setupScriptFuncList(void) {
 		{28, 0, NULL},
 		{29, 2, OPCODE(SF_setActorState)},
 		{30, 3, OPCODE(SF_moveTo)},
-		{31, 0, NULL},
+		{31, 1, OPCODE(SF_sceneEq)},
 		{32, 0, NULL},
 		{33, 1, OPCODE(SF_finishBgdAnim)},
 		{34, 2, OPCODE(SF_swapActors)},
@@ -91,8 +93,8 @@ void Script::setupScriptFuncList(void) {
 		{45, 5, OPCODE(SF_walkRelative)},
 		{46, 5, OPCODE(SF_moveRelative)},
 		{47, 0, NULL},
-		{48, 0, NULL},
-		{49, 0, NULL},
+		{48, 0, OPCODE(SF_placard)},
+		{49, 0, OPCODE(SF_placardOff)},
 		{50, 0, NULL},
 		{51, 0, NULL},
 		{52, 6, OPCODE(SF_throwActor)},
@@ -118,8 +120,8 @@ void Script::setupScriptFuncList(void) {
 		{72, 0, NULL},
 		{73, 0, NULL},
 		{74, 0, NULL},
-		{75, 0, NULL},
-		{76, 0, NULL},
+		{75, 1, OPCODE(SF_rand)},
+		{76, 0, OPCODE(SF_fadeMusic)},
 		{77, 0, NULL}
 	};
 	_SFuncList = SFuncList;
@@ -143,7 +145,9 @@ int Script::SF_sleep(SCRIPTFUNC_PARAMS) {
 
 // Script function #2 (0x02)
 int Script::SF_takeObject(SCRIPTFUNC_PARAMS) {
-	thread->pop();
+	SDataWord_T param = thread->pop();
+
+	debug(1, "stub: SF_takeObject(%d)", param);
 	return SUCCESS;
 }
 
@@ -211,10 +215,12 @@ int Script::SF_actorWalkTo(SCRIPTFUNC_PARAMS) {
 
 // Script function #7 (0x07)
 int Script::SF_doAction(SCRIPTFUNC_PARAMS) {
-	thread->pop();
-	thread->pop();
-	thread->pop();
-	thread->pop();
+	SDataWord_T param1 = thread->pop();
+	SDataWord_T param2 = thread->pop();
+	SDataWord_T param3 = thread->pop();
+	SDataWord_T param4 = thread->pop();
+
+	debug(1, "stub: SF_doAction(%d, %d, %d, %d)", param1, param2, param3, param4);
 	return SUCCESS;
 }
 
@@ -246,14 +252,18 @@ int Script::SF_setFacing(SCRIPTFUNC_PARAMS) {
 
 // Script function #9 (0x09)
 int Script::SF_startBgdAnim(SCRIPTFUNC_PARAMS) {
-	thread->pop();
-	thread->pop();
+	SDataWord_T param1 = thread->pop();
+	SDataWord_T param2 = thread->pop();
+
+	debug(1, "stub: SF_startBgdAnim(%d, %d)", param1, param2);
 	return SUCCESS;
 }
 
 // Script function #10 (0x0A)
 int Script::SF_stopBgdAnim(SCRIPTFUNC_PARAMS) {
-	thread->pop();
+	SDataWord_T param = thread->pop();
+
+	debug(1, "stub: SF_stopBgdAnim(%d)", param);
 	return SUCCESS;
 }
 
@@ -284,35 +294,45 @@ int Script::SF_dialogMode(SCRIPTFUNC_PARAMS) {
 
 // Script function #14 (0x0E)
 int Script::SF_faceTowards(SCRIPTFUNC_PARAMS) {
-	thread->pop();
-	thread->pop();
+	SDataWord_T param1 = thread->pop();
+	SDataWord_T param2 = thread->pop();
+
+	debug(1, "stub: SF_faceTowards(%d, %d)", param1, param2);
 	return SUCCESS;
 }
 
 // Script function #15 (0x0F)
 int Script::SF_setFollower(SCRIPTFUNC_PARAMS) {
-	thread->pop();
-	thread->pop();
+	SDataWord_T param1 = thread->pop();
+	SDataWord_T param2 = thread->pop();
+
+	debug(1, "stub: SF_setFollower(%d, %d)", param1, param2);
 	return SUCCESS;
 }
 
 // Script function #16 (0x10)
 int Script::SF_gotoScene(SCRIPTFUNC_PARAMS) {
-	thread->pop();
-	thread->pop();
+	SDataWord_T param1 = thread->pop();
+	SDataWord_T param2 = thread->pop();
+
+	debug(1, "stub: SF_gotoScene(%d, %d)", param1, param2);
 	return SUCCESS;
 }
 
 // Script function #23 (0x17)
 int Script::SF_setBgdAnimSpeed(SCRIPTFUNC_PARAMS) {
-	thread->pop();
-	thread->pop();
+	SDataWord_T param1 = thread->pop();
+	SDataWord_T param2 = thread->pop();
+
+	debug(1, "stub: SF_setBgdAnimSpeed(%d, %d)", param1, param2);
 	return SUCCESS;
 }
 
 // Script function #25 (0x19)
 int Script::SF_centerActor(SCRIPTFUNC_PARAMS) {
-	thread->pop();
+	SDataWord_T param = thread->pop();
+
+	debug(1, "stub: SF_centerActor(%d)", param);
 	return SUCCESS;
 }
 
@@ -378,8 +398,10 @@ int Script::SF_actorWalkToAsync(SCRIPTFUNC_PARAMS) {
 
 // Script function #29 (0x1D)
 int Script::SF_setActorState(SCRIPTFUNC_PARAMS) {
-	thread->pop();
-	thread->pop();
+	SDataWord_T param1 = thread->pop();
+	SDataWord_T param2 = thread->pop();
+
+	debug(1, "stub: SF_setActorState(%d, %d)", param1, param2);
 	return SUCCESS;
 }
 
@@ -420,16 +442,32 @@ int Script::SF_moveTo(SCRIPTFUNC_PARAMS) {
 	return SUCCESS;
 }
 
+// Script function #31 (0x21)
+int Script::SF_sceneEq(SCRIPTFUNC_PARAMS) {
+	SDataWord_T param = thread->pop();
+
+	if (_vm->_scene->getSceneLUT(param) == _vm->_scene->currentSceneNumber())
+		thread->retVal = 1;
+	else 
+		thread->retVal = 0;
+	return SUCCESS;
+}
+
+
 // Script function #33 (0x21)
 int Script::SF_finishBgdAnim(SCRIPTFUNC_PARAMS) {
-	thread->pop();
+	SDataWord_T param = thread->pop();
+
+	debug(1, "stub: SF_finishBgdAnim(%d)", param);
 	return SUCCESS;
 }
 
 // Script function #34 (0x22)
 int Script::SF_swapActors(SCRIPTFUNC_PARAMS) {
-	thread->pop();
-	thread->pop();
+	SDataWord_T param1 = thread->pop();
+	SDataWord_T param2 = thread->pop();
+
+	debug(1, "stub: SF_swapActors(%d, %d)", param1, param2);
 	return SUCCESS;
 }
 
@@ -587,10 +625,12 @@ int Script::SF_linkAnim(SCRIPTFUNC_PARAMS) {
 
 // Script function #42 (0x2A)
 int Script::SF_scriptSpecialWalk(SCRIPTFUNC_PARAMS) {
-	thread->pop();
-	thread->pop();
-	thread->pop();
-	thread->pop();
+	SDataWord_T param1 = thread->pop();
+	SDataWord_T param2 = thread->pop();
+	SDataWord_T param3 = thread->pop();
+	SDataWord_T param4 = thread->pop();
+
+	debug(1, "stub: SF_scriptSpecialWalk(%d, %d, %d, %d)", param1, param2, param3, param4);
 	return SUCCESS;
 }
 
@@ -658,73 +698,103 @@ int Script::SF_checkUserInterrupt(SCRIPTFUNC_PARAMS) {
 
 // Script function #45 (0x2D)
 int Script::SF_walkRelative(SCRIPTFUNC_PARAMS) {
-	thread->pop();
-	thread->pop();
-	thread->pop();
-	thread->pop();
-	thread->pop();
+	SDataWord_T param1 = thread->pop();
+	SDataWord_T param2 = thread->pop();
+	SDataWord_T param3 = thread->pop();
+	SDataWord_T param4 = thread->pop();
+	SDataWord_T param5 = thread->pop();
+
+	debug(1, "stub: SF_walkRelative(%d, %d, %d, %d, %d)", param1, param2, param3, param4, param5);
 	return SUCCESS;
 }
 
 // Script function #46 (0x2E)
 int Script::SF_moveRelative(SCRIPTFUNC_PARAMS) {
-	thread->pop();
-	thread->pop();
-	thread->pop();
-	thread->pop();
-	thread->pop();
+	SDataWord_T param1 = thread->pop();
+	SDataWord_T param2 = thread->pop();
+	SDataWord_T param3 = thread->pop();
+	SDataWord_T param4 = thread->pop();
+	SDataWord_T param5 = thread->pop();
+
+	debug(1, "stub: SF_moveRelative(%d, %d, %d, %d, %d)", param1, param2, param3, param4, param5);
+	return SUCCESS;
+}
+
+// Script function #48 (0x30)
+int Script::SF_placard(SCRIPTFUNC_PARAMS) {
+	debug(1, "stub: SF_placard()");
+	return SUCCESS;
+}
+
+// Script function #49 (0x31)
+int Script::SF_placardOff(SCRIPTFUNC_PARAMS) {
+	debug(1, "stub: SF_placardOff()");
 	return SUCCESS;
 }
 
 // Script function #52 (0x34)
 int Script::SF_throwActor(SCRIPTFUNC_PARAMS) {
-	thread->pop();
-	thread->pop();
-	thread->pop();
-	thread->pop();
-	thread->pop();
-	thread->pop();
+	SDataWord_T param1 = thread->pop();
+	SDataWord_T param2 = thread->pop();
+	SDataWord_T param3 = thread->pop();
+	SDataWord_T param4 = thread->pop();
+	SDataWord_T param5 = thread->pop();
+	SDataWord_T param6 = thread->pop();
+
+	debug(1, "stub: SF_throwActor(%d, %d, %d, %d, %d, %d)", param1, param2, param3, param4, param5, param6);
 	return SUCCESS;
 }
 
 // Script function #53 (0x35)
 int Script::SF_waitWalk(SCRIPTFUNC_PARAMS) {
-	thread->pop();
+	SDataWord_T param = thread->pop();
+
+	debug(1, "stub: SF_waitWalk(%d)", param);
 	return SUCCESS;
 }
 
 // Script function #55 (0x37)
 int Script::SF_changeActorScene(SCRIPTFUNC_PARAMS) {
-	thread->pop();
-	thread->pop();
+	SDataWord_T param1 = thread->pop();
+	SDataWord_T param2 = thread->pop();
+
+	debug(1, "stub: SF_changeActorScene(%d, %d)", param1, param2);
 	return SUCCESS;
 }
 
 // Script function #56 (0x38)
 int Script::SF_climb(SCRIPTFUNC_PARAMS) {
-	thread->pop();
-	thread->pop();
-	thread->pop();
-	thread->pop();
+	SDataWord_T param1 = thread->pop();
+	SDataWord_T param2 = thread->pop();
+	SDataWord_T param3 = thread->pop();
+	SDataWord_T param4 = thread->pop();
+
+	debug(1, "stub: SF_climb(%d, %d, %d, %d)", param1, param2, param3, param4);
 	return SUCCESS;
 }
 
 // Script function #58 (0x3A)
 int Script::SF_setActorZ(SCRIPTFUNC_PARAMS) {
-	thread->pop();
-	thread->pop();
+	SDataWord_T param1 = thread->pop();
+	SDataWord_T param2 = thread->pop();
+
+	debug(1, "stub: SF_setActorZ(%d, %d)", param1, param2);
 	return SUCCESS;
 }
 
 // Script function #60 (0x3C)
 int Script::SF_getActorX(SCRIPTFUNC_PARAMS) {
-	thread->pop();
+	SDataWord_T param = thread->pop();
+
+	debug(1, "stub: SF_getActorX(%d)", param);
 	return SUCCESS;
 }
 
 // Script function #61 (0x3D)
 int Script::SF_getActorY(SCRIPTFUNC_PARAMS) {
-	thread->pop();
+	SDataWord_T param = thread->pop();
+
+	debug(1, "stub: SF_getActorY(%d)", param);
 	return SUCCESS;
 }
 
@@ -832,6 +902,21 @@ int Script::SF_playSound(SCRIPTFUNC_PARAMS) {
 	else
 		_vm->_sound->stopSound();
 
+	return SUCCESS;
+}
+
+// Script function #75 (0x4d)
+int Script::SF_rand(SCRIPTFUNC_PARAMS) {
+	SDataWord_T param = thread->pop();
+
+	thread->retVal = (_vm->_rnd.getRandomNumber(param));
+
+	return SUCCESS;
+}
+
+// Script function #76 (0x4c)
+int Script::SF_fadeMusic(SCRIPTFUNC_PARAMS) {
+	debug(1, "stub: SF_fadeMusic()");
 	return SUCCESS;
 }
 

@@ -274,7 +274,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 		saved_offset = thread->i_offset;
 		in_char = scriptS.readByte();
 
-		debug(1, "Executing thread offset: %lu (%x) stack: %d", thread->i_offset, in_char, thread->stackSize());
+		debug(2, "Executing thread offset: %lu (%x) stack: %d", thread->i_offset, in_char, thread->stackSize());
 
 		switch (in_char) {
 		case 0x01: // nextblock
@@ -390,8 +390,8 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 
 				sfunc = _SFuncList[func_num].sfunc_fp;
 				if (sfunc == NULL) {
-					_vm->_console->print(S_WARN_PREFIX "%X: Undefined script function number: (%X)\n",
-							thread->i_offset, func_num);
+					_vm->_console->print(S_WARN_PREFIX "%X: Undefined script function number: #%d (%X)\n",
+							thread->i_offset, func_num, func_num);
 					_vm->_console->print(S_WARN_PREFIX "Removing %d operand(s) from stack.\n", n_args);
 					for (i = 0; i < n_args; i++) {
 						thread->pop();

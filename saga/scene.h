@@ -238,6 +238,9 @@ class Scene {
 	void sceneInfoCmd(int argc, char *argv[]);
 	void sceneChangeCmd(int argc, char *argv[]);
 
+	int getSceneLUT(int num);
+	int currentSceneNumber() { return _sceneNumber; }
+
  private:
 	int loadScene(int scene, int load_flag, SCENE_PROC scene_proc, SCENE_DESC *, 
 				  int fadeIn);

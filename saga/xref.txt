@@ -56,6 +56,7 @@ Scene.c
  resInfo->entryScript      _desc.sceneScriptNum
  resInfo->preScript        _desc.startScriptNum
  resInfo->backgroundMusic  _desc.musicRN
+ thisScene->ID             currentSceneNumber()
 
 Interp.c
 ========
@@ -73,3 +74,8 @@ Interp.c
 Actor.c
 =======
  abortAllSpeeches()        SThreadAbortAll()
+
+Main.c
+======
+ sceneIndexTable           _scene->getSceneLUT()
+

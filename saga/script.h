@@ -301,6 +301,11 @@ private:
 	int SF_enableEscape(SCRIPTFUNC_PARAMS);
 	int SF_playSound(SCRIPTFUNC_PARAMS);
 	int SF_gotoScene(SCRIPTFUNC_PARAMS);
+	int SF_rand(SCRIPTFUNC_PARAMS);
+	int SF_sceneEq(SCRIPTFUNC_PARAMS);
+	int SF_placard(SCRIPTFUNC_PARAMS);
+	int SF_placardOff(SCRIPTFUNC_PARAMS);
+	int SF_fadeMusic(SCRIPTFUNC_PARAMS);
 };
 
 } // End of namespace Saga

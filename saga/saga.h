@@ -116,6 +116,9 @@ public:
 	Events *_events;
 	PalAnim *_palanim;
 	
+	/** Random number generator */
+	Common::RandomSource _rnd;
+
 private:
 	int decodeBGImageRLE(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len);
 	int flipImage(byte *img_buf, int columns, int scanlines);

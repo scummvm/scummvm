@@ -411,6 +411,12 @@ int Scene::getInfo(SCENE_INFO *si) {
 	return SUCCESS;
 }
 
+int Scene::getSceneLUT(int scene_num) { 
+	assert((scene_num > 0) && (scene_num < _sceneMax));
+
+	return _sceneLUT[scene_num];
+};
+
 int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SCENE_DESC *scene_desc_param, int fadeType) {
 	SCENE_INFO scene_info;
 	uint32 res_number = 0;
