@@ -45,6 +45,7 @@
 GlobalsPreferencePtr gPrefs;
 GlobalsDataPtr gVars;
 
+Boolean bDirectMode = false;
 Boolean bStartScumm = false;
 
 /***********************************************************************
@@ -365,7 +366,13 @@ static UInt32 ScummVMPalmMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 			if (error) 
 				goto end;
 
-			FrmGotoForm(MainForm);
+			if (!bDirectMode) {
+				FrmGotoForm(MainForm);
+			}else {
+				GamUnselect();
+				bStartScumm = true;
+			}
+
 			AppEventLoop();
 end:
 			AppStop();

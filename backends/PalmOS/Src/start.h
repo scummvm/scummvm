@@ -88,6 +88,8 @@ typedef	struct {
 } GlobalsPreferenceType, *GlobalsPreferencePtr;
 
 extern GlobalsPreferencePtr gPrefs;
+
+extern Boolean bDirectMode;
 extern Boolean bStartScumm;
 
 #define appPrefID				0x00
