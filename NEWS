@@ -22,6 +22,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Remove AYGSHELL.DLL dependency to work on CE .Net platforms
    - Fix key mapping issues introduced in 0.7.0
    - Full Throttle interactive action sequences should be more playable.
+   - New key mapping option "FT Cheat" to win a Full Throttle action sequence
    - Quit Simon game with 'Action key' on Smartphones
 
  Sword2:
