@@ -33,12 +33,13 @@
  * Modified for ScummVM by Johannes Schickel
  ****************************************************************************/
 
+namespace Kyra {
+
 /** decompress format 80 compressed data.
- * @param compressed data.
- * @param pointer to output uncompressed data.
+ * @param image_in compressed data.
+ * @param image_out pointer to output uncompressed data.
  * @returns size of uncompressed data.
  */
-namespace Kyra {
 int Compression::decode80(const uint8* image_in, uint8* image_out) {
 	/*
 	0 copy 0cccpppp p

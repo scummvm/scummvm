@@ -19,9 +19,9 @@
  *
  */
 
-/** Various decompression routines */
-#ifndef __COMPRESSION_H
-#define __COMPRESSION_H
+/* Various decompression routines */
+#ifndef CODECS_H
+#define CODECS_H
 
 // THIS CODE WAS TAKEN FROM FreeKyra Tools Module
 

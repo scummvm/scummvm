@@ -100,8 +100,8 @@ public:
 	 * samples (i.e. len * 4 bytes). The endianness of these samples shall be
 	 * the native endianness.
 	 *
-	 * @obsolete Instead of this, use the other setupPremix method which
-	 *           takes an AudioStream.
+	 * @deprecated Instead of this, use the other setupPremix method which
+	 *             takes an AudioStream.
 	 */
 	void setupPremix(PremixProc *proc, void *param);
 
