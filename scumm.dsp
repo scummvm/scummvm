@@ -351,6 +351,10 @@ SOURCE=.\scumm\instrument.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\scumm\intern.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\scumm\object.cpp
 # End Source File
 # Begin Source File
@@ -396,6 +400,10 @@ SOURCE=.\scumm\script_v5.cpp
 # Begin Source File
 
 SOURCE=.\scumm\script_v6.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\scumm\script_v8.cpp
 # End Source File
 # Begin Source File
 
