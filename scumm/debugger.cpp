@@ -555,7 +555,7 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 	a = &_s->_actors[actnum];
 
 	if (!strcmp(argv[2], "ignoreboxes")) {
-			a->ignoreBoxes = atoi(argv[3]);
+			a->ignoreBoxes = (atoi(argv[3]) > 0);
 			Debug_Printf("Actor[%d].ignoreBoxes = %d\n", actnum, a->ignoreBoxes);
 	} else if (!strcmp(argv[2], "costume")) {
 			value = atoi(argv[3]);
