@@ -72,7 +72,6 @@ build.rules:
 	$(CP) backends/sdl/build.rules build.rules
 
 deb:
-	rm -rf debian/;
 	ln -sf dists/debian;
 	debian/prepare
 	fakeroot debian/rules binary
