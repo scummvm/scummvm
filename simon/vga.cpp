@@ -649,7 +649,7 @@ void SimonEngine::vc_10_draw() {
 		_vga_var7 = state.depack_src;
 		_vga_var5 = height;
 		if (_variableArray[34] == -1)
-			state.x = _variableArray[502 / 2];
+			state.x = _variableArray[251];
 
 		_x_scroll = state.x;
 

@@ -2057,18 +2057,18 @@ void SimonEngine::hitarea_stuff_helper() {
 	time_t cur_time;
 
 	if (!(_game & GF_SIMON2)) {
-		uint subr_id = _variableArray[0x1FC / 2];
+		uint subr_id = _variableArray[254];
 		if (subr_id != 0) {
 			Subroutine *sub = getSubroutineByID(subr_id);
 			if (sub != NULL) {
 				startSubroutineEx(sub);
 				startUp_helper_2();
 			}
-			_variableArray[0x1FC / 2] = 0;
+			_variableArray[254] = 0;
 			_run_script_return_1 = false;
 		}
 	} else {
-		if (_variableArray[0x1FC / 2] || _variableArray[0x1F2 / 2]) {
+		if (_variableArray[254] || _variableArray[249]) {
 			hitarea_stuff_helper_2();
 		}
 	}
@@ -2086,26 +2086,26 @@ void SimonEngine::hitarea_stuff_helper_2() {
 	uint subr_id;
 	Subroutine *sub;
 
-	subr_id = _variableArray[0x1F2 / 2];
+	subr_id = _variableArray[249];
 	if (subr_id != 0) {
 		sub = getSubroutineByID(subr_id);
 		if (sub != NULL) {
-			_variableArray[0x1F2 / 2] = 0;
+			_variableArray[249] = 0;
 			startSubroutineEx(sub);
 			startUp_helper_2();
 		}
-		_variableArray[0x1F2 / 2] = 0;
+		_variableArray[249] = 0;
 	}
 
-	subr_id = _variableArray[0x1FC / 2];
+	subr_id = _variableArray[254];
 	if (subr_id != 0) {
 		sub = getSubroutineByID(subr_id);
 		if (sub != NULL) {
-			_variableArray[0x1FC / 2] = 0;
+			_variableArray[254] = 0;
 			startSubroutineEx(sub);
 			startUp_helper_2();
 		}
-		_variableArray[0x1FC / 2] = 0;
+		_variableArray[254] = 0;
 	}
 
 	_run_script_return_1 = false;
@@ -2427,7 +2427,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 		_vga_var3 = 0;
 		_vga_var5 = 134;
 		if (_variableArray[34] != -1)
-			_variableArray[502 / 2] = 0;
+			_variableArray[251] = 0;
 	}
 
 	vc_ptr_org = _vc_ptr;
