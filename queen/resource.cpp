@@ -142,23 +142,17 @@ uint32 Resource::fileOffset(const char *filename) {
 }
 
 uint8 *Resource::loadFile(const char *filename, uint32 skipBytes, byte *dstBuf) {
-	uint32 size = fileSize(filename);
+	uint32 size = fileSize(filename) - skipBytes;
 	if (dstBuf == NULL) 
 		dstBuf = new byte[size];
 	// skip 'skipBytes' bytes (useful for headers)
 	_resourceFile->seek(fileOffset(filename) + skipBytes, SEEK_SET);
-	_resourceFile->read(dstBuf, size - skipBytes);
+	_resourceFile->read(dstBuf, size);
 	return dstBuf;
 }
 
 uint8 *Resource::loadFileMalloc(const char *filename, uint32 skipBytes, byte *dstBuf) {
-	uint32 size = fileSize(filename);
-	if (dstBuf == NULL)
-		dstBuf = (byte *)malloc(size);
-	// skip 'skipBytes' bytes (useful for headers)
-	_resourceFile->seek(fileOffset(filename) + skipBytes, SEEK_SET);
-	_resourceFile->read(dstBuf, size - skipBytes);
-	return dstBuf;
+	return loadFile(filename, skipBytes, (byte *)malloc(fileSize(filename) - skipBytes));
 }
 
 bool Resource::exists(const char *filename) {
