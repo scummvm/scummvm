@@ -1247,7 +1247,7 @@ int Sound::playBundleSound(char *sound) {
 
 	if (size < 0) {
 		warning("Decompression sound failed (no size field)");
-		free(ptr);
+		free(orig_ptr);
 		return -1;
 	}
 
