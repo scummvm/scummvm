@@ -25,7 +25,6 @@
 
 #include <SonyClie.h>
 #include "common/system.h"
-#include "ArmNative.h"
 #include "cdaudio.h"
 
 // OSD resource id
@@ -105,7 +104,7 @@ public:
 	// Returns true if an event was retrieved.	
 	bool poll_event(Event *event);
 	
-	void SimulateArrowKeys(Event *event, Int8 iHoriz, Int8 iVert, Boolean repeat = false);
+	void SimulateArrowKeys(Event *event, Int8 iHoriz, Int8 iVert);
 
 	/** @name Sound */
 	//@{
@@ -149,8 +148,6 @@ public:
 
 	// Quit
 	void quit();
-	bool _selfQuit;
-	UInt8 _quitCount;
 
 	// Overlay
 	void showOverlay();
@@ -177,12 +174,14 @@ private:
 	typedef void (OSystem_PALMOS::*RendererProc)();
 	RendererProc _renderer_proc;
 
-	void updateScreen__flipping();
-	void updateScreen__buffered();
-	void updateScreen__direct();
-	void updateScreen__wide_portrait();
-	void updateScreen__wide_landscape();
-	void updateScreen__wide_zodiac();
+	void updateScreen_flipping();
+	void updateScreen_buffered();
+	void updateScreen_direct();
+	void updateScreen_widePortrait();
+	void updateScreen_wideLandscape();
+	void updateScreen_wideZodiac();
+
+	void rumblePack(Boolean active);
 
 	void *ptrP[5];	// various ptr
 
@@ -225,7 +224,6 @@ private:
 	int _new_shake_pos;
 	byte _mouseKeyColor;
 	
-	Boolean _vibrate;
 	UInt32 _exit_delay;
 	
 	struct {
@@ -234,6 +232,8 @@ private:
 		TimerProc callback;
 	} _timer;
 
+	// Audio
+	int _samplesPerSec;
 	SoundDataType _sound;
 
 	// Palette data
@@ -261,36 +261,26 @@ private:
 /*	Boolean _alarmRaised;
 	void alarm_handler();
 */
-	// ARM
-	enum {
-		PNO_COPY = 0,
-		PNO_WIDE,
-		PNO_SNDSTREAM,
-		PNO_COUNT
-	};
-	
-	struct {
-		PnoDescriptor pnoDesc;
-		MemPtr pnoPtr;
-	} _arm[PNO_COUNT];
-
 	CDAudio *_cdPlayer;
 	// PALM spec
 
 	enum {
 		kLastKeyNone			= 0,
-		kLastKeyMouseUp			= 1	<< 0,
-		kLastKeyMouseDown		= 1	<< 1,
-		kLastKeyMouseLeft		= 1	<< 2,
-		kLastKeyMouseRight		= 1	<< 3,
-		kLastKeyMouseButLeft	= 1 << 4,
-		kLastKeyMouseButRight	= 1 << 5,
-		
+		kLastKeyMouse			= 1	<< 0,
+	
 		kLastKeyCalc			= 1 << 30,
 		kLastKeyAny				= 1 << 31
 	};
 
 	
+	UInt32 _keyMask;
+	struct {
+		UInt32 bitUp;
+		UInt32 bitDown;
+		UInt32 bitLeft;
+		UInt32 bitRight;
+		UInt32 bitButLeft;
+	} _keyMouse;
 
 	Int32 _lastKeyPressed;
 	UInt32 _lastKeyRepeat;
