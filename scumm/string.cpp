@@ -51,7 +51,7 @@ void Scumm::unkMessage1() {
 		// mentioned in the patch. FIXME after iMUSE is done.
 		if (_gameId != GID_SAMNMAX || (VAR(VAR_V6_SOUNDMODE) != 2))
 			_sound->talkSound(a, b, 1, -1);
-	} 
+	}
 }
 
 void Scumm::unkMessage2() {
@@ -153,7 +153,7 @@ void Scumm::CHARSET_1() {
 	if (_talkDelay)
 		return;
 
-	if (_haveMsg != 0xFF && _haveMsg != 0xFE) {
+	if (_haveMsg == 1) {
 		// FIXME: DIG and CMI never set sfxMode or any actor talk data...
 		// This hack will force the backup cutoff system to be used instead,
 		// unless the talkChannel is null (eg, this string has no sound attached)
@@ -236,10 +236,62 @@ void Scumm::CHARSET_1() {
 			continue;
 		}
 
-		if (c == 0xFE)
-			c = 0xFF;
-
-		if (c != 0xFF) {
+		if (c == 0xFE || c == 0xFF) {
+			c = *buffer++;
+			switch(c) {
+			case 1:
+				goto newLine;
+			case 2:
+				_haveMsg = 0;
+				_keepText = true;
+				break;
+			case 3:
+				if (_haveMsg != 0xFE)
+					_haveMsg = 0xFF;
+				_keepText = false;
+				break;
+			case 9:
+				frme = *buffer++;
+				frme |= *buffer++ << 8;
+				has_anim = true;
+				break;
+			case 10:
+				talk_sound_a = buffer[0] | (buffer[1] << 8) | (buffer[4] << 16) | (buffer[5] << 24);
+				talk_sound_b = buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] << 24);
+				has_talk_sound = true;
+				buffer += 14;
+	
+				// Set flag that speech variant exist of this msg
+				if (_haveMsg == 0xFF)
+					_haveMsg = 0xFE;
+				break;
+			case 12:
+				int color;
+				color = *buffer++;
+				color |= *buffer++ << 8;
+				if (color == 0xFF)
+					_charset->setColor(_charsetColor);
+				else
+					_charset->setColor(color);
+				break;
+			case 13:
+				warning("CHARSET_1: Unknown opcode 13\n", READ_LE_UINT16(buffer));
+				buffer += 2;
+				break;
+			case 14: {
+				int oldy = _charset->getFontHeight();
+	
+				_charset->setCurID(*buffer++);
+				buffer += 2;
+				for (i = 0; i < 4; i++)
+					_charsetColorMap[i] = _charsetData[_charset->getCurID()][i];
+				_charset->_nextTop -= _charset->getFontHeight() - oldy;
+				break;
+				}
+			default:
+				warning("CHARSET_1: invalid code %d", c);
+			}
+		} else {
 			_charset->_left = _charset->_nextLeft;
 			_charset->_top = _charset->_nextTop;
 			if (c & 0x80 && _CJKMode)
@@ -261,66 +313,8 @@ void Scumm::CHARSET_1() {
 				VAR(VAR_CHARCOUNT)++;
 			} else
 				_talkDelay += (int)VAR(VAR_CHARINC);
-			continue;
 		}
-
-		c = *buffer++;
-		switch(c) {
-		case 1:
-			goto newLine;
-		case 2:
-			_haveMsg = 0;
-			_keepText = true;
-			break;
-		case 3:		
-			if (_haveMsg != 0xFE)
-				_haveMsg = 0xFF;
-			_keepText = false;
-			break;		
-		case 9:
-			frme = *buffer++;
-			frme |= *buffer++ << 8;
-			has_anim = true;
-			break;
-		case 10:
-			talk_sound_a = buffer[0] | (buffer[1] << 8) | (buffer[4] << 16) | (buffer[5] << 24);
-			talk_sound_b = buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] << 24);
-			has_talk_sound = true;
-			buffer += 14;
-
-			// Set flag that speech variant exist of this msg
-			if (_haveMsg == 0xFF)
-				_haveMsg = 0xFE;
-			break;		
-		case 12:
-			int color;
-			color = *buffer++;
-			color |= *buffer++ << 8;
-			if (color == 0xFF)
-				_charset->setColor(_charsetColor);
-			else
-				_charset->setColor(color);
-			break;
-		case 13:
-			buffer += 2;
-			break;
-		case 14: {
-			int oldy = _charset->getFontHeight();
-
-			_charset->setCurID(*buffer++);
-			buffer += 2;
-			for (i = 0; i < 4; i++)
-				_charsetColorMap[i] = _charsetData[_charset->getCurID()][i];
-			_charset->_nextTop -= _charset->getFontHeight() - oldy;
-			break;
-			}
-		default:
-			warning("CHARSET_1: invalid code %d", c);
-		}
-		if (c == 3 || c == 2)
-			break;
-
-	} while (1);
+	} while (c != 2 && c != 3);
 
 	// Even if talkSound() is called, we may still have to call
 	// startAnimActor() since actorTalk() may already have caused the
@@ -443,7 +437,7 @@ void Scumm::drawString(int a) {
 	if (a == 0) {
 		_charset->_nextLeft = _charset->_left;
 		_charset->_nextTop = _charset->_top;
-	} 
+	}
 
 
 	_string[a].xpos = _charset->_str.right + 8;	// Indy3: Fixes Grail Diary text positioning
@@ -473,8 +467,8 @@ const byte *Scumm::addMessageToStack(const byte *msg) {
 		if (num >= 500)
 			error("Message stack overflow");
 
-		if (chr == 0xff) {	// 0xff is an escape character			
-			ptr[num++] = chr = *msg++;	// followed by a "command" code 
+		if (chr == 0xff) {	// 0xff is an escape character
+			ptr[num++] = chr = *msg++;	// followed by a "command" code
 			if (chr != 1 && chr != 2 && chr != 3 && chr != 8) {
 				ptr[num++] = *msg++;	// and some commands are followed by parameters to the functions below
 				ptr[num++] = *msg++;	// these are numbers of names, strings, verbs, variables, etc
@@ -543,23 +537,20 @@ const byte *Scumm::addMessageToStack(const byte *msg) {
 				break;
 			case 3:
 			case 9:
-//#if defined(DOTT)
 			case 10:
 			case 12:
 			case 13:
 			case 14:
-//#endif
 				*_msgPtrToAdd++ = 0xFF;
 				*_msgPtrToAdd++ = chr;
 				*_msgPtrToAdd++ = ptr[num++];
 				*_msgPtrToAdd++ = ptr[num++];
 				if (_version == 8) {
-					// FIXME - is this right?!?
 					*_msgPtrToAdd++ = ptr[num++];
 					*_msgPtrToAdd++ = ptr[num++];
 				}
 				break;
-			default: 
+			default:
 				debug(2, "addMessageToStack(): string escape sequence %d unknown", chr);
 				*_msgPtrToAdd++ = 0xFF;
 				*_msgPtrToAdd++ = chr;
@@ -836,7 +827,7 @@ void Scumm::loadLanguageBundle() {
 		int lineCount = _languageIndexSize;
 		const char *baseTag = "";
 		byte enc = 0;	// Initially assume the language file is not encoded
-		
+	
 		// We'll determine the real index size as we go.
 		_languageIndexSize = 0;
 		for (i = 0; i < lineCount; i++) {
@@ -858,23 +849,23 @@ void Scumm::loadLanguageBundle() {
 					idx = idx * 10 + (*ptr - '0');
 					ptr++;
 				}
-				
+	
 				// ...followed by a slash...
 				assert(*ptr == '/');
 				ptr++;
-				
+	
 				// ...and then the translated message, possibly encoded
 				_languageIndex[_languageIndexSize].offset = ptr - _languageBuffer;
-				
+	
 				// Decode string if necessary.
 				if (enc) {
 					while (*ptr != '\n' && *ptr != '\r')
 						*ptr++ ^= enc;
 				}
-				
+	
 				// The tag is the basetag, followed by a dot and then the index
 				sprintf(_languageIndex[_languageIndexSize].tag, "%s.%03d", baseTag, idx);
-				
+	
 				// That was another index entry
 				_languageIndexSize++;
 			}
@@ -897,7 +888,7 @@ void Scumm::loadLanguageBundle() {
 			// After that follows a single space which we skip
 			assert(isspace(*ptr));
 			ptr++;
-			
+	
 			// Then comes the translated string: we record an offset to that.
 			_languageIndex[i].offset = ptr - _languageBuffer;
 	
