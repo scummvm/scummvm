@@ -123,6 +123,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui, GameDetector &detector)
 	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
 
 
+#if !defined(__DC__)
 	//
 	// Save game path
 	//
@@ -141,6 +142,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui, GameDetector &detector)
 		getcwd(buf, sizeof(buf));
 		_savePath->setLabel(buf);
 	}
+#endif
 
 	//
 	// Add OK & Cancel buttons
