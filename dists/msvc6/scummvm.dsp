@@ -274,6 +274,10 @@ SOURCE=..\..\common\str.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\common\system.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\common\system.h
 # End Source File
 # Begin Source File
@@ -296,6 +300,14 @@ SOURCE=..\..\common\util.h
 # Begin Group "sound"
 
 # PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\..\sound\audiocd.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\sound\audiocd.h
+# End Source File
 # Begin Source File
 
 SOURCE=..\..\sound\audiostream.cpp
@@ -356,6 +368,14 @@ SOURCE=..\..\sound\mixer.cpp
 # Begin Source File
 
 SOURCE=..\..\sound\mixer.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\sound\mp3.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\sound\mp3.h
 # End Source File
 # Begin Source File
 
@@ -488,6 +508,14 @@ SOURCE=..\..\gui\ScrollBarWidget.cpp
 # Begin Source File
 
 SOURCE=..\..\gui\ScrollBarWidget.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\gui\TabWidget.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\gui\TabWidget.h
 # End Source File
 # Begin Source File
 
