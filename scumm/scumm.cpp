@@ -697,11 +697,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_heSndLoop = 0;
 	_heSndSoundFreq = 0;
 	memset(_timers, 0, sizeof(_timers));
-	_wizResNum = 0;
-	_wizX1 = 0;
-	_wizY1 = 0;
-	_wizState = 0;
-	_wizFlag = 0;
 
 	memset(_akosQueue, 0, sizeof(_akosQueue));
 	_akosQueuePos = 0;
@@ -1315,6 +1310,11 @@ void ScummEngine_v60he::scummInit() {
 
 		_wizPolygons = (WizPolygon *)calloc(_wizNumPolygons, sizeof(WizPolygon));
 	}
+}
+
+void ScummEngine_v90he::scummInit() {
+	ScummEngine_v80he::scummInit();
+	memset(&_wizParams, 0, sizeof(_wizParams));
 }
 
 void ScummEngine::setupMusic(int midi) {

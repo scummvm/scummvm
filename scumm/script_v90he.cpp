@@ -422,9 +422,26 @@ void ScummEngine_v90he::o90_startLocalScript() {
 	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
 }
 
+void ScummEngine_v90he::wizDraw(const WizParameters *params) {
+	debug(1, "ScummEngine_v90he::wizDraw()");
+	switch (params->drawMode) {
+	case 1:
+		// XXX incomplete
+		displayWizImage(&params->img);
+		break;
+	case 2:
+	case 6:
+	case 3:
+	case 4:
+		warning("unhandled wizDraw mode %d", params->drawMode);
+		break;
+	default:
+		error("invalid wizDraw mode %d", params->drawMode);
+	}
+}
+
 void ScummEngine_v90he::o90_unknown1C() {
-	// For Pajame Sam 2 demo
-	// Incomplete
+	int a, b;
 	int subOp = fetchScriptByte();
 	subOp -= 46;
 
@@ -439,77 +456,97 @@ void ScummEngine_v90he::o90_unknown1C() {
 		pop();
 		break;
 	case 1:
-		pop();
-		pop();
-		pop();
-		pop();
+		_wizParams.box.bottom = pop();
+		_wizParams.box.right = pop();
+		_wizParams.box.top = pop();
+		_wizParams.box.left = pop();
 		break;
 	case 2:
-		//Sets a variable to 1
+		_wizParams.drawMode = 1;
 		break;
 	case 3:
-		//Gets a script string
+		_wizParams.drawFlags |= 0x800;
+		_wizParams.drawMode = 3;
+		copyScriptString(_wizParams.filename);
 		break;
 	case 4:
-		//Gets a script string
-		pop();
+		_wizParams.drawFlags |= 0x800;
+		_wizParams.drawMode = 4;
+		copyScriptString(_wizParams.filename);
+		_wizParams.unk_14C = pop();
 		break;
 	case 5:
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
+		_wizParams.drawFlags |= 0x300;
+		_wizParams.drawMode = 2;
+		_wizParams.box.bottom = pop();
+		_wizParams.box.right = pop();
+		_wizParams.box.top = pop();
+		_wizParams.box.left = pop();
+		_wizParams.unk_148 = pop();
 		break;
 	case 6:
-		_wizState = pop();
+		_wizParams.drawFlags |= 0x400;
+		_wizParams.img.state = pop();
 		break;
 	case 7:
-		pop();
+		_wizParams.drawFlags |= 0x10;
+		_wizParams.unk_150 = pop();
 		break;
 	case 8:
-		_wizFlag |= pop();
+		_wizParams.drawFlags |= 0x20;
+		_wizParams.img.flags = pop();
 		break;
 	case 10:
-	{
-		int flags = pop();
-		int state = pop();
-		int y1 = pop();
-		int x1 = pop();
-		int resnum = pop();
-		if (_fullRedraw) {
-			assert(_wizImagesNum < ARRAYSIZE(_wizImages));
-			WizImage *pwi = &_wizImages[_wizImagesNum];
-			pwi->resnum = resnum;
-			pwi->x1 = x1;
-			pwi->y1 = y1;
-			pwi->flags = flags;
-			++_wizImagesNum;
-		} else {
-			drawWizImage(rtImage, resnum, state, x1, y1, flags);
-		}
-	}
+		_wizParams.img.flags = pop();
+		_wizParams.img.state = pop();
+		_wizParams.img.y1 = pop();
+		_wizParams.img.x1 = pop();
+		_wizParams.img.resNum = pop();
+		displayWizImage(&_wizParams.img);
 		break;
 	case 11:
-		_wizResNum = pop();
-		_wizFlag = 0;
+		_wizParams.img.resNum = pop();
+		_wizParams.drawMode = 0;
+		_wizParams.drawFlags = 0;
+		_wizParams.remapPos = 0;
+		_wizParams.img.flags = 0;
 		break;
 	case 19:
-		_wizY1 = pop();
-		_wizX1 = pop();
+		_wizParams.drawFlags |= 1;
+		_wizParams.img.y1 = pop();
+		_wizParams.img.x1 = pop();
 		break;
 	case 20:
-		pop();
-		pop();
+		b = pop();
+		a = pop();
+		_wizParams.drawFlags |= 0x40;
+		_wizParams.drawMode = 6;
+		if (_wizParams.remapPos == 0) {
+			memset(_wizParams.remapBuf2, 0, sizeof(_wizParams.remapBuf2));
+		} else {
+			assert(_wizParams.remapPos < ARRAYSIZE(_wizParams.remapBuf2));
+			_wizParams.remapBuf2[_wizParams.remapPos] = a;
+			_wizParams.remapBuf1[a] = b;
+			++_wizParams.remapPos;
+		}
 		break;
 	case 21:
-		pop();
-		pop();
-		pop();
-		pop();
+		_wizParams.drawFlags |= 0x200;
+		_wizParams.box.bottom = pop();
+		_wizParams.box.right = pop();
+		_wizParams.box.top = pop();
+		_wizParams.box.left = pop();
 		break;
 	case 40: // HE99+
 		pop();
+		break;
+	case 46:
+		_wizParams.drawFlags |= 8;
+		_wizParams.unk_158 = pop();
+		break;
+	case 52:
+		_wizParams.drawFlags |= 4;
+		_wizParams.unk_15C = pop();
 		break;
 	case 87: // HE99+
 		pop();
@@ -521,28 +558,24 @@ void ScummEngine_v90he::o90_unknown1C() {
 	case 91: // HE99+
 		pop();
 		break;
+	case 108:
+		_wizParams.drawFlags |= 1;
+		_wizParams.img.y1 = pop();
+		_wizParams.img.x1 = pop();
+		break;
 	case 171: // HE99+
 		break;
 	case 200:
-		_wizFlag |= 64;
-		_wizY1 = _wizX1 = pop();
+		_wizParams.drawFlags |= 0x23;
+		_wizParams.img.flags |= 0x40;
+		_wizParams.unk_160 = _wizParams.img.y1 = _wizParams.img.x1 = pop();
 		break;
 	case 203: // HE98+
 		pop();
 		pop();
 		break;
 	case 209:
-		if (_fullRedraw) {
-			assert(_wizImagesNum < ARRAYSIZE(_wizImages));
-			WizImage *pwi = &_wizImages[_wizImagesNum];
-			pwi->resnum = _wizResNum;
-			pwi->x1 = _wizX1;
-			pwi->y1 = _wizY1;
-			pwi->flags = _wizFlag;
-			++_wizImagesNum;
-		} else {
-			drawWizImage(rtImage, _wizResNum, _wizState, _wizX1, _wizY1, _wizFlag);
-		}
+		wizDraw(&_wizParams);
 		break;
 	default:
 		error("o90_unknown1C: unhandled case %d", subOp);
@@ -798,6 +831,7 @@ void ScummEngine_v90he::o90_unknown28() {
 void ScummEngine_v90he::o90_unknown29() {
 	int state, resId;
 	uint32 w, h;
+	int16 x, y;
 
 	int subOp = fetchScriptByte();
 	subOp -= 30;
@@ -806,14 +840,14 @@ void ScummEngine_v90he::o90_unknown29() {
 	case 0:
 		state = pop();
 		resId = pop();
-		loadImgSpot(resId, state, w, h);
-		push(w);
+		loadImgSpot(resId, state, x, y);
+		push(x);
 		break;
 	case 1:
 		state = pop();
 		resId = pop();
-		loadImgSpot(resId, state, w, h);
-		push(h);
+		loadImgSpot(resId, state, x, y);
+		push(y);
 		break;
 	case 2:
 		state = pop();

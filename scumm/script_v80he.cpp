@@ -559,44 +559,49 @@ void ScummEngine_v80he::o80_cursorCommand() {
 	VAR(VAR_USERPUT) = _userPut;
 }
 
-void ScummEngine_v80he::loadImgSpot(int resId, int state, uint32 &w, uint32 &h) {
+void ScummEngine_v80he::loadImgSpot(int resId, int state, int16 &x, int16 &y) {
 	const uint8 *dataPtr = getResourceAddress(rtImage, resId);
 	if (!dataPtr) {
 		warning("loadImgSpot: unknown Image %d", resId);
-		w = h = 0;
+		x = y = 0;
 		return;
 	}
 
 	const uint8 *spotPtr = findWrappedBlock(MKID('SPOT'), dataPtr, state, 0);
 
 	if (spotPtr) {
-		w = (int16)READ_LE_UINT32(spotPtr + 0);
-		h = (int16)READ_LE_UINT32(spotPtr + 4);
+		x = (int16)READ_LE_UINT32(spotPtr + 0);
+		y = (int16)READ_LE_UINT32(spotPtr + 4);
 	} else {
-		w = 0;
-		h = 0;
+		x = 0;
+		y = 0;
 	}
 }
 
 void ScummEngine_v80he::loadWizCursor(int resId, int resType, bool state) {
-	Common::Rect rc;
-	uint32 w, h;
+	int16 x, y;
+	loadImgSpot(resId, 0, x, y);
+	if (x < 0) {
+		x = 0;
+	} else if (x > 32) {
+		x = 32;
+	}
+	if (y < 0) {
+		y = 0;
+	} else if (y > 32) {
+		y = 32;
+	}
 
-	loadImgSpot(resId, 0, w, h);
-
-	rc.top = w;
-	rc.right = h;
-
-	rc.top = MAX((int)rc.top, 0);
-	rc.right = MAX((int)rc.right, 0);
-	rc.top = MIN((int)rc.top, 32);
-	rc.right = MIN((int)rc.right, 32);
-
-	uint8 *cursor = drawWizImage(rtImage, resId, 0, 0, 0, 0x20);
-	uint32 cw, ch;
+	WizImage wi;
+	wi.resNum = resId;
+	wi.x1 = wi.y1 = 0;
+	wi.state = 0;
+	wi.flags = 0x20;	
+	uint8 *cursor = drawWizImage(rtImage, &wi);
+	uint32 cw, ch;	
 	getWizImageDim(resId, 0, cw, ch);
 	setCursorFromBuffer(cursor, cw, ch, cw);
-	setCursorHotspot(rc.top, rc.right);
+	setCursorHotspot(x, y);
 	free(cursor);
 }
 
@@ -612,23 +617,13 @@ void ScummEngine_v80he::o80_setState() {
 void ScummEngine_v80he::o80_drawWizPolygon() {
 	error("o80_drawWizPolygon");
 
-	int xy1 = pop();
-	int resnum = pop();
-
-	if (_fullRedraw) {
-		assert(_wizImagesNum < ARRAYSIZE(_wizImages));
-		WizImage *pwi = &_wizImages[_wizImagesNum];
-		pwi->resnum = resnum;
-		pwi->x1 = xy1;
-		pwi->y1 = xy1;
-		pwi->flags = 64;
-		++_wizImagesNum;
-	} else {
-		drawWizImage(rtImage, resnum, 0, xy1, xy1, 64);
-	}
+	WizImage wi;
+	wi.x1 = wi.y1 = pop();
+	wi.resNum = pop();
+	wi.state = 0;
+	wi.flags = 0x40;
+	displayWizImage(&wi);	
 }
-
-
 
 void ScummEngine_v80he::o80_pickVarRandom() {
 	int num;

@@ -685,10 +685,11 @@ protected:
 	} GCC_PACK;
 
 	struct WizImage {
-		int resnum;
+		int resNum;
 		int x1;
 		int y1;
 		int flags;
+		int state;
 	};
 
 #if !defined(__GNUC__)
@@ -721,8 +722,9 @@ protected:
 	void writeFileFromArray(int slot, int resID);
 	void arrrays_unk2(int dst, int src, int len2, int len);
 
+	void displayWizImage(const WizImage *pwi);
 	void getWizImageDim(int resnum, int state,  uint32 &w, uint32 &h);
-	uint8 *drawWizImage(int restype, int resnum, int state, int x1, int y1, int flags);
+	uint8 *drawWizImage(int restype, const WizImage *pwi);
 	void drawWizPolygon(int resnum, int state, int id, int flags);
 	void flushWizBuffer();
 
@@ -805,7 +807,7 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 
-	void loadImgSpot(int resId, int state, uint32 &w, uint32 &h);
+	void loadImgSpot(int resId, int state, int16 &x, int16 &y);
 	void loadWizCursor(int resId, int resType, bool state);
 	
 	/* HE version 80 script opcodes */
@@ -828,16 +830,46 @@ protected:
 		OpcodeProcV90he proc;
 		const char *desc;
 	};
+
+	struct WizParameters {
+		byte filename[260];
+		Common::Rect box;
+		int drawFlags;
+		int drawMode;
+		int unk_11C;
+		int unk_120;
+		int unk_124;
+		int unk_128;
+		int unk_12C;
+		int unk_130;
+		int unk_134;
+		int unk_138;
+		int unk_148;
+		int unk_14C;
+		int unk_150;
+		int unk_158;
+		int unk_15C;
+		int unk_160;
+		uint8 remapBuf1[256];
+		uint8 remapBuf2[256];
+		int remapPos;
+		WizImage img;
+	};
 	
 	const OpcodeEntryV90he *_opcodesV90he;
+	WizParameters _wizParams;
 
 public:
 	ScummEngine_v90he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v80he(detector, syst, gs, md5sum) {}
+
+	virtual void scummInit();
 
 protected:
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
+	
+	void wizDraw(const WizParameters *params);
 	
 	/* HE version 90 script opcodes */
 	void o90_dup();
