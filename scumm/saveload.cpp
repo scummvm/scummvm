@@ -163,16 +163,16 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 
 	_completeScreenRedraw = true;
 
+	// We could simply dirty colours 0-15 for 16-colour games -- nowadays
+	// they handle their palette pretty much like the more recent games
+	// anyway. There was a time, though, when re-initializing was necessary
+	// for backwards compatibility, and it may still prove useful if we
+	// ever add options for using different 16-colour palettes.
+
 	if (_version == 1) {
 		setupC64Palette();
-		setDirtyColors(0, 15);
 	} else if (_features & GF_16COLOR) {
-		// HACK: There was a time when ScummVM didn't store the
-		// palette in _currentPalette for 16-color games. To avoid
-		// breaking savegame compatibility, always set up the default
-		// palette after loading a game.
 		setupEGAPalette();
-		setDirtyColors(0, 15);
 	} else
 		setDirtyColors(0, 255);
 
