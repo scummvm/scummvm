@@ -3077,6 +3077,11 @@ void SimonState::processSpecialKeys()
 			_exit_cutscene = true;
 			break;
 
+		case 63: // F5
+			if (_game & GAME_SIMON2)
+				_exit_cutscene = true;
+			break;
+
 		case 't':
 			_vk_t_toggle ^= 1;
 			break;
@@ -4569,7 +4574,10 @@ void SimonState::delay(uint amount)
 					break;
 
 				case OSystem::EVENT_RBUTTONDOWN:
+					if (_game & GAME_SIMON2)
 					_skip_speech = true;
+					else
+					_exit_cutscene = true;
 					break;
 			}
 		}
@@ -4812,8 +4820,9 @@ void SimonState::playMusic(uint music_unk, uint music)
 			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music - 1], SEEK_SET);
 			midi.read_all_songs(_game_file, music);
 			_midi_unk1 = music;
-		} else
-			warning ("XMI music not supported");
+		} else {
+			/* TODO Add XMI midi format support for simon2dos/talkie */
+		}
 		_vc72_var1 = music_unk;
 		_vc70_var1 = 0xFFFF;
 		_vc72_var3 = 0xFFFF;
