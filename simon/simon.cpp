@@ -3641,6 +3641,49 @@ void SimonEngine::draw_mouse_pointer() {
 		_system->set_mouse_cursor(_simon1_cursor, 16, 16, 0, 0);
 }
 
+// Thanks to Stuart Caie for providing the original
+// C conversion upon which this function is based.
+void decompress_icon_amiga (byte *dst, byte *src, byte base, uint pitch) {
+	byte icon_pln[288];
+	byte *i, *o, x, y;
+
+	// Decode RLE planar icon data
+	i = src;
+	o = icon_pln;
+	while (o < &icon_pln[288]) {
+		x = *i++;
+		if (x < 128) {
+			do {
+				*o++ = *i++;
+				*o++ = *i++;
+				*o++ = *i++;
+			} while (x-- > 0);
+		} else {
+			x = 256 - x;
+			do {
+				*o++ = i[0];
+				*o++ = i[1];
+				*o++ = i[2];
+			} while (x-- > 0);
+			i += 3;
+		}
+	}
+
+	// Translate planar data to chunky (very slow method)
+	for (y = 0; y < 24; y++) {
+		for (x = 0; x < 24; x++) {
+			byte pixel =
+				  (icon_pln[((   y)*3) + (x>>3)] & (1<<(7-(x&7))) ? 1 : 0)
+				| (icon_pln[((24+y)*3) + (x>>3)] & (1<<(7-(x&7))) ? 2 : 0)
+				| (icon_pln[((48+y)*3) + (x>>3)] & (1<<(7-(x&7))) ? 4 : 0)
+				| (icon_pln[((72+y)*3) + (x>>3)] & (1<<(7-(x&7))) ? 8 : 0);
+			if (pixel)
+				dst[x] = pixel | base;
+		}
+		dst += pitch;
+	}
+}
+
 void decompress_icon(byte *dst, byte *src, uint w, uint h_org, byte base, uint pitch) {
 	int8 reps;
 	byte color_1, color_2;
@@ -3709,14 +3752,21 @@ void SimonEngine::draw_icon_c(FillOrCopyStruct *fcs, uint icon, uint x, uint y) 
 	dst = dx_lock_2();
 
 	if (!(_game & GF_SIMON2)) {
+		// Simon 1
 		dst += (x + fcs->x) * 8;
 		dst += (y * 25 + fcs->y) * _dx_surface_pitch;
 
-		src = _icon_file_ptr;
-		src += READ_LE_UINT16(&((uint16 *)src)[icon]);
-
-		decompress_icon(dst, src, 24, 12, 0xE0, _dx_surface_pitch);
+		if (_game & GF_AMIGA) {
+			src = _icon_file_ptr;
+			src += READ_BE_UINT32(&((uint32 *)src)[icon]);
+			decompress_icon_amiga (dst, src, 0xE0, _dx_surface_pitch);
+		} else {
+			src = _icon_file_ptr;
+			src += READ_LE_UINT16(&((uint16 *)src)[icon]);
+			decompress_icon(dst, src, 24, 12, 0xE0, _dx_surface_pitch);
+		}
 	} else {
+		// Simon 2
 		dst += 110;
 		dst += x;
 		dst += (y + fcs->y) * _dx_surface_pitch;
