@@ -1309,7 +1309,6 @@ void Actor::abortSpeech() {
 void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point &toPoint) {
 	Point iteratorPoint;
 	Point bestPoint;
-	Point maskPoint;
 	int maskType;
 	int cellValue;
 	int i;
