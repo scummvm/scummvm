@@ -4986,6 +4986,7 @@ void SimonState::playMusic(uint music)
 	/* Simon 2 dos talkie music isn't supported */
 	/* Simon 2 dos music isn't supported */
 	if (_voice_type == FORMAT_WAV) {
+		midi.shutdown();
 		if (_game & GAME_WIN) {
 			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
 			midi.read_all_songs(_game_file);
