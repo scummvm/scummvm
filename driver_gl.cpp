@@ -235,13 +235,15 @@ void Driver::drawSmushFrame(int offsetX, int offsetY) {
 	glDepthMask(GL_FALSE);
 	glEnable(GL_SCISSOR_TEST);
 
+	glScissor(offsetX, 480 - (offsetY + _smushHeight),
+		  _smushWidth, _smushHeight);
+
 	int curTexIdx = 0;
 	for (int y = 0; y < _smushHeight; y += BITMAP_TEXTURE_SIZE) {
 		for (int x = 0; x < _smushWidth; x += BITMAP_TEXTURE_SIZE) {
 			int t_width = (x + BITMAP_TEXTURE_SIZE >= _smushWidth) ? (_smushWidth - x) : BITMAP_TEXTURE_SIZE;
 			int t_height = (y + BITMAP_TEXTURE_SIZE >= _smushHeight) ? (_smushHeight - y) : BITMAP_TEXTURE_SIZE;
 			glBindTexture(GL_TEXTURE_2D, _smushTexIds[curTexIdx]);
-			glScissor(x + offsetX, 480 - (y + t_height + offsetY), x + offsetX + t_width, 480 - (y + offsetY));
 			glBegin(GL_QUADS);
 			glTexCoord2f(0, 0);
 			glVertex2i(x + offsetX, y + offsetY);

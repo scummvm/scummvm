@@ -1094,11 +1094,11 @@ static void StartMovie() {
 	int x = 0;
 	int y = 0;
 
-	if (!lua_isnil(lua_getparam(4)))
-		x = check_int(4);
-
 	if (!lua_isnil(lua_getparam(3)))
-		y = check_int(3);
+		x = check_int(3);
+
+	if (!lua_isnil(lua_getparam(4)))
+		y = check_int(4);
 
 	Engine::instance()->setMode(ENGINE_MODE_NORMAL);
 	pushbool(g_smush->play(luaL_check_string(1), x, y));
