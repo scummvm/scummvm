@@ -31,7 +31,7 @@ NutRenderer::NutRenderer(ScummEngine *vm) :
 	_initialized(false),
 	_loaded(false),
 	_nbChars(0) {
-	
+
 	for (int i = 0; i < 256; i++)
 		_chars[i].src = NULL;
 }
@@ -237,9 +237,9 @@ int NutRenderer::getCharHeight(byte c) {
 }
 
 void NutRenderer::drawShadowChar(int c, int x, int y, byte color, bool useMask) {
-	debug(8, "NutRenderer::drawChar('%c', %d, %d, %d, %d) called", c, x, y, (int)color, useMask);
+	debug(8, "NutRenderer::drawShadowChar('%c', %d, %d, %d, %d) called", c, x, y, (int)color, useMask);
 	if (!_loaded) {
-		warning("NutRenderer::drawChar() Font is not loaded");
+		warning("NutRenderer::drawShadowChar() Font is not loaded");
 		return;
 	}
 
@@ -253,7 +253,7 @@ void NutRenderer::drawShadowChar(int c, int x, int y, byte color, bool useMask) 
 	// some "font shadow" resource we don't know yet.
 	// One problem remains: the fonts on the save/load screen don't have a
 	// shadow. So how do we know whether to draw text with or without shadow?
-	
+
 	int offsetX[7] = { -1,  0, 1, 0, 1, 2, 0 };
 	int offsetY[7] = {  0, -1, 0, 1, 2, 1, 0 };
 	int cTable[7] =  {  0,  0, 0, 0, 0, 0, color };
@@ -263,14 +263,18 @@ void NutRenderer::drawShadowChar(int c, int x, int y, byte color, bool useMask) 
 		y += offsetY[i];
 		color = cTable[i];
 		
-		dst = vs->screenPtr + (y + _vm->_screenTop) * vs->width + x + vs->xstart;
+		if (y >= vs->height || x + vs->xstart >= vs->width) {
+			continue;
+		}
+		
+		dst = vs->screenPtr + y * vs->width + x + vs->xstart;
 		if (useMask)
-			mask = _vm->getMaskBuffer(x, y + _vm->_screenTop, 0);
+			mask = _vm->getMaskBuffer(x, y, 0);
 		
 		if (c >= 256 && _vm->_CJKMode)
-			draw2byte(dst, mask, c, x, y, color);
+			draw2byte(dst, mask, c, x, y - _vm->_screenTop, color);
 		else
-			drawChar(dst, mask, (byte)c, x, y, color);
+			drawChar(dst, mask, (byte)c, x, y - _vm->_screenTop, color);
 		
 		x -= offsetX[i];
 		y -= offsetY[i];
@@ -287,13 +291,16 @@ void NutRenderer::drawFrame(byte *dst, int c, int x, int y) {
 	const int minX = x < 0 ? -x : 0;
 	const int minY = y < 0 ? -y : 0;
 
+	if (height <= 0 || width <= 0) {
+		return;
+	}
+
 	dst += _vm->_screenWidth * y + x;
 	if (minY) {
 		src += minY * srcPitch;
 		dst += minY * _vm->_screenWidth;
 	}
-	
-	
+
 	for (int ty = minY; ty < height; ty++) {
 		for (int tx = minX; tx < width; tx++) {
 			bits = src[tx];
@@ -314,9 +321,13 @@ void NutRenderer::drawChar(byte *dst, byte *mask, byte c, int x, int y, byte col
 
 	byte maskmask;
 	int maskpos;
-	
+
 	const int minX = x < 0 ? -x : 0;
 	const int minY = y < 0 ? -y : 0;
+
+	if (height <= 0 || width <= 0) {
+		return;
+	}
 
 	if (minY) {
 		src += minY * srcPitch;
@@ -324,7 +335,7 @@ void NutRenderer::drawChar(byte *dst, byte *mask, byte c, int x, int y, byte col
 		if (mask)
 			mask += minY * _vm->gdi._numStrips;
 	}
-	
+
 	for (int ty = minY; ty < height; ty++) {
 		maskmask = revBitMask[(x + minX) & 7];
 		maskpos = (x%8 + minX) / 8;
@@ -353,13 +364,17 @@ void NutRenderer::draw2byte(byte *dst, byte *mask, int c, int x, int y, byte col
 		return;
 	}
 
-	int width = _vm->_2byteWidth;
-	int height = MIN(_vm->_2byteHeight, _vm->_screenHeight - y);
+	const int width = _vm->_2byteWidth;
+	const int height = MIN(_vm->_2byteHeight, _vm->_screenHeight - y);
 	byte *src = _vm->get2byteCharPtr(c);
 	byte bits = 0;
 
 	byte maskmask;
 	int maskpos;
+
+	if (height <= 0 || width <= 0) {
+		return;
+	}
 
 	for (int ty = 0; ty < height; ty++) {
 		maskmask = revBitMask[x & 7];
