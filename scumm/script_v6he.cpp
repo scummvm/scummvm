@@ -555,6 +555,7 @@ void ScummEngine_v6he::o6_actorOps() {
 
 	switch (b) {
 	case 30:
+		// _heversion >= 70
 		k = pop();
 		j = pop();
 		i = pop();

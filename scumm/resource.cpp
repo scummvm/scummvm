@@ -507,10 +507,9 @@ void ScummEngine::readResTypeList(int id, uint32 tag, const char *name) {
 		}
 
 		if (_heversion >= 70) {
-			// FIXME: these are related to globs
-
-			//_fileHandle.read(_globSize, num);
-			_fileHandle.seek(4 * num, SEEK_CUR);
+			for (i = 0; i < num; i++) {
+				res.globsize[id][i] = _fileHandle.readUint32LE();
+			}
 		}
 	}
 }
@@ -534,6 +533,9 @@ void ScummEngine::allocResTypeData(int id, uint32 tag, int num, const char *name
 		res.roomno[id] = (byte *)calloc(num, sizeof(byte));
 		res.roomoffs[id] = (uint32 *)calloc(num, sizeof(uint32));
 	}
+
+	if (_heversion >= 70)
+		res.globsize[id] = (uint32 *)calloc(num, sizeof(uint32));
 }
 
 void ScummEngine::loadCharset(int no) {
@@ -569,7 +571,7 @@ void ScummEngine::ensureResourceLoaded(int type, int i) {
 
 	debugC(DEBUG_RESOURCE, "ensureResourceLoaded(%s,%d)", resTypeFromId(type), i);
 
-	if (type == rtRoom && i > 0x7F && _version < 7) {
+	if ((type == rtRoom || _heversion >= 70) && i > 0x7F && _version < 7) {
 		i = _resourceMapper[i & 0x7F];
 	}
 
@@ -1959,6 +1961,9 @@ void ScummEngine::freeResources() {
 		free(res.flags[i]);
 		free(res.roomno[i]);
 		free(res.roomoffs[i]);
+
+		if (_heversion >= 70)
+			free(res.globsize[i]);
 	}
 }
 

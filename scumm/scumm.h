@@ -351,6 +351,7 @@ protected:
 		byte *flags[rtNumTypes];
 		byte *roomno[rtNumTypes];
 		uint32 *roomoffs[rtNumTypes];
+		uint32 *globsize[rtNumTypes];
 	} res;
 
 	VirtualMachineState vm;
