@@ -110,7 +110,6 @@ void SkyLogic::logicScript() {
 
 	for (;;) {
 		uint16 mode = _compact->mode; // get pointer to current script
-		printf("compact mode: %d\n", mode);
 		uint16 *scriptNo = SkyCompact::getSub(_compact, mode);
 		uint16 *offset   = SkyCompact::getSub(_compact, mode + 2);
 
@@ -931,10 +930,9 @@ script:
 	// Bit 12-15 - Module number
 
 	uint16 moduleNo = (uint16)((scriptNo & 0xff00) >> 12);
-	printf("Doing Script %x\n", (offset << 16) | scriptNo);
+	debug(3, "Doing Script %x\n", (offset << 16) | scriptNo);
 	uint16 *scriptData = _moduleList[moduleNo]; // get module address
 
-	printf("File: %d\n", moduleNo + F_MODULE_0);
 	if (!scriptData) { // The module has not been loaded
 		scriptData = (uint16 *)_skyDisk->loadFile(moduleNo + F_MODULE_0, NULL);
 		_moduleList[moduleNo] = scriptData; // module has been loaded
@@ -1104,21 +1102,19 @@ script:
 }
 
 bool SkyLogic::fnCacheChip(uint32 a, uint32 b, uint32 c) {
-	//warning("Stub: fnCacheChip");
-	printf("SkyDisk::fnCacheChip(%d);\n",a);
+	debug(5, "SkyDisk::fnCacheChip(%d);\n",a);
 	_skyDisk->fnCacheChip(a);
 	return true;
 }
 
 bool SkyLogic::fnCacheFast(uint32 a, uint32 b, uint32 c) {
-	//warning("Stub: fnCacheFast");
-	printf("SkyDisk::fnCacheFast(%d);\n",a);
+	debug(5, "SkyDisk::fnCacheFast(%d);\n",a);
 	_skyDisk->fnCacheFast(a);
 	return true;
 }
 
 bool SkyLogic::fnDrawScreen(uint32 a, uint32 b, uint32 c) {
-	printf("Call: fnDrawScreen(%X, %X)\n",a,b);
+	debug(5, "Call: fnDrawScreen(%X, %X)\n",a,b);
 	_skyScreen->fnDrawScreen(a, b);
 	return true;
 }
@@ -2006,28 +2002,21 @@ bool SkyLogic::fnStopFx(uint32 a, uint32 b, uint32 c) {
 bool SkyLogic::fnStartMusic(uint32 a, uint32 b, uint32 c) {
 	_skyMusic->startMusic((uint16)a);
 	return true;
-	//error("Stub: fnStartMusic");
 }
 
 bool SkyLogic::fnStopMusic(uint32 a, uint32 b, uint32 c) {
 	_skyMusic->startMusic(0);
 	return true;
-	//error("Stub: fnStopMusic");
 }
 
 bool SkyLogic::fnFadeDown(uint32 a, uint32 b, uint32 c) {
-	printf("fnFadeDown(scroll = %d);\n",a);
 	_skyScreen->fnFadeDown(a);
 	return true;
-	// this is actually already implemented in SkyScreen
-	//error("Stub: fnFadeDown");
 }
 
 bool SkyLogic::fnFadeUp(uint32 a, uint32 b, uint32 c) {
-	printf("fnFadeUp(scroll = %d, palette = %d);\n",a,b);
 	_skyScreen->fnFadeUp(a,b);
 	return true;
-	//error("Stub: fnFadeUp");
 }
 
 bool SkyLogic::fnQuitToDos(uint32 a, uint32 b, uint32 c) {
