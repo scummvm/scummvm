@@ -1091,24 +1091,24 @@ void SwordEngine::go(void) {
 
 void SwordEngine::checkCd(void) {
 	uint8 needCd = _cdList[SwordLogic::_scriptVars[NEW_SCREEN]];
-	if (needCd == 0) {
-		if (_systemVars.currentCD == 0)
-			needCd = 1;
-		else
-			needCd = _systemVars.currentCD;
-	}
-	if (_systemVars.runningFromCd) {
-		if (!_systemVars.currentCD) {
-			_systemVars.currentCD = needCd;
-			_control->askForCd();
-		} else if (_systemVars.currentCD != needCd) {
-			_music->startMusic(0, 0);
-			_sound->closeCowSystem();
-			_systemVars.currentCD = needCd;
-			_control->askForCd();
+	if (_systemVars.runningFromCd) { // are we running from cd?
+		if (needCd == 0) { // needCd == 0 means we can use either CD1 or CD2.
+			if (_systemVars.currentCD == 0) {
+				_systemVars.currentCD = 1; // if there is no CD currently inserted, ask for CD1.
+				_control->askForCd();
+			} // else: there is already a cd inserted and we don't care if it's cd1 or cd2.
+		} else if (needCd != _systemVars.currentCD) { // we need a different CD than the one in drive.
+			_music->startMusic(0, 0); // 
+			_sound->closeCowSystem(); // close music and sound files before changing CDs
+			_systemVars.currentCD = needCd; // askForCd will ask the player to insert _systemVars.currentCd,
+			_control->askForCd();		    // so it has to be updated before calling it.
 		}
-	} else
-		_systemVars.currentCD = needCd;
+	} else {		// we're running from HDD, we don't have to care about music files and SwordSound will take care of
+		if (needCd) // switching sound.clu files on SwordSound::newScreen by itself, so there's nothing to be done.
+			_systemVars.currentCD = needCd;
+		else if (_systemVars.currentCD == 0)
+			_systemVars.currentCD = 1;
+	}
 }
 
 uint8 SwordEngine::mainLoop(void) {
