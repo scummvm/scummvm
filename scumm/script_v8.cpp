@@ -527,7 +527,7 @@ void Scumm_v8::decodeParseString(int m, int n)
 		break;
 	case 0xD1: {
 
-		byte buffer[1024];
+		char buffer[1024];
 		_messagePtr = _scriptPointer;
 
 		if (_messagePtr[0] == '/') {
@@ -552,10 +552,10 @@ void Scumm_v8::decodeParseString(int m, int n)
 			// _sound->_talkChannel = _sound->playBundleSound(pointer);
 
 			_messagePtr = _transText;
-			_msgPtrToAdd = buffer;
+			_msgPtrToAdd = (byte *)buffer;
 			_messagePtr = addMessageToStack(_messagePtr);
 		} else {
-			_msgPtrToAdd = buffer;
+			_msgPtrToAdd = (byte *)buffer;
 			_scriptPointer = _messagePtr = addMessageToStack(_messagePtr);
 		}
 
@@ -563,7 +563,20 @@ void Scumm_v8::decodeParseString(int m, int n)
 			loadCharset(_string[m].charset);
 
 		if (_fr[_string[m].charset] != NULL) {
-			_fr[_string[m].charset]->drawString((char *)buffer, (int)_string[m].xpos, (int)_string[m].ypos, (unsigned char)_string[m].color, 0);
+			int x = _string[m].xpos;
+			// HACK - center mode. I call this a hack because we really should
+			// not duplicate all the string code from string.cpp. Rather, maybe
+			// abstract away the code in string.cpp from using the 'charset'
+			// fonts, and allow it to work both with old and new fonts. To this
+			// end, we should seperate the parts of Charset/_charset which are
+			// for bookkeeping (like x_pos, center mode etc.) and those that are
+			// for rendering. Then let the old (think printCharOld), medium (printChar),
+			// new (NUT) style renderers be subclasses of a common base class (which
+			// defines the API). This will clean up the code, and allow us to reuse
+			// the string logic in string.cpp.
+			if (_string[m].center)
+				x -= _fr[_string[m].charset]->getStringWidth(buffer) / 2;
+			_fr[_string[m].charset]->drawString(buffer, x, _string[m].ypos, _string[m].color, 0);
 		}
 		break;
 	}
