@@ -1,4 +1,4 @@
-/* ScummVM - Scumm Interpreter
+s/* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001/2002 The ScummVM project
  *
@@ -461,7 +461,7 @@ void Scumm::ensureResourceLoaded(int type, int i)
 
 	loadResource(type, i);
 
-	if (!(_features & GF_AFTER_V7))
+        if (!(_features & GF_AFTER_V7) && !(_features & GF_SMALL_HEADER))
 		if (type == rtRoom && i == _roomResource)
 			_vars[VAR_ROOM_FLAG] = 1;
 }

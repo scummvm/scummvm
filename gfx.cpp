@@ -32,14 +32,16 @@ void Scumm::getGraphicsPerformance()
 		initScreens(0, 0, _realWidth, _realHeight); //ender
 	}
 
-	_vars[VAR_PERFORMANCE_1] = 0;	//_scummTimer;
+	if (!(_features & GF_SMALL_HEADER))	/* FIXME TEST: Enders Zak fix */
+		_vars[VAR_PERFORMANCE_1] = 0;	//_scummTimer;
 
 	for (i = 10; i != 0; i--) {
 		setDirtyRange(0, 0, _realHeight); //ender
 		drawDirtyScreenParts();
 	}
 
-	_vars[VAR_PERFORMANCE_2] = 0;	//_scummTimer;
+	if (!(_features & GF_SMALL_HEADER))	/* FIXME TEST: Enders Zak fix */
+		_vars[VAR_PERFORMANCE_2] = 0;	//_scummTimer;
 
 	if (_gameId == GID_DIG)
 		initScreens(0, 0, _realWidth, _realHeight);
