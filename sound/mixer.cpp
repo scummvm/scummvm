@@ -47,31 +47,23 @@ private:
 	byte _volume;
 	int8 _pan;
 	bool _paused;
+	int _id;
 
 protected:
 	RateConverter *_converter;
 	AudioInputStream *_input;
 
 public:
-	int _id;
 
-	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, bool isMusic, byte volume, int8 pan, int id = -1)
-		: _mixer(mixer), _handle(handle), _isMusic(isMusic), _volume(volume), _pan(pan), _paused(false), _converter(0), _input(0), _id(id) {
-		assert(mixer);
-	}
-
-	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume, int8 pan, bool reverseStereo = false, int id = -1)
-		: _mixer(mixer), _handle(handle), _isMusic(isMusic), _volume(volume), _pan(pan), _paused(false), _converter(0), _input(input), _id(id) {
-		assert(mixer);
-		assert(input);
-
-		// Get a rate converter instance
-		_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo(), reverseStereo);
-	}
+	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, bool isMusic, byte volume, int8 pan, int id = -1);
+	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume, int8 pan, bool reverseStereo = false, int id = -1);
 	virtual ~Channel();
-	void destroy();
-	virtual void mix(int16 *data, uint len);
 
+	void mix(int16 *data, uint len);
+
+	bool isFinished() const {
+		return _input->endOfStream();
+	}
 	bool isMusicChannel() const {
 		return _isMusic;
 	}
@@ -89,6 +81,9 @@ public:
 	}
 	int getVolume() const {
 		return isMusicChannel() ? _mixer->getMusicVolume() : _mixer->getVolume();
+	}
+	int getId() const {
+		return _id;
 	}
 };
 
@@ -121,7 +116,7 @@ SoundMixer::SoundMixer() {
 	_paused = false;
 
 	for (i = 0; i != NUM_CHANNELS; i++)
-		_channels[i] = NULL;
+		_channels[i] = 0;
 }
 
 SoundMixer::~SoundMixer() {
@@ -208,9 +203,10 @@ void SoundMixer::endStream(PlayingSoundHandle handle) {
 }
 
 void SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
+
 	int index = -1;
 	for (int i = 0; i != NUM_CHANNELS; i++) {
-		if (_channels[i] == NULL) {
+		if (_channels[i] == 0) {
 			index = i;
 			break;
 		}
@@ -229,16 +225,20 @@ void SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
 void SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id, byte volume, int8 pan, uint32 loopStart, uint32 loopEnd) {
 	Common::StackLock lock(_mutex);
 
+	const bool autoFreeMemory = (flags & SoundMixer::FLAG_AUTOFREE) != 0;
+
 	// Prevent duplicate sounds
 	if (id != -1) {
 		for (int i = 0; i != NUM_CHANNELS; i++)
-			if (_channels[i] != NULL && _channels[i]->_id == id)
+			if (_channels[i] != 0 && _channels[i]->getId() == id) {
+				if (autoFreeMemory)
+					free(sound);
 				return;
+			}
 	}
 
 	// Create the input stream
 	AudioInputStream *input;
-	const bool autoFreeMemory = (flags & SoundMixer::FLAG_AUTOFREE) != 0;
 	if (flags & SoundMixer::FLAG_LOOP) {
 		if (loopEnd == 0) {
 			input = makeLinearInputStream(rate, flags, (byte *)sound, size, 0, size, autoFreeMemory);
@@ -301,8 +301,13 @@ void SoundMixer::mix(int16 *buf, uint len) {
 
 		// now mix all channels
 		for (int i = 0; i != NUM_CHANNELS; i++)
-			if (_channels[i] && !_channels[i]->isPaused())
-				_channels[i]->mix(buf, len);
+			if (_channels[i]) {
+				if (_channels[i]->isFinished()) {
+					delete _channels[i];
+					_channels[i] = 0;
+				} else if (!_channels[i]->isPaused())
+					_channels[i]->mix(buf, len);
+			}
 	}
 }
 
@@ -317,16 +322,18 @@ void SoundMixer::mixCallback(void *s, byte *samples, int len) {
 void SoundMixer::stopAll() {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++)
-		if (_channels[i])
-			_channels[i]->destroy();
+		if (_channels[i] != 0) {
+			delete _channels[i];
+			_channels[i] = 0;
+		}
 }
 
 void SoundMixer::stopID(int id) {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++) {
-		if (_channels[i] != NULL && _channels[i]->_id == id) {
-			_channels[i]->destroy();
-			return;
+		if (_channels[i] != 0 && _channels[i]->getId() == id) {
+			delete _channels[i];
+			_channels[i] = 0;
 		}
 	}
 }
@@ -345,8 +352,10 @@ void SoundMixer::stopHandle(PlayingSoundHandle handle) {
 		return;
 	}
 
-	if (_channels[index])
-		_channels[index]->destroy();
+	if (_channels[index]) {
+		delete _channels[index];
+		_channels[index] = 0;
+	}
 }
 
 void SoundMixer::setChannelVolume(PlayingSoundHandle handle, byte volume) {
@@ -390,7 +399,7 @@ void SoundMixer::pauseAll(bool paused) {
 void SoundMixer::pauseID(int id, bool paused) {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++) {
-		if (_channels[i] != NULL && _channels[i]->_id == id) {
+		if (_channels[i] != 0 && _channels[i]->getId() == id) {
 			_channels[i]->pause(paused);
 			return;
 		}
@@ -453,18 +462,25 @@ void SoundMixer::setMusicVolume(int volume) {
 #pragma mark -
 
 
+Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, bool isMusic, byte volume, int8 pan, int id)
+	: _mixer(mixer), _handle(handle), _isMusic(isMusic), _volume(volume), _pan(pan), _paused(false), _converter(0), _input(0), _id(id) {
+	assert(mixer);
+}
+
+Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume, int8 pan, bool reverseStereo, int id)
+	: _mixer(mixer), _handle(handle), _isMusic(isMusic), _volume(volume), _pan(pan), _paused(false), _converter(0), _input(input), _id(id) {
+	assert(mixer);
+	assert(input);
+
+	// Get a rate converter instance
+	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo(), reverseStereo);
+}
+
 Channel::~Channel() {
 	delete _converter;
 	delete _input;
 	if (_handle)
 		*_handle = 0;
-}
-
-void Channel::destroy() {
-	for (int i = 0; i != SoundMixer::NUM_CHANNELS; i++)
-		if (_mixer->_channels[i] == this)
-			_mixer->_channels[i] = 0;
-	delete this;
 }
 
 /* len indicates the number of sample *pairs*. So a value of
@@ -474,9 +490,7 @@ void Channel::destroy() {
 void Channel::mix(int16 *data, uint len) {
 	assert(_input);
 
-	if (_input->endOfStream()) {
-		destroy();
-	} else if (_input->endOfData()) {
+	if (_input->endOfData()) {
 		// TODO: call drain method
 	} else {
 		assert(_converter);

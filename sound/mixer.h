@@ -42,7 +42,6 @@ class Channel;
 class File;
 
 class SoundMixer {
-	friend class Channel;
 public:
 	typedef void PremixProc (void *param, int16 *data, uint len);
 
