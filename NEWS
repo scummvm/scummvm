@@ -41,6 +41,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
  Sword2:
    - Fixed crash caused by attempting to play music from CD1 and CD2 at the
      same time.
+   - Fixed crash in the cutscene player if the speech file was missing.
 
  BASS:
    - Fixed crash when talking to the gardener using spanish text with the
