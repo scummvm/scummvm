@@ -23,6 +23,16 @@
 #include "stdafx.h"
 #include "scumm.h"
 
+SoundMixer::SoundMixer()
+{
+	_volume_table = (int16 *)calloc(256 * sizeof(int16), 1);
+}
+
+SoundMixer::~SoundMixer()
+{
+	free(_volume_table);
+}
+
 void SoundMixer::uninsert(Channel * chan)
 {
 
@@ -146,8 +156,6 @@ void SoundMixer::on_generate_samples(void *s, byte *samples, int len)
 
 bool SoundMixer::bind_to_system(OSystem *syst)
 {
-	_volume_table = (int16 *)calloc(256 * sizeof(int16), 1);
-
 	uint rate = (uint) syst->property(OSystem::PROP_GET_SAMPLE_RATE, 0);
 
 	_output_rate = rate;
@@ -211,10 +219,10 @@ void SoundMixer::set_volume(int volume)
 
 	// The volume table takes 8 bit unsigned data as index and returns 16 bit signed
 	for (i = 0; i < 128; i++)
-		_volume_table[i] = i * volume ;
+		_volume_table[i] = i * volume;
 
 	for (i = -128; i < 0; i++)
-		_volume_table[i+256] = i * volume ;
+		_volume_table[i+256] = i * volume;
 }
 
 void SoundMixer::set_music_volume(int volume)

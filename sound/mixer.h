@@ -24,6 +24,7 @@
 #define MIXER_H
 
 #include <stdio.h>
+
 #ifdef COMPRESSED_SOUND_FILE
 #include <mad.h>
 #endif
@@ -145,6 +146,9 @@ public:
 
 	Channel *_channels[NUM_CHANNELS];
 	PlayingSoundHandle *_handles[NUM_CHANNELS];
+
+	SoundMixer();
+	~SoundMixer();
 
 	int insert_at(PlayingSoundHandle *handle, int index, Channel * chan);
 	void append(void *data, uint32 len);
