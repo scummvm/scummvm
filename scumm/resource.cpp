@@ -482,7 +482,6 @@ void Scumm::readResTypeList(int id, uint32 tag, const char *name) {
 		if (num >= 0xFF) {
 			error("Too many %ss (%d) in directory", name, num);
 		}
-		allocResTypeData(id, tag, num, name, 1);
 	} else {
 		if (num != res.num[id]) {
 			error("Invalid number of %ss (%d) in directory", name, num);
