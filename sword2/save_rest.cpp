@@ -247,6 +247,9 @@ uint32 Sword2Engine::restoreGame(uint16 slotNo) {
 		_memory->freeMemory(saveBufferMem);
 	}
 
+	// Force the game engine to pick a cursor. This appears to be needed
+	// when using the -x command-line option to restore a game.
+	_mouseTouching = 1;
 	return errorCode;
 }
 
