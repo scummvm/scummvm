@@ -22,8 +22,8 @@
 
 #include "stdafx.h"
 #include "scumm.h"
-#include "mididrv.h"
-#include "imuse.h"
+#include "sound/mididrv.h"
+#include "sound/imuse.h"
 #include "gui.h"
 #include "string.h"
 #include "gameDetector.h"
@@ -1087,7 +1087,7 @@ void checkHeap()
 #endif
 }
 
-ScummDebugger debugger;
+ScummDebugger g_debugger;
 
 void Scumm::waitForTimer(int msec_delay) {
 	OSystem::Event event;
@@ -1120,7 +1120,7 @@ void Scumm::waitForTimer(int msec_delay) {
 					else if (event.kbd.keycode=='g')
 						_fastMode ^= 2;
 					else if (event.kbd.keycode=='d')
-						debugger.attach(this);
+						g_debugger.attach(this);
 					else if (event.kbd.keycode=='s')
 						resourceStats();
 				}
