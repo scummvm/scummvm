@@ -279,6 +279,10 @@ int Scumm::fetchScriptWord() {
 	return a;
 }
 
+#ifndef BYPASS_COPY_PROT
+#define BYPASS_COPY_PROT
+#endif
+
 int Scumm::readVar(uint var) {
 	int a;
 #ifdef BYPASS_COPY_PROT
