@@ -129,7 +129,7 @@ public:
 	void akos16PutOnScreen(byte * dest, byte * src, int32 transparency, int32 count);
 	void akos16SkipData(int32 numskip);
 	void akos16DecodeLine(byte *buf, int32 numbytes, int32 dir);
-	void akos16ApplyMask(byte * dest, byte * maskptr, int32 bits, int32 count, int32 fillwith);
+	void akos16ApplyMask(byte * dest, byte * maskptr, byte bits, int32 count, byte fillwith);
 	void akos16Decompress(byte * dest, int32 pitch, byte * src, int32 width, int32 height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency);
 	void akos16DecompressMask(byte * dest, int32 pitch, byte * src, int32 width, int32 height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency, byte * maskptr, int32 bitpos_start);
 };

@@ -1068,16 +1068,16 @@ void AkosRenderer::codec5()
 	}
 }
 
-static int32 akos16_shadow_mode;
+static uint32 akos16_shadow_mode;
 static byte akos16_unk5;
-static int32 akos16_unk6;
-static int32 akos16_mask;
-static int32 akos16_headervalue;
+static byte akos16_unk6;
+static byte akos16_mask;
+static byte akos16_headervalue;
 static byte akos16_shift;
-static int32 akos16_bits;
-static int32 akos16_numbits;
+static uint16 akos16_bits;
+static byte akos16_numbits;
 static byte * akos16_dataptr;
-static int32 _bitMask[] = {0, 1, 3, 7, 15, 31, 63, 127, 255};
+static byte _bitMask[] = {0, 1, 3, 7, 15, 31, 63, 127, 255};
 static byte akos16_buffer[336];
 
 void AkosRenderer::akos16SetupBitReader(byte *src) {
@@ -1126,7 +1126,7 @@ void AkosRenderer::akos16PutOnScreen(byte * dest, byte * src, int32 transparency
 				return;
 			tmp_data = *(src++);
 			if (tmp_data != transparency) {
-				if (tmp_data >= 8) {
+				if (tmp_data < 8) {
 					tmp_data = shadow_table[*(dest) + (tmp_data << 8)];
 				}
 				*(dest) = tmp_data;
@@ -1137,7 +1137,7 @@ void AkosRenderer::akos16PutOnScreen(byte * dest, byte * src, int32 transparency
 }
 
 void AkosRenderer::akos16SkipData(int32 numskip) {
-	int32 bits, tmp_bits;
+	uint16 bits, tmp_bits;
 
 	if (numskip != 0) {
 		for(;;) {
@@ -1156,7 +1156,7 @@ void AkosRenderer::akos16SkipData(int32 numskip) {
 						akos16_numbits -= 3;
 						akos16_bits >>= 3;
 						if (tmp_bits != 4) {
-							akos16_headervalue = tmp_bits - 4;
+							akos16_headervalue += (tmp_bits - 4);
 							goto label1;
 						}
 						akos16_unk5 = 1;
@@ -1164,7 +1164,7 @@ void AkosRenderer::akos16SkipData(int32 numskip) {
 							akos16_bits |= (*akos16_dataptr++) << akos16_numbits;
 							akos16_numbits += 8;
 						}
-						akos16_unk6= (akos16_bits & 0xff) - 1;
+						akos16_unk6 = (byte)((akos16_bits & 0xff) - 1);
 						akos16_bits >>= 8;
 						akos16_numbits -= 8;
 						if (akos16_numbits > 8)
@@ -1177,7 +1177,7 @@ void AkosRenderer::akos16SkipData(int32 numskip) {
 						akos16_bits |= (*akos16_dataptr++) << akos16_numbits;
 						akos16_numbits += 8;
 					}
-					akos16_headervalue = akos16_bits & akos16_mask;
+					akos16_headervalue = ((byte)akos16_bits) & akos16_mask;
 					akos16_bits >>= akos16_shift;
 					akos16_numbits -= akos16_shift;
 					if (akos16_numbits > 8)
@@ -1202,12 +1202,12 @@ label1:
 }
 
 void AkosRenderer::akos16DecodeLine(byte *buf, int32 numbytes, int32 dir) {
-	int32 bits, tmp_bits;
+	uint16 bits, tmp_bits;
 
 	if (numbytes != 0) {
 		for(;;) {
 			numbytes--;
-			*buf = (byte)akos16_headervalue;
+			*buf = akos16_headervalue;
 			buf += dir;
 			if (akos16_unk5 == 0) {
 				if (akos16_numbits <= 8) {
@@ -1223,7 +1223,7 @@ void AkosRenderer::akos16DecodeLine(byte *buf, int32 numbytes, int32 dir) {
 						akos16_numbits -= 3;
 						akos16_bits >>= 3;
 						if (tmp_bits != 4) {
-							akos16_headervalue = tmp_bits - 4;
+							akos16_headervalue += (tmp_bits - 4);
 							goto label1;
 						}
 						akos16_unk5 = 1;
@@ -1231,7 +1231,7 @@ void AkosRenderer::akos16DecodeLine(byte *buf, int32 numbytes, int32 dir) {
 							akos16_bits |= (*akos16_dataptr++) << akos16_numbits;
 							akos16_numbits += 8;
 						}
-						akos16_unk6= (akos16_bits & 0xff) - 1;
+						akos16_unk6 = (byte)((akos16_bits & 0xff) - 1);
 						akos16_bits >>= 8;
 						akos16_numbits -= 8;
 						if (akos16_numbits > 8)
@@ -1244,7 +1244,7 @@ void AkosRenderer::akos16DecodeLine(byte *buf, int32 numbytes, int32 dir) {
 						akos16_bits |= (*akos16_dataptr++) << akos16_numbits;
 						akos16_numbits += 8;
 					}
-					akos16_headervalue = akos16_bits & akos16_mask;
+					akos16_headervalue = ((byte)akos16_bits) & akos16_mask;
 					akos16_bits >>= akos16_shift;
 					akos16_numbits -= akos16_shift;
 					if (akos16_numbits > 8)
@@ -1268,11 +1268,10 @@ label1:
 	}
 }
 
-void AkosRenderer::akos16ApplyMask(byte * dest, byte * maskptr, int32 bits, int32 count, int32 fillwith) {
-	int32 tmp;
-	byte tmp_data = *(maskptr);
+void AkosRenderer::akos16ApplyMask(byte * dest, byte * maskptr, byte bits, int32 count, byte fillwith) {
+	byte tmp;
+	byte tmp_data = *(maskptr++);
 	byte bitpos = 1 << (7 - bits);
-	maskptr++;
 
 	for(;;) {
 		tmp = tmp_data;
@@ -1281,7 +1280,7 @@ void AkosRenderer::akos16ApplyMask(byte * dest, byte * maskptr, int32 bits, int3
 				return;
 
 			if (tmp != bitpos) {
-				*(dest) = (byte)fillwith;
+				*(dest) = fillwith;
 			}
 
 			bitpos >>= 1;
@@ -1341,7 +1340,7 @@ void AkosRenderer::akos16DecompressMask(byte * dest, int32 pitch, byte * src, in
 			return;
 
 		akos16DecodeLine(tmp_buf, width, dir);
-		akos16ApplyMask(akos16_buffer, maskptr, bitpos_start, width, transparency);
+		akos16ApplyMask(akos16_buffer, maskptr, (byte)bitpos_start, width, transparency);
 		akos16PutOnScreen(dest, akos16_buffer, transparency, width);
 
 		if (numskip_after != 0)	{
@@ -1379,7 +1378,7 @@ void AkosRenderer::codec16() {
 	if(tmp_x < 0) {
 		skip_x = tmp_x;
 		clip_left -= tmp_x;
-		skip_x = !skip_x;
+		skip_x = -skip_x;
 	}
 
 	tmp_x = clip_right - maxw;
@@ -1404,7 +1403,6 @@ void AkosRenderer::codec16() {
 		return;
 
 	_vm->updateDirtyRect(0, clip_left, clip_right + 1, clip_top, clip_bottom + 1, 1 << dirty_id);
-
 	if(clip_top < draw_top) {
 		draw_top = clip_top;
 	}
@@ -1418,18 +1416,16 @@ void AkosRenderer::codec16() {
 	height_unk = clip_top;
 	int32 pitch = _vm->_realWidth;
 
-	int32 tmp1, tmp2, tmp3, dir;
+	int32 tmp1, tmp2, dir;
 
-	if (mirror != 0) {
-		dir = -1;
-		tmp2 = cur_x;
+	if (!mirror) {
 		cur_x = skip_x;
 		tmp1 = width - 1;
-		tmp3 = tmp1;
-		tmp3 -= tmp2;
+		dir = -1;
 		width_unk = clip_right;
-		skip_x = tmp1 - tmp2;
-		cur_x = tmp1;
+		skip_x = tmp1 - cur_x;
+		tmp2 = cur_x;
+		cur_x = tmp1 - cur_x;
 	}	else {
 		dir = 1;
 		width_unk = clip_left;
@@ -1437,15 +1433,15 @@ void AkosRenderer::codec16() {
 
 	tmp_y = cur_y - skip_y;
 	if(tmp_y < 0) {
-		tmp_y = !tmp_y;
+		tmp_y = -tmp_y;
 	}
 
 	tmp_y++;
 	int32 out_height = tmp_y;
-	cur_x -= skip_x;
 
+	tmp_x = cur_x - skip_x;
 	if(cur_x < 0) {
-		cur_x = !cur_x;
+		cur_x = -cur_x;
 	}
 
 	cur_x++;
