@@ -22,7 +22,6 @@
 #define CHOOSER_DIALOG_H
 
 #include "common/str.h"
-#include "common/list.h"
 #include "gui/dialog.h"
 
 namespace GUI {

@@ -45,7 +45,7 @@ TabWidget::TabWidget(GuiObject *boss, int x, int y, int w, int h)
 }
 
 TabWidget::~TabWidget() {
-	for (int i = 0; i < _tabs.size(); ++i) {
+	for (uint i = 0; i < _tabs.size(); ++i) {
 		delete _tabs[i].firstWidget;
 		_tabs[i].firstWidget = 0;
 	}
@@ -81,7 +81,7 @@ int TabWidget::addTab(const String &title) {
 }
 
 void TabWidget::setActiveTab(int tabID) {
-	assert(0 <= tabID && tabID < _tabs.size());
+	assert(0 <= tabID && tabID < (int)_tabs.size());
 	if (_activeTab != tabID) {
 		// Exchange the widget lists, and switch to the new tab
 		if (_activeTab != -1)
@@ -101,7 +101,7 @@ void TabWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	x -= kTabLeftOffset;
 	if (x >= 0 && x % (_tabWidth + kTabSpacing) < _tabWidth) {
 		tabID = x / (_tabWidth + kTabSpacing);
-		if (tabID >= _tabs.size())
+		if (tabID >= (int)_tabs.size())
 			tabID = -1;
 	}
 
@@ -126,7 +126,7 @@ void TabWidget::drawWidget(bool hilite) {
 
 	// Iterate over all tabs and draw them
 	int i, x = _x + kTabLeftOffset;
-	for (i = 0; i < _tabs.size(); ++i) {
+	for (i = 0; i < (int)_tabs.size(); ++i) {
 		NewGuiColor color = (i == _activeTab) ? gui->_color : gui->_shadowcolor;
 		int yOffset = (i == _activeTab) ? 0 : 2; 
 		gui->box(x, _y + yOffset, _tabWidth, kTabHeight - yOffset, color, color);

@@ -151,14 +151,14 @@ public:
  */
 class FSList : Common::List<FilesystemNode *> {
 public:
-	class ConstIterator {
+	class const_iterator {
 		friend class FSList;
 		FilesystemNode **_data;
-		ConstIterator(FilesystemNode **data) : _data(data) { }
+		const_iterator(FilesystemNode **data) : _data(data) { }
 	public:
 		const FilesystemNode &operator *() const { return **_data; }
 		const FilesystemNode *operator->() const { return *_data; }
-		bool operator !=(const ConstIterator &iter) const { return _data != iter._data; }
+		bool operator !=(const const_iterator &iter) const { return _data != iter._data; }
 		void operator ++() { ++_data; }
 	};
 
@@ -187,12 +187,12 @@ public:
 
 	int size() const	{ return _size; }
 
-	ConstIterator	begin() const {
-		return ConstIterator(_data);
+	const_iterator	begin() const {
+		return const_iterator(_data);
 	}
 
-	ConstIterator	end() const {
-		return ConstIterator(_data + _size);
+	const_iterator	end() const {
+		return const_iterator(_data + _size);
 	}
 
 };

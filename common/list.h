@@ -34,8 +34,8 @@ protected:
 	T *_data;
 
 public:
-	typedef T *Iterator;
-	typedef const T *ConstIterator;
+	typedef T *iterator;
+	typedef const T *const_iterator;
 
 public:
 	List<T>() : _capacity(0), _size(0), _data(0) {}
@@ -103,7 +103,7 @@ public:
 		return *this;
 	}
 
-	int size() const {
+	uint size() const {
 		return _size;
 	}
 
@@ -121,19 +121,19 @@ public:
 	}
 
 
-	Iterator		begin() {
+	iterator		begin() {
 		return _data;
 	}
 
-	Iterator		end() {
+	iterator		end() {
 		return _data + _size;
 	}
 
-	ConstIterator	begin() const {
+	const_iterator	begin() const {
 		return _data;
 	}
 
-	ConstIterator	end() const {
+	const_iterator	end() const {
 		return _data + _size;
 	}
 

@@ -459,7 +459,7 @@ void NewGui::drawChar(byte chr, int xx, int yy, NewGuiColor color) {
 int NewGui::getStringWidth(const String &str) {
 	int space = 0;
 
-	for (int i = 0; i < str.size(); ++i)
+	for (uint i = 0; i < str.size(); ++i)
 		space += getCharWidth(str[i]);
 	return space;
 }
@@ -483,7 +483,7 @@ int NewGui::getCharWidth(byte c) {
 
 void NewGui::drawString(const String &s, int x, int y, int w, NewGuiColor color, int align, int deltax, bool useEllipsis) {
 	const int leftX = x, rightX = x + w;
-	int i;
+	uint i;
 	int width = getStringWidth(s);
 	String str;
 	

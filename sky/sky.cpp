@@ -88,7 +88,7 @@ GameList Engine_SKY_gameList() {
 DetectedGameList Engine_SKY_detectGames(const FSList &fslist) {
 	DetectedGameList detectedGames;
 	// Iterate over all files in the given directory
-	for (FSList::ConstIterator file = fslist.begin(); file != fslist.end(); ++file) {
+	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		const char *fileName = file->displayName().c_str();
 
 		if (0 == scumm_stricmp("sky.dsk", fileName)) {

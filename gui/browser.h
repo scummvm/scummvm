@@ -21,9 +21,8 @@
 #ifndef BROWSER_DIALOG_H
 #define BROWSER_DIALOG_H
 
-#include "dialog.h"
+#include "gui/dialog.h"
 #include "common/str.h"
-#include "common/list.h"
 
 #ifdef MACOSX
 #include <Carbon/Carbon.h>

@@ -68,7 +68,7 @@ DetectedGameList Engine_SWORD2_detectGames(const FSList &fslist) {
 
 	for (g = sword2_settings; g->name; ++g) {
 		// Iterate over all files in the given directory
-		for (FSList::ConstIterator file = fslist.begin(); file != fslist.end(); ++file) {
+		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 			const char *gameName = file->displayName().c_str();
 
 			if (0 == scumm_stricmp(g->detectname, gameName)) {

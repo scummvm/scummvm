@@ -53,7 +53,7 @@ GameSettings Plugin::findGame(const char *gameName) const {
 	assert(gameName);
 	GameList games = getSupportedGames();
 	GameSettings result = {NULL, NULL, 0};
-	for (GameList::Iterator g = games.begin(); g != games.end(); ++g) {
+	for (GameList::iterator g = games.begin(); g != games.end(); ++g) {
 		if (!scumm_stricmp(g->name, gameName)) {
 			result = *g;
 			break;
@@ -254,7 +254,7 @@ void PluginManager::loadPlugins() {
 }
 
 void PluginManager::unloadPlugins() {
-	int i;
+	uint i;
 	for (i = 0; i < _plugins.size(); i++) {
 		_plugins[i]->unloadPlugin();
 		delete _plugins[i];
@@ -281,7 +281,7 @@ DetectedGameList PluginManager::detectGames(const FSList &fslist) const {
 
 	// Iterate over all known games and for each check if it might be
 	// the game in the presented directory.
-	PluginList::ConstIterator iter;
+	PluginList::const_iterator iter;
 	for (iter = _plugins.begin(); iter != _plugins.end(); ++iter) {
 		candidates.push_back((*iter)->detectGames(fslist));
 	}

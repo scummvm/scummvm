@@ -99,7 +99,7 @@ void CELauncherDialog::automaticScanDirectory(const FilesystemNode *node) {
 	addCandidate(node->path(), candidates);
 	// Then recurse on the subdirectories
 	FSList *dirs = node->listDir(FilesystemNode::kListDirectoriesOnly);
-	for (FSList::ConstIterator currentDir = dirs->begin(); currentDir != dirs->end(); ++currentDir)
+	for (FSList::const_iterator currentDir = dirs->begin(); currentDir != dirs->end(); ++currentDir)
 		automaticScanDirectory(&(*currentDir));
 
 }

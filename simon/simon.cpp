@@ -98,7 +98,7 @@ DetectedGameList Engine_SIMON_detectGames(const FSList &fslist) {
 		strcat(detectName2, ".");
 
 		// Iterate over all files in the given directory
-		for (FSList::ConstIterator file = fslist.begin(); file != fslist.end(); ++file) {
+		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 			const char *name = file->displayName().c_str();
 
 			if ((0 == scumm_stricmp(detectName, name))  || 

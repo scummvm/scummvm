@@ -356,7 +356,7 @@ void LauncherDialog::updateListing() {
 	// Retrieve a list of all games defined in the config file
 	_domains.clear();
 	const ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
-	ConfigManager::DomainMap::ConstIterator iter = domains.begin();
+	ConfigManager::DomainMap::const_iterator iter = domains.begin();
 	for (iter = domains.begin(); iter != domains.end(); ++iter) {
 		String name(iter->_value.get("gameid"));
 		String description(iter->_value.get("description"));
@@ -417,14 +417,14 @@ void LauncherDialog::addGame() {
 		} else {
 			// Display the candidates to the user and let her/him pick one
 			StringList list;
-			for (idx = 0; idx < candidates.size(); idx++)
+			for (idx = 0; idx < (int)candidates.size(); idx++)
 				list.push_back(candidates[idx].description);
 			
 			ChooserDialog dialog("Pick the game:");
 			dialog.setList(list);
 			idx = dialog.runModal();
 		}
-		if (0 <= idx && idx < candidates.size()) {
+		if (0 <= idx && idx < (int)candidates.size()) {
 			DetectedGame result = candidates[idx];
 
 			// The auto detector or the user made a choice.

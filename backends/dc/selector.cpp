@@ -167,7 +167,7 @@ static const char *checkDetect(const FilesystemNode *entry)
   DetectedGameList candidates;
 
   const PluginList &plugins = PluginManager::instance().getPlugins();
-  PluginList::ConstIterator iter = plugins.begin();
+  PluginList::const_iterator iter = plugins.begin();
   for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
     candidates.push_back((*iter)->detectGames(files));
   }
@@ -278,7 +278,7 @@ static int findGames(Game *games, int max)
     dirs[curr_dir].deficon[0] = '\0';
     FSList *fslist = dirs[curr_dir++].node->listDir(FilesystemNode::kListAll);
     if (fslist != NULL) {
-      for (FSList::ConstIterator entry = fslist->begin(); entry != fslist->end();
+      for (FSList::const_iterator entry = fslist->begin(); entry != fslist->end();
 	   ++entry) {
 	if (entry->isDirectory()) {
 	  if(num_dirs < MAX_DIR && strcasecmp(entry->displayName().c_str(),

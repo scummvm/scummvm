@@ -22,11 +22,7 @@
 #define MESSAGE_DIALOG_H
 
 #include "gui/dialog.h"
-
-namespace Common {
-	class String;
-	class StringList;
-}
+#include "common/str.h"
 
 namespace GUI {
 

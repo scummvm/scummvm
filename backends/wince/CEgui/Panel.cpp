@@ -42,7 +42,7 @@ namespace CEGUI {
 	}
 
 	bool Panel::draw(SDL_Surface *surface) {
-		ItemMap::ConstIterator iterator;
+		ItemMap::const_iterator iterator;
 		if (!_drawn && _visible) {
 			GUIElement::draw(surface);
 			for (iterator = _itemsMap.begin(); iterator != _itemsMap.end(); ++iterator) {
@@ -55,14 +55,14 @@ namespace CEGUI {
 	}
 
 	void Panel::forceRedraw() {
-		ItemMap::ConstIterator iterator;
+		ItemMap::const_iterator iterator;
 		GUIElement::forceRedraw();
 		for (iterator = _itemsMap.begin(); iterator != _itemsMap.end(); ++iterator)
 			((GUIElement*)(iterator->_value))->forceRedraw();
 	}
 
 	bool Panel::action(int x, int y, bool pushed) {
-		ItemMap::ConstIterator iterator;
+		ItemMap::const_iterator iterator;
 		bool result = false;
 		if (!checkInside(x, y))
 			return false;

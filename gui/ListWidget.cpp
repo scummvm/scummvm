@@ -97,7 +97,7 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (isEnabled()) {
 		int oldSelectedItem = _selectedItem;
 		_selectedItem = (y - 1) / kLineHeight + _currentPos;
-		if (_selectedItem > _list.size() - 1)
+		if (_selectedItem > (int)_list.size() - 1)
 			_selectedItem = -1;
 
 		if (oldSelectedItem != _selectedItem) {
@@ -183,7 +183,7 @@ bool ListWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 				_selectedItem--;
 			break;
 		case 256+18:	// down arrow
-			if (_selectedItem < _list.size() - 1)
+			if (_selectedItem < (int)_list.size() - 1)
 				_selectedItem++;
 			break;
 		case 256+24:	// pageup
@@ -193,7 +193,7 @@ bool ListWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 			break;
 		case 256+25:	// pagedown
 			_selectedItem += _entriesPerPage - 1;
-			if (_selectedItem >= _list.size() )
+			if (_selectedItem >= (int)_list.size() )
 				_selectedItem = _list.size() - 1;
 			break;
 		case 256+22:	// home

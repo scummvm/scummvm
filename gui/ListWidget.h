@@ -23,7 +23,6 @@
 
 #include "gui/widget.h"
 #include "common/str.h"
-#include "common/list.h"
 
 namespace GUI {
 

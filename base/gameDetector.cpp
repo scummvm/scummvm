@@ -159,10 +159,10 @@ void listGames() {
 	printf("Game ID              Full Title                                            \n"
 	       "-------------------- ------------------------------------------------------\n");
 
-	PluginList::ConstIterator iter = plugins.begin();
+	PluginList::const_iterator iter = plugins.begin();
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		GameList list = (*iter)->getSupportedGames();
-		for (GameList::Iterator v = list.begin(); v != list.end(); ++v) {
+		for (GameList::iterator v = list.begin(); v != list.end(); ++v) {
 			printf("%-20s %s\n", v->name, v->description);
 		}
 	}
@@ -176,7 +176,7 @@ void listTargets() {
 	printf("Target               Description                                           \n"
 	       "-------------------- ------------------------------------------------------\n");
 
-	ConfigManager::DomainMap::ConstIterator iter = domains.begin();
+	ConfigManager::DomainMap::const_iterator iter = domains.begin();
 	for (iter = domains.begin(); iter != domains.end(); ++iter) {
 		String name(iter->_key);
 		String description(iter->_value.get("description"));
@@ -196,7 +196,7 @@ GameSettings GameDetector::findGame(const String &gameName, const Plugin **plugi
 	const PluginList &plugins = PluginManager::instance().getPlugins();
 	GameSettings result = {NULL, NULL, 0};
 
-	PluginList::ConstIterator iter = plugins.begin();
+	PluginList::const_iterator iter = plugins.begin();
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		result = (*iter)->findGame(gameName.c_str());
 		if (result.name) {

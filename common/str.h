@@ -67,7 +67,7 @@ public:
 	}
 
 	const char *c_str() const		{ return _str ? _str : ""; }
-	int size() const				{ return _len; }
+	uint size() const				{ return _len; }
 
 	bool isEmpty() const	{ return (_len == 0); }
 };

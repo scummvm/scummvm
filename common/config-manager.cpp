@@ -171,7 +171,7 @@ void ConfigManager::flushToDisk() {
 	if (!(cfg_file = fopen(_filename.c_str(), "w"))) {
 		warning("Unable to write configuration file: %s.\n", _filename.c_str());
 	} else {
-		DomainMap::ConstIterator d;
+		DomainMap::const_iterator d;
 
 		// First write the global domains
 		for (d = _globalDomains.begin(); d != _globalDomains.end(); ++d) {
@@ -193,7 +193,7 @@ void ConfigManager::writeDomain(FILE *file, const String &name, const Domain &do
 	
 	fprintf(file, "[%s]\n", name.c_str());
 
-	Domain::ConstIterator x;
+	Domain::const_iterator x;
 	for (x = domain.begin(); x != domain.end(); ++x) {
 		const String &value = x->_value;
 		if (!value.isEmpty())
@@ -218,7 +218,7 @@ bool ConfigManager::hasKey(const String &key) const {
 	if (!_activeDomain.isEmpty() && _gameDomains[_activeDomain].contains(key))
 		return true;
 	
-	DomainMap::ConstIterator iter;
+	DomainMap::const_iterator iter;
 	for (iter = _globalDomains.begin(); iter != _globalDomains.end(); ++iter) {
 		if (iter->_value.contains(key))
 			return true;
@@ -273,7 +273,7 @@ const String & ConfigManager::get(const String &key, const String &domain) const
 	if (!dom.isEmpty() && _gameDomains.contains(dom) && _gameDomains[dom].contains(key))
 		return _gameDomains[dom][key];
 
-	DomainMap::ConstIterator iter;
+	DomainMap::const_iterator iter;
 	for (iter = _globalDomains.begin(); iter != _globalDomains.end(); ++iter) {
 		if (iter->_value.contains(key))
 			return iter->_value[key];

@@ -68,19 +68,19 @@ private:
 	Map<Key, Value, Comparator> &operator =(const Map<Key, Value, Comparator> &map);
 
 public:
-	class ConstIterator {
+	class const_iterator {
 		friend class Map<Key, Value, Comparator>;
 	protected:
 		Node *_node;
-		ConstIterator(Node *node) : _node(node) {}
+		const_iterator(Node *node) : _node(node) {}
 		
 	public:
-		ConstIterator() : _node(0) {}
+		const_iterator() : _node(0) {}
 
 		Node &operator *() { assert(_node != 0); return *_node; }
 		const Node &operator *() const { assert(_node != 0); return *_node; }
 		const Node *operator->() const { assert(_node != 0); return _node; }
-		bool operator !=(const ConstIterator &iter) const { return _node != iter._node; }
+		bool operator !=(const const_iterator &iter) const { return _node != iter._node; }
 		void operator ++() {
 			if (!_node)
 				return;
@@ -203,17 +203,17 @@ public:
 		merge(map._root);
 	}
 
-	ConstIterator	begin() const {
+	const_iterator	begin() const {
 		Node *node = _root;
 		if (node) {
 			while (node->_left)
 				node = node->_left;
 		}
-		return ConstIterator(node);
+		return const_iterator(node);
 	}
 
-	ConstIterator	end() const {
-		return ConstIterator();
+	const_iterator	end() const {
+		return const_iterator();
 	}
 
 protected:
