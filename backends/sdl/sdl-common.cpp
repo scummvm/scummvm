@@ -401,8 +401,8 @@ void OSystem_SDL_Common::set_mouse_pos(int x, int y) {
 	
 void OSystem_SDL_Common::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {
 
-	assert(0 < w && w <= MAX_MOUSE_W);
-	assert(0 < h && h <= MAX_MOUSE_H);
+	assert(0 <= w && w <= MAX_MOUSE_W);
+	assert(0 <= h && h <= MAX_MOUSE_H);
 	_mouseCurState.w = w;
 	_mouseCurState.h = h;
 
