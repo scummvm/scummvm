@@ -103,7 +103,7 @@ void SimonState::loadGamePcFile(const char *filename) {
 	in->open(filename, _gameDataPath);
 	if (in->isOpen() == false) {
 		char *filename2;
-		filename2 = (char *)malloc(strlen(filename) + 1);
+		filename2 = (char *)malloc(strlen(filename) + 2);
 		strcpy(filename2, filename);
 		strcat(filename2, ".");
 		in->open(filename2, _gameDataPath);

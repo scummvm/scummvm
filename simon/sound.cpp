@@ -118,7 +118,7 @@ void SimonSound::readSfxFile(const char *filename, const char *gameDataPath) {
 
 	if (file->isOpen() == false) {
 		char *filename2;
-		filename2 = (char *)malloc(strlen(filename) + 1);
+		filename2 = (char *)malloc(strlen(filename) + 2);
 		strcpy(filename2, filename);
 		strcat(filename2, ".");
 		file->open(filename2, gameDataPath);
