@@ -119,7 +119,7 @@ int Scumm::checkMouseOver(int x, int y)
 void Scumm::drawVerb(int verb, int mode)
 {
 	VerbSlot *vs;
-	byte tmp;
+	bool tmp;
 
 	if (!verb)
 		return;
