@@ -1900,7 +1900,6 @@ void Scumm::o5_roomOps()
 			}
 			checkRange(256, 0, a, "o5_roomOps: 2: Illegal room color slot (%d)");
 			_currentPalette[a] = b;
-printf("palette change, %d -> %d\n", a, b);
 			_fullRedraw = 1;
 		} else {
 			error("room-color is no longer a valid command");
@@ -1921,7 +1920,6 @@ printf("palette change, %d -> %d\n", a, b);
 				b = getVarOrDirectWord(0x40);
 			}
 			checkRange(256, 0, a, "o5_roomOps: 2: Illegal room color slot (%d)");
-printf("shadow palette change, %d -> %d\n", a, b);
 			_shadowPalette[b] = a;
 			setDirtyColors(b, b);
 		} else {
