@@ -668,9 +668,9 @@ OSystem *GameDetector::createSystem() {
 #endif
 }
 
-Engine *GameDetector::createEngine(OSystem *system) {
+Engine *GameDetector::createEngine(OSystem *sys) {
 	assert(_plugin);
-	return _plugin->createInstance(this, system);
+	return _plugin->createInstance(this, sys);
 }
 
 int GameDetector::getMidiDriverType() {

@@ -409,26 +409,26 @@ void OSystem_SDL_Common::add_dirty_rgn_auto(const byte *buf) {
 }
 
 void OSystem_SDL_Common::kbd_mouse() {
-	uint32 time = get_msecs();
-	if (time >= km.last_time + km.delay_time) {
-		km.last_time = time;
+	uint32 curTime = get_msecs();
+	if (curTime >= km.last_time + km.delay_time) {
+		km.last_time = curTime;
 		if (km.x_down_count == 1) {
-			km.x_down_time = time;
+			km.x_down_time = curTime;
 			km.x_down_count = 2;
 		}
 		if (km.y_down_count == 1) {
-			km.y_down_time = time;
+			km.y_down_time = curTime;
 			km.y_down_count = 2;
 		}
 
 		if (km.x_vel || km.y_vel) {
 			if (km.x_down_count) {
-				if (time > km.x_down_time + km.delay_time * 12) {
+				if (curTime > km.x_down_time + km.delay_time * 12) {
 					if (km.x_vel > 0)
 						km.x_vel++;
 					else
 						km.x_vel--;
-				} else if (time > km.x_down_time + km.delay_time * 8) {
+				} else if (curTime > km.x_down_time + km.delay_time * 8) {
 					if (km.x_vel > 0)
 						km.x_vel = 5;
 					else
@@ -436,12 +436,12 @@ void OSystem_SDL_Common::kbd_mouse() {
 				}
 			}
 			if (km.y_down_count) {
-				if (time > km.y_down_time + km.delay_time * 12) {
+				if (curTime > km.y_down_time + km.delay_time * 12) {
 					if (km.y_vel > 0)
 						km.y_vel++;
 					else
 						km.y_vel--;
-				} else if (time > km.y_down_time + km.delay_time * 8) {
+				} else if (curTime > km.y_down_time + km.delay_time * 8) {
 					if (km.y_vel > 0)
 						km.y_vel = 5;
 					else
