@@ -99,6 +99,12 @@ public:
 	// Add a callback timer
 	void set_timer(int timer, int (*callback)(int));
 
+	// Mutex handling
+	void *create_mutex(void);
+	void lock_mutex(void *mutex);
+	void unlock_mutex(void *mutex);
+	void delete_mutex(void *mutex);
+
 	static OSystem *create(int gfx_mode, bool full_screen);
 
 private:
@@ -1147,6 +1153,23 @@ void OSystem_SDL::setup_icon() {
 	SDL_Surface *sdl_surf = SDL_CreateRGBSurfaceFrom(icon, 32, 32, 32, 32 * 4, 0xFF0000, 0x00FF00, 0x0000FF, 0xFF000000);
 	SDL_WM_SetIcon(sdl_surf, (unsigned char *) mask);
 }
+
+void *OSystem_SDL::create_mutex(void) {
+	return (void *) SDL_CreateMutex();
+}
+
+void OSystem_SDL::lock_mutex(void *mutex) {
+	SDL_mutexP((SDL_mutex *) mutex);
+}
+
+void OSystem_SDL::unlock_mutex(void *mutex) {
+	SDL_mutexV((SDL_mutex *) mutex);
+}
+
+void OSystem_SDL::delete_mutex(void *mutex) {
+	SDL_DestroyMutex((SDL_mutex *) mutex);
+}
+
 
 #ifdef USE_NULL_DRIVER
 

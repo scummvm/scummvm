@@ -116,6 +116,12 @@ public:
 	// Add a callback timer
 	void set_timer(int timer, int (*callback)(int));
 
+	// Mutex handling
+	void *create_mutex(void);
+	void lock_mutex(void *mutex);
+	void unlock_mutex(void *mutex);
+	void delete_mutex(void *mutex);
+
 	static OSystem *create(int gfx_mode, bool full_screen);
 
 private:
@@ -935,4 +941,23 @@ void OSystem_X11::set_timer(int timer, int (*callback)(int)) {
 	} else {
 		_timer_active = false;
 	}
+}
+
+void *OSystem_X11::create_mutex(void) {
+	pthread_mutex_t *mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
+	pthread_mutex_init(mutex, NULL);
+	return (void *) mutex;
+}
+
+void OSystem_X11::lock_mutex(void *mutex) {
+	pthread_mutex_lock((pthread_mutex_t *) mutex);
+}
+
+void OSystem_X11::unlock_mutex(void *mutex) {
+	pthread_mutex_unlock((pthread_mutex_t *) mutex);
+}
+
+void OSystem_X11::delete_mutex(void *mutex) {
+	pthread_mutex_destroy((pthread_mutex_t *) mutex);
+	free(mutex);
 }

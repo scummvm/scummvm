@@ -142,6 +142,12 @@ public:
 	// Add a new callback timer
 	virtual void set_timer(int timer, int (*callback)(int)) = 0;
 
+	// Mutex handling
+	virtual void *create_mutex(void) = 0;
+	virtual void lock_mutex(void *mutex) = 0;
+	virtual void unlock_mutex(void *mutex) = 0;
+	virtual void delete_mutex(void *mutex) = 0;
+
 	// Quit
 	virtual void quit() = 0;
 };
