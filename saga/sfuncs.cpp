@@ -112,7 +112,7 @@ void Script::setupScriptFuncList(void) {
 		{66, 0, NULL},
 		{67, 0, NULL},
 		{68, 0, NULL},
-		{69, 0, NULL},
+		{69, 1, OPCODE(SF_enableEscape)},
 		{70, 1, OPCODE(SF_playSound)},
 		{71, 0, NULL},
 		{72, 0, NULL},
@@ -730,6 +730,12 @@ int Script::SF_playMusic(R_SCRIPTFUNC_PARAMS) {
 	else
 		_vm->_music->stop();
 
+	return R_SUCCESS;
+}
+
+// Script function #69
+int Script::SF_enableEscape(R_SCRIPTFUNC_PARAMS) {
+	thread->pop();
 	return R_SUCCESS;
 }
 

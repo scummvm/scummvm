@@ -154,8 +154,7 @@ namespace Saga {
 #define FX_JAIL_DOOR 54
 #define FX_KILN_FIRE 55
 
-// TODO: These are only in the CD version, and I can't find them in the source
-//       code we got. Someone needs to verify these to get the correct values.
+// These are only in the CD version
 
 #define FX_CROWD_01 56
 #define FX_CROWD_02 57

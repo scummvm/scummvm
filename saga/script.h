@@ -274,6 +274,7 @@ private:
 	int SF_getActorX(R_SCRIPTFUNC_PARAMS);
 	int SF_getActorY(R_SCRIPTFUNC_PARAMS);
 	int SF_playMusic(R_SCRIPTFUNC_PARAMS);
+	int SF_enableEscape(R_SCRIPTFUNC_PARAMS);
 	int SF_playSound(R_SCRIPTFUNC_PARAMS);
 };
 
