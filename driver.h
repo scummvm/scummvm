@@ -32,7 +32,12 @@ class Bitmap;
 class Driver {
 public:
 	Driver() { ; }
-	Driver(int screenW, int screenH, int screenBPP) { ; }
+	Driver(int screenW, int screenH, int screenBPP, bool fullscreen = false) {
+		_screenWidth = screenW;
+		_screenHeight = screenH;
+		_screenBPP = screenBPP;
+		_isFullscreen = fullscreen;
+	}
 
 	struct TextObjectHandle {
 		uint16 *bitmapData;
@@ -42,6 +47,8 @@ public:
 		int width;
 		int height;
 	};
+
+	virtual void toggleFullscreenMode() = 0;
 
 	virtual void setupCamera(float fov, float nclip, float fclip, float roll) = 0;
 	virtual void positionCamera(Vector3d pos, Vector3d interest) = 0;
@@ -78,6 +85,10 @@ public:
 
 	virtual void prepareSmushFrame(int width, int height, byte *bitmap) = 0;
 	virtual void drawSmushFrame(int offsetX, int offsetY) = 0;
+
+protected:
+	int _screenWidth, _screenHeight, _screenBPP;
+	bool _isFullscreen;
 };
 
 extern Driver *g_driver;

@@ -93,10 +93,17 @@ static void lookAt(TGLfloat eyex, TGLfloat eyey, TGLfloat eyez, TGLfloat centerx
 	tglTranslatef(-eyex, -eyey, -eyez);
 }
 
-DriverTinyGL::DriverTinyGL(int screenW, int screenH, int screenBPP) {
-	_screen = SDL_SetVideoMode(screenW, screenH, screenBPP, SDL_HWSURFACE);
+DriverTinyGL::DriverTinyGL(int screenW, int screenH, int screenBPP, bool fullscreen) {
+	Uint32 flags = SDL_HWSURFACE;
+	if (fullscreen)
+		flags |= SDL_FULLSCREEN;
+	_screen = SDL_SetVideoMode(screenW, screenH, screenBPP, flags);
 	if (_screen == NULL)
 		error("Could not initialize video");
+	_screenWidth = screenW;
+	_screenHeight = screenH;
+	_screenBPP = screenBPP;
+	_isFullscreen = fullscreen;
 
 	SDL_WM_SetCaption("Residual: Modified TinyGL - Software Renderer", "Residual");
 
@@ -114,6 +121,17 @@ DriverTinyGL::~DriverTinyGL() {
 	SDL_FreeSurface(_zbufferSurface);
 	tglClose();
 	ZB_close(_zb);
+}
+
+void DriverTinyGL::toggleFullscreenMode() {
+	Uint32 flags = SDL_HWSURFACE;
+
+	if (! _isFullscreen)
+		flags |= SDL_FULLSCREEN;
+	if (SDL_SetVideoMode(_screenWidth, _screenHeight, _screenBPP, flags) == 0)
+		warning("Could not change fullscreen mode");
+	else
+		_isFullscreen = ! _isFullscreen;
 }
 
 void DriverTinyGL::setupCamera(float fov, float nclip, float fclip, float roll) {

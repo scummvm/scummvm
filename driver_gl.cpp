@@ -20,7 +20,8 @@
 #include "material.h"
 #include "driver_gl.h"
 
-DriverGL::DriverGL(int screenW, int screenH, int screenBPP) {
+// Constructor. Should create the driver and open screens, etc.
+DriverGL::DriverGL(int screenW, int screenH, int screenBPP, bool fullscreen) {
 	char GLDriver[1024];
 
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
@@ -29,8 +30,15 @@ DriverGL::DriverGL(int screenW, int screenH, int screenBPP) {
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-	if (SDL_SetVideoMode(screenW, screenH, screenBPP, SDL_OPENGL) == 0)
+	Uint32 flags = SDL_OPENGL;
+	if (fullscreen)
+		flags |= SDL_FULLSCREEN;
+	if (SDL_SetVideoMode(screenW, screenH, screenBPP, flags) == 0)
 		error("Could not initialize video");
+	_screenWidth = screenW;
+	_screenHeight = screenH;
+	_screenBPP = screenBPP;
+	_isFullscreen = fullscreen;
 
 	sprintf(GLDriver, "Residual: %s/%s", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
 	SDL_WM_SetCaption(GLDriver, "Residual");
@@ -39,6 +47,17 @@ DriverGL::DriverGL(int screenW, int screenH, int screenBPP) {
 	loadEmergFont();
 
 	_smushNumTex = 0;
+}
+
+void DriverGL::toggleFullscreenMode() {
+	Uint32 flags = SDL_OPENGL;
+
+	if (! _isFullscreen)
+		flags |= SDL_FULLSCREEN;
+	if (SDL_SetVideoMode(_screenWidth, _screenHeight, _screenBPP, flags) == 0)
+		warning("Could not change fullscreen mode");
+	else
+		_isFullscreen = ! _isFullscreen;
 }
 
 void DriverGL::setupCamera(float fov, float nclip, float fclip, float roll) {
@@ -289,7 +308,7 @@ void DriverGL::drawBitmap(const Bitmap *bitmap) {
 	GLuint *textures;
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0, 640, 480, 0, 0, 1);
+	glOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glMatrixMode(GL_TEXTURE);
@@ -307,7 +326,7 @@ void DriverGL::drawBitmap(const Bitmap *bitmap) {
 		glDisable(GL_DEPTH_TEST);
 		glDepthMask(GL_FALSE);
 		glEnable(GL_SCISSOR_TEST);
-		glScissor(bitmap->_x, 480 - (bitmap->_y + bitmap->_height), bitmap->_width, bitmap->_height);
+		glScissor(bitmap->_x, _screenHeight - (bitmap->_y + bitmap->_height), bitmap->_width, bitmap->_height);
 		int cur_tex_idx = bitmap->_numTex * (bitmap->_currImage - 1);
 		for (int y = bitmap->_y; y < (bitmap->_y + bitmap->_height); y += BITMAP_TEXTURE_SIZE) {
 			for (int x = bitmap->_x; x < (bitmap->_x + bitmap->_width); x += BITMAP_TEXTURE_SIZE) {
@@ -403,7 +422,7 @@ void DriverGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 	//	}
 
 	if (y + h == 480) {
-		glRasterPos2i(x, 479);
+		glRasterPos2i(x, _screenHeight - 1);
 		glBitmap(0, 0, 0, 0, 0, -1, NULL);
 	} else
 		glRasterPos2i(x, y + h);
@@ -465,7 +484,7 @@ void DriverGL::drawSmushFrame(int offsetX, int offsetY) {
 	// prepare view
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0, 640, 480, 0, 0, 1);
+	glOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glMatrixMode(GL_TEXTURE);
@@ -481,7 +500,7 @@ void DriverGL::drawSmushFrame(int offsetX, int offsetY) {
 	glDepthMask(GL_FALSE);
 	glEnable(GL_SCISSOR_TEST);
 
-	glScissor(offsetX, 480 - (offsetY + _smushHeight), _smushWidth, _smushHeight);
+	glScissor(offsetX, _screenHeight - (offsetY + _smushHeight), _smushWidth, _smushHeight);
 
 	int curTexIdx = 0;
 	for (int y = 0; y < _smushHeight; y += BITMAP_TEXTURE_SIZE) {
@@ -523,7 +542,7 @@ void DriverGL::drawEmergString(int x, int y, const char *text, const Color &fgCo
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
-	glOrtho(0, 640, 480, 0, 0, 1);
+	glOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();

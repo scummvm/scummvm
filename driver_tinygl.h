@@ -33,12 +33,13 @@
 
 class DriverTinyGL : public Driver {
 public:
-	DriverTinyGL(int screenW, int screenH, int screenBPP);
+	DriverTinyGL(int screenW, int screenH, int screenBPP, bool fullscreen = false);
 	virtual ~DriverTinyGL();
 
 	void setupCamera(float fov, float nclip, float fclip, float roll);
 	void positionCamera(Vector3d pos, Vector3d interest);
 
+	void toggleFullscreenMode();
 	void clearScreen(); 
 	void flipBuffer();
 

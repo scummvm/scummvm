@@ -89,6 +89,7 @@ int main(int argc, char *argv[]) {
 	ZBUFFER_GLOBAL = parseBoolStr(g_registry->get("zbuffer"));
 	SHOWFPS_GLOBAL = parseBoolStr(g_registry->get("fps"));
 	TINYGL_GLOBAL = parseBoolStr(g_registry->get("soft"));
+	bool fullscreen = parseBoolStr(g_registry->get("fullscreen"));
 	for (i = 1; i < argc; i++) {
 		if (strcmp(argv[i], "-zbuffer") == 0)
 			ZBUFFER_GLOBAL = true;
@@ -98,6 +99,10 @@ int main(int argc, char *argv[]) {
 			SHOWFPS_GLOBAL = true;
 		else if (strcmp(argv[i], "-nofps") == 0)
 			SHOWFPS_GLOBAL = false;
+		else if (strcmp(argv[i], "-fullscreen") == 0)
+			fullscreen = true;
+		else if (strcmp(argv[i], "-nofullscreen") == 0)
+			fullscreen = false;
 		else if (strcmp(argv[i], "-soft") == 0)
 			TINYGL_GLOBAL = true;
 		else if (strcmp(argv[i], "-nosoft") == 0)
@@ -108,6 +113,7 @@ int main(int argc, char *argv[]) {
 			printf("Recognised options:\n");
 			printf("\t-[no]zbuffer\t\tEnable/disable ZBuffers (Very slow on older cards)\n");
 			printf("\t-[no]fps\t\tEnable/disable fps display in upper right corner\n");
+			printf("\t-[no]fullscreen\tEnable/disable fullscreen mode at startup\n");
 			printf("\t-[no]soft\t\tEnable/disable software renderer\n");
 			exit(-1);
 		}
@@ -126,9 +132,9 @@ int main(int argc, char *argv[]) {
 	g_timer = new Timer();
 	g_smush = new Smush();
 	if (TINYGL_GLOBAL)
-		g_driver = new DriverTinyGL(640, 480, 16);
+		g_driver = new DriverTinyGL(640, 480, 16, fullscreen);
 	else
-		g_driver = new DriverGL(640, 480, 24);
+		g_driver = new DriverGL(640, 480, 24, fullscreen);
 	g_imuse = new Imuse(20);
 
 	Bitmap *splash_bm = g_resourceloader->loadBitmap("splash.bm");

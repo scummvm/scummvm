@@ -31,10 +31,12 @@
 
 class DriverGL : public Driver {
 public:
-	DriverGL(int screenW, int screenH, int screenBPP);
+	DriverGL(int screenW, int screenH, int screenBPP, bool fullscreen = false);
 
 	void setupCamera(float fov, float nclip, float fclip, float roll);
 	void positionCamera(Vector3d pos, Vector3d interest);
+
+	void toggleFullscreenMode();
 
 	void clearScreen(); 
 	void flipBuffer();

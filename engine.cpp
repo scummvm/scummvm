@@ -131,6 +131,10 @@ void Engine::mainLoop() {
 				lua_endblock();
 			}
 			if (event.type == SDL_KEYDOWN) {
+				if ((event.key.keysym.sym == SDLK_RETURN ||
+				     event.key.keysym.sym == SDLK_KP_ENTER) &&
+				    (event.key.keysym.mod & KMOD_ALT))
+					g_driver->toggleFullscreenMode();
 				if (event.key.keysym.sym == SDLK_q)
 					return;
 			}
