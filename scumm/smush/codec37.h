@@ -22,35 +22,7 @@
 #ifndef CODEC37_H
 #define CODEC37_H
 
-#include "config.h"
-
-#ifdef DEBUG
-# ifndef NO_DEBUG_CODEC37
-#  define DEBUG_CODEC37
-# endif
-#else
-# ifdef DEBUG_CODEC37
-#  error DEBUG_CODEC37 defined without DEBUG
-# endif
-#endif
-
-#ifdef DEBUG_CODEC37
-# ifndef NO_DEBUG_CODEC37_PROCS
-#  define DEBUG_CODEC37_PROC1
-#  define DEBUG_CODEC37_PROC2
-#  define DEBUG_CODEC37_PROC3
-#  define DEBUG_CODEC37_PROC4
-# endif
-#endif
-
 #include "decoder.h"
-
-/*!	@brief ::decoder for codec 37.
-
-*/
-
-#define DELTA_ADD 0x3E00	// what is this 0x3E00 ?? == 320*200/4 - 128
-				// It looks like it is a safe-guarding protection from bugs., but maybe not...
 
 class Codec37Decoder : public Decoder {
 private:
@@ -69,17 +41,12 @@ public:
 	void clean();
 	virtual ~Codec37Decoder();
 protected:
-	static inline uint32 expand(byte b) {
-		uint32 r = b | (b << 8);
-		return r | (r << 16);
-	}
 	void maketable(int32, int32);
-	void proc1(Blitter &, Chunk &, int32, int32, int32, int32);
-	void proc2(Blitter &, Chunk &, int32);
-	void proc3WithFDFE(Blitter &, Chunk &, int32, int32, int32);
-	void proc3WithoutFDFE(Blitter &, Chunk &, int32, int32, int32);
-	void proc4WithFDFE(Blitter &, Chunk &, int32, int32, int32);
-	void proc4WithoutFDFE(Blitter &, Chunk &, int32, int32, int32);
+	void bompDecode(byte *dst, byte *src, int32 len);
+	void proc3WithFDFE(byte *, byte *, int32, int32, int32, int32, int16 *);
+	void proc3WithoutFDFE(byte *, byte *, int32, int32, int32, int32, int16 *);
+	void proc4WithFDFE(byte *, byte *, int32, int32, int32, int32, int16 *);
+	void proc4WithoutFDFE(byte *, byte *, int32, int32, int32, int32, int16 *);
 public:
 	bool decode(Blitter &, Chunk &);
 };
