@@ -26,8 +26,6 @@
 #include "common/scummsys.h"
 #include "common/util.h"
 
-class File;
-
 
 /**
  * Generic input stream for the resampling code.
