@@ -64,8 +64,8 @@ Actor::Actor() {
 	memset(&cost, 0, sizeof(CostumeData));
 	memset(&walkdata, 0, sizeof(ActorWalkData));
 	walkdata.point3.x = 32000;
-
 	walkScript = 0;
+	memset(talkQueue, 0, sizeof(talkQueue));
 
 	initActor(1);
 }

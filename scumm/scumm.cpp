@@ -701,8 +701,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	memset(_akosQueue, 0, sizeof(_akosQueue));
 	_akosQueuePos = 0;
 
-	memset(_talkQueue, 0, sizeof(_talkQueue));
-
 	//
 	// Init all VARS to 0xFF
 	//

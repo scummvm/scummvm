@@ -126,6 +126,14 @@ public:
 	uint32 condMask;
 	bool talkUnk;
 	AuxBlock auxBlock;
+
+	struct {
+		int16 posX;
+		int16 posY;
+		int16 color;
+		byte sentence[128];
+	} talkQueue[16];
+
 protected:
 	byte palette[256];
 	int elevation;

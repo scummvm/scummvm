@@ -1675,12 +1675,12 @@ void ScummEngine::akos_processQueue() {
 			if (_heversion >= 71) {
 				_actorToPrintStrFor = a->number;
 
-				a->talkPosX = _talkQueue[param_1].posX;
-				a->talkPosY = _talkQueue[param_1].posY;
-				a->talkColor = _talkQueue[param_1].color;
+				a->talkPosX = a->talkQueue[param_1].posX;
+				a->talkPosY = a->talkQueue[param_1].posY;
+				a->talkColor = a->talkQueue[param_1].color;
 
 				_string[0].loadDefault();
-				actorTalk(_talkQueue[param_1].sentence);
+				actorTalk(a->talkQueue[param_1].sentence);
 
 			} else if (param_1 != 0) {
 				if (_imuseDigital) {

@@ -879,13 +879,6 @@ public:
 	} _akosQueue[32];
 	int16 _akosQueuePos;
 
-	struct {
-		int16 posX;
-		int16 posY;
-		int16 color;
-		byte sentence[128];
-	} _talkQueue[16];
-
 	Common::Rect _actorClipOverride;
 
 	bool akos_increaseAnims(const byte *akos, Actor *a);
