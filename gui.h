@@ -54,7 +54,7 @@ protected:
 	VirtScreen *_vs;
 	bool _old_cursor_mode;
 	int _parentX, _parentY;
-	byte _active;
+	bool _active;
 	byte _clickTimer;
 	byte _cur_page;
 	byte _dialog;
