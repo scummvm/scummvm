@@ -293,8 +293,7 @@ SCUMM
   - Fix inventory flashing at times
   - Add support for PCM music
   - Add variables for _heversion > 70
-  - Add support for cursor resources / opcodes
-
+  
 Broken Sword 1 & 2
 ==================
 * Currently BS1 & BS2 duplicate some code for MPEG2 playback. It would seem

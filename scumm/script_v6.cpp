@@ -935,7 +935,7 @@ void ScummEngine_v6::o6_cursorCommand() {
 	case 0x99: 		// SO_CURSOR_IMAGE Set cursor image
 		{
 			if (_heversion >= 70) { // Windows titles
-				_Win32ResExtractor->extractCursor(pop());
+				_Win32ResExtractor->setCursor(pop());
 				break;
 			}
 			int room, obj = popRoomAndObj(&room);

@@ -53,19 +53,24 @@ Win32ResExtractor::Win32ResExtractor(ScummEngine *scumm) {
 	snprintf(_fileName, 256, "%s.he3", _vm->getGameName());
 }
 
-byte *Win32ResExtractor::extractCursor(int id) {
+void Win32ResExtractor::setCursor(int id) {
 	char buf[20];
-	byte *cursor = 0;
+	byte *cursorRes = 0, *cursor = 0;
 	int cursorsize;
+	int w = 0, h = 0, hotspot_x = 0, hotspot_y = 0, keycolor = 0;
 
 	snprintf(buf, 20, "%d", id);
 
-	cursorsize = extractResource("group_cursor", buf, cursor);
+	cursorsize = extractResource("group_cursor", buf, &cursorRes);
 
-	return 0;
+	convertIcons(cursorRes, cursorsize, &cursor, &w, &h, &hotspot_x, &hotspot_y,
+				 &keycolor);
+
+	_vm->setCursorHotspot(hotspot_x, hotspot_y);
+	_vm->grabCursorFromBuffer(cursor, w, h);
 }
 
-int Win32ResExtractor::extractResource(const char *resType, char *resName, byte *data) {
+int Win32ResExtractor::extractResource(const char *resType, char *resName, byte **data) {
 	char *arg_language = NULL;
 	const char *arg_type = resType;
 	char *arg_name = resName;
@@ -91,7 +96,7 @@ int Win32ResExtractor::extractResource(const char *resType, char *resName, byte 
 
 	fi.total_size = fi.file->size();
 	if (fi.total_size == -1) {
-		error("Cannot get size of file %s", fi.file->name());
+		warning("Cannot get size of file %s", fi.file->name());
 		goto cleanup;
 	}
 	if (fi.total_size == 0) {
@@ -114,10 +119,6 @@ int Win32ResExtractor::extractResource(const char *resType, char *resName, byte 
 
 	//	verbose_printf("file is a %s\n",
 	//		fi.is_PE_binary ? "Windows NT `PE' binary" : "Windows 3.1 `NE' binary");
-
-	/* warn about more unnecessary options */
-	if (!fi.is_PE_binary && arg_language != NULL)
-		warning("%s: --language has no effect because file is 16-bit binary", fi.file->name());
 
 	/* errors will be printed by the callback */
 	ressize = do_resources(&fi, arg_type, arg_name, arg_language, arg_action, data);
@@ -170,18 +171,18 @@ const char *Win32ResExtractor::res_type_string_to_id(const char *type) {
 
 int Win32ResExtractor::extract_resources(WinLibrary *fi, WinResource *wr,
                             WinResource *type_wr, WinResource *name_wr,
-							WinResource *lang_wr, byte *data) {
+							WinResource *lang_wr, byte **data) {
 	int size;
 	bool free_it;
 	const char *type;
 	int32 id;
 
-	if (data) {
+	if (*data) {
 		error("Win32ResExtractor::extract_resources() more than one cursor");
 		return 0;
 	}
 
-	data = extract_resource(fi, wr, &size, &free_it, type_wr->id, (lang_wr == NULL ? NULL : lang_wr->id), _arg_raw);
+	*data = extract_resource(fi, wr, &size, &free_it, type_wr->id, (lang_wr == NULL ? NULL : lang_wr->id), _arg_raw);
 
 	if (data == NULL) {
 		warning("Win32ResExtractor::extract_resources() problem with resource extraction");
@@ -193,7 +194,7 @@ int Win32ResExtractor::extract_resources(WinLibrary *fi, WinResource *wr,
 	if ((id = strtol(type_wr->id, 0, 10)) != 0)
 		type = res_type_id_to_string(id);
 
-	warning("extractCursor(). Found cursor name: %s%s%s [size=%d]",
+	debugC(DEBUG_RESOURCE, "extractCursor(). Found cursor name: %s%s%s [size=%d]",
 	  get_resource_id_quoted(name_wr),
 	  (lang_wr->id[0] != '\0' ? " language: " : ""),
 	  get_resource_id_quoted(lang_wr), size);
@@ -287,12 +288,12 @@ byte *Win32ResExtractor::extract_group_icon_cursor_resource(WinLibrary *fi, WinR
 
 		if (get_resource_entry(fi, fwr, &iconsize) != NULL) {
 		    if (iconsize == 0) {
-				warning("%s: icon resource `%s' is empty, skipping", fi->file->name(), name);
+				debugC(DEBUG_RESOURCE, "%s: icon resource `%s' is empty, skipping", fi->file->name(), name);
 				skipped++;
 				continue;
 		    }
 		    if ((uint32)iconsize != icondir->entries[c].bytes_in_res) {
-				warning("%s: mismatch of size in icon resource `%s' and group (%d != %d)", 
+				debugC(DEBUG_RESOURCE, "%s: mismatch of size in icon resource `%s' and group (%d != %d)", 
 					fi->file->name(), name, iconsize, 1, icondir->entries[c].bytes_in_res);
 		    }
 		    size += iconsize; /* size += icondir->entries[c].bytes_in_res; */
@@ -400,7 +401,7 @@ bool Win32ResExtractor::check_offset(byte *memory, int total_size, const char *n
 /* do_resources:
  *   Do something for each resource matching type, name and lang.
  */
-int Win32ResExtractor::do_resources(WinLibrary *fi, const char *type, char *name, char *lang, int action, byte *data) {
+int Win32ResExtractor::do_resources(WinLibrary *fi, const char *type, char *name, char *lang, int action, byte **data) {
 	WinResource *type_wr;
 	WinResource *name_wr;
 	WinResource *lang_wr;
@@ -425,7 +426,7 @@ int Win32ResExtractor::do_resources(WinLibrary *fi, const char *type, char *name
 
 int Win32ResExtractor::do_resources_recurs(WinLibrary *fi, WinResource *base, 
 		  WinResource *type_wr, WinResource *name_wr, WinResource *lang_wr,
-		  const char *type, char *name, char *lang, int action, byte *data) {
+		  const char *type, char *name, char *lang, int action, byte **data) {
 	int c, rescnt;
 	WinResource *wr;
 	uint32 size = 0;
@@ -852,7 +853,8 @@ Win32ResExtractor::WinResource *Win32ResExtractor::find_resource(WinLibrary *fi,
 #define ROW_BYTES(bits) ((((bits) + 31) >> 5) << 2)
 
 
-int Win32ResExtractor::convertIcons(byte *data, int datasize) {
+int Win32ResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int *w, int *h,
+							int *hotspot_x, int *hotspot_y, int *keycolor) {
 	Win32CursorIconFileDir dir;
 	Win32CursorIconFileDirEntry *entries = NULL;
 	uint32 offset;
@@ -861,7 +863,7 @@ int Win32ResExtractor::convertIcons(byte *data, int datasize) {
 	int matched = 0;
 	MemoryReadStream *in = new MemoryReadStream(data, datasize);
 
-	if (!in->read(&dir, sizeof(Win32CursorIconFileDir)))
+	if (!in->read(&dir, sizeof(Win32CursorIconFileDir)- sizeof(Win32CursorIconFileDirEntry)))
 		goto cleanup;
 	fix_win32_cursor_icon_file_dir_endian(&dir);
 
@@ -876,16 +878,17 @@ int Win32ResExtractor::convertIcons(byte *data, int datasize) {
 
 	entries = (Win32CursorIconFileDirEntry *)malloc(dir.count * sizeof(Win32CursorIconFileDirEntry));
 	for (c = 0; c < dir.count; c++) {
-		if (in->read(&entries[c], sizeof(Win32CursorIconFileDirEntry)))
+		if (!in->read(&entries[c], sizeof(Win32CursorIconFileDirEntry)))
 			goto cleanup;
 		fix_win32_cursor_icon_file_dir_entry_endian(&entries[c]);
 		if (entries[c].reserved != 0)
 			warning("reserved is not zero");
 	}
-	offset = sizeof(Win32CursorIconFileDir) + dir.count * sizeof(Win32CursorIconFileDirEntry);
+
+	offset = sizeof(Win32CursorIconFileDir) + (dir.count - 1) * (sizeof(Win32CursorIconFileDirEntry));
 
 	for (completed = 0; completed < dir.count; ) {
-		uint32 min_offset = (uint32)-1;
+		uint32 min_offset = 0x7fffffff;
 		int previous = completed;
 
 		for (c = 0; c < dir.count; c++) {
@@ -898,7 +901,7 @@ int Win32ResExtractor::convertIcons(byte *data, int datasize) {
 				byte *image_data = NULL, *mask_data = NULL;
 				byte *row = NULL;
 
-				if (in->read(&bitmap, sizeof(Win32BitmapInfoHeader)))
+				if (!in->read(&bitmap, sizeof(Win32BitmapInfoHeader)))
 					goto local_cleanup;
 
 				fix_win32_bitmap_info_header_endian(&bitmap);
@@ -921,7 +924,7 @@ int Win32ResExtractor::convertIcons(byte *data, int datasize) {
 				if (bitmap.size != sizeof(Win32BitmapInfoHeader)) {
 					uint32 skip = bitmap.size - sizeof(Win32BitmapInfoHeader);
 					warning("skipping %d bytes of extended bitmap header", skip);
-					in->seek(skip);
+					in->seek(skip, SEEK_CUR);
 				}
 				offset += bitmap.size;
 
@@ -940,7 +943,7 @@ int Win32ResExtractor::convertIcons(byte *data, int datasize) {
 				mask_size = height * ROW_BYTES(width);
 
 				if (entries[c].dib_size	!= bitmap.size + image_size + mask_size + palette_count * sizeof(Win32RGBQuad))
-					warning("incorrect total size of bitmap (%d specified; %d real)",
+					debugC(DEBUG_RESOURCE, "incorrect total size of bitmap (%d specified; %d real)",
 					    entries[c].dib_size,
 					    bitmap.size + image_size + mask_size + palette_count * sizeof(Win32RGBQuad)
 					);
@@ -958,16 +961,33 @@ int Win32ResExtractor::convertIcons(byte *data, int datasize) {
 				completed++;
 				matched++;
 
+				*hotspot_x = entries[c].hotspot_x;
+				*hotspot_y = entries[c].hotspot_y;
+				*w = width;
+				*h = height;
+				*keycolor = 0;
+				*cursor = (byte *)malloc(width * height);
+
 				row = (byte *)malloc(width * 4);
 
 				for (d = 0; d < height; d++) {
 					uint32 x;
 					uint32 y = (bitmap.height < 0 ? d : height - d - 1);
 					uint32 imod = y * (image_size / height) * 8 / bitmap.bit_count;
-					uint32 mmod = y * (mask_size / height) * 8;
+					//uint32 mmod = y * (mask_size / height) * 8;
 
 					for (x = 0; x < width; x++) {
+
 						uint32 color = simple_vec(image_data, x + imod, bitmap.bit_count);
+
+						// FIXME?: This works only with b/w cursors and white index may be
+						// different. But now it's enough.
+						if (color) {
+							cursor[0][width * d + x] = 15; // white in SCUMM
+						} else {
+							cursor[0][width * d + x] = 255; // transparent
+						}
+						/*
 
 						if (bitmap.bit_count <= 16) {
 							if (color >= palette_count) {
@@ -977,6 +997,7 @@ int Win32ResExtractor::convertIcons(byte *data, int datasize) {
 							row[4*x+0] = palette[color].red;
 							row[4*x+1] = palette[color].green;
 							row[4*x+2] = palette[color].blue;
+
 						} else {
 							row[4*x+0] = (color >> 16) & 0xFF;
 							row[4*x+1] = (color >>  8) & 0xFF;
@@ -986,11 +1007,10 @@ int Win32ResExtractor::convertIcons(byte *data, int datasize) {
 						    row[4*x+3] = (color >> 24) & 0xFF;
 						else
 						    row[4*x+3] = simple_vec(mask_data, x + mmod, 1) ? 0 : 0xFF;
+						*/
 					}
 
-					//png_write_row(png_ptr, row);
 				}
-
 
 				if (row != NULL)
 					free(row);
@@ -1024,8 +1044,8 @@ int Win32ResExtractor::convertIcons(byte *data, int datasize) {
 				warning("offset of bitmap header incorrect (too low)");
 				goto cleanup;
 			}
-			warning("skipping %d bytes of garbage at %d", min_offset-offset, offset);
-			in->seek(min_offset - offset);
+			debugC(DEBUG_RESOURCE, "skipping %d bytes of garbage at %d", min_offset-offset, offset);
+			in->seek(min_offset - offset, SEEK_CUR);
 			offset = min_offset;
 		}
 	}

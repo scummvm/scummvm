@@ -118,9 +118,10 @@ class Win32ResExtractor {
  public:
 	Win32ResExtractor(ScummEngine *scumm);
 	~Win32ResExtractor();
-	int extractResource(const char *resType, char *resName, byte *data);
-	byte *extractCursor(int id);
-	int convertIcons(byte *data, int datasize);
+	int extractResource(const char *resType, char *resName, byte **data);
+	void setCursor(int id);
+	int convertIcons(byte *data, int datasize, byte **cursor, int *w, int *h,
+					 int *hotspot_x, int *hotspot_y, int *keycolor);
 
  private:
 	bool _arg_raw;
@@ -426,7 +427,7 @@ class Win32ResExtractor {
 	bool read_library(WinLibrary *);
 	WinResource *find_resource(WinLibrary *, const char *, const char *, const char *, int *);
 	byte *get_resource_entry(WinLibrary *, WinResource *, int *);
-	int do_resources(WinLibrary *, const char *, char *, char *, int, byte *);
+	int do_resources(WinLibrary *, const char *, char *, char *, int, byte **);
 	bool compare_resource_id(WinResource *, const char *);
 	const char *res_type_string_to_id(const char *);
 
@@ -434,7 +435,7 @@ class Win32ResExtractor {
 	char *get_destination_name(WinLibrary *, char *, char *, char *);
 
 	byte *extract_resource(WinLibrary *, WinResource *, int *, bool *, char *, char *, bool);
-	int extract_resources(WinLibrary *, WinResource *, WinResource *, WinResource *, WinResource *, byte *);
+	int extract_resources(WinLibrary *, WinResource *, WinResource *, WinResource *, WinResource *, byte **);
 	byte *extract_group_icon_cursor_resource(WinLibrary *, WinResource *, char *, int *, bool);
 
 	bool decode_pe_resource_id(WinLibrary *, WinResource *, uint32);
@@ -443,7 +444,7 @@ class Win32ResExtractor {
 	WinResource *list_ne_name_resources(WinLibrary *, WinResource *, int *);
 	WinResource *list_pe_resources(WinLibrary *, Win32ImageResourceDirectory *, int, int *);
 	int calc_vma_size(WinLibrary *);
-	int do_resources_recurs(WinLibrary *, WinResource *, WinResource *, WinResource *, WinResource *, const char *, char *, char *, int, byte *);
+	int do_resources_recurs(WinLibrary *, WinResource *, WinResource *, WinResource *, WinResource *, const char *, char *, char *, int, byte **);
 	char *get_resource_id_quoted(WinResource *);
 	WinResource *find_with_resource_array(WinLibrary *, WinResource *, const char *);
 
