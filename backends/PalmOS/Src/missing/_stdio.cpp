@@ -173,7 +173,6 @@ FileRef *fopen(const Char *filename, const Char *type) {
 	} else {
 		// if write file :
 		// use only the specified card
-		// FIXME : vfsModeCreate|vfsModeWrite will failed on OS3.5 Clié
 		err = VFSFileDelete(gVars->volRefNum, filename);	// delete it if exists
 		err = VFSFileCreate(gVars->volRefNum, filename);
 		openMode = vfsModeWrite;
