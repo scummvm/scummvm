@@ -606,7 +606,7 @@ void Actor::putActor(int dstX, int dstY, byte newRoom) {
 			}
 			adjustActorPos();
 		} else {
-			if (_vm->_heversion >= 72) {
+			if (_vm->_heversion >= 71) {
 				if (auxBlock.visible) {
 					_vm->queueAuxBlock(this);
 					auxBlock.visible = false;
@@ -1366,7 +1366,7 @@ void Actor::setActorCostume(int c) {
 		memset(animVariable, 0, sizeof(animVariable));
 		costume = c;
 		
-		if (_vm->_heversion >= 72) {
+		if (_vm->_heversion >= 71) {
 			if (auxBlock.visible) {
 				_vm->queueAuxBlock(this);
 			}

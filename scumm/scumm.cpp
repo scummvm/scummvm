@@ -1824,7 +1824,7 @@ load_game:
 			drawFlashlight();
 			setActorRedrawFlags();
 		}
-		if (_heversion >= 72) {
+		if (_heversion >= 71) {
 			preProcessAuxQueue();
 			processActors();
 			postProcessAuxQueue();

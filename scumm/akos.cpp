@@ -1674,7 +1674,7 @@ void ScummEngine::akos_processQueue() {
 			a->offs_y = param_2;
 			break;
 		case 7:
-			if (_heversion >= 72) {
+			if (_heversion >= 71) {
 				queueAuxEntry(a->number, param_1);
 			} else if (param_1 != 0) {
 				if (_imuseDigital) {
