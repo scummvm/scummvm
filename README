@@ -687,16 +687,19 @@ best compatibility between machines and games.
 7.2) Playing sound with MT-32 emulation:
 ---- -----------------------------------
 Some games which contain MIDI music data also have improved tracks designed
-for MT-32 sound module. ScummVM can now emulate this card, however you should
-provide original MT-32 ROMs to make it work. Put the roms in game directory or
-directory specified by extrapath.
+for the MT-32 sound module. ScummVM can now emulate this device, however you
+must provide original MT-32 ROMs to make it work:
+
+MT32_PCM.ROM     - IC21 (512KB)
+MT32_CONTROL.ROM - IC26 (16KB) and IC27 (16KB), interleaved byte-wise
+
+Place these ROMs in the game directory or a directory specified by extrapath.
 
 You don't need to specify --native-mt32 with this driver, as it automatically
 gets turned on.
 
-NOTE: You need to have enough processor power to use this emulator as it uses
-heavy floating-point computations.
-
+NOTE: The processor requirements for the emulator are quite high; a fast CPU is
+strongly recommended.
 
 7.3) Playing sound with MIDI emulation:
 ---- ----------------------------------
