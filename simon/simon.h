@@ -583,13 +583,13 @@ protected:
 	void ensureVgaResLoadedC(uint vga_res);
 	void ensureVgaResLoaded(uint vga_res);
 
-	void start_vga_code(uint b, uint vga_res, uint vga_struct_id, uint x, uint y, uint base_color);
+	void start_vga_code(uint b, uint vga_res, uint vga_sprite_id, uint x, uint y, uint base_color);
 	void o_unk26_helper(uint a, uint b, uint c, uint d, uint e, uint f, uint g, uint h);
-	void talk_with_speech(uint speech_id, uint vga_struct_id);
-	void talk_with_text(uint vga_struct_id, uint color, const char *string_ptr, uint threeval_a, int threeval_b, uint width);
+	void talk_with_speech(uint speech_id, uint vga_sprite_id);
+	void talk_with_text(uint vga_sprite_id, uint color, const char *string_ptr, uint threeval_a, int threeval_b, uint width);
 	FillOrCopyStruct *fcs_alloc(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint unk4);
 
-	void render_string(uint vga_struct_id, uint color, uint width, uint height, const char *txt);
+	void render_string(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
 
 	void setup_hit_areas(FillOrCopyStruct *fcs, uint fcs_index);
 
