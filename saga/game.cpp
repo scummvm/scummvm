@@ -40,6 +40,8 @@
 
 namespace Saga {
 
+static int detectGame(const FSList &fslist, bool mode = false);
+
 // Inherit the Earth - DOS Demo version
 
 static GAME_FILEDESC ITEDEMO_GameFiles[] = {
@@ -267,8 +269,6 @@ static GAME_MD5 game_md5[] = {
 	{ GID_ITE_MACDEMO1, "b3a831fbed337d1f1300fee1dd474f6c", "soundsd.rsc" },
 	{ GID_ITE_MACDEMO1, "e139d86bab2ee8ba3157337f894a92d4", "voicesd.rsc" },
 };
-
-static bool gameMD5check(int descNum);
 
 static GAMEDESC GameDescs[] = {
 	// Inherit the earth - DOS Demo version
@@ -528,10 +528,11 @@ static GAMEDESC GameDescs[] = {
 
 static GAMEMODULE GameModule;
 
-int SagaEngine::initGame() {
-	uint16 game_n;
+int SagaEngine::initGame(void) {
+	int game_n;
+	FSList dummy;
 
-	if (detectGame(&game_n) != SUCCESS) {
+	if ((game_n = detectGame(dummy)) == -1) {
 		warning("No valid games were found in the specified directory.");
 		return FAILURE;
 	}
@@ -547,7 +548,7 @@ int SagaEngine::initGame() {
 	return SUCCESS;
 }
 
-int SagaEngine::loadLanguage() {
+int SagaEngine::loadLanguage(void) {
 	char lang_file[MAXPATH];
 	uint16 game_n;
 
@@ -597,12 +598,19 @@ RSCFILE_CONTEXT *SagaEngine::getFileContext(uint16 type, int param) {
 	return found_ctxt;
 }
 
-
-
 DetectedGameList GAME_ProbeGame(const FSList &fslist) {
-	uint16 game_count = ARRAYSIZE(GameDescs);
-	uint16 game_n;
 	DetectedGameList detectedGames;
+	int game_n;
+
+	if ((game_n = detectGame(fslist, true)) != -1)
+		detectedGames.push_back(GameDescs[game_n].toGameSettings());
+
+	return detectedGames;
+}
+
+int detectGame(const FSList &fslist, bool mode) {
+	int game_count = ARRAYSIZE(GameDescs);
+	int game_n = -1;
 	Common::StringMap filesMD5;
 
 	typedef Common::Map<Common::String, bool> StringSet;
@@ -624,18 +632,34 @@ DetectedGameList GAME_ProbeGame(const FSList &fslist) {
 		filesList[tstr] = true;
 	}
 
-	// Now count MD5s for required files
-	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
- 		if (!file->isDirectory()) {
-			tstr = file->displayName();
-			tstr.toLowercase();
+	if (mode) {
+		// Now count MD5s for required files
+		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+			if (!file->isDirectory()) {
+				tstr = file->displayName();
+				tstr.toLowercase();
+				
+				if (filesList.contains(tstr)) {
+					if (md5_file(file->path().c_str(), md5sum, NULL, FILE_MD5_BYTES)) {
+						for (int j = 0; j < 16; j++) {
+							sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
+						}
+						filesMD5[tstr] = Common::String(md5str);
+					}
+				}
+			}
+		}
+	} else {
+		File testFile;
 
-			if (filesList.contains(tstr)) {
-				if (md5_file(file->path().c_str(), md5sum, NULL, FILE_MD5_BYTES)) {
+		for (StringSet::const_iterator file = filesList.begin(); file != filesList.end(); ++file) {
+			if (testFile.open(file->_key.c_str())) {
+				testFile.close();
+				if (md5_file(file->_key.c_str(), md5sum, NULL, FILE_MD5_BYTES)) {
 					for (int j = 0; j < 16; j++) {
 						sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
 					}
-					filesMD5[tstr] = Common::String(md5str);
+					filesMD5[file->_key] = Common::String(md5str);
 				}
 			}
 		}
@@ -680,61 +704,24 @@ DetectedGameList GAME_ProbeGame(const FSList &fslist) {
 				continue;
 
 			debug(5, "Found game: %s", GameDescs[game_n].gd_title);
-			detectedGames.push_back(GameDescs[game_n].toGameSettings());
 
-			return detectedGames;
+			return game_n;
 		}
 	}
 
-	return detectedGames;
+	if (!filesMD5.isEmpty()) {
+		printf("MD5s of your ITE version are unknown. Please, report following data to\n");
+		printf("ScummVM team along with your ITE version:\n");
+
+		for (Common::StringMap::const_iterator file = filesMD5.begin(); file != filesMD5.end(); ++file)
+			printf("%s: %s\n", file->_key.c_str(), file->_value.c_str());
+
+	}
+
+	return -1;
 }
 
-int SagaEngine::detectGame(uint16 *game_n_p) {
-	uint16 game_count = ARRAYSIZE(GameDescs);
-	uint16 game_n;
-
-	uint16 file_count;
-	uint16 file_n;
-	File test_file;
-
-	int file_missing = 0;
-
-	if (game_n_p == NULL) {
-		return FAILURE;
-	}
-
-	for (game_n = 0; game_n < game_count; game_n++) {
-		file_count = GameDescs[game_n].gd_filect;
-		file_missing = 0;
-
-		// Try to open all files for this game
-		for (file_n = 0; file_n < file_count; file_n++) {
-			if (!test_file.open(GameDescs[game_n].gd_filedescs[file_n].gf_fname)) {
-				file_missing = 1;
-				break;
-			}
-			test_file.close();
-		}
-
-		// Try the next game, couldn't find all files for the current 
-		// game
-		if (file_missing) {
-			continue;
-		} else {
-			debug(5, "Probing game: %s", GameDescs[game_n].gd_title);
-			if (!gameMD5check(game_n))
-				continue;
-		}
-
-		debug(5, "Found game: %s", GameDescs[game_n].gd_title);
-		*game_n_p = game_n;
-		return SUCCESS;
-	}
-
-	return FAILURE;
-}
-
-int SagaEngine::loadGame(uint16 game_n) {
+int SagaEngine::loadGame(int game_n) {
 	RSCFILE_CONTEXT *load_ctxt;
 	uint16 game_count = ARRAYSIZE(GameDescs);
 	const char *game_fname;
@@ -820,28 +807,6 @@ int SagaEngine::getSceneInfo(GAME_SCENEDESC *gs_desc) {
 	gs_desc->scene_lut_rn = RSC_ConvertID(GameModule.gamedesc->gd_resource_desc->scene_lut_rn);
 
 	return SUCCESS;
-}
-
-static bool gameMD5check(int descNum) {
-	char md5str[32+1];
-	uint8 md5sum[16];
-
-	for (int i = 0; i < ARRAYSIZE(game_md5); i++) {
-		if (game_md5[i].id == GameDescs[descNum].gd_game_id) {
-			if (md5_file(game_md5[i].filename, md5sum, NULL, FILE_MD5_BYTES)) {
-				for (int j = 0; j < 16; j++) {
-					sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
-				}
-				
-				if (strcmp(game_md5[i].md5, md5str))
-					return false;
-			} else {
-				return false;
-			}
-		}
-	}
-
-	return true;
 }
 
 } // End of namespace Saga

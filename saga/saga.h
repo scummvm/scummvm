@@ -290,7 +290,7 @@ public:
 	Point _mousePos;
 
 public:
-	int initGame();
+	int initGame(void);
 	RSCFILE_CONTEXT *getFileContext(uint16 type, int param);
 	int getFontInfo(GAME_FONTDESC **, int *);
 	const GAME_RESOURCEDESC getResourceInfo(void);
@@ -299,10 +299,8 @@ public:
 	int getSceneInfo(GAME_SCENEDESC *);
 
 private:
-	int loadLanguage();
-	int loadGame(uint16 game_n_p);
-	int detectGame(uint16 *game_n_p);
-
+	int loadLanguage(void);
+	int loadGame(int game_n_p);
 };
 
 // FIXME: Global var. We use it until everything will be turned into objects
