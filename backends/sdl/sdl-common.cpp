@@ -47,6 +47,34 @@
 #define JOY_BUT_SPACE 4
 #define JOY_BUT_F5 5
 
+static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
+	{"1x", "Normal (no scaling)", GFX_NORMAL},
+	{"2x", "2x", GFX_DOUBLESIZE},
+	{"3x", "3x", GFX_TRIPLESIZE},
+	{"2xsai", "2xSAI", GFX_2XSAI},
+	{"super2xsai", "Super2xSAI", GFX_SUPER2XSAI},
+	{"supereagle", "SuperEagle", GFX_SUPEREAGLE},
+	{"advmame2x", "AdvMAME2x", GFX_ADVMAME2X},
+	{"advmame3x", "AdvMAME3x", GFX_ADVMAME3X},
+	{"hq2x", "HQ2x", GFX_HQ2X},
+	{"hq3x", "HQ3x", GFX_HQ3X},
+	{"tv2x", "TV2x", GFX_TV2X},
+	{"dotmatrix", "DotMatrix", GFX_DOTMATRIX},
+	{0, 0, 0}
+};
+
+static const int s_gfxModeSwitchTable[][4] = {
+		{ GFX_NORMAL, GFX_DOUBLESIZE, GFX_TRIPLESIZE, -1 },
+		{ GFX_NORMAL, GFX_ADVMAME2X, GFX_ADVMAME3X, -1 },
+		{ GFX_NORMAL, GFX_HQ2X, GFX_HQ3X, -1 },
+		{ GFX_NORMAL, GFX_2XSAI, -1, -1 },
+		{ GFX_NORMAL, GFX_SUPER2XSAI, -1, -1 },
+		{ GFX_NORMAL, GFX_SUPEREAGLE, -1, -1 },
+		{ GFX_NORMAL, GFX_TV2X, -1, -1 },
+		{ GFX_NORMAL, GFX_DOTMATRIX, -1, -1 }
+	};
+
+
 OSystem *OSystem_SDL_create() {
 	return OSystem_SDL_Common::create();
 }
@@ -104,7 +132,7 @@ void OSystem_SDL_Common::set_timer(TimerProc callback, int timer) {
 OSystem_SDL_Common::OSystem_SDL_Common()
 	: _screen(0), _screenWidth(0), _screenHeight(0),
 	_tmpscreen(0), _tmpScreenWidth(0), _overlayVisible(false),
-	_cdrom(0), _modeChanged(false), _dirty_checksums(0),
+	_cdrom(0), _scaler_proc(0), _modeChanged(false), _dirty_checksums(0),
 	_mouseVisible(false), _mouseDrawn(false), _mouseData(0),
 	_mouseHotspotX(0), _mouseHotspotY(0),
 	_currentShakePos(0), _newShakePos(0),
@@ -668,17 +696,6 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 
 			// Ctrl-Alt-<key> will change the GFX mode
 			if ((b & (KBD_CTRL|KBD_ALT)) == (KBD_CTRL|KBD_ALT)) {
-				static const int gfxModes[][4] = {
-						{ GFX_NORMAL, GFX_DOUBLESIZE, GFX_TRIPLESIZE, -1 },
-						{ GFX_NORMAL, GFX_ADVMAME2X, GFX_ADVMAME3X, -1 },
-						{ GFX_NORMAL, GFX_HQ2X, GFX_HQ3X, -1 },
-						{ GFX_NORMAL, GFX_2XSAI, -1, -1 },
-						{ GFX_NORMAL, GFX_SUPER2XSAI, -1, -1 },
-						{ GFX_NORMAL, GFX_SUPEREAGLE, -1, -1 },
-						{ GFX_NORMAL, GFX_TV2X, -1, -1 },
-						{ GFX_NORMAL, GFX_DOTMATRIX, -1, -1 }
-					};
-
 				// FIXME EVIL HACK: This shouldn't be a static int, rather it
 				// should be a member variable. Furthermore, it shouldn't be
 				// set in this code, rather it should be set by load_gfx_mode().
@@ -688,8 +705,8 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 					// Try to figure out which gfx mode "group" we are in
 					// This is just a temporary hack until the proper solution
 					// (i.e. code in load_gfx_mode()) is in effect.
-					for (int i = 0; i < ARRAYSIZE(gfxModes); i++) {
-						if (gfxModes[i][1] == _mode || gfxModes[i][2] == _mode) {
+					for (int i = 0; i < ARRAYSIZE(s_gfxModeSwitchTable); i++) {
+						if (s_gfxModeSwitchTable[i][1] == _mode || s_gfxModeSwitchTable[i][2] == _mode) {
 							_scalerType = i;
 							break;
 						}
@@ -708,22 +725,22 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 				// TODO: Shall we 'wrap around' here?
 				if (ev.key.keysym.sym == '=' || ev.key.keysym.sym == '+' || ev.key.keysym.sym == '-') {
 					factor += (ev.key.keysym.sym == '-' ? -1 : +1);
-					if (0 <= factor && factor < 4 && gfxModes[_scalerType][factor] >= 0) {
-						setGraphicsMode(gfxModes[_scalerType][factor]);
+					if (0 <= factor && factor < 4 && s_gfxModeSwitchTable[_scalerType][factor] >= 0) {
+						setGraphicsMode(s_gfxModeSwitchTable[_scalerType][factor]);
 					}
 					break;
 				}
 				
 				if ('1' <= ev.key.keysym.sym && ev.key.keysym.sym <= '9') {
 					_scalerType = ev.key.keysym.sym - '1';
-					if (_scalerType >= ARRAYSIZE(gfxModes))
+					if (_scalerType >= ARRAYSIZE(s_gfxModeSwitchTable))
 						break;
 					
-					while (gfxModes[_scalerType][factor] < 0) {
+					while (s_gfxModeSwitchTable[_scalerType][factor] < 0) {
 						assert(factor > 0);
 						factor--;
 					}
-					setGraphicsMode(gfxModes[_scalerType][factor]);
+					setGraphicsMode(s_gfxModeSwitchTable[_scalerType][factor]);
 					break;
 				}
 			}
@@ -1033,37 +1050,93 @@ void OSystem_SDL_Common::clearSoundCallback() {
 	SDL_CloseAudio();
 }
 
-static const OSystem::GraphicsMode gfx_modes[] = {
-	{"1x", "Normal (no scaling)", GFX_NORMAL},
-	{"2x", "2x", GFX_DOUBLESIZE},
-	{"3x", "3x", GFX_TRIPLESIZE},
-	{"2xsai", "2xSAI", GFX_2XSAI},
-	{"super2xsai", "Super2xSAI", GFX_SUPER2XSAI},
-	{"supereagle", "SuperEagle", GFX_SUPEREAGLE},
-	{"advmame2x", "AdvMAME2x", GFX_ADVMAME2X},
-	{"advmame3x", "AdvMAME3x", GFX_ADVMAME3X},
-	{"hq2x", "HQ2x", GFX_HQ2X},
-	{"hq3x", "HQ3x", GFX_HQ3X},
-	{"tv2x", "TV2x", GFX_TV2X},
-	{"dotmatrix", "DotMatrix", GFX_DOTMATRIX},
-	{0, 0, 0}
-};
-
 const OSystem::GraphicsMode *OSystem_SDL_Common::getSupportedGraphicsModes() const {
-	return gfx_modes;
+	return s_supportedGraphicsModes;
+}
+
+void OSystem_SDL_Common::update_screen() {
+	Common::StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
+
+	intern_update_screen();
 }
 
 bool OSystem_SDL_Common::setGraphicsMode(int mode) {
 	Common::StackLock lock(_graphicsMutex, this);
 
-	// FIXME! HACK, hard coded threshold, not good
-	// Really should check the 'mode' against the list of supported
-	// modes, and then decide whether to accept it.
-	if (mode > 11)
+	int newScaleFactor = 1;
+	ScalerProc *newScalerProc;
+
+	switch(mode) {
+	case GFX_NORMAL:
+		newScaleFactor = 1;
+		newScalerProc = Normal1x;
+		break;
+	case GFX_DOUBLESIZE:
+		newScaleFactor = 2;
+		newScalerProc = Normal2x;
+		break;
+	case GFX_TRIPLESIZE:
+		newScaleFactor = 3;
+		newScalerProc = Normal3x;
+		break;
+
+	case GFX_2XSAI:
+		newScaleFactor = 2;
+		newScalerProc = _2xSaI;
+		break;
+	case GFX_SUPER2XSAI:
+		newScaleFactor = 2;
+		newScalerProc = Super2xSaI;
+		break;
+	case GFX_SUPEREAGLE:
+		newScaleFactor = 2;
+		newScalerProc = SuperEagle;
+		break;
+	case GFX_ADVMAME2X:
+		newScaleFactor = 2;
+		newScalerProc = AdvMame2x;
+		break;
+	case GFX_ADVMAME3X:
+		newScaleFactor = 3;
+		newScalerProc = AdvMame3x;
+		break;
+	case GFX_HQ2X:
+		newScaleFactor = 2;
+		newScalerProc = HQ2x;
+		break;
+	case GFX_HQ3X:
+		newScaleFactor = 3;
+		newScalerProc = HQ3x;
+		break;
+	case GFX_TV2X:
+		newScaleFactor = 2;
+		newScalerProc = TV2x;
+		break;
+	case GFX_DOTMATRIX:
+		newScaleFactor = 2;
+		newScalerProc = DotMatrix;
+		break;
+
+	default:
+		warning("unknown gfx mode %d", mode);
 		return false;
+	}
 
 	_mode = mode;
-	hotswap_gfx_mode();
+
+	if (newScaleFactor != _scaleFactor) {
+		hotswap_gfx_mode();
+	} else {
+		_scaler_proc = newScalerProc;
+		_forceFull = true;
+
+		// Blit everything to the screen
+		intern_update_screen();
+	
+		// Make sure that an EVENT_SCREEN_CHANGED gets sent later
+		_modeChanged = true;
+	}
+
 	return true;
 }
 

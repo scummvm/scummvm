@@ -21,7 +21,6 @@
  */
 
 #include "sdl-common.h"
-#include "common/scaler.h"
 #include "common/util.h"
 
 class OSystem_SDL : public OSystem_SDL_Common {
@@ -29,12 +28,10 @@ public:
 	OSystem_SDL();
 
 	// Update the dirty areas of the screen
-	void update_screen();
+	void intern_update_screen();
 
 protected:
 	SDL_Surface *_hwscreen;    // hardware screen
-
-	ScalerProc *_scaler_proc;
 
 	virtual void load_gfx_mode();
 	virtual void unload_gfx_mode();
@@ -49,7 +46,7 @@ OSystem_SDL_Common *OSystem_SDL_Common::create_intern() {
 }
 
 OSystem_SDL::OSystem_SDL()
-	 : _hwscreen(0), _scaler_proc(0)
+	 : _hwscreen(0)
 {
 }
 
@@ -136,7 +133,7 @@ void OSystem_SDL::load_gfx_mode() {
 		// FIXME: We should be able to continue the game without
 		// shutting down or bringing up the debug console, but at
 		// this point we've already screwed up all our member vars.
-		// We need to find a way to call SDL_VideoModeOK *before*
+		// We need to find a way to call SDL_SetVideoMode *before*
 		// that happens and revert to all the old settings if we
 		// can't pull off the switch to the new settings.
 		//
@@ -225,16 +222,14 @@ void OSystem_SDL::hotswap_gfx_mode() {
 	SDL_FreeSurface(old_tmpscreen);
 
 	// Blit everything to the screen
-	update_screen();
+	intern_update_screen();
 	
 	// Make sure that an EVENT_SCREEN_CHANGED gets sent later
 	_modeChanged = true;
 }
 
-void OSystem_SDL::update_screen() {
+void OSystem_SDL::intern_update_screen() {
 	assert(_hwscreen != NULL);
-
-	Common::StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
 
 	// If the shake position changed, fill the dirty area with blackness
 	if (_currentShakePos != _newShakePos) {
@@ -374,15 +369,19 @@ void OSystem_SDL::setFullscreenMode(bool enable) {
 	if (_full_screen != enable) {
 		assert(_hwscreen != 0);
 		_full_screen ^= true;
-#ifdef MACOSX
+#if defined(MACOSX) && !SDL_VERSION_ATLEAST(1, 2, 6)
 		// On OS X, SDL_WM_ToggleFullScreen is currently not implemented. Worse,
-		// it still always returns -1. So we simply don't call it at all and
-		// use hotswap_gfx_mode() directly to switch to fullscreen mode.
+		// before SDL 1.2.6 it always returned -1 (which would indicate a
+		// successful switch). So we simply don't call it at all and use
+		// hotswap_gfx_mode() directly to switch to fullscreen mode.
 		hotswap_gfx_mode();
 #else
 		if (!SDL_WM_ToggleFullScreen(_hwscreen)) {
 			// if ToggleFullScreen fails, achieve the same effect with hotswap gfx mode
 			hotswap_gfx_mode();
+		} else {
+			// Make sure that an EVENT_SCREEN_CHANGED gets sent later
+			_modeChanged = true;
 		}
 #endif
 	}

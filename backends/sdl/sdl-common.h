@@ -24,6 +24,7 @@
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"
+#include "common/scaler.h"
 #include "common/system.h"
 #include "backends/intern.h"
 
@@ -45,7 +46,7 @@ public:
 	void move_screen(int dx, int dy, int height);
 
 	// Update the dirty areas of the screen
-	void update_screen() = 0;
+	void update_screen();
 
 	// Either show or hide the mouse cursor
 	bool show_mouse(bool visible);
@@ -159,6 +160,7 @@ protected:
 	};
 
 	bool _forceFull; // Force full redraw on next update_screen
+	ScalerProc *_scaler_proc;
 	int _scaleFactor;
 	int _mode;
 	bool _full_screen;
@@ -232,6 +234,8 @@ protected:
 	void fillMouseEvent(Event &event, int x, int y);
 	void toggleMouseGrab();
 
+
+	virtual void intern_update_screen() = 0;
 
 	virtual void load_gfx_mode() = 0;
 	virtual void unload_gfx_mode() = 0;
