@@ -52,7 +52,7 @@ public:
 	virtual unsigned int tell() const = 0;	//!< get the Chunk current read position
 	virtual bool seek(int delta, seek_type dir = seek_cur) = 0;	//!< move the current read position inside the Chunk
 	virtual bool read(void * buffer, unsigned int size) = 0;		//!< read some data for the current read position
-	virtual char getChar() = 0;							//!< extract the character at the current read position
+	virtual int8 getChar() = 0;							//!< extract the character at the current read position
 	virtual unsigned char getByte() = 0;					//!< extract the byte at the current read position
 	virtual short getShort() = 0;						//!< extract the short at the current read position
 	virtual unsigned short getWord() = 0;					//!< extract the word at the current read position
@@ -85,7 +85,7 @@ public:
 	unsigned int tell() const;
 	bool seek(int delta, seek_type dir = seek_cur);
 	bool read(void * buffer, unsigned int size);
-	char getChar();
+	int8 getChar();
 	unsigned char getByte();
 	short getShort();
 	unsigned short getWord();
@@ -111,7 +111,7 @@ public:
 	unsigned int tell() const;
 	bool seek(int delta, seek_type dir = seek_cur);
 	bool read(void * buffer, unsigned int size);
-	char getChar();
+	int8 getChar();
 	unsigned char getByte();
 	short getShort();
 	unsigned short getWord();

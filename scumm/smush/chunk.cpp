@@ -157,10 +157,10 @@ bool FileChunk::read(void * buffer, unsigned int size) {
 	return true;
 }
 
-char FileChunk::getChar() {
+int8 FileChunk::getChar() {
 	if(_curPos >= _size) error("invalid char read request");
 	_data->seek(_offset + _curPos);
-	char buffer;
+	int8 buffer;
 	_data->read(&buffer, sizeof(buffer));
 	_curPos+= sizeof(buffer);
 	return buffer;
@@ -255,7 +255,7 @@ bool ContChunk::read(void * buffer, unsigned int size) {
 	return true;
 }
 
-char ContChunk::getChar() {
+int8 ContChunk::getChar() {
 	if(_curPos >= _size) error("invalid char read request");
 	return _data[_curPos++];
 }
