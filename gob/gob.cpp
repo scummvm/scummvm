@@ -103,8 +103,6 @@ int GobEngine::init(GameDetector &detector) {
 }
 
 int GobEngine::go() {
-	int msec = 0;
-
 	for (;;) {
 		OSystem::Event event;
 		while (g_system->pollEvent(event)) {
