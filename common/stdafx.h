@@ -2,8 +2,11 @@
  * $Id$
  *
  * $Log$
- * Revision 1.1  2002/08/21 16:07:23  fingolfin
- * Initial revision
+ * Revision 1.2  2002/09/22 11:37:53  kirben
+ * Remove mention of Windows GDI build
+ *
+ * Revision 1.1.1.1  2002/08/21 16:07:23  fingolfin
+ * new ScummVM CVS module
  *
  * Revision 1.18  2002/07/08 13:33:10  fingolfin
  * two more small QNX fixes
@@ -141,11 +144,6 @@
 
 
 /* Semi-Platform-specific version info */
-#ifdef ALLOW_GDI
-/* Assume Win32 GDI is used, then... */
-#define SCUMMVM_PLATFORM_VERSION  "Win32 GDI version"
-
-#else
 #ifdef ALLOW_X11
 /* Assume pure X11 is used, then... */
 #define SCUMMVM_PLATFORM_VERSION  "X11 version"
@@ -161,7 +159,6 @@
 //SDL_COMPILEDVERSION is a number... :(
 //SDL_Linked_Version returns an SDL_Version structure...
 
-#endif
 #endif
 #endif
 #endif
