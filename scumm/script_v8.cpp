@@ -241,7 +241,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_walkActorToObj),
 		/* A0 */
 		OPCODE(o6_walkActorTo),
-		OPCODE(o6_putActorInRoom),	// FIXME - this seems to be wrong? at least we get actor indices from 31 to 79 here...
+		OPCODE(o6_putActorInRoom),
 		OPCODE(o6_putActorAtObject),
 		OPCODE(o6_faceActor),
 		/* A4 */
@@ -571,7 +571,7 @@ void Scumm_v8::decodeParseString(int m, int n)
 //		error("decodeParseString: SO_PRINT_MUMBLE");
 //		break;
 	default:
-		error("decodeParseString: default case %d", b);
+		error("decodeParseString: default case 0x%x", b);
 	}
 }
 
@@ -633,7 +633,7 @@ void Scumm_v8::o8_wait()
 	}
 
 	default:
-		error("o8_wait: default case %d", subOp);
+		error("o8_wait: default case 0x%x", subOp);
 	}
 
 	_scriptPointer -= 2;
@@ -656,7 +656,7 @@ void Scumm_v8::o8_dim()
 		nukeArray(array);
 		break;
 	default:
-		error("o8_dim: default case %d", subOp);
+		error("o8_dim: default case 0x%x", subOp);
 	}
 }
 
@@ -680,7 +680,7 @@ void Scumm_v8::o8_dim2()
 		nukeArray(array);
 		break;
 	default:
-		error("o8_dim2: default case %d", subOp);
+		error("o8_dim2: default case 0x%x", subOp);
 	}
 }
 
@@ -723,7 +723,7 @@ void Scumm_v8::o8_arrayOps()
 		}
 		break;
 	default:
-		error("o8_arrayOps: default case %d (array %d)", subOp, array);
+		error("o8_arrayOps: default case 0x%x (array %d)", subOp, array);
 	}
 }
 
@@ -798,7 +798,7 @@ void Scumm_v8::o8_cursorCommand()
 			_charsetColorMap[i] = _charsetData[_string[1].t_charset][i] = (unsigned char)args[i];
 		break;
 	case 0xE9: 		// SO_CURSOR_PUT
-	        _virtual_mouse_x = pop();
+		_virtual_mouse_x = pop();
 		_virtual_mouse_y = pop();
 
 		mouse.x = _virtual_mouse_x - virtscr[0].xstart;
@@ -807,10 +807,10 @@ void Scumm_v8::o8_cursorCommand()
 
 		_system->set_mouse_pos(mouse.x, mouse.y);
 		_system->update_screen();
-		warning("warped mouse to (%d, %d) from %d-%d", _virtual_mouse_x, _virtual_mouse_y, _roomResource, vm.slot[_currentScript].number);
+//		warning("warped mouse to (%d, %d) from %d-%d", _virtual_mouse_x, _virtual_mouse_y, _roomResource, vm.slot[_currentScript].number);
 		break;
 	default:
-		error("o8_cursorCommand: default case %d", subOp);
+		error("o8_cursorCommand: default case 0x%x", subOp);
 	}
 
 	_vars[VAR_CURSORSTATE] = _cursor.state;
@@ -883,7 +883,7 @@ void Scumm_v8::o8_resourceRoutines()
 		setResourceCounter(rtSound, resid, 0x7F);
 		break;
 	default:
-		error("o8_resourceRoutines: default case %d", subOp);
+		error("o8_resourceRoutines: default case 0x%x", subOp);
 	}
 }
 
@@ -895,7 +895,7 @@ void Scumm_v8::o8_roomOps()
 	
 	switch (subOp) {
 	case 0x52:		// SO_ROOM_PALETTE Set room palette
-		error("o8_roomOps: default case %d", subOp);
+		error("o8_roomOps: default case 0x%x", subOp);
 		break;
 	case 0x55:		// SO_ROOM_INTENSITY Set room intensity
 		// Not used in CMI???
@@ -954,7 +954,7 @@ void Scumm_v8::o8_roomOps()
 //		warning("o8_roomOps: SO_ROOM_SATURATION(%d, %d, %d, %d, %d)", a, b, c, d, e);
 		break;
 	default:
-		error("o8_roomOps: default case %d", subOp);
+		error("o8_roomOps: default case 0x%x", subOp);
 	}
 }
 
@@ -1126,7 +1126,7 @@ void Scumm_v8::o8_actorOps()
 		warning("o8_actorOps: setActorPan(%d) not implemented", i);
 		break;
 	default:
-		error("o8_actorOps: default case %d", subOp);
+		error("o8_actorOps: default case 0x%x", subOp);
 	}
 }
 
@@ -1142,7 +1142,7 @@ void Scumm_v8::o8_cameraOps()
 		//warning("unfreezeCamera NYI");
 		break;
 	default:
-		error("o8_cameraOps: default case %d", subOp);
+		error("o8_cameraOps: default case 0x%x", subOp);
 	}
 }
 
@@ -1256,7 +1256,7 @@ void Scumm_v8::o8_verbOps()
 		pop();
 		break;
 	default:
-		error("o8_verbops: default case %d", subOp);
+		error("o8_verbops: default case 0x%x", subOp);
 	}
 }
 
@@ -1280,7 +1280,7 @@ void Scumm_v8::o8_system()
 //		shutDown(0);
 //		break;
 	default:
-		error("o8_system: default case %d", subOp);
+		error("o8_system: default case 0x%x", subOp);
 	}
 }
 
@@ -1404,7 +1404,7 @@ void Scumm_v8::o8_kernelSetFunctions()
 		break;
 
 	default:
-		warning("o8_kernelSetFunctions: default case %d (len = %d)", args[0], len);
+		warning("o8_kernelSetFunctions: default case 0x%x (len = %d)", args[0], len);
 	}
 }
 
@@ -1425,7 +1425,7 @@ void Scumm_v8::o8_kernelGetFunctions()
 	case 0xD3:		// getKeyState
 	case 0xD7:		// getBox
 		push(0);
-		warning("o8_kernelGetFunctions: default case %d (len = %d)", args[0], len);
+		warning("o8_kernelGetFunctions: default case 0x%x (len = %d)", args[0], len);
 		break;
 	case 0xD8: {		// findBlastObject
 		BlastObject *eo;
@@ -1445,7 +1445,7 @@ void Scumm_v8::o8_kernelGetFunctions()
 	}
 	case 0xD9:		// actorHit
 		push(0);
-		warning("o8_kernelGetFunctions: default case %d (len = %d)", args[0], len);
+		warning("o8_kernelGetFunctions: default case 0x%x (len = %d)", args[0], len);
 		break;
 	case 0xDA:		// lipSyncWidth
 	case 0xDB:		// lipSyncHeight
@@ -1479,11 +1479,11 @@ void Scumm_v8::o8_kernelGetFunctions()
 	case 0xE3:		// musicLipSyncHeight
 		// FIXME: These are needed for the song intro to Part III - the scene will freeze
 		// without them.
-		warning("o8_kernelGetFunctions: default case %d (len = %d)", args[0], len);
+		warning("o8_kernelGetFunctions: default case 0x%x (len = %d)", args[0], len);
 		push(255);
 		break;
 	default:
-		error("o8_kernelGetFunctions: default case %d (len = %d)", args[0], len);
+		error("o8_kernelGetFunctions: default case 0x%x (len = %d)", args[0], len);
 	}
 
 }
