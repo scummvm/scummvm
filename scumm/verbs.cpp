@@ -221,7 +221,8 @@ void Scumm::drawVerbBitmap(int verb, int x, int y) {
 	xstrip = x >> 3;
 	ydiff = y - vs->topline;
 
-	assert(obim = getResourceAddress(rtVerb, verb));
+	obim = getResourceAddress(rtVerb, verb);
+	assert(obim);
 	if (_features & GF_OLD_BUNDLE) {
 		imgw = obim[0];
 		imgh = obim[1] >> 3;
