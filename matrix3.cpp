@@ -163,16 +163,16 @@ float Matrix3::getRoll()
 	return roll;
 }
 
-void Matrix3::transform( Vector3d v )
+void Matrix3::transform( Vector3d* v )
 {
 	float x;
 	float y;
 	float z;
 
-	x = v.dotProduct( right_.x(), up_.x(), at_.x() );
-	y = v.dotProduct( right_.x(), up_.x(), at_.x() );
-	z = v.dotProduct( right_.x(), up_.x(), at_.x() );
+	x = v->dotProduct( right_.x(), up_.x(), at_.x() );
+	y = v->dotProduct( right_.x(), up_.x(), at_.x() );
+	z = v->dotProduct( right_.x(), up_.x(), at_.x() );
 
-	v.set( x, y, z );
+	v->set( x, y, z );
 }
 

@@ -42,7 +42,7 @@ public:
 		Vector3d v;
 
 		v = s.pos_;
-		rot_.transform( v );
+		rot_.transform( &v );
 
 		pos_+=v;
 

@@ -40,7 +40,7 @@ public:
 	float getYaw();
 	float getRoll();
 
-	void transform( Vector3d v );
+	void transform( Vector3d* v );
 
 	// operators
 	Matrix3& operator *=(const Matrix3& s)

@@ -156,7 +156,7 @@ void Model::Mesh::update() {
 
 			v.set( *(pVertices), *(pVertices+1), *(pVertices+2) );
 
-			tempMatrix.rot_.transform( v );
+			tempMatrix.rot_.transform( &v );
 			v+= tempMatrix.pos_;
 
 			GLdouble winX;
@@ -634,7 +634,7 @@ void Model::Mesh::draw() const {
 
 			v.set( *(pVertices), *(pVertices+1), *(pVertices+2) );
 
-			tempMatrix.rot_.transform( v );
+			tempMatrix.rot_.transform( &v );
 			v+= tempMatrix.pos_;
 			
 			glVertex3f( v.x(), v.y(), v.z() );
@@ -686,7 +686,7 @@ void Model::Mesh::draw() const {
 
 			v.set( *(pVertices), *(pVertices+1), *(pVertices+2) );
 
-			tempMatrix.rot_.transform( v );
+			tempMatrix.rot_.transform( &v );
 			v+= tempMatrix.pos_;
 
 			GLdouble winX;

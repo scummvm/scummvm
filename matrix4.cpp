@@ -12,7 +12,7 @@ void Matrix4::translate( float x, float y, float z )
 
 	v.set( x, y, z );
 
-	rot_.transform( v );
+	rot_.transform( &v );
 
 	pos_ += v;
 }
