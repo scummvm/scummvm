@@ -42,7 +42,7 @@
 #if SND_LIB_MAJOR >= 1 || SND_LIB_MINOR >= 6
 #define snd_seq_flush_output(x) snd_seq_drain_output(x)
 #define snd_seq_set_client_group(x,name)	/*nop */
-#define my_snd_seq_open(seqp) snd_seq_open(seqp, "hw", SND_SEQ_OPEN_OUTPUT, 0)
+#define my_snd_seq_open(seqp) snd_seq_open(seqp, "hw", SND_SEQ_OPEN_DUPLEX, 0)
 #else
 /* SND_SEQ_OPEN_OUT causes oops on early version of ALSA */
 #define my_snd_seq_open(seqp) snd_seq_open(seqp, SND_SEQ_OPEN)
@@ -79,7 +79,6 @@ MidiDriver_ALSA::MidiDriver_ALSA()
 
 int MidiDriver_ALSA::open() {
 	char *var;
-	unsigned int caps;
 
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
@@ -91,29 +90,28 @@ int MidiDriver_ALSA::open() {
 			error("Invalid port %s", var);
 			return -1;
 		}
-	}
-        else {	
+	} else {	
 		if (parse_addr(var, &seq_client, &seq_port) < 0) {
 			error("Invalid port %s", var);
 			return -1;
 		}
 	}
 
-	if (my_snd_seq_open(&seq_handle)) {
+	if (my_snd_seq_open(&seq_handle) < 0) {
 		error("Can't open sequencer");
 		return -1;
 	}
 
 	my_client = snd_seq_client_id(seq_handle);
-	snd_seq_set_client_name(seq_handle, "SCUMMVM");
+	if (snd_seq_set_client_name(seq_handle, "SCUMMVM") < 0) {
+		error("Can't set sequencer client name");
+	}
 	snd_seq_set_client_group(seq_handle, "input");
 
-	caps = SND_SEQ_PORT_CAP_READ;
-	if (seq_client == SND_SEQ_ADDRESS_SUBSCRIBERS)
-		caps = ~SND_SEQ_PORT_CAP_SUBS_READ;
-	my_port =
-		snd_seq_create_simple_port(seq_handle, "SCUMMVM", caps,
-															 SND_SEQ_PORT_TYPE_MIDI_GENERIC | SND_SEQ_PORT_TYPE_APPLICATION);
+	my_port = snd_seq_create_simple_port(seq_handle, "SCUMMVM port 0",
+		SND_SEQ_PORT_CAP_WRITE | SND_SEQ_PORT_CAP_SUBS_WRITE |
+		SND_SEQ_PORT_CAP_READ, SND_SEQ_PORT_TYPE_MIDI_GENERIC);
+
 	if (my_port < 0) {
 		snd_seq_close(seq_handle);
 		error("Can't create port");
@@ -123,13 +121,12 @@ int MidiDriver_ALSA::open() {
 	if (seq_client != SND_SEQ_ADDRESS_SUBSCRIBERS) {
 		/* subscribe to MIDI port */
 		if (snd_seq_connect_to(seq_handle, my_port, seq_client, seq_port) < 0) {
-			snd_seq_close(seq_handle);
-			error("Can't subscribe to MIDI port (%d:%d)", seq_client, seq_port);
-			return -1;
+			error("Can't subscribe to MIDI port (%d:%d) see README for help", seq_client, seq_port);
 		}
+		else printf("Connected to Alsa sequencer client [%d:%d]\n", seq_client, seq_port);
 	}
 
-	printf("ALSA client initialised [%d:%d]\n", seq_client, seq_port);
+	printf("ALSA client initialised [%d:0]\n", my_client);
 
 	return 0;
 }
