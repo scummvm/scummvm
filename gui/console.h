@@ -69,7 +69,7 @@ protected:
 	int _historyLine;
 
 public:
-	ConsoleDialog(NewGui *gui);
+	ConsoleDialog(NewGui *gui, int _realWidth);
 
 	void open();
 	void drawDialog();

@@ -47,8 +47,8 @@ This code is not finished, so please don't complain :-)
  * - add a scrollbar widget to allow scrolling in the history
  * - a *lot* of others things, this code is in no way complete and heavily under progress
  */
-ConsoleDialog::ConsoleDialog(NewGui *gui)
-	: Dialog(gui, 0, 0, 320, 12*kLineHeight+2)
+ConsoleDialog::ConsoleDialog(NewGui *gui, int _realWidth)
+	: Dialog(gui, 0, 0, _realWidth, 12*kLineHeight+2)
 {
 	_lineWidth = (_w - kScrollBarWidth - 2) / kCharWidth;
 	_linesPerPage = (_h - 2) / kLineHeight;

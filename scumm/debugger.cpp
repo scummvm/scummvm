@@ -128,7 +128,7 @@ void ScummDebugger::enter()
 {
 #ifdef USE_CONSOLE
 	if (!_s->_debuggerDialog) {
-		_s->_debuggerDialog = new ConsoleDialog(_s->_newgui);
+		_s->_debuggerDialog = new ConsoleDialog(_s->_newgui, _s->_realWidth);
 		Debug_Printf("Debugger started, type 'exit' to return to the game\n");
 	}
 	

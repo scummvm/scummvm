@@ -213,15 +213,16 @@ void NewGui::runLoop()
 
 void NewGui::saveState()
 {
+	int sys_height = _system->get_height();
+	int sys_width = _system->get_width();
+
 	// Backup old cursor
 	_oldCursorMode = _system->show_mouse(true);
 	
 	_system->show_overlay();
 	// TODO - add getHeight & getWidth methods to OSystem.
-	_screen = new int16[320 * 240];
-	_screenPitch = 320;
-//	_screen = new int16[_system->get_width() * _system->get_height()];
-//	_screenPitch = _system->get_width();
+	_screen = new int16[sys_width * sys_height];
+	_screenPitch = sys_width;
 	_system->grab_overlay(_screen, _screenPitch);
 
 	_currentKeyDown.keycode = 0;

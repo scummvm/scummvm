@@ -1008,6 +1008,14 @@ void OSystem_SDL_Common::clear_overlay()
 	_forceFull = true;
 }
 
+int16 OSystem_SDL_Common::get_height() {
+	return _screenHeight;
+}
+
+int16 OSystem_SDL_Common::get_width() {
+	return _screenWidth;
+}
+
 void OSystem_SDL_Common::grab_overlay(int16 *buf, int pitch)
 {
 	if (!_overlayVisible)
