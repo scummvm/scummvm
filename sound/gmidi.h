@@ -30,6 +30,17 @@
 	#include <string.h>
 #endif
 
+#ifdef __MORPHOS__
+	#include <exec/types.h>
+	#include <devices/amidi.h>
+
+	#define NO_PPCINLINE_STDARG
+	#define NO_PPCINLINE_VARARGS
+	#include <clib/alib_protos.h>
+	#include <proto/exec.h>
+
+	extern struct IOMidiRequest *ScummMidiRequest;
+#endif
 
 /* Roland to General Midi patch table. Still needs much work. */
 static const byte mt32_to_gmidi[128] = {

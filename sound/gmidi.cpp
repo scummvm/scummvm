@@ -1,4 +1,4 @@
-/* ScummVM - Scumm Interpreter
+ /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
@@ -22,7 +22,12 @@
  * Timidity support by Lionel Ulmer <lionel.ulmer@free.fr>
  * QuickTime support by Florent Boudet <flobo@ifrance.com>
  * Raw output support by Michael Pearce
+ * MorphOS support by Ruediger Hanke 
  */
+
+#ifdef __MORPHOS__
+#include <devices/timer.h>
+#endif
 
 
 #include "stdafx.h"
@@ -53,6 +58,8 @@ void MidiDriver::midiInit() {
 		case MIDI_QTMUSIC:
 			midiInitQuicktime();
 			break;
+		case MIDI_AMIDI:
+			break;
 		default:
 			DeviceType = 0;
 			midiInitNull();
@@ -81,6 +88,9 @@ void MidiDriver::MidiOut(int b) {
 			break;
 		case MIDI_QTMUSIC:
 			MidiOutQuicktime(_mo, b);
+			break;
+		case MIDI_AMIDI:
+			MidiOutMorphOS(_mo, b);
 			break;
 		default:
 			error("Invalid midi device type ");
@@ -136,7 +146,7 @@ int MidiDriver::open_sequencer_device() {
 /*********** Timidity		*/
 int MidiDriver::connect_to_timidity(int port) {
 	int s = 0;
-#if !defined(__APPLE__CW)		// No socket support on Apple Carbon
+#if !defined(__APPLE__CW) && !defined(__MORPHOS__)  // No socket support on Apple Carbon or Morphos
 	struct hostent *serverhost;
 	struct sockaddr_in sadd;	
 
@@ -337,6 +347,25 @@ void MidiDriver::MidiOutQuicktime(void *a, int b) {
  	}
 #endif
 }
+
+/*********** MorphOS            */
+void MidiDriver::MidiOutMorphOS(void *a, int b) {
+#ifdef __MORPHOS__
+      if( ScummMidiRequest ) {
+              ULONG midi_data = b;    // you never know about an int's size ;-)
+              ScummMidiRequest->amr_Std.io_Command = CMD_WRITE;
+              ScummMidiRequest->amr_Std.io_Data = &midi_data;
+              ScummMidiRequest->amr_Std.io_Length = 4;
+              DoIO( (struct IORequest *)ScummMidiRequest );
+      }
+#endif
+}
+
+
+
+
+
+
 
 void MidiDriver::midiInitNull() {warning("Music not enabled - MIDI support selected with no MIDI driver available. Try Adlib");}
 

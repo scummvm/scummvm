@@ -272,11 +272,12 @@ void Scumm::readIndexFile() {
 			}
 			fileRead(_fileHandle, _classData, num * sizeof(uint32));
 			
-#if defined(SCUMM_BIG_ENDIAN)
+/* #if defined(SCUMM_BIG_ENDIAN)
 			for (i=0; i<num; i++) {
 				_classData[i] = FROM_LE_32(_classData[i]);
 			}
-#endif
+#endif */ // ?? FIXME Remove according to Morphos diff.
+
 			break;
 
 		case MKID('RNAM'):
@@ -544,17 +545,6 @@ void Scumm::loadCharset(int no) {
 	for (i=0; i<15; i++) {
 		_charsetData[no][i+1] = ptr[i+14];
 	}
- printf("byte *font[] = {");   
- while(*ptr) {	 
-   line++;
-   printf("%d,", ptr[i]);
-   if (line > 80) {
-    printf("\n");
-    line = 0;
-   }
-   ptr++;
-  }
-  printf("};\n");
 }
 
 void Scumm::nukeCharset(int i) {
@@ -669,7 +659,7 @@ int Scumm::readSoundResource(int type, int idx) {
 
 	pos = 0;
 
-	basetag = fileReadDwordLE();
+	basetag = fileReadDword();
 	total_size = fileReadDwordBE();
 
 	if (_gameId==GID_SAMNMAX || _features & GF_AFTER_V7) {

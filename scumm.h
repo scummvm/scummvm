@@ -59,7 +59,8 @@ enum {
 	MIDI_WINDOWS = 1,
 	MIDI_TIMIDITY = 2,
 	MIDI_SEQ = 3,
-	MIDI_QTMUSIC = 4,	
+	MIDI_QTMUSIC = 4,
+	MIDI_AMIDI = 5
 };
 
 /* Script status type (slot.status) */

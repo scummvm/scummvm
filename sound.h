@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.8  2002/03/16 18:58:51  ender
+ * MorphOS port (sdl version) + endian fixes for big endian machines.
+ *
  * Revision 1.7  2002/03/14 08:20:38  ender
  * Fix compile error when using USE_ADLIB
  *
@@ -428,6 +431,7 @@ struct MidiDriver {
 	void MidiOutSeq(void *a, int b);
 	void MidiOutWindows(void *a, int b);
 	void MidiOutQuicktime(void *a, int b);
+	void MidiOutMorphOS(void *a, int b);
 
 	int connect_to_timidity(int port);
 	int open_sequencer_device();

@@ -565,11 +565,11 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room) {
 		od->parentstate = cdhd->v7.parentstate;
 
 		imhd = (ImageHeader*)findResourceData(MKID('IMHD'), room + od->offs_obim_to_room);
-		od->x_pos = imhd->v7.x_pos;
-		od->y_pos = imhd->v7.y_pos;
-		od->width = imhd->v7.width;
-		od->height = imhd->v7.height;
-		od->actordir = imhd->v7.actordir;
+		od->x_pos = READ_LE_UINT16(&imhd->v7.x_pos);
+		od->y_pos = READ_LE_UINT16(&imhd->v7.y_pos);
+		od->width =	READ_LE_UINT16(&imhd->v7.width);
+		od->height = READ_LE_UINT16(&imhd->v7.height);
+		od->actordir = READ_LE_UINT16(&imhd->v7.actordir);
 
 	}
 	od->fl_object_index = 0;
