@@ -60,7 +60,7 @@ private:
 	IMuseInternal *_imuse;				// Pointer to the real imuse object
 };
 
-#define MAX_DIGITAL_CHANNELS 10
+#define MAX_DIGITAL_CHANNELS 16
 #define MAX_IMUSE_JUMPS 1
 #define MAX_IMUSE_REGIONS 3
 
@@ -83,6 +83,8 @@ private:
 		int8 _volumeRight;
 		int8 _volume;
 		int8 _volumeFade;
+		int8 _volumeFadeParam;
+		int8 _volumeFadeStep;
 		bool _isJump;
 		uint32 _numLoops;
 		uint32 _offsetStop;

@@ -188,7 +188,7 @@ bool ScummMixer::stop() {
 				_channels[i].chan = 0;
 		}
 	}
-	_mixer->stopAll();
+//	_mixer->stopAll();
 	return true;
 }
 
@@ -196,7 +196,7 @@ ScummRenderer::ScummRenderer(Scumm * scumm, uint32 speed) :
 	_scumm(scumm),
 	_smixer(0),
 	_insaneSpeed(speed) {
-	scumm->_mixer->stopAll();
+//	scumm->_mixer->stopAll();
 }
 
 static ScummRenderer * s_renderer;

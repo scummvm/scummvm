@@ -4866,6 +4866,35 @@ void IMuseDigital::handler() {
 				continue;
 			}
 
+			if (_channel[l]._volumeFade != -1) {
+				if (_channel[l]._volumeFadeStep < 0) {
+					if (_channel[l]._volume > _channel[l]._volumeFade) {
+						_channel[l]._volume += _channel[l]._volumeFadeStep;
+						_channel[l]._volumeRight += _channel[l]._volumeFadeStep;
+						if (_channel[l]._volume < _channel[l]._volumeFade) {
+							_channel[l]._volume = _channel[l]._volumeFade;
+						}
+						if (_channel[l]._volumeRight < _channel[l]._volumeFade) {
+							_channel[l]._volumeRight = _channel[l]._volumeFade;
+						}
+						if ((_channel[l]._volume == 0) && (_channel[l]._volumeRight == 0)) {
+							_channel[l]._toBeRemoved = true;
+						}
+					}
+				} else if (_channel[l]._volumeFadeStep > 0) {
+					if (_channel[l]._volume < _channel[l]._volumeFade) {
+						_channel[l]._volume += _channel[l]._volumeFadeStep;
+						_channel[l]._volumeRight += _channel[l]._volumeFadeStep;
+						if (_channel[l]._volume > _channel[l]._volumeFade) {
+							_channel[l]._volume = _channel[l]._volumeFade;
+						}
+						if (_channel[l]._volumeRight > _channel[l]._volumeFade) {
+							_channel[l]._volumeRight = _channel[l]._volumeFade;
+						}
+					}
+				}
+			}
+
 			if ((_channel[l]._jump[0]._numLoops == 0) && (_channel[l]._isJump == true)) {
 				_channel[l]._isJump = false;
 			}
@@ -4889,7 +4918,7 @@ void IMuseDigital::handler() {
 						mixer_size = new_size;
 					}
 				}
-			} else {
+			} else if (_channel[l]._isJump == true) {
 				if (_channel[l]._jump[0]._numLoops != 500) {
 					_channel[l]._jump[0]._numLoops--;
 				}
@@ -4907,16 +4936,8 @@ void IMuseDigital::handler() {
 			} else if ((_channel[l]._numLoops > 0) && (new_size != mixer_size)) {
 				memcpy(buf + new_size, _channel[l]._data, mixer_size - new_size);
 				_channel[l]._offset = mixer_size - new_size;
-				_channel[l]._numLoops--;
 			} else {
 				_channel[l]._offset += mixer_size;
-			}
-
-			if (_channel[l]._volumeFade != -1) {
-				if (_channel[l]._volume > _channel[l]._volumeFade) {
-					_channel[l]._volume -= 10;
-					_channel[l]._volumeRight -= 10;
-				}
 			}
 
 			if (_channel[l]._bits == 12) {
@@ -4969,6 +4990,7 @@ void IMuseDigital::startSound(int sound) {
 			_channel[l]._volumeRight = 127;
 			_channel[l]._volume = 127;
 			_channel[l]._volumeFade = -1;
+			_channel[l]._volumeFadeParam = 0;
 
 			uint32 tag, size = 0, r, t;
 
@@ -5129,6 +5151,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 	int32 sample = b;
 	byte sub_cmd = c >> 8;
 	int8 channel = -1, l;
+	int8 tmp;
 
 	if (!(cmd || param))
 		return 1;
@@ -5154,8 +5177,19 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 				}
 				_channel[channel]._volume = d;
 				_channel[channel]._volumeRight = d;
+				if (_channel[channel]._volumeFade != -1) {
+					tmp = ((_channel[channel]._volumeFade - _channel[channel]._volume) * 2) / _channel[channel]._volumeFadeParam;
+					if ((tmp < 0) && (tmp > -2)) {
+						tmp = -1;
+					} else if ((tmp > 0) && (tmp < 2)) {
+						tmp = 1;
+					} else {
+						tmp /= 2;
+					}
+				_channel[channel]._volumeFadeStep = tmp;
+				}
 				return 0;
-			case 7: // right volume control (0-127) i think
+			case 7: // right volume control (0-127)
 				debug(2, "IMuseDigital::doCommand setting right volume sample(%d),volume(%d)", sample, d);
 				for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 					if ((_channel[l]._idSound == sample) && (_channel[l]._used == true)) {
@@ -5184,10 +5218,20 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					}
 				}
 				if (channel == -1) {
-						warning("IMuseDigital::doCommand Sample %d not exist in channels", sample);
+						warning("IMuseDigital::doCommand 14,6 sample %d not exist in channels", sample);
 					return 1;
 				}
-				_channel[channel]._volumeFade = e;
+				_channel[channel]._volumeFade = d;
+				_channel[channel]._volumeFadeParam = e;
+				tmp = ((_channel[channel]._volumeFade - _channel[channel]._volume) * 2) / _channel[channel]._volumeFadeParam;
+				if ((tmp < 0) && (tmp > -2)) {
+					tmp = -1;
+				} else if ((tmp > 0) && (tmp < 2)) {
+					tmp = 1;
+				} else {
+					tmp /= 2;
+				}
+				_channel[channel]._volumeFadeStep = tmp;
 				return 0;
 			default:
 				warning("IMuseDigital::doCommand 14 DEFAULT sub command %d", sub_cmd);
@@ -5199,16 +5243,16 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 		}
 	} else if (param == 16) {
 		switch (cmd) {
-		case 0: // it looks be play music (DIG/CMI) (state) (0, 1 ,2, 4, 6, 8, 9, 10, 12, 14, 15, 17, 18, 79, ...)
+		case 0: // play music (state)
 			debug(2, "IMuseDigital::doCommand 0x1000 (%d)", b);
 			return 0;
-		case 1: // it looks be play music (DIG/CMI) (seq) (2020, 2022, 2023, 2045, 2046, 2050, 2060, 2070, ...)
+		case 1: // play music (seq)
 			debug(2, "IMuseDigital::doCommand 0x1001 (%d)", b);
 			return 0;
-		case 2: // dummy in DIG and CMI,     FT - ?
+		case 2: // dummy in DIG and CMI
 			debug(2, "IMuseDigital::doCommand 0x1002 (%d)", b);
 			return 0;
-		case 3: // ??? (stream related) (1, 2, 8),(1)
+		case 3: // ??? (stream related)
 			debug(2, "IMuseDigital::doCommand 0x1003 (%d,%d)", b, c);
 			return 0;
 		default:
