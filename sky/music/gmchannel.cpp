@@ -53,6 +53,7 @@ SkyGmChannel::SkyGmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pM
 {
 	_musicData = pMusicData;
 	_midiDrv = pMidiDrv;
+	_channelData.midiChannelNumber = 0;
 	_channelData.startOfData = startOfData;
 	_channelData.eventDataPtr = startOfData;
 	_channelData.channelActive = 1;
