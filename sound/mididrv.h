@@ -65,9 +65,6 @@ public:
 	};
 
 	
-	/* destroy the midi object */
-//	virtual void destroy() = 0;
-
 	/* open the midi driver.
 	 * returns 0 if successful.
 	 * otherwise an error code. */

@@ -35,7 +35,6 @@
 /* Windows MIDI driver */
 class MidiDriver_WIN : public MidiDriver {
 public:
-	void destroy();
 	int open(int mode);
 	void close();
 	void send(uint32 b);
@@ -77,11 +76,6 @@ private:
 void MidiDriver_WIN::set_stream_callback(void *param, StreamCallback *sc) {
 	_stream_param = param;
 	_stream_proc = sc;
-}
-
-void MidiDriver_WIN::destroy() {
-	close();
-	delete this;
 }
 
 void CALLBACK MidiDriver_WIN::midi_callback(HMIDIOUT hmo, UINT wMsg,
@@ -277,7 +271,6 @@ extern struct IOMidiRequest *ScummMidiRequest;
 /* MorphOS MIDI driver */
 class MidiDriver_AMIDI : public MidiDriver {
 public:
-	void destroy();
 	int open(int mode);
 	void close();
 	void send(uint32 b);
@@ -293,11 +286,6 @@ private:
 void MidiDriver_AMIDI::set_stream_callback(void *param, StreamCallback *sc) {
 	_stream_param = param;
 	_stream_proc = sc;
-}
-
-void MidiDriver_AMIDI::destroy() {
-	close();
-	delete this;
 }
 
 int MidiDriver_AMIDI::open(int mode) {
@@ -341,7 +329,6 @@ MidiDriver *MidiDriver_AMIDI_create() {
 class MidiDriver_SEQ : public MidiDriver {
 public:
         MidiDriver_SEQ();
-	void destroy();
 	int open(int mode);
 	void close();
 	void send(uint32 b);
@@ -448,11 +435,6 @@ MidiDriver *MidiDriver_SEQ_create() {
 	return new MidiDriver_SEQ();
 }
 
-void MidiDriver_SEQ::destroy() {
-	close();
-	delete this;
-}
-
 #endif
 
 #if defined(__APPLE__) || defined(__APPLE_CW)
@@ -467,7 +449,6 @@ void MidiDriver_SEQ::destroy() {
 /* QuickTime MIDI driver */
 class MidiDriver_QT : public MidiDriver {
 public:
-	void destroy();
 	int open(int mode);
 	void close();
 	void send(uint32 b);
@@ -487,12 +468,6 @@ private:
 void MidiDriver_QT::set_stream_callback(void *param, StreamCallback *sc) {
 	_stream_param = param;
 	_stream_proc = sc;
-}
-
-void MidiDriver_QT::destroy()
-{
-	close();
-	delete this;
 }
 
 int MidiDriver_QT::open(int mode) {
@@ -663,7 +638,6 @@ MidiDriver *MidiDriver_QT_create() {
 /* Based on code by Benjamin W. Zale */
 class MidiDriver_CORE : public MidiDriver {
 public:
-	void destroy();
 	int open(int mode);
 	void close();
 	void send(uint32 b);
@@ -681,11 +655,6 @@ private:
 void MidiDriver_CORE::set_stream_callback(void *param, StreamCallback *sc) {
 	_stream_param = param;
 	_stream_proc = sc;
-}
-
-void MidiDriver_CORE::destroy() {
-	close();
-	delete this;
 }
 
 int MidiDriver_CORE::open(int mode) {
@@ -752,7 +721,6 @@ MidiDriver *MidiDriver_CORE_create() {
 /* NULL driver */
 class MidiDriver_NULL : public MidiDriver {
 public:
-	void destroy();
 	int open(int mode);
 	void close();
 	void send(uint32 b);
@@ -766,7 +734,6 @@ int MidiDriver_NULL::open(int mode) {
 	return 0;
 }
 void MidiDriver_NULL::close() {}
-void MidiDriver_NULL::destroy() {}
 void MidiDriver_NULL::send(uint32 b) {}
 void MidiDriver_NULL::pause(bool pause) {}
 void MidiDriver_NULL::set_stream_callback(void *param, StreamCallback *sc) {}
