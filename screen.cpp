@@ -43,7 +43,7 @@ float getZbufferBlockDepth(char *zbuffer, int x, int y) {
 	writePtr = (char *)buffer;
 
 	for(i = 0; i < 16; i++) {
-		readPtr = zbuffer + (y*16+i) * 640 + (x * 16);
+		readPtr = zbuffer + (y * 16 + i) * 640 + (x * 16);
 		for(j = 0; j < 16; j++) {
 			*(writePtr++) = *(readPtr++);
 			*(writePtr++) = *(readPtr++);
@@ -126,11 +126,11 @@ void screenBlocksAddRectangle( int top, int right, int left, int bottom, float d
 	firstTop = top /16;
 
 	width = (right - left) / 16;
-	if((right-left)%16)
+	if((right-left) % 16)
 		width++;
 
 	height = (bottom - top) / 16;
-	if((bottom - top)%16)
+	if((bottom - top) % 16)
 		height++;
 
 	// temp hack
@@ -165,14 +165,14 @@ void screenBlocksDrawDebug() {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	for(i = 0; i< 40; i++) {
+	for(i = 0; i < 40; i++) {
 		for(j = 0;j < 30; j++) {
 			if(screenBlockData[i][j].isDirty) {
 				glBegin(GL_QUADS);
-				glVertex2i(i*16,j*16);
-				glVertex2i((i+1)*16,j*16);
-				glVertex2i((i+1)*16,(j+1)*16);
-				glVertex2i(i*16,(j+1)*16);
+				glVertex2i(i * 16, j * 16);
+				glVertex2i((i + 1) * 16, j * 16);
+				glVertex2i((i + 1) * 16, (j + 1) * 16);
+				glVertex2i(i * 16,(j + 1)*16);
 				glEnd();
 			}
 		}
@@ -208,8 +208,8 @@ void screenBlocksBlitDirtyBlocks() {
 					width++;
 				}
 				for (int y = 0; y < 16; y++) {
-					glRasterPos2i(start*16, j*16 + y + 1);
-					glDrawPixels(16*width, 1, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, dataTemp+((j*16 +y) * 640)+(start*16));
+					glRasterPos2i(start * 16, j * 16 + y + 1);
+					glDrawPixels(16 * width, 1, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, dataTemp+((j*16 +y) * 640)+(start*16));
 				}
 			}
 		}

@@ -22,12 +22,12 @@
 #include "matrix3.h"
 
 // matrix 4 is a rotation matrix + position
-class Matrix4{
+class Matrix4 {
 public:
 	Matrix3 rot_;
 	Vector3d pos_;
 
-	Matrix4( void );
+	Matrix4();
 
 	Matrix4& operator =(const Matrix4& s) {
 		pos_ = s.pos_;
@@ -40,7 +40,7 @@ public:
 		Vector3d v;
 
 		v = s.pos_;
-		rot_.transform( &v );
+		rot_.transform(&v);
 
 		pos_+=v;
 
@@ -49,7 +49,7 @@ public:
 		return *this;
 	}
 
-	void translate( float x, float y, float z );
+	void translate(float x, float y, float z);
 
 private:
 };
