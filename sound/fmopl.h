@@ -28,7 +28,12 @@
 #define HAS_YM3812	1
 
 /* --- select emulation chips --- */
+#ifdef _MSC_VER
+// FIXME: how to fix it for VC6 ?
+#define BUILD_YM3812 1
+#else
 #define BUILD_YM3812 defined(HAS_YM3812) && HAS_YM3812
+#endif
 #define BUILD_YM3526 defined(HAS_YM3526) && HAS_YM3526
 #define BUILD_Y8950  defined(HAS_Y8950) && HAS_Y8950
 
