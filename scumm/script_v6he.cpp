@@ -784,6 +784,9 @@ void ScummEngine_v6he::o6_kernelSetFunctions() {
 	case 22:
 		_skipDrawObject = 0;
 		break;
+	case 23:
+		_charset->clearCharsetMask();
+		break;
 	default:
 		warning("o6_kernelSetFunctions: default case %d (param count %d)", args[0], num);
 		break;
