@@ -773,6 +773,7 @@ void Script::runThread(SCRIPT_THREAD *thread, int instr_limit) {
 
 				if (!(speechFlags & kSpeakAsync)) {
 					thread->wait(kWaitTypeSpeech);
+					thread->i_offset = scriptS.pos();
 					return;
 				}
 			}
