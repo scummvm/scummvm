@@ -68,6 +68,8 @@ static int old_mouse_x, old_mouse_y;
 static int old_mouse_h, old_mouse_w;
 static bool has_mouse, hide_mouse;
 
+static unsigned int scale;
+
 #define MAX_NUMBER_OF_DIRTY_SQUARES 32
 typedef struct {
   int x, y, w, h;
@@ -188,7 +190,7 @@ void BoxTest(int num) {
 }
 
 /* Initialize the graphics sub-system */
-void initGraphics(Scumm *s, bool fullScreen) {
+void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor) {
   char buf[512], *gameName;
   static XShmSegmentInfo shminfo;
   XWMHints *wm_hints;
@@ -196,6 +198,8 @@ void initGraphics(Scumm *s, bool fullScreen) {
   XTextProperty window_name;
   char *name = (char *) &buf;
   
+	scale = scaleFactor;  // not implemented yet! ignored.
+
   /* For the window title */
   sprintf(buf, "ScummVM - %s", gameName = s->getGameName());
   free(gameName);

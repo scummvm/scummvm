@@ -553,7 +553,7 @@ void Scumm::redrawBGAreas() {
 	int i;
 	int val;
 	CameraData *cd = &camera;
-	int diff;	// Full throttle hack
+	int diff;
 
 	if (!(_features & GF_AFTER_V7))
 		if (cd->_cur.x!=cd->_last.x && charset._hasMask)
@@ -2369,7 +2369,7 @@ void Scumm::drawBomp(BompDrawData *bd) {
                         src = bd->dataptr;
 
                         do {
-                                byte color,code;
+                                byte color;
                                 uint len, num;
                                 uint x;
                                 if ((uint)y >= (uint)bd->outheight) {

@@ -2611,7 +2611,7 @@ void Scumm::o6_miscOps() {
 			break;
 			
 		case 117:
-			error("stub o6_miscOps_117()");
+			warning("stub o6_miscOps_117()");
 			break;
 
 		case 118:

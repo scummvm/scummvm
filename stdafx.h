@@ -2,6 +2,9 @@
  * $Id$
  *
  * $Log$
+ * Revision 1.9  2002/03/06 12:24:56  ender
+ * Applied cleanup and scaling patch by Rob.
+ *
  * Revision 1.8  2001/11/20 07:13:01  vasyl
  * Added ability for ports to override all includes in stdafx.h. To use this feature
  * port must define symbol NONSTANDARD_PORT. Port must also provide
@@ -85,3 +88,25 @@
 
 
 #endif
+
+
+/* Semi-Platform-specific version info */
+#ifdef ALLOW_GDI
+/* Assume Win32 GDI is used, then... */
+#define SCUMMVM_PLATFORM_VERSION  "Win32 GDI version"
+
+#else
+#ifdef ALLOW_X11
+/* Assume pure X11 is used, then... */
+#define SCUMMVM_PLATFORM_VERSION  "X11 version"
+
+#else
+#ifdef SDL_COMPILEDVERSION
+#define SCUMMVM_PLATFORM_VERSION  "SDL version"
+//SDL_COMPILEDVERSION is a number... :(
+//SDL_Linked_Version returns an SDL_Version structure...
+
+#endif
+#endif
+#endif
+

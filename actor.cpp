@@ -156,9 +156,9 @@ int Scumm::calcMovementFactor(Actor *a, int newX, int newY) {
 	a->walkdata.yfrac = 0;
 
 	if(_gameId==GID_DIG) {
-		float temp;
+		double temp;
 		temp = atan2 (XYFactor, -YXFactor);
-		a->newDirection = normalizeAngle(temp * 1.8e2 / 3.14);
+		a->newDirection = normalizeAngle((int)(temp * 1.8e2 / 3.14));
 	} else {
 		a->newDirection = getAngleFromPos(XYFactor, YXFactor);
 	}
@@ -465,7 +465,7 @@ AdjustBoxResult Scumm::adjustXYToBeInBox(Actor *a, int x, int y, int pathfrom) {
 	AdjustBoxResult abr,tmp;
 	uint threshold;
 	uint best;
-	int box, iterations;	/* Use inerations for those odd times we get stuck in the loop */
+	int box, iterations = 0;	/* Use inerations for those odd times we get stuck in the loop */
 	byte flags, b;
 	
 	abr.x = x;
@@ -480,7 +480,7 @@ AdjustBoxResult Scumm::adjustXYToBeInBox(Actor *a, int x, int y, int pathfrom) {
 		
 		while(1) {
 			iterations++;
-			if (iterations > 1000) return abr;	/* Safety net */
+			if (iterations > 3000000) return abr;	/* Safety net */
 			box = getNumBoxes() - 1;
 			best = (uint)0xFFFF;
 			b = 0;

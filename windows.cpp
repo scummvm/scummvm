@@ -45,7 +45,7 @@
 #define BITS_PER_SAMPLE 16
 
 static bool shutdown;
-
+static unsigned int scale;
 
 #if USE_GDI
 typedef struct DIB {
@@ -446,9 +446,10 @@ void waitForTimer(Scumm *s, int delay) {
 	} 
 }
 
-void initGraphics(Scumm *s, bool fullScreen) {
+void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor) {
 	if(fullScreen)
 		warning("Use SDL for fullscreen support");
+	scale = scaleFactor;  // not supported yet! ignored.
 }
 
 void drawMouse(Scumm *s, int, int, int, byte*, bool) {

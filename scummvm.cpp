@@ -191,7 +191,9 @@ void Scumm::scummMain(int argc, char **argv) {
 
 	_fileHandle = NULL;
 	
-	_debugMode = 1;
+	_debugMode = 0;  // off by default...
+	_noSubtitles = 0;  // use by default - should this depend on soundtrack?
+	_scale = 2;  // double size by default
 
 	_maxHeapThreshold = 450000;
 	_minHeapThreshold = 400000;
@@ -234,7 +236,7 @@ void Scumm::scummMain(int argc, char **argv) {
 //		_bootParam = 10001;
 //	}
 
-	initGraphics(this, _fullScreen);
+	initGraphics(this, _fullScreen, _scale);
 
     if (_features & GF_SMALL_HEADER)
         readIndexFileSmall();
@@ -397,9 +399,31 @@ int Scumm::scummLoop(int delta) {
 
 }
 
+
+#define USAGE_STRING	"ScummVM - Scumm Interpreter\n" \
+						"Syntax:\n" \
+						"\tscummvm [-v] [-d] [-n] [-b<num>] [-t<num>] [-s<num>] [-p<path>] [-m<num>] [-f] game\n" \
+						"Flags:\n" \
+						"\tv       - show version info and exit\n" \
+						"\td       - enable debug output\n" \
+						"\tn       - no subtitles for speech\n" \
+						"\tb<num>  - start in room <num>\n" \
+						"\tt<num>  - Set music tempo. Suggested: 1F0000\n" \
+						"\ts<num>  - Set scale factor to <num> (1, 2, or 3 - 2 by default)\n" \
+						"\tp<path> - look for game in <path>\n" \
+						"\tm<num> - Set music volume to <num> (0-100)\n" \
+						"\tf       - fullscreen mode\n"
+
 void Scumm::parseCommandLine(int argc, char **argv) {
 	int i;
 	char *s;
+
+	// check for arguments
+	if (argc < 2)
+	{
+		printf( USAGE_STRING );
+		exit(1);
+	}
 
 	/* Parse the arguments */
 	for (i=1; i < argc; i++) {
@@ -410,21 +434,49 @@ void Scumm::parseCommandLine(int argc, char **argv) {
 			while (*s) {
 				switch(tolower(*s)) {
 				case 'b': 
+                	if (*(s+1) == '\0')
+                		goto ShowHelpAndExit;
 					_bootParam = atoi(s+1);
 					goto NextArg;
 				case 'f':
 					_fullScreen = true;
 					break;
+				case 'd':
+					_debugMode = true;
+					break;
+				case 'n':
+					_noSubtitles = true;
+					break;
+				case 's':
+                	if (*(s+1) == '\0')
+                		goto ShowHelpAndExit;
+					_scale = atoi(s+1);
+					if (_scale == 0 || _scale > 3)
+					{
+						// bad scale - only 1, 2, 3 work for now
+						printf("Invalid scale '%s' - valid values are 1, 2, 3\n", s+1);
+						exit(1);
+					}
+					goto NextArg;
 				case 'v':
 					printf("ScummVM " SCUMMVM_VERSION "\nBuilt on " __DATE__ " " __TIME__ "\n");
+					#ifdef SCUMMVM_PLATFORM_VERSION
+					printf("    " SCUMMVM_PLATFORM_VERSION "\n");
+					#endif
 					exit(1);
 				case 'p':
-					_gameDataPath = argv[++i];
-					break;
+                	if (*(s+1) == '\0')
+                		goto ShowHelpAndExit;
+					_gameDataPath = s+1;
+                    goto NextArg;
                 case 't':
+                	if (*(s+1) == '\0')
+                		goto ShowHelpAndExit;
                     _gameTempo = atoi(s+1);
                     goto NextArg;
                 case 'm': {
+                	if (*(s+1) == '\0')
+                		goto ShowHelpAndExit;
 					SoundEngine *se = (SoundEngine*)_soundEngine;
 					if (se) 
 						se->set_music_volume(atoi(s+1));
@@ -432,15 +484,7 @@ void Scumm::parseCommandLine(int argc, char **argv) {
 				}
 				default:
 ShowHelpAndExit:;
-					printf(
-						"ScummVM - Scumm Interpreter\n"
-						"Syntax:\n"
-						"\tscummvm [-b<num>] [-p path] [-f] [-m<num>] [-t<num>] game\n"
-						"Flags:\n"
-						"\tm<num> - Set music volume (0-100)\n"
-						"\tt<num> - Set music tempo (Default: 2031616)\n"
-						"\tb<num> - start in that room\n"
-						"\tf - fullscreen mode\n");
+					printf( USAGE_STRING );
 					exit(1);
 				}
 				s++;
@@ -1157,14 +1201,15 @@ void NORETURN CDECL error(const char *s, ...) {
 
 	if (scumm._currentScript != 0xFF) {
 		ScriptSlot *ss = &scumm.vm.slot[scumm._currentScript];
-		fprintf(stderr, "Error(%d:%d:0x%X): %s!\nPress a key to quit.\n", 
+		fprintf(stderr, "Error(%d:%d:0x%X): %s!\n",
 			scumm._roomResource,
 			ss->number,
 			scumm._scriptPointer - scumm._scriptOrgPointer,
 			buf);
 	} else {
-		fprintf(stderr, "Error: %s!\nPress a key to quit.\n", buf);
+		fprintf(stderr, "Error: %s!\n", buf);
 	}
+	// Doesn't wait for any keypress!! Is it intended to?
 	exit(1);
 }
 

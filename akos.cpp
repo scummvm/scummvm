@@ -39,7 +39,7 @@ int Scumm::akos_findManyDirection(int16 ManyDirection, uint16 facing)
 {
 	int32 direction;
 	int32 temp;
-	int32 temp_facing;
+
 	temp=many_direction_tab[ManyDirection];
 	direction=temp + ManyDirection * 8;
 	do{

@@ -491,7 +491,7 @@ void Scumm::loadRoomObjectsSmall() {
 
 void Scumm::setupRoomObject(ObjectData *od, byte *room) {      
 	  CodeHeader *cdhd;
-	  ImageHeader *imhd;	// Full throttle hack
+	  ImageHeader *imhd;
 
         if(_features & GF_SMALL_HEADER) {
                

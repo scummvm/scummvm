@@ -349,9 +349,11 @@ newLine:;
 				charset.printCharOld(c);
 			else  if (!(_features&GF_AFTER_V6)) {
 //                                if (!_vars[VAR_V5_CHARFLAG]) { /* FIXME */
+					if (!(a && _noSubtitles))
 					charset.printChar(c);
 //                                }
 			} else {
+				if (!(a && _noSubtitles))
 				charset.printChar(c);
 			}
 

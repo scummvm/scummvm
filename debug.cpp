@@ -149,6 +149,7 @@ bool ScummDebugger::do_command() {
 
 	default: /* this line is never reached */
 		error("Unknown debug command");	
+		return true;
 	}
 }
 

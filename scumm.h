@@ -956,6 +956,9 @@ struct Scumm {
 
 	uint16 _debugMode;
 
+	uint16 _noSubtitles;  // skip all subtitles?
+	unsigned int _scale;  // multiplier to resolution (2 is default)
+
 	byte *_messagePtr;
 
 	byte _numNestedScripts;
@@ -2214,7 +2217,7 @@ void CDECL NORETURN error(const char *s, ...);
 void CDECL warning(const char *s, ...);
 void CDECL debug(int level, const char *s, ...);
 void checkHeap();
-void initGraphics(Scumm *s, bool fullScreen);
+void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor = 2);
 void updateScreen(Scumm *s);
 void drawMouse(Scumm *s, int x, int y, int color, byte *mask, bool visible);
 void drawMouse(Scumm *s, int x, int y, int w, int h, byte *buf, bool visible);

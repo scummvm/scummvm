@@ -27,7 +27,7 @@
 #include "sound.h"
 #include "SDL_thread.h"
 
-#define SCALEUP_2x2
+static unsigned int scale;
 
 Scumm scumm;
 ScummDebugger debugger;
@@ -121,13 +121,21 @@ void waitForTimer(Scumm *s, int msec_delay) {
 				break;
 			case SDL_MOUSEMOTION: {
 				int newx,newy;
-	#if !defined(SCALEUP_2x2)
-				newx = event.motion.x;
-				newy = event.motion.y;
-	#else
+	if (scale == 3)
+	{
+				newx = event.motion.x/3;
+				newy = event.motion.y/3;
+	} else
+	if (scale == 2)
+	{
 				newx = event.motion.x>>1;
 				newy = event.motion.y>>1;
-	#endif
+	} else
+	{
+				newx = event.motion.x;
+				newy = event.motion.y;
+	}
+
 				if (newx != s->mouse.x || newy != s->mouse.y) {
 					s->mouse.x = newx;
 					s->mouse.y = newy;
@@ -181,17 +189,26 @@ void addDirtyRect(int x, int y, int w, int h) {
 		fullRedraw = true;
 	else if (!fullRedraw) {
 		r = &dirtyRects[numDirtyRects++];
-#if defined(SCALEUP_2x2)
+	if (scale == 3)
+	{
+		r->x = x*3;
+		r->y = y*3;
+		r->w = w*3;
+		r->h = h*3;
+	} else
+	if (scale == 2)
+	{
 		r->x = x*2;
 		r->y = y*2;
 		r->w = w*2;
 		r->h = h*2;
-#else
+	} else
+	{
 		r->x = x;
 		r->y = y;
 		r->w = w;
 		r->h = h;
-#endif
+	}
 	}
 }
 
@@ -219,12 +236,23 @@ void setShakePos(Scumm *s, int shake_pos) {
 		/* Old shake pos was current_shake_pos, new is shake_pos.
 		 * Move the screen up or down to account for the change.
 		 */
-#if defined(SCALEUP_2x2)
-		SDL_Rect dstr = {0,shake_pos*2,640,400}, srcr = {0,old_shake_pos*2,640,400};
-#else
-		SDL_Rect dstr = {0,shake_pos,320,200}, srcr = {0,old_shake_pos,320,200};
-#endif
+	if (scale == 3)
+	{
+		SDL_Rect dstr = {0,shake_pos*3,960,600};
+		SDL_Rect srcr = {0,old_shake_pos*3,960,600};
 		SDL_BlitSurface(screen, &srcr, screen, &dstr);
+	} else
+	if (scale == 2)
+	{
+		SDL_Rect dstr = {0,shake_pos*2,640,400};
+		SDL_Rect srcr = {0,old_shake_pos*2,640,400};
+		SDL_BlitSurface(screen, &srcr, screen, &dstr);
+	} else
+	{
+		SDL_Rect dstr = {0,shake_pos,320,200};
+		SDL_Rect srcr = {0,old_shake_pos,320,200};
+		SDL_BlitSurface(screen, &srcr, screen, &dstr);
+	}
 		
 		/* Also adjust the mouse pointer backup Y coordinate.
 		 * There is a minor mouse glitch when the mouse is moved
@@ -247,12 +275,21 @@ void setShakePos(Scumm *s, int shake_pos) {
 
 		/* Fill the dirty area with blackness or the scumm image */
 		{
-#if defined(SCALEUP_2x2)
-			SDL_Rect blackrect = {0, dirty_blacktop*2, 640, dirty_blackheight*2};
-#else
-			SDL_Rect blackrect = {0, dirty_blacktop, 320, dirty_blackheight};
-#endif
+		if (scale == 3)
+		{
+			SDL_Rect blackrect = {0, dirty_blacktop*3, 960, dirty_blackheight*3};
 			SDL_FillRect(screen, &blackrect, 0);
+		} else
+		if (scale == 2)
+		{
+			SDL_Rect blackrect = {0, dirty_blacktop*2, 640, dirty_blackheight*2};
+			SDL_FillRect(screen, &blackrect, 0);
+		} else
+		{
+			SDL_Rect blackrect = {0, dirty_blacktop, 320, dirty_blackheight};
+			SDL_FillRect(screen, &blackrect, 0);
+		}
+
 			s->redrawLines(dirty_top, dirty_top + dirty_height);
 		}
 	}
@@ -277,15 +314,37 @@ void blitToScreen(Scumm *s, byte *src,int x, int y, int w, int h) {
 	if (SDL_LockSurface(screen)==-1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
-#if !defined(SCALEUP_2x2)
-	dst = (byte*)screen->pixels + y*320 + x;
+	if (scale == 3)
+	{
+	dst = (byte*)screen->pixels + y*960*3 + x*3;
 	addDirtyRect(x,y,w,h);
+#ifdef DEBUG_CODE
+	byte black = GetAsyncKeyState(VK_SHIFT)<0 ? 0 : 0xFF;
 	do {
-		memcpy(dst, src, w);
-		dst += 320;
+		i=0;
+		do {
+			dst[i*3] = dst[i*3+1] = dst[i*3+2] = src[i] & black;
+		} while (++i!=w);
+		memcpy(dst+960, dst, w*3);
+		memcpy(dst+960+960, dst, w*3);
+		dst += 960*3;
 		src += 320;
 	} while (--h);
 #else
+	do {
+		i=0;
+		do {
+			dst[i*3] = dst[i*3+1] = dst[i*3+2] = src[i];
+		} while (++i!=w);
+		memcpy(dst+960, dst, w*3);
+		memcpy(dst+960+960, dst, w*3);
+		dst += 960*3;
+		src += 320;
+	} while (--h);
+#endif
+	} else
+	if (scale == 2)
+	{
 	dst = (byte*)screen->pixels + y*640*2 + x*2;
 	addDirtyRect(x,y,w,h);		
 #ifdef DEBUG_CODE
@@ -310,7 +369,16 @@ void blitToScreen(Scumm *s, byte *src,int x, int y, int w, int h) {
 		src += 320;
 	} while (--h);
 #endif
-#endif
+	} else
+	{
+	dst = (byte*)screen->pixels + y*320 + x;
+	addDirtyRect(x,y,w,h);
+	do {
+		memcpy(dst, src, w);
+		dst += 320;
+		src += 320;
+	} while (--h);
+	}
 
 	SDL_UnlockSurface(screen);
 }
@@ -361,7 +429,58 @@ void drawMouse(Scumm *s, int xdraw, int ydraw, int w, int h, byte *buf, bool vis
 	if (SDL_LockSurface(screen)==-1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
-#if defined(SCALEUP_2x2)
+	if (scale == 3)
+	{
+
+	if (has_mouse) {
+		dst = (byte*)screen->pixels + old_mouse_y*960*3 + old_mouse_x*3;
+		bak = old_backup;
+
+		for (y=0; y<old_mouse_h; y++,bak+=BAK_WIDTH*3,dst+=960*3) {
+			if ( (uint)(old_mouse_y + y) < 200) {
+				for (x=0; x<old_mouse_w; x++) {
+					if ((uint)(old_mouse_x + x) < 320) {
+						dst[x*3+960] = dst[x*3+960+960] = dst[x*3] = bak[x*3];
+						dst[x*3+960+1] = dst[x*3+960+960+1] = dst[x*3+1] = bak[x*3+1];
+						dst[x*3+960+2] = dst[x*3+960+960+2] = dst[x*3+2] = bak[x*3+2];
+					}
+				}
+			}
+		}
+	}
+
+	if (visible) {
+		ydraw += current_shake_pos;
+
+		dst = (byte*)screen->pixels + ydraw*960*3 + xdraw*3;
+		bak = old_backup;
+
+		for (y=0; y<h; y++,dst+=960*3,bak+=BAK_WIDTH*3,buf+=w) {
+			if ((uint)(ydraw+y)<200) {
+				for (x=0; x<w; x++) {
+					if ((uint)(xdraw+x)<320) {
+						bak[x*3] = dst[x*3];
+						bak[x*3+1] = dst[x*3+1];
+						bak[x*3+2] = dst[x*3+2];
+						if ((color=buf[x])!=0xFF) {
+							dst[x*3] = color;
+							dst[x*3+1] = color;
+							dst[x*3+2] = color;
+							dst[x*3+960] = color;
+							dst[x*3+1+960] = color;
+							dst[x*3+2+960] = color;
+							dst[x*3+960+960] = color;
+							dst[x*3+1+960+960] = color;
+							dst[x*3+2+960+960] = color;
+						}
+					}
+				}
+			}
+		}
+	}
+	} else
+	if (scale == 2)
+	{
 
 	if (has_mouse) {
 		dst = (byte*)screen->pixels + old_mouse_y*640*2 + old_mouse_x*2;
@@ -402,7 +521,8 @@ void drawMouse(Scumm *s, int xdraw, int ydraw, int w, int h, byte *buf, bool vis
 			}
 		}
 	}
-#else
+	} else
+	{
 	if (has_mouse) {
 		dst = (byte*)screen->pixels + old_mouse_y*320 + old_mouse_x;
 		bak = old_backup;
@@ -436,9 +556,7 @@ void drawMouse(Scumm *s, int xdraw, int ydraw, int w, int h, byte *buf, bool vis
 			}
 		}
 	}
-
-
-#endif	
+	}
 
 	SDL_UnlockSurface(screen);
 
@@ -487,8 +605,10 @@ int music_thread(Scumm *s) {
 }
 
 
-void initGraphics(Scumm *s, bool fullScreen) {
+void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor) {
 	SDL_AudioSpec desired;
+
+	scale = scaleFactor;
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)==-1) {
 		error("Could not initialize SDL: %s.\n", SDL_GetError());
@@ -525,11 +645,31 @@ void initGraphics(Scumm *s, bool fullScreen) {
 	}
 	
 
-#if !defined(SCALEUP_2x2)
-	screen = SDL_SetVideoMode(320, 200, 8, fullScreen ? (SDL_SWSURFACE | SDL_FULLSCREEN) : SDL_SWSURFACE);
-#else
-	screen = SDL_SetVideoMode(640, 400, 8, fullScreen ? (SDL_SWSURFACE | SDL_FULLSCREEN) : SDL_SWSURFACE);
-#endif
+	if (scale == 3)
+	{
+		screen = SDL_SetVideoMode(960, 600, 8, fullScreen ? (SDL_SWSURFACE | SDL_FULLSCREEN) : (SDL_SWSURFACE | SDL_DOUBLEBUF));
+	} else
+	if (scale == 2)
+	{
+		screen = SDL_SetVideoMode(640, 400, 8, fullScreen ? (SDL_SWSURFACE | SDL_FULLSCREEN) : (SDL_SWSURFACE | SDL_DOUBLEBUF));
+	} else
+	{
+		screen = SDL_SetVideoMode(320, 200, 8, fullScreen ? (SDL_SWSURFACE | SDL_FULLSCREEN) : (SDL_SWSURFACE | SDL_DOUBLEBUF));
+	}
+
+// SDL_SWSURFACE 	0x00000000	/* Surface is in system memory */
+// SDL_HWSURFACE 	0x00000001	/* Surface is in video memory */
+// SDL_ASYNCBLIT 	0x00000004	/* Use asynchronous blits if possible */
+// SDL_ANYFORMAT 	0x10000000	/* Allow any video depth/pixel-format */
+// SDL_HWPALETTE 	0x20000000	/* Surface has exclusive palette */
+// SDL_DOUBLEBUF 	0x40000000	/* Set up double-buffered video mode */
+// SDL_FULLSCREEN	0x80000000	/* Surface is a full screen display */
+// SDL_OPENGL    	0x00000002	/* Create an OpenGL rendering context */
+// SDL_OPENGLBLIT	0x0000000A	/* Create an OpenGL rendering context and use it for blitting */
+// SDL_RESIZABLE 	0x00000010	/* This video mode may be resized */
+// SDL_NOFRAME   	0x00000020	/* No window caption or edge frame */
+
+
 
 	printf("%d %d, %d %d, %d %d %d, %d %d %d %d %d\n", 
 		sizeof(int8), sizeof(uint8),
