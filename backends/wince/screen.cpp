@@ -21,7 +21,7 @@
 
 #ifdef _WIN32_WCE
 
-#define POCKETSCUMM_VERSION "CVS build 0.3.1cvs"
+#define POCKETSCUMM_VERSION "PPC build 03.02.09/1"
 
 /* Original GFX code by Vasyl Tsvirkunov */
 
@@ -33,6 +33,8 @@
 //#include "screen.h"
 //#include "resource.h"
 //#include "dynamic_imports.h"
+
+#include <tlhelp32.h>
 
 #define COLORCONV565(r,g,b) \
 (((r&0xf8)<<(11-3))|((g&0xfc)<<(5-2))|((b&0xf8)>>3))
@@ -98,6 +100,7 @@ UBYTE decomp[320 * 240];
 UBYTE comment_zone[8 * 220];
 UBYTE highlighted_zone[8 * 220];
 int _highlighted_index = -1;
+
 
 bool _gfx_mode_switch;
 int _game_selection_X_offset;
@@ -603,6 +606,8 @@ void palette_update()
 
 void SetPalEntry(int ent, UBYTE r, UBYTE g, UBYTE b)
 {
+	int i;
+
 	if (ent >= MAX_CLR)
 		return;
 
@@ -616,6 +621,7 @@ void SetPalEntry(int ent, UBYTE r, UBYTE g, UBYTE b)
 		pal[ent] = COLORCONV555(r,g,b);
 	else if(gxdp.ffFormat & kfDirect)
 		pal[ent] = COLORCONVMONO(r,g,b);
+	
 }
 
 /* *************** CLS IMPLEMENTATIONS ****************** */
@@ -2045,7 +2051,7 @@ void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 					if (!own_palette) {
 						register first = *(src + 0);
 						register second = *(src + 1);	
-						
+
 						r = (3*palRed[first] + palRed[second])>>2;
 						g = (3*palGreen[first] + palGreen[second])>>2;
 						b = (3*palBlue[first] + palBlue[second])>>2;
@@ -2054,7 +2060,7 @@ void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 						register second = 3 * *(src + 1);	
 
 						r = (3 * own_palette[first] + 
-							     own_palette[second]) >> 2;
+								own_palette[second]) >> 2;
 						g = (3 * own_palette[first + 1] +
 								 own_palette[second + 1]) >> 2;
 						b = (3 * own_palette[first + 2] +
@@ -2068,7 +2074,7 @@ void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 					if (!own_palette) {
 						register first = *(src + 1);
 						register second = *(src + 2);	
-						
+
 						r = (palRed[first] + palRed[second])>>1;
 						g = (palGreen[first] + palGreen[second])>>1;
 						b = (palBlue[first] + palBlue[second])>>1;
@@ -2084,9 +2090,9 @@ void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 						b = (own_palette[first + 2] +
 							     own_palette[second + 2]) >> 1;
 					}
-
+					
 					*(unsigned short*)dst = COLORCONV565(r,g,b);
-
+	
 					dst += pixelstep;
 
 					src += 3;
