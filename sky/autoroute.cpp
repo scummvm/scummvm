@@ -135,7 +135,6 @@ bool SkyAutoRoute::calcWalkGrid(uint8 startX, uint8 startY, uint8 destX, uint8 d
 	uint16 *walkDest  = _routeGrid + (destY + 1) * ROUTE_GRID_WIDTH + destX + 1;
 	uint16 *walkStart = _routeGrid + (startY + 1) * ROUTE_GRID_WIDTH + startX + 1;
 	*walkStart = 1;
-	uint16 *walkPos = walkStart;
 
 	// if we are on the edge, move diagonally from start
 	if (roiY < ROUTE_GRID_HEIGHT-3)
