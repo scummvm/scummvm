@@ -262,7 +262,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o90_findAllObjectsWithClassOf),
 		OPCODE(o6_invalid),
 		OPCODE(o6_findInventory),
-		OPCODE(o72_findObject),
+		OPCODE(o70_findObject),
 		/* B0 */
 		OPCODE(o72_findObjectWithClassOf),
 		OPCODE(o70_polygonHit),

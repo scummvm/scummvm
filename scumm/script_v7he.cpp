@@ -246,7 +246,7 @@ void ScummEngine_v70he::setupOpcodes() {
 		OPCODE(o6_verbOps),
 		OPCODE(o6_getActorFromXY),
 		/* A0 */
-		OPCODE(o6_findObject),
+		OPCODE(o70_findObject),
 		OPCODE(o6_pseudoRoom),
 		OPCODE(o6_getActorElevation),
 		OPCODE(o6_getVerbEntrypoint),
@@ -402,6 +402,62 @@ void ScummEngine_v70he::arrrays_unk2(int dst, int src, int len2, int len) {
 	}
 
 	writeArray(0, 0, edi + i, 0);
+}
+
+int ScummEngine_v70he::findObject(int x, int y, int num, int *args) {
+	int i, b, result;
+	int cond, cls, tmp;
+	byte a;
+	const int mask = 0xF;
+
+	for (i = 1; i < _numLocalObjects; i++) {
+		result = 0;
+		if ((_objs[i].obj_nr < 1) || getClass(_objs[i].obj_nr, kObjectClassUntouchable))
+			continue;
+
+		// Check polygon bounds
+		if (polygonDefined(_objs[i].obj_nr)) {
+			if (polygonHit(_objs[i].obj_nr, x, y) != 0)
+				result = _objs[i].obj_nr;
+			else if (VAR_POLYGONS_ONLY != 0xFF && VAR(VAR_POLYGONS_ONLY))
+				continue;
+		}
+
+		if (!result) {
+			// Check object bounds
+			b = i;
+			do {
+				a = _objs[b].parentstate;
+				b = _objs[b].parent;
+				if (b == 0) {
+					if (_objs[i].x_pos <= x && _objs[i].width + _objs[i].x_pos > x &&
+					    _objs[i].y_pos <= y && _objs[i].height + _objs[i].y_pos > y)
+						result = _objs[i].obj_nr;
+					break;
+				}
+			} while ((_objs[b].state & mask) == a);
+		}
+
+		if (result) {
+			if (!num)
+				return result;
+
+			// Check object class
+			cond = 1;
+			tmp = num;
+			while (--tmp >= 0) {
+				cls = args[tmp];
+				b = getClass(i, cls);
+				if ((cls & 0x80 && !b) || (!(cls & 0x80) && b))
+					cond = 0;
+			}
+
+			if (cond)
+				return result;
+		}
+	}
+
+	return 0;
 }
 
 void ScummEngine_v70he::o70_startSound() {
@@ -615,6 +671,13 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 	default:
 		debug(1,"o70_resourceRoutines: default case %d", op);
 	}
+}
+
+void ScummEngine_v70he::o70_findObject() {
+	int y = pop();
+	int x = pop();
+	int r = findObject(x, y, 0, 0);
+	push(r);
 }
 
 void ScummEngine_v70he::o70_quitPauseRestart() {

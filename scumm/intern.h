@@ -626,6 +626,7 @@ protected:
 
 	void arrrays_unk2(int dst, int src, int len2, int len);
 
+	int findObject(int x, int y, int num, int *args);
 	void polygonErase(int fromId, int toId);
 	bool polygonContains(const WizPolygon &pol, int x, int y);
 	bool polygonDefined(int id);
@@ -638,6 +639,7 @@ protected:
 	void o70_pickupObject();
 	void o70_getActorRoom();
 	void o70_resourceRoutines();
+	void o70_findObject();
 	void o70_quitPauseRestart();
 	void o70_kernelSetFunctions();
 	void o70_unknownED();
@@ -720,7 +722,6 @@ protected:
 	void flushWizBuffer();
 	void captureWizImage(int restype, int resnum, const Common::Rect& r, bool frontBuffer, int compType);
 
-	int findObject(int x, int y, int num, int *args);
 	virtual void decodeParseString(int a, int b);
 	void decodeScriptString(byte *dst, bool scriptString = false);
 	void copyScriptString(byte *dst);
@@ -748,7 +749,6 @@ protected:
 	void o72_roomOps();
 	void o72_actorOps();
 	void o72_verbOps();
-	void o72_findObject();
 	void o72_arrayOps();
 	void o72_dimArray();
 	void o72_dim2dimArray();
