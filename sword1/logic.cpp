@@ -930,8 +930,7 @@ int Logic::fnPlaySequence(Object *cpt, int32 id, int32 sequenceId, int32 d, int3
     "credits",  // 19 CD2   credits, to follow "finale" sequence
     // etc.
   };
-                                                                                               
-  warning("fnPlaySequence(%d) called", sequenceId);
+
   MoviePlayer player(_screen, _mixer, _system);
 
   player.play(sequence_list[sequenceId]);
