@@ -3565,6 +3565,6 @@ Compact sc80_goo = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

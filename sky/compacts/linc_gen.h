@@ -571,6 +571,6 @@ uint16 rs_foster_s90[] = {
 
 uint32 *grid93 = 0;
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

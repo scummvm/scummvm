@@ -3828,6 +3828,6 @@ uint16 sc38_lift_down[] = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

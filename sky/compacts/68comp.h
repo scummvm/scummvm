@@ -1409,6 +1409,6 @@ uint16 sc68_joey_list[] = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

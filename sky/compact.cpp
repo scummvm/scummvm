@@ -51,7 +51,7 @@ namespace SkyTalkAnims {
 	extern bool animTalkTableIsPointer[];
 	extern uint16 animTalkTableVal[];
 	extern void *animTalkTablePtr[];
-};
+}
 
 namespace SkyCompact {
 
@@ -602,5 +602,5 @@ void patchFor288(void) {
 	((Compact *)SkyCompact::data_3[409])->actionScript = 0x3127; // slot_28
 }
 
-};
+}
 

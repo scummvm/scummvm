@@ -9322,6 +9322,6 @@ void *data_1[] = {
 	car_down_seq
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

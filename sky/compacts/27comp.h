@@ -3274,6 +3274,6 @@ Compact chair_27 = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

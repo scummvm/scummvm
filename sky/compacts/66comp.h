@@ -6689,6 +6689,6 @@ void *data_5[] = {
 	reset_dad_spec
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

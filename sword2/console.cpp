@@ -1329,11 +1329,11 @@ void Con_display_events()	// (James11july97)
 
 #else // not debug
 
-void	Print_to_console(const char *format,...) {};
-void	Temp_print_to_console(const char *format,...) {};
-void	Clear_console_line(void) {};
-void	Scroll_console(void) {};
-void	Init_console(void) {};
-void	StartConsole(void) {};
+void	Print_to_console(const char *format,...) {}
+void	Temp_print_to_console(const char *format,...) {}
+void	Clear_console_line(void) {}
+void	Scroll_console(void) {}
+void	Init_console(void) {}
+void	StartConsole(void) {}
 
 #endif	// _SWORD2_DEBUG

@@ -795,6 +795,6 @@ uint16 rs_foster_29_23[] = {
 	65535
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

@@ -266,4 +266,4 @@ bool operator != (const char* y, const ConstString &x) {
 	return x != y;
 }
 
-};	// End of namespace ScummVM
+}	// End of namespace ScummVM

@@ -1221,6 +1221,6 @@ uint16 s20_mouse[] = {
 	ID_TEXT_MOUSE
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

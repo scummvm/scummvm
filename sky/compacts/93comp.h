@@ -834,6 +834,6 @@ uint16 pal93[] = {
 	16191
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

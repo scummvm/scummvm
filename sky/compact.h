@@ -3252,6 +3252,6 @@ namespace SkyCompact {
 	extern uint16 ss_auto[];
 	extern uint16 wit_auto[];
 	extern uint16 minif_auto[];
-};
+}
 
 #endif

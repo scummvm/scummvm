@@ -1820,6 +1820,6 @@ Compact top_barrel = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

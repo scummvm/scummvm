@@ -1260,6 +1260,6 @@ uint16 sc70_mouse_list[] = {
 	ID_TEXT_MOUSE
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

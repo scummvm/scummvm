@@ -25,9 +25,10 @@
 
 FILE *File::fopenNoCase(const char *filename, const char *directory, const char *mode) {
 	FILE *file;
-	char buf[256];
+	char buf[512];
 	char *ptr;
 
+	assert(directory);
 	strcpy(buf, directory);
 
 #ifdef WIN32

@@ -744,6 +744,6 @@ uint16 sc41_palette[] = {
 	16191
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

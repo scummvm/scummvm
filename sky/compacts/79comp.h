@@ -1655,6 +1655,6 @@ Compact sc79_pipe = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

@@ -237,6 +237,6 @@ class String;
 
 typedef Map<String, String> StringMap;
 
-};	// End of namespace ScummVM
+}	// End of namespace ScummVM
 
 #endif

@@ -1260,5 +1260,5 @@ void SkyDebug::script(uint32 command, uint16 *scriptData) {
 
 void SkyDebug::mcode(uint32 mcode, uint32 a, uint32 b, uint32 c) {
 	debug(6, "MCODE: %s(%d, %d, %d)", mcodes[mcode], a, b, c);
-};
+}
 

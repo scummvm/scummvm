@@ -1910,6 +1910,6 @@ uint16 sc75_get_tiss[] = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

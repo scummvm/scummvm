@@ -1836,6 +1836,6 @@ Compact sc32_exit_33 = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

@@ -1162,6 +1162,6 @@ uint16 sc48_light_pal[] = {
 	16191
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

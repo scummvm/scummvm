@@ -2158,10 +2158,12 @@ void Gdi::unkDecode11(byte *dst, const byte *src, int height) {
 #pragma mark -
 
 void Scumm::fadeIn(int effect) {
-
 	updatePalette();
 
 	switch (effect) {
+	case 0:
+		// seems to do nothing
+		break;
 	case 1:
 	case 2:
 	case 3:
@@ -2179,6 +2181,8 @@ void Scumm::fadeIn(int effect) {
 	case 128:
 		unkScreenEffect6();
 		break;
+	case 129:
+		break;
 	case 130:
 	case 131:
 	case 132:
@@ -2190,8 +2194,6 @@ void Scumm::fadeIn(int effect) {
 		break;
 	case 135:
 		unkScreenEffect5(1);
-		break;
-	case 129:
 		break;
 	default:
 		warning("Unknown screen effect, %d", effect);

@@ -6681,6 +6681,6 @@ uint16 sc74_slot_flash[] = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

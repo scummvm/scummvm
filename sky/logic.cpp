@@ -1148,7 +1148,7 @@ uint16 SkyLogic::mouseScript(uint32 scrNum, Compact *scriptComp) {
 	uint16 retVal = script((uint16)(scrNum & 0xFFFF), (uint16)(scrNum >> 16)); 
 	_compact = tmpComp;
 	return retVal;
-};
+}
 
 /**
  * This is the actual script engine.  It interprets script \a scriptNo starting at \a offset

@@ -2414,6 +2414,6 @@ Compact sc72_chamber1 = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

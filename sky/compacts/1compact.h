@@ -1972,6 +1972,6 @@ uint16 fire1_seq[] = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

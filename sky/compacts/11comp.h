@@ -1725,6 +1725,6 @@ uint16 cable_fall2_seq[] = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

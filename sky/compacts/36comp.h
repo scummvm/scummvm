@@ -4269,6 +4269,6 @@ Compact sc36_exit_30 = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

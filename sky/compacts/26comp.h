@@ -1303,6 +1303,6 @@ Compact s26_floor = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

@@ -2142,6 +2142,6 @@ uint16 take_cassette_seq[] = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

@@ -141,6 +141,6 @@ public:
 	}
 };
 
-};	// End of namespace ScummVM
+}	// End of namespace ScummVM
 
 #endif

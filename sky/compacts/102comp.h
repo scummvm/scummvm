@@ -568,6 +568,6 @@ Compact restart_butt = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

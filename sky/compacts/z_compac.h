@@ -5969,6 +5969,6 @@ void *data_0[] = {
 
 uint32 *z_compact_table = (uint32*)data_0;
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

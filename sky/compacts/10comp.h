@@ -2430,6 +2430,6 @@ Compact liyt_1 = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

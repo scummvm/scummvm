@@ -1092,6 +1092,6 @@ Compact sc77_door76 = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

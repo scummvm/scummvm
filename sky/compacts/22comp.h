@@ -1581,6 +1581,6 @@ Compact fish_poster = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

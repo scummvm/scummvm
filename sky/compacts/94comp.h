@@ -1377,6 +1377,6 @@ Compact hologram_a = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

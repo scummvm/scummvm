@@ -1346,6 +1346,6 @@ Compact cupboard_s4 = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

@@ -1220,6 +1220,6 @@ uint16 sc40_ascend[] = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

@@ -6615,6 +6615,6 @@ void *data_4[] = {
 	&sc31_at_watcher
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

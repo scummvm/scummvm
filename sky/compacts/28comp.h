@@ -989,6 +989,6 @@ Compact small_l_28 = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

@@ -2073,6 +2073,6 @@ uint16 change6_seq[] = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

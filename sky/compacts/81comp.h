@@ -2762,6 +2762,6 @@ uint16 sc81_foster_sit[] = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

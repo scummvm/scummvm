@@ -3765,6 +3765,6 @@ uint16 armsup_seq[] = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

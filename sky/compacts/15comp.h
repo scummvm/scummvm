@@ -1106,6 +1106,6 @@ uint16 s15_chip_list[] = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

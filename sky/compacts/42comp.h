@@ -1708,6 +1708,6 @@ uint16 sc42_fos_leave[] = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

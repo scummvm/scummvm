@@ -1357,6 +1357,6 @@ uint16 door_l95_anim[] = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

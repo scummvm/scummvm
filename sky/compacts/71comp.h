@@ -1700,6 +1700,6 @@ uint16 sc71_light2_anim[] = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

@@ -712,6 +712,6 @@ uint16 sc82_jobs_return[] = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

@@ -1601,6 +1601,6 @@ Compact right_exit_s18 = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

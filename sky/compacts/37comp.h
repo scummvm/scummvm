@@ -1904,6 +1904,6 @@ uint16 sc37_crbarbox[] = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

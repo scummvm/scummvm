@@ -1258,6 +1258,6 @@ Compact menu_bar = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

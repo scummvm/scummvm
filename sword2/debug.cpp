@@ -547,7 +547,7 @@ void Print_current_info(void)	//Tony30Oct96
 //--------------------------------------------------------------------------------------
 #else // not debug
 
-void Draw_debug_graphics(void) {};
+void Draw_debug_graphics(void) {}
 
 #endif	// _SWORD2_DEBUG
 //--------------------------------------------------------------------------------------

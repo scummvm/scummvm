@@ -629,6 +629,6 @@ uint16 sc45_mouse_list[] = {
 	ID_TEXT_MOUSE
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

@@ -1518,6 +1518,6 @@ Compact door_r91f = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

@@ -2850,6 +2850,6 @@ uint16 sc31_joey_list[] = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

@@ -434,6 +434,6 @@ uint16 sc85_logic_list[] = {
 	ID_STD_MENU_LOGIC
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

@@ -2546,6 +2546,6 @@ Compact sc73_cham4_light = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

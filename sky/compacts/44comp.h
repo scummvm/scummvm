@@ -649,6 +649,6 @@ uint16 reset_37_44[] = {
 	65535
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

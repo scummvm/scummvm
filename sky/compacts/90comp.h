@@ -1857,6 +1857,6 @@ void *data_6[] = {
 
 uint32 *sec6_compacts = (uint32*)data_6;
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

@@ -798,6 +798,6 @@ Compact blind_menu = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

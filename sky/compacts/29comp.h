@@ -1590,6 +1590,6 @@ void *data_3[] = {
 	rs_31_28
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

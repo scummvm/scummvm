@@ -980,6 +980,6 @@ uint16 fost_con_look[] = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

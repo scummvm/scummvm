@@ -4923,6 +4923,6 @@ void *data_2[] = {
 
 uint32 *table2 = (uint32*)data_2;
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

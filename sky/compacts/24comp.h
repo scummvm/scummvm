@@ -1311,6 +1311,6 @@ uint16 s24_fast_list[] = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif

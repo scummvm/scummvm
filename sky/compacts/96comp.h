@@ -924,6 +924,6 @@ uint16 fast_list_sc96[] = {
 	0
 };
 
-}; // namespace SkyCompact
+} // namespace SkyCompact
 
 #endif
