@@ -157,7 +157,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 		}   
 		_silentDigitalImuse = true;
 	} 
-	_mixer->setVolume(kDefaultSFXVolume);
+	_mixer->setVolume(kDefaultSFXVolume * kDefaultMasterVolume / 255);
 	_mixer->setMusicVolume(kDefaultMusicVolume);
 
 	// Init iMuse
@@ -1129,20 +1129,21 @@ void Scumm::processKbd()
 		if (_sound->_sfxMode & 2)
 			stopTalk();
 		return;
-	} else if (_lastKeyHit == '[') { // [ volume down
-		_sound->_sound_volume_master-=5;
-		if (_sound->_sound_volume_master < 0)
-			_sound->_sound_volume_master = 0;
-		if (_imuse) {
-			_imuse->set_master_volume(_sound->_sound_volume_master);
-		}
-	} else if (_lastKeyHit == ']') { // ] volume down
-		_sound->_sound_volume_master+=5;
-		if (_sound->_sound_volume_master > 128)
-			_sound->_sound_volume_master = 128;		
-		if (_imuse) {
-			_imuse->set_master_volume(_sound->_sound_volume_master);
-		}
+	} else if (_lastKeyHit == '[') { // [ Music volume down
+		int vol = _sound->_sound_volume_music;
+		if (!(vol & 0xF) && vol)
+			vol -= 16;
+		vol = vol & 0xF0;
+		_sound->_sound_volume_music = vol;
+		if (_imuse)
+			_imuse->set_music_volume (vol);
+	} else if (_lastKeyHit == ']') { // ] Music volume up
+		int vol = _sound->_sound_volume_music;
+		vol = (vol + 16) & 0xFF0;
+		if (vol > 255) vol = 255;
+		_sound->_sound_volume_music = vol;
+		if (_imuse)
+			_imuse->set_music_volume (vol);
 	} else if (_lastKeyHit == '-') { // - text speed down
 		_defaultTalkDelay+=5;
 		if (_defaultTalkDelay > 90)
