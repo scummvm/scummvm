@@ -218,11 +218,11 @@ uint32 *command_pointer = (uint32 *)zero_commands;
 
 void SkyState::initVirgin() {
 	
-	_tempPal = loadFile(60111, NULL);
+	_tempPal = _skyDisk->loadFile(60111, NULL);
 	if (_tempPal != NULL)
 		setPalette(_tempPal);
 
-	_workScreen = loadFile(60110, NULL);
+	_workScreen = _skyDisk->loadFile(60110, NULL);
 
 	if (_workScreen != NULL)
 		showScreen();
@@ -234,14 +234,14 @@ void SkyState::initVirgin() {
 
 void SkyState::intro(void) {
 
-	_workScreen = loadFile(60112, NULL); //while virgin screen is up, load rev screen
-	_tempPal = loadFile(60113, NULL);
+	_workScreen = _skyDisk->loadFile(60112, NULL); //while virgin screen is up, load rev screen
+	_tempPal = _skyDisk->loadFile(60113, NULL);
 
 	//loadSectionMusic(0);
 	
 	delay(3000); //keep virgin screen up for 3 seconds
 
-	//if (!_isCDVersion)
+	//if (!isCDVersion(_gameVersion))
 	//	fn_start_music();
 	
 	delay(3000); //and another 3 seconds.
@@ -252,8 +252,8 @@ void SkyState::intro(void) {
 	free (_workScreen);
 	
 	//while rev is up, load gibbons screen
-	_workScreen = loadFile(60114, NULL);
-	_tempPal = loadFile(60115, NULL);
+	_workScreen = _skyDisk->loadFile(60114, NULL);
+	_tempPal = _skyDisk->loadFile(60115, NULL);
 
 	intro_text_space = (uint8 *)malloc(10000);
 	intro_text_save = (uint8 *)malloc(10000);
@@ -269,7 +269,7 @@ void SkyState::intro(void) {
 	free (_tempPal);
 	free (_workScreen);
 
-	if (_isCDVersion)
+	if (isCDVersion(_gameVersion))
 		doCDIntro();
 	
 	

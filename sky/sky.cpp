@@ -83,7 +83,7 @@ void SkyState::go() {
 		_dump_file = stdout;
 
 	initialise();
-	if (!_isDemo || _isCDVersion)
+	if (!isDemo(_gameVersion) || isCDVersion(_gameVersion))
 		intro();
 	
 	while (1) {
@@ -99,8 +99,9 @@ void SkyState::initialise(void) {
 
 	_sound = new SkySound(_mixer);
 
-	initialiseDisk();
-	setupVersionSpecifics(_gameVersion);	//_gameVersion is initialised in initialiseDisk();
+	_skyDisk = new SkyDisk(_gameDataPath);
+	_gameVersion = _skyDisk->determineGameVersion();
+
 	initialiseScreen();
 	initVirgin();
 	//initMouse();
@@ -108,7 +109,7 @@ void SkyState::initialise(void) {
 	//initScript();
 	initialiseGrids();
 	//initialiseRouter();
-	initialiseText();
+	_skyText = getSkyText();
 }
 
 void SkyState::initItemList() {
@@ -123,7 +124,7 @@ void SkyState::initItemList() {
 	_itemList[119] = (void*)data_0; // Compacts - Section 0
 	_itemList[120] = (void*)data_1; // Compacts - Section 1
 	
-	if (_isDemo) {
+	if (isDemo(_gameVersion)) {
 		_itemList[121] = _itemList[122] = _itemList[123] = _itemList[124] = _itemList[125] = (void*)data_0;
 	} else {
 		_itemList[121] = (void*)data_2; // Compacts - Section 2
@@ -186,5 +187,61 @@ void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
 		}
 		cur = _system->get_msecs();
 	} while (cur < start + amount);
+}
+
+SkyText *SkyState::getSkyText() {
+
+	switch (_gameVersion) {
+	case 267:
+		//floppy demo
+		return new SkyText_v00267(_skyDisk, _gameVersion);
+	case 288:
+		//floppy - old version
+		return new SkyText_v00288(_skyDisk, _gameVersion);
+	//case 331:
+		//floppy - new version
+		//return new SkyText_v00331(_skyDisk, _gameVersion);
+	case 365:
+		//cd demo, uses a slightly modified version of v00368
+	case 368:
+		//cd version
+		return new SkyText_v00368(_skyDisk, _gameVersion);
+	default:
+		error("Unknown game version!");
+	}
+}
+
+bool SkyState::isDemo(uint32 version) {
+	switch (version) {
+	case 267:
+		return true;
+	case 288:
+		return false;
+	case 331:
+		return false;
+	case 365:
+		return true;
+	case 368:
+		return false;
+	default:
+		error("Unknown game version!");
+	}
+}
+
+bool SkyState::isCDVersion(uint32 version) {
+	switch (version) {
+	case 267:
+		return false;
+	case 288:
+		return false;
+	case 331:
+		return false;
+	case 365:
+		return true;
+	case 368:
+		return true;
+	default:
+		error("Unknown game version!");
+	}
 }
 
