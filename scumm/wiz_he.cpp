@@ -1217,6 +1217,25 @@ void ScummEngine_v90he::displayWizComplexImage(const WizParameters *params) {
 		r = &params->box;
 	}
 
+	if (params->processFlags & 0x10000) {
+		warning("ScummEngine_v90he::displayWizComplexImage() unhandled flags = 0x10000");
+	}
+
+	if (params->processFlags & 0x40) {
+		int st = (params->processFlags & 0x400) ? params->img.state : 0;
+		int num = params->remapNum;
+		const uint8 *index = params->remapIndex;
+		uint8 *iwiz = getResourceAddress(rtImage, params->img.resNum);
+		assert(iwiz);
+		uint8 *rmap = findWrappedBlock(MKID('RMAP'), iwiz, st, 0) ;
+		assert(rmap);
+		*(uint32 *)(rmap + 8) = TO_BE_32(0x12345678);
+		while (num--) {
+			uint8 idx = *index++;
+			rmap[0xC + idx] = params->remapColor[idx];
+		}
+	}
+
 	if (_fullRedraw) {
 		assert(_wiz._imagesNum < ARRAYSIZE(_wiz._images));
 		WizImage *pwi = &_wiz._images[_wiz._imagesNum];
