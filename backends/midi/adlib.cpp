@@ -875,7 +875,7 @@ void MidiDriver_ADLIB::close() {
 	// Detach the premix callback handler
 	_mixer->setupPremix (0, 0);
 	
-	// Turn of the OPL emulation
+	// Turn off the OPL emulation
 	YM3812Shutdown();
 
 	_isOpen = false;
