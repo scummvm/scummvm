@@ -273,45 +273,58 @@ void OSystem_SDL::update_screen() {
 		SDL_Rect *last_rect = _dirty_rect_list + _num_dirty_rects;
 
 		// Convert appropriate parts of the 8bpp image into 16bpp
+		SDL_Rect dst;
 		if (!_overlayVisible) {
-			SDL_Rect dst;
 			for(r = _dirty_rect_list; r != last_rect; ++r) {
 				dst = *r;
 				dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
 				dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
-				if (SDL_BlitSurface(_screen, r, _tmpscreen, &dst) != 0)
+				if (_scaler_proc == Normal1x) {
+					if (SDL_BlitSurface(_screen, r, _hwscreen, &dst) != 0)
+						error("SDL_BlitSurface failed: %s", SDL_GetError());
+				} else {
+					if (SDL_BlitSurface(_screen, r, _tmpscreen, &dst) != 0)
+						error("SDL_BlitSurface failed: %s", SDL_GetError());
+				}
+			}
+		} else {
+			for(r = _dirty_rect_list; r != last_rect; ++r) {
+				dst = *r;
+				if (SDL_BlitSurface(_tmpscreen, r, _hwscreen, &dst) != 0)
 					error("SDL_BlitSurface failed: %s", SDL_GetError());
 			}
 		}
 
-		SDL_LockSurface(_tmpscreen);
-		SDL_LockSurface(_hwscreen);
-	
-		srcPitch = _tmpscreen->pitch;
-		dstPitch = _hwscreen->pitch;
-	
-		for(r = _dirty_rect_list; r != last_rect; ++r) {
-			register int dst_y = r->y + _currentShakePos;
-			register int dst_h = 0;
-			if (dst_y < _screenHeight) {
-				dst_h = r->h;
-				if (dst_h > _screenHeight - dst_y)
-					dst_h = _screenHeight - dst_y;
+		if (_scaler_proc != Normal1x) {
+			SDL_LockSurface(_tmpscreen);
+			SDL_LockSurface(_hwscreen);
 
-				dst_y *= _scaleFactor;
+			srcPitch = _tmpscreen->pitch;
+			dstPitch = _hwscreen->pitch;
 
-				_scaler_proc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch, NULL, 
-					(byte *)_hwscreen->pixels + r->x * 2 * _scaleFactor + dst_y * dstPitch, dstPitch, r->w, dst_h);
-			}
+			for(r = _dirty_rect_list; r != last_rect; ++r) {
+				register int dst_y = r->y + _currentShakePos;
+				register int dst_h = 0;
+				if (dst_y < _screenHeight) {
+					dst_h = r->h;
+					if (dst_h > _screenHeight - dst_y)
+						dst_h = _screenHeight - dst_y;
+
+						dst_y *= _scaleFactor;
+
+						_scaler_proc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch, NULL,
+						(byte *)_hwscreen->pixels + r->x * 2 * _scaleFactor + dst_y * dstPitch, dstPitch, r->w, dst_h);
+				}
 			
-			r->x *= _scaleFactor;
-			r->y = dst_y;
-			r->w *= _scaleFactor;
-			r->h = dst_h * _scaleFactor;
+				r->x *= _scaleFactor;
+				r->y = dst_y;
+				r->w *= _scaleFactor;
+				r->h = dst_h * _scaleFactor;
+			}
+
+			SDL_UnlockSurface(_tmpscreen);
+			SDL_UnlockSurface(_hwscreen);
 		}
-		
-		SDL_UnlockSurface(_tmpscreen);
-		SDL_UnlockSurface(_hwscreen);
 
 		// Readjust the dirty rect list in case we are doing a full update.
 		// This is necessary if shaking is active.
