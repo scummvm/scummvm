@@ -962,6 +962,17 @@ int Scene::defaultScene(int param, R_SCENE_INFO *scene_info) {
 			_vm->_script->SThreadCompleteThread();
 		}
 
+		if (_desc.musicRN >= 0) {
+			event.type = R_ONESHOT_EVENT;
+			event.code = R_MUSIC_EVENT;
+			event.param = _desc.musicRN;
+			event.op = EVENT_PLAY;
+			event.time = 0;
+
+			_vm->_events->queue(&event);
+		} else
+			_vm->_music->stop();
+
 		if (_desc.sceneScriptNum > 0) {
 			R_SCRIPT_THREAD *_sceneScriptThread;
 

@@ -104,7 +104,7 @@ void Script::setupScriptFuncList(void) {
 		{60, 0, OPCODE(SF_getActorX)},
 		{61, 0, OPCODE(SF_getActorY)},
 		{62, 0, NULL},
-		{63, 0, NULL},
+		{63, 0, OPCODE(SF_playMusic)},
 		{64, 0, NULL},
 		{65, 0, NULL},
 		{66, 0, NULL},
@@ -616,6 +616,49 @@ int Script::SF_getActorX(R_SCRIPTFUNC_PARAMS) {
 
 // Script function #61
 int Script::SF_getActorY(R_SCRIPTFUNC_PARAMS) {
+	return R_SUCCESS;
+}
+
+static int musicTable[] = {
+	MUSIC_1,
+	MUSIC_2,
+	MUSIC_3,
+	MUSIC_4,
+	MUSIC_5,
+	MUSIC_6,
+	MUSIC_7,
+	MUSIC_8,
+	MUSIC_9,
+	MUSIC_10,
+	MUSIC_11,
+	MUSIC_12,
+	MUSIC_13,
+	MUSIC_14,
+	MUSIC_15,
+	MUSIC_16,
+	MUSIC_17,
+	MUSIC_18,
+	MUSIC_19,
+	MUSIC_20,
+	MUSIC_21,
+	MUSIC_22,
+	MUSIC_23,
+	MUSIC_24,
+	MUSIC_25,
+	MUSIC_26
+};
+
+// Script function #63
+int Script::SF_playMusic(R_SCRIPTFUNC_PARAMS) {
+	SDataWord_T param;
+
+	param = thread->pop();
+
+	if (/* param >= 0 && */ param < ARRAYSIZE(musicTable))
+		_vm->_music->play(musicTable[param], 0);
+	else
+		_vm->_music->stop();
+
 	return R_SUCCESS;
 }
 

@@ -252,6 +252,7 @@ private:
 	int SF_setActorZ(R_SCRIPTFUNC_PARAMS);
 	int SF_getActorX(R_SCRIPTFUNC_PARAMS);
 	int SF_getActorY(R_SCRIPTFUNC_PARAMS);
+	int SF_playMusic(R_SCRIPTFUNC_PARAMS);
 };
 
 } // End of namespace Saga
