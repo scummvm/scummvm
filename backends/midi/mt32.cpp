@@ -36,9 +36,14 @@
 #include "common/file.h"
 #include "common/config-manager.h"
 
+class MidiChannel_MT32 : public MidiChannel_MPU401 {
+	void effectLevel(byte value) { }
+	void chorusLevel(byte value) { }
+};
+
 class MidiDriver_MT32 : public MidiDriver_Emulated {
 private:
-	MidiChannel_MPU401 _midiChannels[16];
+	MidiChannel_MT32 _midiChannels[16];
 	uint16 _channelMask;
 	MT32Emu::Synth *_synth;
 
@@ -54,6 +59,7 @@ public:
 	int open();
 	void close();
 	void send(uint32 b);
+	void setPitchBendRange (byte channel, uint range);
 	void sysEx(byte *msg, uint16 length);
 
 	uint32 property(int prop, uint32 param);
@@ -77,33 +83,32 @@ public:
 	void close() {
 		return file.close();
 	}
-	size_t read(void *ptr, size_t size) {
-		return file.read(ptr, size);
+	size_t read(void *in, size_t size) {
+		return file.read(in, size);
 	}
-	bool readLine(char *ptr, size_t size) {
-		return file.gets(ptr, size) != NULL;
+	bool readLine(char *in, size_t size) {
+		return file.gets(in, size) != NULL;
 	}
-	size_t write(const void *ptr, size_t size) {
-		return file.write(ptr, size);
-	}
-	int readByte() {
+	bool readBit8u(MT32Emu::Bit8u *in) {
 		byte b = file.readByte();
 		if (file.eof())
-			return -1;
-		return b;
-	}
-	bool writeByte(unsigned char out) {
-		file.writeByte(out);
-		if (file.ioFailed())
 			return false;
+		*in = b;
 		return true;
+	}
+	size_t write(const void *in, size_t size) {
+		return file.write(in, size);
+	}
+	bool writeBit8u(MT32Emu::Bit8u out) {
+		file.writeByte(out);
+		return !file.ioFailed();
 	}
 	bool isEOF() {
 		return file.eof();
 	}
 };
 
-MT32Emu::File *MT32_OpenFile(void *userData, const char *filename, MT32Emu::File::OpenMode mode) {
+static MT32Emu::File *MT32_OpenFile(void *userData, const char *filename, MT32Emu::File::OpenMode mode) {
 	MT32File *file = new MT32File();
 	if (!file->open(filename, mode)) {
 		delete file;
@@ -112,13 +117,11 @@ MT32Emu::File *MT32_OpenFile(void *userData, const char *filename, MT32Emu::File
 	return file;
 }
 
-////////////////////////////////////////
-//
-// MidiDriver_MT32
-//
-////////////////////////////////////////
+static void MT32_PrintDebug(void *userData, const char *fmt, va_list list) {
+	//vdebug(0, fmt, list); // FIXME: Use a higher debug level
+}
 
-static void report(void *userData, MT32Emu::ReportType type, void *reportData) {
+static void MT32_Report(void *userData, MT32Emu::ReportType type, void *reportData) {
 	switch(type) {
 	case MT32Emu::ReportType_lcdMessage:
 		g_system->displayMessageOnOSD((char *)reportData);
@@ -143,6 +146,12 @@ static void report(void *userData, MT32Emu::ReportType type, void *reportData) {
 	}
 }
 
+////////////////////////////////////////
+//
+// MidiDriver_MT32
+//
+////////////////////////////////////////
+
 MidiDriver_MT32::MidiDriver_MT32(SoundMixer *mixer) : MidiDriver_Emulated(mixer) {
 	_channelMask = 0xFFFF; // Permit all 16 channels by default
 	uint i;
@@ -153,16 +162,12 @@ MidiDriver_MT32::MidiDriver_MT32(SoundMixer *mixer) : MidiDriver_Emulated(mixer)
 
 	_baseFreq = 1000;
 
-	_outputRate = _mixer->getOutputRate();
+	_outputRate = 32000; //_mixer->getOutputRate();
 }
 
 MidiDriver_MT32::~MidiDriver_MT32() {
 	if (_synth != NULL)
 		delete _synth;
-}
-
-static void vdebug(void *data, const char *fmt, va_list list) {
-	// do nothing here now
 }
 
 int MidiDriver_MT32::open() {
@@ -180,9 +185,8 @@ int MidiDriver_MT32::open() {
 	prop.RevType = 0;
 	prop.RevTime = 5;
 	prop.RevLevel = 3;
-	prop.userData = (void *)1;
-	prop.printDebug = &vdebug;
-	prop.report = &report;
+	prop.printDebug = MT32_PrintDebug;
+	prop.report = MT32_Report;
 	prop.openFile = MT32_OpenFile;
 	_synth = new MT32Emu::Synth();
 	if (!_synth->open(prop))
@@ -195,6 +199,23 @@ int MidiDriver_MT32::open() {
 
 void MidiDriver_MT32::send(uint32 b) {
 	_synth->playMsg(b);
+}
+
+void MidiDriver_MT32::setPitchBendRange(byte channel, uint range) {
+	if (range > 24) {
+		printf("setPitchBendRange() called with range > 24: %d", range);
+	}
+	byte benderRangeSysex[9];
+	benderRangeSysex[0] = 0x41; // Roland
+	benderRangeSysex[1] = channel;
+	benderRangeSysex[2] = 0x16; // MT-32
+	benderRangeSysex[3] = 0x12; // Write
+	benderRangeSysex[4] = 0x00;
+	benderRangeSysex[5] = 0x00;
+	benderRangeSysex[6] = 0x04;
+	benderRangeSysex[7] = (byte)range;
+	benderRangeSysex[8] = MT32Emu::Synth::calcSysexChecksum(&benderRangeSysex[4], 4, 0);
+	sysEx(benderRangeSysex, 9);
 }
 
 void MidiDriver_MT32::sysEx(byte *msg, uint16 length) {
@@ -233,7 +254,7 @@ uint32 MidiDriver_MT32::property(int prop, uint32 param) {
 }
 
 MidiChannel *MidiDriver_MT32::allocateChannel() {
-	MidiChannel_MPU401 *chan;
+	MidiChannel_MT32 *chan;
 	uint i;
 
 	for (i = 0; i < ARRAYSIZE(_midiChannels); ++i) {

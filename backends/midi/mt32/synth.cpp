@@ -35,9 +35,9 @@
 // Used to dump drum patches to syx file for viewing
 #define DUMPDRUMS 0
 
-#define SYSEX_SIZE 512
-
 namespace MT32Emu {
+
+const int MAX_SYSEX_SIZE = 512;
 
 iir_filter_type usefilter;
 
@@ -106,6 +106,16 @@ float iir_filter_normal(float input,float *hist1_ptr, float *coef_ptr, int revLe
 	output *= ResonInv[revLevel];
 
 	return(output);
+}
+
+Bit8u Synth::calcSysexChecksum(Bit8u *data, Bit32u len, Bit8u checksum) {
+	for (unsigned int i = 0; i < len; i++) {
+		checksum = checksum + data[i];
+	}
+	checksum = checksum & 0x7f;
+	if (checksum)
+		checksum = 0x80 - checksum;
+	return checksum;
 }
 
 Synth::Synth() {
@@ -208,42 +218,36 @@ bool Synth::loadPreset(const char *filename) {
 		return false;
 	}
 	bool inSys = false;
-	Bit8u sysexBuf[SYSEX_SIZE];
+	Bit8u sysexBuf[MAX_SYSEX_SIZE];
 	Bit16u syslen = 0;
-	int filePos = 0;
 	bool rc = true;
 	for (;;) {
-		int fc = file->readByte();
-		if (fc == -1) {
+		Bit8u c;
+		if (!file->readBit8u(&c)) {
 			if (!file->isEOF()) {
 				rc = false;
 			}
 			break;
 		}
-		Bit8u c = (Bit8u)fc;
 		sysexBuf[syslen] = c;
-		syslen++;
-		filePos++;
-		if (c==0xf0)
+		if (inSys) {
+			syslen++;
+			if (c == 0xF7) {
+				playSysex(&sysexBuf[0],syslen);
+				inSys = false;
+				syslen = 0;
+			} else if (syslen == MAX_SYSEX_SIZE) {
+				printDebug("MAX_SYSEX_SIZE (%d) exceeded while processing preset %s, ignoring message", MAX_SYSEX_SIZE, filename);
+				inSys = false;
+				syslen = 0;
+			}
+		} else if (c == 0xF0) {
+			syslen++;
 			inSys = true;
-		if ((c==0xf7) && (inSys)) {
-			playSysex(&sysexBuf[0],syslen);
-			inSys = false;
-			syslen = 0;
 		}
 	}
 	closeFile(file);
 	return rc;
-}
-
-unsigned char calcChecksum(unsigned char *data, unsigned int len, unsigned char checksum) {
-	for (unsigned int i = 0; i < len; i++) {
-		checksum = checksum + data[i];
-	}
-	checksum = checksum & 0x7f;
-	if (checksum)
-		checksum = 0x80 - checksum;
-	return checksum;
 }
 
 bool Synth::loadDrums(const char *filename) {
@@ -288,15 +292,15 @@ void Synth::dumpDrums(const char *filename) {
 	memset(dumbtext,0,10);
 	for (int drumnum=0;drumnum<30;drumnum++) {
 		// Sysex header
-		if (!file->writeByte(0xf0))
+		if (!file->writeBit8u(0xf0))
 			break;
-		if (!file->writeByte(0x41))
+		if (!file->writeBit8u(0x41))
 			break;
-		if (!file->writeByte(0x10))
+		if (!file->writeBit8u(0x10))
 			break;
-		if (!file->writeByte(0x16))
+		if (!file->writeBit8u(0x16))
 			break;
-		if (!file->writeByte(0x12))
+		if (!file->writeBit8u(0x12))
 			break;
 
 		int useaddr = drumnum * 256;
@@ -304,11 +308,11 @@ void Synth::dumpDrums(const char *filename) {
 		char isb = (char)((useaddr >> 7) & 0x7f);
 		char msb = (char)(((useaddr >> 14) & 0x7f) | 0x08);
 		//Address
-		if (!file->writeByte(msb))
+		if (!file->writeBit8u(msb))
 			break;
-		if (!file->writeByte(isb))
+		if (!file->writeBit8u(isb))
 			break;
-		if (!file->writeByte(lsb))
+		if (!file->writeBit8u(lsb))
 			break;
 
 		TimbreParam *timbre = &mt32ram.params.timbres[192 + drumnum].timbre;
@@ -325,12 +329,12 @@ void Synth::dumpDrums(const char *filename) {
 			break;
 		//Checksum
 		unsigned char *dat = (unsigned char *)timbre;
-		unsigned char checksum = calcChecksum(dat, 246, msb + isb + lsb);
-		if (!file->writeByte(checksum))
+		unsigned char checksum = calcSysexChecksum(dat, 246, msb + isb + lsb);
+		if (!file->writeBit8u(checksum))
 			break;
 
 		//End of sysex
-		if (!file->writeByte(0xf7))
+		if (!file->writeBit8u(0xf7))
 			break;
 	}
 	closeFile(file);
@@ -470,16 +474,15 @@ bool Synth::loadROM(const char *filename) {
 #endif
 	bool rc = true;
 	for (int i = 0; ; i++) {
-		int fc = file->readByte();
-		if (fc == -1) {
+		Bit8u s;
+		if (!file->readBit8u(&s)) {
 			if (!file->isEOF()) {
 				rc = false;
 			}
 			break;
 		}
-		Bit16s s = (Bit16s)fc;
-		fc = file->readByte();
-		if (fc == -1) {
+		Bit8u c;
+		if (!file->readBit8u(&c)) {
 			if (!file->isEOF()) {
 				rc = false;
 			} else {
@@ -487,7 +490,6 @@ bool Synth::loadROM(const char *filename) {
 			}
 			break;
 		}
-		Bit16s c = (Bit16s)fc;
 
 		short e;
 		int bit;
@@ -515,8 +517,8 @@ bool Synth::loadROM(const char *filename) {
 		*/
 
 #ifdef MT32OUT
-		outFile->writeByte(e & 0xff);
-		outFile->writeByte(((e >> 8) & 0x7f));
+		outFile->writeBit8u(e & 0xff);
+		outFile->writeBit8u(((e >> 8) & 0x7f));
 #endif
 		// File is encoded in dB, convert to PCM
 		// MINDB = -96
@@ -533,8 +535,8 @@ bool Synth::loadROM(const char *filename) {
 		romfile[i] = (Bit16s)vol;
 
 #ifdef MT32OUT
-		outFileB->writeByte(romfile[i] & 0xff);
-		outFileB->writeByte(romfile[i] >> 8);
+		outFileB->writeBit8u(romfile[i] & 0xff);
+		outFileB->writeBit8u(romfile[i] >> 8);
 #endif
 	}
 #ifdef MT32OUT
@@ -636,9 +638,11 @@ bool Synth::open(SynthProperties &useProp) {
 	if (available3DNow) {
 		printDebug("Detected and using SIMD (AMD 3DNow) extensions");
 		usefilter = &iir_filter_3dnow;
+		report(ReportType_using3DNow, NULL);
 	} else if (availableSSE) {
 		printDebug("Detected and using SIMD (Intel SSE) extensions");
 		usefilter = &iir_filter_sse;
+		report(ReportType_usingSSE, NULL);
 	}
 #endif
 
@@ -695,13 +699,13 @@ void Synth::close(void) {
 		}
 	}
 	if (partialManager != NULL) {
-		partialManager = NULL;
 		delete partialManager;
+		partialManager = NULL;
 	}
 
 	if (reverbModel != NULL) {
-		reverbModel = NULL;
 		delete reverbModel;
+		reverbModel = NULL;
 	}
 
 	for (int i = 0; i < 9; i++) {
@@ -721,7 +725,7 @@ void Synth::playMsg(Bit32u msg) {
 	unsigned char velocity = (unsigned char)((msg & 0xff0000) >> 16);
 	isEnabled = true;
 
-	//if (code!=0xf) printDebug("Playing chan %d, code 0x%01x note: 0x%02x", chan, code, note);
+	//printDebug("Playing chan %d, code 0x%01x note: 0x%02x", chan, code, note);
 
 	char part = chantable[chan];
 	if (part < 0 || part > 8) {
@@ -865,7 +869,7 @@ void Synth::playSysexWithoutHeader(unsigned char device, Bit8u *sysex, Bit32u le
 		printDebug("playSysexWithoutHeader: Message is too short (%d bytes)!", len);
 		return;
 	}
-	unsigned char checksum = calcChecksum(sysex, len - 1, 0);
+	unsigned char checksum = calcSysexChecksum(sysex, len - 1, 0);
 	if (checksum != sysex[len - 1]) {
 		printDebug("playSysexWithoutHeader: Message checksum is incorrect (provided: %02x, expected: %02x)!", sysex[len - 1], checksum);
 		return;
@@ -875,7 +879,7 @@ void Synth::playSysexWithoutHeader(unsigned char device, Bit8u *sysex, Bit32u le
 	addr = MEMADDR(addr);
 	sysex += 3;
 	len -= 3;
-	printDebug("Sysex addr: 0x%06x", SYSEXMEMADDR(addr));
+	//printDebug("Sysex addr: 0x%06x", SYSEXMEMADDR(addr));
 	// NOTE: Please keep both lower and upper bounds in each check, for ease of reading
 	if (device < 0x10) {
 		printDebug("WRITE-CHANNEL: Channel %d temp area 0x%06x", device, SYSEXMEMADDR(addr));
@@ -1108,10 +1112,14 @@ void Synth::playSysexWithoutHeader(unsigned char device, Bit8u *sysex, Bit32u le
 		printDebug(" Master volume: %d", mt32ram.params.system.masterVol);
 		mastervolume = (Bit16s)((float)mt32ram.params.system.masterVol * 327.0);
 	} else if (addr == MEMADDR(0x200000)) {
-		char buf[SYSEX_SIZE];
-		memset(&buf, 0, SYSEX_SIZE);
+		char buf[MAX_SYSEX_SIZE];
+		if (len > MAX_SYSEX_SIZE - 1) {
+			printDebug("WRITE-LCD sysex length (%d) exceeded MAX_SYSEX_SIZE (%d) - 1; truncating", len, MAX_SYSEX_SIZE);
+			len = MAX_SYSEX_SIZE - 1;
+		}
 		memcpy(&buf, &sysex[0], len);
-		printDebug("LCD Display: %s", buf);
+		buf[len] = 0;
+		printDebug("WRITE-LCD: %s", buf);
 		report(ReportType_lcdMessage, buf);
 	} else if (addr >= MEMADDR(0x7f0000)) {
 		printDebug("Reset");
@@ -1136,15 +1144,15 @@ int Synth::dumpSysex(char *filename) {
 	int patchnum;
 	for (patchnum=0;patchnum<64;patchnum++) {
 		// Sysex header
-		if (!file->writeByte(0xF0))
+		if (!file->writeBit8u(0xF0))
 			break;
-		if (!file->writeByte(0x41))
+		if (!file->writeBit8u(0x41))
 			break;
-		if (!file->writeByte(0x10))
+		if (!file->writeBit8u(0x10))
 			break;
-		if (!file->writeByte(0x16))
+		if (!file->writeBit8u(0x16))
 			break;
-		if (!file->writeByte(0x12))
+		if (!file->writeBit8u(0x12))
 			break;
 
 		int useaddr = patchnum * 256;
@@ -1152,11 +1160,11 @@ int Synth::dumpSysex(char *filename) {
 		char isb = (char)((useaddr >> 7) & 0x7f);
 		char msb = (char)(((useaddr >> 14) & 0x7f) | 0x08);
 		//Address
-		if (!file->writeByte(msb))
+		if (!file->writeBit8u(msb))
 			break;
-		if (!file->writeByte(isb))
+		if (!file->writeBit8u(isb))
 			break;
-		if (!file->writeByte(lsb))
+		if (!file->writeBit8u(lsb))
 			break;
 
 		//Data
@@ -1172,13 +1180,13 @@ int Synth::dumpSysex(char *filename) {
 			break;
 		//Checksum
 		unsigned char *dat = (unsigned char *)&mt32ram.params.timbres[patchnum + 128].timbre;
-		unsigned char checksum = calcChecksum(dat, 246, msb + isb + lsb);
+		unsigned char checksum = calcSysexChecksum(dat, 246, msb + isb + lsb);
 
-		if (!file->writeByte(checksum))
+		if (!file->writeBit8u(checksum))
 			break;
 
 		//End of sysex
-		if (!file->writeByte(0xF7))
+		if (!file->writeBit8u(0xF7))
 			break;
 	}
 	closeFile(file);

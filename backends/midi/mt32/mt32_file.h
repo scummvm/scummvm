@@ -34,12 +34,17 @@ public:
 	};
 	virtual ~File() {}
 	virtual void close() = 0;
-	virtual size_t read(void *ptr, size_t size) = 0;
-	virtual bool readLine(char *ptr, size_t size) = 0;
-	virtual size_t write(const void *ptr, size_t size) = 0;
-	// Returns -1 in case of EOF or error
-	virtual int readByte() = 0;
-	virtual bool writeByte(unsigned char out) = 0;
+	virtual size_t read(void *in, size_t size) = 0;
+	virtual bool readLine(char *in, size_t size) = 0;
+	virtual bool readBit8u(Bit8u *in) = 0;
+	virtual bool readBit16u(Bit16u *in);
+	virtual bool readBit32u(Bit32u *in);
+	virtual size_t write(const void *out, size_t size) = 0;
+	virtual bool writeBit8u(Bit8u out) = 0;
+	// Note: May write some a single byte to the file before failing
+	virtual bool writeBit16u(Bit16u out);
+	// Note: May write some (<4) bytes to the file before failing
+	virtual bool writeBit32u(Bit32u out);
 	virtual bool isEOF() = 0;
 };
 
@@ -49,11 +54,11 @@ private:
 public:
 	bool open(const char *filename, OpenMode mode);
 	void close();
-	size_t read(void *ptr, size_t size);
-	bool readLine(char *ptr, size_t size);
-	size_t write(const void *, size_t size);
-	int readByte();
-	bool writeByte(unsigned char out);
+	size_t read(void *in, size_t size);
+	bool readLine(char *in, size_t size);
+	bool readBit8u(Bit8u *in);
+	size_t write(const void *out, size_t size);
+	bool writeBit8u(unsigned char out);
 	bool isEOF();
 };
 

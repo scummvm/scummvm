@@ -22,9 +22,6 @@
 #ifndef MT32EMU_MT32EMU_H
 #define MT32EMU_MT32EMU_H
 
-#include "stdafx.h"
-#include "common/scummsys.h"
-
 #include "freeverb.h"
 
 #include "structures.h"

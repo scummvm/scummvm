@@ -149,7 +149,7 @@ void Partial::startPartial(dpoly *usePoly, PatchCache *useCache, Partial *pairPa
 	pitchEnvCache = 0;
 	pitchSustain = false;
 	loopPos = 0;
-	partialOff.pcmabs = 0;
+	partialOff.pcmoffset = partialOff.pcmplace = 0;
 	pair = pairPartial;
 	useNoisePair = pairPartial == NULL && (mixType == 1 || mixType == 2);
 	age = 0;
@@ -238,9 +238,10 @@ Bit16s *Partial::generateSamples(long length) {
 				delta = wavtabler[tPCM->pcmnum][noteVal];
 				addr = tPCM->addr;
 				len = tPCM->len;
-				if (partialOff.pcmoffs.pcmplace >= len) {
+				if (partialOff.pcmplace >= len) {
 					if (tPCM->loop) {
-						partialOff.pcmabs = 0;
+						partialOff.pcmplace = partialOff.pcmoffset = 0;
+						// FIXME:KG: Use this?: partialOff.pcmplace %= len;
 					} else {
 						play = false;
 						deactivate();
@@ -252,11 +253,11 @@ Bit16s *Partial::generateSamples(long length) {
 				delta = looptabler[tPCM->aggSound][loopPos][noteVal];
 				addr = synth->PCM[tmppcm].addr;
 				len = synth->PCM[tmppcm].len;
-				if (partialOff.pcmoffs.pcmplace >= len) {
+				if (partialOff.pcmplace >= len) {
 					loopPos++;
 					if (LoopPatterns[tPCM->aggSound][loopPos]==-1)
 						loopPos=0;
-					partialOff.pcmabs = 0;
+					partialOff.pcmplace = partialOff.pcmoffset = 0;
 				}
 			}
 
@@ -265,7 +266,7 @@ Bit16s *Partial::generateSamples(long length) {
 				int taddr;
 				if (delta<0x10000) {
 					// Linear sound interpolation
-					taddr = addr + partialOff.pcmoffs.pcmplace;
+					taddr = addr + partialOff.pcmplace;
 					if (taddr >= ROMSIZE) {
 						synth->printDebug("Overflow ROMSIZE!");
 						taddr = ROMSIZE - 1;
@@ -273,16 +274,15 @@ Bit16s *Partial::generateSamples(long length) {
 					ra = synth->romfile[taddr];
 					rb = synth->romfile[taddr+1];
 					dist = rb-ra;
-					ptemp = (ra + ((dist * (Bit32s)(partialOff.pcmoffs.pcmoffset>>8)) >>8));
+					ptemp = (ra + ((dist * (Bit32s)(partialOff.pcmoffset >> 8)) >> 8));
 				} else {
-					//r = romfile[addr + partialOff.pcmoffs.pcmplace];
 					// Sound decimation
 					// The right way to do it is to use a lowpass filter on the waveform before selecting
 					// a point.  This is too slow.  The following approximates this as fast as possible
 					int idelta = delta >> 16;
-					taddr = addr + partialOff.pcmoffs.pcmplace;
+					taddr = addr + partialOff.pcmplace;
 					ra = 0;
-					for (int ix=0;ix<idelta;ix++)
+					for (int ix = 0; ix < idelta; ix++)
 						ra += synth->romfile[taddr++];
 					ptemp = ra / idelta;
 				}
@@ -291,12 +291,12 @@ Bit16s *Partial::generateSamples(long length) {
 			// Synthesis partial
 			int divis = divtable[noteVal] >> 15;
 
-			partialOff.pcmoffs.pcmplace %= (Bit16u)divis;
+			partialOff.pcmplace %= (Bit16u)divis;
 
 			if (ampval > 0) {
 				int wf = patchCache->waveform ;
-				int toff = partialOff.pcmoffs.pcmplace;
-				int minorplace = partialOff.pcmoffs.pcmoffset >> 14;
+				int toff = partialOff.pcmplace;
+				int minorplace = partialOff.pcmoffset >> 14;
 
 				int pa, pb;
 
@@ -381,7 +381,10 @@ Bit16s *Partial::generateSamples(long length) {
 			tdelta = (tdelta * *poly->bendptr)>>12;
 
 		// Add calculated delta to our waveform offset
-		partialOff.pcmabs += (int)tdelta;
+		Bit32u absOff = ((partialOff.pcmplace << 16) | partialOff.pcmoffset);
+		absOff += (int)tdelta;
+		partialOff.pcmplace = (Bit16u)((absOff & 0xFFFF0000) >> 16);
+		partialOff.pcmoffset = (Bit16u)(absOff & 0xFFFF);
 
 		// Put volume envelope over generated sample
 		ptemp = (ptemp * ampval) >> 9;

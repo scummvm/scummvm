@@ -36,12 +36,11 @@
 namespace MT32Emu {
 
 #ifdef _MSC_VER
-#define  ALIGN_PACKED __declspec(align(1))
+#define  MT32EMU_ALIGN_PACKED __declspec(align(1))
 typedef unsigned __int64   Bit64u;
 typedef   signed __int64   Bit64s;
 #else
-//#define ALIGN_PACKED __attribute__ ((__packed__))
-#define ALIGN_PACKED __attribute__ ((aligned (1)))
+#define MT32EMU_ALIGN_PACKED __attribute__((packed))
 typedef unsigned long long Bit64u;
 typedef   signed long long Bit64s;
 #endif
@@ -53,7 +52,16 @@ typedef   signed short int Bit16s;
 typedef unsigned char      Bit8u;
 typedef   signed char      Bit8s;
 
+// The following structures represent the MT-32's memory
+// Since sysex allows this memory to be written to in blocks of bytes,
+// we keep this packed so that we can copy data into the various
+// banks directly
+#ifdef __GNUC__
+#pragma pack(push, 1)
+#else
 #pragma pack(1)
+#endif
+
 struct TimbreParam {
 	struct commonParam {
 		char name[10];
@@ -61,19 +69,19 @@ struct TimbreParam {
 		char pstruct34;  // #3&4  0-12 (1-13)
 		char pmute;  // 0-15 (0000-1111)
 		char nosustain; // 0-1(Normal, No sustain)
-	} ALIGN_PACKED common;
+	} MT32EMU_ALIGN_PACKED common;
 
 	struct partialParam {
 		struct wgParam {
 			char coarse;  // 0-96 (C1,C#1-C9)
-			char fine;  // 0-100 (-50 - +50)
+			char fine;  // 0-100 (-50 to +50 (cents?))
 			char keyfollow;  // 0-16 (-1,-1/2,0,1,1/8,1/4,3/8,1/2,5/8,3/4,7/8,1,5/4,3/2,2.s1,s2)
 			char bender;  // 0,1 (ON/OFF)
 			char waveform; //  0-1 (SQU/SAW)
 			char pcmwave; // 0-127 (1-128)
 			char pulsewid; // 0-100
 			char pwvelo; // 0-14 (-7 - +7)
-		} ALIGN_PACKED wg;
+		} MT32EMU_ALIGN_PACKED wg;
 
 		struct envParam {
 			char depth; // 0-10
@@ -81,13 +89,13 @@ struct TimbreParam {
 			char timekeyfollow; // 0-4
 			char time[4]; // 1-100
 			char level[5]; // 1-100 (-50 - +50)
-		} ALIGN_PACKED env;
+		} MT32EMU_ALIGN_PACKED env;
 
 		struct lfoParam {
 			char rate; // 0-100
 			char depth; // 0-100
 			char modsense; // 0-100
-		} ALIGN_PACKED lfo;
+		} MT32EMU_ALIGN_PACKED lfo;
 
 		struct tvfParam {
 			char cutoff; // 0-100
@@ -101,7 +109,7 @@ struct TimbreParam {
 			char envtkf; // TIME KEY FOLLOW 0-4
 			char envtime[5]; // 1-100
 			char envlevel[4]; // 1-100
-		} ALIGN_PACKED tvf;
+		} MT32EMU_ALIGN_PACKED tvf;
 
 		struct tvaParam {
 			char level; // 0-100
@@ -114,22 +122,20 @@ struct TimbreParam {
 			char envvkf; // VELOS KEY FOLL0W 0-4
 			char envtime[5]; // 1-100
 			char envlevel[4]; // 1-100
-		} ALIGN_PACKED tva;
-
-	} ALIGN_PACKED partial[4];
-	//char dummy[20];
-} ALIGN_PACKED;
+		} MT32EMU_ALIGN_PACKED tva;
+	} MT32EMU_ALIGN_PACKED partial[4];
+} MT32EMU_ALIGN_PACKED;
 
 struct PatchParam {
 	char timbreGroup; // TIMBRE GROUP  0-3 (group A, group B, Memory, Rhythm)
 	char timbreNum; // TIMBRE NUMBER 0-63
-	char keyShift; // KEY SHIFT 0-48 (-24 - +24)
-	char fineTune; // FINE TUNE 0-100 (-50 - +50)
+	char keyShift; // KEY SHIFT 0-48 (-24 - +24 semitones)
+	char fineTune; // FINE TUNE 0-100 (-50 - +50 cents)
 	char benderRange; // BENDER RANGE 0-24
 	char assignMode;  // ASSIGN MODE 0-3 (POLY1, POLY2, POLY3, POLY4)
 	char reverbSwitch;  // REVERB SWITCH 0-1 (OFF,ON)
 	char dummy; // (DUMMY)
-} ALIGN_PACKED;
+} MT32EMU_ALIGN_PACKED;
 
 struct MemParams {
 	struct PatchTemp {
@@ -137,23 +143,23 @@ struct MemParams {
 		char outlevel; // OUTPUT LEVEL 0-100
 		char panpot; // PANPOT 0-14 (R-L)
 		char dummyv[6];
-	} ALIGN_PACKED patchSettings[8];
+	} MT32EMU_ALIGN_PACKED patchSettings[8];
 
 	struct RhythmTemp {
 		char timbre; // TIMBRE  0-94 (M1-M64,R1-30,OFF)
 		char outlevel; // OUTPUT LEVEL 0-100
 		char panpot; // PANPOT 0-14 (R-L)
 		char reverbSwitch;  // REVERB SWITCH 0-1 (OFF,ON)
-	} ALIGN_PACKED rhythmSettings[64];
+	} MT32EMU_ALIGN_PACKED rhythmSettings[64];
 
-	TimbreParam timbreSettings[8];
+	TimbreParam MT32EMU_ALIGN_PACKED timbreSettings[8];
 
-	PatchParam patches[128];
+	PatchParam MT32EMU_ALIGN_PACKED patches[128];
 
 	struct PaddedTimbre {
 		TimbreParam timbre;
 		char padding[10];
-	} ALIGN_PACKED timbres[64 + 64 + 64 + 30]; // Group A, Group B, Memory, Rhythm
+	} MT32EMU_ALIGN_PACKED timbres[64 + 64 + 64 + 30]; // Group A, Group B, Memory, Rhythm
 
 	struct SystemArea {
 		char masterTune; // MASTER TUNE 0-127 432.1-457.6Hz
@@ -163,8 +169,8 @@ struct MemParams {
 		char reserveSettings[9]; // PARTIAL RESERVE (PART 1) 0-32
 		char chanAssign[9]; // MIDI CHANNEL (PART1) 0-16 (1-16,OFF)
 		char masterVol; // MASTER VOLUME 0-100
-	} ALIGN_PACKED system;
-} ALIGN_PACKED;
+	} MT32EMU_ALIGN_PACKED system;
+};
 
 struct MemBanks {
 	char pTemp[8][sizeof(MemParams::PatchTemp)];
@@ -173,21 +179,21 @@ struct MemBanks {
 	char patchBank[128][sizeof(PatchParam)];
 	char timbreBank[64 + 64 + 64 + 30][sizeof(MemParams::PaddedTimbre)];
 	char systemBank[sizeof(MemParams::SystemArea)];
-} ALIGN_PACKED;
+	// System memory 0x100000
+	// Display 0x200000
+	// Reset 0x7F0000
+};
 
 union MT32RAMFormat {
 	MemParams params;
 	MemBanks banks;
+} MT32EMU_ALIGN_PACKED;
 
-	// System memory 10
-
-	// Display 20
-
-	// Reset 7F
-
-} ALIGN_PACKED;
-
+#ifdef __GNUC__
+#pragma pack(pop)
+#else
 #pragma pack()
+#endif
 
 struct sampleFormat {
 	Bit32u addr;
@@ -205,17 +211,9 @@ struct sampleTable {
 	Bit32s aggSound; // This variable is for the last 9 PCM samples, which are actually loop combinations
 };
 
-union soundaddr {
-	Bit32u pcmabs;
-	struct offsets {
-#if defined(SCUMM_LITTLE_ENDIAN)
-		Bit16u pcmoffset;
-		Bit16u pcmplace;
-#else
-		Bit16u pcmplace;
-		Bit16u pcmoffset;
-#endif
-	} pcmoffs;
+struct soundaddr {
+	Bit16u pcmplace;
+	Bit16u pcmoffset;
 };
 
 struct volset {

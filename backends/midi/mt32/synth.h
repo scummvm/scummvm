@@ -185,6 +185,7 @@ public:
 	// Sends a 4-byte MIDI message to the MT-32 for immediate playback
 	void playMsg(Bit32u msg);
 
+	static Bit8u calcSysexChecksum(Bit8u *data, Bit32u len, Bit8u checksum);
 	// Sends a string of Sysex commands to the MT-32 for immediate interpretation
 	// The length is in bytes
 	void playSysex(Bit8u *sysex, Bit32u len);
