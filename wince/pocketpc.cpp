@@ -129,6 +129,7 @@ private:
 	HMODULE hInst;
 	HWND hWnd;
 	bool _display_cursor;
+	bool _simulate_right_up;
 
 
 	enum {
@@ -370,8 +371,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 		Scumm *scumm = Scumm::createFromDetector(&detector, system);
 		g_scumm = scumm;
 
-		registry_init();
 		keypad_init();
+		registry_init();
 		
 		hide_cursor = TRUE;
 		if (scumm->_gameId == GID_SAMNMAX || scumm->_gameId == GID_FT || scumm->_gameId == GID_DIG)
@@ -475,8 +476,10 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			do_quit();			
 			break;
 		case IDC_SKIP:
-			wm->_event.kbd.ascii = mapKey(VK_ESCAPE);;
-			wm->_event.event_code = EVENT_KEYDOWN;
+			if (g_scumm->vm.cutScenePtr[g_scumm->vm.cutSceneStackPointer])
+				wm->_event.kbd.ascii = g_scumm->_vars[g_scumm->VAR_CUTSCENEEXIT_KEY];
+			else
+				wm->_event.kbd.ascii = g_scumm->_vars[g_scumm->VAR_TALKSTOP_KEY];						
 			break;
 		case IDC_LOADSAVE:
 			if (GetScreenMode()) {
@@ -500,15 +503,12 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
       break;
 
 		case IDC_LANDSCAPE:
-			SetScreenMode(!GetScreenMode());
-			SHSipPreference(hWnd,SIP_FORCEDOWN);
-			SetCapture(hWnd); // to prevent input panel from getting taps
 			SHFullScreen (hWnd, SHFS_HIDESIPBUTTON | SHFS_HIDETASKBAR | SHFS_HIDESTARTICON);
 			InvalidateRect(HWND_DESKTOP, NULL, TRUE);
-			/*
-			SipShowIM(SIPF_OFF);
-			SHSipPreference(hWnd, SIP_FORCEDOWN);
-			*/
+			SetScreenMode(!GetScreenMode());
+			//SHSipPreference(hWnd,SIP_FORCEDOWN);
+			MoveWindow(hWnd, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), TRUE);
+			SetCapture(hWnd); // to prevent input panel from getting taps						
 			if (!hide_toolbar)
 				toolbar_drawn = false;
 			break;
@@ -536,6 +536,15 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			}
 		}
 
+		break;
+
+	case WM_KEYUP:
+		if (wParam) {
+			if (wm->_simulate_right_up) {
+					wm->_event.event_code = EVENT_RBUTTONUP;
+					wm->_simulate_right_up = false;
+			}
+		}
 		break;
 
 	case WM_MOUSEMOVE:
@@ -633,7 +642,10 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 						break;
 					case ToolbarSkip:
 						wm->_event.event_code = EVENT_KEYDOWN;
-						wm->_event.kbd.ascii = mapKey(VK_ESCAPE);				
+						if (g_scumm->vm.cutScenePtr[g_scumm->vm.cutSceneStackPointer])
+							wm->_event.kbd.ascii = g_scumm->_vars[g_scumm->VAR_CUTSCENEEXIT_KEY];
+						else
+							wm->_event.kbd.ascii = g_scumm->_vars[g_scumm->VAR_TALKSTOP_KEY];						
 						break;
 					case ToolbarSound:
 						sound_activated = !sound_activated;
@@ -655,6 +667,7 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			wm->_event.event_code = EVENT_LBUTTONUP;
 			wm->_event.mouse.x = x;
 			wm->_event.mouse.y = y;
+			wm->_last_mouse_event = wm->_event;
 		}
 		break;
 	case WM_LBUTTONDBLCLK:  // doesn't seem to work right now
@@ -753,6 +766,7 @@ void OSystem_WINCE3::addEventKeyPressed(int ascii_code) {
 void OSystem_WINCE3::addEventRightButtonClicked() {
 	_last_mouse_event.event_code = EVENT_RBUTTONDOWN;
 	_event = _last_mouse_event;
+	_simulate_right_up = true;
 }
 
 void action_right_click() {
@@ -790,7 +804,10 @@ void action_skip() {
 	OSystem_WINCE3* system;
 	system = (OSystem_WINCE3*)g_scumm->_system;
 
-	system->addEventKeyPressed(mapKey(VK_ESCAPE));
+	if (g_scumm->vm.cutScenePtr[g_scumm->vm.cutSceneStackPointer])
+		system->addEventKeyPressed(g_scumm->_vars[g_scumm->VAR_CUTSCENEEXIT_KEY]);
+	else
+		system->addEventKeyPressed(g_scumm->_vars[g_scumm->VAR_TALKSTOP_KEY]);						
 }
 
 void action_hide() {
@@ -1066,6 +1083,13 @@ void OSystem_WINCE3::set_mouse_cursor(const byte *buf, uint w, uint h, int hotsp
 	_ms_hotspot_y = hotspot_y;
 
 	_ms_buf = (byte*)buf;
+
+	// Refresh mouse cursor
+
+	if (!hide_cursor) {
+		undraw_mouse();
+		draw_mouse();
+	}
 }
 	
 void OSystem_WINCE3::set_shake_pos(int shake_pos) {;}
