@@ -49,6 +49,8 @@ ObjectMap::ObjectMap(Gfx *gfx) {
 	debug(0, "ObjectMap Module: Initializing...");
 	_gfx = gfx;
 	_initialized = 1;
+	_objects_loaded = 0;
+	_names_loaded = 0;
 }
 
 // Shuts down the object map module, destroys module allocation context
