@@ -1151,7 +1151,7 @@ void Scumm::initScummVars() {
 					char buf[50];
 					uint i = 82;
 					File f;
-					while (i < 86) {
+					while (i < 85) {
 						sprintf(buf, "%d.LFL", i);
 						f.open(buf, _gameDataPath);
 						if (f.isOpen() == false)
