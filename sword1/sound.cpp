@@ -214,20 +214,40 @@ int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 		} else
 			resSize = READ_LE_UINT32(fBuf + headerPos + 4) >> 1;
 		int16 *srcData = (int16*)(fBuf + headerPos + 8);
-		int16 *dstData = (int16*)malloc(resSize * 2);
 		uint32 srcPos = 0;
-		int16 *dstPos = dstData;
+		uint32 dstPos = 0;
 		cSize = (cSize - (headerPos + 8)) / 2;
+		if (_cowMode == CowDemo) {
+			// FIXME: Until someone figures out how to really
+			//        calculate the uncompressed buffer size, use
+			//        brute force to avoid crashes.
+			debug(1, "old resSize = %d", resSize);
+			resSize = 0;
+			while (srcPos < cSize) {
+				int16 length = (int16)READ_LE_UINT16(srcData + srcPos);
+				srcPos++;
+				if (length < 0) {
+					length = -length;
+					srcPos++;
+				} else {
+					srcPos += length;
+				}
+				resSize += length;
+			}
+			debug(1, "new resSize = %d", resSize);
+		}
+		int16 *dstData = (int16*)malloc(resSize * 2);
+		srcPos = 0;
 		while (srcPos < cSize) {
 			int16 length = (int16)READ_LE_UINT16(srcData + srcPos);
 			srcPos++;
 			if (length < 0) {
 				length = -length;
 				for (uint16 cnt = 0; cnt < (uint16)length; cnt++)
-					*dstPos++ = srcData[srcPos];
+					dstData[dstPos++] = srcData[srcPos];
 				srcPos++;
 			} else {
-				memcpy(dstPos, srcData + srcPos, length * 2);
+				memcpy(dstData + dstPos, srcData + srcPos, length * 2);
 				dstPos += length;
 				srcPos += length;
 			}
