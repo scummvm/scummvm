@@ -848,10 +848,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\gui\consolefont.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\gui\credits.h"
 				>
 			</File>
@@ -861,6 +857,14 @@
 			</File>
 			<File
 				RelativePath="..\..\gui\dialog.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\editable.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\editable.h"
 				>
 			</File>
 			<File
@@ -961,6 +965,10 @@
 			</File>
 			<File
 				RelativePath="..\..\graphics\animation.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\consolefont.cpp"
 				>
 			</File>
 			<File
