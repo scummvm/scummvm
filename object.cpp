@@ -672,7 +672,8 @@ byte *Scumm::getObjOrActorName(int obj) {
 		byte offset;
 
 		objptr = getOBCDFromObject(obj);
-		offset = *(objptr+18);
+		if (objptr)
+			offset = *(objptr+18);
 		return(objptr+offset);
         }
 
@@ -901,7 +902,7 @@ void Scumm::setOwnerOf(int obj, int owner) {
 
 int Scumm::getObjX(int obj) {
 	if (obj < NUM_ACTORS) {
-		if (obj==0)
+		if (obj<1)
 			return 0; /* fix for indy4's map */
 		return derefActorSafe(obj,"getObjX")->x;
 	} else {
@@ -914,7 +915,7 @@ int Scumm::getObjX(int obj) {
 
 int Scumm::getObjY(int obj) {
 	if (obj < NUM_ACTORS) {
-		if (obj==0)
+		if (obj<1)
 			return 0; /* fix for indy4's map */
 		return derefActorSafe(obj,"getObjY")->y;
 	} else {

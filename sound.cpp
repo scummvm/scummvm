@@ -22,6 +22,7 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "sound.h"
+#include "cdmusic.h"
 
 #ifdef _WIN32_WCE
 extern void *bsearch(const void *, const void *, size_t, 
@@ -98,7 +99,18 @@ void Scumm::processSoundQues() {
 }
 
 void Scumm::playSound(int sound) {
+	byte *ptr;
         SoundEngine *se = (SoundEngine*)_soundEngine;
+
+	ptr = getResourceAddress(rtSound, sound);
+	if (ptr != NULL && READ_UINT32_UNALIGNED(ptr) == MKID('SOUN')) {
+		ptr += 8;
+		cd_play(ptr[16], ptr[17] == 0xff ? -1 : ptr[17],
+			(ptr[18] * 60 + ptr[19]) * 75 + ptr[20]);
+		current_cd_sound = sound;
+		return;
+	}
+
         if (_features & GF_OLD256) return; /* FIXME */
 
 	if (se) {
@@ -171,6 +183,7 @@ void Scumm::startTalkSound(uint32 offset, uint32 b, int mode) {
 	  key.org_offset = offset;
 	  result = (OffsetTable *) bsearch(&key, offset_table, num_sound_effects, sizeof(OffsetTable), compar);
 
+
 	  if (result == NULL) {
 	    warning("startTalkSound: did not find sound at offset %d !", offset);
 	    return;
@@ -233,6 +246,9 @@ int Scumm::isSoundRunning(int sound) {
 	SoundEngine *se;
 	int i;
 
+	if (sound == current_cd_sound)
+		return cd_is_running();
+
 	i = _soundQue2Pos;
 	while (i--) {
 		if (_soundQue2[i] == sound)
@@ -275,6 +291,11 @@ void Scumm::stopSound(int a) {
 	SoundEngine *se;
 	int i;
 
+	if (a == current_cd_sound) {
+		current_cd_sound = 0;
+		cd_stop();
+	}
+
 	se = (SoundEngine*)_soundEngine;
 	if (se)
 		se->stop_sound(a);
@@ -286,6 +307,12 @@ void Scumm::stopSound(int a) {
 
 void Scumm::stopAllSounds() {
 	SoundEngine *se = (SoundEngine*)_soundEngine;
+
+	if (current_cd_sound != 0) {
+		current_cd_sound = 0;
+		cd_stop();
+	}
+
 	if (se) {
 		se->stop_all_sounds();
 		se->clear_queue();
@@ -550,10 +577,16 @@ void Scumm::playSfxSound_MP3(void *sound, uint32 size) {
 
   mad_stream_init(&mc->sound_data.mp3.stream);
 
+
+
 #ifdef _WIN32_WCE  
+
   // 11 kHz on WinCE
+
   mad_stream_options((mad_stream*)&mc->sound_data.mp3.stream, MAD_OPTION_HALFSAMPLERATE);
+
 #endif
+
   
   mad_frame_init(&mc->sound_data.mp3.frame);
   mad_synth_init(&mc->sound_data.mp3.synth);

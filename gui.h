@@ -23,24 +23,24 @@ enum {
 };
 
 static const char* string_map_table_custom[] = { 
-	"Master Volume :",
-	"Music Volume :",
-	"SFX Volume :",
-	"+",
-	"-",
-	"Sound",
-	"Keys",
-	"About",
-	"Pocket ScummVM",
-	"Build " SCUMMVM_VERSION "(" SCUMMVM_CVS ")",	
-	"ScummVM http://scummvm.sourceforge.net",	
-	"All games (c) LucasArts",
-	"Quit",
-	"Pause",
-	"Save",
-	"Skip",
-	"Hide",
-	"Options"
+	"Master Volume :",	//0
+	"Music Volume :",	//1
+	"SFX Volume :",		//2
+	"+",				//3
+	"-",				//4
+	"Sound",			//5
+	"Keys",				//6
+	"About",			//7
+	"Pocket ScummVM",	//8
+	"Build " SCUMMVM_VERSION "(" SCUMMVM_CVS ")",	//9
+	"ScummVM http://scummvm.sourceforge.net",		//10
+	"All games (c) LucasArts",						//11
+	"Quit",											//12
+	"Pause",										//13
+	"Save",											//14
+	"Skip",											//15
+	"Hide",											//16
+	"Options"										//17
 };
 
 static const byte string_map_table_v6[] = {
@@ -84,6 +84,7 @@ struct GuiWidget {
 struct Gui {
 	Scumm *_s;
 	const GuiWidget *_widgets[4];
+	int _return_to;
 	int _curX, _curY;
 	VirtScreen *_vs;
 	byte _color,_shadowcolor;
@@ -137,11 +138,12 @@ struct Gui {
 	void saveLoadDialog();
 	void pause();
 	void options();
+	void launcher();
 
 	void handleSoundDialogCommand(int cmd);
 	void handleOptionsDialogCommand(int cmd);
 	void handleKeysDialogCommand(int cmd);
-
+	void handleLauncherDialogCommand(int cmd);
 };
 
 // Built-in font

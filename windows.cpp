@@ -23,6 +23,7 @@
 
 #include "scumm.h"
 #include "sound.h"
+#include "cdmusic.h"
 #include "gui.h"
 
 #if !defined(ALLOW_GDI)
@@ -113,6 +114,7 @@ WndMan wm[1];
 byte veryFastMode;
 
 void modifyslot(int sel, int what);
+void launcherLoop() {;}
 
 int mapKey(int key) {
 	if (key>=VK_F1 && key<=VK_F9) {
@@ -120,6 +122,12 @@ int mapKey(int key) {
 	}
 	return key;
 }
+
+// FIXME: CD Music Stubs
+void cd_playtrack(int track, int offset, int delay) {;}
+void cd_play(int track, int num_loops, int start_frame) {;}
+void cd_stop() {;}
+int cd_is_running() {return 0;}
 
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	WndMan *wm = (WndMan*)GetWindowLong(hWnd, GWL_USERDATA);	
@@ -408,9 +416,7 @@ void outputdisplay2(Scumm *s, int disp) {
 }
 
 void blitToScreen(Scumm *s, byte *src,int x, int y, int w, int h) {
-	byte *dst;
-	SDL_Rect *r;
-	int i;
+	byte *dst;	
 
 	dst = (byte*)wm->_vgabuf + y*320 + x;
 
@@ -460,10 +466,6 @@ void drawMouse(Scumm *s, int x, int y, int w, int h, byte *buf, bool visible) {
 
 void fill_buffer(int16 *buf, int len) {
 	scumm.mixWaves(buf, len);
-}
-
-void cd_playtrack(int track, int offset, int delay) { // FIXME: Add for Win32
-;
 }
 
 void WndMan::prepare_header(WAVEHDR *wh, int i) {

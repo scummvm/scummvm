@@ -1204,7 +1204,9 @@ struct Scumm {
 	OffsetTable *offset_table;
 	int num_sound_effects;
 #endif
-  
+
+	int current_cd_sound;
+
 	void openRoom(int room);
 	void deleteRoomOffsets();
 	void readRoomsOffsets();

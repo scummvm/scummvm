@@ -36,9 +36,15 @@ Icon icon;
 SoundEngine sound;
 SOUND_DRIVER_TYPE snd_driv;
 
-
+/* CD Audio stubs */
+void cd_playtrack(int track, int offset, int delay) {;}
+void cd_play(int track, int num_loops, int start_frame) {;}
+void cd_stop() {;}
+int cd_is_running() {return 0;}
 void cd_playtrack(int track, int offset, int delay) {
-  /* Not implemented yet => stub function */
+
+void launcherLoop() {
+  /* No launcher on DC yet => stub function */
 }
 
 void BoxTest(int num) {

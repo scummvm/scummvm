@@ -866,8 +866,14 @@ void Preferences()
     osError = RunAppModalLoopForWindow(prefsWin);
 }
 
-void cd_playtrack(int track, int offset, int delay) {
-  /* No CD Playback in the Mac-Version right now */
+/* FIXME: CD Music Stubs */
+void cd_playtrack(int track, int offset, int delay) {;}
+void cd_play(int track, int num_loops, int start_frame) {;}
+void cd_stop() {;}
+int cd_is_running() {return 0;}
+
+void launcherLoop() {
+  /* No launcher on mac yet => stub function */
 }
 
 void BoxTest(int num) {

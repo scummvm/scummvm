@@ -27,6 +27,8 @@
 #include "sound.h"
 #include "SDL_thread.h"
 
+#include "cdmusic.h"
+
 static unsigned int scale;
 
 Scumm scumm;
@@ -175,6 +177,8 @@ void waitForTimer(Scumm *s, int msec_delay) {
 				break;
 			}
 		}
+
+		cd_music_loop(); // Loop CD Music if necessary
 
 		if (SDL_GetTicks() >= start_time + msec_delay)
 			break;
@@ -663,8 +667,81 @@ void fill_sound(void *userdata, Uint8 *stream, int len) {
 }
 
 void cd_playtrack(int track, int offset, int delay) {
-        SDL_CDStatus(cdrom);
-        SDL_CDPlayTracks(cdrom, track, (int)((offset * 7.5) - 22650), 0, (int)(delay * 7.5));
+	if (!cdrom) return;
+    
+	SDL_CDStatus(cdrom);
+    SDL_CDPlayTracks(cdrom, track, (int)((offset * 7.5) - 22650), 0, (int)(delay * 7.5));
+}
+
+static int cd_track, cd_num_loops = 0, cd_start_frame;
+
+// On my system, calling SDL_CDStatus all the time slows things down a
+// lot and prevents music from playing at all :( So this saves the
+// time the track is expected to be finished.
+static Uint32 cd_end_time;
+
+static Uint32 cd_stop_time;
+
+void cd_play(int track, int num_loops, int start_frame) {
+	// warning("cd_play(%d,%d,%d)", track, num_loops, start_frame);
+	if (!cdrom) return;
+
+	cd_track = track;
+	cd_num_loops = num_loops;
+	cd_start_frame = start_frame;
+
+	SDL_CDStatus(cdrom);
+	SDL_CDPlayTracks(cdrom, track, start_frame, 1, 0);
+	cd_stop_time = 0;
+	cd_end_time = SDL_GetTicks() +
+		cdrom->track[track].length * 1000 / CD_FPS;
+}
+
+// Schedule the music to be stopped after 1/10 sec, unless another
+// track is started in the meantime.  (On my machine, stopping and
+// then restarting the CD takes a few seconds.)
+void cd_stop() {
+	cd_stop_time = SDL_GetTicks() + 100;
+	cd_num_loops = 0;
+}
+
+int cd_is_running() {
+	if (!cdrom) return 0;
+
+	return (cd_num_loops != 0 && (SDL_GetTicks() < cd_end_time ||
+				      SDL_CDStatus(cdrom) != CD_STOPPED));
+}
+
+static void cd_shutdown() {
+	if (!cdrom) return;
+
+	if (cd_num_loops != 0)
+		SDL_CDStop(cdrom);
+}
+
+void cd_music_loop() {
+	if (!cdrom) return;
+
+	if (cd_stop_time != 0 && SDL_GetTicks() >= cd_stop_time) {
+		SDL_CDStop(cdrom);
+		cd_num_loops = 0;
+		cd_stop_time = 0;
+		return;
+	}
+	if (cd_num_loops == 0 || SDL_GetTicks() < cd_end_time)
+		return;
+	if (cd_num_loops != 1 && SDL_CDStatus(cdrom) != CD_STOPPED) {
+		// Wait another second for it to be done
+		cd_end_time += 1000;
+		return;
+	}
+	if (cd_num_loops > 0)
+		cd_num_loops--;
+	if (cd_num_loops != 0) {
+		SDL_CDPlayTracks(cdrom, cd_track, cd_start_frame, 1, 0);
+		cd_end_time = SDL_GetTicks() +
+			cdrom->track[cd_track].length * 1000 / CD_FPS;
+	}
 }
 
 int music_thread(Scumm *s) {
@@ -703,6 +780,7 @@ void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor) {
 
 	/* Clean up on exit */
  	atexit(SDL_Quit);
+	atexit(cd_shutdown);
 	atexit(resetCursor);
 
 	char buf[512], *gameName;
@@ -777,7 +855,7 @@ void launcherLoop() {
 	int delta = 0;
 	last_time = SDL_GetTicks();
 
-	gui.saveLoadDialog();
+	gui.launcher();
 	do {
 		updateScreen(&scumm);
 

@@ -666,7 +666,7 @@ int Scumm::readSoundResource(int type, int idx) {
 			fileRead(_fileHandle,createResource(type, idx, total_size+8), total_size+8);
 			return 1;
         	}
-	} else {
+	} else if (basetag == MKID('SOU ')) {
 		best_pri = -1;
 		while (pos < total_size) {
 			tag = fileReadDword();
@@ -697,6 +697,16 @@ int Scumm::readSoundResource(int type, int idx) {
 			fileRead(_fileHandle,createResource(type, idx, best_size), best_size);
 			return 1;
 		}		
+	} else if (FROM_LE_32(basetag) == 24) {
+		fileSeek(_fileHandle, -12, SEEK_CUR);
+		total_size = fileReadDwordBE();
+		fileSeek(_fileHandle, -8, SEEK_CUR);
+		fileRead(_fileHandle, createResource(type, idx, total_size), total_size);
+		return 1;
+	} else {
+		error("Unrecognized base tag %c%c%c%c in sound %d",
+		      basetag&0xff, basetag>>8, basetag>>16, basetag>>24,
+		      idx);
 	}
 	res.roomoffs[type][idx] = 0xFFFFFFFF;
 	return 0;

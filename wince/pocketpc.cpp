@@ -33,6 +33,7 @@
 #include "commctrl.h"
 
 #include <Winuser.h>
+
 #include <Winnls.h>
 #include <sipapi.h>
 #include <Aygshell.h>
@@ -44,6 +45,7 @@
 #include "SDL_audio.h"
 #include "SDL_timer.h"
 #include "SDL_thread.h"
+
 
 #define VERSION "(VM " SCUMMVM_CVS ")"
 
@@ -1020,7 +1022,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 void setShakePos(Scumm *s, int shake_pos) {}
 // TODO : switch to MP3 support
 void cd_playtrack(int track, int offset, int delay) {}
+
 // Never happening on Pocket version
-void launcherLoop() {}
 
-
+void launcherLoop() {;}
+void cd_playtrack(int track, int offset, int delay) {;}
+void cd_play(int track, int num_loops, int start_frame) {;}
+void cd_stop() {;}
+int cd_is_running() {return 0;}

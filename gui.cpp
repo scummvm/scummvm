@@ -44,7 +44,8 @@ enum {
 	SOUND_DIALOG,
 	KEYS_DIALOG,
 	OPTIONS_DIALOG,
-	ABOUT_DIALOG
+	ABOUT_DIALOG,
+	LAUNCHER_DIALOG
 };
 
 
@@ -97,7 +98,9 @@ const GuiWidget *Gui::widgetFromPos(int x, int y) {
 void Gui::drawChar(const char str, int xx, int yy) { 
   unsigned int buffer, mask = 0, x, y;    
   byte *tmp;
-  
+  int tempc = _color;
+  _color = _textcolor;
+
   tmp = &guifont[0];
   tmp += 224 + (str + 1)*8;
 
@@ -107,9 +110,10 @@ void Gui::drawChar(const char str, int xx, int yy) {
     	if ((mask >>= 1) == 0) {buffer = *tmp++;  mask = 0x80;}
         color = ((buffer & mask) != 0);
         if (color)
-				hline(xx + x, yy + y, yy + y + 1);
+				vline(xx + x, yy + y, yy + y);
       }
   }
+  _color = tempc;
 
 }
 void Gui::drawString(const char *str, int x, int y, int w, byte color, bool center) {
@@ -133,7 +137,7 @@ void Gui::drawString(const char *str, int x, int y, int w, byte color, bool cent
 void Gui::drawWidget(const GuiWidget *w) {
 	const char *s;
 	int x,y;
-
+	
 	x = w->_x;
 	y = w->_y;
 
@@ -177,10 +181,12 @@ void Gui::drawWidget(const GuiWidget *w) {
 #endif
 		}
 		
-		if (*text)
+		if (*text) {
+			printf("drawString(%s)\n", text);
 			drawString(text, x+_parentX, y+_parentY, w->_w,
 				(_clickWidget && _clickWidget==w->_id) ? _textcolorhi : _textcolor,
 				false);
+		}
 		break;
 	}
 	case GUI_IMAGE:
@@ -317,6 +323,13 @@ void Gui::leftMouseClick(int x, int y) {
 	if (_dialog == PAUSE_DIALOG)
 		close();
 }
+const GuiWidget launcher_dialog[] = {
+	{GUI_STAT, 0xFF, GWF_DEFAULT, 0, 0, 320, 200, 0, 0 },	
+	{GUI_CUSTOMTEXT,0x01,GWF_CLEARBG, 5,   180, 45, 15, 20, 12},
+	{GUI_CUSTOMTEXT,0x01,GWF_CLEARBG, 130, 180, 65, 15, 21,17},
+	{GUI_CUSTOMTEXT,0x01,GWF_CLEARBG, 265, 180, 50, 15, 22, 7},
+	{0,0,0,0,0,0,0,0,0}
+};
 const GuiWidget keys_dialog[] = {
 	{GUI_STAT, 0xFF, GWF_DEFAULT, 30, 10, 260, 130, 0, 0 },
 
@@ -352,7 +365,7 @@ const GuiWidget keys_dialog[] = {
 
 	//OK
 	{GUI_RESTEXT, 0x01, GWF_BUTTON, 30 + 113, 10 + 106, 54, 16, 60, 9 },
-	{0}
+	{0,0,0,0,0,0,0,0,0}
 };
 
 
@@ -363,7 +376,7 @@ const GuiWidget about_dialog[] = {
 	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 10, 20 + 10 + 15 + 5 + 15, 230, 15, 0, 10},	 // ScummVM Url
 	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 75, 20 + 10 + 15 + 5 + 15 + 15 + 15, 150, 15, 0, 11}, // Lucasarts
 	{GUI_RESTEXT, 0x01, GWF_BUTTON, 30 + 113, 20 + 96, 54, 16, 40, 9 },
-	{0}
+	{0,0,0,0,0,0,0,0,0}
 };
 
 const GuiWidget options_dialog[] = {
@@ -371,7 +384,7 @@ const GuiWidget options_dialog[] = {
 	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10 , 80 + 10, 40, 15, 1, 5}, // Sound
 	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10 + 40 + 30 , 80 + 10, 40, 15 , 2, 6}, // Keys
 	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10 + 40 + 30 + 40 + 30, 80 + 10, 40, 15, 3, 7},	 // About
-	{0}
+	{0,0,0,0,0,0,0,0,0}
 };
 
 const GuiWidget sound_dialog[] = {
@@ -387,7 +400,7 @@ const GuiWidget sound_dialog[] = {
 	{GUI_VARTEXT, 0x01, GWF_BUTTON, 30 + 73, 20 + 25 + 25 + 11, 128, 15, 23, 2}, // SFX
 	{GUI_RESTEXT,0x01,GWF_BUTTON,30 + (260 / 2) - 80, 20 + 25 + 25 + 11 + 25 ,54,16,40,9}, /* OK */
 	{GUI_RESTEXT,0x01,GWF_BUTTON,30 + (260 / 2), 20 + 25 + 25 + 11 + 25 ,54,16,50,7}, /* Cancel */
-	{0}
+	{0,0,0,0,0,0,0,0,0}
 };
 
 const GuiWidget save_load_dialog[] = {
@@ -482,6 +495,7 @@ void Gui::handleOptionsDialogCommand(int cmd) {
 			_widgets[0] = about_dialog;
 			_active = true;
 			_cur_page = 0;
+			_return_to = 0;
 			_dialog = ABOUT_DIALOG;
 			draw(0, 100);
 			return;
@@ -514,11 +528,38 @@ void Gui::handleKeysDialogCommand(int cmd) {
 #endif
 }
 
+void Gui::handleLauncherDialogCommand(int cmd) {
+	printf("handle launcher command\n");
+ switch(cmd) {
+	case 20:
+		close();
+	break;
+	case 21:
+		// Nothing yet
+	break;
+	case 22:
+			_widgets[0] = about_dialog;
+			_active = true;
+			_cur_page = 0;
+			_return_to = LAUNCHER_DIALOG;
+			_dialog = ABOUT_DIALOG;
+			draw(0, 100);
+			printf("about dialog\n");
+	break;
+	default:
+		printf("default\n");
+		close();
+ }
+}
 
 void Gui::handleCommand(int cmd) {
 	int lastEdit = _editString;
 	showCaret(false);
-	
+
+	if (_dialog == LAUNCHER_DIALOG) {
+		handleLauncherDialogCommand(cmd);
+		return;
+	}
 	if (_dialog == SOUND_DIALOG) {
 		handleSoundDialogCommand(cmd);
 		return;
@@ -535,7 +576,14 @@ void Gui::handleCommand(int cmd) {
 	}
 
 	if (_dialog == ABOUT_DIALOG) {
-		close();
+		if (_return_to == LAUNCHER_DIALOG) {
+			_widgets[0] = launcher_dialog;
+			_active = true;
+			_cur_page = 0;
+			_dialog = LAUNCHER_DIALOG;
+			draw(0, 100);
+		} else 
+			close();
 		return;
 	}
 
@@ -706,7 +754,7 @@ void Gui::addLetter(byte letter) {
 }
 
 byte Gui::getDefaultColor(int color) {
-	if(_s->_features & GF_AFTER_V7)
+	if((_s->_features & GF_AFTER_V7) || (_s->_features & GF_SMALL_HEADER))
 		return 0;
 	if (_s->_features&GF_AFTER_V6) {
 		if (color==8) color=1;
@@ -726,10 +774,10 @@ void Gui::init(Scumm *s) {
 		_shadowcolor = getDefaultColor(8);
 	} else {
 		_bgcolor = 0;
-		_color = 2;
-		_textcolor = 6;
-		_textcolorhi = 3;
-		_shadowcolor = 2;
+		_color	= 0;
+		_textcolor = 8;	// 15 is nice
+		_textcolorhi = 15;
+		_shadowcolor = 0;
 	}
 }
 
@@ -774,6 +822,7 @@ void Gui::close() {
 	_active = false;
 
 #ifdef _WIN32_WCE
+
 	// Option dialog can be accessed from the file dialog now, always check
 	if (draw_keyboard) {
 		draw_keyboard = false;
@@ -802,4 +851,11 @@ void Gui::options() {
 	_active = true;
 	_cur_page = 0;
 	_dialog = OPTIONS_DIALOG;
+}
+
+void Gui::launcher() {
+	_widgets[0] = launcher_dialog;
+	_active = true;
+	_cur_page = 0;
+	_dialog = LAUNCHER_DIALOG;
 }
