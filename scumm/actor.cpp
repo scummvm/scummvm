@@ -260,7 +260,12 @@ int Actor::updateActorDirection(bool is_walking)
 
 	from = toSimpleDir(dirType, facing);
 	dir = remapDirection(newDirection, is_walking);
-	shouldInterpolate = (dir & 1024) ? true : false;
+	if (_vm->_features & GF_AFTER_V7)
+		// Direction interpolation interfers with walk scripts in Dig; they perform
+		// (much better) interpolation themselves.
+		shouldInterpolate = false;	
+	else
+		shouldInterpolate = (dir & 1024) ? true : false;
 	to = toSimpleDir(dirType, dir & 1023);
 	num = dirType ? 8 : 4;
 
@@ -302,7 +307,6 @@ int Actor::actorWalkStep()
 
 	direction = updateActorDirection(true);
 	if (!(moving & MF_IN_LEG) || facing != direction) {
-		// FIXME - frame is never set and thus always 0! See actor.h comment
 		if (walkFrame != frame || facing != direction) {
 			startWalkAnim(walkFrame == frame ? 2 : 1, direction);
 		}
@@ -410,6 +414,7 @@ void Actor::setupActorScale()
 
 void Actor::startAnimActor(int f)
 {
+	frame = f;
 	if (_vm->_features & GF_NEW_COSTUMES) {
 		switch (f) {
 		case 1001:
@@ -456,7 +461,9 @@ void Actor::startAnimActor(int f)
 			f = talkFrame2;
 			break;
 		}
-
+		
+		assert(f != 0x3E);
+	
 		// FIXME: This is a hack to fix decapitation, which somehow occurs only on
 		// the standFrame (CHORE mode 3). We hack around this by simply using the
 		// initFrame instead. As far as it goes, I see no difference. Apart from
@@ -468,13 +475,9 @@ void Actor::startAnimActor(int f)
 			animProgress = 0;
 			cost.animCounter1 = 0;
 			needRedraw = true;
-
-			if (initFrame == f)
+			if (f == initFrame)
 				cost.reset();
-
-			if (f != 0x3E) {
-				_vm->cost_decodeData(this, f, (uint) - 1);
-			}
+			_vm->cost_decodeData(this, f, (uint) - 1);
 		}
 
 		needBgReset = true;
@@ -495,8 +498,8 @@ void Actor::animateActor(int anim)
 
 	} else {
 
-		cmd = anim >> 2;
-		dir = oldDirToNewDir(anim & 3);
+		cmd = anim / 4;
+		dir = oldDirToNewDir(anim % 4);
 
 		// Convert into old cmd code
 		cmd = 0x3F - cmd + 2;
@@ -504,15 +507,15 @@ void Actor::animateActor(int anim)
 	}
 
 	switch (cmd) {
-	case 2:
+	case 2:				// stop walking
 		stopActorMoving();
 		startAnimActor(standFrame);
 		break;
-	case 3:
+	case 3:				// change direction immediatly
 		moving &= ~MF_TURN;
 		setDirection(dir);
 		break;
-	case 4:
+	case 4:				// turn to new direction
 		turnToDirection(dir);
 		break;
 	default:
@@ -1205,20 +1208,22 @@ void Actor::startWalkAnim(int cmd, int angle)
 	if (angle == -1)
 		angle = facing;
 
-/*FIXME: (yazoo): the walk script are buggy in dig causing
- * troubles while walking. It's disabled until I can
- * find a proper fix
- * note: walk scripts aren't required to make the game
- * work as usual */
-
-/*	int16 args[16];
-
+	/* FIXME: (yazoo/fingolfin): using the walk script is buggy in Dig,
+	 * troubles while walking. It's disabled until we can figure out how
+	 * to fix this properly.
+	 * Note: walk scripts aren't required to make the game
+	 * work as usual
+	 */
+#if 0
 	if (walk_script != 0) {
-		args[2] = angle;
+		int16 args[16];
 		args[0] = number;
 		args[1] = cmd;
+		args[2] = angle;
 		_vm->runScript(walk_script, 1, 0, args);
-	} else*/  {
+	} else
+#endif
+	{
 		switch (cmd) {
 		case 1:										/* start walk */
 			setDirection(angle);
