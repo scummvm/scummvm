@@ -68,6 +68,7 @@ private:
 	bool _updateNeeded;
 	bool _insanity;
 	bool _middleAudio;
+	bool _skipPalette;
 
 public:
 	SmushPlayer(ScummEngine_v6 *scumm, int speed);

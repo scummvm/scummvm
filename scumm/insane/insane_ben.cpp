@@ -254,7 +254,7 @@ void Insane::mineChooseRoad(int32 buttons) {
 					smush_setToFinish();
 				}
 
-				if (_roadLeftBranch && !_needSceneSwitch) {
+				if (_roadBranch && !_needSceneSwitch) {
 					_iactSceneId2 = _iactSceneId;
 					queueSceneSwitch(2, 0, "mineexit.san", 64, 0, 0, 0);
 				}
@@ -275,7 +275,7 @@ void Insane::mineChooseRoad(int32 buttons) {
 
 			drawSpeedyActor(buttons);
 
-			if ((buttons & 1) && _currSceneId == 1 && _roadLeftBranch && !_needSceneSwitch) {
+			if ((buttons & 1) && _currSceneId == 1 && _roadBranch && !_needSceneSwitch) {
 				_iactSceneId2 = _iactSceneId;
 				queueSceneSwitch(2, 0, "mineexit.san", 64, 0, 0, 0);
 			}
@@ -301,7 +301,7 @@ void Insane::mineChooseRoad(int32 buttons) {
 			if ((buttons & 1) == 0)
 				return;
 
-			if (_roadLeftBranch && !_needSceneSwitch) {
+			if (_roadBranch && !_needSceneSwitch) {
 				_iactSceneId2 = _iactSceneId;
 
 				if (readArray(4) && _val211d < 3) {
@@ -312,7 +312,7 @@ void Insane::mineChooseRoad(int32 buttons) {
 				}
 			}
 			
-			if (_roadRightBranch) {
+			if (_roadStop) {
 				writeArray(1, _posBrokenTruck);
 				writeArray(3, _val57d);
 				smush_setToFinish();
@@ -338,7 +338,7 @@ void Insane::mineChooseRoad(int32 buttons) {
 			if ((buttons & 1) == 0)
 				return;
 
-			if (_roadLeftBranch && !_needSceneSwitch) {
+			if (_roadBranch && !_needSceneSwitch) {
 				_iactSceneId2 = _iactSceneId;
 
 				if (readArray(4) && _val211d < 3) {
@@ -349,7 +349,7 @@ void Insane::mineChooseRoad(int32 buttons) {
 				}
 			}
 			
-			if (_roadRightBranch) {
+			if (_roadStop) {
 				writeArray(1, _posBrokenTruck);
 				writeArray(3, _posVista);
 				smush_setToFinish();

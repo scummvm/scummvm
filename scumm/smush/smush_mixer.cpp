@@ -139,6 +139,7 @@ bool SmushMixer::stop() {
 			delete _channels[i].chan;
 			_channels[i].id = -1;
 			_channels[i].chan = NULL;
+			_mixer->endStream(_channels[i].handle);
 		}
 	}
 	return true;

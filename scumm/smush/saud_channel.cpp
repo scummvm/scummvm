@@ -75,7 +75,7 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 			} else
 				return false;
 			break;
-		case TYPE_SDAT: 
+		case TYPE_SDAT:
 			_inData = true;
 			_dataSize = size;
 			offset += 8;
@@ -103,7 +103,7 @@ bool SaudChannel::processBuffer() {
 	} else if (_inData) {
 		if (_dataSize < _tbufferSize) {
 			int32 offset = _dataSize;
-			while (handleSubTags(offset));
+			while (handleSubTags(offset)) ;
 			_sbufferSize = _dataSize;
 			_sbuffer = _tbuffer;
 			if (offset < _tbufferSize) {
@@ -171,12 +171,17 @@ SaudChannel::SaudChannel(int32 track, int32 freq) :
 }
 
 SaudChannel::~SaudChannel() {
+	_dataSize = 0;
+	_tbufferSize = 0;
+	_sbufferSize = 0;
+	_markReached = true;
 	if (_tbuffer)
 		delete []_tbuffer;
 	if (_sbuffer) {
-		warning("this should never happen !!!! (_sbuffer not NULL here)");
+		// _sbuffer can be not empty here with insane when it seeks in video
 		delete []_sbuffer;
 	}
+	_sbuffer = 0;
 }
 
 bool SaudChannel::isTerminated() const {

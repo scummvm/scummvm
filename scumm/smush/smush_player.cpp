@@ -236,6 +236,7 @@ SmushPlayer::SmushPlayer(ScummEngine_v6 *scumm, int speed) {
 	_speed = speed;
 	_insanity = false;
 	_middleAudio = false;
+	_skipPalette = false;
 }
 
 SmushPlayer::~SmushPlayer() {
@@ -657,6 +658,9 @@ void SmushPlayer::handleNewPalette(Chunk &b) {
 	checkBlock(b, TYPE_NPAL, 0x300);
 	debug(6, "SmushPlayer::handleNewPalette()");
 
+	if (_skipPalette)
+		return;
+
 	readPalette(_pal, b);
 	setPalette(_pal);
 }
@@ -786,7 +790,6 @@ void SmushPlayer::handleFrame(Chunk &b) {
 		delete sub;
 	}
 
-	// FIXME: Check either parameters are valid
 	if (_insanity) {
 		_vm->_insane->procPostRendering(_dst, 0, 0, 0, _frame, _nbframes-1);
 	}
@@ -808,8 +811,10 @@ void SmushPlayer::handleAnimHeader(Chunk &b) {
 	_version = b.getWord();
 	_nbframes = b.getWord();
 	b.getWord();
-	readPalette(_pal, b);
-	setPalette(_pal);
+	if (!_skipPalette) {
+		readPalette(_pal, b);
+		setPalette(_pal);
+	}
 }
 
 void SmushPlayer::setupAnim(const char *file, const char *directory) {
@@ -972,9 +977,14 @@ void SmushPlayer::insanity(bool flag) {
 }
 
 void SmushPlayer::seekSan(const char *file, const char *directory, int32 pos, int32 contFrame) {
+	if(_smixer)
+		_smixer->stop();
+
 	if (file) {
-		if (_base)
+		if (_base) {
+			_base->seek(0, FileChunk::seek_end);
 			delete _base;
+		}
 
 		_base = new FileChunk(file, directory);
 		// In this case we need to get palette and number of frames
@@ -986,8 +996,11 @@ void SmushPlayer::seekSan(const char *file, const char *directory, int32 pos, in
 		}
 		if (pos >= 8)
 			pos -= 8;
+
+		_skipPalette = false;
 	} else {
 		_base->reinit(pos);
+		_skipPalette = true;
 	}
 
 	if (pos != 8 && pos) {

@@ -39,9 +39,8 @@
 #include "scumm/insane/insane.h"
 
 // TODO (in no particular order):
-// o SAUD complaining again
-// o Insane::postCase16() has workaround. Cockpit is not transparent so it is
-//   disabled now
+// o Long TRS messages get rendered just in one line, so text overlaps
+// o Approaching enemy animation is wrong sometimes
 // o Code review/cleanup
 // o DOS demo INSANE
 
@@ -149,8 +148,8 @@ void Insane::initvars(void) {
 	_posFatherTorque = 0;
 	_posCave = 0;
 	_posVista = 0;
-	_roadLeftBranch = false;
-	_roadRightBranch = false;
+	_roadBranch = false;
+	_roadStop = false;
 	_carIsBroken = false;
 	_benHasGoggles = false;
 	_mineCaveIsNear = false;
@@ -756,7 +755,7 @@ int32 Insane::idx2Tweak(void) {
 }
 
 void Insane::smush_setToFinish(void) {
-	debug(5, "Video is set to finish");
+	debug(INSANE_DBG, "Video is set to finish");
 	_vm->_videoFinished = 1;
 }
 
@@ -800,7 +799,7 @@ void Insane::prepareScenePropScene(int32 scenePropNum, bool arg_4, bool arg_8) {
 
 	int tmp, idx = scenePropIdx[scenePropNum];
 
-	debug(5, "Insane::prepareScenePropScene(%d, %d, %d)", scenePropNum, arg_4, arg_8);
+	debug(INSANE_DBG, "Insane::prepareScenePropScene(%d, %d, %d)", scenePropNum, arg_4, arg_8);
 
 	if (!loadScenePropSounds(idx))
 		return;
@@ -842,7 +841,7 @@ void Insane::queueSceneSwitch(int32 sceneId, byte *fluPtr, const char *filename,
 							  int32 arg_C, int32 arg_10, int32 startFrame, int32 numFrames) {
 	int32 tmp;
 	
-	debug(5, "queueSceneSwitch(%d, *, %s, %d, %d, %d, %d)", sceneId, filename, arg_C, arg_10,
+	debug(INSANE_DBG, "queueSceneSwitch(%d, *, %s, %d, %d, %d, %d)", sceneId, filename, arg_C, arg_10,
 		  startFrame, numFrames);
 	if (_needSceneSwitch || _sceneData1Loaded)
 		return;
@@ -861,7 +860,7 @@ void Insane::queueSceneSwitch(int32 sceneId, byte *fluPtr, const char *filename,
 }
 
 void Insane::smush_rewindCurrentSan(int arg_0, int arg_4, int arg_8) {
-	debug(5, "smush_rewindCurrentSan(%d, %d, %d)", arg_0, arg_4, arg_8);
+	debug(INSANE_DBG, "smush_rewindCurrentSan(%d, %d, %d)", arg_0, arg_4, arg_8);
 	_smush_setupsan2 = arg_0;
 	
 	smush_setupSanFile(0, 8, 0);
@@ -958,7 +957,7 @@ void Insane::escapeKeyHandler(void) {
 	if (_needSceneSwitch || _keyboardDisable)
 		return;
 
-	debug(5, "scene: %d", _currSceneId);
+	debug(INSANE_DBG, "scene: %d", _currSceneId);
 	switch (_currSceneId) {
 	case 1:
 		queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0, _continueFrame1, 1300);
@@ -1184,7 +1183,6 @@ void Insane::smlayer_setActorLayer(int actornum, int actnum, int layer) {
 }
 
 void Insane::smlayer_setFluPalette(byte *pal, int shut_flag) {
-	// FIXME. We can't run it without SmushPlayer object
 	//	  if (shut_flag)
 	//		// FIXME: shut colors and make picture appear smoothly
 	//		SmushPlayer::setPalette(pal);
@@ -1340,7 +1338,7 @@ void Insane::smlayer_setActorFacing(int actornum, int actnum, int frame, int dir
 }
 
 const char *Insane::handleTrsTag(int32 trsId) {
-	debug(5, "Insane::handleTrsTag(%d)", trsId);
+	debug(INSANE_DBG, "Insane::handleTrsTag(%d)", trsId);
 	return _player->getString(trsId);
 }
 
@@ -1392,7 +1390,7 @@ void Insane::smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32 
 	byte *tmp = fluPtr;
 	int32 offset;
 	
-	debug(5, "smush_setupSanWithFlu(%s, %d, %d, %d, %d, %lx, %d)", filename, setupsan2,
+	debug(INSANE_DBG, "smush_setupSanWithFlu(%s, %d, %d, %d, %d, %lx, %d)", filename, setupsan2,
 		  step1, step2, setupsan1, fluPtr, numFrames);
 
 	_smush_setupsan1 = setupsan1;
@@ -1428,6 +1426,7 @@ void Insane::smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32 
 
 void Insane::smush_setupSanFromStart(const char *filename, int32 setupsan2, int32 step1, 
 									 int32 step2, int32 setupsan1) {
+	debug(INSANE_DBG, "Insane::smush_setupFromStart(%s)", filename);
 	_smush_setupsan1 = setupsan1;
 	_smush_setupsan2 = setupsan2;
 	smush_setupSanFile(filename, 8, 0);
@@ -1443,7 +1442,7 @@ void Insane::smush_setFrameSteps(int32 step1, int32 step2) {
 }
 
 void Insane::smush_setupSanFile(const char *filename, int32 offset, int32 contFrame) {
-	debug(5, "smush_setupSanFile(%s, %x, %d)", filename, offset, contFrame);
+	debug(INSANE_DBG, "Insane::smush_setupSanFile(%s, %x, %d)", filename, offset, contFrame);
 
 	_player->seekSan(filename, _vm->getGameDataPath(), offset, contFrame);
 

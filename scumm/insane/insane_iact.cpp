@@ -133,20 +133,18 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	case 6:
 		switch (par2) {
 		case 38:
-			// left branch sign
 			smlayer_drawSomething(renderBitmap, codecparam, 50-19, 20-13, 3, 
 								  _smush_iconsNut, 7, 0, 0);
-			_roadLeftBranch = true;
+			_roadBranch = true;
 			_iactSceneId = par4;
 			break;
 		case 7:
 			if (readArray(4) != 0)
 				return;
 
-			// right branch sign
-			smlayer_drawSomething(renderBitmap, codecparam, 160-19, 20-13, 3, 
+			smlayer_drawSomething(renderBitmap, codecparam, 160-13, 20-10, 3, // QW
 								  _smush_icons2Nut, 8, 0, 0);
-			_roadRightBranch = true;
+			_roadStop = true;
 			break;
 		case 8:
 			if (readArray(4) == 0 || readArray(6) == 0)
@@ -437,16 +435,16 @@ void Insane::iactScene4(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			
 			smlayer_drawSomething(renderBitmap, codecparam, 270-19, 20-13, 3, 
 								  _smush_icons2Nut, 10, 0, 0);
-			_roadLeftBranch = true;
+			_roadBranch = true;
 			_iactSceneId = par4;
 			break;
 		case 7:
 			if (readArray(4) != 0)
 				return;
 
-			smlayer_drawSomething(renderBitmap, codecparam, 160-19, 20-13, 3, 
+			smlayer_drawSomething(renderBitmap, codecparam, 160-13, 20-10, 3, // QW
 								  _smush_icons2Nut, 8, 0, 0);
-			_roadRightBranch = true;
+			_roadStop = true;
 			break;
 		case 8:
 			if (readArray(4) == 0 || readArray(6) == 0)
@@ -462,13 +460,13 @@ void Insane::iactScene4(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				return;
 			
 			_carIsBroken = true;
-			smlayer_drawSomething(renderBitmap, codecparam, 160-12, 20-10, 3, 
+			smlayer_drawSomething(renderBitmap, codecparam, 160-13, 20-10, 3, // QW
 								  _smush_icons2Nut, 8, 0, 0);
 			break;
 		case 11:
 			smlayer_drawSomething(renderBitmap, codecparam, 50-19, 20-13, 3, 
 								  _smush_icons2Nut, 9, 0, 0);
-			_roadLeftBranch = true;
+			_roadBranch = true;
 			_iactSceneId = par4;
 			break;
 		}
@@ -528,15 +526,15 @@ void Insane::iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		case 38:
 			smlayer_drawSomething(renderBitmap, codecparam, 270-19, 20-13, 3, 
 								  _smush_icons2Nut, 10, 0, 0);
-			_roadLeftBranch = true;
+			_roadBranch = true;
 			_iactSceneId = par4;
 			break;
 		case 7:
 			if (readArray(4) != 0)
 				return;
 
-			_roadRightBranch = true;
-			smlayer_drawSomething(renderBitmap, codecparam, 160-19, 20-13, 3, 
+			_roadStop = true;
+			smlayer_drawSomething(renderBitmap, codecparam, 160-13, 20-10, 3, //QW
 								  _smush_icons2Nut, 8, 0, 0);
 			break;
 		case 8:
@@ -553,13 +551,13 @@ void Insane::iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				return;
 			
 			_carIsBroken = true;
-			smlayer_drawSomething(renderBitmap, codecparam, 160-12, 20-10, 3, 
+			smlayer_drawSomething(renderBitmap, codecparam, 160-13, 20-10, 3, //QW
 								  _smush_icons2Nut, 8, 0, 0);
 			break;
 		case 11:
 			smlayer_drawSomething(renderBitmap, codecparam, 50-19, 20-13, 3, 
 								  _smush_icons2Nut, 9, 0, 0);
-			_roadLeftBranch = true;
+			_roadBranch = true;
 			_iactSceneId = par4;
 			break;
 		}
@@ -591,7 +589,7 @@ void Insane::iactScene17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		case 38:
 			smlayer_drawSomething(renderBitmap, codecparam, 28, 48, 1, 
 								  _smush_iconsNut, 6, 0, 0);
-			_roadLeftBranch = true;
+			_roadBranch = true;
 			_iactSceneId = par4;
 			if (_counter1 <= 4) {
 				if (_counter1 == 4)
@@ -602,7 +600,7 @@ void Insane::iactScene17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			}
 			_objectDetected = true;
 			break;
-		case 11:
+		case 10:
 			smlayer_drawSomething(renderBitmap, codecparam, 28, 48, 1, 
 								  _smush_iconsNut, 6, 0, 0);
 			if (_counter1 <= 4) {

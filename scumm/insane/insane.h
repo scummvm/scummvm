@@ -51,6 +51,8 @@ namespace Scumm {
 #define EN_TORQUE    8 // Father Torque
 #define EN_BEN       9 // used only with handler
 
+#define INSANE_DBG 5
+
 class Insane {
  public:
 	Insane(ScummEngine_v6 *scumm);
@@ -163,8 +165,8 @@ class Insane {
 	int16 _posFatherTorque;
 	int16 _posCave;
 	int16 _posVista;
-	bool _roadLeftBranch;
-	bool _roadRightBranch;
+	bool _roadBranch;
+	bool _roadStop;
 	bool _carIsBroken;
 	bool _benHasGoggles;
 	bool _mineCaveIsNear;
@@ -268,9 +270,6 @@ class Insane {
 	void readFileToMem(const char *name, byte **buf);
 	void startVideo(const char *filename, int num, int argC, int frameRate, 
 					 int doMainLoop, byte *fluPtr = 0, int32 numFrames = 0);
-	void smush_proc39(void);
-	void smush_proc40(void);
-	void smush_proc41(void);
 	void smush_warpMouse(int x, int y, int buttons);
 	void putActors(void);
 	void readState(void);

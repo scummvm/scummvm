@@ -55,7 +55,7 @@ void Insane::runScene(int arraynum) {
 	putActors();
 	readState();
 
-	debug(5, "INSANE Arg: %d", readArray(0));
+	debug(INSANE_DBG, "INSANE Arg: %d", readArray(0));
 
 	switch (readArray(0)) {
 	case 1:
@@ -164,7 +164,7 @@ void Insane::runScene(int arraynum) {
 }
 
 int Insane::initScene(int sceneId) {
-	debug(5, "initScene(%d)", sceneId);
+	debug(INSANE_DBG, "initScene(%d)", sceneId);
 
 	if (_needSceneSwitch)
 		return 1;
@@ -186,7 +186,7 @@ int Insane::initScene(int sceneId) {
 void Insane::stopSceneSounds(int sceneId) {
 	int flag = 0;
 
-	debug(5, "stopSceneSounds(%d)", sceneId);
+	debug(INSANE_DBG, "stopSceneSounds(%d)", sceneId);
 
 	switch (sceneId) {
 	case 1:
@@ -278,7 +278,7 @@ void Insane::stopSceneSounds(int sceneId) {
 }
 
 void Insane::shutCurrentScene(void) {
-	debug(5, "shutCurrentScene()");
+	debug(INSANE_DBG, "shutCurrentScene()");
 
 	_currScenePropIdx = 0;
 	_currTrsMsg = 0;
@@ -307,7 +307,7 @@ void Insane::shutCurrentScene(void) {
 int Insane::loadSceneData(int scene, int flag, int phase) {
 	int retvalue = 1;
 
-	debug(5, "Insane::loadSceneData(%d, %d, %d)", scene, flag, phase);
+	debug(INSANE_DBG, "Insane::loadSceneData(%d, %d, %d)", scene, flag, phase);
 	//if (phase == 1) /// FIXME
 	//	insane_unlock();
 	switch (scene) {
@@ -601,7 +601,7 @@ int Insane::loadSceneData(int scene, int flag, int phase) {
 }
 
 void Insane::setSceneCostumes(int sceneId) {
-	debug(5, "Insane::setSceneCostumes(%d)", sceneId);
+	debug(INSANE_DBG, "Insane::setSceneCostumes(%d)", sceneId);
 
 	switch (sceneId) {
 	case 1:
@@ -651,7 +651,7 @@ void Insane::setSceneCostumes(int sceneId) {
 void Insane::setEnemyCostumes(void) {
 	int i;
 
-	debug(5, "setEnemyCostumes(%d)", _currEnemy);
+	debug(INSANE_DBG, "setEnemyCostumes(%d)", _currEnemy);
 
 	smlayer_setActorCostume(0, 2, readArray(12));
 	smlayer_setActorCostume(0, 0, readArray(14));
@@ -987,8 +987,8 @@ void Insane::postCase11(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 							 _continueFrame, 1300);
 		}
 	}
-	_roadLeftBranch = false;
-	_roadRightBranch = false;
+	_roadBranch = false;
+	_roadStop = false;
 }
 
 void Insane::postCase0(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -1002,8 +1002,8 @@ void Insane::postCase0(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		smush_rewindCurrentSan(1088, -1, -1);
 	
 	_roadBumps = false;
-	_roadLeftBranch = false;
-	_roadRightBranch = false;
+	_roadBranch = false;
+	_roadStop = false;
 	_benHasGoggles = false;
 	_mineCaveIsNear = false;
 	_continueFrame1 = curFrame;
@@ -1022,8 +1022,8 @@ void Insane::postCase17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			writeArray(9, 0);
 		}
 	}
-	_roadLeftBranch = false;
-	_roadRightBranch = false;
+	_roadBranch = false;
+	_roadStop = false;
 }
 
 void Insane::postCase16(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -1043,11 +1043,10 @@ void Insane::postCase16(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	smlayer_showStatusMsg(-1, renderBitmap, codecparam, 202, 168, 1, 2, 0, "%s", buf);
 	
 	sprintf(buf, "^f01%02o", curFrame & 0xff);
-	smlayer_showStatusMsg(-1, renderBitmap, codecparam, 140, 168, 1, 2, 0, "%s", buf);
+	smlayer_showStatusMsg(-1, renderBitmap, codecparam, 240, 168, 1, 2, 0, "%s", buf);
 	smlayer_showStatusMsg(-1, renderBitmap, codecparam, 170, 43, 1, 2, 0, "%s", buf);
 
-	// FIXME: it should be transparent, so now it is disabled
-	//smlayer_drawSomething(renderBitmap, codecparam, 0, 0, 1, _smush_bensgoggNut, 0, 0, 0);
+	smlayer_drawSomething(renderBitmap, codecparam, 0, 0, 1, _smush_bensgoggNut, 0, 0, 0);
 	
 	if (!_objectDetected)
 		smlayer_drawSomething(renderBitmap, codecparam, 24, 170, 1, 
@@ -1062,8 +1061,8 @@ void Insane::postCase16(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	}
 	_roadBumps = false;
 	_mineCaveIsNear = false;
-	_roadLeftBranch = false;
-	_roadRightBranch = false;
+	_roadBranch = false;
+	_roadStop = false;
 	_objectDetected = false;
 	_counter1++;
 	_continueFrame1 = curFrame;
@@ -1080,8 +1079,8 @@ void Insane::postCase1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0, 
 						 flu->startFrame, flu->numFrames);
 	}
-	_roadLeftBranch = false;
-	_roadRightBranch = false;
+	_roadBranch = false;
+	_roadStop = false;
 }
 
 void Insane::postCase2(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -1096,8 +1095,8 @@ void Insane::postCase2(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		smush_rewindCurrentSan(1088, -1, -1);
 
 	_roadBumps = false;
-	_roadLeftBranch = false;
-	_roadRightBranch = false;
+	_roadBranch = false;
+	_roadStop = false;
 	_continueFrame = curFrame;
 }
 
@@ -1110,8 +1109,8 @@ void Insane::postCase20(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		smush_rewindCurrentSan(1088, -1, -1);
 	
 	_roadBumps = false;
-	_roadLeftBranch = false;
-	_roadRightBranch = false;
+	_roadBranch = false;
+	_roadStop = false;
 	_continueFrame = curFrame;
 }
 
@@ -1154,8 +1153,8 @@ void Insane::postCase3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	}
 
 	_carIsBroken = false;
-	_roadRightBranch = false;
-	_roadLeftBranch = false;
+	_roadStop = false;
+	_roadBranch = false;
 	_iactSceneId = 0;
 }
 
@@ -1186,8 +1185,8 @@ void Insane::postCase5(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	}
 	
 	_carIsBroken = false;
-	_roadRightBranch = false;
-	_roadLeftBranch = false;
+	_roadStop = false;
+	_roadBranch = false;
 	_iactSceneId = 0;
 }
 
@@ -1204,8 +1203,8 @@ void Insane::postCase6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0, 
 						 flu->startFrame, flu->numFrames);
 	}
-	_roadLeftBranch = false;
-	_roadRightBranch = false;
+	_roadBranch = false;
+	_roadStop = false;
 }
 
 void Insane::postCase8(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -1226,8 +1225,8 @@ void Insane::postCase8(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		}
  	}
 	
-	_roadLeftBranch = false;
-	_roadRightBranch = false;
+	_roadBranch = false;
+	_roadStop = false;
 }
 
 void Insane::postCase9(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -1237,8 +1236,8 @@ void Insane::postCase9(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0,
 						 _continueFrame1, 1300);
 	}
-	_roadLeftBranch = false;
-	_roadRightBranch = false;
+	_roadBranch = false;
+	_roadStop = false;
 }
 
 void Insane::postCase10(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -1287,8 +1286,8 @@ void Insane::postCase10(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		}
  	}
 	
-	_roadLeftBranch = false;
-	_roadRightBranch = false;
+	_roadBranch = false;
+	_roadStop = false;
 }
 
 void Insane::postCase12(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -1373,8 +1372,8 @@ void Insane::postCase12(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	if (curFrame >= maxFrame)
 		smush_rewindCurrentSan(1088, -1, -1);
 
-	_roadLeftBranch = false;
-	_roadRightBranch = false;
+	_roadBranch = false;
+	_roadStop = false;
 	_continueFrame = curFrame;
 }
 
@@ -1390,8 +1389,8 @@ void Insane::postCase23(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				queueSceneSwitch(5, 0, "tovista2.san", 64, 0, 0, 290);
 		}
 	}
-	_roadLeftBranch = false;
-	_roadRightBranch = false;
+	_roadBranch = false;
+	_roadStop = false;
 }
 
 void Insane::postCase14(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -1415,8 +1414,8 @@ void Insane::postCase14(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		}
 	}
 
-	_roadLeftBranch = false;
-	_roadRightBranch = false;
+	_roadBranch = false;
+	_roadStop = false;
 }
 
 void Insane::postCaseAll(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -1462,8 +1461,8 @@ void Insane::postCaseAll(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			}
 		}
 	}
-	_roadLeftBranch = false;
-	_roadRightBranch = false;
+	_roadBranch = false;
+	_roadStop = false;
 	_continueFrame = curFrame;
 }
 

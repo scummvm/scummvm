@@ -159,6 +159,10 @@ bool NutRenderer::loadFont(const char *filename, const char *directory) {
 				_chars[l].width = READ_LE_UINT16(dataSrc + offset + 14);
 				_chars[l].height = READ_LE_UINT16(dataSrc + offset + 16);
 				_chars[l].src = new byte[(_chars[l].width + 2) * _chars[l].height + 1000];
+				// If characters have transparency, then bytes just get skipped and
+				// so there may appear some garbage. That's why we have to fill it
+				// with zeroes first.
+				memset(_chars[l].src, 0, (_chars[l].width + 2) * _chars[l].height + 1000);
 				if ((codec == 44) || (codec == 21)) 
 					decoded_length = decodeCodec44(_chars[l].src, dataSrc + offset + 22, READ_BE_UINT32(dataSrc + offset + 4) - 14);
 				else if (codec == 1) {
@@ -304,7 +308,7 @@ void NutRenderer::drawFrame(byte *dst, int c, int x, int y) {
 	for (int ty = minY; ty < height; ty++) {
 		for (int tx = minX; tx < width; tx++) {
 			bits = src[tx];
-			if (bits != 231) {
+			if (bits != 231 && bits) {
 				dst[tx] = bits;
 			}
 		}
