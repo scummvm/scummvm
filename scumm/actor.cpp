@@ -404,16 +404,29 @@ void Actor::setupActorScale() {
 	if (ignoreBoxes)
 		return;
 
-	if (_vm->getBoxFlags(walkbox) & kBoxPlayerOnly)
-		return;
+	// FIXME: The following two lines we apparenly added to fix bug #551944,
+	// which deals with "Script race in mystery vortex" in Sam&Max.
+	// (this was added in the *old* CVS repository in rev 1.61 of actor.cpp).
+	// The comment on that bug says: "Fixed by initial guesswork from jah.
+	// Turned out we need to check the box locking state."
+	// However:
+	// 1) Contrary to the bug comment, this doesn't check the box locking flag
+	// 2) For all Scumm versions from 1-5 this is definitely wrong
+	// 3) I checked a Sam&Max IDA DB, and found no evidence for this either
+	// 4) From a purely logical point of view (i.e. considering how actors,
+	//    scaling etc. work), this makes no sense either.
+	//
+	// Hence, I am hereby commenting out this code. It may cause regressions,
+	// esp. in the Mystery Vortex; it would be very good if people could hence
+	// playtest the Vortex. Should it turn out the Vortex needs this, we could
+	// re-enable it, although it would be preferable to find a proper fix :-)
+//	if (_vm->getBoxFlags(walkbox) & kBoxPlayerOnly)
+//		return;
 
 	scale = _vm->getScale(walkbox, x, y);
-	if (scale > 255) {
-		warning("Actor %d at %d, scale %d out of range", number, y, scale);
-	}
+	assert(scale <= 0xFF);
 
-	scalex = (byte)scale;
-	scaley = (byte)scale;
+	scalex = scaley = (byte)scale;
 }
 
 void Actor::startAnimActor(int f) {
@@ -1460,6 +1473,8 @@ void Actor::walkActorOld() {
 		// Can't walk through locked boxes
 		int flags = _vm->getBoxFlags(next_box);
 		if (flags & kBoxLocked && !(flags & kBoxPlayerOnly && !isPlayer())) {
+//			moving |= MF_LAST_LEG;
+//			return;
 			break;
 		}
 

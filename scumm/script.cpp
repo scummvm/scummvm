@@ -973,7 +973,7 @@ int Scumm::defineArray(int array, int type, int dim2, int dim1) {
 	int size;
 	ArrayHeader *ah;
 
-	if (type != 5 && type != 4)
+	if (type != 4)
 		type = 5;
 
 	nukeArray(array);

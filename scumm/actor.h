@@ -148,6 +148,7 @@ public:
 	void faceToObject(int obj);
 	void turnToDirection(int newdir);
 	void walkActor();
+	void walkActorOld();
 	void drawActorCostume();
 	void animateCostume();
 	void setActorCostume(int c);
@@ -163,7 +164,6 @@ public:
 	void startAnimActor(int frame);
 
 	void remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold);
-	void walkActorOld();
 
 	void animateActor(int anim);
 
