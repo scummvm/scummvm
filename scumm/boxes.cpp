@@ -308,6 +308,28 @@ void Scumm::getBoxCoordinates(int boxnum, BoxCoords *box)
 		box->ll.y = (int32)FROM_LE_32(bp->v8.lly);
 		box->lr.x = (int32)FROM_LE_32(bp->v8.lrx);
 		box->lr.y = (int32)FROM_LE_32(bp->v8.lry);
+
+		// FIXME: Some walkboxes in CMI appear to have been flipped,
+		// in the sense that for instance the lower boundary is above
+		// the upper one. Can that really be the case, or is there
+		// some more sinister problem afoot?
+		//
+		// Is this fix sufficient, or will we need something more
+		// elaborate?
+
+		if (box->ul.y > box->ll.y && box->ur.y > box->lr.y) {
+			SWAP(box->ul.x, box->ll.x);
+			SWAP(box->ul.y, box->ll.y);
+			SWAP(box->ur.x, box->lr.x);
+			SWAP(box->ur.y, box->lr.y);
+		}
+
+		if (box->ul.x > box->ur.x && box->ll.x > box->lr.x) {
+			SWAP(box->ul.x, box->ur.x);
+			SWAP(box->ul.y, box->ur.y);
+			SWAP(box->ll.x, box->lr.x);
+			SWAP(box->ll.y, box->lr.y);
+		}
 	} else {
 		box->ul.x = (int16)FROM_LE_16(bp->old.ulx);
 		box->ul.y = (int16)FROM_LE_16(bp->old.uly);
