@@ -1257,6 +1257,7 @@ script:
 		case 19: // script_exit
 			return 0;
 		case 20: // restart_script
+			offset = 0;
 			goto script;
 		default:
 			error("Unknown script command: %d", command);
