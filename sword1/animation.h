@@ -25,15 +25,7 @@
 // Uncomment this if you are using libmpeg2 0.3.1.
 // #define USE_MPEG2_0_3_1
 
-#ifdef _MSC_VER
-typedef signed char int8_t;
-typedef signed short int16_t;
-typedef signed int int32_t;
-
-typedef unsigned char uint8_t;
-typedef unsigned short uint16_t;
-typedef unsigned int uint32_t; 
-#else
+#ifndef _MSC_VER
 #include <inttypes.h>
 #endif
 
@@ -50,7 +42,12 @@ typedef sequence_t mpeg2_sequence_t;
 
 #endif
 
-namespace Sword2 {
+#include "sword1/screen.h"
+#include "sword1/sound.h"
+
+#include "sound/audiostream.h"
+
+namespace Sword1 {
 
 
 #ifdef BACKEND_8BIT
@@ -67,10 +64,12 @@ namespace Sword2 {
 
 class AnimationState {
 private:
-	Sword2Engine *_vm;
+	Screen *_scr;
+	SoundMixer *_snd;
+	OSystem *_sys;
 
 	int framenum;
-	int ticks;
+	uint32 ticks;
 
 #ifdef USE_MPEG2
 	mpeg2dec_t *decoder;
@@ -112,7 +111,7 @@ private:
 
 public:
 
-	AnimationState(Sword2Engine *vm);
+	AnimationState(Screen *scr, SoundMixer *snd, OSystem *sys);
 	~AnimationState();
 
 	bool init(const char *name);
@@ -131,18 +130,13 @@ private:
 
 class MoviePlayer {
 private:
-	Sword2Engine *_vm;
-	uint8 *_textSurface;
-
-	void openTextObject(MovieTextObject *obj);
-	void closeTextObject(MovieTextObject *obj);
-	void drawTextObject(MovieTextObject *obj);
-
-	int32 playDummy(const char *filename, MovieTextObject *text[], uint8 *musicOut);
+	Screen *_scr;
+	SoundMixer *_snd;
+	OSystem *_sys;
 
 public:
-	MoviePlayer(Sword2Engine *vm) : _vm(vm), _textSurface(NULL) {}
-	int32 play(const char *filename, MovieTextObject *text[], uint8 *musicOut);
+	MoviePlayer(Screen *scr, SoundMixer *snd, OSystem *sys) : _scr(scr), _snd(snd), _sys(sys) {}
+	void play(const char *filename);
 };
 
 } // End of namespace Sword2

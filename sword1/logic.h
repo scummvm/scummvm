@@ -26,6 +26,7 @@
 #include "sworddefs.h"
 #include "objectman.h"
 #include "common/util.h"
+#include "sound/mixer.h"
 
 namespace Sword1 {
 
@@ -46,7 +47,7 @@ typedef int (Logic::*BSMcodeTable)(Object *, int32, int32, int32, int32, int32, 
 
 class Logic {
 public:
-	Logic(ObjectMan *pObjMan, ResMan *resMan, Screen *pScreen, Mouse *pMouse, Sound *pSound, Music *pMusic, Menu *pMenu);
+	Logic(ObjectMan *pObjMan, ResMan *resMan, Screen *pScreen, Mouse *pMouse, Sound *pSound, Music *pMusic, Menu *pMenu, OSystem *system, SoundMixer *mixer);
 	~Logic(void);
 	void initialize(void);
 	void newScreen(uint32 screen);
@@ -66,6 +67,8 @@ public:
 	int cfnPresetScript	(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 private:
 	ObjectMan *_objMan;
+	OSystem *_system;
+	SoundMixer *_mixer;
 	ResMan *_resMan;
 	Screen *_screen;
 	Sound *_sound;

@@ -132,6 +132,7 @@ bool AnimationState::init(const char *name) {
 
 	info = mpeg2_info(decoder);
 	framenum = 0;
+	ticks = _vm->_system->get_msecs();
 
 	/* Play audio - TODO: Sync with video?*/
 
@@ -316,12 +317,18 @@ bool AnimationState::decodeFrame() {
 				 */
 
 #ifdef BACKEND_8BIT
-				if (checkPaletteSwitch() ||
-                                    (bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < (framenum+3)){
+				if (checkPaletteSwitch() || (bgSoundStream == NULL) ||
+					(bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < (framenum+3)){
+
 					_vm->_graphics->plotYUV(lut, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
 
-					while ((bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < framenum+1);
-						_vm->_system->delay_msecs(10);
+					if (bgSoundStream) {
+						while ((bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < framenum+1);
+							_vm->_system->delay_msecs(10);
+					} else {
+						ticks += 83;
+						_vm->sleepUntil(ticks);
+					}
 
 					_vm->_graphics->setNeedFullRedraw();
 
@@ -332,11 +339,18 @@ bool AnimationState::decodeFrame() {
 
 #else
 
-				if ((bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < (framenum+3)){
+				if ((bgSoundStream == NULL) ||
+					(bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < (framenum+3)){
+
 					plotYUV(lookup2, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
 
-					while ((bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < framenum+1);
-						_vm->_system->delay_msecs(10);
+					if (bgSoundStream) {
+						while ((bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < framenum+1);
+							_vm->_system->delay_msecs(10);
+					} else {
+						ticks += 83;
+						_vm->sleepUntil(ticks);
+					}
 
 				} else
 					printf("dropped frame %i\n", framenum);

@@ -110,7 +110,7 @@ void SwordEngine::initialize(void) {
 	_music = new Music(_system, _mixer);
 	_sound = new Sound("", _mixer, _resMan);
 	_menu = new Menu(_screen, _mouse);
-	_logic = new Logic(_objectMan, _resMan, _screen, _mouse, _sound, _music, _menu);
+	_logic = new Logic(_objectMan, _resMan, _screen, _mouse, _sound, _music, _menu, _system, _mixer);
 	_mouse->useLogicAndMenu(_logic, _menu);
 
 	uint8 musicVol = (uint8)ConfMan.getInt("music_volume");

@@ -31,6 +31,7 @@
 #include "system.h"
 #include "menu.h"
 #include "sword1.h"
+#include "animation.h"
 
 namespace Sword1 {
 
@@ -924,5 +925,40 @@ void Screen::drawLine(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 		bsubline_3(x1, y1, x2, y2);
 	}
 }
+
+#ifdef BACKEND_8BIT
+void Screen::plotYUV(byte *lut, int width, int height, byte *const *dat) {
+
+	byte * buf = (uint8*)malloc(width * height);
+
+	int x, y;
+
+	int ypos = 0;
+	int cpos = 0;
+	int linepos = 0;
+
+	for (y = 0; y < height; y += 2) {
+		for (x = 0; x < width; x += 2) {
+			int i = ((((dat[2][cpos] + ROUNDADD) >> SHIFT) * BITDEPTH) + ((dat[1][cpos] + ROUNDADD)>>SHIFT)) * BITDEPTH;
+			cpos++;
+
+			buf[linepos          ] = lut[i + ((dat[0][        ypos  ] + ROUNDADD) >> SHIFT)];
+			buf[width + linepos++] = lut[i + ((dat[0][width + ypos++] + ROUNDADD) >> SHIFT)];
+			buf[linepos          ] = lut[i + ((dat[0][        ypos  ] + ROUNDADD) >> SHIFT)];
+			buf[width + linepos++] = lut[i + ((dat[0][width + ypos++] + ROUNDADD) >> SHIFT)];
+		}
+		linepos += (2 * width - width);
+		ypos += width;
+	}
+
+	_system->copy_rect(buf, width, (640-width)/2, (480-height)/2, width, height);
+	_system->update_screen();
+
+	free(buf);
+
+}
+#endif
+
+
 
 } // End of namespace Sword1
