@@ -92,7 +92,7 @@ public:
 	void keyOn();
 	void keyOff();
 	void frequency(int freq);
-	int nextTick(uint16 rate, int phaseShift);
+	void nextTick(uint16 rate, const int *phaseShift, int *outbuf, int buflen);
 };
 
 class Voice2612 {
@@ -279,6 +279,8 @@ void Operator2612::frequency(int freq) {
 		value /= 127;
 	}
 	_attackTime = (int32) value; // 1 秒 == (1 << 12)
+	if (_attackTime > 0)
+		_attackTime = (1 << (12+10)) / (_owner->_rate * _attackTime);
 
 	r = _specifiedDecayRate;
 	if (r != 0) {
@@ -310,81 +312,106 @@ void Operator2612::frequency(int freq) {
 	_releaseRate = (int32) value / _owner->_rate;
 }
 
-int Operator2612::nextTick(uint16 rate, int phaseShift) {
-	// sampling ひとつ分進める
-	switch (_state) {
-	case _s_ready:
-		return 0;
-		break;
-	case _s_attacking:
-		++_tickCount;
-		if (_attackTime <= 0) {
-			_currentLevel = 0;
-			_state = _s_decaying;
-		} else {
-			int i = (int) (((double)_tickCount * (1 << (12+10))) / ((double)rate * _attackTime));
-			if (i >= 1024) {
-				_currentLevel = 0;
-				_state = _s_decaying;
+void Operator2612::nextTick(uint16 rate, const int *phasebuf, int *outbuf, int buflen) {
+	if (_state == _s_ready)
+		return;
+	if (_state == _s_attacking && _attackTime <= 0)
+		_state = _s_decaying;
+
+	int32 increment;
+	int32 target;
+	State next_state;
+	bool switching;
+
+	while (buflen) {
+		switching = false;
+		switch (_state) {
+		case _s_ready:
+			return;
+			break;
+		case _s_attacking:
+			next_state = _s_attacking;
+			break;
+		case _s_decaying:
+			increment = _decayRate;
+			target = _sustainLevel;
+			next_state = _s_sustaining;
+			break;
+		case _s_sustaining:
+			increment = _sustainRate;
+			target = ((int32)0x7f << 15);
+			next_state = _s_ready;
+			break;
+		case _s_releasing:
+			increment = _releaseRate;
+			target = ((int32)0x7f << 15);
+			next_state = _s_ready;
+			break;
+		}
+
+		for (; buflen && !switching; --buflen, ++phasebuf, ++outbuf) {
+			if (next_state == _s_attacking) {
+				// Attack phase
+				++_tickCount;
+				if (_attackTime <= 0) {
+					_currentLevel = 0;
+					_state = _s_decaying;
+					switching = true;
+				} else {
+					int i = (int) (_tickCount * _attackTime);
+					if (i >= 1024) {
+						_currentLevel = 0;
+						_state = _s_decaying;
+						switching = true;
+					} else {
+						_currentLevel = attackOut[i] << (31 - 8 - 16);
+					}
+				}
 			} else {
-				_currentLevel = attackOut[i] << (31 - 8 - 16);
+				// Decay, Sustain and Release phases
+				_currentLevel += increment;
+				if (_currentLevel >= target) {
+					_currentLevel = target;
+					_state = next_state;
+					switching = true;
+				}
 			}
-		}
-		break;
-	case _s_decaying:
-		_currentLevel += _decayRate;
-		if (_currentLevel >= _sustainLevel) {
-			_currentLevel = _sustainLevel;
-			_state = _s_sustaining;
-		}
-		break;
-	case _s_sustaining:
-		_currentLevel += _sustainRate;
-		if (_currentLevel >= ((int32)0x7f << 15)) {
-			_currentLevel = ((int32)0x7f << 15);
-			_state = _s_ready;
-		}
-		break;
-	case _s_releasing:
-		_currentLevel += _releaseRate;
-		if (_currentLevel >= ((int32)0x7f << 15)) {
-			_currentLevel = ((int32)0x7f << 15);
-			_state = _s_ready;
-		}
-		break;
-	};
 
-	int32 level = _currentLevel + _totalLevel;
-	int32 output = 0;
-	if (level < ((int32)0x7f << 15)) {
-		_phase &= 0x3ffff;
-		phaseShift >>= 2;		// 正しい変調量は?  3 じゃ小さすぎで 2 じゃ大きいような。
-		if (_feedbackLevel)
-			phaseShift += (_lastOutput << (_feedbackLevel - 1)) / 1024;
-		output = sintbl[((_phase >> 7) + phaseShift) & 0x7ff];
-		output >>= (level >> 18);	// 正しい減衰量は?
-		// Here is the original code, which requires 64-bit ints
-//		output *= powtbl[511 - ((level>>25)&511)];
-//		output >>= 16;
-//		output >>= 1;
-		// And here's our 32-bit trick for doing it. (Props to Fingolfin!)
-//		int powVal = powtbl[511 - ((level>>9)&511)];
-//		int outputHI = output / 256;
-//		int powHI = powVal / 256;
-//		output = (outputHI * powHI) / 2 + (outputHI * (powVal % 256) + powHI * (output % 256)) / 512;
-		// And here's the even faster code.
-		output = ((output >> 4) * (powtbl[511-((level>>9)&511)] >> 3)) / 1024;
+			int32 level = _currentLevel + _totalLevel;
+			int32 output = 0;
+			if (level < ((int32)0x7f << 15)) {
+				_phase &= 0x3ffff;
+				int phaseShift = *phasebuf >> 2; // 正しい変調量は?  3 じゃ小さすぎで 2 じゃ大きいような。
+				if (_feedbackLevel)
+					phaseShift += (_lastOutput << (_feedbackLevel - 1)) / 1024;
+				output = sintbl[((_phase >> 7) + phaseShift) & 0x7ff];
+				output >>= (level >> 18);	// 正しい減衰量は?
+				// Here is the original code, which requires 64-bit ints
+//				output *= powtbl[511 - ((level>>25)&511)];
+//				output >>= 16;
+//				output >>= 1;
+				// And here's our 32-bit trick for doing it. (Props to Fingolfin!)
+				// Result varies from original code by max of 1.
+//				int powVal = powtbl[511 - ((level>>9)&511)];
+//				int outputHI = output / 256;
+//				int powHI = powVal / 256;
+//				output = (outputHI * powHI) / 2 + (outputHI * (powVal % 256) + powHI * (output % 256)) / 512;
+				// And here's the even faster code.
+				// Result varies from original code by max of 8.
+				output = ((output >> 4) * (powtbl[511-((level>>9)&511)] >> 3)) / 1024;
 
-		if (_multiple > 0)
-//			_phase += (_frequency * _multiple) / rate;
-			_phase += _frequency * _multiple; // / rate; already included
-		else
-//			_phase += _frequency / (rate << 1);
-			_phase += _frequency / 2;
+				if (_multiple > 0)
+//					_phase += (_frequency * _multiple) / rate;
+					_phase += _frequency * _multiple; // / rate; already included
+				else
+//					_phase += _frequency / (rate << 1);
+					_phase += _frequency / 2;
+			}
+
+			_lastOutput = output;
+			*outbuf += output;
+		}
 	}
-
-	_lastOutput = output;
-	return output;
 }
 
 ////////////////////////////////////////
@@ -467,82 +494,64 @@ void Voice2612::nextTick(int *outbuf, int buflen) {
 	if (_velocity == 0)
 		return;
 
-	int i;
-	int d1, d2, d3, d4;
+	int *buf1 = (int *) calloc(buflen * 2, sizeof(int));
+	int *buf2 = buf1 + buflen;
+
 	switch (_algorithm) {
 	case 0:
-		for (i = 0; i < buflen; ++i) {
-			d1 = _opr[0]->nextTick(_rate, 0);
-			d2 = _opr[1]->nextTick(_rate, d1);
-			d3 = _opr[2]->nextTick(_rate, d2);
-			d4 = _opr[3]->nextTick(_rate, d3);
-			outbuf[i] += d4;
-		}
+		_opr[0]->nextTick(_rate, buf1, buf2, buflen);
+		_opr[1]->nextTick(_rate, buf2, buf1, buflen);
+		memset (buf2, 0, sizeof (int) * buflen);
+		_opr[2]->nextTick(_rate, buf1, buf2, buflen);
+		_opr[3]->nextTick(_rate, buf2, outbuf, buflen);
 		break;
 	case 1:
-		for (i = 0; i < buflen; ++i) {
-			d1 = _opr[0]->nextTick(_rate, 0);
-			d2 = _opr[1]->nextTick(_rate, 0);
-			d3 = _opr[2]->nextTick(_rate, d1+d2);
-			d4 = _opr[3]->nextTick(_rate, d3);
-			outbuf[i] += d4;
-		}
+		_opr[0]->nextTick(_rate, buf1, buf2, buflen);
+		_opr[1]->nextTick(_rate, buf1, buf2, buflen);
+		_opr[2]->nextTick(_rate, buf2, buf1, buflen);
+		_opr[3]->nextTick(_rate, buf1, outbuf, buflen);
 		break;
 	case 2:
-		for (i = 0; i < buflen; ++i) {
-			d1 = _opr[0]->nextTick(_rate, 0);
-			d2 = _opr[1]->nextTick(_rate, 0);
-			d3 = _opr[2]->nextTick(_rate, d2);
-			d4 = _opr[3]->nextTick(_rate, d1+d3);
-			outbuf[i] += d4;
-		}
+		_opr[1]->nextTick(_rate, buf1, buf2, buflen);
+		_opr[2]->nextTick(_rate, buf2, buf1, buflen);
+		memset(buf2, 0, sizeof(int) * buflen);
+		_opr[0]->nextTick(_rate, buf2, buf1, buflen);
+		_opr[3]->nextTick(_rate, buf1, outbuf, buflen);
 		break;
 	case 3:
-		for (i = 0; i < buflen; ++i) {
-			d1 = _opr[0]->nextTick(_rate, 0);
-			d2 = _opr[1]->nextTick(_rate, d1);
-			d3 = _opr[2]->nextTick(_rate, 0);
-			d4 = _opr[3]->nextTick(_rate, d2+d3);
-			outbuf[i] += d4;
-		}
+		_opr[0]->nextTick(_rate, buf1, buf2, buflen);
+		_opr[1]->nextTick(_rate, buf2, buf1, buflen);
+		memset(buf2, 0, sizeof(int) * buflen);
+		_opr[2]->nextTick(_rate, buf2, buf1, buflen);
+		_opr[3]->nextTick(_rate, buf1, outbuf, buflen);
 		break;
 	case 4:
-		for (i = 0; i < buflen; ++i) {
-			d1 = _opr[0]->nextTick(_rate, 0);
-			d2 = _opr[1]->nextTick(_rate, d1);
-			d3 = _opr[2]->nextTick(_rate, 0);
-			d4 = _opr[3]->nextTick(_rate, d3);
-			outbuf[i] += d2 + d4;
-		}
+		_opr[0]->nextTick(_rate, buf1, buf2, buflen);
+		_opr[1]->nextTick(_rate, buf2, outbuf, buflen);
+		_opr[2]->nextTick(_rate, buf1, buf1, buflen);
+		_opr[3]->nextTick(_rate, buf1, outbuf, buflen);
 		break;
 	case 5:
-		for (i = 0; i < buflen; ++i) {
-			d1 = _opr[0]->nextTick(_rate, 0);
-			d2 = _opr[1]->nextTick(_rate, d1);
-			d3 = _opr[2]->nextTick(_rate, d1);
-			d4 = _opr[3]->nextTick(_rate, d1);
-			outbuf[i] += d2 + d3 + d4;
-		}
+		_opr[0]->nextTick(_rate, buf1, buf2, buflen);
+		_opr[1]->nextTick(_rate, buf2, outbuf, buflen);
+		_opr[2]->nextTick(_rate, buf2, outbuf, buflen);
+		_opr[3]->nextTick(_rate, buf2, outbuf, buflen);
 		break;
 	case 6:
-		for (i = 0; i < buflen; ++i) {
-			d1 = _opr[0]->nextTick(_rate, 0);
-			d2 = _opr[1]->nextTick(_rate, d1);
-			d3 = _opr[2]->nextTick(_rate, 0);
-			d4 = _opr[3]->nextTick(_rate, 0);
-			outbuf[i] += d2 + d3 + d4;
-		}
+		_opr[0]->nextTick(_rate, buf1, buf2, buflen);
+		_opr[1]->nextTick(_rate, buf2, outbuf, buflen);
+		_opr[2]->nextTick(_rate, buf1, outbuf, buflen);
+		_opr[3]->nextTick(_rate, buf1, outbuf, buflen);
 		break;
 	case 7:
-		for (i = 0; i < buflen; ++i) {
-			d1 = _opr[0]->nextTick(_rate, 0);
-			d2 = _opr[1]->nextTick(_rate, 0);
-			d3 = _opr[2]->nextTick(_rate, 0);
-			d4 = _opr[3]->nextTick(_rate, 0);
-			outbuf[i] += d1 + d2 + d3 + d4;
-		}
+		_opr[0]->nextTick(_rate, buf1, outbuf, buflen);
+		_opr[1]->nextTick(_rate, buf1, outbuf, buflen);
+		_opr[2]->nextTick(_rate, buf1, outbuf, buflen);
+		_opr[3]->nextTick(_rate, buf1, outbuf, buflen);
 		break;
 	};
+
+	free (buf1);
 }
 
 void Voice2612::noteOn(int n, int onVelo) {
