@@ -2443,15 +2443,6 @@ void Scumm_v6::o6_kernelSetFunctions() {
 				delete sp;
 			}
 			break;
-		case 7:
-			warning("o6_kernelSetFunctions: stub7()");
-			break;
-		case 10:
-			warning("o6_kernelSetFunctions: stub10(%d,%d,%d,%d)", args[1], args[2], args[3], args[4]);
-			break;
-		case 11:
-			warning("o6_kernelSetFunctions: stub11(%d)", args[1]);
-			break;
 		case 12:
 			setCursorImg(args[1], (uint) - 1, args[2]);
 			break;
@@ -2505,11 +2496,9 @@ void Scumm_v6::o6_kernelSetFunctions() {
 				drawDescString(getStringAddressVar(VAR_STRING2DRAW));
 			}
 			break;
-		case 18:
-			warning("o6_kernelSetFunctions: stub18(%d,%d)", args[1], args[2]);
-			break;
 		case 20:
 			// Occurs in The Dig, at the alien pyramid. See bug #742979.
+			// Also occurs in the first scene of The Dig.
 			warning("o6_kernelSetFunctions: stub20(%d, %d)", args[1], args[2]);
 			break;
 		case 107:
@@ -2535,10 +2524,6 @@ void Scumm_v6::o6_kernelSetFunctions() {
 			break;
 		case 119:
 			enqueueObject(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], 0);
-			break;
-		case 120:
-			// FIXME: isn't it likely that this does the same as the pre-V7 opcode with the same id, i.e. swapPalColors?
-			warning("o6_kernelSetFunctions: stub120(%d,%d)", args[1], args[2]);
 			break;
 		case 124:
 			_saveSound = args[1];
