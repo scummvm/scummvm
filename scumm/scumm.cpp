@@ -231,14 +231,14 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 
 	// First 640x480 game, hence version 7.1
+	// There is also a Scummsys.90 version of freddi
 	{"freddi", "Freddi Fish 1: The Case of the Missing Kelp Seeds", GID_HEGAME, 6, 71, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
+	{"freddemo", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo)", GID_FREDDEMO, 6, 71, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
 
 	// Humongous Entertainment Scumm Version 8.0 ?  Scummsrc.80 
 	{"zoodemo", "Putt-Putt Saves the Zoo (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
-	/* has old MAXS block */
-	{"freddemo", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo)", GID_FREDDEMO, 6, 71, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
 	{"ff2-demo", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
 	GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
@@ -252,8 +252,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
 	{"socks", "Pajama Sam's Sock Works", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
-
-	// Resource changed
+	// Resource changed for pajama
 	{"pajama", "Pajama Sam 1: No Need to Hide When It's Dark Outside", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
 
@@ -264,13 +263,14 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
 	{"f3-mdemo", "Freddi Fish 3: The Case of the Stolen Conch Shell (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
+	// there is also a C++ engine based version of timedemo
 	{"timedemo", "Putt-Putt Travels Through Time (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
 	{"spyfox", "Spyfox 1: Dry Cereal", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
 	{"foxdemo", "Spyfox 1: Dry Cereal (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
-	/* there is also a C++ engine version of spydemo */
+	// there is also a C++ engine version of spydemo
 	{"spydemo", "Spyfox 1: Dry Cereal (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
 
