@@ -340,7 +340,7 @@ simon games.
         - and +                - music volume, down/up
         m                      - music on/off
         s                      - sound effects on/off
-        b                      - ambient sounds on/off
+        b                      - background sounds on/off
 
 Note that using ctrl-f and ctrl-g are not recommended: Games can crash when
 being ran faster than their normal speed, as scripts will loose synchronisation
