@@ -129,7 +129,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_writeWordVar),
 		/* 44 */
-		OPCODE(o6_invalid),
+		OPCODE(o90_unknown44),
 		OPCODE(o80_unknown45),
 		OPCODE(o6_invalid),
 		OPCODE(o6_wordArrayWrite),
@@ -473,7 +473,7 @@ void ScummEngine_v90he::o90_unknown1F() {
 
 	}
 
-	eax = tableUnk[eax * 4];
+	eax = tableUnk[eax];
 
 	if (ecx)
 		push(eax);
@@ -505,7 +505,7 @@ void ScummEngine_v90he::o90_unknown20() {
 
 	}
 
-	eax = tableUnk[eax * 4];
+	eax = tableUnk[eax];
 
 	if (ecx)
 		push(eax);
@@ -1181,6 +1181,57 @@ void ScummEngine_v90he::o90_unknown3A() {
 		error("o90_unknown3A: Unknown case %d", subOp);
 	}
 	debug(1,"o90_unknown3A stub (%d)", subOp);
+}
+
+void ScummEngine_v90he::o90_unknown44() {
+	// Object releated
+	int subOp = fetchScriptByte();
+	subOp -= 32;
+
+	switch (subOp) {
+	case 0:
+		if (_heObjectNum == -1)
+			push(0);
+		else
+			push(_objs[_heObjectNum].width);
+		break;
+	case 1:
+		if (_heObjectNum == -1)
+			push(0);
+		else
+			push(_objs[_heObjectNum].height);
+		break;
+	case 4:
+		push(0);
+		break;
+	case 6:
+		if (_heObjectNum == -1)
+			push(0);
+		else
+			push(_objs[_heObjectNum].x_pos);
+		break;
+	case 7:
+		if (_heObjectNum == -1)
+			push(0);
+		else
+			push(_objs[_heObjectNum].y_pos);
+		break;
+	case 20:
+		push(getState(_heObject));
+		break;
+	case 25:
+		_heObject = pop();
+		_heObjectNum = getObjectIndex(_heObject);
+		break;
+	case 107:
+		// Dummy case
+		pop();
+		push(0);
+		break;
+	default:
+		error("o90_unknown44: Unknown case %d", subOp);
+	}
+	debug(1,"o90_unknown44 stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_unknown94() {

@@ -834,6 +834,8 @@ protected:
 		const char *desc;
 	};
 
+	int _heObject, _heObjectNum;
+
 	struct WizParameters {
 		byte filename[260];
 		Common::Rect box;
@@ -896,6 +898,7 @@ protected:
 	void o90_unknown36();
 	void o90_unknown37();
 	void o90_unknown3A();
+	void o90_unknown44();
 	void o90_unknown94();
 	void o90_unknown9E();
 	void o90_unknownA5();
