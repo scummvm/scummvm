@@ -61,7 +61,7 @@ void OSystem_SDL::set_palette(const byte *colors, uint start, uint num) {
 	const byte *b = colors;
 	uint i;
 	SDL_Color *base = _currentPalette + start;
-	for(i = 0; i < num; i++) {
+	for (i = 0; i < num; i++) {
 		base[i].r = b[0];
 		base[i].g = b[1];
 		base[i].b = b[2];
@@ -283,7 +283,7 @@ void OSystem_SDL::update_screen() {
 
 		if (_scaler_proc == Normal1x) {
 			SDL_Surface *target = _overlayVisible ? _tmpscreen : _screen;
-			for(r = _dirty_rect_list; r != last_rect; ++r) {
+			for (r = _dirty_rect_list; r != last_rect; ++r) {
 				dst = *r;
 				
 				if (_overlayVisible) {
@@ -296,7 +296,7 @@ void OSystem_SDL::update_screen() {
 			}
 		} else {
 			if (!_overlayVisible) {
-				for(r = _dirty_rect_list; r != last_rect; ++r) {
+				for (r = _dirty_rect_list; r != last_rect; ++r) {
 					dst = *r;
 					dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
 					dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
@@ -311,7 +311,7 @@ void OSystem_SDL::update_screen() {
 			srcPitch = _tmpscreen->pitch;
 			dstPitch = _hwscreen->pitch;
 
-			for(r = _dirty_rect_list; r != last_rect; ++r) {
+			for (r = _dirty_rect_list; r != last_rect; ++r) {
 				register int dst_y = r->y + _currentShakePos;
 				register int dst_h = 0;
 				if (dst_y < _screenHeight) {

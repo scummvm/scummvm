@@ -91,7 +91,7 @@ void OSystem_SDL_OpenGL::set_palette(const byte *colors, uint start, uint num) {
 	const byte *b = colors;
 	uint i;
 	SDL_Color *base = _currentPalette + start;
-	for(i = 0; i < num; i++) {
+	for (i = 0; i < num; i++) {
 		base[i].r = b[0];
 		base[i].g = b[1];
 		base[i].b = b[2];
@@ -386,46 +386,23 @@ void OSystem_SDL_OpenGL::update_screen() {
 	if (_num_dirty_rects > 0) {
 	
 		SDL_Rect *r; 
+		SDL_Rect dst;
 		uint32 srcPitch, dstPitch;
 		SDL_Rect *last_rect = _dirty_rect_list + _num_dirty_rects;
 
-		// Convert appropriate parts of the 8bpp image into 16bpp
-		SDL_Rect dst;
-		if (!_overlayVisible) {
-			for(r = _dirty_rect_list; r != last_rect; ++r) {
-				dst = *r;
-				dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
-				dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
-				if (_scaler_proc == Normal1x) {
-				    if (_usingOpenGL) {
-					if (SDL_BlitSurface(_screen, r, _tmpscreen, &dst) != 0)
-						error("SDL_BlitSurface failed: %s", SDL_GetError());
-				    }
-				    else { // SDL backend
-					if (SDL_BlitSurface(_screen, r, _hwscreen, &dst) != 0)
-						error("SDL_BlitSurface failed: %s", SDL_GetError());
-				    }
-				} else { // _scaler_proc != Normal1x
+		
+		if (_usingOpenGL) {
+		
+			if (!_overlayVisible) {
+				for (r = _dirty_rect_list; r != last_rect; ++r) {
+					dst = *r;
+					dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
+					dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
 					if (SDL_BlitSurface(_screen, r, _tmpscreen, &dst) != 0)
 						error("SDL_BlitSurface failed: %s", SDL_GetError());
 				}
 			}
-		} else {
-		    if (!_usingOpenGL) {
-			SDL_Surface *target = _overlayVisible ? _tmpscreen : _screen;
-			for(r = _dirty_rect_list; r != last_rect; ++r) {
-				dst = *r;
-				// FIXME: I don't understand why this is necessary...
-				dst.x--;
-				dst.y--;
-				if (SDL_BlitSurface(target, r, _hwscreen, &dst) != 0)
-					error("SDL_BlitSurface failed: %s", SDL_GetError());
-			}
-		    }
-		}
-
-		
-		if (_usingOpenGL) {
+			
 			// Almost the same thing as SDL_UpdateRects
 			fb2gl.blit16(
 			    _tmpscreen, 
@@ -447,49 +424,71 @@ void OSystem_SDL_OpenGL::update_screen() {
 			}
 
 			fb2gl.display();
-		}
-		else { // SDL backend
-		
-		  if (_scaler_proc != Normal1x) {
-			SDL_LockSurface(_tmpscreen);
-			SDL_LockSurface(_hwscreen);
-
-			srcPitch = _tmpscreen->pitch;
-			dstPitch = _hwscreen->pitch;
-
-			for(r = _dirty_rect_list; r != last_rect; ++r) {
-				register int dst_y = r->y + _currentShakePos;
-				register int dst_h = 0;
-				if (dst_y < _screenHeight) {
-					dst_h = r->h;
-					if (dst_h > _screenHeight - dst_y)
-						dst_h = _screenHeight - dst_y;
-
-						dst_y *= _scaleFactor;
-
-						_scaler_proc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
-						(byte *)_hwscreen->pixels + r->x * 2 * _scaleFactor + dst_y * dstPitch, dstPitch, r->w, dst_h);
+		} else { // SDL backend
+			
+			if (_scaler_proc == Normal1x) {
+				SDL_Surface *target = _overlayVisible ? _tmpscreen : _screen;
+				for (r = _dirty_rect_list; r != last_rect; ++r) {
+					dst = *r;
+					
+					if (_overlayVisible) {
+						// FIXME: I don't understand why this is necessary...
+						dst.x--;
+						dst.y--;
+					}
+					if (SDL_BlitSurface(target, r, _hwscreen, &dst) != 0)
+						error("SDL_BlitSurface failed: %s", SDL_GetError());
+				}
+			} else {
+				if (!_overlayVisible) {
+					for (r = _dirty_rect_list; r != last_rect; ++r) {
+						dst = *r;
+						dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
+						dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
+						if (SDL_BlitSurface(_screen, r, _tmpscreen, &dst) != 0)
+							error("SDL_BlitSurface failed: %s", SDL_GetError());
+					}
+				}
+	
+				SDL_LockSurface(_tmpscreen);
+				SDL_LockSurface(_hwscreen);
+			
+				srcPitch = _tmpscreen->pitch;
+				dstPitch = _hwscreen->pitch;
+			
+				for (r = _dirty_rect_list; r != last_rect; ++r) {
+					register int dst_y = r->y + _currentShakePos;
+					register int dst_h = 0;
+					if (dst_y < _screenHeight) {
+						dst_h = r->h;
+						if (dst_h > _screenHeight - dst_y)
+							dst_h = _screenHeight - dst_y;
+			
+							dst_y *= _scaleFactor;
+			
+							_scaler_proc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
+							(byte *)_hwscreen->pixels + r->x * 2 * _scaleFactor + dst_y * dstPitch, dstPitch, r->w, dst_h);
+					}
+				
+					r->x *= _scaleFactor;
+					r->y = dst_y;
+					r->w *= _scaleFactor;
+					r->h = dst_h * _scaleFactor;
 				}
 			
-				r->x *= _scaleFactor;
-				r->y = dst_y;
-				r->w *= _scaleFactor;
-				r->h = dst_h * _scaleFactor;
+				SDL_UnlockSurface(_tmpscreen);
+				SDL_UnlockSurface(_hwscreen);
 			}
-
-			SDL_UnlockSurface(_tmpscreen);
-			SDL_UnlockSurface(_hwscreen);
-		  }
-
-		  // Readjust the dirty rect list in case we are doing a full update.
-		  // This is necessary if shaking is active.
-		  if (_forceFull) {
-			_dirty_rect_list[0].y = 0;
-			_dirty_rect_list[0].h = _screenHeight * _scaleFactor;
-		  }
-
-		  // Finally, blit all our changes to the screen
-		  SDL_UpdateRects(_hwscreen, _num_dirty_rects, _dirty_rect_list);
+			
+			// Readjust the dirty rect list in case we are doing a full update.
+			// This is necessary if shaking is active.
+			if (_forceFull) {
+				_dirty_rect_list[0].y = 0;
+				_dirty_rect_list[0].h = _screenHeight * _scaleFactor;
+			}
+			
+			// Finally, blit all our changes to the screen
+			SDL_UpdateRects(_hwscreen, _num_dirty_rects, _dirty_rect_list);
 		} // END OF "SDL backend"
 	} // if (num_dirty_rects > 0) ...
 
