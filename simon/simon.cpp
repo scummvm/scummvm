@@ -2733,8 +2733,8 @@ restart:;
 					fcs->textColumnOffset -= 8;
 					fcs->textColumn++;
 				}
-				name_len++;
 			}
+			name_len++;
 		}
 		// while_1_end
 
