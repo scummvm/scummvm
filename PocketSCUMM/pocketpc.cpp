@@ -263,3 +263,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 
 	return 0;
 }
+
+bool isSfxFinished()
+{ 
+	return true; 
+} 
+    
+void playSfxSound(void *sound, uint32 size, uint rate)
+{ 
+} 
