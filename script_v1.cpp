@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.5  2001/10/29 22:09:20  strigeus
+ * script invoked loading&saving in compatible mode
+ *
  * Revision 1.4  2001/10/26 17:34:50  strigeus
  * bug fixes, code cleanup
  *
@@ -1376,6 +1379,7 @@ void Scumm::o5_roomOps() {
 		_saveLoadFlag = getVarOrDirectByte(0x80);
 		_saveLoadSlot = getVarOrDirectByte(0x40);
 		_saveLoadSlot = 99; /* use this slot */
+		_saveLoadCompatible = true;
 		break;
 	case 10: /* ? */
 		a = getVarOrDirectWord(0x80);
