@@ -1011,8 +1011,9 @@ void Sound::playBundleMusic(const char *song) {
 	}
 
 	if (_nameBundleMusic[0] == 0) {
-		_outputMixerSize = 66150; // ((22050 * 2 * 2) / 4) * 3
 		if (_scumm->_gameId == GID_CMI) {
+			_outputMixerSize = (22050 * 2 * 2);
+
 			char bunfile[20];
 			sprintf(bunfile, "musdisk%d.bun", _scumm->VAR(_scumm->VAR_CURRENTDISK));
 			if (_musicDisk != _scumm->VAR(_scumm->VAR_CURRENTDISK)) 
@@ -1026,8 +1027,9 @@ void Sound::playBundleMusic(const char *song) {
 			}
 
 			_musicDisk = (byte)_scumm->VAR(_scumm->VAR_CURRENTDISK);
-			_outputMixerSize = 88140; // ((22050 * 2 * 2)
 		} else {
+			_outputMixerSize = ((22050 * 2 * 2) / 4) * 3;
+
 			if (_bundle->openMusicFile("digmusic.bun", _scumm->getGameDataPath()) == false)
 				return;
 		}
@@ -1038,17 +1040,13 @@ void Sound::playBundleMusic(const char *song) {
 		_offsetBufBundleMusic = 0;
 		_bundleMusicPosition = 0;
 		_pauseBundleMusic = false;
-		_musicBundleToBeRemoved = false;
 		_musicBundleToBeChanged = false;
 		_bundleMusicTrack = 0;
 		_numberSamplesBundleMusic = _bundle->getNumberOfMusicSamplesByName(song);
 		_nameBundleMusic = song;
 		_scumm->_timer->installProcedure(&music_handler, 1000000, this);
-		return;
-	}
-	if (strcmp(_nameBundleMusic, song) != 0) {
+	} else if (strcmp(_nameBundleMusic, song) != 0) {
 		_newNameBundleMusic = song;
-		_musicBundleToBeRemoved = false;
 		_musicBundleToBeChanged = true;
 	}
 }
@@ -1058,7 +1056,18 @@ void Sound::pauseBundleMusic(bool state) {
 }
 
 void Sound::stopBundleMusic() {
-	_musicBundleToBeRemoved = true;
+	// First stop the music timer
+	_scumm->_timer->releaseProcedure(&music_handler);
+	_nameBundleMusic = "";
+	_scumm->_mixer->stopChannel(_bundleMusicTrack);
+	if (_musicBundleBufFinal) {
+		free(_musicBundleBufFinal);
+		_musicBundleBufFinal = NULL;
+	}
+	if (_musicBundleBufOutput) {
+		free(_musicBundleBufOutput);
+		_musicBundleBufOutput = NULL;
+	}
 }
 
 void Sound::bundleMusicHandler(ScummEngine *scumm) {
@@ -1069,21 +1078,6 @@ void Sound::bundleMusicHandler(ScummEngine *scumm) {
 
 	if (_pauseBundleMusic)
 		return;
-
-	if (_musicBundleToBeRemoved) {
-		_scumm->_timer->releaseProcedure(&music_handler);
-		_nameBundleMusic = "";
-		_scumm->_mixer->stopChannel(_bundleMusicTrack);
-		if (_musicBundleBufFinal) {
-			free(_musicBundleBufFinal);
-			_musicBundleBufFinal = NULL;
-		}
-		if (_musicBundleBufOutput) {
-			free(_musicBundleBufOutput);
-			_musicBundleBufOutput = NULL;
-		}
-		return;
-	}
 
 	if (_musicBundleToBeChanged) {
 		_nameBundleMusic = _newNameBundleMusic;
@@ -1104,9 +1098,7 @@ void Sound::bundleMusicHandler(ScummEngine *scumm) {
 		if (l == 0) {
 			tag = READ_BE_UINT32(ptr); ptr += 4;
 			if (tag != MKID_BE('iMUS')) {
-				warning("Decompression of bundle song failed");
-				_musicBundleToBeRemoved = true;
-				return;
+				error("Decompressing bundle song failed (unknown tag '%s')", tag2str(tag));
 			}
 
 			ptr += 12;
@@ -1139,9 +1131,7 @@ void Sound::bundleMusicHandler(ScummEngine *scumm) {
 				}
 			}
 			if (size < 0) {
-				warning("Decompression sound failed (no size field)");
-				_musicBundleToBeRemoved = true;
-				return;
+				error("Decompressing sound failed (missing size field)");
 			}
 			header_size = (ptr - _musicBundleBufOutput);
 		}

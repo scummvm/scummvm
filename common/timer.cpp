@@ -91,12 +91,10 @@ int Timer::handler(int t) {
 	for (l = 0; l < MAX_TIMERS; l++) {
 		if (_timerSlots[l].procedure && _timerSlots[l].interval > 0) {
 			_timerSlots[l].counter -= interval;
-			// FIXME: We only check the value of _timerSlots[l].interval here
-			// because the timer might remove itself.
-			// Strictly spoken, that is a dirty thing to do for a timer, but for
-			// now the bundle timer requires this. Of course the whole bundle
-			// music timer is kind of scary anyway...
-			while (_timerSlots[l].counter <= 0 && _timerSlots[l].interval > 0) {
+			while (_timerSlots[l].counter <= 0) {
+				// A small paranoia check which catches the case where
+				// a timer removes itself (which it never should do).
+				assert(_timerSlots[l].procedure && _timerSlots[l].interval > 0);
 				_timerSlots[l].counter += _timerSlots[l].interval;
 				_timerSlots[l].procedure(_timerSlots[l].refCon);
 			}

@@ -57,7 +57,6 @@ protected:
 	bool _pauseBundleMusic;
 	PlayingSoundHandle _bundleMusicTrack;
 	bool _musicBundleToBeChanged;
-	bool _musicBundleToBeRemoved;
 	int32 _bundleMusicSampleBits;
 	int32 _outputMixerSize;
 	int32 _bundleSampleChannels;
