@@ -134,7 +134,7 @@ void ScummEngine_v4::loadCharset(int no) {
 
 	size = _fileHandle->readUint32LE() + 11;
 
-	_fileHandle->read(createResource(6, no, size), size);
+	_fileHandle->read(createResource(rtCharset, no, size), size);
 	closeRoom();
 }
 
