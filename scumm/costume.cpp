@@ -28,12 +28,12 @@
 
 const byte revBitMask[8] = { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 };
 
-void CostumeRenderer::ignorePakCols(int a) {
+void CostumeRenderer::ignorePakCols(int num) {
 	int n;
 
 	n = _height;
-	if (a > 1)
-		n *= a;
+	if (num > 1)
+		n *= num;
 
 	do {
 		_repcolor = *_srcptr++;
@@ -77,7 +77,7 @@ const byte cost_scaleTable[256] = {
 	238, 30, 158, 94, 222, 62, 190, 126, 254
 };
 
-byte CostumeRenderer::mainRoutine(int slot, int frame) {
+byte CostumeRenderer::mainRoutine() {
 	int xmove, ymove, i, s;
 	byte drawFlag = 1;
 	uint scal;
@@ -503,7 +503,7 @@ byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
 
 	if (code != 0x7B) {
 		if (!(_vm->_features & GF_OLD256) || code < 0x79)
-			return mainRoutine(limb, code);
+			return mainRoutine();
 	}
 
 	return 0;

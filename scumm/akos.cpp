@@ -882,28 +882,22 @@ byte AkosRenderer::codec1() {
 
 void AkosRenderer::codec1_ignorePakCols(int num) {
 	int n;
-	byte repcolor;
-	byte replen;
-	const byte *src;
 
 	n = _height;
 	if (num > 1)
 		n *= num;
-	src = srcptr;
 	do {
-		repcolor = *src++;
-		replen = repcolor & v1.mask;
-		if (replen == 0) {
-			replen = *src++;
+		v1.repcolor = *srcptr++;
+		v1.replen = v1.repcolor & v1.mask;
+		if (v1.replen == 0) {
+			v1.replen = *srcptr++;
 		}
 		do {
 			if (!--n) {
-				v1.repcolor = repcolor >> v1.shr;
-				v1.replen = replen;
-				srcptr = src;
+				v1.repcolor >>= v1.shr;
 				return;
 			}
-		} while (--replen);
+		} while (--v1.replen);
 	} while (1);
 }
 
@@ -1056,51 +1050,18 @@ void AkosRenderer::akos16PutOnScreen(byte *dest, const byte *src, byte transpare
 		akos16.bits >>= (n);
 
 
-void AkosRenderer::akos16SkipData(int32 numskip) {
-	uint16 bits, tmp_bits;
-	
-	while (numskip != 0) {
-		if (akos16.unk5 == 0) {
-			AKOS16_FILL_BITS()
-			bits = akos16.bits & 3;
-			if (bits & 1) {
-				AKOS16_EAT_BITS(2)
-				if (bits & 2) {
-					tmp_bits = akos16.bits & 7;
-					AKOS16_EAT_BITS(3)
-					if (tmp_bits != 4) {
-						akos16.color += (tmp_bits - 4);
-					} else {
-						akos16.unk5 = 1;
-						AKOS16_FILL_BITS()
-						akos16.unk6 = (akos16.bits & 0xff) - 1;
-						AKOS16_EAT_BITS(8)
-						AKOS16_FILL_BITS()
-					}
-				} else {
-					AKOS16_FILL_BITS()
-					akos16.color = ((byte)akos16.bits) & akos16.mask;
-					AKOS16_EAT_BITS(akos16.shift)
-					AKOS16_FILL_BITS()
-				}
-			} else {
-				AKOS16_EAT_BITS(1);
-			}
-		} else {
-			if (--akos16.unk6 == 0) {
-				akos16.unk5 = 0;
-			}
-		}
-		numskip--;
-	}
+void AkosRenderer::akos16SkipData(int32 numbytes) {
+	akos16DecodeLine(0, numbytes, 0);
 }
 
 void AkosRenderer::akos16DecodeLine(byte *buf, int32 numbytes, int32 dir) {
 	uint16 bits, tmp_bits;
 
 	while (numbytes != 0) {
-		*buf = akos16.color;
-		buf += dir;
+		if (buf) {
+			*buf = akos16.color;
+			buf += dir;
+		}
 		
 		if (akos16.unk5 == 0) {
 			AKOS16_FILL_BITS()

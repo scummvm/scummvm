@@ -85,7 +85,7 @@ protected:
 
 	void proc3();
 	void proc3_ami();
-	byte mainRoutine(int limb, int frame);
+	byte mainRoutine();
 	void ignorePakCols(int num);
 };
 
