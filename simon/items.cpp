@@ -1490,9 +1490,15 @@ void SimonEngine::o_unk_132_helper_2(FillOrCopyStruct *fcs, int x) {
 	old_text = fcs->text_color;
 	fcs->text_color = fcs->fill_color;
 
-	x += 120;
-	if (x != 128)
-		x = 129;
+	if (_language == 20) { //Hebrew
+		x = 128;
+	} else { 
+		x += 120;
+		if (x != 128)
+			x = 129;
+
+	}
+
 	video_putchar(fcs, x);
 
 	fcs->text_color = old_text;

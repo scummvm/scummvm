@@ -2733,7 +2733,7 @@ restart:;
 					width = _hebrew_char_widths [name[name_len]-64];
 				fcs->textLength++;
 				fcs->textColumnOffset -= width;
-				if (fcs->textColumnOffset >= width) {
+				if (fcs->textColumnOffset < width) {
 					fcs->textColumnOffset += 8;
 					fcs->textColumn++;
 				}

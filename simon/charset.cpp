@@ -215,11 +215,12 @@ void SimonEngine::video_putchar(FillOrCopyStruct *fcs, byte c) {
 		video_fill_or_copy_from_3_to_2(fcs);
 	} else if (c == 0xD || c == 0xA) {
 		video_putchar_newline(fcs);
-	} else if (c == 8 || (_language != 20 && c == 1)) {
+	} else if ((c == 1 && _language != 20) || (c == 8)) {
 		if (_language == 20) { //Hebrew
+			if (c >= 64 && c < 91)
+				width = _hebrew_char_widths [c-64];
+
 			if (fcs->textLength != 0) {
-				if (c >= 64 && c < 91)
-					width = _hebrew_char_widths [c-64];
 				fcs->textLength--;			
 				fcs->textColumnOffset += width;
 				if (fcs->textColumnOffset >= 8) {
@@ -229,6 +230,7 @@ void SimonEngine::video_putchar(FillOrCopyStruct *fcs, byte c) {
 			}
 		} else {
 			int8 val = (c == 8) ? 6 : 4;
+
 			if (fcs->textLength != 0) {
 				fcs->textLength--;
 				fcs->textColumnOffset -= val;
@@ -251,7 +253,7 @@ void SimonEngine::video_putchar(FillOrCopyStruct *fcs, byte c) {
 				width = _hebrew_char_widths [c-64];
 			fcs->textColumnOffset  -= width;
 			if (fcs->textColumnOffset >= width) {
-				++fcs->textColumn;
+				fcs->textColumn++;
 				fcs->textColumnOffset += 8;
 			}
 			video_putchar_drawchar(fcs, fcs->width + fcs->x - fcs->textColumn, fcs->textRow * 8 + fcs->y, c);
