@@ -2485,8 +2485,7 @@ void Scumm_v6::o6_kernelSetFunctions() {
 			warning("o6_kernelSetFunctions: stub120(%d,%d)", args[1], args[2]);
 			break;
 		case 124:
-			// FIXME: isn't it likely that this does the same as the pre-V7 opcode with the same id?
-			warning("o6_kernelSetFunctions: stub124(%d)", args[1]);
+			_saveSound = args[1];
 			break;
 		}
 	} else {
