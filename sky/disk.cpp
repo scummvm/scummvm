@@ -71,7 +71,6 @@ void SkyState::initialise_disk()
 uint16 *SkyState::load_file(uint16 file_nr, uint8 *dest)
 {
 	uint8 cflag;
-	uint32 eax, ecx;
 	int32 bytes_read;
 	uint8 *file_ptr, *esiptr, *ediptr;
 	dataFileHeader file_header;
@@ -89,27 +88,23 @@ uint16 *SkyState::load_file(uint16 file_nr, uint8 *dest)
 		return NULL;
 	}
 
-	eax = READ_LE_UINT32((file_ptr + 5));
-	file_flags = eax;
-	eax &= 0x03fffff;
-	file_size = eax;
+	file_flags = READ_LE_UINT32((file_ptr + 5));
+	file_size = file_flags & 0x03fffff;
 
-	ecx = READ_LE_UINT32((file_ptr + 2));
-	ecx &= 0x0ffffff;
+	file_offset = READ_LE_UINT32((file_ptr + 2)) & 0x0ffffff;
 
-	cflag = (uint8)((ecx >> (23)) & 0x1); 
-	ecx = (((1 << (23)) ^ 0xFFFFFFFF) & ecx); 
+	cflag = (uint8)((file_offset >> (23)) & 0x1);
+	file_offset = (((1 << (23)) ^ 0xFFFFFFFF) & file_offset);
 
 	if (cflag)
-		ecx = ecx << 4;
+		file_offset <<= 4;
 
-	file_offset = ecx;
 	fixed_dest = dest;
 	file_dest = dest;
 	comp_dest = dest;
 
 	if (dest == NULL) //we need to allocate memory for this file
-		file_dest = (uint8 *)malloc(eax);
+		file_dest = (uint8 *)malloc(file_size);
 
 	data_disk_handle->seek(file_offset, SEEK_SET);
 
@@ -127,23 +122,18 @@ uint16 *SkyState::load_file(uint16 file_nr, uint8 *dest)
 
 	//if cflag == 0 then file is compressed, 1 == uncompressed
 
-	if (!cflag)
-	{
+	if (!cflag) {
 		debug(1, "File is compressed...");
 
 		memcpy(&file_header, file_dest, sizeof(struct dataFileHeader));
 		if ( (uint8)((FROM_LE_16(file_header.flag) >> 7) & 0x1)	 ) {
 			debug(1, "with RNC!");
 
-			eax = FROM_LE_16(file_header.flag);
-			eax &= 0xFFFFFF00; //clear al
-			eax = eax << 8;
-			eax |= FROM_LE_16((uint16)file_header.s_tot_size);
-
-			decomp_size = eax;
+			decomp_size = (FROM_LE_16(file_header.flag) & 0xFFFFFF00) << 8;
+			decomp_size |= FROM_LE_16((uint16)file_header.s_tot_size);
 
 			if (fixed_dest == NULL) // is this valid?
-				comp_dest = (uint8 *)malloc(eax);
+				comp_dest = (uint8 *)malloc(decomp_size);
 
 			esiptr = file_dest;
 			ediptr = comp_dest;
@@ -156,11 +146,11 @@ uint16 *SkyState::load_file(uint16 file_nr, uint8 *dest)
 				ediptr += sizeof(struct dataFileHeader);
 			}
 
-			eax = UnpackM1(esiptr, ediptr, 0);
+			uint32 unPackLen = UnpackM1(esiptr, ediptr, 0);
 
-			debug(2, "UnpackM1 returned: %d", eax);
+			debug(2, "UnpackM1 returned: %d", unPackLen);
 
-			if (eax == 0) { //Unpack returned 0: file was probably not packed.
+			if (unPackLen == 0) { //Unpack returned 0: file was probably not packed.
 				if (fixed_dest == NULL)
 					free(comp_dest);
 			
@@ -168,21 +158,19 @@ uint16 *SkyState::load_file(uint16 file_nr, uint8 *dest)
 			}
 
 			if (! (uint8)(file_flags >> (22) & 0x1) ) { // include header?
-				eax += sizeof(struct dataFileHeader);
+				unPackLen += sizeof(struct dataFileHeader);
 
-				if (eax != decomp_size) {
-					debug(1, "ERROR: invalid decomp size! (was: %d, should be: %d)", eax, decomp_size);
+				if (unPackLen != decomp_size) {
+					debug(1, "ERROR: invalid decomp size! (was: %d, should be: %d)", unPackLen, decomp_size);
 				}
 			}
 
 			if (fixed_dest == NULL)
 				free(file_dest);
 
-		}
-		else
+		} else
 			debug(1, "but not with RNC! (?!)");
-	}
-	else
+	} else
 		return (uint16 *)file_dest;
 
 	return (uint16 *)comp_dest;
