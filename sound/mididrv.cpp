@@ -1153,12 +1153,42 @@ void MidiDriver_MIDIEMU::send(uint32 b)
 	break;
 
 	case 0xb0: { /* control change .. pitch bend? */
+		int i;
 		unsigned char ctrl = (unsigned char)((b >> 8) & 0x7F);
 		unsigned char vel = (unsigned char)((b >> 16) & 0x7F);
 
-                switch(ctrl) {
-		case 0x07:
+		/* FIXME: Except for Volume, the Modulation and Sustain
+				  code is just a random guess. */
+        switch(ctrl) {
+		case 0x01:	/* Modulation */
+			for (i = 0; i < 9; i++)
+				if (chp[i][0] == channel)
+					midi_write_adlib(0x20 + adlib_opadd[i], vel);
+			break;
+		case 0x07:	/* Volume */
 			ch[channel].vol = vel;
+			break;
+		case 0x0A:	/* Pan */
+			debug(1, "MIDI sub-command 0xB0 (Key After Touch) case %02X (Pan) not handled in MIDIEMU driver.", ctrl);
+			break;
+		case 0x40:	/* Sustain on/off */
+			for (i = 0; i < 9; i++)
+				if (chp[i][0] == channel)
+					midi_write_adlib(0x80 + adlib_opadd[i], vel);
+			break;
+		case 0x5B:	/* Extended depth effect */
+			debug(1, "MIDI sub-command 0xB0 (Key After Touch) case %02X (Extended Depth) not handled in MIDIEMU driver.", ctrl);
+			break;
+		case 0x5D:	/* Chorus depth */
+			debug(1, "MIDI sub-command 0xB0 (Key After Touch) case %02X (Chorus Depth) not handled in MIDIEMU driver.", ctrl);
+			break;
+		case 0x7B: 	/* All notes off */
+			for (i = 0; i < 9; i++) {
+				if (chp[i][0] == channel) {
+					midi_fm_endnote(i);
+					chp[i][0] = -1;
+				}
+			}
 			break;
 		default:
 			debug(1, "MIDI sub-command 0xB0 (Key After Touch) case %02X not handled in MIDIEMU driver.", ctrl);
