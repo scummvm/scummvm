@@ -246,12 +246,6 @@ Blue's ABC Time
 	Demo	Windows	en	7ddeaf52c8b9a50551ce0aa2ac811d07	BluesABCTimeDemo	khalek, sev
 	Demo	Windows	en	810a9da887aefa597b0cf3c77d262897	BluesABCTimeDemo	sev
 
-Blue's Art Time Activities (Demo)
-	Demo	All	en	d00ffc8c32d17e575fd985d435d2eb88	artdemo		sev
-
-Blue's Reading Time Activities (Demo)
-	Demo	All	en	95818b178d473c989ac753574e8892aa	readdemo	sev
-
 Fatty Bears Birthday Surprise
 	Demo	DOS	en	47e75b1bdcb44c78cb94883d1731ccf8	fbdemo	khalek
 	Demo	Windows	en	22c9eb04455440131ffc157aeb8d40a8	fbdemo	khalek
