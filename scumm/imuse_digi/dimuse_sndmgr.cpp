@@ -82,23 +82,31 @@ void ImuseDigiSndMgr::countElements(byte *ptr, int &numRegions, int &numJumps, i
 void ImuseDigiSndMgr::prepareSound(byte *ptr, int slot) {
 	if (READ_UINT32(ptr) == MKID('Crea')) {
 		bool quit = false;
+		int len;
 
 		int32 offset = READ_LE_UINT16(ptr + 20);
 		int16 version = READ_LE_UINT16(ptr + 22);
 		int16 code = READ_LE_UINT16(ptr + 24);
-		assert(version == 0x010A || version == 0x0114);
-		assert(code == ~version + 0x1234);
 
-		_sounds[slot].region = (_region *)malloc(sizeof(_region) * 4);
+		_sounds[slot].region = (_region *)malloc(sizeof(_region) * 70);
 		_sounds[slot].jump = (_jump *)malloc(sizeof(_jump));
 		_sounds[slot].resPtr = ptr;
 		_sounds[slot].bits = 8;
 		_sounds[slot].channels = 1;
 
 		while (!quit) {
-			int len = READ_LE_UINT32(ptr + offset);
-			offset += 4;
+			len = READ_LE_UINT32(ptr + offset);
 			code = len & 0xFF;
+			if ((code != 0) && (code != 1) && (code != 6) && (code != 7)) {
+				// try again with 2 bytes forward (workaround for some FT sounds (ex.362, 363)
+				offset += 2;
+				len = READ_LE_UINT32(ptr + offset);
+				code = len & 0xFF;
+				if ((code != 0) && (code != 1) && (code != 6) && (code != 7)) {
+					error("Invalid code in VOC file : %d", code);
+				}
+			}
+			offset += 4;
 			len >>= 8;
 			switch(code) {
 			case 0:
@@ -132,7 +140,6 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, int slot) {
 				quit = true;
 				break;
 			}
-			// FIXME some FT samples (ex. 362) has bad length, 2 bytes too short
 			offset += len;
 		}
 	} else if (READ_UINT32(ptr) == MKID('iMUS')) {
