@@ -301,6 +301,7 @@ void Smush::play(const char *filename, const char *directory) {
 	    }
 		SDL_Delay(10);
 	};
+	deinit();
 }
 
 FILE *File::fopenNoCase(const char *filename, const char *directory, const char *mode) {
