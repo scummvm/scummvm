@@ -28,6 +28,61 @@
 class OSystem;
 class MidiDriver;
 
+enum {
+	kDefaultMasterVolume = 192,
+	kDefaultSFXVolume = 192,
+	kDefaultMusicVolume = 192
+};
+
+enum GameId {
+	GID_TENTACLE = 1,
+	GID_MONKEY2 = 2,
+	GID_INDY4 = 3,
+	GID_MONKEY = 4,
+	GID_SAMNMAX = 5,
+	GID_MONKEY_EGA = 6,
+	GID_LOOM256 = 7,
+	GID_ZAK256 = 8,
+	GID_INDY3_256 = 9,
+	GID_LOOM = 10,
+	GID_FT = 11,
+	GID_DIG = 12,
+	GID_MONKEY_VGA = 13,
+	GID_CMI = 14,
+	//GID_MANIAC = 15;
+	//GID_ZAK = 16;
+
+	/* Simon the Sorcerer */
+	GID_SIMON_FIRST = 20,
+	GID_SIMON_LAST = GID_SIMON_FIRST + 8,
+};
+
+enum GameFeatures {
+	GF_NEW_OPCODES = 1,
+	GF_AFTER_V6 = 2,
+	GF_AFTER_V7 = 4,
+	GF_HAS_ROOMTABLE = GF_AFTER_V7,
+	GF_USE_KEY = 8,
+	GF_NEW_COSTUMES = GF_AFTER_V7,
+	GF_USE_ANGLES = GF_AFTER_V7,
+	GF_DRAWOBJ_OTHER_ORDER = 16,
+
+	GF_DEFAULT = GF_USE_KEY,
+
+	GF_SMALL_HEADER = 32,
+	GF_EXTERNAL_CHARSET = GF_SMALL_HEADER,
+	GF_SMALL_NAMES = 64,
+	GF_OLD_BUNDLE = 128,
+	GF_16COLOR = 256,
+	GF_OLD256 = 512,
+	GF_AUDIOTRACKS = 1024,
+	GF_NO_SCALLING = 2048,
+	GF_ADLIB_DEFAULT = 4096,
+	GF_AMIGA = 8192,
+	GF_HUMONGOUS = 16384,
+	GF_AFTER_V8 = 32768
+};
+
 struct VersionSettings {
 	const char *filename;
 	const char *gamename;

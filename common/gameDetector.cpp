@@ -22,9 +22,10 @@
 
 
 #include "stdafx.h"
-#include "scumm/scumm.h"
+//#include "scumm/scumm.h"
 #include "sound/mididrv.h"
 #include "scumm/imuse.h"
+#include "common/engine.h"
 #include "common/gameDetector.h"
 #include "common/config-file.h"
 
