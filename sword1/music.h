@@ -28,7 +28,7 @@
 #define TOTAL_TUNES 270
 
 #define SAMPLERATE 11025
-#define BUFSIZE (4 * SAMPLERATE)
+#define BUFSIZE (6 * SAMPLERATE)
 #define WAVEHEADERSIZE 0x2C
 
 class SoundMixer;
@@ -44,16 +44,20 @@ private:
 	File _musicFile;
 	OSystem *_system;
 	SoundMixer *_mixer;
-	uint16 _fading;
+	bool _fading;
+	uint16 _fadeVal;
 	bool _playing;
 	bool _loop;
 	OSystem::MutexRef _mutex;
 	static void passMixerFunc(void *param, int16 *buf, uint len);
-	void mixer(int16 *buf, uint len);
+	void mixTo(int16 *src, int16 *dst, uint32 len);
+	void mixer(int16 *buf, uint32 len);
 	static const char _tuneList[TOTAL_TUNES][8]; // in staticres.cpp
 	uint32 _waveSize, _wavePos;
+	int16 *_musicBuf; // samples for 6 seconds
 	uint32 _bufPos, _smpInBuf;
-	int16 _musicBuf[BUFSIZE]; // samples for 8 seconds
+	int16 *_fadeBuf;
+	uint32 _fadeBufPos, _fadeSmpInBuf;
 };
 
 #endif // BSMUSIC_H
