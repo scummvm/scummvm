@@ -39,7 +39,6 @@ Player_MOD::Player_MOD(ScummEngine *scumm) {
 		_channels[i].id = 0;
 		_channels[i].vol = 0;
 		_channels[i].freq = 0;
-		_channels[i].ptr = NULL;
 		_channels[i].converter = NULL;
 		_channels[i].input = NULL;
 	}
@@ -56,13 +55,12 @@ Player_MOD::~Player_MOD() {
 	for (int i = 0; i < MOD_MAXCHANS; i++) {
 		if (!_channels[i].id)
 			continue;
-		free(_channels[i].ptr);
 		delete _channels[i].converter;
 		delete _channels[i].input;
 	}
 }
 
-void Player_MOD::setMasterVolume (int vol) {
+void Player_MOD::setMasterVolume(int vol) {
 	_maxvol = vol;
 }
 
@@ -77,7 +75,7 @@ void Player_MOD::clearUpdateProc() {
 	_mixamt = 0;
 }
 
-void Player_MOD::startChannel (int id, void *data, int size, int rate, uint8 vol, int loopStart, int loopEnd, int8 pan) {
+void Player_MOD::startChannel(int id, void *data, int size, int rate, uint8 vol, int loopStart, int loopEnd, int8 pan) {
 	int i;
 	if (id == 0)
 		error("player_mod - attempted to start channel id 0");
@@ -93,7 +91,6 @@ void Player_MOD::startChannel (int id, void *data, int size, int rate, uint8 vol
 	_channels[i].id = id;
 	_channels[i].vol = vol;
 	_channels[i].pan = pan;
-	_channels[i].ptr = data;
 	_channels[i].freq = rate;
 	_channels[i].input = makeLinearInputStream(rate, SoundMixer::FLAG_AUTOFREE | (loopStart != loopEnd ? SoundMixer::FLAG_LOOP : 0), (const byte*)data, size, loopStart, loopEnd - loopStart);
 	_channels[i].converter = makeRateConverter(rate, _mixer->getOutputRate(), false, false);
@@ -104,8 +101,6 @@ void Player_MOD::stopChannel(int id) {
 		error("player_mod - attempted to stop channel id 0");
 	for (int i = 0; i < MOD_MAXCHANS; i++) {
 		if (_channels[i].id == id) {
-			free(_channels[i].ptr);
-			_channels[i].ptr = NULL;
 			delete _channels[i].converter;
 			_channels[i].converter = NULL;
 			delete _channels[i].input;

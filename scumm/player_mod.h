@@ -60,7 +60,6 @@ private:
 		uint8 vol;
 		int8 pan;
 		uint16 freq;
-		void *ptr;
 		RateConverter *converter;
 		AudioInputStream *input;
 	};
