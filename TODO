@@ -314,6 +314,7 @@ SAGA
    be provided by ScummVM if they aren't already.
  * OO'ify (blah_mod.h contains public stuff, blah.h private stuff) [almost
    done]
+ * rand() -> rnd.getRandomNumber()
 
 - bugs/misfeatures -
  * Make actor animation Event-driven. See FIXME in actor.cpp. Maybe it
