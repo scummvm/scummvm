@@ -121,6 +121,8 @@ public:
 	uint16 animCreate(uint16 curImage, const Person *person); // CREATE_ANIM
 	void animErase(uint16 bobNum);
 
+	StateDirection findStateDirection(uint16 state); // == FIND_STATE(state, "DIR");
+
 
 protected:
 	bool _textToggle;
@@ -137,7 +139,6 @@ protected:
 	uint16 _numItems;
 	uint16 _numGraphics;
 
-	uint16 _numObjectBoxes;
 	uint16 _numWalkOffs;
 	uint16 _numObjDesc;
 	uint16 _numCmdList;	//COM_LIST_MAX

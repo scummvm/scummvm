@@ -1340,6 +1340,26 @@ void Logic::animErase(uint16 bobNum) {
 }
 
 
+StateDirection Logic::findStateDirection(uint16 state) {
+	// see queen.c l.4016-4023
+	StateDirection sd = STATE_DIR_BACK;
+	switch ((state >> 2) & 3) {
+	case 0: 
+		sd = STATE_DIR_BACK;
+		break;
+	case 1: 
+		sd = STATE_DIR_RIGHT;
+		break;
+	case 2: 
+		sd = STATE_DIR_LEFT;
+		break;
+	case 3: 
+		sd = STATE_DIR_FRONT;
+		break;
+	}
+	return sd;
+}
+
 
 } // End of namespace Queen
 

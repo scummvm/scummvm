@@ -411,8 +411,20 @@ ObjectData *Walk::joeSetupInRoom(bool autoPosition, uint16 scale) {
 	// TODO: cutawayJoeFacing
 
     // check to see which way Joe entered room
-	// TODO: JoeFacing with _objectData[entryObj].state
-	_logic->joeFacing(DIR_FRONT);
+	switch (_logic->findStateDirection(pod->state)) {
+	case STATE_DIR_FRONT:
+		_logic->joeFacing(DIR_FRONT);
+		break;
+	case STATE_DIR_BACK:
+		_logic->joeFacing(DIR_BACK);
+		break;
+	case STATE_DIR_LEFT:
+		_logic->joeFacing(DIR_LEFT);
+		break;
+	case STATE_DIR_RIGHT:
+		_logic->joeFacing(DIR_RIGHT);
+		break;
+	}
 
 	_joePrevFacing = _logic->joeFacing();
 	BobSlot *pbs = _graphics->bob(0);

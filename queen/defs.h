@@ -89,12 +89,22 @@ enum {
 	PANEL_AREA_INV_4    = 14
 };
 
+
 enum Language {
 	ENGLISH  = 'E',
 	FRENCH   = 'F',
 	GERMAN   = 'G',
 	ITALIAN  = 'I'
 };
+
+
+enum StateDirection {
+	STATE_DIR_BACK  = 0,
+	STATE_DIR_RIGHT = 1,
+	STATE_DIR_LEFT  = 2,
+	STATE_DIR_FRONT = 3
+};
+
 
 } // End of namespace Queen
 
