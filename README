@@ -73,7 +73,6 @@ The following games are SCUMM engine, but NOT supported by ScummVM (yet).
 
         Maniac Mansion
         Zak McKracken (16 color floppy version)
-        Monkey Island 1 (EGA, 16 color floppy version)
         Loom (16 color floppy version)
         Putt-Putt Joins the Parade
         Most other Humongous Entertainment titles
@@ -130,7 +129,7 @@ the section on Reporting Bugs.
 
        Monkey Island (EGA Version):
                 - Music doesn't loop
-		- Sound doesn't play
+                - Sound doesn't play
 
        Indy 4 (Fate Of Atlantis):
                 - Keyboard fighting does not work. ScummVM now defaults to
