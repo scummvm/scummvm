@@ -33,12 +33,8 @@ typedef struct {
 	Boolean screenLocked;
 	Boolean vibrator;
 	Boolean stdPalette;
-/*
-	struct {
-		UInt16 speaker;
-		UInt16 headphone;
-	} volume;
-*/
+	Boolean autoReset;
+
 	struct {
 		UInt8 on;
 		UInt8 off;

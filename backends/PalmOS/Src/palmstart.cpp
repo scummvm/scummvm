@@ -38,19 +38,6 @@ void MemExtInit();
 void MemExtCleanup();
 /***********************************************************************
  *
- *	Entry Points
- *
- ***********************************************************************/
-//UInt8 *screen_1;
-//UInt8 *screen_2;
-//extern FileRef gLogFile;
-//extern UInt16 gHRrefNum;
-//extern UInt16 gVolRefNum;
-//extern Boolean gScreenLocked;
-//extern Boolean gFlipping;
-//extern Boolean gVibrator;
-/***********************************************************************
- *
  *	Internal Structures
  *
  ***********************************************************************/
@@ -96,6 +83,7 @@ typedef	struct {
 	UInt16 debugLevel;
 	Boolean saveConfig;
 	Boolean stdPalette;
+	Boolean autoReset;
 
 	struct {
 		UInt16 speaker;
@@ -127,7 +115,6 @@ typedef struct {
  *
  ***********************************************************************/
 static GlobalsPreferenceType *gPrefs;
-//static SkinInfoType _skin;
 static DmOpenRef _dbP = NULL;
 static UInt16 _lstIndex = 0;	// last index
 static UInt8 __editMode__;
@@ -178,7 +165,6 @@ GlobalsDataType *gVars;
 
 #define sknSelectedState(bmp)	(bmp + sknStateSelected)
 #define sknDisabledState(bmp)	(bmp + sknStateDisabled)
-
 /***********************************************************************
  *
  *	Internal Functions
@@ -745,10 +731,6 @@ static void IcnRedrawTools(DmOpenRef skinDBP)
 			SknSetState(skinDBP, skinButtonGameDelete,sknStateDisabled);
 			SknShowObject(skinDBP, skinButtonGameDelete);
 		}
-//		if (SknGetState(skinDBP, skinButtonGameStart) == sknStateNormal) {
-//			SknSetState(skinDBP, skinButtonGameStart,sknStateDisabled);
-//			SknShowObject(skinDBP, skinButtonGameStart);
-//		}
 		if (SknGetState(skinDBP, skinButtonGameEdit) == sknStateNormal) {
 			SknSetState(skinDBP, skinButtonGameEdit,sknStateDisabled);
 			SknShowObject(skinDBP, skinButtonGameEdit);
@@ -759,10 +741,6 @@ static void IcnRedrawTools(DmOpenRef skinDBP)
 			SknSetState(skinDBP, skinButtonGameDelete,sknStateNormal);
 			SknShowObject(skinDBP, skinButtonGameDelete);
 		}
-//		if (SknGetState(skinDBP, skinButtonGameStart) == sknStateDisabled) {
-//			SknSetState(skinDBP, skinButtonGameStart,sknStateNormal);
-//			SknShowObject(skinDBP, skinButtonGameStart);
-//		}
 		if (SknGetState(skinDBP, skinButtonGameEdit) == sknStateDisabled) {
 			SknSetState(skinDBP, skinButtonGameEdit,sknStateNormal);
 			SknShowObject(skinDBP, skinButtonGameEdit);
@@ -830,8 +808,7 @@ static void GamGetListBounds(RectangleType *rAreaP, RectangleType *rArea2xP) {
 	}
 }
 
-static void GamUpdateList()
-{
+static void GamUpdateList() {
 	MemHandle record;
 	UInt16 index, maxIndex, maxView;
 	GameInfoType *game;
@@ -869,7 +846,7 @@ static void GamUpdateList()
 	index = gPrefs->listPosition;
 	maxIndex = DmNumRecords(_dbP);
 	maxView = rArea.extent.y / sknInfoListItemSize;
-	
+
 	if (index > 0 && (index+maxView) > maxIndex) {
 		index -= (index+maxView) - maxIndex;
 		 gPrefs->listPosition = index;
@@ -880,13 +857,12 @@ static void GamUpdateList()
 
 	SknCloseSkin(skinDBP);
 
-	while (index < (gPrefs->listPosition + maxView) && index < maxIndex)
-	{
+	while (index < (gPrefs->listPosition + maxView) && index < maxIndex) {
 		record = DmQueryRecord(_dbP, index);
 		game = (GameInfoType *)MemHandleLock(record);
-		
+
 		// text box
-		RctSetRectangle(&rField, rArea.topLeft.x, (rArea.topLeft.y + 12 * (index - gPrefs->listPosition)), rArea.extent.x, sknInfoListItemSize);
+		RctSetRectangle(&rField, rArea.topLeft.x, (rArea.topLeft.y + sknInfoListItemSize * (index - gPrefs->listPosition)), rArea.extent.x, sknInfoListItemSize);
 		WinSetClip(&rField);
 
 		if (game->selected) {
@@ -1496,7 +1472,7 @@ static Boolean SoundFormHandleEvent(EventPtr eventP) {
 static void MiscOptionsFormSave() {
 
 	FieldType *fld1P;
-	ControlType *cck1P, *cck2P, *cck3P, *cck4P, *cck5P;	
+	ControlType *cck1P, *cck2P, *cck3P, *cck4P, *cck5P, *cck6P;	
 	FormPtr frmP;
 
 	fld1P = (FieldType *)GetObjectPtr(MiscOptionsDebugLevelField);
@@ -1504,6 +1480,7 @@ static void MiscOptionsFormSave() {
 	cck1P = (ControlType *)GetObjectPtr(MiscOptionsVibratorCheckbox);
 	cck2P = (ControlType *)GetObjectPtr(MiscOptionsNoAutoOffCheckbox);
 	cck3P = (ControlType *)GetObjectPtr(MiscOptionsStdPaletteCheckbox);
+	cck6P = (ControlType *)GetObjectPtr(MiscOptionsAutoResetCheckbox);
 	cck4P = (ControlType *)GetObjectPtr(MiscOptionsDebugCheckbox);
 	cck5P = (ControlType *)GetObjectPtr(MiscOptionsWriteIniCheckbox);
 
@@ -1518,6 +1495,7 @@ static void MiscOptionsFormSave() {
 	gPrefs->vibrator = CtlGetValue(cck1P);
 	gPrefs->autoOff = !CtlGetValue(cck2P);
 	gPrefs->stdPalette = CtlGetValue(cck3P);
+	gPrefs->autoReset = CtlGetValue(cck6P);
 	gPrefs->debug = CtlGetValue(cck4P);
 	gPrefs->saveConfig = CtlGetValue(cck5P);
 
@@ -1537,6 +1515,7 @@ static void MiscOptionsFormInit() {
 	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsVibratorCheckbox), gPrefs->vibrator);
 	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsNoAutoOffCheckbox), !gPrefs->autoOff);
 	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsStdPaletteCheckbox), gPrefs->stdPalette);
+	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsAutoResetCheckbox), gPrefs->autoReset);
 	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsDebugCheckbox), gPrefs->debug);
 	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsWriteIniCheckbox), gPrefs->saveConfig);
 
@@ -2240,8 +2219,7 @@ typedef void (*sndStateOffType)(UInt8 /* kind */);
 #define aOutSndKindHp       (2) /* HeadPhone volume */
 ////////////////////////////////////////////////////////////
 #define MAX_ARG	20
-static void StartScummVM()
-{
+static void StartScummVM() {
 	Char *argvP[MAX_ARG];
 	UInt8 argc	= 0;
 	UInt8 count;
@@ -2253,13 +2231,7 @@ static void StartScummVM()
 
 	bStartScumm = false;	//
 	UInt16 index = GamGetSelected();
-/*	
-	if (index == dmMaxRecordIndex) {
-		// TODO : enable "Continue anyway ?" to use ScummVM selector
-		FrmCustomAlert(FrmWarnAlert,"Error : No game was specified !",0,0);
-		return;
-	}
-*/
+
 	for(count = 0; count < MAX_ARG; count++)
 		argvP[count] = NULL;
 
@@ -2401,8 +2373,7 @@ static void StartScummVM()
 	gVars->volRefNum = gPrefs->volRefNum;
 	gVars->vibrator = gPrefs->vibrator;
 	gVars->stdPalette = gPrefs->stdPalette;
-//	gVars->volume.speaker = gPrefs->volume.speaker;
-//	gVars->volume.headphone = gPrefs->volume.headphone;
+	gVars->autoReset = gPrefs->autoReset;
 
 	if (gVars->vibrator)
 	{
@@ -2440,7 +2411,6 @@ static void StartScummVM()
 
 		Pa1Lib_devHpVolume(gPrefs->volume.headphone, gPrefs->volume.headphone);
 		Pa1Lib_devSpVolume(gPrefs->volume.speaker);
-	//	Pa1Lib_devEqVolume(gPrefs->volume.speaker);
 
 		if (sndStateOnFuncP && sndStateOffFuncP) {
 			((sndStateOnType)(sndStateOnFuncP))(aOutSndKindSp, gPrefs->volume.headphone, gPrefs->volume.headphone);
@@ -2894,7 +2864,7 @@ static Err AppStartCheckHRmode()
 static void AppStopHRMode() {
 	if (gVars->HRrefNum != sysInvalidRefNum) {
 			HRClose(gVars->HRrefNum);
-			//SysLibRemove(gVars->HRrefNum);
+			//SysLibRemove(gVars->HRrefNum);	// never call this !!
 	}
 }
 
@@ -3001,8 +2971,7 @@ static Err AppStart(void)
 	MemSet(gPrefs, dataSize, 0);
 
 	// Read the saved preferences / saved-state information.
-	if (PrefGetAppPreferences(appFileCreator, appPrefID, gPrefs, &dataSize, true) == noPreferenceFound)
-	{
+	if (PrefGetAppPreferences(appFileCreator, appPrefID, gPrefs, &dataSize, true) == noPreferenceFound) {
 		UInt32 romVersion;
 		FtrGet(sysFtrCreator, sysFtrNumROMVersion, &romVersion);
 
@@ -3019,16 +2988,6 @@ static Err AppStart(void)
 		gPrefs->volume.master = 192;
 		gPrefs->volume.music = 192;
 		gPrefs->volume.sfx = 192;
-
-/*		if (gPrefs->skin.nameP)
-			StrCopy(_skin.nameP, prefs.skin.nameP);
-
-		_skin.cardNo = prefs.skin.cardNo;
-		_skin.dbID = prefs.skin.dbID;
-
-		gVibrator = prefs.vibrator;
-		gAutoOff = prefs.autoOff;
-		ArrowManager.position = prefs.listPosition;*/
 	}
 
 	error = AppStartCheckMathLib();
@@ -3091,8 +3050,7 @@ static Err AppStopCheckNotify()
 	return err;
 }
 
-static void AppStop(void)
-{
+static void AppStop(void) {
 	WinEraseWindow();
 	WinPalette(winPaletteSetToDefault, 0, 256, NULL);
 	// Write the saved preferences / saved-state information.  This data 
@@ -3107,9 +3065,12 @@ static void AppStop(void)
 	FrmCloseAllForms();
 	GamCloseDatabase();
 
-	if (gVars)
+	if (gVars) {
+		Boolean autoReset = gVars->autoReset;
 		MemPtrFree(gVars);
-
+		if (autoReset)
+			SysReset();
+	}
 }
 
 
