@@ -947,7 +947,9 @@ rm -f $TMPC $TMPO$EXEEXT
 #
 # Check for nasm
 #
-CheckNASM
+if test "$_have_x86" = yes ; then
+    CheckNASM
+fi
 
 if test "$_nasm" = yes ; then
     _def_nasm='#define USE_NASM'
