@@ -3237,8 +3237,9 @@ void SimonState::processSpecialKeys()
 			break;
 
 		case 't':
-			if (_game & GAME_SIMON2)
-				_vk_t_toggle ^= 1;
+			_vk_t_toggle ^= 1;
+			if (_game == GAME_SIMON1TALKIE || _game == GAME_SIMON1WIN && _vk_t_toggle)
+				warning("Many subtitles are missing in Simon 1 talkie/win data files");
 			break;
 
 		case '+':
@@ -4699,11 +4700,14 @@ void SimonState::go()
 	if (_debugLevel == 4)
 		_start_mainscript = true;
 
-	if (_sound->hasVoice() && _language != 20) {
+	if (_sound->hasVoice()) {
 		_vk_t_toggle = false;
 	} else {
 		_vk_t_toggle = true;
 	}
+	//Only English and German voice files were produced
+	if  (_language >= 2)
+		_vk_t_toggle = true;
 
 	midi._midi_sfx_toggle = false;
 	
