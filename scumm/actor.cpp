@@ -1064,7 +1064,8 @@ int Scumm::getActorFromPos(int x, int y) {
 	for (i = 1; i < _numActors; i++) {
 		if (testGfxUsageBit(x >> 3, i) && !getClass(i, kObjectClassUntouchable)
 			&& y >= _actors[i].top && y <= _actors[i].bottom) {
-			return i;
+			if (_version > 2 || i != VAR(VAR_EGO))
+				return i;
 		}
 	}
 	return 0;
