@@ -70,6 +70,8 @@ protected:
 	// Commands
 	bool Cmd_Exit(char _parameter[255][255]);
 	bool Cmd_Room(char _parameter[255][255]);
+	bool Cmd_LoadGame(char _parameter[255][255]);
+	bool Cmd_SaveGame(char _parameter[255][255]);
 	
 #ifdef USE_CONSOLE
 	static bool debuggerInputCallback(ConsoleDialog *console, const char *input, void *refCon);

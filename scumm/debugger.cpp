@@ -54,6 +54,9 @@ void ScummDebugger::attach(Scumm *s)
 		DCmd_Register("exit", &ScummDebugger::Cmd_Exit);
 		DCmd_Register("quit", &ScummDebugger::Cmd_Exit);
 		DCmd_Register("room", &ScummDebugger::Cmd_Room);
+
+		DCmd_Register("loadgame", &ScummDebugger::Cmd_LoadGame);
+		DCmd_Register("savegame", &ScummDebugger::Cmd_SaveGame);
 	}
 }
 
@@ -258,4 +261,26 @@ bool ScummDebugger::Cmd_Room(char _parameter[255][255]) {
         _s->_fullRedraw = 1;
 
 	return true;
+}
+
+bool ScummDebugger::Cmd_LoadGame(char _parameter[255][255]) {
+        int slot = atoi(_parameter[1]);
+
+        _s->_saveLoadSlot = slot;
+        _s->_saveLoadFlag = 2;
+        _s->_saveLoadCompatible = false;
+
+	_detach_now = true;
+	return false;
+}
+
+bool ScummDebugger::Cmd_SaveGame(char _parameter[255][255]) {
+        int slot = atoi(_parameter[1]);
+
+        _s->_saveLoadSlot = slot;
+        _s->_saveLoadFlag = 1;
+        _s->_saveLoadCompatible = false;
+
+	_detach_now = true;
+	return false;
 }
