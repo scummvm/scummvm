@@ -125,7 +125,8 @@ bool ListWidget::handleKeyDown(char key, int modifiers)
 		case '\n':	// enter
 		case '\r':
 			if (_selectedItem >= 0) {
-				if ((_currentKeyDown != '\n' && _currentKeyDown != '\r')) {		// override continuous enter keydown
+				// override continuous enter keydown
+				if (_editable && (_currentKeyDown != '\n' && _currentKeyDown != '\r')) {
 					_editMode = true;
 					dirty = true;
 					_backupString = _list[_selectedItem];

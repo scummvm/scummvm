@@ -25,9 +25,7 @@
 
 
 #ifdef _MSC_VER
-
 #	pragma warning( disable : 4068 ) // unknown pragma
-
 #endif
 
 
@@ -43,6 +41,14 @@
  * - come up with a new look & feel / theme for the GUI 
  * - ...
  */
+
+enum {
+	kDoubleClickDelay = 500,    // milliseconds
+	kCursorAnimateDelay = 500,
+	
+	kKeyRepeatInitialDelay = 400,
+	kKeyRepeatSustainDelay = 100,
+};
 
 // Built-in font
 static byte guifont[] = {
@@ -126,6 +132,8 @@ void NewGui::runLoop()
 	
 		_system->update_screen();		
 
+		uint32 time = _system->get_msecs();
+
 		while (_system->poll_event(&event)) {
 			switch(event.event_code) {
 				case OSystem::EVENT_KEYDOWN:
@@ -134,8 +142,7 @@ void NewGui::runLoop()
 					// init continuous event stream
 					_currentKeyDown = event.kbd.ascii;
 					_currentKeyDownFlags = event.kbd.flags;
-					_keyRepeatEvenCount = 1;
-					_keyRepeatLoopCount = 0;
+					_keyRepeatTime = time + kKeyRepeatInitialDelay;
 					break;
 				case OSystem::EVENT_KEYUP:
 					activeDialog->handleKeyUp((byte)event.kbd.ascii, event.kbd.flags);
@@ -150,7 +157,6 @@ void NewGui::runLoop()
 				// We don'event distinguish between mousebuttons (for now at least)
 				case OSystem::EVENT_LBUTTONDOWN:
 				case OSystem::EVENT_RBUTTONDOWN: {
-					uint32 time = _system->get_msecs();
 					if (_lastClick.count && (time < _lastClick.time + kDoubleClickDelay)
 					      && ABS(_lastClick.x - event.mouse.x) < 3
 					      && ABS(_lastClick.y - event.mouse.y) < 3) {
@@ -174,17 +180,12 @@ void NewGui::runLoop()
 		// check if event should be sent again (keydown)
 		if (_currentKeyDown != 0)
 		{
-			// if only fired once, wait longer
-			if ( _keyRepeatLoopCount >= ((_keyRepeatEvenCount > 1) ? 2 : 4) )
-			//                                                           ^  loops to wait first event
-			//                                                       ^      loops to wait after first event
+			if (_keyRepeatTime < time)
 			{
 				// fire event
 				activeDialog->handleKeyDown(_currentKeyDown, _currentKeyDownFlags);
-				_keyRepeatEvenCount++;
-				_keyRepeatLoopCount = 0;
+				_keyRepeatTime = time + kKeyRepeatSustainDelay;
 			}
-			_keyRepeatLoopCount++;
 		}
 
 		// Delay for a moment

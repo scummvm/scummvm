@@ -43,11 +43,6 @@ enum {
 	kTextAlignRight,
 };
 
-enum {
-	kDoubleClickDelay = 500,    // milliseconds
-	kCursorAnimateDelay = 500
-};
-
 // Extremly simple stack class, doesn't even do any error checking (for now)
 class DialogStack {
 protected:
@@ -88,8 +83,7 @@ protected:
 	
 	// for continuous events (keyDown)
 	int			_currentKeyDown, _currentKeyDownFlags;
-	int			_keyRepeatLoopCount;
-	int			_keyRepeatEvenCount;
+	uint32		_keyRepeatTime;
 	
 	// position and time of last mouse click (used to detect double clicks)
 	struct {

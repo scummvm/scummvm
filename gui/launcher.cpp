@@ -54,6 +54,7 @@ LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 
 	// Add list with game titles
 	_list = new ListWidget(this, 10, 10, 300, 112);
+	_list->setEditable(false);
 	_list->setNumberingMode(kListNumberingOff);
 	
 	const VersionSettings *v = version_settings;

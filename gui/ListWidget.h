@@ -62,6 +62,8 @@ public:
 	int getSelected() const						{ return _selectedItem; }
 	const String& getSelectedString() const		{ return _list[_selectedItem]; }
 	void setNumberingMode(int numberingMode)	{ _numberingMode = numberingMode; }
+	bool isEditable() const						{ return _editable; }
+	void setEditable(bool editable)				{ _editable = editable; }
 	
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
 	virtual void handleMouseUp(int x, int y, int button, int clickCount);
