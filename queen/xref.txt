@@ -196,8 +196,14 @@ JOEWALK						Logic::_joe.walk (legal values = 0,1,2,3)
 
 JOURNAL
 =======
+clearlefttext()
+drawnames()
+findsaves()
+menutext()
+predrawbobs()
 prompt_do()
 USE_JOURNAL()				Graphics::useJournal
+waitmousezone()
 -
 choice
 decbase
