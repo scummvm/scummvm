@@ -1174,8 +1174,10 @@ void Scumm_v8::o8_verbOps()
 				if (_verbs[slot].verbid == 0)
 					break;
 			}
-			if (slot == _maxVerbs)
-				error("Too many verbs");
+			if (slot == _maxVerbs) {
+				warning("Too many verbs");
+				break;
+			}
 			_curVerbSlot = slot;
 		}
 		vs = &_verbs[_curVerbSlot];
