@@ -198,10 +198,10 @@ void Super2xSaI(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstP
 			else
 				product1a = color5;
 
-			*(dP + 0) = product1a;
-			*(dP + 1) = product1b;
-			*(dP + dstPitch/2 + 0) = product2a;
-			*(dP + dstPitch/2 + 1) = product2b;
+			*(dP + 0) = (uint16) product1a;
+			*(dP + 1) = (uint16) product1b;
+			*(dP + dstPitch/2 + 0) = (uint16) product2a;
+			*(dP + dstPitch/2 + 1) = (uint16) product2b;
 
 			bP += 1;
 			dP += 2;
@@ -303,10 +303,10 @@ void SuperEagle(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstP
 				product1b = Q_INTERPOLATE(color6, color6, color6, product1b);
 			}
 
-			*(dP + 0) = product1a;
-			*(dP + 1) = product1b;
-			*(dP + dstPitch/2 + 0) = product2a;
-			*(dP + dstPitch/2 + 1) = product2b;
+			*(dP + 0) = (uint16) product1a;
+			*(dP + 1) = (uint16) product1b;
+			*(dP + dstPitch/2 + 0) = (uint16) product2a;
+			*(dP + dstPitch/2 + 1) = (uint16) product2b;
 
 			bP += 1;
 			dP += 2;
@@ -440,10 +440,10 @@ void _2xSaI(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch
 				}
 			}
 
-			*(dP + 0) = colorA;
-			*(dP + 1) = product;
-			*(dP + dstPitch/2 + 0) = product1;
-			*(dP + dstPitch/2 + 1) = product2;
+			*(dP + 0) = (uint16) colorA;
+			*(dP + 1) = (uint16) product;
+			*(dP + dstPitch/2 + 0) = (uint16) product1;
+			*(dP + dstPitch/2 + 1) = (uint16) product2;
 
 			bP += 1;
 			dP += 2;
