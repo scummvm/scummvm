@@ -465,9 +465,11 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 	if (_vm->_gameId == GID_CMI) {
 		_sfxMode |= mode;
 		return;
-	}
+	} else if (_vm->_gameId == GID_DIG) {
+		_sfxMode |= mode;
+		if (!(_vm->_features & GF_DEMO))
+			return;
 
-	if ((_vm->_gameId == GID_DIG) && (_vm->_features & GF_DEMO)) {
 		char filename[30];
 		char roomname[10];
 
