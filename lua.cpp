@@ -1192,6 +1192,32 @@ static void GetCurrentScript() {
 	current_script();
 }
 
+static void Load() {
+	lua_Object fileName = lua_getparam(1);
+	if (lua_isnil(fileName)) {
+		Engine::instance()->_savegameFileName = NULL;
+	} else if (lua_isstring(fileName)) {
+		Engine::instance()->_savegameFileName = lua_getstring(fileName);
+	} else {
+		warning("Load() fileName is wrong");
+		return;
+	}
+	Engine::instance()->_savegameLoadRequest = true;
+}
+
+static void Save() {
+	lua_Object fileName = lua_getparam(1);
+	if (lua_isnil(fileName)) {
+		Engine::instance()->_savegameFileName = NULL;
+	} else if (lua_isstring(fileName)) {
+		Engine::instance()->_savegameFileName = lua_getstring(fileName);
+	} else {
+		warning("Save() fileName is wrong");
+		return;
+	}
+	Engine::instance()->_savegameSaveRequest = true;
+}
+
 // Stub function for builtin functions not yet implemented
 
 static void stubWarning() {
@@ -1395,8 +1421,6 @@ static char *stubFuncs[] = {
 	"GetActorTimeScale",
 	"SetActorScale",
 	"SetActorColormap",
-	"Save",
-	"Load",
 	"SearchForFileOrSwapCDs",
 	"EngineDisplay",
 	"SetOffscreenTextPos",
@@ -1680,7 +1704,9 @@ struct luaL_reg builtins[] = {
 	{ "GetTextCharPosition", GetTextCharPosition },
 	{ "GetDiskFreeSpace", GetDiskFreeSpace },
 	{ "Is3DHardwareEnabled", Is3DHardwareEnabled },
-	{ "GetCurrentScript", GetCurrentScript }
+	{ "GetCurrentScript", GetCurrentScript },
+	{ "Save", Save },
+	{ "Load", Load }
 };
 
 void register_lua() {

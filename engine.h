@@ -140,6 +140,10 @@ public:
 		}
 	}
 
+	bool _savegameLoadRequest;
+	bool _savegameSaveRequest;
+	char *_savegameFileName;
+
 private:
 	static Engine *instance_;
 

@@ -46,6 +46,10 @@ void Engine::mainLoop() {
 	unsigned int frameCounter = 0;
 	unsigned int timeAccum = 0;
 	char fps[8] = "";
+	_savegameLoadRequest = false;
+	_savegameSaveRequest = false;
+	_savegameFileName = NULL;
+
 
 	for (;;) {
 		// Process events
