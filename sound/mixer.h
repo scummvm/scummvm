@@ -50,14 +50,13 @@ public:
 	};
 
 	enum {
-		FLAG_UNSIGNED = 1 << 0,         // unsigned samples (default: signed)
-		FLAG_STEREO = 1 << 1,           // sound is in stereo (default: mono)
-		FLAG_16BITS = 1 << 2,           // sound is 16 bits wide (default: 8bit)
-		FLAG_AUTOFREE = 1 << 3,         // sound buffer is freed automagically at the end of playing
-		FLAG_REVERSE_STEREO = 1 << 4,   // reverse the left and right stereo channel
-		FLAG_LOOP = 1 << 5,             // loop the audio
-		FLAG_LITTLE_ENDIAN = 1 << 6		// sample is little endian (default: big endian)
-			
+		FLAG_UNSIGNED = 1 << 0,         /** unsigned samples (default: signed) */
+		FLAG_16BITS = 1 << 1,           /** sound is 16 bits wide (default: 8bit) */
+		FLAG_LITTLE_ENDIAN = 1 << 2,    /** sample is little endian (default: big endian) */
+		FLAG_STEREO = 1 << 3,           /** sound is in stereo (default: mono) */
+		FLAG_REVERSE_STEREO = 1 << 4,   /** reverse the left and right stereo channel */
+		FLAG_AUTOFREE = 1 << 5,         /** sound buffer is freed automagically at the end of playing */
+		FLAG_LOOP = 1 << 6              /** loop the audio */
 	};
 
 private:

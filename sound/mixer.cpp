@@ -57,22 +57,24 @@ public:
 	virtual ~Channel();
 	void destroy();
 	virtual void mix(int16 *data, uint len);
-	virtual void pause(bool paused) {
+
+	virtual bool isMusicChannel() const	= 0;
+
+	void pause(bool paused) {
 		_paused = paused;
 	}
-	virtual bool isPaused() {
+	bool isPaused() {
 		return _paused;
 	}
-	virtual void setChannelVolume(const byte volume) {
+	void setChannelVolume(const byte volume) {
 		_volume = volume;
 	}
-	virtual void setChannelPan(const int8 pan) {
+	void setChannelPan(const int8 pan) {
 		_pan = pan;
 	}
-	virtual int getVolume() const {
+	int getVolume() const {
 		return isMusicChannel() ? _mixer->getMusicVolume() : _mixer->getVolume();
 	}
-	virtual bool isMusicChannel() const	= 0;
 };
 
 class ChannelRaw : public Channel {
