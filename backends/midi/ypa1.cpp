@@ -29,15 +29,15 @@ int MidiDriver_YamahaPa1::open() {
 }
 
 void MidiDriver_YamahaPa1::close() {
-	MidiDriver_MPU401::close();
 	if (_isOpen) {
+		_isOpen = false;
+		MidiDriver_MPU401::close();
 		for (UInt8 channel = 0; channel < 16; channel++) {
 			Pa1Lib_midiControlChange(_midiHandle, channel, 120,0); // all sound off
 			Pa1Lib_midiControlChange(_midiHandle, channel, 121,0); // reset all controller
 			Pa1Lib_midiControlChange(_midiHandle, channel, 123, 0); // all notes off
 		}
 		Pa1Lib_midiClose(_midiHandle);
-		_isOpen = false;
 	}
 }
 
@@ -55,7 +55,7 @@ void MidiDriver_YamahaPa1::send(uint32 b) {
 	
 	chanID = (midiCmd[0] & 0x0F) ;
 	mdCmd = midiCmd[0] & 0xF0;
-	
+
 	switch (mdCmd) {
 		case 0x80:	// note off
 			Pa1Lib_midiNoteOff(_midiHandle, chanID, midiCmd[1], 0);
@@ -85,43 +85,30 @@ MidiDriver *MidiDriver_YamahaPa1_create() {
 
 //////////////////////////////////////////
 // thread emu
-static struct {
-	bool active;
-	int old_time;
-	int sleep;
-
-} g_thread;
-
-static bool t_first_call = false;
+#include "palm.h"
 
 int MidiDriver_MPU401::midi_driver_thread(void *param) {
 	MidiDriver_MPU401 *mid = (MidiDriver_MPU401 *)param;
 	int cur_time;
+	
+	if (mid->_started_thread) {
+		UInt8 id = ((OSystem_PALMOS *)g_system)->_threadID;
+		ThreadEmuPtr thread = &(((OSystem_PALMOS *)g_system)->_thread[id]);
 
-	if (!t_first_call)	
-	{
-		g_thread.active = false;
-		g_thread.old_time = g_system->get_msecs();
-		g_thread.sleep = 10;
-		t_first_call = true;
-	}
-
-	cur_time = g_system->get_msecs();
-	if (cur_time - g_thread.old_time >= g_thread.sleep)
-		g_thread.active = true;
-
-	if (g_thread.active)
-	{
+		// wait 10 msecs
 		cur_time = g_system->get_msecs();
-		while (g_thread.old_time < cur_time) {
-			g_thread.old_time += 10;
-			// Don't use mid->_se_on_timer()
-			// We must come in through IMuseMonitor to protect
-			// against conflicts with script access to IMuse.
-			if (mid->_timer_proc)
-				(*(mid->_timer_proc)) (mid->_timer_param);
+		if (cur_time - thread->old_time >= 10)
+			thread->sleep = false;
+
+		// if 10 msecs
+		if (!thread->sleep) {
+			thread->sleep = true;
+			while (thread->old_time < cur_time) {
+				thread->old_time += 10;
+				if (mid->_timer_proc)
+					(*(mid->_timer_proc)) (mid->_timer_param);
+			}
 		}
-		g_thread.active = false;
 	}
 
 	return 0;
