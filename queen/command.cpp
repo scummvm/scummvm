@@ -864,7 +864,7 @@ bool Command::executeIfDialog(const char *description) {
 
 		_graphics->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
 
-		_logic->dialogue(description, _curCmd.noun, cutaway);
+		_logic->dialogue(description, _selCmd.noun, cutaway);
 
 		while (cutaway[0] != '\0') {
 			char currentCutaway[20];
