@@ -321,12 +321,12 @@ byte AkosRenderer::drawLimb(const CostumeData &cost, int limb) {
 }
 
 void AkosRenderer::codec1_genericDecode() {
-	const byte *src;
+	const byte *mask, *src;
 	byte *dst;
 	byte len, maskbit;
-	uint y, color, height;
-	uint pcolor;
-	const byte *scaleytab, *mask;
+	uint y, color, height, pcolor;
+	const byte *scaleytab;
+	bool masked;
 
 	y = v1.y;
 	src = _srcptr;
@@ -351,8 +351,9 @@ void AkosRenderer::codec1_genericDecode() {
 
 		do {
 			if (*scaleytab++ < _scaleY) {
-				if (color && y < _outheight
-						&& (!v1.mask_ptr || !((mask[0] | mask[v1.imgbufoffs]) & maskbit))) {
+				masked = v1.mask_ptr && ((mask[0] | mask[v1.imgbufoffs]) & maskbit);
+
+				if (color && y < _outheight && !masked) {
 					pcolor = palette[color];
 					if (_shadow_mode == 1) {
 						if (pcolor == 13)
@@ -367,8 +368,8 @@ void AkosRenderer::codec1_genericDecode() {
 					}
 					*dst = pcolor;
 				}
-				mask += _numStrips;
 				dst += _outwidth;
+				mask += _numStrips;
 				y++;
 			}
 			if (!--height) {
@@ -504,7 +505,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	int num_colors;
 	bool use_scaling;
 	int i, j;
-	int skip = 0, startScaleIndexX, tmp_y;
+	int skip = 0, startScaleIndexX, startScaleIndexY;
 	int cur_x, x_right, x_left;
 	int cur_y, y_top, y_bottom;
 	bool y_clipping;
@@ -521,7 +522,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 		v1.scaletable = _vm->getStringAddressVar(_vm->VAR_CUSTOMSCALETABLE);
 	}
 
-	/* Setup color decoding variables */
+	// Setup color decoding variables
 	num_colors = _vm->getResourceDataSize(akpl);
 	if (num_colors == 32) {
 		v1.mask = (1 << 3) - 1;
@@ -600,20 +601,20 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 			step = -step;
 		}
 
-		tmp_y = 0x180 - ymoveCur;
+		startScaleIndexY = 0x180 - ymoveCur;
 		for (i = 0; i < ymoveCur; i++) {
-			if (v1.scaletable[tmp_y++] < _scaleY)
+			if (v1.scaletable[startScaleIndexY++] < _scaleY)
 				cur_y -= step;
 		}
 
 		y_top = y_bottom = cur_y;
-		tmp_y = 0x180 - ymoveCur;
+		startScaleIndexY = 0x180 - ymoveCur;
 		for (i = 0; i < _height; i++) {
-			if (v1.scaletable[tmp_y++] < _scaleY)
+			if (v1.scaletable[startScaleIndexY++] < _scaleY)
 				y_bottom++;
 		}
 
-		tmp_y = 0x180 - ymoveCur;
+		startScaleIndexY = 0x180 - ymoveCur;
 	} else {
 		if (!_mirror)
 			xmoveCur = -xmoveCur;
@@ -633,21 +634,18 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 		y_bottom = cur_y + _height;
 
 		startScaleIndexX = 0x180;
-		tmp_y = 0x180;
+		startScaleIndexY = 0x180;
 	}
 
 	v1.scaleXindex = startScaleIndexX;
-	v1.scaleYindex = tmp_y;
+	v1.scaleYindex = startScaleIndexY;
 	v1.skip_width = _width;
+	v1.scaleXstep = _mirror ? 1 : -1;
 
-	v1.scaleXstep = -1;
-	if (_mirror)
-		v1.scaleXstep = -v1.scaleXstep;
-
-	if ((int) y_top >= (int)_outheight || y_bottom <= 0)
+	if (y_top >= (int)_outheight || y_bottom <= 0)
 		return 0;
 
-	if ((int)x_left >= (int)_outwidth || x_right <= 0)
+	if (x_left >= (int)_outwidth || x_right <= 0)
 		return 1;
 
 	v1.replen = 0;
