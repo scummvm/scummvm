@@ -1158,8 +1158,10 @@ void Scumm::enqueueObject(int objectNumber, int objectX, int objectY, int object
 	BlastObject *eo;
 	ObjectData *od;
 
-	if (_enqueuePos == sizeof(_enqueuedObjects) / sizeof(_enqueuedObjects[0]))
-		error("enqueueObject: overflow");
+	if (_enqueuePos == sizeof(_enqueuedObjects) / sizeof(_enqueuedObjects[0])) {
+		warning("enqueueObject: overflow");
+		return;
+	}
 
 	eo = &_enqueuedObjects[_enqueuePos++];
 	eo->number = objectNumber;

@@ -859,7 +859,7 @@ public:
 	int _screenLeft, _screenTop;
 	uint16 _enqueue_b, _enqueue_c, _enqueue_d, _enqueue_e;
 	int _enqueuePos; 
-	BlastObject _enqueuedObjects[32];
+	BlastObject _enqueuedObjects[128];
 
 	void enqueueObject(int a, int b, int c, int d, int e, int f, int g, int h, int mode);
 	void clearEnqueue() { _enqueuePos = 0; }
