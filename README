@@ -17,7 +17,8 @@ Table of Contents:
  * 3.2 Simon the Sorcerer notes
  * 3.3 Broken Sword notes
  * 3.4 Flight of the Amazon Queen notes
- * 3.5 Known Bugs
+ * 3.5 Beneath a Steel Sky notes
+ * 3.6 Known Bugs
 4.0) Supported Platforms
 5.0) Running ScummVM
  * 5.1 Command Line Options
@@ -234,8 +235,15 @@ and thus removing the run-time dependency on the 'queen.tbl' file.
 This tool also allows you to compress the speech and sound effects with MP3,
 OGG or FLAC.
 
+3.5) Beneath a Steel Sky notes
+---- -------------------------
+As of ScummVM 0.7.0 you need the additional SKY.CPT file to run Beneath a 
+Steel Sky.
+This file is available on the 'Compatibility' page of the ScummVM
+website, you can place it in either the directory containing the other
+datafiles (SKY.DNR, SKY.DSK) or in your extrapath. 
 
-3.5) Known Problems in ScummVM 0.8.0CVS
+3.6) Known Problems in ScummVM 0.8.0CVS
 ---- -----------------------------------
 This release has the following known problems. There is no need to report them,
 although patches to fix them are welcome. If you discover a bug that is not
