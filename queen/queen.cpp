@@ -260,7 +260,7 @@ SaveFile *QueenEngine::readGameStateHeader(uint16 slot, GameStateHeader *gsh) {
 	char name[20];
 	makeGameStateName(slot, name);
 	SaveFile *file = _saveFileMan->open_savefile(name, getSavePath(), false);
-	if (file && file->readUint32BE() == 'SCVM') {
+	if (file && file->readUint32BE() == MKID_BE('SCVM')) {
 		gsh->version = file->readUint32BE();
 		gsh->flags = file->readUint32BE();
 		gsh->dataSize = file->readUint32BE();
