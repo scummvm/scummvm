@@ -36,7 +36,7 @@ General
 * In OSystem, replace all the TOGGLE properties by GET/SET ones. E.g.
   instead of PROP_TOGGLE_FULLSCREEN have PROP_SET_FULLSCREEN and
   PROP_GET_FULLSCREEN.
-  Alternatively (my prefered solution) use plain methods for this:
+  Alternatively (my preferred solution) use plain methods for this:
     void OSystem::setFullscreen(bool)
   and
     bool OSystem::getFullscreen()
@@ -177,7 +177,6 @@ Config Manager
 
 SCUMM
 =====
-* Add actor talkVolume to savegames
 * Fix C64 costume code
 * Make it possible to restart games properly
 * Add support for handling Kanji in FM Towns games (foreground is rendered on a

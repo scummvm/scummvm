@@ -1744,6 +1744,7 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 		MKLINE(Actor, talkColor, sleByte, VER(8)),
 		MKLINE(Actor, talkFrequency, sleInt16, VER(16)),
 		MKLINE(Actor, talkPan, sleInt16, VER(24)),
+		MKLINE(Actor, talkVolume, sleInt16, VER(29)),
 		MKLINE(Actor, scalex, sleByte, VER(8)),
 		MKLINE(Actor, scaley, sleByte, VER(8)),
 		MKLINE(Actor, charset, sleByte, VER(8)),
