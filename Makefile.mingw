@@ -27,7 +27,7 @@ CP  = cp
 #######################################################################
 
 CXXFLAGS:= -g -O -Wall -Wuninitialized -Wno-long-long -Wno-multichar -Wno-unknown-pragmas
-DEFINES +=
+DEFINES += -DINSANE
 LDFLAGS :=
 INCLUDES:= -I. -Icommon -Iscumm $(SDL_CFLAGS)
 LIBS	+= $(SDL_LIBS) -lmingw32 -lwinmm
