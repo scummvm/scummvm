@@ -74,7 +74,8 @@ protected:
 
 	void initialise();
 
-	static int CDECL game_thread_proc(void *param);
+	static void timerHandler(void *ptr);
+	void gotTimerTick();
 };
 
 // XXX: Temporary hack to allow Graphics to call delay()

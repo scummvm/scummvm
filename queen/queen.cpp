@@ -222,7 +222,21 @@ void QueenEngine::initialise(void) {
 	_graphics = new Graphics(_display, _resource);
 	_logic = new Logic(_resource, _graphics, _display);
 	//_sound = new Sound(_mixer, _detector->_sfx_volume);
+	_timer->installTimerProc(&timerHandler, 1000000 / 50, this); //call 50 times per second
 }
+
+
+void QueenEngine::timerHandler(void *ptr) {
+
+	((QueenEngine *)ptr)->gotTimerTick();
+}
+
+
+void QueenEngine::gotTimerTick() {
+
+	_display->handleTimer();
+}
+
 
 void QueenEngine::delay(uint amount) { 
 

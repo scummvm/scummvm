@@ -212,7 +212,7 @@ void Display::palSet(const uint8 *pal, int start, int end, bool updateScreen) {
 	_system->set_palette(tempPal + start * 4, start, end - start + 1);
 	if (updateScreen) {
 		_system->update_screen();
-		_system->delay_msecs(20);
+		waitForTimer();
 	}
 }
 
@@ -783,6 +783,25 @@ void Display::horizontalScroll(int16 scroll) {
 
 	_horizontalScroll = scroll;
 }
+
+
+void Display::handleTimer() {
+
+	_gotTick = true;
+}
+
+
+void Display::waitForTimer() {
+
+	_gotTick = false;
+	while (!_gotTick) {
+		OSystem::Event event;
+
+		_system->delay_msecs(10);
+		while (_system->poll_event(&event));
+	}
+}
+
 
 
 const uint8 TextRenderer::FONT[] = {

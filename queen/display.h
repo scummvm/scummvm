@@ -100,6 +100,9 @@ public:
 
 	bool fullscreen() const { return _fullscreen; }
 
+	void handleTimer();
+	void waitForTimer();
+
 
 private:
 
@@ -136,6 +139,8 @@ private:
 	uint16 _bdWidth, _bdHeight;
 
 	Common::RandomSource _randomizer;
+
+	bool _gotTick;
 
 	Dynalum _dynalum;
 	OSystem *_system;
