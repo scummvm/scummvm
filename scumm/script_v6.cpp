@@ -2405,9 +2405,9 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 		case 6: {
 				uint32 speed;
 				assert(getStringAddressVar(VAR_VIDEONAME));
-				if (strcmp((char *)getStringAddressVar(VAR_VIDEONAME), "sq3.san") == 0)
-					speed = 71000;
-				else {
+				if (strcmp((char *)getStringAddressVar(VAR_VIDEONAME), "sq3.san") == 0) {
+					speed = 1000000 / 14;
+				} else {
 					if (_smushFrameRate == 0) 
 						_smushFrameRate = 14;
 					speed = 1000000 / _smushFrameRate;

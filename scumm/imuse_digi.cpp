@@ -672,7 +672,7 @@ IMuseDigital::IMuseDigital(ScummEngine *scumm)
 
 	_bundle = new Bundle();
 
-	_scumm->_timer->installTimerProc(timer_handler, 40000, this);
+	_scumm->_timer->installTimerProc(timer_handler, 1000000 / 25, this);
 }
 
 IMuseDigital::~IMuseDigital() {
