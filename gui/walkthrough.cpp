@@ -60,16 +60,18 @@ static int getNextWordLength(byte *src, int maxLength) {
 
 bool WalkthroughDialog::loadWalkthroughText() {
 	char filename[260];
-	File file;
+	File *file = new File();
 
 	sprintf(filename, "%s.wkt", _gameName);
-	file.open(filename);
-	if (!file.isOpen())
+	file->open(filename);
+	if (!file->isOpen())
 		return false;
-	int bufferSize = file.size();
+	int bufferSize = file->size();
 	byte *buffer = (byte *)malloc(bufferSize);
-	file.read(buffer, bufferSize);
-	file.close();
+	file->read(buffer, bufferSize);
+	file->close();
+
+	delete file;
 
 	_linesArray.clear();
 
