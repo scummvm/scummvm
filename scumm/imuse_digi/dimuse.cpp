@@ -156,9 +156,6 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 void IMuseDigital::callback() {
 	Common::StackLock lock(_mutex, "IMuseDigital::callback()");
 
-	if (_pause || !_vm)
-		return;
-
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && !track->readyToRemove) {
@@ -166,6 +163,9 @@ void IMuseDigital::callback() {
 				track->readyToRemove = true;
 				continue;
 			}
+
+			if (_pause || !_vm)
+				return;
 
 			if (track->volFadeUsed) {
 				if (track->volFadeStep < 0) {
