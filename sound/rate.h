@@ -1,9 +1,26 @@
-// HACK: Instead of using the full st_i.h (and then st.h and stconfig.h etc.)
-// from SoX, we use this minimal variant which is just sufficient to make
-// resample.c and rate.c compile.
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2001-2003 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
 
-#ifndef RATE_H
-#define RATE_H
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Header$
+ *
+ */
+
+#ifndef SOUND_RATE_H
+#define SOUND_RATE_H
 
 #include <stdio.h>
 #include <assert.h>
@@ -11,7 +28,7 @@
 #include "common/engine.h"
 #include "common/util.h"
 
-#include "audiostream.h"
+#include "sound/audiostream.h"
 
 typedef int16 st_sample_t;
 typedef uint16 st_volume_t;
@@ -48,8 +65,6 @@ static inline void clampedAdd(int16& a, int b) {
 
 
 class RateConverter {
-protected:
-	eff_struct effp;
 public:
 	RateConverter() {}
 	virtual ~RateConverter() {}
@@ -57,15 +72,9 @@ public:
 	virtual int drain(st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) = 0;
 };
 
-class LinearRateConverter : public RateConverter {
-	bool _reverseStereo;
-public:
-	LinearRateConverter(st_rate_t inrate, st_rate_t outrate, bool reverseStereo);
-	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol);
-	virtual int drain(st_sample_t *obuf, st_size_t *osamp, st_volume_t vol);
-};
-
 class ResampleRateConverter : public RateConverter {
+protected:
+	eff_struct effp;
 public:
 	ResampleRateConverter(st_rate_t inrate, st_rate_t outrate, int quality);
 	~ResampleRateConverter();
@@ -73,40 +82,6 @@ public:
 	virtual int drain(st_sample_t *obuf, st_size_t *osamp, st_volume_t vol);
 };
 
-template<bool stereo, bool reverseStereo>
-class CopyRateConverter : public RateConverter {
-public:
-	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
-		int16 tmp[2];
-		st_size_t len = *osamp;
-		assert(input.isStereo() == stereo);
-		while (!input.eof() && len--) {
-			tmp[0] = tmp[1] = input.read() * vol / 256;
-			if (stereo)
-				tmp[reverseStereo ? 0 : 1] = input.read() * vol / 256;
-			clampedAdd(*obuf++, tmp[0]);
-			clampedAdd(*obuf++, tmp[1]);
-		}
-		return (ST_SUCCESS);
-	}
-	virtual int drain(st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
-		return (ST_SUCCESS);
-	}
-};
-
-static inline RateConverter *makeRateConverter(st_rate_t inrate, st_rate_t outrate, bool stereo, bool reverseStereo = false) {
-	if (inrate != outrate) {
-		return new LinearRateConverter(inrate, outrate, reverseStereo);
-		//return new ResampleRateConverter(inrate, outrate, 1);
-	} else {
-		if (stereo) {
-			if (reverseStereo)
-				return new CopyRateConverter<true, true>();
-			else
-				return new CopyRateConverter<true, false>();
-		} else
-			return new CopyRateConverter<false, false>();
-	}
-}
+RateConverter *makeRateConverter(st_rate_t inrate, st_rate_t outrate, bool stereo, bool reverseStereo = false);
 
 #endif

@@ -1,50 +1,53 @@
-/*
-* August 21, 1998
-* Copyright 1998 Fabrice Bellard.
-*
-* [Rewrote completly the code of Lance Norskog And Sundry
-* Contributors with a more efficient algorithm.]
-*
-* This source code is freely redistributable and may be used for
-* any purpose.	 This copyright notice must be maintained. 
-* Lance Norskog And Sundry Contributors are not responsible for 
-* the consequences of using this software.  
-*/
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2001-2003 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Header$
+ *
+ */
 
 /*
- * Sound Tools rate change effect file.
+ * The code in this file is based on code with Copyright 1998 Fabrice Bellard
+ * Fabrice original code is part of SoX (http://sox.sourceforge.net).
+ * Max Horn adapted that code to the needs of ScummVM and rewrote it partial,
+ * in the process removing any use of floating point arithmetic. Various other
+ * improvments over the original code were made.
  */
 
 #include "stdafx.h"
-#include "rate.h"
+#include "sound/rate.h"
 
-#include <math.h>
 
-/*
- * Linear Interpolation.
+#define FRAC_BITS 16
+
+
+/**
+ * Audio rate converter based on simple linear Interpolation.
  *
  * The use of fractional increment allows us to use no buffer. It
  * avoid the problems at the end of the buffer we had with the old
  * method which stored a possibly big buffer of size
  * lcm(in_rate,out_rate).
  *
- * Limited to 16 bit samples and sampling frequency <= 65535 Hz. If
- * the input & output frequencies are equal, a delay of one sample is
- * introduced.	Limited to processing 32-bit count worth of samples.
- *
- * 1 << FRAC_BITS evaluating to zero in several places.	 Changed with
- * an (unsigned long) cast to make it safe.  MarkMLl 2/1/99
- *
- * Replaced all uses of floating point arithmetic by fixed point
- * calculations (Max Horn 2003-07-18).
+ * Limited to sampling frequency <= 65535 Hz.
  */
+class LinearRateConverter : public RateConverter {
+protected:
+	bool _reverseStereo;
 
-#define FRAC_BITS 16
-
-/* Private data */
-
-typedef struct ratestuff
-{
 	/** fractional position of the output stream in input stream unit */
 	unsigned long opos, opos_frac;
 
@@ -58,41 +61,57 @@ typedef struct ratestuff
 	st_sample_t ilast[2];
 	/** current sample(s) in the input stream (left/right channel) */
 	st_sample_t icur[2];
-} *rate_t;
+
+	/** Rate convert data from the given input stream and write the result into obuf. */
+	template<bool stereo, int leftChannel>
+	int st_rate_flow(AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol);
+public:
+	LinearRateConverter(st_rate_t inrate, st_rate_t outrate, bool reverseStereo);
+
+	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
+		if (input.isStereo()) {
+			if (_reverseStereo)
+				return st_rate_flow<true, 1>(input, obuf, osamp, vol);
+			else
+				return st_rate_flow<true, 0>(input, obuf, osamp, vol);
+		} else
+			return st_rate_flow<false, 0>(input, obuf, osamp, vol);
+	}
+	
+	virtual int drain(st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
+		return (ST_SUCCESS);
+	}
+};
+
 
 /*
  * Prepare processing.
  */
-int st_rate_start(eff_t effp, st_rate_t inrate, st_rate_t outrate)
-{
-	rate_t rate = (rate_t) effp->priv;
+LinearRateConverter::LinearRateConverter(st_rate_t inrate, st_rate_t outrate, bool reverseStereo)
+	: _reverseStereo(reverseStereo) {
 	unsigned long incr;
 
 	if (inrate == outrate) {
-		st_fail("Input and Output rates must be different to use rate effect");
-		return (ST_EOF);
+		error("Input and Output rates must be different to use rate effect");
 	}
 
 	if (inrate >= 65536 || outrate >= 65536) {
-		st_fail("rate effect can only handle rates < 65536");
-		return (ST_EOF);
+		error("rate effect can only handle rates < 65536");
 	}
 
-	rate->opos_frac = 0;
-	rate->opos = 0;
+	opos_frac = 0;
+	opos = 0;
 
 	/* increment */
 	incr = (inrate << FRAC_BITS) / outrate;
 
-	rate->opos_inc_frac = incr & ((1UL << FRAC_BITS) - 1);
-	rate->opos_inc = incr >> FRAC_BITS;
+	opos_inc_frac = incr & ((1UL << FRAC_BITS) - 1);
+	opos_inc = incr >> FRAC_BITS;
 
-	rate->ipos = 0;
+	ipos = 0;
 
-	rate->ilast[0] = rate->ilast[1] = 0;
-	rate->icur[0] = rate->icur[1] = 0;
-
-	return (ST_SUCCESS);
+	ilast[0] = ilast[1] = 0;
+	icur[0] = icur[1] = 0;
 }
 
 /*
@@ -100,9 +119,8 @@ int st_rate_start(eff_t effp, st_rate_t inrate, st_rate_t outrate)
  * Return number of samples processed.
  */
 template<bool stereo, int leftChannel>
-int st_rate_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol)
+int LinearRateConverter::st_rate_flow(AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol)
 {
-	rate_t rate = (rate_t) effp->priv;
 	st_sample_t *ostart, *oend;
 	st_sample_t out;
 	unsigned long tmp;
@@ -115,14 +133,14 @@ int st_rate_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size
 	while (obuf < oend && !input.eof()) {
 
 		// read enough input samples so that ipos > opos
-		while (rate->ipos <= rate->opos + 1) {
-			rate->ilast[0] = rate->icur[0];
-			rate->icur[0] = input.read();
+		while (ipos <= opos + 1) {
+			ilast[0] = icur[0];
+			icur[0] = input.read();
 			if (stereo) {
-				rate->ilast[1] = rate->icur[1];
-				rate->icur[1] = input.read();
+				ilast[1] = icur[1];
+				icur[1] = input.read();
 			}
-			rate->ipos++;
+			ipos++;
 
 			// Abort if we reached the end of the input buffer
 			if (input.eof())
@@ -131,10 +149,10 @@ int st_rate_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size
 
 		// Loop as long as the outpos trails behind, and as long as there is
 		// still space in the output buffer.
-		while (rate->ipos > rate->opos + 1) {
+		while (ipos > opos + 1) {
 
 			// interpolate
-			out = (st_sample_t) (rate->ilast[leftChannel] + (((rate->icur[leftChannel] - rate->ilast[leftChannel]) * rate->opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS));
+			out = (st_sample_t) (ilast[leftChannel] + (((icur[leftChannel] - ilast[leftChannel]) * opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS));
 			// adjust volume
 			out = out * vol / 256;
 	
@@ -143,7 +161,7 @@ int st_rate_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size
 			
 			if (stereo) {
 				// interpolate
-				out = (st_sample_t) (rate->ilast[1-leftChannel] + (((rate->icur[1-leftChannel] - rate->ilast[1-leftChannel]) * rate->opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS));
+				out = (st_sample_t) (ilast[1-leftChannel] + (((icur[1-leftChannel] - ilast[1-leftChannel]) * opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS));
 				// adjust volume
 				out = out * vol / 256;
 			}
@@ -152,9 +170,9 @@ int st_rate_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size
 			clampedAdd(*obuf++, out);
 	
 			// Increment output position
-			tmp = rate->opos_frac + rate->opos_inc_frac;
-			rate->opos += rate->opos_inc + (tmp >> FRAC_BITS);
-			rate->opos_frac = tmp & ((1UL << FRAC_BITS) - 1);
+			tmp = opos_frac + opos_inc_frac;
+			opos += opos_inc + (tmp >> FRAC_BITS);
+			opos_frac = tmp & ((1UL << FRAC_BITS) - 1);
 
 			// Abort if we reached the end of the output buffer
 			if (obuf >= oend)
@@ -167,21 +185,52 @@ the_end:
 	return (ST_SUCCESS);
 }
 
-LinearRateConverter::LinearRateConverter(st_rate_t inrate, st_rate_t outrate, bool reverseStereo) {
-	_reverseStereo = reverseStereo;
-	st_rate_start(&effp, inrate, outrate);
-}
 
-int LinearRateConverter::flow(AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
-	if (input.isStereo()) {
-		if (_reverseStereo)
-			return st_rate_flow<true, 1>(&effp, input, obuf, osamp, vol);
-		else
-			return st_rate_flow<true, 0>(&effp, input, obuf, osamp, vol);
-	} else
-		return st_rate_flow<false, 0>(&effp, input, obuf, osamp, vol);
-}
+#pragma mark -
 
-int LinearRateConverter::drain(st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
-	return (ST_SUCCESS);
+
+/**
+ * Simple audio rate converter for the case that the inrate equals the outrate.
+ */
+template<bool stereo, bool reverseStereo>
+class CopyRateConverter : public RateConverter {
+public:
+	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
+		int16 tmp[2];
+		st_size_t len = *osamp;
+		assert(input.isStereo() == stereo);
+		while (!input.eof() && len--) {
+			tmp[0] = tmp[1] = input.read() * vol / 256;
+			if (stereo)
+				tmp[reverseStereo ? 0 : 1] = input.read() * vol / 256;
+			clampedAdd(*obuf++, tmp[0]);
+			clampedAdd(*obuf++, tmp[1]);
+		}
+		return (ST_SUCCESS);
+	}
+	virtual int drain(st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
+		return (ST_SUCCESS);
+	}
+};
+
+
+#pragma mark -
+
+
+/**
+ * Create and return a RateConverter object for the specified input and output rates.
+ */
+RateConverter *makeRateConverter(st_rate_t inrate, st_rate_t outrate, bool stereo, bool reverseStereo) {
+	if (inrate != outrate) {
+		return new LinearRateConverter(inrate, outrate, reverseStereo);
+		//return new ResampleRateConverter(inrate, outrate, 1);
+	} else {
+		if (stereo) {
+			if (reverseStereo)
+				return new CopyRateConverter<true, true>();
+			else
+				return new CopyRateConverter<true, false>();
+		} else
+			return new CopyRateConverter<false, false>();
+	}
 }
