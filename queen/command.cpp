@@ -44,24 +44,14 @@ void CmdText::display(uint8 color) {
 	_vm->display()->setTextCentered(COMMAND_Y_POS, _command, false);
 }
 
-void CmdText::displayTemp(uint8 color, bool locked, Verb v, const char *name) {
+void CmdText::displayTemp(uint8 color, Verb v, const char *name) {
 	char temp[MAX_COMMAND_LEN] = "";
 	if (_isReversed) {
 		if (name != NULL)
 			sprintf(temp, "%s ", name);
-
-		if (locked) {
-			strcat(temp, _vm->logic()->verbName(v));
-			strcat(temp, " ");
-			strcat(temp, _vm->logic()->joeResponse(39));
-		} else
-			strcat(temp, _vm->logic()->verbName(v));
+		strcat(temp, _vm->logic()->verbName(v));
 	} else {
-		if (locked)
-			sprintf(temp, "%s %s", _vm->logic()->joeResponse(39), _vm->logic()->verbName(v));
-		else
-			strcpy(temp, _vm->logic()->verbName(v));
-
+		strcpy(temp, _vm->logic()->verbName(v));
 		if (name != NULL) {
 			strcat(temp, " ");
 			strcat(temp, name);
@@ -122,7 +112,7 @@ void CmdState::init() {
 	oldVerb = verb = action = VERB_NONE;
 	oldNoun = noun = subject[0] = subject[1] = 0;
 	
-	selAction = defaultVerb = VERB_NONE;
+	selAction = VERB_NONE;
 	selNoun = 0;
 }
 
@@ -599,21 +589,6 @@ void Command::grabSelectedItem() {
 		}
 		_state.verb = VERB_NONE;
 	} else {
-//		if (_vm->logic()->joeWalk() == JWM_MOVE) {
-//			_cmdText.clear();
-//			_state.commandLevel = 1;
-//			_vm->logic()->joeWalk(JWM_NORMAL);
-//			_state.action = VERB_NONE;
-//			lookForCurrentIcon();
-//		}
-
-		if (_state.defaultVerb != VERB_NONE) {
-			State::alterDefaultVerb(&id->state, _state.defaultVerb);
-			_state.defaultVerb = VERB_NONE;
-			clear(true);
-			return;
-		}
-
 		if (_cmdText.isEmpty()) {
 			_state.verb = VERB_LOOK_AT;
 			_state.action = VERB_LOOK_AT;
@@ -665,16 +640,6 @@ void Command::grabSelectedNoun() {
 					_cmdText.setVerb(VERB_WALK_TO);
 			}
 		} else if (_mouseKey == Input::MOUSE_RBUTTON) {
-
-			// rmb pressed, do default if one exists
-			if (_state.defaultVerb != VERB_NONE) {
-				// change default of command				
-				State::alterDefaultVerb(&od->state, _state.defaultVerb);
-				_state.defaultVerb = VERB_NONE;
-				clear(true);
-				return;
-			}
-
 			if (_cmdText.isEmpty()) {
 				// Ensures that Right Mkey will select correct default
 				_state.verb = State::findDefaultVerb(od->state);
@@ -682,7 +647,6 @@ void Command::grabSelectedNoun() {
 				_cmdText.setVerb(_state.selAction);
 				_cmdText.addObject(_vm->logic()->objectName(od->name));
 			} else {
-				_state.verb = VERB_NONE;
 				if ((_state.commandLevel == 2 && !_parse) || _state.action != VERB_NONE) {
 					_state.verb = _state.action;
 				} else {
@@ -705,12 +669,7 @@ void Command::grabSelectedVerb() {
 	_state.subject[1] = 0;
 
 	// if right mouse key selected, then store command VERB
-	if (_mouseKey == Input::MOUSE_RBUTTON) {
-		_state.defaultVerb = _state.verb;
-		_cmdText.displayTemp(11, true, _state.verb);
-	}
-	else {
-		_state.defaultVerb = VERB_NONE;
+	if (_mouseKey == Input::MOUSE_LBUTTON) {
 		if (_vm->logic()->joeWalk() == JWM_MOVE && _state.verb != VERB_NONE) {
 			_vm->logic()->joeWalk(JWM_NORMAL);
 		}
@@ -1252,9 +1211,7 @@ void Command::lookForCurrentObject(int16 cx, int16 cy) {
 	if (od == NULL || od->name <= 0) {
 		_state.oldNoun = _state.noun;
 		_vm->display()->clearTexts(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
-		if (_state.defaultVerb != VERB_NONE) {
-			_cmdText.displayTemp(INK_CMD_LOCK, true, _state.defaultVerb);
-		} else if (_state.action != VERB_NONE) {
+		if (_state.action != VERB_NONE) {
 			_cmdText.display(INK_CMD_NORMAL);
 		}
 		return;
@@ -1269,11 +1226,7 @@ void Command::lookForCurrentObject(int16 cx, int16 cy) {
 		}
 	}
 	const char *name = _vm->logic()->objectName(od->name);
-	if (_state.defaultVerb != VERB_NONE) {
-		_cmdText.displayTemp(INK_CMD_LOCK, true, _state.defaultVerb, name);
-	} else {
-		_cmdText.displayTemp(INK_CMD_NORMAL, name);
-	}
+	_cmdText.displayTemp(INK_CMD_NORMAL, name);
 	_state.oldNoun = _state.noun;
 }
 
@@ -1294,14 +1247,10 @@ void Command::lookForCurrentIcon(int16 cx, int16 cy) {
 					_cmdText.setVerb((v == VERB_NONE) ? VERB_LOOK_AT : v);
 				}
 				const char *name = _vm->logic()->objectName(id->name);
-				if (_state.defaultVerb != VERB_NONE) {
-					_cmdText.displayTemp(INK_CMD_LOCK, true, _state.defaultVerb, name);
-				} else {
-					_cmdText.displayTemp(INK_CMD_NORMAL, name);
-				}
+				_cmdText.displayTemp(INK_CMD_NORMAL, name);
 			}
 		} else if (isVerbAction(_state.verb)) {
-			_cmdText.displayTemp(INK_CMD_NORMAL, false, _state.verb);
+			_cmdText.displayTemp(INK_CMD_NORMAL, _state.verb);
 		} else if (_state.verb == VERB_NONE) {
 			_cmdText.display(INK_CMD_NORMAL);
 		}
