@@ -116,7 +116,7 @@ void CDECL warning(const char *s, ...)
 
 	fprintf(stderr, "WARNING: %s!\n", buf);
 #if defined( USE_WINDBG )
-	sprintf(&buf[strlen(buf)], "\n");
+	strcat(buf, "\n");
 	OutputDebugString(buf);
 #endif
 }
@@ -137,7 +137,7 @@ void CDECL debug(int level, const char *s, ...)
 	printf("%s\n", buf);
 
 #if defined( USE_WINDBG )
-	sprintf(&buf[strlen(buf)], "\n");
+	strcat(buf, "\n");
 	OutputDebugString(buf);
 #endif
 
