@@ -713,12 +713,8 @@ void ScummEngine::allocResTypeData(int id, uint32 tag, int num, const char *name
 	debug(9, "allocResTypeData(%s/%s,%s,%d,%d)", resTypeFromId(id), name, tag2str(TO_BE_32(tag)), num, mode);
 	assert(id >= 0 && id < (int)(ARRAYSIZE(res.mode)));
 
-	if (num >= 2000) {
-		/* FIXME: this used to be an error but it seems the newer humongous titles
-		 * exceed this presumably old limit, need to determine a new ceiling
-		 */
-		warning("Too many %ss (%d) in directory", name, num);
-	}
+	if (num >= 8000)
+		error("Too many %ss (%d) in directory", name, num);
 
 	res.mode[id] = mode;
 	res.num[id] = num;

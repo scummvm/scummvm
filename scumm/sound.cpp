@@ -162,7 +162,7 @@ void Sound::playSound(int soundID, int offset) {
 	byte flags = SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
 	bool music = false;
 	
-	if ((_vm->_heversion >= 70) && soundID >= 4000) {
+	if (_vm->_heversion >= 70 && soundID > _vm->_numSounds) {
 		debugC(DEBUG_SOUND, "playSound #%d", soundID);
 
 		int music_offs, total_size;
@@ -202,7 +202,6 @@ void Sound::playSound(int soundID, int offset) {
 			musicFile.seek(+skip, SEEK_CUR);
 
 		}
-
 
 		music_offs = musicFile.readUint32LE();
 		size = musicFile.readUint32LE();

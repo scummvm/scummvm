@@ -477,10 +477,11 @@ protected:
 	/* Global resource tables */
 	int _numVariables, _numBitVariables, _numLocalObjects;
 	int _numGlobalObjects, _numArray, _numVerbs, _numFlObject;
-	int _numInventory, _numRooms, _numScripts, _numSounds;
+	int _numInventory, _numRooms, _numScripts;
 	int _numNewNames, _numGlobalScripts;
 	int _numActors, _numImages, _numRoomVariables;
 public:
+	int _numSounds;
 	int _numCostumes;	// FIXME - should be protected, used by Actor::remapActorPalette
 	int _numCharsets;	// FIXME - should be protected, used by CharsetRenderer
 
