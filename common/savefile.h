@@ -73,22 +73,18 @@ class SaveFileManager {
 public:
 	virtual ~SaveFileManager() {}
 
-	virtual SaveFile *open_savefile(const char *filename,
-					bool saveOrLoad)
-	{
+	virtual SaveFile *open_savefile(const char *filename, bool saveOrLoad) {
 		StdioSaveFile *sf = new StdioSaveFile(filename,
 						      (saveOrLoad? "wb":"rb"));
-		if(!sf->is_open()) {
+		if (!sf->is_open()) {
 			delete sf;
 			sf = NULL;
 		}
 		return sf;
 	}
 
-	virtual void list_savefiles(const char *prefix,
-				    bool *marks, int num)
-	{
-		memset(marks, true, num*sizeof(bool));
+	virtual void list_savefiles(const char * /* prefix */,  bool *marks, int num) {
+		memset(marks, true, num * sizeof(bool));
 	}
 
 };
