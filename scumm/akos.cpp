@@ -845,8 +845,6 @@ void AkosRenderer::codec1_ignorePakCols(int num)
 
 void AkosRenderer::codec5()
 {
-	VirtScreen *vs;
-
 	int left, right, top, bottom;
 	int clip_left, clip_right, clip_top, clip_bottom;
 
@@ -866,8 +864,6 @@ void AkosRenderer::codec5()
 	// What I do know is that drawBomp() doesn't care about masking and
 	// shadows, and these are both needed for Full Throttle and The Dig.
 	
-	vs = &_vm->virtscr[0];
-
 	if (!mirror) {
 		left = (_x - move_x_cur - _width) + 1;
 	} else {
@@ -878,7 +874,7 @@ void AkosRenderer::codec5()
 	top = _y + move_y_cur;
 	bottom = top + _height;
 
-	if (left >= _vm->_realWidth || top >= _vm->_realHeight)
+	if (left >= (int) outwidth || top >= (int) outheight)
 		return;
 
 	// The actual drawing code shouldn't survive even if the image is
@@ -886,9 +882,9 @@ void AkosRenderer::codec5()
 	// be less tolerant...
 
 	clip_left = (left >= 0) ? left : 0;
-	clip_right = (right > _vm->_realWidth) ? _vm->_realWidth : right;
+	clip_right = (right > (int) outwidth) ? (int) outwidth : right;
 	clip_top = (top >= 0) ? top : 0;
-	clip_bottom = (bottom > _vm->_realHeight) ? _vm->_realHeight : bottom;
+	clip_bottom = (bottom > (int) outheight) ? (int) outheight : bottom;
 	
 	if (clip_top < draw_top)
 		draw_top = clip_top;
@@ -922,13 +918,13 @@ void AkosRenderer::codec5()
 	for (src_y = 0, dst_y = top; src_y < _height; src_y++) {
 		byte code, color;
 		uint num, i;
-		byte *d = dest + dst_y * _vm->_realWidth + left;
+		byte *d = dest + dst_y * outwidth + left;
 		byte *s;
 		uint data_length;
 
 		data_length = READ_LE_UINT16(src) + 2;
 
-		if (dst_y < 0 || dst_y >= _vm->_realHeight) {
+		if (dst_y < 0 || dst_y >= (int) outheight) {
 			src += data_length;
 			dst_y++;
 			continue;
@@ -944,7 +940,7 @@ void AkosRenderer::codec5()
 			if (code & 1) {
 				color = *s++;
 				for (i = 0; i < num; i++) {
-					if (dst_x >= 0 && dst_x < _vm->_realWidth) {
+					if (dst_x >= 0 && dst_x < (int) outwidth) {
 						if (color != 255) {
 							if (v1.mask_ptr)
 								mask = v1.mask_ptr + _numStrips * dst_y + (dst_x >> 3);
@@ -962,7 +958,7 @@ void AkosRenderer::codec5()
 			} else {
 				for (i = 0; i < num; i++) {
 					color = s[i];
-					if (dst_x >= 0 && dst_x < _vm->_realWidth) {
+					if (dst_x >= 0 && dst_x < (int) outwidth) {
 						if (color != 255) {
 							if (v1.mask_ptr)
 								mask = v1.mask_ptr + _numStrips * dst_y + (dst_x >> 3);
