@@ -163,8 +163,8 @@
 	#include "extend.h"
 	
 	#define __PALM_OS__
-	#define scumm_stricmp stricmp// FIXME - this is definitly wrong. Try strcasecmp?
-	#define scumm_strnicmp strnicmp// FIXME - this is definitly wrong. Try strncasecmp?
+	#define scumm_stricmp stricmp
+	#define scumm_strnicmp strnicmp
 	
 	#define CHECK_HEAP
 	#define SCUMM_BIG_ENDIAN
