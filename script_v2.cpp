@@ -151,7 +151,7 @@ void Scumm::setupOpcodes2() {
 	&Scumm::o6_setObjectXY,
 	&Scumm::o6_drawBlastObject,
 	/* 64 */
-	&Scumm::o6_samGame,
+	&Scumm::o6_bompWindow,
 	&Scumm::o6_stopObjectCode,
 	&Scumm::o6_stopObjectCode,
 	&Scumm::o6_endCutscene,
@@ -673,17 +673,18 @@ void Scumm::setupOpcodes2() {
 	_opcodes = opcode_list;
 	_opcodes_lookup = opcode_lookup;
 }
-void Scumm::o6_samGame() {
+void Scumm::o6_bompWindow() { // Set BOMP processing window
 	int a, b, c, d;
-	// Sam and Max game opcode
+	
 	d = pop();
 	c = pop();
 	b = pop();
 	a = pop();
 	
-
+	warning("o6_bompWindow(%d, %d, %d, %d)", a, b, c, d);	
 	// sub_274EF(a, b, c, d);
 }
+
 int Scumm::popRoomAndObj(int *room) {
 	int obj;
 
