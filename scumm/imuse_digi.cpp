@@ -993,7 +993,7 @@ void IMuseDigital::stopAllSounds() {
 void IMuseDigital::pause(bool p) {
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		if (_channel[l].used) {
-			_scumm->_mixer->pauseID(_channel[l].handle, p);
+			_scumm->_mixer->pauseHandle(_channel[l].handle, p);
 		}
 	}
 	_pause = p;
