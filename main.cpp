@@ -130,7 +130,6 @@ int main(int argc, char *argv[]) {
   Engine::instance()->font = glGenLists(256);
   #ifdef WIN32
   {
-	#warning entering w32 code
 	HDC   hDC;
 	HFONT font;
 	SDL_SysWMinfo wmi;
