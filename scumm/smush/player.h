@@ -70,6 +70,10 @@ private:
 	bool _voices;			//!< should the player output the voice ?
 	bool _skips[37];			//!< mapping of frame object identifier to show or hide
 	char * _curBuffer;		//!< pointer to the current frame
+	int32 _IACTchannel;
+	byte _IACToutput[4096];
+	int32 _IACTrest;
+
 public:
 	SmushPlayer(Renderer *, bool wait = true, bool output_sound = true);
 	virtual ~SmushPlayer();

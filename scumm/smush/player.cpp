@@ -23,7 +23,9 @@
 #include "common/file.h"
 #include "common/util.h"
 #include "common/engine.h" // for debug, warning, error
+#include "common/engine.h" // for debug, warning, error
 #include "scumm/scumm.h"
+#include "sound/mixer.h"
 
 #include "player.h"
 
@@ -209,6 +211,8 @@ SmushPlayer::SmushPlayer(Renderer * renderer, bool wait, bool sound) :
 							_curBuffer(0) {
 	_fr[0] = _fr[1] = _fr[2] = _fr[3] = 0;
 	assert(_renderer != 0);
+	_IACTchannel = -1;
+	_IACTrest = 0;
 }
 
 SmushPlayer::~SmushPlayer() {
@@ -315,8 +319,89 @@ void SmushPlayer::handleImuseAction8(Chunk & b, int32 flags, int32 unknown, int3
 	int32 nbframes = b.getWord();
 	int32 size = b.getDword();
 	int32 bsize = b.getSize() - 18;
-	handleImuseBuffer(track_id, index, nbframes, size, unknown, track_flags, b, bsize);
+	if (g_scumm->_gameId != GID_CMI) {
+		handleImuseBuffer(track_id, index, nbframes, size, unknown, track_flags, b, bsize);
+	} else {
+		byte output_data[4096];
+		byte * src = (byte*)malloc(bsize);
+		b.read(src, bsize);
+		byte * d_src = src;
+		byte value;
 
+		do {
+			if (bsize == 0)
+				break;
+			if (_IACTrest >= 2) {
+				int32 len = READ_BE_UINT16(_IACToutput) + 2;
+				len -= _IACTrest;
+				if (len > bsize) {
+					memcpy(_IACToutput + _IACTrest, d_src, bsize);
+					_IACTrest += bsize;
+					bsize = 0;
+				} else {
+					memcpy(_IACToutput + _IACTrest, d_src, len);
+					byte * dst = output_data;
+					byte * d_src2 = _IACToutput;
+					d_src2 += 2;
+					int32 count = 1024;
+					byte variable1 = *(d_src2++);
+					byte variable2 = variable1 >> 4;
+					variable1 &= 0x0f;
+					do {
+						value = *(d_src2++);
+						if (value == 0x80) {
+							*(dst++) = *(d_src2++);
+							*(dst++) = *(d_src2++);
+						} else {
+							int16 val = (int8)value << variable2;
+							*(dst++) = val>> 8;
+							*(dst++) = (byte)(val);
+						}
+						value = *(d_src2++);
+						if (value == 0x80) {
+							*(dst++) = *(d_src2++);
+							*(dst++) = *(d_src2++);
+						} else {
+							int16 val = (int8)value << variable1;
+							*(dst++) = val>> 8;
+							*(dst++) = (byte)(val);
+						}
+					} while (--count);
+
+					if (_IACTchannel == -1) {
+						_IACTchannel = g_scumm->_mixer->playStream(NULL, -1, output_data, 0x1000, 22050,
+															SoundMixer::FLAG_STEREO | SoundMixer::FLAG_16BITS);
+					} else {
+						g_scumm->_mixer->append(_IACTchannel, output_data, 0x1000, 22050,
+															SoundMixer::FLAG_STEREO | SoundMixer::FLAG_16BITS);
+					}
+
+					bsize -= len;
+					d_src += len;
+					_IACTrest = 0;
+				}
+			} else {
+				if (bsize == 1) {
+					if (_IACTrest != 0) {
+						*(byte*)(_IACToutput + 1) = *(byte*)d_src++;
+						_IACTrest = 2;
+						bsize--;
+					}
+					bsize = 0;
+					*(byte*)(_IACToutput + 0) = *(byte*)d_src;
+					_IACTrest = 1;
+				} else if (_IACTrest == 0) {
+					*(byte*)(_IACToutput + 0) = *(byte*)d_src++;
+					bsize--;
+					*(byte*)(_IACToutput + 1) = *(byte*)d_src++;
+					_IACTrest = 2;
+					bsize--;
+				}
+			}	
+		} while (bsize != 0);
+	
+		free(src);
+	}
 }
 
 void SmushPlayer::handleImuseAction(Chunk & b) {
@@ -566,8 +651,7 @@ void SmushPlayer::handleFrame(Chunk & b) {
 				handleDeltaPalette(*sub);
 				break;
 			case TYPE_IACT:
-				if (g_scumm->_gameId != GID_CMI)
-					handleImuseAction(*sub);
+				handleImuseAction(*sub);
 				break;
 			case TYPE_STOR:
 				handleStore(*sub);
