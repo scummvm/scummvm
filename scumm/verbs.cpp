@@ -222,7 +222,7 @@ void Scumm::drawVerbBitmap(int verb, int x, int y) {
 	ydiff = y - vs->topline;
 
 	obim = getResourceAddress(rtVerb, verb);
-	if (_features & GF_SMALL_HEADER) {
+	if (_features & GF_OLD_BUNDLE) {
 		int room = READ_LE_UINT32(obim);
 		int object = READ_LE_UINT32(obim + 4);
 		byte *roomptr = getResourceAddress(rtRoom, room);
