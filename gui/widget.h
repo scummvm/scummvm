@@ -54,7 +54,7 @@ enum {
 };
 
 enum {
-	kButtonWidth = 70,
+	kButtonWidth = 72,
 	kButtonHeight = 16
 };
 
