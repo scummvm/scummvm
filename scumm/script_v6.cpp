@@ -2294,11 +2294,10 @@ void ScummEngine_v6::o6_printEgo() {
 void ScummEngine_v6::o6_talkActor() {
 	_actorToPrintStrFor = pop();
 
-	const byte *msg = translateTextAndPlaySpeech(_scriptPointer);
-	_scriptPointer += resStrLen(_scriptPointer) + 1;
-
 	setStringVars(0);
-	actorTalk(msg);
+	actorTalk(_scriptPointer);
+
+	_scriptPointer += resStrLen(_scriptPointer) + 1;
 }
 
 void ScummEngine_v6::o6_talkEgo() {
@@ -3089,7 +3088,6 @@ void ScummEngine_v6::o6_setBoxSet() {
 
 void ScummEngine_v6::decodeParseString(int m, int n) {
 	byte b;
-	const byte *msg;
 
 	b = fetchScriptByte();
 
@@ -3124,23 +3122,23 @@ void ScummEngine_v6::decodeParseString(int m, int n) {
 		_string[m].no_talk_anim = true;
 		break;
 	case 75:		// SO_TEXTSTRING
-		msg = translateTextAndPlaySpeech(_scriptPointer);
-		_scriptPointer += resStrLen(_scriptPointer) + 1;
+		translateText(_scriptPointer, _transText);
 
 		switch (m) {
 		case 0:
-			actorTalk(msg);
+			actorTalk(_scriptPointer);
 			break;
 		case 1:
-			drawString(1, msg);
+			drawString(1, _transText);
 			break;
 		case 2:
-			unkMessage1(msg);
+			unkMessage1(_transText);
 			break;
 		case 3:
-			unkMessage2(msg);
+			unkMessage2(_transText);
 			break;
 		}
+		_scriptPointer += resStrLen(_scriptPointer) + 1;
 
 		break;
 	case 0xFE:

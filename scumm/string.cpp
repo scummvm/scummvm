@@ -523,14 +523,7 @@ void ScummEngine::addMessageToStack(const byte *msg, byte *dstBuffer, int dstBuf
 					addNameToStack(val);
 					break;
 				case 7:
-					if (_version <= 2) {
-						while ((chr = (byte) _scummVars[val++])) {
-							if (chr != '@')
-								*_msgPtrToAdd++ = chr;
-						}
-					} else {
-						addStringToStack(val);
-					}
+					addStringToStack(val);
 					break;
 				case 9:
 				case 10:
@@ -583,7 +576,6 @@ void ScummEngine::addVerbToStack(int var) {
 		for (k = 1; k < _numVerbs; k++) {
 			if (num == _verbs[k].verbid && !_verbs[k].type && !_verbs[k].saveid) {
 				const byte *ptr = getResourceAddress(rtVerb, k);
-				ptr = translateTextAndPlaySpeech(ptr);
 				addMessageToStack(ptr, 0, 0);
 				break;
 			}
@@ -593,23 +585,27 @@ void ScummEngine::addVerbToStack(int var) {
 
 void ScummEngine::addNameToStack(int var) {
 	int num;
-	const byte *ptr = 0;
 
 	num = readVar(var);
-	if (num)
-		ptr = getObjOrActorName(num);
-	if (ptr) {
-		if ((_version == 8) && (ptr[0] == '/')) {
-			translateText(ptr, _transText);
-			addMessageToStack(_transText, 0, 0);
-		} else {
+	if (num) {
+		const byte *ptr = getObjOrActorName(num);
+		if (ptr)
 			addMessageToStack(ptr, 0, 0);
-		}
 	}
 }
 
 void ScummEngine::addStringToStack(int var) {
 	const byte *ptr;
+
+	if (_version <= 2) {
+		byte chr;
+		while ((chr = (byte)_scummVars[var++])) {
+			if (chr != '@')
+				*_msgPtrToAdd++ = chr;
+		}
+
+		return;
+	}
 
 	if (_version == 3 || _version >= 6)
 		var = readVar(var);
@@ -858,12 +854,11 @@ void ScummEngine::loadLanguageBundle() {
 	qsort(_languageIndex, _languageIndexSize, sizeof(LangIndexNode), indexCompare);
 }
 
-const byte *ScummEngine::translateTextAndPlaySpeech(const byte *ptr) {
+void ScummEngine::playSpeech(const byte *ptr) {
 	if ((_gameId == GID_DIG || _gameId == GID_CMI) && (ptr[0] == '/')) {
 		char pointer[20];
 		int i, j;
 
-		translateText(ptr, _transText);
 		for (i = 0, j = 0; (ptr[i] != '/' || j == 0) && j < 19; i++) {
 			if (ptr[i] != '/')
 				pointer[j++] = ptr[i];
@@ -873,18 +868,11 @@ const byte *ScummEngine::translateTextAndPlaySpeech(const byte *ptr) {
 		// Play speech
 		if (!(_features & GF_DEMO) && (_gameId == GID_CMI)) // CMI demo does not have .IMX for voice
 			strcat(pointer, ".IMX");
-		// FIXME: This is a hack to distinguish between 'real' actor speech and
-		// some odd (?) other strings... there is probably a better way to do this.
-		// I just don't know which (yet).
-		if ((_gameId == GID_DIG) || (_gameId == GID_CMI && ptr[i+1] != 0 && ptr[i+1] != 255)) {
-			_sound->stopTalkSound();
-			_imuseDigital->startVoice(kTalkSoundID, pointer);
-			_sound->talkSound(0, 0, 2, -1);
-		}
 
-		ptr = _transText;
+		_sound->stopTalkSound();
+		_imuseDigital->startVoice(kTalkSoundID, pointer);
+		_sound->talkSound(0, 0, 2, -1);
 	}
-	return ptr;
 }
 
 void ScummEngine::translateText(const byte *text, byte *trans_buff) {

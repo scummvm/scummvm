@@ -1077,10 +1077,10 @@ protected:
 	char *_languageBuffer;
 	LangIndexNode *_languageIndex;
 	int _languageIndexSize;
-	byte _transText[500];
+	byte _transText[512];
 
 	void loadLanguageBundle();
-	const byte *translateTextAndPlaySpeech(const byte *ptr);
+	void playSpeech(const byte *ptr);
 public:
 	void translateText(const byte *text, byte *trans_buff);	// Used by class ScummDialog
 

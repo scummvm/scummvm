@@ -1148,6 +1148,13 @@ void ScummEngine::actorTalk(const byte *msg) {
 	Actor *a;
 
 	addMessageToStack(msg, _charsetBuffer, sizeof(_charsetBuffer));
+	
+	while ((_gameId == GID_DIG || _gameId == GID_CMI) && (_charsetBuffer[0] == '/')) {
+		translateText(_charsetBuffer, _transText);
+		if (_transText[0] != '/')
+			playSpeech(_charsetBuffer);
+		memcpy(_charsetBuffer, _transText, MIN(sizeof(_charsetBuffer), sizeof(_transText)));
+	}
 
 	// FIXME: Workaround for bugs #770039 and #770049 
 	if (_gameId == GID_LOOM || _gameId == GID_LOOM256) {

@@ -467,7 +467,6 @@ void ScummEngine_v8::writeVar(uint var, int value) {
 
 void ScummEngine_v8::decodeParseString(int m, int n) {
 	byte b;
-	const byte *msg;
 
 	b = fetchScriptByte();
 
@@ -514,29 +513,30 @@ void ScummEngine_v8::decodeParseString(int m, int n) {
 		_string[m].no_talk_anim = true;
 		break;
 	case 0xD1:		// SO_PRINT_STRING
-		msg = translateTextAndPlaySpeech(_scriptPointer);
-		_scriptPointer += resStrLen(_scriptPointer) + 1;
+		translateText(_scriptPointer, _transText);
 
 		switch (m) {
 		case 0:
-			actorTalk(msg);
+			actorTalk(_scriptPointer);
 			break;
 		case 1:
-			drawString(1, msg);
+			drawString(1, _transText);
 			break;
 		case 2:
-			unkMessage1(msg);
+			unkMessage1(_transText);
 			break;
 		case 3:
-			unkMessage2(msg);
+			unkMessage2(_transText);
 			break;
 		case 5:{
 			byte buffer[256];
-			addMessageToStack(msg, buffer, sizeof(buffer));
-			enqueueText(buffer, _string[m].xpos, _string[m].ypos, _string[m].color, _string[m].charset, _string[m].center);
+			addMessageToStack(_transText, buffer, sizeof(buffer));
+			translateText(buffer, _transText);
+			enqueueText(_transText, _string[m].xpos, _string[m].ypos, _string[m].color, _string[m].charset, _string[m].center);
 			}
 			break;
 		}
+		_scriptPointer += resStrLen(_scriptPointer) + 1;
 
 		break;
 	case 0xD2:		// SO_PRINT_WRAP Set print wordwrap

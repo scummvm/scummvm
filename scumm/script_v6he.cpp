@@ -1405,7 +1405,6 @@ void ScummEngine_v6he::o6_unknownFB() {
 void ScummEngine_v6he::decodeParseString(int m, int n) {
 	byte b;
 	int c;
-	const byte *msg;
 
 	b = fetchScriptByte();
 
@@ -1440,23 +1439,23 @@ void ScummEngine_v6he::decodeParseString(int m, int n) {
 		_string[m].no_talk_anim = true;
 		break;
 	case 75:		// SO_TEXTSTRING
-		msg = translateTextAndPlaySpeech(_scriptPointer);
-		_scriptPointer += resStrLen(_scriptPointer) + 1;
+		translateText(_scriptPointer, _transText);
 
 		switch (m) {
 		case 0:
-			actorTalk(msg);
+			actorTalk(_scriptPointer);
 			break;
 		case 1:
-			drawString(1, msg);
+			drawString(1, _transText);
 			break;
 		case 2:
-			unkMessage1(msg);
+			unkMessage1(_transText);
 			break;
 		case 3:
-			unkMessage2(msg);
+			unkMessage2(_transText);
 			break;
 		}
+		_scriptPointer += resStrLen(_scriptPointer) + 1;
 
 		break;
 	case 0xF9:
