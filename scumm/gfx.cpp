@@ -1055,9 +1055,9 @@ void Gdi::decodeStripEGA(byte *dst, byte *src, int height) {
 				for(int z = 0; z < run; z++) {
 
 					if(z & 1) {
-						*(dst + y * _vm->_realWidth + x) = color & 0xf;
+						*(dst + y * _vm->_realWidth + x) = _vm->_shadowPalette[color & 0xf];
 					} else {
-						*(dst + y * _vm->_realWidth + x) = color >> 4;
+						*(dst + y * _vm->_realWidth + x) = _vm->_shadowPalette[color >> 4];
 					}
 
 					y++;
@@ -1087,7 +1087,7 @@ void Gdi::decodeStripEGA(byte *dst, byte *src, int height) {
 			}
 			
 			for(int z = 0; z < run; z++) {
-				*(dst + y * _vm->_realWidth + x) = color & 0xf;
+				*(dst + y * _vm->_realWidth + x) = _vm->_shadowPalette[color & 0xf];
 				y++;
 
 				if(y >= height){
