@@ -4304,6 +4304,12 @@ void SimonEngine::read_vga_from_datfile_1(uint vga_id) {
 }
 
 byte *SimonEngine::read_vga_from_datfile_2(uint id) {
+	// !!! HACK !!!
+	// allocate more space for text to cope with foreign languages that use
+	// up more space than english. I hope 6400 bytes are enough. This number
+	// is base on: 2 (lines) * 320 (screen width) * 10 (textheight) -- olki
+	int extraBuffer = (id == 5 ? 6400 : 0);
+
 	if (_game & GF_OLD_BUNDLE) {
 		File in;
 		char buf[15];
@@ -4327,10 +4333,10 @@ byte *SimonEngine::read_vga_from_datfile_2(uint id) {
 			byte *buffer = new byte[size];
 			if (in.read(buffer, size) != size)
 				error("read_vga_from_datfile_2: read failed");
-			dst = setup_vga_destination (READ_BE_UINT32 (buffer + size - 4));
+			dst = setup_vga_destination (READ_BE_UINT32(buffer + size - 4) + extraBuffer);
 			decrunch_file_amiga (buffer, dst, size);
 		} else {
-			dst = setup_vga_destination(size);
+			dst = setup_vga_destination(size + extraBuffer);
 			if (in.read(dst, size) != size)
 				error("read_vga_from_datfile_2: read failed");
 		}
@@ -4342,14 +4348,7 @@ byte *SimonEngine::read_vga_from_datfile_2(uint id) {
 		uint32 size = _game_offsets_ptr[id + 1] - offs_a;
 		byte *dst;
 
-		// !!! HACK !!!
-		// allocate more space for text to cope with foreign languages that use
-		// up more space than english. I hope 6400 bytes are enough. This number
-		// is base on: 2 (lines) * 320 (screen width) * 10 (textheight) -- olki
-		if (id == 5)
-			size += 6400;
-
-		dst = setup_vga_destination(size);
+		dst = setup_vga_destination(size + extraBuffer);
 		resfile_read(dst, offs_a, size);
 
 		return dst;
