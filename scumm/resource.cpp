@@ -519,7 +519,7 @@ int Scumm::loadResource(int type, int idx)
 	uint32 fileOffs;
 	uint32 size, tag;
 
-	//debug(1, "loadResource(%s,%d)", resTypeFromId(type),idx);
+	debug(1, "loadResource(%s,%d)", resTypeFromId(type),idx);
 
 	if (type == rtCharset && (_features & GF_SMALL_HEADER)) {
 		loadCharset(idx);
@@ -567,7 +567,9 @@ int Scumm::loadResource(int type, int idx)
 		tag = fileReadDword();
 
 		if (tag != res.tags[type]) {
-			error("%s %d not in room %d at %d+%d", res.name[type], type, roomNr, _fileOffset, fileOffs);
+			error("%s %d not in room %d at %d+%d in file %s",
+					res.name[type], idx, roomNr,
+					_fileOffset, fileOffs, _fileHandle.name());
 		}
 
 		size = _fileHandle.readUint32BE();
