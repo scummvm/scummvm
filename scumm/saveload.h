@@ -32,7 +32,7 @@ namespace Scumm {
 // Can be useful for other ports too :)
 
 #define VER(x) x
-#define CURRENT_VER 25
+#define CURRENT_VER 26
 
 // To work around a warning in GCC 3.2 (and 3.1 ?) regarding non-POD types,
 // we use a small trick: instead of 0 we use 42. Why? Well, it seems newer GCC
@@ -113,11 +113,11 @@ public:
 	uint32 getVersion() { return _savegameVersion; }
 
 	void saveUint32(uint32 d);
-	void saveWord(uint16 d);
+	void saveUint16(uint16 d);
 	void saveByte(byte b);
 
 	byte loadByte();
-	uint16 loadWord();
+	uint16 loadUint16();
 	uint32 loadUint32();
 
 	void saveBytes(void *b, int len);

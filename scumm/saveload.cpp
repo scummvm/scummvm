@@ -608,15 +608,45 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	if (savegameVersion >= VER(13))
 		s->saveLoadArrayOf(_scaleSlots, 20, sizeof(_scaleSlots[0]), scaleSlotsEntries);
 
-	// Save all resource. Fingolfin doesn't like this part of the save/load code a bit.
-	// It is very fragile: e.g. if we change the num limit for one resource type, this
-	// code will break down. Worse, there is no way such a problem could easily be detected.
-	// We should at least store for each save resource it's type and ID. Then at least
-	// we can perform some integrety checks when loading.
-	for (i = rtFirst; i <= rtLast; i++)
-		if (res.mode[i] != 1)
-			for (j = 1; j < res.num[i]; j++)
-				saveLoadResource(s, i, j);
+	// Save all resource.
+	int type, idx;
+	if (savegameVersion >= VER(26)) {
+		// New, more robust resource save/load system. This stores the type
+		// and index of each resource. Thus if we increase e.g. the maximum
+		// number of script resources, savegames won't break.
+		if (s->isSaving()) {
+			for (type = rtFirst; type <= rtLast; type++) {
+				if (res.mode[type] != 1 && type != rtTemp && type != rtBuffer) {
+					s->saveUint16(type);	// Save the res type...
+					for (idx = 0; idx < res.num[type]; idx++) {
+						// Only save resources which actually exist...
+						if (res.address[type][idx]) {
+							s->saveUint16(idx);	// Save the index of the resource
+							saveResource(s, type, idx);
+						}
+					}
+					s->saveUint16(0xFFFF);	// End marker
+				}
+			}
+			s->saveUint16(0xFFFF);	// End marker
+		} else {
+			while ((type = s->loadUint16()) != 0xFFFF) {
+				while ((idx = s->loadUint16()) != 0xFFFF) {
+					assert(0 <= idx && idx < res.num[type]);
+					loadResource(s, type, idx);
+				}
+			}
+		}
+	} else {
+		// Old, fragile resource save/load system. Doesn't save resources
+		// with index 0, and breaks whenever we change the limit on a given
+		// resource type.
+		for (type = rtFirst; type <= rtLast; type++)
+			if (res.mode[type] != 1)
+				for (idx = 1; idx < res.num[type]; idx++)
+					if (type != rtTemp && type != rtBuffer)
+						saveLoadResource(s, type, idx);
+	}
 
 	s->saveLoadArrayOf(_objectOwnerTable, _numGlobalObjects, sizeof(_objectOwnerTable[0]), sleByte);
 	s->saveLoadArrayOf(_objectStateTable, _numGlobalObjects, sizeof(_objectStateTable[0]), sleByte);
@@ -666,14 +696,14 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 			for (j = 1; j < res.num[i]; j++) {
 				if (res.flags[i][j] & RF_LOCK) {
 					s->saveByte(i);
-					s->saveWord(j);
+					s->saveUint16(j);
 				}
 			}
 		s->saveByte(0xFF);
 	} else {
 		int r;
 		while ((r = s->loadByte()) != 0xFF) {
-			res.flags[r][s->loadWord()] |= RF_LOCK;
+			res.flags[r][s->loadUint16()] |= RF_LOCK;
 		}
 	}
 	
@@ -709,10 +739,6 @@ void ScummEngine::saveLoadResource(Serializer *ser, int type, int idx) {
 	byte *ptr;
 	uint32 size;
 
-	/* don't save/load these resource types */
-	if (type == rtTemp || type == rtBuffer)
-		return;
-
 	if (!res.mode[type]) {
 		if (ser->isSaving()) {
 			ptr = res.address[type][idx];
@@ -727,10 +753,10 @@ void ScummEngine::saveLoadResource(Serializer *ser, int type, int idx) {
 			ser->saveBytes(ptr + sizeof(MemBlkHeader), size);
 
 			if (type == rtInventory) {
-				ser->saveWord(_inventory[idx]);
+				ser->saveUint16(_inventory[idx]);
 			}
 			if (type == rtObjectName && ser->getVersion() >= VER(25)) {
-				ser->saveWord(_newNames[idx]);
+				ser->saveUint16(_newNames[idx]);
 			}
 		} else {
 			size = ser->loadUint32();
@@ -738,21 +764,58 @@ void ScummEngine::saveLoadResource(Serializer *ser, int type, int idx) {
 				createResource(type, idx, size);
 				ser->loadBytes(getResourceAddress(type, idx), size);
 				if (type == rtInventory) {
-					_inventory[idx] = ser->loadWord();
+					_inventory[idx] = ser->loadUint16();
 				}
 				if (type == rtObjectName && ser->getVersion() >= VER(25)) {
-					_newNames[idx] = ser->loadWord();
+					_newNames[idx] = ser->loadUint16();
 				}
 			}
 		}
 	} else if (res.mode[type] == 2 && ser->getVersion() >= VER(23)) {
 		// Save/load only a list of resource numbers that need reloaded.
 		if (ser->isSaving()) {
-			ser->saveWord (res.address[type][idx] ? 1 : 0);
+			ser->saveUint16(res.address[type][idx] ? 1 : 0);
 		} else {
-			if (ser->loadWord())
-				ensureResourceLoaded (type, idx);
+			if (ser->loadUint16())
+				ensureResourceLoaded(type, idx);
 		}
+	}
+}
+
+void ScummEngine::saveResource(Serializer *ser, int type, int idx) {
+	assert(res.address[type][idx]);
+
+	if (res.mode[type] == 0) {
+		byte *ptr = res.address[type][idx];
+		uint32 size = ((MemBlkHeader *)ptr)->size;
+
+		ser->saveUint32(size);
+		ser->saveBytes(ptr + sizeof(MemBlkHeader), size);
+
+		if (type == rtInventory) {
+			ser->saveUint16(_inventory[idx]);
+		}
+		if (type == rtObjectName) {
+			ser->saveUint16(_newNames[idx]);
+		}
+	}
+}
+
+void ScummEngine::loadResource(Serializer *ser, int type, int idx) {
+	if (res.mode[type] == 0) {
+		uint32 size = ser->loadUint32();
+		assert(size);
+		createResource(type, idx, size);
+		ser->loadBytes(getResourceAddress(type, idx), size);
+
+		if (type == rtInventory) {
+			_inventory[idx] = ser->loadUint16();
+		}
+		if (type == rtObjectName) {
+			_newNames[idx] = ser->loadUint16();
+		}
+	} else if (res.mode[type] == 2) {
+		ensureResourceLoaded(type, idx);
 	}
 }
 
@@ -768,7 +831,7 @@ void Serializer::saveUint32(uint32 d) {
 	_saveLoadStream->writeUint32LE(d);
 }
 
-void Serializer::saveWord(uint16 d) {
+void Serializer::saveUint16(uint16 d) {
 	_saveLoadStream->writeUint16LE(d);
 }
 
@@ -780,7 +843,7 @@ uint32 Serializer::loadUint32() {
 	return _saveLoadStream->readUint32LE();
 }
 
-uint16 Serializer::loadWord() {
+uint16 Serializer::loadUint16() {
 	return _saveLoadStream->readUint16LE();
 }
 
@@ -820,7 +883,7 @@ void Serializer::saveArrayOf(void *b, int len, int datasize, byte filetype) {
 			break;
 		case sleUint16:
 		case sleInt16:
-			saveWord((int16)data);
+			saveUint16((int16)data);
 			break;
 		case sleInt32:
 		case sleUint32:
@@ -848,10 +911,10 @@ void Serializer::loadArrayOf(void *b, int len, int datasize, byte filetype) {
 			data = loadByte();
 			break;
 		case sleUint16:
-			data = loadWord();
+			data = loadUint16();
 			break;
 		case sleInt16:
-			data = (int16)loadWord();
+			data = (int16)loadUint16();
 			break;
 		case sleUint32:
 			data = loadUint32();
@@ -926,7 +989,7 @@ void Serializer::saveEntries(void *d, const SaveLoadEntry *sle) {
 		} else if (size == 0xFF) {
 			// save reference
 			void *ptr = *((void **)at);
-			saveWord(ptr ? ((*_save_ref) (_ref_me, type, ptr) + 1) : 0);
+			saveUint16(ptr ? ((*_save_ref) (_ref_me, type, ptr) + 1) : 0);
 		} else {
 			// save entry
 			int columns = 1;
@@ -964,7 +1027,7 @@ void Serializer::loadEntries(void *d, const SaveLoadEntry *sle) {
 				sle++;
 		} else if (size == 0xFF) {
 			// load reference...
-			int num = loadWord();
+			int num = loadUint16();
 			// ...but only use it if it's still there in CURRENT_VER
 			if (sle->maxVersion == CURRENT_VER)
 				*((void **)at) = num ? (*_load_ref) (_ref_me, type, num - 1) : NULL;

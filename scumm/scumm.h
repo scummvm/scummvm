@@ -446,7 +446,9 @@ protected:
 		return result;
 	}
 	void saveOrLoad(Serializer *s, uint32 savegameVersion);
-	void saveLoadResource(Serializer *ser, int type, int index);
+	void saveLoadResource(Serializer *ser, int type, int index);	// "Obsolete"
+	void saveResource(Serializer *ser, int type, int index);
+	void loadResource(Serializer *ser, int type, int index);
 	void makeSavegameName(char *out, int slot, bool compatible);
 
 	int getKeyState(int key);
