@@ -34,10 +34,12 @@ LipSynch::LipSynch(const char *filename, const char *data, int len) :
 		error("Invalid file format in %s\n", filename);
 	} else {
 		numEntries_ = (len - 8) / 4;
-		
+
 		// There are cases where the lipsync file has no entries
-		if (numEntries_ == 0)
+		if (numEntries_ == 0) {
 			status_ = false;
+			entries_ = NULL;
+		}
 		else {
 		    status_ = true;
 			data += 8;
