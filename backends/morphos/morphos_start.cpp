@@ -43,8 +43,8 @@
 extern "C" WBStartup *_WBenchMsg;
 
 // For command line parsing
-static STRPTR usageTemplate = "STORY/A,DATAPATH/K,WBWINDOW/S,SCALER/K,AMIGA/S,MIDIUNIT/K/N,MUSIC/K,MUSICVOL/K/N,SFXVOL/K/N,TEMPO/K/N,TALKSPEED/K/N,NOSUBTITLES=NST/S";
-typedef enum { USG_STORY = 0,	 USG_DATAPATH,  USG_WBWINDOW,	 USG_SCALER, 	 USG_AMIGA,	 USG_MIDIUNIT,	 USG_MUSIC,	  USG_MUSICVOL, USG_SFXVOL,    USG_TEMPO,   USG_TALKSPEED, USG_NOSUBTITLES } usageFields;
+static STRPTR usageTemplate = "STORY/A,DATAPATH/K,WINDOW/S,SCALER/K,AMIGA/S,MIDIUNIT/K/N,MUSIC/K,MUSICVOL/K/N,SFXVOL/K/N,TEMPO/K/N,TALKSPEED/K/N,NOSUBTITLES=NST/S";
+typedef enum { USG_STORY = 0,	 USG_DATAPATH,  USG_WINDOW,  USG_SCALER, 	  USG_AMIGA,  USG_MIDIUNIT,  USG_MUSIC,   USG_MUSICVOL, USG_SFXVOL,    USG_TEMPO,   USG_TALKSPEED, USG_NOSUBTITLES } usageFields;
 static LONG	args[13] =  { (ULONG) NULL, (ULONG) NULL, FALSE, (ULONG) NULL, false, (ULONG) NULL, (ULONG) NULL, (ULONG) NULL, (ULONG) NULL,	(ULONG) NULL, (ULONG) NULL, false };
 static RDArgs *ScummArgs = NULL;
 
@@ -155,12 +155,12 @@ static void ReadToolTypes(WBArg *OfFile)
 		strcat(ScummPath, ToolValue);
 	}
 
-	if (ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "WBWINDOW"))
+	if (ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "WINDOW"))
 	{
 		if (MatchToolValue(ToolValue, "YES"))
-			args[USG_WBWINDOW] = TRUE;
+			args[USG_WINDOW] = TRUE;
 		else if (MatchToolValue(ToolValue, "NO"))
-			args[USG_WBWINDOW] = FALSE;
+			args[USG_WINDOW] = FALSE;
 	}
 
 	if (ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "SCALER"))
@@ -321,11 +321,11 @@ int main()
 	}
 
 	argv[argc++] = "ScummVM";
-	if (ScummPath) 				   argv[argc++] = ScummPath;
-	if (!args[ USG_WBWINDOW ]) 	argv[argc++] = "-f";
-	if (args[ USG_NOSUBTITLES ]) 	argv[argc++] = "-n";
-	if (args[ USG_AMIGA ]) 			argv[argc++] = "-a";
-	if (args[ USG_MUSIC ]) 			argv[argc++] = ScummMusicDriver;
+	if (ScummPath) 				argv[argc++] = ScummPath;
+	if (!args[USG_WINDOW]) 		argv[argc++] = "-f";
+	if (args[USG_NOSUBTITLES]) argv[argc++] = "-n";
+	if (args[USG_AMIGA]) 		argv[argc++] = "-a";
+	if (args[USG_MUSIC]) 		argv[argc++] = ScummMusicDriver;
 	if (ScummGfxScaler != ST_INVALID)
 	{
 		sprintf(scaler, "-g%s", MorphOSScaler::GetParamName(ScummGfxScaler));
