@@ -247,8 +247,9 @@ bool ScummDebugger::RunCommand(const char *inputOrig) {
 
 	for(i=0; i < _dcmd_count; i++) {
 		if (!strcmp(_dcmds[i].name, param[0])) {
+			bool result = (this->*_dcmds[i].function)(num_params, param);
 			free(input);
-			return (this->*_dcmds[i].function)(num_params, param);
+			return result;
 		}
 	}
 
@@ -718,25 +719,12 @@ bool ScummDebugger::Cmd_DebugLevel(int argc, const char **argv) {
 
 bool ScummDebugger::Cmd_PrintBox(int argc, const char **argv) {
 	int num, i = 0;
-	num = _s->getNumBoxes();
 
 	if (argc > 1) {
 		for (i = 1; i < argc; i++)
 			printBox(atoi(argv[i]));
 	} else {
-/*
-	byte *boxm = _s->getBoxMatrixBaseAddr();
-
-	Debug_Printf("Walk matrix:\n");
-	for (i = 0; i < num; i++) {
-		while (*boxm != 0xFF) {
-			Debug_Printf("[%d] ", *boxm);
-			boxm++;
-		}
-		boxm++;
-		Debug_Printf("\n");
-	}
-*/
+		num = _s->getNumBoxes();
 		Debug_Printf("\nWalk boxes:\n");
 		for (i = 0; i < num; i++)
 			printBox(i);
@@ -745,6 +733,7 @@ bool ScummDebugger::Cmd_PrintBox(int argc, const char **argv) {
 }
 
 void ScummDebugger::printBox(int box) {
+	assert(box < _s->getNumBoxes());
 	BoxCoords coords;
 	int flags = _s->getBoxFlags(box);
 	int mask = _s->getMaskFromBox(box);
