@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.4  2001/10/10 17:18:33  strigeus
+ * fixed swapped parameters in o_walkActorToActor
+ *
  * Revision 1.3  2001/10/10 11:24:21  strigeus
  * fixed return value from adjustXYToBeInBox
  *
@@ -141,7 +144,7 @@ int Scumm::actorWalkStep(Actor *a) {
 	YXFactor = a->walkdata.YXFactor;
 
 	direction = XYFactor>0 ? 1 : 0;
-	if (abs(YXFactor) * 3 > abs(XYFactor))
+	if (abs(YXFactor) * 2 > abs(XYFactor))
 		direction = YXFactor>0 ? 2 : 3;
 	a->newDirection = direction;
 
