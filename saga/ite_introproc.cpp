@@ -166,6 +166,135 @@ int Scene::ITEIntroRegisterLang() {
 	return SUCCESS;
 }
 
+enum {
+	kCHeader,
+	kCText
+};
+
+enum {
+	kITEPC          = (1 << 0),
+	kITEPCCD        = (1 << 1),
+	kITEMac         = (1 << 2),
+	kITEWyrmKeep    = (1 << 3),
+	kITEAny         = 0xffff,
+	kITENotWyrmKeep = kITEAny & ~kITEWyrmKeep
+};
+
+#define INV(n) (kITEAny & ~(n))
+
+// Queue a page of credits text. The original interpreter did word-wrapping
+// automatically. We currently don't.
+
+EVENT *Scene::ITEQueueCredits(SCENE_INFO *scene_info, int delta_time, int duration, int n_credits, const INTRO_CREDIT credits[]) {
+	int game;
+
+	// The assumption here is that all WyrmKeep versions have the same
+	// credits, regardless of which operating system they're for.
+
+	if (_vm->_features & GF_WYRMKEEP) {
+		game = kITEWyrmKeep;
+	} else if (_vm->_features & GF_MAC_RESOURCES) {
+		game = kITEMac;
+	} else if (_vm->_gameId == GID_ITE_CD_G) {
+		game = kITEPCCD;
+	} else {
+		game = kITEPC;
+	}
+
+	int line_spacing = 0;
+	int paragraph_spacing;
+	int font = 0;
+	int i;
+
+	int n_paragraphs = 0;
+	int credits_height = 0;
+
+	for (i = 0; i < n_credits; i++) {
+		if (!(credits[i].game & game)) {
+			continue;
+		}
+
+		switch (credits[i].type) {
+		case kCHeader:
+			font = SMALL_FONT_ID;
+			line_spacing = 4;
+			n_paragraphs++;
+			break;
+		case kCText:
+			font = MEDIUM_FONT_ID;
+			line_spacing = 2;
+			break;
+		default:
+			error("Unknown credit type");
+		}
+
+		credits_height += (_vm->_font->getHeight(font) + line_spacing);
+	}
+
+	paragraph_spacing = (200 - credits_height) / (n_paragraphs + 3);
+	credits_height += (n_paragraphs * paragraph_spacing);
+
+	int y = paragraph_spacing;
+
+	TEXTLIST_ENTRY text_entry;
+	TEXTLIST_ENTRY *entry_p;
+	EVENT event;
+	EVENT *q_event = NULL;
+
+	text_entry.color = 255;
+	text_entry.effect_color = 0;
+	text_entry.flags = FONT_OUTLINE | FONT_CENTERED;
+	text_entry.text_x = 160;
+
+	for (i = 0; i < n_credits; i++) {
+		if (!(credits[i].game & game)) {
+			continue;
+		}
+
+		switch (credits[i].type) {
+		case kCHeader:
+			font = SMALL_FONT_ID;
+			line_spacing = 4;
+			y += paragraph_spacing;
+			break;
+		case kCText:
+			font = MEDIUM_FONT_ID;
+			line_spacing = 2;
+			break;
+		default:
+			break;
+		}
+
+		text_entry.string = credits[i].string;
+		text_entry.font_id = font;
+		text_entry.text_y = y;
+
+		entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
+
+		// Display text
+		event.type = ONESHOT_EVENT;
+		event.code = TEXT_EVENT;
+		event.op = EVENT_DISPLAY;
+		event.data = entry_p;
+		event.time = delta_time;
+
+		q_event = _vm->_events->queue(&event);
+
+		// Remove text
+		event.type = ONESHOT_EVENT;
+		event.code = TEXT_EVENT;
+		event.op = EVENT_REMOVE;
+		event.data = entry_p;
+		event.time = duration;
+
+		q_event = _vm->_events->chain(q_event, &event);
+
+		y += (_vm->_font->getHeight(font) + line_spacing);
+	}
+
+	return q_event;
+}
+
 int Scene::SC_ITEIntroAnimProc(int param, SCENE_INFO *scene_info, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroAnimProc(param, scene_info);
 }
@@ -647,29 +776,20 @@ int Scene::SC_ITEIntroValleyProc(int param, SCENE_INFO *scene_info, void *refCon
 
 // Handles intro title scene (valley overlook)
 int Scene::ITEIntroValleyProc(int param, SCENE_INFO *scene_info) {
-	TEXTLIST_ENTRY text_entry;
-	TEXTLIST_ENTRY *entry_p;
 	EVENT event;
 	EVENT *q_event;
-	int i;
 
 	const INTRO_CREDIT credits[] = {
-		{160, 44, 9000, CREDIT_DURATION1,
-		"Producer", SMALL_FONT_ID},
-		{160, 56, 0, CREDIT_DURATION1,
-		"Walter Hochbrueckner", MEDIUM_FONT_ID},
-		{160, 88, 0, CREDIT_DURATION1,
-		"Executive Producer", SMALL_FONT_ID},
-		{160, 100, 0, CREDIT_DURATION1,
-		"Robert McNally", MEDIUM_FONT_ID},
-		{160, 132, 0, CREDIT_DURATION1,
-		"Publisher", SMALL_FONT_ID},
-		{160, 144, 0, CREDIT_DURATION1,
-		"Jon Van Caneghem", MEDIUM_FONT_ID}
+		{kITEAny, kCHeader, "Producer"},
+		{kITEAny, kCText, "Walter Hochbrueckner"},
+		{kITEAny, kCHeader, "Executive Producer"},
+		{kITEAny, kCText, "Robert McNally"},
+		{kITEWyrmKeep, kCHeader, "2nd Executive Producer"},
+		{kITENotWyrmKeep, kCHeader, "Publisher"},
+		{kITEAny, kCText, "Jon Van Caneghem"}
 	};
 
 	int n_credits = ARRAYSIZE(credits);
-	int event_delay = 3000;
 
 	switch (param) {
 	case SCENE_BEGIN:
@@ -733,36 +853,7 @@ int Scene::ITEIntroValleyProc(int param, SCENE_INFO *scene_info) {
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue game credits list
-		text_entry.color = 255;
-		text_entry.effect_color = 0;
-		text_entry.flags = FONT_OUTLINE | FONT_CENTERED;
-
-		for (i = 0; i < n_credits; i++) {
-			text_entry.string = credits[i].string;
-			text_entry.font_id = credits[i].font_id;
-			text_entry.text_x = credits[i].text_x;
-			text_entry.text_y = credits[i].text_y;
-
-			entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
-
-			// Display text
-			event.type = ONESHOT_EVENT;
-			event.code = TEXT_EVENT;
-			event.op = EVENT_DISPLAY;
-			event.data = entry_p;
-			event.time = event_delay += credits[i].delta_time;
-
-			q_event = _vm->_events->queue(&event);
-
-			// Remove text
-			event.type = ONESHOT_EVENT;
-			event.code = TEXT_EVENT;
-			event.op = EVENT_REMOVE;
-			event.data = entry_p;
-			event.time = credits[i].duration;
-
-			q_event = _vm->_events->chain(q_event, &event);
-		}
+		q_event = ITEQueueCredits(scene_info, 12000, CREDIT_DURATION1, n_credits, credits);
 
 		// End scene after credit display
 		event.type = ONESHOT_EVENT;
@@ -788,42 +879,33 @@ int Scene::SC_ITEIntroTreeHouseProc(int param, SCENE_INFO *scene_info, void *ref
 
 // Handles second intro credit screen (treehouse view)
 int Scene::ITEIntroTreeHouseProc(int param, SCENE_INFO *scene_info) {
-	TEXTLIST_ENTRY text_entry;
-	TEXTLIST_ENTRY *entry_p;
 	EVENT event;
 	EVENT *q_event;
 
-	int i;
-
-	const INTRO_CREDIT credits[] = {
-		{160, 58, 2000, CREDIT_DURATION1,
-		"Game Design", SMALL_FONT_ID},
-		{160, 70, 0, CREDIT_DURATION1,
-		"Talin, Joe Pearce, Robert McNally", MEDIUM_FONT_ID},
-		{160, 80, 0, CREDIT_DURATION1,
-		"and Carolly Hauksdottir", MEDIUM_FONT_ID},
-		{160, 119, 0, CREDIT_DURATION1,
-		"Screenplay and Dialog", SMALL_FONT_ID},
-		{160, 131, 0, CREDIT_DURATION1,
-		"Robert Leh, Len Wein, and Bill Rotsler",
-		MEDIUM_FONT_ID},
-		{160, 54, 5000, CREDIT_DURATION1,
-		"Art", SMALL_FONT_ID},
-		{160, 66, 0, CREDIT_DURATION1,
-		"Edward Lacabanne, Glenn Price, April Lee,",
-		MEDIUM_FONT_ID},
-		{160, 76, 0, CREDIT_DURATION1,
-		"Lisa Iennaco, Brian Dowrick, Reed", MEDIUM_FONT_ID},
-		{160, 86, 0, CREDIT_DURATION1,
-		"Waller, Allison Hershey and Talin", MEDIUM_FONT_ID},
-		{160, 123, 0, CREDIT_DURATION1,
-		"Art Direction", SMALL_FONT_ID},
-		{160, 135, 0, CREDIT_DURATION1,
-		"Allison Hershey", MEDIUM_FONT_ID}
+	const INTRO_CREDIT credits1[] = {
+		{kITEAny, kCHeader, "Game Design"},
+		{kITEAny, kCText, "Talin, Joe Pearce, Robert McNally"},
+		{kITEAny, kCText, "and Carolly Hauksdottir"},
+		{kITEAny, kCHeader, "Screenplay and Dialog"},
+		{kITEAny, kCText, "Robert Leh, Len Wein, and Bill Rotsler"}
 	};
 
-	int n_credits = ARRAYSIZE(credits);
-	int event_delay = 0;
+	int n_credits1 = ARRAYSIZE(credits1);
+
+	const INTRO_CREDIT credits2[] = {
+		{kITEWyrmKeep, kCHeader, "Art Direction"},
+		{kITEWyrmKeep, kCText, "Allison Hershey"},
+		{kITEAny, kCHeader, "Art"},
+		{kITEAny, kCText, "Edward Lacabanne, Glenn Price, April Lee,"},
+		{kITEWyrmKeep, kCText, "Lisa Sample, Brian Dowrick, Reed Waller,"},
+		{kITEWyrmKeep, kCText, "Allison Hershey and Talin"},
+		{kITENotWyrmKeep, kCText, "Lisa Iennaco, Brian Dowrick, Reed"},
+		{kITENotWyrmKeep, kCText, "Waller, Allison Hershey and Talin"},
+		{kITENotWyrmKeep, kCHeader, "Art Direction"},
+		{kITENotWyrmKeep, kCText, "Allison Hershey"}
+	};
+
+	int n_credits2 = ARRAYSIZE(credits2);
 
 	switch (param) {
 	case SCENE_BEGIN:
@@ -835,8 +917,6 @@ int Scene::ITEIntroTreeHouseProc(int param, SCENE_INFO *scene_info) {
 		event.duration = DISSOLVE_DURATION;
 
 		q_event = _vm->_events->queue(&event);
-
-		event_delay = DISSOLVE_DURATION;
 
 		// Begin title screen background animation 
 		_vm->_anim->setFrameTime(0, 100);
@@ -850,36 +930,8 @@ int Scene::ITEIntroTreeHouseProc(int param, SCENE_INFO *scene_info) {
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue game credits list
-		text_entry.color = 255;
-		text_entry.effect_color = 0;
-		text_entry.flags = FONT_OUTLINE | FONT_CENTERED;
-
-		for (i = 0; i < n_credits; i++) {
-			text_entry.string = credits[i].string;
-			text_entry.font_id = credits[i].font_id;
-			text_entry.text_x = credits[i].text_x;
-			text_entry.text_y = credits[i].text_y;
-
-			entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
-
-			// Display text
-			event.type = ONESHOT_EVENT;
-			event.code = TEXT_EVENT;
-			event.op = EVENT_DISPLAY;
-			event.data = entry_p;
-			event.time = event_delay += credits[i].delta_time;
-
-			q_event = _vm->_events->queue(&event);
-
-			// Remove text
-			event.type = ONESHOT_EVENT;
-			event.code = TEXT_EVENT;
-			event.op = EVENT_REMOVE;
-			event.data = entry_p;
-			event.time = credits[i].duration;
-
-			q_event = _vm->_events->chain(q_event, &event);
-		}
+		q_event = ITEQueueCredits(scene_info, DISSOLVE_DURATION + 2000, CREDIT_DURATION1, n_credits1, credits1);
+		q_event = ITEQueueCredits(scene_info, DISSOLVE_DURATION + 7000, CREDIT_DURATION1, n_credits2, credits2);
 
 		// End scene after credit display
 		event.type = ONESHOT_EVENT;
@@ -905,44 +957,29 @@ int Scene::SC_ITEIntroFairePathProc(int param, SCENE_INFO *scene_info, void *ref
 
 // Handles third intro credit screen (path to puzzle tent)
 int Scene::ITEIntroFairePathProc(int param, SCENE_INFO *scene_info) {
-	TEXTLIST_ENTRY text_entry;
-	TEXTLIST_ENTRY *entry_p;
 	EVENT event;
 	EVENT *q_event;
-	long event_delay = 0;
-	int i;
 
-	INTRO_CREDIT credits[] = {
-		{160, 58, 2000, CREDIT_DURATION1,
-		"Original Game Engine Programming", SMALL_FONT_ID},
-
-		{160, 70, 0, CREDIT_DURATION1,
-		"Talin, Walter Hochbrueckner,", MEDIUM_FONT_ID},
-
-		{160, 80, 0, CREDIT_DURATION1,
-		"Joe Burks and Robert Wiggins", MEDIUM_FONT_ID},
-
-		{160, 119, 0, CREDIT_DURATION1,
-		"Music and Sound", SMALL_FONT_ID},
-
-		{160, 131, 0, CREDIT_DURATION1,
-		"Matt Nathan", MEDIUM_FONT_ID},
-
-		{160, 58, 5000, CREDIT_DURATION1,
-		"Directed by", SMALL_FONT_ID},
-
-		{160, 70, 0, CREDIT_DURATION1,
-		"Talin", MEDIUM_FONT_ID},
-
-		{160, 119, 0, CREDIT_DURATION1,
-		"Game Engine Reconstruction", SMALL_FONT_ID},
-
-		{160, 131, 0, CREDIT_DURATION1,
-		"Alpha software - Use at your own risk.",
-		MEDIUM_FONT_ID}
+	const INTRO_CREDIT credits1[] = {
+		{kITEAny, kCHeader, "Programming"},
+		{kITEAny, kCText, "Talin, Walter Hochbrueckner,"},
+		{kITEAny, kCText, "Joe Burks and Robert Wiggins"},
+		{kITEPCCD | kITEWyrmKeep, kCHeader, "Additional Programming"},
+		{kITEPCCD | kITEWyrmKeep, kCText, "John Bolton"},
+		{kITEMac, kCHeader, "Macintosh Version"},
+		{kITEMac, kCText, "Michael McNally and Robert McNally"},
+		{kITEAny, kCHeader, "Music and Sound"},
+		{kITEAny, kCText, "Matt Nathan"}
 	};
 
-	int n_credits = ARRAYSIZE(credits);
+	int n_credits1 = ARRAYSIZE(credits1);
+
+	const INTRO_CREDIT credits2[] = {
+		{kITEAny, kCHeader, "Directed by"},
+		{kITEAny, kCText, "Talin"}
+	};
+
+	int n_credits2 = ARRAYSIZE(credits2);
 
 	switch (param) {
 	case SCENE_BEGIN:
@@ -954,8 +991,6 @@ int Scene::ITEIntroFairePathProc(int param, SCENE_INFO *scene_info) {
 		event.duration = DISSOLVE_DURATION;
 
 		q_event = _vm->_events->queue(&event);
-
-		event_delay = DISSOLVE_DURATION;
 
 		// Begin title screen background animation 
 		_vm->_anim->setCycles(0, -1);
@@ -969,36 +1004,8 @@ int Scene::ITEIntroFairePathProc(int param, SCENE_INFO *scene_info) {
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue game credits list
-		text_entry.color = 255;
-		text_entry.effect_color = 0;
-		text_entry.flags = FONT_OUTLINE | FONT_CENTERED;
-
-		for (i = 0; i < n_credits; i++) {
-			text_entry.string = credits[i].string;
-			text_entry.font_id = credits[i].font_id;
-			text_entry.text_x = credits[i].text_x;
-			text_entry.text_y = credits[i].text_y;
-
-			entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
-
-			// Display text
-			event.type = ONESHOT_EVENT;
-			event.code = TEXT_EVENT;
-			event.op = EVENT_DISPLAY;
-			event.data = entry_p;
-			event.time = event_delay += credits[i].delta_time;
-
-			q_event = _vm->_events->queue(&event);
-
-			// Remove text
-			event.type = ONESHOT_EVENT;
-			event.code = TEXT_EVENT;
-			event.op = EVENT_REMOVE;
-			event.data = entry_p;
-			event.time = credits[i].duration;
-
-			q_event = _vm->_events->chain(q_event, &event);
-		}
+		q_event = ITEQueueCredits(scene_info, DISSOLVE_DURATION + 2000, CREDIT_DURATION1, n_credits1, credits1);
+		q_event = ITEQueueCredits(scene_info, DISSOLVE_DURATION + 7000, CREDIT_DURATION1, n_credits2, credits2);
 
 		// End scene after credit display
 		event.type = ONESHOT_EVENT;

@@ -36,6 +36,8 @@ namespace Saga {
 class ActionMap;
 class ObjectMap;
 
+struct EVENT;
+
 struct SCENE_BGINFO {
 	int bg_x;
 	int bg_y;
@@ -193,12 +195,10 @@ struct INTRO_CAPTION {
 };
 
 struct INTRO_CREDIT {
-	int text_x;
-	int text_y;
-	int delta_time;
-	int duration;
+	int game;
+	// int lang;	// TODO
+	int type;
 	const char *string;
-	int font_id;
 };
 
 
@@ -322,6 +322,7 @@ class Scene {
 	static int SC_ITEIntroFaireTentProc(int param, SCENE_INFO *scene_info, void *refCon);
 
  private:
+	EVENT *ITEQueueCredits(SCENE_INFO *scene_info, int delta_time, int duration, int n_credits, const INTRO_CREDIT credits[]);
 	int ITEIntroAnimProc(int param, SCENE_INFO *scene_info);
 	int ITEIntroCave1Proc(int param, SCENE_INFO *scene_info);
 	int ITEIntroCave2Proc(int param, SCENE_INFO *scene_info);

@@ -360,7 +360,7 @@ static GAMEDESC GameDescs[] = {
 		ARRAYSIZE(ITEMACDEMO_GameFonts),
 		ITEMACDEMO_GameFonts,
 		&ITECD_GameSound,
-		GF_VOX_VOICES | GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES
+		GF_VOX_VOICES | GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_WYRMKEEP
 	},
 
 	// Inherit the earth - early MAC Demo version
@@ -378,7 +378,7 @@ static GAMEDESC GameDescs[] = {
 		ARRAYSIZE(ITEMACDEMO_GameFonts),
 		ITEMACDEMO_GameFonts,
 		&ITECD_GameSound,
-		GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES
+		GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_WYRMKEEP
 	},
 
 	// Inherit the earth - MAC CD Wyrmkeep version

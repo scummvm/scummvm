@@ -36,7 +36,7 @@ ActorTableData ActorTable[ACTORCOUNT] = {
 //    ------------ ---- ----  ---- ----- ---- ---- ---- --- ---- -- -- --
 	{ kProtagonist | kExtended,
 					 0,   1,    0,    0,   0,  37, 135,  0,   1,  0, 0, 0},	// map party
-																			// spr and frm numbers taken from permanent actors list
+	// spr and frm numbers taken from permanent actors list
 	{ kFollower | kExtended,
 					 1,   0,    0,    0,   0,  45, 177,  1, 132,  0, 0, 0},	// Okk
 	{ kFollower | kExtended,
