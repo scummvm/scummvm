@@ -70,6 +70,7 @@ Sound::Sound(ScummEngine *parent)
 	_curSoundPos(0),
 	_overrideFreq(0),
 	_currentCDSound(0),
+	_currentMusic(0),
 	_soundsPaused(false),
 	_sfxMode(0) {
 	
@@ -85,7 +86,9 @@ Sound::~Sound() {
 
 void Sound::addSoundToQueue(int sound) {
 	_vm->VAR(_vm->VAR_LAST_SOUND) = sound;
-	_vm->ensureResourceLoaded(rtSound, sound);
+	// Music resources are in separate file
+	if (!((_vm->_heversion == 70 || _vm->_heversion == 71) && sound >= 4000))
+		_vm->ensureResourceLoaded(rtSound, sound);
 	addSoundToQueue2(sound);
 }
 
@@ -155,6 +158,52 @@ void Sound::playSound(int soundID) {
 	debugC(DEBUG_SOUND, "playSound #%d (room %d)", soundID, 
 		_vm->getResourceRoomNr(rtSound, soundID));
 
+	if ((_vm->_heversion == 70 || _vm->_heversion == 71) && soundID >= 4000) {
+		int music_offs, total_size;
+		char buf[32];
+		File musicFile;
+		sprintf(buf, "%s.he4", _vm->getGameName());
+		if (musicFile.open(buf) == false) {
+			return;
+		}
+		musicFile.seek(4, SEEK_SET);
+		total_size = musicFile.readUint32BE();
+		debug(1, "Total Music file size %d", total_size);
+
+		// Skip header junk
+		musicFile.seek(+20, SEEK_CUR);
+
+		// Skip to correct music header
+		uint skip = (soundID - 4001) * 25;
+		musicFile.seek(+skip, SEEK_CUR);
+
+		// Skip to offsets
+		musicFile.seek(+21, SEEK_CUR);
+
+		music_offs = musicFile.readUint32LE();
+		size = musicFile.readUint32LE();
+
+		musicFile.seek(music_offs, SEEK_SET);
+
+
+		if (music_offs > total_size || (size + music_offs) > total_size)
+			error("Bad music offsets");
+
+		byte *src_ptr = (byte *) calloc(size, 1);
+		musicFile.read(src_ptr, size);
+		musicFile.close();
+
+		rate = 11025;
+
+		// Allocate a sound buffer, copy the data into it, and play
+		sound = (char *)malloc(size);
+		memcpy(sound, src_ptr, size);
+		_currentMusic = soundID;
+		_vm->_mixer->stopHandle(_musicChannelHandle);
+		_vm->_mixer->playRaw(&_musicChannelHandle, sound, size, rate, flags, soundID);
+		return;
+	}
+
 	ptr = _vm->getResourceAddress(rtSound, soundID);
 	if (!ptr) {
 		return;
@@ -213,7 +262,9 @@ void Sound::playSound(int soundID) {
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr + 8, size);
-		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
+		_currentMusic = soundID;
+		_vm->_mixer->stopHandle(_musicChannelHandle);
+		_vm->_mixer->playRaw(&_musicChannelHandle, sound, size, rate, flags, soundID);
 	}	
 	// Support for sampled sound effects in Monkey Island 1 and 2
 	else if (READ_UINT32(ptr) == MKID('SBL ')) {
@@ -658,16 +709,17 @@ int Sound::isSoundRunning(int sound) const {
 
 	if (_vm->_features & GF_HUMONGOUS) {
 		if (sound == 10000)
-			// FIXME: Music resources in HE7 games are currently unsupported,
-			// so prevent music restart attempt
-			return 1;
+			return (_musicChannelHandle.isActive()) ? _currentMusic : 0;
 		else if (sound == -2) {
 			return isSfxFinished();
 		} else if (sound == -1) {
 			// getSoundStatus(), with a -1, will return the
 			// ID number of the first active music it finds.
 			// TODO handle MRAW (pcm music) in humongous games
-			return _vm->_imuse->getSoundStatus(sound);
+			if (_currentMusic)
+				return _currentMusic;
+			else
+				return _vm->_imuse->getSoundStatus(sound);
 		}
 	}
 

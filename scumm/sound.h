@@ -73,8 +73,11 @@ protected:
 	int _overrideFreq;
 
 	int _currentCDSound;
+	int _currentMusic;
 public:
 	PlayingSoundHandle _talkChannelHandle;	// Handle of mixer channel actor is talking on
+	PlayingSoundHandle _musicChannelHandle;	// Handle of mixer channel music is on
+
 	bool _soundsPaused;
 	byte _sfxMode;
 
