@@ -958,6 +958,7 @@ int main(int argc, char* argv[]) {
 	scumm->_gameText = detector._gameText;
 	scumm->_features = detector._features;
 	scumm->_soundCardType = detector._soundCardType;
+	scumm->_noSubtitles = detector._noSubtitles;
 
 	scumm->delta=6;
 	

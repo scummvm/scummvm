@@ -1,9 +1,10 @@
 ScummVM README
-last updated: 2002-03-08
+Last updated:    2002-04-05
+Release version: 0.2.0
 ------------------------------------------------------------------------
 
-For more info, please visit the ScummVM home page at:
-http://scummvm.sourceforge.net/
+For more information, the latest release and progress reports, please visit
+the ScummVM home page at: http://scummvm.sourceforge.net/
 
 About:
 ------
@@ -11,7 +12,9 @@ About:
 ScummVM is an implementation of the SCUMM (Script Creation Utility for
 Maniac Mansion) engine used in various Lucas Arts games such as Monkey
 Island and Day of the Tentacle. At this time ScummVM should be considered
-ALPHA software, as it's still under heavy development.
+ALPHA software, as it's still under heavy development. Be aware that while
+many games will work with few major bugs, crashes can happen. Also note
+that saved games can, and probably will, be incompatible between releases.
 
 Supported Games:
 ----------------
@@ -25,7 +28,9 @@ be playable to the end:
 	Day Of The Tentacle
         Sam & Max
 
-The following games should load, but are not yet in a playable form.
+The following games should load, but are not yet fully playable. If you want
+the latest updates on game compatability, visit our website and view the
+compatability chart.
 
 	Loom (256 color CD version)
 	Zak McKraken (256 color FM Towns version)
@@ -46,6 +51,23 @@ features that sometimes make it impossible to finish the game. Save often,
 and please file a bug report (follow the link on the homepage) if you discover
 such a bug. Attach a saved game if possible.
 
+Supported Platforms:
+-------------------
+ScummVM has been ported to run on many platforms and operating systems.
+Links to these ports can be found either on the ScummVM webpage or by a
+google search. Many thanks to the effort of porters. If you have a port of
+ScummVM and wish to commit it into the main CVS, feel free to contact us!
+
+	Windows 	- SDL/GDI
+	Windows CE 	- SDL		(iPaq and other handheld devices)
+	Linux		- SDL/X11 	(includes iPaq devices running Linux)
+	Macintosh	- SDL/CUSTOM	(Including Classic and Mac OS X)
+	AmigaOS		- SDL/AGA
+	MorphOS		- SDL
+	Acorn (RiscOS)	- ???
+	BeOS		- ???
+	Dreamcast	- ???
+
 Known Bugs:
 -----------
 This release has the following known bugs. There is no need to report them,
@@ -58,15 +80,33 @@ although patches to fix them are welcome.
                 - Some overlap may occur in graphics, expecially the intro
                 - Music does not work with USE_ADLIB
 
-       Monkey 1 (CD):
-                - CD Music is not yet working.
+       Day of the Tentacle:
+                - German talkie version may crash when talking to Thomas
+                  Jefferson.
+
+Reporting Bugs:
+---------------
+To report a bug, please create a SourceForge account and follow the bugs
+link from our homepage. Please make sure the bug is reproducable, and 
+still exists in the latest daily build/current CVS version.
+
+Please include the following information:
+		- Game version (PLEASE test the latest CVS/Daily build)
+		- Bug details, including instructions on reproducing
+		- Language of game (English, German, etc)
+		- Version of game (Talkie, Floppy...)
+		- Platform and Compiler (Win32, Linux, etc)
+		- Attach a save game if possible
 
 Compiling:
 ----------
 
 You need SDL-1.2.2 (maybe older versions will work), and a supported
-compiler. At the moment only GCC and Microsoft Visual C++ are
-supported.
+compiler. Several compilers, including GCC, mingw and Microsoft Visual C++
+are supported. If you wish to use MP3-compressed CD tracks or .SOU files,
+you will need to install the MAD library and define COMPRESSED_SOUND_FILE.
+Tools for compressing .SOU files to .SO3 files can be found in the 'tools'
+CVS module, or in the 'scummvm-tools' package.
 
 	GCC:
 	* Type make (or gmake if that's what GNU make is called on your
@@ -79,6 +119,7 @@ supported.
 	  windows.cpp from the project and add sdl.cpp.
 	* Enter the path to the SDL include files in Tools|Options|Directories
 	* Now it should compile successfully.
+
 
 Running:
 --------
@@ -106,7 +147,8 @@ you would make a shortcut with this command:
 
   C:\Games\LucasArts\scummvm.exe -f -pC:\Games\LucasArts\monkey\ monkey
 
-Or, if you have, for example, Full Throttle on CD, and you CD drive is D:.
+Or, if you have, for example, Full Throttle on CD, and you CD drive is D:,
+and you wish to disable subtitles and run in fullscreen:
 
   C:\Games\LucasArts\scummvm.exe -f -n -pD:\resource\ ft
 
@@ -204,7 +246,8 @@ Savegames:
 
 Savegames are by default put in the current directory. You can use the
 environment variable SCUMMVM_SAVEPATH to specify where to put save games.
-Don't forget the trailing directory separator.
+Don't forget the trailing directory separator. Also be aware that saved games
+can, and probably WILL, break between ScummVM releases.
 
 Bash Example:
         export SCUMMVM_SAVEPATH=/tmp/scummvm_savegames/
