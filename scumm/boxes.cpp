@@ -211,7 +211,9 @@ Box *Scumm::getBoxBaseAddr(int box) {
 	// the tent to the elders, box = 2, but ptr[0] = 2 -> errors out.
 	// Hence we disable the check for now. Maybe in PASS (and other old games)
 	// we shouldn't subtract 1 from ptr[0] when performing the check?
-	if (_gameId != GID_MONKEY_EGA)
+	// this also seems to be incorrect for atari st demo of zak
+	// and assumingly other v2 games
+	if ((_gameId != GID_MONKEY_EGA) && !(_features & GF_AFTER_V2))
 		checkRange(ptr[0] - 1, 0, box, "Illegal box %d");
 
 	if (_features & GF_SMALL_HEADER) {
