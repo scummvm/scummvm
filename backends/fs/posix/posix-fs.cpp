@@ -22,10 +22,8 @@
 
 #include "../fs.h"
 
-#ifdef MACOSX
 #include <sys/types.h>
 #include <sys/param.h>
-#endif
 #include <sys/stat.h>
 #include <dirent.h>
 #include <stdio.h>
