@@ -1930,6 +1930,9 @@ byte *Player::parse_midi(byte *s)
 		case 93:										/* chorus */
 			part->set_chorus(value);
 			break;
+		case 123:										/* unhold pedal */
+			part->set_pedal(false);
+			break;
 		default:
 			warning("parse_midi: invalid control %d", control);
 		}
