@@ -47,8 +47,8 @@ CFG=scumm - Win32 (WCE emulator) Debug
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
 CPP=cl.exe
-# ADD BASE CPP /nologo /W3 /GX- /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "NDEBUG" /D "_LIB" /YX /Gs8192 /GF /O2  /c
-# ADD CPP /nologo /W3 /GX- /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "NDEBUG" /D "_LIB" /YX /Gs8192 /GF /O2  /c
+# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "NDEBUG" /D "_LIB" /YX /Gs8192 /GF /O2 /c
+# ADD CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "NDEBUG" /D "_LIB" /YX /Gs8192 /GF /O2 /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -73,8 +73,8 @@ BSC32=bscmake.exe
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
 CPP=cl.exe
-# ADD BASE CPP /nologo /W3 /GX- /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "_LIB" /YX /Gs8192 /GF  /c
-# ADD CPP /nologo /W3 /GX- /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "_LIB" /YX /Gs8192 /GF  /c
+# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "_LIB" /YX /Gs8192 /GF /c
+# ADD CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "_LIB" /YX /Gs8192 /GF /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -99,8 +99,8 @@ BSC32=bscmake.exe
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
 CPP=clarm.exe
-# ADD BASE CPP /nologo /W3 /GX- /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /O2 /M$(CECrtMT)  /c
-# ADD CPP /nologo /W3 /GX- /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /D "_LIB" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "DISABLE_QUEEN" /D "USE_VORBIS" /D "WIN32" /YX /O2 /M$(CECrtMT)  /c
+# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /O2 /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /D "_LIB" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "WIN32" /D "DISABLE_SWORD1" /YX /O2 /M$(CECrtMT) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -125,8 +125,8 @@ BSC32=bscmake.exe
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
 CPP=clarm.exe
-# ADD BASE CPP /nologo /W3 /GX- /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug)  /c
-# ADD CPP /nologo /W3 /GX- /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /D "_LIB" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "DISABLE_QUEEN" /D "USE_VORBIS" /D "WIN32" /YX /M$(CECrtMTDebug)  /c
+# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /D "_LIB" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "DISABLE_SWORD1" /D "USE_VORBIS" /D "WIN32" /YX /M$(CECrtMTDebug) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -762,6 +762,7 @@ NODEP_CPP_SMUSH_P=\
 	"..\..\..\scumm\smush\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\scumm\smush\chunk_type.h"\
+	"..\..\..\scumm\smush\scumm\smush\insane.h"\
 	"..\..\..\scumm\smush\scumm\smush\smush_font.h"\
 	"..\..\..\scumm\smush\scumm\smush\smush_mixer.h"\
 	"..\..\..\scumm\smush\scumm\smush\smush_player.h"\
@@ -784,6 +785,7 @@ NODEP_CPP_SMUSH_P=\
 	"..\..\..\scumm\smush\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\scumm\smush\chunk_type.h"\
+	"..\..\..\scumm\smush\scumm\smush\insane.h"\
 	"..\..\..\scumm\smush\scumm\smush\smush_font.h"\
 	"..\..\..\scumm\smush\scumm\smush\smush_mixer.h"\
 	"..\..\..\scumm\smush\scumm\smush\smush_player.h"\
@@ -822,6 +824,7 @@ DEP_CPP_SMUSH_P=\
 	"..\..\..\scumm\smush\chunk_type.h"\
 	"..\..\..\scumm\smush\codec37.h"\
 	"..\..\..\scumm\smush\codec47.h"\
+	"..\..\..\scumm\smush\insane.h"\
 	"..\..\..\scumm\smush\smush_font.h"\
 	"..\..\..\scumm\smush\smush_mixer.h"\
 	"..\..\..\scumm\smush\smush_player.h"\
@@ -871,6 +874,7 @@ DEP_CPP_SMUSH_P=\
 	"..\..\..\scumm\smush\chunk_type.h"\
 	"..\..\..\scumm\smush\codec37.h"\
 	"..\..\..\scumm\smush\codec47.h"\
+	"..\..\..\scumm\smush\insane.h"\
 	"..\..\..\scumm\smush\smush_font.h"\
 	"..\..\..\scumm\smush\smush_mixer.h"\
 	"..\..\..\scumm\smush\smush_player.h"\
@@ -2094,6 +2098,7 @@ NODEP_CPP_GFX_C=\
 	"..\..\..\scumm\scumm\actor.h"\
 	"..\..\..\scumm\scumm\bomp.h"\
 	"..\..\..\scumm\scumm\charset.h"\
+	"..\..\..\scumm\scumm\intern.h"\
 	"..\..\..\scumm\scumm\resource.h"\
 	"..\..\..\scumm\scumm\scumm.h"\
 	"..\..\..\scumm\scumm\usage_bits.h"\
@@ -2108,6 +2113,7 @@ NODEP_CPP_GFX_C=\
 	"..\..\..\scumm\scumm\actor.h"\
 	"..\..\..\scumm\scumm\bomp.h"\
 	"..\..\..\scumm\scumm\charset.h"\
+	"..\..\..\scumm\scumm\intern.h"\
 	"..\..\..\scumm\scumm\resource.h"\
 	"..\..\..\scumm\scumm\scumm.h"\
 	"..\..\..\scumm\scumm\usage_bits.h"\
@@ -2135,6 +2141,7 @@ DEP_CPP_GFX_C=\
 	"..\..\..\scumm\bomp.h"\
 	"..\..\..\scumm\charset.h"\
 	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
@@ -2167,6 +2174,7 @@ DEP_CPP_GFX_C=\
 	"..\..\..\scumm\bomp.h"\
 	"..\..\..\scumm\charset.h"\
 	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
@@ -4387,6 +4395,7 @@ NODEP_CPP_SCRIPT_V=\
 	"..\..\..\scumm\scumm\object.h"\
 	"..\..\..\scumm\scumm\resource.h"\
 	"..\..\..\scumm\scumm\scumm.h"\
+	"..\..\..\scumm\scumm\smush\insane.h"\
 	"..\..\..\scumm\scumm\smush\smush_player.h"\
 	"..\..\..\scumm\scumm\sound.h"\
 	"..\..\..\scumm\scumm\verbs.h"\
@@ -4406,6 +4415,7 @@ NODEP_CPP_SCRIPT_V=\
 	"..\..\..\scumm\scumm\object.h"\
 	"..\..\..\scumm\scumm\resource.h"\
 	"..\..\..\scumm\scumm\scumm.h"\
+	"..\..\..\scumm\scumm\smush\insane.h"\
 	"..\..\..\scumm\scumm\smush\smush_player.h"\
 	"..\..\..\scumm\scumm\sound.h"\
 	"..\..\..\scumm\scumm\verbs.h"\
@@ -4444,6 +4454,7 @@ DEP_CPP_SCRIPT_V=\
 	"..\..\..\scumm\imuse.h"\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\music.h"\
+	"..\..\..\scumm\nut_renderer.h"\
 	"..\..\..\scumm\object.h"\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
@@ -4451,6 +4462,7 @@ DEP_CPP_SCRIPT_V=\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\codec37.h"\
 	"..\..\..\scumm\smush\codec47.h"\
+	"..\..\..\scumm\smush\insane.h"\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
@@ -4500,6 +4512,7 @@ DEP_CPP_SCRIPT_V=\
 	"..\..\..\scumm\imuse.h"\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\music.h"\
+	"..\..\..\scumm\nut_renderer.h"\
 	"..\..\..\scumm\object.h"\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
@@ -4507,6 +4520,7 @@ DEP_CPP_SCRIPT_V=\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\codec37.h"\
 	"..\..\..\scumm\smush\codec47.h"\
+	"..\..\..\scumm\smush\insane.h"\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
@@ -4683,6 +4697,7 @@ NODEP_CPP_SCUMM=\
 	"..\..\..\scumm\base\gameDetector.h"\
 	"..\..\..\scumm\base\plugins.h"\
 	"..\..\..\scumm\common\config-manager.h"\
+	"..\..\..\scumm\common\md5.h"\
 	"..\..\..\scumm\gui\message.h"\
 	"..\..\..\scumm\gui\newgui.h"\
 	"..\..\..\scumm\scumm\actor.h"\
@@ -4702,6 +4717,7 @@ NODEP_CPP_SCUMM=\
 	"..\..\..\scumm\scumm\player_v3a.h"\
 	"..\..\..\scumm\scumm\resource.h"\
 	"..\..\..\scumm\scumm\scumm.h"\
+	"..\..\..\scumm\scumm\smush\insane.h"\
 	"..\..\..\scumm\scumm\sound.h"\
 	"..\..\..\scumm\scumm\verbs.h"\
 	"..\..\..\scumm\sound\mididrv.h"\
@@ -4716,6 +4732,7 @@ NODEP_CPP_SCUMM=\
 	"..\..\..\scumm\base\gameDetector.h"\
 	"..\..\..\scumm\base\plugins.h"\
 	"..\..\..\scumm\common\config-manager.h"\
+	"..\..\..\scumm\common\md5.h"\
 	"..\..\..\scumm\gui\message.h"\
 	"..\..\..\scumm\gui\newgui.h"\
 	"..\..\..\scumm\scumm\actor.h"\
@@ -4735,6 +4752,7 @@ NODEP_CPP_SCUMM=\
 	"..\..\..\scumm\scumm\player_v3a.h"\
 	"..\..\..\scumm\scumm\resource.h"\
 	"..\..\..\scumm\scumm\scumm.h"\
+	"..\..\..\scumm\scumm\smush\insane.h"\
 	"..\..\..\scumm\scumm\sound.h"\
 	"..\..\..\scumm\scumm\verbs.h"\
 	"..\..\..\scumm\sound\mididrv.h"\
@@ -4756,6 +4774,7 @@ DEP_CPP_SCUMM=\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
+	"..\..\..\common\md5.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
@@ -4787,6 +4806,7 @@ DEP_CPP_SCUMM=\
 	"..\..\..\scumm\imuse_digi.h"\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\music.h"\
+	"..\..\..\scumm\nut_renderer.h"\
 	"..\..\..\scumm\object.h"\
 	"..\..\..\scumm\player_mod.h"\
 	"..\..\..\scumm\player_v1.h"\
@@ -4796,6 +4816,11 @@ DEP_CPP_SCUMM=\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\smush\chunk.h"\
+	"..\..\..\scumm\smush\codec37.h"\
+	"..\..\..\scumm\smush\codec47.h"\
+	"..\..\..\scumm\smush\insane.h"\
+	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\audiostream.h"\
@@ -4830,6 +4855,7 @@ DEP_CPP_SCUMM=\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
+	"..\..\..\common\md5.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
@@ -4861,6 +4887,7 @@ DEP_CPP_SCUMM=\
 	"..\..\..\scumm\imuse_digi.h"\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\music.h"\
+	"..\..\..\scumm\nut_renderer.h"\
 	"..\..\..\scumm\object.h"\
 	"..\..\..\scumm\player_mod.h"\
 	"..\..\..\scumm\player_v1.h"\
@@ -4870,6 +4897,11 @@ DEP_CPP_SCUMM=\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\smush\chunk.h"\
+	"..\..\..\scumm\smush\codec37.h"\
+	"..\..\..\scumm\smush\codec47.h"\
+	"..\..\..\scumm\smush\insane.h"\
+	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\audiostream.h"\
@@ -4911,7 +4943,6 @@ NODEP_CPP_SOUND=\
 	"..\..\..\scumm\scumm\sound.h"\
 	"..\..\..\scumm\sound\audiocd.h"\
 	"..\..\..\scumm\sound\mididrv.h"\
-	"..\..\..\scumm\sound\midiparser.h"\
 	"..\..\..\scumm\sound\mixer.h"\
 	"..\..\..\scumm\sound\voc.h"\
 	"..\..\..\scumm\sound\vorbis.h"\
@@ -4932,7 +4963,6 @@ NODEP_CPP_SOUND=\
 	"..\..\..\scumm\scumm\sound.h"\
 	"..\..\..\scumm\sound\audiocd.h"\
 	"..\..\..\scumm\sound\mididrv.h"\
-	"..\..\..\scumm\sound\midiparser.h"\
 	"..\..\..\scumm\sound\mixer.h"\
 	"..\..\..\scumm\sound\voc.h"\
 	"..\..\..\scumm\sound\vorbis.h"\
@@ -4969,7 +4999,6 @@ DEP_CPP_SOUND=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiocd.h"\
 	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sound\voc.h"\
 	"..\..\..\sound\vorbis.h"\
@@ -5017,7 +5046,6 @@ DEP_CPP_SOUND=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiocd.h"\
 	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sound\voc.h"\
 	"..\..\..\sound\vorbis.h"\

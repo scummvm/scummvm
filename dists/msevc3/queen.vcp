@@ -1,0 +1,2310 @@
+# Microsoft eMbedded Visual Tools Project File - Name="queen" - Package Owner=<4>
+# Microsoft eMbedded Visual Tools Generated Build File, Format Version 6.02
+# ** DO NOT EDIT **
+
+# TARGTYPE "Win32 (WCE MIPS) Static Library" 0x8204
+# TARGTYPE "Win32 (WCE ARM) Static Library" 0x8504
+# TARGTYPE "Win32 (WCE SH3) Static Library" 0x8104
+
+CFG=queen - Win32 (WCE MIPS) Debug
+!MESSAGE This is not a valid makefile. To build this project using NMAKE,
+!MESSAGE use the Export Makefile command and run
+!MESSAGE 
+!MESSAGE NMAKE /f "queen.vcn".
+!MESSAGE 
+!MESSAGE You can specify a configuration when running NMAKE
+!MESSAGE by defining the macro CFG on the command line. For example:
+!MESSAGE 
+!MESSAGE NMAKE /f "queen.vcn" CFG="queen - Win32 (WCE MIPS) Debug"
+!MESSAGE 
+!MESSAGE Possible choices for configuration are:
+!MESSAGE 
+!MESSAGE "queen - Win32 (WCE MIPS) Release" (based on "Win32 (WCE MIPS) Static Library")
+!MESSAGE "queen - Win32 (WCE MIPS) Debug" (based on "Win32 (WCE MIPS) Static Library")
+!MESSAGE "queen - Win32 (WCE SH3) Release" (based on "Win32 (WCE SH3) Static Library")
+!MESSAGE "queen - Win32 (WCE SH3) Debug" (based on "Win32 (WCE SH3) Static Library")
+!MESSAGE "queen - Win32 (WCE ARM) Release" (based on "Win32 (WCE ARM) Static Library")
+!MESSAGE "queen - Win32 (WCE ARM) Debug" (based on "Win32 (WCE ARM) Static Library")
+!MESSAGE 
+
+# Begin Project
+# PROP AllowPerConfigDependencies 0
+# PROP Scc_ProjName ""
+# PROP Scc_LocalPath ""
+# PROP ATL_Project 2
+
+!IF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 0
+# PROP BASE Output_Dir "MIPSRel"
+# PROP BASE Intermediate_Dir "MIPSRel"
+# PROP BASE CPU_ID "{D6519010-710F-11D3-99F2-00105A0DF099}"
+# PROP BASE Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 0
+# PROP Output_Dir "MIPSRel"
+# PROP Intermediate_Dir "MIPSRel"
+# PROP CPU_ID "{D6519010-710F-11D3-99F2-00105A0DF099}"
+# PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
+# PROP Target_Dir ""
+CPP=clmips.exe
+# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "_LIB" /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "_LIB" /YX /Oxs /M$(CECrtMT) /c
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Debug"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 1
+# PROP BASE Output_Dir "MIPSDbg"
+# PROP BASE Intermediate_Dir "MIPSDbg"
+# PROP BASE CPU_ID "{D6519010-710F-11D3-99F2-00105A0DF099}"
+# PROP BASE Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 1
+# PROP Output_Dir "MIPSDbg"
+# PROP Intermediate_Dir "MIPSDbg"
+# PROP CPU_ID "{D6519010-710F-11D3-99F2-00105A0DF099}"
+# PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
+# PROP Target_Dir ""
+CPP=clmips.exe
+# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 0
+# PROP BASE Output_Dir "SH3Rel"
+# PROP BASE Intermediate_Dir "SH3Rel"
+# PROP BASE CPU_ID "{D6519020-710F-11D3-99F2-00105A0DF099}"
+# PROP BASE Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 0
+# PROP Output_Dir "SH3Rel"
+# PROP Intermediate_Dir "SH3Rel"
+# PROP CPU_ID "{D6519020-710F-11D3-99F2-00105A0DF099}"
+# PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
+# PROP Target_Dir ""
+CPP=shcl.exe
+# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "_LIB" /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "_LIB" /YX /Oxs /M$(CECrtMT) /c
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 1
+# PROP BASE Output_Dir "SH3Dbg"
+# PROP BASE Intermediate_Dir "SH3Dbg"
+# PROP BASE CPU_ID "{D6519020-710F-11D3-99F2-00105A0DF099}"
+# PROP BASE Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 1
+# PROP Output_Dir "SH3Dbg"
+# PROP Intermediate_Dir "SH3Dbg"
+# PROP CPU_ID "{D6519020-710F-11D3-99F2-00105A0DF099}"
+# PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
+# PROP Target_Dir ""
+CPP=shcl.exe
+# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 0
+# PROP BASE Output_Dir "ARMRel"
+# PROP BASE Intermediate_Dir "ARMRel"
+# PROP BASE CPU_ID "{D6518FFC-710F-11D3-99F2-00105A0DF099}"
+# PROP BASE Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 0
+# PROP Output_Dir "ARMRel"
+# PROP Intermediate_Dir "ARMRel"
+# PROP CPU_ID "{D6518FFC-710F-11D3-99F2-00105A0DF099}"
+# PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
+# PROP Target_Dir ""
+CPP=clarm.exe
+# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../" /I "../../common/" /I "../../backends/wince/" /I "../../backends/wince/missing/" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "WIN32" /YX /Oxs /M$(CECrtMT) /c
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo /out:"queen\ARMRel\queen.lib"
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Debug"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 1
+# PROP BASE Output_Dir "ARMDbg"
+# PROP BASE Intermediate_Dir "ARMDbg"
+# PROP BASE CPU_ID "{D6518FFC-710F-11D3-99F2-00105A0DF099}"
+# PROP BASE Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 1
+# PROP Output_Dir "ARMDbg"
+# PROP Intermediate_Dir "ARMDbg"
+# PROP CPU_ID "{D6518FFC-710F-11D3-99F2-00105A0DF099}"
+# PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
+# PROP Target_Dir ""
+CPP=clarm.exe
+# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /I "../../" /I "../../common/" /I "../../backends/wince/" /I "../../backends/wince/missing/" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "WIN32" /YX /M$(CECrtMTDebug) /c
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo /out:"queen\ARMDbg\queen.lib"
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+
+!ENDIF 
+
+# Begin Target
+
+# Name "queen - Win32 (WCE MIPS) Release"
+# Name "queen - Win32 (WCE MIPS) Debug"
+# Name "queen - Win32 (WCE SH3) Release"
+# Name "queen - Win32 (WCE SH3) Debug"
+# Name "queen - Win32 (WCE ARM) Release"
+# Name "queen - Win32 (WCE ARM) Debug"
+# Begin Group "Source Files"
+
+# PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+# Begin Source File
+
+SOURCE=..\..\queen\command.cpp
+
+!IF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
+
+NODEP_CPP_COMMA=\
+	"..\..\queen\queen\command.h"\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\queen\state.h"\
+	"..\..\queen\queen\talk.h"\
+	"..\..\queen\queen\walk.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_COMMA=\
+	"..\..\queen\queen\command.h"\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\queen\state.h"\
+	"..\..\queen\queen\talk.h"\
+	"..\..\queen\queen\walk.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
+
+NODEP_CPP_COMMA=\
+	"..\..\queen\queen\command.h"\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\queen\state.h"\
+	"..\..\queen\queen\talk.h"\
+	"..\..\queen\queen\walk.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_COMMA=\
+	"..\..\queen\queen\command.h"\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\queen\state.h"\
+	"..\..\queen\queen\talk.h"\
+	"..\..\queen\queen\walk.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
+
+DEP_CPP_COMMA=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\base\engine.h"\
+	"..\..\common\list.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\command.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\display.h"\
+	"..\..\queen\graphics.h"\
+	"..\..\queen\input.h"\
+	"..\..\queen\logic.h"\
+	"..\..\queen\queen.h"\
+	"..\..\queen\sound.h"\
+	"..\..\queen\state.h"\
+	"..\..\queen\structs.h"\
+	"..\..\queen\talk.h"\
+	"..\..\queen\walk.h"\
+	"..\..\sound\mixer.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_COMMA=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Debug"
+
+DEP_CPP_COMMA=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\base\engine.h"\
+	"..\..\common\list.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\command.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\display.h"\
+	"..\..\queen\graphics.h"\
+	"..\..\queen\input.h"\
+	"..\..\queen\logic.h"\
+	"..\..\queen\queen.h"\
+	"..\..\queen\sound.h"\
+	"..\..\queen\state.h"\
+	"..\..\queen\structs.h"\
+	"..\..\queen\talk.h"\
+	"..\..\queen\walk.h"\
+	"..\..\sound\mixer.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_COMMA=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\command.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\cutaway.cpp
+
+!IF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
+
+NODEP_CPP_CUTAW=\
+	"..\..\queen\queen\cutaway.h"\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\queen\talk.h"\
+	"..\..\queen\queen\walk.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_CUTAW=\
+	"..\..\queen\queen\cutaway.h"\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\queen\talk.h"\
+	"..\..\queen\queen\walk.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
+
+NODEP_CPP_CUTAW=\
+	"..\..\queen\queen\cutaway.h"\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\queen\talk.h"\
+	"..\..\queen\queen\walk.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_CUTAW=\
+	"..\..\queen\queen\cutaway.h"\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\queen\talk.h"\
+	"..\..\queen\queen\walk.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
+
+DEP_CPP_CUTAW=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\base\engine.h"\
+	"..\..\common\file.h"\
+	"..\..\common\list.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\cutaway.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\display.h"\
+	"..\..\queen\graphics.h"\
+	"..\..\queen\input.h"\
+	"..\..\queen\logic.h"\
+	"..\..\queen\queen.h"\
+	"..\..\queen\resource.h"\
+	"..\..\queen\sound.h"\
+	"..\..\queen\structs.h"\
+	"..\..\queen\talk.h"\
+	"..\..\queen\walk.h"\
+	"..\..\sound\mixer.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_CUTAW=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Debug"
+
+DEP_CPP_CUTAW=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\base\engine.h"\
+	"..\..\common\file.h"\
+	"..\..\common\list.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\cutaway.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\display.h"\
+	"..\..\queen\graphics.h"\
+	"..\..\queen\input.h"\
+	"..\..\queen\logic.h"\
+	"..\..\queen\queen.h"\
+	"..\..\queen\resource.h"\
+	"..\..\queen\sound.h"\
+	"..\..\queen\structs.h"\
+	"..\..\queen\talk.h"\
+	"..\..\queen\walk.h"\
+	"..\..\sound\mixer.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_CUTAW=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\cutaway.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\debug.cpp
+
+!IF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
+
+NODEP_CPP_DEBUG=\
+	"..\..\queen\queen\debug.h"\
+	"..\..\queen\queen\defs.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\structs.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_DEBUG=\
+	"..\..\queen\queen\debug.h"\
+	"..\..\queen\queen\defs.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\structs.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
+
+NODEP_CPP_DEBUG=\
+	"..\..\queen\queen\debug.h"\
+	"..\..\queen\queen\defs.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\structs.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_DEBUG=\
+	"..\..\queen\queen\debug.h"\
+	"..\..\queen\queen\defs.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\structs.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
+
+DEP_CPP_DEBUG=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\base\engine.h"\
+	"..\..\common\file.h"\
+	"..\..\common\list.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\debug.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\graphics.h"\
+	"..\..\queen\input.h"\
+	"..\..\queen\logic.h"\
+	"..\..\queen\queen.h"\
+	"..\..\queen\resource.h"\
+	"..\..\queen\structs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_DEBUG=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Debug"
+
+DEP_CPP_DEBUG=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\base\engine.h"\
+	"..\..\common\file.h"\
+	"..\..\common\list.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\debug.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\graphics.h"\
+	"..\..\queen\input.h"\
+	"..\..\queen\logic.h"\
+	"..\..\queen\queen.h"\
+	"..\..\queen\resource.h"\
+	"..\..\queen\structs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_DEBUG=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\debug.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\defs.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\display.cpp
+
+!IF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
+
+NODEP_CPP_DISPL=\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_DISPL=\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
+
+NODEP_CPP_DISPL=\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_DISPL=\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
+
+DEP_CPP_DISPL=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\base\engine.h"\
+	"..\..\common\file.h"\
+	"..\..\common\list.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\display.h"\
+	"..\..\queen\input.h"\
+	"..\..\queen\queen.h"\
+	"..\..\queen\resource.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_DISPL=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Debug"
+
+DEP_CPP_DISPL=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\base\engine.h"\
+	"..\..\common\file.h"\
+	"..\..\common\list.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\display.h"\
+	"..\..\queen\input.h"\
+	"..\..\queen\queen.h"\
+	"..\..\queen\resource.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_DISPL=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\display.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\graphics.cpp
+
+!IF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
+
+NODEP_CPP_GRAPH=\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_GRAPH=\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
+
+NODEP_CPP_GRAPH=\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_GRAPH=\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
+
+DEP_CPP_GRAPH=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\base\engine.h"\
+	"..\..\common\file.h"\
+	"..\..\common\list.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\display.h"\
+	"..\..\queen\graphics.h"\
+	"..\..\queen\logic.h"\
+	"..\..\queen\queen.h"\
+	"..\..\queen\resource.h"\
+	"..\..\queen\sound.h"\
+	"..\..\queen\structs.h"\
+	"..\..\sound\mixer.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_GRAPH=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Debug"
+
+DEP_CPP_GRAPH=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\base\engine.h"\
+	"..\..\common\file.h"\
+	"..\..\common\list.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\display.h"\
+	"..\..\queen\graphics.h"\
+	"..\..\queen\logic.h"\
+	"..\..\queen\queen.h"\
+	"..\..\queen\resource.h"\
+	"..\..\queen\sound.h"\
+	"..\..\queen\structs.h"\
+	"..\..\sound\mixer.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_GRAPH=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\graphics.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\input.cpp
+
+!IF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
+
+NODEP_CPP_INPUT=\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_INPUT=\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
+
+NODEP_CPP_INPUT=\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_INPUT=\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
+
+DEP_CPP_INPUT=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\input.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_INPUT=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Debug"
+
+DEP_CPP_INPUT=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\input.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_INPUT=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\input.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\journal.cpp
+
+!IF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
+
+NODEP_CPP_JOURN=\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\journal.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_JOURN=\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\journal.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
+
+NODEP_CPP_JOURN=\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\journal.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_JOURN=\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\journal.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
+
+DEP_CPP_JOURN=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\base\engine.h"\
+	"..\..\common\file.h"\
+	"..\..\common\list.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\display.h"\
+	"..\..\queen\graphics.h"\
+	"..\..\queen\journal.h"\
+	"..\..\queen\logic.h"\
+	"..\..\queen\queen.h"\
+	"..\..\queen\resource.h"\
+	"..\..\queen\sound.h"\
+	"..\..\queen\structs.h"\
+	"..\..\sound\mixer.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_JOURN=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Debug"
+
+DEP_CPP_JOURN=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\base\engine.h"\
+	"..\..\common\file.h"\
+	"..\..\common\list.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\display.h"\
+	"..\..\queen\graphics.h"\
+	"..\..\queen\journal.h"\
+	"..\..\queen\logic.h"\
+	"..\..\queen\queen.h"\
+	"..\..\queen\resource.h"\
+	"..\..\queen\sound.h"\
+	"..\..\queen\structs.h"\
+	"..\..\sound\mixer.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_JOURN=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\journal.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\logic.cpp
+
+!IF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
+
+NODEP_CPP_LOGIC=\
+	"..\..\queen\common\config-manager.h"\
+	"..\..\queen\queen\command.h"\
+	"..\..\queen\queen\cutaway.h"\
+	"..\..\queen\queen\debug.h"\
+	"..\..\queen\queen\defs.h"\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\journal.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\queen\state.h"\
+	"..\..\queen\queen\talk.h"\
+	"..\..\queen\queen\walk.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_LOGIC=\
+	"..\..\queen\common\config-manager.h"\
+	"..\..\queen\queen\command.h"\
+	"..\..\queen\queen\cutaway.h"\
+	"..\..\queen\queen\debug.h"\
+	"..\..\queen\queen\defs.h"\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\journal.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\queen\state.h"\
+	"..\..\queen\queen\talk.h"\
+	"..\..\queen\queen\walk.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
+
+NODEP_CPP_LOGIC=\
+	"..\..\queen\common\config-manager.h"\
+	"..\..\queen\queen\command.h"\
+	"..\..\queen\queen\cutaway.h"\
+	"..\..\queen\queen\debug.h"\
+	"..\..\queen\queen\defs.h"\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\journal.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\queen\state.h"\
+	"..\..\queen\queen\talk.h"\
+	"..\..\queen\queen\walk.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_LOGIC=\
+	"..\..\queen\common\config-manager.h"\
+	"..\..\queen\queen\command.h"\
+	"..\..\queen\queen\cutaway.h"\
+	"..\..\queen\queen\debug.h"\
+	"..\..\queen\queen\defs.h"\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\journal.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\queen\state.h"\
+	"..\..\queen\queen\talk.h"\
+	"..\..\queen\queen\walk.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
+
+DEP_CPP_LOGIC=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\base\engine.h"\
+	"..\..\common\config-manager.h"\
+	"..\..\common\file.h"\
+	"..\..\common\list.h"\
+	"..\..\common\map.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\singleton.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\command.h"\
+	"..\..\queen\cutaway.h"\
+	"..\..\queen\debug.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\display.h"\
+	"..\..\queen\graphics.h"\
+	"..\..\queen\input.h"\
+	"..\..\queen\journal.h"\
+	"..\..\queen\logic.h"\
+	"..\..\queen\queen.h"\
+	"..\..\queen\resource.h"\
+	"..\..\queen\sound.h"\
+	"..\..\queen\state.h"\
+	"..\..\queen\structs.h"\
+	"..\..\queen\talk.h"\
+	"..\..\queen\walk.h"\
+	"..\..\sound\mixer.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_LOGIC=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Debug"
+
+DEP_CPP_LOGIC=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\base\engine.h"\
+	"..\..\common\config-manager.h"\
+	"..\..\common\file.h"\
+	"..\..\common\list.h"\
+	"..\..\common\map.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\singleton.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\command.h"\
+	"..\..\queen\cutaway.h"\
+	"..\..\queen\debug.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\display.h"\
+	"..\..\queen\graphics.h"\
+	"..\..\queen\input.h"\
+	"..\..\queen\journal.h"\
+	"..\..\queen\logic.h"\
+	"..\..\queen\queen.h"\
+	"..\..\queen\resource.h"\
+	"..\..\queen\sound.h"\
+	"..\..\queen\state.h"\
+	"..\..\queen\structs.h"\
+	"..\..\queen\talk.h"\
+	"..\..\queen\walk.h"\
+	"..\..\sound\mixer.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_LOGIC=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\logic.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\music.cpp
+
+!IF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
+
+NODEP_CPP_MUSIC=\
+	"..\..\queen\queen\music.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\sound\mididrv.h"\
+	"..\..\queen\sound\midiparser.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_MUSIC=\
+	"..\..\queen\queen\music.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\sound\mididrv.h"\
+	"..\..\queen\sound\midiparser.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
+
+NODEP_CPP_MUSIC=\
+	"..\..\queen\queen\music.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\sound\mididrv.h"\
+	"..\..\queen\sound\midiparser.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_MUSIC=\
+	"..\..\queen\queen\music.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\sound\mididrv.h"\
+	"..\..\queen\sound\midiparser.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
+
+DEP_CPP_MUSIC=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\base\engine.h"\
+	"..\..\common\file.h"\
+	"..\..\common\list.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\timer.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\music.h"\
+	"..\..\queen\queen.h"\
+	"..\..\queen\resource.h"\
+	"..\..\sound\mididrv.h"\
+	"..\..\sound\midiparser.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_MUSIC=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	"..\..\common\morphos_timer.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Debug"
+
+DEP_CPP_MUSIC=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\base\engine.h"\
+	"..\..\common\file.h"\
+	"..\..\common\list.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\timer.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\music.h"\
+	"..\..\queen\queen.h"\
+	"..\..\queen\resource.h"\
+	"..\..\sound\mididrv.h"\
+	"..\..\sound\midiparser.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_MUSIC=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	"..\..\common\morphos_timer.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\music.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\musicdata.cpp
+
+!IF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
+
+NODEP_CPP_MUSICD=\
+	"..\..\queen\queen\sound.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_MUSICD=\
+	"..\..\queen\queen\sound.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
+
+NODEP_CPP_MUSICD=\
+	"..\..\queen\queen\sound.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_MUSICD=\
+	"..\..\queen\queen\sound.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
+
+DEP_CPP_MUSICD=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\sound.h"\
+	"..\..\sound\mixer.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_MUSICD=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Debug"
+
+DEP_CPP_MUSICD=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\sound.h"\
+	"..\..\sound\mixer.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_MUSICD=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\queen.cpp
+
+!IF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
+
+NODEP_CPP_QUEEN=\
+	"..\..\queen\backends\fs\fs.h"\
+	"..\..\queen\base\gameDetector.h"\
+	"..\..\queen\base\plugins.h"\
+	"..\..\queen\common\config-manager.h"\
+	"..\..\queen\common\file.h"\
+	"..\..\queen\common\timer.h"\
+	"..\..\queen\queen\command.h"\
+	"..\..\queen\queen\cutaway.h"\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\music.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\queen\talk.h"\
+	"..\..\queen\queen\walk.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_QUEEN=\
+	"..\..\queen\backends\fs\fs.h"\
+	"..\..\queen\base\gameDetector.h"\
+	"..\..\queen\base\plugins.h"\
+	"..\..\queen\common\config-manager.h"\
+	"..\..\queen\common\file.h"\
+	"..\..\queen\common\timer.h"\
+	"..\..\queen\queen\command.h"\
+	"..\..\queen\queen\cutaway.h"\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\music.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\queen\talk.h"\
+	"..\..\queen\queen\walk.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
+
+NODEP_CPP_QUEEN=\
+	"..\..\queen\backends\fs\fs.h"\
+	"..\..\queen\base\gameDetector.h"\
+	"..\..\queen\base\plugins.h"\
+	"..\..\queen\common\config-manager.h"\
+	"..\..\queen\common\file.h"\
+	"..\..\queen\common\timer.h"\
+	"..\..\queen\queen\command.h"\
+	"..\..\queen\queen\cutaway.h"\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\music.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\queen\talk.h"\
+	"..\..\queen\queen\walk.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_QUEEN=\
+	"..\..\queen\backends\fs\fs.h"\
+	"..\..\queen\base\gameDetector.h"\
+	"..\..\queen\base\plugins.h"\
+	"..\..\queen\common\config-manager.h"\
+	"..\..\queen\common\file.h"\
+	"..\..\queen\common\timer.h"\
+	"..\..\queen\queen\command.h"\
+	"..\..\queen\queen\cutaway.h"\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\music.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\queen\talk.h"\
+	"..\..\queen\queen\walk.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
+
+DEP_CPP_QUEEN=\
+	"..\..\backends\fs\fs.h"\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\base\engine.h"\
+	"..\..\base\gameDetector.h"\
+	"..\..\base\plugins.h"\
+	"..\..\common\config-manager.h"\
+	"..\..\common\file.h"\
+	"..\..\common\list.h"\
+	"..\..\common\map.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\singleton.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\timer.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\command.h"\
+	"..\..\queen\cutaway.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\display.h"\
+	"..\..\queen\graphics.h"\
+	"..\..\queen\input.h"\
+	"..\..\queen\logic.h"\
+	"..\..\queen\music.h"\
+	"..\..\queen\queen.h"\
+	"..\..\queen\resource.h"\
+	"..\..\queen\sound.h"\
+	"..\..\queen\structs.h"\
+	"..\..\queen\talk.h"\
+	"..\..\queen\walk.h"\
+	"..\..\sound\mixer.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_QUEEN=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	"..\..\common\morphos_timer.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Debug"
+
+DEP_CPP_QUEEN=\
+	"..\..\backends\fs\fs.h"\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\base\engine.h"\
+	"..\..\base\gameDetector.h"\
+	"..\..\base\plugins.h"\
+	"..\..\common\config-manager.h"\
+	"..\..\common\file.h"\
+	"..\..\common\list.h"\
+	"..\..\common\map.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\singleton.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\timer.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\command.h"\
+	"..\..\queen\cutaway.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\display.h"\
+	"..\..\queen\graphics.h"\
+	"..\..\queen\input.h"\
+	"..\..\queen\logic.h"\
+	"..\..\queen\music.h"\
+	"..\..\queen\queen.h"\
+	"..\..\queen\resource.h"\
+	"..\..\queen\sound.h"\
+	"..\..\queen\structs.h"\
+	"..\..\queen\talk.h"\
+	"..\..\queen\walk.h"\
+	"..\..\sound\mixer.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_QUEEN=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	"..\..\common\morphos_timer.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\queen.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\resource.cpp
+
+!IF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
+
+NODEP_CPP_RESOU=\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_RESOU=\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
+
+NODEP_CPP_RESOU=\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_RESOU=\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
+
+DEP_CPP_RESOU=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\common\file.h"\
+	"..\..\common\list.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\resource.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_RESOU=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Debug"
+
+DEP_CPP_RESOU=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\common\file.h"\
+	"..\..\common\list.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\resource.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_RESOU=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\resource.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\restables.cpp
+
+!IF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
+
+NODEP_CPP_RESTA=\
+	"..\..\queen\queen\resource.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_RESTA=\
+	"..\..\queen\queen\resource.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
+
+NODEP_CPP_RESTA=\
+	"..\..\queen\queen\resource.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_RESTA=\
+	"..\..\queen\queen\resource.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
+
+DEP_CPP_RESTA=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\common\file.h"\
+	"..\..\common\list.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\resource.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_RESTA=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Debug"
+
+DEP_CPP_RESTA=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\common\file.h"\
+	"..\..\common\list.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\resource.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_RESTA=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\sound.cpp
+
+!IF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
+
+NODEP_CPP_SOUND=\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\music.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_SOUND=\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\music.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
+
+NODEP_CPP_SOUND=\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\music.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_SOUND=\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\music.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
+
+DEP_CPP_SOUND=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\base\engine.h"\
+	"..\..\common\file.h"\
+	"..\..\common\list.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\input.h"\
+	"..\..\queen\music.h"\
+	"..\..\queen\queen.h"\
+	"..\..\queen\resource.h"\
+	"..\..\queen\sound.h"\
+	"..\..\sound\mixer.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_SOUND=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Debug"
+
+DEP_CPP_SOUND=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\base\engine.h"\
+	"..\..\common\file.h"\
+	"..\..\common\list.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\input.h"\
+	"..\..\queen\music.h"\
+	"..\..\queen\queen.h"\
+	"..\..\queen\resource.h"\
+	"..\..\queen\sound.h"\
+	"..\..\sound\mixer.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_SOUND=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\sound.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\state.cpp
+
+!IF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
+
+NODEP_CPP_STATE=\
+	"..\..\queen\queen\state.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_STATE=\
+	"..\..\queen\queen\state.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
+
+NODEP_CPP_STATE=\
+	"..\..\queen\queen\state.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_STATE=\
+	"..\..\queen\queen\state.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
+
+DEP_CPP_STATE=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\state.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_STATE=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Debug"
+
+DEP_CPP_STATE=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\state.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_STATE=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\state.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\structs.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\talk.cpp
+
+!IF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
+
+NODEP_CPP_TALK_=\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\queen\state.h"\
+	"..\..\queen\queen\talk.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_TALK_=\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\queen\state.h"\
+	"..\..\queen\queen\talk.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
+
+NODEP_CPP_TALK_=\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\queen\state.h"\
+	"..\..\queen\queen\talk.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_TALK_=\
+	"..\..\queen\queen\display.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\input.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\resource.h"\
+	"..\..\queen\queen\sound.h"\
+	"..\..\queen\queen\state.h"\
+	"..\..\queen\queen\talk.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
+
+DEP_CPP_TALK_=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\base\engine.h"\
+	"..\..\common\file.h"\
+	"..\..\common\list.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\display.h"\
+	"..\..\queen\graphics.h"\
+	"..\..\queen\input.h"\
+	"..\..\queen\logic.h"\
+	"..\..\queen\queen.h"\
+	"..\..\queen\resource.h"\
+	"..\..\queen\sound.h"\
+	"..\..\queen\state.h"\
+	"..\..\queen\structs.h"\
+	"..\..\queen\talk.h"\
+	"..\..\sound\mixer.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_TALK_=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Debug"
+
+DEP_CPP_TALK_=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\base\engine.h"\
+	"..\..\common\file.h"\
+	"..\..\common\list.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\display.h"\
+	"..\..\queen\graphics.h"\
+	"..\..\queen\input.h"\
+	"..\..\queen\logic.h"\
+	"..\..\queen\queen.h"\
+	"..\..\queen\resource.h"\
+	"..\..\queen\sound.h"\
+	"..\..\queen\state.h"\
+	"..\..\queen\structs.h"\
+	"..\..\queen\talk.h"\
+	"..\..\sound\mixer.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_TALK_=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\talk.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\walk.cpp
+
+!IF  "$(CFG)" == "queen - Win32 (WCE MIPS) Release"
+
+NODEP_CPP_WALK_=\
+	"..\..\queen\queen\defs.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\walk.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_WALK_=\
+	"..\..\queen\queen\defs.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\walk.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
+
+NODEP_CPP_WALK_=\
+	"..\..\queen\queen\defs.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\walk.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_WALK_=\
+	"..\..\queen\queen\defs.h"\
+	"..\..\queen\queen\graphics.h"\
+	"..\..\queen\queen\logic.h"\
+	"..\..\queen\queen\queen.h"\
+	"..\..\queen\queen\walk.h"\
+	"..\..\queen\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
+
+DEP_CPP_WALK_=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\base\engine.h"\
+	"..\..\common\list.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\graphics.h"\
+	"..\..\queen\logic.h"\
+	"..\..\queen\queen.h"\
+	"..\..\queen\structs.h"\
+	"..\..\queen\walk.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_WALK_=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Debug"
+
+DEP_CPP_WALK_=\
+	"..\..\backends\wince\missing\unistd.h"\
+	"..\..\backends\wince\portdefs.h"\
+	"..\..\base\engine.h"\
+	"..\..\common\list.h"\
+	"..\..\common\savefile.h"\
+	"..\..\common\scummsys.h"\
+	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
+	"..\..\common\system.h"\
+	"..\..\common\util.h"\
+	"..\..\queen\defs.h"\
+	"..\..\queen\graphics.h"\
+	"..\..\queen\logic.h"\
+	"..\..\queen\queen.h"\
+	"..\..\queen\structs.h"\
+	"..\..\queen\walk.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_WALK_=\
+	"..\..\common\config.h"\
+	"..\..\common\extend.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\walk.h
+# End Source File
+# End Group
+# Begin Group "Header Files"
+
+# PROP Default_Filter "h;hpp;hxx;hm;inl"
+# End Group
+# End Target
+# End Project

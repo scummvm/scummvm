@@ -194,7 +194,7 @@ RSC=rc.exe
 # ADD RSC /l 0x409 /d UNDER_CE=$(CEVersion) /d _WIN32_WCE=$(CEVersion) /d "UNICODE" /d "_UNICODE" /d "NDEBUG" /d "$(CePlatform)" /d "ARM" /d "_ARM_" /r
 CPP=clarm.exe
 # ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /YX /Oxs /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../../" /I "../../common/" /I "../../backends/wince/" /I "../../backends/wince/missing/" /D "WIN32" /D "USE_VORBIS" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "DISABLE_QUEEN" /FR /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../" /I "../../common/" /I "../../backends/wince/" /I "../../backends/wince/missing/" /D "WIN32" /D "USE_VORBIS" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "DISABLE_SWORD1" /FR /YX /Oxs /M$(CECrtMT) /c
 MTL=midl.exe
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o "NUL" /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /o "NUL" /win32
@@ -429,11 +429,11 @@ DEP_CPP_CONFI=\
 	"..\..\common\str.h"\
 	"..\..\common\system.h"\
 	"..\..\common\util.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CONFI=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -600,11 +600,11 @@ DEP_CPP_DEBUG=\
 	"..\..\gui\font.h"\
 	"..\..\gui\newgui.h"\
 	"..\..\gui\object.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -755,11 +755,11 @@ DEP_CPP_FILE_=\
 	"..\..\common\str.h"\
 	"..\..\common\system.h"\
 	"..\..\common\util.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_FILE_=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -828,11 +828,11 @@ DEP_CPP_MD5_C=\
 	"..\..\common\str.h"\
 	"..\..\common\system.h"\
 	"..\..\common\util.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MD5_C=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -849,11 +849,11 @@ DEP_CPP_MD5_C=\
 	"..\..\common\str.h"\
 	"..\..\common\system.h"\
 	"..\..\common\util.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MD5_C=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
@@ -870,11 +870,11 @@ DEP_CPP_MD5_C=\
 	"..\..\common\str.h"\
 	"..\..\common\system.h"\
 	"..\..\common\util.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MD5_C=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -891,11 +891,11 @@ DEP_CPP_MD5_C=\
 	"..\..\common\str.h"\
 	"..\..\common\system.h"\
 	"..\..\common\util.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MD5_C=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
@@ -933,11 +933,11 @@ DEP_CPP_MD5_C=\
 	"..\..\common\str.h"\
 	"..\..\common\system.h"\
 	"..\..\common\util.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MD5_C=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -1049,13 +1049,13 @@ DEP_CPP_SAVEF=\
 	"..\..\common\stdafx.h"\
 	"..\..\common\system.h"\
 	"..\..\common\util.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"zconf.h"\
+	{$(INCLUDE)}"zlib.h"\
 	
 NODEP_CPP_SAVEF=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\conf.h"\
-	".\DL_byteorder.h"\
-	".\lib.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -1162,11 +1162,11 @@ DEP_CPP_STR_C=\
 	"..\..\common\scummsys.h"\
 	"..\..\common\stdafx.h"\
 	"..\..\common\str.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_STR_C=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -1326,11 +1326,11 @@ DEP_CPP_SYSTE=\
 	"..\..\common\str.h"\
 	"..\..\common\system.h"\
 	"..\..\common\util.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SYSTE=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -1447,12 +1447,12 @@ DEP_CPP_TIMER=\
 	"..\..\common\system.h"\
 	"..\..\common\timer.h"\
 	"..\..\common\util.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_TIMER=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
 	"..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -1559,11 +1559,11 @@ DEP_CPP_UTIL_=\
 	"..\..\common\str.h"\
 	"..\..\common\system.h"\
 	"..\..\common\util.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_UTIL_=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -1767,17 +1767,17 @@ DEP_CPP_AUDIO=\
 	"..\..\sound\mixer.h"\
 	"..\..\sound\mp3.h"\
 	"..\..\sound\vorbis.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_AUDIO=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\ad.h"\
-	".\DL_byteorder.h"\
-	".\orbis\config_types.h"\
-	".\orbis\ivorbiscodec.h"\
-	".\orbis\ogg.h"\
-	".\orbis\os_types.h"\
-	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -1936,7 +1936,6 @@ NODEP_CPP_AUDIOS=\
 DEP_CPP_AUDIOS=\
 	"..\..\backends\wince\missing\unistd.h"\
 	"..\..\backends\wince\portdefs.h"\
-	"..\..\base\engine.h"\
 	"..\..\common\file.h"\
 	"..\..\common\list.h"\
 	"..\..\common\savefile.h"\
@@ -1947,17 +1946,17 @@ DEP_CPP_AUDIOS=\
 	"..\..\common\util.h"\
 	"..\..\sound\audiostream.h"\
 	"..\..\sound\mixer.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_AUDIOS=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\ad.h"\
-	".\DL_byteorder.h"\
-	".\orbis\config_types.h"\
-	".\orbis\ivorbiscodec.h"\
-	".\orbis\ogg.h"\
-	".\orbis\os_types.h"\
-	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -2085,11 +2084,11 @@ DEP_CPP_FMOPL=\
 	"..\..\common\system.h"\
 	"..\..\common\util.h"\
 	"..\..\sound\fmopl.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_FMOPL=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -2216,12 +2215,12 @@ DEP_CPP_MIDID=\
 	"..\..\common\system.h"\
 	"..\..\common\timer.h"\
 	"..\..\sound\mididrv.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDID=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
 	"..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -2325,12 +2324,12 @@ DEP_CPP_MIDIP=\
 	"..\..\common\util.h"\
 	"..\..\sound\mididrv.h"\
 	"..\..\sound\midiparser.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIP=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
 	"..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -2448,12 +2447,12 @@ DEP_CPP_MIDIPA=\
 	"..\..\common\util.h"\
 	"..\..\sound\mididrv.h"\
 	"..\..\sound\midiparser.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIPA=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
 	"..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -2567,12 +2566,12 @@ DEP_CPP_MIDIPAR=\
 	"..\..\common\util.h"\
 	"..\..\sound\mididrv.h"\
 	"..\..\sound\midiparser.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIPAR=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
 	"..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -2755,24 +2754,28 @@ DEP_CPP_MIXER=\
 	"..\..\common\list.h"\
 	"..\..\common\savefile.h"\
 	"..\..\common\scummsys.h"\
+	"..\..\common\singleton.h"\
 	"..\..\common\stdafx.h"\
 	"..\..\common\str.h"\
 	"..\..\common\system.h"\
 	"..\..\common\util.h"\
+	"..\..\sound\audiocd.h"\
 	"..\..\sound\audiostream.h"\
 	"..\..\sound\mixer.h"\
+	"..\..\sound\mp3.h"\
 	"..\..\sound\rate.h"\
+	"..\..\sound\vorbis.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_MIXER=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\ad.h"\
-	".\DL_byteorder.h"\
-	".\orbis\config_types.h"\
-	".\orbis\ivorbiscodec.h"\
-	".\orbis\ogg.h"\
-	".\orbis\os_types.h"\
-	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -2812,7 +2815,9 @@ NODEP_CPP_MIXER=\
 	"..\..\sound\common\util.h"\
 	"..\..\sound\sound\audiostream.h"\
 	"..\..\sound\sound\mixer.h"\
+	"..\..\sound\sound\mp3.h"\
 	"..\..\sound\sound\rate.h"\
+	"..\..\sound\sound\vorbis.h"\
 	"..\..\sound\stdafx.h"\
 	
 
@@ -2823,7 +2828,9 @@ NODEP_CPP_MIXER=\
 	"..\..\sound\common\util.h"\
 	"..\..\sound\sound\audiostream.h"\
 	"..\..\sound\sound\mixer.h"\
+	"..\..\sound\sound\mp3.h"\
 	"..\..\sound\sound\rate.h"\
+	"..\..\sound\sound\vorbis.h"\
 	"..\..\sound\stdafx.h"\
 	
 
@@ -2973,19 +2980,20 @@ DEP_CPP_MP3_C=\
 	"..\..\common\system.h"\
 	"..\..\common\util.h"\
 	"..\..\sound\audiocd.h"\
+	"..\..\sound\audiostream.h"\
 	"..\..\sound\mixer.h"\
 	"..\..\sound\mp3.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_MP3_C=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\ad.h"\
-	".\DL_byteorder.h"\
-	".\orbis\config_types.h"\
-	".\orbis\ivorbiscodec.h"\
-	".\orbis\ogg.h"\
-	".\orbis\os_types.h"\
-	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -3023,8 +3031,8 @@ NODEP_CPP_MP3_C=\
 NODEP_CPP_MP3_C=\
 	"..\..\sound\common\file.h"\
 	"..\..\sound\common\util.h"\
+	"..\..\sound\sound\audiostream.h"\
 	"..\..\sound\sound\mp3.h"\
-	"..\..\sound\stdafx.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Debug"
@@ -3032,8 +3040,8 @@ NODEP_CPP_MP3_C=\
 NODEP_CPP_MP3_C=\
 	"..\..\sound\common\file.h"\
 	"..\..\sound\common\util.h"\
+	"..\..\sound\sound\audiostream.h"\
 	"..\..\sound\sound\mp3.h"\
-	"..\..\sound\stdafx.h"\
 	
 
 !ENDIF 
@@ -3116,12 +3124,12 @@ DEP_CPP_MPU40=\
 	"..\..\common\util.h"\
 	"..\..\sound\mididrv.h"\
 	"..\..\sound\mpu401.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MPU40=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
 	"..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -3311,17 +3319,11 @@ DEP_CPP_RATE_=\
 	"..\..\common\util.h"\
 	"..\..\sound\audiostream.h"\
 	"..\..\sound\rate.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RATE_=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\ad.h"\
-	".\DL_byteorder.h"\
-	".\orbis\config_types.h"\
-	".\orbis\ivorbiscodec.h"\
-	".\orbis\ogg.h"\
-	".\orbis\os_types.h"\
-	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -3462,11 +3464,11 @@ DEP_CPP_VOC_C=\
 	"..\..\common\system.h"\
 	"..\..\common\util.h"\
 	"..\..\sound\voc.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VOC_C=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -3649,19 +3651,20 @@ DEP_CPP_VORBI=\
 	"..\..\common\system.h"\
 	"..\..\common\util.h"\
 	"..\..\sound\audiocd.h"\
+	"..\..\sound\audiostream.h"\
 	"..\..\sound\mixer.h"\
 	"..\..\sound\vorbis.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_VORBI=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\ad.h"\
-	".\DL_byteorder.h"\
-	".\orbis\config_types.h"\
-	".\orbis\ivorbiscodec.h"\
-	".\orbis\ogg.h"\
-	".\orbis\os_types.h"\
-	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -3699,8 +3702,8 @@ NODEP_CPP_VORBI=\
 NODEP_CPP_VORBI=\
 	"..\..\sound\common\file.h"\
 	"..\..\sound\common\util.h"\
+	"..\..\sound\sound\audiostream.h"\
 	"..\..\sound\sound\vorbis.h"\
-	"..\..\sound\stdafx.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Debug"
@@ -3708,8 +3711,8 @@ NODEP_CPP_VORBI=\
 NODEP_CPP_VORBI=\
 	"..\..\sound\common\file.h"\
 	"..\..\sound\common\util.h"\
+	"..\..\sound\sound\audiostream.h"\
 	"..\..\sound\sound\vorbis.h"\
-	"..\..\sound\stdafx.h"\
 	
 
 !ENDIF 
@@ -3810,11 +3813,11 @@ DEP_CPP_ABOUT=\
 	"..\..\gui\newgui.h"\
 	"..\..\gui\object.h"\
 	"..\..\gui\widget.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ABOUT=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -3975,11 +3978,11 @@ DEP_CPP_BROWS=\
 	"..\..\gui\newgui.h"\
 	"..\..\gui\object.h"\
 	"..\..\gui\widget.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BROWS=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -4140,11 +4143,11 @@ DEP_CPP_CHOOS=\
 	"..\..\gui\newgui.h"\
 	"..\..\gui\object.h"\
 	"..\..\gui\widget.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHOOS=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -4291,11 +4294,11 @@ DEP_CPP_CONSO=\
 	"..\..\gui\object.h"\
 	"..\..\gui\ScrollBarWidget.h"\
 	"..\..\gui\widget.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CONSO=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -4434,11 +4437,11 @@ DEP_CPP_DIALO=\
 	"..\..\gui\newgui.h"\
 	"..\..\gui\object.h"\
 	"..\..\gui\widget.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIALO=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -4583,11 +4586,11 @@ DEP_CPP_EDITT=\
 	"..\..\gui\newgui.h"\
 	"..\..\gui\object.h"\
 	"..\..\gui\widget.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_EDITT=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -4839,12 +4842,12 @@ DEP_CPP_LAUNC=\
 	"..\..\gui\TabWidget.h"\
 	"..\..\gui\widget.h"\
 	"..\..\sound\mididrv.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LAUNC=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
 	"..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -5030,11 +5033,11 @@ DEP_CPP_LISTW=\
 	"..\..\gui\object.h"\
 	"..\..\gui\ScrollBarWidget.h"\
 	"..\..\gui\widget.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LISTW=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -5187,11 +5190,11 @@ DEP_CPP_MESSA=\
 	"..\..\gui\newgui.h"\
 	"..\..\gui\object.h"\
 	"..\..\gui\widget.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MESSA=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -5344,12 +5347,12 @@ DEP_CPP_NEWGU=\
 	"..\..\gui\font.h"\
 	"..\..\gui\newgui.h"\
 	"..\..\gui\object.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_NEWGU=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
 	"..\..\gui\scumm_globals.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -5583,12 +5586,12 @@ DEP_CPP_OPTIO=\
 	"..\..\gui\TabWidget.h"\
 	"..\..\gui\widget.h"\
 	"..\..\sound\mididrv.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_OPTIO=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
 	"..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -5755,11 +5758,11 @@ DEP_CPP_POPUP=\
 	"..\..\gui\object.h"\
 	"..\..\gui\PopUpWidget.h"\
 	"..\..\gui\widget.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_POPUP=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -5908,11 +5911,11 @@ DEP_CPP_SCROL=\
 	"..\..\gui\object.h"\
 	"..\..\gui\ScrollBarWidget.h"\
 	"..\..\gui\widget.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCROL=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -6097,11 +6100,11 @@ DEP_CPP_TABWI=\
 	"..\..\gui\object.h"\
 	"..\..\gui\TabWidget.h"\
 	"..\..\gui\widget.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_TABWI=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -6234,11 +6237,11 @@ DEP_CPP_WIDGE=\
 	"..\..\gui\newgui.h"\
 	"..\..\gui\object.h"\
 	"..\..\gui\widget.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_WIDGE=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -6582,11 +6585,11 @@ DEP_CPP_FINDG=\
 	"..\..\scumm\gfx.h"\
 	"..\..\scumm\script.h"\
 	"..\..\scumm\scumm.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_FINDG=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -6708,10 +6711,8 @@ DEP_CPP_GAPI_=\
 	"..\..\backends\wince\portdefs.h"\
 	"..\..\backends\wince\screen.h"\
 	"..\..\common\stdafx.h"\
-	
-NODEP_CPP_GAPI_=\
-	".\ipapi.h"\
-	".\x.h"\
+	{$(INCLUDE)}"gx.h"\
+	{$(INCLUDE)}"sipapi.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -6988,36 +6989,36 @@ DEP_CPP_POCKE=\
 	"..\..\scumm\script.h"\
 	"..\..\scumm\scumm.h"\
 	"..\..\sound\mididrv.h"\
+	{$(INCLUDE)}"begin_code.h"\
+	{$(INCLUDE)}"close_code.h"\
+	{$(INCLUDE)}"gx.h"\
+	{$(INCLUDE)}"SDL.h"\
+	{$(INCLUDE)}"SDL_active.h"\
+	{$(INCLUDE)}"SDL_audio.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"SDL_cdrom.h"\
+	{$(INCLUDE)}"SDL_error.h"\
+	{$(INCLUDE)}"SDL_events.h"\
+	{$(INCLUDE)}"SDL_getenv.h"\
+	{$(INCLUDE)}"SDL_joystick.h"\
+	{$(INCLUDE)}"SDL_keyboard.h"\
+	{$(INCLUDE)}"SDL_keysym.h"\
+	{$(INCLUDE)}"SDL_main.h"\
+	{$(INCLUDE)}"SDL_mouse.h"\
+	{$(INCLUDE)}"SDL_mutex.h"\
+	{$(INCLUDE)}"SDL_quit.h"\
+	{$(INCLUDE)}"SDL_rwops.h"\
+	{$(INCLUDE)}"SDL_timer.h"\
+	{$(INCLUDE)}"SDL_types.h"\
+	{$(INCLUDE)}"SDL_version.h"\
+	{$(INCLUDE)}"SDL_video.h"\
+	{$(INCLUDE)}"sipapi.h"\
 	
 NODEP_CPP_POCKE=\
 	"..\..\backends\wince\GameX.h"\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
 	"..\..\common\morphos_timer.h"\
-	".\dl.h"\
-	".\DL_active.h"\
-	".\DL_audio.h"\
-	".\DL_byteorder.h"\
-	".\DL_cdrom.h"\
-	".\DL_error.h"\
-	".\DL_events.h"\
-	".\DL_getenv.h"\
-	".\DL_joystick.h"\
-	".\DL_keyboard.h"\
-	".\DL_keysym.h"\
-	".\DL_main.h"\
-	".\DL_mouse.h"\
-	".\DL_mutex.h"\
-	".\DL_quit.h"\
-	".\DL_rwops.h"\
-	".\DL_timer.h"\
-	".\DL_types.h"\
-	".\DL_version.h"\
-	".\DL_video.h"\
-	".\egin_code.h"\
-	".\ipapi.h"\
-	".\lose_code.h"\
-	".\x.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -7375,36 +7376,36 @@ DEP_CPP_SCREE=\
 	"..\..\scumm\script.h"\
 	"..\..\scumm\scumm.h"\
 	"..\..\sound\mididrv.h"\
+	{$(INCLUDE)}"begin_code.h"\
+	{$(INCLUDE)}"close_code.h"\
+	{$(INCLUDE)}"gx.h"\
+	{$(INCLUDE)}"SDL.h"\
+	{$(INCLUDE)}"SDL_active.h"\
+	{$(INCLUDE)}"SDL_audio.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"SDL_cdrom.h"\
+	{$(INCLUDE)}"SDL_error.h"\
+	{$(INCLUDE)}"SDL_events.h"\
+	{$(INCLUDE)}"SDL_getenv.h"\
+	{$(INCLUDE)}"SDL_joystick.h"\
+	{$(INCLUDE)}"SDL_keyboard.h"\
+	{$(INCLUDE)}"SDL_keysym.h"\
+	{$(INCLUDE)}"SDL_main.h"\
+	{$(INCLUDE)}"SDL_mouse.h"\
+	{$(INCLUDE)}"SDL_mutex.h"\
+	{$(INCLUDE)}"SDL_quit.h"\
+	{$(INCLUDE)}"SDL_rwops.h"\
+	{$(INCLUDE)}"SDL_timer.h"\
+	{$(INCLUDE)}"SDL_types.h"\
+	{$(INCLUDE)}"SDL_version.h"\
+	{$(INCLUDE)}"SDL_video.h"\
+	{$(INCLUDE)}"sipapi.h"\
 	
 NODEP_CPP_SCREE=\
 	"..\..\backends\wince\GameX.h"\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
 	"..\..\common\morphos_timer.h"\
-	".\dl.h"\
-	".\DL_active.h"\
-	".\DL_audio.h"\
-	".\DL_byteorder.h"\
-	".\DL_cdrom.h"\
-	".\DL_error.h"\
-	".\DL_events.h"\
-	".\DL_getenv.h"\
-	".\DL_joystick.h"\
-	".\DL_keyboard.h"\
-	".\DL_keysym.h"\
-	".\DL_main.h"\
-	".\DL_mouse.h"\
-	".\DL_mutex.h"\
-	".\DL_quit.h"\
-	".\DL_rwops.h"\
-	".\DL_timer.h"\
-	".\DL_types.h"\
-	".\DL_version.h"\
-	".\DL_video.h"\
-	".\egin_code.h"\
-	".\ipapi.h"\
-	".\lose_code.h"\
-	".\x.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -7758,38 +7759,38 @@ DEP_CPP_SMART=\
 	"..\..\scumm\script.h"\
 	"..\..\scumm\scumm.h"\
 	"..\..\sound\mididrv.h"\
+	{$(INCLUDE)}"Aygshell.h"\
+	{$(INCLUDE)}"begin_code.h"\
+	{$(INCLUDE)}"close_code.h"\
+	{$(INCLUDE)}"gx.h"\
+	{$(INCLUDE)}"SDL.h"\
+	{$(INCLUDE)}"SDL_active.h"\
+	{$(INCLUDE)}"SDL_audio.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"SDL_cdrom.h"\
+	{$(INCLUDE)}"SDL_error.h"\
+	{$(INCLUDE)}"SDL_events.h"\
+	{$(INCLUDE)}"SDL_getenv.h"\
+	{$(INCLUDE)}"SDL_joystick.h"\
+	{$(INCLUDE)}"SDL_keyboard.h"\
+	{$(INCLUDE)}"SDL_keysym.h"\
+	{$(INCLUDE)}"SDL_main.h"\
+	{$(INCLUDE)}"SDL_mouse.h"\
+	{$(INCLUDE)}"SDL_mutex.h"\
+	{$(INCLUDE)}"SDL_quit.h"\
+	{$(INCLUDE)}"SDL_rwops.h"\
+	{$(INCLUDE)}"SDL_timer.h"\
+	{$(INCLUDE)}"SDL_types.h"\
+	{$(INCLUDE)}"SDL_version.h"\
+	{$(INCLUDE)}"SDL_video.h"\
+	{$(INCLUDE)}"sipapi.h"\
+	{$(INCLUDE)}"vibrate.h"\
 	
 NODEP_CPP_SMART=\
 	"..\..\backends\wince\GameX.h"\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
 	"..\..\common\morphos_timer.h"\
-	".\dl.h"\
-	".\DL_active.h"\
-	".\DL_audio.h"\
-	".\DL_byteorder.h"\
-	".\DL_cdrom.h"\
-	".\DL_error.h"\
-	".\DL_events.h"\
-	".\DL_getenv.h"\
-	".\DL_joystick.h"\
-	".\DL_keyboard.h"\
-	".\DL_keysym.h"\
-	".\DL_main.h"\
-	".\DL_mouse.h"\
-	".\DL_mutex.h"\
-	".\DL_quit.h"\
-	".\DL_rwops.h"\
-	".\DL_timer.h"\
-	".\DL_types.h"\
-	".\DL_version.h"\
-	".\DL_video.h"\
-	".\egin_code.h"\
-	".\ibrate.h"\
-	".\ipapi.h"\
-	".\lose_code.h"\
-	".\x.h"\
-	".\ygshell.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -8181,43 +8182,43 @@ DEP_CPP_WINCE=\
 	"..\..\scumm\scumm.h"\
 	"..\..\sound\fmopl.h"\
 	"..\..\sound\mididrv.h"\
+	{$(INCLUDE)}"Aygshell.h"\
+	{$(INCLUDE)}"begin_code.h"\
+	{$(INCLUDE)}"close_code.h"\
+	{$(INCLUDE)}"gx.h"\
+	{$(INCLUDE)}"SDL.h"\
+	{$(INCLUDE)}"SDL_active.h"\
+	{$(INCLUDE)}"SDL_audio.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"SDL_cdrom.h"\
+	{$(INCLUDE)}"SDL_error.h"\
+	{$(INCLUDE)}"SDL_events.h"\
+	{$(INCLUDE)}"SDL_getenv.h"\
+	{$(INCLUDE)}"SDL_joystick.h"\
+	{$(INCLUDE)}"SDL_keyboard.h"\
+	{$(INCLUDE)}"SDL_keysym.h"\
+	{$(INCLUDE)}"SDL_main.h"\
+	{$(INCLUDE)}"SDL_mouse.h"\
+	{$(INCLUDE)}"SDL_mutex.h"\
+	{$(INCLUDE)}"SDL_quit.h"\
+	{$(INCLUDE)}"SDL_rwops.h"\
+	{$(INCLUDE)}"SDL_timer.h"\
+	{$(INCLUDE)}"SDL_types.h"\
+	{$(INCLUDE)}"SDL_version.h"\
+	{$(INCLUDE)}"SDL_video.h"\
+	{$(INCLUDE)}"sipapi.h"\
+	{$(INCLUDE)}"vibrate.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_WINCE=\
 	"..\..\backends\wince\GameX.h"\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
 	"..\..\common\morphos_timer.h"\
-	".\dl.h"\
-	".\DL_active.h"\
-	".\DL_audio.h"\
-	".\DL_byteorder.h"\
-	".\DL_cdrom.h"\
-	".\DL_error.h"\
-	".\DL_events.h"\
-	".\DL_getenv.h"\
-	".\DL_joystick.h"\
-	".\DL_keyboard.h"\
-	".\DL_keysym.h"\
-	".\DL_main.h"\
-	".\DL_mouse.h"\
-	".\DL_mutex.h"\
-	".\DL_quit.h"\
-	".\DL_rwops.h"\
-	".\DL_timer.h"\
-	".\DL_types.h"\
-	".\DL_version.h"\
-	".\DL_video.h"\
-	".\egin_code.h"\
-	".\ibrate.h"\
-	".\ipapi.h"\
-	".\lose_code.h"\
-	".\orbis\config_types.h"\
-	".\orbis\ivorbiscodec.h"\
-	".\orbis\ogg.h"\
-	".\orbis\os_types.h"\
-	".\orbis\vorbisfile.h"\
-	".\x.h"\
-	".\ygshell.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -8417,11 +8418,11 @@ DEP_CPP_WINDO=\
 	"..\..\common\list.h"\
 	"..\..\common\scummsys.h"\
 	"..\..\common\str.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_WINDO=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -8592,18 +8593,18 @@ DEP_CPP_ADLIB=\
 	"..\..\sound\fmopl.h"\
 	"..\..\sound\mididrv.h"\
 	"..\..\sound\mixer.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_ADLIB=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
 	"..\..\common\morphos_timer.h"\
-	".\ad.h"\
-	".\DL_byteorder.h"\
-	".\orbis\config_types.h"\
-	".\orbis\ivorbiscodec.h"\
-	".\orbis\ogg.h"\
-	".\orbis\os_types.h"\
-	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -8745,21 +8746,26 @@ NODEP_CPP_ALSA_=\
 DEP_CPP_ALSA_=\
 	"..\..\backends\wince\missing\unistd.h"\
 	"..\..\backends\wince\portdefs.h"\
+	"..\..\common\config-manager.h"\
+	"..\..\common\list.h"\
+	"..\..\common\map.h"\
 	"..\..\common\savefile.h"\
 	"..\..\common\scummsys.h"\
+	"..\..\common\singleton.h"\
 	"..\..\common\stdafx.h"\
+	"..\..\common\str.h"\
 	"..\..\common\system.h"\
 	"..\..\common\timer.h"\
 	"..\..\common\util.h"\
 	"..\..\sound\mididrv.h"\
 	"..\..\sound\mpu401.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ALSA_=\
 	"..\..\backends\midi\config.h"\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
 	"..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -8893,12 +8899,12 @@ DEP_CPP_COREA=\
 	"..\..\common\timer.h"\
 	"..\..\sound\mididrv.h"\
 	"..\..\sound\mpu401.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COREA=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
 	"..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -9034,6 +9040,7 @@ DEP_CPP_MORPH=\
 	"..\..\common\util.h"\
 	"..\..\sound\mididrv.h"\
 	"..\..\sound\mpu401.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MORPH=\
 	"..\..\backends\midi\morphos.h"\
@@ -9041,7 +9048,6 @@ NODEP_CPP_MORPH=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
 	"..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -9176,12 +9182,12 @@ DEP_CPP_NULL_=\
 	"..\..\common\timer.h"\
 	"..\..\sound\mididrv.h"\
 	"..\..\sound\mpu401.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_NULL_=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
 	"..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -9312,12 +9318,12 @@ DEP_CPP_QUICK=\
 	"..\..\common\util.h"\
 	"..\..\sound\mididrv.h"\
 	"..\..\sound\mpu401.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_QUICK=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
 	"..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -9448,12 +9454,12 @@ DEP_CPP_SEQ_C=\
 	"..\..\common\util.h"\
 	"..\..\sound\mididrv.h"\
 	"..\..\sound\mpu401.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SEQ_C=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
 	"..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -9587,12 +9593,12 @@ DEP_CPP_WINDOW=\
 	"..\..\common\util.h"\
 	"..\..\sound\mididrv.h"\
 	"..\..\sound\mpu401.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_WINDOW=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
 	"..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -9750,18 +9756,18 @@ DEP_CPP_YM261=\
 	"..\..\common\util.h"\
 	"..\..\sound\mididrv.h"\
 	"..\..\sound\mixer.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_YM261=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
 	"..\..\common\morphos_timer.h"\
-	".\ad.h"\
-	".\DL_byteorder.h"\
-	".\orbis\config_types.h"\
-	".\orbis\ivorbiscodec.h"\
-	".\orbis\ogg.h"\
-	".\orbis\os_types.h"\
-	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -9979,18 +9985,18 @@ DEP_CPP_ENGIN=\
 	"..\..\common\timer.h"\
 	"..\..\common\util.h"\
 	"..\..\sound\mixer.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_ENGIN=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
 	"..\..\common\morphos_timer.h"\
-	".\ad.h"\
-	".\DL_byteorder.h"\
-	".\orbis\config_types.h"\
-	".\orbis\ivorbiscodec.h"\
-	".\orbis\ogg.h"\
-	".\orbis\os_types.h"\
-	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -10229,19 +10235,19 @@ DEP_CPP_GAMED=\
 	"..\..\common\util.h"\
 	"..\..\sound\mididrv.h"\
 	"..\..\sound\mixer.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_GAMED=\
 	"..\..\base\config.h"\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
 	"..\..\common\morphos_timer.h"\
-	".\ad.h"\
-	".\DL_byteorder.h"\
-	".\orbis\config_types.h"\
-	".\orbis\ivorbiscodec.h"\
-	".\orbis\ogg.h"\
-	".\orbis\os_types.h"\
-	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -10566,34 +10572,34 @@ DEP_CPP_MAIN_=\
 	"..\..\gui\message.h"\
 	"..\..\gui\newgui.h"\
 	"..\..\gui\object.h"\
+	{$(INCLUDE)}"begin_code.h"\
+	{$(INCLUDE)}"close_code.h"\
+	{$(INCLUDE)}"SDL.h"\
+	{$(INCLUDE)}"SDL_active.h"\
+	{$(INCLUDE)}"SDL_audio.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"SDL_cdrom.h"\
+	{$(INCLUDE)}"SDL_error.h"\
+	{$(INCLUDE)}"SDL_events.h"\
+	{$(INCLUDE)}"SDL_getenv.h"\
+	{$(INCLUDE)}"SDL_joystick.h"\
+	{$(INCLUDE)}"SDL_keyboard.h"\
+	{$(INCLUDE)}"SDL_keysym.h"\
+	{$(INCLUDE)}"SDL_main.h"\
+	{$(INCLUDE)}"SDL_mouse.h"\
+	{$(INCLUDE)}"SDL_mutex.h"\
+	{$(INCLUDE)}"SDL_quit.h"\
+	{$(INCLUDE)}"SDL_rwops.h"\
+	{$(INCLUDE)}"SDL_timer.h"\
+	{$(INCLUDE)}"SDL_types.h"\
+	{$(INCLUDE)}"SDL_version.h"\
+	{$(INCLUDE)}"SDL_video.h"\
 	
 NODEP_CPP_MAIN_=\
 	"..\..\base\allegro.h"\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
 	"..\..\common\morphos_timer.h"\
-	".\dl.h"\
-	".\DL_active.h"\
-	".\DL_audio.h"\
-	".\DL_byteorder.h"\
-	".\DL_cdrom.h"\
-	".\DL_error.h"\
-	".\DL_events.h"\
-	".\DL_getenv.h"\
-	".\DL_joystick.h"\
-	".\DL_keyboard.h"\
-	".\DL_keysym.h"\
-	".\DL_main.h"\
-	".\DL_mouse.h"\
-	".\DL_mutex.h"\
-	".\DL_quit.h"\
-	".\DL_rwops.h"\
-	".\DL_timer.h"\
-	".\DL_types.h"\
-	".\DL_version.h"\
-	".\DL_video.h"\
-	".\egin_code.h"\
-	".\lose_code.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -10799,11 +10805,11 @@ DEP_CPP_PLUGI=\
 	"..\..\common\str.h"\
 	"..\..\common\system.h"\
 	"..\..\common\util.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLUGI=\
 	"..\..\common\config.h"\
 	"..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"

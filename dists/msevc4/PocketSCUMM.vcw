@@ -3,6 +3,18 @@ Microsoft eMbedded Visual Tools Workspace File, Format Version 4.00
 
 ###############################################################################
 
+Project: "queen"=.\queen\queen.vcp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "scumm"=.\scumm\scumm.vcp - Package Owner=<4>
 
 Package=<5>
@@ -34,6 +46,9 @@ Package=<4>
     End Project Dependency
     Begin Project Dependency
     Project_Dep_Name sword2
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name queen
     End Project Dependency
 }}}
 

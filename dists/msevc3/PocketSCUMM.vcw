@@ -3,7 +3,7 @@ Microsoft eMbedded Visual Tools Workspace File, Format Version 3.00
 
 ###############################################################################
 
-Project: "sword2"=.\sword2.vcp - Package Owner=<4>
+Project: "queen"=.\queen.vcp - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -45,7 +45,10 @@ Package=<4>
     Project_Dep_Name sky
     End Project Dependency
     Begin Project Dependency
-    Project_Dep_Name sword2 
+    Project_Dep_Name sword2
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name queen
     End Project Dependency
 }}}
 
@@ -64,6 +67,18 @@ Package=<4>
 ###############################################################################
 
 Project: "sky"=.\sky.vcp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "sword2"=.\sword2.vcp - Package Owner=<4>
 
 Package=<5>
 {{{
