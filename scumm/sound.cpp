@@ -973,7 +973,7 @@ void Sound::playBundleMusic(char * song) {
 				return;
 			}
 
-			_musicDisk = _scumm->_vars[_scumm->VAR_CURRENTDISK];
+			_musicDisk = (byte)_scumm->_vars[_scumm->VAR_CURRENTDISK];
 			_outputMixerSize = 88140; // ((22050 * 2 * 2)
 		} else {
 			if (_scumm->_bundle->openMusicFile("digmusic.bun", _scumm->getGameDataPath()) == false)
