@@ -80,6 +80,8 @@ protected:
 	bool Cmd_PrintObjects(int argc, const char **argv);
 	bool Cmd_Actor(int argc, const char **argv);
 	bool Cmd_Object(int argc, const char **argv);
+	bool Cmd_Script(int argc, const char **argv);
+	bool Cmd_PrintScript(int argc, const char **argv);
 	
 	bool Cmd_DebugLevel(int argc, const char **argv);
 	bool Cmd_Help(int argc, const char **argv);

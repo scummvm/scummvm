@@ -85,6 +85,8 @@ void ScummDebugger::attach(Scumm *s, char *entry) {
 		DCmd_Register("room", &ScummDebugger::Cmd_Room);
 		DCmd_Register("objects", &ScummDebugger::Cmd_PrintObjects);
 		DCmd_Register("object", &ScummDebugger::Cmd_Object);
+		DCmd_Register("script", &ScummDebugger::Cmd_Script);
+		DCmd_Register("scripts", &ScummDebugger::Cmd_PrintScript);
 
 		DCmd_Register("loadgame", &ScummDebugger::Cmd_LoadGame);
 		DCmd_Register("savegame", &ScummDebugger::Cmd_SaveGame);
@@ -392,6 +394,49 @@ bool ScummDebugger::Cmd_Hide(int argc, const char **argv) {
 	} else {
 		Debug_Printf("Unknown hide parameter '%s'\n", argv[1]);
 	}
+	return true;
+}
+
+bool ScummDebugger::Cmd_Script(int argc, const char** argv) {
+	int scriptnum;
+
+	if (argc < 2) {
+		Debug_Printf("Syntax: script <scriptnum> <command>\n");
+		return true;
+	}
+	
+	scriptnum = atoi(argv[1]);
+	
+	if (scriptnum >= _s->_maxScripts) {
+		Debug_Printf("Script number %d is out of range (range: 1 - %d)\n", scriptnum, _s->_maxScripts);
+		return true;
+	}
+	
+	if ((!strcmp(argv[2], "kill")) || (!strcmp(argv[2], "stop"))) {
+		_s->stopScriptNr(scriptnum);
+	} else {
+		Debug_Printf("Unknown script command '%s'\n", argv[2]);
+	}
+
+	return true;
+}
+			
+bool ScummDebugger::Cmd_PrintScript(int argc, const char **argv) {
+	int i;
+	ScriptSlot *ss;
+	Debug_Printf("+-----------------------------+\n");
+	Debug_Printf("|# |num|sta|typ|un1|un2|fc|cut|\n");
+	Debug_Printf("+--+---+---+---+---+--+---+---+\n");
+	for (i=0; i < 25; i++) {
+		ss = &(_s->vm.slot[i]);
+		if (ss->number) {
+			Debug_Printf("|%2d|%3d|%3d|%3d|%3d|%3d|%2d|%3d|\n",
+					i, ss->number, ss->status, ss->where, ss->unk1, ss->unk2,
+					ss->freezeCount, ss->cutsceneOverride);
+		}
+	}
+	Debug_Printf("+-----------------------------+\n");
+	
 	return true;
 }
 
