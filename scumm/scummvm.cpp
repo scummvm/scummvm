@@ -895,10 +895,7 @@ void Scumm::scummInit() {
 	}
 
 	if (_version <= 2) {
-		if (_version == 1)
-			initV1MouseOver();
-		else
-			initV2MouseOver();
+		initV2MouseOver();
 
 		// Seems in V2 there was only a single room effect (iris),
 		// so we set that here.

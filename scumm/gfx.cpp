@@ -2581,7 +2581,7 @@ void Scumm::setupV1ManiacPalette() {
 	setPalColor(12, 168, 168, 168);
 	setPalColor(13,  84, 252,  84);
 	setPalColor(14,  84,  84, 252);
-	setPalColor(15,  84,  84,  84);
+	setPalColor(15, 252,  84, 252);
 }
 
 void Scumm::setupV1ZakPalette() {

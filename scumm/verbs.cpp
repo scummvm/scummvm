@@ -33,63 +33,23 @@ enum {
 	kSentenceLine = 6
 };
 
-void Scumm::initV1MouseOver() {
-	int i;
-
-	v2_mouseover_box = -1;
-
-	// Inventory items
-
-	for (i = 0; i < 2; i++) {
-		v2_mouseover_boxes[2 * i].rect.left = 0;
-		v2_mouseover_boxes[2 * i].rect.right = 144;
-		v2_mouseover_boxes[2 * i].rect.top = 32 + 8 * i;
-		v2_mouseover_boxes[2 * i].rect.bottom = v2_mouseover_boxes[2 * i].rect.top + 8;
-
-		v2_mouseover_boxes[2 * i].color = 4;
-		v2_mouseover_boxes[2 * i].hicolor = 7;
-
-
-		v2_mouseover_boxes[2 * i + 1].rect.left = 176;
-		v2_mouseover_boxes[2 * i + 1].rect.right = 320;
-		v2_mouseover_boxes[2 * i + 1].rect.top = v2_mouseover_boxes[2 * i].rect.top;
-		v2_mouseover_boxes[2 * i + 1].rect.bottom = v2_mouseover_boxes[2 * i].rect.bottom;
-
-		v2_mouseover_boxes[2 * i + 1].color = 4;
-		v2_mouseover_boxes[2 * i + 1].hicolor = 7;
-	}
-
-	// Inventory arrows
-
-	v2_mouseover_boxes[kInventoryUpArrow].rect.left = 144;
-	v2_mouseover_boxes[kInventoryUpArrow].rect.right = 176;
-	v2_mouseover_boxes[kInventoryUpArrow].rect.top = 32;
-	v2_mouseover_boxes[kInventoryUpArrow].rect.bottom = 40;
-
-	v2_mouseover_boxes[kInventoryUpArrow].color = 6;
-	v2_mouseover_boxes[kInventoryUpArrow].hicolor = 7;
-
-	v2_mouseover_boxes[kInventoryDownArrow].rect.left = 144;
-	v2_mouseover_boxes[kInventoryDownArrow].rect.right = 176;
-	v2_mouseover_boxes[kInventoryDownArrow].rect.top = 40;
-	v2_mouseover_boxes[kInventoryDownArrow].rect.bottom = 48;
-
-	v2_mouseover_boxes[kInventoryDownArrow].color = 6;
-	v2_mouseover_boxes[kInventoryDownArrow].hicolor = 7;
-
-	// Sentence line
-
-	v2_mouseover_boxes[kSentenceLine].rect.left = 0;
-	v2_mouseover_boxes[kSentenceLine].rect.right = 320;
-	v2_mouseover_boxes[kSentenceLine].rect.top = 0;
-	v2_mouseover_boxes[kSentenceLine].rect.bottom = 8;
-
-	v2_mouseover_boxes[kSentenceLine].color = 4;
-	v2_mouseover_boxes[kSentenceLine].hicolor = 7;
-}
-
 void Scumm::initV2MouseOver() {
 	int i;
+	int arrow_color, color, hi_color;
+
+	if (_version == 1) {
+		 if (_gameId == GID_MANIAC)
+			color = 15;
+		else
+			color = 4;
+
+		hi_color = 7;
+		arrow_color = 6;
+	} else {
+		color = 13;
+		hi_color = 14;
+		arrow_color = 1;
+	}
 
 	v2_mouseover_box = -1;
 
@@ -101,8 +61,8 @@ void Scumm::initV2MouseOver() {
 		v2_mouseover_boxes[2 * i].rect.top = 32 + 8 * i;
 		v2_mouseover_boxes[2 * i].rect.bottom = v2_mouseover_boxes[2 * i].rect.top + 8;
 
-		v2_mouseover_boxes[2 * i].color = 13;
-		v2_mouseover_boxes[2 * i].hicolor = 14;
+		v2_mouseover_boxes[2 * i].color = color;
+		v2_mouseover_boxes[2 * i].hicolor = hi_color;
 
 
 		v2_mouseover_boxes[2 * i + 1].rect.left = 176;
@@ -110,8 +70,8 @@ void Scumm::initV2MouseOver() {
 		v2_mouseover_boxes[2 * i + 1].rect.top = v2_mouseover_boxes[2 * i].rect.top;
 		v2_mouseover_boxes[2 * i + 1].rect.bottom = v2_mouseover_boxes[2 * i].rect.bottom;
 
-		v2_mouseover_boxes[2 * i + 1].color = 13;
-		v2_mouseover_boxes[2 * i + 1].hicolor = 14;
+		v2_mouseover_boxes[2 * i + 1].color = color;
+		v2_mouseover_boxes[2 * i + 1].hicolor = hi_color;
 	}
 
 	// Inventory arrows
@@ -121,16 +81,16 @@ void Scumm::initV2MouseOver() {
 	v2_mouseover_boxes[kInventoryUpArrow].rect.top = 32;
 	v2_mouseover_boxes[kInventoryUpArrow].rect.bottom = 40;
 
-	v2_mouseover_boxes[kInventoryUpArrow].color = 1;
-	v2_mouseover_boxes[kInventoryUpArrow].hicolor = 14;
+	v2_mouseover_boxes[kInventoryUpArrow].color = arrow_color;
+	v2_mouseover_boxes[kInventoryUpArrow].hicolor = hi_color;
 
 	v2_mouseover_boxes[kInventoryDownArrow].rect.left = 144;
 	v2_mouseover_boxes[kInventoryDownArrow].rect.right = 176;
 	v2_mouseover_boxes[kInventoryDownArrow].rect.top = 40;
 	v2_mouseover_boxes[kInventoryDownArrow].rect.bottom = 48;
 
-	v2_mouseover_boxes[kInventoryDownArrow].color = 1;
-	v2_mouseover_boxes[kInventoryDownArrow].hicolor = 14;
+	v2_mouseover_boxes[kInventoryDownArrow].color = arrow_color;
+	v2_mouseover_boxes[kInventoryDownArrow].hicolor = hi_color;
 
 	// Sentence line
 
@@ -139,8 +99,8 @@ void Scumm::initV2MouseOver() {
 	v2_mouseover_boxes[kSentenceLine].rect.top = 0;
 	v2_mouseover_boxes[kSentenceLine].rect.bottom = 8;
 
-	v2_mouseover_boxes[kSentenceLine].color = 13;
-	v2_mouseover_boxes[kSentenceLine].hicolor = 14;
+	v2_mouseover_boxes[kSentenceLine].color = color;
+	v2_mouseover_boxes[kSentenceLine].hicolor = hi_color;
 }
 
 void Scumm::checkV2MouseOver(ScummVM::Point pos) {
