@@ -357,7 +357,7 @@ They are:
         super2xsai - Enhanced 2xsai filtering. 640x400 screen/window size
         supereagle - Less blurry than 2xsai, but slower. Also 640x400
         advmame2x  - 640x400 scaling. Doesn't rely on blurring like 2xSAI.
-	tv2x       - 640x400 scaling. Horizontal scanlines.
+        tv2x       - 640x400 scaling. Horizontal scanlines.
 
 To select a graphics filter, pass its name via the '-g' option to scummvm, for example:
 
