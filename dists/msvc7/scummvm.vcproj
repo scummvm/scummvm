@@ -467,6 +467,12 @@
 				RelativePath="..\..\gui\dialog.h">
 			</File>
 			<File
+				RelativePath="..\..\gui\font.cpp">
+			</File>
+			<File
+				RelativePath="..\..\gui\font.h">
+			</File>
+			<File
 				RelativePath="..\..\gui\launcher.cpp">
 			</File>
 			<File
@@ -477,6 +483,9 @@
 			</File>
 			<File
 				RelativePath="..\..\gui\message.h">
+			</File>
+			<File
+				RelativePath="..\..\gui\newfont.cpp">
 			</File>
 			<File
 				RelativePath="..\..\gui\newgui.cpp">
@@ -492,6 +501,9 @@
 			</File>
 			<File
 				RelativePath="..\..\gui\options.h">
+			</File>
+			<File
+				RelativePath="..\..\gui\scummfont.cpp">
 			</File>
 			<File
 				RelativePath="..\..\gui\widget.cpp">
