@@ -21,8 +21,6 @@
 
 #ifdef _WIN32_WCE
 
-#define POCKETSCUMM_VERSION "PPC 0.4.2cvs"
-
 /* Original GFX code by Vasyl Tsvirkunov */
 
 #include "wince.h"
@@ -55,6 +53,8 @@ static UBYTE staticTranslate[20];
 static UBYTE invert = 0;
 static int colorscale = 0;
 unsigned char color_match[500];  // used for paletted issues	
+
+extern const char *getBuildDate();
 
 extern UBYTE item_toolbar[];
 extern UBYTE item_toolbar_colors[];
@@ -819,7 +819,7 @@ void drawBlankGameSelection() {
 void drawVideoDevice() {
 	char info[100];
 
-	sprintf(info, "Video device : %s %s - version %s", gfx_device_name[_gfx_device], gfx_device_options_name[_gfx_option], POCKETSCUMM_VERSION);
+	sprintf(info, "Video device : %s %s - CVS %s PPC %s", gfx_device_name[_gfx_device], gfx_device_options_name[_gfx_option], SCUMMVM_VERSION, getBuildDate());
 	drawString(info, 10, 0, 2, 1);
 	/*
 	printString(video_device, 10, 270, 2, 0);
