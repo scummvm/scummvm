@@ -45,7 +45,6 @@ void SkyMusicBase::loadSection(uint8 pSection)
 	_currentSection = pSection;
 	_musicData = _skyDisk->loadFile(_driverFileBase + FILES_PER_SECTION * pSection, NULL);
 	_allowedCommands = 0;
-	_playTime = 0;
 	_musicTempo0 = 0x78; // init constants taken from idb file, area ~0x1060
 	_musicTempo1 = 0xC0;
 	_onNextPoll.doReInit = false;
@@ -137,12 +136,6 @@ void SkyMusicBase::loadNewMusic(void)
 		error("Music %d requested but doesn't exist in file.\n", _onNextPoll.musicToProcess);
 		return;
 	}
-
-	if ((_onNextPoll.musicToProcess == 6) && (_currentSection == 5) && (_playTime < 3456))
-			return ;
-
-	_playTime = 0;
-
 	if (_currentMusic != 0)
 		stopMusic();
 
@@ -172,7 +165,6 @@ void SkyMusicBase::pollMusic(void)
 		loadNewMusic();
 
 	_aktTime += _tempo;
-	_playTime++;
 
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++) {
 		newTempo = _channels[cnt]->process((uint16)(_aktTime >> 16));
