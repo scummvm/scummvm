@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "math.h"
 
 void Scumm::initActor(Actor *a, int mode) {
 	if (mode==1) {
@@ -153,8 +154,14 @@ int Scumm::calcMovementFactor(Actor *a, int newX, int newY) {
 	a->walkdata.YXFactor = YXFactor;
 	a->walkdata.xfrac = 0;
 	a->walkdata.yfrac = 0;
-	
-	a->newDirection = getAngleFromPos(XYFactor, YXFactor);
+
+	if(_gameId==GID_DIG) {
+		float temp;
+		temp = atan2 (XYFactor, -YXFactor);
+		a->newDirection = normalizeAngle(temp * 1.8e2 / 3.14);
+	} else {
+		a->newDirection = getAngleFromPos(XYFactor, YXFactor);
+	}
 
 	return actorWalkStep(a);
 }

@@ -1117,21 +1117,6 @@ int Scumm::oldDirToNewDir(int dir) {
 }
 
 
-const uint16 many_direction_tab[18] = {
-	71,	109,	251,	530,
-	0,
-	0,
-	0,
-	0,
-	22,72,107,
-	157,
-	202,
-	252,
-	287,
-	337
-};
-
-
 int Scumm::numSimpleDirDirections(int dirType) {
 	return dirType ? 8 : 4;
 }
@@ -1139,7 +1124,7 @@ int Scumm::numSimpleDirDirections(int dirType) {
 /* Convert an angle to a simple direction */
 int Scumm::toSimpleDir(int dirType, int dir) {
 	int num = dirType ? 8 : 4, i;
-	const uint16 *dirtab = &many_direction_tab[dirType*8];
+	const uint16 *dirtab = &many_direction_tab[dirType*8+2];
 	for(i=1;i<num;i++,dirtab++) {
 		if (dir >= dirtab[0] && dir <= dirtab[1])
 			return i;

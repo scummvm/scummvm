@@ -2692,6 +2692,17 @@ void Scumm::o6_kernelFunction() {
 		a = derefActorSafe(args[1], "o6_kernelFunction:212");
 		push(a->frame);
 		break;
+	case 215:
+		if(_extraBoxFlags[args[1]]&0x00FF==0x00C0)
+		{
+			push(_extraBoxFlags[args[1]]);
+		}
+		else
+		{
+			byte* temp = (byte*)getBoxBaseAddr(args[1]);
+			push((byte)(*(temp+17)));
+		}
+		break;
 	default:
 		error("o6_kernelFunction: default case %d", args[0]);
 	}

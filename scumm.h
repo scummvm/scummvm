@@ -43,6 +43,43 @@ enum {
 	NUM_ACTORS = 30
 };
 
+const uint16 many_direction_tab[18] = {
+	4,
+	8,
+	71,
+	109,
+	251,
+	530,
+	0,
+	0,
+	0,
+	0,
+	22,
+	72,
+	107,
+	157,
+	202,
+	252,
+	287,
+	337 };
+
+const int16 many_direction_tab_2 [16] = {
+	0,
+	90,
+	180,
+	270,
+	-1,
+	-1,
+	-1,
+	-1,
+	0,
+	45,
+	90,
+	135,
+	180,
+	225,
+	270,
+	315 };
 
 struct Point {
 	int x,y;
@@ -796,6 +833,8 @@ struct Scumm {
 	char *_exe_name;
 	char *_gameDataPath;
 
+	int akos_findManyDirection(int16 ManyDirection, uint16 facing);
+	
 	byte _saveLoadFlag;
 	byte _saveLoadSlot;
 	bool _saveLoadCompatible;
