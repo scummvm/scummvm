@@ -400,6 +400,8 @@ private:
 	void lock();
 	void unlock();
 
+	int set_master_volume_intern(uint vol);
+
 public:
 	Part *parts_ptr() {
 		return _parts;
@@ -1264,13 +1266,8 @@ int IMuseInternal::set_music_volume(uint vol)
 	return 0;
 }
 
-int IMuseInternal::set_master_volume(uint vol)
+int IMuseInternal::set_master_volume_intern(uint vol)
 {
-	int i;
-
-	// recalibrate from 0-256 range
-	vol = vol * 127 / 256;
-
 	if (vol > 127)
 		return -1;
 
@@ -1278,10 +1275,19 @@ int IMuseInternal::set_master_volume(uint vol)
 		vol = vol * _music_volume / 128;
 
 	_master_volume = vol;
-	for (i = 0; i != 8; i++)
+	for (int i = 0; i != 8; i++)
 		_channel_volume_eff[i] = (_channel_volume[i] + 1) * vol >> 7;
 	update_volumes();
+
 	return 0;
+}
+
+int IMuseInternal::set_master_volume(uint vol)
+{
+	// recalibrate from 0-256 range
+	vol = vol * 127 / 256;
+
+	return set_master_volume_intern(vol);
 }
 
 int IMuseInternal::get_master_volume()
@@ -1334,9 +1340,9 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 	if (param == 0) {
 		switch (cmd) {
 		case 6:
-			return set_master_volume(b);
+			return set_master_volume_intern(b);
 		case 7:
-			return get_master_volume();
+			return _master_volume;
 		case 8:
 			return start_sound(b) ? 0 : -1;
 		case 9:
