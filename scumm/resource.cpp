@@ -1053,14 +1053,6 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 	if (*src_ptr == 0x80) {
 		// 0x80: is music; otherwise not.
 
-		if (_gameId == GID_MONKEY_VGA || _gameId == GID_MONKEY_EGA) {
-			// FIXME: This evil hack works around the fact that in some
-			// places in MonkeyVGA, the music is never explicitly stopped.
-			// Rather it seems that starting a new music is supposed to 
-			// automatically stop the old song.
-			_imuse->stop_all_sounds();
-		}
-
 		// The "speed" of the song
 		ticks = *(src_ptr + 1);
 		
