@@ -28,7 +28,7 @@ typedef struct  {
 } imuse_music_table;
 ///////////////////////////////////////////////////////////////////
 
-static void addImuseDigi_digStateMusicMap() {
+static void addDimuseTables_digStateMusicMap() {
 	imuse_music_map _digStateMusicMap[] = {
 	{0,		0,	0,	0,	0,	0	},
 	{1,		0,	0,	0,	0,	0	},
@@ -149,7 +149,7 @@ static void addImuseDigi_digStateMusicMap() {
 	writeRecord(_digStateMusicMap, sizeof(_digStateMusicMap), GBVARS_DIGSTATEMUSICMAP_INDEX , GBVARS_SCUMM);
 }
 ///////////////////////////////////////////////////////////////////
-static void addImuseDigi_digStateMusicTable() {
+static void addDimuseTables_digStateMusicTable() {
 	imuse_music_table _digStateMusicTable[] = {
 	{0,		1000,	0, 0, 0, 0, "STATE_NULL",						"",										  ""},
 	{1,		1001,	0, 0, 0, 0, "stateNoChange",				"",											""},
@@ -220,7 +220,7 @@ static void addImuseDigi_digStateMusicTable() {
 	writeRecord(_digStateMusicTable, sizeof(_digStateMusicTable), GBVARS_DIGSTATEMUSICTABLE_INDEX , GBVARS_SCUMM);
 }
 ///////////////////////////////////////////////////////////////////
-static void addImuseDigi_comiStateMusicTable() {
+static void addDimuseTables_comiStateMusicTable() {
 	imuse_music_table _comiStateMusicTable[] = {
 	{0,	1000,	0, 0, 0, 0,  "STATE_NULL",				 "",											""},
 	{0,	1001,	0, 0, 0, 0,  "stateNoChange",			 "",											""},
@@ -320,7 +320,7 @@ static void addImuseDigi_comiStateMusicTable() {
 	writeRecord(_comiStateMusicTable, sizeof(_comiStateMusicTable), GBVARS_COMISTATEMUSICTABLE_INDEX , GBVARS_SCUMM);
 }
 ///////////////////////////////////////////////////////////////////
-static void addImuseDigi_comiSeqMusicTable() {
+static void addDimuseTables_comiSeqMusicTable() {
 	imuse_music_table _comiSeqMusicTable[] = {
 	{0, 2000,	0, 0, 0, 0,  "SEQ_NULL",					"",												""},
 	{0, 2100,	0, 0, 0, 0,  "seqINTRO",					"",												""},
@@ -416,7 +416,7 @@ static void addImuseDigi_comiSeqMusicTable() {
 	writeRecord(_comiSeqMusicTable, sizeof(_comiSeqMusicTable), GBVARS_COMISEQMUSICTABLE_INDEX ,GBVARS_SCUMM);
 }
 ///////////////////////////////////////////////////////////////////
-static void addImuseDigi_digSeqMusicTable() {
+static void addDimuseTables_digSeqMusicTable() {
 
 	imuse_music_table _digSeqMusicTable[] = {
 	{0, 2000,	0, 0, 0, 0,	"SEQ_NULL",							"",												""						},
@@ -501,7 +501,7 @@ typedef struct {
 	char name[30];
 } imuse_ft_music_table;
 ///////////////////////////////////////////////////////////////////
-static void addImuseDigi_ftStateMusicTable() {
+static void addDimuseTables_ftStateMusicTable() {
 
 	imuse_ft_music_table _ftStateMusicTable[] = {
 	{0,		"",					0,	0,		"STATE_NULL"					},
@@ -559,7 +559,7 @@ static void addImuseDigi_ftStateMusicTable() {
 	writeRecord(_ftStateMusicTable, sizeof(_ftStateMusicTable), GBVARS_FTSTATEMUSICTABLE_INDEX , GBVARS_SCUMM);
 }
 ///////////////////////////////////////////////////////////////////
-static void addImuseDigi_ftSeqMusicTable() {
+static void addDimuseTables_ftSeqMusicTable() {
 
 	imuse_ft_music_table _ftSeqMusicTable[] = {
 	{0,		"",					2,	127,  "SEQ_NULL"						},
@@ -625,13 +625,13 @@ static void addImuseDigi_ftSeqMusicTable() {
 ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////
 
-void addImuseDigi() {
-	addImuseDigi_digStateMusicMap();
-	addImuseDigi_digStateMusicTable();
-	addImuseDigi_comiStateMusicTable();
-	addImuseDigi_comiSeqMusicTable();
-	addImuseDigi_digSeqMusicTable();
-	addImuseDigi_ftStateMusicTable();
-	addImuseDigi_ftSeqMusicTable();
+void addDimuseTables() {
+	addDimuseTables_digStateMusicMap();
+	addDimuseTables_digStateMusicTable();
+	addDimuseTables_comiStateMusicTable();
+	addDimuseTables_comiSeqMusicTable();
+	addDimuseTables_digSeqMusicTable();
+	addDimuseTables_ftStateMusicTable();
+	addDimuseTables_ftSeqMusicTable();
 
 }

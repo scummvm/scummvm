@@ -1,7 +1,7 @@
 #include <PalmOS.h>
 #include "b_globals.h"
 
-static void addBundle_imcTable() {
+static void addDimuseCodecs_imcTable() {
 	Int16 imcTable[] = {
 	0x0007, 0x0008, 0x0009, 0x000A, 0x000B, 0x000C, 0x000D, 0x000E, 0x0010, 0x0011,
 	0x0013, 0x0015, 0x0017, 0x0019, 0x001C, 0x001F, 0x0022, 0x0025, 0x0029, 0x002D,
@@ -16,6 +16,6 @@ static void addBundle_imcTable() {
 	writeRecord(imcTable, sizeof(imcTable), GBVARS_IMCTABLE_INDEX , GBVARS_SCUMM);
 }
 
-void addBundle() {
-	addBundle_imcTable();
+void addDimuseCodecs() {
+	addDimuseCodecs_imcTable();
 }
