@@ -27,6 +27,8 @@ namespace Queen {
 // Maybe should be an inlined function somwhere else, feel free to change
 #define InRange(x,l,h)     ((x)<=(h) && (x)>=(l)) /* X in [l..h] */
 
+#define SAVEGAME_SIZE	24622
+
 enum {
 	COMPRESSION_NONE  = 0,
 	COMPRESSION_MP3   = 1,	

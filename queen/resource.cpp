@@ -46,8 +46,8 @@ const GameVersion Resource::_gameVersions[] = {
 };
 
 
-Resource::Resource(const Common::String &datafilePath, const char *datafileName)
-	: _JAS2Pos(0), _datafilePath(datafilePath), _resourceEntries(0), _resourceTable(NULL) {
+Resource::Resource(const Common::String &datafilePath, const char *datafileName, SaveFileManager *mgr, const char *savePath)
+	: _JAS2Pos(0), _datafilePath(datafilePath), _resourceEntries(0), _resourceTable(NULL), _saveFileManager(mgr), _savePath(savePath) {
 
 	_resourceFile = new File();
 	_resourceFile->open(datafileName, _datafilePath);
@@ -259,6 +259,40 @@ File *Resource::giveCompressedSound(const char *filename) {
 	assert(strstr(filename, ".SB"));
 	_resourceFile->seek(fileOffset(filename), SEEK_SET);
 	return _resourceFile;
+}
+
+bool Resource::writeSave(uint16 slot, const byte *saveData, uint32 size) {
+	char name[20];
+	sprintf(name, "queensav.%03d", slot);
+	SaveFile *file = _saveFileManager->open_savefile(name, _savePath, true);
+	if (!file) {
+		warning("Can't create file '%s', game not saved", name);
+		return false;
+	}
+
+	if (file->write(saveData, size) != size) {
+		warning("Can't write file '%s'. (Disk full?)", name);
+		return false;
+	}
+
+	delete file;
+	return true;
+}
+
+bool Resource::readSave(uint16 slot, byte *&ptr) {
+	char name[20];
+	sprintf(name, "queensav.%03d", slot);
+	SaveFile *file = _saveFileManager->open_savefile(name, _savePath, false);
+	if (!file)
+		return false;
+
+	if (file->read(ptr, SAVEGAME_SIZE) != SAVEGAME_SIZE) {
+		warning("Can't read from file '%s'", name);
+		delete file;
+		return false;
+	}
+
+	return true;
 }
 
 } // End of namespace Queen

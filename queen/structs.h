@@ -36,6 +36,13 @@ struct Box {
 		y2 = (int16)READ_BE_UINT16(ptr); ptr += 2;
 	}
 
+	void writeTo(byte *&ptr) {
+		WRITE_BE_UINT16(ptr, x1); ptr += 2;
+		WRITE_BE_UINT16(ptr, y1); ptr += 2;
+		WRITE_BE_UINT16(ptr, x2); ptr += 2;
+		WRITE_BE_UINT16(ptr, y2); ptr += 2;
+	}
+
 	int16 xDiff() const {
 		return x2 - x1;
 	}
@@ -72,6 +79,14 @@ struct Area {
 		object = READ_BE_UINT16(ptr); ptr += 2;
 	}
 
+	void writeTo(byte *&ptr) {
+		WRITE_BE_UINT16(ptr, mapNeighbours); ptr += 2;
+		box.writeTo(ptr);
+		WRITE_BE_UINT16(ptr, bottomScaleFactor); ptr += 2;
+		WRITE_BE_UINT16(ptr, topScaleFactor); ptr += 2;
+		WRITE_BE_UINT16(ptr, object); ptr += 2;
+	}
+
 	uint16 calcScale(int16 y) const {
 		uint16 dy = box.y2 - box.y1;
 		int16 ds = (int16)(topScaleFactor - bottomScaleFactor);
@@ -102,6 +117,12 @@ struct WalkOffData {
 		entryObj = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		x = READ_BE_UINT16(ptr); ptr += 2;
 		y = READ_BE_UINT16(ptr); ptr += 2;
+	}
+
+	void writeTo(byte *&ptr) {
+		WRITE_BE_UINT16(ptr, entryObj); ptr += 2;
+		WRITE_BE_UINT16(ptr, x); ptr += 2;
+		WRITE_BE_UINT16(ptr, y); ptr += 2;
 	}
 };
 
@@ -210,6 +231,17 @@ struct ObjectData {
 		state = READ_BE_UINT16(ptr); ptr += 2;
 		image = (int16)READ_BE_UINT16(ptr); ptr += 2;
 	}
+
+	void writeTo(byte *&ptr) {
+		WRITE_BE_UINT16(ptr, name); ptr += 2;
+		WRITE_BE_UINT16(ptr, x); ptr += 2;
+		WRITE_BE_UINT16(ptr, y); ptr += 2;
+		WRITE_BE_UINT16(ptr, description); ptr += 2;
+		WRITE_BE_UINT16(ptr, entryObj); ptr += 2;
+		WRITE_BE_UINT16(ptr, room); ptr += 2;
+		WRITE_BE_UINT16(ptr, state); ptr += 2;
+		WRITE_BE_UINT16(ptr, image); ptr += 2;
+	}
 };
 
 
@@ -274,6 +306,14 @@ struct ItemData {
 		state = READ_BE_UINT16(ptr); ptr += 2;
 		frame = READ_BE_UINT16(ptr); ptr += 2;
 		sfxDescription = (int16)READ_BE_UINT16(ptr); ptr += 2;
+	}
+
+	void writeTo(byte *&ptr) {
+		WRITE_BE_UINT16(ptr, name); ptr += 2;
+		WRITE_BE_UINT16(ptr, description); ptr += 2;
+		WRITE_BE_UINT16(ptr, state); ptr += 2;
+		WRITE_BE_UINT16(ptr, frame); ptr += 2;
+		WRITE_BE_UINT16(ptr, sfxDescription); ptr += 2;
 	}
 };
 
@@ -512,6 +552,20 @@ struct Person {
 struct TalkSelected {
 	int16 hasTalkedTo;
 	int16 values[4];
+
+	void readFrom(byte *&ptr) {
+		hasTalkedTo = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		for (int i = 0; i < 4; i++) {
+			values[i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		}	
+	}
+
+	void writeTo(byte *&ptr) {
+		WRITE_BE_UINT16(ptr, hasTalkedTo); ptr += 2;
+		for (int i = 0; i < 4; i++) {
+			WRITE_BE_UINT16(ptr, values[i]); ptr += 2;
+		}
+	}
 };
 
 

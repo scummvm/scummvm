@@ -72,6 +72,11 @@ class Input {
 		bool talkQuit() const { return _talkQuit; }
 		void talkQuitReset()  { _talkQuit = false; }
 
+		bool quickSave() const { return _quickSave; }
+		void quickSaveReset()  { _quickSave = false; }
+		bool quickLoad() const { return _quickLoad; }
+		void quickLoadReset()  { _quickLoad = false; }
+
 		bool fastMode() const { return _fastMode; }
 		void fastMode(bool fm)	{ _fastMode = fm; }
 
@@ -102,7 +107,9 @@ class Input {
 			KEY_RETURN    = 13,
 			KEY_BACKSPACE = 8,
 			
-			KEY_F1 = 282
+			KEY_F1 = 282,
+			KEY_F11 = KEY_F1 + 10,
+			KEY_F12
 		};
 
 		enum 
@@ -130,6 +137,12 @@ class Input {
 
 		//! moved Talk::_quit here 
 		bool _talkQuit;         // TALKQUIT
+
+		//! Set if quicksave requested
+		bool _quickSave;
+
+		//! Set if quickload requested
+		bool _quickLoad;
 
 		//! Set by delay();
 		int _inKey;

@@ -2321,6 +2321,177 @@ void Logic::update() {
 	BobSlot *joe = _graphics->bob(0);
 	_display->update(joe->active, joe->x, joe->y);
 	_dbg->update(_input->checkKeys());
+
+	if (_input->quickSave())
+		if (!_input->cutawayRunning()) {
+			_input->quickSaveReset();
+			gameSave(0, "Quicksave");
+		}
+	if (_input->quickLoad())
+		if (!_input->cutawayRunning()) {
+			_input->quickLoadReset();
+			gameLoad(0);
+		}
+}
+
+bool Logic::gameSave(uint16 slot, const char *desc) {
+	if (!desc)	//no description entered
+		return false;
+
+	debug(3, "Saving game to slot %d", slot);
+	
+	int i, j;
+	char *buf = new char[32];
+	memcpy(buf, desc, strlen(desc) < 32 ? strlen(desc) : 32);
+	for (i = strlen(desc); i < 32; i++)
+		buf[i] = '\0';
+	byte *saveData = new byte[SAVEGAME_SIZE];
+	byte *ptr = saveData;
+	memcpy(ptr, buf, 32); ptr += 32;
+	
+	WRITE_BE_UINT16(ptr, _settings.talkSpeed); ptr += 2;
+	WRITE_BE_UINT16(ptr, _settings.musicVolume); ptr += 2;
+	WRITE_BE_UINT16(ptr, _settings.sfxToggle ? 1 : 0); ptr += 2;
+	WRITE_BE_UINT16(ptr, _settings.speechToggle ? 1 : 0); ptr += 2;
+	WRITE_BE_UINT16(ptr, _settings.musicToggle ? 1 : 0); ptr += 2;
+	WRITE_BE_UINT16(ptr, _settings.textToggle ? 1 : 0); ptr += 2;
+	
+	for (i = 0; i < 4; i++) {
+		WRITE_BE_UINT16(ptr, _inventoryItem[i]); ptr += 2;
+	}
+	
+	WRITE_BE_UINT16(ptr, _graphics->bob(0)->x); ptr += 2;
+	WRITE_BE_UINT16(ptr, _graphics->bob(0)->y); ptr += 2;
+	WRITE_BE_UINT16(ptr, _currentRoom); ptr += 2;
+
+	for (i = 1; i <= _numObjects; i++)
+		_objectData[i].writeTo(ptr);
+		
+	for (i = 1; i <= _numItems; i++)
+		_itemData[i].writeTo(ptr);
+		
+	for (i = 0; i < GAME_STATE_COUNT; i++) {
+		WRITE_BE_UINT16(ptr, gameState(i)); ptr += 2;
+	}
+	
+	for (i = 1; i <= _numRooms; i++)
+		for (j = 1; j <= _areaMax[i]; j++)
+			_area[i][j].writeTo(ptr);
+			
+	for (i = 0; i <= 85; i++)
+			_talkSelected[i].writeTo(ptr);
+	
+	for (i = 1; i <= _numWalkOffs; i++)
+		_walkOffData[i].writeTo(ptr);
+
+	WRITE_BE_UINT16(ptr, _joe.facing); ptr += 2;
+	WRITE_BE_UINT16(ptr, 0); ptr += 2; //TODO: tmpbamflag
+	WRITE_BE_UINT16(ptr, 0); ptr += 2; //TODO: lastoverride
+	
+	//TODO: lastmerge, lastalter, altmrgpri
+	for (i = 0; i < 3; i++) {
+		WRITE_BE_UINT16(ptr, 0); ptr += 2;
+	}
+	
+	if ((ptr - saveData) != SAVEGAME_SIZE) {
+		delete[] saveData;
+		return false;
+	}
+	
+	bool result = _resource->writeSave(slot, saveData, SAVEGAME_SIZE);
+	delete[] saveData;
+	
+	return result;	
+}
+
+bool Logic::gameLoad(uint16 slot) {
+	int i, j;
+	byte *saveData = new byte[SAVEGAME_SIZE];
+	byte *ptr = saveData;
+	if (!_resource->readSave(slot, saveData)) {
+		warning("Couldn't load savegame from slot %d", slot);
+		delete[] saveData;
+		return false;
+	}
+	
+	debug(3, "Loading game from slot %d", slot);
+	ptr += 32;	//skip description
+	_settings.talkSpeed = (int16)READ_BE_UINT16(ptr); ptr += 2;
+	_settings.musicVolume = (int16)READ_BE_UINT16(ptr); ptr += 2;
+	_settings.sfxToggle = READ_BE_UINT16(ptr) != 0; ptr += 2;
+	_settings.speechToggle = READ_BE_UINT16(ptr) != 0; ptr += 2;
+	_settings.musicToggle = READ_BE_UINT16(ptr) != 0; ptr += 2;
+	_settings.textToggle = READ_BE_UINT16(ptr) != 0; ptr += 2;
+
+	for (i = 0; i < 4; i++) {
+		_inventoryItem[i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
+	}
+
+	_joe.x = (int16)READ_BE_UINT16(ptr); ptr += 2;
+	_joe.y = (int16)READ_BE_UINT16(ptr); ptr += 2;
+
+	currentRoom(READ_BE_UINT16(ptr)); ptr += 2;
+	
+	for (i = 1; i <= _numObjects; i++)
+		_objectData[i].readFrom(ptr);
+
+	for (i = 1; i <= _numItems; i++)
+		_itemData[i].readFrom(ptr);
+
+	for (i = 0; i < GAME_STATE_COUNT; i++) {
+		gameState(i, (int16)READ_BE_UINT16(ptr)); ptr += 2;
+	}
+
+	for (i = 1; i <= _numRooms; i++)
+		for (j = 1; j <= _areaMax[i]; j++)
+			_area[i][j].readFrom(ptr);
+	
+	for (i = 0; i <= 85; i++)
+		_talkSelected[i].readFrom(ptr);
+		
+	for (i = 1; i <= _numWalkOffs; i++)
+		_walkOffData[i].readFrom(ptr);
+
+	joeFacing(READ_BE_UINT16(ptr));  ptr += 2;
+	READ_BE_UINT16(ptr); ptr += 2;	//TODO: tmpbamflag
+	READ_BE_UINT16(ptr); ptr += 2; //TODO: lastoverride
+	//_sound->playSound(_sound->lastOverride())
+	
+	//TODO: lastmerge, lastalter, altmrgpri
+	for (i = 0; i < 3; i++) {
+		READ_BE_UINT16(ptr); ptr += 2;
+	}
+
+	if ((ptr - saveData) != SAVEGAME_SIZE) {
+		delete[] saveData;
+		return false;
+	}
+	
+	//CUTJOEF = _joe.facing;
+	joeFace();
+	
+	//OLDX = _joe.x;
+	//OLDY = _joe.y;
+	_oldRoom = 0;
+	newRoom(_currentRoom);
+	_entryObj = 0;
+
+	switch (gameState(VAR_DRESSING_MODE)) {
+		case  0: 
+			joeUseClothes(false);
+			break;
+		case  1:
+			joeUseUnderwear();
+			break;
+		case  2:
+			joeUseDress(false);
+			break;
+	}
+	inventoryRefresh();
+	//bamflag = ..
+	
+	delete[] saveData;
+	return true;
 }
 
 void Logic::sceneStart(bool showMouseCursor) {

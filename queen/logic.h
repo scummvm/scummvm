@@ -298,6 +298,8 @@ public:
 
 	void update();
 
+	bool gameSave(uint16 slot, const char *desc);
+	bool gameLoad(uint16 slot);
 
 	enum {
 		MAX_ZONES_NUMBER   = 32,

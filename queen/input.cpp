@@ -38,6 +38,7 @@ const char* Input::_commandKeys[LANGUAGE_COUNT] = {
 Input::Input(Language language, OSystem *system) : 
 	_system(system), _fastMode(false), _keyVerb(VERB_NONE), 
 	_cutawayRunning(false), _cutawayQuit(false), _talkQuit(false),
+	_quickSave(false), _quickLoad(false),
 	_inKey(0), _mouse_x(0), _mouse_y(0), _mouseButton(0) {
 
 	switch (language) {
@@ -184,6 +185,14 @@ int Input::checkKeys() {
 				if (_canQuit)
 					_talkQuit = true;
 			}
+			break;
+
+		case KEY_F11:	// Quicksave
+			_quickSave = true;
+			break;
+			
+		case KEY_F12:	// Quickload
+			_quickLoad = true;
 			break;
 
 		default:

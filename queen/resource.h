@@ -23,6 +23,7 @@
 #define QUEEN_RESOURCE_H
 
 #include "common/file.h"
+#include "common/savefile.h"
 #include "defs.h"
 
 namespace Queen {
@@ -62,7 +63,7 @@ struct GameVersion {
 class Resource {
 
 public:
-	Resource(const Common::String &datafilePath, const char *datafileName);
+	Resource(const Common::String &datafilePath, const char *datafileName, SaveFileManager *mgr, const char *savePath);
 	~Resource(void);
 	uint8 *loadFile(const char *filename, uint32 skipBytes = 0, byte *dstBuf = NULL);
 	uint8 *loadFileMalloc(const char *filename, uint32 skipBytes = 0, byte *dstBuf = NULL);
@@ -76,6 +77,9 @@ public:
 	File *giveCompressedSound(const char *filename);
 	Language getLanguage();
 	const char *JASVersion();
+	bool writeSave(uint16 slot, const byte *saveData, uint32 size);
+	bool readSave(uint16 slot, byte *&ptr);
+
 
 protected:
 	File *_resourceFile;
@@ -84,6 +88,7 @@ protected:
 	uint8 _compression;
 	const Common::String _datafilePath;
 	const GameVersion *_gameVersion;
+	const char *_savePath;
 	uint32 _resourceEntries;
 	ResourceEntry *_resourceTable;
 	static const GameVersion _gameVersions[];
@@ -93,6 +98,8 @@ protected:
 	bool readTableFile();
 	void readTableCompResource();
 	static const GameVersion *detectGameVersion(uint32 dataFilesize);
+
+	SaveFileManager *_saveFileManager;
 };
 
 } // End of namespace Queen
