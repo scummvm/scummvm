@@ -163,7 +163,7 @@ void Sound::playSound(int soundID, int offset) {
 	bool music = false;
 	
 	if (_vm->_heversion >= 70 && soundID > _vm->_numSounds) {
-		debug(0, "playSound #%d", soundID);
+		debug(1, "playSound #%d", soundID);
 
 		int music_offs, tunes, total_size;
 		uint skip = 0;
@@ -197,7 +197,7 @@ void Sound::playSound(int soundID, int offset) {
 				if (soundID >= 8000)
 					skip = (soundID - 8000) * 25;
 				else
-					skip = (soundID - 4001) * 25;
+					skip = (soundID - 4000) * 25;
 			}
 		}
 
