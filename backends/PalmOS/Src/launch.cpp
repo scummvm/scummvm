@@ -186,7 +186,7 @@ Boolean StartScummVM() {
 
 		// language
 		if (gameInfoP->language > 0) {
-			const Char *lang = "en\0de\0fr\0it\0p\0es\0jp\0z\0kr\0hb\0ru\0cz\0nl\0";
+			const Char *lang = "en\0de\0fr\0it\0pt\0es\0jp\0zh\0kr\0hb\0ru\0cz\0nl\0";
 			ArgsAdd(&argvP[argc], "-q", (lang + (gameInfoP->language - 1) * 3), &argc);
 		}
 
@@ -365,9 +365,6 @@ Boolean StartScummVM() {
 
 //	if (argc > MAX_ARG)
 //		FrmCustomAlert(FrmErrorAlert, "Too many parameters.",0,0);
-
-	gVars->skinSet	= false;
-	gVars->pinUpdate= false;
 
 	stackSize = (gPrefs->setStack ? STACK_LARGER : STACK_DEFAULT);
 	lightspeed= (gPrefs->lightspeed.enable ? gPrefs->lightspeed.mode : 255);
