@@ -145,7 +145,6 @@ void SkyState::go() {
 	while (1) {
 		delay(100);
 		_skyLogic->engine();
-		_skyScreen->recreate();
 		_skyScreen->spriteEngine();
 		_skyScreen->flip();
 	}
@@ -154,6 +153,8 @@ void SkyState::go() {
 void SkyState::initialise(void) {
 
 	//initialise_memory();
+
+	memset(_itemList, sizeof(void*), 2048);
 
 	_skyDisk = new SkyDisk(_gameDataPath);
 	_skySound = new SkySound(_mixer, _skyDisk);
@@ -335,7 +336,7 @@ bool SkyState::isDemo(uint32 version) {
 }
 
 bool SkyState::isCDVersion(uint32 version) {
-
+return false;
 	switch (version) {
 	case 267:
 		return false;

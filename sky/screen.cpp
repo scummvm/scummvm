@@ -171,7 +171,6 @@ void SkyScreen::recreate(void) {
 		}
 		screenPos += (GRID_H - 1) * GAME_SCREEN_WIDTH;
 	}
-	showScreen(_backScreen);
 }
 
 void SkyScreen::flip(void) {
@@ -435,6 +434,7 @@ void SkyScreen::sortSprites(void) {
 		currDrawList++;
 
 		do { // a_new_draw_list:
+			//printf("loading drawlist %d\n",loadDrawList);
 			uint16 *drawListData = (uint16*)SkyState::fetchCompact(loadDrawList);
 			nextDrawList = false;
 			while ((!nextDrawList) && (drawListData[0])) {
@@ -446,8 +446,11 @@ void SkyScreen::sortSprites(void) {
 					Compact *spriteComp = SkyState::fetchCompact(drawListData[0]);
 					if ((spriteComp->status & 4) && // is it sortable playfield?(!?!)
 						(spriteComp->screen == SkyLogic::_scriptVariables[SCREEN])) { // on current screen
+							//printf("Adding to drawlist. status = %X, screen = %X\n",spriteComp->status,spriteComp->screen);
 							dataFileHeader *spriteData = 
 								(dataFileHeader*)SkyState::fetchItem(spriteComp->frame >> 6);
+							//printf("ycood = %d, s_offset_y = %d, height = %d\n",spriteComp->ycood,spriteData->s_offset_y,spriteData->s_height);
+							//printf("xcood = %d, s_offset_x = %d, width  = %d\n",spriteComp->xcood,spriteData->s_offset_x,spriteData->s_width);
 							if (!spriteData) {
 								printf("Missing file %d!\n",spriteComp->frame >> 6);
 								spriteComp->status = 0;
@@ -483,9 +486,7 @@ void SkyScreen::sortSprites(void) {
 			drawSprite((uint8*)sortList[cnt].sprite, sortList[cnt].compact);
 			if (sortList[cnt].compact->status & 8) vectorToGame(0x81);
 			else vectorToGame(1);
-			if (sortList[cnt].compact->status & 0x200) {
-				verticalMask();
-			}
+			if (!(sortList[cnt].compact->status & 0x200)) verticalMask();
 		}
 	}
 }
@@ -494,24 +495,17 @@ void SkyScreen::doSprites(uint8 layer) {
 
 	uint16 drawListNum = DRAW_LIST_NO;
 	uint32 idNum;
-	bool getNextDrawList;
 	uint16* drawList;
 	while (SkyLogic::_scriptVariables[drawListNum]) { // std sp loop
 		idNum = SkyLogic::_scriptVariables[drawListNum];
 		drawListNum++;
 
+		//printf("std_sp: New DrawList: %d\n",idNum); getchar();
 		drawList = (uint16*)SkyState::fetchCompact(idNum);
-		getNextDrawList = false;
 		while(drawList[0]) {
 			// new_draw_list:
-			while ((!getNextDrawList) && (drawList[0])) {
+			while ((drawList[0] != 0) && (drawList[0] != 0xFFFF)) {
 				// back_loop:
-				if (drawList[0]) {
-					if (drawList[0] == 0xFFFF) {
-						// new_draw_list
-						idNum = drawList[1];
-						getNextDrawList = true;
-					} else {
 						// not_new_list
 						Compact *spriteData = SkyState::fetchCompact(drawList[0]);
 						drawList++;
@@ -523,12 +517,10 @@ void SkyScreen::doSprites(uint8 layer) {
 								if (spriteData->status & 8) vectorToGame(0x81);
 								else vectorToGame(1);
 						}
-					}
-				}
 			}
-			if (drawList[0]) {
-				drawList = (uint16*)SkyState::fetchCompact(idNum);
-				getNextDrawList = false;
+			if (drawList[0] == 0xFFFF) {
+				//printf("sub: New DrawList: %d\n",drawList[1]); getchar();
+				drawList = (uint16*)SkyState::fetchCompact(drawList[1]);
 			}
 		}
 	}
@@ -547,8 +539,7 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 	_maskX1 = _maskX2 = 0;
 	uint8 *spriteData = spriteInfo + (sprCompact->frame & 0x3F) * sprDataFile->s_sp_size;
 	spriteData += sizeof(dataFileHeader);
-
-	int32 spriteY = sprCompact->ycood + sprDataFile->s_offset_y - TOP_LEFT_Y;
+	int32 spriteY = sprCompact->ycood + (int16)sprDataFile->s_offset_y - TOP_LEFT_Y;
 	if (spriteY < 0) {
 		spriteY = ~spriteY;
 		if (_sprHeight <= (uint32)spriteY) {
@@ -569,7 +560,7 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 		}
 	}
 	_sprY = (uint32)spriteY;
-	int32 spriteX = sprCompact->xcood + sprDataFile->s_offset_x - TOP_LEFT_X;
+	int32 spriteX = sprCompact->xcood + (int16)sprDataFile->s_offset_x - TOP_LEFT_X;
 	if (spriteX < 0) {
 		spriteX = ~spriteX;
 		if (_sprWidth <= (uint32)spriteX) {
@@ -598,9 +589,12 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 		_sprWidth = 0;
 		return ;
 	}
+	
 	for (uint8 cnty = 0; cnty < _sprHeight; cnty++) {
 		for (uint8 cntx = 0; cntx < _sprWidth; cntx++)
 			if (spriteData[cntx + _maskX1]) screenPtr[cntx] = spriteData[cntx + _maskX1];
+		_system->copy_rect(screenPtr,320,_sprX + _maskX1, _sprY + cnty, _sprWidth, 1);
+		_system->update_screen();
 		spriteData += _sprWidth;
 		screenPtr += GAME_SCREEN_WIDTH;
 	}
