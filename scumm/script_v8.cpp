@@ -1310,9 +1310,9 @@ void Scumm_v8::o8_startVideo()
 	
 	warning("o8_startVideo(%s/%s)", getGameDataPath(), (char*)_scriptPointer);
 	
-	ScummRenderer * sr = new ScummRenderer(this, 1000/14);
-	SmushPlayer * sp = new SmushPlayer(sr);
-	sp->play((char*)_scriptPointer, getGameDataPath());
+	//ScummRenderer * sr = new ScummRenderer(this, 1000/14);
+	//SmushPlayer * sp = new SmushPlayer(sr);
+	//sp->play((char*)_scriptPointer, getGameDataPath());
 	
 	_scriptPointer += len + 1;
 }

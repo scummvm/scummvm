@@ -1031,6 +1031,8 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					tmp /= 2;
 				}
 				_channel[chan]._volumeFadeStep = tmp;
+				printf("volumeFade is %d, step is %d\n", d, tmp);
+
 				return 0;
 			default:
 				warning("IMuseDigital::doCommand 14 DEFAULT sub command %d", sub_cmd);
@@ -1059,6 +1061,12 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					}
 				}
 			} else if (_scumm->_gameId == GID_CMI) {
+				if (b == 1000) {		// STATE_NULL
+					// FIXME: Fade this out properly, in the same increments as the real engine
+					_scumm->_sound->stopBundleMusic();
+					return 0;
+				}
+
 				for(l = 0;; l++) {
 					if (_comiStateMusicTable[l].index == -1) {
 						return 1;
