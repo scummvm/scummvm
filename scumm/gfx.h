@@ -25,6 +25,8 @@
 
 #include "common/rect.h"
 
+class Scumm;
+
 enum {					/** Camera modes */
 	CM_NORMAL = 1,
 	CM_FOLLOW_ACTOR = 2,
