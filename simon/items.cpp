@@ -405,7 +405,7 @@ int SimonState::runScript()
 			break;
 
 		case 68:{									/* exit interpreter */
-				error("Exit interpreter opcode");
+				system->quit();
 			}
 			break;
 
