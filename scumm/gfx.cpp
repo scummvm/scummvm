@@ -1046,12 +1046,12 @@ next_iter:
 
 void Gdi::decodeStripEGA(byte *dst, byte *src, int height) {
 	byte color = 0;
-	int run = 0, x = 0, y = 0;
+	int run = 0, x = 0, y = 0, z;
 
-  while(x < 8){
+	while(x < 8) {
 		color = *src++;
 		
-		if(color >= 0x80) {
+		if(color & 0x80) {
 			run = color & 0x3f;
 
 			if(color & 0x40) {
@@ -1060,46 +1060,43 @@ void Gdi::decodeStripEGA(byte *dst, byte *src, int height) {
 				if(run == 0) {
 					run = *src++;
 				}
+				const register byte colors[2] = { color >> 4, color & 0xf };
+				for(z = 0; z < run; z++) {
 
-				for(int z = 0; z < run; z++) {
-
-					if(z & 1) {
-						*(dst + y * _vm->_realWidth + x) = _vm->_shadowPalette[color & 0xf];
-					} else {
-						*(dst + y * _vm->_realWidth + x) = _vm->_shadowPalette[color >> 4];
-					}
+					*(dst + y * _vm->_realWidth + x) = _vm->_shadowPalette[ colors[z&1] ];
 
 					y++;
-					if(y >= height){
+					if(y >= height) {
 						y = 0;
 						x++;
 					}
 				}
-			} else{
+			} else {
 				if(run == 0) {
 					run = *src++;
 				}
 
-				for(int z = 0; z < run; z++) {
+				for(z = 0; z < run; z++) {
 					*(dst + y * _vm->_realWidth + x) = *(dst + y * _vm->_realWidth + x - 1);
+
 					y++;
-					if(y >= height){
+					if(y >= height) {
 						y = 0;
 						x++;
 					}
-				}            
+				}
 			}
-		} else if(color < 0x80){
+		} else {
 			run = color >> 4;
 			if(run == 0) {
 				run = *src++;
 			}
 			
-			for(int z = 0; z < run; z++) {
+			for(z = 0; z < run; z++) {
 				*(dst + y * _vm->_realWidth + x) = _vm->_shadowPalette[color & 0xf];
-				y++;
 
-				if(y >= height){
+				y++;
+				if(y >= height) {
 					y = 0;
 					x++;
 				}
