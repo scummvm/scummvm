@@ -563,10 +563,6 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 	rect.top -= topline;
 	rect.bottom -= topline;
 
-	if (rect.left < 0)
-		rect.left = 0;
-	if (rect.right < 0)
-		rect.right = 0;
 	rect.clip(vs->width, vs->height);
 
 	markRectAsDirty(vs->number, rect, USAGE_BIT_RESTORED);
