@@ -438,13 +438,7 @@ void Sound::processSfxQueues() {
 
 	if (_scumm->VAR(_scumm->VAR_TALK_ACTOR)) { //_sfxMode & 2) {
 		act = _scumm->VAR(_scumm->VAR_TALK_ACTOR);
-		if (_talkChannel < 0)
-			finished = false;
-		else if (_scumm->_mixer->_channels[_talkChannel] == NULL) {
-			finished = true;
-		} else
-			finished = false;
-		
+		finished = (_talkChannel >= 0) && (_scumm->_mixer->_channels[_talkChannel] == NULL);
 
 		if (act != 0 && (uint) act < 0x80 && !_scumm->_string[0].no_talk_anim) {
 			a = _scumm->derefActor(act, "processSfxQueues");
@@ -463,7 +457,7 @@ void Sound::processSfxQueues() {
 			}
 		}
 		
-		if (finished  && _scumm->_talkDelay == 0) {
+		if (finished && _scumm->_talkDelay == 0) {
 			_scumm->stopTalk();
 			_sfxMode &= ~2;
 			_talkChannel = -1;
