@@ -320,6 +320,10 @@ SOURCE=.\debug.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=".\engine.cpp"
+# End Source File
+# Begin Source File
+
 SOURCE=.\gameDetector.cpp
 # End Source File
 # Begin Source File
