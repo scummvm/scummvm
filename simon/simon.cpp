@@ -4183,11 +4183,12 @@ void SimonEngine::talk_with_text(uint vga_sprite_id, uint color, const char *str
 	char *convertedString2 = convertedString;
 	int16 height, len_div_3;
 	int stringLength = strlen(string);
-	int pos, padding, lettersPerRow;
+	int pos, padding, lettersPerRow, lettersPerRowJustified;
 	const int textHeight = 10;
 
 	height = textHeight;
 	lettersPerRow = width / 6;
+	lettersPerRowJustified = stringLength / (stringLength / lettersPerRow + 1) + 1;
 
 	len_div_3 = (stringLength + 3) / 3;
 	if (!(_game & GF_SIMON2) && (_game & GF_TALKIE)) {
@@ -4205,14 +4206,25 @@ void SimonEngine::talk_with_text(uint vga_sprite_id, uint color, const char *str
 	assert(stringLength > 0);
 	while (stringLength > 0) {
 		if (stringLength > lettersPerRow) {
-			pos = lettersPerRow;
-			while (string[pos] != ' ' && pos > 0)
-				pos--;
+			int removeLastWord = 0;
+			if (lettersPerRow > lettersPerRowJustified) {
+				pos = lettersPerRowJustified;
+				while (string[pos] != ' ')
+					pos++;
+				if (pos > lettersPerRow)
+					removeLastWord = 1;
+			}
+			if (lettersPerRow <= lettersPerRowJustified || removeLastWord) {
+				pos = lettersPerRow;
+				while (string[pos] != ' ' && pos > 0)
+					pos--;
+			}
 			height += textHeight;
 			y -= textHeight;
 		} else
 			pos = stringLength;
-		padding = (lettersPerRow - pos) / 2;
+		padding = (lettersPerRow - pos) % 2 ?
+			(lettersPerRow - pos) / 2 + 1 : (lettersPerRow - pos) / 2;
 		while (padding--)
 			*convertedString2++ = ' ';
 		stringLength -= pos;
