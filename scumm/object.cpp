@@ -305,7 +305,7 @@ void Scumm::drawRoomObjects(int arg) {
 	}
 }
 
-const uint32 IMxx_tags[] = {
+static const uint32 IMxx_tags[] = {
 	MKID('IM00'),
 	MKID('IM01'),
 	MKID('IM02'),
@@ -1468,7 +1468,7 @@ void Scumm::drawBlastObject(BlastObject *eo) {
 	updateDirtyRect(vs->number, bdd.x, bdd.x + bdd.srcwidth, bdd.y, bdd.y + bdd.srcheight, 0);
 }
 
-byte _bompScaleTable[] = {
+static byte _bompScaleTable[] = {
     0, 128,  64, 192,  32, 160,  96, 224,
    16, 144,  80, 208,  48, 176, 112, 240,
     8, 136,  72, 200,  40, 168, 104, 232,
@@ -1536,7 +1536,7 @@ byte _bompScaleTable[] = {
    31, 159,  95, 223,  63, 191, 127, 255,
 };
 
-byte _bompBitsTable[] = {
+static byte _bompBitsTable[] = {
 	8, 7, 7, 6, 7, 6, 6, 5, 7, 6, 6, 5, 6, 5, 5, 4,
 	7, 6, 6, 5, 6, 5, 5, 4, 6, 5, 5, 4, 5, 4, 4, 3,
 	7, 6, 6, 5, 6, 5, 5, 4, 6, 5, 5, 4, 5, 4, 4, 3,
@@ -1556,9 +1556,10 @@ byte _bompBitsTable[] = {
 };
 
 int32 Scumm::setupBompScale(byte * scalling, int32 size, byte scale) {
-	uint32 tmp;
+	uint32 tmp = (256 - (size >> 1));
 	int32 count = (size + 7) >> 3;
-	byte * tmp_ptr = _bompScaleTable + (256 - (size >> 1));
+	assert(0 <= tmp && tmp < sizeof(_bompScaleTable));
+	byte * tmp_ptr = _bompScaleTable + tmp;
 	byte * tmp_scalling = scalling;
 	byte a = 0;
 
@@ -1615,8 +1616,10 @@ int32 Scumm::setupBompScale(byte * scalling, int32 size, byte scale) {
 
 	count = (size + 7) >> 3;
 	byte ret_value = 0;
-	while((count--) != 0) {
-		ret_value += *(*(scalling++) + _bompBitsTable);
+	while(count--) {
+		tmp = *scalling++;
+		assert(0 <= tmp && tmp < sizeof(_bompBitsTable));
+		ret_value += _bompBitsTable[tmp];
 	}
 
 	return ret_value;
