@@ -272,7 +272,7 @@ void SkyScreen::paletteFadeUp(uint16 fileNr) {
 	if (pal) {
 		paletteFadeUp(pal);
 		free(pal);
-	} else printf("SkyScreen::paletteFadeUp: Can't load palette #%d\n",fileNr);
+	} else warning("SkyScreen::paletteFadeUp: Can't load palette #%d\n",fileNr);
 }
 
 void SkyScreen::paletteFadeUp(uint8 *pal) {
@@ -511,8 +511,7 @@ void SkyScreen::sortSprites(void) {
 							dataFileHeader *spriteData = 
 								(dataFileHeader *)SkyState::fetchItem(spriteComp->frame >> 6);
 							if (!spriteData) {
-								printf("Missing file %d!\n",spriteComp->frame >> 6);
-								//getchar();
+								debug(9,"Missing file %d!\n",spriteComp->frame >> 6);
 								spriteComp->status = 0;
 							} else {
 								sortList[spriteCnt].yCood = spriteComp->ycood + spriteData->s_offset_y + spriteData->s_height;
@@ -572,7 +571,7 @@ void SkyScreen::doSprites(uint8 layer) {
 						(spriteData->screen == SkyLogic::_scriptVariables[SCREEN])) {
 					uint8 *toBeDrawn = (uint8 *)SkyState::fetchItem(spriteData->frame >> 6);
 					if (!toBeDrawn) {
-						printf("Spritedata %d not loaded!\n",spriteData->frame >> 6);
+						debug(9, "Spritedata %d not loaded!\n",spriteData->frame >> 6);
 						spriteData->status = 0;
 					} else {
 						drawSprite(toBeDrawn, spriteData);
