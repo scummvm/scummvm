@@ -778,7 +778,7 @@ void Scumm::removeObjectFromRoom(int obj)
 	for (i = 1; i < _numLocalObjects; i++) {
 		if (_objs[i].obj_nr == (uint16)obj) {
 			if (_objs[i].width != 0) {
-				for (j = 0; j < _objs[i].width; j++) {
+				for (j = 0; j < _objs[i].width >> 3; j++) {
 					strip = (_objs[i].x_pos >> 3) + j;
 
 					// Clip value
