@@ -246,8 +246,8 @@ class Insane {
 		int32 costume4;
 		int32 costume6;
 		int32 costume5;
-		int16 field_2C;
-		int32 field_30;
+		int16 costumevar;
+		int32 maxframe;
 		int32 field_34;
 	};
   
@@ -459,10 +459,10 @@ class Insane {
 	int32 weaponMinRange(int32 actornum);
 	void switchBenWeapon(void);
 	void prepareScenePropScene(int32 scenePropNum, bool arg_4, bool arg_8);
-	int32 calcDamage(bool arg_0, bool arg_4);
+	int32 calcBenDamage(bool arg_0, bool arg_4);
 	int32 weaponDamage(int32 actornum);
 	void proc47(int32 actornum, int32 val);
-	bool weaponIsEffective(void);
+	bool weaponBenIsEffective(void);
 	bool actor1StateFlags(int state);
 	bool actor0StateFlags1(int state);
 	bool actor0StateFlags2(int state);
@@ -470,12 +470,12 @@ class Insane {
 	void init_scenePropStruct(int32 n, int32 n1, int32 actornum, int32 sound, int32 trsId,
 							  byte r, byte g, byte b, int32 counter, int32 maxCounter,
 							  int32 index);
-	int32 setProperActorState(void);
+	int32 setBenState(void);
 	bool smlayer_actorNeedRedraw(int actornum, int actnum);
 	void reinitActors(void);
 	void smush_setPaletteValue(int where, int r, int g, int b);
 	char *handleTrsTag(int32 trsFilePtr, int32 trsId);
-	void enemyOuchSound(void);
+	void ouchSoundBen(void);
 	void smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32 step1, 
 							   int32 step2, int32 setupsan1, byte *fluPtr, int32 numFrames);
 	void smush_setupSanFromStart(const char *filename, int32 setupsan2, int32 step1, 
@@ -494,7 +494,10 @@ class Insane {
 	void setEnemyAnimation(int32 actornum, int anim);
 	void chooseEnemyWeaponAnim(int buttons);
 	void switchEnemyWeapon(void);
-	void enemyDustAction(void);
+	void setEnemyState(void);
+	int32 calcEnemyDamage(bool arg_0, bool arg_4);
+	void ouchSoundEnemy(void);
+	bool weaponEnemyIsEffective(void);
 
 	void blah(void);
 
