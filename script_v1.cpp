@@ -347,7 +347,332 @@ void Scumm::setupOpcodes() {
 	&Scumm::o5_drawBox
 	};
 
+static const char* opcode_lookup[] = {
+	/* 00 */
+	"o5_stopObjectCode",
+	"o5_putActor",
+	"o5_startMusic",
+	"o5_getActorRoom",
+	/* 04 */
+	"o5_isGreaterEqual",
+	"o5_drawObject",
+	"o5_getActorElevation",
+	"o5_setState",
+	/* 08 */
+	"o5_isNotEqual",
+	"o5_faceActor",
+	"o5_startScript",
+	"o5_getVerbEntrypoint",
+	/* 0C */
+	"o5_resourceRoutines",
+	"o5_walkActorToActor",
+	"o5_putActorAtObject",
+	"o5_getObjectState",
+	/* 10 */
+	"o5_getObjectOwner",
+	"o5_animateActor",
+	"o5_panCameraTo",
+	"o5_actorSet",
+	/* 14 */
+	"o5_print",
+	"o5_actorFromPos",
+	"o5_getRandomNr",
+	"o5_and",
+	/* 18 */
+	"o5_jumpRelative",
+	"o5_doSentence",
+	"o5_move",
+	"o5_multiply",
+	/* 1C */
+	"o5_startSound",
+	"o5_ifClassOfIs",
+	"o5_walkActorTo",
+	"o5_isActorInBox",
+	/* 20 */
+	"o5_stopMusic",
+	"o5_putActor",
+	"o5_getAnimCounter",
+	"o5_getActorY",
+	/* 24 */
+	"o5_loadRoomWithEgo",
+	"o5_pickupObject",
+	"o5_setVarRange",
+	"o5_stringOps",
+	/* 28 */
+	"o5_equalZero",
+	"o5_setOwnerOf",
+	"o5_startScript",
+	"o5_delayVariable",
+	/* 2C */
+	"o5_cursorCommand",
+	"o5_putActorInRoom",
+	"o5_delay",
+	"o5_badOpcode",
+	/* 30 */
+	"o5_matrixOps",
+	"o5_getInventoryCount",
+	"o5_setCameraAt",
+	"o5_roomOps",
+	/* 34 */
+	"o5_getDist",
+	"o5_findObject",
+	"o5_walkActorToObject",
+	"o5_startObject",
+	/* 38 */
+	"o5_lessOrEqual",
+	"o5_doSentence",
+	"o5_subtract",
+	"o5_getActorScale",
+	/* 3C */
+	"o5_stopSound",
+	"o5_findInventory",
+	"o5_walkActorTo",
+	"o5_drawBox",
+	/* 40 */
+	"o5_cutscene",
+	"o5_putActor",
+	"o5_chainScript",
+	"o5_getActorX",
+	/* 44 */
+	"o5_isLess",
+	"o5_badOpcode",
+	"o5_increment",
+	"o5_setState",
+	/* 48 */
+	"o5_isEqual",
+	"o5_faceActor",
+	"o5_startScript",
+	"o5_getVerbEntrypoint",
+	/* 4C */
+	"o5_soundKludge",
+	"o5_walkActorToActor",
+	"o5_putActorAtObject",
+	"o5_badOpcode",
+	/* 50 */
+	"o5_pickupObjectOld",
+	"o5_animateActor",
+	"o5_actorFollowCamera",
+	"o5_actorSet",
+	/* 54 */
+	"o5_setObjectName",
+	"o5_actorFromPos",
+	"o5_getActorMoving",
+	"o5_or",
+	/* 58 */
+	"o5_overRide",
+	"o5_doSentence",
+	"o5_add",
+	"o5_divide",
+	/* 5C */
+        "o5_oldRoomEffect",
+	"o5_actorSetClass",
+	"o5_walkActorTo",
+	"o5_isActorInBox",
+	/* 60 */
+	"o5_freezeScripts",
+	"o5_putActor",
+	"o5_stopScript",
+	"o5_getActorFacing",
+	/* 64 */
+	"o5_loadRoomWithEgo",
+	"o5_pickupObject",
+	"o5_getClosestObjActor",
+	"o5_dummy",
+	/* 68 */
+	"o5_getScriptRunning",
+	"o5_setOwnerOf",
+	"o5_startScript",
+	"o5_debug",
+	/* 6C */
+	"o5_getActorWidth",
+	"o5_putActorInRoom",
+	"o5_stopObjectScript",
+	"o5_badOpcode",
+	/* 70 */
+	"o5_lights",
+	"o5_getActorCostume",
+	"o5_loadRoom",
+	"o5_roomOps",
+	/* 74 */
+	"o5_getDist",
+	"o5_findObject",
+	"o5_walkActorToObject",
+	"o5_startObject",
+	/* 78 */
+	"o5_isGreater", /* less? */
+	"o5_doSentence",
+	"o5_verbOps",
+	"o5_getActorWalkBox",
+	/* 7C */
+	"o5_isSoundRunning",
+	"o5_findInventory",
+	"o5_walkActorTo",
+	"o5_drawBox",
+	/* 80 */
+	"o5_breakHere",
+	"o5_putActor",
+	"o5_startMusic",
+	"o5_getActorRoom",
+	/* 84 */
+	"o5_isGreaterEqual", /* less equal? */
+	"o5_drawObject",
+	"o5_getActorElevation",
+	"o5_setState",
+	/* 88 */
+	"o5_isNotEqual",
+	"o5_faceActor",
+	"o5_startScript",
+	"o5_getVerbEntrypoint",
+	/* 8C */
+	"o5_resourceRoutines",
+	"o5_walkActorToActor",
+	"o5_putActorAtObject",
+	"o5_getObjectState",
+	/* 90 */
+	"o5_getObjectOwner",
+	"o5_animateActor",
+	"o5_panCameraTo",
+	"o5_actorSet",
+	/* 94 */
+	"o5_print",
+	"o5_actorFromPos",
+	"o5_getRandomNr",
+	"o5_and",
+	/* 98 */
+	"o5_quitPauseRestart",
+	"o5_doSentence",
+	"o5_move",
+	"o5_multiply",
+	/* 9C */
+	"o5_startSound",
+	"o5_ifClassOfIs",
+	"o5_walkActorTo",
+	"o5_isActorInBox",
+	/* A0 */
+	"o5_stopObjectCode",
+	"o5_putActor",
+	"o5_getAnimCounter",
+	"o5_getActorY",
+	/* A4 */
+	"o5_loadRoomWithEgo",
+	"o5_pickupObject",
+	"o5_setVarRange",
+	"o5_dummy",
+	/* A8 */
+	"o5_notEqualZero",
+	"o5_setOwnerOf",
+	"o5_startScript",
+	"o5_saveRestoreVerbs",
+	/* AC */
+	"o5_expression",
+	"o5_putActorInRoom",
+	"o5_wait",
+	"o5_badOpcode",
+	/* B0 */
+	"o5_matrixOps",
+	"o5_getInventoryCount",
+	"o5_setCameraAt",
+	"o5_roomOps",
+	/* B4 */
+	"o5_getDist",
+	"o5_findObject",
+	"o5_walkActorToObject",
+	"o5_startObject",
+	/* B8 */
+	"o5_lessOrEqual",
+	"o5_doSentence",
+	"o5_subtract",
+	"o5_getActorScale",
+	/* BC */
+	"o5_stopSound",
+	"o5_findInventory",
+	"o5_walkActorTo",
+	"o5_drawBox",
+	/* C0 */
+	"o5_endCutscene",
+	"o5_putActor",
+	"o5_chainScript",
+	"o5_getActorX",
+	/* C4 */
+	"o5_isLess",
+	"o5_badOpcode",
+	"o5_decrement",
+	"o5_setState",
+	/* C8 */
+	"o5_isEqual",
+	"o5_faceActor",
+	"o5_startScript",
+	"o5_getVerbEntrypoint",
+	/* CC */
+	"o5_pseudoRoom",
+	"o5_walkActorToActor",
+	"o5_putActorAtObject",
+	"o5_badOpcode",
+	/* D0 */
+	"o5_pickupObjectOld",
+	"o5_animateActor",
+	"o5_actorFollowCamera",
+	"o5_actorSet",
+	/* D4 */
+	"o5_setObjectName",
+	"o5_actorFromPos",
+	"o5_getActorMoving",
+	"o5_or",
+	/* D8 */
+	"o5_printEgo",
+	"o5_doSentence",
+	"o5_add",
+	"o5_divide",
+	/* DC */
+	"o5_badOpcode",
+	"o5_actorSetClass",
+	"o5_walkActorTo",
+	"o5_isActorInBox",
+	/* E0 */
+	"o5_freezeScripts",
+	"o5_putActor",
+	"o5_stopScript",
+	"o5_getActorFacing",
+	/* E4 */
+	"o5_loadRoomWithEgo",
+	"o5_pickupObject",
+	"o5_getClosestObjActor",
+	"o5_dummy",
+	/* E8 */
+	"o5_getScriptRunning",
+	"o5_setOwnerOf",
+	"o5_startScript",
+	"o5_debug",
+	/* EC */
+	"o5_getActorWidth",
+	"o5_putActorInRoom",
+	"o5_stopObjectScript",
+	"o5_badOpcode",
+	/* F0 */
+	"o5_lights",
+	"o5_getActorCostume",
+	"o5_loadRoom",
+	"o5_roomOps",
+	/* F4 */
+	"o5_getDist",
+	"o5_findObject",
+	"o5_walkActorToObject",
+	"o5_startObject",
+	/* F8 */
+	"o5_isGreater",
+	"o5_doSentence",
+	"o5_verbOps",
+	"o5_getActorWalkBox",
+	/* FC */
+	"o5_isSoundRunning",
+	"o5_findInventory",
+	"o5_walkActorTo",
+	"o5_drawBox",
+	};
+
+
 	_opcodes = opcode_list;
+	_opcodes_lookup = opcode_lookup;
 }
 
 void Scumm::o5_actorFollowCamera() {

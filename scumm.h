@@ -1003,6 +1003,7 @@ struct Scumm {
 	byte *_bitVars;
 
 	const OpcodeProc *_opcodes;
+	const char* *_opcodes_lookup;
 
 	int _xPos, _yPos;
 	int _dir;
