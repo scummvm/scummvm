@@ -76,12 +76,12 @@ Player::Player() :
 	_loop_counter(0),
 	_loop_to_tick(0),
 	_loop_from_tick(0),
+	_passThrough(0),
 	_speed(128),
 	_isMT32(false),
 	_isGM(false),
 	_se(0),
 	_vol_chan(0){
-	_passThrough = 0;
 }
 
 Player::~Player() {
