@@ -55,6 +55,7 @@ struct TextRenderer {
 	void drawString(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, uint8 color, const char *text, bool outlined = true);
 	void drawChar(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, uint8 color, const uint8 *chr);
 
+	Language lang;
 	uint8 charWidth[256];
 	static const uint8 FONT[];
 };
@@ -63,7 +64,7 @@ struct TextRenderer {
 class Display {
 public:
 
-	Display(OSystem *system, Input *input);
+	Display(Language language, OSystem *system, Input *input);
 	~Display();
 
 	void dynalumInit(Resource *resource, const char *roomName, uint16 roomNum);

@@ -57,9 +57,9 @@ void TextRenderer::drawString(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y
 
 	const uint8 *str = (const uint8*)text;
 	while (*str && x < dstPitch) {
-		const uint8 *pchr = FONT + (*str) * 8;
 
-		// FIXME: handle 0x96 character in french version (replace with 0xFB)
+		uint8 c = (lang == FRENCH && *str == 0x96) ? 0xFB : *str;
+		const uint8 *pchr = FONT + c * 8;
 
 		if (outlined) {
 			drawChar(dstBuf, dstPitch, x - 1, y - 1, INK_OUTLINED_TEXT, pchr);
@@ -73,7 +73,7 @@ void TextRenderer::drawString(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y
 		}
 		drawChar(dstBuf, dstPitch, x, y, color, pchr);
 
-		x += charWidth[ *str ];
+		x += charWidth[ c ];
 		++str;
 	}
 }
@@ -101,10 +101,11 @@ void TextRenderer::drawChar(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, 
 
 
 
-Display::Display(OSystem *system, Input *input)
+Display::Display(Language language, OSystem *system, Input *input)
 	: _system(system), _input(input) {
 
 	_dynalum.prevColMask = 0xFF;
+	_textRenderer.lang = language;
 	_textRenderer.init();
 
 	_buffers[RB_BACKDROP] = new uint8[BACKDROP_W * BACKDROP_H];
