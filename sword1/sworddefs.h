@@ -135,7 +135,7 @@ enum fileFlags {
 };
 
 struct CdFile {
-	char *name;
+	const char *name;
 	uint8 flags;
 };
 
