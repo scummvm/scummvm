@@ -464,6 +464,7 @@ void SoundMixer::pauseHandle(PlayingSoundHandle handle, bool paused) {
 }
 
 bool SoundMixer::isSoundIDActive(int id) {
+	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i] && _channels[i]->getId() == id)
 			return true;
