@@ -665,7 +665,6 @@ void ScummEngine_v6he::o6_actorOps() {
 	case 218:		
 		{
 			// TODO: this opcode is used in the putt-putt fun pack, in 'checkers" mini game
-			warning("o6_actorOps():218 partially unimplemented");
 
 			int top_actor = a->top;
 			int bottom_actor = a->bottom;
@@ -957,7 +956,7 @@ void ScummEngine_v6he::o6_openFile() {
 		else
 			error("o6_openFile(): wrong open file mode");
 
-		warning("%d = o6_openFile(\"%s\", %d)", slot, filename + r, mode);
+		debug(1, "%d = o6_openFile(\"%s\", %d)", slot, filename + r, mode);
 	}
 	push(slot);
 }
@@ -965,7 +964,7 @@ void ScummEngine_v6he::o6_openFile() {
 void ScummEngine_v6he::o6_closeFile() {
 	int slot = pop();
 	_hFileTable[slot].close();
-	warning("o6_closeFile(%d)", slot);
+	debug(1, "o6_closeFile(%d)", slot);
 }
 
 void ScummEngine_v6he::o6_deleteFile() {
@@ -984,7 +983,7 @@ void ScummEngine_v6he::o6_deleteFile() {
 			break;
 	}
 
-	warning("stub o6_deleteFile(\"%s\")", filename + r);
+	debug(1, "stub o6_deleteFile(\"%s\")", filename + r);
 }
 
 void ScummEngine_v6he::o6_rename() {
@@ -1015,7 +1014,7 @@ void ScummEngine_v6he::o6_rename() {
 			break;
 	}
 
-	warning("stub o6_rename(\"%s\" to \"%s\")", filename + r1, filename2 + r2);
+	debug(1, "stub o6_rename(\"%s\" to \"%s\")", filename + r1, filename2 + r2);
 }
 
 int ScummEngine_v6he::readFileToArray(int slot, int32 size) {
@@ -1039,7 +1038,7 @@ void ScummEngine_v6he::o6_readFile() {
 	} else {
 		push(readFileToArray(slot, size));
 	}
-	warning("o6_readFile(%d, %d)", slot, size);
+	debug(1, "o6_readFile(%d, %d)", slot, size);
 }
 
 void ScummEngine_v6he::writeFileFromArray(int slot, int resID) {
@@ -1061,7 +1060,7 @@ void ScummEngine_v6he::o6_writeFile() {
 	} else {
 		writeFileFromArray(slot, resID);
 	}
-	warning("o6_writeFile(%d, %d)", slot, resID);
+	debug(1, "o6_writeFile(%d, %d)", slot, resID);
 }
 
 void ScummEngine_v6he::o6_setVolume() {
@@ -1177,7 +1176,7 @@ void ScummEngine_v6he::o6_readINI() {
 	int len;
 
 	len = resStrLen(_scriptPointer);
-	warning("stub o6_readINI(\"%s\")", _scriptPointer);
+	debug(1, "stub o6_readINI(\"%s\")", _scriptPointer);
 	_scriptPointer += len + 1;
 	pop();
 	push(0);
