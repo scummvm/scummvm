@@ -3659,7 +3659,7 @@ void SimonState::start_vga_code(uint b, uint vga_res, uint vga_struct_id, uint c
 		vsp++;
 
 	vsp->unk6 = b;
-	vsp->unk5 = 0;
+	vsp->priority = 0;
 	vsp->unk4 = 0;
 
 	vsp->y = d;

@@ -311,7 +311,7 @@ void SimonState::vc_3()
 
 	vsp->base_color = e;
 	vsp->unk6 = a;
-	vsp->unk5 = 0;
+	vsp->priority = 0;
 	vsp->unk4 = 0;
 	vsp->image = 0;
 	vsp->x = c;
@@ -1178,29 +1178,29 @@ void SimonState::vc_23_set_pri()
 	}
 
 	memcpy(&bak, vsp, sizeof(bak));
-	bak.unk5 = pri;
+	bak.priority = pri;
 	bak.unk6 |= 0x8000;
 
 	vus2 = vsp;
 
-	if (vsp != _vga_sprites && pri < vsp[-1].unk5) {
+	if (vsp != _vga_sprites && pri < vsp[-1].priority) {
 		do {
 			vsp--;
-		} while (vsp != _vga_sprites && pri < vsp[-1].unk5);
+		} while (vsp != _vga_sprites && pri < vsp[-1].priority);
 		do {
 			memcpy(vus2, vus2 - 1, sizeof(VgaSprite));
 		} while (--vus2 != vsp);
 		memcpy(vus2, &bak, sizeof(VgaSprite));
-	} else if (vsp[1].id != 0 && pri >= vsp[1].unk5) {
+	} else if (vsp[1].id != 0 && pri >= vsp[1].priority) {
 		do {
 			vsp++;
-		} while (vsp[1].id != 0 && pri >= vsp[1].unk5);
+		} while (vsp[1].id != 0 && pri >= vsp[1].priority);
 		do {
 			memcpy(vus2, vus2 + 1, sizeof(VgaSprite));
 		} while (++vus2 != vsp);
 		memcpy(vus2, &bak, sizeof(VgaSprite));
 	} else {
-		vsp->unk5 = pri;
+		vsp->priority = pri;
 	}
 	_vga_sprite_changed++;
 }

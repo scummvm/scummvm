@@ -76,7 +76,9 @@ struct VgaSprite {
 	uint16 image;
 	uint16 base_color;
 	uint16 x, y;									/* actually signed numbers */
-	uint16 unk4, unk5, unk6, unk7;
+	uint16 unk4;
+	uint16 priority;
+	uint16 unk6, unk7;
 };
 
 struct VgaSleepStruct {
