@@ -355,9 +355,7 @@ void ScummEngine::nukeArrays(int script) {
 		return;
 
 	for (i = 1; i < _numArray; i++) {
-		// HACK: for some reason original has script number greater by one
-		// maybe it got increased somewhere else
-		if (_arraySlot[i] == script + 1) {
+		if (_arraySlot[i] == script) {
 			nukeResource(rtString, i);
 			_arraySlot[i] = 0;
 		}
