@@ -816,6 +816,7 @@ void Scumm::o5_actorSetClass() {
 			_classData[act] = 0;
 			continue;
 		}
+
 		if(_features & GF_SMALL_HEADER) {
 			oldClassData=(byte*)&_classData[act];
 			if (newClass&0x80)
@@ -1340,9 +1341,11 @@ void Scumm::o5_ifClassOfIs() {
 	byte *oldClass;
 
 	act = getVarOrDirectWord(0x80);
+	
 	while ( (_opcode = fetchScriptByte()) != 0xFF) {
 		cls = getVarOrDirectWord(0x80);
 		oldClass = (byte*)&_classData[act];
+
 		if(_features & GF_SMALL_HEADER)
 			b = oldClass[((cls-1)&0x7f)/8] & bit_table[((cls-1)&0x07)];
 		else
@@ -1497,10 +1500,14 @@ void Scumm::o5_loadRoomWithEgo() {
 
 void Scumm::o5_matrixOps() {
 	int a,b;
-	if(_features & GF_OLD256) { /* FIXME: missing function call*/
-		warning("o5_matrixOps - unimplemented on GF_OLD256");
-		a=getVarOrDirectByte(0x80);
-		b=fetchScriptByte();
+
+	if(_features & GF_OLD256) {
+		a = getVarOrDirectByte(0x80);
+		b = fetchScriptByte();
+		if (b == 0x40) // Lock Box
+			setBoxFlags(a, 0x80);
+		else
+			setBoxFlags(a, 0);
 		return;
 	}
 	
@@ -2342,10 +2349,8 @@ void Scumm::o5_walkActorToActor() {
 	int b,x,y;
 	Actor *a, *a2;
 	int nr;
-
-	warning("walk actor to actor");
-
-	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_walkActorToActor");
+	int nr2 = getVarOrDirectByte(0x80);
+	a = derefActorSafe(nr2, "o5_walkActorToActor");
 	if (a->room != _currentRoom) {
 		getVarOrDirectByte(0x40);
 		fetchScriptByte();
@@ -2358,7 +2363,7 @@ void Scumm::o5_walkActorToActor() {
 		fetchScriptByte();
 		return;
 	}
-
+	// warning("walk actor %d to actor %d", nr, nr2);
 	a2 = derefActorSafe(nr, "o5_walkActorToActor(2)");
 	if (a2->room != _currentRoom) {
 		fetchScriptByte();
@@ -2514,11 +2519,13 @@ void Scumm::o5_oldRoomEffect() {
 
 void Scumm::o5_pickupObjectOld() {
 	int obj = getVarOrDirectWord(0x80);
-
+	
 	if(getObjectIndex(obj) == -1)
 		return;
-	
+
+	// warning("adding %d from %d to inventoryOld", obj, _currentRoom);
 	addObjectToInventory(obj,_currentRoom);
+	// warning("added to inventoryOld");
 	removeObjectFromRoom(obj);
 	putOwner(obj, _vars[VAR_EGO]);
 	putClass(obj, 32, 1);
