@@ -25,6 +25,10 @@ INCLUDES += `sdl-config --cflags`
 LIBS    += `sdl-config --libs`
 DEFINES += -DUNIX
 
+# Uncomment this in addition to the above if you compile on Mac OS X
+# LIBS	+= -framework QuickTime -framework AudioUnit
+# DEFINES += -DMACOSX
+
 # Uncomment this if you rather want X11 output
 # OBJS     = x11.o
 # DEFINES += -DUNIX_X11
@@ -32,6 +36,9 @@ DEFINES += -DUNIX
 # INCLUDES+= -I/usr/X11R6/include
 # LIBS    += -lpthread -lXext -lX11
 
+# Enable this if you want ScummVM to dump all scripts it runs.
+# This is mainly interesting for developers.
+# DEFINES += -DDUMP_SCRIPTS
 
 CPPFLAGS= $(DEFINES) $(INCLUDES)
 
