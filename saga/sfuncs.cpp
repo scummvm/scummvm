@@ -310,6 +310,7 @@ int Script::SF_preDialog(SCRIPTFUNC_PARAMS) {
 	_vm->_interface->setMode(kPanelNull);
 
 	debug(1, "stub: SF_preDialog()");
+	return SUCCESS;
 }
 
 // Script function #13 (0x0D)
