@@ -330,7 +330,7 @@ void ScummEngine_v6::setupOpcodes() {
 		OPCODE(o6_writeFile),
 		OPCODE(o6_findAllObjects),
 		OPCODE(o6_deleteFile),
-		OPCODE(o6_invalid),
+		OPCODE(o6_rename),
 		/* E0 */
 		OPCODE(o6_unknownE0),
 		OPCODE(o6_unknownE1),
@@ -1624,7 +1624,12 @@ void ScummEngine_v6::o6_roomOps() {
 		else
 			setPalette(a);
 		break;
-	case 221:
+	case 220:		// SO_DRAW_OBJECT_AT
+		a = pop();
+		b = pop();
+		warning("o6_roomops:180 (%d, %d): unimplemented", a, b);
+		break;
+	case 221:		// SO_DRAW_OBJECT_IMAGE
 		int len;
 		len = resStrLen(_scriptPointer);
 		_scriptPointer += len + 1;
@@ -2935,8 +2940,6 @@ void ScummEngine_v6::o6_stampObject() {
 		_objs[objnum].y_pos = y * 8;
 		putState(object, state);
 		drawObject(objnum, 0);
-		warning("o6_stampObject: (%d at (%d,%d) state %d)", object, x, y, state);
-		
 		return;	
 	}
 
@@ -3036,6 +3039,37 @@ void ScummEngine_v6::o6_deleteFile() {
 	}
 
 	warning("stub o6_deleteFile(\"%s\")", filename + r);
+}
+
+void ScummEngine_v6::o6_rename() {
+	int len, r1, r2;
+	byte filename[100],filename2[100];
+
+	_msgPtrToAdd = filename;
+	_messagePtr = _scriptPointer;
+	addMessageToStack(_messagePtr);
+
+	len = resStrLen(_scriptPointer);
+	_scriptPointer += len + 1;
+
+	for (r1 = strlen((char*)filename); r1 != 0; r1--) {
+		if (filename[r1 - 1] == '\\')
+			break;
+	}
+
+	_msgPtrToAdd = filename2;
+	_messagePtr = _scriptPointer;
+	addMessageToStack(_messagePtr);
+
+	len = resStrLen(_scriptPointer);
+	_scriptPointer += len + 1;
+
+	for (r2 = strlen((char*)filename2); r2 != 0; r2--) {
+		if (filename2[r2 - 1] == '\\')
+			break;
+	}
+
+	warning("stub o6_rename(\"%s\" to \"%s\")", filename + r1, filename2 + r2);
 }
 
 int ScummEngine_v6::readFileToArray(int slot, int32 size) {
