@@ -36,7 +36,7 @@ void Scumm::checkExecVerbs() {
 	if (_userPut<=0 || _mouseButStat==0)
 		return;
 
-	if (_mouseButStat < 0x200) {
+	if (_mouseButStat < MBS_MAX_KEY) {
 		/* Check keypresses */
 		vs = &_verbs[1];
 		for (i=1; i<_maxVerbs; i++,vs++) {
@@ -48,8 +48,8 @@ void Scumm::checkExecVerbs() {
 			}
 		}
 		runInputScript(4, _mouseButStat, 1);
-	} else if (_mouseButStat&0xC000) {
-		byte code = _mouseButStat&0x8000 ? 1 : 2;
+	} else if (_mouseButStat&MBS_MOUSE_MASK) {
+		byte code = _mouseButStat&MBS_LEFT_CLICK ? 1 : 2;
 		if (mouse.y >= virtscr[0].topline && mouse.y < virtscr[0].topline + virtscr[0].height) {
 			over = checkMouseOver(mouse.x, mouse.y);
 			if (over != 0) {

@@ -474,7 +474,7 @@ void Scumm::saveOrLoad(Serializer *s) {
 	if (s->isSaving()) {
 		for (i=rtFirst; i<=rtLast; i++)
 			for(j=1; j<res.num[i]; j++) {
-				if (res.flags[i][j]&0x80) {
+				if (res.flags[i][j]&RF_LOCK) {
 					s->saveByte(i);
 					s->saveWord(j);
 				}
@@ -483,7 +483,7 @@ void Scumm::saveOrLoad(Serializer *s) {
 	} else {
 		int r;
 		while ((r = s->loadByte()) != 0xFF) {
-			res.flags[r][s->loadWord()] |= 0x80;
+			res.flags[r][s->loadWord()] |= RF_LOCK;
 		}
 	}
 

@@ -337,6 +337,26 @@ enum {
 	OF_STATE_SHL = 4
 };
 
+/* Camera Modes */
+enum {
+	CM_NORMAL = 1,
+	CM_FOLLOW_ACTOR = 2,
+	CM_PANNING = 3,
+};
+
+enum {
+	MBS_LEFT_CLICK = 0x8000,
+	MBS_RIGHT_CLICK = 0x4000,
+	MBS_MOUSE_MASK = (MBS_LEFT_CLICK|MBS_RIGHT_CLICK),
+	MBS_MAX_KEY	= 0x0200
+};
+
+enum {
+	RF_LOCK = 0x80,
+	RF_USAGE = 0x7F,
+	RF_USAGE_MAX = RF_USAGE
+};
+
 #define _maxRooms res.num[rtRoom]
 #define _maxScripts res.num[rtScript]
 #define _maxCostumes res.num[rtCostume]

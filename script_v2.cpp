@@ -1414,7 +1414,7 @@ void Scumm::o6_actorSet() {
 		a->talkColor = pop();
 		break;
 	case 88: /* actor-name */
-		loadPtrToResource(9, a->number, NULL);
+		loadPtrToResource(rtActorName, a->number, NULL);
 		break;
 	case 89: /* actor-initframe */
 		a->initFrame = pop();
@@ -1492,7 +1492,7 @@ void Scumm::o6_verbOps() {
 		}
 		break;
 	case 125:
-		loadPtrToResource(8, slot, NULL);
+		loadPtrToResource(rtVerb, slot, NULL);
 		vs->type = 0;
 		vs->imgindex = 0;
 		break;
@@ -1558,7 +1558,7 @@ void Scumm::o6_verbOps() {
 		} else {
 			ptr = getStringAddress(a);
 		}
-		loadPtrToResource(8, slot, ptr);
+		loadPtrToResource(rtVerb, slot, ptr);
 		vs->type = 0;
 		vs->imgindex = 0;
 		break;

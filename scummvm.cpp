@@ -532,7 +532,7 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 
 	loadRoomObjects();
 
-	camera._mode = 1;
+	camera._mode = CM_NORMAL;
 	camera._curPos = camera._destPos = 160;
 
 	if (_majorScummVersion==6) {
@@ -821,9 +821,9 @@ int Scumm::getKeyInput(int a) {
 		_mouseButStat = 0;
 		_lastKeyHit = _vars[VAR_CUTSCENEEXIT_KEY];
 	} else if (_leftBtnPressed&1) {
-		_mouseButStat = 0x8000;
+		_mouseButStat = MBS_LEFT_CLICK;
 	} else if (_rightBtnPressed&1) {
-		_mouseButStat = 0x4000;
+		_mouseButStat = MBS_RIGHT_CLICK;
 	}
 	
 	_leftBtnPressed &= ~1;
@@ -835,9 +835,9 @@ int Scumm::getKeyInput(int a) {
 void Scumm::convertKeysToClicks() {
 	if (_lastKeyHit && _cursorState>0) {
 		if (_lastKeyHit==9) {
-			_mouseButStat = 0x4000;
+			_mouseButStat = MBS_RIGHT_CLICK;
 		}	else if (_lastKeyHit==13) {
-			_mouseButStat = 0x8000;	
+			_mouseButStat = MBS_LEFT_CLICK;	
 		} else
 			return;
 		_lastKeyHit = 0;

@@ -464,7 +464,7 @@ void Gui::loop() {
 	}
 	
 	_s->getKeyInput(0);
-	if (_s->_mouseButStat&0x8000) {
+	if (_s->_mouseButStat&MBS_LEFT_CLICK) {
 		leftMouseClick(_s->mouse.x, _s->mouse.y);
 	} else if (_s->_lastKeyHit) {
 		addLetter(_s->_lastKeyHit);

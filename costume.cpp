@@ -670,7 +670,7 @@ void CostumeRenderer::proc_special(byte code) {
 }
 
 void CostumeRenderer::loadCostume(int id) {
-	_ptr = _vm->getResourceAddress(3, id);
+	_ptr = _vm->getResourceAddress(rtCostume, id);
 	
 	if (_vm->_majorScummVersion == 6) {
 		_ptr += 8;

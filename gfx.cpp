@@ -255,7 +255,7 @@ void Scumm::setCameraAt(int dest) {
 	int t;
 	CameraData *cd = &camera;
 
-	if (cd->_mode!=2 || abs(dest - cd->_curPos) > 160) {
+	if (cd->_mode!=CM_FOLLOW_ACTOR || abs(dest - cd->_curPos) > 160) {
 		cd->_curPos = dest;
 	}
 	cd->_destPos = dest;
@@ -279,12 +279,12 @@ void Scumm::setCameraFollows(Actor *a) {
 	int t,i;
 	CameraData *cd = &camera;
 
-	cd->_mode = 2;
+	cd->_mode = CM_FOLLOW_ACTOR;
 	cd->_follows = a->number;
 
 	if (a->room != _currentRoom) {
 		startScene(a->room, 0, 0);
-		cd->_mode = 2;
+		cd->_mode = CM_FOLLOW_ACTOR;
 		cd->_curPos = a->x;
 		setCameraAt(cd->_curPos);
 	}
@@ -1453,7 +1453,7 @@ void Scumm::moveCamera() {
 		return;
 	}
 
-	if (cd->_mode==2) {
+	if (cd->_mode==CM_FOLLOW_ACTOR) {
 		a = derefActorSafe(cd->_follows, "moveCamera");
 		
 		actorx = a->x;
@@ -1520,7 +1520,7 @@ void Scumm::cameraMoved() {
 void Scumm::panCameraTo(int x) {
 	CameraData *cd = &camera;
 	cd->_destPos = x;
-	cd->_mode = 3;
+	cd->_mode = CM_PANNING;
 	cd->_movingToActor = 0;
 }
 
@@ -1530,7 +1530,7 @@ void Scumm::actorFollowCamera(int act) {
 
 	/* mi1 compatibilty */
 	if (act==0) {
-		cd->_mode = 1;
+		cd->_mode = CM_NORMAL;
 		cd->_follows = 0;
 		cd->_movingToActor = 0;
 		return;
@@ -1546,7 +1546,7 @@ void Scumm::actorFollowCamera(int act) {
 
 void Scumm::setCameraAtEx(int at) {
 	CameraData *cd = &camera;
-	cd->_mode = 1;
+	cd->_mode = CM_NORMAL;
 	cd->_curPos = at;
 	setCameraAt(at);
 	cd->_movingToActor = 0;

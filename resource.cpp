@@ -571,7 +571,7 @@ byte *Scumm::getStringAddress(int i) {
 }
 
 void Scumm::setResourceCounter(int type, int index, byte flag) {
-	res.flags[type][index] &= 0x80;
+	res.flags[type][index] &= ~RF_USAGE;
 	res.flags[type][index] |= flag;
 }
 
@@ -663,14 +663,14 @@ byte *findResource(uint32 tag, byte *searchin, int index) {
 
 void Scumm::lock(int type, int i) {
 	validateResource("Locking", type, i);
-	res.flags[type][i] |= 0x80;
+	res.flags[type][i] |= RF_LOCK;
 
 //	debug(1, "locking %d,%d", type, i);
 }
 
 void Scumm::unlock(int type, int i) {
 	validateResource("Unlocking", type, i);
-	res.flags[type][i] &= ~0x80;
+	res.flags[type][i] &= ~RF_LOCK;
 
 //	debug(1, "unlocking %d,%d", type, i);
 }
@@ -697,8 +697,8 @@ void Scumm::increaseResourceCounter() {
 
 	for (i=rtFirst; i<=rtLast; i++) {
 		for(j=res.num[i]; --j>=0;) {
-			counter = res.flags[i][j] & 0x7F;
-			if (counter && counter < 0x7F) {
+			counter = res.flags[i][j] & RF_USAGE;
+			if (counter && counter < RF_USAGE_MAX) {
 				setResourceCounter(i, j, counter+1);
 			}
 		}

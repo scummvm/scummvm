@@ -421,7 +421,7 @@ void Scumm::o5_actorSet() {
 			a->talkColor = getVarOrDirectByte(0x80);
 			break;
 		case 13: /* name */
-			loadPtrToResource(9, a->number, NULL);
+			loadPtrToResource(rtActorName, a->number, NULL);
 			break;
 		case 14: /* initanim */
 			a->initFrame = getVarOrDirectByte(0x80);
@@ -1628,7 +1628,7 @@ void Scumm::o5_stringOps() {
 	_opcode = fetchScriptByte();
 	switch(_opcode&0x1F) {
 	case 1: /* loadstring */
-		loadPtrToResource(7, getVarOrDirectByte(0x80), NULL);
+		loadPtrToResource(rtString, getVarOrDirectByte(0x80), NULL);
 		break;
 	case 2: /* copystring */
 		a = getVarOrDirectByte(0x80);
@@ -1640,7 +1640,7 @@ void Scumm::o5_stringOps() {
 	case 3: /* set string char */
 		a = getVarOrDirectByte(0x80);
 		b = getVarOrDirectByte(0x40);
-		ptr = getResourceAddress(7, a);
+		ptr = getResourceAddress(rtString, a);
 		if (ptr==NULL) error("String %d does not exist", a);
 		c = getVarOrDirectByte(0x20);
 		ptr[b] = c;
