@@ -73,7 +73,6 @@ const char *gScummVMFullVersion = "ScummVM 0.5.3cvs (" __DATE__ " " __TIME__ ")"
 
 /* FIXME - BIG HACK for MidiEmu */
 OSystem *g_system = 0;
-SoundMixer *g_mixer = 0;
 Engine *g_engine = 0;
 
 Engine::Engine(GameDetector *detector, OSystem *syst)
@@ -83,9 +82,8 @@ Engine::Engine(GameDetector *detector, OSystem *syst)
 
 	_gameDataPath = detector->_gameDataPath;
 
-	/* FIXME - BIG HACK for MidiEmu */
-	g_system = _system;
-	g_mixer = _mixer;
+	g_system = _system; // FIXME - BIG HACK for MidiEmu
+
 	_timer = new Timer(this);
 }
 

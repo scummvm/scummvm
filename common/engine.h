@@ -53,7 +53,6 @@ struct VersionSettings;
 
 /* FIXME - BIG HACK for MidiEmu */
 extern OSystem *g_system;
-extern SoundMixer *g_mixer;
 
 class Engine {
 public:

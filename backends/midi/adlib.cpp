@@ -554,7 +554,7 @@ class MidiDriver_ADLIB : public MidiDriver {
 	friend class AdlibPercussionChannel;
 
 public:
-	MidiDriver_ADLIB();
+	MidiDriver_ADLIB(SoundMixer *mixer);
 
 	int open();
 	void close();
@@ -810,14 +810,14 @@ void AdlibPercussionChannel::noteOn(byte note, byte velocity) {
 
 // MidiDriver method implementations
 
-MidiDriver_ADLIB::MidiDriver_ADLIB()  {
+MidiDriver_ADLIB::MidiDriver_ADLIB(SoundMixer *mixer) 
+	: _mixer(mixer) {
 	uint i;
 
 	_isOpen = false;
 	_game_SmallHeader = false;
 
 	_adlib_reg_cache = 0;
-	_mixer = 0
 
 	_timer_proc = 0;
 	_timer_param = 0;
@@ -839,8 +839,7 @@ int MidiDriver_ADLIB::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
 	_isOpen = true;
-	_mixer = g_mixer;
-	
+
 	int i;
 	AdlibVoice *voice;
 

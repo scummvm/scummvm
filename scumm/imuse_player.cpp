@@ -20,12 +20,15 @@
  */
 
 #include "stdafx.h"
-#include "scumm/scumm.h"
-#include "sound/midiparser.h"
-#include "scumm/saveload.h"
+
 #include "common/util.h"
 #include "common/engine.h"
-#include "imuse_internal.h"
+
+#include "scumm/imuse_internal.h"
+#include "scumm/saveload.h"
+#include "scumm/scumm.h"
+
+#include "sound/midiparser.h"
 
 
 

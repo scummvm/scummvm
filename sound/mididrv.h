@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 
 class MidiChannel;
+class SoundMixer;
 
 // Abstract MIDI Driver Class
 class MidiDriver {
@@ -132,7 +133,7 @@ enum {
 
 // Factory functions, for faster compile
 extern MidiDriver *MidiDriver_NULL_create();
-extern MidiDriver *MidiDriver_ADLIB_create();
+extern MidiDriver *MidiDriver_ADLIB_create(SoundMixer *mixer);
 extern MidiDriver *MidiDriver_WIN_create();
 extern MidiDriver *MidiDriver_SEQ_create();
 extern MidiDriver *MidiDriver_QT_create();

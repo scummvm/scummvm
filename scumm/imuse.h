@@ -74,7 +74,7 @@ public:
 	MidiDriver *getMidiDriver();
 
 	// Factory methods
-	static IMuse *create(OSystem *syst, MidiDriver *midi);
+	static IMuse *create(OSystem *syst, SoundMixer *mixer, MidiDriver *midi);
 };
 
 #endif

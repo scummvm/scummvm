@@ -22,9 +22,9 @@
 #ifndef DEFINED_IMUSE_INTERNAL
 #define DEFINED_IMUSE_INTERNAL
 
-#include "sound/mididrv.h"
 #include "common/scummsys.h"
 #include "scumm/instrument.h"
+#include "sound/mididrv.h"
 
 // Unremark this statement to activate some of
 // the most common iMuse diagnostic messages.
@@ -45,6 +45,7 @@ class  IMuseInternal;
 class MidiParser;
 class Scumm;
 class OSystem;
+class SoundMixer;
 
 
 
@@ -355,6 +356,8 @@ private:
 	MidiDriver *_midi_native;
 
 	byte **_base_sounds;
+	
+	SoundMixer *_mixer;
 
 private:
 	bool _paused;
@@ -439,7 +442,7 @@ public:
 	IMuseInternal();
 	~IMuseInternal();
 
-	int initialize(OSystem *syst, MidiDriver *midi);
+	int initialize(OSystem *syst, SoundMixer *mixer, MidiDriver *midi);
 	void reallocateMidiChannels(MidiDriver *midi);
 	void setGlobalAdlibInstrument(byte slot, byte *data);
 	void copyGlobalAdlibInstrument(byte slot, Instrument *dest);
@@ -465,7 +468,7 @@ public:
 	uint32 property(int prop, uint32 value);
 	MidiDriver *getMidiDriver();
 
-	static IMuseInternal *create(OSystem *syst, MidiDriver *midi);
+	static IMuseInternal *create(OSystem *syst, SoundMixer *mixer, MidiDriver *midi);
 };
 
 #endif

@@ -443,7 +443,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 
 	// Setup midi driver
 	if (!driver)
-		driver = MidiDriver_ADLIB_create();
+		driver = MidiDriver_ADLIB_create(_mixer);
 
 	midi.mapMT32toGM (!(_game & GF_SIMON2) && !detector->_native_mt32);
 	midi.set_driver(driver);

@@ -21,14 +21,17 @@
  */
 
 #include "stdafx.h"
-#include "imuse.h"
-#include "imuse_internal.h"
-#include "instrument.h"
-#include "saveload.h"
-#include "scumm.h"
+
 #include "common/util.h"
-#include "sound/mididrv.h"
 #include "common/gameDetector.h"	// For kDefaultMasterVolume etc.
+
+#include "scumm/imuse.h"
+#include "scumm/imuse_internal.h"
+#include "scumm/instrument.h"
+#include "scumm/saveload.h"
+#include "scumm/scumm.h"
+
+#include "sound/mididrv.h"
 
 
 
@@ -78,7 +81,7 @@ MidiDriver *IMuseInternal::getMidiDriver() {
 	} else {
 		// Route it through Adlib anyway.
 		if (!_midi_adlib) {
-			_midi_adlib = MidiDriver_ADLIB_create();
+			_midi_adlib = MidiDriver_ADLIB_create(_mixer);
 			initMidiDriver(_midi_adlib);
 		}
 		driver = _midi_adlib;
@@ -186,14 +189,14 @@ MidiDriver *IMuseInternal::getBestMidiDriver(int sound) {
 		} else {
 			// Route it through Adlib anyway.
 			if (!_midi_adlib) {
-				_midi_adlib = MidiDriver_ADLIB_create();
+				_midi_adlib = MidiDriver_ADLIB_create(_mixer);
 				initMidiDriver(_midi_adlib);
 			}
 			driver = _midi_adlib;
 		}
 	} else {
 		if (!_midi_adlib &&(_enable_multi_midi || !_midi_native)) {
-			_midi_adlib = MidiDriver_ADLIB_create();
+			_midi_adlib = MidiDriver_ADLIB_create(_mixer);
 			initMidiDriver(_midi_adlib);
 		}
 		driver = _midi_adlib;
@@ -1048,6 +1051,7 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 					_players[i].clear();
 			}
 			driver->close();
+			// FIXME: shouldn't we delete 'driver' here, too ?
 		}
 		break;
 
@@ -1072,15 +1076,16 @@ void IMuseInternal::setBase(byte **base) {
 	_base_sounds = base;
 }
 
-IMuseInternal *IMuseInternal::create(OSystem *syst, MidiDriver *native_midi) {
+IMuseInternal *IMuseInternal::create(OSystem *syst, SoundMixer *mixer, MidiDriver *native_midi) {
 	IMuseInternal *i = new IMuseInternal;
-	i->initialize(syst, native_midi);
+	i->initialize(syst, mixer, native_midi);
 	return i;
 }
 
-int IMuseInternal::initialize(OSystem *syst, MidiDriver *native_midi) {
+int IMuseInternal::initialize(OSystem *syst, SoundMixer *mixer, MidiDriver *native_midi) {
 	int i;
 
+	_mixer = mixer;
 	_midi_native = native_midi;
 	_midi_adlib = NULL;
 	if (native_midi)
@@ -1736,7 +1741,7 @@ MidiDriver *IMuse::getMidiDriver() { in(); MidiDriver *ret = _target->getMidiDri
 // The IMuse::create method provides a front-end factory
 // for creating IMuseInternal without exposing that class
 // to the client.
-IMuse *IMuse::create(OSystem *syst, MidiDriver *midi) {
-	IMuseInternal *engine = IMuseInternal::create(syst, midi);
+IMuse *IMuse::create(OSystem *syst, SoundMixer *mixer, MidiDriver *midi) {
+	IMuseInternal *engine = IMuseInternal::create(syst, mixer, midi);
 	return new IMuse(syst, engine);
 }

@@ -625,16 +625,16 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 		else
 			_playerV2 = new Player_V2(this);
 	} else {
-		_imuse = IMuse::create (syst, detector->createMidi());
+		_imuse = IMuse::create (syst, _mixer, detector->createMidi());
 		if (_imuse) {
 			if (detector->_gameTempo != 0)
 				_imuse->property(IMuse::PROP_TEMPO_BASE, detector->_gameTempo);
-			_imuse->property (IMuse::PROP_OLD_ADLIB_INSTRUMENTS, (_features & GF_SMALL_HEADER) ? 1 : 0);
-			_imuse->property (IMuse::PROP_MULTI_MIDI, detector->_multi_midi);
-			_imuse->property (IMuse::PROP_NATIVE_MT32, detector->_native_mt32);
+			_imuse->property(IMuse::PROP_OLD_ADLIB_INSTRUMENTS, (_features & GF_SMALL_HEADER) ? 1 : 0);
+			_imuse->property(IMuse::PROP_MULTI_MIDI, detector->_multi_midi);
+			_imuse->property(IMuse::PROP_NATIVE_MT32, detector->_native_mt32);
 			if (_features & GF_HUMONGOUS) {
-				_imuse->property (IMuse::PROP_LIMIT_PLAYERS, 1);
-				_imuse->property (IMuse::PROP_RECYCLE_PLAYERS, 1);
+				_imuse->property(IMuse::PROP_LIMIT_PLAYERS, 1);
+				_imuse->property(IMuse::PROP_RECYCLE_PLAYERS, 1);
 			}
 			_imuse->set_music_volume(_sound->_sound_volume_music);
 		}
