@@ -22,11 +22,7 @@
  * $Header$
  */
 
-#include "stdafx.h"
-#include "common/util.h"
-#include "sound/audiostream.h"
-#include "sound/mididrv.h"
-#include "sound/mixer.h"
+#include "emumidi.h"
 
 #include <math.h>
 
@@ -36,9 +32,6 @@
 // Miscellaneous
 //
 ////////////////////////////////////////
-
-#define BASE_FREQ 250
-#define FIXP_SHIFT  16
 
 static int *sintbl = 0;
 static int *powtbl = 0;
@@ -158,19 +151,12 @@ public:
 	void sysEx_customInstrument(uint32 type, byte *instr);
 };
 
-class MidiDriver_YM2612 : public AudioStream, public MidiDriver {
+class MidiDriver_YM2612 : public MidiDriver_Emulated {
 protected:
 	MidiChannel_YM2612 *_channel[16];
 
 	int _next_voice;
 	int _volume;
-
-	bool _isOpen;
-	SoundMixer *_mixer;
-	Timer::TimerProc _timer_proc;
-	void *_timer_param;
-	int _next_tick;
-	int _samples_per_tick;
 
 protected:
 	static void createLookupTables();
@@ -193,25 +179,12 @@ public:
 	void setPitchBendRange(byte channel, uint range) { }
 	void sysEx(byte *msg, uint16 length);
 
-	void setTimerCallback(void *timer_param, Timer::TimerProc timer_proc);
-	uint32 getBaseTempo() { return 1000000 / BASE_FREQ; }
-
 	MidiChannel *allocateChannel() { return 0; }
 	MidiChannel *getPercussionChannel() { return 0; }
 
 
 	// AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples) {
-		memset(buffer, 0, 2 * numSamples);	// FIXME
-		generate_samples(buffer, numSamples / 2);
-		return numSamples;
-	}
-	int16 read() {
-		error("ProcInputStream::read not supported");
-	}
 	bool isStereo() const { return true; }
-	bool endOfData() const { return false; }
-	
 	int getRate() const { return _mixer->getOutputRate(); }
 };
 
@@ -736,13 +709,8 @@ void MidiChannel_YM2612::rate(uint16 r) {
 //
 ////////////////////////////////////////
 
-MidiDriver_YM2612::MidiDriver_YM2612(SoundMixer *mixer) :
-_mixer(mixer) {
-	_isOpen = false;
-	_timer_proc = 0;
-	_timer_param = 0;
-	_next_tick = 0;
-	_samples_per_tick = (getRate() << FIXP_SHIFT) / BASE_FREQ;
+MidiDriver_YM2612::MidiDriver_YM2612(SoundMixer *mixer)
+	: MidiDriver_Emulated(mixer) {
 	_next_voice = 0;
 
 	createLookupTables();
@@ -769,8 +737,10 @@ MidiDriver_YM2612::~MidiDriver_YM2612() {
 int MidiDriver_YM2612::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
+
+	MidiDriver_Emulated::open();
+
 	_mixer->setupPremix(this);
-	_isOpen = true;
 	return 0;
 }
 
@@ -781,11 +751,6 @@ void MidiDriver_YM2612::close() {
 
 	// Detach the premix callback handler
 	_mixer->setupPremix(0);
-}
-
-void MidiDriver_YM2612::setTimerCallback(void *timer_param, Timer::TimerProc timer_proc) {
-	_timer_proc = timer_proc;
-	_timer_param = timer_param;
 }
 
 void MidiDriver_YM2612::send(uint32 b) {
@@ -838,23 +803,8 @@ void MidiDriver_YM2612::sysEx(byte *msg, uint16 length) {
 }
 
 void MidiDriver_YM2612::generate_samples(int16 *data, int len) {
-	int step;
-
-	do {
-		step = len;
-		if (step > (_next_tick >> FIXP_SHIFT))
-			step = (_next_tick >> FIXP_SHIFT);
-		nextTick(data, step);
-
-		_next_tick -= step << FIXP_SHIFT;
-		if (!(_next_tick >> FIXP_SHIFT)) {
-			if (_timer_proc)
-				(*_timer_proc)(_timer_param);
-			_next_tick += _samples_per_tick;
-		}
-		data += step * 2; // Stereo means * 2
-		len -= step;
-	} while (len);
+	memset(data, 0, 2 * sizeof(int16) * len);
+	nextTick(data, len);
 }
 
 void MidiDriver_YM2612::nextTick(int16 *buf1, int buflen) {

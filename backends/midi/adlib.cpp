@@ -18,15 +18,9 @@
  * $Header$
  */
 
-#include "stdafx.h"
-#include "sound/audiostream.h"
-#include "sound/mididrv.h"
-#include "sound/fmopl.h"
-#include "sound/mixer.h"
+#include "emumidi.h"
 #include "common/util.h"
-
-#define BASE_FREQ 250
-#define FIXP_SHIFT 16
+#include "sound/fmopl.h"
 
 #ifdef DEBUG_ADLIB
 static int tick;
@@ -544,7 +538,7 @@ static void create_lookup_table() {
 //
 ////////////////////////////////////////
 
-class MidiDriver_ADLIB : public AudioStream, public MidiDriver {
+class MidiDriver_ADLIB : public MidiDriver_Emulated {
 	friend class AdlibPart;
 	friend class AdlibPercussionChannel;
 
@@ -554,51 +548,30 @@ public:
 	int open();
 	void close();
 	void send(uint32 b);
-	void send (byte channel, uint32 b); // Supports higher than channel 15
+	void send(byte channel, uint32 b); // Supports higher than channel 15
 	uint32 property(int prop, uint32 param);
 
 	void setPitchBendRange(byte channel, uint range); 
 	void sysEx_customInstrument(byte channel, uint32 type, byte *instr);
 
-	void setTimerCallback(void *timer_param, Timer::TimerProc timer_proc);
-	uint32 getBaseTempo() {
-		return 1000000 / BASE_FREQ;
-	}
-
 	MidiChannel *allocateChannel();
 	MidiChannel *getPercussionChannel() { return &_percussion; } // Percussion partially supported
 
+
 	// AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples) {
-		memset(buffer, 0, 2 * numSamples);	// FIXME
-		generate_samples(buffer, numSamples);
-		return numSamples;
-	}
-	int16 read() {
-		error("ProcInputStream::read not supported");
-	}
 	bool isStereo() const { return false; }
-	bool endOfData() const { return false; }
-	
 	int getRate() const { return _mixer->getOutputRate(); }
 
 private:
-	bool _isOpen;
 	bool _game_SmallHeader;
 
 	FM_OPL *_opl;
 	byte *_adlib_reg_cache;
-	SoundMixer *_mixer;
-
-	Timer::TimerProc _timer_proc;
-	void *_timer_param;
 
 	int _adlib_timer_counter;
 
 	uint16 channel_table_2[9];
 	int _voice_index;
-	int _next_tick;
-	int _samples_per_tick;
 	int _timer_p;
 	int _timer_q;
 	uint16 curnote_table[9];
@@ -820,20 +793,15 @@ void AdlibPercussionChannel::noteOn(byte note, byte velocity) {
 // MidiDriver method implementations
 
 MidiDriver_ADLIB::MidiDriver_ADLIB(SoundMixer *mixer) 
-	: _mixer(mixer) {
+	: MidiDriver_Emulated(mixer) {
 	uint i;
 
-	_isOpen = false;
 	_game_SmallHeader = false;
 
 	_adlib_reg_cache = 0;
 
-	_timer_proc = 0;
-	_timer_param = 0;
-
 	_adlib_timer_counter = 0;
 	_voice_index = 0;
-	_next_tick = 0;
 	for (i = 0; i < ARRAYSIZE(curnote_table); ++i) {
 		curnote_table[i] = 0;
 	}
@@ -849,7 +817,8 @@ MidiDriver_ADLIB::MidiDriver_ADLIB(SoundMixer *mixer)
 int MidiDriver_ADLIB::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
-	_isOpen = true;
+
+	MidiDriver_Emulated::open();
 
 	int i;
 	AdlibVoice *voice;
@@ -869,8 +838,6 @@ int MidiDriver_ADLIB::open() {
 	adlib_write(0xBD, 0x00);
 	create_lookup_table();
 
-	_samples_per_tick = (getRate() << FIXP_SHIFT) / BASE_FREQ;
-
 	_mixer->setupPremix(this);
 
 	return 0;
@@ -879,6 +846,10 @@ int MidiDriver_ADLIB::open() {
 void MidiDriver_ADLIB::close() {
 	if (!_isOpen)
 		return;
+	_isOpen = false;
+
+	// Detach the premix callback handler
+	_mixer->setupPremix(0);
 
 	uint i;
 	for (i = 0; i < ARRAYSIZE(_voices); ++i) {
@@ -886,15 +857,10 @@ void MidiDriver_ADLIB::close() {
 			mc_off(&_voices [i]);
 	}
 
-	// Detach the premix callback handler
-	_mixer->setupPremix(0);
-
 	// Turn off the OPL emulation
 //	YM3812Shutdown();
 	
 	free(_adlib_reg_cache);
-
-	_isOpen = false;
 }
 
 void MidiDriver_ADLIB::send (uint32 b) {
@@ -976,11 +942,6 @@ void MidiDriver_ADLIB::sysEx_customInstrument(byte channel, uint32 type, byte *i
 	_parts[channel].sysEx_customInstrument(type, instr);
 }
 
-void MidiDriver_ADLIB::setTimerCallback(void *timer_param, Timer::TimerProc timer_proc) {
-	_timer_proc = timer_proc;
-	_timer_param = timer_param;
-}
-
 MidiChannel *MidiDriver_ADLIB::allocateChannel() {
 	AdlibPart *part;
 	uint i;
@@ -1013,24 +974,8 @@ void MidiDriver_ADLIB::adlib_write(byte port, byte value) {
 }
 
 void MidiDriver_ADLIB::generate_samples(int16 *data, int len) {
-	int step;
-
-	do {
-		step = len;
-		if (step > (_next_tick >> FIXP_SHIFT))
-			step = (_next_tick >> FIXP_SHIFT);
-		YM3812UpdateOne(_opl, data, step);
-
-		_next_tick -= step << FIXP_SHIFT;
-		if (!(_next_tick >> FIXP_SHIFT)) {
-			if (_timer_proc)
-				(*_timer_proc)(_timer_param);
-			on_timer();
-			_next_tick += _samples_per_tick;
-		}
-		data += step;
-		len -= step;
-	} while (len);
+	memset(data, 0, sizeof(int16) * len);
+	YM3812UpdateOne(_opl, data, len);
 }
 
 void MidiDriver_ADLIB::on_timer() {
