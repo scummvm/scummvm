@@ -416,8 +416,13 @@ void Scumm_v2::decodeParseString() {
 	_string[textSlot].overhead = false;
 
 	// V1 Mansion Mansion uses static color table for subtitles
-	if (((_gameId == GID_MANIAC) && (_version == 1)) && _actorToPrintStrFor != 0xFF) 
-		_string[textSlot].color =  v1_mm_actor_speech_color[_actorToPrintStrFor];
+	if ((_gameId == GID_MANIAC) && (_version == 1)) {
+		// Demo mode doesn't set subtitle color before display first subtitle.
+		if (_demo_mode && _actorToPrintStrFor == 0xFF)
+			_string[textSlot].color = 1;
+		else if (_actorToPrintStrFor != 0xFF) 
+			_string[textSlot].color =  v1_mm_actor_speech_color[_actorToPrintStrFor];
+	}
 
 	_messagePtr = buffer;
 	switch (textSlot) {
