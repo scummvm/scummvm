@@ -1607,6 +1607,8 @@ void Gui::restartControl(void) {
 	if (!restartDialog.run())
 		return;
 
+	_vm->_graphics->closeMenuImmediately();
+
 	// Restart the game. To do this, we must...
 
 	// Stop music instantly!
