@@ -57,12 +57,20 @@ public:
 		_data[_size++] = element;
 	}
 
+	void push_back(const List<T>& list) {
+		ensureCapacity(_size + list._size);
+		for (int i = 0; i < list._size; i++)
+			_data[_size++] = list._data[i];
+	}
+
 	void insert_at(int idx, const T& element) {
 		assert(idx >= 0 && idx <= _size);
 		ensureCapacity(_size + 1);
 		// The following loop is not efficient if you can just memcpy things around.
 		// e.g. if you have a list of ints. But for real objects (String...), memcpy
-		// is *not* usually a good idea!
+		// usually isn't correct (specifically, for any class which has a non-default
+		// copy behaviour. E.g. the String class uses a refCounter which has to be
+		// updated whenever a String is copied.
 		for (int i = _size; i > idx; i--) {
 			_data[i] = _data[i-1];
 		}
