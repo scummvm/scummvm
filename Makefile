@@ -113,6 +113,17 @@ scummvm-static: $(OBJS)
 		$(OSXOPT)/lib/libFLAC.a \
 		-lz
 
+# Special target to create a snapshot disk image for Mac OS X
+osxsnap: bundle
+	mkdir ScummVM-snapshot
+	cp README ./ScummVM-snapshot/ScummVM\ ReadMe
+	cp NEWS ./ScummVM-snapshot/News
+	cp COPYING ./ScummVM-snapshot/License
+	/Developer/Tools/SetFile -t TEXT -c ttxt ./ScummVM-snapshot/*
+	/Developer/Tools/CpMac -r $(bundle_name) ./ScummVM-snapshot/
+	hdiutil create -format UDZO -srcfolder ScummVM-snapshot ScummVM-snapshot.dmg
+	rm -rf ScummVM-snapshot
+
 # Special target to create a win32 snapshot binary
 win32dist: scummvm
 	mkdir -p $(WIN32PATH)
