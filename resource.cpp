@@ -96,6 +96,8 @@ void Scumm::openRoom(int room) {
 		if (openResourceFile(buf)) {
 			if (room==0)
 				return;
+			if (_features & GF_EXTERNAL_CHARSET && room>=roomlimit)
+				return;
 			readRoomsOffsets();
 			_fileOffset = _roomFileOffsets[room];
 
