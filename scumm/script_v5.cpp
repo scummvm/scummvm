@@ -1303,6 +1303,14 @@ void Scumm_v5::o5_loadRoom() {
 	// and others. OTOH, it seems to cause a problem in newer games.
 	if (!(_features & GF_SMALL_HEADER) || room != _currentRoom)
 		startScene(room, 0, 0);
+
+        // FIXME: Incredibly nasty evil hack to fix bug #770699 (During meeting
+        // with Guru, script 42 changes between room 0 and room 19 to create
+        // 'some time later' effects. On switching back to room 19, the camera
+        // reverts to 0,0 - Added for 0.5.0, should be fixed properly
+        if (_gameId == GID_ZAK && (vm.slot[_currentScript].number == 42) && (room == 19))
+                setCameraAt(480, 0);
+
 	_fullRedraw = 1;
 }
 
@@ -2130,6 +2138,16 @@ void Scumm_v5::o5_stopScript() {
 	int script;
 
 	script = getVarOrDirectByte(0x80);
+
+        if ((_gameId == GID_ZAK) && (_roomResource == 7) && (vm.slot[_currentScript].number == 10001)) {
+                // FIXME: Nasty hack for bug #771499
+                // Don't let the exit script for room 7 stop the buy script (24),
+                // switching to the number selection keypad (script 15)
+                if ((script == 24) && isScriptRunning(15))
+                        return;
+        }
+
+
 	if (!script)
 		stopObjectCode();
 	else
