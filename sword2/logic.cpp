@@ -57,9 +57,6 @@ int Logic::processSession(void) {
 		uint id = game_object_list[_pc++];
 		_scriptVars[ID] = id;
 
-		// Release the list again so it can float in memory - at this
-		// point not one thing should be locked
-
 		_vm->_resman->closeResource(run_list);
 
 		if (!_scriptVars[ID]) {
