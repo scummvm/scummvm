@@ -72,22 +72,55 @@ enum {
 	KEY_ALL_SKIP = 3457   // WinCE
 };
 
-/** SCUMM feature flags. */
+/**
+ * SCUMM feature flags define for every game which specific set of engine
+ * features are used by that game.
+ * Note that some of them could be replaced by checks for the SCUMM version.
+ */
 enum GameFeatures {
+	/** Games with the new stack based opcodes (ScummEngine_v6 and subclasses). */
 	GF_NEW_OPCODES         = 1 << 0,
+	
+	/** Games with the new camera system (ScummEngine_v7 and subclasses). */
 	GF_NEW_CAMERA          = 1 << 1,
+
+	/** Games with the AKOS custome system (ScummEngine_v7 and subclasses, HE games). */
 	GF_NEW_COSTUMES        = 1 << 2,
+
+	/** Games with digital IMUSE (ScummEngine_v7 and subclasses). */
 	GF_DIGI_IMUSE          = 1 << 3,
+
+	/** Games using XOR encrypted data files. */
 	GF_USE_KEY             = 1 << 4,
-	GF_DRAWOBJ_OTHER_ORDER = 1 << 5,
+	
+	/** Small header games (ScummEngine_v4 and subclasses). */
 	GF_SMALL_HEADER        = 1 << 6,
+
+	/** Small name games (ScummEngine_v3 and subclasses). */
 	GF_SMALL_NAMES         = 1 << 7,
+
+	/** Old bundle games (ScummEngine_v3old and subclasses). */
 	GF_OLD_BUNDLE          = 1 << 8,
+
+	/** EGA games. */
 	GF_16COLOR             = 1 << 9,
+
+	/** VGA versions of V3 games. */
 	GF_OLD256              = 1 << 10,
+
+	/** Games which have Audio CD tracks. */
 	GF_AUDIOTRACKS         = 1 << 11,
+
+	/** Games without actor scaling (ScummEngine_v3 and subclasses). */
 	GF_NO_SCALING          = 1 << 12,
+
+	/**
+	 * Games using only very few local variables in scripts.
+	 * Apparently that is only the case for 256 color version of Indy3.
+	 */
 	GF_FEW_LOCALS          = 1 << 13,
+
+	/** Games made by Humongous Entertainment. */
 	GF_HUMONGOUS           = 1 << 14,
 	GF_MULTIPLE_VERSIONS   = 1 << 15,
 	
@@ -668,7 +701,7 @@ protected:
 	bool openResourceFile(const char *filename, byte encByte);
 
 	void loadPtrToResource(int type, int i, const byte *ptr);
-	void readResTypeList(int id, uint32 tag, const char *name);
+	virtual void readResTypeList(int id, uint32 tag, const char *name);
 	void allocResTypeData(int id, uint32 tag, int num, const char *name, int mode);
 	byte *createResource(int type, int index, uint32 size);
 	int loadResource(int type, int i);

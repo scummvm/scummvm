@@ -26,6 +26,36 @@
 
 namespace Scumm {
 
+extern const char *resTypeFromId(int id);
+
+
+void ScummEngine_v3old::readResTypeList(int id, uint32 tag, const char *name) {
+	int num;
+	int i;
+
+	debug(9, "readResTypeList(%s,%s,%s)", resTypeFromId(id), tag2str(TO_BE_32(tag)), name);
+
+	num = _fileHandle->readByte();
+
+	if (num >= 0xFF) {
+		error("Too many %ss (%d) in directory", name, num);
+	}
+
+	if (id == rtRoom) {
+		for (i = 0; i < num; i++)
+			res.roomno[id][i] = i;
+		_fileHandle->seek(num, SEEK_CUR);
+	} else {
+		for (i = 0; i < num; i++)
+			res.roomno[id][i] = _fileHandle->readByte();
+	}
+	for (i = 0; i < num; i++) {
+		res.roomoffs[id][i] = _fileHandle->readUint16LE();
+		if (res.roomoffs[id][i] == 0xFFFF)
+			res.roomoffs[id][i] = 0xFFFFFFFF;
+	}
+}
+
 void ScummEngine_v3old::readIndexFile() {
 	int magic = 0;
 	debug(9, "readIndexFile()");

@@ -400,7 +400,8 @@ void ScummEngine::drawRoomObjects(int arg) {
 	int i;
 	const int mask = (_version <= 2) ? 0x8 : 0xF;
 
-	if (_features & GF_DRAWOBJ_OTHER_ORDER) {
+	if (_gameId == GID_SAMNMAX) {
+		// In Sam & Max, objects are drawn in reverse order.
 		for (i = 1; i < _numLocalObjects; i++)
 			if (_objs[i].obj_nr > 0)
 				drawRoomObject(i, arg);

@@ -34,8 +34,9 @@
 
 namespace Scumm {
 
+extern const char *resTypeFromId(int id);
+
 static uint16 newTag2Old(uint32 newTag);
-static const char *resTypeFromId(int id);
 static const byte *findResourceSmall(uint32 tag, const byte *searchin);
 
 
@@ -520,37 +521,14 @@ void ScummEngine::readResTypeList(int id, uint32 tag, const char *name) {
 
 	if (_version == 8)
 		num = _fileHandle->readUint32LE();
-	else if (!(_features & GF_OLD_BUNDLE))
-		num = _fileHandle->readUint16LE();
 	else
-		num = _fileHandle->readByte();
+		num = _fileHandle->readUint16LE();
 
-	if (_features & GF_OLD_BUNDLE) {
-		if (num >= 0xFF) {
-			error("Too many %ss (%d) in directory", name, num);
-		}
-	} else {
-		if (num != res.num[id]) {
-			error("Invalid number of %ss (%d) in directory", name, num);
-		}
+	if (num != res.num[id]) {
+		error("Invalid number of %ss (%d) in directory", name, num);
 	}
 
-	if (_features & GF_OLD_BUNDLE) {
-		if (id == rtRoom) {
-			for (i = 0; i < num; i++)
-				res.roomno[id][i] = i;
-			_fileHandle->seek(num, SEEK_CUR);
-		} else {
-			for (i = 0; i < num; i++)
-				res.roomno[id][i] = _fileHandle->readByte();
-		}
-		for (i = 0; i < num; i++) {
-			res.roomoffs[id][i] = _fileHandle->readUint16LE();
-			if (res.roomoffs[id][i] == 0xFFFF)
-				res.roomoffs[id][i] = 0xFFFFFFFF;
-		}
-
-	} else if (_features & GF_SMALL_HEADER) {
+	if (_features & GF_SMALL_HEADER) {
 		for (i = 0; i < num; i++) {
 			res.roomno[id][i] = _fileHandle->readByte();
 			res.roomoffs[id][i] = _fileHandle->readUint32LE();
