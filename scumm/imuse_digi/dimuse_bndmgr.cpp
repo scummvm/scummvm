@@ -172,7 +172,7 @@ bool BundleMgr::loadCompTable(int32 index) {
 	_file.seek(8, SEEK_CUR);
 
 	if (tag != MKID_BE('COMP')) {
-		warning("BundleMgr::decompressSampleByIndex() Compressed sound %d invalid (%s)", index, tag2str(tag));
+		warning("BundleMgr::loadCompTable() Compressed sound %d invalid (%s)", index, tag2str(tag));
 		return false;
 	}
 
@@ -199,7 +199,7 @@ int32 BundleMgr::decompressSampleByCurIndex(int32 offset, int32 size, byte **com
 int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, byte **comp_final, int header_size, bool header_outside) {
 	int32 i, final_size, output_size;
 	int skip, first_block, last_block;
-	
+
 	assert(0 <= index && index < _numFiles);
 
 	if (_file.isOpen() == false) {
@@ -217,7 +217,7 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 		if (!_compTableLoaded)
 			return 0;
 	}
-	
+
 	first_block = (offset + header_size) / 0x2000;
 	last_block = (offset + header_size + size - 1) / 0x2000;
 
@@ -238,6 +238,9 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 			_file.seek(_bundleTable[index].offset + _compTable[i].offset, SEEK_SET);
 			_file.read(_compInput, _compTable[i].size);
 			_outputSize = BundleCodecs::decompressCodec(_compTable[i].codec, _compInput, _compOutput, _compTable[i].size);
+			if (_outputSize > 0x2000) {
+				error("_outputSize: %d", _outputSize);
+			}
 			_lastBlock = i;
 		}
 
@@ -254,7 +257,10 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 			output_size = size;
 
 		assert(final_size + output_size <= blocks_final_size);
-		assert(skip + output_size <= (int)sizeof(_compOutput));
+
+		if ((skip + output_size) > 0x2000) {
+			error("skip: %d, output_size: %d, _outputSize: %d", skip, output_size, _outputSize);
+		}
 
 		memcpy(*comp_final + final_size, _compOutput + skip, output_size);
 		final_size += output_size;
