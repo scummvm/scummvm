@@ -114,7 +114,6 @@ static int32 codec1(byte *dst, byte *src, int height) {
 }
 
 bool NutRenderer::loadFont(const char *filename) {
-	debug(8, "NutRenderer::loadFont(\"%s\") called", filename);
 	if (_loaded) {
 		warning("NutRenderer::loadFont() Font already loaded, ok, loading...");
 	}
@@ -198,7 +197,6 @@ bool NutRenderer::loadFont(const char *filename) {
 }
 
 int NutRenderer::getCharWidth(byte c) const {
-	debug(8, "NutRenderer::getCharWidth() called");
 	if (!_loaded) {
 		warning("NutRenderer::getCharWidth() Font is not loaded");
 		return 0;
@@ -214,7 +212,6 @@ int NutRenderer::getCharWidth(byte c) const {
 }
 
 int NutRenderer::getCharHeight(byte c) const {
-	debug(8, "NutRenderer::getCharHeight() called");
 	if (!_loaded) {
 		warning("NutRenderer::getCharHeight() Font is not loaded");
 		return 0;
@@ -230,7 +227,6 @@ int NutRenderer::getCharHeight(byte c) const {
 }
 
 int NutRenderer::getCharOffsX(byte c) const {
-	debug(8, "NutRenderer::getCharOffsX() called");
 	if (!_loaded) {
 		warning("NutRenderer::getCharOffsX() Font is not loaded");
 		return 0;
@@ -247,7 +243,6 @@ int NutRenderer::getCharOffsX(byte c) const {
 }
 
 int NutRenderer::getCharOffsY(byte c) const {
-	debug(8, "NutRenderer::getCharOffsY() called");
 	if (!_loaded) {
 		warning("NutRenderer::getCharOffsY() Font is not loaded");
 		return 0;
@@ -264,7 +259,6 @@ int NutRenderer::getCharOffsY(byte c) const {
 }
 
 void NutRenderer::drawShadowChar(const Graphics::Surface &s, int c, int x, int y, byte color, bool showShadow) {
-	debug(8, "NutRenderer::drawShadowChar('%c', %d, %d, %d, %d) called", c, x, y, (int)color, showShadow);
 	if (!_loaded) {
 		warning("NutRenderer::drawShadowChar() Font is not loaded");
 		return;
@@ -363,7 +357,7 @@ void NutRenderer::drawChar(const Graphics::Surface &s, byte c, int x, int y, byt
 
 void NutRenderer::draw2byte(const Graphics::Surface &s, int c, int x, int y, byte color) {
 	if (!_loaded) {
-		debug(2, "NutRenderer::draw2byte() Font is not loaded");
+		warning("NutRenderer::draw2byte() Font is not loaded");
 		return;
 	}
 
