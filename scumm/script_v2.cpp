@@ -686,10 +686,8 @@ void Scumm_v2::o2_actorSet() {
 			break;
 
 		case 2:		// Actor Set Color
-			if ((_gameId == GID_ZAK) && (_version == 1)) {
-				// FIXME: maybe this is needed for MM v1, too, but so far I have
-				// not seen any call to this in it at all, so I don't know
-				i = 3;
+			if (_version == 1) {
+				i = 0;
 			} else {
 				i = fetchScriptByte();
 			}
