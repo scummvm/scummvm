@@ -3,9 +3,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 
 0.7.0 (2004-12-??)
  New Games:
-   - Added SAGA engine (for the games and "I Have No Mouth and I Must Scream"
-     and "Inherit the Earth")
-   - Added 26 Humongous Entertainment titles, only a few are completable.
+     - Added 26 Humongous Entertainment titles, only a few are completable.
 
  General:
    - Added support for FLAC (lossless) encoded audio files
