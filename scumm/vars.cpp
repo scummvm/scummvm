@@ -168,8 +168,13 @@ void ScummEngine_v6::setupScummVars() {
 	VAR_TIMEDATE_MINUTE = 126;
 }
 
-#if 0
 void ScummEngine_v7he::setupScummVars() {
+	// Early windows titles and freddi
+	if (_heversion <= 71) {
+		ScummEngine_v6he::setupScummVars();
+		return;
+	}
+
 	// TODO Not complete
 	VAR_KEYPRESS = 0;
 	VAR_DEBUGMODE = 1;
@@ -229,7 +234,6 @@ void ScummEngine_v7he::setupScummVars() {
 	VAR_TIMEDATE_YEAR = 67;
 
 }
-#endif
 
 void ScummEngine_v7::setupScummVars() {
 	VAR_MOUSE_X = 1;
