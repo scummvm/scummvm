@@ -129,31 +129,6 @@ void Scumm::initializeLocals(int slot, int *vars) {
 		for (i = 0; i < 16; i++)
 			vm.localvar[slot][i] = vars[i];
 	}
-
-#if defined(BYPASS_COPY_PROT) && 0
-	// Loom will set bit 15 of variable 214 to 1 if the user enters the
-	// wrong code. But this bit is also used later in the game to determine
-	// if the user has already learned the fourth note. Therefore any
-	// interfering directly with this variable may be risky.
-	//
-	// Let's try an alternative solution instead. The correct code is
-	// stored in variables 82-85. Each time the user selects a symbol,
-	// its ID (0-11) is passed to room-69-203 as local variable 0. Variable
-	// 98 is 1, 2, 3 or 4 depending on how many symbols the player has
-	// selected yet.
-	//
-	// If the sum of variables 82-85 is 0, the "fail" bit will be set,
-	// regardless of the player's choice. I don't know why, but it does
-	// mean that it's safer to change local variable 0 than to change
-	// variables 82-85.
-	//
-	// Update: It has since occured to me that bit 15 could be set to
-	// indicate that the game is running in "demo" mode. In that case, this
-	// bypassing mechanism is needlessly complicated after all, and we
-	// could just make every read of that bit return zero.
-	if (_gameId == GID_LOOM && _currentRoom == 69 && vm.slot[slot].number == 203)
-		vm.localvar[slot][0] = _scummVars[81 + _scummVars[98]];
-#endif
 }
 
 int Scumm::getVerbEntrypoint(int obj, int entry) {
@@ -521,7 +496,8 @@ int Scumm::readVar(uint var) {
 			// during the game...
 			if (_gameId == GID_INDY3 && var == 94 && bit == 4) {
 				return 0;
-			} else if (_gameId == GID_LOOM && var == 214 && bit == 15) {
+//			} else if (_gameId == GID_LOOM && var == 221 && bit == 14) {	// For Mac Loom
+			} else if (_gameId == GID_LOOM && var == 214 && bit == 15) {	// For PC Loom
 				return 0;
 			} else if (_gameId == GID_ZAK256 && var == 151 && bit == 8) {
 				return 0;

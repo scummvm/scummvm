@@ -959,7 +959,12 @@ void Scumm::initScummVars() {
 			VAR(VAR_V6_EMSSPACE) = 10000;
 
 		VAR(VAR_59) = 3;
-
+	}
+	
+	if (_gameId == GID_LOOM) {
+		// This is the for the Mac version of Loom. TODO: add code to properly
+		// distinguish the Mac version from the PC (and other) versions.
+		VAR(39) = 320;
 	}
 
 	if (!(_features & GF_NEW_OPCODES)) {
@@ -1036,7 +1041,11 @@ int Scumm::scummLoop(int delta) {
 		VAR(VAR_VIRT_MOUSE_Y) = _virtualMouse.y;
 		VAR(VAR_MOUSE_X) = _mouse.x;
 		VAR(VAR_MOUSE_Y) = _mouse.y;
-		VAR(VAR_DEBUGMODE) = _debugMode;
+		if (_gameId != GID_LOOM) {
+			// This is the for the Mac version of Loom. TODO: add code to properly
+			// distinguish the Mac version from the PC (and other) versions.
+			VAR(VAR_DEBUGMODE) = _debugMode;
+		}
 	}
 
 	if (_features & GF_AUDIOTRACKS) {
@@ -2501,7 +2510,11 @@ void Scumm::launch() {
 		if (_version < 7)
 			VAR(VAR_VERSION) = 21;
 	
-		VAR(VAR_DEBUGMODE) = _debugMode;
+		if (_gameId != GID_LOOM) {
+			// This is the for the Mac version of Loom. TODO: add code to properly
+			// distinguish the Mac version from the PC (and other) versions.
+			VAR(VAR_DEBUGMODE) = _debugMode;
+		}
 	}
 
 	if (_gameId == GID_MONKEY || _gameId == GID_MONKEY_SEGA)

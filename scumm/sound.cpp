@@ -407,14 +407,39 @@ void Sound::playSound(int soundID) {
 	
 	}
 	
+	if (_scumm->_gameId = GID_LOOM && (READ_LE_UINT16(ptr + 4) == 'so')) {
+		// Mac version of Loom uses yet another sound format
+		/*
+		playSound #9 (room 70)
+		000000: 55 00 00 45  73 6f 00 64  01 00 00 00  00 00 00 00   |U..Eso.d........|
+		000010: 00 05 00 8e  2a 8f 2d 1c  2a 8f 2a 8f  2d 1c 00 28   |....*.-.*.*.-..(|
+		000020: 00 31 00 3a  00 43 00 4c  00 01 00 00  00 01 00 64   |.1.:.C.L.......d|
+		000030: 5a 00 01 00  00 00 01 00  64 00 00 01  00 00 00 01   |Z.......d.......|
+		000040: 00 64 5a 00  01 00 00 00  01 00 64 5a  00 01 00 00   |.dZ.......dZ....|
+		000050: 00 01 00 64  00 00 00 00  00 00 00 07  00 00 00 64   |...d...........d|
+		000060: 64 00 00 4e  73 6f 00 64  01 00 00 00  00 00 00 00   |d..Nso.d........|
+		000070: 00 05 00 89  3d 57 2d 1c  3d 57 3d 57  2d 1c 00 28   |....=W-.=W=W-..(|
+		playSound #16 (room 69)
+		000000: dc 00 00 a5  73 6f 00 64  01 00 00 00  00 00 00 00   |....so.d........|
+		000010: 00 05 00 00  2a 8f 03 e8  03 e8 03 e8  03 e8 00 28   |....*..........(|
+		000020: 00 79 00 7f  00 85 00 d6  00 01 00 00  00 19 01 18   |.y..............|
+		000030: 2f 00 18 00  01 18 32 00  18 00 01 18  36 00 18 00   |/.....2.....6...|
+		000040: 01 18 3b 00  18 00 01 18  3e 00 18 00  01 18 42 00   |..;.....>.....B.|
+		000050: 18 00 01 18  47 00 18 00  01 18 4a 00  18 00 01 18   |....G.....J.....|
+		000060: 4e 00 10 00  01 18 53 00  10 00 01 18  56 00 10 00   |N.....S.....V...|
+		000070: 01 18 5a 00  10 00 02 28  5f 00 01 00  00 00 00 00   |..Z....(_.......|
+		*/
+		return;
+	}
+	
 	if (_scumm->_features & GF_OLD_BUNDLE && _scumm->_version != 1) {
-		// FIXME: support amiga sounds
-		uint16 amigatest;
-		amigatest = READ_LE_UINT16(ptr + 12);
 		// other versions seem to be 0000 at this point...
 		// hopefully this test is correct
 		// 0xfe7f seems to be sound and 0x764a music
-		if ((amigatest != 0xfe7f) && (amigatest != 0x764a)) {
+		bool amigatest = (READ_LE_UINT16(ptr + 12) == 0xfe7f) || (READ_LE_UINT16(ptr + 12) == 0x764a);
+		if (amigatest) {
+			// TODO: support amiga sounds
+		} else {
 			if (_scumm->_playerV2)
 				_scumm->_playerV2->startSound (soundID, ptr);
 		}
