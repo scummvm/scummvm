@@ -377,6 +377,7 @@ extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 	//}
 
 	// ...and quit (the return 0 should never be reached)
+	delete g_timer;
 	system->quit();
 	delete system;
 	return 0;

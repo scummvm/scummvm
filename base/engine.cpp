@@ -53,7 +53,6 @@ Engine::~Engine() {
 	File::resetDefaultDirectories();
 
 	delete _mixer;
-	delete _timer;
 	delete _saveFileMan;
 }
 
