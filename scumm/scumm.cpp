@@ -1166,7 +1166,7 @@ int ScummEngine::init(GameDetector &detector) {
 			_features |= GF_DEFAULT_TO_1X_SCALER;
 			_system->setGraphicsMode("1x");
 		} else {
-			_system->initSize(_screenWidth, _screenHeight, 2);
+			_system->initSize(_screenWidth, _screenHeight, (detector._force1xOverlay ? 1 : 2));
 			if (_features & GF_DEFAULT_TO_1X_SCALER)
 				_system->setGraphicsMode("1x");
 		}

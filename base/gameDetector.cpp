@@ -98,6 +98,7 @@ static const char USAGE_STRING[] =
 	"  --aspect-ratio           Enable aspect ratio correction\n"
 	"  --render-mode=MODE       Enable additional render modes (cga, ega, hercGreen,\n"
     "                           hercAmber, amiga)\n"
+	"  --force-1x-overlay       Make inner GUI 320x200\n"
 	"\n"
 #if !defined(DISABLE_SKY) || !defined(DISABLE_QUEEN)
 	"  --alt-intro              Use alternative intro for CD versions of Beneath a\n"
@@ -205,6 +206,7 @@ GameDetector::GameDetector() {
 #endif
 
 	_dumpScripts = false;
+	_force1xOverlay = false;
 
 	memset(&_game, 0, sizeof(_game));
 	_plugin = 0;
@@ -487,6 +489,10 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 					goto ShowHelpAndExit;
 
 				ConfMan.set("render_mode", option, kTransientDomain);
+			END_OPTION
+
+			DO_LONG_OPTION_BOOL("force-1x-overlay")
+				_force1xOverlay = true;
 			END_OPTION
 
 			DO_LONG_OPTION("savepath")

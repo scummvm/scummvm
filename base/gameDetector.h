@@ -59,6 +59,8 @@ public:
 	
 	bool _dumpScripts;
 
+	bool _force1xOverlay;
+
 	void setTarget(const String &name);
 
 public:
