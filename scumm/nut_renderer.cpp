@@ -188,8 +188,8 @@ void NutRenderer::drawString(char *string, int32 x, int32 y, byte color, int32 m
 			return;
 		}
 
-		x += getCharWidth(string[l]);
 		drawChar(string[l], x, y, 0);
+		x += getCharWidth(string[l]);
 		l++;
 	} while (string[l] != 0);
 
