@@ -2276,6 +2276,7 @@ void ScummEngine_v6::o6_quitPauseRestart() {
 		pauseGame();
 		break;
 	case 160:		// SO_QUIT
+	case 244: // hev7 quit
 		shutDown();
 		break;
 	default:
@@ -3201,3 +3202,4 @@ void ScummEngine_v6::decodeParseString(int m, int n) {
 }
 
 } // End of namespace Scumm
+
