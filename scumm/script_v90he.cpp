@@ -1610,7 +1610,7 @@ void ScummEngine_v90he::o90_floodState() {
 		_floodState.field_1C = pop();
 		break;
 	case 3:
-		//memset(_floodState, 0);
+		memset(&_floodState, 0, sizeof(_floodState));
 		_floodState.box.left = 0;
 		_floodState.box.top = 0;
 		_floodState.box.right = 640;
