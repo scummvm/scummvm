@@ -1178,7 +1178,7 @@ void OSystem_SDL_Common::setup_icon() {
 	}
 	memset(mask, 0, sizeof(mask));
 	for (h = 0; h < 32; h++) {
-		char *line = scummvm_icon[1 + ncols + h];
+		const char *line = scummvm_icon[1 + ncols + h];
 		for (w = 0; w < 32; w++) {
 			icon[w + 32 * h] = rgba[(int)line[w]];
 			if (rgba[(int)line[w]] & 0xFF000000) {

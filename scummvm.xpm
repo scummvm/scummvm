@@ -1,5 +1,5 @@
 /* XPM */
-static char *scummvm_icon[] = {
+static const char *scummvm_icon[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 80 1",
 "  c black",
