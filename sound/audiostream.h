@@ -68,16 +68,17 @@ public:
 		return samples;
 	}
 
-	/** Read a singel (16 bit signed) sample from the stream. */
+	/** Read a single (16 bit signed) sample from the stream. */
 	virtual int16 read() = 0;
 	
 	/** Is this a stereo stream? */
 	virtual bool isStereo() const = 0;
 	
-	/* End of stream reached? */
+	/** End of stream reached? */
 	virtual bool eos() const = 0;
 
-	virtual int getRate() const { return -1; }
+	/** Sample rate of the stream. */
+	virtual int getRate() const = 0;
 };
 
 class WrappedAudioInputStream : public AudioInputStream {
@@ -101,23 +102,19 @@ public:
 	int size() const { return _len; }
 	bool isStereo() const { return false; }
 	bool eos() const { return _len <= 0; }
+	
+	int getRate() const { return -1; }
 };
 
-class MusicStream : public AudioInputStream {
-public:
-	virtual int getRate() const = 0;
-};
-
-
-AudioInputStream *makeLinearInputStream(byte _flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen);
-WrappedAudioInputStream *makeWrappedInputStream(byte _flags, uint32 len);
+AudioInputStream *makeLinearInputStream(int rate, byte _flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen);
+WrappedAudioInputStream *makeWrappedInputStream(int rate, byte _flags, uint32 len);
 
 #ifdef USE_MAD
-MusicStream *makeMP3Stream(File *file, mad_timer_t duration, uint size = 0);
+AudioInputStream *makeMP3Stream(File *file, mad_timer_t duration, uint size = 0);
 #endif
 
 #ifdef USE_VORBIS
-MusicStream *makeVorbisStream(OggVorbis_File *file, int duration);
+AudioInputStream *makeVorbisStream(OggVorbis_File *file, int duration);
 #endif
 
 

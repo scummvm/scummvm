@@ -57,6 +57,15 @@ public:
 		: _mixer(mixer), _handle(handle), _isMusic(isMusic), _volume(volume), _pan(pan), _paused(false), _converter(0), _input(0), _id(-1) {
 		assert(mixer);
 	}
+
+	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume, int8 pan, bool reverseStereo = false)
+		: _mixer(mixer), _handle(handle), _isMusic(isMusic), _volume(volume), _pan(pan), _paused(false), _converter(0), _input(input), _id(-1) {
+		assert(mixer);
+		assert(input);
+
+		// Get a rate converter instance
+		_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo(), reverseStereo);
+	}
 	virtual ~Channel();
 	void destroy();
 	virtual void mix(int16 *data, uint len);
@@ -95,22 +104,6 @@ public:
 
 	void finish();
 };
-
-#ifdef USE_MAD
-class ChannelMP3 : public Channel {
-public:
-	ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, uint size, byte volume, int8 pan);
-	ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume, int8 pan);
-};
-#endif // USE_MAD
-
-#ifdef USE_VORBIS
-class ChannelVorbis : public Channel {
-public:
-	ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool isMusic, byte volume, int8 pan);
-};
-#endif // USE_VORBIS
-
 
 #pragma mark -
 #pragma mark --- SoundMixer ---
@@ -255,18 +248,30 @@ int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, ui
 #ifdef USE_MAD
 int SoundMixer::playMP3(PlayingSoundHandle *handle, File *file, uint32 size, byte volume, int8 pan) {
 	Common::StackLock lock(_mutex);
-	return insertChannel(handle, new ChannelMP3(this, handle, file, size, volume, pan));
+
+	// Create the input stream
+	AudioInputStream *input = makeMP3Stream(file, mad_timer_zero, size);
+	Channel *chan = new Channel(this, handle, input, false, volume, pan);
+	return insertChannel(handle, chan);
 }
 int SoundMixer::playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume, int8 pan) {
 	Common::StackLock lock(_mutex);
-	return insertChannel(handle, new ChannelMP3(this, handle, file, duration, volume, pan));
+
+	// Create the input stream
+	AudioInputStream *input = makeMP3Stream(file, duration, 0);
+	Channel *chan = new Channel(this, handle, input, true, volume, pan);
+	return insertChannel(handle, chan);
 }
 #endif
 
 #ifdef USE_VORBIS
 int SoundMixer::playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track, byte volume, int8 pan) {
 	Common::StackLock lock(_mutex);
-	return insertChannel(handle, new ChannelVorbis(this, handle, ov_file, duration, is_cd_track, volume, pan));
+
+	// Create the input stream
+	AudioInputStream *input = makeVorbisStream(ov_file, duration);
+	Channel *chan = new Channel(this, handle, input, is_cd_track, volume, pan);
+	return insertChannel(handle, chan);
 }
 #endif
 
@@ -509,20 +514,20 @@ ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *soun
 	// Create the input stream
 	if (flags & SoundMixer::FLAG_LOOP) {
 		if (loopEnd == 0) {
-			_input = makeLinearInputStream(flags, _ptr, size, 0, size);
+			_input = makeLinearInputStream(rate, flags, _ptr, size, 0, size);
 		} else {
 			assert(loopStart < loopEnd && loopEnd <= size);
-			_input = makeLinearInputStream(flags, _ptr, size, loopStart, loopEnd - loopStart);
+			_input = makeLinearInputStream(rate, flags, _ptr, size, loopStart, loopEnd - loopStart);
 		}
 	} else {
-		_input = makeLinearInputStream(flags, _ptr, size, 0, 0);
+		_input = makeLinearInputStream(rate, flags, _ptr, size, 0, 0);
 	}
 
 	if (!(flags & SoundMixer::FLAG_AUTOFREE))
 		_ptr = 0;
 
 	// Get a rate converter instance
-	_converter = makeRateConverter(rate, mixer->getOutputRate(), _input->isStereo(), (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0);
+	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo(), (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0);
 }
 
 ChannelRaw::~ChannelRaw() {
@@ -536,13 +541,13 @@ ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle,
 	assert(size <= buffer_size);
 
 	// Create the input stream
-	_input = makeWrappedInputStream(flags, buffer_size);
+	_input = makeWrappedInputStream(rate, flags, buffer_size);
 	
 	// Append the initial data
 	append(sound, size);
 
 	// Get a rate converter instance
-	_converter = makeRateConverter(rate, mixer->getOutputRate(), _input->isStereo(), (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0);
+	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo(), (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0);
 }
 
 void ChannelStream::finish() {
@@ -552,34 +557,3 @@ void ChannelStream::finish() {
 void ChannelStream::append(void *data, uint32 len) {
 	((WrappedAudioInputStream *)_input)->append((const byte *)data, len);
 }
-
-#ifdef USE_MAD
-ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, uint size, byte volume, int8 pan)
-	: Channel(mixer, handle, false, volume, pan) {
-	// Create the input stream
-	_input = makeMP3Stream(file, mad_timer_zero, size);
-
-	// Get a rate converter instance
-	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo());
-}
-
-ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume, int8 pan) 
-	: Channel(mixer, handle, true, volume, pan) {
-	// Create the input stream
-	_input = makeMP3Stream(file, duration, 0);
-
-	// Get a rate converter instance
-	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo());
-}
-#endif // USE_MAD
-
-#ifdef USE_VORBIS
-ChannelVorbis::ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool isMusic, byte volume, int8 pan)
-	: Channel(mixer, handle, isMusic, volume, pan) {
-	// Create the input stream
-	_input = makeVorbisStream(ov_file, duration);
-
-	// Get a rate converter instance
-	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo());
-}
-#endif // USE_VORBIS

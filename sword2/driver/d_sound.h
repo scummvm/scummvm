@@ -43,7 +43,7 @@ typedef struct {
 	PlayingSoundHandle _handle;
 } FxHandle;
 
-class MusicHandle : public MusicStream {
+class MusicHandle : public AudioInputStream {
 public:
 	uint32 _id;
 	bool _firstTime;
@@ -62,7 +62,7 @@ public:
 	int16 read();
 	bool eos() const;
 
-	MusicHandle() : MusicStream(), _firstTime(false),
+	MusicHandle() : _firstTime(false),
 			_streaming(false), _paused(false), _looping(false),
 			_fading(0), _fileStart(0), _filePos(0), _fileEnd(0),
 			_lastSample(0) {}
