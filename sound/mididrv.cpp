@@ -26,6 +26,8 @@
  * QuickTime support by Florent Boudet <flobo@ifrance.com>
  * Raw output support by Michael Pearce
  * MorphOS support by Ruediger Hanke 
+ * Alsa support by Nicolas Noble <nicolas@nobis-crew.org> copied from
+ *    both the QuickTime support and (vkeybd http://www.alsa-project.org/~iwai/alsa.html)
  */
 
 #include "stdafx.h"
@@ -1469,25 +1471,6 @@ void MidiDriver_MIDIEMU::midi_fm_endnote(int voice) {
 
 #define ADDR_DELIM      ".:"
 
-static int parse_addr(char *arg, int *client, int *port)
-{
-        char *p;
-
-        if (isdigit(*arg)) {
-                if ((p = strpbrk(arg, ADDR_DELIM)) == NULL)
-                        return -1;
-                *client = atoi(arg);
-                *port = atoi(p + 1);
-        } else {
-                if (*arg == 's' || *arg == 'S') {
-                        *client = SND_SEQ_ADDRESS_SUBSCRIBERS;
-                        *port = 0;
-                } else
-                        return -1;
-        }
-        return 0;
-}
-
 class MidiDriver_ALSA : public MidiDriver {
 public:
         MidiDriver_ALSA();
@@ -1506,10 +1489,29 @@ private:
 	snd_seq_t *seq_handle;
 	int seq_client, seq_port;
 	int my_client, my_port;
+	static int parse_addr(char *arg, int *client, int *port);
 };
 
-MidiDriver_ALSA::MidiDriver_ALSA() {
-    printf("Driver: ALSA\n");
+MidiDriver_ALSA::MidiDriver_ALSA() : _mode(0), seq_handle(0), seq_client(0), seq_port(0), my_client(0), my_port(0) {
+}
+
+int MidiDriver_ALSA::parse_addr(char *arg, int *client, int *port)
+{
+        char *p;
+
+        if (isdigit(*arg)) {
+                if ((p = strpbrk(arg, ADDR_DELIM)) == NULL)
+                        return -1;
+                *client = atoi(arg);
+                *port = atoi(p + 1);
+        } else {
+                if (*arg == 's' || *arg == 'S') {
+                        *client = SND_SEQ_ADDRESS_SUBSCRIBERS;
+                        *port = 0;
+                } else
+                        return -1;
+        }
+        return 0;
 }
 
 void MidiDriver_ALSA::send_event(int do_flush)
@@ -1530,6 +1532,7 @@ int MidiDriver_ALSA::open(int mode) {
         if (_mode != 0)
 		return MERR_ALREADY_OPEN;
 	_mode=mode;
+	
 	if (mode!=MO_SIMPLE) return MERR_STREAMING_NOT_AVAILABLE;
 	
 	if (!(var = getenv("SCUMMVM_PORT"))) {
@@ -1585,13 +1588,15 @@ void MidiDriver_ALSA::send(uint32 b)
 {
 	unsigned int midiCmd[4];
 	ev.type = SND_SEQ_EVENT_OSS;
-	ev.data.raw8.d[0] = b;
 
 	midiCmd[3] = (b & 0xFF000000) >> 24;
 	midiCmd[2] = (b & 0x00FF0000) >> 16;
 	midiCmd[1] = (b & 0x0000FF00) >> 8;
 	midiCmd[0] = (b & 0x000000FF);
-
+	ev.data.raw32.d[0] = midiCmd[0];
+	ev.data.raw32.d[1] = midiCmd[1];
+	ev.data.raw32.d[2] = midiCmd[2];
+	
 	unsigned char chanID = midiCmd[0] & 0x0F;
 	switch (midiCmd[0] & 0xF0) {
 	case 0x80:
@@ -1602,8 +1607,8 @@ void MidiDriver_ALSA::send(uint32 b)
 		snd_seq_ev_set_noteon(&ev, chanID, midiCmd[1], midiCmd[2]);
 		send_event(1);
 		break;
-
-	case 0xB0:										// Effect
+	case 0xB0:
+		/* is it this simple ? Wow... */
 		snd_seq_ev_set_controller(&ev, chanID, midiCmd[1], midiCmd[2]);
 		send_event(1);
 		break;
@@ -1612,7 +1617,7 @@ void MidiDriver_ALSA::send(uint32 b)
 		send_event(0);
 		break;
 
-	case 0xE0:{									// Pitch bend
+	case 0xE0:{
 			long theBend =
 				((((long)midiCmd[1] + (long)(midiCmd[2] << 8))) - 0x4000) / 4;
 			snd_seq_ev_set_pitchbend(&ev, chanID, theBend);
@@ -1622,12 +1627,15 @@ void MidiDriver_ALSA::send(uint32 b)
 
 	default:
 		error("Unknown Command: %08x\n", (int)b);
+		/* I don't know if this works but, well... */
+		send_event(1);
 		break;
 	}
 }
 
 void MidiDriver_ALSA::pause(bool pause) {
 	if (_mode == MO_STREAMING) {
+		/* Err... and what? */
 	}
 }
 
@@ -1641,65 +1649,3 @@ MidiDriver *MidiDriver_ALSA_create() {
 }
 
 #endif
-
-
-#if 0
-
-/* Old code for timidity support, maybe somebody can rewrite this for the 
-   new midi driver system?
- */
-
-
-/*********** Timidity		*/
-int MidiDriver::connect_to_timidity(int port)
-{
-	int s = 0;
-#if !defined(macintosh) && !defined(__MORPHOS__)	// No socket support on Apple Carbon or Morphos
-	struct hostent *serverhost;
-	struct sockaddr_in sadd;
-
-	serverhost = gethostbyname("localhost");
-	if (serverhost == NULL)
-		error("Could not resolve Timidity host ('localhost')");
-
-	sadd.sin_family = serverhost->h_addrtype;
-	sadd.sin_port = htons(port);
-	memcpy(&(sadd.sin_addr), serverhost->h_addr_list[0], serverhost->h_length);
-
-	s = socket(AF_INET, SOCK_STREAM, 0);
-	if (s < 0)
-		error("Could not open Timidity socket");
-
-	if (connect(s, (struct sockaddr *)&sadd, sizeof(struct sockaddr_in)) < 0)
-		error("Could not connect to Timidity server");
-#endif
-	return s;
-}
-
-void MidiDriver::midiInitTimidity()
-{
-	int s, s2;
-	int len;
-	int dummy, newport;
-	char buf[256];
-
-	s = connect_to_timidity(7777);
-	len = read(s, buf, 256);			// buf[len] = '\0'; printf("%s", buf);
-	sprintf(buf, "SETBUF %f %f\n", 0.1, 0.15);
-	write(s, buf, strlen(buf));
-	len = read(s, buf, 256);			// buf[len] = '\0'; printf("%s", buf); 
-
-	sprintf(buf, "OPEN lsb\n");
-	write(s, buf, strlen(buf));
-	len = read(s, buf, 256);			// buf[len] = '\0'; printf("%s", buf); 
-
-	sscanf(buf, "%d %d", &dummy, &newport);
-	printf("	 => port = %d\n", newport);
-
-	s2 = connect_to_timidity(newport);
-	_mo = (void *)s2;
-}
-
-
-#endif /* 0 */
-
