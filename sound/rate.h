@@ -81,4 +81,24 @@ public:
 	virtual int drain(st_sample_t *obuf, st_size_t *osamp, st_volume_t vol);
 };
 
+class CopyRateConverter : public RateConverter {
+public:
+	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
+		int16 tmp;
+		st_size_t len = *osamp;
+		while (!input.eof() && len--) {
+			tmp = input.read() * vol / 256;
+			clampedAdd(*obuf++, tmp);
+			if (input.isStereo())
+				tmp = input.read() * vol / 256;
+			clampedAdd(*obuf++, tmp);
+		}
+		return (ST_SUCCESS);
+	}
+	virtual int drain(st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
+		return (ST_SUCCESS);
+	}
+};
+
+
 #endif

@@ -107,7 +107,7 @@ int st_rate_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size
 		ilast[i] = rate->ilast[i];
 
 	ostart = obuf;
-	oend = obuf + *osamp;
+	oend = obuf + *osamp * 2;
 
 	while (obuf < oend && !input.eof()) {
 
@@ -159,7 +159,7 @@ int st_rate_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size
 	}
 
 the_end:
-	*osamp = obuf - ostart;
+	*osamp = (obuf - ostart) / 2;
 	for (i = 0; i < channels; i++)
 		rate->ilast[i] = ilast[i];
 	return (ST_SUCCESS);

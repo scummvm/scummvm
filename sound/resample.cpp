@@ -268,11 +268,7 @@ int st_resample_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_
 	long Nout = 0;	// The number of bytes we effectively output
 	long Nx;		// The number of bytes we will read from input
 	long Nproc;		// The number of bytes we process to generate Nout output bytes
-#if 1	// FIXME: Hack to generate stereo output
-	const long obufSize = *osamp / 2;
-#else
 	const long obufSize = *osamp;
-#endif
 
 TODO: adjust for the changes made to AudioInputStream; add support for stereo
 initially, could just average the left/right channel -> bad for quality of course,
@@ -394,11 +390,7 @@ printf("osamp = %ld, Nout = %ld\n", obufSize, Nout);
 		r->Yposition = 0;
 	
 	// Finally set *osamp to the number of samples we put into the output buffer
-#if 1	// FIXME: Hack to generate stereo output
-	*osamp = numOutSamples * 2;
-#else
 	*osamp = numOutSamples;
-#endif
 
 	return (ST_SUCCESS);
 }
