@@ -292,8 +292,8 @@ void ScummEngine_v8::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		/* C8 */
-		OPCODE(o6_startScriptQuick2),	// FIXME: are these really the "quick" (=recursive) variants,
-		OPCODE(o6_startObjectQuick),	// or aren't these maybe supposed to be the "plain" versions, too?
+		OPCODE(o6_startScriptQuick2),
+		OPCODE(o6_startObjectQuick),
 		OPCODE(o6_pickOneOf),
 		OPCODE(o6_pickOneOfDefault),
 		/* CC */
@@ -698,7 +698,7 @@ void ScummEngine_v8::o8_cursorCommand() {
 		break;
 	case 0xDE:		// SO_CURSOR_SOFT_ON Turn soft cursor on
 		_cursor.state++;
-			// FIXME is this check right? see bug #739229
+		// FIXME is this check right? see bug #739229
 		if (_cursor.state > 1)
 			warning("Cursor state %d greater than 1 in script", _cursor.state);
 		verbMouseOver(0);
@@ -1216,7 +1216,7 @@ void ScummEngine_v8::o8_verbOps() {
 		// scripts that place verbs for that.
 		// Also, var595 contains the vertical position at which to start placing verbs (330)
 		a = pop();
-		warning("SO_VERB_CHARSET %d: not yet implemented", a);
+		warning("SO_VERB_LINE_SPACING %d: not yet implemented", a);
 		break;
 	default:
 		error("o8_verbops: default case 0x%x", subOp);
@@ -1449,9 +1449,13 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 	}
 	case 0xDA:		// lipSyncWidth
 	case 0xDB:		// lipSyncHeight
+		{
 		// TODO - get lip sync data for the currently active voice
 		// HACK - return random values for now, to make things look half decent
-		push(_rnd.getRandomNumber(255));
+		int val = _rnd.getRandomNumber(255);
+//		warning("o8_kernelGetFunctions: lipSync(case 0x%x, len %d, val %d)", args[0], len, val);
+		push(val);
+		}
 		break;
 	case 0xDC:		// actorTalkAnimation
 		{
@@ -1488,9 +1492,12 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 		break;
 	case 0xE2:		// musicLipSyncWidth
 	case 0xE3:		// musicLipSyncHeight
+		{
 		// TODO - get lip sync data for the currently active music
-		//warning("o8_kernelGetFunctions: musicLipSync(case 0x%x, len = %d)", args[0], len);
-		push(_rnd.getRandomNumber(255));
+		int val = _rnd.getRandomNumber(255);
+//		warning("o8_kernelGetFunctions: musicLipSync(case 0x%x, len %d, val %d)", args[0], len, val);
+		push(val);
+		}
 		break;
 	default:
 		error("o8_kernelGetFunctions: default case 0x%x (len = %d)", args[0], len);
@@ -1505,6 +1512,7 @@ void ScummEngine_v8::o8_getActorChore() {
 	// FIXME: This is a hack for the cannon scene, as something isn't quite right
 	// here yet..
 	if ((_roomResource == 10) && (vm.slot[_currentScript].number == 2021)) {
+		//warning("o8_getActorChore() hack: would have returned %d", a->frame);
 		push(11);
 		return;
 	}
