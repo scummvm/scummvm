@@ -104,10 +104,9 @@ void MidiPlayer::metaEvent (byte type, byte *data, uint16 length) {
 
 void MidiPlayer::onTimer (void *data) {
 	MidiPlayer *player = (MidiPlayer *) data;
-	if (player->_paused || !player->_parser)
-		return;
 	player->_system->lock_mutex (player->_mutex);
-	player->_parser->onTimer();
+	if (!player->_paused && player->_parser)
+		player->_parser->onTimer();
 	player->_system->unlock_mutex (player->_mutex);
 }
 
