@@ -308,7 +308,7 @@ void	Build_display(void)	//Tony21Sept96
 	else
 	{
 		StartConsole();
-		SetPalette(0, 3, pal, RDPAL_INSTANT);	//force the palette
+		BS2_SetPalette(0, 3, pal, RDPAL_INSTANT);	//force the palette
 		Print_to_console("no valid screen?");
 	}
 #endif	// _SWORD2_DEBUG
@@ -399,7 +399,7 @@ void DisplayMsg( uint8 *text, int time )	// Chris 15May97
 	pal[187].red   = 255;
 	pal[187].green = 255;
 	pal[187].blue  = 255;
-	SetPalette(0, 256, (uint8 *) pal, RDPAL_FADE);
+	BS2_SetPalette(0, 256, (uint8 *) pal, RDPAL_FADE);
 
 	CopyScreenBuffer();
 
@@ -455,7 +455,7 @@ void DisplayMsg( uint8 *text, int time )	// Chris 15May97
 		CopyScreenBuffer();
 	}
 
-	SetPalette(0, 256, (uint8 *) oldPal, RDPAL_FADE);
+	BS2_SetPalette(0, 256, (uint8 *) oldPal, RDPAL_FADE);
 }
 
 //------------------------------------------------------------------------------------
@@ -1043,7 +1043,7 @@ void Start_new_palette(void)	//Tony25Sept96
 
 	UpdatePaletteMatchTable((uint8 *) FetchPaletteMatchTable(screenFile));
 
-	SetPalette(0, 256, FetchPalette(screenFile), RDPAL_FADE);
+	BS2_SetPalette(0, 256, FetchPalette(screenFile), RDPAL_FADE);
 	lastPaletteRes=0;	// indicating that it's a screen palette
 
   	res_man.Res_close(this_screen.background_layer_id);	// close screen file
@@ -1184,7 +1184,7 @@ void SetFullPalette(int32 palRes)		// James17jun97
 
 //		UpdatePaletteMatchTable(file+(256*4));	// not yet in separate palette files
 
-		SetPalette(0, 256, file, RDPAL_INSTANT);
+		BS2_SetPalette(0, 256, file, RDPAL_INSTANT);
 
 		if (palRes != CONTROL_PANEL_PALETTE)	// (James 03sep97)
 			lastPaletteRes=palRes;	// indicating that it's a separate palette resource
@@ -1200,7 +1200,7 @@ void SetFullPalette(int32 palRes)		// James17jun97
 
 			UpdatePaletteMatchTable((uint8 *) FetchPaletteMatchTable(file));
 
-			SetPalette(0, 256, FetchPalette(file), RDPAL_INSTANT);
+			BS2_SetPalette(0, 256, FetchPalette(file), RDPAL_INSTANT);
 			lastPaletteRes=0;	// indicating that it's a screen palette
 
 	  		res_man.Res_close(this_screen.background_layer_id);	// close screen file

@@ -61,7 +61,7 @@
 //								speed - but didn't work.  Added functions
 //								to fade the palette up and down.
 //
-//	1.10	05-Dec-96	PRP		Added a flag to SetPalette so that the palette
+//	1.10	05-Dec-96	PRP		Added a flag to BS2_SetPalette so that the palette
 //								can be set immediately or later by the fade.
 //
 //	1.11	06-Dec-96	JEL		fadeStatus now initialised to 0
@@ -91,18 +91,18 @@
 //
 //	1.21	09-Jul-97	JEL		Fixed palette dimming - to unsigned rather than signed RGB values!
 //
-//	1.22	26-Jun-97	JEL		SetPalette now always sets colour 0 to black so doesn't need setting to black from game engine
+//	1.22	26-Jun-97	JEL		BS2_SetPalette now always sets colour 0 to black so doesn't need setting to black from game engine
 //
 //	1.23	10-Jul-97	JEL		Nothing changed but new version had to be booked in anyway.
 //
-//	1.24	10-Jul-97	JEL		SetPalette doesn't do that any more (see above)!
+//	1.24	10-Jul-97	JEL		BS2_SetPalette doesn't do that any more (see above)!
 //
 //	Functions
 //	---------
 //
 //	--------------------------------------------------------------------------
 //
-//	void SetPalette(int32 startEntry, int32 noEntries, uint8 *colourTable)
+//	void BS2_SetPalette(int32 startEntry, int32 noEntries, uint8 *colourTable)
 //
 //	Sets the palette from position startEntry for noEntries, to the data 
 //	pointed to by colourTable.
@@ -315,10 +315,10 @@ uint8 QuickMatch(uint8 r, uint8 g, uint8 b) {
 
 
 
-int32 SetPalette(int16 startEntry, int16 noEntries, uint8 *colourTable, uint8 fadeNow)
+int32 BS2_SetPalette(int16 startEntry, int16 noEntries, uint8 *colourTable, uint8 fadeNow)
 
 {
-	debug(0, "SetPalette(%d, %d, %d)", startEntry, noEntries, fadeNow);
+	debug(0, "BS2_SetPalette(%d, %d, %d)", startEntry, noEntries, fadeNow);
 
 	StackLock lock(g_sword2->_paletteMutex);
 

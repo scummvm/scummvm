@@ -890,7 +890,7 @@ int32 FN_play_sequence(int32 *params)	// James(09apr97)
 	_palEntry	 pal[256];
 
 	memset(pal, 0, 256*sizeof(_palEntry));
-	SetPalette(0, 256, (uint8 *) pal, RDPAL_INSTANT);
+	BS2_SetPalette(0, 256, (uint8 *) pal, RDPAL_INSTANT);
  	//--------------------------------------------------
 
   	Zdebug("FN_play_sequence FINISHED");

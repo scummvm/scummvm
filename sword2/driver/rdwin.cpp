@@ -307,12 +307,12 @@ long FAR PASCAL WindowsMessageHandler(HWND hWnd, UINT message, WPARAM wParam, LP
         {
 			int32 hr;
 
-            hr = IDirectDrawSurface_SetPalette(lpPrimarySurface, lpPalette);
+            hr = IDirectDrawSurface_BS2_SetPalette(lpPrimarySurface, lpPalette);
             if (hr == DDERR_SURFACELOST)
             {
                 IDirectDrawSurface_Restore(lpPrimarySurface);
 
-                hr= IDirectDrawSurface_SetPalette(lpPrimarySurface, lpPalette);
+                hr= IDirectDrawSurface_BS2_SetPalette(lpPrimarySurface, lpPalette);
                 if(hr == DDERR_SURFACELOST)
                 {
                    Message("Failed to restore palette after second try");

@@ -1216,12 +1216,12 @@ int32 FN_add_human(int32 *params)	//Tony30Sept96
 #ifdef _SWORD2_DEBUG
 	if (testingSnR)						// testing logic scripts by simulating an instant Save & Restore
 	{
-		SetPalette(0, 1, white, RDPAL_INSTANT);
+		BS2_SetPalette(0, 1, white, RDPAL_INSTANT);
 
 		Clear_fx_queue();				// stops all fx & clears the queue - eg. when leaving a location
 		res_man.Kill_all_objects(0);	// ie. trashing all object resources so they load in fresh & restart their logic scripts
 
-		SetPalette(0, 1, black, RDPAL_INSTANT);
+		BS2_SetPalette(0, 1, black, RDPAL_INSTANT);
 	}
 #endif									// ('0' means don't print to console, but console isn't up anyway)
 	//----------------------------------------------------------------------------------------------

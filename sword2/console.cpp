@@ -182,7 +182,7 @@ void	Init_console(void)	//Tony9Sept96
 	con_chr_height=12;
 	con_width=screenWide;	//max across
 
-	SetPalette(CON_PEN, 1, white, RDPAL_INSTANT);	// Force a palatte for the console. Chris 11Apr97
+	BS2_SetPalette(CON_PEN, 1, white, RDPAL_INSTANT);	// Force a palatte for the console. Chris 11Apr97
 
 	console_sprite = Twalloc(con_width*(CON_lines*con_chr_height), MEM_float, UID_con_sprite);
 
@@ -545,7 +545,7 @@ uint32	Parse_user_input(void)	//Tony13Aug96
 						//---------------------------------
 						case	8:	// START
 							Con_start(&input[1][0]);
-							SetPalette(187, 1, pal, RDPAL_INSTANT);	//force the palette
+							BS2_SetPalette(187, 1, pal, RDPAL_INSTANT);	//force the palette
 							return(0);
 							break;
 						//---------------------------------
@@ -613,7 +613,7 @@ uint32	Parse_user_input(void)	//Tony13Aug96
 						//---------------------------------
 						case	18:	// S (same as START)
 							Con_start(&input[1][0]);
-							SetPalette(187, 1, pal, RDPAL_INSTANT);	//force the palette
+							BS2_SetPalette(187, 1, pal, RDPAL_INSTANT);	//force the palette
 							return(0);
 							break;
 						//---------------------------------
@@ -1012,7 +1012,7 @@ void Con_fatal_error(const char *format,...)	//Tony17Oct96
 	uint8 white[4]	= {255,255,255,0};	// (James 05mar97)
 
 
-	SetPalette(CON_PEN, 1, white, RDPAL_INSTANT);	// set text colour in case screen is faded down! (James 05mar97)
+	BS2_SetPalette(CON_PEN, 1, white, RDPAL_INSTANT);	// set text colour in case screen is faded down! (James 05mar97)
 
 	va_start(arg_ptr,format);
 	_vsnprintf( buf, 150, format, arg_ptr);

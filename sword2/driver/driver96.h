@@ -113,7 +113,7 @@
 //	1.20	03-Dec-96	PRP		Sound driver functions added.  It is now 
 //								possible to play speech.
 //
-//	1.21	05-Dec-96	PRP		SetPalette changed so that the palette can
+//	1.21	05-Dec-96	PRP		BS2_SetPalette changed so that the palette can
 //								be realized immediately or later when fading
 //								is called.
 //
@@ -443,7 +443,7 @@
 //	------------------------------- palette.c --------------------------------
 //	--------------------------------------------------------------------------
 //
-//	void SetPalette(int32 startEntry, int32 noEntries, uint8 *colourTable, uint8 setNow)
+//	void BS2_SetPalette(int32 startEntry, int32 noEntries, uint8 *colourTable, uint8 setNow)
 //
 //	Sets the palette from position startEntry for noEntries, to the data 
 //	pointed to by colourTable.  To set the palette immediately pass
@@ -1506,7 +1506,7 @@ extern int32 GetGameName(uint8 *name);
 //-----------------------------------------------------------------------------
 //	Palette functions - from palette.c
 //-----------------------------------------------------------------------------
-extern int32 SetPalette(int16 startEntry, int16 noEntries, uint8 *palette, uint8 setNow);
+extern int32 BS2_SetPalette(int16 startEntry, int16 noEntries, uint8 *palette, uint8 setNow);
 extern int32 UpdatePaletteMatchTable(uint8 *data);
 extern uint8 QuickMatch(uint8 r, uint8 g, uint8 b);
 extern int32 FadeUp(float time);

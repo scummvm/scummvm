@@ -1094,7 +1094,7 @@ void resMan::CacheNewCluster(uint32 newCluster)
 	InitialiseBackgroundLayer(FetchBackgroundLayer(bgfile));
 	InitialiseBackgroundLayer(NULL);
 	InitialiseBackgroundLayer(NULL);
-	SetPalette(0, 256, FetchPalette(bgfile), RDPAL_FADE);
+	BS2_SetPalette(0, 256, FetchPalette(bgfile), RDPAL_FADE);
 
 	RenderParallax(FetchBackgroundLayer(bgfile), 2);
 	res_man.Res_close(2950);		// release the screen resource
