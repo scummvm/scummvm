@@ -78,7 +78,7 @@ enum scriptVariableOffsets {
 	LINC_DIGIT_6 = 651,
 	LINC_DIGIT_7 = 653,
 	LINC_DIGIT_8 = 654,
-	LINC_DIGIT_9 = 655,
+	LINC_DIGIT_9 = 655
 };
 
 class SkyAutoRoute;
