@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 
+#include "common/system.h"
 #include "base/gameDetector.h"
 #include "base/plugins.h"
 #include "backends/fs/fs.h"
