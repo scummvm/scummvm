@@ -265,7 +265,7 @@ public:
 
 	Input(Sword2Engine *vm) :
 		_vm(vm), _mouseBacklog(0), _mouseLogPos(0), _keyBacklog(0),
-		_keyLogPos(0) {};
+		_keyLogPos(0), _mouseX(0), _mouseY(0) {};
 
 	void parseEvents(void);
 

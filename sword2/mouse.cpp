@@ -809,46 +809,36 @@ void Sword2Engine::setLuggage(uint32 res) {
 }
 
 uint32 Sword2Engine::checkMouseList(void) {
-	int32 priority = 0;
-	uint32 j = 1;
+	// Number of priorities subject to implementation needs
 
-	if (_curMouse > 1) {
-		// Number of priorities subject to implementation needs
-
-		while (priority < 10) {
+	for (int priority = 0; priority < 10; priority++) {
+		for (uint i = 1; i < _curMouse; i++) {
 			// If the mouse pointer is over this
 			// mouse-detection-box
 
-			if (_mouseList[j].priority == priority &&
-			    _input->_mouseX + _thisScreen.scroll_offset_x >= _mouseList[j].x1 &&
-			    _input->_mouseX + _thisScreen.scroll_offset_x <= _mouseList[j].x2 &&
-			    _input->_mouseY + _thisScreen.scroll_offset_y >= _mouseList[j].y1 &&
-			    _input->_mouseY + _thisScreen.scroll_offset_y <= _mouseList[j].y2) {
+			if (_mouseList[i].priority == priority &&
+			    _input->_mouseX + _thisScreen.scroll_offset_x >= _mouseList[i].x1 &&
+			    _input->_mouseX + _thisScreen.scroll_offset_x <= _mouseList[i].x2 &&
+			    _input->_mouseY + _thisScreen.scroll_offset_y >= _mouseList[i].y1 &&
+			    _input->_mouseY + _thisScreen.scroll_offset_y <= _mouseList[i].y2) {
 				// Record id
-				_mouseTouching = _mouseList[j].id;
+				_mouseTouching = _mouseList[i].id;
 
 				// Change all COGS pointers to CROSHAIR
-				if (_mouseList[j].pointer == USE)
-					_mouseList[j].pointer = CROSHAIR;
+				if (_mouseList[i].pointer == USE)
+					_mouseList[i].pointer = CROSHAIR;
 
-				createPointerText(_mouseList[j].pointer_text, _mouseList[j].pointer);
+				createPointerText(_mouseList[i].pointer_text, _mouseList[i].pointer);
 
 				// Return pointer type
-				return _mouseList[j].pointer;
-			}
-
-			j++;
-			if (j == _curMouse) {
-				j = 0;
-				// Next priority - 0 being the highest, 9 the
-				// lowest
-				priority++;
+				return _mouseList[i].pointer;
 			}
 		}
 	}
 
-	_mouseTouching = 0;	// touching nothing
-	return 0;		// no pointer to return
+	// Touching nothing; no pointer to return
+	_mouseTouching = 0;
+	return 0;
 }
 
 #define POINTER_TEXT_WIDTH	640		// just in case!
