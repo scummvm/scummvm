@@ -73,8 +73,7 @@ void String::decRefCount() {
 	--(*_refCount);
 	if (*_refCount <= 0) {
 		delete _refCount;
-		if (_str)
-			free(_str);
+		free(_str);
 	}
 }
 
