@@ -693,9 +693,9 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_wizPolygons = NULL;
 
 	_actorClipOverride.top = 0;
-	_actorClipOverride.bottom = 479;
+	_actorClipOverride.bottom = 480;
 	_actorClipOverride.left = 0;
-	_actorClipOverride.right = 639;
+	_actorClipOverride.right = 640;
 
 	_skipDrawObject = 0;
 	_skipProcessActors = 0;
@@ -1221,7 +1221,10 @@ void ScummEngine::scummInit() {
 		VAR(VAR_CAMERA_ACCEL_Y) = 100;
 	} else if (!(_features & GF_NEW_CAMERA)) {
 		camera._leftTrigger = 10;
-		camera._rightTrigger = 30;
+		if (_heversion >= 71)
+			camera._rightTrigger = 70;
+		else
+			camera._rightTrigger = 30;
 		camera._mode = 0;
 	}
 	camera._follows = 0;
