@@ -56,6 +56,23 @@ public:
 	virtual bool isStereo() const { return false; }
 };
 
+// Wrapped memory stream, to be used by the ChannelStream class (and possibly others?)
+template<bool stereo, int sampleSize>
+class WrappedMemoryStream : public AudioInputStream {
+protected:
+	byte *_bufferStart;
+	byte *_bufferEnd;
+	byte *_pos;
+	byte *_end;
+	
+	void advance();
+public:
+	WrappedMemoryStream(const byte *buffer, uint bufferSize);
+	virtual int size() const;
+	void append(const byte *data, uint32 len);
+};
+
+
 AudioInputStream *makeInputStream(byte _flags, const byte *ptr, uint32 len);
 
 #endif

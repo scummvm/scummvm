@@ -34,36 +34,58 @@ public:
 	virtual bool isStereo() const { return stereo; }
 };
 
-#if 0
-TODO: Implement a wrapped memory stream, to be used by the ChannelStream class
-(and possibly others?)
+
+#pragma mark -
+
 
 template<bool stereo, int sampleSize>
-class WrappedMemoryStream : public AudioInputStream {
-protected:
-	byte *_bufferStart;
-	byte *_bufferEnd;
-	byte *_pos;
-	byte *_end;
-	
-	void advance() {
-		_ptr += sampleSize;
-		.. TODO: wrap
+WrappedMemoryStream<stereo, sampleSize>::WrappedMemoryStream(const byte *buffer, uint bufferSize)
+	: _bufferStart(buffer), _bufferEnd(buffer+bufferSize) {
+	if (stereo)	// Stereo requires an even sized buffer
+		assert(bufferSize % 2 == 0);
+}
+
+template<bool stereo, int sampleSize>
+void WrappedMemoryStream<stereo, sampleSize>::advance() {
+	_pos += sampleSize;
+	// Wrap around?
+	if (_pos >= _bufferEnd)
+		_pos = _pos - (_bufferEnd - _bufferStart);
+}
+
+template<bool stereo, int sampleSize>
+int WrappedMemoryStream<stereo, sampleSize>::size() const {
+	int len = _end - _pos;
+	if (len < 0)
+		len += (_bufferEnd - _bufferStart);
+	return len / sampleSize;
+}
+
+template<bool stereo, int sampleSize>
+void WrappedMemoryStream<stereo, sampleSize>::append(const byte *data, uint32 len) {
+	if (_end + len > _bufferEnd) {
+		// Wrap-around case
+		uint32 size_to_end_of_buffer = _bufferEnd - _end;
+		len -= size_to_end_of_buffer;
+		if ((_end < _pos) || (_bufferStart + len >= _pos)) {
+			debug(2, "WrappedMemoryStream: buffer overflow (A)");
+			return;
+		}
+		memcpy(_end, (byte*)data, size_to_end_of_buffer);
+		memcpy(_bufferStart, (byte *)data + size_to_end_of_buffer, len);
+		_end = _bufferStart + len;
+	} else {
+		if ((_end < _pos) && (_end + len >= _pos)) {
+			debug(2, "WrappedMemoryStream: buffer overflow (B)");
+			return;
+		}
+		memcpy(_end, data, len);
+		_end += len;
 	}
-public:
-	WrappedMemoryStream(const byte *ptr, uint len) : _bufferStart(ptr), _bufferEnd(ptr+len) { }
-	virtual int size() const {
-		int size = _end - _pos;
-		if (size < 0)
-			size += _bufferEnd - _bufferStart
-		return size / sampleSize;
-	}
-	
-	void append(const byte *ptr, uint len) {
-		...
-	}
-};
-#endif
+}
+
+
+#pragma mark -
 
 
 template<bool stereo, class T = class LinearMemoryStream<stereo, 1> >
