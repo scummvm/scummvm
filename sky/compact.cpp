@@ -40,10 +40,13 @@
 #define COMPACT_SIZE (sizeof(compactOffsets)/sizeof(uint32))
 #define EXTCOMPACT_SIZE (sizeof(extCompactOffsets)/sizeof(uint32))
 #define MEGASET_SIZE (sizeof(megaSetOffsets)/sizeof(uint32))
+#define TURNTABLE_SIZE (sizeof(turnTableOffsets)/sizeof(uint32))
 
 #define OFFS(type,item) (((uint32)(&((type*)0)->item)))
 #define MK32(type,item) OFFS(type, item),0,0,0
 #define MK16(type,item) OFFS(type, item),0
+#define MK32_A5(type, item) MK32(type, item[0]), MK32(type, item[1]), \
+	MK32(type, item[2]), MK32(type, item[3]), MK32(type, item[4])
 
 namespace SkyCompact {
 
@@ -122,6 +125,13 @@ static const uint32 megaSetOffsets[] = {
 	MK32(MegaSet, standTalk),
 };
 
+static const uint32 turnTableOffsets[] = {
+	MK32_A5(TurnTable, turnTableUp),
+	MK32_A5(TurnTable, turnTableDown),
+	MK32_A5(TurnTable, turnTableLeft),
+	MK32_A5(TurnTable, turnTableRight),
+	MK32_A5(TurnTable, turnTableTalk),
+};
 
 void *getCompactElem(Compact *cpt, uint32 off) {
 	if (off < COMPACT_SIZE)
@@ -136,33 +146,33 @@ void *getCompactElem(Compact *cpt, uint32 off) {
 		return((uint8 *)(cpt->extCompact->megaSet0) + megaSetOffsets[off]);
 
 	off -= MEGASET_SIZE;
-	if (off < 5*5*4)
-		return ((void **)(cpt->extCompact->megaSet0->turnTable))[off/4];
+	if (off < TURNTABLE_SIZE)
+		return ((uint8 *)(cpt->extCompact->megaSet0->turnTable) + turnTableOffsets[off]);
 
-	off -= 5*5*4;
+	off -= TURNTABLE_SIZE;
 	if (off < MEGASET_SIZE)
 		return((uint8 *)(cpt->extCompact->megaSet1) + megaSetOffsets[off]);
 
 	off -= MEGASET_SIZE;
-	if (off < 5*5*4)
-		return ((void **)(cpt->extCompact->megaSet1->turnTable))[off/4];
+	if (off < TURNTABLE_SIZE)
+		return ((uint8 *)(cpt->extCompact->megaSet0->turnTable) + turnTableOffsets[off]);
 
-	off -= 5*5*4;
+	off -= TURNTABLE_SIZE;
 	if (off < MEGASET_SIZE)
 		return((uint8 *)(cpt->extCompact->megaSet2) + megaSetOffsets[off]);
 
 	off -= MEGASET_SIZE;
-	if (off < 5*5*4)
-		return ((void **)(cpt->extCompact->megaSet2->turnTable))[off/4];
+	if (off < TURNTABLE_SIZE)
+		return ((uint8 *)(cpt->extCompact->megaSet0->turnTable) + turnTableOffsets[off]);
 
-	off -= 5*5*4;
+	off -= TURNTABLE_SIZE;
 	if (off < MEGASET_SIZE)
 		return((uint8 *)(cpt->extCompact->megaSet3) + megaSetOffsets[off]);
 
 	off -= MEGASET_SIZE;
-	if (off < 5*5*4)
-		return ((void **)(cpt->extCompact->megaSet3->turnTable))[off/4];
-	off -= 5*5*4;
+	if (off < TURNTABLE_SIZE)
+		return ((uint8 *)(cpt->extCompact->megaSet0->turnTable) + turnTableOffsets[off]);
+	off -= TURNTABLE_SIZE;
 
 	error("Offset %X out of bounds of compact", off + COMPACT_SIZE + EXTCOMPACT_SIZE + 4 * MEGASET_SIZE + 4 * 5*5*4);
 }

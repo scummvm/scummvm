@@ -48,6 +48,14 @@ struct dataFileHeader {
 	uint16 s_compressed_size;
 };
 
+struct TurnTable {
+	uint16 *turnTableUp[5];
+	uint16 *turnTableDown[5];
+	uint16 *turnTableLeft[5];
+	uint16 *turnTableRight[5];
+	uint16 *turnTableTalk[5];
+};
+
 struct MegaSet {
 	uint16 gridWidth;
 	uint16 colOffset;
@@ -64,7 +72,7 @@ struct MegaSet {
 	uint16 *standLeft;
 	uint16 *standRight;
 	uint16 *standTalk;
-	void *turnTable;
+	TurnTable *turnTable;
 };
 
 struct ExtCompact {

@@ -912,7 +912,6 @@ namespace SkyCompact {
 	extern uint16 burke_st_down[];
 	extern uint16 burke_u_to_r[];
 	extern uint16 burke_d_to_r[];
-	extern uint16 *burke_turnTable[5][5];
 	extern ExtCompact burke_ext;
 	extern Compact burke;
 	extern uint16 shake_seq[];
@@ -1318,7 +1317,6 @@ namespace SkyCompact {
 	extern uint16 babs_t_to_d[];
 	extern uint16 babs_t_to_l[];
 	extern uint16 babs_t_to_r[];
-	extern uint16 *sc36_babs_turnTable[5][5];
 	extern ExtCompact sc36_babs_ext;
 	extern Compact sc36_babs;
 	extern uint16 sc36_col_down4[];
@@ -1536,7 +1534,6 @@ namespace SkyCompact {
 	extern uint16 spu_d_to_r[];
 	extern uint16 spu_down[];
 	extern uint16 spu_st_up[];
-	extern uint16 *spunky_turnTable[5][5];
 	extern ExtCompact spunky_ext;
 	extern Compact spunky;
 	extern uint16 sc38_video_anim[];
@@ -1601,7 +1598,6 @@ namespace SkyCompact {
 	extern uint16 shades_l_to_d[];
 	extern uint16 shades_r_to_u[];
 	extern uint16 shades_r_to_l[];
-	extern uint16 *shades_turnTable[5][5];
 	extern ExtCompact shades_ext;
 	extern Compact shades;
 	extern uint16 liftc2_down[];
@@ -2123,7 +2119,6 @@ namespace SkyCompact {
 	extern uint16 medi_r_to_u[];
 	extern uint16 medi_r_to_d[];
 	extern uint16 medi_r_to_l[];
-	extern uint16 *medi_turnTable[5][5];
 	extern ExtCompact medi_ext;
 	extern Compact medi;
 	extern uint16 sc71_mouse_list[];
@@ -2215,7 +2210,6 @@ namespace SkyCompact {
 	extern uint16 wit_u_to_r[];
 	extern uint16 wit_r_to_u[];
 	extern uint16 wit_t_to_l[];
-	extern uint16 *witness_turnTable[5][5];
 	extern ExtCompact witness_ext;
 	extern Compact witness;
 	extern uint16 sc72_logic_list[];
@@ -2246,7 +2240,6 @@ namespace SkyCompact {
 	extern uint16 gal_r_to_u[];
 	extern uint16 gal_r_to_d[];
 	extern uint16 gal_r_to_l[];
-	extern uint16 *gallagher_turnTable[5][5];
 	extern ExtCompact gallagher_ext;
 	extern Compact gallagher;
 	extern uint16 sc73_joey_fight1[];
@@ -2386,7 +2379,6 @@ namespace SkyCompact {
 	extern uint16 ken_r_to_u[];
 	extern uint16 ken_r_to_d[];
 	extern uint16 ken_r_to_l[];
-	extern uint16 *ken_turnTable[5][5];
 	extern ExtCompact ken_ext;
 	extern Compact ken;
 	extern uint16 sc76_floor_table[];
@@ -2992,7 +2984,6 @@ namespace SkyCompact {
 	extern uint16 lamb_r_to_u[];
 	extern uint16 lamb_r_to_d[];
 	extern uint16 lamb_r_to_l[];
-	extern uint16 *lamb_turnTable[5][5];
 	extern ExtCompact lamb_ext;
 	extern Compact lamb;
 	extern uint16 bfoster_left[];
