@@ -288,14 +288,14 @@ static const ScummGameSettings scumm_settings[] = {
 	{"f3-mdemo", "Freddi Fish 3: The Case of the Stolen Conch Shell (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	// there is also a C++ engine based version of timedemo
-	{"timedemo", "Putt-Putt Travels Through Time (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"TimeDemo", "Putt-Putt Travels Through Time (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"spyfox", "Spyfox 1: Dry Cereal", GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"foxdemo", "Spyfox 1: Dry Cereal (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	// there is also a C++ engine version of spydemo
-	{"spydemo", "Spyfox 1: Dry Cereal (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"SpyDemo", "Spyfox 1: Dry Cereal (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 	// Humongous Entertainment Scumm Version 9.5 ?  Scummsys.95
@@ -338,7 +338,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"freddicove", "Freddi Fish 5: The Case of the Creature of Coral Cave", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"ffhsdemo", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Demo)", GID_HEGAME, 6, 98, MDT_NONE,
+	{"FFHSDemo", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Demo)", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"pj3-demo", "Pajama Sam 3: You Are What You Eat From Your Head to Your Feet (Demo)", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
@@ -352,9 +352,9 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"bb2demo", "Backyard Baseball 2001 (Demo)", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"football2002", "Backyard Football 2002 (Demo)", GID_HEGAME, 6, 98, MDT_NONE,
+	{"Football2002", "Backyard Football 2002 (Demo)", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"pjsamdemo", "Pajama Sam: No Need To Hide When It's Dark Outside (Demo)", GID_HEGAME, 6, 98, MDT_NONE,
+	{"PjSamDemo", "Pajama Sam: No Need To Hide When It's Dark Outside (Demo)", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{NULL, NULL, 0, 0, 0, MDT_NONE, 0, 0, 0}
 };
@@ -392,6 +392,10 @@ static const ScummGameSettings he_md5_settings[] = {
 	{"df047cc4792150f601290357566d36a6", "Freddi Fish 1: The Case of the Missing Kelp Seeds *updated)", GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"92e7727e67f5cd979d8a1070e4eb8cb3", "Putt-Putt Saves the Zoo *updated)", GID_HEGAME, 6, 98, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	{"0ab19be9e2a3f6938226638b2a3744fe", "Putt-Putt Travels Through Time (updated Demo)", GID_HEGAME, 6, 98, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	{"9d4ab3e0e1d1ebc6ba8a6a4c470ed184", "Spyfox 1: Dry Cereal (Updated Demo)", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 	{NULL, NULL, 0, 0, 0, MDT_NONE, 0, 0, 0}
