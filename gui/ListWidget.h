@@ -37,6 +37,7 @@ class ListWidget : public Widget, public CommandReceiver {
 protected:
 	StringList		_list;
 	bool			_editable;
+	bool			_editMode;
 	int				_numberingMode;
 	int				_currentPos;
 	int				_entriesPerPage;
@@ -57,6 +58,8 @@ public:
 
 protected:
 	void drawWidget(bool hilite);
+	void lostFocusWidget();
+	void scrollToCurrent();
 };
 
 #endif

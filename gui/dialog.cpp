@@ -73,11 +73,24 @@ void Dialog::draw()
 
 void Dialog::handleMouseDown(int x, int y, int button)
 {
-	_focusedWidget = findWidget(x, y);
+	Widget *w;
+	w = findWidget(x, y);
 
-	if (_focusedWidget) {
-		_focusedWidget->handleMouseDown(x - _focusedWidget->_x, y - _focusedWidget->_y, button);
+	if (w != _focusedWidget) {
+		// The focus will change. Tell the old focused widget (if any)
+		// that it lost the focus.
+		if (_focusedWidget)
+			_focusedWidget->lostFocus();
+	
+		// Tell the new focused widget (if any) that it just gained the focus.
+		if (w)
+			w->recievedFocus();
+	
+		_focusedWidget = w;
 	}
+
+	if (_focusedWidget)
+		_focusedWidget->handleMouseDown(x - _focusedWidget->_x, y - _focusedWidget->_y, button);
 }
 
 void Dialog::handleMouseUp(int x, int y, int button)
@@ -88,8 +101,10 @@ void Dialog::handleMouseUp(int x, int y, int button)
 		w = _focusedWidget;
 		
 		// Lose focus on mouseup unless the widget requested to retain the focus
-		if (! (_focusedWidget->getFlags() & WIDGET_RETAIN_FOCUS ))
+		if (! (_focusedWidget->getFlags() & WIDGET_RETAIN_FOCUS )) {
+			_focusedWidget->lostFocus();
 			_focusedWidget = 0;
+		}
 
 	} else {
 		w = findWidget(x, y);

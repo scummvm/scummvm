@@ -114,6 +114,7 @@ public:
 	const char *c_str() const		{ return _str; }
 	int size() const				{ return _len; }
 	
+	void deleteLastChar();
 	void clear();
 
 protected:

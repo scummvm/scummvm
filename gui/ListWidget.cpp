@@ -27,8 +27,6 @@
 
 /*
  * TODO:
- * - Implement scrolling using arrow keys, pageup/pagedown, home/end keys etc.
- * - Implement editing of the selected string in a generic fashion
  */
 
 
@@ -39,7 +37,7 @@
 ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h)
 	: Widget(boss, x, y, w - kScrollBarWidth, h)
 {
-	_flags = WIDGET_ENABLED | WIDGET_CLEARBG;
+	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE;
 	_type = kListWidget;
 	_numberingMode = kListNumberingOne;
 	_entriesPerPage = (_h - 4) / LINE_HEIGHT;
@@ -48,6 +46,11 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h)
 	_scrollBar = new ScrollBarWidget(boss, _x + _w, _y, kScrollBarWidth, _h);
 	_scrollBar->setTarget(this);
 	
+	// FIXME: This flag should come from widget definition
+	_editable = true;
+
+	_editMode = false;
+
 	// FIXME - fill in dummy data for now
 	_list.push_back("A simple game?");
 	_list.push_back("This space for rent!");
@@ -81,14 +84,114 @@ ListWidget::~ListWidget()
 
 void ListWidget::handleMouseDown(int x, int y, int button)
 {
+	int oldSelectedItem = _selectedItem;
+
 	if (_flags & WIDGET_ENABLED) {
 		_selectedItem = (y - 2) / LINE_HEIGHT + _currentPos;
+
+		if (_editMode && oldSelectedItem != _selectedItem) {
+			// loose caret
+			_list[_selectedItem].deleteLastChar();
+			_editMode = false;
+		}
 		draw();
 	}
 }
 
 void ListWidget::handleKeyDown(char key, int modifiers)
 {
+	bool dirty = false;
+	int oldSelectedItem = _selectedItem;
+
+	if (_editMode) {
+
+		// get rid of caret
+		_list[_selectedItem].deleteLastChar();
+
+		if (key == '\n' || key == '\r') {
+			// enter, exit editmode
+			_editMode = false;
+			dirty = true;
+		}
+		else if (_editMode && key == 8) {	// backspace
+			_list[_selectedItem].deleteLastChar();
+			dirty = true;
+		} else if (_editMode &&
+					// filter keystrokes
+					( ( key >= 'a' && key <= 'z' )
+					|| ( key >= 'A' && key <= 'Z' )
+					|| ( key >= '0' && key <= '9' )
+					|| ( key == ' ')
+					) )
+			{
+
+			_list[_selectedItem] += key;
+			dirty = true;
+		}
+
+	} else {
+		// not editmode
+
+		switch (key) {
+		case '\n':	// enter
+		case '\r':
+			if (_selectedItem >= 0) {
+				_editMode = true;
+				dirty = true;
+			}
+			break;
+		case 17:	// up arrow
+			if (_selectedItem > 0)
+				_selectedItem--;
+			break;
+		case 18:	// down arrow
+			if (_selectedItem < _list.size() - 1)
+				_selectedItem++;
+			break;
+		case 24:	// pageup
+			_selectedItem -= _entriesPerPage - 1;
+			if (_selectedItem < 0)
+				_selectedItem = 0;
+			break;
+		case 25:	// pagedown
+			_selectedItem += _entriesPerPage - 1;
+			if (_selectedItem >= _list.size() )
+				_selectedItem = _list.size() - 1;
+			break;
+		case 22:	// home
+			_selectedItem = 0;
+			break;
+		case 23:	// end
+			_selectedItem = _list.size() - 1;
+			break;
+		}
+
+		scrollToCurrent();
+	}
+
+	if (_editMode)
+		// re-add caret
+		_list[_selectedItem] += '_';
+
+	if (dirty || _selectedItem != oldSelectedItem)
+		draw();
+
+	if (_selectedItem != oldSelectedItem) {
+		// also draw scrollbar
+		_scrollBar->draw();
+	}
+
+}
+
+void ListWidget::lostFocusWidget()
+{
+	if (_editMode) {
+		// loose caret
+		_list[_selectedItem].deleteLastChar();
+		_editMode = false;
+	}
+
+	draw();
 }
 
 void ListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
@@ -119,7 +222,25 @@ void ListWidget::drawWidget(bool hilite)
 		} else
 			buffer = "";
 		buffer += _list[pos];
+	
 		gui->drawString(buffer, _x+5, _y+2 + LINE_HEIGHT * i, _w - 10,
-							(_selectedItem == pos) ? gui->_textcolorhi : gui->_textcolor);
+							(_selectedItem == pos && _hasFocus) ? gui->_textcolorhi : gui->_textcolor);
 	}
+}
+
+void ListWidget::scrollToCurrent() {
+
+	// Only do something if the current item is not in our view port
+	if (_selectedItem < _currentPos) {
+		// it's above our view
+		_currentPos = _selectedItem;
+	} else if (_selectedItem >= _currentPos + _entriesPerPage ) {
+		// it's below our view
+		_currentPos = _selectedItem - _entriesPerPage + 1;
+		if (_currentPos < 0)
+			_currentPos = 0;
+	}
+
+	_scrollBar->_currentPos = _currentPos;
+	_scrollBar->recalc();
 }

@@ -84,6 +84,7 @@ protected:
 	uint16		_w, _h;
 	uint16		_id;
 	uint16		_flags;
+	bool		_hasFocus;
 
 public:
 	Widget(Dialog *boss, int x, int y, int w, int h);
@@ -98,6 +99,8 @@ public:
 	virtual void handleKeyUp(char key, int modifiers) {}
 	virtual void handleTickle() {}
 	void draw();
+	void recievedFocus() { _hasFocus = true; recievedFocusWidget(); }
+	void lostFocus() { _hasFocus = false; lostFocusWidget(); }
 
 	void setFlags(int flags)	{ _flags |= flags; }
 	void clearFlags(int flags)	{ _flags &= ~flags; }
@@ -105,6 +108,9 @@ public:
 
 protected:
 	virtual void drawWidget(bool hilite) {}
+
+	virtual void recievedFocusWidget() {}
+	virtual void lostFocusWidget() {}
 };
 
 

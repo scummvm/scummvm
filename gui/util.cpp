@@ -163,6 +163,13 @@ String& String::operator +=(char c)
 	return *this;
 }
 
+void String::deleteLastChar() {
+	if (_len > 0) {
+		_len--;
+		_str[_len]=0;
+	}
+}
+
 void String::clear()
 {
 	if (_str)
@@ -187,3 +194,4 @@ void String::ensureCapacity(int new_len, bool keep_old)
 		free(old_str);
 	}
 }
+

@@ -25,7 +25,8 @@
 
 
 Widget::Widget (Dialog *boss, int x, int y, int w, int h)
-	: _type(0), _boss(boss), _x(x), _y(y), _w(w), _h(h), _id(0), _flags(0)
+	: _type(0), _boss(boss), _x(x), _y(y), _w(w), _h(h),
+	  _id(0), _flags(0), _hasFocus(false)
 {
 	// Insert into the widget list of the boss
 	_next = _boss->_firstWidget;
