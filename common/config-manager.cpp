@@ -299,6 +299,9 @@ void ConfigManager::set(const String &key, const String &value) {
 }
 
 void ConfigManager::set(const String &key, const String &value, const String &dom) {
+	if (dom.isEmpty())
+		set(key, value);
+
 	if (_globalDomains.contains(dom))
 		_globalDomains[dom][key] = value;
 	else
@@ -346,17 +349,22 @@ void ConfigManager::registerDefault(const String &key, bool value) {
 
 
 void ConfigManager::setActiveDomain(const String &domain) {
+	assert(!domain.isEmpty());
 	_activeDomain = domain;
 	_gameDomains.addKey(domain);
 }
 
-void ConfigManager::removeGameDomain(const String &name) {
-	_gameDomains.remove(name);
+void ConfigManager::removeGameDomain(const String &domain) {
+	assert(!domain.isEmpty());
+	_gameDomains.remove(domain);
 }
 
 void ConfigManager::renameGameDomain(const String &oldName, const String &newName) {
 	if (oldName == newName)
 		return;
+
+	assert(!oldName.isEmpty());
+	assert(!newName.isEmpty());
 
 	_gameDomains[newName].merge(_gameDomains[oldName]);
 	
@@ -364,6 +372,7 @@ void ConfigManager::renameGameDomain(const String &oldName, const String &newNam
 }
 
 bool ConfigManager::hasGameDomain(const String &domain) const {
+	assert(!domain.isEmpty());
 	return _gameDomains.contains(domain);
 }
 
