@@ -191,6 +191,7 @@ void Sword2Engine::displayMsg(byte *text, int time) {
 
 	_graphics->fadeDown();
 	_graphics->waitForFade();
+	_graphics->clearScene();
 	_graphics->setPalette(0, 256, oldPal, RDPAL_FADE);
 	_graphics->fadeUp();
 }
