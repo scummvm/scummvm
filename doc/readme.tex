@@ -3,13 +3,21 @@
 %%% mode: latex
 %%% TeX-master: t
 %%% End: 
-\documentclass [a4paper,12pt]{article}
+\documentclass [a4paper]{article}
 %\author {Hannes Niederhausen}
 \title {ScummVM ReadMe}
 
+\usepackage {hyperref}
 \usepackage {times}
 \usepackage {fancyhdr}
 \usepackage [latin1] {inputenc}
+
+\addtolength{\textheight}{\topmargin}
+\addtolength{\textheight}{\footskip}
+\addtolength{\textheight}{2cm}
+\setlength{\topmargin}{-1cm}
+\setlength{\footskip}{0cm}
+%\setlength{\headheight}{0cm}
 
 \date {2004/01/18}
 
@@ -22,8 +30,8 @@
 \renewcommand {\headrulewidth} {1pt}
 %
 \maketitle
-\newpage
-\thispagestyle {empty}
+%\newpage
+%\thispagestyle {empty}
 \tableofcontents
 %
 \newpage
