@@ -676,7 +676,7 @@ void Player::part_set_transpose(uint8 chan, byte relative, int8 b) {
 	part->set_transpose(b);
 }
 
-void Player::key_on(uint8 chan, uint8 note, uint8 velocity) {
+void Player::key_on(uint8 chan, byte note, uint8 velocity) {
 	Part *part;
 
 	part = getPart(chan);
