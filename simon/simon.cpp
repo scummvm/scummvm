@@ -4810,11 +4810,24 @@ void SimonState::vc_19() {
 	error("vc_19: chain to script not implemented");
 }
 
+
+/* helper routines */
+
+/* write unaligned 16-bit */
+static void write_16_le(void *p, uint16 a) {
+	((byte*)p)[0] = (byte) (a);
+	((byte*)p)[1] = (byte) (a >> 8);
+}
+
+/* read unaligned 16-bit */
+static uint16 read_16_le(void *p) {
+	return ((byte*)p)[0] | (((byte*)p)[1] << 8);
+}
+
 /* FIXME: unaligned access */
 void SimonState::vc_20() {
-	/* no idea what's going on */
 	uint16 a = vc_read_next_word();
-	*(uint16*)_vc_ptr = a;
+	write_16_le(_vc_ptr, a);
 	_vc_ptr += 2;
 }
 
@@ -4822,19 +4835,21 @@ void SimonState::vc_20() {
 void SimonState::vc_21() {
 	if (!(_game & GAME_SIMON2)) {
 		int16 a = vc_read_next_word();
-		uint16 *tmp = (uint16*)(_vc_ptr + a);
+		byte *tmp = _vc_ptr + a;
+		uint16 val = read_16_le(tmp + 4);
 
-		if (tmp[2] != 0) {
-			tmp[2]--;
-			_vc_ptr = (byte*)tmp + 6;
+		if (val != 0) {
+			write_16_le(tmp + 4, val - 1);
+			_vc_ptr = tmp + 6;
 		}
 	} else {
 		int16 a = vc_read_next_word();
 		byte *tmp = _vc_ptr + a;
+		uint16 val = read_16_le(tmp + 3);
 
-		if (*(uint16*)(tmp+3) != 0) {
-			(*(uint16*)(tmp+3))--;
-			_vc_ptr = (byte*)tmp + 5;
+		if (val != 0) {
+			write_16_le(tmp + 3, val - 1);
+			_vc_ptr = tmp + 5;
 		}
 	}
 }
@@ -6203,7 +6218,7 @@ void SimonState::o_pathfind(int x,int y,uint var_1,uint var_2) {
 		p = (uint16*)_pathfind_array[20-i];
 		if (!p)
 			continue;
-		for(j=0; p[0] != 0xE703; j++,p+=2) { /* 0xE703 = byteswapped 999 */
+		for(j=0; READ_BE_UINT16_UNALIGNED(&p[0]) != 999; j++,p+=2) { /* 0xE703 = byteswapped 999 */
 			x_diff = abs(READ_BE_UINT16_UNALIGNED(&p[0]) - x);
 			y_diff = abs(READ_BE_UINT16_UNALIGNED(&p[1]) - 12 - y);
 
@@ -6452,7 +6467,7 @@ void SimonState::draw_icon_c(FillOrCopyStruct *fcs, uint icon, uint x, uint y) {
 		dst += (y*25 + fcs->y) * _dx_surface_pitch;
 
 		src = _icon_file_ptr;
-		src += ((uint16*)src)[icon];
+		src += READ_LE_UINT16(&((uint16*)src)[icon]);
 
 		decompress_icon(dst, src, 24, 12, 0xE0,_dx_surface_pitch);
 
@@ -6467,11 +6482,11 @@ void SimonState::draw_icon_c(FillOrCopyStruct *fcs, uint icon, uint x, uint y) {
 		dst += (y+fcs->y)*_dx_surface_pitch;
 
 		src = _icon_file_ptr;
-		src += ((uint16*)src)[icon*2+0];
+		src += READ_LE_UINT16(&((uint16*)src)[icon*2+0]);
 		decompress_icon(dst, src, 20, 10, 0xE0,_dx_surface_pitch);
 
 		src = _icon_file_ptr;
-		src += ((uint16*)src)[icon*2+1];
+		src += READ_LE_UINT16(&((uint16*)src)[icon*2+1]);
 		decompress_icon(dst, src, 20, 10, 0xD0,_dx_surface_pitch);
 
 		dx_unlock_2();
@@ -7195,7 +7210,7 @@ void SimonState::render_string(uint num_1, uint color, uint width, uint height, 
 			byte *img_hdr = src + 48 + chr * 4;
 			uint img_height = img_hdr[2];
 			uint img_width = img_hdr[3],i;
-			byte *img = src + *(uint16*)img_hdr;
+			byte *img = src + READ_LE_UINT16(img_hdr);
 			byte *cur_dst = dst;
 
 			assert(img_width > 0 && img_width < 50 && img_height>0 && img_height<50);
@@ -8596,7 +8611,7 @@ void SimonState::dump_video_script(byte *src, bool one_opcode_only) {
 
 	do {
 		if (!(_game & GAME_SIMON2)) {
-			opcode = READ_BE_UINT16_UNALIGNED((uint16*)src);
+			opcode = READ_BE_UINT16_UNALIGNED(src);
 			src+=2;
 		} else {
 			opcode = *src++;
@@ -8619,7 +8634,7 @@ void SimonState::dump_video_script(byte *src, bool one_opcode_only) {
 			case 'v':	fprintf(_dump_file,"[%d] ", READ_BE_UINT16_UNALIGNED(src)); src+=2; break;
 			case 'i':	fprintf(_dump_file,"%d ", (int16)READ_BE_UINT16_UNALIGNED(src)); src+=2; break;
 			case 'q': 
-				while (*(uint16*)src != 0xE703) {
+				while (READ_BE_UINT16_UNALIGNED(src) != 999) {
 					fprintf(_dump_file,"(%d,%d) ", READ_BE_UINT16_UNALIGNED(src), READ_BE_UINT16_UNALIGNED(src+2));
 					src += 4;
 				}
