@@ -267,10 +267,12 @@ SCUMM
   - Add arrayOps case 127 (For chase/lost/smaller/bb2demo/footdemo).
   - Add support for array sorting (Used in lost/smaller).
   - Fix actor glitches in pajama2
-  - Fix loadImgSpot asserts, due to spritesProcessWiz loading WizImages with sprite res_id of 0
   - Fix cursor transparency in puzzle of pajama2
   - Fix sprites graphical glitches
   - Fix inventory background/items disappearing in puttzoo/zoodemo/putttime/timedemo
+  - Add support for o90_getPolygonOverlap case9 (Used in lost/smaller)
+  - Add support for o90_getPolygonOverlap case10 (Used in Caramel Pit of pajama3)
+  - Add floodState (For puzzle in pajama2)
   - Add support for floodState (For puzzle in pajama2)
   - Add support for o80_unknownE0 (For binoculars in pajama2 and black board in freddi2)
   - Add support for various new opcodes
