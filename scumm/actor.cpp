@@ -136,7 +136,7 @@ void Actor::initActor(int mode) {
 }
 
 void Actor::stopActorMoving() {
-	if (_vm->_version >= 7)
+	if (walkScript)
 		_vm->stopScript(walkScript);
 	moving = 0;
 }
@@ -518,6 +518,7 @@ void Actor::animateActor(int anim) {
 
 	switch (cmd) {
 	case 2:				// stop walking
+		startAnimActor(standFrame);
 		stopActorMoving();
 		break;
 	case 3:				// change direction immediatly
