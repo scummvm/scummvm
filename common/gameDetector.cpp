@@ -310,8 +310,9 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 	char c;
 	_save_slot = -1;
 
-	/* Parse the arguments */
-	// FIXME: Add more lemons
+	// Parse the arguments
+	// into a transient "_COMMAND_LINE" config comain.
+	g_config->set_domain ("_COMMAND_LINE");
 	for (i = argc - 1; i >= 1; i--) {
 		s = argv[i];
 
@@ -487,8 +488,14 @@ void GameDetector::setGame(const String &name) {
 	g_config->rename_domain(name, "game-specific");
 	g_config->rename_domain("game-specific", name);
 	updateconfig();
+
+	// The command line and launcher options
+	// override config file global and game-specific options.
+	g_config->set_domain ("_COMMAND_LINE");
+	updateconfig();
 	g_config->set_domain ("user-overrides");
 	updateconfig();
+	g_config->delete_domain ("_COMMAND_LINE");
 	g_config->delete_domain ("user-overrides");
 }
 
