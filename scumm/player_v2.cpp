@@ -859,7 +859,6 @@ void Player_V2::squareGenerator(int channel, int freq, int vol,
 
 void Player_V2::generateSpkSamples(int16 *data, int len) {
 	int winning_channel = -1;
-	int freq;
 	for (int i = 0; i < 4; i++) {
 		if (winning_channel == -1
 		    && channels[i].d.volume
