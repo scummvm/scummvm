@@ -505,7 +505,7 @@ int GameDetector::detectMusicDriver(int midiFlags) {
 				#elif defined(MACOSX)
 					musicDriver = MD_COREAUDIO;
 				#elif defined(__PALM_OS__)	// must be before mac
-					musicDriver = MD_YPA1;
+					musicDriver = MD_YPA1;	// TODO : cahnge this and use Zodiac driver when needed
 				#elif defined(__MORPHOS__)
 					musicDriver = MD_ETUDE;
 				#elif defined (_WIN32_WCE) || defined(UNIX) || defined(X11_BACKEND)
@@ -595,6 +595,7 @@ MidiDriver *GameDetector::createMidi(int midiDriver) {
 	case MD_PCJR:      return NULL;
 #if defined(__PALM_OS__)
 	case MD_YPA1:      return MidiDriver_YamahaPa1_create();
+	case MD_ZODIAC:    return MidiDriver_Zodiac_create();
 #endif
 #if defined(WIN32) && !defined(_WIN32_WCE)
 	case MD_WINDOWS:   return MidiDriver_WIN_create();

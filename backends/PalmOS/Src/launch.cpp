@@ -201,12 +201,15 @@ Boolean StartScummVM() {
 				case 1:	// yamaha Pa1
 					AddArg(&argvP[argc], "-e", "ypa1", &argc);
 					break;
-				case 2: // PC Speaker
+				case 2:	// Tapwave Zodiac
+					AddArg(&argvP[argc], "-e", "zodiac", &argc);
+					break;
+				case 3: // PC Speaker
 					AddArg(&argvP[argc], "-e", "pcspk", &argc);
 					break;
-				case 3: // IBM PCjr
+				case 4: // IBM PCjr
 					AddArg(&argvP[argc], "-e", "pcjr", &argc);
-				case 4: // FM Towns
+				case 5: // FM Towns
 					AddArg(&argvP[argc], "-e", "towns", &argc);
 			}		
 		}
@@ -282,6 +285,7 @@ Boolean StartScummVM() {
 	VFSFileCreate(gVars->volRefNum,"PALM/Programs/ScummVM/scumm.log");
 	VFSFileOpen(gVars->volRefNum,"PALM/Programs/ScummVM/scumm.log",vfsModeWrite, &gVars->logFile);
 
+	// TODO : move this to ypa1.cpp (?)
 	void *sndStateOnFuncP = NULL,
 		 *sndStateOffFuncP = NULL;
 
@@ -302,12 +306,14 @@ Boolean StartScummVM() {
 		Pa1Lib_devHpVolume(gPrefs->volume.headphone, gPrefs->volume.headphone);
 		Pa1Lib_devSpVolume(gPrefs->volume.speaker);
 	}
+	//
 
 	SavePrefs();	// free globals pref memory
 	GlbOpen();
 	main(argc, argvP);
 	GlbClose();
 
+	// TODO : move this to ypa1.cpp (?)
 	if (musicDriver == 1 || musicDriver == sysInvalidRefNum) {
 		if (sndStateOnFuncP && sndStateOffFuncP) {
 			((sndStateOffType)(sndStateOffFuncP))(aOutSndKindSp);
@@ -316,6 +322,7 @@ Boolean StartScummVM() {
 
 		Pa1Lib_Close();
 	}
+	//
 
 	// close log file
 	VFSFileClose(gVars->logFile);

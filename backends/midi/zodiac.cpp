@@ -20,20 +20,8 @@
 
 #include "stdafx.h"
 #include "sound/mpu401.h"
+#include "common/util.h"
 
-/* NULL driver */
-class MidiDriver_ADLIB : public MidiDriver_MPU401 {
-public:
-	int open() { return 0; }
-	void send(uint32 b) { }
-};
-
-MidiDriver *MidiDriver_ADLIB_create(SoundMixer *mixer) {
-	return new MidiDriver_ADLIB();
-}
-
-#ifdef DISABLE_TAPWAVE
-MidiDriver *MidiDriver_Zodiac_create() {
-	return new MidiDriver_ADLIB();
-}
+#ifndef DISABLE_TAPWAVE
+// Tapwave code will come here
 #endif

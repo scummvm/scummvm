@@ -60,6 +60,7 @@ static const struct MidiDriverDescription midiDrivers[] = {
 
 #if defined(__PALM_OS__)
 	{"ypa1", "Yamaha Pa1", MD_YPA1},
+	{"zodiac", "Tapwave Zodiac", MD_ZODIAC},
 #endif
 	{0, 0, 0}
 };
