@@ -227,14 +227,14 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
         * Enter the compiled SDLAudio.lib to your link libraries list
         * Now it should compile successfully
 
-	Debian GNU/Linux:
-	* Install the packages 'build-essential', 'fakeroot', 'debhelper',
-	  'libsdl1.2-dev', and 'libmad0-dev' on your system.
-	* Optional: Install the 'libvorbis-dev' and/or the 'libasound2-dev'
-	  packages, and edit the Makefile to turn on support for Ogg Vorbis
-	  and/or the ALSA sequencer.
-	* Run 'make deb'.
-	* Finally run 'dpkg -i ../scummvm-cvs*deb', and you're done.
+        Debian GNU/Linux:
+        * Install the packages 'build-essential', 'fakeroot', 'debhelper',
+          'libsdl1.2-dev', and 'libmad0-dev' on your system.
+        * Optional: Install the 'libvorbis-dev' and/or the 'libasound2-dev'
+          packages, and edit the Makefile to turn on support for Ogg Vorbis
+          and/or the ALSA sequencer.
+        * Run 'make deb'.
+        * Finally run 'dpkg -i ../scummvm-cvs*deb', and you're done.
 
 
 Running:
@@ -296,8 +296,8 @@ Command Line Options:
         -d[<num>]  - Set debug verbosity to <num>
         -w[<file>] - Write configuration file
         -l<file>   - Load alternate configuration file
-	-x[<num>]  - Save game slot to load (default: autosave)
-	-z         - Display list of games
+        -x[<num>]  - Save game slot to load (default: autosave)
+        -z         - Display list of games
 
 In game Hot Keys:
 -----------------
