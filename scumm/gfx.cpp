@@ -3104,9 +3104,9 @@ void Scumm::createSpecialPalette(int16 from, int16 to, int16 redScale, int16 gre
 		int g = (int) (*curPtr++ * greenScale) >> 8;
 		int b = (int) (*curPtr++ * blueScale) >> 8;
 
-		searchPtr = palPtr;
+		searchPtr = palPtr + from * 3;
 		bestResult = 32000;
-		currentIndex = 0;
+		currentIndex = from;
 
 		for (j = from; j < to; j++) {
 			int ar = (*searchPtr++);
