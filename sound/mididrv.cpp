@@ -34,7 +34,7 @@
 #include "scumm.h"
 #include "mididrv.h"
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(_WIN32_WCE)
 
 /* Windows MIDI driver */
 class MidiDriver_WIN : public MidiDriver {

@@ -9083,7 +9083,7 @@ void dump_bitmap(const char *filename, byte *offs, int w, int h, int flags, cons
 
 void SimonState::dump_single_bitmap(int file, int image, byte *offs, int w, int h, byte base) {
 /* Only supported for win32 atm. mkdir doesn't work otherwise. */
-#ifdef WIN32
+#if defined (WIN32) && !defined(_WIN32_WCE)
 	char buf[255], buf2[255];
 	struct stat statbuf;
 

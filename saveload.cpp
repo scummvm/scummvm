@@ -203,7 +203,7 @@ void Scumm::makeSavegameName(char *out, int slot, bool compatible)
 
 #else
 
-	sprintf(out, "%s%s.%c%.2d", _savegame_dir, _exe_name,
+	sprintf(out, "%s%s.%c%.2d", _gameDataPath, _exe_name,
 					compatible ? 'c' : 's', slot);
 
 #endif
