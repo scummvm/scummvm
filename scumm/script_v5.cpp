@@ -1091,7 +1091,7 @@ void Scumm_v5::o5_getClosestObjActor() {
 		}
 	} while (--obj >= _vars[VAR_ACTOR_RANGE_MIN]);
 
-	setResult(closest_dist);
+	setResult(closest_obj);
 }
 
 void Scumm_v5::o5_getDist() {

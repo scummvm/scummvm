@@ -225,8 +225,9 @@ void OSystem_SDL_Common::move_screen(int dx, int dy, int height) {
 			copy_rect((byte *)_screen->pixels + _screenWidth * (y - dy), _screenWidth, 0, y, _screenWidth, 1);
 	} else if (dy < 0) {
 		// move up - copy from top to bottom
+		dy = -dy;
 		for (y = dy; y < height; y++)
-			copy_rect((byte *)_screen->pixels + _screenWidth * (y - dy), _screenWidth, 0, y, _screenWidth, 1);
+			copy_rect((byte *)_screen->pixels + _screenWidth * y, _screenWidth, 0, y - dy, _screenWidth, 1);
 	}
 
 	// horizontal movement
@@ -236,8 +237,9 @@ void OSystem_SDL_Common::move_screen(int dx, int dy, int height) {
 			copy_rect((byte *)_screen->pixels + x - dx, _screenWidth, x, 0, 1, height);
 	} else if (dx < 0)  {
 		// move left - copy from left to right
+		dx = -dx;
 		for (x = dx; x < _screenWidth; x++)
-			copy_rect((byte *)_screen->pixels + x - dx, _screenWidth, x, 0, 1, height);
+			copy_rect((byte *)_screen->pixels + x, _screenWidth, x - dx, 0, 1, height);
 	}
 }
 
