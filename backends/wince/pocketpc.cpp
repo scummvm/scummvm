@@ -92,6 +92,22 @@ typedef struct pseudoGAPI {
 	int format;
 } pseudoGAPI;
 
+typedef struct {
+	int x, y, w, h;
+} dirty_square;
+
+#define MAX_NUMBER_OF_DIRTY_SQUARES 32
+
+#define AddDirtyRect(xi,yi,wi,hi) 				\
+  if (num_of_dirty_square < MAX_NUMBER_OF_DIRTY_SQUARES) {	\
+    ds[num_of_dirty_square].x = xi;				\
+    ds[num_of_dirty_square].y = yi;				\
+    ds[num_of_dirty_square].w = wi;				\
+    ds[num_of_dirty_square].h = hi;				\
+    num_of_dirty_square++;					\
+  }
+
+
 /* Hardcode the video buffer for some devices for which there is no GAPI */
 /* and no GameX support */
 
@@ -312,6 +328,8 @@ int gameXGXResume() {
 #endif
 
 GameDetector detector;
+Engine *engine;
+bool is_simon;
 NewGui *g_gui;
 extern Scumm *g_scumm;
 //extern SimonState *g_simon;
@@ -552,6 +570,10 @@ static char _directory[MAX_PATH];
 bool select_game;
 
 bool gfx_mode_switch;
+
+dirty_square ds[MAX_NUMBER_OF_DIRTY_SQUARES];
+int num_of_dirty_square;
+
 
 SoundProc *real_soundproc;
 
@@ -821,7 +843,7 @@ void runGame(char *game_name) {
 
 	/* Start the engine */
 
-	Engine *engine = Engine::createFromDetector(&detector, system);
+	engine = Engine::createFromDetector(&detector, system);
 
 	keypad_init();
 	load_key_mapping();
@@ -830,6 +852,8 @@ void runGame(char *game_name) {
 		hide_cursor = FALSE;
 	else
 		hide_cursor = TRUE;
+
+	is_simon = (detector._gameId >= GID_SIMON_FIRST);
 
 	engine->go();
 
@@ -1106,10 +1130,8 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			else {
 				switch(toolbar_selection) {
 					case ToolbarSaveLoad:
-						if (detector._gameId >= GID_SIMON_FIRST &&
-							detector._gameId <= GID_SIMON_LAST) {							
+						if (is_simon) 
 							break;
-						}
 						/*if (GetScreenMode()) {*/
 						/*
 							draw_keyboard = true;
@@ -1126,15 +1148,8 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 							toolbar_drawn = false;
 						break;
 					case ToolbarSkip:
-						if (detector._gameId >= GID_SIMON_FIRST) {
-
-// !!! FIX SIMON !!!							
-							
-							//g_simon->_exit_cutscene = true;
-
-
-// !!! FIX SIMON !!!
-
+						if (is_simon) {
+							((SimonState*)engine)->_exit_cutscene = true;
 							break;
 						}
 						wm->_event.event_code = EVENT_KEYDOWN;
@@ -1489,6 +1504,8 @@ void OSystem_WINCE3::set_palette(const byte *colors, uint start, uint num) {
 	}
 
 	palette_update();
+
+	num_of_dirty_square = MAX_NUMBER_OF_DIRTY_SQUARES;
 }
 
 void OSystem_WINCE3::load_gfx_mode() {
@@ -1509,6 +1526,7 @@ void OSystem_WINCE3::init_size(uint w, uint h) {
 	LimitScreenGeometry();
 	_screenWidth = w;
 	_screenHeight = h;
+	num_of_dirty_square = MAX_NUMBER_OF_DIRTY_SQUARES;
 }
 
 void OSystem_WINCE3::copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {
@@ -1517,12 +1535,15 @@ void OSystem_WINCE3::copy_rect(const byte *buf, int pitch, int x, int y, int w, 
 	if (!hide_cursor && _mouse_drawn)
 		undraw_mouse();
 
+	AddDirtyRect(x, y, w, h);
+
 	dst = _gfx_buf + y * 320 + x;
 	do {
 		memcpy(dst, buf, w);
 		dst += 320;
 		buf += pitch;
 	} while (--h);
+
 }
 
 void OSystem_WINCE3::update_screen() {
@@ -1534,8 +1555,19 @@ void OSystem_WINCE3::update_screen() {
 		Set_565((int16*)_overlay_buf, 320, 0, 0, 320, 200);
 		checkToolbar();
 	}
-	else
-		Blt(_gfx_buf);
+	else {
+		if (num_of_dirty_square >= MAX_NUMBER_OF_DIRTY_SQUARES) {
+			Blt(_gfx_buf);  // global redraw
+			num_of_dirty_square = 0;
+		}
+		else {
+			int i;
+			for (i=0; i<num_of_dirty_square; i++) {
+				Blt_part(_gfx_buf + (320 * ds[i].y) + ds[i].x, ds[i].x, ds[i].y, ds[i].w, ds[i].h, 320);
+			}
+			num_of_dirty_square = 0;
+		}
+	}
 }
 
 bool OSystem_WINCE3::show_mouse(bool visible) {
@@ -1593,6 +1625,7 @@ void OSystem_WINCE3::draw_mouse() {
 		return;
 	}
 
+	AddDirtyRect(xdraw, ydraw, real_w, real_h);
 	_ms_old.x = xdraw;
 	_ms_old.y = ydraw;
 	_ms_old.w = real_w;
@@ -1628,6 +1661,8 @@ void OSystem_WINCE3::undraw_mouse() {
 	_mouse_drawn = false;
 
 	int old_h = _ms_old.h;
+
+	AddDirtyRect(_ms_old.x, _ms_old.y, _ms_old.w, _ms_old.h);
 
 	byte *dst = _gfx_buf + (_ms_old.y * 320) + _ms_old.x;
 	byte *bak = _ms_backup;
@@ -1820,6 +1855,7 @@ void OSystem_WINCE3::hide_overlay() {
 	undraw_mouse();
 	_overlay_visible = false;
 	toolbar_drawn = false;
+	num_of_dirty_square = MAX_NUMBER_OF_DIRTY_SQUARES;
 }
 
 void OSystem_WINCE3::clear_overlay() {

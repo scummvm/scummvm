@@ -121,22 +121,22 @@ UBYTE *toolbar = NULL;
 /* Using vectorized function to save on branches */
 typedef void (*tCls)();
 typedef void (*tBlt)(UBYTE*);
-typedef void (*tBlt_part)(UBYTE*,int, int, int, int, UBYTE*);
+typedef void (*tBlt_part)(UBYTE*,int, int, int, int, UBYTE*, int);
 typedef void (*tSet_565)(INT16 *buffer, int pitch, int x, int y, int width, int height);
 
 void mono_Cls();
 void mono_Blt(UBYTE*);
-void mono_Blt_part(UBYTE*, int, int, int, int, UBYTE*);
+void mono_Blt_part(UBYTE*, int, int, int, int, UBYTE*, int);
 
 void palette_Cls();
 void palette_Blt(UBYTE*);
-void palette_Blt_part(UBYTE*, int, int, int, int, UBYTE*);
+void palette_Blt_part(UBYTE*, int, int, int, int, UBYTE*, int);
 
 void hicolor_Cls();
 void hicolor555_Blt(UBYTE*);
-void hicolor555_Blt_part(UBYTE*, int, int, int, int, UBYTE*);
+void hicolor555_Blt_part(UBYTE*, int, int, int, int, UBYTE*, int);
 void hicolor565_Blt(UBYTE*);
-void hicolor565_Blt_part(UBYTE*, int, int, int, int, UBYTE*);
+void hicolor565_Blt_part(UBYTE*, int, int, int, int, UBYTE*, int);
 void hicolor565_Get_565(INT16*, int, int, int, int, int);
 void hicolor565_Set_565(INT16*, int, int, int, int, int);
 void hicolor555_Set_565(INT16*, int, int, int, int, int);
@@ -577,14 +577,14 @@ int counter = 0;
 
 void drawSoundItem(int x, int y) {
 	if (!sound_activated)
-		pBlt_part(image_expand(item_soundOn), x, y, 32, 32, item_soundOn_colors);
+		pBlt_part(image_expand(item_soundOn), x, y, 32, 32, item_soundOn_colors, 0);
 	else
-		pBlt_part(image_expand(item_soundOff), x, y, 32, 32, item_soundOff_colors);
+		pBlt_part(image_expand(item_soundOff), x, y, 32, 32, item_soundOff_colors, 0);
 }
 
 void drawWait() {
-	pBlt_part(image_expand(item_toolbar), 0, 0, 320, 40, item_toolbar_colors);
-	pBlt_part(image_expand(item_loading), 28, 10, 100, 25, item_loading_colors);
+	pBlt_part(image_expand(item_toolbar), 0, 0, 320, 40, item_toolbar_colors, 0);
+	pBlt_part(image_expand(item_loading), 28, 10, 100, 25, item_loading_colors, 0);
 }
 
 void drawBlankGameSelection() {
@@ -592,7 +592,7 @@ void drawBlankGameSelection() {
 	image_expand(item_startup);
 	/* Store empty comment */
 	memcpy(comment_zone, decomp + (206 * 220), 8 * 220); 
-	pBlt_part(decomp, _game_selection_X_offset, _game_selection_Y_offset, 220, 250, item_startup_colors);
+	pBlt_part(decomp, _game_selection_X_offset, _game_selection_Y_offset, 220, 250, item_startup_colors, 0);
 }
 
 void drawCommentString(char *comment) {
@@ -600,27 +600,27 @@ void drawCommentString(char *comment) {
 	memcpy(decomp + (206 * 220), comment_zone, 8 * 220);
 	/* Draw new comment */
 	printString(comment, 24, 206, 2);
-	pBlt_part(decomp + (206 * 220), _game_selection_X_offset, _game_selection_Y_offset + 206, 220, 8, item_startup_colors);
+	pBlt_part(decomp + (206 * 220), _game_selection_X_offset, _game_selection_Y_offset + 206, 220, 8, item_startup_colors, 0);
 }
 
 void drawStandardString(char *game, int index) {
 	printString(game, 24, 70 + (15 * index), 2);
 	//pBlt_part(decomp, GAME_SELECTION_X_OFFSET + 24, GAME_SELECTION_Y_OFFSET + 70 + (12 * index), 220, 8, item_startup_colors);
-	pBlt_part(decomp + ((70 + (15 * index)) * 220), _game_selection_X_offset, _game_selection_Y_offset + 70 + (15 * index), 220, 8, item_startup_colors);	
+	pBlt_part(decomp + ((70 + (15 * index)) * 220), _game_selection_X_offset, _game_selection_Y_offset + 70 + (15 * index), 220, 8, item_startup_colors, 0);	
 }
 
 void drawHighlightedString(char *game, int index) {
 	/* Replace former highlighted string */
 	if (_highlighted_index != -1) {
 		memcpy(decomp + ((70 + (15 * _highlighted_index)) * 220), highlighted_zone, 8 * 220);
-		pBlt_part(decomp + ((70 + (15 * _highlighted_index)) * 220), _game_selection_X_offset, _game_selection_Y_offset + 70 + (15 * _highlighted_index), 220, 8, item_startup_colors);
+		pBlt_part(decomp + ((70 + (15 * _highlighted_index)) * 220), _game_selection_X_offset, _game_selection_Y_offset + 70 + (15 * _highlighted_index), 220, 8, item_startup_colors, 0);
 	}
 	/* Save non highlighted string */
 	_highlighted_index = index;
 	memcpy(highlighted_zone, decomp + ((70 + (15 * index)) * 220), 8 * 220);
 	/* Draw new highlighted string */
 	printString(game, 24, 70 + (15 * index), 2, 3);
-	pBlt_part(decomp + ((70 + (15 * index)) * 220), _game_selection_X_offset, _game_selection_Y_offset + 70 + (15 * index), 220, 8, item_startup_colors);
+	pBlt_part(decomp + ((70 + (15 * index)) * 220), _game_selection_X_offset, _game_selection_Y_offset + 70 + (15 * index), 220, 8, item_startup_colors, 0);
 }
 
 void resetLastHighlighted() {
@@ -638,45 +638,45 @@ void drawAllToolbar() {
 	if (currentScreenMode) {
 
 		if (draw_keyboard) {
-			pBlt_part(image_expand(item_keyboard), 0, 200, 320, 40, item_keyboard_colors);
+			pBlt_part(image_expand(item_keyboard), 0, 200, 320, 40, item_keyboard_colors, 0);
 		}
 		else {
-			pBlt_part(image_expand(item_toolbar), 0, 200, 320, 40, item_toolbar_colors);
+			pBlt_part(image_expand(item_toolbar), 0, 200, 320, 40, item_toolbar_colors, 0);
 			x = 10;
 			y = 204;
-			pBlt_part(image_expand(item_disk), x, y, 32, 32, item_disk_colors);
+			pBlt_part(image_expand(item_disk), x, y, 32, 32, item_disk_colors, 0);
 			x += 40;
-			pBlt_part(image_expand(item_skip), x, y, 32, 32, item_skip_colors);
+			pBlt_part(image_expand(item_skip), x, y, 32, 32, item_skip_colors, 0);
 			x += 40;
 			drawSoundItem(x, y);
 			if (_gfx_mode_switch) {
 				x += 40;
 				pBlt_part(image_expand(item_monkeyPortrait), x, y, 32, 32, 
-						item_monkeyPortrait_colors);
+						item_monkeyPortrait_colors, 0);
 			}
 		}
 	}
 	else {
 			if (draw_keyboard) {
 				pBlt_part(image_expand(item_keyboardPortrait), 0, 240, 320, 80,
-							item_keyboardPortrait_colors);
+							item_keyboardPortrait_colors, 0);
 			}
 			else {
 			pBlt_part(image_expand(item_toolbarPortrait), 0, 240, 320, 80, 
-						item_toolbarPortrait_colors);
+						item_toolbarPortrait_colors, 0);
 			/*drawToolbarItem(item_toolbarPortrait_colors, item_toolbarPortrait,
 							0, 240, 240, 80);*/
 			x = 10;
 			y = 240;
-			pBlt_part(image_expand(item_disk), x, y, 32, 32, item_disk_colors);
+			pBlt_part(image_expand(item_disk), x, y, 32, 32, item_disk_colors, 0);
 			x += 40;
-			pBlt_part(image_expand(item_skip), x, y, 32, 32, item_skip_colors);
+			pBlt_part(image_expand(item_skip), x, y, 32, 32, item_skip_colors, 0);
 			x += 40;
 			drawSoundItem(x, y);
 			if (_gfx_mode_switch) {
 				x += 40;
 				pBlt_part(image_expand(item_monkeyLandscape), x, y, 32, 32,
-							item_monkeyLandscape_colors);			
+							item_monkeyLandscape_colors, 0);			
 			}
 		}
 	}
@@ -733,6 +733,14 @@ void Blt(UBYTE * scr_ptr)
 
 }
 
+void Blt_part(UBYTE * src_ptr, int x, int y, int width, int height, int pitch) {
+	pBlt_part(src_ptr, x, y, width, height, NULL, pitch);
+
+	if (toolbar_available && !toolbar_drawn && !hide_toolbar)
+		drawAllToolbar();
+
+}
+
 void checkToolbar() {
 	if (toolbar_available && !toolbar_drawn && !hide_toolbar)
 		drawAllToolbar();
@@ -771,10 +779,12 @@ void mono_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int height)
 	static long linestep;
 	static UBYTE bitmask;
 	static int   bitshift;
+	static long skipmask;
 
 	scraddr = (UBYTE*)dynamicGXBeginDraw();
 	pixelstep = geom[useMode].pixelstep;
 	linestep = (pixelstep > 0) ? -1 : 1;
+	skipmask = geom[useMode].xSkipMask;
 	bitshift = 0;
 	bitmask = (1<<gxdp.cBPP)-1;
 
@@ -800,13 +810,14 @@ void mono_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int height)
 				/* Turtle warning !!! */
 
 				for (i=0; i<width; i++) {
+					if (skipmask == 0xffffffff || (long)i & skipmask) {
+						*dst = ((*dst)&~bitmask)|(COLORCONVMONO(
+										RED_FROM_565(*(buffer + i)), 
+										GREEN_FROM_565(*(buffer + i)),
+										BLUE_FROM_565(*(buffer + i))) << bitshift);
 
-					*dst = ((*dst)&~bitmask)|(COLORCONVMONO(
-									RED_FROM_565(*(buffer + i)), 
-									GREEN_FROM_565(*(buffer + i)),
-									BLUE_FROM_565(*(buffer + i))) << bitshift);
-
-					dst += pixelstep;
+						dst += pixelstep;
+					}
 				}
 
 				ADVANCE_PARTIAL(scraddr, linestep);
@@ -821,12 +832,12 @@ void mono_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int height)
 
 
 void mono_Blt(UBYTE *src_ptr) {
-	mono_Blt_part(src_ptr, 0, 0, _geometry_w, _geometry_h, NULL);
+	mono_Blt_part(src_ptr, 0, 0, _geometry_w, _geometry_h, NULL, 0);
 }
 
 
 void mono_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
-				    UBYTE * own_palette)
+				    UBYTE * own_palette, int pitch)
 {
 // Mono blit routines contain good deal of voodoo
 	static UBYTE *src;
@@ -878,7 +889,7 @@ void mono_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 
 			/* Update offsets to the current line */
 			scraddr += y * linestep;
-			scr_ptr_limit = scr_ptr + width * height;
+			scr_ptr_limit = scr_ptr + (pitch ? pitch : width) * height;
 			src_limit = scr_ptr + width;
 
 
@@ -960,8 +971,8 @@ void mono_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 
 					ADVANCE_PARTIAL(scraddr, linestep);
 
-					scr_ptr += width;
-					src_limit += width;
+					scr_ptr += (pitch ? pitch : width);
+					src_limit += (pitch ? pitch : width);
 				}
 			}
 			else if(skipmask != 0xffffffff)
@@ -995,8 +1006,8 @@ void mono_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 
 					ADVANCE_PARTIAL(scraddr, linestep);
 
-					scr_ptr += width;
-					src_limit += width;
+					scr_ptr += (pitch ? pitch : width);
+					src_limit += (pitch ? pitch : width);
 				}
 			}
 			else
@@ -1027,8 +1038,8 @@ void mono_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 
 					ADVANCE_PARTIAL(scraddr, linestep);
 
-					scr_ptr += width;
-					src_limit += width;
+					scr_ptr += (pitch ? pitch : width);
+					src_limit += (pitch ? pitch : width);
 				}
 			}
 		}
@@ -1048,7 +1059,7 @@ void mono_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 
 			/* Update offsets to the current line */
 			scraddr += y * linestep;
-			scr_ptr_limit = scr_ptr + width * height;
+			scr_ptr_limit = scr_ptr + (pitch ? pitch : width) * height;
 			src_limit = scr_ptr + width;
 
 			if(skipmask != 0xffffffff)
@@ -1088,8 +1099,8 @@ void mono_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 
 						scraddr += linestep;
 
-						scr_ptr += width;
-						src_limit += width;
+						scr_ptr += (pitch ? pitch : width);
+						src_limit += (pitch ? pitch : width);
 					}
 				}
 				else
@@ -1126,8 +1137,8 @@ void mono_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 
 						scraddr += linestep;
 
-						scr_ptr += width;
-						src_limit += width;
+						scr_ptr += (pitch ? pitch : width);
+						src_limit += (pitch ? pitch : width);
 					}
 				}
 			}
@@ -1165,8 +1176,8 @@ void mono_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 
 						scraddr += linestep;
 
-						scr_ptr += width;
-						src_limit += width;
+						scr_ptr += (pitch ? pitch : width);
+						src_limit += (pitch ? pitch : width);
 					}
 				}
 				else
@@ -1201,8 +1212,8 @@ void mono_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 
 						scraddr += linestep;
 
-						scr_ptr += width;
-						src_limit += width;
+						scr_ptr += (pitch ? pitch : width);
+						src_limit += (pitch ? pitch : width);
 					}
 				}
 			}
@@ -1219,6 +1230,7 @@ void palette_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int heig
 	static UBYTE *dst;
 	static long pixelstep;
 	static long linestep;
+	static long skipmask;
 	unsigned char color_match[500];
 	memset(color_match, 255, sizeof(color_match));
 
@@ -1226,6 +1238,7 @@ void palette_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int heig
 
 	pixelstep = geom[useMode].pixelstep;
 	linestep = geom[useMode].linestep;
+	skipmask = geom[useMode].xSkipMask;
 
 	if(scraddr)
 	{
@@ -1249,10 +1262,11 @@ void palette_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int heig
 				/* HUGE Turtle warning !!! */
 
 				for (i=0; i<width; i++) {
-
+					if (skipmask == 0xffffffff || (long)i & skipmask) {
 					*dst++ = best_match(RED_FROM_565(*(buffer + i)),
 									    GREEN_FROM_565(*(buffer + i)), 
 									    BLUE_FROM_565(*(buffer + i)), 236) + 10;
+					}
 				}
 
 				buffer += pitch;
@@ -1266,11 +1280,11 @@ void palette_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int heig
 
 
 void palette_Blt(UBYTE *src_ptr) {
-	palette_Blt_part(src_ptr, 0, 0, _geometry_w, _geometry_h, NULL);
+	palette_Blt_part(src_ptr, 0, 0, _geometry_w, _geometry_h, NULL, 0);
 }
 
 void palette_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
-				    UBYTE * own_palette)
+				    UBYTE * own_palette, int pitch)
 {
 	static UBYTE *src;
 	static UBYTE *dst;
@@ -1315,7 +1329,7 @@ void palette_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
 
 		/* Update offsets to the current line */
         scraddr += y * linestep;
-        scr_ptr_limit = scr_ptr + width * height;
+		scr_ptr_limit = scr_ptr + (pitch ? pitch : width) * height;
         src_limit = scr_ptr + width;
 
 		/* Internal pixel loops */
@@ -1355,8 +1369,8 @@ void palette_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
 					src ++;
 				}
 				scraddr += linestep;
-				scr_ptr += width;
-				src_limit += width;
+				scr_ptr += (pitch ? pitch : width);
+				src_limit += (pitch ? pitch : width);
 			}
 		}
 		else
@@ -1394,8 +1408,8 @@ void palette_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
 					src ++;
 				}
 				scraddr += linestep;
-				scr_ptr += width;
-				src_limit += width;
+				scr_ptr += (pitch ? pitch : width);
+				src_limit += (pitch ? pitch : width);
 			}
 		}
 
@@ -1411,11 +1425,13 @@ void hicolor555_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int h
 	static UBYTE *dst;
 	static long pixelstep;
 	static long linestep;
-
+	static long skipmask;
+	
 	scraddr = (UBYTE*)dynamicGXBeginDraw();
 
 	pixelstep = geom[useMode].pixelstep;
 	linestep = geom[useMode].linestep;
+	skipmask = geom[useMode].xSkipMask;
 
 	if(scraddr)
 	{
@@ -1439,10 +1455,13 @@ void hicolor555_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int h
 				/* Turtle warning !!! */
 
 				for (i=0; i<width; i++) {
-					*(unsigned short*)dst = COLORCONV555(
-						RED_FROM_565(*(buffer + i)), GREEN_FROM_565(*(buffer + i)), BLUE_FROM_565(*(buffer + i))
-					);
-					dst += 2;
+					if (skipmask == 0xffffffff || (long)i & skipmask) {
+
+						*(unsigned short*)dst = COLORCONV555(
+							RED_FROM_565(*(buffer + i)), GREEN_FROM_565(*(buffer + i)), BLUE_FROM_565(*(buffer + i))
+						);
+						dst += pixelstep;
+					}
 				}
 
 				buffer += pitch;
@@ -1456,12 +1475,12 @@ void hicolor555_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int h
 
 
 void hicolor555_Blt(UBYTE *src_ptr) {
-	hicolor555_Blt_part(src_ptr, 0, 0, _geometry_w, _geometry_h, NULL);
+	hicolor555_Blt_part(src_ptr, 0, 0, _geometry_w, _geometry_h, NULL, 0);
 }
 
 
 void hicolor555_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
-				    UBYTE * own_palette)
+				    UBYTE * own_palette, int pitch)
 {
 	static UBYTE *src;
 	static UBYTE *dst;
@@ -1500,7 +1519,7 @@ void hicolor555_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
 
 		/* Update offsets to the current line */
         scraddr += y * linestep;
-        scr_ptr_limit = scr_ptr + width * height;
+        scr_ptr_limit = scr_ptr + (pitch ? pitch : width) * height;
         src_limit = scr_ptr + width;
 
 		/* Internal pixel loops */
@@ -1577,8 +1596,8 @@ void hicolor555_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
 					src += 4;
 				}
 				scraddr += linestep;
-				scr_ptr += width;
-				src_limit += width;
+				scr_ptr += (pitch ? pitch : width);
+				src_limit += (pitch ? pitch : width);
 			}
 		}
 		else if(skipmask != 0xffffffff)
@@ -1611,8 +1630,8 @@ void hicolor555_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
 					src ++;
 				}
 				scraddr += linestep;
-				scr_ptr += width;
-				src_limit += width;
+				scr_ptr += (pitch ? pitch : width);
+				src_limit += (pitch ? pitch : width);
 			}
 		}
 		else
@@ -1643,8 +1662,8 @@ void hicolor555_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
 				}
 
 				scraddr += linestep;
-				scr_ptr += width;
-				src_limit += width;
+				scr_ptr += (pitch ? pitch : width);
+				src_limit += (pitch ? pitch : width);
 			}
 		}
 
@@ -1656,7 +1675,7 @@ void hicolor555_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
 
 
 void hicolor565_Blt(UBYTE *src_ptr) {
-	hicolor565_Blt_part(src_ptr, 0, 0, _geometry_w, _geometry_h, NULL);
+	hicolor565_Blt_part(src_ptr, 0, 0, _geometry_w, _geometry_h, NULL, 0);
 }
 
 
@@ -1666,11 +1685,13 @@ void hicolor565_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int h
 	static UBYTE *dst;
 	static long pixelstep;
 	static long linestep;
+	static long skipmask;
 
 	scraddr = (UBYTE*)dynamicGXBeginDraw();
 
 	pixelstep = geom[useMode].pixelstep;
 	linestep = geom[useMode].linestep;
+	skipmask = geom[useMode].xSkipMask;
 
 	if(scraddr)
 	{
@@ -1690,10 +1711,17 @@ void hicolor565_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int h
 
 				/* skip non updated pixels for this line */
 
-				for (i=0; i < x; i++)					
-					dst += pixelstep;
+				for (i=0; i < x; i++) {
+						dst += pixelstep;
+				}
 
-				memcpy(dst, buffer, width * 2);
+				for (i=0; i<width; i++) {
+					if (skipmask == 0xffffffff || (long)i & skipmask) {
+						*(unsigned short*)dst = buffer[i];
+						dst += pixelstep;
+					}
+				}
+				//memcpy(dst, buffer, width * 2);
 
 				buffer += pitch;
 				scraddr += linestep;
@@ -1705,7 +1733,7 @@ void hicolor565_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int h
 }
 
 void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
-						 UBYTE * own_palette)
+						 UBYTE * own_palette, int pitch)
 {
 	static UBYTE *src;
 	static UBYTE *dst;
@@ -1744,7 +1772,7 @@ void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 
 		/* Update offsets to the current line */
 		scraddr += y * linestep;
-		scr_ptr_limit = scr_ptr + width * height;
+		scr_ptr_limit = scr_ptr + (pitch ? pitch : width) * height;
 		src_limit = scr_ptr + width;
 
 		/* Internal pixel loops */
@@ -1822,8 +1850,8 @@ void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 				}
 
 				scraddr += linestep;
-				scr_ptr += width;
-				src_limit += width;
+				scr_ptr += (pitch ? pitch : width);
+				src_limit += (pitch ? pitch : width);
 			}
 		}
 		else if(skipmask != 0xffffffff)
@@ -1856,8 +1884,8 @@ void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 				}			
 
 				scraddr += linestep;
-				scr_ptr += width;
-				src_limit += width;
+				scr_ptr += (pitch ? pitch : width);
+				src_limit += (pitch ? pitch : width);
 		}
 		}
 		else
@@ -1887,8 +1915,8 @@ void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 				}
 
 				scraddr += linestep;
-				scr_ptr += width;
-				src_limit += width;
+				scr_ptr += (pitch ? pitch : width);
+				src_limit += (pitch ? pitch : width);
 			}
 		}
 
@@ -1983,7 +2011,7 @@ void Get_565(UBYTE *src, INT16 *buffer, int pitch, int x, int y, int width, int 
 }
 
 void Set_565(INT16 *buffer, int pitch, int x, int y, int width, int height) {
-	pSet_565(buffer, pitch, x, y, width, height);
+		pSet_565(buffer, pitch, x, y, width, height);
 }
 
 void NULL_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int height) {

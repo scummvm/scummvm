@@ -45,6 +45,7 @@ void GraphicsResume();
 
 void SetPalEntry(int ent, UBYTE r, UBYTE g, UBYTE b);
 void Blt(UBYTE * scr_ptr);
+void Blt_part(UBYTE * src_ptr, int x, int y, int width, int height, int pitch);
 void checkToolbar();
 
 void Get_565(UBYTE *src, INT16 *buffer, int pitch, int x, int y, int width, int height);
