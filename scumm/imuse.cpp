@@ -324,9 +324,9 @@ void IMuseInternal::on_timer(MidiDriver *midi) {
 	sequencer_timers(midi);
 }
 
-int IMuseInternal::getMusicTimer() {
+int IMuseInternal::getMusicTimer() const {
 	int best_time = 0;
-	Player *player = _players;
+	const Player *player = _players;
 	int i;
 
 	for (i = ARRAYSIZE(_players); i != 0; i--, player++) {
@@ -1767,7 +1767,7 @@ void IMuse::stopSound(int sound) { in(); _target->stopSound(sound); out(); }
 void IMuse::stopAllSounds() { in(); _target->stopAllSounds(); out(); }
 int IMuse::getSoundStatus(int sound) const { in(); int ret = _target->getSoundStatus(sound, true); out(); return ret; }
 bool IMuse::get_sound_active(int sound) const { in(); bool ret = _target->getSoundStatus(sound, false) ? 1 : 0; out(); return ret; }
-int IMuse::getMusicTimer() { in(); int ret = _target->getMusicTimer(); out(); return ret; }
+int IMuse::getMusicTimer() const { in(); int ret = _target->getMusicTimer(); out(); return ret; }
 int32 IMuse::doCommand (int a, int b, int c, int d, int e, int f, int g, int h) { in(); int32 ret = _target->doCommand(a,b,c,d,e,f,g,h); out(); return ret; }
 int32 IMuse::doCommand (int numargs, int args[]) { in(); int32 ret = _target->doCommand (numargs, args); out(); return ret; }
 int IMuse::clear_queue() { in(); int ret = _target->clear_queue(); out(); return ret; }

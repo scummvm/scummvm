@@ -257,7 +257,7 @@ public:
 	int    setTranspose(byte relative, int b);
 	int    setVolume(byte vol);
 	bool   startSound(int sound, MidiDriver *midi);
-	int    getMusicTimer();
+	int    getMusicTimer() const;
 
 public:
 	// MidiDriver interface
@@ -460,7 +460,7 @@ public:
 	int stopSound(int sound);
 	int stopAllSounds();
 	int getSoundStatus(int sound, bool ignoreFadeouts = true) const;
-	int getMusicTimer();
+	int getMusicTimer() const;
 	int32 doCommand (int a, int b, int c, int d, int e, int f, int g, int h);
 	int32 doCommand (int numargs, int args[]);
 	int clear_queue();

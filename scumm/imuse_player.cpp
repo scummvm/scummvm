@@ -127,7 +127,7 @@ bool Player::startSound(int sound, MidiDriver *midi) {
 	return true;
 }
 
-int Player::getMusicTimer() {
+int Player::getMusicTimer() const {
 	return _parser ? (_parser->getTick() * 2 / _parser->getPPQN()) : 0;
 }
 
