@@ -584,60 +584,58 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY, int pathfrom)
 			if (iterations > 1000)
 				return abr;							/* Safety net */
 			box = _vm->getNumBoxes() - 1;
-			if (box == 0)
+			if (box < firstValidBox)
 				return abr;
 
 			best = (uint) 0xFFFF;
 			b = 0;
 
-			if (((_vm->_features & GF_SMALL_HEADER) && box)
-					|| !(_vm->_features & GF_SMALL_HEADER))
-				for (j = box; j >= firstValidBox; j--) {
-					flags = _vm->getBoxFlags(j);
-					if (flags & 0x80 && (!(flags & 0x20) || isInClass(31)))
-						continue;
+			for (j = box; j >= firstValidBox; j--) {
+				flags = _vm->getBoxFlags(j);
+				if (flags & 0x80 && (!(flags & 0x20) || isInClass(31)))
+					continue;
 
-					if (pathfrom >= firstValidBox) {
-						int i = _vm->getPathToDestBox(pathfrom, j);
-						if (i == -1)
+				if (pathfrom >= firstValidBox) {
+					int i = _vm->getPathToDestBox(pathfrom, j);
+					if (i == -1)
+						continue;
+					
+					if (_vm->_features & GF_OLD256) {
+						// FIXME - we check here if the box suggested by getPathToDestBox
+						// is locked or not. This prevents us from walking thru
+						// closed doors in some cases in Zak256. However a better fix
+						// would be to recompute the box matrix whenever flags change.
+						flags = _vm->getBoxFlags(i);
+						if (flags & 0x80 && (!(flags & 0x20) || isInClass(31)))
 							continue;
-						
-						if (_vm->_features & GF_OLD256) {
-							// FIXME - we check here if the box suggested by getPathToDestBox
-							// is locked or not. This prevents us from walking thru
-							// closed doors in some cases in Zak256. However a better fix
-							// would be to recompute the box matrix whenever flags change.
-							flags = _vm->getBoxFlags(i);
-							if (flags & 0x80 && (!(flags & 0x20) || isInClass(31)))
-								continue;
-						}
 					}
-
-					if (!_vm->inBoxQuickReject(j, dstX, dstY, threshold))
-						continue;
-
-					if (_vm->checkXYInBoxBounds(j, dstX, dstY)) {
-						abr.x = dstX;
-						abr.y = dstY;
-						abr.dist = j;
-						return abr;
-					}
-
-					tmp = _vm->getClosestPtOnBox(j, dstX, dstY);
-
-					if (tmp.dist >= best)
-						continue;
-
-					abr.x = tmp.x;
-					abr.y = tmp.y;
-
-					if (tmp.dist == 0) {
-						abr.dist = j;
-						return abr;
-					}
-					best = tmp.dist;
-					b = j;
 				}
+
+				if (!_vm->inBoxQuickReject(j, dstX, dstY, threshold))
+					continue;
+
+				if (_vm->checkXYInBoxBounds(j, dstX, dstY)) {
+					abr.x = dstX;
+					abr.y = dstY;
+					abr.dist = j;
+					return abr;
+				}
+
+				tmp = _vm->getClosestPtOnBox(j, dstX, dstY);
+
+				if (tmp.dist >= best)
+					continue;
+
+				abr.x = tmp.x;
+				abr.y = tmp.y;
+
+				if (tmp.dist == 0) {
+					abr.dist = j;
+					return abr;
+				}
+				best = tmp.dist;
+				b = j;
+			}
 
 			if (threshold == 0 || threshold * threshold >= best) {
 				abr.dist = b;
