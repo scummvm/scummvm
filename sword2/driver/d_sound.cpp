@@ -1205,7 +1205,7 @@ uint8 Sword2Sound::IsFxMute(void) {
 }
 
 void Sword2Sound::StartMusicFadeDown(int i) {
-	g_engine->_mixer->stop(soundHandleMusic[i]);
+	g_engine->_mixer->stopHandle(soundHandleMusic[i]);
 	musFading[i] = -16;
 	musStreaming[i] = 0;
 	fpMus.close();
@@ -1231,7 +1231,7 @@ int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 l
 			primaryStream = 1;
 
 		musFading[primaryStream] = 0;
-		g_engine->_mixer->stop(soundHandleMusic[primaryStream]);
+		g_engine->_mixer->stopHandle(soundHandleMusic[primaryStream]);
 		musStreaming[primaryStream] = 0;
 	}
 
@@ -1798,7 +1798,7 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 			if (musFading[i]) {
 				if (musFading[i] < 0) {
 					if (++musFading[i] == 0) {
-						g_engine->_mixer->stop(soundHandleMusic[i]);
+						g_engine->_mixer->stopHandle(soundHandleMusic[i]);
 						musStreaming[i] = 0;
 						musLooping[i] = 0;
 					} else {
@@ -1916,7 +1916,7 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 
 					// End of the music so we need to start fading and start the music again
 					if (fade) {
-						g_engine->_mixer->stop(soundHandleMusic[i]);
+						g_engine->_mixer->stopHandle(soundHandleMusic[i]);
 						musFading[i] = -16;		// Fade the old music
 
 						// Close the music cluster if it's open
