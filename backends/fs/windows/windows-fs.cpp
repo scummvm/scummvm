@@ -50,14 +50,14 @@ public:
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual String path() const { return _path; }
 
-	virtual FSList *listDir() const;
+	virtual FSList *listDir(ListMode) const;
 	virtual FilesystemNode *parent() const;
 	virtual FilesystemNode *clone() const { return new WindowsFilesystemNode(this); }
 
 private:
 	static char *toAscii(TCHAR *x);
 	static TCHAR* toUnicode(char *x);
-	static void addFile (FSList* list, const WindowsFilesystemNode *parentNode, const char *base, WIN32_FIND_DATA* find_data);
+	static void addFile (FSList* list, ListMode mode, const WindowsFilesystemNode *parentNode, const char *base, WIN32_FIND_DATA* find_data);
 };
 
 
@@ -83,7 +83,7 @@ static TCHAR unicodeString[MAX_PATH];
 #endif
 }
 
-void WindowsFilesystemNode::addFile (FSList* list, const WindowsFilesystemNode *parentNode, const char *base, WIN32_FIND_DATA* find_data) {
+void WindowsFilesystemNode::addFile (FSList* list, ListMode mode, const WindowsFilesystemNode *parentNode, const char *base, WIN32_FIND_DATA* find_data) {
 	WindowsFilesystemNode entry;
 	char *asciiName = toAscii(find_data->cFileName);
 	bool isDirectory;
@@ -94,8 +94,8 @@ void WindowsFilesystemNode::addFile (FSList* list, const WindowsFilesystemNode *
 	
 	isDirectory = (find_data->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ? true : false);
 
-	// Only keep the directories for the moment (files already supported)
-	if (!isDirectory)
+	if ((!isDirectory && mode == kListDirectoriesOnly) ||
+		(isDirectory && mode == kListFilesOnly))
 		return;
 
 	entry._isDirectory = isDirectory;
@@ -141,7 +141,7 @@ WindowsFilesystemNode::WindowsFilesystemNode(const WindowsFilesystemNode *node) 
 	_parentNode = node->_parentNode;
 }
 
-FSList *WindowsFilesystemNode::listDir() const {
+FSList *WindowsFilesystemNode::listDir(ListMode mode) const {
 	assert(_isDirectory);
 
 	FSList *myList = new FSList();
@@ -179,9 +179,9 @@ FSList *WindowsFilesystemNode::listDir() const {
 		handle = FindFirstFile(toUnicode(searchPath), &desc);
 		if (handle == INVALID_HANDLE_VALUE)
 			return myList;
-		addFile(myList, this, _path.c_str(), &desc);
+		addFile(myList, mode, this, _path.c_str(), &desc);
 		while (FindNextFile(handle, &desc))
-			addFile(myList, this, _path.c_str(), &desc);
+			addFile(myList, mode, this, _path.c_str(), &desc);
 
 		FindClose(handle);
 	}
