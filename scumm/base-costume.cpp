@@ -30,7 +30,7 @@ byte BaseCostumeRenderer::drawCostume(const VirtScreen &vs, const CostumeData &c
 	byte result = 0;
 
 	if (drawVirScr)
-		_outptr = _vm->virtscr[0].getPixels(0, 0);
+		_outptr = vs.getBackPixels(0, 0);
 	else
 		_outptr = vs.getPixels(0, 0);
 
