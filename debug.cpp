@@ -67,7 +67,7 @@ bool ScummDebugger::do_command()
 	case CMD_HELP:
 		printf("Debugger commands:\n"
 					 "(a)ctor [actornum] -> show actor information\n"
-					 "(b)oxes -> list and draw boxen\n"
+					 "(b)ox [boxnum] -> list and draw the specified (or all) boxes\n"
 					 "(c)ontinue -> exit the debugger and continue the program\n"
 					 "(h)elp -> display this help text\n"
 					 "(g)o [numframes] -> increase frame\n"
@@ -108,32 +108,10 @@ bool ScummDebugger::do_command()
 		}
 		return true;
 	case CMD_DUMPBOX:
-		{
-			int num, i = 0;
-			BoxCoords box;
-			byte *boxm = _s->getBoxMatrixBaseAddr();
-			int flags;
-			num = _s->getNumBoxes();
-
-			printf("Walk matrix:\n");
-			for (i = 0; i < num; i++) {
-				while (*boxm != 0xFF) {
-					printf("[%d] ", *boxm);
-					boxm++;
-				}
-				boxm++;
-				printf("\n");
-			}
-
-			printf("\nWalk boxes:\n");
-			for (i = 0; i < num; i++) {
-				boxTest(i);
-				_s->getBoxCoordinates(i, &box);
-				flags = _s->getBoxFlags(i);
-				printf("%d: [%d x %d] [%d x %d] [%d x %d] [%d x %d], flags=0x%02x\n", i,
-							 box.ul.x, box.ul.y, box.ll.x, box.ll.y, box.ur.x, box.ur.y, box.lr.x, box.lr.y, flags);
-			}
-		}
+		if (!_parameters[0])
+			printBoxes();
+		else
+			printBox(atoi(_parameters));
 		return true;
 	case CMD_VAR:
 		if (!_parameters[0]) {
@@ -317,6 +295,45 @@ void ScummDebugger::printScripts()
 }
 
 
+void ScummDebugger::printBoxes()
+{
+	int num, i = 0;
+	byte *boxm = _s->getBoxMatrixBaseAddr();
+	num = _s->getNumBoxes();
+
+	printf("Walk matrix:\n");
+	for (i = 0; i < num; i++) {
+		while (*boxm != 0xFF) {
+			printf("[%d] ", *boxm);
+			boxm++;
+		}
+		boxm++;
+		printf("\n");
+	}
+
+	printf("\nWalk boxes:\n");
+	for (i = 0; i < num; i++)
+		printBox(i);
+}
+
+void ScummDebugger::printBox(int box)
+{
+	BoxCoords coords;
+	int flags = _s->getBoxFlags(box);
+	int mask = _s->getMaskFromBox(box);
+
+	_s->getBoxCoordinates(box, &coords);
+	
+	// Draw the box
+	boxTest(box);
+
+	// Print out coords, flags, zbuffer mask
+	printf("%d: [%d x %d] [%d x %d] [%d x %d] [%d x %d], flags=0x%02x, mask=%d\n",
+				box,
+				 coords.ul.x, coords.ul.y, coords.ll.x, coords.ll.y,
+				 coords.ur.x, coords.ur.y, coords.lr.x, coords.lr.y,
+				 flags, mask);
+}
 
 
 /************ ENDER: Temporary debug code for boxen **************/

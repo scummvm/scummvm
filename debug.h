@@ -43,7 +43,9 @@ struct ScummDebugger {
 
 	void printActors(int act);
 	void printScripts();
-	
+
+	void printBox(int box);
+	void printBoxes();
 	void boxTest(int box);
 };
 
