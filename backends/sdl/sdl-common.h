@@ -106,6 +106,8 @@ public:
 	static OSystem *create(int gfx_mode, bool full_screen);
 
 protected:
+	typedef void ScalerProc(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
+								uint8 *dstPtr, uint32 dstPitch, int width, int height);
 
 	OSystem_SDL_Common();
 	virtual ~OSystem_SDL_Common();
@@ -113,6 +115,11 @@ protected:
 	// unseen game screen
 	SDL_Surface *_screen;
 	int _screenWidth, _screenHeight;
+
+	// temporary screen (for scalers/overlay)
+	SDL_Surface *_tmpscreen;
+	int _tmpScreenWidth;
+	bool _overlayVisible;
 
 	// CD Audio
 	SDL_CD *_cdrom;

@@ -70,8 +70,9 @@ void OSystem_SDL_Common::set_timer(int timer, int (*callback)(int)) {
 }
 
 OSystem_SDL_Common::OSystem_SDL_Common()
-	: _screen(0), _screenWidth(0), _screenHeight(0), _cdrom(0),
-	_dirty_checksums(0),
+	: _screen(0), _screenWidth(0), _screenHeight(0),
+	_tmpscreen(0), _tmpScreenWidth(0), _overlayVisible(false),
+	_cdrom(0), _dirty_checksums(0),
 	_mouseVisible(false), _mouseDrawn(false), _mouseData(0),
 	_mouseHotspotX(0), _mouseHotspotY(0),
 	_currentShakePos(0), _newShakePos(0)
@@ -729,8 +730,6 @@ void OSystem_SDL_Common::draw_mouse() {
 	int h = _mouseCurState.h;
 	byte color;
 	byte *src = _mouseData;		// Image representing the mouse
-	byte *bak = _mouseBackup;		// Surface used to backup the area obscured by the mouse
-	byte *dst;					// Surface we are drawing into
 
 	// clip the mouse rect, and addjust the src pointer accordingly
 	if (x < 0) {
@@ -743,6 +742,7 @@ void OSystem_SDL_Common::draw_mouse() {
 		src -= y * _mouseCurState.w;
 		y = 0;
 	}
+
 	if (w > _screenWidth - x)
 		w = _screenWidth - x;
 	if (h > _screenHeight - y)
@@ -760,32 +760,59 @@ void OSystem_SDL_Common::draw_mouse() {
 	_mouseOldState.h = h;
 
 	// Draw the mouse cursor; backup the covered area in "bak"
-
-	if (SDL_LockSurface(_screen) == -1)
+	
+	if (SDL_LockSurface(_overlayVisible ? _tmpscreen : _screen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 	
 	// Mark as dirty
 	add_dirty_rect(x, y, w, h);
 
-	dst = (byte *)_screen->pixels + y * _screenWidth + x;
-	while (h > 0) {
-		int width = w;
-		while (width > 0) {
-			*bak++ = *dst;
-			color = *src++;
-			if (color != 0xFF)	// 0xFF = transparent, don't draw
-				*dst = color;
-			dst++;
-			width--;
+	if (!_overlayVisible) {
+		byte *bak = _mouseBackup;		// Surface used to backup the area obscured by the mouse
+		byte *dst;					// Surface we are drawing into
+	
+		dst = (byte *)_screen->pixels + y * _screenWidth + x;
+		while (h > 0) {
+			int width = w;
+			while (width > 0) {
+				*bak++ = *dst;
+				color = *src++;
+				if (color != 0xFF)	// 0xFF = transparent, don't draw
+					*dst = color;
+				dst++;
+				width--;
+			}
+			src += _mouseCurState.w - w;
+			bak += MAX_MOUSE_W - w;
+			dst += _screenWidth - w;
+			h--;
 		}
-		src += _mouseCurState.w - w;
-		bak += MAX_MOUSE_W - w;
-		dst += _screenWidth - w;
-		h--;
+	
+	} else {
+		uint16 *bak = (uint16*)_mouseBackup;	// Surface used to backup the area obscured by the mouse
+		uint16 *dst;					// Surface we are drawing into
+	
+		dst = (uint16 *)_tmpscreen->pixels + (y+1) * _tmpScreenWidth + (x+1);
+		while (h > 0) {
+			int width = w;
+			while (width > 0) {
+				*bak++ = *dst;
+				color = *src++;
+				if (color != 0xFF)	// 0xFF = transparent, don't draw
+					*dst = RBGToColor(_currentPalette[color].r, _currentPalette[color].g, _currentPalette[color].b);
+				dst++;
+				width--;
+			}
+			src += _mouseCurState.w - w;
+			bak += MAX_MOUSE_W - w;
+			dst += _tmpScreenWidth - w;
+			h--;
+		}
+	
 	}
 
-	SDL_UnlockSurface(_screen);
-
+	SDL_UnlockSurface(_overlayVisible ? _tmpscreen : _screen);
+	
 	// Finally, set the flag to indicate the mouse has been drawn
 	_mouseDrawn = true;
 }
@@ -795,28 +822,43 @@ void OSystem_SDL_Common::undraw_mouse() {
 		return;
 	_mouseDrawn = false;
 
-	if (SDL_LockSurface(_screen) == -1)
+	if (SDL_LockSurface(_overlayVisible ? _tmpscreen : _screen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
-	byte *dst, *bak = _mouseBackup;
 	const int old_mouse_x = _mouseOldState.x;
 	const int old_mouse_y = _mouseOldState.y;
 	const int old_mouse_w = _mouseOldState.w;
 	const int old_mouse_h = _mouseOldState.h;
 	int x, y;
 
-	// No need to do clipping here, since draw_mouse() did that already
+	if (!_overlayVisible) {
+	
+		byte *dst, *bak = _mouseBackup;
+	
+		// No need to do clipping here, since draw_mouse() did that already
+		dst = (byte *)_screen->pixels + old_mouse_y * _screenWidth + old_mouse_x;
+		for (y = 0; y < old_mouse_h; ++y, bak += MAX_MOUSE_W, dst += _screenWidth) {
+			for (x = 0; x < old_mouse_w; ++x) {
+				dst[x] = bak[x];
+			}
+		}
+	
+	} else {
 
-	dst = (byte *)_screen->pixels + old_mouse_y * _screenWidth + old_mouse_x;
-	for (y = 0; y < old_mouse_h; ++y, bak += MAX_MOUSE_W, dst += _screenWidth) {
-		for (x = 0; x < old_mouse_w; ++x) {
-			dst[x] = bak[x];
+		uint16 *dst, *bak = (uint16 *)_mouseBackup;
+	
+		// No need to do clipping here, since draw_mouse() did that already
+		dst = (uint16 *)_tmpscreen->pixels + (old_mouse_y+1) * _tmpScreenWidth + (old_mouse_x+1);
+		for (y = 0; y < old_mouse_h; ++y, bak += MAX_MOUSE_W, dst += _tmpScreenWidth) {
+			for (x = 0; x < old_mouse_w; ++x) {
+				dst[x] = bak[x];
+			}
 		}
 	}
 
 	add_dirty_rect(old_mouse_x, old_mouse_y, old_mouse_w, old_mouse_h);
 
-	SDL_UnlockSurface(_screen);
+	SDL_UnlockSurface(_overlayVisible ? _tmpscreen : _screen);
 }
 
 void OSystem_SDL_Common::stop_cdrom() {	/* Stop CD Audio in 1/10th of a second */
