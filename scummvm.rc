@@ -44,8 +44,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,2,0,0
- PRODUCTVERSION 0,2,0,0
+ FILEVERSION 0,3,0,0
+ PRODUCTVERSION 0,3,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -63,14 +63,14 @@ BEGIN
             VALUE "Comments", "Look! A three headed monkey (TM)! .. Nice use of the TM!\0"
             VALUE "CompanyName", "ScummVM Team\0"
             VALUE "FileDescription", "http://www.scummvm.org/\0"
-            VALUE "FileVersion", "0, 2, 0, 0\0"
+            VALUE "FileVersion", "0, 3, 0, 0\0"
             VALUE "InternalName", "scummvm\0"
             VALUE "LegalCopyright", "Copyright © 2002 The ScummVM Team\0"
             VALUE "LegalTrademarks", "'SCUMM', and all SCUMM games are a TM of LucasArts. Simon The Sorcerer is a TM of AdventureSoft.\0"
             VALUE "OriginalFilename", "scummvm.exe\0"
             VALUE "PrivateBuild", "\0"
             VALUE "ProductName", "ScummVM\0"
-            VALUE "ProductVersion", "0, 2, 0, 0\0"
+            VALUE "ProductVersion", "0, 3, 0, 0\0"
             VALUE "SpecialBuild", "\0"
         END
     END
