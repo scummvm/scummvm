@@ -33,46 +33,12 @@
 #include "d_sound.h"
 #include "bs2/sword2.h"
 
-
 #define MENUDEEP 40		// Temporary, until menu.h is written!
 
+// ---------------------------------------------------------------------------
+// OSystem Event Handler. Full of cross platform goodness and 99% fat free!
+// ---------------------------------------------------------------------------
 
-#if 0
-//-----------------------------------------------------------------------------
-
-void Zdebug(const char *format,...) {
-#ifdef __PALM_OS__
-	char buf[256]; // 1024 is too big overflow the stack
-#else
-	char buf[1024];
-#endif
-	va_list va;
-
-	va_start(va, format);
-	vsprintf(buf, format, va);
-	va_end(va);
-
-#ifdef __GP32__ //ph0x FIXME: implement fprint?
-	printf("ZDEBUG: %s\n", buf);
-#else
-	fprintf(stderr, "ZDEBUG: %s!\n", buf);
-#endif
-#if defined( USE_WINDBG )
-	strcat(buf, "\n");
-#if defined( _WIN32_WCE )
-	TCHAR buf_unicode[1024];
-	MultiByteToWideChar(CP_ACP, 0, buf, strlen(buf) + 1, buf_unicode, sizeof(buf_unicode));
-	OutputDebugString(buf_unicode);
-#else
-	OutputDebugString(buf);
-#endif
-#endif
-}
-#endif
-
-//-----------------------------------------------------------------------------
-//	OSystem Event Handler. Full of cross platform goodness and 99% fat free!
-//-----------------------------------------------------------------------------
 void Sword2State::parseEvents() {
 	OSystem::Event event;
 	
@@ -105,21 +71,16 @@ void Sword2State::parseEvents() {
 			break;
 		}
 	}
-		
 }
 
-
-int32 CloseAppWindow(void)
-
-{
+int32 CloseAppWindow(void) {
 	warning("stub CloseAppWindow");
 /*
 	DestroyWindow(hwnd);
 */
 	// just quit for now
 	g_system->quit();
-	return(RD_OK);
-
+	return RD_OK;
 }
 
 static bool _needRedraw = false;
@@ -128,9 +89,7 @@ void SetNeedRedraw() {
 	_needRedraw = true;
 }
 
-int32 ServiceWindows(void)
-
-{
+int32 ServiceWindows(void) {
 	g_sword2->parseEvents();
 	FadeServer();
 
@@ -146,12 +105,10 @@ int32 ServiceWindows(void)
 	g_system->update_screen();
 
 	return RD_OK;
-
 }
 
-void SetWindowName(const char *windowName)
-{
+void SetWindowName(const char *windowName) {
 	warning("stub SetWindowName( %s )", windowName);
-//	SetWindowText(hwnd,windowName);
-//	strcpy(gameName,windowName);
+	// SetWindowText(hwnd, windowName);
+	// strcpy(gameName, windowName);
 }
