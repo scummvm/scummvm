@@ -55,7 +55,7 @@ struct Rect {
 	Rect(int16 x, int16 y) : top(0), left(0), bottom(x), right(y) {}
 	Rect(int16 x1, int16 y1, int16 x2, int16 y2) : top(x1), left(y1), bottom(x2), right(y2) {}
 	int16 width() const { return right - left; }
-	int16 height() const { return top - bottom; }
+	int16 height() const { return bottom - top; }
 
 	/*!	@brief check if given position is inside this rectangle
 		
