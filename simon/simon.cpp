@@ -4710,12 +4710,31 @@ void SimonState::initSound()
 #endif
 
 		if (_voice_type != FORMAT_NONE) {
-			_voice_offsets = (uint32 *)malloc(gss->NUM_VOICE_RESOURCES * sizeof(uint32));
+#ifdef USE_MAD
+			if (_voice_type == FORMAT_MP3)
+				_voice_offsets = (uint32 *)malloc((gss->NUM_VOICE_RESOURCES + 1) * sizeof(uint32));
+			else
+#else
+				_voice_offsets = (uint32 *)malloc(gss->NUM_VOICE_RESOURCES * sizeof(uint32));
+#endif
 			if (_voice_offsets == NULL)
 				error("Out of memory for voice offsets");
 	
 			if (_voice_file->read(_voice_offsets, gss->NUM_VOICE_RESOURCES * sizeof(uint32)) != gss->NUM_VOICE_RESOURCES * sizeof(uint32))
 				error("Cannot read voice offsets");
+#ifdef USE_MAD
+			if (_voice_type == FORMAT_MP3) {
+				uint8 buf[2048];
+				uint32 pos = 0;
+				_voice_file->seek(0, SEEK_SET);
+			        while ((_voice_file->read(buf, 2048)) > 0) {
+					if (pos == _voice_file->pos())
+						break;
+					pos = _voice_file->pos();
+			        }
+				_voice_offsets[gss->NUM_EFFECTS_RESOURCES] = pos;
+			}
+#endif
 		}
 
 		_effects_offsets = NULL;
@@ -4734,12 +4753,31 @@ void SimonState::initSound()
 #endif
 		if (_effects_file->isOpen() == true)
 		{
-			_effects_offsets = (uint32 *)malloc(gss->NUM_EFFECTS_RESOURCES * sizeof(uint32));
+#ifdef USE_MAD
+			if (_effects_type == FORMAT_MP3)
+				_effects_offsets = (uint32 *)malloc((gss->NUM_EFFECTS_RESOURCES + 1) * sizeof(uint32));
+			else
+#else
+				_effects_offsets = (uint32 *)malloc(gss->NUM_EFFECTS_RESOURCES * sizeof(uint32));
+#endif
 			if (_effects_offsets == NULL)
 				error("Out of memory for effects offsets");
 
 			if (_effects_file->read(_effects_offsets, gss->NUM_EFFECTS_RESOURCES * sizeof(uint32)) != gss->NUM_EFFECTS_RESOURCES * sizeof(uint32))
 				error("Cannot read effects offsets");
+#ifdef USE_MAD
+			if (_effects_type == FORMAT_MP3) {
+				uint8 buf[2048];
+				uint32 pos = 0;
+				_effects_file->seek(0, SEEK_SET);
+			        while ((_effects_file->read(buf, 2048)) > 0) {
+					if (pos == _effects_file->pos())
+						break;
+					pos = _effects_file->pos();
+			        }
+				_effects_offsets[gss->NUM_EFFECTS_RESOURCES] = pos;
+			}
+#endif
 		} else {
 			_effects_type = FORMAT_NONE;
 		}
