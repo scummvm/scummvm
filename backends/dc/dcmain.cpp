@@ -44,7 +44,7 @@ OSystem *OSystem_Dreamcast::create() {
 
 OSystem_Dreamcast::OSystem_Dreamcast()
   : screen(NULL), mouse(NULL), overlay(NULL), _ms_buf(NULL),
-    _sound_proc(NULL), _timer_active(false)
+    _sound_proc(NULL), _timer_active(false), _current_shake_pos(0)
 {
   memset(screen_tx, 0, sizeof(screen_tx));
   memset(mouse_tx, 0, sizeof(screen_tx));
