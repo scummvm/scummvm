@@ -519,7 +519,6 @@ byte *SimonEngine::vc_10_no_depack_swap(byte *src, uint w, uint h) {
 	h *= 8;
 	byte *dst = _video_buf_1 + h - 1;
 
-	// loc_40F57F
 	uint h_cur = h;
 	do {
 		do {
