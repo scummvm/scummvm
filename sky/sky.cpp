@@ -289,6 +289,7 @@ void SkyState::initialise(void) {
 		else
 			_skyMusic = new SkyGmMusic(_detector->createMidi(), _skyDisk, _system);
 	}
+	_skyMusic->setVolume((uint8)(_detector->_music_volume >> 1));
 
 	// Override global scaler with any game-specific define
 	if (g_config->get("gfx_mode")) {
