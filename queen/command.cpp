@@ -249,23 +249,23 @@ void Command::updatePlayer() {
 			_vm->input()->clearKeyVerb();
 			_vm->logic()->useJournal();
 		}
-//		else if (_vm->input()->keyVerb() != VERB_SKIP_TEXT) {
-//			_state.verb = _vm->input()->keyVerb();
-//			if (isVerbInv(_state.verb)) {
-//				_state.noun = _state.selNoun = 0;
-//				// Clear old noun and old verb in case we're pointing at an
-//				// object (noun) or item (verb) and we want to use an item
-//				// on it. This was the command will be redisplayed with the
-//				// object/item that the cursor is currently on.
-//				_state.oldNoun = 0;
-//				_state.oldVerb = VERB_NONE;
-//				grabSelectedItem();
-//			}
-//			else {
-//				grabSelectedVerb();
-//			}
-//			_vm->input()->clearKeyVerb();
-//		}
+		else if (_vm->input()->keyVerb() != VERB_SKIP_TEXT) {
+			_state.verb = _vm->input()->keyVerb();
+			if (isVerbInv(_state.verb)) {
+				_state.noun = _state.selNoun = 0;
+				// Clear old noun and old verb in case we're pointing at an
+				// object (noun) or item (verb) and we want to use an item
+				// on it. This was the command will be redisplayed with the
+				// object/item that the cursor is currently on.
+				_state.oldNoun = 0;
+				_state.oldVerb = VERB_NONE;
+				grabSelectedItem();
+			}
+			else {
+				grabSelectedVerb();
+			}
+			_vm->input()->clearKeyVerb();
+		}
 	}
 
 	_mouseKey = _vm->input()->mouseButton();
@@ -612,26 +612,26 @@ void Command::grabSelectedItem() {
 	// If we've selected via keyboard, and there is no VERB then do
 	// the ITEMs default, otherwise keep constructing!
 
-	if (_mouseKey == Input::MOUSE_LBUTTON) {
-//		|| (_vm->input()->keyVerb() != VERB_NONE && _state.verb != VERB_NONE)) {
+	if (_mouseKey == Input::MOUSE_LBUTTON ||
+		(_vm->input()->keyVerb() != VERB_NONE && _state.verb != VERB_NONE)) {
 		if (_state.action == VERB_NONE) {
-//			if (_vm->input()->keyVerb() != VERB_NONE) {
-//				// We've selected via the keyboard, no command is being 
-//				// constructed, so we shall find the item's default
-//				_state.verb = findDefault(item, true);
-//				if (_state.verb == VERB_NONE) {
-//					// set to Look At
-//					_state.verb = VERB_LOOK_AT;
-//					_cmdText.setVerb(VERB_LOOK_AT);
-//				}
-//				_state.action = _state.verb;
-//			}
-//			else {
+			if (_vm->input()->keyVerb() != VERB_NONE) {
+				// We've selected via the keyboard, no command is being 
+				// constructed, so we shall find the item's default
+				_state.verb = State::findDefaultVerb(id->state);
+				if (_state.verb == VERB_NONE) {
+					// set to Look At
+					_state.verb = VERB_LOOK_AT;
+					_cmdText.setVerb(VERB_LOOK_AT);
+				}
+				_state.action = _state.verb;
+			}
+			else {
 				// Action>0 ONLY if command has been constructed 
 				// Left Mouse Button pressed just do Look At     
 				_state.action = VERB_LOOK_AT;
 				_cmdText.setVerb(VERB_LOOK_AT);
-//			}
+			}
 		}
 		_state.verb = VERB_NONE;
 	}
