@@ -1081,8 +1081,8 @@ int SwordLogic::fnISpeak(BsObject *cpt, int32 id, int32 cdt, int32 textNo, int32
 		textCpt->o_target = textCptId;
 
 		// the graphic is a property of SwordText, so we don't lock/unlock it.
-		uint16 textSpriteWidth  = _textMan->giveSpriteData(textCpt->o_target)->width;
-		uint16 textSpriteHeight = _textMan->giveSpriteData(textCpt->o_target)->height;
+		uint16 textSpriteWidth  = FROM_LE_16(_textMan->giveSpriteData(textCpt->o_target)->width);
+		uint16 textSpriteHeight = FROM_LE_16(_textMan->giveSpriteData(textCpt->o_target)->height);
 
 		cpt->o_text_id = textCptId;
 

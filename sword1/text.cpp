@@ -44,8 +44,8 @@ SwordText::SwordText(ObjectMan *pObjMan, ResMan *pResMan, bool czechVersion) {
 	else
 		_font = (uint8*)_resMan->openFetchRes(GAME_FONT);
 	_joinWidth = charWidth( SPACE ) - 2 * OVERLAP;
-	_charHeight = _resMan->fetchFrame(_font, 0)->height; // all chars have the same height
-	_textBlocks[0] = _textBlocks[1] = 0;
+	_charHeight = FROM_LE_16(_resMan->fetchFrame(_font, 0)->height); // all chars have the same height
+	_textBlocks[0] = _textBlocks[1] = NULL;
 }
 
 uint32 SwordText::lowTextManager(uint8 *ascii, int32 width, uint8 pen) {
@@ -79,8 +79,8 @@ void SwordText::makeTextSprite(uint8 slot, uint8 *text, uint16 maxWidth, uint8 p
 
 	memcpy( _textBlocks[slot]->runTimeComp, "Nu  ", 4);
 	_textBlocks[slot]->compSize	= 0;
-	_textBlocks[slot]->width	= sprWidth;
-	_textBlocks[slot]->height	= sprHeight;
+	_textBlocks[slot]->width	= TO_LE_16(sprWidth);
+	_textBlocks[slot]->height	= TO_LE_16(sprHeight);
 	_textBlocks[slot]->offsetX	= 0;
 	_textBlocks[slot]->offsetY	= 0;
 
@@ -98,7 +98,7 @@ void SwordText::makeTextSprite(uint8 slot, uint8 *text, uint16 maxWidth, uint8 p
 uint16 SwordText::charWidth(uint8 ch) {
 	if (ch < SPACE)
 		ch = 64;
-	return _resMan->fetchFrame(_font, ch - SPACE)->width;
+	return FROM_LE_16(_resMan->fetchFrame(_font, ch - SPACE)->width);
 }
 
 uint16 SwordText::analyzeSentence(uint8 *text, uint16 maxWidth, LineInfo *line) {
@@ -145,8 +145,8 @@ uint16 SwordText::copyChar(uint8 ch, uint8 *sprPtr, uint16 sprWidth, uint8 pen) 
 	FrameHeader *chFrame = _resMan->fetchFrame(_font, ch - SPACE);
 	uint8 *chData = ((uint8*)chFrame) + sizeof(FrameHeader);
 	uint8 *dest = sprPtr;
-	for (uint16 cnty = 0; cnty < chFrame->height; cnty++) {
-		for (uint16 cntx = 0; cntx < chFrame->width; cntx++) {
+	for (uint16 cnty = 0; cnty < FROM_LE_16(chFrame->height); cnty++) {
+		for (uint16 cntx = 0; cntx < FROM_LE_16(chFrame->width); cntx++) {
 			if (*chData == LETTER_COL)
 				dest[cntx] = pen;
 			else if ((*chData == BORDER_COL) && (!dest[cntx])) // don't do a border if there's already a color underneath (chars can overlap)
