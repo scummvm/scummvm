@@ -236,7 +236,7 @@ void AboutDialog::drawDialog() {
 	// Draw text
 	// TODO: Add a "fade" effect for the top/bottom text lines
 	const int firstLine = _scrollPos / _lineHeight;
-	const int lastLine = MIN((_scrollPos + _h) / _lineHeight + 1, _lines.size());
+	const int lastLine = MIN((uint)(_scrollPos + _h) / _lineHeight + 1, _lines.size());
 	int y = _y + kYOff - (_scrollPos % _lineHeight);
 
 	for (int line = firstLine; line < lastLine; line++) {
