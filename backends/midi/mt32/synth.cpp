@@ -2988,7 +2988,7 @@ bool CSynthMT32::InitTables(const char *baseDir ) {
 
 		for (int i = 0; i < 4; ++i) {
 			waveforms[i][f] = (Bit16s *)malloc(waveformsize[i][f]);
-			for (int j = 0; j < waveformsize[i][f]/2; ++j)
+			for (uint j = 0; j < waveformsize[i][f]/2; ++j)
 				waveforms[i][f][j] = fp.readSint16LE();
 		}
 #endif

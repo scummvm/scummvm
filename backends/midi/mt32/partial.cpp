@@ -237,7 +237,7 @@ INLINE void CPartialMT32::generateSamples(Bit16s * partialBuf, long length) {
 					// to how it looks on the MT-32.  What it really does it takes the
 					// square wave and multiplies it by a full cosine
 					// TODO: This area here crashes DosBox due to read overflow                     
-					int offsetpos = (toff<<2)+minorplace;
+					uint offsetpos = (toff<<2)+minorplace;
 					//int a = 0;
 					if(toff < sawtable[noteval][partCache->pulsewidth]) {
 						while(offsetpos>waveformsize[2][noteval]) {
