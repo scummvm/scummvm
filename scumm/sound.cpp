@@ -216,7 +216,7 @@ void Sound::playSound(int soundID, int offset) {
 		}
 
 		musicFile.seek(music_offs, SEEK_SET);
-		ptr = (byte *) calloc(size, 1);
+		ptr = (byte *)malloc(size);
 		musicFile.read(ptr, size);
 		musicFile.close();
 
@@ -224,11 +224,8 @@ void Sound::playSound(int soundID, int offset) {
 		music = true;
 		if (_vm->_heversion == 70) {
 			// Allocate a sound buffer, copy the data into it, and play
-			sound = (char *)malloc(size);
-			memcpy(sound, ptr, size);
-			free(ptr);
 			_vm->_mixer->stopHandle(_musicChannelHandle);
-			_vm->_mixer->playRaw(&_musicChannelHandle, sound, size, 11025, flags, soundID);
+			_vm->_mixer->playRaw(&_musicChannelHandle, ptr, size, 11025, flags, soundID);
 			return;
 		}
 	} else {
@@ -766,7 +763,7 @@ int Sound::isSoundRunning(int sound) const {
 		} else if (sound == -1 || sound == 10000) {
 			// getSoundStatus(), with a -1, will return the
 			// ID number of the first active music it finds.
-			if (_vm->_heversion >= 70  || _currentMusic)
+			if (_vm->_heversion >= 70 || _currentMusic)
 				return (_musicChannelHandle.isActive()) ? 1 : 0;
 			else if (_vm->_imuse)
 				return (_vm->_imuse->getSoundStatus(sound));
