@@ -397,6 +397,13 @@ displayText_t Text::displayText(char *textPtr, uint8 *dest, bool centre, uint16 
 	if (tmpPtr)
 		strcpy(tmpPtr, "MUND BEATMUNG!");
 
+	// work around bug #1151924 (line width exceeded when talking to gardener using spanish text)
+	// This text apparently only is broken in the floppy versions, the CD versions contain
+	// the correct string "MANIFESTACION - ARTISTICA.", which doesn't break the algorithm/game.
+	tmpPtr = strstr(textPtr, "MANIFESTACION-ARTISTICA.");
+	if (tmpPtr)
+		strcpy(tmpPtr, "MANIFESTACION - ARTISTICA.");
+	
 	while (textChar >= 0x20) {
 		if ((_curCharSet == 1) && (textChar >= 0x80))
 			textChar = 0x20;
