@@ -1,27 +1,25 @@
 # Common build rules, used by the sub modules and their module.mk files
 
-# Clean target, removes all object files. This looks a bit hackish, as we have to
-# copy the content of MODULE_OBJS to another unique variable (the next module.mk
-# will overwrite it after all). The same for the libMODULE.a library file.
-MODULE_OBJS-$(MODULE) := $(MODULE_OBJS)
-MODULE_LIB-$(MODULE) := $(MODULE)/$(PLUGIN_PREFIX)$(MODULE)$(PLUGIN_SUFFIX)
-clean: clean-$(MODULE)
-clean-$(MODULE): clean-% :
-	-$(RM) $(MODULE_OBJS-$*) $(MODULE_LIB-$*)
-
 # Convenience library target
-$(MODULE_LIB-$(MODULE)): $(MODULE_OBJS)
+$(MODULE)/lib$(MODULE).a: $(MODULE_OBJS)
 	-$(RM) $@
 	$(AR) $@ $+
 	$(RANLIB) $@ 
 
+# Clean target, removes all object files. This looks a bit hackish, as we have to
+# copy the content of MODULE_OBJS to another unique variable (the next module.mk
+# will overwrite it after all). The same for the libMODULE.a library file.
+MODULE_OBJS-$(MODULE) := $(MODULE_OBJS)
+MODULE_LIB-$(MODULE) := $(MODULE)/lib$(MODULE).a
+clean: clean-$(MODULE)
+clean-$(MODULE): clean-% :
+	-$(RM) $(MODULE_OBJS-$*) $(MODULE_LIB-$*)
+
 
 # Pseudo target for comfort, allows for "make common", "make gui" etc.
-$(MODULE): $(MODULE_LIB-$(MODULE))
+$(MODULE): $(MODULE_OBJS)
 
-ifdef STATIC_PLUGINS
-# Add static plugin object files to the main OBJS list
-OBJS += $(MODULE_LIB-$(MODULE))
-endif
+# Add convenience library to main OBJS list
+OBJS += $(MODULE)/lib$(MODULE).a
 
 .PHONY: clean-$(MODULE) $(MODULE)
