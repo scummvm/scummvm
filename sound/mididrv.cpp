@@ -1103,13 +1103,17 @@ int MidiDriver_ALSA::open(int mode)
 		return MERR_STREAMING_NOT_AVAILABLE;
 
 	if (!(var = getenv("SCUMMVM_PORT"))) {
-		error("You have to define the environnement variable SCUMMVM_PORT");
-		return -1;
+		// default alsa port if none specified
+		if (parse_addr("65:0", &seq_client, &seq_port) < 0) {
+			error("Invalid port %s", var);
+			return -1;
+		}
 	}
-
-	if (parse_addr(var, &seq_client, &seq_port) < 0) {
-		error("Invalid port %s", var);
-		return -1;
+        else {	
+		if (parse_addr(var, &seq_client, &seq_port) < 0) {
+			error("Invalid port %s", var);
+			return -1;
+		}
 	}
 
 	if (my_snd_seq_open(&seq_handle)) {
