@@ -343,7 +343,7 @@ class Script {
 public:
 	StringsTable _mainStrings;
 
-	Script();
+	Script(SagaEngine *vm);
 	~Script();
 	
 	void CF_script_togglestep();
@@ -382,6 +382,7 @@ public:
 	void scriptExec(int argc, const char **argv);
 	
 private:
+	SagaEngine *_vm;
 	bool _initialized;
 	bool _voiceLUTPresent;
 	RSCFILE_CONTEXT *_scriptContext;

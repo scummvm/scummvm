@@ -729,8 +729,7 @@ int Scene::loadSceneResourceList(uint32 reslist_rn) {
 	_resList = (SCENE_RESLIST *)calloc(_resListEntries, sizeof(*_resList));
 
 	if (_resList == NULL) {
-		warning("Scene::loadSceneResourceList(): Error: Memory allocation failed");
-		return MEM;
+		memoryError("Scene::loadSceneResourceList()");
 	}
 
 	// Load scene resource list from raw scene 
@@ -794,8 +793,8 @@ int Scene::processSceneResources() {
 							&_bgMask.buf_len, &_bgMask.w, &_bgMask.h);
 			debug(0, "BACKGROUND MASK width=%d height=%d length=%d", _bgMask.w, _bgMask.h, _bgMask.buf_len);
 			break;
-		case SAGA_SCENE_NAME_LIST:
-			debug(0, "Loading scene name list resource...");
+		case SAGA_STRINGS:
+			debug(0, "Loading scene strings resource...");
 			_vm->loadStrings(_sceneStrings, _resList[i].res_data, _resList[i].res_data_len);
 			break;
 		case SAGA_OBJECT_MAP:
@@ -806,43 +805,42 @@ int Scene::processSceneResources() {
 			debug(0, "Loading action map resource...");
 			_actionMap->load(res_data, res_data_len);
 			break;
-		case SAGA_ISO_TILESET:
+		case SAGA_ISO_IMAGES:
 			if (!(_vm->_scene->getFlags() & kSceneFlagISO)) {
-				warning("Scene::ProcessSceneResources(): Isometric tileset incompatible with normal scene mode");
-				return FAILURE;
+				error("Scene::ProcessSceneResources(): not Iso mode");
 			}
 
-			debug(0, "Loading isometric tileset resource.");
+			debug(0, "Loading isometric images resource.");
 
-			if (_vm->_isoMap->loadTileset(res_data, res_data_len) != SUCCESS) {
-				warning("Scene::ProcessSceneResources(): Error loading isometric tileset resource");
-				return FAILURE;
-			}
+			_vm->_isoMap->loadImages(res_data, res_data_len);
 			break;
-		case SAGA_ISO_METAMAP:
+		case SAGA_ISO_MAP:
 			if (!(_vm->_scene->getFlags() & kSceneFlagISO)) {
-				error("Scene::ProcessSceneResources(): Isometric metamap incompatible with normal scene mode");
+				error("Scene::ProcessSceneResources(): not Iso mode");
 			}
 
-			debug(0, "Loading isometric metamap resource.");
+			debug(0, "Loading isometric map resource.");
 
-			if (_vm->_isoMap->loadMetamap(res_data, res_data_len) != SUCCESS) {
-				warning("Scene::ProcessSceneResources(): Error loading isometric metamap resource");
-				return FAILURE;
-			}
+			_vm->_isoMap->loadMap(res_data, res_data_len);
 			break;
-		case SAGA_ISO_METATILESET:
+		case SAGA_ISO_PLATFORMS:
 			if (!(_vm->_scene->getFlags() & kSceneFlagISO)) {
-				error("Scene::ProcessSceneResources(): Isometric metatileset incompatible with normal scene mode");
+				error("Scene::ProcessSceneResources(): not Iso mode");
 			}
 
-			debug(0, "Loading isometric metatileset resource.");
+			debug(0, "Loading isometric platforms resource.");
 
-			if (_vm->_isoMap->loadMetaTileset(res_data, res_data_len) != SUCCESS) {
-				warning("Scene::ProcessSceneResources(): Error loading isometric tileset resource");
-				return FAILURE;
-			}
+			_vm->_isoMap->loadPlatforms(res_data, res_data_len);
 			break;
+		case SAGA_ISO_METATILES:
+			if (!(_vm->_scene->getFlags() & kSceneFlagISO)) {
+				error("Scene::ProcessSceneResources(): not Iso mode");
+			}
+
+			debug(0, "Loading isometric metatiles resource.");
+
+			_vm->_isoMap->loadMetaTiles(res_data, res_data_len);
+			break;			
 		case SAGA_ANIM_1:
 		case SAGA_ANIM_2:
 		case SAGA_ANIM_3:
@@ -870,6 +868,15 @@ int Scene::processSceneResources() {
 				_animEntries++;
 			}
 			break;
+		case SAGA_ISO_MULTI:
+			if (!(_vm->_scene->getFlags() & kSceneFlagISO)) {
+				error("Scene::ProcessSceneResources(): not Iso mode");
+			}
+
+			debug(0, "Loading isometric multi resource.");
+
+			_vm->_isoMap->loadMulti(res_data, res_data_len);
+			break;			
 		case SAGA_PAL_ANIM:
 			debug(0, "Loading palette animation resource.");
 			_vm->_palanim->loadPalAnim(_resList[i].res_data, _resList[i].res_data_len);

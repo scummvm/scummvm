@@ -31,104 +31,169 @@
 
 namespace Saga {
 
-IsoMap::IsoMap(Gfx *gfx) {
-	_gfx = gfx;
-	_init = 1;
-	_tiles_loaded = 0;
+IsoMap::IsoMap(SagaEngine *vm) : _vm(vm) {
+	_tileData = NULL;
+	_tilesCount = 0;
+	_tilePlatformList = NULL;
+	_tilePlatformsCount = 0;
+	_metaTileList = NULL;
+	_metaTilesCount = 0;
+	_multiTable = NULL;
+	_multiCount = 0;
 }
 
-int IsoMap::loadTileset(const byte *tileres_p, size_t tileres_len) {
-	ISOTILE_ENTRY first_entry;
-	ISOTILE_ENTRY *tile_tbl;
-
+void IsoMap::loadImages(const byte *resourcePointer, size_t resourceLength) {
+	IsoTileData *tileData;
 	uint16 i;
 
-	assert((_init) && (!_tiles_loaded));
-	assert((tileres_p != NULL) && (tileres_len > 0));
+	if (resourceLength == 0) {
+		error("IsoMap::loadImages wrong resourceLength");
+	}
 
-	MemoryReadStreamEndian readS(tileres_p, tileres_len, IS_BIG_ENDIAN);
-
+	_tileData = (byte*)malloc(resourceLength);
+	_tileDataLength = resourceLength;
+	memcpy(_tileData, resourcePointer, resourceLength);
+	
+	MemoryReadStreamEndian readS(_tileData, _tileDataLength, IS_BIG_ENDIAN);
 	readS.readUint16(); // skip
-	first_entry.tile_offset = readS.readUint16();
-
-	_tile_ct = first_entry.tile_offset / SAGA_ISOTILE_ENTRY_LEN;
+	_tilesCount = readS.readUint16();
+	_tilesCount = _tilesCount / SAGA_ISOTILEDATA_LEN;
 
 	readS.seek(0);
 
-	tile_tbl = (ISOTILE_ENTRY *)malloc(_tile_ct * sizeof(*tile_tbl));
-	if (tile_tbl == NULL) {
-		return MEM;
+	_tilesTable = (IsoTileData *)malloc(_tilesCount * sizeof(*_tilesTable));
+	if (_tilesTable == NULL) {
+		memoryError("IsoMap::loadImages");
 	}
 
-	for (i = 0; i < _tile_ct; i++) {
-		tile_tbl[i].tile_h = readS.readByte();
-		tile_tbl[i].mask_rule = readS.readByte();
-		tile_tbl[i].tile_offset = readS.readUint16();
-		tile_tbl[i].terrain_mask = readS.readSint16();
-		tile_tbl[i].mask = readS.readSint16();
+	for (i = 0; i < _tilesCount; i++) {
+		tileData = &_tilesTable[i];
+		tileData->height = readS.readByte();
+		tileData->attributes = readS.readByte();
+		tileData->offset = readS.readUint16();
+		tileData->terrainMask = readS.readSint16();
+		tileData->FGBGAttr = readS.readByte();
+		readS.readByte(); //skip
 	}
 
-	_tiles_loaded = 1;
-	_tile_tbl = tile_tbl;
-	_tileres_p = tileres_p;
-	_tileres_len = tileres_len;
-
-	return SUCCESS;
 }
 
-int IsoMap::loadMetaTileset(const byte *mtileres_p, size_t mtileres_len) {
-	ISO_METATILE_ENTRY *mtile_tbl;
-	uint16 mtile_ct;
-	uint16 ct;
-	int i;
+void IsoMap::loadPlatforms(const byte * resourcePointer, size_t resourceLength) {
+	TilePlatformData *tilePlatformData;
+	uint16 i, x, y;
 
-	assert(_init);
-	assert((mtileres_p != NULL) && (mtileres_len > 0));
-
-	MemoryReadStreamEndian readS(mtileres_p, mtileres_len, IS_BIG_ENDIAN);
-
-	mtile_ct = mtileres_len / SAGA_METATILE_ENTRY_LEN;
-	mtile_tbl = (ISO_METATILE_ENTRY *)malloc(mtile_ct * sizeof(*mtile_tbl));
-	if (mtile_tbl == NULL) {
-		return MEM;
+	if (resourceLength == 0) {
+		error("IsoMap::loadPlatforms wrong resourceLength");
 	}
 
-	for (ct = 0; ct < mtile_ct; ct++) {
-		mtile_tbl[ct].mtile_n = readS.readUint16();
-		mtile_tbl[ct].height = readS.readSint16();
-		mtile_tbl[ct].highest_pixel = readS.readSint16();
-		mtile_tbl[ct].v_bits = readS.readByte();
-		mtile_tbl[ct].u_bits = readS.readByte();
-		for (i = 0; i < SAGA_METATILE_SIZE; i++) {
-			mtile_tbl[ct].tile_tbl[i] = readS.readUint16();
+	MemoryReadStreamEndian readS(resourcePointer, resourceLength, IS_BIG_ENDIAN);
+
+	_tilePlatformsCount = resourceLength / SAGA_TILEPLATFORMDATA_LEN;
+	_tilePlatformList = (TilePlatformData *)malloc(_tilePlatformsCount * sizeof(*_tilePlatformList));
+	if (_tilePlatformList == NULL) {
+		memoryError("IsoMap::loadPlatforms");
+	}
+
+	for (i = 0; i < _tilePlatformsCount; i++) {
+		tilePlatformData = &_tilePlatformList[i];
+		tilePlatformData->metaTile = readS.readSint16();
+		tilePlatformData->height = readS.readSint16();
+		tilePlatformData->highestPixel = readS.readSint16();
+		tilePlatformData->vBits = readS.readByte();
+		tilePlatformData->uBits = readS.readByte();
+		for (y = 0; y < SAGA_PLATFORM_W; y++) {
+			for (x = 0; x < SAGA_PLATFORM_W; x++) {
+				tilePlatformData->tiles[x][y] = readS.readSint16();
+			}
 		}
 	}
 
-	_mtile_ct = mtile_ct;
-	_mtile_tbl = mtile_tbl;
-	_mtileres_p = mtileres_p;
-	_mtileres_len = mtileres_len;
-
-	_mtiles_loaded = 1;
-
-	return SUCCESS;
 }
 
-int IsoMap::loadMetamap(const byte *mm_res_p, size_t mm_res_len) {
-	int i;
+void IsoMap::loadMap(const byte * resourcePointer, size_t resourceLength) {
+	uint16 x, y;
 
-	MemoryReadStreamEndian readS(mm_res_p, mm_res_len, IS_BIG_ENDIAN);
-	_metamap_n = readS.readSint16();
-
-	for (i = 0; i < SAGA_METAMAP_SIZE; i++) {
-		_metamap_tbl[i] = readS.readUint16();
+	if (resourceLength != SAGA_TILEMAP_LEN) {
+		error("IsoMap::loadMap wrong resourceLength");
 	}
 
-	_mm_res_p = mm_res_p;
-	_mm_res_len = mm_res_len;
-	_metamap_loaded = 1;
+	MemoryReadStreamEndian readS(resourcePointer, resourceLength, IS_BIG_ENDIAN);
+	_tileMap.edgeType = readS.readByte();
+	readS.readByte(); //skip
 
-	return SUCCESS;
+	for (y = 0; y < SAGA_TILEMAP_H; y++) {
+		for (x = 0; x < SAGA_TILEMAP_W; x++) {
+			_tileMap.tilePlatforms[x][y] = readS.readSint16();
+		}
+	}
+
+}
+
+void IsoMap::loadMetaTiles(const byte * resourcePointer, size_t resourceLength) {
+	MetaTileData *metaTileData;
+	uint16 i, j;
+
+	if (resourceLength == 0) {
+		error("IsoMap::loadMetaTiles wrong resourceLength");
+	}
+
+	MemoryReadStreamEndian readS(resourcePointer, resourceLength, IS_BIG_ENDIAN);
+	_metaTilesCount = resourceLength / SAGA_METATILEDATA_LEN;
+
+	_metaTileList = (MetaTileData *)malloc(_metaTilesCount * sizeof(*_metaTileList));
+	if (_metaTileList == NULL) {
+		memoryError("IsoMap::loadMetaTiles");
+	}
+
+	for (i = 0; i < _metaTilesCount; i++) {
+		metaTileData = &_metaTileList[i];
+		metaTileData->highestPlatform = readS.readUint16();
+		metaTileData->highestPixel = readS.readUint16();
+		for (j = 0; j < SAGA_MAX_PLATFORM_H; j++) {
+			metaTileData->stack[j] = readS.readSint16();
+		}
+	}
+}
+
+void IsoMap::loadMulti(const byte * resourcePointer, size_t resourceLength) {
+	MultiTileEntryData *multiTileEntryData;
+	uint16 i;
+
+	if (resourceLength < 2) {
+		error("IsoMap::loadMetaTiles wrong resourceLength");
+	}
+
+	MemoryReadStreamEndian readS(resourcePointer, resourceLength, IS_BIG_ENDIAN);
+	_multiCount = readS.readUint16();
+	_multiTable = (MultiTileEntryData *)malloc(_multiCount * sizeof(*_multiTable));
+	if (_multiTable == NULL) {
+		memoryError("IsoMap::loadMulti");
+	}
+	debug(0,"resourceLength=%d but should be %d",resourceLength, 12*_multiCount + 2);
+	for (i = 0; i < _multiCount; i++) {
+		multiTileEntryData = &_multiTable[i];
+		readS.readUint16();//skip
+		multiTileEntryData->offset = readS.readSint16();
+		multiTileEntryData->u = readS.readByte();
+		multiTileEntryData->v = readS.readByte();
+		multiTileEntryData->h = readS.readByte();
+		multiTileEntryData->uSize = readS.readByte();
+		multiTileEntryData->vSize = readS.readByte();
+		multiTileEntryData->numStates = readS.readByte();
+		multiTileEntryData->currentState = readS.readByte();
+		readS.readByte();//skip
+	}
+}
+
+void IsoMap::freeMem() {
+	free(_tileData);
+	_tilesCount = 0;
+	free(_tilePlatformList);
+	_tilePlatformsCount = 0;
+	free(_metaTileList);
+	_metaTilesCount = 0;
+	free(_multiTable);
+	_multiCount = 0;
 }
 
 int IsoMap::draw(SURFACE *dst_s) {
@@ -141,136 +206,126 @@ int IsoMap::draw(SURFACE *dst_s) {
 }
 
 int IsoMap::drawMetamap(SURFACE *dst_s, int map_x, int map_y) {
-	int meta_base_x = map_x;
+/*	int meta_base_x = map_x;
 	int meta_base_y = map_y;
 	int meta_xi;
 	int meta_yi;
-	int meta_x;
-	int meta_y;
 	int meta_idx;
+	Point platformPoint;
 
 	for (meta_yi = SAGA_METAMAP_H - 1; meta_yi >= 0; meta_yi--) {
-		meta_x = meta_base_x;
-		meta_y = meta_base_y;
+		platformPoint.x = meta_base_x;
+		platformPoint.y = meta_base_y;
 		for (meta_xi = SAGA_METAMAP_W - 1; meta_xi >= 0; meta_xi--) {
 			meta_idx = meta_xi + (meta_yi * 16);
-			drawMetaTile(dst_s, _metamap_tbl[meta_idx], meta_x, meta_y);
-			meta_x += 128;
-			meta_y += 64;
+			drawMetaTile(dst_s, _metamap_tbl[meta_idx], platformPoint);
+			platformPoint.x += 128;
+			platformPoint.y += 64;
 		}
 
 		meta_base_x -= 128;
 		meta_base_y += 64;
 	}
-
+*/
 	return SUCCESS;
 }
 
-int IsoMap::drawMetaTile(SURFACE *dst_s, uint16 mtile_i, int mtile_x, int mtile_y) {
-	int tile_xi;
-	int tile_yi;
-	int tile_x;
-	int tile_y;
-	int tile_base_x;
-	int tile_base_y;
-	int tile_i;
-	ISO_METATILE_ENTRY *mtile_p;
-	assert(_init && _mtiles_loaded);
+int IsoMap::drawMetaTile(SURFACE *ds, uint16 platformNumber, const Point &point) {
+	int x;
+	int y;
+	
+	TilePlatformData *tilePlatformData;
+	Point tilePoint;
+	Point tileBasePoint;
 
-	if (mtile_i >= _mtile_ct) {
+	if (platformNumber >= _tilePlatformsCount) {
 		return FAILURE;
 	}
 
-	mtile_p = &_mtile_tbl[mtile_i];
+	tilePlatformData = &_tilePlatformList[platformNumber];
 
-	tile_base_x = mtile_x;
-	tile_base_y = mtile_y;
+	tileBasePoint = point;
 
-	for (tile_yi = SAGA_METATILE_H - 1; tile_yi >= 0; tile_yi--) {
-		tile_y = tile_base_y;
-		tile_x = tile_base_x;
-		for (tile_xi = SAGA_METATILE_W - 1; tile_xi >= 0; tile_xi--) {
-			tile_i = tile_xi + (tile_yi * SAGA_METATILE_W);
-			drawTile(dst_s, mtile_p->tile_tbl[tile_i], tile_x, tile_y);
-			tile_x += SAGA_ISOTILE_WIDTH / 2;
-			tile_y += SAGA_ISOTILE_BASEHEIGHT / 2 + 1;
+	for (y = SAGA_PLATFORM_W - 1; y >= 0; y--) {
+		tilePoint = tileBasePoint;
+		for (x = SAGA_PLATFORM_W - 1; x >= 0; x--) {
+			drawTile(ds, tilePlatformData->tiles[x][y], tilePoint);
+			tilePoint.x += SAGA_ISOTILE_WIDTH / 2;
+			tilePoint.y += SAGA_ISOTILE_BASEHEIGHT / 2 + 1;
 		}
-		tile_base_x -= SAGA_ISOTILE_WIDTH / 2;
-		tile_base_y += SAGA_ISOTILE_BASEHEIGHT / 2 + 1;
+		tileBasePoint.x -= SAGA_ISOTILE_WIDTH / 2;
+		tileBasePoint.y += SAGA_ISOTILE_BASEHEIGHT / 2 + 1;
 	}
 
 	return SUCCESS;
 }
 
-int IsoMap::drawTile(SURFACE *dst_s, uint16 tile_i, int tile_x, int tile_y) {
-	const byte *tile_p;
-	const byte *read_p;
-	byte *draw_p;
-	int draw_x;
-	int draw_y;
-	int tile_h;
-	int w_count = 0;
+int IsoMap::drawTile(SURFACE *ds, uint16 tileNumber, const Point &point) {
+	const byte *tilePointer;
+	const byte *readPointer;
+	byte *drawPointer;
+	Point drawPoint;
+	int height;
+	int widthCount = 0;
 	int row;
 	int bg_runct;
 	int fg_runct;
 	int ct;
 
-	assert(_init && _tiles_loaded);
 
-	if (tile_i >= _tile_ct) {
+	if (tileNumber >= _tilesCount) {
 		return FAILURE;
 	}
 
 	/* temporary x clip */
-	if (tile_x < 0) {
+	if (point.x < 0) {
 		return SUCCESS;
 	}
 
 	/* temporary x clip */
-	if (tile_x >= 320 - 32) {
+	if (point.x >= ds->w - 32) {
 		return SUCCESS;
 	}
 
-	tile_p = _tileres_p + _tile_tbl[tile_i].tile_offset;
-	tile_h = _tile_tbl[tile_i].tile_h;
+	tilePointer = _tileData + _tilesTable[tileNumber].offset;
+	height = _tilesTable[tileNumber].height;
 
-	read_p = tile_p;
-	draw_p = (byte *)dst_s->pixels + tile_x + (tile_y * dst_s->pitch);
+	readPointer = tilePointer;
+	drawPointer = (byte *)ds->pixels + point.x + (point.y * ds->pitch);
 
-	draw_x = tile_x;
-	draw_y = tile_y;
+	drawPoint = point;
 
-	if (tile_h > SAGA_ISOTILE_BASEHEIGHT) {
-		draw_y = tile_y - (tile_h - SAGA_ISOTILE_BASEHEIGHT);
+	if (height > SAGA_ISOTILE_BASEHEIGHT) {
+		drawPoint.y -= (height - SAGA_ISOTILE_BASEHEIGHT);
 	}
 
 	// temporary y clip
-	if (draw_y < 0) {
+	if (drawPoint.y < 0) {
 		return SUCCESS;
 	}
 
-	for (row = 0; row < tile_h; row++) {
-		draw_p = (byte *)dst_s->pixels + draw_x + ((draw_y + row) * dst_s->pitch);
-		w_count = 0;
+	for (row = 0; row < height; row++) {
+		drawPointer = (byte *)ds->pixels + drawPoint.x + ((drawPoint.y + row) * ds->pitch);
+		widthCount = 0;
 
 		// temporary y clip
-		if ((draw_y + row) >= 137) {
+		if ((drawPoint.y + row) >= _vm->getDisplayInfo().sceneHeight) {
 			return SUCCESS;
 		}
 
 		for (;;) {
-			bg_runct = *read_p++;
-			w_count += bg_runct;
-			if (w_count >= SAGA_ISOTILE_WIDTH) {
+			bg_runct = *readPointer++;
+			widthCount += bg_runct;
+			if (widthCount >= SAGA_ISOTILE_WIDTH) {
 				break;
 			}
 
-			draw_p += bg_runct;
-			fg_runct = *read_p++;
-			w_count += fg_runct;
+			drawPointer += bg_runct;
+			fg_runct = *readPointer++;
+			widthCount += fg_runct;
 
 			for (ct = 0; ct < fg_runct; ct++) {
-				*draw_p++ = *read_p++;
+				*drawPointer++ = *readPointer++;
 			}
 		}
 	}

@@ -28,70 +28,94 @@
 
 namespace Saga {
 
-struct ISOTILE_ENTRY {
-	int tile_h;
-	int mask_rule;
-	size_t tile_offset;
-	int terrain_mask;
-	int mask;
-};
-
-#define SAGA_ISOTILE_ENTRY_LEN 8
+#define SAGA_ISOTILEDATA_LEN 8
 #define SAGA_ISOTILE_WIDTH 32
 #define SAGA_ISOTILE_BASEHEIGHT 15
 
-#define SAGA_METATILE_W 8
-#define SAGA_METATILE_H 8
-#define SAGA_METATILE_SIZE 64
+#define SAGA_TILEPLATFORMDATA_LEN 136
+#define SAGA_PLATFORM_W 8
+#define SAGA_MAX_PLATFORM_H 16
 
-#define SAGA_METAMAP_W 16
-#define SAGA_METAMAP_H 16
-#define SAGA_METAMAP_SIZE 256
+#define SAGA_TILEMAP_LEN 514
+#define SAGA_TILEMAP_W 16
+#define SAGA_TILEMAP_H 16
 
-struct ISO_METATILE_ENTRY {
-	int mtile_n;
-	int height;
-	int highest_pixel;
-	byte v_bits;
-	byte u_bits;
-	int tile_tbl[SAGA_METATILE_SIZE];
+#define SAGA_METATILEDATA_LEN 36
+
+struct IsoTileData {
+	byte height;
+	int8 attributes;
+	size_t offset;
+	uint16 terrainMask;
+	byte FGBGAttr;
 };
 
-#define SAGA_METATILE_ENTRY_LEN 136
 
-class Gfx;
+struct TilePlatformData {
+	int16 metaTile;	
+	int16 height;
+	int16 highestPixel;
+	byte vBits;
+	byte uBits;
+	int16 tiles[SAGA_PLATFORM_W][SAGA_PLATFORM_W];
+};
+
+struct TileMapData {
+	byte edgeType;
+	int16 tilePlatforms[SAGA_TILEMAP_W][SAGA_TILEMAP_H];
+};
+
+struct MetaTileData {
+	uint16 highestPlatform;
+	uint16 highestPixel;
+	int16 stack[SAGA_MAX_PLATFORM_H];
+};
+
+struct MultiTileEntryData {
+	int16 offset;
+	byte u;
+	byte v;
+	byte h;
+	byte uSize;
+	byte vSize;
+	byte numStates;
+	byte currentState;
+};
 
 class IsoMap {
 public:
-	IsoMap(Gfx *gfx);
-	int loadTileset(const byte *, size_t);
-	int loadMetaTileset(const byte *, size_t);
-	int loadMetamap(const byte *mm_res_p, size_t mm_res_len);
+	IsoMap(SagaEngine *vm);
+	~IsoMap() {
+		freeMem();
+	}
+	void loadImages(const byte * resourcePointer, size_t resourceLength);
+	void loadMap(const byte * resourcePointer, size_t resourceLength);
+	void loadPlatforms(const byte * resourcePointer, size_t resourceLength);
+	void loadMetaTiles(const byte * resourcePointer, size_t resourceLength);
+	void loadMulti(const byte * resourcePointer, size_t resourceLength);
+	void freeMem();
 	int draw(SURFACE *dst_s);
 private:
-	int drawTile(SURFACE *dst_s, uint16 tile_i, int tile_x, int tile_y);
-	int drawMetaTile(SURFACE *dst_s, uint16 mtile_i, int mtile_x, int mtile_y);
+	int drawTile(SURFACE *ds, uint16 tileNumber, const Point &point);
+	int drawMetaTile(SURFACE *ds, uint16 platformNumber, const Point &point);
 	int drawMetamap(SURFACE *dst_s, int map_x, int map_y);
-	int _init;
-	int _tiles_loaded;
-	const byte *_tileres_p;
-	size_t _tileres_len;
-	uint16 _tile_ct;
-	ISOTILE_ENTRY *_tile_tbl;
+	
+	byte *_tileData;
+	size_t _tileDataLength;	
+	uint16 _tilesCount;
+	IsoTileData *_tilesTable;
 
-	int _mtiles_loaded;
-	const byte *_mtileres_p;
-	size_t _mtileres_len;
-	uint16 _mtile_ct;
-	ISO_METATILE_ENTRY *_mtile_tbl;
+	uint16 _tilePlatformsCount;
+	TilePlatformData *_tilePlatformList;
+	uint16 _metaTilesCount;
+	MetaTileData *_metaTileList;
+	
+	uint16 _multiCount;
+	MultiTileEntryData *_multiTable;
 
-	int _metamap_loaded;
-	int _metamap_n;
-	uint16 _metamap_tbl[SAGA_METAMAP_SIZE];
-	const byte *_mm_res_p;
-	size_t _mm_res_len;
+	TileMapData _tileMap;
 
-	Gfx *_gfx;
+	SagaEngine *_vm;
 };
 
 } // End of namespace Saga

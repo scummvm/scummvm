@@ -206,11 +206,12 @@ int SagaEngine::init(GameDetector &detector) {
 	_font = new Font(this);
 	_sprite = new Sprite(this);
 	_anim = new Anim(this);
-	_script = new Script();
+	_script = new Script(this);
 	_interface = new Interface(this); // requires script module
 	_actor = new Actor(this);
 	_palanim = new PalAnim(this);
 	_scene = new Scene(this);
+	_isoMap = new IsoMap(this);
 
 	if (!_scene->initialized()) {
 		warning("Couldn't initialize scene module");
@@ -249,7 +250,6 @@ int SagaEngine::init(GameDetector &detector) {
 		debug(0, "Music disabled.");
 	}
 
-	_isoMap = new IsoMap(_gfx);
 	
 	_render = new Render(this, _system);
 	if (!_render->initialized()) {

@@ -41,7 +41,7 @@ namespace Saga {
 
 // Initializes the scripting module.
 // Loads script resource look-up table, initializes script data system
-Script::Script() {
+Script::Script(SagaEngine *vm) : _vm(vm){
 	RSCFILE_CONTEXT *resourceContext;
 	byte *resourcePointer;
 	size_t resourceLength;
