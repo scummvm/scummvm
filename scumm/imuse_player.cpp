@@ -1028,6 +1028,7 @@ int Player::addParameterFader(int param, int target, int time) {
 				ptr->param = 0;
 			return 0;
 		}
+		break;
 
 	default:
 		warning("Player::addParameterFader (%d, %d, %d): Unknown parameter", param, target, time);
