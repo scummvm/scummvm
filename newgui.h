@@ -21,15 +21,26 @@
 #ifndef NEWGUI_H
 #define NEWGUI_H
 
-#include <stack>
-
 #include "scummsys.h"
 
 class Scumm;
 class Dialog;
 
-typedef std::stack<Dialog *> DialogStack;
+// Extremly simple stack class, doesn't even do any error checking (for now)
+class DialogStack {
+protected:
+	Dialog	*_stack[10];	// Anybody nesting dialogs deeper than 4 is mad anyway
+	int		_size;
+public:
+	DialogStack() : _size(0) {}
+	
+	bool	empty() const		{ return _size <= 0; }
+	void	push(Dialog *d)		{ _stack[_size++] = d; }
+	Dialog	*top() const		{ return _stack[_size-1]; }
+	void	pop()				{ if (_size > 0) _stack[--_size] = 0; }
+};
 
+// This class hopefully will replace the old Gui class completly one day 
 class NewGui {
 	friend class Dialog;
 public:
@@ -50,7 +61,6 @@ public:
 protected:
 	Scumm		*_s;
 	bool		_need_redraw;
-//	Dialog		*_activeDialog;
 	DialogStack	_dialogStack;
 	
 	Dialog		*_pauseDialog;
