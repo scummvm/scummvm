@@ -26,14 +26,20 @@ OBJS	:=
 
 # Turn on useful warnings
 CXXFLAGS+= -Wall -pedantic -Wpointer-arith -Wcast-qual -Wcast-align -Wconversion
-CXXFLAGS+= -Wshadow -Wstrict-prototypes -Wuninitialized -Wimplicit
+CXXFLAGS+= -Wshadow -Wstrict-prototypes -Wuninitialized -Wimplicit -Wundef
 CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder
-CXXFLAGS+= -Wwrite-strings -Wredundant-decls -Wdisabled-optimization -fcheck-new -Wundef
-CXXFLAGS+= -Wctor-dtor-privacy -Wnon-virtual-dtor
+CXXFLAGS+= -Wwrite-strings -fcheck-new -Wctor-dtor-privacy -Wnon-virtual-dtor
+
 # Seems GCC 2.95 doesn't support the following, so we do not yet turn them
 # on by default (but I'd strongly recommend to all GCC 2.95 users to update
 # to a better compiler like GCC 3.x).
-# CXXFLAGS+= -ansi -W -Wno-unused-parameter -Woverloaded-virtual -Wfloat-equal
+# CXXFLAGS+= -ansi -W -Wno-unused-parameter -Woverloaded-virtual -Wdisabled-optimization -Wfloat-equal
+
+# The following causes problems on some systems where the system header
+# contain duplicate declarations already. That's really a bug in the 
+# system headers, but since it causes lots of warnings on those systems,
+# we don't enable it by default
+#CXXFLAGS+= -Wredundant-decls
 
 # Load the build rules & settings for the chosen backend
 -include build.rules
