@@ -1215,7 +1215,6 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 				pts[0].x = pts[0].y = pts[1].y = pts[3].x = -w / 2;
 				pts[2].y = pts[3].y = h / 2 - 1;
 
-				// transform points
 				if (spi->flags & kSFZoomed) {
 					for (int j = 0; j < 4; ++j) {
 						pts[j].x = pts[i].x * zoom / 256;
@@ -1257,7 +1256,7 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 			wiz.img.flags |= 2;
 		if (spi->field_7C) {
 			wiz.processFlags |= 0x80000;
-			//wiz.field_178 = spi->field_7C; // FIXME
+			wiz.unk_178 = spi->field_7C;
 		}
 		wiz.processFlags |= kWPFNewFlags;
 		
@@ -1286,11 +1285,11 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 		}
 		if (spi->field_14) {
 			wiz.processFlags |= 0x8000;
-			//wiz.field_174 = spi->field_14; // FIXME
+			wiz.unk_174 = spi->field_14;
 		}
 		if (spi->res_id && spi->group_num && _spriteGroups[spi->group_num].field_20) {
 			wiz.processFlags |= 0x1000;
-			//wiz.field_380 = _spriteGroups[spi->group_num].field_20; // FIXME
+			wiz.unk_380 = _spriteGroups[spi->group_num].field_20;
 		}
 		displayWizComplexImage(&wiz);
 	}

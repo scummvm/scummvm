@@ -88,7 +88,7 @@ void Wiz::polygonStore(int id, bool flag, int vert1x, int vert1y, int vert2x, in
 	wp->vert[4].x = vert1x;
 	wp->vert[4].y = vert1y;
 	wp->id = id;
-	wp->numVerts = 5;  
+	wp->numVerts = 5;
 	wp->flag = flag;	
 
 	polygonCalcBoundBox(wp->vert, wp->numVerts, wp->bound);

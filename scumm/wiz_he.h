@@ -63,9 +63,15 @@ struct WizParameters {
 	int zoom;
 	int unk_15C;
 	int unk_160;
+	int unk_164;
+	int unk_16C;
+	int unk_170;
+	int unk_174;
+	int unk_178;
 	uint8 remapColor[256];
 	uint8 remapIndex[256];
 	int remapNum;
+	int unk_380;
 	WizImage img;
 };
 
