@@ -325,6 +325,13 @@ OSystem_X11::OSystem_X11()
 	num_of_dirty_square = MAX_NUMBER_OF_DIRTY_SQUARES;
 	_overlay_visible = false;
 	_mouse_state_changed = true;
+	_mouse_visible = true;
+	cur_state.x = 0;
+	cur_state.y = 0;
+	cur_state.hot_x = 0;
+	cur_state.hot_y = 0;
+	cur_state.w = 0;
+	cur_state.h = 0;
 	
 	/* For the window title */
 	sprintf(buf, "ScummVM");
