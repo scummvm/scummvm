@@ -742,6 +742,10 @@ void Sound::pauseSounds(bool pause) {
 	if (se)
 		se->pause(pause);
 
+	// Don't pause sounds if the game isn't active
+	if (!_scumm->_roomResource)
+		return;
+
 	_soundsPaused = pause;
 	_scumm->_mixer->pause(pause);	
 
