@@ -5,23 +5,30 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * $Header$
- *
  */
+
+/*
+ * Readline and command completion support by Tom Dunstan <tommyd@senet.com.au>
+ */
+
 
 #include "stdafx.h"
 #include "scumm.h"
 
+#ifdef HAVE_READLINE
+#include "debugrl.h"
+#endif
 
 enum {
 	CMD_INVALID,
@@ -42,6 +49,9 @@ void ScummDebugger::attach(Scumm *s) {
 	s->_debugger = this;
 
 	_go_amount = 1;
+#ifdef HAVE_READLINE
+	initialize_readline();
+#endif
 }
 
 bool ScummDebugger::do_command() {
@@ -128,8 +138,11 @@ int ScummDebugger::get_command() {
 	const DebuggerCommands *dc;
 	char *s;
 	int i;
+	static char *buf;
 
 	do {
+#ifndef HAVE_READLINE
+		buf = _cmd_buffer;
 		printf("debug> ");
 		if (!fgets(_cmd_buffer, sizeof(_cmd_buffer), stdin))
 			return CMD_QUIT;
@@ -140,11 +153,26 @@ int ScummDebugger::get_command() {
 
 		if (i==0)
 			continue;
-						
+					
+#else // yes we do have readline
+		if(buf) {
+		  free(buf);
+		}
+		buf = readline("debug> ");
+		if(!buf) {
+		  printf("\n");
+		  return CMD_QUIT;
+		}
+		if(strlen(buf) == 0) {
+			continue;
+		}
+		add_history(buf);
+#endif
+
 		dc = debugger_commands;
 		do {
-			if (!strncmp(_cmd_buffer, dc->text, dc->len)) {
-				for(s=_cmd_buffer;*s;s++) {
+			if (!strncmp(buf, dc->text, dc->len)) {
+				for(s=buf;*s;s++) {
 					if (*s==32) { s++; break; }
 				}
 				_parameters = s;
@@ -152,9 +180,9 @@ int ScummDebugger::get_command() {
 			}
 		} while ((++dc)->text[0]);
 		
-		for(s=_cmd_buffer;*s;s++)
+		for(s=buf;*s;s++)
 			if (*s==32) { *s=0; break; }
-		printf("Invalid command '%s'. Type 'help' for a list of available commands.\n", _cmd_buffer);
+		printf("Invalid command '%s'. Type 'help' for a list of available commands.\n", buf);
 	} while (1);
 }
 

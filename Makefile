@@ -2,11 +2,11 @@
 
 CC	= gcc
 CFLAGS	= -g -Wno-multichar
-DEFINES	= -DUNIX
+DEFINES	= -DUNIX -DHAVE_READLINE
 LDFLAGS := 
 INCLUDES:= `sdl-config --cflags`
 CPPFLAGS= $(DEFINES) $(INCLUDES)
-LIBS	= `sdl-config --libs`
+LIBS	= `sdl-config --libs` -lreadline -lncurses -lhistory
 ZIPFILE := scummvm-`date '+%Y-%m-%d'`.zip
 
 INCS	= scumm.h scummsys.h stdafx.h
@@ -14,13 +14,11 @@ INCS	= scumm.h scummsys.h stdafx.h
 OBJS	= actor.o boxes.o costume.o gfx.o object.o resource.o \
 	  saveload.o script.o scummvm.o sound.o string.o \
 	  sys.o verbs.o sdl.o script_v1.o script_v2.o debug.o gui.o \
-	  imuse.o
+	  imuse.o debugrl.o
 
-DISTFILES=actor.cpp boxes.cpp costume.cpp gfx.cpp object.cpp resource.cpp \
-	  saveload.cpp script.cpp scummvm.cpp sound.cpp string.cpp \
-	  sys.cpp verbs.cpp sdl.cpp script_v1.cpp script_v2.cpp debug.cpp \
-	  Makefile scumm.h scummsys.h stdafx.h stdafx.cpp windows.cpp \
-          whatsnew.txt readme.txt copying.txt scummvm.dsp scummvm.dsw 
+DISTFILES=$(OBJS:.o=.cpp) Makefile scumm.h scummsys.h stdafx.h stdafx.cpp \
+	  windows.cpp debugrl.h whatsnew.txt readme.txt copying.txt \
+	  scummvm.dsp scummvm.dsw 
 
 .cpp.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $(<)
