@@ -41,6 +41,8 @@ namespace Saga {
 #define RID_IHNMDEMO_SCRIPT_LUT 18
 
 // SCENES
+#define ITE_SCENE_INV -1
+
 #define ITE_DEFAULT_SCENE 32
 
 // FONTS

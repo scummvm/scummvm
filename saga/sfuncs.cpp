@@ -39,6 +39,7 @@
 #include "saga/sndres.h"
 
 #include "saga/script.h"
+#include "saga/objectmap.h"
 
 #include "saga/scene.h"
 
@@ -48,20 +49,20 @@ namespace Saga {
 
 void Script::setupScriptFuncList(void) {
 	static const ScriptFunctionDescription scriptFunctionsList[SCRIPT_FUNCTION_MAX] = {
-		OPCODE(SF_putString),
+		OPCODE(sfPutString),
 		OPCODE(sfWait),
-		OPCODE(SF_takeObject),
-		OPCODE(SF_objectIsCarried),
+		OPCODE(sfTakeObject),
+		OPCODE(sfIsCarried),
 		OPCODE(sfStatusBar),
-		OPCODE(SF_mainMode),
+		OPCODE(sfMainMode),
 		OPCODE(sfScriptWalkTo),
-		OPCODE(SF_doAction),
+		OPCODE(sfScriptDoAction),
 		OPCODE(sfSetActorFacing),
 		OPCODE(sfStartBgdAnim),
 		OPCODE(sfStopBgdAnim),
 		OPCODE(sfLockUser),
-		OPCODE(SF_preDialog),
-		OPCODE(SF_killActorThreads),
+		OPCODE(sfPreDialog),
+		OPCODE(sfKillActorThreads),
 		OPCODE(sfFaceTowards),
 		OPCODE(sfSetFollower),
 		OPCODE(SF_gotoScene),
@@ -132,90 +133,70 @@ void Script::setupScriptFuncList(void) {
 
 // Script function #0 (0x00)
 // Print a debugging message
-int Script::SF_putString(SCRIPTFUNC_PARAMS) {
-	int16 stringIndex = thread->pop();
+void Script::sfPutString(SCRIPTFUNC_PARAMS) {
+	const char *str;
+	str = thread->_strings->getString(thread->pop());
 
-	_vm->_console->DebugPrintf(thread->_strings->getString(stringIndex));
-	return SUCCESS;
+	_vm->_console->DebugPrintf("sfPutString: %s\n",str);
+	debug(0, "sfPutString: %s", str);
 }
 
 // Script function #1 (0x01) blocking
 // Param1: time in ticks
-int Script::sfWait(SCRIPTFUNC_PARAMS) {
+void Script::sfWait(SCRIPTFUNC_PARAMS) {
 	int16 time;
 	time = thread->pop();
 
 	if (!_skipSpeeches) {
 		thread->waitDelay(ticksToMSec(time)); // put thread to sleep
 	}
-	return SUCCESS;
 }
 
 // Script function #2 (0x02)
-int Script::SF_takeObject(SCRIPTFUNC_PARAMS) {
-	thread->pop();
-	warning("Not implemented");
-/*	ScriptDataWord param = thread->pop();
-	int index = param & 0x1FFF;
-	
-	
-	if (index >= ARRAYSIZE(ObjectTable)) {
-		return FAILURE;
+void Script::sfTakeObject(SCRIPTFUNC_PARAMS) {
+	uint16 objectId = thread->pop();
+	ObjectData *obj;
+	obj = _vm->_actor->getObj(objectId);
+	if (obj->sceneNumber != ITE_SCENE_INV) {
+		obj->sceneNumber = ITE_SCENE_INV;
+		//_vm->_interface->addToInventory(index); TODO: do it
 	}
-
-	if (ObjectTable[index].sceneIndex != -1) {
-		ObjectTable[index].sceneIndex = -1;
-		_vm->_interface->addToInventory(index);
-	}*/
-
-	return SUCCESS;
 }
 
 // Script function #3 (0x03)
 // Check if an object is carried.
-int Script::SF_objectIsCarried(SCRIPTFUNC_PARAMS) {
-	/*ScriptDataWord param =*/ thread->pop();
-	warning("Not implemented");
-	thread->_returnValue = 0;
-/*	
-	
-	int index = param & 0x1FFF;
+void Script::sfIsCarried(SCRIPTFUNC_PARAMS) {
+	uint16 objectId = thread->pop();
+	ObjectData *obj;
+	obj = _vm->_actor->getObj(objectId);
 
-	if (index >= ARRAYSIZE(ObjectTable)) {
-		thread->retVal = 0;
-		return FAILURE;
-	}
-
-	thread->retVal = (ObjectTable[index].sceneIndex == -1) ? 1 : 0;*/
-	return SUCCESS;
+	thread->_returnValue = (obj->sceneNumber == ITE_SCENE_INV) ? 1 : 0;
 }
 
 // Script function #4 (0x04) nonblocking
 // Set the command display to the specified text string
 // Param1: dialogue index of string
-int Script::sfStatusBar(SCRIPTFUNC_PARAMS) {
+void Script::sfStatusBar(SCRIPTFUNC_PARAMS) {
 	int16 stringIndex = thread->pop();
 
-	return _vm->_interface->setStatusText(thread->_strings->getString(stringIndex));
+	_vm->_interface->setStatusText(thread->_strings->getString(stringIndex));
 }
 
 // Script function #5 (0x05)
-int Script::SF_mainMode(SCRIPTFUNC_PARAMS) {
-	; // center actor
-	; // show verb
+void Script::sfMainMode(SCRIPTFUNC_PARAMS) {
+	_vm->_actor->_centerActor = _vm->_actor->_protagonist;
+	showVerb();		
 	_vm->_interface->activate();
 	_vm->_interface->setMode(kPanelInventory);
-	; // set pointer verb
-
-	return SUCCESS;
+	setPointerVerb();
 }
 
 // Script function #6 (0x06) blocking
 // Param1: actor id
 // Param2: actor x
 // Param3: actor y
-int Script::sfScriptWalkTo(SCRIPTFUNC_PARAMS) {
-	int16 actorId;
+void Script::sfScriptWalkTo(SCRIPTFUNC_PARAMS) {
+	uint16 actorId;
 	Location actorLocation;
 	ActorData *actor;
 
@@ -231,26 +212,83 @@ int Script::sfScriptWalkTo(SCRIPTFUNC_PARAMS) {
 	if (_vm->_actor->actorWalkTo(actorId, actorLocation)) {
 		thread->waitWalk(actor);
 	}
-	return SUCCESS;
 }
 
 // Script function #7 (0x07)
-int Script::SF_doAction(SCRIPTFUNC_PARAMS) {
-	thread->pop();
-	thread->pop();
-	thread->pop();
-	thread->pop();
+// Param1: actor id
+// Param2: action
+// Param3: theObject
+// Param4: withObject
+void Script::sfScriptDoAction(SCRIPTFUNC_PARAMS) {
+	uint16 objectId;
+	uint16 action;
+	uint16 theObject;
+	uint16 withObject;
+	int16 scriptEntryPointNumber;
+	int16 moduleNumber;
+	ActorData *actor;
+	ObjectData *obj;
+	const HitZone *hitZone;
+	EVENT event;
 
-	// The parameters correspond with the thread variables.
+	objectId = thread->pop();
+	action = thread->pop();
+	theObject = thread->pop();
+	withObject = thread->pop();
 
-	//debug(1, "stub: SF_doAction(%d, %d, %d, %d)", actor_parm, action_parm, obj_parm, withobj_parm);
-	return SUCCESS;
+	switch (objectTypeId(objectId)) {
+		case kGameObjectObject:
+			obj = _vm->_actor->getObj(objectId);
+			scriptEntryPointNumber = obj->scriptEntrypointNumber;
+			if (scriptEntryPointNumber <= 0) {
+				return;
+			}
+			moduleNumber = 0; 
+			break;
+		case kGameObjectActor: 
+			actor = _vm->_actor->getActor(objectId);			
+			scriptEntryPointNumber = actor->scriptEntrypointNumber;
+			if (scriptEntryPointNumber <= 0) {
+				return;
+			}
+			if (actor->flags & (kProtagonist | kFollower)) {
+				moduleNumber = 0; 
+			} else {
+				moduleNumber = _vm->_scene->getScriptModuleNumber();
+			}
+			break;
+		case kGameObjectHitZone:
+		case kGameObjectStepZone:
+			if (objectTypeId(objectId) == kGameObjectHitZone) {
+				hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(objectId));
+			} else {
+				hitZone = _vm->_scene->_actionMap->getHitZone(objectIdToIndex(objectId));
+			}
+			scriptEntryPointNumber = hitZone->getScriptNumber();
+			moduleNumber = _vm->_scene->getScriptModuleNumber();			
+			break;
+		default:
+			error("Script::sfScriptDoAction wrong object type");
+	}
+
+	event.type = ONESHOT_EVENT;
+	event.code = SCRIPT_EVENT;
+	event.op = EVENT_EXEC_NONBLOCKING;
+	event.time = 0;
+	event.param = moduleNumber;
+	event.param2 = scriptEntryPointNumber;
+	event.param3 = action;		// Action
+	event.param4 = theObject;	// Object
+	event.param5 = theObject;	// With Object
+	event.param6 = objectId;
+
+	_vm->_events->queue(&event);
 }
 
 // Script function #8 (0x08) nonblocking
 // Param1: actor id
 // Param2: actor orientation
-int Script::sfSetActorFacing(SCRIPTFUNC_PARAMS) {
+void Script::sfSetActorFacing(SCRIPTFUNC_PARAMS) {
 	int16 actorId;
 	int actorDirection;
 	ActorData *actor;
@@ -261,12 +299,10 @@ int Script::sfSetActorFacing(SCRIPTFUNC_PARAMS) {
 	actor = _vm->_actor->getActor(actorId);
 	actor->facingDirection = actor->actionDirection = actorDirection;
 	actor->targetObject = ID_NOTHING;
-
-	return SUCCESS;
 }
 
 // Script function #9 (0x09)
-int Script::sfStartBgdAnim(SCRIPTFUNC_PARAMS) {
+void Script::sfStartBgdAnim(SCRIPTFUNC_PARAMS) {
 	int16 animId = thread->pop();
 	int16 cycles = thread->pop();
 
@@ -274,17 +310,15 @@ int Script::sfStartBgdAnim(SCRIPTFUNC_PARAMS) {
 	_vm->_anim->play(animId, kRepeatSpeed);
 
 	debug(1, "sfStartBgdAnim(%d, %d)", animId, cycles);
-	return SUCCESS;
 }
 
 // Script function #10 (0x0A)
-int Script::sfStopBgdAnim(SCRIPTFUNC_PARAMS) {
+void Script::sfStopBgdAnim(SCRIPTFUNC_PARAMS) {
 	int16 animId = thread->pop();
 
 	_vm->_anim->stop(animId);
 
 	debug(1, "sfStopBgdAnim(%d)", animId);
-	return SUCCESS;
 }
 
 // Script function #11 (0x0B) nonblocking
@@ -292,7 +326,7 @@ int Script::sfStopBgdAnim(SCRIPTFUNC_PARAMS) {
 // continues to run. If the parameter is false, the user interface is 
 // reenabled.
 // Param1: boolean
-int Script::sfLockUser(SCRIPTFUNC_PARAMS) {
+void Script::sfLockUser(SCRIPTFUNC_PARAMS) {
 	int16 lock;
 
 	lock = thread->pop();
@@ -303,12 +337,11 @@ int Script::sfLockUser(SCRIPTFUNC_PARAMS) {
 		_vm->_interface->activate();
 	}
 
-	return SUCCESS;
 }
 
 // Script function #12 (0x0C)
 // Disables mouse input, etc.
-int Script::SF_preDialog(SCRIPTFUNC_PARAMS) {
+void Script::sfPreDialog(SCRIPTFUNC_PARAMS) {
 	_vm->_interface->deactivate();
 	; // clear converse text
 	if (_vm->_interface->isInMainMode())
@@ -318,22 +351,30 @@ int Script::SF_preDialog(SCRIPTFUNC_PARAMS) {
 	_vm->_interface->setMode(kPanelNull);
 
 	debug(1, "stub: SF_preDialog()");
-	return SUCCESS;
 }
 
 // Script function #13 (0x0D)
-int Script::SF_killActorThreads(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
+void Script::sfKillActorThreads(SCRIPTFUNC_PARAMS) {
+	ScriptThread *anotherThread;
+	ScriptThreadList::iterator threadIterator;
+	int16 actorId;
 
-	debug(1, "stub: SF_killActorThreads(), %d args", nArgs);
-	return SUCCESS;
+	actorId = thread->pop();
+
+
+	for (threadIterator = _threadList.begin(); threadIterator != _threadList.end(); ++threadIterator) {
+		anotherThread = threadIterator.operator->();
+		if ((anotherThread != thread) && (anotherThread->_threadVars[kThreadVarActor] == actorId)) {
+			thread->_flags &= ~kTFlagWaiting;
+			thread->_flags |= kTFlagAborted;
+		}
+	}
 }
 
 // Script function #14 (0x0E)
 // Param1: actor id
 // Param2: object id
-int Script::sfFaceTowards(SCRIPTFUNC_PARAMS) {
+void Script::sfFaceTowards(SCRIPTFUNC_PARAMS) {
 	int16 actorId;
 	int16 targetObject;
 	ActorData *actor;
@@ -343,14 +384,12 @@ int Script::sfFaceTowards(SCRIPTFUNC_PARAMS) {
 
 	actor = _vm->_actor->getActor(actorId);
 	actor->targetObject = targetObject;
-
-	return SUCCESS;
 }
 
 // Script function #15 (0x0F)
 // Param1: actor id
 // Param2: target object
-int Script::sfSetFollower(SCRIPTFUNC_PARAMS) {
+void Script::sfSetFollower(SCRIPTFUNC_PARAMS) {
 	int16 actorId;
 	int16 targetObject;
 
@@ -369,8 +408,6 @@ int Script::sfSetFollower(SCRIPTFUNC_PARAMS) {
 	} else {
 		actor->flags &= ~kFollower;
 	}
-	
-	return SUCCESS;
 }
 
 static struct SceneSubstitutes {
@@ -428,7 +465,7 @@ static struct SceneSubstitutes {
 };
 
 // Script function #16 (0x10)
-int Script::SF_gotoScene(SCRIPTFUNC_PARAMS) {
+void Script::SF_gotoScene(SCRIPTFUNC_PARAMS) {
 	int16 sceneNum = thread->pop();
 	int16 entrance = thread->pop();
 
@@ -437,11 +474,10 @@ int Script::SF_gotoScene(SCRIPTFUNC_PARAMS) {
 			debug(0, "Scene %d substitute exists", sceneNum);
 
 	debug(1, "stub: SF_gotoScene(%d, %d)", sceneNum, entrance);
-	return SUCCESS;
 }
 
 // Script function #17 (0x11)
-int Script::SF_setObjImage(SCRIPTFUNC_PARAMS) {
+void Script::SF_setObjImage(SCRIPTFUNC_PARAMS) {
 	error("Not implemented");
 /*	int16 obj_param = getSWord(thread->pop());
 	int16 sprite_param = getSWord(thread->pop());
@@ -456,11 +492,10 @@ int Script::SF_setObjImage(SCRIPTFUNC_PARAMS) {
 	ObjectTable[index].spritelistRn = sprite_param + 9;
 	_vm->_interface->draw();
 */
-	return SUCCESS;
 }
 
 // Script function #18 (0x12)
-int Script::SF_setObjName(SCRIPTFUNC_PARAMS) {
+void Script::SF_setObjName(SCRIPTFUNC_PARAMS) {
 	error("Not implemented");
 
 /*	int obj_param = getSWord(thread->pop());
@@ -473,11 +508,10 @@ int Script::SF_setObjName(SCRIPTFUNC_PARAMS) {
 	}
 
 	ObjectTable[index].nameIndex = name_param;*/
-	return SUCCESS;
 }
 
 // Script function #19 (0x13)
-int Script::SF_getObjImage(SCRIPTFUNC_PARAMS) {
+void Script::SF_getObjImage(SCRIPTFUNC_PARAMS) {
 	error("Not implemented");
 
 /*	int param = getSWord(thread->pop());
@@ -489,21 +523,19 @@ int Script::SF_getObjImage(SCRIPTFUNC_PARAMS) {
 	}
 
 	thread->retVal = ObjectTable[index].spritelistRn;*/
-	return SUCCESS;
 }
 
 // Script function #20 (0x14)
-int Script::SF_getNumber(SCRIPTFUNC_PARAMS) {
+void Script::SF_getNumber(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
 	debug(1, "stub: SF_getNumber(), %d args", nArgs);
-	return SUCCESS;
 }
 
 // Script function #21 (0x15)
 // Param1: door #
-int Script::sfScriptOpenDoor(SCRIPTFUNC_PARAMS) {
+void Script::sfScriptOpenDoor(SCRIPTFUNC_PARAMS) {
 	int16 doorNumber;
 	doorNumber = thread->pop();
 
@@ -512,12 +544,11 @@ int Script::sfScriptOpenDoor(SCRIPTFUNC_PARAMS) {
 	} else {
 		_vm->_scene->setDoorState(doorNumber, 0);
 	}
-	return SUCCESS;
 }
 
 // Script function #22 (0x16)
 // Param1: door #
-int Script::sfScriptCloseDoor(SCRIPTFUNC_PARAMS) {
+void Script::sfScriptCloseDoor(SCRIPTFUNC_PARAMS) {
 	int16 doorNumber;
 	doorNumber = thread->pop();
 
@@ -526,42 +557,38 @@ int Script::sfScriptCloseDoor(SCRIPTFUNC_PARAMS) {
 	} else {
 		_vm->_scene->setDoorState(doorNumber, 0xff);
 	}
-	return SUCCESS;
 }
 
 // Script function #23 (0x17)
-int Script::sfSetBgdAnimSpeed(SCRIPTFUNC_PARAMS) {
+void Script::sfSetBgdAnimSpeed(SCRIPTFUNC_PARAMS) {
 	int16 animId = thread->pop();
 	int16 speed = thread->pop();
 
 	_vm->_anim->setFrameTime(animId, ticksToMSec(speed));
 	debug(1, "sfSetBgdAnimSpeed(%d, %d)", animId, speed);
 
-	return SUCCESS;
 }
 
 // Script function #24 (0x18)
-int Script::SF_cycleColors(SCRIPTFUNC_PARAMS) {
+void Script::SF_cycleColors(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
 	debug(1, "stub: SF_cycleColors(), %d args", nArgs);
-	return SUCCESS;
 }
 
 // Script function #25 (0x19)
 // Param1: actor id
-int Script::sfDoCenterActor(SCRIPTFUNC_PARAMS) {
+void Script::sfDoCenterActor(SCRIPTFUNC_PARAMS) {
 	int16 actorId;
 	actorId = thread->pop();
 
 	_vm->_actor->_centerActor = _vm->_actor->getActor(actorId);
-	return SUCCESS;
 }
 
 // Script function #26 (0x1A) nonblocking
 // Starts the specified animation 
-int Script::sfStartBgdAnimSpeed(SCRIPTFUNC_PARAMS) {
+void Script::sfStartBgdAnimSpeed(SCRIPTFUNC_PARAMS) {
 	int16 animId = thread->pop();
 	int16 cycles = thread->pop();
 	int16 speed = thread->pop();
@@ -570,14 +597,13 @@ int Script::sfStartBgdAnimSpeed(SCRIPTFUNC_PARAMS) {
 	_vm->_anim->play(animId, ticksToMSec(speed));
 
 	debug(1, "sfStartBgdAnimSpeed(%d, %d, %d)", animId, cycles, speed);
-	return SUCCESS;
 }
 
 // Script function #27 (0x1B) nonblocking
 // Param1: actor id
 // Param2: actor x
 // Param3: actor y
-int Script::sfScriptWalkToAsync(SCRIPTFUNC_PARAMS) {
+void Script::sfScriptWalkToAsync(SCRIPTFUNC_PARAMS) {
 	int16 actorId;
 	Location actorLocation;
 	ActorData *actor;
@@ -592,22 +618,20 @@ int Script::sfScriptWalkToAsync(SCRIPTFUNC_PARAMS) {
 	actor->flags &= ~kFollower;
 
 	_vm->_actor->actorWalkTo(actorId, actorLocation);
-	return SUCCESS;
 }
 
 // Script function #28 (0x1C)
-int Script::SF_enableZone(SCRIPTFUNC_PARAMS) {
+void Script::SF_enableZone(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
 	debug(1, "stub: SF_enableZone(), %d args", nArgs);
-	return SUCCESS;
 }
 
 // Script function #29 (0x1D)
 // Param1: actor id
 // Param2: current action
-int Script::sfSetActorState(SCRIPTFUNC_PARAMS) {
+void Script::sfSetActorState(SCRIPTFUNC_PARAMS) {
 	int16 actorId;
 	int currentAction;
 	ActorData *actor;
@@ -623,14 +647,13 @@ int Script::sfSetActorState(SCRIPTFUNC_PARAMS) {
 	actor->currentAction = currentAction;
 	actor->actorFlags &= ~kActorBackwards;
 
-	return SUCCESS;
 }
 
 // Script function #30 (0x1E) nonblocking
 // Param1: actor id
 // Param2: actor pos x
 // Param3: actor pos y
-int Script::scriptMoveTo(SCRIPTFUNC_PARAMS) {
+void Script::scriptMoveTo(SCRIPTFUNC_PARAMS) {
 	int16 actorId;
 	Location actorLocation;
 	ActorData *actor;
@@ -644,22 +667,20 @@ int Script::scriptMoveTo(SCRIPTFUNC_PARAMS) {
 	actor->location.x = actorLocation.x;
 	actor->location.y = actorLocation.y;
 
-	return SUCCESS;
 }
 
 // Script function #31 (0x21)
-int Script::SF_sceneEq(SCRIPTFUNC_PARAMS) {
+void Script::SF_sceneEq(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 
 	if (_vm->_scene->getSceneLUT(param) == _vm->_scene->currentSceneNumber())
 		thread->_returnValue = 1;
 	else 
 		thread->_returnValue = 0;
-	return SUCCESS;
 }
 
 // Script function #32 (0x20)
-int Script::SF_dropObject(SCRIPTFUNC_PARAMS) {
+void Script::SF_dropObject(SCRIPTFUNC_PARAMS) {
 	error("Not implemented");
 
 /*	ScriptDataWord obj_param = thread->pop();
@@ -682,23 +703,21 @@ int Script::SF_dropObject(SCRIPTFUNC_PARAMS) {
 	ObjectTable[index].x = x_param;
 	ObjectTable[index].y = y_param;
 */
-	return SUCCESS;
 }
 
 // Script function #33 (0x21)
-int Script::sfFinishBgdAnim(SCRIPTFUNC_PARAMS) {
+void Script::sfFinishBgdAnim(SCRIPTFUNC_PARAMS) {
 	int16 animId = thread->pop();
 
 	_vm->_anim->finish(animId);
 
 	debug(1, "sfFinishBgdAnim(%d)", animId);
-	return SUCCESS;
 }
 
 // Script function #34 (0x22)
 // Param1: actor id 1
 // Param2: actor id 2
-int Script::sfSwapActors(SCRIPTFUNC_PARAMS) {
+void Script::sfSwapActors(SCRIPTFUNC_PARAMS) {
 	int16 actorId1;
 	int16 actorId2;
 	ActorData *actor1;
@@ -728,7 +747,6 @@ int Script::sfSwapActors(SCRIPTFUNC_PARAMS) {
 	}
 
 
-	return SUCCESS;
 }
 
 // Script function #35 (0x23)
@@ -737,7 +755,7 @@ int Script::sfSwapActors(SCRIPTFUNC_PARAMS) {
 // Param3: actor id1
 ///....
 // Param3: actor idN
-int Script::sfSimulSpeech(SCRIPTFUNC_PARAMS) {
+void Script::sfSimulSpeech(SCRIPTFUNC_PARAMS) {
 	int16 stringId;
 	int16 actorsCount;
 	int i;
@@ -756,7 +774,6 @@ int Script::sfSimulSpeech(SCRIPTFUNC_PARAMS) {
 	string = thread->_strings->getString(stringId);
 
 	_vm->_actor->simulSpeech(string, actorsIds, actorsCount, 0);
-	return SUCCESS;
 }
 
 // Script function #36 (0x24) ?
@@ -764,7 +781,7 @@ int Script::sfSimulSpeech(SCRIPTFUNC_PARAMS) {
 // Param2: actor x
 // Param3: actor y
 // Param4: actor walk flag
-int Script::sfScriptWalk(SCRIPTFUNC_PARAMS) {
+void Script::sfScriptWalk(SCRIPTFUNC_PARAMS) {
 	int16 actorId;
 	Location actorLocation;
 	ActorData *actor;
@@ -791,7 +808,6 @@ int Script::sfScriptWalk(SCRIPTFUNC_PARAMS) {
 	}
 
 	actor->actorFlags = (actor->actorFlags & ~kActorFacingMask) | (walkFlags & kActorFacingMask);
-	return SUCCESS;
 }
 
 // Script function #37 (0x25) nonblocking
@@ -799,7 +815,7 @@ int Script::sfScriptWalk(SCRIPTFUNC_PARAMS) {
 // Param2: flags telling how to cycle the frames
 // Param3: cycle frame number
 // Param4: cycle delay
-int Script::sfCycleFrames(SCRIPTFUNC_PARAMS) {
+void Script::sfCycleFrames(SCRIPTFUNC_PARAMS) {
 	int16 actorId;
 	int flags;
 	int cycleFrameSequence;
@@ -836,14 +852,13 @@ int Script::sfCycleFrames(SCRIPTFUNC_PARAMS) {
 	actor->cycleDelay = cycleDelay;
 	actor->actionCycle = 0;
 
-	return SUCCESS;
 }
 
 // Script function #38 (0x26) nonblocking
 // Param1: actor id
 // Param2: frame type
 // Param3: frame offset
-int Script::sfSetFrame(SCRIPTFUNC_PARAMS) {
+void Script::sfSetFrame(SCRIPTFUNC_PARAMS) {
 	int16 actorId;
 	int frameType;
 	int frameOffset;
@@ -868,24 +883,22 @@ int Script::sfSetFrame(SCRIPTFUNC_PARAMS) {
 	if (actor->currentAction != kActionFall) {
 		actor->currentAction = kActionFreeze;
 	}
-
-	return SUCCESS;
 }
 
 // Script function #39 (0x27)
 // Sets the right-hand portrait
-int Script::sfSetPortrait(SCRIPTFUNC_PARAMS) {
+void Script::sfSetPortrait(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 
-	return _vm->_interface->setRightPortrait(param);
+	_vm->_interface->setRightPortrait(param);
 }
 
 // Script function #40 (0x28)
 // Sets the left-hand portrait
-int Script::sfSetProtagPortrait(SCRIPTFUNC_PARAMS) {
+void Script::sfSetProtagPortrait(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 
-	return _vm->_interface->setLeftPortrait(param);
+	_vm->_interface->setLeftPortrait(param);
 }
 
 // Script function #41 (0x29) nonblocking
@@ -895,7 +908,7 @@ int Script::sfSetProtagPortrait(SCRIPTFUNC_PARAMS) {
 // Param2: total linked frame count
 // Param3: animation id link target
 // Param4: animation id link source
-int Script::sfChainBgdAnim(SCRIPTFUNC_PARAMS) {
+void Script::sfChainBgdAnim(SCRIPTFUNC_PARAMS) {
 	int16 animId1 = thread->pop();
 	int16 animId = thread->pop();
 	int16 cycles = thread->pop();
@@ -909,18 +922,16 @@ int Script::sfChainBgdAnim(SCRIPTFUNC_PARAMS) {
 
 	_vm->_anim->link(animId1, animId);
 	debug(1, "sfChainBgdAnim(%d, %d, %d, %d)", animId1, animId, cycles, speed);
-	return SUCCESS;
 }
 
 // Script function #42 (0x2A)
-int Script::SF_scriptSpecialWalk(SCRIPTFUNC_PARAMS) {
+void Script::SF_scriptSpecialWalk(SCRIPTFUNC_PARAMS) {
 	thread->pop();
 	thread->pop();
 	thread->pop();
 	thread->pop();
 
 	//debug(1, "stub: SF_scriptSpecialWalk(%d, %d, %d, %d)", param1, param2, param3, param4);
-	return SUCCESS;
 }
 
 // Script function #43 (0x2B) nonblocking
@@ -930,7 +941,7 @@ int Script::SF_scriptSpecialWalk(SCRIPTFUNC_PARAMS) {
 // Param4: actor direction
 // Param5: actor action
 // Param6: actor frame number
-int Script::sfPlaceActor(SCRIPTFUNC_PARAMS) {
+void Script::sfPlaceActor(SCRIPTFUNC_PARAMS) {
 	int16 actorId;
 	Location actorLocation;
 	int actorDirection;
@@ -951,7 +962,7 @@ int Script::sfPlaceActor(SCRIPTFUNC_PARAMS) {
 
 	if (_vm->getGameType() == GType_IHNM) {
 		warning("Actors aren't implemented for IHNM yet");
-		return SUCCESS;
+		return;
 	}
 
 	actor = _vm->_actor->getActor(actorId);
@@ -973,21 +984,19 @@ int Script::sfPlaceActor(SCRIPTFUNC_PARAMS) {
 
 	actor->targetObject = ID_NOTHING;
 
-	return SUCCESS;
 }
 
 // Script function #44 (0x2C) nonblocking
 // Checks to see if the user has interrupted a currently playing 
 // game cinematic. Pushes a zero or positive value if the game 
 // has not been interrupted.
-int Script::SF_checkUserInterrupt(SCRIPTFUNC_PARAMS) {
+void Script::SF_checkUserInterrupt(SCRIPTFUNC_PARAMS) {
 	thread->_returnValue = (_skipSpeeches == true);
 
-	return SUCCESS;
 }
 
 // Script function #45 (0x2D)
-int Script::SF_walkRelative(SCRIPTFUNC_PARAMS) {
+void Script::SF_walkRelative(SCRIPTFUNC_PARAMS) {
 	thread->pop();
 	thread->pop();
 	thread->pop();
@@ -995,11 +1004,10 @@ int Script::SF_walkRelative(SCRIPTFUNC_PARAMS) {
 	thread->pop();
 
 	//debug(1, "stub: SF_walkRelative(%d, %d, %d, %d, %d)", param1, param2, param3, param4, param5);
-	return SUCCESS;
 }
 
 // Script function #46 (0x2E)
-int Script::SF_moveRelative(SCRIPTFUNC_PARAMS) {
+void Script::SF_moveRelative(SCRIPTFUNC_PARAMS) {
 	thread->pop();
 	thread->pop();
 	thread->pop();
@@ -1007,23 +1015,21 @@ int Script::SF_moveRelative(SCRIPTFUNC_PARAMS) {
 	thread->pop();
 
 	//debug(1, "stub: SF_moveRelative(%d, %d, %d, %d, %d)", param1, param2, param3, param4, param5);
-	return SUCCESS;
 }
 
 // Script function #47 (0x2F)
-int Script::SF_simulSpeech2(SCRIPTFUNC_PARAMS) {
+void Script::SF_simulSpeech2(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
 	debug(1, "stub: SF_simulSpeech2(), %d args", nArgs);
-	return SUCCESS;
 }
 
 static TEXTLIST_ENTRY *placardTextEntry;
 
 // Script function #48 (0x30)
 // Param1: string rid
-int Script::sfPlacard(SCRIPTFUNC_PARAMS) {
+void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	int stringId;
 	SURFACE *back_buf = _vm->_gfx->getBackBuffer();
 	static PALENTRY cur_pal[PAL_ENTRIES];
@@ -1126,11 +1132,10 @@ int Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 
 	q_event = _vm->_events->chain(q_event, &event);
 
-	return SUCCESS;
 }
 
 // Script function #49 (0x31)
-int Script::sfPlacardOff(SCRIPTFUNC_PARAMS) {
+void Script::sfPlacardOff(SCRIPTFUNC_PARAMS) {
 	static PALENTRY cur_pal[PAL_ENTRIES];
 	PALENTRY *pal;
 	EVENT event;
@@ -1189,31 +1194,28 @@ int Script::sfPlacardOff(SCRIPTFUNC_PARAMS) {
 
 	q_event = _vm->_events->chain(q_event, &event);
 
-	return SUCCESS;
 }
 
 // Script function #50 (0x32)
-int Script::SF_setProtagState(SCRIPTFUNC_PARAMS) {
+void Script::SF_setProtagState(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
 	debug(1, "stub: SF_setProtagState(), %d args", nArgs);
-	return SUCCESS;
 }
 
 // Script function #51 (0x33)
-int Script::sfResumeBgdAnim(SCRIPTFUNC_PARAMS) {
+void Script::sfResumeBgdAnim(SCRIPTFUNC_PARAMS) {
 	int16 animId = thread->pop();
 	int16 cycles = thread->pop();
 
 	_vm->_anim->resume(animId, cycles);
 	debug(1, "sfResumeBgdAnimSpeed(%d, %d)", animId, cycles);
 
-	return SUCCESS;
 }
 
 // Script function #52 (0x34)
-int Script::SF_throwActor(SCRIPTFUNC_PARAMS) {
+void Script::SF_throwActor(SCRIPTFUNC_PARAMS) {
 	thread->pop();
 	thread->pop();
 	thread->pop();
@@ -1222,47 +1224,42 @@ int Script::SF_throwActor(SCRIPTFUNC_PARAMS) {
 	thread->pop();
 
 	//debug(1, "stub: SF_throwActor(%d, %d, %d, %d, %d, %d)", param1, param2, param3, param4, param5, param6);
-	return SUCCESS;
 }
 
 // Script function #53 (0x35)
-int Script::SF_waitWalk(SCRIPTFUNC_PARAMS) {
+void Script::SF_waitWalk(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 
 	debug(1, "stub: SF_waitWalk(%d)", param);
-	return SUCCESS;
 }
 
 // Script function #54 (0x36)
-int Script::SF_sceneID(SCRIPTFUNC_PARAMS) {
+void Script::SF_sceneID(SCRIPTFUNC_PARAMS) {
 	thread->_returnValue = _vm->_scene->currentSceneNumber();
-	return SUCCESS;
 }
 
 // Script function #55 (0x37)
-int Script::SF_changeActorScene(SCRIPTFUNC_PARAMS) {
+void Script::SF_changeActorScene(SCRIPTFUNC_PARAMS) {
 	thread->pop();
 	thread->pop();
 
 	//debug(1, "stub: SF_changeActorScene(%d, %d)", param1, param2);
-	return SUCCESS;
 }
 
 // Script function #56 (0x38)
-int Script::SF_climb(SCRIPTFUNC_PARAMS) {
+void Script::SF_climb(SCRIPTFUNC_PARAMS) {
 	thread->pop();
 	thread->pop();
 	thread->pop();
 	thread->pop();
 
 	//debug(1, "stub: SF_climb(%d, %d, %d, %d)", param1, param2, param3, param4);
-	return SUCCESS;
 }
 
 // Script function #57 (0x39)
 // Param1: door #
 // Param2: door state
-int Script::sfSetDoorState(SCRIPTFUNC_PARAMS) {
+void Script::sfSetDoorState(SCRIPTFUNC_PARAMS) {
 	int16 doorNumber;
 	int16 doorState;
 	doorNumber = thread->pop();
@@ -1273,54 +1270,48 @@ int Script::sfSetDoorState(SCRIPTFUNC_PARAMS) {
 	} else {
 		_vm->_scene->setDoorState(doorNumber, doorState);
 	}
-	return SUCCESS;
 }
 
 // Script function #58 (0x3A)
-int Script::SF_setActorZ(SCRIPTFUNC_PARAMS) {
+void Script::SF_setActorZ(SCRIPTFUNC_PARAMS) {
 	thread->pop();
 	thread->pop();
 
 	//debug(1, "stub: SF_setActorZ(%d, %d)", param1, param2);
-	return SUCCESS;
 }
 
 // Script function #59 (0x3B)
-int Script::SF_text(SCRIPTFUNC_PARAMS) {
+void Script::SF_text(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
 	debug(1, "stub: SF_text(), %d args", nArgs);
-	return SUCCESS;
 }
 
 // Script function #60 (0x3C)
-int Script::SF_getActorX(SCRIPTFUNC_PARAMS) {
+void Script::SF_getActorX(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 
 	debug(1, "stub: SF_getActorX(%d)", param);
-	return SUCCESS;
 }
 
 // Script function #61 (0x3D)
-int Script::SF_getActorY(SCRIPTFUNC_PARAMS) {
+void Script::SF_getActorY(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 
 	debug(1, "stub: SF_getActorY(%d)", param);
-	return SUCCESS;
 }
 
 // Script function #62 (0x3E)
-int Script::SF_eraseDelta(SCRIPTFUNC_PARAMS) {
+void Script::SF_eraseDelta(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
 	debug(1, "stub: SF_eraseDelta(), %d args", nArgs);
-	return SUCCESS;
 }
 
 // Script function #63 (0x3F)
-int Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
+void Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
 	if (_vm->getGameType() == GType_ITE) {
 		int16 param = thread->pop() + 9;
 
@@ -1335,64 +1326,56 @@ int Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
 		debug(1, "Stub: sfPlayMusic(%d, %d)", param1, param2);
 	}
 
-	return SUCCESS;
 }
 
 // Script function #64 (0x40)
-int Script::SF_pickClimbOutPos(SCRIPTFUNC_PARAMS) {
+void Script::SF_pickClimbOutPos(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
 	debug(1, "stub: SF_pickClimbOutPos(), %d args", nArgs);
-	return SUCCESS;
 }
 
 // Script function #65 (0x41)
-int Script::SF_tossRif(SCRIPTFUNC_PARAMS) {
+void Script::SF_tossRif(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
 	debug(1, "stub: SF_tossRif(), %d args", nArgs);
-	return SUCCESS;
 }
 
 // Script function #66 (0x42)
-int Script::SF_showControls(SCRIPTFUNC_PARAMS) {
+void Script::SF_showControls(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
 	debug(1, "stub: SF_showControls(), %d args", nArgs);
-	return SUCCESS;
 }
 
 // Script function #67 (0x43)
-int Script::SF_showMap(SCRIPTFUNC_PARAMS) {
+void Script::SF_showMap(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
 	debug(1, "stub: SF_showMap(), %d args", nArgs);
-	return SUCCESS;
 }
 
 // Script function #68 (0x44)
-int Script::SF_puzzleWon(SCRIPTFUNC_PARAMS) {
+void Script::SF_puzzleWon(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
 	debug(1, "stub: SF_puzzleWon(), %d args", nArgs);
-	return SUCCESS;
 }
 
 // Script function #69 (0x45)
-int Script::sfEnableEscape(SCRIPTFUNC_PARAMS) {
+void Script::sfEnableEscape(SCRIPTFUNC_PARAMS) {
 	if (thread->pop())
 		_abortEnabled = true;
 	else {
 		_skipSpeeches = false;
 		_abortEnabled = false;
 	}
-	
-	return SUCCESS;
 }
 
 static struct {
@@ -1467,7 +1450,7 @@ static struct {
 };
 
 // Script function #70 (0x46)
-int Script::sfPlaySound(SCRIPTFUNC_PARAMS) {
+void Script::sfPlaySound(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 	int res;
 
@@ -1481,67 +1464,59 @@ int Script::sfPlaySound(SCRIPTFUNC_PARAMS) {
 		_vm->_sound->stopSound();
 	}
 
-	return SUCCESS;
 }
 
 // Script function #71 (0x47)
-int Script::SF_playLoopedSound(SCRIPTFUNC_PARAMS) {
+void Script::SF_playLoopedSound(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
 	debug(1, "stub: SF_playLoopedSound(), %d args", nArgs);
-	return SUCCESS;
 }
 
 // Script function #72 (0x48)
-int Script::SF_getDeltaFrame(SCRIPTFUNC_PARAMS) {
+void Script::SF_getDeltaFrame(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
 	debug(1, "stub: SF_getDeltaFrame(), %d args", nArgs);
-	return SUCCESS;
 }
 
 // Script function #73 (0x49)
-int Script::SF_showProtect(SCRIPTFUNC_PARAMS) {
+void Script::SF_showProtect(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
 	debug(1, "stub: SF_showProtect(), %d args", nArgs);
-	return SUCCESS;
 }
 
 // Script function #74 (0x4A)
-int Script::SF_protectResult(SCRIPTFUNC_PARAMS) {
+void Script::SF_protectResult(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
 	debug(1, "stub: SF_protectResult(), %d args", nArgs);
-	return SUCCESS;
 }
 
 // Script function #75 (0x4d)
-int Script::sfRand(SCRIPTFUNC_PARAMS) {
+void Script::sfRand(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 
 	thread->_returnValue = (_vm->_rnd.getRandomNumber(param));
 
-	return SUCCESS;
 }
 
 // Script function #76 (0x4c)
-int Script::SF_fadeMusic(SCRIPTFUNC_PARAMS) {
+void Script::SF_fadeMusic(SCRIPTFUNC_PARAMS) {
 	debug(1, "stub: SF_fadeMusic()");
-	return SUCCESS;
 }
 
 // Script function #77 (0x4d)
-int Script::SF_playVoice(SCRIPTFUNC_PARAMS) {
+void Script::SF_playVoice(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
 	debug(1, "stub: SF_playVoice(), %d args", nArgs);
-	return SUCCESS;
 }
 
 void Script::finishDialog(int replyID, int flags, int bitOffset) {

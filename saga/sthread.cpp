@@ -177,7 +177,6 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 
 	byte argumentsCount;
 	uint16 functionNumber;
-	int scriptFunctionReturnValue;
 	ScriptFunctionType scriptFunction;
 
 	int debug_print = 0;
@@ -319,10 +318,7 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 
 			debug(8, "Calling 0x%X %s", functionNumber, _scriptFunctionsList[functionNumber].scriptFunctionName);
 			scriptFunction = _scriptFunctionsList[functionNumber].scriptFunction;
-			scriptFunctionReturnValue = (this->*scriptFunction)(thread, argumentsCount);
-			if (scriptFunctionReturnValue != SUCCESS) {		// TODO: scriptFunctionReturnValue should be ignored & removed
-				_vm->_console->DebugPrintf(S_WARN_PREFIX "%X: Script function %d failed.\n", thread->_instructionOffset, scriptFunctionReturnValue);
-			}
+			(this->*scriptFunction)(thread, argumentsCount);
 
 			if (functionNumber ==  16) { // SF_gotoScene
 				instructionCount = instructionLimit; // break the loop
