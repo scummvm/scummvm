@@ -120,6 +120,7 @@ public:
 
 #ifndef BACKEND_8BIT
 	void drawTextObject(SpriteInfo *s, uint8 *src);
+	void clearDisplay();
 	void updateDisplay(void);
 #endif
 

@@ -317,6 +317,13 @@ void AnimationState::drawTextObject(SpriteInfo *s, uint8 *src) {
 	}
 }
 
+void AnimationState::clearDisplay(void) {
+	NewGuiColor black = _vm->_system->RGBToColor(0, 0, 0);
+
+	for (int i = 0; i < 640 * 480; i++)
+		overlay[i] = black;
+}
+
 void AnimationState::updateDisplay(void) {
 	_vm->_system->copy_rect_overlay(overlay, 640, 0, 0, 640, 480);
 }
@@ -517,6 +524,15 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 
 	if (text)
 		closeTextObject(text[textCounter]);
+
+#ifndef BACKEND_8BIT
+	// Most movies fade to black on their own, but not all of them. Since
+	// we may be hanging around in the cutscene player for a while longer,
+	// waiting for the lead-out sound to finish, paint the overlay black.
+
+	anim->clearDisplay();
+	anim->updateDisplay();
+#endif
 
 	_vm->_graphics->clearScene();
 	_vm->_graphics->setNeedFullRedraw();
