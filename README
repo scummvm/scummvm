@@ -68,6 +68,28 @@ Enter      : Selects items in inventory, conversation, etc
 Escape     : Skips cutscenes, exits certain screens
 q          : Quit 
 
+Development/debug keys from the original game
+---------------------------------------------
+Ctrl + e   : Enter lua string to execute
+Ctrl + g   : Jump to set
+Ctrl + i   : Toggle walk boxes
+Ctrl + l   : Toggle lighting
+Ctrl + n   : Display background name
+Ctrl + o   : Create a door
+Ctrl + p   : Execute patch file
+Ctrl + s   : Turn on cursor
+Ctrl + u   : Create a new object
+Ctrl + v   : print the value of a variable
+Alt + n    : Next viewpoint
+Apt + p    : Prev viewpoint
+Alt + s    : Run lua script
+Shift + n  : Next set
+Shift + p  : Prev set
+Shift + o  : Toggle object names
+F3         : Toggle sector editor
+Home       : Go to default position in current set
+j          : Enter jump number
+
 How do I report bugs?
 ---------------------
 Don't. Residual is very alpha and we KNOW it doesn't work right.
