@@ -432,7 +432,7 @@ protected:
 	int a, b, c, d;
 
 public:
-	CubicInterpolator(int a0, int b0, int c0) : x0(2 * a0 - b0), x1(a0), x2(b0), x3(c0) {
+	CubicInterpolator(int8 a0, int8 b0, int8 c0) : x0(2 * a0 - b0), x1(a0), x2(b0), x3(c0) {
 		// We use a simple linear interpolation for x0
 		updateCoefficients();
 	}
@@ -445,7 +445,7 @@ public:
 		updateCoefficients();
 	}
 
-	inline void feedData(int xNew) {
+	inline void feedData(int8 xNew) {
 		x0 = x1;
 		x1 = x2;
 		x2 = x3;
@@ -492,7 +492,7 @@ static void mix_signed_mono_8(int16 *data, uint &len, byte *&s, uint32 &fp_pos,
 
 	do {
 		do {
-			result = interp.interpolate(fp_pos) * volume / 256;
+			result = interp.interpolate(fp_pos) * volume;
 
 			clamped_add_16(*data++, result);
 			clamped_add_16(*data++, result);
@@ -519,7 +519,7 @@ static void mix_unsigned_mono_8(int16 *data, uint &len, byte *&s, uint32 &fp_pos
 
 	do {
 		do {
-			result = interp.interpolate(fp_pos) * volume / 256;
+			result = interp.interpolate(fp_pos) * volume;
 
 			clamped_add_16(*data++, result);
 			clamped_add_16(*data++, result);
@@ -552,11 +552,11 @@ static void mix_unsigned_stereo_8(int16 *data, uint &len, byte *&s, uint32 &fp_p
 	do {
 		do {
 			if (!reverse_stereo) {
-				clamped_add_16(*data++, left.interpolate(fp_pos) * volume / 256);
-				clamped_add_16(*data++, right.interpolate(fp_pos) * volume / 256);
+				clamped_add_16(*data++, left.interpolate(fp_pos) * volume);
+				clamped_add_16(*data++, right.interpolate(fp_pos) * volume);
 			} else {
-				clamped_add_16(*data++, right.interpolate(fp_pos) * volume / 256);
-				clamped_add_16(*data++, left.interpolate(fp_pos) * volume / 256);
+				clamped_add_16(*data++, right.interpolate(fp_pos) * volume);
+				clamped_add_16(*data++, left.interpolate(fp_pos) * volume);
 			}
 
 			fp_pos += fp_speed;
