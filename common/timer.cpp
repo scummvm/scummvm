@@ -51,7 +51,7 @@ Timer::Timer(OSystem *system) :
 }
 
 Timer::~Timer() {
-	_system->set_timer(0, NULL);
+	_system->set_timer(0, 0);
 
 	{
 		StackLock lock(_mutex);
