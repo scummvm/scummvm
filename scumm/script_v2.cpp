@@ -689,63 +689,39 @@ void Scumm_v2::o2_drawObject() {
 }
 
 void Scumm_v2::o2_resourceRoutines() {
+	const ResTypes resTypes[] = {
+			rtNumTypes,	// Unknown / invalid
+			rtNumTypes,	// Unknown / invalid
+			rtCostume,
+			rtRoom,
+			rtNumTypes,	// Unknown / invalid
+			rtScript,
+			rtSound
+		};
 	int resid = getVarOrDirectByte(0x80);
 	int opcode = fetchScriptByte();
 
+	ResTypes type = rtNumTypes;
+	if (0 <= (opcode >> 4) && (opcode >> 4) < (int)ARRAYSIZE(resTypes))
+		type = resTypes[opcode >> 4];
+
+	if (type == rtNumTypes) {
+		warning("o2_resourceRoutines: unknown restype %d", (opcode >> 4));
+		return;
+	}
+
 	if (((opcode & 0x0f) == 0) || ((opcode & 0x0f) == 1)) {
-		switch (opcode & 0xf1) {
-		case 96:
-			lock(rtSound, resid);
-			return;
-		case 97:
-			unlock(rtSound, resid);
-			return;
-		case 80:
-			lock(rtScript, resid);
-			return;
-		case 81:
-			unlock(rtScript, resid);
-			return;
-		case 32:
-			lock(rtCostume, resid);
-			return;
-		case 33:
-			unlock(rtCostume, resid);
-			return;
-		case 48:
-			lock(rtRoom, resid);
-			return;
-		case 49:
-			unlock(rtRoom, resid);
-			return;
-		default:
-			error("o2_resourceRoutines: unknown lock/unlock opcode %d", (opcode & 0xF1));
+		if (opcode & 1) {
+			ensureResourceLoaded(type, resid);
+		} else {
+			// Seems the nuke opcodes do nothing?
+			warning("o2_resourceRoutines: nuking resType %d, id %d does nothing", type, resid);
 		}
 	} else {
-		switch (opcode & 0xf1) {
-		// FIXME why is this case happening?
-		case 0:
-			warning("o2_resourceRoutines: unknown lock/unlock opcode 0");
-			return;
-		case 96:
-		case 80:
-		case 32:
-		case 48:
-			return;
-		case 97:
-			ensureResourceLoaded(rtSound, resid);
-			return;
-		case 81:
-			ensureResourceLoaded(rtScript, resid);
-			return;
-		case 33:
-			ensureResourceLoaded(rtCostume, resid);
-			return;
-		case 49:
-			ensureResourceLoaded(rtRoom, resid);
-			return;
-		default:
-			error("o2_resourceRoutines: unknown load/nuke opcode %d", (opcode & 0xF1));
+		if (opcode & 1) {
+			lock(type, resid);
+		} else {
+			unlock(type, resid);
 		}
 	}
 }

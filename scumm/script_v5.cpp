@@ -695,7 +695,8 @@ void Scumm_v5::o5_endCutscene() {
 }
 
 void Scumm_v5::o5_debug() {
-	getVarOrDirectWord(0x80);
+	int a = getVarOrDirectWord(0x80);
+	debug(1, "o5_debug(%d)", a);
 }
 
 void Scumm_v5::o5_decrement() {
