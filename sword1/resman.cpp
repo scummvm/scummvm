@@ -25,10 +25,32 @@
 #include "resman.h"
 #include "sworddefs.h"
 #include "base/engine.h"
+#include "common/config-manager.h"
 #include "common/util.h"
+#include "common/str.h"
 #include "swordres.h"
 
+#include "gui/message.h"
+#include "gui/newgui.h"
+
 namespace Sword1 {
+	void guiFatalError(char *msg) {
+		// Displays a dialog on-screen before terminating the engine.
+		// First sets a dummy palette to allow cursor visibility - just in case
+		// we're aborting before the initial palette was loaded...
+		const byte dummy_palette[] = {
+			0, 0, 0, 0, 0, 0, 171, 0, 0, 171, 0, 0,0, 171, 171, 0,
+			171, 0, 0, 0, 171, 0, 171, 0, 171, 87, 0, 0, 171, 171,
+			171, 0, 87, 87, 87, 0, 87, 87, 255, 0, 87, 255, 87, 0,
+			87, 255, 255, 0, 255, 87, 87, 0, 255, 87, 255, 0, 255,
+			255, 87, 0, 255, 255, 255, 0
+		};
+		g_system->set_palette(dummy_palette, 0, 16);
+
+		GUI::MessageDialog dialog(msg);
+		dialog.runModal();
+		error(msg);
+}
 
 #define MAX_PATH_LEN 260
 
@@ -44,8 +66,19 @@ ResMan::~ResMan(void) {
 void ResMan::loadCluDescript(const char *fileName) {
 	File resFile;
 	resFile.open(fileName);
-	if (!resFile.isOpen())
-		error("ResMan::loadCluDescript(): File %s not found!", fileName);
+	if (!resFile.isOpen()) {
+		// Uh-uh, file not found. Perhaps we're playing straight from CD2?
+		// Check the Extra Path.
+		const Common::String ePath = ConfMan.get("extrapath");
+		resFile.open(fileName, ePath);
+	}
+
+	if (!resFile.isOpen()) {
+		char msg[512];
+		sprintf(msg, "Couldn't open CLU description '%s'\n\nIf you are running from CD, please ensure you have read the ScummVM documentation regarding multi-cd games.", fileName);
+		guiFatalError(msg);
+	}
+
 	
 	_prj.noClu = resFile.readUint32LE();
 	_prj.clu = new Clu*[_prj.noClu];
@@ -232,8 +265,19 @@ File *ResMan::openClusterFile(uint32 id) {
 	char fileName[15];
 	sprintf(fileName, "%s.CLU", _prj.clu[(id >> 24)-1]->label);
 	clusFile->open(fileName);
-	if (!clusFile->isOpen())
-		error("Can't open cluster file %s", fileName);
+	if (!clusFile->isOpen()) {
+		// Uh-uh, file not found. Perhaps we're playing straight from CD2,
+		// and its looking for something like SCRIPTS.CLU. Check the Extra Path.
+		const Common::String ePath = ConfMan.get("extrapath");
+		clusFile->open(fileName, ePath);
+	}
+
+	if (!clusFile->isOpen()) {
+		char msg[512];
+		sprintf(msg, "Couldn't open game cluster file '%s'\n\nIf you are running from CD, please ensure you have read the ScummVM documentation regarding multi-cd games.", fileName);
+		guiFatalError(msg);
+	}
+
 	return clusFile;
 }
 

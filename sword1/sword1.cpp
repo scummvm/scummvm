@@ -41,6 +41,9 @@
 #include "music.h"
 #include "control.h"
 
+#include "gui/message.h"
+#include "gui/newgui.h"
+
 using namespace Sword1;
 
 /* Broken Sword 1 */
@@ -1050,8 +1053,12 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 			_systemVars.runningFromCd = false;
 			_systemVars.playSpeech = true;
 			return ;
-		} else
-			error("SPEECH2.CLU not found.\nPlease copy the SPEECH.CLU from CD2 and rename it to SPEECH2.CLU");
+		} else {
+			const char msg[] = "SPEECH2.CLU not found.\nPlease copy the SPEECH.CLU from CD2 and rename it to SPEECH2.CLU";
+                        GUI::MessageDialog dialog(msg);
+			dialog.runModal();
+			error(msg);
+		}
 	} else { // speech1.clu & speech2.clu not present. are we running from cd?
 		if (test.open("cd1.id")) {
 			_systemVars.runningFromCd = true;
@@ -1061,8 +1068,12 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 			_systemVars.runningFromCd = true;
 			_systemVars.currentCD = 2;
 			test.close();
-		} else
-			error("Unable to find files.\nPlease read the instructions again");
+		} else {
+			const char msg[] = "Unable to find the game files.\nPlease read the ScummVM documentation";
+                        GUI::MessageDialog dialog(msg);
+			dialog.runModal();
+			error(msg);
+		}
 	}
 }
 

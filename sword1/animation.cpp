@@ -26,6 +26,8 @@
 
 #include "sword1/animation.h"
 
+#include "common/config-manager.h"
+#include "common/str.h"
 namespace Sword1 {
 
 AnimationState::AnimationState(Screen *scr, SoundMixer *snd, OSystem *sys)
@@ -49,6 +51,8 @@ AnimationState::~AnimationState() {
 }
 
 bool AnimationState::init(const char *basename) {
+	const Common::String ePath = ConfMan.get("extrapath");
+
 #ifdef USE_MPEG2
 
 	char tempFile[512];
@@ -66,7 +70,7 @@ bool AnimationState::init(const char *basename) {
 	sprintf(tempFile, "%s.pal", basename);
 	File f;
 
-	if (!f.open(tempFile)) {
+	if (!f.open(tempFile) && !f.open(tempFile, ePath)) {
 		warning("Cutscene: %s.pal palette missing", basename);
 		return false;
 	}
@@ -117,7 +121,7 @@ bool AnimationState::init(const char *basename) {
 	// Open MPEG2 stream
 	mpgfile = new File();
 	sprintf(tempFile, "%s.mp2", basename);
-	if (!mpgfile->open(tempFile)) {
+	if (!mpgfile->open(tempFile) && !mpgfile->open(tempFile, ePath)) {
 		warning("Cutscene: Could not open %s", tempFile);
 		return false;
 	}
@@ -139,7 +143,7 @@ bool AnimationState::init(const char *basename) {
 
 #ifdef USE_VORBIS
 	sprintf(tempFile, "%s.ogg", basename);
-	if (sndfile->open(tempFile)) 
+	if (sndfile->open(tempFile) || sndfile->open(tempFile, ePath)) 
 		bgSoundStream = makeVorbisStream(sndfile, sndfile->size());				
 #endif
 
@@ -403,8 +407,9 @@ bool AnimationState::decodeFrame() {
 void MoviePlayer::play(const char *filename) {
 #ifdef USE_MPEG2
 	AnimationState *anim = new AnimationState(_scr, _snd, _sys);
+	bool initOK = anim->init(filename);
 
-	if (anim->init(filename)) {
+	if (initOK) {
 		while (anim->decodeFrame()) {
 #ifndef BACKEND_8BIT
 			_sys->update_screen();
