@@ -67,7 +67,7 @@ static const StreamFileFormat STREAM_FILEFORMATS[] = {
 	{ NULL, NULL, NULL } // Terminator
 };
 
-AudioStream* AudioStream::openStreamFile(const char* filename)
+AudioStream* AudioStream::openStreamFile(const char* filename, const char *path)
 {
 	char buffer[1024];
 	const uint len = strlen(filename);
@@ -82,7 +82,10 @@ AudioStream* AudioStream::openStreamFile(const char* filename)
 
 	for (int i = 0; i < ARRAYSIZE(STREAM_FILEFORMATS)-1 && stream == NULL; ++i) {
 		strcpy(ext, STREAM_FILEFORMATS[i].fileExtension);
-		fileHandle->open(buffer);
+		if (path != NULL)
+			fileHandle->open(buffer, File::kFileReadMode, path);
+		else
+			fileHandle->open(buffer);
 		if (fileHandle->isOpen())
 			stream = STREAM_FILEFORMATS[i].openStreamFile(fileHandle, fileHandle->size());
 	}

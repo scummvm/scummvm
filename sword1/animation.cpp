@@ -25,6 +25,8 @@
 #include "sound/audiostream.h"
 
 
+#include "common/config-manager.h"
+#include "common/str.h"
 namespace Sword1 {
 
 AnimationState::AnimationState(Screen *scr, SoundMixer *snd, OSystem *sys)
@@ -63,8 +65,9 @@ MoviePlayer::MoviePlayer(Screen *scr, SoundMixer *snd, OSystem *sys)
 void MoviePlayer::play(const char *filename) {
 #ifdef USE_MPEG2
 	AnimationState *anim = new AnimationState(_scr, _snd, _sys);
+	bool initOK = anim->init(filename);
 
-	if (anim->init(filename)) {
+	if (initOK) {
 		while (anim->decodeFrame()) {
 #ifndef BACKEND_8BIT
 			_sys->updateScreen();
@@ -98,4 +101,4 @@ void MoviePlayer::play(const char *filename) {
 #endif
 }
 
-} // End of namespace Sword2
+} // End of namespace Sword1
