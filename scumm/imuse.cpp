@@ -666,6 +666,7 @@ class IMuseGM : public IMuseDriver {
 	MidiDriver *_md;
 	MidiChannelGM _midi_channels[16];
 
+	Instrument _part_instr[32]; // Adlib custom instruments
 	Instrument _glob_instr[32]; // Adlib custom instruments
 
 	byte _midi_program_last[16];
@@ -5045,11 +5046,9 @@ int IMuseGM::part_update_active(Part *part, uint16 *active)
 
 void IMuseGM::part_set_instrument (Part *part, Instrument *instr)
 {
-	if (!part->_mc)
-		update_pris();
-	if (!part->_mc)
-		return;
-	_md->sysEx_customInstrument (part->_mc->gm()->_chan, 'ADL ', (byte *)instr);
+	Instrument *i = &_part_instr[part->_slot];
+	memcpy(i, instr, sizeof(Instrument));
+	part->changed (pcProgram);
 }
 
 void IMuseGM::set_instrument(uint slot, byte *data)
@@ -5101,18 +5100,26 @@ void IMuseGM::part_changed(Part *part, uint16 what)
 	if (what & pcEffectLevel)
 		midiEffectLevel(mc->_chan, part->_effect_level);
 
-	if (what & pcProgram && part->_program < 128) {
+	if (what & pcProgram) {
 		if (part->_player->_isGM) {
-			_midi_program_last [part->_chan] = part->_program;
-			if (part->_bank) {
-				midiControl0(mc->_chan, part->_bank);
-				midiProgram(mc->_chan, part->_program, part->_player->_mt32emulate);
-				midiControl0(mc->_chan, 0);
-			} else {
-				midiProgram(mc->_chan, part->_program, part->_player->_mt32emulate);
+			if (part->_program < 128) {
+				_midi_program_last [part->_chan] = part->_program;
+				if (part->_bank) {
+					midiControl0(mc->_chan, part->_bank);
+					midiProgram(mc->_chan, part->_program, part->_player->_mt32emulate);
+					midiControl0(mc->_chan, 0);
+				} else {
+					midiProgram(mc->_chan, part->_program, part->_player->_mt32emulate);
+				}
 			}
-		} else if (part->_program < 32) {
-			part_set_instrument(part, &_glob_instr[part->_program]);
+		} else {
+			debug (0, "Setting instrument (%d)", (int) _part_instr [part->_slot].oplvl_1);
+			if (_part_instr [part->_slot].oplvl_1 != 0) {
+				_md->sysEx_customInstrument (mc->_chan, 'ADL ', (byte *) (&_part_instr [part->_slot]));
+			} else if (part->_program < 32) {
+				memcpy (&_part_instr [part->_slot], &_glob_instr[part->_program], sizeof (Instrument));
+				_md->sysEx_customInstrument (mc->_chan, 'ADL ', (byte *) (&_part_instr [part->_slot]));
+			}
 		}
 	}
 
