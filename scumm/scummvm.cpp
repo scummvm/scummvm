@@ -339,7 +339,7 @@ void Scumm::initScummVars()
 		_vars[VAR_FIXEDDISK] = checkFixedDisk();
 		_vars[VAR_SOUNDCARD] = _soundCardType;
 		_vars[VAR_VIDEOMODE] = 0x13;
-		_vars[VAR_HEAPSPACE] = 630;
+		_vars[VAR_HEAPSPACE] = 1400;
 		_vars[VAR_MOUSEPRESENT] = _mousePresent;
 		_vars[VAR_SOUNDPARAM] = _soundParam;
 		_vars[VAR_SOUNDPARAM2] = _soundParam2;
