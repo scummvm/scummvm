@@ -74,11 +74,11 @@ static const VersionSettings scumm_settings[] = {
 
 	/* Scumm Version 3 */
 	{"indy3EGA", "Indiana Jones and the Last Crusade", GID_INDY3, 3, VersionSettings::ADLIB_ALWAYS,
-	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_INDY3, "00.LFL"},
-	{"indy3Towns", "Indiana Jones and the Last Crusade (FM Towns)", GID_INDY3_TOWNS, 3, VersionSettings::ADLIB_ALWAYS,
-	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_INDY3 | GF_FMTOWNS | GF_AUDIOTRACKS, "00.LFL"},
-	{"indy3", "Indiana Jones and the Last Crusade (256)", GID_INDY3_256, 3, VersionSettings::ADLIB_ALWAYS,
-	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_INDY3, "00.LFL"},
+	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE, "00.LFL"},
+	{"indy3Towns", "Indiana Jones and the Last Crusade (FM Towns)", GID_INDY3, 3, VersionSettings::ADLIB_ALWAYS,
+	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS | GF_FMTOWNS | GF_AUDIOTRACKS, "00.LFL"},
+	{"indy3", "Indiana Jones and the Last Crusade (256)", GID_INDY3, 3, VersionSettings::ADLIB_ALWAYS,
+	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, "00.LFL"},
 	{"zak256", "Zak McKracken and the Alien Mindbenders (256)", GID_ZAK256, 3, VersionSettings::ADLIB_ALWAYS,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FMTOWNS | GF_AUDIOTRACKS, "00.LFL"},
 	{"loom", "Loom", GID_LOOM, 3, VersionSettings::ADLIB_ALWAYS,
@@ -812,7 +812,7 @@ void Scumm::launch() {
 		if (_version < 7)
 			VAR(VAR_VERSION) = 21;
 	
-		if (_gameId != GID_LOOM && _gameId != GID_INDY3) {
+		if (!(_features & GF_OLD_BUNDLE && (_gameId == GID_LOOM || _gameId == GID_INDY3))) {
 			// This is the for the Mac version of Indy3/Loom. TODO: add code to properly
 			// distinguish the Mac version from the PC (and other) versions.
 			VAR(VAR_DEBUGMODE) = _debugMode;
@@ -1064,7 +1064,7 @@ void Scumm::initScummVars() {
 		VAR(VAR_59) = 3;
 	}
 	
-	if (_gameId == GID_LOOM || _gameId == GID_INDY3) {
+	if (_features & GF_OLD_BUNDLE && (_gameId == GID_LOOM || _gameId == GID_INDY3)) {
 		// This is the for the Mac version of Indy3/Loom. TODO: add code to properly
 		// distinguish the Mac version from the PC (and other) versions.
 		VAR(39) = 320;
@@ -1183,7 +1183,7 @@ int Scumm::scummLoop(int delta) {
 		VAR(VAR_VIRT_MOUSE_Y) = _virtualMouse.y;
 		VAR(VAR_MOUSE_X) = _mouse.x;
 		VAR(VAR_MOUSE_Y) = _mouse.y;
-		if (_gameId != GID_LOOM && _gameId != GID_INDY3) {
+		if (_features & GF_OLD_BUNDLE && (_gameId == GID_LOOM || _gameId == GID_INDY3)) {
 			// This is the for the Mac version of Indy3/Loom. TODO: add code to properly
 			// distinguish the Mac version from the PC (and other) versions.
 			VAR(VAR_DEBUGMODE) = _debugMode;
@@ -1721,7 +1721,7 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 				if (_gameId == GID_ZAK256 && _roomResource == 15 && ss->number == 202) {
 					// HACK to make Zak256 work (see bug #770093)
 					warning("Script %d stopped with active cutscene/override in exit", ss->number);
-				} else if (_gameId == GID_INDY3 && _roomResource == 3) {
+				} else if (_gameId == GID_INDY3 && (_features & GF_OLD_BUNDLE) && _roomResource == 3) {
 					// HACK to make Indy3 Demo work
 					warning("Script %d stopped with active cutscene/override in exit", ss->number);
 				} else {

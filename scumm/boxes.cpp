@@ -289,7 +289,8 @@ Box *Scumm::getBoxBaseAddr(int box) {
 	// checking at all. All the problems so far have been cases where
 	// the value was exactly one more than what we consider the maximum.
 	// So it's very well possible that all of these are script errors.
-	if (_gameId == GID_MONKEY_EGA || _gameId == GID_INDY3 || _gameId == GID_ZAK) {
+	if ((_features & GF_OLD_BUNDLE)
+	    && (_gameId == GID_MONKEY_EGA || _gameId == GID_INDY3 || _gameId == GID_ZAK)) {
 		checkRange(ptr[0], 0, box, "Illegal box %d");
 	} else
 		checkRange(ptr[0] - 1, 0, box, "Illegal box %d");
@@ -657,7 +658,7 @@ int Scumm::getPathToDestBox(byte from, byte to) {
 	// case to fix the scene in Indy3 where Indy meets Hitler in Berlin.
 	// It's one of the places (or maybe even the only one?). See bug #770690
 	// and also bug #774783.
-	if ((_features & GF_INDY3) && _roomResource == 46 && from == 1 && to == 0)
+	if ((_gameId == GID_INDY3) && _roomResource == 46 && from == 1 && to == 0)
 		return 1;
 
 	// Skip up to the matrix data for box 'from'

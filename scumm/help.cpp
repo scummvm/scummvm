@@ -30,8 +30,6 @@ int ScummHelp::numPages(byte gameId) {
 		return 4;
 		break;
 	case GID_INDY3:
-	case GID_INDY3_256:
-	case GID_INDY3_TOWNS:
 		return 6;
 		break;
 	case GID_LOOM:
@@ -141,8 +139,6 @@ void ScummHelp::updateStrings(byte gameId, byte version, int page,
 				ADD_BIND("b", "Switch");
 			break;
 		case GID_INDY3:
-		case GID_INDY3_256:
-		case GID_INDY3_TOWNS:
 			ADD_BIND("q", "Push");
 			ADD_BIND("a", "Pull");
 			ADD_BIND("z", "Give");
@@ -265,8 +261,6 @@ void ScummHelp::updateStrings(byte gameId, byte version, int page,
 			break;
 		case GID_INDY3:
 		case GID_ZAK256:
-		case GID_INDY3_256:
-		case GID_INDY3_TOWNS:
 			title = "Other game controls:";
 			ADD_TEXT("Inventory:");
 			ADD_BIND("y", "Upper left item");
@@ -291,8 +285,6 @@ void ScummHelp::updateStrings(byte gameId, byte version, int page,
 	case 5:
 		switch (gameId) {
 		case GID_INDY3:
-		case GID_INDY3_256:
-		case GID_INDY3_TOWNS:
 			title = "Fighting controls (numpad):";
 			ADD_BIND("7", "Step back");
 			ADD_BIND("4", "Step back");
@@ -315,8 +307,6 @@ void ScummHelp::updateStrings(byte gameId, byte version, int page,
 	case 6:
 		switch (gameId) {
 		case GID_INDY3:
-		case GID_INDY3_256:
-		case GID_INDY3_TOWNS:
 			title = "Biplane controls (numpad):";
 			ADD_BIND("7", "Fly to upper left");
 			ADD_BIND("4", "Fly to left");

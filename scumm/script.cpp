@@ -494,7 +494,7 @@ int Scumm::readVar(uint var) {
 #if defined(BYPASS_COPY_PROT)
 			// INDY3, EGA Loom and, apparently, Zak256 check this
 			// during the game...
-			if (_gameId == GID_INDY3 && var == 94 && bit == 4) {
+			if (_gameId == GID_INDY3 && (_features & GF_OLD_BUNDLE) && var == 94 && bit == 4) {
 				return 0;
 //			} else if (_gameId == GID_LOOM && var == 221 && bit == 14) {	// For Mac Loom
 			} else if (_gameId == GID_LOOM && var == 214 && bit == 15) {	// For PC Loom
@@ -508,7 +508,7 @@ int Scumm::readVar(uint var) {
 		} else {
 			var &= 0x7FFF;
 #if defined(BYPASS_COPY_PROT)
-			if (_gameId == GID_INDY3_TOWNS && var == 1508) {
+			if (_gameId == GID_INDY3 && (_features & GF_FMTOWNS) && var == 1508) {
 				return 0;
 			}
 #endif
@@ -518,7 +518,7 @@ int Scumm::readVar(uint var) {
 	}
 
 	if (var & 0x4000) {
-		if (_gameId == GID_INDY3_256 || _gameId == GID_INDY3_TOWNS) {
+		if (_features & GF_FEW_LOCALS) {
 			var &= 0xF;
 		} else {
 			var &= 0xFFF;
@@ -585,7 +585,7 @@ void Scumm::writeVar(uint var, int value) {
 	}
 
 	if (var & 0x4000) {
-		if (_gameId == GID_INDY3_256 || _gameId == GID_INDY3_TOWNS) {
+		if (_features & GF_FEW_LOCALS) {
 			var &= 0xF;
 		} else {
 			var &= 0xFFF;
@@ -759,13 +759,10 @@ void Scumm::runExitScript() {
 
 		vm.slot[slot].delayFrameCount = 0;
 
-		// FIXME: the exit script of room 7 in indy3 only seems to have a size and tag
-		// not actual data not even a 00 (stop code)
-		// maybe we should be limiting ourselves to strictly reading the size 
-		// described in the header?
-		if (_gameId == GID_INDY3_256 || _gameId == GID_INDY3_TOWNS) {
-			// FIXME: Oddly, Indy3 seems to contain exit scripts with only a size
-			// and a tag - not even a terminating NULL!
+		// FIXME: the exit script of room 7 in indy3 only seems to have a size
+		// and tag not actual data not even a 00 (stop code). Maybe we should
+		// be limiting ourselves to strictly reading the size from the header?
+		if (_gameId == GID_INDY3) {
 			byte *roomptr = getResourceAddress(rtRoom, _roomResource);
 			const byte *excd = findResourceData(MKID('EXCD'), roomptr) - _resourceHeaderSize;
 			if (!excd || (getResourceDataSize(excd) < 1)) {
@@ -813,7 +810,7 @@ void Scumm::killScriptsAndResources() {
 			ss->status = ssDead;
 		} else if (ss->where == WIO_LOCAL) {
 			// HACK to make Indy3 Demo work
-			if (ss->cutsceneOverride != 0 && !(_gameId == GID_INDY3 && _roomResource == 3)) {
+			if (ss->cutsceneOverride != 0 && !(_gameId == GID_INDY3 && (_features & GF_OLD_BUNDLE) && _roomResource == 3)) {
 				warning("Script %d stopped with active cutscene/override in exit", ss->number);
 				ss->cutsceneOverride = 0;
 			}

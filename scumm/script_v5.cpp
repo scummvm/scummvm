@@ -597,7 +597,7 @@ void Scumm_v5::o5_chainScript() {
 	// called via chainScript by script 32, and in there Local[5] is defined
 	// to the  actor ID of the opposing soldier. So, we copy that value over
 	// to the Local[5] variable of script 33.
-	if ((_features & GF_INDY3) && vm.slot[cur].number == 32 && script == 33) {
+	if (_gameId == GID_INDY3 && vm.slot[cur].number == 32 && script == 33) {
 		vars[5] = vm.localvar[cur][5];
 	}
 
@@ -665,7 +665,7 @@ void Scumm_v5::o5_cursorCommand() {
 		initCharset(getVarOrDirectByte(0x80));
 		break;
 	case 14:											/* unk */
-		if (_features & GF_OLD_BUNDLE || _gameId == GID_INDY3_256 || _gameId == GID_INDY3_TOWNS) {
+		if (_gameId == GID_LOOM || _gameId == GID_INDY3) {
 			/*int a = */ getVarOrDirectByte(0x80);
 			/*int b = */ getVarOrDirectByte(0x40);
 			// This is some kind of "init charset" opcode. However, we don't have to do anything
@@ -679,7 +679,7 @@ void Scumm_v5::o5_cursorCommand() {
 		break;
 	}
 
-	if (!(_features & GF_OLD_BUNDLE) && _gameId != GID_INDY3_256 && _gameId != GID_INDY3_TOWNS) {
+	if (!(_gameId == GID_LOOM || _gameId == GID_INDY3)) {
 		VAR(VAR_CURSORSTATE) = _cursor.state;
 		VAR(VAR_USERPUT) = _userPut;
 	}
@@ -966,7 +966,7 @@ void Scumm_v5::o5_getActorScale() {
 		return;
 
 	// INDY3 uses this opcode as a wait_for_actor();
-	if (_features & GF_INDY3) {
+	if (_gameId == GID_INDY3) {
 		const byte *oldaddr = _scriptPointer - 1;
 		a = derefActor(getVarOrDirectByte(0x80), "o5_getActorScale (wait)");
 		if (a->moving) {
@@ -1000,7 +1000,7 @@ void Scumm_v5::o5_getActorX() {
 	int a;
 	getResultPos();
 
-	if (_features & GF_INDY3)
+	if (_gameId == GID_INDY3)
 		a = getVarOrDirectByte(0x80);
 	else
 		a = getVarOrDirectWord(0x80);
@@ -1012,7 +1012,7 @@ void Scumm_v5::o5_getActorY() {
 	int a;
 	getResultPos();
 
-	if (_features & GF_INDY3) {
+	if (_gameId == GID_INDY3) {
 		a = getVarOrDirectByte(0x80);
 
 		// WORKAROUND bug #636433 (can't get into Zeppelin) 
@@ -2349,7 +2349,7 @@ void Scumm_v5::o5_verbOps() {
 void Scumm_v5::o5_wait() {
 	const byte *oldaddr = _scriptPointer - 1;
 
-	if (_features & GF_INDY3) {
+	if (_gameId == GID_INDY3) {
 		_opcode = 2;
 	} else
 		_opcode = fetchScriptByte();
@@ -2593,7 +2593,7 @@ void Scumm_v5::decodeParseString() {
  			// It's also needed for Loom, or the lines Bobbin
  			// speaks during the intro are put at position 0,0.
  			// In addition, Loom needs to remember the text colour.
-			if ((_features & GF_INDY3) || _gameId == GID_LOOM) {
+			if (_gameId == GID_LOOM || _gameId == GID_INDY3) {
 				_string[textSlot].t_xpos = _string[textSlot].xpos;
 				_string[textSlot].t_ypos = _string[textSlot].ypos;
  				_string[textSlot].t_color = _string[textSlot].color;

@@ -84,8 +84,8 @@ enum GameFeatures {
 	GF_HUMONGOUS           = 1 << 14,
 	GF_AFTER_HEV7          = 1 << 15,
 	GF_FMTOWNS             = 1 << 16,
-	GF_INDY3               = 1 << 17,
-	GF_LOOM                = 1 << 18,
+	GF_FEW_LOCALS          = 1 << 17,
+	GF_LOOM                = 1 << 18,	// FIXME: remove this
 
 	GF_EXTERNAL_CHARSET    = GF_SMALL_HEADER
 };
@@ -203,7 +203,6 @@ enum ScummGameId {
 	GID_MONKEY_EGA,
 	GID_LOOM256,
 	GID_ZAK256,
-	GID_INDY3_256,
 	GID_INDY3,
 	GID_LOOM,
 	GID_FT,
@@ -214,8 +213,7 @@ enum ScummGameId {
 	GID_ZAK,
 	GID_PUTTDEMO,
 	GID_PUTTPUTT,
-	GID_MONKEY_SEGA,
-	GID_INDY3_TOWNS
+	GID_MONKEY_SEGA
 };
 
 #define _maxRooms res.num[rtRoom]
