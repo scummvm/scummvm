@@ -360,8 +360,8 @@ int SwordLogic::animDriver(BsObject *compact) {
 	AnimUnit *animPtr = (AnimUnit*)(data + 4 + compact->o_anim_pc * sizeof(AnimUnit));
 
 	if (!(compact->o_status & STAT_SHRINK)) {
-		compact->o_anim_x = animPtr->animX;
-		compact->o_anim_y = animPtr->animY;
+		compact->o_anim_x = FROM_LE_32(animPtr->animX);
+		compact->o_anim_y = FROM_LE_32(animPtr->animY);
 	}
 
 	compact->o_frame = FROM_LE_32(animPtr->animFrame);
