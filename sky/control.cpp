@@ -1452,7 +1452,9 @@ uint16 SkyControl::parseSaveData(uint8 *srcBuf) {
 		_skyLogic->fnEnterSection(SkyLogic::_scriptVariables[CUR_SECTION], 0, 0);
 	}
 	_skyDisk->refreshFilesList(reloadList);
-	_skyMusic->startMusic((uint16)music);
+	SkyState::_systemVars.currentMusic = (uint16)music;
+	if (!(SkyState::_systemVars.systemFlags & SF_MUS_OFF))
+		_skyMusic->startMusic((uint16)music);
 	_savedMouse = (uint16)mouseType;
 	SkyState::_systemVars.currentPalette = palette; // will be set when doControlPanel ends
 	SkyState::_systemVars.systemFlags |= SF_GAME_RESTORED; // what's that for?
