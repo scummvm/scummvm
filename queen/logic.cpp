@@ -232,7 +232,7 @@ Logic::Logic(Resource *resource, Graphics *graphics, Display *theDisplay, Input 
 }
 
 Logic::~Logic() {
-	free(_jas);
+	delete[] _jas;
 	delete _walk;
 }
 

@@ -126,7 +126,7 @@ void Graphics::bankOverpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 void Graphics::bankErase(uint32 bankslot) {
 
 	debug(9, "Graphics::bankErase(%d)", bankslot);
-	free(_banks[bankslot].data);
+	delete[] _banks[bankslot].data;
 	_banks[bankslot].data = 0;	
 }
 
@@ -735,7 +735,7 @@ void Graphics::loadBackdrop(const char* name, uint16 room) {
 	}
 	uint32 size = _resource->fileSize(name);
 	_display->pcxReadBackdrop(pcxbuf, size, room > 114);
-	free(pcxbuf);
+	delete[] pcxbuf;
 
 	if (room >= 90) {
 		_cameraBob = 0;
@@ -751,7 +751,7 @@ void Graphics::loadPanel() {
 	}
 	uint32 size = _resource->fileSize("panel.pcx");
 	_display->pcxReadPanel(pcxbuf, size);
-	free(pcxbuf);
+	delete[] pcxbuf;
 }
 
 

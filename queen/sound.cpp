@@ -80,7 +80,7 @@ void SBSound::sfxPlay(const char *base) {
 	  _input->delay(10);
 	
 	if (_resource->exists(name)) 
-		playSound(_resource->loadFile(name, SB_HEADER_SIZE), _resource->fileSize(name) - SB_HEADER_SIZE);
+		playSound(_resource->loadFileMalloc(name, SB_HEADER_SIZE), _resource->fileSize(name) - SB_HEADER_SIZE);
 }
 
 #ifdef USE_MAD
