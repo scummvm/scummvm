@@ -1386,8 +1386,11 @@ INLINE int32 getAmpEnvelope(dpoly::partialStatus *pStat, dpoly *poly) {
 		} else {
 			tc = tStat->envbase;
 			tc = (tc + ((tStat->envdist * tStat->envpos) / tStat->envsize));
+
+			// TRISTAN
 			if (tc < 0)
 				tc = 0;
+
 			if((tStat->envpos >= tStat->envsize) || (tc == 0)){
 				pStat->PCMDone = true;
 				pStat->isDecayed = true;
@@ -2919,7 +2922,8 @@ bool CSynthMT32::InitTables() {
 			//brsa = exp(pow(((float)tr * 0.0133),2));
 			brsa = exp(pow(((float)tr * 0.005),3)) * 125;
 
-			brsa = pow((float)10,((float)(tr/46.5)-1))/2;
+			//brsa = pow((float)10,((float)(tr/46.5)-1))/2;
+			brsa = pow((float)10,((float)(tr/55)-1))/2;
  
 			//brsa = pow(exp((ftr-40)/40),1.15);
 			//brsq = exp((ftr-35)/35);

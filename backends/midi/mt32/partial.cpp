@@ -237,6 +237,15 @@ INLINE void CPartialMT32::generateSamples(int16 * partialBuf, long length) {
 					// to how it looks on the MT-32.  What it really does it takes the
 					// square wave and multiplies it by a full cosine
 					// TODO: This area here crashes DosBox due to read overflow                     
+					if(toff < sawtable[noteval][partCache->pulsewidth]) {
+						ptemp = waveforms[2][noteval][(toff<<2)+minorplace];
+					} else {
+						ptemp = waveforms[3][noteval][(toff<<2)+minorplace];
+					}
+					ptemp = ptemp *4;
+
+// This is dosbox 0.62 canadacow's code. Reported to be worse than above 0.61 code
+#if 0
 					uint offsetpos = (toff<<2)+minorplace;
 					//int a = 0;
 					if(toff < sawtable[noteval][partCache->pulsewidth]) {
@@ -251,7 +260,8 @@ INLINE void CPartialMT32::generateSamples(int16 * partialBuf, long length) {
 						ptemp = waveforms[3][noteval][offsetpos];
 					}
 					ptemp = ptemp *4;
-					
+#endif
+
 					// ptemp = (int)(sin((double)toff / 100.0) * 100.0);
 					//ptemp = pa;
 
