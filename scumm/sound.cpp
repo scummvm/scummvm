@@ -423,7 +423,6 @@ void Sound::playSound(int soundID) {
 				case 1: { // Music (Euphony format)
 					int numInstruments = *(ptr + 0x14);
 					int tuneSize = 0, tempo = 0;
-					int startPtr = ptr;
 
 					ptr += (0x16 + (numInstruments * 48));	// Skip instrument definitions
 					ptr += (32*4);	// Skip preset values (mute, channel, volume, transpose)
