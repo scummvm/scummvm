@@ -5,6 +5,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
  General:
    - Added support for FLAC (losless) encoded audio files
    - Added an On Screen Display to the SDL backend
+   - Rewrote the backend API partially
 
  SCUMM:
    - Added graphics decoders for 3DO Humongous Entertainment games
