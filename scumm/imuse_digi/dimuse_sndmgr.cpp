@@ -307,6 +307,10 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 				result = openMusicBundle(slot);
 			else
 				error("ImuseDigiSndMgr::openSound() Don't know how load sound: %d", soundId);
+			if (!result) {
+				closeSound(&_sounds[slot]);
+				return NULL;
+			}
 			_sounds[slot].bundle->decompressSampleByIndex(soundId, 0, 0x2000, &ptr, 0, header_outside);
 			_sounds[slot].soundId = soundId;
 			_sounds[slot].type = soundType;
@@ -323,6 +327,10 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 				result = openMusicBundle(slot);
 			else
 				error("ImuseDigiSndMgr::openSound() Don't know how load sound: %d", soundId);
+			if (!result) {
+				closeSound(&_sounds[slot]);
+				return NULL;
+			}
 			_sounds[slot].bundle->decompressSampleByName(soundName, 0, 0x2000, &ptr, header_outside);
 			strcpy(_sounds[slot].name, soundName);
 			_sounds[slot].soundId = soundId;
