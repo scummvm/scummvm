@@ -320,9 +320,9 @@ void ConsoleDialog::killLastWord() {
 	}
 
 	for (int i = _currentPos; i < _promptEndPos; i++)
-		_buffer[i % kBufferSize] = _buffer[(i+cnt+1) % kBufferSize];
+		_buffer[i % kBufferSize] = _buffer[(i+cnt) % kBufferSize];
 	_buffer[_promptEndPos % kBufferSize] = ' ';
-	_promptEndPos -= cnt + 1;
+	_promptEndPos -= cnt;
 }
 
 void ConsoleDialog::addToHistory(const char *str) {
