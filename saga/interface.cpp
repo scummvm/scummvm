@@ -26,7 +26,6 @@
 
 #include "saga/gfx.h"
 #include "saga/game_mod.h"
-#include "saga/cvar_mod.h"
 #include "saga/actor.h"
 #include "saga/console.h"
 #include "saga/font.h"
@@ -144,6 +143,7 @@ static INTERFACE_BUTTON IHNM_c_buttons[] = {
 };
 
 int Interface::registerLang(void) {
+#if 0
 	size_t i;
 
 	for (i = 0; i < ARRAYSIZE(I_VerbData); i++) {
@@ -156,6 +156,7 @@ int Interface::registerLang(void) {
 
 		assert(CVAR_Find(I_VerbData[i].verb_cvar) != NULL);
 	}
+#endif
 
 	return SUCCESS;
 }

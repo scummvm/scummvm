@@ -383,7 +383,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 				n_args = scriptS.readByte();
 				func_num = scriptS.readUint16LE();
 				if (func_num >= SFUNC_NUM) {
-					_vm->_console->print(S_ERROR_PREFIX "Invalid script function number: (%X)\n", func_num);
+					_vm->_console->DebugPrintf(S_ERROR_PREFIX "Invalid script function number: (%X)\n", func_num);
 					thread->flags |= kTFlagAborted;
 					break;
 				}
@@ -391,7 +391,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 				sfunc = _SFuncList[func_num];
 				sfuncRetVal = (this->*sfunc)(thread, n_args);
 				if (sfuncRetVal != SUCCESS) {
-					_vm->_console->print(S_WARN_PREFIX "%X: Script function %d failed.\n", thread->i_offset, func_num);
+					_vm->_console->DebugPrintf(S_WARN_PREFIX "%X: Script function %d failed.\n", thread->i_offset, func_num);
 				}
 
 				if (func_num == 16) { // SF_gotoScene
@@ -419,7 +419,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 			thread->stackPtr = thread->framePtr;
 			setFramePtr(thread, thread->pop());
 			if (thread->stackSize() == 0) {
-				_vm->_console->print("Script execution complete.");
+				_vm->_console->DebugPrintf("Script execution complete.\n");
 				thread->flags |= kTFlagFinished;
 			} else {
 				thread->i_offset = thread->pop();
@@ -519,7 +519,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 					}
 				}
 				if (!branch_found) {
-					_vm->_console->print(S_ERROR_PREFIX "%X: Random jump target out of " "bounds.", thread->i_offset);
+					_vm->_console->DebugPrintf(S_ERROR_PREFIX "%X: Random jump target out of bounds.\n", thread->i_offset);
 				}
 			}
 			break;
@@ -757,7 +757,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 
 				a_index = _vm->_actor->getActorIndex(param1);
 				if (a_index < 0) {
-					_vm->_console->print(S_WARN_PREFIX "%X: DLGP Actor id not found.", thread->i_offset);
+					_vm->_console->DebugPrintf(S_WARN_PREFIX "%X: DLGP Actor id not found.\n", thread->i_offset);
 				}
 
 				for (i = 0; i < n_voices; i++) {
@@ -804,7 +804,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 
 		default:
 
-			_vm->_console->print(S_ERROR_PREFIX "%X: Invalid opcode encountered: " "(%X).\n", thread->i_offset, in_char);
+			_vm->_console->DebugPrintf(S_ERROR_PREFIX "%X: Invalid opcode encountered: (%X).\n", thread->i_offset, in_char);
 			thread->flags |= kTFlagAborted;
 			break;
 		}
@@ -816,7 +816,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 			scriptS.seek(thread->i_offset);
 		}
 		if (unhandled) {
-			_vm->_console->print(S_ERROR_PREFIX "%X: Unhandled opcode.\n", thread->i_offset);
+			_vm->_console->DebugPrintf(S_ERROR_PREFIX "%X: Unhandled opcode.\n", thread->i_offset);
 			thread->flags |= kTFlagAborted;
 		}
 		if ((thread->flags == kTFlagNone) && debug_print) {

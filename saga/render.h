@@ -51,7 +51,6 @@ struct BUFFER_INFO {
 
 class Render {
 public:
-	int reg(void);
 	Render(SagaEngine *vm, OSystem *system);
 	~Render(void);
 	bool initialized();

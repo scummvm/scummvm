@@ -38,7 +38,6 @@
 #include "saga/actor.h"
 #include "saga/animation.h"
 #include "saga/console.h"
-#include "saga/cvar_mod.h"
 #include "saga/events.h"
 #include "saga/font.h"
 #include "saga/game_mod.h"
@@ -89,13 +88,12 @@ namespace Saga {
 
 #define MAX_TIME_DELTA 100
 
-static void CF_quitfunc(int argc, char *argv[], void *refCon);
-static void CF_testfunc(int argc, char *argv[], void *refCon);
-
 SagaEngine *_vm = NULL;
 
 SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 	: Engine(syst) {
+
+	_console = NULL;
 
 	// The Linux version of Inherit the Earth puts all data files in an
 	// 'itedata' sub-directory, except for voices.rsc
@@ -128,16 +126,6 @@ void SagaEngine::errorString(const char *buf1, char *buf2) {
 int SagaEngine::init(GameDetector &detector) {
 	_soundEnabled = 1;
 	_musicEnabled = 1;
-
-	_console = new Console(this);
-
-	CVAR_RegisterFunc(CF_testfunc, "testfunc", "foo [ optional foo ]", CVAR_NONE, 0, -1, this);
-
-	CVAR_Register_I(&_soundEnabled, "sound", NULL, CVAR_CFG, 0, 1);
-
-	CVAR_Register_I(&_musicEnabled, "music", NULL, CVAR_CFG, 0, 1);
-
-	CVAR_RegisterFunc(CF_quitfunc, "quit", NULL, CVAR_NONE, 0, 0, this);
 
 	// Add some default directories
 	// Win32 demo & full game
@@ -186,6 +174,9 @@ int SagaEngine::init(GameDetector &detector) {
 	GAME_GetDisplayInfo(&disp_info);
 	_gfx = new Gfx(_system, disp_info.logical_w, disp_info.logical_h, detector);
 
+	// Graphics driver should be initialized before console
+	_console = new Console(this);
+
 	// Graphics should be initialized before music
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_NATIVE | MDT_ADLIB | MDT_PREFER_NATIVE);
 	bool native_mt32 = (ConfMan.getBool("native_mt32") || (midiDriver == MD_MT32));
@@ -221,15 +212,6 @@ int SagaEngine::init(GameDetector &detector) {
 		debug(0, "Sound disabled.");
 	}
 
-	// Register engine modules
-	_console->reg(); // Register console cvars first
-	GAME_Register();
-	_scene->reg();
-	_actor->reg();
-	_script->reg();
-	_render->reg();
-	_anim->reg();
-
 	return 0;
 }
 
@@ -246,6 +228,9 @@ int SagaEngine::go() {
 	uint32 currentTicks;
 
 	for (;;) {
+		if (_console->isAttached())
+			_console->onFrame();
+
 		if (_render->getFlags() & RF_RENDERPAUSE) {
 			// Freeze time while paused
 			_previousTicks = _system->getMillis();
@@ -280,7 +265,6 @@ void SagaEngine::shutdown() {
 	delete _sprite;
 	delete _font;
 	delete _console;
-	CVAR_Shutdown();
 	delete _events;
 	delete _palanim;
 
@@ -295,21 +279,6 @@ void SagaEngine::shutdown() {
 	delete _anim;
 
 	_system->quit();
-}
-
-static void CF_quitfunc(int argc, char *argv[], void *refCon) {
-	((SagaEngine *)refCon)->shutdown();
-	exit(0);
-}
-
-static void CF_testfunc(int argc, char *argv[], void *refCon) {
-	int i;
-
-	_vm->_console->print("Test function invoked: Got %d arguments.", argc);
-
-	for (i = 0; i < argc; i++) {
-		_vm->_console->print("Arg %d: %s", i, argv[i]);
-	}
 }
 
 } // End of namespace Saga

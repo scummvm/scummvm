@@ -29,7 +29,6 @@
 #include "saga/yslib.h"
 
 #include "saga/animation.h"
-#include "saga/cvar_mod.h"
 #include "saga/events.h"
 #include "saga/font.h"
 #include "saga/game_mod.h"
@@ -150,6 +149,7 @@ int Scene::ITEStartProc() {
 }
 
 int Scene::ITEIntroRegisterLang() {
+#if 0
 	size_t i;
 
 	for (i = 0; i < ARRAYSIZE(IntroDiag); i++) {
@@ -160,6 +160,7 @@ int Scene::ITEIntroRegisterLang() {
 			return FAILURE;
 		}
 	}
+#endif
 
 	return SUCCESS;
 }

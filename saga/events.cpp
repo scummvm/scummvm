@@ -198,18 +198,6 @@ int Events::handleContinuous(EVENT *event) {
 			break;
 		}
 		break;
-	case CONSOLE_EVENT:
-		switch (event->op) {
-		case EVENT_ACTIVATE:
-			_vm->_console->dropConsole(event_pc);
-			break;
-		case EVENT_DEACTIVATE:
-			_vm->_console->raiseConsole(event_pc);
-			break;
-		default:
-			break;
-		}
-		break;
 	default:
 		break;
 
@@ -398,7 +386,7 @@ int Events::handleOneShot(EVENT *event) {
 
 		sthread = _vm->_script->SThreadCreate();
 		if (sthread == NULL) {
-			_vm->_console->print("Thread creation failed.");
+			_vm->_console->DebugPrintf("Thread creation failed.\n");
 			break;
 		}
 

@@ -29,7 +29,6 @@
 #include "saga/game_mod.h"
 #include "saga/animation.h"
 #include "saga/console.h"
-#include "saga/cvar_mod.h"
 #include "saga/interface.h"
 #include "saga/events.h"
 #include "saga/actionmap.h"
@@ -46,23 +45,6 @@
 #include "saga/scene.h"
 
 namespace Saga {
-
-static void CF_scenechange(int argc, char *argv[], void *refCon);
-static void CF_sceneinfo(int argc, char *argv[], void *refCon);
-static void CF_actioninfo(int argc, char *argv[], void *refCon);
-static void CF_objectinfo(int argc, char *argv[], void *refCon);
-
-
-int Scene::reg() {
-	CVAR_Register_I(&_sceneNumber, "scene", NULL, CVAR_READONLY, 0, 0);
-	CVAR_RegisterFunc(CF_scenechange, "scene_change", "<Scene number>", CVAR_NONE, 1, 1, this);
-	CVAR_RegisterFunc(CF_sceneinfo, "scene_info", NULL, CVAR_NONE, 0, 0, this);
-	CVAR_RegisterFunc(CF_actioninfo,
-					  "action_info", NULL, CVAR_NONE, 0, 0, this);
-	CVAR_RegisterFunc(CF_objectinfo, "object_info", NULL, CVAR_NONE, 0, 0, this);
-
-	return SUCCESS;
-}
 
 Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	GAME_SCENEDESC gs_desc;
@@ -904,71 +886,52 @@ int Scene::endScene() {
 	return SUCCESS;
 }
 
-void Scene::sceneChangeCmd(int argc, char *argv[]) {
+void Scene::sceneChangeCmd(int argc, const char **argv) {
 	int scene_num = 0;
 
-	if ((argc == 0) || (argc > 1)) {
-		return;
-	}
-
-	scene_num = atoi(argv[0]);
+	scene_num = atoi(argv[1]);
 
 	if ((scene_num < 1) || (scene_num > _sceneMax)) {
-		_vm->_console->print("Invalid scene number.");
+		_vm->_console->DebugPrintf("Invalid scene number.\n");
 		return;
 	}
 
 	clearSceneQueue();
 
 	if (changeScene(scene_num) == SUCCESS) {
-		_vm->_console->print("Scene changed.");
+		_vm->_console->DebugPrintf("Scene changed.\n");
 	} else {
-		_vm->_console->print("Couldn't change scene!");
+		_vm->_console->DebugPrintf("Couldn't change scene!\n");
 	}
 }
 
-static void CF_scenechange(int argc, char *argv[], void *refCon) {
-	((Scene *)refCon)->sceneChangeCmd(argc, argv);
-}
+void Scene::sceneInfoCmd() {
+	const char *fmt = "%-20s %d\n";
 
-void Scene::sceneInfoCmd(int argc, char *argv[]) {
-	const char *fmt = "%-20s %d";
-
-	_vm->_console->print(fmt, "Scene number:", _sceneNumber);
-	_vm->_console->print(fmt, "Descriptor R#:", _sceneResNum);
-	_vm->_console->print("-------------------------");
-	_vm->_console->print(fmt, "Flags:", _desc.flags);
-	_vm->_console->print(fmt, "Resource list R#:", _desc.resListRN);
-	_vm->_console->print(fmt, "End slope:", _desc.endSlope);
-	_vm->_console->print(fmt, "Begin slope:", _desc.beginSlope);
-	_vm->_console->print(fmt, "Script resource:", _desc.scriptNum);
-	_vm->_console->print(fmt, "Scene script:", _desc.sceneScriptNum);
-	_vm->_console->print(fmt, "Start script:", _desc.startScriptNum);
-	_vm->_console->print(fmt, "Music R#", _desc.musicRN);
-}
-
-static void CF_sceneinfo(int argc, char *argv[], void *refCon) {
-	((Scene *)refCon)->sceneInfoCmd(argc, argv);
+	_vm->_console->DebugPrintf(fmt, "Scene number:", _sceneNumber);
+	_vm->_console->DebugPrintf(fmt, "Descriptor R#:", _sceneResNum);
+	_vm->_console->DebugPrintf("-------------------------\n");
+	_vm->_console->DebugPrintf(fmt, "Flags:", _desc.flags);
+	_vm->_console->DebugPrintf(fmt, "Resource list R#:", _desc.resListRN);
+	_vm->_console->DebugPrintf(fmt, "End slope:", _desc.endSlope);
+	_vm->_console->DebugPrintf(fmt, "Begin slope:", _desc.beginSlope);
+	_vm->_console->DebugPrintf(fmt, "Script resource:", _desc.scriptNum);
+	_vm->_console->DebugPrintf(fmt, "Scene script:", _desc.sceneScriptNum);
+	_vm->_console->DebugPrintf(fmt, "Start script:", _desc.startScriptNum);
+	_vm->_console->DebugPrintf(fmt, "Music R#", _desc.musicRN);
 }
 
 int Scene::SC_defaultScene(int param, SCENE_INFO *scene_info, void *refCon) {
 	return ((Scene *)refCon)->defaultScene(param, scene_info);
 }
 
-static void CF_actioninfo(int argc, char *argv[], void *refCon) {
-	(void)(argc);
-	(void)(argv);
-
-	((Scene *)refCon)->_actionMap->info();
+void Scene::CF_actioninfo() {
+	_actionMap->info();
 }
 
-static void CF_objectinfo(int argc, char *argv[], void *refCon) {
-	(void)(argc);
-	(void)(argv);
-
-	((Scene *)refCon)->_objectMap->info();
+void Scene::CF_objectinfo() {
+	_objectMap->info();
 }
-
 
 int Scene::defaultScene(int param, SCENE_INFO *scene_info) {
 	EVENT event;

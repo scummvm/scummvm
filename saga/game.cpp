@@ -30,7 +30,6 @@
 #include "backends/fs/fs.h"
 
 #include "saga/rscfile_mod.h"
-#include "saga/cvar_mod.h"
 #include "saga/interface.h"
 #include "saga/scene.h"
 
@@ -295,25 +294,6 @@ GAMEDESC GameDescs[] = {
 };
 
 static GAMEMODULE GameModule;
-
-int GAME_Register() {
-	return SUCCESS;
-
-	// Register "g_language" cfg cvar
-	strncpy(GameModule.game_language, "us", MAXPATH);
-
-	if (CVAR_Register_S(GameModule.game_language, "g_language",
-						NULL, CVAR_CFG, GAME_LANGSTR_LIMIT) != SUCCESS) {
-		return FAILURE;
-	}
-
-	// Register "g_skipintro" cfg cvar
-	if (CVAR_Register_I(&GameModule.g_skipintro, "g_skipintro", NULL, CVAR_CFG, 0, 1) != SUCCESS) {
-		return FAILURE;
-	}
-
-	return SUCCESS;
-}
 
 int GAME_Init() {
 	uint16 game_n;

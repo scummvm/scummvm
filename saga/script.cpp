@@ -29,23 +29,10 @@
 #include "saga/rscfile_mod.h"
 #include "saga/game_mod.h"
 #include "saga/console.h"
-#include "saga/cvar_mod.h"
 
 #include "saga/script.h"
 
 namespace Saga {
-
-static void CF_script_info(int argc, char *argv[], void *refCon); 
-static void CF_script_exec(int argc, char *argv[], void *refCon);
-static void CF_script_togglestep(int argc, char *argv[], void *refCon);
-
-int Script::reg() {
-	CVAR_RegisterFunc(CF_script_info, "script_info", NULL, CVAR_NONE, 0, 0, this);
-	CVAR_RegisterFunc(CF_script_exec, "script_exec", "<Script number>", CVAR_NONE, 1, 1, this);
-	CVAR_RegisterFunc(CF_script_togglestep, "script_togglestep", NULL, CVAR_NONE, 0, 0, this);
-
-	return SUCCESS;
-}
 
 // Initializes the scripting module.
 // Loads script resource look-up table, initializes script data system
@@ -496,7 +483,7 @@ VOICE_LUT *Script::loadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, SCR
 	return voice_lut;
 }
 
-void Script::scriptInfo(int argc, char *argv[]) {
+void Script::scriptInfo() {
 	uint32 n_entrypoints;
 	uint32 i;
 	char *name_ptr;
@@ -511,51 +498,39 @@ void Script::scriptInfo(int argc, char *argv[]) {
 
 	n_entrypoints = currentScript()->bytecode->n_entrypoints;
 
-	_vm->_console->print("Current script contains %d entrypoints:", n_entrypoints);
+	_vm->_console->DebugPrintf("Current script contains %d entrypoints:\n", n_entrypoints);
 
 	for (i = 0; i < n_entrypoints; i++) {
 		name_ptr = (char *)currentScript()->bytecode->bytecode_p +
 							currentScript()->bytecode->entrypoints[i].name_offset;
-		_vm->_console->print("%lu: %s", i, name_ptr);
+		_vm->_console->DebugPrintf("%lu: %s\n", i, name_ptr);
 	}
 }
 
-void Script::scriptExec(int argc, char *argv[]) {
+void Script::scriptExec(int argc, const char **argv) {
 	uint16 ep_num;
 
-	if (argc < 1) {
-		return;
-	}
-
-	ep_num = atoi(argv[0]);
+	ep_num = atoi(argv[1]);
 
 	if (_dbg_thread == NULL) {
-		_vm->_console->print("Creating debug thread...");
+		_vm->_console->DebugPrintf("Creating debug thread...\n");
 		_dbg_thread = SThreadCreate();
 		if (_dbg_thread == NULL) {
-			_vm->_console->print("Thread creation failed.");
+			_vm->_console->DebugPrintf("Thread creation failed.\n");
 			return;
 		}
 	}
 
 	if (ep_num >= currentScript()->bytecode->n_entrypoints) {
-		_vm->_console->print("Invalid entrypoint.");
+		_vm->_console->DebugPrintf("Invalid entrypoint.\n");
 		return;
 	}
 
 	SThreadExecute(_dbg_thread, ep_num);
 }
 
-void CF_script_info(int argc, char *argv[], void *refCon) {
-	((Script *)refCon)->scriptInfo(argc, argv);
-}
-
-void CF_script_exec(int argc, char *argv[], void *refCon) {
-	((Script *)refCon)->scriptExec(argc, argv);
-}
-
-void CF_script_togglestep(int argc, char *argv[], void *refCon) {
-	((Script *)refCon)->_dbg_singlestep = !((Script *)refCon)->_dbg_singlestep;
+void Script::CF_script_togglestep() {
+	_dbg_singlestep = !_dbg_singlestep;
 }
 
 } // End of namespace Saga

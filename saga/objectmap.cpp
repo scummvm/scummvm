@@ -29,7 +29,6 @@
 #include "saga/saga.h"
 
 #include "saga/gfx.h"
-#include "saga/cvar_mod.h"
 #include "saga/console.h"
 #include "saga/font.h"
 #include "saga/objectmap.h"
@@ -345,11 +344,11 @@ int ObjectMap::hitTest(const Point& imousePt) {
 void ObjectMap::info(void) {
 	int i;
 
-	_vm->_console->print("%d objects loaded.", _nObjects);
+	_vm->_console->DebugPrintf("%d objects loaded.\n", _nObjects);
 
 	for (i = 0; i < _nObjects; i++) {
-		_vm->_console->print("%s:", _names[i]);
-		_vm->_console->print("%d. verb: %d, flags: %X, name_i: %d, scr_n: %d, ca_ct: %d", i, 
+		_vm->_console->DebugPrintf("%s:\n", _names[i]);
+		_vm->_console->DebugPrintf("%d. verb: %d, flags: %X, name_i: %d, scr_n: %d, ca_ct: %d\n", i, 
 					_objectMaps[i].defaultVerb,
 					_objectMaps[i].flags,
 					_objectMaps[i].objectNum,

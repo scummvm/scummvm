@@ -186,7 +186,8 @@ public:
 	Script();
 	~Script();
 	
-	int reg(void);
+	void CF_script_togglestep();
+
 	int loadScript(int scriptNum);
 	int freeScript();
 	SCRIPT_BYTECODE *loadBytecode(byte *bytecode_p, size_t bytecode_len);
@@ -201,8 +202,8 @@ public:
 	SCRIPT_DATABUF *dataBuffer(int idx) { return _dataBuf[idx]; }
 	YS_DL_LIST *threadList() { return _threadList; }
 
-	void scriptInfo(int argc, char *argv[]);
-	void scriptExec(int argc, char *argv[]);
+	void scriptInfo();
+	void scriptExec(int argc, const char **argv);
 	
 protected:
 	bool _initialized;

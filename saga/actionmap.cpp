@@ -24,7 +24,6 @@
 /* Action map module */
 #include "saga/saga.h"
 
-#include "saga/cvar_mod.h"
 #include "saga/gfx.h"
 #include "saga/console.h"
 
@@ -182,10 +181,10 @@ int ActionMap::draw(SURFACE *ds, int color) {
 }
 
 void ActionMap::info(void) {
-	_vm->_console->print("%d exits loaded.\n", _nExits);
+	_vm->_console->DebugPrintf("%d exits loaded.\n\n", _nExits);
 
 	for (int i = 0; i < _nExits; i++) {
-		_vm->_console->print ("Action %d: Exit to: %d", i, _exitsTbl[i].exitScene);
+		_vm->_console->DebugPrintf("Action %d: Exit to: %d\n", i, _exitsTbl[i].exitScene);
 	}
 }
 

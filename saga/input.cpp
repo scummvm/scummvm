@@ -38,76 +38,51 @@ int SagaEngine::processInput() {
 	Point imousePt;
 
 	while (g_system->pollEvent(event)) {
-		int in_char;
-
 		switch (event.event_code) {
 		case OSystem::EVENT_KEYDOWN:
-			if (_vm->_console->isActive()) {
-				in_char = event.kbd.ascii;
-				switch (event.kbd.keycode) {
-				case 96: // backquote
-					_vm->_console->deactivate();
-					break;
-				case 280: // page up
-					_vm->_console->pageUp();
-					break;
-				case 281: // page down
-					_vm->_console->pageDown();
-					break;
-				case 273: // up
-				case 264: // keypad up
-					_vm->_console->cmdUp();
-					break;
-				case 274: // down
-				case 258: // keypad down
-					_vm->_console->cmdDown();
-					break;
-				default:
-					if (in_char) {
-						_vm->_console->type(in_char);
-					}
-					break;
-				}
-				break;
+			if (event.kbd.flags == OSystem::KBD_CTRL) {
+				if (event.kbd.keycode == 'd')
+					_console->attach();
 			}
-
 			switch (event.kbd.keycode) {
-			case 96: // back quote
-				_vm->_console->activate();
+			case '#':
+			case '`':
+			case '~':
+				_console->attach();
 				break;
-			case 114: // r
-				_vm->_interface->draw();
+			case 'r':
+				_interface->draw();
 				break;
 			case 282: // F1
-				_vm->_render->toggleFlag(RF_SHOW_FPS);
+				_render->toggleFlag(RF_SHOW_FPS);
 				break;
 			case 283: // F2
-				_vm->_render->toggleFlag(RF_PALETTE_TEST);
+				_render->toggleFlag(RF_PALETTE_TEST);
 				break;
 			case 284: // F3
-				_vm->_render->toggleFlag(RF_TEXT_TEST);
+				_render->toggleFlag(RF_TEXT_TEST);
 				break;
 			case 285: // F4
-				_vm->_render->toggleFlag(RF_OBJECTMAP_TEST);
+				_render->toggleFlag(RF_OBJECTMAP_TEST);
 				break;
 			case 9: // Tab
-				_vm->_script->SThreadDebugStep();
+				_script->SThreadDebugStep();
 				break;
 
 			// Actual game keys
 			case 32: // space
-				_vm->_actor->skipDialogue();
+				_actor->skipDialogue();
 				break;
 			case 19:  // pause
-			case 112: // p
-				_vm->_render->toggleFlag(RF_RENDERPAUSE);
+			case 'p':
+				_render->toggleFlag(RF_RENDERPAUSE);
 				break;
 			case 27: // Esc
 				// Skip to next scene skip target
-				if (!_vm->_interface->getMode() == kPanelNone) // FIXME: hack
-					_vm->_script->SThreadAbortAll();
+				if (!_interface->getMode() == kPanelNone) // FIXME: hack
+					_script->SThreadAbortAll();
 				else
-					_vm->_scene->skipScene();
+					_scene->skipScene();
 				break;
 			default:
 				break;
@@ -117,7 +92,7 @@ int SagaEngine::processInput() {
 			_mousePos.x = event.mouse.x;
 			_mousePos.y = event.mouse.y;
 			imousePt = _mousePos;
-			_vm->_interface->update(imousePt, UPDATE_MOUSECLICK);
+			_interface->update(imousePt, UPDATE_MOUSECLICK);
 			break;
 		case OSystem::EVENT_MOUSEMOVE:
 			_mousePos.x = event.mouse.x;

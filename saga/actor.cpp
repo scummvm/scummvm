@@ -26,7 +26,6 @@
 #include "saga/gfx.h"
 
 #include "saga/game_mod.h"
-#include "saga/cvar_mod.h"
 #include "saga/console.h"
 #include "saga/rscfile_mod.h"
 #include "saga/script.h"
@@ -44,29 +43,12 @@
 namespace Saga {
 
 static int zCompare(const void *elem1, const void *elem2);
-static void CF_actor_add(int argc, char *argv[], void *refCon);
-static void CF_actor_del(int argc, char *argv[], void *refCon);
-static void CF_actor_move(int argc, char *argv[], void *refCon);
-static void CF_actor_moverel(int argc, char *argv[], void *refCon);
-static void CF_actor_seto(int argc, char *argv[], void *refCon);
-static void CF_actor_setact(int argc, char *argv[], void *refCon);
 
 ACTIONTIMES ActionTDeltas[] = {
 	{ ACTION_IDLE, 80 },
 	{ ACTION_WALK, 80 },
 	{ ACTION_SPEAK, 200 }
 };
-
-int Actor::reg() {
-	CVAR_RegisterFunc(CF_actor_add, "actor_add", "<Actor id> <lx> <ly>", CVAR_NONE, 3, 3, this);
-	CVAR_RegisterFunc(CF_actor_del, "actor_del", "<Actor id>", CVAR_NONE, 1, 1, this);
-	CVAR_RegisterFunc(CF_actor_move, "actor_move", "<Actor id> <lx> <ly>", CVAR_NONE, 3, 3, this);
-	CVAR_RegisterFunc(CF_actor_moverel, "actor_moverel", "<Actor id> <lx> <ly>", CVAR_NONE, 3, 3, this);
-	CVAR_RegisterFunc(CF_actor_seto, "actor_seto", "<Actor id> <Orientation>", CVAR_NONE, 2, 2, this);
-	CVAR_RegisterFunc(CF_actor_setact, "actor_setact", "<Actor id> <Action #>", CVAR_NONE, 2, 2, this);
-
-	return SUCCESS;
-}
 
 Actor::Actor(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	int i;
@@ -1028,116 +1010,86 @@ int Actor::StoA(Point *actor, const Point screen) {
 	return SUCCESS;
 }
 
-static void CF_actor_add(int argc, char *argv[], void *refCon) {
+void Actor::CF_actor_add(int argc, const char **argv) {
 	ACTOR actor;
 
-	if (argc < 3)
-		return;
+	actor.id = (uint16) atoi(argv[1]);
 
-	actor.id = (uint16) atoi(argv[0]);
+	actor.a_pt.x = atoi(argv[2]);
+	actor.a_pt.y = atoi(argv[3]);
 
-	actor.a_pt.x = atoi(argv[1]);
-	actor.a_pt.y = atoi(argv[2]);
-
-	((Actor *)refCon)->addActor(&actor);
-
-	return;
+	addActor(&actor);
 }
 
-static void CF_actor_del(int argc, char *argv[], void *refCon) {
+void Actor::CF_actor_del(int argc, const char **argv) {
 	int id;
  
-	if (argc < 0)
-		return;
+	id = atoi(argv[1]);
 
-	id = atoi(argv[0]);
-
-	((Actor *)refCon)->deleteActor(id);
-
-	return;
+	deleteActor(id);
 }
 
-static void CF_actor_move(int argc, char *argv[], void *refCon) {
+void Actor::CF_actor_move(int argc, const char **argv) {
 	int id;
 	Point move_pt;
 
-	if (argc < 2)
-		return;
+	id = atoi(argv[1]);
 
-	id = atoi(argv[0]);
+	move_pt.x = atoi(argv[2]);
+	move_pt.y = atoi(argv[3]);
 
-	move_pt.x = atoi(argv[1]);
-	move_pt.y = atoi(argv[2]);
-
-	((Actor *)refCon)->move(id, &move_pt);
-
-	return;
+	move(id, &move_pt);
 }
 
-static void CF_actor_moverel(int argc, char *argv[], void *refCon) {
+void Actor::CF_actor_moverel(int argc, const char **argv) {
 	int id;
 	Point move_pt;
 
-	if (argc < 3)
-		return;
+	id = atoi(argv[1]);
 
-	id = atoi(argv[0]);
+	move_pt.x = atoi(argv[2]);
+	move_pt.y = atoi(argv[3]);
 
-	move_pt.x = atoi(argv[1]);
-	move_pt.y = atoi(argv[2]);
-
-	((Actor *)refCon)->moveRelative(id, &move_pt);
-
-	return;
+	moveRelative(id, &move_pt);
 }
 
-static void CF_actor_seto(int argc, char *argv[], void *refCon) {
+void Actor::CF_actor_seto(int argc, const char **argv) {
 	int id;
 	int orient;
 
-	if (argc < 2)
-		return;
+	id = atoi(argv[1]);
+	orient = atoi(argv[2]);
 
-	id = atoi(argv[0]);
-	orient = atoi(argv[1]);
-
-	((Actor *)refCon)->setOrientation(id, orient);
-
-	return;
+	setOrientation(id, orient);
 }
 
-static void CF_actor_setact(int argc, char *argv[], void *refCon) {
+void Actor::CF_actor_setact(int argc, const char **argv) {
 	int index = 0;
 	int action_n = 0;
 
 	ACTOR *actor;
 
-	if (argc < 2)
-		return;
+	index = atoi(argv[1]);
+	action_n = atoi(argv[2]);
 
-	index = atoi(argv[0]);
-	action_n = atoi(argv[1]);
-
-	actor = ((Actor *)refCon)->lookupActor(index);
+	actor = lookupActor(index);
 	if (actor == NULL) {
-		_vm->_console->print("Invalid actor index.");
-
+		_vm->_console->DebugPrintf("Invalid actor index.\n");
 		return;
 	}
 
 	if ((action_n < 0) || (action_n >= actor->action_ct)) {
-		_vm->_console->print("Invalid action number.");
-
+		_vm->_console->DebugPrintf("Invalid action number.\n");
 		return;
 	}
 
-	_vm->_console->print("Action frame counts: %d %d %d %d.",
+	_vm->_console->DebugPrintf("Action frame counts: %d %d %d %d.\n",
 			actor->act_tbl[action_n].dir[0].frame_count,
 			actor->act_tbl[action_n].dir[1].frame_count,
 			actor->act_tbl[action_n].dir[2].frame_count,
 			actor->act_tbl[action_n].dir[3].frame_count);
 
-	((Actor *)refCon)->setAction(index, action_n, ACTION_LOOP);
+	setAction(index, action_n, ACTION_LOOP);
 }
 
 } // End of namespace Saga

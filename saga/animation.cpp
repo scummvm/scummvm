@@ -25,7 +25,6 @@
 #include "saga/saga.h"
 #include "saga/gfx.h"
 
-#include "saga/cvar_mod.h"
 #include "saga/console.h"
 #include "saga/game_mod.h"
 #include "saga/events.h"
@@ -34,13 +33,6 @@
 #include "saga/animation.h"
 
 namespace Saga {
-
-static void CF_anim_info(int argc, char *argv[], void *refCon);
-
-int Anim::reg() {
-	CVAR_RegisterFunc(CF_anim_info, "anim_info", NULL, CVAR_NONE, 0, 0, this);
-	return SUCCESS;
-}
 
 Anim::Anim(SagaEngine *vm) : _vm(vm) {
 	int i;
@@ -915,29 +907,22 @@ int Anim::getFrameOffset(const byte *resdata, size_t resdata_len, uint16 find_fr
 	return SUCCESS;
 }
 
-void Anim::animInfo(int argc, char *argv[]) {
+void Anim::animInfo() {
 	uint16 anim_ct;
 	uint16 i;
 	uint16 idx;
 
-	(void)(argc);
-	(void)(argv);
-
 	anim_ct = _anim_count;
 
-	_vm->_console->print("There are %d animations loaded:", anim_ct);
+	_vm->_console->DebugPrintf("There are %d animations loaded:\n", anim_ct);
 
 	for (idx = 0, i = 0; i < anim_ct; idx++, i++) {
 		while (_anim_tbl[idx] == NULL) {
 			idx++;
 		}
 
-		_vm->_console->print("%02d: Frames: %u Flags: %u", i, _anim_tbl[idx]->n_frames, _anim_tbl[idx]->flags);
+		_vm->_console->DebugPrintf("%02d: Frames: %u Flags: %u\n", i, _anim_tbl[idx]->n_frames, _anim_tbl[idx]->flags);
 	}
-}
-
-static void CF_anim_info(int argc, char *argv[], void *refCon) {
-	((Anim *)refCon)->animInfo(argc, argv);
 }
 
 } // End of namespace Saga

@@ -214,7 +214,9 @@ class Scene {
  public:
 	Scene(SagaEngine *vm);
 	~Scene();
-	int reg();
+
+	void CF_actioninfo();
+	void CF_objectinfo();
 
 	int startScene();
 	int nextScene();
@@ -235,8 +237,8 @@ class Scene {
 
 	bool initialized() { return _initialized; }
 
-	void sceneInfoCmd(int argc, char *argv[]);
-	void sceneChangeCmd(int argc, char *argv[]);
+	void sceneInfoCmd();
+	void sceneChangeCmd(int argc, const char **argv);
 
 	int getSceneLUT(int num);
 	int currentSceneNumber() { return _sceneNumber; }

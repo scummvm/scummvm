@@ -26,8 +26,6 @@
 
 #include "saga/gfx.h"
 #include "saga/actor.h"
-#include "saga/console.h"
-#include "saga/cvar_mod.h"
 #include "saga/font.h"
 #include "saga/game_mod.h"
 #include "saga/interface.h"
@@ -43,10 +41,6 @@
 namespace Saga {
 
 const char *test_txt = "The quick brown fox jumped over the lazy dog. She sells sea shells down by the sea shore.";
-
-int Render::reg(void) {
-	return SUCCESS;
-}
 
 Render::Render(SagaEngine *vm, OSystem *system) {
 	_vm = vm;
@@ -181,9 +175,6 @@ int Render::drawScene() {
 	if (_flags & RF_PALETTE_TEST) {
 		drawPalette(backbuf_surface);
 	}
-
-	// Draw console
-	_vm->_console->draw(backbuf_surface);
 
 	_system->copyRectToScreen((byte *)backbuf_surface->pixels, backbuf_surface->w, 0, 0, 
 							  backbuf_surface->w, backbuf_surface->h);

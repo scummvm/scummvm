@@ -6,9 +6,7 @@ MODULE_OBJS := \
 	saga/actordata.o \
 	saga/animation.o \
 	saga/console.o \
-	saga/cvar.o \
 	saga/events.o \
-	saga/expr.o \
 	saga/font.o \
 	saga/font_map.o \
 	saga/game.o \

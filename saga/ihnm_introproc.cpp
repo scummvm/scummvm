@@ -28,7 +28,6 @@
 #include "saga/gfx.h"
 
 #include "saga/animation.h"
-#include "saga/cvar_mod.h"
 #include "saga/events.h"
 #include "saga/rscfile_mod.h"
 #include "saga/sndres.h"

@@ -94,9 +94,9 @@ enum ANIM_FLAGS {
 
 class Anim {
 public:
-	int reg(void);
 	Anim(SagaEngine *vm);
 	~Anim(void);
+
 	int load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_id_p);
 	int freeId(uint16 anim_id);
 	int play(uint16 anim_id, int vector_time);
@@ -105,7 +105,7 @@ public:
 	int clearFlag(uint16 anim_id, uint16 flag);
 	int setFrameTime(uint16 anim_id, int time);
 	int reset(void);
-	void animInfo(int argc, char *argv[]);
+	void animInfo(void);
 
 private:
 	int getNumFrames(const byte *anim_resource, size_t anim_resource_len, uint16 *n_frames);

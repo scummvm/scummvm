@@ -186,9 +186,15 @@ struct ACTIONTIMES {
 
 class Actor {
 public:
-	int reg();
 	Actor(SagaEngine *vm);
 	~Actor();
+
+	void CF_actor_add(int argc, const char **argv);
+	void CF_actor_del(int argc, const char **argv);
+	void CF_actor_move(int argc, const char **argv);
+	void CF_actor_moverel(int argc, const char **argv);
+	void CF_actor_seto(int argc, const char **argv);
+	void CF_actor_setact(int argc, const char **argv);
 
 	int direct(int msec);
 

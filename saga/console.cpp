@@ -24,442 +24,211 @@
 // Console module
 
 #include "saga/saga.h"
-#include "saga/gfx.h"
-#include "saga/font.h"
-#include "saga/cvar_mod.h"
-#include "saga/events.h"
+#include "saga/actor.h"
+#include "saga/animation.h"
+#include "saga/scene.h"
+#include "saga/script.h"
 
 #include "saga/console.h"
 
+#include "common/debugger.cpp"
+
 namespace Saga {
 
-int Console::reg() {
-	CVAR_Register_I(&_resize, "con_h", NULL, CVAR_NONE, 12, CON_DEFAULTPOS);
-	CVAR_Register_I(&_droptime, "con_droptime", NULL, CVAR_NONE, 0, 5000);
-	CVAR_Register_I(&_lineMax, "con_lines", NULL, CVAR_NONE, 5, 5000);
-	return SUCCESS;
-}
+Console::Console(SagaEngine *vm) : Common::Debugger<Console>() {
+	_vm = vm;
 
-Console::Console(SagaEngine *vm) : _vm(vm) {
-	memset(&_scrollback, 0, sizeof(_scrollback));
-	memset(&_history, 0, sizeof(_history));
+	DCmd_Register("continue", &Console::Cmd_Exit);
+	DCmd_Register("exit", &Console::Cmd_Exit);
+	DCmd_Register("quit", &Console::Cmd_Exit);
+	DCmd_Register("help", &Console::Cmd_Help);
 
-	_resize = CON_DEFAULTPOS;
-	_droptime = CON_DROPTIME;
+	// CVAR_Register_I(&_soundEnabled, "sound", NULL, CVAR_CFG, 0, 1);
+	// CVAR_Register_I(&_musicEnabled, "music", NULL, CVAR_CFG, 0, 1);
 
-	_active = false;
-	_yMax = CON_DEFAULTPOS;
-	_lineMax = CON_DEFAULTLINES;
-	_histMax = CON_DEFAULTCMDS;
-	_histPos = 0;
-	_linePos = 0;
-	_yPos = 0;
-	_prompt = NULL;
-	_promptW = 0;
-	*_inputBuf = 0;
-	_inputPos = 0;
+	// Actor commands
+	DCmd_Register("actor_add", &Console::Cmd_ActorAdd);
+	DCmd_Register("actor_del", &Console::Cmd_ActorDel);
+	DCmd_Register("actor_move", &Console::Cmd_ActorMove);
+	DCmd_Register("actor_moverel", &Console::Cmd_ActorMoveRel);
+	DCmd_Register("actor_seto", &Console::Cmd_ActorSetO);
+	DCmd_Register("actor_setact", &Console::Cmd_ActorSetAct);
+
+	// Animation commands
+	DCmd_Register("anim_info", &Console::Cmd_AnimInfo);
+
+	// Game stuff
+
+#if 0
+	// Register "g_language" cfg cvar
+	strncpy(GameModule.game_language, "us", MAXPATH);
+
+	CVAR_Register_S(GameModule.game_language, "g_language", NULL, CVAR_CFG, GAME_LANGSTR_LIMIT);
+
+	// Register "g_skipintro" cfg cvar
+	CVAR_Register_I(&GameModule.g_skipintro, "g_skipintro", NULL, CVAR_CFG, 0, 1);
+#endif
+
+	// Scene commands
+	DCmd_Register("scene_change", &Console::Cmd_SceneChange);
+	DCmd_Register("scene_info", &Console::Cmd_SceneInfo);
+	DCmd_Register("action_info", &Console::Cmd_ActionInfo);
+	DCmd_Register("object_info", &Console::Cmd_ObjectInfo);
+	// CVAR_Register_I(&_sceneNumber, "scene", NULL, CVAR_READONLY, 0, 0);
+
+	// Script commands
+	DCmd_Register("script_info", &Console::Cmd_ScriptInfo);
+	DCmd_Register("script_exec", &Console::Cmd_ScriptExec);
+	DCmd_Register("script_togglestep", &Console::Cmd_ScriptToggleStep);
+//	CVAR_RegisterFunc(CF_script_info, "script_info", NULL, CVAR_NONE, 0, 0, this);
+//	CVAR_RegisterFunc(CF_script_exec, "script_exec", "<Script number>", CVAR_NONE, 1, 1, this);
+//	CVAR_RegisterFunc(CF_script_togglestep, "script_togglestep", NULL, CVAR_NONE, 0, 0, this);
 }
 
 Console::~Console() {
-	debug(0, "~Console(): Deleting console scrollback and command history.");
-
-	deleteScroll(&_scrollback);
-	deleteScroll(&_history);
 }
 
-int Console::activate() {
-	EVENT con_event;
-
-	if (_active) {
-		return FAILURE;
-	}
-
-	con_event.type = CONTINUOUS_EVENT;
-	con_event.code = CONSOLE_EVENT | NODESTROY;
-	con_event.op = EVENT_ACTIVATE;
-	con_event.time = 0;
-	con_event.duration = _droptime;
-
-	_vm->_events->queue(&con_event);
-
-	_active = true;
-
-	return SUCCESS;
+void Console::preEnter() {
 }
 
-int Console::deactivate() {
-	EVENT con_event;
-
-	if (!_active) {
-		return FAILURE;
-	}
-
-	con_event.type = CONTINUOUS_EVENT;
-	con_event.code = CONSOLE_EVENT | NODESTROY;
-	con_event.op = EVENT_DEACTIVATE;
-	con_event.time = 0;
-	con_event.duration = _droptime;
-
-	_vm->_events->queue(&con_event);
-
-	return SUCCESS;
+void Console::postEnter() {
 }
 
-bool Console::isActive(void) {
-	return _active;
+bool Console::Cmd_Exit(int argc, const char **argv) {
+	_detach_now = true;
+	return false;
 }
 
-// Responsible for processing character input to the console and maintaining
-// the console input buffer.
-// Input buffer is processed by EXPR_Parse on enter.
-// High ASCII characters are ignored.
-int Console::type(int in_char) {
-	int input_pos = _inputPos;
-	const char *expr;
-	int expr_len;
-	int result;
-	//char *lvalue;
+bool Console::Cmd_Help(int argc, const char **argv) {
+	// console normally has 39 line width
+	// wrap around nicely
+	int width = 0, size, i;
 
-	char *rvalue = NULL;
-	CVAR_P con_cvar = NULL;
+	DebugPrintf("Commands are:\n");
+	for (i = 0 ; i < _dcmd_count ; i++) {
+		size = strlen(_dcmds[i].name) + 1;
 
-	const char *expr_err;
-	const char *err_str;
+		if ((width + size) >= 39) {
+			DebugPrintf("\n");
+			width = size;
+		} else
+			width += size;
 
-	if (_yPos != _yMax) {
-		// Ignore keypress until console fully down
-		return SUCCESS;
+		DebugPrintf("%s ", _dcmds[i].name);
 	}
 
-	if ((in_char > 127) || (!in_char)) {
-		// Ignore non-ascii codes
-		return SUCCESS;
+	width = 0;
+
+	DebugPrintf("\n\nVariables are:\n");
+	for (i = 0 ; i < _dvar_count ; i++) {
+		size = strlen(_dvars[i].name) + 1;
+
+		if ((width + size) >= 39) {
+			DebugPrintf("\n");
+			width = size;
+		} else
+			width += size;
+
+		DebugPrintf("%s ", _dvars[i].name);
 	}
 
-	switch (in_char) {
-	case '\r':
-		expr = _inputBuf;
-		_vm->_console->print("> %s", _inputBuf);
-		expr_len = strlen(_inputBuf);
-		result = EXPR_Parse(&expr, &expr_len, &con_cvar, &rvalue);
-		_vm->_console->addLine(&_history, _histMax, _inputBuf);
-		memset(_inputBuf, 0, CON_INPUTBUF_LEN);
-		_inputPos = 0;
-		_histPos = 0;
-		if (result != SUCCESS) {
-			EXPR_GetError(&expr_err);
-			_vm->_console->print("Parse error: %s", expr_err);
-			break;
-		}
+	DebugPrintf("\n");
 
-		if (rvalue == NULL) {
-			CVAR_Print(con_cvar);
-			break;
-		}
-
-		if (CVAR_IsFunc(con_cvar)) {
-			CVAR_Exec(con_cvar, rvalue);
-		} else if (CVAR_SetValue(con_cvar, rvalue) != SUCCESS) {
-			CVAR_GetError(&err_str);
-			_vm->_console->print("Illegal assignment: %s.", err_str);
-		}
-		break;
-	case '\b':
-		_inputBuf[input_pos] = 0;
-		if (input_pos > 0) {
-			_inputPos--;
-			_inputBuf[_inputPos] = 0;
-		}
-		break;
-	default:
-		if (input_pos < CON_INPUTBUF_LEN) {
-			_inputBuf[input_pos] = (char)in_char;
-			_inputPos++;
-		}
-		break;
-	}
-
-	if (rvalue)
-		free(rvalue);
-
-	return SUCCESS;
+	return true;
 }
 
-int Console::draw(SURFACE *ds) {
-	int line_y;
-	CONSOLE_LINE *walk_ptr;
-	CONSOLE_LINE *start_ptr;
-	int txt_fgcolor;
-	int txt_shcolor;
-	Rect fill_rect;
-	int i;
-
-	if (!_active) {
-		return FAILURE;
-	}
-
-	if (_resize != _yMax) {
-		_yMax = _resize;
-		_yPos = _resize;
-	}
-
-	fill_rect.top = 0;
-	fill_rect.left = 0;
-	fill_rect.bottom = _yPos + 1;
-	fill_rect.right = ds->w;
-
-	drawRect(ds, &fill_rect, _vm->_gfx->matchColor(CONSOLE_BGCOLOR));
-	txt_fgcolor = _vm->_gfx->matchColor(CONSOLE_TXTCOLOR);
-	txt_shcolor = _vm->_gfx->matchColor(CONSOLE_TXTSHADOW);
-
-	_vm->_font->draw(SMALL_FONT_ID, ds, ">", 1, 2, _yPos - 10, txt_fgcolor, txt_shcolor, FONT_SHADOW);
-	_vm->_font->draw(SMALL_FONT_ID, ds, _inputBuf, strlen(_inputBuf),
-				10, _yPos - 10, txt_fgcolor, txt_shcolor, FONT_SHADOW);
-
-	line_y = _yPos - (CON_INPUT_H + CON_LINE_H);
-	start_ptr = _scrollback.head;
-
-	for (i = 0; i < _linePos; i++) {
-		if (start_ptr->next) {
-			start_ptr = start_ptr->next;
-		} else {
-			break;
-		}
-	}
-
-	for (walk_ptr = start_ptr; walk_ptr; walk_ptr = walk_ptr->next) {
-		_vm->_font->draw(SMALL_FONT_ID, ds, walk_ptr->str_p, walk_ptr->str_len, 2, line_y, txt_fgcolor, txt_shcolor, FONT_SHADOW);
-		line_y -= CON_LINE_H;
-		if (line_y < -CON_LINE_H)
-			break;
-	}
-
-	return SUCCESS;
+bool Console::Cmd_ActorAdd(int argc, const char **argv) {
+	if (argc != 4)
+		DebugPrintf("Usage: %s <Actor id> <lx> <ly>\n", argv[0]);
+	else
+		_vm->_actor->CF_actor_add(argc, argv);
+	return true;
 }
 
-int Console::print(const char *fmt_str, ...) {
-	char vsstr_p[CON_PRINTFLIMIT + 1];
-	va_list argptr;
-	int ret_val;
-
-	va_start(argptr, fmt_str);
-	ret_val = vsprintf(vsstr_p, fmt_str, argptr);
-	_vm->_console->addLine(&_scrollback, _lineMax, vsstr_p);
-	debug(0, vsstr_p);
-	va_end(argptr);
-	_linePos = 0;
-
-	return ret_val;
+bool Console::Cmd_ActorDel(int argc, const char **argv) {
+	if (argc != 2)
+		DebugPrintf("Usage: %s <Actor id>\n", argv[0]);
+	else
+		_vm->_actor->CF_actor_del(argc, argv);
+	return true;
 }
 
-int Console::cmdUp() {
-	CONSOLE_LINE *start_ptr = _history.head;
-	int i;
-
-	if (!start_ptr) {
-		return SUCCESS;
-	}
-
-	if (_histPos < _history.lines) {
-		_histPos++;
-	}
-
-	for (i = 1; (i < _histPos); i++) {
-		if (start_ptr->next) {
-			start_ptr = start_ptr->next;
-		} else {
-			break;
-		}
-	}
-
-	memset(_inputBuf, 0, CON_INPUTBUF_LEN);
-	strcpy(_inputBuf, start_ptr->str_p);
-	_inputPos = start_ptr->str_len - 1;
-
-	debug(0, "History pos: %d/%d", _histPos, _history.lines);
-
-	return SUCCESS;
+bool Console::Cmd_ActorMove(int argc, const char **argv) {
+	if (argc != 4)
+		DebugPrintf("Usage: %s <Actor id> <lx> <ly>\n", argv[0]);
+	else
+		_vm->_actor->CF_actor_move(argc, argv);
+	return true;
 }
 
-int Console::cmdDown(void) {
-	CONSOLE_LINE *start_ptr = _history.head;
-	int i;
-
-	if (_histPos == 1) {
-		debug(0, "Erased input buffer.");
-		memset(_inputBuf, 0, CON_INPUTBUF_LEN);
-		_inputPos = 0;
-		_histPos--;
-		return SUCCESS;
-	} else if (_histPos) {
-		_histPos--;
-	} else {
-		return SUCCESS;
-	}
-
-	for (i = 1; i < _histPos; i++) {
-		if (start_ptr->next) {
-			start_ptr = start_ptr->next;
-		} else {
-			break;
-		}
-	}
-
-	memset(_inputBuf, 0, CON_INPUTBUF_LEN);
-	strcpy(_inputBuf, start_ptr->str_p);
-	_inputPos = start_ptr->str_len - 1;
-
-	debug(0, "History pos: %d/%d", _histPos, _history.lines);
-
-	return SUCCESS;
+bool Console::Cmd_ActorMoveRel(int argc, const char **argv) {
+	if (argc != 4)
+		DebugPrintf("Usage: %s <Actor id> <lx> <ly>\n", argv[0]);
+	else
+		_vm->_actor->CF_actor_moverel(argc, argv);
+	return true;
 }
 
-int Console::pageUp() {
-	int n_lines;
-	n_lines = (_yMax - CON_INPUT_H) / CON_LINE_H;
-
-	if (_linePos < (_scrollback.lines - n_lines)) {
-		_linePos += n_lines;
-	}
-
-	debug(0, "Line pos: %d", _linePos);
-	return SUCCESS;
+bool Console::Cmd_ActorSetO(int argc, const char **argv) {
+	if (argc != 3)
+		DebugPrintf("Usage: %s <Actor id> <Orientation>\n", argv[0]);
+	else
+		_vm->_actor->CF_actor_seto(argc, argv);
+	return true;
 }
 
-int Console::pageDown() {
-	int n_lines;
-	n_lines = (_yMax - CON_INPUT_H) / CON_LINE_H;
-
-	if (_linePos > n_lines) {
-		_linePos -= n_lines;
-	} else {
-		_linePos = 0;
-	}
-
-	return SUCCESS;
+bool Console::Cmd_ActorSetAct(int argc, const char **argv) {
+	if (argc != 3)
+		DebugPrintf("Usage: %s <Actor id> <Action #>\n", argv[0]);
+	else
+		_vm->_actor->CF_actor_setact(argc, argv);
+	return true;
 }
 
-int Console::dropConsole(double percent) {
-	SURFACE *back_buf;
-
-	if (percent > 1.0) {
-		percent = 1.0;
-	}
-
-	back_buf = _vm->_gfx->getBackBuffer();
-	_vm->_console->setDropPos(percent);
-	_vm->_console->draw(back_buf);
-
-	return SUCCESS;
+bool Console::Cmd_AnimInfo(int argc, const char **argv) {
+	_vm->_anim->animInfo();
+	return true;
 }
 
-int Console::raiseConsole(double percent) {
-	SURFACE *back_buf;
-
-	if (percent >= 1.0) {
-		percent = 1.0;
-		_active = false;
-	}
-
-	back_buf = _vm->_gfx->getBackBuffer();
-	_vm->_console->setDropPos(1.0 - percent);
-	_vm->_console->draw(back_buf);
-
-	return SUCCESS;
+bool Console::Cmd_SceneChange(int argc, const char **argv) {
+	if (argc != 2)
+		DebugPrintf("Usage: %s <Scene number>\n", argv[0]);
+	else
+		_vm->_scene->sceneChangeCmd(argc, argv);
+	return true;
 }
 
-int Console::setDropPos(double percent) {
-	double exp_percent;
-
-	if (percent > 1.0)
-		percent = 1.0;
-	if (percent < 0.0)
-		percent = 0.0;
-
-	exp_percent = percent * percent;
-	_yPos = (int)(_yMax * exp_percent);
-
-	return SUCCESS;
+bool Console::Cmd_SceneInfo(int argc, const char **argv) {
+	_vm->_scene->sceneInfoCmd();
+	return true;
 }
 
-int Console::addLine(CON_SCROLLBACK *scroll, int line_max, const char *constr_p) {
-	int constr_len;
-	char *newstr_p;
-	CONSOLE_LINE *newline_p;
-	int del_lines;
-	int i;
-
-	constr_len = strlen(constr_p) + 1;
-	newstr_p = (char *)malloc(constr_len);
-	if (newstr_p == NULL) {
-		return MEM;
-	}
-
-	newline_p = (CONSOLE_LINE *)malloc(sizeof(CONSOLE_LINE));
-	if (newline_p == NULL) {
-		return MEM;
-	}
-	newline_p->next = NULL;
-	newline_p->prev = NULL;
-
-	strcpy(newstr_p, constr_p);
-	newline_p->str_p = newstr_p;
-	newline_p->str_len = constr_len;
-
-	if (scroll->head == NULL) {
-		scroll->head = newline_p;
-		scroll->tail = newline_p;
-	} else {
-		scroll->head->prev = newline_p;
-		newline_p->next = scroll->head;
-		scroll->head = newline_p;
-	}
-
-	scroll->lines++;
-
-	if (scroll->lines > line_max) {
-		del_lines = scroll->lines - line_max;
-
-		for (i = 0; i < del_lines; i++) {
-			_vm->_console->deleteLine(scroll);
-		}
-	}
-
-	return SUCCESS;
+bool Console::Cmd_ActionInfo(int argc, const char **argv) {
+	_vm->_scene->CF_actioninfo();
+	return true;
 }
 
-int Console::deleteLine(CON_SCROLLBACK *scroll) {
-	CONSOLE_LINE *temp_p = scroll->tail;
-
-	if (temp_p->prev == NULL) {
-		scroll->head = NULL;
-		scroll->tail = NULL;
-	} else {
-		temp_p->prev->next = NULL;
-		scroll->tail = temp_p->prev;
-	}
-
-	if (temp_p->str_p)
-		free(temp_p->str_p);
-	free(temp_p);
-	scroll->lines--;
-
-	return SUCCESS;
+bool Console::Cmd_ObjectInfo(int argc, const char **argv) {
+	_vm->_scene->CF_objectinfo();
+	return true;
 }
 
-int Console::deleteScroll(CON_SCROLLBACK * scroll) {
-	CONSOLE_LINE *walk_ptr;
-	CONSOLE_LINE *temp_ptr;
+bool Console::Cmd_ScriptInfo(int argc, const char **argv) {
+	_vm->_script->scriptInfo();
+	return true;
+}
 
-	for (walk_ptr = scroll->head; walk_ptr; walk_ptr = temp_ptr) {
+bool Console::Cmd_ScriptExec(int argc, const char **argv) {
+	if (argc != 2)
+		DebugPrintf("Usage: %s <Script number>\n", argv[0]);
+	else
+		_vm->_script->scriptExec(argc, argv);
+	return true;
+}
 
-		if (walk_ptr->str_p)
-			free(walk_ptr->str_p);
-		temp_ptr = walk_ptr->next;
-		free(walk_ptr);
-	}
-
-	return SUCCESS;
+bool Console::Cmd_ScriptToggleStep(int argc, const char **argv) {
+	_vm->_script->CF_script_togglestep();
+	return true;
 }
 
 } // End of namespace Saga
