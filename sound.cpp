@@ -221,7 +221,32 @@ void Scumm::playSound(int sound)
 		return;
 	}
 
-	if ((_features & GF_OLD256) || (_gameId == GID_MONKEY_VGA))
+	if ((_features & GF_OLD256) && (ptr != NULL)) {
+		char *sound;
+		int size = READ_LE_UINT32(ptr);
+		ptr+=0x16;
+
+		if (size == 30) {
+#ifdef COMPRESSED_SOUND_FILE
+        	        if (playMP3CDTrack(*ptr, 0, 0, 0) == -1)
+#endif
+	                _system->play_cdrom(*ptr, 0, 0, 0);
+			return;
+		}
+
+		sound = (char*)malloc(size-0x36);
+		for (int x=0; x<(size-0x36); x++) {
+			int bit = *ptr++;
+			if (bit<0x80) sound[x] = 0x7F-bit; else sound[x] = bit;
+		}
+
+		// FIXME: Something in the header signifies looping. Need to track it down and add a 
+		//	  mixer flag or something.
+		_mixer->play_raw(NULL, sound, size-0x36, 11000, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+		return;
+	}
+
+	if (_gameId == GID_MONKEY_VGA)
 		return;											/* FIXME */
 
 	if (se) {
