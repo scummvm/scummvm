@@ -1285,9 +1285,10 @@ void Scumm::o5_loadRoom()
 
 	room = getVarOrDirectByte(0x80);
 	
-	// FIXME - the following 'if' is needed for Zak256 and MonkeyVGA, but might
-	// cause regression in other games.
-	if (room != _currentRoom)
+	// For small header games, we only call startScene if the room
+	// actually changed. This avoid unwanted (wrong) fades in Zak256
+	// and others. OTOH, it seems to cause a problem in newer games.
+	if (!(_features & GF_SMALL_HEADER) || room != _currentRoom)
 		startScene(room, 0, 0);
 	_fullRedraw = 1;
 }
@@ -1589,27 +1590,27 @@ void Scumm::o5_resourceRoutines()
 
 	case 0x1F + 1:
 		// TODO
-		warning("o5_resourceRoutines %d not yet handled", _opcode);
+		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode,  vm.slot[_currentScript].number);
 		break;
 	case 0x20 + 1:
 		// TODO
-		warning("o5_resourceRoutines %d not yet handled", _opcode);
+		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode,  vm.slot[_currentScript].number);
 		break;
 	case 0x22 + 1:
 		// TODO
 		foo = getVarOrDirectByte(0x40);
-		warning("o5_resourceRoutines %d not yet handled", _opcode);
+		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode,  vm.slot[_currentScript].number);
 		break;
 	case 0x23 + 1:
 		// TODO
 		foo = getVarOrDirectByte(0x40);
 		bar = fetchScriptByte();
-		warning("o5_resourceRoutines %d not yet handled", _opcode);
+		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode,  vm.slot[_currentScript].number);
 		break;
 	case 0x24 + 1:
 		// TODO
 		foo = getVarOrDirectByte(0x40);
-		warning("o5_resourceRoutines %d not yet handled", _opcode);
+		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode,  vm.slot[_currentScript].number);
 		break;
 
 	default:
@@ -1881,7 +1882,7 @@ void Scumm::o5_setObjectName()
 	int a;
 	int i = 0;
 	byte *name = NULL;
-	unsigned char work[255];
+	unsigned char work[256];
 	
 	// Read in new name
 	while ((a = fetchScriptByte()) != 0) {
@@ -2089,14 +2090,13 @@ void Scumm::o5_stringOps()
 	case 3:											/* set string char */
 		a = getVarOrDirectByte(0x80);
 		b = getVarOrDirectByte(0x40);
+		c = getVarOrDirectByte(0x20);
 		ptr = getResourceAddress(rtString, a);
-		if (!(_gameId == GID_LOOM256)) {	/* FIXME - LOOM256 */
+		if (_gameId != GID_LOOM256) {	/* FIXME - LOOM256 */
 			if (ptr == NULL)
 				error("String %d does not exist", a);
-			c = getVarOrDirectByte(0x20);
 			ptr[b] = c;
-		} else
-			getVarOrDirectByte(0x20);
+		}
 
 		break;
 
