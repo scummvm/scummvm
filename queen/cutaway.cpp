@@ -32,6 +32,8 @@ namespace Queen {
 
    - Implement CUTAWAY_SCALE
 
+   - Implement SCENE_START and SCENE_END
+
    - Finish Cutaway::handleAnimation
 
    - Support the remaining cutaway object types:
@@ -493,6 +495,7 @@ Cutaway::ObjectType Cutaway::getObjectType(CutawayObject &object) {
 }
 
 byte *Cutaway::getCutawayAnim(byte *ptr, int header, CutawayAnim &anim) {
+	// lines 1531-1607 in cutaway.c
 
 	anim.currentFrame = 0;
 	anim.originalFrame = 0;
@@ -508,7 +511,7 @@ byte *Cutaway::getCutawayAnim(byte *ptr, int header, CutawayAnim &anim) {
 		// XXX if(FULLSCREEN) bobs[0].y2=199;
 	}
 	else {
-		warning("Stuff not yet implemented in Cutaway::handleAnimation()");
+		//warning("Stuff not yet implemented in Cutaway::getCutawayAnim()");
 		
 		anim.object = _logic->findBob(header);
 
@@ -528,6 +531,24 @@ byte *Cutaway::getCutawayAnim(byte *ptr, int header, CutawayAnim &anim) {
 
 	anim.bank = (int16)READ_BE_UINT16(ptr);
 	ptr += 2;
+
+	if (anim.bank == 0) {
+		anim.bank = 15;
+	}
+	else {
+		if (anim.bank != 13) {
+			/* XXX if (OLDBANK != T) */ {
+				_graphics->bankLoad(_bankNames[anim.bank], 8);
+				// XXX OLDBANK=T;
+			}
+
+			anim.bank = 8;
+		}
+		else {
+			// Make sure we ref correct JOE bank (7)
+			anim.bank = 7;
+		}
+	}
 
 	anim.mx = (int16)READ_BE_UINT16(ptr);
 	ptr += 2;
@@ -551,6 +572,14 @@ byte *Cutaway::getCutawayAnim(byte *ptr, int header, CutawayAnim &anim) {
 	anim.song = 0;
 #endif
 
+	// Extract information that depend on the signedness of values
+	if (anim.unpackFrame < 0) {
+		anim.flip = true;
+		anim.unpackFrame = -anim.unpackFrame;
+	}
+	else
+		anim.flip = false;
+
 	return ptr;
 }
 
@@ -571,13 +600,16 @@ void Cutaway::dumpCutawayAnim(CutawayAnim &anim) {
 }
 
 byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
+	// lines 1517-1770 in cutaway.c
 	int frameCount = 0;
 	int header = 0;
+	int i;
+		
+	CutawayAnim objAnim[56];
 
 	// Read animation frames
 	for (;;) {
 
-		CutawayAnim tmp;      // make array
 		header = (int16)READ_BE_UINT16(ptr);
 		ptr += 2;
 
@@ -589,8 +621,8 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 		if (header > 1000)
 			error("Header too large");
 
-		ptr = getCutawayAnim(ptr, header, tmp);
-		dumpCutawayAnim(tmp);
+		ptr = getCutawayAnim(ptr, header, objAnim[frameCount]);
+		dumpCutawayAnim(objAnim[frameCount]);
 
 		frameCount++;
 
@@ -599,18 +631,72 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 	}
 
 	if (object.animType == 1) {
-		// XXX
+		// lines 1615-1636 in cutaway.c
+
+		if (/*(P_BNUM==1) &&*/ (_logic->currentRoom() == 47 || _logic->currentRoom() == 63)) {
+			// The oracle
+			warning("The oracle is not yet handled");
+		}
+		else {
+			int currentImage = 0;
+			currentImage = makeComplexAnimation(currentImage, objAnim, frameCount);
+		}
+
+		if (object.bobStartX || object.bobStartY) {
+			BobSlot *bob = _graphics->bob(objAnim[0].object);
+			bob->x = object.bobStartX;
+			bob->y = object.bobStartY;
+		}
 	}
 
 	// Setup the SYNCHRO bob channels
-	// XXX
+
+	for (i = 0; i < frameCount; i++) {
+		if (objAnim[i].mx || objAnim[i].my) {
+			BobSlot *bob = _graphics->bob(objAnim[i].object);
+			bob->frameNum = objAnim[i].originalFrame;
+			_graphics->bobMove(
+					objAnim[i].object, 
+					objAnim[i].mx, 
+					objAnim[i].my,
+					(object.specialMove > 0) ? object.specialMove : 4);
+		}
+	}
+
+	// Boat room hard coded
+	if (_logic->currentRoom() == 43) {
+		BobSlot *bob = _graphics->bob(0);
+		if (bob->x < 320)
+			_graphics->bobMove(
+					0, 
+					bob->x + 346, 
+					bob->y,
+					4);
+	}
 
 	// Normal cutaway
 
 	if (object.animType != 1) {
-		// XXX
+		// lines 1657-1761 in cutaway.c
 	}
 
+	bool moving = true;
+
+	while (moving) {
+		moving = false;
+		_graphics->update();
+		
+		for (i = 0; i < frameCount; i++) {
+			BobSlot *bob = _graphics->bob(objAnim[i].object);
+			if (bob->moving) {
+				moving = true;
+				break;
+			}
+		}
+
+		if (_quit)
+			break;
+	}
 
 	return ptr;
 }
@@ -1043,6 +1129,45 @@ void Cutaway::talk(char *nextFilename) {
 
 		Talk::talk(_talkFile, 0 /* XXX */, nextFilename, _graphics, _logic, _resource);
 	}
+}
+
+
+int Cutaway::makeComplexAnimation(int16 currentImage, Cutaway::CutawayAnim *objAnim, int frameCount) {
+	AnimFrame cutAnim[17][30];
+	bool hasFrame[256];
+	int i;
+	int bobNum = objAnim[0].object;
+
+	memset(hasFrame, 0, sizeof(hasFrame));
+
+	BobSlot *bob = _graphics->bob(bobNum);
+	bob->xflip = objAnim[0].flip;
+
+	for (i = 0; i < frameCount; i++) {
+		cutAnim[bobNum][i].frame = currentImage + objAnim[i].unpackFrame;
+		cutAnim[bobNum][i].speed = objAnim[i].speed;
+		hasFrame[objAnim[i].unpackFrame] = true;
+	}
+
+	cutAnim[bobNum][frameCount].frame = 0;	
+	cutAnim[bobNum][frameCount].speed = 0;
+
+	int uniqueFrameCount = 0;
+
+	for (i = 1; i < 256; i++)
+		if (hasFrame[i])
+			uniqueFrameCount++;
+
+	for (i = 1; i < 256; i++) {
+		if (hasFrame[i]) {
+			currentImage++;
+			_graphics->bankUnpack(i, currentImage, objAnim[0].bank);
+		}
+	}
+
+	_graphics->bobAnimString(bobNum, cutAnim[bobNum]);
+
+	return currentImage + 1;
 }
 
 } // End of namespace Queen

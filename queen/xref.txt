@@ -44,15 +44,17 @@ Czone
 CUTAWAY
 =======
 CUTAWAY()					Cutaway::run
+MAKE_COMPLEX_ANIM()			Cutaway::makeComplexAnimation
 SCENE_START()
 SCENE_END()
--
 CUTJOEF
 CUTON
-CUTQUIT
-FINAL_ROOM
-IROOM
-TROOM
+CUTQUIT						Cutaway::_quit (rename and move to Logic?)
+FINAL_ROOM					Cutaway::_finalRoom
+IROOM						Cutaway::_initialRoom
+TROOM						Cutaway::_temporaryRoom
+OBJ_CUT
+OBJ_ANIM
 
 
 DEBUG
@@ -398,7 +400,7 @@ DESC2,DESC,
 OBJMAXv,
 OBJ_DESC_DATA,
 PERSON_DATA,
-PERSON_OBJ,OBJ_CUT,OBJ_ANIM,
+PERSON_OBJ
 FS,FE,FACE,TY,DY,BS,DS,
 TEMPA,
 I2,

@@ -106,7 +106,7 @@ class Cutaway {
 
 		struct CutawayAnim {
 			int object;
-			int unpackFrame;          // Frame to unpack 
+			int unpackFrame;          // Frame to unpack
 			int speed;
 			int bank;
 			int mx;
@@ -117,6 +117,7 @@ class Cutaway {
 			int currentFrame;  // Index to Current Frame
 			int originalFrame;  // Index to Original Object Frame
 			int song;
+			bool flip;		// set this if unpackFrame is negative
 		};
 
 		struct ObjectDataBackup {
@@ -259,6 +260,9 @@ class Cutaway {
 
 		//! Get CutawayAnim data from ptr and return new ptr
 		byte *getCutawayAnim(byte *ptr, int header, CutawayAnim &anim);
+
+		//! Special animation
+		int makeComplexAnimation(int16 currentImage, CutawayAnim *objAnim, int frameCount);
 
 		//! Read a CutawayObject from ptr and return new ptr
 		static byte *getCutawayObject(byte *ptr, CutawayObject &object);
