@@ -1454,7 +1454,8 @@ void Scumm::o5_ifClassOfIs()
 
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		cls = getVarOrDirectWord(0x80);
-		b = getClass(act, cls);
+		if (cls)
+			b = getClass(act, cls);
 
 		if (cls & 0x80 && !b || !(cls & 0x80) && b)
 			cond = false;

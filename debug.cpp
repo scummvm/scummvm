@@ -73,7 +73,7 @@ bool ScummDebugger::do_command()
 					 "(q)uit -> quit the debugger\n"
 					 "(g)o [numframes] -> increase frame\n"
 					 "(a)ctor [actornum] -> show actor information\n"
-					 "(r)oom roomnum -> load room\n"
+					 "(r)oom [roomnum] -> load room\n"
 					 "(s)cripts -> show running scripts\n"
 					 "(b)oxes -> list and draw boxen\n"
 					 "(v)ariable -> set or show a variable value\n"
@@ -102,7 +102,7 @@ bool ScummDebugger::do_command()
 		return true;
 	case CMD_LOAD_ROOM:
 		if (!_parameters[0]) {
-			printf("Enter a room number...\n");
+			printf("Current room: %d [%d]\n", _s->_currentRoom, _s->_roomResource);
 		} else {
 			int room = atoi(_parameters);
 			_s->actor[_s->_vars[_s->VAR_EGO]].room = room;
