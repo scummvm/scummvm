@@ -827,20 +827,17 @@ void Scumm::o5_actorSetClass()
 			_classData[act] = 0;
 
 			if( _features & GF_SMALL_HEADER)
-
 			{
-
 				Actor *a;
-
 				a=derefActor(act);
-
 				a->forceClip=0;
-
 			}
-
 				
 			continue;
 		}
+
+		if(_gameId == GID_INDY3_256)
+			newClass--;
 
 		if (newClass & 0x80)
 			putClass(act, newClass, 1);
@@ -1323,7 +1320,7 @@ void Scumm::o5_getActorY()
 		actor = getVarOrDirectByte(0x80);
 	else
 		actor = getVarOrDirectWord(0x80);
-	setResult(actor);
+	setResult(getObjY(actor));
 }
 
 void Scumm::o5_getAnimCounter()
@@ -2247,6 +2244,7 @@ void Scumm::o5_startScript()
 
 void Scumm::o5_startSound()
 {
+	_vars[VAR_MUSIC_FLAG]=0;
 	addSoundToQueue(getVarOrDirectByte(0x80));
 }
 
@@ -2505,9 +2503,6 @@ void Scumm::o5_wait()
 			break;
 		return;
 	case 2:											/* wait for message */
-		if ((_currentRoom == 0) && (_gameId == GID_ZAK256))	// Bypass Zak256 script hang
-			return;
-
 		if (_vars[VAR_HAVE_MSG])
 			break;
 		return;

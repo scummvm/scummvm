@@ -958,6 +958,7 @@ public:
 	uint16 _mouthSyncTimes[52];
 	uint _curSoundPos;
 	int current_cd_sound;
+	int tempMusic;
 
 #ifdef COMPRESSED_SOUND_FILE
 

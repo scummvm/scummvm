@@ -272,7 +272,7 @@ void Scumm::executeScript()
 		_opcode = fetchScriptByte();
 		_scriptPointerStart = _scriptPointer;
 		vm.slot[_currentScript].didexec = 1;
-		debug(1, "Script %d: [%X] %s()", vm.slot[_currentScript].number, _opcode, _opcodes_lookup[_opcode]);
+		//debug(1, "Script %d: [%X] %s()", vm.slot[_currentScript].number, _opcode, _opcodes_lookup[_opcode]);
 		op = getOpcode(_opcode);
 		(this->*op) ();
 	}
