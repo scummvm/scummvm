@@ -20,6 +20,8 @@
 
 #ifdef MACOSX
 
+#include "stdafx.h"
+#include "common/config-manager.h"
 #include "sound/mpu401.h"
 
 #include <AudioUnit/AudioUnit.h>
@@ -29,7 +31,7 @@
 // midi backends. For some reasons, reverb will suck away a *lot* of CPU time.
 // Until we know for sure what is causing this and if there is a better way to
 // fix the problem, we just disable all reverb for these backends.
-#define COREAUDIO_REVERB_HACK
+//#define COREAUDIO_REVERB_HACK
 
 
 /* CoreAudio MIDI driver
@@ -54,19 +56,42 @@ int MidiDriver_CORE::open() {
 	if (au_output != NULL)
 		return MERR_ALREADY_OPEN;
 
-	int err;
+	OSStatus err;
 	AudioUnitConnection auconnect;
-	ComponentDescription compdesc;
-	Component compid;
 
 	// Open the Music Device
-	compdesc.componentType = kAudioUnitComponentType;
-	compdesc.componentSubType = kAudioUnitSubType_MusicDevice;
-	compdesc.componentManufacturer = kAudioUnitID_DLSSynth;
-	compdesc.componentFlags = 0;
-	compdesc.componentFlagsMask = 0;
-	compid = FindNextComponent(NULL, &compdesc);
-	au_MusicDevice = (AudioUnit) OpenComponent(compid);
+	au_MusicDevice = (AudioUnit) OpenDefaultComponent(kAudioUnitComponentType, kAudioUnitSubType_MusicDevice);
+	
+	if (au_MusicDevice == 0)
+		error("Failed opening CoreAudio music device");
+	
+	// Load custom soundfont, if specified
+	// FIXME: This is kind of a temporary hack. Better (IMO) would be to
+	// query QuickTime for whatever custom soundfont was set in the
+	// QuickTime Preferences, and use that automatically.
+	if (ConfMan.hasKey("soundfont")) {
+		FSRef	fsref;
+		FSSpec	fsSpec;
+		const char *soundfont = ConfMan.get("soundfont").c_str();
+	
+		err = FSPathMakeRef ((const byte *)soundfont, &fsref, NULL);
+
+		if (err == noErr) {
+			err = FSGetCatalogInfo (&fsref, kFSCatInfoNone, NULL, NULL, &fsSpec, NULL);
+		}
+	
+		if (err == noErr) {
+			err = AudioUnitSetProperty (
+				au_MusicDevice,
+				kMusicDeviceProperty_SoundBankFSSpec, kAudioUnitScope_Global,
+				0,
+				&fsSpec, sizeof(fsSpec)
+			);
+		}
+
+		if (err != noErr)
+			warning("Failed loading custom sound font '%s' (error %d)\n", soundfont, err);
+	}
 
 	// open the output unit
 	au_output = (AudioUnit) OpenDefaultComponent(kAudioUnitComponentType, kAudioUnitSubType_Output);
