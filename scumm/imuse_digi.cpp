@@ -777,7 +777,7 @@ void IMuseDigital::setBundleVoice(byte *src) {
 }
 
 void IMuseDigital::startSound(int sound) {
-	debug(0, "IMuseDigital::startSound(%d)", sound);
+	debug(5, "IMuseDigital::startSound(%d)", sound);
 	int l, r;
 
 	for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
@@ -999,7 +999,7 @@ void IMuseDigital::startSound(int sound) {
 }
 
 void IMuseDigital::stopSound(int sound) {
-	debug(0, "IMuseDigital::stopSound(%d)", sound);
+	debug(5, "IMuseDigital::stopSound(%d)", sound);
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		if ((_channel[l].idSound == sound) && _channel[l].used) {
 			_channel[l].toBeRemoved = true;
@@ -1234,7 +1234,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 }
 
 int IMuseDigital::getSoundStatus(int sound) const {
-	debug(0, "IMuseDigital::getSoundStatus(%d)", sound);
+	debug(5, "IMuseDigital::getSoundStatus(%d)", sound);
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		if ((_channel[l].idSound == sound) && _channel[l].used) {
 			return 1;
