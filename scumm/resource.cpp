@@ -560,8 +560,12 @@ void Scumm::ensureResourceLoaded(int type, int i) {
 
 	// FIXME - TODO: This check used to be "i==0". However, that causes
 	// problems when using this function to ensure charset 0 is loaded.
-	// Quesetion: Why was this check like that in the first place?
-	if (i < 0)
+	// Question: Why was this check like that in the first place?
+	// Answer: costumes with an index of zero in the newer games at least
+	// TODO: determine after what version this behaviour changes...
+	if ((_gameId == GID_ZAK256) && (i < 0))
+		return;
+	else if (i == 0)
 		return;
 
 	if (i <= res.num[type])
