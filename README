@@ -334,6 +334,7 @@ simon games.
         Tab                    - simulate right mouse button press
 
     Simon:
+        F1 - F3                - text speed, faster - slower
         - and +                - music volume, down/up
         m                      - music on/off
         s                      - sound effects on/off
