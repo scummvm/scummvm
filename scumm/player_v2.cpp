@@ -39,10 +39,11 @@ const uint8 note_lengths[] = {
 	0,  
 	0,  0,  2,
 	0,  3,  4,
-	0,  6,  8,
-	0, 12, 16,
-	0, 24, 32,
-	0, 48, 64
+	5,  6,  8,
+	9, 12, 16,
+	18, 24, 32,
+	36, 48, 64,
+	96
 };
 
 static const uint16 hull_offsets[] = {
@@ -745,7 +746,7 @@ void Player_V2::next_freqs(ChannelInfo *channel) {
 	      channel->d.freq);
 
 	if (channel->d.note_length && !--channel->d.note_length) {
-		channel->d.hull_offset += 16;
+		channel->d.hull_offset  = 16;
 		channel->d.hull_counter = 1;
 	}
 
