@@ -346,7 +346,7 @@ lowTextManager_t SkyText::lowTextManager(uint32 textNum, uint16 width, uint16 lo
 		cpt = SkyState::fetchCompact(compactNum);
 	}
 
-	cpt->flag = (compactNum - FIRST_TEXT_COMPACT) + FIRST_TEXT_BUFFER;
+	cpt->flag = (uint16)(compactNum - FIRST_TEXT_COMPACT) + FIRST_TEXT_BUFFER;
 
 	byte *oldText = (byte *)SkyState::_itemList[compactNum];
 	SkyState::_itemList[compactNum] = (void **)textData; 
@@ -360,7 +360,7 @@ lowTextManager_t SkyText::lowTextManager(uint32 textNum, uint16 width, uint16 lo
 
 	struct lowTextManager_t ret;
 	ret.textData = _dtData;
-	ret.compactNum = compactNum;
+	ret.compactNum = (uint16)compactNum;
 
 	return ret;
 
