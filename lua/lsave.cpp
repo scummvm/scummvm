@@ -133,7 +133,7 @@ void lua_Save(SaveRestoreFunc saveFunc) {
 		}
 	}
 	
-	Closure	*tempClosure = (Closure *)L->rootcl.next;
+	Closure *tempClosure = (Closure *)L->rootcl.next;
 	while (tempClosure != NULL) {
 		saveFunc(&tempClosure, sizeof(Closure *));
 		saveFunc(&tempClosure->nelems, sizeof(int));

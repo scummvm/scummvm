@@ -143,7 +143,7 @@ int     (lua_clonetag) (int t);
 ** for compatibility with old versions. Avoid using these macros/functions
 ** If your program does need any of these, define LUA_COMPAT2_5
 */
-#define LUA_COMPAT2_5
+//#define LUA_COMPAT2_5
 
 #ifdef LUA_COMPAT2_5
 
