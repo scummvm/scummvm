@@ -2,23 +2,27 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
 0.5.4(CVS) (2003-??-??)
-- Many, Many, Many SCUMM game engine fixes. Many of them. And that's a lot.
-- Added Broken Sword 2 engine
-- Added option to choose between Adlib, PCjr and PC Speaker in earlier games.
-- Added Adlib support for indy3ega and loom (ega)
-- Added sound effects support for indy3/monkeyega/monkeyvga/pass
-- Added HQ2x and HQ3x scalers
-- Added FM Towns targets for Loom and indy3
-- Classic V1 versions of Maniac Mansion and Zak McKracken are now supported and completable
-- Rewrote sound mixer
-- Several iMUSE bugs fixed
-- Improved native MT32 support
-- Improved music/sound for Amiga versions
-- Adlib GM emulation table revamped, providing more accurate software MIDI
-- Added full and partial sound looping to Zak McKracken FmTowns
-- Default Makefile now uses configure script, old one is Makefile.noconf
-- Improved compression of Fate of Atlantis and Simon the Sorcerer 2 sound files
-- Keyboard fighting in Fate of Atlantis now works
+ General:
+   - Added Broken Sword 2 engine
+   - Added HQ2x and HQ3x scalers
+   - Improved native MT32 support
+   - Adlib GM emulation table revamped, providing more accurate software MIDI
+   - Default Makefile now uses configure script, old one is Makefile.noconf
+   - Rewrote sound mixer from scratch
+   - Many other "under the hood" improvements, like a new config managment
+	 and plugin capabilities
+ SCUMM:
+   - Many, Many, Many SCUMM game engine fixes. Many of them. And that's a lot.
+   - Added option to choose between Adlib, PCjr and PC Speaker in earlier games.
+   - Added Adlib support for indy3ega and loom (ega)
+   - Added sound effects support for indy3/monkeyega/monkeyvga/pass
+   - Added FM Towns targets for Loom and Indy3
+   - Improved FM Towns SFX support (YM2612 emulation, looping)
+   - Classic V1 versions of Maniac Mansion and Zak McKracken are now supported and completable
+   - Several iMUSE bugs fixed
+   - Improved music/sound for various Amiga versions
+   - Improved compression of Fate of Atlantis and Simon the Sorcerer 2 sound files
+   - Keyboard fighting in Fate of Atlantis now works
 
 0.5.1 (2003-08-06) 
 - Rewrote Beneath a Steel Sky savegame code (see note in READMEs 'Known Bugs')
