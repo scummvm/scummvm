@@ -243,8 +243,10 @@ void Actor::handleSpeech(int msec) {
 			}
 		}
 
-		if (_activeSpeech.sampleResourceId != -1)
+		if (_activeSpeech.sampleResourceId != -1) {
 			_vm->_sndRes->playVoice(_activeSpeech.sampleResourceId);
+			_activeSpeech.sampleResourceId++;
+		}
 
 		if (_activeSpeech.actorIds[0] != 0) {
 			actor = getActor(_activeSpeech.actorIds[0]);
