@@ -17,8 +17,13 @@
  *
  * Change Log:
  * $Log$
- * Revision 1.1  2001/10/09 14:30:14  strigeus
- * Initial revision
+ * Revision 1.2  2001/10/09 18:35:02  strigeus
+ * fixed object parent bug
+ * fixed some signed/unsigned comparisons
+ *
+ * Revision 1.1.1.1  2001/10/09 14:30:14  strigeus
+ *
+ * initial revision
  *
  *
  */
@@ -56,7 +61,7 @@ void Scumm::initActor(Actor *a, int mode) {
 	_classData[a->number] = 0;
 }
 
-void Scumm::setActorWalkSpeed(Actor *a, int speedx, int speedy) {
+void Scumm::setActorWalkSpeed(Actor *a, uint speedx, uint speedy) {
 	if (speedx == a->speedx && speedy == a->speedy)
 		return;
 
@@ -72,7 +77,6 @@ int Scumm::calcMovementFactor(Actor *a, int newX, int newY) {
 	int actorX, actorY;
 	int diffX, diffY;
 	int32 XYFactor, YXFactor;
-	int32 tmp;
 
 	actorX = a->x;
 	actorY = a->y;
@@ -94,11 +98,7 @@ int Scumm::calcMovementFactor(Actor *a, int newX, int newY) {
 		YXFactor = 0;
 	}
 
-	tmp = XYFactor >> 16;
-	if (tmp<0)
-		tmp = -tmp;
-
-	if (tmp > a->speedx) {
+	if ((uint)abs(XYFactor >> 16) > a->speedx) {
 		XYFactor = a->speedx<<16;
 		if (diffX < 0)
 			XYFactor = -XYFactor;
@@ -449,7 +449,7 @@ int Scumm::getActorXYPos(Actor *a) {
 
 AdjustBoxResult Scumm::adjustXYToBeInBox(Actor *a, int x, int y) {
 	AdjustBoxResult abr,tmp;
-	int threshold;
+	uint threshold;
 	uint best;
 	int box;
 	byte flags, b;
@@ -515,8 +515,8 @@ void Scumm::adjustActorPos(Actor *a) {
 
 	a->x = abr.x;
 	a->y = abr.y;
-	a->walkbox = abr.dist; /* not a dist */
-	a->walkdata.destbox = abr.dist;
+	a->walkbox = (byte)abr.dist; /* not a dist */
+	a->walkdata.destbox = (byte)abr.dist;
 	a->mask = getMaskFromBox(abr.dist);
 	a->walkdata.destx = -1;
 	setupActorScale(a);
@@ -748,7 +748,7 @@ void Scumm::setupCostumeRenderer(CostumeRenderer *c, Actor *a) {
 	c->_actorY = a->y - a->elevation;
 	c->_zbuf = a->mask;
 	if (c->_zbuf > _numZBuffer)
-		c->_zbuf = _numZBuffer;
+		c->_zbuf = (byte)_numZBuffer;
 	if (a->neverZClip)
 		c->_zbuf = a->neverZClip;
 	
@@ -863,7 +863,7 @@ void Scumm::actorTalk() {
 		return;
 	
 	if (vm.vars[VAR_TALK_ACTOR]>0x7F) {
-		_charsetColor = _stringColor[0];
+		_charsetColor = (byte)_stringColor[0];
 	} else {
 		a = derefActorSafe(vm.vars[VAR_TALK_ACTOR], "actorTalk(2)");
 		_charsetColor = a->talkColor;
@@ -939,7 +939,7 @@ void Scumm::startWalkActor(Actor *a, int x, int y, int dir) {
 
 	a->walkdata.destx = abr.x;
 	a->walkdata.desty = abr.y;
-	a->walkdata.destbox = abr.dist; /* a box */
+	a->walkdata.destbox = (byte)abr.dist; /* a box */
 	a->walkdata.destdir = dir;
 	a->moving = (a->moving&2)|1;
 	a->walkdata.curbox = a->walkbox;

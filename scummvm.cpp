@@ -17,8 +17,13 @@
  *
  * Change Log:
  * $Log$
- * Revision 1.1  2001/10/09 14:30:13  strigeus
- * Initial revision
+ * Revision 1.2  2001/10/09 18:35:02  strigeus
+ * fixed object parent bug
+ * fixed some signed/unsigned comparisons
+ *
+ * Revision 1.1.1.1  2001/10/09 14:30:13  strigeus
+ *
+ * initial revision
  *
  *
  */
@@ -209,7 +214,7 @@ void Scumm::scummMain() {
 
 	_fileHandle = NULL;
 	
-	_bootParam = 0;
+	_bootParam = 29;
 	_debugMode = 1;
 
 	initThings();

@@ -17,22 +17,19 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.3  2001/10/09 18:35:02  strigeus
+ * fixed object parent bug
+ * fixed some signed/unsigned comparisons
+ *
  * Revision 1.2  2001/10/09 17:38:20  strigeus
  * Autodetection of endianness.
  *
  * Revision 1.1.1.1  2001/10/09 14:30:12  strigeus
- *
  * initial revision
- *
  *
  */
 
 #include "scummsys.h"
-
-#ifdef WIN32
-#pragma warning (disable: 4018)
-#pragma warning (disable: 4244)
-#endif
 
 #define SWAP(a,b) do{int tmp=a; a=b; b=tmp; } while(0)
 
@@ -143,8 +140,8 @@ struct ObjectData {
 	byte numstrips;
 	byte height;
 	byte actordir;
-	byte cdhd_0f;
-	byte cdhd_0e;
+	byte parentstate;
+	byte parent;
 	byte ownerstate;
 	byte fl_object_index;
 	byte unk_3;
@@ -289,7 +286,7 @@ struct CharsetRenderer {
 	int _drawTop;
 	int _left, _left2;
 	byte _center;
-	uint _right;
+	int _right;
 	byte _color;
 	bool _hasMask;
 	
@@ -379,9 +376,9 @@ struct CostumeRenderer {
 };
 
 struct Actor {
-	int16 x,y,top,bottom;
-	int16 elevation;
-	uint16 width;
+	int x,y,top,bottom;
+	int elevation;
+	uint width;
 	byte number;
 	byte facing;
 	byte costume;
@@ -395,7 +392,7 @@ struct Actor {
 	byte neverZClip;
 	byte initFrame,walkFrame,standFrame,talkFrame1,talkFrame2;
 	bool needRedraw, needBgReset,costumeNeedsInit,visible;
-	uint16 speedx,speedy;
+	uint speedx,speedy;
 	byte data8; /* unused */
 	byte animIndex;
 	byte walkbox;
@@ -827,7 +824,7 @@ struct Scumm {
 	void initActor(Actor *a, int mode);
 	bool checkFixedDisk();
 
-	void setActorWalkSpeed(Actor *a, int speed1, int speed2);
+	void setActorWalkSpeed(Actor *a, uint speed1, uint speed2);
 	int calcMovementFactor(Actor *a, int newx, int newy);
 	int actorWalkStep(Actor *a);
 	int getProgrDirChange(Actor *a, int mode);

@@ -17,17 +17,24 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.3  2001/10/09 18:35:02  strigeus
+ * fixed object parent bug
+ * fixed some signed/unsigned comparisons
+ *
  * Revision 1.2  2001/10/09 17:38:20  strigeus
  * Autodetection of endianness.
  *
  * Revision 1.1.1.1  2001/10/09 14:30:14  strigeus
- *
  * initial revision
  *
  *
  */
 
 #if defined(WIN32)
+
+#pragma warning (disable: 4244)
+#pragma warning (disable: 4101)
+
 
 #define SCUMM_LITTLE_ENDIAN
 

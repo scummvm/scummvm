@@ -17,8 +17,13 @@
  *
  * Change Log:
  * $Log$
- * Revision 1.1  2001/10/09 14:30:14  strigeus
- * Initial revision
+ * Revision 1.2  2001/10/09 18:35:02  strigeus
+ * fixed object parent bug
+ * fixed some signed/unsigned comparisons
+ *
+ * Revision 1.1.1.1  2001/10/09 14:30:14  strigeus
+ *
+ * initial revision
  *
  *
  */
@@ -195,7 +200,7 @@ byte CostumeRenderer::mainRoutine(Actor *a, int slot, int frame) {
 	_vscreenheight = _vm->virtscr[0].height;
 	_vm->updateDirtyRect(0, _left, _right+1,_top,_bottom,1<<a->number);
 
-	if ((int)_top >= (int)_vscreenheight || _bottom <= 0) {
+	if (_top >= (int)_vscreenheight || _bottom <= 0) {
 		checkHeap();
 		return 0;
 	}
@@ -241,10 +246,10 @@ byte CostumeRenderer::mainRoutine(Actor *a, int slot, int frame) {
 		}
 	}
 
-	if (_top > _vscreenheight || _top < 0)
+	if ((uint)_top > (uint)_vscreenheight || _top < 0)
 		_top = 0;
 
-	if (_bottom > _vscreenheight)
+	if ((uint)_bottom > _vscreenheight)
 		_bottom = _vscreenheight;
 
 	if (a->top > _top)

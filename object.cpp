@@ -17,8 +17,13 @@
  *
  * Change Log:
  * $Log$
- * Revision 1.1  2001/10/09 14:30:14  strigeus
- * Initial revision
+ * Revision 1.2  2001/10/09 18:35:02  strigeus
+ * fixed object parent bug
+ * fixed some signed/unsigned comparisons
+ *
+ * Revision 1.1.1.1  2001/10/09 14:30:14  strigeus
+ *
+ * initial revision
  *
  *
  */
@@ -174,8 +179,8 @@ int Scumm::findObject(int x, int y) {
 			continue;
 		b = i;
 		do {
-			a = objs[b].cdhd_0e;
-			b = objs[b].cdhd_0f;
+			a = objs[b].parentstate;
+			b = objs[b].parent;
 			if (b==0) {
 				if (objs[i].x_pos <= (x>>3) &&
 						objs[i].numstrips + objs[i].x_pos > (x>>3) &&
@@ -203,12 +208,12 @@ void Scumm::drawRoomObjects(int arg) {
 			continue;
 		
 		do {
-			a = od->cdhd_0e;
-			if (!od->cdhd_0f) {
+			a = od->parentstate;
+			if (!od->parent) {
 				drawObject(num, arg);
 				break;
 			}
-			od = &objs[od->cdhd_0f];
+			od = &objs[od->parent];
 		} while ((od->ownerstate & 0xF0)==a);
 
 	} while (--num);
@@ -364,12 +369,12 @@ void Scumm::loadRoomObjects() {
 		objs[i].x_pos = cdhd->x;
 		objs[i].y_pos = cdhd->y;
 
-		if (!(cdhd->flags&0x80)) {
-			objs[i].cdhd_0e = 0x10;
+		if (cdhd->flags == 0x80) {
+			objs[i].parentstate = 1<<4;
 		} else {
-			objs[i].cdhd_0e = cdhd->flags;
+			objs[i].parentstate = (cdhd->flags&0xF)<<4;
 		}
-		objs[i].cdhd_0f = cdhd->unk1;
+		objs[i].parent = cdhd->unk1;
 		objs[i].cdhd_10 = READ_LE_UINT16(&cdhd->unk2);
 		objs[i].cdhd_12 = READ_LE_UINT16(&cdhd->unk3);
 		objs[i].actordir = cdhd->unk4;
