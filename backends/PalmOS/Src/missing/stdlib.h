@@ -36,6 +36,7 @@
 #define strtol(a,b,c)		StrAToI(a)
 #define qsort(a,b,c,d)		SysQSort((a), (b), (c), (CmpFuncPtr)(&d), 0);
 #define rand()				SysRandom(0)
+#define abort()
 
 MemPtr realloc(MemPtr oldP, UInt32 size);
 MemPtr calloc(UInt32 nelem, UInt32 elsize);
