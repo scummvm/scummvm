@@ -26,11 +26,15 @@
 
 byte Scumm::getMaskFromBox(int box) {
 	Box *ptr = getBoxBaseAddr(box);
+	if (!ptr)
+		return 0;
 	return ptr->mask;
 }
 
 byte Scumm::getBoxFlags(int box) {
 	Box *ptr = getBoxBaseAddr(box);
+	if (!ptr)
+		return 0;
 	return ptr->flags;
 }
 
@@ -38,16 +42,21 @@ int Scumm::getBoxScale(int box) {
 	if(_features & GF_NO_SCALLING)
 		return(255);
 	Box *ptr = getBoxBaseAddr(box);
+	if (!box)
+		return 255;
 	return FROM_LE_16(ptr->scale);
 }
 
 byte Scumm::getNumBoxes() {
 	byte *ptr = getResourceAddress(rtMatrix, 2);
+	if (!ptr) return 0;
 	return ptr[0];
 }
 
 Box *Scumm::getBoxBaseAddr(int box) {
         byte *ptr = getResourceAddress(rtMatrix, 2);
+		if (!ptr) 
+			return NULL;
 	checkRange(ptr[0]-1, 0, box, "Illegal box %d");
         if(_features & GF_SMALL_HEADER) {
 		if (_features & GF_OLD256) 
