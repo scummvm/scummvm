@@ -240,10 +240,11 @@ enum {
 
 //! GameState vars
 enum {
-	VAR_DRESSING_MODE  =  19, // 0=normal clothes, 1=underwear, 2=dress
-	VAR_ROOM73_CUTAWAY =  93,
-	VAR_INTRO_PLAYED   = 117,
-	VAR_CAN_CHANGE_CLOTES = 202
+	VAR_DRESSING_MODE      =  19, // 0=normal clothes, 1=underwear, 2=dress
+	VAR_ROOM73_CUTAWAY     =  93,
+	VAR_INTRO_PLAYED       = 117,
+	VAR_CAN_CHANGE_CLOTHES = 202,
+	VAR_AZURA_IN_LOVE      = 167
 };
 
 

@@ -235,7 +235,7 @@ private:
 	Input *_input;
 	Resource *_resource;
 
-	static const CarBamData CARBAM_DATA[];
+	static const CarBamData _carBamData[];
 
 };
 

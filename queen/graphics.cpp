@@ -767,9 +767,13 @@ void Graphics::loadPanel() {
 
 void Graphics::initCarBamScene() {
 
+	debug(0, "Graphics::initCarBamScene()");
 	bobClear(5);
+	_bobs[5].active = true;
 	bobClear(6);
+	_bobs[6].active = true;
 	bobClear(7);
+	_bobs[7].active = true;
 	_bam.enable = true;
 	_bam.index = 0;
 }
@@ -778,7 +782,7 @@ void Graphics::initCarBamScene() {
 void Graphics::updateCarBamScene() {
 
 	if (_bam.enable) {
-		const CarBamData *cb = &CARBAM_DATA[_bam.index];
+		const CarBamData *cb = &_carBamData[_bam.index];
 		BobSlot *pbob;
 
 		// Truck
@@ -803,7 +807,8 @@ void Graphics::updateCarBamScene() {
 		else {
 			++_bam.index;
 		}
-		// XXX if(bamsfx==2) // Play BKG SFX if(SFXTOGGLE) sfxplay(NULLstr);
+		// Play BKG SFX
+		// XXX if(bamsfx==2 && SFXTOGGLE) sfxplay(NULLstr);
 	}
 }
 
@@ -951,7 +956,7 @@ int Graphics::textCenterX(const char *text) const {
 
 
 
-const CarBamData Graphics::CARBAM_DATA[] = {
+const CarBamData Graphics::_carBamData[] = {
 	{ { 310, 105, 1 }, { 314, 106, 17 }, { 366, 101,  1 },  0 },
 	{ { 303, 105, 1 }, { 307, 106, 17 }, { 214,   0, 10 },  0 },
 	{ { 297, 104, 1 }, { 301, 105, 17 }, { 214,   0, 10 },  0 },
