@@ -145,10 +145,10 @@
 			Name="common"
 			Filter="">
 			<File
-				RelativePath="..\..\common\config-file.cpp">
+				RelativePath="..\..\common\config-manager.cpp">
 			</File>
 			<File
-				RelativePath="..\..\common\config-file.h">
+				RelativePath="..\..\common\config-manager.h">
 			</File>
 			<File
 				RelativePath="..\..\common\file.cpp">
@@ -179,6 +179,9 @@
 			</File>
 			<File
 				RelativePath="..\..\common\scummsys.h">
+			</File>
+			<File
+				RelativePath="..\..\common\singleton.h">
 			</File>
 			<File
 				RelativePath="..\..\common\stdafx.h">
