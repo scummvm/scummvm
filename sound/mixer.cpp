@@ -29,7 +29,6 @@
 #define SOX_HACK
 
 #ifdef SOX_HACK
-//#define BUGGY_NEW_MP3_PLAYER
 #include "rate.h"
 #endif
 
