@@ -22,6 +22,7 @@
 #define WIDGET_H
 
 #include "scummsys.h"
+#include "common/util.h"
 
 class Dialog;
 
@@ -117,16 +118,17 @@ protected:
 /* StaticTextWidget */
 class StaticTextWidget : public Widget {
 protected:
-	char	*_label;
+	typedef ScummVM::String String;
+
+	String _label;
 	int		_align;
 public:
-	StaticTextWidget(Dialog *boss, int x, int y, int w, int h, const char *text, int align);
-	~StaticTextWidget();
+	StaticTextWidget(Dialog *boss, int x, int y, int w, int h, const String &text, int align);
 	void setValue(int value);
-	void setLabel(const char *label);
-	const char *getLabel() const	{ return _label; }
-	void setAlign(int align)		{ _align = align; }
-	int getAlign() const			{ return _align; }
+	void setLabel(const String &label) { _label = label; }
+	const String &getLabel() const     { return _label; }
+	void setAlign(int align)           { _align = align; }
+	int getAlign() const               { return _align; }
 
 protected:
 	void drawWidget(bool hilite);
@@ -140,8 +142,7 @@ protected:
 	uint32			_cmd;
 	uint8			_hotkey;
 public:
-	ButtonWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd = 0, uint8 hotkey = 0);
-	virtual ~ButtonWidget();
+	ButtonWidget(Dialog *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
 
 	void setCmd(uint32 cmd)					{ _cmd = cmd; }
 	uint32 getCmd() const					{ return _cmd; }
@@ -156,7 +157,7 @@ class CheckboxWidget : public ButtonWidget {
 protected:
 	bool	_state;
 public:
-	CheckboxWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd = 0, uint8 hotkey = 0);
+	CheckboxWidget(Dialog *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
 	void setState(bool state)	{ _state = state; }
 	bool getState() const		{ return _state; }
 
@@ -175,7 +176,7 @@ protected:
 	int		_valueMin, _valueMax;
 	bool	_isDragging;
 public:
-	SliderWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd = 0, uint8 hotkey = 0);
+	SliderWidget(Dialog *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
 	void setValue(int value)	{ _value = value; }
 	int getValue() const		{ return _value; }
 

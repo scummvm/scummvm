@@ -76,68 +76,35 @@ void Widget::draw()
 #pragma mark -
 
 
-StaticTextWidget::StaticTextWidget(Dialog *boss, int x, int y, int w, int h, const char *text, int align)
-	: Widget (boss, x, y, w, h), _label(0), _align(align)
+StaticTextWidget::StaticTextWidget(Dialog *boss, int x, int y, int w, int h, const String &text, int align)
+	: Widget (boss, x, y, w, h), _align(align)
 {
 	_type = kStaticTextWidget;
 	setLabel(text);
 }
 
-StaticTextWidget::~StaticTextWidget()
-{
-	if (_label) {
-		free(_label);
-		_label = 0;
-	}
-}
-
-void StaticTextWidget::setLabel(const char *label)
-{
-	// Free old label if any
-	if (_label)
-		free(_label);
-
-	// Duplicate new label
-	if (label)
-		_label = strdup(label);
-	else
-		_label = 0;
-}
-
 void StaticTextWidget::setValue(int value)
 {
-	// Free old label if any
-	if (_label)
-		free(_label);
-
-	_label = (char *)malloc(10);
-	sprintf(_label, "%d", value);
+	char buf[256];
+	sprintf(buf, "%d", value);
+	_label = buf;
 }
 
 void StaticTextWidget::drawWidget(bool hilite)
 {
 	NewGui *gui = _boss->getGui();
-	gui->drawString(_label, _x, _y, _w, hilite ? gui->_textcolorhi : gui->_textcolor, _align);
+	gui->drawString(_label.c_str(), _x, _y, _w, hilite ? gui->_textcolorhi : gui->_textcolor, _align);
 }
 
 
 #pragma mark -
 
 
-ButtonWidget::ButtonWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd, uint8 hotkey)
+ButtonWidget::ButtonWidget(Dialog *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey)
 	: StaticTextWidget(boss, x, y, w, h, label, kTextAlignCenter), CommandSender(boss), _cmd(cmd), _hotkey(hotkey)
 {
-	assert(label);
 	_flags = WIDGET_ENABLED | WIDGET_BORDER | WIDGET_CLEARBG ;
 	_type = kButtonWidget;
-}
-
-ButtonWidget::~ButtonWidget()
-{
-	if (_label) {
-		free(_label);
-		_label = 0;
-	}
 }
 
 void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount)
@@ -161,7 +128,7 @@ static uint32 checked_img[8] = {
 	0x00000000,
 };
 
-CheckboxWidget::CheckboxWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd, uint8 hotkey)
+CheckboxWidget::CheckboxWidget(Dialog *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey), _state(false)
 {
 	_flags = WIDGET_ENABLED;
@@ -191,12 +158,12 @@ void CheckboxWidget::drawWidget(bool hilite)
 		gui->fillRect(_x + 2, _y + 2, 10, 10, gui->_bgcolor);
 	
 	// Finally draw the label
-	gui->drawString(_label, _x + 20, _y + 3, _w, gui->_textcolor);
+	gui->drawString(_label.c_str(), _x + 20, _y + 3, _w, gui->_textcolor);
 }
 
 #pragma mark -
 
-SliderWidget::SliderWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd, uint8 hotkey)
+SliderWidget::SliderWidget(Dialog *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey),
 	  _value(0), _oldValue(1), _valueMin(0), _valueMax(100)
 {
