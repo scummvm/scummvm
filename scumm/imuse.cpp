@@ -1109,7 +1109,7 @@ int IMuseInternal::initialize(OSystem *syst, MidiDriver *native_midi, MidiDriver
 	_midi_native = native_midi;
 	_midi_adlib = adlib_midi;
 	if (native_midi != NULL)
-		initMidiDriver(_midi_native);
+		initMidiDriver(native_midi);
 	if (adlib_midi != NULL)
 		initMidiDriver(adlib_midi);
 
