@@ -98,7 +98,7 @@ LINK32=link.exe
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /I "./sound" /I "./" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "ALLOW_GDI" /D "BYPASS_COPY_PROT" /D "USE_ADLIB" /D "USE_MAD" /Yu"stdafx.h" /FD /GZ /c
 # SUBTRACT BASE CPP /Fr
-# ADD CPP /nologo /MTd /W3 /WX /Gm /GR /GX /ZI /Od /I "." /I "sound" /I "common" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "ALLOW_GDI" /D "USE_ADLIB" /D "BYPASS_COPY_PROT" /D "USE_MAD" /YX /FD /GZ /c
+# ADD CPP /nologo /MTd /W3 /WX /Gm /GR /GX /ZI /Od /I "." /I "sound" /I "common" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "ALLOW_GDI" /D "USE_ADLIB" /D "BYPASS_COPY_PROT" /D "USE_MAD" /D "DISABLE_BS2" /YX /FD /GZ /c
 # SUBTRACT CPP /Fr
 # ADD BASE RSC /l 0x41d /d "_DEBUG"
 # ADD RSC /l 0x41d /d "_DEBUG"
@@ -250,6 +250,14 @@ SOURCE=.\common\util.h
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\sound\audiostream.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sound\audiostream.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\sound\fmopl.cpp
 # End Source File
 # Begin Source File
@@ -291,6 +299,14 @@ SOURCE=.\sound\mpu401.cpp
 # Begin Source File
 
 SOURCE=.\sound\mpu401.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sound\rate.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sound\rate.h
 # End Source File
 # End Group
 # Begin Group "gui"
