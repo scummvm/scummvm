@@ -226,7 +226,7 @@ private:
 	byte _encbyte;
 
 public:
-	MemoryReadStream(const byte *buf, uint32 len) : _ptr(buf), _ptrOrig(buf), _bufSize(len), _pos(0) {}
+	MemoryReadStream(const byte *buf, uint32 len) : _ptr(buf), _ptrOrig(buf), _bufSize(len), _pos(0), _encbyte(0) {}
 
 	void setEnc(byte value) { _encbyte = value; }
 
