@@ -51,7 +51,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo /nodefaultlib:libc
+# ADD LIB32 /nologo
 
 !ELSEIF  "$(CFG)" == "simon - Win32 Debug"
 
@@ -62,8 +62,8 @@ LIB32=link.exe -lib
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "simon___Win32_Debug"
-# PROP Intermediate_Dir "simon___Win32_Debug"
+# PROP Output_Dir "simon___Debug"
+# PROP Intermediate_Dir "simon___Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
 # ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "." /I "common" /I "scumm" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "BYPASS_COPY_PROT" /D "USE_ADLIB" /D "DUMP_SCRIPTS" /YX /FD /GZ /c
@@ -85,11 +85,12 @@ LIB32=link.exe -lib
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "simon___Win32_MP3_Enabled_Debug"
-# PROP Intermediate_Dir "simon___Win32_MP3_Enabled_Debug"
+# PROP Output_Dir "simon___MP3_Enabled_Debug"
+# PROP Intermediate_Dir "simon___MP3_Enabled_Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "BYPASS_COPY_PROT" /D "USE_ADLIB" /D "DUMP_SCRIPTS" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "." /I "common" /I "scumm" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "BYPASS_COPY_PROT" /D "USE_ADLIB" /D "DUMP_SCRIPTS" /D "COMPRESSED_SOUND_FILE" /YX /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "." /I "common" /I "scumm" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "BYPASS_COPY_PROT" /D "USE_ADLIB" /D "DUMP_SCRIPTS" /D "COMPRESSED_SOUND_FILE" /FD /GZ /c
+# SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x415 /d "_DEBUG"
 # ADD RSC /l 0x415 /d "_DEBUG"
 BSC32=bscmake.exe
