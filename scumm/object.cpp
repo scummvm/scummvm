@@ -181,7 +181,7 @@ int ScummEngine::getObjectImageCount(int object) {
 	imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), ptr);
 
 	count = READ_LE_UINT32(&imhd->v8.image_count);
-	debug(1, "getObjectImageCount: image count %d", count);
+	warning("getObjectImageCount: image count %d", count);
 	return count;
 }
 
