@@ -44,17 +44,17 @@ void IMuseDigital::setDigMusicState(int stateId) {
 		}
 		num = l;
 
-		assert(_digStateMusicMap[num].unk1 >= 0 && _digStateMusicMap[num].unk1 < 11);
+		assert(_digStateMusicMap[num].unk1 < 11);
 		int val2 = _attributesTable[_digStateMusicMap[num].unk1];
 		if (val2 == 0) {
-			assert(_digStateMusicMap[num].unk3 >= 0 && _digStateMusicMap[num].unk3 < 11);
+			assert(_digStateMusicMap[num].unk3 < 11);
 			if (_attributesTable[_digStateMusicMap[num].unk3] != 0) {
 				num = _digStateMusicMap[num].unk4;
 			} else {
 				num = _digStateMusicMap[num].musicTableIndex;
 			}
 		} else {
-			assert(_digStateMusicMap[num].unk1 >= 0 && _digStateMusicMap[num].unk2 < 11);
+			assert(_digStateMusicMap[num].unk2 < 11);
 			int val = _attributesTable[_digStateMusicMap[num].unk2];
 			if (val == 0) {
 				num = _digStateMusicMap[num].musicTableIndex + val2;
