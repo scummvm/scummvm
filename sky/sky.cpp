@@ -115,7 +115,7 @@ void **SkyEngine::_itemList[300];
 SystemVars SkyEngine::_systemVars = {0, 0, 0, 0, 4316, 0, 0, false, false };
 
 SkyEngine::SkyEngine(GameDetector *detector, OSystem *syst)
-	: Engine(syst), _fastmode(0) {
+	: Engine(syst), _fastMode(0) {
 }
 
 SkyEngine::~SkyEngine() {
