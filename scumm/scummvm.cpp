@@ -927,18 +927,16 @@ void ScummEngine::scummInit() {
 		initScreens(0, 16, _screenWidth, 144);
 	}
 
+	for (i = 0; i < 256; i++)
+		_roomPalette[i] = i;
 	if (_version == 1) {
-		for (i = 0; i < 16; i++)
-			_roomPalette[i] = i;
 		if (_gameId == GID_MANIAC)
 			setupV1ManiacPalette();
 		else
 			setupV1ZakPalette();
 	} else if (_features & GF_16COLOR) {
-		for (i = 0; i < 16; i++) {
-			_roomPalette[i] = i;
+		for (i = 0; i < 16; i++)
 			_shadowPalette[i] = i;
-		}
 		if ((_features & GF_AMIGA) || (_features & GF_ATARI_ST))
 			setupAmigaPalette();
 		else
@@ -1890,13 +1888,14 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		_actors[i].hideActor();
 	}
 
-	for (i = 0; i < 256; i++) {
-		_roomPalette[i] = i;
-		if (_version < 7)
+	if (_version < 7) {
+		for (i = 0; i < 256; i++) {
+			_roomPalette[i] = i;
 			_shadowPalette[i] = i;
+		}
+		if (_features & GF_SMALL_HEADER)
+			setDirtyColors(0, 255);
 	}
-	if (_features & GF_SMALL_HEADER)
-		setDirtyColors(0, 255);
 
 	clearDrawObjectQueue();
 
