@@ -76,13 +76,13 @@ bool EditTextWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 			_label.deleteLastChar();
 			dirty = true;
 			break;
-		case 20:	// left arrow
+		case 256+20:	// left arrow
 			break;
-		case 19:	// right arrow
+		case 256+19:	// right arrow
 			break;
-		case 22:	// home
+		case 256+22:	// home
 			break;
-		case 23:	// end
+		case 256+23:	// end
 			break;
 		default:
 			if (isprint((char)ascii)) {

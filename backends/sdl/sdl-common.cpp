@@ -47,6 +47,9 @@ OSystem *OSystem_SDL_Common::create(int gfx_mode, bool full_screen) {
 	}
 
 	SDL_ShowCursor(SDL_DISABLE);
+	
+	// Enable unicode support if possible
+	SDL_EnableUNICODE(1); 
 
 #ifndef MACOSX		// Don't set icon on OS X, as we use a nicer external icon there
 	// Setup the icon
@@ -423,14 +426,19 @@ void *OSystem_SDL_Common::create_thread(ThreadProc *proc, void *param) {
 	return SDL_CreateThread(proc, param);
 }
 
-int mapKey(int key, byte mod)
+static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode)
 {
 	if (key >= SDLK_F1 && key <= SDLK_F9) {
 		return key - SDLK_F1 + 315;
+	} else if (key >= SDLK_UP && key <= SDLK_PAGEDOWN) {
+		return key;
+	} else if (unicode) {
+		return unicode;
 	} else if (key >= 'a' && key <= 'z' && mod & KMOD_SHIFT) {
-		key &= ~0x20;
-	} else if (key >= SDLK_NUMLOCK && key <= SDLK_EURO)
+		return key & ~0x20;
+	} else if (key >= SDLK_NUMLOCK && key <= SDLK_EURO) {
 		return 0;
+	}
 	return key;
 }
 	
@@ -486,24 +494,24 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 					break;
 				}
 				// map menu key (f11) to f5 (scumm menu)
-				if (ev.key.keysym.sym == 292) {
+				if (ev.key.keysym.sym == SDLK_F11) {
 					event->event_code = EVENT_KEYDOWN;
-					event->kbd.keycode = 286;
-					event->kbd.ascii = mapKey(286, ev.key.keysym.mod);
+					event->kbd.keycode = SDLK_F5;
+					event->kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
 				}
 				// map center (space) to tab (default action )
 				// I wanted to map the calendar button but the calendar comes up
 				//
-				else if (ev.key.keysym.sym==32) {
+				else if (ev.key.keysym.sym == SDLK_SPACE) {
 					event->event_code = EVENT_KEYDOWN;
-					event->kbd.keycode = 9;
-					event->kbd.ascii = mapKey(9, ev.key.keysym.mod);
+					event->kbd.keycode = SDLK_TAB;
+					event->kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
 				}
 				// since we stole space (pause) above we'll rebind it to the tab key on the keyboard
-				else if (ev.key.keysym.sym==9) {
+				else if (ev.key.keysym.sym == SDLK_TAB) {
 					event->event_code = EVENT_KEYDOWN;
-					event->kbd.keycode = 32;
-					event->kbd.ascii = mapKey(32, ev.key.keysym.mod);
+					event->kbd.keycode = SDLK_SPACE;
+					event->kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
 				}
 				else {
 				// let the events fall through if we didn't change them, this may not be the best way to
@@ -511,12 +519,12 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 				// and yes i have an huge terminal size so i dont wrap soon enough.
 					event->event_code = EVENT_KEYDOWN;
 					event->kbd.keycode = ev.key.keysym.sym;
-					event->kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod);
+					event->kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 				}
 #else
 				event->event_code = EVENT_KEYDOWN;
 				event->kbd.keycode = ev.key.keysym.sym;
-				event->kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod);
+				event->kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 #endif
 				
 				switch(ev.key.keysym.sym) {
@@ -546,7 +554,7 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 		case SDL_KEYUP: {
 			event->event_code = EVENT_KEYUP;
 			event->kbd.keycode = ev.key.keysym.sym;
-			event->kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod);
+			event->kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 
 				switch(ev.key.keysym.sym){
 					case SDLK_LEFT:                

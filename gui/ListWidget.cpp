@@ -142,6 +142,8 @@ bool ListWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 	bool dirty = false;
 	int oldSelectedItem = _selectedItem;
 
+printf("ListWidget::handleKeyDown(%d, %d, %d)\n", (int)ascii, (int)keycode, (int)modifiers);
+
 	if (_editMode) {
 
 		if (_caretVisible)
@@ -189,28 +191,28 @@ bool ListWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 				}
 			}
 			break;
-		case 17:	// up arrow
+		case 256+17:	// up arrow
 			if (_selectedItem > 0)
 				_selectedItem--;
 			break;
-		case 18:	// down arrow
+		case 256+18:	// down arrow
 			if (_selectedItem < _list.size() - 1)
 				_selectedItem++;
 			break;
-		case 24:	// pageup
+		case 256+24:	// pageup
 			_selectedItem -= _entriesPerPage - 1;
 			if (_selectedItem < 0)
 				_selectedItem = 0;
 			break;
-		case 25:	// pagedown
+		case 256+25:	// pagedown
 			_selectedItem += _entriesPerPage - 1;
 			if (_selectedItem >= _list.size() )
 				_selectedItem = _list.size() - 1;
 			break;
-		case 22:	// home
+		case 256+22:	// home
 			_selectedItem = 0;
 			break;
-		case 23:	// end
+		case 256+23:	// end
 			_selectedItem = _list.size() - 1;
 			break;
 		default:
