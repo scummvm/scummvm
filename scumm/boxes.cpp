@@ -207,9 +207,13 @@ Box *Scumm::getBoxBaseAddr(int box) {
 	byte *ptr = getResourceAddress(rtMatrix, 2);
 	if (!ptr)
 		return NULL;
-	// stops pass to adventure loom demo from working properly
+	// FIXME: In "pass to adventure", the loom demo, when bobbin enters
+	// the tent to the elders, box = 2, but ptr[0] = 2 -> errors out.
+	// Hence we disable the check for now. Maybe in PASS (and other old games)
+	// we shouldn't subtract 1 from ptr[0] when performing the check?
 	if (_gameId != GID_MONKEY_EGA)
 		checkRange(ptr[0] - 1, 0, box, "Illegal box %d");
+
 	if (_features & GF_SMALL_HEADER) {
 		if (_features & GF_AFTER_V3) // GF_OLD256 or GF_AFTER_V3 ?
 			return (Box *)(ptr + box * (SIZEOF_BOX - 2) + 1);
