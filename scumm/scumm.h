@@ -353,6 +353,7 @@ public:
 	byte _gameId;
 	byte _version;
 	byte _heversion;
+	byte _numActors;
 	uint32 _features;						// Should only be accessed for reading (TODO enforce it compiler-wise with making it private and creating an accessor)
 	uint8 _gameMD5[16];
 
@@ -493,7 +494,7 @@ protected:
 	int _numGlobalObjects, _numArray, _numVerbs, _numFlObject;
 	int _numInventory;
 	int _numNewNames, _numGlobalScripts;
-	int _numActors, _numRoomVariables;
+	int _numRoomVariables;
 	int _numPalettes, _numSprites, _numTalkies, _numUnk;
 public:
 	int _numLocalScripts, _numImages, _numRooms, _numScripts, _numSounds;	// Used by HE games

@@ -76,7 +76,7 @@ ScummEngine *g_scumm = 0;
 struct ScummGameSettings {
 	const char *name;
 	const char *description;
-	byte id, version, heversion;
+	byte id, version, heversion, numActors;
 	int midi; // MidiDriverType values
 	uint32 features;
 	const char *baseFilename;
@@ -93,130 +93,130 @@ static const ScummGameSettings scumm_settings[] = {
 	/* Scumm Version 1 */
 	/* Scumm Version 2 */
 
-	{"maniac", "Maniac Mansion", GID_MANIAC, 2, 0, MDT_PCSPK,
+	{"maniac", "Maniac Mansion", GID_MANIAC, 2, 0, 13, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, 0, 0},
-	//{"maniacnes", "Maniac Mansion (NES)", GID_MANIAC, 2, 0, MDT_NONE,
+	//{"maniacnes", "Maniac Mansion (NES)", GID_MANIAC, 2, 0, 13, MDT_NONE,
 	// GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES, 0, 0},
-	{"zak",         "Zak McKracken and the Alien Mindbenders", GID_ZAK, 2, 0, MDT_PCSPK,
+	{"zak",         "Zak McKracken and the Alien Mindbenders", GID_ZAK, 2, 0, 13, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, 0, 0},
 
 	/* Scumm Version 3 */
-	{"indy3EGA", "Indiana Jones and the Last Crusade", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
+	{"indy3EGA", "Indiana Jones and the Last Crusade", GID_INDY3, 3, 0, 13, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE, 0, 0},
-	{"indy3Towns", "Indiana Jones and the Last Crusade (FM-TOWNS)", GID_INDY3, 3, 0, MDT_TOWNS,
+	{"indy3Towns", "Indiana Jones and the Last Crusade (FM-TOWNS)", GID_INDY3, 3, 0, 13, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS | GF_FMTOWNS | GF_AUDIOTRACKS, 0, 0},
-	{"indy3", "Indiana Jones and the Last Crusade (256)", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
+	{"indy3", "Indiana Jones and the Last Crusade (256)", GID_INDY3, 3, 0, 13, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, 0, 0},
 
-	{"zakTowns", "Zak McKracken and the Alien Mindbenders (FM-TOWNS)", GID_ZAK256, 3, 0, MDT_TOWNS,
+	{"zakTowns", "Zak McKracken and the Alien Mindbenders (FM-TOWNS)", GID_ZAK256, 3, 0, 13, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FMTOWNS | GF_AUDIOTRACKS, 0, 0},
-	{"loom", "Loom", GID_LOOM, 3, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	{"loom", "Loom", GID_LOOM, 3, 0, 13, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE, 0, 0},
-	{"loomTowns", "Loom (FM Towns)", GID_LOOM, 3, 0, MDT_TOWNS,
+	{"loomTowns", "Loom (FM Towns)", GID_LOOM, 3, 0, 13, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FMTOWNS | GF_AUDIOTRACKS, 0, 0},
 
 	/* Scumm Version 4 */
-	{"monkeyEGA", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	{"monkeyEGA", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4, 0, 13, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, 0, 0},
-	{"pass", "Passport to Adventure", GID_PASS, 4, 0, MDT_PCSPK | MDT_ADLIB,
+	{"pass", "Passport to Adventure", GID_PASS, 4, 0, 13, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, 0, 0},
 
 	/* Scumm version 5 */
-	{"monkeyVGA", "Monkey Island 1 (256 color Floppy version)", GID_MONKEY_VGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	{"monkeyVGA", "Monkey Island 1 (256 color Floppy version)", GID_MONKEY_VGA, 4, 0, 13, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
 	 GF_SMALL_HEADER | GF_USE_KEY, 0, 0},
-	{"loomcd", "Loom (256 color CD version)", GID_LOOM256, 4, 0, MDT_NONE,
+	{"loomcd", "Loom (256 color CD version)", GID_LOOM256, 4, 0, 13, MDT_NONE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS, 0, 0},
-	{"monkey", "Monkey Island 1", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
+	{"monkey", "Monkey Island 1", GID_MONKEY, 5, 0, 13, /*MDT_PCSPK |*/ MDT_ADLIB,
 	 GF_USE_KEY | GF_AUDIOTRACKS, 0, 0},
-	{"monkey1", "Monkey Island 1 (alt)", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
+	{"monkey1", "Monkey Island 1 (alt)", GID_MONKEY, 5, 13, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY | GF_AUDIOTRACKS, 0, 0},
-	{"game", "Monkey Island 1 (SegaCD version)", GID_MONKEY_SEGA, 5, 0, MDT_NONE,
+	{"game", "Monkey Island 1 (SegaCD version)", GID_MONKEY_SEGA, 5, 0, 13, MDT_NONE,
 	 GF_USE_KEY | GF_AUDIOTRACKS, 0, 0},
-	{"monkey2", "Monkey Island 2: LeChuck's revenge", GID_MONKEY2, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
+	{"monkey2", "Monkey Island 2: LeChuck's revenge", GID_MONKEY2, 5, 0, 13, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, 0, 0},
-	{"mi2demo", "Monkey Island 2: LeChuck's revenge (Demo)", GID_MONKEY2, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
+	{"mi2demo", "Monkey Island 2: LeChuck's revenge (Demo)", GID_MONKEY2, 5, 0, 13, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, 0, 0},
 
-	{"atlantis", "Indiana Jones and the Fate of Atlantis", GID_INDY4, 5, 0, MDT_ADLIB | MDT_NATIVE,
+	{"atlantis", "Indiana Jones and the Fate of Atlantis", GID_INDY4, 5, 0, 13, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, 0, 0},
-	{"playfate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, 0, MDT_ADLIB | MDT_NATIVE,
+	{"playfate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, 0, 13, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, 0, 0},
-	{"fate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, 0, MDT_ADLIB | MDT_NATIVE,
+	{"fate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, 0, 13, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, 0, 0},
-	{"indy4", "Indiana Jones and the Fate of Atlantis (FM-TOWNS)", GID_INDY4, 5, 0, MDT_ADLIB | MDT_NATIVE,
+	{"indy4", "Indiana Jones and the Fate of Atlantis (FM-TOWNS)", GID_INDY4, 5, 0, 13, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, 0, 0},
-	{"indydemo", "Indiana Jones and the Fate of Atlantis (FM-TOWNS Demo)", GID_INDY4, 5, 0, MDT_ADLIB | MDT_NATIVE,
+	{"indydemo", "Indiana Jones and the Fate of Atlantis (FM-TOWNS Demo)", GID_INDY4, 5, 0, 13, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, 0, 0},
 
 	/* Scumm Version 6 */
-	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
+	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6, 0, 13, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY, 0, 0},
-	{"tentacleMac", "Day Of The Tentacle", GID_TENTACLE, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
+	{"tentacleMac", "Day Of The Tentacle", GID_TENTACLE, 6, 0, 13, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY, "tentacle", "Day Of The Tentacle Data"},
-	{"dottdemo", "Day Of The Tentacle (Demo)", GID_TENTACLE, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
+	{"dottdemo", "Day Of The Tentacle (Demo)", GID_TENTACLE, 6, 0, 13, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY, 0, 0},
 
-	{"samnmax", "Sam & Max", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
+	{"samnmax", "Sam & Max", GID_SAMNMAX, 6, 0, 20, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER, 0, 0},
-	{"samnmax-alt", "Sam & Max (alt)", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
+	{"samnmax-alt", "Sam & Max (alt)", GID_SAMNMAX, 6, 0, 20, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER, "samnmax", "samnmax.sm0"},
-	{"samnmaxMac", "Sam & Max (Mac)", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
+	{"samnmaxMac", "Sam & Max (Mac)", GID_SAMNMAX, 6, 0, 20, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER, "samnmax", "Sam & Max Data"},
-	{"samdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
+	{"samdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 0, 20, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER, 0, 0},
-	{"samdemoMac", "Sam & Max (Mac Demo)", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
+	{"samdemoMac", "Sam & Max (Mac Demo)", GID_SAMNMAX, 6, 0, 20, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER, "samdemo", "Sam & Max Demo Data"},
-	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
+	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 0, 20, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER, 0, "snmdemo.sm0"},
-	{"snmidemo", "Sam & Max (Interactive WIP Demo)", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
+	{"snmidemo", "Sam & Max (Interactive WIP Demo)", GID_SAMNMAX, 6, 0, 20, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER, 0, 0},
 
 //	{"test", "Test demo game", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE, GF_NEW_OPCODES, 0, 0},
 
 	/* Scumm Version 7 */
-	{"ft", "Full Throttle", GID_FT, 7, 0, MDT_NONE,
+	{"ft", "Full Throttle", GID_FT, 7, 0, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, 0, 0},
-	{"ftMac", "Full Throttle (Mac)", GID_FT, 7, 0, MDT_NONE,
+	{"ftMac", "Full Throttle (Mac)", GID_FT, 7, 0, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, "ft", "Full Throttle Data"},
-	{"ftdemo", "Full Throttle (Mac Demo)", GID_FT, 7, 0, MDT_NONE,
+	{"ftdemo", "Full Throttle (Mac Demo)", GID_FT, 7, 0, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, 0, "Full Throttle Demo Data"},
-	{"ftpcdemo", "Full Throttle (PC Demo)", GID_FT, 7, 0, MDT_NONE,
+	{"ftpcdemo", "Full Throttle (PC Demo)", GID_FT, 7, 0, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, "ft", 0},
 
 
-	{"dig", "The Dig", GID_DIG, 7, 0, MDT_NONE,
+	{"dig", "The Dig", GID_DIG, 7, 0, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, 0, 0},
-	{"digMac", "The Dig (Mac)", GID_DIG, 7, 0, MDT_NONE,
+	{"digMac", "The Dig (Mac)", GID_DIG, 7, 0, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, "dig", "The Dig Data"},
-	{"digdemo", "The Dig (Demo)", GID_DIG, 7, 0, MDT_NONE,
+	{"digdemo", "The Dig (Demo)", GID_DIG, 7, 0, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, "dig", 0},
-	{"digdemoMac", "The Dig (Mac Demo)", GID_DIG, 7, 0, MDT_NONE,
+	{"digdemoMac", "The Dig (Mac Demo)", GID_DIG, 7, 0, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, "dig", "The Dig Demo Data"},
 
 #ifndef __PALM_OS__
 	/* Scumm Version 8 */
-	{"comi", "The Curse of Monkey Island", GID_CMI, 8, 0, MDT_NONE,
+	{"comi", "The Curse of Monkey Island", GID_CMI, 8, 0, 80, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER, 0, 0},
-	{"comidemo", "The Curse of Monkey Island (Demo)", GID_CMI, 8, 0, MDT_NONE,
+	{"comidemo", "The Curse of Monkey Island (Demo)", GID_CMI, 8, 0, 80, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER | GF_DEMO, "comi", 0},
 #endif
 
 	// Humongous Entertainment Scumm Version 6
-	{"puttputt", "Putt-Putt Joins The Parade", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_NATIVE,
+	{"puttputt", "Putt-Putt Joins The Parade", GID_HEGAME, 6, 60, 13, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
-	{"puttdemo", "Putt-Putt Joins The Parade (Demo)", GID_PUTTDEMO, 6, 0, MDT_ADLIB | MDT_NATIVE,
+	{"puttdemo", "Putt-Putt Joins The Parade (Demo)", GID_PUTTDEMO, 6, 0, 13, MDT_ADLIB | MDT_NATIVE,
 	  GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_MULTIPLE_VERSIONS, 0, 0},
-	{"moondemo", "Putt-Putt Goes To The Moon (Demo)", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_NATIVE,
+	{"moondemo", "Putt-Putt Goes To The Moon (Demo)", GID_HEGAME, 6, 60, 13, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
-	{"puttmoon", "Putt-Putt Goes To The Moon", GID_PUTTMOON, 6, 60, MDT_ADLIB | MDT_NATIVE,
+	{"puttmoon", "Putt-Putt Goes To The Moon", GID_PUTTMOON, 6, 60, 13, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
-	{"funpack", "Putt-Putt's Fun Pack", GID_FUNPACK, 6, 60, MDT_ADLIB | MDT_NATIVE,
+	{"funpack", "Putt-Putt's Fun Pack", GID_FUNPACK, 6, 60, 13, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"fbpack", "Fatty Bear's Fun Pack", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_NATIVE,
+	{"fbpack", "Fatty Bear's Fun Pack", GID_HEGAME, 6, 60, 13, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"fbear", "Fatty Bear's Birthday Surprise", GID_FBEAR, 6, 60, MDT_ADLIB | MDT_NATIVE,
+	{"fbear", "Fatty Bear's Birthday Surprise", GID_FBEAR, 6, 60, 13, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
-	{"fbdemo", "Fatty Bear's Birthday Surprise (DOS Demo)", GID_FBEAR, 6, 60, MDT_ADLIB | MDT_NATIVE,
+	{"fbdemo", "Fatty Bear's Birthday Surprise (DOS Demo)", GID_FBEAR, 6, 60, 13, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
 
 #ifndef __PALM_OS__
@@ -224,156 +224,156 @@ static const ScummGameSettings scumm_settings[] = {
 	  * several interpreter versions... */
 	// First 640x480 game, hence version 7.1
 	// There is also a Scummsys.90 version of freddi
-	{"freddi", "Freddi Fish 1: The Case of the Missing Kelp Seeds", GID_HEGAME, 6, 71, MDT_NONE,
+	{"freddi", "Freddi Fish 1: The Case of the Missing Kelp Seeds", GID_HEGAME, 6, 71, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
-	{"farmdemo", "Let's Explore the Farm with Buzzy (Demo)", GID_HEGAME, 6, 71, MDT_NONE,
+	{"farmdemo", "Let's Explore the Farm with Buzzy (Demo)", GID_HEGAME, 6, 71, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
-	{"airdemo", "Let's Explore the Airport with Buzzy (Demo)", GID_HEGAME, 6, 71, MDT_NONE,
+	{"airdemo", "Let's Explore the Airport with Buzzy (Demo)", GID_HEGAME, 6, 71, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
-	{"catalog", "Humongous Interactive Catalog", GID_HEGAME, 6, 71, MDT_NONE,
+	{"catalog", "Humongous Interactive Catalog", GID_HEGAME, 6, 71, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"freddemo", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo)", GID_HEGAME, 6, 71, MDT_NONE,
+	{"freddemo", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo)", GID_HEGAME, 6, 71, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
 
 	// Humongous Entertainment Scumm Version 7.2
-	{"catalog2", "Humongous Interactive Catalog 2", GID_HEGAME, 6, 72, MDT_NONE,
+	{"catalog2", "Humongous Interactive Catalog 2", GID_HEGAME, 6, 72, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"farm", "Let's Explore the Farm with Buzzy", GID_HEGAME, 6, 72, MDT_NONE,
+	{"farm", "Let's Explore the Farm with Buzzy", GID_HEGAME, 6, 72, 28, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"airport", "Let's Explore the Airport with Buzzy", GID_HEGAME, 6, 72, MDT_NONE,
+	{"airport", "Let's Explore the Airport with Buzzy", GID_HEGAME, 6, 72, 28, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"jungle", "Let's Explore the Jungle with Buzzy", GID_HEGAME, 6, 72, MDT_NONE,
+	{"jungle", "Let's Explore the Jungle with Buzzy", GID_HEGAME, 6, 72, 28, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
-	{"puttzoo", "Putt-Putt Saves the Zoo", GID_HEGAME, 6, 72, MDT_NONE,
+	{"puttzoo", "Putt-Putt Saves the Zoo", GID_HEGAME, 6, 72, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
-	{"zoodemo", "Putt-Putt Saves the Zoo (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
+	{"zoodemo", "Putt-Putt Saves the Zoo (Demo)", GID_HEGAME, 6, 72, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 	// Humongous Entertainment Scumm Version 8.0 ?  Scummsrc.80 
-	{"ff2-demo", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Demo)", GID_HEGAME, 6, 80, MDT_NONE,
+	{"ff2-demo", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Demo)", GID_HEGAME, 6, 80, 30, MDT_NONE,
 	GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"freddi2", "Freddi Fish 2: The Case of the Haunted Schoolhouse", GID_HEGAME, 6, 80, MDT_NONE,
+	{"freddi2", "Freddi Fish 2: The Case of the Haunted Schoolhouse", GID_HEGAME, 6, 80, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
-	{"pjs-demo", "Pajama Sam 1: No Need to Hide When It's Dark Outside (Demo)", GID_HEGAME, 6, 80, MDT_NONE,
+	{"pjs-demo", "Pajama Sam 1: No Need to Hide When It's Dark Outside (Demo)", GID_HEGAME, 6, 80, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"pajama", "Pajama Sam 1: No Need to Hide When It's Dark Outside", GID_HEGAME, 6, 80, MDT_NONE,
+	{"pajama", "Pajama Sam 1: No Need to Hide When It's Dark Outside", GID_HEGAME, 6, 80, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
-	{"balloon", "Putt-Putt and Pep's Balloon-O-Rama", GID_HEGAME, 6, 80, MDT_NONE,
+	{"balloon", "Putt-Putt and Pep's Balloon-O-Rama", GID_HEGAME, 6, 80, 60, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"dog", "Putt-Putt and Pep's Dog on a Stick", GID_HEGAME, 6, 80, MDT_NONE,
+	{"dog", "Putt-Putt and Pep's Dog on a Stick", GID_HEGAME, 6, 80, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"maze", "Freddi Fish and Luther's Maze Madness", GID_HEGAME, 6, 80, MDT_NONE,
+	{"maze", "Freddi Fish and Luther's Maze Madness", GID_HEGAME, 6, 80, 60, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"socks", "Pajama Sam's Sock Works", GID_HEGAME, 6, 80, MDT_NONE,
+	{"socks", "Pajama Sam's Sock Works", GID_HEGAME, 6, 80, 56, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"water", "Freddi Fish and Luther's Water Worries", GID_HEGAME, 6, 80, MDT_NONE,
+	{"water", "Freddi Fish and Luther's Water Worries", GID_HEGAME, 6, 80, 56, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 	// Humongous Entertainment Scumm Version 9.0 ?  Scummsys.90
-	{"kinddemo", "Big Thinkers Kindergarten (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"kinddemo", "Big Thinkers Kindergarten (Demo)", GID_HEGAME, 6, 90, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"thinkerk", "Big Thinkers Kindergarten", GID_HEGAME, 6, 90, MDT_NONE,
+	{"thinkerk", "Big Thinkers Kindergarten", GID_HEGAME, 6, 90, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"1grademo", "Big Thinkers First Grade (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"1grademo", "Big Thinkers First Grade (Demo)", GID_HEGAME, 6, 90, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"freddi3", "Freddi Fish 3: The Case of the Stolen Conch Shell", GID_HEGAME, 6, 90, MDT_NONE,
+	{"freddi3", "Freddi Fish 3: The Case of the Stolen Conch Shell", GID_HEGAME, 6, 90, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"f3-mdemo", "Freddi Fish 3: The Case of the Stolen Conch Shell (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"f3-mdemo", "Freddi Fish 3: The Case of the Stolen Conch Shell (Demo)", GID_HEGAME, 6, 90, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	// there is also a C++ engine based version of timedemo
-	{"TimeDemo", "Putt-Putt Travels Through Time (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"TimeDemo", "Putt-Putt Travels Through Time (Demo)", GID_HEGAME, 6, 90, 31, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
-	{"spyfox", "Spyfox 1: Dry Cereal", GID_HEGAME, 6, 90, MDT_NONE,
+	{"spyfox", "Spyfox 1: Dry Cereal", GID_HEGAME, 6, 90, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
-	{"foxdemo", "Spyfox 1: Dry Cereal (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"foxdemo", "Spyfox 1: Dry Cereal (Demo)", GID_HEGAME, 6, 90, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	// there is also a C++ engine version of spydemo
-	{"Spydemo", "Spyfox 1: Dry Cereal (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"Spydemo", "Spyfox 1: Dry Cereal (Demo)", GID_HEGAME, 6, 90, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
 
 	// Humongous Entertainment Scumm Version 9.5 ?  Scummsys.95
-	{"pj2demo", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"pj2demo", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening (Demo)", GID_HEGAME, 6, 90, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"pajama2", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening", GID_HEGAME, 6, 90, MDT_NONE,
+	{"pajama2", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening", GID_HEGAME, 6, 90, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"chase", "Spy Fox in Cheese Chase Game", GID_HEGAME, 6, 90, MDT_NONE,
+	{"chase", "Spy Fox in Cheese Chase Game", GID_HEGAME, 6, 90, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 	// Humongous Entertainment Scumm Version 9.8 ?  Scummsys.98
 	// these and later games can easily be identified by the .(a) file instead of a .he1
 	// and INIB chunk in the .he0
-	{"lost", "Pajama Sam's Lost & Found", GID_HEGAME, 6, 98, MDT_NONE,
+	{"lost", "Pajama Sam's Lost & Found", GID_HEGAME, 6, 98, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"racedemo", "Putt-Putt Enters the Race (Demo)", GID_HEGAME, 6, 98, MDT_NONE,
+	{"racedemo", "Putt-Putt Enters the Race (Demo)", GID_HEGAME, 6, 98, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"puttrace", "Putt-Putt Enters the Race", GID_HEGAME, 6, 98, MDT_NONE,
+	{"puttrace", "Putt-Putt Enters the Race", GID_HEGAME, 6, 98, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"BluesABCTimeDemo", "Blue's ABC Time (Demo)", GID_HEGAME, 6, 98, MDT_NONE,
+	{"BluesABCTimeDemo", "Blue's ABC Time (Demo)", GID_HEGAME, 6, 98, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 	// Global scripts increased to 2048
-	{"500demo", "Putt-Putt Enters the Race (Demo)", GID_FREDDI4, 6, 98, MDT_NONE,
+	{"500demo", "Putt-Putt Enters the Race (Demo)", GID_FREDDI4, 6, 98, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"freddi4", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch", GID_FREDDI4, 6, 98, MDT_NONE,
+	{"freddi4", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch", GID_FREDDI4, 6, 98, 57, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"f4-demo", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Demo)", GID_FREDDI4, 6, 98, MDT_NONE,
+	{"f4-demo", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Demo)", GID_FREDDI4, 6, 98, 57, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 	// Engine moved to c++ 
 	// Humongous Entertainment Scumm Version 9.9 ?  Scummsys.99
-	{"smaller", "Pajama Sam's Lost & Found (Test)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"smaller", "Pajama Sam's Lost & Found (Test)", GID_HEGAME, 6, 99, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"puttcircus", "Putt-Putt Joins the Circus", GID_HEGAME, 6, 99, MDT_NONE,
+	{"puttcircus", "Putt-Putt Joins the Circus", GID_HEGAME, 6, 99, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"circdemo", "Putt-Putt Joins the Circus (Demo)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"circdemo", "Putt-Putt Joins the Circus (Demo)", GID_HEGAME, 6, 99, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"sf2-demo", "Spyfox 2: Some Assembly Required (Demo)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"sf2-demo", "Spyfox 2: Some Assembly Required (Demo)", GID_HEGAME, 6, 99, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"spyfox2", "Spyfox 2: Some Assembly Required", GID_HEGAME, 6, 99, MDT_NONE,
+	{"spyfox2", "Spyfox 2: Some Assembly Required", GID_HEGAME, 6, 99, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"mustard", "Spy Fox in Hold the Mustard", GID_HEGAME, 6, 99, MDT_NONE,
+	{"mustard", "Spy Fox in Hold the Mustard", GID_HEGAME, 6, 99, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 	// Humongous Entertainment Scumm Version ?
-	{"freddicove", "Freddi Fish 5: The Case of the Creature of Coral Cave", GID_HEGAME, 6, 99, MDT_NONE,
+	{"freddicove", "Freddi Fish 5: The Case of the Creature of Coral Cave", GID_HEGAME, 6, 99, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
-	{"pj3-demo", "Pajama Sam 3: You Are What You Eat From Your Head to Your Feet (Demo)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"pj3-demo", "Pajama Sam 3: You Are What You Eat From Your Head to Your Feet (Demo)", GID_HEGAME, 6, 99, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"pajama3", "Pajama Sam 3: You Are What You Eat From Your Head to Your Feet", GID_HEGAME, 6, 99, MDT_NONE,
+	{"pajama3", "Pajama Sam 3: You Are What You Eat From Your Head to Your Feet", GID_HEGAME, 6, 99, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"SamsFunShop", "Pajama Sam's One-Stop Fun Shop", GID_HEGAME, 6, 99, MDT_NONE,
+	{"SamsFunShop", "Pajama Sam's One-Stop Fun Shop", GID_HEGAME, 6, 99, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"PuttsFunShop", "Putt-Putt's One-Stop Fun Shop", GID_HEGAME, 6, 99, MDT_NONE,
+	{"PuttsFunShop", "Putt-Putt's One-Stop Fun Shop", GID_HEGAME, 6, 99, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"putttime", "Putt-Putt Travels Through Time", GID_HEGAME, 6, 99, MDT_NONE,
+	{"putttime", "Putt-Putt Travels Through Time", GID_HEGAME, 6, 99, 31, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"spyozon", "Spyfox 3: Operation Ozone", GID_HEGAME, 6, 99, MDT_NONE,
+	{"spyozon", "Spyfox 3: Operation Ozone", GID_HEGAME, 6, 99, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"sf3-demo", "Spyfox 3: Operation Ozone (Demo)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"sf3-demo", "Spyfox 3: Operation Ozone (Demo)", GID_HEGAME, 6, 99, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
-	{"bb2demo", "Backyard Baseball 2001 (Demo)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"bb2demo", "Backyard Baseball 2001 (Demo)", GID_HEGAME, 6, 99, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"footdemo", "Backyard Football 2002 (Demo)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"footdemo", "Backyard Football 2002 (Demo)", GID_HEGAME, 6, 99, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 	// Humongous Entertainment Scumm Version ?
-	{"Football2002", "Backyard Football 2002 (Demo)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"Football2002", "Backyard Football 2002 (Demo)", GID_HEGAME, 6, 100, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"FFHSDemo", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Demo)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"FFHSDemo", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Demo)", GID_HEGAME, 6, 100, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"ff5demo", "Freddi Fish 5: The Case of the Creature of Coral Cave (Demo)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"ff5demo", "Freddi Fish 5: The Case of the Creature of Coral Cave (Demo)", GID_HEGAME, 6, 100, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"PjSamDemo", "Pajama Sam: No Need To Hide When It's Dark Outside (Demo)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"PjSamDemo", "Pajama Sam: No Need To Hide When It's Dark Outside (Demo)", GID_HEGAME, 6, 100, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"PuttTTT", "Putt-Putt Travels Through Time *updated)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"PuttTTT", "Putt-Putt Travels Through Time *updated)", GID_HEGAME, 6, 100, 31, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 
 #endif
-	{NULL, NULL, 0, 0, 0, MDT_NONE, 0, 0, 0}
+	{NULL, NULL, 0, 0, 0, 0, MDT_NONE, 0, 0, 0}
 };
 
 // This additional table is used for titles where GF_MULTIPLE_VERSIONS is specified.
@@ -382,46 +382,46 @@ static const ScummGameSettings scumm_settings[] = {
 //
 // Use main table to specify default flags and this table to override defaults.
 static const ScummGameSettings he_md5_settings[] = {
-	{"0b3222aaa7efcf283eb621e0cefd26cc", "Putt-Putt Joins The Parade (early version)", GID_HEGAME, 6, 0, MDT_ADLIB | MDT_NATIVE,
+	{"0b3222aaa7efcf283eb621e0cefd26cc", "Putt-Putt Joins The Parade (early version)", GID_HEGAME, 6, 0, 13, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS, 0, 0},
-	{"6a30a07f353a75cdc602db27d73e1b42", "Putt-Putt Joins The Parade (Windows)", GID_HEGAME, 6, 70, MDT_NONE,
+	{"6a30a07f353a75cdc602db27d73e1b42", "Putt-Putt Joins The Parade (Windows)", GID_HEGAME, 6, 70, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0, 0},
-	{"37ff1b308999c4cca7319edfcc1280a0", "Putt-Putt Joins The Parade (Windows Demo)", GID_PUTTDEMO, 6, 70, MDT_NONE,
+	{"37ff1b308999c4cca7319edfcc1280a0", "Putt-Putt Joins The Parade (Windows Demo)", GID_PUTTDEMO, 6, 70, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"9c92eeaf517a31b7221ec2546ab669fd", "Putt-Putt Goes To The Moon (Windows)", GID_HEGAME, 6, 70, MDT_NONE,
+	{"9c92eeaf517a31b7221ec2546ab669fd", "Putt-Putt Goes To The Moon (Windows)", GID_HEGAME, 6, 70, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0, 0},
-	{"9c143c5905055d5df7a0f014ab379aee", "Putt-Putt Goes To The Moon (Windows Demo)", GID_HEGAME, 6, 70, MDT_NONE,
+	{"9c143c5905055d5df7a0f014ab379aee", "Putt-Putt Goes To The Moon (Windows Demo)", GID_HEGAME, 6, 70, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0, 0},
-	{"179879b6e35c1ead0d93aab26db0951b", "Fatty Bear's Birthday Surprise (Windows)", GID_FBEAR, 6, 70, MDT_NONE,
+	{"179879b6e35c1ead0d93aab26db0951b", "Fatty Bear's Birthday Surprise (Windows)", GID_FBEAR, 6, 70, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0, 0},
-	{"22c9eb04455440131ffc157aeb8d40a8", "Fatty Bear's Birthday Surprise (Windows Demo)", GID_FBEAR, 6, 70, MDT_NONE,
+	{"22c9eb04455440131ffc157aeb8d40a8", "Fatty Bear's Birthday Surprise (Windows Demo)", GID_FBEAR, 6, 70, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0, 0},
-	{"8d479e36f35e80257dfc102cf4b8a912", "Let's Explore the Farm with Buzzy (Demo) (farm cd)", GID_HEGAME, 6, 72, MDT_NONE,
+	{"8d479e36f35e80257dfc102cf4b8a912", "Let's Explore the Farm with Buzzy (Demo) (farm cd)", GID_HEGAME, 6, 72, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"566165a7338fa11029e7c14d94fa70d0", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo) (spyfox cd)", GID_HEGAME, 6, 72, MDT_NONE,
+	{"566165a7338fa11029e7c14d94fa70d0", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo) (spyfox cd)", GID_HEGAME, 6, 72, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"0855496dde35356b1a9691e22ba84cdc", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo) (farm cd)", GID_HEGAME, 6, 72, MDT_NONE,
+	{"0855496dde35356b1a9691e22ba84cdc", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo) (farm cd)", GID_HEGAME, 6, 72, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"8ffd618a776a4c0d8922bb28b09f8ce8", "Let's Explore the Airport with Buzzy (Demo) (farm cd)", GID_HEGAME, 6, 72, MDT_NONE,
+	{"8ffd618a776a4c0d8922bb28b09f8ce8", "Let's Explore the Airport with Buzzy (Demo) (farm cd)", GID_HEGAME, 6, 72, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"e144f5f49d9241d2a9dee2576b3d09cb", "Let's Explore the Airport with Buzzy (Demo) (spyfox cd)", GID_HEGAME, 6, 72, MDT_NONE,
+	{"e144f5f49d9241d2a9dee2576b3d09cb", "Let's Explore the Airport with Buzzy (Demo) (spyfox cd)", GID_HEGAME, 6, 72, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"df047cc4792150f601290357566d36a6", "Freddi Fish 1: The Case of the Missing Kelp Seeds *updated)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"df047cc4792150f601290357566d36a6", "Freddi Fish 1: The Case of the Missing Kelp Seeds *updated)", GID_HEGAME, 6, 90, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"92e7727e67f5cd979d8a1070e4eb8cb3", "Putt-Putt Saves the Zoo *updated)", GID_FREDDI4, 6, 98, MDT_NONE,
+	{"92e7727e67f5cd979d8a1070e4eb8cb3", "Putt-Putt Saves the Zoo *updated)", GID_FREDDI4, 6, 98, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"0ab19be9e2a3f6938226638b2a3744fe", "Putt-Putt Travels Through Time (updated Demo)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"0ab19be9e2a3f6938226638b2a3744fe", "Putt-Putt Travels Through Time (updated Demo)", GID_HEGAME, 6, 100, 31, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"3de99ef0523f8ca7958faa3afccd035a", "Spyfox 1: Dry Cereal (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"3de99ef0523f8ca7958faa3afccd035a", "Spyfox 1: Dry Cereal (Updated)", GID_HEGAME, 6, 100, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"9d4ab3e0e1d1ebc6ba8a6a4c470ed184", "Spyfox 1: Dry Cereal (Updated Demo)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"9d4ab3e0e1d1ebc6ba8a6a4c470ed184", "Spyfox 1: Dry Cereal (Updated Demo)", GID_HEGAME, 6, 100, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"51305e929e330e24a75a0351c8f9975e", "Freddi Fish 2: The Case of the Haunted Schoolhouse *updated)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"51305e929e330e24a75a0351c8f9975e", "Freddi Fish 2: The Case of the Haunted Schoolhouse *updated)", GID_HEGAME, 6, 99, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"21abe302e1b1e2b66d6f5c12e241ebfd", "Freddi Fish 5: The Case of the Creature of Coral Cave (unencrypted)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"21abe302e1b1e2b66d6f5c12e241ebfd", "Freddi Fish 5: The Case of the Creature of Coral Cave (unencrypted)", GID_HEGAME, 6, 99, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
-	{NULL, NULL, 0, 0, 0, MDT_NONE, 0, 0, 0}
+	{NULL, NULL, 0, 0, 0, MDT_NONE, 0, 0, 0, 0}
 };
 
 
@@ -436,6 +436,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	  _gameId(gs.id),
 	  _version(gs.version),
 	  _heversion(gs.heversion),
+	  _numActors(gs.numActors),
 	  _features(gs.features),
 	  gdi(this), _pauseDialog(0), _optionsDialog(0), _mainMenuDialog(0), _versionDialog(0),
 	  _targetName(detector->_targetName) {
@@ -543,7 +544,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_numCharsets = 0;
 	_numNewNames = 0;
 	_numGlobalScripts = 0;
-	_numActors = 0;
 	_numCostumes = 0;
 	_numImages = 0;
 	_numLocalScripts = 60;
@@ -1049,19 +1049,6 @@ void ScummEngine::mainInit() {
 	setupScummVars();
 
 	setupOpcodes();
-
-	if (_version == 8)
-		_numActors = 80;
-	else if ((_version == 7) || (_heversion == 72))
-		_numActors = 30;
-	else if (_gameId == GID_SAMNMAX)
-		_numActors = 20;
-	else if (_gameId == GID_MANIAC)
-		_numActors = 25;
-	else if (_heversion >= 80)
-		_numActors = 63;
-	else 
-		_numActors = 13;
 
 	if (_version >= 7)
 		OF_OWNER_ROOM = 0xFF;
