@@ -1521,5 +1521,5 @@ void MidiDriver_ADLIB::adlib_note_on(int chan, byte note, int mod) {
 	assert(chan >= 0 && chan < 9);
 	code = (note << 7) + mod;
 	curnote_table[chan] = code;
-	adlib_playnote(chan, channel_table_2[chan] + code);
+	adlib_playnote(chan, (int16) channel_table_2[chan] + code);
 }
