@@ -208,7 +208,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			const MusicDriver *md = GameDetector::getMusicDrivers();
 			for (; md->name; md++) {
 				if (md->id == (int) data) {
-					g_config->set ("music_driver", md->name, "user-overrides");
+					g_config->set ("music_driver", md->name, "_USER_OVERRIDES");
 					break;
 				}
 			}

@@ -493,10 +493,10 @@ void GameDetector::setGame(const String &name) {
 	// override config file global and game-specific options.
 	g_config->set_domain ("_COMMAND_LINE");
 	updateconfig();
-	g_config->set_domain ("user-overrides");
+	g_config->set_domain ("_USER_OVERRIDES");
 	updateconfig();
 	g_config->delete_domain ("_COMMAND_LINE");
-	g_config->delete_domain ("user-overrides");
+	g_config->delete_domain ("_USER_OVERRIDES");
 }
 
 int GameDetector::parseGraphicsMode(const char *s) {
