@@ -1058,7 +1058,7 @@ void SimonEngine::vc_18_jump_rel() {
 
 /* chain to script? */
 void SimonEngine::vc_19_chain_to_script() {
-	/* XXX: not implemented */
+	/* unused */
 	error("vc_19_chain_to_script: not implemented");
 }
 
@@ -1127,10 +1127,8 @@ void SimonEngine::vc_23_set_sprite_priority() {
 	uint16 pri = vc_read_next_word();
 	VgaSprite bak;
 
-	if (vsp->id == 0) {
-		debug(1,"Tried to set pri for unknown id %d", _vga_cur_sprite_id);
+	if (vsp->id == 0)
 		return;
-	}
 
 	memcpy(&bak, vsp, sizeof(bak));
 	bak.priority = pri;
@@ -1282,9 +1280,8 @@ void SimonEngine::vc_27_reset() {
 }
 
 void SimonEngine::vc_28_dummy_op() {
-	/* dummy opcode */
+	/* unused */
 	_vc_ptr += 8;
-	warning("vc_28 - Please report error message and where in game it occured");
 }
 
 void SimonEngine::vc_29_stop_all_sounds() {
@@ -1327,12 +1324,9 @@ void SimonEngine::vc_34_force_lock() {
 }
 
 void SimonEngine::vc_35() {
-	/* unknown function is simon1dos/simon2dos */
-	/* dummy op in simon1win/simon2win */
-	/* not used? */
+	/* unused */
 	_vc_ptr += 4;
 	_vga_sprite_changed++;
-	warning("vc_35 - Please report error message and where in game it occured");
 }
 
 void SimonEngine::vc_36_saveload_thing() {
@@ -1536,15 +1530,13 @@ void SimonEngine::vc_52_play_sound() {
 }
 
 void SimonEngine::vc_53_no_op() {
-	/* dummy op in simon1dos/talkie */
-	/* no op in simon1win */
-	warning("vc_53 - Please report error message and where in game it occured");
+	/* unused */
+	_vc_ptr += 4;
 }
 
 void SimonEngine::vc_54_no_op() {
-	/* dummy op in simon1dos/talkie */
-	/* no op in simon1win */
-	warning("vc_54 - Please report error message and where in game it occured");
+	/* unused */
+	_vc_ptr += 6;
 }
 
 void SimonEngine::vc_55_offset_hit_area() {
@@ -1569,7 +1561,6 @@ void SimonEngine::vc_55_offset_hit_area() {
 }
 
 void SimonEngine::vc_56() {
-	/* no op in simon1 */
 	if (_game & GF_SIMON2) {
 		uint num = vc_read_var_or_word() * _vga_base_delay;
 
@@ -1578,8 +1569,6 @@ void SimonEngine::vc_56() {
 
 		add_vga_timer(num + gss->VGA_DELAY_BASE, _vc_ptr, _vga_cur_sprite_id, _vga_cur_file_id);
 		_vc_ptr = (byte *)&vc_get_out_of_code;
-	} else {
-		warning("vc_56 - Please report error message and where in game it occured");
 	}
 }
 
@@ -1599,10 +1588,6 @@ void SimonEngine::vc_59() {
 }
 
 void SimonEngine::vc_58() {
-	/* no op in simon1dos */
-	/* not used in simon1win? */
-	if (!(_game & GF_SIMON2))
-		warning("vc_58 - Please report error message and where in game it occured");
 	uint sprite = _vga_cur_sprite_id;
 	uint file = _vga_cur_file_id;
 	byte *vc_ptr;
@@ -1623,10 +1608,7 @@ void SimonEngine::vc_58() {
 }
 
 void SimonEngine::vc_57_no_op() {
-	/* unknown function in simon1dos/simon2dos */
-	/* no op in simon1win/simon2win */
-	/* not used? */
-		warning("vc_57 - Please report error message and where in game it occured");
+	/* unused */
 }
 
 void SimonEngine::vc_kill_sprite(uint file, uint sprite) {

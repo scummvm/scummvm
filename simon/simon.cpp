@@ -3681,6 +3681,9 @@ void SimonEngine::video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte
 	w = ha->width;
 	h = ha->height;
 
+	// Works around bug in original Simon the Sorcerer 2
+	// Animations continue in background whe load/save dialog is open
+	// Often causing the savegame name highlighter to be cut short
 	if (!(h > 0 && w > 0 && ha->x + w <= 320 && ha->y + h <= 200)) {
 		debug(1,"Invalid coordinates in video_toggle_colors (%d,%d,%d,%d)", ha->x, ha->y, ha->width, ha->height);
 		_lock_word &= ~0x8000;
