@@ -420,6 +420,7 @@ bool ScummDebugger::Cmd_Script(int argc, const char** argv) {
 		_s->stopScriptNr(scriptnum);
 	} else if ((!strcmp(argv[2], "run")) || (!strcmp(argv[2], "start"))) {
 		_s->runScript(scriptnum, 0, 0, 0);
+		return false;
 	} else {
 		Debug_Printf("Unknown script command '%s'\n", argv[2]);
 	}
