@@ -142,7 +142,7 @@ void SkyMT32Music::startDriver(void) {
 				sysExData++;
 				dataLen--;
 			}
-			for (uint8 cnt = 0; cnt < rlVal; cnt++) {
+			for (uint8 cnt2 = 0; cnt2 < rlVal; cnt2++) {
 				sendBuf[len] = codeVal;
 				len++;
 				crc -= codeVal;
