@@ -418,7 +418,7 @@
 			RelativePath="..\..\scumm\scumm.h">
 		</File>
 		<File
-			RelativePath="..\..\scumm\scummvm.cpp">
+			RelativePath="..\..\scumm\scumm.cpp">
 		</File>
 		<File
 			RelativePath="..\..\scumm\sound.cpp">

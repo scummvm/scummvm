@@ -531,7 +531,7 @@ SOURCE=..\..\scumm\scumm.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\scumm\scummvm.cpp
+SOURCE=..\..\scumm\scumm.cpp
 # End Source File
 # Begin Source File
 
