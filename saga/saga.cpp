@@ -54,6 +54,7 @@
 #include "sprite_mod.h"
 #include "text_mod.h"
 #include "objectmap_mod.h"
+#include "sound.h"
 
 struct SAGAGameSettings {
 	const char *name;
@@ -211,7 +212,7 @@ void SagaEngine::go() {
 
 	/* Initialize engine modules
 	 * \*------------------------------------------------------------- */
-	_sndRes = new SndRes();
+	_sndRes = new SndRes(this);
 	EVENT_Init();
 	FONT_Init();
 	SPRITE_Init();
@@ -252,7 +253,7 @@ void SagaEngine::go() {
 	}
 
 	/* Initialize system specific sound */
-	SYSSOUND_Init(MainData.sound_enabled);
+	_sound = new Sound(MainData.sound_enabled);
 	if (!MainData.sound_enabled) {
 		R_printf(R_STDOUT, "Sound disabled.\n");
 	}
@@ -298,16 +299,10 @@ void SagaEngine::go() {
 
 	}			/* end main game engine loop */
 
-	R_Shutdown(0);
-
 	return;
 }
 
 void SagaEngine::shutdown() {
-	_system->quit();
-}
-
-void R_Shutdown(int param) {
 	SCENE_Shutdown();
 	ACTOR_Shutdown();
 	SCRIPT_Shutdown();
@@ -321,16 +316,18 @@ void R_Shutdown(int param) {
 	CVAR_Shutdown();
 	EVENT_Shutdown();
 
+	delete _sndRes;
+
 	/* Shutdown system modules */
 	SYSMUSIC_Shutdown();
-	SYSSOUND_Shutdown();
+	delete _sound;
 
-	/*  exit(param); */
+	_system->quit();
 }
 
 static void CF_quitfunc(int argc, char *argv[])
 {
-	R_Shutdown(0);
+	_vm->shutdown();
 	exit(0);
 }
 

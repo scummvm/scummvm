@@ -143,12 +143,6 @@ enum R_ERRORCODE {
 
 
 /*
- * r_main.c
-\*--------------------------------------------------------------------------*/
-
-void R_Shutdown(int param);
-
-/*
  * r_transitions.c
 \*--------------------------------------------------------------------------*/
 int TRANSITION_Dissolve(uchar *dst_img,
@@ -159,22 +153,6 @@ int TRANSITION_Dissolve(uchar *dst_img,
 /*--------------------------------------------------------------------------*\
  * System specific routines
 \*--------------------------------------------------------------------------*/
-
-/*
- * System : Sound
-\*--------------------------------------------------------------------------*/
-int SYSSOUND_Init(int enabled);
-int SYSSOUND_Shutdown(void);
-
-int SYSSOUND_Play(int sound_rn, int channel);
-int SYSSOUND_Pause(int channel);
-int SYSSOUND_Resume(int channel);
-int SYSSOUND_Stop(int channel);
-
-int SYSSOUND_PlayVoice(R_SOUNDBUFFER *);
-int SYSSOUND_PauseVoice(void);
-int SYSSOUND_ResumeVoice(void);
-int SYSSOUND_StopVoice(void);
 
 /*
  * System : Music

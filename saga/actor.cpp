@@ -47,6 +47,7 @@
 #include "sprite_mod.h"
 #include "font_mod.h"
 #include "text_mod.h"
+#include "sound.h"
 
 /*
  * Begin module component
@@ -414,7 +415,7 @@ int ACTOR_SkipDialogue(void)
 					ys_dll_delete(a_dnode);
 
 					/* And stop any currently playing voices */
-					SYSSOUND_StopVoice();
+					_vm->_sound->stopVoice();
 				}
 			}
 		}

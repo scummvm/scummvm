@@ -20,6 +20,7 @@
  * $Header$
  *
  */
+#include "saga.h"
 #include "reinherit.h"
 
 #include "yslib.h"
@@ -27,8 +28,8 @@
 /*
  * Uses the following modules:
 \*--------------------------------------------------------------------------*/
+#include "sound.h"
 #include "game_mod.h"
-#include "rscfile_mod.h"
 
 namespace Saga {
 
@@ -36,53 +37,40 @@ namespace Saga {
  * Begin module component
 \*--------------------------------------------------------------------------*/
 
-static int SoundInitialized = 0;
-
-static R_RSCFILE_CONTEXT *SoundContext;
-static R_RSCFILE_CONTEXT *VoiceContext;
-
-int SYSSOUND_Init(int enabled) {
+Sound::Sound(int enabled) {
 	int result;
 
-	if (SoundInitialized) {
-		return R_FAILURE;
-	}
-
-	/* Load sound module resource file contexts
-	 * \*------------------------------------------------------------- */
-	result = GAME_GetFileContext(&SoundContext, R_GAME_SOUNDFILE, 0);
+	/* Load sound module resource file contexts */
+	result = GAME_GetFileContext(&_soundContext, R_GAME_SOUNDFILE, 0);
 	if (result != R_SUCCESS) {
-		return R_FAILURE;
+		return;
 	}
 
-	result = GAME_GetFileContext(&VoiceContext, R_GAME_VOICEFILE, 0);
+	result = GAME_GetFileContext(&_voiceContext, R_GAME_VOICEFILE, 0);
 	if (result != R_SUCCESS) {
-		return R_FAILURE;
+		return;
 	}
 
-    /* Grab sound resource information for the current game
-    \*-------------------------------------------------------------*/
+    /* Grab sound resource information for the current game */
     //GAME_GetSoundInfo(&SoundModule.snd_info);
 
-	SoundInitialized = 1;
-	return R_SUCCESS;
+	_soundInitialized = 1;
+	return;
 }
 
-int SYSSOUND_Shutdown() {
-	if (!SoundInitialized) {
-		return R_FAILURE;
+Sound::~Sound() {
+	if (!_soundInitialized) {
+		return;
 	}
 
-	SoundInitialized = 0;
-
-	return R_SUCCESS;
+	_soundInitialized = 0;
 }
 
-int SYSSOUND_Play(int sound_rn, int channel) {
+int Sound::play(int sound_rn, int channel) {
 	int resource_size;
 	char *resource_data;
 
-	if (!SoundInitialized) {
+	if (!_soundInitialized) {
 		return R_FAILURE;
 	}
 
@@ -93,64 +81,64 @@ int SYSSOUND_Play(int sound_rn, int channel) {
 	return R_SUCCESS;
 }
 
-int SYSSOUND_Pause(int channel) {
+int Sound::pause(int channel) {
 	(void)channel;
 
-	if (!SoundInitialized) {
+	if (!_soundInitialized) {
 		return R_FAILURE;
 	}
 
 	return R_SUCCESS;
 }
 
-int SYSSOUND_Resume(int channel) {
+int Sound::resume(int channel) {
 	(void)channel;
 
-	if (!SoundInitialized) {
+	if (!_soundInitialized) {
 		return R_FAILURE;
 	}
 
 	return R_SUCCESS;
 }
 
-int SYSSOUND_Stop(int channel) {
+int Sound::stop(int channel) {
 	(void)channel;
 
-	if (!SoundInitialized) {
+	if (!_soundInitialized) {
 		return R_FAILURE;
 	}
 
 	return R_SUCCESS;
 }
 
-int SYSSOUND_PlayVoice(R_SOUNDBUFFER *buf) {
+int Sound::playVoice(R_SOUNDBUFFER *buf) {
 	(void)buf;
 
-	if (!SoundInitialized) {
+	if (!_soundInitialized) {
 		return R_FAILURE;
 	}
 
 	return R_SUCCESS;
 }
 
-int SYSSOUND_PauseVoice(void) {
-	if (!SoundInitialized) {
+int Sound::pauseVoice(void) {
+	if (!_soundInitialized) {
 		return R_FAILURE;
 	}
 
 	return R_SUCCESS;
 }
 
-int SYSSOUND_ResumeVoice(void) {
-	if (!SoundInitialized) {
+int Sound::resumeVoice(void) {
+	if (!_soundInitialized) {
 		return R_FAILURE;
 	}
 
 	return R_SUCCESS;
 }
 
-int SYSSOUND_StopVoice(void) {
-	if (!SoundInitialized) {
+int Sound::stopVoice(void) {
+	if (!_soundInitialized) {
 		return R_FAILURE;
 	}
 

@@ -20,50 +20,46 @@
  * $Header$
  *
  */
+/*
+ Description:   
+ 
+    Sound class
 
-#ifndef SAGA_H
-#define SAGA_H
+ Notes: 
+*/
 
-#include "common/stdafx.h"
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
+#ifndef SAGA_SOUND_H_
+#define SAGA_SOUND_H_
 
-//#include "gamedesc.h"
+#include "rscfile_mod.h"
 
 namespace Saga {
 
-class SndRes;
-class Sound;
-
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
-
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
-};
-
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
-
- protected:
-	void go();
-
+class Sound {
  public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~SagaEngine();
 
-	void shutdown();
+	Sound(int enabled);
+	~Sound(void);
 
-	SndRes *_sndRes;
-	Sound  *_sound;
-};
+	int play(int sound_rn, int channel);
+	int pause(int channel);
+	int resume(int channel);
+	int stop(int channel);
 
-// FIXME: Global var. We use it until everything will be turned into objects
-extern SagaEngine *_vm;
+	int playVoice(R_SOUNDBUFFER *);
+	int pauseVoice(void);
+	int resumeVoice(void);
+	int stopVoice(void);
+
+ private:
+
+	int _soundInitialized;
+
+	R_RSCFILE_CONTEXT *_soundContext;
+	R_RSCFILE_CONTEXT *_voiceContext;
+
+ };
 
 } // End of namespace Saga
 
-#endif
+#endif				/* SAGA_SOUND_H_ */

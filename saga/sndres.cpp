@@ -23,11 +23,12 @@
 /*
  Description:   
  
-    Sound resource management module
+    Sound resource management class
 
  Notes: 
 */
 
+#include "saga.h"
 #include "reinherit.h"
 
 #include "yslib.h"
@@ -44,10 +45,11 @@
  * Begin module component
 \*--------------------------------------------------------------------------*/
 #include "sndres.h"
+#include "sound.h"
 
 namespace Saga {
 
-SndRes::SndRes(void) {
+SndRes::SndRes(SagaEngine *vm) {
 	int result;
 
 	/* Load sound module resource file contexts */
@@ -65,6 +67,7 @@ SndRes::SndRes(void) {
 	/* Grab sound resource information for the current game */
 	GAME_GetSoundInfo(&_snd_info);
 
+	_vm = vm;
 	_init = 1;
 }
 
@@ -77,7 +80,7 @@ int SndRes::playVoice(ulong voice_rn) {
 		return R_FAILURE;
 	}
 
-	SYSSOUND_PlayVoice(&snd_buffer);
+	_vm->_sound->playVoice(&snd_buffer);
 
 	return R_SUCCESS;
 }

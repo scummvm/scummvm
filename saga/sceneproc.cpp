@@ -28,10 +28,7 @@
  Notes: 
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <assert.h>
-
+#include "saga.h"
 #include "reinherit.h"
 
 #include "yslib.h"
@@ -43,6 +40,7 @@
 #include "events_mod.h"
 #include "scene_mod.h"
 #include "palanim_mod.h"
+#include "sound.h"
 
 /*
  * Begin module
@@ -69,7 +67,7 @@ int InitialSceneProc(int param, R_SCENE_INFO * scene_info)
 	case SCENE_BEGIN:
 
 		SYSMUSIC_Stop();
-		SYSSOUND_StopVoice();
+		_vm->_sound->stopVoice();
 
 		/* Fade palette to black from intro scene
 		 * \*----------------------------------------------------- */

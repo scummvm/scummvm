@@ -23,13 +23,16 @@
 /*
  Description:   
  
-    Sound resource management module - private header
+    Sound resource class header
 
  Notes: 
 */
 
 #ifndef SAGA_SNDRES_H_
 #define SAGA_SNDRES_H_
+
+#include "rscfile_mod.h"
+#include "game_mod.h"
 
 namespace Saga {
 
@@ -65,7 +68,7 @@ struct R_VOC_BLOCK1 {
 class SndRes {
  public:
 
-	SndRes(void);
+	SndRes(SagaEngine *vm);
 
 	int loadSound(ulong sound_rn);
 	int playVoice(ulong voice_rn);
@@ -83,6 +86,8 @@ class SndRes {
 	R_RSCFILE_CONTEXT *_voice_ctxt;
 
 	R_GAME_SOUNDINFO _snd_info;
+
+	SagaEngine *_vm;
  };
 
 } // End of namespace Saga
