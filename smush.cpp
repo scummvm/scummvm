@@ -20,10 +20,18 @@
 #include "debug.h"
 #include <cstring>
 #include "smush.h"
+#include "timer.h"
 #include "mixer/mixer.h"
 #include <SDL.h>
 
+Smush *smush;
+
+void Smush::timerCallback(void *refCon) {
+	smush->handleFrame();
+}
+
 Smush::Smush() {
+	smush = this;
 	_nbframes = 0;
 	_dst = NULL;
 	_width = 0;
@@ -32,6 +40,7 @@ Smush::Smush() {
 	_channels = -1;
 	_freq = 0;
 	_soundHandle = 0;
+	_freq = 22050;
 }
 
 Smush::~Smush() {
@@ -40,12 +49,13 @@ Smush::~Smush() {
 
 void Smush::init() {
 	_frame = 0;
-	_channels = -1;
-	_freq = 22050;
 	_alreadyInit = false;
+	_videoFinished = false;
+	g_timer->installTimerProc(&timerCallback, _speed, NULL);
 }
 
 void Smush::deinit() {
+	g_timer->removeTimerProc(&timerCallback);
 }
 
 void Smush::handleBlocky16(byte *src) {
@@ -74,7 +84,7 @@ void Smush::handleWave(const byte *src, uint32 size) {
 		flags |= SoundMixer::FLAG_STEREO;
 	if (_soundHandle == 0)
 		g_mixer->newStream(&_soundHandle, (byte *)dst, size * _channels * 2, _freq,
-							flags, 300000);
+							flags, 500000);
 	else
 		g_mixer->appendStream(_soundHandle, (byte *)dst, size * _channels * 2);
 }
@@ -106,6 +116,11 @@ void Smush::handleFrame() {
 		}
 	} while (pos < size);
 	free(frame);
+	_frame++;
+	if (_frame == _nbframes) {
+		_videoFinished = true;
+	}
+//	updateGLScreen();
 }
 
 void Smush::handleFramesHeader() {
@@ -167,9 +182,9 @@ void Smush::play(const char *filename, const char *directory) {
 	f.close();
 
 	// Load the video
-	init();
 	setupAnim(filename, directory);
 	handleFramesHeader();
+	init();
 
 	SDL_Surface* image;
 	image = SDL_CreateRGBSurface(SDL_SWSURFACE, 640, 480, 16, 0x0000f800, 0x000007e0, 0x0000001f, 0x00000000);
@@ -182,14 +197,11 @@ void Smush::play(const char *filename, const char *directory) {
 
 	_dst = (byte *)image->pixels;
 
-	for (int l = 0; l < _nbframes; l++) {
-		handleFrame();
-		_frame++;
+	_videoFinished = false;
 
-//		SDL_BlitSurface(image, &src, screen, NULL);
-//		SDL_UpdateRect(screen, 0, 0, 0, 0);
-		SDL_Delay(_speed / 1000);
-	}
+	while (!_videoFinished) {
+		SDL_Delay(10);
+	};
 }
 
 FILE *File::fopenNoCase(const char *filename, const char *directory, const char *mode) {

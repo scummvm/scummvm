@@ -72,7 +72,7 @@ private:
 	int32 _speed;
 	int _channels;
 	int _freq;
-
+	bool _videoFinished;
 	int _width, _height;
 	uint8 *_dst;
 
@@ -83,6 +83,7 @@ public:
 	void play(const char *filename, const char *directory);
 
 private:
+	static void timerCallback(void *ptr);
 	void parseNextFrame();
 	void handleFramesHeader();
 	void handleFrame();
