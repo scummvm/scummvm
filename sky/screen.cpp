@@ -506,7 +506,7 @@ void SkyScreen::sortSprites(void) {
 								//getchar();
 								spriteComp->status = 0;
 							} else {
-								sortList[spriteCnt].yCood = spriteComp->ycood + (int16)FROM_LE_16(spriteData->s_offset_y) + (int16)FROM_LE_16(spriteData->s_height);
+								sortList[spriteCnt].yCood = spriteComp->ycood + spriteData->s_offset_y + spriteData->s_height;
 								sortList[spriteCnt].compact = spriteComp;
 								sortList[spriteCnt].sprite = spriteData;
 								spriteCnt++;
@@ -587,12 +587,12 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 		return ;
 	}
 	dataFileHeader *sprDataFile = (dataFileHeader *)spriteInfo;
-	_sprWidth = FROM_LE_16(sprDataFile->s_width);
-	_sprHeight = FROM_LE_16(sprDataFile->s_height);
+	_sprWidth = sprDataFile->s_width;
+	_sprHeight = sprDataFile->s_height;
 	_maskX1 = _maskX2 = 0;
-	uint8 *spriteData = spriteInfo + (sprCompact->frame & 0x3F) * FROM_LE_16(sprDataFile->s_sp_size);
+	uint8 *spriteData = spriteInfo + (sprCompact->frame & 0x3F) * sprDataFile->s_sp_size;
 	spriteData += sizeof(dataFileHeader);
-	int32 spriteY = sprCompact->ycood + (int16)FROM_LE_16(sprDataFile->s_offset_y) - TOP_LEFT_Y;
+	int32 spriteY = sprCompact->ycood + sprDataFile->s_offset_y - TOP_LEFT_Y;
 	if (spriteY < 0) {
 		spriteY = -spriteY;
 		if (_sprHeight <= (uint32)spriteY) {
@@ -600,10 +600,10 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 			return ;
 		}
 		_sprHeight -= spriteY;
-		spriteData += FROM_LE_16(sprDataFile->s_width) * spriteY;
+		spriteData += sprDataFile->s_width * spriteY;
 		spriteY = 0;
 	} else {
-		int32 botClip = GAME_SCREEN_HEIGHT - FROM_LE_16(sprDataFile->s_height) - spriteY;
+		int32 botClip = GAME_SCREEN_HEIGHT - sprDataFile->s_height - spriteY;
 		if (botClip < 0) {
 			botClip = -botClip;
 			if (_sprHeight <= (uint32)botClip) {
@@ -614,7 +614,7 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 		}
 	}
 	_sprY = (uint32)spriteY;
-	int32 spriteX = sprCompact->xcood + (int16)FROM_LE_16(sprDataFile->s_offset_x) - TOP_LEFT_X;
+	int32 spriteX = sprCompact->xcood + sprDataFile->s_offset_x - TOP_LEFT_X;
 	if (spriteX < 0) {
 		spriteX = -spriteX;
 		if (_sprWidth <= (uint32)spriteX) {
@@ -625,7 +625,7 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 		_maskX1 = spriteX;
 		spriteX = 0;
 	} else {
-		int32 rightClip = GAME_SCREEN_WIDTH - (FROM_LE_16(sprDataFile->s_width) + spriteX);
+		int32 rightClip = GAME_SCREEN_WIDTH - (sprDataFile->s_width + spriteX);
 		if (rightClip < 0) {
 			rightClip = (-rightClip) + 1;
 			if (_sprWidth <= (uint32)rightClip) {
