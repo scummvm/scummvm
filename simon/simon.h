@@ -574,11 +574,11 @@ protected:
 
 	void start_vga_code(uint b, uint vga_res, uint vga_struct_id, uint c, uint d, uint f);
 	void o_unk26_helper(uint a, uint b, uint c, uint d, uint e, uint f, uint g, uint h);
-	void talk_with_speech(uint speech_id, uint num_1);
-	void talk_with_text(uint num_1, uint num_2, const char *string_ptr, uint a, int b, uint c);
+	void talk_with_speech(uint speech_id, uint vga_struct_id);
+	void talk_with_text(uint vga_struct_id, uint color, const char *string_ptr, uint threeval_a, int threeval_b, uint width);
 	FillOrCopyStruct *fcs_alloc(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint unk4);
 
-	void render_string(uint num_1, uint color, uint width, uint height, const char *txt);
+	void render_string(uint vga_struct_id, uint color, uint width, uint height, const char *txt);
 
 	void setup_hit_areas(FillOrCopyStruct *fcs, uint fcs_index);
 
