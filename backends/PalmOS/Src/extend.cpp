@@ -27,8 +27,6 @@
 #include "globals.h"
 #include "enginersc.h"
 
-#include "arm/native.h"
-
 const Char *SCUMMVM_SAVEPATH = "/PALM/Programs/ScummVM/Saved/";
 
 void PalmFatalError(const Char *err) {
