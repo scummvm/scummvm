@@ -31,6 +31,7 @@ class File;
 enum CptIds {
 	CPT_JOEY = 1,
 	CPT_FOSTER = 3,
+	CPT_MENU_BAR = 0x2E,
 	CPT_REICH_DOOR_20 = 0x30AB,
 	CPT_MOVE_LIST = 0xBD //0x8000
 };
@@ -65,6 +66,11 @@ public:
 	uint8	*createResetData(uint16 gameVersion);
 	uint16	_numSaveIds;
 	uint16	*_saveIds;
+	// - debugging functions
+	uint16 findCptId(void *cpt);
+	uint16 findCptId(const char *cptName);
+	uint16 giveNumDataLists(void);
+	uint16 giveDataListLen(uint16 listNum);
 private:
 	uint16  _numDataLists;
 	uint16  *_dataListLen;

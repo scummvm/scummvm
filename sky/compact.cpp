@@ -406,4 +406,38 @@ uint8 *SkyCompact::createResetData(uint16 gameVersion) {
 	error("Unable to find reset data for Beneath a Steel Sky Version 0.0%03d", gameVersion);
 }
 
+// - debugging functions
+
+uint16 SkyCompact::findCptId(void *cpt) {
+	for (uint16 listCnt = 0; listCnt < _numDataLists; listCnt++)
+		for (uint16 elemCnt = 0; elemCnt < _dataListLen[listCnt]; elemCnt++)
+			if (_compacts[listCnt][elemCnt] == cpt)
+				return (listCnt << 12) | elemCnt;
+	// not found
+	debug(1, "Id for Compact %p wasn't found!", cpt);
+	return 0;
+}
+
+uint16 SkyCompact::findCptId(const char *cptName) {
+	for (uint16 listCnt = 0; listCnt < _numDataLists; listCnt++)
+		for (uint16 elemCnt = 0; elemCnt < _dataListLen[listCnt]; elemCnt++)
+			if (_cptNames[listCnt][elemCnt] != 0)
+				if (scumm_stricmp(cptName, _cptNames[listCnt][elemCnt]) == 0)
+					return (listCnt << 12) | elemCnt;
+	// not found
+	debug(1, "Id for Compact %s wasn't found!", cptName);
+	return 0;
+}
+
+uint16 SkyCompact::giveNumDataLists(void) {
+	return _numDataLists;
+}
+
+uint16 SkyCompact::giveDataListLen(uint16 listNum) {
+	if (listNum >= _numDataLists) // list doesn't exist
+		return 0;
+	else
+		return _dataListLen[listNum];
+}
+
 } // End of namespace Sky
