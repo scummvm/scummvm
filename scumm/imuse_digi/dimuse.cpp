@@ -128,6 +128,9 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
+		if (!ser->isSaving()) {
+			track->compressed = false;
+		}
 		ser->saveLoadEntries(track, trackEntries);
 		if (!ser->isSaving()) {
 			if (!track->used)
