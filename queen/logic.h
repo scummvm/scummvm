@@ -284,7 +284,13 @@ public:
 	void inventoryDeleteItem(uint16 itemNum, bool refresh = true);
 	void inventoryScroll(uint16 count, bool up);
 
+	//! Ugly hack from original code
+	void sceneReset() { _scene = 0; }
+
+	//! Make a scene
 	void sceneStart(bool showMouseCursor);
+
+	//! Stop making a scene
 	void sceneStop(bool showMouseCursor);
 
 	//! Copy data from dummy object to object

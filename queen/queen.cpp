@@ -158,6 +158,9 @@ void QueenEngine::roomChanged() {
 			_graphics->loadPanel();
 			
 			_logic->playCutaway("cred.cut");
+
+			// Ugly fix from original code
+			_logic->sceneReset();
 		}
 
 		_logic->currentRoom(ROOM_HOTEL_LOBBY);

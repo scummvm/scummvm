@@ -1306,10 +1306,7 @@ void Cutaway::run(char *nextFilename) {
 
 	talk(nextFilename);
 
-	// XXX removed the condition because otherwise sceneStop is not always
-	// executed in pair with sceneStart. */
-	
-	if (_comPanel == 0 || (_comPanel == 2 /*&& !_anotherCutaway*/)) {
+	if (_comPanel == 0 || (_comPanel == 2 && !_anotherCutaway)) {
 		_logic->sceneStop(true);
 		_comPanel = 0;
 	}
