@@ -475,7 +475,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 
 			if (decflag == 0)
 				continue;
-	
+
 			switch (codec) {
 			case 1:
 				result |= codec1(xmoveCur, ymoveCur);
@@ -810,7 +810,6 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 					rect.left--;
 			}
 		}
-
 
 		if (skip)
 			skip--;
