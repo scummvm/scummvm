@@ -4553,6 +4553,9 @@ void SimonState::go()
 	_last_music_played = (uint) - 1;
 	_vga_base_delay = 1;
 	
+	_mainscript_toggle = false;
+	_vgascript_toggle = false;
+
 	if (_voice_type != FORMAT_NONE) {
 	_vk_t_toggle = false;
 	} else {
@@ -4598,7 +4601,11 @@ void SimonState::delay(uint amount)
 		while (_system->poll_event(&event)) {
 			switch (event.event_code) {
 				case OSystem::EVENT_KEYDOWN:
-				if (event.kbd.keycode == 't') {
+				if (event.kbd.keycode == 'o') {
+					_mainscript_toggle ^= 1;
+				} else if (event.kbd.keycode == 'v') {
+					_vgascript_toggle ^= 1;
+				} else if (event.kbd.keycode == 't') {
 					_vk_t_toggle ^= 1;
 				} else if (event.kbd.keycode == ']' || event.kbd.keycode == '+') {
 					midi.set_volume(midi.get_volume() + 16);

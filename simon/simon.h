@@ -28,12 +28,8 @@
 #include "sound/mixer.h"
 
 /* Various other settings */
-//#define DUMP_CONTINOUS_MAINSCRIPT
-//#define DUMP_START_MAINSCRIPT
-//#define DUMP_CONTINOUS_VGASCRIPT
 //#define DRAW_IMAGES_DEBUG
 //#define DRAW_THREE_STARS
-//#define DUMP_START_VGASCRIPT
 //#define DUMP_FILE_NR 8
 //#define DUMP_BITMAPS_FILE_NR 8
 //#define DUMP_DRAWN_BITMAPS
@@ -196,6 +192,8 @@ public:
 	bool _dx_use_3_or_4_for_lock;
 
 	bool _mouse_pos_changed;
+	bool _mainscript_toggle;
+	bool _vgascript_toggle;
 	bool _vk_t_toggle;
 	byte _mouse_cursor;
 	bool _vga_var9;

@@ -37,9 +37,8 @@ int SimonState::runScript()
 	bool flag, condition;
 
 	do {
-#ifdef DUMP_CONTINOUS_MAINSCRIPT
-		dumpOpcode(_code_ptr);
-#endif
+		if (_mainscript_toggle)
+			dumpOpcode(_code_ptr);
 
 		opcode = getByte();
 		if (opcode == 0xFF)
@@ -1219,9 +1218,8 @@ int SimonState::startSubroutine(Subroutine *sub)
 	SubroutineLine *sl;
 	byte *old_code_ptr;
 
-#ifdef DUMP_START_MAINSCRIPT
-	dumpSubroutine(sub);
-#endif
+	if (_mainscript_toggle)
+		dumpSubroutine(sub);
 
 	old_code_ptr = _code_ptr;
 
@@ -1239,9 +1237,8 @@ int SimonState::startSubroutine(Subroutine *sub)
 			else
 				_code_ptr += 8;
 
-#ifdef DUMP_CONTINOUS_MAINSCRIPT
-			fprintf(_dump_file, "; %d\n", sub->id);
-#endif
+			if (_mainscript_toggle)
+				fprintf(_dump_file, "; %d\n", sub->id);
 			result = runScript();
 			if (result != 0) {
 				/* result -10 means restart subroutine */
