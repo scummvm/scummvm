@@ -47,9 +47,6 @@ bool Lab::open(const char *filename) {
 
   std::fseek(f_, 16, SEEK_SET);
   char binary_entry[16];
-#ifndef _MSC_VER
-  file_map_.resize(num_entries);
-#endif
   for (int i = 0; i < num_entries; i++) {
     std::fread(binary_entry, 1, 16, f_);
     int fname_offset = READ_LE_UINT32(binary_entry);
@@ -60,9 +57,7 @@ bool Lab::open(const char *filename) {
     std::transform(fname.begin(), fname.end(), fname.begin(), tolower);
 
     file_map_.insert(std::make_pair(fname, LabEntry(start, size)));
-#ifndef _MSC_VER
     file_map_.size();
-#endif
   }
 
   delete [] string_table;
