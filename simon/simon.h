@@ -24,6 +24,7 @@
 
 #include <stdio.h>
 #include "common/engine.h"
+#include "common/util.h"
 #include "simon/midi.h"
 #include "sound/mixer.h"
 #include "simon/sound.h"
@@ -779,6 +780,8 @@ public:
 	void show_it(void *buf);
 
 	char *gen_savename(int slot);
+
+	RandomSource _rnd;
 };
 
 

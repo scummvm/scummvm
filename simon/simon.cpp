@@ -4512,6 +4512,8 @@ void SimonState::delay(uint amount)
 	uint32 cur = start;
 	const uint vga_period = _fast_mode ? 10 : 50;
 
+	_rnd.getRandomNumber(2);
+
 	do {
 		while (!_in_callback && cur >= _last_vga_tick + vga_period) {
 			_last_vga_tick += vga_period;

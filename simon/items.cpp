@@ -277,7 +277,7 @@ int SimonState::runScript()
 
 				for (;;) {
 					uint value_2 = value;
-					rand_value = rand() & 0x7FFF;
+					rand_value = _rnd.getRandomNumber(0xffff) & 0x7FFF;
 
 					if (value == 0)
 						error("Invalid random range");
