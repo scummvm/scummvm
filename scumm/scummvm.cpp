@@ -877,6 +877,8 @@ int Scumm::scummLoop(int delta) {
 	if (_features & GF_AFTER_V7) {
 		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
 		VAR(VAR_CAMERA_POS_Y) = camera._cur.y;
+	} else if (_features & GF_AFTER_V2) {
+		VAR(VAR_CAMERA_POS_X) = camera._cur.x / 8;
 	} else {
 		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
 	}
