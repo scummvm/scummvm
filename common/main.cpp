@@ -200,10 +200,8 @@ int main(int argc, char *argv[]) {
 		launcherDialog(detector, system);
 
 	// Verify the given game name
-	if (detector.detectMain()) {
-		system->quit();
-		return -1;
-	}
+	if (detector.detectMain())
+		goto exitNow;
 
 	// Set the window caption to the game name
 	prop.caption = g_config->get("description", detector._gameFileName);
@@ -217,7 +215,7 @@ int main(int argc, char *argv[]) {
 		prop.gfx_mode = GFX_NORMAL;
 		system->property(OSystem::PROP_SET_GFX_MODE, &prop);
 	}
-	
+
 	// Create the game engine
 	Engine *engine = Engine::createFromDetector(&detector, system);
 
@@ -234,12 +232,14 @@ int main(int argc, char *argv[]) {
 
 	// Free up memory
 	delete engine;
+exitNow:
 	delete g_gui;
 	delete g_config;
 
 	// ...and quit (the return 0 should never be reached)
 	system->quit();
-	delete system;	// palmos leaks
+	delete system;
+	free((void *)version_settings); // allocated in GameDetector
 	return 0;
 }
 
