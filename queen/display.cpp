@@ -570,9 +570,9 @@ void Display::screenMode(int comPanel, bool inCutaway) {
 	}
 
 	if (comPanel == 2 && inCutaway) {
-		_fullscreen = (_bdHeight == GAME_SCREEN_HEIGHT);
+		fullscreen((_bdHeight == GAME_SCREEN_HEIGHT));
 	} else if (comPanel == 1) {
-		_fullscreen = false;
+		fullscreen(false);
 	}
 }
 

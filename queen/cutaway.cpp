@@ -390,12 +390,14 @@ void Cutaway::changeRooms(CutawayObject &object) {
 
 	_vm->logic()->oldRoom(_initialRoom);
 
-	// FIXME: this cutaway is played at the end of the command 0x178. This command
-	// setups some persons and associates bob slots to them. They should be hidden
-	// as their y coordinate is > 150, but they aren't ! A (temporary) workaround
-	// is to display the room with the panel area enabled.
+	// FIXME - the first cutaway is played at the end of the command 0x178. This 
+	// command setups some persons and associates bob slots to them. They should be 
+	// hidden as their y coordinate is > 150, but they aren't ! A (temporary) 
+	// workaround is to display the room with the panel area enabled. Same problem
+	// for cutaway c62c.
 	int16 comPanel = _comPanel;
-	if (strcmp(_basename, "c41f") == 0 && _temporaryRoom == 106 && object.room == 41) {
+	if ((strcmp(_basename, "c41f") == 0 && _temporaryRoom == 106 && object.room == 41) ||
+		(strcmp(_basename, "c62c") == 0 && _temporaryRoom == 105 && object.room == 41)) {
 		comPanel = 1;
 	}
 
@@ -820,7 +822,7 @@ void Cutaway::handlePersonRecord(
 
 	if (0 != strcmp(sentence, "*")) {
 		if (sentence[0] == '#') {
-			debug(0, "Starting credits");
+			debug(0, "Starting credits '%s'", sentence + 1);
 			_vm->logic()->startCredits(sentence + 1);
 		}
 		else {
@@ -1286,7 +1288,8 @@ int Cutaway::makeComplexAnimation(int16 currentImage, Cutaway::CutawayAnim *objA
 	int frameIndex[256];
 	int i;
 	int bobNum = objAnim[0].object;
-
+	assert(bobNum < 21);
+	
 	memset(frameIndex, 0, sizeof(frameIndex));
 	debug(6, "[Cutaway::makeComplexAnimation] currentImage = %i", currentImage);
 

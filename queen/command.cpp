@@ -407,7 +407,9 @@ int16 Command::executeCommand(uint16 comId, int16 condResult) {
 	}
 
 	// don't play music on an OPEN/CLOSE command - in case the command fails
-	if (_state.selAction != VERB_OPEN && _state.selAction != VERB_CLOSE) {
+	if (_state.selAction != VERB_NONE && 
+		_state.selAction != VERB_OPEN && 
+		_state.selAction != VERB_CLOSE) {
 		// only play song if it's a PLAY BEFORE type
 		if (com->song > 0) {
 			_vm->sound()->playSong(com->song);

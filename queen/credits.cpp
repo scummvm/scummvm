@@ -128,10 +128,10 @@ void Credits::update() {
 
 		}
 		else {
+			assert(_count < ARRAYSIZE(_list));
 			_list[_count].text = line;
 			_list[_count].color = _color;
 			_list[_count].fontSize = _fontSize;
-
 			switch (_justify) {
 				case 0:
 					_list[_count].x = (_zone % 3) * (320 / 3) + 8;

@@ -53,7 +53,7 @@ private:
 		char *text;
 	};
 
-	Line _list[15];
+	Line _list[18];
 
 	bool _running;
 	int _count;
