@@ -41,9 +41,9 @@
 
 extern Config *g_config;
 
-#define CURRENT_GAMES_VERSION 5
+#define CURRENT_GAMES_VERSION 7
 
-#define MAX_GAMES 29
+#define MAX_GAMES 30
 int MAX_DIRECTORY = 40;
 
 #define MAX_DISPLAYED_DIRECTORIES 7
@@ -77,50 +77,57 @@ static const ScummGame GameList[] = {
 
 	{	 "Simon 1 demo",
 		 "Playable",
-		 "", "GDEMO", "",
+		 "simon1demo", "", "",
 		 "simon1demo",
 		 1
 	},
 	{	
 		 "Simon 1 dos",
 		 "Completable",
-		 "", "GAMEPC", "",
+		 "simon1dos", "", "",
 		 "simon1dos",
 		 0
 	},
 	{
 		 "Simon 1 talk",
 		 "Completable",
-		 "", "SIMON.GME", "DOS",
+		 "simon1talkie", "", "",
 		 "simon1talkie",
 		 0
 	},
 	{	 
 		 "Simon 1 win",
 		 "Completable",
-		 "", "SIMON.GME", "WIN",
+		 "simon1win", "", "",
 		 "simon1win",
 		 0
 	},
 	{	 
 		 "Simon 2 dos",
-		 "Completable, no music",
-		 "", "GAME32", "",
+		 "Completable",
+		 "simon2dos", "", "",
 		 "simon2dos",
 		 0
 	},
 	{
 		 "Simon 2 talk",
-		 "Completable, no music",
-		 "", "GSPTR30", "DOS",
+		 "Completable",
+		 "simon2talkie", "", "",
 		 "simon2talkie",
 		 0
 	},
 	{	 
 		 "Simon 2 win",
-		 "Completable, no music",
-		 "", "GSPTR30", "WIN",
+		 "Completable",
+		 "simon2win", "", "",
 		 "simon2win",
+		 0
+	},
+	{	 
+		 "Simon 2 mac",
+		 "Completable",
+		 "simon2mac", "", "",
+		 "simon2mac",
 		 0
 	},
 	{
@@ -145,22 +152,22 @@ static const ScummGame GameList[] = {
 		 0
 	},
 	{	 
-		 "Zak Mc Kracken CGA",
-		 "Not working",
+		 "Zak Mc Kracken enhanced",
+		 "Experimental",
 		 "zak", "", "",
 		 "zak",
 		 0
 	},
 	{
-		 "Maniac Mansion",
-		 "Not working",
+		 "Maniac Mansion enhanced",
+		 "Experimental",
 		 "maniac", "", "",
 		 "maniac",
 		 0
 	},
 	{
 		 "Loom EGA",
-		 "Not working",
+		 "Completable",
 		 "loom", "", "",
 		 "loom",
 		 0
@@ -251,7 +258,7 @@ static const ScummGame GameList[] = {
 	},
 	{
 		 "Full Throttle",
-		 "Partially working",
+		 "Completable",
 		 "", "FT.LA0", "FT.LA1",
 		 "ft",
 		 0
@@ -272,7 +279,7 @@ static const ScummGame GameList[] = {
 	},
 	{
 		 "Beneath a Steel Sky",
-		 "Not working",
+		 "Completable",
 		 "", "SKY.DSK", "SKY.DNR",
 		 "sky",
 		 0
