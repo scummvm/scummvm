@@ -791,7 +791,7 @@ void IMuseDigital::startSound(int sound, byte *voc_src, int voc_size, int voc_ra
 			byte *data;
 
 			if ((sound == kTalkSoundID) && (_voiceVocData) || (READ_UINT32(ptr) == MKID('Crea'))) {
-				if (READ_UINT32(ptr) == MKID('Crea')) {
+				if (ptr && READ_UINT32(ptr) == MKID('Crea')) {
 					int loops = 0;
 					voc_src = readVOCFromMemory(ptr, voc_size, voc_rate, loops);
 				}
