@@ -13,3 +13,6 @@
 #ifdef Timer
 #undef Timer
 #endif
+#ifndef REAL_MAIN
+#define main scumm_main
+#endif

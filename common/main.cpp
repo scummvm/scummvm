@@ -39,7 +39,7 @@ extern "C" int main(int argc, char *argv[]);
 
 #if defined(MACOSX) || defined(QTOPIA)
 #include <SDL.h>
-#elif !defined(__MORPHOS__)
+#elif !defined(__MORPHOS__) && !defined(__DC__)
 #undef main
 #endif
 
@@ -143,10 +143,6 @@ static void launcherDialog(GameDetector &detector, OSystem *system)
 int main(int argc, char *argv[])
 {
 	GameDetector detector;
-#ifdef __DC__
-	extern void dc_init_hardware();
-	dc_init_hardware();
-#endif
 
 #if defined(UNIX)
 	/* On Unix, do a quick endian / alignement check before starting */
@@ -172,14 +168,9 @@ int main(int argc, char *argv[])
 	g_config->set("versioninfo", SCUMMVM_VERSION);
 	
 	// Parse the command line information
-#if defined(__DC__)
-	extern int dc_setup(GameDetector &detector);
-	dc_setup(detector);
-#else
 	detector._saveconfig = false;
 	detector.updateconfig();
 	detector.parseCommandLine(argc, argv);	
-#endif
 
 	// Create the system object
 	OSystem *system = detector.createSystem();
