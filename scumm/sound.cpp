@@ -753,8 +753,6 @@ bool Sound::isMouthSyncOff(uint pos) {
 
 
 int Sound::isSoundRunning(int sound) const {
-	printf("isSoundRunning %d\n", sound);
-
 	if (_vm->_imuseDigital)
 		return (_vm->_imuseDigital->getSoundStatus(sound) != 0);
 
