@@ -176,8 +176,6 @@ void Sound::playSound(int soundID) {
 	int rate;
 	byte flags = SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
 	
-debug (0, "playSound (%d)", soundID);
-
 	debug(3,"playSound #%d (room %d)", soundID, _scumm->getResourceRoomNr(rtSound, soundID));
 	ptr = _scumm->getResourceAddress(rtSound, soundID);
 	if (ptr) {
