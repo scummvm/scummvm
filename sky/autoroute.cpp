@@ -138,7 +138,7 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 *routeCalc) {
 	
 	if (cpt->xcood < TOP_LEFT_X) {
 		initX = cpt->xcood - TOP_LEFT_X;
-		initBlockY = 0;
+		initBlockX = 0;
 	} else if (cpt->xcood - TOP_LEFT_X >= GAME_SCREEN_WIDTH) { // no_init_x1
 		initX = cpt->xcood - TOP_LEFT_X - (GAME_SCREEN_WIDTH - 1); // -1 to match amiga
 		initBlockX = (GAME_SCREEN_WIDTH - 1) >> 3;
