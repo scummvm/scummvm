@@ -21,12 +21,10 @@
 #include "stdafx.h"
 #include "driver96.h"
 #include "bs2/header.h"		// HACK: For cutscenes instruction message
-#include "bs2/memory.h"		// HACK: For cutscenes instruction message
 #include "bs2/maketext.h"	// HACK: For cutscenes instruction message
 #include "bs2/sword2.h"
 #include "sound/mixer.h"
 #include "rdwin.h"
-#include "_mouse.h"
 #include "d_draw.h"
 #include "palette.h"
 #include "render.h"
@@ -43,13 +41,6 @@ int16 scrollx;
 int16 scrolly;
 
 int32 renderCaps = 0;
-
-void FatalDirectDrawError(char *str, int32 code, char *filename, int32 line) {
-	char string[256];
-
-	sprintf(string, "FATAL: %s - code 0x%.8x - file %s - line %d", str, code, filename, line);
-	warning("%s", string);
-}
 
 int32 PlotDots(int16 x, int16 y, int16 count) {
 
@@ -88,8 +79,8 @@ int32 PlotDots(int16 x, int16 y, int16 count) {
 		IDirectDrawSurface2_Unlock(lpBackBuffer, ddDescription.lpSurface);
 	}
 */
-	return(RD_OK);
 
+	return RD_OK;
 }
 
 /**
@@ -167,7 +158,8 @@ int32 GetRenderType(void) {
 }
 
 /**
- * Fill the screen buffer with palette colour zero.
+ * Fill the screen buffer with palette colour zero. Note that it does not
+ * touch the menu areas of the screen.
  */
 
 int32 EraseBackBuffer( void ) {
@@ -182,7 +174,7 @@ int32 NextSmackerFrame(void) {
 }
 
 
-uint8 *textSurface = NULL;
+static uint8 *textSurface = NULL;
 
 void OpenTextObject(_movieTextObject *obj) {
 	if (obj->textSprite)
