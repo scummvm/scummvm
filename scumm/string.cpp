@@ -183,6 +183,7 @@ void Scumm::CHARSET_1() {
 
 	if (!_keepText) {
 		if ((_features & GF_AFTER_V2 || _features & GF_AFTER_V3) && _gameId != GID_LOOM) {
+			_charset->_hasMask = true;
 			gdi._mask.left = _string[0].xpos;
 			gdi._mask.top = _string[0].ypos;
 			gdi._mask.bottom = _string[0].ypos + 8;
@@ -331,7 +332,8 @@ void Scumm::CHARSET_1() {
 
 	_charsetBufPos = buffer - _charsetBuffer;
 
-	gdi._mask = _charset->_str;
+	_charset->_hasMask = true;
+	gdi._mask.extend(_charset->_str);
 }
 
 void Scumm::drawDescString(const byte *msg) {
@@ -380,8 +382,9 @@ void Scumm::drawDescString(const byte *msg) {
 
 	// hack: more 8 pixels at width and height while redraw
 	// for proper description redraw while scrolling room
-	gdi._mask = _charset->_str;
-	gdi._mask.grow(8);
+	ScummVM::Rect r(_charset->_str);
+	r.grow(8);
+	gdi._mask.extend(r);
 }
 
 void Scumm::drawString(int a) {
@@ -494,19 +497,8 @@ void Scumm::drawString(int a) {
 
 	if (_features & GF_AFTER_V7) {
 		_charset->_hasMask = true;
-		// FIXME - how is this supposed to ever work, since gdi._mask_left is by default set
-		// to -1 to mark it as invalid. Hence this comparision will always leave it at -1,
-		// which implies that if the mask was marked invalid, it will always stay so. 
-		// That seems odd and not at all to be the intended thing... or is it?
-		if (_charset->_str.left < gdi._mask.left)
-			gdi._mask.left = _charset->_str.left;
-		if (_charset->_str.right > gdi._mask.right)
-			gdi._mask.right = _charset->_str.right;
-		if (_charset->_str.top < gdi._mask.top)
-			gdi._mask.top = _charset->_str.top;
-		if (_charset->_str.bottom > gdi._mask.bottom)
-			gdi._mask.bottom = _charset->_str.bottom;
-	} 
+		gdi._mask.extend(_charset->_str);
+	}
 }
 
 const byte *Scumm::addMessageToStack(const byte *msg) {

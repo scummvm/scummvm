@@ -447,6 +447,8 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b) {
 
 void Gdi::clearCharsetMask() {
 	memset(_vm->getResourceAddress(rtBuffer, 9), 0, _imgBufOffs[1]);
+	_mask.top = _mask.left = 32767;
+	_mask.right = _mask.bottom = 0;
 }
 
 /**
@@ -763,10 +765,11 @@ void Scumm::redrawBGStrip(int start, int num) {
 }
 
 void Scumm::restoreCharsetBg() {
-	if (gdi._mask.left != -1) {
+	if (_charset->_hasMask) {
 		restoreBG(gdi._mask);
 		_charset->_hasMask = false;
-		gdi._mask.left = -1;
+		gdi._mask.top = gdi._mask.left = 32767;
+		gdi._mask.right = gdi._mask.bottom = 0;
 		_charset->_str.left = -1;
 		_charset->_left = -1;
 	}
@@ -781,7 +784,7 @@ void Scumm::restoreBG(ScummVM::Rect rect, byte backColor) {
 	byte *backbuff, *bgbak;
 	bool lightsOn;
 
-	if (rect.left == rect.right || rect.top == rect.bottom)
+	if (rect.left >= rect.right || rect.top >= rect.bottom)
 		return;
 	if (rect.top < 0)
 		rect.top = 0;
@@ -846,17 +849,9 @@ void Scumm::restoreBG(ScummVM::Rect rect, byte backColor) {
 }
 
 bool Scumm::hasCharsetMask(int left, int top, int right, int bottom) {
-	// FIXME: I wonder if the <= / >= here shouldn't be replaced by < / >
-	// After all, right/bottom are not actually part of the rects.
-	// That is, the pixels part of the rect range from x = left .. right-1
-	// and y = top .. bottom-1. The 'equal' / '=' cases in the check
-	// would mean that the rects are touching on their borders, but not
-	// actually overlapping.
-	return _charset->_hasMask
-			&& top <= gdi._mask.bottom
-			&& left <= gdi._mask.right
-			&& bottom >= gdi._mask.top
-			&& right >= gdi._mask.left;
+	ScummVM::Rect rect(left, top, right, bottom);
+	
+	return _charset->_hasMask && rect.intersects(gdi._mask);
 }
 
 byte *Scumm::getMaskBuffer(int x, int y, int z) {
