@@ -49,10 +49,7 @@ void ScummEngine::setCameraAt(int pos_x, int pos_y) {
 		camera._cur.x = (short) VAR(VAR_CAMERA_MAX_X);
 
 	if (VAR_SCROLL_SCRIPT != 0xFF && VAR(VAR_SCROLL_SCRIPT)) {
-		if (_version <= 2)
-			VAR(VAR_CAMERA_POS_X) = camera._cur.x / 8;
-		else
-			VAR(VAR_CAMERA_POS_X) = camera._cur.x;
+		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
 		runScript(VAR(VAR_SCROLL_SCRIPT), 0, 0, 0);
 	}
 
@@ -226,10 +223,7 @@ void ScummEngine::moveCamera() {
 	cameraMoved();
 
 	if (VAR_SCROLL_SCRIPT != 0xFF && VAR(VAR_SCROLL_SCRIPT) && pos != camera._cur.x) {
-		if (_version <= 2)
-			VAR(VAR_CAMERA_POS_X) = camera._cur.x / 8;
-		else
-			VAR(VAR_CAMERA_POS_X) = camera._cur.x;
+		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
 		runScript(VAR(VAR_SCROLL_SCRIPT), 0, 0, 0);
 	}
 }
