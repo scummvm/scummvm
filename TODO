@@ -337,8 +337,7 @@ SAGA
 - plans -
  * Implement unimplemented/proofread unchecked opcodes
  * Remove use of floating point, especially doubles.
- * Write sprites cache. Now we load/decode them each time from game 
-   resources (h00ligan)
+ * inspect Font module - free memory, GameFontIds <-> FONT_ID
  * Implement Verbs (h00ligan)
  * Implement ShowSaveReminder(), that is that diskette
  * Implement Save/Load
