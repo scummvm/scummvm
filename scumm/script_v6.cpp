@@ -865,7 +865,7 @@ void Scumm_v6::o6_ifClassOfIs() {
 	while (--num >= 0) {
 		cls = args[num];
 		b = getClass(obj, cls);
-		if (cls & 0x80 && !b || !(cls & 0x80) && b)
+		if ((cls & 0x80 && !b) || (!(cls & 0x80) && b))
 			cond = 0;
 	}
 	push(cond);
@@ -1653,8 +1653,11 @@ void Scumm_v6::o6_actorOps() {
 		a->initActor(0);
 		break;
 	case 84:											/* actor-elevation */
-		a->elevation = pop();
-		a->needRedraw = true;
+		k = pop();
+		if (k != a->elevation) {
+			a->elevation = k;
+			a->needRedraw = true;
+		}
 		break;
 	case 85:											/* actor-defaultanims */
 		a->initFrame = 1;
