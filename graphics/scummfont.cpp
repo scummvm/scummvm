@@ -97,16 +97,12 @@ const ScummFont g_scummfont;
 #ifdef __PALM_OS__
 #include "scumm_globals.h"
 
-_GINIT(NewGui)
-#ifndef NEW_FONT_CODE
-_GSETPTR(Graphics::guifont, GBVARS_GUIFONT_INDEX, byte, GBVARS_SCUMM)
-#endif
+_GINIT(ScummFont)
+_GSETPTR(Graphics::guifont, GBVARS_GUIFONT_INDEX, byte, GBVARS_COMMON)
 _GEND
 
-_GRELEASE(NewGui)
-#ifndef NEW_FONT_CODE
-_GRELEASEPTR(GBVARS_GUIFONT_INDEX, GBVARS_SCUMM)
-#endif
+_GRELEASE(ScummFont)
+_GRELEASEPTR(GBVARS_GUIFONT_INDEX, GBVARS_COMMON)
 _GEND
 
 #endif
