@@ -1,10 +1,16 @@
 # $Id$
+#
+# $Log$
+# Revision 1.7  2001/11/03 06:17:36  cmatsuoka
+# Using full path for SDL includes (-ISDL doesn't seem to work for
+# native builds).
+#
 
 CC	= gcc
 CFLAGS	= -g -Wno-multichar
 DEFINES	= -DUNIX
 LDFLAGS :=
-INCLUDES:= -ISDL -D_REENTRANT
+INCLUDES:= -I/usr/include/SDL -D_REENTRANT
 LIBS	:= -lSDL
 CPPFLAGS= $(DEFINES) $(INCLUDES)
 ZIPFILE := scummvm-`date '+%Y-%m-%d'`.zip
