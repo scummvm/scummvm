@@ -10,6 +10,7 @@ RM      := rm -f
 RM_REC  := $(RM) -r
 ZIP     := zip -q
 CP      := cp
+WIN32PATH=C:/scummvm
 
 #######################################################################
 # Default compilation parameters. Normally don't edit these           #
@@ -106,5 +107,17 @@ scummvm-static: $(OBJS)
 		/sw/lib/libmpeg2.a \
 		/sw/lib/libFLAC.a \
 		-lz
+
+# Special target to create a win32 snapshot binary
+win32dist: scummvm
+	mkdir -p $(WIN32PATH)
+	strip scummvm.exe -o $(WIN32PATH)/scummvm.exe
+	cp COPYING $(WIN32PATH)/copying.txt
+	cp README $(WIN32PATH)/readme.txt
+	cp NEWS $(WIN32PATH)/news.txt
+	cp SDL/README-SDL.txt $(WIN32PATH)
+	cp SDL/lib/SDL.dll $(WIN32PATH)
+	u2d $(WIN32PATH)/*.txt
+
 
 .PHONY: deb bundle test
