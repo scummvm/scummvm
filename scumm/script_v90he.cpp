@@ -1288,6 +1288,7 @@ void ScummEngine_v90he::o90_sortArray() {
 
 	switch (subOp) {
 	case 129:
+	case 134: // HE100
 		fetchScriptWord();
 		pop();
 		pop();

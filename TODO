@@ -281,7 +281,7 @@ SCUMM
     (^ Need to find where they are used) 
   - Add shadows support for akos codecs in HE90+ games, uses XMAP resources.
   - Add addtional arrayOps cases (For smaller/lost).
-  - Add support for array sorting (Need to find where it is used).
+  - Add support for array sorting (Used in lost/smaller).
   - Fix actor glitches in pajama2
   - Fix array issues in Buzzy games (Kirben)
   - Fix inventory background/items disappearing in puttzoo/zoodemo/putttime/timedemo

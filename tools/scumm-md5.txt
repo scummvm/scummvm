@@ -312,6 +312,7 @@ Let's Explore the Jungle with Buzzy
 	-	Windows	en	8801fb4a1200b347f7a38523339526dd	jungle	Kirben
 
 Pajama Sam 1: No Need to Hide When It's Dark Outside
+	-	All	en	37aed3f91c1ef959e0bd265f9b13781f	PajamaNHD	Kirben
 	-	All	en	672dec94b82f7f0877ebb5b5cf7f4bc1	pajama	khalek
 	-	Windows	nl	4fa6870d9bc8c313b65d54b1da5a1891	pajama	joostp
 	Demo	All	en	f237bf8a5ef9af78b2a6a4f3901da341	pjs-demo	khalek, sev
@@ -330,6 +331,7 @@ Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	Demo	All	nl	f08145577e4f13584cc90b3d6e9caa55	pj3demo	joostp
 
 Pajama Sam's Lost & Found
+	-	All	en	a561d2e2413cc1c71d5a1bf87bf493ea	lost	Kirben
 	-	All	en	ed361270102e355afe5236954216aba2	lost	Kirben
 	Demo	Windows	en	a2bb6aa0537402c1b3c2ea899ccef64b	smaller	Kirben
 

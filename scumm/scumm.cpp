@@ -313,7 +313,7 @@ static const ScummGameSettings scumm_settings[] = {
 	// these and later games can easily be identified by the .(a) file instead of a .he1
 	// and INIB chunk in the .he0
 	{"lost", "Pajama Sam's Lost & Found", GID_HEGAME, 6, 98, 61, MDT_NONE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
 	{"racedemo", "Putt-Putt Enters the Race (Demo)", GID_HEGAME, 6, 98, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"puttrace", "Putt-Putt Enters the Race", GID_HEGAME, 6, 98, 61, MDT_NONE,
@@ -376,6 +376,8 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"PjSamDemo", "Pajama Sam: No Need To Hide When It's Dark Outside (Demo)", GID_HEGAME, 6, 100, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	{"PajamaNHD", "Pajama Sam: No Need To Hide When It's Dark Outside (Updated)", GID_HEGAME, 6, 100, 61, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"PuttTTT", "Putt-Putt Travels Through Time *updated)", GID_HEGAME, 6, 100, 31, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
@@ -418,6 +420,8 @@ static const ScummGameSettings he_md5_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"21abe302e1b1e2b66d6f5c12e241ebfd", "Freddi Fish 5: The Case of the Creature of Coral Cave (Unencrypted)", GID_HEGAME, 6, 99, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	{"a561d2e2413cc1c71d5a1bf87bf493ea", "Pajama Sam's Lost & Found (Updated)", GID_HEGAME, 6, 100, 61, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"0ab19be9e2a3f6938226638b2a3744fe", "Putt-Putt Travels Through Time (Updated Demo)", GID_HEGAME, 6, 100, 31, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"8e3241ddd6c8dadf64305e8740d45e13", "Putt-Putt and Pep's Balloon-O-Rama (Updated)", GID_HEGAME, 6, 100, 60, MDT_NONE,

@@ -248,7 +248,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		/* A4 */
 		OPCODE(o6_ifClassOfIs),
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o90_cond),
 		OPCODE(o90_cos),
 		/* A8 */
 		OPCODE(o6_invalid),
