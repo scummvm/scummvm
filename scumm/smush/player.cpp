@@ -202,7 +202,9 @@ SmushPlayer::SmushPlayer(Renderer * renderer, bool wait, bool sound) :
 							_voices(true),
 							_curBuffer(0),
 							_IACTchannel(-1),
-							_IACTpos(0) {
+							_IACTpos(0),
+							_storeFrame(false),
+							_frameBuffer(NULL) {
 	_fr[0] = _fr[1] = _fr[2] = _fr[3] = _fr[4] = 0;
 	assert(_renderer != 0);
 }
@@ -223,6 +225,10 @@ void SmushPlayer::clean() {
 	if(_fr[2]) delete _fr[2];
 	if(_fr[3]) delete _fr[3];
 	if(_fr[4]) delete _fr[4];
+
+	if (_frameBuffer != NULL) {
+		free(_frameBuffer);
+	}
 }
 
 void SmushPlayer::checkBlock(const Chunk & b, Chunk::type type_expected, uint32 min_size) {
@@ -288,12 +294,21 @@ void SmushPlayer::handleSkip(Chunk & b) {
 
 void SmushPlayer::handleStore(Chunk & b) {
 	checkBlock(b, TYPE_STOR, 4);
+	_storeFrame = true;
 	debug(6, "SmushPlayer::handleStore()");
 }
 
 void SmushPlayer::handleFetch(Chunk & b) {
 	checkBlock(b, TYPE_FTCH, 6);
 	debug(6, "SmushPlayer::handleFetch()");
+
+	if(_curBuffer == NULL) {
+		_curBuffer = _renderer->lockFrame(_frame);
+	}
+
+	if (_frameBuffer != NULL) {
+		memcpy(_curBuffer, _frameBuffer, _frameSize.getX() * _frameSize.getY());
+	}
 }
 
 void SmushPlayer::handleImuseBuffer(int32 track_id, int32 index, int32 nbframes, int32 size, int32 unk1, int32 track_flags, Chunk & b, int32 bsize) {
@@ -577,6 +592,13 @@ void SmushPlayer::decodeCodec(Chunk & b, const Rect & r, Decoder & codec) {
 	assert(_curBuffer);
 	Blitter blit((byte*)_curBuffer, _frameSize, r);
 	codec.decode(blit, b);
+	if (_storeFrame == true) {
+		if (_frameBuffer == NULL) {
+			_frameBuffer = (byte*)malloc(_frameSize.getX() * _frameSize.getY());
+		}
+		memcpy(_frameBuffer, _curBuffer, _frameSize.getX() * _frameSize.getY());
+		_storeFrame = false;
+	}
 }
 
 void SmushPlayer::initSize(const Rect & r, bool always, bool transparent) {

@@ -73,6 +73,8 @@ private:
 	int32 _IACTchannel;
 	byte _IACToutput[4096];
 	int32 _IACTpos;
+	bool _storeFrame;
+	byte *_frameBuffer;
 
 public:
 	SmushPlayer(Renderer *, bool wait = true, bool output_sound = true);
