@@ -43,7 +43,7 @@ struct ActorWalkData {
 	byte curbox;
 	int16 x, y;										// Current position
 	int16 newx, newy;							// Next position on our way to the destination
-	int32 XYFactor, YXFactor;
+	int32 deltaXFactor, deltaYFactor;
 	uint16 xfrac, yfrac;
 	int point3x, point3y;
 };

@@ -120,7 +120,7 @@ int Scumm::getAngleFromPos(int x, int y) {
 int Actor::calcMovementFactor(int newX, int newY) {
 	int actorX, actorY;
 	int diffX, diffY;
-	int32 XYFactor, YXFactor;
+	int32 deltaXFactor, deltaYFactor;
 
 	actorX = x;
 	actorY = y;
@@ -130,28 +130,28 @@ int Actor::calcMovementFactor(int newX, int newY) {
 
 	diffX = newX - actorX;
 	diffY = newY - actorY;
-	YXFactor = speedy << 16;
+	deltaYFactor = speedy << 16;
 
 	if (diffY < 0)
-		YXFactor = -YXFactor;
+		deltaYFactor = -deltaYFactor;
 
-	XYFactor = YXFactor * diffX;
+	deltaXFactor = deltaYFactor * diffX;
 	if (diffY != 0) {
-		XYFactor /= diffY;
+		deltaXFactor /= diffY;
 	} else {
-		YXFactor = 0;
+		deltaYFactor = 0;
 	}
 
-	if ((uint) abs((int)(XYFactor >> 16)) > speedx) {
-		XYFactor = speedx << 16;
+	if ((uint) abs((int)(deltaXFactor >> 16)) > speedx) {
+		deltaXFactor = speedx << 16;
 		if (diffX < 0)
-			XYFactor = -XYFactor;
+			deltaXFactor = -deltaXFactor;
 
-		YXFactor = XYFactor * diffY;
+		deltaYFactor = deltaXFactor * diffY;
 		if (diffX != 0) {
-			YXFactor /= diffX;
+			deltaYFactor /= diffX;
 		} else {
-			XYFactor = 0;
+			deltaXFactor = 0;
 		}
 	}
 
@@ -159,12 +159,12 @@ int Actor::calcMovementFactor(int newX, int newY) {
 	walkdata.y = actorY;
 	walkdata.newx = newX;
 	walkdata.newy = newY;
-	walkdata.XYFactor = XYFactor;
-	walkdata.YXFactor = YXFactor;
+	walkdata.deltaXFactor = deltaXFactor;
+	walkdata.deltaYFactor = deltaYFactor;
 	walkdata.xfrac = 0;
 	walkdata.yfrac = 0;
 
-	newDirection = _vm->getAngleFromPos(XYFactor, YXFactor);
+	newDirection = _vm->getAngleFromPos(deltaXFactor, deltaYFactor);
 
 	return actorWalkStep();
 }
@@ -205,8 +205,8 @@ int Actor::remapDirection(int dir, bool is_walking) {
 
 		flags = _vm->getBoxFlags(walkbox);
 
-		flipX = (walkdata.XYFactor > 0);
-		flipY = (walkdata.YXFactor > 0);
+		flipX = (walkdata.deltaXFactor > 0);
+		flipY = (walkdata.deltaYFactor > 0);
 
 		// FIXME - this special cases for the class might be necesary
 		// for other games besides Loom!
@@ -258,7 +258,7 @@ int Actor::remapDirection(int dir, bool is_walking) {
 		}
 	}
 	// OR 1024 in to signal direction interpolation should be done
-	return normalizeAngle(dir) | 1024;
+	return normalizeAngle(dir);
 }
 
 int Actor::updateActorDirection(bool is_walking) {
@@ -338,11 +338,13 @@ int Actor::actorWalkStep() {
 		return 0;
 	}
 
-	tmpX = ((actorX + 8000) << 16) + walkdata.xfrac + (walkdata.XYFactor >> 8) * scalex;
+	// FIXME: Fingolfin asks: what do these 8000 here ?!? That looks wrong... maybe
+	// a 0x8000 was meant? But even that makes not much sense to me
+	tmpX = ((actorX + 8000) << 16) + walkdata.xfrac + (walkdata.deltaXFactor >> 8) * scalex;
 	walkdata.xfrac = (uint16)tmpX;
 	actorX = (tmpX >> 16) - 8000;
 
-	tmpY = (actorY << 16) + walkdata.yfrac + (walkdata.YXFactor >> 8) * scalex;
+	tmpY = (actorY << 16) + walkdata.yfrac + (walkdata.deltaYFactor >> 8) * scaley;
 	walkdata.yfrac = (uint16)tmpY;
 	actorY = (tmpY >> 16);
 
@@ -811,6 +813,7 @@ void Scumm::walkActors() {
 	for (i = 1; i < NUM_ACTORS; i++) {
 		a = derefActor(i);
 		if (a->isInCurrentRoom())
+			// FIXME: really V3, or should it maybe be GF_SMALL_HEADER
 			if (_features & GF_AFTER_V3)
 				a->walkActorOld();
 			else
@@ -1220,9 +1223,15 @@ void Actor::setActorCostume(int c) {
 void Actor::startWalkActor(int destX, int destY, int dir) {
 	AdjustBoxResult abr;
 
+	// FIXME: Fingolfin isn't convinced calling adjustXYToBeInBox here is the 
+	// right thing. In fact I think it might completly wrong...
 	abr = adjustXYToBeInBox(destX, destY, walkbox);
 
 	if (!isInCurrentRoom()) {
+		// FIXME: Should we really use abr.x / abr.y here? Shouldn't it be destX / destY?
+		// Considering that abr was obtained by adjustXYToBeInBox which works on
+		// the boxes in the *current* room no in the room the actor actually is in.
+		warning("When is this ever triggered anyway?");
 		x = abr.x;
 		y = abr.y;
 		if (dir != -1)
@@ -1231,6 +1240,12 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 	}
 
 	if (ignoreBoxes != 0) {
+		// FIXME: this seems wrong for GF_SMALL_HEADER games where walkbox
+		// is a valid box. Rather, I'd think that for these games, we should
+		// set walkbox to -1 or some other "illegal" value. The same for
+		// abr.dist (which is used to set walkdata.destbox after all).
+		// Also together with my above FIXME comment that would mean that up to
+		// here there is no reason to even call adjustXYToBeInBox....
 		abr.dist = 0;
 		walkbox = 0;
 	} else {
@@ -1239,6 +1254,11 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 		// Not sure if there is a better way to achieve this.
 		if (walkbox == 0)
 			adjustActorPos();
+
+		// Fingolfin remarks on the above FIXME: this is yet another case of the 
+		// walbox 0 problem... In many parts of the code we use "0" to denote "illegal walkbox",
+		// which is correct for newer games but wrong for GF_SMALL_HEADER games
+		// which use -1 / 0xFF for the same purpose.
 
 		if (_vm->checkXYInBoxBounds(walkdata.destbox, abr.x, abr.y)) {
 			abr.dist = walkdata.destbox;
@@ -1353,18 +1373,21 @@ void Actor::walkActor() {
 			walkdata.curbox = walkdata.destbox;
 			break;
 		}
+
 		if (walkbox == walkdata.destbox)
 			break;
+
 		box = _vm->getPathToDestBox(walkbox, walkdata.destbox);
 		if (box == -1 || box > 0xF0) {
 			walkdata.destbox = walkbox;
 			moving |= MF_LAST_LEG;
 			return;
 		}
-		walkdata.curbox = box;
 
+		walkdata.curbox = box;
 		if (_vm->findPathTowards(this, walkbox, box, walkdata.destbox, foundPathX, foundPathY))
 			break;
+
 		if (calcMovementFactor(foundPathX, foundPathY))
 			return;
 

@@ -336,8 +336,8 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		MKLINE(Actor, walkdata.y, sleInt16, VER_V8),
 		MKLINE(Actor, walkdata.newx, sleInt16, VER_V8),
 		MKLINE(Actor, walkdata.newy, sleInt16, VER_V8),
-		MKLINE(Actor, walkdata.XYFactor, sleInt32, VER_V8),
-		MKLINE(Actor, walkdata.YXFactor, sleInt32, VER_V8),
+		MKLINE(Actor, walkdata.deltaXFactor, sleInt32, VER_V8),
+		MKLINE(Actor, walkdata.deltaYFactor, sleInt32, VER_V8),
 		MKLINE(Actor, walkdata.xfrac, sleUint16, VER_V8),
 		MKLINE(Actor, walkdata.yfrac, sleUint16, VER_V8),
 
