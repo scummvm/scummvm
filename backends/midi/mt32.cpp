@@ -192,6 +192,16 @@ static int MT32_Report(void *userData, MT32Emu::ReportType type, const void *rep
 		break;
 	case MT32Emu::ReportType_progressInit:
 		if (((MidiDriver_MT32 *)userData)->_initialising) {
+			const byte dummy_palette[] = {
+				0, 0, 0, 0, 
+				0, 0, 171, 0, 
+				0, 171, 0, 0, 
+				0, 171, 171, 0, 
+				171, 0, 0, 0
+			};
+
+			g_system->setPalette(dummy_palette, 0, 5);
+
 			drawProgress(*((const float *)reportData));
 			return eatSystemEvents();
 		}
