@@ -2452,6 +2452,7 @@ void Scumm_v6::o6_kernelSetFunctions() {
 							break;
 						case 9:
 							sp->play("credits.san", getGameDataPath());
+							break;
 						default:
 						// Other INSANE modes
 							warning("Unknown FT_INSANE mode for %d", args[1]);
