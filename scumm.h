@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.9  2001/10/16 20:31:27  strigeus
+ * misc fixes
+ *
  * Revision 1.8  2001/10/16 10:01:47  strigeus
  * preliminary DOTT support
  *
@@ -853,8 +856,6 @@ struct Scumm {
 	byte *_findResPos2;
 
 	bool _BgNeedsRedraw;
-
-
 
 	int16 _localParamList[16];
 

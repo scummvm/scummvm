@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.6  2001/10/16 20:31:27  strigeus
+ * misc fixes
+ *
  * Revision 1.5  2001/10/16 10:01:48  strigeus
  * preliminary DOTT support
  *
@@ -806,8 +809,6 @@ void updateScreen(Scumm *s) {
 	wm->writeToScreen();
 }
 
-
-
 void waitForTimer(Scumm *s) {
 	if (!veryFastMode) {
 		Sleep(5);
@@ -829,6 +830,8 @@ int main(int argc, char* argv[]) {
 
 #if defined(DOTT)
 	scumm._exe_name = "tentacle";
+#elif defined(INDY4)
+	scumm._exe_name = "atlantis";
 #else
 	scumm._exe_name = "monkey2";
 #endif

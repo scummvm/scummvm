@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.5  2001/10/16 20:31:27  strigeus
+ * misc fixes
+ *
  * Revision 1.4  2001/10/16 10:01:47  strigeus
  * preliminary DOTT support
  *
@@ -231,6 +234,7 @@ void Scumm::drawStripToScreen() {
 
 
 void blit(byte *dst, byte *src, int w, int h) {
+	assert(h>0);
 	do {
 		memcpy(dst, src, w);
 		dst += 320;
@@ -1361,7 +1365,7 @@ void Scumm::restoreBG(int left, int top, int right, int bottom) {
 	height = bottom - top;
 	width = right - left;
 	widthmod = (width >> 2) + 2;
-	
+
 	if (vs->alloctwobuffers && _currentRoom!=0 && _vars[VAR_DRAWFLAGS]&2) {
 		blit(gdi.bg_ptr, gdi.where_to_draw_ptr, width, height);
 		if (gdi.virtScreen==0 && charset._hasMask && height) {
@@ -1433,7 +1437,7 @@ int Scumm::findVirtScreen(int y) {
 	gdi.virtScreen=-1;
 
 	for(i=0; i<3; i++,vs++) {
-		if (y >= vs->topline && y <= vs->topline+vs->height) {
+		if (y >= vs->topline && y < vs->topline+vs->height) {
 			gdi.virtScreen = i;
 			return i;
 		}	

@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.4  2001/10/16 20:31:27  strigeus
+ * misc fixes
+ *
  * Revision 1.3  2001/10/16 10:01:45  strigeus
  * preliminary DOTT support
  *
@@ -497,7 +500,61 @@ StartPos:;
 }
 
 void CostumeRenderer::proc3() {
-	warning("COST_Proc3: not implemented");
+	byte *mask,*src,*dst;
+	byte maskbit,len,height,pcolor,width;
+	int color,t;
+	uint y;
+	
+	mask = _mask_ptr_dest;
+	dst = _bg_ptr;
+	height = _height2;
+	width = _width2;
+	len = _replen;
+	color = _repcolor;
+	src = _srcptr;
+	maskbit = revBitMask[_xpos&7];
+	y = _ypos;
+
+	if (_docontinue) goto StartPos;
+
+	do {
+		len = *src++;
+		color = len>>_shrval;
+		len &= _maskval;
+		if (!len) len = *src++;
+		do {
+			if (cost_scaleTable[_scaleIndexY++] < _scaleY) {
+				if (color && y < _vscreenheight && !((*mask|mask[_imgbufoffs])&maskbit)) {
+					pcolor = _palette[color];
+					if (pcolor==13)
+						pcolor = _transEffect[*dst];
+					*dst = pcolor;
+				}
+				dst += 320;
+				mask += 40;
+				y++;
+			}
+			if (!--height) {
+				if(!--width)
+					return;
+				height = _height;
+				y = _ypostop;
+				_scaleIndexY = _scaleIndexYTop;
+				t = _scaleIndexX;
+				_scaleIndexX = t + _scaleIndexXStep;
+				if (cost_scaleTable[t] < _scaleX) {
+					_xpos += _scaleIndexXStep;
+					if (_xpos >= 320)
+						return;
+					maskbit = revBitMask[_xpos&7];
+					_bg_ptr += _scaleIndexXStep;
+				}
+				dst = _bg_ptr;
+				mask = _mask_ptr + (_xpos>>3);
+			}
+StartPos:;
+		} while (--len);
+	} while(1);
 }
 
 void CostumeRenderer::proc2() {

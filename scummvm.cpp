@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.9  2001/10/16 20:31:27  strigeus
+ * misc fixes
+ *
  * Revision 1.8  2001/10/16 12:20:22  strigeus
  * made files compile on unix
  *
@@ -234,7 +237,11 @@ void Scumm::scummMain(int argc, char **argv) {
 
 	_fileHandle = NULL;
 	
+#if defined(INDY4)
+	_bootParam = -7873;
+#else
 	_bootParam = 0;
+#endif
 	_debugMode = 1;
 
 	parseCommandLine(argc, argv);
@@ -412,6 +419,7 @@ static const GameNameList game_list[] = {
 	{"monkey2", "Monkey Island 2: LeChuck's revenge"},
 	{"atlantis", "Indiana Jones 4 and the Fate of Atlantis"},
 	{"fate", "Indiana Jones 4 and the Fate of Atlantis (Demo)"},
+	{"tentacle", "Day Of The Tenctacle"},
 	{NULL,NULL}
 };
 

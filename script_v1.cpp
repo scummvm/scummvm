@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.2  2001/10/16 20:31:27  strigeus
+ * misc fixes
+ *
  * Revision 1.1  2001/10/16 10:01:47  strigeus
  * preliminary DOTT support
  *
@@ -1397,11 +1400,20 @@ void Scumm::o_roomOps() {
 		unkRoomFunc3(d, e, a, b, c);
 		break;
 
-	case 13: /* ? */
-		error("roomops:13 not implemented");
+	case 13: { /* save-string */
+		char buf[256],*s;
+		a = getVarOrDirectByte(0x80);
+		s = buf;
+		while (*s++=fetchScriptByte());
+		warning("roomops:13 save-string(%d,\"%s\") not implemented", a, buf);
 		break;
-	case 14: /* ? */
-		error("roomops:14 not implemented");
+		}
+	case 14: /* load-string */
+		char buf[256],*s;
+		a = getVarOrDirectByte(0x80);
+		s = buf;
+		while (*s++=fetchScriptByte());
+		warning("roomops:14 load-string(%d,\"%s\") not implemented", a, buf);
 		break;
 	case 15: /* palmanip? */
 		a = getVarOrDirectByte(0x80);

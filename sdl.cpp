@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.9  2001/10/16 20:31:27  strigeus
+ * misc fixes
+ *
  * Revision 1.8  2001/10/16 10:01:48  strigeus
  * preliminary DOTT support
  *
@@ -220,10 +223,9 @@ void updateScreen(Scumm *s) {
 	}
 	
 	if(s->_palDirtyMax != -1) {
+		/* this updates the screen automatically */
 		updatePalette(s);
-	}
-
-	if (fullRedraw) {
+	} else if (fullRedraw) {
 		SDL_UpdateRect(screen, 0,0,0,0);
 #if defined(SHOW_AREA)
 		debug(2,"update area 100 %%");
@@ -346,7 +348,13 @@ void initGraphics(Scumm *s) {
 
 #undef main
 int main(int argc, char* argv[]) {
+#if defined(DOTT)
+	scumm._exe_name = "tentacle";
+#elif defined(INDY4)
+	scumm._exe_name = "atlantis";
+#else
 	scumm._exe_name = "monkey2";
+#endif
 	scumm._videoMode = 0x13;
 	scumm.scummMain(argc, argv);
 	return 0;
