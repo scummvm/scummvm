@@ -1,0 +1,53 @@
+DEPS = $(OBJS:.o=.d)
+
+OBJS =\
+        actor.o \
+        bitmap.o \
+        blocky16.o \
+        costume.o \
+        debug.o \
+        driver_gl.o \
+        engine.o \
+        keyframe.o \
+        lab.o \
+        localize.o \
+        lua.o \
+        main.o \
+        material.o \
+        matrix3.o \
+        matrix4.o \
+        model.o \
+        objectstate.o \
+        registry.o \
+        resource.o \
+        scene.o \
+        screen.o \
+        smush.o \
+        sound.o \
+        textobject.o \
+        textsplit.o \
+        timer.o \
+        vima.o \
+        walkplane.o \
+        mixer/mixer.o \
+        mixer/rate.o \
+        mixer/audiostream.o
+
+residual: $(OBJS) lua/lib/liblua.a lua/lib/liblualib.a
+	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
+
+.cpp.o:
+	$(CXX) $(CXXFLAGS) -MMD -c $(<) -o $*.o
+
+lua/lib/liblua.a lua/lib/liblualib.a: lua-build
+
+lua-build:
+	$(MAKE) -C lua
+
+clean: lua-clean
+	-rm -f residual$(EXEEXT) *.o mixer\*.o *.d mixer\*.d *~
+
+lua-clean:
+	$(MAKE) -C lua clean
+
+-include $(DEPS)
