@@ -1,4 +1,4 @@
-/* ScummVM - Scumm Interpreter
+99/* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001/2002 The ScummVM project
  *
@@ -1993,9 +1993,17 @@ void Scumm::o5_roomOps()
 		e = getVarOrDirectByte(0x40);
 		setScaleItem(e - 1, b, a, d, c);
 	case 8:											/* room scale? */
-//		a = getVarOrDirectByte(0x80);
-//		b = getVarOrDirectByte(0x40);
-//		c = getVarOrDirectByte(0x20);
+		if (_features & GF_SMALL_HEADER) {
+			if (!(_features & GF_OLD256)) {
+				a = getVarOrDirectWord(0x80);
+				b = getVarOrDirectWord(0x40);
+			}
+			c = getVarOrDirectWord(0x20);
+		} else {
+			a = getVarOrDirectByte(0x80);
+			b = getVarOrDirectByte(0x40);
+			c = getVarOrDirectByte(0x20);
+		}
 		darkenPalette(b, c, a, a, a);
 		break;
 	case 9:											/* ? */
@@ -2057,7 +2065,7 @@ void Scumm::o5_roomOps()
 		unkRoomFunc4(b, c, a, d, 1);
 		break;
 
-	case 16:											/* ? */
+	case 16:			
 		a = getVarOrDirectByte(0x80);
 		b = getVarOrDirectByte(0x40);
 		if (a < 1)
