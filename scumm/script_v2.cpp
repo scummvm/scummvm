@@ -433,7 +433,7 @@ void Scumm_v2::o2_setState08() {
 
 void Scumm_v2::o2_clearState08() {
 	int obj = getVarOrDirectWord(0x80);
-	putState(obj, getState(obj) & 0xF7);
+	putState(obj, getState(obj) & ~0x08);
 	removeObjectFromRoom(obj);
 	clearDrawObjectQueue();
 }
@@ -678,10 +678,10 @@ void Scumm_v2::o2_drawObject() {
 	h = od->height;
 
 	i = _numLocalObjects;
-	do {
+	while (i--) {
 		if (_objs[i].obj_nr && _objs[i].x_pos == x && _objs[i].y_pos == y && _objs[i].width == w && _objs[i].height == h)
-			putState(_objs[i].obj_nr, getState(_objs[i].obj_nr) & 0xF7);
-	} while (--i);
+			putState(_objs[i].obj_nr, getState(_objs[i].obj_nr) & ~0x08);
+	}
 
 	putState(obj, getState(_objs[obj].obj_nr) | 0x08);
 }
@@ -1083,8 +1083,7 @@ void Scumm_v2::o2_pickupObject() {
 	addObjectToInventory(obj, _roomResource);
 	removeObjectFromRoom(obj);
 	putOwner(obj, VAR(VAR_EGO));
-	putClass(obj, 32, 1);
-	putState(obj, 1);
+	putState(obj, getState(obj) | 0xA);
 	clearDrawObjectQueue();
 	runHook(1);
 }
