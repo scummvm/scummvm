@@ -1795,7 +1795,7 @@ void Gdi::unkDecodeA(byte *dst, const byte *src, int height) {
 							if (!--height)
 								return;
 						}
-						*dst++ = color + _palette_mod;
+						*dst++ = (_vm->_features & GF_SMALL_HEADER) ? _vm->_roomPalette[color + _palette_mod] : color + _palette_mod;
 					} while (--reps);
 					bits >>= 8;
 					bits |= (*src++) << (cl - 8);
@@ -1846,7 +1846,7 @@ void Gdi::unkDecodeA_trans(byte *dst, const byte *src, int height) {
 								return;
 						}
 						if (color != _transparentColor)
-							*dst = color + _palette_mod;
+							*dst = (_vm->_features & GF_SMALL_HEADER) ? _vm->_roomPalette[color + _palette_mod] : color + _palette_mod;
 						dst++;
 					} while (--reps);
 					bits >>= 8;
