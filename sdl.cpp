@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.7.2.1  2001/10/12 07:25:32  yazoo
+ * Patched for indy4
+ *
  * Revision 1.7  2001/10/11 11:49:51  strigeus
  * Determine caption from file name.
  *
@@ -344,7 +347,7 @@ void initGraphics(Scumm *s) {
 
 #undef main
 int main(int argc, char* argv[]) {
-	scumm._exe_name = "monkey2";
+	scumm._exe_name = "atlantis";
 	scumm._videoMode = 0x13;
 	scumm.scummMain(argc, argv);
 	return 0;

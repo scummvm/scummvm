@@ -17,8 +17,12 @@
  *
  * Change Log:
  * $Log$
- * Revision 1.1  2001/10/09 14:30:13  strigeus
- * Initial revision
+ * Revision 1.1.1.1.2.1  2001/10/12 07:24:08  yazoo
+ * Patched for indy4
+ *
+ * Revision 1.1.1.1  2001/10/09 14:30:13  strigeus
+ *
+ * initial revision
  *
  *
  */
@@ -140,7 +144,7 @@ void Scumm::unkMessage2() {
 	if (_stringColor[3]==0)
 		_stringColor[3] = 4;
 
-	error("unkMessage2: call to printScummMessage(%s)", buf);
+	//error("unkMessage2: call to printScummMessage(%s)", buf); //tweak for indy4
 	vm.vars[0] = 0;
 	_messagePtr = tmp;
 }

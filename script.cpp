@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.2.2.1  2001/10/12 07:23:32  yazoo
+ * Patched for indy4
+ *
  * Revision 1.2  2001/10/11 13:36:25  strigeus
  * fixed swapped parameters in o_walkActorToActor
  *
@@ -1984,12 +1987,22 @@ void Scumm::o_roomOps() {
 		unkRoomFunc3(d, e, a, b, c);
 		break;
 
-	case 13: /* ? */
-		error("roomops:13 not implemented");
+	case 13: /* ? */ //Tweak for Indy 4
+		a = fetchScriptByte();
+		while(a!=0)
+		{
+			a=fetchScriptByte();
+		}
+		//error("roomops:13 not implemented");
 		break;
-	case 14: /* ? */
-		error("roomops:14 not implemented");
+	case 14: /* ? */ //Tweak for Indy 4
+		a = fetchScriptByte();
+		while(a!=0) // We should be reading a string
+		{
+			a=fetchScriptByte();
+		}
 		break;
+//		error("roomops:14 not implemented");
 	case 15: /* palmanip? */
 		a = getVarOrDirectByte(0x80);
 		_opcode = fetchScriptByte();

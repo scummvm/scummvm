@@ -1,5 +1,5 @@
 #if defined(WIN32)
-
+#include<stdio.h>
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
