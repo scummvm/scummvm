@@ -70,6 +70,11 @@ struct CostumeData {
 class Actor {
 
 public:
+	static byte kInvalidBox;
+	
+	static void initActorClass(Scumm *scumm);
+
+public:
 	int x, y, top, bottom;
 	int elevation;
 	uint width;
@@ -102,18 +107,14 @@ public:
 	uint16 sound[8];
 	CostumeData cost;
 	byte palette[256];
-	
-	static byte INVALID_BOX;
-
 protected:
-	Scumm *_vm;
+	static Scumm *_vm;
 
 public:
 
 	// Constructor, sets all data to 0
 	Actor() {
-		_vm = 0;
-		
+		assert(_vm != 0);
 		top = bottom = 0;
 		number = 0;
 		needRedraw = needBgReset = costumeNeedsInit = visible = false;
@@ -130,9 +131,6 @@ public:
 		initActor(1);
 	}
 	
-	void initActorClass(Scumm *scumm) {
-		_vm = scumm;
-	}
 //protected:
 	void hideActor();
 	void showActor();
@@ -192,7 +190,7 @@ public:
 	}
 	
 	void classChanged(int cls, bool value);
-
+	
 protected:
 	bool isInClass(int cls);
 };

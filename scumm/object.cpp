@@ -34,12 +34,24 @@ bool Scumm::getClass(int obj, int cls)
 	checkRange(32, 1, cls, "Class %d out of range in getClass");
 
 	if (_features & GF_SMALL_HEADER) {
-		if (cls == 31)							// CLASS_PLAYERONLY
-			cls = 23;
-
-		if (cls == 32)							// CLASS_TOUCHABLE
-			cls = 24;
+		// Translate the new (V5) object classes to the old classes
+		// (for those which differ).
+		switch (cls) {
+			case kObjectClassUntouchable:
+				cls = 24;
+				break;
+			case kObjectClassPlayer:
+				cls = 23;
+				break;
+			case kObjectClassXFlip:
+				cls = 19;
+				break;
+			case kObjectClassYFlip:
+				cls = 18;
+				break;
+		}
 	}
+
 	return (_classData[obj] & (1 << (cls - 1))) != 0;
 }
 
@@ -50,19 +62,29 @@ void Scumm::putClass(int obj, int cls, bool set)
 	checkRange(32, 1, cls, "Class %d out of range in putClass");
 
 	if (_features & GF_SMALL_HEADER) {
-		if (cls == 31)							// CLASS_PLAYERONLY
-			cls = 23;
-
-		if (cls == 32)							// CLASS_TOUCHABLE
-			cls = 24;
-
-		// FIXME: It isn't enough for the Indy3 intro to make the
-		// little trains ignore boxes (class 22), they have to always
-		// clip (class 21) as well. Is this yet another walkbox 0
-		// error?
-		if (_gameId == GID_INDY3_256 && cls == 22 && _currentRoom == 76)
-			putClass(obj, 21, set);
+		// Translate the new (V5) object classes to the old classes
+		// (for those which differ).
+		switch (cls) {
+			case kObjectClassUntouchable:
+				cls = 24;
+				break;
+			case kObjectClassPlayer:
+				cls = 23;
+				break;
+			case kObjectClassXFlip:
+				cls = 19;
+				break;
+			case kObjectClassYFlip:
+				cls = 18;
+				break;
+		}
 	}
+
+	// FIXME: It isn't enough for the Indy3 intro to make the
+	// little trains ignore boxes, they have to always clip as
+	// well. Is this yet another walkbox 0 error?
+	if (_gameId == GID_INDY3_256 && cls == kObjectClassIgnoreBoxes && _currentRoom == 76)
+		putClass(obj, kObjectClassAlwaysClip, set);
 
 	if (set)
 		_classData[obj] |= (1 << (cls - 1));
@@ -256,7 +278,7 @@ int Scumm::findObject(int x, int y) {
 	const int mask = (_features & GF_AFTER_V2) ? 0x8 : 0xF;
 
 	for (i = 1; i < _numLocalObjects; i++) {
-		if ((_objs[i].obj_nr < 1) || getClass(_objs[i].obj_nr, 32))
+		if ((_objs[i].obj_nr < 1) || getClass(_objs[i].obj_nr, kObjectClassUntouchable))
 			continue;
 		if (_features & GF_AFTER_V2 && _objs[i].state & 0x2)
 			continue;
@@ -403,7 +425,7 @@ void Scumm::drawObject(int obj, int arg) {
 		byte flags = Gdi::dbAllowMaskOr;
 		// Sam & Max needs this to fix object-layering problems with
 		// the inventory and conversation icons.
-		if ((_features & GF_AFTER_V7 || _gameId == GID_SAMNMAX) && getClass(od->obj_nr, 22))
+		if ((_features & GF_AFTER_V7 || _gameId == GID_SAMNMAX) && getClass(od->obj_nr, kObjectClassIgnoreBoxes))
 			flags |= Gdi::dbDrawMaskOnAll;
 		gdi.drawBitmap(ptr, &virtscr[0], x, ypos, width << 3, height, x - xpos, numstrip, flags);
 	}

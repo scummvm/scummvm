@@ -542,9 +542,6 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_hexdumpScripts = false;
 	_showStack = false;
 
-	if (_features & GF_SMALL_HEADER)
-		Actor::INVALID_BOX = 255;
-
 	if (_gameId == GID_ZAK256) {	// FmTowns is 320x240
 		_screenWidth = 320;
 		_screenHeight = 240;
@@ -695,11 +692,11 @@ void Scumm::scummInit() {
 	setupCursor();
 	
 	// Allocate and Initialize actors
+	Actor::initActorClass(this);
 	_actors = new Actor[_numActors];
 	for (i = 1; i < _numActors; i++) {
 		a = derefActor(i);
 		a->number = i;
-		a->initActorClass(this);
 		a->initActor(1);
 	}
 

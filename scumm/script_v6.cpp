@@ -1120,7 +1120,7 @@ void Scumm_v6::o6_pickupObject() {
 
 	addObjectToInventory(obj, room);
 	putOwner(obj, VAR(VAR_EGO));
-	putClass(obj, 32, 1);
+	putClass(obj, kObjectClassUntouchable, 1);
 	putState(obj, 1);
 	removeObjectFromRoom(obj);
 	clearDrawObjectQueue();

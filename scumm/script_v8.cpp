@@ -1540,7 +1540,7 @@ void Scumm_v8::o8_kernelGetFunctions() {
 
 			if (eo->posX <= x && eo->width + eo->posX > x &&
 			    eo->posY <= y && eo->height + eo->posY > y) {
-                		if (!getClass(eo->number, 32)) {
+                		if (!getClass(eo->number, kObjectClassUntouchable)) {
 					push(eo->number);
 					return;
 				}

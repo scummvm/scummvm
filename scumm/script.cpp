@@ -76,6 +76,121 @@ void Scumm::runScript(int script, bool freezeResistant, bool recursive, int *lva
 	runScriptNested(slot);
 }
 
+void Scumm::runVerbCode(int object, int entry, bool freezeResistant, bool recursive, int *vars) {
+	ScriptSlot *s;
+	uint32 obcd;
+	int slot, where, offs;
+
+	if (!object)
+		return;
+
+	if (!recursive)
+		stopObjectScript(object);
+
+	where = whereIsObject(object);
+
+	if (where == WIO_NOT_FOUND) {
+		warning("Code for object %d not in room %d", object, _roomResource);
+		return;
+	}
+
+	obcd = getOBCDOffs(object);
+	slot = getScriptSlot();
+
+	offs = getVerbEntrypoint(object, entry);
+	if (offs == 0)
+		return;
+
+	s = &vm.slot[slot];
+	s->number = object;
+	s->offs = obcd + offs;
+	s->status = ssRunning;
+	s->where = where;
+	s->freezeResistant = freezeResistant;
+	s->recursive = recursive;
+	s->freezeCount = 0;
+	s->delayFrameCount = 0;
+
+	initializeLocals(slot, vars);
+
+	runScriptNested(slot);
+}
+
+void Scumm::initializeLocals(int slot, int *vars) {
+	int i;
+	if (!vars) {
+		for (i = 0; i < 16; i++)
+			vm.localvar[slot][i] = 0;
+	} else {
+		for (i = 0; i < 16; i++)
+			vm.localvar[slot][i] = vars[i];
+	}
+}
+
+int Scumm::getVerbEntrypoint(int obj, int entry) {
+	byte *objptr, *verbptr;
+	int verboffs;
+
+	if (whereIsObject(obj) == WIO_NOT_FOUND)
+		return 0;
+
+	objptr = getOBCDFromObject(obj);
+	assert(objptr);
+
+	if (_features & GF_AFTER_V2)
+		verbptr = objptr + 15;
+	else if (_features & GF_OLD_BUNDLE)
+		verbptr = objptr + 17;
+	else if (_features & GF_SMALL_HEADER)
+		verbptr = objptr + 19;
+	else
+		verbptr = findResource(MKID('VERB'), objptr);
+
+	assert(verbptr);
+
+	verboffs = verbptr - objptr;
+
+	if (!(_features & GF_SMALL_HEADER))
+		verbptr += _resourceHeaderSize;
+
+	if (_features & GF_AFTER_V8) {
+		uint32 *ptr = (uint32 *)verbptr;
+		uint32 verb;
+		do {
+			verb = READ_LE_UINT32(ptr);
+			if (!verb)
+				return 0;
+			if (verb == (uint32)entry || verb == 0xFFFFFFFF)
+				break;
+			ptr += 2;
+		} while (1);
+		return verboffs + 8 + READ_LE_UINT32(ptr + 1);
+	} if (_features & GF_AFTER_V2) {
+		do {
+			if (!*verbptr)
+				return 0;
+			if (*verbptr == entry || *verbptr == 0xFF)
+				break;
+			verbptr += 2;
+		} while (1);
+	
+		return *(verbptr + 1);
+	} else {
+		do {
+			if (!*verbptr)
+				return 0;
+			if (*verbptr == entry || *verbptr == 0xFF)
+				break;
+			verbptr += 3;
+		} while (1);
+	
+		if (_features & GF_SMALL_HEADER)
+			return READ_LE_UINT16(verbptr + 1);
+		else
+			return verboffs + READ_LE_UINT16(verbptr + 1);
+	}
+}
+
 /* Stop script 'script' */
 void Scumm::stopScriptNr(int script) {
 	ScriptSlot *ss;
@@ -791,121 +906,6 @@ void Scumm::decreaseScriptDelay(int amount) {
 				ss->delay = 0;
 			}
 		}
-	}
-}
-
-void Scumm::runVerbCode(int object, int entry, bool freezeResistant, bool recursive, int *vars) {
-	ScriptSlot *s;
-	uint32 obcd;
-	int slot, where, offs;
-
-	if (!object)
-		return;
-
-	if (!recursive)
-		stopObjectScript(object);
-
-	where = whereIsObject(object);
-
-	if (where == WIO_NOT_FOUND) {
-		warning("Code for object %d not in room %d", object, _roomResource);
-		return;
-	}
-
-	obcd = getOBCDOffs(object);
-	slot = getScriptSlot();
-
-	offs = getVerbEntrypoint(object, entry);
-	if (offs == 0)
-		return;
-
-	s = &vm.slot[slot];
-	s->number = object;
-	s->offs = obcd + offs;
-	s->status = ssRunning;
-	s->where = where;
-	s->freezeResistant = freezeResistant;
-	s->recursive = recursive;
-	s->freezeCount = 0;
-	s->delayFrameCount = 0;
-
-	initializeLocals(slot, vars);
-
-	runScriptNested(slot);
-}
-
-void Scumm::initializeLocals(int slot, int *vars) {
-	int i;
-	if (!vars) {
-		for (i = 0; i < 16; i++)
-			vm.localvar[slot][i] = 0;
-	} else {
-		for (i = 0; i < 16; i++)
-			vm.localvar[slot][i] = vars[i];
-	}
-}
-
-int Scumm::getVerbEntrypoint(int obj, int entry) {
-	byte *objptr, *verbptr;
-	int verboffs;
-
-	if (whereIsObject(obj) == WIO_NOT_FOUND)
-		return 0;
-
-	objptr = getOBCDFromObject(obj);
-	assert(objptr);
-
-	if (_features & GF_AFTER_V2)
-		verbptr = objptr + 15;
-	else if (_features & GF_OLD_BUNDLE)
-		verbptr = objptr + 17;
-	else if (_features & GF_SMALL_HEADER)
-		verbptr = objptr + 19;
-	else
-		verbptr = findResource(MKID('VERB'), objptr);
-
-	assert(verbptr);
-
-	verboffs = verbptr - objptr;
-
-	if (!(_features & GF_SMALL_HEADER))
-		verbptr += _resourceHeaderSize;
-
-	if (_features & GF_AFTER_V8) {
-		uint32 *ptr = (uint32 *)verbptr;
-		uint32 verb;
-		do {
-			verb = READ_LE_UINT32(ptr);
-			if (!verb)
-				return 0;
-			if (verb == (uint32)entry || verb == 0xFFFFFFFF)
-				break;
-			ptr += 2;
-		} while (1);
-		return verboffs + 8 + READ_LE_UINT32(ptr + 1);
-	} if (_features & GF_AFTER_V2) {
-		do {
-			if (!*verbptr)
-				return 0;
-			if (*verbptr == entry || *verbptr == 0xFF)
-				break;
-			verbptr += 2;
-		} while (1);
-	
-		return *(verbptr + 1);
-	} else {
-		do {
-			if (!*verbptr)
-				return 0;
-			if (*verbptr == entry || *verbptr == 0xFF)
-				break;
-			verbptr += 3;
-		} while (1);
-	
-		if (_features & GF_SMALL_HEADER)
-			return READ_LE_UINT16(verbptr + 1);
-		else
-			return verboffs + READ_LE_UINT16(verbptr + 1);
 	}
 }
 

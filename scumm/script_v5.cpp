@@ -1435,7 +1435,7 @@ void Scumm_v5::o5_pickupObject() {
 		room = _roomResource;
 	addObjectToInventory(obj, room);
 	putOwner(obj, VAR(VAR_EGO));
-	putClass(obj, 32, 1);
+	putClass(obj, kObjectClassUntouchable, 1);
 	putState(obj, 1);
 	removeObjectFromRoom(obj);
 	clearDrawObjectQueue();
@@ -2637,7 +2637,7 @@ void Scumm_v5::o5_pickupObjectOld() {
 	addObjectToInventory(obj, _roomResource);
 	removeObjectFromRoom(obj);
 	putOwner(obj, VAR(VAR_EGO));
-	putClass(obj, 32, 1);
+	putClass(obj, kObjectClassUntouchable, 1);
 	putState(obj, 1);
 	clearDrawObjectQueue();
 	runHook(1);

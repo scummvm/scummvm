@@ -32,8 +32,15 @@
 
 #include <math.h>
 
-byte Actor::INVALID_BOX = 0;
+byte Actor::kInvalidBox = 0;
+Scumm *Actor::_vm = 0;
 
+void Actor::initActorClass(Scumm *scumm) {
+	_vm = scumm;
+	if (_vm->_features & GF_SMALL_HEADER) {
+		kInvalidBox = 255;
+	}
+}
 
 void Actor::initActor(int mode) {
 	if (mode == 1) {
@@ -71,30 +78,28 @@ void Actor::initActor(int mode) {
 	forceClip = 0;
 	ignoreTurns = false;
 	
-	initFrame = 1;
-	walkFrame = 2;
-	standFrame = 3;
-	talkFrame1 = 4;
-	talkFrame2 = 5;
+	if (_vm->_features & GF_AFTER_V2) {
+		initFrame = 2;
+		walkFrame = 0;
+		standFrame = 1;
+		talkFrame1 = 5;
+		talkFrame2 = 4;
+	} else {
+		initFrame = 1;
+		walkFrame = 2;
+		standFrame = 3;
+		talkFrame1 = 4;
+		talkFrame2 = 5;
+	}
 
 	walk_script = 0;
 	talk_script = 0;
 
-	if (_vm) {
-		if (_vm->_features & GF_AFTER_V2) {
-			initFrame = 2;
-			walkFrame = 0;
-			standFrame = 1;
-			talkFrame1 = 5;
-			talkFrame2 = 4;
-		}
-		_vm->_classData[number] = (_vm->_features & GF_AFTER_V7) ? _vm->_classData[0] : 0;
-	}
+	_vm->_classData[number] = (_vm->_features & GF_AFTER_V7) ? _vm->_classData[0] : 0;
 }
 
 void Actor::stopActorMoving() {
-	if (_vm)
-		_vm->stopScriptNr(walk_script);
+	_vm->stopScriptNr(walk_script);
 	moving = 0;
 }
 
@@ -219,12 +224,12 @@ int Actor::remapDirection(int dir, bool is_walking) {
 		// for other games besides Loom!
 
 		// Check for X-Flip
-		if ((flags & kBoxXFlip) || isInClass((_vm->_gameId == GID_LOOM256 || _vm->_gameId == GID_LOOM) ? 19 : 30)) {
+		if ((flags & kBoxXFlip) || isInClass(kObjectClassXFlip)) {
 			dir = 360 - dir;
 			flipX = !flipX;
 		}
 		// Check for Y-Flip
-		if ((flags & kBoxYFlip) || isInClass((_vm->_gameId == GID_LOOM256 || _vm->_gameId == GID_LOOM) ? 18 : 29)) {
+		if ((flags & kBoxYFlip) || isInClass(kObjectClassYFlip)) {
 			dir = 180 - dir;
 			flipY = !flipY;
 		}
@@ -605,7 +610,7 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 
 	abr.x = dstX;
 	abr.y = dstY;
-	abr.dist = INVALID_BOX;
+	abr.dist = kInvalidBox;
 
 	if (ignoreBoxes)
 		return abr;
@@ -618,14 +623,14 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 			return abr;
 
 		bestDist = (uint) 0xFFFF;
-		bestBox = INVALID_BOX;
+		bestBox = kInvalidBox;
 
 		// We iterate (backwards) over all boxes, searching the one closes
 		// to the desired coordinates.
 		for (box = numBoxes; box >= firstValidBox; box--) {
 			flags = _vm->getBoxFlags(box);
 
-			if (flags & kBoxInvisible && (!(flags & kBoxPlayerOnly) || isInClass(31)))
+			if (flags & kBoxInvisible && !(flags & kBoxPlayerOnly && !isInClass(kObjectClassPlayer)))
 				continue;
 			
 			// For increased performance, we perform a quick test if
@@ -691,7 +696,7 @@ void Actor::adjustActorPos() {
 		stopActorMoving();
 	}
 
-	if (walkbox != INVALID_BOX) {
+	if (walkbox != kInvalidBox) {
 		byte flags = _vm->getBoxFlags(walkbox);
 		if (flags & 7) {
 			turnToDirection(facing);
@@ -908,7 +913,7 @@ void Actor::drawActorCostume() {
 
 		if (forceClip)
 			cr._zbuf = forceClip;
-		else if (isInClass(20))
+		else if (isInClass(kObjectClassNeverClip))
 			cr._zbuf = 0;
 		else {
 			cr._zbuf = _vm->getMaskFromBox(walkbox);
@@ -1056,7 +1061,8 @@ int Scumm::getActorFromPos(int x, int y) {
 	for (i = 1; i < _numActors; i++) {
 		Actor *a = derefActor(i);
 		assert(a->number == i);
-		if (testGfxUsageBit(x >> 3, i) && !getClass(i, 32) && y >= a->top && y <= a->bottom) {
+		if (testGfxUsageBit(x >> 3, i) && !getClass(i, kObjectClassUntouchable)
+			&& y >= a->top && y <= a->bottom) {
 			return i;
 		}
 	}
@@ -1182,8 +1188,8 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 	}
 
 	if (ignoreBoxes) {
-		abr.dist = INVALID_BOX;
-		walkbox = INVALID_BOX;
+		abr.dist = kInvalidBox;
+		walkbox = kInvalidBox;
 	} else {
 		if (_vm->checkXYInBoxBounds(walkdata.destbox, abr.x, abr.y)) {
 			abr.dist = walkdata.destbox;
@@ -1294,7 +1300,7 @@ void Actor::walkActor() {
 	do {
 		moving &= ~MF_NEW_LEG;
 
-		if (walkbox == INVALID_BOX) {
+		if (walkbox == kInvalidBox) {
 			setBox(walkdata.destbox);
 			walkdata.curbox = walkdata.destbox;
 			break;
@@ -1366,7 +1372,7 @@ void Actor::walkActorOld() {
 	do {
 		moving &= ~MF_NEW_LEG;
 
-		if (walkbox == INVALID_BOX) {
+		if (walkbox == kInvalidBox) {
 			walkbox = walkdata.destbox;
 			walkdata.curbox = walkdata.destbox;
 			break;
@@ -1385,7 +1391,7 @@ void Actor::walkActorOld() {
 		// FIXME: not sure if this is needed in non-Zak games, but I think it shouldn't
 		// hurt there either.
 		int flags = _vm->getBoxFlags(next_box);
-		if (flags & kBoxLocked && (!(flags & kBoxPlayerOnly) || isInClass(31))) {
+		if (flags & kBoxLocked && !(flags & kBoxPlayerOnly && !isInClass(kObjectClassPlayer))) {
 			moving |= MF_LAST_LEG;
 			return;
 		}
@@ -1509,22 +1515,10 @@ void Scumm::resetActorBgs() {
 }
 
 void Actor::classChanged(int cls, bool value) {
-	switch(cls) {
-	case 20:	// Never clip
-		break;
-	case 21:	// Always clip
+	if (cls == kObjectClassAlwaysClip)
 		forceClip = value;
-		break;
-	case 22:	// Ignore boxes
+	if (cls == kObjectClassIgnoreBoxes)
 		ignoreBoxes = value;
-		break;
-	case 29:	// Y flip
-		break;
-	case 30:	// X flip
-		break;
-	case 31:	// ??
-		break;
-	}
 }
 
 bool Actor::isInClass(int cls) {

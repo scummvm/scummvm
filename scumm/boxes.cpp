@@ -280,7 +280,7 @@ int Scumm::getSpecialBox(int x, int y) {
 bool Scumm::checkXYInBoxBounds(int b, int x, int y) {
 	BoxCoords box;
 
-	if (b < 0 || b == Actor::INVALID_BOX)
+	if (b < 0 || b == Actor::kInvalidBox)
 		return false;
 
 	getBoxCoordinates(b, &box);
@@ -571,10 +571,10 @@ int Scumm::getPathToDestBox(byte from, byte to) {
 	if (from == to)
 		return to;
 
-	if (to == Actor::INVALID_BOX)
+	if (to == Actor::kInvalidBox)
 		return -1;
 
-	if (from == Actor::INVALID_BOX)
+	if (from == Actor::kInvalidBox)
 		return to;
 	
 	assert(from < numOfBoxes);

@@ -638,7 +638,7 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 			_s->addObjectToInventory(obj, atoi(argv[3]));
 
 		_s->putOwner(obj, _s->VAR(_s->VAR_EGO));
-		_s->putClass(obj, 32, 1);
+		_s->putClass(obj, kObjectClassUntouchable, 1);
 		_s->putState(obj, 1);
 		_s->removeObjectFromRoom(obj);
 		_s->clearDrawObjectQueue();

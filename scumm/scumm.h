@@ -61,6 +61,16 @@ enum {
 	KEY_SET_OPTIONS = 3456 // WinCE
 };
 
+enum ObjectClass {
+	kObjectClassNeverClip = 20,
+	kObjectClassAlwaysClip = 21,
+	kObjectClassIgnoreBoxes = 22,
+	kObjectClassYFlip = 29,
+	kObjectClassXFlip = 30,
+	kObjectClassPlayer = 31,	// Actor is controlled by the player
+	kObjectClassUntouchable = 32
+};
+
 #include "gfx.h"
 #include "boxes.h"
 
