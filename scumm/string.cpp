@@ -234,7 +234,7 @@ void ScummEngine::CHARSET_1() {
 			if (_charset->_center) {
 				_charset->_nextLeft -= _charset->getStringWidth(0, buffer) / 2;
 			}
-			if (_string[0].height) {
+			if (!(_features & GF_FMTOWNS) && _string[0].height) {
 				_charset->_nextTop += _string[0].height;
 			} else {
 				_charset->_nextTop += _charset->getFontHeight();
@@ -505,7 +505,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 				} else {
 					_charset->_left = _charset->_startLeft;
 				}
-				if (_string[0].height) {
+				if (!(_features & GF_FMTOWNS) && _string[0].height) {
 					_charset->_nextTop += _string[0].height;
 				} else {
 					_charset->_top += fontHeight;
