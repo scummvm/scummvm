@@ -53,7 +53,7 @@ struct Rect {
 
 	Rect() : top(0), left(0), bottom(0), right(0) {}
 	Rect(int16 x, int16 y) : top(0), left(0), bottom(x), right(y) {}
-	Rect(int16 x1, int16 y1, int16 x2, int16 y2) : top(x1), left(y1), bottom(x2), right(y2) {}
+	Rect(int16 x1, int16 y1, int16 x2, int16 y2) : top(y1), left(x1), bottom(y2), right(x2) {}
 	int16 width() const { return right - left; }
 	int16 height() const { return bottom - top; }
 
