@@ -23,6 +23,15 @@
 
 namespace Scumm {
 
+#ifdef __PALM_OS__
+imuse_music_map *_digStateMusicMap;
+const imuse_music_table *_digStateMusicTable;
+const imuse_music_table *_comiStateMusicTable;
+const imuse_music_table *_comiSeqMusicTable;
+const imuse_music_table *_digSeqMusicTable;
+const imuse_ft_music_table *_ftStateMusicTable;
+const imuse_ft_music_table *_ftSeqMusicTable;
+#else
 imuse_music_map _digStateMusicMap[] = {
 	{0,   0,  0,  0,  0,  0 },
 	{1,   0,  0,  0,  0,  0 },
@@ -579,5 +588,31 @@ const imuse_ft_music_table _ftSeqMusicTable[] = {
 	{52,  "bornbad",  2,  127,  "seqCredits"          },
 	{-1,  "",         0,  0,    ""                    }
 };
+#endif
 
 } // End of namespace Scumm
+
+#ifdef __PALM_OS__
+#include "scumm_globals.h"
+
+_GINIT(DimuseTables)
+_GSETPTR(Scumm::_digStateMusicMap,		GBVARS_DIGSTATEMUSICMAP_INDEX,		Scumm::imuse_music_map		, GBVARS_SCUMM)
+_GSETPTR(Scumm::_digStateMusicTable,	GBVARS_DIGSTATEMUSICTABLE_INDEX,	Scumm::imuse_music_table	, GBVARS_SCUMM)
+_GSETPTR(Scumm::_comiStateMusicTable,	GBVARS_COMISTATEMUSICTABLE_INDEX,	Scumm::imuse_music_table	, GBVARS_SCUMM)
+_GSETPTR(Scumm::_comiSeqMusicTable,		GBVARS_COMISEQMUSICTABLE_INDEX,		Scumm::imuse_music_table	, GBVARS_SCUMM)
+_GSETPTR(Scumm::_digSeqMusicTable,		GBVARS_DIGSEQMUSICTABLE_INDEX,		Scumm::imuse_music_table	, GBVARS_SCUMM)
+_GSETPTR(Scumm::_ftStateMusicTable,		GBVARS_FTSTATEMUSICTABLE_INDEX,		Scumm::imuse_ft_music_table	, GBVARS_SCUMM)
+_GSETPTR(Scumm::_ftSeqMusicTable,		GBVARS_FTSEQMUSICTABLE_INDEX,		Scumm::imuse_ft_music_table	, GBVARS_SCUMM)
+_GEND
+
+_GRELEASE(DimuseTables)
+_GRELEASEPTR(GBVARS_DIGSTATEMUSICMAP_INDEX		, GBVARS_SCUMM)
+_GRELEASEPTR(GBVARS_DIGSTATEMUSICTABLE_INDEX	, GBVARS_SCUMM)
+_GRELEASEPTR(GBVARS_COMISTATEMUSICTABLE_INDEX	, GBVARS_SCUMM)
+_GRELEASEPTR(GBVARS_COMISEQMUSICTABLE_INDEX		, GBVARS_SCUMM)
+_GRELEASEPTR(GBVARS_DIGSEQMUSICTABLE_INDEX		, GBVARS_SCUMM)
+_GRELEASEPTR(GBVARS_FTSTATEMUSICTABLE_INDEX		, GBVARS_SCUMM)
+_GRELEASEPTR(GBVARS_FTSEQMUSICTABLE_INDEX		, GBVARS_SCUMM)
+_GEND
+
+#endif

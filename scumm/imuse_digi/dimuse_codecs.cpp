@@ -44,12 +44,15 @@ uint32 decode12BitsSample(byte *src, byte **dst, uint32 size) {
 	return s_size;
 }
 
+#ifdef __PALM_OS__
+static byte *_destImcTable = NULL;		// save 23k of memory !
+static uint32 *_destImcTable2 = NULL;
+
+static const int16 *imcTable;
+#else
 static byte _destImcTable[93];
 static uint32 _destImcTable2[5697];
 
-#ifdef __PALM_OS__
-static const int16 *imcTable;
-#else
 static const int16 imcTable[] = {
 	0x0007, 0x0008, 0x0009, 0x000A, 0x000B, 0x000C, 0x000D, 0x000E, 0x0010, 0x0011,
 	0x0013, 0x0015, 0x0017, 0x0019, 0x001C, 0x001F, 0x0022, 0x0025, 0x0029, 0x002D,
@@ -119,9 +122,22 @@ static const byte imxShortTable[] = {
 	0, 0, 1, 3, 7, 15, 31, 63
 };
 
+#ifdef __PALM_OS__
+void releaseImcTables() {
+	free(_destImcTable);
+	free(_destImcTable2);
+}
+#endif
+
 void initializeImcTables() {
 	int32 destTablePos = 0;
 	int32 imcTable1Pos = 0;
+	
+#ifdef __PALM_OS__
+	if (!_destImcTable) _destImcTable = (byte *)calloc(93, sizeof(byte));
+	if (!_destImcTable2) _destImcTable2 = (uint32 *)calloc(5697, sizeof(uint32));
+#endif
+	
 	do {
 		byte put = 1;
 		int32 tableValue = ((imcTable[imcTable1Pos] * 4) / 7) / 2;
@@ -687,11 +703,11 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 #ifdef __PALM_OS__
 #include "scumm_globals.h"
 
-_GINIT(BundleCodecs)
+_GINIT(DimuseCodecs)
 _GSETPTR(Scumm::BundleCodecs::imcTable, GBVARS_IMCTABLE_INDEX, int16, GBVARS_SCUMM)
 _GEND
 
-_GRELEASE(BundleCodecs)
+_GRELEASE(DimuseCodecs)
 _GRELEASEPTR(GBVARS_IMCTABLE_INDEX, GBVARS_SCUMM)
 _GEND
 

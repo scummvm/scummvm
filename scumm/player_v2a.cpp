@@ -29,12 +29,18 @@ namespace Scumm {
 
 #define BASE_FREQUENCY 3579545
 
-static uint32	CRCtable[256];
+#ifdef __PALM_OS__
+static uint32 *CRCtable = NULL;
+#else
+static uint32 CRCtable[256];
+#endif
+
 static void	InitCRC (void)
 {
 	const uint32 poly = 0xEDB88320;
 	int i, j;
 	uint32 n;
+
 	for (i = 0; i < 256; i++)
 	{
 		n = i;
@@ -1151,6 +1157,9 @@ Player_V2A::Player_V2A(ScummEngine *scumm) {
 	_scumm = scumm;
 	_system = scumm->_system;
 
+#ifdef __PALM_OS__
+	if (!CRCtable) CRCtable = (uint32 *)calloc(256, sizeof(uint32));
+#endif
 	InitCRC();
 
 	for (i = 0; i < V2A_MAXSLOTS; i++) {
@@ -1164,6 +1173,9 @@ Player_V2A::Player_V2A(ScummEngine *scumm) {
 
 Player_V2A::~Player_V2A() {
 	delete _mod;
+#ifdef __PALM_OS__
+	free(CRCtable);
+#endif
 }
 
 void Player_V2A::setMasterVolume (int vol) {

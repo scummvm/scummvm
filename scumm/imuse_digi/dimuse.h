@@ -144,6 +144,15 @@ struct imuse_ft_music_table {
 	char name[30];
 };
 
+#ifdef __PALM_OS__
+extern imuse_music_map *_digStateMusicMap;
+extern const imuse_music_table *_digStateMusicTable;
+extern const imuse_music_table *_comiStateMusicTable;
+extern const imuse_music_table *_comiSeqMusicTable;
+extern const imuse_music_table *_digSeqMusicTable;
+extern const imuse_ft_music_table *_ftStateMusicTable;
+extern const imuse_ft_music_table *_ftSeqMusicTable;
+#else
 extern imuse_music_map _digStateMusicMap[];
 extern const imuse_music_table _digStateMusicTable[];
 extern const imuse_music_table _digSeqMusicTable[];
@@ -151,6 +160,7 @@ extern const imuse_music_table _comiStateMusicTable[];
 extern const imuse_music_table _comiSeqMusicTable[];
 extern const imuse_ft_music_table _ftStateMusicTable[];
 extern const imuse_ft_music_table _ftSeqMusicTable[];
+#endif
 
 } // End of namespace Scumm
 

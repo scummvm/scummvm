@@ -88,6 +88,9 @@ namespace BundleCodecs {
 
 uint32 decode12BitsSample(byte *src, byte **dst, uint32 size);
 void initializeImcTables();
+#ifdef __PALM_OS__
+void releaseImcTables();
+#endif
 int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 input_size);
 
 } // End of namespace BundleCodecs

@@ -43,6 +43,9 @@ ImuseDigiSndMgr::~ImuseDigiSndMgr() {
 			closeSound(&_sounds[l]);
 	}
 	delete _cacheBundleDir;
+#ifdef __PALM_OS__
+	BundleCodecs::releaseImcTables();
+#endif
 }
 
 void ImuseDigiSndMgr::prepareSound(byte *ptr, int slot) {
