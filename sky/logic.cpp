@@ -1349,7 +1349,7 @@ bool SkyLogic::fnQuit(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnSpeakMe(uint32 targetId, uint32 mesgNum, uint32 animNum) {
-	//stdSpeak(SkyState::fetchCompact(targetId), mesgNum, animNum, 0);
+	stdSpeak(SkyState::fetchCompact(targetId), mesgNum, animNum, 0);
 	return false; 	//drop out of script
 }
 
