@@ -1088,7 +1088,6 @@ void SimonState::playSting(uint a) {
 	if (_mus_file->read(_mus_offsets, size) != size)
 		error("Can't read offsets");
 
-	// midi.shutdown();
 	_mus_file->seek(_mus_offsets[a], SEEK_SET);
 	midi.loadSMF (_mus_file, a, true);
 	midi.startTrack (0);
@@ -4440,6 +4439,7 @@ void SimonState::shutdown() {
 		delete _game_file;
 		_game_file = NULL;
 	}
+	_system->quit();
 }
 
 void SimonState::delay(uint amount) {

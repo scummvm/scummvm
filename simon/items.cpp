@@ -1307,17 +1307,17 @@ void SimonState::o_quit_if_user_presses_y() {
 	for (;;) {
 		delay(1);
 		if (_key_pressed == 'f' && _language == 20) // Hebrew
-			_system->quit();
+			shutdown();
 		if (_key_pressed == 's' && _language == 5) // Spanish
-			_system->quit();
+			shutdown();
 		if (_key_pressed == 's' && _language == 3) // Italian
-			_system->quit();
+			shutdown();
 		if (_key_pressed == 'o' && _language == 2) // French
-			_system->quit();
+			shutdown();
 		if (_key_pressed == 'j' && _language == 1) // German
-			_system->quit();
+			shutdown();
 		if (_key_pressed == 'y' && _language == 0) // English
-			_system->quit();
+			shutdown();
 		if (_key_pressed == 'n')
 			goto get_out;
 	}
