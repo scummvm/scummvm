@@ -763,7 +763,7 @@ int32 Logic::fnChangeShadows(int32 *params) {
 		uint32 rv = _vm->_graphics->closeLightMask();
 
 		if (rv)
-			error("Driver Error %.8x [%s line %u]", rv);
+			error("Driver Error %.8x", rv);
 
 		_vm->_thisScreen.mask_flag = 0;
 	}
