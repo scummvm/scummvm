@@ -718,22 +718,7 @@ static void GetActorSector(void) {
 	Actor *act = check_actor(1);
 	int sectorType = check_int(2);
 
-	int sectorFlag;
-	switch (sectorType) {
-	case 1:
-		sectorFlag = 0x1000;
-		break;
-	case 2:
-		sectorFlag = 0x2000;
-		break;
-	case 3:
-		sectorFlag = 0x8000;
-		break;
-	default:
-		error("Invalid sector type %d\n", sectorType);
-}
-
-	Sector *result = Engine::instance()->currScene()->findPointSector(act->pos(), sectorFlag);
+	Sector *result = Engine::instance()->currScene()->findPointSector(act->pos(), sectorType);
 	if (result != NULL) {
 		lua_pushnumber(result->id());
 		lua_pushstring(const_cast<char *>(result->name()));
@@ -1289,6 +1274,9 @@ static void BlastText() {
 			Localizer::instance()->localize(str).c_str(), x, y);
 }
 
+static void sputLua_dummy() {
+}
+
 static char *stubFuncs[] = {
 	"RestoreIMuse",
 	"SaveIMuse",
@@ -1430,7 +1418,8 @@ static struct {
 	char *name;
 	int key;
 } system_defaults[] = {
-	{ "frameTime", 0 }
+	{ "frameTime", 0 },
+	{ "movieTime", 0 }
 };
 
 // Entries in the system.controls table
@@ -1699,12 +1688,15 @@ void register_lua() {
 	vbuffer_tag = lua_newtag();
 	object_tag = lua_newtag();
 
-	//Yaz: do we really need a garbage collector ?
-	// Register GC methods
-	lua_pushcfunction(gc_Color);
-	lua_settagmethod(color_tag, "gc");
-	lua_pushcfunction(gc_Sound);
-	lua_settagmethod(sound_tag, "gc");
+	// Register new version of dofile, and other builtin functions
+	luaL_openlib(builtins, sizeof(builtins) / sizeof(builtins[0]));
+
+    // Register stubs
+	for (unsigned i = 0; i < sizeof(stubFuncs) / sizeof(char *); i++) {
+		lua_pushstring(stubFuncs[i]);
+		lua_pushcclosure(stubWarning, 1);
+		lua_setglobal(stubFuncs[i]);
+	}
 
 	// Register system table
 	lua_Object system_table = lua_createtable();
@@ -1717,7 +1709,7 @@ void register_lua() {
 		lua_pushnumber(system_defaults[i].key);
 		lua_settable();
 	}
-	
+
 	// Create and populate system.controls table
 	lua_Object controls_table = lua_createtable();
 	lua_pushobject(system_table);
@@ -1732,23 +1724,26 @@ void register_lua() {
 		lua_settable();
 	}
 
-	// Register new version of dofile, and other builtin functions
-	luaL_openlib(builtins, sizeof(builtins) / sizeof(builtins[0]));
+	lua_pushobject(system_table);
+	lua_pushstring("camChangeHandler");
+	lua_pushcfunction(sputLua_dummy);
+	lua_settable();
 
-	// Register stubs
-	for (unsigned i = 0; i < sizeof(stubFuncs) / sizeof(char *); i++) {
-		lua_pushstring(stubFuncs[i]);
-		lua_pushcclosure(stubWarning, 1);
-		lua_setglobal(stubFuncs[i]);
-	}
+	lua_pushobject(system_table);
+	lua_pushstring("axisHandler");
+	lua_pushcfunction(sputLua_dummy);
+	lua_settable();
 
 	// Register constants for box types
-	lua_pushnumber(1);
-	lua_setglobal("WALK");	// Set to this value by Grim Fandango
-	// scripts anyway...
-	lua_pushnumber(2);
+	lua_pushnumber(0);
+	lua_setglobal("NONE");
+	lua_pushnumber(0x1000);
+	lua_setglobal("WALK");
+	lua_pushnumber(0x2000);
 	lua_setglobal("CAMERA");
-	lua_pushnumber(3);
+	lua_pushnumber(0x4000);
+	lua_setglobal("SPECIAL");
+	lua_pushnumber(0x8000);
 	lua_setglobal("HOT");
 }
 
