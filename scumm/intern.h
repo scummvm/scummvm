@@ -553,16 +553,6 @@ protected:
 		OpcodeProcv60he proc;
 		const char *desc;
 	};
-	struct vsUnpackCtx {
-		uint8 size;
-		uint8 type;
-		uint8 b;
-		uint8 *ptr;
-	};
-	struct vsPackCtx {
-		int size;
-		uint8 buf[256];
-	};
 
 	const OpcodeEntryv60he *_opcodesv60he;
 
@@ -584,10 +574,7 @@ protected:
 	void writeFileFromArray(int slot, int resID);
 	int virtScreenSave(byte *dst, int x1, int y1, int x2, int y2);
 	int virtScreenSavePack(byte *dst, byte *src, int len, int unk);
-	void virtScreenSavePackBuf(vsPackCtx *ctx, uint8 *&dst, int len);
-	void virtScreenSavePackByte(vsPackCtx *ctx, uint8 *&dst, int len, uint8 b);
 	void virtScreenLoad(int resIdx, int x1, int y1, int x2, int y2);
-	uint8 virtScreenLoadUnpack(vsUnpackCtx *ctx, byte *data);
 	void seekFilePos(int slot, int offset, int mode);
 	virtual void decodeParseString(int a, int b);
 	void swapObjects(int object1, int object2);

@@ -40,6 +40,22 @@
 
 namespace Scumm {
 
+struct vsUnpackCtx {
+	uint8 size;
+	uint8 type;
+	uint8 b;
+	uint8 *ptr;
+};
+
+struct vsPackCtx {
+	int size;
+	uint8 buf[256];
+};
+
+static void virtScreenSavePackBuf(vsPackCtx *ctx, uint8 *&dst, int len);
+static void virtScreenSavePackByte(vsPackCtx *ctx, uint8 *&dst, int len, uint8 b);
+static uint8 virtScreenLoadUnpack(vsUnpackCtx *ctx, byte *data);
+
 // Compatibility notes:
 //
 // FBEAR (fbear, fbeardemo)
@@ -832,7 +848,7 @@ void ScummEngine_v60he::virtScreenLoad(int resIdx, int x1, int y1, int x2, int y
 	markRectAsDirty(kMainVirtScreen, x1, x2, y1, y2 + 1); // XXX , 0x4000);
 }
 
-uint8 ScummEngine_v60he::virtScreenLoadUnpack(vsUnpackCtx *ctx, byte *data) {
+uint8 virtScreenLoadUnpack(vsUnpackCtx *ctx, byte *data) {
 	uint8 decByte;
 	if (data != 0) {
 		ctx->type = 0;
@@ -965,7 +981,7 @@ int ScummEngine_v60he::virtScreenSavePack(byte *dst, byte *src, int len, int unk
 	return ctx.size;
 }
 
-void ScummEngine_v60he::virtScreenSavePackBuf(vsPackCtx *ctx, uint8 *&dst, int len) {
+void virtScreenSavePackBuf(vsPackCtx *ctx, uint8 *&dst, int len) {
 	if (dst) {
 		*dst++ = (len - 1) * 2;
 	}
@@ -979,7 +995,7 @@ void ScummEngine_v60he::virtScreenSavePackBuf(vsPackCtx *ctx, uint8 *&dst, int l
 	}
 }
 
-void ScummEngine_v60he::virtScreenSavePackByte(vsPackCtx *ctx, uint8 *&dst, int len, uint8 b) {
+void virtScreenSavePackByte(vsPackCtx *ctx, uint8 *&dst, int len, uint8 b) {
 	if (dst) {
 		*dst++ = ((len - 1) * 2) | 1;
 	}
