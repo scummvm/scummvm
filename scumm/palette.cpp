@@ -588,40 +588,39 @@ void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int
 
 	if (startColor <= endColor) {
 		const byte *cptr;
-		byte *cur;
-		int j;
-		int color;
-
-		cptr = getPalettePtr(_curPalIndex) + startColor * 3;
-		cur = _currentPalette + startColor * 3;
+		int color, idx, j;
 
 		for (j = startColor; j <= endColor; j++) {
 			// FIXME: Hack to fix Amiga palette adjustments
-			if ((_features & GF_AMIGA && _version == 5) && (j >= 16 && j < 81)) {
-				cptr += 3;
-				cur += 3;
+			if ((_features & GF_AMIGA && _version == 5) && (j >= 16 && j < 81))
 				continue;
-			}
+
+			idx = (_heversion == 70) ? _HEV7ActorPalette[j] : j;
+			cptr = getPalettePtr(_curPalIndex) + idx * 3;
+
+			if (_heversion == 70)
+				setDirtyColors(idx, idx);
 
 			color = *cptr++;
 			color = color * redScale / 0xFF;
 			if (color > 255)
 				color = 255;
-			*cur++ = color;
+			_currentPalette[idx * 3 + 0] = color;
 
 			color = *cptr++;
 			color = color * greenScale / 0xFF;
 			if (color > 255)
 				color = 255;
-			*cur++ = color;
+			_currentPalette[idx * 3 + 1] = color;
 
 			color = *cptr++;
 			color = color * blueScale / 0xFF;
 			if (color > 255)
 				color = 255;
-			*cur++ = color;
+			_currentPalette[idx * 3 + 2] = color;
 		}
-		setDirtyColors(startColor, endColor);
+		if (_heversion != 70)
+			setDirtyColors(startColor, endColor);
 	}
 }
 
@@ -809,6 +808,9 @@ void ScummEngine::copyPalColor(int dst, int src) {
 }
 
 void ScummEngine::setPalColor(int idx, int r, int g, int b) {
+	if (_heversion == 70)
+		idx = _HEV7ActorPalette[idx];
+
 	_currentPalette[idx * 3 + 0] = r;
 	_currentPalette[idx * 3 + 1] = g;
 	_currentPalette[idx * 3 + 2] = b;
