@@ -359,7 +359,7 @@ void ScummEngine_v7::setupScummVars() {
 	VAR_DEBUGMODE = 116;
 	VAR_FADE_DELAY = 117;
 
-	// Full Throttle specific	
+	// Full Throttle specific
 	VAR_CHARSET_MASK = 119;
 
 	VAR_VIDEONAME = 123;
@@ -454,16 +454,16 @@ void ScummEngine_v8::setupScummVars() {
 	VAR_CAMERA_THRESHOLD_X = 124;
 	VAR_CAMERA_THRESHOLD_Y = 125;
 
-	VAR_BLAST_ABOVE_TEXT = 133;
-
 	VAR_EGO = 126;
+
+	VAR_DEFAULT_TALK_DELAY = 128;
+	VAR_CHARINC = 129;
+
+	VAR_BLAST_ABOVE_TEXT = 133;
 
 	VAR_DEBUGMODE = 130;
 	VAR_KEYPRESS = 132;
 	VAR_SYNC = 134;
-
-	VAR_DEFAULT_TALK_DELAY = 128;
-	VAR_CHARINC = 129;
 }
 
 void ScummEngine::initScummVars() {

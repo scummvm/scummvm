@@ -794,7 +794,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	}
 
 	if (savegameVersion >= VER(32) && _heversion == 70)
-			s->saveLoadArrayOf(_HEV7ActorPalette, sizeof(_HEV7ActorPalette), 1, sleByte);
+		s->saveLoadArrayOf(_HEV7ActorPalette, sizeof(_HEV7ActorPalette), 1, sleByte);
 
 	// PalManip data was not saved before V10 save games
 	if (savegameVersion < VER(10))

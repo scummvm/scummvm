@@ -968,7 +968,6 @@ protected:
 	void setupV1ZakPalette();
 	void setPalette(int pal);
 	void setPaletteFromPtr(const byte *ptr, int numcolor = -1);
-	void setPaletteFromRes();
 	void setPalColor(int index, int r, int g, int b);
 	void setDirtyColors(int min, int max);
 	const byte *findPalInPals(const byte *pal, int index);

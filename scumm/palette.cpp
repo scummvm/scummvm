@@ -149,12 +149,6 @@ void ScummEngine::setPaletteFromPtr(const byte *ptr, int numcolor) {
 	setDirtyColors(0, numcolor - 1);
 }
 
-void ScummEngine::setPaletteFromRes() {
-	byte *ptr;
-	ptr = getResourceAddress(rtRoom, _roomResource) + _CLUT_offs;
-	setPaletteFromPtr(ptr);
-}
-
 void ScummEngine::setDirtyColors(int min, int max) {
 	if (_palDirtyMin > min)
 		_palDirtyMin = min;
@@ -170,7 +164,6 @@ void ScummEngine::initCycl(const byte *ptr) {
 
 	if (_features & GF_SMALL_HEADER) {
 		cycl = _colorCycle;
-		ptr += 6;
 		for (j = 0; j < 16; ++j, ++cycl) {
 			uint16 delay = READ_BE_UINT16(ptr);
 			ptr += 2;

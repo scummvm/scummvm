@@ -2257,27 +2257,35 @@ void ScummEngine::initRoomSubBlocks() {
 
 	if (ptr) {
 		_CLUT_offs = ptr - roomptr;
-		setPaletteFromRes();
 	}
 
 	if (_version >= 6) {
 		ptr = findResource(MKID('PALS'), roomptr);
 		if (ptr) {
 			_PALS_offs = ptr - roomptr;
-			setPalette(0);
 		}
 	}
 
 	// Color cycling
 	// HE 7.0 games load resources but don't use them.
 	if (_version >= 4 && _heversion <= 60) {
-		if (_features & GF_SMALL_HEADER)
-			ptr = findResourceSmall(MKID('CYCL'), roomptr);
-		else 
-			ptr = findResourceData(MKID('CYCL'), roomptr);
+		ptr = findResourceData(MKID('CYCL'), roomptr);
 		if (ptr) {
 			initCycl(ptr);
 		}
+	}
+
+	// Transparent color
+	if (_features & GF_OLD_BUNDLE)
+		gdi._transparentColor = 255;
+	else {
+		ptr = findResourceData(MKID('TRNS'), roomptr);
+		if (ptr)
+			gdi._transparentColor = ptr[0];
+		else if (_version == 8)
+			gdi._transparentColor = 5;
+		else
+			gdi._transparentColor = 255;
 	}
 
 	// Actor Palette in HE 70 games
@@ -2323,18 +2331,8 @@ void ScummEngine::initRoomSubBlocks() {
 
 	}
 
-	// Transparent color
-	if (_features & GF_OLD_BUNDLE)
-		gdi._transparentColor = 255;
-	else {
-		ptr = findResourceData(MKID('TRNS'), roomptr);
-		if (ptr)
-			gdi._transparentColor = ptr[0];
-		else if (_version == 8)
-			gdi._transparentColor = 5;
-		else
-			gdi._transparentColor = 255;
-	}
+	if (_PALS_offs || _CLUT_offs)
+		setPalette(0);
 
 	initBGBuffers(_roomHeight);
 }
