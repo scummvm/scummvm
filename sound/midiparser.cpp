@@ -237,7 +237,18 @@ void MidiParser::allNotesOff() {
 	if (!_driver)
 		return;
 
-	int i;
+	int i, j;
+
+	// Turn off all active notes
+	for (i = 0; i < 128; ++i) {
+		for (j = 0; j < 16; ++j) {
+			if (_active_notes[i] & (1 << j)) {
+				_driver->send (0x80 | j | i << 8);
+			}
+		}
+	}
+
+	// To be sure, send an "All Note Off" event (but not all MIDI devices support this...)
 	for (i = 0; i < 16; ++i)
 		_driver->send (0x007BB0 | i);
 	for (i = 0; i < ARRAYSIZE(_hanging_notes); ++i)
