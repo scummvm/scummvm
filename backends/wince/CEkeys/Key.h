@@ -1,0 +1,51 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2001-2004 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Header$
+ *
+ */
+
+#ifndef CEKEYS_KEY
+#define CEKEYS_KEY
+
+#include "common/stdafx.h"
+#include "common/scummsys.h"
+#include "common/system.h"
+
+namespace CEKEYS {
+
+	class Key {
+	public:
+		Key(int ascii, int keycode = 0, int flags = 0, bool pushed = true);
+		Key();
+		void setAscii(int ascii);
+		void setKeycode(int keycode);
+		void setFlags(int flags);
+		void setPushed(bool pushed);
+		int ascii();
+		int keycode();
+		int flags();
+		bool pushed();
+	private:
+		int _ascii;
+		int _keycode;
+		int _flags;
+		bool _pushed;
+	};
+}
+
+#endif
