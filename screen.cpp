@@ -241,6 +241,7 @@ void screenBlocksBlitDirtyBlocks()
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE); 
 	glDepthMask(GL_TRUE);
 
+
 	for(i=0;i<40;i++)
 	{
 		for(j=0;j<30;j++)
@@ -251,15 +252,13 @@ void screenBlocksBlitDirtyBlocks()
 				int width = 1;
 				int temp = i+1;
 				screenBlockData[i][j].isDirty = false;
-				while(temp <40 && screenBlockData[temp][j].isDirty)
+				while((temp <40) && screenBlockData[temp][j].isDirty)
 				{
 					screenBlockData[temp][j].isDirty = false;
 					width++;
+					temp++;
 				}
 
-				/* This loop here is to prevent using PixelZoom that may be unoptimized for the 1.0 / -1.0 case
-				in some drivers...
-				*/
 				for (int y = 0; y < 16; y++)
 				{
 					glRasterPos2i(j*16, i*16 + y);

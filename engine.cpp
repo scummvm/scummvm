@@ -87,6 +87,18 @@ void Engine::mainLoop() {
 
 	screenBlocksReset();
 
+    // Draw the screen
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    Bitmap::prepareGL();
+    if (currScene_ != NULL)
+      currScene_->drawBackground();
+
+    glEnable(GL_DEPTH_TEST);
+    if (currScene_ != NULL)
+    currScene_->setupCamera();
+
+	glMatrixMode(GL_MODELVIEW);
     // Update actor costumes
     for (actor_list_type::iterator i = actors_.begin();
 	 i != actors_.end(); i++) {
@@ -96,10 +108,17 @@ void Engine::mainLoop() {
 		a->update();
     }
 
-    // Draw the screen
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // Draw actors
+    glEnable(GL_TEXTURE_2D);
+    for (actor_list_type::iterator i = actors_.begin();
+	 i != actors_.end(); i++) {
+      Actor *a = *i;
+      if (a->inSet(currScene_->name()) && a->visible())
+		a->draw();
+    }
+    glDisable(GL_TEXTURE_2D);
 
-	screenBlocksDrawDebug();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	screenBlocksBlitDirtyBlocks();
 
@@ -121,8 +140,10 @@ void Engine::mainLoop() {
     }
     glDisable(GL_TEXTURE_2D);
 
+	screenBlocksDrawDebug();
 
-    // Draw text
+
+	// Draw text
     for (text_list_type::iterator i = textObjects_.begin();
 	 i != textObjects_.end(); i++) {
       (*i)->draw();
