@@ -22,6 +22,7 @@
 
 /* The bare pure X11 port done by Lionel 'BBrox' Ulmer */
 
+#include "common/stdafx.h"
 #include "backends/intern.h"
 #include "common/util.h"
 #include "base/engine.h"	// Only #included for error() and warning()
@@ -166,7 +167,7 @@ private:
 	uint16 *palette;
 	bool _palette_changed;
 	Display *display;
-	int screen;
+	int screen, depth;
 	Window window;
 	GC black_gc;
 	XImage *image;
@@ -352,7 +353,14 @@ OSystem_X11::OSystem_X11()
 		error("Could not open display !\n");
 		exit(1);
 	}
+
+	if (XShmQueryExtension(display)!=True)
+		error("No Shared Memory Extension present");
+	
 	screen = DefaultScreen(display);
+	depth = DefaultDepth(display,screen);
+	if (depth != 16)
+		error("Your screen depth is %ibit. Values other than 16bit are currently not supported", depth);
 
 	window_width = 320;
 	window_height = 200;
@@ -425,10 +433,16 @@ void OSystem_X11::init_size(uint w, uint h)
 
 		XConfigureWindow(display, window, CWWidth | CWHeight, &new_values);
 	}
-	image =	XShmCreateImage(display, DefaultVisual(display, screen), 16, ZPixmap, NULL, &shminfo, fb_width, fb_height);
-	shminfo.shmid = shmget(IPC_PRIVATE, fb_width * fb_height * 2, IPC_CREAT | 0700);
-	shminfo.shmaddr = (char *)shmat(shminfo.shmid, 0, 0);
-	image->data = shminfo.shmaddr;
+	
+	image =	XShmCreateImage(display, DefaultVisual(display, screen), depth, ZPixmap, NULL, &shminfo, fb_width, fb_height);
+	if (!image)
+		error("Couldn't get image by XShmCreateImage()");
+	
+	shminfo.shmid = shmget(IPC_PRIVATE, image->bytes_per_line * image->height, IPC_CREAT | 0700);
+	if (shminfo.shmid < 0)
+		error("Couldn't allocate image data by shmget()");
+	
+	image->data = shminfo.shmaddr = (char *)shmat(shminfo.shmid, 0, 0);
 	shminfo.readOnly = False;
 	if (XShmAttach(display, &shminfo) == 0) {
 		error("Could not attach shared memory segment !\n");
