@@ -524,3 +524,4 @@ void NewGui_initGlobals()	{
 }
 void NewGui_releaseGlobals(){	GRELEASEPTR(GBVARS_GUIFONT_INDEX, GBVARS_SCUMM)				}
 #endif
+
