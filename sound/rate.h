@@ -35,11 +35,6 @@ typedef uint16 st_volume_t;
 typedef uint32 st_size_t;
 typedef uint32 st_rate_t;
 
-typedef struct {
-	byte priv[1024];
-} eff_struct;
-typedef eff_struct *eff_t;
-
 /* Minimum and maximum values a sample can hold. */
 #define ST_SAMPLE_MAX 0x7fffL
 #define ST_SAMPLE_MIN (-ST_SAMPLE_MAX - 1L)

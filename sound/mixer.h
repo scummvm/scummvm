@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef MIXER_H
-#define MIXER_H
+#ifndef SOUND_MIXER_H
+#define SOUND_MIXER_H
 
 #include "stdafx.h"
 #if defined(HAVE_CONFIG_H)

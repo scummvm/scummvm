@@ -28,6 +28,15 @@
 #include "sound/mixer.h"
 #include "sound/rate.h"
 
+
+#pragma mark -
+#pragma mark --- Channel classes ---
+#pragma mark -
+
+
+/**
+ * Channels used by the sound mixer.
+ */
 class Channel {
 protected:
 	SoundMixer *_mixer;
@@ -36,35 +45,17 @@ protected:
 	AudioInputStream *_input;
 public:
 	int _id;
+
 	Channel(SoundMixer *mixer, PlayingSoundHandle *handle)
 		: _mixer(mixer), _handle(handle), _converter(0), _input(0), _id(-1) {
 		assert(mixer);
 	}
-	virtual ~Channel() {
-		delete _converter;
-		delete _input;
-		if (_handle)
-			*_handle = 0;
-	}
-	
-	/* len indicates the number of sample *pairs*. So a value of
-	   10 means that the buffer contains twice 10 sample, each
-	   16 bits, for a total of 40 bytes.
-	 */
-	virtual void mix(int16 *data, uint len) {
-		assert(_input);
-		assert(_converter);
-	
-		if (_input->eos()) {
-			// TODO: call drain method
-			destroy();
-			return;
-		}
-	
-		const int volume = isMusicChannel() ? _mixer->getMusicVolume() : _mixer->getVolume();
-		_converter->flow(*_input, data, len, volume);
-	}
+	virtual ~Channel();
 	void destroy();
+	virtual void mix(int16 *data, uint len);
+	virtual int getVolume() const {
+		return isMusicChannel() ? _mixer->getMusicVolume() : _mixer->getVolume();
+	}
 	virtual bool isMusicChannel() const	= 0;
 };
 
@@ -107,16 +98,13 @@ public:
 	ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track);
 	bool isMusicChannel() const		{ return _is_cd_track; }
 };
-#endif
+#endif // USE_VORBIS
 
 
+#pragma mark -
+#pragma mark --- SoundMixer ---
+#pragma mark -
 
-void Channel::destroy() {
-	for (int i = 0; i != SoundMixer::NUM_CHANNELS; i++)
-		if (_mixer->_channels[i] == this)
-			_mixer->_channels[i] = 0;
-	delete this;
-}
 
 SoundMixer::SoundMixer() {
 	_syst = 0;
@@ -265,12 +253,11 @@ void SoundMixer::mixCallback(void *s, byte *samples, int len) {
 }
 
 bool SoundMixer::bindToSystem(OSystem *syst) {
-	uint rate = (uint) syst->property(OSystem::PROP_GET_SAMPLE_RATE, 0);
-	_outputRate = rate;
 	_syst = syst;
 	_mutex = _syst->create_mutex();
+	_outputRate = (uint) syst->property(OSystem::PROP_GET_SAMPLE_RATE, 0);
 
-	if (rate == 0)
+	if (_outputRate == 0)
 		error("OSystem returned invalid sample rate");
 
 	return syst->set_sound_proc(mixCallback, this, OSystem::SOUND_16BIT);
@@ -365,6 +352,41 @@ void SoundMixer::setMusicVolume(int volume) {
 }
 
 
+#pragma mark -
+#pragma mark --- Channel implementations ---
+#pragma mark -
+
+
+Channel::~Channel() {
+	delete _converter;
+	delete _input;
+	if (_handle)
+		*_handle = 0;
+}
+
+void Channel::destroy() {
+	for (int i = 0; i != SoundMixer::NUM_CHANNELS; i++)
+		if (_mixer->_channels[i] == this)
+			_mixer->_channels[i] = 0;
+	delete this;
+}
+
+	
+/* len indicates the number of sample *pairs*. So a value of
+   10 means that the buffer contains twice 10 sample, each
+   16 bits, for a total of 40 bytes.
+ */
+void Channel::mix(int16 *data, uint len) {
+	assert(_input);
+	if (_input->eos()) {
+		// TODO: call drain method
+		destroy();
+	} else {
+		assert(_converter);
+		_converter->flow(*_input, data, len, getVolume());
+	}
+}
+
 /* RAW mixer */
 ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id, uint32 loopStart, uint32 loopEnd)
 	: Channel(mixer, handle) {
@@ -418,8 +440,6 @@ void ChannelStream::append(void *data, uint32 len) {
 
 void ChannelStream::mix(int16 *data, uint len) {
 	assert(_input);
-	assert(_converter);
-
 	if (_input->eos()) {
 		// TODO: call drain method
 
@@ -431,13 +451,11 @@ void ChannelStream::mix(int16 *data, uint len) {
 		if (_finished) {
 			destroy();
 		}
-
 		return;
 	}
 
-	const int volume = _mixer->getVolume();	// FIXME: Shouldn't this be music volume instead??
-//	const int volume = isMusicChannel() ? _mixer->getMusicVolume() : _mixer->getVolume();
-	_converter->flow(*_input, data, len, volume);
+	assert(_converter);
+	_converter->flow(*_input, data, len, getVolume());
 }
 
 #ifdef USE_MAD

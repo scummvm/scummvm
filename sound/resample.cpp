@@ -58,6 +58,11 @@
 /* resample includes */
 #include "resample.h"
 
+typedef struct {
+	byte priv[1024];
+} eff_struct;
+typedef eff_struct *eff_t;
+
 /* this Float MUST match that in filter.c */
 #define Float double/*float*/
 
