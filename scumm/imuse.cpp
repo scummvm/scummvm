@@ -192,17 +192,9 @@ MidiDriver *IMuseInternal::getBestMidiDriver(int sound) {
 			driver = _midi_native;
 		} else {
 			// Route it through Adlib anyway.
-			if (!_midi_adlib) {
-				_midi_adlib = MidiDriver_ADLIB_create(_mixer);
-				initMidiDriver(_midi_adlib);
-			}
 			driver = _midi_adlib;
 		}
 	} else {
-		if (!_midi_adlib &&(_enable_multi_midi || !_midi_native)) {
-			_midi_adlib = MidiDriver_ADLIB_create(_mixer);
-			initMidiDriver(_midi_adlib);
-		}
 		driver = _midi_adlib;
 	}
 	return driver;
@@ -344,7 +336,6 @@ int IMuseInternal::getMusicTimer() const {
 void IMuseInternal::sequencer_timers(MidiDriver *midi) {
 	Player *player = _players;
 	int i;
-
 	for (i = ARRAYSIZE(_players); i != 0; i--, player++) {
 		if (player->isActive() && player->getMidiDriver() == midi) {
 			player->onTimer();
@@ -1098,6 +1089,9 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 			}
 			driver->close();
 			// FIXME: shouldn't we delete 'driver' here, too ?
+		} else if (_enable_multi_midi && _midi_adlib == NULL) {
+			_midi_adlib = MidiDriver_ADLIB_create(_mixer);
+			initMidiDriver(_midi_adlib);
 		}
 		break;
 
@@ -1137,9 +1131,14 @@ int IMuseInternal::initialize(OSystem *syst, SoundMixer *mixer, MidiDriver *nati
 
 	_mixer = mixer;
 	_midi_native = native_midi;
-	_midi_adlib = NULL;
 	if (native_midi)
 		initMidiDriver(_midi_native);
+	if (!native_midi || _enable_multi_midi) {
+		_midi_adlib = MidiDriver_ADLIB_create(_mixer);
+		initMidiDriver(_midi_adlib);
+	} else {
+		_midi_adlib = NULL;
+	}
 
 	if (!_tempoFactor) _tempoFactor = 100;
 	_master_volume = 255;
