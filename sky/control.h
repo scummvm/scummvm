@@ -210,7 +210,8 @@ private:
 	uint16 saveGameToFile(void);
 	void stosMegaSet(uint8 **destPos, MegaSet *mega);
 	void stosCompact(uint8 **destPos, Compact *cpt);
-	void stosStr(uint8 **destPos, uint16 *src, bool isGraph);
+	void stosGrafStr(uint8 **destPos, Compact *cpt);
+	void stosStr(uint8 **destPos, Compact *cpt, uint16 type);
 	uint32 prepareSaveData(uint8 *destBuf);
 
 	bool autoSaveExists(void);
