@@ -664,6 +664,8 @@ void LoadedCostume::loadCostume(int id) {
 }
 
 void CostumeRenderer::drawNESCostume(const Actor *a, int limb) {
+	const byte darkpalette[16] = {0x00,0x00,0x2D,0x3D,0x00,0x00,0x2D,0x3D,0x00,0x00,0x2D,0x3D,0x00,0x00,0x2D,0x3D};
+	const byte *palette;
 	const byte *src;
 	int offset, numSprites;
 	const byte *table, *ptr, *spritesDefs, *spritesOffsetTab, *numSpritesTab;
@@ -672,6 +674,11 @@ void CostumeRenderer::drawNESCostume(const Actor *a, int limb) {
 	int frameNum = cost.curpos[limb];
 	byte *bgTransBuf = _vm->getMaskBuffer(0, 0, 0);
 	byte *gfxMaskBuf = _vm->getMaskBuffer(0, 0, 1);
+
+	if (_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color)
+		palette = _vm->_NESPalette[1];
+	else
+		palette = darkpalette;
 
 	src = _loaded._dataOffsets;
 
@@ -699,7 +706,7 @@ void CostumeRenderer::drawNESCostume(const Actor *a, int limb) {
 		byte mask = (ptr[0] & 0x80) ? 0x01 : 0x80;
 		int8 y = ptr[0] << 1;	y >>= 1;
 		byte tile = ptr[1];
-		byte palette = (ptr[2] & 0x03) << 2;
+		byte sprpal = (ptr[2] & 0x03) << 2;
 		int8 x = ptr[2];	x >>= 2;
 
 		ptr += 3;
@@ -721,7 +728,7 @@ void CostumeRenderer::drawNESCostume(const Actor *a, int limb) {
 			byte c2 = _vm->_NESPatTable[0][tile * 16 + ty + 8];
 
 			for (int tx = 0; tx < 8; tx++) {
-				unsigned char c = ((c1 & mask) ? 1 : 0) | ((c2 & mask) ? 2 : 0) | palette;
+				unsigned char c = ((c1 & mask) ? 1 : 0) | ((c2 & mask) ? 2 : 0) | sprpal;
 				if (mask == 0x01) {
 					c1 >>= 1;
 					c2 >>= 1;
@@ -734,7 +741,7 @@ void CostumeRenderer::drawNESCostume(const Actor *a, int limb) {
 				int my = _actorY + y + ty;
 				int mx = _actorX + x + tx;
 				if (!doMask || !(bgTransBuf[my * _numStrips + mx / 8] & (0x80 >> (mx & 7))))
-					*((byte *)_out.pixels + my * _out.pitch + mx) = _vm->_NESPalette[1][c];
+					*((byte *)_out.pixels + my * _out.pitch + mx) = palette[c];
 			}
 		}
 		if (left > _actorX + x)
