@@ -2304,7 +2304,8 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	if (_version < 7) {
 		for (i = 0; i < 256; i++) {
 			_roomPalette[i] = i;
-			_shadowPalette[i] = i;
+			if (_shadowPalette)
+				_shadowPalette[i] = i;
 		}
 		if (_features & GF_SMALL_HEADER)
 			setDirtyColors(0, 255);

@@ -535,7 +535,6 @@ void ScummEngine::readIndexFile() {
 				_fileHandle.read(_objectStateTable, num);
 				_fileHandle.read(_objectOwnerTable, num);
 				_fileHandle.read(_objectRoomTable, num);
-				// FIXME more DOBJ bits left to sort out here
 			} else {
 				_fileHandle.read(_objectOwnerTable, num);
 				for (i = 0; i < num; i++) {
