@@ -2075,7 +2075,7 @@ void Scumm::dissolveEffect(int width, int height) {
 	for (i = 0; i < w * h; i++) {
 		x = offsets[i] % vs->width;
 		y = offsets[i] / vs->width;
-		_system->copy_rect(vs->screenPtr + vs->xstart + y * vs->width + x, vs->width, x, y, width, height);
+		_system->copy_rect(vs->screenPtr + vs->xstart + y * vs->width + x, vs->width, x, y + vs->topline, width, height);
 
 		if (++blits >= blits_before_refresh) {
 			blits = 0;
