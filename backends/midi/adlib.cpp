@@ -174,7 +174,7 @@ struct AdlibVoice {
 	Struct10 _s10b;
 	Struct11 _s11b;
 	
-	AdlibVoice() : _part (0), _next(0), _prev(0) {}
+	AdlibVoice() { memset(this, 0, sizeof(AdlibVoice)); }
 };
 
 struct AdlibSetParams {
