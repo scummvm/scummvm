@@ -241,9 +241,11 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b)
 	if (height > _vm->_realHeight)
 		height = _vm->_realHeight;
 
-	scrollY = _vm->camera._cur.y - (_vm->_realHeight / 2);
-	if (scrollY == -(_vm->_realHeight / 2))
+	// FIXME - is this check really necessary?
+	if (_vm->camera._cur.y == 0)
 		scrollY = 0;
+	else
+		scrollY = _vm->_screenTop;
 
 	ptr = vs->screenPtr + (t * NUM_STRIPS + x) * 8 + _readOffs + scrollY * _vm->_realWidth;
 	_vm->_system->copy_rect(ptr, _vm->_realWidth, x * 8, vs->topline + t, w, height);
