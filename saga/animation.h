@@ -94,7 +94,7 @@ enum ANIM_FLAGS {
 class Anim {
 public:
 	int reg(void);
-	Anim(void);
+	Anim(SagaEngine *vm);
 	~Anim(void);
 	int load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_id_p);
 	int freeId(uint16 anim_id);
@@ -112,6 +112,7 @@ private:
 					size_t thisf_len, const byte **nextf_p, size_t *nextf_len);
 	int getFrameOffset(const byte *anim_resource, size_t anim_resource_len, uint16 find_frame, size_t *frame_offset);
 
+	SagaEngine *_vm;
 	bool _initialized;
 
 	uint16 _anim_count;

@@ -41,7 +41,7 @@ struct R_ACTIONMAP_ENTRY {
 class ActionMap {
  public:
 	int reg(void);
-	ActionMap(void);
+	ActionMap(SagaEngine *vm);
 	~ActionMap(void);
 
 	int load(const byte *exmap_res, size_t exmap_res_len);
@@ -53,6 +53,8 @@ class ActionMap {
 	void actionInfo(int argc, char *argv[]);
 
 private:
+	SagaEngine *_vm;
+
 	bool _initialized;
 	int _exits_loaded;
 	int _n_exits;

@@ -40,7 +40,7 @@ int ActionMap::reg(void) {
 	return R_SUCCESS;
 }
 
-ActionMap::ActionMap(void) {
+ActionMap::ActionMap(SagaEngine *vm) : _vm(vm) {
 	debug(0, "ACTIONMAP Module: Initializing...");
 
 	_exits_loaded = 0;

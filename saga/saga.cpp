@@ -154,8 +154,8 @@ void SagaEngine::go() {
 	EVENT_Init();
 	FONT_Init();
 	SPRITE_Init();
-	_anim = new Anim();
-	_actionMap = new ActionMap();
+	_anim = new Anim(this);
+	_actionMap = new ActionMap(this);
 	OBJECTMAP_Init();
 	ISOMAP_Init();
 	SCRIPT_Init();

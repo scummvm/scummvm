@@ -42,7 +42,7 @@ int Anim::reg() {
 	return R_SUCCESS;
 }
 
-Anim::Anim(void) {
+Anim::Anim(SagaEngine *vm) : _vm(vm) {
 	int i;
 
 	_anim_limit = R_MAX_ANIMATIONS;
