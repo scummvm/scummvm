@@ -2671,8 +2671,8 @@ void ScummEngine::transitionEffect(int a) {
 			if (t == b) {
 				while (l <= r) {
 					if (l >= 0 && l < gdi._numStrips && t < bottom) {
-						virtscr[0].tdirty[l] = t * 8;
-						virtscr[0].bdirty[l] = (b + 1) * 8;
+						virtscr[0].tdirty[l] = _screenTop + t * 8;
+						virtscr[0].bdirty[l] = _screenTop + (b + 1) * 8;
 					}
 					l++;
 				}
@@ -2683,8 +2683,8 @@ void ScummEngine::transitionEffect(int a) {
 					b = bottom;
 				if (t < 0)
 					t = 0;
- 				virtscr[0].tdirty[l] = t * 8;
-				virtscr[0].bdirty[l] = (b + 1) * 8;
+ 				virtscr[0].tdirty[l] = _screenTop + t * 8;
+				virtscr[0].bdirty[l] = _screenTop + (b + 1) * 8;
 			}
 			updateDirtyScreen(kMainVirtScreen);
 		}
