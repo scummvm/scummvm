@@ -2131,7 +2131,7 @@ bool LogicGame::preChangeRoom() {
 
 		// XXX enable talking for talkie version
 
-		if (ConfMan.getBool("alt_intro") && !_vm->resource()->isDemo() && !_vm->resource()->isInterview() && !_vm->resource()->isFloppy()) {
+		if (ConfMan.getBool("alt_intro") && _vm->resource()->isCD()) {
 			playCutaway("cintr.cut");
 		} else {
 			playCutaway("cdint.cut");
