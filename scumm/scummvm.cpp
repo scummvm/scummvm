@@ -370,8 +370,10 @@ void Scumm::initScummVars()
 void Scumm::checkRange(int max, int min, int no, const char *str)
 {
 	if (no < min || no > max) {
-		error("Value %d is out of bounds (%d,%d) int script(%d) msg %s", no, min,
-					max, vm.slot[_curExecScript].number, str);
+		char buf[1024];
+		sprintf(buf, str, no);
+		error("Value %d is out of bounds (%d,%d) in script %d (%s)", no, min,
+					max, vm.slot[_curExecScript].number, buf);
 	}
 }
 

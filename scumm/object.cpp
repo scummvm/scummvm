@@ -188,41 +188,35 @@ void Scumm::getObjectXYPos(int object, int &x, int &y, int &dir)
 	byte *ptr;
 	ImageHeader *imhd;
 
-	if (!(_features & GF_SMALL_HEADER)) {
-		if (_features & GF_AFTER_V6) {
-			state = getState(object) - 1;
-			if (state < 0)
-				state = 0;
+	if (_features & GF_AFTER_V6) {
+		state = getState(object) - 1;
+		if (state < 0)
+			state = 0;
 
-			if (od->fl_object_index) {
-				ptr = getResourceAddress(rtFlObject, od->fl_object_index);
-				ptr = findResource(MKID('OBIM'), ptr);
-			} else {
-				ptr = getResourceAddress(rtRoom, _roomResource);
-				ptr += od->OBIMoffset;
-			}
-			assert(ptr);
-			imhd = (ImageHeader *)findResourceData(MKID('IMHD'), ptr);
-			if (_features & GF_AFTER_V8) {
-				x = od->x_pos + (int32)READ_LE_UINT32(&imhd->v8.hotspot[state].x);
-				y = od->y_pos + (int32)READ_LE_UINT32(&imhd->v8.hotspot[state].y);
-			} else if (_features & GF_AFTER_V7) {
-				x = od->x_pos + (int16)READ_LE_UINT16(&imhd->v7.hotspot[state].x);
-				y = od->y_pos + (int16)READ_LE_UINT16(&imhd->v7.hotspot[state].y);
-			} else {
-				x = od->x_pos + (int16)READ_LE_UINT16(&imhd->old.hotspot[state].x);
-				y = od->y_pos + (int16)READ_LE_UINT16(&imhd->old.hotspot[state].y);
-			}
+		if (od->fl_object_index) {
+			ptr = getResourceAddress(rtFlObject, od->fl_object_index);
+			ptr = findResource(MKID('OBIM'), ptr);
 		} else {
-			x = od->walk_x;
-			y = od->walk_y;
+			ptr = getResourceAddress(rtRoom, _roomResource);
+			ptr += od->OBIMoffset;
 		}
-		dir = oldDirToNewDir(od->actordir & 3);
+		assert(ptr);
+		imhd = (ImageHeader *)findResourceData(MKID('IMHD'), ptr);
+		if (_features & GF_AFTER_V8) {
+			x = od->x_pos + (int32)READ_LE_UINT32(&imhd->v8.hotspot[state].x);
+			y = od->y_pos + (int32)READ_LE_UINT32(&imhd->v8.hotspot[state].y);
+		} else if (_features & GF_AFTER_V7) {
+			x = od->x_pos + (int16)READ_LE_UINT16(&imhd->v7.hotspot[state].x);
+			y = od->y_pos + (int16)READ_LE_UINT16(&imhd->v7.hotspot[state].y);
+		} else {
+			x = od->x_pos + (int16)READ_LE_UINT16(&imhd->old.hotspot[state].x);
+			y = od->y_pos + (int16)READ_LE_UINT16(&imhd->old.hotspot[state].y);
+		}
 	} else {
 		x = od->walk_x;
 		y = od->walk_y;
-		dir = oldDirToNewDir(od->actordir & 3);
 	}
+	dir = oldDirToNewDir(od->actordir & 3);
 }
 
 int Scumm::getObjActToObjActDist(int a, int b)
@@ -351,6 +345,8 @@ void Scumm::drawObject(int obj, int arg)
 
 	if (od->obj_nr == 0)
 		return;
+
+	checkRange(_numGlobalObjects - 1, 0, od->obj_nr, "Object %d out of range in drawObject");
 
 	xpos = od->x_pos >> 3;
 	ypos = od->y_pos;
