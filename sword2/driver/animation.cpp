@@ -190,12 +190,12 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], byte *mus
 		return RD_OK;
 	}
 
-#ifndef BACKEND_8BIT
 	// Clear the screen, because whatever is on it will be visible when the
-	// overlay is removed.
-	_vm->_graphics->clearScene();
+	// overlay is removed. And if there isn't an overlay, we don't want it
+	// to be visible during the cutscene. (Not all cutscenes cover the
+	// entire screen.)
+	anim->clearScreen();
 	_vm->_graphics->updateDisplay();
-#endif
 
 #ifndef SCUMM_BIG_ENDIAN
 	flags |= SoundMixer::FLAG_LITTLE_ENDIAN;
