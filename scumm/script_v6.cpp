@@ -3025,7 +3025,7 @@ void ScummEngine_v6::o6_pickVarRandom() {
 	int value = fetchScriptWord();
 
 	if (readVar(value) == 0) {
-		defineArray(value, 5, 0, num);
+		defineArray(value, 5, 0, num + 1);
 		if (num > 0) {
 			int16 counter = 0;
 			do {
