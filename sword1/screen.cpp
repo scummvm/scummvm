@@ -451,19 +451,19 @@ void Screen::verticalMask(uint16 x, uint16 y, uint16 bWidth, uint16 bHeight) {
 	uint16 lGridSizeX = _gridSizeX + 2 * (SCREEN_LEFT_EDGE / SCRNGRID_X); // width of the grid for the imaginary screen
 
 	for (uint16 blkx = 0; blkx < bWidth; blkx++) {
-		uint16 level = 0;
-		while ((level < _roomDefTable[_currentScreen].totalLayers - 1) && 
-			(!_layerGrid[level][gridX + blkx + gridY * lGridSizeX]))
-			level++;
-		if (level < _roomDefTable[_currentScreen].totalLayers - 1) {
-			uint16 *grid = _layerGrid[level] + gridX + blkx + gridY * lGridSizeX;
-			for (int16 blky = bHeight - 1; blky >= 0; blky--) {
-				if (*grid) {
-					uint8 *blkData = _layerBlocks[level + 1] + (READ_LE_UINT16(grid) - 1) * 128;
-					blitBlockClear(x + blkx, y + blky, blkData);
-				} else 
-					break;
-				grid -= lGridSizeX;
+		// A sprite can be masked by several layers at the same time,
+		// so we have to check them all. See bug #917427.
+		for (int16 level = _roomDefTable[_currentScreen].totalLayers - 2; level >= 0; level--) {
+			if (_layerGrid[level][gridX + blkx + gridY * lGridSizeX]) {
+				uint16 *grid = _layerGrid[level] + gridX + blkx + gridY * lGridSizeX;
+				for (int16 blky = bHeight - 1; blky >= 0; blky--) {
+					if (*grid) {
+						uint8 *blkData = _layerBlocks[level + 1] + (READ_LE_UINT16(grid) - 1) * 128;
+						blitBlockClear(x + blkx, y + blky, blkData);
+					} else 
+						break;
+					grid -= lGridSizeX;
+				}
 			}
 		}
 	}
