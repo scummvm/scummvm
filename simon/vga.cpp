@@ -43,8 +43,8 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 	&SimonState::vc_10_draw,
 	&SimonState::vc_11_clear_pathfind_array,
 	&SimonState::vc_12_delay,
-	&SimonState::vc_13_offset_x,
-	&SimonState::vc_14_offset_y,
+	&SimonState::vc_13_set_sprite_offset_x,
+	&SimonState::vc_14_set_sprite_offset_y,
 	&SimonState::vc_15_wakeup_id,
 	&SimonState::vc_16_sleep_on_id,
 	&SimonState::vc_17_set_pathfind_item,
@@ -52,8 +52,8 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 	&SimonState::vc_19_chain_to_script,
 	&SimonState::vc_20_set_code_word,
 	&SimonState::vc_21_jump_if_code_word,
-	&SimonState::vc_22_set_palette,
-	&SimonState::vc_23_set_priority,
+	&SimonState::vc_22_set_sprite_palette,
+	&SimonState::vc_23_set_sprite_priority,
 	&SimonState::vc_24_set_sprite_xy,
 	&SimonState::vc_25_halt_sprite,
 	&SimonState::vc_26_set_window,
@@ -67,7 +67,7 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 	&SimonState::vc_34_force_lock,
 	&SimonState::vc_35,
 	&SimonState::vc_36_saveload_thing,
-	&SimonState::vc_37_offset_y_f,
+	&SimonState::vc_37_set_sprite_offset_y,
 	&SimonState::vc_38_skip_if_var_zero,
 	&SimonState::vc_39_set_var,
 	&SimonState::vc_40_var_add,
@@ -75,8 +75,8 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 	&SimonState::vc_42_delay_if_not_eq,
 	&SimonState::vc_43_skip_if_bit_clear,
 	&SimonState::vc_44_skip_if_bit_set,
-	&SimonState::vc_45_set_x,
-	&SimonState::vc_46_set_y,
+	&SimonState::vc_45_set_sprite_x,
+	&SimonState::vc_46_set_sprite_y,
 	&SimonState::vc_47_add_var_f,
 	&SimonState::vc_48,
 	&SimonState::vc_49_set_bit,
@@ -94,7 +94,7 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 	&SimonState::vc_61_sprite_change,
 	&SimonState::vc_62_palette_thing,
 	&SimonState::vc_63_palette_thing_2,
-	&SimonState::vc_64_skip_if_voice,
+	&SimonState::vc_64_skip_if_no_speech,
 	&SimonState::vc_65_palette_thing_3,
 	&SimonState::vc_66_skip_if_nz,
 	&SimonState::vc_67_skip_if_ge,
@@ -982,17 +982,15 @@ void SimonState::vc_12_delay() {
 	_vc_ptr = (byte *)&vc_get_out_of_code;
 }
 
-void SimonState::vc_13_offset_x() {
+void SimonState::vc_13_set_sprite_offset_x() {
 	VgaSprite *vsp = find_cur_sprite();
-	int16 a = vc_read_next_word();
-	vsp->x += a;
+	vsp->x += (int16)vc_read_next_word();
 	_vga_sprite_changed++;
 }
 
-void SimonState::vc_14_offset_y() {
+void SimonState::vc_14_set_sprite_offset_y() {
 	VgaSprite *vsp = find_cur_sprite();
-	int16 a = vc_read_next_word();
-	vsp->y += a;
+	vsp->y += (int16)vc_read_next_word();
 	_vga_sprite_changed++;
 }
 
@@ -1092,7 +1090,7 @@ void SimonState::vc_21_jump_if_code_word() {
 	}
 }
 
-void SimonState::vc_22_set_palette() {
+void SimonState::vc_22_set_sprite_palette() {
 	uint a = vc_read_next_word();
 	uint b = vc_read_next_word();
 	uint num = a == 0 ? 0x20 : 0x10;
@@ -1116,7 +1114,7 @@ void SimonState::vc_22_set_palette() {
 	_vga_sprite_changed++;
 }
 
-void SimonState::vc_23_set_priority() {
+void SimonState::vc_23_set_sprite_priority() {
 	VgaSprite *vsp = find_cur_sprite(), *vus2;
 	uint16 pri = vc_read_next_word();
 	VgaSprite bak;
@@ -1347,7 +1345,7 @@ void SimonState::vc_36_saveload_thing() {
 	}
 }
 
-void SimonState::vc_37_offset_y_f() {
+void SimonState::vc_37_set_sprite_offset_y() {
 	VgaSprite *vsp = find_cur_sprite();
 	vsp->y += vc_read_var(vc_read_next_word());
 	_vga_sprite_changed++;
@@ -1444,13 +1442,13 @@ void SimonState::vc_44_skip_if_bit_set() {
 	}
 }
 
-void SimonState::vc_45_set_x() {
+void SimonState::vc_45_set_sprite_x() {
 	VgaSprite *vsp = find_cur_sprite();
 	vsp->x = vc_read_var(vc_read_next_word());
 	_vga_sprite_changed++;
 }
 
-void SimonState::vc_46_set_y() {
+void SimonState::vc_46_set_sprite_y() {
 	VgaSprite *vsp = find_cur_sprite();
 	vsp->y = vc_read_var(vc_read_next_word());
 	_vga_sprite_changed++;
@@ -1601,7 +1599,7 @@ void SimonState::vc_58() {
 
 	vc_ptr = _vc_ptr;
 	_vc_ptr = (byte *)&tmp;
-	vc_23_set_priority();
+	vc_23_set_sprite_priority();
 
 	_vc_ptr = vc_ptr;
 	_vga_cur_sprite_id = sprite;
@@ -1759,7 +1757,7 @@ void SimonState::vc_63_palette_thing_2() {
 	_video_var_3 = false;
 }
 
-void SimonState::vc_64_skip_if_voice() {
+void SimonState::vc_64_skip_if_no_speech() {
 	// Simon2
 	if (_sound->_voice_handle == 0)
 		vc_skip_next_instruction();

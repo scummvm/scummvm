@@ -612,8 +612,8 @@ public:
 	void vc_10_draw();
 	void vc_11_clear_pathfind_array();
 	void vc_12_delay();
-	void vc_13_offset_x();
-	void vc_14_offset_y();
+	void vc_13_set_sprite_offset_x();
+	void vc_14_set_sprite_offset_y();
 	void vc_15_wakeup_id();
 	void vc_16_sleep_on_id();
 	void vc_17_set_pathfind_item();
@@ -621,8 +621,8 @@ public:
 	void vc_19_chain_to_script();
 	void vc_20_set_code_word();
 	void vc_21_jump_if_code_word();
-	void vc_22_set_palette();
-	void vc_23_set_priority();
+	void vc_22_set_sprite_palette();
+	void vc_23_set_sprite_priority();
 	void vc_24_set_sprite_xy();
 	void vc_25_halt_sprite();
 	void vc_26_set_window();
@@ -638,7 +638,7 @@ public:
 	void vc_34_force_lock();
 	void vc_35();
 	void vc_36_saveload_thing();
-	void vc_37_offset_y_f();
+	void vc_37_set_sprite_offset_y();
 	void vc_38_skip_if_var_zero();
 	void vc_39_set_var();
 	void vc_40_var_add();
@@ -646,8 +646,8 @@ public:
 	void vc_42_delay_if_not_eq();
 	void vc_43_skip_if_bit_clear();
 	void vc_44_skip_if_bit_set();
-	void vc_45_set_x();
-	void vc_46_set_y();
+	void vc_45_set_sprite_x();
+	void vc_46_set_sprite_y();
 	void vc_47_add_var_f();
 	void vc_48();
 	void vc_49_set_bit();
@@ -666,7 +666,7 @@ public:
 	void vc_63_palette_thing_2();
 
 	// Simon2 specific Video Script Opcodes
-	void vc_64_skip_if_voice();
+	void vc_64_skip_if_no_speech();
 	void vc_65_palette_thing_3();
 	void vc_66_skip_if_nz();
 	void vc_67_skip_if_ge();

@@ -995,8 +995,8 @@ const char *const simon1_video_opcode_name_table[] = {
 	"|CLEAR_PATHFIND_ARRAY",
 	/* 12 */
 	"d|DELAY",
-	"d|OFFSET_X",
-	"d|OFFSET_Y",
+	"d|SET_SPRITE_OFFSET_X",
+	"d|SET_SPRITE_OFFSET_Y",
 	"d|IDENT_WAKEUP",
 	/* 16 */
 	"d|IDENT_SLEEP",
@@ -1006,8 +1006,8 @@ const char *const simon1_video_opcode_name_table[] = {
 	/* 20 */
 	"dd|SET_CODE_WORD",
 	"i|JUMP_IF_CODE_WORD",
-	"dd|SET_PALETTE",
-	"d|SET_PRIORITY",
+	"dd|SET_SPRITE_PALETTE",
+	"d|SET_SPRITE_PRIORITY",
 	/* 24 */
 	"diid|SET_SPRITE_XY",
 	"x|HALT_SPRITE",
@@ -1025,7 +1025,7 @@ const char *const simon1_video_opcode_name_table[] = {
 	"dd|VC35",
 	/* 36 */
 	"dd|SAVELOAD_THING",
-	"v|OFFSET_Y_F",
+	"v|SET_SPRITE_OFFSET_Y",
 	"v|SKIP_IF_VAR_ZERO",
 	"vd|SET_VAR",
 	/* 40 */
@@ -1035,8 +1035,8 @@ const char *const simon1_video_opcode_name_table[] = {
 	"d|SKIP_IF_BIT_CLEAR",
 	/* 44 */
 	"d|SKIP_IF_BIT_SET",
-	"v|SET_X_F",
-	"v|SET_Y_F",
+	"v|SET_SPRITE_X",
+	"v|SET_SPRITE_Y",
 	"vv|ADD_VAR_F",
 	/* 48 */
 	"|VC_48",
@@ -1052,7 +1052,7 @@ const char *const simon1_video_opcode_name_table[] = {
 	"|DUMMY_56",
 	"|DUMMY_57",
 	"|UNK_58",
-	"|SKIP_IF_VOICE",
+	"|SKIP_IF_NO_SPEECH",
 	/* 60 */
 	"d|KILL_SPRITE",
 	"ddd|INIT_SPRITE",
@@ -1078,8 +1078,8 @@ const char *const simon2_video_opcode_name_table[] = {
 	"|CLEAR_PATHFIND_ARRAY",
 	/* 12 */
 	"b|DELAY",
-	"d|OFFSET_X",
-	"d|OFFSET_Y",
+	"d|SET_SPRITE_OFFSET_X",
+	"d|SET_SPRITE_OFFSET_Y",
 	"d|IDENT_WAKEUP",
 	/* 16 */
 	"d|IDENT_SLEEP",
@@ -1089,8 +1089,8 @@ const char *const simon2_video_opcode_name_table[] = {
 	/* 20 */
 	"dd|SET_CODE_WORD",
 	"i|JUMP_IF_CODE_WORD",
-	"dd|SET_PALETTE",
-	"d|SET_PRIORITY",
+	"dd|SET_SPRITE_PALETTE",
+	"d|SET_SPRITE_PRIORITY",
 	/* 24 */
 	"diid|SET_SPRITE_XY",
 	"x|HALT_SPRITE",
@@ -1108,7 +1108,7 @@ const char *const simon2_video_opcode_name_table[] = {
 	"dd|VC35",
 	/* 36 */
 	"dd|SAVELOAD_THING",
-	"v|OFFSET_Y_F",
+	"v|SET_SPRITE_OFFSET_Y",
 	"v|SKIP_IF_VAR_ZERO",
 	"vd|SET_VAR",
 	/* 40 */
@@ -1118,8 +1118,8 @@ const char *const simon2_video_opcode_name_table[] = {
 	"d|SKIP_IF_BIT_CLEAR",
 	/* 44 */
 	"d|SKIP_IF_BIT_SET",
-	"v|SET_X_F",
-	"v|SET_Y_F",
+	"v|SET_SPRITE_X",
+	"v|SET_SPRITE_Y",
 	"vv|ADD_VAR_F",
 	/* 48 */
 	"|VC_48",
@@ -1142,7 +1142,7 @@ const char *const simon2_video_opcode_name_table[] = {
 	"|PALETTE_THING",
 	"|PALETTE_THING_2",
 	/* 64 */
-	"|SKIP_IF_VOICE",
+	"|SKIP_IF_NO_SPEECH",
 	"|PALETTE_THING_3",
 	"|SKIP_IF_NZ",
 	"|SKIP_IF_GE",
