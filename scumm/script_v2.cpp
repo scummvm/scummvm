@@ -1522,7 +1522,7 @@ void ScummEngine_v2::o2_getActorWalkBox() {
 	Actor *a;
 	getResultPos();
 	a = derefActor(getVarOrDirectByte(PARAM_1), "o2_getActorWalkbox");
-	setResult(a->walkbox);
+	setResult(a->_walkbox);
 }
 
 void ScummEngine_v2::o2_dummy() {

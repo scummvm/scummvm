@@ -1157,7 +1157,7 @@ void Insane::smlayer_putActor(int actornum, int actnum, int x, int y, byte room)
 
 void Insane::smlayer_setActorLayer(int actornum, int actnum, int layer) {
 	Actor *a = _vm->derefActor(_actor[actornum].act[actnum].actor, "smlayer_setActorLayer");
-	a->layer = layer;
+	a->_layer = layer;
 }
 
 void Insane::smlayer_setFluPalette(byte *pal, int shut_flag) {

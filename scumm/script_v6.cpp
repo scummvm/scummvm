@@ -1404,7 +1404,7 @@ void ScummEngine_v6::o6_getActorRoom() {
 
 void ScummEngine_v6::o6_getActorWalkBox() {
 	Actor *a = derefActor(pop(), "o6_getActorWalkBox");
-	push(a->ignoreBoxes ? 0 : a->walkbox);
+	push(a->ignoreBoxes ? 0 : a->_walkbox);
 }
 
 void ScummEngine_v6::o6_getActorCostume() {
@@ -1446,7 +1446,7 @@ void ScummEngine_v6::o6_isActorInBox() {
 
 void ScummEngine_v6::o6_getActorLayer() {
 	Actor *a = derefActor(pop(), "getActorLayer");
-	push(a->layer);
+	push(a->_layer);
 }
 
 void ScummEngine_v6::o6_getObjectX() {
@@ -1792,14 +1792,14 @@ void ScummEngine_v6::o6_actorOps() {
 			a->sound[i] = args[i];
 		break;
 	case 79:		// SO_WALK_ANIMATION
-		a->walkFrame = pop();
+		a->_walkFrame = pop();
 		break;
 	case 80:		// SO_TALK_ANIMATION
-		a->talkStopFrame = pop();
-		a->talkStartFrame = pop();
+		a->_talkStopFrame = pop();
+		a->_talkStartFrame = pop();
 		break;
 	case 81:		// SO_STAND_ANIMATION
-		a->standFrame = pop();
+		a->_standFrame = pop();
 		break;
 	case 82:		// SO_ANIMATION
 		// dummy case in scumm6
@@ -1814,11 +1814,11 @@ void ScummEngine_v6::o6_actorOps() {
 		a->setElevation(pop());
 		break;
 	case 85:		// SO_ANIMATION_DEFAULT
-		a->initFrame = 1;
-		a->walkFrame = 2;
-		a->standFrame = 3;
-		a->talkStartFrame = 4;
-		a->talkStopFrame = 5;
+		a->_initFrame = 1;
+		a->_walkFrame = 2;
+		a->_standFrame = 3;
+		a->_talkStartFrame = 4;
+		a->_talkStopFrame = 5;
 		break;
 	case 86:		// SO_PALETTE
 		j = pop();
@@ -1833,7 +1833,7 @@ void ScummEngine_v6::o6_actorOps() {
 		loadPtrToResource(rtActorName, a->number, NULL);
 		break;
 	case 89:		// SO_INIT_ANIMATION
-		a->initFrame = pop();
+		a->_initFrame = pop();
 		break;
 	case 91:		// SO_ACTOR_WIDTH
 		a->width = pop();
@@ -1865,7 +1865,7 @@ void ScummEngine_v6::o6_actorOps() {
 		a->setAnimSpeed(pop());
 		break;
 	case 98:		// SO_SHADOW
-		a->shadow_mode = pop();
+		a->_shadowMode = pop();
 		break;
 	case 99:		// SO_TEXT_OFFSET
 		a->talkPosY = pop();
@@ -1885,14 +1885,14 @@ void ScummEngine_v6::o6_actorOps() {
 		a->initActor(2);
 		break;
 	case 227:		// SO_ACTOR_DEPTH
-		a->layer = pop();
+		a->_layer = pop();
 		break;
 	case 228:		// SO_ACTOR_WALK_SCRIPT
 		a->walkScript = pop();
 		break;
 	case 229:		// SO_ACTOR_STOP
 		a->stopActorMoving();
-		a->startAnimActor(a->standFrame);
+		a->startAnimActor(a->_standFrame);
 		break;
 	case 230:										/* set direction */
 		a->moving &= ~MF_TURN;
@@ -2618,7 +2618,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			break;
 		case 111:
 			a = derefActor(args[1], "o6_kernelSetFunctions: 111");
-			a->shadow_mode = args[2] + args[3];
+			a->_shadowMode = args[2] + args[3];
 			break;
 		case 112:									/* palette shift? */
 			setupShadowPalette(args[3], args[4], args[5], args[1], args[2], args[6], args[7]);

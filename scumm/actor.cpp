@@ -46,7 +46,7 @@ void Actor::initActorClass(ScummEngine *scumm) {
 
 Actor::Actor() {
 	assert(_vm != 0);
-	offs_x = offs_y = 0;
+	_offsX = _offsY = 0;
 	top = bottom = 0;
 	number = 0;
 	needRedraw = needBgReset = costumeNeedsInit = visible = false;
@@ -54,7 +54,7 @@ Actor::Actor() {
 	speedx = 8;
 	speedy = 2;
 	frame = 0;
-	walkbox = 0;
+	_walkbox = 0;
 	animProgress = 0;
 	skipLimb = false;
 	drawToBackBuf = false;
@@ -87,7 +87,7 @@ void Actor::initActor(int mode) {
 		condMask = 1;
 		skipLimb = false;
 	}
-	elevation = 0;
+	_elevation = 0;
 	width = 24;
 	talkColor = 15;
 	talkPosX = 0;
@@ -99,8 +99,8 @@ void Actor::initActor(int mode) {
 
 	stopActorMoving();
 
-	shadow_mode = 0;
-	layer = 0;
+	_shadowMode = 0;
+	_layer = 0;
 
 	setActorWalkSpeed(8, 2);
 	animSpeed = 0;
@@ -119,24 +119,24 @@ void Actor::initActor(int mode) {
 	talkVolume = 127;
 
 	if (_vm->_version <= 2) {
-		initFrame = 2;
-		walkFrame = 0;
-		standFrame = 1;
-		talkStartFrame = 5;
-		talkStopFrame = 4;
+		_initFrame = 2;
+		_walkFrame = 0;
+		_standFrame = 1;
+		_talkStartFrame = 5;
+		_talkStopFrame = 4;
 	} else {
-		initFrame = 1;
-		walkFrame = 2;
-		standFrame = 3;
-		talkStartFrame = 4;
-		talkStopFrame = 5;
+		_initFrame = 1;
+		_walkFrame = 2;
+		_standFrame = 3;
+		_talkStartFrame = 4;
+		_talkStopFrame = 5;
 	}
 
-	talking = false;
+	_talking = false;
 	walkScript = 0;
 	talkScript = 0;
 
-	clipOverride = _vm->_actorClipOverride;
+	_clipOverride = _vm->_actorClipOverride;
 
 	auxBlock.visible = false;
 
@@ -243,7 +243,7 @@ int Actor::remapDirection(int dir, bool is_walking) {
 	// actor is in the current room anyway.
 	
 	if (!ignoreBoxes || (_vm->_gameId == GID_LOOM || _vm->_gameId == GID_LOOM256)) {
-		specdir = _vm->_extraBoxFlags[walkbox];
+		specdir = _vm->_extraBoxFlags[_walkbox];
 		if (specdir) {
 			if (specdir & 0x8000) {
 				dir = specdir & 0x3FFF;
@@ -256,7 +256,7 @@ int Actor::remapDirection(int dir, bool is_walking) {
 			}
 		}
 
-		flags = _vm->getBoxFlags(walkbox);
+		flags = _vm->getBoxFlags(_walkbox);
 
 		flipX = (walkdata.deltaXFactor > 0);
 		flipY = (walkdata.deltaYFactor > 0);
@@ -358,7 +358,7 @@ int Actor::updateActorDirection(bool is_walking) {
 }
 
 void Actor::setBox(int box) {
-	walkbox = box;
+	_walkbox = box;
 	setupActorScale();
 }
 
@@ -372,7 +372,7 @@ int Actor::actorWalkStep() {
 
 	nextFacing = updateActorDirection(true);
 	if (!(moving & MF_IN_LEG) || facing != nextFacing) {
-		if (walkFrame != frame || facing != nextFacing) {
+		if (_walkFrame != frame || facing != nextFacing) {
 			startWalkAnim(1, nextFacing);
 		}
 		moving |= MF_IN_LEG;
@@ -380,7 +380,7 @@ int Actor::actorWalkStep() {
 
 	actorPos = _pos;
 
-	if (walkbox != walkdata.curbox && _vm->checkXYInBoxBounds(walkdata.curbox, actorPos.x, actorPos.y)) {
+	if (_walkbox != walkdata.curbox && _vm->checkXYInBoxBounds(walkdata.curbox, actorPos.x, actorPos.y)) {
 		setBox(walkdata.curbox);
 	}
 
@@ -427,12 +427,12 @@ void Actor::setupActorScale() {
 	// For some boxes, we ignore the scaling and use whatever values the
 	// scripts set. This is used e.g. in the Mystery Vortex in Sam&Max.
 	// Older games used the flag 0x20 differently, though.
-	if (_vm->_gameId == GID_SAMNMAX && (_vm->getBoxFlags(walkbox) & kBoxIgnoreScale))
+	if (_vm->_gameId == GID_SAMNMAX && (_vm->getBoxFlags(_walkbox) & kBoxIgnoreScale))
 		return;
 
-	boxscale = _vm->getBoxScale(walkbox);
+	boxscale = _vm->getBoxScale(_walkbox);
 
-	uint16 scale = _vm->getScale(walkbox, _pos.x, _pos.y);
+	uint16 scale = _vm->getScale(_walkbox, _pos.x, _pos.y);
 	assert(scale <= 0xFF);
 
 	scalex = scaley = (byte)scale;
@@ -442,26 +442,26 @@ void Actor::startAnimActor(int f) {
 	if (_vm->_version >= 7 && !((_vm->_gameId == GID_FT) && (_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))) {
 		switch (f) {
 		case 1001:
-			f = initFrame;
+			f = _initFrame;
 			break;
 		case 1002:
-			f = walkFrame;
+			f = _walkFrame;
 			break;
 		case 1003:
-			f = standFrame;
+			f = _standFrame;
 			break;
 		case 1004:
-			f = talkStartFrame;
+			f = _talkStartFrame;
 			break;
 		case 1005:
-			f = talkStopFrame;
+			f = _talkStopFrame;
 			break;
 		}
 
 		if (costume != 0) {
 			animProgress = 0;
 			needRedraw = true;
-			if (f == initFrame)
+			if (f == _initFrame)
 				cost.reset();
 			_vm->akos_decodeData(this, f, (uint) - 1);
 			frame = f;
@@ -469,19 +469,19 @@ void Actor::startAnimActor(int f) {
 	} else {
 		switch (f) {
 		case 0x38:
-			f = initFrame;
+			f = _initFrame;
 			break;
 		case 0x39:
-			f = walkFrame;
+			f = _walkFrame;
 			break;
 		case 0x3A:
-			f = standFrame;
+			f = _standFrame;
 			break;
 		case 0x3B:
-			f = talkStartFrame;
+			f = _talkStartFrame;
 			break;
 		case 0x3C:
-			f = talkStopFrame;
+			f = _talkStopFrame;
 			break;
 		}
 
@@ -493,7 +493,7 @@ void Actor::startAnimActor(int f) {
 			needRedraw = true;
 			// V1 - V2 games don't seem to need a cost.reset() at this point.
 			// Causes Zak to lose his body in several scenes, see bug #771508
-			if (_vm->_version >= 3 && f == initFrame) {
+			if (_vm->_version >= 3 && f == _initFrame) {
 				cost.reset();
 				auxBlock.visible = false;
 			}
@@ -529,7 +529,7 @@ void Actor::animateActor(int anim) {
 
 	switch (cmd) {
 	case 2:				// stop walking
-		startAnimActor(standFrame);
+		startAnimActor(_standFrame);
 		stopActorMoving();
 		break;
 	case 3:				// change direction immediatly
@@ -603,7 +603,7 @@ void Actor::putActor(int dstX, int dstY, byte newRoom) {
 		if (isInCurrentRoom()) {
 			if (moving) {
 				stopActorMoving();
-				startAnimActor(standFrame);
+				startAnimActor(_standFrame);
 			}
 			adjustActorPos();
 		} else {
@@ -722,8 +722,8 @@ void Actor::adjustActorPos() {
 	stopActorMoving();
 	cost.soundCounter = 0;
 
-	if (walkbox != kInvalidBox) {
-		byte flags = _vm->getBoxFlags(walkbox);
+	if (_walkbox != kInvalidBox) {
+		byte flags = _vm->getBoxFlags(_walkbox);
 		if (flags & 7) {
 			turnToDirection(facing);
 		}
@@ -764,7 +764,7 @@ void Actor::hideActor() {
 
 	if (moving) {
 		stopActorMoving();
-		startAnimActor(standFrame);
+		startAnimActor(_standFrame);
 	}
 	visible = false;
 	cost.soundCounter = 0;
@@ -782,17 +782,17 @@ void Actor::showActor() {
 	_vm->ensureResourceLoaded(rtCostume, costume);
 
 	if (costumeNeedsInit) {
-		startAnimActor(initFrame);
+		startAnimActor(_initFrame);
 		if (_vm->_version <= 2) {
-			startAnimActor(standFrame);
-			startAnimActor(talkStopFrame);
+			startAnimActor(_standFrame);
+			startAnimActor(_talkStopFrame);
 		}
 		costumeNeedsInit = false;
 	}
 
 	// FIXME: Evil hack to work around bug #770717
 	if (!moving && _vm->_version <= 2)
-		startAnimActor(standFrame);
+		startAnimActor(_standFrame);
 
 	stopActorMoving();
 	visible = true;
@@ -908,7 +908,7 @@ static int compareDrawOrder(const void* a, const void* b)
 	int diff;
 
 	// The actor in the higher layer is ordered lower
-	diff = actor1->layer - actor2->layer;
+	diff = actor1->_layer - actor2->_layer;
 	if (diff < 0)
 		return +1;
 	if (diff > 0)
@@ -952,7 +952,7 @@ void ScummEngine::processActors() {
 	
 	// Make a list of all actors in this room
 	for (int i = 1; i < _numActors; i++) {
-		if (_version == 8 && _actors[i].layer < 0)
+		if (_version == 8 && _actors[i]._layer < 0)
 			continue;
 		if (_actors[i].isInCurrentRoom() && _actors[i].costume)
 			actors[numactors++] = &_actors[i];
@@ -989,7 +989,7 @@ void ScummEngine::processUpperActors() {
 	int i;
 
 	for (i = 1; i < _numActors; i++) {
-		if (_actors[i].isInCurrentRoom() && _actors[i].costume && _actors[i].layer < 0) {
+		if (_actors[i].isInCurrentRoom() && _actors[i].costume && _actors[i]._layer < 0) {
 			CHECK_HEAP
 			_actors[i].drawActorCostume();
 			CHECK_HEAP
@@ -1012,8 +1012,8 @@ void Actor::drawActorCostume(bool hitTestMode) {
 
 	bcr->_actorID = number;
 
-	bcr->_actorX = _pos.x + offs_x - _vm->virtscr[0].xstart;
-	bcr->_actorY = _pos.y + offs_y - elevation;
+	bcr->_actorX = _pos.x + _offsX - _vm->virtscr[0].xstart;
+	bcr->_actorY = _pos.y + _offsY - _elevation;
 
 	if (_vm->_version <= 2) {
 		// HACK: We have to adjust the x position by one strip (8 pixels) in
@@ -1028,16 +1028,16 @@ void Actor::drawActorCostume(bool hitTestMode) {
 			bcr->_actorX += 8;
 	}
 
-	bcr->_clipOverride = clipOverride;
+	bcr->_clipOverride = _clipOverride;
 
 	if (_vm->_version == 4 && boxscale & 0x8000) {
-		bcr->_scaleX = bcr->_scaleY = _vm->getScale(walkbox, _pos.x, _pos.y);
+		bcr->_scaleX = bcr->_scaleY = _vm->getScale(_walkbox, _pos.x, _pos.y);
 	} else {
 		bcr->_scaleX = scalex;
 		bcr->_scaleY = scaley;
 	}
 
-	bcr->_shadow_mode = shadow_mode;
+	bcr->_shadow_mode = _shadowMode;
 	if (_vm->_features & GF_SMALL_HEADER)
 		bcr->_shadow_table = NULL;
 	else if (_vm->_heversion == 70)
@@ -1053,7 +1053,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 
 		bcr->_zbuf = forceClip;
 		if (bcr->_zbuf == 100) {
-			bcr->_zbuf = _vm->getMaskFromBox(walkbox);
+			bcr->_zbuf = _vm->getMaskFromBox(_walkbox);
 			if (bcr->_zbuf > _vm->gdi._numZBuffer-1)
 				bcr->_zbuf = _vm->gdi._numZBuffer-1;
 		}
@@ -1064,7 +1064,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 		else if (isInClass(kObjectClassNeverClip))
 			bcr->_zbuf = 0;
 		else {
-			bcr->_zbuf = _vm->getMaskFromBox(walkbox);
+			bcr->_zbuf = _vm->getMaskFromBox(_walkbox);
 			if (bcr->_zbuf > _vm->gdi._numZBuffer-1)
 				bcr->_zbuf = _vm->gdi._numZBuffer-1;
 		}
@@ -1269,9 +1269,9 @@ void ScummEngine::actorTalk(const byte *msg) {
 			if ((_version <= 7 && !_keepText) || (_version == 8 && VAR(VAR_HAVE_MSG)))
 				stopTalk();
 			setTalkingActor(a->number);
-			a->talking = true;
+			a->_talking = true;
 			if (!_string[0].no_talk_anim) {
-				a->runActorTalkScript(a->talkStartFrame);
+				a->runActorTalkScript(a->_talkStartFrame);
 				_useTalkAnims = true;
 			}
 			oldact = getTalkingActor();
@@ -1325,15 +1325,14 @@ void ScummEngine::stopTalk() {
 	act = getTalkingActor();
 	if (act && act < 0x80) {
 		Actor *a = derefActor(act, "stopTalk");
-		if (a->isInCurrentRoom() || _version >= 7) {
-			if ((_version >= 7 && !_string[0].no_talk_anim) || (_version <= 6 && _useTalkAnims)) {
-				a->runActorTalkScript(a->talkStopFrame);
-				_useTalkAnims = false;
-			}
+		if ((_version >= 7 && !_string[0].no_talk_anim) ||
+			(_version <= 6 && a->isInCurrentRoom() && _useTalkAnims)) {
+			a->runActorTalkScript(a->_talkStopFrame);
+			_useTalkAnims = false;
 		}
 		if (_version <= 7 && !(_features & GF_HUMONGOUS))
 			setTalkingActor(0xFF);
-		a->talking = false;
+		a->_talking = false;
 	}
 	if (_version == 8 || _features & GF_HUMONGOUS)
 		setTalkingActor(0);
@@ -1372,7 +1371,7 @@ void Actor::setActorCostume(int c) {
 			if (costume) {
 				_vm->ensureResourceLoaded(rtCostume, costume);
 			}
-			startAnimActor(initFrame);
+			startAnimActor(_initFrame);
 		}
 	} else {
 		if (visible) {
@@ -1423,7 +1422,7 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 
 	if (ignoreBoxes) {
 		abr.box = kInvalidBox;
-		walkbox = kInvalidBox;
+		_walkbox = kInvalidBox;
 	} else {
 		if (_vm->checkXYInBoxBounds(walkdata.destbox, abr.x, abr.y)) {
 			abr.box = walkdata.destbox;
@@ -1446,7 +1445,7 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 	moving = (moving & MF_IN_LEG) | MF_NEW_LEG;
 	walkdata.point3.x = 32000;
 
-	walkdata.curbox = walkbox;
+	walkdata.curbox = _walkbox;
 }
 
 void Actor::startWalkAnim(int cmd, int angle) {
@@ -1467,14 +1466,14 @@ void Actor::startWalkAnim(int cmd, int angle) {
 		switch (cmd) {
 		case 1:										/* start walk */
 			setDirection(angle);
-			startAnimActor(walkFrame);
+			startAnimActor(_walkFrame);
 			break;
 		case 2:										/* change dir only */
 			setDirection(angle);
 			break;
 		case 3:										/* stop walk */
 			turnToDirection(angle);
-			startAnimActor(standFrame);
+			startAnimActor(_standFrame);
 			break;
 		}
 	}
@@ -1529,25 +1528,25 @@ void Actor::walkActor() {
 	moving &= ~MF_NEW_LEG;
 	do {
 
-		if (walkbox == kInvalidBox) {
+		if (_walkbox == kInvalidBox) {
 			setBox(walkdata.destbox);
 			walkdata.curbox = walkdata.destbox;
 			break;
 		}
 
-		if (walkbox == walkdata.destbox)
+		if (_walkbox == walkdata.destbox)
 			break;
 
-		next_box = _vm->getPathToDestBox(walkbox, walkdata.destbox);
+		next_box = _vm->getPathToDestBox(_walkbox, walkdata.destbox);
 		if (next_box < 0) {
-			walkdata.destbox = walkbox;
+			walkdata.destbox = _walkbox;
 			moving |= MF_LAST_LEG;
 			return;
 		}
 
 		walkdata.curbox = next_box;
 		
-		if (findPathTowards(walkbox, next_box, walkdata.destbox, foundPath))
+		if (findPathTowards(_walkbox, next_box, walkdata.destbox, foundPath))
 			break;
 
 		if (calcMovementFactor(foundPath))
@@ -1585,11 +1584,11 @@ void Actor::walkActorV12() {
 			startWalkAnim(3, walkdata.destdir);
 		} else {
 			setBox(walkdata.curbox);
-			if (walkbox == walkdata.destbox) {
+			if (_walkbox == walkdata.destbox) {
 				foundPath = walkdata.dest;
 				moving |= MF_LAST_LEG;
 			} else {
-				next_box = _vm->getPathToDestBox(walkbox, walkdata.destbox);
+				next_box = _vm->getPathToDestBox(_walkbox, walkdata.destbox);
 				if (next_box < 0) {
 					moving |= MF_LAST_LEG;
 					return;
@@ -1604,7 +1603,7 @@ void Actor::walkActorV12() {
 				walkdata.curbox = next_box;
 
 				_vm->getClosestPtOnBox(walkdata.curbox, x, y, tmp.x, tmp.y);
-				_vm->getClosestPtOnBox(walkbox, tmp.x, tmp.y, foundPath.x, foundPath.y);
+				_vm->getClosestPtOnBox(_walkbox, tmp.x, tmp.y, foundPath.x, foundPath.y);
 			}
 			calcMovementFactor(foundPath);
 		}
@@ -1654,16 +1653,16 @@ void Actor::walkActorOld() {
 	do {
 		loopCtr++;
 
-		if (walkbox == kInvalidBox) {
+		if (_walkbox == kInvalidBox) {
 			setBox(walkdata.destbox);
 			walkdata.curbox = walkdata.destbox;
 			break;
 		}
 
-		if (walkbox == walkdata.destbox)
+		if (_walkbox == walkdata.destbox)
 			break;
 
-		next_box = _vm->getPathToDestBox(walkbox, walkdata.destbox);
+		next_box = _vm->getPathToDestBox(_walkbox, walkdata.destbox);
 		if (next_box < 0) {
 			moving |= MF_LAST_LEG;
 			return;
@@ -1682,12 +1681,12 @@ void Actor::walkActorOld() {
 
 		if (_vm->_version <= 2) {
 			_vm->getClosestPtOnBox(walkdata.curbox, _pos.x, _pos.y, p2.x, p2.y);
-			_vm->getClosestPtOnBox(walkbox, p2.x, p2.y, p3.x, p3.y);
+			_vm->getClosestPtOnBox(_walkbox, p2.x, p2.y, p3.x, p3.y);
 // FIXME: Work in progress
 //			calcMovementFactor(p3);
 //			return;
 		} else {
-			findPathTowardsOld(walkbox, next_box, walkdata.destbox, p2, p3);
+			findPathTowardsOld(_walkbox, next_box, walkdata.destbox, p2, p3);
 			if (p2.x == 32000 && p3.x == 32000) {
 				break;
 			}
@@ -1804,7 +1803,7 @@ void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold)
 		akpl_color = *akpl++;
 
 		// allow remap of generic palette entry?
-		if (!shadow_mode || akpl_color >= 16) {
+		if (!_shadowMode || akpl_color >= 16) {
 			r = (r * r_fact) >> 8;
 			g = (g * g_fact) >> 8;
 			b = (b * b_fact) >> 8;
@@ -1890,8 +1889,8 @@ void ScummEngine::postProcessAuxQueue() {
 			if (ae->actorNum != -1) {
 				Actor *a = derefActor(ae->actorNum, "postProcessAuxQueue");
 				const uint8 *cost = getResourceAddress(rtCostume, a->costume);
-				int dy = a->offs_y + a->_pos.y - a->getElevation();
-				int dx = a->offs_x + a->_pos.x;
+				int dy = a->_offsY + a->_pos.y - a->getElevation();
+				int dx = a->_offsX + a->_pos.x;
 
 				const uint8 *akax = findResource(MKID('AKAX'), cost);
 				assert(akax);
@@ -1974,11 +1973,11 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 	static const SaveLoadEntry actorEntries[] = {
 		MKLINE(Actor, _pos.x, sleInt16, VER(8)),
 		MKLINE(Actor, _pos.y, sleInt16, VER(8)),
-		MKLINE(Actor, offs_x, sleInt16, VER(32)),
-		MKLINE(Actor, offs_y, sleInt16, VER(32)),
+		MKLINE(Actor, _offsX, sleInt16, VER(32)),
+		MKLINE(Actor, _offsY, sleInt16, VER(32)),
 		MKLINE(Actor, top, sleInt16, VER(8)),
 		MKLINE(Actor, bottom, sleInt16, VER(8)),
-		MKLINE(Actor, elevation, sleInt16, VER(8)),
+		MKLINE(Actor, _elevation, sleInt16, VER(8)),
 		MKLINE(Actor, width, sleUint16, VER(8)),
 		MKLINE(Actor, facing, sleUint16, VER(8)),
 		MKLINE(Actor, costume, sleUint16, VER(8)),
@@ -2001,11 +2000,11 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 		MKLINE(Actor, moving, sleByte, VER(8)),
 		MKLINE(Actor, ignoreBoxes, sleByte, VER(8)),
 		MKLINE(Actor, forceClip, sleByte, VER(8)),
-		MKLINE(Actor, initFrame, sleByte, VER(8)),
-		MKLINE(Actor, walkFrame, sleByte, VER(8)),
-		MKLINE(Actor, standFrame, sleByte, VER(8)),
-		MKLINE(Actor, talkStartFrame, sleByte, VER(8)),
-		MKLINE(Actor, talkStopFrame, sleByte, VER(8)),
+		MKLINE(Actor, _initFrame, sleByte, VER(8)),
+		MKLINE(Actor, _walkFrame, sleByte, VER(8)),
+		MKLINE(Actor, _standFrame, sleByte, VER(8)),
+		MKLINE(Actor, _talkStartFrame, sleByte, VER(8)),
+		MKLINE(Actor, _talkStopFrame, sleByte, VER(8)),
 		MKLINE(Actor, speedx, sleUint16, VER(8)),
 		MKLINE(Actor, speedy, sleUint16, VER(8)),
 		MKLINE(Actor, cost.animCounter, sleUint16, VER(8)),
@@ -2019,12 +2018,12 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 		MKARRAY(Actor, palette[0], sleByte, 256, VER(10)),
 	
 		MK_OBSOLETE(Actor, mask, sleByte, VER(8), VER(9)),
-		MKLINE(Actor, shadow_mode, sleByte, VER(8)),
+		MKLINE(Actor, _shadowMode, sleByte, VER(8)),
 		MKLINE(Actor, visible, sleByte, VER(8)),
 		MKLINE(Actor, frame, sleByte, VER(8)),
 		MKLINE(Actor, animSpeed, sleByte, VER(8)),
 		MKLINE(Actor, animProgress, sleByte, VER(8)),
-		MKLINE(Actor, walkbox, sleByte, VER(8)),
+		MKLINE(Actor, _walkbox, sleByte, VER(8)),
 		MKLINE(Actor, needRedraw, sleByte, VER(8)),
 		MKLINE(Actor, needBgReset, sleByte, VER(8)),
 		MKLINE(Actor, costumeNeedsInit, sleByte, VER(8)),
@@ -2034,7 +2033,7 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 		MKLINE(Actor, talkPosX, sleInt16, VER(8)),
 		MKLINE(Actor, ignoreTurns, sleByte, VER(8)),
 	
-		MKLINE(Actor, layer, sleByte, VER(8)),
+		MKLINE(Actor, _layer, sleByte, VER(8)),
 	
 		MKLINE(Actor, talkScript, sleUint16, VER(8)),
 		MKLINE(Actor, walkScript, sleUint16, VER(8)),

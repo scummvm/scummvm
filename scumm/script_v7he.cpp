@@ -714,7 +714,7 @@ void ScummEngine_v70he::o70_kernelSetFunctions() {
 		break;
 	case 30:
 		a = derefActor(args[1], "o70_kernelSetFunctions: 30");
-		a->clipOverride.bottom = args[2];
+		a->_clipOverride.bottom = args[2];
 		break;
 	case 42:
 		// drawWizImage related

@@ -938,7 +938,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		break;
 	case 43: // HE 90+
 		// Uses reverse order of layering, so we adjust
-		a->layer = -pop();
+		a->_layer = -pop();
 		break;
 	case 64:
 		_actorClipOverride.bottom = pop();
@@ -969,14 +969,14 @@ void ScummEngine_v72he::o72_actorOps() {
 			a->sound[i] = args[i];
 		break;
 	case 79:		// SO_WALK_ANIMATION
-		a->walkFrame = pop();
+		a->_walkFrame = pop();
 		break;
 	case 80:		// SO_TALK_ANIMATION
-		a->talkStopFrame = pop();
-		a->talkStartFrame = pop();
+		a->_talkStopFrame = pop();
+		a->_talkStartFrame = pop();
 		break;
 	case 81:		// SO_STAND_ANIMATION
-		a->standFrame = pop();
+		a->_standFrame = pop();
 		break;
 	case 82:		// SO_ANIMATION
 		// dummy case in scumm6
@@ -991,11 +991,11 @@ void ScummEngine_v72he::o72_actorOps() {
 		a->setElevation(pop());
 		break;
 	case 85:		// SO_ANIMATION_DEFAULT
-		a->initFrame = 1;
-		a->walkFrame = 2;
-		a->standFrame = 3;
-		a->talkStartFrame = 4;
-		a->talkStopFrame = 5;
+		a->_initFrame = 1;
+		a->_walkFrame = 2;
+		a->_standFrame = 3;
+		a->_talkStartFrame = 4;
+		a->_talkStopFrame = 5;
 		break;
 	case 86:		// SO_PALETTE
 		j = pop();
@@ -1011,7 +1011,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		loadPtrToResource(rtActorName, a->number, name);
 		break;
 	case 89:		// SO_INIT_ANIMATION
-		a->initFrame = pop();
+		a->_initFrame = pop();
 		break;
 	case 91:		// SO_ACTOR_WIDTH
 		a->width = pop();
@@ -1042,8 +1042,8 @@ void ScummEngine_v72he::o72_actorOps() {
 		a->setAnimSpeed(pop());
 		break;
 	case 98:		// SO_SHADOW
-		a->shadow_mode = pop();
-		debug(0, "Set actor XMAP idx to %d", a->shadow_mode);
+		a->_shadowMode = pop();
+		debug(0, "Set actor XMAP idx to %d", a->_shadowMode);
 		break;
 	case 99:		// SO_TEXT_OFFSET
 		a->talkPosY = pop();

@@ -1534,13 +1534,13 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			akos_queCommand(8, a, GB(2), 0);
 			continue;
 		case AKC_C0A1:
-			if (a->talking) {
+			if (a->_talking) {
 				curpos = GUW(2);
 				break;
 			}
 			continue;
 		case AKC_C0A2:
-			if (!a->talking) {
+			if (!a->_talking) {
 				curpos = GUW(2);
 				break;
 			}
@@ -1659,8 +1659,8 @@ void ScummEngine::akos_processQueue() {
 			a->forceClip = param_1;
 			break;
 		case 6:
-			a->offs_x = param_1;
-			a->offs_y = param_2;
+			a->_offsX = param_1;
+			a->_offsY = param_2;
 			break;
 		case 7:
 			if (_heversion >= 71) {

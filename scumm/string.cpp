@@ -174,7 +174,7 @@ void ScummEngine::CHARSET_1() {
 	}
 
 	if (a && !_string[0].no_talk_anim) {
-		a->runActorTalkScript(a->talkStartFrame);
+		a->runActorTalkScript(a->_talkStartFrame);
 		_useTalkAnims = true;
 	}
 

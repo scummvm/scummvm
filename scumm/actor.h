@@ -90,9 +90,9 @@ public:
 	Common::Point _pos;
 	
 	/** HE specific: This rect is used to clip actor drawing. */
-	Common::Rect clipOverride;
+	Common::Rect _clipOverride;
 
-	int offs_x, offs_y;
+	int _offsX, _offsY;
 	int top, bottom;
 	uint width;
 	byte number;
@@ -108,19 +108,25 @@ public:
 	byte moving;
 	bool ignoreBoxes;
 	byte forceClip;
-	byte initFrame, walkFrame, standFrame, talkStartFrame, talkStopFrame;
+
+	byte _initFrame;
+	byte _walkFrame;
+	byte _standFrame;
+	byte _talkStartFrame;
+	byte _talkStopFrame;
+
 	bool needRedraw, needBgReset, visible;
-	byte shadow_mode;
+	byte _shadowMode;
 	bool flip;
 	byte frame;
-	byte walkbox;
+	byte _walkbox;
 	int16 talkPosX, talkPosY;
 	uint16 talkScript, walkScript;
 	bool ignoreTurns;
 	bool skipLimb;
 	bool drawToBackBuf;
-	bool talking;
-	int8 layer;
+	bool _talking;
+	int8 _layer;
 	uint16 sound[32];
 	CostumeData cost;
 	uint32 condMask;
@@ -136,7 +142,7 @@ public:
 
 protected:
 	byte palette[256];
-	int elevation;
+	int _elevation;
 	uint16 facing;
 	uint16 targetFacing;
 	uint speedx, speedy;
@@ -229,12 +235,12 @@ public:
 	}
 
 	int getElevation() const {
-		return elevation;
+		return _elevation;
 	}
 	
 	void setElevation(int newElevation) {
-		if (elevation != newElevation) {
-			elevation = newElevation;
+		if (_elevation != newElevation) {
+			_elevation = newElevation;
 			needRedraw = true;
 		}
 	}

@@ -917,24 +917,24 @@ void ScummEngine_v8::o8_actorOps() {
 		a->setActorWalkSpeed(i, j);
 		break;
 	case 0x67:		// SO_ACTOR_ANIMATION_DEFAULT Set actor animation to default
-		a->initFrame = 1;
-		a->walkFrame = 2;
-		a->standFrame = 3;
-		a->talkStartFrame = 4;
-		a->talkStopFrame = 5;
+		a->_initFrame = 1;
+		a->_walkFrame = 2;
+		a->_standFrame = 3;
+		a->_talkStartFrame = 4;
+		a->_talkStopFrame = 5;
 		break;
 	case 0x68:		// SO_ACTOR_ANIMATION_INIT Initialize animation
-		a->initFrame = pop();
+		a->_initFrame = pop();
 		break;
 	case 0x69:		// SO_ACTOR_ANIMATION_TALK Set actor animation to talk animation
-		a->talkStopFrame = pop();
-		a->talkStartFrame = pop();
+		a->_talkStopFrame = pop();
+		a->_talkStartFrame = pop();
 		break;
 	case 0x6A:		// SO_ACTOR_ANIMATION_WALK Set actor animation to walk animation
-		a->walkFrame = pop();
+		a->_walkFrame = pop();
 		break;
 	case 0x6B:		// SO_ACTOR_ANIMATION_STAND Set actor animation to standing animation
-		a->standFrame = pop();
+		a->_standFrame = pop();
 		break;
 	case 0x6C:		// SO_ACTOR_ANIMATION_SPEED Set speed of animation
 		a->setAnimSpeed(pop());
@@ -986,7 +986,7 @@ void ScummEngine_v8::o8_actorOps() {
 			a->putActor(a->_pos.x, a->_pos.y, a->room);
 		break;
 	case 0x78:		// SO_ACTOR_SPECIAL_DRAW
-		a->shadow_mode = pop();
+		a->_shadowMode = pop();
 		break;
 	case 0x79:		// SO_ACTOR_TEXT_OFFSET Set text offset relative to actor
 		a->talkPosY = pop();
@@ -1007,11 +1007,11 @@ void ScummEngine_v8::o8_actorOps() {
 		a->initActor(2);
 		break;
 	case 0x7F:		// SO_ACTOR_DEPTH Set actor Z position
-		a->layer = pop();
+		a->_layer = pop();
 		break;
 	case 0x80:		// SO_ACTOR_STOP
 		a->stopActorMoving();
-		a->startAnimActor(a->standFrame);
+		a->startAnimActor(a->_standFrame);
 		break;
 	case 0x81:		// SO_ACTOR_FACE Make actor face angle
 		a->moving &= ~MF_TURN;
@@ -1395,7 +1395,7 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 	case 0xDC:		// actorTalkAnimation
 		{
 		Actor *a = derefActor(args[1], "actorTalkAnimation");
-		push(a->talkStartFrame);
+		push(a->_talkStartFrame);
 		}
 		break;
 	case 0xDD:		// getGroupSfxVol
@@ -1455,7 +1455,7 @@ void ScummEngine_v8::o8_getActorZPlane() {
 
 	int z = a->forceClip;
 	if (z == 100) {
-		z = getMaskFromBox(a->walkbox);
+		z = getMaskFromBox(a->_walkbox);
 		if (z > gdi._numZBuffer - 1)
 			z = gdi._numZBuffer - 1;
 	}

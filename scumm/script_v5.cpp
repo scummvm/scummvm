@@ -428,14 +428,14 @@ void ScummEngine_v5::o5_actorOps() {
 			a->sound[0] = getVarOrDirectByte(PARAM_1);
 			break;
 		case 4:			// SO_WALK_ANIMATION
-			a->walkFrame = getVarOrDirectByte(PARAM_1);
+			a->_walkFrame = getVarOrDirectByte(PARAM_1);
 			break;
 		case 5:			// SO_TALK_ANIMATION
-			a->talkStartFrame = getVarOrDirectByte(PARAM_1);
-			a->talkStopFrame = getVarOrDirectByte(PARAM_2);
+			a->_talkStartFrame = getVarOrDirectByte(PARAM_1);
+			a->_talkStopFrame = getVarOrDirectByte(PARAM_2);
 			break;
 		case 6:			// SO_STAND_ANIMATION
-			a->standFrame = getVarOrDirectByte(PARAM_1);
+			a->_standFrame = getVarOrDirectByte(PARAM_1);
 			break;
 		case 7:			// SO_ANIMATION
 			getVarOrDirectByte(PARAM_1);
@@ -449,11 +449,11 @@ void ScummEngine_v5::o5_actorOps() {
 			a->setElevation(getVarOrDirectWord(PARAM_1));
 			break;
 		case 10:		// SO_ANIMATION_DEFAULT
-			a->initFrame = 1;
-			a->walkFrame = 2;
-			a->standFrame = 3;
-			a->talkStartFrame = 4;
-			a->talkStopFrame = 5;
+			a->_initFrame = 1;
+			a->_walkFrame = 2;
+			a->_standFrame = 3;
+			a->_talkStartFrame = 4;
+			a->_talkStopFrame = 5;
 			break;
 		case 11:		// SO_PALETTE
 			i = getVarOrDirectByte(PARAM_1);
@@ -476,7 +476,7 @@ void ScummEngine_v5::o5_actorOps() {
 			loadPtrToResource(rtActorName, a->number, NULL);
 			break;
 		case 14:		// SO_INIT_ANIMATION
-			a->initFrame = getVarOrDirectByte(PARAM_1);
+			a->_initFrame = getVarOrDirectByte(PARAM_1);
 			break;
 		case 15:		// SO_PALETTE_LIST
 			error("o5_actorOps:unk not implemented");
@@ -524,7 +524,7 @@ void ScummEngine_v5::o5_actorOps() {
 			a->setAnimSpeed(getVarOrDirectByte(PARAM_1));
 			break;
 		case 23:		// SO_SHADOW
-			a->shadow_mode = getVarOrDirectByte(PARAM_1);
+			a->_shadowMode = getVarOrDirectByte(PARAM_1);
 			break;
 		default:
 			warning("o5_actorOps: default case");
@@ -1082,7 +1082,7 @@ void ScummEngine_v5::o5_getActorWalkBox() {
 	getResultPos();
 	int act = getVarOrDirectByte(PARAM_1);
 	Actor *a = derefActor(act, "o5_getActorWalkBox");
-	setResult(a->walkbox);
+	setResult(a->_walkbox);
 }
 
 void ScummEngine_v5::o5_getActorWidth() {

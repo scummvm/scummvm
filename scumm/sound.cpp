@@ -560,15 +560,15 @@ void Sound::processSfxQueues() {
 			if (a->isInCurrentRoom()) {
 				if (isMouthSyncOff(_curSoundPos) && !_mouthSyncMode) {
 					if (!_endOfMouthSync)
-						a->runActorTalkScript(a->talkStopFrame);
+						a->runActorTalkScript(a->_talkStopFrame);
 					_mouthSyncMode = 0;
 				} else  if (isMouthSyncOff(_curSoundPos) == 0 && !_mouthSyncMode) {
-					a->runActorTalkScript(a->talkStartFrame);
+					a->runActorTalkScript(a->_talkStartFrame);
 					_mouthSyncMode = 1;
 				}
 
 				if (_vm->_version <= 6 && finished)
-					a->runActorTalkScript(a->talkStopFrame);
+					a->runActorTalkScript(a->_talkStopFrame);
 			}
 		}
 
