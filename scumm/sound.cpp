@@ -56,7 +56,6 @@ Sound::Sound(ScummEngine *parent) {
 	memset(this,0,sizeof(Sound));	// palmos
 	
 	_scumm = parent;
-	_talkChannelHandle = 0;
 	_currentCDSound = 0;
 
 	_sfxFile = 0;
@@ -427,7 +426,7 @@ void Sound::processSfxQueues() {
 	if ((_sfxMode & 2) && _scumm->VAR(_scumm->VAR_TALK_ACTOR)) {
 		act = _scumm->VAR(_scumm->VAR_TALK_ACTOR);
 
-		finished = !_talkChannelHandle;
+		finished = !_talkChannelHandle.isActive();
 
 		if (act != 0 && (uint) act < 0x80 && !_scumm->_string[0].no_talk_anim) {
 			a = _scumm->derefActor(act, "processSfxQueues");

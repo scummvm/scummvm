@@ -805,7 +805,7 @@ void IMuseDigital::mixerCallback() {
 			_channel[l].offset += mixer_size;
 
 			if (_scumm->_silentDigitalImuse == false) {
-				if (_channel[l].handle == 0)
+				if (!_channel[l].handle.isActive())
 					_scumm->_mixer->newStream(&_channel[l].handle, _channel[l].freq, 
 											_channel[l].mixerFlags, 100000);
 				_scumm->_mixer->setChannelVolume(_channel[l].handle, _channel[l].vol / 1000);
@@ -821,7 +821,7 @@ void IMuseDigital::startSound(int sound) {
 	int l, r;
 
 	for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
-		if (!_channel[l].used && !_channel[l].handle) {
+		if (!_channel[l].used && !_channel[l].handle.isActive()) {
 			byte *ptr = _scumm->getResourceAddress(rtSound, sound);
 			byte *s_ptr = ptr;
 			if (ptr == NULL) {
@@ -1290,7 +1290,6 @@ void IMuseDigital::playBundleMusic(const char *song) {
 		_bundleSongPosInMs = 0;
 		_pauseBundleMusic = false;
 		_musicBundleToBeChanged = false;
-		_bundleMusicTrack = 0;
 		_numberSamplesBundleMusic = _bundle->getNumberOfMusicSamplesByName(song);
 		_nameBundleMusic = song;
 		_scumm->_timer->installTimerProc(&music_handler, 1000000, this);
@@ -1423,7 +1422,7 @@ void IMuseDigital::bundleMusicHandler() {
 
 	_bundleSongPosInMs = (_bundleMusicPosition * 5) / (_outputMixerSize / 200);
 	_bundleMusicPosition += final_size;
-	if (_bundleMusicTrack == 0)
+	if (!_bundleMusicTrack.isActive())
 		_scumm->_mixer->newStream(&_bundleMusicTrack, rate, SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO, 300000);
 	_scumm->_mixer->appendStream(_bundleMusicTrack, buffer, final_size);
 	free(buffer);

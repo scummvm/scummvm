@@ -39,7 +39,6 @@ SmushMixer::SmushMixer(SoundMixer *m) :
 	for (int32 i = 0; i < NUM_CHANNELS; i++) {
 		_channels[i].id = -1;
 		_channels[i].chan = NULL;
-		_channels[i].handle = 0;
 	}
 }
 
@@ -70,19 +69,17 @@ void SmushMixer::addChannel(SmushChannel *c) {
 	}
 
 	for (i = 0; i < NUM_CHANNELS; i++) {
-		if ((_channels[i].chan == NULL || _channels[i].id == -1) && _channels[i].handle == 0) {
+		if ((_channels[i].chan == NULL || _channels[i].id == -1) && !_channels[i].handle.isActive()) {
 			_channels[i].chan = c;
 			_channels[i].id = track;
-			_channels[i].handle = 0;
 			return;
 		}
 	}
 
 	for (i = 0; i < NUM_CHANNELS; i++) {
-		warning("channel %d : %p(%d, %d) %d %d", i, (void *)_channels[i].chan, 
+		warning("channel %d : %p(%d, %d) %d", i, (void *)_channels[i].chan, 
 			_channels[i].chan ? _channels[i].chan->getTrackIdentifier() : -1, 
-			_channels[i].chan ? _channels[i].chan->isTerminated() : 1, 
-			_channels[i].handle);
+			_channels[i].chan ? _channels[i].chan->isTerminated() : 1);
 	}
 
 	error("SmushMixer::addChannel(%d): no channel available", track);
@@ -122,7 +119,7 @@ bool SmushMixer::handleFrame() {
 				}
 
 				if (_silentMixer == false) {
-					if (_channels[i].handle == 0)
+					if (!_channels[i].handle.isActive())
 						_mixer->newStream(&_channels[i].handle, rate, flags, 500000);
 					_mixer->appendStream(_channels[i].handle, data, size);
 				}

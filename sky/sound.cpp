@@ -1019,11 +1019,6 @@ SkySound::SkySound(SoundMixer *mixer, SkyDisk *pDisk, uint8 pVolume) {
 	_skyDisk = pDisk;
 	_soundData = NULL;
 	_mixer = mixer;
-	_voiceHandle = 0;
-	_effectHandle = 0;
-	_bgSoundHandle = 0;
-	_ingameSpeech = 0;
-	_ingameSound0 = _ingameSound1 = 0;
 	_saveSounds[0] = _saveSounds[1] = 0xFFFF;
 	_mainSfxVolume = pVolume;
 }

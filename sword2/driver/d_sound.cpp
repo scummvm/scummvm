@@ -35,6 +35,7 @@
 #include "common/stdafx.h"
 #include "common/file.h"
 #include "sword2/sword2.h"
+#include "sound/rate.h"
 
 namespace Sword2 {
 
@@ -132,7 +133,6 @@ Sound::Sound(Sword2Engine *vm) {
 
 	memset(_fx, 0, sizeof(_fx));
 
-	_soundHandleSpeech = 0;
 	_soundOn = true;
 
 	_converter = makeRateConverter(_music[0].getRate(), _vm->_mixer->getOutputRate(), _music[0].isStereo(), false);
@@ -243,7 +243,7 @@ void Sound::playLeadOut(uint8 *leadOut) {
 		return;
 	}
 
-	while (_fx[i]._handle) {
+	while (_fx[i]._handle.isActive()) {
 		_vm->_graphics->updateDisplay();
 		_vm->_system->delay_msecs(30);
 	}
@@ -284,7 +284,7 @@ void Sound::fxServer(int16 *data, uint len) {
  */
 
 int32 Sound::amISpeaking() {
-	if (!_speechMuted && !_speechPaused && _soundHandleSpeech != 0)
+	if (!_speechMuted && !_speechPaused && _soundHandleSpeech.isActive())
 		return RDSE_SPEAKING;
 
 	return RDSE_QUIET;
@@ -441,7 +441,7 @@ int32 Sound::getSpeechStatus(void) {
 	if (_speechPaused)
 		return RDSE_SAMPLEPLAYING;
 
-	if (!_soundHandleSpeech) {
+	if (!_soundHandleSpeech.isActive()) {
 		_speechStatus = false;
 		return RDSE_SAMPLEFINISHED;
 	}
@@ -459,7 +459,7 @@ void Sound::setSpeechVolume(uint8 volume) {
 
 	_speechVol = volume;
 
-	if (_soundHandleSpeech != 0 && !_speechMuted && getSpeechStatus() == RDSE_SAMPLEPLAYING) {
+	if (_soundHandleSpeech.isActive() && !_speechMuted && getSpeechStatus() == RDSE_SAMPLEPLAYING) {
 		_vm->_mixer->setChannelVolume(_soundHandleSpeech, 16 * _speechVol);
 	}
 }
@@ -558,7 +558,7 @@ int32 Sound::openFx(int32 id, uint8 *data) {
 			// between rooms.
 
 			for (fxi = 0; fxi < MAXFX; fxi++) {
-				if (!_fx[fxi]._handle)
+				if (!_fx[fxi]._handle.isActive())
 					break;
 			}
 

@@ -79,7 +79,7 @@ void SwordSound::engine(void) {
 			if (_fxQueue[cnt2].delay == 0)
 				playSample(&_fxQueue[cnt2]);
 		} else {
-			if (!_fxQueue[cnt2].handle) { // sound finished
+			if (!_fxQueue[cnt2].handle.isActive()) { // sound finished
 				_resMan->resClose(_fxList[_fxQueue[cnt2].id].sampleId);
 				if (cnt2 != _endOfQueue-1)
 					_fxQueue[cnt2] = _fxQueue[_endOfQueue - 1];
@@ -109,7 +109,7 @@ bool SwordSound::amISpeaking(void) {
 }
 
 bool SwordSound::speechFinished(void) {
-	return (_speechHandle == 0);
+	return !_speechHandle.isActive();
 }
 
 void SwordSound::newScreen(uint32 screen) {

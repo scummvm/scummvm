@@ -22,7 +22,6 @@
 #include <stdio.h>
 #include "base/engine.h"
 #include "common/util.h"
-#include "sound/mixer.h"
 #include "base/gameDetector.h"
 #include "sworddefs.h"
 

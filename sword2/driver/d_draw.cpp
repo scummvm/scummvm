@@ -173,7 +173,7 @@ int32 MoviePlayer::play(char *filename, _movieTextObject *text[], uint8 *musicOu
 		tmpPal[255 * 4 + 2] = 255;
 		_vm->_graphics->setPalette(0, 256, tmpPal, RDPAL_INSTANT);
 
-		PlayingSoundHandle handle = 0;
+		PlayingSoundHandle handle;
 
 		bool skipCutscene = false;
 
@@ -226,7 +226,7 @@ int32 MoviePlayer::play(char *filename, _movieTextObject *text[], uint8 *musicOu
 		// more importantly - that we don't free the sound buffer while
 		// it's in use.
 
-		while (handle) {
+		while (handle.isActive()) {
 			_vm->_system->delay_msecs(100);
 		};
 

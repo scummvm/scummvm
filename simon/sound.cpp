@@ -262,10 +262,6 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const C
 	_last_voice_file = 0;
 	_offsets = 0;
 
-	_voice_handle = 0;
-	_effects_handle = 0;
-	_ambient_handle = 0;
-
 	_voice_file = false;
 	_ambient_playing = 0;
 

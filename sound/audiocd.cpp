@@ -74,7 +74,7 @@ bool AudioCDManager::isPlaying() const {
 void AudioCDManager::updateCD() {
 	if (_cd.playing) {
 		// If the sound handle is 0, then playback stopped.
-		if (!_cd.handle) {
+		if (!_cd.handle.isActive()) {
 			// If playback just stopped, check if the current track is supposed
 			// to be repeated, and if that's the case, play it again. Else, stop
 			// the CD explicitly.
@@ -94,7 +94,7 @@ void AudioCDManager::updateCD() {
 
 AudioCDManager::Status AudioCDManager::getStatus() const {
 	// TODO: This could be improved for "real" CD playback.
-	// But to do that, we have to extend the OSystem interface.
+	// But to do that, we would have to extend the OSystem interface.
 	Status info = _cd;
 	info.playing = isPlaying();
 	return info;

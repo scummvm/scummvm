@@ -22,6 +22,9 @@
 
 #include "stdafx.h"
 #include "scumm/player_mod.h"
+#include "sound/audiostream.h"
+#include "sound/mixer.h"
+#include "sound/rate.h"
 
 namespace Scumm {
 

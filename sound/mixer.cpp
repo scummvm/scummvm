@@ -152,10 +152,10 @@ void SoundMixer::newStream(PlayingSoundHandle *handle, uint rate, byte flags, ui
 void SoundMixer::appendStream(PlayingSoundHandle handle, void *sound, uint32 size) {
 	Common::StackLock lock(_mutex);
 	
-	if (handle == 0)
+	if (!handle.isActive())
 		return;
 
-	int index = handle - 1;
+	int index = handle.getIndex();
 
 	if ((index < 0) || (index >= NUM_CHANNELS)) {
 		warning("soundMixer::appendStream has invalid index %d", index);
@@ -179,10 +179,10 @@ void SoundMixer::endStream(PlayingSoundHandle handle) {
 	Common::StackLock lock(_mutex);
 
 	// Simply ignore stop requests for handles of sounds that already terminated
-	if (handle == 0)
+	if (!handle.isActive())
 		return;
 
-	int index = handle - 1;
+	int index = handle.getIndex();
 
 	if ((index < 0) || (index >= NUM_CHANNELS)) {
 		warning("soundMixer::endStream has invalid index %d", index);
@@ -219,7 +219,7 @@ void SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
 
 	_channels[index] = chan;
 	if (handle)
-		*handle = index + 1;
+		handle->setIndex(index);
 }
 
 void SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id, byte volume, int8 pan, uint32 loopStart, uint32 loopEnd) {
@@ -358,10 +358,10 @@ void SoundMixer::stopHandle(PlayingSoundHandle handle) {
 	Common::StackLock lock(_mutex);
 
 	// Simply ignore stop requests for handles of sounds that already terminated
-	if (handle == 0)
+	if (!handle.isActive())
 		return;
 
-	int index = handle - 1;
+	int index = handle.getIndex();
 
 	if ((index < 0) || (index >= NUM_CHANNELS)) {
 		warning("soundMixer::stopHandle has invalid index %d", index);
@@ -377,10 +377,10 @@ void SoundMixer::stopHandle(PlayingSoundHandle handle) {
 void SoundMixer::setChannelVolume(PlayingSoundHandle handle, byte volume) {
 	Common::StackLock lock(_mutex);
 
-	if (handle == 0)
+	if (!handle.isActive())
 		return;
 
-	int index = handle - 1;
+	int index = handle.getIndex();
 
 	if ((index < 0) || (index >= NUM_CHANNELS)) {
 		warning("soundMixer::setChannelVolume has invalid index %d", index);
@@ -394,10 +394,10 @@ void SoundMixer::setChannelVolume(PlayingSoundHandle handle, byte volume) {
 void SoundMixer::setChannelPan(PlayingSoundHandle handle, int8 pan) {
 	Common::StackLock lock(_mutex);
 
-	if (handle == 0)
+	if (!handle.isActive())
 		return;
 
-	int index = handle - 1;
+	int index = handle.getIndex();
 
 	if ((index < 0) || (index >= NUM_CHANNELS)) {
 		warning("soundMixer::setChannelVolume has invalid index %d", index);
@@ -426,10 +426,10 @@ void SoundMixer::pauseHandle(PlayingSoundHandle handle, bool paused) {
 	Common::StackLock lock(_mutex);
 
 	// Simply ignore pause/unpause requests for handles of sound that alreayd terminated
-	if (handle == 0)
+	if (!handle.isActive())
 		return;
 
-	int index = handle - 1;
+	int index = handle.getIndex();
 
 	if ((index < 0) || (index >= NUM_CHANNELS)) {
 		warning("soundMixer::pauseHandle has invalid index %d", index);
@@ -496,7 +496,7 @@ Channel::~Channel() {
 	delete _converter;
 	delete _input;
 	if (_handle)
-		*_handle = 0;
+		_handle->resetIndex();
 }
 
 /* len indicates the number of sample *pairs*. So a value of

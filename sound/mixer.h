@@ -35,11 +35,21 @@
 #endif
 
 
-typedef uint32 PlayingSoundHandle;
-
 class AudioInputStream;
 class Channel;
 class File;
+
+class PlayingSoundHandle {
+	friend class Channel;
+	friend class SoundMixer;
+	int val;
+	int getIndex() const { return val - 1; }
+	void setIndex(int i) { val = i + 1; }
+	void resetIndex() { val = 0; }
+public:
+	PlayingSoundHandle() { resetIndex(); }
+	bool isActive() const { return val > 0; }
+};
 
 class SoundMixer {
 public:

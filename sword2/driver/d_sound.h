@@ -22,7 +22,8 @@
 
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
-#include "sound/rate.h"
+
+class RateConverter;
 
 namespace Sword2 {
 

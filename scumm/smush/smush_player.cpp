@@ -229,7 +229,6 @@ SmushPlayer::SmushPlayer(ScummEngine *scumm, int speed, bool subtitles) {
 	_storeFrame = false;
 	_width = 0;
 	_height = 0;
-	_IACTchannel = 0;
 	_IACTpos = 0;
 	_soundFrequency = 22050;
 	_speed = speed;
@@ -461,7 +460,7 @@ void SmushPlayer::handleIACT(Chunk &b) {
 						}
 					} while (--count);
 
-					if (_IACTchannel == 0)
+					if (!_IACTchannel.isActive())
 						_scumm->_mixer->newStream(&_IACTchannel, 22050, SoundMixer::FLAG_STEREO | SoundMixer::FLAG_16BITS, 200000);
 					_scumm->_mixer->appendStream(_IACTchannel, output_data, 0x1000);
 

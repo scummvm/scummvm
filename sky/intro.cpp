@@ -728,7 +728,7 @@ bool SkyIntro::nextPart(uint16 *&data) {
 				SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED, SOUND_VOICE);
 		return true;
 	case WAITVOICE:
-		while (_voice)
+		while (_voice.isActive())
 			if (!escDelay(50))
 				return false;
 		return true;

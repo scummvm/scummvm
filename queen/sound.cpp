@@ -33,7 +33,7 @@
 namespace Queen {
 
 Sound::Sound(SoundMixer *mixer, QueenEngine *vm) : 
-	_mixer(mixer), _vm(vm), _sfxToggle(true), _speechToggle(true), _musicToggle(true), _lastOverride(0), _currentSong(0), _sfxHandle(0) {
+	_mixer(mixer), _vm(vm), _sfxToggle(true), _speechToggle(true), _musicToggle(true), _lastOverride(0), _currentSong(0) {
 }
 
 Sound::~Sound() {
@@ -68,7 +68,7 @@ Sound *Sound::giveSound(SoundMixer *mixer, QueenEngine *vm, uint8 compression) {
 }
 
 void Sound::waitSfxFinished() {
-	while(_sfxHandle != 0)
+	while(_sfxHandle.isActive())
 		_vm->input()->delay(10);
 }
 

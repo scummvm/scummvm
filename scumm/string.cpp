@@ -163,7 +163,7 @@ void ScummEngine::CHARSET_1() {
 	if (_talkDelay)
 		return;
 
-	if ((_gameId == GID_CMI || _gameId == GID_DIG) && _sound->_talkChannelHandle) {
+	if ((_gameId == GID_CMI || _gameId == GID_DIG) && _sound->_talkChannelHandle.isActive()) {
 		// Keep the 'speech' flag in _sound->_sfxMode set as long as the
 		// _talkChannelHandle is valid.
 		_sound->_sfxMode |= 2;
@@ -317,7 +317,7 @@ void ScummEngine::CHARSET_1() {
 			} else {
 				if ((_gameId == GID_LOOM256) && _noSubtitles && (_sound->pollCD())) {
 					// Special case for loomcd, since it only uses CD audio.for sound
-				} else if (_noSubtitles && (_haveMsg == 0xFE || _sound->_talkChannelHandle)) {
+				} else if (_noSubtitles && (_haveMsg == 0xFE || _sound->_talkChannelHandle.isActive())) {
 					// Subtitles are turned off, and there is a voice version
 					// of this message -> don't print it. 
 				} else

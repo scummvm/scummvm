@@ -26,7 +26,6 @@
 #include "base/engine.h"
 #include "common/util.h"
 #include "simon/midi.h"
-#include "sound/mixer.h"
 #include "simon/sound.h"
 
 class GameDetector;
