@@ -1332,7 +1332,9 @@ void Scumm_v8::o6_kernelSetFunctions()
 		// not used anymore (was smush frame rate)
 		break;
 	case 20:	// setBoxSlot
-		setBoxScale(args[1], args[2]);
+		warning("o6_kernelSetFunctions: setBoxSlot(%d, %d)", args[1], args[2]);
+		// FIXME - really setBoxScale ?!?
+//		setBoxScale(args[1], args[2]);
 		break;
 	case 21:	// setScaleSlot
 		warning("o6_kernelSetFunctions: setScaleSlot(%d, %d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
