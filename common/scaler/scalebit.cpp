@@ -120,11 +120,6 @@ static void scale2x(void* void_dst, unsigned dst_slice, const void* void_src, un
 
 	count = height;
 
-	stage_scale2x(SCDST(0), SCDST(1), SCSRC(0), SCSRC(0), SCSRC(1), pixel, width);
-
-	dst = SCDST(2);
-
-	count -= 2;
 	while (count) {
 		stage_scale2x(SCDST(0), SCDST(1), SCSRC(0), SCSRC(1), SCSRC(2), pixel, width);
 
@@ -133,8 +128,6 @@ static void scale2x(void* void_dst, unsigned dst_slice, const void* void_src, un
 
 		--count;
 	}
-
-	stage_scale2x(SCDST(0), SCDST(1), SCSRC(1-1), SCSRC(2-1), SCSRC(2-1), pixel, width);
 
 #if defined(__GNUC__) && defined(__i386__)
 	scale2x_mmx_emms();
@@ -165,11 +158,6 @@ static void scale3x(void* void_dst, unsigned dst_slice, const void* void_src, un
 
 	count = height;
 
-	stage_scale3x(SCDST(0), SCDST(1), SCDST(2), SCSRC(0), SCSRC(0), SCSRC(1), pixel, width);
-
-	dst = SCDST(3);
-
-	count -= 2;
 	while (count) {
 		stage_scale3x(SCDST(0), SCDST(1), SCDST(2), SCSRC(0), SCSRC(1), SCSRC(2), pixel, width);
 
@@ -178,8 +166,6 @@ static void scale3x(void* void_dst, unsigned dst_slice, const void* void_src, un
 
 		--count;
 	}
-
-	stage_scale3x(SCDST(0), SCDST(1), SCDST(2), SCSRC(1-1), SCSRC(2-1), SCSRC(2-1), pixel, width);
 }
 
 /**
@@ -222,18 +208,6 @@ static void scale4x_buf(void* void_dst, unsigned dst_slice, void* void_mid, unsi
 	mid[4] = mid[3] + mid_slice;
 	mid[5] = mid[4] + mid_slice;
 
-	stage_scale2x(SCMID(-2+6), SCMID(-1+6), SCSRC(0), SCSRC(0), SCSRC(1), pixel, width);
-	stage_scale2x(SCMID(0), SCMID(1), SCSRC(0), SCSRC(1), SCSRC(2), pixel, width);
-	stage_scale2x(SCMID(2), SCMID(3), SCSRC(1), SCSRC(2), SCSRC(3), pixel, width);
-	stage_scale4x(SCDST(0), SCDST(1), SCDST(2), SCDST(3), SCMID(-2+6), SCMID(-2+6), SCMID(-1+6), SCMID(0), pixel, width);
-
-	dst = SCDST(4);
-
-	stage_scale4x(SCDST(0), SCDST(1), SCDST(2), SCDST(3), SCMID(-1+6), SCMID(0), SCMID(1), SCMID(2), pixel, width);
-
-	dst = SCDST(4);
-
-	count -= 4;
 	while (count) {
 		unsigned char* tmp;
 
@@ -254,13 +228,6 @@ static void scale4x_buf(void* void_dst, unsigned dst_slice, void* void_mid, unsi
 
 		--count;
 	}
-
-	stage_scale2x(SCMID(4), SCMID(5), SCSRC(2), SCSRC(3), SCSRC(3), pixel, width);
-	stage_scale4x(SCDST(0), SCDST(1), SCDST(2), SCDST(3), SCMID(1), SCMID(2), SCMID(3), SCMID(4), pixel, width);
-
-	dst = SCDST(4);
-
-	stage_scale4x(SCDST(0), SCDST(1), SCDST(2), SCDST(3), SCMID(3), SCMID(4), SCMID(5), SCMID(5), pixel, width);
 
 #if defined(__GNUC__) && defined(__i386__)
 	scale2x_mmx_emms();
