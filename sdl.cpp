@@ -1087,13 +1087,16 @@ void OSystem_SDL::play_cdrom(int track, int num_loops, int start_frame, int end_
 
 	if (!cdrom)
 		return;
+	
+	if (end_frame > 0)
+		end_frame+=5;
 
 	cd_track = track;
 	cd_num_loops = num_loops;
 	cd_start_frame = start_frame;
 
 	SDL_CDStatus(cdrom);	
-	SDL_CDPlayTracks(cdrom, track, start_frame, 0, end_frame + 5);
+	SDL_CDPlayTracks(cdrom, track, start_frame, 0, end_frame);
 	cd_end_frame = end_frame;
 	cd_stop_time = 0;
 	cd_end_time = SDL_GetTicks() + cdrom->track[track].length * 1000 / CD_FPS;
