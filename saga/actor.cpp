@@ -46,10 +46,26 @@
 namespace Saga {
 
 static int commonObjectCompare(const CommonObjectDataPointer& obj1, const CommonObjectDataPointer& obj2) {
-	if (obj1->location.y == obj2->location.y) {
+	int p1 = obj1->location.y - obj1->location.z;
+	int p2 = obj2->location.y - obj2->location.z;
+	if (p1 == p2) {
 		return 0;
 	} else {
-		if (obj1->location.y < obj2->location.y) {
+		if (p1 < p2) {
+			return -1;
+		} else {
+			return 1;
+		}
+	}
+}
+
+static int tileCommonObjectCompare(const CommonObjectDataPointer& obj1, const CommonObjectDataPointer& obj2) {
+	int p1 = -obj1->location.u() - obj1->location.v() - obj1->location.z;
+	int p2 = -obj2->location.u() - obj2->location.v() - obj2->location.z;
+	if (p1 == p2) {
+		return 0;
+	} else {
+		if (p1 < p2) {
 			return -1;
 		} else {
 			return 1;
@@ -1166,6 +1182,13 @@ void Actor::createDrawOrderList() {
 	int i;
 	ActorData *actor;
 	ObjectData *obj;
+	CommonObjectOrderList::CompareFunction *compareFunction;
+
+	if (_vm->_scene->getFlags() & kSceneFlagISO) {
+		compareFunction = &tileCommonObjectCompare;
+	} else {
+		compareFunction = &commonObjectCompare;
+	}
 
 	_drawOrderList.clear();
 	for (i = 0; i < _actorsCount; i++) {
@@ -1173,7 +1196,7 @@ void Actor::createDrawOrderList() {
 		if (actor->disabled) continue;
 		if (actor->sceneNumber != _vm->_scene->currentSceneNumber()) continue;
 
-		_drawOrderList.pushBack(actor, commonObjectCompare);
+			_drawOrderList.pushBack(actor, compareFunction);
 
 		calcScreenPosition(actor);
 	}
@@ -1182,7 +1205,7 @@ void Actor::createDrawOrderList() {
 		obj = _objs[i];
 		if (obj->sceneNumber != _vm->_scene->currentSceneNumber()) continue;
 
-		_drawOrderList.pushBack(obj, commonObjectCompare);
+		_drawOrderList.pushBack(obj, compareFunction);
 
 		calcScreenPosition(obj);
 	}

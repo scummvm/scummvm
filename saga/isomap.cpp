@@ -1318,9 +1318,9 @@ void IsoMap::findTilePath(ActorData* actor, const Location &start, const Locatio
 		bestV += normalDirTable[dir].v;
 	}
 
-	if (i > 64) {
+/*	if (i > 64) {
 		i = 64;
-	}
+	}*/
 	actor->walkStepsCount = i;
 	if (i) {	
 		if (actor->tileDirectionsAlloced < i) {
