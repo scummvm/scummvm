@@ -25,28 +25,46 @@
 
 #include <SonyClie.h>
 #include "common/system.h"
+#include "ArmNative.h"
 #include "cdaudio.h"
 
-#include "PNOLoader.h"
+// OSD resource id
+#define kDrawKeyState	3000
+#define kDrawNumPad		3010
+#define kDrawBatLow		3020
 
+// OSD key state
+enum {
+	MD_NONE = 0,
+	MD_CMD,
+	MD_ALT,
+	MD_CTRL
+};
 
-Err HwrDisplayPalette(UInt8 operation, Int16 startIndex, 
-			 	  			 UInt16 paletteEntries, RGBColorType *tableP)
-							SYS_TRAP(sysTrapHwrDisplayPalette);
-
-typedef struct {
-	OSystem::SoundProc proc;
-	void *param;
-
-	SndStreamRef sndRefNum;
-	bool active, useHandler;
-	void *dataP;
-} SoundDataType;
+// gfx modes
+enum {
+	GFX_FLIPPING = 100,	// Palmos
+	GFX_BUFFERED = 101,	// Palmos
+	GFX_WIDE = 102 // palmos
+};
 
 class OSystem_PALMOS : public OSystem {
 public:
 	// Set colors of the palette
 	void setPalette(const byte *colors, uint start, uint num);
+
+	const GraphicsMode *getSupportedGraphicsModes() const;
+	bool setGraphicsMode(int mode);
+	int getGraphicsMode() const;
+	int getDefaultGraphicsMode() const;
+	
+	int getOutputSampleRate() const;
+	bool openCD(int drive);
+	void setWindowCaption(const char *caption);	// TODO : _inGame = true = don't set
+
+	bool hasFeature(Feature f);
+	void setFeatureState(Feature f, bool enable);
+	bool getFeatureState(Feature f);
 
 	// Set the size of the video bitmap.
 	// Typically, 320x200
@@ -100,7 +118,6 @@ public:
 	 * Currently, only the 16-bit signed mode is ever used for Simon & Scumm
 	 * @param proc		pointer to the callback.
 	 * @param param		an arbitrary parameter which is stored and passed to proc.
-	 * @param format	the sample type format.
 	 */
 	bool setSoundCallback(SoundProc proc, void *param);
 	
@@ -150,20 +167,14 @@ public:
 	int16 getHeight();
 	byte RGBToColor(uint8 r, uint8 g, uint8 b);
 	void ColorToRGB(byte color, uint8 &r, uint8 &g, uint8 &b);
-	// Set a parameter
-	uint32 property(int param, Property *value);
 
 	// Savefile management
 	SaveFileManager *get_savefile_manager();
 
-	static OSystem *create(UInt16 gfx_mode);
-
-//	UInt8 _sndHandle;
-//	Boolean _isSndPlaying;
-//	UInt8 *convP;
+	static OSystem *create();
 
 protected:
-	byte *_tmpScreenP, *_tmpBackupP;
+	byte *_tmpScreenP, *_tmpBackupP, *_tmpHotSwapP; // TODO : rename _tmpScreenP
 	bool _overlayVisible;
 
 private:
@@ -179,17 +190,15 @@ private:
 
 	void *ptrP[5];	// various ptr
 
-	WinHandle _screenH;
-	WinHandle _offScreenH;
-	Boolean _fullscreen, _adjustAspectRatio;
+	WinHandle _screenH, _offScreenH;
+	Boolean _fullscreen, _adjustAspectRatio, _wide;
 	struct {
 		Coord x;
 		Coord y;
 		UInt32 addr;
 	} _screenOffset;
 
-	byte *_screenP;
-	byte *_offScreenP;
+	byte *_screenP, *_offScreenP;
 	int _offScreenPitch;
 	int _screenPitch;
 
@@ -208,16 +217,17 @@ private:
 		int16 x,y,w,h;
 	};
 
-	UInt16 _mode;
+	UInt16 _mode, _initMode, _setMode;
+	Boolean _modeChanged, _gfxLoaded;
 	byte *_mouseDataP;
 	byte *_mouseBackupP;
 	MousePos _mouseCurState;
 	MousePos _mouseOldState;
 	int16 _mouseHotspotX;
 	int16 _mouseHotspotY;
-	byte _mouseKeycolor;
 	int _current_shake_pos;
 	int _new_shake_pos;
+	byte _mouseKeyColor;
 	
 	Boolean _vibrate;
 	UInt32 _exit_delay;
@@ -234,7 +244,6 @@ private:
 	RGBColorType *_currentPalette;
 	uint _paletteDirtyStart, _paletteDirtyEnd;
 
-
 	void draw_mouse();
 	void undraw_mouse();
 	
@@ -242,17 +251,32 @@ private:
 	void timer_handler(UInt32 current_msecs);
 	
 	void getCoordinates(EventPtr event, Coord *x, Coord *y);
-	void draw1BitGfx(UInt16 id, UInt32 x, UInt32 y, Boolean clear);
+	void draw1BitGfx(UInt16 id, Int32 x, Int32 y, Boolean clear);
 
 	void load_gfx_mode();
+	void hotswap_gfx_mode(int mode);
 	void unload_gfx_mode();
-	static void autosave();
 
+	// Battery
+	Boolean _showBatLow;
+	void battery_handler();
+
+	// Alarm
+/*	Boolean _alarmRaised;
+	void alarm_handler();
+*/
 	// ARM
+	enum {
+		PNO_COPY = 0,
+		PNO_WIDE,
+		PNO_SNDSTREAM,
+		PNO_COUNT
+	};
+	
 	struct {
 		PnoDescriptor pnoDesc;
 		MemPtr pnoPtr;
-	} _arm;
+	} _arm[PNO_COUNT];
 
 	CDAudio *_cdPlayer;
 	// PALM spec
@@ -282,7 +306,16 @@ private:
 	eventsEnum _lastEvent;
 
 	OSystem_PALMOS();
-	void init_intern(UInt16 gfx_mode);
+	void init_intern();
 };
+
+Err HwrDisplayPalette(UInt8 operation, Int16 startIndex, 
+			 	  			 UInt16 paletteEntries, RGBColorType *tableP)
+							SYS_TRAP(sysTrapHwrDisplayPalette);
+
+// Sound
+void pcm2adpcm(Int16 *src, UInt8 *dst, UInt32 length);
+Err sndCallback(void* UserDataP, SndStreamRef stream, void* bufferP, UInt32 *bufferSizeP);
+void ClearScreen();
 
 #endif
