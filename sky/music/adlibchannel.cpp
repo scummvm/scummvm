@@ -42,7 +42,7 @@ SkyAdlibChannel::SkyAdlibChannel(FM_OPL *opl, uint8 *pMusicData, uint16 startOfD
 
 	uint16 instrumentDataLoc;
 
-	if (SkyState::_systemVars.gameVersion == 267) {
+	if (SkyState::_systemVars.gameVersion <= 267) {
 		instrumentDataLoc = (_musicData[0x11FC] << 8) | _musicData[0x11FB];
 		_frequenceTable = (uint16*)(_musicData+0x7F4);
 		_registerTable = _musicData+0xDF4;

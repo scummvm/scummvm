@@ -85,7 +85,7 @@ void SkyAdlibMusic::premixerCall(int16 *buf, uint len) {
 
 void SkyAdlibMusic::setupPointers(void) {
 
-	if (SkyState::_systemVars.gameVersion == 267) {
+	if (SkyState::_systemVars.gameVersion <= 267) {
 		// disk demo uses a different adlib driver version, some offsets have changed
 		_musicDataLoc = (_musicData[0x11F8] << 8) | _musicData[0x11F7];
 		_initSequence = _musicData + 0xE87;

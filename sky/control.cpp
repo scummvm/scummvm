@@ -1595,7 +1595,7 @@ void SkyControl::applyDiff(uint16 *data, uint16 *diffData) {
 }
 
 void SkyControl::restartGame(void) {
-	if (SkyState::_systemVars.gameVersion == 267)
+	if (SkyState::_systemVars.gameVersion <= 267)
 		return; // no restart for floppy demo
 
 	uint16 *resetData;
