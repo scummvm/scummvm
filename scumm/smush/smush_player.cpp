@@ -679,6 +679,10 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 	if ((height > _vm->_screenHeight) || (width > _vm->_screenWidth))
 		return;
 
+	// Special case for FT smush files.
+	if ((height == 1) && (width == 1))
+		return;
+
 	if (!_alreadyInit) {
 		_codec37.init(width, height);
 		_codec47.init(width, height);
@@ -690,7 +694,6 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 	b.getWord();
 	b.getWord();
 
-
 	int32 chunk_size = b.getSize() - 14;
 	byte *chunk_buffer = (byte *)malloc(chunk_size);
 	assert(chunk_buffer);
@@ -699,7 +702,7 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 	switch (codec) {
 	case 1:
 	case 3:
-		smush_decode_codec1(_dst, chunk_buffer, left, top, height, width, _vm->_screenWidth);
+	  //smush_decode_codec1(_dst, chunk_buffer, left, top, height, width, _vm->_screenWidth);
 		break;
 	case 37:
 		_codec37.decode(_dst, chunk_buffer);
