@@ -42,6 +42,17 @@
 #pragma mark -
 
 
+/**
+ * A simple raw audio stream, purely memory based. It operates on a single
+ * block of data, which is passed to it upon creation. 
+ * Optionally supports looping the sound.
+ *
+ * Design note: This code tries to be as optimiized as possible (without
+ * resorting to assembly, that is). To this end, it is written as a template
+ * class. This way the compiler can actually create optimized code for each
+ * special code. This results in a total of 12 versions of the code being
+ * generated.
+ */
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
 class LinearMemoryStream : public AudioInputStream {
 protected:
@@ -50,10 +61,11 @@ protected:
 	const byte *_loopPtr;
 	const byte *_loopEnd;
 	const int _rate;
+	const byte *_origPtr;
 
 	inline bool eosIntern() const	{ return _ptr >= _end; };
 public:
-	LinearMemoryStream(int rate, const byte *ptr, uint len, uint loopOffset, uint loopLen)
+	LinearMemoryStream(int rate, const byte *ptr, uint len, uint loopOffset, uint loopLen, bool autoFreeMemory)
 		: _ptr(ptr), _end(ptr+len), _loopPtr(0), _loopEnd(0), _rate(rate) {
 
 		// Verify the buffer sizes are sane
@@ -68,6 +80,11 @@ public:
 		}
 		if (stereo)	// Stereo requires even sized data
 			assert(len % 2 == 0);
+		
+		_origPtr = autoFreeMemory ? ptr : 0;
+	}
+	~LinearMemoryStream() {
+		free(const_cast<byte *>(_origPtr));
 	}
 	int readBuffer(int16 *buffer, const int numSamples);
 
@@ -112,7 +129,9 @@ int LinearMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buf
 #pragma mark -
 
 
-// Wrapped memory stream, to be used by the ChannelStream class (and possibly others?)
+/**
+ * Wrapped memory stream.
+ */
 template<bool stereo, bool is16Bit, bool isUnsigned>
 class WrappedMemoryStream : public WrappedAudioInputStream {
 protected:
@@ -288,60 +307,67 @@ public:
 #pragma mark --- Input stream factories ---
 #pragma mark -
 
+/* In the following, we use preprocessor / macro tricks to simplify the code
+ * which instantiates the input streams. We used to use template functions for
+ * this, but MSVC6 / EVC 3-4 (used for WinCE builds) are extremely buggy when it
+ * comes to this feature of C++... so as a compromise we use macros to cut down
+ * on the (source) code duplication a bit.
+ * So while normally macro tricks are said to make maintenance harder, in this
+ * particular case it should actually help it :-)
+ */
 
-template<bool stereo>
-static AudioInputStream *makeLinearInputStream(int rate, const byte *ptr, uint32 len, bool is16Bit, bool isUnsigned, bool isLE, uint loopOffset, uint loopLen) {
-	if (isUnsigned) {
-		if (is16Bit) {
-			if (isLE)
-				return new LinearMemoryStream<stereo, true, true, true>(rate, ptr, len, loopOffset, loopLen);
-			else 
-				return new LinearMemoryStream<stereo, true, true, false>(rate, ptr, len, loopOffset, loopLen);
-		} else
-			return new LinearMemoryStream<stereo, false, true, false>(rate, ptr, len, loopOffset, loopLen);
-	} else {
-		if (is16Bit) {
-			if (isLE)
-				return new LinearMemoryStream<stereo, true, false, true>(rate, ptr, len, loopOffset, loopLen);
-			else
-				return new LinearMemoryStream<stereo, true, false, false>(rate, ptr, len, loopOffset, loopLen);
-		} else
-			return new LinearMemoryStream<stereo, false, false, false>(rate, ptr, len, loopOffset, loopLen);
-	}
-}
+#define MAKE_LINEAR(STEREO, UNSIGNED) \
+		if (is16Bit) { \
+			if (isLE) \
+				return new LinearMemoryStream<STEREO, true, UNSIGNED, true>(rate, ptr, len, loopOffset, loopLen, autoFreeMemory); \
+			else  \
+				return new LinearMemoryStream<STEREO, true, UNSIGNED, false>(rate, ptr, len, loopOffset, loopLen, autoFreeMemory); \
+		} else \
+			return new LinearMemoryStream<STEREO, false, UNSIGNED, false>(rate, ptr, len, loopOffset, loopLen, autoFreeMemory)
 
-template<bool stereo>
-static WrappedAudioInputStream *makeWrappedInputStream(int rate, uint32 len, bool is16Bit, bool isUnsigned) {
-	if (isUnsigned) {
-		if (is16Bit)
-			return new WrappedMemoryStream<stereo, true, true>(rate, len);
-		else
-			return new WrappedMemoryStream<stereo, false, true>(rate, len);
-	} else {
-		if (is16Bit)
-			return new WrappedMemoryStream<stereo, true, false>(rate, len);
-		else
-			return new WrappedMemoryStream<stereo, false, false>(rate, len);
-	}
-}
-
-AudioInputStream *makeLinearInputStream(int rate, byte _flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen) {
+AudioInputStream *makeLinearInputStream(int rate, byte _flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen, bool autoFreeMemory) {
+	const bool isStereo = (_flags & SoundMixer::FLAG_STEREO) != 0;
 	const bool is16Bit = (_flags & SoundMixer::FLAG_16BITS) != 0;
 	const bool isUnsigned = (_flags & SoundMixer::FLAG_UNSIGNED) != 0;
 	const bool isLE    = (_flags & SoundMixer::FLAG_LITTLE_ENDIAN) != 0;
-	if (_flags & SoundMixer::FLAG_STEREO) {
-		return makeLinearInputStream<true>(rate, ptr, len, is16Bit, isUnsigned, isLE, loopOffset, loopLen);
+	
+	if (isStereo) {
+		if (isUnsigned) {
+			MAKE_LINEAR(true, true);
+		} else {
+			MAKE_LINEAR(true, false);
+		}
 	} else {
-		return makeLinearInputStream<false>(rate, ptr, len, is16Bit, isUnsigned, isLE, loopOffset, loopLen);
+		if (isUnsigned) {
+			MAKE_LINEAR(false, true);
+		} else {
+			MAKE_LINEAR(false, false);
+		}
 	}
 }
 
+#define MAKE_WRAPPED(STEREO, UNSIGNED) \
+		if (is16Bit) \
+			return new WrappedMemoryStream<STEREO, true, UNSIGNED>(rate, len); \
+		else \
+			return new WrappedMemoryStream<STEREO, false, UNSIGNED>(rate, len)
+
 WrappedAudioInputStream *makeWrappedInputStream(int rate, byte _flags, uint32 len) {
+	const bool isStereo = (_flags & SoundMixer::FLAG_STEREO) != 0;
 	const bool is16Bit = (_flags & SoundMixer::FLAG_16BITS) != 0;
 	const bool isUnsigned = (_flags & SoundMixer::FLAG_UNSIGNED) != 0;
-	if (_flags & SoundMixer::FLAG_STEREO) {
-		return makeWrappedInputStream<true>(rate, len, is16Bit, isUnsigned);
+	
+	if (isStereo) {
+		if (isUnsigned) {
+			MAKE_WRAPPED(true, true);
+		} else {
+			MAKE_WRAPPED(true, false);
+		}
 	} else {
-		return makeWrappedInputStream<false>(rate, len, is16Bit, isUnsigned);
+		if (isUnsigned) {
+			MAKE_WRAPPED(false, true);
+		} else {
+			MAKE_WRAPPED(false, false);
+		}
 	}
 }

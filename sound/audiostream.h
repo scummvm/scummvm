@@ -100,7 +100,7 @@ public:
 	int getRate() const { return -1; }
 };
 
-AudioInputStream *makeLinearInputStream(int rate, byte _flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen);
+AudioInputStream *makeLinearInputStream(int rate, byte _flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen, bool autoFreeMemory = false);
 WrappedAudioInputStream *makeWrappedInputStream(int rate, byte _flags, uint32 len);
 
 #endif
