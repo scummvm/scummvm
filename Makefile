@@ -2,7 +2,7 @@
 
 CC      = gcc
 CFLAGS  = -g -Wno-multichar
-DEFINES = -DUNIX -DUSE_ADLIB
+DEFINES = -DUNIX -DUSE_ADLIB 
 LDFLAGS :=
 INCLUDES:= `sdl-config --cflags` -I./ -I./sound
 CPPFLAGS= $(DEFINES) $(INCLUDES)

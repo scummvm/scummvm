@@ -458,16 +458,14 @@ void Gui::addLetter(byte letter) {
 }
 
 byte Gui::getDefaultColor(int color) {
-#if defined(FULL_THROTTLE)
-	return 0;
-#else
+	if(_s->_features & GF_AFTER_V7)
+		return 0;
 	if (_s->_features&GF_AFTER_V6) {
 		if (color==8) color=1;
 		return _s->readArray(110, 0, color);
 	} else {
 		return _s->getStringAddress(21)[color];
 	}
-#endif
 }
 
 void Gui::init(Scumm *s) {

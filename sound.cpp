@@ -24,11 +24,11 @@
 #include "sound.h"
 
 void Scumm::addSoundToQueue(int sound) {
-#if !defined(FULL_THROTTLE)
-	_vars[VAR_LAST_SOUND] = sound;
-	ensureResourceLoaded(rtSound, sound);
-	addSoundToQueue2(sound);
-#endif
+	if(!(_features & GF_AFTER_V7)) {
+		_vars[VAR_LAST_SOUND] = sound;
+		ensureResourceLoaded(rtSound, sound);
+		addSoundToQueue2(sound);
+	}
 	
 	if(_features & GF_AUDIOTRACKS)
 		warning("Requesting audio track: %d",sound);
@@ -82,10 +82,11 @@ void Scumm::processSoundQues() {
 				data[7]
 				);
 #endif
-#if !defined(FULL_THROTTLE)
-			if (se) 
-				_vars[VAR_SOUNDRESULT] = (short)se->do_command(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
-#endif
+			if(!(_features & GF_AFTER_V7)) {
+				if (se) 
+					_vars[VAR_SOUNDRESULT] = (short)se->do_command(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
+			}
+
 		}
 	}
 	_soundQuePos = 0;

@@ -1189,26 +1189,26 @@ void Scumm::o6_panCameraTo() {
 }
 
 void Scumm::o6_actorFollowCamera() {
-#if defined(FULL_THROTTLE)
-	setCameraFollows(derefActorSafe(pop(), "actorFollowCamera"));
-#else
-	actorFollowCamera(pop());
-#endif
+	if(_features & GF_AFTER_V7)
+		setCameraFollows(derefActorSafe(pop(), "actorFollowCamera"));
+	else
+		actorFollowCamera(pop());
+
 }
 
 void Scumm::o6_setCameraAt() {
-#if defined(FULL_THROTTLE)
-	int x,y;
+	if(_features & GF_AFTER_V7) {
+		int x,y;
 
-	camera._follows = 0;
+		camera._follows = 0;
 
-	y = pop();
-	x = pop();
-
-	setCameraAt(x,y);
-#else
-	setCameraAtEx(pop());
-#endif
+		y = pop();
+		x = pop();
+	
+		setCameraAt(x,y);
+	} else {
+		setCameraAtEx(pop());
+	}	
 }
 
 void Scumm::o6_loadRoom() {
@@ -1384,10 +1384,11 @@ void Scumm::o6_loadRoomWithEgo() {
 	_vars[VAR_WALKTO_OBJ] = 0;
 
 	/* startScene maybe modifies VAR_EGO, i hope not */
-#if !defined(FULL_THROTTLE)
-	camera._dest.x = camera._cur.x = a->x;
-	setCameraFollows(a);
-#endif
+	
+	if(!(_features & GF_AFTER_V7)) {
+		camera._dest.x = camera._cur.x = a->x;
+		setCameraFollows(a);
+	}
 	_fullRedraw=1;
 	if (x != -1) {
 		startWalkActor(a, x, y, -1);
@@ -1536,10 +1537,9 @@ void Scumm::o6_resourceRoutines() {
 	switch(fetchScriptByte()) {
 	case 100: /* load script */
 		res = pop();
-#if defined(FULL_THROTTLE)
-		if (res >= _numGlobalScripts)
-			break;
-#endif
+		if(_features & GF_AFTER_V7)
+			if (res >= _numGlobalScripts)
+				break;
 		ensureResourceLoaded(rtScript, res);
 		break;
 	case 101: /* load sound */
@@ -1556,10 +1556,9 @@ void Scumm::o6_resourceRoutines() {
 		break;
 	case 104: /* nuke script */
 		res = pop();
-#if defined(FULL_THROTTLE)
-		if (res >= _numGlobalScripts)
-			break;
-#endif
+		if(_features & GF_AFTER_V7)
+			if (res >= _numGlobalScripts)
+				break;
 		setResourceCounter(rtScript, res, 0x7F);
 		debug(5, "nuke script %d", res);
 		break;
@@ -2172,14 +2171,15 @@ void Scumm::o6_wait() {
 			break;
 		return;
 	case 170:
-#if !defined(FULL_THROTTLE)
-		if (camera._cur.x>>3 != camera._dest.x>>3)
-			break;
-#else
-		if (camera._dest.x != camera._cur.x ||
-			  camera._dest.y != camera._cur.y)
+		if(!(_features & GF_AFTER_V7)) {
+			if (camera._cur.x>>3 != camera._dest.x>>3)
 				break;
-#endif
+		} else {
+			if (camera._dest.x != camera._cur.x ||
+				  camera._dest.y != camera._cur.y)
+					break;
+		}
+
 		return;
 	case 171:
 		if (_sentenceNum) {

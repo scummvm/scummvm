@@ -249,9 +249,8 @@ void Scumm::scummMain(int argc, char **argv) {
 
 	scummInit();
 
-#if !defined(FULL_THROTTLE)
-	_vars[VAR_VERSION] = 21; 
-#endif
+	if(!(_features & GF_AFTER_V7))
+		_vars[VAR_VERSION] = 21; 
 	_vars[VAR_DEBUGMODE] = _debugMode;
 
 	if (_gameId==GID_MONKEY) {
@@ -283,12 +282,12 @@ int Scumm::scummLoop(int delta) {
 
 	processKbd();
 
-#if defined(FULL_THROTTLE)
-	_vars[VAR_CAMERA_POS_X] = camera._cur.x;
-	_vars[VAR_CAMERA_POS_Y] = camera._cur.y;
-#else
-	_vars[VAR_CAMERA_POS_X] = camera._cur.x;
-#endif
+	if(_features & GF_AFTER_V7) {
+		_vars[VAR_CAMERA_POS_X] = camera._cur.x;
+		_vars[VAR_CAMERA_POS_Y] = camera._cur.y;
+	} else {
+		_vars[VAR_CAMERA_POS_X] = camera._cur.x;
+	}
 	_vars[VAR_HAVE_MSG] = _haveMsg;
 	_vars[VAR_VIRT_MOUSE_X] = _virtual_mouse_x;
 	_vars[VAR_VIRT_MOUSE_Y] = _virtual_mouse_y;
@@ -343,14 +342,14 @@ int Scumm::scummLoop(int delta) {
 		moveCamera();
 		fixObjectFlags();
 		CHARSET_1();
-#if !defined(FULL_THROTTLE)
-		if (camera._cur.x != camera._last.x || _BgNeedsRedraw || _fullRedraw) {
-#else
-		if (camera._cur.x != camera._last.x || 
-			  camera._cur.y != camera._last.y || _BgNeedsRedraw || 
-				_fullRedraw) {
-#endif
-		redrawBGAreas();
+		if(!(_features & GF_AFTER_V7)) {
+			if (camera._cur.x != camera._last.x || _BgNeedsRedraw || _fullRedraw) {
+				redrawBGAreas();
+			}
+		} else {
+			if (camera._cur.x != camera._last.x || camera._cur.y != camera._last.y || _BgNeedsRedraw || _fullRedraw) {
+				redrawBGAreas();
+			}
 		}
 		processDrawQue();
 		setActorRedrawFlags();
@@ -615,26 +614,26 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
         else
                 loadRoomObjects();
 
-#if !defined(FULL_THROTTLE)
-	camera._mode = CM_NORMAL;
-	camera._cur.x = camera._dest.x = 160;
-#endif
+	if(!(_features & GF_AFTER_V7)) {
+		camera._mode = CM_NORMAL;
+		camera._cur.x = camera._dest.x = 160;
+	}
 
 	if (_features&GF_AFTER_V6) {
 		_vars[VAR_V6_SCREEN_WIDTH] = _scrWidth;
 		_vars[VAR_V6_SCREEN_HEIGHT] = _scrHeight;
 	}
 
-#if defined(FULL_THROTTLE)
-	_vars[VAR_CAMERA_MIN_X] = 160;
-	_vars[VAR_CAMERA_MAX_X] = _scrWidth - 160;
-	_vars[VAR_CAMERA_MIN_Y] = 100;
-	_vars[VAR_CAMERA_MAX_Y] = _scrHeight - 100;
-	setCameraAt(160, 100);
-#else
-	_vars[VAR_CAMERA_MAX_X] = _scrWidth - 160;
-	_vars[VAR_CAMERA_MIN_X] = 160;
-#endif
+	if(_features & GF_AFTER_V7) {
+		_vars[VAR_CAMERA_MIN_X] = 160;
+		_vars[VAR_CAMERA_MAX_X] = _scrWidth - 160;
+		_vars[VAR_CAMERA_MIN_Y] = 100;
+		_vars[VAR_CAMERA_MAX_Y] = _scrHeight - 100;
+		setCameraAt(160, 100);
+	} else {
+		_vars[VAR_CAMERA_MAX_X] = _scrWidth - 160;
+		_vars[VAR_CAMERA_MIN_X] = 160;
+	}
 
 	if (_roomResource == 0)
 		return;
@@ -657,18 +656,18 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 	_egoPositioned = false;
 	runEntryScript();
 
-#if !defined(FULL_THROTTLE)
-	if (a && !_egoPositioned) {
-		getObjectXYPos(objectNr);
-		putActor(a, _xPos, _yPos, _currentRoom);
-		a->moving = 0;
+	if(!(_features & GF_AFTER_V7)) {
+		if (a && !_egoPositioned) {
+			getObjectXYPos(objectNr);
+			putActor(a, _xPos, _yPos, _currentRoom);
+			a->moving = 0;
+		}
+	} else {
+		if (camera._follows) {
+			Actor *a = derefActorSafe(camera._follows, "startScene: follows");
+			setCameraAt(a->x, a->y);
+		}
 	}
-#else
-	if (camera._follows) {
-		Actor *a = derefActorSafe(camera._follows, "startScene: follows");
-		setCameraAt(a->x, a->y);
-	}
-#endif
 
 	_doEffect = true;
 
@@ -801,14 +800,15 @@ void Scumm::initRoomSubBlocks() {
                         int id;
 
                         ptr += _resourceHeaderSize; /* skip tag & size */
-#ifdef FULL_THROTTLE
-                        id = READ_LE_UINT16(ptr);
-                        checkRange(2050, 2000, id, "Invalid local script %d");
-                        _localScriptList[id - _numGlobalScripts] = ptr + 2 - roomptr;
-#else
-                        id = ptr[0];
-                        _localScriptList[id - _numGlobalScripts] = ptr + 1 - roomptr;
-#endif
+                        
+			if(_features & GF_AFTER_V7) {
+				id = READ_LE_UINT16(ptr);
+				checkRange(2050, 2000, id, "Invalid local script %d");
+				_localScriptList[id - _numGlobalScripts] = ptr + 2 - roomptr;
+			} else {
+	                        id = ptr[0];
+        	                _localScriptList[id - _numGlobalScripts] = ptr + 1 - roomptr;
+			}
 #ifdef DUMP_SCRIPTS
                         do {
                                 char buf[32];
@@ -1016,12 +1016,12 @@ int Scumm::getKeyInput(int a) {
 		_mouseButStat = MBS_RIGHT_CLICK;
 	}
 
-#if defined(FULL_THROTTLE)
-//	_vars[VAR_LEFTBTN_DOWN] = (_leftBtnPressed&msClicked) != 0;
-	_vars[VAR_LEFTBTN_HOLD] = (_leftBtnPressed&msDown) != 0;
-//	_vars[VAR_RIGHTBTN_DOWN] = (_rightBtnPressed&msClicked) != 0;
-	_vars[VAR_RIGHTBTN_HOLD] = (_rightBtnPressed&msDown) != 0;
-#endif
+	if(_features & GF_AFTER_V7) {
+//		_vars[VAR_LEFTBTN_DOWN] = (_leftBtnPressed&msClicked) != 0;
+		_vars[VAR_LEFTBTN_HOLD] = (_leftBtnPressed&msDown) != 0;
+//		_vars[VAR_RIGHTBTN_DOWN] = (_rightBtnPressed&msClicked) != 0;
+		_vars[VAR_RIGHTBTN_HOLD] = (_rightBtnPressed&msDown) != 0;
+	}
 
 	_leftBtnPressed &= ~msClicked;
 	_rightBtnPressed &= ~msClicked;

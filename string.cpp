@@ -191,14 +191,15 @@ void Scumm::CHARSET_1() {
 	Actor *a;
 	byte *buffer;	
 
-#if !defined(FULL_THROTTLE)
-	if (!_haveMsg || (camera._dest.x>>3) != (camera._cur.x>>3) ||
-			camera._cur.x != camera._last.x 
-		) return;
-#else
-	if (!_haveMsg)
-		return;
-#endif
+	if(!(_features & GF_AFTER_V7)) {
+		if (!_haveMsg || (camera._dest.x>>3) != (camera._cur.x>>3) ||
+				camera._cur.x != camera._last.x 
+			) return;
+	} else {
+		if (!_haveMsg)
+			return;
+	}
+
 	a = NULL;
 	if (_vars[VAR_TALK_ACTOR] != 0xFF)
 		a = derefActorSafe(_vars[VAR_TALK_ACTOR], "CHARSET_1");

@@ -656,7 +656,7 @@ int Scumm::readSoundResource(int type, int index) {
 	basetag = fileReadDwordLE();
 	total_size = fileReadDwordBE();
 
-	if (_gameId==GID_SAMNMAX) {
+	if (_gameId==GID_SAMNMAX || _features & GF_AFTER_V7) {
 		if (basetag == MKID('MIDI')) {
 			fileSeek(_fileHandle, -8, SEEK_CUR);
 			fileRead(_fileHandle,createResource(type, index, total_size+8), total_size+8);
