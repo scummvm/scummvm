@@ -255,7 +255,7 @@ void codec37_proc5(byte *dst, byte *src, int next_offs, int bw, int bh,
 }
 
 
-
+// this table is the same in FT and Dig
 static const int8 maketable_bytes[] = {
 	0, 0, 1, 0, 2, 0, 3, 0, 5, 0, 8, 0, 13, 0, 21, 0,
 	-1, 0, -2, 0, -3, 0, -5, 0, -8, 0, -13, 0, -17, 0, -21, 0,
@@ -592,8 +592,19 @@ void SmushPlayer::setPalette()
 {
 	int i;
 
-	for (i = 0; i < 768; i++)
-		sm->_currentPalette[i] = _fluPalette[i];
+	byte palette_colors[1024];
+	byte *p = palette_colors;
+	
+	byte *data = _fluPalette;
+
+	for (i = 0; i != 256; i++, data += 3, p+=4) {
+		p[0] = data[0];
+		p[1] = data[1];
+		p[2] = data[2];
+		p[3] = 0;
+	}
+	sm->_system->set_palette(palette_colors, 0, 256);
+
 }
 
 void SmushPlayer::startVideo(short int arg, byte *videoFile)
@@ -658,7 +669,7 @@ void SmushPlayer::startVideo(short int arg, byte *videoFile)
 		if (_paletteChanged) {
 			_paletteChanged = false;
 			setPalette();
-			sm->setDirtyColors(0, 255);
+		//	sm->setDirtyColors(0, 255);
 		}
 
 		if (_frameChanged) {
@@ -666,7 +677,7 @@ void SmushPlayer::startVideo(short int arg, byte *videoFile)
 
 			sm->_system->copy_rect(sm->_videoBuffer, 320, 0, 0, 320, 200);
 			sm->_system->update_screen();
-			sm->waitForTimer(20);
+			sm->waitForTimer(60);
 			
 			//sm->delta = sm->_system->waitTick(sm->delta);
 		}
