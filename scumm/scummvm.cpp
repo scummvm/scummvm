@@ -130,10 +130,18 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	if (prop.cd_num >= 0 && (_features & GF_AUDIOTRACKS))
 		syst->property(OSystem::PROP_OPEN_CD, &prop);
 
+	// Override global fullscreen setting with any game-specific define
 	if (g_config->getBool("fullscreen", false)) {
- 		if (!_system->property(OSystem::PROP_GET_FULLSCREEN, 0))
-        		_system->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
+ 		if (!syst->property(OSystem::PROP_GET_FULLSCREEN, 0))
+        		syst->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
  	}
+
+	// Override global scaler with any game-specific define
+	if (g_config->get("gfx_mode")) {
+		prop.gfx_mode = detector->parseGraphicsMode(g_config->get("gfx_mode"));
+		syst->property(OSystem::PROP_SET_GFX_MODE, &prop);
+	}
+
 #ifndef __GP32__ //ph0x FIXME, "quick dirty hack"
 	/* Bind the mixer to the system => mixer will be invoked
 	 * automatically when samples need to be generated */	
