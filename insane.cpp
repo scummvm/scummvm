@@ -1511,7 +1511,7 @@ void SmushPlayer::startVideo(short int arg, byte *videoFile)
 	pcd37.table_last_pitch = 0;
 	pcd37.table_last_flags = 0;
 
-	sm->stopBundleMusic();
+	sm->pauseBundleMusic(true);
 	init();
 	openFile(videoFile);
 
@@ -1530,7 +1530,7 @@ void SmushPlayer::startVideo(short int arg, byte *videoFile)
 		_frameChanged = 1;
 
 		if (ftell(_in) >= fileSize)
-			return;
+			break;
 #ifdef INSANE_DEBUG
 		warning("Playing frame %d", frameIndex);
 #endif
@@ -1562,5 +1562,5 @@ void SmushPlayer::startVideo(short int arg, byte *videoFile)
 
 	sm->_insaneState = 0;
 	sm->exitCutscene();
-
+	sm->pauseBundleMusic(false);
 }

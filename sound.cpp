@@ -796,6 +796,7 @@ void Scumm::playBundleMusic(int32 song) {
 		_currentSampleBundleMusic = 0;
 		_offsetSampleBundleMusic = 0;
 		_offsetBufBundleMusic = 0;
+		_pauseBundleMusic = false;	
 		_numberSamplesBundleMusic = _bundle->getNumberOfMusicSamplesByIndex(song);
 		_numberBundleMusic = song;
 		_timer->installProcedure(&music_handler, 1000);
@@ -810,13 +811,21 @@ void Scumm::playBundleMusic(int32 song) {
 	}
 }
 
+void Scumm::pauseBundleMusic(bool state) {
+	_pauseBundleMusic = state;
+}
+
 void Scumm::stopBundleMusic() {
 	_timer->releaseProcedure(&music_handler);
 	_numberBundleMusic = -1;
-	if (_musicBundleBufFinal) 
+	if (_musicBundleBufFinal) {
 		free(_musicBundleBufFinal);
-	if (_musicBundleBufOutput)
+		_musicBundleBufFinal = NULL;
+	}
+	if (_musicBundleBufOutput) {
 		free(_musicBundleBufOutput);
+		_musicBundleBufOutput = NULL;
+	}
 }
 
 int Scumm::bundleMusicHandler(int t) {
@@ -824,11 +833,11 @@ int Scumm::bundleMusicHandler(int t) {
 	int32 l, num = _numberSamplesBundleMusic, length, k;
 	int32 rate = 22050;
 	int32 tag, size = -1, header_size = 0;
-	if (_numberBundleMusic == -1)
-		_timer->releaseProcedure(&music_handler);
 	
 	ptr = _musicBundleBufOutput;
 	
+	if (_pauseBundleMusic)
+		return t;
 
 	for (k = 0, l = _currentSampleBundleMusic; l < num; k++) {
 		length = _bundle->decompressMusicSampleByIndex(_numberBundleMusic, l, (_musicBundleBufOutput + ((k * 0x2000) + _offsetBufBundleMusic)));

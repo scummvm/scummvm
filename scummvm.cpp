@@ -194,6 +194,8 @@ void Scumm::scummInit()
 #endif
 
 	_numberBundleMusic = -1;
+	_musicBundleBufFinal = NULL;
+	_musicBundleBufOutput = NULL;
 
 	_timer->installProcedure(&autosave, 5 * 60 * 1000);
 }

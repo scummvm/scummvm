@@ -756,6 +756,7 @@ public:
 	int32 _offsetBufBundleMusic;
 	byte * _musicBundleBufFinal;
 	byte * _musicBundleBufOutput;
+	bool _pauseBundleMusic;
 
 	void setupSound();
 	void processSoundQues();
@@ -781,6 +782,7 @@ public:
 	bool isSfxFinished();
 	void playBundleSound(char *sound);
 	void playBundleMusic(int32 song);
+	void pauseBundleMusic(bool state);
 	void stopBundleMusic();
 	int bundleMusicHandler(int t);
 	void decompressBundleSound(int index);
