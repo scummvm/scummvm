@@ -192,7 +192,7 @@ void File::clearIOFailed() {
 
 bool File::eof() {
 	if (_handle == NULL) {
-		error("File is not open!");
+		error("File::eof: File is not open!");
 		return false;
 	}
 
@@ -201,7 +201,7 @@ bool File::eof() {
 
 uint32 File::pos() {
 	if (_handle == NULL) {
-		error("File is not open!");
+		error("File::pos: File is not open!");
 		return 0;
 	}
 
@@ -210,7 +210,7 @@ uint32 File::pos() {
 
 uint32 File::size() {
 	if (_handle == NULL) {
-		error("File is not open!");
+		error("File::size: File is not open!");
 		return 0;
 	}
 
@@ -224,7 +224,7 @@ uint32 File::size() {
 
 void File::seek(int32 offs, int whence) {
 	if (_handle == NULL) {
-		error("File is not open!");
+		error("File::seek: File is not open!");
 		return;
 	}
 
@@ -237,7 +237,7 @@ uint32 File::read(void *ptr, uint32 len) {
 	uint32 real_len;
 
 	if (_handle == NULL) {
-		error("File is not open!");
+		error("File::read: File is not open!");
 		return 0;
 	}
 
@@ -255,7 +255,7 @@ uint32 File::read(void *ptr, uint32 len) {
 
 uint32 File::write(const void *ptr, uint32 len) {
 	if (_handle == NULL) {
-		error("File is not open!");
+		error("File::write: File is not open!");
 		return 0;
 	}
 
