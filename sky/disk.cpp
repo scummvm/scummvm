@@ -132,7 +132,7 @@ uint16 *SkyState::load_file(uint16 file_nr, uint8 *dest)
     {
 	debug(1, "File is compressed...");
 
-	memcpy(&file_header, file_dest, sizeof(struct s));
+	memcpy(&file_header, file_dest, sizeof(struct dataFileHeader));
 	if ( (uint8)((FROM_LE_16(file_header.flag) >> 7) & 0x1)  ) {
 	    debug(1, "with RNC!");
 	    
@@ -150,11 +150,11 @@ uint16 *SkyState::load_file(uint16 file_nr, uint8 *dest)
 	    ediptr = comp_dest;
 		
 	    if ( (uint8)(file_flags >> (22) & 0x1) ) //do we include the header?
-	    	esiptr += sizeof(struct s);
+	    	esiptr += sizeof(struct dataFileHeader);
 	    else {
-		memcpy(ediptr, esiptr, sizeof(struct s));
-		esiptr += sizeof(struct s);
-		ediptr += sizeof(struct s);
+		memcpy(ediptr, esiptr, sizeof(struct dataFileHeader));
+		esiptr += sizeof(struct dataFileHeader);
+		ediptr += sizeof(struct dataFileHeader);
 	    }
 
 	    eax = UnpackM1(esiptr, ediptr, 0);
@@ -169,7 +169,7 @@ uint16 *SkyState::load_file(uint16 file_nr, uint8 *dest)
 	    }
 	    
 	    if (! (uint8)(file_flags >> (22) & 0x1) ) { //include header?
-	    	eax += sizeof(struct s);
+	    	eax += sizeof(struct dataFileHeader);
 	    
 		if (eax != decomp_size)
 		{
