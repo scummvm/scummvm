@@ -1146,8 +1146,10 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 	for (int i = 0; i < _numSpritesToProcess; i++) {
 		SpriteInfo *spi = _activeSpritesTable[i];
 
-		if (!(spi->flags & kSFNeedRedraw))
-			continue;
+		// HACK Sprite redraws aren't always been triggered
+		// so leave disabled for now.
+		//if (!(spi->flags & kSFNeedRedraw))
+		//	continue;
 
 		spr_flags = spi->flags;
 
