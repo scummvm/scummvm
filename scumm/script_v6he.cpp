@@ -389,7 +389,7 @@ void ScummEngine_v6he::o6_setState() {
 	int obj = pop();
 
 	if (state & 0x8000) {
-		state = state & 0x7F00;
+		state &= 0x7FFF;
 		putState(obj, state);
 		if (_heversion >= 72)
 			removeObjectFromDrawQue(obj);
