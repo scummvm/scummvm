@@ -69,7 +69,7 @@ protected:
 
 	// Destination
 	byte *_outptr;
-	uint _outwidth, _outheight;
+	int _outwidth, _outheight;
 	int32 _numStrips;
 
 	// Source pointer

@@ -347,7 +347,8 @@ void AkosRenderer::codec1_genericDecode() {
 	const byte *mask, *src;
 	byte *dst;
 	byte len, maskbit;
-	uint y, color, height, pcolor;
+	int y;
+	uint color, height, pcolor;
 	const byte *scaleytab;
 	bool masked;
 	bool skip_column = false;
@@ -376,14 +377,14 @@ void AkosRenderer::codec1_genericDecode() {
 		do {
 			if (*scaleytab++ < _scaleY) {
 				if (_actorHitMode) {
-					if (color && (int16) y == _actorHitY && v1.x == _actorHitX) {
+					if (color && y == _actorHitY && v1.x == _actorHitX) {
 						_actorHitResult = true;
 						return;
 					}
 				} else {
-					masked = (y < _outheight) && v1.mask_ptr && ((mask[0] | mask[v1.imgbufoffs]) & maskbit);
+					masked = (y < 0 || y >= _outheight) || (v1.mask_ptr && ((mask[0] | mask[v1.imgbufoffs]) & maskbit));
 
-					if (color && y < _outheight && !masked && !skip_column) {
+					if (color && !masked && !skip_column) {
 						pcolor = palette[color];
 						if (_shadow_mode == 1) {
 							if (pcolor == 13)	
@@ -413,7 +414,7 @@ void AkosRenderer::codec1_genericDecode() {
 
 				if (v1.scaletable[v1.scaleXindex] < _scaleX) {
 					v1.x += v1.scaleXstep;
-					if (v1.x < 0 || v1.x >= (int)_outwidth)
+					if (v1.x < 0 || v1.x >= _outwidth)
 						return;
 					maskbit = revBitMask[v1.x & 7];
 					v1.destptr += v1.scaleXstep;
@@ -548,7 +549,6 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 
 	v1.scaletable = defaultScaleTable;
 
-	// FIXME - which value for VAR_CUSTOMSCALETABLE in V8 ?
 	if (_vm->VAR_CUSTOMSCALETABLE != 0xFF && _vm->isGlobInMemory(rtString, _vm->VAR(_vm->VAR_CUSTOMSCALETABLE))) {
 		v1.scaletable = _vm->getStringAddressVar(_vm->VAR_CUSTOMSCALETABLE);
 	}
@@ -614,7 +614,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 
 			j = startScaleIndexX;
 			for (i = 0, skip = 0; i < _width; i++) {
-				if (rect.left >= (int)_outwidth) {
+				if (rect.left >= _outwidth) {
 					startScaleIndexX = j;
 					skip++;
 				}
@@ -679,10 +679,10 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	} else
 		_vm->markRectAsDirty(kMainVirtScreen, rect, _actorID);
 
-	if (rect.top >= (int)_outheight || rect.bottom <= 0)
+	if (rect.top >= _outheight || rect.bottom <= 0)
 		return 0;
 
-	if (rect.left >= (int)_outwidth || rect.right <= 0)
+	if (rect.left >= _outwidth || rect.right <= 0)
 		return 0;
 
 	v1.replen = 0;
@@ -725,10 +725,16 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	if (v1.skip_width <= 0 || _height <= 0)
 		return 0;
 
-	if ((uint) rect.top > _outheight)
+	if (rect.left < 0)
+		rect.left = 0;
+
+	if (rect.top < 0)
 		rect.top = 0;
 
-	if ((uint) rect.bottom > _outheight)
+	if (rect.top > _outheight)
+		rect.top = _outheight;
+
+	if (rect.bottom > _outheight)
 		rect.bottom = _outheight;
 
 	if (_draw_top > rect.top)
