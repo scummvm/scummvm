@@ -1,11 +1,12 @@
 For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
-?.?.? (2002-09-30/CVS)
+?.?.? (2002-10-22/CVS)
 - massive cleanup work for iMUSE. Sam and Max music is now playing correctly
 - many bugfixes for Zak256, + sound and music support
 - support for Monkey1 VGA Floppy
 - completed support for The Dig
+- added akos16 implementation for The Dig and Full Throttle costumes
 - added digital iMUSE implementation for The Dig and Full Throttle music.
 - Loom CD speech+music syncronisation improved greatly
 - added midi-emulation via adlib, for platforms without sequencer support

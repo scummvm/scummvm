@@ -45,6 +45,7 @@ be playable to the end:
         Indiana Jones And The Fate Of Atlantis    [Game: atlantis]
         Day Of The Tentacle                       [Game: tentacle]
         Sam & Max                                 [Game: samnmax]
+        The Dig                                   [Game: dig]
         Simon The Sorcerer                        [Game: simon1dos/simon1win]
 
 
@@ -55,7 +56,6 @@ compatibility chart.
 
         Indiana Jones & the Last Crusade (256)   [Game: indy3]
         Full Throttle                            [Game: ft]
-        The Dig                                  [Game: dig]
         Simon the Sorcerer II                    [Game: simon2dos/simon2win]
 
 The following games are SCUMM engine, but NOT supported by ScummVM (yet).
@@ -123,6 +123,10 @@ the section on Reporting Bugs.
                   way, we do not know where to buy or download a copy of this
                   game. Petition LucasArts to re-release it :)
 
+
+       The Dig
+                - Walking around the Nexus room may leave trails of Boston
+                  at the 'seam' of the circular room
 
        All CD games:
                - If you are experiencing random crashes, and your game
