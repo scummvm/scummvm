@@ -1761,7 +1761,8 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 	if (!(_features & GF_SMALL_HEADER) && VAR_NEW_ROOM != 0xFF)  // Disable for SH games. Overwrites
 		VAR(VAR_NEW_ROOM) = room; // gamevars, eg Zak cashcards
 
-	runExitScript();
+	if (_currentRoom)
+		runExitScript();
 	killScriptsAndResources();
 	clearEnqueue();
 	stopCycle(0);
