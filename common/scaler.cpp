@@ -107,6 +107,14 @@ static inline int GetResult(uint32 A, uint32 B, uint32 C, uint32 D) {
 }
 
 static inline uint32 INTERPOLATE(uint32 A, uint32 B) {
+	// FIXME: Is an "if" (and thus introducing a conditional (even hard to predict)
+	// jump inside a hot code section really good for a speed improvement? 
+	// Maybe it would actually be faster to remove it. This would remove the jump
+	// at the expense of 4 ANDs, 2 shifts and 2 additions. But if that means
+	// avoiding a pipeline flush (and don't forget, those instructions might be
+	// interleaved, thus "free")...
+	// Answering this will require some careful analysis, and could actually vary
+	// when running on different processors.
 	if (A != B) {
 		return (((A & colorMask) >> 1) + ((B & colorMask) >> 1) + (A & B & lowPixelMask));
 	} else
@@ -667,74 +675,72 @@ void DotMatrix(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPi
 
 static int   RGBtoYUV[65536];
 
-#define INTERPOLATE_3_1(x, y)	Q_INTERPOLATE(x, x, x, y)
-
-#define INTERPOLATE_2_1_1(x, y, z)	Q_INTERPOLATE(x, x, y, z)
-
-static inline uint16 INTERPOLATE_7_1(uint16 w1, uint16 w2) {
-	return ((((w1 & redblueMask) * 7 + (w2 & redblueMask)) >> 3)  & redblueMask) |
-	       ((((w1 & greenMask) * 7 + (w2 & greenMask)) >> 3)  & greenMask);
+// Interpolate two 16 bit pixels with the given weights.
+template<int w1, int w2>
+static inline uint16 interpolate16(uint16 p1, uint16 p2) {
+	return ((((p1 & redblueMask) * w1 + (p2 & redblueMask) * w2) / (w1 + w2)) & redblueMask) |
+	       ((((p1 & greenMask) * w1 + (p2 & greenMask) * w2) / (w1 + w2)) & greenMask);
 }
 
-static inline uint16 INTERPOLATE_2_7_7(uint16 w1, uint16 w2, uint16 w3) {
-	return ((((w1 & redblueMask) * 2 + ((w2 & redblueMask) + (w3 & redblueMask)) * 7) >> 4)  & redblueMask) |
-	       ((((w1 & greenMask) * 2 + ((w2 & greenMask) + (w3 & greenMask)) * 7) >> 4)  & greenMask);
+// Interpolate three 16 bit pixels with the given weights.
+template<int w1, int w2, int w3>
+static inline uint16 interpolate16(uint16 p1, uint16 p2, uint16 p3) {
+	return ((((p1 & redblueMask) * w1 + (p2 & redblueMask) * w2 + (p3 & redblueMask) * w3) / (w1 + w2 + w3)) & redblueMask) |
+	       ((((p1 & greenMask) * w1 + (p2 & greenMask) * w2 + (p3 & greenMask) * w3) / (w1 + w2 + w3)) & greenMask);
 }
 
-#define INTERPOLATE_1_1(x, y) INTERPOLATE(x, y)
-
-#define PIXEL00_1M  *(q) = INTERPOLATE_3_1(w[5], w[1]);
-#define PIXEL00_1U  *(q) = INTERPOLATE_3_1(w[5], w[2]);
-#define PIXEL00_1L  *(q) = INTERPOLATE_3_1(w[5], w[4]);
-#define PIXEL00_2   *(q) = INTERPOLATE_2_1_1(w[5], w[4], w[2]);
-#define PIXEL00_4   *(q) = INTERPOLATE_2_7_7(w[5], w[4], w[2]);
-#define PIXEL00_5   *(q) = INTERPOLATE_1_1(w[4], w[2]);
+#define PIXEL00_1M  *(q) = interpolate16<3,1>(w[5], w[1]);
+#define PIXEL00_1U  *(q) = interpolate16<3,1>(w[5], w[2]);
+#define PIXEL00_1L  *(q) = interpolate16<3,1>(w[5], w[4]);
+#define PIXEL00_2   *(q) = interpolate16<2,1,1>(w[5], w[4], w[2]);
+#define PIXEL00_4   *(q) = interpolate16<2,7,7>(w[5], w[4], w[2]);
+#define PIXEL00_5   *(q) = interpolate16<1,1>(w[4], w[2]);
 #define PIXEL00_C   *(q) = w[5];
 
-#define PIXEL01_1   *(q+1) = INTERPOLATE_3_1(w[5], w[2]);
-#define PIXEL01_3   *(q+1) = INTERPOLATE_7_1(w[5], w[2]);
-#define PIXEL01_6   *(q+1) = INTERPOLATE_3_1(w[2], w[5]);
+#define PIXEL01_1   *(q+1) = interpolate16<3,1>(w[5], w[2]);
+#define PIXEL01_3   *(q+1) = interpolate16<7,1>(w[5], w[2]);
+#define PIXEL01_6   *(q+1) = interpolate16<3,1>(w[2], w[5]);
 #define PIXEL01_C   *(q+1) = w[5];
 
-#define PIXEL02_1M  *(q+2) = INTERPOLATE_3_1(w[5], w[3]);
-#define PIXEL02_1U  *(q+2) = INTERPOLATE_3_1(w[5], w[2]);
-#define PIXEL02_1R  *(q+2) = INTERPOLATE_3_1(w[5], w[6]);
-#define PIXEL02_2   *(q+2) = INTERPOLATE_2_1_1(w[5], w[2], w[6]);
-#define PIXEL02_4   *(q+2) = INTERPOLATE_2_7_7(w[5], w[2], w[6]);
-#define PIXEL02_5   *(q+2) = INTERPOLATE_1_1(w[2], w[6]);
+#define PIXEL02_1M  *(q+2) = interpolate16<3,1>(w[5], w[3]);
+#define PIXEL02_1U  *(q+2) = interpolate16<3,1>(w[5], w[2]);
+#define PIXEL02_1R  *(q+2) = interpolate16<3,1>(w[5], w[6]);
+#define PIXEL02_2   *(q+2) = interpolate16<2,1,1>(w[5], w[2], w[6]);
+#define PIXEL02_4   *(q+2) = interpolate16<2,7,7>(w[5], w[2], w[6]);
+#define PIXEL02_5   *(q+2) = interpolate16<1,1>(w[2], w[6]);
 #define PIXEL02_C   *(q+2) = w[5];
 
-#define PIXEL10_1   *(q+nextlineDst) = INTERPOLATE_3_1(w[5], w[4]);
-#define PIXEL10_3   *(q+nextlineDst) = INTERPOLATE_7_1(w[5], w[4]);
-#define PIXEL10_6   *(q+nextlineDst) = INTERPOLATE_3_1(w[4], w[5]);
+#define PIXEL10_1   *(q+nextlineDst) = interpolate16<3,1>(w[5], w[4]);
+#define PIXEL10_3   *(q+nextlineDst) = interpolate16<7,1>(w[5], w[4]);
+#define PIXEL10_6   *(q+nextlineDst) = interpolate16<3,1>(w[4], w[5]);
 #define PIXEL10_C   *(q+nextlineDst) = w[5];
 
 #define PIXEL11     *(q+1+nextlineDst) = w[5];
 
-#define PIXEL12_1   *(q+2+nextlineDst) = INTERPOLATE_3_1(w[5], w[6]);
-#define PIXEL12_3   *(q+2+nextlineDst) = INTERPOLATE_7_1(w[5], w[6]);
-#define PIXEL12_6   *(q+2+nextlineDst) = INTERPOLATE_3_1(w[6], w[5]);
+#define PIXEL12_1   *(q+2+nextlineDst) = interpolate16<3,1>(w[5], w[6]);
+#define PIXEL12_3   *(q+2+nextlineDst) = interpolate16<7,1>(w[5], w[6]);
+#define PIXEL12_6   *(q+2+nextlineDst) = interpolate16<3,1>(w[6], w[5]);
 #define PIXEL12_C   *(q+2+nextlineDst) = w[5];
 
-#define PIXEL20_1M  *(q+nextlineDst2) = INTERPOLATE_3_1(w[5], w[7]);
-#define PIXEL20_1D  *(q+nextlineDst2) = INTERPOLATE_3_1(w[5], w[8]);
-#define PIXEL20_1L  *(q+nextlineDst2) = INTERPOLATE_3_1(w[5], w[4]);
-#define PIXEL20_2   *(q+nextlineDst2) = INTERPOLATE_2_1_1(w[5], w[8], w[4]);
-#define PIXEL20_4   *(q+nextlineDst2) = INTERPOLATE_2_7_7(w[5], w[8], w[4]);
-#define PIXEL20_5   *(q+nextlineDst2) = INTERPOLATE_1_1(w[8], w[4]);
+#define PIXEL20_1M  *(q+nextlineDst2) = interpolate16<3,1>(w[5], w[7]);
+#define PIXEL20_1D  *(q+nextlineDst2) = interpolate16<3,1>(w[5], w[8]);
+#define PIXEL20_1L  *(q+nextlineDst2) = interpolate16<3,1>(w[5], w[4]);
+#define PIXEL20_2   *(q+nextlineDst2) = interpolate16<2,1,1>(w[5], w[8], w[4]);
+#define PIXEL20_4   *(q+nextlineDst2) = interpolate16<2,7,7>(w[5], w[8], w[4]);
+#define PIXEL20_5   *(q+nextlineDst2) = interpolate16<1,1>(w[8], w[4]);
 #define PIXEL20_C   *(q+nextlineDst2) = w[5];
 
-#define PIXEL21_1   *(q+1+nextlineDst2) = INTERPOLATE_3_1(w[5], w[8]);
-#define PIXEL21_3   *(q+1+nextlineDst2) = INTERPOLATE_7_1(w[5], w[8]);
-#define PIXEL21_6   *(q+1+nextlineDst2) = INTERPOLATE_3_1(w[8], w[5]);
+#define PIXEL21_1   *(q+1+nextlineDst2) = interpolate16<3,1>(w[5], w[8]);
+#define PIXEL21_3   *(q+1+nextlineDst2) = interpolate16<7,1>(w[5], w[8]);
+#define PIXEL21_6   *(q+1+nextlineDst2) = interpolate16<3,1>(w[8], w[5]);
 #define PIXEL21_C   *(q+1+nextlineDst2) = w[5];
 
-#define PIXEL22_1M  *(q+2+nextlineDst2) = INTERPOLATE_3_1(w[5], w[9]);
-#define PIXEL22_1D  *(q+2+nextlineDst2) = INTERPOLATE_3_1(w[5], w[8]);
-#define PIXEL22_1R  *(q+2+nextlineDst2) = INTERPOLATE_3_1(w[5], w[6]);
-#define PIXEL22_2   *(q+2+nextlineDst2) = INTERPOLATE_2_1_1(w[5], w[6], w[8]);
-#define PIXEL22_4   *(q+2+nextlineDst2) = INTERPOLATE_2_7_7(w[5], w[6], w[8]);
-#define PIXEL22_5   *(q+2+nextlineDst2) = INTERPOLATE_1_1(w[6], w[8]);
+#define PIXEL22_1M  *(q+2+nextlineDst2) = interpolate16<3,1>(w[5], w[9]);
+#define PIXEL22_1D  *(q+2+nextlineDst2) = interpolate16<3,1>(w[5], w[8]);
+#define PIXEL22_1R  *(q+2+nextlineDst2) = interpolate16<3,1>(w[5], w[6]);
+#define PIXEL22_2   *(q+2+nextlineDst2) = interpolate16<2,1,1>(w[5], w[6], w[8]);
+#define PIXEL22_4   *(q+2+nextlineDst2) = interpolate16<2,7,7>(w[5], w[6], w[8]);
+#define PIXEL22_5   *(q+2+nextlineDst2) = interpolate16<1,1>(w[6], w[8]);
 #define PIXEL22_C   *(q+2+nextlineDst2) = w[5];
 
 static inline bool diffYUV(int yuv1, int yuv2) {
