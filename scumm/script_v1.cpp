@@ -1756,7 +1756,7 @@ void Scumm::o5_roomOps()
 			b = getVarOrDirectByte(0x40);
 			c = getVarOrDirectByte(0x20);
 		}
-		darkenPalette(b, c, a, a, a);
+		darkenPalette(a, a, a, b, c);
 		break;
 	case 9:											/* ? */
 		_saveLoadFlag = getVarOrDirectByte(0x80);
@@ -1780,7 +1780,7 @@ void Scumm::o5_roomOps()
 		_opcode = fetchScriptByte();
 		d = getVarOrDirectByte(0x80);
 		e = getVarOrDirectByte(0x40);
-		darkenPalette(d, e, a, b, c);
+		darkenPalette(a, b, c, d, e);
 		break;
 	case 12:											/* ? */
 		a = getVarOrDirectWord(0x80);
@@ -1789,7 +1789,7 @@ void Scumm::o5_roomOps()
 		_opcode = fetchScriptByte();
 		d = getVarOrDirectByte(0x80);
 		e = getVarOrDirectByte(0x40);
-		unkRoomFunc3(d, e, a, b, c);
+		setupShadowPalette(a, b, c, d, e);
 		break;
 
 	case 13:{										/* save-string */

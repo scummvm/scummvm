@@ -1517,7 +1517,7 @@ void Scumm::o6_roomOps()
 		c = pop();
 		b = pop();
 		a = pop();
-		darkenPalette(b, c, a, a, a);
+		darkenPalette(a, a, a, b, c);
 		break;
 
 	case 180:
@@ -1543,7 +1543,7 @@ void Scumm::o6_roomOps()
 		c = pop();
 		b = pop();
 		a = pop();
-		darkenPalette(d, e, a, b, c);
+		darkenPalette(a, b, c, d, e);
 		break;
 
 	case 183:
@@ -1552,7 +1552,7 @@ void Scumm::o6_roomOps()
 		c = pop();
 		b = pop();
 		a = pop();
-		unkRoomFunc3(d, e, a, b, c);
+		setupShadowPalette(a, b, c, d, e);
 		break;
 
 	case 184:
@@ -2974,30 +2974,4 @@ void Scumm::decodeParseString2(int m, int n)
 	default:
 		error("decodeParseString: default case");
 	}
-}
-
-void Scumm::setupShadowPalette(int slot, int rfact, int gfact, int bfact, int from, int to)
-{
-	byte *table;
-	int i, num;
-	byte *curpal;
-
-	if (slot < 0 || slot > 7)
-		error("setupShadowPalette: invalid slot %d", slot);
-
-	if (from < 0 || from > 255 || to < 0 || from > 255 || to < from)
-		error("setupShadowPalette: invalid range from %d to %d", from, to);
-
-	table = _shadowPalette + slot * 256;
-	for (i = 0; i < 256; i++)
-		table[i] = i;
-
-	table += from;
-	curpal = _currentPalette + from * 3;
-	num = to - from + 1;
-	do {
-		*table++ = remapPaletteColor((curpal[0] * rfact) >> 8,
-																 curpal[1] * gfact >> 8, curpal[2] * bfact >> 8, (uint) - 1);
-		curpal += 3;
-	} while (--num);
 }

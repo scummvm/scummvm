@@ -2574,7 +2574,34 @@ void Scumm::palManipulate()
 	_palManipCounter--;
 }
 
-void Scumm::unkRoomFunc3(int palstart, int palend, int rfact, int gfact, int bfact)
+void Scumm::setupShadowPalette(int slot, int redScale, int greenScale, int blueScale, int startColor, int endColor)
+{
+	byte *table;
+	int i;
+	byte *curpal;
+
+	if (slot < 0 || slot > 7)
+		error("setupShadowPalette: invalid slot %d", slot);
+
+	if (startColor < 0 || startColor > 255 || endColor < 0 || startColor > 255 || endColor < startColor)
+		error("setupShadowPalette: invalid range from %d to %d", startColor, endColor);
+
+	table = _shadowPalette + slot * 256;
+	for (i = 0; i < 256; i++)
+		table[i] = i;
+
+	table += startColor;
+	curpal = _currentPalette + startColor * 3;
+	for (i = startColor; i <= endColor; i++) {
+		*table++ = remapPaletteColor((curpal[0] * redScale) >> 8,
+									  curpal[1] * greenScale >> 8,
+									  curpal[2] * blueScale >> 8,
+									  (uint) - 1);
+		curpal += 3;
+	}
+}
+
+void Scumm::setupShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor)
 {
 	byte *basepal = getPalettePtr();
 	byte *pal = basepal;
@@ -2601,9 +2628,9 @@ void Scumm::unkRoomFunc3(int palstart, int palend, int rfact, int gfact, int bfa
 	// and thus doesn't result in any visual differences.
 
 	for (i = 0; i <= 255; i++) {
-		int r = (int) (*pal++ * rfact) >> 8;
-		int g = (int) (*pal++ * gfact) >> 8;
-		int b = (int) (*pal++ * bfact) >> 8;
+		int r = (int) (*pal++ * redScale) >> 8;
+		int g = (int) (*pal++ * greenScale) >> 8;
+		int b = (int) (*pal++ * blueScale) >> 8;
 
 		// The following functionality is similar to remapPaletteColor, except
 		// 1) we have to work off the original CLUT rather than the current palette, and
@@ -2613,7 +2640,6 @@ void Scumm::unkRoomFunc3(int palstart, int palend, int rfact, int gfact, int bfa
 		int j;
 		int ar, ag, ab;
 		uint sum, diff, bestsum, bestitem = 0;
-		compareptr = basepal + palstart * 3;
 
 		if (r > 255)
 			r = 255;
@@ -2622,13 +2648,14 @@ void Scumm::unkRoomFunc3(int palstart, int palend, int rfact, int gfact, int bfa
 		if (b > 255)
 			b = 255;
 
-		bestsum = (uint) - 1;
+		bestsum = (uint)-1;
 
 		r &= ~3;
 		g &= ~3;
 		b &= ~3;
 
-		for (j = palstart; j <= palend; j++, compareptr += 3) {
+		compareptr = basepal + startColor * 3;
+		for (j = startColor; j <= endColor; j++, compareptr += 3) {
 			ar = compareptr[0] & ~3;
 			ag = compareptr[1] & ~3;
 			ab = compareptr[2] & ~3;
@@ -2650,6 +2677,87 @@ void Scumm::unkRoomFunc3(int palstart, int palend, int rfact, int gfact, int bfa
 			}
 		}
 		*table++ = bestitem;
+	}
+}
+
+/* Yazoo: This function create the specialPalette used for semi-transparency in SamnMax */
+void Scumm::createSpecialPalette(int16 from, int16 to, int16 redScale, int16 greenScale, int16 blueScale,
+			int16 startColor, int16 endColor)
+{
+	byte *palPtr;
+	byte *curPtr;
+	byte *searchPtr;
+
+	uint bestResult;
+	uint currentResult;
+
+	byte currentIndex;
+
+	int i, j;
+
+	palPtr = getPalettePtr();
+
+	for (i = 0; i < 256; i++)
+		_proc_special_palette[i] = i;
+
+	curPtr = palPtr + startColor * 3;
+
+	for (i = startColor; i < endColor; i++) {
+		int r = (int) (*curPtr++ * redScale) >> 8;
+		int g = (int) (*curPtr++ * greenScale) >> 8;
+		int b = (int) (*curPtr++ * blueScale) >> 8;
+
+		searchPtr = palPtr;
+		bestResult = 32000;
+		currentIndex = 0;
+
+		for (j = from; j < to; j++) {
+			int ar = (*searchPtr++);
+			int ag = (*searchPtr++);
+			int ab = (*searchPtr++);
+
+			// FIXME - shouldn't we use a better distance measure, like the one in remapPaletteColor ?
+			currentResult = abs(ar - r) + abs(ag - g) + abs(ab - b);
+
+			if (currentResult < bestResult) {
+				_proc_special_palette[i] = currentIndex;
+				bestResult = currentResult;
+			}
+			currentIndex++;
+		}
+	}
+}
+
+void Scumm::darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor)
+{
+	if (startColor <= endColor) {
+		byte *cptr, *cur;
+		int j;
+		int color;
+
+		cptr = getPalettePtr() + startColor * 3;
+		cur = _currentPalette + startColor * 3;
+
+		for (j = startColor; j <= endColor; j++) {
+			color = *cptr++;
+			color = color * redScale / 0xFF;
+			if (color > 255)
+				color = 255;
+			*cur++ = color;
+
+			color = *cptr++;
+			color = color * greenScale / 0xFF;
+			if (color > 255)
+				color = 255;
+			*cur++ = color;
+
+			color = *cptr++;
+			color = color * blueScale / 0xFF;
+			if (color > 255)
+				color = 255;
+			*cur++ = color;
+		}
+		setDirtyColors(startColor, endColor);
 	}
 }
 
@@ -2811,43 +2919,6 @@ byte *Scumm::getPalettePtr()
 		cptr = findPalInPals(cptr + _PALS_offs, _curPalIndex);
 	}
 	return cptr;
-}
-
-void Scumm::darkenPalette(int startColor, int endColor, int redScale, int greenScale, int blueScale)
-{
-	if (startColor <= endColor) {
-		byte *cptr, *cur;
-		int num;
-		int color;
-
-		cptr = getPalettePtr() + startColor * 3;
-		cur = _currentPalette + startColor * 3;
-		num = endColor - startColor + 1;
-
-		do {
-			color = *cptr++;
-			if (redScale != 0xFF)
-				color = color * redScale / 0xFF;
-			if (color > 255)
-				color = 255;
-			*cur++ = color;
-
-			color = *cptr++;
-			if (greenScale != 0xFF)
-				color = color * greenScale / 0xFF;
-			if (color > 255)
-				color = 255;
-			*cur++ = color;
-
-			color = *cptr++;
-			if (blueScale != 0xFF)
-				color = color * blueScale / 0xFF;
-			if (color > 255)
-				color = 255;
-			*cur++ = color;
-		} while (--num);
-		setDirtyColors(startColor, endColor);
-	}
 }
 
 void Scumm::grabCursor(int x, int y, int w, int h)
@@ -3054,7 +3125,7 @@ int Scumm::remapPaletteColor(int r, int g, int b, uint threshold)
 {
 	int i;
 	int ar, ag, ab;
-	uint sum, j, bestsum, bestitem = 0;
+	uint sum, diff, bestsum, bestitem = 0;
 	byte *pal = _currentPalette;
 
 	if (r > 255)
@@ -3077,12 +3148,12 @@ int Scumm::remapPaletteColor(int r, int g, int b, uint threshold)
 		if (ar == r && ag == g && ab == b)
 			return i;
 
-		j = ar - r;
-		sum = j * j * 3;
-		j = ag - g;
-		sum += j * j * 6;
-		j = ab - b;
-		sum += j * j * 2;
+		diff = ar - r;
+		sum = diff * diff * 3;
+		diff = ag - g;
+		sum += diff * diff * 6;
+		diff = ab - b;
+		sum += diff * diff * 2;
 
 		if (sum < bestsum) {
 			bestsum = sum;
@@ -3091,6 +3162,8 @@ int Scumm::remapPaletteColor(int r, int g, int b, uint threshold)
 	}
 
 	if (threshold != (uint) - 1 && bestsum > threshold * threshold * (2 + 3 + 6)) {
+		// Best match exceeded threshold. Try to find an unused palette entry and
+		// use it for our purpose.
 		pal = _currentPalette + (256 - 2) * 3;
 		for (i = 254; i > 48; i--, pal -= 3) {
 			if (pal[0] >= 252 && pal[1] >= 252 && pal[2] >= 252) {
@@ -3389,71 +3462,6 @@ labelBompSkip:
 		dst += bd->outwidth;
 		if (pos_y >= clip_bottom)
 			break;
-	}
-}
-
-/* Yazoo: This function create the specialPalette used for semi-transparency in SamnMax */
-void Scumm::createSpecialPalette(int16 a, int16 b, int16 c, int16 d, int16 e, int16 colorMin,
-																 int16 colorMax)
-{
-	byte *palPtr;
-	byte *curPtr;
-	byte *searchPtr;
-
-	byte readComp1;
-	byte readComp2;
-	byte readComp3;
-
-	int colorComp1;
-	int colorComp2;
-	int colorComp3;
-
-	int searchComp1;
-	int searchComp2;
-	int searchComp3;
-
-	short int bestResult;
-	short int currentResult;
-
-	byte currentIndex;
-
-	int i;
-	int j;
-
-	palPtr = getPalettePtr();
-
-	for (i = 0; i < 256; i++)
-		_proc_special_palette[i] = i;
-
-	curPtr = palPtr + colorMin * 3;
-
-	for (i = colorMin; i < colorMax; i++) {
-		readComp1 = *(curPtr++);
-		readComp2 = *(curPtr++);
-		readComp3 = *(curPtr++);
-
-		colorComp1 = ((readComp1) * c) >> 8;
-		colorComp2 = ((readComp2) * d) >> 8;
-		colorComp3 = ((readComp3) * e) >> 8;
-
-		searchPtr = palPtr;
-		bestResult = 32000;
-		currentIndex = 0;
-
-		for (j = a; j < b; j++) {
-			searchComp1 = (*searchPtr++);
-			searchComp2 = (*searchPtr++);
-			searchComp3 = (*searchPtr++);
-
-			currentResult =
-				abs(searchComp1 - colorComp1) + abs(searchComp2 - colorComp2) + abs(searchComp3 - colorComp3);
-
-			if (currentResult < bestResult) {
-				_proc_special_palette[i] = currentIndex;
-				bestResult = currentResult;
-			}
-			currentIndex++;
-		}
 	}
 }
 

@@ -755,11 +755,11 @@ public:
 	void stopCycle(int i);
 	void palManipulateInit(int start, int end, int string_id, int time);
 	void palManipulate();
-	void unkRoomFunc3(int a, int b, int c, int d, int e);
 	int remapPaletteColor(int r, int g, int b, uint threshold);
 	void moveMemInPalRes(int start, int end, byte direction);
-	void setupShadowPalette(int slot, int rfact, int gfact, int bfact, int from, int to);
-	void darkenPalette(int a, int b, int c, int d, int e);
+	void setupShadowPalette(int slot, int redScale, int greenScale, int blueScale, int startColor, int endColor);
+	void setupShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor);
+	void darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor);
 
 	void setShake(int mode);
 
