@@ -50,9 +50,6 @@ protected:
 class SaveLoadDialog : public ScummDialog {
 public:
 	SaveLoadDialog(NewGui *gui, Scumm *scumm);
-
-	virtual void open();
-
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	virtual void open();	
 	virtual void close();

@@ -333,6 +333,10 @@ void SaveLoadDialog::open()
 {
 	switchToLoadMode();
 
+#ifdef _WIN32_WCE
+	force_keyboard(true);
+#endif
+
 	ScummDialog::open();
 }
 
@@ -389,15 +393,6 @@ void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	default:
 		ScummDialog::handleCommand(sender, cmd, data);
 	}
-}
-
-void SaveLoadDialog::open() {
-
-	ScummDialog::open();
-
-#ifdef _WIN32_WCE
-	force_keyboard(true);
-#endif
 }
 
 void SaveLoadDialog::close() {
