@@ -1171,7 +1171,7 @@ void Scumm::waitForTimer(int msec_delay) {
 						_fastMode ^= 1;
 					else if (event.kbd.keycode=='g')
 						_fastMode ^= 2;
-					else if (event.kbd.keycode=='d')
+					else if ((event.kbd.keycode=='d') && (_fullScreen == false))
 						g_debugger.attach(this);
 					else if (event.kbd.keycode=='s')
 						resourceStats();

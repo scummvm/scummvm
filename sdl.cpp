@@ -904,7 +904,8 @@ uint32 OSystem_SDL::property(int param, uint32 value) {
 
 	case PROP_TOGGLE_FULLSCREEN:
 		_full_screen ^= true;
-		
+		g_scumm->_fullScreen = _full_screen;
+
 		if (!SDL_WM_ToggleFullScreen(sdl_hwscreen)) {
 			/* if ToggleFullScreen fails, achieve the same effect with hotswap gfx mode */
 			hotswap_gfx_mode();
