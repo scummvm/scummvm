@@ -924,11 +924,14 @@ X.X Credits:
  The ScummVM team:
         James Brown          - Lead developer
         Max Horn             - Lead developer
-        Robert Goeffringmann - Engine: Beneath a Steel Sky (maintainer)
+        David Eriksson       - Engine: Flight of the Amazon Queen
+	Robert Goeffringmann - Engine: Beneath a Steel Sky (maintainer)
         Jonathan Gray        - Engine: SCUMM
         Oliver Kiehl         - Engine: Beneath a Steel Sky, Simon
         Pawel Kolodziejski   - Engine: SCUMM (Codecs, iMUSE, Smush, etc.)
-        Joost Peters         - Engine: Beneath a Steel Sky
+	Gregory Montoir      - Engine: Flight of the Amazon Queen
+        Joost Peters         - Engine: Beneath a Steel Sky,
+	                               Flight of the Amazon Queen
         Chris Apers          - Port: PalmOS
         Nicolas Bacca        - Port: PocketPC/WinCE port
         Marcus Comstedt      - Port: Dreamcast
