@@ -4,8 +4,14 @@ AR = ar rcu
 CXXFLAGS = -g -W -Wall -Ilua/include `sdl-config --cflags` -DUNIX \
 	   -Wno-multichar # -O2
 LDFLAGS = -g -W -Wall # -O2
-LIBS =  -Llua/lib -llua -llualib `sdl-config --libs` \
-	-lGL -lGLU -lz
+LIBS =  -Llua/lib -llua -llualib `sdl-config --libs` -lz 
+
+LIBS += -lGL -lGLU
+
+# For OSX use these instead of -lGL and -lGLU
+#LIBS += -framework OpenGL -framework GLUT 
+#CXXFLAGS += -DOSX
+
 OBJS = main.o lab.o bitmap.o model.o resource.o material.o debug.o \
 	textsplit.o lua.o registry.o localize.o scene.o engine.o actor.o \
 	sound.o timer.o keyframe.o costume.o walkplane.o textobject.o \

@@ -88,16 +88,24 @@ int main(int argc, char *argv[]) {
 	Bitmap *splash_bm = ResourceLoader::instance()->loadBitmap("splash.bm");
 
 	SDL_Event event;
+	
+// For some reason we don't get the SDL_VIDEOEXPOSE event on OSX, so just don't wait for it.
+#ifndef OSX
 	while (SDL_PollEvent(&event)) {
 		if (event.type == SDL_VIDEOEXPOSE) {
+#else
+	SDL_PollEvent(&event);
+#endif	
 			g_driver->clearScreen();
 
 			Bitmap::prepareDraw();
 			splash_bm->draw();
 
 			g_driver->flipBuffer();
+#ifndef OSX
 		}
 	}
+#endif
 
 	lua_open();
 

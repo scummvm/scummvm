@@ -28,7 +28,13 @@
 
 
 #define skip_word(pc)	(pc+=2)
+
+/* Little Endian */
 #define get_word(pc)	(*((unsigned short*)(pc)))
+
+/* Big Endian */
+/*#define get_word(pc)    ((*((pc)+1)<<8)|(*(pc))) */
+
 #define next_word(pc)   (pc+=2, get_word(pc-2))
 
 

@@ -691,7 +691,7 @@ void Model::Mesh::draw() const {
 		}
 
 		if (SCREENBLOCKS_GLOBAL == 1)
-			screenBlocksAddRectangle( top, right, left, bottom, bestDepth );
+			screenBlocksAddRectangle( (int)top, (int)right, (int)left, (int)bottom, (int)bestDepth );
 	}
 	/*
 	glDisable(GL_DEPTH_TEST);

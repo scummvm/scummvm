@@ -1084,7 +1084,9 @@ static void NewObjectState() {
 	if (!unk2)
 		unk3 = check_int(6);		// ?
 
+#ifndef OSX
 	warning("Stub: newObjectState(%d, %s, %s)", setupID, bitmap, zbitmap);
+#endif
 	// object = scene.addObjectState;
 	// lua_pushusertag(object, object_tag);
 }

@@ -645,10 +645,18 @@ static void bompInit(const byte *src) {
 }
 
 static void bompDecodeMain(byte *dst, const byte *src, int size) {
+	int count = size / 2;
+	byte *start = dst;
+
 	bompInit(src);
 	while (size--) {
 		*dst++ = bompDecode();
 	}
+#ifdef SYSTEM_BIG_ENDIAN              
+        for (int i = 0; i < count; ++i) {
+                ((uint16 *)start)[i] = SWAP_BYTES_16(((uint16 *)start)[i]);
+        }       
+#endif  
 }
 
 void Blocky16::decode(byte *dst, const byte *src) {
@@ -680,6 +688,11 @@ void Blocky16::decode(byte *dst, const byte *src) {
 
 	switch(src[18]) {
 	case 0:
+	#ifdef SYSTEM_BIG_ENDIAN
+                for (int i = 0; i < _width * _height; ++i) {
+                        ((uint16*)gfx_data)[i] = TO_LE_16(((uint16*)gfx_data)[i]);
+                }
+	#endif
 		memcpy(_curBuf, gfx_data, _frameSize);
 		break;
 	case 1:

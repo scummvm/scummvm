@@ -50,13 +50,19 @@ Resource(filename) {
 		if (codec == 0) {
 			memcpy(data_[i], data + pos, 2 * width_ * height_);
 			pos += 2 * width_ * height_ + 8;
-			} else if (codec == 3) {
+		} else if (codec == 3) {
 				int compressed_len = READ_LE_UINT32(data + pos);
 				decompress_codec3(data + pos + 4, data_[i]);
 				pos += compressed_len + 12;
-			}
 		}
 
+	#ifdef SYSTEM_BIG_ENDIAN
+		for (int j = 0; j < width_ * height_; ++j) {
+			((uint16 *)data_[i])[j] = SWAP_BYTES_16(((uint16 *)data_[i])[j]);
+		}
+	#endif
+	}	
+	
 	if (format_ == 1) {
 		num_tex_ = ((width_ + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE) *
 			((height_ + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE);

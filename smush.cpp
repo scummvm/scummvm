@@ -63,7 +63,13 @@ void Smush::init() {
 	_movieTime = 0;
 	_videoFinished = false;
 	_videoPause = false;
+//HACK: If we don't set it here, it'll never get set at all..
+//	This is BAD - but until we find the source of the problem, this'll have to do.
+#ifndef OSX
 	_updateNeeded = false;
+#else
+	_updateNeeded = true;
+#endif
 	if (!_surface)
 		_surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, 16, 0x0000f800, 0x000007e0, 0x0000001f, 0x00000000);
 	if (!_bufSurface)
@@ -94,9 +100,11 @@ void Smush::handleWave(const byte *src, uint32 size) {
 	int16 *dst = new int16[size * _channels];
 	decompressVima((char *)src, dst, size * _channels * 2, destTable);
 
+#ifndef SYSTEM_BIG_ENDIAN
 	for (uint32 j = 0; j < size * _channels; j++)
 		dst[j] = SWAP_BYTES_16(dst[j]);
- 
+#endif
+	
 	int flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE;
 //	int flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LITTLE_ENDIAN;
 	if (_channels == 2)
