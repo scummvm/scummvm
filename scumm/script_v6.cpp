@@ -2859,7 +2859,7 @@ void Scumm_v6::o6_openFile() {
 		else
 			error("o6_openFile(): wrong open file mode");
 
-		warning("%d = o6_openFile(\"%s\", %d)", slot, filename, mode);
+		warning("%d = o6_openFile(\"%s\", %d)", slot, filename + r, mode);
 	}
 	push(slot);
 }
@@ -2871,7 +2871,7 @@ void Scumm_v6::o6_closeFile() {
 }
 
 void Scumm_v6::o6_deleteFile() {
-	int len;
+	int len, r;
 	byte filename[100];
 
 	_msgPtrToAdd = filename;
@@ -2881,7 +2881,12 @@ void Scumm_v6::o6_deleteFile() {
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
 
-	warning("stub o6_deleteFile(\"%s\")", filename);
+	for (r = strlen((char*)filename); r != 0; r--) {
+		if (filename[r - 1] == '\\')
+			break;
+	}
+
+	warning("stub o6_deleteFile(\"%s\")", filename + r);
 }
 
 int Scumm_v6::readFileToArray(int slot, int32 size) {
