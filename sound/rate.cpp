@@ -51,7 +51,7 @@ typedef struct ratestuff
 
 	unsigned long ipos;	 /* position in the input stream (integer) */
 
-	st_sample_t ilast; /* last sample in the input stream */
+	st_sample_t ilast[2]; /* last sample(s) in the input stream (left/right channel) */
 } *rate_t;
 
 /*
@@ -83,7 +83,8 @@ int st_rate_start(eff_t effp, st_rate_t inrate, st_rate_t outrate)
 
 	rate->ipos = 0;
 
-	rate->ilast = 0;
+	rate->ilast[0] = 0;
+	rate->ilast[1] = 0;
 	return (ST_SUCCESS);
 }
 
@@ -91,23 +92,29 @@ int st_rate_start(eff_t effp, st_rate_t inrate, st_rate_t outrate)
  * Processed signed long samples from ibuf to obuf.
  * Return number of samples processed.
  */
+template<int channels>
 int st_rate_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol)
 {
 	rate_t rate = (rate_t) effp->priv;
 	st_sample_t *ostart, *oend;
-	st_sample_t ilast, icur, out;
+	st_sample_t ilast[2], icur[2], out;
 	unsigned long tmp;
+	int i;
 
-	ilast = rate->ilast;
+	assert(channels == 1 || channels == 2);
+
+	for (i = 0; i < channels; i++)
+		ilast[i] = rate->ilast[i];
 
 	ostart = obuf;
 	oend = obuf + *osamp;
 
 	while (obuf < oend && !input.eof()) {
 
-		/* read as many input samples so that ipos > opos */
+		/* read enough input samples so that ipos > opos */
 		while (rate->ipos <= rate->opos) {
-			ilast = input.read();
+			for (i = 0; i < channels; i++)
+				ilast[i] = input.read();
 			rate->ipos++;
 			/* See if we finished the input buffer yet */
 
@@ -115,25 +122,64 @@ int st_rate_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size
 				goto the_end;
 		}
 
-		icur = input.peek();
+		// read the input sample(s)
+		icur[0] = input.read();
+		if (channels == 2) {
+			if (input.eof())
+				goto the_end;	// Shouldn't happen if data comes pair-wise
+			icur[1] = input.read();
+		}
 
-		/* interpolate */
-		out = ilast + (((icur - ilast) * rate->opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS);
+		while (rate->ipos > rate->opos) {
+			for (i = 0; i < channels; i++) {
+				// interpolate
+				out = ilast[i] + (((icur[i] - ilast[i]) * rate->opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS);
+		
+				// adjust volume
+				out = out * vol / 256;
+		
+				// output left channel sample
+				clampedAdd(*obuf++, out);
+			}
+	
+			// For mono input, repeat the sample to produce stereo output
+			if (channels == 1)
+				clampedAdd(*obuf++, out);
+	
+			// Increment output position
+			tmp = rate->opos_frac + rate->opos_inc_frac;
+			rate->opos = rate->opos + rate->opos_inc + (tmp >> FRAC_BITS);
+			rate->opos_frac = tmp & ((1UL << FRAC_BITS) - 1);
+		}
 
-		/* output sample & increment position */
-		out = out * vol / 256;
-		clampedAdd(*obuf++, out);
-		#if 1	// FIXME: Hack to generate stereo output
-		clampedAdd(*obuf++, out);
-		#endif
-
-		tmp = rate->opos_frac + rate->opos_inc_frac;
-		rate->opos = rate->opos + rate->opos_inc + (tmp >> FRAC_BITS);
-		rate->opos_frac = tmp & ((1UL << FRAC_BITS) - 1);
+		// Increment input position again (for the sample we read now)
+		rate->ipos++;
+		for (i = 0; i < channels; i++)
+			ilast[i] = icur[i];
 	}
 
 the_end:
 	*osamp = obuf - ostart;
-	rate->ilast = ilast;
+	for (i = 0; i < channels; i++)
+		rate->ilast[i] = ilast[i];
+	return (ST_SUCCESS);
+}
+
+
+#pragma mark -
+
+
+LinearRateConverter::LinearRateConverter(st_rate_t inrate, st_rate_t outrate) {
+	st_rate_start(&effp, inrate, outrate);
+}
+
+int LinearRateConverter::flow(AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
+	if (input.isStereo())
+		return st_rate_flow<2>(&effp, input, obuf, osamp, vol);
+	else
+		return st_rate_flow<1>(&effp, input, obuf, osamp, vol);
+}
+
+int LinearRateConverter::drain(st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
 	return (ST_SUCCESS);
 }

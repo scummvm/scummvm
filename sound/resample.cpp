@@ -274,6 +274,16 @@ int st_resample_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_
 	const long obufSize = *osamp;
 #endif
 
+TODO: adjust for the changes made to AudioInputStream; add support for stereo
+initially, could just average the left/right channel -> bad for quality of course,
+but easiest to implement and would get this going again.
+Next step is to duplicate the X/Y buffers... a lot of computations don't care about
+how many channels there are anyway, they could just be ran twice, e.g. SrcEX and SrcUD.
+But better for efficiency would be to rewrite those to deal with 2 channels, too.
+Because esp in SrcEX/SrcUD, only very few computations depend on the input data,
+and dealing with both channels in parallel should only be a little slower than dealing
+with them alone
+
 	// Constrain amount we actually process
 	//fprintf(stderr,"Xp %d, Xread %d\n",r->Xp, r->Xread);
 
@@ -313,7 +323,6 @@ int st_resample_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_
 	
 	// Finally compute the effective number of bytes to process
 	Nproc = last - r->Xoff - r->Xp;
-printf("FOO(3) Nproc %ld\n", Nproc);
 
 	if (Nproc <= 0) {
 		/* fill in starting here next time */
@@ -356,7 +365,7 @@ printf("FOO(3) Nproc %ld\n", Nproc);
 
 	/* Copy back portion of input signal that must be re-used */
 	k = r->Xp - r->Xoff;
-	fprintf(stderr,"k %d, last %d\n",k,last);
+	//fprintf(stderr,"k %d, last %d\n",k,last);
 	for (i = 0; i < last - k; i++)
 		r->X[i] = r->X[i + k];
 
@@ -370,7 +379,8 @@ printf("osamp = %ld, Nout = %ld\n", obufSize, Nout);
 		int sample = (int)(r->Y[i] * vol / 256);
 		clampedAdd(*obuf++, sample);
 #if 1	// FIXME: Hack to generate stereo output
-		clampedAdd(*obuf++, sample);
+//		clampedAdd(*obuf++, sample);
+		*obuf++;
 #endif
 	}
 
@@ -514,12 +524,12 @@ static long SrcUD(resample_t r, long Nx) {
 	Factor = r->Factor;
 	time = r->Time;
 	dt = 1.0 / Factor;	   /* Output sampling period */
-	fprintf(stderr,"Factor %f, dt %f, ",Factor,dt);
-	fprintf(stderr,"Time %f, ",r->Time);
+	//fprintf(stderr,"Factor %f, dt %f, ",Factor,dt);
+	//fprintf(stderr,"Time %f, ",r->Time);
 	/* (Xh * dhb)>>La is max index into Imp[] */
 	/*fprintf(stderr,"ct=%d\n",ct);*/
-	fprintf(stderr,"ct=%.2f %d\n",(double)r->Nwing*Na/r->dhb, r->Xh);
-	fprintf(stderr,"ct=%ld, T=%.6f, dhb=%6f, dt=%.6f\n", r->Xh, time-floor(time),(double)r->dhb/Na,dt);
+	//fprintf(stderr,"ct=%.2f %d\n",(double)r->Nwing*Na/r->dhb, r->Xh);
+	//fprintf(stderr,"ct=%ld, T=%.6f, dhb=%6f, dt=%.6f\n", r->Xh, time-floor(time),(double)r->dhb/Na,dt);
 	Ystart = Y = r->Y + r->Yposition;
 	n = (int)ceil((double)Nx / dt);
 	while (n--) {
@@ -722,3 +732,33 @@ static void LpFilter(double *c, long N, double frq, double Beta, long Num) {
 		}
 	}
 }
+
+
+#pragma mark -
+
+
+ResampleRateConverter::ResampleRateConverter(st_rate_t inrate, st_rate_t outrate, int quality) {
+	// FIXME: quality is for now a nasty hack.
+	// Valid values are 0,1,2,3 (everything else is treated like 0 for now)
+	const char *arg = 0;
+	switch (quality) {
+	case 1: arg = "-qs"; break;
+	case 2: arg = "-q"; break;
+	case 3: arg = "-ql"; break;
+	}
+	st_resample_getopts(&effp, arg ? 1 : 0, &arg);
+	st_resample_start(&effp, inrate, outrate);
+}
+
+ResampleRateConverter::~ResampleRateConverter() {
+	st_resample_stop(&effp);
+}
+
+int ResampleRateConverter::flow(AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
+	return st_resample_flow(&effp, input, obuf, osamp, vol);
+}
+
+int ResampleRateConverter::drain(st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
+	return st_resample_drain(&effp, obuf, osamp, vol);
+}
+

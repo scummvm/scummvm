@@ -56,17 +56,6 @@ static inline void clampedAdd(int16& a, int b) {
 #define st_fail error
 
 
-// Resample (high quality)
-int st_resample_getopts(eff_t effp, int n, const char **argv);
-int st_resample_start(eff_t effp, st_rate_t inrate, st_rate_t outrate);
-int st_resample_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol);
-int st_resample_drain(eff_t effp, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol);
-int st_resample_stop(eff_t effp);
-
-// Rate (linear filter, low quality)
-int st_rate_start(eff_t effp, st_rate_t inrate, st_rate_t outrate);
-int st_rate_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol);
-
 class RateConverter {
 protected:
 	eff_struct effp;
@@ -79,40 +68,17 @@ public:
 
 class LinearRateConverter : public RateConverter {
 public:
-	LinearRateConverter(st_rate_t inrate, st_rate_t outrate) {
-		st_rate_start(&effp, inrate, outrate);
-	}
-	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
-		return st_rate_flow(&effp, input, obuf, osamp, vol);
-	}
-	virtual int drain(st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
-		return (ST_SUCCESS);
-	}
+	LinearRateConverter(st_rate_t inrate, st_rate_t outrate);
+	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol);
+	virtual int drain(st_sample_t *obuf, st_size_t *osamp, st_volume_t vol);
 };
 
 class ResampleRateConverter : public RateConverter {
 public:
-	ResampleRateConverter(st_rate_t inrate, st_rate_t outrate, int quality) {
-		// FIXME: quality is for now a nasty hack.
-		// Valid values are 0,1,2,3 (everything else is treated like 0 for now)
-		const char *arg = 0;
-		switch (quality) {
-		case 1: arg = "-qs"; break;
-		case 2: arg = "-q"; break;
-		case 3: arg = "-ql"; break;
-		}
-		st_resample_getopts(&effp, arg ? 1 : 0, &arg);
-		st_resample_start(&effp, inrate, outrate);
-	}
-	~ResampleRateConverter() {
-		st_resample_stop(&effp);
-	}
-	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
-		return st_resample_flow(&effp, input, obuf, osamp, vol);
-	}
-	virtual int drain(st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
-		return st_resample_drain(&effp, obuf, osamp, vol);
-	}
+	ResampleRateConverter(st_rate_t inrate, st_rate_t outrate, int quality);
+	~ResampleRateConverter();
+	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol);
+	virtual int drain(st_sample_t *obuf, st_size_t *osamp, st_volume_t vol);
 };
 
 #endif

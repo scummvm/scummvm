@@ -23,47 +23,79 @@
 #include "mixer.h"
 
 template<int channels, int sampleSize>
-class MemoryAudioInputStream : public AudioInputStream {
+class LinearMemoryStream : public AudioInputStream {
 protected:
 	const byte *_ptr;
 	const byte *_end;
-	void advance() { _ptr += channels * sampleSize; }
+	void advance() { _ptr += sampleSize; }
 public:
-	MemoryAudioInputStream(const byte *ptr, uint len) : _ptr(ptr), _end(ptr+len) { }
-	virtual int size() { return (_end - _ptr) / (channels * sampleSize); }
+	LinearMemoryStream(const byte *ptr, uint len) : _ptr(ptr), _end(ptr+len) { }
+	virtual int size() const { return (_end - _ptr) / sampleSize; }
+	virtual bool isStereo() const { return channels == 2; }
 };
 
+#if 0
+TODO: Implement a wrapped memory stream, to be used by the ChannelStream class
+(and possibly others?)
 
-template<int channels>
-class Input8bitSignedStream : public MemoryAudioInputStream<channels, 1> {
+template<int channels, int sampleSize>
+class WrappedMemoryStream : public AudioInputStream {
+protected:
+	byte *_bufferStart;
+	byte *_bufferEnd;
+	byte *_pos;
+	byte *_end;
+	
+	void advance() {
+		_ptr += channels * sampleSize;
+		.. TODO: wrap
+	}
+public:
+	WrappedMemoryStream(const byte *ptr, uint len) : _bufferStart(ptr), _bufferEnd(ptr+len) { }
+	virtual int size() const {
+		int size = _end - _pos;
+		if (size < 0)
+			size += _bufferEnd - _bufferStart
+		return size / (channels * sampleSize);
+	}
+	
+	void append(const byte *ptr, uint len) {
+		...
+	}
+};
+#endif
+
+
+template<int channels, class T = class LinearMemoryStream<channels, 1> >
+class Input8bitSignedStream : public T {
 protected:
 	int16 readIntern() { int8 v = (int8)*_ptr; return v << 8; }
 public:
-	Input8bitSignedStream(const byte *ptr, int len) : MemoryAudioInputStream<channels, 1>(ptr, len) { }
+	Input8bitSignedStream(const byte *ptr, int len) : T(ptr, len) { }
 };
 
-template<int channels>
-class Input8bitUnsignedStream : public MemoryAudioInputStream<channels, 1> {
+template<int channels, class T = class LinearMemoryStream<channels, 1> >
+class Input8bitUnsignedStream : public T {
 protected:
 	int16 readIntern() { int8 v = (int8)(*_ptr ^ 0x80); return v << 8; }
 public:
-	Input8bitUnsignedStream(const byte *ptr, int len) : MemoryAudioInputStream<channels, 1>(ptr, len) { }
+	Input8bitUnsignedStream(const byte *ptr, int len) : T(ptr, len) { }
 };
 
-template<int channels>
-class Input16bitSignedStream : public MemoryAudioInputStream<channels, 2> {
+template<int channels, class T = class LinearMemoryStream<channels, 2> >
+class Input16bitSignedStream : public T {
 protected:
 	int16 readIntern() { return (int16)READ_BE_UINT16(_ptr); }
 public:
-	Input16bitSignedStream(const byte *ptr, int len) : MemoryAudioInputStream<channels, 2>(ptr, len) { }
+	Input16bitSignedStream(const byte *ptr, int len) : T(ptr, len) { }
 };
 
-template<int channels>
-class Input16bitUnsignedStream : public MemoryAudioInputStream<channels, 2> {
+template<int channels, class T = class LinearMemoryStream<channels, 2> >
+class Input16bitUnsignedStream : public T {
 protected:
 	int16 readIntern() { return (int16)(READ_BE_UINT16(_ptr) ^ 0x8000); }
 public:
-	Input16bitUnsignedStream(const byte *ptr, int len) : MemoryAudioInputStream<channels, 2>(ptr, len) { }
+	Input16bitUnsignedStream(const byte *ptr, int len) : T(ptr, len) { }
 };
 
 
