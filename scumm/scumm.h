@@ -560,12 +560,12 @@ protected:
 	void startManiac();
 
 public:
-	void runScript(int script, bool freezeResistant, bool recursive, int *lvarptr);
+	void runScript(int script, bool freezeResistant, bool recursive, int *lvarptr, int cycle = 0);
 	void stopScript(int script);
 	void nukeArrays(byte script);
 
 protected:
-	void runObjectScript(int script, int entry, bool freezeResistant, bool recursive, int *vars, int slot = -1);
+	void runObjectScript(int script, int entry, bool freezeResistant, bool recursive, int *vars, int slot = -1, int cycle = 0);
 	void runScriptNested(int script);
 	void executeScript();
 	void updateScriptPtr();
@@ -1296,6 +1296,9 @@ public:
 	byte VAR_NUM_SOUND_CHANNELS;
 	byte VAR_MUSIC_CHANNEL;
 	byte VAR_SOUND_CHANNEL;
+
+	byte VAR_SCRIPT_CYCLE;
+	byte VAR_NUM_SCRIPT_CYCLES;
 
 	byte VAR_NUM_ROOMS;
 	byte VAR_NUM_SCRIPTS;

@@ -404,8 +404,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		MKLINE(ObjectData, parent, sleByte, VER(8)),
 		MKLINE(ObjectData, state, sleByte, VER(8)),
 		MKLINE(ObjectData, fl_object_index, sleByte, VER(8)),
-		// TODO
-		//MKLINE(ObjectData, flag, sleByte, VER(XXX)),
+		MKLINE(ObjectData, flags, sleByte, VER(46)),
 		MKEND()
 	};
 
@@ -609,6 +608,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		MKLINE(ScriptSlot, freezeCount, sleByte, VER(8)),
 		MKLINE(ScriptSlot, didexec, sleByte, VER(8)),
 		MKLINE(ScriptSlot, cutsceneOverride, sleByte, VER(8)),
+		MKLINE(ScriptSlot, cycle, sleByte, VER(46)),
 		MK_OBSOLETE(ScriptSlot, unk5, sleByte, VER(8), VER(10)),
 		MKEND()
 	};

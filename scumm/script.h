@@ -50,6 +50,7 @@ struct ScriptSlot {
 	byte where;
 	byte freezeCount;
 	byte cutsceneOverride;
+	byte cycle;
 };
 
 struct NestedScript {

@@ -965,6 +965,9 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_MUSIC_CHANNEL = 0xFF;
 	VAR_SOUND_CHANNEL = 0xFF;
 
+	VAR_NUM_SCRIPT_CYCLES = 0xFF;
+	VAR_SCRIPT_CYCLE = 0xFF;
+
 	VAR_NUM_ROOMS = 0xFF;
 	VAR_NUM_SCRIPTS = 0xFF;
 	VAR_NUM_SOUNDS = 0xFF;

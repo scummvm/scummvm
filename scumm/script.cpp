@@ -33,7 +33,7 @@
 namespace Scumm {
 
 /* Start executing script 'script' with the given parameters */
-void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, int *lvarptr) {
+void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, int *lvarptr, int cycle) {
 	ScriptSlot *s;
 	byte *scriptPtr;
 	uint32 scriptOffs;
@@ -63,6 +63,9 @@ void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, in
 				       vm.slot[_currentScript].number, _roomResource);
 	}
 
+	if (cycle == 0)
+		cycle = (_heversion >= 90) ? VAR(VAR_SCRIPT_CYCLE) : 1;
+
 	slot = getScriptSlot();
 
 	s = &vm.slot[slot];
@@ -74,13 +77,14 @@ void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, in
 	s->recursive = recursive;
 	s->freezeCount = 0;
 	s->delayFrameCount = 0;
+	s->cycle = cycle;
 
 	initializeLocals(slot, lvarptr);
 
 	runScriptNested(slot);
 }
 
-void ScummEngine::runObjectScript(int object, int entry, bool freezeResistant, bool recursive, int *vars, int slot) {
+void ScummEngine::runObjectScript(int object, int entry, bool freezeResistant, bool recursive, int *vars, int slot, int cycle) {
 	ScriptSlot *s;
 	uint32 obcd;
 	int where, offs;
@@ -108,6 +112,9 @@ void ScummEngine::runObjectScript(int object, int entry, bool freezeResistant, b
 	if (offs == 0)
 		return;
 
+	if (cycle == 0)
+		cycle = (_heversion >= 90) ? VAR(VAR_SCRIPT_CYCLE) : 1;
+
 	s = &vm.slot[slot];
 	s->number = object;
 	s->offs = obcd + offs;
@@ -117,6 +124,7 @@ void ScummEngine::runObjectScript(int object, int entry, bool freezeResistant, b
 	s->recursive = recursive;
 	s->freezeCount = 0;
 	s->delayFrameCount = 0;
+	s->cycle = cycle;
 
 	initializeLocals(slot, vars);
 
@@ -781,12 +789,16 @@ void ScummEngine::runAllScripts() {
 	// for loop. But in that case, _curExecScript will be equal to _currentScript. Hence
 	// it would seem we can replace all occurances of _curExecScript by _currentScript.
 	_currentScript = 0xFF;
-	for (_curExecScript = 0; _curExecScript < NUM_SCRIPT_SLOT; _curExecScript++) {
-		if (vm.slot[_curExecScript].status == ssRunning && vm.slot[_curExecScript].didexec == 0) {
-			_currentScript = (byte)_curExecScript;
-			getScriptBaseAddress();
-			getScriptEntryPoint();
-			executeScript();
+	int numCycles = (_heversion >= 90) ? VAR(VAR_NUM_SCRIPT_CYCLES) : 1;
+
+	for (int cycle = 1; cycle <= numCycles; cycle++) {
+		for (_curExecScript = 0; _curExecScript < NUM_SCRIPT_SLOT; _curExecScript++) {
+			if (vm.slot[_curExecScript].status == ssRunning && vm.slot[_curExecScript].didexec == 0) {
+				_currentScript = (byte)_curExecScript;
+				getScriptBaseAddress();
+				getScriptEntryPoint();
+				executeScript();
+			}
 		}
 	}
 }

@@ -457,7 +457,7 @@ void ScummEngine_v90he::o90_startScriptUnk() {
 	cycle = pop();
 	script = pop();
 	flags = fetchScriptByte();
-	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
+	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args, cycle);
 }
 
 void ScummEngine_v90he::o90_jumpToScriptUnk() {
@@ -470,7 +470,7 @@ void ScummEngine_v90he::o90_jumpToScriptUnk() {
 	script = pop();
 	flags = fetchScriptByte();
 	stopObjectCode();
-	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
+	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args, cycle);
 }
 
 void ScummEngine_v90he::o90_wizImageOps() {
