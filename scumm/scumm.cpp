@@ -210,7 +210,6 @@ static const ScummGameSettings scumm_settings[] = {
 	{"fbdemo", "Fatty Bear's Birthday Surprise (Demo)", GID_FBEAR, 6, 60, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 
-#ifdef HEGAMES
 	 /* Note that both full versions of Humongous games and demos were often released for
 	  * several interpreter versions... */
 	// Humongous Entertainment Scumm Version 6 (Windows versions are version 7 actually)
@@ -227,9 +226,6 @@ static const ScummGameSettings scumm_settings[] = {
 	{"airdemo", "Let's Explore the Airport with Buzzy (Demo)", GID_HEGAME, 6, 70, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"jungle", "Let's Explore the Jungle with Buzzy", GID_HEGAME, 6, 70, MDT_NONE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	/* needs the MAXS reading code for >= 72 but is still 320x200? */
-	{"puttzoo", "Putt-Putt Saves the Zoo", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 
 	// First 640x480 game, hence version 7.1
@@ -258,7 +254,11 @@ static const ScummGameSettings scumm_settings[] = {
 	{"pajama", "Pajama Sam 1: No Need to Hide When It's Dark Outside", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
 
+#ifdef HEGAMES
 	// Humongous Entertainment Scumm Version 9.0 ?  Scummsys.90
+	/* needs the MAXS reading code for >= 72 but is still 320x200? */
+	{"puttzoo", "Putt-Putt Saves the Zoo", GID_HEGAME, 6, 72, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"kinddemo", "Big Thinkers Kindergarten (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
 	{"1grademo", "Big Thinkers First Grade (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
