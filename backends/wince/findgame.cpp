@@ -273,7 +273,7 @@ static const ScummGame GameList[] = {
 	{	
 		 "Curse of Monkey Island",
 		 "Completable",
-		 "", "COMI.LA0", "COMI.LA1",
+		 "", "COMI.LA0", "",
 		 "comi",
 		 0
 	},
@@ -909,10 +909,12 @@ void findGame(TCHAR *directory) {
 				continue;
 
 			//MessageBox(NULL, TEXT("Check OK"), TEXT("Checking file"), MB_OK);
-			MultiByteToWideChar(CP_ACP, 0, current_game.check_file_2, strlen(current_game.check_file_2) + 1, checkfile, sizeof(checkfile));
-			wsprintf(work, TEXT("%s\\%s"), directory, checkfile);			
-			if (GetFileAttributes(work) == 0xFFFFFFFF)
-				continue;
+			if (strlen(current_game.check_file_2)) {
+				MultiByteToWideChar(CP_ACP, 0, current_game.check_file_2, strlen(current_game.check_file_2) + 1, checkfile, sizeof(checkfile));
+				wsprintf(work, TEXT("%s\\%s"), directory, checkfile);			
+				if (GetFileAttributes(work) == 0xFFFFFFFF)
+					continue;
+			}
 			
 			//MessageBox(NULL, TEXT("Match file !"), TEXT("..."), MB_OK);
 			gamesFound[i] = 1;
