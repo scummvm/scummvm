@@ -191,7 +191,7 @@ typedef signed long int32;
 #define START_PACK_STRUCTS pack (push,1)
 #define END_PACK_STRUCTS   pack(pop)
 
-#elif (defined(__MWERKS__) && defined(macintosh))
+#elif (defined(__MWERKS__) && defined(macintosh) && !defined(__APPLE__CW))
 	
 	#define scumm_stricmp strcmp
 	
