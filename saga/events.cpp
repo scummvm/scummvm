@@ -258,7 +258,7 @@ int Events::handleImmediate(EVENT *event) {
 
 int Events::handleOneShot(EVENT *event) {
 	SURFACE *back_buf;
-	SCRIPT_THREAD *sthread;
+	ScriptThread *sthread;
 	Rect rect;
 
 	static SCENE_BGINFO bginfo;
@@ -397,7 +397,7 @@ int Events::handleOneShot(EVENT *event) {
 		case EVENT_EXEC_NONBLOCKING:
 			debug(0, "Starting start script #%d", event->param);
 		
-			sthread = _vm->_script->SThreadCreate();
+			sthread = _vm->_script->createThread();
 			if (sthread == NULL) {
 				_vm->_console->DebugPrintf("Thread creation failed.\n");
 				break;
@@ -408,10 +408,10 @@ int Events::handleOneShot(EVENT *event) {
 			sthread->threadVars[kVarWithObject] = TO_LE_16(event->param4);
 			sthread->threadVars[kVarActor] = TO_LE_16(event->param5);
 
-			_vm->_script->SThreadExecute(sthread, event->param);
+			_vm->_script->executeThread(sthread, event->param);
 
 			if (event->op == EVENT_EXEC_BLOCKING)
-				_vm->_script->SThreadCompleteThread();
+				_vm->_script->completeThread();
 
 			break;
 		case EVENT_THREAD_WAKE:

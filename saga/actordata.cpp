@@ -27,7 +27,7 @@
 
 namespace Saga {
 
-ActorTableData ActorTable[ACTORCOUNT] = {
+ActorTableData ITE_ActorTable[ITE_ACTORCOUNT] = {
 	// Original used so called permanent actors for first three and that was designed by 
 	// EXTENDED object flag. They contained frames in more than one resource. We use 
 	// different technique here see "Apppending to sprite list" in loadActorResources()

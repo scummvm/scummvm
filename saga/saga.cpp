@@ -357,6 +357,27 @@ const char *SagaEngine::getObjectName(uint16 objectId) {
 	return NULL;
 }
 
+int SagaEngine::getObjectScriptEntrypointNumber(uint16 objectId) {
+	ActorData *actor;
+	switch (objectIdType(objectId)) {
+		case kGameObjectActor: 
+			actor = _vm->_actor->getActor(objectId);
+			return actor->scriptEntrypointNumber;
+			break;
+	}
+	//todo: object name & etc
+	return 0;
+}
+
+int SagaEngine::getObjectFlags(uint16 objectId) {
+	ActorData *actor;
+	if (objectIdType(objectId) == kGameObjectActor) {
+			actor = _vm->_actor->getActor(objectId);
+			return actor->flags;
+	}
+	return 0;
+}
+
 const char *SagaEngine::getTextString(int textStringId) {
 	const char *string;
 	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
@@ -366,6 +387,32 @@ const char *SagaEngine::getTextString(int textStringId) {
 		string = interfaceTextStrings[0][textStringId];
 
 	return string;
+}
+
+void SagaEngine::getExcuseInfo(int verb, const char *&textString, int &soundResourceId) {
+	textString = NULL; // TODO: i18n it !
+	switch (verb) {
+		case kVerbPickUp:
+			textString = "I can't pick that up.";
+			soundResourceId = RID_BOAR_VOICE_007;
+			break;
+		case kVerbLookAt:	
+			textString = "I see nothing special about it."; 
+			soundResourceId = RID_BOAR_VOICE_006;
+			break;
+		case kVerbOpen:		
+			textString = "There's no place to open it.";
+			soundResourceId = RID_BOAR_VOICE_000;
+			break;
+		case kVerbClose:	
+			textString = "There's no opening to close."; 
+			soundResourceId = RID_BOAR_VOICE_002;
+			break;
+		case kVerbUse:		
+			textString = "I don't know how to do that."; 
+			soundResourceId = RID_BOAR_VOICE_005;
+			break;
+	}
 }
 
 } // End of namespace Saga

@@ -134,22 +134,22 @@ struct ActorFrameSequence {
 	ActorFrameRange directions[ACTOR_DIRECTIONS_COUNT];
 };
 
-struct ActorLocation {
-	int x;					// Actor's logical coordinates
+struct Location {
+	int x;					// logical coordinates
 	int y;					// 
 	int z;					// 
-	ActorLocation() {
+	Location() {
 		x = y = z = 0;
 	}
-	int distance(const ActorLocation &location) const {
+	int distance(const Location &location) const {
 		return MAX(ABS(x - location.x), ABS(y - location.y));
 	}
-	void delta(const ActorLocation &location, ActorLocation &result) const {
+	void delta(const Location &location, Location &result) const {
 		result.x = x - location.x;
 		result.y = y - location.y;
 		result.z = z - location.z;
 	}
-	void add(const ActorLocation &location) {
+	void add(const Location &location) {
 		x += location.x;
 		y += location.y;
 		z += location.z;
@@ -176,10 +176,10 @@ struct ActorData {
 	int nameIndex;				// Actor's index in actor name string list
 	byte speechColor;			// Actor dialogue color
 	uint16 flags;				// Actor initial flags
-	
+	int scriptEntrypointNumber;		// Actor script entrypoint number
 
 	int sceneNumber;			// scene of actor
-	ActorLocation location;		// Actor's logical coordinates
+	Location location;		// Actor's logical coordinates
 
 	Point screenPosition;		// Actor's screen coordinates
 	int screenDepth;			//
@@ -211,8 +211,8 @@ struct ActorData {
 	int walkStepIndex;
 	Point *walkStepsPoints;
 
-	ActorLocation finalTarget;
-	ActorLocation partialTarget;
+	Location finalTarget;
+	Location partialTarget;
 	int walkFrameSequence;
 	
 	void cycleWrap(int cycleLimit) {
@@ -235,7 +235,9 @@ struct ActorData {
 		memset(&spriteList, 0, sizeof(spriteList));
 	}
 	~ActorData() {
+		free(frames);
 		free(walkStepsPoints);
+		spriteList.freeMem();
 	}
 };
 
@@ -271,7 +273,7 @@ public:
 
 	void cmdActorWalkTo(int argc, const char **argv);
 
-	bool validActorId(uint16 id) { return (id == 1) || ((id >= 0x2000) && (id < (0x2000 | ACTORCOUNT))); }
+	bool validActorId(uint16 id) { return (id == 1) || ((id >= 0x2000) && (id < (0x2000 | _actorsCount))); }
 	int actorIdToIndex(uint16 id) { return (id == 1 ) ? 0 : (id & ~0x2000); }
 	uint16 actorIndexToId(int index) { return (index == 0 ) ? 1 : (index | 0x2000); }
 
@@ -281,13 +283,14 @@ public:
 
 	void drawPathTest();
 
+	uint16 testHit(const Point& mousePointer){ return ID_NOTHING;}; //TODO: do it
 	const char * getActorName(uint16 actorId);
 	bool actorEndWalk(uint16 actorId, bool recurse);
-	bool actorWalkTo(uint16 actorId, const ActorLocation &toLocation);
+	bool actorWalkTo(uint16 actorId, const Location &toLocation);
 	ActorData *getActor(uint16 actorId);
 	ActorFrameRange *getActorFrameRange(uint16 actorId, int frameType);
-	void realLocation(ActorLocation &location, uint16 objectId, uint16 walkFlags);
-	void actorFaceTowardsPoint(uint16 actorId, const ActorLocation &toLocation);
+	void realLocation(Location &location, uint16 objectId, uint16 walkFlags);
+	void actorFaceTowardsPoint(uint16 actorId, const Location &toLocation);
 	void actorFaceTowardsObject(uint16 actorId, uint16 objectId);
 
 //	speech 
@@ -337,13 +340,14 @@ private:
 	void removeNodes();
 	void nodeToPath();
 	void removePathPoints();
-	bool validFollowerLocation(const ActorLocation &location);
+	bool validFollowerLocation(const Location &location);
 	
 	int _lastTickMsec;
 	SagaEngine *_vm;
 	RSCFILE_CONTEXT *_actorContext;
 	ActorOrderList _drawOrderList;
-	ActorData _actors[ACTORCOUNT];
+	int _actorsCount;
+	ActorData **_actors;
 	SpeechData _activeSpeech;
 	StringsTable _actorsStrings;
 

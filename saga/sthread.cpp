@@ -37,34 +37,34 @@
 
 namespace Saga {
 
-void Script::setFramePtr(SCRIPT_THREAD *thread, int newPtr) {
+void Script::setFramePtr(ScriptThread *thread, int newPtr) {
 	thread->framePtr = newPtr;
 	dataBuffer(3)->length = ARRAYSIZE(thread->stackBuf) - thread->framePtr;
 	dataBuffer(3)->data = (ScriptDataWord *) &(thread->stackBuf[newPtr]);
 }
 
-SCRIPT_THREAD *Script::SThreadCreate() {
-	SCRIPT_THREAD *new_thread;
+ScriptThread *Script::createThread() {
+	ScriptThread *newThread;
 
 	if (!isInitialized()) {
 		return NULL;
 	}
 
-	new_thread = _threadList.pushFront().operator->();
+	newThread = _threadList.pushFront().operator->();
 
-	new_thread->stackPtr = ARRAYSIZE(new_thread->stackBuf) - 1;
-	setFramePtr(new_thread, new_thread->stackPtr);
+	newThread->stackPtr = ARRAYSIZE(newThread->stackBuf) - 1;
+	setFramePtr(newThread, newThread->stackPtr);
 
-	new_thread->flags = kTFlagWaiting;
-	new_thread->waitType = kWaitTypePause;
+	newThread->flags = kTFlagWaiting;
+	newThread->waitType = kWaitTypePause;
 
-	dataBuffer(4)->length = ARRAYSIZE(new_thread->threadVars);
-	dataBuffer(4)->data = new_thread->threadVars;
-	return new_thread;
+	dataBuffer(4)->length = ARRAYSIZE(newThread->threadVars);
+	dataBuffer(4)->data = newThread->threadVars;
+	return newThread;
 }
 
 void Script::wakeUpActorThread(int waitType, void *threadObj) {
-	SCRIPT_THREAD *thread;
+	ScriptThread *thread;
 	ScriptThreadList::iterator threadIterator;
 
 	for (threadIterator = _threadList.begin(); threadIterator != _threadList.end(); ++threadIterator) {
@@ -76,7 +76,7 @@ void Script::wakeUpActorThread(int waitType, void *threadObj) {
 }
 
 void Script::wakeUpThreads(int waitType) {
-	SCRIPT_THREAD *thread;
+	ScriptThread *thread;
 	ScriptThreadList::iterator threadIterator;
 	
 	for (threadIterator = _threadList.begin(); threadIterator != _threadList.end(); ++threadIterator) {
@@ -88,7 +88,7 @@ void Script::wakeUpThreads(int waitType) {
 }
 
 void Script::wakeUpThreadsDelayed(int waitType, int sleepTime) {
-	SCRIPT_THREAD *thread;
+	ScriptThread *thread;
 	ScriptThreadList::iterator threadIterator;
 
 	for (threadIterator = _threadList.begin(); threadIterator != _threadList.end(); ++threadIterator) {
@@ -101,7 +101,7 @@ void Script::wakeUpThreadsDelayed(int waitType, int sleepTime) {
 }
 
 int Script::executeThreads(uint msec) {
-	SCRIPT_THREAD *thread;
+	ScriptThread *thread;
 	ScriptThreadList::iterator threadIterator;
 
 	if (!isInitialized()) {
@@ -114,8 +114,8 @@ int Script::executeThreads(uint msec) {
 		thread = threadIterator.operator->();
 
 		if (thread->flags & (kTFlagFinished | kTFlagAborted)) {
-			//if (thread->flags & kTFlagFinished) // FIXME. Missing function
-
+			if (thread->flags & kTFlagFinished)
+				setPointerVerb();
 			
 			threadIterator = _threadList.erase(threadIterator);
 			continue;
@@ -152,12 +152,12 @@ int Script::executeThreads(uint msec) {
 	return SUCCESS;
 }
 
-void Script::SThreadCompleteThread(void) {
+void Script::completeThread(void) {
 	for (int i = 0; i < 40 &&  !_threadList.isEmpty() ; i++)
 		executeThreads(0);
 }
 
-int Script::SThreadSetEntrypoint(SCRIPT_THREAD *thread, int ep_num) {
+void Script::setThreadEntrypoint(ScriptThread *thread, int entrypointNumber) {
 	SCRIPT_BYTECODE *bytecode;
 	int max_entrypoint;
 
@@ -166,26 +166,24 @@ int Script::SThreadSetEntrypoint(SCRIPT_THREAD *thread, int ep_num) {
 	bytecode = currentScript()->bytecode;
 	max_entrypoint = bytecode->n_entrypoints;
 
-	if ((ep_num < 0) || (ep_num >= max_entrypoint)) {
-		return FAILURE;
+	if ((entrypointNumber < 0) || (entrypointNumber >= max_entrypoint)) {
+		error("Script::setThreadEntrypoint wrong entrypointNumber");
 	}
 
-	thread->ep_num = ep_num;
-	thread->ep_offset = bytecode->entrypoints[ep_num].offset;
-
-	return SUCCESS;
+	thread->entrypointNumber = entrypointNumber;
+	thread->entrypointOffset = bytecode->entrypoints[entrypointNumber].offset;
 }
 
-int Script::SThreadExecute(SCRIPT_THREAD *thread, int ep_num) {
+int Script::executeThread(ScriptThread *thread, int entrypointNumber) {
 	assert(isInitialized());
 
 	if ((currentScript() == NULL) || (!currentScript()->loaded)) {
 		return FAILURE;
 	}
 
-	SThreadSetEntrypoint(thread, ep_num);
+	setThreadEntrypoint(thread, entrypointNumber);
 
-	thread->i_offset = thread->ep_offset;
+	thread->instructionOffset = thread->entrypointOffset;
 	thread->flags = kTFlagNone;
 
 	return SUCCESS;
@@ -193,16 +191,16 @@ int Script::SThreadExecute(SCRIPT_THREAD *thread, int ep_num) {
 
 
 
-unsigned char *Script::SThreadGetReadPtr(SCRIPT_THREAD *thread) {
-	return currentScript()->bytecode->bytecode_p + thread->i_offset;
+unsigned char *Script::SThreadGetReadPtr(ScriptThread *thread) {
+	return currentScript()->bytecode->bytecode_p + thread->instructionOffset;
 }
 
 unsigned long Script::SThreadGetReadOffset(const byte *read_p) {
 	return (unsigned long)(read_p - (unsigned char *)currentScript()->bytecode->bytecode_p);
 }
 
-size_t Script::SThreadGetReadLen(SCRIPT_THREAD *thread) {
-	return currentScript()->bytecode->bytecode_len - thread->i_offset;
+size_t Script::SThreadGetReadLen(ScriptThread *thread) {
+	return currentScript()->bytecode->bytecode_len - thread->instructionOffset;
 }
 
 
@@ -216,7 +214,7 @@ int Script::SThreadDebugStep() {
 	return SUCCESS;
 }
 
-void Script::runThread(SCRIPT_THREAD *thread, int instr_limit) {
+void Script::runThread(ScriptThread *thread, int instr_limit) {
 	int instr_count;
 	uint32 saved_offset;
 	ScriptDataWord param1;
@@ -251,23 +249,23 @@ void Script::runThread(SCRIPT_THREAD *thread, int instr_limit) {
 	dataBuffer(2)->length = currentScript()->bytecode->bytecode_len / sizeof(ScriptDataWord);
 	dataBuffer(2)->data = (ScriptDataWord *) currentScript()->bytecode->bytecode_p;
 
-	scriptS.seek(thread->i_offset);
+	scriptS.seek(thread->instructionOffset);
 
 	for (instr_count = 0; instr_count < instr_limit; instr_count++) {
 		if (thread->flags & (kTFlagAsleep))
 			break;
 
-		saved_offset = thread->i_offset;
+		saved_offset = thread->instructionOffset;
 		operandChar = scriptS.readByte();
 //		debug print (opCode name etc) should be placed here
 //		SDebugPrintInstr(thread)
 
-//		debug(2, "Executing thread offset: %lu (%x) stack: %d", thread->i_offset, operandChar, thread->stackSize());
+//		debug(2, "Executing thread offset: %lu (%x) stack: %d", thread->instructionOffset, operandChar, thread->stackSize());
 		switch (operandChar) {
 		case 0x01: // nextblock
 			// Some sort of "jump to the start of the next memory
 			// page" instruction, I think.
-			thread->i_offset = 1024 * ((thread->i_offset / 1024) + 1);
+			thread->instructionOffset = 1024 * ((thread->instructionOffset / 1024) + 1);
 			break;
 
 // STACK INSTRUCTIONS
@@ -356,7 +354,7 @@ void Script::runThread(SCRIPT_THREAD *thread, int instr_limit) {
 				// counter as a pointer here. But I don't think
 				// we will have to do that.
 				thread->push(data);
-				thread->i_offset = (unsigned long)param1;
+				thread->instructionOffset = (unsigned long)param1;
 			}
 			break;
 		case opCcall:		// Call function
@@ -377,7 +375,7 @@ void Script::runThread(SCRIPT_THREAD *thread, int instr_limit) {
 				scriptFunction = _scriptFunctionsList[functionNumber].scriptFunction;
 				scriptFunctionReturnValue = (this->*scriptFunction)(thread, argumentsCount);
 				if (scriptFunctionReturnValue != SUCCESS) {
-					_vm->_console->DebugPrintf(S_WARN_PREFIX "%X: Script function %d failed.\n", thread->i_offset, scriptFunctionReturnValue);
+					_vm->_console->DebugPrintf(S_WARN_PREFIX "%X: Script function %d failed.\n", thread->instructionOffset, scriptFunctionReturnValue);
 				}
 
 				if (functionNumber == 16) { // SF_gotoScene
@@ -408,7 +406,7 @@ void Script::runThread(SCRIPT_THREAD *thread, int instr_limit) {
 				thread->flags |= kTFlagFinished;
 				return;
 			} else {
-				thread->i_offset = thread->pop();
+				thread->instructionOffset = thread->pop();
 				/* int n_args = */ thread->pop();
 				if (operandChar == opReturn)
 					thread->push(scriptRetVal);
@@ -420,14 +418,14 @@ void Script::runThread(SCRIPT_THREAD *thread, int instr_limit) {
 			// (JMP): Unconditional jump
 		case 0x1D:
 			param1 = scriptS.readUint16LE();
-			thread->i_offset = (unsigned long)param1;
+			thread->instructionOffset = (unsigned long)param1;
 			break;
 			// (JNZP): Jump if nonzero + POP
 		case 0x1E:
 			param1 = scriptS.readUint16LE();
 			data = thread->pop();
 			if (data) {
-				thread->i_offset = (unsigned long)param1;
+				thread->instructionOffset = (unsigned long)param1;
 			}
 			break;
 			// (JZP): Jump if zero + POP
@@ -435,7 +433,7 @@ void Script::runThread(SCRIPT_THREAD *thread, int instr_limit) {
 			param1 = scriptS.readUint16LE();
 			data = thread->pop();
 			if (!data) {
-				thread->i_offset = (unsigned long)param1;
+				thread->instructionOffset = (unsigned long)param1;
 			}
 			break;
 			// (JNZ): Jump if nonzero
@@ -443,7 +441,7 @@ void Script::runThread(SCRIPT_THREAD *thread, int instr_limit) {
 			param1 = scriptS.readUint16LE();
 			data = thread->stackTop();
 			if (data) {
-				thread->i_offset = (unsigned long)param1;
+				thread->instructionOffset = (unsigned long)param1;
 			}
 			break;
 			// (JZ): Jump if zero
@@ -451,7 +449,7 @@ void Script::runThread(SCRIPT_THREAD *thread, int instr_limit) {
 			param1 = scriptS.readUint16LE();
 			data = thread->stackTop();
 			if (!data) {
-				thread->i_offset = (unsigned long)param1;
+				thread->instructionOffset = (unsigned long)param1;
 			}
 			break;
 			// (SWCH): Switch
@@ -470,7 +468,7 @@ void Script::runThread(SCRIPT_THREAD *thread, int instr_limit) {
 					switch_jmp = scriptS.readUint16LE();
 					// Found the specified case
 					if (data == (ScriptDataWord) switch_num) {
-						thread->i_offset = switch_jmp;
+						thread->instructionOffset = switch_jmp;
 						case_found = 1;
 						break;
 					}
@@ -479,7 +477,7 @@ void Script::runThread(SCRIPT_THREAD *thread, int instr_limit) {
 				// Jump to default case
 				if (!case_found) {
 					default_jmp = scriptS.readUint16LE();
-					thread->i_offset = default_jmp;
+					thread->instructionOffset = default_jmp;
 				}
 			}
 			break;
@@ -497,7 +495,7 @@ void Script::runThread(SCRIPT_THREAD *thread, int instr_limit) {
 					uint16 offset = scriptS.readUint16LE();
 
 					if (branch_probability > probability) {
-						thread->i_offset = offset;
+						thread->instructionOffset = offset;
 						break;
 					}
 
@@ -770,7 +768,7 @@ void Script::runThread(SCRIPT_THREAD *thread, int instr_limit) {
 
 				if (!(speechFlags & kSpeakAsync)) {
 					thread->wait(kWaitTypeSpeech);
-					thread->i_offset = scriptS.pos();
+					thread->instructionOffset = scriptS.pos();
 					return;
 				}
 			}
@@ -803,7 +801,7 @@ void Script::runThread(SCRIPT_THREAD *thread, int instr_limit) {
 			scriptS.readUint16LE();
 			scriptS.readUint16LE();
 			iparam1 = (long)scriptS.readByte();
-			thread->i_offset += iparam1;
+			thread->instructionOffset += iparam1;
 			break;
 
 // End instruction list
@@ -814,14 +812,14 @@ void Script::runThread(SCRIPT_THREAD *thread, int instr_limit) {
 		}
 
 		// Set instruction offset only if a previous instruction didn't branch
-		if (saved_offset == thread->i_offset) {
-			thread->i_offset = scriptS.pos();
+		if (saved_offset == thread->instructionOffset) {
+			thread->instructionOffset = scriptS.pos();
 		} else {
-			if (thread->i_offset >= scriptS.size()) {
+			if (thread->instructionOffset >= scriptS.size()) {
 				scriptError(thread, "Out of range script execution");
 				return;
 			} else {
-				scriptS.seek(thread->i_offset);
+				scriptS.seek(thread->instructionOffset);
 			}
 		}
 

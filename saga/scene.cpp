@@ -191,7 +191,7 @@ int Scene::startScene() {
 	scene_qdat = queueIterator.operator->();
 	assert(scene_qdat != NULL);
 
-	loadScene(scene_qdat->scene_n, scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->scene_desc, scene_qdat->fadeType);
+	loadScene(scene_qdat->scene_n, scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->sceneDescription, scene_qdat->fadeType);
 
 	return SUCCESS;
 }
@@ -230,7 +230,7 @@ int Scene::nextScene() {
 	scene_qdat = queueIterator.operator->();
 	assert(scene_qdat != NULL);
 
-	loadScene(scene_qdat->scene_n, scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->scene_desc, scene_qdat->fadeType);
+	loadScene(scene_qdat->scene_n, scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->sceneDescription, scene_qdat->fadeType);
 
 	return SUCCESS;
 }
@@ -277,7 +277,7 @@ int Scene::skipScene() {
 		_sceneQueue.erase(_sceneQueue.begin(), queueIterator);
 
 		endScene();
-		loadScene(skip_qdat->scene_n, skip_qdat->load_flag, skip_qdat->scene_proc, skip_qdat->scene_desc, skip_qdat->fadeType);
+		loadScene(skip_qdat->scene_n, skip_qdat->load_flag, skip_qdat->scene_proc, skip_qdat->sceneDescription, skip_qdat->fadeType);
 	}
 	// Search for a scene to skip to
 
@@ -504,7 +504,7 @@ int Scene::getSceneLUT(int scene_num) {
 	return _sceneLUT[scene_num];
 }
 
-int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SCENE_DESC *scene_desc_param, int fadeType) {
+int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SceneDescription *scene_desc_param, int fadeType) {
 	SCENE_INFO scene_info;
 	uint32 res_number = 0;
 	int result;
@@ -580,8 +580,8 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SCENE_
 	}
 
 	// Load scene script data
-	if (_desc.scriptNum > 0) {
-		if (_vm->_script->loadScript(_desc.scriptNum) != SUCCESS) {
+	if (_desc.scriptModuleNumber > 0) {
+		if (_vm->_script->loadScript(_desc.scriptModuleNumber) != SUCCESS) {
 			warning("Scene::loadScene(): Error loading scene script");
 			return FAILURE;
 		}
@@ -635,12 +635,12 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SCENE_
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Start the scene pre script, but stay with black palette
-		if (_desc.startScriptNum > 0) {
+		if (_desc.startScriptEntrypointNumber > 0) {
 			event.type = ONESHOT_EVENT;
 			event.code = SCRIPT_EVENT;
 			event.op = EVENT_EXEC_BLOCKING;
 			event.time = 0;
-			event.param = _desc.startScriptNum;
+			event.param = _desc.startScriptEntrypointNumber;
 			event.param2 = 0;		// Action
 			event.param3 = _sceneNumber;	// Object
 			event.param4 = 0;		// With Object - TODO: should be 'entrance'
@@ -695,9 +695,9 @@ int Scene::loadSceneDescriptor(uint32 res_number) {
 	_desc.resListRN = readS.readSint16();
 	_desc.endSlope = readS.readSint16();
 	_desc.beginSlope = readS.readSint16();
-	_desc.scriptNum = readS.readUint16();
-	_desc.sceneScriptNum = readS.readUint16();
-	_desc.startScriptNum = readS.readUint16();
+	_desc.scriptModuleNumber = readS.readUint16();
+	_desc.sceneScriptEntrypointNumber = readS.readUint16();
+	_desc.startScriptEntrypointNumber = readS.readUint16();
 	_desc.musicRN = readS.readSint16();
 
 	RSC_FreeResource(scene_desc_data);
@@ -930,7 +930,7 @@ int Scene::endScene() {
 
 	_sceneProc(SCENE_END, &scene_info, this);
 
-	if (_desc.scriptNum > 0) {
+	if (_desc.scriptModuleNumber > 0) {
 		_vm->_script->freeScript();
 	}
 
@@ -1002,9 +1002,9 @@ void Scene::cmdSceneInfo() {
 	_vm->_console->DebugPrintf(fmt, "Resource list R#:", _desc.resListRN);
 	_vm->_console->DebugPrintf(fmt, "End slope:", _desc.endSlope);
 	_vm->_console->DebugPrintf(fmt, "Begin slope:", _desc.beginSlope);
-	_vm->_console->DebugPrintf(fmt, "Script resource:", _desc.scriptNum);
-	_vm->_console->DebugPrintf(fmt, "Scene script:", _desc.sceneScriptNum);
-	_vm->_console->DebugPrintf(fmt, "Start script:", _desc.startScriptNum);
+	_vm->_console->DebugPrintf(fmt, "scriptModuleNumber:", _desc.scriptModuleNumber);
+	_vm->_console->DebugPrintf(fmt, "sceneScriptEntrypointNumber:", _desc.sceneScriptEntrypointNumber);
+	_vm->_console->DebugPrintf(fmt, "startScriptEntrypointNumber:", _desc.startScriptEntrypointNumber);
 	_vm->_console->DebugPrintf(fmt, "Music R#", _desc.musicRN);
 }
 
@@ -1084,12 +1084,12 @@ int Scene::defaultScene(int param, SCENE_INFO *scene_info) {
 		_vm->_events->chain(q_event, &event);
 
 		// Start the scene main script
-		if (_desc.sceneScriptNum > 0) {
+		if (_desc.sceneScriptEntrypointNumber > 0) {
 			event.type = ONESHOT_EVENT;
 			event.code = SCRIPT_EVENT;
 			event.op = EVENT_EXEC_NONBLOCKING;
 			event.time = 0;
-			event.param = _desc.sceneScriptNum;
+			event.param = _desc.sceneScriptEntrypointNumber;
 			event.param2 = 0;		// Action
 			event.param3 = _sceneNumber;	// Object
 			event.param4 = 0;		// With Object - TODO: should be 'entrance'

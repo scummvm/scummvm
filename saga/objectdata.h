@@ -28,12 +28,17 @@
 
 namespace Saga {
 
+enum {
+	kObjUseWith = 0x01,
+	kObjNotFlat = 0x02
+};
+
 struct OBJECTTABLE {
 	byte nameIndex;
 	int32 sceneIndex;
 	int16 x, y, z;
 	int32 spritelistRn;
-	byte scriptRn;
+	byte scriptEntrypointNumber;
 	uint16 interactBits;
 };
 

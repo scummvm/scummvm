@@ -127,15 +127,15 @@ enum WalkFlags {
 	kWalkFace = (1<<5)
 };
 
-struct SCRIPT_THREAD {
+struct ScriptThread {
 	int flags;				// ThreadFlags
 	int waitType;			// ThreadWaitTypes
 	void *threadObj;		// which object we're handling
 
 	uint sleepTime;
-	int ep_num; // Entrypoint number
-	unsigned long ep_offset; // Entrypoint offset
-	unsigned long i_offset; // Instruction offset
+	int entrypointNumber; // Entrypoint number
+	unsigned long entrypointOffset; // Entrypoint offset
+	unsigned long instructionOffset; // Instruction offset
 
 	// The scripts are allowed to access the stack like any other memory
 	// area. It's therefore probably quite important that our stacks work
@@ -183,10 +183,12 @@ struct SCRIPT_THREAD {
 		sleepTime = aSleepTime;
 	}
 
-	SCRIPT_THREAD() { memset(this, 0, sizeof(*this)); }
+	ScriptThread() {
+		memset(this, 0, sizeof(*this)); 
+	}
 };
 
-typedef SortedList<SCRIPT_THREAD> ScriptThreadList;
+typedef SortedList<ScriptThread> ScriptThreadList;
 
 struct PROC_TBLENTRY {
 	size_t name_offset;
@@ -224,7 +226,7 @@ struct ScriptDataBuf {
 	int length;
 };
 
-#define SCRIPTFUNC_PARAMS SCRIPT_THREAD *thread, int nArgs
+#define SCRIPTFUNC_PARAMS ScriptThread *thread, int nArgs
 
 class Script {
 public:
@@ -251,11 +253,19 @@ public:
 	void doVerb();
 	void showVerb();
 	void setVerb(int verb);
-	void setLeftButtonVerb(int verb);
-	void setRightButtonVerb(int verb);
 	int getCurrentVerb() const { return _currentVerb; }
+	void setPointerVerb();
+	void whichObject(const Point& mousePointer);
+	
+	void setLeftButtonVerb(int verb);
 	int getLeftButtonVerb() const { return _leftButtonVerb; }
+	void setRightButtonVerb(int verb);
 	int getRightButtonVerb() const { return _rightButtonVerb; }
+	void setNonPlayfieldVerb() {
+		setRightButtonVerb(kVerbNone);
+		_pointerObject = ID_NOTHING;
+		_currentObject[_firstObjectSet ? 1 : 0] = ID_NOTHING;
+	}
 
 	void scriptInfo();
 	void scriptExec(int argc, const char **argv);
@@ -276,13 +286,15 @@ protected:
 	bool _firstObjectSet;
 	bool _secondObjectNeeded;
 	uint16 _currentObject[2];
+	int16 _currentObjectFlags[2];
 	uint16 _pendingObject[2];
 	int _currentVerb;
 	int _stickyVerb;
 	int _leftButtonVerb;
 	int _rightButtonVerb;
 	int _pendingVerb;
-	
+
+	uint16 _pointerObject;	
 
 public:
 	bool _skipSpeeches;
@@ -290,27 +302,27 @@ public:
 
 	int _dbg_singlestep;
 	int _dbg_dostep;
-	SCRIPT_THREAD *_dbg_thread;
+	ScriptThread *_dbg_thread;
 	TEXTLIST_ENTRY *_dbg_txtentry;
 
 public:
-	SCRIPT_THREAD *SThreadCreate();
-	int SThreadExecute(SCRIPT_THREAD *thread, int ep_num);
+	ScriptThread *createThread();
+	int executeThread(ScriptThread *thread, int entrypointNumber);
 	int executeThreads(uint msec);
 	int SThreadDebugStep();
-	void SThreadCompleteThread(void);
+	void completeThread(void);
 
 	void wakeUpActorThread(int waitType, void *threadObj);
 	void wakeUpThreads(int waitType);
 	void wakeUpThreadsDelayed(int waitType, int sleepTime);
 
 private:
-	void setFramePtr(SCRIPT_THREAD *thread, int newPtr);
-	unsigned char *SThreadGetReadPtr(SCRIPT_THREAD *thread);
+	void setFramePtr(ScriptThread *thread, int newPtr);
+	unsigned char *SThreadGetReadPtr(ScriptThread *thread);
 	unsigned long SThreadGetReadOffset(const byte *read_p);
-	size_t SThreadGetReadLen(SCRIPT_THREAD *thread);
-	void runThread(SCRIPT_THREAD *thread, int instr_limit);
-	int SThreadSetEntrypoint(SCRIPT_THREAD *thread, int ep_num);
+	size_t SThreadGetReadLen(ScriptThread *thread);
+	void runThread(ScriptThread *thread, int instr_limit);
+	void setThreadEntrypoint(ScriptThread *thread, int entrypointNumber);
 
 private:
 	typedef int (Script::*ScriptFunctionType)(SCRIPTFUNC_PARAMS);
@@ -322,8 +334,8 @@ private:
 	const ScriptFunctionDescription *_scriptFunctionsList;
 
 	void setupScriptFuncList(void);
-	void scriptError(SCRIPT_THREAD *thread, const char *format, ...);
-	int SDebugPrintInstr(SCRIPT_THREAD *thread);
+	void scriptError(ScriptThread *thread, const char *format, ...);
+	int SDebugPrintInstr(ScriptThread *thread);
 
 	int SF_putString(SCRIPTFUNC_PARAMS);
 	int sfWait(SCRIPTFUNC_PARAMS);

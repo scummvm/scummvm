@@ -27,10 +27,6 @@
 
 namespace Saga {
 
-enum {
-	kObjUseWith = 0x01,
-	kObjNotFlat = 0x02
-};
 
 OBJECTTABLE ObjectTable[OBJECTCOUNT] = {
 	{  8,  49, 1256,  760,  0,  9,  5, kObjNotFlat }, // Magic Hat

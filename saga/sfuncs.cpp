@@ -209,7 +209,7 @@ int Script::SF_mainMode(SCRIPTFUNC_PARAMS) {
 // Param3: actor y
 int Script::sfScriptWalkTo(SCRIPTFUNC_PARAMS) {
 	uint16 actorId;
-	ActorLocation actorLocation;
+	Location actorLocation;
 	ActorData *actor;
 
 	actorId = getSWord(thread->pop());
@@ -566,7 +566,7 @@ int Script::sfStartBgdAnimSpeed(SCRIPTFUNC_PARAMS) {
 // Param3: actor y
 int Script::sfScriptWalkToAsync(SCRIPTFUNC_PARAMS) {
 	uint16 actorId;
-	ActorLocation actorLocation;
+	Location actorLocation;
 	ActorData *actor;
 
 	actorId = getSWord(thread->pop());
@@ -619,7 +619,7 @@ int Script::sfSetActorState(SCRIPTFUNC_PARAMS) {
 // Param3: actor pos y
 int Script::scriptMoveTo(SCRIPTFUNC_PARAMS) {
 	uint16 actorId;
-	ActorLocation actorLocation;
+	Location actorLocation;
 	ActorData *actor;
 
 	actorId = getSWord(thread->pop());
@@ -688,7 +688,7 @@ int Script::sfSwapActors(SCRIPTFUNC_PARAMS) {
 	uint16 actorId2;
 	ActorData *actor1;
 	ActorData *actor2;
-	ActorLocation location;
+	Location location;
 
 	actorId1 = getSWord(thread->pop());
 	actorId2 = getSWord(thread->pop());
@@ -751,7 +751,7 @@ int Script::sfSimulSpeech(SCRIPTFUNC_PARAMS) {
 // Param4: actor walk flag
 int Script::sfScriptWalk(SCRIPTFUNC_PARAMS) {
 	uint16 actorId;
-	ActorLocation actorLocation;
+	Location actorLocation;
 	ActorData *actor;
 	uint16 walkFlags;
 
@@ -917,7 +917,7 @@ int Script::SF_scriptSpecialWalk(SCRIPTFUNC_PARAMS) {
 // Param6: actor frame number
 int Script::sfPlaceActor(SCRIPTFUNC_PARAMS) {
 	uint16 actorId;
-	ActorLocation actorLocation;
+	Location actorLocation;
 	int actorDirection;
 	int frameType;
 	int frameOffset;

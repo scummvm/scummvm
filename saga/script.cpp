@@ -31,6 +31,12 @@
 #include "saga/script.h"
 #include "saga/stream.h"
 #include "saga/interface.h"
+#include "saga/actordata.h"
+#include "saga/scene.h"
+#include "saga/events.h"
+#include "saga/actor.h"
+#include "saga/objectdata.h"
+#include "saga/objectmap.h"
 
 namespace Saga {
 
@@ -61,6 +67,7 @@ Script::Script() {
 	_stickyVerb = kVerbWalkTo;
 	_leftButtonVerb = kVerbNone;
 	_rightButtonVerb = kVerbNone;
+	_pointerObject = 0;
 
 	_dataBuf[0].data = _dataBuf[1].data = (ScriptDataWord *)calloc(SCRIPT_DATABUF_LEN, sizeof(ScriptDataWord));;
 	_dataBuf[0].length = _dataBuf[1].length = SCRIPT_DATABUF_LEN;
@@ -256,7 +263,7 @@ int Script::getBit(int bufNumber, ScriptDataWord bitNumber, int *bitState) {
 }
 
 // Loads a script; including script bytecode and dialogue list 
-int Script::loadScript(int script_num) {
+int Script::loadScript(int scriptModuleNumber) {
 	ScriptData *script_data;
 	byte *bytecode_p;
 	size_t bytecode_len;
@@ -270,8 +277,8 @@ int Script::loadScript(int script_num) {
 	int result;
 
 	// Validate script number
-	if ((script_num < 0) || (script_num > _scriptLUTMax)) {
-		warning("Script::loadScript(): Invalid script number");
+	if ((scriptModuleNumber < 0) || (scriptModuleNumber > _scriptLUTMax)) {
+		warning("Script::loadScript(): Invalid script module number");
 		return FAILURE;
 	}
 
@@ -279,7 +286,7 @@ int Script::loadScript(int script_num) {
 	freeScript();
 
 	// Initialize script data structure
-	debug(0, "Loading script data for script #%d", script_num);
+	debug(0, "Loading script data for script module #%d", scriptModuleNumber);
 
 	script_data = (ScriptData *)malloc(sizeof(*script_data));
 	if (script_data == NULL) {
@@ -293,7 +300,7 @@ int Script::loadScript(int script_num) {
 	script_data->voice = NULL;
 
 	// Load script bytecode
-	scriptl_rn = _scriptLUT[script_num].script_rn;
+	scriptl_rn = _scriptLUT[scriptModuleNumber].script_rn;
 
 	result = RSC_LoadResource(_scriptContext, scriptl_rn, &bytecode_p, &bytecode_len);
 	if (result != SUCCESS) {
@@ -309,7 +316,7 @@ int Script::loadScript(int script_num) {
 	}
 
 	// Load script strings list
-	stringsResourceId = _scriptLUT[script_num].diag_list_rn;
+	stringsResourceId = _scriptLUT[scriptModuleNumber].diag_list_rn;
 
 	// Load strings list resource
 	result = RSC_LoadResource(_scriptContext, stringsResourceId, &stringsPointer, &stringsLength);
@@ -323,7 +330,7 @@ int Script::loadScript(int script_num) {
 
 	// Load voice resource lookup table
 	if (_voiceLUTPresent) {
-		voicelut_rn = _scriptLUT[script_num].voice_lut_rn;
+		voicelut_rn = _scriptLUT[scriptModuleNumber].voice_lut_rn;
 
 		// Load voice LUT resource
 		result = RSC_LoadResource(_scriptContext, voicelut_rn, &voicelut_p, &voicelut_len);
@@ -492,7 +499,7 @@ VOICE_LUT *Script::loadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, Scr
 	return voice_lut;
 }
 
-void Script::scriptError(SCRIPT_THREAD *thread, const char *format, ...) {
+void Script::scriptError(ScriptThread *thread, const char *format, ...) {
 	char buf[STRINGBUFLEN];
 	va_list	argptr;
 
@@ -501,8 +508,8 @@ void Script::scriptError(SCRIPT_THREAD *thread, const char *format, ...) {
 	va_end (argptr);
 
 	thread->flags |= kTFlagAborted;
-	debug(0, "Script::scriptError %X: %s", thread->i_offset, buf);
-	_vm->_console->DebugPrintf("Script::scriptError %X: %s", thread->i_offset, buf);	
+	debug(0, "Script::scriptError %X: %s", thread->instructionOffset, buf);
+	_vm->_console->DebugPrintf("Script::scriptError %X: %s", thread->instructionOffset, buf);	
 }
 
 void Script::scriptInfo() {
@@ -536,7 +543,7 @@ void Script::scriptExec(int argc, const char **argv) {
 
 	if (_dbg_thread == NULL) {
 		_vm->_console->DebugPrintf("Creating debug thread...\n");
-		_dbg_thread = SThreadCreate();
+		_dbg_thread = createThread();
 		if (_dbg_thread == NULL) {
 			_vm->_console->DebugPrintf("Thread creation failed.\n");
 			return;
@@ -548,7 +555,7 @@ void Script::scriptExec(int argc, const char **argv) {
 		return;
 	}
 
-	SThreadExecute(_dbg_thread, ep_num);
+	executeThread(_dbg_thread, ep_num);
 }
 
 // verb
@@ -641,6 +648,198 @@ void Script::setRightButtonVerb(int verb) {
 }
 
 void Script::doVerb() {
+	int scriptEntrypointNumber = 0;
+	int scriptModuleNumber = 0;
+	int objectType;
+	EVENT event;
+	const char *excuseText;
+	int excuseSampleResourceId;
+
+	objectType = objectIdType(_pendingObject[0]);
+
+	if (_pendingVerb == kVerbGive) {
+		scriptEntrypointNumber = _vm->getObjectScriptEntrypointNumber(_pendingObject[1]);
+		if (_vm->getObjectFlags(_pendingObject[1]) & (kFollower|kProtagonist|kExtended)) {
+			scriptModuleNumber = 0;
+		} else {
+			scriptModuleNumber = _vm->_scene->getScriptModuleNumber();
+		}
+	} else {
+		if (_pendingVerb == kVerbUse) {
+			if ((objectIdType(_pendingObject[1]) > kGameObjectNone) && (objectType < objectIdType(_pendingObject[1]))) {
+				SWAP(_pendingObject[0], _pendingObject[1]);
+				objectType = objectIdType(_pendingObject[0]);
+			}
+		}
+
+		if (objectType == kGameObjectHitZone) {
+			scriptModuleNumber = _vm->_scene->getScriptModuleNumber();
+			//TODO: check HitZone Exit
+		} else {
+			if (objectType & (kGameObjectActor | kGameObjectObject)) {
+				scriptEntrypointNumber = _vm->getObjectScriptEntrypointNumber(_pendingObject[0]);
+
+				if ((objectType == kGameObjectActor) && !(_vm->getObjectFlags(_pendingObject[0]) & (kFollower|kProtagonist|kExtended))) {
+					scriptModuleNumber = _vm->_scene->getScriptModuleNumber();
+				} else {
+					scriptModuleNumber = 0;
+				}
+			}
+		}
+	}
+
+	if (scriptEntrypointNumber > 0) {
+		if (scriptModuleNumber != _vm->_scene->getScriptModuleNumber()) {
+			warning("scriptModuleNumber != _vm->_scene->getScriptModuleNumber()");
+		}
+		
+		event.type = ONESHOT_EVENT;
+		event.code = SCRIPT_EVENT;
+		event.op = EVENT_EXEC_NONBLOCKING;
+		event.time = 0;
+		event.param = scriptEntrypointNumber;
+		event.param2 = _pendingVerb;		// Action
+		event.param3 = _pendingObject[0];	// Object
+		event.param4 = _pendingObject[1];	// With Object
+		event.param5 = (objectType == kGameObjectActor) ? _pendingObject[0] : ID_PROTAG;		// Actor
+
+		_vm->_events->queue(&event);
+
+	} else {
+		_vm->getExcuseInfo(_pendingVerb, excuseText, excuseSampleResourceId);
+		if (excuseText) 
+			_vm->_actor->actorSpeech(ID_PROTAG, &excuseText, 1, excuseSampleResourceId, 0);			
+	}
+
+	if ((_currentVerb == kVerbWalkTo) || (_currentVerb == kVerbLookAt)) {
+		_stickyVerb = _currentVerb;
+	}
+
+	_pendingVerb = kVerbNone;
+	_currentObject[0] = _currentObject[1] = ID_NOTHING;
+	setLeftButtonVerb(_stickyVerb);
+
+	setPointerVerb();
+}
+
+void Script::setPointerVerb() {
+	Point mousePoint;
+	mousePoint = _vm->getMousePos();
+	if (_vm->_interface->isActive()) {
+		_pointerObject = ID_PROTAG;
+		whichObject(mousePoint);
+	}
+}
+
+void Script::whichObject(const Point& mousePointer) {
+	uint16 objectId;
+	int16 objectFlags;
+	int newRightButtonVerb;
+	uint16 newObjectId;
+	ActorData *actor;
+	Location pickLocation;
+	int hitZoneId;
+	HitZone * hitZone;
+
+	objectId = ID_NOTHING;
+	objectFlags = 0;
+	_leftButtonVerb = _currentVerb;
+	newRightButtonVerb = kVerbNone;
+
+	if (_vm->_actor->_protagonist->currentAction == kActionWalkDir) {
+	} else {
+		newObjectId = _vm->_actor->testHit(mousePointer);
+
+		if (newObjectId != ID_NOTHING) {
+			if (objectIdType(newObjectId) == kGameObjectObject) {
+				objectId = newObjectId;
+				objectFlags = 0;
+				newRightButtonVerb = kVerbLookAt;
+
+				if ((_currentVerb == kVerbTalkTo) || ((_currentVerb == kVerbGive) && _firstObjectSet)) {
+					objectId = ID_NOTHING;
+					newObjectId = ID_NOTHING;
+				}
+			} else {
+				actor = _vm->_actor->getActor(newObjectId);
+				objectId = newObjectId;
+				objectFlags = kObjUseWith;
+				newRightButtonVerb = kVerbTalkTo;
+				
+				if ((_currentVerb == kVerbPickUp) ||
+					(_currentVerb == kVerbOpen) ||
+					(_currentVerb == kVerbClose) ||
+					((_currentVerb == kVerbGive) && !_firstObjectSet) ||
+					((_currentVerb == kVerbUse) && !(actor->flags & kFollower))) {
+					objectId = ID_NOTHING;
+					newObjectId = ID_NOTHING;
+				}
+			}
+		}
+
+		if (newObjectId == ID_NOTHING) {
+/*			struct HitZone	far *newZone = NULL;
+			UWORD		zone;*/
+			
+
+			if (_vm->_scene->getFlags() & kSceneFlagISO) {
+				//todo: it
+			} else {
+				pickLocation.x = mousePointer.x;
+				pickLocation.y = mousePointer.y;
+				pickLocation.z = 0;
+			}
+			
+			hitZoneId = _vm->_scene->_objectMap->hitTest(mousePointer);
+		
+			if ((hitZoneId != -1) && 0) { //TODO: do it
+				//hitZone = _vm->_scene->_objectMap->getZone(hitZoneId);
+				//objectId = hitZone->objectId;
+				objectFlags = 0;
+				newRightButtonVerb = hitZone->getRightButtonVerb() & 0x7f;
+
+				if (newRightButtonVerb == kVerbWalkOnly) {
+					if (_firstObjectSet) {
+						objectId = ID_NOTHING;
+					} else {
+						newRightButtonVerb = _leftButtonVerb = kVerbWalkTo;
+					}
+				} else {
+					if (_firstObjectSet) {
+						objectId = ID_NOTHING;
+					} else {
+						newRightButtonVerb = _leftButtonVerb = kVerbLookAt;
+					}
+				}
+
+				if (newRightButtonVerb >= kVerbOptions) {
+					newRightButtonVerb = kVerbNone;
+				}
+
+				if ((_currentVerb == kVerbTalkTo) || ((_currentVerb == kVerbGive) && !_firstObjectSet)) {
+					objectId = ID_NOTHING;
+					newObjectId = ID_NOTHING;
+				}
+
+				if ((_leftButtonVerb == kVerbUse) && (hitZone->getRightButtonVerb() & 0x80)) {
+					objectFlags = kObjUseWith;
+				}					
+			}
+		}
+	}
+
+	if (objectId != _pointerObject) {
+		_pointerObject = objectId;
+		_currentObject[_firstObjectSet ? 1 : 0] = objectId;
+		_currentObjectFlags[_firstObjectSet ? 1 : 0] = objectFlags;
+		if (_pendingVerb == kVerbNone) {
+			showVerb();
+		}
+	}
+
+	if (newRightButtonVerb != _rightButtonVerb) {
+		setRightButtonVerb(newRightButtonVerb);
+	}
 }
 
 // console wrappers

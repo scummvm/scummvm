@@ -99,14 +99,14 @@ struct SCENE_RESLIST {
 
 #define SAGA_SCENE_DESC_LEN 16
 
-struct SCENE_DESC {
+struct SceneDescription {
 	int16 flags;
 	int16 resListRN;
 	int16 endSlope;
 	int16 beginSlope;
-	uint16 scriptNum;
-	uint16 sceneScriptNum;
-	uint16 startScriptNum;
+	uint16 scriptModuleNumber;
+	uint16 sceneScriptEntrypointNumber;
+	uint16 startScriptEntrypointNumber;
 	int16 musicRN;
 	SCENE_RESLIST *resList;
 	size_t resListCnt;
@@ -139,7 +139,7 @@ enum SCENE_FADE_TYPES {
 
 struct SCENE_QUEUE {
 	uint32 scene_n;
-	SCENE_DESC *scene_desc;
+	SceneDescription* sceneDescription;
 	int load_flag;
 	SCENE_PROC *scene_proc;
 	int scene_skiptarget;
@@ -203,7 +203,8 @@ class Scene {
 	int endScene();
 	int queueScene(SCENE_QUEUE *scene_queue);
 	int draw(SURFACE *);
-	int getFlags() { return _desc.flags; }
+	int getFlags() const { return _desc.flags; }
+	int getScriptModuleNumber() const { return _desc.scriptModuleNumber; }
 	bool isInDemo() { return !_inGame; }
 	
 	void getBGMaskInfo(int &width, int &height, byte *&buffer, size_t &bufferLength);
@@ -232,8 +233,7 @@ class Scene {
 	int currentSceneNumber() { return _sceneNumber; }
 
  private:
-	int loadScene(int scene, int load_flag, SCENE_PROC scene_proc, SCENE_DESC *, 
-				  int fadeIn);
+	int loadScene(int scene, int load_flag, SCENE_PROC scene_proc, SceneDescription *, int fadeIn);
 	int loadSceneDescriptor(uint32 res_number);
 	int loadSceneResourceList(uint32 res_number);
 	int processSceneResources();
@@ -253,7 +253,7 @@ class Scene {
 	int _sceneResNum;
 	bool _inGame;
 	bool _loadDesc;
-	SCENE_DESC _desc;
+	SceneDescription _desc;
 	int _resListEntries;
 	SCENE_RESLIST *_resList;
 	int _animEntries;

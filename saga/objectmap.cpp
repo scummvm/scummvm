@@ -43,7 +43,7 @@ HitZone::HitZone(MemoryReadStreamEndian *readStream) {
 
 	_flags = readStream->readByte();
 	_clickAreasCount = readStream->readByte();
-	_defaultVerb = readStream->readByte();
+	_rightButtonVerb = readStream->readByte();
 	readStream->readByte(); // pad
 	_nameNumber = readStream->readUint16();
 	_scriptNumber = readStream->readUint16();

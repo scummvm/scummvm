@@ -433,8 +433,10 @@ public:
 						byte **output_buf, size_t *output_buf_len, int *w, int *h);
 	const byte *getImagePal(const byte *image_data, size_t image_size);
 	void loadStrings(StringsTable &stringsTable, const byte *stringsPointer, size_t stringsLength);
-	const char *getObjectName(uint16 objectId);
 
+	const char *getObjectName(uint16 objectId);
+	int getObjectScriptEntrypointNumber(uint16 objectId);
+	int getObjectFlags(uint16 objectId);
 public:
 	TEXTLIST *textCreateList();
 	void textDestroyList(TEXTLIST *textlist);
@@ -491,6 +493,7 @@ public:
 	const GameDisplayInfo & getDisplayInfo() { return _gameDisplayInfo; }
 	
 	const char *getTextString(int textStringId);
+	void getExcuseInfo(int verb, const char *&textString, int &soundResourceId);
 private:
 	int loadGame(int gameNumber);
 };

@@ -67,7 +67,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 		return;
 	}
 
-	_iThread = _vm->_script->SThreadCreate();
+	_iThread = _vm->_script->createThread();
 	if (_iThread == NULL) {
 		error("Interface::Interface(): Error creating script thread for game interface module");
 	}
@@ -347,7 +347,7 @@ int Interface::draw() {
 	return SUCCESS;
 }
 
-int Interface::update(const Point& imousePointer, int updateFlag) {
+int Interface::update(const Point& mousePoint, int updateFlag) {
 	SURFACE *backBuffer;
 
 
@@ -358,31 +358,33 @@ int Interface::update(const Point& imousePointer, int updateFlag) {
 	backBuffer = _vm->_gfx->getBackBuffer();
 
 
-	if (_panelMode == kPanelMain) { // FIXME: HACK
-		// Update playfield space ( only if cursor is inside )
-		if (imousePointer.y < _vm->getSceneHeight()) {
-			// Mouse is in playfield space
-			if (updateFlag == UPDATE_MOUSEMOVE) {
-				handlePlayfieldUpdate(backBuffer, imousePointer);
+	if (_panelMode == kPanelMain) {
+		if (updateFlag == UPDATE_MOUSEMOVE) {
+	
+			if (mousePoint.y < _vm->getSceneHeight()) {
+				//handlePlayfieldUpdate(backBuffer, imousePointer);
+				_vm->_script->whichObject(mousePoint);
 			} else {
-				if (updateFlag == UPDATE_MOUSECLICK) {
-					handlePlayfieldClick(backBuffer, imousePointer);
+				if (_lastMousePoint.y < _vm->getSceneHeight()) {
+					_vm->_script->setNonPlayfieldVerb();
 				}
+				handleCommandUpdate(backBuffer, mousePoint);
 			}
+
 		} else {
-			// Update command space
-			if (updateFlag == UPDATE_MOUSEMOVE) {
-				handleCommandUpdate(backBuffer, imousePointer);
-			} else {
-				if (updateFlag == UPDATE_MOUSECLICK) {
-					handleCommandClick(backBuffer, imousePointer);
+
+			if (updateFlag == UPDATE_MOUSECLICK) {
+				if (mousePoint.y < _vm->getSceneHeight()) {
+					handlePlayfieldClick(backBuffer, mousePoint);
+				} else {
+					handleCommandClick(backBuffer, mousePoint);
 				}
 			}
 		}
 	}
 
 	drawStatusBar(backBuffer);
-
+	_lastMousePoint = mousePoint;
 	return SUCCESS;
 }
 
@@ -415,21 +417,21 @@ int Interface::drawStatusBar(SURFACE *ds) {
 	return SUCCESS;
 }
 
-void Interface::handleCommandClick(SURFACE *ds, const Point& imousePointer) {
+void Interface::handleCommandClick(SURFACE *ds, const Point& mousePoint) {
 
 	PanelButton *panelButton;
 
-	panelButton = verbHitTest(imousePointer);
+	panelButton = verbHitTest(mousePoint);
 	if (panelButton) {
 		_vm->_script->setVerb(panelButton->id);
 		return;
 	}
 }
 
-void Interface::handleCommandUpdate(SURFACE *ds, const Point& imousePointer) {
+void Interface::handleCommandUpdate(SURFACE *ds, const Point& mousePoint) {
 	PanelButton *panelButton;
 
-	panelButton = verbHitTest(imousePointer);
+	panelButton = verbHitTest(mousePoint);
 	if (_mainPanel.currentButton != panelButton) {
 		if (_mainPanel.currentButton) {
 			drawVerb(_mainPanel.currentButton->id, 0);
@@ -458,7 +460,7 @@ int Interface::handlePlayfieldClick(SURFACE *ds, const Point& imousePt) {
 	uint16 object_flags = 0;
 
 //	int script_num;
-	ActorLocation location;
+	Location location;
 
 	objectNum = _vm->_scene->_objectMap->hitTest(imousePt);
 
@@ -529,7 +531,7 @@ int Interface::handlePlayfieldUpdate(SURFACE *ds, const Point& imousePt) {
 	*/
 }
 
-PanelButton *Interface::verbHitTest(const Point& imousePointer) {
+PanelButton *Interface::verbHitTest(const Point& mousePoint) {
 	PanelButton *panelButton;
 	Rect rect;
 	int i;
@@ -540,7 +542,7 @@ PanelButton *Interface::verbHitTest(const Point& imousePointer) {
 			rect.right = rect.left + panelButton->width;
 			rect.top = _mainPanel.y + panelButton->yOffset;
 			rect.bottom = rect.top + panelButton->height;
-			if (rect.contains(imousePointer))
+			if (rect.contains(mousePoint))
 				return panelButton;
 		}
 	}
@@ -642,6 +644,7 @@ int Interface::inventoryTest(const Point& imousePt, int *ibutton) {
 
 	return FAILURE;
 }
+
 
 void Interface::drawVerb(int verb, int state) {
 	SURFACE *backBuffer;

@@ -49,16 +49,16 @@ struct ActorTableData {
 	int16 z;
 	int32 spriteListResourceId;
 	int32 frameListResourceId;
-	byte scriptResourceId;
+	byte scriptEntrypointNumber;
 	byte speechColor;
 	byte currentAction;
 	byte facingDirection;
 	byte actionDirection;
 };
 
-#define ACTORCOUNT 181
+#define ITE_ACTORCOUNT 181
 
-extern ActorTableData ActorTable[ACTORCOUNT];
+extern ActorTableData ITE_ActorTable[ITE_ACTORCOUNT];
 
 } // End of namespace Saga
 

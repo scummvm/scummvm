@@ -49,13 +49,16 @@ public:
 	int getEntranceNumber() const {
 		return _scriptNumber;
 	}
+	int getRightButtonVerb() const {
+		return _rightButtonVerb;
+	}
 
 	void draw(SURFACE *ds, int color);	
 	bool hitTest(const Point &testPoint);
 private:
 	int _flags;				// HitZoneFlags
 	int _clickAreasCount;
-	int _defaultVerb;
+	int _rightButtonVerb;
 	int _nameNumber;
 	int _scriptNumber;
 

@@ -135,7 +135,8 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	size_t stringsLength;
 	ActorData *actor;
 	debug(9, "Actor::Actor()");
-
+	
+	_actors = NULL;
 	if (_vm->getGameType() == GType_IHNM) {
 		warning("Actors aren't implemented for IHNM yet");
 		return;
@@ -180,32 +181,37 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_vm->loadStrings(_actorsStrings, stringsPointer, stringsLength);
 	RSC_FreeResource(stringsPointer);
 
-	for (i = 0; i < ACTORCOUNT; i++) {
-		actor = &_actors[i];
-		actor->actorId = actorIndexToId(i);
-		actor->index = i;
-		debug(9, "init actorId=%d index=%d", actor->actorId, actor->index);
-		actor->nameIndex = ActorTable[i].nameIndex;
-		actor->spriteListResourceId = ActorTable[i].spriteListResourceId;
-		actor->frameListResourceId = ActorTable[i].frameListResourceId;
-		actor->speechColor = ActorTable[i].speechColor;
-		actor->sceneNumber = ActorTable[i].sceneIndex;
-		actor->flags = ActorTable[i].flags;
-		actor->currentAction = ActorTable[i].currentAction;
-		actor->facingDirection = ActorTable[i].facingDirection;
-		actor->actionDirection = ActorTable[i].actionDirection;
-		actor->frameNumber = 0;
-		actor->targetObject = ID_NOTHING;
-		actor->actorFlags = 0;
+	if (_vm->getGameType() == GType_ITE) {
+		_actorsCount = ITE_ACTORCOUNT;
+		_actors = (ActorData **)malloc(_actorsCount * sizeof(ActorData *));
+		for (i = 0; i < _actorsCount; i++) {
+			actor = _actors[i] = new ActorData();
+			actor->actorId = actorIndexToId(i);
+			actor->index = i;
+			debug(9, "init actorId=%d index=%d", actor->actorId, actor->index);
+			actor->nameIndex = ITE_ActorTable[i].nameIndex;
+			actor->scriptEntrypointNumber = ITE_ActorTable[i].scriptEntrypointNumber;
+			actor->spriteListResourceId = ITE_ActorTable[i].spriteListResourceId;
+			actor->frameListResourceId = ITE_ActorTable[i].frameListResourceId;
+			actor->speechColor = ITE_ActorTable[i].speechColor;
+			actor->sceneNumber = ITE_ActorTable[i].sceneIndex;
+			actor->flags = ITE_ActorTable[i].flags;
+			actor->currentAction = ITE_ActorTable[i].currentAction;
+			actor->facingDirection = ITE_ActorTable[i].facingDirection;
+			actor->actionDirection = ITE_ActorTable[i].actionDirection;
+			actor->frameNumber = 0;
+			actor->targetObject = ID_NOTHING;
+			actor->actorFlags = 0;
 
-		actor->location.x = ActorTable[i].x;
-		actor->location.y = ActorTable[i].y;
-		actor->location.z = ActorTable[i].z;
+			actor->location.x = ITE_ActorTable[i].x;
+			actor->location.y = ITE_ActorTable[i].y;
+			actor->location.z = ITE_ActorTable[i].z;
 
-		actor->disabled = !loadActorResources(actor);
-		if (actor->disabled) {
-			warning("Disabling actorId=%d index=%d", actor->actorId, actor->index);
-		} 
+			actor->disabled = !loadActorResources(actor);
+			if (actor->disabled) {
+				warning("Disabling actorId=%d index=%d", actor->actorId, actor->index);
+			} 
+		}
 	}
 }
 
@@ -225,11 +231,11 @@ Actor::~Actor() {
 	free(_pathCell);
 	_actorsStrings.freeMem();
 	//release resources
-	for (i = 0; i < ACTORCOUNT; i++) {
-		actor = &_actors[i];
-		free(actor->frames);
-		actor->spriteList.freeMem();
+	for (i = 0; i < _actorsCount; i++) {
+		actor = _actors[i];
+		delete actor;
 	}
+	free(_actors);
 }
 
 bool Actor::loadActorResources(ActorData *actor) {
@@ -304,7 +310,7 @@ bool Actor::loadActorResources(ActorData *actor) {
 	return true;
 }
 
-void Actor::realLocation(ActorLocation &location, uint16 objectId, uint16 walkFlags) {
+void Actor::realLocation(Location &location, uint16 objectId, uint16 walkFlags) {
 	int angle;
 	int distance;
 	ActorData *actor;
@@ -332,9 +338,9 @@ void Actor::realLocation(ActorLocation &location, uint16 objectId, uint16 walkFl
 	}
 }
 
-void Actor::actorFaceTowardsPoint(uint16 actorId, const ActorLocation &toLocation) {
+void Actor::actorFaceTowardsPoint(uint16 actorId, const Location &toLocation) {
 	ActorData *actor;
-	ActorLocation delta;
+	Location delta;
 
 	actor = getActor(actorId);
 
@@ -382,7 +388,7 @@ ActorData *Actor::getActor(uint16 actorId) {
 		return _protagonist;
 	}
 
-	actor = &_actors[actorIdToIndex(actorId)];
+	actor = _actors[actorIdToIndex(actorId)];
 
 	if (actor->disabled)
 		warning("Actor::getActor disabled actorId 0x%X", actorId);
@@ -390,7 +396,7 @@ ActorData *Actor::getActor(uint16 actorId) {
 	return actor;
 }
 
-bool Actor::validFollowerLocation(const ActorLocation &location) {
+bool Actor::validFollowerLocation(const Location &location) {
 	Point point;	
 	location.toScreenPointXY(point);
 	
@@ -406,8 +412,8 @@ void Actor::updateActorsScene() {
 	int i, j;
 	int followerDirection;
 	ActorData *actor;
-	ActorLocation tempLocation;
-	ActorLocation possibleLocation;
+	Location tempLocation;
+	Location possibleLocation;
 	Point delta;
 	
 	if (_vm->getGameType() == GType_IHNM) {
@@ -418,8 +424,8 @@ void Actor::updateActorsScene() {
 	_activeSpeech.stringsCount = 0;
 	_protagonist = NULL;
 
-	for (i = 0; i < ACTORCOUNT; i++) {
-		actor = &_actors[i];		
+	for (i = 0; i < _actorsCount; i++) {
+		actor = _actors[i];		
 		if (actor->flags & (kProtagonist | kFollower)) {
 			actor->sceneNumber = _vm->_scene->currentSceneNumber();
 			if (actor->flags & kProtagonist) {
@@ -452,8 +458,8 @@ void Actor::updateActorsScene() {
 	followerDirection = _protagonist->facingDirection + 3;
 	calcActorScreenPosition(_protagonist);
 
-	for (i = 0; i < ACTORCOUNT; i++) {
-		actor = &_actors[i];		
+	for (i = 0; i < _actorsCount; i++) {
+		actor = _actors[i];		
 		if (actor->flags & (kFollower)) {
 			actor->facingDirection = actor->actionDirection = _protagonist->facingDirection;
 			actor->currentAction = kActionWait;
@@ -630,11 +636,11 @@ void Actor::handleActions(int msec, bool setup) {
 	ActorFrameRange *frameRange;
 	int state;
 	int speed;
-	ActorLocation delta;
-	ActorLocation addDelta;
+	Location delta;
+	Location addDelta;
 
-	for (i = 0; i < ACTORCOUNT; i++) {
-		actor = &_actors[i];
+	for (i = 0; i < _actorsCount; i++) {
+		actor = _actors[i];
 		if (actor->disabled) continue;
 		if (actor->sceneNumber != _vm->_scene->currentSceneNumber()) continue;
 		
@@ -876,7 +882,7 @@ int Actor::direct(int msec) {
 	// FIXME: HACK. This should be turned into cycle event.
 	_lastTickMsec += msec;
 
-	if (_lastTickMsec > ticksToMSec(5)) { // fixme
+	if (_lastTickMsec > ticksToMSec(2)) { // fixme
 		_lastTickMsec = 0;
 		//process actions
 		handleActions(msec, false);
@@ -922,8 +928,8 @@ void Actor::createDrawOrderList() {
 	ActorData *actor;
 
 	_drawOrderList.clear();
-	for (i = 0; i < ACTORCOUNT; i++) {
-		actor = &_actors[i];
+	for (i = 0; i < _actorsCount; i++) {
+		actor = _actors[i];
 		if (actor->disabled) continue;
 		if (actor->sceneNumber != _vm->_scene->currentSceneNumber()) continue;
 
@@ -1009,9 +1015,9 @@ int Actor::drawActors() {
 }
 
 bool Actor::followProtagonist(ActorData *actor) {
-	ActorLocation protagonistLocation;
-	ActorLocation newLocation;
-	ActorLocation delta;
+	Location protagonistLocation;
+	Location newLocation;
+	Location delta;
 	int protagonistBGMaskType;
 	Point prefer1;
 	Point prefer2;
@@ -1132,7 +1138,7 @@ bool Actor::actorEndWalk(uint16 actorId, bool recurse) {
 	return walkMore;
 }
 
-bool Actor::actorWalkTo(uint16 actorId, const ActorLocation &toLocation) {
+bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 	ActorData *actor;
 	ActorData *anotherActor;
 	int	i;
@@ -1207,8 +1213,8 @@ bool Actor::actorWalkTo(uint16 actorId, const ActorLocation &toLocation) {
 				
 				_barrierCount = 0;
 
-				for (i = 0; (i < ACTORCOUNT) && (_barrierCount < ACTOR_BARRIERS_MAX); i++) {
-					anotherActor = &_actors[i];
+				for (i = 0; (i < _actorsCount) && (_barrierCount < ACTOR_BARRIERS_MAX); i++) {
+					anotherActor = _actors[i];
 					if (anotherActor->disabled) continue;
 					if (anotherActor->sceneNumber != _vm->_scene->currentSceneNumber()) continue;
 					if (anotherActor == actor ) continue;
@@ -1298,8 +1304,8 @@ bool Actor::actorWalkTo(uint16 actorId, const ActorLocation &toLocation) {
 			return false;
 		} else {
 			if (actor->flags & kProtagonist) {
-				_actors[1].actorFlags &= ~kActorNoFollow;
-				_actors[2].actorFlags &= ~kActorNoFollow;
+				_actors[1]->actorFlags &= ~kActorNoFollow; // TODO: mark all actors with kFollower flag, not only 1 and 2
+				_actors[2]->actorFlags &= ~kActorNoFollow;
 			}			
 			actor->currentAction = (actor->walkStepsCount >= ACTOR_MAX_STEPS_COUNT) ? kActionWalkToLink : kActionWalkToPoint;
 			actor->walkFrameSequence = kFrameWalk;
@@ -1903,7 +1909,7 @@ void Actor::drawPathTest() {
 
 void Actor::cmdActorWalkTo(int argc, const char **argv) {
 	uint16 actorId = (uint16) atoi(argv[1]);
-	ActorLocation location;
+	Location location;
 	Point movePoint;
 
 	movePoint.x = atoi(argv[2]);

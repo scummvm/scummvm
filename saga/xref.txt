@@ -60,9 +60,9 @@ Scene.c
  resInfo->loadList         _desc.resListRN
  resInfo->horizon          _desc.endSlope
  resInfo->nearFigureLimit  _desc.beginSlope
- resInfo->scriptModule     _desc.scriptNum
- resInfo->entryScript      _desc.sceneScriptNum
- resInfo->preScript        _desc.startScriptNum
+ resInfo->scriptModule     _desc.scriptModuleNumber
+ resInfo->entryScript      _desc.sceneScriptEntrypointNumber
+ resInfo->preScript        _desc.startScriptEntrypointNumber
  resInfo->backgroundMusic  _desc.musicRN
  thisScene->ID             currentSceneNumber()
 

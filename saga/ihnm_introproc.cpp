@@ -41,7 +41,7 @@ SCENE_RESLIST IHNM_IntroMovie1RL[] = {
 	{31, SAGA_ANIM_1, 0, 0}
 };
 
-SCENE_DESC IHNM_IntroMovie1Desc = {
+SceneDescription IHNM_IntroMovie1Desc = {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	IHNM_IntroMovie1RL,
 	ARRAYSIZE(IHNM_IntroMovie1RL)
@@ -52,7 +52,7 @@ SCENE_RESLIST IHNM_IntroMovie2RL[] = {
 	{33, SAGA_ANIM_1, 0, 0}
 };
 
-SCENE_DESC IHNM_IntroMovie2Desc = {
+SceneDescription IHNM_IntroMovie2Desc = {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	IHNM_IntroMovie2RL,
 	ARRAYSIZE(IHNM_IntroMovie2RL)
@@ -63,7 +63,7 @@ SCENE_RESLIST IHNM_IntroMovie3RL[] = {
 	{35, SAGA_ANIM_1, 0, 0}
 };
 
-SCENE_DESC IHNM_IntroMovie3Desc = {
+SceneDescription IHNM_IntroMovie3Desc = {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	IHNM_IntroMovie3RL,
 	ARRAYSIZE(IHNM_IntroMovie3RL)
@@ -74,7 +74,7 @@ SCENE_RESLIST IHNM_IntroMovie4RL[] = {
 	{1226, SAGA_ANIM_1, 0, 0}
 };
 
-SCENE_DESC IHNM_IntroMovie4Desc = {
+SceneDescription IHNM_IntroMovie4Desc = {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	IHNM_IntroMovie4RL,
 	ARRAYSIZE(IHNM_IntroMovie4RL)

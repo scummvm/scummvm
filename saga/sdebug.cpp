@@ -37,7 +37,7 @@ namespace Saga {
 #define SD_DISPLAY_LEN 128
 #define SD_ADDTXT(x) strncat(disp_buf, x, SD_DISPLAY_LEN);
 
-int Script::SDebugPrintInstr(SCRIPT_THREAD *thread) {
+int Script::SDebugPrintInstr(ScriptThread *thread) {
 	TEXTLIST_ENTRY tl_e;
 	char tmp_buf[80] = { 0 };
 	static char disp_buf[SD_DISPLAY_LEN] = { 0 };
@@ -66,11 +66,11 @@ int Script::SDebugPrintInstr(SCRIPT_THREAD *thread) {
 	tl_e.display = 1;
 
 	MemoryReadStream readS(currentScript()->bytecode->bytecode_p 
-							 + thread->i_offset, 
+							 + thread->instructionOffset, 
 							 currentScript()->bytecode->bytecode_len 
-							 - thread->i_offset);
+							 - thread->instructionOffset);
 	in_char = readS.readByte();
-	sprintf(tmp_buf, "%04lX | %02X | ", thread->i_offset, in_char);
+	sprintf(tmp_buf, "%04lX | %02X | ", thread->instructionOffset, in_char);
 	strncat(disp_buf, tmp_buf, SD_DISPLAY_LEN);
 
 	switch (in_char) {

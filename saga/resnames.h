@@ -115,6 +115,11 @@ namespace Saga {
 //TODO: fill it
 #define RID_SCENE1_VOICE_138 186
 
+#define RID_BOAR_VOICE_000 239
+#define RID_BOAR_VOICE_002 241
+#define RID_BOAR_VOICE_005 244
+#define RID_BOAR_VOICE_006 245
+#define RID_BOAR_VOICE_007 246
 
 // MUSIC
 #define MUSIC_1 9

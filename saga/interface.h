@@ -96,19 +96,18 @@ public:
 
 	int activate();
 	int deactivate();
+	bool isActive() { return _active; }
 	int setMode(int mode, bool force = false);
 	int getMode(void) const { return _panelMode; }
 	void rememberMode();
 	void restoreMode();
-	void lockMode() { _lockedMode = _panelMode; }
-	void unlockMode() { _panelMode = _lockedMode; }
 	bool isInMainMode() { return _inMainMode; }
 	int setStatusText(const char *new_txt);
 	int loadScenePortraits(int resourceId);
 	int setLeftPortrait(int portrait);
 	int setRightPortrait(int portrait);
 	int draw();
-	int update(const Point& imousePointer, int updateFlag);
+	int update(const Point& mousePoint, int updateFlag);
 	int drawStatusBar(SURFACE *ds);
 	void drawVerb(int verb, int state);
 
@@ -120,12 +119,15 @@ public:
 	
 private:
 	int inventoryTest(const Point& imousePt, int *ibutton);
-	PanelButton *verbHitTest(const Point& imousePointer);
-	void handleCommandUpdate(SURFACE *ds, const Point& imousePointer);
-	void handleCommandClick(SURFACE *ds, const Point& imousePointer);
+	PanelButton *verbHitTest(const Point& mousePoint);
+	void handleCommandUpdate(SURFACE *ds, const Point& mousePoint);
+	void handleCommandClick(SURFACE *ds, const Point& mousePoint);
 	int handlePlayfieldUpdate(SURFACE *ds, const Point& imousePt);
 	int handlePlayfieldClick(SURFACE *ds, const Point& imousePt);
 	
+	void lockMode() { _lockedMode = _panelMode; }
+	void unlockMode() { _panelMode = _lockedMode; }
+
 	void drawPanelButtonText(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton, int textColor, int textShadowColor);
 public:
 	void converseClear(void);
@@ -152,7 +154,7 @@ private:
 	InterfacePanel _conversePanel;
 	SpriteList _defPortraits;
 	SpriteList _scenePortraits;
-	SCRIPT_THREAD *_iThread;
+	ScriptThread *_iThread;
 	PanelButton *_verbTypeToPanelButton[kVerbTypesMax];
 
 	bool _active;
@@ -164,6 +166,8 @@ private:
 	int _leftPortrait;
 	int _rightPortrait;
 	
+	Point _lastMousePoint;
+
 	uint16 *_inventory;
 	int _inventorySize;
 	byte _inventoryCount;
