@@ -52,14 +52,19 @@ protected:
 	int _return_to;
 	int _curX, _curY;
 	VirtScreen *_vs;
-	bool _old_cursor_mode;
 	int _parentX, _parentY;
 	bool _active;
+	bool _inited;
 	byte _clickTimer;
 	byte _cur_page;
 	byte _dialog;
 	int _clickWidget;
 	char *_queryMess;
+	
+	// mouse cursor state
+	bool _old_cursor_mode;
+	int _old_cursorHotspotX, _old_cursorHotspotY, _old_cursorWidth, _old_cursorHeight;
+	byte _old_grabbedCursor[2048];
 
 	// optiondialog specifics
 	int _gui_variables[100];

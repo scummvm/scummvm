@@ -947,17 +947,19 @@ void Gui::init(Scumm *s)
 
 void Gui::loop()
 {
-	/* FIXME - _active is a bool, so what was that code meant to do ? */
-#if OLD_WEIRD_CODE
-	if (_active == 1) {
-		_active++;
-#else
-	if (_active) {
-#endif
+	if (_active && !_inited) {
+		_inited = true;
 		draw(0, 200);								// was 100		
 		_s->pauseSounds(true);
 
+		// Backup old cursor
+		memcpy(_old_grabbedCursor, _s->_grabbedCursor, sizeof(_old_grabbedCursor));
+		_old_cursorWidth = _s->_cursorWidth;
+		_old_cursorHeight = _s->_cursorHeight;
+		_old_cursorHotspotX = _s->_cursorHotspotX;
+		_old_cursorHotspotY = _s->_cursorHotspotY;
 		_old_cursor_mode = _s->_system->show_mouse(true);
+
 		_s->_cursorAnimate++;
 		_s->gdi._cursorActive = 1;
 	}
@@ -991,10 +993,20 @@ void Gui::close()
 	_s->_fullRedraw = true;
 	_s->_completeScreenRedraw = true;
 	_s->_cursorAnimate--;
+
+	// Restore old cursor
+	memcpy(_s->_grabbedCursor, _old_grabbedCursor, sizeof(_old_grabbedCursor));
+	_s->_cursorWidth = _old_cursorWidth;
+	_s->_cursorHeight = _old_cursorHeight;
+	_s->_cursorHotspotX = _old_cursorHotspotX;
+	_s->_cursorHotspotY = _old_cursorHotspotY;
+	_s->updateCursor();
+
 	_s->_system->show_mouse(_old_cursor_mode);
 
 	_s->pauseSounds(false);
 	_active = false;
+	_inited = false;
 
 #ifdef _WIN32_WCE
 
