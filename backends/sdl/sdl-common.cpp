@@ -19,13 +19,18 @@
  *
  */
 
-#include "sdl-common.h"
+#include "backends/sdl/sdl-common.h"
 #include "sound/mididrv.h"
 #include "common/config-manager.h"
 #include "common/scaler.h"
 #include "common/util.h"
 
+#if defined(HAVE_CONFIG_H)
+#include "config.h"
+#endif
+
 #include "scummvm.xpm"
+
 
 // FIXME move joystick defines out and replace with confile file options
 // we should really allow users to map any key to a joystick button
@@ -595,12 +600,21 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 	while(SDL_PollEvent(&ev)) {
 		switch(ev.type) {
 		case SDL_KEYDOWN:
+#ifdef LINUPY
+			// Yopy has no ALT key, steal the SHIFT key 
+			// (which isn't used much anyway)
+			if (ev.key.keysym.mod & KMOD_SHIFT)
+				b |= KBD_ALT;
+			if (ev.key.keysym.mod & KMOD_CTRL)
+				b |= KBD_CTRL;
+#else
 			if (ev.key.keysym.mod & KMOD_SHIFT)
 				b |= KBD_SHIFT;
 			if (ev.key.keysym.mod & KMOD_CTRL)
 				b |= KBD_CTRL;
 			if (ev.key.keysym.mod & KMOD_ALT)
 				b |= KBD_ALT;
+#endif
 			event->kbd.flags = b;
 
 			// Alt-Return toggles full screen mode				
@@ -713,6 +727,35 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 					break;
 				}
 			}
+
+#ifdef LINUPY
+			// On Yopy map the End button to quit
+			if ((ev.key.keysym.sym==293)) {
+				event->event_code = EVENT_QUIT;
+				return true;
+			}
+			// Map menu key to f5 (scumm menu)
+			if (ev.key.keysym.sym==306) {
+				event->event_code = EVENT_KEYDOWN;
+				event->kbd.keycode = SDLK_F5;
+				event->kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
+				return true;
+			}
+			// Map action key to action
+			if (ev.key.keysym.sym==291) {
+				event->event_code = EVENT_KEYDOWN;
+				event->kbd.keycode = SDLK_TAB;
+				event->kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
+				return true;
+			}
+			// Map OK key to skip cinematic
+			if (ev.key.keysym.sym==292) {
+				event->event_code = EVENT_KEYDOWN;
+				event->kbd.keycode = SDLK_ESCAPE;
+				event->kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
+				return true;
+			}
+#endif
 
 #ifdef QTOPIA
 			// quit on fn+backspace on zaurus

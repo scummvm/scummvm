@@ -34,14 +34,18 @@ _mpeg2=auto
 _build_scumm=yes
 _build_simon=yes
 _build_sky=yes
-_build_bs1=yes
-_build_bs2=yes
+_build_sword1=yes
+_build_sword2=yes
 _build_queen=yes
 _need_memalign=no
 # more defaults
 _backend=sdl
 _ranlib=ranlib
 _sdlconfig=sdl-config
+_host=""
+_sdlpath="$PATH"
+# config.h defaults
+_def_linupy="#undef LINUPY"
 
 cc_check() {
 	echo >> "$TMPLOG"
@@ -75,7 +79,13 @@ int main(int argc, char **argv)
 	return 0;
 }
 EOF
-eval "$1 -o tmp_cxx_compiler tmp_cxx_compiler.cpp 2> /dev/null" && eval "./tmp_cxx_compiler 2> /dev/null" && rm -f tmp_cxx_compiler tmp_cxx_compiler.cpp
+
+if test -n "$_host"; then
+    # In cross-compiling mode, we cannot run the result
+    eval "$1 -o tmp_cxx_compiler tmp_cxx_compiler.cpp 2> /dev/null" && rm -f tmp_cxx_compiler tmp_cxx_compiler.cpp
+else
+    eval "$1 -o tmp_cxx_compiler tmp_cxx_compiler.cpp 2> /dev/null" && eval "./tmp_cxx_compiler 2> /dev/null" && rm -f tmp_cxx_compiler tmp_cxx_compiler.cpp
+fi
 }
 
 #
@@ -90,10 +100,10 @@ find_sdlconfig()
 	
 	IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=":"
 	
-	for path_dir in $PATH; do
+	for path_dir in $_sdlpath; do
 	  for sdlconfig in $sdlconfigs; do
-	    if test -e "$path_dir/$sdlconfig" ; then
-	      _sdlconfig=$sdlconfig
+	    if test -x "$path_dir/$sdlconfig" ; then
+	      _sdlconfig="$path_dir/$sdlconfig"
 	      echo $_sdlconfig
 	      break
 	    fi
@@ -169,14 +179,18 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help             display this help and exit
-  --backend=BACKEND      backend to build (sdl, sdlgl, x11, morphos, dc, gp32) [sdl]
+  --backend=BACKEND      backend to build (sdl, x11, morphos, dc, gp32) [sdl]
+
+Special configuration feature:
+  --host=HOST            cross-compile to target HOST (arm-linux, ...)
+                         special targets: linupy for Yopy PDA
 
 Optional Features:
   --disable-scumm          don't build the SCUMM engine
   --disable-simon          don't build the simon engine
   --disable-sky            don't build the Beneath a Steel Sky engine
-  --disable-bs1            don't build the Broken Sword I engine
-  --disable-bs2            don't build the Broken Sword II engine
+  --disable-sword1         don't build the Broken Sword I engine
+  --disable-sword2         don't build the Broken Sword II engine
   --disable-queen          don't build the Flight of the Amazon Queen engine
 
 Optional Libraries:
@@ -191,6 +205,7 @@ Optional Libraries:
   --disable-zlib           disable zlib (compression) support [autodetect]
   --disable-mpeg2          disable mpeg2 codec for cutscenes [autodetect]
   --with-mpeg2-prefix=PFX  Prefix where libmpeg2 is installed (optional)
+  --with-sdl-prefix=PFX    Prefix where the sdl-config script is installed
  
 EOF
     exit 0
@@ -204,8 +219,8 @@ for ac_option in $@; do
       --disable-scumm)		_build_scumm=no ;;
       --disable-simon)		_build_simon=no ;;
       --disable-sky)		_build_sky=no ;;
-      --disable-bs1)		_build_bs1=no ;;
-      --disable-bs2)		_build_bs2=no ;;
+      --disable-sword1)		_build_sword1=no ;;
+      --disable-sword2)		_build_sword2=no ;;
       --disable-queen)		_build_queen=no ;;
       --enable-alsa)		_alsa=yes	;;
       --disable-alsa)		_alsa=no	;;
@@ -255,6 +270,13 @@ for ac_option in $@; do
       --enable-release)
 	DEBFLAGS=""
         ;;
+      --with-sdl-prefix=*)
+	arg=`echo $ac_option | cut -d '=' -f 2`
+	_sdlpath="$arg:$arg/bin"
+	;;
+      --host=*)
+	_host=`echo $ac_option | cut -d '=' -f 2`
+	;;
       *)
         echo "error: unrecognised option: $ac_option
 Try \`$0 --help' for more information." >&2
@@ -264,18 +286,29 @@ Try \`$0 --help' for more information." >&2
 done;
 
 CXXFLAGS="$CXXFLAGS $DEBFLAGS"
+
+if test "$_host" = "linupy"; then
+    _host=arm-linux
+    def_linupy="#define DLINUPY"
+fi
+
 #
 # Determine the C++ compiler
 #
 printf "Looking for C++ compiler... "
-compilers="$CXX g++ c++"
+if test -n "$_host"; then
+    compilers="$CXX $_host-g++ $_host-c++"
+else
+    compilers="$CXX g++ c++"
+fi
+
 CXX=
 for compiler in $compilers; do
-  if test_compiler $compiler; then
-    CXX=$compiler
-    echo $CXX
-    break
-  fi
+    if test_compiler $compiler; then
+	CXX=$compiler
+	echo $CXX
+	break
+    fi
 done
 if test -z $CXX; then
     echo "none found!"
@@ -355,16 +388,16 @@ else
 	_mak_sky='# DISABLE_SKY = 1'
 fi
 
-if test "$_build_bs1" = no ; then
-	_mak_bs1='DISABLE_SWORD1 = 1'
+if test "$_build_sword1" = no ; then
+	_mak_sword1='DISABLE_SWORD1 = 1'
 else
-	_mak_bs1='# DISABLE_SWORD1 = 1'
+	_mak_sword1='# DISABLE_SWORD1 = 1'
 fi
 
-if test "$_build_bs2" = no ; then
-	_mak_bs2='DISABLE_SWORD2 = 1'
+if test "$_build_sword2" = no ; then
+	_mak_sword2='DISABLE_SWORD2 = 1'
 else
-	_mak_bs2='# DISABLE_SWORD2 = 1'
+	_mak_sword2='# DISABLE_SWORD2 = 1'
 fi
 
 if test "$_build_queen" = no ; then
@@ -373,15 +406,35 @@ else
 	_mak_queen='# DISABLE_QUEEN = 1'
 fi
 
-#
-# Determine hosttype
-#
-# TODO - also add an command line option to override this?!?
-# TODO - recognize more systems, e.g. *BSD
-printf "Checking hosttype... "
-hosttype=`uname -s`
-echo $hosttype
-case $hosttype in
+
+if test -n "$_host"; then
+    # Cross-compiling mode - add your target here if needed
+    case "$_host" in
+	arm-linux)
+	    echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+	    DEFINES="$DEFINES -DUNIX"
+	    _def_endianess='#define SCUMM_LITTLE_ENDIAN'
+	    _def_align='#define SCUMM_NEED_ALIGNMENT'
+	    type_1_byte='char'
+	    type_2_byte='short'
+	    type_4_byte='int'
+	    ;;
+	*)
+	    echo "Cross-compiling to unknown target, please add your target to configure."
+	    exit 1
+	    ;;
+    esac
+	    
+else
+    #
+    # Determine hosttype
+    #
+    # TODO - also add an command line option to override this?!?
+    # TODO - recognize more systems, e.g. *BSD
+    printf "Checking hosttype... "
+    hosttype=`uname -s`
+    echo $hosttype
+    case $hosttype in
 	Linux | OpenBSD | FreeBSD | NetBSD | BSD/OS | SunOS | HP-UX | BeOS)
 		DEFINES="$DEFINES -DUNIX"
 		;;
@@ -410,13 +463,13 @@ case $hosttype in
 		echo "WARNING: could not establish system type, assuming unix like"
 		DEFINES="$DEFINES -DUNIX"
 		;;
-esac
+    esac
 
-#
-# Check for endianess
-#
-printf "Checking endianess... "
-cat <<EOF >tmp_endianess_check.cpp
+    #
+    # Check for endianess
+    #
+    printf "Checking endianess... "
+    cat <<EOF >tmp_endianess_check.cpp
 #include <stdio.h>
 #include <stdlib.h>
 int main(int argc, char **argv)
@@ -432,27 +485,27 @@ int main(int argc, char **argv)
 	return 0;
 }
 EOF
-$CXX -o tmp_endianess_check tmp_endianess_check.cpp
-endianess=`./tmp_endianess_check`
-echo $endianess;
-case $endianess in
+    $CXX -o tmp_endianess_check tmp_endianess_check.cpp
+    endianess=`./tmp_endianess_check`
+    echo $endianess;
+    case $endianess in
 	big)
-		_def_endianess='#define SCUMM_BIG_ENDIAN'
-		;;
+	    _def_endianess='#define SCUMM_BIG_ENDIAN'
+	    ;;
 	little)
-		_def_endianess='#define SCUMM_LITTLE_ENDIAN'
-		;;
+	    _def_endianess='#define SCUMM_LITTLE_ENDIAN'
+	    ;;
 	*)
-		exit 1
-		;;
-esac
-rm -f tmp_endianess_check tmp_endianess_check.cpp
+	    exit 1
+	    ;;
+    esac
+    rm -f tmp_endianess_check tmp_endianess_check.cpp
 
-#
-# Check whether memory alignment is required
-#
-echo -n "Alignment required... "
-cat > $TMPC << EOF
+    #
+    # Check whether memory alignment is required
+    #
+    echo -n "Alignment required... "
+    cat > $TMPC << EOF
 #include <stdlib.h>
 #include <signal.h>
 int main(int argc, char **argv)
@@ -467,31 +520,32 @@ int main(int argc, char **argv)
 	return 0;
 }
 EOF
-_need_memalign=yes
-cc_check && $TMPO && _need_memalign=no
-if test "$_need_memalign" = yes ; then
-  _def_align='#define SCUMM_NEED_ALIGNMENT'
-else
- _def_align='#undef SCUMM_NEED_ALIGNMENT'
+    _need_memalign=yes
+    cc_check && $TMPO && _need_memalign=no
+    if test "$_need_memalign" = yes ; then
+	_def_align='#define SCUMM_NEED_ALIGNMENT'
+    else
+	_def_align='#undef SCUMM_NEED_ALIGNMENT'
+    fi
+    echo "$_need_memalign"
+
+    #
+    # Determine data type sizes
+    # TODO: proper error checking
+    #
+    printf "Type with 1 byte... "
+    type_1_byte=`find_type_with_size 1`
+    echo "$type_1_byte"
+    
+    printf "Type with 2 bytes... "
+    type_2_byte=`find_type_with_size 2`
+    echo "$type_2_byte"
+    
+    printf "Type with 4 bytes... "
+    type_4_byte=`find_type_with_size 4`
+    echo "$type_4_byte"
+    
 fi
-echo "$_need_memalign"
-
-#
-# Determine data type sizes
-# TODO: proper error checking
-#
-printf "Type with 1 byte... "
-type_1_byte=`find_type_with_size 1`
-echo "$type_1_byte"
-
-printf "Type with 2 bytes... "
-type_2_byte=`find_type_with_size 2`
-echo "$type_2_byte"
-
-printf "Type with 4 bytes... "
-type_4_byte=`find_type_with_size 4`
-echo "$type_4_byte"
-
 
 echocheck "Ogg Vorbis"
 if test "$_vorbis" = auto ; then
@@ -607,7 +661,7 @@ fi
 if test "$_build_sky" = yes ; then
   echo "    Beneath a Steel Sky"
 fi
-if test "$_build_bs1" = yes ; then
+if test "$_build_sword1" = yes ; then
   echo -n "    Broken Sword I"
   if test "$_mpeg2" = yes ; then
 	echo " (w/ mpeg2 cutscenes)"
@@ -615,7 +669,7 @@ if test "$_build_bs1" = yes ; then
 	echo "  (without mpeg2 cutscenes)"
   fi
 fi
-if test "$_build_bs2" = yes ; then
+if test "$_build_sword2" = yes ; then
   echo -n "    Broken Sword II"
   if test "$_mpeg2" = yes ; then
 	echo " (w/ mpeg2 cutscenes)"
@@ -640,14 +694,6 @@ case $_backend in
     INCLUDES="$INCLUDES `$_sdlconfig --cflags`"
     LIBS="$LIBS `$_sdlconfig --libs`"
     OBJS="$OBJS backends/sdl/sdl-common.o backends/sdl/sdl.o"
-    MODULES="$MODULES backends/sdl"
-    MODULE_DIRS="$MODULE_DIRS backends/sdl"
-    ;;
-  sdlgl)
-    find_sdlconfig
-    INCLUDES="$INCLUDES `$_sdlconfig --cflags`"
-    LIBS="$LIBS `$_sdlconfig --libs` -lGL"
-    OBJS="$OBJS backends/sdl/sdl-common.o backends/sdl/sdl_gl.o"
     MODULES="$MODULES backends/sdl"
     MODULE_DIRS="$MODULE_DIRS backends/sdl"
     ;;
@@ -677,6 +723,8 @@ cat > config.h << EOF
 
 $_def_endianess
 $_def_align
+
+$_def_linupy
 
 /* Data types */
 typedef unsigned $type_1_byte byte;
@@ -714,8 +762,8 @@ $_make_def_HAVE_GCC3
 $_mak_scumm
 $_mak_simon
 $_mak_sky
-$_mak_bs1
-$_mak_bs2
+$_mak_sword1
+$_mak_sword2
 $_mak_queen
 
 INCLUDES += $INCLUDES
