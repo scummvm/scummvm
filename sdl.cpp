@@ -337,6 +337,7 @@ void OSystem_SDL::copy_rect(const byte *buf, int pitch, int x, int y, int w, int
 		 * and just updates those, on the actual display. */
 		add_dirty_rgn_auto(buf);
 	} else {
+		y+=_current_shake_pos;
 		/* Clip the coordinates */
 		if (x < 0) { w+=x; buf-=x; x = 0; }
 		if (y < 0) { h+=y; buf-=y*pitch; y = 0; }
@@ -501,7 +502,7 @@ void OSystem_SDL::add_dirty_rgn_auto(const byte *buf) {
 						ck[w+CKSUM_NUM] = ck[w];
 						w++;
 					} while (x+w != SCREEN_WIDTH/8 && ck[w] != ck[w+CKSUM_NUM]);
-
+					
 					add_dirty_rect(x*8, y*8, w*8, 8);
 
 					if (force_full)
