@@ -307,7 +307,7 @@ void SimonState::leaveHitAreaById(uint hitarea_id) {
 		hitarea_leave(ha);
 }
 
-void SimonState::handle_unk2_hitarea(FillOrCopyStruct *fcs) {
+void SimonState::handle_uparrow_hitarea(FillOrCopyStruct *fcs) {
 	uint index;
 
 	index = get_fcs_ptr_3_index(fcs);
@@ -320,7 +320,7 @@ void SimonState::handle_unk2_hitarea(FillOrCopyStruct *fcs) {
 	unlock();
 }
 
-void SimonState::handle_unk_hitarea(FillOrCopyStruct *fcs) {
+void SimonState::handle_downarrow_hitarea(FillOrCopyStruct *fcs) {
 	uint index;
 
 	index = get_fcs_ptr_3_index(fcs);

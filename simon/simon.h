@@ -519,8 +519,8 @@ public:
 	void defocusHitarea();
 	void startSubroutine170();
 	void runSubroutine101();
-	void handle_unk2_hitarea(FillOrCopyStruct *fcs);
-	void handle_unk_hitarea(FillOrCopyStruct *fcs);
+	void handle_uparrow_hitarea(FillOrCopyStruct *fcs);
+	void handle_downarrow_hitarea(FillOrCopyStruct *fcs);
 	void hitareaChangedHelper();
 	void focusVerb(uint hitarea_id);
 	HitArea *findHitAreaByID(uint hitarea_id);

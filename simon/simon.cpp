@@ -1126,9 +1126,9 @@ void SimonState::setup_cond_c_helper() {
 
 		if (_last_hitarea == NULL) {
 		} else if (_last_hitarea->id == 0x7FFB) {
-			handle_unk2_hitarea(_last_hitarea->fcs);
+			handle_uparrow_hitarea(_last_hitarea->fcs);
 		} else if (_last_hitarea->id == 0x7FFC) {
-			handle_unk_hitarea(_last_hitarea->fcs);
+			handle_downarrow_hitarea(_last_hitarea->fcs);
 		} else if (_last_hitarea->item_ptr != NULL) {
 			_hitarea_object_item = _last_hitarea->item_ptr;
 			_variableArray[60] = (_last_hitarea->flags & 1) ? (_last_hitarea->flags >> 8) : 0xFFFF;
@@ -1590,9 +1590,9 @@ startOver:
 
 		if (ha == NULL) {
 		} else if (ha->id == 0x7FFB) {
-			handle_unk2_hitarea(ha->fcs);
+			handle_uparrow_hitarea(ha->fcs);
 		} else if (ha->id == 0x7FFC) {
-			handle_unk_hitarea(ha->fcs);
+			handle_downarrow_hitarea(ha->fcs);
 		} else if (ha->id >= 101 && ha->id < 113) {
 			_verb_hitarea = ha->unk3;
 			handle_verb_hitarea(ha);
