@@ -396,7 +396,7 @@ void Journal::drawNormalPanel() {
 
 void Journal::drawYesNoPanel(int titleNum) {
 	static const int frames[] = { FRAME_GREY, FRAME_BLUE_1, FRAME_BLUE_2 };
-	static const int titles[] = { titleNum, TXT_YES, TXT_NO };
+	const int titles[] = { titleNum, TXT_YES, TXT_NO };
 	drawPanel(frames, titles, 3);
 
 	hideBob(BOB_LEFT_RECT_4);
