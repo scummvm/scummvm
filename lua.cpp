@@ -279,8 +279,8 @@ static void SetActorRot() {
 static void GetActorRot() {
   Actor *act = check_actor(1);
   lua_pushnumber(act->pitch());
-  lua_pushnumber(act->roll());
   lua_pushnumber(act->yaw());
+  lua_pushnumber(act->roll());
 }
 
 static void GetAngleBetweenActors() {
