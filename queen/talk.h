@@ -69,7 +69,6 @@ class Talk {
 	  MAX_TEXT_WIDTH = (320-18),
 	  PUSHUP = 4,
 	  TALK_SELECTED_COUNT = 86,
-	  ZONE_SCREEN = 1,
 	  ARROW_BOB_UP = 62,
 	  ARROW_BOB_DOWN = 63,
 	  ARROW_ZONE_UP   = 5,
@@ -131,11 +130,21 @@ class Talk {
 	//! Used to select voice files
 	int16 _talkKey;
 
+	int16 _jMax;
+
 	//! Used by findDialogueString
 	int16 _pMax;
 
+	// Update game state efter dialogue
+	int16 _gameState[2];
+	int16 _testValue[2];
+	int16 _itemNumber[2];
+
 	//! String data
 	byte *_person1Ptr;
+
+	//! Cutaway data
+	byte *_cutawayPtr;
 
 	//! Data used if we have talked to the person before
 	byte *_person2Ptr;

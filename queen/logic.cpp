@@ -393,7 +393,11 @@ void Logic::initialise() {
 
 
 ObjectData* Logic::objectData(int index) {
-  return &_objectData[index];
+	index = abs(index);
+	if (index <= _numObjects)
+		return &_objectData[index];
+	else
+		error("[Logic::objectData] Invalid object data index: %i", index);
 }
 
 uint16 Logic::roomData(int room) {
@@ -412,6 +416,7 @@ Area *Logic::currentRoomArea(int num) {
 	if (num == 0 || num > _areaMax[_currentRoom]) {
 		error("Logic::currentRoomArea() - Bad area number = %d (max = %d), currentRoom = %d", num, _areaMax[_currentRoom], _currentRoom);
 	}
+
 	return &_area[_currentRoom][num];
 }
 
@@ -1568,7 +1573,7 @@ ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
 	uint16 oldx;
 	uint16 oldy;
 	WalkOffData *pwo = NULL;
-	ObjectData *pod = &_objectData[_entryObj];
+	ObjectData *pod = objectData(_entryObj);
 	if (pod == NULL) {
 		error("Logic::joeSetupInRoom() - No object data for obj %d", _entryObj);
 	}

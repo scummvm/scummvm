@@ -1518,10 +1518,12 @@ void Command::lookCurrentRoom() {
 	int16 i = 0;
 	if (_curCmd.noun > _logic->currentRoomObjMax()) {
 		uint16 obj = _logic->currentRoomArea(_curCmd.noun - _logic->currentRoomObjMax())->object;
-		aObjName = _logic->objectData(obj)->name;
-		if (aObjName > 0) {
-			i = aObjName;
-			_curCmd.noun = obj - k;
+		if (obj) {
+			aObjName = _logic->objectData(obj)->name;
+			if (aObjName > 0) {
+				i = aObjName;
+				_curCmd.noun = obj - k;
+			}
 		}
 	}
 	else {

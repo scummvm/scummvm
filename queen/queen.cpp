@@ -131,6 +131,7 @@ void QueenEngine::roomChanged() {
 		// XXX fadeout(0,223);
 	}
 	else if (_logic->currentRoom() == FOTAQ_LOGO && _logic->gameState(VAR_INTRO_PLAYED) == 0) {
+#if 0
 		bool pcGamesDemo = _resource->isDemo() && !_resource->exists("pclogo.cut");
 
 		if (pcGamesDemo) {
@@ -159,6 +160,7 @@ void QueenEngine::roomChanged() {
 			
 			_logic->playCutaway("cred.cut");
 		}
+#endif
 
 		_logic->currentRoom(ROOM_HOTEL_LOBBY);
 		_logic->entryObj(584);

@@ -363,7 +363,7 @@ protected:
 	ZoneSlot _zones[2][MAX_ZONES_NUMBER];
 
 	//! Actor position in room is _walkOffData[_entryObj]
-	uint16 _entryObj;
+	int16 _entryObj;
 
 	//! Object description (Look At)
 	char **_objDescription;	//OBJECT_DESCRstr

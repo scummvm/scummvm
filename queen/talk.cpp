@@ -299,8 +299,46 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 	}
 
 // TALK_PROC_EXIT:
+
+	cutawayFilename[0] = '\0';
+
+	for (i = 0; i < 2; i++) {
+		if (_gameState[i] > 0) {
+			if (_logic->gameState(_gameState[i]) == _testValue[i]) {
+				if (_itemNumber[i] > 0)
+					_logic->inventoryInsertItem(_itemNumber[i]);
+				else
+					_logic->inventoryDeleteItem(abs(_itemNumber[i]));
+			}
+		}
+	}
 	
-	// XXX: missing some code here!
+	_logic->zoneSetupPanel();
+
+	uint8 *ptr = _cutawayPtr;
+
+	int16 cutawayGameState = (int16)READ_BE_UINT16(ptr); ptr += 2;
+	int16 cutawayTestValue = (int16)READ_BE_UINT16(ptr); ptr += 2;
+
+	if (_logic->gameState(cutawayGameState) == cutawayTestValue) {
+		getString(ptr, cutawayFilename, 20);
+
+		//CR 2 - 7/3/95, If we're executing a cutaway scene, then make sure
+		// Joe can talk, so set TALKQUIT to 0 just in case we exit on the
+		// line that set's the cutaway game states.
+		_input->talkQuitReset();
+	}
+
+	if (_input->talkQuit()) {
+		talkSelected()->hasTalkedTo = 1;
+	}
+	else {
+		// TODO: missing some code here!
+	}
+
+	_logic->joeFace();
+
+	// TODO: missing some code here!
 
 	if (cutawayFilename[0] == '\0') {
 		BobSlot *pbs = _graphics->bob(person.actor->bobNum);
@@ -357,6 +395,8 @@ void Talk::findDialogueString(byte *ptr, int16 id, char *str) {
 }
 
 void Talk::load(const char *filename) {
+	int i;
+	
 	byte *ptr = _fileData = _resource->loadFile(filename, 20);
 	if (!_fileData) {
 		error("Failed to load resource data file '%s'", filename);
@@ -379,23 +419,23 @@ void Talk::load(const char *filename) {
 	else
 		canQuit = true;
 
-	_uniqueKey            = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	_talkKey              = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	/*int16 jMax            =*/ (int16)READ_BE_UINT16(ptr); ptr += 2;
-	_pMax                 = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	/*int16 gameState1      =*/ (int16)READ_BE_UINT16(ptr); ptr += 2;
-	/*int16 testValue1      =*/ (int16)READ_BE_UINT16(ptr); ptr += 2;
-	/*int16 itemToInsert1   =*/ (int16)READ_BE_UINT16(ptr); ptr += 2;
-	/*int16 gameState2      =*/ (int16)READ_BE_UINT16(ptr); ptr += 2;
-	/*int16 testValue2      =*/ (int16)READ_BE_UINT16(ptr); ptr += 2;
-	/*int16 itemToInsert2   =*/ (int16)READ_BE_UINT16(ptr); ptr += 2;
+	_uniqueKey      = (int16)READ_BE_UINT16(ptr); ptr += 2;
+	_talkKey        = (int16)READ_BE_UINT16(ptr); ptr += 2;
+	_jMax           = (int16)READ_BE_UINT16(ptr); ptr += 2;
+	_pMax           = (int16)READ_BE_UINT16(ptr); ptr += 2;
+
+	for (i = 0; i < 2; i++) {
+		_gameState [i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		_testValue [i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		_itemNumber[i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
+	}
 
 	//debug(0, "uniqueKey = %i", _uniqueKey);
 	//debug(0, "talkKey   = %i", _talkKey);
 
-	_person1Ptr      = _fileData + READ_BE_UINT16(ptr); ptr += 2;
-	/*byte *cutawayPtr = _fileData + READ_BE_UINT16(ptr);*/ ptr += 2;
-	_person2Ptr      = _fileData + READ_BE_UINT16(ptr); ptr += 2;
+	_person1Ptr = _fileData + READ_BE_UINT16(ptr); ptr += 2;
+	_cutawayPtr = _fileData + READ_BE_UINT16(ptr); ptr += 2;
+	_person2Ptr = _fileData + READ_BE_UINT16(ptr); ptr += 2;
 
 	if (ptr != (_fileData + 28))
 		error("ptr != (_fileData + 28))");
@@ -409,7 +449,7 @@ void Talk::load(const char *filename) {
 
 	ptr = dataPtr;
 
-	for (int i = 1; i <= _levelMax; i++)
+	for (i = 1; i <= _levelMax; i++)
 		for (int j = 0; j <= 5; j++) {
 			ptr += 2;
 			_dialogueTree[i][j].head = (int16)READ_BE_UINT16(ptr); ptr += 2;
@@ -1190,11 +1230,11 @@ int16 Talk::selectSentence() {
 
 		// Set zones for UP/DOWN text arrows when not English version
 
-		_logic->zoneClearAll(ZONE_SCREEN);
+		_logic->zoneClearAll(ZONE_PANEL);
 
 		if (_logic->language() != ENGLISH) {
-			_logic->zoneSet(ZONE_SCREEN, ARROW_ZONE_UP,   MAX_TEXT_WIDTH + 1, 0,  319, 24);
-			_logic->zoneSet(ZONE_SCREEN, ARROW_ZONE_DOWN, MAX_TEXT_WIDTH + 1, 25, 319, 49);
+			_logic->zoneSet(ZONE_PANEL, ARROW_ZONE_UP,   MAX_TEXT_WIDTH + 1, 0,  319, 24);
+			_logic->zoneSet(ZONE_PANEL, ARROW_ZONE_DOWN, MAX_TEXT_WIDTH + 1, 25, 319, 49);
 		}
 
 		_graphics->textClear(151,199);
@@ -1214,7 +1254,7 @@ int16 Talk::selectSentence() {
 
 				if (yOffset < 5) {
 					_logic->zoneSet(
-							ZONE_SCREEN,
+							ZONE_PANEL,
 							i,
 							0,
 							yOffset * LINE_HEIGHT - PUSHUP,
@@ -1260,7 +1300,7 @@ int16 Talk::selectSentence() {
 
 				_logic->update();
 
-				zone = _logic->zoneIn(ZONE_SCREEN, _input->mousePosX(), _input->mousePosY());
+				zone = _logic->zoneIn(ZONE_PANEL, _input->mousePosX(), _input->mousePosY());
 
 				if (5 == zone || 6 == zone) {
 					// XXX Arrow zones
@@ -1275,12 +1315,12 @@ int16 Talk::selectSentence() {
 								oldZone, zone);
 
 						if (zone > 0) {
-							for (y = _logic->zoneBox(ZONE_SCREEN, zone).y1; y < _logic->zoneBox(ZONE_SCREEN, zone).y2; y += 10)
+							for (y = _logic->zoneBox(ZONE_PANEL, zone).y1; y < _logic->zoneBox(ZONE_PANEL, zone).y2; y += 10)
 								_graphics->textColor(y, INK_JOE);
 						}
 
 						if (oldZone > 0) {
-							for (y = _logic->zoneBox(ZONE_SCREEN, oldZone).y1; y < _logic->zoneBox(ZONE_SCREEN, oldZone).y2; y += 10)
+							for (y = _logic->zoneBox(ZONE_PANEL, oldZone).y1; y < _logic->zoneBox(ZONE_PANEL, oldZone).y2; y += 10)
 								_graphics->textColor(y, INK_TALK_NORMAL);
 						}
 
