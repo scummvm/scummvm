@@ -20,13 +20,13 @@
  */
 
 #include "stdafx.h"
-#include "cutaway.h"
-#include "display.h"
-#include "graphics.h"
-#include "input.h"
-#include "sound.h"
-#include "talk.h"
-#include "walk.h"
+#include "queen/cutaway.h"
+#include "queen/display.h"
+#include "queen/graphics.h"
+#include "queen/input.h"
+#include "queen/sound.h"
+#include "queen/talk.h"
+#include "queen/walk.h"
 
 namespace Queen {
 
@@ -82,8 +82,9 @@ Cutaway::Cutaway(
 		Resource *resource,
 		Sound *sound) 
 : _graphics(graphics), _input(input), _logic(logic), _resource(resource), _sound(sound), _walk(logic->walk()),
-	_quit(false), _personDataCount(0), _personFaceCount(0), _lastSong(0), _songBeforeComic(0) {
+	_personDataCount(0), _personFaceCount(0), _lastSong(0), _songBeforeComic(0) {
 	memset(&_bankNames, 0, sizeof(_bankNames));
+	_input->cutawayQuitReset();
 	load(filename); 
 }
 
@@ -116,10 +117,10 @@ void Cutaway::load(const char *filename) {
 
 	if (_cutawayObjectCount < 0) {
 		_cutawayObjectCount = -_cutawayObjectCount;
-		_canQuit = false;
+		_input->canQuit(false);
 	}
 	else
-		_canQuit = true;
+		_input->canQuit(true);
 
 	int flags1 = READ_BE_UINT16(ptr);
 	ptr += 2;
@@ -376,9 +377,8 @@ void Cutaway::actionSpecialMove(int index) {
 
 					_logic->update();
 
-					if (_quit)
+					if (_input->cutawayQuit())
 						return;
-
 				}
 
 				_input->fastMode(false);
@@ -431,7 +431,7 @@ void Cutaway::actionSpecialMove(int index) {
 
 					_logic->update();
 
-					if (_quit)
+					if (_input->cutawayQuit())
 						return;
 
 				}
@@ -470,7 +470,7 @@ void Cutaway::actionSpecialMove(int index) {
 
 					_logic->update();
 
-					if (_quit)
+					if (_input->cutawayQuit())
 						return;
 
 				}
@@ -820,7 +820,7 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 
 		frameCount++;
 
-		if (_quit)
+		if (_input->cutawayQuit())
 			return NULL;
 	}
 
@@ -933,7 +933,7 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 					_logic->update();
 			}
 
-			if (_quit)
+			if (_input->cutawayQuit())
 				return NULL;
 
 			if (objAnim[i].song > 0)
@@ -963,8 +963,8 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 			}
 		}
 
-		if (_quit)
-			break;
+		if (_input->cutawayQuit())
+			return NULL;
 	}
 
 	return ptr;
@@ -1016,7 +1016,7 @@ void Cutaway::handlePersonRecord(
 					);
 	}
 
-	if (_quit)
+	if (_input->cutawayQuit())
 		return;
 
 	if (0 != strcmp(sentence, "*")) {
@@ -1050,7 +1050,7 @@ void Cutaway::handlePersonRecord(
 
 	}
 
-	if (_quit)
+	if (_input->cutawayQuit())
 		return;
 }
 
@@ -1058,6 +1058,8 @@ void Cutaway::run(char *nextFilename) {
 	nextFilename[0] = '\0';
 
 	byte *ptr = _objectData;
+
+	_input->cutawayRunning(true);
 
 	_initialRoom = _temporaryRoom = _logic->currentRoom();
 
@@ -1135,7 +1137,7 @@ void Cutaway::run(char *nextFilename) {
 				break;
 		}
 
-		if (_quit)
+		if (_input->cutawayQuit())
 			break;
 
 		// XXX
@@ -1155,7 +1157,7 @@ void Cutaway::run(char *nextFilename) {
 
 	goToFinalRoom();
 
-	_quit = false;
+	_input->cutawayQuitReset();
 
 	updateGameState();
 
@@ -1179,8 +1181,8 @@ void Cutaway::run(char *nextFilename) {
 	// Make sure Joe is clipped!
 	joeBob->box.y2    = 149;
 
-	// XXX CUTON=0;
-	_quit = false;
+	_input->cutawayRunning(false);
+	_input->cutawayQuitReset();
 
 	if (_songBeforeComic > 0)
 		/* XXX playsong(_songBeforeComic) */ ;
@@ -1262,7 +1264,7 @@ void Cutaway::goToFinalRoom() {
 	uint16 joeX    = READ_BE_UINT16(ptr); ptr += 2;
 	uint16 joeY    = READ_BE_UINT16(ptr); ptr += 2;
 
-	if ((!_quit || (!_anotherCutaway && joeRoom == _finalRoom)) &&
+	if ((!_input->cutawayQuit() || (!_anotherCutaway && joeRoom == _finalRoom)) &&
 			joeRoom != _temporaryRoom &&
 			joeRoom != 0) {
 
@@ -1273,7 +1275,7 @@ void Cutaway::goToFinalRoom() {
 		_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), RDM_FADE_JOE_XY, 0, _comPanel, true);
 	}
 
-	if (_quit) {
+	if (_input->cutawayQuit()) {
 		// Lines 1927-2032 in cutaway.c
 		
 		// Stop the credits from running
@@ -1495,14 +1497,13 @@ void Cutaway::handleText(
 			// XXX: see if speaking is finished
 		}
 
-		if (_quit)
+		if (_input->cutawayQuit())
+			return;
+
+		if (_input->verbSkipText()) {
+			_input->clearKeyVerb();
 			break;
-
-// XXX		if(KEYVERB==101) {
-// XXX			KEYVERB=0;
-// XXX			break;
-// XXX		}
-
+		}
 	}
 
 	_graphics->textClear(0,198);

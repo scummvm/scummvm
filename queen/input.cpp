@@ -29,7 +29,8 @@ namespace Queen {
 
 Input::Input(OSystem *system) : 
 	_system(system), _fastMode(false), _keyVerb(VERB_NONE), 
-	_cutawayRunning(false), _cutQuit(false), _talkQuit(false) {
+	_cutawayRunning(false), _cutawayQuit(false), _talkQuit(false),
+   _inKey(0)	{
 }
 
 void Input::delay() {
@@ -42,34 +43,16 @@ void Input::delay(uint amount) {
 
 	uint32 start = _system->get_msecs();
 	uint32 cur = start;
-	_key_pressed = 0;	//reset
 
 	do {
 		while (_system->poll_event(&event)) {
 			switch (event.event_code) {
 				case OSystem::EVENT_KEYDOWN:
-#if 0
-					if (event.kbd.flags == OSystem::KBD_CTRL) {
-						if (event.kbd.keycode == 'f') {
-							_fastMode ^= 1;
-							break;
-						}
-						if (event.kbd.keycode == 'g') {
-							_fastMode ^= 2;
-							break;
-						}
-					}
-#endif
-
 					debug(1, "event.kbd.keycode = %i (%c)", 
 							event.kbd.keycode,
 							isprint(event.kbd.keycode) ? event.kbd.keycode : '.');
 
-					// Make sure backspace works right (this fixes a small issue on OS X)
-					if (event.kbd.keycode == 8)
-						_key_pressed = 8;
-					else
-						_key_pressed = (byte)event.kbd.ascii;
+					_inKey = event.kbd.keycode;
 					break;
 
 				case OSystem::EVENT_MOUSEMOVE:
@@ -111,6 +94,70 @@ void Input::delay(uint amount) {
 }
 
 void Input::checkKeys() {
+
+	if (_inKey)
+		debug(0, "[Input::checkKeys] _inKey = %i", _inKey);
+
+	switch (_inKey) {
+		case KEY_SPACE:
+			_keyVerb = VERB_SKIP_TEXT;
+			break;
+
+		case KEY_COMMA:
+			_keyVerb = VERB_SCROLL_UP;
+			break;
+
+		case KEY_DOT:
+			_keyVerb = VERB_SCROLL_DOWN;
+			break;
+
+		case KEY_DIGIT_1:
+			_keyVerb = VERB_DIGIT_1;
+			break;
+
+		case KEY_DIGIT_2:
+			_keyVerb = VERB_DIGIT_2;
+			break;
+
+		case KEY_DIGIT_3:
+			_keyVerb = VERB_DIGIT_3;
+			break;
+
+		case KEY_DIGIT_4:
+			_keyVerb = VERB_DIGIT_4;
+			break;
+
+		case KEY_ESCAPE:
+			if (_canQuit) {
+				if (_cutawayRunning) {
+					debug(0, "[Input::checkKeys] Setting _cutawayQuit to true!");
+					_cutawayQuit = true;
+				}
+
+				// XXX if (_joeWalk == 3)	// Dialogue
+				// XXX 	_talkQuit = true;
+			}
+			break;
+
+		case KEY_F1:	// Use Journal
+			if (_cutawayRunning) {
+				if (_canQuit) {
+					_keyVerb = VERB_USE_JOURNAL;
+					_cutawayQuit = _talkQuit = true;
+				}
+			}
+			else {
+				_keyVerb = VERB_USE_JOURNAL;
+				if (_canQuit)
+					_talkQuit = true;
+			}
+			break;
+
+		default:
+			break;
+	}
+	
+	_inKey = 0;	//reset
 }
 
   

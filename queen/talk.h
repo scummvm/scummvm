@@ -139,9 +139,6 @@ class Talk {
 	//! Data used if we haven't talked to the person before
 	byte *_joePtr;
 
-	//! Set to true to quit talking
-	bool _quit;
-
 	//! Is a talking head
 	bool _talkHead;
 

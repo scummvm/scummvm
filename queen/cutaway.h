@@ -167,12 +167,6 @@ class Cutaway {
 		//! This cutaway is followed by another
 		bool _anotherCutaway;
 
-		//! Specify if the player can quit this cutaway or not 
-		bool _canQuit;
-
-		//! Set to true to abort the cutaway
-		bool _quit;
-
 		//! Room before cutaway
 		int _initialRoom; 
 

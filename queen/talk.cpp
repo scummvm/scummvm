@@ -69,10 +69,12 @@ Talk::Talk(
 		Resource *resource,
 		Sound *sound) : 
 	_graphics(graphics), _input(input), _logic(logic), _resource(resource), 
-	_sound(sound), _fileData(NULL), _quit(false) {
+	_sound(sound), _fileData(NULL) {
 
 	//! TODO Move this to the Logic class later!
 	memset(_talkSelected, 0, sizeof(_talkSelected));
+
+	_input->talkQuitReset();
 }
 
 Talk::~Talk() {
@@ -207,7 +209,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 			if (speak(_talkString[0], &person, otherVoiceFilePrefix))
 				personWalking = true;
 
-			if (_quit)
+			if (_input->talkQuit())
 				break;
 
 			speak(_talkString[selectedSentence], &person, _joeVoiceFilePrefix[selectedSentence]);
@@ -223,7 +225,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 			}
 		}
 
-		if (_quit)
+		if (_input->talkQuit())
 			break;
 
 		retval   = _dialogueTree[level][selectedSentence].dialogueNodeValue1;
@@ -594,6 +596,9 @@ bool Talk::speak(const char *sentence, Person *person, const char *voiceFilePref
 		}
 		else
 			i++;
+
+		if (_input->cutawayQuit() || _input->talkQuit())
+			goto exit;
 	}
 
 	if (segmentStart != i) {
@@ -651,7 +656,7 @@ void Talk::speakSegment(
 	switch (command) {
 		case SPEAK_PAUSE:
 			for (i = 0; i < 10; i++) {
-				if (_quit)
+				if (_input->talkQuit())
 					break;
 				_logic->update();
 			}
@@ -870,13 +875,13 @@ void Talk::speakSegment(
 				_logic->update();
 
 			if (_logic->joeWalk() == 3) {
-				if (_quit)
+				if (_input->talkQuit())
 					break;
 
 				_logic->update();
 			}
 			else {
-				if (_quit)
+				if (_input->talkQuit())
 					break;
 				
 				// XXX CHECK_PLAYER();
@@ -1114,14 +1119,15 @@ int16 Talk::selectSentence() {
 			bob2->active = (yOffset > 4);
 		}
 
-		// XXX KEYVERB=0;
+		_input->clearKeyVerb();
+
 		if (sentenceCount > 0) {
 			int zone = 0;
 			int oldZone = 0;
 
 			while (0 == selectedSentence) {
 
-				if (_quit)
+				if (_input->talkQuit())
 					break;
 
 				_logic->update();

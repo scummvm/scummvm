@@ -76,8 +76,14 @@ class Input {
 		//! Returns 1-4 if keyDigit() is true, otherwise -1
 		int verbDigit();
 
-		bool cutQuit()        { return _cutQuit; }
-		void cutQuitReset()   { _cutQuit = false; }
+		bool verbSkipText() { return _keyVerb == VERB_SKIP_TEXT; }
+
+		void canQuit(bool cq)             { _canQuit = cq; }
+
+		void cutawayRunning(bool running) { _cutawayRunning = running; }
+
+		bool cutawayQuit()        { return _cutawayQuit; }
+		void cutawayQuitReset()   { _cutawayQuit = false; }
 
 		bool talkQuit()       { return _talkQuit; }
 		void talkQuitReset()  { _talkQuit = false; }
@@ -85,6 +91,21 @@ class Input {
 		void fastMode(bool fm)	{ _fastMode = fm; }
 
 	private:
+
+		enum KeyCode {
+			KEY_SPACE = ' ',
+			KEY_COMMA = ',',
+			KEY_DOT   = '.',
+			
+			KEY_DIGIT_1 = '1',
+			KEY_DIGIT_2 = '2',
+			KEY_DIGIT_3 = '3',
+			KEY_DIGIT_4 = '4',
+
+			KEY_ESCAPE = 27,
+			
+			KEY_F1 = 282
+		};
 		
 		//! Used to get keyboard and mouse events
 		OSystem *_system;
@@ -98,14 +119,17 @@ class Input {
 		//! set if a cutaway is running
 		bool _cutawayRunning;   // CUTON
 
+		//! set this if we can quit
+		bool _canQuit;	// inverse of CANTQUIT
+
 		//! moved Cutaway::_quit here
-		bool _cutQuit;          // CUTQUIT
+		bool _cutawayQuit;          // cutawayQuit
 
 		//! moved Talk::_quit here 
 		bool _talkQuit;         // TALKQUIT
 
 		//! Set by delay();
-		int _key_pressed;
+		int _inKey;
 
 		//! Set by delay();
 		int _sdl_mouse_x, _sdl_mouse_y;
