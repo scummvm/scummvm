@@ -2281,6 +2281,8 @@ struct Serializer {
 
 	bool isSaving() { return _saveOrLoad; }
 
+	bool Serializer::checkEOFLoadStream();
+
 };
 
 extern const uint32 IMxx_tags[];

@@ -285,8 +285,13 @@ void Scumm::scummMain(int argc, char **argv) {
 }
 
 int Scumm::scummLoop(int delta) {
+
+#ifndef _WIN32_WCE
+
 	if (_debugger)
 		_debugger->on_frame();
+
+#endif
 	
 	_vars[VAR_TMR_1] += delta;
 	_vars[VAR_TMR_2] += delta;

@@ -2,6 +2,9 @@
  * $Id$
  *
  * $Log$
+ * Revision 1.12  2002/03/14 22:45:22  arisme
+ * Minor changes to compile WinCE port
+ *
  * Revision 1.11  2002/03/09 13:48:53  drigo
  * Support for MacOS classic port
  *
@@ -36,6 +39,8 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#if !defined(_WIN32_WCE)
+
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #define NOGDICAPMASKS
 #define OEMRESOURCE
@@ -60,6 +65,8 @@
 #define NOSOUND
 #define NODRAWTEXT
 
+#endif
+
 #include <SDL.h>
 #include <windows.h>
 #include <stdio.h>
@@ -73,6 +80,7 @@
 #include <assert.h>
 #include <mmsystem.h>
 #include <ctype.h>
+#include <Winuser.h>
 
 #else
 
