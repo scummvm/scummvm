@@ -143,6 +143,35 @@ public:
 		_size = _sizeOrig;
 		_pos = 0;
 	}
+
+	void seek(uint32 offs, int whence = SEEK_SET) {
+		switch (whence) {
+		case SEEK_SET:
+			rewind();
+			if (offs > _size)
+				offs = _size;
+			_size -= offs;
+			_ptr += offs;
+			_pos += offs;
+			break;
+
+		case SEEK_CUR:
+			_size -= offs;
+			_ptr += offs;
+			_pos += offs;
+			break;
+
+		case SEEK_END:
+			rewind();
+			if (offs > _size)
+				offs = 0;
+			offs = _size - offs;
+			_size -= offs;
+			_ptr += offs;
+			_pos += offs;
+			break;
+		}
+	}
 };
 
 }	// End of namespace Common
