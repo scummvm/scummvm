@@ -1121,8 +1121,8 @@ void ScummEngine::actorTalk() {
 	_messagePtr = addMessageToStack(_messagePtr);
 	assert((int)(_msgPtrToAdd - _charsetBuffer) < (int)(sizeof(_charsetBuffer)));
 
-	// FIXMW: Workaround for bug #770049
-	if (_gameId == GID_LOOM) {
+	// FIXME: Workaround for bugs #770039 and #770049 
+	if (_gameId == GID_LOOM || _gameId == GID_LOOM256) {
 		if (!*_charsetBuffer)
 			return;
 	}
