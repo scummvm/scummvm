@@ -342,6 +342,7 @@ int16 IsoMap::findMulti(int16 tileIndex, int16 absU, int16 absV, int16 absH) {
 	int16 mv;
 	int16 state;
 	uint16 i, offset;
+	int16 *tiles;
 
 	ru = (tileIndex >> 13) & 0x03;
 	rv = (tileIndex >> 11) & 0x03;
@@ -358,11 +359,13 @@ int16 IsoMap::findMulti(int16 tileIndex, int16 absU, int16 absV, int16 absH) {
 			state = multiTileEntryData->currentState;
 			
 			offset = (ru + state * multiTileEntryData->uSize) * multiTileEntryData->vSize + rv;
+			offset *= sizeof(*_multiTableData);
 			offset += multiTileEntryData->offset;
-			if (offset >= _multiDataCount * sizeof(*_multiTableData)) {
+			if (offset + sizeof(*_multiTableData) - 1 >= _multiDataCount * sizeof(*_multiTableData)) {
 				error("wrong multiTileEntryData->offset");
 			}
-			tileIndex = _multiTableData[offset];
+			tiles = (int16*)((byte*)_multiTableData + offset);
+			tileIndex = *tiles;
 			if (tileIndex >= 256) {
 				warning("something terrible happened");
 				return 1;
