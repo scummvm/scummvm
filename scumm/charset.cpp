@@ -706,7 +706,7 @@ void CharsetRendererClassic::printChar(int chr) {
 
 	if (vs->number != 0)
 		_blitAlso = false;
-	if (vs->number == 0 && !_blitAlso)
+	if (vs->number == 0 && !_ignoreCharsetMask)
 		_hasMask = true;
 
 	_charPtr += 4;
