@@ -759,11 +759,19 @@ void ScummEngine_v7he::o7_kernelSetFunctions() {
 		_fullRedraw = 1;
 		break;
 	case 24:
-		_skipProcessActors = 1;
+		if (_heversion <= 72) {
+			_skipProcessActors = 1;
+		} else {
+			//Pause aux animation
+		}
 		_fullRedraw = 1;
 		break;
 	case 25:
-		_skipProcessActors = 0;
+		if (_heversion <= 72) {
+			_skipProcessActors = 0;
+		} else {
+			//Resume aux animation
+		}
 		_fullRedraw = 1;
 		break;
 	case 30:
