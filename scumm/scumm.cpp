@@ -216,17 +216,17 @@ static const ScummGameSettings scumm_settings[] = {
 	// Humongous Entertainment Scumm Version 6 (Windows versions are version 7 actually)
 	{"catalog", "Humongous Interactive Catalog", GID_HEGAME, 6, 60, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"farm", "Let's Explore the Farm with Buzzy", GID_HEGAME, 6, 60, MDT_NONE,
+	{"farm", "Let's Explore the Farm with Buzzy", GID_HEGAME, 6, 70, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"farmdemo", "Let's Explore the Farm with Buzzy (Demo)", GID_HEGAME, 6, 60, MDT_NONE,
+	{"farmdemo", "Let's Explore the Farm with Buzzy (Demo)", GID_HEGAME, 6, 70, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"airport", "Let's Explore the Airport with Buzzy", GID_HEGAME, 6, 60, MDT_NONE,
+	{"airport", "Let's Explore the Airport with Buzzy", GID_HEGAME, 6, 70, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"airdemo", "Let's Explore the Airport with Buzzy (Demo)", GID_HEGAME, 6, 60, MDT_NONE,
+	{"airdemo", "Let's Explore the Airport with Buzzy (Demo)", GID_HEGAME, 6, 70, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"jungle", "Let's Explore the Jungle with Buzzy", GID_HEGAME, 6, 60, MDT_NONE,
+	{"jungle", "Let's Explore the Jungle with Buzzy", GID_HEGAME, 6, 70, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"puttzoo", "Putt-Putt Saves the Zoo", GID_HEGAME, 6, 60, MDT_NONE,
+	{"puttzoo", "Putt-Putt Saves the Zoo", GID_HEGAME, 6, 70, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 
 	// First 640x480 game, hence version 7.1
