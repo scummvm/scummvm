@@ -187,6 +187,7 @@ any answer. Chances are that it will work.
 ---- ---------------------------------
 The Simon the Sorcerer 1 & 2 games were split into several targets to make
 coding easier and to make it more clear which target should be used:
+       simon1acorn  - Use for Simon the Sorcerer 1 for Acorn (CD)
        simon1dos    - Use for Simon the Sorcerer 1 for DOS (Disk)
        simon2dos    - Use for Simon the Sorcerer 2 for DOS (Disk)
        simon1talkie - Use for Simon the Sorcerer 1 Talkie for DOS (CD)
@@ -224,8 +225,6 @@ the section on Reporting Bugs.
 
 // FIXME: Are these two still present? Many walk-related fixes lately...
        Indiana Jones & the Last Crusade (EGA):
-                - In some rooms Indy may be able to walk to odd places
-
        Indiana Jones & the Last Crusade (256):
                 - In some rooms Indy may be able to walk to odd places
 
@@ -246,6 +245,10 @@ the section on Reporting Bugs.
                   corrupt, and you will need to start a new game using this
                   version.
 
+       Broken Sword 1:
+                - Demo does not work correctly
+                - Macintosh version isn't supported
+
        Simon the Sorcerer 2:
                 - Combined speech and subtitles will often cause speech to be 
                   cut off early, this is limitation of original game.
@@ -255,6 +258,7 @@ the section on Reporting Bugs.
                   original game
 
        Curse of Monkey Island
+                - Demo does not work correctly
                 - Some minor graphical glitches remain
 
        FM Towns versions:
@@ -429,14 +433,6 @@ Beneath a Steel Sky:
         es  - Spanish
         se  - Swedish
 
-Simon the Sorcerer: 1 & 2
-        en  - English (default)
-        de  - German
-        fr  - French
-        it  - Italian
-        es  - Spanish
-        hb  - Hebrew
-
 Broken Sword 1
         en  - English (default)
         de  - German
@@ -445,6 +441,15 @@ Broken Sword 1
         es  - Spanish
         pt  - Portuguese
         cz  - Czech
+
+Simon the Sorcerer: 1 & 2
+        en  - English (default)
+        de  - German
+        fr  - French
+        it  - Italian
+        es  - Spanish
+        hb  - Hebrew
+
 
 5.3) Graphics filters:
 ---- -----------------
@@ -769,6 +774,7 @@ this task, and ScummVM must be compiled with MAD or VORBIS support.
   simon2mp3 simon.wav   (For simon1win)
   simon2mp3 simon2.voc  (For simon2talkie)
   simon2mp3 simon2.wav  (For simon2win) 
+  simon2mp3 mac         (For simon2mac) 
 
 For Ogg Vorbis add --vorbis, ie
 
