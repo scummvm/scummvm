@@ -43,8 +43,12 @@ enum {
 	CMD_DUMPBOX,
 	CMD_VAR,
 	CMD_WATCH,
+	CMD_DEBUG_LEVEL,
 	CMD_QUIT
 };
+
+extern uint16 _debugLevel;
+
 
 void ScummDebugger::attach(Scumm *s)
 {
@@ -71,6 +75,7 @@ bool ScummDebugger::do_command()
 					 "(c)ontinue -> exit the debugger and continue the program\n"
 					 "(h)elp -> display this help text\n"
 					 "(g)o [numframes] -> increase frame\n"
+					 "(l)evel [level] -> set or show debugging level, 0 to disable\n"
 					 "(r)oom [roomnum] -> load room\n"
 					 "(s)cripts -> show running scripts\n"
 					 "(v)ariable -> set or show a variable value\n"
@@ -124,6 +129,26 @@ bool ScummDebugger::do_command()
 				_s->writeVar(var, atoi(tok));
 
 			printf("Var[%d] = %d\n", var, _s->readVar(var));
+		}
+		return true;
+
+	case CMD_DEBUG_LEVEL:
+		if (!_parameters[0]) {
+			if (_s->_debugMode == false)
+				printf("Debugging is not enabled at this time\n");
+			else
+				printf("Debugging is currently at level %d\n", _debugLevel);
+		} else {
+			// set level
+			int level = atoi(_parameters);
+			_debugLevel = level;
+			if (level != 0) {
+				_s->_debugMode = true;
+				printf("Debugging set to level %d\n", level);
+			} else {
+				_s->_debugMode = false;
+				printf("Debugging is now disabled\n");
+			}
 		}
 		return true;
 
@@ -192,6 +217,7 @@ static const DebuggerCommands debugger_commands[] = {
 	{"b", 1, CMD_DUMPBOX},
 	{"v", 1, CMD_VAR},
 	{"w", 1, CMD_WATCH},
+	{"l", 1, CMD_DEBUG_LEVEL},
 	{"q", 1, CMD_QUIT},
 	{"", 0, 0}
 };
