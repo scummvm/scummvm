@@ -598,8 +598,8 @@ bool Talk::speak(const char *sentence, Person *person, const char *voiceFilePref
 		person = &joe_person;
 	}
 	
-	//debug(6, "Sentence '%s' is said by person '%s' and voice files with prefix '%s' played",
-	//		sentence, person->name, voiceFilePrefix);
+	debug(6, "Sentence '%s' is said by person '%s' and voice files with prefix '%s' played",
+			sentence, person->name, voiceFilePrefix);
 
 	if (sentence[0] == '\0') {
 		goto exit;
@@ -658,7 +658,6 @@ exit:
 	return personWalking;
 }
 
-// cyx : there is a similar function in Cutaway, what about merging them ?
 int Talk::countSpaces(const char *segment) {
 	int tmp = 0;
 
@@ -764,7 +763,6 @@ void Talk::defaultAnimation(
 		int bankNum) {
 	// lines 1730-1823 in talk.c
 
-#if 0
 	debug(6, "Talk::defaultAnimation(\"%s\", %s, {\"%s\", %i, ...}, %i, %i)",
 			segment, 
 			isJoe ? "true" : "false",
@@ -772,7 +770,6 @@ void Talk::defaultAnimation(
 			parameters->state,
 			startFrame,
 			bankNum);
-#endif
 
 	if (segment[0] != 0)  {
 
@@ -859,8 +856,6 @@ void Talk::speakSegment(
 		const char *voiceFilePrefix,
 		int index)
 {
-	// Function SPEAK_SUB, lines 1406-1870 in talk.a
-
 	int i;
 	char segment[MAX_STRING_SIZE];
 	memcpy(segment, segmentStart, length);
@@ -868,9 +863,6 @@ void Talk::speakSegment(
 	
 	char voiceFileName[MAX_STRING_SIZE];
 	snprintf(voiceFileName, sizeof(voiceFileName), "%s%1x", voiceFilePrefix, index + 1);
-
-	// debug(6, "Sentence segment '%*s' is said by person '%s' and voice file '%s' is played",
-	//		length, segment, person->name, voiceFileName);
 
 	// FIXME - it seems the french talkie version has a useless voice file ; 
 	// the c30e_102 file is very similar to c30e_101, so there is no need to 

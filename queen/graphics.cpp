@@ -190,6 +190,11 @@ void BobSlot::clear() {
 	box = _defaultBox;
 }
 
+static int compareBobDrawOrder(const void *a, const void *b) {
+	const BobSlot *bob1 = *(const BobSlot * const *)a;
+	const BobSlot *bob2 = *(const BobSlot * const *)b;
+	return bob1->y - bob2->y;
+}
 
 const Box Graphics::_gameScreenBox(0, 0, GAME_SCREEN_WIDTH - 1, ROOM_ZONE_HEIGHT - 1);
 const Box Graphics::_fullScreenBox(0, 0, GAME_SCREEN_WIDTH - 1, GAME_SCREEN_HEIGHT - 1);
@@ -333,7 +338,6 @@ void Graphics::sortBobs() {
 
 	// animate/move the bobs
 	for (int32 i = 0; i < ARRAYSIZE(_bobs); ++i) {
-
 		BobSlot *pbs = &_bobs[i];
 		if (pbs->active) {
 			_sortedBobs[_sortedBobsCount] = pbs;
@@ -354,19 +358,7 @@ void Graphics::sortBobs() {
 			}
 		}
 	}
-
-	// bubble sort the bobs
-	for (int32 index = 0; index < _sortedBobsCount - 1; ++index) {
-		int32 smallest = index;
-		for (int32 compare = index + 1; compare <= _sortedBobsCount - 1; ++compare) {
-			if (_sortedBobs[compare]->y < _sortedBobs[smallest]->y) {
-				smallest = compare;
-			}
-		}
-		if (index != smallest) {
-			SWAP(_sortedBobs[index], _sortedBobs[smallest]);
-		}
-	}
+	qsort(_sortedBobs, _sortedBobsCount, sizeof(BobSlot *), compareBobDrawOrder);
 }
 
 void Graphics::drawBobs() {

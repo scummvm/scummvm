@@ -47,9 +47,9 @@ const GameVersion Resource::_gameVersions[] = {
 };
 
 static int compareResourceEntry(const void *a, const void *b) {
-	const char *key = (const char *)a;
+	const char *filename = (const char *)a;
 	const ResourceEntry *entry = (const ResourceEntry *)b;
-	return strcmp(key, entry->filename);
+	return strcmp(filename, entry->filename);
 }
 
 Resource::Resource(const Common::String &datafilePath)
@@ -84,14 +84,6 @@ ResourceEntry *Resource::resourceEntry(const char *filename) const {
 	re = (ResourceEntry *)bsearch(entryName, _resourceTable, _resourceEntries, sizeof(ResourceEntry), compareResourceEntry);
 #else
 	// cyx: is that code still necessary ?
-	uint32 low = 0;
-	uint32 high = _resourceEntries - 1;
-
-	if (!strcmp(entryName, _resourceTable[low].filename))
-		return low;
-	if (!strcmp(entryName, _resourceTable[high].filename))
-		return high;
-
 	// Does work for me (????) use this instead
 	uint32 cur = 0;
 	do {
@@ -99,7 +91,7 @@ ResourceEntry *Resource::resourceEntry(const char *filename) const {
 			re = &_resourceTable[cur];
 			break;
 		}
-	} while (cur++ <= high);
+	} while (cur++ < _resourceEntries);
 #endif
 
 	debug(7, "Couldn't find file '%s'", entryName);
@@ -163,7 +155,9 @@ bool Resource::findCompressedVersion() {
 }
 
 void Resource::checkJASVersion() {
-	int32 offset = resourceEntry("QUEEN.JAS")->offset;
+	ResourceEntry *re = resourceEntry("QUEEN.JAS");
+	assert(re != NULL);
+	uint32 offset = re->offset;
 	if (isDemo())
 		offset += JAS_VERSION_OFFSET_DEMO;
 	else if (isInterview())
@@ -200,7 +194,7 @@ Language Resource::getLanguage() const {
 bool Resource::readTableFile(const GameVersion *gameVersion) {
 	File tableFile;
 	tableFile.open(_tableFilename);
-	if (tableFile.isOpen() && tableFile.readUint32BE() == 'QTBL') {
+	if (tableFile.isOpen() && tableFile.readUint32BE() == MKID_BE('QTBL')) {
 		if (tableFile.readUint32BE() != CURRENT_TBL_VERSION)
 			warning("Incorrect version of queen.tbl, please update it");
 		tableFile.seek(gameVersion->tableOffset);
@@ -211,7 +205,7 @@ bool Resource::readTableFile(const GameVersion *gameVersion) {
 }
 
 void Resource::readTableCompResource() {
-	if (_resourceFile->readUint32BE() != 'QTBL')
+	if (_resourceFile->readUint32BE() != MKID_BE('QTBL'))
 		error("Invalid table header");
 
 	_resourceFile->read(_versionString, 6);
@@ -247,7 +241,9 @@ const GameVersion *Resource::detectGameVersion(uint32 size) const {
 
 File *Resource::giveCompressedSound(const char *filename) {
 	assert(strstr(filename, ".SB"));
-	_resourceFile->seek(resourceEntry(filename)->offset);
+	ResourceEntry *re = resourceEntry(filename);
+	assert(re != NULL);
+	_resourceFile->seek(re->offset);
 	return _resourceFile;
 }
 

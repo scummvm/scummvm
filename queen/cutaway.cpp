@@ -114,7 +114,7 @@ void Cutaway::load(const char *filename) {
 
 	byte *bankNamesPtr  = _fileData + READ_BE_UINT16(ptr);
 	ptr += 2;
-	//debug(6, "Bank name file offset = %08x", 20 + bankNamesPtr - _fileData);
+	debug(6, "Bank name file offset = %08x", 20 + bankNamesPtr - _fileData);
 
 	_objectData = ptr;
 
@@ -159,7 +159,7 @@ void Cutaway::loadStrings(byte *ptr) {
 	int bankNameCount = READ_BE_UINT16(ptr);
 	ptr += 2;
 
-	//debug(6, "Bank name count = %i", bankNameCount);
+	debug(6, "Bank name count = %i", bankNameCount);
 
 	/*
 		 The _bankNames zero-based array is the one-based BANK_NAMEstr array in
@@ -170,7 +170,7 @@ void Cutaway::loadStrings(byte *ptr) {
 		ptr = Talk::getString(ptr, _bankNames[j], MAX_FILENAME_LENGTH);
 
 		if (_bankNames[j][0]) {
-			//debug(6, "Bank name %i = '%s'", j, _bankNames[j]);
+			debug(6, "Bank name %i = '%s'", j, _bankNames[j]);
 			j++;
 		}
 	}
@@ -272,7 +272,7 @@ byte *Cutaway::turnOnPeople(byte *ptr, CutawayObject &object) {
 	for (int i = 0; i < object.personCount; i++) {
 		object.person[i] = (int16)READ_BE_INT16(ptr);
 		ptr += 2;
-		//debug(6, "[%i] Turn on person %i", i, object.person[i]);
+		debug(7, "[%i] Turn on person %i", i, object.person[i]);
 	}
 
 	return ptr;
@@ -726,13 +726,10 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 }
 
 static void findCdCut(const char *basename, int index, char *result) {
-	// Function find_cd_cut, lines 5-15 in execute.c
-
 	strcpy(result, basename);
 	for (int i = strlen(basename); i < 5; i++)
 		result[i] = '_';
 	snprintf(result + 5, 3, "%02i", index);
-	//debug(6, "findCdCut(\"%s\", %i, \"%s\")", basename, index, result);
 }
 
 void Cutaway::handlePersonRecord(

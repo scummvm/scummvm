@@ -227,7 +227,7 @@ void QueenEngine::saveGameState(uint16 slot, const char *desc) {
 		if (file->write(saveData, dataSize) != dataSize) {
 			warning("Can't write file '%s'. (Disk full?)", name);
 		}
-		delete saveData;
+		delete[] saveData;
 		delete file;
 	} else {
 		warning("Can't create file '%s', game not saved", name);

@@ -1247,7 +1247,7 @@ void Logic::handlePinnacleRoom() {
 	struct { 
 		uint16 obj;
 		int16 song;
-	} songs[] = { 
+	} cmds[] = { 
 		{ 0x2A,  3 },
 		{ 0x29, 16 },
 		{ 0x2F,  6 },
@@ -1255,9 +1255,9 @@ void Logic::handlePinnacleRoom() {
 		{ 0x2B,  3 },
 		{ 0x30,  3 }
 	};
-	for (int i = 0; i < ARRAYSIZE(songs); ++i) {
-		if (songs[i].obj == prevObj) {
-			_vm->sound()->playSong(songs[i].song);
+	for (int i = 0; i < ARRAYSIZE(cmds); ++i) {
+		if (cmds[i].obj == prevObj) {
+			_vm->sound()->playSong(cmds[i].song);
 		}
 	}
 
@@ -1852,7 +1852,7 @@ void Logic::asmPanRightToHugh() {
 	_vm->input()->fastMode(true);
 	_vm->update();
 				
-	int i = 4, k = 160;
+	int k = 160;
 
 	// Adjust thug1 gun so it matches rest of body
 	bob_thugA1->x += (k / 2) * 2 - 45; 
@@ -1866,32 +1866,25 @@ void Logic::asmPanRightToHugh() {
 	bob_thugB1->x += (k / 2) * 4 + k; 
 	bob_thugB2->x += (k / 2) * 4 + k; 
 
-	if (i == 3) {
-		bob_thugB1->x += 10;
-		bob_thugB2->x += 10;
-	}
-
-	i *= 2;
-
 	int horizontalScroll = 0;
 	while (horizontalScroll < k && !_vm->input()->cutawayQuit()) {
 
-		horizontalScroll = horizontalScroll + i;
+		horizontalScroll += 8;
 		if (horizontalScroll > k)
 			horizontalScroll = k;
 
 		_vm->display()->horizontalScroll(horizontalScroll);
 
-		bob_thugA1->x -= i * 2; 
-		bob_thugA2->x -= i * 2; 
-		bob_thugA3->x -= i * 2;
+		bob_thugA1->x -= 16; 
+		bob_thugA2->x -= 16; 
+		bob_thugA3->x -= 16;
 
-		bob_hugh1->x -= i * 3;
-		bob_hugh2->x -= i * 3;
-		bob_hugh3->x -= i * 3;
+		bob_hugh1->x -= 24;
+		bob_hugh2->x -= 24;
+		bob_hugh3->x -= 24;
 
-		bob_thugB1->x -= i * 4;
-		bob_thugB2->x -= i * 4;
+		bob_thugB1->x -= 32;
+		bob_thugB2->x -= 32;
 
 		_vm->update();
 	}
@@ -1921,20 +1914,19 @@ void Logic::asmPanRightToJoeAndRita() { // cdint.cut
 
 	int horizontalScroll = _vm->display()->horizontalScroll();
 
-	int i = 1;
 	while (horizontalScroll < 290 && !_vm->input()->cutawayQuit()) {
 
-		horizontalScroll = horizontalScroll + i;
+		++horizontalScroll;
 		if (horizontalScroll > 290)
 			horizontalScroll = 290;
 
 		_vm->display()->horizontalScroll(horizontalScroll);
 
-		bob_box  ->x -= i * 2;
-		bob_beam ->x -= i;
-		bob_crate->x -= i * 3;
-		bob_clock->x -= i * 2;
-		bob_hands->x -= i * 2;
+		bob_box  ->x -= 2;
+		bob_beam ->x -= 1;
+		bob_crate->x -= 3;
+		bob_clock->x -= 2;
+		bob_hands->x -= 2;
 
 		_vm->update();
 	}
@@ -1950,19 +1942,18 @@ void Logic::asmPanLeftToBomb() {
 				
 	int horizontalScroll = _vm->display()->horizontalScroll();
 
-	int i = 5;
 	while ((horizontalScroll > 0 || bob21->x < 136) && !_vm->input()->cutawayQuit()) {
 
-		horizontalScroll -= i;
+		horizontalScroll -= 5;
 		if (horizontalScroll < 0)
 			horizontalScroll = 0;
 
 		_vm->display()->horizontalScroll(horizontalScroll);
 
 		if (horizontalScroll < 272 && bob21->x < 136)
-			bob21->x += (i/2);
+			bob21->x += 2;
 
-		bob22->x += i;
+		bob22->x += 5;
 
 		_vm->update();
 	}
