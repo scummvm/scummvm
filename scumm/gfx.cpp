@@ -1988,21 +1988,25 @@ void Gdi::unkDecodeC_trans(byte *dst, const byte *src, int height) {
 #undef FILL_BITS
 
 /* Ender - Zak256/Indy256 decoders */
-#define READ_256BIT                 \
-        if ((mask <<= 1) == 256) {  \
-            buffer = *src++;        \
-            mask = 1;               \
-        }                           \
-        bits = ((buffer & mask) != 0);
+#define READ_256BIT                        \
+		do {                               \
+			if ((mask <<= 1) == 256) {     \
+				buffer = *src++;           \
+				mask = 1;                  \
+			}                              \
+			bits = ((buffer & mask) != 0); \
+		} while (0)
 
-#define NEXT_ROW                       \
-        dst += _vm->_screenWidth;      \
-        if (--h == 0) {                \
-            if (!--x)                  \
-                return;                \
-            dst -= _vertStripNextInc;  \
-            h = height;                \
-        }
+#define NEXT_ROW                           \
+		do {                               \
+			dst += _vm->_screenWidth;      \
+			if (--h == 0) {                \
+				if (!--x)                  \
+					return;                \
+				dst -= _vertStripNextInc;  \
+				h = height;                \
+			}                              \
+		} while (0)
 
 void Gdi::unkDecode7(byte *dst, const byte *src, int height) {
 	uint h = height;
@@ -2011,7 +2015,7 @@ void Gdi::unkDecode7(byte *dst, const byte *src, int height) {
 		int x = 8;
 		for (;;) {
 			*dst = *src++;
-			NEXT_ROW
+			NEXT_ROW;
 		}
 		return;
 	}
@@ -2038,7 +2042,7 @@ void Gdi::unkDecode8(byte *dst, const byte *src, int height) {
 
 		do {
 			*dst = color;
-			NEXT_ROW
+			NEXT_ROW;
 		} while (--run);
 	}
 }
@@ -2067,7 +2071,7 @@ void Gdi::unkDecode9(byte *dst, const byte *src, int height) {
 			}
 			for (i = 0; i < ((c & 3) + 2); i++) {
 				*dst = (run * 16 + color);
-				NEXT_ROW
+				NEXT_ROW;
 			}
 			break;
 
@@ -2079,7 +2083,7 @@ void Gdi::unkDecode9(byte *dst, const byte *src, int height) {
 					color += bits << j;
 				}
 				*dst = (run * 16 + color);
-				NEXT_ROW
+				NEXT_ROW;
 			}
 			break;
 
@@ -2108,13 +2112,13 @@ void Gdi::unkDecode10(byte *dst, const byte *src, int height) {
 		byte color = *src++;
 		if (color < numcolors) {
 			*dst = local_palette[color];
-			NEXT_ROW
+			NEXT_ROW;
 		} else {
 			uint run = color - numcolors + 1;
 			color = *src++;
 			do {
 				*dst = color;
-				NEXT_ROW
+				NEXT_ROW;
 			} while (--run);
 		}
 	}
@@ -2133,7 +2137,7 @@ void Gdi::unkDecode11(byte *dst, const byte *src, int height) {
 			*dst = color;
 			dst += _vm->_screenWidth;
 			for (i = 0; i < 3; i++) {
-				READ_256BIT
+				READ_256BIT;
 				if (!bits)
 					break;
 			}
@@ -2151,7 +2155,7 @@ void Gdi::unkDecode11(byte *dst, const byte *src, int height) {
 				color = 0;
 				inc = 1;
 				for (i = 0; i < 8; i++) {
-					READ_256BIT
+					READ_256BIT;
 					color += bits << i;
 				}
 				break;
