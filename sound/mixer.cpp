@@ -68,8 +68,6 @@ public:
 		_volume = volume;
 	}
 	virtual void setChannelPan(const int8 pan) {
-		if (pan != 0)
-			printf("Pan set to %d\n", pan);
 		_pan = pan;
 	}
 	virtual int getVolume() const {
