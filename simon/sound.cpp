@@ -46,73 +46,73 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const c
 	_voice_file = false;
 	_ambient_playing = 0;
 
-	File file;
-	File file2;
+	File *file = new File();
+	File *file2 = new File();
 	const char *s;
 
 #ifdef USE_MAD
-	file.open(gss->mp3_filename, gameDataPath);
-	if (file.isOpen() == false) {
+	file->open(gss->mp3_filename, gameDataPath);
+	if (file->isOpen() == false) {
 #endif
 		// for simon2 mac/amiga, only read index file
 		if (_game == GAME_SIMON2MAC) {
-			file.open("voices.idx", gameDataPath);
-			if (file.isOpen() == false) {
+			file->open("voices.idx", gameDataPath);
+			if (file->isOpen() == false) {
 				warning("Can't open voice index file 'voices.idx'");
 			} else {
-				file.seek(0, SEEK_END);
-				int end = file.pos();
-				file.seek(0, SEEK_SET);
+				file->seek(0, SEEK_END);
+				int end = file->pos();
+				file->seek(0, SEEK_SET);
 				_filenums = (uint16 *)malloc(end / 3 + 1);
 				_offsets = (uint32 *)malloc((end / 6) * 4 + 1);
 
 				for (int i = 1; i <= end / 6; i++) {
-					_filenums[i] = file.readUint16BE();
-					_offsets[i] = file.readUint32BE();
+					_filenums[i] = file->readUint16BE();
+					_offsets[i] = file->readUint32BE();
 				}
 				_voice_file = true;
 			}
 		} else if (_game & GF_WIN) {
 			s = gss->wav_filename;
-			file.open(s, gameDataPath);
-			if (file.isOpen() == false) {
+			file->open(s, gameDataPath);
+			if (file->isOpen() == false) {
 				warning("Can't open voice file %s", s);
 			} else	{
 				_voice_file = true;
-				_voice = new WavSound(_mixer, &file);
+				_voice = new WavSound(_mixer, file);
 			}
 		} else if (_game & GF_TALKIE) {
 			s = gss->voc_filename;
-			file.open(s, gameDataPath);
-			if (file.isOpen() == false) {
+			file->open(s, gameDataPath);
+			if (file->isOpen() == false) {
 				warning("Can't open voice file %s", s);
 			} else {
 				_voice_file = true;
-				_voice = new VocSound(_mixer, &file);
+				_voice = new VocSound(_mixer, file);
 			}
 		}
 #ifdef USE_MAD
 	} else {
 		_voice_file = true;
-		_voice = new MP3Sound(_mixer, &file);
+		_voice = new MP3Sound(_mixer, file);
 	}
 #endif
 
 	if (_game == GAME_SIMON1TALKIE) {
 #ifdef USE_MAD
-		file2.open(gss->mp3_effects_filename, gameDataPath);
-		if (file2.isOpen() == false) {
+		file2->open(gss->mp3_effects_filename, gameDataPath);
+		if (file2->isOpen() == false) {
 #endif
 			s = gss->voc_effects_filename;
-			file2.open(s, gameDataPath);
-			if (file2.isOpen() == false) {
+			file2->open(s, gameDataPath);
+			if (file2->isOpen() == false) {
 				warning("Can't open effects file %s", s);
 			} else {
-				_effects = new VocSound(_mixer, &file2);
+				_effects = new VocSound(_mixer, file2);
 			}
 #ifdef USE_MAD
 		} else {
-			_effects = new MP3Sound(_mixer, &file2);
+			_effects = new MP3Sound(_mixer, file2);
 		}
 #endif
 	}
@@ -121,24 +121,24 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const c
 void SimonSound::readSfxFile(const char *filename, const char *gameDataPath) {
 	stopAll();
 
-	File file;
-	file.open(filename, gameDataPath);
+	File *file = new File();
+	file->open(filename, gameDataPath);
 
-	if (file.isOpen() == false) {
+	if (file->isOpen() == false) {
 		char *filename2;
 		filename2 = (char *)malloc(strlen(filename) + 2);
 		strcpy(filename2, filename);
 		strcat(filename2, ".");
-		file.open(filename2, gameDataPath);
+		file->open(filename2, gameDataPath);
 		free(filename2);
-		if (file.isOpen() == false) {
+		if (file->isOpen() == false) {
 			if (atoi(filename + 6) != 1 && atoi(filename + 6) != 30)
 			warning("readSfxFile: Can't load sfx file %s", filename);
 			return;
 		}
 	}
 
-	_effects = new WavSound(_mixer, &file);
+	_effects = new WavSound(_mixer, file);
 }
 
 void SimonSound::loadSfxTable(File *gameFile, uint32 base) {
@@ -151,15 +151,15 @@ void SimonSound::loadSfxTable(File *gameFile, uint32 base) {
 }
 
 void SimonSound::playVoice(uint sound) {
-	File file;
 	if (_game == GAME_SIMON2MAC && _filenums) {
 		char filename[16];
 		sprintf(filename, "voices%d.dat", _filenums[sound]);
-		file.open(filename, _gameDataPath);
-		if (file.isOpen() == false) {
+		File *file = new File();
+		file->open(filename, _gameDataPath);
+		if (file->isOpen() == false) {
 			warning("Can't open voice file %s", filename);
 		} else {
-			_voice = new WavSound(_mixer, &file, _offsets);
+			_voice = new WavSound(_mixer, file, _offsets);
 		}
 	}
 
