@@ -987,7 +987,20 @@ void Scumm_v2::o2_drawSentence() {
 	else
 		_string[2].color = 13;
 
-	sentence[41] = 0;	// Maximal length: 40 characters
+	char *ptr = sentence;
+	int n = 0;
+
+	// Maximum length: 40 printable characters
+	while (*ptr != 0) {
+		if (*ptr != '@')
+			n++;
+		if (n > 40) {
+			*ptr = 0;
+			break;
+		}
+		ptr++;
+	}
+
 	_messagePtr = (byte*)sentence;
 
 	sentenceline.top = virtscr[2].topline;
