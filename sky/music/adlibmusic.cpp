@@ -39,7 +39,7 @@ SkyAdlibMusic::SkyAdlibMusic(SoundMixer *pMixer, SkyDisk *pSkyDisk, OSystem *sys
 	OPLBuildTables((env_bits ? env_bits : FMOPL_ENV_BITS_HQ), (eg_ent ? eg_ent : FMOPL_EG_ENT_HQ));
 	_opl = OPLCreate(OPL_TYPE_YM3812, 3579545, _sampleRate);
   
-	_mixer->setupPremix(this, passMixerFunc);
+	_mixer->setupPremix(passMixerFunc, this);
 }
 
 SkyAdlibMusic::~SkyAdlibMusic(void) {
@@ -55,30 +55,36 @@ void SkyAdlibMusic::setVolume(uint8 volume) {
 		_channels[cnt]->updateVolume(volume | 128);
 }
 
-void SkyAdlibMusic::premixerCall(int16 *buf, uint len) {
+void SkyAdlibMusic::premixerCall(int16 *data, uint len) {
 
 	if (_musicData == NULL) {
 		// no music loaded
-		memset(buf, 0, len * sizeof(int16));
-		return;
+		memset(data, 0, 2 * len * sizeof(int16));
 	} else if ((_currentMusic == 0) || (_numberOfChannels == 0)) {
 		// music loaded but not played as of yet
-		memset(buf, 0, len * sizeof(int16));
+		memset(data, 0, 2 * len * sizeof(int16));
 		// poll anyways as pollMusic() can activate the music
 		pollMusic();
 		_nextMusicPoll = _sampleRate/50;
-		return;
-	}
-	uint32 render;
-	while (len) {
-		render = (len > _nextMusicPoll) ? (_nextMusicPoll) : (len);
-		len -= render;
-		_nextMusicPoll -= render;
-		YM3812UpdateOne (_opl, buf, render);
-		buf += render;
-		if (_nextMusicPoll == 0) {
-			pollMusic();
-			_nextMusicPoll = _sampleRate/50;
+	} else {
+		uint32 render;
+		int16 *origData = data;
+		uint origLen = len;
+		while (len) {
+			render = (len > _nextMusicPoll) ? (_nextMusicPoll) : (len);
+			len -= render;
+			_nextMusicPoll -= render;
+			YM3812UpdateOne(_opl, data, render);
+			data += render;
+			if (_nextMusicPoll == 0) {
+				pollMusic();
+				_nextMusicPoll = _sampleRate/50;
+			}
+		}
+	
+		// Convert mono data to stereo
+		for (int i = (origLen - 1); i >= 0; i--) {
+			origData[2 * i] = origData[2 * i + 1] = origData[i];
 		}
 	}
 }

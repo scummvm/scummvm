@@ -83,8 +83,14 @@ public:
 	 * to be generated */
 	bool bindToSystem(OSystem *syst);
 
-	/** Premix procedure, useful when using fmopl adlib */
-	void setupPremix(void * param, PremixProc * proc);
+	/**
+	 * Set the premix procedure. This is mainly used for the adlib music, but is not limited
+	 * to it. The premix proc is invoked by the mixer whenever it needs to generate any
+	 * data, before any other mixing takes place. The premixer than has a chanve to fill
+	 * the mix buffer with data (usually music samples). It should generate the specified
+	 * number of 16bit stereo samples (i.e. len * 4 bytes).
+	 */
+	void setupPremix(PremixProc *proc, void *param);
 
 	// start playing a raw sound
 	int playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags,

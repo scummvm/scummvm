@@ -160,7 +160,7 @@ bool SoundMixer::bindToSystem(OSystem *syst) {
 	return syst->set_sound_proc(mixCallback, this, OSystem::SOUND_16BIT);
 }
 
-void SoundMixer::setupPremix(void *param, PremixProc *proc) {
+void SoundMixer::setupPremix(PremixProc *proc, void *param) {
 	StackLock lock(_mutex);
 	_premixParam = param;
 	_premixProc = proc;
@@ -279,12 +279,7 @@ void SoundMixer::mix(int16 *buf, uint len) {
 	StackLock lock(_mutex);
 
 	if (_premixProc && !_paused) {
-		int i;
 		_premixProc(_premixParam, buf, len);
-		// Convert mono data from the premix proc to stereo
-		for (i = (len - 1); i >= 0; i--) {
-			buf[2 * i] = buf[2 * i + 1] = buf[i];
-		}
 	} else {
 		//  zero the buf out
 		memset(buf, 0, 2 * len * sizeof(int16));

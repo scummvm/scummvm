@@ -381,7 +381,7 @@ Player_V2::Player_V2(Scumm *scumm) {
 	set_pcjr(scumm->_midiDriver != MD_PCSPK);
 	setMasterVolume(255);
 
-	_mixer->setupPremix(this, premix_proc);
+	_mixer->setupPremix(premix_proc, this);
 }
 
 Player_V2::~Player_V2() {
@@ -820,10 +820,12 @@ void Player_V2::next_freqs(ChannelInfo *channel) {
 	}
 }
 
-void Player_V2::do_mix (int16 *data, uint len) {
+void Player_V2::do_mix(int16 *data, uint len) {
 	mutex_up();
 	uint step;
 
+	int16 *origData = data;
+	uint origLen = len;
 	do {
 		step = len;
 		if (step > (_next_tick >> FIXP_SHIFT))
@@ -848,6 +850,12 @@ void Player_V2::do_mix (int16 *data, uint len) {
 			}
 		}
 	} while (len -= step);
+
+	// Convert mono data to stereo
+	for (int i = (origLen - 1); i >= 0; i--) {
+		origData[2 * i] = origData[2 * i + 1] = origData[i];
+	}
+
 	mutex_down();
 }
 
@@ -911,7 +919,7 @@ void Player_V2::generateSpkSamples(int16 *data, uint len) {
 		}
 	}
 
-	memset (data, 0, sizeof(int16) * len);
+	memset(data, 0, sizeof(int16) * len);
 	if (winning_channel != -1) {
 		squareGenerator(0, _channels[winning_channel].d.freq, 0, 
 				0, data, len);

@@ -866,7 +866,7 @@ int MidiDriver_ADLIB::open() {
 
 	_samples_per_tick = (_mixer->getOutputRate() << FIXP_SHIFT) / BASE_FREQ;
 
-	_mixer->setupPremix(this, premix_proc);
+	_mixer->setupPremix(premix_proc, this);
 	
 	return 0;
 }
@@ -1014,6 +1014,9 @@ void MidiDriver_ADLIB::adlib_write(byte port, byte value) {
 void MidiDriver_ADLIB::generate_samples(int16 *data, int len) {
 	int step;
 
+	int16 *origData = data;
+	uint origLen = len;
+
 	do {
 		step = len;
 		if (step > (_next_tick >> FIXP_SHIFT))
@@ -1030,6 +1033,11 @@ void MidiDriver_ADLIB::generate_samples(int16 *data, int len) {
 		data += step;
 		len -= step;
 	} while (len);
+
+	// Convert mono data to stereo
+	for (int i = (origLen - 1); i >= 0; i--) {
+		origData[2 * i] = origData[2 * i + 1] = origData[i];
+	}
 }
 
 void MidiDriver_ADLIB::reset_tick() {
