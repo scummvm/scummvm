@@ -42,7 +42,7 @@
 extern Config *g_config;
 
 #define MAX_GAMES 20
-int MAX_DIRECTORY = 1;
+int MAX_DIRECTORY = 40;
 
 #define MAX_DISPLAYED_DIRECTORIES 7
 #define MAX_DISPLAYED_GAMES 7
@@ -526,7 +526,7 @@ void doScan() {
 	if (wcslen(basePath) != 0) {
 		//SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), LB_ADDSTRING, 0, (LPARAM)TEXT(".."));
 		if (_total_directories == MAX_DIRECTORY) {
-			MAX_DIRECTORY += 1;
+			MAX_DIRECTORY += 10;
 			directories = (DirectoryName*)realloc(directories, MAX_DIRECTORY  * sizeof(DirectoryName));
 		}
 		wcscpy(directories[_total_directories++].name, TEXT(".."));
@@ -549,7 +549,7 @@ void doScan() {
 			LB_ADDSTRING, 0, (LPARAM)(work ? work + 1 : desc.cFileName));
 		*/
 		if (_total_directories == MAX_DIRECTORY) {
-			MAX_DIRECTORY += 1;
+			MAX_DIRECTORY += 10;
 			directories = (DirectoryName*)realloc(directories, MAX_DIRECTORY  * sizeof(DirectoryName));
 		}
 		wcscpy(directories[_total_directories++].name, (work ? work + 1 : desc.cFileName));
@@ -564,7 +564,7 @@ void doScan() {
 			LB_ADDSTRING, 0, (LPARAM)(work ? work + 1 : desc.cFileName));
 		*/
 		if (_total_directories == MAX_DIRECTORY) {
-			MAX_DIRECTORY += 1;
+			MAX_DIRECTORY += 10;
 			directories = (DirectoryName*)realloc(directories, MAX_DIRECTORY  * sizeof(DirectoryName));
 		}
 		wcscpy(directories[_total_directories++].name, (work ? work + 1 : desc.cFileName));
