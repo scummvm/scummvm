@@ -1597,7 +1597,7 @@ void SimonEngine::vc_59() {
 			vc_kill_sprite(file, start);
 		} while (++start != end);
 	} else {
-		if (_sound->_voice_handle == -1)
+		if (_sound->_voice_handle == 0)
 			vc_skip_next_instruction();
 	}
 }
@@ -1775,7 +1775,7 @@ void SimonEngine::vc_63_palette_thing_2() {
 
 void SimonEngine::vc_64_skip_if_no_speech() {
 	// Simon2
-	if (_sound->_voice_handle == -1)
+	if (_sound->_voice_handle == 0)
 		vc_skip_next_instruction();
 }
 

@@ -270,9 +270,9 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const c
 	_filenums = 0;
 	_offsets = 0;
 
-	_voice_handle = -1;
-	_effects_handle = -1;
-	_ambient_handle = -1;
+	_voice_handle = 0;
+	_effects_handle = 0;
+	_ambient_handle = 0;
 
 	_voice_file = false;
 	_ambient_playing = 0;
@@ -440,7 +440,7 @@ void SimonSound::playVoice(uint sound) {
 	if (!_voice)
 		return;
 
-	if (_voice_handle != -1)
+	if (_voice_handle)
 		_mixer->stop(_voice_index);
 
 	_voice_index = _voice->playSound(sound, &_voice_handle, (_game == GAME_SIMON1CD32) ? 0 : SoundMixer::FLAG_UNSIGNED);
@@ -468,7 +468,7 @@ void SimonSound::playAmbient(uint sound) {
 	if (_ambient_paused)
 		return;
 
-	if (_ambient_handle != -1)
+	if (_ambient_handle)
 		_mixer->stop(_ambient_index);
 
 	_ambient_index = _effects->playSound(sound, &_ambient_handle, SoundMixer::FLAG_LOOP|SoundMixer::FLAG_UNSIGNED);
