@@ -113,7 +113,7 @@ void ConsoleDialog::drawDialog() {
 		int x = _x + 1;
 		for (int column = 0; column < _lineWidth; column++) {
 			int l = (start + line) % _linesInBuffer;
-			byte c = _buffer[l * _lineWidth + column];
+			byte c = buffer(l * _lineWidth + column);
 			g_gui.drawChar(c, x, y, g_gui._textcolor);
 			x += kCharWidth;
 		}
@@ -163,7 +163,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	
 			// Copy the user input to str
 			for (i = 0; i < len; i++)
-				str[i] = _buffer[(_promptStartPos + i) % kBufferSize];
+				str[i] = buffer(_promptStartPos + i);
 			str[len] = '\0';
 
 			// Add the input to the history
@@ -208,7 +208,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 
 			// Copy the user input to str
 			for (i = 0; i < len; i++)
-				str[i] = _buffer[(_promptStartPos + i) % kBufferSize];
+				str[i] = buffer(_promptStartPos + i);
 			str[len] = '\0';
 
 			char *completion = 0;
@@ -273,7 +273,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 			specialKeys(keycode);
 		} else if (isprint((char)ascii)) {
 			for (i = _promptEndPos - 1; i >= _currentPos; i--)
-				_buffer[(i + 1) % kBufferSize] = _buffer[i % kBufferSize];
+				buffer(i + 1) = buffer(i);
 			_promptEndPos++;
 			putchar((char)ascii);
 			scrollToCurrent();
@@ -285,8 +285,7 @@ void ConsoleDialog::insertIntoPrompt(const char* str)
 {
 	unsigned int l = strlen(str);
 	for (int i = _promptEndPos - 1; i >= _currentPos; i--)
-		_buffer[(i + l) % kBufferSize] = 
-			_buffer[i % kBufferSize];
+		buffer(i + l) = buffer(i);
 	for (unsigned int j = 0; j < l; ++j) {
 		_promptEndPos++;
 		putcharIntern(str[j]);
@@ -334,24 +333,22 @@ void ConsoleDialog::specialKeys(int keycode) {
 
 void ConsoleDialog::killChar() {
 	for (int i = _currentPos; i < _promptEndPos; i++)
-		_buffer[i % kBufferSize] = _buffer[(i + 1) % kBufferSize];
-	_buffer[_promptEndPos % kBufferSize] = ' ';
+		buffer(i) = buffer(i + 1);
+	buffer(_promptEndPos) = ' ';
 	_promptEndPos--;
 }
 
 void ConsoleDialog::killLine() {
 	for (int i = _currentPos; i < _promptEndPos; i++)
-		_buffer[i % kBufferSize] = ' ';
+		buffer(i) = ' ';
 	_promptEndPos = _currentPos;
 }
 
 void ConsoleDialog::killLastWord() {
-	int pos;
 	int cnt = 0;
 	bool space = true;
 	while (_currentPos > _promptStartPos) {
-		pos = getBufferPos();
-		if (_buffer[pos-1] == ' ') {
+		if (buffer(_currentPos - 1) == ' ') {
 			if (!space)
 				break;
 		} else
@@ -361,8 +358,8 @@ void ConsoleDialog::killLastWord() {
 	}
 
 	for (int i = _currentPos; i < _promptEndPos; i++)
-		_buffer[i % kBufferSize] = _buffer[(i + cnt) % kBufferSize];
-	_buffer[_promptEndPos % kBufferSize] = ' ';
+		buffer(i) = buffer(i + cnt);
+	buffer(_promptEndPos) = ' ';
 	_promptEndPos -= cnt;
 }
 
@@ -381,7 +378,7 @@ void ConsoleDialog::historyScroll(int direction) {
 	if (_historyLine == 0 && direction > 0) {
 		int i;
 		for (i = 0; i < _promptEndPos - _promptStartPos; i++)
-			_history[_historyIndex][i] = _buffer[(_promptStartPos + i) % kBufferSize];
+			_history[_historyIndex][i] = buffer(_promptStartPos + i);
 		_history[_historyIndex][i] = '\0';
 	}
 
@@ -472,7 +469,7 @@ void ConsoleDialog::putcharIntern(int c) {
 	if (c == '\n')
 		nextLine();
 	else {
-		_buffer[getBufferPos()] = (char)c;
+		buffer(_currentPos) = (char)c;
 		_currentPos++;
 		if ((_scrollLine + 1) * _lineWidth == _currentPos) {
 			_scrollLine++;
@@ -504,7 +501,7 @@ void ConsoleDialog::drawCaret(bool erase) {
 	int x = _x + 1 + (_currentPos % _lineWidth) * kCharWidth;
 	int y = _y + displayLine * kLineHeight;
 
-	char c = _buffer[getBufferPos()];
+	char c = buffer(_currentPos);
 	if (erase) {
 		g_gui.fillRect(x, y, kCharWidth, kLineHeight, g_gui._bgcolor);
 		g_gui.drawChar(c, x, y + 2, g_gui._textcolor);

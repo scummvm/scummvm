@@ -104,13 +104,16 @@ public:
 	}
 
 protected:
+	inline char &buffer(int idx) {
+		return _buffer[idx % kBufferSize];
+	}
+
 	void drawCaret(bool erase);
 	void putcharIntern(int c);
 	void insertIntoPrompt(const char *str);
 	void print(const char *str);
 	void updateScrollBar();
 	void scrollToCurrent();
-	inline int getBufferPos() const { return _currentPos % kBufferSize; }
 
 	// Line editing
 	void specialKeys(int keycode);
