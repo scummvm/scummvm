@@ -1319,6 +1319,7 @@ void Actor::startWalkAnim(int cmd, int angle) {
 #if 1
 	if (walkScript != 0) {
 		int args[16];
+		memset(args, 0, sizeof(args));
 		args[0] = number;
 		args[1] = cmd;
 		args[2] = angle;
