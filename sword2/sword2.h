@@ -85,6 +85,17 @@ struct KeyboardEvent {
 	int modifiers;
 };
 
+struct StartUp {
+	char description[MAX_description];
+
+	// id of screen manager object
+	uint32 start_res_id;
+
+	// Tell the manager which startup you want (if there are more than 1)
+	// (i.e more than 1 entrance to a screen and/or separate game boots)
+	uint32 key;
+};
+
 class Sword2Engine : public Engine {
 private:
 	uint32 _eventFilter;
@@ -112,18 +123,6 @@ private:
 	uint32 _startRes;
 
 	bool _useSubtitles;
-
-	struct StartUp {
-		char description[MAX_description];
-
-		// id of screen manager object
-		uint32 start_res_id;
-
-		// tell the manager which startup you want (if there are more
-		// than 1) (i.e more than 1 entrance to a screen and/or
-		// separate game boots)
-		uint32 key;
-	};
 
 	StartUp _startList[MAX_starts];
 
@@ -256,8 +255,12 @@ public:
 
 	bool initStartMenu();
 	void registerStartPoint(int32 key, char *name);
-	void conPrintStartMenu();
-	void conStart(int start);
+
+	uint32 getNumStarts() { return _totalStartups; }
+	uint32 getNumScreenManagers() { return _totalScreenManagers; }
+	StartUp *getStartList() { return _startList; }
+
+	void runStart(int start);
 
 	// Convenience alias for OSystem::getMillis().
 	// This is a bit hackish, of course :-).

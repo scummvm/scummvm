@@ -23,12 +23,20 @@
 
 class File;
 
-namespace Sword2 {
-
 #define MAX_MEM_CACHE (8 * 1024 * 1024) // we keep up to 8 megs of resource data files in memory
 #define	MAX_res_files 20
 
+namespace Sword2 {
+
 class Sword2Engine;
+
+enum {
+	BOTH		= 0x0,		// Cluster is on both CDs
+	CD1		= 0x1,		// Cluster is on CD1 only
+	CD2		= 0x2,		// Cluster is on CD2 only
+	LOCAL_CACHE	= 0x4,		// Cluster is cached on HDD
+	LOCAL_PERM	= 0x8		// Cluster is on HDD.
+};
 
 struct Resource {
 	byte *ptr;
@@ -45,38 +53,12 @@ struct ResourceFile {
 };
 
 class ResourceManager {
-public:
-	ResourceManager(Sword2Engine *vm);	// read in the config file
-	~ResourceManager(void);
-
-	byte *openResource(uint32 res, bool dump = false);
-	void closeResource(uint32 res);
-
-	bool checkValid(uint32 res);
-	uint32 fetchLen(uint32 res);
-
-	// Prompts the user for the specified CD.
-	void getCd(int cd);
-
-	int whichCd();
-
-	void remove(int res);
-
-	// ----console commands
-
-	void printConsoleClusters(void);
-	void listResources(uint minCount);
-	void examine(int res);
-	void kill(int res);
-	void killAll(bool wantInfo);
-	void killAllObjects(bool wantInfo);
-	void removeAll(void);
 private:
 	File *openCluFile(uint16 fileNum);
 	void readCluIndex(uint16 fileNum, File *file = NULL);
 	void removeFromCacheList(Resource *res);
 	void addToCacheList(Resource *res);
-	void checkMemUsage(void);
+	void checkMemUsage();
 
 	Sword2Engine *_vm;
 
@@ -92,6 +74,34 @@ private:
 
 	Resource *_cacheStart, *_cacheEnd;
 	uint32 _usedMem; // amount of used memory in bytes
+
+public:
+	ResourceManager(Sword2Engine *vm);	// read in the config file
+	~ResourceManager();
+
+	uint32 getNumResFiles() { return _totalResFiles; }
+	uint32 getNumClusters() { return _totalClusters; }
+	ResourceFile *getResFiles() { return _resFiles; }
+	Resource *getResList() { return _resList; }
+
+	byte *openResource(uint32 res, bool dump = false);
+	void closeResource(uint32 res);
+
+	bool checkValid(uint32 res);
+	uint32 fetchLen(uint32 res);
+
+	// Prompts the user for the specified CD.
+	void getCd(int cd);
+
+	int whichCd();
+
+	void remove(int res);
+	void removeAll();
+
+	// ----console commands
+
+	void killAll(bool wantInfo);
+	void killAllObjects(bool wantInfo);
 };
 
 } // End of namespace Sword2

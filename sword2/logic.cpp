@@ -21,7 +21,6 @@
 #include "common/stdafx.h"
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
-#include "sword2/console.h"
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
 #include "sword2/resman.h"
@@ -29,8 +28,6 @@
 #include "sword2/sound.h"
 
 #define LEVEL (_curObjectHub->logic_level)
-
-#define Debug_Printf _vm->_debugger->DebugPrintf
 
 namespace Sword2 {
 
@@ -54,7 +51,7 @@ Logic::~Logic() {
  * Do one cycle of the current session.
  */
 
-int Logic::processSession(void) {
+int Logic::processSession() {
 	// might change during the session, so take a copy here
 	uint32 run_list = _currentRunList;
 
@@ -219,7 +216,7 @@ void Logic::expressChangeSession(uint32 sesh_id) {
  * @return The private _currentRunList variable.
  */
 
-uint32 Logic::getRunList(void) {
+uint32 Logic::getRunList() {
 	return _currentRunList;
 }
 
@@ -257,28 +254,7 @@ void Logic::logicReplace(uint32 new_script) {
 	_curObjectHub->script_pc[LEVEL] = new_script & 0xffff;
 }
 
-void Logic::examineRunList(void) {
-	uint32 *game_object_list;
-	StandardHeader *file_header;
-
-	if (_currentRunList) {
-		// open and lock in place
-		game_object_list = (uint32 *) (_vm->_resman->openResource(_currentRunList) + sizeof(StandardHeader));
-
-		Debug_Printf("Runlist number %d\n", _currentRunList);
-
-		for (int i = 0; game_object_list[i]; i++) {
-			file_header = (StandardHeader *) _vm->_resman->openResource(game_object_list[i]);
-			Debug_Printf("%d %s\n", game_object_list[i], file_header->name);
-			_vm->_resman->closeResource(game_object_list[i]);
-		}
-
-		_vm->_resman->closeResource(_currentRunList);
-	} else
-		Debug_Printf("No run list set\n");
-}
-
-void Logic::resetKillList(void) {
+void Logic::resetKillList() {
 	_kills = 0;
 }
 

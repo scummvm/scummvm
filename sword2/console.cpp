@@ -179,8 +179,92 @@ bool Debugger::Cmd_Help(int argc, const char **argv) {
 	return true;
 }
 
+static int compare_blocks(const void *p1, const void *p2) {
+	const MemBlock *m1 = *(const MemBlock * const *) p1;
+	const MemBlock *m2 = *(const MemBlock * const *) p2;
+
+	if (m1->size < m2->size)
+		return 1;
+	if (m1->size > m2->size)
+		return -1;
+	return 0;
+}
+
 bool Debugger::Cmd_Mem(int argc, const char **argv) {
-	_vm->_memory->memDisplay();
+	int16 numBlocks = _vm->_memory->getNumBlocks();
+	MemBlock *memBlocks = _vm->_memory->getMemBlocks();
+
+	MemBlock **blocks = (MemBlock **) malloc(numBlocks * sizeof(MemBlock));
+
+	int i, j;
+
+	for (i = 0, j = 0; i < MAX_MEMORY_BLOCKS; i++) {
+		if (memBlocks[i].ptr)
+			blocks[j++] = &memBlocks[i];
+	}
+
+	qsort(blocks, numBlocks, sizeof(MemBlock *), compare_blocks);
+
+	DebugPrintf("     size id  res  type                 name\n");
+	DebugPrintf("---------------------------------------------------------------------------\n");
+
+	for (i = 0; i < numBlocks; i++) {
+		StandardHeader *head = (StandardHeader *) blocks[i]->ptr;
+		const char *type;
+
+		switch (head->fileType) {
+		case ANIMATION_FILE:
+			type = "ANIMATION_FILE";
+			break;
+		case SCREEN_FILE:
+			type = "SCREEN_FILE";
+			break;
+		case GAME_OBJECT:
+			type  = "GAME_OBJECT";
+			break;
+		case WALK_GRID_FILE:
+			type = "WALK_GRID_FILE";
+			break;
+		case GLOBAL_VAR_FILE:
+			type = "GLOBAL_VAR_FILE";
+			break;
+		case PARALLAX_FILE_null:
+			type = "PARALLAX_FILE_null";
+			break;
+		case RUN_LIST:
+			type = "RUN_LIST";
+			break;
+		case TEXT_FILE:
+			type = "TEXT_FILE";
+			break;
+		case SCREEN_MANAGER:
+			type = "SCREEN_MANAGER";
+			break;
+		case MOUSE_FILE:
+			type = "MOUSE_FILE";
+			break;
+		case WAV_FILE:
+			type = "WAV_FILE";
+			break;
+		case ICON_FILE:
+			type = "ICON_FILE";
+			break;
+		case PALETTE_FILE:
+			type = "PALETTE_FILE";
+			break;
+		default:
+			type = "<unknown>";
+			break;
+		}
+
+		DebugPrintf("%9ld %-3d %-4d %-20s %s\n", blocks[i]->size, blocks[i]->id, blocks[i]->uid, type, head->name);
+	}
+		
+	free(blocks);
+
+	DebugPrintf("---------------------------------------------------------------------------\n");
+	DebugPrintf("%9ld\n", _vm->_memory->getTotAlloc());
+
 	return true;
 }
 
@@ -190,7 +274,37 @@ bool Debugger::Cmd_Tony(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Res(int argc, const char **argv) {
-	_vm->_resman->printConsoleClusters();
+	uint32 numClusters = _vm->_resman->getNumClusters();
+
+	if (!numClusters) {
+		DebugPrintf("Argh! No resources!\n");
+		return true;
+	}
+
+	ResourceFile *resFiles = _vm->_resman->getResFiles();
+
+	for (uint i = 0; i < numClusters; i++) {
+		DebugPrintf("%-20s ", resFiles[i].fileName);
+		if (!(resFiles[i].cd & LOCAL_PERM)) {			
+			switch (resFiles[i].cd & 3) {
+			case BOTH:
+				DebugPrintf("CD 1 & 2\n");
+				break;
+			case CD1:
+				DebugPrintf("CD 1\n");
+				break;
+			case CD2:
+				DebugPrintf("CD 2\n");
+				break;
+			default:
+				DebugPrintf("CD 3? Huh?!\n");
+				break;
+			}
+		} else
+			DebugPrintf("HD\n");
+	}
+
+	DebugPrintf("%d resources\n", _vm->_resman->getNumResFiles());
 	return true;
 }
 
@@ -201,12 +315,39 @@ bool Debugger::Cmd_ResList(int argc, const char **argv) {
 	if (argc > 1)
 		minCount = atoi(argv[1]);
 
-	_vm->_resman->listResources(minCount);
+	uint32 numResFiles = _vm->_resman->getNumResFiles();
+	Resource *resList = _vm->_resman->getResList();
+
+	for (uint i = 0; i < numResFiles; i++) {
+		if (resList[i].ptr && resList[i].refCount >= minCount) {
+			StandardHeader *head = (StandardHeader *) resList[i].ptr;
+			DebugPrintf("%-4d: %-35s refCount: %-3d\n", i, head->name, resList[i].refCount);
+		}
+	}
+
 	return true;
 }
 
 bool Debugger::Cmd_Starts(int argc, const char **argv) {
-	_vm->conPrintStartMenu();
+	uint32 numStarts = _vm->getNumStarts();
+
+	if (!numStarts) {
+		DebugPrintf("Sorry - no startup positions registered?\n");
+
+		uint32 numScreenManagers = _vm->getNumScreenManagers();
+
+		if (!numScreenManagers)
+			DebugPrintf("There is a problem with startup.inf\n");
+		else
+			DebugPrintf(" (%d screen managers found in startup.inf)\n", numScreenManagers);
+		return true;
+	}
+
+	StartUp *startList = _vm->getStartList();
+
+	for (uint i = 0; i < numStarts; i++)
+		DebugPrintf("%d  (%s)\n", i, startList[i].description);
+
 	return true;
 }
 
@@ -218,7 +359,23 @@ bool Debugger::Cmd_Start(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->conStart(atoi(argv[1]));
+	uint32 numStarts = _vm->getNumStarts();
+
+	if (!numStarts) {
+		DebugPrintf("Sorry - there are no startups!\n");
+		return true;
+	}
+
+	int start = atoi(argv[1]);
+	
+	if (start < 0 || start >= (int) numStarts) {
+		DebugPrintf("Not a legal start position\n");
+		return true;
+	}
+
+	DebugPrintf("Running start %d\n", start);
+
+	_vm->runStart(start);
 	_vm->_screen->setPalette(187, 1, pal, RDPAL_INSTANT);
 	return true;
 }
@@ -268,28 +425,139 @@ bool Debugger::Cmd_Player(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_ResLook(int argc, const char **argv) {
-	if (argc != 2)
+	if (argc != 2) {
 		DebugPrintf("Usage: %s number\n", argv[0]);
-	else
-		_vm->_resman->examine(atoi(argv[1]));
+		return true;
+	}
+
+	int res = atoi(argv[1]);
+	uint32 numResFiles = _vm->_resman->getNumResFiles();
+
+	if (res < 0 || res >= (int) numResFiles) {
+		DebugPrintf("Illegal resource %d. There are %d resources, 0-%d.\n",
+			res, numResFiles, numResFiles - 1);
+		return true;
+	}
+
+	if (!_vm->_resman->checkValid(res)) {
+		DebugPrintf("%d is a null & void resource number\n", res);
+		return true;
+	}
+
+	// Open up the resource and take a look inside!
+	StandardHeader *file_header = (StandardHeader *) _vm->_resman->openResource(res);
+
+	switch (file_header->fileType) {
+	case ANIMATION_FILE:
+		DebugPrintf("<anim> %s\n", file_header->name);
+		break;
+	case SCREEN_FILE:
+		DebugPrintf("<layer> %s\n", file_header->name);
+		break;
+	case GAME_OBJECT:
+		DebugPrintf("<game object> %s\n", file_header->name);
+		break;
+	case WALK_GRID_FILE:
+		DebugPrintf("<walk grid> %s\n", file_header->name);
+		break;
+	case GLOBAL_VAR_FILE:
+		DebugPrintf("<global variables> %s\n", file_header->name);
+		break;
+	case PARALLAX_FILE_null:
+		DebugPrintf("<parallax file NOT USED!> %s\n", file_header->name);
+		break;
+	case RUN_LIST:
+		DebugPrintf("<run list> %s\n", file_header->name);
+		break;
+	case TEXT_FILE:
+		DebugPrintf("<text file> %s\n", file_header->name);
+		break;
+	case SCREEN_MANAGER:
+		DebugPrintf("<screen manager> %s\n", file_header->name);
+		break;
+	case MOUSE_FILE:
+		DebugPrintf("<mouse pointer> %s\n", file_header->name);
+		break;
+	case ICON_FILE:
+		DebugPrintf("<menu icon> %s\n", file_header->name);
+		break;
+	default:
+		DebugPrintf("unrecognised fileType %d\n", file_header->fileType);
+		break;
+	}
+
+	_vm->_resman->closeResource(res);
 	return true;
 }
 
 bool Debugger::Cmd_CurrentInfo(int argc, const char **argv) {
-	printCurrentInfo();
+	// prints general stuff about the screen, etc.
+	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
+
+	if (screenInfo->background_layer_id) {
+		DebugPrintf("background layer id %d\n", screenInfo->background_layer_id);
+		DebugPrintf("%d wide, %d high\n", screenInfo->screen_wide, screenInfo->screen_deep);
+		DebugPrintf("%d normal layers\n", screenInfo->number_of_layers);
+
+		Cmd_RunList(argc, argv);
+	} else
+		DebugPrintf("No screen\n");
 	return true;
 }
 
 bool Debugger::Cmd_RunList(int argc, const char **argv) {
-	_vm->_logic->examineRunList();
+	uint32 *game_object_list;
+	StandardHeader *file_header;
+
+	uint32 runList = _vm->_logic->getRunList();
+
+	if (runList) {
+		game_object_list = (uint32 *) (_vm->_resman->openResource(runList) + sizeof(StandardHeader));
+
+		DebugPrintf("Runlist number %d\n", runList);
+
+		for (int i = 0; game_object_list[i]; i++) {
+			file_header = (StandardHeader *) _vm->_resman->openResource(game_object_list[i]);
+			DebugPrintf("%d %s\n", game_object_list[i], file_header->name);
+			_vm->_resman->closeResource(game_object_list[i]);
+		}
+
+		_vm->_resman->closeResource(runList);
+	} else
+		DebugPrintf("No run list set\n");
+
 	return true;
 }
 
 bool Debugger::Cmd_Kill(int argc, const char **argv) {
-	if (argc != 2)
+	if (argc != 2) {
 		DebugPrintf("Usage: %s number\n", argv[0]);
-	else
-		_vm->_resman->kill(atoi(argv[1]));
+		return true;
+	}
+
+	int res = atoi(argv[1]);
+	uint32 numResFiles = _vm->_resman->getNumResFiles();
+
+	if (res < 0 || res >= (int) numResFiles) {
+		DebugPrintf("Illegal resource %d. There are %d resources, 0-%d.\n",
+			res, numResFiles, numResFiles - 1);
+		return true;
+	}
+
+	Resource *resList = _vm->_resman->getResList();
+
+	if (!resList[res].ptr) {
+		DebugPrintf("Resource %d is not in memory\n", res);
+		return true;
+	}
+
+	if (resList[res].refCount) {
+		DebugPrintf("Resource %d is open - cannot remove\n", res);
+		return true;
+	}
+
+	_vm->_resman->remove(res);
+	DebugPrintf("Trashed %d\n", res);
 	return true;
 }
 
@@ -466,7 +734,7 @@ bool Debugger::Cmd_AnimTest(int argc, const char **argv) {
 	}
 
 	// Automatically do "s 32" to run the animation testing start script
-	_vm->conStart(32);
+	_vm->runStart(32);
 
 	// Same as typing "VAR 912 <value>" at the console
 	varSet(912, atoi(argv[1]));
@@ -482,7 +750,7 @@ bool Debugger::Cmd_TextTest(int argc, const char **argv) {
 	}
 
 	// Automatically do "s 33" to run the text/speech testing start script
-	_vm->conStart(33);
+	_vm->runStart(33);
 
 	// Same as typing "VAR 1230 <value>" at the console
 	varSet(1230, atoi(argv[1]));
@@ -501,7 +769,7 @@ bool Debugger::Cmd_LineTest(int argc, const char **argv) {
 	}
 
 	// Automatically do "s 33" to run the text/speech testing start script
-	_vm->conStart(33);
+	_vm->runStart(33);
 
 	// Same as typing "VAR 1230 <value>" at the console
 	varSet(1230, atoi(argv[1]));
@@ -518,7 +786,21 @@ bool Debugger::Cmd_LineTest(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Events(int argc, const char **argv) {
-	_vm->_logic->printEventList();
+	EventUnit *eventList = _vm->_logic->getEventList();
+
+	DebugPrintf("EVENT LIST:\n");
+
+	for (uint32 i = 0; i < MAX_events; i++) {
+		if (eventList[i].id) {
+			byte buf[NAME_LEN];
+			uint32 target = eventList[i].id;
+			uint32 script = eventList[i].interact_id;
+
+			DebugPrintf("slot %2d: id = %s (%d)\n", i, _vm->fetchObjectName(target, buf), target);
+			DebugPrintf("         script = %s (%d) pos %d\n", _vm->fetchObjectName(script / 65536, buf), script / 65536, script % 65536);
+		}
+	}
+
 	return true;
 }
 

@@ -21,6 +21,8 @@
 #ifndef	MEMORY_H
 #define	MEMORY_H
 
+#define MAX_MEMORY_BLOCKS 999
+
 namespace Sword2 {
 
 struct MemBlock {
@@ -51,14 +53,15 @@ public:
 	MemoryManager(Sword2Engine *vm);
 	~MemoryManager();
 
+	int16 getNumBlocks() { return _numBlocks; }
+	uint32 getTotAlloc() { return _totAlloc; }
+	MemBlock *getMemBlocks() { return _memBlocks; }
+
 	int32 encodePtr(byte *ptr);
 	byte *decodePtr(int32 n);
 
 	byte *memAlloc(uint32 size, int16 uid);
 	void memFree(byte *ptr);
-
-	void memDisplay();
-	void memStatusStr(char *buf);
 };
 
 } // End of namespace Sword2

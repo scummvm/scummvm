@@ -21,13 +21,10 @@
 #include "common/stdafx.h"
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
-#include "sword2/console.h"
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
 #include "sword2/memory.h"
 #include "sword2/resman.h"
-
-#define Debug_Printf _vm->_debugger->DebugPrintf
 
 namespace Sword2 {
 
@@ -48,7 +45,7 @@ void Logic::setPlayerActionEvent(uint32 id, uint32 interact_id) {
 	sendEvent(id, (interact_id << 16) | 2);
 }
 
-int Logic::checkEventWaiting(void) {
+int Logic::checkEventWaiting() {
 	for (int i = 0; i < MAX_events; i++) {
 		if (_eventList[i].id == _scriptVars[ID])
 			return 1;
@@ -57,7 +54,7 @@ int Logic::checkEventWaiting(void) {
 	return 0;
 }
 
-void Logic::startEvent(void) {
+void Logic::startEvent() {
 	// call this from stuff like fnWalk
 	// you must follow with a return IR_TERMINATE
 
@@ -90,7 +87,7 @@ void Logic::killAllIdsEvents(uint32 id) {
 
 // For the debugger
 
-uint32 Logic::countEvents(void) {
+uint32 Logic::countEvents() {
 	uint32 count = 0;
 
 	for (int i = 0; i < MAX_events; i++) {
@@ -99,21 +96,6 @@ uint32 Logic::countEvents(void) {
 	}
 
 	return count;
-}
-
-void Logic::printEventList(void) {
-	Debug_Printf("EVENT LIST:\n");
-
-	for (uint32 i = 0; i < MAX_events; i++) {
-		if (_eventList[i].id) {
-			byte buf[NAME_LEN];
-			uint32 target = _eventList[i].id;
-			uint32 script = _eventList[i].interact_id;
-
-			Debug_Printf("slot %2d: id = %s (%d)\n", i, _vm->fetchObjectName(target, buf), target);
-			Debug_Printf("         script = %s (%d) pos %d\n", _vm->fetchObjectName(script / 65536, buf), script / 65536, script % 65536);
-		}
-	}
 }
 
 } // End of namespace Sword2

@@ -46,10 +46,8 @@ private:
 
 	byte _debugTextBlocks[MAX_DEBUG_TEXTS];
 
-	void clearDebugTextBlocks(void);
+	void clearDebugTextBlocks();
 	void makeDebugTextBlock(char *text, int16 x, int16 y);
-
-	void printCurrentInfo(void);
 
 	void plotCrossHair(int16 x, int16 y, uint8 pen);
 	void drawRect(int16 x, int16 y, int16 x2, int16 y2, uint8 pen);
@@ -72,8 +70,8 @@ public:
 	ObjectGraphic _playerGraphic;
 	uint32 _playerGraphicNoFrames;
 
-	void buildDebugText(void);
-	void drawDebugGraphics(void);
+	void buildDebugText();
+	void drawDebugGraphics();
 
 protected:
 	Sword2Engine *_vm;

@@ -31,7 +31,7 @@
 
 namespace Sword2 {
 
-void Debugger::clearDebugTextBlocks(void) {
+void Debugger::clearDebugTextBlocks() {
 	uint8 blockNo = 0;
 
 	while (blockNo < MAX_DEBUG_TEXTS && _debugTextBlocks[blockNo] > 0) {
@@ -56,7 +56,7 @@ void Debugger::makeDebugTextBlock(char *text, int16 x, int16 y) {
 	_debugTextBlocks[blockNo] = _vm->_fontRenderer->buildNewBloc((byte *) text, x, y, 640 - x, 0, RDSPR_DISPLAYALIGN, CONSOLE_FONT_ID, NO_JUSTIFICATION);
 }
 
-void Debugger::buildDebugText(void) {
+void Debugger::buildDebugText() {
 	char buf[128];
 
 	int32 showVarNo;		// for variable watching
@@ -307,12 +307,21 @@ void Debugger::buildDebugText(void) {
 		// memory indicator - this should come last, to show all the
 		// sprite blocks above!
 
-		_vm->_memory->memStatusStr(buf);
+		uint32 totAlloc = _vm->_memory->getTotAlloc();
+		int16 numBlocks = _vm->_memory->getNumBlocks();
+
+		if (totAlloc < 1024)
+			sprintf(buf, "%u bytes in %d memory blocks", totAlloc, numBlocks);
+		else if (totAlloc < 1024 * 1024)
+			sprintf(buf, "%uK in %d memory blocks", totAlloc / 1024, numBlocks);
+		else
+			sprintf(buf, "%.02fM in %d memory blocks", totAlloc / 1048576., numBlocks);
+
 		makeDebugTextBlock(buf, 0, 0);
 	}
 }
 
-void Debugger::drawDebugGraphics(void) {
+void Debugger::drawDebugGraphics() {
 	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 	// walk-grid
 
@@ -362,20 +371,6 @@ void Debugger::drawRect(int16 x1, int16 y1, int16 x2, int16 y2, uint8 pen) {
 	_vm->_screen->drawLine(x1, y2, x2, y2, pen);	// bottom edge
 	_vm->_screen->drawLine(x1, y1, x1, y2, pen);	// left edge
 	_vm->_screen->drawLine(x2, y1, x2, y2, pen);	// right edge
-}
-
-void Debugger::printCurrentInfo(void) {
-	// prints general stuff about the screen, etc.
-	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
-
-	if (screenInfo->background_layer_id) {
-		DebugPrintf("background layer id %d\n", screenInfo->background_layer_id);
-		DebugPrintf("%d wide, %d high\n", screenInfo->screen_wide, screenInfo->screen_deep);
-		DebugPrintf("%d normal layers\n", screenInfo->number_of_layers);
-
-		_vm->_logic->examineRunList();
-	} else
-		DebugPrintf("No screen\n");
 }
 
 } // End of namespace Sword2

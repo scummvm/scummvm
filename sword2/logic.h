@@ -44,6 +44,11 @@ struct MovieTextObject;
 class Sword2Engine;
 class Router;
 
+struct EventUnit {
+	uint32 id;
+	uint32 interact_id;
+};
+
 class Logic {
 private:
 	Sword2Engine *_vm;
@@ -61,11 +66,6 @@ private:
 
 	// each object has one of these tacked onto the beginning
 	ObjectHub *_curObjectHub;
-
-	struct EventUnit {
-		uint32 id;
-		uint32 interact_id;
-	};
 
 	EventUnit _eventList[MAX_events];
 
@@ -148,6 +148,8 @@ public:
 	Logic(Sword2Engine *vm);
 	~Logic();
 
+	EventUnit *getEventList() { return _eventList; }
+
 	// Point to the global variable data
 	static uint32 *_scriptVars;
 
@@ -166,12 +168,12 @@ public:
 
 	void sendEvent(uint32 id, uint32 interact_id);
 	void setPlayerActionEvent(uint32 id, uint32 interact_id);
-	void startEvent(void);
-	int checkEventWaiting(void);
+	void startEvent();
+	int checkEventWaiting();
 	void clearEvent(uint32 id);
 	void killAllIdsEvents(uint32 id);
 
-	uint32 countEvents(void);
+	uint32 countEvents();
 
 	struct SyncUnit {
 		uint32 id;
@@ -181,7 +183,7 @@ public:
 	SyncUnit _syncList[MAX_syncs];
 
 	void clearSyncs(uint32 id);
-	int getSync(void);
+	int getSync();
 
 	Router *_router;
 
@@ -304,22 +306,19 @@ public:
 	int32 fnChangeShadows(int32 *params);
 
 	// do one cycle of the current session
-	int processSession(void);
+	int processSession();
 
 	// cause the logic loop to terminate and drop out
 	void expressChangeSession(uint32 sesh_id);
 
-	uint32 getRunList(void);
+	uint32 getRunList();
 
 	// setup script_id and script_pc in _curObjectHub - called by fnGosub()
 	void logicUp(uint32 new_script);
 
 	void logicReplace(uint32 new_script);
 	void logicOne(uint32 new_script);
-	void examineRunList(void);
-	void resetKillList(void);
-
-	void printEventList(void);
+	void resetKillList();
 };
 
 } // End of namespace Sword2

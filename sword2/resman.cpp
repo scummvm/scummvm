@@ -21,8 +21,8 @@
 #include "common/stdafx.h"
 #include "common/file.h"
 #include "sword2/sword2.h"
-#include "sword2/console.h"
 #include "sword2/defs.h"
+#include "sword2/console.h"
 #include "sword2/logic.h"
 #include "sword2/memory.h"
 #include "sword2/resman.h"
@@ -41,14 +41,6 @@ namespace Sword2 {
 //	resource.inf which is a list of ascii cluster file names
 //	resource.tab which is a table which tells us which cluster a resource
 //      is located in and the number within the cluster
-
-enum {
-	BOTH		= 0x0,		// Cluster is on both CDs
-	CD1		= 0x1,		// Cluster is on CD1 only
-	CD2		= 0x2,		// Cluster is on CD2 only
-	LOCAL_CACHE	= 0x4,		// Cluster is cached on HDD
-	LOCAL_PERM	= 0x8		// Cluster is on HDD.
-};
 
 #if !defined(__GNUC__)
 	#pragma START_PACK_STRUCTS
@@ -198,7 +190,7 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 	_usedMem = 0;
 }
 
-ResourceManager::~ResourceManager(void) {
+ResourceManager::~ResourceManager() {
 	Resource *res = _cacheStart;
 	while (res) {
 		_vm->_memory->memFree(res->ptr);
@@ -659,7 +651,7 @@ uint32 ResourceManager::fetchLen(uint32 res) {
 	return _resFiles[parent_res_file].entryTab[actual_res * 2 + 1];
 }
 
-void ResourceManager::checkMemUsage(void) {
+void ResourceManager::checkMemUsage() {
 	while (_usedMem > MAX_MEM_CACHE) {
 		// we're using up more memory than we wanted to. free some old stuff.
 		// Newly loaded objects are added to the start of the list,
@@ -679,113 +671,6 @@ void ResourceManager::checkMemUsage(void) {
 	}
 }
 
-void ResourceManager::printConsoleClusters(void) {
-	if (_totalClusters) {
-		for (uint i = 0; i < _totalClusters; i++) {
-			Debug_Printf("%-20s ", _resFiles[i].fileName);
-			if (!(_resFiles[i].cd & LOCAL_PERM)) {			
-				switch (_resFiles[i].cd & 3) {
-				case BOTH:
-					Debug_Printf("CD 1 & 2\n");
-					break;
-				case CD1:
-					Debug_Printf("CD 1\n");
-					break;
-				case CD2:
-					Debug_Printf("CD 2\n");
-					break;
-				default:
-					Debug_Printf("CD 3? Huh?!\n");
-					break;
-				}
-			} else
-				Debug_Printf("HD\n");
-		}
-		Debug_Printf("%d resources\n", _totalResFiles);
-	} else
-		Debug_Printf("Argh! No resources!\n");
-}
-
-void ResourceManager::listResources(uint minCount) {
-	for (uint i = 0; i < _totalResFiles; i++) {
-		if (_resList[i].ptr && _resList[i].refCount >= minCount) {
-			StandardHeader *head = (StandardHeader *) _resList[i].ptr;
-			Debug_Printf("%-4d: %-35s refCount: %-3d\n", i, head->name, _resList[i].refCount);
-		}
-	}
-}
-
-void ResourceManager::examine(int res) {
-	if (res < 0 || res >= (int) _totalResFiles)
-		Debug_Printf("Illegal resource %d (there are %d resources 0-%d)\n", res, _totalResFiles, _totalResFiles - 1);
-	else if (_resConvTable[res * 2] == 0xffff)
-		Debug_Printf("%d is a null & void resource number\n", res);
-	else {
-		// open up the resource and take a look inside!
-		StandardHeader *file_header = (StandardHeader *) openResource(res);
-
-		switch (file_header->fileType) {
-		case ANIMATION_FILE:
-			Debug_Printf("<anim> %s\n", file_header->name);
-			break;
-		case SCREEN_FILE:
-			Debug_Printf("<layer> %s\n", file_header->name);
-			break;
-		case GAME_OBJECT:
-			Debug_Printf("<game object> %s\n", file_header->name);
-			break;
-		case WALK_GRID_FILE:
-			Debug_Printf("<walk grid> %s\n", file_header->name);
-			break;
-		case GLOBAL_VAR_FILE:
-			Debug_Printf("<global variables> %s\n", file_header->name);
-			break;
-		case PARALLAX_FILE_null:
-			Debug_Printf("<parallax file NOT USED!> %s\n", file_header->name);
-			break;
-		case RUN_LIST:
-			Debug_Printf("<run list> %s\n", file_header->name);
-			break;
-		case TEXT_FILE:
-			Debug_Printf("<text file> %s\n", file_header->name);
-			break;
-		case SCREEN_MANAGER:
-			Debug_Printf("<screen manager> %s\n", file_header->name);
-			break;
-		case MOUSE_FILE:
-			Debug_Printf("<mouse pointer> %s\n", file_header->name);
-			break;
-		case ICON_FILE:
-			Debug_Printf("<menu icon> %s\n", file_header->name);
-			break;
-		default:
-			Debug_Printf("unrecognised fileType %d\n", file_header->fileType);
-			break;
-		}
-		closeResource(res);
-	}
-}
-
-void ResourceManager::kill(int res) {
-	if (res < 0 || res >= (int) _totalResFiles) {
-		Debug_Printf("Illegal resource %d (there are %d resources 0-%d)\n", res, _totalResFiles, _totalResFiles - 1);
-		return;
-	}
-
-	if (!_resList[res].ptr) {
-		Debug_Printf("Resource %d is not in memory\n", res);
-		return;
-	}
-
-	if (_resList[res].refCount) {
-		Debug_Printf("Resource %d is open - cannot remove\n", res);
-		return;
-	}
-
-	remove(res);
-	Debug_Printf("Trashed %d\n", res);
-}
-
 void ResourceManager::remove(int res) {
 	if (_resList[res].ptr) {
 		removeFromCacheList(_resList + res);
@@ -802,7 +687,7 @@ void ResourceManager::remove(int res) {
  * the player object and global variables resource.
  */
 
-void ResourceManager::removeAll(void) {
+void ResourceManager::removeAll() {
 	// We need to clear the FX queue, because otherwise the sound system
 	// will still believe that the sound resources are in memory, and that
 	// it's ok to close them.
@@ -880,7 +765,7 @@ void ResourceManager::killAllObjects(bool wantInfo) {
 		Debug_Printf("Expelled %d resources\n", nuked);
 }
 
-int ResourceManager::whichCd(void)  {
+int ResourceManager::whichCd()  {
 	return _curCd;
 }
 

@@ -43,14 +43,9 @@
 
 #include "common/stdafx.h"
 #include "sword2/sword2.h"
-#include "sword2/console.h"
 #include "sword2/memory.h"
 
 namespace Sword2 {
-
-#define MAX_BLOCKS 999
-
-#define Debug_Printf _vm->_debugger->DebugPrintf
 
 MemoryManager::MemoryManager(Sword2Engine *vm) : _vm(vm) {
 	// The id stack contains all the possible ids for the memory blocks.
@@ -71,24 +66,24 @@ MemoryManager::MemoryManager(Sword2Engine *vm) : _vm(vm) {
 	// encoding or decoding pointers any faster, and these are by far the
 	// most common operations.
 
-	_idStack = (int16 *) malloc(MAX_BLOCKS * sizeof(int16));
-	_memBlocks = (MemBlock *) malloc(MAX_BLOCKS * sizeof(MemBlock));
-	_memBlockIndex = (MemBlock **) malloc(MAX_BLOCKS * sizeof(MemBlock *));
+	_idStack = (int16 *) malloc(MAX_MEMORY_BLOCKS * sizeof(int16));
+	_memBlocks = (MemBlock *) malloc(MAX_MEMORY_BLOCKS * sizeof(MemBlock));
+	_memBlockIndex = (MemBlock **) malloc(MAX_MEMORY_BLOCKS * sizeof(MemBlock *));
 
 	_totAlloc = 0;
 	_numBlocks = 0;
 
-	for (int i = 0; i < MAX_BLOCKS; i++) {
-		_idStack[i] = MAX_BLOCKS - i - 1;
+	for (int i = 0; i < MAX_MEMORY_BLOCKS; i++) {
+		_idStack[i] = MAX_MEMORY_BLOCKS - i - 1;
 		_memBlocks[i].ptr = NULL;
 		_memBlockIndex[i] = NULL;
 	}
 
-	_idStackPtr = MAX_BLOCKS;
+	_idStackPtr = MAX_MEMORY_BLOCKS;
 }
 
 MemoryManager::~MemoryManager() {
-	for (int i = 0; i < MAX_BLOCKS; i++)
+	for (int i = 0; i < MAX_MEMORY_BLOCKS; i++)
 		free(_memBlocks[i].ptr);
 	free(_memBlocks);
 	free(_memBlockIndex);
@@ -243,98 +238,6 @@ void MemoryManager::memFree(byte *ptr) {
 
 	for (int i = idx; i < _numBlocks; i++)
 		_memBlockIndex[i] = _memBlockIndex[i + 1];
-}
-
-static int compare_blocks(const void *p1, const void *p2) {
-	const MemBlock *m1 = *(const MemBlock * const *) p1;
-	const MemBlock *m2 = *(const MemBlock * const *) p2;
-
-	if (m1->size < m2->size)
-		return 1;
-	if (m1->size > m2->size)
-		return -1;
-	return 0;
-}
-
-void MemoryManager::memDisplay() {
-	MemBlock **blocks = (MemBlock **) malloc(_numBlocks * sizeof(MemBlock));
-	int i, j;
-
-	for (i = 0, j = 0; i < MAX_BLOCKS; i++) {
-		if (_memBlocks[i].ptr)
-			blocks[j++] = &_memBlocks[i];
-	}
-
-	qsort(blocks, _numBlocks, sizeof(MemBlock *), compare_blocks);
-
-	Debug_Printf("     size id  res  type                 name\n");
-	Debug_Printf("---------------------------------------------------------------------------\n");
-
-	for (i = 0; i < _numBlocks; i++) {
-		StandardHeader *head = (StandardHeader *) blocks[i]->ptr;
-		const char *type;
-
-		switch (head->fileType) {
-		case ANIMATION_FILE:
-			type = "ANIMATION_FILE";
-			break;
-		case SCREEN_FILE:
-			type = "SCREEN_FILE";
-			break;
-		case GAME_OBJECT:
-			type  = "GAME_OBJECT";
-			break;
-		case WALK_GRID_FILE:
-			type = "WALK_GRID_FILE";
-			break;
-		case GLOBAL_VAR_FILE:
-			type = "GLOBAL_VAR_FILE";
-			break;
-		case PARALLAX_FILE_null:
-			type = "PARALLAX_FILE_null";
-			break;
-		case RUN_LIST:
-			type = "RUN_LIST";
-			break;
-		case TEXT_FILE:
-			type = "TEXT_FILE";
-			break;
-		case SCREEN_MANAGER:
-			type = "SCREEN_MANAGER";
-			break;
-		case MOUSE_FILE:
-			type = "MOUSE_FILE";
-			break;
-		case WAV_FILE:
-			type = "WAV_FILE";
-			break;
-		case ICON_FILE:
-			type = "ICON_FILE";
-			break;
-		case PALETTE_FILE:
-			type = "PALETTE_FILE";
-			break;
-		default:
-			type = "<unknown>";
-			break;
-		}
-
-		Debug_Printf("%9ld %-3d %-4d %-20s %s\n", blocks[i]->size, blocks[i]->id, blocks[i]->uid, type, head->name);
-	}
-		
-	free(blocks);
-
-	Debug_Printf("---------------------------------------------------------------------------\n");
-	Debug_Printf("%9ld\n", _totAlloc);
-}
-
-void MemoryManager::memStatusStr(char *buf) {
-	if (_totAlloc < 1024)
-		sprintf(buf, "%u bytes in %d memory blocks", _totAlloc, _numBlocks);
-	else if (_totAlloc < 1024 * 1024)
-		sprintf(buf, "%uK in %d memory blocks", _totAlloc / 1024, _numBlocks);
-	else
-		sprintf(buf, "%.02fM in %d memory blocks", _totAlloc / 1048576., _numBlocks);
 }
 
 } // End of namespace Sword2

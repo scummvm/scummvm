@@ -22,7 +22,6 @@
 #include "common/file.h"
 
 #include "sword2/sword2.h"
-#include "sword2/console.h"
 #include "sword2/defs.h"
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
@@ -31,8 +30,6 @@
 #include "sword2/resman.h"
 #include "sword2/router.h"
 #include "sword2/sound.h"
-
-#define Debug_Printf _debugger->DebugPrintf
 
 namespace Sword2 {
 
@@ -145,37 +142,7 @@ void Sword2Engine::registerStartPoint(int32 key, char *name) {
 	_totalStartups++;
 }
 
-/**
- * The console 'starts' (or 's') command which lists out all the registered
- * start points in the game.
- */
-
-void Sword2Engine::conPrintStartMenu() {
-	if (!_totalStartups) {
-		Debug_Printf("Sorry - no startup positions registered?\n");
-
-		if (!_totalScreenManagers)
-			Debug_Printf("There is a problem with startup.inf\n");
-		else
-			Debug_Printf(" (%d screen managers found in startup.inf)\n", _totalScreenManagers);
-		return;
-	}
-
-	for (uint i = 0; i < _totalStartups; i++)
-		Debug_Printf("%d  (%s)\n", i, _startList[i].description);
-}
-
-void Sword2Engine::conStart(int start) {
-	if (!_totalStartups) {
-		Debug_Printf("Sorry - there are no startups!\n");
-		return;
-	}
-
-	if (start < 0 || start >= (int) _totalStartups) {
-		Debug_Printf("Not a legal start position\n");
-		return;
-	}
-
+void Sword2Engine::runStart(int start) {
 	// Restarting - stop sfx, music & speech!
 
 	_sound->clearFxQueue();
@@ -207,7 +174,6 @@ void Sword2Engine::conStart(int start) {
 	// Denotes script to run
 	uint32 null_pc = _startList[start].key & 0xffff;
 
-	Debug_Printf("Running start %d\n", start);
 	_logic->runScript(raw_script, raw_data_ad, &null_pc);
 
 	_resman->closeResource(_startList[start].start_res_id);
