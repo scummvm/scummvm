@@ -76,28 +76,24 @@ void Process_fx_queue(void) {
 			continue;
 
 		switch (fxq[j].type) {
-			case FX_RANDOM:
-				// 1 in 'delay' chance of this fx occurring
-				if (rand() % fxq[j].delay == 0)
-					Trigger_fx(j);
-				break;
-
-			case FX_SPOT:
-				if (fxq[j].delay)
-					fxq[j].delay--;
-				else {
-					Trigger_fx(j);
-					fxq[j].type = FX_SPOT2;
-				}
-				break;
-
-			case FX_SPOT2:
-				// Once the Fx has finished remove it from
-				// the queue.
-
-				if (g_sound->IsFxOpen(j + 1))
-					fxq[j].resource = 0;
-				break;
+		case FX_RANDOM:
+			// 1 in 'delay' chance of this fx occurring
+			if (rand() % fxq[j].delay == 0)
+				Trigger_fx(j);
+			break;
+		case FX_SPOT:
+			if (fxq[j].delay)
+				fxq[j].delay--;
+			else {
+				Trigger_fx(j);
+				fxq[j].type = FX_SPOT2;
+			}
+			break;
+		case FX_SPOT2:
+			// Once the Fx has finished remove it from the queue.
+			if (g_sound->IsFxOpen(j + 1))
+				fxq[j].resource = 0;
+			break;
 		}
 	}
 }
@@ -163,22 +159,18 @@ int32 FN_play_fx(int32 *params) {		// called from script only
 	char type[10];
 
 	if (wantSfxDebug) {
-		switch (params[1])	// 'type'
-		{
-			case FX_SPOT:
-				strcpy(type, "SPOT");
-				break;
-
-			case FX_LOOP:
-				strcpy(type, "LOOPED");
-				break;
-
-			case FX_RANDOM:
-				strcpy(type, "RANDOM");
-				break;
-
-			default:
-				strcpy(type, "INVALID");
+		switch (params[1]) {	// 'type'
+		case FX_SPOT:
+			strcpy(type, "SPOT");
+			break;
+		case FX_LOOP:
+			strcpy(type, "LOOPED");
+			break;
+		case FX_RANDOM:
+			strcpy(type, "RANDOM");
+			break;
+		default:
+			strcpy(type, "INVALID");
 		}
 
 		Zdebug("SFX (sample=\"%s\", vol=%d, pan=%d, delay=%d, type=%s)", FetchObjectName(params[0]), params[3], params[4], params[2], type);

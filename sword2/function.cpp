@@ -263,21 +263,18 @@ int32 FN_flash(int32 *params) {		// (James14feb97)
 #ifdef _SWORD2_DEBUG
 	// what colour?
 	switch (params[0]) {
-		case WHITE:
-			BS2_SetPalette(0, 1, white, RDPAL_INSTANT);
-			break;
-
-		case RED:
-			BS2_SetPalette(0, 1, red, RDPAL_INSTANT);
-			break;
-
-		case GREEN:
-			BS2_SetPalette(0, 1, green, RDPAL_INSTANT);
-			break;
-
-		case BLUE:
-			BS2_SetPalette(0, 1, blue, RDPAL_INSTANT);
-			break;
+	case WHITE:
+		BS2_SetPalette(0, 1, white, RDPAL_INSTANT);
+		break;
+	case RED:
+		BS2_SetPalette(0, 1, red, RDPAL_INSTANT);
+		break;
+	case GREEN:
+		BS2_SetPalette(0, 1, green, RDPAL_INSTANT);
+		break;
+	case BLUE:
+		BS2_SetPalette(0, 1, blue, RDPAL_INSTANT);
+		break;
 	}
 
 	// There used to be a busy-wait loop here, so I don't know how long
@@ -302,25 +299,21 @@ int32 FN_colour(int32 *params) {	// (James14feb97)
 #ifdef _SWORD2_DEBUG
 	// what colour?
 	switch (params[0]) {
-		case BLACK:
-			BS2_SetPalette(0, 1, black, RDPAL_INSTANT);
-			break;
-
-		case WHITE:
-			BS2_SetPalette(0, 1, white, RDPAL_INSTANT);
-			break;
-
-		case RED:
-			BS2_SetPalette(0, 1, red, RDPAL_INSTANT);
-			break;
-
-		case GREEN:
-			BS2_SetPalette(0, 1, green, RDPAL_INSTANT);
-			break;
-
-		case BLUE:
-			BS2_SetPalette(0, 1, blue, RDPAL_INSTANT);
-			break;
+	case BLACK:
+		BS2_SetPalette(0, 1, black, RDPAL_INSTANT);
+		break;
+	case WHITE:
+		BS2_SetPalette(0, 1, white, RDPAL_INSTANT);
+		break;
+	case RED:
+		BS2_SetPalette(0, 1, red, RDPAL_INSTANT);
+		break;
+	case GREEN:
+		BS2_SetPalette(0, 1, green, RDPAL_INSTANT);
+		break;
+	case BLUE:
+		BS2_SetPalette(0, 1, blue, RDPAL_INSTANT);
+		break;
 	}
 #endif
 

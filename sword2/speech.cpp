@@ -661,233 +661,215 @@ int32	FN_speech_process(int32	*params) {	// Tony5Dec96
 	while(1) {
 		//we are currently running a command
 		switch (ob_speech->command) {
-			case 0:
-				// Do nothing
-				break;
+		case 0:
+			// Do nothing
+			break;
+		case INS_talk:
+			pars[0] = params[0];		// ob_graphic
+			pars[1] = params[1];		// ob_speech
+			pars[2] = params[2];		// ob_logic
+			pars[3] = params[3];		// ob_mega
+			pars[4] = ob_speech->ins1;	// encoded text number
+			pars[5] = ob_speech->ins2;	// wav res id
+			pars[6] = ob_speech->ins3;	// anim res id
+			pars[7] = ob_speech->ins4;	// anim table res id
+			pars[8] = ob_speech->ins5;	// animation mode - 0 lip synced, 1 just straight animation
 
-			case INS_talk:
-				pars[0] = params[0];		// ob_graphic
-				pars[1] = params[1];		// ob_speech
-				pars[2] = params[2];		// ob_logic
-				pars[3] = params[3];		// ob_mega
+			// Zdebug("speech-process talk");
 
-				pars[4] = ob_speech->ins1;	// encoded text number
-				pars[5] = ob_speech->ins2;	// wav res id
-				pars[6] = ob_speech->ins3;	// anim res id
-				pars[7] = ob_speech->ins4;	// anim table res id
-				pars[8] = ob_speech->ins5;	// animation mode - 0 lip synced, 1 just straight animation
+			// run the function - (it thinks it's been called from
+			// script - bloody fool)
 
-				// Zdebug("speech-process talk");
+			if (FN_i_speak(pars) != IR_REPEAT) {
+				// Zdebug("speech-process talk finished");
+				// command finished
+				ob_speech->command = 0;
 
-				// run the function - (it thinks it's been
-				// called from script - bloody fool)
+				// waiting for command
+				ob_speech->wait_state = 1;
+			}
 
-				if (FN_i_speak(pars) != IR_REPEAT) {
-					// Zdebug("speech-process talk finished");
-					// command finished
-					ob_speech->command = 0;
+			// come back again next cycle
+			return IR_REPEAT;
+		case INS_turn:
+			pars[0] = params[2];		// ob_logic
+			pars[1] = params[0];		// ob_graphic
+			pars[2] = params[3];		// ob_mega
+			pars[3] = params[4];		// ob_walkdata
+			pars[4] = ob_speech->ins1;	// direction to turn to
 
-					// waiting for command
-					ob_speech->wait_state = 1;
-				}
+			if (FN_turn(pars) != IR_REPEAT) {
+				// command finished
+				ob_speech->command = 0;
 
-				// come back again next cycle
-				return IR_REPEAT;
+				// waiting for command
+				ob_speech->wait_state = 1;
+			}
 
-			case INS_turn:
-				pars[0] = params[2];		// ob_logic
-				pars[1] = params[0];		// ob_graphic
-				pars[2] = params[3];		// ob_mega
-				pars[3] = params[4];		// ob_walkdata
-				pars[4] = ob_speech->ins1;	// direction to turn to
+			// come back again next cycle
+			return IR_REPEAT;
+		case INS_face:
+			pars[0] = params[2];		// ob_logic
+			pars[1] = params[0];		// ob_graphic
+			pars[2] = params[3];		// ob_mega
+			pars[3] = params[4];		// ob_walkdata
+			pars[4] = ob_speech->ins1;	// target
 
-				if (FN_turn(pars) != IR_REPEAT) {
-					// command finished
-					ob_speech->command = 0;
+			if (FN_face_mega(pars) != IR_REPEAT) {
+				// command finished
+				ob_speech->command = 0;
 
-					// waiting for command
-					ob_speech->wait_state = 1;
-				}
+				// waiting for command
+				ob_speech->wait_state = 1;
+			}
 
-				// come back again next cycle
-				return IR_REPEAT;
+			// come back again next cycle
+			return IR_REPEAT;
+		case INS_anim:
+			pars[0] = params[2];		// ob_logic
+			pars[1] = params[0];		// ob_graphic
+			pars[2] = ob_speech->ins1;	// anim res
 
-			case INS_face:
-				pars[0] = params[2];		// ob_logic
-				pars[1] = params[0];		// ob_graphic
-				pars[2] = params[3];		// ob_mega
-				pars[3] = params[4];		// ob_walkdata
-				pars[4] = ob_speech->ins1;	// target
+			if (FN_anim(pars) != IR_REPEAT) {
+				// command finished
+				ob_speech->command = 0;
 
-				if (FN_face_mega(pars) != IR_REPEAT) {
-					// command finished
-					ob_speech->command = 0;
+				// waiting for command
+				ob_speech->wait_state = 1;
+			}
 
-					// waiting for command
-					ob_speech->wait_state = 1;
-				}
+			// come back again next cycle
+			return IR_REPEAT;
+		case INS_reverse_anim:
+			pars[0] = params[2];		// ob_logic
+			pars[1] = params[0];		// ob_graphic
+			pars[2] = ob_speech->ins1;	// anim res
 
-				// come back again next cycle
-				return IR_REPEAT;
+			if (FN_reverse_anim(pars) != IR_REPEAT) {
+				// command finished
+				ob_speech->command = 0;
 
-			case INS_anim:
-				pars[0] = params[2];		// ob_logic
-				pars[1] = params[0];		// ob_graphic
-				pars[2] = ob_speech->ins1;	// anim res
+				// waiting for command
+				ob_speech->wait_state = 1;
+			}
 
-				if (FN_anim(pars) != IR_REPEAT) {
-					// command finished
-					ob_speech->command = 0;
+			// come back again next cycle
+			return IR_REPEAT;
+		case INS_table_anim:
+			pars[0] = params[2];		// ob_logic
+			pars[1] = params[0];		// ob_graphic
+			pars[2] = params[3];		// ob_mega
+			pars[3] = ob_speech->ins1;	// pointer to anim table
 
-					// waiting for command
-					ob_speech->wait_state = 1;
-				}
+			if (FN_mega_table_anim(pars) != IR_REPEAT) {
+				// command finished
+				ob_speech->command = 0;
 
-				// come back again next cycle
-				return IR_REPEAT;
+				// waiting for command
+				ob_speech->wait_state = 1;
+			}
 
-			case INS_reverse_anim:
-				pars[0] = params[2];		// ob_logic
-				pars[1] = params[0];		// ob_graphic
-				pars[2] = ob_speech->ins1;	// anim res
+			// come back again next cycle
+			return IR_REPEAT;
+		case INS_reverse_table_anim:
+			pars[0] = params[2];		// ob_logic
+			pars[1] = params[0];		// ob_graphic
+			pars[2] = params[3];		// ob_mega
+			pars[3] = ob_speech->ins1;	// pointer to anim table
 
-				if (FN_reverse_anim(pars) != IR_REPEAT) {
-					// command finished
-					ob_speech->command = 0;
+			if (FN_reverse_mega_table_anim(pars) != IR_REPEAT) {
+				// command finished
+				ob_speech->command = 0;
 
-					// waiting for command
-					ob_speech->wait_state = 1;
-				}
+				// waiting for command
+				ob_speech->wait_state = 1;
+			}
 
-				// come back again next cycle
-				return IR_REPEAT;
+			// come back again next cycle
+			return IR_REPEAT;
+		case INS_no_sprite:
+			FN_no_sprite(params);		// ob_graphic
+			ob_speech->command = 0;		// command finished
+			ob_speech->wait_state = 1;	// waiting for command
+			return IR_REPEAT ;
+		case INS_sort:
+			FN_sort_sprite(params);		// ob_graphic
+			ob_speech->command = 0;		// command finished
+			ob_speech->wait_state = 1;	// waiting for command
+			return IR_REPEAT;
+		case INS_foreground:
+			FN_fore_sprite(params);		// ob_graphic
+			ob_speech->command = 0;		// command finished
+			ob_speech->wait_state = 1;	// waiting for command
+			return IR_REPEAT;
+		case INS_background:
+			FN_back_sprite(params);		// ob_graphic
+			ob_speech->command = 0;		// command finished
+			ob_speech->wait_state = 1;	// waiting for command
+			return IR_REPEAT;
+		case INS_walk:
+			pars[0] = params[2];		// ob_logic
+			pars[1] = params[0];		// ob_graphic
+			pars[2] = params[3];		// ob_mega
+			pars[3] = params[4];		// ob_walkdata
+			pars[4] = ob_speech->ins1;	// target x
+			pars[5] = ob_speech->ins2;	// target y
+			pars[6] = ob_speech->ins3;	// target direction
 
-			case INS_table_anim:
-				pars[0] = params[2];		// ob_logic
-				pars[1] = params[0];		// ob_graphic
-				pars[2] = params[3];		// ob_mega
-				pars[3] = ob_speech->ins1;	// pointer to anim table
+			if (FN_walk(pars) != IR_REPEAT) {
+				// Zdebug("speech-process walk finished");
+				// command finished
+				ob_speech->command = 0;
 
-				if (FN_mega_table_anim(pars) != IR_REPEAT) {
-					// command finished
-					ob_speech->command = 0;
+				//waiting for command
+				ob_speech->wait_state = 1;
+			}
 
-					// waiting for command
-					ob_speech->wait_state = 1;
-				}
+			// come back again next cycle
+			return IR_REPEAT;
+		case INS_walk_to_anim:
+			pars[0] = params[2];		// ob_logic
+			pars[1] = params[0];		// ob_graphic
+			pars[2] = params[3];		// ob_mega
+			pars[3] = params[4];		// ob_walkdata
+			pars[4] = ob_speech->ins1;	// anim resource
 
-				// come back again next cycle
-				return IR_REPEAT;
+			if (FN_walk_to_anim(pars) != IR_REPEAT) {
+				// Zdebug("speech-process walk finished");
+				// command finished
+				ob_speech->command = 0;
 
-			case INS_reverse_table_anim:
-				pars[0] = params[2];		// ob_logic
-				pars[1] = params[0];		// ob_graphic
-				pars[2] = params[3];		// ob_mega
-				pars[3] = ob_speech->ins1;	// pointer to anim table
+				// waiting for command
+				ob_speech->wait_state = 1;
+			}
 
-				if (FN_reverse_mega_table_anim(pars) != IR_REPEAT) {
-					// command finished
-					ob_speech->command = 0;
-
-					// waiting for command
-					ob_speech->wait_state = 1;
-				}
-
-				// come back again next cycle
-				return IR_REPEAT;
-
-			case INS_no_sprite:
-				FN_no_sprite(params);		// ob_graphic
-				ob_speech->command = 0;		// command finished
-				ob_speech->wait_state = 1;	// waiting for command
-				return IR_REPEAT ;
-
-			case INS_sort:
-				FN_sort_sprite(params);		// ob_graphic
-				ob_speech->command = 0;		// command finished
-				ob_speech->wait_state = 1;	// waiting for command
-				return IR_REPEAT;
-
-			case INS_foreground:
-				FN_fore_sprite(params);		// ob_graphic
-				ob_speech->command = 0;		// command finished
-				ob_speech->wait_state = 1;	// waiting for command
-				return IR_REPEAT;
-
-			case INS_background:
-				FN_back_sprite(params);		// ob_graphic
-				ob_speech->command = 0;		// command finished
-				ob_speech->wait_state = 1;	// waiting for command
-				return IR_REPEAT;
-
-			case INS_walk:
-				pars[0] = params[2];		// ob_logic
-				pars[1] = params[0];		// ob_graphic
-				pars[2] = params[3];		// ob_mega
-				pars[3] = params[4];		// ob_walkdata
-				pars[4] = ob_speech->ins1;	// target x
-				pars[5] = ob_speech->ins2;	// target y
-				pars[6] = ob_speech->ins3;	// target direction
-
-				if (FN_walk(pars) != IR_REPEAT) {
-					// Zdebug("speech-process walk finished");
-					// command finished
-					ob_speech->command = 0;
-
-					//waiting for command
-					ob_speech->wait_state = 1;
-				}
-
-				// come back again next cycle
-				return IR_REPEAT;
-
-			case INS_walk_to_anim:
-				pars[0] = params[2];		// ob_logic
-				pars[1] = params[0];		// ob_graphic
-				pars[2] = params[3];		// ob_mega
-				pars[3] = params[4];		// ob_walkdata
-				pars[4] = ob_speech->ins1;	// anim resource
-
-				if (FN_walk_to_anim(pars) != IR_REPEAT) {
-					// Zdebug("speech-process walk finished");
-					// command finished
-					ob_speech->command = 0;
-					// waiting for command
-					ob_speech->wait_state = 1;
-				}
-
-				// come back again next cycle
-				return IR_REPEAT;
-
-			case INS_stand_after_anim:
-				pars[0] = params[0];		// ob_graphic
-				pars[1] = params[3];		// ob_mega
-				pars[2] = ob_speech->ins1;	// anim resource
-				FN_stand_after_anim(pars);
-				ob_speech->command = 0;		// command finished
-				ob_speech->wait_state = 1;	// waiting for command
-				return IR_REPEAT;		// come back again next cycle
-
-			case INS_set_frame:
-
-				pars[0] = params[0];		// ob_graphic
-				pars[1] = ob_speech->ins1;	// anim_resource
-				pars[2] = ob_speech->ins2;	// FIRST_FRAME or LAST_FRAME
-				ret= FN_set_frame(pars);
-				ob_speech->command = 0;		// command finished
-				ob_speech->wait_state = 1;	// waiting for command
-				return IR_REPEAT;		// come back again next cycle
-
-			case INS_quit:
-				// Zdebug("speech-process - quit");
-				ob_speech->command = 0;		// finish with all this
-				// ob_speech->wait_state = 0;	// start with waiting for command next conversation
-				return IR_CONT;			// thats it, we're finished with this
-
-			default:
-				ob_speech->command = 0;		// not yet implemented - just cancel
-				ob_speech->wait_state = 1;	// waiting for command
-				break;
+			// come back again next cycle
+			return IR_REPEAT;
+		case INS_stand_after_anim:
+			pars[0] = params[0];		// ob_graphic
+			pars[1] = params[3];		// ob_mega
+			pars[2] = ob_speech->ins1;	// anim resource
+			FN_stand_after_anim(pars);
+			ob_speech->command = 0;		// command finished
+			ob_speech->wait_state = 1;	// waiting for command
+			return IR_REPEAT;		// come back again next cycle
+		case INS_set_frame:
+			pars[0] = params[0];		// ob_graphic
+			pars[1] = ob_speech->ins1;	// anim_resource
+			pars[2] = ob_speech->ins2;	// FIRST_FRAME or LAST_FRAME
+			ret = FN_set_frame(pars);
+			ob_speech->command = 0;		// command finished
+			ob_speech->wait_state = 1;	// waiting for command
+			return IR_REPEAT;		// come back again next cycle
+		case INS_quit:
+			// Zdebug("speech-process - quit");
+			ob_speech->command = 0;		// finish with all this
+			// ob_speech->wait_state = 0;	// start with waiting for command next conversation
+			return IR_CONT;			// thats it, we're finished with this
+		default:
+			ob_speech->command = 0;		// not yet implemented - just cancel
+			ob_speech->wait_state = 1;	// waiting for command
+			break;
 		}
 
 		if (SPEECH_ID == ID) {
@@ -1629,48 +1611,37 @@ void GetCorrectCdForSpeech(int32 wavId) {
 
 uint8 WantSpeechForLine(uint32 wavId) {	// James (29july97)
 	switch (wavId) {
-		case 1328:	// AttendantSpeech
-				//	SFX(Phone71);
-				//	FX <Telephone rings>
-
-		case 2059:	// PabloSpeech
-				//	SFX (2059);
-				//	FX <Sound of sporadic gunfire from below>
-
-		case 4082:	// DuaneSpeech
-				//	SFX (4082);
-				//	FX <Pffffffffffft! Frp. (Unimpressive, flatulent noise.)>
-
-		case 4214:	// cat_52
-				//	SFX (4214);
-				//	4214FXMeow!
-
-		case 4568:	// trapdoor_13
-	 			//	SFX (4568);
-				//	4568fx<door slamming>
-
-		case 4913:	// LobineauSpeech
-				//	SFX (tone2);
-				//	FX <Lobineau hangs up>
-
-		case 5120:	// bush_66
-				//	SFX (5120);
-				//	5120FX<loud buzzing>
-
-		case 528:	// PresidentaSpeech
-				//	SFX (528);
-				//	FX <Nearby Crash of Collapsing Masonry>
-
-		case 920:	// location 62
-
-		case 923:	// location 62
-
-		case 926:	// location 62
-			// don't want speech for these lines!
-			return 0;
-
-		default:
-			// ok for all other lines
-			return 1;
+	case 1328:	// AttendantSpeech
+			//	SFX(Phone71);
+			//	FX <Telephone rings>
+	case 2059:	// PabloSpeech
+			//	SFX (2059);
+			//	FX <Sound of sporadic gunfire from below>
+	case 4082:	// DuaneSpeech
+			//	SFX (4082);
+			//	FX <Pffffffffffft! Frp. (Unimpressive, flatulent noise.)>
+	case 4214:	// cat_52
+			//	SFX (4214);
+			//	4214FXMeow!
+	case 4568:	// trapdoor_13
+ 			//	SFX (4568);
+			//	4568fx<door slamming>
+	case 4913:	// LobineauSpeech
+			//	SFX (tone2);
+			//	FX <Lobineau hangs up>
+	case 5120:	// bush_66
+			//	SFX (5120);
+			//	5120FX<loud buzzing>
+	case 528:	// PresidentaSpeech
+			//	SFX (528);
+			//	FX <Nearby Crash of Collapsing Masonry>
+	case 920:	// location 62
+	case 923:	// location 62
+	case 926:	// location 62
+		// don't want speech for these lines!
+		return 0;
+	default:
+		// ok for all other lines
+		return 1;
 	}
 }

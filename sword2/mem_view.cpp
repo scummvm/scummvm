@@ -125,37 +125,28 @@ void Console_mem_display(void) {	// Tony13Aug96
 }
 
 const char *Fetch_mem_owner(uint32 uid) {	//Tony3June96
-	switch(uid) {
-		case UID_memman:
-			return "MEMMAN";
-
-		case UID_font:
-			return "font";
-
-		case UID_temp:
-			return "temp ram allocation";
-
-		case UID_decompression_buffer:
-			return "decompression buffer";
-
-		case UID_shrink_buffer:
-			return "shrink buffer";
-
-		case UID_con_sprite:
-			return "console sprite buffer";
-
-		case UID_text_sprite:
-			return "text sprite";
-
-		case UID_walk_anim:
-			return "walk anim";
-
-		case UID_savegame_buffer:
-			return "savegame buffer";
-
-		default:
-			sprintf(buf, "<sob> %d?", uid);
-			return buf;
+	switch (uid) {
+	case UID_memman:
+		return "MEMMAN";
+	case UID_font:
+		return "font";
+	case UID_temp:
+		return "temp ram allocation";
+	case UID_decompression_buffer:
+		return "decompression buffer";
+	case UID_shrink_buffer:
+		return "shrink buffer";
+	case UID_con_sprite:
+		return "console sprite buffer";
+	case UID_text_sprite:
+		return "text sprite";
+	case UID_walk_anim:
+		return "walk anim";
+	case UID_savegame_buffer:
+		return "savegame buffer";
+	default:
+		sprintf(buf, "<sob> %d?", uid);
+		return buf;
 	}
 }
 

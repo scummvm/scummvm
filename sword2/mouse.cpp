@@ -144,31 +144,26 @@ void Mouse_engine(void) {	// Tony30Sept96
 	}
 
 	switch (mouse_mode) {
-		case MOUSE_normal:
-			Normal_mouse();
-			break;
-
-		case MOUSE_top:
-			Top_menu_mouse();
-			break;
-
-		case MOUSE_drag:
-			Drag_mouse();
-			break;
-
-		case MOUSE_system_menu:
-			System_menu();
-			break;
-
-		case MOUSE_holding:
-			if (mousey < 400) {
-				mouse_mode = MOUSE_normal;
-				Zdebug("   releasing");
-			}
-			break;
-
-		default:
-			break;
+	case MOUSE_normal:
+		Normal_mouse();
+		break;
+	case MOUSE_top:
+		Top_menu_mouse();
+		break;
+	case MOUSE_drag:
+		Drag_mouse();
+		break;
+	case MOUSE_system_menu:
+		System_menu();
+		break;
+	case MOUSE_holding:
+		if (mousey < 400) {
+			mouse_mode = MOUSE_normal;
+			Zdebug("   releasing");
+		}
+		break;
+	default:
+		break;
 	}
 }
 
@@ -249,25 +244,21 @@ void System_menu(void) {	// Tony19Mar97
 
 				// call the relevent screen
 				switch (hit) {
-					case 0:
-						Option_control();
-						break;
-
-					case 1:
-						Quit_control();
-						break;
-
-					case 2:
-						Save_control();
-						break;
-
-					case 3:
-						Restore_control();
-						break;
-
-					case 4:
-						Restart_control();
-						break;
+				case 0:
+					Option_control();
+					break;
+				case 1:
+					Quit_control();
+					break;
+				case 2:
+					Save_control();
+					break;
+				case 3:
+					Restore_control();
+					break;
+				case 4:
+					Restart_control();
+					break;
 				}
 
 				// Menu stays open on death screen
@@ -917,96 +908,80 @@ void CreatePointerText(uint32 textId, uint32 pointerRes) {	// James16jun97
 			// correctly for text position
 
 			switch (pointerRes) {
-				case CROSHAIR:
-					yOffset = -7;
-					xOffset = +10;
-					break;
-
-				case EXIT0:
-					yOffset = +15;
-					xOffset = +20;
-					break;
-
-				case EXIT1:
-					yOffset = +16;
-					xOffset = -10;
-					break;
-
-				case EXIT2:
-					yOffset = +10;
-					xOffset = -22;
-					break;
-
-				case EXIT3:
-					yOffset = -16;
-					xOffset = -10;
-					break;
-
-				case EXIT4:
-					yOffset = -15;
-					xOffset = +15;
-					break;
-
-				case EXIT5:
-					yOffset = -12;
-					xOffset = +10;
-					break;
-
-				case EXIT6:
-					yOffset = +10;
-					xOffset = +25;
-					break;
-
-				case EXIT7:
-					yOffset = +16;
-					xOffset = +20;
-					break;
-
-				case EXITDOWN:
-					yOffset = -20;
-					xOffset = -10;
-					break;
-
-				case EXITUP:
-					yOffset = +20;
-					xOffset = +20;
-					break;
-
-				case MOUTH:
-					yOffset = -10;
-					xOffset = +15;
-					break;
-
-				case NORMAL:
-					yOffset = -10;
-					xOffset = +15;
-					break;
-
-				case PICKUP:
-					yOffset = -40;
-					xOffset = +10;
-					break;
-
-				case SCROLL_L:
-					yOffset = -20;
-					xOffset = +20;
-					break;
-
-				case SCROLL_R:
-					yOffset = -20;
-					xOffset = -20;
-					break;
-
-				case USE:
-					yOffset = -8;
-					xOffset = +20;
-					break;
-
-				default:
-					// shouldn't happen if we cover all
-					// the different mouse pointers above
-					yOffset = -10;
-					xOffset = +10;
+			case CROSHAIR:
+				yOffset = -7;
+				xOffset = +10;
+				break;
+			case EXIT0:
+				yOffset = +15;
+				xOffset = +20;
+				break;
+			case EXIT1:
+				yOffset = +16;
+				xOffset = -10;
+				break;
+			case EXIT2:
+				yOffset = +10;
+				xOffset = -22;
+				break;
+			case EXIT3:
+				yOffset = -16;
+				xOffset = -10;
+				break;
+			case EXIT4:
+				yOffset = -15;
+				xOffset = +15;
+				break;
+			case EXIT5:
+				yOffset = -12;
+				xOffset = +10;
+				break;
+			case EXIT6:
+				yOffset = +10;
+				xOffset = +25;
+				break;
+			case EXIT7:
+				yOffset = +16;
+				xOffset = +20;
+				break;
+			case EXITDOWN:
+				yOffset = -20;
+				xOffset = -10;
+				break;
+			case EXITUP:
+				yOffset = +20;
+				xOffset = +20;
+				break;
+			case MOUTH:
+				yOffset = -10;
+				xOffset = +15;
+				break;
+			case NORMAL:
+				yOffset = -10;
+				xOffset = +15;
+				break;
+			case PICKUP:
+				yOffset = -40;
+				xOffset = +10;
+				break;
+			case SCROLL_L:
+				yOffset = -20;
+				xOffset = +20;
+				break;
+			case SCROLL_R:
+				yOffset = -20;
+				xOffset = -20;
+				break;
+			case USE:
+				yOffset = -8;
+				xOffset = +20;
+				break;
+			default:
+				// shouldn't happen if we cover all
+				// the different mouse pointers above
+				yOffset = -10;
+				xOffset = +10;
+				break;
 			}
 
 			// set up justification for text sprite, based on its

@@ -365,390 +365,346 @@ int RunScript(char *scriptData, char *objectData, uint32 *offset) {
 	while (runningScript) {
 		curCommand = code[ip++];
 
-		switch(curCommand) {
-			case CP_END_SCRIPT:
-				// End the script
-				DEBUG("End script",0);
-				runningScript = 0;
-				break;
+		switch (curCommand) {
+		case CP_END_SCRIPT:
+			// End the script
+			DEBUG("End script",0);
+			runningScript = 0;
+			break;
+		case CP_PUSH_LOCAL_VAR32:
+			// Push the contents of a local variable
+			Read16ip(parameter);
+			DEBUG("Push local var %d (%d)", parameter, *(int32 *) (variables + parameter));
+			PUSHONSTACK(*(int32 *) (variables + parameter));
+			break;
+		case CP_PUSH_GLOBAL_VAR32:
+			// Push a global variable
+			Read16ip(parameter);
+			DEBUG("Push global var %d (%d)", parameter, globalInterpreterVariables2[parameter]);
+			ASSERT(globalInterpreterVariables2);
+			PUSHONSTACK(globalInterpreterVariables2[parameter]);
+			break;
+		case CP_POP_LOCAL_VAR32:
+			// Pop a value into a local word variable
+			Read16ip(parameter);
+			POPOFFSTACK(value);
+			DEBUG("Pop %d into var %d", value, parameter);
+			*((int32 *) (variables + parameter)) = value;
+			break;
+		case CP_CALL_MCODE:
+			// Call an mcode routine
+			Read16ip(parameter);
+			ASSERT(parameter <= MAX_FN_NUMBER);
+			// amount to adjust stack by (no of parameters)
+			Read8ip(value);
+			DEBUG("Call mcode %d with stack = %x", parameter, stack2 + stackPointer2 - value);
+			retVal = McodeTable[parameter](stack2 + stackPointer2 - value);
+			stackPointer2 -= value;
+			CHECKSTACKPOINTER2
 
-			case CP_PUSH_LOCAL_VAR32:
-				// Push the contents of a local variable
-				Read16ip(parameter);
-				DEBUG("Push local var %d (%d)", parameter, *(int32 *) (variables + parameter));
-				PUSHONSTACK(*(int32 *) (variables + parameter));
-				break;
-
-			case CP_PUSH_GLOBAL_VAR32:
-				// Push a global variable
-				Read16ip(parameter);
-				DEBUG("Push global var %d (%d)", parameter, globalInterpreterVariables2[parameter]);
-				ASSERT(globalInterpreterVariables2);
-				PUSHONSTACK(globalInterpreterVariables2[parameter]);
-				break;
-
-			case CP_POP_LOCAL_VAR32:
-				// Pop a value into a local word variable
-				Read16ip(parameter);
-				POPOFFSTACK(value);
-				DEBUG("Pop %d into var %d", value, parameter);
-				*((int32 *) (variables + parameter)) = value;
-				break;
-
-			case CP_CALL_MCODE:
-				// Call an mcode routine
-				Read16ip(parameter);
-				ASSERT(parameter <= MAX_FN_NUMBER);
-				// amount to adjust stack by (no of parameters)
-				Read8ip(value);
-				DEBUG("Call mcode %d with stack = %x", parameter, stack2 + stackPointer2 - value);
-				retVal = McodeTable[parameter](stack2 + stackPointer2 - value);
-				stackPointer2 -= value;
-				CHECKSTACKPOINTER2
-
-				switch (retVal & 7) {
-					case IR_STOP:
-						// Quit out for a cycle
-						*offset = ip;
-						return 0;
-
-					case IR_CONT:
-						// Continue as normal
-						break;
-
-					case IR_TERMINATE:
-						// Return without updating the
-						// offset
-						return 2;
-
-					case IR_REPEAT:
-						// Return setting offset to
-						// start of this function call
-						*offset = savedStartOfMcode;
-						return 0;
-
-					case IR_GOSUB:
-						// that's really neat
-						*offset = ip;
-						return 2;
-
-					default:
-						ASSERT(FALSE);
-				}
-				parameterReturnedFromMcodeFunction = retVal >> 3;
-				break;
-
-			case CP_PUSH_LOCAL_ADDR:
-				// push the address of a local variable
-				Read16ip(parameter);
-				DEBUG("Push address of local variable %d (%x)", parameter, (int32) (variables + parameter));
-				PUSHONSTACK((int32) (variables + parameter));
-				break;
-
-			case CP_PUSH_INT32:
-				// Push a long word value on to the stack
-				Read32ip(parameter);
-				DEBUG("Push int32 %d (%x)", parameter, parameter);
-				PUSHONSTACK(parameter);
-				break;
-
-			case CP_SKIPONFALSE:
-				// Skip if the value on the stack is false
-				Read32ipLeaveip(parameter);
-				POPOFFSTACK(value);
-				DEBUG("Skip %d if %d is false", parameter, value);
-				if (value)
-					ip += sizeof(int32);
-				else
-					ip += parameter;
-				break;
-
-			case CP_SKIPALWAYS:
-				// skip a block
-				Read32ipLeaveip(parameter);
-				DEBUG("Skip %d", parameter);
-				ip += parameter;
-				break;
-
-			case CP_SWITCH:
-				// 9 switch
-				POPOFFSTACK(value);
-				Read32ip(caseCount);
-
-				// Search the cases
-				foundCase = 0;
-				for (count = 0; count < caseCount && !foundCase; count++) {
-					if (value == (int32) READ_LE_UINT32(code + ip)) {
-						// We have found the case, so
-						// lets jump to it
-						foundCase = 1;
-						ip += READ_LE_UINT32(code + ip + sizeof(int32));
-					} else
-						ip += sizeof(int32) * 2;
-				}
-
-				// If we found no matching case then use the
-				// default
-
-				if (!foundCase)
-					ip += READ_LE_UINT32(code + ip);
-
-				break;
-
-			case CP_ADDNPOP_LOCAL_VAR32:
-				Read16ip(parameter);
-				POPOFFSTACK(value);
-				*((int32 *) (variables + parameter)) += value;
-				DEBUG("+= %d into var %d->%d", value, parameter, *(int32 *) (variables + parameter));
-				break;
-
-			case CP_SUBNPOP_LOCAL_VAR32:
-				Read16ip(parameter);
-				POPOFFSTACK(value);
-				*((int32 *) (variables + parameter)) -= value;
-				DEBUG("-= %d into var %d->%d", value, parameter, *(int32 *) (variables + parameter));
-				break;
-
-			case CP_SKIPONTRUE:
-				// Skip if the value on the stack is TRUE
-				Read32ipLeaveip(parameter);
-				POPOFFSTACK(value);
-				DEBUG("Skip %d if %d is false", parameter, value);
-				if (!value)
-					ip += sizeof(int32);
-				else
-					ip += parameter;
-				break;
-
-			case CP_POP_GLOBAL_VAR32:
-				// Pop a global variable
-				Read16ip(parameter);
-				POPOFFSTACK(value);
-				DEBUG("Pop %d into global var %d", value, parameter);
-
-#ifdef TRACEGLOBALVARIABLESET
-				TRACEGLOBALVARIABLESET(parameter, value);
-#endif
-
-				globalInterpreterVariables2[parameter] = value;
-				break;
-
-			case CP_ADDNPOP_GLOBAL_VAR32:
-				// Add and pop a global variable
-				Read16ip(parameter);
-				// parameter = *((int16_TYPE *) (code + ip));
-				// ip += 2;
-				POPOFFSTACK(value);
-				globalInterpreterVariables2[parameter] += value;
-				DEBUG("+= %d into global var %d->%d", value, parameter, *(int32 *) (variables + parameter));
-				break;
-
-			case CP_SUBNPOP_GLOBAL_VAR32:
-				// Sub and pop a global variable
-				Read16ip(parameter);
-				POPOFFSTACK(value);
-				globalInterpreterVariables2[parameter] -= value;
-				DEBUG("-= %d into global var %d->%d", value, parameter, *(int32 *) (variables + parameter));
-				break;
-
-			case CP_DEBUGON:
-				// Turn debugging on
-				g_debugFlag = 1;
-				break;
-
-			case CP_DEBUGOFF:
-				// Turn debugging on
-				g_debugFlag = 0;
-				break;
-
-			case CP_QUIT:
+			switch (retVal & 7) {
+			case IR_STOP:
 				// Quit out for a cycle
 				*offset = ip;
 				return 0;
-
-			case CP_TERMINATE:
-				// Quit out immediately without affecting the
-				// offset pointer
-				return 3;
-
-			// Operators
-
-			case OP_ISEQUAL:
-				// '=='
-				DEBUG("%d == %d -> %d",
-					stack2[stackPointer2 - 2],
-					stack2[stackPointer2 - 1],
-					stack2[stackPointer2 - 2] == stack2[stackPointer2 - 1]);
-				DOOPERATION (stack2[stackPointer2 - 2] == stack2[stackPointer2 - 1]);
+			case IR_CONT:
+				// Continue as normal
 				break;
-
-			case OP_PLUS:
-				// '+'
-				DEBUG("%d + %d -> %d",
-					stack2[stackPointer2 - 2],
-					stack2[stackPointer2 - 1],
-					stack2[stackPointer2 - 2] + stack2[stackPointer2 - 1]);
-				DOOPERATION(stack2[stackPointer2 - 2] + stack2[stackPointer2 - 1]);
-				break;
-
-			case OP_MINUS:
-				// '-'
-				DEBUG("%d - %d -> %d",
-					stack2[stackPointer2 - 2],
-					stack2[stackPointer2 - 1],
-					stack2[stackPointer2 - 2] - stack2[stackPointer2 - 1]);
-				DOOPERATION(stack2[stackPointer2 - 2] - stack2[stackPointer2 - 1]);
-				break;
-
-			case OP_TIMES:
-				// '*'
-				DEBUG("%d * %d -> %d",
-					stack2[stackPointer2 - 2],
-					stack2[stackPointer2 - 1],
-					stack2[stackPointer2 - 2] * stack2[stackPointer2 - 1]);
-				DOOPERATION(stack2[stackPointer2 - 2] * stack2[stackPointer2 - 1]);
-				break;
-
-			case OP_DIVIDE:
-				// '/'
-				DEBUG("%d / %d -> %d",
-					stack2[stackPointer2 - 2],
-					stack2[stackPointer2 - 1],
-					stack2[stackPointer2 - 2] / stack2[stackPointer2 - 1]);
-				DOOPERATION(stack2[stackPointer2 - 2] / stack2[stackPointer2 - 1]);
-				break;
-
-			case OP_NOTEQUAL:
-				// '!='
-				DEBUG("%d != %d -> %d",
-					stack2[stackPointer2 - 2],
-					stack2[stackPointer2 - 1],
-					stack2[stackPointer2 - 2] != stack2[stackPointer2 - 1]);
-				DOOPERATION(stack2[stackPointer2 - 2] != stack2[stackPointer2 - 1]);
-				break;
-
-			case OP_ANDAND:
-				// '&&'
-				DEBUG("%d != %d -> %d",
-					stack2[stackPointer2 - 2],
-					stack2[stackPointer2 - 1],
-					stack2[stackPointer2 - 2] && stack2[stackPointer2 - 1]);
-				DOOPERATION(stack2[stackPointer2 - 2] && stack2[stackPointer2 - 1]);
-				break;
-
-			case OP_GTTHAN:
-				// '>'
-				DEBUG("%d > %d -> %d",
-					stack2[stackPointer2 - 2],
-					stack2[stackPointer2 - 1],
-					stack2[stackPointer2 - 2] > stack2[stackPointer2 - 1]);
-				DOOPERATION(stack2[stackPointer2 - 2] > stack2[stackPointer2 - 1]);
-				break;
-
-			case OP_LSTHAN:
-				// '<'
-				DEBUG("%d < %d -> %d",
-					stack2[stackPointer2 - 2],
-					stack2[stackPointer2 - 1],
-					stack2[stackPointer2 - 2] < stack2[stackPointer2 - 1]);
-				DOOPERATION(stack2[stackPointer2 - 2] < stack2[stackPointer2 - 1]);
-				break;
-
-			case CP_JUMP_ON_RETURNED:
-				// Jump to a part of the script depending on
-				// the return value from an mcode routine
-
-				// Get the maximum value
-				Read8ip(parameter);
-
-				ip += READ_LE_UINT32(code + ip + parameterReturnedFromMcodeFunction * 4);
-				break;
-
-			case CP_TEMP_TEXT_PROCESS:
-				// Process a text line
-				// This was apparently used in Linc
-				Read32ip(parameter);
-				DEBUG("Process text id %d", parameter);
-				break;
-
-			case CP_SAVE_MCODE_START:
-				// Save the start position on an mcode
-				// instruction in case we need to restart it
-				// again
-				savedStartOfMcode = ip - 1;
-				break;
-
-			case CP_RESTART_SCRIPT:
-				// Start the script again
-				// Do a ip search to find the script we are
-				// running
-
-				tempScrPtr = scriptData + READ_LE_UINT32(scriptData) + sizeof(int);
-				scriptNumber = 0;
-				foundScript = 0;
-
-				for (count = 1; count < (int) noScripts && !foundScript; count++) {
-					if (ip < ((const int *) tempScrPtr)[count + 1]) {
-						scriptNumber = count - 1;
-						foundScript = 1;
-					}
-				}
-
-				if (!foundScript)
-					scriptNumber = count - 1;
-
-				// So we know what script we are running,
-				// lets restart it
-
-				ip = ((const int *) tempScrPtr)[scriptNumber + 1];
-				break;
-
-			case CP_PUSH_STRING:
-				// Push the address of a string on to the stack
-				// Get the string size
-				Read8ip(parameter);
-				// ip points to the string
-				PUSHONSTACK((int) (code + ip));
-				ip += (parameter + 1);
-				break;
-
-			case CP_PUSH_DEREFERENCED_STRUCTURE:
-				// Push the address of a dereferenced structure
-				Read32ip(parameter);
-				DEBUG("Push address of far variable (%x)", (int32) (variables + parameter));
-				PUSHONSTACK((int) (objectData + sizeof(int) + sizeof(_standardHeader) + sizeof(_object_hub) + parameter));
-				break;
-
-			case OP_GTTHANE:
-				// '>='
-				DEBUG("%d > %d -> %d",
-					stack2[stackPointer2 - 2],
-					stack2[stackPointer2 - 1],
-					stack2[stackPointer2 - 2] >= stack2[stackPointer2 - 1]);
-				DOOPERATION(stack2[stackPointer2 - 2] >= stack2[stackPointer2 - 1]);
-				break;
-
-			case OP_LSTHANE:
-				// '<='
-				DEBUG("%d < %d -> %d",
-					stack2[stackPointer2 - 2],
-					stack2[stackPointer2 - 1],
-					stack2[stackPointer2 - 2] <= stack2[stackPointer2 - 1]);
-				DOOPERATION(stack2[stackPointer2 - 2] <= stack2[stackPointer2 - 1]);
-				break;
-
-			case OP_OROR:
-				// '||'
-				DEBUG("%d || %d -> %d",
-					stack2[stackPointer2 - 2],
-					stack2[stackPointer2 - 1],
-					stack2[stackPointer2 - 2] || stack2[stackPointer2 - 1]);
-				DOOPERATION (stack2[stackPointer2 - 2] || stack2[stackPointer2 - 1]);
-				break;
-
+			case IR_TERMINATE:
+				// Return without updating the
+				// offset
+				return 2;
+			case IR_REPEAT:
+				// Return setting offset to
+				// start of this function call
+				*offset = savedStartOfMcode;
+				return 0;
+			case IR_GOSUB:
+				// that's really neat
+				*offset = ip;
+				return 2;
 			default:
-				Con_fatal_error("Interpreter error: Invalid token %d", curCommand);
-				return 3;
+				ASSERT(FALSE);
+			}
+			parameterReturnedFromMcodeFunction = retVal >> 3;
+			break;
+		case CP_PUSH_LOCAL_ADDR:
+			// push the address of a local variable
+			Read16ip(parameter);
+			DEBUG("Push address of local variable %d (%x)", parameter, (int32) (variables + parameter));
+			PUSHONSTACK((int32) (variables + parameter));
+			break;
+		case CP_PUSH_INT32:
+			// Push a long word value on to the stack
+			Read32ip(parameter);
+			DEBUG("Push int32 %d (%x)", parameter, parameter);
+			PUSHONSTACK(parameter);
+			break;
+		case CP_SKIPONFALSE:
+			// Skip if the value on the stack is false
+			Read32ipLeaveip(parameter);
+			POPOFFSTACK(value);
+			DEBUG("Skip %d if %d is false", parameter, value);
+			if (value)
+				ip += sizeof(int32);
+			else
+				ip += parameter;
+			break;
+		case CP_SKIPALWAYS:
+			// skip a block
+			Read32ipLeaveip(parameter);
+			DEBUG("Skip %d", parameter);
+			ip += parameter;
+			break;
+		case CP_SWITCH:
+			// 9 switch
+			POPOFFSTACK(value);
+			Read32ip(caseCount);
+
+			// Search the cases
+			foundCase = 0;
+			for (count = 0; count < caseCount && !foundCase; count++) {
+				if (value == (int32) READ_LE_UINT32(code + ip)) {
+					// We have found the case, so lets
+					// jump to it
+					foundCase = 1;
+					ip += READ_LE_UINT32(code + ip + sizeof(int32));
+				} else
+					ip += sizeof(int32) * 2;
+			}
+
+			// If we found no matching case then use the
+			// default
+
+			if (!foundCase)
+				ip += READ_LE_UINT32(code + ip);
+
+			break;
+		case CP_ADDNPOP_LOCAL_VAR32:
+			Read16ip(parameter);
+			POPOFFSTACK(value);
+			*((int32 *) (variables + parameter)) += value;
+			DEBUG("+= %d into var %d->%d", value, parameter, *(int32 *) (variables + parameter));
+			break;
+		case CP_SUBNPOP_LOCAL_VAR32:
+			Read16ip(parameter);
+			POPOFFSTACK(value);
+			*((int32 *) (variables + parameter)) -= value;
+			DEBUG("-= %d into var %d->%d", value, parameter, *(int32 *) (variables + parameter));
+			break;
+		case CP_SKIPONTRUE:
+			// Skip if the value on the stack is TRUE
+			Read32ipLeaveip(parameter);
+			POPOFFSTACK(value);
+			DEBUG("Skip %d if %d is false", parameter, value);
+			if (!value)
+				ip += sizeof(int32);
+			else
+				ip += parameter;
+			break;
+		case CP_POP_GLOBAL_VAR32:
+			// Pop a global variable
+			Read16ip(parameter);
+			POPOFFSTACK(value);
+			DEBUG("Pop %d into global var %d", value, parameter);
+
+#ifdef TRACEGLOBALVARIABLESET
+			TRACEGLOBALVARIABLESET(parameter, value);
+#endif
+
+			globalInterpreterVariables2[parameter] = value;
+			break;
+		case CP_ADDNPOP_GLOBAL_VAR32:
+			// Add and pop a global variable
+			Read16ip(parameter);
+			// parameter = *((int16_TYPE *) (code + ip));
+			// ip += 2;
+			POPOFFSTACK(value);
+			globalInterpreterVariables2[parameter] += value;
+			DEBUG("+= %d into global var %d->%d", value, parameter, *(int32 *) (variables + parameter));
+			break;
+		case CP_SUBNPOP_GLOBAL_VAR32:
+			// Sub and pop a global variable
+			Read16ip(parameter);
+			POPOFFSTACK(value);
+			globalInterpreterVariables2[parameter] -= value;
+			DEBUG("-= %d into global var %d->%d", value, parameter, *(int32 *) (variables + parameter));
+			break;
+		case CP_DEBUGON:
+			// Turn debugging on
+			g_debugFlag = 1;
+			break;
+		case CP_DEBUGOFF:
+			// Turn debugging on
+			g_debugFlag = 0;
+			break;
+		case CP_QUIT:
+			// Quit out for a cycle
+			*offset = ip;
+			return 0;
+		case CP_TERMINATE:
+			// Quit out immediately without affecting the offset
+			// pointer
+			return 3;
+
+		// Operators
+
+		case OP_ISEQUAL:
+			// '=='
+			DEBUG("%d == %d -> %d",
+				stack2[stackPointer2 - 2],
+				stack2[stackPointer2 - 1],
+				stack2[stackPointer2 - 2] == stack2[stackPointer2 - 1]);
+			DOOPERATION (stack2[stackPointer2 - 2] == stack2[stackPointer2 - 1]);
+			break;
+		case OP_PLUS:
+			// '+'
+			DEBUG("%d + %d -> %d",
+				stack2[stackPointer2 - 2],
+				stack2[stackPointer2 - 1],
+				stack2[stackPointer2 - 2] + stack2[stackPointer2 - 1]);
+			DOOPERATION(stack2[stackPointer2 - 2] + stack2[stackPointer2 - 1]);
+			break;
+		case OP_MINUS:
+			// '-'
+			DEBUG("%d - %d -> %d",
+				stack2[stackPointer2 - 2],
+				stack2[stackPointer2 - 1],
+				stack2[stackPointer2 - 2] - stack2[stackPointer2 - 1]);
+			DOOPERATION(stack2[stackPointer2 - 2] - stack2[stackPointer2 - 1]);
+			break;
+		case OP_TIMES:
+			// '*'
+			DEBUG("%d * %d -> %d",
+				stack2[stackPointer2 - 2],
+				stack2[stackPointer2 - 1],
+				stack2[stackPointer2 - 2] * stack2[stackPointer2 - 1]);
+			DOOPERATION(stack2[stackPointer2 - 2] * stack2[stackPointer2 - 1]);
+			break;
+		case OP_DIVIDE:
+			// '/'
+			DEBUG("%d / %d -> %d",
+				stack2[stackPointer2 - 2],
+				stack2[stackPointer2 - 1],
+				stack2[stackPointer2 - 2] / stack2[stackPointer2 - 1]);
+			DOOPERATION(stack2[stackPointer2 - 2] / stack2[stackPointer2 - 1]);
+			break;
+		case OP_NOTEQUAL:
+			// '!='
+			DEBUG("%d != %d -> %d",
+				stack2[stackPointer2 - 2],
+				stack2[stackPointer2 - 1],
+				stack2[stackPointer2 - 2] != stack2[stackPointer2 - 1]);
+			DOOPERATION(stack2[stackPointer2 - 2] != stack2[stackPointer2 - 1]);
+			break;
+		case OP_ANDAND:
+			// '&&'
+			DEBUG("%d != %d -> %d",
+				stack2[stackPointer2 - 2],
+				stack2[stackPointer2 - 1],
+				stack2[stackPointer2 - 2] && stack2[stackPointer2 - 1]);
+			DOOPERATION(stack2[stackPointer2 - 2] && stack2[stackPointer2 - 1]);
+			break;
+		case OP_GTTHAN:
+			// '>'
+			DEBUG("%d > %d -> %d",
+				stack2[stackPointer2 - 2],
+				stack2[stackPointer2 - 1],
+				stack2[stackPointer2 - 2] > stack2[stackPointer2 - 1]);
+			DOOPERATION(stack2[stackPointer2 - 2] > stack2[stackPointer2 - 1]);
+			break;
+		case OP_LSTHAN:
+			// '<'
+			DEBUG("%d < %d -> %d",
+				stack2[stackPointer2 - 2],
+				stack2[stackPointer2 - 1],
+				stack2[stackPointer2 - 2] < stack2[stackPointer2 - 1]);
+			DOOPERATION(stack2[stackPointer2 - 2] < stack2[stackPointer2 - 1]);
+			break;
+		case CP_JUMP_ON_RETURNED:
+			// Jump to a part of the script depending on
+			// the return value from an mcode routine
+
+			// Get the maximum value
+			Read8ip(parameter);
+			ip += READ_LE_UINT32(code + ip + parameterReturnedFromMcodeFunction * 4);
+			break;
+		case CP_TEMP_TEXT_PROCESS:
+			// Process a text line
+			// This was apparently used in Linc
+			Read32ip(parameter);
+			DEBUG("Process text id %d", parameter);
+			break;
+		case CP_SAVE_MCODE_START:
+			// Save the start position on an mcode instruction in
+			// case we need to restart it again
+			savedStartOfMcode = ip - 1;
+			break;
+		case CP_RESTART_SCRIPT:
+			// Start the script again
+			// Do a ip search to find the script we are running
+
+			tempScrPtr = scriptData + READ_LE_UINT32(scriptData) + sizeof(int);
+			scriptNumber = 0;
+			foundScript = 0;
+
+			for (count = 1; count < (int) noScripts && !foundScript; count++) {
+				if (ip < ((const int *) tempScrPtr)[count + 1]) {
+					scriptNumber = count - 1;
+					foundScript = 1;
+				}
+			}
+
+			if (!foundScript)
+				scriptNumber = count - 1;
+
+			// So we know what script we are running, lets restart
+			// it
+
+			ip = ((const int *) tempScrPtr)[scriptNumber + 1];
+			break;
+		case CP_PUSH_STRING:
+			// Push the address of a string on to the stack
+			// Get the string size
+			Read8ip(parameter);
+
+			// ip points to the string
+			PUSHONSTACK((int) (code + ip));
+			ip += (parameter + 1);
+			break;
+		case CP_PUSH_DEREFERENCED_STRUCTURE:
+			// Push the address of a dereferenced structure
+			Read32ip(parameter);
+			DEBUG("Push address of far variable (%x)", (int32) (variables + parameter));
+			PUSHONSTACK((int) (objectData + sizeof(int) + sizeof(_standardHeader) + sizeof(_object_hub) + parameter));
+			break;
+		case OP_GTTHANE:
+			// '>='
+			DEBUG("%d > %d -> %d",
+				stack2[stackPointer2 - 2],
+				stack2[stackPointer2 - 1],
+				stack2[stackPointer2 - 2] >= stack2[stackPointer2 - 1]);
+			DOOPERATION(stack2[stackPointer2 - 2] >= stack2[stackPointer2 - 1]);
+			break;
+		case OP_LSTHANE:
+			// '<='
+			DEBUG("%d < %d -> %d",
+				stack2[stackPointer2 - 2],
+				stack2[stackPointer2 - 1],
+				stack2[stackPointer2 - 2] <= stack2[stackPointer2 - 1]);
+			DOOPERATION(stack2[stackPointer2 - 2] <= stack2[stackPointer2 - 1]);
+			break;
+		case OP_OROR:
+			// '||'
+			DEBUG("%d || %d -> %d",
+				stack2[stackPointer2 - 2],
+				stack2[stackPointer2 - 1],
+				stack2[stackPointer2 - 2] || stack2[stackPointer2 - 1]);
+			DOOPERATION (stack2[stackPointer2 - 2] || stack2[stackPointer2 - 1]);
+			break;
+		default:
+			Con_fatal_error("Interpreter error: Invalid token %d", curCommand);
+			return 3;
 		}
 	}
 

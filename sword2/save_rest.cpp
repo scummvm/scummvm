@@ -564,25 +564,21 @@ void PutPlayerStructures(void) {	// James27feb97 (updated by James on 29july97)
 	// which megaset was the player at the time of saving?
 
 	switch (g_header.mega.megaset_res) {
-		case 36:		// GeoMega:
-			null_pc = 9;	// script no.9	- 'player_is_george'
-			break;
-
-		case 2003:		// GeoMegaB:
-			null_pc = 13;	// script no.13 - 'player_is_georgeB'
-			break;
-
-		case 1366:		// NicMegaA:
-			null_pc = 11;	// script no.11 - 'player_is_nicoA'
-			break;
-
- 		case 1437:		// NicMegaB:
-			null_pc = 12;	// script no.12 - 'player_is_nicoB'
-			break;
-
- 		case 1575:		// NicMegaC:
-			null_pc = 10;	// script no.10 - 'player_is_nicoC'
-			break;
+	case 36:		// GeoMega:
+		null_pc = 9;	// script no.9	- 'player_is_george'
+		break;
+	case 2003:		// GeoMegaB:
+		null_pc = 13;	// script no.13 - 'player_is_georgeB'
+		break;
+	case 1366:		// NicMegaA:
+		null_pc = 11;	// script no.11 - 'player_is_nicoA'
+		break;
+	case 1437:		// NicMegaB:
+		null_pc = 12;	// script no.12 - 'player_is_nicoB'
+		break;
+	case 1575:		// NicMegaC:
+		null_pc = 10;	// script no.10 - 'player_is_nicoC'
+		break;
 	}
 
 	RunScript(raw_script_ad, raw_script_ad, &null_pc);

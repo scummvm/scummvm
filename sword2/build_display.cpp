@@ -603,18 +603,18 @@ void Process_image(buildit *build_unit) {	// (5nov96 JEL)
 	} else {
 		// what compression was used?
 		switch (anim_head->runTimeComp) {
-			case NONE:
-				spriteType += RDSPR_NOCOMPRESSION;
-				break;
-			case RLE256:
-				spriteType += RDSPR_RLE256;
-				break;
-			case RLE16:
-				spriteType += RDSPR_RLE16;
-				// points to just after last cdt_entry, ie.
-				// start of colour table
-				colTablePtr = (uint8*) (anim_head + 1) + anim_head->noAnimFrames * sizeof(_cdtEntry);
-				break;
+		case NONE:
+			spriteType += RDSPR_NOCOMPRESSION;
+			break;
+		case RLE256:
+			spriteType += RDSPR_RLE256;
+			break;
+		case RLE16:
+			spriteType += RDSPR_RLE16;
+			// points to just after last cdt_entry, ie.
+			// start of colour table
+			colTablePtr = (uint8*) (anim_head + 1) + anim_head->noAnimFrames * sizeof(_cdtEntry);
+			break;
 		}
 	}
 
@@ -894,80 +894,73 @@ int32 FN_register_frame(int32 *params) {	// (27nov96 JEL)
 
 	// check low word for sprite type
 	switch (ob_graph->type & 0x0000ffff) {
-		case BGP0_SPRITE:
+	case BGP0_SPRITE:
 #ifdef _SWORD2_DEBUG
-			if (cur_bgp0 == MAX_bgp0_sprites)
-				Con_fatal_error("ERROR: bgp0_list full in FN_register_frame [line=%d file=%s]",__LINE__,__FILE__);
+		if (cur_bgp0 == MAX_bgp0_sprites)
+			Con_fatal_error("ERROR: bgp0_list full in FN_register_frame [line=%d file=%s]", __LINE__, __FILE__);
 #endif
 
-			Register_frame(params, &bgp0_list[cur_bgp0]);
-			cur_bgp0++;
-			break;
-
-		case BGP1_SPRITE:
+		Register_frame(params, &bgp0_list[cur_bgp0]);
+		cur_bgp0++;
+		break;
+	case BGP1_SPRITE:
 #ifdef _SWORD2_DEBUG
-			if (cur_bgp1 == MAX_bgp1_sprites)
-				Con_fatal_error("ERROR: bgp1_list full in FN_register_frame [line=%d file=%s]",__LINE__,__FILE__);
+		if (cur_bgp1 == MAX_bgp1_sprites)
+			Con_fatal_error("ERROR: bgp1_list full in FN_register_frame [line=%d file=%s]", __LINE__, __FILE__);
 #endif
 
-			Register_frame(params, &bgp1_list[cur_bgp1]);
-			cur_bgp1++;
-			break;
-
-		case BACK_SPRITE:
+		Register_frame(params, &bgp1_list[cur_bgp1]);
+		cur_bgp1++;
+		break;
+	case BACK_SPRITE:
 #ifdef _SWORD2_DEBUG
-			if (cur_back == MAX_back_sprites)
-				Con_fatal_error("ERROR: back_list full in FN_register_frame [line=%d file=%s]",__LINE__,__FILE__);
+		if (cur_back == MAX_back_sprites)
+			Con_fatal_error("ERROR: back_list full in FN_register_frame [line=%d file=%s]", __LINE__, __FILE__);
 #endif
 
-			Register_frame(params, &back_list[cur_back]);
-			cur_back++;
-			break;
-
-		case SORT_SPRITE:
+		Register_frame(params, &back_list[cur_back]);
+		cur_back++;
+		break;
+	case SORT_SPRITE:
 #ifdef _SWORD2_DEBUG
-			if (cur_sort == MAX_sort_sprites)
-				Con_fatal_error("ERROR: sort_list full in FN_register_frame [line=%d file=%s]",__LINE__,__FILE__);
+		if (cur_sort == MAX_sort_sprites)
+			Con_fatal_error("ERROR: sort_list full in FN_register_frame [line=%d file=%s]", __LINE__, __FILE__);
 #endif
 
-			sort_order[cur_sort] = cur_sort;
-			Register_frame(params, &sort_list[cur_sort]);
-			cur_sort++;
-			break;
-
-		case FORE_SPRITE:
+		sort_order[cur_sort] = cur_sort;
+		Register_frame(params, &sort_list[cur_sort]);
+		cur_sort++;
+		break;
+	case FORE_SPRITE:
 #ifdef _SWORD2_DEBUG
-			if (cur_fore == MAX_fore_sprites)
-				Con_fatal_error("ERROR: fore_list full in FN_register_frame [line=%d file=%s]",__LINE__,__FILE__);
+		if (cur_fore == MAX_fore_sprites)
+			Con_fatal_error("ERROR: fore_list full in FN_register_frame [line=%d file=%s]", __LINE__, __FILE__);
 #endif
 
-			Register_frame(params, &fore_list[cur_fore]);
-			cur_fore++;
-			break;
-
-		case FGP0_SPRITE:
+		Register_frame(params, &fore_list[cur_fore]);
+		cur_fore++;
+		break;
+	case FGP0_SPRITE:
 #ifdef _SWORD2_DEBUG
-			if (cur_fgp0 == MAX_fgp0_sprites)
-				Con_fatal_error("ERROR: fgp0_list full in FN_register_frame [line=%d file=%s]",__LINE__,__FILE__);
+		if (cur_fgp0 == MAX_fgp0_sprites)
+			Con_fatal_error("ERROR: fgp0_list full in FN_register_frame [line=%d file=%s]", __LINE__, __FILE__);
 #endif
 
-			Register_frame(params, &fgp0_list[cur_fgp0]);
-			cur_fgp0++;
-			break;
-
-		case FGP1_SPRITE:
+		Register_frame(params, &fgp0_list[cur_fgp0]);
+		cur_fgp0++;
+		break;
+	case FGP1_SPRITE:
 #ifdef _SWORD2_DEBUG
-			if (cur_fgp1 == MAX_fgp1_sprites)
-				Con_fatal_error("ERROR: fgp1_list full in FN_register_frame [line=%d file=%s]",__LINE__,__FILE__);
+		if (cur_fgp1 == MAX_fgp1_sprites)
+			Con_fatal_error("ERROR: fgp1_list full in FN_register_frame [line=%d file=%s]", __LINE__, __FILE__);
 #endif
 
-			Register_frame(params, &fgp1_list[cur_fgp1]);
-			cur_fgp1++;
-			break;
-
-		default:
-			// NO_SPRITE no registering!
-			break;
+		Register_frame(params, &fgp1_list[cur_fgp1]);
+		cur_fgp1++;
+		break;
+	default:
+		// NO_SPRITE no registering!
+		break;
 	}
 
 	return IR_CONT;

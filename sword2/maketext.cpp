@@ -400,22 +400,20 @@ void CopyChar(_frameHeader *charPtr, uint8 *spritePtr, uint16 spriteWidth, uint8
 
 		// if required output pen is non-zero
 		if (pen) {
-			for(cols = 0; cols < charPtr->width; cols++) {
+			for (cols = 0; cols < charPtr->width; cols++) {
 				// inc source ptr along sprite data
 				switch (*source++) {
-					case LETTER_COL:
-						*dest = pen;
-						break;
+				case LETTER_COL:
+					*dest = pen;
+					break;
+				case BORDER_COL:
+					// don't do a border pixel if there's
+					// already a bit of another character
+					// underneath (for overlapping!)
 
-					case BORDER_COL:
-						// don't do a border pixel if
-						// there's already a bit of
-						// another character underneath
-						// (for overlapping!)
-
-						if (!*dest)
-							*dest = border_pen;
-						break;
+					if (!*dest)
+						*dest = border_pen;
+					break;
 
 					// do nothing if source pixel is zero,
 					// ie. transparent
@@ -502,43 +500,35 @@ uint32 Build_new_block(uint8 *ascii, int16 x, int16 y, uint16 width, uint8 pen, 
 		frame_head = (_frameHeader *) text_sprite_list[j].text_mem->ad;
 
 		switch (justification) {
-			// this one is always used for SPEECH TEXT; possibly
-			// also for pointer text
-			case POSITION_AT_CENTRE_OF_BASE:
-				x -= (frame_head->width) / 2;
-				y -= frame_head->height;
-				break;
-
- 			case POSITION_AT_CENTRE_OF_TOP:
-				x -= (frame_head->width) / 2;
-				break;
-
-   			case POSITION_AT_LEFT_OF_TOP:
-				// the given coords are already correct for
-				// this!
-				break;
-
-   			case POSITION_AT_RIGHT_OF_TOP:
-				x -= frame_head->width;
-				break;
-
-			case POSITION_AT_LEFT_OF_BASE:
-				y -= frame_head->height;
-				break;
-
-   			case POSITION_AT_RIGHT_OF_BASE:
-				x -= frame_head->width;
-				y -= frame_head->height;
-				break;
-
-			case POSITION_AT_LEFT_OF_CENTRE:
-				y -= (frame_head->height) / 2;
-   				break;
-
-			case POSITION_AT_RIGHT_OF_CENTRE:
-				x -= frame_head->width;
-				y -= (frame_head->height) / 2;
- 				break;
+		// this one is always used for SPEECH TEXT; possibly
+		// also for pointer text
+		case POSITION_AT_CENTRE_OF_BASE:
+			x -= (frame_head->width) / 2;
+			y -= frame_head->height;
+			break;
+		case POSITION_AT_CENTRE_OF_TOP:
+			x -= (frame_head->width) / 2;
+			break;
+		case POSITION_AT_LEFT_OF_TOP:
+			// the given coords are already correct for this!
+			break;
+		case POSITION_AT_RIGHT_OF_TOP:
+			x -= frame_head->width;
+			break;
+		case POSITION_AT_LEFT_OF_BASE:
+			y -= frame_head->height;
+			break;
+		case POSITION_AT_RIGHT_OF_BASE:
+			x -= frame_head->width;
+			y -= frame_head->height;
+			break;
+		case POSITION_AT_LEFT_OF_CENTRE:
+			y -= (frame_head->height) / 2;
+			break;
+		case POSITION_AT_RIGHT_OF_CENTRE:
+			x -= frame_head->width;
+			y -= (frame_head->height) / 2;
+			break;
 		}
 
 		// ensure text sprite is a few pixels inside the visible screen
@@ -680,22 +670,20 @@ void InitialiseFontResourceFlags(void) {	// (James31july97)
 
 void InitialiseFontResourceFlags(uint8 language) {	// (James31july97)
 	switch (language) {
-		case FINNISH_TEXT:	// special Finnish fonts
-			speech_font_id = FINNISH_SPEECH_FONT_ID;
-			controls_font_id = FINNISH_CONTROLS_FONT_ID;
-			red_font_id = FINNISH_RED_FONT_ID;
-			break;
-
-		case POLISH_TEXT:	// special Polish fonts
-			speech_font_id = POLISH_SPEECH_FONT_ID;
-			controls_font_id = POLISH_CONTROLS_FONT_ID;
-			red_font_id = POLISH_RED_FONT_ID;
-			break;
-
-		default:		// DEFAULT_TEXT	- regular fonts
-			speech_font_id = ENGLISH_SPEECH_FONT_ID;
-			controls_font_id = ENGLISH_CONTROLS_FONT_ID;
-			red_font_id = ENGLISH_RED_FONT_ID;
-			break;
+	case FINNISH_TEXT:	// special Finnish fonts
+		speech_font_id = FINNISH_SPEECH_FONT_ID;
+		controls_font_id = FINNISH_CONTROLS_FONT_ID;
+		red_font_id = FINNISH_RED_FONT_ID;
+		break;
+	case POLISH_TEXT:	// special Polish fonts
+		speech_font_id = POLISH_SPEECH_FONT_ID;
+		controls_font_id = POLISH_CONTROLS_FONT_ID;
+		red_font_id = POLISH_RED_FONT_ID;
+		break;
+	default:		// DEFAULT_TEXT	- regular fonts
+		speech_font_id = ENGLISH_SPEECH_FONT_ID;
+		controls_font_id = ENGLISH_CONTROLS_FONT_ID;
+		red_font_id = ENGLISH_RED_FONT_ID;
+		break;
 	}
 }

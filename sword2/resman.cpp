@@ -277,175 +277,177 @@ static void convertEndian(uint8 *file, uint32 len) {
 	SWAP32(hdr->compSize);
 	SWAP32(hdr->decompSize);
 
-	switch(hdr->fileType) {
-		case ANIMATION_FILE: {
-			_animHeader *animHead = (_animHeader *)file;
+	_animHeader *animHead;
+	_cdtEntry *cdtEntry;
+	_multiScreenHeader *mscreenHeader;
+	_object_hub *objectHub;
+	_walkGridHeader *walkGridHeader;
+	uint32 *list;
+	_textHeader *textHeader;
 
-			SWAP16(animHead->noAnimFrames);
-			SWAP16(animHead->feetStartX);
-			SWAP16(animHead->feetStartY);
-			SWAP16(animHead->feetEndX);
-			SWAP16(animHead->feetEndY);
-			SWAP16(animHead->blend);
+	switch (hdr->fileType) {
+	case ANIMATION_FILE:
+		animHead = (_animHeader *)file;
 
-			_cdtEntry *cdtEntry = (_cdtEntry *) (file + sizeof(_animHeader));
-			for (i = 0; i < animHead->noAnimFrames; i++, cdtEntry++) {
-				SWAP16(cdtEntry->x);
-				SWAP16(cdtEntry->y);
-				SWAP32(cdtEntry->frameOffset);
+		SWAP16(animHead->noAnimFrames);
+		SWAP16(animHead->feetStartX);
+		SWAP16(animHead->feetStartY);
+		SWAP16(animHead->feetEndX);
+		SWAP16(animHead->feetEndY);
+		SWAP16(animHead->blend);
 
-				_frameHeader *frameHeader = (_frameHeader *) (file + cdtEntry->frameOffset);
-				// Quick trick to prevent us from incorrectly applying the endian
-				// fixes multiple times. This assumes that frames are less than 1 MB
-				// and have height/width less than 4096.
-				if ((frameHeader->compSize & 0xFFF00000) ||
-					(frameHeader->width & 0xF000) ||
-					(frameHeader->height & 0xF000)) {
-					SWAP32(frameHeader->compSize);
-					SWAP16(frameHeader->width);
-					SWAP16(frameHeader->height);
-				}
+		cdtEntry = (_cdtEntry *) (file + sizeof(_animHeader));
+		for (i = 0; i < animHead->noAnimFrames; i++, cdtEntry++) {
+			SWAP16(cdtEntry->x);
+			SWAP16(cdtEntry->y);
+			SWAP32(cdtEntry->frameOffset);
+
+			_frameHeader *frameHeader = (_frameHeader *) (file + cdtEntry->frameOffset);
+			// Quick trick to prevent us from incorrectly applying the endian
+			// fixes multiple times. This assumes that frames are less than 1 MB
+			// and have height/width less than 4096.
+			if ((frameHeader->compSize & 0xFFF00000) ||
+				(frameHeader->width & 0xF000) ||
+				(frameHeader->height & 0xF000)) {
+				SWAP32(frameHeader->compSize);
+				SWAP16(frameHeader->width);
+				SWAP16(frameHeader->height);
 			}
-			break;
 		}
-		case SCREEN_FILE: {
-			_multiScreenHeader *mscreenHeader = (_multiScreenHeader *)file;
+		break;
+	case SCREEN_FILE: {
+		mscreenHeader = (_multiScreenHeader *) file;
 
-			SWAP32(mscreenHeader->palette);
-			SWAP32(mscreenHeader->bg_parallax[0]);
-			SWAP32(mscreenHeader->bg_parallax[1]);
-			SWAP32(mscreenHeader->screen);
-			SWAP32(mscreenHeader->fg_parallax[0]);
-			SWAP32(mscreenHeader->fg_parallax[1]);
-			SWAP32(mscreenHeader->layers);
-			SWAP32(mscreenHeader->paletteTable);
-			SWAP32(mscreenHeader->maskOffset);
+		SWAP32(mscreenHeader->palette);
+		SWAP32(mscreenHeader->bg_parallax[0]);
+		SWAP32(mscreenHeader->bg_parallax[1]);
+		SWAP32(mscreenHeader->screen);
+		SWAP32(mscreenHeader->fg_parallax[0]);
+		SWAP32(mscreenHeader->fg_parallax[1]);
+		SWAP32(mscreenHeader->layers);
+		SWAP32(mscreenHeader->paletteTable);
+		SWAP32(mscreenHeader->maskOffset);
 
-			// screenHeader
-			_screenHeader *screenHeader = (_screenHeader*) (file + mscreenHeader->screen);
+		// screenHeader
+		_screenHeader *screenHeader = (_screenHeader*) (file + mscreenHeader->screen);
 
-			SWAP16(screenHeader->width);
-			SWAP16(screenHeader->height);
-			SWAP16(screenHeader->noLayers);
+		SWAP16(screenHeader->width);
+		SWAP16(screenHeader->height);
+		SWAP16(screenHeader->noLayers);
 
-			// layerHeader
-			_layerHeader *layerHeader = (_layerHeader *) (file + mscreenHeader->layers);
-			for (i = 0; i < screenHeader->noLayers; i++, layerHeader++) {
-				SWAP16(layerHeader->x);
-				SWAP16(layerHeader->y);
-				SWAP16(layerHeader->width);
-				SWAP16(layerHeader->height);
-				SWAP32(layerHeader->maskSize);
-				SWAP32(layerHeader->offset);
-			}
-
-			// backgroundParallaxLayer
-			_parallax *parallax;
-			int offset;
-			offset = mscreenHeader->bg_parallax[0];
-			if (offset > 0) {
-				parallax = (_parallax *) (file + offset);
-				SWAP16(parallax->w);
-				SWAP16(parallax->h);
-			}
-
-			offset = mscreenHeader->bg_parallax[1];
-			if (offset > 0) {
-				parallax = (_parallax *) (file + offset);
-				SWAP16(parallax->w);
-				SWAP16(parallax->h);
-			}
-
-			// backgroundLayer
-			offset = mscreenHeader->screen + sizeof(_screenHeader);
-			if (offset > 0) {
-				parallax = (_parallax *) (file + offset);
-				SWAP16(parallax->w);
-				SWAP16(parallax->h);
-			}
-
-			// foregroundParallaxLayer
-			offset = mscreenHeader->fg_parallax[0];
-			if (offset > 0) {
-				parallax = (_parallax *) (file + offset);
-				SWAP16(parallax->w);
-				SWAP16(parallax->h);
-			}
-
-			offset = mscreenHeader->fg_parallax[1];
-			if (offset > 0) {
-				parallax = (_parallax *) (file + offset);
-				SWAP16(parallax->w);
-				SWAP16(parallax->h);
-			}
-			break;
+		// layerHeader
+		_layerHeader *layerHeader = (_layerHeader *) (file + mscreenHeader->layers);
+		for (i = 0; i < screenHeader->noLayers; i++, layerHeader++) {
+			SWAP16(layerHeader->x);
+			SWAP16(layerHeader->y);
+			SWAP16(layerHeader->width);
+			SWAP16(layerHeader->height);
+			SWAP32(layerHeader->maskSize);
+			SWAP32(layerHeader->offset);
 		}
-		case GAME_OBJECT: {
-			_object_hub *objectHub = (_object_hub *)file;
 
-			objectHub->type = (int)SWAP_BYTES_32(objectHub->type);
-			SWAP32(objectHub->logic_level);
-
-			for (i = 0; i < TREE_SIZE; i++) {
-				SWAP32(objectHub->logic[i]);
-				SWAP32(objectHub->script_id[i]);
-				SWAP32(objectHub->script_pc[i]);
-			}
-			break;
+		// backgroundParallaxLayer
+		_parallax *parallax;
+		int offset;
+		offset = mscreenHeader->bg_parallax[0];
+		if (offset > 0) {
+			parallax = (_parallax *) (file + offset);
+			SWAP16(parallax->w);
+			SWAP16(parallax->h);
 		}
-		case WALK_GRID_FILE: {
-			_walkGridHeader	*walkGridHeader = (_walkGridHeader *)file;
 
-			SWAP32(walkGridHeader->numBars);
-			SWAP32(walkGridHeader->numNodes);
-
-			_barData *barData = (_barData *) (file + sizeof(_walkGridHeader));
-			for (i = 0; i < walkGridHeader->numBars; i++) {
-				SWAP16(barData->x1);
-				SWAP16(barData->y1);
-				SWAP16(barData->x2);
-				SWAP16(barData->y2);
-				SWAP16(barData->xmin);
-				SWAP16(barData->ymin);
-				SWAP16(barData->xmax);
-				SWAP16(barData->ymax);
-				SWAP16(barData->dx);
-				SWAP16(barData->dy);
-				SWAP32(barData->co);
-				barData++;
-			}
-
-			uint16 *node = (uint16 *) (file + sizeof(_walkGridHeader) + walkGridHeader->numBars * sizeof(_barData));
-			for (i = 0; i < walkGridHeader->numNodes*2; i++) {
-				SWAP16(*node);
-				node++;
-			}
-
-			break;
+		offset = mscreenHeader->bg_parallax[1];
+		if (offset > 0) {
+			parallax = (_parallax *) (file + offset);
+			SWAP16(parallax->w);
+			SWAP16(parallax->h);
 		}
-		case GLOBAL_VAR_FILE:
-			break;
-		case PARALLAX_FILE_null:
-			break;
-		case RUN_LIST: {
-			uint32 *list = (uint32 *)file;
-			while (*list) {
-				SWAP32(*list);
-				list++;
-			}
-			break;
+
+		// backgroundLayer
+		offset = mscreenHeader->screen + sizeof(_screenHeader);
+		if (offset > 0) {
+			parallax = (_parallax *) (file + offset);
+			SWAP16(parallax->w);
+			SWAP16(parallax->h);
 		}
-		case TEXT_FILE: {
-			_textHeader *textHeader = (_textHeader *)file;
-			SWAP32(textHeader->noOfLines);
-			break;
+
+		// foregroundParallaxLayer
+		offset = mscreenHeader->fg_parallax[0];
+		if (offset > 0) {
+			parallax = (_parallax *) (file + offset);
+			SWAP16(parallax->w);
+			SWAP16(parallax->h);
 		}
-		case SCREEN_MANAGER:
-			break;
-		case MOUSE_FILE:
-			break;
-		case ICON_FILE:
-			break;
+
+		offset = mscreenHeader->fg_parallax[1];
+		if (offset > 0) {
+			parallax = (_parallax *) (file + offset);
+			SWAP16(parallax->w);
+			SWAP16(parallax->h);
+		}
+		break;
+	case GAME_OBJECT:
+		objectHub = (_object_hub *)file;
+
+		objectHub->type = (int)SWAP_BYTES_32(objectHub->type);
+		SWAP32(objectHub->logic_level);
+
+		for (i = 0; i < TREE_SIZE; i++) {
+			SWAP32(objectHub->logic[i]);
+			SWAP32(objectHub->script_id[i]);
+			SWAP32(objectHub->script_pc[i]);
+		}
+		break;
+	case WALK_GRID_FILE:
+		_walkGridHeader	*walkGridHeader = (_walkGridHeader *)file;
+
+		SWAP32(walkGridHeader->numBars);
+		SWAP32(walkGridHeader->numNodes);
+
+		_barData *barData = (_barData *) (file + sizeof(_walkGridHeader));
+		for (i = 0; i < walkGridHeader->numBars; i++) {
+			SWAP16(barData->x1);
+			SWAP16(barData->y1);
+			SWAP16(barData->x2);
+			SWAP16(barData->y2);
+			SWAP16(barData->xmin);
+			SWAP16(barData->ymin);
+			SWAP16(barData->xmax);
+			SWAP16(barData->ymax);
+			SWAP16(barData->dx);
+			SWAP16(barData->dy);
+			SWAP32(barData->co);
+			barData++;
+		}
+
+		uint16 *node = (uint16 *) (file + sizeof(_walkGridHeader) + walkGridHeader->numBars * sizeof(_barData));
+		for (i = 0; i < walkGridHeader->numNodes*2; i++) {
+			SWAP16(*node);
+			node++;
+		}
+
+		break;
+	case GLOBAL_VAR_FILE:
+		break;
+	case PARALLAX_FILE_null:
+		break;
+	case RUN_LIST:
+		uint32 *list = (uint32 *)file;
+		while (*list) {
+			SWAP32(*list);
+			list++;
+		}
+		break;
+	case TEXT_FILE:
+		_textHeader *textHeader = (_textHeader *)file;
+		SWAP32(textHeader->noOfLines);
+		break;
+	case SCREEN_MANAGER:
+		break;
+	case MOUSE_FILE:
+		break;
+	case ICON_FILE:
+		break;
 	}
 }
 #endif
@@ -836,43 +838,43 @@ void resMan::Examine_res(uint8 *input) {	//Tony23Oct96
 			//      NOT USED HERE
 			//----------------------------------------------------
 
-			switch(file_header->fileType) {
-				case ANIMATION_FILE:
-					Print_to_console(" <anim> %s", file_header->name);
-					break;
-				case SCREEN_FILE:
-					Print_to_console(" <layer> %s", file_header->name);
-					break;
-				case GAME_OBJECT:
-					Print_to_console(" <game object> %s", file_header->name);
-					break;
-				case WALK_GRID_FILE:
-					Print_to_console(" <walk grid> %s", file_header->name);
-					break;
-				case GLOBAL_VAR_FILE:
-					Print_to_console(" <global variables> %s", file_header->name);
-					break;
-				case PARALLAX_FILE_null:
-					Print_to_console(" <parallax file NOT USED!> %s", file_header->name);
-					break;
-				case RUN_LIST:
-					Print_to_console(" <run list> %s", file_header->name);
-					break;
-				case TEXT_FILE:
-					Print_to_console(" <text file> %s", file_header->name);
-					break;
-				case SCREEN_MANAGER:
-					Print_to_console(" <screen manager> %s", file_header->name);
-					break;
-				case MOUSE_FILE:
-					Print_to_console(" <mouse pointer> %s", file_header->name);
-					break;
-				case ICON_FILE:
-					Print_to_console(" <menu icon> %s", file_header->name);
-					break;
-				default:
-					Print_to_console(" unrecognised fileType %d", file_header->fileType);
-					break;
+			switch (file_header->fileType) {
+			case ANIMATION_FILE:
+				Print_to_console(" <anim> %s", file_header->name);
+				break;
+			case SCREEN_FILE:
+				Print_to_console(" <layer> %s", file_header->name);
+				break;
+			case GAME_OBJECT:
+				Print_to_console(" <game object> %s", file_header->name);
+				break;
+			case WALK_GRID_FILE:
+				Print_to_console(" <walk grid> %s", file_header->name);
+				break;
+			case GLOBAL_VAR_FILE:
+				Print_to_console(" <global variables> %s", file_header->name);
+				break;
+			case PARALLAX_FILE_null:
+				Print_to_console(" <parallax file NOT USED!> %s", file_header->name);
+				break;
+			case RUN_LIST:
+				Print_to_console(" <run list> %s", file_header->name);
+				break;
+			case TEXT_FILE:
+				Print_to_console(" <text file> %s", file_header->name);
+				break;
+			case SCREEN_MANAGER:
+				Print_to_console(" <screen manager> %s", file_header->name);
+				break;
+			case MOUSE_FILE:
+				Print_to_console(" <mouse pointer> %s", file_header->name);
+				break;
+			case ICON_FILE:
+				Print_to_console(" <menu icon> %s", file_header->name);
+				break;
+			default:
+				Print_to_console(" unrecognised fileType %d", file_header->fileType);
+				break;
 			}
 			res_man.Res_close(res);
 		}

@@ -134,12 +134,12 @@ void Sword2FontRenderer::drawText(char *text, int x, int y, int alignment) {
 		int textWidth = getTextWidth(text);
 
 		switch (alignment) {
-			case kAlignRight:
-				x -= textWidth;
-				break;
-			case kAlignCenter:
-				x -= (textWidth / 2);
-				break;
+		case kAlignRight:
+			x -= textWidth;
+			break;
+		case kAlignCenter:
+			x -= (textWidth / 2);
+			break;
 		}
 	}
 
@@ -272,19 +272,19 @@ void Sword2Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint3
 	// Which compression was used?
 
 	switch (anim_head->runTimeComp) {
-		case NONE:
-			spriteType |= RDSPR_NOCOMPRESSION;
-			break;
-		case RLE256:
-			spriteType |= RDSPR_RLE256;
-			break;
-		case RLE16:
-			spriteType |= RDSPR_RLE256;
-			// Points to just after last cdt_entry, i.e. start of
-			// colour table
-			colTablePtr = (uint8 *) (anim_head + 1) +
-				anim_head->noAnimFrames * sizeof(_cdtEntry);
-			break;
+	case NONE:
+		spriteType |= RDSPR_NOCOMPRESSION;
+		break;
+	case RLE256:
+		spriteType |= RDSPR_RLE256;
+		break;
+	case RLE16:
+		spriteType |= RDSPR_RLE256;
+		// Points to just after last cdt_entry, i.e. start of colour
+		// table
+		colTablePtr = (uint8 *) (anim_head + 1) +
+			anim_head->noAnimFrames * sizeof(_cdtEntry);
+		break;
 	}
 
 	_sprites[state].x = x;
@@ -400,21 +400,19 @@ int Sword2Dialog::run() {
 
 			if (me) {
 				switch (me->buttons) {
-					case RD_LEFTBUTTONDOWN:
-						if (newHit)
-							_widgets[i]->onMouseDown(newMouseX, newMouseY);
-						break;
-
-					case RD_LEFTBUTTONUP:
-						if (newHit)
-							_widgets[i]->onMouseUp(newMouseX, newMouseY);
-						// So that slider widgets will
-						// know when the user releases
-						// the mouse button, even if
-						// the cursor is outside of the
-						// slider's hit area.
-						_widgets[i]->releaseMouse(newMouseX, newMouseY);
-						break;
+				case RD_LEFTBUTTONDOWN:
+					if (newHit)
+						_widgets[i]->onMouseDown(newMouseX, newMouseY);
+					break;
+				case RD_LEFTBUTTONUP:
+					if (newHit)
+						_widgets[i]->onMouseUp(newMouseX, newMouseY);
+					// So that slider widgets will know
+					// when the user releases the mouse
+					// button, even if the cursor is
+					// outside of the slider's hit area.
+					_widgets[i]->releaseMouse(newMouseX, newMouseY);
+					break;
 				}
 			}
 
@@ -1261,13 +1259,12 @@ public:
 				uint32 textId;
 
 				switch (rv) {
-					case SR_ERR_FILEOPEN:
-						textId = 213516674;
-						break;
-
-					default:	// SR_ERR_WRITEFAIL
-						textId = 213516676;
-						break;
+				case SR_ERR_FILEOPEN:
+					textId = 213516674;
+					break;
+				default:	// SR_ERR_WRITEFAIL
+					textId = 213516676;
+					break;
 				}
 
 				Control_error((char*) (FetchTextLine(res_man.Res_open(textId / SIZE), textId & 0xffff) + 2));
@@ -1280,17 +1277,15 @@ public:
 				uint32 textId;
 
 				switch (rv) {
-					case SR_ERR_FILEOPEN:
-						textId = 213516670;
-						break;
-
-					case SR_ERR_INCOMPATIBLE:
-						textId = 213516671;
-						break;
-
-					default:	// SR_ERR_READFAIL
-						textId = 213516673;
-						break;
+				case SR_ERR_FILEOPEN:
+					textId = 213516670;
+					break;
+				case SR_ERR_INCOMPATIBLE:
+					textId = 213516671;
+					break;
+				default:	// SR_ERR_READFAIL
+					textId = 213516673;
+					break;
 				}
 
 				Control_error((char *) (FetchTextLine(res_man.Res_open(textId / SIZE), textId & 0xffff) + 2));
@@ -1529,26 +1524,31 @@ void Option_control(void) {	//Pete6Jun97
 
 void UpdateGraphicsLevel(uint8 newLevel) {	// (James13jun97)
 	switch (newLevel) {
-		case 0:		// Lowest setting: no graphics fx
-			ClearTransFx();
-			ClearShadowFx();
-			ClearBltFx();
-			break;
-		case 1:		// Medium-low setting: transparency-blending
-			SetTransFx();
-			ClearShadowFx();
-			ClearBltFx();
-			break;
-		case 2:		// Medium-high setting: transparency-blending + shading
-			SetTransFx();
-			SetShadowFx();
-			ClearBltFx();
-			break;
-		case 3:		// Highest setting: transparency-blending + shading + edge-blending + improved stretching
-			SetTransFx();
-			SetShadowFx();
-			SetBltFx();
-			break;
+	case 0:
+		// Lowest setting: no graphics fx
+		ClearTransFx();
+		ClearShadowFx();
+		ClearBltFx();
+		break;
+	case 1:
+		// Medium-low setting: transparency-blending
+		SetTransFx();
+		ClearShadowFx();
+		ClearBltFx();
+		break;
+	case 2:
+		// Medium-high setting: transparency-blending + shading
+		SetTransFx();
+		SetShadowFx();
+		ClearBltFx();
+		break;
+	case 3:
+		// Highest setting: transparency-blending + shading +
+		// edge-blending + improved stretching
+		SetTransFx();
+		SetShadowFx();
+		SetBltFx();
+		break;
 	}
 
 	// update our global variable - which needs to be checked when dimming
