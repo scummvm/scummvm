@@ -181,6 +181,25 @@ void Scumm::playSound(int sound)
 		return;
 	}
 
+	// Support for SFX in Monkey Island 1, Mac version
+	// This is rather hackish right now, but works OK. SFX are not sounding
+	// 100% correct, though, not sure right now what is causing this.
+	if (ptr != NULL && READ_UINT32_UNALIGNED(ptr) == MKID('Mac1')) {
+
+		// Read info from the header
+		int size = READ_UINT32_UNALIGNED(ptr+0x60);
+		int rate = READ_UINT32_UNALIGNED(ptr+0x64) >> 16;
+
+		// Skip over the header (fixed size)
+		ptr += 0x72;
+		
+		// Allocate a sound buffer, copy the data into it, and play
+		char *sound = (char*)malloc(size);
+		memcpy(sound, ptr, size);
+		_mixer->play_raw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+		return;
+	}
+
 	if ((_features & GF_OLD256) || (_gameId == GID_MONKEY_VGA))
 		return;											/* FIXME */
 

@@ -557,6 +557,13 @@ int Scumm::readSoundResource(int type, int idx)
 	basetag = fileReadDword();
 	total_size = fileReadDwordBE();
 
+	debug(1, "  basetag: %c%c%c%c, total_size=%d",
+			(char)((basetag >> 24) & 0xff),
+			(char)((basetag >> 16) & 0xff),
+			(char)((basetag >> 8) & 0xff),
+			(char)(basetag & 0xff),
+			total_size);
+
 	//if (_gameId == GID_SAMNMAX || _features & GF_AFTER_V7) {
 	if (basetag == MKID('MIDI') || basetag == MKID('iMUS')) {
 		fileSeek(_fileHandle, -8, SEEK_CUR);
@@ -595,6 +602,14 @@ int Scumm::readSoundResource(int type, int idx)
 				break;
 			}
 
+			debug(1, "    tag: %c%c%c%c, total_size=%d, pri=%d",
+					(char)((tag >> 24) & 0xff),
+					(char)((tag >> 16) & 0xff),
+					(char)((tag >> 8) & 0xff),
+					(char)(tag & 0xff),
+					size, pri);
+		
+
 			if (pri > best_pri) {
 				best_pri = pri;
 				best_size = size;
@@ -616,7 +631,7 @@ int Scumm::readSoundResource(int type, int idx)
 		fileRead(_fileHandle, createResource(type, idx, total_size), total_size);
 		return 1;
 	} else if (basetag == MKID('Mac0')) {
-		debug(1, "Ignoring base tag Mac0 in sound %d, size %d", idx, total_size);
+		debug(1, "Found base tag Mac0 in sound %d, size %d", idx, total_size);
 		debug(1, "It was at position %d", filePos(_fileHandle));
 		
 		/* Offset
@@ -626,18 +641,19 @@ int Scumm::readSoundResource(int type, int idx)
 		   empty "Loop" chunk. Maybe "Loop" indicates the song should be
 		   played forever?!?.
 		   
-		   For Mac1, it follows a chunk "Inst" contains the same data as a
-		   MacOS 'snd ' resource, i.e. sampled sound data (8bit). This is
-		   used for sound effects (like the sea gull in Monkey Island).
-		
-		   For Mac0, there can be various different subchunks it seems. The
-		   following combinations appear in MI
-		     ORGA, SHAK, BASS (ID 101)
-		     ORGA, MARI, BASS (ID 108)
-		     VIBE, WHIS, BASS (ID 104)
-		     ORGA, SHAK, VIBE (ID 110)
-		   Guess is that these are instrument names: Organ, Marimba, Whistle...
-		   Maybe there is a mapping table someplace?
+		   There can be various different subchunks it seems. The
+		   following combinations appear in Monkey Island:
+			100: ORGA, TROM, BASS, 
+			101: ORGA, SHAK, BASS, 
+			103: PIPE, PIPE, PIPE, 
+			104: VIBE, WHIS, BASS, 
+			108: ORGA, MARI, BASS, 
+			110: ORGA, SHAK, VIBE, 
+			111: MARI, SHAK, BASS, 
+			115: PLUC, SHAK, WHIS, 
+		   One guess is that these are instrument names: Organ, Marimba, Whistle...
+		   Maybe there is a mapping table someplace? Maybe these are even mapped to
+		   Mac1 type "instruments" ?
 		   
 		   What follows are four byte "commands" it seems, like this (hex):
 		     01 68 4F 49
@@ -666,9 +682,18 @@ int Scumm::readSoundResource(int type, int idx)
 		   Maybe I am mistaken when I think it's four byte, some other parts
 		   seem to suggest it's 2 byte oriented, or even variable lenght...
 		 */
+		fileSeek(_fileHandle, -12, SEEK_CUR);
+		total_size = fileReadDwordBE();
+		fileRead(_fileHandle, createResource(type, idx, total_size), total_size - 8);
+		return 1;
 	} else if (basetag == MKID('Mac1')) {
-		debug(1, "Ignoring base tag Mac1 in sound %d, size %d", idx, total_size);
+		debug(1, "Found base tag Mac1 in sound %d, size %d", idx, total_size);
 		debug(1, "It was at position %d", filePos(_fileHandle));
+
+		fileSeek(_fileHandle, -12, SEEK_CUR);
+		total_size = fileReadDwordBE();
+		fileRead(_fileHandle, createResource(type, idx, total_size), total_size - 8);
+		return 1;
 	} else {
 		fprintf(stderr, "WARNING: Unrecognized base tag 0x%08lx in sound %d\n",
 					basetag, idx);
