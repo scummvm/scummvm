@@ -3329,6 +3329,13 @@ void SimonState::readSfxFile(const char *filename)
 			_effects_offsets[i] += offs;
 		}
 	}
+#if defined(SCUMM_BIG_ENDIAN)
+	uint r;
+	if (_effects_offsets) {
+		for (r = 0; r < gss->NUM_EFFECTS_RESOURCES; r++)
+			_effects_offsets[r] = READ_LE_UINT32(&_effects_offsets[r]);
+	}
+#endif
 }
 
 void SimonState::video_putchar(FillOrCopyStruct *fcs, byte c)
