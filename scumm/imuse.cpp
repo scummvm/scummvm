@@ -2134,7 +2134,6 @@ void Player::parse_sysex(byte *p, uint len)
 			// Roland custom instrument definition.
 			part = get_part (p[0] & 0x0F);
 			if (part) {
-				p[0] = part->_mc->getNumber();
 				part->_instrument.roland (p - 1);
 				part->changed (IMuseDriver::pcProgram);
 			}

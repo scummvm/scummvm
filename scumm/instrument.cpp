@@ -415,6 +415,7 @@ void Instrument_Roland::saveOrLoad (Serializer *s)
 void Instrument_Roland::send (MidiChannel *mc)
 {
 	if (NATIVE_MT32) { // if (mc->device()->mt32device()) {
+		_instrument.device_id = mc->getNumber();
 		mc->device()->sysEx ((byte *) &_instrument, sizeof (_instrument));
 	} else {
 		// Convert to a GM program change.
