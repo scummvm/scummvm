@@ -533,10 +533,11 @@ void Scumm::loadRoomObjects() {
 	assert(searchptr);
 
 	// Load in new room objects
+	ResourceIterator	obcds(searchptr, false);
 	for (i = 0; i < _numObjectsInRoom; i++) {
 		od = &_objs[findLocalObjectSlot()];
 
-		ptr = findResource(MKID('OBCD'), searchptr);
+		ptr = obcds.findNext(MKID('OBCD'));
 		if (ptr == NULL)
 			error("Room %d missing object code block(s)", _roomResource);
 
@@ -553,16 +554,16 @@ void Scumm::loadRoomObjects() {
 		if (_dumpScripts) {
 			char buf[32];
 			sprintf(buf, "roomobj-%d-", _roomResource);
-			ptr = findResource(MKID('VERB'), ptr, 0);
+			ptr = findResource(MKID('VERB'), ptr);
 			dumpResource(buf, od->obj_nr, ptr);
 		}
 
-		searchptr = NULL;
 	}
 
 	searchptr = room;
+	ResourceIterator	obims(room, false);
 	for (i = 0; i < _numObjectsInRoom; i++) {
-		ptr = findResource(MKID('OBIM'), searchptr);
+		ptr = obims.findNext(MKID('OBIM'));
 		if (ptr == NULL)
 			error("Room %d missing image blocks(s)", _roomResource);
 
@@ -580,7 +581,6 @@ void Scumm::loadRoomObjects() {
 			if (_objs[j].obj_nr == obim_id)
 				_objs[j].OBIMoffset = ptr - room;
 		}
-		searchptr = NULL;
 	}
 
 	for (i = 1; i < _numLocalObjects; i++) {
@@ -636,7 +636,7 @@ void Scumm::loadRoomObjectsSmall() {
 	ObjectData *od;
 	const byte *ptr;
 	uint16 obim_id;
-	const byte *room, *searchptr;
+	const byte *room;
 	const RoomHeader *roomhdr;
 
 	CHECK_HEAP
@@ -651,11 +651,11 @@ void Scumm::loadRoomObjectsSmall() {
 	if (_numObjectsInRoom > _numLocalObjects)
 		error("More than %d objects in room %d", _numLocalObjects, _roomResource);
 
-	searchptr = room;
+	ResourceIterator	obcds(room, true);
 	for (i = 0; i < _numObjectsInRoom; i++) {
 		od = &_objs[findLocalObjectSlot()];
 
-		ptr = findResourceSmall(MKID('OBCD'), searchptr);
+		ptr = obcds.findNext(MKID('OBCD'));
 		if (ptr == NULL)
 			error("Room %d missing object code block(s)", _roomResource);
 
@@ -666,13 +666,11 @@ void Scumm::loadRoomObjectsSmall() {
 			sprintf(buf, "roomobj-%d-", _roomResource);
 			dumpResource(buf, od->obj_nr, ptr);
 		}
-
-		searchptr = NULL;
 	}
 
-	searchptr = room;
+	ResourceIterator	obims(room, true);
 	for (i = 0; i < _numObjectsInRoom; i++) {
-		ptr = findResourceSmall(MKID('OBIM'), searchptr);
+		ptr = obims.findNext(MKID('OBIM'));
 		if (ptr == NULL)
 			error("Room %d missing image blocks(s)", _roomResource);
 
@@ -682,7 +680,6 @@ void Scumm::loadRoomObjectsSmall() {
 			if (_objs[j].obj_nr == obim_id)
 				_objs[j].OBIMoffset = ptr - room;
 		}
-		searchptr = NULL;
 	}
 
 	for (i = 1; i < _numLocalObjects; i++) {
@@ -1090,11 +1087,9 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 		else
 			searchptr = roomptr;
 		assert(searchptr);
+		ResourceIterator	obcds(searchptr, _features & GF_SMALL_HEADER);
 		for (i = 0;;) {
-			if (_features & GF_SMALL_HEADER)
-				obcdptr = findResourceSmall(MKID('OBCD'), searchptr);
-			else
-				obcdptr = findResource(MKID('OBCD'), searchptr);
+			obcdptr = obcds.findNext(MKID('OBCD'));
 			if (obcdptr == NULL)
 				error("findObjectInRoom: Not enough code blocks in room %d", room);
 			cdhd = (const CodeHeader *)findResourceData(MKID('CDHD'), obcdptr);
@@ -1115,19 +1110,14 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 			}
 			if (++i == numobj)
 				error("findObjectInRoom: Object %d not found in room %d", id, room);
-			searchptr = NULL;
 		}
 	}
 
 	roomptr = fo->roomptr;
 	if (findWhat & foImageHeader) {
-		searchptr = roomptr;
-		assert(searchptr);
+		ResourceIterator	obims(roomptr, _features & GF_SMALL_HEADER);
 		for (i = 0;;) {
-			if (_features & GF_SMALL_HEADER)
-				obimptr = findResourceSmall(MKID('OBIM'), searchptr);
-			else
-				obimptr = findResource(MKID('OBIM'), searchptr);
+			obimptr = obims.findNext(MKID('OBIM'));
 			if (obimptr == NULL)
 				error("findObjectInRoom: Not enough image blocks in room %d", room);
 			imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), obimptr);
@@ -1149,7 +1139,6 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 			}
 			if (++i == numobj)
 				error("findObjectInRoom: Object %d image not found in room %d", id, room);
-			searchptr = NULL;
 		}
 	}
 }
@@ -1640,7 +1629,7 @@ void Scumm::loadFlObject(uint object, uint room) {
 		char buf[32];
 		const byte *ptr = foir.obcd;
 		sprintf(buf, "roomobj-%d-", room);
-		ptr = findResource(MKID('VERB'), ptr, 0);
+		ptr = findResource(MKID('VERB'), ptr);
 		dumpResource(buf, object, ptr);
 	}
 

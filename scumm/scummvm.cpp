@@ -1662,7 +1662,8 @@ void Scumm::initRoomSubBlocks() {
 			}
 		}
 	} else if (_features & GF_SMALL_HEADER) {
-		while ((ptr = findResourceSmall(MKID('LSCR'), searchptr)) != NULL) {
+		ResourceIterator localScriptIterator(searchptr, true);
+		while ((ptr = localScriptIterator.findNext(MKID('LSCR'))) != NULL) {
 			int id = 0;
 			ptr += _resourceHeaderSize;	/* skip tag & size */
 			id = ptr[0];
@@ -1674,10 +1675,10 @@ void Scumm::initRoomSubBlocks() {
 			}
 
 			_localScriptList[id - _numGlobalScripts] = ptr + 1 - roomptr;
-			searchptr = NULL;
 		}
 	} else {
-		while ((ptr = findResource(MKID('LSCR'), searchptr)) != NULL) {
+		ResourceIterator localScriptIterator(searchptr, false);
+		while ((ptr = localScriptIterator.findNext(MKID('LSCR'))) != NULL) {
 			int id = 0;
 
 			ptr += _resourceHeaderSize;	/* skip tag & size */
@@ -1700,8 +1701,6 @@ void Scumm::initRoomSubBlocks() {
 				sprintf(buf, "room-%d-", _roomResource);
 				dumpResource(buf, id, ptr - _resourceHeaderSize);
 			}
-
-			searchptr = NULL;
 		}
 	}
 

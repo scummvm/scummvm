@@ -1349,9 +1349,9 @@ const byte *Scumm::findResourceData(uint32 tag, const byte *ptr) {
 	if (_features & GF_OLD_BUNDLE)
 		error("findResourceData must not be used in GF_OLD_BUNDLE games");
 	else if (_features & GF_SMALL_HEADER)
-		ptr = findResourceSmall(tag, ptr, 0);
+		ptr = findResourceSmall(tag, ptr);
 	else
-		ptr = findResource(tag, ptr, 0);
+		ptr = findResource(tag, ptr);
 
 	if (ptr == NULL)
 		return NULL;
@@ -1370,72 +1370,58 @@ int Scumm::getResourceDataSize(const byte *ptr) const {
 		return READ_BE_UINT32(ptr - 4) - 8;
 }
 
-struct FindResourceState {
-	uint32 size, pos;
-	const byte *ptr;
-};
+ResourceIterator::ResourceIterator(const byte *searchin, bool smallHeader)
+	: _ptr(searchin), _smallHeader(smallHeader) {
+	assert(searchin);
+	if (_smallHeader) {
+		_size = READ_LE_UINT32(searchin);
+		_pos = 6;
+		_ptr = searchin + 6;
+	} else {
+		_size = READ_BE_UINT32(searchin + 4);
+		_pos = 8;
+		_ptr = searchin + 8;
+	}
+	
+}
 
-/* just O(N) complexity when iterating with this function */
+const byte *ResourceIterator::findNext(uint32 tag) {
+	uint32 size = 0;
+	const byte *result = 0;
+	
+	if (_smallHeader) {
+		uint16 smallTag = newTag2Old(tag);
+		do {
+			if (_pos >= _size)
+				return 0;
+	
+			result = _ptr;
+			size = READ_LE_UINT32(result);
+			if ((int32)size <= 0)
+				return 0;	// Avoid endless loop
+			
+			_pos += size;
+			_ptr += size;
+		} while (READ_LE_UINT16(result + 4) != smallTag);
+	} else {
+		do {
+			if (_pos >= _size)
+				return 0;
+	
+			result = _ptr;
+			size = READ_BE_UINT32(result + 4);
+			if ((int32)size <= 0)
+				return 0;	// Avoid endless loop
+			
+			_pos += size;
+			_ptr += size;
+		} while (READ_UINT32(result) != tag);
+	}
+
+	return result;
+}
+
 const byte *findResource(uint32 tag, const byte *searchin) {
-	uint32 size;
-	static FindResourceState frs;
-	FindResourceState *f = &frs;	/* easier to make it thread safe like this */
-
-	if (searchin) {
-		f->size = READ_BE_UINT32(searchin + 4);
-		f->pos = 8;
-		f->ptr = searchin + 8;
-		goto StartScan;
-	}
-
-	do {
-		size = READ_BE_UINT32(f->ptr + 4);
-		if ((int32)size <= 0)
-			return NULL;
-
-		f->pos += size;
-		f->ptr += size;
-
-	StartScan:
-		if (f->pos >= f->size)
-			return NULL;
-	} while (READ_UINT32(f->ptr) != tag);
-
-	return f->ptr;
-}
-
-const byte *findResourceSmall(uint32 tag, const byte *searchin) {
-	uint32 size;
-	static FindResourceState frs;
-	FindResourceState *f = &frs;	/* easier to make it thread safe like this */
-	uint16 smallTag;
-
-	smallTag = newTag2Old(tag);
-
-	if (searchin) {
-		f->size = READ_LE_UINT32(searchin);
-		f->pos = 6;
-		f->ptr = searchin + 6;
-		goto StartScan;
-	}
-
-	do {
-		size = READ_LE_UINT32(f->ptr);
-		if ((int32)size <= 0)
-			return NULL;
-
-		f->pos += size;
-		f->ptr += size;
-
-	StartScan:
-		if (f->pos >= f->size)
-			return NULL;
-	} while (READ_LE_UINT16(f->ptr + 4) != smallTag);
-
-	return f->ptr;
-}
-
-const byte *findResource(uint32 tag, const byte *searchin, int idx) {
 	uint32 curpos, totalsize, size;
 
 	assert(searchin);
@@ -1446,7 +1432,7 @@ const byte *findResource(uint32 tag, const byte *searchin, int idx) {
 	searchin += 4;
 
 	while (curpos < totalsize) {
-		if (READ_UINT32(searchin) == tag && !idx--)
+		if (READ_UINT32(searchin) == tag)
 			return searchin;
 
 		size = READ_BE_UINT32(searchin + 4);
@@ -1463,7 +1449,7 @@ const byte *findResource(uint32 tag, const byte *searchin, int idx) {
 	return NULL;
 }
 
-const byte *findResourceSmall(uint32 tag, const byte *searchin, int idx) {
+const byte *findResourceSmall(uint32 tag, const byte *searchin) {
 	uint32 curpos, totalsize, size;
 	uint16 smallTag;
 
@@ -1478,7 +1464,7 @@ const byte *findResourceSmall(uint32 tag, const byte *searchin, int idx) {
 	while (curpos < totalsize) {
 		size = READ_LE_UINT32(searchin);
 
-		if (READ_LE_UINT16(searchin + 4) == smallTag && !idx--)
+		if (READ_LE_UINT16(searchin + 4) == smallTag)
 			return searchin;
 
 		if ((int32)size <= 0) {
