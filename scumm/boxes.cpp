@@ -159,7 +159,7 @@ int Scumm::getScale(int box, int x, int y) {
 	if (_version == 8) {
 		int slot = FROM_LE_32(ptr->v8.scaleSlot);
 		if (slot) {
-			assert(1 <= slot && slot <= 20);
+			assert(1 <= slot && slot <= ARRAYSIZE(_scaleSlots));
 			int scaleX = 0, scaleY = 0;
 			ScaleSlot &s = _scaleSlots[slot-1];
 
@@ -248,16 +248,121 @@ void Scumm::setScaleItem(int slot, int y1, int scale1, int y2, int scale2) {
 			tmp = 255;
 		*ptr++ = tmp;
 	}
+/*	
+	// TEST!
+	printf("setScaleItem(%d, %d, %d, %d, %d)\n", slot, y1, scale1, y2, scale2);
+	convertScaleTableToScaleSlot(slot);
+*/
+}
+
+void Scumm::convertScaleTableToScaleSlot(int slot) {
+	assert(1 <= slot && slot <= ARRAYSIZE(_scaleSlots));
+
+	byte *resptr = getResourceAddress(rtScaleTable, slot);
+	ScaleSlot &s = _scaleSlots[slot-1];
+
+	int lowerIdx, upperIdx;
+	float m, oldM;
+	
+	if (resptr[0] == resptr[199]) {
+		// The scale is constant This usually means we encountered one of the
+		// "broken" cases. We set pseudo scale item values which lead to a 
+		// constant scale of 255.
+		// TODO
+		printf("Broken case!\n");
+		s.y1 = 0;
+		s.y2 = 199;
+		s.scale1 = s.scale2 = 255;
+		return;
+	}
+	
+	/*
+	 * Essentially, what we are doing here is some kind of "line fitting"
+	 * algorithm. The data in the scale table represents a linear graph. What
+	 * we want to find is the slope and (vertical) offset of this line. Things
+	 * are complicated by the fact that the line is cut of vertically at 1 and
+	 * 255. We have to be careful in handling this and some border cases.
+	 * 
+	 * Some typical graphs look like these:
+	 *       ---         ---     ---
+	 *       /         ---           \ 
+	 *  ___/       ---               \___
+	 * 
+	 * The method used here is to compute the slope of secants fixed at the
+	 * left and right end. For most cases this detects the cut-over points
+	 * quite accurately. 
+	 */
+	
+	// Search for the bend on the left side
+	m = (resptr[199] - resptr[0]) / 199.0;
+	for (lowerIdx = 0; lowerIdx < 199 && (resptr[lowerIdx] == 1 || resptr[lowerIdx] == 255); lowerIdx++) {
+		oldM = m;
+		m = (resptr[199] - resptr[lowerIdx+1]) / (float)(199 - (lowerIdx+1));
+		if (m > 0) {
+			if (m <= oldM)
+				break;
+		} else {
+			if (m >= oldM)
+				break;
+		}
+	}
+	
+	// Search for the bend on the right side
+	m = (resptr[199] - resptr[0]) / 199.0;
+	for (upperIdx = 199; upperIdx > 1 && (resptr[upperIdx] == 1 || resptr[upperIdx] == 255); upperIdx--) {
+		oldM = m;
+		m = (resptr[upperIdx-1] - resptr[0]) / (float)(upperIdx-1);
+		if (m > 0) {
+			if (m <= oldM)
+				break;
+		} else {
+			if (m >= oldM)
+				break;
+		}
+	}
+
+	// If lowerIdx and upperIdx are equal, we assume that there
+	// was no bend at all, and go for the maximum range.
+	if (lowerIdx == upperIdx) {
+		lowerIdx = 0;
+		upperIdx = 199;
+	}
+
+	// The values of y1 and y2, as well as the scale, can now easily be computed
+	s.y1 = lowerIdx;
+	s.y2 = upperIdx;
+	s.scale1 = resptr[lowerIdx];
+	s.scale2 = resptr[upperIdx];
+
+	
+	// Compute the variance, for debugging. It shouldn't exceed 1
+	int y;
+	int sum = 0;
+	int scale;
+	float variance;
+	for (y = 0; y < 200; y++) {
+		scale = (s.scale2 - s.scale1) * (y - s.y1) / (s.y2 - s.y1) + s.scale1;
+		if (scale < 1)
+			scale = 1;
+		else if (scale > 255)
+			scale = 255;
+
+		sum += (resptr[y] - scale) * (resptr[y] - scale);
+	}
+	variance = sum / (200.0 - 1.0);
+	if (variance > 1)
+		warning("scale item %d, variance %f exceeds 1 (room %d)\n", slot, variance, _currentRoom);
 }
 
 void Scumm::setScaleSlot(int slot, int x1, int y1, int scale1, int x2, int y2, int scale2) {
-	assert(1 <= slot && slot <= 20);
-	_scaleSlots[slot-1].x2 = x2;
-	_scaleSlots[slot-1].y2 = y2;
-	_scaleSlots[slot-1].scale2 = scale2;
-	_scaleSlots[slot-1].x1 = x1;
-	_scaleSlots[slot-1].y1 = y1;
-	_scaleSlots[slot-1].scale1 = scale1;
+	assert(1 <= slot && slot <= ARRAYSIZE(_scaleSlots));
+	ScaleSlot &s = _scaleSlots[slot-1];
+	s.x2 = x2;
+	s.y2 = y2;
+	s.scale2 = scale2;
+	s.x1 = x1;
+	s.y1 = y1;
+	s.scale1 = scale1;
 }
 
 byte Scumm::getNumBoxes() {

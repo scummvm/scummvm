@@ -1054,14 +1054,15 @@ public:
 	void setScaleItem(int slot, int a, int b, int c, int d);
 
 protected:
-	// V8 scaling stuff: should be in V8 class
+	// Scaling slots/items
 	struct ScaleSlot {
 		int x1, y1, scale1;
 		int x2, y2, scale2;
 	};
-	ScaleSlot _scaleSlots[20];	// FIXME - not sure if this limit is right, but based on my observations it is
+	ScaleSlot _scaleSlots[20];
 	void setScaleSlot(int slot, int x1, int y1, int scale1, int x2, int y2, int scale2);
 	void setBoxScaleSlot(int box, int slot);
+	void convertScaleTableToScaleSlot(int slot);
 
 	void createBoxMatrix();
 	bool areBoxesNeighbours(int i, int j);
