@@ -231,12 +231,22 @@ void Gdi::init() {
 	_textSurface.bytesPerPixel = 1;
 
 	_numStrips = _vm->_screenWidth / 8;
-#ifdef V7_SMOOTH_SCROLLING_HACK
+
 	// Increase the number of screen strips by one; needed for smooth scrolling
 	if (_vm->_version >= 7) {
+		// We now have mostly working smooth scrolling code in place for V7+ games
+		// (i.e. The Dig, Full Throttle and COMI). It seems to work very well so far.
+		// One area which still may need some work are the AKOS codecs (except for
+		// codec 1, which I already updated): their masking code may need adjustments,
+		// similar to the treatment codec 1 received.
+		//
+		// To understand how we achieve smooth scrolling, first note that with it, the
+		// virtual screen strips don't match the display screen strips anymore. To
+		// overcome that problem, we simply use a screen pitch that is 8 pixel wider
+		// than the actual screen width, and always draw one strip more than needed to
+		// the backbuf (of course we have to treat the right border seperately). This
 		_numStrips += 1;
 	}
-#endif
 }
 
 void ScummEngine::initVirtScreen(VirtScreenNumber slot, int number, int top, int width, int height, bool twobufs,
@@ -261,13 +271,13 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int number, int top, int
 	vs->backBuf = NULL;
 	vs->bytesPerPixel = 1;
 	vs->pitch = width;
-#ifdef V7_SMOOTH_SCROLLING_HACK
+
 	if (_version >= 7) {
 		// Increase the pitch by one; needed to accomodate the extra
 		// screen strip which we use to implement smooth scrolling.
+		// See Gdi::init()
 		vs->pitch += 8;
 	}
-#endif
 
 	size = vs->pitch * vs->h;
 	if (scrollable) {
@@ -324,18 +334,11 @@ void ScummEngine::markRectAsDirty(VirtScreenNumber virt, int left, int right, in
 		bottom = vs->h;
 
 	if (virt == kMainVirtScreen && dirtybit) {
-#ifdef V7_SMOOTH_SCROLLING_HACK
-		// TODO / FIXME: I *think* the next (commented out) line is
-		// what we should be doing; but if I enable it instead of the
-		// old way to compute lp, we get redraw glitches. Not sure why
-		// (maybe my logic is simply flawed, I just don't see how).
-		//lp = (left + vs->xstart) / 8;
+
 		lp = left / 8 + _screenStartStrip;
-#else
-		lp = left / 8 + _screenStartStrip;
-#endif
 		if (lp < 0)
 			lp = 0;
+
 		rp = (right + vs->xstart) / 8;
 		if (_version >= 7) {
 			if (rp > 409)

@@ -335,11 +335,7 @@ void ScummEngine::cameraMoved() {
 		screenLeft = _screenStartStrip * 8;
 	}
 
-#ifdef V7_SMOOTH_SCROLLING_HACK
 	virtscr[0].xstart = screenLeft;
-#else
-	virtscr[0].xstart = _screenStartStrip * 8;
-#endif
 }
 
 void ScummEngine::panCameraTo(int x, int y) {
