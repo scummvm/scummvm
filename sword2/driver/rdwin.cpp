@@ -543,6 +543,7 @@ int32 ServiceWindows(void)
 
 {
 	g_sword2->parseEvents();
+	FadeServer();
 	g_sword2->_system->update_screen();
 //	warning("stub ServiceWindows");  // too noisy
 /*

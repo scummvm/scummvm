@@ -59,7 +59,7 @@
 extern uint8 paletteMatch[64*64*64];
 
 extern int32 RestorePalette(void);
-extern void FadeServer(void *);
+extern void FadeServer();
 
 
 #endif

@@ -320,8 +320,6 @@ int32 BS2_SetPalette(int16 startEntry, int16 noEntries, uint8 *colourTable, uint
 {
 	debug(0, "BS2_SetPalette(%d, %d, %d)", startEntry, noEntries, fadeNow);
 
-	StackLock lock(g_sword2->_paletteMutex);
-
 	if (noEntries == 0) {
 		RestorePalette();
 		return RD_OK;
@@ -421,122 +419,55 @@ uint8 GetFadeStatus(void)
 	return(fadeStatus);
 }
 
-
-void FadeServer(void *)
-
-{
+void FadeServer() {
+	static int32 previousTime = 0;
+	const byte *newPalette = (const byte *) fadePalette;
 	int32 currentTime;
 	int16 fadeMultiplier;
 	int16 i;
 
-	StackLock lock(g_sword2->_paletteMutex);
-	
-	switch (fadeStatus) {
-		case RDFADE_UP:
-			currentTime = SVM_timeGetTime();
-			if (currentTime >= fadeStartTime + fadeTotalTime) {
-				fadeStatus = RDFADE_NONE;
-				g_system->set_palette((const byte *) palCopy, 0, 256);
-			} else {
-				fadeMultiplier = (int16) (((int32) (currentTime - fadeStartTime) * 256) / fadeTotalTime);
-				for (i=0; i<256; i++) {
-					fadePalette[i][0] = (palCopy[i][0] * fadeMultiplier) >> 8;
-					fadePalette[i][1] = (palCopy[i][1] * fadeMultiplier) >> 8;
-					fadePalette[i][2] = (palCopy[i][2] * fadeMultiplier) >> 8;
-				}
-				g_system->set_palette((const byte *) fadePalette, 0, 256);
-			}
-			break;
+	// This used to be called through a timer, but is now called from
+	// ServiceWindows() instead, since that's the only place where we
+	// actually update the screen.
 
-		case RDFADE_DOWN:
-			currentTime = SVM_timeGetTime();
-			if (currentTime >= fadeStartTime + fadeTotalTime) {
-				memset(fadePalette, 0, sizeof(fadePalette));
-				fadeStatus = RDFADE_BLACK;
-			} else {
-				fadeMultiplier = (int16) (((int32) (fadeTotalTime - (currentTime - fadeStartTime)) * 256) / fadeTotalTime);
-				for (i=0; i<256; i++) {
-					fadePalette[i][0] = (palCopy[i][0] * fadeMultiplier) >> 8;
-					fadePalette[i][1] = (palCopy[i][1] * fadeMultiplier) >> 8;
-					fadePalette[i][2] = (palCopy[i][2] * fadeMultiplier) >> 8;
-				}
-			}
-			g_system->set_palette((const byte *) fadePalette, 0, 256);
-			break;
-		}
-
-
-/*
-	int32 currentTime;
-	int16 fadeMultiplier;
-	int16 i;
-	HRESULT hr;
-
-
-	if (lpPalette == NULL)
+	// If we're not in the process of fading, do nothing.
+	if (fadeStatus != RDFADE_UP && fadeStatus != RDFADE_DOWN)
 		return;
 
-	if (fadeStatus)
-	{
-		if (fadeStatus == RDFADE_UP)
-		{
-			currentTime = timeGetTime();
-			if (currentTime >= fadeStartTime + fadeTotalTime)
-			{
-				fadeStatus = RDFADE_NONE;
-				if (bFullScreen)
-					hr = IDirectDrawPalette_SetEntries(lpPalette, 0, 0, 256, (LPPALETTEENTRY) &palCopy[0][0]);
-				else
-					hr = IDirectDrawPalette_SetEntries(lpPalette, 0, 10, 236, (LPPALETTEENTRY) &palCopy[10][0]);
-			}
-			else
-			{
-				fadeMultiplier = (int16) (((int32) (currentTime - fadeStartTime) * 256) / fadeTotalTime);
-				for (i=0; i<256; i++)
-				{
-					fadePalette[i][0] = (palCopy[i][0] * fadeMultiplier) >> 8;
-					fadePalette[i][1] = (palCopy[i][1] * fadeMultiplier) >> 8;
-					fadePalette[i][2] = (palCopy[i][2] * fadeMultiplier) >> 8;
-				}
-				if (bFullScreen)
-					hr = IDirectDrawPalette_SetEntries(lpPalette, 0, 0, 256, (LPPALETTEENTRY) &fadePalette[0][0]);
-				else
-					hr = IDirectDrawPalette_SetEntries(lpPalette, 0, 10, 236, (LPPALETTEENTRY) &fadePalette[10][0]);
+	// I don't know if this is necessary, but let's limit how often the
+	// palette is updated, just to be safe.
+	currentTime = SVM_timeGetTime();
+	if (currentTime - previousTime <= 25)
+		return;
+
+	previousTime = currentTime;
+
+	if (fadeStatus == RDFADE_UP) {
+		if (currentTime >= fadeStartTime + fadeTotalTime) {
+			fadeStatus = RDFADE_NONE;
+			newPalette = (const byte *) palCopy;
+		} else {
+			fadeMultiplier = (int16) (((int32) (currentTime - fadeStartTime) * 256) / fadeTotalTime);
+			for (i = 0; i < 256; i++) {
+				fadePalette[i][0] = (palCopy[i][0] * fadeMultiplier) >> 8;
+				fadePalette[i][1] = (palCopy[i][1] * fadeMultiplier) >> 8;
+				fadePalette[i][2] = (palCopy[i][2] * fadeMultiplier) >> 8;
 			}
 		}
-		else if (fadeStatus == RDFADE_DOWN)
-		{
-			currentTime = timeGetTime();
-			if (currentTime >= fadeStartTime + fadeTotalTime)
-			{
-				for (i=0; i<256; i++)
-				{
-					fadePalette[i][0] = 0;
-					fadePalette[i][1] = 0;
-					fadePalette[i][2] = 0;
-				}
-				fadeStatus = RDFADE_BLACK;
-				if (bFullScreen)
-					hr = IDirectDrawPalette_SetEntries(lpPalette, 0, 0, 256, (LPPALETTEENTRY) &fadePalette[0][0]);
-				else
-					hr = IDirectDrawPalette_SetEntries(lpPalette, 0, 10, 236, (LPPALETTEENTRY) &fadePalette[10][0]);
-			}
-			else
-			{
-				fadeMultiplier = (int16) (((int32) (fadeTotalTime - (currentTime - fadeStartTime)) * 256) / fadeTotalTime);
-				for (i=0; i<256; i++)
-				{
-					fadePalette[i][0] = (palCopy[i][0] * fadeMultiplier) >> 8;
-					fadePalette[i][1] = (palCopy[i][1] * fadeMultiplier) >> 8;
-					fadePalette[i][2] = (palCopy[i][2] * fadeMultiplier) >> 8;
-				}
-				if (bFullScreen)
-					hr = IDirectDrawPalette_SetEntries(lpPalette, 0, 0, 256, (LPPALETTEENTRY) &fadePalette[0][0]);
-				else
-					hr = IDirectDrawPalette_SetEntries(lpPalette, 0, 10, 236, (LPPALETTEENTRY) &fadePalette[10][0]);
+	} else {
+		if (currentTime >= fadeStartTime + fadeTotalTime) {
+			fadeStatus = RDFADE_BLACK;
+			memset(fadePalette, 0, sizeof(fadePalette));
+		} else {
+			fadeMultiplier = (int16) (((int32) (fadeTotalTime - (currentTime - fadeStartTime)) * 256) / fadeTotalTime);
+			for (i = 0; i < 256; i++) {
+				fadePalette[i][0] = (palCopy[i][0] * fadeMultiplier) >> 8;
+				fadePalette[i][1] = (palCopy[i][1] * fadeMultiplier) >> 8;
+				fadePalette[i][2] = (palCopy[i][2] * fadeMultiplier) >> 8;
 			}
 		}
 	}
-*/
+
+	g_system->set_palette(newPalette, 0, 256);
 }
 

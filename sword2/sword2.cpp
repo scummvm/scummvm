@@ -274,11 +274,6 @@ void Sword2State::go()
 		return;
 	}
 
-	_paletteMutex = _system->create_mutex();
-	_timer->installProcedure(&FadeServer, 40000 / 25);
-
-
-	
 	Zdebug("CALLING: InitialiseDisplay");
 	_system->init_size(640, 480);
 	rv = InitialiseDisplay(640, 480, 8, RD_FULLSCREEN);
