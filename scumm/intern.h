@@ -660,12 +660,13 @@ protected:
 	void o72_objectY();
 	void o72_startScript();
 	void o72_startObject();
+	void o72_drawObject();
+	void o72_unknown62();
 	void o72_unknown63();
 	void o72_arrayOps();
 	void o72_dimArray();
 	void o72_dim2dimArray();
 	void o72_jumpToScript();
-	void o72_drawObject();
 	void o72_stringLen();
 	void o72_readINI();
 	void o72_unknownF4();

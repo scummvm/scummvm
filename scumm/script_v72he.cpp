@@ -167,8 +167,8 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_startScriptQuick),
 		/* 60 */
 		OPCODE(o72_startObject),
-		OPCODE(o6_drawObject),
-		OPCODE(o6_drawObjectAt),
+		OPCODE(o72_drawObject),
+		OPCODE(o72_unknown62),
 		OPCODE(o72_unknown63),
 		/* 64 */
 		OPCODE(o6_invalid),
@@ -437,6 +437,51 @@ void ScummEngine_v72he::o72_startObject() {
 	runObjectScript(script, entryp, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
 }
 
+void ScummEngine_v72he::o72_drawObject() {
+	int subOp = fetchScriptByte();
+	int state = 0, y = -1, x = -1;
+
+	switch (subOp) {
+	case 62:
+		state = pop();
+		y = pop();
+		x = pop();
+		break;
+	case 63:
+		state = pop();
+		if (state == 0)
+			state = 1;
+		break;
+	case 65:
+		state = 1;
+		y = pop();
+		x = pop();
+	default:
+		warning("o72_drawObject: default case %d", subOp);
+	}
+
+	int object = pop();
+	int objnum = getObjectIndex(object);
+	if (objnum == -1)
+		return;
+
+	if (y != -1 && x != -1) {
+		_objs[objnum].x_pos = x * 8;
+		_objs[objnum].y_pos = y * 8;
+	}
+
+	if (state != -1) {
+		addObjectToDrawQue(objnum);
+		putState(object, state);
+	}
+}
+
+void ScummEngine_v72he::o72_unknown62() {
+	int a = pop();
+	// unknown62(a, 0, 0, 4);
+	warning("o72_unknown62 stub (%d)", a);
+}
+
 void ScummEngine_v72he::o72_unknown63() {
 	int a = fetchScriptByte();
 	warning("o72_unknown63 stub (%d)", a);
@@ -557,45 +602,6 @@ void ScummEngine_v72he::o72_jumpToScript() {
 	flags = fetchScriptByte();
 	stopObjectCode();
 	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
-}
-
-void ScummEngine_v72he::o72_drawObject() {
-	int subOp = fetchScriptByte();
-	int state = 0, y = -1, x = -1;
-
-	switch (subOp) {
-	case 62:
-		state = pop();
-		y = pop();
-		x = pop();
-		break;
-	case 63:
-		state = pop();
-		if (state == 0)
-			state = 1;
-		break;
-	case 65:
-		state = 1;
-		y = pop();
-		x = pop();
-	default:
-		warning("o72_drawObject: default case %d", subOp);
-	}
-
-	int object = pop();
-	int objnum = getObjectIndex(object);
-	if (objnum == -1)
-		return;
-
-	if (y != -1 && x != -1) {
-		_objs[objnum].x_pos = x * 8;
-		_objs[objnum].y_pos = y * 8;
-	}
-
-	if (state != -1) {
-		addObjectToDrawQue(objnum);
-		putState(object, state);
-	}
 }
 
 void ScummEngine_v72he::o72_stringLen() {

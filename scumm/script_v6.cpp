@@ -597,7 +597,7 @@ void ScummEngine_v6::o6_pushWord() {
 }
 
 void ScummEngine_v6::o6_pushByteVar() {
-	push(readVar(fetchScriptWord()));
+	push(readVar(fetchScriptByte()));
 }
 
 void ScummEngine_v6::o6_pushWordVar() {
