@@ -66,27 +66,20 @@ SwordLogic::SwordLogic(ObjectMan *pObjMan, ResMan *resMan, SwordScreen *pScreen,
 void SwordLogic::newScreen(uint32 screen) {
 	BsObject *compact = (BsObject*)_objMan->fetchObject(PLAYER);
 
-	//Tdebug("locked player");
-
-	if (SwordEngine::_systemVars.justRestoredGame)	// if we've just restored a game - we want George to be exactly as saved
-	{
-		if (_scriptVars[GEORGE_WALKING])	// except that if George was walking when we saveed the game
-		{
+	if (SwordEngine::_systemVars.justRestoredGame) { // if we've just restored a game - we want George to be exactly as saved
+		fnAddHuman(NULL, 0, 0, 0, 0, 0, 0, 0);
+		if (_scriptVars[GEORGE_WALKING]) { // except that if George was walking when we saveed the game
 			fnStandAt(compact, PLAYER, _scriptVars[CHANGE_X], _scriptVars[CHANGE_Y], _scriptVars[CHANGE_DIR], _scriptVars[CHANGE_STANCE], 0,0);
 			fnIdle(compact,PLAYER,0,0,0,0,0,0);
 			_scriptVars[GEORGE_WALKING] = 0;
 		}
-
 		SwordEngine::_systemVars.justRestoredGame = 0;
-	}
-	else	// if we haven't just restored a game, set George to stand, etc
-	{
+		if (_scriptVars[CURRENT_MUSIC])
+			_music->startMusic(_scriptVars[CURRENT_MUSIC], 1);
+	} else { // if we haven't just restored a game, set George to stand, etc
 		compact->o_screen = _scriptVars[NEW_SCREEN]; //move the mega/player at this point between screens
-		//Tdebug("FN_stand_at...");
 		fnStandAt(compact, PLAYER, _scriptVars[CHANGE_X], _scriptVars[CHANGE_Y], _scriptVars[CHANGE_DIR], _scriptVars[CHANGE_STANCE], 0,0);
-		//Tdebug("FN_change_floor...");
 		fnChangeFloor(compact, PLAYER, _scriptVars[CHANGE_PLACE], 0, 0, 0, 0, 0);
-		//Tdebug("done");
 	}
 }
 
@@ -371,7 +364,7 @@ int SwordLogic::animDriver(BsObject *compact) {
 		compact->o_anim_y = animPtr->animY;
 	}
 
-	compact->o_frame = animPtr->animFrame;
+	compact->o_frame = FROM_LE_32(animPtr->animFrame);
 	compact->o_anim_pc++;
 	if (compact->o_anim_pc == numFrames)
 		compact->o_logic = LOGIC_script;
@@ -1508,16 +1501,16 @@ int SwordLogic::fnStopFx(BsObject *cpt, int32 id, int32 fxNo, int32 b, int32 c, 
 
 int SwordLogic::fnPlayMusic(BsObject *cpt, int32 id, int32 tuneId, int32 loopFlag, int32 c, int32 d, int32 z, int32 x) {
 	if (loopFlag == LOOPED)
-		SwordEngine::_systemVars.currentMusic = tuneId; // so it gets restarted when saving & reloading
+		_scriptVars[CURRENT_MUSIC] = tuneId; // so it gets restarted when saving & reloading
 	else
-		SwordEngine::_systemVars.currentMusic = 0;
+		_scriptVars[CURRENT_MUSIC] = 0;
 
 	_music->startMusic(tuneId, loopFlag);
 	return SCRIPT_CONT;
 }
 
 int SwordLogic::fnStopMusic(BsObject *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
-	SwordEngine::_systemVars.currentMusic = 0;
+	_scriptVars[CURRENT_MUSIC] = 0;
 	_music->fadeDown();
 	return SCRIPT_CONT;
 }
