@@ -2118,13 +2118,13 @@ void ScummEngine::processKbd(bool smushMode) {
 			VAR(VAR_RIGHTBTN_HOLD) = 1;
 			VAR(VAR_MOUSE_HOLD) += 2;
 		}
-	} else if (_version >= 6 && !(_features & GF_HUMONGOUS)) {
-		VAR(VAR_LEFTBTN_DOWN) = (_leftBtnPressed & msClicked) != 0;
-		VAR(VAR_RIGHTBTN_DOWN) = (_rightBtnPressed & msClicked) != 0;
+	} else if (_version >= 6) {
+		VAR(VAR_LEFTBTN_HOLD) = (_leftBtnPressed & msDown) != 0;
+		VAR(VAR_RIGHTBTN_HOLD) = (_rightBtnPressed & msDown) != 0;
 
 		if (_version == 7) {
-			VAR(VAR_LEFTBTN_HOLD) = (_leftBtnPressed & msDown) != 0;
-			VAR(VAR_RIGHTBTN_HOLD) = (_rightBtnPressed & msDown) != 0;
+			VAR(VAR_LEFTBTN_DOWN) = (_leftBtnPressed & msClicked) != 0;
+			VAR(VAR_RIGHTBTN_DOWN) = (_rightBtnPressed & msClicked) != 0;
 		}
 	}
 
