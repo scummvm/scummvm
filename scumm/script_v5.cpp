@@ -1522,8 +1522,8 @@ void ScummEngine_v5::o5_matrixOps() {
 		return;
 	}
 
-	int subOp = fetchScriptByte();
-	switch (subOp & 0x1F) {
+	_opcode = fetchScriptByte();
+	switch (_opcode & 0x1F) {
 	case 1:
 		a = getVarOrDirectByte(0x80);
 		b = getVarOrDirectByte(0x40);
