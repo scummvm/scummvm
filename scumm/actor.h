@@ -109,10 +109,13 @@ public:
 
 	// Constructor, sets all data to 0
 	Actor() {
+		_vm = 0;
+		
 		top = bottom = 0;
 		number = 0;
 		needRedraw = needBgReset = costumeNeedsInit = visible = false;
 		flip = false;
+		speedx = speedy = 0;
 		frame = 0;
 		walkbox = 0;
 		animProgress = 0;
