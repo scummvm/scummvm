@@ -19,6 +19,9 @@
  * $Header$
  *
  */
+#ifndef __TIME_H__
+#define __TIME_H__
+
 
 #include <PalmOS.h>
 
@@ -38,3 +41,5 @@ struct tm {
 
 time_t time(time_t *tloc);
 struct tm *localtime(const time_t *timer);
+
+#endif
