@@ -690,7 +690,7 @@ static byte *readCreativeVocFile(byte *ptr, uint32 &size, uint32 &rate, uint32 &
 
 static void imus_digital_handler(void *engine) {
 	// Avoid race condition
-	Scumm *scumm = Scumm *)engine;
+	Scumm *scumm = (Scumm *)engine;
 	if (scumm && scumm->_imuseDigital)
 		scumm->_imuseDigital->handler();
 }
