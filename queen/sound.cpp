@@ -99,20 +99,31 @@ void Sound::playSong(int16 songNum) {
 		return;
 	}
 	
-	int16 newTune = _song[songNum - 1].tuneList[0];
+	int16 newTune = _song[songNum - 1].tuneList[0] - 1;
 
-	if (_tune[newTune - 1].sfx[0]) {
+	if (_tune[newTune].sfx[0]) {
 		if (sfxOn())
-			playSfx(_tune[newTune - 1].sfx[0]);
+			playSfx(_tune[newTune].sfx[0]);
 		return;
 	}
 
 	if (!musicOn() || _vm->resource()->isDemo())
 		return;
 
+	switch (_song[songNum - 1].override) {
+		// Override all songs
+		case  1:
+			break;
+		// Alter song settings (such as volume) and exit
+		case  2:
+		default:
+			return;
+			break;
+	}
+	
 	_lastOverride = songNum;
 	
-	switch (_tune[newTune - 1].mode) {
+	switch (_tune[newTune].mode) {
 		//Random loop
 		case  0:
 			warning("Music: Random loop not yet supported (doing sequential loop instead)");
@@ -127,7 +138,7 @@ void Sound::playSong(int16 songNum) {
 			break;
 	}
 
-	int16 song = _tune[newTune - 1].tuneNum[0] - 1;
+	int16 song = _tune[newTune].tuneNum[0] - 1;
 
 	// Work around bug in Roland music, note that these numbers are 'one-off' from
 	// the original code.
