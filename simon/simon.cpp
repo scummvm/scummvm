@@ -3058,6 +3058,51 @@ bool SimonState::has_vgastruct_with_id(uint16 id, uint16 file)
 
 void SimonState::processSpecialKeys()
 {
+	switch (_key_pressed) {
+		case 27: // escape
+			_exit_cutscene = true;
+			break;
+
+		case 't':
+			_vk_t_toggle ^= 1;
+			break;
+
+		case '+':
+			midi.set_volume(midi.get_volume() + 16);
+			break;
+
+		case '-':
+			midi.set_volume(midi.get_volume() - 16);
+			break;
+
+		case 'm':
+			midi.pause(_music_paused ^= 1);
+			break;
+
+		case 's':
+			_sound->effectsPause(_effects_paused ^= 1);
+			break;
+
+		case 'b':
+			_sound->ambientPause(_ambient_paused ^= 1);
+			break;
+
+		case 'r':
+			if (_debugMode)
+				_start_mainscript ^= 1;
+			break;
+
+		case 'o':
+			if (_debugMode)
+				_continous_mainscript ^= 1;
+			break;
+
+		case 'v':
+			if (_debugMode)
+				_continous_vgascript ^= 1;
+	}
+	
+	_key_pressed = 0;
 }
 
 static const byte _simon1_cursor[256] = {
@@ -4524,49 +4569,30 @@ void SimonState::delay(uint amount)
 		while (_system->poll_event(&event)) {
 			switch (event.event_code) {
 				case OSystem::EVENT_KEYDOWN:
+					if (event.kbd.flags==OSystem::KBD_CTRL) {
+						if (event.kbd.keycode == 'f')
+							_fast_mode ^= 1;
+					}
+					_key_pressed = (byte)event.kbd.ascii;
+					break;
 
-				if (event.kbd.ascii == 't') {
-					_vk_t_toggle ^= 1;
-				} else if (event.kbd.ascii == '+') {
-					midi.set_volume(midi.get_volume() + 16);
-				} else if (event.kbd.ascii == '-') {
-					midi.set_volume(midi.get_volume() - 16);
-				} else if (event.kbd.ascii == 'm') {
-					midi.pause(_music_paused ^= 1);
-				} else if (event.kbd.ascii == 's') {
-					_sound->effectsPause(_effects_paused ^= 1);
-				} else if (event.kbd.ascii == 'b') {
-					_sound->ambientPause(_ambient_paused ^= 1);
-				} else if (event.kbd.flags==OSystem::KBD_CTRL) {
-					if (event.kbd.keycode == 'f')
-						_fast_mode ^= 1;
-				} else if (_debugMode) {
-					if (event.kbd.ascii == 'r') {
-						_start_mainscript ^= 1;
-					} else if (event.kbd.ascii == 'o') {
-						_continous_mainscript ^= 1;
-					} else if (event.kbd.ascii == 'v') 
-						_continous_vgascript ^= 1;
-				}
-				_key_pressed = (byte)event.kbd.ascii;
-				break;
 				case OSystem::EVENT_MOUSEMOVE:
-				_sdl_mouse_x = event.mouse.x;
-				_sdl_mouse_y = event.mouse.y;
-				_mouse_pos_changed = true;
-				break;
+					_sdl_mouse_x = event.mouse.x;
+					_sdl_mouse_y = event.mouse.y;
+					_mouse_pos_changed = true;
+					break;
 
-				case OSystem::EVENT_LBUTTONDOWN:
-				_left_button_down++;
+					case OSystem::EVENT_LBUTTONDOWN:
+					_left_button_down++;
 #ifdef _WIN32_WCE
-				_sdl_mouse_x = event.mouse.x;
-				_sdl_mouse_y = event.mouse.y;
+					_sdl_mouse_x = event.mouse.x;
+					_sdl_mouse_y = event.mouse.y;
 #endif
-				break;
+					break;
 
 				case OSystem::EVENT_RBUTTONDOWN:
-				_exit_cutscene = true;
-				break;
+					_exit_cutscene = true;
+					break;
 			}
 		}
 

@@ -1370,21 +1370,20 @@ void SimonState::o_177()
 
 void SimonState::o_quit_if_user_presses_y()
 {
-	OSystem::Event event;
-
 	for (;;) {
-		_system->poll_event(&event);
-		if (event.event_code == OSystem::EVENT_KEYDOWN) {
-			// FIXME Arisme : better than being blocked ?
-			if (event.kbd.keycode == 'y' ||
-				event.kbd.keycode == 'o' || /* french */
-				event.kbd.keycode == 'j' /* german I guess :) */)
+		delay(1);
+		switch (_key_pressed) {
+			case 'y':
+			case 'o': // french
+			case 'j': // german
 				_system->quit();
-			else if (event.kbd.keycode == 'n')
 				break;
+
+			case 'n':
+				goto get_out;
 		}
-		delay(10);
 	}
+get_out:;
 }
 
 void SimonState::o_unk_137(uint fcs_index)
