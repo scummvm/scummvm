@@ -1123,6 +1123,9 @@ load_game:
 	checkExecVerbs();
 	checkAndRunSentenceScript();
 
+	if (_quit)
+		return 0;
+
 	// HACK: If a load was requested, immediately perform it. This avoids
 	// drawing the current room right after the load is request but before
 	// it is performed. That was annoying esp. if you loaded while a SMUSH
@@ -2253,7 +2256,7 @@ void Scumm::waitForTimer(int msec_delay) {
 
 	start_time = _system->get_msecs();
 
-	for (;;) {
+	while (!_quit) {
 		parseEvents();
 
 		_sound->updateCD(); // Loop CD Audio if needed
@@ -2335,6 +2338,7 @@ void Scumm::parseEvents() {
 	
 		case OSystem::EVENT_QUIT:
 			_quit = true;
+			_videoFinished = true;
 			break;
 	
 		default:

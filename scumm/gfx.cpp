@@ -2313,7 +2313,7 @@ void Scumm::dissolveEffect(int width, int height) {
 	w = vs->width / width;
 	h = vs->height / height;
 
-	// When used used correctly, vs->width % width and vs->height % height
+	// When used correctly, vs->width % width and vs->height % height
 	// should both be zero, but just to be safe...
 
 	if (vs->width % width)

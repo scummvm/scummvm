@@ -280,7 +280,7 @@ void SmushPlayer::deinit() {
 		_scumm->_imuseDigital->pause(false);
 	}
 	_scumm->_sound->pauseBundleMusic(false);
-	_scumm->_fullRedraw = 1;
+	_scumm->_fullRedraw = true;
 }
 
 void SmushPlayer::checkBlock(const Chunk &b, Chunk::type type_expected, uint32 min_size) {
