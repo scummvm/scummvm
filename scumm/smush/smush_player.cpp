@@ -844,10 +844,10 @@ void SmushPlayer::setupAnim(const char *file, const char *directory) {
 	checkBlock(*sub, TYPE_AHDR);
 	handleAnimHeader(*sub);
 
-	if (_insanity)
+	if (_insanity) {
 		if(!(_scumm->_features & GF_DEMO))
 			readString("mineroad.trs", directory);
-	else
+	} else
 		readString(file, directory);
 
 	if (_scumm->_gameId == GID_FT) {
