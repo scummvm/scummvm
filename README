@@ -454,6 +454,7 @@ If you don't have a MIDI capable soundcard, or if you want to take
 advantage of your TiMidity samples, then you can ask TiMidity to become an
 alsa sequencer output. Here is a quick way to do so:
   timidity -iAqqq -B2,8 -Os1S -s 44100 &
+If you get distorted output with this setting try dropping the -B2,8 or changing the value.
 
 Then the TiMidity port will be visible from the 'aconnect -o -l' list. You
 should launch it as root, since it will try to set up some real time
