@@ -85,6 +85,7 @@ int16 MusicHandle::read() {
 		if (_filePos >= _fileEnd) {
 			_firstTime = true;
 			_filePos = _fileStart;
+			fpMus.seek(_filePos, SEEK_SET);
 		}
 	} else {
 		// Fade out at the end of the music. Is this really desirable
