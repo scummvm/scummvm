@@ -802,11 +802,11 @@ void Scumm::restoreBG(int left, int top, int right, int bottom, byte backColor) 
 	}
 }
 
-int Scumm::hasCharsetMask(int x, int y, int x2, int y2) {
+bool Scumm::hasCharsetMask(int x, int y, int x2, int y2) {
 	if (!_charset->_hasMask || y > gdi._mask_bottom || x > gdi._mask_right ||
 			y2 < gdi._mask_top || x2 < gdi._mask_left)
-		return 0;
-	return 1;
+		return false;
+	return true;
 }
 
 byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem) {
