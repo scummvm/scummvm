@@ -70,19 +70,19 @@ void Scumm_v3::readIndexFile()
 
 	/* I'm not sure for those values yet, they will have to be rechecked */
 
-	_numVariables = 800;					/* 800 */
+	_numVariables = 800;				/* 800 */
 	_numBitVariables = 4096;			/* 2048 */
 	_numLocalObjects = 200;				/* 200 */
 	_numArray = 50;
 	_numVerbs = 100;
 	_numNewNames = 0;
 	_objectRoomTable = NULL;
-	_numCharsets = 9;							/* 9 */
-	_numInventory = 80;						/* 80 */
+	_numCharsets = 9;					/* 9 */
+	_numInventory = 80;					/* 80 */
 	_numGlobalScripts = 200;
 
 	_shadowPaletteSize = 256;
-	_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);	// stupid for now. Need to be removed later
+	_shadowPalette = (byte *) calloc(_shadowPaletteSize, 1);	// stupid for now. Need to be removed later
 	_numFlObject = 50;
 	allocateArrays();
 
