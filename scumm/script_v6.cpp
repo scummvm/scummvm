@@ -324,7 +324,7 @@ void Scumm_v6::setupOpcodes()
 		OPCODE(o6_deleteFile),
 		OPCODE(o6_invalid),
 		/* E0 */
-		OPCODE(o6_invalid),
+		OPCODE(o6_unknownE0),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_pickVarRandom),
@@ -2980,6 +2980,23 @@ void Scumm_v6::o6_getDateTime()
 	
 	if (_features & GF_AFTER_V8)
 		_vars[VAR_TIMEDATE_SECOND] = t->tm_sec;
+}
+
+void Scumm_v6::o6_unknownE0() {
+        int a = fetchScriptByte();
+        warning("o6_unknownEO(%d) stub", a);
+        a -= 222;
+        if (a != 0) {
+                a--;
+                a--;
+                if (a != 0) {
+                        return;
+                }
+                pop();
+                return;
+        }
+        pop();
+        return;
 }
 
 void Scumm_v6::decodeParseString(int m, int n)

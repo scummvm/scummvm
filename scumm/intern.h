@@ -374,6 +374,7 @@ protected:
 	void o6_findAllObjects();
 	void o6_pickVarRandom();
 	void o6_getDateTime();
+	void o6_unknownE0();
 
 	byte VAR_VIDEONAME;
 
