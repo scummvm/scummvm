@@ -42,9 +42,9 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui)
 {
 	// The GFX mode popup & a label
 	// TODO - add an API to query the list of available GFX modes, and to get/set the mode
-	new StaticTextWidget(this, 10, 10+1, 90, kLineHeight, "Graphics: ", kTextAlignRight);
+	new StaticTextWidget(this, 10, 10+1, 100, kLineHeight, "Graphics: ", kTextAlignRight);
 	PopUpWidget *gfxPopUp;
-	gfxPopUp = new PopUpWidget(this, 100, 10, 200, kLineHeight);
+	gfxPopUp = new PopUpWidget(this, 110, 10, 180, kLineHeight);
 	gfxPopUp->appendEntry("Normal (no scaling)");
 	gfxPopUp->appendEntry("2x");
 	gfxPopUp->appendEntry("3x");
@@ -56,9 +56,9 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui)
 
 	// The MIDI mode popup & a label
 	// TODO - add an API to query the list of available MIDI drivers
-	new StaticTextWidget(this, 10, 26+1, 90, kLineHeight, "MIDI driver: ", kTextAlignRight);
+	new StaticTextWidget(this, 10, 26+1, 100, kLineHeight, "MIDI driver: ", kTextAlignRight);
 	PopUpWidget *midiPopUp;
-	midiPopUp = new PopUpWidget(this, 100, 26, 200, kLineHeight);
+	midiPopUp = new PopUpWidget(this, 110, 26, 180, kLineHeight);
 	midiPopUp->appendEntry("None");
 	midiPopUp->appendEntry("Adlib");
 	midiPopUp->appendEntry("CoreAudio");
@@ -70,15 +70,15 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui)
 	// Sound controllers
 	//
 	const int yoffset = 45;
-	new StaticTextWidget(this, 10, yoffset+10, 90, 16, "Master volume: ", kTextAlignRight);
-	new StaticTextWidget(this, 10, yoffset+26, 90, 16, "Music volume: ", kTextAlignRight);
-	new StaticTextWidget(this, 10, yoffset+42, 90, 16, "SFX volume: ", kTextAlignRight);
+	new StaticTextWidget(this, 10, yoffset+10, 100, 16, "Master volume: ", kTextAlignRight);
+	new StaticTextWidget(this, 10, yoffset+26, 100, 16, "Music volume: ", kTextAlignRight);
+	new StaticTextWidget(this, 10, yoffset+42, 100, 16, "SFX volume: ", kTextAlignRight);
 
 	SliderWidget *masterVolumeSlider, *musicVolumeSlider, *sfxVolumeSlider;
 
-	masterVolumeSlider = new SliderWidget(this, 110, yoffset+8, 80, 12, "Volume1", 0);
-	musicVolumeSlider  = new SliderWidget(this, 110, yoffset+24, 80, 12, "Volume2", 0);
-	sfxVolumeSlider    = new SliderWidget(this, 110, yoffset+40, 80, 12, "Volume3", 0);
+	masterVolumeSlider = new SliderWidget(this, 110, yoffset+8, 85, 12, "Volume1", 0);
+	musicVolumeSlider  = new SliderWidget(this, 110, yoffset+24, 85, 12, "Volume2", 0);
+	sfxVolumeSlider    = new SliderWidget(this, 110, yoffset+40, 85, 12, "Volume3", 0);
 
 	masterVolumeSlider->setMinValue(0);	masterVolumeSlider->setMaxValue(255);
 	musicVolumeSlider->setMinValue(0);	musicVolumeSlider->setMaxValue(255);
