@@ -339,6 +339,45 @@ is kept standard:
 -TMidiChannelAdl -TGui -TScumm -TSoundEngine -TPart -TPlayer
 
 
+
+Credits:
+--------
+  The core ScummVM team:
+        Ludvig Strigeus   - Original developer, lead developer 'simon' module
+        Vincent Hamm      - Current lead developer, ScummVM
+        James Brown       - Co-lead developer, ScummVM
+        Jeremy Newman     - Webmaster
+
+ Porters:
+        Lionel Ulmer      - X11/Linux port
+        Nicolas Bacca     - PocketPC/WinCE port
+        Mutwin Kraus      - Macintosh port
+        Marcus Comstedt   - DreamCast port
+        Ruediger Hanke    - MorphOS port
+
+ Contributors:
+        Claudio Matsuoka  - Daily builds (http://scummvm.sf.net/daily/)
+        Janne Huttunen    - Zak256/Indy256/LoomCD actor mask support
+        Jeroen Janssen    - Numerous readability and bugfix patches
+        Daniel Schepler   - Final MI1 CD music support
+        Tim 'realmz'      - Initial MI1 CD music support
+        Jonathan 'khalek' - Expert weaver in the Loom
+
+        And to all the contributors, users, and beta testers we've missed.
+        Thanks!
+
+ Special thanks to:
+        Jimmi Thogersen - For ScummRev, and much obscure code/documentation
+        Kevin Carnes    - For Scumm16, the basis of ScummVM older gfx codecs
+
+        Aric Wilmunder, Ron Gilbert, David Fox, Vince Lee, and all those at
+        LucasFilm/LucasArts who made SCUMM the insane mess to reimplement
+        that it is today. Feel free to drop us a line and tell us what you
+        think, guys!
+
+
+
+
 ------------------------------------------------------------------------
 Good Luck and Happy Adventuring!
 The ScummVM team.
