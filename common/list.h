@@ -50,31 +50,37 @@ protected:
 	struct Iterator {
 		NodeBase *_node;
 		
+		Iterator<T2>() : _node(0) {}
 		Iterator<T2>(NodeBase *node) : _node(node) {}
 
 		// Prefix inc
 		Iterator<T2> &operator++() {
-			_node = _node->_next;
+			if (_node)
+				_node = _node->_next;
 			return *this;
 		}
 		// Postfix inc
 		Iterator<T2> operator++(int) {
 			Iterator<T2> tmp = *this;
-			_node = _node->_next;
+			if (_node)
+				_node = _node->_next;
 			return tmp;
 		}
 		// Prefix dec
 		Iterator<T2> &operator--() {
-			_node = _node->_prev;
+			if (_node)
+				_node = _node->_prev;
 			return *this;
 		}
 		// Postfix dec
 		Iterator<T2> operator--(int) {
 			Iterator<T2> tmp = *this;
-			_node = _node->_prev;
+			if (_node)
+				_node = _node->_prev;
 			return tmp;
 		}
 		T2& operator*() const {
+			assert(_node);
 			return static_cast<Node<T2>*>(_node)->_data;
 		}
 		T2* operator->() const {
