@@ -105,7 +105,7 @@ private:
 	} palettes[50];
 #else
         static NewGuiColor lookup2[BITDEPTH * BITDEPTH * 256];
-        NewGuiColor * overlay;
+        NewGuiColor *overlay;
         static bool lookupInit;
 
 #endif
@@ -117,6 +117,11 @@ public:
 
 	bool init(const char *name);
 	bool decodeFrame();
+
+#ifndef BACKEND_8BIT
+	void drawTextObject(SpriteInfo *s, uint8 *src);
+	void updateDisplay(void);
+#endif
 
 private:
 
@@ -136,7 +141,7 @@ private:
 
 	void openTextObject(MovieTextObject *obj);
 	void closeTextObject(MovieTextObject *obj);
-	void drawTextObject(MovieTextObject *obj);
+	void drawTextObject(AnimationState *anim, MovieTextObject *obj);
 
 	int32 playDummy(const char *filename, MovieTextObject *text[], uint8 *musicOut);
 

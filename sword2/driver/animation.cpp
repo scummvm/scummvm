@@ -279,7 +279,35 @@ void AnimationState::plotYUV(NewGuiColor *lut, int width, int height, byte *cons
 		linepos += (2 * 640 - width);
 		ypos += width;
 	}
+}
 
+void AnimationState::drawTextObject(SpriteInfo *s, uint8 *src) {
+	NewGuiColor *dst = overlay + RENDERWIDE * (s->y - 40) + s->x;
+
+	// FIXME: These aren't the "right" colours, but look good to me.
+
+	NewGuiColor pen = _vm->_system->RGBToColor(255, 255, 255);
+	NewGuiColor border = _vm->_system->RGBToColor(0, 0, 0);
+
+	for (int y = 0; y < s->h; y++) {
+		for (int x = 0; x < s->w; x++) {
+			switch (src[x]) {
+			case 1:
+				dst[x] = border;
+				break;
+			case 255:
+				dst[x] = pen;
+				break;
+			default:
+				break;
+			}
+		}
+		dst += RENDERWIDE;
+		src += s->w;
+	}
+}
+
+void AnimationState::updateDisplay(void) {
 	_vm->_system->copy_rect_overlay(overlay, 640, 0, 40, 640, 400);
 }
 
@@ -380,9 +408,17 @@ void MoviePlayer::closeTextObject(MovieTextObject *obj) {
 	}
 }
 
-void MoviePlayer::drawTextObject(MovieTextObject *obj) {
-	if (obj->textSprite && _textSurface)
+void MoviePlayer::drawTextObject(AnimationState *anim, MovieTextObject *obj) {
+	if (obj->textSprite && _textSurface) {
+#ifdef BACKEND_8BIT
 		_vm->_graphics->drawSurface(obj->textSprite, _textSurface);
+#else
+		if (anim)
+			anim->drawTextObject(obj->textSprite, _textSurface);
+		else
+			_vm->_graphics->drawSurface(obj->textSprite, _textSurface);
+#endif
+	}
 }
 
 /**
@@ -440,7 +476,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 				textVisible = false;
 			}
 			if (textVisible)
-				drawTextObject(text[textCounter]);
+				drawTextObject(anim, text[textCounter]);
 		}
 
 		frameCounter++;
@@ -448,6 +484,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 #ifdef BACKEND_8BIT
 		_vm->_graphics->updateDisplay(true);
 #else
+		anim->updateDisplay();
 		_vm->_graphics->updateDisplay(false);
 #endif
 
@@ -570,7 +607,7 @@ int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], uint
 			if (frameCounter == text[textCounter]->startFrame) {
 				_vm->_graphics->clearScene();
 				openTextObject(text[textCounter]);
-				drawTextObject(text[textCounter]);
+				drawTextObject(NULL, text[textCounter]);
 				if (text[textCounter]->speech) {
 					_vm->_mixer->playRaw(&handle, text[textCounter]->speech, text[textCounter]->speechBufferSize, 22050, flags);
 				}
