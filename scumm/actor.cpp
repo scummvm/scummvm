@@ -1079,7 +1079,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 
 		} 
 	}
-	talkUnk == 0;
+	talkUnk = 0;
 
 	// If the actor is partially hidden, redraw it next frame.
 	// Only done for pre-AKOS, though.
