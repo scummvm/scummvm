@@ -986,6 +986,10 @@ void Cutaway::run(char *nextFilename) {
 	joeBob->animating = 0;
 	joeBob->moving    = 0;
 
+	// if the cutaway has been cancelled, we must stop the speech as well
+	if (_vm->sound()->speechOn())
+		_vm->sound()->stopSpeech();
+	
 	_vm->input()->cutawayRunning(false);
 	_vm->input()->cutawayQuitReset();
 	_vm->input()->quickSaveReset();
