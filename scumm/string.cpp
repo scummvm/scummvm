@@ -512,7 +512,7 @@ int ScummEngine::addMessageToStack(const byte *msg, byte *dst, int dstSize) {
 				num += (_version == 8) ? 4 : 2;
 			}
 		} else {
-			if (chr != '@') {
+			if (!(chr == '@' && _heversion <= 71)) {
 				*dst++ = chr;
 			}
 		}
