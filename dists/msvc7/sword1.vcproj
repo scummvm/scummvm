@@ -99,6 +99,12 @@
 			RelativePath="..\..\sword1\collision.h">
 		</File>
 		<File
+			RelativePath="..\..\sword1\control.cpp">
+		</File>
+		<File
+			RelativePath="..\..\sword1\control.h">
+		</File>
+		<File
 			RelativePath="..\..\sword1\debug.cpp">
 		</File>
 		<File
