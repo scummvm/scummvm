@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.3.2.1  2001/10/12 07:17:56  yazoo
+ * Patched for indy4
+ *
  * Revision 1.3  2001/10/10 12:52:21  strigeus
  * fixed bug in GDI_UnkDecode7()
  *
@@ -226,14 +229,15 @@ void Scumm::drawStripToScreen() {
 	blitToScreen(this, gdi.readPtr, gdi.draw8xPos*8, gdi.drawY+gdi.drawTop, gdi.drawWidth, gdi.drawBottom-gdi.drawTop);
 }
 
-
 void blit(byte *dst, byte *src, int w, int h) {
-	do {
+	while (h--)
+	{
 		memcpy(dst, src, w);
 		dst += 320;
 		src += 320;
-	} while (--h);
+	};
 }
+
 
 /* TODO: writes are being done to this data */
 MouseCursor mouse_cursors[4] = {
