@@ -119,3 +119,12 @@ Vector3d Sector::projectToPlane(Vector3d point) const {
 	result.z() -= dot(normal_, point - vertices_[0]) / normal_.z();
 	return result;
 }
+
+Vector3d Sector::projectToPuckVector(Vector3d v) const {
+	if (normal_.z() == 0)
+		error("Trying to walk along vertical plane\n");
+
+	Vector3d result = v;
+	result.z() -= dot(normal_, v) / normal_.z();
+	return result;
+}

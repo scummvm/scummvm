@@ -30,7 +30,7 @@ Actor::Actor(const char *name) :
 		pitch_(0), yaw_(0), roll_(0), walkRate_(0), turnRate_(0),
 		visible_(true), talkSound_(NULL), turning_(false), walking_(false),
 		restCostume_(NULL), restChore_(-1),
-		walkCostume_(NULL), walkChore_(-1), lastWalkTime_(-1),
+		walkCostume_(NULL), walkChore_(-1), walkedLast_(false), walkedCur_(-1),
 		turnCostume_(NULL), leftTurnChore_(-1), rightTurnChore_(-1),
 		lastTurnDir_(0), currTurnDir_(0),
 		mumbleCostume_(NULL), mumbleChore_(-1) {
@@ -69,6 +69,18 @@ void Actor::walkTo(Vector3d p) {
 	}
 }
 
+bool Actor::isWalking() const {
+	return walkedLast_ || walkedCur_ || walking_;
+}
+
+bool Actor::isTurning() const {
+	if (turning_)
+		return true;
+	if (lastTurnDir_ != 0 || currTurnDir_ != 0)
+		return true;
+	return false;
+}
+
 void Actor::walkForward() {
 	float dist = Engine::instance()->perSecond(walkRate_);
 	float yaw_rad = yaw_ * (M_PI / 180), pitch_rad = pitch_ * (M_PI / 180);
@@ -79,18 +91,31 @@ void Actor::walkForward() {
 
 	if (! constrain_) {
 		pos_ = destPos;
-		lastWalkTime_ = Engine::instance()->frameStart();
+		walkedCur_ = true;
 	}
 	else {
 		Sector *sector = Engine::instance()->currScene()->findPointSector(destPos, 0x1000);
 		if (sector != NULL) {
 			pos_ = sector->projectToPlane(destPos);
-			lastWalkTime_ = Engine::instance()->frameStart();
+			walkedCur_ = true;
 		}
 	}
 }
 
+Vector3d Actor::puckVector() const {
+	float yaw_rad = yaw_ * (M_PI / 180);
+	Vector3d forwardVec(-std::sin(yaw_rad), std::cos(yaw_rad), 0);
+
+	Sector *sector = Engine::instance()->currScene()->findPointSector(pos_, 0x1000);
+	if (sector == NULL)
+		return forwardVec;
+	else
+		return sector->projectToPuckVector(forwardVec);
+}
+
 void Actor::setRestChore(int chore, Costume *cost) {
+	if (restCostume_ == cost && restChore_ == chore)
+		return;
 	if (restChore_ >= 0)
 		restCostume_->stopChore(restChore_);
 	restCostume_ = cost;
@@ -99,6 +124,8 @@ void Actor::setRestChore(int chore, Costume *cost) {
 }
 
 void Actor::setWalkChore(int chore, Costume *cost) {
+	if (walkCostume_ == cost && walkChore_ == chore)
+		return;
 	if (walkChore_ >= 0)
 		walkCostume_->stopChore(walkChore_);
 	walkCostume_ = cost;
@@ -106,6 +133,9 @@ void Actor::setWalkChore(int chore, Costume *cost) {
 }
 
 void Actor::setTurnChores(int left_chore, int right_chore, Costume *cost) {
+	if (turnCostume_ == cost && leftTurnChore_ == left_chore &&
+	    rightTurnChore_ == right_chore)
+		return;
 	if (leftTurnChore_ >= 0) {
 		turnCostume_->stopChore(leftTurnChore_);
 		turnCostume_->stopChore(rightTurnChore_);
@@ -123,6 +153,8 @@ void Actor::setTalkChore(int index, int chore, Costume *cost) {
 	if (index < 1 || index > 10)
 		error("Got talk chore index out of range (%d)\n", index);
 	index--;
+	if (talkCostume_[index] == cost && talkChore_[index] == chore)
+		return;
 	if (talkChore_[index] >= 0)
 		talkCostume_[index]->stopChore(talkChore_[index]);
 	talkCostume_[index] = cost;
@@ -278,6 +310,8 @@ void Actor::update() {
 			}
 		else
 			pos_ += dir * walkAmt;
+
+		walkedCur_ = true;
 	}
 
 	// The rest chore might have been stopped because of a
@@ -285,10 +319,8 @@ void Actor::update() {
 	if (restChore_ >= 0 && restCostume_->isChoring(restChore_, false) < 0)
 		restCostume_->playChoreLooping(restChore_);
 
-	bool isWalking = (walking_ ||
-			  lastWalkTime_ == Engine::instance()->frameStart());
 	if (walkChore_ >= 0) {
-		if (isWalking) {
+		if (walkedCur_) {
 			if (walkCostume_->isChoring(walkChore_, false) < 0)
 				walkCostume_->playChoreLooping(walkChore_);
 		}
@@ -299,7 +331,7 @@ void Actor::update() {
 	}
 
 	if (leftTurnChore_ >= 0) {
-		if (isWalking)
+		if (walkedCur_)
 			currTurnDir_ = 0;
 		if (lastTurnDir_ != 0 && lastTurnDir_ != currTurnDir_)
 			turnCostume_->stopChore(getTurnChore(lastTurnDir_));
@@ -308,6 +340,8 @@ void Actor::update() {
 	}
 	else
 		currTurnDir_ = 0;
+	walkedLast_ = walkedCur_;
+	walkedCur_ = false;
 	lastTurnDir_ = currTurnDir_;
 	currTurnDir_ = 0;
 

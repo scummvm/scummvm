@@ -40,6 +40,7 @@ public:
 	bool isPointInSector(Vector3d point) const;
 
 	Vector3d projectToPlane(Vector3d point) const;
+	Vector3d projectToPuckVector(Vector3d v) const;
 
 private:
 	int numVertices_, id_;

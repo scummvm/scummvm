@@ -38,12 +38,12 @@ public:
 	void setPos(Vector3d pos) { pos_ = pos; }
 	Vector3d pos() const { return pos_; }
 	void walkTo(Vector3d p);
-	bool isWalking() const { return walking_; }
+	bool isWalking() const;
 	void setRot(float pitch, float yaw, float roll) {
 		pitch_ = pitch; yaw_ = yaw; roll_ = roll;
 	}
 	void turnTo(float pitch, float yaw, float roll);
-	bool isTurning() const { return turning_; }
+	bool isTurning() const;
 	float pitch() const { return pitch_; }
 	float yaw() const { return yaw_; }
 	float roll() const { return roll_; }
@@ -63,6 +63,7 @@ public:
 		return setName_ == name;
 	}
 	void walkForward();
+	Vector3d puckVector() const;
 	void turn(int dir);
 
 	void sayLine(const char *msg);
@@ -140,7 +141,7 @@ private:
 
 	Costume *walkCostume_;
 	int walkChore_;
-	int lastWalkTime_;
+	bool walkedLast_, walkedCur_;
 
 	Costume *turnCostume_;
 	int leftTurnChore_, rightTurnChore_;

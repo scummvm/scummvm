@@ -407,6 +407,14 @@ static void WalkActorForward() {
 	act->walkForward();
 }
 
+static void GetActorPuckVector() {
+	Actor *act = check_actor(1);
+	Vector3d result = act->puckVector();
+	lua_pushnumber(result.x());
+	lua_pushnumber(result.y());
+	lua_pushnumber(result.z());
+}
+
 static void WalkActorTo() {
 	Actor *act = check_actor(1);
 	double x = luaL_check_number(2);
@@ -418,6 +426,11 @@ static void WalkActorTo() {
 static void IsActorMoving() {
 	Actor *act = check_actor(1);
 	pushbool(act->isWalking());
+}
+
+static void IsActorResting() {
+	Actor *act = check_actor(1);
+	pushbool(!(act->isWalking() || act->isTurning()));
 }
 
 static void TurnActor() {
@@ -1287,7 +1300,6 @@ static char *stubFuncs[] = {
 	"LockFont",
 	"EnableDebugKeys",
 	"WorldToScreen",
-	"IsActorResting",
 	"CompleteActorChore",
 	"SetActorRoll",
 	"SetActorPitch",
@@ -1301,7 +1313,6 @@ static char *stubFuncs[] = {
 	"WalkActorVector",
 	"PutActorAtInterest",
 	"SetActorReflection",
-	"GetActorPuckVector",
 	"GetActorRect",
 	"GetActorNodeLocation",
 	"SetActorTimeScale",
@@ -1522,8 +1533,10 @@ struct luaL_reg builtins[] = {
 	{ "GetActorWalkRate", GetActorWalkRate },
 	{ "SetActorTurnRate", SetActorTurnRate },
 	{ "WalkActorForward", WalkActorForward },
+	{ "GetActorPuckVector", GetActorPuckVector },
 	{ "WalkActorTo", WalkActorTo },
 	{ "IsActorMoving", IsActorMoving },
+	{ "IsActorResting", IsActorResting },
 	{ "TurnActor", TurnActor },
 	{ "PushActorCostume", PushActorCostume },
 	{ "SetActorRestChore", SetActorRestChore },
