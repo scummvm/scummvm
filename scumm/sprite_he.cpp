@@ -870,10 +870,10 @@ void ScummEngine_v90he::spriteGroupSet_fields_0_4_8_C(int spriteGroupId, int val
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
 	_spriteGroups[spriteGroupId].flags |= kSGF01;
-	_spriteGroups[spriteGroupId].field_0 = value1;
-	_spriteGroups[spriteGroupId].field_4 = value2;
-	_spriteGroups[spriteGroupId].field_8 = value3;
-	_spriteGroups[spriteGroupId].field_C = value4;
+	_spriteGroups[spriteGroupId].bbox.left = value1;
+	_spriteGroups[spriteGroupId].bbox.top = value2;
+	_spriteGroups[spriteGroupId].bbox.right = value3;
+	_spriteGroups[spriteGroupId].bbox.bottom = value4;
 
 	redrawSpriteGroup(spriteGroupId);
 }
@@ -1269,7 +1269,19 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 		spi->imgFlags = wiz.img.flags;
 		
 		if (spi->group_num && _spriteGroups[spi->group_num].flags & kSGF01) {
-			// TODO: rectClipIfIntersects() is missing
+			/* TODO: rectClipIfIntersects() is missing
+			if (r1.intersects(r2)) {
+				r1.clip(r2);
+				wiz.processFlags |= 0x200;
+				wiz.box = spi->bbox;
+			} else {
+				bboxPtr->left = 1234;
+				bboxPtr->top = 1234;
+				bboxPtr->right = -1234;
+				bboxPtr->bottom = -1234;
+				continue;
+			}
+			*/
 		}
 		if (spi->field_14) {
 			wiz.processFlags |= 0x8000;

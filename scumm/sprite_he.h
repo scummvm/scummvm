@@ -103,10 +103,7 @@ struct SpriteInfo {
 };
 
 struct SpriteGroup {
-	int field_0;
-	int field_4;
-	int field_8;
-	int field_C;
+	Common::Rect bbox;
 	int field_10;
 	int flags;
 	int tx;
