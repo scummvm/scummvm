@@ -108,6 +108,12 @@
 			RelativePath="..\..\queen\cutaway.h">
 		</File>
 		<File
+			RelativePath="..\..\queen\debug.cpp">
+		</File>
+		<File
+			RelativePath="..\..\queen\debug.h">
+		</File>
+		<File
 			RelativePath="..\..\queen\defs.h">
 		</File>
 		<File
