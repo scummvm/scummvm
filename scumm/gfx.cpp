@@ -2147,12 +2147,12 @@ void Scumm::fadeIn(int effect) {
 	case 3:
 	case 4:
 	case 5:
-					// Some of the transition effects won't work properly unless
-					// the screen is marked as clean first. At first I thought I
-					// could safely do this every time fadeIn() was called, but
-					// that broke the FOA intro. Probably other things as well.
-					//
-					// Hopefully it's safe to do it at this point, at least.
+		// Some of the transition effects won't work properly unless
+		// the screen is marked as clean first. At first I thought I
+		// could safely do this every time fadeIn() was called, but
+		// that broke the FOA intro. Probably other things as well.
+		//
+		// Hopefully it's safe to do it at this point, at least.
 		virtscr[0].setDirtyRange(0, 0);
  		transitionEffect(effect - 1);
 		break;
@@ -2180,16 +2180,16 @@ void Scumm::fadeIn(int effect) {
 }
 
 void Scumm::fadeOut(int effect) {
-	VirtScreen *vs;
+	VirtScreen *vs = &virtscr[0];
 
-	virtscr[0].setDirtyRange(0, 0);
+	vs->setDirtyRange(0, 0);
 	if (!(_features & GF_NEW_CAMERA))
 		camera._last.x = camera._cur.x;
 
 	if (_screenEffectFlag && effect != 0) {
 	
 		// Fill screen 0 with black
-		vs = &virtscr[0];
+		
 		memset(vs->screenPtr + vs->xstart, 0, vs->size);
 	
 		// Fade to black with the specified effect, if any.
@@ -2206,7 +2206,7 @@ void Scumm::fadeOut(int effect) {
 			break;
 		case 129:
 			// Just blit screen 0 to the display (i.e. display will be black)
-			virtscr[0].setDirtyRange(0, vs->height);
+			vs->setDirtyRange(0, vs->height);
 			updateDirtyScreen(0);
 			break;
 		case 134:
