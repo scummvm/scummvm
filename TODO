@@ -75,7 +75,6 @@ SCUMM
 * Add support for graphics codecs used in 3DO versions of Humongous games
 * Proper handling of .tlk files for Humongous games
 * Merge iMUSE and iMUSE Digital
-* Add support for FM Euphony sounds used in FM Towns games
 * Implement the needed INSANE bits for Full Throttle action sequences
 * iMUSE Digital enhancements/fixes for Full Throttle and COMI
 * Try to remove all use of MAD/Ogg code from scumm/sound.cpp:
@@ -83,6 +82,7 @@ SCUMM
   become important for loadable module support
 * Add support for Mac0 music format used in Monkey Island Mac
   See https://sourceforge.net/tracker/index.php?func=detail&aid=781797&group_id=37116&atid=418823
+* Add support for sound effects format found in Sega CD version of Monkey Island
 * Rename scummvm.cpp to scumm.cpp for consistency. [Fingolfin is working on
   this, please don't do anything about this before talking to him].
   1) Try to get scummvm.cpp fixed for ViewCVS [in progress!]
