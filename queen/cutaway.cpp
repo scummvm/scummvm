@@ -57,27 +57,25 @@ namespace Queen {
 void Cutaway::run(
 		const char *filename, 
 		char *nextFilename,
+		Graphics *graphics,
 		Logic *logic,
 		Resource *resource) {
-	Cutaway *cutaway = new Cutaway(filename, logic, resource);
+	Cutaway *cutaway = new Cutaway(filename, graphics,logic, resource);
 	cutaway->run(nextFilename);
 	delete cutaway;
 }
 
 Cutaway::Cutaway(
 		const char *filename, 
+		Graphics *graphics,
 		Logic *logic,
 		Resource *resource) 
-: _logic(logic), _resource(resource), _quit(false), _lastSong(0), _songBeforeComic(0) {
-	// XXX should not create this object ourselves
-	_graphics = new Graphics(resource);
+: _graphics(graphics), _logic(logic), _resource(resource), _quit(false), _lastSong(0), _songBeforeComic(0) {
 	memset(&_bankNames, 0, sizeof(_bankNames));
 	load(filename); 
 }
 
 Cutaway::~Cutaway() {
-	// XXX only delete this if we created it
-	delete _graphics;
 	delete[] _fileData;
 }
 

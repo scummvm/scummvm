@@ -36,6 +36,7 @@ class Cutaway {
 		static void run(
 				const char *filename,
 				char *nextFilename,
+				Graphics *graphics,
 				Logic *logic,
 				Resource *resource);
 	private:
@@ -181,6 +182,7 @@ class Cutaway {
 
 		Cutaway(
 				const char *filename, 
+				Graphics *graphics,
 				Logic *logic,
 				Resource *resource);
 		~Cutaway();
