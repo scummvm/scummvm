@@ -34,9 +34,11 @@ namespace Saga {
 #define RID_ITE_SCENE_LUT  1806
 #define RID_ITE_SCRIPT_LUT 216
 
-	// Hmmm.... as far as I see original uses now commented values, but they're wrong
-#define RID_IHNM_SCENE_LUT  1272  // 286
-#define RID_IHNM_SCRIPT_LUT 0     // 18
+#define RID_IHNM_SCENE_LUT  1272
+#define RID_IHNM_SCRIPT_LUT 29
+
+#define RID_IHNMDEMO_SCENE_LUT  286
+#define RID_IHNMDEMO_SCRIPT_LUT 18
 
 // SCENES
 #define ITE_DEFAULT_SCENE 32

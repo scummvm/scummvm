@@ -271,10 +271,6 @@ int Script::loadScript(int script_num) {
 	uint32 voicelut_rn;
 	int result;
 
-	if (_vm->_gameType == GType_IHNM) {
-		return SUCCESS;
-	}
-
 	// Validate script number
 	if ((script_num < 0) || (script_num > _scriptLUTMax)) {
 		warning("Script::loadScript(): Invalid script number");

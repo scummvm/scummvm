@@ -385,7 +385,7 @@ ActorData *Actor::getActor(uint16 actorId) {
 	actor = &_actors[actorIdToIndex(actorId)];
 
 	if (actor->disabled)
-		error("Actor::getActor disabled actorId 0x%X", actorId);
+		warning("Actor::getActor disabled actorId 0x%X", actorId);
 
 	return actor;
 }
