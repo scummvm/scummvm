@@ -96,6 +96,33 @@ bool CmdText::isEmpty() const {
 }
 
 
+void CurrentCmdState::init() {
+
+	commandLevel = 1;
+	oldVerb = verb = action = Verb(VERB_NONE);
+	oldNoun = noun = subject1 = subject2 = 0;
+}
+
+
+void CurrentCmdState::addObject(int16 objNum) {
+	
+	switch (commandLevel) {
+	case 1:
+		subject1 = objNum;
+		break;
+	case 2:
+		subject2 = objNum;
+		break;
+	}
+}
+
+
+void SelectedCmdState::init() {
+	
+	action = defaultVerb = Verb(VERB_NONE);
+	noun = 0;
+}
+
 
 Command::Command(Logic *l, Graphics *g, Input *i, Walk *w)
 	: _logic(l), _graphics(g), _input(i), _walk(w) {
@@ -111,13 +138,8 @@ void Command::clear(bool clearTexts) {
 		_graphics->textClear(151, 151);
 	}
 	_parse = false;
-
-	_curCmd.commandLevel = 1;
-	_curCmd.oldVerb = _curCmd.verb = _curCmd.action = Verb(VERB_NONE);
-	_curCmd.oldNoun = _curCmd.noun = 0;
-
-	_selCmd.action = _selCmd.defaultVerb = Verb(VERB_NONE);
-	_selCmd.noun = _selCmd.subject1 = _selCmd.subject2 = 0;
+	_curCmd.init();
+	_selCmd.init();
 }
 
 
@@ -137,11 +159,11 @@ void Command::executeCurrentAction(bool walk) {
 	uint16 objMax = _logic->currentRoomObjMax();
 	uint16 roomData = _logic->currentRoomData();
 
-	if (_mouseKey == Input::MOUSE_RBUTTON && _selCmd.subject1 != 0) {
+	if (_mouseKey == Input::MOUSE_RBUTTON && _curCmd.subject1 != 0) {
 		// check to see if selecting default command for object/item
-		if (_selCmd.subject1 > 0) {
+		if (_curCmd.subject1 > 0) {
 			// an object
-			int16 i = _selCmd.subject1;
+			int16 i = _curCmd.subject1;
 			if (_curCmd.noun > objMax) {
 				int16 aObj = _logic->currentRoomArea(_curCmd.noun - objMax)->object;
 				int16 aObjName = _logic->objectData(aObj)->name;
@@ -173,7 +195,7 @@ void Command::executeCurrentAction(bool walk) {
 		}
 		else {
 			// an item
-			int16 name = _logic->itemData(ABS(_selCmd.subject1))->name;
+			int16 name = _logic->itemData(ABS(_curCmd.subject1))->name;
 			obj1Name = _logic->objectName(name);
 		}
 	}
@@ -187,8 +209,8 @@ void Command::executeCurrentAction(bool walk) {
 	// XXX SUBJECT[2]=0;
 
 	// get objects names
-	obj1Name = _logic->objectOrItemName(_selCmd.subject1);
-	obj2Name = _logic->objectOrItemName(_selCmd.subject2);
+	obj1Name = _logic->objectOrItemName(_curCmd.subject1);
+	obj2Name = _logic->objectOrItemName(_curCmd.subject2);
 
 	if (handleBadCommand(walk)) {
 		cleanupCurrentAction();
@@ -196,12 +218,12 @@ void Command::executeCurrentAction(bool walk) {
 	}
 
 	// get the number of commands associated with Object/Item
-	uint16 comMax = countAssociatedCommands(_selCmd.action, _selCmd.subject1, _selCmd.subject2);
+	uint16 comMax = countAssociatedCommands(_selCmd.action, _curCmd.subject1, _curCmd.subject2);
 	if (comMax == 0) {
 		// no command match was found, so exit
-		// pass ACTION2 as paramater, as a new Command (and a new ACTION2) 
+		// pass ACTION2 as parameter, as a new Command (and a new ACTION2) 
 		// can be constructed while Joe speaks 
-		executeStandardStuff(_selCmd.action, _selCmd.subject1, _selCmd.subject2);
+		executeStandardStuff(_selCmd.action, _curCmd.subject1, _curCmd.subject2);
 		cleanupCurrentAction();
 		return;
 	}
@@ -209,7 +231,7 @@ void Command::executeCurrentAction(bool walk) {
     // process each associated command for the Object, until all done
     // or one of the Gamestate tests fails...
 	int16 cond = 0;
-	CmdListData *com = &_cmdList[0];
+	CmdListData *com = &_cmdList[1];
 	uint16 comId = 0;
 	uint16 curCommand;
 	for (curCommand = 1; curCommand <= comMax; ++curCommand) {
@@ -217,7 +239,7 @@ void Command::executeCurrentAction(bool walk) {
 		++comId;
 		// try to find a match for the command in COM_LIST
 		for (; comId <= _numCmdList; ++comId, ++com) {
-			if (com->match(_selCmd.action, _selCmd.subject1, _selCmd.subject2)) {
+			if (com->match(_selCmd.action, _curCmd.subject1, _curCmd.subject2)) {
 				break;
 			}
 		}
@@ -258,11 +280,11 @@ void Command::executeCurrentAction(bool walk) {
 
 	// Don't grab if action is TALK or WALK
 	if (_selCmd.action.value() != VERB_TALK_TO && _selCmd.action.value() != VERB_WALK_TO) {
-		if (_selCmd.subject1 > 0) {
-			_logic->joeGrab(_logic->objectData(_selCmd.subject1)->state, 0);
+		if (_curCmd.subject1 > 0) {
+			_logic->joeGrab(_logic->objectData(_curCmd.subject1)->state, 0);
 		}
-		if (_selCmd.subject2 > 0) {
-			_logic->joeGrab(_logic->objectData(_selCmd.subject2)->state, 0);
+		if (_curCmd.subject2 > 0) {
+			_logic->joeGrab(_logic->objectData(_curCmd.subject2)->state, 0);
 		}
 	}
 
@@ -295,9 +317,9 @@ void Command::executeCurrentAction(bool walk) {
 	}
 
 	int16 oldImage = 0;
-	if (_selCmd.subject1 > 0) {
+	if (_curCmd.subject1 > 0) {
 		// an object (not an item)
-		oldImage = _logic->objectData(_selCmd.subject1)->image;
+		oldImage = _logic->objectData(_curCmd.subject1)->image;
 	}
 
 	if (com->setObjects) {
@@ -308,7 +330,7 @@ void Command::executeCurrentAction(bool walk) {
 	}
 
 	if (com->imageOrder != 0) {
-		ObjectData* od = _logic->objectData(_selCmd.subject1);
+		ObjectData* od = _logic->objectData(_curCmd.subject1);
 		// we must update the graphic image of the object
 		if (com->imageOrder < 0) {
 			// instead of setting to -1 or -2, flag as negative
@@ -320,15 +342,15 @@ void Command::executeCurrentAction(bool walk) {
 		else {
 			od->image = com->imageOrder;
 		}
-		_logic->roomRefreshObject(_selCmd.subject1);
+		_logic->roomRefreshObject(_curCmd.subject1);
 	}
 	else {
 		// this object is not being updated by command list, see if
 		// it has another image copied to it
-		if (_selCmd.subject1 > 0) {
+		if (_curCmd.subject1 > 0) {
 			// an object (not an item)
-			if (_logic->objectData(_selCmd.subject1)->image != oldImage) {
-				_logic->roomRefreshObject(_selCmd.subject1);
+			if (_logic->objectData(_curCmd.subject1)->image != oldImage) {
+				_logic->roomRefreshObject(_curCmd.subject1);
 			}
 		}
 	}
@@ -361,7 +383,7 @@ void Command::executeCurrentAction(bool walk) {
 		break;
 	}
 
-	changeObjectState(_selCmd.action, _selCmd.subject1, com->song, cutDone);
+	changeObjectState(_selCmd.action, _curCmd.subject1, com->song, cutDone);
 
 	if (_selCmd.action.value() == VERB_TALK_TO && cond > 0) {
 		if (executeIfDialog(_logic->objectTextualDescription(cond))) {
@@ -417,7 +439,7 @@ void Command::updatePlayer() {
 
 		if (_input->keyVerb().isJournal()) {
 			// XXX queen.c l.348-365
-			warning("Command::updatePlayer() - Journal not implemented");
+			warning("Command::updatePlayer() - Journal not yet implemented");
 		}
 		else if (!_input->keyVerb().isSkipText()) {
 			_curCmd.verb = _input->keyVerb();
@@ -496,6 +518,56 @@ void Command::readCommandsFrom(byte *&ptr) {
 }
 
 
+int16 Command::makeJoeWalkTo(int16 x, int16 y, int16 objNum, const Verb &v, bool mustWalk) {
+
+	// Check to see if object is actually an exit to another
+	// room. If so, then set up new room
+
+
+	ObjectData *objData = _logic->objectData(objNum);
+	if (objData->x != 0 || objData->y != 0) {
+		x = objData->x;
+		y = objData->y;
+	}
+
+	if (v.value() == VERB_WALK_TO) {
+		_logic->entryObj(objData->entryObj);
+		if (_logic->entryObj() != 0) {
+			_logic->newRoom(_logic->objectData(_logic->entryObj())->room);
+			// because this is an exit object, see if there is
+			// a walk off point and set (x,y) accordingly
+			WalkOffData *wod = _logic->walkOffPointForObject(objNum);
+			if (wod != NULL) {
+				x = wod->x;
+				y = wod->y;
+			}
+		}
+	}
+	else {
+		_logic->entryObj(0);
+		_logic->newRoom(0);
+	}
+
+
+	int16 p = 0;
+	if (mustWalk) {
+		// determine which way for Joe to face Object
+		uint16 facing = State::findDirection(objData->state);
+
+		BobSlot *bobJoe  = _graphics->bob(0);
+		if (x == bobJoe->x && y == bobJoe->y) {
+			_logic->joeFacing(facing);
+			_logic->joeFace();
+		}
+		else {
+			p = _walk->joeMove(facing, x, y, false); // XXX inCutaway parameter
+			// XXX if(P != 0) P = FIND_VERB
+		}
+	}
+	return p;
+}
+
+
 void Command::grabCurrentSelection() {
 	
 	_selPosX = _input->mousePosX();
@@ -522,6 +594,51 @@ void Command::grabCurrentSelection() {
 		clear(true);
 		_logic->joeWalk(2);
 	}
+}
+
+
+void Command::grabSelectedObject(int16 objNum, uint16 objState, uint16 objName) {
+
+	if (!_curCmd.action.isNone()) {
+		_cmdText.addObject(_logic->objectName(objName));
+	}
+	
+	_curCmd.addObject(objNum);
+
+    // if first noun and it's a 2 level command then set up action word
+	if (_curCmd.action.value() == VERB_USE && _curCmd.commandLevel == 1) {
+		if (State::findUse(objState) == STATE_USE_ON) {
+			// object supports 2 levels
+			_curCmd.commandLevel = 2;
+			_cmdText.addLinkWord(Verb(VERB_PREP_WITH));
+			 // command not fully constructed
+			_cmdText.display(INK_CMD_NORMAL);
+			_parse = false;
+		}
+		else {
+			_cmdText.display(INK_CMD_SELECT);
+			_parse = true;
+		}
+	}
+	else if (_curCmd.action.value() == VERB_GIVE && _curCmd.commandLevel == 1) {
+		_curCmd.commandLevel = 2;
+		_cmdText.addLinkWord(Verb(VERB_PREP_TO));
+		 // command not fully constructed
+		_cmdText.display(INK_CMD_NORMAL);
+		_parse = false;
+	}
+	else {
+		_cmdText.display(INK_CMD_SELECT);
+		_parse = true;
+	}
+
+	if (_parse) {
+		_curCmd.verb = Verb(VERB_NONE);
+		_logic->joeWalk(2); // set JOEWALK flag to perform EXECUTE_ACTION procedure
+		_selCmd.action = _curCmd.action;
+		_curCmd.action = Verb(VERB_NONE);
+	}
+
 }
 
 
@@ -601,47 +718,7 @@ void Command::grabSelectedItem() {
 		}
 	}
 
-	if (_curCmd.action.isTwoLevelsCommand() && _curCmd.commandLevel == 1) {
-		_parse = false;
-	}
-	if (!_curCmd.action.isNone()) {
-		_cmdText.addObject(_logic->objectName(_logic->itemData(item)->name));
-	}
-	
-	switch (_curCmd.commandLevel) {
-	case 1:
-		_selCmd.subject1 = -item;
-		break;
-	case 2:
-		_selCmd.subject2 = -item;
-		break;
-	}
-
-	if (_curCmd.action.value() == VERB_USE && _curCmd.commandLevel == 1) {
-		if (State::findUse(_logic->itemData(item)->state) == STATE_USE_ON) {
-			_cmdText.addLinkWord(Verb(VERB_PREP_WITH));
-			_curCmd.commandLevel = 2;
-		}
-		else {
-			_parse = true;
-		}
-		_cmdText.display(INK_CMD_NORMAL);
-	}
-	else if (_curCmd.action.value() == VERB_GIVE && _curCmd.commandLevel == 1) {
-		_cmdText.addLinkWord(Verb(VERB_PREP_TO));
-		_curCmd.commandLevel = 2;
-		_cmdText.display(INK_CMD_NORMAL);
-	}
-	else {
-		_cmdText.display(INK_CMD_SELECT);
-	}
-
-	if (_parse) {
-		_curCmd.verb = Verb(VERB_NONE);
-		_logic->joeWalk(2); // set JOEWALK flag to perform EXECUTE_ACTION procedure
-		_selCmd.action = _curCmd.action;
-		_curCmd.action = Verb(VERB_NONE);
-	}
+	grabSelectedObject(-item, _logic->itemData(item)->state, _logic->itemData(item)->name);
 }
 
 
@@ -720,55 +797,7 @@ void Command::grabSelectedNoun() {
 	}
 
 	_selCmd.noun = 0;
-
-	if (_curCmd.action.isTwoLevelsCommand() && _curCmd.commandLevel == 1) {
-		// command not fully constructed
-		_parse = false;
-	}
-	else {
-		_parse = true;
-	}
-
-	if (!_curCmd.action.isNone()) {
-		_cmdText.addObject(_logic->objectName(objName));
-	}
-	
-	switch (_curCmd.commandLevel) {
-	case 1:
-		_selCmd.subject1 = objNum;
-		break;
-	case 2:
-		_selCmd.subject2 = objNum;
-		break;
-	}
-
-    // if first noun and it's a 2 level command then set up action word
-
-	if (_curCmd.action.value() == VERB_USE && _curCmd.commandLevel == 1) {
-		if (State::findUse(_logic->objectData(objNum)->state) == STATE_USE_ON) {
-			_cmdText.addLinkWord(Verb(VERB_PREP_WITH));
-			_curCmd.commandLevel = 2;
-		}
-		else {
-			// object does not support 2nd level
-			_parse = true;
-		}
-		_cmdText.display(INK_CMD_NORMAL);
-	}
-	else if (_curCmd.action.value() == VERB_GIVE && _curCmd.commandLevel == 1) {
-		_cmdText.addLinkWord(Verb(VERB_PREP_TO));
-		_cmdText.display(INK_CMD_NORMAL);
-	}
-	else {
-		_cmdText.display(INK_CMD_SELECT);
-	}
-
-	if (_parse) {
-		_curCmd.verb = Verb(VERB_NONE);
-		_logic->joeWalk(2); // set JOEWALK flag to perform EXECUTE_ACTION procedure
-		_selCmd.action = _curCmd.action;
-		_curCmd.action = Verb(VERB_NONE);
-	}
+	grabSelectedObject(objNum, _logic->objectData(objNum)->state, objName);
 }
 	
 
@@ -781,8 +810,8 @@ void Command::grabSelectedVerb() {
 	}
 	else if (_curCmd.verb.isPanelCommand() || _curCmd.verb.value() == VERB_WALK_TO) {
 		_curCmd.action = _curCmd.verb;
-		_selCmd.subject1 = 0;
-		_selCmd.subject2 = 0;
+		_curCmd.subject1 = 0;
+		_curCmd.subject2 = 0;
 
 		// if right mouse key selected, then store command VERB
 		if (_mouseKey == Input::MOUSE_RBUTTON) {
@@ -858,7 +887,7 @@ bool Command::handleBadCommand(bool walk) {
 
 	// l.96-141 execute.c
 	uint16 objMax = _logic->currentRoomObjMax();
-	uint16 roomData = _logic->roomData(_logic->currentRoom());
+	uint16 roomData = _logic->currentRoomData();
 
 	// select without a command or WALK TO ; do a WALK
 	if ((_selCmd.action.value() == VERB_WALK_TO || _selCmd.action.isNone()) && 
@@ -870,19 +899,21 @@ bool Command::handleBadCommand(bool walk) {
 		return true;
 	}
 	// check to see if one of the objects is hidden
-	if (_selCmd.subject1 > 0 && _logic->objectData(_selCmd.subject1)->name <= 0) {
+	if (_curCmd.subject1 > 0 && _logic->objectData(_curCmd.subject1)->name <= 0) {
 		return true;
 	}
-	if (_selCmd.action.value() == VERB_GIVE && _selCmd.subject2 > 0 && _logic->objectData(_selCmd.subject2)->name <= 0) {
+	if (_selCmd.action.value() == VERB_GIVE && 
+		_curCmd.subject2 > 0 && _logic->objectData(_curCmd.subject2)->name <= 0) {
 		return true;
 	}
     // check for USE command on exists
-	if (_selCmd.action.value() == VERB_USE && _selCmd.subject1 > 0 && _logic->objectData(_selCmd.subject1)->entryObj > 0) {
+	if (_selCmd.action.value() == VERB_USE && 
+		_curCmd.subject1 > 0 && _logic->objectData(_curCmd.subject1)->entryObj > 0) {
 		_selCmd.action = Verb(VERB_WALK_TO);
 	}
 	if (_selCmd.noun > 0 && _selCmd.noun <= objMax) {
-		int16 p = _logic->joeWalkTo(_selPosX, _selPosY, walk);
-		if (p != 0) {
+		uint16 objNum = _logic->currentRoomData() + _selCmd.noun;
+		if (makeJoeWalkTo(_selPosX, _selPosY, objNum, _selCmd.action, walk) != 0) {
 			return true;
 		}
 		if (_selCmd.action.value() == VERB_WALK_TO && _logic->objectData(roomData + _selCmd.noun)->entryObj < 0) {
@@ -911,7 +942,7 @@ void Command::executeStandardStuff(const Verb& action, int16 subj1, int16 subj2)
 
 	case VERB_USE:
 		if (subj1 < 0) {
-			k = _logic->itemData(ABS(subj1))->sfxDescription;
+			k = _logic->itemData(-subj1)->sfxDescription;
 			if (k > 0) {
 				_logic->joeSpeak(k, true);
 			}
@@ -933,6 +964,7 @@ void Command::executeStandardStuff(const Verb& action, int16 subj1, int16 subj2)
 		break;
 
 	case 4: // weird, isn't it ? l.193 execute.c
+		warning("Command::executeStandardStuff() - Use of verb 4");
 	case VERB_MOVE:
 		// 'I can't move it'
 		if (subj1 > 0) {
@@ -1128,10 +1160,10 @@ void Command::openOrCloseAssociatedObject(const Verb& action, int16 otherObj) {
 		if (cmdList->match(action, otherObj, 0)) {
 			if (cmdList->setConditions) {
 				CmdGameState *cmdGs = _cmdGameState;
-				// FIXME: weird loop...
 				uint16 j;
 				for (j = 1; j <= _numCmdGameState; ++j) {
 					if (cmdGs[j].id == i && cmdGs[i].gameStateSlot > 0) {
+						// FIXME: weird, why using 'i' instead of 'j' ?
 						if (_logic->gameState(cmdGs[i].gameStateSlot) == cmdGs[i].gameStateValue) {
 							com = i;
 							break;
@@ -1278,7 +1310,7 @@ void Command::setObjects(uint16 command) {
 					// turning off graphic image
 					objData->name = 0;
 					if (objData->room == _logic->currentRoom()) {
-						if (dstObj != _selCmd.subject1) {
+						if (dstObj != _curCmd.subject1) {
 							// if the new object we have updated is on screen and is not the 
 							// current object, then we can update. This is because we turn
 							// current object off ourselves by COM_LIST(com, 8)
@@ -1307,7 +1339,7 @@ void Command::setObjects(uint16 command) {
 					}
 				}
 
-				if (dstObj != _selCmd.subject1) {
+				if (dstObj != _curCmd.subject1) {
 					// if the new object we have updated is on screen and
 					// is not current object then update it
 					_logic->roomRefreshObject(dstObj);
@@ -1416,9 +1448,9 @@ uint16 Command::nextObjectDescription(ObjectDescription* objDesc, uint16 firstDe
 void Command::look() {
 
 	if (_selCmd.noun > 0 && _selCmd.noun <= _logic->currentRoomObjMax()) {
-		uint16 k = _logic->currentRoomData();
-		if (_logic->objectData(k + _selCmd.noun)->entryObj == 0) {
-			if (_logic->joeWalkTo(_selPosX, _selPosY, true) == -2) {
+		uint16 objNum = _logic->currentRoomData() + _selCmd.noun;
+		if (_logic->objectData(objNum)->entryObj == 0) {
+			if (makeJoeWalkTo(_selPosX, _selPosY, objNum, _selCmd.action, true) == -2) { // XXX inCutaway parameter
 				// 'I can't get close enough to have a look.'
 				_logic->joeSpeak(13);
 			}
@@ -1426,25 +1458,25 @@ void Command::look() {
 	}
 
 	// if object type and disabled, don't look
-	if (_selCmd.subject1 > 0 && _logic->objectData(_selCmd.subject1)->name <= 0) {
+	if (_curCmd.subject1 > 0 && _logic->objectData(_curCmd.subject1)->name <= 0) {
 		return;
 	}
 
 	uint16 desc;
-	if (_selCmd.subject1 < 0) {
-		desc = _logic->itemData(ABS(_selCmd.subject1))->description;
+	if (_curCmd.subject1 < 0) {
+		desc = _logic->itemData(-_curCmd.subject1)->description;
 	}
 	else {
-		desc = _logic->objectData(_selCmd.subject1)->description;
+		desc = _logic->objectData(_curCmd.subject1)->description;
 	}
 
-	debug(0, "Command::look() - desc = %X, _selCmd.subject1 = %X", desc, _selCmd.subject1);
+	debug(0, "Command::look() - desc = %X, _curCmd.subject1 = %X", desc, _curCmd.subject1);
 
 	// check to see if the object/item has a series of description
 	ObjectDescription *objDesc = _logic->objectDescription(1);
 	uint16 i;
 	for (i = 1; i <= _logic->objectDescriptionCount(); ++i, ++objDesc) {
-		if (objDesc->object == _selCmd.subject1) {
+		if (objDesc->object == _curCmd.subject1) {
 			desc = nextObjectDescription(objDesc, desc);
 			break;
 		}
@@ -1477,7 +1509,6 @@ void Command::lookCurrentItem() {
 		}
 	}
 }
-
 
 
 void Command::lookCurrentRoom() {

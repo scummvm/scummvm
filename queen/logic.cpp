@@ -170,57 +170,6 @@ void State::alterDefaultVerb(uint16 *objState, Verb v) {
 	*objState = (*objState & ~0xF0) | (val << 4);
 }
 
-/*
-void Command_::readAllCommandsFrom(byte *&ptr) {
-
-	uint16 i;
-
-	// Command List Data
-	_numCmdList = READ_BE_UINT16(ptr); ptr += 2;
-
-	_cmdList = new CmdListData[_numCmdList + 1];
-	memset(&_cmdList[0], 0, sizeof(CmdListData));
-	for (i = 1; i <= _numCmdList; i++) {
-		_cmdList[i].readFrom(ptr);
-	}
-	
-	// Command AREA
-	_numCmdArea = READ_BE_UINT16(ptr); ptr += 2;
-
-	_cmdArea = new CmdArea[_numCmdArea + 1];
-	memset(&_cmdArea[0], 0, sizeof(CmdArea));
-	for (i = 1; i <= _numCmdArea; i++) {
-		_cmdArea[i].readFrom(ptr);
-	}
-	
-	// Command OBJECT
-	_numCmdObject = READ_BE_UINT16(ptr); ptr += 2;
-
-	_cmdObject = new CmdObject[_numCmdObject + 1];
-	memset(&_cmdObject[0], 0, sizeof(CmdObject));
-	for (i = 1; i <= _numCmdObject; i++) {
-		_cmdObject[i].readFrom(ptr);
-	}
-
-	// Command INVENTORY
-	_numCmdInventory = READ_BE_UINT16(ptr);	ptr += 2;
-
-	_cmdInventory = new CmdInventory[_numCmdInventory + 1];
-	memset(&_cmdInventory[0], 0, sizeof(CmdInventory));
-	for (i = 1; i <= _numCmdInventory; i++) {
-		_cmdInventory[i].readFrom(ptr);
-	}
-	
-	// Command GAMESTATE
-	_numCmdGameState = READ_BE_UINT16(ptr);	ptr += 2;
-	_cmdGameState = new CmdGameState[_numCmdGameState + 1];
-	memset(&_cmdGameState[0], 0, sizeof(CmdGameState));
-	for (i = 1; i <= _numCmdGameState; i++) {
-		_cmdGameState[i].readFrom(ptr);
-	}
-}
-*/
-
 
 Common::RandomSource Logic::randomizer;
 
@@ -659,7 +608,7 @@ uint16 Logic::findFrame(uint16 obj) {
 }
 
 
-uint16 Logic::objectForPerson(uint16 bobNum) {
+uint16 Logic::objectForPerson(uint16 bobNum) const {
 
 	uint16 bobcur = 0;
 	// first object number in the room
@@ -681,7 +630,7 @@ uint16 Logic::objectForPerson(uint16 bobNum) {
 }
 
 
-WalkOffData *Logic::walkOffPointForObject(uint16 obj) {
+WalkOffData *Logic::walkOffPointForObject(uint16 obj) const {
 	
 	uint16 i;
 	for (i = 1; i <= _numWalkOffs; ++i) {
@@ -1726,59 +1675,6 @@ uint16 Logic::joeFace() {
 }
 
 
-int16 Logic::joeWalkTo(int16 x, int16 y, bool mustWalk) {
-
-	// Check to see if object is actually an exit to another
-	// room. If so, then set up new room
-
-	uint16 k = _roomData[_currentRoom];
-
-	ObjectData *objData = &_objectData[k + _cmd->selectedNoun()];
-	if (objData->x != 0 || objData->y != 0) {
-		x = objData->x;
-		y = objData->y;
-	}
-
-	if (_cmd->selectedAction().value() == VERB_WALK_TO) {
-		_entryObj = objData->entryObj;
-	}
-	else {
-		_entryObj = 0;
-	}
-
-	_newRoom = 0;
-
-	if (_entryObj != 0 && _cmd->selectedAction().value() != VERB_CLOSE) {
-		_newRoom = _objectData[_entryObj].room;
-		// because this is an exit object, see if there is
-		// a walk off point and set (x,y) accordingly
-		WalkOffData *wod = walkOffPointForObject(k + _cmd->selectedNoun());
-		if (wod != NULL) {
-			x = wod->x;
-			y = wod->y;
-		}
-	}
-
-	// determine which way for Joe to face Object
-	uint16 facing = State::findDirection(objData->state);
-
-	int16 p = 0;
-	if (mustWalk) {
-		BobSlot *bobJoe  = _graphics->bob(0);
-		if (x == bobJoe->x && y == bobJoe->y) {
-			joeFacing(facing);
-			joeFace();
-		}
-		else {
-			// XXX inCutaway parameter
-			p = _walk->joeMove(facing, x, y, false);
-			// if(P != 0) P = FIND_VERB
-		}
-	}
-	return p;
-}
-
-
 void Logic::joeGrab(uint16 state, uint16 speed) {
 
 	StateGrab sg = State::findGrab(state);
@@ -2203,7 +2099,7 @@ void Logic::customMoveJoe(int facing, uint16 areaNum, uint16 walkDataNum) {
 	case 14:
 		playCutaway("c14b.CUT", nextCut);
 		break;
-    case 16:
+	case 16:
 		if (areaNum == 3) {
 			playCutaway("c16a.CUT", nextCut);
 		}
@@ -2216,41 +2112,41 @@ void Logic::customMoveJoe(int facing, uint16 areaNum, uint16 walkDataNum) {
 			playCutaway("c17b.CUT", nextCut);
 		}
 		break;
-    case 22:
+	case 22:
 		playCutaway("c22a.CUT", nextCut);
 		break;
-    case 26:
+	case 26:
 		playCutaway("c26b.CUT", nextCut);
 		break;
-    case 30:
+	case 30:
 		playCutaway("c30a.CUT", nextCut);
 		break;
-    case 32:
+	case 32:
 		playCutaway("c32c.CUT", nextCut);
 		break;
-    case 50:
+	case 50:
 		if (areaNum == 6) {
 			if (_gameState[21] == 0) {
 				playCutaway("c50d.CUT", nextCut);
 				while (nextCut[0] != '\0') {
 					playCutaway(nextCut, nextCut);
 				}
-			    _gameState[21] = 1;
+				_gameState[21] = 1;
 			} else {
 				playCutaway("c50h.CUT", nextCut);
 			}
 		}
 		break;
-    case 53:
+	case 53:
 		playCutaway("c53b.CUT", nextCut);
 		break;
-    case 55:
+	case 55:
 		joeSpeak(19);
 		break;
-    case 71:
+	case 71:
 		joeSpeak(21);
 		break;
-    case 73:
+	case 73:
 		// don't play next Cutaway
 		if (_gameState[VAR_ROOM73_CUTAWAY] == 0) {
 			playCutaway("c73a.CUT"); 
@@ -2266,7 +2162,7 @@ void Logic::customMoveJoe(int facing, uint16 areaNum, uint16 walkDataNum) {
 			playCutaway("c73c.CUT");
 		}
 		break;
-    case 100:
+	case 100:
 		if (areaNum == 7) {
 			joeSpeak(17);
 		}
@@ -2276,7 +2172,7 @@ void Logic::customMoveJoe(int facing, uint16 areaNum, uint16 walkDataNum) {
 			playCutaway("c101b.CUT", nextCut);
 		}
 		break;
-    case 103:
+	case 103:
 		if (areaNum == 3) {
 			if (_gameState[35] == 1) {
 				playCutaway("c103e.CUT", nextCut);

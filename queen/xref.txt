@@ -31,10 +31,11 @@ SELECT()					Command::grabCurrentSelection
 SELECT_ITEM()				Command::grabSelectedItem
 SELECT_NOUN()				Command::grabSelectedNoun
 SELECT_VERB()				Command::grabSelectedVerb
+WALK()						Command::makeJoeWalkTo
 -
-ACTION						Command::_currentAction
-ACTION2						Command::_selectedAction
-CLEVEL						Command::_commandLevel
+ACTION						Command::_curCmd.action
+ACTION2						Command::_selCmd.action
+CLEVEL						Command::_curCmd.commandLevel
 COM_A						Command::_cmdArea
 COM_A_MAX					Command::_numCmdArea
 COM_O						Command::_cmdObject
@@ -46,13 +47,13 @@ COM_I_MAX					Command::_numCmdInventory
 COM_LIST					Command::_cmdList
 COM_LIST_MAX				Command::_numCmdList
 COMMANDstr					Command::_command
-DEFCOMM						Command::_defaultVerb
+DEFCOMM						Command::_selCmd.defaultVerb
 MKEY						Command::_mouseKey
-OLDVERB,VERB				Command::_*verb*
-OLDNOUN,NOUN				Command::_*noun*
-NOUN2						Command::_selectedNoun
+OLDVERB,VERB				Command::_curCmd.*verb
+OLDNOUN,NOUN				Command::_curCmd.*noun
+NOUN2						Command::_selCmd.noun
 PARSE						Command::_parse
-SUBJ1,SUBJ2,SUBJECT			Command::_subject*
+SUBJ1,SUBJ2,SUBJECT			Command::_selCmd.subject*
 
 
 CREDIT SCRIPTING SYSTEM
@@ -187,7 +188,6 @@ SETUP_JOE()					Logic::joeSetup
 USE_UNDERWEAR()				Logic::joeUseUnderwear
 USE_CLOTHES()				Logic::joeUseClothes
 USE_DRESS()					Logic::joeUseDress
-WALK()						Logic::joeWalkTo
 -
 JOE_RESPstr 				Logic::_joeResponse
 JOEF,JX,JY,JDIR				Logic::_joe.*

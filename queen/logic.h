@@ -138,8 +138,8 @@ public:
 
 	uint16 findBob(uint16 obj);
 	uint16 findFrame(uint16 obj);
-	uint16 objectForPerson(uint16 bobnum); // OBJ_PERSON
-	WalkOffData *walkOffPointForObject(uint16 obj);
+	uint16 objectForPerson(uint16 bobnum) const; // OBJ_PERSON
+	WalkOffData *walkOffPointForObject(uint16 obj) const;
 
 	Area *area(int room, int num);
 	Area *currentRoomArea(int num);
@@ -217,9 +217,6 @@ public:
 	//! FACE_JOE()
 	uint16 joeFace();
 
-	//! WALK()
-	int16 joeWalkTo(int16 x, int16 y, bool mustWalk);
-
 	//! GRAB_JOE()
 	void joeGrab(uint16 state, uint16 speed);
 
@@ -234,7 +231,7 @@ public:
 
 	void playCutaway(const char *cutFile, char *next = NULL);
 
-	const char* objectOrItemName(int16 obj) const;
+	const char *objectOrItemName(int16 obj) const;
 
 	Verb findVerbUnderCursor(int16 cursorx, int16 cursory) const;
 	uint16 findObjectUnderCursor(int16 cursorx, int16 cursory) const;

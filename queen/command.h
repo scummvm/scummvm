@@ -56,26 +56,61 @@ struct CmdText {
 };
 
 
+struct CurrentCmdState {
+
+	void init();
+	void addObject(int16 objNum);
+
+	Verb oldVerb;
+	Verb verb;
+	Verb action;
+	int16 oldNoun;
+	int16 noun;
+	//! current level of the command (max=2 for GIVE and USE verbs)
+	int commandLevel;
+	int16 subject1;
+	int16 subject2;
+};
+
+
+struct SelectedCmdState {
+
+	void init();
+	
+	//! locked verb (using 2nd mouse button)
+	Verb defaultVerb;
+	Verb action;
+	int16 noun;
+};
+
+
 class Command {
 public:
 	
 	Command(Logic*, Graphics*, Input*, Walk*);
 	
+	//! initialise command construction
 	void clear(bool clearTexts);
 
+	//! execute last constructed command
 	void executeCurrentAction(bool walk);
 
+	//! get player input and construct command from it
 	void updatePlayer();
 
+	//! read all command arrays from stream
 	void readCommandsFrom(byte *&ptr);
 
-	Verb selectedAction() const { return _selCmd.action; }
-	int16 selectedNoun() const { return _selCmd.noun; }
+	//! return true if command is ready to be executed
 	bool parse() const { return _parse; }
+
 
 private:
 
+	int16 makeJoeWalkTo(int16 x, int16 y, int16 objNum, const Verb &v, bool mustWalk);
+
 	void grabCurrentSelection();
+	void grabSelectedObject(int16 objNum, uint16 objState, uint16 objName);
 	void grabSelectedItem();
 	void grabSelectedNoun();
 	void grabSelectedVerb();
@@ -89,27 +124,31 @@ private:
 	void changeObjectState(const Verb& action, int16 obj, int16 song, bool cutDone);
 	void cleanupCurrentAction();
 
+	//! find default verb action for specified object
 	Verb findDefault(uint16 obj, bool itemType);
+
+	//! alter default verb action for specified object and update command display
 	void alterDefault(const Verb& def, bool itemType);
 	
-	//! Opens/closes the object associated with object - OPEN_CLOSE_OTHER(OBJECT_DATA[S][4])
+	//! OPEN_CLOSE_OTHER(OBJECT_DATA[S][4])
 	void openOrCloseAssociatedObject(const Verb& action, int16 obj);
 	
-	//! Update gamestates - P1_SET_CONDITIONS
+	//! update gamestates - P1_SET_CONDITIONS
 	int16 setConditions(uint16 command, bool lastCmd);
 
-	//! Turn on/off areas - P2_SET_AREAS
+	//! turn on/off areas - P2_SET_AREAS
 	void setAreas(uint16 command);
 
-	//! Hide/show objects, redisplay if in the same room as Joe - P3_SET_OBJECTS
+	//! hide/show objects, redisplay if in the same room as Joe - P3_SET_OBJECTS
 	void setObjects(uint16 command);
 	
-	//! Inserts/deletes items (inventory) - P4_SET_ITEMS
+	//! inserts/deletes items (inventory) - P4_SET_ITEMS
 	void setItems(uint16 command);
 
+	//! update description for object and returns description number to use
 	uint16 nextObjectDescription(ObjectDescription *objDesc, uint16 firstDesc);
 
-	//! Look at Objects/Items and speak their description
+	//! look at current object / item and speak its description
 	void look();
 	void lookCurrentItem();
 	void lookCurrentRoom();
@@ -131,33 +170,18 @@ private:
 	CmdGameState *_cmdGameState;
 	uint16 _numCmdGameState;
 
-	//! Textual form of the command (displayed between room and panel areas)
+	//! textual form of the command (displayed between room and panel areas)
 	CmdText _cmdText;
 	
-	//! If true, command string is executed
+	//! flag indicating that the current command is fully constructed
 	bool _parse;
 
-	struct {
-		Verb oldVerb, verb;
-		Verb action;
-		int16 oldNoun, noun;
-		//! Current level of the command (max=2 for GIVE and USE verbs)
-		int commandLevel;
-	} _curCmd;
+	CurrentCmdState _curCmd;
 
-	struct {
-		//! Locked verb (using 2nd mouse button)
-		Verb defaultVerb;
-		Verb action;
-		int16 noun;
-		int16 subject1, subject2;
-	} _selCmd;
+	SelectedCmdState _selCmd;
 
-	//! MKEY
-	int _mouseKey;
-
-	//! Position of last selection
-	int _selPosX, _selPosY;
+	//! last user selection
+	int _mouseKey, _selPosX, _selPosY;
 
 	Logic *_logic;
 	Graphics *_graphics;
