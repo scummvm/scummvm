@@ -774,3 +774,4 @@ void Codec47_releaseGlobals() {
 	GRELEASEPTR(GBVARS_CODEC47TABLE_INDEX		, GBVARS_SCUMM)
 }
 #endif
+
