@@ -251,6 +251,8 @@ int Script::SF_faceTowards(R_SCRIPTFUNC_PARAMS) {
 
 // Script function #15
 int Script::SF_setFollower(R_SCRIPTFUNC_PARAMS) {
+	thread->stack->pop();
+	thread->stack->pop();
 	return R_SUCCESS;
 }
 
@@ -363,6 +365,8 @@ int Script::SF_moveTo(R_SCRIPTFUNC_PARAMS) {
 
 // Script function #34
 int Script::SF_swapActors(R_SCRIPTFUNC_PARAMS) {
+	thread->stack->pop();
+	thread->stack->pop();
 	return R_SUCCESS;
 }
 

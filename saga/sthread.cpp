@@ -220,11 +220,13 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 		saved_offset = thread->i_offset;
 		in_char = scriptS.readByte();
 
-		debug(0, "Executing thread offset: %lu (%x)", thread->i_offset, in_char);
+		debug(0, "Executing thread offset: %lu (%x) stack: %d", thread->i_offset, in_char, thread->stack->size());
 
 		switch (in_char) {
 		case 0x01: // nextblock
-			debug(0, "Stub: opcode 0x01(nextblock)");
+			// Some sort of "jump to the start of the next memory
+			// page" instruction, I think.
+			thread->i_offset = 1024 * ((thread->i_offset / 1024) + 1);
 			break;
 
 // STACK INSTRUCTIONS
@@ -300,14 +302,19 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			// (GOSB): Call subscript ?
 		case 0x17:
 			{
+				int n_args;
 				int temp;
-				int temp2;
 
+				n_args = scriptS.readByte();
 				temp = scriptS.readByte();
-				temp2 = scriptS.readByte();
+				if (temp != 2)
+					error("Calling dynamically generated script? Wow");
 				param1 = (SDataWord_T)scriptS.readUint16LE();
 				data = scriptS.pos();
-				//thread->stack->push((SDataWord_T)temp);
+				thread->stack->push(n_args);
+				// NOTE: The original pushes the program
+				// counter as a pointer here. But I don't think
+				// we will have to do that.
 				thread->stack->push(data);
 				thread->i_offset = (unsigned long)param1;
 			}
@@ -360,6 +367,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 				thread->executing = 0;
 			} else {
 				data = thread->stack->pop();
+				/* int n_args = */ thread->stack->pop();
 				thread->i_offset = data;
 			}
 			break;
