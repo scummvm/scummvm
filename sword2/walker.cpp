@@ -19,7 +19,7 @@
 
 // WALKER.CPP by James (14nov96)
 
-// script functions for moving megas about the place & also for keeping tabs
+// Script functions for moving megas about the place & also for keeping tabs
 // on them
 
 #include "common/stdafx.h"
@@ -33,7 +33,8 @@
 namespace Sword2 {
 
 /**
- * Walk mega to (x,y,dir)
+ * Walk mega to (x,y,dir). Set RESULT to 0 if it succeeded. Otherwise, set
+ * RESULT to 1.
  */
 
 int32 Logic::fnWalk(int32 *params) {
@@ -43,32 +44,21 @@ int32 Logic::fnWalk(int32 *params) {
 	//		3 pointer to object's walkdata structure
 	//		4 target x-coord
 	//		5 target y-coord
-	//		6 target direction
+	//		6 target direction (8 means end walk on ANY direction)
 
-	ObjectLogic *ob_logic;
-	ObjectGraphic *ob_graph;
-	ObjectMega *ob_mega;
+	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
+	ObjectGraphic *ob_graph = (ObjectGraphic *) _vm->_memory->intToPtr(params[1]);
+	ObjectMega *ob_mega  = (ObjectMega *) _vm->_memory->intToPtr(params[2]);
+
+	int16 target_x = (int16) params[4];
+	int16 target_y = (int16) params[5];
+	uint8 target_dir = (uint8) params[6];
+
 	ObjectWalkdata *ob_walkdata;
-	int16 target_x;
-	int16 target_y;
-	uint8 target_dir;
-	int32 route;
-	int32 walk_pc;
-	WalkData *walkAnim;
 
-	// get the parameters
+	// If this is the start of the walk, calculate the route.
 
-	ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
-	ob_graph = (ObjectGraphic *) _vm->_memory->intToPtr(params[1]);
-	ob_mega	 = (ObjectMega *) _vm->_memory->intToPtr(params[2]);
-
-	target_x = (int16) params[4];
-	target_y = (int16) params[5];
-	target_dir = (uint8) params[6];
-
-	// if this is the start of the walk, calculate route
-
-	if (ob_logic->looping == 0) {
+	if (!ob_logic->looping) {
 		// If we're already there, don't even bother allocating
 		// memory and calling the router, just quit back & continue
 		// the script! This avoids an embarassing mega stand frame
@@ -78,25 +68,22 @@ int32 Logic::fnWalk(int32 *params) {
 		// anim.
 		
 		if (ob_mega->feet_x == target_x && ob_mega->feet_y == target_y && ob_mega->current_dir == target_dir) {
-			// 0 means ok - finished walk
 			_scriptVars[RESULT] = 0;
-			return IR_CONT;	// may as well continue the script
+			return IR_CONT;
 		}
 
-		// invalid direction (NB. '8' means end walk on ANY direction)
-		if (params[6] < 0 || params[6] > 8)
-			error("Invalid direction (%d) in fnWalk", params[6]);
+		assert(params[6] >= 0 && params[6] <= 8);
 
 		ob_walkdata = (ObjectWalkdata *) _vm->_memory->intToPtr(params[3]);
 
-		ob_mega->walk_pc = 0;	// always
+		ob_mega->walk_pc = 0;
 
-		// set up mem for _walkData in route_slots[] & set mega's
+		// Set up mem for _walkData in route_slots[] & set mega's
 		// 'route_slot_id' accordingly
 
 		_router->allocateRouteMem();
 
-		route = _router->routeFinder(ob_mega, ob_walkdata, target_x, target_y, target_dir);
+		int32 route = _router->routeFinder(ob_mega, ob_walkdata, target_x, target_y, target_dir);
 
 		// 0 = can't make route to target
 		// 1 = created route
@@ -116,42 +103,30 @@ int32 Logic::fnWalk(int32 *params) {
 
 			// (see fnGetPlayerSaveData() in save_rest.cpp
 		} else {
-			// free up the walkdata mem block
 			_router->freeRouteMem();
-
-			// 1 means error, no walk created
 			_scriptVars[RESULT] = 1;
-
-			// may as well continue the script
 			return IR_CONT;
 		}
 
-		// ok, walk is about to start, so set the mega's graphic
-		// resource
-
+		// Walk is about to start, so set the mega's graphic resource
 		ob_graph->anim_resource = ob_mega->megaset_res;
 	} else if (_scriptVars[EXIT_FADING] && _vm->_graphics->getFadeStatus() == RDFADE_BLACK) {
-		// double clicked an exit so quit the walk when screen is black
-
+		// Double clicked an exit so quit the walk when screen is black
 		// ok, thats it - back to script and change screen
 
-		ob_logic->looping = 0;	// so script loop stops
-		_router->freeRouteMem();	// free up the walkdata mem block
+		ob_logic->looping = 0;
+		_router->freeRouteMem();
 
-		// must clear in-case on the new screen there's a walk
+		// Must clear in-case on the new screen there's a walk
 		// instruction (which would get cut short)
 		_scriptVars[EXIT_CLICK_ID] = 0;
-
-		// this will be reset when we change screens, so we can use
-		// it in script to check if a 2nd-click came along
-		// _scriptVars[EXIT_FADING] = 0;
 
 		// finished walk
 		ob_mega->currently_walking = 0;
 
-		// (see fnGetPlayerSaveData() in save_rest.cpp
+		// see fnGetPlayerSaveData() in save_rest.cpp
 
-		_scriptVars[RESULT] = 0;		// 0 means ok
+		_scriptVars[RESULT] = 0;
 
 		// continue the script so that RESULT can be checked!
 		return IR_CONT;
@@ -159,37 +134,36 @@ int32 Logic::fnWalk(int32 *params) {
 
 	// get pointer to walkanim & current frame position
 
-	// lock the _walkData array
-	walkAnim = _router->lockRouteMem();
-	walk_pc = ob_mega->walk_pc;
+	WalkData *walkAnim = _router->lockRouteMem();
+	int32 walk_pc = ob_mega->walk_pc;
 
-	// if stopping the walk early, overwrite the next step with a
+	// If stopping the walk early, overwrite the next step with a
 	// slow-out, then finish
 
 	if (checkEventWaiting()) {
 		if (walkAnim[walk_pc].step == 0 && walkAnim[walk_pc + 1].step == 1) {
-			// at the beginning of a step
+			// At the beginning of a step
 			ob_walkdata = (ObjectWalkdata *) _vm->_memory->intToPtr(params[3]);
 			_router->earlySlowOut(ob_mega, ob_walkdata);
 		}
 	}
 
-	// get new frame of walk
+	// Get new frame of walk
 
 	ob_graph->anim_pc = walkAnim[walk_pc].frame;
 	ob_mega->current_dir = walkAnim[walk_pc].dir;
 	ob_mega->feet_x = walkAnim[walk_pc].x;
 	ob_mega->feet_y = walkAnim[walk_pc].y;
 
-	// check if NEXT frame is in fact the end-marker of the walk sequence
+	// Check if NEXT frame is in fact the end-marker of the walk sequence
 	// so we can return to script just as the final (stand) frame of the
 	// walk is set - so that if followed by an anim, the anim's first
 	// frame replaces the final stand-frame of the walk (see below)
 
 	// '512' is end-marker
 	if (walkAnim[walk_pc + 1].frame == 512) {
-		ob_logic->looping = 0;	// so script loop stops
-		_router->freeRouteMem();	// free up the walkdata mem block
+		ob_logic->looping = 0;
+		_router->freeRouteMem();
 
 		// finished walk
 		ob_mega->currently_walking = 0;
@@ -207,11 +181,9 @@ int32 Logic::fnWalk(int32 *params) {
 
 		if (checkEventWaiting()) {
 			startEvent();
-			// 1 means didn't finish walk
 			_scriptVars[RESULT] = 1;
 			return IR_TERMINATE;
 		} else {
-			// 0 means ok - finished walk
 			_scriptVars[RESULT] = 0;
 
 			// CONTINUE the script so that RESULT can be checked!
@@ -226,12 +198,11 @@ int32 Logic::fnWalk(int32 *params) {
 		}
 	}
 
-	// increment the walkanim frame number, float the walkanim & come
+	// Increment the walkanim frame number, float the walkanim & come
 	// back next cycle
 
 	ob_mega->walk_pc++;
 
-	// allow _walkData array to float about memory again
 	_router->floatRouteMem();
 	return IR_REPEAT;
 }
@@ -247,62 +218,50 @@ int32 Logic::fnWalkToAnim(int32 *params) {
 	//		3 pointer to object's walkdata structure
 	//		4 anim resource id
 
-	ObjectLogic *ob_logic;
-	uint8 *anim_file;
-	AnimHeader *anim_head;
 	int32 pars[7];
 
-	// if this is the start of the walk, read anim file to get start coords
-
-	ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
-
-	if (ob_logic->looping == 0) {
-		// open anim file
-		anim_file = _vm->_resman->openResource(params[4]);
-
-		// point to animation header
-		anim_head = _vm->fetchAnimHeader( anim_file );
-
-		pars[4] = anim_head->feetStartX;	// target_x
-		pars[5] = anim_head->feetStartY;	// target_y
-		pars[6] = anim_head->feetStartDir;	// target_dir
-
-		// close anim file
-		_vm->_resman->closeResource(params[4]);
-
-		// if start coords not yet set in anim header, use the standby
-		// coords (which should be set beforehand in the script)
-
-		if (pars[4] == 0 && pars[5] == 0) {
-			pars[4] = _standbyX;
-			pars[5] = _standbyY;
-			pars[6] = _standbyDir;
-
-			debug(5, "WARNING: fnWalkToAnim(%s) used standby coords", _vm->fetchObjectName(params[4]));
-		}
-
-		if (pars[6] < 0 || pars[6] > 7)
-			error("Invalid direction (%d) in fnWalkToAnim", pars[6]);
-	}
-
-	// set up the rest of the parameters for fnWalk()
+	// Walkdata is needed for earlySlowOut if player clicks elsewhere
+	// during the walk.
 
 	pars[0] = params[0];
 	pars[1] = params[1];
 	pars[2] = params[2];
 	pars[3] = params[3];
 
-	// walkdata (param 3) is needed for earlySlowOut if player clicks
-	// elsewhere during the walk
+	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
 
-	// call fnWalk() with target coords set to anim start position
+	// If this is the start of the walk, read anim file to get start coords
+
+	if (!ob_logic->looping) {
+		uint8 *anim_file = _vm->_resman->openResource(params[4]);
+		AnimHeader *anim_head = _vm->fetchAnimHeader( anim_file );
+
+		pars[4] = anim_head->feetStartX;
+		pars[5] = anim_head->feetStartY;
+		pars[6] = anim_head->feetStartDir;
+
+		_vm->_resman->closeResource(params[4]);
+
+		// If start coords not yet set in anim header, use the standby
+		// coords (which should be set beforehand in the script).
+
+		if (pars[4] == 0 && pars[5] == 0) {
+			pars[4] = _standbyX;
+			pars[5] = _standbyY;
+			pars[6] = _standbyDir;
+
+			debug(3, "WARNING: fnWalkToAnim(%s) used standby coords", _vm->fetchObjectName(params[4]));
+		}
+
+		assert(pars[6] >= 0 && pars[6] <= 7);
+	}
+
 	return fnWalk(pars);
 }
 
 /**
- * turn mega to <direction>
- * just needs to call fnWalk() with current feet coords, so router can
- * produce anim of turn frames
+ * Turn mega to <direction>. Just needs to call fnWalk() with current feet
+ * coords, so router can produce anim of turn frames.
  */
 
 int32 Logic::fnTurn(int32 *params) {
@@ -312,40 +271,34 @@ int32 Logic::fnTurn(int32 *params) {
 	//		3 pointer to object's walkdata structure
 	//		4 target direction
 
-	ObjectLogic *ob_logic;
-	ObjectMega *ob_mega;
 	int32 pars[7];
-
-	// if this is the start of the turn, get the mega's current feet
-	// coords + the required direction
-
-	ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
-
-	if (ob_logic->looping == 0) {
-		if (params[4] < 0 || params[4] > 7)
-			error("Invalid direction (%d) in fnTurn", params[4]);
-
-	 	ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[2]);
-
-		pars[4] = ob_mega->feet_x;
-		pars[5] = ob_mega->feet_y;
-		pars[6] = params[4];		// DIRECTION to turn to
-	}
-
-	// set up the rest of the parameters for fnWalk()
 
 	pars[0] = params[0];
 	pars[1] = params[1];
 	pars[2] = params[2];
 	pars[3] = params[3];
 
-	// call fnWalk() with target coords set to feet coords
+	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
+
+	// If this is the start of the turn, get the mega's current feet
+	// coords + the required direction
+
+	if (!ob_logic->looping) {
+		assert(params[4] >= 0 && params[4] <= 7);
+
+		ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[2]);
+
+		pars[4] = ob_mega->feet_x;
+		pars[5] = ob_mega->feet_y;
+		pars[6] = params[4];
+	}
+
 	return fnWalk(pars);
 }
 
 /**
- * stand mega at (x,y,dir)
- * sets up the graphic object, but also needs to set the new 'current_dir' in
+ * Stand mega at (x,y,dir)
+ * Sets up the graphic object, but also needs to set the new 'current_dir' in
  * the mega object, so the router knows in future
  */
 
@@ -356,37 +309,30 @@ int32 Logic::fnStandAt(int32 *params) {
 	//		3 target y-coord
 	//		4 target direction
 
-	ObjectMega *ob_mega;
-	ObjectGraphic *ob_graph;
+	assert(params[4] >= 0 && params[4] <= 7);
 
-	// check for invalid direction
-
-	if (params[4] < 0 || params[4] > 7)
-		error("Invalid direction (%d) in fnStandAt", params[4]);
-
-	// set up pointers to the graphic & mega structure
-
-	ob_graph = (ObjectGraphic *) _vm->_memory->intToPtr(params[0]);
-	ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[1]);
+	ObjectGraphic *ob_graph = (ObjectGraphic *) _vm->_memory->intToPtr(params[0]);
+	ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[1]);
 
 	// set up the stand frame & set the mega's new direction
+
+	ob_mega->feet_x = params[2];
+	ob_mega->feet_y = params[3];
+	ob_mega->current_dir = params[4];
 
 	// mega-set animation file
 	ob_graph->anim_resource	= ob_mega->megaset_res;
 
-	ob_mega->feet_x = params[2];
-	ob_mega->feet_y = params[3];
-
 	// dir + first stand frame (always frame 96)
 	ob_graph->anim_pc = params[4] + 96;
-
-	ob_mega->current_dir = params[4];
 
 	return IR_CONT;
 }
 
-// stand mega in <direction> at current feet coords
-// just needs to call fnStandAt() with current feet coords
+/**
+ * Stand mega in <direction> at current feet coords
+ * Just needs to call fnStandAt() with current feet coords
+ */
 
 int32 Logic::fnStand(int32 *params) {
 	// params:	0 pointer to object's graphic structure
@@ -394,15 +340,15 @@ int32 Logic::fnStand(int32 *params) {
 	//		2 target direction
 
 	ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[1]);
+
 	int32 pars[5];
 
 	pars[0] = params[0];
 	pars[1] = params[1];
 	pars[2] = ob_mega->feet_x;
 	pars[3] = ob_mega->feet_y;
-	pars[4] = params[2];		// DIRECTION to stand in
+	pars[4] = params[2];
 
-	// call fnStandAt() with target coords set to feet coords
 	return fnStandAt(pars);
 }
 
@@ -415,17 +361,10 @@ int32 Logic::fnStandAfterAnim(int32 *params) {
 	//		1 pointer to object's mega structure
 	//		2 anim resource id
 
-	uint8 *anim_file;
-	AnimHeader *anim_head;
+	uint8 *anim_file = _vm->_resman->openResource(params[2]);
+	AnimHeader *anim_head = _vm->fetchAnimHeader(anim_file);
+
 	int32 pars[5];
-
-	// open the anim file & set up a pointer to the animation header
-
-	// open anim file
-	anim_file = _vm->_resman->openResource(params[2]);
-	anim_head = _vm->fetchAnimHeader(anim_file);
-
-	// set up the parameter list for fnWalkTo()
 
 	pars[0] = params[0];
 	pars[1] = params[1];
@@ -434,7 +373,7 @@ int32 Logic::fnStandAfterAnim(int32 *params) {
 	pars[3] = anim_head->feetEndY;
 	pars[4] = anim_head->feetEndDir;
 
-	// if start coords not available either use the standby coords (which
+	// If start coords not available either use the standby coords (which
 	// should be set beforehand in the script)
 
 	if (pars[2] == 0 && pars[3] == 0) {
@@ -442,37 +381,28 @@ int32 Logic::fnStandAfterAnim(int32 *params) {
 		pars[3] = _standbyY;
 		pars[4] = _standbyDir;
 
-		debug(5, "WARNING: fnStandAfterAnim(%s) used standby coords", _vm->fetchObjectName(params[2]));
+		debug(3, "WARNING: fnStandAfterAnim(%s) used standby coords", _vm->fetchObjectName(params[2]));
 	}
 
-	if (pars[4] < 0 || pars[4] > 7)
-		error("Invalid direction (%d) in fnStandAfterAnim", pars[4]);
+	assert(pars[4] >= 0 && pars[4] <= 7);
 
-	// close the anim file
 	_vm->_resman->closeResource(params[2]);
-
-	// call fnStandAt() with target coords set to anim end position
 	return fnStandAt(pars);
 }
 
-// stand mega at start position of anim
+/**
+ * Stand mega at start position of anim
+ */
 
 int32 Logic::fnStandAtAnim(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 	//		1 pointer to object's mega structure
 	//		2 anim resource id
 
-	uint8 *anim_file;
-	AnimHeader *anim_head;
+	uint8 *anim_file = _vm->_resman->openResource(params[2]);
+	AnimHeader *anim_head = _vm->fetchAnimHeader(anim_file);
+
 	int32 pars[5];
-
-	// open the anim file & set up a pointer to the animation header
-
-	// open anim file
-	anim_file = _vm->_resman->openResource(params[2]);
-	anim_head = _vm->fetchAnimHeader(anim_file);
-
-	// set up the parameter list for fnWalkTo()
 
 	pars[0] = params[0];
 	pars[1] = params[1];
@@ -481,7 +411,7 @@ int32 Logic::fnStandAtAnim(int32 *params) {
 	pars[3] = anim_head->feetStartY;
 	pars[4] = anim_head->feetStartDir;
 
-	// if start coords not available use the standby coords (which should
+	// If start coords not available use the standby coords (which should
 	// be set beforehand in the script)
 
 	if (pars[2] == 0 && pars[3] == 0) {
@@ -489,22 +419,20 @@ int32 Logic::fnStandAtAnim(int32 *params) {
 		pars[3] = _standbyY;
 		pars[4] = _standbyDir;
 
-		debug(5, "WARNING: fnStandAtAnim(%s) used standby coords", _vm->fetchObjectName(params[2]));
+		debug(3, "WARNING: fnStandAtAnim(%s) used standby coords", _vm->fetchObjectName(params[2]));
 	}
 
-	if (pars[4] < 0 || pars[4] > 7)
-		error("Invalid direction (%d) in fnStandAfterAnim", pars[4]);
+	assert(pars[4] >= 0 && pars[4] <= 7);
 
-	// close the anim file
 	_vm->_resman->closeResource(params[2]);
-
-	// call fnStandAt() with target coords set to anim end position
 	return fnStandAt(pars);
 }
 
-// Code to workout direction from start to dest
+/**
+ * Work out direction from start to dest.
+ */
 
-// used in what_target not valid for all megas
+// Used in whatTarget(); not valid for all megas
 #define	diagonalx 36
 #define	diagonaly 8
 
@@ -535,8 +463,8 @@ int Logic::whatTarget(int startX, int startY, int destX, int destY) {
 }
 
 /**
- * turn mega to face point (x,y) on the floor
- * just needs to call fnWalk() with current feet coords & direction computed
+ * Turn mega to face point (x,y) on the floor
+ * Just needs to call fnWalk() with current feet coords & direction computed
  * by whatTarget()
  */
 
@@ -548,31 +476,26 @@ int32 Logic::fnFaceXY(int32 *params) {
 	//		4 target x-coord
 	//		5 target y-coord
 
-	ObjectLogic *ob_logic;
-	ObjectMega *ob_mega;
- 	int32 pars[7];
-
-	// if this is the start of the turn, get the mega's current feet
-	// coords + the required direction
-
-	ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
-
-	if (ob_logic->looping == 0) {
-	 	ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[2]);
-	
-		pars[4] = ob_mega->feet_x;
-		pars[5] = ob_mega->feet_y;
-		pars[6] = whatTarget(ob_mega->feet_x, ob_mega->feet_y, params[4], params[5]);
-	}
-
-	// set up the rest of the parameters for fnWalk()
+	int32 pars[7];
 
 	pars[0] = params[0];
 	pars[1] = params[1];
 	pars[2] = params[2];
 	pars[3] = params[3];
 
-	// call fnWalk() with target coords set to feet coords
+	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
+
+	// If this is the start of the turn, get the mega's current feet
+	// coords + the required direction
+
+	if (!ob_logic->looping) {
+		ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[2]);
+	
+		pars[4] = ob_mega->feet_x;
+		pars[5] = ob_mega->feet_y;
+		pars[6] = whatTarget(ob_mega->feet_x, ob_mega->feet_y, params[4], params[5]);
+	}
+
 	return fnWalk(pars);
 }
 
@@ -583,52 +506,49 @@ int32 Logic::fnFaceMega(int32 *params) {
 	//		3 pointer to object's walkdata structure
 	//		4 id of target mega to face
 
-	uint32 null_pc = 3;	// get ob_mega
-	char *raw_script_ad;
 	int32 pars[7];
-	ObjectLogic *ob_logic;
-	ObjectMega *ob_mega;
-	StandardHeader *head;
-
-	ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[2]);
-	ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
-
-	if (ob_logic->looping == 0) {
-		// get targets info
-		head = (StandardHeader *) _vm->_resman->openResource(params[4]);
-
-		if (head->fileType != GAME_OBJECT)
-			error("fnFaceMega %d not an object", params[4]);
-
-		raw_script_ad = (char *) head;
-
-		//call the base script - this is the graphic/mouse service call
-		runScript(raw_script_ad, raw_script_ad, &null_pc);
-
-		_vm->_resman->closeResource(params[4]);
-
-		// engineMega is now the ObjectMega of mega we want to turn
-		// to face
-
-		pars[3] = params[3];
-		pars[4] = ob_mega->feet_x;
-		pars[5] = ob_mega->feet_y;
-		pars[6] = whatTarget(ob_mega->feet_x, ob_mega->feet_y, _vm->_engineMega.feet_x, _vm->_engineMega.feet_y);
-	}
 
 	pars[0] = params[0];
 	pars[1] = params[1];
 	pars[2] = params[2];
 	pars[3] = params[3];
 
-	// call fnWalk() with target coords set to feet coords
+	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
+
+	// If this is the start of the walk, decide where to walk to.
+
+	if (!ob_logic->looping) {
+		StandardHeader *head = (StandardHeader *) _vm->_resman->openResource(params[4]);
+
+		assert(head->fileType == GAME_OBJECT);
+
+		// Call the base script. This is the graphic/mouse service
+		// call, and will set _engineMega to the ObjectMega of mega we
+		// want to turn to face.
+
+		char *raw_script_ad = (char *) head;
+		uint32 null_pc = 3;
+
+		runScript(raw_script_ad, raw_script_ad, &null_pc);
+
+		_vm->_resman->closeResource(params[4]);
+
+		ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[2]);
+
+		pars[3] = params[3];
+		pars[4] = ob_mega->feet_x;
+		pars[5] = ob_mega->feet_y;
+		pars[6] = whatTarget(ob_mega->feet_x, ob_mega->feet_y, _engineMega.feet_x, _engineMega.feet_y);
+	}
+
 	return fnWalk(pars);
 }
 
-int32 Logic::fnWalkToTalkToMega(int32 *params) {
-	// we route to left or right hand side of target id if possible
-	// target is a shrinking mega
+/**
+ * Route to the left or right hand side of target id, if possible.
+ */
 
+int32 Logic::fnWalkToTalkToMega(int32 *params) {
 	// params:	0 pointer to object's logic structure
 	//		1 pointer to object's graphic structure
 	//		2 pointer to object's mega structure
@@ -636,115 +556,99 @@ int32 Logic::fnWalkToTalkToMega(int32 *params) {
 	//		4 id of target mega to face
 	//		5 distance
 
-	ObjectMega *ob_mega;
-	ObjectLogic *ob_logic;
-
-	uint32 null_pc = 3;	// 4th script - get mega
-	char *raw_script_ad;
 	int32 pars[7];
-	int scale;
-	int mega_separation = params[5];
-	StandardHeader *head;
 
-	ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
-	ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[2]);
-
-	pars[0] = params[0];	// standard stuff
+	pars[0] = params[0];
 	pars[1] = params[1];
 	pars[2] = params[2];
-	pars[3] = params[3];	// walkdata
+	pars[3] = params[3];
 
-	// not been here before so decide where to walk-to
+	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
+
+	// If this is the start of the walk, calculate the route.
+
 	if (!ob_logic->looping)	{
-		// first request the targets info
-		head = (StandardHeader *) _vm->_resman->openResource(params[4]);
+		StandardHeader *head = (StandardHeader *) _vm->_resman->openResource(params[4]);
 
-		if (head->fileType != GAME_OBJECT)
-			error("fnWalkToTalkToMega %d not an object", params[4]);
+		assert(head->fileType == GAME_OBJECT);
 
-		raw_script_ad = (char *) head;
+		// Call the base script. This is the graphic/mouse service
+		// call, and will set _engineMega to the ObjectMega of mega we
+		// want to route to.
 
-		// call the base script - this is the graphic/mouse service
-		// call
+		char *raw_script_ad = (char *) head;
+		uint32 null_pc = 3;
+
 		runScript(raw_script_ad, raw_script_ad, &null_pc);
 
 		_vm->_resman->closeResource(params[4]);
 
-		// engineMega is now the ObjectMega of mega we want to
-		// route to
+		// Stand exactly beside the mega, ie. at same y-coord
+		pars[5] = _engineMega.feet_y;
 
-		// stand exactly beside the mega, ie. at same y-coord
-		pars[5] = _vm->_engineMega.feet_y;
+		ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[2]);
 
-		// apply scale factor to walk distance
-		// Ay+B gives 256 * scale ie. 256 * 256 * true_scale for even
-		// better accuracy, ie. scale = (Ay + B) / 256
+		// Apply scale factor to walk distance. Ay+B gives 256 * scale
+		// ie. 256 * 256 * true_scale for even better accuracy, ie.
+		// scale = (Ay + B) / 256
 
-		scale = (ob_mega->scale_a * ob_mega->feet_y + ob_mega->scale_b) / 256;
+		int scale = (ob_mega->scale_a * ob_mega->feet_y + ob_mega->scale_b) / 256;
+		int mega_separation = (params[5] * scale) / 256;
 
-		mega_separation= (mega_separation * scale) / 256;
+		debug(4, "Target is at (%d, %d), separation %d", _engineMega.feet_x, _engineMega.feet_y, mega_separation);
 
-		debug(5, "separation %d", mega_separation);
-		debug(5, " target x %d, y %d", _vm->_engineMega.feet_x, _vm->_engineMega.feet_y);
-
-		if (_vm->_engineMega.feet_x < ob_mega->feet_x)
-		{
+		if (_engineMega.feet_x < ob_mega->feet_x) {
 			// Target is left of us, so aim to stand to their
 			// right. Face down_left
 
-			pars[4] = _vm->_engineMega.feet_x + mega_separation;
+			pars[4] = _engineMega.feet_x + mega_separation;
 			pars[6] = 5;
 		} else {
 			// Ok, must be right of us so aim to stand to their
 			// left. Face down_right.
 
-			pars[4] = _vm->_engineMega.feet_x - mega_separation;
+			pars[4] = _engineMega.feet_x - mega_separation;
 			pars[6] = 3;
 		}
 	}
 
-	// first cycle builds the route - thereafter merely follows it
-
-	// Call fnWalk() with target coords set to feet coords. RESULT will
-	// be 1 when it finishes, or 0 if it failed to build route.
 	return fnWalk(pars);
 }
 
 int32 Logic::fnSetWalkGrid(int32 *params) {
 	// params:	none
 
-	error("fnSetWalkGrid no longer valid");
+	error("fnSetWalkGrid() is no longer a valid opcode");
 	return IR_CONT;
 }
 
-// add this walkgrid resource to the list of those used for routing in this
-// location - note this is ignored in the resource is already in the list
+/**
+ * Add this walkgrid resource to the list of those used for routing in this
+ * location. Note that this is ignored if the resource is already in the list.
+ */
 
 int32 Logic::fnAddWalkGrid(int32 *params) {
 	// params:	0 id of walkgrid resource
 
-	// all objects that add walkgrids must be restarted whenever we
-	// re-enter a location
+	// All objects that add walkgrids must be restarted whenever we
+	// re-enter a location.
 
 	// DON'T EVER KILL GEORGE!
 	if (_scriptVars[ID] != 8) {
-		// need to call this in case it wasn't called in script!
-		// ('params' just used as dummy param)
-		fnAddToKillList(params);
+		// Need to call this in case it wasn't called in script!
+		fnAddToKillList(NULL);
 	}
 
 	_router->addWalkGrid(params[0]);
-
-	// Touch the grid, getting it into memory.
-	_vm->_resman->openResource(params[0]);
-	_vm->_resman->closeResource(params[0]);
-
+	fnPreLoad(params);
 	return IR_CONT;
 }
 
-// remove this walkgrid resource from the list of those used for routing in
-// this location - note that this is ignored if the resource isn't actually
-// in the list
+/**
+ * Remove this walkgrid resource from the list of those used for routing in
+ * this location. Note that this is ignored if the resource isn't actually
+ * in the list.
+ */
 
 int32 Logic::fnRemoveWalkGrid(int32 *params) {
 	// params:	0 id of walkgrid resource
@@ -756,7 +660,7 @@ int32 Logic::fnRemoveWalkGrid(int32 *params) {
 int32 Logic::fnRegisterWalkGrid(int32 *params) {
 	// params:	none
 
-	error("fnRegisterWalkGrid no longer valid");
+	error("fnRegisterWalkGrid() is no longer a valid opcode");
 	return IR_CONT;
 }
 
@@ -767,7 +671,7 @@ int32 Logic::fnSetScaling(int32 *params) {
 
 	// 256 * s = A * y + B
 
-	// where s is system scale, which itself is (256 * actual_scale) ie.
+	// Where s is system scale, which itself is (256 * actual_scale) ie.
 	// s == 128 is half size
 
  	ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[0]);
@@ -778,18 +682,18 @@ int32 Logic::fnSetScaling(int32 *params) {
 	return IR_CONT;
 }
 
+/**
+ * Set the standby walk coords to be used by fnWalkToAnim() and
+ * fnStandAfterAnim() when the anim header's start/end coords are zero.
+ * Useful during development; can stay in final game anyway.
+ */
+
 int32 Logic::fnSetStandbyCoords(int32 *params) {
-	// set the standby walk coords to be used by fnWalkToAnim and
-	// fnStandAfterAnim when the anim header's start/end coords are zero
-
-	// useful during development; can stay in final game anyway
-
 	// params:	0 x-coord
 	//		1 y-coord
 	//		2 direction (0..7)
 
-	if (params[2] < 0 || params[2] > 7)
-		error("Invalid direction (%d) in fnSetStandbyCoords", params[2]);
+	assert(params[2] >= 0 && params[2] <= 7);
 
 	_standbyX = (int16) params[0];
 	_standbyY = (int16) params[1];

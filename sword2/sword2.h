@@ -199,9 +199,6 @@ public:
 
 	int32 initBackground(int32 res, int32 new_palette);
 
-	// Set by fnPassMega()
-	ObjectMega _engineMega;
-
 	int menuClick(int menu_items);
 
 	void addMenuObject(MenuObject *obj);

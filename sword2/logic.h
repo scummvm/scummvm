@@ -160,6 +160,9 @@ private:
 
 	int whatTarget(int startX, int startY, int destX, int destY);
 
+	// Set by fnPassMega()
+	ObjectMega _engineMega;
+
 public:
 	Logic(Sword2Engine *vm) :
 		  _vm(vm), _kills(0), _smackerLeadOut(0),

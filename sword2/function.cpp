@@ -189,7 +189,7 @@ int32 Logic::fnPassMega(int32 *params) {
 
 	// params: 	0 pointer to a mega structure
 
-	memcpy(&_vm->_engineMega, _vm->_memory->intToPtr(params[0]), sizeof(ObjectMega));
+	memcpy(&_engineMega, _vm->_memory->intToPtr(params[0]), sizeof(ObjectMega));
 	return IR_CONT;
 }
 
