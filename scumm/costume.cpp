@@ -571,7 +571,7 @@ void LoadedCostume::loadCostume(int id) {
 		_numColors = 32;
 		break;
 	default:
-		error("Costume %d with format %d is invalid", id, _format);
+		error("Costume %d with format 0x%X is invalid", id, _format);
 	}
 
 	
