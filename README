@@ -16,7 +16,8 @@ Table of Contents:
  * 3.1 Copy Protection
  * 3.2 Simon the Sorcerer notes
  * 3.3 Broken Sword notes
- * 3.4 Known Bugs
+ * 3.4 Flight of the Amazon Queen notes
+ * 3.5 Known Bugs
 4.0) Supported Platforms
 5.0) Running ScummVM
  * 5.1 Command Line Options
@@ -217,7 +218,21 @@ The cutscenes should be placed in the main game data directory. Note that
 currently this requires either copying the game to harddisk or reburning
 customised versions of the game CDs.
 
-3.4) Known Problems in ScummVM 0.7.0CVS
+3.4) Flight of the Amazon Queen notes
+---- --------------------------------
+In order to use a non-freeware version of Flight of the Amazon Queen (i.e.
+your own), you will need to have the 'queen.tbl' file (available from the
+Compatibility page on our website) in either the directory containing the
+'queen.1' datafile or in the directory where your ScummVM executable resides.
+                  
+Alternatively, you can use the 'queenrebuild' tool from the Tools module to
+'rebuild' your FOTAQ datafile to include the table for that specific version,
+and thus removing the run-time dependency on the 'queen.tbl' file. 
+This tool also allows you to compress the speech and sound effects with MP3,
+OGG or FLAC.
+
+
+3.5) Known Problems in ScummVM 0.7.0CVS
 ---- -----------------------------------
 This release has the following known problems. There is no need to report them,
 although patches to fix them are welcome. If you discover a bug that is not
@@ -318,7 +333,7 @@ arguments - see the next section.
 
   --alt-intro              Use alternative intro for CD versions of Beneath a
                            Steel Sky and Flight of the Amazon Queen
-  --copy-protection        Enable copy protection in SCUMM games ,when
+  --copy-protection        Enable copy protection in SCUMM games, when
                            ScummVM disables it by default.
   --demo-mode              Start demo mode of Maniac Mansion (Classic version)
   --tempo=NUM              Set music tempo (in percent, 50-200) for SCUMM games
@@ -496,7 +511,11 @@ simon games.
 
     Flight of the Amazon Queen:
         Ctrl-d                 - Starts the debugger
-        F1                     - Displays save/load box
+        F1                     - Use Journal (saving/loading)
+        F11                    - Quicksave
+        F12                    - Quickload
+        Escape                 - Skips cutscenes
+        Space                  - Skips current line of text
 
     Simon the Sorcerer 1 & 2:
         Ctrl 0-9 and Alt 0-9   - Load and save game state
@@ -1027,7 +1046,7 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
         * You can now type 'make' to create a command line binary.
         * To get a version you can run from Finder, type 'make bundle' which
           will create ScummVM.app (this only works if you installed SDL
-          etc. via Fink and into \texttt{/sw}. If you have installed SDL
+          etc. via Fink and into /sw. If you have installed SDL
           in another way, you'll have to edit the Makefile).
 
 X.X Credits:
