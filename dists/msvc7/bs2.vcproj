@@ -99,12 +99,6 @@
 			Name="driver"
 			Filter="">
 			<File
-				RelativePath="..\..\bs2\driver\_console.cpp">
-			</File>
-			<File
-				RelativePath="..\..\bs2\driver\_console.h">
-			</File>
-			<File
 				RelativePath="..\..\bs2\driver\_mouse.cpp">
 			</File>
 			<File
