@@ -163,10 +163,10 @@ void Sound::playSound(int soundID, int offset) {
 	bool music = false;
 	
 	if (_vm->_heversion >= 70 && soundID > _vm->_numSounds) {
-		debug(1, "playSound #%d", soundID);
+		debug(0, "playSound #%d", soundID);
 
-		int music_offs, tunes, total_size;
-		uint skip = 0;
+		int music_offs, total_size;
+		uint tunes, skip = 0;
 		char buf[32];
 		File musicFile;
 
@@ -178,13 +178,22 @@ void Sound::playSound(int soundID, int offset) {
 		musicFile.seek(4, SEEK_SET);
 		total_size = musicFile.readUint32BE();
 		musicFile.seek(+8, SEEK_CUR);
-		tunes = musicFile.readUint32LE() - 1;
+		tunes = musicFile.readUint32LE();
+
+		if (soundID >= 8500)
+			skip = (soundID - 8500);
+		if (soundID >= 8000)
+			skip = (soundID - 8000);
+		else if	(soundID >= 4000)
+			skip = (soundID - 4000);
+		
+		if (skip > tunes)
+			skip = 0;
 
 		musicFile.seek(+28, SEEK_CUR);
 		if (musicFile.readUint32LE() == MKID('SGEN')) {
 			// Skip to correct music header
-			if (tunes)
-				skip = (soundID - 8000) * 21;
+			skip *= 21;
 
 			// Skip to offsets
 			musicFile.seek(+8, SEEK_CUR);
@@ -193,19 +202,14 @@ void Sound::playSound(int soundID, int offset) {
 			musicFile.seek(-28, SEEK_CUR);
 
 			// Skip to correct music header
-			if (tunes) {
-				if (soundID >= 8000)
-					skip = (soundID - 8000) * 25;
-				else
-					skip = (soundID - 4000) * 25;
-			}
+			skip *= 25;
 		}
 
 		musicFile.seek(+skip, SEEK_CUR);
 		music_offs = musicFile.readUint32LE();
 		size = musicFile.readUint32LE();
 
-		if (music_offs > total_size || (size + music_offs) > total_size) {
+		if (music_offs > total_size || (size + music_offs > total_size) || size < 0) {
 			warning("playSound: Bad music offsets");
 			musicFile.close();
 			return;
@@ -238,10 +242,11 @@ void Sound::playSound(int soundID, int offset) {
 		return;
 	}
 
+	Common::hexdump(ptr, 0x30);
 	// Support for SFX in Monkey Island 1, Mac version
 	// This is rather hackish right now, but works OK. SFX are not sounding
 	// 100% correct, though, not sure right now what is causing this.
-	else if (READ_UINT32(ptr) == MKID('Mac1')) {
+	if (READ_UINT32(ptr) == MKID('Mac1')) {
 
 		// Read info from the header
 		size = READ_BE_UINT32(ptr+0x60);
@@ -749,6 +754,7 @@ bool Sound::isMouthSyncOff(uint pos) {
 
 
 int Sound::isSoundRunning(int sound) const {
+	printf("isSoundRunning %d\n", sound);
 
 	if (_vm->_imuseDigital)
 		return (_vm->_imuseDigital->getSoundStatus(sound) != 0);
