@@ -689,7 +689,11 @@ MidiDriver *GameDetector::createMidi() {
 	switch(drv) {
 	case MD_NULL:		return MidiDriver_NULL_create();
 #ifndef __PALM_OS__
-	case MD_ADLIB:		_use_adlib = true; return MidiDriver_ADLIB_create();
+	// In the case of Adlib, we won't specify anything.
+	// IMuse is designed to set up its own Adlib driver
+	// if need be, and we only have to specify a native
+	// driver.
+	case MD_ADLIB:		_use_adlib = true; return NULL;
 #else
 	case MD_YPA1:		return MidiDriver_YamahaPa1_create();
 #endif

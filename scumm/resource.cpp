@@ -723,21 +723,18 @@ int Scumm::readSoundResource(int type, int idx) {
 				pri = 15;
 				break;
 			case MKID('ADL '):
-//				pri = 1;
+				pri = 1;
 				if (_use_adlib)
 					pri = 10;
 				break;
 			case MKID('ROL '):
-//				if (!_use_adlib)
-					pri = 3;
+				pri = 3;
 				break;
 			case MKID('GMD '):
-//				if (!_use_adlib)
-					pri = 4;
+				pri = 4;
 				break;
 			case MKID('MAC '):
-//				if (!_use_adlib)
-					pri = 2;
+				pri = 2;
 				break;
 			case MKID('SPK '):
 				pri = -1;

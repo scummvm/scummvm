@@ -31,6 +31,10 @@
 // the most common iMuse diagnostic messages.
 // #define IMUSE_DEBUG
 
+// Unremark this statement to support simultaneous
+// use of Adlib and native MIDI drivers.
+// #define ADLIB_TOO
+
 //
 // Some constants
 //
@@ -330,7 +334,6 @@ private:
 	bool isMT32(int sound);
 	bool isGM(int sound);
 	int get_queue_sound_status(int sound);
-	Player *allocate_player(byte priority);
 	void handle_marker(uint id, byte data);
 	int get_channel_volume(uint a);
 	void initMidiDriver (MidiDriver *midi);
@@ -344,6 +347,8 @@ private:
 	void expire_sustain_notes (MidiDriver *midi);
 	void expire_volume_faders (MidiDriver *midi);
 
+	MidiDriver *getBestMidiDriver (int sound);
+	Player *allocate_player(byte priority);
 	Part *allocate_part(byte pri, MidiDriver *midi);
 
 	int32 ImSetTrigger (int sound, int id, int a, int b, int c, int d);
@@ -606,6 +611,37 @@ bool IMuseInternal::isGM(int sound) {
 	return false;
 }
 
+MidiDriver *IMuseInternal::getBestMidiDriver (int sound) {
+	MidiDriver *driver = NULL;
+
+	if (isGM (sound)) {
+		if (_midi_native) {
+			driver = _midi_native;
+#if !defined(__PALM_OS__) // Adlib not supported on PalmOS
+		} else {
+			// Route it through Adlib anyway.
+			if (!_midi_adlib) {
+				_midi_adlib = MidiDriver_ADLIB_create();
+				initMidiDriver (_midi_adlib);
+			}
+			driver = _midi_adlib;
+#endif
+		}
+#if !defined(__PALM_OS__) // Adlib not supported on PalmOS
+	} else {
+		if (!_midi_adlib) {
+#if !defined(ADLIB_TOO)
+			if (_midi_native) return NULL;
+#endif
+			_midi_adlib = MidiDriver_ADLIB_create();
+			initMidiDriver (_midi_adlib);
+		}
+		driver = _midi_adlib;
+#endif
+	}
+	return driver;
+}
+
 bool IMuseInternal::startSound(int sound) {
 	Player *player;
 	void *mdhd;
@@ -632,6 +668,12 @@ bool IMuseInternal::startSound(int sound) {
 		}
 	}
 
+	// Check which MIDI driver this track should use.
+	// If it's NULL, it ain't something we can play.
+	MidiDriver *driver = getBestMidiDriver (sound);
+	if (!driver)
+		return false;
+
 	// If the requested sound is already playing, start it over
 	// from scratch. This was originally a hack to prevent Sam & Max
 	// iMuse messiness while upgrading the iMuse engine, but it
@@ -650,7 +692,7 @@ bool IMuseInternal::startSound(int sound) {
 		return false;
 
 	player->clear();
-	return player->startSound (sound, _midi_native);
+	return player->startSound (sound, driver);
 }
 
 
@@ -1615,20 +1657,19 @@ void IMuseInternal::setBase(byte **base) {
 	_base_sounds = base;
 }
 
-IMuseInternal *IMuseInternal::create(OSystem *syst, MidiDriver *midi) {
+IMuseInternal *IMuseInternal::create (OSystem *syst, MidiDriver *native_midi) {
 	IMuseInternal *i = new IMuseInternal;
-	i->initialize(syst, midi);
+	i->initialize(syst, native_midi);
 	return i;
 }
 
-int IMuseInternal::initialize(OSystem *syst, MidiDriver *midi) {
+int IMuseInternal::initialize(OSystem *syst, MidiDriver *native_midi) {
 	int i;
 
-	if (midi == NULL)
-		error ("IMuse was initialized without a MIDI driver (even the NULL driver)");
-
-	_midi_native = midi;
-	initMidiDriver (_midi_native);
+	_midi_native = native_midi;
+	_midi_adlib = NULL;
+	if (native_midi)
+		initMidiDriver (_midi_native);
 
 	_master_volume = 255;
 	if (_music_volume < 1)
@@ -1839,7 +1880,10 @@ void Player::uninit_parts() {
 		error("asd");
 	while (_parts)
 		_parts->uninit();
-	_se->reallocateMidiChannels (_midi); // In case another player couldn't allocate all its parts
+
+	// In case another player is waiting to allocate parts
+	if (_midi)
+		_se->reallocateMidiChannels (_midi);
 }
 
 void Player::uninit_seq() {
@@ -3000,8 +3044,12 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm) {
 		init_sustaining_notes();
 		_active_volume_faders = true;
 		fix_parts_after_load();
-		reallocateMidiChannels (_midi_native);
 		set_master_volume (_master_volume);
+
+		if (_midi_native)
+			reallocateMidiChannels (_midi_native);
+		if (_midi_adlib)
+			reallocateMidiChannels (_midi_adlib);
 	}
 
 	return 0;
@@ -3028,11 +3076,15 @@ void IMuseInternal::fix_players_after_load(Scumm *scumm) {
 
 	for (i = ARRAYSIZE(_players); i != 0; i--, player++) {
 		if (player->_active) {
-			player->set_tempo(player->_tempo);
 			scumm->getResourceAddress(rtSound, player->_id);
-			player->_mt32emulate = isMT32(player->_id);
-			player->_isGM = isGM(player->_id);
-			player->_midi = _midi_native;
+			player->_midi = getBestMidiDriver (player->_id);
+			if (player->_midi == NULL) {
+				player->clear();
+			} else {
+				player->set_tempo(player->_tempo);
+				player->_mt32emulate = isMT32(player->_id);
+				player->_isGM = isGM(player->_id);
+			}
 		}
 	}
 }
