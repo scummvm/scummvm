@@ -473,6 +473,7 @@ simon games.
         Ctrl-z OR Alt-x        - Quit
         Keyboard Arrow Keys    - Simulate mouse movement
         Ctrl-f                 - Toggle fast mode.
+        Ctrl-m                 - Toggle mouse capture
         Ctrl-Alt 1-8           - Switch between graphics filters
         Ctrl-Alt + and -       - Increase/Decrease the scale factor
         Ctrl-Alt a             - Toggle aspect-ratio correction on/off.
