@@ -595,6 +595,13 @@ int IMuseInternal::get_master_volume() {
 }
 
 int IMuseInternal::terminate() {
+	// We are going to remove the MIDI drivers,
+	// so first pull any reference to them by
+	// the parts.
+	int i;
+	for (i = 0; i < ARRAYSIZE(_parts); ++i)
+		_parts[i]._mc = 0;
+
 	if (_midi_adlib) {
 		_midi_adlib->close();
 		delete _midi_adlib;
