@@ -47,8 +47,6 @@
 #include <proto/cdda.h>
 #include <proto/cybergraphics.h>
 
-#include <emul/emulinterface.h>
-
 #include <time.h>
 
 #include "morphos.h"
@@ -65,17 +63,6 @@ static TagItem PlayTags[] =   { { CDPA_StartTrack, 1 },
 										  { CDPA_Loops,      1 },
 										  { TAG_DONE,		   0 }
 										};
-
-TagItem musicProcTags[] = { { NP_Entry,       0							       	  },
-									 { NP_Name,        (ULONG)"ScummVM Music Thread"  },
-									 { NP_Priority,    60 							        },
-									 {	TAG_DONE,       0 					       		  }
-								  };
-TagItem soundProcTags[] = { { NP_Entry,       0							       	  },
-									 { NP_Name,        (ULONG)"ScummVM Sound Thread"  },
-									 { NP_Priority,    0  							        },
-									 { TAG_DONE,       0 					       		  }
-								  };
 
 #define BLOCKSIZE_X	32
 #define BLOCKSIZE_Y	8
@@ -188,7 +175,7 @@ OSystem_MorphOS::~OSystem_MorphOS()
 	if (ScummMusicThread)
 	{
 		Signal((Task *) ScummMusicThread, SIGBREAKF_CTRL_C);
-		ObtainSemaphore(&ScummMusicThreadRunning);	 /* Wait for thread to finish */
+		ObtainSemaphore(&ScummMusicThreadRunning);    /* Wait for thread to finish */
 		ReleaseSemaphore(&ScummMusicThreadRunning);
 	}
 
@@ -270,10 +257,11 @@ uint32 OSystem_MorphOS::get_msecs()
 
 void OSystem_MorphOS::delay_msecs(uint msecs)
 {
-	TimerIORequest->tr_node.io_Command = TR_ADDREQUEST;
+/*	  TimerIORequest->tr_node.io_Command = TR_ADDREQUEST;
 	TimerIORequest->tr_time.tv_secs = 0;
 	TimerIORequest->tr_time.tv_micro = msecs*1000;
-	DoIO((IORequest *) TimerIORequest);
+	DoIO((IORequest *) TimerIORequest);*/
+	TimeDelay(UNIT_MICROHZ, 0, msecs*1000);
 }
 
 void OSystem_MorphOS::set_timer(int timer, int (*callback)(int))
@@ -283,15 +271,10 @@ void OSystem_MorphOS::set_timer(int timer, int (*callback)(int))
 
 void *OSystem_MorphOS::create_thread(ThreadProc *proc, void *param)
 {
-	static EmulFunc ThreadEmulFunc;
-
-	ThreadEmulFunc.Trap      = TRAP_FUNC;
-	ThreadEmulFunc.Address	 = (ULONG)proc;
-	ThreadEmulFunc.StackSize = 16000;
-	ThreadEmulFunc.Extension = 0;
-	ThreadEmulFunc.Arg1	    = (ULONG)param;
-	musicProcTags[0].ti_Data = (ULONG)&ThreadEmulFunc;
-	ScummMusicThread = CreateNewProc(musicProcTags);
+	ScummMusicThread = CreateNewProcTags(NP_Entry, (ULONG) proc, NP_CodeType, CODETYPE_PPC,
+													 NP_Name, (ULONG) "ScummVM Music Thread",
+													 NP_Priority, 80, NP_StackSize, 32000,
+													 NP_PPC_Arg1, (ULONG) param, TAG_DONE);
 	return ScummMusicThread;
 }
 
@@ -1300,24 +1283,17 @@ void OSystem_MorphOS::set_mouse_cursor(const byte *buf, uint w, uint h, int hots
 
 bool OSystem_MorphOS::set_sound_proc(void *param, OSystem::SoundProc *proc, byte format)
 {
-	static EmulFunc MySoundEmulFunc;
-
 	SoundProc = proc;
 	SoundParam = param;
 
 	/*
 	 * Create Sound Thread
 	 */
-	MySoundEmulFunc.Trap      = TRAP_FUNC;
-	MySoundEmulFunc.Address	  = (ULONG)&morphos_sound_thread;
-	MySoundEmulFunc.StackSize = 8192;
-	MySoundEmulFunc.Extension = 0;
-	MySoundEmulFunc.Arg1	     = (ULONG)this;
-	MySoundEmulFunc.Arg2	     = AHIST_S16S;
-
-	soundProcTags[0].ti_Data = (ULONG)&MySoundEmulFunc;
-	ScummSoundThread = CreateNewProc(soundProcTags);
-
+	ScummSoundThread = CreateNewProcTags(NP_Entry, (ULONG) &morphos_sound_thread,
+													 NP_CodeType, CODETYPE_PPC,
+													 NP_Name, (ULONG) "ScummVM Sound Thread",
+													 NP_PPC_Arg1, (ULONG) this,
+													 NP_PPC_Arg2, AHIST_S16S, TAG_DONE);
 	if (!ScummSoundThread)
 	{
 		puts("Failed to create sound thread");
