@@ -144,19 +144,12 @@ void SkyLogic::logicScript() {
 }
 
 void SkyLogic::autoRoute() {
-	uint16 *route = 0;
-	uint16 ret = _skyAutoRoute->autoRoute(_compact, &route);
+	
+	_compact->downFlag = _skyAutoRoute->autoRoute(_compact);
+	if (!_compact->downFlag) // route ok
+		_compact->grafixProg = (uint16*)_compact->extCompact->animScratch;
 
 	_compact->logic = L_SCRIPT; // continue the script
-
-	if (ret != 1) // route failed
-		_compact->downFlag = 1; // return fail to script
-	else if (!route) // zero route
-		_compact->downFlag = 2; // return fail to script
-	else {
-		_compact->grafixProg = route; // put graphic prog in
-		_compact->downFlag = 0; // route ok
-	}
 
 	logicScript();
 	return;
