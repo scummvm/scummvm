@@ -117,7 +117,7 @@ StackLock::~StackLock() {
 void StackLock::lock() {
 	assert(_syst);
 	if (_mutexName != NULL)
-		debug(5, "Locking mutex %s", _mutexName);
+		debug(6, "Locking mutex %s", _mutexName);
 	
 	_syst->lock_mutex(_mutex);
 }
@@ -125,7 +125,7 @@ void StackLock::lock() {
 void StackLock::unlock() {
 	assert(_syst);
 	if (_mutexName != NULL)
-		debug(5, "Unlocking mutex %s", _mutexName);
+		debug(6, "Unlocking mutex %s", _mutexName);
 
 	_syst->unlock_mutex(_mutex);
 }
