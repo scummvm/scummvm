@@ -141,45 +141,45 @@ int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_b
 		return R_FAILURE;
 	}
 
-	MemoryReadStream *readS = new MemoryReadStream(snd_res, snd_res_len);
+	MemoryReadStream readS(snd_res, snd_res_len);
 
 	for (i = 0; i < R_VOC_FILE_DESC_LEN; i++)
-		voc_hb.ft_desc[i] = readS->readByte();
+		voc_hb.ft_desc[i] = readS.readByte();
 
 	if (memcmp(voc_hb.ft_desc, R_VOC_FILE_DESC, R_VOC_FILE_DESC_LEN) != 0) {
 		/* Voc file desc string not found */
 		return R_FAILURE;
 	}
 
-	voc_hb.db_offset = readS->readUint16LE();
-	voc_hb.voc_version = readS->readUint16LE();
-	voc_hb.voc_fileid = readS->readUint16LE();
+	voc_hb.db_offset = readS.readUint16LE();
+	voc_hb.voc_version = readS.readUint16LE();
+	voc_hb.voc_fileid = readS.readUint16LE();
 
-	if ((int32)(snd_res_len - readS->pos()) < (int32)(voc_hb.db_offset + R_VOC_GENBLOCK_LEN)) {
+	if ((int32)(snd_res_len - readS.pos()) < (int32)(voc_hb.db_offset + R_VOC_GENBLOCK_LEN)) {
 		return R_FAILURE;
 	}
 
-	while (readS->pos() < voc_hb.db_offset)
-		readS->readByte();
+	while (readS.pos() < voc_hb.db_offset)
+		readS.readByte();
 
 	for (;;) {
 		/* Read generic block header */
-		if (snd_res_len - readS->pos() < R_VOC_GENBLOCK_LEN) {
+		if (snd_res_len - readS.pos() < R_VOC_GENBLOCK_LEN) {
 			return R_FAILURE;
 		}
 
-		voc_gb.block_id = readS->readByte();
+		voc_gb.block_id = readS.readByte();
 		if (voc_gb.block_id == 0) {
 			return R_FAILURE;
 		}
 
-		voc_gb.block_len = readS->readUint24LE();
+		voc_gb.block_len = readS.readUint24LE();
 
 		/* Process block */
 		switch (voc_gb.block_id) {
 		case 1:	/* Sound data block */
-			voc_b1.time_constant = readS->readByte();
-			voc_b1.pack_method = readS->readByte();
+			voc_b1.time_constant = readS.readByte();
+			voc_b1.pack_method = readS.readByte();
 
 			if (voc_b1.pack_method != 0) {
 				debug(0, "Packed VOC files not supported");
@@ -195,15 +195,15 @@ int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_b
 			snd_buf_i->res_data = snd_res;
 			snd_buf_i->res_len = snd_res_len;
 
-			snd_buf_i->s_buf = snd_res + readS->pos();
-			snd_buf_i->s_buf_len = snd_res_len - readS->pos() - 1;	/* -1 for end block */
+			snd_buf_i->s_buf = snd_res + readS.pos();
+			snd_buf_i->s_buf_len = snd_res_len - readS.pos() - 1;	/* -1 for end block */
 
 			snd_buf_i->s_signed = 0;
 			return R_SUCCESS;
 			break;
 		default:
 			for (i = 0; i < voc_gb.block_len; i++)
-				readS->readByte();
+				readS.readByte();
 			break;
 		}
 	}

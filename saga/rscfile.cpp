@@ -113,10 +113,10 @@ int RSC_LoadRSC(R_RSCFILE_CONTEXT *rsc) {
 		return R_FAILURE;
 	}
 
-	MemoryReadStream *readS = new MemoryReadStream(tblinfo_buf, RSC_TABLEINFO_SIZE);
+	MemoryReadStream readS(tblinfo_buf, RSC_TABLEINFO_SIZE);
 
-	res_tbl_offset = readS->readUint32LE();
-	res_tbl_ct = readS->readUint32LE();
+	res_tbl_offset = readS.readUint32LE();
+	res_tbl_ct = readS.readUint32LE();
 
 	// Check for sane table offset
 	if (res_tbl_offset != rsc->rc_file.size() - RSC_TABLEINFO_SIZE - RSC_TABLEENTRY_SIZE * res_tbl_ct) {
@@ -145,11 +145,11 @@ int RSC_LoadRSC(R_RSCFILE_CONTEXT *rsc) {
 		return R_FAILURE;
 	}
 
-	readS = new MemoryReadStream(tbl_buf, tbl_len);
+	MemoryReadStream readS1(tbl_buf, tbl_len);
 
 	for (i = 0; i < res_tbl_ct; i++) {
-		rsc_restbl[i].res_offset = readS->readUint32LE();
-		rsc_restbl[i].res_size = readS->readUint32LE();
+		rsc_restbl[i].res_offset = readS1.readUint32LE();
+		rsc_restbl[i].res_size = readS1.readUint32LE();
 		if ((rsc_restbl[i].res_offset > rsc->rc_file.size()) || (rsc_restbl[i].res_size > rsc->rc_file.size())) {
 			free(tbl_buf);
 			free(rsc_restbl);

@@ -48,13 +48,13 @@ int PALANIM_Load(const byte *resdata, size_t resdata_len) {
 		return R_FAILURE;
 	}
 
-	MemoryReadStream *readS = new MemoryReadStream(resdata, resdata_len);
+	MemoryReadStream readS(resdata, resdata_len);
 
 	if (GAME_GetGameType() == R_GAMETYPE_IHNM) {
 		return R_SUCCESS;
 	}
 
-	PAnimData.entry_count = readS->readUint16LE();
+	PAnimData.entry_count = readS.readUint16LE();
 
 	debug(0, "PALANIM_Load(): Loading %d PALANIM entries.", PAnimData.entry_count);
 
@@ -71,8 +71,8 @@ int PALANIM_Load(const byte *resdata, size_t resdata_len) {
 		int pal_count;
 		int p, c;
 
-		color_count = readS->readUint16LE();
-		pal_count = readS->readUint16LE();
+		color_count = readS.readUint16LE();
+		pal_count = readS.readUint16LE();
 
 		PAnimData.entries[i].pal_count = pal_count;
 		PAnimData.entries[i].color_count = color_count;
@@ -98,13 +98,13 @@ int PALANIM_Load(const byte *resdata, size_t resdata_len) {
 		PAnimData.entries[i].colors = (R_COLOR *)test_p;
 
 		for (p = 0; p < pal_count; p++) {
-			PAnimData.entries[i].pal_index[p] = readS->readByte();
+			PAnimData.entries[i].pal_index[p] = readS.readByte();
 		}
 
 		for (c = 0; c < color_count; c++) {
-			PAnimData.entries[i].colors[c].red = readS->readByte();
-			PAnimData.entries[i].colors[c].green = readS->readByte();
-			PAnimData.entries[i].colors[c].blue = readS->readByte();
+			PAnimData.entries[i].colors[c].red = readS.readByte();
+			PAnimData.entries[i].colors[c].green = readS.readByte();
+			PAnimData.entries[i].colors[c].blue = readS.readByte();
 		}
 	}
 

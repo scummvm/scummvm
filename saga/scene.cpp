@@ -97,10 +97,10 @@ int SCENE_Init() {
 		return R_MEM;
 	}
 
-	MemoryReadStream *readS = new MemoryReadStream(scene_lut_p, scene_lut_len);
+	MemoryReadStream readS(scene_lut_p, scene_lut_len);
 
 	for (i = 0; i < SceneModule.scene_max; i++) {
-		SceneModule.scene_lut[i] = readS->readUint16LE();
+		SceneModule.scene_lut[i] = readS.readUint16LE();
 	}
 
 	free(scene_lut_p);
@@ -507,16 +507,16 @@ int LoadSceneDescriptor(uint32 res_number) {
 		return R_FAILURE;
 	}
 
-	MemoryReadStream *readS = new MemoryReadStream(scene_desc_data, scene_desc_len);
+	MemoryReadStream readS(scene_desc_data, scene_desc_len);
 
-	SceneModule.desc.unknown0 = readS->readUint16LE();
-	SceneModule.desc.res_list_rn = readS->readUint16LE();
-	SceneModule.desc.end_slope = readS->readUint16LE();
-	SceneModule.desc.begin_slope = readS->readUint16LE();
-	SceneModule.desc.script_num = readS->readUint16LE();
-	SceneModule.desc.scene_scriptnum = readS->readUint16LE();
-	SceneModule.desc.start_scriptnum = readS->readUint16LE();
-	SceneModule.desc.music_rn = readS->readSint16LE();
+	SceneModule.desc.unknown0 = readS.readUint16LE();
+	SceneModule.desc.res_list_rn = readS.readUint16LE();
+	SceneModule.desc.end_slope = readS.readUint16LE();
+	SceneModule.desc.begin_slope = readS.readUint16LE();
+	SceneModule.desc.script_num = readS.readUint16LE();
+	SceneModule.desc.scene_scriptnum = readS.readUint16LE();
+	SceneModule.desc.start_scriptnum = readS.readUint16LE();
+	SceneModule.desc.music_rn = readS.readSint16LE();
 
 	RSC_FreeResource(scene_desc_data);
 
@@ -536,7 +536,7 @@ int LoadSceneResourceList(uint32 reslist_rn) {
 		return R_FAILURE;
 	}
 
-	MemoryReadStream *readS = new MemoryReadStream(resource_list, resource_list_len);
+	MemoryReadStream readS(resource_list, resource_list_len);
 
 	// Allocate memory for scene resource list 
 	SceneModule.reslist_entries = resource_list_len / SAGA_RESLIST_ENTRY_LEN;
@@ -553,8 +553,8 @@ int LoadSceneResourceList(uint32 reslist_rn) {
 	debug(0, "Loading scene resource list...");
 
 	for (i = 0; i < SceneModule.reslist_entries; i++) {
-		SceneModule.reslist[i].res_number = readS->readUint16LE();
-		SceneModule.reslist[i].res_type = readS->readUint16LE();
+		SceneModule.reslist[i].res_number = readS.readUint16LE();
+		SceneModule.reslist[i].res_type = readS.readUint16LE();
 	}
 
 	RSC_FreeResource(resource_list);

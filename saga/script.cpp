@@ -109,15 +109,15 @@ Script::Script() {
 	}
 
 	// Convert LUT resource to logical LUT
-	MemoryReadStream *readS = new MemoryReadStream(rsc_ptr, rsc_len);
+	MemoryReadStream readS(rsc_ptr, rsc_len);
 	for (i = 0; i < _script_lut_max; i++) {
-		prevTell = readS->pos();
-		_script_lut[i].script_rn = readS->readUint16LE();
-		_script_lut[i].diag_list_rn = readS->readUint16LE();
-		_script_lut[i].voice_lut_rn = readS->readUint16LE();
+		prevTell = readS.pos();
+		_script_lut[i].script_rn = readS.readUint16LE();
+		_script_lut[i].diag_list_rn = readS.readUint16LE();
+		_script_lut[i].voice_lut_rn = readS.readUint16LE();
 		// Skip the unused portion of the structure
-		for (j = readS->pos(); j < prevTell + _script_lut_entrylen; j++)
-			readS->readByte();
+		for (j = readS.pos(); j < prevTell + _script_lut_entrylen; j++)
+			readS.readByte();
 	}
 
 	RSC_FreeResource(rsc_ptr);
@@ -328,12 +328,12 @@ R_SCRIPT_BYTECODE *Script::loadBytecode(byte *bytecode_p, size_t bytecode_len) {
 
 	debug(0, "Loading script bytecode...");
 
-	MemoryReadStream *readS = new MemoryReadStream(bytecode_p, bytecode_len);
+	MemoryReadStream readS(bytecode_p, bytecode_len);
 
 	// The first two uint32 values are the number of entrypoints, and the
 	// offset to the entrypoint table, respectively.
-	n_entrypoints = readS->readUint32LE();
-	ep_tbl_offset = readS->readUint32LE();
+	n_entrypoints = readS.readUint32LE();
+	ep_tbl_offset = readS.readUint32LE();
 
 	// Check that the entrypoint table offset is valid.
 	if ((bytecode_len - ep_tbl_offset) < (n_entrypoints * R_SCRIPT_TBLENTRY_LEN)) {
@@ -364,15 +364,15 @@ R_SCRIPT_BYTECODE *Script::loadBytecode(byte *bytecode_p, size_t bytecode_len) {
 
 	// Read in the entrypoint table
 
-	while (readS->pos() < ep_tbl_offset)
-		readS->readByte();
+	while (readS.pos() < ep_tbl_offset)
+		readS.readByte();
 
 	for (i = 0; i < n_entrypoints; i++) {
 		// First uint16 is the offset of the entrypoint name from the start
 		// of the bytecode resource, second uint16 is the offset of the 
 		// bytecode itself for said entrypoint
-		bc_ep_tbl[i].name_offset = readS->readUint16LE();
-		bc_ep_tbl[i].offset = readS->readUint16LE();
+		bc_ep_tbl[i].name_offset = readS.readUint16LE();
+		bc_ep_tbl[i].offset = readS.readUint16LE();
 
 		// Perform a simple range check on offset values
 		if ((bc_ep_tbl[i].name_offset > bytecode_len) || (bc_ep_tbl[i].offset > bytecode_len)) {
@@ -409,10 +409,10 @@ R_DIALOGUE_LIST *Script::loadDialogue(const byte *dialogue_p, size_t dialogue_le
 		return NULL;
 	}
 
-	MemoryReadStream *readS = new MemoryReadStream(dialogue_p, dialogue_len);
+	MemoryReadStream readS(dialogue_p, dialogue_len);
 
 	// First uint16 is the offset of the first string
-	offset = readS->readUint16LE();
+	offset = readS.readUint16LE();
 	if (offset > dialogue_len) {
 		warning("Error, invalid string offset");
 		return NULL;
@@ -438,9 +438,9 @@ R_DIALOGUE_LIST *Script::loadDialogue(const byte *dialogue_p, size_t dialogue_le
 	}
 
 	// Read in tables from dialogue list resource
-	readS->seek(0);
+	readS.seek(0);
 	for (i = 0; i < n_dialogue; i++) {
-		offset = readS->readUint16LE();
+		offset = readS.readUint16LE();
 		if (offset > dialogue_len) {
 			warning("Error, invalid string offset");
 			free(dialogue_list->str);
@@ -480,10 +480,10 @@ R_VOICE_LUT *Script::loadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, R
 		return NULL;
 	}
 
-	MemoryReadStream *readS = new MemoryReadStream(voicelut_p, voicelut_len);
+	MemoryReadStream readS(voicelut_p, voicelut_len);
 
 	for (i = 0; i < n_voices; i++) {
-		voice_lut->voices[i] = readS->readUint16LE();
+		voice_lut->voices[i] = readS.readUint16LE();
 	}
 
 	return voice_lut;

@@ -79,7 +79,7 @@ int OBJECTMAP_Load(const byte *om_res, size_t om_res_len) {
 
 	int i, k, m;
 
-	MemoryReadStream *readS = new MemoryReadStream(om_res, om_res_len);
+	MemoryReadStream readS(om_res, om_res_len);
 
 	if (!OMInfo.initialized) {
 		warning("Error: Object map module not initialized");
@@ -91,7 +91,7 @@ int OBJECTMAP_Load(const byte *om_res, size_t om_res_len) {
 	}
 
 	// Obtain object count N and allocate space for N objects
-	OMInfo.n_objects = readS->readUint16LE();
+	OMInfo.n_objects = readS.readUint16LE();
 
 	OMInfo.object_maps = (R_OBJECTMAP_ENTRY *)malloc(OMInfo.n_objects * sizeof *OMInfo.object_maps);
 
@@ -103,11 +103,11 @@ int OBJECTMAP_Load(const byte *om_res, size_t om_res_len) {
 	// Load all N objects
 	for (i = 0; i < OMInfo.n_objects; i++) {
 		object_map = &OMInfo.object_maps[i];
-		object_map->unknown0 = readS->readByte();
-		object_map->n_clickareas = readS->readByte();
-		object_map->flags = readS->readUint16LE();
-		object_map->object_num = readS->readUint16LE();
-		object_map->script_num = readS->readUint16LE();
+		object_map->unknown0 = readS.readByte();
+		object_map->n_clickareas = readS.readByte();
+		object_map->flags = readS.readUint16LE();
+		object_map->object_num = readS.readUint16LE();
+		object_map->script_num = readS.readUint16LE();
 		object_map->clickareas = (R_CLICKAREA *)malloc(object_map->n_clickareas * sizeof *(object_map->clickareas));
 
 		if (object_map->clickareas == NULL) {
@@ -118,7 +118,7 @@ int OBJECTMAP_Load(const byte *om_res, size_t om_res_len) {
 		// Load all clickareas for this object
 		for (k = 0; k < object_map->n_clickareas; k++) {
 			clickarea = &object_map->clickareas[k];
-			clickarea->n_points = readS->readUint16LE();
+			clickarea->n_points = readS.readUint16LE();
 			assert(clickarea->n_points != 0);
 
 			clickarea->points = (R_POINT *)malloc(clickarea->n_points * sizeof *(clickarea->points));
@@ -130,8 +130,8 @@ int OBJECTMAP_Load(const byte *om_res, size_t om_res_len) {
 			// Load all points for this clickarea
 			for (m = 0; m < clickarea->n_points; m++) {
 				point = &clickarea->points[m];
-				point->x = readS->readSint16LE();
-				point->y = readS->readSint16LE();
+				point->x = readS.readSint16LE();
+				point->y = readS.readSint16LE();
 			}
 			debug(2, "OBJECTMAP_Load(): Read %d points for clickarea %d in object %d.",
 					clickarea->n_points, k, object_map->object_num);
@@ -180,13 +180,13 @@ int OBJECTMAP_LoadNames(const unsigned char *onl_res, size_t onl_res_len) {
 
 	int i;
 
-	MemoryReadStream *readS = new MemoryReadStream(onl_res, onl_res_len);
+	MemoryReadStream readS(onl_res, onl_res_len);
 
 	if (OMInfo.names_loaded) {
 		OBJECTMAP_FreeNames();
 	}
 
-	table_len = readS->readUint16LE();
+	table_len = readS.readUint16LE();
 
 	n_names = table_len / 2 - 2;
 	OMInfo.n_names = n_names;
@@ -200,7 +200,7 @@ int OBJECTMAP_LoadNames(const unsigned char *onl_res, size_t onl_res_len) {
 	}
 
 	for (i = 0; i < n_names; i++) {
-		name_offset = readS->readUint16LE();
+		name_offset = readS.readUint16LE();
 		OMInfo.names[i] = (const char *)(onl_res + name_offset);
 
 		debug(3, "Loaded object name string: %s", OMInfo.names[i]);

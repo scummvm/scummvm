@@ -221,9 +221,9 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 
 		saved_offset = thread->i_offset;
 		debug(2, "Executing thread offset: %lu", thread->i_offset);
-		MemoryReadStream *readS = new MemoryReadStream(GetReadPtr(thread), GetReadLen(thread));
+		MemoryReadStream readS(GetReadPtr(thread), GetReadLen(thread));
 
-		in_char = readS->readByte();
+		in_char = readS.readByte();
 
 		switch (in_char) {
 			// Align (ALGN)
@@ -250,12 +250,12 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			break;
 			// Push word (PUSH)
 		case 0x06:
-			param1 = (SDataWord_T)readS->readUint16LE();
+			param1 = (SDataWord_T)readS.readUint16LE();
 			SSTACK_Push(thread->stack, param1);
 			break;
 			// Push word (PSHD) (dialogue string index)
 		case 0x08:
-			param1 = (SDataWord_T)readS->readUint16LE();
+			param1 = (SDataWord_T)readS.readUint16LE();
 			SSTACK_Push(thread->stack, param1);
 			break;
 
@@ -263,22 +263,22 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 
 			// Test flag (TSTF)
 		case 0x0B:
-			n_buf = readS->readByte();
-			param1 = (SDataWord_T)readS->readUint16LE();
+			n_buf = readS.readByte();
+			param1 = (SDataWord_T)readS.readUint16LE();
 			_vm->_sdata->getBit(n_buf, param1, &bitstate);
 			SSTACK_Push(thread->stack, bitstate);
 			break;
 			// Get word (GETW)
 		case 0x0C:
-			n_buf = readS->readByte();
-			param1 = readS->readUint16LE();
+			n_buf = readS.readByte();
+			param1 = readS.readUint16LE();
 			_vm->_sdata->getWord(n_buf, param1, &data);
 			SSTACK_Push(thread->stack, data);
 			break;
 			// Modify flag (MODF)
 		case 0x0F:
-			n_buf = readS->readByte();
-			param1 = (SDataWord_T)readS->readUint16LE();
+			n_buf = readS.readByte();
+			param1 = (SDataWord_T)readS.readUint16LE();
 			bitstate = _vm->_sdata->readWordU(param1);
 			SSTACK_Top(thread->stack, &data);
 			if (bitstate) {
@@ -289,15 +289,15 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			break;
 			// Put word (PUTW)
 		case 0x10:
-			n_buf = readS->readByte();
-			param1 = (SDataWord_T)readS->readUint16LE();
+			n_buf = readS.readByte();
+			param1 = (SDataWord_T)readS.readUint16LE();
 			SSTACK_Top(thread->stack, &data);
 			_vm->_sdata->putWord(n_buf, param1, data);
 			break;
 			// Modify flag and pop (MDFP)
 		case 0x13:
-			n_buf = readS->readByte();
-			param1 = (SDataWord_T)readS->readUint16LE();
+			n_buf = readS.readByte();
+			param1 = (SDataWord_T)readS.readUint16LE();
 			SSTACK_Pop(thread->stack, &param1);
 			bitstate = _vm->_sdata->readWordU(param1);
 			if (bitstate) {
@@ -308,8 +308,8 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			break;
 			// Put word and pop (PTWP)
 		case 0x14:
-			n_buf = readS->readByte();
-			param1 = (SDataWord_T)readS->readUint16LE();
+			n_buf = readS.readByte();
+			param1 = (SDataWord_T)readS.readUint16LE();
 			SSTACK_Top(thread->stack, &data);
 			_vm->_sdata->putWord(n_buf, param1, data);
 			break;
@@ -322,10 +322,10 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 				int temp;
 				int temp2;
 
-				temp = readS->readByte();
-				temp2 = readS->readByte();
-				param1 = (SDataWord_T)readS->readUint16LE();
-				data = readS->pos();
+				temp = readS.readByte();
+				temp2 = readS.readByte();
+				param1 = (SDataWord_T)readS.readUint16LE();
+				data = readS.pos();
 				//SSTACK_Push(thread->stack, (SDataWord_T)temp);
 				SSTACK_Push(thread->stack, data);
 				thread->i_offset = (unsigned long)param1;
@@ -340,8 +340,8 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 				int FIXME_SHADOWED_result;
 				SFunc_T sfunc;
 
-				n_args = readS->readByte();
-				func_num = readS->readUint16LE();
+				n_args = readS.readByte();
+				func_num = readS.readUint16LE();
 				if (func_num >= R_SFUNC_NUM) {
 					CON_Print(S_ERROR_PREFIX "Invalid script function number: (%X)\n", func_num);
 					thread->executing = 0;
@@ -366,7 +366,7 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			break;
 			// (ENTR) Enter the dragon
 		case 0x1A:
-			param1 = readS->readUint16LE();
+			param1 = readS.readUint16LE();
 			break;
 			// (?) Unknown
 		case 0x1B:
@@ -387,12 +387,12 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 
 			// (JMP): Unconditional jump
 		case 0x1D:
-			param1 = readS->readUint16LE();
+			param1 = readS.readUint16LE();
 			thread->i_offset = (unsigned long)param1;
 			break;
 			// (JNZP): Jump if nonzero + POP
 		case 0x1E:
-			param1 = readS->readUint16LE();
+			param1 = readS.readUint16LE();
 			SSTACK_Pop(thread->stack, &data);
 			if (data) {
 				thread->i_offset = (unsigned long)param1;
@@ -400,7 +400,7 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			break;
 			// (JZP): Jump if zero + POP
 		case 0x1F:
-			param1 = readS->readUint16LE();
+			param1 = readS.readUint16LE();
 			SSTACK_Pop(thread->stack, &data);
 			if (!data) {
 				thread->i_offset = (unsigned long)param1;
@@ -408,7 +408,7 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			break;
 			// (JNZ): Jump if nonzero
 		case 0x20:
-			param1 = readS->readUint16LE();
+			param1 = readS.readUint16LE();
 			SSTACK_Top(thread->stack, &data);
 			if (data) {
 				thread->i_offset = (unsigned long)param1;
@@ -416,7 +416,7 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			break;
 			// (JZ): Jump if zero
 		case 0x21:
-			param1 = readS->readUint16LE();
+			param1 = readS.readUint16LE();
 			SSTACK_Top(thread->stack, &data);
 			if (!data) {
 				thread->i_offset = (unsigned long)param1;
@@ -425,9 +425,9 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			// (JMPR): Relative jump
 		case 0x57:
 			// ignored?
-			readS->readUint16LE();
-			readS->readUint16LE();
-			iparam1 = (long)readS->readByte();
+			readS.readUint16LE();
+			readS.readUint16LE();
+			iparam1 = (long)readS.readByte();
 			thread->i_offset += iparam1;
 			break;
 			// (SWCH): Switch
@@ -440,10 +440,10 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 				int case_found = 0;
 
 				SSTACK_Pop(thread->stack, &data);
-				n_switch = readS->readUint16LE();
+				n_switch = readS.readUint16LE();
 				for (i = 0; i < n_switch; i++) {
-					switch_num = readS->readUint16LE();
-					switch_jmp = readS->readUint16LE();
+					switch_num = readS.readUint16LE();
+					switch_jmp = readS.readUint16LE();
 					// Found the specified case
 					if (data == (SDataWord_T) switch_num) {
 						thread->i_offset = switch_jmp;
@@ -454,7 +454,7 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 
 				// Jump to default case
 				if (!case_found) {
-					default_jmp = readS->readUint16LE();
+					default_jmp = readS.readUint16LE();
 					thread->i_offset = default_jmp;
 				}
 			}
@@ -469,11 +469,11 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 				int branch_found = 0;
 
 				// Ignored?
-				readS->readUint16LE();
-				n_branch = readS->readUint16LE();
+				readS.readUint16LE();
+				n_branch = readS.readUint16LE();
 				for (i = 0; i < n_branch; i++) {
-					branch_wt = readS->readUint16LE();
-					branch_jmp = readS->readUint16LE();
+					branch_wt = readS.readUint16LE();
+					branch_jmp = readS.readUint16LE();
 					if (rand_sel == i) {
 						thread->i_offset = branch_jmp;
 						branch_found = 1;
@@ -511,29 +511,29 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 		case 0x28:
 			unhandled = 1;
 			printf("??? ");
-			readS->readByte();
-			readS->readUint16LE();
+			readS.readByte();
+			readS.readUint16LE();
 			break;
 			// (?)
 		case 0x29:
 			unhandled = 1;
 			printf("??? ");
-			readS->readByte();
-			readS->readUint16LE();
+			readS.readByte();
+			readS.readUint16LE();
 			break;
 			// (?)
 		case 0x2A:
 			unhandled = 1;
 			printf("??? ");
-			readS->readByte();
-			readS->readUint16LE();
+			readS.readByte();
+			readS.readUint16LE();
 			break;
 			// (?)
 		case 0x2B:
 			unhandled = 1;
 			printf("??? ");
-			readS->readByte();
-			readS->readUint16LE();
+			readS.readByte();
+			readS.readUint16LE();
 			break;
 
 // ARITHMETIC INSTRUCTIONS    
@@ -715,11 +715,11 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 				int a_index;
 				int voice_rn;
 
-				n_voices = readS->readByte();
-				param1 = (SDataWord_T) readS->readUint16LE();
+				n_voices = readS.readByte();
+				param1 = (SDataWord_T) readS.readUint16LE();
 				// ignored ?
-				readS->readByte();
-				readS->readUint16LE();
+				readS.readByte();
+				readS.readUint16LE();
 
 				a_index = ACTOR_GetActorIndex(param1);
 				if (a_index < 0) {
@@ -753,12 +753,12 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 				int FIXME_SHADOWED_param3;
 
 				printf("DLGO | ");
-				FIXME_SHADOWED_param1 = readS->readByte();
-				FIXME_SHADOWED_param2 = readS->readByte();
+				FIXME_SHADOWED_param1 = readS.readByte();
+				FIXME_SHADOWED_param2 = readS.readByte();
 				printf("%02X %02X ", FIXME_SHADOWED_param1, FIXME_SHADOWED_param2);
 
 				if (FIXME_SHADOWED_param2 > 0) {
-					FIXME_SHADOWED_param3 = readS->readUint16LE();
+					FIXME_SHADOWED_param3 = readS.readUint16LE();
 					printf("%04X", FIXME_SHADOWED_param3);
 				}
 			}
@@ -775,7 +775,7 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 
 		// Set instruction offset only if a previous instruction didn't branch
 		if (saved_offset == thread->i_offset) {
-			thread->i_offset = readS->pos();
+			thread->i_offset = readS.pos();
 		}
 		if (unhandled) {
 			CON_Print(S_ERROR_PREFIX "%X: Unhandled opcode.\n", thread->i_offset);
