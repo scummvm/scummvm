@@ -138,6 +138,8 @@ void SwordEngine::initialize(void) {
 	default:
 		_systemVars.language = BS1_ENGLISH;
 	}
+
+	_systemVars.showText = ConfMan.getBool("subtitles");
 	
 	_systemVars.playSpeech = 1;
 	startPositions(ConfMan.getInt("boot_param"));
