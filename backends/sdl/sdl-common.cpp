@@ -46,10 +46,6 @@ OSystem *OSystem_SDL_Common::create(int gfx_mode, bool full_screen) {
 		error("Could not initialize SDL: %s.\n", SDL_GetError());
 	}
 
-#ifdef WIN32				  // Use waveout on win32, not
-	SDL_AudioInit("waveout"); // dsound - unfortunatly dsound
-#endif						  // doesn't do COOPERATIVE mode
-
 	SDL_ShowCursor(SDL_DISABLE);
 
 	// Setup the icon
