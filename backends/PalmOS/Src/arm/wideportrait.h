@@ -6,6 +6,6 @@
 #define COMPILE_WIDEPORTRAIT
 #define COMPILE_PACE
 
-UInt32 OSystem_updateScreen_widePortrait(void *userData68KP);
+void OSystem_updateScreen_widePortrait(void *userData68KP);
 
 #endif

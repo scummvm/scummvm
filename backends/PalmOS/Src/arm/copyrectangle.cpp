@@ -4,7 +4,7 @@
 #define MAIN_TYPE	CopyRectangleType
 #include "macros.h"
 
-UInt32 OSystem_CopyRectToScreen(void *userData68KP) {
+void OSystem_CopyRectToScreen(void *userData68KP) {
 // import variables
 	SETPTR	(UInt8 *,	dst				)
 	SETPTR	(UInt8 *,	buf				)
@@ -23,6 +23,4 @@ UInt32 OSystem_CopyRectToScreen(void *userData68KP) {
 			buf += pitch;
 		} while (--h);
 	}
-
-	return 0;
 }

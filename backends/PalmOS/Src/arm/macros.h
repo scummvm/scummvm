@@ -13,7 +13,7 @@
 	#define ARM_ADDP(member)		data.member = &member;
 	#define ARM_ADDM(member)		data.member = member;
 	#define ARM_ADDV(member, var)	data.member = var;
-	#define ARM_INIT(id)			data.funcID = id;
+//	#define ARM_INIT(id)			data.funcID = id;
 
 	#define ARM_DATA()		&data
 	#define ARM_CONTINUE()	} else
@@ -36,7 +36,7 @@
 	#define ARM_ADDP(member)
 	#define ARM_ADDM(member)
 	#define ARM_ADDV(member, var)
-	#define ARM_INIT(id)
+//	#define ARM_INIT(id)
 
 	#define ARM_DATA()
 	#define ARM_CONTINUE()

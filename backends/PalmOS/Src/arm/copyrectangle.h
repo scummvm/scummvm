@@ -6,6 +6,6 @@
 #define COMPILE_COPYRECT
 #define COMPILE_PACE
 
-UInt32 OSystem_CopyRectToScreen(void *userData68KP);
+void OSystem_CopyRectToScreen(void *userData68KP);
 
 #endif
