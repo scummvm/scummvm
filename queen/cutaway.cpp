@@ -473,7 +473,7 @@ byte *Cutaway::turnOnPeople(byte *ptr, CutawayObject &object) {
 	for (int i = 0; i < object.personCount; i++) {
 		object.person[i] = (int16)READ_BE_UINT16(ptr);
 		ptr += 2;
-		debug(0, "[%i] Turn on person %i", i, object.person[i]);
+		//debug(0, "[%i] Turn on person %i", i, object.person[i]);
 	}
 
 	return ptr;
@@ -545,10 +545,10 @@ void Cutaway::changeRooms(CutawayObject &object) {
 					}
 				}
 
-				debug(0, "Person '%s' (%i) is %s", 
+				/*debug(0, "Person '%s' (%i) is %s", 
 						_logic->objectName(objectData->name),
 						objectData->name,
-						on ? "on" : "off");
+						on ? "on" : "off");*/
 
 				if (on) {
 					// It is needed, so ensure it's ON
@@ -597,12 +597,6 @@ void Cutaway::changeRooms(CutawayObject &object) {
 	_temporaryRoom = _logic->currentRoom();
 
 	restorePersonData();
-
-	// XXX CUTAWAY_SCALE(OBJECT);
-	// XXX SF=Param;
-	// XXX if(SCALE_FACTOR>0 && SCALE_FACTOR<100)
-	// XXX   SF=SCALE_FACTOR;
-
 }
 
 Cutaway::ObjectType Cutaway::getObjectType(CutawayObject &object) {
@@ -899,7 +893,7 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 
 					if (0 == objAnim[i].object) {
 						// Scale Joe
-						// XXX bob->scale = SF;
+						bob->scale = scale(object);
 					}
 				}
 
@@ -990,7 +984,7 @@ void Cutaway::handlePersonRecord(
 
 		if (object.bobStartX || object.bobStartY) {
 			BobSlot *bob = _graphics->bob(p.actor->bobNum);
-			bob->scale = 100; // XXX SF;
+			bob->scale = scale(object);
 			bob->x = object.bobStartX;
 			bob->y = object.bobStartY;
 		}
@@ -1501,6 +1495,35 @@ int Cutaway::countSpaces(ObjectType type, const char *segment) {
 
 	return (tmp * 2) / _logic->talkSpeed();
 
+}
+
+int Cutaway::scale(CutawayObject &object) {
+	int scaling = 100;
+
+	if (object.scale > 0)
+		scaling = object.scale;
+	else if (!object.objectNumber) {
+		// Only scale Joe 
+		int x, y;
+		
+		if (object.bobStartX > 0 || object.bobStartY > 0) {
+			x = object.bobStartX;
+			y = object.bobStartY;
+		}
+		else {
+			BobSlot *bob = _graphics->bob(0);
+			x = bob->x;
+			y = bob->y;
+		}
+
+		int zone = _logic->zoneInArea(0, x, y);
+		if (zone > 0) {
+			Area *area = _logic->area(_logic->currentRoom(), zone);
+			scaling = area->calcScale(y);
+		}
+	}
+
+	return scaling;
 }
 
 } // End of namespace Queen

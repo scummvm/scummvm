@@ -281,6 +281,9 @@ class Cutaway {
 		//! Used by handleText()
 		int countSpaces(ObjectType type, const char *segment);
 
+		//! Scale Joe
+		int scale(CutawayObject &object);
+
 		//! Dump CutawayAnum data with debug()
 		static void dumpCutawayAnim(CutawayAnim &anim);
 
