@@ -1648,7 +1648,12 @@ void outputdisplay2(Scumm *s, int disp);
 extern const byte revBitMask[8];
 void blitToScreen(Scumm *s, byte *src, int x, int y, int w, int h);
 
+#if defined(__GNUC__)
 void CDECL error(const char *s, ...) NORETURN;
+#else
+void CDECL NORETURN error(const char *s, ...);
+#endif
+
 void CDECL warning(const char *s, ...);
 void CDECL debug(int level, const char *s, ...);
 void checkHeap();
