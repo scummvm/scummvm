@@ -369,6 +369,10 @@ void OSystem_SDL::setFullscreenMode(bool enable) {
 	if (_full_screen != enable) {
 		assert(_hwscreen != 0);
 		_full_screen ^= true;
+
+		if (_mouseDrawn)
+			undraw_mouse();
+	
 #if defined(MACOSX) && !SDL_VERSION_ATLEAST(1, 2, 6)
 		// On OS X, SDL_WM_ToggleFullScreen is currently not implemented. Worse,
 		// before SDL 1.2.6 it always returned -1 (which would indicate a
