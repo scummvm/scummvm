@@ -118,6 +118,8 @@ SwordMusic::~SwordMusic() {
 	_mixer->setupPremix(0, 0);
 	delete _converter[0];
 	delete _converter[1];
+	if (_mutex)
+		_system->delete_mutex(_mutex);
 }
 
 void SwordMusic::passMixerFunc(void *param, int16 *buf, uint len) {
