@@ -857,7 +857,7 @@ struct Scumm {
 
 	byte OF_OWNER_ROOM;
 	
-        int _gameTempo;
+        int _gameTempo, _saveSound;
 	int _lastLoadedRoom;
 	int _roomResource;
 	byte _encbyte;
@@ -1414,6 +1414,7 @@ struct Scumm {
         void o5_oldRoomEffect();
 	void o5_pickupObjectOld();
 	
+	void o6_samGame();
 	void o6_pushByte();
 	void o6_pushWord();
 	void o6_pushByteVar();

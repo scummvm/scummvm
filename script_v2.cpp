@@ -151,7 +151,7 @@ void Scumm::setupOpcodes2() {
 	&Scumm::o6_setObjectXY,
 	&Scumm::o6_drawBlastObject,
 	/* 64 */
-	&Scumm::o6_invalid,
+	&Scumm::o6_samGame,
 	&Scumm::o6_stopObjectCode,
 	&Scumm::o6_stopObjectCode,
 	&Scumm::o6_endCutscene,
@@ -673,7 +673,17 @@ void Scumm::setupOpcodes2() {
 	_opcodes = opcode_list;
 	_opcodes_lookup = opcode_lookup;
 }
+void Scumm::o6_samGame() {
+	int a, b, c, d;
+	// Sam and Max game opcode
+	d = pop();
+	c = pop();
+	b = pop();
+	a = pop();
+	
 
+	// sub_274EF(a, b, c, d);
+}
 int Scumm::popRoomAndObj(int *room) {
 	int obj;
 
@@ -2569,10 +2579,6 @@ void Scumm::o6_miscOps() {
 			unkMiscOp9();
 			break;
 
-		case 124: /* samnmax */
-			warning("o6_miscOps: _saveSound=%d", args[1]);
-			break;
-
 		case 104: /* samnmax */
 			nukeFlObjects(args[2], args[3]);
 			break;
@@ -2643,7 +2649,12 @@ void Scumm::o6_miscOps() {
 			break;
 
 		case 123:
-			error("stub o6_miscOps_123(%d,%d)", args[1], args[2]);
+			swapPalColors(args[1],args[2]);			
+			break;
+
+		case 124: /* samnmax */
+			warning("o6_miscOps: _saveSound=%d", args[1]);
+			_saveSound = args[1];
 			break;
 
 		default:
@@ -2658,8 +2669,13 @@ void Scumm::o6_kernelFunction() {
 	Actor *a;
 
 	getStackList(args,sizeof(args)/sizeof(args[0]));
-
+	
 	switch(args[0]) {
+	case 113:
+		// Do something to [1] x [2] (x/y)
+		warning("o6_kernelFunction: stub113(%d,%d)", args[1], args[2]);
+		push(0);
+		break;
 	case 115:
 		warning("o6_kernelFunction: stub115(%d,%d)", args[1], args[2]);
 		push(0);
