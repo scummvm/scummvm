@@ -623,6 +623,7 @@ protected:
 	byte *createResource(int type, int index, uint32 size);
 	int loadResource(int type, int i);
 	void nukeResource(int type, int i);	
+	int getResourceSize(int type, int idx);
 
 public:
 	bool isGlobInMemory(int type, int index) const;

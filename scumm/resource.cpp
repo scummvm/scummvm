@@ -1269,6 +1269,13 @@ int Scumm::getResourceRoomNr(int type, int idx) {
 	return res.roomno[type][idx];
 }
 
+int Scumm::getResourceSize(int type, int idx) {
+	byte *ptr = getResourceAddress(type, idx);
+	MemBlkHeader *hdr = (MemBlkHeader *)(ptr - sizeof(MemBlkHeader));
+	
+	return hdr->size;
+}
+
 byte *Scumm::getResourceAddress(int type, int idx) {
 	byte *ptr;
 
