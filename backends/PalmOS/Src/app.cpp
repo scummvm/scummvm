@@ -137,7 +137,7 @@ static void AppStopMathLib() {
 }
 
 // Set the screen pitch for direct screen access
-// avaliable only before a game start
+// available only before a game start
 void WinScreenGetPitch() {
 	if (OPTIONS_TST(kOptModeHiDensity)) {
 		WinScreenGetAttribute(winScreenRowBytes, &(gVars->screenPitch));
@@ -381,8 +381,8 @@ Err AppStart(void) {
 	GamImportDatabase();
 
 	AppStartCheckScreenSize();
-	AppStartCheckNotify(); 		// not fatal error if not avalaible
-	AppStartSetMemory();		// set memory required by the differents engines
+	AppStartCheckNotify(); 		// not fatal error if not available
+	AppStartSetMemory();		// set memory required by the different engines
 
 	// force ARM option if bDirectMode
 	if (!error)

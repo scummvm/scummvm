@@ -193,13 +193,13 @@ void OSystem_PALMOS::load_gfx_mode() {
 
 				// only for 320x200 games
 				if (!(_screenWidth == 320 && _screenHeight == 200)) {
-					warning("Wide display not avalaible for this game, switching to GFX_NORMAL mode.");
+					warning("Wide display not available for this game, switching to GFX_NORMAL mode.");
 					_mode = GFX_NORMAL;
 				}
 			}
 
 		} else {
-			warning("HiRes+ not avalaible on this device, switching to GFX_NORMAL mode.");
+			warning("HiRes+ not available on this device, switching to GFX_NORMAL mode.");
 			_mode = GFX_NORMAL;
 		}
 	}
@@ -318,7 +318,7 @@ void OSystem_PALMOS::load_gfx_mode() {
 		// try to allocate on storage heap, TODO : error if failed
 		FtrPtrNew(appFileCreator, ftrBufferOverlay, _screenWidth * _screenHeight, (void **)&_tmpScreenP);
 		FtrPtrNew(appFileCreator, ftrBufferBackup, _screenWidth * _screenHeight, (void **)&_tmpBackupP);
-		// only if wide mode avalaible
+		// only if wide mode available
 		if OPTIONS_TST(kOptModeWide)
 			FtrPtrNew(appFileCreator, ftrBufferHotSwap, _screenWidth * _screenHeight, (void **)&_tmpHotSwapP);
 

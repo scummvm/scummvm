@@ -3,7 +3,7 @@
 
 // OSystem : wide display
 // consider ony 480x320 screens
-// only avalaible for 320x200 games, so use values instead of vars
+// only available for 320x200 games, so use values instead of vars
 #define WIDE_PITCH			320	// pitch in portrait mode
 #define WIDE_FULL_WIDTH		320	// original screen size
 #define WIDE_HALF_WIDTH		160	// 320 / 2
