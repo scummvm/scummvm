@@ -96,7 +96,7 @@ struct BobSlot {
 struct TextSlot {
 	uint16 x;
 	uint8 color;
-	char *text;
+	Common::String text;
 	bool outlined;
 };
 
@@ -132,7 +132,7 @@ public:
 	void textSet(uint16 x, uint16 y, const char *text, bool outlined = true); // text()
 	void textDrawAll(); // drawtext()
 	void textClear(uint16 y1, uint16 y2); // blanktexts()
-	uint16 textLength(const char* text); // textlen()
+	uint16 textWidth(const char* text) const; // textlen()
 
 	void frameErase(uint32 fslot);
 	void frameEraseAll(bool joe); // freeframes, freeallframes
@@ -142,6 +142,7 @@ public:
 
 	void panelLoad(); // loadpanel
 	void panelDraw();
+	void panelClear();
 
 	void boxDraw(const Box &b, uint8 color);
 

@@ -24,8 +24,8 @@
 
 namespace Queen {
 
-Logic::Logic(Resource *resource) 
-	: _maxAnimatedFrame(0), _maxStaticFrame(0), _resource(resource) {
+Logic::Logic(Resource *resource, Graphics *graphics) 
+	: _maxAnimatedFrame(0), _maxStaticFrame(0), _resource(resource), _graphics(graphics) {
 	_jas = _resource->loadFile("QUEEN.JAS", 20);
 	_joe.x = _joe.y = 0;
 	initialise();
@@ -264,7 +264,7 @@ WalkOffData *Logic::walkOffData(int index) {
 	return &_walkOffData[index];
 }
 
-GraphicData *Logic::findGraphic(int index) {
+GraphicData *Logic::graphicData(int index) {
 	return &_graphicData[index];
 }
 
@@ -457,6 +457,7 @@ uint16 Logic::objectForPerson(uint16 bobNum) {
 		if (bobcur == bobNum) {
 			return cur;
 		}
+		++cur;
 	}
 	return 0;
 }

@@ -19,7 +19,9 @@
  *
  */
 
+#include "stdafx.h"
 #include "queen/graphics.h"
+#include "queen/resource.h"
 
 
 namespace Queen {
@@ -272,7 +274,6 @@ Graphics::Graphics(Resource *resource)
 	memset(_bobs, 0, sizeof(_bobs));
 	memset(_sortedBobs, 0, sizeof(_sortedBobs));
 	_sortedBobsCount = 0;
-	memset(_texts, 0, sizeof(_texts));
 	_shrinkBuffer.data = new uint8[ BOB_SHRINK_BUF_SIZE ];
 	_backdrop = new uint8[ BACKDROP_W * BACKDROP_H ];
 	_panel = new uint8[ PANEL_W * PANEL_H ];
@@ -782,10 +783,7 @@ void Graphics::textSet(uint16 x, uint16 y, const char *text, bool outlined) {
 		pts->x = x;
 		pts->color = _curTextColor;
 		pts->outlined = outlined;
-		if (pts->text != NULL) {
-			free(pts->text);
-		}
-		pts->text = strdup(text);
+		pts->text = text;
 	}
 }
 
@@ -794,7 +792,7 @@ void Graphics::textDrawAll() {
 	int y;
 	for (y = GAME_SCREEN_HEIGHT - 1; y > 0; --y) {
 		const TextSlot *pts = &_texts[y];
-		if (pts->text != NULL) {
+		if (!pts->text.isEmpty()) {
 			displayText(pts, y);
 		}
 	}
@@ -804,16 +802,13 @@ void Graphics::textDrawAll() {
 void Graphics::textClear(uint16 y1, uint16 y2) {
 
 	while (y1 <= y2) {
-		if (_texts[y1].text != NULL) {
-			free(_texts[y1].text);
-			_texts[y1].text = NULL;
-		}
+		_texts[y1].text.clear();
 		++y1;
 	}
 }
 
 
-uint16 Graphics::textLength(const char* text) {
+uint16 Graphics::textWidth(const char* text) const {
 
 	uint16 len = 0;
 	while (*text) {
@@ -866,10 +861,6 @@ void Graphics::backdropLoad(const char* name, uint16 room) {
 	_backdropWidth  = READ_LE_UINT16(pcxbuf +  12);
 	_backdropHeight = READ_LE_UINT16(pcxbuf +  14);
 
-	if (_backdropHeight == 150) {
-		_fullscreen = false;
-	}
-
 	if (room >= 90) {
 		_cameraBob = 0;
 	}
@@ -913,6 +904,11 @@ void Graphics::panelLoad() {
 
 void Graphics::panelDraw() {
 	memcpy(_screen + SCREEN_W * ROOM_ZONE_HEIGHT, _panel, PANEL_W * PANEL_H);
+}
+
+
+void Graphics::panelClear() {
+	memset(_screen + SCREEN_W * ROOM_ZONE_HEIGHT, 0, PANEL_W * PANEL_H);
 }
 
 
@@ -1024,7 +1020,7 @@ void Graphics::update() {
 void Graphics::displayText(const TextSlot *pts, uint16 y) {
 
 	uint16 x = pts->x;
-	uint8 *str = (uint8*)pts->text;
+	const uint8 *str = (const uint8*)pts->text.c_str();
 	while (*str && x < GAME_SCREEN_WIDTH) {
 		const uint8 *pchr = FONT + (*str) * 8;
 //		if (_resource->_gameVersion->versionString[1] == 'F' && *str == 150) {

@@ -45,11 +45,12 @@ struct ZoneSlot {
 
 
 class Graphics;
+class Resource;
 
 class Logic {
 
 public:
-	Logic(Resource *resource);
+	Logic(Resource *resource, Graphics *graphics);
 	~Logic();
 
 	uint16 currentRoom();
@@ -58,7 +59,7 @@ public:
 	ObjectData* objectData(int index);
 	uint16 roomData(int room);
 	uint16 objMax(int room);
-	GraphicData* findGraphic(int index);
+	GraphicData* graphicData(int index);
 
 	uint16 findBob(uint16 obj); // FIXME: move that to QueenDisplay ?
 	uint16 findFrame(uint16 obj); // FIXME: move that to QueenDisplay ?
@@ -145,6 +146,7 @@ protected:
 	uint16 _maxAnimatedFrame, _maxStaticFrame, _maxAnimatedFrameLen; // FMAXA, FMAX, FMAXALEN
 
 	Resource *_resource;
+	Graphics *_graphics;
 
 	void initialise();
 };
