@@ -244,7 +244,6 @@ SCUMM
   - Add support for song sync. in HE80+ games.
   - Add support for additional sound resources
   - Add support for sprites (Used by HE90+ games)
-  - Add support for multi-blocks, often used when loading wizImages
   - Add support for additional drawWizImage flags
   - Add support for WizPolygon rendering (cyx)
   - Add support for aux animation code used by cut scenes (cyx)

@@ -625,8 +625,33 @@ int ScummEngine_v72he::findObject(int x, int y, int *args) {
 }
 
 const byte *ScummEngine_v72he::findWrappedBlock(uint32 tag, const byte *ptr, int state, bool errorFlag) {
+	printf("findWrappedBlock: tag %x\n", tag);
 	if (READ_UINT32(ptr) == MKID('MULT')) {
-		error("findWrappedBlock: multi blocks aren't implemented");
+		const byte *offs, *wrap;
+		uint32 size;
+
+		wrap = findResource(MKID('WRAP'), ptr);
+		if (wrap == NULL)
+			return NULL;
+
+		offs = findResourceData(MKID('OFFS'), wrap);
+		if (offs == NULL)
+			return NULL;
+
+		size = getResourceDataSize(offs) / 4;
+		if ((uint32)state >= (uint32)size)
+			return NULL;
+
+		offs += READ_LE_UINT32(offs + state * sizeof(uint32));
+		offs = findResourceData(tag, offs - 8);
+;		if (offs)
+			return offs;
+
+		offs = findResourceData(MKID('DEFA'), ptr);
+		if (offs == NULL)
+			return NULL;
+
+		return findResourceData(tag, offs - 8);
 	} else {
 		return findResourceData(tag, ptr);
 	}
