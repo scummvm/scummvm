@@ -3028,8 +3028,8 @@ void ScummEngine_v6::o6_pickVarRandom() {
 	}
 
 	if (var_A-1 <= num) {
-		int16 var_2 = readArray(value, 0, var_A - 1);
-		shuffleArray(value, 1, num - 1);
+		int16 var_2 = readArray(value, 0, num - 1);
+		shuffleArray(value, 1, var_A - 1);
 		if (readArray(value, 0, 1) == var_2) {
 			num = 2;
 		} else {
