@@ -1254,7 +1254,9 @@ void SmushPlayer::parseTRES()
                printf("getStringTRES(%d)\n", READ_LE_UINT16(_cur + 16));
                return;
        }
-
+	if ((sm->_noSubtitles) && (READ_LE_UINT16(_cur + 4) != 0))
+		return;
+	
 	byte * txt = getStringTRES (READ_LE_UINT16(_cur + 16));
 	drawStringTRES (READ_LE_UINT16(_cur), READ_LE_UINT16(_cur + 2), txt);
 	if (txt != NULL)
