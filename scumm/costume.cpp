@@ -985,14 +985,12 @@ void NESCostumeLoader::loadCostume(int id) {
 	_id = id;
 	_baseptr = _vm->getResourceAddress(rtCostume, id);
 
-	_dataOffsets = _baseptr + 4;
+	_dataOffsets = _baseptr + 2;
 
 	frameset = 0;
 	framenum = 0;
 
 	src = _dataOffsets;
-	// Cost(a)
-	offset = src[(frameset * 4 + framenum) * 2];
 
 	// Lookup & desc
 	offset = READ_LE_UINT16(_vm->_NEScostdesc + v1MMNESLookup[_id] * 2);
