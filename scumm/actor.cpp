@@ -810,24 +810,32 @@ void Scumm::playActorSounds() {
 	}
 }
 
-inline int32 drawOrder (const Actor* x) { return (x)->y - ((x)->layer << 11); }
-
-int sortByDrawOrder (const void* a, const void* b)
+static int compareDrawOrder(const void* a, const void* b)
 {
 	const Actor* actor1 = *(const Actor *const*)a;
 	const Actor* actor2 = *(const Actor *const*)b;
-	int32 order1 = drawOrder(actor1);
-	int32 order2 = drawOrder(actor2);
+	int diff;
 
-	// The qsort() function is apparently not guaranteed to be stable (i.e.
-	// it may re-order actors with the same draw order value). Use the
+	// The actor in the higher layer is ordered lower
+	diff = actor1->layer - actor2->layer;
+	if (diff < 0)
+		return +1;
+	if (diff > 0)
+		return -1;
+
+	// The actor with higher y value is ordered higher
+	diff = actor1->y - actor2->y;
+	if (diff < 0)
+		return -1;
+	if (diff > 0)
+		return +1;
+
+	// The qsort() function is not guaranteed to be stable (i.e. it may
+	// re-order "equal" elements in an array it sorts). Hence we use the
 	// actor number as tie-breaker. This is needed for the Sam & Max intro,
 	// and possibly other cases as well. See bug #758167.
 
-	if (order1 == order2)
-		return actor1->number - actor2->number;
-
-	return order1 - order2;
+	return actor1->number - actor2->number;
 }
 
 void Scumm::processActors() {
@@ -851,10 +859,7 @@ void Scumm::processActors() {
 
 	// Sort actors by position before we draw them (to ensure that actors in
 	// front are drawn after those "behind" them).
-	// Bertrand TODO : Put a std::sort with a inlined comparison operator?
-	// I suppose only STL containers are not allowed, not algorithms, but I prefered leaving a good old qsort
-	// (Which might be slower that the previous code but just fits on one line)
-	qsort(actors, numactors, sizeof (Actor*), sortByDrawOrder);
+	qsort(actors, numactors, sizeof (Actor*), compareDrawOrder);
 
 	Actor** end = actors + numactors;
 
