@@ -458,10 +458,9 @@ MusicStream *makeMP3Stream(File *file, mad_timer_t duration, uint size) {
 class VorbisInputStream : public MusicStream {
 	OggVorbis_File *_ov_file;
 	int _end_pos;
-	bool _eofFlag;
 	int _numChannels;
 	int16 _buffer[4096];
-	const int16 * const _bufferEnd;
+	const int16 *_bufferEnd;
 	const int16 *_pos;
 	
 	void refill();
@@ -486,43 +485,45 @@ public:
 
 VorbisInputStream::VorbisInputStream(OggVorbis_File *file, int duration) 
 	: _ov_file(file), _bufferEnd(_buffer + ARRAYSIZE(_buffer)) {
-	_pos = _bufferEnd;
+
+	// Check the header, determine if this is a stereo stream
 	_numChannels = ov_info(_ov_file, -1)->channels;
 
+	// Determine the end position
 	if (duration)
 		_end_pos = ov_pcm_tell(_ov_file) + duration;
 	else
 		_end_pos = ov_pcm_total(_ov_file, -1);
-
-	_eofFlag = false;
+	
+	// Read in initial data
+	refill();
 }
 
 inline int16 VorbisInputStream::readIntern() {
+	assert(!eosIntern());
+
+	int16 sample = *_pos++;
 	if (_pos >= _bufferEnd) {
 		refill();
 	}
-	return *_pos++;
+	return sample;
 }
 
 inline bool VorbisInputStream::eosIntern() const {
-	if (_eofFlag)
-		return true;
-	if (_pos < _bufferEnd)
-		return false;
-	return (_end_pos <= ov_pcm_tell(_ov_file));
+	return _pos >= _bufferEnd;
 }
 
 int VorbisInputStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples = 0;
 	while (samples < numSamples && !eosIntern()) {
-		if (_pos >= _bufferEnd) {
-			refill();
-		}
 		const int len = MIN(numSamples, samples + (int)(_bufferEnd - _pos));
 		memcpy(buffer, _pos, len * 2);
 		buffer += len;
 		_pos += len;
 		samples += len;
+		if (_pos >= _bufferEnd) {
+			refill();
+		}
 	}
 	return samples;
 }
@@ -532,7 +533,7 @@ void VorbisInputStream::refill() {
 	uint len_left = sizeof(_buffer);
 	char *read_pos = (char *)_buffer;
 
-	while (len_left > 0) {
+	while (len_left > 0 && _end_pos > ov_pcm_tell(_ov_file)) {
 		long result = ov_read(_ov_file, read_pos, len_left,
 #ifndef VORBIS_TREMOR
 #ifdef SCUMM_BIG_ENDIAN
@@ -544,18 +545,14 @@ void VorbisInputStream::refill() {
 				      1,	// signed
 #endif
 					  NULL);
-		if (result == 0) {
-			_eofFlag = true;
-			memset(read_pos, 0, len_left);
-			break;
-		} else if (result == OV_HOLE) {
+		if (result == OV_HOLE) {
 			// Possibly recoverable, just warn about it
 			warning("Corrupted data in Vorbis file");
-		} else if (result < 0) {
-			debug(1, "Decode error %d in Vorbis file", result);
+		} else if (result <= 0) {
+			if (result < 0)
+				debug(1, "Decode error %d in Vorbis file", result);
 			// Don't delete it yet, that causes problems in
 			// the CD player emulation code.
-			_eofFlag = true;
 			memset(read_pos, 0, len_left);
 			break;
 		} else {
@@ -565,6 +562,7 @@ void VorbisInputStream::refill() {
 	}
 
 	_pos = _buffer;
+	_bufferEnd = (int16 *)read_pos;
 }
 
 MusicStream *makeVorbisStream(OggVorbis_File *file, int duration) {
@@ -594,7 +592,6 @@ static AudioInputStream *makeLinearInputStream(const byte *ptr, uint32 len, bool
 	}
 }
 
-
 template<bool stereo>
 static WrappedAudioInputStream *makeWrappedInputStream(uint32 len, bool is16Bit, bool isUnsigned) {
 	if (isUnsigned) {
@@ -609,7 +606,6 @@ static WrappedAudioInputStream *makeWrappedInputStream(uint32 len, bool is16Bit,
 			return new WrappedMemoryStream<stereo, false, false>(len);
 	}
 }
-
 
 AudioInputStream *makeLinearInputStream(byte _flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen) {
 	const bool is16Bit = (_flags & SoundMixer::FLAG_16BITS) != 0;
