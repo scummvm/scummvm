@@ -324,8 +324,6 @@ static byte charsetDataV2[] = {
 };
 
 void CharsetRendererV2::setCurID(byte id) {
-	printf("CharsetRendererV2::setCurID(%d)\n", id);
-
 	_nbChars = charsetDataV2[6];
 	_widthTable = charsetDataV2 + 8;
 	_fontPtr = charsetDataV2 + 8 + _nbChars;

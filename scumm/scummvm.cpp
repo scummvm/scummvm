@@ -1029,6 +1029,14 @@ load_game:
 			clearClickedStatus();
 		}
 
+#if 1
+		// FIXME - MM / Zak hack
+		if ((_features & GF_AFTER_V2) && (_mouseButStat & MBS_LEFT_CLICK)) {
+			_scummVars[32] = 2;
+			printf("mouse click\n");
+		}
+#endif
+
 		if (!_verbRedraw && _cursor.state > 0) {
 			verbMouseOver(checkMouseOver(mouse.x, mouse.y));
 		}

@@ -43,6 +43,14 @@ void Scumm::checkExecVerbs() {
 	int i, over;
 	VerbSlot *vs;
 
+#if 1
+		// FIXME - MM / Zak hack
+		if ((_features & GF_AFTER_V2) && (_mouseButStat & MBS_LEFT_CLICK)) {
+			printf("Running script 4\n");
+			runScript(4, 0, 0, 0);
+		}
+#endif
+
 	if (_userPut <= 0 || _mouseButStat == 0)
 		return;
 
