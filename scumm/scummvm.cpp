@@ -1265,54 +1265,6 @@ void NORETURN CDECL error(const char *s, ...)
 	g_scumm->_system->quit();
 }
 
-void CDECL warning(const char *s, ...)
-{
-	char buf[1024];
-	va_list va;
-
-	va_start(va, s);
-	vsprintf(buf, s, va);
-	va_end(va);
-
-	fprintf(stderr, "WARNING: %s!\n", buf);
-#if defined( USE_WINDBG )
-	sprintf(&buf[strlen(buf)], "\n");
-	OutputDebugString(buf);
-#endif
-}
-
-uint16 _debugLevel = 1;
-
-void CDECL debug(int level, const char *s, ...)
-{
-	char buf[1024];
-	va_list va;
-
-	if (level > _debugLevel)
-		return;
-
-	va_start(va, s);
-	vsprintf(buf, s, va);
-	va_end(va);
-	printf("%s\n", buf);
-
-#if defined( USE_WINDBG )
-	sprintf(&buf[strlen(buf)], "\n");
-	OutputDebugString(buf);
-#endif
-
-	fflush(stdout);
-}
-
-void checkHeap()
-{
-#if defined(WIN32)
-	if (_heapchk() != _HEAPOK) {
-		error("Heap is invalid!");
-	}
-#endif
-}
-
 ScummDebugger g_debugger;
 
 void Scumm::waitForTimer(int msec_delay) {
