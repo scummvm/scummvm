@@ -105,7 +105,7 @@ void MidiParser::hangingNote (byte channel, byte note, uint32 time_left, bool re
 	int i;
 
 	if (_hanging_notes_count >= ARRAYSIZE(_hanging_notes)) {
-		printf ("WARNING! MidiParser::hangingNote(): Exceeded polyphony!\n");
+		warning("MidiParser::hangingNote(): Exceeded polyphony");
 		return;
 	}
 
@@ -138,7 +138,7 @@ void MidiParser::hangingNote (byte channel, byte note, uint32 time_left, bool re
 		++_hanging_notes_count;
 	} else {
 		// We checked this up top. We should never get here!
-		printf ("WARNING! MidiParser::hangingNote(): Internal error!\n");
+		warning("MidiParser::hangingNote(): Internal error");
 	}
 }
 
@@ -180,7 +180,7 @@ void MidiParser::onTimer() {
 		// Process the next info.
 		_position._last_event_tick += info.delta;
 		if (info.event < 0x80) {
-			printf ("ERROR! Bad command or running status %02X\n", info.event);
+			warning("Bad command or running status %02X", info.event);
 			_position._play_pos = 0;
 			return;
 		}
@@ -300,7 +300,7 @@ void MidiParser::hangAllActiveNotes() {
 				temp_active[_next_event.basic.param1] &= ~ (1 << _next_event.channel());
 			}
 		} else if (_next_event.event == 0xFF && _next_event.ext.type == 0x2F) {
-			// printf ("MidiParser::hangAllActiveNotes(): Hit End of Track with active notes left!\n");
+			// warning("MidiParser::hangAllActiveNotes(): Hit End of Track with active notes left");
 			for (i = 0; i < 128; ++i) {
 				for (j = 0; j < 16; ++j) {
 					if (temp_active[i] & (1 << j)) {
