@@ -41,32 +41,31 @@ class Bundle {
 protected:
 
 private:
-	int32 compDecode(byte * src, byte * dst);
-	int32 decompressCodec(int32 codec, byte * comp_input, byte * comp_output, int32 size);
+	int32 compDecode(byte *src, byte *dst);
+	int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 size);
 	CompTable _compVoiceTable[50];
 	CompTable _compMusicTable[2500];
-	FILE * _voiceFile;
-	FILE * _musicFile;
-	BundleAudioTable * _bundleVoiceTable;
-	BundleAudioTable * _bundleMusicTable;
+	FILE *_voiceFile;
+	FILE *_musicFile;
+	BundleAudioTable *_bundleVoiceTable;
+	BundleAudioTable *_bundleMusicTable;
 	int32 _numVoiceFiles;
 	int32 _numMusicFiles;
-	Scumm * _scumm;
+	Scumm *_scumm;
 	int32 _lastSong;
 
 public:
-	Bundle(Scumm * parent);
-	~Bundle();
+	  Bundle(Scumm *parent);
+	 ~Bundle();
 
-	bool openVoiceFile(char * filename);
-	bool openMusicFile(char * filename);
-	int32 decompressVoiceSampleByName(char * name, byte * comp_final);
-	int32 decompressVoiceSampleByIndex(int32 index, byte * comp_final);
-	int32 decompressMusicSampleByName(char * name, int32 number, byte * comp_final);
-	int32 decompressMusicSampleByIndex(int32 index, int32 number, byte * comp_final);
+	bool openVoiceFile(char *filename);
+	bool openMusicFile(char *filename);
+	int32 decompressVoiceSampleByName(char *name, byte *comp_final);
+	int32 decompressVoiceSampleByIndex(int32 index, byte *comp_final);
+	int32 decompressMusicSampleByName(char *name, int32 number, byte *comp_final);
+	int32 decompressMusicSampleByIndex(int32 index, int32 number, byte *comp_final);
 	int32 getNumberOfMusicSamplesByIndex(int32 index);
-	int32 getNumberOfMusicSamplesByName(char * name);
+	int32 getNumberOfMusicSamplesByName(char *name);
 };
 
 #endif
-
