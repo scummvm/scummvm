@@ -399,7 +399,7 @@ void ListWidget::scrollToCurrent() {
 		_currentPos = _selectedItem - _entriesPerPage + 1;
 	}
 
-	if (_currentPos < 0)
+	if (_currentPos < 0 || _entriesPerPage > (int)_list.size())
 		_currentPos = 0;
 	else if (_currentPos + _entriesPerPage > (int)_list.size())
 		_currentPos = _list.size() - _entriesPerPage;
