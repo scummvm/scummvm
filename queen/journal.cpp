@@ -297,7 +297,7 @@ void Journal::handleNormalMode(int16 zoneNum, int x) {
 	} else if (zoneNum == ZN_TEXT_TOGGLE) {
 		_vm->subtitles(!_vm->subtitles());
 
-		// Ensure text is always on when voice is off
+		// Ensure voice is always on when text is off
 		if (!_vm->subtitles())
 			_vm->sound()->speechToggle(true);
 
