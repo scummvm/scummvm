@@ -50,7 +50,7 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 
-class OSystem_X11 : public OSystem {
+class OSystem_X11:public OSystem {
 public:
 	// Set colors of the palette
 	void set_palette(const byte *colors, uint start, uint num);
@@ -68,32 +68,32 @@ public:
 
 	// Either show or hide the mouse cursor
 	bool show_mouse(bool visible);
-	
+
 	// Set the position of the mouse cursor
 	void set_mouse_pos(int x, int y);
-	
+
 	// Set the bitmap that's used when drawing the cursor.
 	void set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y);
-	
+
 	// Shaking is used in SCUMM. Set current shake position.
 	void set_shake_pos(int shake_pos);
-		
+
 	// Get the number of milliseconds since the program was started.
 	uint32 get_msecs();
-	
+
 	// Delay for a specified amount of milliseconds
 	void delay_msecs(uint msecs);
-	
+
 	// Create a thread
 	void *create_thread(ThreadProc *proc, void *param);
-	
+
 	// Get the next event.
-	// Returns true if an event was retrieved.	
+	// Returns true if an event was retrieved.  
 	bool poll_event(Event *event);
-	
+
 	// Set function that generates samples 
 	bool set_sound_proc(void *param, SoundProc *proc, byte sound);
-		
+
 	// Poll cdrom status
 	// Returns true if cd audio is playing
 	bool poll_cdrom();
@@ -114,7 +114,7 @@ public:
 	uint32 property(int param, Property *value);
 
 	// Add a callback timer
-	void set_timer(int timer, int (*callback)(int));
+	void set_timer(int timer, int (*callback) (int));
 
 	// Mutex handling
 	void *create_mutex(void);
@@ -125,7 +125,7 @@ public:
 	static OSystem *create(int gfx_mode, bool full_screen);
 
 private:
-	OSystem_X11();
+	  OSystem_X11();
 
 	typedef struct {
 		int x, y, w, h;
@@ -186,7 +186,7 @@ private:
 
 	unsigned int _timer_duration, _timer_next_expiry;
 	bool _timer_active;
-	int (*_timer_callback)(int);
+	int (*_timer_callback) (int);
 };
 
 typedef struct {
@@ -350,15 +350,14 @@ OSystem_X11::OSystem_X11()
 	wm_hints->initial_state = NormalState;
 	XStringListToTextProperty(&name, 1, &window_name);
 	XSetWMProperties(display, window, &window_name, &window_name,
-	                 NULL /* argv */ , 0 /* argc */ , NULL /* size hints */ ,
-	                 wm_hints, NULL /* class hints */ );
+									 NULL /* argv */ , 0 /* argc */ , NULL /* size hints */ ,
+									 wm_hints, NULL /* class hints */ );
 	XFree(wm_hints);
 
 	XSelectInput(display, window,
-	             ExposureMask | KeyPressMask | KeyReleaseMask |
-	             PointerMotionMask | ButtonPressMask | ButtonReleaseMask |
-	             StructureNotifyMask);
-	
+							 ExposureMask | KeyPressMask | KeyReleaseMask |
+							 PointerMotionMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask);
+
 	values.foreground = BlackPixel(display, screen);
 	black_gc = XCreateGC(display, window, GCForeground, &values);
 
@@ -383,14 +382,16 @@ out_of_loop:
 	gettimeofday(&start_time, NULL);
 }
 
-uint32 OSystem_X11::get_msecs() {
+uint32 OSystem_X11::get_msecs()
+{
 	struct timeval current_time;
 	gettimeofday(&current_time, NULL);
-	return (uint32) (((current_time.tv_sec - start_time.tv_sec) * 1000) +
-	                 ((current_time.tv_usec - start_time.tv_usec) / 1000));
+	return (uint32)(((current_time.tv_sec - start_time.tv_sec) * 1000) +
+									((current_time.tv_usec - start_time.tv_usec) / 1000));
 }
 
-void OSystem_X11::init_size(uint w, uint h) {
+void OSystem_X11::init_size(uint w, uint h)
+{
 	static XShmSegmentInfo shminfo;
 
 	fb_width = w;
@@ -405,12 +406,13 @@ void OSystem_X11::init_size(uint w, uint h) {
 
 		XConfigureWindow(display, window, CWWidth | CWHeight, &new_values);
 	}
-
 #ifdef USE_XV_SCALING
 	image = XvShmCreateImage(display, 65, 0x03, 0, fb_width, fb_height, &shminfo);
 	shminfo.shmid = shmget(IPC_PRIVATE, image->data_size, IPC_CREAT | 0700);
 #else
-	image =	XShmCreateImage(display, DefaultVisual(display, screen), 16, ZPixmap, NULL, &shminfo, fb_width, fb_height);
+	image =
+		XShmCreateImage(display, DefaultVisual(display, screen), 16, ZPixmap, NULL, &shminfo, fb_width,
+										fb_height);
 	shminfo.shmid = shmget(IPC_PRIVATE, fb_width * fb_height * 2, IPC_CREAT | 0700);
 #endif
 	shminfo.shmaddr = (char *)shmat(shminfo.shmid, 0, 0);
@@ -431,7 +433,8 @@ void OSystem_X11::init_size(uint w, uint h) {
 #endif
 }
 
-bool OSystem_X11::set_sound_proc(void *param, SoundProc *proc, byte format) {
+bool OSystem_X11::set_sound_proc(void *param, SoundProc *proc, byte format)
+{
 	static THREAD_PARAM thread_param;
 
 	/* And finally start the music thread */
@@ -440,21 +443,22 @@ bool OSystem_X11::set_sound_proc(void *param, SoundProc *proc, byte format) {
 	thread_param.format = format;
 
 	if (format == SOUND_16BIT)
-		pthread_create(&sound_thread, NULL, sound_and_music_thread, (void *) &thread_param);
+		pthread_create(&sound_thread, NULL, sound_and_music_thread, (void *)&thread_param);
 	else
 		warning("Only support 16 bit sound for now. Disabling sound ");
 
 	return true;
 }
 
-void OSystem_X11::set_palette(const byte *colors, uint start, uint num) {
+void OSystem_X11::set_palette(const byte *colors, uint start, uint num)
+{
 	const byte *data = colors;
 #ifdef USE_XV_SCALING
 	unsigned int *pal = &(palette[start]);
 #else
 	unsigned short *pal = &(palette[start]);
 #endif
-	
+
 	do {
 #ifdef USE_XV_SCALING
 		*pal++ = (data[0] << 16) | (data[1] << 8) | data[2];
@@ -477,7 +481,8 @@ void OSystem_X11::set_palette(const byte *colors, uint start, uint num) {
     num_of_dirty_square++;					\
   }
 
-void OSystem_X11::copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {
+void OSystem_X11::copy_rect(const byte *buf, int pitch, int x, int y, int w, int h)
+{
 	unsigned char *dst;
 
 	if (y < 0) {
@@ -505,7 +510,8 @@ void OSystem_X11::copy_rect(const byte *buf, int pitch, int x, int y, int w, int
 	}
 }
 
-void OSystem_X11::update_screen_helper(const dirty_square * d, dirty_square * dout) {
+void OSystem_X11::update_screen_helper(const dirty_square * d, dirty_square * dout)
+{
 	int x, y;
 	unsigned char *ptr_src = local_fb + (fb_width * d->y) + d->x;
 #ifdef USE_XV_SCALING
@@ -513,7 +519,7 @@ void OSystem_X11::update_screen_helper(const dirty_square * d, dirty_square * do
 #else
 	unsigned short *ptr_dst = ((unsigned short *)image->data) + (fb_width * d->y) + d->x;
 #endif
-	
+
 	for (y = 0; y < d->h; y++) {
 		for (x = 0; x < d->w; x++) {
 			*ptr_dst++ = palette[*ptr_src++];
@@ -531,12 +537,13 @@ void OSystem_X11::update_screen_helper(const dirty_square * d, dirty_square * do
 		dout->h = d->y + d->h;
 }
 
-void OSystem_X11::update_screen() {
+void OSystem_X11::update_screen()
+{
 	bool full_redraw = false;
 	bool need_redraw = false;
 	static const dirty_square ds_full = { 0, 0, fb_width, fb_height };
 	dirty_square dout = { fb_width, fb_height, 0, 0 };
-	
+
 	/* First make sure the mouse is drawn, if it should be drawn. */
 	draw_mouse();
 
@@ -565,31 +572,31 @@ void OSystem_X11::update_screen() {
 		if (current_shake_pos < new_shake_pos)
 			XFillRectangle(display, window, black_gc, 0, current_shake_pos, window_width, new_shake_pos);
 		else
-			XFillRectangle(display, window, black_gc, 0, window_height - current_shake_pos, 
-			               window_width, window_height - new_shake_pos);
+			XFillRectangle(display, window, black_gc, 0, window_height - current_shake_pos,
+										 window_width, window_height - new_shake_pos);
 #ifndef USE_XV_SCALING
 		XShmPutImage(display, window, DefaultGC(display, screen), image,
-		             0, 0, scumm_x, scumm_y + new_shake_pos,
-		             fb_width, fb_height, 0);
+								 0, 0, scumm_x, scumm_y + new_shake_pos, fb_width, fb_height, 0);
 #endif
 		current_shake_pos = new_shake_pos;
 	} else if (need_redraw == true) {
 #ifdef USE_XV_SCALING
 		XvShmPutImage(display, 65, window, DefaultGC(display, screen), image,
-			      0, 0, fb_width, fb_height, 0, 0, window_width, window_height, 0);
+									0, 0, fb_width, fb_height, 0, 0, window_width, window_height, 0);
 #else
 		XShmPutImage(display, window, DefaultGC(display, screen), image,
-		             dout.x, dout.y, scumm_x + dout.x, scumm_y + dout.y + current_shake_pos,
-		             dout.w - dout.x, dout.h - dout.y, 0);
+								 dout.x, dout.y, scumm_x + dout.x, scumm_y + dout.y + current_shake_pos,
+								 dout.w - dout.x, dout.h - dout.y, 0);
 #endif
 		XFlush(display);
 	}
 }
 
-bool OSystem_X11::show_mouse(bool visible) {
+bool OSystem_X11::show_mouse(bool visible)
+{
 	if (_mouse_visible == visible)
 		return visible;
-	
+
 	bool last = _mouse_visible;
 	_mouse_visible = visible;
 
@@ -601,11 +608,13 @@ bool OSystem_X11::show_mouse(bool visible) {
 	return last;
 }
 
-void OSystem_X11::quit() {
+void OSystem_X11::quit()
+{
 	exit(1);
 }
 
-void OSystem_X11::draw_mouse() {
+void OSystem_X11::draw_mouse()
+{
 	if (_mouse_drawn || !_mouse_visible)
 		return;
 	_mouse_drawn = true;
@@ -678,7 +687,8 @@ void OSystem_X11::draw_mouse() {
 	}
 }
 
-void OSystem_X11::undraw_mouse() {
+void OSystem_X11::undraw_mouse()
+{
 	if (!_mouse_drawn)
 		return;
 	_mouse_drawn = false;
@@ -698,66 +708,76 @@ void OSystem_X11::undraw_mouse() {
 	}
 }
 
-void OSystem_X11::set_mouse_pos(int x, int y) {
+void OSystem_X11::set_mouse_pos(int x, int y)
+{
 	if ((x != cur_state.x) || (y != cur_state.y)) {
 		cur_state.x = x;
 		cur_state.y = y;
 		undraw_mouse();
 	}
 }
-	
-void OSystem_X11::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {
+
+void OSystem_X11::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y)
+{
 	cur_state.w = w;
 	cur_state.h = h;
 	cur_state.hot_x = hotspot_x;
 	cur_state.hot_y = hotspot_y;
-	_ms_buf = (byte*)buf;
+	_ms_buf = (byte *)buf;
 
 	undraw_mouse();
 }
-	
-void OSystem_X11::set_shake_pos(int shake_pos) {
+
+void OSystem_X11::set_shake_pos(int shake_pos)
+{
 	new_shake_pos = shake_pos;
 }
 
-void *OSystem_X11::create_thread(ThreadProc *proc, void *param) {
+void *OSystem_X11::create_thread(ThreadProc *proc, void *param)
+{
 	pthread_t *thread = (pthread_t *) malloc(sizeof(pthread_t));
-	if (pthread_create(thread, NULL, (void * (*)(void *)) proc, param))
+	if (pthread_create(thread, NULL, (void *(*)(void *))proc, param))
 		return NULL;
 	else
 		return thread;
 }
 
-uint32 OSystem_X11::property(int param, Property *value) {
-	switch (param) 
-	{
-		case PROP_GET_SAMPLE_RATE:
-			return 22050;
-		case PROP_GET_FULLSCREEN:
-			return 0;
+uint32 OSystem_X11::property(int param, Property *value)
+{
+	switch (param) {
+	case PROP_GET_SAMPLE_RATE:
+		return 22050;
+	case PROP_GET_FULLSCREEN:
+		return 0;
 	}
 	warning("Property not implemented yet (%d) ", param);
 	return 0;
 }
 
-bool OSystem_X11::poll_cdrom() {
+bool OSystem_X11::poll_cdrom()
+{
 	return false;
 }
 
-void OSystem_X11::play_cdrom(int track, int num_loops, int start_frame, int end_frame) {
+void OSystem_X11::play_cdrom(int track, int num_loops, int start_frame, int end_frame)
+{
 }
 
-void OSystem_X11::stop_cdrom() {
+void OSystem_X11::stop_cdrom()
+{
 }
 
-void OSystem_X11::update_cdrom() {
+void OSystem_X11::update_cdrom()
+{
 }
 
-void OSystem_X11::delay_msecs(uint msecs) {
+void OSystem_X11::delay_msecs(uint msecs)
+{
 	usleep(msecs * 1000);
 }
 
-bool OSystem_X11::poll_event(Event *scumm_event) {
+bool OSystem_X11::poll_event(Event *scumm_event)
+{
 	/* First, handle timers */
 	uint32 current_msecs = get_msecs();
 
@@ -772,76 +792,79 @@ bool OSystem_X11::poll_event(Event *scumm_event) {
 		XNextEvent(display, &event);
 		switch (event.type) {
 		case Expose:{
-			int real_w, real_h;
-			int real_x, real_y;
-			real_x = event.xexpose.x;
-			real_y = event.xexpose.y;
-			real_w = event.xexpose.width;
-			real_h = event.xexpose.height;
-			if (real_x < scumm_x) {
-				real_w -= scumm_x - real_x;
-				real_x = 0;
-			} else {
-				real_x -= scumm_x;
-			}
-			if (real_y < scumm_y) {
-				real_h -= scumm_y - real_y;
-				real_y = 0;
-			} else {
-				real_y -= scumm_y;
-			}
-			if ((real_h <= 0) || (real_w <= 0))
-				break;
-			if ((real_x >= fb_width) || (real_y >= fb_height))
-				break;
+				int real_w, real_h;
+				int real_x, real_y;
+				real_x = event.xexpose.x;
+				real_y = event.xexpose.y;
+				real_w = event.xexpose.width;
+				real_h = event.xexpose.height;
+				if (real_x < scumm_x) {
+					real_w -= scumm_x - real_x;
+					real_x = 0;
+				} else {
+					real_x -= scumm_x;
+				}
+				if (real_y < scumm_y) {
+					real_h -= scumm_y - real_y;
+					real_y = 0;
+				} else {
+					real_y -= scumm_y;
+				}
+				if ((real_h <= 0) || (real_w <= 0))
+					break;
+				if ((real_x >= fb_width) || (real_y >= fb_height))
+					break;
 
-			if ((real_x + real_w) >= fb_width) {
-				real_w = fb_width - real_x;
-			}
-			if ((real_y + real_h) >= fb_height) {
-				real_h = fb_height - real_y;
-			}
+				if ((real_x + real_w) >= fb_width) {
+					real_w = fb_width - real_x;
+				}
+				if ((real_y + real_h) >= fb_height) {
+					real_h = fb_height - real_y;
+				}
 
-			/* Compute the intersection of the expose event with the real ScummVM display zone */
-			AddDirtyRec(real_x, real_y, real_w, real_h);
-		}
-		break;
+				/* Compute the intersection of the expose event with the real ScummVM display zone */
+				AddDirtyRec(real_x, real_y, real_w, real_h);
+			}
+			break;
 
 		case KeyPress:
 			switch (event.xkey.keycode) {
-				case 132:
-					report_presses = 0;
-					break;
+			case 132:
+				report_presses = 0;
+				break;
 
-				case 133:
-					fake_right_mouse = 1;
-					break;
-				}
+			case 133:
+				fake_right_mouse = 1;
+				break;
+			}
 			break;
 
-		case KeyRelease: {
-			/* I am using keycodes here and NOT keysyms to be sure that even if the user
-			   remaps his iPAQ's keyboard, it will still work.
-			 */
-			int keycode = -1;
-			int ascii = -1;
-			byte mode = 0;
+		case KeyRelease:{
+				/* I am using keycodes here and NOT keysyms to be sure that even if the user
+				   remaps his iPAQ's keyboard, it will still work.
+				 */
+				int keycode = -1;
+				int ascii = -1;
+				byte mode = 0;
 
-			if (event.xkey.state & 0x01) mode |= KBD_SHIFT;
-			if (event.xkey.state & 0x04) mode |= KBD_CTRL;
-			if (event.xkey.state & 0x08) mode |= KBD_ALT;
-			switch (event.xkey.keycode) {
+				if (event.xkey.state & 0x01)
+					mode |= KBD_SHIFT;
+				if (event.xkey.state & 0x04)
+					mode |= KBD_CTRL;
+				if (event.xkey.state & 0x08)
+					mode |= KBD_ALT;
+				switch (event.xkey.keycode) {
 				case 9:								/* Escape on my PC */
 				case 130:							/* Calendar on the iPAQ */
 					keycode = 27;
 					break;
 
-				case 71:							/* F5 on my PC */
+				case 71:								/* F5 on my PC */
 				case 128:							/* Record on the iPAQ */
 					keycode = 319;
 					break;
 
-				case 65:							/* Space on my PC */
+				case 65:								/* Space on my PC */
 				case 131:							/* Schedule on the iPAQ */
 					keycode = 32;
 					break;
@@ -855,23 +878,23 @@ bool OSystem_X11::poll_event(Event *scumm_event) {
 					break;
 
 				default:{
-					KeySym xsym;
-					xsym = XKeycodeToKeysym(display, event.xkey.keycode, 0);
-					keycode = xsym;
-					if ((xsym >= 'a') && (xsym <= 'z') && (event.xkey.state & 0x01))
-						xsym &= ~0x20;		/* Handle shifted keys */
-					ascii = xsym;
+						KeySym xsym;
+						xsym = XKeycodeToKeysym(display, event.xkey.keycode, 0);
+						keycode = xsym;
+						if ((xsym >= 'a') && (xsym <= 'z') && (event.xkey.state & 0x01))
+							xsym &= ~0x20;		/* Handle shifted keys */
+						ascii = xsym;
+					}
+				}
+				if (keycode != -1) {
+					scumm_event->event_code = EVENT_KEYDOWN;
+					scumm_event->kbd.keycode = keycode;
+					scumm_event->kbd.ascii = (ascii != -1 ? ascii : keycode);
+					scumm_event->kbd.flags = mode;
+					return true;
 				}
 			}
-			if (keycode != -1)
-			{
-				scumm_event->event_code = EVENT_KEYDOWN;
-				scumm_event->kbd.keycode = keycode;
-				scumm_event->kbd.ascii = (ascii != -1 ? ascii : keycode);
-				scumm_event->kbd.flags = mode;
-				return true;
-			}
-		} break;
+			break;
 
 		case ButtonPress:
 			if (report_presses != 0) {
@@ -887,7 +910,7 @@ bool OSystem_X11::poll_event(Event *scumm_event) {
 				scumm_event->mouse.y = event.xbutton.y - scumm_y;
 				return true;
 			}
-		break;
+			break;
 
 		case ButtonRelease:
 			if (report_presses != 0) {
@@ -901,9 +924,9 @@ bool OSystem_X11::poll_event(Event *scumm_event) {
 					scumm_event->event_code = EVENT_RBUTTONUP;
 				scumm_event->mouse.x = event.xbutton.x - scumm_x;
 				scumm_event->mouse.y = event.xbutton.y - scumm_y;
-				return true;					
+				return true;
 			}
-		break;
+			break;
 
 		case MotionNotify:
 			scumm_event->event_code = EVENT_MOUSEMOVE;
@@ -912,16 +935,15 @@ bool OSystem_X11::poll_event(Event *scumm_event) {
 			return true;
 
 		case ConfigureNotify:{
-			if ((window_width != event.xconfigure.width) ||
-			    (window_height != event.xconfigure.height)) {
-				window_width = event.xconfigure.width;
-				window_height = event.xconfigure.height;
-				scumm_x = (window_width - fb_width) / 2;
-				scumm_y = (window_height - fb_height) / 2;
-				XFillRectangle(display, window, black_gc, 0, 0, window_width, window_height);
+				if ((window_width != event.xconfigure.width) || (window_height != event.xconfigure.height)) {
+					window_width = event.xconfigure.width;
+					window_height = event.xconfigure.height;
+					scumm_x = (window_width - fb_width) / 2;
+					scumm_y = (window_height - fb_height) / 2;
+					XFillRectangle(display, window, black_gc, 0, 0, window_width, window_height);
+				}
 			}
-		}
-		break;
+			break;
 
 		default:
 			printf("Unhandled event : %d\n", event.type);
@@ -932,7 +954,8 @@ bool OSystem_X11::poll_event(Event *scumm_event) {
 	return false;
 }
 
-void OSystem_X11::set_timer(int timer, int (*callback)(int)) {
+void OSystem_X11::set_timer(int timer, int (*callback) (int))
+{
 	if (callback != NULL) {
 		_timer_duration = timer;
 		_timer_next_expiry = get_msecs() + timer;
@@ -943,21 +966,25 @@ void OSystem_X11::set_timer(int timer, int (*callback)(int)) {
 	}
 }
 
-void *OSystem_X11::create_mutex(void) {
+void *OSystem_X11::create_mutex(void)
+{
 	pthread_mutex_t *mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
 	pthread_mutex_init(mutex, NULL);
-	return (void *) mutex;
+	return (void *)mutex;
 }
 
-void OSystem_X11::lock_mutex(void *mutex) {
+void OSystem_X11::lock_mutex(void *mutex)
+{
 	pthread_mutex_lock((pthread_mutex_t *) mutex);
 }
 
-void OSystem_X11::unlock_mutex(void *mutex) {
+void OSystem_X11::unlock_mutex(void *mutex)
+{
 	pthread_mutex_unlock((pthread_mutex_t *) mutex);
 }
 
-void OSystem_X11::delete_mutex(void *mutex) {
+void OSystem_X11::delete_mutex(void *mutex)
+{
 	pthread_mutex_destroy((pthread_mutex_t *) mutex);
 	free(mutex);
 }

@@ -32,8 +32,7 @@
 
 void invalidblock(uint32 tag)
 {
-	error("Encountered invalid block %c%c%c%c", tag >> 24, tag >> 16, tag >> 8,
-				tag);
+	error("Encountered invalid block %c%c%c%c", tag >> 24, tag >> 16, tag >> 8, tag);
 }
 
 int _frameChanged;
@@ -74,13 +73,11 @@ void SmushPlayer::openFile(byte *fileName)
 {
 	byte buf[100];
 
-	sprintf((char *)buf, "%sVIDEO/%s", (char *)sm->_gameDataPath,
-					(char *)fileName);
+	sprintf((char *)buf, "%sVIDEO/%s", (char *)sm->_gameDataPath, (char *)fileName);
 	_in = fopen((char *)buf, "rb");
 
 	if (_in == NULL) {
-		sprintf((char *)buf, "%svideo/%s", (char *)sm->_gameDataPath,
-						(char *)fileName);
+		sprintf((char *)buf, "%svideo/%s", (char *)sm->_gameDataPath, (char *)fileName);
 		_in = fopen((char *)buf, "rb");
 
 	}
@@ -132,17 +129,18 @@ void SmushPlayer::parseAHDR()
 }
 
 
-void SmushPlayer::parseIACT() {
+void SmushPlayer::parseIACT()
+{
 	unsigned int pos, bpos, tag, sublen, subpos, trk, idx, flags;
 	bool new_mixer = false;
-	byte * buf;
+	byte *buf;
 
 	flags = SoundMixer::FLAG_AUTOFREE;
 
 	pos = 0;
 	pos += 6;
 
-	trk = READ_LE_UINT32(_cur + pos); /* FIXME: is this correct ? */
+	trk = READ_LE_UINT32(_cur + pos);	/* FIXME: is this correct ? */
 	pos += 4;
 
 	for (idx = 0; idx < MAX_STREAMER; idx++) {
@@ -151,9 +149,8 @@ void SmushPlayer::parseIACT() {
 	}
 
 	if (idx == MAX_STREAMER) {
-		for (idx = 0; idx < MAX_STREAMER; idx++) {			
-			if (_imusTrk[idx] == 0 &&
-			    g_scumm->_mixer->_channels[idx] == NULL) {
+		for (idx = 0; idx < MAX_STREAMER; idx++) {
+			if (_imusTrk[idx] == 0 && g_scumm->_mixer->_channels[idx] == NULL) {
 				_imusTrk[idx] = trk;
 				_imusSize[idx] = 0;
 				new_mixer = true;
@@ -167,7 +164,7 @@ void SmushPlayer::parseIACT() {
 		return;
 	}
 
-	pos += 8; /* FIXME: what are these ? */	
+	pos += 8;											/* FIXME: what are these ? */
 
 	while (pos < _frmeSize) {
 
@@ -185,15 +182,13 @@ void SmushPlayer::parseIACT() {
 			_imusSubSize[idx] = READ_BE_UINT32(_cur + pos);
 			pos += 4;
 			_imusSize[idx] -= 8;
-			debug(3, "trk %d: tag '%4s' size %x",
-			      trk, _cur + pos - 8, _imusSubSize[idx]);
+			debug(3, "trk %d: tag '%4s' size %x", trk, _cur + pos - 8, _imusSubSize[idx]);
 		}
 
-		sublen = _imusSubSize[idx] < (_frmeSize - pos) ?
-			_imusSubSize[idx] : (_frmeSize - pos);
-				
+		sublen = _imusSubSize[idx] < (_frmeSize - pos) ? _imusSubSize[idx] : (_frmeSize - pos);
+
 		switch (_imusSubTag[idx]) {
-		case 'MAP ' :
+		case 'MAP ':
 			tag = READ_BE_UINT32(_cur + pos);
 			if (tag != 'FRMT')
 				error("trk %d: no FRMT section");
@@ -202,27 +197,27 @@ void SmushPlayer::parseIACT() {
 			_imusChan[idx] = READ_BE_UINT32(_cur + pos + 24);
 			_imusPos[idx] = 0;
 			break;
-		case 'DATA' :
+		case 'DATA':
 			switch (_imusCodec[idx]) {
-			case 8 :
+			case 8:
 				if (_imusChan[idx] == 2)
 					flags |= SoundMixer::FLAG_STEREO;
 				flags |= SoundMixer::FLAG_UNSIGNED;
-				buf = (byte *) malloc(sublen);
+				buf = (byte *)malloc(sublen);
 				memcpy(buf, _cur + pos, sublen);
 				bpos = sublen;
 				break;
-			case 12 :
+			case 12:
 				if (_imusChan[idx] == 2)
 					flags |= SoundMixer::FLAG_STEREO;
 				flags |= SoundMixer::FLAG_16BITS;
-				buf = (byte *) malloc(2 * sublen);
+				buf = (byte *)malloc(2 * sublen);
 
 				bpos = 0;
 				subpos = 0;
 
 				while (subpos < sublen) {
-					
+
 					while (_imusPos[idx] < 3 && subpos < sublen) {
 						_imusData[idx][_imusPos[idx]] = _cur[pos + subpos];
 						_imusPos[idx]++;
@@ -249,13 +244,12 @@ void SmushPlayer::parseIACT() {
 					}
 				}
 				break;
-			default :
-				error("trk %d: unknown iMUS codec %d",
-				      trk, _imusCodec[idx]);
+			default:
+				error("trk %d: unknown iMUS codec %d", trk, _imusCodec[idx]);
 			}
 
 			debug(3, "trk %d: iMUSE play part, len 0x%x rate %d remain 0x%x",
-			      trk, bpos, _imusRate[idx], _imusSubSize[idx]);
+						trk, bpos, _imusRate[idx], _imusSubSize[idx]);
 
 			if (new_mixer) {
 				g_scumm->_mixer->play_stream(NULL, idx, buf, bpos, _imusRate[idx], flags);
@@ -267,16 +261,15 @@ void SmushPlayer::parseIACT() {
 			   with signed/unsigned issues */
 
 			break;
-		default :
+		default:
 			error("trk %d: unknown tag inside iMUS %08x [%c%c%c%c]",
-			      trk, _imusSubTag[idx], _imusSubTag[idx] >> 24, 
-				  _imusSubTag[idx] >> 16, _imusSubTag[idx] >> 8,
-				  _imusSubTag[idx]);
+						trk, _imusSubTag[idx], _imusSubTag[idx] >> 24,
+						_imusSubTag[idx] >> 16, _imusSubTag[idx] >> 8, _imusSubTag[idx]);
 		}
 
 		_imusSubSize[idx] -= sublen;
-		_imusSize[idx] -= sublen;				
-		pos += sublen;	
+		_imusSize[idx] -= sublen;
+		pos += sublen;
 
 		if (_imusSubSize[idx] == 0 && _imusSubTag[idx] == 'DATA') {
 			_imusTrk[idx] = 0;
@@ -373,14 +366,13 @@ void codec37_bompdepack(byte *dst, byte *src, int len)
 	} while (len -= num);
 }
 
-void codec37_proc4(byte *dst, byte *src, int next_offs, int bw, int bh,
-									 int pitch, int16 * table)
+void codec37_proc4(byte *dst, byte *src, int next_offs, int bw, int bh, int pitch, int16 *table)
 {
 	byte code, *tmp;
 	int i;
 	uint32 t;
 
- 	if (pitch != 320) {
+	if (pitch != 320) {
 		warning("invalid pitch");
 		return;
 	}
@@ -390,30 +382,30 @@ void codec37_proc4(byte *dst, byte *src, int next_offs, int bw, int bh,
 		do {
 			code = *src++;
 			if (code == 0xFD) {
- 				t = src[0];
- 				t += (t << 8) + (t << 16) + (t << 24);
- 				*(uint32 *)(dst + 0) = t;
- 				*(uint32 *)(dst + 320) = t;
- 				*(uint32 *)(dst + 320 * 2) = t;
- 				*(uint32 *)(dst + 320 * 3) = t;
-				 src += 1;
-				 dst += 4;
+				t = src[0];
+				t += (t << 8) + (t << 16) + (t << 24);
+				*(uint32 *)(dst + 0) = t;
+				*(uint32 *)(dst + 320) = t;
+				*(uint32 *)(dst + 320 * 2) = t;
+				*(uint32 *)(dst + 320 * 3) = t;
+				src += 1;
+				dst += 4;
 			} else if (code == 0xFE) {
- 				t = src[0];
- 				t += (t << 8) + (t << 16) + (t << 24);
- 				*(uint32 *)(dst + 0) = t;
- 				t = src[1];
- 				t += (t << 8) + (t << 16) + (t << 24);
- 				*(uint32 *)(dst + 320) = t;
- 				t = src[2];
- 				t += (t << 8) + (t << 16) + (t << 24);
- 				*(uint32 *)(dst + 320 * 2) = t;
- 				t = src[3];
- 				t += (t << 8) + (t << 16) + (t << 24);
- 				*(uint32 *)(dst + 320 * 3) = t;	
+				t = src[0];
+				t += (t << 8) + (t << 16) + (t << 24);
+				*(uint32 *)(dst + 0) = t;
+				t = src[1];
+				t += (t << 8) + (t << 16) + (t << 24);
+				*(uint32 *)(dst + 320) = t;
+				t = src[2];
+				t += (t << 8) + (t << 16) + (t << 24);
+				*(uint32 *)(dst + 320 * 2) = t;
+				t = src[3];
+				t += (t << 8) + (t << 16) + (t << 24);
+				*(uint32 *)(dst + 320 * 3) = t;
 				src += 4;
 				dst += 4;
-			} else if (code == 0xFF) {			
+			} else if (code == 0xFF) {
 				*(uint32 *)(dst + 0) = ((uint32 *)src)[0];
 				*(uint32 *)(dst + 320) = ((uint32 *)src)[1];
 				*(uint32 *)(dst + 320 * 2) = ((uint32 *)src)[2];
@@ -421,20 +413,20 @@ void codec37_proc4(byte *dst, byte *src, int next_offs, int bw, int bh,
 				src += 16;
 				dst += 4;
 			} else if (code == 0x00) {
-			        uint16 count = src[0] + 1;
-			        src += 1;
-			        for (uint16 l = 0; l < count; l++) {
-				        tmp = dst + next_offs;
+				uint16 count = src[0] + 1;
+				src += 1;
+				for (uint16 l = 0; l < count; l++) {
+					tmp = dst + next_offs;
 					*(uint32 *)(dst + 0) = *(uint32 *)(tmp);
-				        *(uint32 *)(dst + 320) = *(uint32 *)(tmp + 320);
+					*(uint32 *)(dst + 320) = *(uint32 *)(tmp + 320);
 					*(uint32 *)(dst + 320 * 2) = *(uint32 *)(tmp + 320 * 2);
 					*(uint32 *)(dst + 320 * 3) = *(uint32 *)(tmp + 320 * 3);
 					dst += 4;
 					i--;
 					if (i == 0) {
-					        i = bw;
-					        dst += 320 * 4 - 320;
-					        bh--;
+						i = bw;
+						dst += 320 * 4 - 320;
+						bh--;
 					}
 				}
 				i++;
@@ -446,17 +438,20 @@ void codec37_proc4(byte *dst, byte *src, int next_offs, int bw, int bh,
 				*(uint32 *)(dst + 320 * 3) = *(uint32 *)(tmp + 320 * 3);
 				dst += 4;
 			}
-			if (i <= 0) break;
-			if (bh <= 0) break;
+			if (i <= 0)
+				break;
+			if (bh <= 0)
+				break;
 		} while (--i);
 		dst += 320 * 4 - 320;
-		if (bh <= 0) break;
+		if (bh <= 0)
+			break;
 	} while (--bh);
 }
 
 
 void codec37_proc5(int game, byte *dst, byte *src, int next_offs, int bw, int bh,
-									 int pitch, int16 * table)
+									 int pitch, int16 *table)
 {
 	byte code, *tmp;
 	int i;
@@ -474,30 +469,30 @@ void codec37_proc5(int game, byte *dst, byte *src, int next_offs, int bw, int bh
 
 			// FIXME: Full Throttle has different FD and FEs?
 			if ((game == GID_DIG) && (code == 0xFD)) {
- 				t = src[0];
- 				t += (t << 8) + (t << 16) + (t << 24);
- 				*(uint32 *)(dst + 0) = t;
- 				*(uint32 *)(dst + 320) = t;
- 				*(uint32 *)(dst + 320 * 2) = t;
- 				*(uint32 *)(dst + 320 * 3) = t;
+				t = src[0];
+				t += (t << 8) + (t << 16) + (t << 24);
+				*(uint32 *)(dst + 0) = t;
+				*(uint32 *)(dst + 320) = t;
+				*(uint32 *)(dst + 320 * 2) = t;
+				*(uint32 *)(dst + 320 * 3) = t;
 				src += 1;
 				dst += 4;
 			} else if ((game == GID_DIG) && (code == 0xFE)) {
- 				t = src[0];
- 				t += (t << 8) + (t << 16) + (t << 24);
- 				*(uint32 *)(dst + 0) = t;
- 				t = src[1];
- 				t += (t << 8) + (t << 16) + (t << 24);
- 				*(uint32 *)(dst + 320) = t;
- 				t = src[2];
- 				t += (t << 8) + (t << 16) + (t << 24);
- 				*(uint32 *)(dst + 320 * 2) = t;
- 				t = src[3];
- 				t += (t << 8) + (t << 16) + (t << 24);
- 				*(uint32 *)(dst + 320 * 3) = t;	
+				t = src[0];
+				t += (t << 8) + (t << 16) + (t << 24);
+				*(uint32 *)(dst + 0) = t;
+				t = src[1];
+				t += (t << 8) + (t << 16) + (t << 24);
+				*(uint32 *)(dst + 320) = t;
+				t = src[2];
+				t += (t << 8) + (t << 16) + (t << 24);
+				*(uint32 *)(dst + 320 * 2) = t;
+				t = src[3];
+				t += (t << 8) + (t << 16) + (t << 24);
+				*(uint32 *)(dst + 320 * 3) = t;
 				src += 4;
 				dst += 4;
-			} else if (code == 0xFF) {			
+			} else if (code == 0xFF) {
 				*(uint32 *)(dst + 0) = ((uint32 *)src)[0];
 				*(uint32 *)(dst + 320) = ((uint32 *)src)[1];
 				*(uint32 *)(dst + 320 * 2) = ((uint32 *)src)[2];
@@ -632,8 +627,7 @@ void codec37_maketable(PersistentCodecData37 * pcd, int pitch, byte idx)
 
 	for (i = 0; i < 255; i++) {
 		j = i + idx * 255;
-		pcd->table1[i] =
-			maketable_bytes[j * 2 + 1] * pitch + maketable_bytes[j * 2];
+		pcd->table1[i] = maketable_bytes[j * 2 + 1] * pitch + maketable_bytes[j * 2];
 	}
 }
 
@@ -660,8 +654,7 @@ int codec37(int game, CodecData * cd, PersistentCodecData37 * pcd)
 			curbuf = pcd->deltaBufs[pcd->curtable];
 			memset(pcd->deltaBuf, 0, curbuf - pcd->deltaBuf);
 			size = *(uint32 *)(cd->src + 4);
-			memset(curbuf + size, 0,
-						 pcd->deltaBuf + pcd->deltaSize - curbuf - size);
+			memset(curbuf + size, 0, pcd->deltaBuf + pcd->deltaSize - curbuf - size);
 			memcpy(curbuf, cd->src + 16, size);
 			break;
 		}
@@ -675,8 +668,7 @@ int codec37(int game, CodecData * cd, PersistentCodecData37 * pcd)
 				return (1);
 
 			memset(pcd->deltaBuf, 0, curbuf - pcd->deltaBuf);
-			memset(curbuf + size, 0,
-						 pcd->deltaBuf + pcd->deltaSize - curbuf - size);
+			memset(curbuf + size, 0, pcd->deltaBuf + pcd->deltaSize - curbuf - size);
 			break;
 		}
 
@@ -697,12 +689,12 @@ int codec37(int game, CodecData * cd, PersistentCodecData37 * pcd)
 			}
 
 			codec37_proc5(game, pcd->deltaBufs[pcd->curtable], cd->src + 16,
-								pcd->deltaBufs[pcd->curtable ^ 1] -
-								pcd->deltaBufs[pcd->curtable], width_in_blocks,
-								height_in_blocks, src_pitch, pcd->table1);
+										pcd->deltaBufs[pcd->curtable ^ 1] -
+										pcd->deltaBufs[pcd->curtable], width_in_blocks,
+										height_in_blocks, src_pitch, pcd->table1);
 			break;
 
-		  }
+		}
 	case 4:{
 			uint16 number = *(uint16 *)(cd->src + 2);
 
@@ -754,7 +746,7 @@ void codec37_init(PersistentCodecData37 * pcd, int width, int height)
 	pcd->deltaBufs[0] = pcd->deltaBuf + 0x3E00;
 	pcd->deltaBufs[1] = pcd->deltaBuf + width * height + 0xBA00;
 	pcd->curtable = 0;
-	pcd->table1 = (int16 *) calloc(255, sizeof(uint16));
+	pcd->table1 = (int16 *)calloc(255, sizeof(uint16));
 }
 
 void SmushPlayer::parseFOBJ()
@@ -786,14 +778,14 @@ void SmushPlayer::parseFOBJ()
 	}
 }
 
-void SmushPlayer::parsePSAD()	// FIXME: Needs to append to
-{								//		  a sound buffer
+void SmushPlayer::parsePSAD()		// FIXME: Needs to append to
+{																//      a sound buffer
 	unsigned int pos, sublen, tag, idx, trk;
 	bool new_mixer = false;
-	byte * buf;	
+	byte *buf;
 	pos = 0;
-	
-	trk = READ_LE_UINT16(_cur + pos); /* FIXME: is this correct ? */
+
+	trk = READ_LE_UINT16(_cur + pos);	/* FIXME: is this correct ? */
 	pos += 2;
 
 	for (idx = 0; idx < MAX_STREAMER; idx++) {
@@ -803,8 +795,7 @@ void SmushPlayer::parsePSAD()	// FIXME: Needs to append to
 
 	if (idx == MAX_STREAMER) {
 		for (idx = 0; idx < MAX_STREAMER; idx++) {
-			if (_psadTrk[idx] == 0 &&
-			    g_scumm->_mixer->_channels[idx] == NULL) {
+			if (_psadTrk[idx] == 0 && g_scumm->_mixer->_channels[idx] == NULL) {
 				_psadTrk[idx] = trk;
 				_saudSize[idx] = 0;
 				new_mixer = true;
@@ -818,8 +809,8 @@ void SmushPlayer::parsePSAD()	// FIXME: Needs to append to
 		return;
 	}
 
-	pos += 8; /* FIXME: what are these ? */
-	
+	pos += 8;											/* FIXME: what are these ? */
+
 	while (pos < _frmeSize) {
 
 		if (_saudSize[idx] == 0) {
@@ -830,52 +821,50 @@ void SmushPlayer::parsePSAD()	// FIXME: Needs to append to
 			_saudSize[idx] = READ_BE_UINT32(_cur + pos);
 			pos += 4;
 		}
-	
+
 		if (_saudSubSize[idx] == 0) {
 			_saudSubTag[idx] = READ_BE_UINT32(_cur + pos);
 			pos += 4;
 			_saudSubSize[idx] = READ_BE_UINT32(_cur + pos);
 			pos += 4;
 			_saudSize[idx] -= 8;
-			debug(3, "trk %d: tag '%4s' size %x",
-			      trk, _cur + pos - 8, _saudSubSize[idx]);
+			debug(3, "trk %d: tag '%4s' size %x", trk, _cur + pos - 8, _saudSubSize[idx]);
 		}
 
-		sublen = _saudSubSize[idx] < (_frmeSize - pos) ?
-			_saudSubSize[idx] : (_frmeSize - pos);
-				
+		sublen = _saudSubSize[idx] < (_frmeSize - pos) ? _saudSubSize[idx] : (_frmeSize - pos);
+
 		switch (_saudSubTag[idx]) {
-		case 'STRK' :
+		case 'STRK':
 			/* FIXME: what is this stuff ? */
 			_strkRate[idx] = 22050;
 			break;
-		case 'SDAT' :
-			buf = (byte *) malloc(sublen);
+		case 'SDAT':
+			buf = (byte *)malloc(sublen);
 
 			memcpy(buf, _cur + pos, sublen);
 
-			debug(3, "trk %d: SDAT part len 0x%x rate %d",
-			      trk, sublen, _strkRate[idx]);
-			
+			debug(3, "trk %d: SDAT part len 0x%x rate %d", trk, sublen, _strkRate[idx]);
+
 			if (new_mixer) {
-				g_scumm->_mixer->play_stream(NULL, idx, buf, sublen, _strkRate[idx], SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+				g_scumm->_mixer->play_stream(NULL, idx, buf, sublen, _strkRate[idx],
+																		 SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 			} else {
-				g_scumm->_mixer->append(idx, buf, sublen, 
-				                        _strkRate[idx], SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+				g_scumm->_mixer->append(idx, buf, sublen,
+																_strkRate[idx], SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 			}
 			break;
-		case 'SMRK' :
+		case 'SMRK':
 			_psadTrk[idx] = 0;
 			break;
-		case 'SHDR' :
+		case 'SHDR':
 			/* FIXME: what is this stuff ? */
 			break;
-		default :
+		default:
 			error("trk %d: unknown tag inside PSAD", trk);
 		}
 		_saudSubSize[idx] -= sublen;
-		_saudSize[idx] -= sublen;				
-		pos += sublen;	
+		_saudSize[idx] -= sublen;
+		pos += sublen;
 	}
 }
 
@@ -982,13 +971,13 @@ void SmushPlayer::setPalette()
 
 	byte *p = palette_colors;
 
-	
+
 
 	byte *data = _fluPalette;
 
 
 
-	for (i = 0; i != 256; i++, data += 3, p+=4) {
+	for (i = 0; i != 256; i++, data += 3, p += 4) {
 
 		p[0] = data[0];
 
@@ -1074,7 +1063,7 @@ void SmushPlayer::startVideo(short int arg, byte *videoFile)
 			sm->_system->copy_rect(sm->_videoBuffer, 320, 0, 0, 320, 200);
 			sm->_system->update_screen();
 			sm->waitForTimer(60);
-			
+
 			//sm->delta = sm->_system->waitTick(sm->delta);
 		}
 

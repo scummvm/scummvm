@@ -66,16 +66,16 @@ enum {
 	GWF_CLEARBG = 2,
 	GWF_PARENT = 4,
 	GWF_DELAY = 8,
-	GWF_DEFAULT = GWF_BORDER|GWF_CLEARBG,
-	GWF_BUTTON = GWF_BORDER|GWF_CLEARBG|GWF_DELAY
+	GWF_DEFAULT = GWF_BORDER | GWF_CLEARBG,
+	GWF_BUTTON = GWF_BORDER | GWF_CLEARBG | GWF_DELAY
 };
 
 struct GuiWidget {
 	byte _type;
 	byte _page;
 	byte _flags;
-	int16 _x,_y;
-	uint16 _w,_h;
+	int16 _x, _y;
+	uint16 _w, _h;
 	uint16 _id;
 	byte _string_number;
 	uint8 _hotkey;
@@ -138,43 +138,48 @@ const GuiWidget launcher_dialog[] = {
 };
 
 const GuiWidget keys_dialog[] = {
-	{GUI_STAT, 0xFF, GWF_DEFAULT, 30, 10, 260, 130, 0, 0 },
+	{GUI_STAT, 0xFF, GWF_DEFAULT, 30, 10, 260, 130, 0, 0},
 
 	// First action
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10, 15, 15, 10, 3}, // CUSTOMTEXT_PLUS
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10, 15, 15, 11, 4}, // CUSTOMTEXT_MINUS
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10, 15, 15, 10, 3},	// CUSTOMTEXT_PLUS
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10, 15, 15, 11, 4},	// CUSTOMTEXT_MINUS
 	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 11 + 33 + 10, 10 + 10, 100, 15, 100, 1},
 	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 3, 100, 15, 1, 1},
 
 	//Second action
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10 + 15 + 5, 15, 15, 20, 3}, // CUSTOMTEXT_PLUS
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10 + 15 + 5, 15, 15, 21, 4}, // CUSTOMTEXT_MINUS
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10 + 15 + 5, 15, 15, 20, 3},	// CUSTOMTEXT_PLUS
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10 + 15 + 5, 15, 15, 21, 4},	// CUSTOMTEXT_MINUS
 	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 10 + 33 + 10, 10 + 10 + 15 + 5, 100, 15, 101, 2},
-	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 15 + 5 + 3, 100, 15, 2,  2},
-	
+	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 15 + 5 + 3, 100, 15, 2, 2},
+
 	//Third action
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10 + 15 + 5 + 15 + 5, 15, 15, 30, 3},// CUSTOMTEXT_PLUS
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10 + 15 + 5 + 15 + 5, 15, 15, 31, 4}, // CUSTOMTEXT_MINUS
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10 + 15 + 5 + 15 + 5, 15, 15, 30, 3},	// CUSTOMTEXT_PLUS
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10 + 15 + 5 + 15 + 5, 15, 15, 31, 4},	// CUSTOMTEXT_MINUS
 	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 10 + 33 + 10, 10 + 10 + 15 + 5 + 15 + 5, 100, 15, 102, 3},
 	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 15 + 5 + 15 + 5 + 3, 100, 15, 3, 3},
 
 	//Fourth action
 	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5, 15, 15, 40, 3},
 	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5, 15, 15, 41, 4},
-	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 10 + 33 + 10, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5, 100, 15, 103, 4},
+	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 10 + 33 + 10, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5, 100, 15,
+	 103, 4},
 	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 3, 100, 15, 4, 4},
 
 	//Fifth action
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5, 15, 15, 50, 3},
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5, 15, 15, 51, 4},
-	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 10 + 33 + 10, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5, 100, 15, 104, 5},
-	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5 + 3, 100, 15, 5, 5},
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5, 15, 15,
+	 50, 3},
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5, 15, 15,
+	 51, 4},
+	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 10 + 33 + 10, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5,
+	 100, 15, 104, 5},
+	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5 + 3, 100,
+	 15, 5, 5},
 
 	//OK
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 30 + 60, 10 + 106, 54, 16, 60, 9 },
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 30 + 60, 10 + 106, 54, 16, 60, 9},
 	//Previous-Next
-	{GUI_NEXTTEXT, 0x01, GWF_BUTTON, 30 + 120, 10 + 106, 54, 16, 61, 0 }, 
-	{0,0,0,0,0,0,0,0,0}
+	{GUI_NEXTTEXT, 0x01, GWF_BUTTON, 30 + 120, 10 + 106, 54, 16, 61, 0},
+	{0, 0, 0, 0, 0, 0, 0, 0, 0}
 };
 
 const GuiWidget about_dialog[] = {
@@ -182,8 +187,8 @@ const GuiWidget about_dialog[] = {
 	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 68, 20 + 10 + 15 + 5, 160, 15, 0, 9},	// Build
 	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 10, 20 + 10 + 15 + 5 + 15, 240, 15, 0, 10},	// ScummVM Url
 	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 75, 20 + 10 + 15 + 5 + 15 + 15 + 15, 150, 15, 0, 11},	// Lucasarts
-	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 110, 20 + 10 + 15 + 5 + 15 + 15 + 15 + 15, 40, 15, 0, 21}, // Except:
-	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 25, 20 + 100, 210, 15, 0, 22}, // Adventuresoft
+	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 110, 20 + 10 + 15 + 5 + 15 + 15 + 15 + 15, 40, 15, 0, 21},	// Except:
+	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 25, 20 + 100, 210, 15, 0, 22},	// Adventuresoft
 	{GUI_SCROLLTEXT, 0x01, 0, 30 + 95, 20 + 10, 100, 15, 0},
 	{GUI_RESTEXT, 0x01, GWF_BUTTON, 30 + 100, 20 + 112, 54, 16, 40, 9},
 	{0, 0, 0, 0, 0, 0, 0, 0, 0}
@@ -194,18 +199,18 @@ const GuiWidget options_dialog[] = {
 	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10, 80 + 10, 40, 15, 1, 5, 'S'},	// Sound
 	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10 + 40 + 30, 80 + 10, 40, 15, 2, 6, 'K'},	// Keys
 	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10 + 40 + 30 + 40 + 30, 80 + 10, 40, 15, 3, 7, 'A'},	// About
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10, 80 + 10 + 15 + 10, 40, 15, 4, 18, 'M'}, // Misc
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10, 80 + 10 + 15 + 10, 40, 15, 4, 18, 'M'},	// Misc
 	{0, 0, 0, 0, 0, 0, 0, 0, 0}
 };
 
 const GuiWidget misc_dialog[] = {
 	{GUI_STAT, 0xFF, GWF_DEFAULT, 50, 80, 210, 65, 0, 0},
-	{GUI_CHECKBOX, 0x01, GWF_DEFAULT, 50 + 10, 80 + 6, 14, 14, 1, 0, 'S'}, // checkbox for subtitles
-	{GUI_CUSTOMTEXT, 0x01, 0, 50 + 10 + 20, 80 + 10, 140, 15, 0, 19}, // "Show speech subtitles"
-	{GUI_CHECKBOX, 0x01, GWF_DEFAULT, 50 + 10, 80 + 6 + 16, 14, 14, 5, 0, 'A'}, // checkbox for amiga pallete
-	{GUI_CUSTOMTEXT, 0x01, 0, 50 + 10 + 20, 80 + 10 + 15, 140, 15, 0, 20}, // "Amiga pallete conversion"
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 50 + 10 + 20, 80 + 10 + 15 + 20, 54, 16, 3, 9, 13}, // ok
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 50 + 10 + 20 + 80, 80 + 10 + 15 + 20, 54, 16, 4, 7}, // cancel
+	{GUI_CHECKBOX, 0x01, GWF_DEFAULT, 50 + 10, 80 + 6, 14, 14, 1, 0, 'S'},	// checkbox for subtitles
+	{GUI_CUSTOMTEXT, 0x01, 0, 50 + 10 + 20, 80 + 10, 140, 15, 0, 19},	// "Show speech subtitles"
+	{GUI_CHECKBOX, 0x01, GWF_DEFAULT, 50 + 10, 80 + 6 + 16, 14, 14, 5, 0, 'A'},	// checkbox for amiga pallete
+	{GUI_CUSTOMTEXT, 0x01, 0, 50 + 10 + 20, 80 + 10 + 15, 140, 15, 0, 20},	// "Amiga pallete conversion"
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 50 + 10 + 20, 80 + 10 + 15 + 20, 54, 16, 3, 9, 13},	// ok
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 50 + 10 + 20 + 80, 80 + 10 + 15 + 20, 54, 16, 4, 7},	// cancel
 	{0, 0, 0, 0, 0, 0, 0, 0, 0}
 };
 
@@ -232,10 +237,10 @@ const GuiWidget save_load_dialog[] = {
 	{GUI_RESTEXT, 0x04, 0, 10, 7, 240, 16, 0, 3},	/* Name your SAVE game */
 
 	{GUI_STAT, 0xFF, GWF_DEFAULT, 6, 20, 170, 96, 0, 0},
-	{GUI_UPDOWNARROW, 0x01, GWF_BUTTON, 180, 24, 16, 40, 0, 0}, /* Up (dummy) */
-	{GUI_UPDOWNARROW, 0x01, GWF_BUTTON, 180, 72, 16, 40, 0, 1}, /* Down (dummy) */
-	{GUI_UPDOWNARROW, 0xFE, GWF_BUTTON, 180, 24, 16, 40, 1, 0}, /* Up */
-	{GUI_UPDOWNARROW, 0xFE, GWF_BUTTON, 180, 72, 16, 40, 2, 1}, /* Down */
+	{GUI_UPDOWNARROW, 0x01, GWF_BUTTON, 180, 24, 16, 40, 0, 0},	/* Up (dummy) */
+	{GUI_UPDOWNARROW, 0x01, GWF_BUTTON, 180, 72, 16, 40, 0, 1},	/* Down (dummy) */
+	{GUI_UPDOWNARROW, 0xFE, GWF_BUTTON, 180, 24, 16, 40, 1, 0},	/* Up */
+	{GUI_UPDOWNARROW, 0xFE, GWF_BUTTON, 180, 72, 16, 40, 2, 1},	/* Down */
 
 	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 24, 160, 10, 20, 0},
 	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 34, 160, 10, 21, 0},
@@ -326,8 +331,8 @@ void Gui::drawChar(const char str, int xx, int yy)
 
 	byte *ptr = getBasePtr(xx, yy);
 	if (ptr == NULL)
-	  return;
-	
+		return;
+
 	for (y = 0; y < 8; y++) {
 		for (x = 0; x < 8; x++) {
 			unsigned char color;
@@ -344,8 +349,7 @@ void Gui::drawChar(const char str, int xx, int yy)
 	_color = tempc;
 
 }
-void Gui::drawString(const char *str, int x, int y, int w, byte color,
-										 bool center)
+void Gui::drawString(const char *str, int x, int y, int w, byte color, bool center)
 {
 	StringTab *st = &_s->string[5];
 	st->charset = 1;
@@ -364,7 +368,7 @@ void Gui::drawString(const char *str, int x, int y, int w, byte color,
 	}
 }
 
-void Gui::drawWidget(const GuiWidget * w)
+void Gui::drawWidget(const GuiWidget *w)
 {
 	const char *s;
 	int x, y;
@@ -410,12 +414,10 @@ void Gui::drawWidget(const GuiWidget * w)
 				break;
 #ifdef _WIN32_WCE
 			case GUI_KEYTEXT:
-				strcpy(text,
-							 getGAPIKeyName(getAction((_current_page * 5) + w->_string_number - 1)->action_key));
+				strcpy(text, getGAPIKeyName(getAction((_current_page * 5) + w->_string_number - 1)->action_key));
 				break;
 			case GUI_ACTIONTEXT:
-				strcpy(text,
-							 getActionName(getAction((_current_page * 5) + w->_string_number - 1)->action_type));
+				strcpy(text, getActionName(getAction((_current_page * 5) + w->_string_number - 1)->action_type));
 				break;
 			case GUI_NEXTTEXT:
 				if (_current_page == 0)
@@ -429,9 +431,7 @@ void Gui::drawWidget(const GuiWidget * w)
 
 			if (*text) {
 				drawString(text, x + _parentX, y + _parentY, w->_w,
-									 (_clickWidget
-										&& _clickWidget == w->_id) ? _textcolorhi : _textcolor,
-									 false);
+									 (_clickWidget && _clickWidget == w->_id) ? _textcolorhi : _textcolor, false);
 			}
 			break;
 		}
@@ -454,8 +454,8 @@ void Gui::drawWidget(const GuiWidget * w)
 			}
 
 			// Center the image
-			x += w->_w/2 - IMG_SIZE/2;
-			y += w->_h/2 - IMG_SIZE/2;
+			x += w->_w / 2 - IMG_SIZE / 2;
+			y += w->_h / 2 - IMG_SIZE / 2;
 			if (w->_flags & GWF_BORDER) {
 				x -= 4;
 				y -= 4;
@@ -464,7 +464,7 @@ void Gui::drawWidget(const GuiWidget * w)
 			byte *ptr = getBasePtr(x, y);
 			if (ptr == NULL)
 				return;
-	
+
 			// If the checkbox is checked, or this is not a checkbox, draw the image
 			if ((getCheckboxChecked(w->_id) == true) || (w->_type != GUI_CHECKBOX)) {
 				for (int y2 = 0; y2 < IMG_SIZE; y2++) {
@@ -482,7 +482,7 @@ void Gui::drawWidget(const GuiWidget * w)
 	}
 }
 
-void Gui::widgetClear(const GuiWidget * wid)
+void Gui::widgetClear(const GuiWidget *wid)
 {
 	int x = wid->_x;
 	int y = wid->_y;
@@ -494,8 +494,7 @@ void Gui::widgetClear(const GuiWidget * wid)
 	if (ptr == NULL)
 		return;
 
-	_s->setVirtscreenDirty(_vs, x + _parentX, y + _parentY, x + _parentX + w,
-												 y + _parentY + h);
+	_s->setVirtscreenDirty(_vs, x + _parentX, y + _parentY, x + _parentX + w, y + _parentY + h);
 
 	if (wid->_flags & GWF_BORDER) {
 		// Inset by 1 pixel in all directions
@@ -511,12 +510,13 @@ void Gui::widgetClear(const GuiWidget * wid)
 	}
 }
 
-void Gui::widgetBorder(const GuiWidget * w)
+void Gui::widgetBorder(const GuiWidget *w)
 {
 	box(w->_x, w->_y, w->_w, w->_h);
 }
 
-void Gui::box(int x, int y, int width, int height) {
+void Gui::box(int x, int y, int width, int height)
+{
 	hline(x + 1, y, x + width - 2, _color);
 	hline(x, y + 1, x + width - 1, _color);
 	vline(x, y + 1, y + height - 2, _color);
@@ -538,18 +538,18 @@ byte *Gui::getBasePtr(int x, int y)
 		return NULL;
 
 	return _vs->screenPtr + x + (y - _vs->topline) * 320 +
-		_s->_screenStartStrip * 8 + (_s->camera._cur.y - 100)*320;
+		_s->_screenStartStrip * 8 + (_s->camera._cur.y - 100) * 320;
 }
 
 void Gui::line(int x, int y, int x2, int y2, byte color)
 {
 	byte *ptr;
-	
+
 	if (x2 < x)
-		x2 ^= x ^= x2 ^= x;	// Swap x2 and x
+		x2 ^= x ^= x2 ^= x;					// Swap x2 and x
 
 	if (y2 < y)
-		y2 ^= y ^= y2 ^= y;	// Swap y2 and y
+		y2 ^= y ^= y2 ^= y;					// Swap y2 and y
 
 	ptr = getBasePtr(x, y);
 
@@ -601,7 +601,7 @@ void Gui::handleSoundDialogCommand(int cmd)
 			_s->_sound_volume_master = _gui_variables[0];	// Master
 			_s->_sound_volume_music = _gui_variables[1];	// Music
 			_s->_sound_volume_sfx = _gui_variables[2];	// SFX
-			
+
 			IMuse *imuse = _s->_imuse;
 			imuse->set_music_volume(_s->_sound_volume_music);
 			imuse->set_master_volume(_s->_sound_volume_master);
@@ -700,9 +700,9 @@ void Gui::handleMiscDialogCommand(int cmd)
 
 			// Amiga pallete conversion checkbox
 			if (getCheckboxChecked(5))
-					_s->_features = _s->_features | GF_AMIGA;
+				_s->_features = _s->_features | GF_AMIGA;
 			else
-					_s->_features = _s->_features & ~GF_AMIGA;
+				_s->_features = _s->_features & ~GF_AMIGA;
 			_s->_fullRedraw = true;
 		}
 		close();
@@ -741,7 +741,6 @@ void Gui::handleKeysDialogCommand(int cmd)
 		draw(0, 200);
 		return;
 	}
-
 #else
 	close();
 #endif
@@ -804,7 +803,7 @@ void Gui::handleCommand(int cmd)
 			close();
 		return;
 	}
-	
+
 	// If we get here, it's the SAVELOAD_DIALOG
 
 	switch (cmd) {
@@ -820,9 +819,9 @@ void Gui::handleCommand(int cmd)
 		getSavegameNames(_slotIndex + 9);
 		draw(20, 28);
 		return;
-	case 3:											/* save button */		
+	case 3:											/* save button */
 		_cur_page = 2;
-		getSavegameNames(1); /* Start at 1, since slot 0 is reserved for autosave */
+		getSavegameNames(1);				/* Start at 1, since slot 0 is reserved for autosave */
 		draw(0, 100);
 		return;
 	case 4:											/* load button */
@@ -847,8 +846,7 @@ void Gui::handleCommand(int cmd)
 		_s->_saveLoadSlot = lastEdit + _slotIndex;
 		_s->_saveLoadCompatible = false;
 		_s->_saveLoadFlag = 1;
-		memcpy(_s->_saveLoadName, game_names[lastEdit],
-					 sizeof(_s->_saveLoadName));
+		memcpy(_s->_saveLoadName, game_names[lastEdit], sizeof(_s->_saveLoadName));
 		close();
 		return;
 	case 9:											/* options button */
@@ -889,7 +887,7 @@ const char *Gui::queryString(int stringno, int id)
 	static char namebuf[64];
 	char *result;
 	int string;
-	
+
 	if (id >= 20 && id <= 28) {
 		// Save game names
 		sprintf(namebuf, "%2d. %s", id - 20 + _slotIndex, game_names[id - 20]);
@@ -1008,7 +1006,7 @@ void Gui::setCheckbox(bool state, int id)
 
 void Gui::clearCheckboxes()
 {
-	for (int id = 0; id <= 100; id++){
+	for (int id = 0; id <= 100; id++) {
 		_cbox_checked[id] = false;
 	}
 }
@@ -1018,7 +1016,7 @@ void Gui::init(Scumm *s)
 	/* Default GUI colors */
 	_bgcolor = 0;
 	_color = 0;
-	_textcolor = 8;							// 15 is nice
+	_textcolor = 8;								// 15 is nice
 	_textcolorhi = 15;
 	_shadowcolor = 0;
 	_s = s;
@@ -1030,7 +1028,7 @@ void Gui::loop()
 {
 	if (_active && !_inited) {
 		_inited = true;
-		draw(0, 200);								// was 100		
+		draw(0, 200);								// was 100    
 		_old_soundsPaused = _s->_soundsPaused;
 		_s->pauseSounds(true);
 
@@ -1102,7 +1100,6 @@ void Gui::close()
 		draw_keyboard = false;
 		toolbar_drawn = false;
 	}
-
 #endif
 }
 
@@ -1113,7 +1110,7 @@ void Gui::checkHotKey(int keycode)
 		const GuiWidget *w = _widgets[i];
 		if (w) {
 			while (w->_type != GUI_NONE) {
-	
+
 				// This rubbish is needed because the current page is 0 when really it should be 1
 				if (_cur_page == 0)
 					page = 1;

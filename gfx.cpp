@@ -29,14 +29,14 @@ void Scumm::getGraphicsPerformance()
 	int i;
 
 	for (i = 10; i != 0; i--) {
-		initScreens(0, 0, _realWidth, _realHeight); //ender
+		initScreens(0, 0, _realWidth, _realHeight);	//ender
 	}
 
 	if (!(_features & GF_SMALL_HEADER))	/* FIXME TEST: Enders Zak fix */
 		_vars[VAR_PERFORMANCE_1] = 0;	//_scummTimer;
 
 	for (i = 10; i != 0; i--) {
-		setDirtyRange(0, 0, _realHeight); //ender
+		setDirtyRange(0, 0, _realHeight);	//ender
 		drawDirtyScreenParts();
 	}
 
@@ -54,7 +54,7 @@ void Scumm::initScreens(int a, int b, int w, int h)
 	int i;
 
 	for (i = 0; i < 3; i++) {
-	    nukeResource(rtBuffer, i+1);
+		nukeResource(rtBuffer, i + 1);
 		nukeResource(rtBuffer, i + 5);
 	}
 
@@ -63,7 +63,7 @@ void Scumm::initScreens(int a, int b, int w, int h)
 	}
 	initVirtScreen(0, 0, b, _realWidth, h - b, true, true);
 	initVirtScreen(1, 0, 0, _realWidth, b, false, false);
-	initVirtScreen(2, 0, h, _realWidth, _realHeight - h, false, false); //ender
+	initVirtScreen(2, 0, h, _realWidth, _realHeight - h, false, false);	//ender
 
 	_screenB = b;
 	_screenH = h;
@@ -96,8 +96,8 @@ void Scumm::initVirtScreen(int slot, int number, int top, int width, int height,
 	if (vs->scrollable)
 		size += 320 * 4;
 
-	createResource(rtBuffer, slot+1, size);
-	vs->screenPtr = getResourceAddress(rtBuffer, slot+1);
+	createResource(rtBuffer, slot + 1, size);
+	vs->screenPtr = getResourceAddress(rtBuffer, slot + 1);
 
 	ptr = vs->screenPtr;
 	for (i = 0; i < size; i++)		// reset background ?
@@ -133,21 +133,20 @@ void Scumm::drawDirtyScreenParts()
 {
 	int i;
 	VirtScreen *vs;
-	byte * src;
+	byte *src;
 
 	updateDirtyScreen(2);
 	if (_features & GF_OLD256)
 		updateDirtyScreen(1);
 
-	if ((camera._last.x == camera._cur.x &&
-			 camera._last.y == camera._cur.y && (_features & GF_AFTER_V7))
+	if ((camera._last.x == camera._cur.x && camera._last.y == camera._cur.y && (_features & GF_AFTER_V7))
 			|| (camera._last.x == camera._cur.x)) {
 		updateDirtyScreen(0);
 	} else {
 		vs = &virtscr[0];
 
 		src = vs->screenPtr + _screenStartStrip * 8 + camera._cur.y - 100;
-		_system->copy_rect(src , 320, 0, vs->topline, 320, vs->height);
+		_system->copy_rect(src, 320, 0, vs->topline, 320, vs->height);
 
 		for (i = 0; i < 40; i++) {
 			vs->tdirty[i] = (byte)vs->height;
@@ -156,7 +155,7 @@ void Scumm::drawDirtyScreenParts()
 	}
 
 	/* Handle shaking */
-	if (_shakeEnabled &&  !_gui->isActive()) {
+	if (_shakeEnabled && !_gui->isActive()) {
 		_shakeFrame = (_shakeFrame + 1) & (NUM_SHAKE_POSITIONS - 1);
 		_system->set_shake_pos(shake_positions[_shakeFrame]);
 	}
@@ -167,7 +166,7 @@ void Scumm::updateDirtyScreen(int slot)
 	gdi.updateDirtyScreen(&virtscr[slot]);
 }
 
-void Gdi::updateDirtyScreen(VirtScreen * vs)
+void Gdi::updateDirtyScreen(VirtScreen *vs)
 {
 	int i;
 	int start, w, top, bottom;
@@ -187,17 +186,15 @@ void Gdi::updateDirtyScreen(VirtScreen * vs)
 
 		if (_vm->_features & GF_AFTER_V7 && (_vm->camera._cur.y != _vm->camera._last.y))
 			drawStripToScreen(vs, start, w, 0, vs->height);
-		else
-		if (bottom) {
+		else if (bottom) {
 			top = vs->tdirty[i];
 			vs->tdirty[i] = (byte)vs->height;
 			vs->bdirty[i] = 0;
-			if (i != 39 && vs->bdirty[i + 1] == (byte)bottom
-					&& vs->tdirty[i + 1] == (byte)top) {
+			if (i != 39 && vs->bdirty[i + 1] == (byte)bottom && vs->tdirty[i + 1] == (byte)top) {
 				w += 8;
 				continue;
 			}
-			if(_vm->_features & GF_AFTER_V7)
+			if (_vm->_features & GF_AFTER_V7)
 				drawStripToScreen(vs, start, w, 0, vs->height);
 			else
 				drawStripToScreen(vs, start, w, top, bottom);
@@ -207,7 +204,7 @@ void Gdi::updateDirtyScreen(VirtScreen * vs)
 	}
 }
 
-void Gdi::drawStripToScreen(VirtScreen * vs, int x, int w, int t, int b)
+void Gdi::drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b)
 {
 	byte *ptr;
 	int scrollY;
@@ -223,15 +220,15 @@ void Gdi::drawStripToScreen(VirtScreen * vs, int x, int w, int t, int b)
 		b = vs->height;
 
 	height = b - t;
-	if(height > 200)
+	if (height > 200)
 		height = 200;
 
 	scrollY = _vm->camera._cur.y - 100;
-	if(scrollY == -100)
+	if (scrollY == -100)
 		scrollY = 0;
 
 	ptr = vs->screenPtr + (t * 40 + x) * 8 + _readOffs + scrollY * 320;
-	_vm->_system->copy_rect(ptr, 320, x * 8, vs->topline + t , w, height);
+	_vm->_system->copy_rect(ptr, 320, x * 8, vs->topline + t, w, height);
 }
 
 void blit(byte *dst, byte *src, int w, int h)
@@ -302,7 +299,7 @@ void Scumm::setCameraAt(int pos_x, int pos_y)
 	}
 }
 
-void Scumm::setCameraFollows(Actor * a)
+void Scumm::setCameraFollows(Actor *a)
 {
 	if (_features & GF_AFTER_V7) {
 		CameraData *cd = &camera;
@@ -318,8 +315,7 @@ void Scumm::setCameraFollows(Actor * a)
 		ax = abs(a->x - cd->_cur.x);
 		ay = abs(a->y - cd->_cur.y);
 
-		if (ax > _vars[VAR_CAMERA_THRESHOLD_X] ||
-				ay > _vars[VAR_CAMERA_THRESHOLD_Y] || ax > 160 || ay > 100) {
+		if (ax > _vars[VAR_CAMERA_THRESHOLD_X] || ay > _vars[VAR_CAMERA_THRESHOLD_Y] || ax > 160 || ay > 100) {
 			setCameraAt(a->x, a->y);
 		}
 
@@ -341,8 +337,7 @@ void Scumm::setCameraFollows(Actor * a)
 
 		t = (a->x >> 3);
 
-		if (t - _screenStartStrip < cd->_leftTrigger ||
-				t - _screenStartStrip > cd->_rightTrigger)
+		if (t - _screenStartStrip < cd->_leftTrigger || t - _screenStartStrip > cd->_rightTrigger)
 			setCameraAt(a->x, 0);
 
 		for (i = 1, a = getFirstActor(); ++a, i < NUM_ACTORS; i++) {
@@ -373,7 +368,7 @@ void Scumm::initBGBuffers(int height)
 	assert(gdi._numZBuffer >= 1 && gdi._numZBuffer <= 5);
 
 	if (_features & GF_AFTER_V7)
-		itemsize = (virtscr[0].height +4) * 40;
+		itemsize = (virtscr[0].height + 4) * 40;
 	else
 		itemsize = (_scrHeight + 4) * 40;
 
@@ -662,7 +657,7 @@ const uint32 zplane_tags[] = {
 	MKID('ZP04')
 };
 
-void Gdi::drawBitmap(byte *ptr, VirtScreen * vs, int x, int y, int h,
+void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h,
 										 int stripnr, int numstrip, byte flag)
 {
 	byte *smap_ptr, *where_draw_ptr;
@@ -687,11 +682,9 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen * vs, int x, int y, int h,
 
 	if (_vm->_features & GF_SMALL_HEADER) {
 		/* this is really ugly, FIXME */
-		if (ptr[-2] == 'B' && ptr[-1] == 'M' &&
-		    READ_LE_UINT32(ptr - 6) > (READ_LE_UINT32(ptr) + 10)) {
+		if (ptr[-2] == 'B' && ptr[-1] == 'M' && READ_LE_UINT32(ptr - 6) > (READ_LE_UINT32(ptr) + 10)) {
 			zplane_list[1] = smap_ptr + READ_LE_UINT32(ptr);
-		} else if (ptr[-4] == 'O' && ptr[-3] == 'I' &&
-			   READ_LE_UINT32(ptr - 8) > READ_LE_UINT32(ptr) + 12) {
+		} else if (ptr[-4] == 'O' && ptr[-3] == 'I' && READ_LE_UINT32(ptr - 8) > READ_LE_UINT32(ptr) + 12) {
 			zplane_list[1] = smap_ptr + READ_LE_UINT32(ptr);
 		} else {
 			zplane_list[1] = 0;
@@ -706,8 +699,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen * vs, int x, int y, int h,
 
 	bottom = y + h;
 	if (bottom > vs->height) {
-		warning("Gdi::drawBitmap, strip drawn to %d below window bottom %d", bottom,
-					vs->height);
+		warning("Gdi::drawBitmap, strip drawn to %d below window bottom %d", bottom, vs->height);
 	}
 
 	twobufs = vs->alloctwobuffers;
@@ -737,8 +729,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen * vs, int x, int y, int h,
 			vs->bdirty[sx] = bottom;
 
 		_backbuff_ptr = vs->screenPtr + (y * 40 + x) * 8;
-		_bgbak_ptr =
-			_vm->getResourceAddress(rtBuffer, vs->number + 5) + (y * 40 + x) * 8;
+		_bgbak_ptr = _vm->getResourceAddress(rtBuffer, vs->number + 5) + (y * 40 + x) * 8;
 		if (!twobufs) {
 			_bgbak_ptr = _backbuff_ptr;
 		}
@@ -772,13 +763,13 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen * vs, int x, int y, int h,
 			else
 				decompressMaskImg();
 		}
-		
+
 		for (i = 1; i < numzbuf; i++) {
 			uint16 offs;
 
 			if (!zplane_list[i])
-				continue;			
-			
+				continue;
+
 			if (_vm->_features & GF_SMALL_HEADER)
 				if (_vm->_features & GF_OLD256)
 					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 4);
@@ -797,8 +788,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen * vs, int x, int y, int h,
 				else
 					decompressMaskImg();
 			} else {
-				if (_useOrDecompress && flag & dbAllowMaskOr)
-					; /* nothing */
+				if (_useOrDecompress && flag & dbAllowMaskOr);	/* nothing */
 				else
 					for (int h = 0; h < _numLinesToProcess; h++)
 						_mask_ptr_dest[h * 40] = 0;
@@ -827,7 +817,7 @@ void Gdi::decompressBitmap()
 		_palette_mod = 16;
 	else
 		_palette_mod = 0;
-	
+
 	switch (code) {
 	case 1:
 		unkDecode7();
@@ -1095,8 +1085,7 @@ void Scumm::redrawBGStrip(int start, int num)
 {
 	int s = _screenStartStrip + start;
 
-	assert(s >= 0
-				 && (size_t) s < sizeof(gfxUsageBits) / sizeof(gfxUsageBits[0]));
+	assert(s >= 0 && (size_t) s < sizeof(gfxUsageBits) / sizeof(gfxUsageBits[0]));
 
 	_curVirtScreen = &virtscr[0];
 
@@ -1129,7 +1118,7 @@ void Gdi::unkDecode1()
 	do {
 		_currentX = 8;
 		do {
-			FILL_BITS * dst++ = color + _palette_mod;;
+			FILL_BITS *dst++ = color + _palette_mod;;
 
 		againPos:;
 
@@ -1181,7 +1170,7 @@ void Gdi::unkDecode2()
 		_currentX = 8;
 		do {
 			FILL_BITS if (color != _transparency)
-				*dst = color + _palette_mod;
+				 *dst = color + _palette_mod;
 			dst++;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
@@ -1216,7 +1205,7 @@ void Gdi::unkDecode3()
 		_currentX = 8;
 		do {
 			FILL_BITS if (color != _transparency)
-				*dst = color + _palette_mod;
+				 *dst = color + _palette_mod;
 			dst++;
 
 		againPos:;
@@ -1280,7 +1269,7 @@ void Gdi::unkDecode4()
 		_tempNumLines = _numLinesToProcess;
 		do {
 			FILL_BITS if (color != _transparency)
-				*dst = color + _palette_mod;
+				 *dst = color + _palette_mod;
 			dst += 320;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
@@ -1314,7 +1303,7 @@ void Gdi::unkDecode5()
 	do {
 		_currentX = 8;
 		do {
-			FILL_BITS * dst++ = color + _palette_mod;
+			FILL_BITS *dst++ = color + _palette_mod;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
 				FILL_BITS color = bits & _decomp_mask;
@@ -1346,7 +1335,7 @@ void Gdi::unkDecode6()
 	do {
 		_tempNumLines = _numLinesToProcess;
 		do {
-			FILL_BITS * dst = color + _palette_mod;
+			FILL_BITS *dst = color + _palette_mod;
 			dst += 320;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
@@ -1522,7 +1511,7 @@ void Gdi::unkDecode11()
 			dst += 320;
 			for (i = 0; i < 3; i++) {
 				READ_256BIT if (!bits)
-					break;
+					  break;
 			}
 			switch (i) {
 			case 1:
@@ -1558,8 +1547,7 @@ void Scumm::restoreCharsetBg()
 	_bkColor = 0;
 
 	if (gdi._mask_left != -1) {
-		restoreBG(gdi._mask_left, gdi._mask_top, gdi._mask_right,
-							gdi._mask_bottom);
+		restoreBG(gdi._mask_left, gdi._mask_top, gdi._mask_right, gdi._mask_bottom);
 		charset._hasMask = false;
 		gdi._mask_left = -1;
 		charset._strLeft = -1;
@@ -1603,16 +1591,13 @@ void Scumm::restoreBG(int left, int top, int right, int bottom)
 	if (bottom >= height)
 		bottom = height;
 
-	updateDirtyRect(vs->number, left, right, top - topline, bottom - topline,
-									0x40000000);
+	updateDirtyRect(vs->number, left, right, top - topline, bottom - topline, 0x40000000);
 
 	height = (top - topline) * 320 + vs->xstart + left;
 
 	backbuff = vs->screenPtr + height;
 	bgbak = getResourceAddress(rtBuffer, vs->number + 5) + height;
-	mask =
-		getResourceAddress(rtBuffer,
-											 9) + top * 40 + (left >> 3) + _screenStartStrip;
+	mask = getResourceAddress(rtBuffer, 9) + top * 40 + (left >> 3) + _screenStartStrip;
 	if (vs->number == 0) {
 		mask += vs->topline * 216;
 	}
@@ -1621,8 +1606,7 @@ void Scumm::restoreBG(int left, int top, int right, int bottom)
 	width = right - left;
 	widthmod = (width >> 2) + 2;
 
-	if (vs->alloctwobuffers
-			&& _currentRoom != 0 /*&& _vars[VAR_V5_DRAWFLAGS]&2 */ ) {
+	if (vs->alloctwobuffers && _currentRoom != 0 /*&& _vars[VAR_V5_DRAWFLAGS]&2 */ ) {
 		blit(backbuff, bgbak, width, height);
 		if (vs->number == 0 && charset._hasMask && height) {
 			do {
@@ -1640,8 +1624,7 @@ void Scumm::restoreBG(int left, int top, int right, int bottom)
 	}
 }
 
-void Scumm::updateDirtyRect(int virt, int left, int right, int top,
-														int bottom, uint32 dirtybits)
+void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, uint32 dirtybits)
 {
 	VirtScreen *vs = &virtscr[virt];
 	int lp, rp;
@@ -1679,8 +1662,7 @@ void Scumm::updateDirtyRect(int virt, int left, int right, int top,
 	setVirtscreenDirty(vs, left, top, right, bottom);
 }
 
-void Scumm::setVirtscreenDirty(VirtScreen * vs, int left, int top, int right,
-															 int bottom)
+void Scumm::setVirtscreenDirty(VirtScreen *vs, int left, int top, int right, int bottom)
 {
 	int lp = left >> 3;
 	int rp = right >> 3;
@@ -1738,6 +1720,8 @@ void Scumm::unkScreenEffect4()
 	warning("stub unkScreenEffect4()");
 }
 
+/* *INDENT-OFF* */
+
 static const int8 screen_eff7_table1[4][16] = {
 	{ 1,  1, -1,  1, -1,  1, -1, -1,
 	  1, -1, -1, -1,  1,  1,  1, -1},
@@ -1762,6 +1746,8 @@ static const byte transition_num_of_iterations[4] = {
 	13, 25, 25, 25
 };
 
+/* *INDENT-ON* */
+
 /* Transition effect. There are four different effects possible,
  * indicated by the value of a:
  * 0: Iris effect
@@ -1774,7 +1760,7 @@ static const byte transition_num_of_iterations[4] = {
  */
 void Scumm::transitionEffect(int a)
 {
-	int delta[16];	// Offset applied during each iteration
+	int delta[16];								// Offset applied during each iteration
 	int tab_2[16];
 	int i, j;
 	int bottom;
@@ -1849,12 +1835,11 @@ void Scumm::setShake(int mode)
 
 void Gdi::clearUpperMask()
 {
-	memset(_vm->getResourceAddress(rtBuffer, 9),
-				 0, _imgBufOffs[1] - _imgBufOffs[0]
+	memset(_vm->getResourceAddress(rtBuffer, 9), 0, _imgBufOffs[1] - _imgBufOffs[0]
 		);
 }
 
-void Scumm::clampCameraPos(ScummPoint * pt)
+void Scumm::clampCameraPos(ScummPoint *pt)
 {
 	if (pt->x < _vars[VAR_CAMERA_MIN_X])
 		pt->x = _vars[VAR_CAMERA_MIN_X];
@@ -1956,9 +1941,9 @@ void Scumm::moveCamera()
 
 			_vars[VAR_CAMERA_DEST_Y] = cd->_dest.y;
 
-			_vars[VAR_CAMERA_FOLLOWED_ACTOR] = cd ->_follows;
+			_vars[VAR_CAMERA_FOLLOWED_ACTOR] = cd->_follows;
 
-			if(_vars[VAR_SCROLL_SCRIPT])
+			if (_vars[VAR_SCROLL_SCRIPT])
 				runScript(_vars[VAR_SCROLL_SCRIPT], 0, 0, 0);
 		}
 	} else {
@@ -2227,7 +2212,7 @@ void Gdi::resetBackground(int top, int bottom, int strip)
 	if (bottom > vs->bdirty[strip])
 		vs->bdirty[strip] = bottom;
 
-	offs = (top * 40 + _vm->_screenStartStrip + strip );
+	offs = (top * 40 + _vm->_screenStartStrip + strip);
 	_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + offs;
 	_bgbak_ptr = _vm->getResourceAddress(rtBuffer, 5) + (offs << 3);
 	_backbuff_ptr = vs->screenPtr + (offs << 3);
@@ -2262,7 +2247,7 @@ void Scumm::setCursorHotspot2(int x, int y)
 byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem)
 {
 	int w, h, i;
-	
+
 	l >>= 3;
 	if (l < 0)
 		l = 0;
@@ -2280,7 +2265,7 @@ byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem)
 
 	do {
 		for (i = 0; i <= w; i++)
-			if (mem[i]) {				
+			if (mem[i]) {
 				return true;
 			}
 		mem += 40;
@@ -2340,7 +2325,7 @@ void Scumm::darkenPalette(int startColor, int endColor, int redScale, int greenS
 		byte *cptr, *cur;
 		int num;
 		int color;
-	
+
 		cptr = getPalettePtr() + startColor * 3;
 		cur = _currentPalette + startColor * 3;
 		num = endColor - startColor + 1;
@@ -2433,7 +2418,7 @@ void Scumm::grabCursor(byte *ptr, int width, int height)
 		dst += width;
 		ptr += 320;
 	}
-	
+
 	updateCursor();
 }
 
@@ -2454,16 +2439,17 @@ void Scumm::useIm01Cursor(byte *im, int w, int h)
 
 	grabCursor(vs->screenPtr + vs->xstart, w, h);
 
-	blit(vs->screenPtr + vs->xstart,
-			 getResourceAddress(rtBuffer, 5) + vs->xstart, w, h);
+	blit(vs->screenPtr + vs->xstart, getResourceAddress(rtBuffer, 5) + vs->xstart, w, h);
 }
 
-void Scumm::updateCursor() {
+void Scumm::updateCursor()
+{
 	_system->set_mouse_cursor(_grabbedCursor, _cursorWidth, _cursorHeight,
-		_cursorHotspotX, _cursorHotspotY);
+														_cursorHotspotX, _cursorHotspotY);
 }
 
-void Scumm::animateCursor() {
+void Scumm::animateCursor()
+{
 	if (_cursorAnimate) {
 		if (!(_cursorAnimateIndex & 0x3)) {
 			decompressDefaultCursor((_cursorAnimateIndex >> 2) & 3);
@@ -2511,7 +2497,7 @@ void Scumm::decompressDefaultCursor(int idx)
 	color = default_cursor_colors[idx];
 
 	for (i = 0; i < 16; i++) {
-		if ((i<7) || (i>9)) {
+		if ((i < 7) || (i > 9)) {
 			_grabbedCursor[16 * 8 + i] = color;
 			_grabbedCursor[16 * i + 8] = color;
 		}
@@ -2561,8 +2547,7 @@ int Scumm::remapPaletteColor(int r, int g, int b, uint threshold)
 		}
 	}
 
-	if (threshold != (uint) - 1
-			&& bestsum > threshold * threshold * (2 + 3 + 6)) {
+	if (threshold != (uint) - 1 && bestsum > threshold * threshold * (2 + 3 + 6)) {
 		pal = _currentPalette + (256 - 2) * 3;
 		for (i = 254; i > 48; i--, pal -= 3) {
 			if (pal[0] >= 252 && pal[1] >= 252 && pal[2] >= 252) {
@@ -2581,7 +2566,7 @@ int Scumm::remapPaletteColor(int r, int g, int b, uint threshold)
 // param2= mirror
 
 // param1= never used ?
-void Scumm::drawBomp(BompDrawData *bd, int param1, byte* dataPtr, int param2, int param3)
+void Scumm::drawBomp(BompDrawData *bd, int param1, byte *dataPtr, int param2, int param3)
 {
 	byte *dest = bd->out + bd->y * bd->outwidth, *src;
 	int h = bd->srcheight;
@@ -2591,8 +2576,7 @@ void Scumm::drawBomp(BompDrawData *bd, int param1, byte* dataPtr, int param2, in
 		return;
 
 	inside = (bd->x >= 0) && (bd->y >= 0) &&
-		(bd->x <= bd->outwidth - bd->srcwidth) &&
-		(bd->y <= bd->outheight - bd->srcheight);
+		(bd->x <= bd->outwidth - bd->srcwidth) && (bd->y <= bd->outheight - bd->srcheight);
 
 	if (1 || bd->scale_x == 255 && bd->scale_y == 255) {
 		/* Routine used when no scaling is needed */
@@ -2673,14 +2657,15 @@ void Scumm::drawBomp(BompDrawData *bd, int param1, byte* dataPtr, int param2, in
 		/* scaling of bomp images not supported yet */
 	}
 
-CHECK_HEAP;
+	CHECK_HEAP;
 }
 
 
 /* Yazoo: This function create the specialPalette used for semi-transparency in SamnMax */
 
 
-void Scumm::createSpecialPalette(int16 a, int16 b, int16 c, int16 d, int16 e, int16 colorMin, int16 colorMax)
+void Scumm::createSpecialPalette(int16 a, int16 b, int16 c, int16 d, int16 e, int16 colorMin,
+																 int16 colorMax)
 {
 	byte *palPtr;
 	byte *curPtr;
@@ -2708,34 +2693,35 @@ void Scumm::createSpecialPalette(int16 a, int16 b, int16 c, int16 d, int16 e, in
 
 	palPtr = getPalettePtr();
 
-	for(i=0;i<256;i++)
-		_proc_special_palette[i]=i;
+	for (i = 0; i < 256; i++)
+		_proc_special_palette[i] = i;
 
-	curPtr = palPtr + colorMin*3;
+	curPtr = palPtr + colorMin * 3;
 
-	for(i=colorMin;i<colorMax;i++) {
-		readComp1=*(curPtr++);
-		readComp2=*(curPtr++);
-		readComp3=*(curPtr++);
+	for (i = colorMin; i < colorMax; i++) {
+		readComp1 = *(curPtr++);
+		readComp2 = *(curPtr++);
+		readComp3 = *(curPtr++);
 
-		colorComp1=((readComp1)*c)>>8;
-		colorComp2=((readComp2)*d)>>8;
-		colorComp3=((readComp3)*e)>>8;
+		colorComp1 = ((readComp1) * c) >> 8;
+		colorComp2 = ((readComp2) * d) >> 8;
+		colorComp3 = ((readComp3) * e) >> 8;
 
 		searchPtr = palPtr;
 		bestResult = 32000;
 		currentIndex = 0;
 
-		for(j=a;j<b;j++) {
+		for (j = a; j < b; j++) {
 			searchComp1 = (*searchPtr++);
 			searchComp2 = (*searchPtr++);
 			searchComp3 = (*searchPtr++);
 
-			currentResult = abs(searchComp1-colorComp1) + abs(searchComp2-colorComp2) + abs(searchComp3-colorComp3);
+			currentResult =
+				abs(searchComp1 - colorComp1) + abs(searchComp2 - colorComp2) + abs(searchComp3 - colorComp3);
 
-			if(currentResult<bestResult) {
-				_proc_special_palette[i]=currentIndex;
-				bestResult=currentResult;
+			if (currentResult < bestResult) {
+				_proc_special_palette[i] = currentIndex;
+				bestResult = currentResult;
 			}
 			currentIndex++;
 		}

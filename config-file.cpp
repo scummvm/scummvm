@@ -153,8 +153,7 @@ void hashconfig::merge(const hashconfig *h)
 // The config-class itself.
 
 Config::Config (const char *cfg, const char *d)
-: filename(Scumm::Strdup(cfg)), domain(d ? Scumm::Strdup(d) : 0), hash(0), ndomains(0),
-willwrite(false)
+: filename(Scumm::Strdup(cfg)), domain(d ? Scumm::Strdup(d) : 0), hash(0), ndomains(0), willwrite(false)
 {
 	FILE *cfg_file;
 	char t[MAXLINELEN];
