@@ -60,7 +60,7 @@ int TabWidget::addTab(const String &title) {
 	// Add a new tab page
 	Tab newTab;
 	 newTab.title = title;
-	 newTab.firstWidget = NULL;
+	 newTab.firstWidget = 0;
 
 	_tabs.push_back(newTab);
 
@@ -84,8 +84,10 @@ void TabWidget::setActiveTab(int tabID) {
 	assert(0 <= tabID && tabID < (int)_tabs.size());
 	if (_activeTab != tabID) {
 		// Exchange the widget lists, and switch to the new tab
-		if (_activeTab != -1)
+		if (_activeTab != -1) {
 			_tabs[_activeTab].firstWidget = _firstWidget;
+			releaseFocus();
+		}
 		_activeTab = tabID;
 		_firstWidget = _tabs[tabID].firstWidget;
 		_boss->draw();
