@@ -75,10 +75,17 @@ deb:
 
 # Special target to create a application wrapper for Mac OS X
 bundle_name = ScummVM.app
-bundle: scummvm
+bundle: scummvm-static
 	mkdir -p $(bundle_name)/Contents/MacOS
 	mkdir -p $(bundle_name)/Contents/Resources
 	echo "APPL????" > $(bundle_name)/Contents/PkgInfo
 	cp Info.plist $(bundle_name)/Contents/
 	cp scummvm.icns $(bundle_name)/Contents/Resources/
-	cp $< $(bundle_name)/Contents/MacOS/
+	cp scummvm-static $(bundle_name)/Contents/MacOS/scummvm
+	strip $(bundle_name)/Contents/MacOS/scummvm
+
+# Special target to create a static linked binary for Mac OS X
+scummvm-static: $(OBJS)
+	$(CXX) $(LDFLAGS) -o scummvm-static $(OBJS) /sw/lib/libSDLmain.a /sw/lib/libSDL.a /sw/lib/libmad.a -framework OpenGL -framework AGL -framework IOKit -framework Cocoa -framework Carbon -framework QuickTime -framework AudioUnit
+
+.PHONY: deb bundle

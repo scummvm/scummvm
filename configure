@@ -14,12 +14,9 @@
 #   - select the desired backend (sdl, x11, ...)
 #   - whether to dump scripts (sets -DDUMP_SCRIPTS)
 #   - whether mad should be used (--enabled-mad) -> set LIBS/DEFINES
-# * detect whether the chose backend is available (e.g. call sdl-config)
-# * detect whether mad/ALSA/... are available
-# * detect endianess and write that into config.h
-# * detect size of data types and write that into config.h
-# * check whether compiler supports "bool" and if not, 
-#   define HAVE_NO_BOOL and add code to config.h to implement "bool"
+#   - whether to do a debug build (with -g) or an optimized build (-O3 etc.)
+# * detect whether the chosen backend is available (e.g. call sdl-config)
+# * detect whether mad/ALSA/vorbis/... are available
 # * ....
 
 
