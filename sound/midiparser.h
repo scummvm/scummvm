@@ -28,29 +28,86 @@ class MidiParser;
 
 class MidiDriver;
 
+struct EventInfo {
+	byte * start; // Points to delta
+	uint32 delta;
+	byte   event;
+	union {
+		struct {
+			byte param1;
+			byte param2;
+		};
+		struct {
+			byte   type; // Used for METAs
+			byte * data; // Used for SysEx and METAs
+			uint32 length; // Used for SysEx and METAs
+		};
+	};
+
+	byte channel() { return event & 0x0F; }
+	byte command() { return event >> 4; }
+};
+
 class MidiParser {
 protected:
 	MidiDriver *_driver;
 	uint32 _timer_rate;
+	uint32 _ppqn;           // Pulses (ticks) Per Quarter Note
+	uint32 _tempo;          // Microseconds per quarter note
+	uint32 _psec_per_tick;  // Microseconds per tick (_tempo / _ppqn)
+	bool   _autoLoop;       // For lightweight clients that don't monitor events
+
+	byte * _tracks[16];
+	byte   _num_tracks;
+	byte   _active_track;
+
+	byte * _play_pos;
+	uint32 _play_time;
+	uint32 _last_event_time;
+	uint32 _last_event_tick;
+	byte   _running_status; // Cache of last MIDI command, used in compressed streams
+	EventInfo _next_event;
+
+protected:
+	static uint32 readVLQ (byte * &data);
+	void resetTracking();
+	void allNotesOff();
+	virtual void parseNextEvent (EventInfo &info) = 0;
+
+	// Multi-byte read helpers
+	uint32 read4high (byte * &data) {
+		uint32 val = 0;
+		int i;
+		for (i = 0; i < 4; ++i) val = (val << 8) | *data++;
+		return val;
+	}
+	uint16 read2low  (byte * &data) {
+		uint16 val = 0;
+		int i;
+		for (i = 0; i < 2; ++i) val |= (*data++) << (i * 8);
+		return val;
+	}
 
 public:
 	enum {
-		mpMalformedPitchBends = 1
+		mpMalformedPitchBends = 1,
+		mpAutoLoop = 2
 	};
 
 public:
+	MidiParser();
 	virtual ~MidiParser() { }
 
 	virtual bool loadMusic (byte *data, uint32 size) = 0;
 	virtual void unloadMusic() = 0;
-	virtual void property (int prop, int value) { }
+	virtual void property (int prop, int value);
 
 	void setMidiDriver (MidiDriver *driver) { _driver = driver; }
 	void setTimerRate (uint32 rate) { _timer_rate = rate / 500; }
-	virtual void onTimer() = 0;
+	void onTimer();
 
-	virtual void setTrack (byte track) = 0;
-	virtual void jumpToTick (uint32 tick) = 0;
+	void setTrack (byte track);
+	void jumpToTick (uint32 tick);
 
 	static MidiParser *createParser_SMF();
 	static MidiParser *createParser_XMIDI();

@@ -262,6 +262,10 @@ SOURCE=.\sound\mididrv.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\sound\midiparser.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\sound\midiparser.h
 # End Source File
 # Begin Source File
