@@ -29,8 +29,8 @@ static void GlbInitAll() {
 	if (gVars->globals[GBVARS_COMMON]) {
 		CALL_INIT(ScummFont)
 	}
+	if (gVars->globals[GBVARS_ENGINE]) {
 #ifndef DISABLE_SCUMM
-	if (gVars->globals[GBVARS_SCUMM]) {
 		CALL_INIT(DimuseTables)
 		CALL_INIT(Akos)
 		CALL_INIT(DimuseCodecs)
@@ -40,36 +40,31 @@ static void GlbInitAll() {
 		CALL_INIT(Charset)
 		CALL_INIT(Costume)
 		CALL_INIT(PlayerV2)
-	}
 #endif
 #ifndef DISABLE_SIMON
-	if (gVars->globals[GBVARS_SIMON]) {
 		CALL_INIT(Simon_Simon)
+		CALL_INIT(Simon_Cursor)
 		CALL_INIT(Simon_Charset)
-	}
 #endif
 #ifndef DISABLE_SWORD1
-	if (gVars->globals[GBVARS_SWORD1]) {
 		CALL_INIT(Sword1_fxList)
-	}
 #endif
 #ifndef DISABLE_QUEEN
-	if (gVars->globals[GBVARS_QUEEN]) {
 		CALL_INIT(Queen_Talk)
 		CALL_INIT(Queen_Display)
 		CALL_INIT(Queen_Graphics)
 		CALL_INIT(Queen_Restables)
 		CALL_INIT(Queen_Musicdata)
-	}
 #endif
+	}
 }
 
 static void GlbReleaseAll() {
 	if (gVars->globals[GBVARS_COMMON]) {
 		CALL_RELEASE(ScummFont)
 	}
-#ifndef DISABLE_SCUMM
 	if (gVars->globals[GBVARS_SCUMM]) {
+#ifndef DISABLE_SCUMM
 		CALL_RELEASE(DimuseTables)
 		CALL_RELEASE(Akos)
 		CALL_RELEASE(DimuseCodecs)
@@ -79,28 +74,23 @@ static void GlbReleaseAll() {
 		CALL_RELEASE(Charset)
 		CALL_RELEASE(Costume)
 		CALL_RELEASE(PlayerV2)
-	}
 #endif
 #ifndef DISABLE_SIMON
-	if (gVars->globals[GBVARS_SIMON]) {
 		CALL_RELEASE(Simon_Simon)
+		CALL_RELEASE(Simon_Cursor)
 		CALL_RELEASE(Simon_Charset)
-	}
 #endif
 #ifndef DISABLE_SWORD1
-	if (gVars->globals[GBVARS_SWORD1]) {
 		CALL_RELEASE(Sword1_fxList)
-	}
 #endif
 #ifndef DISABLE_QUEEN
-	if (gVars->globals[GBVARS_QUEEN]) {
 		CALL_RELEASE(Queen_Talk)
 		CALL_RELEASE(Queen_Display)
 		CALL_RELEASE(Queen_Graphics)
 		CALL_RELEASE(Queen_Restables)
 		CALL_RELEASE(Queen_Musicdata)
-	}
 #endif
+	}
 }
 
 //TODO : use Boolean instead of void to check err
@@ -118,11 +108,7 @@ static DmOpenRef GlbOpenInternal(const Char *nameP) {
 
 void GlbOpen() {
 	gVars->globals[GBVARS_COMMON]= GlbOpenInternal("Glbs::Common");
-	gVars->globals[GBVARS_SCUMM] = GlbOpenInternal("Glbs::Scumm");
-	gVars->globals[GBVARS_SWORD1]= GlbOpenInternal("Glbs::Sword1");
-	gVars->globals[GBVARS_SIMON] = GlbOpenInternal("Glbs::Simon");
-	gVars->globals[GBVARS_QUEEN] = GlbOpenInternal("Glbs::Queen");
-
+	gVars->globals[GBVARS_SCUMM] = GlbOpenInternal("Glbs::Engine");
 	GlbInitAll();
 }
 
@@ -131,14 +117,8 @@ void GlbClose() {
 
 	if (gVars->globals[GBVARS_COMMON])
 		DmCloseDatabase(gVars->globals[GBVARS_COMMON]);
-	if (gVars->globals[GBVARS_SCUMM])
-		DmCloseDatabase(gVars->globals[GBVARS_SCUMM]);
-	if (gVars->globals[GBVARS_SIMON])
-		DmCloseDatabase(gVars->globals[GBVARS_SIMON]);
-	if (gVars->globals[GBVARS_SWORD1])
-		DmCloseDatabase(gVars->globals[GBVARS_SWORD1]);
-	if (gVars->globals[GBVARS_QUEEN])
-		DmCloseDatabase(gVars->globals[GBVARS_QUEEN]);
+	if (gVars->globals[GBVARS_ENGINE])
+		DmCloseDatabase(gVars->globals[GBVARS_ENGINE]);
 }
 
 void *GlbGetRecord(UInt16 index, UInt16 id) {

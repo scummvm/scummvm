@@ -5,34 +5,18 @@
 //#define BUILD_COMMON
 //#define BUILD_SIMON
 //#define BUILD_SCUMM
+#define BUILD_SKY
 //#define BUILD_QUEEN
-#define BUILD_SWORD1
+//#define BUILD_SWORD1
 
 #ifdef BUILD_COMMON
 #	define BUILD_RES	GBVARS_COMMON
 #	define BUILD_NAME	"Common"
-
-#elif defined(BUILD_SCUMM)
-#	define BUILD_RES	GBVARS_SCUMM
-#	define BUILD_NAME	"Scumm"
-
-#elif defined(BUILD_SIMON)
-#	define BUILD_RES	GBVARS_SIMON
-#	define BUILD_NAME	"Simon"
-
-#elif defined(BUILD_QUEEN)
-#	define BUILD_RES	GBVARS_QUEEN
-#	define BUILD_NAME	"Queen"
-
-#elif defined(BUILD_SWORD1)
-#	define BUILD_RES	GBVARS_SWORD1
-#	define BUILD_NAME	"Sword1"
-
 #else
-#	define BUILD_RES	-1
-#	define BUILD_NAME
-#	error No target defined.
+#	define BUILD_RES	GBVARS_ENGINE
+#	define BUILD_NAME	"Engine"
 #endif
+
 DmOpenRef dbP[GBVARS_COUNT];
 ///////////////////////////////////////////////////////////////////
 
@@ -80,6 +64,9 @@ void buildAll() {
 #elif defined(BUILD_SIMON)
 	addSimon();
 	Simon_addCharset();
+
+#elif defined(BUILD_SKY)
+	Sky_addHufftext();
 
 #elif defined(BUILD_QUEEN)
 	Queen_addTalk();

@@ -64,6 +64,7 @@ PROTO_GLOBALS(PlayerV2)
 // Simon stuffs
 #ifndef DISABLE_SIMON
 PROTO_GLOBALS(Simon_Simon)
+PROTO_GLOBALS(Simon_Cursor)
 PROTO_GLOBALS(Simon_Charset)
 #endif
 // Queen stuffs
@@ -74,7 +75,6 @@ PROTO_GLOBALS(Queen_Graphics)
 PROTO_GLOBALS(Queen_Restables)
 PROTO_GLOBALS(Queen_Musicdata)
 #endif
-
 // Sword1 stuffs
 #ifndef DISABLE_SWORD1
 PROTO_GLOBALS(Sword1_fxList)
