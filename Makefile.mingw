@@ -33,7 +33,7 @@ lua-build:
 mixer-build:
 	$(MAKE) -C mixer
 
-clean: lua-clean
+clean: lua-clean mixer-clean
 	-rm -f residual.exe *.o *.d *~
 
 lua-clean:
@@ -44,7 +44,7 @@ mixer-clean:
 
 -include $(DEPS)
 
-.PHONY: lua-build lua-clean
+.PHONY: lua-build lua-clean mixer-build mixer-clean
 
 # Some additional targets
 install:   residual
