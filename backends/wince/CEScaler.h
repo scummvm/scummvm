@@ -31,4 +31,6 @@
 DECLARE_SCALER(PocketPCPortrait);
 DECLARE_SCALER(PocketPCHalf);
 
+void initCEScaler(void);
+
 #endif

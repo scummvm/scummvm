@@ -22,16 +22,30 @@
 #include "stdafx.h"
 #include "CEScaler.h"
 
-template<int bitFormat, int w1, int w2, int w3, int w4>
-static inline uint16 interpolate16_4(uint16 p1, uint16 p2, uint16 p3, uint16 p4)
- {
-        return ((((p1 & redblueMask) * w1 + (p2 & redblueMask) * w2 + (p3 & redblueMask) * w3 + (p4 & redblueMask) * w4) / (w1 + w2 + w3 + w4)) & redblueMask) |
-               ((((p1 & greenMask) * w1 + (p2 & greenMask) * w2 + (p3 & greenMask) * w3 + (p4 & greenMask) * w4) / (w1 + w2 + w3 + w4)) & greenMask);
+int redblueMasks[] = { 0x7C1F, 0xF81F };
+int greenMasks[] = { 0x03E0, 0x07E0 };
+
+static int maskUsed;
+
+void initCEScaler(void) {
+	if (gBitFormat == 555)
+		maskUsed = 0;
+	else
+		maskUsed = 1;
 }
 
+static inline uint16 CEinterpolate16_4(uint16 p1, uint16 p2, uint16 p3, uint16 p4)
+{		
+        return ((((p1 & redblueMasks[maskUsed]) + (p2 & redblueMasks[maskUsed]) + (p3 & redblueMasks[maskUsed]) + (p4 & redblueMasks[maskUsed])) / 4) & redblueMasks[maskUsed]) |
+               ((((p1 & greenMasks[maskUsed]) + (p2 & greenMasks[maskUsed]) + (p3 & greenMasks[maskUsed]) + (p4 & greenMasks[maskUsed])) / 4) & greenMasks[maskUsed]);
+}
 
-void PocketPCPortrait(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
-							int width, int height) {
+static inline uint16 CEinterpolate16_2(uint16 p1, int w1, uint16 p2, int w2) {
+        return ((((p1 & redblueMasks[maskUsed]) * w1 + (p2 & redblueMasks[maskUsed]) * w2) / (w1 + w2)) & redblueMasks[maskUsed]) |
+               ((((p1 & greenMasks[maskUsed]) * w1 + (p2 & greenMasks[maskUsed]) * w2) / (w1 + w2)) & greenMasks[maskUsed]);
+}
+
+void PocketPCPortrait(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	uint8 *work;
 	int i;
 
@@ -46,16 +60,9 @@ void PocketPCPortrait(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint3
 			uint16 color3 = *(((const uint16 *)srcPtr) + (i + 2));
 			uint16 color4 = *(((const uint16 *)srcPtr) + (i + 3));
 		
-			if (gBitFormat == 565) {
-				*(((uint16 *)work) + 0) = interpolate16_2<565, 3, 1>(color1, color2);
-				*(((uint16 *)work) + 1) = interpolate16_2<565, 1, 1>(color2, color3);
-				*(((uint16 *)work) + 2) = interpolate16_2<565, 1, 3>(color3, color4);
-			}
-			else {
-				*(((uint16 *)work) + 0) = interpolate16_2<555, 3, 1>(color1, color2);
-				*(((uint16 *)work) + 1) = interpolate16_2<555, 1, 1>(color2, color3);
-				*(((uint16 *)work) + 2) = interpolate16_2<555, 1, 3>(color3, color4);
-			}
+			*(((uint16 *)work) + 0) = CEinterpolate16_2(color1, 3, color2, 1);
+			*(((uint16 *)work) + 1) = CEinterpolate16_2(color2, 1, color3, 1);
+			*(((uint16 *)work) + 2) = CEinterpolate16_2(color3, 1, color4, 3);
 		
 			work += 3 * sizeof(uint16);
 		}
@@ -64,8 +71,7 @@ void PocketPCPortrait(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint3
 	}
 }
 
-void PocketPCHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
-							int width, int height) {
+void PocketPCHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	uint8 *work;
 	int i;
 	uint16 srcPitch16 = (uint16)(srcPitch / sizeof(uint16));
@@ -80,10 +86,7 @@ void PocketPCHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 ds
 			uint16 color2 = *(((const uint16 *)srcPtr) + (i + 1));
 			uint16 color3 = *(((const uint16 *)srcPtr) + (i + srcPitch16));
 			uint16 color4 = *(((const uint16 *)srcPtr) + (i + srcPitch16 + 1));
-			if (gBitFormat == 565)
-				*(((uint16 *)work) + 0) = interpolate16_4<565, 1, 1, 1, 1>(color1, color2, color3, color4);
-			else
-				*(((uint16 *)work) + 0) = interpolate16_4<555, 1, 1, 1, 1>(color1, color2, color3, color4);
+			*(((uint16 *)work) + 0) = CEinterpolate16_4(color1, color2, color3, color4);
 			
 			work += sizeof(uint16);
 		}
