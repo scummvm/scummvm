@@ -25,7 +25,6 @@ UInt32 CostumeRenderer_proc3(void *userData68KP) {
 	SET32	(int			,_outwidth					)
 	SET32	(int			,_outheight					)
 	SETPTR	(byte *			,_shadow_table				)
-	SETPTR	(byte *			,_vm_proc_special_palette	)
 	SETPTR	(byte *			,_palette					)
 	SET8	(byte			,_shadow_mode				)
 	
@@ -70,7 +69,6 @@ UInt32 CostumeRenderer_proc3(void *userData68KP) {
 		len = *src++;
 		color = len >> v1.shr;
 		len &= v1.mask;
-
 		if (!len)
 			len = *src++;
 
@@ -82,7 +80,7 @@ UInt32 CostumeRenderer_proc3(void *userData68KP) {
 					// FIXME: Fully implement _shadow_mode.in Sam & Max
 					// For now, it's enough for transparency.
 					if (_shadow_mode & 0x20) {
-						pcolor = _vm_proc_special_palette[*dst];
+						pcolor = _shadow_table[*dst];
 					} else {
 						pcolor = _palette[color];
 						if (pcolor == 13 && _shadow_table)
@@ -96,7 +94,8 @@ UInt32 CostumeRenderer_proc3(void *userData68KP) {
 			}
 			if (!--height) {
 				if (!--v1.skip_width)
-					goto end_jump;
+					return _scaleIndexX;
+					//goto end_jump;
 				height = _height;
 				y = v1.y;
 
@@ -106,7 +105,8 @@ UInt32 CostumeRenderer_proc3(void *userData68KP) {
 				if (_scaleX == 255 || v1.scaletable[_scaleIndexX] < _scaleX) {
 					v1.x += v1.scaleXstep;
 					if (v1.x < 0 || v1.x >= _outwidth)
-						goto end_jump;
+						return _scaleIndexX;
+						//goto end_jump;
 					maskbit = revBitMask[v1.x & 7];
 					v1.destptr += v1.scaleXstep;
 				}
@@ -118,9 +118,9 @@ UInt32 CostumeRenderer_proc3(void *userData68KP) {
 		} while (--len);
 	} while (1);
 
-end_jump:
+//end_jump:
 //	v1comp->x		= ByteSwap32(v1.x);
 //	v1comp->destptr	= (byte *)ByteSwap32(v1.destptr);
 
-	return _scaleIndexX;
+//	return _scaleIndexX;
 }
