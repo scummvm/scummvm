@@ -1090,11 +1090,40 @@ void ScummEngine_v90he::o90_unknown27() {
 }
 
 void ScummEngine_v90he::o90_unknown28() {
-	// Incomplete
 	byte subOp = fetchScriptByte();
 	subOp -= 37;
 
 	switch (subOp) {
+	case 0:
+		switch (pop()) {
+		case 1:
+			pop();
+			pop();
+			break;
+		case 2:
+			pop();
+			break;
+		case 3:
+			pop();
+			break;
+		case 4:
+			pop();
+			break;
+		case 5:
+			break;
+		case 6:
+			pop();
+			break;
+		case 7:
+			pop();
+			break;
+		case 8:
+			pop();
+			break;
+		default:
+			error("o90_unknown28 subOp 38: Unknown case %d", subOp);
+		}
+		break;
 	case 5:
 		pop();
 		pop();
@@ -1109,6 +1138,9 @@ void ScummEngine_v90he::o90_unknown28() {
 	case 20:
 		pop();
 		break;
+	case 26:
+		pop();
+		break;
 	case 28:
 		pop();
 		pop();
@@ -1118,6 +1150,8 @@ void ScummEngine_v90he::o90_unknown28() {
 		pop();
 		pop();
 		pop();
+		break;
+	case 56:
 		break;
 	case 180:
 		break;
