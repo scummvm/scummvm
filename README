@@ -419,6 +419,7 @@ simon games.
                                  instead, or a multiple thereof.
         Ctrl-Alt-b             - Switch beetwen bilinear and non-linear
                                  filtering [OpenGL backend]
+        Alt-Enter              - toggles full screen/windowed
 
     Scumm:
         Ctrl 0-9 and Alt 0-9   - load and save game state
@@ -431,7 +432,6 @@ simon games.
         F5                     - displays a save/load box.
         Space                  - pauses
         Period (.)             - skips current line of text in some games
-        Alt-Enter              - toggles full screen/windowed
         Enter                  - simulate left mouse button press
         Tab                    - simulate right mouse button press
 
@@ -442,6 +442,11 @@ simon games.
         s                      - sound effects on/off
         b                      - background sounds on/off
 
+    Beneath a Steel Sky:
+        Escape                 - skip the intro
+        F5                     - display the save/load/options box
+        Period (.)             - skip the current line of text
+
 Note that using ctrl-f and ctrl-g are not recommended: Games can crash when
 being ran faster than their normal speed, as scripts will loose synchronisation
 
@@ -449,7 +454,7 @@ being ran faster than their normal speed, as scripts will loose synchronisation
 Language options:
 -----------------
 ScummVM includes a language option for Maniac Mansion, Zak McKracken, The Dig,
-Curse of Monkey Island, Beneath a Steel Sky.and Simon the Sorcerer 1 & 2.
+Curse of Monkey Island, Beneath a Steel Sky, and Simon the Sorcerer 1 & 2.
 
     Maniac Mansion and Zak McKracken:
         en  - English (default)
