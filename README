@@ -432,7 +432,6 @@ simon games.
     Simon:
         F1 - F3                - text speed, faster - slower
         F10                    - shows all characters and objects you can interact with
-	                         (Simon the Sorcerer 2 only)
         - and +                - music volume, down/up
         m                      - music on/off
         s                      - sound effects on/off
