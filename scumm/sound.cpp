@@ -248,8 +248,8 @@ void Sound::playSound(int sound) {
 		else if (READ_UINT32_UNALIGNED(ptr) == MKID('SBL ')) {
 			debug(2, "Using SBL sound effect");
 	
-			// TODO - Figuring out how the SBL chunk works. Here's an
-			// example:
+			// TODO - Figuring out how the SBL chunk works. Here's
+			// an example:
 			//
 			// 53 42 4c 20 00 00 11 ae  |SBL ....|
 			// 41 55 68 64 00 00 00 03  |AUhd....|
@@ -259,20 +259,36 @@ void Sound::playSound(int sound) {
 			// 7e 7f 7f 80 80 7f 7f 7f  |~.......|
 			// 7f 80 80 7f 7e 7d 7d 7e  |....~}}~|
 			// 7e 7e 7e 7e 7e 7e 7e 7f  |~~~~~~~.|
-			// 7f 7f 7f 80 80 80 80 80  |........|
-			// 80 81 80 80 7f 7f 80 85  |........|
-			// 8b 8b 83 78 72 6d 6f 75  |...xrmou|
-			// 7a 78 77 7d 83 84 83 81  |zxw}....|
 			//
-			// The length of the AUhd chunk always seems to be 3 bytes.
-			// Let's skip that for now.
+			// The length of the AUhd chunk always seems to be 3
+			// bytes. Let's skip that for now.
 			//
-			// The starting offset, length and sample rate is all pure
-			// guesswork. The result sounds reasonable to me, but I've
-			// never heard the original.
-	
+			// The starting offset, length and sample rate is all
+			// pure guesswork. The result sounds reasonable to me,
+			// but I've never heard the original.
+			//
+			// I've since discovered that the non-interactive
+			// Sam & Max demo also uses SBL sound effects, but
+			// with different sub-chunks. Example:
+			//
+			// 53 42 4c 20 00 01 15 6e  |SBL ...n|
+			// 57 56 68 64 00 00 00 03  |WVhd....|
+			// 00 00 80 57 56 64 74 00  |...WVdt.|
+			// 01 15 5b 01 56 15 01 a6  |..[.V...|
+			// 00 80 80 80 80 80 80 80  |........|
+			// 80 80 80 80 80 80 80 80  |........|
+			// 80 80 80 80 80 80 80 80  |........|
+			// 80 80 80 80 80 80 80 80  |........|
+			//
+			// I'm going to assume that the sample frequency is
+			// the only important difference between the two.
+
+			if (READ_UINT32_UNALIGNED(ptr + 8) == MKID('WVhd'))
+				rate = 11025;
+			else
+				rate = 8000;
+
 			size = READ_BE_UINT32_UNALIGNED(ptr + 4) - 27;
-			rate = 8000;
 	
 			// Allocate a sound buffer, copy the data into it, and play
 			char *sound = (char*)malloc(size);
