@@ -197,7 +197,7 @@ struct CharsetRenderer {
 	
 	int _bufPos;
 	byte _unk12, _disableOffsX;
-	byte *_ptr;
+	byte *_ptr;	// FIXME: This field is *NOT* used - remove next time save game format changes
 	byte _unk2, _bpp;
 	byte _invNumBits;
 	uint32 _charOffs;
@@ -220,7 +220,7 @@ struct CharsetRenderer {
 	void drawBits();
 	void printChar(int chr);
 	void printCharOld(int chr);
-	int getSpacing(char chr);
+	int getSpacing(char chr, byte *charset);
 	int getStringWidth(int a, byte *str, int pos);
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
 };

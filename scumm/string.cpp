@@ -28,7 +28,7 @@
 int CharsetRenderer::getStringWidth(int arg, byte *text, int pos)
 {
 	byte *ptr;
-	int width, offs, w;
+	int width;
 	byte chr;
 
 	width = 1;
@@ -69,19 +69,7 @@ int CharsetRenderer::getStringWidth(int arg, byte *text, int pos)
 				continue;
 			}
 		}
-		if (_vm->_features & GF_OLD256) {
-			width += getSpacing(chr);
-		} else {
-			offs = READ_LE_UINT32(ptr + chr * 4 + 4);
-			if (offs) {
-				if (ptr[offs + 2] >= 0x80) {
-					w = ptr[offs + 2] - 0x100;
-				} else {
-					w = ptr[offs + 2];
-				}
-				width += ptr[offs] + w;
-			}
-		}
+		width += getSpacing(chr, ptr);
 	}
 	return width;
 }
@@ -90,7 +78,6 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth)
 {
 	int lastspace = -1;
 	int curw = 1;
-	int offs, w;
 	byte *ptr;
 	byte chr;
 
@@ -138,19 +125,7 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth)
 
 		if (chr == ' ')
 			lastspace = pos - 1;
-		if (_vm->_features & GF_OLD256) {
-			curw += getSpacing(chr);
-		} else {
-			offs = READ_LE_UINT32(ptr + chr * 4 + 4);
-			if (offs) {
-				if (ptr[offs + 2] >= 0x80) {
-					w = ptr[offs + 2] - 0x100;
-				} else {
-					w = ptr[offs + 2];
-				}
-				curw += w + ptr[offs];
-			}
-		}
+		curw += getSpacing(chr, ptr);
 		if (lastspace == -1)
 			continue;
 		if (curw > maxwidth) {
@@ -431,7 +406,11 @@ void Scumm::CHARSET_1()
 			buffer += 2;
 			break;
 		case 14: {
-			int oldy = getResourceAddress(rtCharset, charset._curId)[30];
+			int oldy;
+			if (_features & GF_SMALL_HEADER)
+				oldy = getResourceAddress(rtCharset, charset._curId)[18];
+			else
+				oldy = getResourceAddress(rtCharset, charset._curId)[30];
 
 			charset._curId = *buffer++;
 			buffer += 2;
@@ -440,7 +419,10 @@ void Scumm::CHARSET_1()
 					charset._colorMap[i] = _charsetData[charset._curId][i - 12];
 				else
 					charset._colorMap[i] = _charsetData[charset._curId][i];
-			charset._ypos2 -= getResourceAddress(rtCharset, charset._curId)[30] - oldy;
+			if (_features & GF_SMALL_HEADER)
+				charset._ypos2 -= getResourceAddress(rtCharset, charset._curId)[18] - oldy;
+			else
+				charset._ypos2 -= getResourceAddress(rtCharset, charset._curId)[30] - oldy;
 			break;
 			}
 		default:
@@ -828,6 +810,10 @@ void CharsetRenderer::printCharOld(int chr)
 	if (chr == '@')
 		return;
 
+	byte *ptr = _vm->getResourceAddress(rtCharset, _curId) + 29;
+	if (_vm->_features & GF_SMALL_HEADER)
+		ptr -= 12;
+
 	if (_unk12) {
 		_strLeft = _left;
 		_strTop = _top;
@@ -851,7 +837,8 @@ void CharsetRenderer::printCharOld(int chr)
 		}
 	}
 
-	_left += getSpacing(chr);
+	// FIXME
+	_left += getSpacing(chr, ptr);
 
 	if (_left > _strRight)
 		_strRight = _left;
@@ -868,29 +855,30 @@ void CharsetRenderer::printChar(int chr)
 	VirtScreen *vs;
 
 	_vm->checkRange(_vm->_maxCharsets - 1, 1, _curId, "Printing with bad charset %d");
+	
 	if ((vs = _vm->findVirtScreen(_top)) == NULL)
 		return;
 
 	if (chr == '@')
 		return;
 
-	_ptr = _vm->getResourceAddress(rtCharset, _curId) + 29;
+	byte *ptr = _vm->getResourceAddress(rtCharset, _curId) + 29;
 	if (_vm->_features & GF_SMALL_HEADER)
-		_ptr -= 12;
+		ptr -= 12;
 
-	_bpp = _unk2 = *_ptr;
+	_bpp = _unk2 = *ptr;
 	_invNumBits = 8 - _bpp;
 	_bitMask = 0xFF << _invNumBits;
 	_colorMap[1] = _color;
 
-	_charOffs = READ_LE_UINT32(_ptr + chr * 4 + 4);
+	_charOffs = READ_LE_UINT32(ptr + chr * 4 + 4);
 
 	if (!_charOffs)
 		return;
 
 	assert(_charOffs < 0x10000);
 
-	_charPtr = _ptr + _charOffs;
+	_charPtr = ptr + _charOffs;
 
 	_width = _charPtr[0];
 	_height = _charPtr[1];
@@ -950,23 +938,14 @@ void CharsetRenderer::printChar(int chr)
 
 	_vm->updateDirtyRect(vs->number, _left, right, _drawTop, _bottom, 0);
 
-#if defined(OLD)
-	if (vs->number == 0)
-		_hasMask = true;
-#else
 	if (vs->number != 0)
 		_blitAlso = false;
 	if (vs->number == 0 && _blitAlso == 0)
 		_hasMask = true;
-#endif
 
 	_dest_ptr = _backbuff_ptr = vs->screenPtr + vs->xstart + _drawTop * _vm->_realWidth + _left;
 
-#if !defined(OLD)
 	if (_blitAlso) {
-#else
-	if (1) {
-#endif
 		_dest_ptr = _bgbak_ptr = _vm->getResourceAddress(rtBuffer, vs->number + 5)
 			+ vs->xstart + _drawTop * _vm->_realWidth + _left;
 	}
@@ -979,10 +958,8 @@ void CharsetRenderer::printChar(int chr)
 
 	drawBits();
 
-#if !defined(OLD)
 	if (_blitAlso)
 		_vm->blit(_backbuff_ptr, _bgbak_ptr, _width, _height);
-#endif
 
 	_left += _width;
 	if (_left > _strRight)
@@ -1042,44 +1019,25 @@ void CharsetRenderer::drawBits()
 }
 
 // do spacing for variable width old-style font
-int CharsetRenderer::getSpacing(char chr)
+int CharsetRenderer::getSpacing(char chr, byte *ptr)
 {
-	int space;
-
-	if (_curId == 1) { 
-		switch (chr) {
-		case '.':
-		case ':':
-		case ';':
-		case 'i':
-		case '\'':
-		case 'I':
-		case '!':
-			space = 2;
-			break;
-		case 'l':
-			space = 3;
-			break;
-		case ' ':
-			space = 4;
-			break;
-		case '(':
-		case ')':
-			space = 5;
-			break;
-		case 'W':
-		case 'w':
-		case 'N':
-		case 'M':
-		case 'm':
-			space = 8;
-			break;
-		default:
-			space = 6;
+	int spacing;
+	
+	if (_vm->_features & GF_OLD256) {
+		spacing = *(ptr - 11 + chr);
+	} else {
+		int offs = READ_LE_UINT32(ptr + chr * 4 + 4);
+		if (offs) {
+			spacing = ptr[offs];
+			if (ptr[offs + 2] >= 0x80) {
+				spacing += ptr[offs + 2] - 0x100;
+			} else {
+				spacing += ptr[offs + 2];
+			}
 		}
-	} else
-		space = 7;
-	return space;
+	}
+	
+	return spacing;
 }
 
 void Scumm::loadLanguageBundle() {

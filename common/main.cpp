@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
 		strcat(scummhome, "\\");
 		strcat(scummhome, DEFAULT_CONFIG_FILE);
 	#else	
-		strcpy(scummhome,DEFAULT_CONFIG_FILE);
+		strcpy(scummhome, DEFAULT_CONFIG_FILE);
 	#endif
 #endif
 
