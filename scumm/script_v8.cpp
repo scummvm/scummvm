@@ -1474,20 +1474,21 @@ void Scumm_v8::o8_kernelGetFunctions()
 		warning("o8_kernelGetFunctions: default case 0x%x (len = %d)", args[0], len);
 		break;
 	case 0xD8: {		// findBlastObject
+		int x = args[1] + (camera._cur.x & 7);
+		int y = args[2] + (camera._cur.y - (_realHeight /2));;
 		BlastObject *eo;
-		int i;
 
-		for (i = _enqueuePos; i >= 0; i--) {
+		for (int i = _enqueuePos; i >= 0; i--) {
 			eo = &_enqueuedObjects[i];
-			if (eo->posX <= args[1] && eo->width + eo->posX > args[1] &&
-			    eo->posY <= args[2] && eo->height + eo->posY > args[2]) {
+
+			if (eo->posX <= x && eo->width + eo->posX > x &&
+			    eo->posY <= y && eo->height + eo->posY > y) {
                 		if (!getClass(eo->number, 32)) {
 					push(eo->number);
 					return;
 				}
 			}
 		}
-
 		push(0);
 		break;
 	}
