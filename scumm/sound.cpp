@@ -1695,15 +1695,15 @@ int Sound::pollMP3CD() const {
 }
 
 int Sound::updateMP3CD() {
-	if (_dig_cd.playing == false)
+	if (!_dig_cd.playing)
 		return -1;
 
-	if (_scumm->_mixer->_channels[_dig_cd.index] == NULL) {
+	if (!_scumm->_mixer->isChannelUsed(_dig_cd.index)) {
 		warning("Error in MP3 decoding");
 		return -1;
 	}
 
-	if (!_scumm->_mixer->isActiveChannel(_dig_cd.index)) {
+	if (!_scumm->_mixer->isChannelActive(_dig_cd.index)) {
 		if (_dig_cd.num_loops == -1 || --_dig_cd.num_loops > 0)
 			playMP3CDTrack(_dig_cd.track, _dig_cd.num_loops, _dig_cd.start, _dig_cd.duration);
 		else

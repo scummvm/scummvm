@@ -43,11 +43,22 @@ class Channel;
 class File;
 
 class SoundMixer {
+	friend class Channel;
 public:
 	typedef void PremixProc (void *param, int16 *data, uint len);
 
 	enum {
 		NUM_CHANNELS = 16
+	};
+
+	enum {
+		// Do *NOT* change any of these flags without looking at the code in mixer.cpp
+		FLAG_UNSIGNED = 1 << 0,         // unsigned samples (default: signed)
+		FLAG_STEREO = 1 << 1,           // sound is in stereo (default: mono)
+		FLAG_16BITS = 1 << 2,           // sound is 16 bits wide (default: 8bit)
+		FLAG_AUTOFREE = 1 << 3,         // sound buffer is freed automagically at the end of playing
+		FLAG_REVERSE_STEREO = 1 << 4,   // reverse the left and right stereo channel
+		FLAG_LOOP = 1 << 5              // loop the audio
 	};
 
 private:
@@ -57,10 +68,9 @@ private:
 	void *_premixParam;
 	PremixProc *_premixProc;
 
-public:
 	uint _outputRate;
 
-	int16 *_volumeTable;
+	int _globalVolume;
 	int _musicVolume;
 
 	bool _paused;
@@ -72,15 +82,6 @@ public:
 	~SoundMixer();
 
 	// start playing a raw sound
-	enum {
-		// Do *NOT* change any of these flags without looking at the code in mixer.cpp
-		FLAG_UNSIGNED = 1 << 0,         // unsigned samples
-		FLAG_STEREO = 1 << 1,           // sound is in stereo
-		FLAG_16BITS = 1 << 2,           // sound is 16 bits wide
-		FLAG_AUTOFREE = 1 << 3,         // sound buffer is freed automagically at the end of playing
-		FLAG_REVERSE_STEREO = 1 << 4,   // sound should be reverse stereo
-		FLAG_LOOP = 1 << 5              // loop the audio
-	};
 	int playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id = -1);
 #ifdef USE_MAD
 	int playMP3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags);
@@ -118,21 +119,33 @@ public:
 	bool hasActiveSFXChannel();
 	
 	/** Check whether the specified channel is active. */
-	bool isActiveChannel(int index);
+	bool isChannelActive(int index);
+
+	/** Check whether the specified channel is in use. */
+	bool isChannelUsed(int index);
 
 	/** bind to the OSystem object => mixer will be
 	 * invoked automatically when samples need
 	 * to be generated */
 	bool bindToSystem(OSystem *syst);
 
+	/** pause - unpause */
+	void pause(bool paused);
+
 	/** set the global volume, 0-256 */
 	void setVolume(int volume);
+	
+	/** query the global volume, 0-256 */
+	int getVolume() const { return _globalVolume; }
 
 	/** set the music volume, 0-256 */
 	void setMusicVolume(int volume);
-
-	/** pause - unpause */
-	void pause(bool paused);
+	
+	/** query the music volume, 0-256 */
+	int getMusicVolume() const { return _musicVolume; }
+	
+	/** query the output rate in kHz */
+	uint getOutputRate() const { return _outputRate; }
 
 private:
 	int insertChannel(PlayingSoundHandle *handle, Channel *chan);
@@ -140,7 +153,7 @@ private:
 	/** mix */
 	void mix(int16 * buf, uint len);
 
-	static void onGenerateSamples(void *s, byte *samples, int len);
+	static void mixCallback(void *s, byte *samples, int len);
 };
 
 #endif
