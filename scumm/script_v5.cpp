@@ -883,9 +883,9 @@ void ScummEngine_v5::saveVars() {
 		switch (_opcode & 0x1F) {
 		case 0x01: // write a range of variables
 			getResultPos();
-		        a = _resultVarNumber;
+			a = _resultVarNumber;
 			getResultPos();
-		        b = _resultVarNumber;
+			b = _resultVarNumber;
 			warning("stub saveVars: vars %d -> %d", a, b);
 			break;
 		case 0x02: // write a range of string variables
@@ -917,9 +917,9 @@ void ScummEngine_v5::loadVars() {
 		switch (_opcode & 0x1F) {
 		case 0x01: // read a range of variables
 			getResultPos();
-		        a = _resultVarNumber;
+			a = _resultVarNumber;
 			getResultPos();
-		        b = _resultVarNumber;
+			b = _resultVarNumber;
 			warning("stub loadVars: vars %d -> %d", a, b);
 			break;
 		case 0x02: // read a range of string variables
@@ -1398,8 +1398,8 @@ void ScummEngine_v5::o5_lessOrEqual() {
 	if (_gameId == GID_INDY3 && (_features & GF_FMTOWNS) &&
 	    (vm.slot[_currentScript].number == 200 || vm.slot[_currentScript].number == 203) &&
 	    _currentRoom == 70 && b == -256) {
-	    o5_jumpRelative();
-	    return;
+		o5_jumpRelative();
+		return;
 	}
 
 	if (b <= a)
@@ -2755,7 +2755,7 @@ void ScummEngine_v5::o5_oldRoomEffect() {
 					// calls yet another sub (which also reads byte_2FCCF):
 
 					byte_2FCCF = 0;
-					//call    sub_0BB3
+					//call sub_0BB3
 					
 					
 					// Now sub_085C is called. This is quite simply: it sets 
@@ -2771,12 +2771,12 @@ void ScummEngine_v5::o5_oldRoomEffect() {
 					// the above sub_1C44, only it sets byte_2FCCF to 1:
 					
 					byte_2FCCF = 1;
-					// call    sub_0BB3
+					// call sub_0BB3
 
 				} else {
 					// Here only sub_085C is called (see comment above) 
 
-					// call    sub_085C
+					// call sub_085C
 				}
 			return;
 			}

@@ -248,7 +248,7 @@ void ScummEngine::redrawV2Inventory() {
 	if (_inventoryOffset > 0) {
 		_string[1].xpos = v2_mouseover_boxes[kInventoryUpArrow].rect.left;
 		_string[1].ypos = v2_mouseover_boxes[kInventoryUpArrow].rect.top + vs->topline;
-	        _string[1].color = v2_mouseover_boxes[kInventoryUpArrow].color;
+		_string[1].color = v2_mouseover_boxes[kInventoryUpArrow].color;
 		drawString(1, (const byte *)" \1\2");
 	}
 
@@ -256,7 +256,7 @@ void ScummEngine::redrawV2Inventory() {
 	if (_inventoryOffset + 4 < getInventoryCount(_scummVars[VAR_EGO])) {
 		_string[1].xpos = v2_mouseover_boxes[kInventoryDownArrow].rect.left;
 		_string[1].ypos = v2_mouseover_boxes[kInventoryDownArrow].rect.top + vs->topline;
-	        _string[1].color = v2_mouseover_boxes[kInventoryDownArrow].color;
+		_string[1].color = v2_mouseover_boxes[kInventoryDownArrow].color;
 		drawString(1, (const byte *)" \3\4");
 	}
 }

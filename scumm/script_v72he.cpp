@@ -1598,7 +1598,7 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, const WizImage *pwi) {
 			ch = pvs->h;
 		}
 		Common::Rect rScreen(cw, ch);
-		if (pwi->flags & 0x80) {    
+		if (pwi->flags & 0x80) {
 //  		drawWizImageHelper2(p, wizd, cw, ch, x1, y1, width, height, &rScreen, 0, 2);
 			warning("drawWizImage() unhandled flag 0x80");
 		} else if (pwi->flags & 0x100) {
