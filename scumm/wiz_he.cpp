@@ -1247,6 +1247,69 @@ void ScummEngine_v90he::displayWizComplexImage(const WizParameters *params) {
 	}
 }
 
+void ScummEngine_v90he::createWizEmptyImage(const WizParameters *params) {
+	int img_w = 640;
+	if (params->processFlags & kWPFUseDefImgWidth) {
+		img_w = params->resDefImgW;
+	}
+	int img_h = 480;
+	if (params->processFlags & kWPFUseDefImgHeight) {
+		img_h = params->resDefImgH;
+	}
+	int img_x = 0;
+	int img_y = 0;
+	if (params->processFlags & 1) {
+		img_x = params->img.x1;
+		img_y = params->img.y1;
+	}
+	const uint16 flags = 0xB;
+	int res_size = 0x1C;
+	if (flags & 1) {
+		res_size += 0x308;
+	}
+	if (flags & 2) {
+		res_size += 0x10;
+	}
+	if (flags & 8) {
+		res_size += 0x10C;
+	}
+	res_size += 8 + img_w * img_h;
+	uint8 *res_data = createResource(rtImage, params->img.resNum, res_size);
+	if (!res_data) {
+		VAR(119) = -1;
+	} else {
+		VAR(119) = 0;
+		WRITE_BE_UINT32(res_data, 'AWIZ'); res_data += 4;
+		WRITE_BE_UINT32(res_data, res_size); res_data += 4;
+		WRITE_BE_UINT32(res_data, 'WIZH'); res_data += 4;
+		WRITE_BE_UINT32(res_data, 0x14); res_data += 4;
+		WRITE_BE_UINT32(res_data, 0); res_data += 4;
+		WRITE_BE_UINT32(res_data, img_w); res_data += 4;
+		WRITE_BE_UINT32(res_data, img_h); res_data += 4;
+		if (flags & 1) {
+			WRITE_BE_UINT32(res_data, 'RGBS'); res_data += 4;
+			WRITE_BE_UINT32(res_data, 0x308); res_data += 4;
+			memcpy(res_data, _currentPalette, 0x300); res_data += 0x300;			
+		}
+		if (flags & 2) {
+			WRITE_BE_UINT32(res_data, 'SPOT'); res_data += 4;
+			WRITE_BE_UINT32(res_data, 0x10); res_data += 4;
+			WRITE_BE_UINT32(res_data, img_x); res_data += 4;
+			WRITE_BE_UINT32(res_data, img_y); res_data += 4;
+		}
+		if (flags & 8) {
+			WRITE_BE_UINT32(res_data, 'RMAP'); res_data += 4;
+			WRITE_BE_UINT32(res_data, 0x10C); res_data += 4;
+			WRITE_BE_UINT32(res_data, 0); res_data += 4;
+			for (int i = 0; i < 0x100; ++i) {
+				*res_data++ = i;
+			}
+		}
+		WRITE_BE_UINT32(res_data, 'WIZD'); res_data += 4;
+		WRITE_BE_UINT32(res_data, img_w * img_h); res_data += 4;
+	}
+}
+
 void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 	debug(1, "processWizImage: processMode %d", params->processMode);
 	switch (params->processMode) {
@@ -1304,10 +1367,12 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 			}
 		}
 		break;
+	case 8:
+		createWizEmptyImage(params);
+		break;
 	case 6:
 	// HE 99+
 	case 7:
-	case 8:
 	case 9:
 	case 10:
 	case 11:

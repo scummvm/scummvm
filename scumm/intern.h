@@ -878,6 +878,7 @@ protected:
 	
 	void drawWizComplexPolygon(int resnum, int state, int po_x, int po_y, int arg14, int angle, int zoom, const Common::Rect *r);
 	void displayWizComplexImage(const WizParameters *params);
+	void createWizEmptyImage(const WizParameters *params);
 	void processWizImage(const WizParameters *params);
 	int getWizImageStates(int resnum);	
 	int isWizPixelNonTransparent(int restype, int resnum, int state, int x, int y, int flags);

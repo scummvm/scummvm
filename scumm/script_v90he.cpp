@@ -480,11 +480,11 @@ void ScummEngine_v90he::o90_wizImageOps() {
 
 	switch (subOp) {
 	case -14: // HE99+
-		_wizParams.processFlags |= 0x2000;
+		_wizParams.processFlags |= kWPFUseDefImgWidth;
 		pop();
 		break;
 	case -13: // HE99+
-		_wizParams.processFlags |= 0x4000;
+		_wizParams.processFlags |= kWPFUseDefImgHeight;
 		pop();
 		break;
 	case 0:
