@@ -1491,8 +1491,10 @@ void SimonState::o_unk_127()
 				_vc70_var1 = 0xffff;
 				_vc72_var3 = 0xffff;
 				_midi_unk2 = 0xffff;
-				midi.initialize();
-				midi.play();
+				if (_game & GAME_WIN) {
+					midi.initialize();
+					midi.play();
+				}
 				_vc72_var1 = b;
 			} else {
 				_vc72_var3 = b;

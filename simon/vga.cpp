@@ -1905,8 +1905,10 @@ void SimonState::vc_69()
 
 	if (_vc72_var1 == 999) {
 		_vc70_var2 = b;
-		midi.initialize();
-		midi.play();
+		if (_game & GAME_WIN) {
+			midi.initialize();
+			midi.play();
+		}
 		_vc72_var1 = b;
 	} else if (_vc72_var1 != 0xFFFF) {
 		if (_vc72_var1 != a) {
