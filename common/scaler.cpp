@@ -143,8 +143,8 @@ void Normal2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 void Normal3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height) {
 	uint8 *r;
-	uint32 dstPitch2 = dstPitch * 2;
-	uint32 dstPitch3 = dstPitch * 3;
+	const uint32 dstPitch2 = dstPitch * 2;
+	const uint32 dstPitch3 = dstPitch * 3;
 
 	while (height--) {
 		r = dstPtr;
