@@ -353,7 +353,7 @@ void Blocky16::level3(byte *d_dst) {
 		*(uint16 *)(d_dst +  0) = val;
 		val = READ_LE_UINT16(_param6_7Ptr + (byte)(tmp2 >> 8) * 2);
 		*(uint16 *)(d_dst +  2) = val;
-	} else if ((code == 0xF9) || (code == 0xFA) || (code == 0xFB) || (code == 0xFC))  {
+	} else if ((code >= 0xF9) && (code <= 0xFC))  {
 		t = READ_LE_UINT16(_paramPtr + code * 2);
 		t = (t << 16) | t;
 		for (i = 0; i < 2; i++) {
@@ -432,7 +432,7 @@ void Blocky16::level2(byte *d_dst) {
 			t = READ_LE_UINT16(_d_src);
 			t = (t << 16) | t;
 			_d_src += 2;
-		} else if ((code == 0xF9) || (code == 0xFA) || (code == 0xFB) || (code == 0xFC))  {
+		} else if ((code >= 0xF9) && (code <= 0xFC))  {
 			t = READ_LE_UINT16(_paramPtr + code * 2);
 			t = (t << 16) | t;
 		}
@@ -517,7 +517,7 @@ void Blocky16::level1(byte *d_dst) {
 			t = READ_LE_UINT16(_d_src);
 			t = (t << 16) | t;
 			_d_src += 2;
-		} else if ((code == 0xF9) || (code == 0xFA) || (code == 0xFB) || (code == 0xFC))  {
+		} else if ((code >= 0xF9) && (code <= 0xFC))  {
 			t = READ_LE_UINT16(_paramPtr + code * 2);
 			t = (t << 16) | t;
 		}
