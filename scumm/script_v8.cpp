@@ -953,12 +953,19 @@ void Scumm_v8::o8_roomOps()
 			fadeIn(_newEffect);
 		}
 		break;
-	case 0x58:		// SO_ROOM_RGB_INTENSITY Set room color intensity
+	case 0x58: 		// SO_ROOM_RGB_INTENSITY Set room color intensity
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		warning("o8_roomOps: SO_ROOM_RGB_INTENSITY unimplemented");
+		break;
 	case 0x59:		// SO_ROOM_TRANSFORM Transform room
 	case 0x5A:		// SO_ROOM_CYCLE_SPEED Set palette cycling speed
 	case 0x5B:		// SO_ROOM_COPY_PALETTE Copy palette
 	case 0x5C:		// SO_ROOM_NEW_PALETTE Create new palette
-		error("o8_roomOps: default case %d", subOp);
+		error("o8_roomOps: unimplemented case %d", subOp);
 		break;
 	case 0x5D:		// SO_ROOM_SAVE_GAME Save game
 		warning("V8 Save game opcode not implemented");
