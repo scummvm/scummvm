@@ -28,7 +28,6 @@
 #include "common/gameDetector.h"
 #include "common/config-file.h"
 
-
 #define CHECK_OPTION() if ((current_option != NULL) || (*s != '\0')) goto ShowHelpAndExit
 #define HANDLE_OPTION() if ((*s == '\0') && (current_option == NULL)) goto ShowHelpAndExit;  \
                         if ((*s != '\0') && (current_option != NULL)) goto ShowHelpAndExit; \
@@ -83,6 +82,7 @@ GameDetector::GameDetector()
 	_amiga = false;
 
 	_talkSpeed = 60;
+	_debugLevel = 1;
 	_debugMode = 0;
 	_noSubtitles = false;
 	_bootParam = 0;
