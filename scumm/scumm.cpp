@@ -403,7 +403,7 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0}, // Football2002
 	{"32709cbeeb3044b34129950860a83f14", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening (Updated)", GID_HEGAME, 6, 99, 61, MDT_NONE, // FIXME: number of actors
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0}, // PajamaTAL
-	{"37aed3f91c1ef959e0bd265f9b13781f", "Pajama Sam: No Need To Hide When It's Dark Outside (Updated Ru)", GID_HEGAME, 6, 100, 61, MDT_NONE,
+	{"37aed3f91c1ef959e0bd265f9b13781f", "Pajama Sam: No Need To Hide When It's Dark Outside (Updated)", GID_HEGAME, 6, 100, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0}, // PajamaNHD
 	{"37ff1b308999c4cca7319edfcc1280a0", "Putt-Putt Joins The Parade (Windows Demo)", GID_PUTTDEMO, 6, 70, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
