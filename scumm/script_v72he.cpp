@@ -579,8 +579,7 @@ void ScummEngine_v72he::o72_pushDWord() {
 }
 
 void ScummEngine_v72he::o72_addMessageToStack() {
-	_stringLength = resStrLen(_scriptPointer) + 1;
-	addMessageToStack(_scriptPointer, _stringBuffer, _stringLength);
+	addMessageToStack(_scriptPointer, _stringBuffer, 4096);
 
 	debug(0,"o72_addMessageToStack(\"%s\")", _scriptPointer);
 

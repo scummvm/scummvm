@@ -326,35 +326,35 @@ static const ScummGameSettings scumm_settings[] = {
 
 	// Engine moved to c++ 
 	// Humongous Entertainment Scumm Version 9.9 ?  Scummsys.99
-	{"sf2-demo", "Spyfox 2: Some Assembly Required (Demo)", GID_HEGAME, 6, 98, MDT_NONE,
+	{"sf2-demo", "Spyfox 2: Some Assembly Required (Demo)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"spyfox2", "Spyfox 2: Some Assembly Required", GID_HEGAME, 6, 98, MDT_NONE,
+	{"spyfox2", "Spyfox 2: Some Assembly Required", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"mustard", "Spy Fox in Hold the Mustard", GID_HEGAME, 6, 98, MDT_NONE,
+	{"mustard", "Spy Fox in Hold the Mustard", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 	// Humongous Entertainment Scumm Version ?
-	{"ff5demo", "Freddi Fish 5: The Case of the Creature of Coral Cave (Demo)", GID_HEGAME, 6, 98, MDT_NONE,
+	{"ff5demo", "Freddi Fish 5: The Case of the Creature of Coral Cave (Demo)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"freddicove", "Freddi Fish 5: The Case of the Creature of Coral Cave", GID_HEGAME, 6, 98, MDT_NONE,
+	{"freddicove", "Freddi Fish 5: The Case of the Creature of Coral Cave", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"FFHSDemo", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Demo)", GID_HEGAME, 6, 98, MDT_NONE,
+	{"FFHSDemo", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Demo)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"pj3-demo", "Pajama Sam 3: You Are What You Eat From Your Head to Your Feet (Demo)", GID_HEGAME, 6, 98, MDT_NONE,
+	{"pj3-demo", "Pajama Sam 3: You Are What You Eat From Your Head to Your Feet (Demo)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"pajama3", "Pajama Sam 3: You Are What You Eat From Your Head to Your Feet", GID_HEGAME, 6, 98, MDT_NONE,
+	{"pajama3", "Pajama Sam 3: You Are What You Eat From Your Head to Your Feet", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"PuttsFunShop", "Putt-Putt's One-Stop Fun Shop", GID_HEGAME, 6, 98, MDT_NONE,
+	{"PuttsFunShop", "Putt-Putt's One-Stop Fun Shop", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"putttime", "Putt-Putt Travels Through Time", GID_HEGAME, 6, 98, MDT_NONE,
+	{"putttime", "Putt-Putt Travels Through Time", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"spyozon", "Spyfox 3: Operation Ozone", GID_HEGAME, 6, 98, MDT_NONE,
+	{"spyozon", "Spyfox 3: Operation Ozone", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"bb2demo", "Backyard Baseball 2001 (Demo)", GID_HEGAME, 6, 98, MDT_NONE,
+	{"bb2demo", "Backyard Baseball 2001 (Demo)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"Football2002", "Backyard Football 2002 (Demo)", GID_HEGAME, 6, 98, MDT_NONE,
+	{"Football2002", "Backyard Football 2002 (Demo)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"PjSamDemo", "Pajama Sam: No Need To Hide When It's Dark Outside (Demo)", GID_HEGAME, 6, 98, MDT_NONE,
+	{"PjSamDemo", "Pajama Sam: No Need To Hide When It's Dark Outside (Demo)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{NULL, NULL, 0, 0, 0, MDT_NONE, 0, 0, 0}
 };
@@ -3343,6 +3343,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 #ifndef __PALM_OS__
 		case 90:
 		case 98:
+		case 99:
 			engine = new ScummEngine_v90he(detector, syst, game);
 			break;
 		case 80:

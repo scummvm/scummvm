@@ -538,7 +538,7 @@ void ScummEngine_v90he::o90_unknown26() {
 			break;
 		case 23:
 			pop();
-			if (_heversion >= 98)
+			if (_heversion >= 99)
 				pop();
 			break;
 		case 29:
