@@ -767,7 +767,8 @@ namespace Kyra {
 		assert(script_start);
 		
 		uint32 scriptStateAtStart = _scriptState;
-		
+		_error = false;
+
 		// runs the script
 		while(true) {
 			if ((uint32)_instructionPos > _chunks[kData]._size) {
