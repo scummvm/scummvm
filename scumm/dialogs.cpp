@@ -71,7 +71,7 @@ static const char* string_map_table_custom[] = {
 	"Options",				//17
 	"Misc",					//18
 	"Show speech subtitles",		//19
-	"Amiga palette conversion",		//20
+	"Amiga version",			//20
 	"If you can read this,",		//21		SPARE
 	"you don't need glasses", 		//22		SPARE
 	"Close",				//23
@@ -469,7 +469,7 @@ OptionsDialog::OptionsDialog(NewGui *gui, Scumm *scumm)
 	// Some misc options
 	//
 	subtitlesCheckbox = new CheckboxWidget(this, 15, 62, 200, 16, "Show subtitles", 0, 'S');
-	amigaPalCheckbox  = new CheckboxWidget(this, 15, 80, 200, 16, "Amiga palette conversion", 0, 'P');
+	amigaCheckbox  = new CheckboxWidget(this, 15, 80, 200, 16, "Amiga version", 0, 'P');
 
 	//
 	// Create the sub dialog(s)
@@ -503,7 +503,7 @@ void OptionsDialog::open() {
 
 	// update checkboxes, too
 	subtitlesCheckbox->setState(_scumm->_noSubtitles == false);
-	amigaPalCheckbox->setState((_scumm->_features & GF_AMIGA) != 0);
+	amigaCheckbox->setState((_scumm->_features & GF_AMIGA) != 0);
 }
 
 void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -553,13 +553,13 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		_scumm->_noSubtitles = !subtitlesCheckbox->getState();
 		g_config->setBool("nosubtitles", _scumm->_noSubtitles);
 		
-		// Amiga palette?
-		if (amigaPalCheckbox->getState())
+		// Amiga version?
+		if (amigaCheckbox->getState())
 			_scumm->setFeatures (_scumm->_features | GF_AMIGA);
 		else
 			_scumm->setFeatures (_scumm->_features & (~GF_AMIGA));
 
-		g_config->setBool("amiga", amigaPalCheckbox->getState());
+		g_config->setBool("amiga", amigaCheckbox->getState());
 		
 		// Finally flush the modified config
 		g_config->flush();

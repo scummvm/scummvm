@@ -2658,7 +2658,7 @@ static void StartScummVM() {
 			StrIToA(num, gameInfoP->roomNum);
 			AddArg(&argvP[argc], "-b", num, &argc);
 		}
-		// amiga palette
+		// amiga version
 		if (gameInfoP->amiga) {
 			AddArg(&argvP[argc], "-a", NULL, &argc);
 		}

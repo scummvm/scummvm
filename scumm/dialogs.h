@@ -133,7 +133,7 @@ protected:
 	StaticTextWidget *_sfxVolumeLabel;
 	
 	CheckboxWidget *subtitlesCheckbox;
-	CheckboxWidget *amigaPalCheckbox;
+	CheckboxWidget *amigaCheckbox;
 };
 
 class InfoDialog : public ScummDialog {

@@ -82,7 +82,7 @@ protected:
 	EditTextWidget *_descriptionWidget;
 	EditTextWidget *_domainWidget;
 	CheckboxWidget *_fullscreenCheckbox;
-	CheckboxWidget *_amigaPalCheckbox;
+	CheckboxWidget *_amigaCheckbox;
 };
 
 EditGameDialog::EditGameDialog(NewGui *gui, Config &config, const String &domain)
@@ -127,10 +127,10 @@ EditGameDialog::EditGameDialog(NewGui *gui, Config &config, const String &domain
 
 	// Display 'Amiga' checkbox, but only for Scumm games.
 	if (GID_SCUMM_FIRST <= v->id && v->id <= GID_SCUMM_LAST) {
-		_amigaPalCheckbox = new CheckboxWidget(this, 15, 82, 200, 16, "Use Amiga Palette", 0, 'A');
-		_amigaPalCheckbox->setState(_config.getBool("amiga", false, _domain));
+		_amigaCheckbox = new CheckboxWidget(this, 15, 82, 200, 16, "Amiga Version", 0, 'A');
+		_amigaCheckbox->setState(_config.getBool("amiga", false, _domain));
 	} else {
-		_amigaPalCheckbox = 0;
+		_amigaCheckbox = 0;
 	}
 
 	// Add OK & Cancel buttons
@@ -151,8 +151,8 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			_config.rename_domain(_domain, newDomain);
 		}
 		_config.set("description", _descriptionWidget->getLabel(), newDomain);
-		if (_amigaPalCheckbox)
-			_config.setBool("amiga", _amigaPalCheckbox->getState(), newDomain);
+		if (_amigaCheckbox)
+			_config.setBool("amiga", _amigaCheckbox->getState(), newDomain);
 		_config.setBool("fullscreen", _fullscreenCheckbox->getState(), newDomain);
 		setResult(1);
 		close();
