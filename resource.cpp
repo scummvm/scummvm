@@ -419,7 +419,9 @@ void Scumm::loadCharset(int no)
 
 	debug(9, "loadCharset(%d)", no);
 
-
+	/* FIXME - hack around crash in Indy4 (occurs if you try to load after dieing) */
+	if (_gameId == GID_INDY4 && no == 0)
+		no = 1;
 
 	memset(_charsetData, 0, sizeof(_charsetData));
 
