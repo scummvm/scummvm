@@ -6,6 +6,9 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Added SAGA engine (for the games and "I Have No Mouth and I Must Scream"
      and "Inherit the Earth")
 
+ General:
+   - Added a MT-32 emulator
+
 0.7.0 (2004-12-24)
  New Games:
    - Added 26 Humongous Entertainment titles, only a few are completable.
