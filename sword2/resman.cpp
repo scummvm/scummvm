@@ -744,6 +744,9 @@ void ResourceManager::printConsoleClusters(void) {
 				case CD2:
 					Debug_Printf("CD 2\n");
 					break;
+				default:
+					Debug_Printf("CD 3? Huh?!\n");
+					break;
 				}
 			} else
 				Debug_Printf("HD\n");
