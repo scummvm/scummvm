@@ -826,6 +826,7 @@ protected:
 	void o90_unknown2F();
 	void o90_mod();
 	void o90_unknown34();
+	void o90_unknown36();
 	void o90_unknown37();
 	void o90_unknown9E();
 };

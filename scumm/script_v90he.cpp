@@ -112,7 +112,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		/* 34 */
 		OPCODE(o90_unknown34),
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o90_unknown36),
 		OPCODE(o90_unknown37),
 		/* 38 */
 		OPCODE(o6_invalid),
@@ -831,6 +831,16 @@ void ScummEngine_v90he::o90_unknown34() {
 	}
 	
 	push(readVar(0));
+}
+
+void ScummEngine_v90he::o90_unknown36() {
+	int a = pop();
+	int b = pop();
+	int c = pop();
+
+	if (!c)
+		b = a;
+	push(b);
 }
 
 void ScummEngine_v90he::o90_unknown37() {
