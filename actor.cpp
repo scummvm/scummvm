@@ -229,6 +229,11 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 		shutUp();
 
 	_lipSynch = g_resourceloader->loadLipSynch(soundLip.c_str());
+	// Sometimes actors speak offscreen before they, including their
+	// talk chores are initialized.
+	// For example, when reading the work order (a LIP file exists for no reason).
+	// Also, some lip synch files have no entries
+	// In these case, revert to using the mumble chore.
 	_talkSoundName = soundName;
 	g_imuse->startVoice(_talkSoundName.c_str());
 	if (g_engine->currScene()) {
