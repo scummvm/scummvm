@@ -320,14 +320,16 @@ int Actor::remapDirection(int dir, bool is_walking) {
 
 int Actor::updateActorDirection(bool is_walking) {
 	int from;
-	int dirType;
+	bool dirType = false;
 	int dir;
 	bool shouldInterpolate;
 
 	if ((_vm->_version == 6) && _ignoreTurns)
 		return _facing;
 
-	dirType = (_vm->_version >= 7) ? _vm->akos_hasManyDirections(_costume) : false;
+	if (_vm->_version >= 7) {
+		dirType = ((AkosCostumeLoader *)_vm->_costumeLoader)->hasManyDirections(_costume);
+	}
 
 	from = toSimpleDir(dirType, _facing);
 	dir = remapDirection(_targetFacing, is_walking);
@@ -467,7 +469,7 @@ void Actor::startAnimActor(int f) {
 			_needRedraw = true;
 			if (f == _initFrame)
 				_cost.reset();
-			_vm->costumeDecodeData(this, f, (uint) - 1);
+			_vm->_costumeLoader->costumeDecodeData(this, f, (uint) - 1);
 			_frame = f;
 		}
 	} else {
@@ -501,7 +503,7 @@ void Actor::startAnimActor(int f) {
 				_cost.reset();
 				_auxBlock.visible = false;
 			}
-			_vm->costumeDecodeData(this, f, (uint) - 1);
+			_vm->_costumeLoader->costumeDecodeData(this, f, (uint) - 1);
 			_frame = f;
 		}
 	}
@@ -570,7 +572,7 @@ void Actor::setDirection(int direction) {
 		vald = _cost.frame[i];
 		if (vald == 0xFFFF)
 			continue;
-		_vm->costumeDecodeData(this, vald, (_vm->_version <= 2) ? 0xFFFF : aMask);
+		_vm->_costumeLoader->costumeDecodeData(this, vald, (_vm->_version <= 2) ? 0xFFFF : aMask);
 	}
 
 	_needRedraw = true;
@@ -1128,25 +1130,10 @@ void Actor::animateCostume() {
 	if (_animProgress >= _animSpeed) {
 		_animProgress = 0;
 		
-		BaseCostumeLoader *cost = 0;
-
-		if (_vm->_features & GF_NEW_COSTUMES) {
-			byte *akos = _vm->getResourceAddress(rtCostume, _costume);
-			assert(akos);
-			if (_vm->akos_increaseAnims(akos, this)) {
-				_needRedraw = true;
-			}
-		} else {
-			if (_vm->_features & GF_NES)
-				cost = new NESCostumeLoader(_vm);
-			else
-				cost = new ClassicCostumeLoader(_vm);
-			cost->loadCostume(_costume);
-			if (cost->increaseAnims(this)) {
-				_needRedraw = true;
-			}
+		_vm->_costumeLoader->loadCostume(_costume);
+		if (_vm->_costumeLoader->increaseAnims(this)) {
+			_needRedraw = true;
 		}
-		delete cost;
 	}
 }
 

@@ -37,18 +37,26 @@ struct CostumeData;
 struct AkosHeader;
 struct AkosOffset;
 
-/* TODO:
 class AkosCostumeLoader : public BaseCostumeLoader {
+protected:
+	const byte *_akos;
+
 public:
-	AkosCostumeLoader(ScummEngine *vm);
+	AkosCostumeLoader(ScummEngine *vm) : BaseCostumeLoader(vm) {}
 
 	void loadCostume(int id);
 	byte increaseAnims(Actor *a);
 	void costumeDecodeData(Actor *a, int frame, uint usemask);
 	
 	//void animateLimb(int limb, int f);
+	bool hasManyDirections(int id) {
+		loadCostume(id);
+		return hasManyDirections();
+	}
+
+protected:
+	bool hasManyDirections();
 };
-*/
 
 class AkosRenderer : public BaseCostumeRenderer {
 protected:

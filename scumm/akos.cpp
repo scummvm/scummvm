@@ -137,20 +137,21 @@ static bool akos_compare(int a, int b, byte cmd) {
 	}
 }
 
-bool ScummEngine::akos_hasManyDirections(int costume) {
-	byte *akos;
+void AkosCostumeLoader::loadCostume(int id) {
+	_akos = _vm->getResourceAddress(rtCostume, id);
+	assert(_akos);
+}
+
+bool AkosCostumeLoader::hasManyDirections() {
 	const AkosHeader *akhd;
 
-	akos = getResourceAddress(rtCostume, costume);
-	assert(akos);
-
-	akhd = (const AkosHeader *)findResourceData(MKID('AKHD'), akos);
+	akhd = (const AkosHeader *)_vm->findResourceData(MKID('AKHD'), _akos);
 	return (akhd->flags & 2) != 0;
 }
 
-void ScummEngine::akos_decodeData(Actor *a, int frame, uint usemask) {
+void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 	uint anim;
-	const byte *akos, *r;
+	const byte *r;
 	const AkosHeader *akhd;
 	uint offs;
 	int i;
@@ -161,20 +162,19 @@ void ScummEngine::akos_decodeData(Actor *a, int frame, uint usemask) {
 	if (a->_costume == 0)
 		return;
 
-	if (_version >= 7 && akos_hasManyDirections(a->_costume))
+	loadCostume(a->_costume);
+
+	if (_vm->_version >= 7 && hasManyDirections())
 		anim = toSimpleDir(1, a->getFacing()) + frame * 8;
 	else
 		anim = newDirToOldDir(a->getFacing()) + frame * 4;
 
-	akos = getResourceAddress(rtCostume, a->_costume);
-	assert(akos);
-
-	akhd = (const AkosHeader *)findResourceData(MKID('AKHD'), akos);
+	akhd = (const AkosHeader *)_vm->findResourceData(MKID('AKHD'), _akos);
 
 	if (anim >= READ_LE_UINT16(&akhd->num_anims))
 		return;
 
-	r = findResourceData(MKID('AKCH'), akos);
+	r = _vm->findResourceData(MKID('AKCH'), _akos);
 	assert(r);
 
 	offs = READ_LE_UINT16(r + anim * sizeof(uint16));
@@ -182,8 +182,8 @@ void ScummEngine::akos_decodeData(Actor *a, int frame, uint usemask) {
 		return;
 	r += offs;
 
-	const uint8 *akst = findResourceData(MKID('AKST'), akos);
-	const uint8 *aksf = findResourceData(MKID('AKSF'), akos);
+	const uint8 *akst = _vm->findResourceData(MKID('AKST'), _akos);
+	const uint8 *aksf = _vm->findResourceData(MKID('AKSF'), _akos);
 
 	i = 0;
 	mask = READ_LE_UINT16(r); r += 2;
@@ -201,7 +201,7 @@ void ScummEngine::akos_decodeData(Actor *a, int frame, uint usemask) {
 					a->_cost.seq3[i] = 0;
 
 					if (akst) {
-						int size = getResourceDataSize(akst) / 8;
+						int size = _vm->getResourceDataSize(akst) / 8;
 						if (size > 0) {
 							bool found = false;
 							while (size--) {
@@ -231,7 +231,7 @@ void ScummEngine::akos_decodeData(Actor *a, int frame, uint usemask) {
 					a->_cost.seq1[i] = 0;
 					a->_cost.seq2[i] = 0;
 					if (aksf) {
-						int size = getResourceDataSize(aksf) / 6;
+						int size = _vm->getResourceDataSize(aksf) / 6;
 						if (size > 0) {
 							bool found = false;
 							while (size--) {
@@ -256,7 +256,7 @@ void ScummEngine::akos_decodeData(Actor *a, int frame, uint usemask) {
 					a->_cost.curpos[i] = start;
 					a->_cost.seq3[i] = 0;
 					if (akst) {
-						int size = getResourceDataSize(akst) / 8;
+						int size = _vm->getResourceDataSize(akst) / 8;
 						if (size > 0) {
 							bool found = false;
 							while (size--) {
@@ -1237,6 +1237,10 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 	byte *dstPtr = (byte *)_out.pixels + dst.left + dst.top * _out.pitch;
 	Wiz::decompressWizImage(dstPtr, _out.pitch, dst, _srcptr, src);
 	return 0;
+}
+
+byte AkosCostumeLoader::increaseAnims(Actor *a) {
+	return _vm->akos_increaseAnims(_akos, a);
 }
 
 bool ScummEngine::akos_increaseAnims(const byte *akos, Actor *a) {

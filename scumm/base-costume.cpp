@@ -88,18 +88,4 @@ bool ScummEngine::isCostumeInUse(int cost) const {
 	return false;
 }
 
-void ScummEngine::costumeDecodeData(Actor *a, int frame, uint usemask) {
-	// TODO: This should eventually become a method of the appropriate
-	// BaseCostumeLoader subclasses.
-	if (_features & GF_NEW_COSTUMES)
-		akos_decodeData(a, frame, usemask);
-	else if (_features & GF_NES) {
-		NESCostumeLoader lc(this);
-		lc.costumeDecodeData(a, frame, usemask);
-	} else {
-		ClassicCostumeLoader lc(this);
-		lc.costumeDecodeData(a, frame, usemask);
-	}
-}
-
 } // End of namespace Scumm

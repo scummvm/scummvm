@@ -857,6 +857,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_existLanguageFile = false;
 	_languageBuffer = NULL;
 	_languageIndex = NULL;
+	_costumeLoader = NULL;
 	_costumeRenderer = NULL;
 	_2byteFontPtr = 0;
 	_V1TalkingActor = 0;
@@ -1154,6 +1155,7 @@ ScummEngine::~ScummEngine() {
 	free(_languageBuffer);
 	free(_audioNames);
 
+	delete _costumeLoader;
 	delete _costumeRenderer;
 
 	free(_shadowPalette);
@@ -1270,12 +1272,16 @@ int ScummEngine::init(GameDetector &detector) {
 		_charset = new CharsetRendererClassic(this);
 
 	// Create the costume renderer
-	if (_features & GF_NEW_COSTUMES)
+	if (_features & GF_NEW_COSTUMES) {
 		_costumeRenderer = new AkosRenderer(this);
-	else if (_features & GF_NES)
+		_costumeLoader = new AkosCostumeLoader(this);
+	} else if (_features & GF_NES) {
 		_costumeRenderer = new NESCostumeRenderer(this);
-	else
+		_costumeLoader = new NESCostumeLoader(this);
+	} else {
 		_costumeRenderer = new ClassicCostumeRenderer(this);
+		_costumeLoader = new ClassicCostumeLoader(this);
+	}
 
 	// Create FT INSANE object
 	if (_gameId == GID_FT)

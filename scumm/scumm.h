@@ -43,6 +43,7 @@ class GameDetector;
 namespace Scumm {
 
 class Actor;
+class BaseCostumeLoader;
 class BaseCostumeRenderer;
 class CharsetRenderer;
 class IMuse;
@@ -470,7 +471,8 @@ public:
 	int _numCostumes;	// FIXME - should be protected, used by Actor::remapActorPalette
 	int _numCharsets;	// FIXME - should be protected, used by CharsetRenderer
 
-	BaseCostumeRenderer* _costumeRenderer;
+	BaseCostumeLoader *_costumeLoader;
+	BaseCostumeRenderer *_costumeRenderer;
 
 	int _NESCostumeSet;
 	void NES_loadCostumeSet(int n);
@@ -845,7 +847,6 @@ public:
 	void setTalkingActor(int variable);
 
 	// Generic costume code
-	void costumeDecodeData(Actor *a, int frame, uint usemask);
 	bool isCostumeInUse(int i) const;
 
 	// Akos Class
@@ -863,8 +864,6 @@ public:
 	bool akos_increaseAnim(Actor *a, int i, const byte *aksq, const uint16 *akfo, int numakfo);
 	void akos_queCommand(byte cmd, Actor *a, int param_1, int param_2);
 	void akos_processQueue();
-	void akos_decodeData(Actor *a, int frame, uint usemask);
-	bool akos_hasManyDirections(int costume);
 
 protected:
 	/* Should be in Graphics class? */
