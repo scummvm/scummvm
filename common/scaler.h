@@ -63,9 +63,9 @@ enum {
 	GFX_SUPEREAGLE = 5,
 	GFX_ADVMAME2X = 6,
 	GFX_ADVMAME3X = 7,
-	GFX_TV2X = 8,
-	GFX_DOTMATRIX = 9,
-	GFX_HQ3X = 10,
+	GFX_HQ3X = 8,
+	GFX_TV2X = 9,
+	GFX_DOTMATRIX = 10,
 
 	GFX_BILINEAR = 12,    // OpenGL backend
 	

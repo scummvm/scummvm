@@ -651,8 +651,8 @@ uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
 				fb2gl.setBilinearMode(_glBilinearFilter);
 				break;
 			default: // SDL backend
-				if (value->gfx_mode >= 10)
-				  return 0;
+				if (value->gfx_mode >= 11)
+					return 0;
 
 				_mode = value->gfx_mode;
 

@@ -619,7 +619,7 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 
 			// Ctr-Alt-<key> will change the GFX mode
 			if (b == (KBD_CTRL|KBD_ALT)) {
-				char keys[] = "1234567890";
+				char keys[] = "123456789cd";
 				char *ptr;
 
 				ptr = strchr(keys, ev.key.keysym.sym);

@@ -468,6 +468,7 @@ simon games.
         Keyboard Arrow Keys    - Simulate mouse movement
         Ctrl-f                 - Runs in fast mode.
         Ctrl-Alt 0-9           - Switch between graphics filters
+	Ctrl-Alt c-d           - Switch between other graphics filters
         Ctrl-Alt b             - Switch between bilinear and non-linear
                                  filtering [OpenGL backend]
         Ctrl-Alt a             - Toggle aspect-ratio correction on/off.

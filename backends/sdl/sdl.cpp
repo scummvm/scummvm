@@ -365,7 +365,7 @@ uint32 OSystem_SDL::property(int param, Property *value) {
 #endif
 		return 1;
 	} else if (param == PROP_SET_GFX_MODE) {
-		if (value->gfx_mode >= 10)
+		if (value->gfx_mode >= 11)
 			return 0;
 
 		_mode = value->gfx_mode;
