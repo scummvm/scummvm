@@ -882,36 +882,12 @@ void AkosRenderer::akos16DecodeLine(byte *buf, int32 numbytes, int32 dir) {
 	}
 }
 
-void AkosRenderer::akos16Decompress(byte *dest, int32 pitch, const byte *src, int32 t_width, int32 t_height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency) {
-	byte *tmp_buf = akos16.buffer;
-
-	if (dir < 0) {
-		dest -= (t_width - 1);
-		tmp_buf += (t_width - 1);
-	}
-
-	akos16SetupBitReader(src);
-
-	if (numskip_before != 0) {
-		akos16SkipData(numskip_before);
-	}
-
-	assert(t_height > 0);
-	assert(t_width > 0);
-	while (t_height--) {
-		akos16DecodeLine(tmp_buf, t_width, dir);
-		bompApplyShadow(_shadow_mode, _shadow_table, akos16.buffer, dest, t_width, transparency);
-
-		if (numskip_after != 0)	{
-			akos16SkipData(numskip_after);
-		}
-		dest += pitch;
-	}
-}
-
-void AkosRenderer::akos16DecompressMask(byte *dest, int32 pitch, const byte *src, int32 t_width, int32 t_height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency, byte * maskptr, int32 bitpos_start) {
+void AkosRenderer::akos16Decompress(byte *dest, int32 pitch, const byte *src, int32 t_width, int32 t_height, int32 dir,
+		int32 numskip_before, int32 numskip_after, byte transparency, int maskLeft, int maskTop, int zBuf) {
 	byte *tmp_buf = akos16.buffer;
 	int maskpitch;
+	byte *maskptr = 0, *charsetMask = 0;
+	const byte maskbit = revBitMask[maskLeft & 7];
 
 	if (dir < 0) {
 		dest -= (t_width - 1);
@@ -925,19 +901,27 @@ void AkosRenderer::akos16DecompressMask(byte *dest, int32 pitch, const byte *src
 	}
 
 	maskpitch = _numStrips;
+	
+	charsetMask = _vm->getMaskBuffer(maskLeft, maskTop, 0);
+	if (zBuf != 0)
+		maskptr = _vm->getMaskBuffer(maskLeft, maskTop, zBuf);
 
 	assert(t_height > 0);
 	assert(t_width > 0);
 	while (t_height--) {
 		akos16DecodeLine(tmp_buf, t_width, dir);
-		bompApplyMask(akos16.buffer, maskptr, (byte)bitpos_start, t_width, transparency);
+		bompApplyMask(akos16.buffer, charsetMask, maskbit, t_width, transparency);
+		if (maskptr) {
+			bompApplyMask(akos16.buffer, maskptr, maskbit, t_width, transparency);
+			maskptr += maskpitch;
+		}
 		bompApplyShadow(_shadow_mode, _shadow_table, akos16.buffer, dest, t_width, transparency);
 
 		if (numskip_after != 0)	{
 			akos16SkipData(numskip_after);
 		}
 		dest += pitch;
-		maskptr += maskpitch;
+		charsetMask += maskpitch;
 	}
 }
 
@@ -1040,15 +1024,9 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	int32 numskip_before = skip_x + (skip_y * _width);
 	int32 numskip_after = _width - cur_x;
 
-	byte *dest = _outptr + width_unk + height_unk * _outwidth;
+	byte *dst = _outptr + width_unk + height_unk * _outwidth;
 
-	if (_zbuf == 0) {
-		akos16Decompress(dest, pitch, _srcptr, cur_x, out_height, dir, numskip_before, numskip_after, transparency);
-	} else {
-		byte *ptr = _vm->getMaskBuffer(clip.left, clip.top, _zbuf);
-		akos16DecompressMask(dest, pitch, _srcptr, cur_x, out_height, dir, numskip_before, numskip_after, transparency, ptr, clip.left / 8);
-	}
-	
+	akos16Decompress(dst, pitch, _srcptr, cur_x, out_height, dir, numskip_before, numskip_after, transparency, clip.left, clip.top, _zbuf);
 	return 0;
 }
 
