@@ -77,7 +77,8 @@ public:
 		byte *allData;
 		int32 offsetData;
 		byte *resPtr;
-		char name[30];
+		char name[15];
+		int soundId;
 		bool freeResPtr;
 		BundleMgr *_bundle;
 		_region region[MAX_IMUSE_REGIONS];

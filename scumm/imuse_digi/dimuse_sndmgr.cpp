@@ -89,7 +89,7 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, int slot) {
 			case MKID_BE('REGN'):
 				size = READ_BE_UINT32(ptr); ptr += 4;
 				if (_sounds[slot].numRegions >= MAX_IMUSE_REGIONS) {
-					warning("ImuseDigiSndMgr::prepareSound(%s) Not enough space for Region", _sounds[slot].name);
+					warning("ImuseDigiSndMgr::prepareSound(%d/%s) Not enough space for Region", _sounds[slot].soundId, _sounds[slot].name);
 					ptr += 8;
 					break;
 				}
@@ -104,7 +104,7 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, int slot) {
 			case MKID_BE('JUMP'):
 				size = READ_BE_UINT32(ptr); ptr += 4;
 				if (_sounds[slot].numJumps >= MAX_IMUSE_JUMPS) {
-					warning("ImuseDigiSndMgr::prepareSound(%s) Not enough space for Jump", _sounds[slot].name);
+					warning("ImuseDigiSndMgr::prepareSound(%d/%s) Not enough space for Jump", _sounds[slot].soundId, _sounds[slot].name);
 					ptr += size;
 					break;
 				}
@@ -121,7 +121,7 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, int slot) {
 				size = READ_BE_UINT32(ptr); ptr += 4;
 				break;
 			default:
-				error("ImuseDigiSndMgr::prepareSound(%s) Unknown sfx header '%s'",  _sounds[slot].name, tag2str(tag));
+				error("ImuseDigiSndMgr::prepareSound(%d/%s) Unknown sfx header '%s'", _sounds[slot].soundId, _sounds[slot].name, tag2str(tag));
 			}
 		} while (tag != MKID_BE('DATA'));
 		_sounds[slot].offsetData =  ptr - s_ptr;
@@ -225,7 +225,8 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 			else 
 				error("ImuseDigiSndMgr::openSound() Don't know how load sound: %d", soundId);
 			_sounds[slot]._bundle->decompressSampleByIndex(soundId, 0, 0x2000, &ptr, 0);
-			strcpy(_sounds[slot].name, soundName);
+			_sounds[slot].name[0] = 0;
+			_sounds[slot].soundId = soundId;
 		} else {
 			error("ImuseDigiSndMgr::openSound() Don't know how load sound: %d", soundId);
 		}
@@ -235,14 +236,15 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 				result = openVoiceBundle(slot);
 			else if (soundGroup == IMUSE_MUSIC)
 				result = openMusicBundle(slot);
-			else 
+			else
 				error("ImuseDigiSndMgr::openSound() Don't know how load sound: %d", soundId);
 			_sounds[slot]._bundle->decompressSampleByName(soundName, 0, 0x2000, &ptr);
-			_sounds[slot].name[0] = 0;
+			strcpy(_sounds[slot].name, soundName);
+			_sounds[slot].soundId = soundId;
 		} else {
 			error("ImuseDigiSndMgr::openSound() Don't know how load sound: %s", soundName);
 		}
-	}	
+	}
 
 	if (result) {
 		if (ptr == NULL) {

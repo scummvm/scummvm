@@ -595,6 +595,7 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 					left = 0x1000 - firstWord / 2;
 					output_size = left * 2;
 				}
+				output_size += firstWord;
 			} else {
 				startPos = 1;
 				for (int i = 0; i < channels; i++) {

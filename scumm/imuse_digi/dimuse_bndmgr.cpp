@@ -229,7 +229,7 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 			curBuf = _blockChache;
 		}
 
-		if ((header_size != 0) && (skip > header_size))
+		if ((header_size != 0) && (skip >= header_size))
 			output_size -= skip;
 		if (output_size > size)
 			output_size = size;
