@@ -41,6 +41,8 @@
 #include "sound/mixer.h"
 #include "common/file.h"
 
+void sword2_sound_handler (void *engine);
+
 class Sword2Sound {
 	public:
 		Sword2Sound(SoundMixer *mixer);
@@ -65,7 +67,7 @@ class Sword2Sound {
 		int32 PauseMusic(void);
 		int32 UnpauseMusic(void);
 		int32 StreamMusic(uint8 *filename, int32 looping);
-		int32 StreamCompMusic(const char *filename, const char *directory, uint32 musicId, int32 looping);
+		int32 StreamCompMusic(const char *filename, uint32 musicId, int32 looping);
 		int32 MusicTimeRemaining();
 		int32 ReverseStereo(void);
 		uint8 GetFxVolume(void);
@@ -75,8 +77,6 @@ class Sword2Sound {
 		uint8 IsFxMute(void);
 		uint8 IsSpeechMute(void);
 		void  StopMusic(void);
-		void  GetSoundStatus(_drvSoundStatus *s);
-		void  SetSoundStatus(_drvSoundStatus *s);
 		void  SetFxVolume(uint8 vol);
 		void  SetSpeechVolume(uint8 vol);
 		void  SetMusicVolume(uint8 vol);
@@ -92,14 +92,16 @@ class Sword2Sound {
 		int32 GetFxIndex(int32 id);
 		void StartMusicFadeDown(int i);
 		int32 DipMusic();
-		void UpdateSampleStreaming(void);
 
 		int32 fxId[MAXFX];
 		uint8 fxCached[MAXFX];
 		uint8 fxiPaused[MAXFX];
 		uint8 fxLooped[MAXFX];
 		uint8 fxVolume[MAXFX];
-		
+		uint32 flagsFx[MAXFX];
+		uint16 *bufferFx[MAXFX];
+		int32 bufferSizeFx[MAXFX];
+
 		uint8 soundOn;
 		uint8 speechStatus;
 		uint8 fxPaused;
@@ -116,14 +118,13 @@ class Sword2Sound {
 		int16 musFading[MAXMUS];
 		int16 musLooping[MAXMUS];
 
-		//DSBUFFERDESC dsbdMus[MAXMUS];
-		//LPDIRECTSOUNDBUFFER lpDsbMus[MAXMUS];
-		PlayingSoundHandle musicHandle[MAXMUS];
+		PlayingSoundHandle soundHandleFx[MAXFX];
+		PlayingSoundHandle soundHandleMusic[MAXMUS];
+		PlayingSoundHandle soundHandleSpeech;
+		File				fpMus;
+		int bufferSizeMusic;
+		int musicIndexChannel[MAXMUS];
 		int musicChannels[MAXMUS];
-		uint16 *lpDsbMus[MAXMUS];
-		File fpMus[MAXMUS];
-		//FILE *fpMus[MAXMUS];
-		//PCMWAVEFORMAT wfMus[MAXMUS];
 		int32 streamCursor[MAXMUS];
 		char musFilename[MAXMUS][256];
 		int32 musFilePos[MAXMUS];
@@ -132,7 +133,6 @@ class Sword2Sound {
 		uint32 musId[MAXMUS];
 		uint32 volMusic[2];
 		uint8 musicMuted;
-		
 };
 
 

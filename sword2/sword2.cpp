@@ -18,15 +18,12 @@
  */
 
 //------------------------------------------------------------------------------------
-#include <ctype.h>
-#include <stdio.h>
-//#include <windows.h>
-
 #include "stdafx.h"
 #include "driver/driver96.h"
 #include "driver/palette.h"
 #include "common/gameDetector.h"
 #include "common/config-file.h"
+#include "common/timer.h"
 #include "build_display.h"
 #include "console.h"
 #include "controls.h"
@@ -318,6 +315,7 @@ void Sword2State::go()
 	}
 */
 
+	g_engine->_timer->installProcedure(sword2_sound_handler, 1000000);
 	Zdebug("CALLING: InitialiseGame");
 	if (InitialiseGame())
 	{

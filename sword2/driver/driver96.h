@@ -1365,50 +1365,6 @@ typedef struct
 //	DDCOLORKEY			blackColorKey;
 } _drvDrawStatus;
 
-
-
-//  This is the structure which is used to set and
-//  retrieve the direct sound drivers global variables.
-
-typedef struct
-{	
-//	HWND				hwnd;
-//	LPDIRECTSOUND		lpDS;
-//	LPDIRECTSOUNDBUFFER	dsbPrimary;
-//	LPDIRECTSOUNDBUFFER	dsbSpeech;
-//	LPDIRECTSOUNDBUFFER	dsbFx[MAXFX];
-	int32				fxId[MAXFX];
-	uint8				fxCached[MAXFX];
-	uint8				soundOn;
-	uint8				speechStatus;
-	uint8				fxPaused;
-	char				musFilename[MAXMUS][256];
-	uint8				speechPaused;
-	uint8				speechVol;
-	uint8				fxVol;
-	uint8               speechMuted;
-	uint8               fxMuted;
-	uint8				musicMuted;
-	uint8				compressedMusic;
-	uint8				fxiPaused[MAXFX];
-	uint8				fxLooped[MAXFX];
-	int16 				musStreaming[MAXMUS];
-	int16				musicPaused[MAXMUS];
-	int16 				musCounter[MAXMUS];
-	int16				musFading[MAXMUS];
-	int16				musLooping[MAXMUS];
-	int16				musLastSample[MAXMUS];
-	int32				streamCursor[MAXMUS];
-	int32				musFilePos[MAXMUS];
-	int32				musEnd[MAXMUS];
-	uint32				musId[MAXMUS];
-//	DSBUFFERDESC 		dsbdMus[MAXMUS];
-//	LPDIRECTSOUNDBUFFER lpDsbMus[MAXMUS];
-	FILE				*fpMus[MAXMUS];
-//	PCMWAVEFORMAT       wfMus[MAXMUS];
-	uint32				volMusic[2];
-} _drvSoundStatus;
-
 //  This is the structure which is used to retrieve
 //  the keyboard driver bits.
 

@@ -19,12 +19,9 @@
 
 #define WIN32_LEAN_AND_MEAN
 
-//#include <windows.h>
-//#include <windowsx.h>
-#include <stdio.h>
-
 #include "common/stdafx.h"
 #include "common/engine.h"
+#include "common/timer.h"
 
 #include "driver96.h"
 
@@ -532,6 +529,7 @@ int32 CloseAppWindow(void)
 	DestroyWindow(hwnd);
 */
 	// just quit for now
+	g_engine->_timer->releaseProcedure(sword2_sound_handler);
 	g_system->quit();
 	return(RD_OK);
 
