@@ -258,6 +258,10 @@ SOURCE=..\..\common\scummsys.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\common\singleton.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\common\stdafx.h
 # End Source File
 # Begin Source File
