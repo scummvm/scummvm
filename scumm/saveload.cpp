@@ -183,7 +183,7 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	// scumm vars. We now know the proper locations. To be able to properly use
 	// old save games, we update the old (bad) variables to the new (correct)
 	// ones.
-	if (hdr.ver < 28 && _version == 8) {
+	if (hdr.ver < VER(28) && _version == 8) {
 		_scummVars[VAR_CAMERA_MIN_X] = _scummVars[101];
 		_scummVars[VAR_CAMERA_MAX_X] = _scummVars[102];
 		_scummVars[VAR_CAMERA_MIN_Y] = _scummVars[103];
@@ -657,6 +657,18 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 
 	// Save all resource.
 	int type, idx;
+
+	if (s->isLoading()) {
+		// When loading, start by deleting old non-permanent resources (an
+		// exception is made for buffer/temp resources, they are going to be
+		// deleted later on anyway).
+		for (type = rtFirst; type <= rtLast; type++) {
+			if (res.mode[type] != 1 && type != rtTemp && type != rtBuffer)
+				for (idx = 1; idx < res.num[type]; idx++)
+					nukeResource(type, idx);
+		}
+	}
+
 	if (savegameVersion >= VER(26)) {
 		// New, more robust resource save/load system. This stores the type
 		// and index of each resource. Thus if we increase e.g. the maximum
@@ -689,10 +701,9 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		// with index 0, and breaks whenever we change the limit on a given
 		// resource type.
 		for (type = rtFirst; type <= rtLast; type++)
-			if (res.mode[type] != 1)
+			if (res.mode[type] != 1 && type != rtTemp && type != rtBuffer)
 				for (idx = 1; idx < res.num[type]; idx++)
-					if (type != rtTemp && type != rtBuffer)
-						saveLoadResource(s, type, idx);
+					saveLoadResource(s, type, idx);
 	}
 
 	s->saveLoadArrayOf(_objectOwnerTable, _numGlobalObjects, sizeof(_objectOwnerTable[0]), sleByte);
