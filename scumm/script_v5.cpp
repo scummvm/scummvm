@@ -1478,13 +1478,19 @@ void Scumm_v5::o5_putActorInRoom() {
 }
 
 void Scumm_v5::o5_quitPauseRestart() {
-	switch (fetchScriptByte()) {
-	case 1:
-		pauseGame(false);
+	byte subOp = fetchScriptByte();
+	switch (subOp) {
+	case 1:		// Restart
+		restart();
 		break;
-	case 3:
-		shutDown(0);
+	case 2:		// Pause
+		pauseGame();
 		break;
+	case 3:		// Quit
+		shutDown();
+		break;
+	default:
+		error("o5_quitPauseRestart invalid case %d\n", subOp);
 	}
 }
 

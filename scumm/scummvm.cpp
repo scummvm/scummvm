@@ -1676,7 +1676,7 @@ int Scumm::checkKeyHit() {
 	return a;
 }
 
-void Scumm::pauseGame(bool user) {
+void Scumm::pauseGame() {
 	pauseDialog();
 }
 
@@ -1745,9 +1745,31 @@ char Scumm::displayError(bool showCancel, const char *message, ...) {
 	return result;
 }
 
-void Scumm::shutDown(int i) {
-	/* TODO: implement this */
-	warning("shutDown: not implemented");
+void Scumm::shutDown() {
+	// FIXME: This is ugly
+	_system->quit();
+}
+
+void Scumm::restart() {
+	// TODO: implement restart
+	// To implement this, there are two approaches (at least):
+	// 1) Manually cleanup all vars, etc. and run the bootscript again
+	// 2) Use the savegame system
+	// For 2, we could modify the savegame system to allow us to "save" to a memory
+	// block. We then do that at the start of the game, just before invoking the 
+	// bootscript (or maybe just after launching it, whatever). Then to restart
+	// we simply load the state. Easy, hu? :-)
+	//
+	// For 1), we first have to clean up / restructure the current init code. Right now
+	// we have the code which inits the state spread over at least these functions:
+	// The constructor, launch, scummInit, readIndexFile
+	// Problem is, the init code is not very logically distributed over those.
+	// We should first clean this up... Code that sets up fixed state (e.g. gdi._vm = this)
+	// can be moved to either the constructor or maybe scummInit. Code that 
+	// might be useful for restart should be moved to a seperate function.
+	// Finally, all the init code in launch should go - launch should only contain
+	// a few function calls and not much else, iMHO.
+	error("Restart not implemented");
 }
 
 void Scumm::processKbd() {
@@ -1789,14 +1811,13 @@ void Scumm::processKbd() {
 
 	if (VAR_RESTART_KEY != 0xFF && _lastKeyHit == VAR(VAR_RESTART_KEY)) {
 		warning("Restart not implemented");
-//		pauseGame(true);
+		//restart();
 		return;
 	}
 
 	if ((VAR_PAUSE_KEY != 0xFF && _lastKeyHit == VAR(VAR_PAUSE_KEY)) ||
 		(VAR_PAUSE_KEY == 0xFF && _lastKeyHit == ' ')) {
-		pauseGame(true);
-		/* pause */
+		pauseGame();
 		return;
 	}
 
@@ -2331,8 +2352,9 @@ void Scumm::launch() {
 	_sound->setupSound();
 
 	// If requested, load a save game instead of running the boot script
-	if (_saveLoadFlag != 2 || !loadState(_saveLoadSlot, _saveLoadCompatible))
+	if (_saveLoadFlag != 2 || !loadState(_saveLoadSlot, _saveLoadCompatible)) {
 		runScript(1, 0, 0, &_bootParam);
+	}
 }
 
 void Scumm::go() {

@@ -708,7 +708,7 @@ void Scumm_v2::o2_actorSet() {
 }
 
 void Scumm_v2::o2_restart() {
-	warning("o2_restart NYI");
+	restart();
 }
 
 void Scumm_v2::o2_drawObject() {

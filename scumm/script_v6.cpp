@@ -2140,15 +2140,19 @@ void Scumm_v6::o6_isAnyOf() {
 }
 
 void Scumm_v6::o6_quitPauseRestart() {
-	switch (fetchScriptByte()) {
-	case 158:
-		pauseGame(false);
+	byte subOp = fetchScriptByte();
+	switch (subOp) {
+	case 158:		// Restart
+		restart();
 		break;
-	case 160:
-		shutDown(0);
+	case 159:		// Pause
+		pauseGame();
+		break;
+	case 160:		// Quit
+		shutDown();
 		break;
 	default:
-		error("o6_quitPauseRestart: invalid case");
+		error("o6_quitPauseRestart invalid case %d\n", subOp);
 	}
 }
 

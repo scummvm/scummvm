@@ -1312,17 +1312,16 @@ void Scumm_v8::o8_soundKludge() {
 }
 
 void Scumm_v8::o8_system() {
-	// TODO
 	byte subOp = fetchScriptByte();
 	switch (subOp) {
 	case 0x28:		// SO_SYSTEM_RESTART Restart game
-//		pauseGame(false);
-//		break;
+		restart();
+		break;
 	case 0x29:		// SO_SYSTEM_QUIT Quit game
-//		shutDown(0);
-//		break;
+		shutDown();
+		break;
 	default:
-		error("o8_system: default case 0x%x", subOp);
+		error("o8_system: invalid case 0x%x", subOp);
 	}
 }
 

@@ -345,8 +345,9 @@ public:
 	bool _videoFinished;
 	bool _smushPlay;
 	
-	void pauseGame(bool user);
-	void shutDown(int i);
+	void pauseGame();
+	void restart();
+	void shutDown();
 	void setOptions(void);
 
 #ifdef __PALM_OS__
