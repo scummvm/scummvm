@@ -837,7 +837,7 @@ void SimonState::playSting(uint a)
 	uint16 size;
 
 	_mus_file = new File();
-	sprintf(filename, "STINGS%i.MUS", a);
+	sprintf(filename, "STINGS%i.MUS", _midi_sfx);
 	_mus_file->open(filename, _gameDataPath);
 	if (!_mus_file->isOpen()) {
 		warning("Can't load sound effect from '%s'", filename);
