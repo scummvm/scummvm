@@ -45,6 +45,8 @@ private:
 
 	int _soundFrequency;
 
+	Common::Mutex _mutex;
+
 public:
 
 	SmushMixer(SoundMixer *);
