@@ -305,7 +305,7 @@ void Cutaway::actionSpecialMove(int index) {
 				_graphics->cameraBob(-1);
 				// XXX fastmode = 1;
 
-				_graphics->update();
+				_graphics->update(true);
 				
 				int i = 4, k = 160;
 
@@ -340,18 +340,18 @@ void Cutaway::actionSpecialMove(int index) {
 
 					display->horizontalScroll(horizontalScroll);
 
-					bob_thugA1->x += i * 2; 
-					bob_thugA2->x += i * 2; 
-					bob_thugA3->x += i * 2;
+					bob_thugA1->x -= i * 2; 
+					bob_thugA2->x -= i * 2; 
+					bob_thugA3->x -= i * 2;
 
-					bob_hugh1->x += i * 3;
-					bob_hugh2->x += i * 3;
-					bob_hugh3->x += i * 3;
+					bob_hugh1->x -= i * 3;
+					bob_hugh2->x -= i * 3;
+					bob_hugh3->x -= i * 3;
 
-					bob_thugB1->x += i * 4;
-					bob_thugB2->x += i * 4;
+					bob_thugB1->x -= i * 4;
+					bob_thugB2->x -= i * 4;
 
-					_graphics->update();
+					_graphics->update(true);
 
 					if (_quit)
 						return;
@@ -364,7 +364,7 @@ void Cutaway::actionSpecialMove(int index) {
 		
 		// cdint.cut - flash white
 		case 37:
-			// XXX flashspecial();
+			_logic->display()->palCustomFlash();
 			break;
 
 		// cdint.cut - pan right
@@ -381,7 +381,7 @@ void Cutaway::actionSpecialMove(int index) {
 				_graphics->cameraBob(-1);
 				// XXX fastmode = 1;
 					
-				_graphics->update();
+				_graphics->update(true);
 
 				bob_box  ->x += 280 * 2;
 				bob_beam ->x += 30;
@@ -389,7 +389,7 @@ void Cutaway::actionSpecialMove(int index) {
 
 				int horizontalScroll = display->horizontalScroll();
 
-				int i = 4;	// XXX 1 in original source code
+				int i = 1;
 				while (horizontalScroll < 290) {
 
 					horizontalScroll = horizontalScroll + i;
@@ -406,7 +406,7 @@ void Cutaway::actionSpecialMove(int index) {
 					bob_clock->x -= i * 2;
 					bob_hands->x -= i * 2;
 
-					_graphics->update();
+					_graphics->update(true);
 
 					if (_quit)
 						return;
@@ -445,7 +445,7 @@ void Cutaway::actionSpecialMove(int index) {
 
 					bob22->x += i;
 
-					_graphics->update();
+					_graphics->update(true);
 
 					if (_quit)
 						return;

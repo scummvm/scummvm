@@ -131,7 +131,7 @@ public:
 	void bobDrawAll(); // drawbobs()
 	void bobClearAll(); // clearallbobs()
 	BobSlot *bob(int index);
-	void bobCustomParallax(uint16 roomNum);
+	void bobCustomParallax(uint16 roomNum); // CHECK_PARALLAX()
 
 	void bobSetText(
 		BobSlot *bob, 
@@ -161,7 +161,7 @@ public:
 	void cameraBob(int bobNum);
 	int cameraBob() { return _cameraBob; }
 
-	void update();
+	void update(bool fastmode = false);
 
 
 private:

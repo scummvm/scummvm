@@ -806,7 +806,7 @@ void Graphics::cameraBob(int bobNum) {
 }
 
 
-void Graphics::update() {
+void Graphics::update(bool fastmode) {
 	// FIXME: temporary code, move to Logic::update()
 	bobSortAll();
 	if (_cameraBob >= 0) {
@@ -821,8 +821,10 @@ void Graphics::update() {
 	_display->prepareUpdate();
 	bobDrawAll();
 	textDrawAll();
-	g_queen->delay(100);
-	_display->palCustomScroll(0); //_currentRoom
+	if (!fastmode) {
+		g_queen->delay(100);
+	}
+	_display->palCustomScroll(_lastRoom);
 	_display->update(_bobs[0].active, _bobs[0].x, _bobs[0].y);
 }
 
