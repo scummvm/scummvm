@@ -117,6 +117,7 @@ SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 	_vm = this;
 
 	_walkthroughDialog->setGameName(detector->_game.name);
+	_walkthroughDialog->create();
 }
 
 SagaEngine::~SagaEngine() {
