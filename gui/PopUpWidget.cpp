@@ -265,6 +265,9 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 	_gui->addDirtyRect(x, y, w, kLineHeight);
 }
 
+
+#pragma mark -
+
 //
 // PopUpWidget
 //
@@ -278,11 +281,14 @@ PopUpWidget::PopUpWidget(Dialog *boss, int x, int y, int w, int h)
 }
 
 void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
-	PopUpDialog popupDialog(this, x + _x + _boss->getX(), y + _y + _boss->getY());
-	int newSel = popupDialog.runModal();
-	if (newSel != -1 && _selectedItem != newSel) {
-		_selectedItem = newSel;
-		sendCommand(kPopUpItemSelectedCmd, _entries[_selectedItem].tag);
+
+	if (isEnabled()) {
+		PopUpDialog popupDialog(this, x + _x + _boss->getX(), y + _y + _boss->getY());
+		int newSel = popupDialog.runModal();
+		if (newSel != -1 && _selectedItem != newSel) {
+			_selectedItem = newSel;
+			sendCommand(kPopUpItemSelectedCmd, _entries[_selectedItem].tag);
+		}
 	}
 }
 
@@ -320,11 +326,11 @@ void PopUpWidget::drawWidget(bool hilite) {
 	gui->vline(_x + _w - 1, _y, _y +_h - 1, gui->_shadowcolor);
 
 	// Draw an arrow pointing down at the right end to signal this is a dropdown/popup
-	gui->drawBitmap(up_down_arrows, _x+_w - 10, _y+2, hilite ? gui->_textcolorhi : gui->_textcolor);
+	gui->drawBitmap(up_down_arrows, _x+_w - 10, _y+2, !isEnabled() ? gui->_color : hilite ? gui->_textcolorhi : gui->_textcolor);
 
 	// Draw the selected entry, if any
 	if (_selectedItem >= 0) {
 		int align = (gui->getStringWidth(_entries[_selectedItem].name) > _w-6) ? kTextAlignRight : kTextAlignLeft;
-		gui->drawString(_entries[_selectedItem].name, _x+2, _y+3, _w-6, gui->_textcolor, align);
+		gui->drawString(_entries[_selectedItem].name, _x+2, _y+3, _w-6, !isEnabled() ? gui->_color : gui->_textcolor, align);
 	}
 }
