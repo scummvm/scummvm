@@ -86,7 +86,7 @@ byte CostumeRenderer::mainRoutine(int slot, int frame) {
 	byte newAmiCost;
 	int ex1, ex2;
 	
-	newAmiCost = (_vm->_gameId == GID_MONKEY2 || _vm->_gameId == GID_INDY4) && ((_vm->_features & GF_AMIGA) || (_vm->_features & GF_16COLOR));
+	newAmiCost = (_vm->_features & GF_AMIGA) || (_vm->_features & GF_16COLOR);
 
 	CHECK_HEAP
 	_maskval = 0xF;
@@ -226,12 +226,10 @@ byte CostumeRenderer::mainRoutine(int slot, int frame) {
 		if (scaling == 0)
 			s = -_xpos;
 		if (s > 0) {
-			if (!newAmiCost) {
-				_width2 -= s;
-				ignorePakCols(s);
-				_xpos = 0;
-				_docontinue = 1;
-			}
+			_width2 -= s;
+			ignorePakCols(s);
+			_xpos = 0;
+			_docontinue = 1;
 		} else {
 			s = _right - _vm->_realWidth;
 			if (s <= 0) {
@@ -245,12 +243,10 @@ byte CostumeRenderer::mainRoutine(int slot, int frame) {
 		if (scaling == 0)
 			s = _right - _vm->_realWidth;
 		if (s > 0) {
-			if (!newAmiCost) {
-				_width2 -= s;
-				ignorePakCols(s);
-				_xpos = _vm->_realWidth - 1;
-				_docontinue = 1;
-			}
+			_width2 -= s;
+			ignorePakCols(s);
+			_xpos = _vm->_realWidth - 1;
+			_docontinue = 1;
 		} else {
 			s = -1 - _left;
 			if (s <= 0)
