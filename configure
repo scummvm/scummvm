@@ -38,6 +38,7 @@ _build_sword1=yes
 _build_sword2=yes
 _build_queen=yes
 _need_memalign=no
+_build_plugins=no
 # more defaults
 _backend=sdl
 _ranlib=ranlib
@@ -193,19 +194,26 @@ Optional Features:
   --disable-sword1         don't build the Broken Sword I engine
   --disable-sword2         don't build the Broken Sword II engine
   --disable-queen          don't build the Flight of the Amazon Queen engine
+  --enable-plugins         build engines as loadable mdoules instead of
+                           static linking them
 
 Optional Libraries:
   --with-alsa-prefix=PFX   Prefix where alsa is installed (optional)
   --disable-alsa           disable ALSA midi sound support [autodetect]
+
   --with-ogg-prefix=PFX    Prefix where libogg is installed (optional)
   --with-vorbis-prefix=PFX Prefix where libvorbis is installed (optional)
   --disable-vorbis         disable Ogg Vorbis support [autodetect]
+
   --with-mad-prefix=PFX    Prefix where libmad is installed (optional)
   --disable-mad            disable libmad (MP3) support [autodetect]
+
   --with-zlib-prefix=PFX   Prefix where zlib is installed (optional)
   --disable-zlib           disable zlib (compression) support [autodetect]
-  --disable-mpeg2          disable mpeg2 codec for cutscenes [autodetect]
+
   --with-mpeg2-prefix=PFX  Prefix where libmpeg2 is installed (optional)
+  --disable-mpeg2          disable mpeg2 codec for cutscenes [autodetect]
+
   --with-sdl-prefix=PFX    Prefix where the sdl-config script is installed
 
 Some influential environment variables:
@@ -240,6 +248,7 @@ for ac_option in $@; do
       --enable-zlib)		_zlib=yes	;;
       --disable-zlib)		_zlib=no	;;
       --disable-mpeg2)          _mpeg2=no       ;;
+      --enable-plugins)         _build_plugins=yes ;;
       --with-mpeg2-prefix=*)
 	_prefix=`echo $ac_option | cut -d '=' -f 2`
 	MPEG2_CFLAGS="-I$_prefix/include"
@@ -445,33 +454,33 @@ else
     echo $hosttype
     case $hosttype in
 	Linux | OpenBSD | FreeBSD | NetBSD | BSD/OS | SunOS | HP-UX | BeOS)
-		DEFINES="$DEFINES -DUNIX"
-		;;
+	    DEFINES="$DEFINES -DUNIX"
+	    ;;
 	IRIX)
-		DEFINES="$DEFINES -DUNIX"
-		ranlib=ar -r
-		;;
+	    DEFINES="$DEFINES -DUNIX"
+	    ranlib=ar -r
+	    ;;
 	Darwin)
-		DEFINES="$DEFINES -DUNIX -DMACOSX"
-		LIBS="$LIBS -framework QuickTime -framework AudioUnit -framework Carbon"
-		# TODO: Add proper check for Altivec support in the compiler...
-		DEFINES="$DEFINES -DHAS_ALTIVEC"
-		CXXFLAGS="$CXXFLAGS -faltivec"
-		;;
+	    DEFINES="$DEFINES -DUNIX -DMACOSX"
+	    LIBS="$LIBS -framework QuickTime -framework AudioUnit -framework Carbon"
+	    # TODO: Add proper check for Altivec support in the compiler...
+	    DEFINES="$DEFINES -DHAS_ALTIVEC"
+	    CXXFLAGS="$CXXFLAGS -faltivec"
+	    ;;
 	MINGW32*)
-		echo "mingw32 not supported by configure script"
-		echo "Try 'make -f Makefile.mingw'"
-		exit 1
-		;;
+	    echo "mingw32 not supported by configure script"
+	    echo "Try 'make -f Makefile.mingw'"
+	    exit 1
+	    ;;
 	CYGWIN*)
-		echo "cygwin not supported by configure script"
-		exit 1
-		;;
+	    echo "cygwin not supported by configure script"
+	    exit 1
+	    ;;
 	# given this is a shell script assume some type of unix
 	*)
-		echo "WARNING: could not establish system type, assuming unix like"
-		DEFINES="$DEFINES -DUNIX"
-		;;
+	    echo "WARNING: could not establish system type, assuming unix like"
+	    DEFINES="$DEFINES -DUNIX"
+	    ;;
     esac
 
     #
@@ -483,15 +492,15 @@ else
 #include <stdlib.h>
 int main(int argc, char **argv)
 {
-	unsigned int data = 0x01234567;
-	char *ptr = (char *)&data;
-	if (ptr[0] == 0x01 && ptr[1] == 0x23 && ptr[2] == 0x45 && ptr[3] == 0x67)
-		printf("big\n");
-	else if (ptr[3] == 0x01 && ptr[2] == 0x23 && ptr[1] == 0x45 && ptr[0] == 0x67)
-		printf("little\n");
-	else
-		printf("unknown\n");
-	return 0;
+    unsigned int data = 0x01234567;
+    char *ptr = (char *)&data;
+    if (ptr[0] == 0x01 && ptr[1] == 0x23 && ptr[2] == 0x45 && ptr[3] == 0x67)
+	printf("big\n");
+    else if (ptr[3] == 0x01 && ptr[2] == 0x23 && ptr[1] == 0x45 && ptr[0] == 0x67)
+	printf("little\n");
+    else
+	printf("unknown\n");
+    return 0;
 }
 EOF
     $CXX -o tmp_endianess_check tmp_endianess_check.cpp
@@ -519,14 +528,14 @@ EOF
 #include <signal.h>
 int main(int argc, char **argv)
 {
-	unsigned char test[8] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88 };
-	signal(SIGBUS, exit);
-	signal(SIGABRT, exit);
-	signal(SIGSEGV, exit);
-	if (*((unsigned int *)(test + 1)) != 0x55443322 && *((unsigned int *)(test + 1)) != 0x22334455) {
-		return 1;
-	}
-	return 0;
+    unsigned char test[8] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88 };
+    signal(SIGBUS, exit);
+    signal(SIGABRT, exit);
+    signal(SIGSEGV, exit);
+    if (*((unsigned int *)(test + 1)) != 0x55443322 && *((unsigned int *)(test + 1)) != 0x22334455) {
+	return 1;
+    }
+    return 0;
 }
 EOF
     _need_memalign=yes
@@ -556,6 +565,44 @@ EOF
     
 fi
 
+#
+# Check whether plugin support is requested and possible
+#
+echocheck "Plugin support"
+_mak_plugins=
+if test "$_build_plugins" = yes ; then
+    case $hosttype in
+	Linux)
+_mak_plugins='
+BUILD_PLUGINS := 1
+CXXFLAGS      += -DDYNAMIC_MODULES
+CXXFLAGS        += -fpic
+PLUGIN_LDFLAGS  += -shared
+PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
+POST_OBJS_FLAGS := -Wl,-no-whole-archive
+LIBS            += -ldl
+'
+	    ;;
+	Darwin)
+_mak_plugins='
+BUILD_PLUGINS := 1
+CXXFLAGS      += -DDYNAMIC_MODULES
+PLUGIN_LDFLAGS  += -bundle -bundle_loader $(EXECUTABLE)
+PRE_OBJS_FLAGS  := -all_load
+POST_OBJS_FLAGS :=
+LIBS            += -ldl
+'
+	    ;;
+	*)
+	    _build_plugins=no
+	    ;;
+    esac
+fi
+echo "$_build_plugins"
+
+#
+# Check for Ogg Vorbis
+#
 echocheck "Ogg Vorbis"
 if test "$_vorbis" = auto ; then
   _vorbis=no
@@ -575,6 +622,9 @@ else
 fi
 echo "$_vorbis"
 
+#
+# Check for MAD (MP3 library)
+#
 echocheck "MAD"
 if test "$_mad" = auto ; then
   _mad=no
@@ -593,6 +643,9 @@ else
 fi
 echo "$_mad"
 
+#
+# Check for ALSA
+#
 echocheck "ALSA >= 0.9"
 if test "$_alsa" = auto ; then
   _alsa=no
@@ -611,6 +664,9 @@ else
 fi
 echo "$_alsa"
 
+#
+# Check for ZLib
+#
 echocheck "zlib"
 if test "$_zlib" = auto ; then
   _zlib=no
@@ -630,6 +686,9 @@ else
 fi
 echo "$_zlib"
 
+#
+# Check for LibMPEG2
+#
 echocheck "libmpeg2 >= 0.3.2"
 if test "$_mpeg2" = auto ; then
   _mpeg2=no
@@ -659,6 +718,9 @@ fi
 echo "$_mpeg2"
 rm -f $TMPC $TMPO
 
+#
+# Check which engines ("frontends") are to be built
+#
 echo
 echo "Engines:"
 if test "$_build_scumm" = yes ; then
@@ -767,6 +829,7 @@ BACKEND := $_backend
 MODULES += $MODULES
 MODULE_DIRS += $MODULE_DIRS
 
+$_mak_plugins
 $_make_def_HAVE_GCC3
 $_mak_scumm
 $_mak_simon
