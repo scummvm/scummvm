@@ -363,8 +363,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_sound = NULL;
 	memset(&res, 0, sizeof(res));
 	memset(&vm, 0, sizeof(vm));
-	_smushFrameRate = 0;
-	_videoFinished = false;
+	_smushVideoShouldFinish = false;
 	_smushPaused = false;
 	_insaneRunning = false;
 	_quit = false;
@@ -917,6 +916,8 @@ ScummEngine_v6::ScummEngine_v6(GameDetector *detector, OSystem *syst, const Scum
 	} else {
 		_Win32ResExtractor = 0;
 	}
+
+	_smushFrameRate = 0;
 }
 
 void ScummEngine::go() {
@@ -1933,9 +1934,9 @@ void ScummEngine::processKbd(bool smushMode) {
 			if (_gameId == GID_FT)
 				_insane->escapeKeyHandler();
 			else
-				_videoFinished = true;
+				_smushVideoShouldFinish = true;
 		}
-		if (!smushMode || _videoFinished)
+		if (!smushMode || _smushVideoShouldFinish)
 			abortCutscene();
 		if (_version <= 2) {
 			// Ensure that the input script also sees the key press.

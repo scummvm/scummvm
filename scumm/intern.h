@@ -329,6 +329,9 @@ protected:
 	// HE v7.0+ games
 	Win32ResExtractor *_Win32ResExtractor;
 
+
+	int _smushFrameRate;
+
 public:
 	ScummEngine_v6(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs);
 

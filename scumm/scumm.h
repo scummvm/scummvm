@@ -394,12 +394,20 @@ public:
 	void animateCursor();
 	void updatePalette();
 
-	/* _insane vars */
-	int _smushFrameRate;
-	bool _videoFinished;
+	/**
+	 * Flag which signals that the SMUSH video playback should end now
+	 * (e.g. because it was aborted by the user or it's simply finished).
+	 */
+	bool _smushVideoShouldFinish;
+	/** This flag is a hack to allow the pause dialog to pause SMUSH playback, too. */
 	bool _smushPaused;
+	/** This flag tells IMuseDigital that INSANE is running. */
 	bool _insaneRunning;
 
+protected:
+	Insane *_insane;
+
+public:
 	void pauseGame();
 	void restart();
 	void shutDown();
@@ -1035,8 +1043,6 @@ protected:
 	bool _copyProtection;
 	bool _demoMode;
 	bool _confirmExit;
-
-	Insane *_insane;
 
 public:
 	uint16 _extraBoxFlags[65];

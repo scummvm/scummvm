@@ -2519,7 +2519,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 						? 232 : 233;
 
 					_insaneRunning = true;
-		    			_insane->setSmushParams(speed);
+					_insane->setSmushParams(speed);
 					_insane->runScene(insaneVarNum);
 					_insaneRunning = false;
 				}

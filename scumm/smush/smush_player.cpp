@@ -251,7 +251,7 @@ SmushPlayer::~SmushPlayer() {
 void SmushPlayer::init() {
 	_frame = 0;
 	_alreadyInit = false;
-	_vm->_videoFinished = false;
+	_vm->_smushVideoShouldFinish = false;
 	_vm->setDirtyColors(0, 255);
 	_dst = _vm->virtscr[0].screenPtr + _vm->virtscr[0].xstart;
 	_smixer = new SmushMixer(_vm->_mixer);
@@ -261,7 +261,7 @@ void SmushPlayer::init() {
 void SmushPlayer::release() {
 	_vm->_timer->removeTimerProc(&timerCallback);
 
-	_vm->_videoFinished = true;
+	_vm->_smushVideoShouldFinish = true;
 
 	for (int i = 0; i < 5; i++) {
 		if (_sf[i]) {
@@ -968,7 +968,7 @@ void SmushPlayer::parseNextFrame() {
 		return;
 
 	if (_base->eof()) {
-		_vm->_videoFinished = true;
+		_vm->_smushVideoShouldFinish = true;
 		return;
 	}
 
@@ -1155,7 +1155,7 @@ void SmushPlayer::play(const char *filename, const char *directory, int32 offset
 			debug(4, "Smush stats: BackendUpdateScreen( %03d )", end_time - start_time);
 
 		}
-		if (_vm->_videoFinished || _vm->_quit || _vm->_saveLoadFlag)
+		if (_vm->_smushVideoShouldFinish || _vm->_quit || _vm->_saveLoadFlag)
 			break;
 		_vm->_system->delay_msecs(10);
 	};

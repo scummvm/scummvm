@@ -755,7 +755,7 @@ int32 Insane::idx2Tweak(void) {
 
 void Insane::smush_setToFinish(void) {
 	debugC(DEBUG_INSANE, "Video is set to finish");
-	_vm->_videoFinished = 1;
+	_vm->_smushVideoShouldFinish = true;
 }
 
 // smlayer_stopSound
