@@ -843,11 +843,11 @@ void ScummEngine_v70he::o70_unknownF1() {
 
 	addr = getStringAddress(id);
 	if (!addr)
-		error("o72_stringLen: Reference to zeroed array pointer (%d)", id);
+		error("o70_unknownF1: Reference to zeroed array pointer (%d)", id);
 
 	addr2 = getStringAddress(id2);
-	if (!addr)
-		error("o72_stringLen: Reference to zeroed array pointer (%d)", id);
+	if (!addr2)
+		error("o70_unknownF1: Reference to zeroed array pointer (%d)", id);
 
 	while(1) {
 		if (*addr != *addr2)
