@@ -299,6 +299,14 @@ SOURCE=.\scumm\imuse_digi.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\scumm\imuse_internal.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\scumm\imuse_player.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\scumm\instrument.cpp
 # End Source File
 # Begin Source File

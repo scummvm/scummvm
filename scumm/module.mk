@@ -12,6 +12,7 @@ SCUMM_OBJS = \
 	scumm/gfx.o \
 	scumm/imuse.o \
 	scumm/imuse_digi.o \
+	scumm/imuse_player.o \
 	scumm/instrument.o \
 	scumm/nut_renderer.o \
 	scumm/object.o \
