@@ -593,7 +593,7 @@ SoundMixer::ChannelStream::ChannelStream(SoundMixer * mixer, void * sound, uint3
 										 byte flags) {
 	_mixer = mixer;
 	_flags = flags;
-	_bufferSize = 850000;
+	_bufferSize = 2000000;
 	_ptr = (byte *)malloc(_bufferSize);
 	memcpy(_ptr, sound, size);
 	_endOfData = _ptr + size;
