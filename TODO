@@ -142,8 +142,6 @@ Game Detector
 * Improve the detector for games with all datafiles in subdirs (i.e.
   Broken Sword 1 & 2). This could work by letting the detector proc recurse
   into sub directories...
-* Remove "detectname" from GameSettings struct. On the long run, "midi" and/or
-  "features" might be removed, too.
 
 Audio
 =====
