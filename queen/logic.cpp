@@ -1778,7 +1778,7 @@ void Logic::asmScaleBlimp() {
 	int16 y = bob->y;
 	while (bob->x > 150) {
 		bob->x = x * 256 / z + 150;
-		bob->x = y * 256 / z + 112;
+		bob->y = y * 256 / z + 112;
 		bob->scale = 100 * 256 / z;
 
 		++z;
