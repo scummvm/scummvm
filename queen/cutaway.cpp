@@ -640,21 +640,21 @@ void Cutaway::handlePersonRecord(
 		_logic->personSetData(
 				object.objectNumber - _logic->roomData(object.room), 
 				"", true, &p);
-
+#if 0
 		debug(0, "Moving person '%s' (%i) = actor '%s' to (%i,%i)", 
 				_logic->objectName(object.objectNumber),
 				object.objectNumber,
 				p.name, object.moveToX, object.moveToY);
-
+#endif
 		strcpy(name, p.name);
-		if (object.moveToX || object.moveToY) {
+		if (object.bobStartX || object.bobStartY) {
 			BobSlot *bob = _graphics->bob(p.actor->bobNum);
 			bob->scale = 100; // XXX SF;
-			bob->x = object.moveToX;
-			bob->y = object.moveToY;
+			bob->x = object.bobStartX;
+			bob->y = object.bobStartY;
 		}
 
-#if 0
+#if 1
 		_walk->personMove(
 				&p, 
 				object.moveToX, object.moveToY,

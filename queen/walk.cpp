@@ -26,6 +26,7 @@
 
 namespace Queen {
 
+
 const MovePersonData Walk::_moveData[] = {
    {"COMPY",       -1, -6, 1, 6, 0, 0, 0, 0,12,12,1,14},
    {"DEINO",       -1, -8, 1, 8, 0, 0, 0, 0,11,11,1,10},
@@ -299,8 +300,6 @@ void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum,
 }
 
 
-
-
 void Walk::joeMove(int direction, uint16 endx, uint16 endy, bool inCutaway) {
 
 //   CAN=0
@@ -341,8 +340,12 @@ void Walk::joeMove(int direction, uint16 endx, uint16 endy, bool inCutaway) {
 }
 
 
-
 void Walk::personMove(const Person *pp, uint16 endx, uint16 endy, uint16 curImage, int direction) {
+
+	if (endx == 0 && endy == 0) {
+		warning("Walk::personMove() - endx == 0 && endy == 0");
+		return;
+	}
 
 	// TODO: room 69 specific
 
@@ -571,7 +574,6 @@ bool Walk::calcPath(uint16 oldArea, uint16 newArea) {
 			}
 		}		
 	}
-	// CAN = -1 if no connection is made, else 0
 	return _areaList[1] != 0;
 }
 
@@ -600,7 +602,6 @@ void Walk::incWalkData(uint16 px, uint16 py, uint16 x, uint16 y, uint16 area) {
 //		pwd->sign = ((pwd->dx < 0) ? -1 : ((pwd->dx > 0) ? 1 : 0)) ;
 	}
 }
-
 
 
 } // End of namespace Queen
