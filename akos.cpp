@@ -39,40 +39,12 @@ bool Scumm::akos_hasManyDirections(Actor * a)
 	return 0;
 }
 
-int Scumm::akos_findManyDirection(int16 ManyDirection, uint16 facing)
-{
-	int32 direction;
-	int32 temp;
-
-	temp = many_direction_tab[ManyDirection];
-	direction = temp + ManyDirection * 8;
-	do {
-		if (facing >= many_direction_tab[direction + 1]) {
-			if (facing <= many_direction_tab[direction + 2]) {
-				return (temp);
-			}
-		}
-
-		--temp;
-		--direction;
-	} while (temp);
-
-	return (temp);
-}
-
-
 int Scumm::akos_frameToAnim(Actor * a, int frame)
 {
-	bool ManyDirection;
-
-	ManyDirection = akos_hasManyDirections(a);
-
-	if (ManyDirection) {
-		frame *= many_direction_tab[ManyDirection];
-		return akos_findManyDirection(ManyDirection, a->facing) + frame;
-	} else {
+	if (akos_hasManyDirections(a))
+		return toSimpleDir(1, a->facing) + frame * 8;
+	else
 		return newDirToOldDir(a->facing) + frame * 4;
-	}
 }
 
 void Scumm::akos_decodeData(Actor * a, int frame, uint usemask)
