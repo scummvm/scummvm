@@ -322,6 +322,10 @@ void Scumm::setupActorScale(Actor * a)
 	byte *resptr;
 	int y;
 
+	// FIXME: Special 'no scaling' class for MI1 VGA Floppy
+	//	      Not totally sure if this is correct.
+	if(_gameId == GID_MONKEY_VGA && getClass(a->number, 0x96)) 
+		return;
 
 	if (_features & GF_NO_SCALLING) {
 		a->scalex = 0xFF;

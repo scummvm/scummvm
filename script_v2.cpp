@@ -1651,6 +1651,14 @@ void Scumm::o6_setObjectName()
 void Scumm::o6_isSoundRunning()
 {
 	int snd = pop();
+
+	// FIXME: This fixes wak-a-rat until we figure out why
+	//		  iMUSE fails to locate certain sounds.
+	if (_gameId == GID_SAMNMAX && _currentRoom == 18 && snd == 23) {
+		push(0);
+		return; 
+	}
+
 	if (snd)
 		snd = isSoundRunning(snd);
 	
