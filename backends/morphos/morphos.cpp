@@ -343,6 +343,8 @@ void OSystem_MorphOS::delete_mutex(void *mutex)
 
 uint32 OSystem_MorphOS::property(int param, Property *value)
 {
+	AUTO_LOCK
+
 	switch (param)
 	{
 		case PROP_TOGGLE_FULLSCREEN:
@@ -362,6 +364,7 @@ uint32 OSystem_MorphOS::property(int param, Property *value)
 			switch (GameID)
 			{
 				case GID_MONKEY:
+				case GID_MONKEY_SEGA:
 					ids = MonkeyCDIDs;
 					names = MonkeyNames;
 					break;
@@ -1426,12 +1429,24 @@ bool OSystem_MorphOS::set_sound_proc(OSystem::SoundProc *proc, void *param, OSys
 	return true;
 }
 
+
 void OSystem_MorphOS::fill_sound(byte *stream, int len)
 {
 	if (SoundProc)
 		SoundProc(SoundParam, stream, len);
 	else
 		memset(stream, 0x0, len);
+}
+
+void OSystem_MorphOS::clear_sound_proc()
+{
+	if (ScummSoundThread)
+	{
+		Signal((Task *) ScummSoundThread, SIGBREAKF_CTRL_C);
+		ObtainSemaphore(&ScummSoundThreadRunning);	 /* Wait for thread to finish */
+		ReleaseSemaphore(&ScummSoundThreadRunning);
+		ScummSoundThread = NULL;
+	}
 }
 
 void OSystem_MorphOS::init_size(uint w, uint h)
@@ -1509,6 +1524,16 @@ void OSystem_MorphOS::init_size(uint w, uint h)
 	}
 
 	CreateScreen(CSDSPTYPE_KEEP);
+}
+
+int16 OSystem_MorphOS::get_width()
+{
+	return ScummScrWidth;
+}
+
+int16 OSystem_MorphOS::get_height()
+{
+	return ScummScrHeight;
 }
 
 void OSystem_MorphOS::show_overlay()
