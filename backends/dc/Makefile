@@ -19,7 +19,7 @@ RM = rm -f
 AR = sh-elf-ar cru
 RANLIB = sh-elf-ranlib
 
-OBJS =	dcmain.o display.o audio.o input.o selector.o icon.o \
+OBJS =	dcmain.o time.o display.o audio.o input.o selector.o icon.o \
 	label.o vmsave.o
 
 include ../../Makefile.common
