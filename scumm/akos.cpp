@@ -1345,9 +1345,8 @@ void ScummEngine::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2) 
 		a->forceClip = param_1;
 		break;
 	case 6:
-		warning("unimplemented akos_queCommand(6,%d,%d,%d)", a->number, param_1, param_2);
-//		a->offs_x = param_1;
-//		a->offs_y = param_2;
+		a->offs_x = param_1;
+		a->offs_y = param_2;
 		break;
 	case 7:
 		if (param_1 != 0) {

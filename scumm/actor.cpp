@@ -46,6 +46,7 @@ void Actor::initActorClass(ScummEngine *scumm) {
 
 Actor::Actor() {
 	assert(_vm != 0);
+	offs_x = offs_y = 0;
 	top = bottom = 0;
 	number = 0;
 	needRedraw = needBgReset = costumeNeedsInit = visible = false;
@@ -954,8 +955,8 @@ void Actor::drawActorCostume() {
 
 	bcr->_actorID = number;
 
-	bcr->_actorX = _pos.x - _vm->virtscr[0].xstart;
-	bcr->_actorY = _pos.y - elevation;
+	bcr->_actorX = _pos.x + offs_x - _vm->virtscr[0].xstart;
+	bcr->_actorY = _pos.y + offs_y - elevation;
 
 	if (_vm->_version <= 2) {
 		// HACK: We have to adjust the x position by one strip (8 pixels) in

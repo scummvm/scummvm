@@ -83,6 +83,7 @@ public:
 
 public:
 	Common::Point _pos;
+	int offs_x, offs_y;
 	int top, bottom;
 	uint width;
 	byte number;
