@@ -33,7 +33,7 @@
 #include "saga/console_mod.h"
 #include "saga/scene_mod.h"
 #include "saga/interface_mod.h"
-#include "saga/text_mod.h"
+#include "saga/text.h"
 #include "saga/palanim_mod.h"
 #include "saga/render.h"
 #include "saga/game_mod.h"
@@ -221,13 +221,13 @@ static int HandleOneShot(R_EVENT *event) {
 	case R_TEXT_EVENT:
 		switch (event->op) {
 		case EVENT_DISPLAY:
-			TEXT_SetDisplay((R_TEXTLIST_ENTRY *)event->data, 1);
+			_vm->textSetDisplay((R_TEXTLIST_ENTRY *)event->data, 1);
 			break;
 		case EVENT_REMOVE:
 			{
 				R_SCENE_INFO scene_info;
 				SCENE_GetInfo(&scene_info);
-				TEXT_DeleteEntry(scene_info.text_list, (R_TEXTLIST_ENTRY *)event->data);
+				_vm->textDeleteEntry(scene_info.text_list, (R_TEXTLIST_ENTRY *)event->data);
 			}
 			break;
 		default:

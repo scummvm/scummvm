@@ -39,7 +39,7 @@
 #include "saga/render.h"
 #include "saga/rscfile_mod.h"
 #include "saga/script.h"
-#include "saga/text_mod.h"
+#include "saga/text.h"
 #include "saga/sound.h"
 #include "saga/music.h"
 
@@ -114,7 +114,7 @@ int SCENE_Init() {
 	debug(0, "SCENE_Init(): LUT has %d entries.", SceneModule.scene_max);
 
 	// Create scene module text list
-	SceneModule.text_list = TEXT_CreateList();
+	SceneModule.text_list = _vm->textCreateList();
 
 	if (SceneModule.text_list == NULL) {
 		warning("Error: Couldn't create scene text list");
@@ -797,7 +797,7 @@ int SCENE_End() {
 	SceneModule.anim_entries = 0;
 
 	EVENT_ClearList();
-	TEXT_ClearList(SceneModule.text_list);
+	_vm->textClearList(SceneModule.text_list);
 
 	SceneModule.scene_loaded = 0;
 

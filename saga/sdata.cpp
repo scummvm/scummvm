@@ -24,7 +24,6 @@
 #include "saga/saga.h"
 
 #include "saga/gfx.h"
-#include "saga/text_mod.h"
 #include "saga/script_mod.h"
 #include "saga/script.h"
 #include "saga/sdata.h"

@@ -29,7 +29,7 @@
 #include "saga/scene_mod.h"
 #include "saga/rscfile_mod.h"
 
-#include "saga/text_mod.h"
+#include "saga/text.h"
 #include "saga/font.h"
 
 #include "saga/sprite_mod.h"
@@ -398,7 +398,7 @@ int SPRITE_DrawOccluded(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_num
 		char buf[1024] = { 0 };
 		sprintf( buf, "dw: %d, dh: %d.", ci.draw_w, ci.draw_h );
 
-		TEXT_Draw(2, ds, buf, spr_x - x_align, spr_y - y_align, 255, 0, FONT_OUTLINE);
+		_vm->textDraw(2, ds, buf, spr_x - x_align, spr_y - y_align, 255, 0, FONT_OUTLINE);
 	}
 */
 	return R_SUCCESS;

@@ -26,6 +26,8 @@
 #ifndef SAGA_TEXT_H__
 #define SAGA_TEXT_H__
 
+#include "saga/yslib.h"
+
 namespace Saga {
 
 #define R_TEXT_CENTERLIMIT 50
@@ -35,6 +37,28 @@ namespace Saga {
 struct R_TEXTLIST_tag {
 	YS_DL_LIST *list;
 };
+
+enum R_TEXT_FLAGS {
+	TEXT_TIMEOUT = 0x01
+};
+
+struct R_TEXTLIST_ENTRY {
+	struct R_TEXTLIST_ENTRY_tag *next;
+	struct R_TEXTLIST_ENTRY_tag *prev;
+	int display;
+	int id;
+	int text_x;
+	int text_y;
+	int color;
+	int effect_color;
+	int flags;
+	int font_id;
+	long time;
+	const char *string;
+	R_TEXTLIST_ENTRY() { memset(this, 0, sizeof(*this)); }
+};
+
+typedef struct R_TEXTLIST_tag R_TEXTLIST;
 
 }				// End of namespace Saga
 #endif

@@ -29,12 +29,11 @@
 #include "saga/gfx.h"
 #include "saga/font.h"
 
-#include "saga/text_mod.h"
 #include "saga/text.h"
 
 namespace Saga {
 
-int TEXT_Draw(int font_id, R_SURFACE *ds, const char *string, int text_x, int text_y, int color,
+int SagaEngine::textDraw(int font_id, R_SURFACE *ds, const char *string, int text_x, int text_y, int color,
 				int effect_color, int flags) {
 	int string_w;
 	int string_len;
@@ -69,7 +68,7 @@ int TEXT_Draw(int font_id, R_SURFACE *ds, const char *string, int text_x, int te
 			return R_FAILURE;
 		}
 
-		string_w = _vm->_font->getStringWidth(font_id, string, string_len, flags);
+		string_w = _font->getStringWidth(font_id, string, string_len, flags);
 
 		if (text_x < (ds->buf_w / 2)) {
 			// Fit to right side
@@ -82,12 +81,12 @@ int TEXT_Draw(int font_id, R_SURFACE *ds, const char *string, int text_x, int te
 		if (fit_w >= string_w) {
 			// Entire string fits, draw it
 			text_x = text_x - (string_w / 2);
-			_vm->_font->draw(font_id, ds, string, string_len, text_x, text_y, color, effect_color, flags);
+			_font->draw(font_id, ds, string, string_len, text_x, text_y, color, effect_color, flags);
 			return R_SUCCESS;
 		}
 
 		// String won't fit on one line
-		h = _vm->_font->getHeight(font_id);
+		h = _font->getHeight(font_id);
 		w_total = 0;
 		len_total = 0;
 		wc = 0;
@@ -106,7 +105,7 @@ int TEXT_Draw(int font_id, R_SURFACE *ds, const char *string, int text_x, int te
 				len = found_p - measure_p;
 			}
 
-			w = _vm->_font->getStringWidth(font_id, measure_p, len, flags);
+			w = _font->getStringWidth(font_id, measure_p, len, flags);
 			measure_p = found_p;
 
 			if ((w_total + w) > fit_w) {
@@ -117,7 +116,7 @@ int TEXT_Draw(int font_id, R_SURFACE *ds, const char *string, int text_x, int te
 				}
 
 				// Wrap what we've got and restart
-				_vm->_font->draw(font_id, ds, start_p, len_total, text_x - (w_total / 2), text_y, color, 
+				_font->draw(font_id, ds, start_p, len_total, text_x - (w_total / 2), text_y, color, 
 							effect_color, flags);
 				text_y += h + R_TEXT_LINESPACING;
 				w_total = 0;
@@ -132,7 +131,7 @@ int TEXT_Draw(int font_id, R_SURFACE *ds, const char *string, int text_x, int te
 				wc++;
 				if (found_p == NULL) {
 					// Since word hit NULL but fit, we are done
-					_vm->_font->draw(font_id, ds, start_p, len_total, text_x - (w_total / 2), text_y, color,
+					_font->draw(font_id, ds, start_p, len_total, text_x - (w_total / 2), text_y, color,
 								effect_color, flags);
 					return R_SUCCESS;
 				}
@@ -141,13 +140,13 @@ int TEXT_Draw(int font_id, R_SURFACE *ds, const char *string, int text_x, int te
 		}
 	} else {
 		// Text is not centered; No formatting required
-		_vm->_font->draw(font_id, ds, string, string_len, text_x, text_y, color, effect_color, flags);
+		_font->draw(font_id, ds, string, string_len, text_x, text_y, color, effect_color, flags);
 	}
 
 	return R_SUCCESS;
 }
 
-R_TEXTLIST *TEXT_CreateList() {
+R_TEXTLIST *SagaEngine::textCreateList() {
 	R_TEXTLIST *new_textlist;
 
 	new_textlist = (R_TEXTLIST *)malloc(sizeof *new_textlist);
@@ -166,7 +165,7 @@ R_TEXTLIST *TEXT_CreateList() {
 	return new_textlist;
 }
 
-void TEXT_ClearList(R_TEXTLIST *tlist) {
+void SagaEngine::textClearList(R_TEXTLIST *tlist) {
 	if (tlist != NULL) {
 		ys_dll_delete_all(tlist->list);
 	}
@@ -174,7 +173,7 @@ void TEXT_ClearList(R_TEXTLIST *tlist) {
 	return;
 }
 
-void TEXT_DestroyList(R_TEXTLIST *tlist) {
+void SagaEngine::textDestroyList(R_TEXTLIST *tlist) {
 	if (tlist != NULL) {
 		ys_dll_destroy(tlist->list);
 	}
@@ -183,7 +182,7 @@ void TEXT_DestroyList(R_TEXTLIST *tlist) {
 	return;
 }
 
-int TEXT_DrawList(R_TEXTLIST *textlist, R_SURFACE *ds) {
+int SagaEngine::textDrawList(R_TEXTLIST *textlist, R_SURFACE *ds) {
 	R_TEXTLIST_ENTRY *entry_p;
 	YS_DL_NODE *walk_p;
 
@@ -192,7 +191,7 @@ int TEXT_DrawList(R_TEXTLIST *textlist, R_SURFACE *ds) {
 	for (walk_p = ys_dll_head(textlist->list); walk_p != NULL; walk_p = ys_dll_next(walk_p)) {
 		entry_p = (R_TEXTLIST_ENTRY *)ys_dll_get_data(walk_p);
 		if (entry_p->display != 0) {
-			TEXT_Draw(entry_p->font_id, ds, entry_p->string, entry_p->text_x, entry_p->text_y, entry_p->color,
+			textDraw(entry_p->font_id, ds, entry_p->string, entry_p->text_x, entry_p->text_y, entry_p->color,
 			entry_p->effect_color, entry_p->flags);
 		}
 	}
@@ -200,7 +199,7 @@ int TEXT_DrawList(R_TEXTLIST *textlist, R_SURFACE *ds) {
 	return R_SUCCESS;
 }
 
-int TEXT_ProcessList(R_TEXTLIST *textlist, long ms) {
+int SagaEngine::textProcessList(R_TEXTLIST *textlist, long ms) {
 	R_TEXTLIST_ENTRY *entry_p;
 	YS_DL_NODE *walk_p;
 	YS_DL_NODE *temp_p;
@@ -220,7 +219,7 @@ int TEXT_ProcessList(R_TEXTLIST *textlist, long ms) {
 
 }
 
-R_TEXTLIST_ENTRY *TEXT_AddEntry(R_TEXTLIST *textlist, R_TEXTLIST_ENTRY *entry) {
+R_TEXTLIST_ENTRY *SagaEngine::textAddEntry(R_TEXTLIST *textlist, R_TEXTLIST_ENTRY *entry) {
 	YS_DL_NODE *new_node = NULL;
 
 	if (entry != NULL) {
@@ -230,7 +229,7 @@ R_TEXTLIST_ENTRY *TEXT_AddEntry(R_TEXTLIST *textlist, R_TEXTLIST_ENTRY *entry) {
 	return (new_node != NULL) ? (R_TEXTLIST_ENTRY *)new_node->data : NULL;
 }
 
-int TEXT_SetDisplay(R_TEXTLIST_ENTRY *entry, int val) {
+int SagaEngine::textSetDisplay(R_TEXTLIST_ENTRY *entry, int val) {
 	if (entry != NULL) {
 		entry->display = !!val;
 		return R_SUCCESS;
@@ -239,7 +238,7 @@ int TEXT_SetDisplay(R_TEXTLIST_ENTRY *entry, int val) {
 	return R_FAILURE;
 }
 
-int TEXT_DeleteEntry(R_TEXTLIST *textlist, R_TEXTLIST_ENTRY *entry) {
+int SagaEngine::textDeleteEntry(R_TEXTLIST *textlist, R_TEXTLIST_ENTRY *entry) {
 	YS_DL_NODE *walk_p;
 
 	if (entry == NULL) {

@@ -28,6 +28,9 @@
 
 namespace Saga {
 
+typedef Common::Point R_POINT;
+typedef Common::Rect R_RECT;
+
 struct R_CLIPINFO {
 	// input members
 	const R_RECT *src_rect;

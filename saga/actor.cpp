@@ -33,7 +33,7 @@
 #include "saga/sndres.h"
 #include "saga/sprite_mod.h"
 #include "saga/font.h"
-#include "saga/text_mod.h"
+#include "saga/text.h"
 #include "saga/sound.h"
 
 #include "saga/actor.h"
@@ -239,7 +239,7 @@ int Actor::drawList() {
 					diag_x = actor->s_pt.x;
 					diag_y = actor->s_pt.y;
 					diag_y -= ACTOR_DIALOGUE_HEIGHT;
-					TEXT_Draw(MEDIUM_FONT_ID, back_buf, a_dialogue->d_string, diag_x, diag_y, actor->a_dcolor, 0,
+					_vm->textDraw(MEDIUM_FONT_ID, back_buf, a_dialogue->d_string, diag_x, diag_y, actor->a_dcolor, 0,
 								FONT_OUTLINE | FONT_CENTERED);
 				}
 			}

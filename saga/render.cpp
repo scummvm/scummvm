@@ -33,7 +33,7 @@
 #include "saga/interface_mod.h"
 #include "saga/scene_mod.h"
 #include "saga/sprite_mod.h"
-#include "saga/text_mod.h"
+#include "saga/text.h"
 
 #include "saga/actionmap.h"
 #include "saga/objectmap.h"
@@ -147,7 +147,7 @@ int Render::drawScene() {
 	// Draw queued text strings
 	SCENE_GetInfo(&scene_info);
 
-	TEXT_DrawList(scene_info.text_list, backbuf_surface);
+	_vm->textDrawList(scene_info.text_list, backbuf_surface);
 
 	// Handle user input
 	SYSINPUT_ProcessInput();
@@ -174,7 +174,7 @@ int Render::drawScene() {
 
 	// Display text formatting test, if applicable
 	if (_flags & RF_TEXT_TEST) {
-		TEXT_Draw(MEDIUM_FONT_ID, backbuf_surface, test_txt, mouse_pt.x, mouse_pt.y,
+		_vm->textDraw(MEDIUM_FONT_ID, backbuf_surface, test_txt, mouse_pt.x, mouse_pt.y,
 				_gfx->getWhite(), _gfx->getBlack(), FONT_OUTLINE | FONT_CENTERED);
 	}
 

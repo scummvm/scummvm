@@ -36,7 +36,7 @@
 #include "saga/rscfile_mod.h"
 #include "saga/scene_mod.h"
 #include "saga/sndres.h"
-#include "saga/text_mod.h"
+#include "saga/text.h"
 #include "saga/palanim_mod.h"
 #include "saga/music.h"
 
@@ -286,7 +286,7 @@ int ITE_IntroCave1Proc(int param, R_SCENE_INFO *scene_info) {
 
 		for (i = INTRO_CAVE1_START; i < INTRO_CAVE1_END; i++) {
 			text_entry.string = IntroDiag[i].i_str;
-			entry_p = TEXT_AddEntry(scene_info->text_list, &text_entry);
+			entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
 
 			// Display text
 			event.type = R_ONESHOT_EVENT;
@@ -383,7 +383,7 @@ int ITE_IntroCave2Proc(int param, R_SCENE_INFO *scene_info) {
 
 		for (i = INTRO_CAVE2_START; i < INTRO_CAVE2_END; i++) {
 			text_entry.string = IntroDiag[i].i_str;
-			entry_p = TEXT_AddEntry(scene_info->text_list, &text_entry);
+			entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
 
 			// Display text
 			event.type = R_ONESHOT_EVENT;
@@ -479,7 +479,7 @@ int ITE_IntroCave3Proc(int param, R_SCENE_INFO *scene_info) {
 
 		for (i = INTRO_CAVE3_START; i < INTRO_CAVE3_END; i++) {
 			text_entry.string = IntroDiag[i].i_str;
-			entry_p = TEXT_AddEntry(scene_info->text_list, &text_entry);
+			entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
 
 			// Display text
 			event.type = R_ONESHOT_EVENT;
@@ -576,7 +576,7 @@ int ITE_IntroCave4Proc(int param, R_SCENE_INFO *scene_info) {
 
 		for (i = INTRO_CAVE4_START; i < INTRO_CAVE4_END; i++) {
 			text_entry.string = IntroDiag[i].i_str;
-			entry_p = TEXT_AddEntry(scene_info->text_list, &text_entry);
+			entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
 
 			// Display text
 			event.type = R_ONESHOT_EVENT;
@@ -698,7 +698,7 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 			text_entry.text_x = credits[i].text_x;
 			text_entry.text_y = credits[i].text_y;
 
-			entry_p = TEXT_AddEntry(scene_info->text_list, &text_entry);
+			entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
 
 			// Display text
 			event.type = R_ONESHOT_EVENT;
@@ -804,7 +804,7 @@ int ITE_IntroTreeHouseProc(int param, R_SCENE_INFO *scene_info) {
 			text_entry.text_x = credits[i].text_x;
 			text_entry.text_y = credits[i].text_y;
 
-			entry_p = TEXT_AddEntry(scene_info->text_list, &text_entry);
+			entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
 
 			// Display text
 			event.type = R_ONESHOT_EVENT;
@@ -913,7 +913,7 @@ int ITE_IntroFairePathProc(int param, R_SCENE_INFO *scene_info) {
 			text_entry.text_x = credits[i].text_x;
 			text_entry.text_y = credits[i].text_y;
 
-			entry_p = TEXT_AddEntry(scene_info->text_list, &text_entry);
+			entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
 
 			// Display text
 			event.type = R_ONESHOT_EVENT;

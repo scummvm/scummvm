@@ -28,7 +28,7 @@
 
 #include "saga/sstack.h"
 #include "saga/sdata.h"
-#include "saga/text_mod.h"
+#include "saga/text.h"
 #include "saga/yslib.h"
 
 namespace Saga {

@@ -30,7 +30,6 @@
 #include "saga/animation.h"
 #include "saga/console_mod.h"
 #include "saga/interface_mod.h"
-#include "saga/text_mod.h"
 
 #include "saga/script.h"
 #include "saga/sfuncs.h"

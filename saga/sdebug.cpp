@@ -26,7 +26,7 @@
 
 #include "saga/gfx.h"
 #include "saga/console_mod.h"
-#include "saga/text_mod.h"
+#include "saga/text.h"
 #include "saga/scene_mod.h"
 #include "saga/font.h"
 
@@ -53,7 +53,7 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 	disp_buf[0] = 0;
 
 	if (_vm->_script->_dbg_txtentry != NULL) {
-		TEXT_DeleteEntry(si.text_list, _vm->_script->_dbg_txtentry);
+		_vm->textDeleteEntry(si.text_list, _vm->_script->_dbg_txtentry);
 		_vm->_script->_dbg_txtentry = NULL;
 	}
 
@@ -514,8 +514,8 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 		break;
 	}
 
-	_vm->_script->_dbg_txtentry = TEXT_AddEntry(si.text_list, &tl_e);
-	TEXT_SetDisplay(_vm->_script->_dbg_txtentry, 1);
+	_vm->_script->_dbg_txtentry = _vm->textAddEntry(si.text_list, &tl_e);
+	_vm->textSetDisplay(_vm->_script->_dbg_txtentry, 1);
 
 	return R_SUCCESS;
 }

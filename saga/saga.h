@@ -35,6 +35,9 @@
 #include <limits.h>
 #include <stddef.h>
 
+#include "saga/text.h"
+#include "saga/gfx.h"
+
 namespace Saga {
 
 class SndRes;
@@ -58,9 +61,6 @@ using Common::MemoryReadStream;
 
 struct R_RSCFILE_CONTEXT;
 struct R_SEMAPHORE;
-
-typedef Common::Point R_POINT;
-typedef Common::Rect R_RECT;
 
 enum R_ERRORCODE {
 	R_MEM = -2,
@@ -116,6 +116,19 @@ public:
 	int decodeBGImage(const byte *image_data, size_t image_size,
 						byte **output_buf, size_t *output_buf_len, int *w, int *h);
 	const byte *getImagePal(const byte *image_data, size_t image_size);
+
+public:
+	R_TEXTLIST *textCreateList();
+	void textDestroyList(R_TEXTLIST *textlist);
+	void textClearList(R_TEXTLIST *textlist);
+	int textDrawList(R_TEXTLIST *textlist, R_SURFACE *ds);
+	R_TEXTLIST_ENTRY *textAddEntry(R_TEXTLIST *textlist, R_TEXTLIST_ENTRY *entry);
+	int textDeleteEntry(R_TEXTLIST *textlist, R_TEXTLIST_ENTRY *entry);
+	int textSetDisplay(R_TEXTLIST_ENTRY *entry, int val);
+	int textDraw(int font_id, R_SURFACE *ds, const char *string, int text_x, int text_y, int color,
+				  int effect_color, int flags);
+	int textProcessList(R_TEXTLIST *textlist, long ms);
+
 };
 
 // FIXME: Global var. We use it until everything will be turned into objects

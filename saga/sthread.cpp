@@ -28,7 +28,6 @@
 #include "saga/gfx.h"
 #include "saga/actor.h"
 #include "saga/console_mod.h"
-#include "saga/text_mod.h"
 
 #include "saga/script.h"
 #include "saga/script_mod.h"

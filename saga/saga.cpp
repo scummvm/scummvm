@@ -52,7 +52,6 @@
 #include "saga/sdata.h"
 #include "saga/sndres.h"
 #include "saga/sprite_mod.h"
-#include "saga/text_mod.h"
 #include "saga/objectmap.h"
 #include "saga/sound.h"
 #include "saga/music.h"

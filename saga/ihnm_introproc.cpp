@@ -32,7 +32,6 @@
 #include "saga/events_mod.h"
 #include "saga/rscfile_mod.h"
 #include "saga/scene_mod.h"
-#include "saga/text_mod.h"
 #include "saga/palanim_mod.h"
 
 #include "saga/scene.h"

@@ -28,7 +28,6 @@
 #include "saga/gfx.h"
 #include "saga/rscfile_mod.h"
 #include "saga/game_mod.h"
-#include "saga/text_mod.h"
 #include "saga/console_mod.h"
 #include "saga/cvar_mod.h"
 
