@@ -1020,7 +1020,6 @@ load_game:
 	}
 	
 	if (_currentRoom == 0) {
-		gdi._cursorActive = 0;
 		CHARSET_1();
 		drawDirtyScreenParts();
 		_sound->processSoundQues();

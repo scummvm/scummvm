@@ -120,11 +120,6 @@ public:
 	ScummVM::Rect _mask;
 
 protected:
-	byte *_readPtr;
-
-	bool _useOrDecompress;
-	byte _cursorActive;
-
 	byte _palette_mod;
 	byte _decomp_shr, _decomp_mask;
 	byte _transparentColor;
