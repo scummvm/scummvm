@@ -14,7 +14,8 @@ DEFINES = -DCOMPRESSED_SOUND_FILE
 LDFLAGS :=-mwindows -mconsole
 INCLUDES:= $(SDL_CFLAGS) -I./ -I./sound
 CPPFLAGS= $(DEFINES) $(INCLUDES)
-LIBS	= -lmingw32 -lwinmm -lmad $(SDL_LIBS)
+#If compiling with GCC 2.95.x remove the -lstdc++
+LIBS	= -lmingw32 -lwinmm -lmad -lstdc++ $(SDL_LIBS)
 EXEEXT	:=.exe
 
 OBJS	= sdl.o scummvmico.o
