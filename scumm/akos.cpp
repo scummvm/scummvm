@@ -739,7 +739,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	v1.skip_width = _width;
 	v1.scaleXstep = _mirror ? 1 : -1;
 
-	if (_clipOverride.bottom < rect.bottom)
+	if (_clipOverride.bottom)
 		rect.bottom = _clipOverride.bottom;
 
 	if (_actorHitMode) {
@@ -1012,7 +1012,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	maxw = _outwidth;
 	maxh = _outheight;
 
-	if (_clipOverride.bottom < clip.bottom)
+	if (_clipOverride.bottom)
 		clip.bottom = _clipOverride.bottom;
 
 	_vm->markRectAsDirty(kMainVirtScreen, clip, _actorID);
