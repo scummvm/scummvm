@@ -857,7 +857,7 @@ void ScummEngine::removeObjectFromDrawQue(int object) {
 
 	int i;
 	for (i = 0; i < _drawObjectQueNr; i++) {
-		if (_drawObjectQue[i] = object)
+		if (_drawObjectQue[i] == object)
 			_drawObjectQue[i] = 0;
 	}
 }

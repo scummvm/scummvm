@@ -386,7 +386,7 @@ void ScummEngine_v90he::o90_unknown1C() {
 
 	if (value == 10) {
 		int flags = pop();
-		int unk = pop();
+		pop();
 		int y1 = pop();
 		int x1 = pop();
 		int resnum = pop();
