@@ -44,6 +44,29 @@ void Actor::initActorClass(Scumm *scumm) {
 	}
 }
 
+Actor::Actor() {
+	assert(_vm != 0);
+	top = bottom = 0;
+	number = 0;
+	needRedraw = needBgReset = costumeNeedsInit = visible = false;
+	flip = false;
+	speedx = 8;
+	speedy = 2;
+	frame = 0;
+	walkbox = 0;
+	animProgress = 0;
+	memset(animVariable, 0, sizeof(animVariable));
+	memset(palette, 0, sizeof(palette));
+	memset(sound, 0, sizeof(sound));
+	memset(&cost, 0, sizeof(CostumeData));
+	memset(&walkdata, 0, sizeof(ActorWalkData));
+	walkdata.point3x = 32000;
+
+	walkScript = 0;
+
+	initActor(1);
+}
+
 void Actor::initActor(int mode) {
 	if (mode == 1) {
 		costume = 0;
