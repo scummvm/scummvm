@@ -1932,6 +1932,8 @@ void Scumm::o5_walkActorToActor() {
 	Actor *a, *a2;
 	int nr;
 
+	warning("walk actor to actor");
+
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_walkActorToActor");
 	if (a->room != _currentRoom) {
 		getVarOrDirectByte(0x40);
@@ -1969,6 +1971,8 @@ void Scumm::o5_walkActorToActor() {
 void Scumm::o5_walkActorToObject() {
 	int obj;
 	Actor *a;
+
+	warning("walk object to object");
 
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_walkActorToObject");
 	obj = getVarOrDirectWord(0x40);

@@ -134,6 +134,7 @@ void Scumm::getObjectXYPos(int object) {
 	ImageHeader *imhd;
 	int x,y;
 	AdjustBoxResult abr;
+	
         if(!(_features & GF_SMALL_HEADER)) {
                 if (_features&GF_AFTER_V6) {
                         state = getState(object)-1;
@@ -155,19 +156,24 @@ void Scumm::getObjectXYPos(int object) {
                         x = (int16)READ_LE_UINT16(&od->walk_x);
                         y = (int16)READ_LE_UINT16(&od->walk_y);
                 }
+		_xPos = x;
+		_yPos = y;
+		_dir = oldDirToNewDir(od->actordir&3);
         } else {
-                x = (int16)READ_LE_UINT16(&od->x_pos);
-                y = (int16)READ_LE_UINT16(&od->y_pos);
+                x = (int16)READ_LE_UINT32(&od->walk_x);
+                y = (int16)READ_LE_UINT16(&od->walk_y);
                 _xPos = x;
                 _yPos = y;
+		_dir= oldDirToNewDir(od->actordir&3);
+	
         }
 
 //	abr = adjustXYToBeInBox(0, x, y);
 //	_xPos = abr.x;
 //	_yPos = abr.y;
-	_xPos = x;
-	_yPos = y;
-	_dir = oldDirToNewDir(od->actordir&3);
+//	_xPos = x;
+//	_yPos = y;
+//	_dir = oldDirToNewDir(od->actordir&3);
 }
 
 int Scumm::getObjActToObjActDist(int a, int b) {
@@ -483,19 +489,32 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room) {
 	ImageHeader *imhd;
 
         if(_features & GF_SMALL_HEADER) {
-               byte *ptr = room + od->offs_obcd_to_room;
-               od->obj_nr = READ_LE_UINT16(ptr+6);
-               od->width = *(ptr+11)<<3;
-               od->height = *(ptr+17);
-               od->x_pos = *(ptr+9)<<3;
-               od->y_pos = *(ptr+10)<<3;
-
-               if(*(ptr+10) == 0x80) {
+               
+		byte *ptr = room + od->offs_obcd_to_room;
+		
+		od->obj_nr = READ_LE_UINT16(ptr+6); // ok
+		
+		od->width = *(ptr+11)<<3; // ok		
+		od->x_pos = *(ptr+9)<<3; // ok
+		
+		if(*(ptr+10) & 0x80) {
 			od->parentstate = 1;  // it's 0x10 in the original code
-               } else {
+		} else {
 			od->parentstate = 0;
-               }
+		}
 
+		od->y_pos = ((*(ptr+10))&0x7F)<<3;
+		
+		od->parent = *(ptr+12);
+		od->walk_x = READ_LE_UINT16(ptr+13);
+
+		od->walk_y = READ_LE_UINT16(ptr+15);
+		
+		od->actordir = (*(ptr+17))&7;
+		od->height = *(ptr+17); // ok
+		
+						
+	       
                return;
         }
 
