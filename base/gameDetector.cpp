@@ -96,7 +96,8 @@ static const char USAGE_STRING[] =
 	"  --native-mt32            True Roland MT-32 (disable GM emulation)\n"
 	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
 	"  --aspect-ratio           Enable aspect ratio correction\n"
-	"  --render-mode=MODE       Enable additional render modes (cga, ega, hercules)\n"
+	"  --render-mode=MODE       Enable additional render modes (cga, ega, hercGreen,\n"
+    "                           hercAmber)\n"
 	"\n"
 #if !defined(DISABLE_SKY) || !defined(DISABLE_QUEEN)
 	"  --alt-intro              Use alternative intro for CD versions of Beneath a\n"
