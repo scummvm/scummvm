@@ -139,6 +139,22 @@ LIB32=link.exe -lib
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=..\..\queen\cutaway.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\cutaway.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\display.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\display.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\queen\graphics.cpp
 # End Source File
 # Begin Source File
@@ -172,6 +188,14 @@ SOURCE=..\..\queen\resource.h
 # Begin Source File
 
 SOURCE=..\..\queen\restables.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\talk.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\talk.h
 # End Source File
 # Begin Source File
 
