@@ -9,7 +9,7 @@ at: http://www.scummvm.org/
 
 Table of Contents:
 ------------------
-1,0) About
+1.0) About
 2.0) Contacting
  * 2.1 Reporting Bugs
 3.0) Supported Games
@@ -119,7 +119,7 @@ Other Games:
      Simon the Sorcerer 2                            [Game: simon2dos/simon2talkie
                                                           /simon2win/simon2mac]
 
-The following games should be finishable, but have some criticial problems that
+The following games should be completable, but have some critical problems that
 prevent them from being fully supported at this time. Please do not file bug
 reports about them.
         
