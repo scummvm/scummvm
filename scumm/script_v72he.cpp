@@ -318,10 +318,10 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* D8 */
 		OPCODE(o6_isRoomScriptRunning),
 		OPCODE(o6_closeFile),
-		OPCODE(o6_openFile),
-		OPCODE(o6_readFile),
+		OPCODE(o72_openFile),
+		OPCODE(o72_readFile),
 		/* DC */
-		OPCODE(o6_writeFile),
+		OPCODE(o72_writeFile),
 		OPCODE(o72_findAllObjects),
 		OPCODE(o6_deleteFile),
 		OPCODE(o6_rename),
@@ -516,7 +516,8 @@ void ScummEngine_v72he::readArrayFromIndexFile() {
 void ScummEngine_v72he::copyScriptString(byte *dst) {
 	int a = pop();
 	int b = 0;
-	if (a == -1) {
+	// FIXME Should only be -1
+	if (a == 1 || a == -1) {
 		int len = resStrLen(_stringBuffer) + 1;
 		while (len--)
 			*dst++ = _stringBuffer[b++];
@@ -853,6 +854,118 @@ void ScummEngine_v72he::o72_jumpToScript() {
 	flags = fetchScriptByte();
 	stopObjectCode();
 	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
+}
+
+void ScummEngine_v72he::o72_openFile() {
+	int mode, slot, l, r;
+	byte filename[100];
+
+	copyScriptString(filename);
+	printf("File %s\n", filename);
+	
+	for (r = strlen((char*)filename); r != 0; r--) {
+		if (filename[r - 1] == '\\')
+			break;
+	}
+	
+	mode = pop();
+	slot = -1;
+	for (l = 0; l < 17; l++) {
+		if (_hFileTable[l].isOpen() == false) {
+			slot = l;
+			break;
+		}
+	}
+
+	if (slot != -1) {
+		if (mode == -1)
+			_hFileTable[slot].open((char*)filename + r, File::kFileReadMode);
+		else if (mode == -2)
+			_hFileTable[slot].open((char*)filename + r, File::kFileWriteMode);
+		else
+			error("o6_openFile(): wrong open file mode %d", mode);
+
+		if (_hFileTable[slot].isOpen() == false)
+			slot = -1;
+
+	}
+	push(slot);
+}
+
+int ScummEngine_v72he::readFileToArray(int slot, int32 size) {
+	if (size == 0)
+		size = _hFileTable[slot].size() - _hFileTable[slot].pos();
+
+	writeVar(0, 0);
+
+	ArrayHeader *ah = defineArray(0, kByteArray, 0, 0, 0, size);
+	_hFileTable[slot].read(ah->data, size);
+
+	return readVar(0);
+}
+
+void ScummEngine_v72he::o72_readFile() {
+	int slot, val;
+	int32 size;
+	int subOp = fetchScriptByte();
+
+	switch (subOp) {
+	case 4:
+		slot = pop();
+		val = _hFileTable[slot].readByte();
+		push(val);
+		break;
+	case 5:
+		slot = pop();
+		val = _hFileTable[slot].readUint16LE();
+		push(val);
+		break;
+	case 6:
+		slot = pop();
+		val = _hFileTable[slot].readUint32LE();
+		push(val);
+		break;
+	case 8:
+		fetchScriptByte();
+		size = pop();
+		slot = pop();
+		val = readFileToArray(slot, size);
+		push(val);
+		break;
+	default:
+		error("default case %d", subOp);
+	}
+}
+
+void ScummEngine_v72he::writeFileFromArray(int slot, int resID) {
+	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, resID);
+	int32 size = (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) *
+		(FROM_LE_32(ah->dim2end) - FROM_LE_32(ah->dim2start) + 1);
+
+	_hFileTable[slot].write(ah->data, size);
+}
+
+void ScummEngine_v72he::o72_writeFile() {
+	int16 resID = pop();
+	int slot = pop();
+	int subOp = fetchScriptByte();
+
+	switch (subOp) {
+	case 4:
+		_hFileTable[slot].writeByte(resID);
+		break;
+	case 5:
+		_hFileTable[slot].writeUint16LE(resID);
+		break;
+	case 6:
+		_hFileTable[slot].writeUint32LE(resID);
+		break;
+	case 8:
+		writeFileFromArray(slot, resID);
+		break;
+	default:
+		error("default case %d", subOp);
+	}
 }
 
 void ScummEngine_v72he::o72_findAllObjects() {

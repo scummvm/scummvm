@@ -675,6 +675,8 @@ protected:
 	void redimArray(int arrayId, int newDim2start, int newDim2end, 
 					int newDim1start, int newDim1end, int type);
 	void shuffleArray(int num, int minIdx, int maxIdx);
+	int readFileToArray(int slot, int32 size);
+	void writeFileFromArray(int slot, int resID);
 
 	void copyScriptString(byte *dst);
 
@@ -700,6 +702,9 @@ protected:
 	void o72_dim2dimArray();
 	void o72_shuffle();
 	void o72_jumpToScript();
+	void o72_openFile();
+	void o72_readFile();
+	void o72_writeFile();
 	void o72_findAllObjects();
 	void o72_getPixel();
 	void o72_pickVarRandom();
