@@ -257,7 +257,7 @@ void IMuseDigital::fadeOutMusic(int fadeDelay) {
 
 IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 	assert(track);
-	Track *fadeTrack;
+	Track *fadeTrack = 0;
 
 	debug(5, "IMuseDigital::cloneToFadeOutTrack(%d, %d)", track->trackId, fadeDelay);
 
