@@ -354,7 +354,9 @@ void Scumm::drawObject(int obj, int arg) {
 		ptr = ptr + od->OBIMoffset;
 	}
 
-	if (_features & GF_SMALL_HEADER)
+	if (_features & GF_OLD_BUNDLE)
+		ptr += 0;
+	else if (_features & GF_SMALL_HEADER)
 		ptr += 8;
 	else if (_features & GF_AFTER_V8) {
 		ptr = findResource(MKID('IMAG'), ptr);
