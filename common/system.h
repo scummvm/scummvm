@@ -63,9 +63,44 @@ public:
 	 *  - a virtual keyboard for text entry (on PDAs)
 	 */
 	enum Feature {
+		/**
+		 * If your backend supports both a windowed and a fullscreen mode,
+		 * then this feature flag can be used to switch between the two.
+		 */
 		kFeatureFullscreenMode,
+
+		/**
+		 * Control aspect ratio correction. Aspect ratio correction is used to
+		 * correct games running at 320x200 (i.e with an aspect ratio of 8:5),
+		 * but which on their original hardware were displayed with the
+		 * standard 4:3 ratio (that is, the original graphics used non-square
+		 * pixels). When the backend support this, then games running at
+		 * 320x200 pixels should be scaled up to 320x240 pixels. For all other
+		 * resolutions, ignore this feature flag.
+		 * @note You can find utility functions in common/scaler.h which can
+		 *       be used to implement aspect ratio correction. In particular,
+		 *       stretch200To240() can stretch a rect, including (very fast)
+		 *       interpolation, and works in-place.
+		 */
 		kFeatureAspectRatioCorrection,
+
+		/**
+		 * Determine whether a virtual keyboard is too be shown or not.
+		 * This would mostly be implemented by backends for hand held devices,
+		 * like PocketPC, Palms, Symbian phones like the P800, Zaurus, etc.
+		 */
 		kFeatureVirtualKeyboard,
+
+		/**
+		 * This flag is a bit more obscure: it gives a hint to the backend that
+		 * the frontend code is very inefficient in doing screen updates. So
+		 * the frontend might do a lot of fullscreen blits even though only a
+		 * tiny portion of the actual screen data changed. In that case, it 
+		 * might pay off for the backend to compute which parts actual changed,
+		 * and then only mark those as dirty.
+		 * Implementing this is purely optional, and no harm should arise 
+		 * when not doing so (except for decreased speed in said frontends).
+		 */
 		kFeatureAutoComputeDirtyRects
 	};
 	
