@@ -2454,7 +2454,9 @@ void Scumm_v6::o6_miscOps()
 
 				ScummRenderer * sr = new ScummRenderer(this, speed);
  				SmushPlayer * sp = new SmushPlayer(sr);
-
+				
+				if (_noSubtitles)
+					sp->hide("subtitles");
 				// INSANE mode 0: SMUSH movie playback
 				if (args[1] == 0) {
  					sp->play((char*)getStringAddressVar(VAR_VIDEONAME), getGameDataPath());
