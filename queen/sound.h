@@ -78,6 +78,7 @@ public:
 	void saveState(byte *&ptr);
 	void loadState(uint32 ver, byte *&ptr);
 
+	static const songData _songDemo[];
 	static const songData _song[];
 	static const tuneData _tune[];
 	static const char *_sfxName[];

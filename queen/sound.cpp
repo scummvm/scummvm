@@ -99,7 +99,12 @@ void Sound::playSong(int16 songNum) {
 		return;
 	}
 	
-	int16 newTune = _song[songNum - 1].tuneList[0] - 1;
+	int16 newTune;
+	if (_vm->resource()->isDemo()) {
+		newTune = _songDemo[songNum - 1].tuneList[0] - 1;
+	} else {
+		newTune = _song[songNum - 1].tuneList[0] - 1;
+	}
 
 	if (_tune[newTune].sfx[0]) {
 		if (sfxOn())
@@ -107,10 +112,11 @@ void Sound::playSong(int16 songNum) {
 		return;
 	}
 
-	if (!musicOn() || _vm->resource()->isDemo())
+	if (!musicOn())
 		return;
 
-	switch (_song[songNum - 1].override) {
+	int override = (_vm->resource()->isDemo()) ? _songDemo[songNum - 1].override : _song[songNum - 1].override;
+	switch (override) {
 		// Override all songs
 		case  1:
 			break;
