@@ -524,7 +524,7 @@ protected:
 	void runScriptNested(int script);
 	void executeScript();
 	void updateScriptPtr();
-	void runHook(int i);
+	void runInventoryScript(int i);
 	void checkAndRunSentenceScript();
 	void runExitScript();
 	void runEntryScript();
@@ -1123,7 +1123,7 @@ public:
 	byte VAR_EXIT_SCRIPT2;
 	byte VAR_VERB_SCRIPT;
 	byte VAR_SENTENCE_SCRIPT;
-	byte VAR_HOOK_SCRIPT;
+	byte VAR_INVENTORY_SCRIPT;
 	byte VAR_CUTSCENE_START_SCRIPT;
 	byte VAR_CUTSCENE_END_SCRIPT;
 	byte VAR_CHARINC;

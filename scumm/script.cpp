@@ -647,14 +647,14 @@ void Scumm::stopObjectCode() {
 	_currentScript = 0xFF;
 }
 
-void Scumm::runHook(int i) {
+void Scumm::runInventoryScript(int i) {
 	if (_version <= 2) {
-		// FIXME - TODO
+		redrawV2Inventory();
 	} else {
 		int tmp[16];
 		tmp[0] = i;
-		if (VAR(VAR_HOOK_SCRIPT)) {
-			runScript(VAR(VAR_HOOK_SCRIPT), 0, 0, tmp);
+		if (VAR(VAR_INVENTORY_SCRIPT)) {
+			runScript(VAR(VAR_INVENTORY_SCRIPT), 0, 0, tmp);
 		}
 	}
 }

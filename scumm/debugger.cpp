@@ -620,7 +620,7 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 		for (i = 1; i < _s->_maxInventoryItems; i++) {
 			if (_s->_inventory[i] == (uint16)obj) {
 				_s->putOwner(obj, _s->VAR(_s->VAR_EGO));
-				_s->runHook(obj);
+				_s->runInventoryScript(obj);
 				return true;
 			}
 		}
@@ -635,7 +635,7 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 		_s->putState(obj, 1);
 		_s->removeObjectFromRoom(obj);
 		_s->clearDrawObjectQueue();
-		_s->runHook(obj);
+		_s->runInventoryScript(obj);
 	} else {
 		Debug_Printf("Unknown object command '%s'\nRight now the only command is pickup", argv[2]); //change when adding commands
 	}

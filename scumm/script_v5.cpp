@@ -1415,7 +1415,7 @@ void Scumm_v5::o5_pickupObject() {
 	putState(obj, 1);
 	removeObjectFromRoom(obj);
 	clearDrawObjectQueue();
-	runHook(1);
+	runInventoryScript(1);
 }
 
 void Scumm_v5::o5_print() {
@@ -1984,7 +1984,7 @@ void Scumm_v5::o5_setObjectName() {
 	}
 
 	memcpy(name, work, i+1);
-	runHook(0);
+	runInventoryScript(0);
 }
 
 void Scumm_v5::o5_setOwnerOf() {
@@ -2681,5 +2681,5 @@ void Scumm_v5::o5_pickupObjectOld() {
 	putClass(obj, kObjectClassUntouchable, 1);
 	putState(obj, 1);
 	clearDrawObjectQueue();
-	runHook(1);
+	runInventoryScript(1);
 }

@@ -1153,7 +1153,6 @@ void Scumm_v2::o2_setOwnerOf() {
 	owner = getVarOrDirectByte(0x40);
 
 	setOwnerOf(obj, owner);
-	redrawV2Inventory();
 }
 
 void Scumm_v2::o2_delay() {
@@ -1296,7 +1295,7 @@ void Scumm_v2::o2_pickupObject() {
 	putState(obj, getState(obj) | 0xA);
 	clearDrawObjectQueue();
 
-	redrawV2Inventory();
+	runInventoryScript(1);
 }
 
 void Scumm_v2::o2_setObjectName() {
@@ -1344,7 +1343,7 @@ void Scumm_v2::o2_setObjectName() {
 	work[i-1] = 0;
 	
 	memcpy(name, work, i);
-	redrawV2Inventory();
+	runInventoryScript(0);
 }
 
 void Scumm_v2::o2_cursorCommand() {	// TODO: Define the magic numbers
@@ -1357,7 +1356,7 @@ void Scumm_v2::o2_cursorCommand() {	// TODO: Define the magic numbers
 
 	if (a2 & 4) {						// Userface
 		_userState = a2 & (32 | 64 | 128);
-		redrawV2Inventory();
+		runInventoryScript(0);
 	}
 
 	if (a2 & 1) {						// Freeze

@@ -1171,7 +1171,7 @@ void Scumm::setOwnerOf(int obj, int owner) {
 		ss = &vm.slot[_currentScript];
 		if (ss->where == WIO_INVENTORY && _inventory[ss->number] == obj) {
 			putOwner(obj, 0);
-			runHook(0);
+			runInventoryScript(0);
 			stopObjectCode();
 			return;
 		}
@@ -1180,7 +1180,7 @@ void Scumm::setOwnerOf(int obj, int owner) {
 		SamInventoryHack(obj);
 
 	putOwner(obj, owner);
-	runHook(0);
+	runInventoryScript(0);
 }
 
 int Scumm::getObjX(int obj) {

@@ -106,7 +106,7 @@ void Scumm::setCameraFollows(Actor *a) {
 		if (_actors[i].isInCurrentRoom())
 			_actors[i].needRedraw = true;
 	}
-	runHook(0);
+	runInventoryScript(0);
 }
 
 void Scumm_v7::setCameraFollows(Actor *a) {
@@ -129,7 +129,7 @@ void Scumm_v7::setCameraFollows(Actor *a) {
 	}
 
 	if (a->number != oldfollow)
-		runHook(0);
+		runInventoryScript(0);
 }
 
 
@@ -365,7 +365,7 @@ void Scumm::actorFollowCamera(int act) {
 		old = camera._follows;
 		setCameraFollows(derefActor(act, "actorFollowCamera"));
 		if (camera._follows != old)
-			runHook(0);
+			runInventoryScript(0);
 
 		camera._movingToActor = false;
 	}

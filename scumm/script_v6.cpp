@@ -1121,7 +1121,7 @@ void Scumm_v6::o6_pickupObject() {
 	for (i = 1; i < _maxInventoryItems; i++) {
 		if (_inventory[i] == (uint16)obj) {
 			putOwner(obj, VAR(VAR_EGO));
-			runHook(obj);
+			runInventoryScript(obj);
 			return;
 		}
 	}
@@ -1132,7 +1132,7 @@ void Scumm_v6::o6_pickupObject() {
 	putState(obj, 1);
 	removeObjectFromRoom(obj);
 	clearDrawObjectQueue();
-	runHook(obj);									/* Difference */
+	runInventoryScript(obj);									/* Difference */
 }
 
 void Scumm_v6::o6_loadRoomWithEgo() {
@@ -1336,7 +1336,7 @@ void Scumm_v6::o6_setObjectName() {
 		if (_newNames[i] == 0) {
 			loadPtrToResource(rtObjectName, i, NULL);
 			_newNames[i] = obj;
-			runHook(0);
+			runInventoryScript(0);
 			return;
 		}
 	}
