@@ -1064,8 +1064,10 @@ void ScummEngine::launch() {
 	scummInit();
 
 	if (_version > 2) {
-		if (_version < 7 && _heversion <= 71)
+		if (_version < 7 && _heversion <= 60)
 			VAR(VAR_VERSION) = 21;
+		else if (_heversion >= 70)
+			VAR(VAR_VERSION) = 22;
 	
 		if (!((_features & GF_MACINTOSH) && (_version == 3)) && !(_features & GF_FMTOWNS)) {
 			// This is NOT for the Mac version of Indy3/Loom
