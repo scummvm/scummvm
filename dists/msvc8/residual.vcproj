@@ -44,11 +44,10 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -62,12 +61,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="OpenGL32.Lib GlAux.Lib GLU32.Lib SDL.Lib SDLMain.Lib&#x0D;&#x0A;/NODEFAULTLIB:LIBCMTD"
-				AdditionalDependencies="sdl.lib zlibwapi.lib"
-				OutputFile="$(OutDir)/residual.exe"
+				AdditionalDependencies="sdl.lib zlibwapi.lib OpenGL32.Lib GLU32.Lib"
 				LinkIncremental="2"
+				GenerateManifest="FALSE"
+				ManifestFile=""
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/residual.pdb"
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -128,8 +126,10 @@
 				AdditionalIncludeDirectories="..\..\"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				StringPooling="TRUE"
-				RuntimeLibrary="2"
+				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="TRUE"
+				EnableEnhancedInstructionSet="2"
+				FloatingPointModel="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -147,12 +147,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="OpenGL32.Lib GlAux.Lib GLU32.Lib SDL.Lib SDLMain.Lib&#x0D;&#x0A;/NODEFAULTLIB:LIBCMTD"
-				AdditionalDependencies="sdl.lib zlibwapi.lib"
+				AdditionalDependencies="sdl.lib zlibwapi.lib OpenGL32.Lib GLU32.Lib"
 				OutputFile="$(OutDir)/residual.exe"
 				LinkIncremental="1"
-				GenerateDebugInformation="TRUE"
-				SubSystem="2"
+				GenerateManifest="FALSE"
+				ManifestFile=""
+				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"

@@ -73,6 +73,10 @@ static bool parseBoolStr(const char *val) {
 
 void quit();
 
+#ifdef _MSC_VER
+	#undef main
+#endif
+
 int main(int argc, char *argv[]) {
 	int i;
 
