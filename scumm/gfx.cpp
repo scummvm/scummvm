@@ -350,7 +350,7 @@ void ScummEngine::updateDirtyRect(int virt, int left, int right, int top, int bo
 			setGfxUsageBit(lp, dirtybit);
 	}
 
-	// The following code used to be in the seperate method setVirtscreenDirty
+	// The following code used to be in the separate method setVirtscreenDirty
 	lp = left >> 3;
 	rp = right >> 3;
 

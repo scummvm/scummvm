@@ -243,7 +243,7 @@ int Actor::remapDirection(int dir, bool is_walking) {
 		flipX = (walkdata.deltaXFactor > 0);
 		flipY = (walkdata.deltaYFactor > 0);
 
-		// FIXME - this special cases for the class might be necesary
+		// FIXME - this special cases for the class might be necessary
 		// for other games besides Loom!
 
 		// Check for X-Flip

@@ -2111,7 +2111,7 @@ void ScummEngine_v5::o5_setObjectName() {
 		//
 		// So for now, I duplicate some code from findResourceData / findResource
 		// here. However, a much nicer solution might be (with stress on "might")
-		// to use the same technique as in V6 games: that is, use a seperate
+		// to use the same technique as in V6 games: that is, use a separate
 		// resource for changed names. That would be the cleanest solution, but
 		// might proof to be infeasible, as it might lead to unforseen regressions.
 		

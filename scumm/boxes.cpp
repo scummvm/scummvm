@@ -368,7 +368,7 @@ Box *ScummEngine::getBoxBaseAddr(int box) {
 	// this also seems to be incorrect for atari st demo of zak
 	// and assumingly other v2 games
 	// The same happens in Indy3EGA (see bug #770351)
-	// Also happend in ZakEGA (see bug #771803).
+	// Also happened in ZakEGA (see bug #771803).
 	//
 	// This *might* mean that we have a bug in our box implementation
 	// OTOH, the original engine, unlike ScummVM, performed no bound

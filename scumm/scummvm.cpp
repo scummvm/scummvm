@@ -1354,7 +1354,7 @@ load_game:
 		if (!success) {
 			displayError(false, errMsg, filename);
 		} else if (_saveLoadFlag == 1 && _saveLoadSlot != 0 && !_saveLoadCompatible) {
-			// Display "Save succesful" message, except for auto saves
+			// Display "Save successful" message, except for auto saves
 #ifdef __PALM_OS__
 			char buf[256]; // 1024 is too big overflow the stack
 #else

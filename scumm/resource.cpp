@@ -802,7 +802,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		return 1;
 	} else if (basetag == MKID('FMUS')) {
 		// Used in 3DO version of puttputt joins the parade and probably others
-		// Specifies a seperate file to be used for music from what I gather.
+		// Specifies a separate file to be used for music from what I gather.
 		int tmpsize;
 		int i = 0;
 		File dmuFile;
