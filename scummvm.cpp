@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.14  2001/10/29 23:07:24  strigeus
+ * better MI1 compatibility
+ *
  * Revision 1.13  2001/10/26 17:34:50  strigeus
  * bug fixes, code cleanup
  *
@@ -265,7 +268,7 @@ void Scumm::scummMain(int argc, char **argv) {
 	if (_gameId==GID_INDY4 && _bootParam==0) {
 		_bootParam = -7873;
 	}
-		
+
 	initGraphics(this);
 
 	if (_majorScummVersion==6)
@@ -277,6 +280,11 @@ void Scumm::scummMain(int argc, char **argv) {
 
 	_vars[VAR_VERSION] = 21; 
 	_vars[VAR_DEBUGMODE] = _debugMode;
+
+	if (_gameId==GID_MONKEY) {
+		_vars[74] = 1225;
+	}
+
 
 	runScript(1,0,0,&_bootParam);
 	_scummTimer = 0;
@@ -325,6 +333,9 @@ void Scumm::scummMain(int argc, char **argv) {
 		_vars[VAR_MOUSE_X] = mouse.x;
 		_vars[VAR_MOUSE_Y] = mouse.y;
 		_vars[VAR_DEBUGMODE] = _debugMode;
+
+		if (_gameId==GID_MONKEY)
+			_vars[VAR_MI1_TIMER]+=40;
 
 		if (_saveLoadFlag) {
 			char buf[256];
@@ -923,7 +934,12 @@ void NORETURN CDECL error(const char *s, ...) {
 	va_end(va);
 
 	if (scumm._currentScript != 0xFF) {
-		fprintf(stderr, "Error(%d): %s!\nPress a key to quit.\n", scumm.vm.slot[scumm._currentScript].number, buf);
+		ScriptSlot *ss = &scumm.vm.slot[scumm._currentScript];
+		fprintf(stderr, "Error(%d:%d:0x%X): %s!\nPress a key to quit.\n", 
+			scumm._roomResource,
+			ss->number,
+			scumm._scriptPointer - scumm._scriptOrgPointer,
+			buf);
 	} else {
 		fprintf(stderr, "Error: %s!\nPress a key to quit.\n", buf);
 	}

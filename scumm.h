@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.15  2001/10/29 23:07:24  strigeus
+ * better MI1 compatibility
+ *
  * Revision 1.14  2001/10/26 17:34:50  strigeus
  * bug fixes, code cleanup
  *
@@ -326,6 +329,7 @@ enum ScummVars {
 	VAR_VERSION = 75,
 
 	VAR_V5_DRAWFLAGS = 9,
+	VAR_MI1_TIMER = 14,
 	VAR_V5_OBJECT_LO = 15,
 	VAR_V5_OBJECT_HI = 16,
 	VAR_V5_TALK_STRING_Y = 54,

@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.10  2001/10/29 23:07:24  strigeus
+ * better MI1 compatibility
+ *
  * Revision 1.9  2001/10/26 17:34:50  strigeus
  * bug fixes, code cleanup
  *
@@ -1556,13 +1559,23 @@ void Scumm::panCameraTo(int x) {
 }
 
 void Scumm::actorFollowCamera(int act) {
-	int old = camera._follows;
+	int old;
+	CameraData *cd = &camera;
 
+	/* mi1 compatibilty */
+	if (act==0) {
+		cd->_mode = 1;
+		cd->_follows = 0;
+		cd->_movingToActor = 0;
+		return;
+	}
+	
+	old = cd->_follows;
 	setCameraFollows(derefActorSafe(act, "actorFollowCamera"));
-	if (camera._follows != old) 
+	if (cd->_follows != old) 
 		runHook(0);
 
-	camera._movingToActor = 0;
+	cd->_movingToActor = 0;
 }
 
 void Scumm::setCameraAtEx(int at) {
