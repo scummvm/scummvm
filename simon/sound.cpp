@@ -17,6 +17,7 @@
  *
  */
 
+#include "stdafx.h"
 #include "simon/sound.h"
 #include "common/file.h"
 #include "common/engine.h"
