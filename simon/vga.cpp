@@ -1582,7 +1582,7 @@ void SimonState::vc_59() {
 			vc_kill_thread(file, start);
 		} while (++start != end);
 	} else {
-		if (vc_59_helper())
+		if (_sound->_voice_handle == 0)
 			vc_skip_next_instruction();
 	}
 }
@@ -1760,7 +1760,7 @@ void SimonState::vc_63_palette_thing_2() {
 
 void SimonState::vc_64_skip_if_text() {
 	// Simon2
-	if (vc_59_helper())
+	if (_sound->_voice_handle == 0)
 		vc_skip_next_instruction();
 }
 

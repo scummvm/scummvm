@@ -3098,7 +3098,7 @@ void SimonState::processSpecialKeys() {
 			break;
 
 		case 't':
-			if (_game & GF_SIMON2)
+			if (_game & GF_SIMON2 && _game & GF_TALKIE)
 				_subtitles ^= 1;
 			break;
 
@@ -3480,10 +3480,6 @@ void SimonState::video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte 
 
 	dx_unlock_2();
 	_lock_word &= ~0x8000;
-}
-
-bool SimonState::vc_59_helper() {
-	return _sound->_voice_handle == 0;
 }
 
 void SimonState::video_copy_if_flag_0x8_c(FillOrCopyStruct *fcs) {

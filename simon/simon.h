@@ -689,7 +689,6 @@ public:
 	VgaSprite *find_cur_sprite();
 	void vc_set_bit_to(uint bit, bool value);
 
-	bool vc_59_helper();
 	void expire_vga_timers();
 
 	bool has_vgastruct_with_id(uint16 id, uint16 file);
