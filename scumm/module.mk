@@ -21,6 +21,7 @@ SCUMM_OBJS = \
 	scumm/resource_v4.o \
 	scumm/saveload.o \
 	scumm/script.o \
+	scumm/script_v2.o \
 	scumm/script_v5.o \
 	scumm/script_v6.o \
 	scumm/script_v8.o \

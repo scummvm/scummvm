@@ -367,6 +367,10 @@ SOURCE=.\scumm\script.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\scumm\script_v2.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\scumm\script_v5.cpp
 # End Source File
 # Begin Source File

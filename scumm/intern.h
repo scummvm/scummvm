@@ -157,16 +157,6 @@ protected:
 	void o5_pickupObjectOld();
 };
 
-// FIXME - subclassing V2 from Scumm_v5 is a hack: V2 should have its own opcode table
-class Scumm_v2 : public Scumm_v5 {
-public:
-	Scumm_v2(GameDetector *detector, OSystem *syst) : Scumm_v5(detector, syst) {}
-
-protected:
-	void readIndexFile();
-	void readMAXS();
-};
-
 // FIXME - maybe we should move the opcodes from v5 to v3, and change the inheritance 
 // accordingly - that would be more logical I guess. However, if you do so, take care
 // of preserving the right readIndexFile / loadCharset !!!
@@ -180,6 +170,62 @@ protected:
 	void readMAXS();
 	
 	void readGlobalObjects();
+};
+
+class Scumm_v2 : public Scumm_v3 {
+public:
+	Scumm_v2(GameDetector *detector, OSystem *syst) : Scumm_v3(detector, syst) {}
+
+protected:
+	void readIndexFile();
+	void readMAXS();
+	typedef void (Scumm_v2::*OpcodeProcV2)();
+	struct OpcodeEntryV2 {
+		OpcodeProcV2 proc;
+		const char *desc;
+	};
+
+	const OpcodeEntryV2 *_opcodesV2;
+
+	virtual void setupOpcodes();
+	virtual void executeOpcode(int i);
+	virtual const char *getOpcodeDesc(int i);
+	virtual void getResultPos();
+	virtual void getResultPosDirect();
+	virtual void ifStateGeneral(byte type);
+	virtual void ifNotStateGeneral(byte type);
+
+	/* Version 2 script opcodes */
+	void o2_setState80();
+	void o2_clearState80();
+	void o2_setState40();
+	void o2_clearState40();
+	void o2_setState20();
+	void o2_clearState20();
+	void o2_setState10();
+	void o2_clearState10();
+	void o2_assignVarByteDirect();
+	void o2_assignVarWordDirect();
+	void o2_assignVarByte();
+	void o2_assignVarWord();
+	void o2_setObjY();
+	void o2_getObjY();
+	void o2_setBitVar();
+	void o2_getBitVar();
+	void o2_addDirect();
+	void o2_subDirect();
+	void o2_ifState80();
+	void o2_ifNotState80();
+	void o2_ifState40();
+	void o2_ifNotState40();
+	void o2_ifState20();
+	void o2_ifNotState20();
+	void o2_ifState10();
+	void o2_ifNotState10();
+	void o2_waitForActor();
+	void o2_waitForSentence();
+	void o2_restart();
+
 };
 
 class Scumm_v4 : public Scumm_v3 {
