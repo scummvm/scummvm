@@ -258,6 +258,9 @@ void free_check(void *ptr) {
 		printf("ERROR: freeing 0xE7E7E7E7\n");
 		exit(1);
 	}
+	if ((int)ptr & 1) {
+		warning("Freeing odd address 0x%x\n", ptr);
+	}
 	free(ptr);
 }
 #endif
