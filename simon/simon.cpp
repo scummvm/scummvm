@@ -37,7 +37,7 @@ extern bool draw_keyboard;
 #endif
 
 static const VersionSettings simon_settings[] = {
-	/* Simon the Sorcerer 1 & 2 (not SCUMM games) */
+	// Simon the Sorcerer 1 & 2 (not SCUMM games)
 	{"simon1dos", "Simon the Sorcerer 1 for DOS", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1DOS, "GAMEPC"},
 //	{"simon1amiga", "Simon the Sorcerer 1 for Amiga", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1AMIGA, "gameamiga"},
 	{"simon2dos", "Simon the Sorcerer 2 for DOS", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2DOS, "GAME32"},
@@ -57,111 +57,111 @@ const VersionSettings *Engine_SIMON_targetList() {
 }
 
 static const GameSpecificSettings simon1_settings = {
-	1,										/* VGA_DELAY_BASE */
-	1576 / 4,									/* TABLE_INDEX_BASE */
-	1460 / 4,									/* TEXT_INDEX_BASE */
-	64,										/* NUM_VIDEO_OP_CODES */
-	1000000,									/* VGA_MEM_SIZE */
-	50000,										/* TABLES_MEM_SIZE */
-	1316 / 4,									/* MUSIC_INDEX_BASE */
-	0,										/* SOUND_INDEX_BASE */
-	"SIMON.GME",									/* gme_filename */
-	"SIMON.WAV",									/* wav_filename */
-	"SIMON.VOC",									/* voc_filename */
-	"SIMON.MP3",									/* mp3_filename */
-	"EFFECTS.VOC",									/* voc_effects_filename */
-	"EFFECTS.MP3",									/* mp3_effects_filename */
-	"GAMEPC",									/* gamepc_filename */
+	1,										// VGA_DELAY_BASE
+	1576 / 4,									// TABLE_INDEX_BASE
+	1460 / 4,									// TEXT_INDEX_BASE
+	64,										// NUM_VIDEO_OP_CODES
+	1000000,									// VGA_MEM_SIZE
+	50000,										// TABLES_MEM_SIZE
+	1316 / 4,									// MUSIC_INDEX_BASE
+	0,										// SOUND_INDEX_BASE
+	"SIMON.GME",									// gme_filename
+	"SIMON.WAV",									// wav_filename
+	"SIMON.VOC",									// voc_filename
+	"SIMON.MP3",									// mp3_filename
+	"EFFECTS.VOC",									// voc_effects_filename
+	"EFFECTS.MP3",									// mp3_effects_filename
+	"GAMEPC",									// gamepc_filename
 };
 
 static const GameSpecificSettings simon1amiga_settings = {
-	1,										/* VGA_DELAY_BASE */
-	1576 / 4,									/* TABLE_INDEX_BASE */
-	1460 / 4,									/* TEXT_INDEX_BASE */
-	64,										/* NUM_VIDEO_OP_CODES */
-	1000000,									/* VGA_MEM_SIZE */
-	50000,										/* TABLES_MEM_SIZE */
-	1316 / 4,									/* MUSIC_INDEX_BASE */
-	0,										/* SOUND_INDEX_BASE */
-	"",										/* gme_filename */
-	"",										/* wav_filename */
-	"",										/* voc_filename */
-	"SIMON.MP3",									/* mp3_filename */
-	"",										/* voc_effects_filename */
-	"",										/* mp3_effects_filename */
-	"gameamiga",									/* gamepc_filename */
+	1,										// VGA_DELAY_BASE
+	1576 / 4,									// TABLE_INDEX_BASE
+	1460 / 4,									// TEXT_INDEX_BASE
+	64,										// NUM_VIDEO_OP_CODES
+	1000000,									// VGA_MEM_SIZE
+	50000,										// TABLES_MEM_SIZE
+	1316 / 4,									// MUSIC_INDEX_BASE
+	0,										// SOUND_INDEX_BASE
+	"",										// gme_filename
+	"",										// wav_filename
+	"",										// voc_filename
+	"SIMON.MP3",									// mp3_filename
+	"",										// voc_effects_filename
+	"",										// mp3_effects_filename
+	"gameamiga",									// gamepc_filename
 };
 
 static const GameSpecificSettings simon1demo_settings = {
-	1,										/* VGA_DELAY_BASE */
-	1576 / 4,									/* TABLE_INDEX_BASE */
-	1460 / 4,									/* TEXT_INDEX_BASE */
-	64,										/* NUM_VIDEO_OP_CODES */
-	1000000,									/* VGA_MEM_SIZE */
-	50000,										/* TABLES_MEM_SIZE */
-	1316 / 4,									/* MUSIC_INDEX_BASE */
-	0,										/* SOUND_INDEX_BASE */
-	"",										/* gme_filename */
-	"",										/* wav_filename */
-	"",										/* voc_filename */
-	"",										/* mp3_filename */
-	"",										/* voc_effects_filename */
-	"",										/* mp3_effects_filename */
-	"GDEMO",									/* gamepc_filename */
+	1,										// VGA_DELAY_BASE
+	1576 / 4,									// TABLE_INDEX_BASE
+	1460 / 4,									// TEXT_INDEX_BASE
+	64,										// NUM_VIDEO_OP_CODES
+	1000000,									// VGA_MEM_SIZE
+	50000,										// TABLES_MEM_SIZE
+	1316 / 4,									// MUSIC_INDEX_BASE
+	0,										// SOUND_INDEX_BASE
+	"",										// gme_filename
+	"",										// wav_filename
+	"",										// voc_filename
+	"",										// mp3_filename
+	"",										// voc_effects_filename
+	"",										// mp3_effects_filename
+	"GDEMO",									// gamepc_filename
 };
 
 static const GameSpecificSettings simon2win_settings = {
-	5,										/* VGA_DELAY_BASE */
-	1580 / 4,									/* TABLE_INDEX_BASE */
-	1500 / 4,									/* TEXT_INDEX_BASE */
-	75,										/* NUM_VIDEO_OP_CODES */
-	2000000,									/* VGA_MEM_SIZE */
-	100000,										/* TABLES_MEM_SIZE */
-	1128 / 4,									/* MUSIC_INDEX_BASE */
-	1660 / 4,									/* SOUND_INDEX_BASE */
-	"SIMON2.GME",									/* gme_filename */
-	"SIMON2.WAV",									/* wav_filename */
-	"SIMON2.VOC",									/* voc_filename */
-	"SIMON2.MP3",									/* mp3_filename */
-	"",										/* voc_effects_filename */
-	"",										/* mp3_effects_filename */
-	"GSPTR30",									/* gamepc_filename */
+	5,										// VGA_DELAY_BASE
+	1580 / 4,									// TABLE_INDEX_BASE
+	1500 / 4,									// TEXT_INDEX_BASE
+	75,										// NUM_VIDEO_OP_CODES
+	2000000,									// VGA_MEM_SIZE
+	100000,										// TABLES_MEM_SIZE
+	1128 / 4,									// MUSIC_INDEX_BASE
+	1660 / 4,									// SOUND_INDEX_BASE
+	"SIMON2.GME",									// gme_filename
+	"SIMON2.WAV",									// wav_filename
+	"SIMON2.VOC",									// voc_filename
+	"SIMON2.MP3",									// mp3_filename
+	"",										// voc_effects_filename
+	"",										// mp3_effects_filename
+	"GSPTR30",									// gamepc_filename
 };
 
 static const GameSpecificSettings simon2mac_settings = {
-	5,										/* VGA_DELAY_BASE */
-	1580 / 4,									/* TABLE_INDEX_BASE */
-	1500 / 4,									/* TEXT_INDEX_BASE */
-	75,										/* NUM_VIDEO_OP_CODES */
-	2000000,									/* VGA_MEM_SIZE */
-	100000,										/* TABLES_MEM_SIZE */
-	1128 / 4,									/* MUSIC_INDEX_BASE */
-	1660 / 4,									/* SOUND_INDEX_BASE */
-	"Simon2.gme",									/* gme_filename */
-	"",										/* wav_filename */
-	"",										/* voc_filename */
-	"SIMON2.MP3",									/* mp3_filename */
-	"",										/* voc_effects_filename */
-	"",										/* mp3_effects_filename */
-	"gsptr30",									/* gamepc_filename */
+	5,										// VGA_DELAY_BASE
+	1580 / 4,									// TABLE_INDEX_BASE
+	1500 / 4,									// TEXT_INDEX_BASE
+	75,										// NUM_VIDEO_OP_CODES
+	2000000,									// VGA_MEM_SIZE
+	100000,										// TABLES_MEM_SIZE
+	1128 / 4,									// MUSIC_INDEX_BASE
+	1660 / 4,									// SOUND_INDEX_BASE
+	"Simon2.gme",									// gme_filename
+	"",										// wav_filename
+	"",										// voc_filename
+	"SIMON2.MP3",									// mp3_filename
+	"",										// voc_effects_filename
+	"",										// mp3_effects_filename
+	"gsptr30",									// gamepc_filename
 };
 
 static const GameSpecificSettings simon2dos_settings = {
-	5,										/* VGA_DELAY_BASE */
-	1580 / 4,									/* TABLE_INDEX_BASE */
-	1500 / 4,									/* TEXT_INDEX_BASE */
-	75,										/* NUM_VIDEO_OP_CODES */
-	2000000,									/* VGA_MEM_SIZE */
-	100000,										/* TABLES_MEM_SIZE */
-	1128 / 4,									/* MUSIC_INDEX_BASE */
-	1660 / 4,									/* SOUND_INDEX_BASE */
-	"SIMON2.GME",									/* gme_filename */
-	"",										/* wav_filename */
-	"",										/* voc_filename */
-	"",										/* mp3_filename */
-	"",										/* voc_effects_filename */
-	"",										/* mp3_effects_filename */
-	"GAME32",									/* gamepc_filename */
+	5,										// VGA_DELAY_BASE
+	1580 / 4,									// TABLE_INDEX_BASE
+	1500 / 4,									// TEXT_INDEX_BASE
+	75,										// NUM_VIDEO_OP_CODES
+	2000000,									// VGA_MEM_SIZE
+	100000,										// TABLES_MEM_SIZE
+	1128 / 4,									// MUSIC_INDEX_BASE
+	1660 / 4,									// SOUND_INDEX_BASE
+	"SIMON2.GME",									// gme_filename
+	"",										// wav_filename
+	"",										// voc_filename
+	"",										// mp3_filename
+	"",										// voc_effects_filename
+	"",										// mp3_effects_filename
+	"GAME32",									// gamepc_filename
 };
 
 
@@ -179,7 +179,7 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 
 	_fcs_list = new FillOrCopyStruct[16];
 
-	/* Setup midi driver */
+	// Setup midi driver
 	if (!driver)
 		driver = MidiDriver_ADLIB_create();
 	midi.set_driver(driver);
@@ -189,7 +189,7 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 
 	_game = (byte)detector->_features;
 
-	/* Setup mixer */
+	// Setup mixer
 	if (!_mixer->bindToSystem(syst))
 		warning("Sound initialization failed. "
 						"Features of the game that depend on sound synchronization will most likely break");
@@ -281,7 +281,7 @@ int SimonState::allocGamePcVars(File *in) {
 	item_array_inited = in->readUint32BE();
 	stringtable_num = in->readUint32BE();
 
-	item_array_inited += 2;				/* first two items are predefined */
+	item_array_inited += 2;				// first two items are predefined
 	item_array_size += 2;
 
 	if (version != 0x80)
@@ -298,7 +298,7 @@ int SimonState::allocGamePcVars(File *in) {
 		_itemarray_ptr[i] = (Item *)allocateItem(sizeof(Item));
 	}
 
-	/* The rest is cleared automatically by calloc */
+	// The rest is cleared automatically by calloc
 	allocateStringTable(stringtable_num + 10);
 	_stringtab_num = stringtable_num;
 
@@ -400,7 +400,7 @@ SubroutineLine *SimonState::createSubroutineLine(Subroutine *sub, int where) {
 	else
 		sl = (SubroutineLine *)allocateTable(SUBROUTINE_LINE_SMALL_SIZE);
 
-	/* where is what offset to insert the line at, locate the proper beginning line */
+	// where is what offset to insert the line at, locate the proper beginning line
 	if (sub->first != 0) {
 		cur_sl = (SubroutineLine *)((byte *)sub + sub->first);
 		while (where) {
@@ -413,11 +413,11 @@ SubroutineLine *SimonState::createSubroutineLine(Subroutine *sub, int where) {
 	}
 
 	if (last_sl != NULL) {
-		/* Insert the subroutine line in the middle of the link */
+		// Insert the subroutine line in the middle of the link
 		last_sl->next = (byte *)sl - (byte *)sub;
 		sl->next = (byte *)cur_sl - (byte *)sub;
 	} else {
-		/* Insert the subroutine line at the head of the link */
+		// Insert the subroutine line at the head of the link
 		sl->next = sub->first;
 		sub->first = (byte *)sl - (byte *)sub;
 	}
@@ -618,7 +618,7 @@ void SimonState::setItemParent(Item *item, Item *parent) {
 	if (item == parent)
 		error("Trying to set item as its own parent");
 
-	/* unlink it if it has a parent */
+	// unlink it if it has a parent
 	if (old_parent)
 		unlinkItem(item);
 	itemChildrenChanged(old_parent);
@@ -653,15 +653,15 @@ void SimonState::itemChildrenChanged(Item *item) {
 void SimonState::unlinkItem(Item *item) {
 	Item *first, *parent, *next;
 
-	/* can't unlink item without parent */
+	// can't unlink item without parent
 	if (item->parent == 0)
 		return;
 
-	/* get parent and first child of parent */
+	// get parent and first child of parent
 	parent = derefItem(item->parent);
 	first = derefItem(parent->child);
 
-	/* the node to remove is first in the parent's children? */
+	// the node to remove is first in the parent's children?
 	if (first == item) {
 		parent->child = item->sibling;
 		item->parent = 0;
@@ -688,7 +688,7 @@ void SimonState::unlinkItem(Item *item) {
 
 void SimonState::linkItem(Item *item, Item *parent) {
 	uint id;
-	/* Don't allow that an item that is already linked is relinked */
+	// Don't allow that an item that is already linked is relinked
 	if (item->parent)
 		return;
 
@@ -738,7 +738,7 @@ void SimonState::loadTextIntoMem(uint string_id) {
 
 	p = _stripped_txt_mem;
 
-	/* get filename */
+	// get filename
 	while (*p) {
 		for (i = 0; *p; p++, i++)
 			filename[i] = *p;
@@ -914,10 +914,10 @@ File *SimonState::openTablesFile_gme(const char *filename) {
 }
 
 void SimonState::closeTablesFile_gme(File *in) {
-	/* not needed */
+	// not needed
 }
 
-/* Simon1DOS load tables file */
+// Simon1DOS load tables file
 uint SimonState::loadTextFile_simon1(const char *filename, byte *dst) {
 	File fo;
 	fo.open(filename, _gameDataPath);
@@ -1398,7 +1398,7 @@ void SimonState::setup_hit_areas(FillOrCopyStruct *fcs, uint fcs_index) {
 		ha->fcs = fcs;
 		ha->unk3 = 1;
 
-		/* Simon1 specific */
+		// Simon1 specific
 		o_kill_thread_simon1(0x80);
 		start_vga_code(0, 1, 0x80, 0, 0, 0xE);
 	} else {
@@ -1434,7 +1434,7 @@ uint SimonState::item_get_icon_number(Item *item) {
 void SimonState::loadIconFile() {
 	File in;
 	if (_game & GF_AMIGAS)
-		/* TODO Add support for decruncher */
+		// TODO Add support for decruncher
 		in.open("icon.pkd", _gameDataPath);
 	else
 		in.open("ICON.DAT", _gameDataPath);
@@ -1614,7 +1614,7 @@ startOver:
 				if (_verb_hitarea != 0)
 					break;
 			} else {
-				/* else 1 */
+				// else 1
 				if (ha->unk3 == 0) {
 					if (ha->item_ptr)
 						goto if_1;
@@ -1662,7 +1662,7 @@ void SimonState::hitarea_stuff_helper() {
 	}
 }
 
-/* Simon 2 specific */
+// Simon 2 specific
 void SimonState::hitarea_stuff_helper_2() {
 	uint subr_id;
 	Subroutine *sub;
@@ -2027,7 +2027,7 @@ void SimonState::set_video_mode_internal(uint mode, uint vga_res_id) {
 		ensureVgaResLoaded(num);
 	}
 
-	/* ensure flipping complete */
+	// ensure flipping complete
 
 	bb = _cur_vga_file_1;
 	b = bb + READ_BE_UINT16_UNALIGNED(&((VgaFile1Header *) bb)->hdr2_start);
@@ -2078,7 +2078,7 @@ void SimonState::set_video_mode_internal(uint mode, uint vga_res_id) {
 	}
 
 	_lock_word &= ~0x20;
-	/* XXX: fix */
+	// XXX: fix
 
 	if (!(_game & GF_SIMON2)) {
 		if (_unk_pal_flag) {
@@ -2154,7 +2154,7 @@ void SimonState::expire_vga_timers() {
 		_vga_tick_counter++;
 
 		while (vte->delay) {
-			/* not quite ok, good enough */
+			// not quite ok, good enough
 			if ((int16)(vte->delay -= 5) <= 0) {
 				uint16 cur_file = vte->cur_vga_file;
 				uint16 cur_unk = vte->sprite_id;
@@ -2164,7 +2164,7 @@ void SimonState::expire_vga_timers() {
 				delete_vga_timer(vte);
 
 				if (script_ptr == NULL) {
-					/* special scroll timer */
+					// special scroll timer
 					scroll_timeout();
 				} else {
 					vc_resume_thread(script_ptr, cur_file, cur_unk);
@@ -2197,7 +2197,7 @@ void SimonState::expire_vga_timers() {
 	}
 }
 
-/* Simon2 specific */
+// Simon2 specific
 void SimonState::scroll_timeout() {
 	if (_vga_var2 == 0)
 		return;
@@ -2305,7 +2305,7 @@ int SimonState::display_savegame_list(int curpos, bool load, char *dst) {
 		dst += 18;
 		slot++;
 	}
-	/* while_break */
+	// while_break
 	if (!load) {
 		if (curpos + 6 == slot)
 			slot++;
@@ -2391,14 +2391,14 @@ restart:;
 	if (i == 205)
 		goto get_out;
 	if (!load) {
-		/* if_1 */
+		// if_1
 	if_1:;
 		unk132_result = i;
 
 		set_hitarea_bit_0x40(0xd0 + i);
 		leaveHitAreaById(0xd0 + i);
 
-		/* some code here */
+		// some code here
 
 		fcs = _fcs_ptr_array_3[5];
 
@@ -2424,15 +2424,15 @@ restart:;
 			}
 			name_len++;
 		}
-		/* while_1_end */
+		// while_1_end
 
-		/* do_3_start */
+		// do_3_start
 		for (;;) {
 			video_putchar(fcs, 0x7f);
 
 			_saveload_flag = true;
 
-			/* do_2 */
+			// do_2
 			do {
 				i = o_unk_132_helper(&b, buf);
 
@@ -2442,24 +2442,24 @@ restart:;
 					clear_hitarea_bit_0x40(0xd0 + unk132_result);
 					if (_saveload_flag) {
 						o_unk_132_helper_2(_fcs_ptr_array_3[5], 8);
-						/* move code */
+						// move code
 					}
 					goto if_1;
 				}
 
-				/* is_not_b */
+				// is_not_b
 				if (!_saveload_flag) {
 					clear_hitarea_bit_0x40(0xd0 + unk132_result);
 					goto restart;
 				}
 			} while (i >= 0x80 || i == 0);
 
-			/* after_do_2 */
+			// after_do_2
 			o_unk_132_helper_2(_fcs_ptr_array_3[5], 8);
 			if (i == 10 || i == 13)
 				break;
 			if (i == 8) {
-				/* do_backspace */
+				// do_backspace
 				if (name_len != 0) {
 					int x;
 
@@ -2477,7 +2477,7 @@ restart:;
 			}
 		}
 
-		/* do_save */
+		// do_save
 		if (!save_game(_saveload_row_curpos + unk132_result, buf + unk132_result * 18))
 			warning("Save failed");
 	} else {
@@ -2563,7 +2563,7 @@ void SimonState::timer_vga_sprites() {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
 	byte *vc_ptr_org = _vc_ptr;
-	uint16 params[5];							/* parameters to vc_10 */
+	uint16 params[5];							// parameters to vc_10
 
 	if (_video_var_9 == 2)
 		_video_var_9 = 1;
@@ -2647,7 +2647,7 @@ void SimonState::timer_vga_sprites_2() {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
 	byte *vc_ptr_org = _vc_ptr;
-	uint16 params[5];							/* parameters to vc_10_draw */
+	uint16 params[5];							// parameters to vc_10_draw
 
 	if (_video_var_9 == 2)
 		_video_var_9 = 1;
@@ -2721,7 +2721,7 @@ void SimonState::timer_proc1() {
 		}
 	}
 
-	/* XXX: more stuff here */
+	// XXX: more stuff here
 	timer_vga_sprites();
 	if (_draw_images_debug)
 		timer_vga_sprites_2();
@@ -2731,7 +2731,7 @@ void SimonState::timer_proc1() {
 	}
 
 	if (_copy_partial_mode == 2) {
-		/* copy partial from attached to 2 */
+		// copy partial from attached to 2
 		dx_copy_from_attached_to_2(176, 61, 320 - 176, 134 - 61);
 		_copy_partial_mode = 0;
 	}
@@ -2826,7 +2826,7 @@ bool SimonState::vc_maybe_skip_proc_1(uint16 a, int16 b) {
 	return item->unk3 == b;
 }
 
-/* OK */
+// OK
 void SimonState::fcs_delete(uint a) {
 	if (_fcs_ptr_array_3[a] == NULL)
 		return;
@@ -2839,7 +2839,7 @@ void SimonState::fcs_delete(uint a) {
 	}
 }
 
-/* OK */
+// OK
 void SimonState::fcs_unk_2(uint a) {
 	a &= 7;
 
@@ -2853,7 +2853,7 @@ void SimonState::fcs_unk_2(uint a) {
 	showmessage_helper_3(_fcs_ptr_1->textLength, _fcs_ptr_1->textMaxLength);
 }
 
-/* OK */
+// OK
 FillOrCopyStruct *SimonState::fcs_alloc(uint x, uint y, uint w, uint h, uint flags, uint fill_color,
 																				uint unk4) {
 	FillOrCopyStruct *fcs;
@@ -2907,7 +2907,7 @@ void SimonState::o_pathfind(int x, int y, uint var_1, uint var_2) {
 		p = (uint16 *)_pathfind_array[20 - i];
 		if (!p)
 			continue;
-		for (j = 0; READ_BE_UINT16_UNALIGNED(&p[0]) != 999; j++, p += 2) {	/* 0xE703 = byteswapped 999 */
+		for (j = 0; READ_BE_UINT16_UNALIGNED(&p[0]) != 999; j++, p += 2) {	// 0xE703 = byteswapped 999
 			x_diff = abs((int)(READ_BE_UINT16_UNALIGNED(&p[0]) - x));
 			y_diff = abs((int)(READ_BE_UINT16_UNALIGNED(&p[1]) - 12 - y));
 
@@ -2929,7 +2929,7 @@ void SimonState::o_pathfind(int x, int y, uint var_1, uint var_2) {
 	_variableArray[var_2] = best_j;
 }
 
-/* ok */
+// ok
 void SimonState::fcs_unk1(uint fcs_index) {
 	FillOrCopyStruct *fcs;
 	uint16 fcsunk1;
@@ -2965,7 +2965,7 @@ void SimonState::fcs_unk1(uint fcs_index) {
 	_fcs_data_2[fcs_index] = 0;
 }
 
-/* ok */
+// ok
 void SimonState::fcs_unk_5(FillOrCopyStruct *fcs, uint fcs_index) {
 	if (!(_game & GF_SIMON2)) {
 		o_kill_thread_simon1(0x80);
@@ -2977,13 +2977,13 @@ void SimonState::delete_hitarea_by_index(uint index) {
 	_hit_areas[index].flags = 0;
 }
 
-/* ok */
+// ok
 void SimonState::fcs_putchar(uint a) {
 	if (_fcs_ptr_1 != _fcs_ptr_array_3[0])
 		video_putchar(_fcs_ptr_1, a);
 }
 
-/* ok */
+// ok
 void SimonState::video_fill_or_copy_from_3_to_2(FillOrCopyStruct *fcs) {
 	if (fcs->flags & 0x10)
 		copy_img_from_3_to_2(fcs);
@@ -2996,7 +2996,7 @@ void SimonState::video_fill_or_copy_from_3_to_2(FillOrCopyStruct *fcs) {
 	fcs->textLength = 0;
 }
 
-/* ok */
+// ok
 void SimonState::copy_img_from_3_to_2(FillOrCopyStruct *fcs) {
 	_lock_word |= 0x8000;
 
@@ -3170,7 +3170,7 @@ static const byte _simon1_cursor[256] = {
 };
 
 static const byte _simon2_cursors[10][256] = {
-	/* cross hair */
+	// cross hair
 	{ 0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xec,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xec,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xec,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
@@ -3187,7 +3187,7 @@ static const byte _simon2_cursors[10][256] = {
 	  0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xec,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xec,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff },
-	/* examine */
+	// examine
 	{ 0xff,0xff,0xef,0xef,0xef,0xef,0xef,0xef,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xef,0xee,0xeb,0xe4,0xe4,0xe4,0xee,0xef,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 	  0xef,0xee,0xeb,0xee,0xef,0xef,0xee,0xec,0xee,0xef,0xff,0xff,0xff,0xff,0xff,0xff,
@@ -3204,7 +3204,7 @@ static const byte _simon2_cursors[10][256] = {
 	  0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xef,0xeb,0xe4,0xef,0xff,
 	  0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xef,0xef,0xff,0xff,
 	  0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff },
-	/* pick up */  
+	// pick up  
 	{ 0xff,0xff,0xff,0xff,0xff,0xe5,0xe5,0xe5,0xe5,0xe5,0xe5,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xff,0xe5,0xe6,0xe6,0xe7,0xe7,0xe6,0xe6,0xe5,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xe5,0xe7,0xe7,0xe7,0xe7,0xe8,0xe8,0xe8,0xe8,0xe5,0xff,0xff,0xff,
@@ -3221,7 +3221,7 @@ static const byte _simon2_cursors[10][256] = {
 	  0xff,0xff,0xff,0xff,0xef,0xee,0xee,0xee,0xee,0xe1,0xe1,0xef,0xff,0xff,0xff,0xe4,
 	  0xef,0xee,0xeb,0xeb,0xeb,0xeb,0xeb,0xe4,0xe4,0xe4,0xe4,0xe4,0xe4,0xe4,0xeb,0xec,
 	  0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xe4 },
-	/* give */
+	// give
 	{ 0xff,0xff,0xff,0xff,0xff,0xe5,0xe7,0xe5,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xff,0xe5,0xe7,0xe8,0xe7,0xe5,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xe9,0xe7,0xe8,0xe8,0xe8,0xe7,0xe9,0xff,0xff,0xff,0xff,0xff,0xff,
@@ -3238,7 +3238,7 @@ static const byte _simon2_cursors[10][256] = {
 	  0xff,0xff,0xff,0xe8,0xe7,0xe7,0xe8,0xe6,0xe6,0xe7,0xff,0xef,0xeb,0xef,0xff,0xff,
 	  0xff,0xff,0xff,0xff,0xe5,0xe7,0xe8,0xe6,0xe5,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xff,0xff,0xe5,0xe6,0xe5,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff },
-	/* talk */
+	// talk
 	{ 0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xe5,0xe5,0xe5,0xe5,0xe5,0xe5,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
@@ -3255,7 +3255,7 @@ static const byte _simon2_cursors[10][256] = {
 	  0xff,0xff,0xff,0xff,0xe5,0xe5,0xe5,0xe5,0xe5,0xe5,0xe5,0xe5,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff },
-	/* use */
+	// use
 	{ 0xff,0xff,0xff,0xff,0xff,0xee,0xe1,0xeb,0xee,0xef,0xef,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xff,0xff,0xef,0xef,0xef,0xe4,0xeb,0xee,0xe5,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xeb,0xe4,0xe4,0xeb,0xe5,0xff,0xff,0xff,
@@ -3272,7 +3272,7 @@ static const byte _simon2_cursors[10][256] = {
 	  0xe5,0xe6,0xe6,0xe5,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xe5,0xe5,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff },
-	/* wear */
+	// wear
 	{ 0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xef,0xef,0xef,0xef,0xef,0xef,0xef,0xef,0xef,0xef,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xef,0xeb,0xed,0xe4,0xe2,0xeb,0xee,0xee,0xee,0xef,0xff,0xff,0xff,
@@ -3289,7 +3289,7 @@ static const byte _simon2_cursors[10][256] = {
 	  0xff,0xff,0xff,0xef,0xef,0xef,0xef,0xef,0xef,0xef,0xef,0xef,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff },
-	/* move */
+	// move
 	{ 0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xe1,0xe1,0xe1,0xe1,0xe1,0xe1,0xe1,0xe1,0xe1,0xe1,0xe1,0xe1,0xe1,0xe1,0xff,
@@ -3306,7 +3306,7 @@ static const byte _simon2_cursors[10][256] = {
 	  0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff },
-	/* open */
+	// open
 	{ 0xff,0xff,0xe5,0xe8,0xe8,0xe7,0xe5,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xe5,0xe8,0xe7,0xe5,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xe5,0xe7,0xe5,0xe7,0xe5,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
@@ -3323,7 +3323,7 @@ static const byte _simon2_cursors[10][256] = {
 	  0xff,0xe5,0xe9,0xe6,0xe6,0xe6,0xe6,0xe6,0xe6,0xe5,0xe9,0xe5,0xff,0xff,0xff,0xff,
 	  0xff,0xe5,0xe9,0xe8,0xe8,0xe8,0xe8,0xe8,0xe8,0xe7,0xe9,0xe5,0xff,0xff,0xff,0xff,
 	  0xff,0xe5,0xe9,0xe9,0xe9,0xe9,0xe9,0xe9,0xe9,0xe9,0xe9,0xe5,0xff,0xff,0xff,0xff },
-	/* question mark */
+	// question mark
 	{ 0xff,0xff,0xff,0xff,0xff,0xe5,0xe5,0xe5,0xe5,0xe5,0xe5,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xff,0xe5,0xe7,0xea,0xec,0xec,0xec,0xe9,0xe5,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xe5,0xe7,0xea,0xec,0xea,0xe9,0xea,0xec,0xe9,0xe5,0xff,0xff,0xff,
@@ -3374,9 +3374,9 @@ void decompress_icon(byte *dst, byte *src, uint w, uint h_org, byte base, uint p
 					*dst = color_2;
 				dst += pitch;
 
-				/* reached bottom? */
+				// reached bottom?
 				if (--h == 0) {
-					/* reached right edge? */
+					// reached right edge?
 					if (--w == 0)
 						return;
 					dst = ++dst_org;
@@ -3395,9 +3395,9 @@ void decompress_icon(byte *dst, byte *src, uint w, uint h_org, byte base, uint p
 					*dst = color_2 | base;
 				dst += pitch;
 
-				/* reached bottom? */
+				// reached bottom?
 				if (--h == 0) {
-					/* reached right edge? */
+					// reached right edge?
 					if (--w == 0)
 						return;
 					dst = ++dst_org;
@@ -4060,7 +4060,7 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 			m++;
 
 		if (m <= letters_per_row && strlen(string_ptr_2) < letters_per_row) {
-			/* if_1 */
+			// if_1
 			n = (letters_per_row - m + 1) >> 1;
 
 			while (n != 0) {
@@ -4075,7 +4075,7 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 			threeval_b -= 10;
 			j = -1;
 		} else {
-			/* else_1 */
+			// else_1
 			j -= 4;
 			if (j == -12) {
 				j = 0;
@@ -4097,7 +4097,7 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 			m++;
 
 		if (m <= letters_per_row) {
-			/* if_4 */
+			// if_4
 			n = (letters_per_row - m + 1) >> 1;
 			while (n) {
 				*char_buf++ = ' ';
@@ -4112,12 +4112,12 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 
 			while (*string_ptr_2-- != ' ' && m > 0)
 				m--;
-			/* while_6_end */
+			// while_6_end
 
 			string_ptr_2 += 2;
 
 			if (strlen(string_ptr_2) <= m && m > 0) {
-				/* if_6 */
+				// if_6
 				n = (letters_per_row - m + 1) >> 1;
 				while (n) {
 					*char_buf++ = ' ';
@@ -4130,7 +4130,7 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 				threeval_b -= 20;
 				j = -1;
 			} else {
-				/* else_6 */
+				// else_6
 				j += 2;
 				string_ptr_2 = string_ptr_3;
 				string_ptr = string_ptr_3;
@@ -4148,7 +4148,7 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 	if (j != -1 && width * 40 > 8000)
 		num_of_rows = 4;
 
-	/* while_8 */
+	// while_8
 	while (num_of_rows == 3 && j != -1) {
 		m = strlen(string_ptr) >> 2;
 		m += j;
@@ -4157,7 +4157,7 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 			m++;
 
 		if (m <= letters_per_row) {
-			/* if_10 */
+			// if_10
 			n = (letters_per_row - m + 1) >> 1;
 			while (n) {
 				*char_buf++ = ' ';
@@ -4173,7 +4173,7 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 			string_ptr_2 += 2;
 
 			if (strlen(string_ptr_2) < m * 2 && m > 0) {
-				/* if_11 */
+				// if_11
 				n = (letters_per_row - m + 1) >> 1;
 				while (n) {
 					*char_buf++ = ' ';
@@ -4190,7 +4190,7 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 				string_ptr_2 += 2;
 
 				if (strlen(string_ptr_2) <= m && m > 0) {
-					/* if_15 */
+					// if_15
 					n = (letters_per_row - m + 1) >> 1;
 					while (n) {
 						*char_buf++ = ' ';
@@ -4203,21 +4203,21 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 					threeval_b -= 30;
 					j = -1;
 				} else {
-					/* else_15 */
+					// else_15
 					j += 2;
 					string_ptr_2 = string_ptr_3;
 					string_ptr = string_ptr_3;
 					char_buf = print_str_buf;
 				}
 			} else {
-				/* else_11 */
+				// else_11
 				j += 2;
 				string_ptr_2 = string_ptr_3;
 				string_ptr = string_ptr_3;
 				char_buf = print_str_buf;
 			}
 		} else {
-			/* else_10 */
+			// else_10
 			num_of_rows = 4;
 			string_ptr = string_ptr_3;
 			string_ptr_2 = string_ptr_3;
@@ -4225,7 +4225,7 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 		}
 	}
 
-	/* while_8_end */
+	// while_8_end
 	if (num_of_rows == 4) {
 		while (strlen(string_ptr) > letters_per_row) {
 			m = letters_per_row;
@@ -4424,7 +4424,7 @@ void SimonState::read_vga_from_datfile_1(uint vga_id) {
 		if (_game == GAME_SIMON1CD32) {
 			sprintf(buf, "0%d.out", vga_id); 
 		} else if (_game == GAME_SIMON1AMIGA) {
-			/* TODO Add support for decruncher */
+			// TODO Add support for decruncher
 			sprintf(buf, "0%d.pkd", vga_id); 
 		} else {
 			sprintf(buf, "0%d.VGA", vga_id); 
@@ -4458,7 +4458,7 @@ byte *SimonState::read_vga_from_datfile_2(uint id) {
 		if (_game == GAME_SIMON1CD32) {
 			sprintf(buf, "%.3d%d.out", id >> 1, (id & 1) + 1);
 		} else if (_game == GAME_SIMON1AMIGA) {
-			/* TODO Add support for decruncher */
+			// TODO Add support for decruncher
 			sprintf(buf, "%.3d%d.pkd", id >> 1, (id & 1) + 1);
 		} else {
 			sprintf(buf, "%.3d%d.VGA", id >> 1, (id & 1) + 1);
@@ -4685,7 +4685,7 @@ void SimonState::go() {
 	if (!_dump_file)
 		_dump_file = stdout;
 
-	/* allocate buffers */
+	// allocate buffers
 	_sdl_buf_3 = (byte *)calloc(320 * 200, 1);
 	_sdl_buf = (byte *)calloc(320 * 200, 1);
 	_sdl_buf_attached = (byte *)calloc(320 * 200, 1);
@@ -4769,7 +4769,7 @@ void SimonState::delay(uint amount) {
 		while (!_in_callback && cur >= _last_vga_tick + vga_period) {
 			_last_vga_tick += vga_period;
 
-			/* don't get too many frames behind */
+			// don't get too many frames behind
 			if (cur >= _last_vga_tick + vga_period * 2)
 				_last_vga_tick = cur;
 
@@ -4896,17 +4896,17 @@ bool SimonState::save_game(uint slot, const char *caption) {
 		}
 	}
 
-	/* write the 255 variables */
+	// write the 255 variables
 	for (i = 0; i != 255; i++) {
 		f.writeUint16BE(readVariable(i));
 	}
 
-	/* write the items in array 6 */
+	// write the items in array 6
 	for (i = 0; i != 10; i++) {
 		f.writeUint16BE(itemPtrToID(_item_array_6[i]));
 	}
 
-	/* Write the bits in array 1 & 2 */
+	// Write the bits in array 1 & 2
 	for (i = 0; i != 32; i++)
 		f.writeUint16BE(_bit_array[i]);
 
@@ -4960,7 +4960,7 @@ bool SimonState::load_game(uint slot) {
 	_no_parent_notify = true;
 
 
-	/* add all timers */
+	// add all timers
 	killAllTimers();
 	for (num = f.readUint32BE(); num; num--) {
 		uint32 timeout = f.readUint32BE();
@@ -5013,17 +5013,17 @@ bool SimonState::load_game(uint slot) {
 	}
 
 
-	/* read the 255 variables */
+	// read the 255 variables
 	for (i = 0; i != 255; i++) {
 		writeVariable(i, f.readUint16BE());
 	}
 
-	/* write the items in array 6 */
+	// write the items in array 6
 	for (i = 0; i != 10; i++) {
 		_item_array_6[i] = derefItem(f.readUint16BE());
 	}
 
-	/* Write the bits in array 1 & 2 */
+	// Write the bits in array 1 & 2
 	for (i = 0; i != 32; i++)
 		_bit_array[i] = f.readUint16BE();
 
@@ -5063,20 +5063,15 @@ void SimonState::playMusic(uint music_unk, uint music) {
 	} else { // Simon 1 music
 		if (_game & GF_AMIGAS) {
 			if (_game != GAME_SIMON1CD32) {
-				/* TODO Add support for decruncher */
+				// TODO Add support for decruncher
 			}
-			/* TODO Add Protracker support for simon1amiga/cd32 */
+			// TODO Add Protracker support for simon1amiga/cd32
 		} else if (_game & GF_DEMO) {
-			/* TODO Add music support for simon1demo */
+			// TODO Add music support for simon1demo
 		} else {
 			midi.stop();
-			if (_game & GF_WIN) {	
+			if (_game & GF_WIN || _game & GF_TALKIE) {	
 				_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
-				// midi.read_all_songs(_game_file, music);
-				midi.playSMF (_game_file);
-			} else if (_game & GF_TALKIE) {
-				_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
-				// midi.read_all_songs_old(_game_file, music);
 				midi.playSMF (_game_file);
 			} else {
 				char buf[50];
@@ -5087,7 +5082,6 @@ void SimonState::playMusic(uint music_unk, uint music) {
 					warning("Can't load music from '%s'", buf);
 					return;
 				}
-				// midi.read_all_songs_old(f, music);
 				midi.playSMF (f);
 				delete f;
 			}
