@@ -66,7 +66,7 @@ bool init_morphos_music(ULONG MidiUnit)
 			if (ScummMidiRequest)
 			{
 				ScummMidiRequest->amr_Version = 2;
-				if (OpenDevice("amidi.device", MidiUnit, (IORequest *) ScummMidiRequest, AMIDIF_MIDISERVER))
+				if (OpenDevice("amidi.device", MidiUnit, (IORequest *) ScummMidiRequest, 0))
 				{
 					DeleteIORequest((IORequest *) ScummMidiRequest);
 					DeleteMsgPort(ScummMidiPort);

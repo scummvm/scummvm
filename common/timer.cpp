@@ -23,6 +23,7 @@
 #include "scummsys.h"
 #include "timer.h"
 
+#ifndef __MORPHOS__
 static Scumm * scumm;
 
 Timer::Timer(Scumm * parent) {
@@ -153,5 +154,5 @@ void Timer::releaseProcedure (TimerProc procedure) {
 	}
 	_timerRunning = true;
 }
-
+#endif
 

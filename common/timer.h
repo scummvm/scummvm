@@ -28,7 +28,7 @@
 typedef void (*TimerProc)(Scumm *);
 
 #ifdef __MORPHOS__
-#include "morphos/morphos_timer.h"
+#include "morphos_timer.h"
 #else
 
 class OSystem;

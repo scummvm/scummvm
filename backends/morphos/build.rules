@@ -1,5 +1,11 @@
-CC      = g++
+CXX     = g++
 CFLAGS  = -Wno-multichar -fstrength-reduce -fno-rtti -O2
 DEFINES = -DNO_PPCINLINE_STDARG -DNO_PPCINLINE_VARARGS
 LDFLAGS = -noixemul -s
 LIBS	= -lamiga -lamigastubs -lcdda
+INCLUDES += -Ibackends/morphos
+MODULES  += backends/morphos
+OBJS	 += backends/morphos/morphos.o backends/morphos/morphos_scaler.o \
+			 backends/morphos/morphos_sound.o backends/morphos/morphos_start.o \
+			 backends/morphos/morphos_timer.o
+

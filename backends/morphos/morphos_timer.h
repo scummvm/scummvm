@@ -44,13 +44,13 @@
 class OSystem;
 
 #define TSM_MSGID_ADDTIMER	  0
-#define TSM_MSGID_REMTIMER    1
+#define TSM_MSGID_REMTIMER   1
 
 struct TimerServiceMessage
 {
 	Message tsm_Message;
 	ULONG tsm_MsgID;
-	int ((*tsm_Callback)(int));
+	TimerProc tsm_Callback;
 	LONG tsm_Interval;
 };
 
@@ -62,12 +62,12 @@ class Timer
 
 		bool init();
 		void release();
-		bool installProcedure(int ((*procedure)(int)), int32 interval);
-		void releaseProcedure(int ((*procedure)(int)));
+		bool installProcedure(TimerProc procedure, int32 interval);
+		void releaseProcedure(TimerProc procedure);
 
 	protected:
-		bool SendMsg(ULONG MsgID, int ((*procedure)(int)), LONG interval);
-		static void TimerService(Timer *);
+		bool SendMsg(ULONG MsgID, TimerProc procedure, LONG interval);
+		static void TimerService(Timer *, Scumm *);
 
 		Process *TimerServiceThread;
 		SignalSemaphore TimerServiceSemaphore;
@@ -77,7 +77,7 @@ class Timer
 			MsgPort *ts_Port;
 			timerequest *ts_IORequest;
 			ULONG ts_SignalBit;
-			int ((*ts_Callback)(int));
+			TimerProc ts_Callback;
 			LONG ts_Interval;
 		};
 };

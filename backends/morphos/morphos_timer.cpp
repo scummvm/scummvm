@@ -50,6 +50,7 @@ Timer::Timer(Scumm * system)
 	ThreadEmulFunc.StackSize = 16000;
 	ThreadEmulFunc.Extension = 0;
 	ThreadEmulFunc.Arg1 = (ULONG) this;
+	ThreadEmulFunc.Arg2 = (ULONG) system;
 	TimerServiceTags[0].ti_Data = (ULONG) &ThreadEmulFunc;
 	TimerServiceThread = CreateNewProc(TimerServiceTags);
 }
@@ -73,17 +74,17 @@ void Timer::release()
 {
 }
 
-bool Timer::installProcedure(int ((*procedure)(int)), int32 interval)
+bool Timer::installProcedure(TimerProc procedure, int32 interval)
 {
 	return SendMsg(TSM_MSGID_ADDTIMER, procedure, interval);
 }
 
-void Timer::releaseProcedure(int ((*procedure)(int)))
+void Timer::releaseProcedure(TimerProc procedure)
 {
 	SendMsg(TSM_MSGID_REMTIMER, procedure, 0);
 }
 
-bool Timer::SendMsg(ULONG msg_id, int ((*procedure)(int)), LONG interval)
+bool Timer::SendMsg(ULONG msg_id, TimerProc procedure, LONG interval)
 {
 	if (TimerServiceThread == NULL)
 		return false;
@@ -115,7 +116,7 @@ bool Timer::SendMsg(ULONG msg_id, int ((*procedure)(int)), LONG interval)
 	return true;
 }
 
-void Timer::TimerService(Timer *this_ptr)
+void Timer::TimerService(Timer *this_ptr, Scumm *system)
 {
 	MsgPort *port = &((Process *) FindTask(NULL))->pr_MsgPort;
 	ULONG port_bit = 1 << port->mp_SigBit;
@@ -215,7 +216,7 @@ void Timer::TimerService(Timer *this_ptr)
 					timerequest *req = timer_slots[t].ts_IORequest;
 					WaitIO((IORequest *) req);
 					interval = timer_slots[t].ts_Interval;
-					(*timer_slots[t].ts_Callback)(interval);
+					(*timer_slots[t].ts_Callback)(system);
 					GetSysTime(&end_callback);
 					SubTime(&end_callback, &start_callback);
 					interval -= end_callback.tv_sec*1000+end_callback.tv_micro/1000+40;
