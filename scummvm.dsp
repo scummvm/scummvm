@@ -120,8 +120,8 @@ LINK32=link.exe
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 0
-# PROP Output_Dir "scummvm___Win32_MP3_Enabled_Release"
-# PROP Intermediate_Dir "scummvm___Win32_MP3_Enabled_Release"
+# PROP Output_Dir "scummvm___MP3_Enabled_Release"
+# PROP Intermediate_Dir "scummvm___MP3_Enabled_Release"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /G6 /MD /W3 /O2 /Ob2 /I "." /I "sound" /I "common" /I "scumm" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "USE_ADLIB" /D "COMPRESSED_SOUND_FILE" /FD /c
@@ -135,7 +135,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib libmad.lib simon___Release\simon.lib scumm___Release\scumm.lib sdl.lib /nologo /subsystem:console /machine:I386 /nodefaultlib
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib libmad.lib scumm___Win32_MP3_Enabled_Release\scumm.lib simon___Win32_MP3_Enabled_Release\simon.lib /nologo /subsystem:console /incremental:yes /machine:I386 /nodefaultlib:"libcd" /nodefaultlib:"libc"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib libmad.lib scumm___MP3_Enabled_Release\scumm.lib simon___MP3_Enabled_Release\simon.lib /nologo /subsystem:console /incremental:yes /machine:I386 /nodefaultlib:"libcd" /nodefaultlib:"libc"
 # SUBTRACT LINK32 /pdb:none
 
 !ENDIF 

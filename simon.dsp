@@ -109,8 +109,8 @@ LIB32=link.exe -lib
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 0
-# PROP Output_Dir "simon___Win32_MP3_Enabled_Release"
-# PROP Intermediate_Dir "simon___Win32_MP3_Enabled_Release"
+# PROP Output_Dir "simon___MP3_Enabled_Release"
+# PROP Intermediate_Dir "simon___MP3_Enabled_Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /I "." /I "common" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "USE_ADLIB" /YX /FD /c
 # ADD CPP /nologo /W3 /GX /O2 /I "." /I "common" /I "scumm" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "USE_ADLIB" /D "COMPRESSED_SOUND_FILE" /YX /FD /c
