@@ -166,9 +166,10 @@ byte * Sound::readCreativeVocFile(byte * ptr, uint32 & size, uint32 & rate, uint
 				break;
 			default:
 				warning("Invalid code in VOC file : %d", code);
-				//~ quit = 1;
+				quit = 1;
 				break;
 		}
+		// FIXME some FT samples (ex. 362) has bad length, 2 bytes too short
 		offset += len;
 	}
 	debug(9, "VOC Data Size : %d", size);
