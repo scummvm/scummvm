@@ -358,6 +358,7 @@ bool ScummDebugger::Cmd_Room(int argc, const char **argv) {
 	if (argc > 1) {
 		int room = atoi(argv[1]);
 		_s->_actors[_s->VAR(_s->VAR_EGO)].room = room;
+		_s->_sound->stopAllSounds();
 		_s->startScene(room, 0, 0);
 		_s->_fullRedraw = 1;
 		return false;
