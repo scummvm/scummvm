@@ -134,13 +134,11 @@ SCUMM
   by ScummEX. [Jamieson has some ideas about this and might work on it|
 * Support all Mac games without needing rescumm. These games being: dott,
   samnmax, dig & ft. See above point.
-* COMI: Implement voice & music lip sync (see patch #671104 & bug #755826)
 * COMI: Fix setActorChoreLimbFrame opcode (see bug #754419, "Wally's Fake
   piratehook still on ground after pick up")
 * V7-8 games: Implement smooth horizontal scrolling (instead of scrolling in
   increments of 8 pixels). See bug #629417.
 * Implement o6_actorOps case 218 as used in Humongous games
-* Implement localizeArray opcode as used in Humongous games
 * Add method of setting initial debug channels from command-line
 
 Broken Sword 2
