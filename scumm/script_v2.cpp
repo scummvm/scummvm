@@ -374,11 +374,14 @@ void Scumm_v2::decodeParseString() {
 	byte buffer[256];	// FIXME
 	byte *ptr = buffer;
 	byte c;
+	bool insertSpace = false;
+
 	while ((c = fetchScriptByte())) {
-		if (c & 0x80) {
-			*ptr++ = c & 0x7f;
-			*ptr++ = ' ';
-		} else if (c < 8) {
+
+		insertSpace = (c & 0x80) != 0;
+		c &= 0x7f;
+
+		if (c < 8) {
 			// Special codes as seen in CHARSET_1 etc. My guess is that they
 			// have a similar function as the corresponding embedded stuff in modern
 			// games. Hence for now we convert them to the modern format.
@@ -391,6 +394,10 @@ void Scumm_v2::decodeParseString() {
 			}
 		} else
 			*ptr++ = c;
+
+		if (insertSpace)
+			*ptr++ = ' ';
+		
 	}
 	*ptr = 0;
 
