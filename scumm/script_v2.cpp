@@ -1146,7 +1146,7 @@ void Scumm_v2::o2_setOwnerOf() {
 	owner = getVarOrDirectByte(0x40);
 
 	setOwnerOf(obj, owner);
-	runHook(0);
+	redrawV2Inventory();
 }
 
 void Scumm_v2::o2_delay() {
@@ -1286,7 +1286,6 @@ void Scumm_v2::o2_pickupObject() {
 	putOwner(obj, VAR(VAR_EGO));
 	putState(obj, getState(obj) | 0xA);
 	clearDrawObjectQueue();
-	runHook(1);
 
 	redrawV2Inventory();
 }
@@ -1326,7 +1325,7 @@ void Scumm_v2::o2_setObjectName() {
 	}
 
 	memcpy(name, work, i + 1);
-	runHook(0);
+	redrawV2Inventory();
 }
 
 void Scumm_v2::o2_cursorCommand() {	// TODO: Define the magic numbers
