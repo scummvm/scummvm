@@ -134,7 +134,7 @@ private:
 	//! speak description of selected object
 	void lookAtSelectedObject();
 
-	//! get the current objects under the cursor
+	//! get the current object under the cursor
 	void lookForCurrentObject();
 
 	//! get the current icon panel under the cursor (inventory item or verb)

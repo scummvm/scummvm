@@ -442,7 +442,9 @@ int16 Command::executeCommand(uint16 comId, int16 condResult) {
 		break;
 	}
 
-	changeObjectState(_state.selAction, _state.subject[0], com->song, cutDone);
+	if (_state.subject[0] > 0) {
+		changeObjectState(_state.selAction, _state.subject[0], com->song, cutDone);
+	}
 
 	// execute.c l.533-548
 	// FIXME: useless test, as .dog has already been played
