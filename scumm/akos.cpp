@@ -23,6 +23,7 @@
 #include "scumm.h"
 #include "actor.h"
 #include "akos.h"
+#include "imuse.h"
 
 bool Scumm::akos_hasManyDirections(Actor *a)
 {
@@ -1443,12 +1444,14 @@ bool Scumm::akos_increaseAnim(Actor *a, int chan, byte *aksq, uint16 *akfo, int 
 			a->flip = GW(2) != 0;
 			continue;
 		case AKC_CmdQue3:
-			tmp = GB(2);
+//			tmp = GB(2);	// previous
+			tmp = GB(2) - 1;
 			if ((uint) tmp < 8)
 				akos_queCommand(3, a, a->sound[tmp], 0);
 			continue;
 		case AKC_CmdQue3Quick:
-			akos_queCommand(3, a, a->sound[1], 0);
+//			akos_queCommand(3, a, a->sound[1], 0);	//previous
+			akos_queCommand(3, a, a->sound[0], 0);
 			continue;
 		case AKC_StartAnim:
 			akos_queCommand(4, a, GB(2), 0);
@@ -1540,7 +1543,48 @@ bool Scumm::akos_increaseAnim(Actor *a, int chan, byte *aksq, uint16 *akfo, int 
 
 void Scumm::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2)
 {
-//  warning("akos_queCommand(%d,%d,%d,%d)", cmd, a->number, param_1, param_2);
+	switch (cmd) {
+	case 1:
+		a->putActor(0, 0, 0);
+		break;
+	case 3:
+		if (param_1 != 0) {
+			if (_imuseDigital) {
+				_imuseDigital->startSound(param_1);
+//				_imuseDigital->doCommand(12, 0x400, param_1, 0, 0, 0, 0, 0);
+			}
+		}
+		break;
+	case 2:
+	case 4:
+	case 5:
+	case 6:
+		warning("unimplemented akos_queCommand(%d,%d,%d,%d)", cmd, a->number, param_1, param_2);
+		break;
+	case 7:
+		if (param_1 != 0) {
+			if (_imuseDigital) {
+//				_imuseDigital->doCommand(12, 0x600, param_1, 0, 0, 0, 0, 0);
+			}
+		}
+		break;
+	case 8:
+		if (param_1 != 0) {
+			if (_imuseDigital) {
+//				_imuseDigital->doCommand(12, 0x700, param_1, 0, 0, 0, 0, 0);
+			}
+		}
+		break;
+	case 9:
+		if (param_1 != 0) {
+			if (_imuseDigital) {
+//				_imuseDigital->doCommand(12, 0x500, param_1, 0, 0, 0, 0, 0);
+			}
+		}
+		break;
+	default:
+		warning("akos_queCommand(%d,%d,%d,%d)", cmd, a->number, param_1, param_2);
+	}
 }
 
 
