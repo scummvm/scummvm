@@ -86,6 +86,7 @@ public:
 	bool parseMusicDriver(const char *s);
 	
 	void updateconfig();
+	void list_games();
 
 public:
 	OSystem *createSystem();

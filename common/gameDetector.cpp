@@ -68,6 +68,7 @@ static const char USAGE_STRING[] =
 #endif
 	"\t-x[<num>]  - save game slot to load (default: autosave)\n"
 	"\t-y         - set text speed (default: 60)\n"
+	"\t-z         - display list of games\n"
 ;
 
 
@@ -163,6 +164,34 @@ void GameDetector::updateconfig()
 		_gameTempo = strtol(val, NULL, 0);
 
 	_talkSpeed = g_config->getInt("talkspeed", _talkSpeed);
+}
+
+void GameDetector::list_games()
+{
+	const VersionSettings *v = version_settings;
+	char config[4] = "";
+
+	printf("Game        SCUMM ver   Full Title                                     Config\n"
+	       "----------- ----------- ---------------------------------------------- -------\n");
+
+	while (v->filename && v->gamename) {
+		if (g_config->has_domain(v->filename)) {
+			strcpy(config, "Yes");
+		}
+		else {
+			strcpy(config, "");
+		}
+
+		if (v->major != 99)
+			printf("%-12s%d.%d.%d\t%-47s%s\n", v->filename,
+		     	  v->major, v->middle, v->minor, v->gamename, config);
+		else
+			printf("%-12s%-7s\t%-47s%s\n", v->filename, "n/a", 
+					v->gamename, config);
+
+		v++;
+	}
+		
 }
 
 void GameDetector::parseCommandLine(int argc, char **argv)
@@ -288,6 +317,10 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 				_talkSpeed = atoi(option);				
 				g_config->setInt("talkspeed", _talkSpeed);
 				break;
+			case 'z':
+				CHECK_OPTION();
+				list_games();
+				exit(1);
 			default:
 				goto ShowHelpAndExit;
 			}
