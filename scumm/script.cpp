@@ -348,14 +348,14 @@ void ScummEngine::updateScriptPtr() {
 }
 
 /* Nuke arrays based on script */
-void ScummEngine::nukeArrays(int script) {
+void ScummEngine::nukeArrays(byte script) {
 	int i;
 
-	if (_heversion < 60 || !script)
+	if (_heversion < 60 || script == 0)
 		return;
 
-	//FIXME Nukes wrong arrays in other
-	if (_gameId != GID_PUTTMOON)
+	//FIXME Nukes wrong arrays
+	if (_gameId == GID_FBEAR)
 		return;
 
 	for (i = 1; i < _numArray; i++) {

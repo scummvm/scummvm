@@ -1769,12 +1769,14 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		stopCycle(0);
 	_sound->processSoundQues();
 
-	if (_heversion >= 70 && _wizPolygons) {		
+	if (_heversion >= 71 && _wizPolygons) {		
 		memset(_wizPolygons, 0, _wizNumPolygons * sizeof(WizPolygon));
 	}
 
+	// For HE80+ games
 	for (i = 0; i < _numRoomVariables; i++)
 		_roomVars[i] = 0;
+	nukeArrays(0xFFFFFFFF);
 
 	for (i = 1; i < _numActors; i++) {
 		_actors[i].hideActor();
