@@ -1130,7 +1130,8 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 
 	DipMusic();
 */
-	return(RD_OK);
+	// return read error for now so we get subtitles
+	return (RDERR_READERROR);
 }
 
 
