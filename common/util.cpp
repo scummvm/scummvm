@@ -182,23 +182,17 @@ const char *getLanguageDescription(Language id) {
 #pragma mark -
 
 
-struct PlatformDescription {
-	const char *code;
-	const char *code2;
-	const char *description;
-	Common::Platform id;
-};
-
-static const PlatformDescription g_platforms[] = {
-	{"pc", "dos", "PC", kPlatformPC},
+const PlatformDescription g_platforms[] = {
 	{"amiga", "ami", "Amiga", kPlatformAmiga},
 	{"atari", "atari-st", "Atari ST", kPlatformAtariST},
-	{"macintosh", "mac", "Macintosh", kPlatformMacintosh},
 
 	// The 'official' spelling seems to be "FM-TOWNS" (e.g. in the Indy4 demo).
 	// However, on the net many variations can be seen, like "FMTOWNS",
 	// "FM TOWNS", "FmTowns", etc.
 	{"fmtowns", "towns", "FM-TOWNS", kPlatformFMTowns},
+
+	{"macintosh", "mac", "Macintosh", kPlatformMacintosh},
+	{"pc", "dos", "PC", kPlatformPC},
 
 	{0, 0, "Default", kPlatformUnknown}
 };
