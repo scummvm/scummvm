@@ -1098,11 +1098,7 @@ void SimonState::setup_cond_c_helper()
 		_left_button_down = 0;
 
 		do {
-#ifdef WIN32
-			if (GetAsyncKeyState(VK_F5) != 0 && _bit_array[0] & 0x200) {
-#else
-			if (_bit_array[0] & 0x200) {
-#endif
+			if (_exit_cutscene && (_bit_array[0] & 0x200)) {
 				startSubroutine170();
 				goto out_of_here;
 			}
@@ -1164,14 +1160,9 @@ void SimonState::unlock()
 {
 	_lock_word |= 1;
 
-	if (_lock_counter != 0) {
-		if (_lock_counter == 1) {
-#ifdef WIN32
-			GetAsyncKeyState(VK_LBUTTON);
-#endif
-		}
+	if (_lock_counter != 0)
 		_lock_counter--;
-	}
+
 	_lock_word &= ~1;
 }
 
