@@ -2353,53 +2353,45 @@ void Scumm_v5::o5_walkActorTo() {
 }
 
 void Scumm_v5::o5_walkActorToActor() {
-	int b, x, y;
+	int x;
 	Actor *a, *a2;
-	int nr;
-	int nr2 = getVarOrDirectByte(0x80);
-	a = derefActorSafe(nr2, "o5_walkActorToActor");
-	assert(a);
+	int nr = getVarOrDirectByte(0x80);
+	int nr2 = getVarOrDirectByte(0x40);
+	int dist = fetchScriptByte();
 
-	if (!a->isInCurrentRoom()) {
-		getVarOrDirectByte(0x40);
-		fetchScriptByte();
-		return;
-	}
-
-	nr = getVarOrDirectByte(0x40);
 	if (nr == 106 && _gameId == GID_INDY4) {
 		warning("Bypassing Indy4 bug");
-		fetchScriptByte();
 		return;
 	}
-	// warning("walk actor %d to actor %d", nr, nr2);
-	a2 = derefActorSafe(nr, "o5_walkActorToActor(2)");
-	assert(a2);
 
-	if (!a2->isInCurrentRoom()) {
-		fetchScriptByte();
+	a = derefActorSafe(nr, "o5_walkActorToActor");
+	assert(a);
+	if (!a->isInCurrentRoom())
 		return;
-	}
-	b = fetchScriptByte();				/* distance from actor */
-	if (b == 0xFF) {
-		b = a2->scalex * a->width / 0xFF;
-		b = b + b / 2;
+
+	a2 = derefActorSafe(nr2, "o5_walkActorToActor(2)");
+	assert(a2);
+	if (!a2->isInCurrentRoom())
+		return;
+
+	if (_features & GF_AFTER_V2)
+		dist *= 8;
+	else if (dist == 0xFF) {
+		dist = a2->scalex * a->width / 0xFF;
+		dist += dist / 2;
 	}
 	x = a2->x;
-	y = a2->y;
 	if (x < a->x)
-		x += b;
+		x += dist;
 	else
-		x -= b;
-
-	a->startWalkActor(x, y, -1);
+		x -= dist;
+	
+	a->startWalkActor(x, a2->y, -1);
 }
 
 void Scumm_v5::o5_walkActorToObject() {
 	int obj;
 	Actor *a;
-
-	// warning("walk object to object");
 
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_walkActorToObject");
 	obj = getVarOrDirectWord(0x40);
