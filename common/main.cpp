@@ -229,6 +229,9 @@ int main(int argc, char *argv[]) {
 	// Run the game engine
 	engine->go();
 
+	// Stop all sound processing now (this prevents some race conditions later on)
+	system->clear_sound_proc();
+
 	// Free up memory
 	delete engine;
 	delete g_gui;
