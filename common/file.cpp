@@ -114,7 +114,7 @@ void File::seek(uint32 offs, int whence) {
 		clearerr(_handle);
 }
 
-void File::read(void *ptr, uint32 size) {
+uint32 File::read(void *ptr, uint32 size) {
 	byte *ptr2 = (byte *)ptr;
 
 	if (_handle == NULL) {
@@ -125,14 +125,19 @@ void File::read(void *ptr, uint32 size) {
 	if (size == 0)
 		return;
 
-	if ((uint32)fread(ptr2, size, 1, _handle) != 1) {
+	if ((uint32)fread(ptr2, 1, size, _handle) != size) {
 		clearerr(_handle);
 		_readFailed = true;
 	}
 
-	do {
-		*ptr2++ ^= _encbyte;
-	} while (--size);
+	if (_encbyte != 0) {
+		uint32 t_size = size;
+		do {
+			*ptr2++ ^= _encbyte;
+		} while (--t_size);
+	}
+
+	return size;
 }
 
 byte File::readByte() {

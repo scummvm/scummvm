@@ -111,7 +111,7 @@ int SoundMixer::playMP3(PlayingSoundHandle * handle, void *sound, uint32 size, b
 	warning("SoundMixer::out of mixer slots");
 	return -1;
 }
-int SoundMixer::playMP3CDTrack(PlayingSoundHandle * handle, FILE * file, mad_timer_t duration) {
+int SoundMixer::playMP3CDTrack(PlayingSoundHandle * handle, File * file, mad_timer_t duration) {
 	/* Stop the previously playing CD track (if any) */
 	for (int i = 0; i != NUM_CHANNELS; i++) {
 		if (_channels[i] == NULL) {
@@ -551,7 +551,7 @@ void SoundMixer::ChannelRaw::mix(int16 * data, uint len) {
 		if (s_org == NULL)
 			error("ChannelRaw::mix out of memory");
 
-		uint num_read = fread(s_org, 1, num, (FILE *) _ptr);
+		uint num_read = ((File *)_ptr)->read(s_org, num);
 		if (num - num_read != 0)
 			memset(s_org + num_read, 0x80, num - num_read);
 
@@ -778,7 +778,7 @@ void SoundMixer::ChannelMP3::realDestroy() {
 
 #define MP3CD_BUFFERING_SIZE 131072
 
-SoundMixer::ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer * mixer, FILE * file,
+SoundMixer::ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer * mixer, File * file,
 														 mad_timer_t duration){
 	_mixer = mixer;
 	_file = file;
@@ -811,7 +811,7 @@ void SoundMixer::ChannelMP3CDMusic::mix(int16 * data, uint len) {
 		int skip_loop;
 		// just skipped
 		memset(_ptr, 0, _bufferSize);
-		_size = fread(_ptr, 1, _bufferSize, _file);
+		_size = _file->read(_ptr, _bufferSize);
 		if (!_size) {
 			realDestroy();
 			return;
@@ -878,7 +878,7 @@ void SoundMixer::ChannelMP3CDMusic::mix(int16 * data, uint len) {
 				} else {
 					not_decoded = _stream.bufend - _stream.next_frame;
 					memcpy(_ptr, _stream.next_frame, not_decoded);
-					_size = fread((unsigned char *)_ptr + not_decoded, 1, _bufferSize - not_decoded, _file);
+					_size = _file->read((unsigned char *)_ptr + not_decoded, _bufferSize - not_decoded);
 				}
 				_stream.error = (enum mad_error)0;
 				// Restream

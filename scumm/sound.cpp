@@ -403,7 +403,7 @@ int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
 	byte file_byte, file_byte_2;
 	int size;
 
-	if (!_sfxFile) {
+	if (_sfxFile->isOpen() == false) {
 		warning("startTalkSound: SFX file is not open");
 		return -1;
 	}
@@ -437,11 +437,11 @@ int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
 		size = -1;
 	}
 
-	_scumm->fileSeek((FILE *) _sfxFile, offset, SEEK_SET);
+	_sfxFile->seek(offset, SEEK_SET);
 	i = 0;
 	while (num > 0) {
-		_scumm->fileRead((FILE *) _sfxFile, &file_byte, sizeof(file_byte));
-		_scumm->fileRead((FILE *) _sfxFile, &file_byte_2, sizeof(file_byte_2));
+		_sfxFile->read(&file_byte, sizeof(file_byte));
+		_sfxFile->read(&file_byte_2, sizeof(file_byte_2));
 		_mouthSyncTimes[i++] = file_byte | (file_byte_2 << 8);
 		num--;
 	}
@@ -620,7 +620,7 @@ void Sound::pauseSounds(bool pause) {
 	_scumm->_mixer->pause(pause);	
 }
 
-int Sound::startSfxSound(void *file, int file_size) {
+int Sound::startSfxSound(File *file, int file_size) {
 	char ident[8];
 	int block_type;
 	byte work[8];
@@ -639,7 +639,7 @@ int Sound::startSfxSound(void *file, int file_size) {
 	if (file_size > 0) {
 		data = (byte *)calloc(file_size + MAD_BUFFER_GUARD, 1);
 
-		if (fread(data, file_size, 1, (FILE *) file) != 1) {
+		if (file->read(data, file_size) != file_size) {
 			/* no need to free the memory since error will shut down */
 			error("startSfxSound: cannot read %d bytes", size);
 			return -1;
@@ -647,30 +647,30 @@ int Sound::startSfxSound(void *file, int file_size) {
 		return playSfxSound_MP3(data, file_size);
 	}
 #endif
-	if (fread(ident, 8, 1, (FILE *) file) != 1)
+	if (file->read(ident, 8) != 8)
 		goto invalid;
 
 	if (!memcmp(ident, "VTLK", 4)) {
-		fseek((FILE *) file, SOUND_HEADER_BIG_SIZE - 8, SEEK_CUR);
+		file->seek(SOUND_HEADER_BIG_SIZE - 8, SEEK_CUR);
 	} else if (!memcmp(ident, "Creative", 8)) {
-		fseek((FILE *) file, SOUND_HEADER_SIZE - 8, SEEK_CUR);
+		file->seek(SOUND_HEADER_SIZE - 8, SEEK_CUR);
 	} else {
 	invalid:;
 		warning("startSfxSound: invalid header");
 		return -1;
 	}
 
-	block_type = getc((FILE *) file);
+	block_type = file->readByte();
 	if (block_type != 1) {
 		warning("startSfxSound: Expecting block_type == 1, got %d", block_type);
 		return -1;
 	}
 
-	fread(work, 3, 1, (FILE *) file);
+	file->read(work, 3);
 
 	size = (work[0] | (work[1] << 8) | (work[2] << 16)) - 2;
-	rate = getc((FILE *) file);
-	comp = getc((FILE *) file);
+	rate = file->readByte();
+	comp = file->readByte();
 
 	if (comp != 0) {
 		warning("startSfxSound: Unsupported compression type %d", comp);
@@ -683,7 +683,7 @@ int Sound::startSfxSound(void *file, int file_size) {
 		return -1;
 	}
 
-	if (fread(data, size, 1, (FILE *) file) != 1) {
+	if (file->read(data, size) != size) {
 		/* no need to free the memory since error will shut down */
 		error("startSfxSound: cannot read %d bytes", size);
 		return -1;
@@ -692,25 +692,9 @@ int Sound::startSfxSound(void *file, int file_size) {
 	return playSfxSound(data, size, 1000000 / (256 - rate), true);
 }
 
-
-#ifdef COMPRESSED_SOUND_FILE
-static int get_int(FILE * f) {
-	int ret = 0;
-	for (int size = 0; size < 4; size++) {
-		int c = fgetc(f);
-		if (c == EOF) {
-			error("Unexpected end of file !!!");
-		}
-		ret <<= 8;
-		ret |= c;
-	}
-	return ret;
-}
-#endif
-
-void * Sound::openSfxFile() {
+File * Sound::openSfxFile() {
 	char buf[256];
-	FILE *file = NULL;
+	File * file = new File();
 
 	/* Try opening the file <_exe_name>.sou first, eg tentacle.sou.
 	 * That way, you can keep .sou files for multiple games in the
@@ -719,12 +703,11 @@ void * Sound::openSfxFile() {
 	offset_table = NULL;
 
 	sprintf(buf, "%s%s.so3", _scumm->getGameDataPath(), _scumm->_exe_name);
-	file = fopen(buf, "rb");
-	if (!file) {
+	if (!file->open(buf)) {
 		sprintf(buf, "%smonster.so3", _scumm->getGameDataPath());
-		file = fopen(buf, "rb");
+		file->open(buf);
 	}
-	if (file != NULL) {
+	if (file->isOpen() == true) {
 		/* Now load the 'offset' index in memory to be able to find the MP3 data
 
 		   The format of the .SO3 file is easy :
@@ -742,17 +725,17 @@ void * Sound::openSfxFile() {
 		int size, compressed_offset;
 		MP3OffsetTable *cur;
 
-		compressed_offset = get_int(file);
+		compressed_offset = file->readDwordBE();
 		offset_table = (MP3OffsetTable *) malloc(compressed_offset);
 		num_sound_effects = compressed_offset / 16;
 
 		size = compressed_offset;
 		cur = offset_table;
 		while (size > 0) {
-			cur[0].org_offset = get_int(file);
-			cur[0].new_offset = get_int(file) + compressed_offset + 4; /* The + 4 is to take into accound the 'size' field */
-			cur[0].num_tags = get_int(file);
-			cur[0].compressed_size = get_int(file);
+			cur[0].org_offset = file->readDwordBE();
+			cur[0].new_offset = file->readDwordBE() + compressed_offset + 4; /* The + 4 is to take into accound the 'size' field */
+			cur[0].num_tags = file->readDwordBE();
+			cur[0].compressed_size = file->readDwordBE();
 			size -= 4 * 4;
 			cur++;
 		}
@@ -760,10 +743,9 @@ void * Sound::openSfxFile() {
 	}
 #endif
 	sprintf(buf, "%s%s.sou", _scumm->getGameDataPath(), _scumm->_exe_name);
-	file = fopen(buf, "rb");
-	if (!file) {
+	if (!file->open(buf)) {
 		sprintf(buf, "%smonster.sou", _scumm->getGameDataPath());
-		file = fopen(buf, "rb");
+		file->open(buf);
 	}
 	return file;
 }
@@ -1042,7 +1024,7 @@ void Sound::updateCD()
 int Sound::getCachedTrack(int track) {
 	int i;
 	char track_name[1024];
-	FILE* file;
+	File * file = new File();
 	int current_index;
 	struct mad_stream stream;
 	struct mad_frame frame;
@@ -1051,7 +1033,7 @@ int Sound::getCachedTrack(int track) {
 	int count = 0;
 
 	// See if we find the track in the cache
-	for (i=0; i<CACHE_TRACKS; i++)
+	for (i = 0; i < CACHE_TRACKS; i++)
 		if (_cached_tracks[i] == track) {
 			if (_mp3_tracks[i])
 				return i;
@@ -1063,18 +1045,20 @@ int Sound::getCachedTrack(int track) {
 
 	// Not found, see if it exists
 	sprintf(track_name, "%strack%d.mp3", _scumm->getGameDataPath(), track);
-	file = fopen(track_name, "rb");
+	file->open(track_name);
 	_cached_tracks[current_index] = track;
 
 	/* First, close the previous file */
 	if (_mp3_tracks[current_index])
-		fclose(_mp3_tracks[current_index]);
+		_mp3_tracks[current_index]->close();
+
 	_mp3_tracks[current_index] = NULL;
-	if (!file) {
+	if (file->isOpen() == false) {
 		// This warning is pretty pointless.
 		debug(1, "Track %d not available in mp3 format", track);
 		return -1;
 	}
+
 	// Check the format and bitrate
 	mad_stream_init(&stream);
 	mad_frame_init(&frame);
@@ -1083,7 +1067,7 @@ int Sound::getCachedTrack(int track) {
 		if (buflen < sizeof(buffer)) {
 			int bytes;
 
-			bytes = fread(buffer + buflen, 1, sizeof(buffer) - buflen, file);
+			bytes = file->read(buffer + buflen, sizeof(buffer) - buflen);
 			if (bytes <= 0) {
 				if (bytes == -1) {
 					warning("Invalid format for track %d", track);
@@ -1127,8 +1111,8 @@ int Sound::getCachedTrack(int track) {
 	mad_frame_finish(&frame);
 	mad_stream_finish(&stream);
 	// Get file size
-	fseek(file, 0, SEEK_END);
-	_mp3_size[current_index] = ftell(file);
+	file->seek(0, SEEK_END);
+	_mp3_size[current_index] = file->pos();
 	_mp3_tracks[current_index] = file;
 	
 	return current_index;
@@ -1136,7 +1120,7 @@ int Sound::getCachedTrack(int track) {
  error:
 	mad_frame_finish(&frame);
 	mad_stream_finish(&stream);
-	fclose(file);
+	delete file;
 
 	return -1;
 }
@@ -1170,7 +1154,7 @@ int Sound::playMP3CDTrack(int track, int num_loops, int start, int delay) {
 	}	
 
 	// Go
-	fseek(_mp3_tracks[index], offset, SEEK_SET);
+	_mp3_tracks[index]->seek(offset, SEEK_SET);
 
 	if (_mp3_cd_playing == true)
 		_scumm->_mixer->stop(_mp3_index);		

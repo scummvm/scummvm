@@ -25,6 +25,7 @@
 #include "sound/mixer.h"
 
 class Scumm;
+class File;
 
 class Sound {
 
@@ -52,7 +53,7 @@ enum {
 
 
 	int _talkChannel;	/* Mixer channel actor is talking on */
-	void *_sfxFile;
+	File *_sfxFile;
 	uint32 _talk_sound_a, _talk_sound_b;
 	byte _talk_sound_mode;
 	bool _mouthSyncMode;
@@ -71,7 +72,7 @@ enum {
 	int _cached_tracks[CACHE_TRACKS];
 	struct mad_header _mad_header[CACHE_TRACKS];
 	long _mp3_size[CACHE_TRACKS];
-	FILE *_mp3_tracks[CACHE_TRACKS];
+	File *_mp3_tracks[CACHE_TRACKS];
 	int _mp3_index;
 	bool _mp3_cd_playing;
 #endif
@@ -109,8 +110,8 @@ public:
 	void talkSound(uint32 a, uint32 b, int mode);
 	void setupSound();
 	void pauseSounds(bool pause);
-	int startSfxSound(void *file, int file_size);
-	void * openSfxFile();
+	int startSfxSound(File *file, int file_size);
+	File * openSfxFile();
 	void stopSfxSound();
 	bool isSfxFinished();
 	uint32 decode12BitsSample(byte * src, byte ** dst, uint32 size);

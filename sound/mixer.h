@@ -31,6 +31,8 @@
 
 typedef uint32 PlayingSoundHandle;
 
+class File;
+
 class SoundMixer {
 private:
 	class Channel {
@@ -112,11 +114,11 @@ private:
 		uint32 _size;
 		uint32 _bufferSize;
 		mad_timer_t _duration;
-		FILE * _file;
+		File * _file;
 		bool _initialized;
 
 	public:
-		ChannelMP3CDMusic(SoundMixer * mixer, FILE * file, mad_timer_t duration);
+		ChannelMP3CDMusic(SoundMixer * mixer, File * file, mad_timer_t duration);
 		void mix(int16 * data, uint len);
 		void realDestroy();
 		bool soundFinished();
@@ -170,7 +172,7 @@ public:
 									byte flags);
 #ifdef COMPRESSED_SOUND_FILE
 	int playMP3(PlayingSoundHandle * handle, void * sound, uint32 size, byte flags);
-	int playMP3CDTrack(PlayingSoundHandle * handle, FILE * file, mad_timer_t duration);
+	int playMP3CDTrack(PlayingSoundHandle * handle, File * file, mad_timer_t duration);
 #endif
 
 	/* Premix procedure, useful when using fmopl adlib */
