@@ -51,9 +51,9 @@ static const GameSpecificSettings simon1_settings = {
 	3624, /* NUM_VOICE_RESOURCES */
 	1316/4, /* MUSIC_INDEX_BASE */
 	0,		/* SOUND_INDEX_BASE */
-	"simon.gme",	/* gme_filename */
-	"simon.wav",	/* wav_filename */
-	"gamepc",			/* gamepc_filename */
+	"SIMON.GME",	/* gme_filename */
+	"SIMON.WAV",	/* wav_filename */
+	"GAMEPC",			/* gamepc_filename */
 };
 
 static const GameSpecificSettings simon2_settings = {
@@ -67,9 +67,9 @@ static const GameSpecificSettings simon2_settings = {
 	12256, /* NUM_VOICE_RESOURCES */
 	1128/4, /* MUSIC_INDEX_BASE */
 	1660/4,			/* SOUND_INDEX_BASE */
-	"simon2.gme", /* gme_filename */
-	"simon2.wav",	/* wav_filename */
-	"gsptr30",		/* gamepc_filename */
+	"SIMON2.GME", /* gme_filename */
+	"SIMON2.WAV",	/* wav_filename */
+	"GSPTR30",		/* gamepc_filename */
 };
 
 //#ifdef USE_2xSAI
@@ -106,6 +106,25 @@ uint fileReadItemID(FILE *in) {
 	if (val==0xFFFFFFFF)
 		return 0;
 	return val + 2;
+}
+
+FILE *fopen_maybe_lowercase(const char *filename) {
+#ifdef WIN32
+	/* win32 is not case sensitive */
+	return fopen(filename, "rb");
+#else
+	/* first try with the original filename */
+	FILE *in = fopen(filename, "rb");
+	char buf[50], *s;
+
+	if (in) return in;
+	/* if that fails, convert the filename into lowercase and retry */
+	
+	s=buf;
+	do *s++ = tolower(*filename++); while (filename[-1]);
+
+	return fopen(buf, "rb");
+#endif
 }
 
 
@@ -527,7 +546,7 @@ bool SimonState::loadGamePcFile(const char *filename) {
 	int i, file_size;
 
 	/* read main gamepc file */
-	in = fopen(filename, "rb");
+	in = fopen_maybe_lowercase(filename);
 	if (in==NULL) return false;
 
 	num_inited_objects = allocGamePcVars(in);
@@ -545,7 +564,7 @@ bool SimonState::loadGamePcFile(const char *filename) {
 	fclose(in);
 
 	/* Read list of TABLE resources */
-	in = fopen("tbllist", "rb");
+	in = fopen_maybe_lowercase("TBLLIST");
 	if (in==NULL) return false;
 
 	fseek(in, 0, SEEK_END);
@@ -564,7 +583,7 @@ bool SimonState::loadGamePcFile(const char *filename) {
 	_tablesheap_curpos_org = _tablesheap_curpos;
 	
 	/* Read list of TEXT resources */
-	in = fopen("stripped.txt", "rb");
+	in = fopen_maybe_lowercase("STRIPPED.TXT");
 	if (in==NULL) return false;
 
 	fseek(in, 0, SEEK_END);
@@ -2185,7 +2204,7 @@ void SimonState::closeTablesFile_gme(FILE *in) {
 
 /* Simon1DOS load tables file */
 uint SimonState::loadTextFile_simon1(const char *filename, byte *dst) {
-	FILE *fo = fopen(filename, "rb");
+	FILE *fo = fopen_maybe_lowercase(filename);
 	uint32 size;
 	
 	if (fo==NULL)
@@ -2204,7 +2223,7 @@ uint SimonState::loadTextFile_simon1(const char *filename, byte *dst) {
 
 
 FILE *SimonState::openTablesFile_simon1(const char *filename) {
-	FILE *fo = fopen(filename, "rb");
+	FILE *fo = fopen_maybe_lowercase(filename);
 	if (fo==NULL)
 		error("openTablesFile: Cannot open '%s'", filename);
 	return fo;
@@ -3123,7 +3142,7 @@ uint SimonState::item_get_icon_number(Item *item) {
 }
 
 void SimonState::loadIconFile() {
-	FILE *in = fopen("icon.dat", "rb");
+	FILE *in = fopen_maybe_lowercase("ICON.DAT");
 	uint size;
 
 	if (in==NULL)
@@ -6522,7 +6541,7 @@ void SimonState::readSfxFile(const char *filename) {
 		FILE *in;
 		uint32 size;
 
-		in = fopen(filename, "rb");
+		in = fopen_maybe_lowercase(filename);
 
 		if(in==NULL) {
 			warning("readSfxFile: Cannot load sfx file %s", filename);
@@ -7259,7 +7278,7 @@ void SimonState::read_vga_from_datfile_1(uint vga_id) {
 
 		sprintf(buf, "%.3d%d.VGA", vga_id>>1, (vga_id&1)+1);
 
-		in = fopen(buf, "rb");
+		in = fopen_maybe_lowercase(buf);
 		if (in==NULL)
 			error("read_vga_from_datfile_1: cannot open %s", buf);
 
@@ -7288,7 +7307,7 @@ byte *SimonState::read_vga_from_datfile_2(uint id) {
 
 		sprintf(buf, "%.3d%d.VGA", id>>1, (id&1)+1);
 
-		in = fopen(buf, "rb");
+		in = fopen_maybe_lowercase(buf);
 		if (in==NULL)
 			error("read_vga_from_datfile_2: cannot open %s", buf);
 
@@ -7326,7 +7345,7 @@ void SimonState::resfile_read(void *dst, uint32 offs, uint32 size) {
 
 void SimonState::openGameFile() {
 	if (_game != GAME_SIMON1DOS) {
-		_game_file = fopen(gss->gme_filename, "rb");
+		_game_file = fopen_maybe_lowercase(gss->gme_filename);
 
 		if (_game_file==NULL)
 			error("cannot open game file '%s'", gss->gme_filename);
@@ -7719,7 +7738,7 @@ bool SimonState::load_game(uint slot) {
 
 	errno = 0;
 
-	f = fopen(filename, "rb");
+	f = fopen_maybe_lowercase(filename);
 	if (f==NULL)
 		return false;
 
@@ -7826,22 +7845,25 @@ bool SimonState::load_game(uint slot) {
 }
 
 void SimonState::initSound() {
-	const char *s = gss->wav_filename;
+	/* only read voice file in windows game */
+	if (_game & GAME_WIN) {
+		const char *s = gss->wav_filename;
 
-	_voice_offsets = NULL;
+		_voice_offsets = NULL;
 
-	_voice_file = fopen(s, "rb");
-	if (_voice_file == NULL) {
-		warning("Cannot open %s",s);
-		return;
+		_voice_file = fopen_maybe_lowercase(s);
+		if (_voice_file == NULL) {
+			warning("Cannot open %s",s);
+			return;
+		}
+
+		_voice_offsets = (uint32*)malloc(gss->NUM_VOICE_RESOURCES * sizeof(uint32));
+		if (_voice_offsets == NULL)
+			error("Out of memory for voice offsets");
+
+		if (fread(_voice_offsets, gss->NUM_VOICE_RESOURCES * sizeof(uint32), 1, _voice_file) != 1)
+			error("Cannot read voice offsets");
 	}
-
-	_voice_offsets = (uint32*)malloc(gss->NUM_VOICE_RESOURCES * sizeof(uint32));
-	if (_voice_offsets == NULL)
-		error("Out of memory for voice offsets");
-
-	if (fread(_voice_offsets, gss->NUM_VOICE_RESOURCES * sizeof(uint32), 1, _voice_file) != 1)
-		error("Cannot read voice offsets");
 }
 
 struct WaveHeader {
@@ -7940,8 +7962,8 @@ void SimonState::playMusic(uint music) {
 		midi.read_all_songs(f);
 	} else {
 		char buf[50];
-		sprintf(buf, "mod%d.mus", music);
-		f = fopen(buf, "rb");
+		sprintf(buf, "MOD%d.MUS", music);
+		f = fopen_maybe_lowercase(buf);
 		if (f==NULL) {
 			warning("Cannot load music from '%s'", buf);
 			return;
