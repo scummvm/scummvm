@@ -30,6 +30,19 @@ class OSystem_Dreamcast : public OSystem {
  public:
   OSystem_Dreamcast();
 
+
+  // Retrieve a list of all graphics modes supported by this backend.
+  const GraphicsMode *getSupportedGraphicsModes() const;
+
+  // Switch to the specified graphics mode.
+  bool setGraphicsMode(int mode);
+
+  // Switch to the specified graphics mode.
+  bool setGraphicsMode(const char *name);
+
+  // Determine which graphics mode is currently active.
+  int getGraphicsMode() const;
+
   // Set colors of the palette
   void setPalette(const byte *colors, uint start, uint num);
 
@@ -49,11 +62,10 @@ class OSystem_Dreamcast : public OSystem {
 
   // Either show or hide the mouse cursor
   bool show_mouse(bool visible);
+
+  // Move ("warp") the mouse cursor to the specified position.
   void warp_mouse(int x, int y);
 
-  // Set the position of the mouse cursor
-  void set_mouse_pos(int x, int y);
-  
   // Set the bitmap that's used when drawing the cursor.
   void set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y);
   
@@ -73,7 +85,14 @@ class OSystem_Dreamcast : public OSystem {
   // Set function that generates samples 
   bool setSoundCallback(SoundProc proc, void *param);
   void clearSoundCallback();
+
+  // Determine the output sample rate. Audio data provided by the sound
+  // callback will be played using this rate.
+  int getOutputSampleRate() const;
 		
+  // Initialise the specified CD drive for audio playback.
+  bool openCD(int drive);
+
   // Poll cdrom status
   // Returns true if cd audio is playing
   bool poll_cdrom();
@@ -90,9 +109,6 @@ class OSystem_Dreamcast : public OSystem {
   // Quit
   void quit();
 
-  // Set a parameter
-  uint32 property(int param, Property *value);
-
   // Overlay
   void show_overlay();
   void hide_overlay();
@@ -101,16 +117,20 @@ class OSystem_Dreamcast : public OSystem {
   void copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h);
 
   // Add a callback timer
-  virtual void set_timer(TimerProc callback, int timer);
+  void set_timer(TimerProc callback, int timer);
 
   // Mutex handling
-  virtual MutexRef createMutex();
-  virtual void lockMutex(MutexRef mutex);
-  virtual void unlockMutex(MutexRef mutex);
-  virtual void deleteMutex(MutexRef mutex);
+  MutexRef createMutex();
+  void lockMutex(MutexRef mutex);
+  void unlockMutex(MutexRef mutex);
+  void deleteMutex(MutexRef mutex);
+
+  // Set a window caption or any other comparable status display to the
+  // given value.
+  void setWindowCaption(const char *caption);
 
   // Savefile handling
-  virtual SaveFileManager *get_savefile_manager();
+  SaveFileManager *get_savefile_manager();
 
 
   static OSystem *create();

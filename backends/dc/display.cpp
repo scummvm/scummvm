@@ -238,7 +238,7 @@ bool OSystem_Dreamcast::show_mouse(bool visible)
   return last;
 }
 
-void OSystem_Dreamcast::set_mouse_pos(int x, int y)
+void OSystem_Dreamcast::warp_mouse(int x, int y)
 {
   if (_overlay_visible) {
     x += _overlay_x;
@@ -246,11 +246,6 @@ void OSystem_Dreamcast::set_mouse_pos(int x, int y)
   }
   _ms_cur_x = (_hires? (x>>1):x);
   _ms_cur_y = (_hires? (y>>1):y);
-}
-
-void OSystem_Dreamcast::warp_mouse(int x, int y)
-{
-  set_mouse_pos(x, y);
 }
 
 void OSystem_Dreamcast::set_mouse_cursor(const byte *buf, uint w, uint h,
@@ -570,3 +565,30 @@ void OSystem_Dreamcast::copy_rect_overlay(const int16 *buf, int pitch,
   } while (--h);
   _overlay_dirty = true;
 }
+
+
+static const OSystem::GraphicsMode gfxmodes[] = {
+  { "default", "640×480 16bpp", 0 },
+  { NULL, NULL, 0 }
+};
+
+const OSystem::GraphicsMode *OSystem_Dreamcast::getSupportedGraphicsModes() const
+{
+  return gfxmodes;
+}
+
+bool OSystem_Dreamcast::setGraphicsMode(int mode)
+{
+  return mode == 0;
+}
+
+bool OSystem_Dreamcast::setGraphicsMode(const char *name)
+{
+  return strcmp(name, "default") == 0;
+}
+
+int OSystem_Dreamcast::getGraphicsMode() const
+{
+  return 0;
+}
+

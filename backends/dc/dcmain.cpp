@@ -109,20 +109,15 @@ void OSystem_Dreamcast::update_cdrom()
   // Dummy.  The CD drive takes care of itself.
 }
 
-uint32 OSystem_Dreamcast::property(int param, Property *value)
+bool OSystem_Dreamcast::openCD(int drive)
 {
-  switch(param) {
+  // Dummy.
+  return true;
+}
 
-  case PROP_GET_SAMPLE_RATE:
-    return 22050;
-
-  case PROP_SET_WINDOW_CAPTION:
-    gGameName = value->caption;
-    break;
-
-  }
-  
-  return 0;
+void OSystem_Dreamcast::setWindowCaption(const char *caption)
+{
+  gGameName = caption;
 }
 
 void OSystem_Dreamcast::quit() {

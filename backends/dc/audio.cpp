@@ -36,13 +36,8 @@ void initSound()
 
 bool OSystem_Dreamcast::setSoundCallback(SoundProc proc, void *param)
 {
-#if SAMPLE_MODE == 0
-  assert(format == SOUND_16BIT);
-#elif SAMPLE_MODE == 1
-  assert(format == SOUND_8BIT);
-#else
-#error Invalid SAMPLE_MODE
-#endif
+  assert(SAMPLE_MODE == 0);
+
   _sound_proc_param = param;
   _sound_proc = proc;
 
@@ -93,3 +88,9 @@ void OSystem_Dreamcast::checkSound()
   if((fillpos += n) >= curr_ring_buffer_samples)
     fillpos = 0;
 }
+
+int OSystem_Dreamcast::getOutputSampleRate() const
+{
+  return 22050;
+}
+
