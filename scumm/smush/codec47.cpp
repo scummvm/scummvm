@@ -223,14 +223,12 @@ static int16 codec47_table[] = {
 	 -6,  43,   1,  43,   0,   0,   0,   0,   0,   0
 };
 
-static int32 last_table_width;
-
 static byte smush_buf_big[99328];
 static byte smush_buf_small[32768];
 static byte smush_buffer[65536];
 static int16 codec47_temp_table[256];
 
-void mk_tables(int32 param) {
+void Codec47Decoder::makeTables37(int32 param) {
 	int32 variable1, variable2, variable3, variable4, count_1, count_2;
 	int32 tmp_param, tmp_param_tmp, tmp_value1, tmp_value2, b1, b2;
 	int32 * tmp_table37_1_2, * tmp_table37_1_1, * tmp_table37_2_2, * tmp_table37_2_1;
@@ -520,10 +518,11 @@ label27:
 	} while (--count_1!= 0);
 }
 
-void make_tables(int32 width) {
-	if (last_table_width == width)
+void Codec47Decoder::makeTables47(int32 width) {
+	if (_lastTableWidth == width)
 		return;
-	last_table_width = width;
+
+	_lastTableWidth = width;
 
 	int32 a, c, d, s, tmp_value, tmp_offset;
 	int16 tmp, tmp2;
@@ -621,7 +620,7 @@ void make_tables(int32 width) {
 	} while (s < 16384);
 }
 	
-static void bomp_decode(byte *dst, byte *src, int32 len) {
+void Codec47Decoder::bompDecode(byte *dst, byte *src, int32 len) {
 	byte code;
 	byte color;
 	int32 num;
@@ -895,18 +894,8 @@ static void codec47_subgfx_lev2() {
 	*(uint32*)(d_dst + (d_pitch * 3) + 4) = val;
 }
 
-static byte * g_out;
-
-/*
-static void disp() {
-	g_scumm->_system->copy_rect((const byte *)g_out, 640, 0, 0, 640, 480);
-	g_scumm->_system->update_screen();
-	g_scumm->waitForTimer(100);
-}
-*/
-
-static void decode2(byte * dst, byte * src, int32 offset1, int32 offset2, int32 pitch,
-						 int16 * tmp_table, byte * param_ptr, int32 height, int32,
+void Codec47Decoder::decode2(byte * dst, byte * src, int32 offset1, int32 offset2, int32 pitch,
+						 int16 * tmp_table, byte * param_ptr, int32 height,
 						 byte * buf_small, byte * buf_big) {
 	d_dst = dst;
 	d_src = src;
@@ -941,8 +930,8 @@ bool Codec47Decoder::initSize(const Point & p, const Rect & r) {
 		Decoder::initSize(p, r);
 		clean();
 
-		mk_tables(4);
-		mk_tables(8);
+		makeTables37(4);
+		makeTables37(8);
 
 		int32 frame_size = getRect().width() * getRect().height();
 		_deltaSize = frame_size * 3;
@@ -961,7 +950,7 @@ Codec47Decoder::Codec47Decoder() {
 }
 
 void Codec47Decoder::clean() {
-	last_table_width = -1;
+	_lastTableWidth = -1;
 	if(_deltaBuf) {
 		delete []_deltaBuf;
 		_deltaSize = 0;
@@ -976,7 +965,6 @@ Codec47Decoder::~Codec47Decoder() {
 }
 
 bool Codec47Decoder::decode(Blitter & dst, Chunk & src) {
-	g_out = _curBuf;
 	int32 width = getRect().width();
 	int32 height = getRect().height();
 	int32 offset1 = _deltaBufs[1] - _curBuf;
@@ -986,25 +974,23 @@ bool Codec47Decoder::decode(Blitter & dst, Chunk & src) {
 	byte * chunk_buffer = (byte*)malloc(chunk_size);
 	src.read(chunk_buffer, chunk_size);
 
-	int32 first_word = READ_LE_UINT16(chunk_buffer + 0);
+	int32 seq_nb = READ_LE_UINT16(chunk_buffer + 0);
 
 	byte * gfx_data = chunk_buffer + 26;
-	byte * tmp_ptr, * tmp_ptr1, * tmp_ptr2, * tmp_ptr3;
+	byte * tmp_ptr;
 
-	if (first_word == 0) {
-		make_tables(width);
+	if (seq_nb == 0) {
+		makeTables47(width);
 		memset(_deltaBufs[0], chunk_buffer[12], width * height);
 		memset(_deltaBufs[1], chunk_buffer[13], width * height);
-		_var100 = -1;
+		_prevSeqNb = -1;
 	}
 	
-	byte * tmp_curBuf = _curBuf;
-
 	byte * ptr;
 	int32 r, l, count;
 	if ((chunk_buffer[4] & 1) != 0) {
 		r = 0;
-		ptr = (byte*)smush_buffer;
+		ptr = smush_buffer;
 		count = r;
 		do {
 			l = count;
@@ -1012,9 +998,9 @@ bool Codec47Decoder::decode(Blitter & dst, Chunk & src) {
 				tmp_ptr = ptr;
 				do {
 					byte tmp = *gfx_data++;
-					*tmp_ptr = tmp;
-					tmp_ptr += 256;
-					smush_buffer[l + r] = tmp;
+//					*tmp_ptr = tmp;
+//					tmp_ptr += 256;
+//					smush_buffer[l + r] = tmp;
 				} while (++l < 256);
 			}
 			r += 256;
@@ -1026,72 +1012,62 @@ bool Codec47Decoder::decode(Blitter & dst, Chunk & src) {
 	switch(chunk_buffer[2]) {
 	case 0:
 		memcpy(_curBuf, gfx_data, width * height);
-		_var104 = _curBuf;
 		break;
 	case 1:
 		warning("codec47: not implemented decode1 proc");
 //		decode1(_curBuf, gfx_data, width * height, &smush_buffer)
-		_var104 = _curBuf;
 		break;
 	case 2:
-//		if (((arg_7 & 16) != 0) && (param1 == 0))
+//		if (((arg_7 & 16) != 0) && (chunk_buffer[3] == 0))
 //		if (chunk_buffer[3] == 0) {
-//			_var100 = first_word;
+//			_prevSeqNb = seq_nb;
 //			free(chunk_buffer);
 //			return false;
 //		}
-		if ((first_word - _var100) == 1) {
-			decode2(tmp_curBuf, gfx_data, offset1, offset2, width,
-					codec47_temp_table, chunk_buffer + 8, height, width * 8,
+		if ((seq_nb - _prevSeqNb) == 1) {
+			decode2(_curBuf, gfx_data, offset1, offset2, width,
+					codec47_temp_table, chunk_buffer + 8, height,
 					smush_buf_small, smush_buf_big);
-			_var104 = _curBuf;
 		}
 		break;
 	case 3:
-//		if (((arg_7 & 16) != 0) && (param1 == 0))
+//		if (((arg_7 & 16) != 0) && (chunk_buffer[3] == 0))
 //		if (chunk_buffer[3] == 0) {
-//			_var100 = first_word;
+//			_prevSeqNb = seq_nb;
 //			free(chunk_buffer);
 //			return false;
 //		}
 		memcpy(_curBuf, _deltaBufs[1], width * height);
-		_var104 = _curBuf;
 		break;
 	case 4:
-//		if (((arg_7 & 16) != 0) && (param1 == 0))
+//		if (((arg_7 & 16) != 0) && (chunk_buffer[3] == 0))
 //		if (chunk_buffer[3] == 0) {
-//			_var100 = first_word;
+//			_prevSeqNb = seq_nb;
 //			free(chunk_buffer);
 //			return false;
 //		}
 		memcpy(_curBuf, _deltaBufs[0], width * height);
-		_var104 = _curBuf;
 		break;
 	case 5:
-		bomp_decode(_curBuf, gfx_data, READ_LE_UINT32(chunk_buffer + 14));
-		_var104 = _curBuf;
+		bompDecode(_curBuf, gfx_data, READ_LE_UINT32(chunk_buffer + 14));
 		break;
 	}
 
-	if (_var104 != 0) {
-		dst.blit(_var104, width * height);
-	}
+	dst.blit(_curBuf, width * height);
 
-	if ((first_word - _var100) == 1) {
+	if ((seq_nb - _prevSeqNb) == 1) {
 		if (chunk_buffer[3] == 1) {
-			tmp_ptr1 = _curBuf;
+			tmp_ptr = _curBuf;
 			_curBuf = _deltaBufs[1];
-			_deltaBufs[1] = tmp_ptr1;
+			_deltaBufs[1] = tmp_ptr;
 		} else if (chunk_buffer[3] == 2) {
 			tmp_ptr = _deltaBufs[0];
-			tmp_ptr2 = _deltaBufs[1];
-			tmp_ptr3 = _curBuf;
-			_deltaBufs[0] = tmp_ptr2;
-			_deltaBufs[1] = tmp_ptr3;
+			_deltaBufs[0] = _deltaBufs[1];
+			_deltaBufs[1] = _curBuf;
 			_curBuf = tmp_ptr;
 		}
 	}
-	_var100 = first_word;
+	_prevSeqNb = seq_nb;
 
 	free(chunk_buffer);
 

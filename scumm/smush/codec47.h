@@ -32,8 +32,15 @@ private:
 	byte * _deltaBufs[2];
 	byte * _deltaBuf;
 	byte * _curBuf;
-	int32 _var100;
-	byte * _var104;
+	int32 _prevSeqNb;
+	int32 _lastTableWidth;
+
+	void makeTables47(int32 width);
+	void makeTables37(int32 param);
+	void bompDecode(byte *dst, byte *src, int32 len);
+	void decode2(byte * dst, byte * src, int32 offset1, int32 offset2, int32 pitch,
+							 int16 * tmp_table, byte * param_ptr, int32 height,
+							 byte * buf_small, byte * buf_big);
 
 public:
 	bool initSize(const Point &, const Rect &);
