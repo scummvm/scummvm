@@ -76,6 +76,7 @@ class MP3InputStream : public AudioInputStream {
 	struct mad_stream _stream;
 	struct mad_frame _frame;
 	struct mad_synth _synth;
+	mad_timer_t _duration;
 	uint32 _posInFrame;
 	uint32 _bufferSize;
 	int _size;
@@ -85,7 +86,6 @@ class MP3InputStream : public AudioInputStream {
 	byte *_ptr;
 	int _rate;
 	bool _initialized;
-	mad_timer_t _duration;
 
 	bool init();
 	void refill();
@@ -105,7 +105,7 @@ public:
 class VorbisInputStream : public AudioInputStream {
 	OggVorbis_File *_ov_file;
 	int _end_pos;
-	bool _eof_flag;
+	bool _eofFlag;
 	int _numChannels;
 	int16 _buffer[4096];
 	int16 *_pos;

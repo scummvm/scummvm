@@ -173,20 +173,20 @@ void WrappedMemoryStream<stereo, is16Bit, isUnsigned>::append(const byte *data, 
 MP3InputStream::MP3InputStream(File *file, mad_timer_t duration, uint size) {
 	// duration == 0 means: play everything till end of file
 	
-	_isStereo = false;
-	_curChannel = 0;
-	_file = file;
-	_rate = 0;
-	_posInFrame = 0;
-	_bufferSize = size ? size : (128 * 1024);	// Default buffer size is 128K
-	
-	_duration = duration;
-
 	mad_stream_init(&_stream);
 	mad_frame_init(&_frame);
 	mad_synth_init(&_synth);
 	
+	_duration = duration;
+
+	_posInFrame = 0;
+	_bufferSize = size ? size : (128 * 1024);	// Default buffer size is 128K
+
+	_isStereo = false;
+	_curChannel = 0;
+	_file = file;
 	_ptr = (byte *)malloc(_bufferSize + MAD_BUFFER_GUARD);
+	_rate = 0;
 
 	_initialized = init();
 
@@ -291,18 +291,16 @@ void MP3InputStream::refill() {
 	mad_timer_negate(&frame_duration);
 	mad_timer_add(&_duration, _frame.header.duration);
 	
+	if (mad_timer_compare(_duration, mad_timer_zero) <= 0)
+		_size = -1;	// Mark for EOF
+	
 	// Synthesise the frame into PCM samples and reset the buffer position
 	mad_synth_frame(&_synth, &_frame);
 	_posInFrame = 0;
 }
 
 bool MP3InputStream::eof() const {
-	// Time over -> input steam ends. Unless _file is 0, which
-	// means that playback is based on the number of input bytes
-	// rather than a duration.
-	if (_file && mad_timer_compare(_duration, mad_timer_zero) <= 0)
-		return true;
-	return (_posInFrame >= _synth.pcm.length);
+	return (_size < 0 || _posInFrame >= _synth.pcm.length);
 }
 
 static inline int scale_sample(mad_fixed_t sample) {
@@ -370,7 +368,7 @@ VorbisInputStream::VorbisInputStream(OggVorbis_File *file, int duration)
 	else
 		_end_pos = ov_pcm_total(_ov_file, -1);
 
-	_eof_flag = false;
+	_eofFlag = false;
 }
 
 int16 VorbisInputStream::read() {
@@ -381,7 +379,7 @@ int16 VorbisInputStream::read() {
 }
 
 bool VorbisInputStream::eof() const {
-	if (_eof_flag)
+	if (_eofFlag)
 		return true;
 	if (_pos < _buffer + ARRAYSIZE(_buffer))
 		return false;
@@ -406,7 +404,7 @@ void VorbisInputStream::refill() {
 #endif
 					  NULL);
 		if (result == 0) {
-			_eof_flag = true;
+			_eofFlag = true;
 			memset(read_pos, 0, len_left);
 			break;
 		} else if (result == OV_HOLE) {
@@ -416,7 +414,7 @@ void VorbisInputStream::refill() {
 			debug(1, "Decode error %d in Vorbis file", result);
 			// Don't delete it yet, that causes problems in
 			// the CD player emulation code.
-			_eof_flag = true;
+			_eofFlag = true;
 			memset(read_pos, 0, len_left);
 			break;
 		} else {
