@@ -184,12 +184,9 @@ void SwordMouse::setPointer(uint32 resId, uint32 rate) {
 		_resMan->resClose(_specialPtrId);
 		_specialPtrId = 0;
 	}
-	_rate = rate;
-	_rateCnt = 1;
 	_frame = 0;
 
 	if (resId == 0) {
-		_rateCnt = 0;
 		_system->set_mouse_cursor(NULL, 0, 0, 0, 0);
 		_system->show_mouse(false);
 	} else {
@@ -207,18 +204,15 @@ void SwordMouse::setPointer(uint32 resId, uint32 rate) {
 
 void SwordMouse::animate(void) {
 	MousePtr *currentPtr;
-	if (_rateCnt && ((_mouseStatus == 1) || _menuStatus)) {
+	if ((_mouseStatus == 1) || _menuStatus) {
 		if (_specialPtrId)
 			currentPtr = _specialPtr;
 		else
 			currentPtr = _pointers[_currentPtrId];
-		_rateCnt--;
-		if (!_rateCnt) {
-			_rateCnt = _rate;
-			_frame = (_frame + 1) % currentPtr->numFrames;
-			uint16 size = currentPtr->sizeX * currentPtr->sizeY;
-			_system->set_mouse_cursor(currentPtr->data + 0x30 + _frame * size, currentPtr->sizeX, currentPtr->sizeY, currentPtr->hotSpotX, currentPtr->hotSpotY);
-		}
+
+		_frame = (_frame + 1) % currentPtr->numFrames;
+		uint16 size = currentPtr->sizeX * currentPtr->sizeY;
+		_system->set_mouse_cursor(currentPtr->data + 0x30 + _frame * size, currentPtr->sizeX, currentPtr->sizeY, currentPtr->hotSpotX, currentPtr->hotSpotY);
 	}
 }
 

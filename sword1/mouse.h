@@ -85,7 +85,7 @@ public:
 	void setMenuStatus(uint8 status);
 private:
 	MousePtr *_pointers[17];
-	uint32 _currentPtrId, _rate, _rateCnt, _frame;
+	uint32 _currentPtrId, _frame;
 	OSystem *_system;
 	SwordLogic *_logic;
 	SwordMenu *_menu;
