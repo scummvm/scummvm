@@ -726,9 +726,12 @@ void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 	uint16 G, H, I;
 
 	while (height--) {
-		B = C = *(p - nextlineSrc);
-		E = F = *(p);
-		H = I = *(p + nextlineSrc);
+		B = *(p - 1 - nextlineSrc);
+		E = *(p - 1);
+		H = *(p - 1 + nextlineSrc);
+		C = *(p - nextlineSrc);
+		F = *(p);
+		I = *(p + nextlineSrc);
 		for (int i = 0; i < width; ++i) {
 			p++;
 			A = B; B = C; C = *(p - nextlineSrc);
@@ -759,9 +762,12 @@ void AdvMame3x(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 	uint16 G, H, I;
 
 	while (height--) {
-		B = C = *(p - nextlineSrc);
-		E = F = *(p);
-		H = I = *(p + nextlineSrc);
+		B = *(p - 1 - nextlineSrc);
+		E = *(p - 1);
+		H = *(p - 1 + nextlineSrc);
+		C = *(p - nextlineSrc);
+		F = *(p);
+		I = *(p + nextlineSrc);
 		for (int i = 0; i < width; ++i) {
 			p++;
 			A = B; B = C; C = *(p - nextlineSrc);
