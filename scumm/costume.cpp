@@ -357,7 +357,7 @@ void CostumeRenderer::procC64(int actor) {
 		palette[2] = v1_mm_actor_palatte_2[actor];
 	} else {
 		palette[1] = 10;
-		palette[2] = _palette[0];
+		palette[2] = _palette[actor];
 	}
 
 	v1.skip_width >>= 3;
@@ -740,11 +740,10 @@ void CostumeRenderer::setPalette(byte *palette) {
 	byte color;
 
 	if (_loaded._format == 0x57) {
-		_palette[0] = palette[0];
-		return;
-	}
-
-	if (_vm->_features & GF_OLD_BUNDLE) {
+		for (i = 0; i < 14; i++) {
+			_palette[i] = palette[i];
+		}
+	} else if (_vm->_features & GF_OLD_BUNDLE) {
 		if ((_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color)) {
 			memcpy(_palette, palette, 16);
 		} else {

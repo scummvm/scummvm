@@ -696,12 +696,10 @@ void Scumm_v2::o2_actorSet() {
 			break;
 
 		case 2:		// Actor Set Color
-			if (_version == 1) {
-				i = 0;
-			} else {
+			if (_version == 2)
 				i = fetchScriptByte();
-			}
-			a->palette[i] = arg;
+
+			a->palette[act] = arg;
 			a->needRedraw = true;
 			break;
 
