@@ -161,6 +161,7 @@ Scumm::~Scumm ()
 	delete _timer;
 	delete _sound;
 	delete _imuse;
+	if (_existLanguageFile) delete _languageBuffer;
 }
 
 void Scumm::scummInit()
@@ -299,6 +300,7 @@ void Scumm::scummInit()
 #endif
 
 	_timer->installProcedure(&autosave, 5 * 60 * 1000);
+	loadLanguageBundle();
 }
 
 

@@ -929,7 +929,10 @@ public:
 	byte *_messagePtr;
 	int16 _talkDelay;
 	bool _keepText;
-
+	bool _existLanguageFile;
+	char *_languageBuffer;
+	void loadLanguageBundle();
+	void translateText(char * text, char * trans_buff);
 
 	bool checkFixedDisk();
 	int _cdrom;

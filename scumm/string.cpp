@@ -1080,3 +1080,106 @@ int CharsetRenderer::getSpacing(char chr)
 		space = 7;
 	return space;
 }
+
+void Scumm::loadLanguageBundle() {
+	File file;
+
+	file.open("language.bnd", _gameDataPath);
+	if(file.isOpen() == false) {
+		_existLanguageFile = false;
+		return;
+	}
+	_languageBuffer = (char*)malloc(file.size());
+	file.read(_languageBuffer, file.size());
+	file.close();
+	_existLanguageFile = true;
+}
+
+void Scumm::translateText(char * text, char * trans_buff) {
+	if ((_existLanguageFile == true) && (text[0] == '/')) {
+		char name[20], tmp[20], tmp2[20], num_s[20];
+		int32 num, l, j, k, r, pos;
+		char enc;
+
+		// copy name from text /..../
+		for (l = 0; l < 20, *(text + l + 1) != '.'; l++) {
+			name[l] = *(text + l + 1);
+		}
+		name[l] = 0;
+		l++;
+
+		// get number from text /..../
+		char number[4];
+		number[0] = *(text + l + 1);
+		number[1] = *(text + l + 2);
+		number[2] = *(text + l + 3);
+		number[3] = 0;
+		num = atol(number);
+		sprintf(num_s, "%d", num);
+
+		char * buf = _languageBuffer;
+		// determine is file encoded
+		if (*buf == 'e') {
+			enc = 0x13;
+			pos = 1;
+		} else {
+			enc = 0;
+			pos = 0;
+		}
+
+		for(;;) {
+			// search char @
+			if (*(buf + pos++) == '@') {
+				// copy name after @ to endline
+				l = 0;
+				do {
+					tmp[l++] = *(buf + pos++);
+				} while((*(buf + pos) != 0x0d) && (*(buf + pos + 1) != 0x0a) && (l < 19));
+				tmp[l] = 0;
+				pos += 2;
+				// compare 'name' with above name
+				if (strcmp(tmp, name) == 0) {
+					// get number lines of 'name'
+					l = 0;
+					if (*(buf + pos++) == '#') {
+						do {
+							tmp[l++] = *(buf + pos++);
+						} while((*(buf + pos) != 0x0d) && (*(buf + pos + 1) != 0x0a) && (l < 19));
+						tmp[l] = 0;
+						pos += 2;
+						l = atol(tmp);
+						// get number of line
+						for(r = 0; r < l; r++) {
+							j = 0;
+							do {
+								tmp2[j++] = *(buf + pos++);
+							} while(*(buf + pos) != '/');
+							tmp2[j] = 0;
+							if (strcmp(tmp2, num_s) == 0) {
+								k = 0;
+								pos++;
+								do {
+									*(trans_buff + k++) = (*(buf + pos++)) ^ enc;
+								} while((*(buf + pos) != 0x0d) && (*(buf + pos + 1) != 0x0a));
+								*(trans_buff + k) = 0;
+								return;
+							}
+							do { 
+								pos++;
+							}	while((*(buf + pos) != 0x0d) && (*(buf + pos + 1) != 0x0a));
+							pos += 2;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	if (text[0] == '/') {
+		char *pointer = strtok((char*)text, "/");
+		int offset = strlen(pointer) + 2;
+		strcpy (trans_buff, text + offset);
+	}
+	strcpy (trans_buff, text);
+}
+
