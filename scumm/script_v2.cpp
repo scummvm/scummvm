@@ -1573,8 +1573,8 @@ void ScummEngine_v2::o2_getActorWalkBox() {
 }
 
 void ScummEngine_v2::o2_dummy() {
-	// Opcode 238 is used in Zak but has no purpose
-	if (!(_gameId == GID_ZAK && _opcode == 238))
+	// Opcode 238 is used in maniac and zak but has no purpose
+	if (_opcode != 238)
 		warning("o2_dummy invoked (opcode %d)", _opcode);
 }
 
