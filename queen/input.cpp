@@ -36,7 +36,7 @@ const char* Input::_commandKeys[LANGUAGE_COUNT] = {
 Input::Input(Language language, OSystem *system) : 
 	_system(system), _fastMode(false), _keyVerb(VERB_NONE), 
 	_cutawayRunning(false), _canQuit(false), _cutawayQuit(false), _talkQuit(false),
-	_quickSave(false), _quickLoad(false), _debugger(false),
+	_dialogueRunning(false), _quickSave(false), _quickLoad(false), _debugger(false),
 	_inKey(0), _mouse_x(0), _mouse_y(0), _mouseButton(0), _idleTime(0) {
 
 	switch (language) {
