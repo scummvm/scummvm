@@ -84,8 +84,7 @@ private:
 	bool _pause;
 
 	int _attributes[188];
-	int _curSeqAtribPos;
-
+	int _nextSeqToPlay;
 	int _curMusicState;
 	int _curMusicSeq;
 	int _curMusicCue;

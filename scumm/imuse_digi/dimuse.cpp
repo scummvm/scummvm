@@ -68,7 +68,7 @@ void IMuseDigital::resetState() {
 	_curMusicSeq = 0;
 	_curMusicCue = 0;
 	memset(_attributes, 0, sizeof(_attributes));
-	_curSeqAtribPos = 0;
+	_nextSeqToPlay = 0;
 }
 
 void IMuseDigital::callback() {

@@ -120,24 +120,24 @@ void IMuseDigital::setDigMusicSequence(int seqId) {
 	if (num != 0) {
 		if (_curMusicSeq == 0) {
 			playDigMusic(_digSeqMusicTable[num].name, &_digSeqMusicTable[num], 0, true);
-			_curSeqAtribPos = 0;
+			_nextSeqToPlay = 0;
 			_attributes[DIG_SEQ_OFFSET + num] = 1;
 		} else {
 			if ((_digSeqMusicTable[_curMusicSeq].opcode == 4) || (_digSeqMusicTable[_curMusicSeq].opcode == 6)) {
-				_curSeqAtribPos = num;
+				_nextSeqToPlay = num;
 				return;
 			} else {
 				playDigMusic(_digSeqMusicTable[num].name, &_digSeqMusicTable[num], 0, true);
-				_curSeqAtribPos = 0;
+				_nextSeqToPlay = 0;
 				_attributes[DIG_SEQ_OFFSET + num] = 1;
 			}
 		}
 	} else {
-		if (_curSeqAtribPos != 0) {
-			playDigMusic(_digSeqMusicTable[_curSeqAtribPos].name, &_digSeqMusicTable[_curSeqAtribPos], 0, true);
-			_attributes[DIG_SEQ_OFFSET + _curSeqAtribPos] = 1;
-			num = _curSeqAtribPos;
-			_curSeqAtribPos = 0;
+		if (_nextSeqToPlay != 0) {
+			playDigMusic(_digSeqMusicTable[_nextSeqToPlay].name, &_digSeqMusicTable[_nextSeqToPlay], 0, true);
+			_attributes[DIG_SEQ_OFFSET + _nextSeqToPlay] = 1;
+			num = _nextSeqToPlay;
+			_nextSeqToPlay = 0;
 		} else {
 			if (_curMusicState != 0) {
 				playDigMusic(_digStateMusicTable[_curMusicState].name, &_digStateMusicTable[_curMusicState], _curMusicState, true);
@@ -257,24 +257,24 @@ void IMuseDigital::setComiMusicSequence(int seqId) {
 	if (num != 0) {
 		if (_curMusicSeq == 0) {
 			playComiMusic(_comiSeqMusicTable[num].name, &_comiSeqMusicTable[num], 0, true);
-			_curSeqAtribPos = 0;
+			_nextSeqToPlay = 0;
 			_attributes[COMI_SEQ_OFFSET + num] = 1;
 		} else {
 			if ((_comiSeqMusicTable[_curMusicSeq].opcode == 4) || (_comiSeqMusicTable[_curMusicSeq].opcode == 6)) {
-				_curSeqAtribPos = num;
+				_nextSeqToPlay = num;
 				return;
 			} else {
 				playComiMusic(_comiSeqMusicTable[num].name, &_comiSeqMusicTable[num], 0, true);
-				_curSeqAtribPos = 0;
+				_nextSeqToPlay = 0;
 				_attributes[COMI_SEQ_OFFSET + num] = 1;
 			}
 		}
 	} else {
-		if (_curSeqAtribPos != 0) {
-			playComiMusic(_comiSeqMusicTable[_curSeqAtribPos].name, &_comiSeqMusicTable[_curSeqAtribPos], 0, true);
-			_attributes[COMI_SEQ_OFFSET + _curSeqAtribPos] = 1;
-			num = _curSeqAtribPos;
-			_curSeqAtribPos = 0;
+		if (_nextSeqToPlay != 0) {
+			playComiMusic(_comiSeqMusicTable[_nextSeqToPlay].name, &_comiSeqMusicTable[_nextSeqToPlay], 0, true);
+			_attributes[COMI_SEQ_OFFSET + _nextSeqToPlay] = 1;
+			num = _nextSeqToPlay;
+			_nextSeqToPlay = 0;
 		} else {
 			if (_curMusicState != 0) {
 				playComiMusic(_comiStateMusicTable[_curMusicState].name, &_comiStateMusicTable[_curMusicState], _curMusicState, true);
