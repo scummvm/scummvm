@@ -195,7 +195,10 @@ int Actor::remapDirection(int dir, bool is_walking)
 			if (specdir & 0x8000) {
 				dir = specdir & 0x3FFF;
 			} else {
-				error("remapDirection: special dir not implemented");
+				// FIXME make actors at top of lab walk
+				// facing the correct way in the dig
+				if (_vm->_gameId != GID_DIG)
+					error("remapDirection: special dir not implemented");
 			}
 		}
 
