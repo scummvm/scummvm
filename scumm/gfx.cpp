@@ -1335,45 +1335,45 @@ StripTable *Gdi::generateStripTable(const byte *src, int width, int height, Stri
 }
 
 void Gdi::drawStripC64Background(byte *dst, int stripnr, int height) {
-	int y, i, j;
 	height >>= 3;
-	for (y = 0; y < height; y++) {
+	for (int y = 0; y < height; y++) {
 		_C64Colors[3] = (_C64ColorMap[y + stripnr * height] & 7);
-		for (i = 0; i < 8; i++) {
-			for (j = 7; j >= 0; j--) {
-				byte c = _C64CharMap[_C64PicMap[y + stripnr * height] * 8 + i] >> (j & 6);
-				dst[7 - j] = _C64Colors[c & 3];
-			}
+		for (int i = 0; i < 8; i++) {
+			byte c = _C64CharMap[_C64PicMap[y + stripnr * height] * 8 + i];
+			dst[0] = dst[1] = _C64Colors[(c >> 6) & 3];
+			dst[2] = dst[3] = _C64Colors[(c >> 4) & 3];
+			dst[4] = dst[5] = _C64Colors[(c >> 2) & 3];
+			dst[6] = dst[7] = _C64Colors[(c >> 0) & 3];
 			dst += _vm->_screenWidth;
 		}
 	}
 }
 
 void Gdi::drawStripC64Object(byte *dst, int stripnr, int width, int height) {
-	int y, i, j;
 	height >>= 3;
 	width >>= 3;
-	for (y = 0; y < height; y++) {
+	for (int y = 0; y < height; y++) {
 		_C64Colors[3] = (_C64ObjectMap[y * width + stripnr + (width * height)] & 7);
-		for (i = 0; i < 8; i++) {
-			for (j = 7; j >= 0; j--) {
-				byte c = _C64CharMap[_C64ObjectMap[y * width + stripnr] * 8 + i] >> (j & 6);
-				dst[7 - j] = _C64Colors[c & 3];
-			}
+		for (int i = 0; i < 8; i++) {
+			byte c = _C64CharMap[_C64ObjectMap[y * width + stripnr] * 8 + i];
+			dst[0] = dst[1] = _C64Colors[(c >> 6) & 3];
+			dst[2] = dst[3] = _C64Colors[(c >> 4) & 3];
+			dst[4] = dst[5] = _C64Colors[(c >> 2) & 3];
+			dst[6] = dst[7] = _C64Colors[(c >> 0) & 3];
 			dst += _vm->_screenWidth;
 		}
 	}
 }
 
 void Gdi::drawStripC64Mask(byte *dst, int stripnr, int height) {
-	int y, i, j;
 	height >>= 3;
-	for (y = 0; y < height; y++) {
-		for (i = 0; i < 8; i++) {
-			for (j = 7; j >= 0; j--) {
-				byte c = _C64MaskChar[_C64MaskMap[y + stripnr * height] * 8 + i] >> (j & 6);
-				dst[7 - j] = c & 3;
-			}
+	for (int y = 0; y < height; y++) {
+		for (int i = 0; i < 8; i++) {
+			byte c = _C64MaskChar[_C64MaskMap[y + stripnr * height] * 8 + i];
+			dst[0] = dst[1] = (c >> 6) & 3;
+			dst[2] = dst[3] = (c >> 4) & 3;
+			dst[4] = dst[5] = (c >> 2) & 3;
+			dst[6] = dst[7] = (c >> 0) & 3;
 			dst += _vm->_screenWidth;
 		}
 	}
