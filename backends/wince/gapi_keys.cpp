@@ -381,5 +381,8 @@ void setActionTypes(unsigned char *actionTypes) {
 		_actions[i].action_type = (ActionType)actionTypes[i];
 }
 
+bool isRightClickSet() {
+	return (_actions[ACTION_RIGHTCLICK].action_key);
+}
 
 #endif

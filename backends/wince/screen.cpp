@@ -795,6 +795,11 @@ void drawWait() {
 	pBlt_part(image_expand(item_loading), 28, 10, 100, 25, item_loading_colors, 0);
 }
 
+void drawWaitSelectKey() {
+	drawWait();
+	drawString("Press key for RIGHT CLICK", 10, 100, 2, 1);
+}
+
 void setGameSelectionPalette() {
 	int i;
 
@@ -3016,12 +3021,14 @@ int drawString(const char *str, int x, int y, int textcolor, int highlight) {
 	current_y = y;
 
 	while(current_pos < strlen(str)) {
+		memset(decomp + (current_y * 320), 0, 320 * 8);
+
 		memset(substring, 0, sizeof(substring));
 		if (strlen(str + current_pos) > MAX_CHARS_PER_LINE) 
 			memcpy(substring, str + current_pos, MAX_CHARS_PER_LINE);
 		else
 			strcpy(substring, str + current_pos);
-		printString(substring, x, current_y, textcolor, highlight, 320);
+		printString(substring, x, current_y, textcolor, highlight, 320);		
 		pBlt_part(decomp + (current_y * 320), 0, current_y, 320, 8, item_startup_colors, 0);
 		current_pos += MAX_CHARS_PER_LINE;
 		current_y += 10;

@@ -433,6 +433,7 @@ bool save_hide_toolbar;
 bool keyboard_override;
 
 bool _get_key_mapping;
+bool _force_get_key_mapping;
 static char _directory[MAX_PATH];
 bool select_game;
 bool need_GAPI;
@@ -458,6 +459,8 @@ extern void palette_update();
 extern void own_soundProc(void *buffer, byte *samples, int len);
 
 extern int chooseGame();
+
+void save_key_mapping();
 
 //#define SHMenuBar_GetMenu(hWndMB,ID_MENU) (HMENU)SendMessage((hWndMB), SHCMBM_GETSUBMENU, (WPARAM)0, (LPARAM)ID_MENU)
 
@@ -871,6 +874,28 @@ void runGame(char *game_name) {
 
 	keypad_init();
 	load_key_mapping();
+
+	/* See if we need to force a mapping */
+
+	if (!smartphone && (is_bass || detector._game.id == GID_SAMNMAX || detector._game.id == GID_CMI) && !isRightClickSet()) {
+		Cls();
+		drawWaitSelectKey();
+		_force_get_key_mapping = true;
+		while (_force_get_key_mapping) {
+			MSG msg;
+
+			if (!PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) 
+				Sleep(100);
+			else {
+					TranslateMessage(&msg);
+					DispatchMessage(&msg);
+			}
+		}
+
+		save_key_mapping();
+		Cls();
+		drawWait();
+	}
 
 	engine->go();
 

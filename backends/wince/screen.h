@@ -59,6 +59,7 @@ int getColor565 (int color);
 void SetScreenMode(int mode);
 int GetScreenMode();
 void drawWait();
+void drawWaitSelectKey();
 void drawVideoDevice();
 
 void setGameSelectionPalette();

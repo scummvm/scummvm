@@ -22,6 +22,7 @@
 #include "wince.h"
 
 extern bool select_game;
+extern bool _force_get_key_mapping;
 extern bool _get_key_mapping;
 extern bool draw_keyboard;
 extern bool hide_toolbar;
@@ -69,12 +70,16 @@ BOOL PPCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OSystem_W
 			GAPI_key = getGAPIKeyMapping((short)wParam);
 			if (GAPI_key) {
 			*/
+				if (_force_get_key_mapping) {
+					getAction(ACTION_RIGHTCLICK)->action_key = GAPIKeysTranslate((unsigned int)(wParam)) & 0xff;					
+				}
+				else
 				if (_get_key_mapping) {
 					wm->_event.kbd.flags = 0xff;
 					wm->_event.kbd.ascii = GAPIKeysTranslate((unsigned int)(wParam));
 					wm->_event.event_code = OSystem::EVENT_KEYDOWN;
 					break;
-				}					
+				}				
 				/*
 				else
 					processAction((short)wParam);
@@ -91,6 +96,9 @@ BOOL PPCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OSystem_W
 		break;
 
 	case WM_KEYUP:
+		if (_force_get_key_mapping)
+			_force_get_key_mapping = false;
+		else
 		if (_get_key_mapping) {
 			_get_key_mapping = false;
 			wm->_event.kbd.flags = 0xff;

@@ -56,6 +56,7 @@ bool processAction (unsigned int);
 void clearActionKey (unsigned char);
 const unsigned int* getActionKeys(void);
 void setActionKeys(unsigned int*);
+bool isRightClickSet(void);
 const char* getActionName(int);
 void setActionTypes(unsigned char *);
 const unsigned char* getActionTypes();
