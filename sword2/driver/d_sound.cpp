@@ -1216,7 +1216,7 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 					// goto label1;
 				}
 			} else {
-label1:
+//label1:
 				len = bufferSizeMusic;
 
 				// Reduce length if it requires reading past the end of the music
