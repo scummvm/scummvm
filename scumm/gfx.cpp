@@ -2631,6 +2631,7 @@ void ScummEngine::setupV1ManiacPalette() {
 	setPalColor(13,  84, 252,  84);
 	setPalColor(14,  84,  84, 252);
 	setPalColor(15,  84,  84,  84);
+	setPalColor(16, 252,  84, 252);
 }
 
 void ScummEngine::setupV1ZakPalette() {
@@ -2650,6 +2651,7 @@ void ScummEngine::setupV1ZakPalette() {
 	setPalColor(13,  84, 252,  84);
 	setPalColor(14,  84,  84, 252);
 	setPalColor(15, 168, 168, 168);
+	setPalColor(16, 252,  84, 252);
 }
 
 void ScummEngine::setPaletteFromPtr(const byte *ptr) {

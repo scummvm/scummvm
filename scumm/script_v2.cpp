@@ -825,7 +825,7 @@ void ScummEngine_v2::o2_verbOps() {
 		vs->verbid = verb;
 		if (_version == 1) {
 			if (_gameId == GID_MANIAC && _demoMode)
-				vs->color = 15;
+				vs->color = 16;
 			else
 				vs->color = 5;
 
@@ -1026,7 +1026,7 @@ void ScummEngine_v2::o2_drawSentence() {
 	_string[2].ypos = virtscr[2].topline;
 	_string[2].xpos = 0;
 	if (_version == 1)
-		_string[2].color = 4;
+		_string[2].color = 16;
 	else 
 		_string[2].color = 13;
 

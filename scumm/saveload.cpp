@@ -178,12 +178,9 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	// ever add options for using different 16-colour palettes.
 
 	if (_version == 1) {
-		if (_gameId == GID_MANIAC) {
+		if (_gameId == GID_MANIAC)
 			setupV1ManiacPalette();
-			if (_demoMode)
-				setPalColor(15, 252,  84, 252);
-
-		} else
+		else
 			setupV1ZakPalette();
 	} else if (_features & GF_16COLOR) {
 		if ((_features & GF_AMIGA) || (_features & GF_ATARI_ST))
