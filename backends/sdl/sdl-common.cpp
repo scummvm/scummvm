@@ -615,7 +615,7 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 
 			// Ctr-Alt-<key> will change the GFX mode
 			if (b == (KBD_CTRL|KBD_ALT)) {
-				const char keys[] = "123456789cd";
+				const char keys[] = "1234567890cd";
 				char *ptr;
 
 				ptr = strchr(keys, ev.key.keysym.sym);
