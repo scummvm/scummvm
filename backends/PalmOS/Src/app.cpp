@@ -274,9 +274,11 @@ Err AppStart(void) {
 	Boolean color;
 	Err error;
 
+#ifndef _DEBUG_ENGINE
 	// delete old databases
  	ModDelete();
- 
+#endif
+
 	// allocate global variables space
 	dataSize = sizeof(GlobalsDataType);
 	gVars = (GlobalsDataType *)MemPtrNew(dataSize);

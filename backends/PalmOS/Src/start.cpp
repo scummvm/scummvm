@@ -28,6 +28,7 @@
 #include "games.h"
 #include "globals.h"
 #include "modules.h"
+#include "skin.h"
 
 #include "forms.h"
 /***********************************************************************
@@ -317,6 +318,7 @@ static void AppLaunchCmdNotify(UInt16 LaunchFlags, SysNotifyParamType * pData)
 					resizing = true;
 					PINGetScreenDimensions();
 					WinScreenGetPitch();
+					SknApplySkin();
 					resizing = false;
 				}
 			}
@@ -343,7 +345,9 @@ static UInt32 ScummVMPalmMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 
 
 		case sysAppLaunchCustomDeleteEngine:
+#ifndef _DEBUG_ENGINE
 			ModDelete();
+#endif
 			break;
 
 		case sysAppLaunchCmdNormalLaunch:	
