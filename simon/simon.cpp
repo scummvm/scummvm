@@ -304,37 +304,6 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 			ConfMan.set("platform", "Windows"); 
 		}
 		ConfMan.flushToDisk();
-	} else {
-#if 1
-		// HACK HACK HACK
-		// This is not how, and where, MD5 computation should be done in the
-		// real world. Rather this is meant as a proof-of-concept hack. 
-		// It's quick, it's dirty, and it'll go again eventually :-)
-		char buf[100];
-		uint8 md5sum[16];
-		File f;
-
-		sprintf(buf, g->detectname);
-		f.open(buf);
-		if (f.isOpen() == false)
-			strcat(buf, ".");
-		
-		if (md5_file(buf, md5sum)) {
-			char md5str[32+1];
-			for (int j = 0; j < 16; j++) {
-				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
-			}
-
-			printf("%s  %s\n", md5str, buf);
-			const MD5Table *elem;
-			elem = (const MD5Table *)bsearch(md5str, md5table, ARRAYSIZE(md5table)-1, sizeof(MD5Table), compareMD5Table);
-			if (elem)
-				printf("Match found in database: target %s, language %s, platform %s\n",
-					elem->target, Common::getLanguageDescription(elem->language), Common::getPlatformDescription(elem->platform));
-			else
-				printf("Unknown MD5! Please report the details (language, platform, etc.) of this game to the ScummVM team\n");
-		}
-#endif
 	}
 
 	VGA_DELAY_BASE = 1;
@@ -3728,6 +3697,7 @@ byte *SimonEngine::read_vga_from_datfile_2(uint id) {
 				error("read_vga_from_datfile_2: read failed");
 			dst = setup_vga_destination (READ_BE_UINT32(buffer + size - 4) + extraBuffer);
 			decrunch_file_amiga (buffer, dst, size);
+			delete [] buffer;
 		} else {
 			dst = setup_vga_destination(size + extraBuffer);
 			if (in.read(dst, size) != size)
