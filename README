@@ -914,9 +914,14 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
         * Open Makefile.mingw, alter SDL paths and choose compiling options.
         * Type make -f Makefile.mingw,  hopefully ScummVM will compile for you.
 
-    Microsoft Visual C++:
+    Microsoft Visual C++ 6.0:
         * Open the workspace, scummwm.dsw
-        * Enter the path to the SDL include files in Tools|Options|Directories
+        * Enter the path to the needed libraries and includes in Tools|Options|Directories
+        * Now it should compile successfully.
+
+    Microsoft Visual C++ 7.0:
+        * Open the solution file scummwm.sln
+        * Enter the path to the needed libraries and includes in Tools|Options|Projects|VC++ Directories
         * Now it should compile successfully.
 
     PocketPC - Windows CE:
