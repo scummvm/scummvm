@@ -973,6 +973,8 @@ void Scumm_v6::o6_getOwner()
 
 void Scumm_v6::o6_startSound()
 {
+	if ((_features & GF_HUMONGOUS) && (_gameId != GID_PUTTDEMO))
+		pop();
 	_sound->addSoundToQueue(pop());
 }
 
