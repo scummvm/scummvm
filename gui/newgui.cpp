@@ -82,7 +82,7 @@ static byte guifont[] = {
 
 // Constructor
 NewGui::NewGui(OSystem *system) : _system(system), _screen(0), _needRedraw(false),
-	_stateIsSaved(false), _currentKeyDown(0), _cursorAnimateCounter(0), _cursorAnimateTimer(0)
+	_stateIsSaved(false), _cursorAnimateCounter(0), _cursorAnimateTimer(0)
 {
 	// Setup some default GUI colors.
 	// TODO - either use nicer values, or maybe make this configurable?
@@ -94,6 +94,9 @@ NewGui::NewGui(OSystem *system) : _system(system), _screen(0), _needRedraw(false
 	
 	// Clear the cursor
 	memset(_cursor, 0xFF, sizeof(_cursor));
+	
+	// Reset key repeat
+	_currentKeyDown.keycode = 0;
 }
 
 void NewGui::runLoop()
@@ -132,22 +135,23 @@ void NewGui::runLoop()
 		while (_system->poll_event(&event)) {
 			switch(event.event_code) {
 				case OSystem::EVENT_KEYDOWN:
-					activeDialog->handleKeyDown((byte)event.kbd.ascii, event.kbd.flags);
+					activeDialog->handleKeyDown(event.kbd.ascii, event.kbd.keycode, event.kbd.flags);
 
 #ifndef _WIN32_WCE
 					// init continuous event stream
 					// not done on WinCE because keyboard is emulated and
 					// keyup is not generated
-					_currentKeyDown = event.kbd.ascii;
-					_currentKeyDownFlags = event.kbd.flags;
+					_currentKeyDown.ascii = event.kbd.ascii;
+					_currentKeyDown.keycode = event.kbd.keycode;
+					_currentKeyDown.flags = event.kbd.flags;
 					_keyRepeatTime = time + kKeyRepeatInitialDelay;
 #endif
 					break;
 				case OSystem::EVENT_KEYUP:
-					activeDialog->handleKeyUp((byte)event.kbd.ascii, event.kbd.flags);
-					if (event.kbd.ascii == _currentKeyDown)
+					activeDialog->handleKeyUp(event.kbd.ascii, event.kbd.keycode, event.kbd.flags);
+					if (event.kbd.keycode == _currentKeyDown.keycode)
 						// only stop firing events if it's the current key
-						_currentKeyDown = 0;
+						_currentKeyDown.keycode = 0;
 					break;
 				case OSystem::EVENT_MOUSEMOVE:
 					_system->set_mouse_pos(event.mouse.x, event.mouse.y);
@@ -183,12 +187,12 @@ void NewGui::runLoop()
 		}
 
 		// check if event should be sent again (keydown)
-		if (_currentKeyDown != 0)
+		if (_currentKeyDown.keycode != 0)
 		{
 			if (_keyRepeatTime < time)
 			{
 				// fire event
-				activeDialog->handleKeyDown(_currentKeyDown, _currentKeyDownFlags);
+				activeDialog->handleKeyDown(_currentKeyDown.ascii, _currentKeyDown.keycode, _currentKeyDown.flags);
 				_keyRepeatTime = time + kKeyRepeatSustainDelay;
 			}
 		}
@@ -216,7 +220,7 @@ void NewGui::saveState()
 //	_screenPitch = _system->get_width();
 	_system->grab_overlay(_screen, _screenPitch);
 
-	_currentKeyDown = 0;
+	_currentKeyDown.keycode = 0;
 	_lastClick.x = _lastClick.y = 0;
 	_lastClick.time = 0;
 	_lastClick.count = 0;

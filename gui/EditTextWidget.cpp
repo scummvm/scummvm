@@ -29,8 +29,6 @@ EditTextWidget::EditTextWidget(Dialog *boss, int x, int y, int w, int h, const S
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE;
 	_type = kEditTextWidget;
 
-	_currentKeyDown = 0;
-
 	_caretVisible = false;
 	_caretTime = 0;
 }
@@ -54,7 +52,7 @@ void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount)
 	// a mouse click should place the caret.
 }
 
-bool EditTextWidget::handleKeyDown(char key, int modifiers)
+bool EditTextWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 {
 	bool handled = true;
 	bool dirty = false;
@@ -63,7 +61,7 @@ bool EditTextWidget::handleKeyDown(char key, int modifiers)
 	if (_caretVisible)
 		drawCaret(true);
 
-	switch (key) {
+	switch (keycode) {
 		case '\n':	// enter/return
 		case '\r':
 			_boss->releaseFocus();
@@ -87,8 +85,8 @@ bool EditTextWidget::handleKeyDown(char key, int modifiers)
 		case 23:	// end
 			break;
 		default:
-			if (isalnum(key) || key == ' ' || key == '-' || key == '_') {
-				_label += key;
+			if (isprint((char)ascii)) {
+				_label += (char)ascii;
 				dirty = true;
 			} else {
 				handled = false;
@@ -97,24 +95,8 @@ bool EditTextWidget::handleKeyDown(char key, int modifiers)
 
 	if (dirty)
 		draw();
-
-#ifndef _WIN32_WCE
-
-	// not done on WinCE because keyboard is emulated and
-	// keyup is not generated
-
-	_currentKeyDown = key;
-
-#endif
 	
 	return handled;
-}
-
-bool EditTextWidget::handleKeyUp(char key, int modifiers)
-{
-	if (key == _currentKeyDown)
-		_currentKeyDown = 0;
-	return true;
 }
 
 void EditTextWidget::drawWidget(bool hilite)

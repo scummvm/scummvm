@@ -84,7 +84,11 @@ protected:
 	bool		_stateIsSaved;
 	
 	// for continuous events (keyDown)
-	int			_currentKeyDown, _currentKeyDownFlags;
+	struct {
+		uint16 ascii;
+		byte flags;
+		int keycode;
+	} _currentKeyDown;
 	uint32		_keyRepeatTime;
 	
 	// position and time of last mouse click (used to detect double clicks)

@@ -118,12 +118,12 @@ public:
 
 	virtual void handleMouseDown(int x, int y, int button, int clickCount)
 		{ close(); }
-	virtual void handleKeyDown(char key, int modifiers)
+	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers)
 		{
-			if (key == ' ')  // Close pause dialog if space key is pressed
+			if (ascii == ' ')  // Close pause dialog if space key is pressed
 				close();
 			else
-				ScummDialog::handleKeyDown(key, modifiers);
+				ScummDialog::handleKeyDown(ascii, keycode, modifiers);
 		}
 protected:
 	void setInfoText (const String& message);
@@ -141,7 +141,7 @@ public:
 	KeysDialog(NewGui *gui, Scumm *scumm);
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-	virtual void handleKeyDown(char key, int modifiers);
+	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
 
 protected:
 

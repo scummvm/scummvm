@@ -74,8 +74,8 @@ public:
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
 	virtual void handleMouseUp(int x, int y, int button, int clickCount);
 	virtual void handleMouseWheel(int x, int y, int direction);
-	virtual bool handleKeyDown(char key, int modifiers);
-	virtual bool handleKeyUp(char key, int modifiers);
+	virtual bool handleKeyDown(uint16 ascii, int keycode, int modifiers);
+	virtual bool handleKeyUp(uint16 ascii, int keycode, int modifiers);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 	virtual bool wantsFocus() { return true; };

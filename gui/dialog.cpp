@@ -188,17 +188,17 @@ void Dialog::handleMouseWheel(int x, int y, int direction)
 		w->handleMouseWheel(x, y, direction);
 }
 
-void Dialog::handleKeyDown(char key, int modifiers)
+void Dialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 {
 	if (_focusedWidget) {
-		if (_focusedWidget->handleKeyDown(key, modifiers))
+		if (_focusedWidget->handleKeyDown(ascii, keycode, modifiers))
 			return;
 	} else {
 		// Hotkey handling
 		Widget *w = _firstWidget;
-		key = toupper(key);
+		ascii = toupper(ascii);
 		while (w) {
-			if (w->_type == kButtonWidget && key == toupper(((ButtonWidget *)w)->_hotkey)) {
+			if (w->_type == kButtonWidget && ascii == toupper(((ButtonWidget *)w)->_hotkey)) {
 				// We first send a mouseDown then a mouseUp.
 				// FIXME: insert a brief delay between both.
 				w->handleMouseDown(0, 0, 1, 1);
@@ -210,17 +210,17 @@ void Dialog::handleKeyDown(char key, int modifiers)
 	}
 
 	// ESC closes all dialogs by default
-	if (key == 27)
+	if (keycode == 27)
 		close();
 	
 	// TODO: tab/shift-tab should focus the next/previous focusable widget
 }
 
-void Dialog::handleKeyUp(char key, int modifiers)
+void Dialog::handleKeyUp(uint16 ascii, int keycode, int modifiers)
 {
 	// Focused widget recieves keyup events
 	if (_focusedWidget)
-		_focusedWidget->handleKeyUp(key, modifiers);
+		_focusedWidget->handleKeyUp(ascii, keycode, modifiers);
 }
 
 void Dialog::handleMouseMoved(int x, int y, int button)

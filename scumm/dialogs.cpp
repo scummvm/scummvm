@@ -752,13 +752,13 @@ void KeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	}
 }
 
-void KeysDialog::handleKeyDown(char key, int modifiers) {
+void KeysDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	if (modifiers == 0xff  && _get_key_mapping) {
 		// GAPI key was selected
 		char selection[100];
 
-		clearActionKey(key & 0xff);
-		getAction(_actionSelected)->action_key = (key & 0xff);
+		clearActionKey(ascii & 0xff);
+		getAction(_actionSelected)->action_key = (ascii & 0xff);
 		sprintf(selection, "Associated key : %s", getGAPIKeyName((unsigned int)getAction(_actionSelected)->action_key));				
 		_actionTitle->setLabel(queryCustomString(25));
 		_keyMapping->setLabel(selection);

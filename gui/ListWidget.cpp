@@ -136,7 +136,7 @@ void ListWidget::handleMouseWheel(int x, int y, int direction)
 	_scrollBar->handleMouseWheel(x, y, direction);
 }
 
-bool ListWidget::handleKeyDown(char key, int modifiers)
+bool ListWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 {
 	bool handled = true;
 	bool dirty = false;
@@ -147,7 +147,7 @@ bool ListWidget::handleKeyDown(char key, int modifiers)
 		if (_caretVisible)
 			drawCaret(true);
 
-		switch (key) {
+		switch (keycode) {
 			case '\n':	// enter/return
 			case '\r':
 				// enter, confirm edit and exit editmode
@@ -166,8 +166,8 @@ bool ListWidget::handleKeyDown(char key, int modifiers)
 				dirty = true;
 				break;
 			default:
-				if (isalnum(key) || key == ' ' || key == '-' || key == '_') {
-					_list[_selectedItem] += key;
+				if (isprint((char)ascii)) {
+					_list[_selectedItem] += (char)ascii;
 					dirty = true;
 				} else {
 					handled = false;
@@ -177,7 +177,7 @@ bool ListWidget::handleKeyDown(char key, int modifiers)
 	} else {
 		// not editmode
 
-		switch (key) {
+		switch (keycode) {
 		case '\n':	// enter
 		case '\r':
 			if (_selectedItem >= 0) {
@@ -234,16 +234,16 @@ bool ListWidget::handleKeyDown(char key, int modifiers)
 	// not done on WinCE because keyboard is emulated and
 	// keyup is not generated
 
-	_currentKeyDown = key;
+	_currentKeyDown = keycode;
 
 #endif
 	
 	return handled;
 }
 
-bool ListWidget::handleKeyUp(char key, int modifiers)
+bool ListWidget::handleKeyUp(uint16 ascii, int keycode, int modifiers)
 {
-	if (key == _currentKeyDown)
+	if (keycode == _currentKeyDown)
 		_currentKeyDown = 0;
 	return true;
 }

@@ -30,7 +30,6 @@ class EditTextWidget : public StaticTextWidget {
 	typedef ScummVM::StringList StringList;
 	typedef ScummVM::String String;
 protected:
-	int				_currentKeyDown;
 	String			_backupString;
 	bool			_caretVisible;
 	uint32			_caretTime;
@@ -39,9 +38,7 @@ public:
 
 	virtual void handleTickle();
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
-	virtual bool handleKeyDown(char key, int modifiers);
-	virtual bool handleKeyUp(char key, int modifiers);
-	//virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	virtual bool handleKeyDown(uint16 ascii, int keycode, int modifiers);
 
 	virtual bool wantsFocus() { return true; };
 

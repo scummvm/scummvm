@@ -110,8 +110,8 @@ public:
 	virtual void handleMouseLeft(int button) {}
 	virtual void handleMouseMoved(int x, int y, int button) {}
 	virtual void handleMouseWheel(int x, int y, int direction) {}
-	virtual bool handleKeyDown(char key, int modifiers) { return false; }	// Return true if the event was handled
-	virtual bool handleKeyUp(char key, int modifiers) { return false; }	// Return true if the event was handled
+	virtual bool handleKeyDown(uint16 ascii, int keycode, int modifiers) { return false; }	// Return true if the event was handled
+	virtual bool handleKeyUp(uint16 ascii, int keycode, int modifiers) { return false; }	// Return true if the event was handled
 	virtual void handleTickle() {}
 	void draw();
 	void receivedFocus() { _hasFocus = true; receivedFocusWidget(); }
