@@ -928,7 +928,7 @@ void Scumm::initRoomSubBlocks() {
 	//
 	if (_features & GF_AFTER_V2)
 		_EXCD_offs = READ_LE_UINT16(roomptr + 0x18);
-	else if (_features & GF_AFTER_V3)
+	else if (_features & GF_OLD_BUNDLE)
 		_EXCD_offs = READ_LE_UINT16(roomptr + 0x19);
 	else {
 		ptr = findResourceData(MKID('EXCD'), roomResPtr);
@@ -943,7 +943,7 @@ void Scumm::initRoomSubBlocks() {
 	//
 	if (_features & GF_AFTER_V2)
 		_ENCD_offs = READ_LE_UINT16(roomptr + 0x1C);
-	else if (_features & GF_AFTER_V3)
+	else if (_features & GF_OLD_BUNDLE)
 		_ENCD_offs = READ_LE_UINT16(roomptr + 0x1B);
 	else {
 		ptr = findResourceData(MKID('ENCD'), roomResPtr);
@@ -959,7 +959,7 @@ void Scumm::initRoomSubBlocks() {
 	if (_features & GF_SMALL_HEADER) {
 		if (_features & GF_AFTER_V2)
 			ptr = roomptr + *(roomptr + 0x15);
-		else if (_features & GF_AFTER_V3)
+		else if (_features & GF_OLD_BUNDLE)
 			ptr = roomptr + READ_LE_UINT16(roomptr + 0x15);
 		else
 			ptr = findResourceData(MKID('BOXD'), roomptr);
@@ -976,7 +976,7 @@ void Scumm::initRoomSubBlocks() {
 			ptr += size;
 			if (_features & GF_AFTER_V2)
 				size = (READ_LE_UINT16(roomptr + 0x0A) - *(roomptr + 0x15)) - size;
-			else if (_features & GF_AFTER_V3)
+			else if (_features & GF_OLD_BUNDLE)
 				// FIXME. This is an evil HACK!!!
 				size = (READ_LE_UINT16(roomptr + 0x0A) - READ_LE_UINT16(roomptr + 0x15)) - size;
 			else
