@@ -37,7 +37,7 @@ This code is not finished, so please don't complain :-)
 */
 
 
-#define PROMPT	"$ "
+#define PROMPT	") "
 
 /* TODO:
  * - it is very inefficient to redraw the full thingy when just one char is added/removed.

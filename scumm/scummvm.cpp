@@ -46,6 +46,7 @@ extern void drawError(char*);
 
 // Use g_scumm from error() ONLY
 Scumm *g_scumm = 0;
+ScummDebugger g_debugger;
 
 extern NewGui *g_gui;
 
@@ -1003,9 +1004,7 @@ void Scumm::saveloadDialog()
 
 void Scumm::debuggerDialog()
 {
-	if (!_debuggerDialog)
-		_debuggerDialog = new ConsoleDialog(_newgui);
-	runDialog(_debuggerDialog);
+	g_debugger.attach(this);
 }
 
 void Scumm::optionsDialog()
@@ -1373,8 +1372,6 @@ void NORETURN CDECL error(const char *s, ...)
 	
 	exit(1);
 }
-
-ScummDebugger g_debugger;
 
 void Scumm::waitForTimer(int msec_delay) {
 	OSystem::Event event;

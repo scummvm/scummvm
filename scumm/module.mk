@@ -6,8 +6,7 @@ SCUMM_OBJS = \
 	scumm/boxes.o \
 	scumm/bundle.o \
 	scumm/costume.o \
-	scumm/debug.o \
-	scumm/debugrl.o \
+	scumm/debugger.o \
 	scumm/dialogs.o \
 	scumm/gfx.o \
 	scumm/imuse.o \
