@@ -320,6 +320,9 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 	if (!strcmp(argv[2], "ignoreboxes")) {
 			a->ignoreBoxes = atoi(argv[3]);
 			Debug_Printf("Actor[%d].ignoreBoxes = %d\n", actnum, a->ignoreBoxes);
+	} else if (!strcmp(argv[2], "costume")) {
+			a->setActorCostume( atoi(argv[3]) );
+			Debug_Printf("Actor[%d].costume = %d\n", actnum, a->costume);
 	} else {
 			Debug_Printf("Unknown actor command '%s'\n", argv[2]);
 	}
