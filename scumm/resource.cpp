@@ -957,8 +957,6 @@ static char OLD256_MIDI_HACK[] =
 int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 	uint32 pos, total_size, size, dw, tag;
 	uint32 best_size = 0, best_offs = 0;
-	byte *ptr, *track, *instr;
-	uint16 ticks, skip;
 
 	debug(4, "readSoundResourceSmallHeader(%s,%d)", resTypeFromId(type), idx);
 
@@ -975,7 +973,7 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 	while (pos < total_size) {
 		size = _fileHandle.readUint32LE();
 		tag = _fileHandle.readUint16LE();
-  	debug(4, "  tag='%c%c', size=%d",
+		debug(4, "  tag='%c%c', size=%d",
 					(char) (tag & 0xff),
 					(char) ((tag >> 8) & 0xff), size);
 		pos += size;
@@ -1009,33 +1007,43 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 	//        - check the LE/BE handling for platforms other than PC
 
 	if (best_offs != 0) {
+		byte *ptr, *track, *instr;
+		uint16 ticks, skip;
+		byte music_type, num_instr;
+
 		_fileHandle.seek(best_offs - 6, SEEK_SET);
 
 		ptr = createResource(type, idx, best_size);
 		_fileHandle.read(ptr, best_size);
 
-		ticks = READ_BE_UINT16_UNALIGNED(ptr + 9);
+		music_type = *(ptr + 8);	// 0x80: is music; otherwise not.
+		
+		if (music_type != 0x80) {
+			// It's an SFX; we don't know how to handle those yet
+			warning("Sound %d not played, format not yet supported", idx);
+			nukeResource(type, idx);
+			res.roomoffs[type][idx] = 0xFFFFFFFF;
+			return 0;
+		}
+		
+		// The "speed" of the song
+		ticks = *(ptr + 9);
+
+		num_instr = *(ptr + 16);	// Normally 8
+		if (num_instr != 8)
+			warning("Sound %d has %d instruments, expected 8", idx, num_instr);
+
 		size = best_size;
-		if (size < 0x98) {
-				// FIXME: OLD256 music file w/o instruments
-				// perhaps we should use then the other "WA" resource in the "SO" resource
-				// and play it raw
-			skip = 0x0a;    // let's give it a try
-		} else {
-			skip = 0x98;
-		}
+		skip = 0x98;
 
-		/* copy the instrument data in another memory area */
-		if (size >= 0x19 + 8*16) {
-			instr = (byte *)calloc(8 * 16, 1);
-			if (instr)
-				memcpy(instr, ptr + 0x19, 8*16);
-		} else {
-			instr = 0;
-		}
+		// copy the instrument data in another memory area
+		instr = (byte *)calloc(8 * 16, 1);
+		assert(instr);
+		memcpy(instr, ptr + 0x19, 8*16);
 
-		ptr  += skip;                     // size + instruments
-		size -= skip;		          // drop instruments for now
+		// skip over the rest of the header and copy the MIDI data into a buffer
+		ptr  += skip;
+		size -= skip;
 		CHECK_HEAP 
 		track = (byte *)calloc(size, 1);
 		if (track == NULL) {
@@ -1043,9 +1051,11 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 		}
 		memcpy(track, ptr, size);         // saving MIDI track data
 
+		// Now nuke the old resource, and replace it with a new one
 		nukeResource(type, idx);
-
 		total_size = 8 + 16 + 14 + 8 + 7 + sizeof(OLD256_MIDI_HACK) - 1 + size;
+
+		// Write the ADL header (see also above for more information)
 		ptr = createResource(type, idx, total_size);
 		memcpy(ptr, "ADL ", 4); ptr += 4;
 		dw = READ_BE_UINT32(&total_size);
@@ -1053,88 +1063,92 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 		memcpy(ptr, "MDhd", 4); ptr += 4;
 		ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 8;
 		ptr += 4;
-		dw = 0;
-		memcpy(ptr, &dw, 4); ptr += 4;
-		memcpy(ptr, &dw, 4); ptr += 4;
+		memset(ptr, 0, 8), ptr += 8;
 		memcpy(ptr, "MThd", 4); ptr += 4;
 		ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 6;
 		ptr += 4;
 		ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 1; // MIDI format 0 with 1 track
 		ptr += 4;
-		memcpy(ptr, &ticks, 2); ptr += 2;  // FIXME: care of BE/LE needed ?
+
+		// FIXME: should we convert ticks here? I.e. BE vs LE, or maybe another scale is
+		// needed? In fact does anything *read* this value, ever?
+		memcpy(ptr, &ticks, 2); ptr += 2;
+
 		memcpy(ptr, "MTrk", 4); ptr += 4;
 		*ptr++ = ((sizeof(OLD256_MIDI_HACK) - 1 + size + 7) >> 24) & 0xFF;
 		*ptr++ = ((sizeof(OLD256_MIDI_HACK) - 1 + size + 7) >> 16) & 0xFF;
 		*ptr++ = ((sizeof(OLD256_MIDI_HACK) - 1 + size + 7) >>  8) & 0xFF;
 		*ptr++ = ((sizeof(OLD256_MIDI_HACK) - 1 + size + 7)      ) & 0xFF;
-		// speed hacks
-		dw = 1100000 - (ticks * 10);
-		if ((dw > 900000) || (dw < 200000))
-			dw = 500000;  // for sanity
+
+		// Conver the ticks into a MIDI tempo. 
+		dw = (500000 * 256) / ticks;
 		debug(4, "  ticks = %d, speed = %ld", ticks, dw);
+		
+		// Write a tempo change SysEx
 		memcpy(ptr, "\x00\xFF\x51\x03", 4); ptr += 4;
 		*ptr++ = (byte)((dw >> 16) & 0xFF);
 		*ptr++ = (byte)((dw >> 8) & 0xFF);
 		*ptr++ = (byte)(dw & 0xFF);
+
+		// Copy our hardcoded instrument table into it
+		// Then, convert the instrument table as given in this song resource
+		// And write it *over* the hardcoded table.
 		memcpy(ptr, OLD256_MIDI_HACK, sizeof(OLD256_MIDI_HACK) - 1);
 
-		if (instr) {
+		
+		/* now fill in the instruments */
+		for (int i = 0; i < 8; i++) {
 
-			/* now fill in the instruments */
-			for (int i = 0; i < 8; i++) {
+			/* flags_1 */
+			ptr[95 * i + 30 + 0] = (instr[i * 16 + 3] >> 4) & 0xf;
+			ptr[95 * i + 30 + 1] = instr[i * 16 + 3] & 0xf;
 
-				/* flags_1 */
-				ptr[95 * i + 30 + 0] = (instr[i * 16 + 3] >> 4) & 0xf;
-				ptr[95 * i + 30 + 1] = instr[i * 16 + 3] & 0xf;
+			/* oplvl_1 */
+			ptr[95 * i + 30 + 2] = (instr[i * 16 + 4] >> 4) & 0xf;
+			ptr[95 * i + 30 + 3] = instr[i * 16 + 4] & 0xf;
 
-				/* oplvl_1 */
-				ptr[95 * i + 30 + 2] = (instr[i * 16 + 4] >> 4) & 0xf;
-				ptr[95 * i + 30 + 3] = instr[i * 16 + 4] & 0xf;
+			/* atdec_1 */
+			ptr[95 * i + 30 + 4] = ((~instr[i * 16 + 5]) >> 4) & 0xf;
+			ptr[95 * i + 30 + 5] = (~instr[i * 16 + 5]) & 0xf;
 
-				/* atdec_1 */
-				ptr[95 * i + 30 + 4] = ((~instr[i * 16 + 5]) >> 4) & 0xf;
-				ptr[95 * i + 30 + 5] = (~instr[i * 16 + 5]) & 0xf;
+			/* sustrel_1 */
+			ptr[95 * i + 30 + 6] = ((~instr[i * 16 + 6]) >> 4) & 0xf;
+			ptr[95 * i + 30 + 7] = (~instr[i * 16 + 6]) & 0xf;
 
-				/* sustrel_1 */
-				ptr[95 * i + 30 + 6] = ((~instr[i * 16 + 6]) >> 4) & 0xf;
-				ptr[95 * i + 30 + 7] = (~instr[i * 16 + 6]) & 0xf;
+			/* waveform_1 */
+			ptr[95 * i + 30 + 8] = (instr[i * 16 + 7] >> 4) & 0xf;
+			ptr[95 * i + 30 + 9] = instr[i * 16 + 7] & 0xf;
 
-				/* waveform_1 */
-				ptr[95 * i + 30 + 8] = (instr[i * 16 + 7] >> 4) & 0xf;
-				ptr[95 * i + 30 + 9] = instr[i * 16 + 7] & 0xf;
+			/* flags_2 */
+			ptr[95 * i + 30 + 10] = (instr[i * 16 + 8] >> 4) & 0xf;
+			ptr[95 * i + 30 + 11] = instr[i * 16 + 8] & 0xf;
 
-				/* flags_2 */
-				ptr[95 * i + 30 + 10] = (instr[i * 16 + 8] >> 4) & 0xf;
-				ptr[95 * i + 30 + 11] = instr[i * 16 + 8] & 0xf;
+			/* oplvl_2 */
+			ptr[95 * i + 30 + 12] = 3;
+			ptr[95 * i + 30 + 13] = 0xF;
 
-				/* oplvl_2 */
-				ptr[95 * i + 30 + 12] = 3;
-				ptr[95 * i + 30 + 13] = 0xF;
+			/* atdec_2 */
+			ptr[95 * i + 30 + 14] = ((~instr[i * 16 + 10]) >> 4) & 0xf;
+			ptr[95 * i + 30 + 15] = (~instr[i * 16 + 10]) & 0xf;
 
-				/* atdec_2 */
-				ptr[95 * i + 30 + 14] = ((~instr[i * 16 + 10]) >> 4) & 0xf;
-				ptr[95 * i + 30 + 15] = (~instr[i * 16 + 10]) & 0xf;
+			/* sustrel_2 */
+			ptr[95 * i + 30 + 16] = ((~instr[i * 16 + 11]) >> 4) & 0xf;
+			ptr[95 * i + 30 + 17] = (~instr[i * 16 + 11]) & 0xf;
 
-				/* sustrel_2 */
-				ptr[95 * i + 30 + 16] = ((~instr[i * 16 + 11]) >> 4) & 0xf;
-				ptr[95 * i + 30 + 17] = (~instr[i * 16 + 11]) & 0xf;
+			/* waveform_2 */
+			ptr[95 * i + 30 + 18] = (instr[i * 16 + 12] >> 4) & 0xf;
+			ptr[95 * i + 30 + 19] = instr[i * 16 + 12] & 0xf;
 
-				/* waveform_2 */
-				ptr[95 * i + 30 + 18] = (instr[i * 16 + 12] >> 4) & 0xf;
-				ptr[95 * i + 30 + 19] = instr[i * 16 + 12] & 0xf;
-
-				/* feedback */
-				ptr[95 * i + 30 + 20] = (instr[i * 16 + 2] >> 4) & 0xf;
-				ptr[95 * i + 30 + 21] = instr[i * 16 + 2] & 0xf;
-			}
-
-			free(instr);
+			/* feedback */
+			ptr[95 * i + 30 + 20] = (instr[i * 16 + 2] >> 4) & 0xf;
+			ptr[95 * i + 30 + 21] = instr[i * 16 + 2] & 0xf;
 		}
+
+		free(instr);
 
 		ptr += sizeof(OLD256_MIDI_HACK) - 1;
 		memcpy(ptr, track, size);
 		free(track);
-		//hexdump(ptr = getResourceAddress(type, idx), 32);
 		return 1;
 	}
 	res.roomoffs[type][idx] = 0xFFFFFFFF;
