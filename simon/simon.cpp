@@ -4847,9 +4847,8 @@ void SimonEngine::delay(uint amount) {
 					_saveLoadFlag = (event.kbd.flags == OSystem::KBD_ALT) ? 1 : 2;
 
 					// We should only allow a load or save when it was possible in original
-					// This stops load/save during cutscenes
-					// But can still load/save during converstation
-					if (!_lock_counter)
+					// This stops load/save during copy protection, conversations and cut scenes
+					if (!_lock_counter && !_show_preposition)
 						quick_load_or_save();
 				} else if (event.kbd.flags == OSystem::KBD_CTRL) {
 					if (event.kbd.keycode == 'a') {
