@@ -107,13 +107,12 @@ void SkyText::fnTextModule(uint32 textInfoId, uint32 textNo) {
 }
 
 void SkyText::getText(uint32 textNr) { //load text #"textNr" into textBuffer
-	uint32 sectionNo = (textNr & 0x0F000) >> 10;
+	uint32 sectionNo = (textNr & 0x0F000) >> 12;
 	
 	if (SkyState::_itemList[FIRST_TEXT_SEC + sectionNo] == (void **)NULL) { //check if already loaded
 		debug(5, "Loading Text item(s) for Section %d", (sectionNo>>2));
 		
-		uint32 fileNo = (sectionNo >> 2); 
-		fileNo += ((SkyState::_systemVars.language * NO_OF_TEXT_SECTIONS) + 60600);
+		uint32 fileNo = sectionNo + ((SkyState::_systemVars.language * NO_OF_TEXT_SECTIONS) + 60600);
 		SkyState::_itemList[FIRST_TEXT_SEC + sectionNo] = (void **)_skyDisk->loadFile((uint16)fileNo, NULL);
 	}
 	_textItemPtr = (uint8 *)SkyState::_itemList[FIRST_TEXT_SEC + sectionNo];
