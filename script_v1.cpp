@@ -2792,7 +2792,7 @@ void Scumm::o5_pickupObjectOld()
 		return;									/* object twice */
 
 	// warning("adding %d from %d to inventoryOld", obj, _currentRoom);
-	addObjectToInventory(obj, _currentRoom);	
+	addObjectToInventory(obj, _roomResource);	
 	removeObjectFromRoom(obj);
 	putOwner(obj, _vars[VAR_EGO]);
 	putClass(obj, 32, 1);
