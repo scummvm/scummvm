@@ -420,11 +420,11 @@ void Scumm::loadRoomObjects()
 		error("More than %d objects in room %d", _numLocalObjects, _roomResource);
 
 	od = &_objs[1];
-
 	if (_features & GF_AFTER_V8)
 		searchptr = rootptr = getResourceAddress(rtRoomScripts, _roomResource);
 	else
 		searchptr = rootptr = room;
+	assert(searchptr);
 
 	for (i = 0; i < _numObjectsInRoom; i++, od++) {
 		ptr = findResource(MKID('OBCD'), searchptr);
@@ -445,6 +445,9 @@ void Scumm::loadRoomObjects()
 		do {
 			char buf[32];
 			sprintf(buf, "roomobj-%d-", _roomResource);
+			if (_features & GF_AFTER_V8)
+				// TODO - maybe V8 is not the only that needs this?
+				ptr = findResource(MKID('VERB'), ptr, 0);
 			dumpResource(buf, od->obj_nr, ptr);
 		} while (0);
 #endif
@@ -537,19 +540,19 @@ void Scumm::loadRoomObjectsSmall()
 		searchptr = NULL;
 	}
 
-	od = &_objs[1];
-	for (i = 1; i <= _numObjectsInRoom; i++, od++) {
-		setupRoomObject(od, room);
+	for (i = 1; i <= _numObjectsInRoom; i++) {
+		setupRoomObject(&_objs[i], room);
 	}
 
 	CHECK_HEAP
 }
 
-void Scumm::setupRoomObject(ObjectData *od, byte *room)
+void Scumm::setupRoomObject(ObjectData *od, byte *room, byte *searchptr)
 {
 	CodeHeader *cdhd = NULL;
 	ImageHeader *imhd = NULL;
-	byte *searchptr = NULL;
+
+	assert(room);
 
 	if (_features & GF_SMALL_HEADER) {
 
@@ -579,11 +582,13 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room)
 		return;
 	}
 
-	if (_features & GF_AFTER_V8)
-		searchptr = getResourceAddress(rtRoomScripts, _roomResource);
-	else
-		searchptr = room;
-
+	if (searchptr == NULL) {
+		if (_features & GF_AFTER_V8)
+			searchptr = getResourceAddress(rtRoomScripts, _roomResource);
+		else
+			searchptr = room;
+	}
+		
 	cdhd = (CodeHeader *)findResourceData(MKID('CDHD'), searchptr + od->OBCDoffset);
 	if (cdhd == NULL)
 		error("Room %d missing CDHD blocks(s)", _roomResource);
@@ -894,6 +899,7 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 	}
 	if (findWhat & foCodeHeader) {
 		searchptr = roomptr;
+		assert(searchptr);
 		for (i = 0;;) {
 			if (_features & GF_SMALL_HEADER)
 				obcdptr = findResourceSmall(MKID('OBCD'), searchptr);
@@ -926,6 +932,7 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 	roomptr = fo->roomptr;
 	if (findWhat & foImageHeader) {
 		searchptr = roomptr;
+		assert(searchptr);
 		for (i = 0;;) {
 			if (_features & GF_SMALL_HEADER)
 				obimptr = findResourceSmall(MKID('OBIM'), searchptr);
@@ -1286,10 +1293,10 @@ void Scumm::drawBlastObject(BlastObject *eo)
 	} else {
 		idx = getObjectIndex(eo->number);
 		assert(idx != -1);
-		ptr = getResourceAddress(1, _roomResource) + _objs[idx].OBIMoffset;
+		ptr = getResourceAddress(rtRoom, _roomResource) + _objs[idx].OBIMoffset;
 	}
 	if (!ptr)
-		error("BlastObject object %d image not found", eo->number);
+		error("BlastObject object %d (%d) image not found", eo->number, idx);
 
 	if (_features & GF_AFTER_V8) {
 		// The OBIM contains an IMAG, which in turn contains a WRAP, which contains
@@ -1594,39 +1601,44 @@ void Scumm::loadFlObject(uint object, uint room)
 	byte *flob, *roomptr;
 	uint32 obcd_size, obim_size, flob_size;
 
-	/* Don't load an already loaded object */
+	// Don't load an already loaded object
 	if (whereIsObject(object) != WIO_NOT_FOUND)
 		return;
 
-	/* Locate the object in the room resource */
+	// Locate the object in the room resource
 	findObjectInRoom(&foir, foImageHeader | foCodeHeader, object, room);
 
-	/* Add an entry for the new floating object in the local object table */
+	// Add an entry for the new floating object in the local object table
 	if (++_numObjectsInRoom > _numLocalObjects)
 		error("loadFlObject: Local Object Table overflow");
 	od = &_objs[_numObjectsInRoom];
 
-	/* Setup sizes */
+	// Setup sizes
 	obcd_size = READ_BE_UINT32_UNALIGNED(foir.obcd + 4);
 	od->OBCDoffset = 8;
 	od->OBIMoffset = obcd_size + 8;
 	obim_size = READ_BE_UINT32_UNALIGNED(foir.obim + 4);
 	flob_size = obcd_size + obim_size + 8;
 
-	/* Allocate slot & memory for floating object */
+	// Get room pointer
+	roomptr = getResourceAddress(rtRoom, room);
+	assert(roomptr);
+
+	// Allocate slot & memory for floating object
 	slot = findFlObjectSlot();
 	createResource(rtFlObject, slot, flob_size);
-
-	/* Copy object code + object image to floating object */
-	roomptr = getResourceAddress(rtRoom, room);
 	flob = getResourceAddress(rtFlObject, slot);
+	assert(flob);
+
+	// Copy object code + object image to floating object
 	((uint32 *)flob)[0] = MKID('FLOB');
 	((uint32 *)flob)[1] = TO_BE_32(flob_size);
+
 	memcpy(flob + 8, roomptr - foir.roomptr + foir.obcd, obcd_size);
 	memcpy(flob + 8 + obcd_size, roomptr - foir.roomptr + foir.obim, obim_size);
 
-	/* Setup local object flags */
-	setupRoomObject(od, flob);
+	// Setup local object flags
+	setupRoomObject(od, flob, flob);
 
 	od->fl_object_index = slot;
 }

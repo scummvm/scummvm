@@ -199,8 +199,8 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_stopObjectCode),
 		/* 7C */
 		OPCODE(o6_stopScript),
-		OPCODE(o6_jumpToScript),		// FIXME - is this right? "O_CHAIN_SCRIPT"
-		OPCODE(o6_dummy),				// FIXME - O_RETURN ? WTF is this, why don't they use the stack?
+		OPCODE(o6_jumpToScript),
+		OPCODE(o6_dummy),				// O_RETURN boils down to a NOP
 		OPCODE(o6_startObjectEx),
 		/* 80 */
 		OPCODE(o6_stopObjectScript),	// FIXME - is this right?
@@ -907,7 +907,12 @@ void Scumm_v8::o8_resourceRoutines()
 		ensureResourceLoaded(rtCostume, resid);
 		break;
 	case 0x3E:		// SO_HEAP_LOAD_OBJECT Load object to heap
-		// TODO - is 'object' in COMI the same as FlObject in Sam&Max ?!?
+		{
+		// FIXME
+		int room = getObjectRoom(resid);
+		warning("o8_resourceRoutines: SO_HEAP_LOAD_OBJECT %d/%d", resid, room);
+		loadFlObject(resid, room);
+		}
 		break;
 	case 0x3F:		// SO_HEAP_LOAD_ROOM Load room to heap
 		ensureResourceLoaded(rtRoom, resid);
@@ -1300,6 +1305,7 @@ void Scumm_v8::o6_kernelSetFunctions()
 	switch (args[0]) {
 	case 11:	// lockObject
 		warning("o6_kernelSetFunctions: lockObject(%d)", args[1]);
+		lock(rtFlObject, args[1]);	// FIXME - no idea if this is right?
 //		getObjectIndex(args[1]);
 //		if (ObjData.field28 != 0) {
 //			ObjData.field32 = 1;
@@ -1307,6 +1313,7 @@ void Scumm_v8::o6_kernelSetFunctions()
 		break;
 	case 12:	// unlockObject
 		warning("o6_kernelSetFunctions: unlockObject(%d)", args[1]);
+		unlock(rtFlObject, args[1]);	// FIXME - no idea if this is right?
 //		getObjectIndex(args[1]);
 //		if (ObjData.field28 != 0) {
 //			ObjData.field32 = 0;

@@ -556,7 +556,7 @@ public:
 	int findInventory(int owner, int index);
 	int getInventoryCount(int owner);
 
-	void setupRoomObject(ObjectData *od, byte *room);
+	void setupRoomObject(ObjectData *od, byte *room, byte *searchptr = NULL);
 	void removeObjectFromRoom(int obj);
 	void loadFlObject(uint object, uint room);
 	void nukeFlObjects(int min, int max);
