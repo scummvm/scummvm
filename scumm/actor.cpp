@@ -81,12 +81,13 @@ void Actor::initActor(int mode) {
 		talkUnk = 0;
 		if (_vm->_version >= 7)
 			visible = false;
+		skipLimb = false;
 	} else if (mode == 2) {
 		facing = 180;
 		condMask = 1;
+		skipLimb = false;
 	}
 	elevation = 0;
-	skipLimb = false;
 	width = 24;
 	talkColor = 15;
 	talkPosX = 0;

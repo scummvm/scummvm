@@ -216,6 +216,10 @@ public:
 		animProgress = 0;
 	}
 
+	int getAnimProgress() const {
+		return animProgress;
+	}
+
 	int getElevation() const {
 		return elevation;
 	}

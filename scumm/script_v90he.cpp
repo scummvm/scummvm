@@ -258,7 +258,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_getActorWidth),
 		OPCODE(o60_wait),
 		OPCODE(o6_getActorScaleX),
-		OPCODE(o6_getActorAnimCounter1),
+		OPCODE(o90_getActorAnimProgress),
 		/* AC */
 		OPCODE(o80_drawWizPolygon),
 		OPCODE(o6_isAnyOf),
@@ -1036,6 +1036,11 @@ void ScummEngine_v90he::o90_unknown9E() {
 		error("o90_unknown9E: Unknown case %d", subOp);
 	}
 	debug(1,"o90_unknown9E stub (%d)", subOp);
+}
+
+void ScummEngine_v90he::o90_getActorAnimProgress() {
+	Actor *a = derefActor(pop(), "o90_getActorAnimProgress");
+	push(a->getAnimProgress());
 }
 
 } // End of namespace Scumm
