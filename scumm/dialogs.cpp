@@ -318,10 +318,7 @@ SaveLoadDialog::SaveLoadDialog(NewGui *gui, Scumm *scumm)
 
 void SaveLoadDialog::open()
 {
-	_saveMode = false;
-	_saveButton->setState(false);
-	_loadButton->setState(true);
-	fillList();
+	switchToLoadMode();
 
 	ScummDialog::open();
 }
@@ -331,28 +328,24 @@ void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	switch (cmd) {
 	case kSaveCmd:
 		if (!_saveMode) {
-			_saveMode = true;
-			_saveButton->setState(true);
-			_loadButton->setState(false);
-			fillList();
-			draw();
+			switchToSaveMode();
 		}
 		break;
 	case kLoadCmd:
 		if (_saveMode) {
-			_saveMode = false;
-			_saveButton->setState(false);
-			_loadButton->setState(true);
-			fillList();
-			draw();
+			switchToLoadMode();
 		}
 		break;
 	case kListItemDoubleClickedCmd:
-		if (_savegameList->getSelected() >= 0 && !_savegameList->getSelectedString().isEmpty()) {
+		if (_savegameList->getSelected() >= 0) {
 			if (_saveMode) {
-				// Start editing the selected item, for saving
-				_savegameList->startEditMode();
-			} else {
+				if (_savegameList->getSelectedString().isEmpty()) {
+					// Start editing the selected item, for saving
+					_savegameList->startEditMode();
+				} else {
+					save();
+				}
+			} else if (!_savegameList->getSelectedString().isEmpty()) {
 				load();
 			}
 		}
@@ -364,6 +357,11 @@ void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			} else {
 				load();
 			}
+		}
+		break;
+	case kListSelectionChangedCmd:
+		if (_saveMode) {
+			_savegameList->startEditMode();
 		}
 		break;
 	case kPlayCmd:
@@ -413,6 +411,30 @@ void SaveLoadDialog::load()
 	_scumm->_saveLoadCompatible = false;
 	_scumm->_saveLoadFlag = 2;		// 2 for load. Magic number anyone?
 	close();
+}
+
+void SaveLoadDialog::switchToSaveMode()
+{
+	_saveMode = true;
+	_saveButton->setState(true);
+	_loadButton->setState(false);
+	_saveButton->clearFlags(WIDGET_ENABLED);
+	_loadButton->setFlags(WIDGET_ENABLED);
+	_savegameList->setEditable(true);
+	fillList();
+	draw();
+}
+
+void SaveLoadDialog::switchToLoadMode()
+{
+	_saveMode = false;
+	_saveButton->setState(false);
+	_loadButton->setState(true);
+	_saveButton->setFlags(WIDGET_ENABLED);
+	_loadButton->clearFlags(WIDGET_ENABLED);
+	_savegameList->setEditable(false);
+	fillList();
+	draw();
 }
 
 

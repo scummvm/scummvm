@@ -66,6 +66,8 @@ protected:
 	void fillList();
 	void save();
 	void load();
+	void switchToSaveMode();
+	void switchToLoadMode();
 };
 
 
