@@ -300,6 +300,13 @@ case $hosttype in
 		DEFINES="$DEFINES -DUNIX -DMACOSX"
 		LIBS="$LIBS -framework QuickTime -framework AudioUnit"
 		;;
+	MINGW)
+		DEFINES="$DEFINES -DWIN32"
+		LIBS="$LIBS -lmingw32"
+		;;
+	Linux | OpenBSD | FreeBSD | NetBSD | BSD/OS | SunOS | HP-UX)
+		DEFINES="$DEFINES -DUNIX"
+		;;
 esac
 
 #
