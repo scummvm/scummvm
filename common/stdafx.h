@@ -1,61 +1,22 @@
-/*
- * $Id$
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2001  Ludvig Strigeus
+ * Copyright (C) 2001-2003 The ScummVM project
  *
- * $Log$
- * Revision 1.3  2002/11/19 08:05:46  arisme
- * Small Windows CE changes : detect old WinCE as NONSTANDARD_PORT, change __cdecl for these systems, add 2 sampling rates for WinCE due to problems with Smush mixer in 11 kHz
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * Revision 1.2  2002/09/22 11:37:53  kirben
- *
- * Remove mention of Windows GDI build
- *
- * Revision 1.1.1.1  2002/08/21 16:07:23  fingolfin
- * new ScummVM CVS module
- *
- * Revision 1.18  2002/07/08 13:33:10  fingolfin
- * two more small QNX fixes
- *
- * Revision 1.17  2002/06/02 20:28:09  bbrox
- * Small warning fix + double inclusion protection (can always be useful
- * :) ).
- *
- * Revision 1.16  2002/05/05 20:04:25  fingolfin
- * cleaning up the mess drigo left... <sigh>
- *
- * Revision 1.15  2002/05/05 19:06:51  drigo
- * Fixed some things for Macintosh ports
- *
- * Revision 1.14  2002/04/18 21:40:23  tomjoad
- * Reenable MorphOS Midi driver, small updates to CD open code (only when CD audio is requested) and start options
- *
- * Revision 1.13  2002/04/12 21:26:34  strigeus
- * new video engine (expect broken non-sdl builds),
- * simon the sorcerer 1 & 2 support (non SCUMM games)
- *
- * Revision 1.12  2002/03/14 22:45:22  arisme
- * Minor changes to compile WinCE port
- *
- * Revision 1.11  2002/03/09 13:48:53  drigo
- * Support for MacOS classic port
- *
- * Revision 1.10  2002/03/08 17:05:09  mutle
- * Some changes, need to be done to get the Mac Port running. For example Point is now called ScummPoint, as the name Point is already in use by Apple.
- *
- * Revision 1.9  2002/03/06 12:24:56  ender
- * Applied cleanup and scaling patch by Rob.
- *
- * Revision 1.8  2001/11/20 07:13:01  vasyl
- * Added ability for ports to override all includes in stdafx.h. To use this feature
- * port must define symbol NONSTANDARD_PORT. Port must also provide
- * port-specific portdefs.h with all includes, symbol defines and everything else
- * port needs.
- *
- * Revision 1.7  2001/11/11 16:54:45  strigeus
- * implemented some sam&max specific features,
- * fixed some bugs
- *
- * Revision 1.6  2001/11/06 22:59:59  cmatsuoka
- * Re-added changes to allow cygwin and beos cross-compilation.
+ * $Header$
  *
  */
 
