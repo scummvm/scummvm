@@ -2170,7 +2170,21 @@ void Scumm::o5_setObjectName()
 		error("Can't set name of object %d", obj);
 
 	name = getObjOrActorName(obj);
-	size = getResourceDataSize(name);
+
+	if (_features & GF_SMALL_HEADER) {
+		// FIXME this is hack to make MonkeyVGA work. needed at least for the german
+		// version but possibly for others as well. There is no apparent other
+		// way to determine the available space that works in all cases...
+		byte *objptr;
+		byte offset = 0;
+
+		objptr = getOBCDFromObject(obj);
+		offset = READ_LE_UINT16(objptr + 18);
+		size = READ_LE_UINT16(objptr) - offset;
+	} else {
+		size = getResourceDataSize(name);
+	}
+
 	i = 0;
 
 	while ((a = fetchScriptByte()) != 0) {
