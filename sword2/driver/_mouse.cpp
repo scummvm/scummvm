@@ -380,8 +380,12 @@ int32 SetMouseAnim(uint8 *ma, int32 size, int32 mouseFlash) {
 		DrawMouse();
 
 		g_sword2->_system->show_mouse(true);
-	} else
-		g_sword2->_system->show_mouse(false);
+	} else {
+		if (luggageAnim)
+			DrawMouse();
+		else
+			g_sword2->_system->show_mouse(false);
+	}
 	return RD_OK;
 }
 
@@ -403,9 +407,12 @@ int32 SetLuggageAnim(uint8 *ma, int32 size) {
 		DrawMouse();
 
 		g_sword2->_system->show_mouse(true);
-	} else
-		g_sword2->_system->show_mouse(false);
-
+	} else {
+		if (mouseAnim)
+			DrawMouse();
+		else
+			g_sword2->_system->show_mouse(false);
+	}
 	return RD_OK;
 }
 
