@@ -321,6 +321,10 @@ void BaseAnimationState::buildLookup() {
 		return;
 
 	lookup = (OverlayColor *)calloc((BITDEPTH+1) * (BITDEPTH+1) * 256, sizeof(OverlayColor));
+	if (!lookup) {
+		warning("Not enough memory to allocate LUT - cannot play sequence");
+		return;
+	}
 
 	int y, cb, cr;
 	int r, g, b;
@@ -347,6 +351,9 @@ void BaseAnimationState::buildLookup() {
 }
 
 void BaseAnimationState::plotYUV(OverlayColor *lut, int width, int height, byte *const *dat) {
+
+	if (!lut)
+		return;
 
 	OverlayColor *ptr = overlay + (MOVIE_HEIGHT - height) / 2 * MOVIE_WIDTH + (MOVIE_WIDTH - width) / 2;
 
