@@ -25,14 +25,14 @@ namespace GUI {
 	extern const Graphics::NewFont g_consolefont;
 };
 
+DECLARE_SINGLETON(Graphics::FontManager);
+
 namespace Graphics {
 
 const ScummFont g_scummfont;
 extern const NewFont g_sysfont;
 extern const NewFont g_sysfont_big;
 
-
-DECLARE_SINGLETON(FontManager);
 
 FontManager::FontManager() {
 }
