@@ -130,7 +130,7 @@ distclean: clean
 clean:
 	$(RM) $(OBJS) $(EXECUTABLE)
 
-.PHONY: all clean dist distclean
+.PHONY: all clean dist distclean plugins
 
 # Old (dumb) compile & dependcy rules
 #INCS	= scumm/scumm.h common/scummsys.h common/stdafx.h
