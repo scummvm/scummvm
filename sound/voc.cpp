@@ -28,14 +28,14 @@
 
 byte *readVOCFromMemory(byte *ptr, int &size, int &rate, int &loops) {
 	
-	assert(strncmp((char *)ptr, "Creative Voice File\x1A", 20) == 0);
+	assert(memcmp(ptr, "Creative Voice File\x1A", 20) == 0);
 	int32 offset = READ_LE_UINT16(ptr + 20);
 	int16 version = READ_LE_UINT16(ptr + 22);
 	int16 code = READ_LE_UINT16(ptr + 24);
 	assert(version == 0x010A || version == 0x0114);
 	assert(code == ~version + 0x1234);
 	
-	bool quit = 0;
+	bool quit = false;
 	byte *ret_sound = 0;
 	size = 0;
 
@@ -45,7 +45,8 @@ byte *readVOCFromMemory(byte *ptr, int &size, int &rate, int &loops) {
 		code = len & 0xFF;
 		len >>= 8;
 		switch(code) {
-		case 0: quit = 1;
+		case 0:
+			quit = true;
 			break;
 		case 1: {
 			int time_constant = ptr[offset++];
@@ -73,7 +74,7 @@ byte *readVOCFromMemory(byte *ptr, int &size, int &rate, int &loops) {
 			break;
 		default:
 			warning("Invalid code in VOC file : %d", code);
-			quit = 1;
+			quit = true;
 			break;
 		}
 		// FIXME some FT samples (ex. 362) has bad length, 2 bytes too short
@@ -84,8 +85,7 @@ byte *readVOCFromMemory(byte *ptr, int &size, int &rate, int &loops) {
 }
 
 enum {
-	SOUND_HEADER_SIZE = 26,
-	SOUND_HEADER_BIG_SIZE = 26 + 8
+	SOUND_HEADER_SIZE = 26
 };
 
 // FIXME/TODO: loadVOCFile() essentially duplicates all the code from
@@ -99,7 +99,7 @@ byte *loadVOCFile(File *file, int &size, int &rate) {
 		goto invalid;
 
 	if (!memcmp(ident, "VTLK", 4)) {
-		file->seek(SOUND_HEADER_BIG_SIZE - 8, SEEK_CUR);
+		file->seek(SOUND_HEADER_SIZE, SEEK_CUR);
 	} else if (!memcmp(ident, "Creative", 8)) {
 		file->seek(SOUND_HEADER_SIZE - 8, SEEK_CUR);
 	} else {
