@@ -38,7 +38,7 @@
 
 #define	NAME_LEN 34
 
-typedef struct {
+struct _standardHeader {
 	uint8 fileType;			// Byte to define file type (see below)
 	uint8 compType;			// Type of file compression used ie.
 					// on whole file (see below)
@@ -48,7 +48,7 @@ typedef struct {
 					// memory (NB. frames still held
 					// compressed)
 	uint8 name[NAME_LEN];		// Name of object
-} GCC_PACK _standardHeader;
+} GCC_PACK;
 
 //----------------------------------------------------------
 // fileType
@@ -106,7 +106,7 @@ typedef struct {
 //----------------------------------------------------------
 // Animation Header
 
-typedef	struct {
+struct _animHeader {
 	uint8 runTimeComp;	// Type of runtime compression used for the
 				// frame data (see below)
 	uint16 noAnimFrames;	// Number of frames in the anim (ie. no. of
@@ -120,7 +120,7 @@ typedef	struct {
 				// place from the start)
 	uint8 feetEndDir;	// Direction to start in after running anim
 	uint16 blend;
-} GCC_PACK _animHeader;
+} GCC_PACK;
 
 //----------------------------------------------------------
 // runtimeComp - compression used on each frame of the anim
@@ -135,7 +135,7 @@ typedef	struct {
 //----------------------------------------------------------
 // CDT Entry
 
-typedef struct {
+struct _cdtEntry {
 	int16 x;		// sprite x-coord OR offset to add to mega's
 				// feet x-coord to calc sprite y-coord
 	int16 y;		// sprite y-coord OR offset to add to mega's
@@ -144,7 +144,7 @@ typedef struct {
 				// of file header)
 	uint8 frameType;	// 0 = print sprite normally with top-left
 				// corner at (x,y), otherwise see below...
-} GCC_PACK _cdtEntry;
+} GCC_PACK;
 
 // 'frameType' bit values
 #define FRAME_OFFSET	1	// Print at (feetX + x, feetY + y), with
@@ -156,12 +156,12 @@ typedef struct {
 //----------------------------------------------------------
 //Frame Header
 
-typedef	struct {
+struct _frameHeader {
 	uint32 compSize;	// Compressed size of frame - NB. compression
 				// type is now in Anim Header
 	uint16 width;		// Dimensions of frame
 	uint16 height;
-} GCC_PACK _frameHeader;
+} GCC_PACK;
 
 //----------------------------------------------------------
 // (2) SCREEN FILES
@@ -183,7 +183,7 @@ typedef	struct {
 // Goes at the beginning of a screen file after the standard header.
 // Gives offsets from start of table of each of the components
 
-typedef struct {
+struct _multiScreenHeader {
 	uint32 palette;
 	uint32 bg_parallax[2];
 	uint32 screen;
@@ -191,26 +191,26 @@ typedef struct {
 	uint32 layers;
 	uint32 paletteTable;
 	uint32 maskOffset;
-} GCC_PACK _multiScreenHeader;
+} GCC_PACK;
 
 //------------------------------------------------------------
 // Palette Data
 
-typedef struct {
+struct _palEntry {
 	uint8 red;
 	uint8 green;
 	uint8 blue;
 	uint8 alpha;
-} GCC_PACK _palEntry;
+} GCC_PACK;
 
 //------------------------------------------------------------
 // Screen Header
 
-typedef struct {
+struct _screenHeader {
 	uint16 width;		// dimensions of the background screen
 	uint16 height;
 	uint16 noLayers;	// number of layer areas
-} GCC_PACK _screenHeader;
+} GCC_PACK;
 
 //------------------------------------------------------------
 // Layer Header
@@ -219,7 +219,7 @@ typedef struct {
 // rather than being placed before each layer mask,
 // in order to simplify the sort routine.
 
-typedef struct {
+struct _layerHeader {
 	uint16 x;		// coordinates of top-left pixel of area
 	uint16 y;
 	uint16 width;
@@ -227,7 +227,7 @@ typedef struct {
 	uint32  maskSize;
 	uint32 offset;		// where to find mask data (from start of
 				// standard file header)
-} GCC_PACK _layerHeader;
+} GCC_PACK;
 
 //----------------------------------------------------------
 // (3) SCRIPT OBJECT FILES
@@ -250,10 +250,10 @@ typedef struct {
 //----------------------------------------------------------
 // Walk-Grid Header - taken directly from old "header.h" in STD_INC
 
-typedef struct {
+struct _walkGridHeader {
 	int32 numBars;		// number of bars on the floor
 	int32 numNodes;		// number of nodes
-} GCC_PACK _walkGridHeader;
+} GCC_PACK;
 
 //----------------------------------------------------------
 // (5) PALETTE FILES
@@ -270,20 +270,20 @@ typedef struct {
 
 #define	TREE_SIZE	3
 
-typedef	struct {
+struct _object_hub {
 	int32 type;			// type of object
 	uint32 logic_level;		// what level?
 	uint32 logic[TREE_SIZE];	// NOT USED
 	uint32 script_id[TREE_SIZE];	// need this if script
 	uint32 script_pc[TREE_SIZE];	// need this also
-} GCC_PACK _object_hub;
+} GCC_PACK;
 
 // (6) text module header
 
-typedef	struct {
+struct _textHeader {
 	uint32 noOfLines;	// how many lines of text are there in this
 				// module
-} GCC_PACK _textHeader;
+} GCC_PACK;
 
 // a text file has:
 //

@@ -27,15 +27,15 @@
 	#pragma START_PACK_STRUCTS
 #endif
 
-typedef	struct _walkData {
+struct _walkData {
 	uint16 frame;
 	int16 x;
 	int16 y;
 	uint8 step;
 	uint8 dir;
-} GCC_PACK _walkData;
+} GCC_PACK;
 
-typedef struct {
+struct _barData {
 	int16 x1;
   	int16 y1;
   	int16 x2;
@@ -47,15 +47,15 @@ typedef struct {
 	int16 dx;	// x2 - x1
 	int16 dy;	// y2 - y1
 	int32 co;	// co = (y1 *dx)- (x1*dy) from an equation for a line y*dx = x*dy + co
-} GCC_PACK _barData;
+} GCC_PACK;
 
-typedef struct {
+struct _nodeData {
 	int16 x;
 	int16 y;
 	int16 level;
 	int16 prev;
 	int16 dist;
-} GCC_PACK _nodeData;
+} GCC_PACK;
 
 #if !defined(__GNUC__)
 	#pragma END_PACK_STRUCTS

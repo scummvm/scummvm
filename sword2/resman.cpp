@@ -79,10 +79,10 @@ Sword2ResourceManager	res_man;	//declare the object global
 	#pragma START_PACK_STRUCTS
 #endif
 
-typedef struct {
+struct _cd_inf {
 	uint8 clusterName[20];	// Null terminated cluster name.
 	uint8 cd;		// Cd cluster is on and whether it is on the local drive or not.
-} GCC_PACK _cd_inf;
+} GCC_PACK;
 
 #if !defined(__GNUC__)
 	#pragma END_PACK_STRUCTS

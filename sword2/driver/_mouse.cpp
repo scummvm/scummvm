@@ -31,7 +31,7 @@
 	#pragma START_PACK_STRUCTS
 #endif
 
-typedef struct {
+struct _mouseAnim {
 	uint8 runTimeComp;	// type of runtime compression used for the
 				// frame data
 	uint8 noAnimFrames;	// number of frames in the anim
@@ -39,7 +39,7 @@ typedef struct {
 	int8 yHotSpot;
 	uint8 mousew;
 	uint8 mouseh;
-} GCC_PACK _mouseAnim;
+} GCC_PACK;
 
 #if !defined(__GNUC__)
 	#pragma END_PACK_STRUCTS

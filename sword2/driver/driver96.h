@@ -243,11 +243,11 @@ typedef struct {
 	#pragma START_PACK_STRUCTS
 #endif
 
-typedef struct {
+struct _parallax {
 	uint16 w;
 	uint16 h;
 	uint32 offset[2];	// 2 is arbitrary
-} GCC_PACK _parallax;
+} GCC_PACK;
 
 #if !defined(__GNUC__)
 	#pragma END_PACK_STRUCTS
