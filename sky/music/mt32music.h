@@ -19,29 +19,32 @@
  *
  */
 
-#ifndef ADLIBMUSIC_H
-#define ADLIBMUSIC_H
+#ifndef MT32MUSIC_H
+#define MT32MUSIC_H
 
 #include "stdafx.h"
-#include "sound/mixer.h"
 #include "common/engine.h"
-#include "adlibchannel.h"
 #include "musicbase.h"
+#include "sound/mididrv.h"
+#include "gmchannel.h"
 
-class SkyAdlibMusic : public SkyMusicBase {
+class SkyMT32Music : public SkyMusicBase {
 public:
-	SkyAdlibMusic(SoundMixer *pMixer, SkyDisk *pSkyDisk);
-	~SkyAdlibMusic(void);
+	SkyMT32Music(MidiDriver *pMidiDrv, SkyDisk *pSkyDisk, uint32 version);
+	~SkyMT32Music(void);
 private:
-	SoundMixer *_mixer;
-	uint8 *_initSequence;
-	uint32 _sampleRate, _nextMusicPoll;
+	static void passTimerFunc(void *param);
+	void timerCall(void);
+	bool processPatchSysEx(uint8 *sysExData);
+
+	bool _ignoreNextPoll;
+	uint8 *_sysExSequence;
+	MidiDriver *_midiDrv;
+	uint8 _dummyMap[128];
+
 	virtual void setupPointers(void);
 	virtual void setupChannels(uint8 *channelData);
 	virtual void startDriver(void);
-
-	void premixerCall(int16 *buf, uint len);
-	static void passMixerFunc(void *param, int16 *buf, uint len);
 };
 
-#endif //ADLIBMUSIC_H
+#endif //MT32MUSIC_H

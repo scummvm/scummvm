@@ -19,31 +19,29 @@
  *
  */
 
-#ifndef GMMUSIC_H
-#define GMMUSIC_H
+#ifndef ADLIBMUSIC_H
+#define ADLIBMUSIC_H
 
 #include "stdafx.h"
+#include "sound/mixer.h"
 #include "common/engine.h"
+#include "adlibchannel.h"
 #include "musicbase.h"
-#include "sound/mididrv.h"
-#include "gmchannel.h"
 
-class SkyGmMusic : public SkyMusicBase {
+class SkyAdlibMusic : public SkyMusicBase {
 public:
-	SkyGmMusic(MidiDriver *pMidiDrv, SkyDisk *pSkyDisk);
-	~SkyGmMusic(void);
+	SkyAdlibMusic(SoundMixer *pMixer, SkyDisk *pSkyDisk, uint32 version);
+	~SkyAdlibMusic(void);
 private:
-	static void passTimerFunc(void *param);
-	void timerCall(void);
-
-	bool _ignoreNextPoll;
-	uint8 *_sysExSequence;
-	MidiDriver *_midiDrv;
-	static byte _mt32_to_gm[6*128];
-
+	SoundMixer *_mixer;
+	uint8 *_initSequence;
+	uint32 _sampleRate, _nextMusicPoll;
 	virtual void setupPointers(void);
 	virtual void setupChannels(uint8 *channelData);
 	virtual void startDriver(void);
+
+	void premixerCall(int16 *buf, uint len);
+	static void passMixerFunc(void *param, int16 *buf, uint len);
 };
 
-#endif //GMMUSIC_H
+#endif //ADLIBMUSIC_H

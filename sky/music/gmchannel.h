@@ -25,7 +25,7 @@
 #include "stdafx.h"
 #include "sound/mididrv.h"
 #include "common/engine.h"
-#include "sky/musicbase.h"
+#include "sky/music/musicbase.h"
 
 typedef struct {
 	uint16 eventDataPtr;

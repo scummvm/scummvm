@@ -1,15 +1,11 @@
 MODULE := sky
 
 MODULE_OBJS = \
-	sky/adlibchannel.o \
-	sky/adlibmusic.o \
 	sky/autoroute.o \
 	sky/cd_intro.o \
 	sky/compact.o \
 	sky/debug.o \
 	sky/disk.o \
-	sky/gmchannel.o \
-	sky/gmmusic.o \
 	sky/grid.o \
 	sky/intro.o \
 	sky/logic.o \
@@ -20,6 +16,10 @@ MODULE_OBJS = \
 	sky/sky.o \
 	sky/sound.o \
 	sky/text.o \
+	sky/music/adlibchannel.o \
+	sky/music/adlibmusic.o \
+	sky/music/gmchannel.o \
+	sky/music/gmmusic.o \
 
 # Include common rules 
 include common.rules

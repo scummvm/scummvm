@@ -19,7 +19,7 @@
  *
  */
 
-#include "sky/adlibmusic.h"
+#include "sky/music/adlibmusic.h"
 #include "sound/fmopl.h"
 
 void SkyAdlibMusic::passMixerFunc(void *param, int16 *buf, uint len) {
@@ -27,8 +27,8 @@ void SkyAdlibMusic::passMixerFunc(void *param, int16 *buf, uint len) {
 	((SkyAdlibMusic*)param)->premixerCall(buf, len);
 }
 
-SkyAdlibMusic::SkyAdlibMusic(SoundMixer *pMixer, SkyDisk *pSkyDisk)
-	: SkyMusicBase(pSkyDisk) {
+SkyAdlibMusic::SkyAdlibMusic(SoundMixer *pMixer, SkyDisk *pSkyDisk, uint32 version)
+	: SkyMusicBase(pSkyDisk, version) {
 
 	_driverFileBase = 60202;
     _mixer = pMixer;
@@ -74,8 +74,15 @@ void SkyAdlibMusic::premixerCall(int16 *buf, uint len) {
 
 void SkyAdlibMusic::setupPointers(void) {
 
-	_musicDataLoc = (_musicData[0x1202]<<8)|_musicData[0x1201];
-	_initSequence = _musicData+0xE91;
+	printf("game version: %d\n",_gameVersion);
+	if (_gameVersion == 267) {
+		// disk demo uses a different adlib driver version, some offsets have changed
+		_musicDataLoc = (_musicData[0x11F8] << 8) | _musicData[0x11F7];
+		_initSequence = _musicData + 0xE87;
+	} else {
+		_musicDataLoc = (_musicData[0x1202] << 8) | _musicData[0x1201];
+		_initSequence = _musicData + 0xE91;
+	}
 	_nextMusicPoll = 0;
 }
 
@@ -85,7 +92,7 @@ void SkyAdlibMusic::setupChannels(uint8 *channelData) {
 	channelData++;
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++) {
 		uint16 chDataStart = ((channelData[(cnt << 1) | 1] << 8) | channelData[cnt << 1]) + _musicDataLoc;
-		_channels[cnt] = new SkyAdlibChannel(_musicData, chDataStart);
+		_channels[cnt] = new SkyAdlibChannel(_musicData, chDataStart, _gameVersion);
 	}
 }
 

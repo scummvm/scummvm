@@ -158,13 +158,14 @@ void SkyState::initialise(void) {
 	_skyDisk = new SkyDisk(_gameDataPath);
 	_skySound = new SkySound(_mixer, _skyDisk);
 	
+	_gameVersion = _skyDisk->determineGameVersion();
+
 	if (_detector->getMidiDriverType() == MD_ADLIB) {
-		_skyMusic = new SkyAdlibMusic(_mixer, _skyDisk);
+		_skyMusic = new SkyAdlibMusic(_mixer, _skyDisk, _gameVersion);
 	} else {
-		_skyMusic = new SkyGmMusic(_detector->createMidi(), _skyDisk);
+		_skyMusic = new SkyGmMusic(_detector->createMidi(), _skyDisk, _gameVersion);
 	}
 
-	_gameVersion = _skyDisk->determineGameVersion();
 	_skyText = new SkyText(_skyDisk, _gameVersion, _language);
 	_skyMouse = new SkyMouse(_skyDisk);
 	_skyScreen = new SkyScreen(_system, _skyDisk);

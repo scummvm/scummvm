@@ -26,7 +26,7 @@
 #include "sky/disk.h"
 #include "sky/grid.h"
 #include "sky/autoroute.h"
-#include "sky/musicbase.h"
+#include "sky/music/musicbase.h"
 #include "sky/mouse.h"
 #include "sky/screen.h"
 

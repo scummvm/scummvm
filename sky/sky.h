@@ -33,10 +33,10 @@
 #include "sky/struc.h"
 #include "sky/grid.h"
 #include "sky/screen.h"
-#include "sky/musicbase.h"
-#include "sky/adlibmusic.h"
-#include "sky/gmmusic.h"
-#include "sky/mt32music.h"
+#include "sky/music/musicbase.h"
+#include "sky/music/adlibmusic.h"
+#include "sky/music/gmmusic.h"
+#include "sky/music/mt32music.h"
 #include "sky/mouse.h"
 
 class SkyLogic;

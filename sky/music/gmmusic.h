@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MT32MUSIC_H
-#define MT32MUSIC_H
+#ifndef GMMUSIC_H
+#define GMMUSIC_H
 
 #include "stdafx.h"
 #include "common/engine.h"
@@ -28,23 +28,22 @@
 #include "sound/mididrv.h"
 #include "gmchannel.h"
 
-class SkyMT32Music : public SkyMusicBase {
+class SkyGmMusic : public SkyMusicBase {
 public:
-	SkyMT32Music(MidiDriver *pMidiDrv, SkyDisk *pSkyDisk);
-	~SkyMT32Music(void);
+	SkyGmMusic(MidiDriver *pMidiDrv, SkyDisk *pSkyDisk, uint32 version);
+	~SkyGmMusic(void);
 private:
 	static void passTimerFunc(void *param);
 	void timerCall(void);
-	bool processPatchSysEx(uint8 *sysExData);
 
 	bool _ignoreNextPoll;
 	uint8 *_sysExSequence;
 	MidiDriver *_midiDrv;
-	uint8 _dummyMap[128];
+	static byte _mt32_to_gm[6*128];
 
 	virtual void setupPointers(void);
 	virtual void setupChannels(uint8 *channelData);
 	virtual void startDriver(void);
 };
 
-#endif //MT32MUSIC_H
+#endif //GMMUSIC_H

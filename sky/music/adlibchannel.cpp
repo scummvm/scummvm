@@ -22,8 +22,9 @@
 #include "adlibchannel.h"
 #include "sound/fmopl.h"
 
-SkyAdlibChannel::SkyAdlibChannel(uint8 *pMusicData, uint16 startOfData)
+SkyAdlibChannel::SkyAdlibChannel(uint8 *pMusicData, uint16 startOfData, uint32 version)
 {
+	_gameVersion = version;
 	_musicData = pMusicData;
 	_channelData.startOfData = startOfData;
 	_channelData.eventDataPtr = startOfData;
@@ -39,14 +40,25 @@ SkyAdlibChannel::SkyAdlibChannel(uint8 *pMusicData, uint16 startOfData)
 	_channelData.frequency = 0;
 	_channelData.instrumentData = NULL;
 
-	uint16 instrumentDataLoc = (_musicData[0x1206] << 8) | _musicData[0x1205];
+	uint16 instrumentDataLoc;
+
+	if (_gameVersion == 267) {
+		instrumentDataLoc = (_musicData[0x11FC] << 8) | _musicData[0x11FB];
+		_frequenceTable = (uint16*)(_musicData+0x7F4);
+		_registerTable = _musicData+0xDF4;
+		_opOutputTable = _musicData+0xE06;
+		_adlibRegMirror = _musicData+0xF55;
+	} else {
+		instrumentDataLoc = (_musicData[0x1206] << 8) | _musicData[0x1205];
+		_frequenceTable = (uint16*)(_musicData+0x7FE);
+		_registerTable = _musicData+0xDFE;
+		_opOutputTable = _musicData+0xE10;
+		_adlibRegMirror = _musicData+0xF5F;
+	}
+
 	_instrumentMap = _musicData+instrumentDataLoc;
 	_instruments = (InstrumentStruct*)(_instrumentMap+0x80);
 
-	_frequenceTable = (uint16*)(_musicData+0x7FE);
-	_registerTable = _musicData+0xDFE;
-	_opOutputTable = _musicData+0xE10;
-	_adlibRegMirror = _musicData+0xF5F;
 	_musicVolume = 0x100;
 }
 
