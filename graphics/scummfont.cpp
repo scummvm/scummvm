@@ -20,7 +20,6 @@
 
 #include "stdafx.h"
 #include "graphics/font.h"
-#include "gui/newgui.h"
 
 namespace Graphics {
 
@@ -65,7 +64,6 @@ int ScummFont::getCharWidth(byte chr) const {
 //void ScummFont::drawChar(byte chr, int xx, int yy, OverlayColor color) {
 void ScummFont::drawChar(const Surface *dst, byte chr, int tx, int ty, uint32 color) const {
 	assert(dst != 0);
-
 	byte *ptr = (byte *)dst->getBasePtr(tx, ty);
 
 	const byte *tmp = guifont + 6 + guifont[4] + chr * 8;
@@ -76,17 +74,15 @@ void ScummFont::drawChar(const Surface *dst, byte chr, int tx, int ty, uint32 co
 		if (ty + y < 0 || ty + y >= dst->h)
 			continue;
 		for (int x = 0; x < 8; x++) {
-			mask >>= 1;
-
 			if (tx + x < 0 || tx + x >= dst->w)
 				continue;
-			
-
+			unsigned char c;
+			mask >>= 1;
 			if (mask == 0) {
 				buffer = *tmp++;
 				mask = 0x80;
 			}
-			const byte c = ((buffer & mask) != 0);
+			c = ((buffer & mask) != 0);
 			if (c) {
 				if (dst->bytesPerPixel == 1)
 					ptr[x] = color;
