@@ -839,7 +839,9 @@ void Scumm::playActorSounds() {
 }
 
 Actor *Scumm::derefActor(int id, const char *errmsg) const {
-	if (id < 1 || id >= _numActors || _actors[id].number != id) {
+	if (id == 0)
+		debug(3, "derefActor(0, \"%s\") in script %d, opcode 0x%x", errmsg, vm.slot[_curExecScript].number, _opcode);
+	if (id < 0 || id >= _numActors || _actors[id].number != id) {
 		if (errmsg)
 			error("Invalid actor %d in %s", id, errmsg);
 		else
@@ -849,7 +851,9 @@ Actor *Scumm::derefActor(int id, const char *errmsg) const {
 }
 
 Actor *Scumm::derefActorSafe(int id, const char *errmsg) const {
-	if (id < 1 || id >= _numActors || _actors[id].number != id) {
+	if (id == 0)
+		debug(3, "derefActorSafe(0, \"%s\") in script %d, opcode 0x%x", errmsg, vm.slot[_curExecScript].number, _opcode);
+	if (id < 0 || id >= _numActors || _actors[id].number != id) {
 		debug(2, "Invalid actor %d in %s (script %d, opcode 0x%x) - This is potentially a BIG problem.",
 			 id, errmsg, vm.slot[_curExecScript].number, _opcode);
 		return NULL;

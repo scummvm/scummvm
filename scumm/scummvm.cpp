@@ -923,7 +923,7 @@ void Scumm::scummInit() {
 	// Allocate and Initialize actors
 	Actor::initActorClass(this);
 	_actors = new Actor[_numActors];
-	for (i = 1; i < _numActors; i++) {
+	for (i = 0; i < _numActors; i++) {
 		_actors[i].number = i;
 		_actors[i].initActor(1);
 	

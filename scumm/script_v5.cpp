@@ -398,25 +398,8 @@ void Scumm_v5::o5_actorSet() {
 	static const byte convertTable[20] =
 		{ 1, 0, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 20 };
 	int act = getVarOrDirectByte(0x80);
-	Actor *a;
+	Actor *a = derefActor(act, "o5_actorSet");
 	int i, j;
-
-	if (act == 0) {
-		// This case happens in Zak256 (and maybe elsewhere), to set the
-		// default talk color (9).
-		while ((_opcode = fetchScriptByte()) != 0xFF) {
-			if (_features & GF_SMALL_HEADER)
-				_opcode = (_opcode & 0xE0) | convertTable[(_opcode & 0x1F) - 1];
-				
-			if (_opcode== 12)
-				_string[0].color = getVarOrDirectByte(0x80);
-			else
-				error("o5_actorSet: Invalid sub opcode %d in actor 0 case", _opcode);
-		}
-		return;
-	}
-
-	a = derefActor(act, "o5_actorSet");
 
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		if (_features & GF_SMALL_HEADER)
@@ -474,7 +457,15 @@ void Scumm_v5::o5_actorSet() {
 			a->needRedraw = true;
 			break;
 		case 12:										/* talk color */
-			a->talkColor = getVarOrDirectByte(0x80);
+
+			// Zak256 (and possibly other games) uses actor 0 to
+			// indicate that it's the default talk color that is
+			// to be changed.
+
+			if (act == 0)
+				_string[0].color = getVarOrDirectByte(0x80);
+			else
+				a->talkColor = getVarOrDirectByte(0x80);
 			break;
 		case 13:										/* name */
 			loadPtrToResource(rtActorName, a->number, NULL);
