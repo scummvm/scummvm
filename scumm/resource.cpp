@@ -241,7 +241,7 @@ void ScummEngine::askForDisk(const char *filename, int disknum) {
 		sprintf(buf, "Cannot find file: '%s'\nInsert disc %d into drive %s\nPress OK to retry, Quit to exit", filename, disknum, getGameDataPath());
 #endif
 
-		result = displayError("Quit", buf);
+		result = displayMessage("Quit", buf);
 		if (result == 2)
 			error("Cannot find file: '%s'", filename);
 	} else { 

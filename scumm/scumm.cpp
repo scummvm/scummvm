@@ -1420,7 +1420,7 @@ load_game:
 
 		makeSavegameName(filename, _saveLoadSlot, _saveTemporaryState);
 		if (!success) {
-			displayError(0, errMsg, filename);
+			displayMessage(0, errMsg, filename);
 		} else if (_saveLoadFlag == 1 && _saveLoadSlot != 0 && !_saveTemporaryState) {
 			// Display "Save successful" message, except for auto saves
 #ifdef __PALM_OS__
@@ -2526,7 +2526,7 @@ void ScummEngine::restart() {
 
 void ScummEngine::startManiac() {
 	warning("stub startManiac()");
-	displayError("Alright", "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' directory inside the Tentacle game directory.");
+	displayMessage(0, "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' directory inside the Tentacle game directory.");
 }
 
 #pragma mark -
@@ -2588,7 +2588,7 @@ void ScummEngine::confirmrestartDialog() {
 	}
 }
 
-char ScummEngine::displayError(const char *altButton, const char *message, ...) {
+char ScummEngine::displayMessage(const char *altButton, const char *message, ...) {
 #ifdef __PALM_OS__
 	char buf[256]; // 1024 is too big overflow the stack
 #else
@@ -2597,7 +2597,7 @@ char ScummEngine::displayError(const char *altButton, const char *message, ...) 
 	va_list va;
 
 	va_start(va, message);
-	vsprintf(buf, message, va);
+	vsnprintf(buf, sizeof(buf), message, va);
 	va_end(va);
 
 	GUI::MessageDialog dialog(buf, "OK", altButton);
