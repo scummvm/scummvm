@@ -274,6 +274,10 @@ SOURCE=.\sound\midistreamer.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\sound\midistreamer.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\sound\mixer.cpp
 # End Source File
 # Begin Source File
