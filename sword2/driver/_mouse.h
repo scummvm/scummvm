@@ -17,27 +17,13 @@
  * $Header$
  */
 
-//=============================================================================
-//
-//	Filename	:	mouse.h
-//	Created		:	18th September 1996
-//	By			:	P.R.Porter
-//
-//	Summary		:	This include file defines links to all data which is
-//					defined in the mouse.c module, but can be accessed by
-//					other parts of the driver96 library.
-//
-//
-//=============================================================================
-
-
 #ifndef MOUSE_H
 #define MOUSE_H
 
-extern int16 mousex;				// Mouse x coordinate
-extern int16 mousey;				// Mouse y coordinate
+extern int16 mousex;		// Mouse x coordinate
+extern int16 mousey;		// Mouse y coordinate
 
-extern void LogMouseEvent(uint16 buttons);	// Adds a mouse event to the log
-extern int32 DrawMouse(void);			// Renders the mouse onto the back buffer.
+extern void LogMouseEvent(uint16 buttons);
+extern int32 DrawMouse(void);
 
 #endif

@@ -17,20 +17,6 @@
  * $Header$
  */
 
-//=============================================================================
-//
-//	Filename	:	d_sound.h
-//	Created		:	5th December 1996
-//	By			:	P.R.Porter
-//
-//	Summary		:	This include file defines links to all data which is
-//					defined in the d_sound.c module, but can be accessed by
-//					other parts of the driver96 library.
-//
-//
-//=============================================================================
-
-
 #ifndef D_SOUND_H
 #define D_SOUND_H
 
