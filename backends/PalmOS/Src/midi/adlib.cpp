@@ -28,6 +28,6 @@ public:
 	void send(uint32 b) { }
 };
 
-MidiDriver *MidiDriver_ADLIB_create() {
+MidiDriver *MidiDriver_ADLIB_create(SoundMixer *mixer) {
 	return new MidiDriver_ADLIB();
 }
