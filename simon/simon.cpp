@@ -3273,7 +3273,7 @@ void SimonState::showmessage_helper_2()
 
 void SimonState::readSfxFile(const char *filename)
 {
-	if (!(_game & GAME_SIMON2)) {
+	if (!(_game & GAME_SIMON2)) { 		/* simon 1 win talkie */
 		File in;
 		uint32 size;
 
@@ -3300,7 +3300,7 @@ void SimonState::readSfxFile(const char *filename)
 		in.read(_sfx_heap, size);
 
 		in.close();
-	} else if (!gss->voc_filename) {
+	} else if (_voice_type == FORMAT_WAV) { /* simon 2 win talkie */
 		int res;
 		uint32 offs;
 		int size;
@@ -3321,7 +3321,7 @@ void SimonState::readSfxFile(const char *filename)
 
 		resfile_read(_sfx_heap, offs, size);
 
-	} else {
+	} else { 				/* simon 2 dos */
 
 		int num_per_set[] = {0, 188, 223, 217, 209, 179, 187, 189, 116, 174, 203,
 				173, 176, 38, 205, 134, 213, 212, 167, 141};
@@ -4877,9 +4877,8 @@ void SimonState::playVoice(uint voice)
 
 void SimonState::playSound(uint sound)
 {
-	if (_game & GAME_WIN) {
 		// XXX: redundant
-		if (_effects_offsets && (_game & GAME_SIMON2)) {			/* VOC sound simon2dos talkie */
+		if (_effects_offsets && (_game & GAME_SIMON2)) {			/* VOC sound simon 2 dos */
 
 			VocHeader voc_hdr;
 			VocBlockHeader voc_block_hdr;
@@ -4906,7 +4905,7 @@ void SimonState::playSound(uint sound)
 
 			_mixer->playRaw(&_effects_sound, buffer, size, samples_per_sec, SoundMixer::FLAG_UNSIGNED);
 
-		 } else if (_effects_offsets) {			/* VOC sound file */
+		 } else if (_effects_offsets) {			/* VOC sound simon 1 dos takie */
 			
 #ifdef USE_MAD
 			if (_effects_type == FORMAT_MP3) {
@@ -4946,14 +4945,7 @@ void SimonState::playSound(uint sound)
 #ifdef USE_MAD
 			}
 #endif
-		} else {
-		/* FIXME: not properly implemented */
-		/* Simon 2 dos talkie sfx aren't supported */
-		/* Simon 2 dos sfx isn't supported */
-		const char *s2 = gss->voc_filename;
-		File music_file;
-		music_file.open(s2, _gameDataPath);
-		if (music_file.isOpen() == false) {
+		} else 	if (_game & GAME_WIN) { 		/* ? sound simon 1/2 win talkie */
 
 			byte *p;
 
@@ -4982,9 +4974,7 @@ void SimonState::playSound(uint sound)
 
 			_mixer->playRaw(&_playing_sound, p + 8, READ_LE_UINT32(p + 4), 22050,
 											 SoundMixer::FLAG_UNSIGNED);
-		}
-		}
-	} else {
+		} else { 					/* ? sound simon 1 dos */
 		warning("playSound(%d)", sound);
 	}
 }
