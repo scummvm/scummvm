@@ -634,12 +634,9 @@ static const imuse_ft_music_table _ftSeqMusicTable[] = {
 };
 #endif
 
-static uint32 decode12BitsSample(byte *src, byte **dst, uint32 size, bool stereo) {
+static uint32 decode12BitsSample(byte *src, byte **dst, uint32 size) {
 	uint32 loop_size = size / 3;
 	uint32 s_size = loop_size * 4;
-	if (stereo) {
-		s_size *= 2;
-	}
 	byte *ptr = *dst = (byte *)malloc(s_size);
 
 	uint32 tmp;
@@ -649,14 +646,8 @@ static uint32 decode12BitsSample(byte *src, byte **dst, uint32 size, bool stereo
 		byte v3 = *src++;
 		tmp = ((((v2 & 0x0f) << 8) | v1) << 4) - 0x8000;
 		WRITE_BE_UINT16(ptr, tmp); ptr += 2;
-		if (stereo) {
-			WRITE_BE_UINT16(ptr, tmp); ptr += 2;
-		}
 		tmp = ((((v2 & 0xf0) << 4) | v3) << 4) - 0x8000;
 		WRITE_BE_UINT16(ptr, tmp); ptr += 2;
-		if (stereo) {
-			WRITE_BE_UINT16(ptr, tmp); ptr += 2;
-		}
 	}
 	return s_size;
 }
@@ -803,7 +794,6 @@ void IMuseDigital::startSound(int sound, byte *voc_src, int voc_size, int voc_ra
 
 			uint32 tag;
 			int32 size = 0;
-			int t;
 
 			if ((sound == kTalkSoundID) && (_voiceVocData) || (READ_UINT32(ptr) == MKID('Crea'))) {
 				if (READ_UINT32(ptr) == MKID('Crea')) {
@@ -815,16 +805,8 @@ void IMuseDigital::startSound(int sound, byte *voc_src, int voc_size, int voc_ra
 				_channel[l].size = voc_size * 2;
 				_channel[l].bits = 8;
 				_channel[l].channels = 2;
-				_channel[l].mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO | SoundMixer::FLAG_UNSIGNED;
-				_channel[l].data = (byte *)malloc(_channel[l].size);
-
-				// Widen data to two channels
-				for (t = 0; t < _channel[l].size / 2; t++) {
-					*(_channel[l].data + t * 2 + 0) = *(voc_src + t);
-					*(_channel[l].data + t * 2 + 1) = *(voc_src + t);
-				}
-
-				free(voc_src);
+				_channel[l].mixerFlags = SoundMixer::FLAG_UNSIGNED;
+				_channel[l].data = voc_src;
 			} else if (READ_UINT32(ptr) == MKID('iMUS')) {
 				ptr += 16;
 				for (;;) {
@@ -928,13 +910,21 @@ void IMuseDigital::startSound(int sound, byte *voc_src, int voc_size, int voc_ra
 				// flag - since we copy the data around anyway, swapping the
 				// channels should be little extra work (in fact, none for
 				// mono data, which includes the 12 bit compressed format).
-				_channel[l].mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
-				_channel[l].mixerSize = _channel[l].freq * 2;
+
+				assert(_channel[l].channels == 1 || _channel[l].channels == 2);
+
+				if (_channel[l].channels == 2) {
+					_channel[l].mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
+					_channel[l].mixerSize = _channel[l].freq * 2;
+				} else {
+					_channel[l].mixerFlags = 0;
+					_channel[l].mixerSize = _channel[l].freq;
+				}
 
 				if (_channel[l].bits == 12) {
 					_channel[l].mixerSize *= 2;
 					_channel[l].mixerFlags |= SoundMixer::FLAG_16BITS;
-					_channel[l].size = decode12BitsSample(ptr, &_channel[l].data, size, (_channel[l].channels == 2) ? false : true);
+					_channel[l].size = decode12BitsSample(ptr, &_channel[l].data, size);
 				} else if (_channel[l].bits == 16) {
 					_channel[l].mixerSize *= 2;
 					_channel[l].mixerFlags |= SoundMixer::FLAG_16BITS;
@@ -943,34 +933,14 @@ void IMuseDigital::startSound(int sound, byte *voc_src, int voc_size, int voc_ra
 					// the data is supposed to be in 16 bit format... that makes no sense...
 					size &= ~1;
 					
-					if (_channel[l].channels == 1) {
-						size *= 2;
-						_channel[l].channels = 2;
-						_channel[l].data = (byte *)malloc(size);
-						// Widen data to two channels
-						for (t = 0; t < size / 4; t++) {
-							*(uint16 *)(_channel[l].data + t * 4 + 0) = *(uint16 *)(ptr + t * 2);
-							*(uint16 *)(_channel[l].data + t * 4 + 2) = *(uint16 *)(ptr + t * 2);
-						}
-					} else {
-						error("IMuseDigital::startSound() Stereo 16 bit sound support not yet implemented");
-					}
+					_channel[l].data = (byte *)malloc(size);
+					memcpy(_channel[l].data, ptr, size);
 					_channel[l].size = size;
 				} else if (_channel[l].bits == 8) {
 					_channel[l].mixerFlags |= SoundMixer::FLAG_UNSIGNED;
-					if (_channel[l].channels == 1) {
-						size *= 2;
-						_channel[l].channels = 2;
-						_channel[l].data = (byte *)malloc(size);
-						// Widen data to two channels
-						for (t = 0; t < size / 2; t++) {
-							*(_channel[l].data + t * 2 + 0) = *(ptr + t);
-							*(_channel[l].data + t * 2 + 1) = *(ptr + t);
-						}
-					} else {
-						_channel[l].data = (byte *)malloc(size);
-						memcpy(_channel[l].data, ptr, size);
-					}
+
+					_channel[l].data = (byte *)malloc(size);
+					memcpy(_channel[l].data, ptr, size);
 					_channel[l].size = size;
 				} else
 					error("IMuseDigital::startSound() Can't handle %d bit samples", _channel[l].bits);
@@ -1394,7 +1364,7 @@ void IMuseDigital::bundleMusicHandler() {
 	byte *buffer = NULL;
 	uint32 final_size;
 	if (_bundleMusicSampleBits == 12) {
-		final_size = decode12BitsSample(ptr, &buffer, _outputMixerSize, false);
+		final_size = decode12BitsSample(ptr, &buffer, _outputMixerSize);
 	} else if (_bundleMusicSampleBits == 16) {
 		buffer = (byte *)malloc(_outputMixerSize);
 		final_size = _outputMixerSize;
