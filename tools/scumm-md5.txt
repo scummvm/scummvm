@@ -228,7 +228,7 @@ Backyard Football 2002
 	Demo	All	en	5bd335265a61caa3d78956ad9f88ba23	FOOTDEMO	sev
 
 Big Thinkers: Kindergarten
-	-	Windows	en	92fc0073a4cf259ff36070ecb8628ba8	thinkerk	Kirben
+	-	All	en	92fc0073a4cf259ff36070ecb8628ba8	thinkerk	Kirben
 	Demo	All	en	695fe0b3963333b7e15b37514db3c745	kinddemo	khalek, sev
 
 Big Thinkers First Grade
@@ -333,6 +333,9 @@ Pajama Sam's Lost & Found
 	-	All	en	ed361270102e355afe5236954216aba2	lost	Kirben
 	Demo	Windows	en	a2bb6aa0537402c1b3c2ea899ccef64b	smaller	Kirben
 
+Pajama Sam's One-Stop Fun Shop
+	-	All	en	68155a6bf082221525f431c2cbdac8ab	SamsFunShop	Kirben
+
 Pajama Sam's Sock Works
 	-	All	en	5e8fb66971a60e523e5afbc4c129c0e8	socks	Kirben
 	-	Windows	ru	19263586f749a560c1adf8b3393a9593	socks	sev
@@ -369,7 +372,7 @@ Putt-Putt Joins The Parade
 
 Putt-Putt Saves the Zoo
 	-	Windows	en	1005456bfe351c1b679e1ff2dc2849e9	puttzoo	khalek
-	-	Windows	en	92e7727e67f5cd979d8a1070e4eb8cb3	puttzoo	cyx
+	-	All	en	92e7727e67f5cd979d8a1070e4eb8cb3	puttzoo	cyx
 	-	Windows	nl	c3b22fa4654bb580b20325ebf4174841	puttzoo	joostp
 	-	Mac	en	58fdf4c7ad13540a734e18f8584cad89	puttzoo	khalek
 	Demo	Windows	en	1005456bfe351c1b679e1ff2dc2849e9	puttzoo	khalek
@@ -378,12 +381,14 @@ Putt-Putt Saves the Zoo
 	Demo	Mac	en	3486ede0f904789267d4bcc5537a46d4	zoodemo	khalek
 
 Putt-Putt Travels Through Time
+	-	Windows	en	a525c1753c1db5011c00417da37887ef	PuttTTT	Kirben
 	-	All?	en	2108d83dcf09f8adb4bc524669c8cf51	PuttTime
 	Demo	All	en	4e5867848ee61bc30d157e2c94eee9b4	timedemo	khalek, sev
 	Demo	All	en	0ab19be9e2a3f6938226638b2a3744fe	putttime-demo	khalek
 
 Putt-Putt and Pep's Balloon-O-Rama
 	-	All	en	08cc5c3eedaf72ebe12734eee94f7fa2	balloon	Kirben
+	-	All	en	8e3241ddd6c8dadf64305e8740d45e13	balloon	Kirben
 
 Putt-Putt and Pep's Dog on a Stick
 	-	Windows	en	d4b8ee426b1afd3e53bc0cf020418cf6	dog	sev
@@ -392,6 +397,9 @@ Putt-Putt and Pep's Dog on a Stick
 Putt-Putt's Fun Pack
 	-	DOS	en	46b53fd430adcfbed791b48a0d4b079f	funpack	khalek
 	-	3DO	en	8afb3cf9f95abf208358e984f0c9e738	funpack	sev
+
+Putt-Putt's One-Stop Fun Shop
+	-	All	en	5262a27afcaee04e5c4900220bd463e7	PuttsFunShop	Kirben
 
 Spy Fox 1: Dry Cereal
 	-	All	en	3de99ef0523f8ca7958faa3afccd035a	spyfox	Kirben
@@ -412,7 +420,7 @@ Spy Fox 3: Operation Ozone
 
 Spy Fox in Cheese Chase Game
 	-	All	en	589601b676c98b1c0c987bc031ab68b3	chase	Kirben
-	-	Mac	en	90c755e1c9b9b8a4129d37b2259d0655	chase	Kirben
+	-	All	en	90c755e1c9b9b8a4129d37b2259d0655	chase	Kirben
 
 Spy Fox in Hold the Mustard
 	-	All	en	225e18566e810c634bf7de63e7568e3e	mustard	Kirben
