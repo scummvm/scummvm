@@ -1534,7 +1534,12 @@ void Scumm::waitForTimer(int msec_delay) {
 						resourceStats();
 					else
 						_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
-				} else
+				} else if (event.kbd.flags & OSystem::KBD_ALT) {
+					// The result must be 273 for Alt-W
+					// because that's what MI2 looks for in
+					// its "instant win" cheat.
+					_keyPressed = event.kbd.keycode + 154;
+				} else 
 					_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
 				break;
 
