@@ -1,20 +1,17 @@
-Residual in-progress items (in rough order of priority):
---------------------------------------------------------
- * Figure out why SMUSH doesn't display graphics on Windows
- * Get SMUSH to stream from .lab instead of needing uncompressed snm
- * Add LAF font support to replace existing hack
-
 Residual TODO list (in rough order of priority):
------------------------------------------------- 
+------------------------------------------------
+ * Move SMUSH drawing to main thread (will fix crashes/blankscreens)
+ * Figure out why in-memory decompression of SMUSH movies doesn't work
+   (See #define in smush.h)
+ * Add LAF font support to replace existing hack 
  * Bounds check the Screenblocks dirty rectangle stuff, so it stops trashing
-   memory and making Residual unusable/unstable.
+   memory and making Residual unusable/unstable.	
+ * Implement bitmap costume drawing
  * Implement 2D primitives 
  * Add OpenGL lighting
  * Implement iMuse
- * Proper vsscanf implementation in textsplit.cpp for platforms without it (many!)
- * Cross platform GUI for debug input dialogs (ctrl+e ctrl+g etc) original used MFC
+ * Proper vsscanf implementation in textsplit.cpp for platforms without it (MSVC, etc)
+ * Cross platform GUI for debug input dialogs (ctrl+e ctrl+g etc) - original used MFC
 
 MSVC notes:
- These things need doing (At least) for it to be compilable under MSVC..
- round() function in lua.cpp's check_int does not exist in MSVC
- vsscanf function does not exist in MSVC (already worked around)
+ round() function in lua.cpp's check_int does not exist in MSVC.
