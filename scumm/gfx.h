@@ -44,7 +44,7 @@ struct VirtScreen {		/* Virtual screen areas */
 	int number;
 	uint16 topline;
 	uint16 width, height;
-	uint16 size;
+	int size;
 	byte alloctwobuffers;
 	bool scrollable;
 	uint16 xstart;
