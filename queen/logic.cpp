@@ -21,7 +21,8 @@
 
 #include "queen/logic.h"
 
-QueenLogic::QueenLogic(QueenResource *resource) : _resource(resource) {
+QueenLogic::QueenLogic(QueenResource *resource) 
+	: _resource(resource), _maxStaticFrame(0), _maxAnimatedFrame(0) {
 	_jas = _resource->loadFile("QUEEN.JAS", 20);
 	
 	initialise();
@@ -61,21 +62,21 @@ void QueenLogic::initialise() {
 	_objectData[0].state = 0;
 	_objectData[0].image = 0;	
 	for (i = 1; i < (_numObjects + 1); i++) {
-		_objectData[0].name = READ_BE_UINT16(ptr);
+		_objectData[i].name = (int16)READ_BE_UINT16(ptr);
 		ptr += 2;
-		_objectData[0].x = READ_BE_UINT16(ptr);
+		_objectData[i].x = READ_BE_UINT16(ptr);
 		ptr += 2;
-		_objectData[0].y = READ_BE_UINT16(ptr);
+		_objectData[i].y = READ_BE_UINT16(ptr);
 		ptr += 2;
-		_objectData[0].description = READ_BE_UINT16(ptr);
+		_objectData[i].description = READ_BE_UINT16(ptr);
 		ptr += 2;
-		_objectData[0].entryObj = (int16)READ_BE_UINT16(ptr);
+		_objectData[i].entryObj = (int16)READ_BE_UINT16(ptr);
 		ptr += 2;
-		_objectData[0].room = READ_BE_UINT16(ptr);
+		_objectData[i].room = READ_BE_UINT16(ptr);
 		ptr += 2;
-		_objectData[0].state = (int16)READ_BE_UINT16(ptr);
+		_objectData[i].state = (int16)READ_BE_UINT16(ptr);
 		ptr += 2;
-		_objectData[0].image = (int16)READ_BE_UINT16(ptr);
+		_objectData[i].image = (int16)READ_BE_UINT16(ptr);
 		ptr += 2;
 	}
 #else
@@ -234,7 +235,17 @@ uint16 QueenLogic::findBob(uint16 obj) {
 	uint16 bobnum = 0;
 	uint16 bobtype = 0; // 1 for animated, 0 for static
 
+	if (obj > _numObjects) {
+		debug(0, "Object index (%i) > _numObjects (%i)", obj, _numObjects);
+		abort();
+	}
+
 	uint16 room = _objectData[obj].room;
+
+	if (room >= _numRooms) {
+		warning("room (%i) > _numRooms (%i)", room, _numRooms);
+	}
+	
 	int16 img = _objectData[obj].image;
 	if(img != 0) {
 		if(img == -3 || img == -4) {
@@ -279,6 +290,10 @@ uint16 QueenLogic::findBob(uint16 obj) {
 					if(img > 5000) {
 						img -= 5000;
 					}
+
+					if (img >= _numGraphics)
+						warning("img (%i) >= _numGraphics (%i)", img, _numGraphics);
+					
 					if(_graphicData[img].lastFrame != 0) {
 						++idxAnimated;
 					}

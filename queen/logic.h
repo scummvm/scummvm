@@ -32,7 +32,7 @@ struct GraphicData {
 };
 
 struct ObjectData {
-	uint16 name;
+	int16 name;
 	uint16 x;
 	uint16 y;
 	uint16 description;
