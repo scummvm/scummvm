@@ -499,7 +499,7 @@ MixerChannel *find_channel() {
 		if (!mc->_sfx_sound)
 			return mc;
 	}
-	return mc;
+	return NULL;
 }
 
 
@@ -513,6 +513,11 @@ bool isSfxFinished() {
 
 void playSfxSound(void *sound, uint32 size, uint rate) {
 	MixerChannel *mc = find_channel();
+
+	if (!mc) {
+		warning("No mixer channel available");
+		return;
+	}
 
 	mc->_sfx_sound = sound;
 	mc->_sfx_pos = 0;

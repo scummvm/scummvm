@@ -818,35 +818,63 @@ void blitToScreen(Scumm *s, byte *src,int x, int y, int w, int h) {
 #define BUFFER_SIZE (8192)
 #define BITS_PER_SAMPLE 16
 
-static void *_sfx_sound;
-static uint32 _sfx_pos;
-static uint32 _sfx_size;
+struct MixerChannel {
+	void *_sfx_sound;
+	uint32 _sfx_pos;
+	uint32 _sfx_size;
+	uint32 _sfx_fp_speed;
+	uint32 _sfx_fp_pos;
 
-static uint32 _sfx_fp_speed;
-static uint32 _sfx_fp_pos;
+	void mix(int16 *data, uint32 len);
+	void clear();
+};
+
+#define NUM_MIXER 4
+
+static MixerChannel mixer_channel[NUM_MIXER];
+
+MixerChannel *find_channel() {
+	int i;
+	MixerChannel *mc = mixer_channel;
+	for(i=0; i<NUM_MIXER; i++,mc++) {
+		if (!mc->_sfx_sound)
+			return mc;
+	}
+	return NULL;
+}
+
 
 bool isSfxFinished() {
-	return _sfx_size == 0;
+	int i;
+	for(i=0; i<NUM_MIXER; i++)
+		if (mixer_channel[i]._sfx_sound)
+			return false;
+	return true;
 }
 
 void playSfxSound(void *sound, uint32 size, uint rate) {
-	if (_sfx_sound) {
-		free(_sfx_sound);
+	MixerChannel *mc = find_channel();
+
+	if (!mc) {
+		warning("No mixer channel available");
+		return;
 	}
-	_sfx_sound = sound;
-	_sfx_pos = 0;
-	_sfx_fp_speed = (1<<16) * rate / 22050;
-	_sfx_fp_pos = 0;
+
+	mc->_sfx_sound = sound;
+	mc->_sfx_pos = 0;
+	mc->_sfx_fp_speed = (1<<16) * rate / 22050;
+	mc->_sfx_fp_pos = 0;
+
 	while (size&0xFFFF0000) size>>=1, rate>>=1;
-	_sfx_size = size * 22050 / rate;
+	mc->_sfx_size = size * 22050 / rate;
 }
 
-void mix_sound(int16 *data, uint32 len) {
+void MixerChannel::mix(int16 *data, uint32 len) {
 	int8 *s;
 	int i;
 	uint32 fp_pos, fp_speed;
 
-	if (!_sfx_size)
+	if (!_sfx_sound)
 		return;
 	if (len > _sfx_size)
 		len = _sfx_size;
@@ -866,6 +894,14 @@ void mix_sound(int16 *data, uint32 len) {
 	_sfx_pos = s - (int8*)_sfx_sound;
 	_sfx_fp_speed = fp_speed;
 	_sfx_fp_pos = fp_pos;
+
+	if (!_sfx_size)
+		clear();
+}
+
+void MixerChannel::clear() {
+	free(_sfx_sound);
+	_sfx_sound = NULL;
 }
 
 int clock;
@@ -898,12 +934,16 @@ void drawMouse(Scumm *s, int x, int y, int w, int h, byte *buf, bool visible) {
 }
 
 void fill_buffer(int16 *buf, int len) {
+	int i;
 #if defined(USE_IMUSE)
 	sound.generate_samples(buf,len);
 #else
 	memset(buf, 0, len*2);
 #endif
-	mix_sound(buf,len);
+	for(i=NUM_MIXER-1; i>=0;i--) {
+		mixer_channel[i].mix((int16*)buf, len);
+	}
+
 }
 
 void WndMan::prepare_header(WAVEHDR *wh, int i) {
@@ -983,6 +1023,7 @@ int main(int argc, char* argv[]) {
 			tmp = 5;
 		} else {
 			tmp = delta = scumm.scummLoop(delta);
+
 			tmp += tmp>>1;
 			
 			if (scumm._fastMode)
