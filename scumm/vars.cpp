@@ -290,6 +290,7 @@ void ScummEngine_v8::setupScummVars() {
 	VAR_OVERRIDE = 30;
 	VAR_ROOM = 31;
 	VAR_NEW_ROOM = 32;
+	VAR_WALKTO_OBJ = 33;
 
 	//VAR_VOICE_MODE = 39; // 0 is voice, 1 is voice+text, 2 is text only
 	VAR_GAME_LOADED = 40;
