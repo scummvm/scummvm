@@ -517,7 +517,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 				*offset = ip;
 				return 2;
 			default:
-				error("Bad return code (%d) from '%s'", opcodes[parameter].desc, retVal & 7);
+				error("Bad return code (%d) from '%s'", retVal & 7, opcodes[parameter].desc);
 			}
 			parameterReturnedFromMcodeFunction = retVal >> 3;
 			break;
