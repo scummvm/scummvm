@@ -2232,8 +2232,22 @@ void ScummEngine_v5::o5_startMusic() {
 }
 
 void ScummEngine_v5::o5_startSound() {
+	const byte *oldaddr = _scriptPointer - 1;
+	int sound = getVarOrDirectByte(PARAM_1);
+
+	// WORKAROUND: In the scene where Largo is talking to Mad Marty, the
+	// Woodtick music often resumes before Largo's theme has finished. As
+	// far as I can tell, this is a script bug.
+
+	if (_gameId == GID_MONKEY2 && sound == 110 && _sound->isSoundRunning(151)) {
+		warning("Delaying Woodtick music until Largo's theme has finished");
+		_scriptPointer = oldaddr;
+		o5_breakHere();
+		return;
+	}
+
 	VAR(VAR_MUSIC_TIMER) = 0;
-	_sound->addSoundToQueue(getVarOrDirectByte(PARAM_1));
+	_sound->addSoundToQueue(sound);
 }
 
 void ScummEngine_v5::o5_stopMusic() {
@@ -2307,14 +2321,6 @@ void ScummEngine_v5::o5_stopScript() {
 	int script;
 
 	script = getVarOrDirectByte(PARAM_1);
-
-	if ((_gameId == GID_ZAK) && (_roomResource == 7) && (vm.slot[_currentScript].number == 10001)) {
-		// FIXME: Nasty hack for bug #771499
-		// Don't let the exit script for room 7 stop the buy script (24),
-		// switching to the number selection keypad (script 15)
-		if ((script == 24) && isScriptRunning(15))
-			return;
-	}
 
 	if (!script)
 		stopObjectCode();

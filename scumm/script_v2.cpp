@@ -318,7 +318,7 @@ void ScummEngine_v2::setupOpcodes() {
 		/* E0 */
 		OPCODE(o2_cursorCommand),
 		OPCODE(o2_putActor),
-		OPCODE(o5_stopScript),
+		OPCODE(o2_stopScript),
 		OPCODE(o5_getActorFacing),
 		/* E4 */
 		OPCODE(o2_loadRoomWithEgo),
@@ -451,8 +451,7 @@ void ScummEngine_v2::writeVar(uint var, int value) {
 	//	 cutscene. Script 116 sets var[175] to 1, which disables New Kid in 
 	//	 script 164. Unfortunatly, when New Kid is reenabled (var[175] = 0) in
 	//	 script 89, script 164 isn't reran to redraw it. Why? Dunno. Hack? Yes.
-	if ((var == 175) && (_gameId == GID_MANIAC) && 
-	    (vm.slot[_currentScript].number == 89))
+	if ((var == 175) && (_gameId == GID_MANIAC) && (vm.slot[_currentScript].number == 89))
 		runScript(164, 0, 0, 0);
 }
 
@@ -1121,6 +1120,28 @@ void ScummEngine_v2::o2_startScript() {
 	}
 
 	runScript(script, 0, 0, 0);
+}
+
+void ScummEngine_v2::o2_stopScript() {
+	int script;
+
+	script = getVarOrDirectByte(PARAM_1);
+
+	if ((_gameId == GID_ZAK) && (_roomResource == 7) && (vm.slot[_currentScript].number == 10001)) {
+	// FIXME: Nasty hack for bug #771499
+	// Don't let the exit script for room 7 stop the buy script (24),
+	// switching to the number selection keypad (script 15)
+		if ((script == 24) && isScriptRunning(15))
+			return;
+	}
+
+	if (script == 0)
+		script = vm.slot[_currentScript].number;
+
+	if (_currentScript != 0 && vm.slot[_currentScript].number == script)
+		stopObjectCode();
+	else
+		stopScript(script);
 }
 
 void ScummEngine_v2::o2_panCameraTo() {
