@@ -276,7 +276,7 @@ void PluginManager::loadPlugins() {
 	LINK_PLUGIN(SAGA)
 	#endif
 	#ifndef DISABLE_KYRA
-	//LINK_PLUGIN(KYRA)
+	LINK_PLUGIN(KYRA)
 	#endif
 
 #endif
