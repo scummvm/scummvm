@@ -1177,6 +1177,8 @@ void ScummEngine::initScummVars() {
 	if (_version == 8) {	// Fixme: How do we deal with non-cd installs?
 		VAR(VAR_CURRENTDISK) = 1;
 		VAR(VAR_LANGUAGE) = _language;
+	} else if (_version >= 7) {
+		VAR(VAR_V6_EMSSPACE) = 10000;
 	} else {
 		VAR(VAR_CURRENTDRIVE) = 0;
 		VAR(VAR_FIXEDDISK) = true;
