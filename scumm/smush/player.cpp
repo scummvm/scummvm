@@ -487,8 +487,8 @@ void SmushPlayer::initSize(const Rect & r, bool always, bool transparent) {
 
 	_codec1.initSize(_frameSize, r);
 	_codec37.initSize(_frameSize, r);
+	_codec47.initSize(_frameSize, r);
 	_codec44.initSize(_frameSize, r);
-	_codecd.initSize(_frameSize, r);
 	_alreadyInit = true;
 }
 
@@ -527,7 +527,7 @@ void SmushPlayer::handleFrameObject(Chunk & b) {
 		break;
 	case 47:
 		initSize(r, false, true);
-		decodeCodec(b, r, _codecd);
+		decodeCodec(b, r, _codec47);
 		break;
 	case 21:
 	case 44:

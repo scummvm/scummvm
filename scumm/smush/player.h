@@ -56,8 +56,8 @@ private:
 	FontRenderer * _fr[4];		//!< pointers to the fonts for the animation
 	Codec1Decoder _codec1;	//!< the ::decoder for codec 1 and 3
 	Codec37Decoder _codec37;	//!< the ::decoder for codec 37
+	Codec47Decoder _codec47;	//!< the ::decoder for codec 47
 	Codec44Decoder _codec44;	//!< the ::decoder for codec 21 and 44
-	DumpDecoder _codecd;	//!< the ::decoder for codec 21 and 44
 	Point _frameSize;		//!< the current frame size of the animation
 	int32 _frame;				//!< the current frame number of the animation
 	bool _outputSound;		//!< should we handle sound ?

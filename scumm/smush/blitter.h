@@ -77,6 +77,7 @@ public:
 	void putBlock(byte *); //!< This method allows to blit one block directly from a buffer
 	void putBlock(uint32, uint32, uint32, uint32); //!< This method allows to blit one block from a 4 int32 value
 	void blockCopy(int32); //!< This method allows to copy one block from another separated by the given offset
+	byte * getPtr() { return _ptr; }
 };
 
 #endif

@@ -26,12 +26,16 @@
 
 #include "decoder.h"
 
-/*!	@brief ::decoder for debugging purpose.
+class Codec47Decoder : public Decoder {
+private:
 
-*/
-class DumpDecoder : public Decoder {
 public:
-	virtual ~DumpDecoder() {}
+	bool initSize(const Point &, const Rect &);
+	Codec47Decoder();
+	void clean();
+	virtual ~Codec47Decoder();
+
+public:
 	bool decode(Blitter &, Chunk &);
 };
 

@@ -24,7 +24,25 @@
 #include "chunk.h"
 #include "blitter.h"
 
-bool DumpDecoder::decode(Blitter & dst, Chunk & src) {
+bool Codec47Decoder::initSize(const Point & p, const Rect & r) {
+	Decoder::initSize(p, r);
+	clean();
+	int32 frame_size = getRect().width() * getRect().height();
+
+	return true;
+}
+
+Codec47Decoder::Codec47Decoder() {
+}
+
+void Codec47Decoder::clean() {
+}
+
+Codec47Decoder::~Codec47Decoder() {
+	clean();
+}
+
+bool Codec47Decoder::decode(Blitter & dst, Chunk & src) {
 
 	return true;
 }
