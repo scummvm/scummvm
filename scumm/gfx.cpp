@@ -1224,7 +1224,10 @@ void Gdi::decompressMaskImg()
 	byte *dst = _mask_ptr_dest;
 	int height = _numLinesToProcess;
 	byte b, c;
-
+	
+	height--;		// FIXME: This seems to fix The Dig nexus wrapping corrupting memory..
+				//	  and doesn't break any other games.. but is it correct? If so,
+				//	  do we need to mirror this change anywhere else?
 	while (1) {
 		b = *src++;
 
