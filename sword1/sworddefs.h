@@ -166,6 +166,16 @@ enum Language {
 #define MATCHBOOK 20
 #define BUZZER 26
 #define BEER_TOWEL 3
+#define BALL 5
+#define TOILET_BRUSH 33
+#define TOILET_KEY 28
+#define TOWEL_CUT 39
+#define PRESSURE_GAUGE 24
+#define MIRROR 38
+#define STONE_KEY 30
+
+#define SC58_PATH_X 225
+#define SC58_PATH_Y 369
 
 #define FLOOR_1 65536
 #define FLOOR_2 131072
@@ -223,12 +233,14 @@ enum Language {
 #define FLOOR_58 3801088
 #define FLOOR_59 3866624
 #define FLOOR_60 3932160
+#define LEFT_FLOOR_61 3997697
 #define FLOOR_62 4063232
 #define FLOOR_63 4128768
 #define FLOOR_65 4259840
 #define FLOOR_66 4325376
 #define FLOOR_67 4390912
 #define FLOOR_69 4521984
+#define RIGHT_FLOOR_71 4653060
 #define FLOOR_72 4718592
 #define FLOOR_73 4784128
 #define FLOOR_74 4849664

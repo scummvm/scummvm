@@ -675,6 +675,326 @@ void SwordEngine::startPositions(int32 startNumber) {
 			//---------------------------
 		}
 	}
+	//-------------------------------------------------------------------------------------------------------
+	// SYRIA
+
+	else if ((startNumber >= 45) && (startNumber <= 55))
+	{
+		SwordLogic::_scriptVars[PARIS_FLAG] = 1;
+
+		// already carrying these objects by the time we reach Syria...
+		_logic->fnAddObject(0,0,BALL,0,0,0,0,0);
+		_logic->fnAddObject(0,0,RED_NOSE,0,0,0,0,0);
+		_logic->fnAddObject(0,0,PHOTOGRAPH,0,0,0,0,0);
+		_logic->fnAddObject(0,0,LIFTING_KEYS,0,0,0,0,0);
+		_logic->fnAddObject(0,0,MATCHBOOK,0,0,0,0,0);
+		_logic->fnAddObject(0,0,BUZZER,0,0,0,0,0);
+		_logic->fnAddObject(0,0,TISSUE,0,0,0,0,0);
+
+		SwordLogic::_scriptVars[CHANGE_STANCE] = STAND;		// use STAND for all starts
+		
+		switch (startNumber)
+		{
+			//---------------------------
+			case 45:	// syria_stall
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 410;
+				SwordLogic::_scriptVars[CHANGE_Y] = 490;
+				SwordLogic::_scriptVars[CHANGE_DIR] = DOWN_RIGHT;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_45;
+			}
+			break;
+			//---------------------------
+			case 47:	// syria_carpet
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 225;
+				SwordLogic::_scriptVars[CHANGE_Y] = 775;
+				SwordLogic::_scriptVars[CHANGE_DIR] = RIGHT;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_47;
+			}
+			break;
+			//---------------------------
+			case 49:	// syria_club
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 438;
+				SwordLogic::_scriptVars[CHANGE_Y] = 400;
+				SwordLogic::_scriptVars[CHANGE_DIR] = DOWN_RIGHT;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_49;
+
+				_logic->fnAddObject(0,0,TOILET_BRUSH,0,0,0,0,0);
+			}
+			break;
+			//---------------------------
+			case 50:	// syria_toilet
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 313;
+				SwordLogic::_scriptVars[CHANGE_Y] = 440;
+				SwordLogic::_scriptVars[CHANGE_DIR] = DOWN_RIGHT;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_50;
+
+				_logic->fnAddObject(0,0,TOILET_KEY,0,0,0,0,0);
+			}
+			break;
+			//---------------------------
+			case 53:	// bull_head pan
+			{
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_53;
+
+				_logic->fnAddObject(0,0,TOWEL_CUT,0,0,0,0,0);
+			}
+			break;
+			//---------------------------
+			case 54:	// bull_head
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 680;
+				SwordLogic::_scriptVars[CHANGE_Y] = 425;
+				SwordLogic::_scriptVars[CHANGE_DIR] = DOWN_LEFT;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_54;
+
+				_logic->fnAddObject(0,0,TOWEL_CUT,0,0,0,0,0);
+			}
+			break;
+			//---------------------------
+			case 55:	// bull_secret
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 825;
+				SwordLogic::_scriptVars[CHANGE_Y] = 373;
+				SwordLogic::_scriptVars[CHANGE_DIR] = DOWN_LEFT;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_55;
+			}
+			break;
+			//---------------------------
+			default:
+			{
+				error("Can't start in location %d", startNumber);
+			}
+			break;
+			//---------------------------
+		}
+	}
+	//-------------------------------------------------------------------------------------------------------
+	// SPAIN 1 or 2
+
+	else if ( ((startNumber >= 56) && (startNumber <= 62)) || 
+		  ((startNumber >=956) && (startNumber <= 962)) )
+	{
+		SwordLogic::_scriptVars[PARIS_FLAG] = 1;
+
+		if (startNumber > 900)	// SPAIN 2
+		{
+			startNumber -= 900;	// set to correct start location
+			SwordLogic::_scriptVars[SPAIN_VISIT] = 2;	// set my own script flag to indicate 2nd visit
+		}
+		else
+			SwordLogic::_scriptVars[SPAIN_VISIT] = 1;	// set my own script flag to indicate 1st visit
+
+		// already carrying these objects by the time we reach Spain...
+		_logic->fnAddObject(0,0,RED_NOSE,0,0,0,0,0);
+		_logic->fnAddObject(0,0,PHOTOGRAPH,0,0,0,0,0);
+		_logic->fnAddObject(0,0,LAB_PASS,0,0,0,0,0);
+		_logic->fnAddObject(0,0,LIFTING_KEYS,0,0,0,0,0);
+		_logic->fnAddObject(0,0,BUZZER,0,0,0,0,0);
+		_logic->fnAddObject(0,0,TISSUE,0,0,0,0,0);
+		_logic->fnAddObject(0,0,BALL,0,0,0,0,0);
+		_logic->fnAddObject(0,0,MATCHBOOK,0,0,0,0,0);
+
+		if (SwordLogic::_scriptVars[SPAIN_VISIT] == 1)	// 1st visit
+			_logic->fnAddObject(0,0,PRESSURE_GAUGE,0,0,0,0,0);
+		else						// 2nd visit
+			_logic->fnAddObject(0,0,POLISHED_CHALICE,0,0,0,0,0);
+
+		switch (startNumber)
+		{
+			//---------------------------
+			case 56:	// Countess' room
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 572;
+				SwordLogic::_scriptVars[CHANGE_Y] = 443;
+				SwordLogic::_scriptVars[CHANGE_DIR] = LEFT;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_56;
+			}
+			break;
+			//---------------------------
+			case 57:	// Spain Drive
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 1630;
+				SwordLogic::_scriptVars[CHANGE_Y] = 460;
+				SwordLogic::_scriptVars[CHANGE_DIR] = DOWN_LEFT;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_57;
+			}
+			break;
+			//---------------------------
+			case 58:	// Mausoleum Exterior
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = SC58_PATH_X;
+				SwordLogic::_scriptVars[CHANGE_Y] = SC58_PATH_Y;
+				SwordLogic::_scriptVars[CHANGE_DIR] = UP_RIGHT;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_58;
+			}
+			break;
+			//---------------------------
+			case 59:	// Mausoleum Interior
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 750;
+				SwordLogic::_scriptVars[CHANGE_Y] = 455;
+				SwordLogic::_scriptVars[CHANGE_DIR] = LEFT;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_59;
+			}
+			break;
+			//---------------------------
+			case 60:	// Spain Reception
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 750;
+				SwordLogic::_scriptVars[CHANGE_Y] = 475;
+				SwordLogic::_scriptVars[CHANGE_DIR] = DOWN_LEFT;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_60;
+			}
+			break;
+			//---------------------------
+			case 61:	// Spain Well
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 400;
+				SwordLogic::_scriptVars[CHANGE_Y] = 345;
+				SwordLogic::_scriptVars[CHANGE_DIR] = DOWN;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = LEFT_FLOOR_61;
+
+				_logic->fnAddObject(0,0,STONE_KEY,0,0,0,0,0);
+				_logic->fnAddObject(0,0,MIRROR,0,0,0,0,0);
+			}
+			break;
+			//---------------------------
+			case 62:	// CHESS PUZZLE
+			{
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_62;  // so it doesn't crash!!
+				
+				_logic->_scriptVars[TOP_MENU_DISABLED] = 1; // because it's irrelevant to the chess puzzle
+				_logic->_scriptVars[GEORGE_ALLOWED_REST_ANIMS] = 0; // because it's irrelevant to the chess puzzle
+
+				compact = (BsObject*)_objectMan->fetchObject(PLAYER);
+				_logic->fnNoSprite(compact, PLAYER, 0, 0, 0, 0, 0, 0);
+			}
+			break;
+			//---------------------------
+		}
+	}
+	//-------------------------------------------------------------------------------------------------------
+	// NIGHT TRAIN
+
+	else if ((startNumber >= 63) && (startNumber <= 70))
+	{
+		SwordLogic::_scriptVars[PARIS_FLAG] = 18;
+
+		switch (startNumber)
+		{
+			//---------------------------
+			case 63:	// train_one
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 1288;
+				SwordLogic::_scriptVars[CHANGE_Y] = 264;
+				SwordLogic::_scriptVars[CHANGE_DIR] = RIGHT;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_63;
+			}
+			break;
+			//---------------------------
+			case 65:	// compt_one
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 460;
+				SwordLogic::_scriptVars[CHANGE_Y] = 430;
+				SwordLogic::_scriptVars[CHANGE_DIR] = DOWN;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_65;
+			}
+			//---------------------------
+			case 66:	// compt_two
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 460;
+				SwordLogic::_scriptVars[CHANGE_Y] = 430;
+				SwordLogic::_scriptVars[CHANGE_DIR] = DOWN;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_66;
+			
+				SwordLogic::_scriptVars[WINDOW_66_OPEN] = 1;
+			}
+			break;
+			//---------------------------
+			case 67:	// compt_three
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 460;
+				SwordLogic::_scriptVars[CHANGE_Y] = 430;
+				SwordLogic::_scriptVars[CHANGE_DIR] = DOWN;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_67;
+			}
+			break;
+			//---------------------------
+			case 69:	// train_guard
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 310;
+				SwordLogic::_scriptVars[CHANGE_Y] = 430;
+				SwordLogic::_scriptVars[CHANGE_DIR] = DOWN;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_69;
+			}
+			break;
+			//---------------------------
+			default:
+			{
+				error("Can't start in location %d", startNumber);
+			}
+			break;
+			//---------------------------
+		}
+	}
+	//-------------------------------------------------------------------------------------------------------
+	// SCOTLAND
+
+	else if ((startNumber >= 71) && (startNumber <= 73))
+	{
+		SwordLogic::_scriptVars[PARIS_FLAG] = 1;
+
+		// already carrying these objects by the time we reach Scotland...
+		_logic->fnAddObject(0,0,RED_NOSE,0,0,0,0,0);
+		_logic->fnAddObject(0,0,PHOTOGRAPH,0,0,0,0,0);
+		_logic->fnAddObject(0,0,LAB_PASS,0,0,0,0,0);
+		_logic->fnAddObject(0,0,LIFTING_KEYS,0,0,0,0,0);
+		_logic->fnAddObject(0,0,BUZZER,0,0,0,0,0);
+
+		switch (startNumber)
+		{
+			//---------------------------
+			case 71:	// churchyard
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 1538;
+				SwordLogic::_scriptVars[CHANGE_Y] = 444;
+				SwordLogic::_scriptVars[CHANGE_DIR] = LEFT;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = RIGHT_FLOOR_71;
+
+				SwordLogic::_scriptVars[NICO_SCOT_SCREEN] = 71;
+				SwordLogic::_scriptVars[NICO_POSITION_71] = 1;
+			}
+			break;
+			//---------------------------
+			case 72:	// church_tower
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 150;
+				SwordLogic::_scriptVars[CHANGE_Y] = 503;
+				SwordLogic::_scriptVars[CHANGE_DIR] = RIGHT;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_72;
+
+				SwordLogic::_scriptVars[NICO_SCOT_SCREEN] = 72;
+			}
+			break;
+			//---------------------------
+			case 73:	// crypt
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 250;
+				SwordLogic::_scriptVars[CHANGE_Y] = 390;
+				SwordLogic::_scriptVars[CHANGE_DIR] = DOWN_RIGHT;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_73;
+
+				SwordLogic::_scriptVars[NICO_SCOT_SCREEN] = 73;
+				SwordLogic::_scriptVars[NICO_POSITION_73] = 1;
+			}
+			break;
+			//---------------------------	
+		}
+	}
 	else
 	{
 		error("Can't start in location %d", startNumber);
