@@ -156,7 +156,7 @@ public:
 		if (id == _lastId) {
 			return _lastString;
 		}
-		debug(9, "StringResource::get(%d)", id);
+		debugC(DEBUG_SMUSH, "StringResource::get(%d)", id);
 		for (int i = 0; i < _nbStrings; i++) {
 			if (_strings[i].id == id) {
 				_lastId = id;
@@ -172,7 +172,7 @@ public:
 };
 
 static StringResource *getStrings(const char *file, bool is_encoded) {
-	debug(7, "trying to read text ressources from %s", file);
+	debugC(DEBUG_SMUSH, "trying to read text ressources from %s", file);
 	File theFile;
 
 	theFile.open(file);
@@ -305,7 +305,7 @@ void SmushPlayer::checkBlock(const Chunk &b, Chunk::type type_expected, uint32 m
 }
 
 void SmushPlayer::handleSoundBuffer(int32 track_id, int32 index, int32 max_frames, int32 flags, int32 vol, int32 pan, Chunk &b, int32 size) {
-	debug(6, "SmushPlayer::handleSoundBuffer(%d, %d)", track_id, index);
+	debugC(DEBUG_SMUSH, "SmushPlayer::handleSoundBuffer(%d, %d)", track_id, index);
 //	if ((flags & 128) == 128) {
 //		return;
 //	}
@@ -331,7 +331,7 @@ void SmushPlayer::handleSoundBuffer(int32 track_id, int32 index, int32 max_frame
 
 void SmushPlayer::handleSoundFrame(Chunk &b) {
 	checkBlock(b, TYPE_PSAD);
-	debug(6, "SmushPlayer::handleSoundFrame()");
+	debugC(DEBUG_SMUSH, "SmushPlayer::handleSoundFrame()");
 
 	int32 track_id = b.getWord();
 	int32 index = b.getWord();
@@ -340,7 +340,7 @@ void SmushPlayer::handleSoundFrame(Chunk &b) {
 	int32 vol = b.getByte();
 	int32 pan = b.getChar();
 	if (index == 0) {
-		debug(5, "track_id:%d, max_frames:%d, flags:%d, vol:%d, pan:%d", track_id, max_frames, flags, vol, pan);
+		debugC(DEBUG_SMUSH, "track_id:%d, max_frames:%d, flags:%d, vol:%d, pan:%d", track_id, max_frames, flags, vol, pan);
 	}
 	int32 size = b.getSize() - 10;
 	handleSoundBuffer(track_id, index, max_frames, flags, vol, pan, b, size);
@@ -349,7 +349,7 @@ void SmushPlayer::handleSoundFrame(Chunk &b) {
 void SmushPlayer::handleSkip(Chunk &b) {
 	checkBlock(b, TYPE_SKIP, 4);
 	int32 code = b.getDword();
-	debug(6, "SmushPlayer::handleSkip(%d)", code);
+	debugC(DEBUG_SMUSH, "SmushPlayer::handleSkip(%d)", code);
 	if (code >= 0 && code < 37)
 		_skipNext = _skips[code];
 	else
@@ -357,13 +357,13 @@ void SmushPlayer::handleSkip(Chunk &b) {
 }
 
 void SmushPlayer::handleStore(Chunk &b) {
-	debug(6, "SmushPlayer::handleStore()");
+	debugC(DEBUG_SMUSH, "SmushPlayer::handleStore()");
 	checkBlock(b, TYPE_STOR, 4);
 	_storeFrame = true;
 }
 
 void SmushPlayer::handleFetch(Chunk &b) {
-	debug(6, "SmushPlayer::handleFetch()");
+	debugC(DEBUG_SMUSH, "SmushPlayer::handleFetch()");
 	checkBlock(b, TYPE_FTCH, 6);
 
 	if (_frameBuffer != NULL) {
@@ -373,7 +373,7 @@ void SmushPlayer::handleFetch(Chunk &b) {
 
 void SmushPlayer::handleIACT(Chunk &b) {
 	checkBlock(b, TYPE_IACT, 8);
-	debug(6, "SmushPlayer::handleImuseAction()");
+	debugC(DEBUG_SMUSH, "SmushPlayer::handleImuseAction()");
 
 	/* int code = */ b.getWord();
 	int flags = b.getWord();
@@ -404,7 +404,7 @@ void SmushPlayer::handleIACT(Chunk &b) {
 		} else {
 			error("ImuseChannel::handleIACT(): bad track_flags: %d", track_flags);
 		}
-		debug(6, "SmushPlayer::handleIACT(): %d, %d, %d", track, index, track_flags);
+		debugC(DEBUG_SMUSH, "SmushPlayer::handleIACT(): %d, %d, %d", track, index, track_flags);
 
 		SmushChannel *c = _smixer->findChannel(track);
 		if (c == 0) {
@@ -634,7 +634,7 @@ static byte delta_color(byte org_color, int16 delta_color) {
 
 void SmushPlayer::handleDeltaPalette(Chunk &b) {
 	checkBlock(b, TYPE_XPAL);
-	debug(6, "SmushPlayer::handleDeltaPalette()");
+	debugC(DEBUG_SMUSH, "SmushPlayer::handleDeltaPalette()");
 
 	if (b.getSize() == 0x300 * 3 + 4) {
 
@@ -663,7 +663,7 @@ void SmushPlayer::handleDeltaPalette(Chunk &b) {
 
 void SmushPlayer::handleNewPalette(Chunk &b) {
 	checkBlock(b, TYPE_NPAL, 0x300);
-	debug(6, "SmushPlayer::handleNewPalette()");
+	debugC(DEBUG_SMUSH, "SmushPlayer::handleNewPalette()");
 
 	if (_skipPalette)
 		return;
@@ -824,7 +824,7 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 
 void SmushPlayer::handleFrame(Chunk &b) {
 	checkBlock(b, TYPE_FRME);
-	debug(6, "SmushPlayer::handleFrame(%d)", _frame);
+	debugC(DEBUG_SMUSH, "SmushPlayer::handleFrame(%d)", _frame);
 	_skipNext = false;
 
 	uint32 start_time, end_time;
@@ -895,14 +895,14 @@ void SmushPlayer::handleFrame(Chunk &b) {
 	updateScreen();
 	_smixer->handleFrame();
 
-	debug(5, "Smush stats: FRME( %03d ), Limit(%d)", end_time - start_time, _speed / 1000);
+	debugC(DEBUG_SMUSH, "Smush stats: FRME( %03d ), Limit(%d)", end_time - start_time, _speed / 1000);
 
 	_frame++;
 }
 
 void SmushPlayer::handleAnimHeader(Chunk &b) {
 	checkBlock(b, TYPE_AHDR, 0x300 + 6);
-	debug(6, "SmushPlayer::handleAnimHeader()");
+	debugC(DEBUG_SMUSH, "SmushPlayer::handleAnimHeader()");
 
 	_version = b.getWord();
 	_nbframes = b.getWord();
@@ -1070,7 +1070,7 @@ void SmushPlayer::updateScreen() {
 	_vm->_system->copyRectToScreen(_dst, _width, 0, 0, _width, _height);
 	_updateNeeded = true;
 	end_time = _vm->_system->get_msecs();
-	debug(4, "Smush stats: updateScreen( %03d )", end_time - start_time);
+	debugC(DEBUG_SMUSH, "Smush stats: updateScreen( %03d )", end_time - start_time);
 }
 
 void SmushPlayer::insanity(bool flag) {
@@ -1152,7 +1152,7 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 
 			end_time = _vm->_system->get_msecs();
 
-			debug(4, "Smush stats: BackendUpdateScreen( %03d )", end_time - start_time);
+			debugC(DEBUG_SMUSH, "Smush stats: BackendUpdateScreen( %03d )", end_time - start_time);
 
 		}
 		if (_vm->_smushVideoShouldFinish || _vm->_quit || _vm->_saveLoadFlag)

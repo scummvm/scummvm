@@ -158,7 +158,7 @@ void SmushFont::drawSubstring(const char *str, byte *buffer, int dst_width, int 
 
 
 void SmushFont::drawString(const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, bool center) {
-	debug(9, "SmushFont::drawString(%s, %d, %d, %d)", str, x, y, center);
+	debugC(DEBUG_SMUSH, "SmushFont::drawString(%s, %d, %d, %d)", str, x, y, center);
 
 	while (str) {
 		char line[256];
@@ -177,7 +177,7 @@ void SmushFont::drawString(const char *str, byte *buffer, int dst_width, int dst
 }
 
 void SmushFont::drawStringWrap(const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, int left, int right, bool center) {
-	debug(9, "SmushFont::drawStringWrap(%s, %d, %d, %d, %d, %d)", str, x, y, left, right, center);
+	debugC(DEBUG_SMUSH, "SmushFont::drawStringWrap(%s, %d, %d, %d, %d, %d)", str, x, y, left, right, center);
 
 	const int width = right - left;
 	char *s = strdup(str);

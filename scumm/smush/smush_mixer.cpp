@@ -49,7 +49,7 @@ SmushMixer::~SmushMixer() {
 }
 
 SmushChannel *SmushMixer::findChannel(int32 track) {
-	debug(9, "SmushMixer::findChannel(%d)", track);
+	debugC(DEBUG_SMUSH, "SmushMixer::findChannel(%d)", track);
 	for (int32 i = 0; i < NUM_CHANNELS; i++) {
 		if (_channels[i].id == track)
 			return _channels[i].chan;
@@ -61,7 +61,7 @@ void SmushMixer::addChannel(SmushChannel *c) {
 	int32 track = c->getTrackIdentifier();
 	int i;
 
-	debug(9, "SmushMixer::addChannel(%d)", track);
+	debugC(DEBUG_SMUSH, "SmushMixer::addChannel(%d)", track);
 
 	for (i = 0; i < NUM_CHANNELS; i++) {
 		if (_channels[i].id == track)
@@ -86,7 +86,7 @@ void SmushMixer::addChannel(SmushChannel *c) {
 }
 
 bool SmushMixer::handleFrame() {
-	debug(9, "SmushMixer::handleFrame()");
+	debugC(DEBUG_SMUSH, "SmushMixer::handleFrame()");
 	for (int i = 0; i < NUM_CHANNELS; i++) {
 		if (_channels[i].id != -1) {
 			if (_channels[i].chan->isTerminated()) {
@@ -133,7 +133,7 @@ bool SmushMixer::handleFrame() {
 }
 
 bool SmushMixer::stop() {
-	debug(9, "SmushMixer::stop()");
+	debugC(DEBUG_SMUSH, "SmushMixer::stop()");
 	for (int i = 0; i < NUM_CHANNELS; i++) {
 		if (_channels[i].id != -1) {
 			delete _channels[i].chan;
