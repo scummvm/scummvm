@@ -173,8 +173,9 @@ public:
 	bool _dx_use_3_or_4_for_lock;
 
 	bool _mouse_pos_changed;
-	bool _mainscript_toggle;
-	bool _vgascript_toggle;
+	bool _start_mainscript;
+	bool _continous_mainscript;
+	bool _continous_vgascript;
 	bool _vk_t_toggle;
 	byte _mouse_cursor;
 	bool _vga_var9;

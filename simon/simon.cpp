@@ -4479,8 +4479,9 @@ void SimonState::go()
 	_last_music_played = (uint) - 1;
 	_vga_base_delay = 1;
 	
-	_mainscript_toggle = false;
-	_vgascript_toggle = false;
+	_start_mainscript = false;
+	_continous_mainscript = false;
+	_continous_vgascript = false;
 
 	if (_sound->hasVoice()) {
 		_vk_t_toggle = false;
@@ -4527,10 +4528,12 @@ void SimonState::delay(uint amount)
 		while (_system->poll_event(&event)) {
 			switch (event.event_code) {
 				case OSystem::EVENT_KEYDOWN:
-				if (event.kbd.ascii == 'o') {
-					_mainscript_toggle ^= 1;
+				if (event.kbd.ascii == 'r') {
+					_start_mainscript ^= 1;
+				} else if (event.kbd.ascii == 'o') {
+					_continous_mainscript ^= 1;
 				} else if (event.kbd.ascii == 'v') {
-					_vgascript_toggle ^= 1;
+					_continous_vgascript ^= 1;
 				} else if (event.kbd.ascii == 't') {
 					_vk_t_toggle ^= 1;
 				} else if (event.kbd.ascii == '+') {

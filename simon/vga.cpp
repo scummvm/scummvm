@@ -113,7 +113,7 @@ void SimonState::run_vga_script()
 	for (;;) {
 		uint opcode;
 
-if (_vgascript_toggle) {
+if (_continous_vgascript) {
 		if ((void *)_vc_ptr != (void *)&vc_get_out_of_code) {
 //      if (_vga_cur_sprite_id==62 && _vga_cur_file_id==68 ||
 //          _vga_cur_sprite_id==1 && _vga_cur_file_id==2) {
@@ -196,7 +196,7 @@ void SimonState::vc_skip_next_instruction()
 		_vc_ptr += opcode_param_len_simon1[opcode];
 	}
 
-	if (_vgascript_toggle)
+	if (_continous_vgascript)
 		fprintf(_dump_file, "; skipped\n");
 }
 
@@ -1647,7 +1647,7 @@ void SimonState::vc_56_no_op()
 	if (_game & GAME_SIMON2) {
 		uint num = vc_read_var_or_word() * _vga_base_delay;
 
-		if (_vgascript_toggle)
+		if (_continous_vgascript)
 			fprintf(_dump_file, "; sleep_ex = %d\n", num + gss->VGA_DELAY_BASE);
 
 		add_vga_timer(num + gss->VGA_DELAY_BASE, _vc_ptr, _vga_cur_sprite_id, _vga_cur_file_id);
