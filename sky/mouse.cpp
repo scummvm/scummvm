@@ -203,8 +203,8 @@ void SkyMouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
 	_mouseHeight = ((struct dataFileHeader *)mouseData)->s_height;
 
 	//_system->set_mouse_cursor(_mouseData2, _mouseWidth, _mouseHeight, mouseX, mouseY);
-	// there's something wrong about the mouse's hotspot. using 0/0 works fine. (but the cursor is still a couple of pixels off)
-	_system->set_mouse_cursor(_mouseData2, _mouseWidth, _mouseHeight, 0, 0);
+	// there's something wrong about the mouse's hotspot. using 4/4 seems to work fine. 
+	_system->set_mouse_cursor(_mouseData2, _mouseWidth, _mouseHeight, 4, 4);
 	if (frameNum == MOUSE_BLANK) _system->show_mouse(false);
 	else _system->show_mouse(true);
 
