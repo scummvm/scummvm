@@ -1,5 +1,5 @@
 // Residual - Virtual machine to run LucasArts' 3D adventure games
-// Copyright (C) 2003 The ScummVM-Residual Team (www.scummvm.org)
+// Copyright (C) 2003-2004 The ScummVM-Residual Team (www.scummvm.org)
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -23,85 +23,85 @@
 #include <SDL.h>
 
 const char *tag2str(uint32 tag) {
-  static char str[5];
-  str[0] = (char)(tag >> 24);
-  str[1] = (char)(tag >> 16);
-  str[2] = (char)(tag >> 8);
-  str[3] = (char)tag;
-  str[4] = '\0';
-  return str;
+	static char str[5];
+	str[0] = (char)(tag >> 24);
+	str[1] = (char)(tag >> 16);
+	str[2] = (char)(tag >> 8);
+	str[3] = (char)tag;
+	str[4] = '\0';
+	return str;
 }
 
 void hexdump(const byte * data, int len, int bytesPerLine) {
-        assert(1 <= bytesPerLine && bytesPerLine <= 32);
-        int i;
-        byte c;
-        int offset = 0;
-        while (len >= bytesPerLine) {
-                printf("%06x: ", offset);
-                for (i = 0; i < bytesPerLine; i++) {
-                        printf("%02x ", data[i]);
-                        if (i % 4 == 3)
-                                printf(" ");
-                }
-                printf(" |");
-                for (i = 0; i < bytesPerLine; i++) {
-                        c = data[i];
-                        if (c < 32 || c >= 127)
-                                c = '.';
-                        printf("%c", c);
-                }
-                printf("|\n");
-                data += bytesPerLine;
-                len -= bytesPerLine;
-                offset += bytesPerLine;
-        }
+	assert(1 <= bytesPerLine && bytesPerLine <= 32);
+	int i;
+	byte c;
+	int offset = 0;
+	while (len >= bytesPerLine) {
+		printf("%06x: ", offset);
+		for (i = 0; i < bytesPerLine; i++) {
+			printf("%02x ", data[i]);
+			if (i % 4 == 3)
+				printf(" ");
+		}
+		printf(" |");
+		for (i = 0; i < bytesPerLine; i++) {
+			c = data[i];
+			if (c < 32 || c >= 127)
+				c = '.';
+			printf("%c", c);
+		}
+		printf("|\n");
+		data += bytesPerLine;
+		len -= bytesPerLine;
+		offset += bytesPerLine;
+	}
 
-        if (len <= 0)
-                return;
+	if (len <= 0)
+		return;
 
-        printf("%06x: ", offset);
-        for (i = 0; i < bytesPerLine; i++) {
-                if (i < len)
-                        printf("%02x ", data[i]);
-                else
-                        printf("   ");
-                if (i % 4 == 3)
-                        printf(" ");
-        }
-        printf(" |");
-        for (i = 0; i < len; i++) {
-                c = data[i];
-                if (c < 32 || c >= 127)
-                        c = '.';
-                printf("%c", c);
-        }
-        for (; i < bytesPerLine; i++)
-                printf(" ");
-        printf("|\n");
+	printf("%06x: ", offset);
+	for (i = 0; i < bytesPerLine; i++) {
+		if (i < len)
+			printf("%02x ", data[i]);
+		else
+			printf("   ");
+		if (i % 4 == 3)
+			printf(" ");
+	}
+	printf(" |");
+	for (i = 0; i < len; i++) {
+		c = data[i];
+		if (c < 32 || c >= 127)
+			c = '.';
+		printf("%c", c);
+	}
+	for (; i < bytesPerLine; i++)
+		printf(" ");
+	printf("|\n");
 }
 
 void warning(const char *fmt, ...) {
-  std::fprintf(stderr, "WARNING: ");
+	std::fprintf(stderr, "WARNING: ");
 
-  std::va_list va;
+	std::va_list va;
 
-  va_start(va, fmt);
-  std::vfprintf(stderr, fmt, va);
-  va_end(va);
-  std::fprintf(stderr, "\n");
+	va_start(va, fmt);
+	std::vfprintf(stderr, fmt, va);
+	va_end(va);
+	std::fprintf(stderr, "\n");
 }
 
 void error(const char *fmt, ...) {
-  std::fprintf(stderr, "ERROR: ");
+	std::fprintf(stderr, "ERROR: ");
 
-  std::va_list va;
+	std::va_list va;
 
-  va_start(va, fmt);
-  std::vfprintf(stderr, fmt, va);
-  va_end(va);
-  std::fprintf(stderr, "\n");
+	va_start(va, fmt);
+	std::vfprintf(stderr, fmt, va);
+	va_end(va);
+	std::fprintf(stderr, "\n");
 
-  SDL_Quit();
-  exit(1);
+	SDL_Quit();
+	exit(1);
 }

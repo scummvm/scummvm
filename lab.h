@@ -1,5 +1,5 @@
 // Residual - Virtual machine to run LucasArts' 3D adventure games
-// Copyright (C) 2003 The ScummVM-Residual Team (www.scummvm.org)
+// Copyright (C) 2003-2004 The ScummVM-Residual Team (www.scummvm.org)
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -24,46 +24,45 @@
 
 class Block {
 public:
-  Block(const char *data, int len) :
-    data_(data), len_(len) { }
-  const char *data() const { return data_; }
-  int len() const { return len_; }
+	Block(const char *data, int len) : data_(data), len_(len) {}
+	const char *data() const { return data_; }
+	int len() const { return len_; }
 
-  ~Block() { delete[] data_; }
+	~Block() { delete[] data_; }
 
 private:
-  Block();
-  const char *data_;
-  int len_;
-  bool owner_;
+	Block();
+	const char *data_;
+	int len_;
+	bool owner_;
 };
 
 class Lab {
 public:
-  Lab() : f_(NULL) { }
-  explicit Lab(const char *filename) : f_(NULL) { open(filename); }
-  bool open(const char *filename);
-  bool isOpen() const { return f_ != NULL; }
-  void close();
-  bool fileExists(const char *filename) const;
-  Block *getFileBlock(const char *filename) const;
-  std::FILE *openNewStream(const char *filename) const;
-  int fileLength(const char *filename) const;
+	Lab() : f_(NULL) { }
+	explicit Lab(const char *filename) : f_(NULL) { open(filename); }
+	bool open(const char *filename);
+	bool isOpen() const { return f_ != NULL; }
+	void close();
+	bool fileExists(const char *filename) const;
+	Block *getFileBlock(const char *filename) const;
+	std::FILE *openNewStream(const char *filename) const;
+	int fileLength(const char *filename) const;
 
-  ~Lab() { close(); }
+	~Lab() { close(); }
 
 private:
-  struct LabEntry {
-    LabEntry(int the_offset, int the_len) :
-      offset(the_offset), len(the_len) { }
-    int offset, len;
-  };
+	struct LabEntry {
+		LabEntry(int the_offset, int the_len) :
+		offset(the_offset), len(the_len) {}
+		int offset, len;
+	};
 
-  std::FILE *f_;
-  typedef std::map<std::string, LabEntry> file_map_type;
-  file_map_type file_map_;
+	std::FILE *f_;
+	typedef std::map<std::string, LabEntry> file_map_type;
+	file_map_type file_map_;
 
-  file_map_type::const_iterator find_filename(const char *filename) const;
+	file_map_type::const_iterator find_filename(const char *filename) const;
 };
 
 #endif

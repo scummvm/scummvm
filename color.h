@@ -1,5 +1,5 @@
 // Residual - Virtual machine to run LucasArts' 3D adventure games
-// Copyright (C) 2003 The ScummVM-Residual Team (www.scummvm.org)
+// Copyright (C) 2003-2004 The ScummVM-Residual Team (www.scummvm.org)
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -18,33 +18,35 @@
 #ifndef COLOR_H
 #define COLOR_H
 
+#include "bits.h"
+
 class Color {
 public:
-  unsigned char vals_[3];
+	byte vals_[3];
 
-  Color() { }
-  Color(unsigned char r, unsigned char g, unsigned char b) {
-    vals_[0] = r; vals_[1] = g; vals_[2] = b;
-  }
-  Color(const Color& c) {
-    vals_[0] = c.vals_[0]; vals_[1] = c.vals_[1]; vals_[2] = c.vals_[2];
-  }
-  unsigned char &red() { return vals_[0]; }
-  unsigned char red() const { return vals_[0]; }
-  unsigned char &green() { return vals_[1]; }
-  unsigned char green() const { return vals_[1]; }
-  unsigned char &blue() { return vals_[2]; }
-  unsigned char blue() const { return vals_[2]; }
+	Color() {}
+	Color(byte r, byte g, byte b) {
+		vals_[0] = r; vals_[1] = g; vals_[2] = b;
+	}
+	Color(const Color& c) {
+		vals_[0] = c.vals_[0]; vals_[1] = c.vals_[1]; vals_[2] = c.vals_[2];
+	}
+	byte &red() { return vals_[0]; }
+	byte red() const { return vals_[0]; }
+	byte &green() { return vals_[1]; }
+	byte green() const { return vals_[1]; }
+	byte &blue() { return vals_[2]; }
+	byte blue() const { return vals_[2]; }
 
-  Color& operator =(const Color &c) {
-    vals_[0] = c.vals_[0]; vals_[1] = c.vals_[1]; vals_[2] = c.vals_[2];
-    return *this;
-  }
+	Color& operator =(const Color &c) {
+		vals_[0] = c.vals_[0]; vals_[1] = c.vals_[1]; vals_[2] = c.vals_[2];
+	return *this;
+}
 
-  Color& operator =(Color *c) {
-    vals_[0] = c->vals_[0]; vals_[1] = c->vals_[1]; vals_[2] = c->vals_[2];
-    return *this;
-  }
+	Color& operator =(Color *c) {
+		vals_[0] = c->vals_[0]; vals_[1] = c->vals_[1]; vals_[2] = c->vals_[2];
+		return *this;
+	}
 };
 
 #endif

@@ -1,5 +1,5 @@
 // Residual - Virtual machine to run LucasArts' 3D adventure games
-// Copyright (C) 2003 The ScummVM-Residual Team (www.scummvm.org)
+// Copyright (C) 2003-2004 The ScummVM-Residual Team (www.scummvm.org)
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -24,17 +24,16 @@
 
 class CMap : public Resource {
 public:
-  // Load a colormap from the given data.
-  CMap(const char *filename, const char *data, int len) :
-    Resource(filename)
-  {
-    if (len < 4 || std::memcmp(data, "CMP ", 4) != 0)
-      error("Invalid magic loading colormap\n");
-    std::memcpy(colors, data + 64, sizeof(colors));
-  }
+	// Load a colormap from the given data.
+	CMap(const char *filename, const char *data, int len) :
+		Resource(filename) {
+	if (len < 4 || std::memcmp(data, "CMP ", 4) != 0)
+		error("Invalid magic loading colormap\n");
+		std::memcpy(colors, data + 64, sizeof(colors));
+	}
 
-  // The color data, in RGB format
-  char colors[256 * 3];
+	// The color data, in RGB format
+	char colors[256 * 3];
 };
 
 #endif

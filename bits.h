@@ -1,5 +1,5 @@
 // Residual - Virtual machine to run LucasArts' 3D adventure games
-// Copyright (C) 2003 The ScummVM-Residual Team (www.scummvm.org)
+// Copyright (C) 2003-2004 The ScummVM-Residual Team (www.scummvm.org)
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -355,24 +355,24 @@ FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 
 inline float get_float(const char *data) {
-  const unsigned char *udata = reinterpret_cast<const unsigned char *>(data);
-  unsigned char fdata[4];
-  fdata[0] = udata[3];
-  fdata[1] = udata[2];
-  fdata[2] = udata[1];
-  fdata[3] = udata[0];
-  return *(reinterpret_cast<const float *>(fdata));
+	const unsigned char *udata = reinterpret_cast<const unsigned char *>(data);
+	unsigned char fdata[4];
+	fdata[0] = udata[3];
+	fdata[1] = udata[2];
+	fdata[2] = udata[1];
+	fdata[3] = udata[0];
+	return *(reinterpret_cast<const float *>(fdata));
 }
 
 #else
 
 inline float get_float(const char *data) {
-  return *(reinterpret_cast<const float *>(data));
+	return *(reinterpret_cast<const float *>(data));
 }
 #endif
 
 inline Vector3d get_vector3d(const char *data) {
-  return Vector3d(get_float(data), get_float(data + 4), get_float(data + 8));
+	return Vector3d(get_float(data), get_float(data + 4), get_float(data + 8));
 }
 
 #endif

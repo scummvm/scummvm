@@ -1,5 +1,5 @@
 // Residual - Virtual machine to run LucasArts' 3D adventure games
-// Copyright (C) 2003 The ScummVM-Residual Team (www.scummvm.org)
+// Copyright (C) 2003-2004 The ScummVM-Residual Team (www.scummvm.org)
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -27,25 +27,24 @@ class CMap;
 
 class Material : public Resource {
 public:
-  // Load a texture from the given data.
-  Material(const char *filename, const char *data, int len,
-	   const CMap &cmap);
+	// Load a texture from the given data.
+	Material(const char *filename, const char *data, int len, const CMap &cmap);
 
-  // Load this texture into the GL context
-  void select() const;
+	// Load this texture into the GL context
+	void select() const;
 
-  // Set which image in an animated texture to use
-  void setNumber(int n) { curr_image_ = n; }
+	// Set which image in an animated texture to use
+	void setNumber(int n) { curr_image_ = n; }
 
-  int numImages() const { return num_images_; }
-  int currentImage() const { return curr_image_; }
+	int numImages() const { return num_images_; }
+	int currentImage() const { return curr_image_; }
 
-  ~Material();
+	~Material();
 
 private:
-  int num_images_, curr_image_;
-  int width_, height_;
-  GLuint *textures_;
+	int num_images_, curr_image_;
+	int width_, height_;
+	GLuint *textures_;
 };
 
 #endif

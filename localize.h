@@ -1,5 +1,5 @@
 // Residual - Virtual machine to run LucasArts' 3D adventure games
-// Copyright (C) 2003 The ScummVM-Residual Team (www.scummvm.org)
+// Copyright (C) 20032004 The ScummVM-Residual Team (www.scummvm.org)
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -23,18 +23,18 @@
 
 class Localizer {
 public:
-  static Localizer *instance();
+	static Localizer *instance();
 
-  std::string localize(const char *str) const;
+	std::string localize(const char *str) const;
 
 private:
-  Localizer();
-  ~Localizer() { }
+	Localizer();
+	~Localizer() { }
 
-  static Localizer *instance_;
+	static Localizer *instance_;
 
-  typedef std::map<std::string, std::string> string_map;
-  string_map entries_;
+	typedef std::map<std::string, std::string> string_map;
+	string_map entries_;
 };
 
 #endif

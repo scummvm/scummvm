@@ -1,5 +1,5 @@
 // Residual - Virtual machine to run LucasArts' 3D adventure games
-// Copyright (C) 2003 The ScummVM-Residual Team (www.scummvm.org)
+// Copyright (C) 2003-2004 The ScummVM-Residual Team (www.scummvm.org)
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -38,11 +38,11 @@
 int ZBUFFER_GLOBAL, SCREENBLOCKS_GLOBAL;
 
 static void saveRegistry() {
-  Registry::instance()->save();
+	Registry::instance()->save();
 }
 
 #ifdef __MINGW32__
-	int PASCAL WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
+int PASCAL WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
 	return main(0, NULL);
 }
 #endif
@@ -51,83 +51,83 @@ extern SoundMixer *g_mixer;
 extern Timer *g_timer;
 
 int main(int argc, char *argv[]) {
-  int i;
+	int i;
 
-  // Parse command line
-  ZBUFFER_GLOBAL = 0;
-  SCREENBLOCKS_GLOBAL = 0;
-  for (i=1;i<argc;i++) {
-	if (strcmp(argv[i], "-zbuffer") == 0)
-		ZBUFFER_GLOBAL = 1;
-	else if (strcmp(argv[i], "-screenblocks") ==0)
-		SCREENBLOCKS_GLOBAL = 1;
-	else {
-		printf("Residual CVS Version\n");
-		printf("--------------------\n");
-		printf("Recognised options:\n");
-		printf("\t-zbuffer\t\tEnable ZBuffers (Very slow on older cards)\n");
-		printf("\t-screenblocks\t\tEnable Screenblocks (Experimental zbuffer speedup on older cards - BROKEN!!\n");
-		exit(-1);
+	// Parse command line
+	ZBUFFER_GLOBAL = 0;
+	SCREENBLOCKS_GLOBAL = 0;
+	for (i=1;i<argc;i++) {
+		if (strcmp(argv[i], "-zbuffer") == 0)
+			ZBUFFER_GLOBAL = 1;
+		else if (strcmp(argv[i], "-screenblocks") ==0)
+			SCREENBLOCKS_GLOBAL = 1;
+		else {
+			printf("Residual CVS Version\n");
+			printf("--------------------\n");
+			printf("Recognised options:\n");
+			printf("\t-zbuffer\t\tEnable ZBuffers (Very slow on older cards)\n");
+			printf("\t-screenblocks\t\tEnable Screenblocks (Experimental zbuffer speedup on older cards - BROKEN!!\n");
+			exit(-1);
+		}
 	}
-  }
 
-  if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
-    return 1;
+	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+		return 1;
 
-  g_driver = new Driver(640, 480, 24);
+	g_driver = new Driver(640, 480, 24);
 
-  atexit(SDL_Quit);
-  atexit(saveRegistry);
-  
-  g_mixer = new SoundMixer();
-  g_timer = new Timer();
-  g_smush = new Smush();
+	atexit(SDL_Quit);
+	atexit(saveRegistry);
 
-  Mixer::instance()->start();
+	g_mixer = new SoundMixer();
+	g_timer = new Timer();
+	g_smush = new Smush();
 
-  Bitmap *splash_bm = ResourceLoader::instance()->loadBitmap("splash.bm");
+	Mixer::instance()->start();
 
-  SDL_Event event;
-  while (SDL_PollEvent(&event)) {
-    if (event.type == SDL_VIDEOEXPOSE) {
-      g_driver->clearScreen();
+	Bitmap *splash_bm = ResourceLoader::instance()->loadBitmap("splash.bm");
 
-      Bitmap::prepareDraw();
-      splash_bm->draw();
+	SDL_Event event;
+	while (SDL_PollEvent(&event)) {
+		if (event.type == SDL_VIDEOEXPOSE) {
+			g_driver->clearScreen();
 
-      g_driver->flipBuffer();
-    }
-  }
+			Bitmap::prepareDraw();
+			splash_bm->draw();
 
-  lua_open();
+			g_driver->flipBuffer();
+		}
+	}
 
-  lua_beginblock();
-  lua_iolibopen();
-  lua_strlibopen();
-  lua_mathlibopen();
-  lua_endblock();
+	lua_open();
 
-  lua_beginblock();
-  register_lua();
-  lua_endblock();
+	lua_beginblock();
+	lua_iolibopen();
+	lua_strlibopen();
+	lua_mathlibopen();
+	lua_endblock();
 
-  lua_beginblock();
-  bundle_dofile("_system.lua");
-  lua_endblock();
+	lua_beginblock();
+	register_lua();
+	lua_endblock();
 
-  lua_beginblock();
-  lua_pushnil();		// resumeSave
-  lua_pushnumber(0);		// bootParam
-  lua_call("BOOT");
-  lua_endblock();
+	lua_beginblock();
+	bundle_dofile("_system.lua");
+	lua_endblock();
 
-  Engine::instance()->mainLoop();
+	lua_beginblock();
+	lua_pushnil();		// resumeSave
+	lua_pushnumber(0);		// bootParam
+	lua_call("BOOT");
+	lua_endblock();
 
-  delete g_smush;
-  delete g_timer;
-  delete g_mixer;
+	Engine::instance()->mainLoop();
 
-  return 0;
+	delete g_smush;
+	delete g_timer;
+	delete g_mixer;
+
+	return 0;
 }
 
 StackLock::StackLock(MutexRef mutex)
