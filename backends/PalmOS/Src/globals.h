@@ -28,7 +28,7 @@
 #include "arm/native.h"
 
 enum {
-	kOptNone					=	0,
+	kOptNone				=	0,
 	kOptDeviceARM			=	1 <<	0x00,
 	kOptDeviceOS5			=	1 <<	0x01,
 	kOptDeviceClie			=	1 <<	0x02,
@@ -55,10 +55,18 @@ enum {
 	kMemGamesCount
 };
 
+enum {
+	INIT_VIBRATOR	= 1 <<	0x00,
+	INIT_PA1LIB		= 1 <<	0x01,
+	INIT_ARM		= 1 <<	0x02,
+	INIT_AUTOOFF	= 1 <<	0x03
+};
+
 typedef struct {
 	DmOpenRef globals[GBVARS_COUNT];
 	UInt32 memory[kMemGamesCount];
 
+	UInt8 init;
 	UInt32 options;
 
 	UInt16 HRrefNum;
@@ -71,7 +79,6 @@ typedef struct {
 	FileRef	logFile;
 
 	Boolean vibrator;
-	Boolean autoReset;
 	Boolean screenLocked;
 	Boolean stdPalette;
 	Boolean filter;
@@ -109,6 +116,12 @@ extern GlobalsDataPtr gVars;
 #define OPTIONS_TST(x)	(gVars->options & (x))
 #define OPTIONS_SET(x)	gVars->options |= (x)
 #define OPTIONS_RST(x)	gVars->options &= ~(x)
+
+#define HWR_INIT(x)			(gVars->init & (x))
+#define HWR_SET(x)			gVars->init |= (x)
+#define HWR_RST(x)			gVars->init &= ~(x)
+#define HWR_RSTALL()		gVars->init = 0
+#define HWR_GET()			(gVars->init)
 
 #define ARM(x)	gVars->arm[x]
 
