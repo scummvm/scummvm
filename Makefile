@@ -1,17 +1,17 @@
 # $Header$
 
-CXX      = c++
-AR        = ar cru
-RANLIB = ranlib
-RM      = rm -f
-MKDIR = mkdir -p
-ECHO  = echo -n
-CAT    = cat
-RM      = rm -f
+CXX     := c++
+AR      := ar cru
+RANLIB  := ranlib
+RM      := rm -f
+MKDIR   := mkdir -p
+ECHO    := echo -n
+CAT     := cat
+RM      := rm -f
 # recursive version of RM
-RM_REC = $(RM) -r
-ZIP = zip -q
-CP  = cp
+RM_REC  := $(RM) -r
+ZIP     := zip -q
+CP      := cp
 
 #######################################################################
 # Default compilation parameters. Normally don't edit these           #
