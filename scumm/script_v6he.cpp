@@ -887,6 +887,10 @@ void ScummEngine_v6he::o6_kernelSetFunctions() {
 		//if (args[5] >= args[3]) {
 		//}
 		break;
+	case 3:
+	case 4:
+		//Used before mini games in 3DO versions, seems safe to ignore.
+		break;
 	default:
 		error("o6_kernelSetFunctions: default case %d (param count %d)", args[0], num);
 		break;
