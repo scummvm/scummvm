@@ -49,14 +49,31 @@ struct MP3OffsetTable {					/* Compressed Sound (.SO3) */
 };
 
 
-Sound::Sound(ScummEngine *parent) {
-	memset(this,0,sizeof(Sound));	// palmos
+Sound::Sound(ScummEngine *parent)
+	:
+	_vm(parent),
+	_soundQuePos(0),
+	_soundQue2Pos(0),
+	_sfxFile(0),
+	_talk_sound_a1(0),
+	_talk_sound_a2(0),
+	_talk_sound_b1(0),
+	_talk_sound_b2(0),
+	_talk_sound_mode(0),
+	_talk_sound_channel(0),
+	_mouthSyncMode(false),
+	_endOfMouthSync(false),
+	_curSoundPos(0),
+	_overrideFreq(0),
+	_currentCDSound(0),
+	_currentMusic(0),
+	_soundsPaused(false),
+	_sfxMode(0) {
 	
-	_vm = parent;
-	_overrideFreq = 0;
-	_currentCDSound = 0;
-
-	_sfxFile = 0;
+	memset(_soundQue, 0, sizeof(_soundQue));
+	memset(_soundQue2Sound, 0, sizeof(_soundQue2Sound));
+	memset(_soundQue2Offset, 0, sizeof(_soundQue2Offset));
+	memset(_mouthSyncTimes, 0, sizeof(_mouthSyncTimes));
 }
 
 Sound::~Sound() {
@@ -64,27 +81,29 @@ Sound::~Sound() {
 	delete _sfxFile;
 }
 
-void Sound::addSoundToQueue(int sound) {
+void Sound::addSoundToQueue(int sound, int offset) {
 	_vm->VAR(_vm->VAR_LAST_SOUND) = sound;
 	_vm->ensureResourceLoaded(rtSound, sound);
-	addSoundToQueue2(sound);
+	addSoundToQueue2(sound, offset);
 }
 
-void Sound::addSoundToQueue2(int sound) {
+void Sound::addSoundToQueue2(int sound, int offset) {
 	if ((_vm->_features & GF_HUMONGOUS) && _soundQue2Pos) {
 		int i = _soundQue2Pos;
 		while (i--) {
-			if (_soundQue2[i] == sound)
+			if (_soundQue2Sound[i] == sound)
 				return;
 		}
 	}
 
-	assert(_soundQue2Pos < ARRAYSIZE(_soundQue2));
-	_soundQue2[_soundQue2Pos++] = sound;
+	assert(_soundQue2Pos < ARRAYSIZE(_soundQue2Sound));
+	_soundQue2Sound[_soundQue2Pos] = sound;
+	_soundQue2Offset[_soundQue2Pos] = offset;
+	_soundQue2Pos++;
 }
 
 void Sound::processSoundQues() {
-	int i = 0, d, num;
+	int i = 0, num, offset, snd;
 	int data[16];
 
 	processSfxQueues();
@@ -93,9 +112,11 @@ void Sound::processSoundQues() {
 		return;
 
 	while (_soundQue2Pos) {
-		d = _soundQue2[--_soundQue2Pos];
-		if (d)
-			playSound(d);
+		_soundQue2Pos--;
+		snd = _soundQue2Sound[_soundQue2Pos];
+		offset = _soundQue2Offset[_soundQue2Pos];
+		if (snd)
+			playSound(snd, offset);
 	}
 
 	while (i < _soundQuePos) {
@@ -126,7 +147,7 @@ void Sound::setOverrideFreq(int freq) {
 	_overrideFreq = freq;
 }
 
-void Sound::playSound(int soundID) {
+void Sound::playSound(int soundID, int offset) {
 	byte *ptr;
 	char *sound;
 	int size;
@@ -168,7 +189,7 @@ void Sound::playSound(int soundID) {
 		if (READ_UINT32(ptr) != MKID('SDAT'))
 			return;	// abort
 
-		size = READ_BE_UINT32(ptr+4) - 8;
+		size = READ_BE_UINT32(ptr+4) - offset - 8;
 		if (_overrideFreq) {
 			// Used by the piano in Fatty Bear's Birthday Surprise
 			rate = _overrideFreq;
@@ -177,12 +198,11 @@ void Sound::playSound(int soundID) {
 
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
-		memcpy(sound, ptr + 8, size);
+		memcpy(sound, ptr + offset + 8, size);
 		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
 	else if (READ_UINT32(ptr) == MKID('MRAW')) {
 		// pcm music in 3DO humongous games
-		// TODO play via imuse so isSoundRunning can properly report music value?
 		ptr += 8 + READ_BE_UINT32(ptr+12);
 		if (READ_UINT32(ptr) != MKID('SDAT'))
 			return;
@@ -194,7 +214,9 @@ void Sound::playSound(int soundID) {
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr + 8, size);
-		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
+		_currentMusic = soundID;
+		_vm->_mixer->stopHandle(_musicChannelHandle);
+		_vm->_mixer->playRaw(&_musicChannelHandle, sound, size, rate, flags, soundID);
 	}	
 	// Support for sampled sound effects in Monkey Island 1 and 2
 	else if (READ_UINT32(ptr) == MKID('SBL ')) {
@@ -643,11 +665,14 @@ int Sound::isSoundRunning(int sound) const {
 	if (_vm->_features & GF_HUMONGOUS) {
 		if (sound == -2) {
 			return !isSfxFinished();
-		} else if (sound == -1) {
+		} else if (sound == -1 || sound == _currentMusic) {
 			// getSoundStatus(), with a -1, will return the
 			// ID number of the first active music it finds.
 			// TODO handle MRAW (pcm music) in humongous games
-			return _vm->_imuse->getSoundStatus(sound);
+			if (_currentMusic)
+				return (_musicChannelHandle.isActive()) ? _currentMusic : 0;
+			else
+				return _vm->_imuse->getSoundStatus(sound);
 		}
 	}
 
@@ -699,7 +724,7 @@ bool Sound::isSoundInQueue(int sound) const {
 
 	i = _soundQue2Pos;
 	while (i--) {
-		if (_soundQue2[i] == sound)
+		if (_soundQue2Sound[i] == sound)
 			return true;
 	}
 
@@ -724,7 +749,10 @@ void Sound::stopSound(int a) {
 			// Stop current sfx
 		} else if (a == -1) {
 			// Stop current music
-			_vm->_imuse->stopSound(_vm->_imuse->getSoundStatus(-1));
+			if (_currentMusic)
+				_vm->_mixer->stopID(_currentMusic);
+			else
+				_vm->_imuse->stopSound(_vm->_imuse->getSoundStatus(-1));
 		}
 	}
 
@@ -740,9 +768,12 @@ void Sound::stopSound(int a) {
 	if (_vm->_musicEngine)
 		_vm->_musicEngine->stopSound(a);
 
-	for (i = 0; i < ARRAYSIZE(_soundQue2); i++)
-		if (_soundQue2[i] == a)
-			_soundQue2[i] = 0;
+	for (i = 0; i < ARRAYSIZE(_soundQue2Sound); i++) {
+		if (_soundQue2Sound[i] == a) {
+			_soundQue2Sound[i] = 0;
+			_soundQue2Offset[i] = 0;
+		}
+	}
 }
 
 void Sound::stopAllSounds() {
@@ -754,7 +785,8 @@ void Sound::stopAllSounds() {
 
 	// Clear the (secondary) sound queue
 	_soundQue2Pos = 0;
-	memset(_soundQue2, 0, sizeof(_soundQue2));
+	memset(_soundQue2Sound, 0, sizeof(_soundQue2Sound));
+	memset(_soundQue2Offset, 0, sizeof(_soundQue2Offset));
 
 	if (_vm->_musicEngine) {
 		_vm->_musicEngine->stopAllSounds();

@@ -397,13 +397,15 @@ void ScummEngine_v6he::o6_setState() {
 }
 
 void ScummEngine_v6he::o6_startSound() {
-	if (_gameId != GID_PUTTDEMO) {
-		// Seems to range between 952 - 9000
-		int offset = pop();
-		debug(2, "o6_startSound: offset %d", offset);
-	}
+	int offset = 0;
 
-	_sound->addSoundToQueue(pop());
+	// In Fatty Bear's Birthday Surprise the piano uses offsets 1 - 23 to
+	// indicate which note to play, but only when using the standard piano
+	// sound. See also o6_soundOps()
+	if (_gameId != GID_PUTTDEMO)
+		offset = pop();
+
+	_sound->addSoundToQueue(pop(), offset);
 }
 
 void ScummEngine_v6he::o6_roomOps() {

@@ -1081,8 +1081,8 @@ void ScummEngine_v6::o6_stopSound() {
 void ScummEngine_v6::o6_startMusic() {
 	if (_features & GF_DIGI_IMUSE)
 		error("o6_startMusic() It shouldn't be called here for imuse digital");
-	else
-		_sound->addSoundToQueue(pop());
+
+	_sound->addSoundToQueue(pop());
 }
 
 void ScummEngine_v6::o6_stopObjectScript() {

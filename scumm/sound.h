@@ -39,7 +39,7 @@ enum {
 class Sound {
 protected:
 	int16 _soundQuePos, _soundQue[0x100];
-	int16 _soundQue2Pos, _soundQue2[10];
+	int16 _soundQue2Pos, _soundQue2Sound[10], _soundQue2Offset[10];
 
 	File *_sfxFile;
 	uint32 _talk_sound_a1, _talk_sound_a2, _talk_sound_b1, _talk_sound_b2;
@@ -57,22 +57,24 @@ protected:
 	int _overrideFreq;
 
 	int _currentCDSound;
+	int _currentMusic;
 
 	ScummEngine *_vm;
 
 public:
 	PlayingSoundHandle _talkChannelHandle;	// Handle of mixer channel actor is talking on
+	PlayingSoundHandle _musicChannelHandle;	// Handle of mixer channel music is on
 	bool _soundsPaused;
 	byte _sfxMode;
 
 public:
 	Sound(ScummEngine *parent);
 	~Sound();
-	void addSoundToQueue(int sound);
-	void addSoundToQueue2(int sound);
+	void addSoundToQueue(int sound, int offset = 0);
+	void addSoundToQueue2(int sound, int offset = 0);
 	void processSoundQues();
 	void setOverrideFreq(int freq);
-	void playSound(int sound);
+	void playSound(int sound, int offset = 0);
 	void startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle *handle = NULL);
 	void stopTalkSound();
 	bool isMouthSyncOff(uint pos);
