@@ -1319,23 +1319,19 @@ void Scumm::o5_getActorX()
 
 void Scumm::o5_getActorY()
 {
-
-	int actor;
+	int a;
 	getResultPos();
 
 	if(_gameId == GID_INDY3_256)
-
-		actor = getVarOrDirectByte(0x80);
-
+		a = getVarOrDirectByte(0x80);
 	else
+		a = getVarOrDirectWord(0x80);
 
-		actor = getVarOrDirectWord(0x80);
-	setResult(getObjY(actor));
+	setResult(getObjY(a));
 }
 
 void Scumm::o5_getAnimCounter()
 {
-
 	Actor *a;
 	getResultPos();
 
@@ -1343,9 +1339,7 @@ void Scumm::o5_getAnimCounter()
 
 	if(a) // FIXME
 		setResult(a->cost.animCounter1);
-
 	else
-
 		setResult(0);
 }
 
