@@ -17,14 +17,6 @@ MODULE_OBJS := \
 	gui/TabWidget.o \
 	gui/widget.o
 
-# TODO: Move the fonts to a separate dir?
-MODULE_OBJS += \
-	gui/font.o \
-	gui/scummfont.o \
-	gui/newfont.o
-
-
-
 MODULE_DIRS += \
 	gui
 

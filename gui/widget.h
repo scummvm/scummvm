@@ -23,7 +23,7 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "gui/font.h"
+#include "graphics/font.h"
 #include "gui/object.h"
 
 namespace GUI {
@@ -127,6 +127,7 @@ protected:
 class StaticTextWidget : public Widget {
 protected:
 	typedef Common::String String;
+	typedef Graphics::TextAlignment TextAlignment;
 
 	String			_label;
 	TextAlignment	_align;

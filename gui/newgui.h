@@ -25,7 +25,7 @@
 #include "common/singleton.h"
 #include "common/str.h"
 #include "common/system.h"	// For events
-#include "gui/font.h"
+#include "graphics/font.h"
 
 // Uncomment the following to enable the new font code:
 //#define NEW_FONT_CODE
@@ -43,11 +43,17 @@ class Dialog;
 
 // Height of a single text line
 #ifdef NEW_FONT_CODE
-#define		g_guifont		g_sysfont
+#define		g_guifont		Graphics::g_sysfont
 #else
-#define		g_guifont		g_scummfont
+#define		g_guifont		Graphics::g_scummfont
 #endif
 #define kLineHeight	(g_guifont.getFontHeight() + 2)
+
+
+using Graphics::TextAlignment;
+using Graphics::kTextAlignCenter;
+using Graphics::kTextAlignLeft;
+using Graphics::kTextAlignRight;
 
 
 // Extremly simple stack class, doesn't even do any error checking (for now)
@@ -84,7 +90,7 @@ public:
 
 protected:
 	OSystem		*_system;
-	Surface		_screen;
+	Graphics::Surface		_screen;
 	int			_screenPitch;
 	
 	bool		_needRedraw;
@@ -142,7 +148,7 @@ public:
 	void drawChar(byte c, int x, int y, OverlayColor color);
 	int getStringWidth(const String &str);
 	int getCharWidth(byte c);
-	void drawString(const String &str, int x, int y, int w, OverlayColor color, TextAlignment align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true);
+	void drawString(const String &str, int x, int y, int w, OverlayColor color, Graphics::TextAlignment align = Graphics::kTextAlignLeft, int deltax = 0, bool useEllipsis = true);
 
 	void blitFromBuffer(int x, int y, int w, int h, const byte *buf, int pitch);
 	void blitToBuffer(int x, int y, int w, int h, byte *buf, int pitch);

@@ -19,9 +19,9 @@
  */
 
 #include "stdafx.h"
-#include "gui/font.h"
+#include "graphics/font.h"
 
-namespace GUI {
+namespace Graphics {
 
 #ifdef __PALM_OS__
 static const byte *guifont;
@@ -92,14 +92,14 @@ void ScummFont::drawChar(const Surface *dst, byte chr, int x, int y, uint32 colo
 
 const ScummFont g_scummfont;
 
-} // End of namespace GUI
+} // End of namespace Graphics
 
 #ifdef __PALM_OS__
 #include "scumm_globals.h"
 
 _GINIT(NewGui)
 #ifndef NEW_FONT_CODE
-_GSETPTR(GUI::guifont, GBVARS_GUIFONT_INDEX, byte, GBVARS_SCUMM)
+_GSETPTR(Graphics::guifont, GBVARS_GUIFONT_INDEX, byte, GBVARS_SCUMM)
 #endif
 _GEND
 

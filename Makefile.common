@@ -88,6 +88,7 @@ endif
 # After the game specific modules follow the shared modules
 MODULES += \
 	gui \
+	graphics \
 	backends \
 	sound \
 	common

@@ -23,7 +23,7 @@
 #include "backends/sdl/sdl-common.h"
 #include "common/scaler.h"
 #include "common/util.h"
-#include "gui/font.h"
+#include "graphics/font.h"
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", "Normal (no scaling)", GFX_NORMAL},
@@ -1180,7 +1180,7 @@ void OSystem_SDL::displayMessageOnOSD(const char *msg) {
 	if (SDL_LockSurface(_osdSurface))
 		error("displayMessageOnOSD: SDL_LockSurface failed: %s", SDL_GetError());
 
-	GUI::Surface dst;
+	Graphics::Surface dst;
 	dst.pixels = _osdSurface->pixels;
 	dst.w = _osdSurface->w;
 	dst.h = _osdSurface->h;
@@ -1188,8 +1188,8 @@ void OSystem_SDL::displayMessageOnOSD(const char *msg) {
 	dst.bytesPerPixel = _osdSurface->format->BytesPerPixel;
 	
 	// The font we are going to use:
-//	const GUI::Font *font = &GUI::g_sysfont;
-	const GUI::Font *font = &GUI::g_scummfont;
+//	const Graphics::Font *font = &Graphics::g_sysfont;
+	const Graphics::Font *font = &Graphics::g_scummfont;
 	
 	// Clear everything with the "transparent" color, i.e. the colorkey
 	SDL_FillRect(_osdSurface, 0, kOSDColorKey);
@@ -1236,7 +1236,7 @@ void OSystem_SDL::displayMessageOnOSD(const char *msg) {
 		font->drawString(&dst, lines[i],
 							osdRect.x, osdRect.y + i * lineHeight + vOffset + lineSpacing, osdRect.w,
 							SDL_MapRGB(_osdSurface->format, 255, 255, 255),
-							GUI::kTextAlignCenter);
+							Graphics::kTextAlignCenter);
 	}
 
 	// Finished drawing, so unlock the OSD surface again

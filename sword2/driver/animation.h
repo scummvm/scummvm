@@ -22,35 +22,10 @@
 #ifndef ANIMATION_H
 #define ANIMATION_H
 
+#include "graphics/animation.h"
+
 #include "sound/mixer.h"
 
-// Uncomment this if you are using libmpeg2 0.3.1.
-// #define USE_MPEG2_0_3_1
-
-#ifdef _MSC_VER
-typedef int8 int8_t;
-typedef signed short int16_t;
-typedef int32 int32_t;
-
-typedef uint8 uint8_t;
-typedef uint16 uint16_t;
-typedef uint32 uint32_t; 
-#else
-#include <inttypes.h>
-#endif
-
-#ifdef USE_MPEG2
-extern "C" {
-	#include <mpeg2dec/mpeg2.h>
-}
-
-#ifdef USE_MPEG2_0_3_1
-typedef int mpeg2_state_t;
-typedef sequence_t mpeg2_sequence_t;
-#define STATE_BUFFER -1
-#endif
-
-#endif
 
 namespace Sword2 {
 

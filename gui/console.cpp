@@ -25,7 +25,7 @@
 #include "base/engine.h"
 #include "base/version.h"
 
-#include "gui/font.h"
+#include "graphics/font.h"
 #define kCharWidth	g_guifont.getMaxCharWidth()
 
 

@@ -22,28 +22,15 @@
 #define FONT_H
 
 #include "common/str.h"
+#include "graphics/surface.h"
 
-namespace GUI {
+namespace Graphics {
 
 // Text alignment modes for drawString()
 enum TextAlignment {
 	kTextAlignLeft,
 	kTextAlignCenter,
 	kTextAlignRight
-};
-
-/**
- * An arbitrary graphics surface, which can be the target (or source) of blit
- * operations, font rendering, etc.
- * @todo This shouldn't be in font.h, but rather in e.g. graphics/surface.h
- */
-struct Surface {
-	void *pixels;
-	uint16 w;
-	uint16 h;
-	uint16 pitch;
-	uint8 bytesPerPixel;
-	Surface() : pixels(0), w(0), h(0), pitch(0), bytesPerPixel(0) {}
 };
 
 /**
@@ -115,6 +102,6 @@ public:
 
 extern const NewFont g_sysfont;
 
-} // End of namespace GUI
+} // End of namespace Graphics
 
 #endif

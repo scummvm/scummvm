@@ -19,9 +19,9 @@
  */
 
 #include "common/stdafx.h"
-#include "gui/font.h"
+#include "graphics/font.h"
 
-namespace GUI {
+namespace Graphics {
 
 int NewFont::getCharWidth(byte chr) const {
 	// If no width table is specified, return the maximum width
@@ -153,4 +153,4 @@ void Font::drawString(const Surface *dst, const Common::String &s, int x, int y,
 }
 
 
-} // End of namespace GUI
+} // End of namespace Graphics
