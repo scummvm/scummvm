@@ -73,6 +73,7 @@ bool ScummDebugger::do_command() {
 				"(r)oom roomnum -> load room\n"
 				"(s)cripts -> show running scripts\n"
                 "(b)oxes -> list and draw boxen\n"
+				"(v)ariable -> set or show a variable value\n"
 				"(w)atch [varnum] -> set a variable watch. 0 means all variables.\n"
 				"(e)xit -> exit game\n"
 			   );
@@ -136,7 +137,7 @@ bool ScummDebugger::do_command() {
 		return true;
 	case CMD_VAR:
 		if (!_parameters[0]) {
-			printf("Enter a variable\n");
+			printf("v 123 will show the value of 123, v 123 456 will set the value of 123 to 456.\n");
 		} else {			
 			char *tok = strtok(_parameters, " ");
 			int var = atoi(tok);
