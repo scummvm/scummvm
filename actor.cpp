@@ -20,15 +20,19 @@
 #include "engine.h"
 #include "costume.h"
 #include "sound.h"
+#include "lipsynch.h"
 #include "localize.h"
 #include <cmath>
 #include <cstring>
 #include "driver_gl.h"
+#include "mixer/mixer.h"
+
+extern SoundMixer *g_mixer;
 
 Actor::Actor(const char *name) :
 		name_(name), talkColor_(255, 255, 255), pos_(0, 0, 0),
 		pitch_(0), yaw_(0), roll_(0), walkRate_(0), turnRate_(0),
-		visible_(true), talkSound_(NULL), turning_(false), walking_(false),
+		visible_(true), talkSound_(NULL), lipSynch_(NULL), turning_(false), walking_(false),
 		restCostume_(NULL), restChore_(-1),
 		walkCostume_(NULL), walkChore_(-1), walkedLast_(false), walkedCur_(-1),
 		turnCostume_(NULL), leftTurnChore_(-1), rightTurnChore_(-1),
@@ -192,9 +196,7 @@ float Actor::yawTo(Vector3d p) const {
 }
 
 void Actor::sayLine(const char *msg) {
-	// For now, just play the appropriate sound if found.  Eventually,
-	// this needs to handle possibly displaying text, starting up
-	// appropriate talking chores, etc.
+	// TODO - Display text
 
 	// Find the message identifier
 	if (msg[0] != '/')
@@ -202,15 +204,33 @@ void Actor::sayLine(const char *msg) {
 	const char *secondSlash = std::strchr(msg + 1, '/');
 	if (secondSlash == NULL)
 		return;
-	if (talkSound_) // Only once line at a time, please :)
+	if (talkSound_) // Only one line at a time, please :)
 		shutUp();
 	std::string msgText = Localizer::instance()->localize(secondSlash + 1);
  	std::string msgId(msg + 1, secondSlash);
+
 	talkSound_ = ResourceLoader::instance()->loadSound((msgId + ".wav").c_str());
+	lipSynch_ = ResourceLoader::instance()->loadLipSynch((msgId + ".lip").c_str());
+
 	if (talkSound_ != NULL) {
 		Mixer::instance()->playVoice(talkSound_);
-		if (mumbleChore_ >= 0)
-			mumbleCostume_->playChoreLooping(mumbleChore_);
+
+		// Sometimes actors speak offscreen before they, including their 
+		// talk chores are initialized.
+		// For example, when reading the work order (a LIP file exists for no reason).
+		// Also, some lip synch files have no entries
+		// In these case, revert to using the mumble chore.
+		if (lipSynch_ != NULL && lipSynch_->getStatus()) {
+			talkAnim_ = lipSynch_->getCurrEntry().anim;
+		    if (talkChore_[talkAnim_] >= 0) {
+				talkCostume_[talkAnim_]->playChoreLooping(talkChore_[talkAnim_]);
+				lipSynch_->advanceEntry();
+			}			
+		} else {
+		    lipSynch_ = NULL;
+      		if (mumbleChore_ >= 0)
+      			mumbleCostume_->playChoreLooping(mumbleChore_);
+		}		
 	}
 }
 
@@ -221,9 +241,13 @@ bool Actor::talking() {
 void Actor::shutUp() {
 	if (talkSound_) {
 		Mixer::instance()->stopVoice(talkSound_);
-		talkSound_ = NULL;
-		if (mumbleChore_ >= 0)
+		if (lipSynch_ != NULL) {
+			if (talkChore_[talkAnim_] >= 0)
+				talkCostume_[talkAnim_]->stopChore(talkChore_[talkAnim_]);
+			lipSynch_ = NULL;
+		} else if (mumbleChore_ >= 0)
 			mumbleCostume_->stopChore(mumbleChore_);
+		talkSound_ = NULL;
 	}
 }
 
@@ -353,11 +377,25 @@ void Actor::update() {
 	lastTurnDir_ = currTurnDir_;
 	currTurnDir_ = 0;
 
-	if (talkSound_ != NULL && talkSound_->done()) {
-		talkSound_ = NULL;
-		if (mumbleChore_ >= 0)
-			mumbleCostume_->stopChore(mumbleChore_);
-	}
+	// Update lip synching
+	if (lipSynch_ != NULL && talkSound_ != NULL &&
+		talkSound_->hasReachedPos(lipSynch_->getCurrEntry().frame * 
+			g_mixer->getOutputRate() / 60)) {
+
+		///printf("Reached beyond frame %d (=pos %d). Playing anim %d\n",
+  		//	lipSynch_->getCurrEntry().frame, lipSynch_->getCurrEntry().frame * 
+		//	g_mixer->getOutputRate() / 60,lipSynch_->getCurrEntry().anim);
+
+		if (talkChore_[talkAnim_] >= 0)
+			talkCostume_[talkAnim_]->stopChore(talkChore_[talkAnim_]);
+		talkAnim_ = lipSynch_->getCurrEntry().anim;
+		if (talkChore_[talkAnim_] >= 0)
+			talkCostume_[talkAnim_]->playChoreLooping(talkChore_[talkAnim_]);
+		lipSynch_->advanceEntry();
+	}	
+
+	if (talkSound_ != NULL && talkSound_->done())
+		shutUp();
 
 	for (std::list<Costume *>::iterator i = costumeStack_.begin();
 		i != costumeStack_.end(); i++) {

@@ -28,6 +28,8 @@ public:
 	~Sound();
 
 	bool done() const { return currPos_ >= numSamples_; }
+	bool hasReachedPos(int position) const { return currPos_ >= position; }
+	int  getCurrPos() const {return currPos_;}
 
 private:
 	int numSamples_, numChannels_, currPos_;

@@ -25,6 +25,7 @@
 #include "material.h"
 #include "model.h"
 #include "sound.h"
+#include "lipsynch.h"
 #include "debug.h"
 #include <cstring>
 #include <cctype>
@@ -67,7 +68,10 @@ ResourceLoader::ResourceLoader() {
 			Lab *l = new Lab(fullname.c_str());
 			lab_counter++;
 			if (l->isOpen())
-				labs_.push_back(l);
+				if (strstr(de->d_name, "005"))
+					labs_.push_front(l);
+				else
+					labs_.push_back(l);
 			else
 				delete l;
 		}
@@ -82,11 +86,16 @@ ResourceLoader::ResourceLoader() {
 			Lab *l = new Lab(fullname.c_str());
 			lab_counter++;
 			if (l->isOpen())
-				labs_.push_back(l);
+				// Handle the Grim 1.1 patch's datafile
+				if (strstr(de->d_name, "005"))
+					labs_.push_front(l);
+				else
+					labs_.push_back(l);
 			else
 				delete l;
 		}
 	}
+
 	closedir(d);
 #endif
 
@@ -142,9 +151,9 @@ Bitmap *ResourceLoader::loadBitmap(const char *filename) {
 	if (b == NULL) {	// Grim sometimes asks for non-existant bitmaps (eg, ha_overhead)
 		warning("Could not find bitmap %s\n", filename);
 	return NULL;
-}
+	}
 
-Bitmap *result = new Bitmap(filename, b->data(), b->len());
+	Bitmap *result = new Bitmap(filename, b->data(), b->len());
 	delete b;
 	cache_[fname] = result;
 	return result;
@@ -192,6 +201,29 @@ KeyframeAnim *ResourceLoader::loadKeyframe(const char *filename) {
 	KeyframeAnim *result = new KeyframeAnim(filename, b->data(), b->len());
 	delete b;
 	cache_[fname] = result;
+	return result;
+}
+
+LipSynch *ResourceLoader::loadLipSynch(const char *filename) {
+	std::string fname = filename;
+	LipSynch *result;
+
+	makeLower(fname);
+	cache_type::iterator i = cache_.find(fname);
+	if (i != cache_.end()) {
+		return dynamic_cast<LipSynch *>(i->second);
+	}
+
+	Block *b = getFileBlock(filename);
+	if (b == NULL) {
+		warning("Could not find lipsynch file %s\n", filename);
+		result = NULL;
+	} else {
+		result = new LipSynch(filename, b->data(), b->len());
+		delete b;
+		cache_[fname] = result;
+	}	
+
 	return result;
 }
 

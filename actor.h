@@ -26,6 +26,7 @@
 
 class Sound;
 class Costume;
+class LipSynch;
 
 class Actor {
 public:
@@ -125,6 +126,7 @@ private:
 	bool visible_;
 	bool lookingMode_;
 	ResPtr<Sound> talkSound_;
+	ResPtr<LipSynch> lipSynch_;
 	std::list<Costume *> costumeStack_;
 
 	// Variables for gradual turning
@@ -149,6 +151,7 @@ private:
 
 	Costume *talkCostume_[10];
 	int talkChore_[10];
+	int talkAnim_;
 
 	Costume *mumbleCostume_;
 	int mumbleChore_;

@@ -30,6 +30,7 @@ class KeyframeAnim;
 class Material;
 class Model;
 class Sound;
+class LipSynch;
 
 class Resource {
 public:
@@ -102,6 +103,7 @@ public:
 	Material *loadMaterial(const char *fname, const CMap &c);
 	Model *loadModel(const char *fname, const CMap &c);
 	Sound *loadSound(const char *fname);
+	LipSynch *loadLipSynch(const char *fname);
 	void uncache(const char *fname);
 
 private:
