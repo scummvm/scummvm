@@ -44,26 +44,27 @@ static const char USAGE_STRING[] =
 	"Syntax:\n"
 	"\tscummvm [-v] [-d[<num>]] [-n] [-b<num>] [-t<num>] [-s<num>] [-p<path>] [-m<num>] [-f] game\n"
 	"Flags:\n"
-	"\t-v         - show version info and exit\n"
+	"\t-a         - specify game is amiga version\n"
+	"\t-b<num>    - start in room <num>\n"
 	"\t-c<num>    - use cdrom <num> for cd audio\n"
 	"\t-d[<num>]  - enable debug output (debug level [1])\n"
-	"\t-n         - no subtitles for speech\n"
-	"\t-y         - set text speed (default: 60)\n"
-	"\t-b<num>    - start in room <num>\n"
-	"\t-t<num>    - set music tempo (default- adlib: 0x1F0000, midi: 0x460000)\n"
-	"\t-p<path>   - look for game in <path>\n"
-	"\t-m<num>    - set music volume to <num> (0-100)\n"
-	"\t-s<num>    - set sfx volume to <num> (0-255)\n"
 	"\t-e<mode>   - set music engine (see readme.txt for details)\n"
 	"\t-f         - fullscreen mode\n"
 	"\t-g<mode>   - graphics mode (normal,2x,3x,2xsai,super2xsai,supereagle,advmame2x)\n"
-	"\t-a         - specify game is amiga version\n"
+	"\t-l<file>   - load config file instead of default\n"
+	"\t-m<num>    - set music volume to <num> (0-100)\n"
+	"\t-n         - no subtitles for speech\n"
+	"\t-p<path>   - look for game in <path>\n"
+	"\t-s<num>    - set sfx volume to <num> (0-255)\n"
+	"\t-t<num>    - set music tempo (default- adlib: 0x1F0000, midi: 0x460000)\n"
+	"\t-v         - show version info and exit\n"
 #if defined(UNIX) || defined(UNIX_X11)
 	"\t-w[<file>] - write to config file [~/.scummvmrc]\n"
 #else
 	"\t-w[<file>] - write to config file [scummvm.ini]\n"
 #endif
-	"\t-l<file>   - load config file instead of default\n"
+	"\t-x[<num>]  - save game slot to load (default: autosave)\n"
+	"\t-y         - set text speed (default: 60)\n"
 ;
 
 void GameDetector::updateconfig()
@@ -75,6 +76,8 @@ void GameDetector::updateconfig()
 			_amiga = true;
 		else
 			_amiga = false;
+	if ((val = scummcfg->get("save_slot")))
+		_save_slot = atoi(val);
 
 	if ((val = scummcfg->get("cdrom")))
 		_cdrom = atoi(val);
@@ -128,6 +131,7 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 	char *s;
 	char *current_option = NULL;
 	char *option = NULL;
+	_save_slot = -1;
 
 	// check for arguments
 	if (argc < 2) {
@@ -235,6 +239,14 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 				HANDLE_OPT_OPTION();
 				if (option != NULL)
 					scummcfg->change_filename(option);
+				break;
+			case 'x':
+				_save_slot = 0;
+				HANDLE_OPT_OPTION();
+				if (option != NULL) {
+					_save_slot = atoi(option);
+					scummcfg->set("save_slot", _save_slot);
+				}
 				break;
 			case 'y':
 				HANDLE_OPTION();

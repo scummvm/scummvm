@@ -1544,8 +1544,8 @@ Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 		scumm->_imuse = imuse;
 	}
 
-	if (detector->_restore) {
-		scumm->_saveLoadSlot = 0;
+	if (detector->_save_slot != -1) {
+		scumm->_saveLoadSlot = detector->_save_slot;
 		scumm->_saveLoadFlag = 2;
 		scumm->_saveLoadCompatible = false;
 	}

@@ -28,7 +28,6 @@ public:
 	char *getGameName(void);
 
 	bool _fullScreen;
-	bool _restore;
 	byte _gameId;
 	bool _simon;
 
@@ -56,6 +55,7 @@ public:
 	
 	int _scummVersion;
 	int _cdrom;
+	int _save_slot;
 	
 	bool _saveconfig;
 
