@@ -43,6 +43,11 @@ struct FindObjectInRoom;
 
 typedef void (Scumm::*OpcodeProc)();
 
+struct OpcodeEntry {
+	OpcodeProc proc;
+	const char *desc;
+};
+
 // Use g_scumm from error() ONLY
 extern Scumm *g_scumm;
 
@@ -59,6 +64,9 @@ enum {
 struct ScummPoint {
 	int x, y;
 };
+
+#include "gfx.h"
+#include "boxes.h"
 
 struct MemBlkHeader {
 	uint32 size;
@@ -265,9 +273,6 @@ enum MouseButtonStatus {
 	msClicked = 2
 };
 
-#include "gfx.h"
-#include "boxes.h"
-
 class Scumm : public Engine {
 public:
 	/* Put often used variables at the top.
@@ -450,13 +455,12 @@ public:
 	byte *_scriptPointer, *_scriptOrgPointer, *_scriptPointerStart;
 	byte _opcode, _numNestedScripts, _currentScript;
 	uint16 _curExecScript;
-	const OpcodeProc *_opcodes;
-	const char **_opcodes_lookup;
+	const OpcodeEntry *_opcodes;
 	byte **_lastCodePtr;
 	int _resultVarNumber, _scummStackPos;
 	int16 _localParamList[16],  _scummStack[150];
 	
-	OpcodeProc getOpcode(int i) { return _opcodes[i]; }
+	OpcodeProc getOpcode(int i) { return _opcodes[i].proc; }
 	void initializeLocals(int slot, int16 *vars);
 	int	getScriptSlot();
 	void runScript(int script, int a, int b, int16 *lvarptr);
@@ -985,6 +989,7 @@ public:
 	void o5_isLess();
 	void o5_isNotEqual();
 	void o5_ifState();
+	void o5_ifNotState();
 	void o5_isSoundRunning();
 	void o5_jumpRelative();
 	void o5_lessOrEqual();

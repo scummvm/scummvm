@@ -283,7 +283,7 @@ void Scumm::executeScript()
 		_opcode = fetchScriptByte();
 		_scriptPointerStart = _scriptPointer;
 		vm.slot[_currentScript].didexec = 1;
-		debug(8, "Script %d: [%X] %s()", vm.slot[_currentScript].number, _opcode, _opcodes_lookup[_opcode]);
+		debug(8, "Script %d: [%X] %s()", vm.slot[_currentScript].number, _opcode, _opcodes[_opcode].desc);
 		op = getOpcode(_opcode);
 		(this->*op) ();
 	}
@@ -861,7 +861,7 @@ void Scumm::push(int a)
 int Scumm::pop()
 {
 	if ((_scummStackPos < 1) || ((unsigned int)_scummStackPos > ARRAYSIZE(_scummStack))) {
-		error("No items on stack to pop() for %s (0x%X) at [%d-%d]\n", _opcodes_lookup[_opcode], _opcode, _roomResource, vm.slot[_currentScript].number);
+		error("No items on stack to pop() for %s (0x%X) at [%d-%d]\n", _opcodes[_opcode].desc, _opcode, _roomResource, vm.slot[_currentScript].number);
 	}
 
 	return _scummStack[--_scummStackPos];
