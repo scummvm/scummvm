@@ -208,22 +208,21 @@ public:
 ////////////////////////////////////////
 
 Operator2612::Operator2612 (Voice2612 *owner) :
-_owner (owner),
-_state (_s_ready),
-_currentLevel ((int32)0x7f << 15),
-_phase (0),
-_lastOutput (0),
-_feedbackLevel (0),
-_detune (0),
-_multiple (1),
-_keyScale (0),
-_specifiedTotalLevel (127),
-_specifiedAttackRate (0),
-_specifiedDecayRate (0),
-_specifiedSustainRate (0),
-_specifiedReleaseRate (15)
-{
-	velocity(0);
+	_owner (owner),
+	_state (_s_ready),
+	_currentLevel ((int32)0x7f << 15),
+	_phase (0),
+	_lastOutput (0),
+	_feedbackLevel (0),
+	_detune (0),
+	_multiple (1),
+	_keyScale (0),
+	_specifiedTotalLevel (127),
+	_specifiedAttackRate (0),
+	_specifiedDecayRate (0),
+	_specifiedSustainRate (0),
+	_specifiedReleaseRate (15) {
+		velocity(0);
 }
 
 Operator2612::~Operator2612()
@@ -232,7 +231,7 @@ Operator2612::~Operator2612()
 void Operator2612::velocity(int velo) {
 	_velocity = velo;
 	_totalLevel = ((int32)_specifiedTotalLevel << 15) +
-	              ((int32)(127-_velocity) << 13);
+					((int32)(127-_velocity) << 13);
 	_sustainLevel = ((int32)_specifiedSustainLevel << 17);
 }
 
@@ -724,8 +723,7 @@ void MidiChannel_YM2612::rate(uint16 r) {
 ////////////////////////////////////////
 
 MidiDriver_YM2612::MidiDriver_YM2612(SoundMixer *mixer) :
-_mixer(mixer)
-{
+_mixer(mixer) {
 	_isOpen = false;
 	_timer_proc = 0;
 	_timer_param = 0;

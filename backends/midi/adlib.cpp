@@ -25,7 +25,7 @@
 #include "common/util.h"
 
 #define BASE_FREQ 250
-#define FIXP_SHIFT  16
+#define FIXP_SHIFT 16
 
 #ifdef DEBUG_ADLIB
 static int tick;
@@ -96,7 +96,7 @@ public:
 		_pedal = 0;
 		_program = 0;
 		_pri_eff = 0;
-		
+
 		_owner = 0;
 		_allocated = false;
 		_channel = 0;
@@ -619,7 +619,7 @@ private:
 	static void link_mc(AdlibPart *part, AdlibVoice *voice);
 	void mc_inc_stuff(AdlibVoice *voice, Struct10 * s10, Struct11 * s11);
 	void mc_init_stuff(AdlibVoice *voice, Struct10 * s10, Struct11 * s11, byte flags,
-	                   InstrumentExtra * ie);
+						InstrumentExtra * ie);
 
 	void struct10_init(Struct10 * s10, InstrumentExtra * ie);
 	static byte struct10_ontimer(Struct10 * s10, Struct11 * s11);
@@ -680,7 +680,7 @@ void AdlibPart::pitchBend(int16 bend) {
 	_pitchbend = bend;
 	for (voice = _voice; voice; voice = voice->_next) {
 		_owner->adlib_note_on(voice->_channel, voice->_note + _transpose_eff,
-			          (_pitchbend * _pitchbend_factor >> 6) + _detune_eff);
+						(_pitchbend * _pitchbend_factor >> 6) + _detune_eff);
 	}
 }
 
@@ -733,7 +733,7 @@ void AdlibPart::pitchBendFactor(byte value) {
 	_pitchbend_factor = value;
 	for (voice = _voice; voice; voice = voice->_next) {
 		_owner->adlib_note_on(voice->_channel, voice->_note + _transpose_eff,
-		                      (_pitchbend * _pitchbend_factor >> 6) + _detune_eff);
+							(_pitchbend * _pitchbend_factor >> 6) + _detune_eff);
 	}
 }
 
@@ -743,7 +743,7 @@ void AdlibPart::detune(byte value) {
 	_detune_eff = value;
 	for (voice = _voice; voice; voice = voice->_next) {
 		_owner->adlib_note_on(voice->_channel, voice->_note + _transpose_eff,
-		              (_pitchbend * _pitchbend_factor >> 6) + _detune_eff);
+						(_pitchbend * _pitchbend_factor >> 6) + _detune_eff);
 	}
 }
 
@@ -820,7 +820,7 @@ MidiDriver_ADLIB::MidiDriver_ADLIB(SoundMixer *mixer)
 
 	_timer_proc = 0;
 	_timer_param = 0;
-	
+
 	_adlib_timer_counter = 0;
 	_voice_index = 0;
 	_next_tick = 0;
@@ -853,8 +853,8 @@ int MidiDriver_ADLIB::open() {
 	_adlib_reg_cache = (byte *)calloc(256, 1);
 
 	// We need to emulate one YM3812 chip
-	int env_bits = g_system->property(OSystem::PROP_GET_FMOPL_ENV_BITS, NULL);   
-	int eg_ent = g_system->property(OSystem::PROP_GET_FMOPL_EG_ENT, NULL);   
+	int env_bits = g_system->property(OSystem::PROP_GET_FMOPL_ENV_BITS, NULL);
+	int eg_ent = g_system->property(OSystem::PROP_GET_FMOPL_EG_ENT, NULL);
 	OPLBuildTables((env_bits ? env_bits : FMOPL_ENV_BITS_HQ), (eg_ent ? eg_ent : FMOPL_EG_ENT_HQ));
 	_opl = OPLCreate(OPL_TYPE_YM3812, 3579545, _mixer->getOutputRate());
 
@@ -866,7 +866,7 @@ int MidiDriver_ADLIB::open() {
 	_samples_per_tick = (_mixer->getOutputRate() << FIXP_SHIFT) / BASE_FREQ;
 
 	_mixer->setupPremix(premix_proc, this);
-	
+
 	return 0;
 }
 
@@ -882,7 +882,7 @@ void MidiDriver_ADLIB::close() {
 
 	// Detach the premix callback handler
 	_mixer->setupPremix(0, 0);
-	
+
 	// Turn off the OPL emulation
 //	YM3812Shutdown();
 	
@@ -1123,7 +1123,7 @@ void MidiDriver_ADLIB::mc_inc_stuff(AdlibVoice *voice, Struct10 *s10, Struct11 *
 			break;
 		default:
 			adlib_set_param(voice->_channel, s11->param,
-											s10->start_value + s11->modify_val);
+							s10->start_value + s11->modify_val);
 			break;
 		}
 	}
@@ -1466,7 +1466,7 @@ void MidiDriver_ADLIB::adlib_note_on_ex(int chan, byte note, int mod)
 }
 
 void MidiDriver_ADLIB::mc_init_stuff(AdlibVoice *voice, Struct10 * s10,
-															Struct11 * s11, byte flags, InstrumentExtra * ie) {
+									Struct11 * s11, byte flags, InstrumentExtra * ie) {
 	AdlibPart *part = voice->_part;
 	s11->modify_val = 0;
 	s11->flag0x40 = flags & 0x40;

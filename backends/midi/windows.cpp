@@ -73,8 +73,7 @@ void MidiDriver_WIN::close() {
 	CloseHandle (_streamEvent);
 }
 
-void MidiDriver_WIN::send(uint32 b)
-{
+void MidiDriver_WIN::send(uint32 b) {
 	union {
 		DWORD dwData;
 		BYTE bData[4];
@@ -88,8 +87,7 @@ void MidiDriver_WIN::send(uint32 b)
 	check_error(midiOutShortMsg(_mo, u.dwData));
 }
 
-void MidiDriver_WIN::sysEx (byte *msg, uint16 length)
-{
+void MidiDriver_WIN::sysEx (byte *msg, uint16 length) {
 	if (!_isOpen)
 		return;
 

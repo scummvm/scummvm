@@ -198,7 +198,7 @@ void OSystem_SDL_Common::copy_rect(const byte *src, int pitch, int x, int y, int
 
 	byte *dst = (byte *)_screen->pixels + y * _screenWidth + x;
 
-	if (_screenWidth==pitch && pitch==w) {
+	if (_screenWidth==pitch && pitch == w) {
 		memcpy(dst, src, h*w);
 	} else {
 		do {
@@ -218,15 +218,15 @@ void OSystem_SDL_Common::move_screen(int dx, int dy, int height) {
 	// Short circuit check - do we have to do anything anyway?
 	if ((dx == 0 && dy == 0) || height <= 0)
 		return;
-	
+
 	Common::StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
 
 	byte *src, *dst;
 	int x, y;
-	
+
 	// We'll have to do a full screen redraw anyway, so set the flag.
 	_forceFull = true;
-	
+
 	// Hide the mouse
 	if (_mouseDrawn)
 		undraw_mouse();
@@ -265,8 +265,8 @@ void OSystem_SDL_Common::move_screen(int dx, int dy, int height) {
 			for (x = dx; x < _screenWidth; x++) {
 				*dst-- = *src--;
 			}
-			src += _screenWidth + (_screenWidth-dx);
-			dst += _screenWidth + (_screenWidth-dx);
+			src += _screenWidth + (_screenWidth - dx);
+			dst += _screenWidth + (_screenWidth - dx);
 		}
 	} else if (dx < 0)  {
 		// move left - copy from left to right
@@ -276,8 +276,8 @@ void OSystem_SDL_Common::move_screen(int dx, int dy, int height) {
 			for (x = -dx; x < _screenWidth; x++) {
 				*dst++ = *src++;
 			}
-			src += _screenWidth - (_screenWidth+dx);
-			dst += _screenWidth - (_screenWidth+dx);
+			src += _screenWidth - (_screenWidth + dx);
+			dst += _screenWidth - (_screenWidth + dx);
 		}
 	}
 
@@ -368,7 +368,7 @@ void OSystem_SDL_Common::mk_checksums(const byte *buf) {
 
 void OSystem_SDL_Common::add_dirty_rgn_auto(const byte *buf) {
 	assert(((long)buf & 3) == 0);
-	
+
 	/* generate a table of the checksums */
 	mk_checksums(buf);
 
@@ -383,9 +383,9 @@ void OSystem_SDL_Common::add_dirty_rgn_auto(const byte *buf) {
 	if (!_forceFull) {
 		int x,y,w;
 		uint32 *ck = _dirty_checksums;
-		
+
 		for(y = 0; y!=_screenHeight / 8; y++) {
-			for(x = 0; x!=_screenWidth / 8; x++,ck++) {
+			for(x = 0; x!=_screenWidth / 8; x++, ck++) {
 				if (ck[0] != ck[CKSUM_NUM]) {
 					/* found a dirty 8x8 block, now go as far to the right as possible,
 						 and at the same time, unmark the dirty status by setting old to new. */

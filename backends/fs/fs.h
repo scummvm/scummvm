@@ -155,8 +155,8 @@ public:
 		ConstIterator(FilesystemNode **data) : _data(data) { }
 	public:
 		const FilesystemNode &operator *() const { return **_data; }
-        const FilesystemNode *operator->() const { return *_data; }
-        bool operator !=(const ConstIterator &iter) const { return _data != iter._data; }
+		const FilesystemNode *operator->() const { return *_data; }
+		bool operator !=(const ConstIterator &iter) const { return _data != iter._data; }
 		void operator ++() { ++_data; }
 	};
 
