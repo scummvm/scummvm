@@ -113,14 +113,7 @@ void CDECL warning(const char *s, ...) {
 #endif
 
 
-/* Dummy midiplayer for unix */
-#ifdef UNIX
-void MidiPlayer::shutdown() {}
-void MidiPlayer::read_all_songs(FILE *in) {}
-void MidiPlayer::initialize() {}
-void MidiPlayer::play() {}
-
-
+#ifndef WIN32
 /* GetAsyncKeyState for unix */
 int GetAsyncKeyState(int key) {
 	return 0;

@@ -25,6 +25,9 @@
 #include "system.h"
 #include "simon.h"
 
+/* This is win32 only code at the moment */
+#ifdef WIN32
+
 void MidiPlayer::read_from_file(void *dst, uint size) {
 	if (fread(dst, size, 1, _input) != 1)
 		error("Midi read error");
@@ -704,3 +707,14 @@ void MidiPlayer::unprepare() {
 void MidiPlayer::play() {
 	check_error(midiStreamRestart(_midi_stream_handle));
 }
+
+#else
+
+/* Dummy midiplayer for unix */
+void MidiPlayer::shutdown() {}
+void MidiPlayer::read_all_songs(FILE *in) {}
+void MidiPlayer::read_all_songs_old(FILE *in) {}
+void MidiPlayer::initialize() {}
+void MidiPlayer::play() {}
+
+#endif

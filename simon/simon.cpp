@@ -25,7 +25,7 @@
 #include "system.h"
 #include "simon.h"
 
-
+#include <errno.h>
 #include <time.h>
 #ifdef WIN32
 #include <malloc.h>
@@ -50,7 +50,7 @@ static const GameSpecificSettings simon1_settings = {
 	50000, /* TABLES_MEM_SIZE */
 	3624, /* NUM_VOICE_RESOURCES */
 	1316/4, /* MUSIC_INDEX_BASE */
-	-1,			/* SOUND_INDEX_BASE */
+	0,		/* SOUND_INDEX_BASE */
 	"simon.gme",	/* gme_filename */
 	"simon.wav",	/* wav_filename */
 	"gamepc",			/* gamepc_filename */
@@ -1549,7 +1549,7 @@ int SimonState::runScript() {
 	case 179: {
 		if (_game == GAME_SIMON1WIN) {
 			uint b = getVarOrByte();
-			uint c = getVarOrByte();
+			/*uint c = */getVarOrByte();
 			uint a = getVarOrByte();
 			uint d = _array_4[a];
 			if (d!=0)
@@ -1705,7 +1705,7 @@ bool SimonState::o_unk_23(uint a) {
 void SimonState::o_177() {
 	if (_game == GAME_SIMON1WIN) {
 		uint a = getVarOrByte();
-		uint b = getVarOrByte();
+		/*uint b = */getVarOrByte();
 		uint offs;
 		Child2 *child = findChildOfType2(getNextItemPtr());
 		if (child != NULL && child->avail_props&0x200) {
@@ -1745,7 +1745,7 @@ void SimonState::o_177() {
 		uint b = getVarOrByte();
 		Child2 *child = findChildOfType2(getNextItemPtr());
 		const char *s;
-		ThreeValues *tv;
+		ThreeValues *tv = NULL;
 		char buf[256];
 
 		if (child != NULL && child->avail_props&1) {
@@ -3387,8 +3387,8 @@ void SimonState::o_print_str() {
 	uint num_1 = getVarOrByte();
 	uint num_2 = getVarOrByte();
 	uint string_id = getNextStringID();
-	const byte *string_ptr;
-	uint speech_id;
+	const byte *string_ptr = NULL;
+	uint speech_id = 0;
 	ThreeValues *tv;
 
 
@@ -3396,8 +3396,6 @@ void SimonState::o_print_str() {
 	case GAME_SIMON1WIN:
 		if (string_id != 0xFFFF)
 			string_ptr = getStringPtrByID(string_id);
-		else
-			string_ptr = NULL;
 
 		speech_id = (uint16)getNextWord();
 		break;
@@ -3405,8 +3403,6 @@ void SimonState::o_print_str() {
 	case GAME_SIMON2WIN:
 		if (string_id != 0xFFFF)
 			string_ptr = getStringPtrByID(string_id);
-		else
-			string_ptr = NULL;
 
 		speech_id = (uint16)getNextWord();
 		break;
@@ -3565,7 +3561,7 @@ void SimonState::delete_memptr_range(byte *end) {
 	do {
 		if (_vga_buf_free_start <= vpe->vgaFile1 && end >= vpe->vgaFile1 ||
 			_vga_buf_free_start <= vpe->vgaFile2 && end >= vpe->vgaFile2) {
-				vpe->dd = NULL;
+				vpe->dd = 0;
 				vpe->vgaFile1 = NULL;
 				vpe->vgaFile2 = NULL;
 		}
@@ -3613,7 +3609,7 @@ void SimonState::o_clear_vgapointer_entry(uint a) {
 	
 	vpe = &_vga_buffer_pointers[a];
 
-	vpe->dd = NULL;
+	vpe->dd = 0;
 	vpe->vgaFile1 = NULL;
 	vpe->vgaFile2 = NULL;
 }
@@ -5734,7 +5730,7 @@ void SimonState::o_unk_127() {
 		}
 	} else {
 		uint a = getVarOrWord();
-		uint b = getVarOrWord();
+		/*uint b = */getVarOrWord();
 
 		if (a!=_last_music_played) {
 			_last_music_played = a;
@@ -6159,7 +6155,7 @@ void SimonState::o_pathfind(int x,int y,uint var_1,uint var_2) {
 	uint i, j;
 	uint prev_i;
 	uint x_diff, y_diff;
-	uint best_i, best_j, best_dist = 0xFFFFFFFF;
+	uint best_i=0, best_j=0, best_dist = 0xFFFFFFFF;
 
 	prev_i = 21 - _variableArray[12];
 	for(i=20; i!=0; --i) {
@@ -7147,7 +7143,7 @@ void SimonState::render_string(uint num_1, uint color, uint width, uint height, 
 	memset(dst, 0, count);
 
 	dst_org = dst;
-	while (chr=*txt++) {
+	while ((chr=*txt++) != 0) {
 		if (chr == 10) {
 			dst_org += width * 10;
 			dst = dst_org;
@@ -8697,6 +8693,8 @@ void dump_bitmap(const char *filename, byte *offs, int w, int h, int flags, cons
 }
 
 void SimonState::dump_single_bitmap(int file, int image, byte *offs, int w, int h, byte base) {
+/* Only supported for win32 atm. mkdir doesn't work otherwise. */
+#ifdef WIN32
 	char buf[255], buf2[255];
 	struct stat statbuf;
 
@@ -8709,86 +8707,10 @@ void SimonState::dump_single_bitmap(int file, int image, byte *offs, int w, int 
 	mkdir(buf2);
 
 	dump_bitmap(buf, offs, w, h, 0, _palette, base);
+#endif
 }
 
 SimonState *SimonState::create() {
 	return new SimonState;
 }
 
-#if 0
-
-
-void pal_load(byte *pal, const byte *vga1, int a, int b) {
-	uint num = a==0 ? 0x20 : 0x10;
-	byte *palptr;
-	const byte *src;
-	
-	palptr = (byte*)&pal[a<<4];
-
-	src = vga1 + 6 + b*96;
-	
-	do {
-		palptr[0] = src[0]<<2;
-		palptr[1] = src[1]<<2;
-		palptr[2] = src[2]<<2;
-		palptr[3] = 0;
-
-		palptr += 4;
-		src += 3;
-	} while (--num);
-}
-
-void SimonState::dump_vga_bitmaps(byte *vga, byte *vga1, int res) {
-	int i;
-	uint32 offs;
-	byte *p2;
-
-	byte pal[768];
-
-	{
-		memset(pal, 0, sizeof(pal));
-		pal_load(pal, vga1, 2, 0);
-		pal_load(pal, vga1, 3, 1);
-		pal_load(pal, vga1, 4, 2);
-		pal_load(pal, vga1, 5, 3);
-	}
-
-	
-	{
-		char buf[255];
-		sprintf(buf, "bmp_%d", res);
-		mkdir(buf2);
-	}
-
-
-	int width, height, flags;
-	
-//	i = 538;
-
-	for(i=1; ; i++) {
-		p2 = vga + i * 8;
-		offs = swap32(*(uint32*)p2);
-
-		/* try to detect end of images.
-		 * assume the end when offset >= 200kb */
-		if (offs >= 200*1024)
-			return;
-		
-		width = swap16(*(uint16*)(p2+6));
-		height = p2[5];
-		flags = p2[4];
-
-		fprintf(_dump_file, "Image %d. Width=%d, Height=%d, Flags=0x%X\n", i, width, height, flags);
-		fflush(_dump_file);
-
-		/* dump bitmap */
-		{
-			char buf[255];
-			sprintf(buf, "bmp_%d\\%d.bmp", res, i);
-
-			dump_bitmap(buf, vga + offs, width, height, flags, pal, 0);
-		}
-	}
-}
-#endif
-	
