@@ -203,7 +203,7 @@ protected:
 	int		_valueMin, _valueMax;
 	bool	_isDragging;
 public:
-	SliderWidget(Dialog *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
+	SliderWidget(Dialog *boss, int x, int y, int w, int h, uint32 cmd = 0, uint8 hotkey = 0);
 	void setValue(int value)	{ _value = value; }
 	int getValue() const		{ return _value; }
 

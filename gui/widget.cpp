@@ -51,6 +51,7 @@ void Widget::draw() {
 		_x += 4;
 		_y += 4;
 		_w -= 8;
+		_h -= 8;
 	}
 
 	// Now perform the actual widget draw
@@ -61,6 +62,7 @@ void Widget::draw() {
 		_x -= 4;
 		_y -= 4;
 		_w += 8;
+		_h += 8;
 	}
 
 	// Flag the draw area as dirty
@@ -171,8 +173,8 @@ void CheckboxWidget::drawWidget(bool hilite) {
 
 #pragma mark -
 
-SliderWidget::SliderWidget(Dialog *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey)
-	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey),
+SliderWidget::SliderWidget(Dialog *boss, int x, int y, int w, int h, uint32 cmd, uint8 hotkey)
+	: ButtonWidget(boss, x, y, w, h, "", cmd, hotkey),
 	  _value(0), _oldValue(0),_valueMin(0), _valueMax(100), _isDragging(false) {
 	_flags = WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG;
 	_type = kSliderWidget;

@@ -51,6 +51,7 @@ This just looks like an option dialog, but it doesn't change any actual settings
 // - music & graphics driver (but see also the comments on EditGameDialog
 //   for some techincal difficulties with this)
 // - default volumes (sfx/master/music)
+// - aspect ratio, language, platform, subtitles, debug mode/level, cd drive, joystick, multi midi, native mt32
 
 enum {
 	kMasterVolumeChanged	= 'mavc',
@@ -85,8 +86,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui, GameDetector &detector)
 	
 
 	// The MIDI mode popup & a label
-	StaticTextWidget *foo = new StaticTextWidget(this, 5, 26+1, 100, kLineHeight, "Music driver: ", kTextAlignRight);
-	foo->setEnabled(false);
+	new StaticTextWidget(this, 5, 26+1, 100, kLineHeight, "Music driver: ", kTextAlignRight);
 	_midiPopUp = new PopUpWidget(this, 105, 26, 180, kLineHeight);
 	int midiSelected = 0, i = 0;;
 	
@@ -105,26 +105,28 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui, GameDetector &detector)
 	//
 	// Sound controllers
 	//
-	const int yoffset = 40;
-	new StaticTextWidget(this, 5, yoffset+10, 100, 16, "Master volume: ", kTextAlignRight);
-	new StaticTextWidget(this, 5, yoffset+26, 100, 16, "Music volume: ", kTextAlignRight);
-	new StaticTextWidget(this, 5, yoffset+42, 100, 16, "SFX volume: ", kTextAlignRight);
+	int yoffset = 48;
 
-	_masterVolumeSlider = new SliderWidget(this, 105, yoffset+8, 85, 12, "Volume1", kMasterVolumeChanged);
-	_musicVolumeSlider  = new SliderWidget(this, 105, yoffset+24, 85, 12, "Volume2", kMusicVolumeChanged);
-	_sfxVolumeSlider    = new SliderWidget(this, 105, yoffset+40, 85, 12, "Volume3", kSfxVolumeChanged);
-
-	_masterVolumeSlider->setMinValue(0);	_masterVolumeSlider->setMaxValue(255);
-	_musicVolumeSlider->setMinValue(0);	_musicVolumeSlider->setMaxValue(255);
-	_sfxVolumeSlider->setMinValue(0);	_sfxVolumeSlider->setMaxValue(255);
-
-	_masterVolumeLabel = new StaticTextWidget(this, 200, yoffset+10, 24, 16, "100%", kTextAlignLeft);
-	_musicVolumeLabel  = new StaticTextWidget(this, 200, yoffset+26, 24, 16, "100%", kTextAlignLeft);
-	_sfxVolumeLabel    = new StaticTextWidget(this, 200, yoffset+42, 24, 16, "100%", kTextAlignLeft);
-	
+	new StaticTextWidget(this, 5, yoffset+2, 100, 16, "Master volume: ", kTextAlignRight);
+	_masterVolumeSlider = new SliderWidget(this, 105, yoffset, 85, 12, kMasterVolumeChanged);
+	_masterVolumeLabel = new StaticTextWidget(this, 200, yoffset+2, 24, 16, "100%", kTextAlignLeft);
+	_masterVolumeSlider->setMinValue(0); _masterVolumeSlider->setMaxValue(255);
 	_masterVolumeLabel->setFlags(WIDGET_CLEARBG);
+	yoffset += 16;
+
+	new StaticTextWidget(this, 5, yoffset+2, 100, 16, "Music volume: ", kTextAlignRight);
+	_musicVolumeSlider = new SliderWidget(this, 105, yoffset, 85, 12, kMusicVolumeChanged);
+	_musicVolumeLabel = new StaticTextWidget(this, 200, yoffset+2, 24, 16, "100%", kTextAlignLeft);
+	_musicVolumeSlider->setMinValue(0); _musicVolumeSlider->setMaxValue(255);
 	_musicVolumeLabel->setFlags(WIDGET_CLEARBG);
+	yoffset += 16;
+
+	new StaticTextWidget(this, 5, yoffset+2, 100, 16, "SFX volume: ", kTextAlignRight);
+	_sfxVolumeSlider = new SliderWidget(this, 105, yoffset, 85, 12, kSfxVolumeChanged);
+	_sfxVolumeLabel = new StaticTextWidget(this, 200, yoffset+2, 24, 16, "100%", kTextAlignLeft);
+	_sfxVolumeSlider->setMinValue(0); _sfxVolumeSlider->setMaxValue(255);
 	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
+	yoffset += 16;
 
 
 #if !( defined(__DC__) || defined(__GP32__) )
@@ -165,15 +167,15 @@ void GlobalOptionsDialog::open() {
 	Dialog::open();
 
 	_soundVolumeMaster = ConfMan.getInt("master_volume");
-	_soundVolumeMusic = ConfMan.getInt("music_volume");
-	_soundVolumeSfx = ConfMan.getInt("sfx_volume");
-
 	_masterVolumeSlider->setValue(_soundVolumeMaster);
-	_musicVolumeSlider->setValue(_soundVolumeMusic);
-	_sfxVolumeSlider->setValue(_soundVolumeSfx);
-
 	_masterVolumeLabel->setValue(_soundVolumeMaster);
+
+	_soundVolumeMusic = ConfMan.getInt("music_volume");
+	_musicVolumeSlider->setValue(_soundVolumeMusic);
 	_musicVolumeLabel->setValue(_soundVolumeMusic);
+
+	_soundVolumeSfx = ConfMan.getInt("sfx_volume");
+	_sfxVolumeSlider->setValue(_soundVolumeSfx);
 	_sfxVolumeLabel->setValue(_soundVolumeSfx);
 }
 
