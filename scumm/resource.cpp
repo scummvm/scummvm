@@ -620,7 +620,7 @@ int Scumm::readSoundResource(int type, int idx)
 					pri = 3;
 				break;
 			case MKID('MAC '):
-				if (!_use_adlib)
+//				if (!_use_adlib)
 					pri = 1;
 				break;
 			case MKID('SPK '):
