@@ -702,8 +702,11 @@ void CostumeRenderer::proc_special(Actor *a, byte mask2)
 	byte shadow4;
 	byte shadow5;
 
+
 	if(a->costume==153) //Samnmax elevator FIXME
+
 		return;
+
 
 	shadow1=a->shadow_mode & 0x80;
 	shadow2=a->shadow_mode & 0x40;

@@ -227,13 +227,12 @@ int Scumm::updateActorDirection(Actor * a)
 	int diff;
 	int dirType;
 	int num;
-
+	
 	dirType = akos_hasManyDirections(a);
 
 	from = toSimpleDir(dirType, a->facing);
 	to = toSimpleDir(dirType, remapDirection(a, a->newDirection));
-	diff = to - from;
-
+	diff = to - from;	
 	num = numSimpleDirDirections(dirType);
 
 	if (abs(diff) > (num >> 1))
@@ -356,7 +355,7 @@ void Scumm::setupActorScale(Actor * a)
 
 void Scumm::startAnimActor(Actor * a, int frame)
 {
-	if (_features & GF_NEW_COSTUMES) {
+	if (_features & GF_NEW_COSTUMES) {		
 		switch (frame) {
 		case 1001:
 			frame = a->initFrame;
@@ -404,6 +403,11 @@ void Scumm::startAnimActor(Actor * a, int frame)
 			a->animProgress = 0;
 			a->cost.animCounter1 = 0;
 			a->needRedraw = true;
+
+			// FIXME: FOA hack, room 17, climbing off machine
+			if (_gameId == GID_INDY4 && a->costume == 27) {
+				a->facing = 0;
+			}
 
 			if (a->initFrame == frame)
 				initActorCostumeData(a);
