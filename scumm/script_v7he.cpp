@@ -416,16 +416,15 @@ int ScummEngine_v7he::getCharsetOffset(int letter) {
 		return 0;
 
 	ptr += offset;
-	
 	result = READ_LE_UINT16(ptr + 2);
 	byte start = *ptr;
 
-	if (result >= 0x80) {
+	if (result >= 0x80)
 		result = (result & 0xff) - 256 + start;
-	} else {
-		result += start;
-	};
-	return (result);
+	else
+		result = (result & 0xff) + start;
+
+	return result;
 }
 
 void ScummEngine_v7he::o7_cursorCommand() {
