@@ -24,7 +24,7 @@
 #include "actor.h"
 #include "akos.h"
 
-bool Scumm::akos_hasManyDirections(Actor * a)
+bool Scumm::akos_hasManyDirections(Actor *a)
 {
 	if (_features & GF_NEW_COSTUMES) {
 		byte *akos;
@@ -39,7 +39,7 @@ bool Scumm::akos_hasManyDirections(Actor * a)
 	return 0;
 }
 
-int Scumm::akos_frameToAnim(Actor * a, int frame)
+int Scumm::akos_frameToAnim(Actor *a, int frame)
 {
 	if (akos_hasManyDirections(a))
 		return toSimpleDir(1, a->facing) + frame * 8;
@@ -47,7 +47,7 @@ int Scumm::akos_frameToAnim(Actor * a, int frame)
 		return newDirToOldDir(a->facing) + frame * 4;
 }
 
-void Scumm::akos_decodeData(Actor * a, int frame, uint usemask)
+void Scumm::akos_decodeData(Actor *a, int frame, uint usemask)
 {
 	uint anim;
 	byte *akos, *r;
@@ -153,7 +153,7 @@ void AkosRenderer::setCostume(int costume)
 	codec = READ_LE_UINT16(&akhd->codec);
 }
 
-void AkosRenderer::setFacing(Actor * a)
+void AkosRenderer::setFacing(Actor *a)
 {
 	mirror = (Scumm::newDirToOldDir(a->facing) != 0 || akhd->flags & 1);
 	if (a->flip)
@@ -786,8 +786,7 @@ void AkosRenderer::codec1()
 
 #if 0
 
-	switch (((byte)y_clipping << 3) | ((byte)use_scaling << 2) |
-					((byte)masking << 1) | (byte)charsetmask) {
+	switch (((byte)y_clipping << 3) | ((byte)use_scaling << 2) | ((byte)masking << 1) | (byte)charsetmask) {
 	case 0:
 		akos_c1_0_decode(this);
 		break;
@@ -923,7 +922,7 @@ void AkosRenderer::codec16()
 }
 
 
-bool Scumm::akos_increaseAnims(byte *akos, Actor * a)
+bool Scumm::akos_increaseAnims(byte *akos, Actor *a)
 {
 	byte *aksq, *akfo;
 	int i;
@@ -948,7 +947,7 @@ bool Scumm::akos_increaseAnims(byte *akos, Actor * a)
 #define GUW(o) READ_LE_UINT16(aksq+curpos+(o))
 #define GB(o) aksq[curpos+(o)]
 
-bool Scumm::akos_increaseAnim(Actor * a, int chan, byte *aksq, uint16 *akfo, int numakfo)
+bool Scumm::akos_increaseAnim(Actor *a, int chan, byte *aksq, uint16 *akfo, int numakfo)
 {
 	byte active;
 	uint old_curpos, curpos, end;
@@ -1175,7 +1174,7 @@ bool Scumm::akos_increaseAnim(Actor * a, int chan, byte *aksq, uint16 *akfo, int
 	return curpos != old_curpos;
 }
 
-void Scumm::akos_queCommand(byte cmd, Actor * a, int param_1, int param_2)
+void Scumm::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2)
 {
 //  warning("akos_queCommand(%d,%d,%d,%d)", cmd, a->number, param_1, param_2);
 }

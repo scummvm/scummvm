@@ -26,8 +26,7 @@
 
 bool Scumm::getClass(int obj, int cls)
 {
-	checkRange(_numGlobalObjects - 1, 0, obj,
-						 "Object %d out of range in getClass");
+	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in getClass");
 	cls &= 0x7F;
 	checkRange(32, 1, cls, "Class %d out of range in getClass");
 
@@ -43,8 +42,7 @@ bool Scumm::getClass(int obj, int cls)
 
 void Scumm::putClass(int obj, int cls, bool set)
 {
-	checkRange(_numGlobalObjects - 1, 0, obj,
-						 "Object %d out of range in putClass");
+	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in putClass");
 	cls &= 0x7F;
 	checkRange(32, 1, cls, "Class %d out of range in getClass");
 
@@ -65,38 +63,33 @@ void Scumm::putClass(int obj, int cls, bool set)
 
 int Scumm::getOwner(int obj)
 {
-	checkRange(_numGlobalObjects - 1, 0, obj,
-						 "Object %d out of range in getOwner");
+	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in getOwner");
 	return _objectOwnerTable[obj];
 }
 
 void Scumm::putOwner(int obj, int owner)
 {
-	checkRange(_numGlobalObjects - 1, 0, obj,
-						 "Object %d out of range in putOwner");
+	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in putOwner");
 	checkRange(0xFF, 0, owner, "Owner %d out of range in putOwner");
 	_objectOwnerTable[obj] = owner;
 }
 
 int Scumm::getState(int obj)
 {
-	checkRange(_numGlobalObjects - 1, 0, obj,
-						 "Object %d out of range in getState");
+	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in getState");
 	return _objectStateTable[obj];
 }
 
 void Scumm::putState(int obj, int state)
 {
-	checkRange(_numGlobalObjects - 1, 0, obj,
-						 "Object %d out of range in putState");
+	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in putState");
 	checkRange(0xFF, 0, state, "State %d out of range in putState");
 	_objectStateTable[obj] = state;
 }
 
 int Scumm::getObjectRoom(int obj)
 {
-	checkRange(_numGlobalObjects - 1, 0, obj,
-						 "Object %d out of range in getObjectRoom");
+	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in getObjectRoom");
 	return _objectRoomTable[obj];
 }
 
@@ -152,9 +145,7 @@ int Scumm::getObjectOrActorXY(int object)
 		return -1;
 	case WIO_INVENTORY:
 		if (_objectOwnerTable[object] < NUM_ACTORS)
-			return
-				getActorXYPos(derefActorSafe
-											(_objectOwnerTable[object], "getObjectOrActorXY(2)"));
+			return getActorXYPos(derefActorSafe(_objectOwnerTable[object], "getObjectOrActorXY(2)"));
 		else
 			return 0xFF;
 	}
@@ -189,11 +180,11 @@ void Scumm::getObjectXYPos(int object)
 			assert(ptr);
 			imhd = (ImageHeader *)findResourceData(MKID('IMHD'), ptr);
 			if (_features & GF_AFTER_V7) {
-				x = od->x_pos + (int16) READ_LE_UINT16(&imhd->v7.hotspot[state].x);
-				y = od->y_pos + (int16) READ_LE_UINT16(&imhd->v7.hotspot[state].y);
+				x = od->x_pos + (int16)READ_LE_UINT16(&imhd->v7.hotspot[state].x);
+				y = od->y_pos + (int16)READ_LE_UINT16(&imhd->v7.hotspot[state].y);
 			} else {
-				x = od->x_pos + (int16) READ_LE_UINT16(&imhd->old.hotspot[state].x);
-				y = od->y_pos + (int16) READ_LE_UINT16(&imhd->old.hotspot[state].y);
+				x = od->x_pos + (int16)READ_LE_UINT16(&imhd->old.hotspot[state].x);
+				y = od->y_pos + (int16)READ_LE_UINT16(&imhd->old.hotspot[state].y);
 			}
 		} else {
 			x = od->walk_x;
@@ -224,8 +215,7 @@ int Scumm::getObjActToObjActDist(int a, int b)
 	if (b < NUM_ACTORS)
 		actb = derefActorSafe(b, "getObjActToObjActDist(2)");
 
-	if (acta && actb && acta->getRoom() == actb->getRoom() && acta->getRoom() &&
-			!acta->isInCurrentRoom())
+	if (acta && actb && acta->getRoom() == actb->getRoom() && acta->getRoom() && !acta->isInCurrentRoom())
 		return 0;
 
 	if (getObjectOrActorXY(a) == -1)
@@ -347,8 +337,7 @@ void Scumm::drawObject(int obj, int arg)
 	width = od->width >> 3;
 	height = od->height &= 0xF8;	// Ender
 
-	if (width == 0 || xpos > _screenEndStrip
-			|| xpos + width < _screenStartStrip)
+	if (width == 0 || xpos > _screenEndStrip || xpos + width < _screenStartStrip)
 		return;
 
 	if (od->fl_object_index) {
@@ -386,8 +375,7 @@ void Scumm::drawObject(int obj, int arg)
 		byte flags = Gdi::dbAllowMaskOr;
 		if (_features & GF_AFTER_V7 && getClass(od->obj_nr, 22))
 			flags |= Gdi::dbDrawMaskOnBoth;
-		gdi.drawBitmap(ptr, _curVirtScreen, x, ypos, height, x - xpos, numstrip,
-									 flags);
+		gdi.drawBitmap(ptr, _curVirtScreen, x, ypos, height, x - xpos, numstrip, flags);
 	}
 }
 
@@ -529,8 +517,7 @@ void Scumm::loadRoomObjectsSmall()
 		setupRoomObject(od, room);
 	}
 
-	CHECK_HEAP
-}
+CHECK_HEAP}
 
 void Scumm::setupRoomObject(ObjectData *od, byte *room)
 {
@@ -567,8 +554,7 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room)
 		return;
 	}
 
-	cdhd = (CodeHeader *)findResourceData(MKID('CDHD'),
-																	 room + od->offs_obcd_to_room);
+	cdhd = (CodeHeader *)findResourceData(MKID('CDHD'), room + od->offs_obcd_to_room);
 	if (_features & GF_AFTER_V7)
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
 	else if (_features & GF_AFTER_V6)
@@ -580,8 +566,8 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room)
 		if (_features & GF_AFTER_V6) {
 			od->width = READ_LE_UINT16(&cdhd->v6.w);
 			od->height = READ_LE_UINT16(&cdhd->v6.h);
-			od->x_pos = ((int16) READ_LE_UINT16(&cdhd->v6.x));
-			od->y_pos = ((int16) READ_LE_UINT16(&cdhd->v6.y));
+			od->x_pos = ((int16)READ_LE_UINT16(&cdhd->v6.x));
+			od->y_pos = ((int16)READ_LE_UINT16(&cdhd->v6.y));
 			if (cdhd->v6.flags == 0x80) {
 				od->parentstate = 1;
 			} else {
@@ -608,9 +594,7 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room)
 		od->parent = cdhd->v7.parent;
 		od->parentstate = cdhd->v7.parentstate;
 
-		imhd =
-			(ImageHeader *)findResourceData(MKID('IMHD'),
-																			room + od->offs_obim_to_room);
+		imhd = (ImageHeader *)findResourceData(MKID('IMHD'), room + od->offs_obim_to_room);
 		od->x_pos = READ_LE_UINT16(&imhd->v7.x_pos);
 		od->y_pos = READ_LE_UINT16(&imhd->v7.y_pos);
 		od->width = READ_LE_UINT16(&imhd->v7.width);
@@ -706,8 +690,7 @@ void Scumm::removeObjectFromRoom(int obj)
 void Scumm::addObjectToDrawQue(int object)
 {
 	_drawObjectQue[_drawObjectQueNr++] = object;
-	if ((unsigned int)_drawObjectQueNr >
-			sizeof(_drawObjectQue) / sizeof(_drawObjectQue[0]))
+	if ((unsigned int)_drawObjectQueNr > sizeof(_drawObjectQue) / sizeof(_drawObjectQue[0]))
 		error("Draw Object Que overflow");
 }
 
@@ -780,8 +763,7 @@ byte *Scumm::getOBCDFromObject(int obj)
 			if (_objs[i].obj_nr == obj) {
 				if (_objs[i].fl_object_index)
 					return getResourceAddress(rtFlObject, _objs[i].fl_object_index) + 8;
-				return getResourceAddress(rtRoom,
-																	_roomResource) + _objs[i].offs_obcd_to_room;
+				return getResourceAddress(rtRoom, _roomResource) + _objs[i].offs_obcd_to_room;
 			}
 		}
 	}
@@ -821,8 +803,7 @@ void Scumm::addObjectToInventory(uint obj, uint room)
 
 CHECK_HEAP}
 
-void Scumm::findObjectInRoom(FindObjectInRoom * fo, byte findWhat, uint id,
-														 uint room)
+void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint room)
 {
 	CodeHeader *cdhd;
 	int i, numobj;
@@ -835,8 +816,7 @@ void Scumm::findObjectInRoom(FindObjectInRoom * fo, byte findWhat, uint id,
 	if (findWhat & foCheckAlreadyLoaded && getObjectIndex(id) != -1) {
 		fo->obcd = obcdptr = getOBCDFromObject(id);
 		assert((byte *)obcdptr > (byte *)256);
-		fo->obim = obimptr =
-			obcdptr + READ_BE_UINT32_UNALIGNED(&((ResHdr *)obcdptr)->size);
+		fo->obim = obimptr = obcdptr + READ_BE_UINT32_UNALIGNED(&((ResHdr *)obcdptr)->size);
 		fo->cdhd = (CodeHeader *)findResourceData(MKID('CDHD'), obcdptr);
 		fo->imhd = (ImageHeader *)findResourceData(MKID('IMHD'), obimptr);
 		return;
@@ -856,8 +836,7 @@ void Scumm::findObjectInRoom(FindObjectInRoom * fo, byte findWhat, uint id,
 	if (numobj == 0)
 		error("findObjectInRoom: No object found in room %d", room);
 	if (numobj > _numLocalObjects)
-		error("findObjectInRoom: More (%d) than %d objects in room %d", numobj,
-					_numLocalObjects, room);
+		error("findObjectInRoom: More (%d) than %d objects in room %d", numobj, _numLocalObjects, room);
 
 	if (findWhat & foCodeHeader) {
 		searchptr = roomptr;
@@ -923,8 +902,7 @@ void Scumm::findObjectInRoom(FindObjectInRoom * fo, byte findWhat, uint id,
 				}
 			}
 			if (++i == numobj)
-				error("findObjectInRoom: Object %d image not found in room %d", id,
-							room);
+				error("findObjectInRoom: Object %d image not found in room %d", id, room);
 			searchptr = NULL;
 		}
 	}
@@ -1077,8 +1055,7 @@ static int getDist(int x, int y, int x2, int y2)
 	return b;
 }
 
-int Scumm::getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2,
-															int e, int f)
+int Scumm::getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e, int f)
 {
 	int i, j;
 	int x, y;
@@ -1123,8 +1100,7 @@ void Scumm::setCursorImg(uint img, uint room, uint imgindex)
 	if (room == (uint) - 1)
 		room = getObjectRoom(img);
 
-	findObjectInRoom(&foir, foCodeHeader | foImageHeader | foCheckAlreadyLoaded,
-									 img, room);
+	findObjectInRoom(&foir, foCodeHeader | foImageHeader | foCheckAlreadyLoaded, img, room);
 
 	if (_features & GF_AFTER_V7)
 		setCursorHotspot2(READ_LE_UINT16(&foir.imhd->v7.hotspot[0].x),
@@ -1172,8 +1148,8 @@ void Scumm::nukeFlObjects(int min, int max)
 		}
 }
 
-void Scumm::enqueueObject(int objectNumber, int objectX, int objectY, int objectWidth, int objectHeight, int f, int g,
-													int image, int mode)
+void Scumm::enqueueObject(int objectNumber, int objectX, int objectY, int objectWidth,
+													int objectHeight, int f, int g, int image, int mode)
 {
 	BlastObject *eo;
 	ObjectData *od;
@@ -1221,7 +1197,7 @@ void Scumm::drawBlastObjects()
 }
 
 
-void Scumm::drawBlastObject(BlastObject * eo)
+void Scumm::drawBlastObject(BlastObject *eo)
 {
 	VirtScreen *vs;
 	byte *bomp, *ptr, *img;
@@ -1232,11 +1208,11 @@ void Scumm::drawBlastObject(BlastObject * eo)
 
 	_lastXstart = vs->xstart;
 
-	checkRange(_numGlobalObjects - 1, 30, eo->number, "Illegal Blast object %d");	
+	checkRange(_numGlobalObjects - 1, 30, eo->number, "Illegal Blast object %d");
 
 	idx = _objs[getObjectIndex(eo->number)].fl_object_index;
 
-	if(idx) {
+	if (idx) {
 		ptr = getResourceAddress(rtFlObject, idx);
 		ptr = findResource(MKID('OBIM'), ptr);
 	} else {
@@ -1244,18 +1220,18 @@ void Scumm::drawBlastObject(BlastObject * eo)
 		assert(idx != -1);
 		ptr = getResourceAddress(1, _roomResource) + _objs[idx].offs_obim_to_room;
 	}
-	if(!ptr)
-		error("BlastObject object %d image not found",eo->number);
+	if (!ptr)
+		error("BlastObject object %d image not found", eo->number);
 
 	img = findResource(IMxx_tags[eo->image], ptr);
-	if(!img)
-		img = findResource(IMxx_tags[1], ptr); // Backward compatibility with samnmax blast objects
-	if(!img)
-		error("blast-object %d invalid image %d (1-x)",eo->number,eo->image);
+	if (!img)
+		img = findResource(IMxx_tags[1], ptr);	// Backward compatibility with samnmax blast objects
+	if (!img)
+		error("blast-object %d invalid image %d (1-x)", eo->number, eo->image);
 
 	bomp = findResourceData(MKID('BOMP'), img);
-	if(!bomp)
-		error("object %d is not a blast object",eo->number);
+	if (!bomp)
+		error("object %d is not a blast object", eo->number);
 
 	bdd.srcwidth = READ_LE_UINT16(&((BompHeader *)bomp)->width);
 	bdd.srcheight = READ_LE_UINT16(&((BompHeader *)bomp)->height);
@@ -1270,8 +1246,7 @@ void Scumm::drawBlastObject(BlastObject * eo)
 	bdd.scale_y = (unsigned char)eo->unk4;
 
 	drawBomp(&bdd, 0, bdd.dataptr, 1, 0);
-	updateDirtyRect(vs->number, bdd.x, bdd.x + bdd.srcwidth, bdd.y,
-								bdd.y + bdd.srcheight, 0);
+	updateDirtyRect(vs->number, bdd.x, bdd.x + bdd.srcwidth, bdd.y, bdd.y + bdd.srcheight, 0);
 }
 
 void Scumm::removeBlastObjects()
@@ -1287,7 +1262,7 @@ void Scumm::removeBlastObjects()
 	clearEnqueue();
 }
 
-void Scumm::removeBlastObject(BlastObject * eo)
+void Scumm::removeBlastObject(BlastObject *eo)
 {
 	restoreBG(eo->posX, eo->posY, eo->posX + eo->width, eo->posY + eo->height);
 }

@@ -41,7 +41,7 @@ enum {
 	CMD_LOAD_ROOM,
 	CMD_DUMPBOX,
 	CMD_VAR,
-	CMD_WATCH,	
+	CMD_WATCH,
 	CMD_EXIT
 };
 
@@ -75,8 +75,7 @@ bool ScummDebugger::do_command()
 					 "(s)cripts -> show running scripts\n"
 					 "(b)oxes -> list and draw boxen\n"
 					 "(v)ariable -> set or show a variable value\n"
-					 "(w)atch [varnum] -> set a variable watch. 0 means all variables.\n"
-					 "(e)xit -> exit game\n");
+					 "(w)atch [varnum] -> set a variable watch. 0 means all variables.\n" "(e)xit -> exit game\n");
 		return true;
 
 	case CMD_QUIT:
@@ -128,18 +127,16 @@ bool ScummDebugger::do_command()
 			printf("\nWalk boxes:\n");
 			for (i = 0; i < num; i++) {
 				warning("BoxTest currently unimplemented in new graphics code\n");
-				/*BoxTest(i);*/
+				/*BoxTest(i); */
 				_s->getBoxCoordinates(i, &box);
 				printf("%d: [%d x %d] [%d x %d] [%d x %d] [%d x %d]\n", i,
-							 box.ul.x, box.ul.y, box.ll.x, box.ll.y,
-							 box.ur.x, box.ur.y, box.lr.x, box.lr.y);
+							 box.ul.x, box.ul.y, box.ll.x, box.ll.y, box.ur.x, box.ur.y, box.lr.x, box.lr.y);
 			}
 		}
 		return true;
 	case CMD_VAR:
 		if (!_parameters[0]) {
-			printf
-				("v 123 will show the value of 123, v 123 456 will set the value of 123 to 456.\n");
+			printf("v 123 will show the value of 123, v 123 456 will set the value of 123 to 456.\n");
 		} else {
 			char *tok = strtok(_parameters, " ");
 			int var = atoi(tok);
@@ -275,9 +272,7 @@ int ScummDebugger::get_command()
 				*s = 0;
 				break;
 			}
-		printf
-			("Invalid command '%s'. Type 'help' for a list of available commands.\n",
-			 buf);
+		printf("Invalid command '%s'. Type 'help' for a list of available commands.\n", buf);
 	} while (1);
 }
 
@@ -286,24 +281,19 @@ void ScummDebugger::printActors(int act)
 	int i;
 	Actor *a;
 
-	printf
-		("+--------------------------------------------------------------+\n");
-	printf
-		("|# |room|  x y   |elev|cos|width|box|mov|zp|frame|scale|spd|dir|\n");
-	printf
-		("+--+----+--------+----+---+-----+---+---+--+-----+-----+---+---+\n");
+	printf("+--------------------------------------------------------------+\n");
+	printf("|# |room|  x y   |elev|cos|width|box|mov|zp|frame|scale|spd|dir|\n");
+	printf("+--+----+--------+----+---+-----+---+---+--+-----+-----+---+---+\n");
 	for (i = 1; i < _s->NUM_ACTORS; i++) {
 		if (act == -1 || act == i) {
 			a = &_s->actor[i];
 			if (a->visible)
 				printf("|%2d|%4d|%3d  %3d|%4d|%3d|%5d|%3d|%3d|%2d|%5d|%5d|%3d|%3d|\n",
 							 i, a->room, a->x, a->y, a->elevation, a->costume, a->width,
-							 a->walkbox, a->moving, a->forceClip, a->frame, a->scalex,
-							 a->speedx, a->facing);
+							 a->walkbox, a->moving, a->forceClip, a->frame, a->scalex, a->speedx, a->facing);
 		}
 	}
-	printf
-		("+--------------------------------------------------------------+\n");
+	printf("+--------------------------------------------------------------+\n");
 }
 
 void ScummDebugger::printScripts()

@@ -80,8 +80,7 @@ void Scumm::stopScriptNr(int script)
 	ss = &vm.slot[1];
 
 	for (i = 1; i < NUM_SCRIPT_SLOT; i++, ss++) {
-		if (script != ss->number ||
-				ss->where != WIO_GLOBAL && ss->where != WIO_LOCAL || ss->status == 0)
+		if (script != ss->number || ss->where != WIO_GLOBAL && ss->where != WIO_LOCAL || ss->status == 0)
 			continue;
 
 		if (ss->cutsceneOverride)
@@ -99,8 +98,7 @@ void Scumm::stopScriptNr(int script)
 	num = _numNestedScripts;
 
 	do {
-		if (nest->number == script
-				&& (nest->where == WIO_GLOBAL || nest->where == WIO_LOCAL)) {
+		if (nest->number == script && (nest->where == WIO_GLOBAL || nest->where == WIO_LOCAL)) {
 			nest->number = 0xFF;
 			nest->slot = 0xFF;
 			nest->where = 0xFF;
@@ -122,8 +120,7 @@ void Scumm::stopObjectScript(int script)
 
 	for (i = 1; i < NUM_SCRIPT_SLOT; i++, ss++) {
 		if (script == ss->number && (ss->where == WIO_ROOM ||
-																 ss->where == WIO_INVENTORY
-																 || ss->where == WIO_FLOBJECT)
+																 ss->where == WIO_INVENTORY || ss->where == WIO_FLOBJECT)
 				&& ss->status != 0) {
 			if (ss->cutsceneOverride)
 				error("Object %d stopped with active cutscene/override", script);
@@ -142,8 +139,7 @@ void Scumm::stopObjectScript(int script)
 
 	do {
 		if (nest->number == script &&
-				(nest->where == WIO_ROOM || nest->where == WIO_FLOBJECT
-				 || nest->where == WIO_INVENTORY)) {
+				(nest->where == WIO_ROOM || nest->where == WIO_FLOBJECT || nest->where == WIO_INVENTORY)) {
 			nest->number = 0xFF;
 			nest->slot = 0xFF;
 			nest->where = 0xFF;
@@ -250,8 +246,7 @@ void Scumm::getScriptBaseAddress()
 
 	case WIO_FLOBJECT:						/* flobject script */
 		idx = getObjectIndex(ss->number);
-		_scriptOrgPointer =
-			getResourceAddress(rtFlObject, _objs[idx].fl_object_index);
+		_scriptOrgPointer = getResourceAddress(rtFlObject, _objs[idx].fl_object_index);
 		_lastCodePtr = &_baseFLObject[ss->number];
 		break;
 	default:
@@ -276,8 +271,7 @@ void Scumm::executeScript()
 		_opcode = fetchScriptByte();
 		_scriptPointerStart = _scriptPointer;
 		vm.slot[_currentScript].didexec = 1;
-		debug(8, "Script %d: [%X] %s()", vm.slot[_currentScript].number, _opcode,
-					_opcodes_lookup[_opcode]);
+		debug(8, "Script %d: [%X] %s()", vm.slot[_currentScript].number, _opcode, _opcodes_lookup[_opcode]);
 		op = getOpcode(_opcode);
 		(this->*op) ();
 	}
@@ -368,8 +362,7 @@ void Scumm::writeVar(uint var, int value)
 
 		if ((_varwatch == (int)var) || (_varwatch == 0)) {
 			if (vm.slot[_currentScript].number < 100)
-				debug(0, "vars[%d] = %d (via script-%d)", var, value,
-							vm.slot[_currentScript].number);
+				debug(0, "vars[%d] = %d (via script-%d)", var, value, vm.slot[_currentScript].number);
 			else
 				debug(0, "vars[%d] = %d (via room-%d-%d)", var, value, _currentRoom,
 							vm.slot[_currentScript].number);
@@ -383,8 +376,7 @@ void Scumm::writeVar(uint var, int value)
 
 		/* FIXME: Enable Indy4 mousefighting by default. 
 		   is there a better place to put this? */
-		if (_gameId == GID_INDY4 && var == 107
-				&& vm.slot[_currentScript].number == 1)
+		if (_gameId == GID_INDY4 && var == 107 && vm.slot[_currentScript].number == 1)
 			value = 1;
 
 		if (value)
@@ -466,9 +458,7 @@ void Scumm::drawBox(int x, int y, int x2, int y2, int color)
 	if (color == -1) {
 		if (vs->number != 0)
 			error("can only copy bg to main window");
-		bgbuff =
-			getResourceAddress(rtBuffer,
-												 vs->number + 5) + vs->xstart + (y - top) * 320 + x;
+		bgbuff = getResourceAddress(rtBuffer, vs->number + 5) + vs->xstart + (y - top) * 320 + x;
 		blit(backbuff, bgbuff, x2 - x, y2 - y);
 	} else {
 		count = y2 - y;
@@ -498,8 +488,7 @@ void Scumm::stopObjectCode()
 		}
 	} else {
 		if (ss->cutsceneOverride) {
-			warning("Script %d ending with active cutscene/override (%d)",
-							ss->number, ss->cutsceneOverride);
+			warning("Script %d ending with active cutscene/override (%d)", ss->number, ss->cutsceneOverride);
 			ss->cutsceneOverride = 0;
 		}
 	}
@@ -536,8 +525,7 @@ void Scumm::freezeScripts(int flag)
 	int i;
 
 	for (i = 1; i < NUM_SCRIPT_SLOT; i++) {
-		if (_currentScript != i && vm.slot[i].status != ssDead
-				&& (vm.slot[i].unk1 == 0 || flag >= 0x80)) {
+		if (_currentScript != i && vm.slot[i].status != ssDead && (vm.slot[i].unk1 == 0 || flag >= 0x80)) {
 			vm.slot[i].status |= 0x80;
 			vm.slot[i].freezeCount++;
 		}
@@ -578,8 +566,7 @@ void Scumm::runAllScripts()
 
 	_currentScript = 0xFF;
 	for (_curExecScript = 0; _curExecScript < NUM_SCRIPT_SLOT; _curExecScript++) {
-		if (vm.slot[_curExecScript].status == ssRunning
-				&& vm.slot[_curExecScript].didexec == 0) {
+		if (vm.slot[_curExecScript].status == ssRunning && vm.slot[_curExecScript].didexec == 0) {
 			_currentScript = (char)_curExecScript;
 			getScriptBaseAddress();
 			getScriptEntryPoint();
@@ -636,13 +623,11 @@ void Scumm::killScriptsAndResources()
 	for (i = 1; i < NUM_SCRIPT_SLOT; i++, ss++) {
 		if (ss->where == WIO_ROOM || ss->where == WIO_FLOBJECT) {
 			if (ss->cutsceneOverride)
-				error("Object %d stopped with active cutscene/override in exit",
-							ss->number);
+				error("Object %d stopped with active cutscene/override in exit", ss->number);
 			ss->status = 0;
 		} else if (ss->where == WIO_LOCAL) {
 			if (ss->cutsceneOverride)
-				error("Script %d stopped with active cutscene/override in exit",
-							ss->number);
+				error("Script %d stopped with active cutscene/override in exit", ss->number);
 			ss->status = 0;
 		}
 	}
@@ -675,8 +660,7 @@ void Scumm::checkAndRunVar33()
 	if (isScriptInUse(_vars[VAR_SENTENCE_SCRIPT])) {
 		ss = vm.slot;
 		for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++)
-			if (ss->number == _vars[VAR_SENTENCE_SCRIPT] && ss->status != 0
-					&& ss->freezeCount == 0)
+			if (ss->number == _vars[VAR_SENTENCE_SCRIPT] && ss->status != 0 && ss->freezeCount == 0)
 				return;
 	}
 
@@ -686,8 +670,7 @@ void Scumm::checkAndRunVar33()
 	_sentenceNum--;
 
 	if (!(_features & GF_AFTER_V7))
-		if (sentence[_sentenceNum].unk2
-				&& sentence[_sentenceNum].unk3 == sentence[_sentenceNum].unk4)
+		if (sentence[_sentenceNum].unk2 && sentence[_sentenceNum].unk3 == sentence[_sentenceNum].unk4)
 			return;
 
 	_localParamList[0] = sentence[_sentenceNum].unk5;
@@ -815,15 +798,13 @@ int Scumm::getVerbEntrypoint(int obj, int entry)
 
 void Scumm::push(int a)
 {
-	assert(_scummStackPos >= 0
-				 && (unsigned int)_scummStackPos <= ARRAYSIZE(_scummStack));
+	assert(_scummStackPos >= 0 && (unsigned int)_scummStackPos <= ARRAYSIZE(_scummStack));
 	_scummStack[_scummStackPos++] = a;
 }
 
 int Scumm::pop()
 {
-	assert(_scummStackPos > 0
-				 && (unsigned int)_scummStackPos <= ARRAYSIZE(_scummStack));
+	assert(_scummStackPos > 0 && (unsigned int)_scummStackPos <= ARRAYSIZE(_scummStack));
 	return _scummStack[--_scummStackPos];
 }
 
@@ -859,8 +840,7 @@ void Scumm::cutscene(int16 *args)
 	int scr = _currentScript;
 	vm.slot[scr].cutsceneOverride++;
 
-	if (++vm.cutSceneStackPointer >
-			sizeof(vm.cutSceneData) / sizeof(vm.cutSceneData[0]))
+	if (++vm.cutSceneStackPointer > sizeof(vm.cutSceneData) / sizeof(vm.cutSceneData[0]))
 		error("Cutscene stack overflow");
 
 	vm.cutSceneData[vm.cutSceneStackPointer] = args[0];
@@ -903,8 +883,7 @@ bool Scumm::isScriptRunning(int script)
 	int i;
 	ScriptSlot *ss = vm.slot;
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++)
-		if (ss->number == script
-				&& (ss->where == WIO_GLOBAL || ss->where == WIO_LOCAL) && ss->status)
+		if (ss->number == script && (ss->where == WIO_GLOBAL || ss->where == WIO_LOCAL) && ss->status)
 			return true;
 	return false;
 }

@@ -171,9 +171,7 @@ void Scumm::unkMessage1()
 		uint32 a, b;
 
 		a = buffer[2] | (buffer[3] << 8) | (buffer[6] << 16) | (buffer[7] << 24);
-		b =
-			buffer[10] | (buffer[11] << 8) | (buffer[14] << 16) | (buffer[15] <<
-																														 24);
+		b = buffer[10] | (buffer[11] << 8) | (buffer[14] << 16) | (buffer[15] << 24);
 //    if (_saveSound != 1)
 		talkSound(a, b, 1);
 	}
@@ -206,8 +204,7 @@ void Scumm::CHARSET_1()
 		return;
 
 	if (!(_features & GF_AFTER_V7)) {
-		if ((camera._dest.x >> 3) != (camera._cur.x >> 3) ||
-				camera._cur.x != camera._last.x)
+		if ((camera._dest.x >> 3) != (camera._cur.x >> 3) || camera._cur.x != camera._last.x)
 			return;
 	}
 
@@ -221,8 +218,7 @@ void Scumm::CHARSET_1()
 
 			if (_vars[VAR_V5_TALK_STRING_Y] < 0) {
 				s = (a->scaley * (int)_vars[VAR_V5_TALK_STRING_Y]) / 0xFF;
-				string[0].ypos =
-					((_vars[VAR_V5_TALK_STRING_Y] - s) >> 1) + s - a->elevation + a->y;
+				string[0].ypos = ((_vars[VAR_V5_TALK_STRING_Y] - s) >> 1) + s - a->elevation + a->y;
 			} else {
 				string[0].ypos = _vars[VAR_V5_TALK_STRING_Y];
 			}
@@ -401,14 +397,11 @@ void Scumm::CHARSET_1()
 		} else if (c == 10) {
 			uint32 tmpA, tmpB;
 
-			tmpA =
-				buffer[0] | (buffer[1] << 8) | (buffer[4] << 16) | (buffer[5] << 24);
-			tmpB =
-				buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] <<
-																														 24);
+			tmpA = buffer[0] | (buffer[1] << 8) | (buffer[4] << 16) | (buffer[5] << 24);
+			tmpB = buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] << 24);
 			talkSound(tmpA, tmpB, 2);
 			buffer += 14;
-			
+
 			// Set flag that speech variant exist of this msg
 			if (_haveMsg == 0xFF)
 				_haveMsg = 0xFE;
@@ -422,8 +415,7 @@ void Scumm::CHARSET_1()
 					charset._colorMap[i] = _charsetData[charset._curId][i - 12];
 				else
 					charset._colorMap[i] = _charsetData[charset._curId][i];
-			charset._ypos2 -=
-				getResourceAddress(rtCharset, charset._curId)[30] - oldy;
+			charset._ypos2 -= getResourceAddress(rtCharset, charset._curId)[30] - oldy;
 		} else if (c == 12) {
 			int color;
 			color = *buffer++;
@@ -594,7 +586,7 @@ void Scumm::drawString(int a)
 		} else {
 			if (a == 1 && (_features & GF_AFTER_V6))
 
-				if(string[a].no_talk_anim==0)
+				if (string[a].no_talk_anim == 0)
 					charset._blitAlso = true;
 			if (_features & GF_OLD256)
 				charset.printCharOld(chr);
@@ -800,8 +792,7 @@ void CharsetRenderer::printCharOld(int chr)
 	unsigned int buffer = 0, mask = 0, x = 0, y = 0;
 	unsigned char color;
 
-	_vm->checkRange(_vm->_maxCharsets - 1, 0, _curId,
-									"Printing with bad charset %d");
+	_vm->checkRange(_vm->_maxCharsets - 1, 0, _curId, "Printing with bad charset %d");
 
 	if ((vs = _vm->findVirtScreen(_top)) == NULL)
 		return;
@@ -818,8 +809,7 @@ void CharsetRenderer::printCharOld(int chr)
 	}
 	char_ptr = _vm->getResourceAddress(rtCharset, _curId) + 224 + (chr + 1) * 8;
 	dest_ptr = vs->screenPtr + vs->xstart + (_top - vs->topline) * 320 + _left;
-	_vm->updateDirtyRect(vs->number, _left, _left + 8, _top - vs->topline,
-											 _top - vs->topline + 8, 0);
+	_vm->updateDirtyRect(vs->number, _left, _left + 8, _top - vs->topline, _top - vs->topline + 8, 0);
 
 	for (y = 0; y < 8; y++) {
 		for (x = 0; x < 8; x++) {
@@ -849,8 +839,7 @@ void CharsetRenderer::printChar(int chr)
 	int d, right;
 	VirtScreen *vs;
 
-	_vm->checkRange(_vm->_maxCharsets - 1, 1, _curId,
-									"Printing with bad charset %d");
+	_vm->checkRange(_vm->_maxCharsets - 1, 1, _curId, "Printing with bad charset %d");
 	if ((vs = _vm->findVirtScreen(_top)) == NULL)
 		return;
 
@@ -943,8 +932,7 @@ void CharsetRenderer::printChar(int chr)
 		_hasMask = true;
 #endif
 
-	_dest_ptr = _backbuff_ptr = vs->screenPtr
-		+ vs->xstart + _drawTop * 320 + _left;
+	_dest_ptr = _backbuff_ptr = vs->screenPtr + vs->xstart + _drawTop * 320 + _left;
 
 #if !defined(OLD)
 	if (_blitAlso) {

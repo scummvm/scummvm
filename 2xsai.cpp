@@ -54,8 +54,7 @@ int Init_2xSaI(uint32 BitFormat)
 	return 1;
 }
 
-static inline int GetResult1(uint32 A, uint32 B, uint32 C, uint32 D,
-														 uint32 /* E */ )
+static inline int GetResult1(uint32 A, uint32 B, uint32 C, uint32 D, uint32 /* E */ )
 {
 	int x = 0;
 	int y = 0;
@@ -76,8 +75,7 @@ static inline int GetResult1(uint32 A, uint32 B, uint32 C, uint32 D,
 	return r;
 }
 
-static inline int GetResult2(uint32 A, uint32 B, uint32 C, uint32 D,
-														 uint32 /* E */ )
+static inline int GetResult2(uint32 A, uint32 B, uint32 C, uint32 D, uint32 /* E */ )
 {
 	int x = 0;
 	int y = 0;
@@ -122,8 +120,7 @@ static inline int GetResult(uint32 A, uint32 B, uint32 C, uint32 D)
 static inline uint32 INTERPOLATE(uint32 A, uint32 B)
 {
 	if (A != B) {
-		return (((A & colorMask) >> 1) + ((B & colorMask) >> 1) +
-						(A & B & lowPixelMask));
+		return (((A & colorMask) >> 1) + ((B & colorMask) >> 1) + (A & B & lowPixelMask));
 	} else
 		return A;
 }
@@ -131,8 +128,7 @@ static inline uint32 INTERPOLATE(uint32 A, uint32 B)
 static inline uint32 Q_INTERPOLATE(uint32 A, uint32 B, uint32 C, uint32 D)
 {
 	register uint32 x = ((A & qcolorMask) >> 2) +
-		((B & qcolorMask) >> 2) +
-		((C & qcolorMask) >> 2) + ((D & qcolorMask) >> 2);
+		((B & qcolorMask) >> 2) + ((C & qcolorMask) >> 2) + ((D & qcolorMask) >> 2);
 	register uint32 y = (A & qlowpixelMask) +
 		(B & qlowpixelMask) + (C & qlowpixelMask) + (D & qlowpixelMask);
 
@@ -149,8 +145,7 @@ static inline uint32 Q_INTERPOLATE(uint32 A, uint32 B, uint32 C, uint32 D)
 #define GREEN_MASK555 0x03E003E0
 
 void Super2xSaI(uint8 *srcPtr, uint32 srcPitch,
-								uint8 *deltaPtr, uint8 *dstPtr, uint32 dstPitch,
-								int width, int height)
+								uint8 *deltaPtr, uint8 *dstPtr, uint32 dstPitch, int width, int height)
 {
 	uint16 *bP;
 	uint8 *dP;
@@ -167,8 +162,7 @@ void Super2xSaI(uint8 *srcPtr, uint32 srcPitch,
 			for (uint32 finish = width; finish; finish -= inc_bP) {
 				uint32 color4, color5, color6;
 				uint32 color1, color2, color3;
-				uint32 colorA0, colorA1, colorA2, colorA3,
-					colorB0, colorB1, colorB2, colorB3, colorS1, colorS2;
+				uint32 colorA0, colorA1, colorA2, colorA3, colorB0, colorB1, colorB2, colorB3, colorS1, colorS2;
 				uint32 product1a, product1b, product2a, product2b;
 
 //---------------------------------------    B1 B2
@@ -217,41 +211,31 @@ void Super2xSaI(uint8 *srcPtr, uint32 srcPitch,
 						product2b = product1b = INTERPOLATE(color5, color6);
 					}
 				} else {
-					if (color6 == color3 && color3 == colorA1
-							&& color2 != colorA2 && color3 != colorA0)
+					if (color6 == color3 && color3 == colorA1 && color2 != colorA2 && color3 != colorA0)
 						product2b = Q_INTERPOLATE(color3, color3, color3, color2);
-					else if (color5 == color2 && color2 == colorA2
-									 && colorA1 != color3 && color2 != colorA3)
+					else if (color5 == color2 && color2 == colorA2 && colorA1 != color3 && color2 != colorA3)
 						product2b = Q_INTERPOLATE(color2, color2, color2, color3);
 					else
 						product2b = INTERPOLATE(color2, color3);
 
-					if (color6 == color3 && color6 == colorB1
-							&& color5 != colorB2 && color6 != colorB0)
+					if (color6 == color3 && color6 == colorB1 && color5 != colorB2 && color6 != colorB0)
 						product1b = Q_INTERPOLATE(color6, color6, color6, color5);
-					else if (color5 == color2 && color5 == colorB2
-									 && colorB1 != color6 && color5 != colorB3)
+					else if (color5 == color2 && color5 == colorB2 && colorB1 != color6 && color5 != colorB3)
 						product1b = Q_INTERPOLATE(color6, color5, color5, color5);
 					else
 						product1b = INTERPOLATE(color5, color6);
 				}
 
-				if (color5 == color3 && color2 != color6 && color4 == color5
-						&& color5 != colorA2)
+				if (color5 == color3 && color2 != color6 && color4 == color5 && color5 != colorA2)
 					product2a = INTERPOLATE(color2, color5);
-				else
-					if (color5 == color1 && color6 == color5
-							&& color4 != color2 && color5 != colorA0)
+				else if (color5 == color1 && color6 == color5 && color4 != color2 && color5 != colorA0)
 					product2a = INTERPOLATE(color2, color5);
 				else
 					product2a = color2;
 
-				if (color2 == color6 && color5 != color3 && color1 == color2
-						&& color2 != colorB2)
+				if (color2 == color6 && color5 != color3 && color1 == color2 && color2 != colorB2)
 					product1a = INTERPOLATE(color2, color5);
-				else
-					if (color4 == color2 && color3 == color2
-							&& color1 != color5 && color2 != colorB0)
+				else if (color4 == color2 && color3 == color2 && color1 != color5 && color2 != colorB0)
 					product1a = INTERPOLATE(color2, color5);
 				else
 					product1a = color5;
@@ -420,8 +404,7 @@ void _2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 
 				register uint32 colorA, colorB;
 				uint32 colorC, colorD,
-					colorE, colorF, colorG, colorH,
-					colorI, colorJ, colorK, colorL, colorM, colorN, colorO, colorP;
+					colorE, colorF, colorG, colorH, colorI, colorJ, colorK, colorL, colorM, colorN, colorO, colorP;
 				uint32 product, product1, product2;
 
 //---------------------------------------
@@ -450,34 +433,34 @@ void _2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 				colorP = *(bP + Nextline + Nextline + 2);
 
 				if ((colorA == colorD) && (colorB != colorC)) {
-					if (((colorA == colorE) && (colorB == colorL)) ||
-							((colorA == colorC) && (colorA == colorF)
-							 && (colorB != colorE) && (colorB == colorJ))) {
+					if (((colorA == colorE) && (colorB == colorL)) || ((colorA == colorC) && (colorA == colorF)
+																														 && (colorB != colorE)
+																														 && (colorB == colorJ))) {
 						product = colorA;
 					} else {
 						product = INTERPOLATE(colorA, colorB);
 					}
 
-					if (((colorA == colorG) && (colorC == colorO)) ||
-							((colorA == colorB) && (colorA == colorH)
-							 && (colorG != colorC) && (colorC == colorM))) {
+					if (((colorA == colorG) && (colorC == colorO)) || ((colorA == colorB) && (colorA == colorH)
+																														 && (colorG != colorC)
+																														 && (colorC == colorM))) {
 						product1 = colorA;
 					} else {
 						product1 = INTERPOLATE(colorA, colorC);
 					}
 					product2 = colorA;
 				} else if ((colorB == colorC) && (colorA != colorD)) {
-					if (((colorB == colorF) && (colorA == colorH)) ||
-							((colorB == colorE) && (colorB == colorD)
-							 && (colorA != colorF) && (colorA == colorI))) {
+					if (((colorB == colorF) && (colorA == colorH)) || ((colorB == colorE) && (colorB == colorD)
+																														 && (colorA != colorF)
+																														 && (colorA == colorI))) {
 						product = colorB;
 					} else {
 						product = INTERPOLATE(colorA, colorB);
 					}
 
-					if (((colorC == colorH) && (colorA == colorF)) ||
-							((colorC == colorG) && (colorC == colorD)
-							 && (colorA != colorH) && (colorA == colorI))) {
+					if (((colorC == colorH) && (colorA == colorF)) || ((colorC == colorG) && (colorC == colorD)
+																														 && (colorA != colorH)
+																														 && (colorA == colorI))) {
 						product1 = colorC;
 					} else {
 						product1 = INTERPOLATE(colorA, colorC);
@@ -537,10 +520,10 @@ void _2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 #endif
 
 #ifdef SCUMM_BIG_ENDIAN
-				product = (colorA<<16) | product;
-				product1 = (product1<<16) | product2;
+				product = (colorA << 16) | product;
+				product1 = (product1 << 16) | product2;
 #endif
-				*((int32 *) dP) = product;
+				*((int32 *)dP) = product;
 				*((uint32 *)(dP + dstPitch)) = product1;
 
 				bP += inc_bP;
@@ -574,8 +557,7 @@ static uint32 Bilinear(uint32 A, uint32 B, uint32 x)
 
 }
 
-static uint32 Bilinear4(uint32 A, uint32 B, uint32 C, uint32 D, uint32 x,
-												uint32 y)
+static uint32 Bilinear4(uint32 A, uint32 B, uint32 C, uint32 D, uint32 x, uint32 y)
 {
 	unsigned long areaA, areaB, areaC, areaD;
 	unsigned long result, xy;
@@ -732,21 +714,22 @@ void Scale_2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */ ,
 	}
 }
 
-void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch, int width, int height)
+void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch,
+							 int width, int height)
 {
 	unsigned int nextlineSrc = srcPitch / sizeof(short);
-	short* p = (short*)srcPtr;
+	short *p = (short *)srcPtr;
 
 	unsigned nextlineDst = dstPitch / sizeof(short);
-	short* q = (short*)dstPtr;
+	short *q = (short *)dstPtr;
 
 	while (height--) {
-		for(int i = 0; i < width; ++i) {
+		for (int i = 0; i < width; ++i) {
 			// short A = *(p + i - nextlineSrc - 1);
 			short B = *(p + i - nextlineSrc);
 			// short C = *(p + i - nextlineSrc + 1);
 			short D = *(p + i - 1);
-			short E = *(p + i );
+			short E = *(p + i);
 			short F = *(p + i + 1);
 			// short G = *(p + i + nextlineSrc - 1);
 			short H = *(p + i + nextlineSrc);
@@ -764,14 +747,15 @@ void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint3
 
 
 /* Beware! Contrary to the other functions in this file, this blits from 8 to 8 bit! */
-void Normal1x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch, int width, int height)
+void Normal1x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch,
+							int width, int height)
 {
-	uint8* r;
+	uint8 *r;
 
 	while (height--) {
 		r = dstPtr;
-		for(int i = 0; i < width; ++i, ++r) {
-			uint8 color = *(srcPtr + i );
+		for (int i = 0; i < width; ++i, ++r) {
+			uint8 color = *(srcPtr + i);
 
 			*r = color;
 		}
@@ -781,14 +765,15 @@ void Normal1x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32
 }
 
 /* Beware! Contrary to the other functions in this file, this blits from 8 to 8 bit! */
-void Normal2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch, int width, int height)
+void Normal2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch,
+							int width, int height)
 {
-	uint8* r;
+	uint8 *r;
 
 	while (height--) {
 		r = dstPtr;
-		for(int i = 0; i < width; ++i, r+=2) {
-			uint8 color = *(srcPtr + i );
+		for (int i = 0; i < width; ++i, r += 2) {
+			uint8 color = *(srcPtr + i);
 
 			*(r) = color;
 			*(r + 1) = color;
@@ -801,14 +786,15 @@ void Normal2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32
 }
 
 /* Beware! Contrary to the other functions in this file, this blits from 8 to 8 bit! */
-void Normal3x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch, int width, int height)
+void Normal3x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch,
+							int width, int height)
 {
-	uint8* r;
+	uint8 *r;
 	uint32 dstPitch2 = dstPitch << 1;
 
 	while (height--) {
 		r = dstPtr;
-		for(int i = 0; i < width; ++i, r+=3) {
+		for (int i = 0; i < width; ++i, r += 3) {
 			uint8 color = *(srcPtr + i);
 
 			*(r + 0) = color;

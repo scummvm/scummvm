@@ -53,8 +53,7 @@ void Scumm::checkExecVerbs()
 		runInputScript(4, _mouseButStat, 1);
 	} else if (_mouseButStat & MBS_MOUSE_MASK) {
 		byte code = _mouseButStat & MBS_LEFT_CLICK ? 1 : 2;
-		if (mouse.y >= virtscr[0].topline
-				&& mouse.y < virtscr[0].topline + virtscr[0].height) {
+		if (mouse.y >= virtscr[0].topline && mouse.y < virtscr[0].topline + virtscr[0].height) {
 			over = checkMouseOver(mouse.x, mouse.y);
 			if (over != 0) {
 				runInputScript(1, _verbs[over].verbid, code);
@@ -63,12 +62,12 @@ void Scumm::checkExecVerbs()
 			runInputScript(2, 0, code);
 		} else {
 			over = checkMouseOver(mouse.x, mouse.y);
-			
+
 			// FIXME For the future: Indy3 and under inv scrolling
 			/*
-				if (over >= 31 && over <= 36) 
-					over += _inventoryOffset;
-			*/
+			   if (over >= 31 && over <= 36) 
+			   over += _inventoryOffset;
+			 */
 			runInputScript(1, over != 0 ? _verbs[over].verbid : 0, code);
 		}
 	}
@@ -97,8 +96,7 @@ int Scumm::checkMouseOver(int x, int y)
 
 	vs = &_verbs[i];
 	do {
-		if (vs->curmode != 1 || !vs->verbid || vs->saveid ||
-				y < vs->y || y >= vs->bottom)
+		if (vs->curmode != 1 || !vs->verbid || vs->saveid || y < vs->y || y >= vs->bottom)
 			continue;
 		if (vs->center) {
 			if (x < -(vs->right - vs->x - vs->x) || x >= vs->right)
@@ -145,9 +143,9 @@ void Scumm::drawVerb(int vrb, int mode)
 
 		// FIXME For the future: Indy3 and under inv scrolling
 		/*
-			if (vrb >= 31 && vrb <= 36) 
-				vrb += _inventoryOffset;
-		*/
+		   if (vrb >= 31 && vrb <= 36) 
+		   vrb += _inventoryOffset;
+		 */
 
 		_messagePtr = getResourceAddress(rtVerb, vrb);
 		if (!_messagePtr)
@@ -240,7 +238,7 @@ void Scumm::drawVerbBitmap(int vrb, int x, int y)
 
 	vst = &_verbs[vrb];
 	vst->right = vst->x + imgw * 8 - 1;
-	vst->bottom = vst->y + imgh * 8 - 1; 
+	vst->bottom = vst->y + imgh * 8 - 1;
 	vst->oldleft = vst->x;
 	vst->oldright = vst->right;
 	vst->oldtop = vst->y;

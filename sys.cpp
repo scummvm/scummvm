@@ -42,7 +42,7 @@ void *Scumm::fileOpen(const char *filename, int mode)
 void Scumm::fileClose(void *file)
 {
 	if (_fileMode == 1 || _fileMode == 2)
-		fclose((FILE *) file);
+		fclose((FILE *)file);
 }
 
 bool Scumm::fileReadFailed(void *file)
@@ -57,12 +57,12 @@ void Scumm::clearFileReadFailed(void *file)
 
 bool Scumm::fileEof(void *file)
 {
-	return feof((FILE *) file) != 0;
+	return feof((FILE *)file) != 0;
 }
 
 uint32 Scumm::filePos(void *handle)
 {
-	return ftell((FILE *) handle);
+	return ftell((FILE *)handle);
 }
 
 void Scumm::fileSeek(void *file, long offs, int whence)
@@ -70,8 +70,8 @@ void Scumm::fileSeek(void *file, long offs, int whence)
 	switch (_fileMode) {
 	case 1:
 	case 2:
-		if (fseek((FILE *) file, offs, whence) != 0)
-			clearerr((FILE *) file);
+		if (fseek((FILE *)file, offs, whence) != 0)
+			clearerr((FILE *)file);
 		return;
 	case 3:
 		_whereInResToRead = offs;
@@ -88,8 +88,8 @@ void Scumm::fileRead(void *file, void *ptr, uint32 size)
 		if (size == 0)
 			return;
 
-		if ((uint32)fread(ptr2, size, 1, (FILE *) file) != 1) {
-			clearerr((FILE *) file);
+		if ((uint32)fread(ptr2, size, 1, (FILE *)file) != 1) {
+			clearerr((FILE *)file);
 			_fileReadFailed = true;
 		}
 
@@ -119,8 +119,8 @@ int Scumm::fileReadByte()
 
 	switch (_fileMode) {
 	case 1:
-		if (fread(&b, 1, 1, (FILE *) _fileHandle) != 1) {
-			clearerr((FILE *) _fileHandle);
+		if (fread(&b, 1, 1, (FILE *)_fileHandle) != 1) {
+			clearerr((FILE *)_fileHandle);
 			_fileReadFailed = true;
 		}
 		return b ^ _encbyte;
@@ -166,9 +166,9 @@ int Scumm::fileReadByte(void *handle)
 {
 	byte b;
 
-	if (fread(&b, 1, 1, (FILE *) handle) != 1) {
-			clearerr((FILE *) handle);
-			_fileReadFailed = true;
+	if (fread(&b, 1, 1, (FILE *)handle) != 1) {
+		clearerr((FILE *)handle);
+		_fileReadFailed = true;
 	}
 	return b ^ _encbyte;
 }
@@ -205,7 +205,7 @@ char *Scumm::Strdup(const char *s)
 {
 	if (s) {
 		int l = strlen(s) + 1;
-		char * r = (char *) malloc(l);
+		char *r = (char *)malloc(l);
 		memcpy(r, s, l);
 		return r;
 	}

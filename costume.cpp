@@ -74,7 +74,7 @@ const byte cost_scaleTable[256] = {
 	238, 30, 158, 94, 222, 62, 190, 126, 254
 };
 
-byte CostumeRenderer::mainRoutine(Actor * a, int slot, int frame)
+byte CostumeRenderer::mainRoutine(Actor *a, int slot, int frame)
 {
 	int xmove, ymove, i, b, s;
 	uint scal;
@@ -94,10 +94,10 @@ byte CostumeRenderer::mainRoutine(Actor * a, int slot, int frame)
 	_width = _width2;
 	_height2 = _srcptr[2];
 	_height = _height2;
-	xmove = (int16) READ_LE_UINT16(_srcptr + 4) + _xmove;
-	ymove = (int16) READ_LE_UINT16(_srcptr + 6) + _ymove;
-	_xmove += (int16) READ_LE_UINT16(_srcptr + 8);
-	_ymove -= (int16) READ_LE_UINT16(_srcptr + 10);
+	xmove = (int16)READ_LE_UINT16(_srcptr + 4) + _xmove;
+	ymove = (int16)READ_LE_UINT16(_srcptr + 6) + _ymove;
+	_xmove += (int16)READ_LE_UINT16(_srcptr + 8);
+	_ymove -= (int16)READ_LE_UINT16(_srcptr + 10);
 	_srcptr += 12;
 
 	switch (_loaded._ptr[7] & 0x7F) {
@@ -108,8 +108,7 @@ byte CostumeRenderer::mainRoutine(Actor * a, int slot, int frame)
 		_srcptr += 2;
 		if (ex1 != 0xFF || ex2 != 0xFF) {
 			ex1 = READ_LE_UINT16(_loaded._ptr + _loaded._numColors + 10 + ex1 * 2);
-			_srcptr =
-				_loaded._ptr + READ_LE_UINT16(_loaded._ptr + ex1 + ex2 * 2) + 14;
+			_srcptr = _loaded._ptr + READ_LE_UINT16(_loaded._ptr + ex1 + ex2 * 2) + 14;
 		}
 	}
 
@@ -274,10 +273,8 @@ byte CostumeRenderer::mainRoutine(Actor * a, int slot, int frame)
 		CHECK_HEAP return 2;
 	}
 
-	_bgbak_ptr =
-		_vm->getResourceAddress(rtBuffer,5) + _vm->virtscr[0].xstart + _ypos * 320 + _xpos;
-	_backbuff_ptr =
-		_vm->virtscr[0].screenPtr + _vm->virtscr[0].xstart + _ypos * 320 + _xpos;
+	_bgbak_ptr = _vm->getResourceAddress(rtBuffer, 5) + _vm->virtscr[0].xstart + _ypos * 320 + _xpos;
+	_backbuff_ptr = _vm->virtscr[0].screenPtr + _vm->virtscr[0].xstart + _ypos * 320 + _xpos;
 	charsetmask =
 		_vm->hasCharsetMask(_left, _top + _vm->virtscr[0].topline, _right,
 												_vm->virtscr[0].topline + _bottom);
@@ -286,11 +283,14 @@ byte CostumeRenderer::mainRoutine(Actor * a, int slot, int frame)
 	if (_vm->_features & GF_SMALL_HEADER)
 		masking = _zbuf;
 	else
-		masking = _vm->isMaskActiveAt(_left, _top, _right, _bottom,_vm->getResourceAddress(rtBuffer,9) +
-		                              _vm->gdi._imgBufOffs[_zbuf] + _vm->_screenStartStrip);
+		masking =
+			_vm->isMaskActiveAt(_left, _top, _right, _bottom,
+													_vm->getResourceAddress(rtBuffer,
+																									9) + _vm->gdi._imgBufOffs[_zbuf] +
+													_vm->_screenStartStrip);
 
 	if (masking || charsetmask) {
-		_mask_ptr =_vm->getResourceAddress(rtBuffer,9) + _ypos * 40 + _vm->_screenStartStrip;
+		_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + _ypos * 40 + _vm->_screenStartStrip;
 		_imgbufoffs = _vm->gdi._imgBufOffs[_zbuf];
 		if (!charsetmask && _zbuf != 0)
 			_mask_ptr += _imgbufoffs;
@@ -298,30 +298,30 @@ byte CostumeRenderer::mainRoutine(Actor * a, int slot, int frame)
 	}
 
 	CHECK_HEAP if (a->shadow_mode) {
-		proc_special(a,(masking<<1)+charsetmask);
+		proc_special(a, (masking << 1) + charsetmask);
 		return b;
 	}
 
 	switch ((scaling << 2) | (masking << 1) | charsetmask) {
 	case 0:
-		proc6(); // no scaling, no masking, no charsetmask
+		proc6();										// no scaling, no masking, no charsetmask
 		break;
 	case 1:
 	case 2:
-		proc5(); // no scaling, masking or charsetmask
+		proc5();										// no scaling, masking or charsetmask
 		break;
 	case 3:
-		proc4(); // no scaling, masking and charsetmask
+		proc4();										// no scaling, masking and charsetmask
 		break;
 	case 4:
-		proc1(); // scaling, no masking, no charsetmask
+		proc1();										// scaling, no masking, no charsetmask
 		break;
 	case 5:
 	case 6:
-		proc2(); // scaling, masking or charsetmask
+		proc2();										// scaling, masking or charsetmask
 		break;
 	case 7:
-		proc3(); // scaling, masking and charsetmask
+		proc3();										// scaling, masking and charsetmask
 		break;
 	}
 
@@ -703,11 +703,11 @@ void CostumeRenderer::proc_special(Actor *a, byte mask2)
 	byte shadow4;
 	byte shadow5;
 
-	shadow1=a->shadow_mode & 0x80;
-	shadow2=a->shadow_mode & 0x40;
-	shadow3=a->shadow_mode & 0x20;
-	shadow4=a->shadow_mode & 0x10;
-	shadow5=a->shadow_mode & 0x0F;
+	shadow1 = a->shadow_mode & 0x80;
+	shadow2 = a->shadow_mode & 0x40;
+	shadow3 = a->shadow_mode & 0x20;
+	shadow4 = a->shadow_mode & 0x10;
+	shadow5 = a->shadow_mode & 0x0F;
 
 	mask = _mask_ptr = _mask_ptr_dest;
 	maskbit = revBitMask[_xpos & 7];
@@ -721,14 +721,14 @@ void CostumeRenderer::proc_special(Actor *a, byte mask2)
 	color = _repcolor;
 	src = _srcptr;
 
-	if(_mirror == 0)
-		shadow5=-shadow5;
+	if (_mirror == 0)
+		shadow5 = -shadow5;
 
 	maskbit = revBitMask[_xpos & 7];
 
 	dst = _backbuff_ptr;
 
-	if(mask2 !=0 && mask2 < 3)
+	if (mask2 != 0 && mask2 < 3)
 		_imgbufoffs = 0;
 
 	if (_docontinue)
@@ -741,28 +741,25 @@ void CostumeRenderer::proc_special(Actor *a, byte mask2)
 		if (!len)
 			len = *src++;
 
-		do { // ok
+		do {												// ok
 			if (cost_scaleTable[_scaleIndexY++] < _scaleY) {
 				if (color && y < _outheight) {
-					if (!mask2 || (mask2 && !((*mask | mask[_imgbufoffs]) & maskbit)))
-					{
-						if(shadow3 == 0)
-						{
+					if (!mask2 || (mask2 && !((*mask | mask[_imgbufoffs]) & maskbit))) {
+						if (shadow3 == 0) {
 							pcolor = _palette[color];
 							if (pcolor != 13)
 								goto proc_special_end;
 
 						}
-						if(shadow2 != 0)
-						{
+						if (shadow2 != 0) {
 							warning("proc_special: shadow2 unimplemented");
 							pcolor = 0;
-						}
-						else // we don't need all the random stuff, just the background copy
+						} else							// we don't need all the random stuff, just the background copy
 						{
-							pcolor=_vm->_proc_special_palette[*dst];
+							pcolor = _vm->_proc_special_palette[*dst];
 						}
-proc_special_end:;		*dst = pcolor;
+					proc_special_end:;
+						*dst = pcolor;
 					}
 				}
 				dst += 320;
@@ -790,7 +787,7 @@ proc_special_end:;		*dst = pcolor;
 		StartPos:;
 		} while (--len);
 	} while (1);
-	
+
 }
 
 #if 0
@@ -825,7 +822,7 @@ void CostumeRenderer::loadCostume(int id)
 }
 #endif
 
-byte CostumeRenderer::drawOneSlot(Actor * a, int slot)
+byte CostumeRenderer::drawOneSlot(Actor *a, int slot)
 {
 
 	if (!(_vm->_features & GF_AFTER_V7)) {
@@ -838,8 +835,7 @@ byte CostumeRenderer::drawOneSlot(Actor * a, int slot)
 
 		i = cd->curpos[slot] & 0x7FFF;
 
-		_frameptr =
-			_loaded._ptr + READ_LE_UINT16(_loaded._ptr + _loaded._numColors + slot * 2 + 10);
+		_frameptr = _loaded._ptr + READ_LE_UINT16(_loaded._ptr + _loaded._numColors + slot * 2 + 10);
 
 		code = _loaded._dataptr[i] & 0x7F;
 
@@ -855,7 +851,7 @@ byte CostumeRenderer::drawOneSlot(Actor * a, int slot)
 
 }
 
-byte CostumeRenderer::drawCostume(Actor * a)
+byte CostumeRenderer::drawCostume(Actor *a)
 {
 	int i;
 	byte r = 0;
@@ -866,12 +862,12 @@ byte CostumeRenderer::drawCostume(Actor * a)
 	return r;
 }
 
-int Scumm::cost_frameToAnim(Actor * a, int frame)
+int Scumm::cost_frameToAnim(Actor *a, int frame)
 {
 	return newDirToOldDir(a->facing) + frame * 4;
 }
 
-void Scumm::loadCostume(LoadedCostume * lc, int costume)
+void Scumm::loadCostume(LoadedCostume *lc, int costume)
 {
 	lc->_ptr = getResourceAddress(rtCostume, costume);
 
@@ -901,7 +897,7 @@ void Scumm::loadCostume(LoadedCostume * lc, int costume)
 	lc->_dataptr = lc->_ptr + READ_LE_UINT16(lc->_ptr + lc->_numColors + 8);
 }
 
-void Scumm::cost_decodeData(Actor * a, int frame, uint usemask)
+void Scumm::cost_decodeData(Actor *a, int frame, uint usemask)
 {
 	byte *p, *r;
 	uint mask, j;
@@ -991,8 +987,7 @@ void CostumeRenderer::setPalette(byte *palette)
 
 void CostumeRenderer::setFacing(uint16 facing)
 {
-	_mirror = Scumm::newDirToOldDir(facing) != 0
-		|| (_loaded._ptr[7] & 0x80);
+	_mirror = Scumm::newDirToOldDir(facing) != 0 || (_loaded._ptr[7] & 0x80);
 }
 
 void CostumeRenderer::setCostume(int costume)
@@ -1000,7 +995,7 @@ void CostumeRenderer::setCostume(int costume)
 	_vm->loadCostume(&_loaded, costume);
 }
 
-byte Scumm::cost_increaseAnims(LoadedCostume * lc, Actor * a)
+byte Scumm::cost_increaseAnims(LoadedCostume *lc, Actor *a)
 {
 	int i;
 	byte r = 0;
@@ -1012,7 +1007,7 @@ byte Scumm::cost_increaseAnims(LoadedCostume * lc, Actor * a)
 	return r;
 }
 
-byte Scumm::cost_increaseAnim(LoadedCostume * lc, Actor * a, int slot)
+byte Scumm::cost_increaseAnim(LoadedCostume *lc, Actor *a, int slot)
 {
 	int highflag;
 	int i, end;

@@ -130,7 +130,7 @@ bool Scumm::loadState(int slot, bool compat)
 	gdi._mask_left = -1;
 
 	initScreens(0, 0, 320, 200);
-	
+
 	// Force a fade to black
 	int old_screenEffectFlag = _screenEffectFlag;
 	_screenEffectFlag = true;
@@ -169,9 +169,9 @@ void Scumm::makeSavegameName(char *out, int slot, bool compatible)
 	dir = _gameDataPath;
 #else
 
-  #if !defined(MACOS_CARBON)
+#if !defined(MACOS_CARBON)
 	dir = getenv("SCUMMVM_SAVEPATH");
-  #endif
+#endif
 
 	// If SCUMMVM_SAVEPATH was not specified, try to use game specific savepath from config
 	if (!dir || dir[0] == 0)
@@ -226,7 +226,7 @@ bool Scumm::getSavegameName(int slot, char *desc)
 #define MKARRAY(type,item,saveas,num) {OFFS(type,item),128|saveas,SIZE(type,item)}, {num,0,0}
 #define MKEND() {0xFFFF,0xFF,0xFF}
 
-void Scumm::saveOrLoad(Serializer * s)
+void Scumm::saveOrLoad(Serializer *s)
 {
 	const SaveLoadEntry objectEntries[] = {
 		MKLINE(ObjectData, offs_obim_to_room, sleUint32),
@@ -442,7 +442,7 @@ void Scumm::saveOrLoad(Serializer * s)
 
 		MKLINE(Scumm, _cd_track, sleInt16),
 		MKLINE(Scumm, _cd_loops, sleInt16),
-		MKLINE(Scumm, _cd_frame, sleInt16),		
+		MKLINE(Scumm, _cd_frame, sleInt16),
 		MKLINE(Scumm, _cd_end, sleInt16),
 
 		MKEND()
@@ -612,7 +612,7 @@ void Scumm::saveOrLoad(Serializer * s)
 	int var120Backup;
 	int var98Backup;
 
-	if (_current_version == VER_V9) 
+	if (_current_version == VER_V9)
 		s->saveLoadEntries(this, mainEntriesV9);
 	else
 		s->saveLoadEntries(this, mainEntriesV8);
@@ -623,33 +623,27 @@ void Scumm::saveOrLoad(Serializer * s)
 		s->saveLoadArrayOf(vm.slot, 25, sizeof(vm.slot[0]), scriptSlotEntries);
 	else
 		s->saveLoadArrayOf(vm.slot, NUM_SCRIPT_SLOT, sizeof(vm.slot[0]), scriptSlotEntries);
-	s->saveLoadArrayOf(_objs, _numLocalObjects, sizeof(_objs[0]),
-										 objectEntries);
+	s->saveLoadArrayOf(_objs, _numLocalObjects, sizeof(_objs[0]), objectEntries);
 	s->saveLoadArrayOf(_verbs, _numVerbs, sizeof(_verbs[0]), verbEntries);
 	s->saveLoadArrayOf(vm.nest, 16, sizeof(vm.nest[0]), nestedScriptEntries);
 	s->saveLoadArrayOf(sentence, 6, sizeof(sentence[0]), sentenceTabEntries);
 	s->saveLoadArrayOf(string, 6, sizeof(string[0]), stringTabEntries);
-	s->saveLoadArrayOf(_colorCycle, 16, sizeof(_colorCycle[0]),
-										 colorCycleEntries);
+	s->saveLoadArrayOf(_colorCycle, 16, sizeof(_colorCycle[0]), colorCycleEntries);
 
 	for (i = rtFirst; i <= rtLast; i++)
 		if (res.mode[i] == 0)
 			for (j = 1; j < res.num[i]; j++)
 				saveLoadResource(s, i, j);
 
-	s->saveLoadArrayOf(_objectOwnerTable, _numGlobalObjects,
-										 sizeof(_objectOwnerTable[0]), sleByte);
-	s->saveLoadArrayOf(_objectStateTable, _numGlobalObjects,
-										 sizeof(_objectStateTable[0]), sleByte);
+	s->saveLoadArrayOf(_objectOwnerTable, _numGlobalObjects, sizeof(_objectOwnerTable[0]), sleByte);
+	s->saveLoadArrayOf(_objectStateTable, _numGlobalObjects, sizeof(_objectStateTable[0]), sleByte);
 	if (_objectRoomTable)
-		s->saveLoadArrayOf(_objectRoomTable, _numGlobalObjects,
-											 sizeof(_objectRoomTable[0]), sleByte);
+		s->saveLoadArrayOf(_objectRoomTable, _numGlobalObjects, sizeof(_objectRoomTable[0]), sleByte);
 
 	if (_shadowPaletteSize)
 		s->saveLoadArrayOf(_shadowPalette, _shadowPaletteSize, 1, sleByte);
 
-	s->saveLoadArrayOf(_classData, _numGlobalObjects, sizeof(_classData[0]),
-										 sleUint32);
+	s->saveLoadArrayOf(_classData, _numGlobalObjects, sizeof(_classData[0]), sleUint32);
 
 	var120Backup = _vars[120];
 	var98Backup = _vars[98];
@@ -684,7 +678,7 @@ void Scumm::saveOrLoad(Serializer * s)
 		_imuse->save_or_load(s, this);
 }
 
-void Scumm::saveLoadResource(Serializer * ser, int type, int idx)
+void Scumm::saveLoadResource(Serializer *ser, int type, int idx)
 {
 	byte *ptr;
 	uint32 size;
@@ -783,8 +777,7 @@ byte Serializer::loadByte()
 	return e;
 }
 
-void Serializer::saveLoadArrayOf(void *b, int len, int datasize,
-																 byte filetype)
+void Serializer::saveLoadArrayOf(void *b, int len, int datasize, byte filetype)
 {
 	byte *at = (byte *)b;
 	uint32 data;
@@ -816,7 +809,7 @@ void Serializer::saveLoadArrayOf(void *b, int len, int datasize,
 				break;
 			case sleUint16:
 			case sleInt16:
-				saveWord((int16) data);
+				saveWord((int16)data);
 				break;
 			case sleInt32:
 			case sleUint32:
@@ -835,13 +828,13 @@ void Serializer::saveLoadArrayOf(void *b, int len, int datasize,
 				data = loadWord();
 				break;
 			case sleInt16:
-				data = (int16) loadWord();
+				data = (int16)loadWord();
 				break;
 			case sleUint32:
 				data = loadUint32();
 				break;
 			case sleInt32:
-				data = (int32) loadUint32();
+				data = (int32)loadUint32();
 				break;
 			default:
 				error("saveLoadArrayOf: invalid filetype %d", filetype);
@@ -862,8 +855,7 @@ void Serializer::saveLoadArrayOf(void *b, int len, int datasize,
 	}
 }
 
-void Serializer::saveLoadArrayOf(void *b, int num, int datasize,
-																 const SaveLoadEntry * sle)
+void Serializer::saveLoadArrayOf(void *b, int num, int datasize, const SaveLoadEntry *sle)
 {
 	byte *data = (byte *)b;
 
@@ -874,7 +866,7 @@ void Serializer::saveLoadArrayOf(void *b, int num, int datasize,
 }
 
 
-void Serializer::saveLoadEntries(void *d, const SaveLoadEntry * sle)
+void Serializer::saveLoadEntries(void *d, const SaveLoadEntry *sle)
 {
 	int replen;
 	byte type;

@@ -515,7 +515,7 @@ void Actor::setActorDirection(int direction)
 	needBgReset = true;
 }
 
-void Scumm::putActor(Actor * a, int dstX, int dstY, byte room)
+void Scumm::putActor(Actor *a, int dstX, int dstY, byte room)
 {
 	if (a->visible && _currentRoom != room && _vars[VAR_TALK_ACTOR] == a->number) {
 		clearMsgQueue();
@@ -547,7 +547,7 @@ void Scumm::putActor(Actor * a, int dstX, int dstY, byte room)
 	}
 }
 
-int Scumm::getActorXYPos(Actor * a)
+int Scumm::getActorXYPos(Actor *a)
 {
 	if (!a)
 		return -1;
