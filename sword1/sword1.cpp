@@ -158,6 +158,8 @@ int SwordEngine::init(GameDetector &detector) {
 		_system->initSize(640, 480);
 	_system->endGFXTransaction();
 
+	checkCdFiles();
+
 	debug(5, "Starting resource manager");
 	_resMan = new ResMan("swordres.rif");
 	debug(5, "Starting object manager");
@@ -235,61 +237,185 @@ void SwordEngine::reinitialize(void) {
 	_systemVars.wantFade = true;
 }
 
-void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or what...
-	const char *speechFiles[] = {
+void SwordEngine::flagsToBool(bool *dest, uint8 flags) {
+	uint8 bitPos = 0;
+	while (flags) {
+		if (flags & 1)
+			dest[bitPos] = true;
+		flags >>= 1;
+		bitPos++;
+	}
+}
+
+static const char *errorMsgs[] = {
+	"The file \"%s\" is missing and the game doesn't work without it.\n"
+	"Please copy it from CD %d and try starting the game again.\n"
+	"The Readme file also contains further information.",
+	
+	"%d important files are missing, the game can't start without them.\n"
+	"Please copy these files from their corresponding CDs:\n",
+
+    "The file \"%s\" is missing.\n"
+	"Even though the game may initially seem to\n"
+	"work fine, it will crash when it needs the\n"
+	"data from this file and you will be thrown back to your last savegame.\n"
+	"Please copy the file from CD %d and start the game again.",
+
+	"%d files are missing.\n"
+	"Even though the game may initially seem to\n"
+	"work fine, it will crash when it needs the\n"
+	"data from these files and you will be thrown back to your last savegame.\n"
+	"Please copy these files from their corresponding CDs:\n"
+};
+
+const CdFile SwordEngine::_cdFileList[] = {
+	{ "paris2.clu", FLAG_CD1 },
+	{ "ireland.clu", FLAG_CD2 },
+	{ "paris3.clu", FLAG_CD1 },
+	{ "paris4.clu", FLAG_CD1 },
+	{ "scotland.clu", FLAG_CD2 },
+	{ "spain.clu", FLAG_CD2 },
+	{ "syria.clu", FLAG_CD2 },
+	{ "train.clu", FLAG_CD2 },
+	{ "compacts.clu", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
+	{ "general.clu", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
+	{ "maps.clu", FLAG_CD1 | FLAG_DEMO },
+	{ "paris1.clu", FLAG_CD1 | FLAG_DEMO },
+	{ "scripts.clu", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
+	{ "swordres.rif", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
+	{ "text.clu", FLAG_CD1 | FLAG_DEMO },
+	{ "cows.mad", FLAG_DEMO },
+	{ "speech1.clu", FLAG_SPEECH1 },
+	 { "speech2.clu", FLAG_SPEECH2 }
 #ifdef USE_MAD
-		"SPEECH%d.CL3",
+	,{ "speech1.cl3", FLAG_SPEECH1 },
+	 { "speech2.cl3", FLAG_SPEECH2 }
 #endif
 #ifdef USE_VORBIS
-		"SPEECH%d.CLV",
+	,{ "speech1.clv", FLAG_SPEECH1 },
+	 { "speech2.clv", FLAG_SPEECH2 }
 #endif
-		"SPEECH%d.CLU"
-	};
-	bool fileFound[2] = { false, false };
-	File test;
+};
 
-	_systemVars.playSpeech = true;
-	_systemVars.isDemo = false;
-
-	for (int i = 1; i <= 2; i++) {
-		for (int j = 0; j < ARRAYSIZE(speechFiles); j++) {
-			char fileName[12];
-			sprintf(fileName, speechFiles[j], i);
-			if (test.open(fileName)) {
-				test.close();
-				fileFound[i - 1] = true;
-				break;
+void SwordEngine::showFileErrorMsg(uint8 type, bool *fileExists) {
+	char msg[1024];
+	int missCnt = 0, missNum = 0;
+	for (int i = 0; i < ARRAYSIZE(_cdFileList); i++)
+		if (!fileExists[i]) {
+			missCnt++;
+			missNum = i;
+		}
+	assert(missCnt > 0); // this function shouldn't get called if there's nothing missing.
+	warning("%d files missing", missCnt);
+	int msgId = (type == TYPE_IMMED) ? 0 : 2;
+	if (missCnt == 1) {
+		sprintf(msg, errorMsgs[msgId],
+				_cdFileList[missNum].name, (_cdFileList[missNum].flags & FLAG_CD2) ? 2 : 1);
+		warning(msg);
+	} else {
+		char *pos = msg + sprintf(msg, errorMsgs[msgId + 1], missCnt);
+		warning(msg);
+		for (int i = 0; i < ARRAYSIZE(_cdFileList); i++)
+			if (!fileExists[i]) {
+				warning("\"%s\" (CD %d)", _cdFileList[i].name, (_cdFileList[i].flags & FLAG_CD2) ? 2 : 1);
+				pos += sprintf(pos, "\"%s\" (CD %d)\n", _cdFileList[i].name, (_cdFileList[i].flags & FLAG_CD2) ? 2 : 1);
 			}
-		}
 	}
+	GUI::MessageDialog dialog(msg);
+	dialog.runModal();
+	if (type == TYPE_IMMED) // we can't start without this file, so error() out.
+		error(msg);
+}
 
-	if (fileFound[0] && fileFound[1]) {
-		// both files exist, assume running from HDD and everything's fine.
-		_systemVars.runningFromCd = false;
-		_systemVars.playSpeech = true;
-	} else { // speech1 & speech2 not present. are we running from cd?
-		if (test.open("cows.mad")) {
-			_systemVars.isDemo = true;
-			Logic::_scriptVars[PLAYINGDEMO] = 1;
+void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or what...
+	File test;
+	bool fileExists[30];
+	bool isFullVersion = false; // default to demo version
+	bool missingTypes[8] = { false, false, false, false, false, false, false, false };
+	bool foundTypes[8] = { false, false, false, false, false, false, false, false };
+	bool cd2FilesFound = false;
+	_systemVars.runningFromCd = false;
+	_systemVars.playSpeech = true;
+
+	// check all files and look out if we can find a file that wouldn't exist if this was the demo version
+	for (int fcnt = 0; fcnt < ARRAYSIZE(_cdFileList); fcnt++) {
+		if (test.open(_cdFileList[fcnt].name)) {
 			test.close();
-		}
-		if (test.open("cd1.id")) {
-			_systemVars.runningFromCd = true;
-			_systemVars.currentCD = 1;
-			test.close();
-		} else if (test.open("cd2.id")) {
-			_systemVars.runningFromCd = true;
-			_systemVars.currentCD = 2;
-			test.close();
+			fileExists[fcnt] = true;
+			flagsToBool(foundTypes, _cdFileList[fcnt].flags);
+			if (!(_cdFileList[fcnt].flags & FLAG_DEMO))
+				isFullVersion = true;
+			if (_cdFileList[fcnt].flags & FLAG_CD2)
+				cd2FilesFound = true;
 		} else {
-			const char msg[] = "Unable to find the game files.\nPlease read the ScummVM documentation";
-			GUI::MessageDialog dialog(msg);
-			dialog.runModal();
-			error(msg);
+			flagsToBool(missingTypes, _cdFileList[fcnt].flags);
+			fileExists[fcnt] = false;
 		}
 	}
 
-	// check cutscene pack version
+	if (((_features & GF_DEMO) == 0) != isFullVersion) // shouldn't happen...
+		warning("Your Broken Sword 1 version looks like a %s version but you are starting it as a %s version", isFullVersion ? "full" : "demo", (_features & GF_DEMO) ? "demo" : "full");
+	
+	if (foundTypes[TYPE_SPEECH1]) // we found some kind of speech1 file (.clu, .cl3, .clv)
+		missingTypes[TYPE_SPEECH1] = false; // so we don't care if there's a different kind missing
+	if (foundTypes[TYPE_SPEECH2]) // same for speech2
+		missingTypes[TYPE_SPEECH2] = false;
+
+	if (isFullVersion)					 // if this is the full version...
+		missingTypes[TYPE_DEMO] = false; // then we don't need demo files...
+	else								 // and vice versa
+		missingTypes[TYPE_SPEECH1] = missingTypes[TYPE_SPEECH2] = missingTypes[TYPE_CD1] = missingTypes[TYPE_CD2] = false;
+
+	bool somethingMissing = false;
+	for (int i = 0; i < 8; i++)
+		somethingMissing |= missingTypes[i];
+	if (somethingMissing) { // okay, there *are* files missing
+		// first, update the fileExists[] array depending on our changed missingTypes
+		for (int fileCnt = 0; fileCnt < ARRAYSIZE(_cdFileList); fileCnt++)
+			if (!fileExists[fileCnt]) {
+				fileExists[fileCnt] = true;
+				for (int flagCnt = 0; flagCnt < 8; flagCnt++)
+					if (missingTypes[flagCnt] && ((_cdFileList[fileCnt].flags & (1 << flagCnt)) != 0))
+						fileExists[fileCnt] = false; // this is one of the files we were looking for
+			}
+		if (missingTypes[TYPE_IMMED]) { 
+			// important files missing, can't start the game without them
+			showFileErrorMsg(TYPE_IMMED, fileExists);
+		} else if ((!missingTypes[TYPE_CD1]) && !cd2FilesFound) {
+			/* we have all the data from cd one, but not a single one from CD2.
+				I'm not sure how we should handle this, for now I'll just assume that the
+				user has set up the extrapath correctly and copied the necessary files to HDD.
+				A quite optimistic assumption, I'd say. Maybe we should change this for the release
+				to warn the user? */
+			warning("CD2 data files not found. I hope you know what you're doing and that\n"
+					"you have set up the extrapath and additional data correctly.\n"
+					"If you didn't, you should better read the ScummVM readme file");
+			_systemVars.runningFromCd = true;
+			_systemVars.playSpeech = true;
+		} else if (missingTypes[TYPE_CD1] || missingTypes[TYPE_CD2]) {
+			// several files from CD1 both CDs are missing. we can probably start, but it'll crash sooner or later
+			showFileErrorMsg(TYPE_CD1, fileExists);
+		} else if (missingTypes[TYPE_SPEECH1] || missingTypes[TYPE_SPEECH2]) {
+			// not so important, but there won't be any voices
+			if (missingTypes[TYPE_SPEECH1] && missingTypes[TYPE_SPEECH2])
+				warning("Unable to find the speech files. The game will work, but you won't hear any voice output.\n"
+						"Please copy the SPEECH.CLU files from both CDs and rename them to SPEECH1.CLU and SPEECH2.CLU,\n"
+						"corresponding to the CD number.\n",
+						"Please read the ScummVM Readme file for more information");
+			else
+				warning("Unable to find the speech file from CD %d.\n"
+						"You won't hear any voice output in that part of the game.\n"
+						"Please read the ScummVM Readme file for more information", missingTypes[TYPE_SPEECH1] ? 1 : 2);
+		} else if (missingTypes[TYPE_DEMO]) {
+			// for the demo version, we simply expect to have all files immediately
+			showFileErrorMsg(TYPE_IMMED, fileExists);
+		}
+	} // everything's fine, let's play.
+	/*if (!isFullVersion)
+		_systemVars.isDemo = true;
+	*/
+	// make the demo flag depend on the Gamesettings for now, and not on what the datafiles look like
+	_systemVars.isDemo = (_features & GF_DEMO) != 0;
 	_systemVars.cutscenePackVersion = 0;
 #ifdef USE_MPEG2
 	if (test.open("intro.snd")) {
@@ -300,8 +426,6 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 }
 
 int SwordEngine::go() {
-	
-	checkCdFiles();
 
 	uint16 startPos = ConfMan.getInt("boot_param");
 	if (startPos)

@@ -74,6 +74,8 @@ void Logic::initialize(void) {
 	memset(_scriptVars, 0, NUM_SCRIPT_VARS * sizeof(uint32));
 	for (uint8 cnt = 0; cnt < NON_ZERO_SCRIPT_VARS; cnt++)
 		_scriptVars[_scriptVarInit[cnt][0]] = _scriptVarInit[cnt][1];
+	if (SwordEngine::_systemVars.isDemo)
+		_scriptVars[PLAYINGDEMO] = 1;
 	
 	delete _eventMan;
 	_eventMan = new EventManager();

@@ -84,6 +84,8 @@ private:
 
 	void checkCdFiles(void);
 	void checkCd(void);
+	void showFileErrorMsg(uint8 type, bool *fileExists);
+	void flagsToBool(bool *dest, uint8 flags);
 	uint8 mainLoop(void);
 
 	uint16 _mouseX, _mouseY, _mouseState;
@@ -98,7 +100,8 @@ private:
 	Menu		*_menu;
 	Music		*_music;
 	Control		*_control;
-	static const uint8 _cdList[TOTAL_SECTIONS];
+	static const uint8  _cdList[TOTAL_SECTIONS];
+	static const CdFile	_cdFileList[];
 };
 
 } // End of namespace Sword1

@@ -116,6 +116,29 @@ struct WalkGridHeader {
 	#pragma END_PACK_STRUCTS
 #endif
 
+enum fileTypes {
+	TYPE_CD1 = 0,
+	TYPE_CD2,
+	TYPE_DEMO,
+	TYPE_IMMED,
+	TYPE_SPEECH1,
+	TYPE_SPEECH2
+};
+
+enum fileFlags {
+	FLAG_CD1 =		(1 << TYPE_CD1),	  // this file is on cd1
+	FLAG_CD2 =		(1 << TYPE_CD2),	  // this file is on cd2
+	FLAG_DEMO =		(1 << TYPE_DEMO),	  // file for the demo version
+	FLAG_IMMED =	(1 << TYPE_IMMED),	  // this file is needed immediately, game won't start without it
+	FLAG_SPEECH1 =	(1 << TYPE_SPEECH1),
+	FLAG_SPEECH2 =	(1 << TYPE_SPEECH2)
+};
+
+struct CdFile {
+	char *name;
+	uint8 flags;
+};
+
 enum Language {
 	BS1_ENGLISH = 0,
 	BS1_FRENCH,
