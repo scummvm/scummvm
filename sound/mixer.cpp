@@ -654,9 +654,8 @@ ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *soun
 	_id = id;
 	_ptr = (byte *)sound;
 	_flags = flags;
-
-#ifdef SOX_HACK
 	
+#ifdef SOX_HACK
 	// Create the input stream
 	if (flags & SoundMixer::FLAG_LOOP) {
 		if (loopEnd == 0) {
@@ -671,8 +670,9 @@ ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *soun
 	// TODO: add support for SoundMixer::FLAG_REVERSE_STEREO
 
 	// Get a rate converter instance
-	_converter = makeRateConverter(rate, mixer->getOutputRate(), _input->isStereo());
-//	printf("   data has %d bits and is %s\n",
+	_converter = makeRateConverter(rate, mixer->getOutputRate(), _input->isStereo(), (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0);
+//	printf("inrate %d, outrate %d, %d bits, %s\n",
+//			rate, mixer->getOutputRate(),
 //			((flags & SoundMixer::FLAG_16BITS) ? 16 : 8),
 //			((flags & SoundMixer::FLAG_UNSIGNED) ? "unsigned" : "signed"));
 #else
@@ -760,7 +760,7 @@ ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle, void
 	// TODO: add support for SoundMixer::FLAG_REVERSE_STEREO
 
 	// Get a rate converter instance
-	_converter = makeRateConverter(rate, mixer->getOutputRate(), _input->isStereo());
+	_converter = makeRateConverter(rate, mixer->getOutputRate(), _input->isStereo(), (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0);
 //	printf("   data has %d bits and is %s\n",
 //			((flags & SoundMixer::FLAG_16BITS) ? 16 : 8),
 //			((flags & SoundMixer::FLAG_UNSIGNED) ? "unsigned" : "signed"));

@@ -58,8 +58,9 @@ public:
 };
 
 class LinearRateConverter : public RateConverter {
+	bool _reverseStereo;
 public:
-	LinearRateConverter(st_rate_t inrate, st_rate_t outrate);
+	LinearRateConverter(st_rate_t inrate, st_rate_t outrate, bool reverseStereo);
 	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol);
 	virtual int drain(st_sample_t *obuf, st_size_t *osamp, st_volume_t vol);
 };
@@ -72,19 +73,19 @@ public:
 	virtual int drain(st_sample_t *obuf, st_size_t *osamp, st_volume_t vol);
 };
 
-template<bool stereo>
+template<bool stereo, bool reverseStereo>
 class CopyRateConverter : public RateConverter {
 public:
 	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
-		int16 tmp;
+		int16 tmp[2];
 		st_size_t len = *osamp;
 		assert(input.isStereo() == stereo);
 		while (!input.eof() && len--) {
-			tmp = input.read() * vol / 256;
-			clampedAdd(*obuf++, tmp);
+			tmp[0] = tmp[1] = input.read() * vol / 256;
 			if (stereo)
-				tmp = input.read() * vol / 256;
-			clampedAdd(*obuf++, tmp);
+				tmp[reverseStereo ? 0 : 1] = input.read() * vol / 256;
+			clampedAdd(*obuf++, tmp[0]);
+			clampedAdd(*obuf++, tmp[1]);
 		}
 		return (ST_SUCCESS);
 	}
@@ -93,15 +94,18 @@ public:
 	}
 };
 
-static inline RateConverter *makeRateConverter(st_rate_t inrate, st_rate_t outrate, bool stereo) {
+static inline RateConverter *makeRateConverter(st_rate_t inrate, st_rate_t outrate, bool stereo, bool reverseStereo = false) {
 	if (inrate != outrate) {
-		return new LinearRateConverter(inrate, outrate);
+		return new LinearRateConverter(inrate, outrate, reverseStereo);
 		//return new ResampleRateConverter(inrate, outrate, 1);
 	} else {
-		if (stereo)
-			return new CopyRateConverter<true>();
-		else
-			return new CopyRateConverter<false>();
+		if (stereo) {
+			if (reverseStereo)
+				return new CopyRateConverter<true, true>();
+			else
+				return new CopyRateConverter<true, false>();
+		} else
+			return new CopyRateConverter<false, false>();
 	}
 }
 

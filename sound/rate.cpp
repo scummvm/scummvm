@@ -99,13 +99,15 @@ int st_rate_start(eff_t effp, st_rate_t inrate, st_rate_t outrate)
  * Processed signed long samples from ibuf to obuf.
  * Return number of samples processed.
  */
-template<bool stereo>
+template<bool stereo, int leftChannel>
 int st_rate_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol)
 {
 	rate_t rate = (rate_t) effp->priv;
 	st_sample_t *ostart, *oend;
 	st_sample_t out;
 	unsigned long tmp;
+
+	assert(leftChannel == 0 || leftChannel == 1);
 
 	ostart = obuf;
 	oend = obuf + *osamp * 2;
@@ -132,7 +134,7 @@ int st_rate_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size
 		while (rate->ipos > rate->opos + 1) {
 
 			// interpolate
-			out = (st_sample_t) (rate->ilast[0] + (((rate->icur[0] - rate->ilast[0]) * rate->opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS));
+			out = (st_sample_t) (rate->ilast[leftChannel] + (((rate->icur[leftChannel] - rate->ilast[leftChannel]) * rate->opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS));
 			// adjust volume
 			out = out * vol / 256;
 	
@@ -141,7 +143,7 @@ int st_rate_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size
 			
 			if (stereo) {
 				// interpolate
-				out = (st_sample_t) (rate->ilast[1] + (((rate->icur[1] - rate->ilast[1]) * rate->opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS));
+				out = (st_sample_t) (rate->ilast[1-leftChannel] + (((rate->icur[1-leftChannel] - rate->ilast[1-leftChannel]) * rate->opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS));
 				// adjust volume
 				out = out * vol / 256;
 			}
@@ -165,15 +167,19 @@ the_end:
 	return (ST_SUCCESS);
 }
 
-LinearRateConverter::LinearRateConverter(st_rate_t inrate, st_rate_t outrate) {
+LinearRateConverter::LinearRateConverter(st_rate_t inrate, st_rate_t outrate, bool reverseStereo) {
+	_reverseStereo = reverseStereo;
 	st_rate_start(&effp, inrate, outrate);
 }
 
 int LinearRateConverter::flow(AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
-	if (input.isStereo())
-		return st_rate_flow<true>(&effp, input, obuf, osamp, vol);
-	else
-		return st_rate_flow<false>(&effp, input, obuf, osamp, vol);
+	if (input.isStereo()) {
+		if (_reverseStereo)
+			return st_rate_flow<true, 1>(&effp, input, obuf, osamp, vol);
+		else
+			return st_rate_flow<true, 0>(&effp, input, obuf, osamp, vol);
+	} else
+		return st_rate_flow<false, 0>(&effp, input, obuf, osamp, vol);
 }
 
 int LinearRateConverter::drain(st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
