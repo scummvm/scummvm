@@ -143,8 +143,13 @@ int Scumm::whereIsObject(int object)
 
 int Scumm::getObjectOrActorXY(int object, int &x, int &y)
 {
-	if (object < NUM_ACTORS)
-		return derefActorSafe(object, "getObjectOrActorXY")->getActorXYPos(x, y);
+	if (object < NUM_ACTORS) {
+		Actor *act = derefActorSafe(object, "getObjectOrActorXY");
+		if (!act) 
+			return 0; 
+		else
+			return act->getActorXYPos(x, y);
+	}
 
 	switch (whereIsObject(object)) {
 	case WIO_NOT_FOUND:
