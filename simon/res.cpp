@@ -278,6 +278,7 @@ byte *SimonState::readSingleOpcode(File *in, byte *ptr)
 		break;
 	case GAME_SIMON1DOS:
 	case GAME_SIMON1DEMO:
+	case GAME_SIMON1AMIGA:
 		table = opcode_arg_table_simon1dos;
 		break;
 	default:
