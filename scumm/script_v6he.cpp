@@ -27,6 +27,7 @@
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
+#include "scumm/imuse.h"
 #include "scumm/intern.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
@@ -1108,16 +1109,19 @@ void ScummEngine_v6he::o6_writeFile() {
 
 void ScummEngine_v6he::o6_soundOps() {
 	byte subOp = fetchScriptByte();
-	int volume = pop();
+	int arg = pop();
 	switch (subOp) {
 	case 0xde:
-		_mixer->setMusicVolume(volume);
+		if (_heversion == 60)
+			_imuse->set_music_volume(arg);
+		else
+			_mixer->setChannelVolume(_sound->_musicChannelHandle, arg);
 		break;
 	case 0xe0:
 		// Fatty Bear's Birthday surprise uses this when playing the
 		// piano, but only when using one of the digitized instruments.
 		// See also o6_startSound().
-		_sound->setOverrideFreq(volume);
+		_sound->setOverrideFreq(arg);
 		break;
 	}
 }

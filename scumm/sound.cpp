@@ -801,7 +801,7 @@ void Sound::stopSound(int a) {
 			// Stop current music
 			if (_currentMusic)
 				_vm->_mixer->stopID(_currentMusic);
-			else if (_vm->_imuse)
+			else
 				_vm->_imuse->stopSound(_vm->_imuse->getSoundStatus(-1));
 		}
 	}
