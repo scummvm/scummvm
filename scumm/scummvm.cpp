@@ -643,7 +643,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 			ConfMan.set("subtitles", !ConfMan.getBool("nosubtitles"));
 	}
 	_confirmExit = ConfMan.getBool("confirm_exit");
-	_defaultTalkDelay = ConfMan.getInt("talkspeed");
 	_native_mt32 = ConfMan.getBool("native_mt32");
 	// TODO: We shouldn't rely on the global Language values matching those COMI etc. expect.
 	// Rather we should explicitly translate them.
@@ -1910,17 +1909,15 @@ void ScummEngine::processKbd(bool smushMode) {
 		if (_imuse)
 			_imuse->set_music_volume (vol);
 	} else if (_lastKeyHit == '-') { // - text speed down
-		_defaultTalkDelay += 5;
-		if (_defaultTalkDelay > 90)
-			_defaultTalkDelay = 90;
-
-		VAR(VAR_CHARINC) = _defaultTalkDelay / 20;
+		if (_defaultTalkDelay < 9)
+			_defaultTalkDelay++;
+		if (VAR_CHARINC != 0xFF)
+			VAR(VAR_CHARINC) = _defaultTalkDelay;
 	} else if (_lastKeyHit == '+') { // + text speed up
-		_defaultTalkDelay -= 5;
-		if (_defaultTalkDelay < 5)
-			_defaultTalkDelay = 5;
-
-		VAR(VAR_CHARINC) = _defaultTalkDelay / 20;
+		if (_defaultTalkDelay > 0)
+			_defaultTalkDelay--;
+		if (VAR_CHARINC != 0xFF)
+			VAR(VAR_CHARINC) = _defaultTalkDelay;
 	} else if (_lastKeyHit == '~' || _lastKeyHit == '#') { // Debug console
 		_debugger->attach();
 	} else if (_version <= 2) {
