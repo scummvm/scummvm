@@ -24,6 +24,7 @@
 #define PLAYER_MOD_H
 
 #include "scumm/scumm.h"
+#include "sound/audiostream.h"
 
 class AudioStream;
 class RateConverter;
@@ -33,7 +34,7 @@ namespace Scumm {
 /**
  * Generic Amiga MOD mixer - provides a 60Hz 'update' routine.
  */
-class Player_MOD {
+class Player_MOD : public AudioStream {
 public:
 	Player_MOD(ScummEngine *scumm);
 	virtual ~Player_MOD();
@@ -49,6 +50,16 @@ public:
 
 	virtual void setUpdateProc(ModUpdateProc *proc, void *param, int freq);
 	virtual void clearUpdateProc();
+
+
+	int readBuffer(int16 *buffer, const int numSamples) {
+		do_mix(buffer, numSamples / 2);
+		return numSamples;
+	}
+	bool isStereo() const { return true; }
+	bool endOfData() const { return false; }
+	
+	int getRate() const { return _samplerate; }
 
 private:
 	enum {
@@ -74,7 +85,6 @@ private:
 
 	uint8 _maxvol;
 
-	static void premix_proc(void *param, int16 *buf, uint len);
 	virtual void do_mix(int16 *buf, uint len);
 	
 	ModUpdateProc *_playproc;

@@ -22,7 +22,6 @@
 
 #include "stdafx.h"
 #include "scumm/player_mod.h"
-#include "sound/audiostream.h"
 #include "sound/mixer.h"
 #include "sound/rate.h"
 
@@ -46,7 +45,7 @@ Player_MOD::Player_MOD(ScummEngine *scumm) {
 	_playproc = NULL;
 	_playparam = NULL;
 
-	_mixer->setupPremix(premix_proc, this);
+	_mixer->setupPremix(this);
 }
 
 Player_MOD::~Player_MOD() {
@@ -144,10 +143,6 @@ void Player_MOD::setChannelFreq(int id, int freq) {
 			break;
 		}
 	}
-}
-
-void Player_MOD::premix_proc(void *param, int16 *buf, uint len) {
-	((Player_MOD *) param)->do_mix(buf, len);
 }
 
 void Player_MOD::do_mix(int16 *data, uint len) {

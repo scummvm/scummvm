@@ -376,7 +376,7 @@ Player_V2::Player_V2(ScummEngine *scumm, bool pcjr) {
 	set_pcjr(pcjr);
 	setMasterVolume(255);
 
-	_mixer->setupPremix(premix_proc, this);
+	_mixer->setupPremix(this);
 }
 
 Player_V2::~Player_V2() {
@@ -790,10 +790,6 @@ void Player_V2::next_freqs(ChannelInfo *channel) {
 			}
 		}
 	}
-}
-
-void Player_V2::premix_proc(void *param, int16 *buf, uint len) {
-	((Player_V2 *) param)->do_mix(buf, len);
 }
 
 void Player_V2::do_mix(int16 *data, uint len) {

@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "scumm/music.h"
+#include "sound/audiostream.h"
 
 class SoundMixer;
 
@@ -72,7 +73,7 @@ struct channel_data {
  * This simulates the pc speaker sound, which is driven  by the 8253 (square
  * wave generator) and a low-band filter.
  */
-class Player_V2 : public MusicEngine {
+class Player_V2 : public AudioStream, public MusicEngine {
 public:
 	Player_V2(ScummEngine *scumm, bool pcjr);
 	virtual ~Player_V2();
@@ -83,6 +84,16 @@ public:
 	virtual void stopAllSounds();
 	virtual int  getMusicTimer() const;
 	virtual int  getSoundStatus(int sound) const;
+
+
+	int readBuffer(int16 *buffer, const int numSamples) {
+		do_mix(buffer, numSamples / 2);
+		return numSamples;
+	}
+	bool isStereo() const { return true; }
+	bool endOfData() const { return false; }
+	
+	int getRate() const { return _sample_rate; }
 
 protected:
 	bool _isV3Game;
@@ -143,7 +154,6 @@ protected:
 						int noiseFeedback, int16 *sample, uint len);
 
 private:
-	static void premix_proc(void *param, int16 *buf, uint len);
 	void do_mix(int16 *buf, uint len);
 
 	void set_pcjr(bool pcjr);
