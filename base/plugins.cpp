@@ -26,6 +26,9 @@
 #include "common/util.h"
 
 
+typedef Engine *(*EngineFactory)(GameDetector *detector, OSystem *syst);
+
+
 #ifdef DYNAMIC_MODULES
 
 #ifdef UNIX

@@ -21,12 +21,15 @@
  */
 
 #include "stdafx.h"
+
 #include "backends/intern.h"
+#include "base/engine.h"
 #include "base/gameDetector.h"
 #include "base/plugins.h"
+
 #include "common/config-file.h"
-#include "base/engine.h"
 #include "common/scaler.h"	// Only for gfx_modes
+
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
@@ -51,52 +54,50 @@ static const char USAGE_STRING[] = "NoUsageString"; // save more data segment sp
 static const char USAGE_STRING[] = 
 	"ScummVM - Graphical Adventure Game Interpreter\n"
 	"Syntax:\n"
-	"\tscummvm [OPTIONS] [game]\n"
+	"  scummvm [OPTIONS] [game]\n"
 	"Options:\n"
-	"\t-p<path>       - Look for game in <path>\n"
-	"\t-x[num]        - Load this savegame (default: 0 - autosave)\n"
-	"\t-f             - Full-screen mode (-F forces window mode.)\n"
-	"\t-g<mode>       - Graphics mode (normal,2x,3x,2xsai,super2xsai,\n"
-	"\t                 supereagle,advmame2x,advmame3x,hq2x,hq3x,\n"
-	"\t                 tv2x,dotmatrix)\n"
-	"\t-e<mode>       - Set music engine (see README for details)\n"
-	"\t-q<lang>       - Specify language (en,de,fr,it,pt,es,jp,zh,kr,se,\n"
-	"\t                 gb,hb)\n"
+	"  -p<path>       - Look for game in <path>\n"
+	"  -x[num]        - Load this savegame (default: 0 - autosave)\n"
+	"  -f             - Full-screen mode (-F forces window mode.)\n"
+	"  -g<mode>       - Graphics mode (normal,2x,3x,2xsai,super2xsai,supereagle,\n"
+	"                   advmame2x,advmame3x,hq2x,hq3x,tv2x,dotmatrix)\n"
+	"  -e<mode>       - Set music engine (see README for details)\n"
+	"  -q<lang>       - Specify language (en,de,fr,it,pt,es,jp,zh,kr,se,gb,hb)\n"
 	"\n"
-	"\t-c<num>        - Use cdrom <num> for cd audio\n"
-	"\t-j[num]        - Enable input with joystick (default: 0 - 1st joystick)\n"
-	"\t-m<num>        - Set music volume to <num> (0-255)\n"
-	"\t-o<num>        - Set master volume to <num> (0-255)\n"
-	"\t-s<num>        - Set sfx volume to <num> (0-255)\n"
-	"\t-t<num>        - Set music tempo (50-200, default 100%%)\n"
+	"  -c<num>        - Use cdrom <num> for cd audio\n"
+	"  -j[num]        - Enable input with joystick (default: 0 - first joystick)\n"
+	"  -m<num>        - Set music volume to <num> (0-255)\n"
+	"  -o<num>        - Set master volume to <num> (0-255)\n"
+	"  -s<num>        - Set sfx volume to <num> (0-255)\n"
+	"  -t<num>        - Set music tempo (50-200, default 100%%)\n"
 	"\n"
-	"\t-n             - No subtitles for speech\n"
-	"\t-y             - Set text speed (default: 60)\n"
+	"  -n             - No subtitles for speech\n"
+	"  -y             - Set text speed (default: 60)\n"
 	"\n"
-	"\t-l<file>       - Load config file instead of default\n"
+	"  -l<file>       - Load config file instead of default\n"
 #if defined(UNIX)
-	"\t-w[file]       - Write to config file [~/.scummvmrc]\n"
+	"  -w[file]       - Write to config file [~/.scummvmrc]\n"
 #else
-	"\t-w[file]       - Write to config file [scummvm.ini]\n"
+	"  -w[file]       - Write to config file [scummvm.ini]\n"
 #endif
-	"\t-v             - Show version info and exit\n"
-	"\t-h             - Display this text and exit\n"
-	"\t-z             - Display list of games\n"
+	"  -v             - Show version info and exit\n"
+	"  -h             - Display this text and exit\n"
+	"  -z             - Display list of games\n"
 	"\n"
-	"\t-b<num>        - Pass number to the boot script (boot param)\n"
-	"\t-d[num]        - Enable debug output (debug level [0])\n"
-	"\t-u             - Dump scripts\n"
+	"  -b<num>        - Pass number to the boot script (boot param)\n"
+	"  -d[num]        - Enable debug output (debug level [0])\n"
+	"  -u             - Dump scripts\n"
 	"\n"
-	"\t--platform=    - Specify version of game (amiga,atari-st,macintosh)\n"
-	"\t--multi-midi   - Enable combination Adlib and native MIDI\n"
-	"\t--native-mt32  - True Roland MT-32 (disable GM emulation)\n"
-	"\t--fullscreen   - Full-screen mode (same as -f)\n"
-	"\t--aspect-ratio - Enable aspect ratio correction\n"
+	"  --platform=    - Specify version of game (amiga,atari-st,macintosh)\n"
+	"  --multi-midi   - Enable combination Adlib and native MIDI\n"
+	"  --native-mt32  - True Roland MT-32 (disable GM emulation)\n"
+	"  --fullscreen   - Full-screen mode (same as -f)\n"
+	"  --aspect-ratio - Enable aspect ratio correction\n"
 #ifndef DISABLE_SCUMM
-	"\t--demo-mode    - Start demo mode of Maniac Mansion (Classic version)\n"
+	"  --demo-mode    - Start demo mode of Maniac Mansion (Classic version)\n"
 #endif
 #ifndef DISABLE_SKY
-	"\t--floppy-intro - Use floppy version intro for Beneath a Steel Sky CD\n"
+	"  --floppy-intro - Use floppy version intro for Beneath a Steel Sky CD\n"
 #endif
 	"\n"
 	"The meaning of long options can be inverted by prefixing them with \"no-\",\n"
@@ -104,6 +105,20 @@ static const char USAGE_STRING[] =
 ;
 #endif
 
+
+struct GraphicsMode {
+	const char *name;
+	const char *description;
+	int id;
+};
+
+/**
+ * List of graphic 'modes' we potentially support. Potentially because not all
+ * backends actually support all the filters listed here. At this point only
+ * the SDL backend supports all (except for the PalmOS ones of course).
+ * @todo Remove this explicit list of graphic modes and rather extend the 
+ * OSystem API to allow querying a backend for the modes it supports.
+ */
 static const struct GraphicsMode gfx_modes[] = {
 	{"normal", "Normal (no scaling)", GFX_NORMAL},
 	{"1x", "Normal (no scaling)", GFX_NORMAL},
@@ -128,6 +143,12 @@ static const struct GraphicsMode gfx_modes[] = {
 	{0, 0, 0}
 };
 
+struct Language {
+	const char *name;
+	const char *description;
+	int id;
+};
+
 static const struct Language languages[] = {
 	{"en", "English", EN_USA},
 	{"de", "German", DE_DEU},
@@ -141,25 +162,6 @@ static const struct Language languages[] = {
 	{"gb", "English", EN_GRB},
 	{"se", "Swedish", SE_SWE},
 	{"hb", "Hebrew", HB_HEB},
-	{0, 0, 0}
-};
-
-static const struct MusicDriver music_drivers[] = {
-	{"auto", "Default", MD_AUTO},
-	{"null", "No music", MD_NULL},
-#ifndef __PALM_OS__	// reduce contant data size
-	{"windows", "Windows MIDI", MD_WINDOWS},
-	{"seq", "SEQ", MD_SEQ},
-	{"qt", "QuickTime", MD_QTMUSIC},
-	{"core", "CoreAudio", MD_COREAUDIO},
-	{"etude", "Etude", MD_ETUDE},
-	{"alsa", "ALSA", MD_ALSA},
-	{"adlib", "Adlib", MD_ADLIB},
-	{"pcspk", "PC Speaker", MD_PCSPK},
-	{"pcjr", "IBM PCjr", MD_PCJR},
-#else
-	{"ypa1", "Yamaha Pa1", MD_YPA1},
-#endif
 	{0, 0, 0}
 };
 
@@ -363,6 +365,10 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				break;
 			case 'e':
 				HANDLE_OPTION();
+				// TODO: Instead of just showing the generic help text,
+				// maybe print a message like:
+				// "'option' is not a supported music driver on this machine.
+				//  Available driver: ..."
 				if (!parseMusicDriver(option))
 					goto ShowHelpAndExit;
 				g_config->set("music_driver", option);
@@ -376,6 +382,10 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			case 'g':
 				HANDLE_OPTION();
 				_gfx_mode = parseGraphicsMode(option);
+				// TODO: Instead of just showing the generic help text,
+				// maybe print a message like:
+				// "'option' is not a supported graphic mode on this machine.
+				//  Available graphic modes: ..."
 				if (_gfx_mode == -1)
 					goto ShowHelpAndExit;
 				g_config->set("gfx_mode", option);
@@ -593,46 +603,8 @@ int GameDetector::parseLanguage(const char *s) {
 	return -1;
 }
 
-bool GameDetector::isMusicDriverAvailable(int drv) {
-	switch(drv) {
-	case MD_AUTO:
-	case MD_NULL: return true;
-#ifndef __PALM_OS__	// don't show it on palmos
-	case MD_ADLIB:
-	case MD_PCSPK:
-	case MD_PCJR:  return true;
-#else
-	case MD_YPA1: return true;
-#endif
-#if defined(WIN32) && !defined(_WIN32_WCE)
-	case MD_WINDOWS: return true;
-#endif
-#if defined(__MORPHOS__)
-	case MD_ETUDE: return true;
-#endif
-#if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX)
-	case MD_SEQ: return true;
-#endif
-#if defined(MACOSX) || defined(macintosh)
-	case MD_QTMUSIC: return true;
-#endif
-#if defined(MACOSX)
-	case MD_COREAUDIO: return true;
-#endif
-#if defined(UNIX) && defined(USE_ALSA)
-	case MD_ALSA: return true;
-#endif
-	}
-	return false;
-}
-
-const MusicDriver *GameDetector::getMusicDrivers() {
-	return music_drivers;
-}
-
-
 bool GameDetector::parseMusicDriver(const char *s) {
-	const MusicDriver *md = music_drivers;
+	const MidiDriverDescription *md = getAvailableMidiDrivers();
 
 	while (md->name) {
 		if (!scumm_stricmp(md->name, s)) {

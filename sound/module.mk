@@ -3,6 +3,7 @@ MODULE := sound
 MODULE_OBJS := \
 	sound/audiostream.o \
 	sound/fmopl.o \
+	sound/mididrv.o \
 	sound/midiparser.o \
 	sound/midiparser_smf.o \
 	sound/midiparser_xmidi.o \

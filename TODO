@@ -111,6 +111,13 @@ Descumm
 * Rewrite code to use 2 passes; first pass builds an intermediate graph, the
   second pass then tries to detect loops, break/continue statements etc.
 
+Backend
+=======
+* Several of the backend factory functions take config parameters. It should
+  be possible to get rid of those once the config system rewrite (see above)
+  has been done. In that case, the backends simply can query the config
+  manager for these parameters (or any others they might like :-).
+
 SDL backend
 ===========
 * Maybe change the shortcuts? One idea (add ctrl-alt in all cases):

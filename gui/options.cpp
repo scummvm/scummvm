@@ -19,15 +19,16 @@
  */
 
 #include "stdafx.h"
-#include "browser.h"
-#include "chooser.h"
-#include "newgui.h"
-#include "options.h"
-#include "PopUpWidget.h"
+#include "gui/browser.h"
+#include "gui/chooser.h"
+#include "gui/newgui.h"
+#include "gui/options.h"
+#include "gui/PopUpWidget.h"
 
 #include "backends/fs/fs.h"
-#include "common/config-file.h"
 #include "base/gameDetector.h"
+#include "common/config-file.h"
+#include "sound/mididrv.h"
 
 #if (!( defined(__DC__) || defined(__GP32__)) && !defined(_MSC_VER))
 #include <unistd.h>
@@ -90,14 +91,12 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui, GameDetector &detector)
 	int midiSelected = 0, i = 0;;
 	
 	// Populate it
-	const MusicDriver *md = GameDetector::getMusicDrivers();
+	const MidiDriverDescription *md = getAvailableMidiDrivers();
 	while (md->name) {
-		if (GameDetector::isMusicDriverAvailable(md->id)) {
-			_midiPopUp->appendEntry(md->description, md->id);
-			if (md->id == _detector._midi_driver)
-				midiSelected = i;
-			i++;
-		}
+		_midiPopUp->appendEntry(md->description, md->id);
+		if (md->id == _detector._midi_driver)
+			midiSelected = i;
+		i++;
 		md++;
 	}
 	_midiPopUp->setSelected(midiSelected);
@@ -205,7 +204,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	case kPopUpItemSelectedCmd:
 		if (sender == _midiPopUp) {
-			const MusicDriver *md = GameDetector::getMusicDrivers();
+			const MidiDriverDescription *md = getAvailableMidiDrivers();
 			for (; md->name; md++) {
 				if (md->id == (int) data) {
 					g_config->set ("music_driver", md->name, "_USER_OVERRIDES");

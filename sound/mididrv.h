@@ -28,13 +28,53 @@
 class MidiChannel;
 class SoundMixer;
 
-// Abstract MIDI Driver Class
+
+/** MIDI Driver Types */
+enum {
+	MD_AUTO = 0,
+	MD_NULL = 1,
+	MD_WINDOWS = 2,
+	MD_TIMIDITY = 3,
+	MD_SEQ = 4,
+	MD_QTMUSIC = 5,
+	MD_ETUDE = 6,
+	MD_COREAUDIO = 7,
+	MD_MIDIEMU = 8,
+	MD_ALSA = 9,
+	MD_ADLIB = 10,
+	MD_PCSPK = 11,
+	MD_PCJR = 12,
+	
+	MD_YPA1 = 100	// palmos
+};
+
+/**
+ * Abstract description of a MIDI driver. Used by the config file and command
+ * line parsing code, and also to be able to give the user a list of available
+ * drivers.
+ */
+struct MidiDriverDescription {
+	const char *name;
+	const char *description;
+	int id;
+};
+
+/**
+ * Get a list of all available MidiDriver types.
+ * @return list of all available midi drivers, terminated by  a zero entry
+ */
+extern const MidiDriverDescription *getAvailableMidiDrivers();
+
+
+/** Abstract MIDI Driver Class */
 class MidiDriver {
 public:
 	virtual ~MidiDriver() { }
 
-	// Error codes returned by open.
-	// Can be converted to a string with getErrorName()
+	/**
+	 * Error codes returned by open.
+	 * Can be converted to a string with getErrorName().
+	 */
 	enum {
 		MERR_CANNOT_CONNECT = 1,
 //		MERR_STREAMING_NOT_AVAILABLE = 2,
@@ -48,20 +88,22 @@ public:
 		PROP_CHANNEL_MASK = 3
 	};
 
-	// Open the midi driver.
-	// Returns 0 if successful, otherwise an error code.
+	/**
+	 * Open the midi driver.
+	 * @return 0 if successful, otherwise an error code.
+	 */
 	virtual int open() = 0;
 
-	// Close the midi driver
+	/** Close the midi driver. */
 	virtual void close() = 0;
 
-	// Output a packed midi command to the midi stream
+	/** Output a packed midi command to the midi stream. */
 	virtual void send(uint32 b) = 0;
 
-	// Get or set a property
+	/** Get or set a property. */
 	virtual uint32 property(int prop, uint32 param) { return 0; }
 
-	// Retrieve a string representation of an error code
+	/** Retrieve a string representation of an error code. */
 	static const char *getErrorName(int error_code);
 
 	// HIGH-LEVEL SEMANTIC METHODS
@@ -117,24 +159,6 @@ public:
 	virtual void sysEx_customInstrument (uint32 type, byte *instr) = 0;
 };
 
-// MIDI Driver Types
-enum {
-	MD_AUTO = 0,
-	MD_NULL = 1,
-	MD_WINDOWS = 2,
-	MD_TIMIDITY = 3,
-	MD_SEQ = 4,
-	MD_QTMUSIC = 5,
-	MD_ETUDE = 6,
-	MD_COREAUDIO = 7,
-	MD_MIDIEMU = 8,
-	MD_ALSA = 9,
-	MD_ADLIB = 10,
-	MD_PCSPK = 11,
-	MD_PCJR = 12,
-	
-	MD_YPA1 = 100	// palmos
-};
 
 // Factory functions, for faster compile
 extern MidiDriver *MidiDriver_NULL_create();

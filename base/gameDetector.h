@@ -46,9 +46,10 @@ enum {
 	GF_DEFAULT_TO_1X_SCALER = 1 << 31
 };
 
-/* Languages
- * note: values 0->8 are are _needed_ for scripts in comi please don't
- * remove/change fixed numbers from this enum
+/**
+ * List of language ids.
+ * @note The order and mappings of the values 0..8 are *required* to stay the
+ * way they are now, as scripts in COMI rely on them. So don't touch them.
  */
 enum {
 	EN_USA = 0,
@@ -82,32 +83,8 @@ struct TargetSettings {
 	const char *detectname;
 };
 
-struct MusicDriver {
-	const char *name;
-	const char *description;
-	int id;
-};
-
-struct GraphicsMode {
-	const char *name;
-	const char *description;
-	int id;
-};
-
-struct Language {
-	const char *name;
-	const char *description;
-	int id;
-};
-
-typedef Engine *(*EngineFactory)(GameDetector *detector, OSystem *syst);
-
 class GameDetector {
 	typedef Common::String String;
-
-public:
-	static const MusicDriver *getMusicDrivers();
-	static bool isMusicDriverAvailable(int drv);
 
 public:
 	GameDetector();
