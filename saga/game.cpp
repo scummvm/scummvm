@@ -385,12 +385,14 @@ DetectedGameList GAME_ProbeGame(const FSList &fslist) {
 			file_missing = 1;
 			// Iterate over all files in the given directory
 			for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-				const char *gameName = file->displayName().c_str();
+				if (!file->isDirectory()) {
+					const char *gameName = file->displayName().c_str();
 
-				if (0 == scumm_stricmp(GameDescs[game_n].gd_filedescs[file_n].gf_fname, 
-									   gameName)) {
-					file_missing = 0;
-					break;
+					if (0 == scumm_stricmp(GameDescs[game_n].gd_filedescs[file_n].gf_fname, 
+										gameName)) {
+						file_missing = 0;
+						break;
+					}
 				}
 			}
 

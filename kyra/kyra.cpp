@@ -77,10 +77,12 @@ DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 			continue;
 
 		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-			const char *name = file->displayName().c_str();
-			if ((!scumm_stricmp(game->detectName, name))) {
-				detectedGames.push_back(game->toGameSettings());
-				break;
+			if (!file->isDirectory()) {
+				const char *name = file->displayName().c_str();
+				if ((!scumm_stricmp(game->detectName, name))) {
+					detectedGames.push_back(game->toGameSettings());
+					break;
+				}
 			}
 		}
 	}

@@ -46,44 +46,62 @@
 using namespace Sword1;
 
 /* Broken Sword 1 */
-static const GameSettings sword1_settings[] = {
-	{"sword1", "Broken Sword I", GF_DEFAULT_TO_1X_SCALER},
-	{"sword1demo", "Broken Sword I (Demo)", GF_DEFAULT_TO_1X_SCALER | Sword1::GF_DEMO },
-	{ NULL, NULL, 0 }
+static const GameSettings sword1FullSettings =
+	{"sword1", "Broken Sword I", GF_DEFAULT_TO_1X_SCALER};
+static const GameSettings sword1DemoSettings = 
+	{"sword1demo", "Broken Sword I (Demo)", GF_DEFAULT_TO_1X_SCALER | Sword1::GF_DEMO };
+
+// check these subdirectories (if present)
+static const char *g_dirNames[] = {	"clusters",	"speech" };
+
+#define NUM_FILES_TO_CHECK 5
+static const char *g_filesToCheck[NUM_FILES_TO_CHECK] = { // these files have to be found
+	"swordres.rif",
+	"general.clu",
+	"compacts.clu",
+	"scripts.clu",
+	"cows.mad",	// this one should only exist in the demo version
+	// the engine needs several more files to work, but checking these should be sufficient
 };
 
 GameList Engine_SWORD1_gameList() {
-	const GameSettings *g = sword1_settings;
 	GameList games;
-	while (g->name) {	
-		games.push_back(*g);
-		g++;
-	}
+	games.push_back(sword1FullSettings);
+	games.push_back(sword1DemoSettings);
 	return games;
+}
+
+void Sword1CheckDirectory(const FSList &fslist, bool *filesFound) {
+	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+		if (!file->isDirectory()) {
+			const char *fileName = file->displayName().c_str();
+			for (int cnt = 0; cnt < NUM_FILES_TO_CHECK; cnt++)
+				if (scumm_stricmp(fileName, g_filesToCheck[cnt]) == 0)
+					filesFound[cnt] = true;
+		} else {
+			for (int cnt = 0; cnt < ARRAYSIZE(g_dirNames); cnt++)
+				if (scumm_stricmp(file->displayName().c_str(), g_dirNames[cnt]) == 0)
+					Sword1CheckDirectory(file->listDir(AbstractFilesystemNode::kListFilesOnly), filesFound);
+		}
+	}
 }
 
 DetectedGameList Engine_SWORD1_detectGames(const FSList &fslist) {
 	DetectedGameList detectedGames;
-	const GameSettings *g = sword1_settings;
+	bool filesFound[NUM_FILES_TO_CHECK];
+	for (int i = 0; i < NUM_FILES_TO_CHECK; i++)
+		filesFound[i] = false;
 
-	// TODO: It would be nice if we had code here which distinguishes
-	// between the 'sword1' and 'sword1demo' targets.
+	Sword1CheckDirectory(fslist, filesFound);
+	bool mainFilesFound = true;
+	for (int i = 0; i < NUM_FILES_TO_CHECK -1; i++)
+		if (!filesFound[i])
+			mainFilesFound = false;
 
-	while (g->name) {
-		// Iterate over all files in the given directory
-		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-			const char *gameName = file->displayName().c_str();
-
-			if ((0 == scumm_stricmp("swordres.rif", gameName)) ||
-				(0 == scumm_stricmp("cd1.id", gameName)) ||
-				(0 == scumm_stricmp("cd2.id", gameName))) {
-				// Match found, add to list of candidates, then abort inner loop.
-				detectedGames.push_back(*g);
-				break;
-			}
-		}
-		g++;
-	}
+	if (mainFilesFound && filesFound[NUM_FILES_TO_CHECK - 1])
+		detectedGames.push_back(sword1DemoSettings);
+	else if (mainFilesFound)
+		detectedGames.push_back(sword1FullSettings);
 
 	return detectedGames;
 }

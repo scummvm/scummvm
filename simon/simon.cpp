@@ -113,13 +113,15 @@ DetectedGameList Engine_SIMON_detectGames(const FSList &fslist) {
 
 		// Iterate over all files in the given directory
 		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-			const char *name = file->displayName().c_str();
+			if (!file->isDirectory()) {
+				const char *name = file->displayName().c_str();
 
-			if ((!scumm_stricmp(detectName, name))  || (!scumm_stricmp(detectName2, name))) {
-				// Match found, add to list of candidates, then abort inner loop.
-				detectedGames.push_back(g->toGameSettings());
-				fileSet.addKey(file->path());
-				break;
+				if ((!scumm_stricmp(detectName, name))  || (!scumm_stricmp(detectName2, name))) {
+					// Match found, add to list of candidates, then abort inner loop.
+					detectedGames.push_back(g->toGameSettings());
+					fileSet.addKey(file->path());
+					break;
+				}
 			}
 		}
 	}

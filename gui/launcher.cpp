@@ -506,7 +506,7 @@ void LauncherDialog::addGame() {
 	if (_browser->runModal() > 0) {
 		// User made his choice...
 		FilesystemNode dir(_browser->getResult());
-		FSList files = dir.listDir(FilesystemNode::kListFilesOnly);
+		FSList files = dir.listDir(FilesystemNode::kListAll);
 
 		// ...so let's determine a list of candidates, games that
 		// could be contained in the specified directory.

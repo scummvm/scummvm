@@ -2678,13 +2678,15 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 
 		// Iterate over all files in the given directory
 		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-			const char *name = file->displayName().c_str();
+			if (!file->isDirectory()) {
+				const char *name = file->displayName().c_str();
 
-			if (0 == scumm_stricmp(detectName, name)) {
-				// Match found, add to list of candidates, then abort inner loop.
-				detectedGames.push_back(g->toGameSettings());
-				fileSet.addKey(file->path());
-				break;
+				if (0 == scumm_stricmp(detectName, name)) {
+					// Match found, add to list of candidates, then abort inner loop.
+					detectedGames.push_back(g->toGameSettings());
+					fileSet.addKey(file->path());
+					break;
+				}
 			}
 		}
 	}

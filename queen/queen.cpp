@@ -64,12 +64,14 @@ DetectedGameList Engine_QUEEN_detectGames(const FSList &fslist) {
 
 	// Iterate over all files in the given directory
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		const char *gameName = file->displayName().c_str();
+		if (!file->isDirectory()) {
+			const char *gameName = file->displayName().c_str();
 
-		if (0 == scumm_stricmp("queen.1", gameName) || 0 == scumm_stricmp("queen.1c", gameName)) {
-			// Match found, add to list of candidates, then abort loop.
-			detectedGames.push_back(queen_setting);
-			break;
+			if (0 == scumm_stricmp("queen.1", gameName) || 0 == scumm_stricmp("queen.1c", gameName)) {
+				// Match found, add to list of candidates, then abort loop.
+				detectedGames.push_back(queen_setting);
+				break;
+			}
 		}
 	}
 	return detectedGames;
