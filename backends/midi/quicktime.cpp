@@ -94,6 +94,9 @@ int MidiDriver_QT::open() {
 		qtErr = NANewNoteChannel(qtNoteAllocator, &simpleNoteRequest, &(qtNoteChannel[i]));
 		if ((qtErr != noErr) || (qtNoteChannel == NULL))
 			goto bail;
+		// Channel 10 (i.e. index 9) is the drum channel. Set it up as such.
+		// All other channels default to piano.
+		NASetInstrumentNumber(qtNoteAllocator, qtNoteChannel[i], (i == 9 ? kFirstDrumkit : kFirstGMInstrument) + 1);
 	}
 	return 0;
 
@@ -200,8 +203,11 @@ void MidiDriver_QT::send(uint32 b) {
 		break;
 
 	case 0xC0:										// Program change
-		// FIXME: For chanID 9 (drum channel), shouldn't we use kFirstDrumkit instead of kFirstGMInstrument ?
-		NASetInstrumentNumber(qtNoteAllocator, qtNoteChannel[chanID], midiCmd[1] + kFirstGMInstrument);
+		// Don't change instrument for the drum channel (I have no idea how a
+		// program change for the drum channel would work; maybe we would just
+		// have to use 'midiCmd[1] + kFirstDrumkit' ?).
+		if (chanID != 9)
+			NASetInstrumentNumber(qtNoteAllocator, qtNoteChannel[chanID], midiCmd[1] + kFirstGMInstrument);
 		break;
 
 	case 0xE0:{									// Pitch bend
