@@ -46,7 +46,7 @@ class Scumm;
 /**
  * Base class for both CostumeRenderer and AkosRenderer.
  */
-struct BaseCostumeRenderer {
+class BaseCostumeRenderer {
 public:
 	byte _dirty_id;
 
@@ -118,6 +118,8 @@ public:
 	virtual void setPalette(byte *palette) = 0;
 	virtual void setFacing(Actor *a) = 0;
 	virtual void setCostume(int costume) = 0;
+	void updateNbStrips (void)		{ _numStrips = _vm->gdi._numStrips; }
+
 
 	byte drawCostume(const CostumeData &cost);
 
