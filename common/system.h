@@ -56,13 +56,13 @@ public:
 		EVENT_RBUTTONDOWN = 6,
 		EVENT_RBUTTONUP = 7,
 		EVENT_WHEELUP = 8,
-		EVENT_WHEELDOWN = 9,
+		EVENT_WHEELDOWN = 9
 	};
 
 	enum {
 		KBD_CTRL = 1,
 		KBD_ALT = 2,
-		KBD_SHIFT = 4,
+		KBD_SHIFT = 4
 	};
 
 	enum {
@@ -83,7 +83,7 @@ public:
 	
 	enum {
 		SOUND_8BIT = 0,
-		SOUND_16BIT = 1,
+		SOUND_16BIT = 1
 	};
 	
 	// Set colors of the palette

@@ -30,7 +30,7 @@ typedef enum {
 	kBoxYFlip		= 0x10,
 	kBoxPlayerOnly	= 0x20,
 	kBoxLocked		= 0x40,
-	kBoxInvisible	= 0x80,
+	kBoxInvisible	= 0x80
 } BoxFlags;
 
 struct AdjustBoxResult {	/* Result type of AdjustBox functions */

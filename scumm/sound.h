@@ -34,8 +34,7 @@ private:
 
 enum {
 	SOUND_HEADER_SIZE = 26,
-	SOUND_HEADER_BIG_SIZE = 26 + 8,
-
+	SOUND_HEADER_BIG_SIZE = 26 + 8
 };
 
 	int16 _soundQuePos, _soundQue[0x100];
