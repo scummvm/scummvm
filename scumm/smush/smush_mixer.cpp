@@ -70,7 +70,7 @@ void SmushMixer::addChannel(SmushChannel *c) {
 	}
 
 	for (i = 0; i < NUM_CHANNELS; i++) {
-		if (_channels[i].chan == NULL || _channels[i].id == -1) {
+		if ((_channels[i].chan == NULL || _channels[i].id == -1) && _channels[i].handle == 0) {
 			_channels[i].chan = c;
 			_channels[i].id = track;
 			_channels[i].handle = 0;
@@ -99,14 +99,14 @@ bool SmushMixer::handleFrame() {
 				_mixer->endStream(_channels[i].handle);
 			} else {
 				int32 rate;
-				bool stereo, is_short;
+				bool stereo, is_16bit;
 				void *data;
 
-				_channels[i].chan->getParameters(rate, stereo, is_short);
+				_channels[i].chan->getParameters(rate, stereo, is_16bit);
 				int32 size = _channels[i].chan->availableSoundData();
 				byte flags = stereo ? SoundMixer::FLAG_STEREO : 0;
 
-				if (is_short) {
+				if (is_16bit) {
 					data = malloc(size * (stereo ? 2 : 1) * 4);
 					_channels[i].chan->getSoundData((int16 *)data, size);
 					size *= stereo ? 4 : 2;
