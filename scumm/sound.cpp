@@ -1735,7 +1735,7 @@ int Sound::VorbisTrackInfo::play(SoundMixer *mixer, int start, int delay) {
 #ifdef VORBIS_TREMOR
 	ov_time_seek(&_ov_file, (ogg_int64_t)(start / 75.0 * 1000));
 #else
-	ov_time_seek(&_ov_file, (int)(start / 75.0));
+	ov_time_seek(&_ov_file, start / 75.0);
 #endif
 	return mixer->playVorbis(NULL, &_ov_file,
 				 delay * ov_info(&_ov_file, -1)->rate / 75,
