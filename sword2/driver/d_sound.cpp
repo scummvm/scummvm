@@ -326,7 +326,7 @@ MusicInputStream::MusicInputStream(int cd, uint32 musicId, bool looping)
 
 MusicInputStream::~MusicInputStream() {
 	delete _decoder;
-};
+}
 
 inline bool MusicInputStream::eosIntern() const {
 	if (_looping)
