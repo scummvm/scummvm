@@ -1440,7 +1440,7 @@ void Scumm_v5::o5_print() {
 }
 
 void Scumm_v5::o5_printEgo() {
-	_actorToPrintStrFor = (unsigned char)_vars[VAR_EGO];
+	_actorToPrintStrFor = (byte)_vars[VAR_EGO];
 	decodeParseString();
 }
 

@@ -303,7 +303,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_getActorMoving),
 		OPCODE(o2_setState02),
 		/* D8 */
-		OPCODE(o2_printEgo),
+		OPCODE(o5_printEgo),
 		OPCODE(o2_doSentence),
 		OPCODE(o5_add),
 		OPCODE(o2_setBitVar),
@@ -832,14 +832,11 @@ void Scumm_v2::o2_doSentence() {
 	}
 }
 
-void Scumm_v2::o2_printEgo() {
-	//_actorToPrintStrFor = (unsigned char)_vars[VAR_EGO];
-	//_messagePtr = _scriptPointer;
-
-	char buffer[256];	// FIXME
-	char *ptr = buffer;
-	char c;
-	while ((c = *_scriptPointer++)) {
+void Scumm_v2::decodeParseString() {
+	byte buffer[256];	// FIXME
+	byte *ptr = buffer;
+	byte c;
+	while ((c = fetchScriptByte())) {
 		if (c & 0x80) {
 			*ptr++ = c & 0x7f;
 			*ptr++ = ' ';
@@ -852,17 +849,14 @@ void Scumm_v2::o2_printEgo() {
 			*ptr++ = c;
 			if (c > 3) {
 				*ptr++ = 0;
-				*ptr++ = *_scriptPointer++;
+				*ptr++ = fetchScriptByte();
 			}
 		} else
 			*ptr++ = c;
 	}
 	*ptr = 0;
 
-	printf("o2_printEgo(%s)\n", buffer);
-	
-	//_messagePtr = addMessageToStack(_messagePtr);
-	//_scriptPointer = _messagePtr;
+	printf("TODO: Scumm_v2::decodeParseString(\"%s\")\n", buffer);
 }
 
 void Scumm_v2::o2_ifClassOfIs() {

@@ -39,7 +39,7 @@
 // Note: This is purely experimental, NOT WORKING COMPLETLY and very buggy.
 // Please do not make reports about problems with it - this is only in CVS
 // to get it fixed and so that really interested parties can experiment it.
-// It is NOT FIT FOR GENERAL USAGE!. You have been warned.
+// It is NOT FIT FOR GENERAL USAGE! You have been warned.
 //
 // Doing this correctly will be quite some more complicated. Basically, with smooth
 // scrolling, the virtual screen strips don't match the display screen strips.

@@ -44,7 +44,7 @@ protected:
 	virtual void executeOpcode(int i);
 	virtual const char *getOpcodeDesc(int i);
 
-	void decodeParseString();
+	virtual void decodeParseString();
 	int getWordVararg(int *ptr);
 
 	/* Version 5 script opcodes */
@@ -172,9 +172,6 @@ protected:
 };
 
 class Scumm_v2 : public Scumm_v3 {
-public:
-	Scumm_v2(GameDetector *detector, OSystem *syst) : Scumm_v3(detector, syst) {}
-
 protected:
 	void readIndexFile();
 	void loadCharset(int no);
@@ -188,11 +185,18 @@ protected:
 
 	const OpcodeEntryV2 *_opcodesV2;
 
-	virtual void setupScummVars();
+public:
+	Scumm_v2(GameDetector *detector, OSystem *syst) : Scumm_v3(detector, syst) {}
 
+protected:
 	virtual void setupOpcodes();
 	virtual void executeOpcode(int i);
 	virtual const char *getOpcodeDesc(int i);
+
+	virtual void setupScummVars();
+
+	virtual void decodeParseString();
+
 	virtual void ifStateCommon(byte type);
 	virtual void ifNotStateCommon(byte type);
 	virtual void setStateCommon(byte type);
@@ -225,7 +229,6 @@ protected:
 	void o2_ifNotState02();
 	void o2_ifState01();
 	void o2_ifNotState01();
-	void o2_printEgo();
 	void o2_actorSet();
 	void o2_waitForActor();
 	void o2_waitForSentence();
@@ -296,18 +299,16 @@ public:
 
 protected:
 	virtual void setupOpcodes();
-
 	virtual void executeOpcode(int i);
 	virtual const char *getOpcodeDesc(int i);
 
 	virtual void setupScummVars();
 
-	int popRoomAndObj(int *room);
-	
-	void shuffleArray(int num, int minIdx, int maxIdx);
-
 	virtual void decodeParseString(int a, int b);
+
 	int getStackList(int *args, uint maxnum);
+	int popRoomAndObj(int *room);
+	void shuffleArray(int num, int minIdx, int maxIdx);
 
 	/* Version 6 script opcodes */
 	void o6_setBlastObjectWindow();
@@ -509,19 +510,18 @@ public:
 
 protected:
 	virtual void setupOpcodes();
-
 	virtual void executeOpcode(int i);
 	virtual const char *getOpcodeDesc(int i);
 
 	virtual void setupScummVars();
+
+	virtual void decodeParseString(int m, int n);
 
 	virtual uint fetchScriptWord();
 	virtual int fetchScriptWordSigned();
 	
 	virtual int readVar(uint var);
 	virtual void writeVar(uint var, int value);
-
-	virtual void decodeParseString(int m, int n);
 
 	/* Version 8 script opcodes */
 	void o8_mod();
