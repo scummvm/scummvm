@@ -123,6 +123,7 @@ class Talk {
 		int _oldSelectedSentenceValue;
 
 		char _talkString[5][MAX_STRING_SIZE];
+		char _joeVoiceFilePrefix[5][MAX_STRING_SIZE];
 
 		Talk(Graphics *graphics, Logic *logic, Resource *resource);
 		~Talk();

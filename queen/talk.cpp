@@ -66,6 +66,24 @@ void Talk::talk(const char *filename, char *cutawayFilename) {
 	debug(0, "----- talk(\"%s\") -----", filename);
 	
 	cutawayFilename[0] = '\0';
+
+	// XXX S=SUBJECT[1];
+	// XXX R=ROOM_DATA[ROOM];
+	// XXX if(OBJECT_DATA[NOUN2+R][0]<=0) return;
+	// XXX if(OBJECT_DATA[NOUN2+R][4]>0) return;
+	// XXX strcpy(Pstr,FIND_STATE(OBJECT_DATA[NOUN2+R][6],"TALK"));
+
+	// I cant talk to that.
+
+	// XXX if(seq(Pstr,"MUTE")) {
+	// XXX 	k=24+Rnd(2);
+	// XXX 	SPEAK(JOE_RESPstr[k],"JOE",find_cd_desc(k));
+	// XXX 	return;
+	// XXX }
+	// XXX panelflag=0;
+
+
+	
 	load(filename);
 
 	char personName[MAX_STRING_SIZE];
@@ -107,7 +125,6 @@ void Talk::talk(const char *filename, char *cutawayFilename) {
 		// debug(0, "retval = %i", retval);
 		
 		char otherVoiceFilePrefix    [MAX_STRING_SIZE];
-		char joeVoiceFilePrefix   [5][MAX_STRING_SIZE];
 
 		_talkString[0][0] = '\0';
 
@@ -136,7 +153,7 @@ void Talk::talk(const char *filename, char *cutawayFilename) {
 			if (index < 0 && _logic->gameState(abs(index)) != _dialogueTree[level][i].gameStateValue)
 				_talkString[i][0] = '\0';
 
-			sprintf(joeVoiceFilePrefix[i], "%2d%4xJ", _talkKey, _dialogueTree[level][i].head);
+			sprintf(_joeVoiceFilePrefix[i], "%2d%4xJ", _talkKey, _dialogueTree[level][i].head);
 		}
 
 		// Check to see if(all the dialogue options have been selected.
@@ -163,7 +180,7 @@ void Talk::talk(const char *filename, char *cutawayFilename) {
 			if (_quit)
 				break;
 
-			speak(_talkString[selectedSentence], personName, joeVoiceFilePrefix[selectedSentence]);
+			speak(_talkString[selectedSentence], personName, _joeVoiceFilePrefix[selectedSentence]);
 		}
 		else {
 			if (bobNum > 0) {
@@ -461,14 +478,6 @@ static char *removeStar(char *str) {
 	return str;
 }
 
-static void text(int x, int y, const char *str) {
-	
-	// This function is just for debugging, the caller should really use some
-	// method in Queen::Graphics.
-	
-	debug(0, "Write '%s' at (%i,%i)", str, x, y);
-}
-
 int16 Talk::selectSentence() {
 	// Function TALK_BOB (lines 577-739) in talk.c
 	int selectedSentence = 0;
@@ -477,6 +486,10 @@ int16 Talk::selectSentence() {
 	int startOption = 1;
 	int optionLines = 0;
 	char optionText[5][MAX_STRING_SIZE];
+
+	// Change NORMAL_INK -> TALK_NORMAL_INK
+
+	_graphics->textCurrentColor(INK_TALK_NORMAL);
 
 	// These bobs are up and down arrows
 
@@ -508,7 +521,7 @@ int16 Talk::selectSentence() {
 			// XXX SetZone(1,6,MAXTEXTLEN+1,25,319,49);
 		}
 
-		// blanktexts(151,199);
+		_graphics->textClear(151,199);
 
 		int sentenceCount = 0;
 		int yOffset = 1;
@@ -517,27 +530,32 @@ int16 Talk::selectSentence() {
 			// XXX TALK_ZONE[I] = 0;
 			if (_talkString[i][0] != '\0') {
 				sentenceCount++;
-				
+
 				char temp[MAX_STRING_SIZE];
 				strcpy(temp, _talkString[i]);
 				optionLines = splitOption(removeStar(temp), optionText);
 
 				if (yOffset < 5)
 					/* XXX SetZone(
-							1, 
-							I, 
-							0, 
-							(yofs * 10) - PUSHUP, 
-							(VersionStr[1] =='E') ? 319 : MAX_TEXT_WIDTH,
-							10 * optionLines + (yOffset * 10) - PUSHUP) */;
+						 1, 
+						 I, 
+						 0, 
+						 (yofs * 10) - PUSHUP, 
+						 (VersionStr[1] =='E') ? 319 : MAX_TEXT_WIDTH,
+						 10 * optionLines + (yOffset * 10) - PUSHUP) */;
 
-				for (int j = 0; j < optionLines; j++) {
-					if (yOffset < 5)
-						text((j == 0) ? 0 : 24, 150 - PUSHUP + yOffset * 10, optionText[j]);
-					yOffset++;
-				}
-				
-			// XXX TALK_ZONE[i] = sentenceCount;
+					for (int j = 0; j < optionLines; j++) {
+						if (yOffset < 5) {
+							debug(0, "Draw text '%s'", optionText[j]);
+							_graphics->textSet(
+									(j == 0) ? 0 : 24, 
+									150 - PUSHUP + yOffset * 10, 
+									optionText[j]);
+						}
+						yOffset++;
+					}
+
+				// XXX TALK_ZONE[i] = sentenceCount;
 			}
 		}
 
@@ -552,15 +570,44 @@ int16 Talk::selectSentence() {
 
 		// XXX KEYVERB=0;
 		if (sentenceCount > 0) {
-			// XXX CH=0, S=0, OLDS=0;
-      // XXX while(CH==0) 
+			int zone = 0;
+			int oldZone = 0;
 
-			if (_quit)
-				break;
+			while (0 == selectedSentence) {
 
-			// XXX update();
+				if (_quit)
+					break;
 
-			// XXX manage input 
+				_graphics->update();
+
+				// XXX zone = zone(1, mouseX, mouseY);
+
+				if (5 == zone || 6 == zone) {
+					// XXX Arrow zones
+				}
+				else {
+					if (oldZone != zone) {
+						// Changed zone, change text colors
+
+						if (zone > 0) {
+
+							// XXX for (int i = zones[1][zone].y1; i < zones[1][zone].y2; i += 10)
+							// XXX 	texts[i + 150].col = INK_JOE;
+						}
+
+						if (oldZone > 0) {
+							// XXX 	for (i = zones[1][oldZone].y1; i < zones[1][oldZone].y2; i += 10)
+							// XXX 		texts[i + 150].col = INK_TALK_NORMAL;
+						}
+
+						oldZone = zone;
+					}
+
+				}
+
+				// XXX make the loop exit as we can't get any input yet
+				selectedSentence = 1;
+			} // while()
 		}
 	}
 
@@ -576,10 +623,20 @@ int16 Talk::selectSentence() {
 	}
 	// XXX End debug stuff
 
+
+	debug(0, "Selected sentence %i", selectedSentence);
+
 	bob1->active = false;
 	bob2->active = false;
 
-	debug(0, "Selected sentence %i", selectedSentence);
+	if (selectedSentence > 0) {
+		_graphics->textClear(0,198);
+
+		speak(_talkString[selectedSentence], "JOE", _joeVoiceFilePrefix[selectedSentence]);
+	}
+	
+	_graphics->textClear(151,151);
+
 	return selectedSentence;
 }
 
