@@ -538,7 +538,7 @@ int SimonState::runScript()
 			}
 			break;
 
-		case 98:{
+		case 98:{									/* start vga */
 				if (!(_game & GAME_SIMON2)) {
 					uint a = getVarOrWord();
 					uint b = getVarOrByte();
@@ -558,7 +558,7 @@ int SimonState::runScript()
 			}
 			break;
 
-		case 99:{
+		case 99:{									/* kill thread */
 				if (!(_game & GAME_SIMON2)) {
 					o_unk_99_simon1(getVarOrWord());
 				} else {
@@ -569,7 +569,7 @@ int SimonState::runScript()
 			}
 			break;
 
-		case 100:{
+		case 100:{									/* vga reset */
 				o_vga_reset();
 			}
 			break;
@@ -601,7 +601,7 @@ int SimonState::runScript()
 			}
 			break;
 
-		case 107:{									/* ADD_ITEM_HITAREA(id,x,y,w,h,item,unk3) */
+		case 107:{									/* add item hitarea */
 				uint flags = 0;
 				uint id = getVarOrWord();
 				uint params = id / 1000;
@@ -685,7 +685,7 @@ int SimonState::runScript()
 			}
 			break;
 
-		case 119:{									/* WAIT_VGA */
+		case 119:{									/* wait vga */
 				uint var = getVarOrWord();
 				_scriptvar_2 = (var == 200);
 
@@ -700,7 +700,7 @@ int SimonState::runScript()
 			}
 			break;
 
-		case 121:{									/* SET_VGA_ITEM */
+		case 121:{									/* set vga item */
 				uint slot = getVarOrByte();
 				_vc_item_array[slot] = getNextItemPtr();
 			}
@@ -750,7 +750,7 @@ int SimonState::runScript()
 			}
 			break;
 
-		case 132:{
+		case 132:{									/* save game */
 #ifdef _WIN32_WCE
 
 				if (!draw_keyboard) {
@@ -762,7 +762,7 @@ int SimonState::runScript()
 			}
 			break;
 
-		case 133:{
+		case 133:{									/* load game */
 				o_load_game();
 			}
 			break;
@@ -773,7 +773,7 @@ int SimonState::runScript()
 			}
 			break;
 
-		case 135:{
+		case 135:{									/* quit if user presses y */
 				o_quit_if_user_presses_y();
 			}
 			break;
@@ -789,12 +789,12 @@ int SimonState::runScript()
 			}
 			break;
 
-		case 138:{
+		case 138:{									/* vga pointer op 4 */
 				o_unk_138();
 			}
 			break;
 
-		case 139:{									/* SET_PARENT_SPECIAL */
+		case 139:{									/* set parent special */
 				Item *item = getNextItemPtr();
 				_no_parent_notify = true;
 				setItemParent(item, getNextItemPtr());
@@ -802,13 +802,13 @@ int SimonState::runScript()
 			}
 			break;
 
-		case 140:{
+		case 140:{									/* del te and add one */
 				killAllTimers();
 				addTimeEvent(3, 0xA0);
 			}
 			break;
 
-		case 141:{
+		case 141:{									/* set m1 or m3 */
 				uint which = getVarOrByte();
 				Item *item = getNextItemPtr();
 				if (which == 1) {
@@ -819,7 +819,7 @@ int SimonState::runScript()
 			}
 			break;
 
-		case 142:{
+		case 142:{									/* is hitarea 0x40 clear */
 				condition = is_hitarea_0x40_clear(getVarOrWord());
 			}
 			break;
@@ -940,7 +940,7 @@ int SimonState::runScript()
 			}
 			break;
 
-		case 163:{
+		case 163:{									/* sound 1 */
 				o_unk_163(getVarOrWord());
 			}
 			break;
@@ -952,7 +952,7 @@ int SimonState::runScript()
 			}
 			break;
 
-		case 165:{
+		case 165:{									/* item unk1 unk2 is */
 				Item *item = getNextItemPtr();
 				int16 a = getNextWord(), b = getNextWord();
 				condition = (item->unk2 == a && item->unk1 == b);
@@ -970,24 +970,24 @@ int SimonState::runScript()
 			}
 			break;
 
-		case 168:{									/* is bit clear? */
+		case 168:{									/* is bit2 clear */
 				uint bit = getVarOrByte();
 				condition = (_bit_array[(bit >> 4) + 16] & (1 << (bit & 15))) == 0;
 			}
 			break;
 
-		case 169:{									/* is bit set? */
+		case 169:{									/* is bit2 set */
 				uint bit = getVarOrByte();
 				condition = (_bit_array[(bit >> 4) + 16] & (1 << (bit & 15))) != 0;
 			}
 			break;
 
-		case 175:{
+		case 175:{									/* vga pointer op 1 */
 				o_unk_175();
 			}
 			break;
 
-		case 176:{
+		case 176:{									/* vga pointer op 2 */
 				o_unk_176();
 			}
 			break;
@@ -1100,12 +1100,12 @@ int SimonState::runScript()
 			}
 			break;
 
-		case 180:{
+		case 180:{									/* force unlock */
 				o_force_unlock();
 			}
 			break;
 
-		case 181:{
+		case 181:{									/* force lock */
 				o_force_lock();
 				if (_game & GAME_SIMON2) {
 					fcs_unk_2(1);
@@ -1114,21 +1114,21 @@ int SimonState::runScript()
 			}
 			break;
 
-		case 182:{
+		case 182:{									/* read vgares 328 */
 				if (_game & GAME_SIMON2)
 					goto invalid_opcode;
 				o_read_vgares_328();
 			}
 			break;
 
-		case 183:{
+		case 183:{									/* read vgares 23 */
 				if (_game & GAME_SIMON2)
 					goto invalid_opcode;
 				o_read_vgares_23();
 			}
 			break;
 
-		case 184:{
+		case 184:{									/* clear vgapointer entry */
 				o_clear_vgapointer_entry(getVarOrWord());
 			}
 			break;
@@ -1140,19 +1140,19 @@ int SimonState::runScript()
 			}
 			break;
 
-		case 186:{
+		case 186:{									/* vga pointer op 3 */
 				o_unk_186();
 			}
 			break;
 
-		case 187:{
+		case 187:{									/* fade to black */
 				if (_game & GAME_SIMON2)
 					goto invalid_opcode;
 				o_fade_to_black();
 			}
 			break;
 
-		case 188:
+		case 188:									/* string2 is */
 			if (!(_game & GAME_SIMON2))
 				goto invalid_opcode;
 			{
