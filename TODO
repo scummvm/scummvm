@@ -222,6 +222,35 @@ SCUMM
   That would require buffering the text; maybe the blast text code could be
   reused for this...
 * Add support for NES version of Maniac Mansion
+* Finish formating stuff in subtitles/translation code in the dig.
+* In the very long distance future add translation stuff(hashing original and replacing with translation)
+* (maybe) Add tools for encoding smush sequences into mpeg format to fit on small devices
+* (maybe) Add tools for encoding resources (ex. sounds) to fit on small devices 
+* fix codec44 for nut fonts
+* Imuse Digital:
+  - fix continue playing 'state' music paused by 'sequence' music
+  - decrease number tracks to 8
+  - implement sounds priority in tracks for deleting lower priority sounds
+  - recheck music code
+  - add sound mixer procedure for pool method
+  - change code to new mixer pool method procedure
+  - check if VAR_SYNC if it's set to nonzero value
+  - add pool method for FT voc samples from resource
+  - add missing volume channels into sound mixer needed by imuse and add code into imuse
+  - implement tuning volume level or something(not sure yet what is)
+  - implement stuff for fadeParam in JUMP opcode and recheck 'next region' code 
+  - recheck original imuse stream stuff if match logicaly our code
+  - make struct sync, jump, regions use dynamic memory usage
+  - split startSound mess into more clear code
+  - fix akos sound related stuff
+  - add save/load code
+  - add code for mp3 and ogg
+ * SMUSH:
+  - get rid smush mixer add code for imuse to handle smush tracks
+  - fix SAUD bug, reported in bug tracker
+  - cleanup channel mess
+  - make code more clear in some places (subtiles code for ex.)
+  - add code for mp3/mad encoded sound tracks (distans future)
 
 Broken Sword 1 & 2
 ==================
