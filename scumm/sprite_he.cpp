@@ -40,31 +40,31 @@ void ScummEngine_v90he::allocateArrays() {
 int ScummEngine_v90he::spriteInfoGet_flags_1(int spriteNum) {
 	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_1: Invalid sprite %d");
 
-	return (_spriteTable[spriteNum].flags & kSF15 != 0) ? 1 : 0;
+	return ((_spriteTable[spriteNum].flags & kSF15) != 0) ? 1 : 0;
 }
 
 int ScummEngine_v90he::spriteInfoGet_flags_2(int spriteNum) {
 	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_2: Invalid sprite %d");
 
-	return (_spriteTable[spriteNum].flags & kSF14 != 0) ? 1 : 0;
+	return ((_spriteTable[spriteNum].flags & kSF14) != 0) ? 1 : 0;
 }
 
 int ScummEngine_v90he::spriteInfoGet_flags_3(int spriteNum) {
 	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_3: Invalid sprite %d");
 
-	return (_spriteTable[spriteNum].flags & kSF16 != 0) ? 1 : 0;
+	return ((_spriteTable[spriteNum].flags & kSF16) != 0) ? 1 : 0;
 }
 
 int ScummEngine_v90he::spriteInfoGet_flags_4(int spriteNum) {
 	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_4: Invalid sprite %d");
 
-	return (_spriteTable[spriteNum].flags & kSF13 != 0) ? 1 : 0;
+	return ((_spriteTable[spriteNum].flags & kSF13) != 0) ? 1 : 0;
 }
 
 int ScummEngine_v90he::spriteInfoGet_flags_5(int spriteNum) {
 	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_5: Invalid sprite %d");
 
-	return (_spriteTable[spriteNum].flags & kSF20 != 0) ? 1 : 0;
+	return ((_spriteTable[spriteNum].flags & kSF20) != 0) ? 1 : 0;
 }
 
 int ScummEngine_v90he::spriteInfoGet_flags_6(int spriteNum) {
@@ -76,13 +76,13 @@ int ScummEngine_v90he::spriteInfoGet_flags_6(int spriteNum) {
 int ScummEngine_v90he::spriteInfoGet_flags_7(int spriteNum) {
 	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_7: Invalid sprite %d");
 
-	return (_spriteTable[spriteNum].flags & kSF23 != 0) ? 1 : 0;
+	return ((_spriteTable[spriteNum].flags & kSF23) != 0) ? 1 : 0;
 }
 
 int ScummEngine_v90he::spriteInfoGet_flags_8(int spriteNum) {
 	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_8: Invalid sprite %d");
 
-	return (_spriteTable[spriteNum].flags & kSF31 != 0) ? 1 : 0;
+	return ((_spriteTable[spriteNum].flags & kSF31) != 0) ? 1 : 0;
 }
 
 } // End of namespace Scumm
