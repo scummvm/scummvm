@@ -1,6 +1,6 @@
 MODULE := kyra
 
-MODULE_OBJS = \
+MODULE_OBJS := \
 	kyra/codecs.o \
 	kyra/cpsimage.o \
 	kyra/font.o \
@@ -10,7 +10,6 @@ MODULE_OBJS = \
 	kyra/script_v1.o \
 	kyra/script.o \
 	kyra/wsamovie.o
-
 
 MODULE_DIRS += \
 	kyra

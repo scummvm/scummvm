@@ -10,7 +10,6 @@ MODULE_OBJS := \
 	backends/midi/mt32/tables.o \
 	backends/midi/mt32/freeverb.o
 
-
 MODULE_DIRS += \
 	backends/midi/mt32
 

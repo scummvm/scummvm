@@ -1,6 +1,6 @@
 MODULE := queen
 
-MODULE_OBJS = \
+MODULE_OBJS := \
 	queen/bankman.o \
 	queen/command.o \
 	queen/credits.o \
