@@ -248,6 +248,7 @@ public:
 	bool setTrack (int track);
 	bool jumpToTick (uint32 tick, bool fireEvents = false);
 	uint32 getTick() { return _position._play_tick; }
+	virtual uint32 getTime() { return _position._play_time; }
 
 	static MidiParser *createParser_SMF();
 	static MidiParser *createParser_XMIDI();

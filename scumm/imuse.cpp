@@ -317,6 +317,21 @@ void IMuseInternal::on_timer(MidiDriver *midi) {
 	sequencer_timers(midi);
 }
 
+int IMuseInternal::getMusicTimer() {
+	int best_time = 0;
+	Player *player = _players;
+	int i;
+
+	for (i = ARRAYSIZE(_players); i != 0; i--, player++) {
+		if (player->isActive()) {
+			int timer = player->getMusicTimer();
+			if (timer > best_time)
+				best_time = timer;
+		}
+	}
+	return best_time / 1000000;
+}
+
 void IMuseInternal::sequencer_timers(MidiDriver *midi) {
 	Player *player = _players;
 	int i;
@@ -1744,6 +1759,7 @@ int IMuse::stopSound(int sound) { in(); int ret = _target->stopSound(sound); out
 int IMuse::stop_all_sounds() { in(); int ret = _target->stop_all_sounds(); out(); return ret; }
 int IMuse::getSoundStatus(int sound) { in(); int ret = _target->getSoundStatus(sound, true); out(); return ret; }
 bool IMuse::get_sound_active(int sound) { in(); bool ret = _target->getSoundStatus(sound, false) ? 1 : 0; out(); return ret; }
+int IMuse::getMusicTimer() { in(); int ret = _target->getMusicTimer(); out(); return ret; }
 int32 IMuse::doCommand (int a, int b, int c, int d, int e, int f, int g, int h) { in(); int32 ret = _target->doCommand(a,b,c,d,e,f,g,h); out(); return ret; }
 int32 IMuse::doCommand (int numargs, int args[]) { in(); int32 ret = _target->doCommand (numargs, args); out(); return ret; }
 int IMuse::clear_queue() { in(); int ret = _target->clear_queue(); out(); return ret; }

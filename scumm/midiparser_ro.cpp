@@ -33,11 +33,15 @@
 
 class MidiParser_RO : public MidiParser {
 protected:
+	int _markerCount; // Number of markers encountered in stream so far
+
+protected:
 	void compressToType0();
 	void parseNextEvent (EventInfo &info);
 
 public:
 	bool loadMusic (byte *data, uint32 size);
+	uint32 getTime() { return (uint32) _markerCount * 1000000; }
 };
 
 
@@ -53,7 +57,10 @@ void MidiParser_RO::parseNextEvent (EventInfo &info) {
 	do {
 		info.start = _position._play_pos;
 		info.event = *(_position._play_pos++);
-		if (info.command() == 0xA) continue;
+		if (info.command() == 0xA) {
+			++_markerCount;
+			continue;
+		} // end if
 
 		if (info.event == 0xF0) {
 			byte delay = *(_position._play_pos++);
@@ -107,6 +114,7 @@ bool MidiParser_RO::loadMusic (byte *data, uint32 size) {
 	_num_tracks = 1;
 	_ppqn = 120;
 	_tracks[0] = pos + 2;
+	_markerCount = 0;
 
 	// Note that we assume the original data passed in
 	// will persist beyond this call, i.e. we do NOT

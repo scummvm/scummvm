@@ -1207,6 +1207,8 @@ int Scumm::scummLoop(int delta) {
 		// Covered automatically by the Sound class
 	} else if (_playerV2) {
 		VAR(VAR_MUSIC_TIMER) = _playerV2->getMusicTimer();
+	} else if (_imuse && _midiDriver != MD_ADLIB) {
+		VAR(VAR_MUSIC_TIMER) = _imuse->getMusicTimer();
 	} else if (_features & GF_SMALL_HEADER) {
 		// TODO: The music delay (given in milliseconds) might have to be tuned a little
 		// to get it correct for all games. Without the ability to watch/listen to the

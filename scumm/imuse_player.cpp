@@ -128,6 +128,10 @@ bool Player::startSound(int sound, MidiDriver *midi) {
 	return true;
 }
 
+uint32 Player::getMusicTimer() {
+	return _parser ? _parser->getTime() : 0;
+}
+
 bool Player::isFadingOut() {
 	int i;
 	for (i = 0; i < ARRAYSIZE(_parameterFaders); ++i) {

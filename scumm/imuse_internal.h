@@ -261,6 +261,7 @@ public:
 	int    setTranspose(byte relative, int b);
 	int    setVolume(byte vol);
 	bool   startSound(int sound, MidiDriver *midi);
+	uint32  getMusicTimer();
 
 public:
 	// MidiDriver interface
@@ -349,7 +350,7 @@ struct Part {
 class IMuseInternal {
 	friend class Player;
 
-private:
+protected:
 	bool _old_adlib_instruments;
 	bool _enable_multi_midi;
 	MidiDriver *_midi_adlib;
@@ -359,7 +360,7 @@ private:
 	
 	SoundMixer *_mixer;
 
-private:
+protected:
 	bool _paused;
 	bool _initialized;
 
@@ -392,6 +393,7 @@ private:
 	CommandQueue _cmd_queue[64];
 	DeferredCommand _deferredCommands[4];
 
+protected:
 	byte *findStartOfSound(int sound);
 	bool isMT32(int sound);
 	bool isGM(int sound);
@@ -461,6 +463,7 @@ public:
 	int stopSound(int sound);
 	int stop_all_sounds();
 	int getSoundStatus(int sound, bool ignoreFadeouts = true);
+	int getMusicTimer();
 	int32 doCommand (int a, int b, int c, int d, int e, int f, int g, int h);
 	int32 doCommand (int numargs, int args[]);
 	int clear_queue();
