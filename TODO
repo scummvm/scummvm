@@ -327,8 +327,6 @@ SAGA
    of turning and walking faced to screen
  * In many places RSC_LoadResource() is called but memory is not freed afterwards,
    i.e. there is a huge leak
- * Structure INTERFACE_DESC should be put into GAME_DISPLAYINFO, as there are
-   expected big differences between IHNM and ITE.
  * Optimize screen output. Now we blit whole screen for each frame.
  * When using the original XMIDI music resources, some songs play at the wrong
    speed. The worst example I've heard of this is the "Elk Fanfare" during the
@@ -338,15 +336,11 @@ SAGA
  * In the dog's castle at guards' room (scene_change 177 ang go down) subtitles
    aren't shown. In floppy version there is complete silence both textual and
    audial.
- * Sound in old Win demo is all wrong -- eithere there is some unique sound format
+ * Sound in old Win demo is all wrong -- either there is some unique sound format
    or I didn't guess it correctly
- * Implementation of threads memory is wrong. See TriggerNScript() and base_address()
-   in original.
- * Converses ignore kReplyOnce now due to deficient threads memory implementation.
  * Up and down keys ('u' and 'd') in converse panel do not work properly
 
 - plans -
- * Implement unimplemented/proofread unchecked opcodes
  * Remove use of floating point, especially doubles.
  * Implement Verbs (h00ligan)
  * Implement ShowSaveReminder(), that is that diskette
