@@ -41,12 +41,29 @@ static const char *const verb_names[] = {
 	"Give"
 };
 
-static const char *const verb_prep_names[] = {
+static const char *const italian_verb_prep_names[] = {
+	"", "", "", "",
+	"", "", "", "con che cosa ?",
+	"", "", "", "a chi ?"
+};
+
+static const char *const french_verb_prep_names[] = {
+	"", "", "", "",
+	"", "", "", "avec quoi ?",
+	"", "", "", "; qui ?"
+};
+
+static const char *const german_verb_prep_names[] = {
+	"", "", "", "",
+	"", "", "", "mit was ?",
+	"", "", "", "zu wem ?"
+};
+
+static const char *const english_verb_prep_names[] = {
 	"", "", "", "",
 	"", "", "", "with what ?",
 	"", "", "", "to whom ?"
 };
-
 
 void SimonState::defocusHitarea()
 {
@@ -81,10 +98,26 @@ void SimonState::focusVerb(uint hitarea_id)
 
 	hitarea_id -= 101;
 
-	CHECK_BOUNDS(hitarea_id, verb_prep_names);
+	if (_language == 3) {
+		CHECK_BOUNDS(hitarea_id, italian_verb_prep_names);
+	} else if (_language == 2) {
+		CHECK_BOUNDS(hitarea_id, french_verb_prep_names);
+	} else if (_language == 1) {
+		CHECK_BOUNDS(hitarea_id, german_verb_prep_names);
+	} else {
+		CHECK_BOUNDS(hitarea_id, english_verb_prep_names);
+	}
 
 	if (_show_preposition) {
-		txt = verb_prep_names[hitarea_id];
+		if (_language == 3) {
+			txt = italian_verb_prep_names[hitarea_id];
+		} else if (_language == 2) {
+			txt = french_verb_prep_names[hitarea_id];
+		} else if (_language == 1) {
+			txt = german_verb_prep_names[hitarea_id];
+		} else {
+			txt = english_verb_prep_names[hitarea_id];
+		}
 	} else {
 		txt = verb_names[hitarea_id];
 	}

@@ -177,6 +177,7 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 
 	_debugMode = detector->_debugMode;
 	_debugLevel = detector->_debugLevel;
+ 	_language = detector->_language;
 
 	_effects_paused = false;
 	_ambient_paused = false;

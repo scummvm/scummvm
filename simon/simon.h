@@ -181,6 +181,7 @@ public:
 	bool _mouse_pos_changed;
 	uint16 _debugMode;
 	uint16 _debugLevel;
+	uint16 _language;
 	bool _start_mainscript;
 	bool _continous_mainscript;
 	bool _continous_vgascript;
