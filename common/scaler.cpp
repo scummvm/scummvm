@@ -719,31 +719,34 @@ void Scale_2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */ ,
 
 void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch,
 							 int width, int height) {
-	unsigned int nextlineSrc = srcPitch / sizeof(short);
-	short *p = (short *)srcPtr;
+	unsigned int nextlineSrc = srcPitch / sizeof(uint16);
+	uint16 *p = (uint16 *)srcPtr;
 
-	unsigned int nextlineDst = dstPitch / sizeof(short);
-	short *q = (short *)dstPtr;
+	unsigned int nextlineDst = dstPitch / sizeof(uint16);
+	uint16 *q = (uint16 *)dstPtr;
+	
+	uint16 A, B, C;
+	uint16 D, E, F;
+	uint16 G, H, I;
 
 	while (height--) {
+		B = C = *(p - nextlineSrc);
+		E = F = *(p);
+		H = I = *(p + nextlineSrc);
 		for (int i = 0; i < width; ++i) {
-			// short A = *(p + i - nextlineSrc - 1);
-			short B = *(p + i - nextlineSrc);
-			// short C = *(p + i - nextlineSrc + 1);
-			short D = *(p + i - 1);
-			short E = *(p + i);
-			short F = *(p + i + 1);
-			// short G = *(p + i + nextlineSrc - 1);
-			short H = *(p + i + nextlineSrc);
-			// short I = *(p + i + nextlineSrc + 1);
+			p++;
+			A = B; B = C; C = *(p - nextlineSrc);
+			D = E; E = F; F = *(p);
+			G = H; H = I; I = *(p + nextlineSrc);
 
-			*(q + (i << 1)) = D == B && B != F && D != H ? D : E;
-			*(q + (i << 1) + 1) = B == F && B != D && F != H ? F : E;
-			*(q + (i << 1) + nextlineDst) = D == H && D != B && H != F ? D : E;
-			*(q + (i << 1) + nextlineDst + 1) = H == F && D != H && B != F ? F : E;
+			*(q) = D == B && B != F && D != H ? D : E;
+			*(q + 1) = B == F && B != D && F != H ? F : E;
+			*(q + nextlineDst) = D == H && D != B && H != F ? D : E;
+			*(q + nextlineDst + 1) = H == F && D != H && B != F ? F : E;
+			q += 2;
 		}
-		p += nextlineSrc;
-		q += nextlineDst << 1;
+		p += nextlineSrc - width;
+		q += (nextlineDst - width) << 1;
 	}
 }
 
