@@ -86,8 +86,8 @@ static const GameSpecificSettings simon2dos_settings = {
 	1128 / 4,											/* MUSIC_INDEX_BASE */
 	1660 / 4,											/* SOUND_INDEX_BASE */
 	"SIMON2.GME",									/* gme_filename */
-	NULL,										/* wav_filename */
-	NULL,
+	"",										/* wav_filename */
+	"",
 	"",
 	"GAME32",											/* gamepc_filename */
 };
@@ -4720,7 +4720,10 @@ void SimonState::playVoice(uint voice)
 	_mixer->stop(_voice_sound);
 	_voice_file->seek(_voice_offsets[voice], SEEK_SET);
 
-	if (!_effects_offsets) {			/* WAVE audio */
+	const char *s2 = gss->wav_filename2;
+	_music_file = new File();
+	_music_file->open(s2, _gameDataPath);
+	if (_music_file->isOpen() == false) {			/* WAVE audio */
 		WaveHeader wave_hdr;
 		uint32 data[2];
 
@@ -4806,6 +4809,14 @@ void SimonState::playSound(uint sound)
 
 			_mixer->playRaw(&_effects_sound, buffer, size, samples_per_sec, SoundMixer::FLAG_UNSIGNED);
 		} else {
+		/* FIXME: not properly implemented */
+		/* Simon 1/2 dos talkie sfx aren't supported */
+		/* Simon 2 dos sfx isn't supported */
+		const char *s2 = gss->wav_filename2;
+		_music_file = new File();
+		_music_file->open(s2, _gameDataPath);
+		if (_music_file->isOpen() == false) {
+
 			byte *p;
 
 			_mixer->stop(_playing_sound);
@@ -4833,6 +4844,7 @@ void SimonState::playSound(uint sound)
 			_mixer->playRaw(&_playing_sound, p + 8, READ_LE_UINT32(p + 4), 22050,
 											 SoundMixer::FLAG_UNSIGNED);
 		}
+		}
 	} else {
 		warning("playSound(%d)", sound);
 	}
@@ -4840,9 +4852,17 @@ void SimonState::playSound(uint sound)
 
 void SimonState::playMusic(uint music)
 {
-	midi.shutdown();
-
+	warning ("play music point reached");
 	/* FIXME: not properly implemented */
+	/* Simon 1/2 dos talkie music aren't supported */
+	/* Simon 2 dos music isn't supported */
+	const char *s2 = gss->wav_filename2;
+	_music_file = new File();
+	_music_file->open(s2, _gameDataPath);
+	if (_music_file->isOpen() == false) {
+
+	midi.shutdown();
+	
 	if (_game & GAME_WIN) {
 		_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
 		File *f = _game_file;
@@ -4862,6 +4882,7 @@ void SimonState::playMusic(uint music)
 
 	midi.initialize();
 	midi.play();
+	}
 }
 
 byte *SimonState::dx_lock_2()

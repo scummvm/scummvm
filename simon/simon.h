@@ -125,6 +125,7 @@ public:
 
 
 	File *_game_file;
+	File *_music_file;
 	File *_voice_file;
 	uint32 *_voice_offsets;
 	File *_effects_file;
