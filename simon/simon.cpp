@@ -115,8 +115,7 @@ DetectedGameList Engine_SIMON_detectGames(const FSList &fslist) {
 		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 			const char *name = file->displayName().c_str();
 
-			if ((0 == scumm_stricmp(detectName, name))  || 
-				(0 == scumm_stricmp(detectName2, name))) {
+			if ((0 == scumm_stricmp(detectName, name))  || (!0 == scumm_stricmp(detectName2, name))) {
 				// Match found, add to list of candidates, then abort inner loop.
 				detectedGames.push_back(g->toGameSettings());
 				fileSet.addKey(file->path());
@@ -311,9 +310,13 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 		// It's quick, it's dirty, and it'll go again eventually :-)
 		char buf[100];
 		uint8 md5sum[16];
+		File f;
 
 		sprintf(buf, g->detectname);
-
+		f.open(buf);
+		if (f.isOpen() == false)
+			strcat(buf, ".");
+		
 		if (md5_file(buf, md5sum)) {
 			// HACK : changed to this code since PalmOS doesn't handle correctly %02x.
 			// It returns only 8 chars string in upper case so i need to use hex[],
