@@ -251,6 +251,10 @@ void PluginManager::loadPlugins() {
 #ifndef DISABLE_QUEEN
 	LOAD_MODULE("queen", QUEEN);
 #endif
+
+#ifndef DISABLE_SAGA
+	LOAD_MODULE("saga", SAGA);
+#endif
 }
 
 void PluginManager::unloadPlugins() {

@@ -38,6 +38,7 @@ _build_sky=yes
 _build_sword1=yes
 _build_sword2=yes
 _build_queen=yes
+_build_saga=no
 _need_memalign=no
 _build_plugins=no
 # more defaults
@@ -251,6 +252,7 @@ for ac_option in $@; do
       --disable-sword1)		_build_sword1=no ;;
       --disable-sword2)		_build_sword2=no ;;
       --disable-queen)		_build_queen=no ;;
+      --enable-saga)		_build_saga=yes ;;
       --enable-alsa)		_alsa=yes	;;
       --disable-alsa)		_alsa=no	;;
       --enable-vorbis)		_vorbis=yes	;;
@@ -441,6 +443,12 @@ if test "$_build_queen" = no ; then
 	_mak_queen='DISABLE_QUEEN = 1'
 else
 	_mak_queen='# DISABLE_QUEEN = 1'
+fi
+
+if test "$_build_saga" = no ; then
+	_mak_saga='DISABLE_SAGA = 1'
+else
+	_mak_saga='# DISABLE_SAGA = 1'
 fi
 
 
@@ -789,6 +797,9 @@ fi
 if test "$_build_queen" = yes ; then
   echo "    Flight of the Amazon Queen"
 fi
+if test "$_build_saga" = yes ; then
+  echo "    SAGA Engine"
+fi
 echo
 
 echo_n "Backend... "
@@ -874,6 +885,7 @@ $_mak_sky
 $_mak_sword1
 $_mak_sword2
 $_mak_queen
+$_mak_saga
 
 INCLUDES += $INCLUDES
 OBJS += $OBJS

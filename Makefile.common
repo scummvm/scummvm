@@ -79,6 +79,12 @@ else
 MODULES += queen
 endif
 
+ifdef DISABLE_SAGA
+DEFINES += -DDISABLE_SAGA
+else 
+MODULES += saga
+endif
+
 # After the game specific modules follow the shared modules
 MODULES += \
 	gui \
