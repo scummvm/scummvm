@@ -679,6 +679,7 @@ IMuseDigital::IMuseDigital(ScummEngine *scumm)
 
 IMuseDigital::~IMuseDigital() {
 	_scumm->_timer->removeTimerProc(timer_handler);
+	stopBundleMusic();
 
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		_scumm->_mixer->stopHandle(_channel[l].handle);
