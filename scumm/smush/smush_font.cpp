@@ -85,7 +85,7 @@ int SmushFont::drawChar(byte *buffer, int dst_width, int x, int y, byte chr) {
 		if (_new_colors) {
 			for (int j = 0; j < h; j++) {
 				for (int i = 0; i < w; i++) {
-					char value = *src++;
+					int8 value = *src++;
 					if (value == -color) {
 						dst[i] = 0xFF;
 					} else if (value == -31) {
