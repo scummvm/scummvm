@@ -27,7 +27,7 @@
 #define SAGA_ACTOR_H__
 
 #include "saga/sprite.h"
-#include "saga/actordata.h"
+#include "saga/itedata.h"
 #include "saga/list.h"
 #include "saga/saga.h"
 

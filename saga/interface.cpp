@@ -29,7 +29,7 @@
 #include "saga/console.h"
 #include "saga/font.h"
 #include "saga/objectmap.h"
-#include "saga/objectdata.h"
+#include "saga/itedata.h"
 #include "saga/rscfile_mod.h"
 #include "saga/scene.h"
 #include "saga/script.h"

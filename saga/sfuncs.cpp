@@ -33,7 +33,7 @@
 #include "saga/font.h"
 #include "saga/interface.h"
 #include "saga/music.h"
-#include "saga/objectdata.h"
+#include "saga/itedata.h"
 #include "saga/render.h"
 #include "saga/sound.h"
 #include "saga/sndres.h"

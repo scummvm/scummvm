@@ -23,8 +23,8 @@
 
 // Actor data table header file
 
-#ifndef SAGA_ACTORDATA_H
-#define SAGA_ACTORDATA_H
+#ifndef SAGA_ITEDATA_H
+#define SAGA_ITEDATA_H
 
 namespace Saga {
 
@@ -59,6 +59,26 @@ struct ActorTableData {
 #define ITE_ACTORCOUNT 181
 
 extern ActorTableData ITE_ActorTable[ITE_ACTORCOUNT];
+
+enum {
+	kObjUseWith = 0x01,
+	kObjNotFlat = 0x02
+};
+
+struct ObjectTableData {
+	byte nameIndex;
+	int32 sceneIndex;
+	int16 x;
+	int16 y;
+	int16 z;
+	int32 spriteListResourceId;
+	byte scriptEntrypointNumber;
+	uint16 interactBits;
+};
+
+#define ITE_OBJECTCOUNT 39
+
+extern ObjectTableData ITE_ObjectTable[ITE_OBJECTCOUNT];
 
 } // End of namespace Saga
 

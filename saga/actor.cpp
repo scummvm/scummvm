@@ -35,8 +35,7 @@
 #include "saga/scene.h"
 
 #include "saga/actor.h"
-#include "saga/actordata.h"
-#include "saga/objectdata.h"
+#include "saga/itedata.h"
 #include "saga/stream.h"
 #include "saga/interface.h"
 #include "saga/events.h"

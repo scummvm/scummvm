@@ -2,7 +2,6 @@ MODULE := saga
 
 MODULE_OBJS := \
 	saga/actor.o \
-	saga/actordata.o \
 	saga/animation.o \
 	saga/console.o \
 	saga/events.o \
@@ -15,7 +14,7 @@ MODULE_OBJS := \
 	saga/interface.o \
 	saga/isomap.o \
 	saga/ite_introproc.o \
-	saga/objectdata.o \
+	saga/itedata.o \
 	saga/objectmap.o \
 	saga/palanim.o \
 	saga/render.o \
