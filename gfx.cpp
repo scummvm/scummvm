@@ -623,15 +623,12 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h, int stripnr
 	int numzbuf;
 	int sx;
 
-        if(_vm->_features & GF_16COLOR) /* FIXME */
-                return;
-
 	CHECK_HEAP
 
-        if(_vm->_features & GF_SMALL_HEADER)
-                smap_ptr = _smap_ptr = ptr;
-        else
-               smap_ptr = findResource(MKID('SMAP'), ptr);
+    if(_vm->_features & GF_SMALL_HEADER)
+          smap_ptr = _smap_ptr = ptr;
+    else
+          smap_ptr = findResource(MKID('SMAP'), ptr);
 
 	assert(smap_ptr);
 
