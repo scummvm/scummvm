@@ -52,6 +52,7 @@ public:
 	};
 
 	Instrument() : _type (0), _instrument (0) { }
+	~Instrument() { delete _instrument; }
 	static void nativeMT32 (bool native);
 
 	void clear();
