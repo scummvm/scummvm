@@ -52,7 +52,6 @@ void Journal::use() {
 
 	memset(_saveDescriptions, 0, sizeof(_saveDescriptions));
 	_vm->findGameStateDescriptions(_saveDescriptions);
-
 	_panelTextCount = 0;
 	_vm->display()->palFadeOut(0, 255, JOURNAL_ROOM);
 	prepare();
@@ -216,6 +215,9 @@ void Journal::enterYesNoMode(int16 zoneNum, int titleNum) {
 void Journal::exitYesNoMode() {
 	_mode = M_NORMAL;
 	if (_prevZoneNum == ZN_MAKE_ENTRY) {
+		OSystem::Property prop;
+		prop.show_keyboard = false;
+		_vm->_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
 		_edit.enable = false;
 	}
 	redraw();
@@ -298,6 +300,9 @@ void Journal::handleYesNoMode(int16 zoneNum) {
 			break;
 		case ZN_MAKE_ENTRY:
 			if (_edit.text[0]) {
+				OSystem::Property prop;
+				prop.show_keyboard = false;
+				_vm->_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
 				_vm->saveGameState(currentSlot, _edit.text);
 				_quit = true;
 			} else {
@@ -497,6 +502,9 @@ void Journal::hideInformationBox() {
 
 
 void Journal::initEditBuffer(const char *desc) {
+	OSystem::Property prop;
+	prop.show_keyboard = true;
+	_vm->_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
 	_edit.enable = true;
 	_edit.posCursor = _vm->display()->textWidth(desc);
 	_edit.textCharsCount = strlen(desc);
