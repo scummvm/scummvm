@@ -8,7 +8,7 @@
 #   Prologue information
 #------------------------------------------------------------------------------
 Name		: scummvm
-Version		: 0.3.0
+Version		: 0.4.0pre
 Release		: @RELEASE@
 Summary		: SCUMM graphic adventure game interpreter
 Group		: Interpreters
@@ -56,6 +56,18 @@ rm -Rf %{buildroot}
 #   Change Log
 #------------------------------------------------------------------------------
 %changelog
+* 0.4.0pre (2003-05-05)
+  - Curse of Monkey Island (comi) support (experimental)
+  - Many important Simon the Sorcerer 1/2 improvements and fixes
+  - Very pre-alpha Beneath a Steel Sky code. Don't expect it to do anything. 
+  - Preliminary support for early Humongous Entertainment titles (very experimental)
+  - New debug console and several GUI/Launcher enhancements (incomplete)
+  - New Save/Load code (easier to expand while retaining compatability)
+  - DreamCast port now works with new games added for 0.3.0b
+  - Various minor SCUMM game fixes
+  - Large memory leak fixed for The Dig/ComI
+  - SMUSH code optimised, framedropping added for slower machines
+  - Code cleanups
 * 0.3.0 (2002-12-01)
   - massive cleanup work for iMUSE. Sam and Max music now plays correctly
   - many bugfixes for Zak256, + sound and music support
