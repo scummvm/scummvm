@@ -156,6 +156,13 @@ int SndRes::load(RSCFILE_CONTEXT *snd_ctxt, uint32 snd_rn, SOUNDBUFFER *snd_buf_
 			return FAILURE;
 		}
 		break;
+	case GAME_SOUND_WAV:
+		result = loadWavSound(snd_res, snd_res_len, snd_buf_i);
+		RSC_FreeResource(snd_res);
+		if (result != SUCCESS) {
+			return FAILURE;
+		}
+		break;
 	default:
 		/* Unknown sound type */
 		RSC_FreeResource(snd_res);
@@ -250,6 +257,64 @@ int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, SOUNDBUFFER *snd_buf
 	return SUCCESS;
 }
 
+int SndRes::loadWavSound(byte *snd_res, size_t snd_res_len, SOUNDBUFFER *snd_buf_i) {
+	// TODO: This function should, perhaps, be made more robust.
+
+	MemoryReadStream readS(snd_res, snd_res_len);
+
+	byte buf[4];
+
+	readS.read(buf, sizeof(buf));
+	if (memcmp(buf, "RIFF", sizeof(buf)) != 0) {
+		return FAILURE;
+	}
+
+	readS.readUint32LE();
+
+	readS.read(buf, sizeof(buf));
+	if (memcmp(buf, "WAVE", sizeof(buf)) != 0) {
+		return FAILURE;
+	}
+
+	readS.read(buf, sizeof(buf));
+	if (memcmp(buf, "fmt ", sizeof(buf)) != 0) {
+		return FAILURE;
+	}
+
+	uint32 len = readS.readUint32LE();
+	uint32 pos = readS.pos();
+
+	readS.readUint16LE();
+
+	snd_buf_i->s_stereo = (readS.readUint16LE() == 2) ? 1 : 0;
+	snd_buf_i->s_freq = readS.readUint16LE();
+	snd_buf_i->s_samplebits = 16;
+	snd_buf_i->s_signed = 1;
+
+	readS.seek(pos + len);
+
+	for (;;) {
+		readS.read(buf, sizeof(buf));
+		if (memcmp(buf, "data", sizeof(buf)) == 0) {
+			break;
+		}
+
+		len = readS.readUint32LE();
+		readS.seek(len, SEEK_CUR);
+	}
+
+	snd_buf_i->s_buf_len = readS.readUint32LE();
+
+	byte *data = (byte *)malloc(snd_buf_i->s_buf_len);
+	if (!data) {
+		return FAILURE;
+	}
+
+	readS.read(data, snd_buf_i->s_buf_len);
+	snd_buf_i->s_buf = data;
+	return SUCCESS;
+}
+
 int SndRes::getVoiceLength(uint32 voice_rn) {
 	int res_type = _snd_info.res_type;
 	uint32 length = 0;
@@ -303,6 +368,9 @@ int SndRes::getVoiceLength(uint32 voice_rn) {
 		// Rough hack, fix this to be accurate
 		ms_f = (double)length / 14705 * 1000.0;
 		ms_i = (int)ms_f;
+	} else if (res_type == GAME_SOUND_WAV) {
+		// TODO!
+		return -1;
 	} else {
 		return -1;
 	}

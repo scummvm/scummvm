@@ -74,6 +74,7 @@ public:
  private:
 	int load(RSCFILE_CONTEXT *snd_ctxt, uint32 snd_rn, SOUNDBUFFER *snd_buf_i);
 	int loadVocSound(byte *snd_res, size_t snd_res_len, SOUNDBUFFER *snd_buf_i);
+	int loadWavSound(byte *snd_res, size_t snd_res_len, SOUNDBUFFER *snd_buf_i);
 
 	int _init;
 

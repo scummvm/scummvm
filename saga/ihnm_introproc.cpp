@@ -276,6 +276,14 @@ int Scene::IHNMHateProc(int param, SCENE_INFO *scene_info) {
 
 		q_event = _vm->_events->queue(&event);
 
+		event.type = ONESHOT_EVENT;
+		event.code = VOICE_EVENT;
+		event.op = EVENT_PLAY;
+		event.param = 0;
+		event.time = 0;
+
+		q_event = _vm->_events->queue(&event);
+
 		_vm->_anim->setFlag(0, ANIM_LOOP);
 		_vm->_anim->play(0, 0);
 		break;
