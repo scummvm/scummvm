@@ -26,6 +26,8 @@
  * QuickTime support by Florent Boudet <flobo@ifrance.com>
  * Raw output support by Michael Pearce
  * MorphOS support by Ruediger Hanke 
+ * Alsa support by Nicolas Noble <nicolas@nobis-crew.org> copied from
+ *    both the QuickTime support and (vkeybd http://www.alsa-project.org/~iwai/alsa.html)
  */
 
 #include "stdafx.h"
@@ -496,6 +498,8 @@ void MidiDriver_QT::set_stream_callback(void *param, StreamCallback *sc) {
 
 int MidiDriver_QT::open(int mode) {
 	ComponentResult qtErr = noErr;
+	int i;
+
 	qtNoteAllocator = NULL;
 
 	if (mode == MO_STREAMING)
@@ -503,7 +507,7 @@ int MidiDriver_QT::open(int mode) {
 
 	_mode = mode;
 
-	for (int i = 0; i < 15; i++)
+	for (i = 0; i < 15; i++)
 		qtNoteChannel[i] = NULL;
 
 	qtNoteAllocator = OpenDefaultComponent(kNoteAllocatorComponentType, 0);
@@ -519,7 +523,7 @@ int MidiDriver_QT::open(int mode) {
 	if (qtErr != noErr)
 		goto bail;
 
-	for (int i = 0; i < 15; i++) {
+	for (i = 0; i < 15; i++) {
 		qtErr =
 			NANewNoteChannel(qtNoteAllocator, &simpleNoteRequest,
 											 &(qtNoteChannel[i]));
@@ -531,7 +535,7 @@ int MidiDriver_QT::open(int mode) {
 bail:
 	error("Init QT failed %x %x %d\n", (int)qtNoteAllocator, (int)qtNoteChannel,
 					(int)qtErr);
-	for (int i = 0; i < 15; i++) {
+	for (i = 0; i < 15; i++) {
 		if (qtNoteChannel[i] != NULL)
 			NADisposeNoteChannel(qtNoteAllocator, qtNoteChannel[i]);
 		qtNoteChannel[i] = NULL;
@@ -644,7 +648,7 @@ void MidiDriver_QT::send(uint32 b) {
 	}
 }
 
-void MidiDriver_QT::pause(bool pause) {
+void MidiDriver_QT::pause(bool) {
 }
 
 MidiDriver *MidiDriver_QT_create() {
@@ -748,7 +752,7 @@ void MidiDriver_CORE::send(uint32 b) {
 	MusicDeviceMIDIEvent(au_MusicDevice, status_byte, first_byte, seccond_byte, 0);
 }
 
-void MidiDriver_CORE::pause(bool pause) {
+void MidiDriver_CORE::pause(bool) {
 }
 
 MidiDriver *MidiDriver_CORE_create() {
@@ -1249,7 +1253,7 @@ int MidiDriver_MIDIEMU::midiemu_callback_thread(void *param) {
 	bool need_midi_data = true;
 
 	for (;;) {
-		int number = 0;
+		int number;
 		int i;
 
 		if (need_midi_data) {
@@ -1267,7 +1271,7 @@ int MidiDriver_MIDIEMU::midiemu_callback_thread(void *param) {
 
 			event = my_evs[i].event;
 			if ((event>>24) == ME_TEMPO) {
-				event = (ME_TEMPO << 24) | (event & 0xFFFFFF);
+				event = (MEVT_TEMPO << 24) | (event & 0xFFFFFF);
 			}
 			driver->send(event);			
 			if (my_evs[i].delta) {
@@ -1487,62 +1491,207 @@ void MidiDriver_MIDIEMU::midi_fm_endnote(int voice) {
 }
 
 
-#if 0
+#if defined(UNIX) && defined(USE_ALSA)
 
-/* Old code for timidity support, maybe somebody can rewrite this for the 
-   new midi driver system?
+#include <alsa/asoundlib.h>
+
+/*
+ *     ALSA sequencer driver
+ * Mostly cut'n'pasted from Virtual Tiny Keyboard (vkeybd) by Takashi Iwai
+ *                                      (you really rox, you know?)
  */
 
-
-/*********** Timidity		*/
-int MidiDriver::connect_to_timidity(int port)
-{
-	int s = 0;
-#if !defined(macintosh) && !defined(__MORPHOS__)	// No socket support on Apple Carbon or Morphos
-	struct hostent *serverhost;
-	struct sockaddr_in sadd;
-
-	serverhost = gethostbyname("localhost");
-	if (serverhost == NULL)
-		error("Could not resolve Timidity host ('localhost')");
-
-	sadd.sin_family = serverhost->h_addrtype;
-	sadd.sin_port = htons(port);
-	memcpy(&(sadd.sin_addr), serverhost->h_addr_list[0], serverhost->h_length);
-
-	s = socket(AF_INET, SOCK_STREAM, 0);
-	if (s < 0)
-		error("Could not open Timidity socket");
-
-	if (connect(s, (struct sockaddr *)&sadd, sizeof(struct sockaddr_in)) < 0)
-		error("Could not connect to Timidity server");
+#if SND_LIB_MINOR >= 6
+#define snd_seq_flush_output(x) snd_seq_drain_output(x)
+#define snd_seq_set_client_group(x,name) /*nop*/
+#define my_snd_seq_open(seqp) snd_seq_open(seqp, "hw", SND_SEQ_OPEN_OUTPUT, 0)
+#else
+/* SND_SEQ_OPEN_OUT causes oops on early version of ALSA */
+#define my_snd_seq_open(seqp) snd_seq_open(seqp, SND_SEQ_OPEN)
 #endif
-	return s;
+
+/*
+ * parse address string
+ */
+
+#define ADDR_DELIM      ".:"
+
+class MidiDriver_ALSA : public MidiDriver {
+public:
+        MidiDriver_ALSA();
+	int open(int mode);
+	void close();
+	void send(uint32 b);
+	void pause(bool pause);
+	void set_stream_callback(void *param, StreamCallback *sc);
+
+private:
+	void send_event(int do_flush);
+        snd_seq_event_t ev;
+	StreamCallback *_stream_proc;
+	void  *_stream_param;
+	int 	 _mode;
+	snd_seq_t *seq_handle;
+	int seq_client, seq_port;
+	int my_client, my_port;
+	static int parse_addr(char *arg, int *client, int *port);
+};
+
+MidiDriver_ALSA::MidiDriver_ALSA() : _mode(0), seq_handle(0), seq_client(0), seq_port(0), my_client(0), my_port(0) {
 }
 
-void MidiDriver::midiInitTimidity()
+int MidiDriver_ALSA::parse_addr(char *arg, int *client, int *port)
 {
-	int s, s2;
-	int len;
-	int dummy, newport;
-	char buf[256];
+        char *p;
 
-	s = connect_to_timidity(7777);
-	len = read(s, buf, 256);			// buf[len] = '\0'; printf("%s", buf);
-	sprintf(buf, "SETBUF %f %f\n", 0.1, 0.15);
-	write(s, buf, strlen(buf));
-	len = read(s, buf, 256);			// buf[len] = '\0'; printf("%s", buf); 
+        if (isdigit(*arg)) {
+                if ((p = strpbrk(arg, ADDR_DELIM)) == NULL)
+                        return -1;
+                *client = atoi(arg);
+                *port = atoi(p + 1);
+        } else {
+                if (*arg == 's' || *arg == 'S') {
+                        *client = SND_SEQ_ADDRESS_SUBSCRIBERS;
+                        *port = 0;
+                } else
+                        return -1;
+        }
+        return 0;
+}
 
-	sprintf(buf, "OPEN lsb\n");
-	write(s, buf, strlen(buf));
-	len = read(s, buf, 256);			// buf[len] = '\0'; printf("%s", buf); 
+void MidiDriver_ALSA::send_event(int do_flush)
+{
+        snd_seq_ev_set_direct(&ev);
+        snd_seq_ev_set_source(&ev, my_port);
+        snd_seq_ev_set_dest(&ev, seq_client, seq_port);
 
-	sscanf(buf, "%d %d", &dummy, &newport);
-	printf("	 => port = %d\n", newport);
+        snd_seq_event_output(seq_handle, &ev);
+        if (do_flush)
+                snd_seq_flush_output(seq_handle);
+}
 
-	s2 = connect_to_timidity(newport);
-	_mo = (void *)s2;
+int MidiDriver_ALSA::open(int mode) {
+	char * var;
+	unsigned int caps;
+	
+        if (_mode != 0)
+		return MERR_ALREADY_OPEN;
+	_mode=mode;
+	
+	if (mode!=MO_SIMPLE) return MERR_STREAMING_NOT_AVAILABLE;
+	
+	if (!(var = getenv("SCUMMVM_PORT"))) {
+		error("You have to define the environnement variable SCUMMVM_PORT");
+		return -1;
+	}
+	
+	if (parse_addr(var, &seq_client, &seq_port) < 0) {
+		error("Invalid port %s", var);
+		return -1;
+	}
+
+	if (my_snd_seq_open(&seq_handle)) {
+		error("Can't open sequencer");
+		return -1;
+	}
+	
+	my_client = snd_seq_client_id(seq_handle);
+	snd_seq_set_client_name(seq_handle, "SCUMMVM");
+	snd_seq_set_client_group(seq_handle, "input");
+	
+	caps = SND_SEQ_PORT_CAP_READ;
+	if (seq_client == SND_SEQ_ADDRESS_SUBSCRIBERS)
+		caps = ~SND_SEQ_PORT_CAP_SUBS_READ;
+	my_port = snd_seq_create_simple_port(seq_handle, "SCUMMVM", caps, SND_SEQ_PORT_TYPE_MIDI_GENERIC | SND_SEQ_PORT_TYPE_APPLICATION);
+	if (my_port < 0) {
+	    snd_seq_close(seq_handle);
+	    error("Can't create port");
+	    return -1;
+	}
+
+        if (seq_client != SND_SEQ_ADDRESS_SUBSCRIBERS) {
+                /* subscribe to MIDI port */
+                if (snd_seq_connect_to(seq_handle, my_port, seq_client, seq_port) < 0) {
+                        snd_seq_close(seq_handle);
+                        error("Can't subscribe to MIDI port (%d:%d)", seq_client, seq_port);
+                        return -1;
+                }
+        }
+
+	printf("ALSA client initialised [%d:%d]\n", my_client, my_port);
+	
+	return 0;
+}
+
+void MidiDriver_ALSA::close() {
+	_mode = 0;
+        if (seq_handle)
+		snd_seq_close(seq_handle);
 }
 
 
-#endif /* 0 */
+void MidiDriver_ALSA::send(uint32 b)
+{
+	unsigned int midiCmd[4];
+	ev.type = SND_SEQ_EVENT_OSS;
+
+	midiCmd[3] = (b & 0xFF000000) >> 24;
+	midiCmd[2] = (b & 0x00FF0000) >> 16;
+	midiCmd[1] = (b & 0x0000FF00) >> 8;
+	midiCmd[0] = (b & 0x000000FF);
+	ev.data.raw32.d[0] = midiCmd[0];
+	ev.data.raw32.d[1] = midiCmd[1];
+	ev.data.raw32.d[2] = midiCmd[2];
+	
+	unsigned char chanID = midiCmd[0] & 0x0F;
+	switch (midiCmd[0] & 0xF0) {
+	case 0x80:
+		snd_seq_ev_set_noteoff(&ev, chanID, midiCmd[1], midiCmd[2]);
+		send_event(1);
+		break;
+	case 0x90:
+		snd_seq_ev_set_noteon(&ev, chanID, midiCmd[1], midiCmd[2]);
+		send_event(1);
+		break;
+	case 0xB0:
+		/* is it this simple ? Wow... */
+		snd_seq_ev_set_controller(&ev, chanID, midiCmd[1], midiCmd[2]);
+		send_event(1);
+		break;
+	case 0xC0:
+		snd_seq_ev_set_pgmchange(&ev, chanID, midiCmd[1]);
+		send_event(0);
+		break;
+
+	case 0xE0:{
+			long theBend =
+				((((long)midiCmd[1] + (long)(midiCmd[2] << 8))) - 0x4000) / 4;
+			snd_seq_ev_set_pitchbend(&ev, chanID, theBend);
+			send_event(1);
+		}
+		break;
+
+	default:
+		error("Unknown Command: %08x\n", (int)b);
+		/* I don't know if this works but, well... */
+		send_event(1);
+		break;
+	}
+}
+
+void MidiDriver_ALSA::pause(bool pause) {
+	if (_mode == MO_STREAMING) {
+		/* Err... and what? */
+	}
+}
+
+void MidiDriver_ALSA::set_stream_callback(void *param, StreamCallback *sc) {
+	_stream_param = param;
+	_stream_proc = sc;
+}
+
+MidiDriver *MidiDriver_ALSA_create() {
+	return new MidiDriver_ALSA();
+}
+
+#endif
