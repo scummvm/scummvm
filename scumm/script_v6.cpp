@@ -3297,7 +3297,7 @@ void ScummEngine_v6::o6_unknownEA() {
 	edi = pop();
 	esi = pop();
 
-	if ((edi | esi) ==  0) {
+	if (edi ==  0) {
 		eax = esi;
 		esi = edi;
 		edi = eax;
@@ -3305,7 +3305,7 @@ void ScummEngine_v6::o6_unknownEA() {
 
 	eax = fetchScriptByte();
 	switch (eax) {
-	case 197:
+	case 199:
 		unknownEA_func(5, esi, edi, fetchScriptWord(), eax);
 		break;
 	case 202:
@@ -3317,6 +3317,7 @@ void ScummEngine_v6::o6_unknownEA() {
 }
 
 void ScummEngine_v6::unknownEA_func(int a, int b, int c, int d, int e) {
+	// Used in mini game at Cosmic Dust Diner in puttmoon
 	warning("unknownEA_func(%d, %d, %d, %d, %d) stub", a, b, c, d, e);
 }
 
