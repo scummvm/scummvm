@@ -34,14 +34,22 @@ extern SoundMixer *g_mixer;
 class Engine {
 public:
 	OSystem *_system;
-
 	SoundMixer *_mixer;
 
+protected:
+	char *_gameDataPath;
+
+public:
 	Engine(GameDetector *detector, OSystem *syst);
 	virtual ~Engine();
 
 	// Invoke the main engine loop using this method
 	virtual void go() = 0;
+	
+	// Get the save game dir path
+	const char *getSavePath() const;
+
+	const char *getGameDataPath() const { return _gameDataPath; }
 
 	// Create a new engine object based on the detector - either 
 	// a Scumm or a SimonState object currently.

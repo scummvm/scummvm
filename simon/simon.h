@@ -110,8 +110,6 @@ struct GameSpecificSettings;
 
 class SimonState : public Engine {
 public:
-	char *_game_path;
-
 	byte *_vc_ptr;								/* video code ptr */
 
 	uint32 *_game_offsets_ptr;

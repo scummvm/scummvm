@@ -166,29 +166,7 @@ bool Scumm::loadState(int slot, bool compat)
 
 void Scumm::makeSavegameName(char *out, int slot, bool compatible)
 {
-
-	const char *dir = NULL;
-
-#ifdef _WIN32_WCE
-	dir = _gameDataPath;
-#else
-
-#if !defined(MACOS_CARBON)
-	dir = getenv("SCUMMVM_SAVEPATH");
-#endif
-
-	// If SCUMMVM_SAVEPATH was not specified, try to use game specific savepath from config
-	if (!dir || dir[0] == 0)
-		dir = scummcfg->get("savepath");
-
-	// If SCUMMVM_SAVEPATH was not specified, try to use general path from config
-	if (!dir || dir[0] == 0)
-		dir = scummcfg->get("savepath", "scummvm");
-
-	// If no save path was specified, use no directory prefix
-	if (dir == NULL)
-		dir = "";
-#endif
+	const char *dir = getSavePath();
 
 	// snprintf should be used here, but it's not portable enough
 	sprintf(out, "%s%s.%c%.2d", dir, _exe_name, compatible ? 'c' : 's', slot);

@@ -50,11 +50,11 @@ byte * SmushPlayer::loadTres() {
 	FILE * f_tres;
 	uint32 tmp, l;
 
-	sprintf((char *)buf, "%sVIDEO/DIGTXT.TRS", (byte *)_scumm->_gameDataPath);
+	sprintf((char *)buf, "%sVIDEO/DIGTXT.TRS", (byte *)_scumm->getGameDataPath());
 	f_tres = (FILE*)_scumm->fileOpen((char *)&buf, 1);
 	
 	if (f_tres == NULL) {
-		sprintf((char *)buf, "%svideo/digtxt.trs", (byte *)_scumm->_gameDataPath);
+		sprintf((char *)buf, "%svideo/digtxt.trs", (byte *)_scumm->getGameDataPath());
 		f_tres = (FILE*)_scumm->fileOpen((char *)&buf, 1);
 		if (f_tres == NULL)
 			return NULL;
@@ -101,11 +101,11 @@ void SmushPlayer::loadFonts() {
 	for (l = 0; l < SP_MAX_FONTS; l++)
 	{
 		_fonts [l] = NULL;
-		sprintf((char *)buf, "%sVIDEO/FONT%d.NUT", (char *)_scumm->_gameDataPath, l);
+		sprintf((char *)buf, "%sVIDEO/FONT%d.NUT", (char *)_scumm->getGameDataPath(), l);
 		f_tres = (FILE*)_scumm->fileOpen((char *)buf, 1);
 
 		if (f_tres == NULL) {
-			sprintf((char *)buf, "%svideo/font%d.nut", (char *)_scumm->_gameDataPath, l);
+			sprintf((char *)buf, "%svideo/font%d.nut", (char *)_scumm->getGameDataPath(), l);
 			f_tres = (FILE*)_scumm->fileOpen((char *)buf, 1);
 			if (f_tres == NULL) 
 				continue;
@@ -425,11 +425,11 @@ uint32 SmushPlayer::nextBE32() {
 void SmushPlayer::openFile(byte *fileName) {
 	byte buf[100];
 
-	sprintf((char *)buf, "%sVIDEO/%s", (char *)_scumm->_gameDataPath, (char *)fileName);
+	sprintf((char *)buf, "%sVIDEO/%s", (char *)_scumm->getGameDataPath(), (char *)fileName);
 	_in = (FILE*)_scumm->fileOpen((char *)buf, 1);
 
 	if (_in == NULL) {
-		sprintf((char *)buf, "%svideo/%s", (char *)_scumm->_gameDataPath, (char *)fileName);
+		sprintf((char *)buf, "%svideo/%s", (char *)_scumm->getGameDataPath(), (char *)fileName);
 		_in = (FILE*)_scumm->fileOpen((char *)buf, 1);
 	}
 }

@@ -684,10 +684,10 @@ void * Sound::openSfxFile() {
 #ifdef COMPRESSED_SOUND_FILE
 	offset_table = NULL;
 
-	sprintf(buf, "%s%s.so3", _scumm->_gameDataPath, _scumm->_exe_name);
+	sprintf(buf, "%s%s.so3", _scumm->getGameDataPath(), _scumm->_exe_name);
 	file = fopen(buf, "rb");
 	if (!file) {
-		sprintf(buf, "%smonster.so3", _scumm->_gameDataPath);
+		sprintf(buf, "%smonster.so3", _scumm->getGameDataPath());
 		file = fopen(buf, "rb");
 	}
 	if (file != NULL) {
@@ -725,10 +725,10 @@ void * Sound::openSfxFile() {
 		return file;
 	}
 #endif
-	sprintf(buf, "%s%s.sou", _scumm->_gameDataPath, _scumm->_exe_name);
+	sprintf(buf, "%s%s.sou", _scumm->getGameDataPath(), _scumm->_exe_name);
 	file = fopen(buf, "rb");
 	if (!file) {
-		sprintf(buf, "%smonster.sou", _scumm->_gameDataPath);
+		sprintf(buf, "%smonster.sou", _scumm->getGameDataPath());
 		file = fopen(buf, "rb");
 	}
 	return file;
@@ -775,7 +775,7 @@ void Sound::playBundleMusic(int32 song) {
 	char buf[256];
 
 	if (_numberBundleMusic == -1) {
-		sprintf(buf, "%s%smusic.bun", _scumm->_gameDataPath, _scumm->_exe_name);
+		sprintf(buf, "%s%smusic.bun", _scumm->getGameDataPath(), _scumm->_exe_name);
 		if (_scumm->_bundle->openMusicFile((char*)&buf) == false)
 			return;
 		_musicBundleBufFinal = (byte*)malloc(OUTPUT_SIZE);
@@ -884,6 +884,7 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 
 	size = OUTPUT_SIZE;
 	ptr = _musicBundleBufFinal;
+
 	byte * buffer = NULL;
 	uint32 final_size = decode12BitsSample(ptr, &buffer, size);
 	_scumm->_mixer->play_raw(NULL, buffer, final_size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO);
@@ -893,7 +894,7 @@ void Sound::playBundleSound(char *sound) {
 	char buf[256];
 	byte * ptr;
 
-	sprintf(buf, "%s%svoice.bun", _scumm->_gameDataPath, _scumm->_exe_name);
+	sprintf(buf, "%s%svoice.bun", _scumm->getGameDataPath(), _scumm->_exe_name);
 	_scumm->_bundle->openVoiceFile((char*)&buf);
 	ptr = (byte *)malloc(1000000);
 	if (_scumm->_bundle->decompressVoiceSampleByName(sound, ptr) == 0) {
@@ -989,7 +990,7 @@ int Sound::getCachedTrack(int track) {
 	_current_cache %= CACHE_TRACKS;
 
 	// Not found, see if it exists
-	sprintf(track_name, "%strack%d.mp3", _scumm->_gameDataPath, track);
+	sprintf(track_name, "%strack%d.mp3", _scumm->getGameDataPath(), track);
 	file = fopen(track_name, "rb");
 	_cached_tracks[current_index] = track;
 

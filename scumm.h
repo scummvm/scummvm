@@ -412,7 +412,6 @@ public:
 	/* Core variable definitions */
 	byte _gameId;
 	const char *_gameText;
-	char *_gameDataPath;
 
 	/* Core class/array definitions */
 	Gdi gdi;

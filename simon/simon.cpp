@@ -126,7 +126,6 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 	midi.set_driver(driver);
 
 	_game = detector->_gameId;
-	_game_path = detector->_gameDataPath;
 
 	/* Setup mixer */
 	if (!_mixer->bind_to_system(syst))
@@ -4541,16 +4540,7 @@ bool SimonState::save_game(uint slot, const char *caption)
 char *SimonState::gen_savename(int slot)
 {
 	static char buf[256];
-	const char *dir;
-
-	/* perhaps getenv should be added to OSystem */
-#ifndef _WIN32_WCE
-	dir = getenv("SCUMMVM_SAVEPATH");
-	if (dir == NULL)
-		dir = "";
-#else
-	dir = _game_path;
-#endif
+	const char *dir = getSavePath();
 
 	sprintf(buf, "%sSAVE.%.3d", dir, slot);
 	return buf;

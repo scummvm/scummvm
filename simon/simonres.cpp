@@ -97,7 +97,7 @@ FILE *SimonState::fopen_maybe_lowercase(const char *filename)
 {
 	FILE *in;
 	char buf[256], dotbuf[256], *e;
-	const char *s = _game_path;
+	const char *s = _gameDataPath;
 
 	if (filename == NULL || *filename == '\0')
 		return NULL;
