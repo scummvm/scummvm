@@ -130,8 +130,9 @@ void IMuseDigital::callback() {
 				if (_track[l].stream->endOfData())
 					mixer_size *= 2;
 
+				int bits = _sound->getBits(_track[l].soundHandle);
 				do {
-					if (_sound->getBits(_track[l].soundHandle) == 12) {
+					if (bits == 12) {
 						byte *ptr = NULL;
 
 						mixer_size += _track[l].mod;
@@ -144,21 +145,15 @@ void IMuseDigital::callback() {
 						result = BundleCodecs::decode12BitsSample(ptr, &data, result2);
 
 						free(ptr);
-					} else if (_sound->getBits(_track[l].soundHandle) == 16) {
+					} else if (bits == 16) {
 						result = _sound->getDataFromRegion(_track[l].soundHandle, _track[l].curRegion, &data, _track[l].regionOffset, mixer_size);
-						if (_sound->getChannels(_track[l].soundHandle) == 2) {
-							if (result & 3)
-								result &= ~2;
-						}
 						if (_sound->getChannels(_track[l].soundHandle) == 1) {
-							if (result & 1)
-								result &= ~1;
+							result &= ~1;
 						}
-					} else if (_sound->getBits(_track[l].soundHandle) == 8) {
+					} else if (bits == 8) {
 						result = _sound->getDataFromRegion(_track[l].soundHandle, _track[l].curRegion, &data, _track[l].regionOffset, mixer_size);
 						if (_sound->getChannels(_track[l].soundHandle) == 2) {
-							if (result & 1)
-								result &= ~1;
+							result &= ~1;
 						}
 					}
 
@@ -252,21 +247,18 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 				bits = _sound->getBits(_track[l].soundHandle);
 				channels = _sound->getChannels(_track[l].soundHandle);
 				freq = _sound->getFreq(_track[l].soundHandle);
+				
 				_track[l].iteration = freq * channels;
 				if ((bits == 12) || (bits == 16))
 					_track[l].iteration *= 2;
 
+				assert(channels == 1 || channels == 2);
+				_track[l].pullSize = freq * channels;
 				if (channels == 2) {
 					mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
-					_track[l].pullSize = freq * 2;
-				} else {
-					_track[l].pullSize = freq;
 				}
 
-				if (bits == 12) {
-					mixerFlags |= SoundMixer::FLAG_16BITS;
-					_track[l].pullSize *= 2;
-				} else if (bits == 16) {
+				if ((bits == 12) || (bits == 16)) {
 					mixerFlags |= SoundMixer::FLAG_16BITS;
 					_track[l].pullSize *= 2;
 				} else if (bits == 8) {
@@ -275,6 +267,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 					error("IMuseDigital::startSound(): Can't handle %d bit samples", bits);
 
 				_track[l].pullSize /= 25;	// We want a "frame rate" of 25 audio blocks per second
+
 				if (soundGroup == IMUSE_MUSIC)
 					_curMusicId = soundId;
 			}
