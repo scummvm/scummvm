@@ -620,6 +620,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_VERB_ALLOWED = 0xFF;
 	VAR_CLICK_AREA = 0xFF;
 
+	VAR_VOICE_MODE = 0xFF;
+
 	// Use g_scumm from error() ONLY
 	g_scumm = this;
 
