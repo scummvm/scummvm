@@ -183,7 +183,12 @@ int Actor::remapDirection(int dir, bool is_walking)
 	bool flipX;
 	bool flipY;
 
-	if (!ignoreBoxes) {
+	// FIXME - why was this here? It breaks some animations in LoomCD, and logical,
+	// why should we not honor box flags when ignoreBoxes is on? If this change
+	// breaks anything, or if you know why the if() was in originally, please
+	// tell this to Fingolfin.
+	//if (!ignoreBoxes) {
+	if (1) {
 		specdir = _vm->_extraBoxFlags[walkbox];
 		if (specdir) {
 			if (specdir & 0x8000) {
