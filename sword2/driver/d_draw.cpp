@@ -87,7 +87,6 @@ void Display::setRenderLevel(int8 level) {
 	}
 }
 
-
 /**
  * Fill the screen buffer with palette colour zero. Note that it does not
  * touch the menu areas of the screen.

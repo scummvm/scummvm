@@ -357,7 +357,7 @@ int32 Logic::fnPlayMusic(int32 *params) {
 		// interruption to gameplay
 		_vm->_loopingMusicId = params[0];
 	} else {
- 		loopFlag = false;
+		loopFlag = false;
 
 		// don't need to restart this tune after control panel or
 		// restore

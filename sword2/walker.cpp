@@ -327,7 +327,7 @@ int32 Logic::fnTurn(int32 *params) {
 			error("Invalid direction (%d) in fnTurn", params[4]);
 
 	 	ob_mega = (Object_mega *) params[2];
-	
+
 		pars[4] = ob_mega->feet_x;
 		pars[5] = ob_mega->feet_y;
 		pars[6] = params[4];		// DIRECTION to turn to
@@ -704,7 +704,7 @@ int32 Logic::fnWalkToTalkToMega(int32 *params) {
 		}
 	}
 
-  	// first cycle builds the route - thereafter merely follows it
+	// first cycle builds the route - thereafter merely follows it
 
 	// Call fnWalk() with target coords set to feet coords. RESULT will
 	// be 1 when it finishes, or 0 if it failed to build route.

@@ -39,7 +39,7 @@ namespace Sword2 {
 #define _MAX_PATH 260
 
 #endif
-	
+
 //Generic error codes
 #define RD_OK				0x00000000
 #define RDERR_UNKNOWN			0x00000001
@@ -147,7 +147,7 @@ namespace Sword2 {
 //Menubar defines.
 #define RDMENU_TOP			0x00
 #define RDMENU_BOTTOM			0x01
-									
+
 #define RDMENU_HIDDEN			0x00
 #define RDMENU_SHOWN			0x01
 #define RDMENU_OPENING			0x02
@@ -169,7 +169,7 @@ namespace Sword2 {
 #define RDSE_FXLEADIN			2
 #define RDSE_FXLEADOUT			3
 #define RDSE_QUIET			1
-#define RDSE_SPEAKING          		0
+#define RDSE_SPEAKING			0
 
 
 #define RDPAL_FADE			0

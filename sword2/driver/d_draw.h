@@ -236,7 +236,7 @@ public:
 	int32 openLightMask(_spriteInfo *s);
 	int32 closeLightMask(void);
 };
- 
+
 } // End of namespace Sword2
 
 #endif

@@ -52,7 +52,7 @@ void LogMouseEvent(uint16 buttons) {
 	// We need to leave the one, which is the current event, alone!
 	if (mouseBacklog == MAX_MOUSE_EVENTS - 1)
 		return;
-	
+
 	me = &mouseLog[(mouseBacklog + mouseLogPos) % MAX_MOUSE_EVENTS];
 	me->buttons = buttons;
 	mouseBacklog++;

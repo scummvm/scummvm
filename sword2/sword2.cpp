@@ -546,7 +546,7 @@ void Sword2Engine::unpauseGame(void) {
 	setFullPalette(0xffffffff);
 
 	// If graphics level at max, turn up again
- 	if (_graphicsLevelFudged) {
+	if (_graphicsLevelFudged) {
 		gui->updateGraphicsLevel(3);
 		_graphicsLevelFudged = false;
 	}

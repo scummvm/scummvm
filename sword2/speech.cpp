@@ -1453,7 +1453,7 @@ void Logic::formText(int32 *params) {
 		// if a specific width has been set up for this character,
 		// then override the default
 
- 		if (ob_speech->width)
+		if (ob_speech->width)
 			textWidth = ob_speech->width;
 		else
 			textWidth = 400;

@@ -682,7 +682,7 @@ int32 Sound::playFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type) {
 					return RDERR_FXFUCKED;
 				}
 				_fx[i]._flags &= ~SoundMixer::FLAG_LOOP;
-				
+
 				byte volume = _musicMuted ? 0 : musicVolTable[_musicVol];
 
 				g_engine->_mixer->playRaw(&_fx[i]._handle, _fx[i]._buf, _fx[i]._bufSize, _fx[i]._rate, _fx[i]._flags, -1, volume, 0);

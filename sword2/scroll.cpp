@@ -52,13 +52,13 @@ void Sword2Engine::setScrolling(void) {
 		if (_thisScreen.max_scroll_offset_x > SCROLL_X)
 			_thisScreen.scroll_offset_x = SCROLL_X;
 		else
- 			_thisScreen.scroll_offset_x = _thisScreen.max_scroll_offset_x;
+			_thisScreen.scroll_offset_x = _thisScreen.max_scroll_offset_x;
 
 		// ensure not too far down
 		if (_thisScreen.max_scroll_offset_y > SCROLL_Y)
 			_thisScreen.scroll_offset_y = SCROLL_Y;
 		else
- 			_thisScreen.scroll_offset_y = _thisScreen.max_scroll_offset_y;
+			_thisScreen.scroll_offset_y = _thisScreen.max_scroll_offset_y;
 	} else {
 		// George's offset from the centre - the desired position
 		// for him
