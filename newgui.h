@@ -21,10 +21,14 @@
 #ifndef NEWGUI_H
 #define NEWGUI_H
 
+#include <stack>
+
 #include "scummsys.h"
 
 class Scumm;
 class Dialog;
+
+typedef std::stack<Dialog *> DialogStack;
 
 class NewGui {
 	friend class Dialog;
@@ -39,15 +43,15 @@ public:
 	void saveloadDialog();
 	void loop();
 
-	bool isActive()	{ return _active; }
+	bool isActive()	{ return ! _dialogStack.empty(); }
 
 	NewGui(Scumm *s);
 
 protected:
 	Scumm		*_s;
-	bool		_active;
 	bool		_need_redraw;
-	Dialog		*_activeDialog;
+//	Dialog		*_activeDialog;
+	DialogStack	_dialogStack;
 	
 	Dialog		*_pauseDialog;
 	Dialog		*_saveLoadDialog;
@@ -67,6 +71,9 @@ protected:
 
 	void saveState();
 	void restoreState();
+	
+	void openDialog(Dialog *dialog);
+	void closeTopDialog();
 
 public:
 	// Drawing

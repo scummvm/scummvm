@@ -28,7 +28,7 @@
 #define vline(x, y, y2, color) line(x, y, x, y2, color);
 
 
-NewGui::NewGui(Scumm *s):_s(s), _active(false), _need_redraw(false), _activeDialog(0)
+NewGui::NewGui(Scumm *s) : _s(s), _need_redraw(false)
 {
 	_pauseDialog = new PauseDialog(this);
 	_saveLoadDialog = new SaveLoadDialog(this);
@@ -36,33 +36,31 @@ NewGui::NewGui(Scumm *s):_s(s), _active(false), _need_redraw(false), _activeDial
 
 void NewGui::pauseDialog()
 {
-	_active = true;
-	_activeDialog = _pauseDialog;
-	_need_redraw = true;
+	openDialog(_pauseDialog);
 }
 
 void NewGui::saveloadDialog()
 {
-	_active = true;
-	_activeDialog = _saveLoadDialog;
-	_need_redraw = true;
+	openDialog(_saveLoadDialog);
 }
 
 void NewGui::loop()
 {
+	Dialog *activeDialog = _dialogStack.top();
+	
 	if (_need_redraw) {
-		_activeDialog->draw();
+		activeDialog->draw();
 		saveState();
 		_need_redraw = false;
 	}
 	_s->animateCursor();
 	_s->getKeyInput(0);
 	if (_s->_mouseButStat & MBS_LEFT_CLICK) {
-		_activeDialog->handleClick(_s->mouse.x, _s->mouse.y, _s->_mouseButStat);
+		activeDialog->handleClick(_s->mouse.x, _s->mouse.y, _s->_mouseButStat);
 	} else if (_s->_lastKeyHit) {
-		_activeDialog->handleKey(_s->_lastKeyHit, 0);
+		activeDialog->handleKey(_s->_lastKeyHit, 0);
 	} else if (_old_mouse.x != _s->mouse.x || _old_mouse.y != _s->mouse.y) {
-		_activeDialog->handleMouseMoved(_s->mouse.x, _s->mouse.y, _s->_mouseButStat);
+		activeDialog->handleMouseMoved(_s->mouse.x, _s->mouse.y, _s->_mouseButStat);
 		_old_mouse.x = _s->mouse.x;
 		_old_mouse.y = _s->mouse.y;
 	}
@@ -107,6 +105,21 @@ void NewGui::restoreState()
 	_s->_system->show_mouse(_old_cursor_mode);
 
 	_s->pauseSounds(_old_soundsPaused);
+}
+
+void NewGui::openDialog(Dialog *dialog)
+{
+	_dialogStack.push(dialog);
+	_need_redraw = true;
+}
+
+void NewGui::closeTopDialog()
+{
+	_dialogStack.pop();
+	if (_dialogStack.empty())
+		restoreState();
+	else
+		_dialogStack.top()->draw();
 }
 
 #pragma mark -

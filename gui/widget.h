@@ -87,8 +87,8 @@ public:
 	uint32 getCmd();
 	void handleClick(int button);
 
-	void handleMouseEntered(int button)	{ printf("handleMouseEntered\n"); setFlags(WIDGET_HILITED); draw(); }
-	void handleMouseLeft(int button)	{ printf("handleMouseLeft\n"); clearFlags(WIDGET_HILITED); draw(); }
+	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
+	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); draw(); }
 };
 
 

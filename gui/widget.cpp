@@ -25,7 +25,7 @@
 
 
 Widget::Widget (Dialog *boss, int x, int y, int w, int h)
-: _boss(boss), _x(x), _y(y), _w(w), _h(h), _id(0), _flags(0)
+	: _boss(boss), _x(x), _y(y), _w(w), _h(h), _id(0), _flags(0)
 {
 	// Insert into the widget list of the boss
 	_next = _boss->_firstWidget;
@@ -51,6 +51,7 @@ void Widget::draw()
 		_x += 4;
 		_y += 4;
 	}
+	
 	// Now perform the actual widget draw
 	drawWidget(_flags & WIDGET_HILITED);
 
@@ -58,6 +59,7 @@ void Widget::draw()
 		_x -= 4;
 		_y -= 4;
 	}
+	
 	// Restore x/y
 	_x -= _boss->_x;
 	_y -= _boss->_y;
@@ -68,7 +70,7 @@ void Widget::draw()
 
 
 StaticTextWidget::StaticTextWidget(Dialog *boss, int x, int y, int w, int h, const char *text)
-:Widget (boss, x, y, w, h)
+	: Widget (boss, x, y, w, h)
 {
 	// FIXME - maybe we should make a real copy of the string?
 	_text = text;
@@ -85,7 +87,7 @@ void StaticTextWidget::drawWidget(bool hilite)
 
 
 ButtonWidget::ButtonWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd)
-:StaticTextWidget(boss, x, y, w, h, label), _cmd(cmd), _hotkey(0)
+	: StaticTextWidget(boss, x, y, w, h, label), _cmd(cmd), _hotkey(0)
 {
 	_flags = WIDGET_ENABLED | WIDGET_BORDER /* | WIDGET_CLEARBG */ ;
 }

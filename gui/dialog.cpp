@@ -74,11 +74,7 @@ Widget *Dialog::findWidget(int x, int y)
 
 void Dialog::close()
 {
-	// FIXME - this code should be inside the Gui class, and should be 
-	// extended to support nested dialogs.
-	_gui->restoreState();
-	_gui->_active = false;
-	_gui->_activeDialog = 0;
+	_gui->closeTopDialog();
 }
 
 void Dialog::addResText(int x, int y, int w, int h, int resID)
@@ -116,7 +112,7 @@ enum {
 };
 
 SaveLoadDialog::SaveLoadDialog(NewGui *gui)
-:Dialog (gui, 30, 20, 260, 124)
+	: Dialog (gui, 30, 20, 260, 124)
 {
 	addResText(10, 7, 240, 16, 1);
 //  addResText(10, 7, 240, 16, 2);
@@ -135,6 +131,8 @@ void SaveLoadDialog::handleCommand(uint32 cmd)
 	case kSaveCmd:
 		break;
 	case kLoadCmd:
+		// FIXME HACK - just to demo the nesting ability
+		_gui->pauseDialog();
 		break;
 	case kPlayCmd:
 		close();
@@ -152,7 +150,7 @@ void SaveLoadDialog::handleCommand(uint32 cmd)
 
 
 PauseDialog::PauseDialog(NewGui *gui)
-:Dialog (gui, 50, 80, 220, 16)
+	: Dialog (gui, 50, 80, 220, 16)
 {
 	addResText(2, 2, 220, 16, 10);
 }
