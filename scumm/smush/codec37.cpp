@@ -85,7 +85,7 @@ Codec37Decoder::~Codec37Decoder() {
 }
 
 void Codec37Decoder::maketable(int pitch, int index) {
-	static const char maketable_bytes[] = {
+	static const signed char maketable_bytes[] = {
 		0, 0, 1, 0, 2, 0, 3, 0, 5, 0, 8, 0, 13, 0, 21, 0,
 		-1, 0, -2, 0, -3, 0, -5, 0, -8, 0, -13, 0, -17, 0, -21, 0,
 		0, 1, 1, 1, 2, 1, 3, 1, 5, 1, 8, 1, 13, 1, 21, 1,
