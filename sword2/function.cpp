@@ -617,7 +617,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 	int startLine = 0;
 	int scrollPos = 0;
 
-	while (scrollPos < lineTop + CREDITS_FONT_HEIGHT) {
+	while (scrollPos < lineTop + CREDITS_FONT_HEIGHT && !_vm->_quit) {
 		bool foundStartLine = false;
 
 		_vm->_graphics->clearScene();
@@ -685,6 +685,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 			fnStopMusic(NULL);
 			break;
 		}
+	  
 
 		_vm->_system->delay_msecs(30);
 
@@ -704,14 +705,19 @@ int32 Logic::fnPlayCredits(int32 *params) {
 	if (logoData)
 		free(logoData);
 
+	if (_vm->_quit)
+		return IR_CONT;
+
 	_vm->_graphics->fadeDown();
 	_vm->_graphics->waitForFade();
 
 	// The music should have stopped by now, but I suppose there is a
 	// slim chance it hasn't on a really, really fast computer.
 
-	while (_vm->_sound->musicTimeRemaining())
+	while (_vm->_sound->musicTimeRemaining()) {
+		_vm->_graphics->updateDisplay(false);
 		_vm->_system->delay_msecs(100);
+	}
 
 	_vm->_sound->restoreMusicState();
 	_vm->_sound->muteFx(false);

@@ -233,7 +233,7 @@ int32 MoviePlayer::play(char *filename, MovieTextObject *text[], uint8 *musicOut
 
 			KeyboardEvent ke;
 
-			if (_vm->_input->readKey(&ke) == RD_OK && ke.keycode == 27) {
+			if ((_vm->_input->readKey(&ke) == RD_OK && ke.keycode == 27) || _vm->_quit) {
 				_vm->_mixer->stopHandle(handle);
 				skipCutscene = true;
 				break;
@@ -252,8 +252,9 @@ int32 MoviePlayer::play(char *filename, MovieTextObject *text[], uint8 *musicOut
 		// it's in use.
 
 		while (handle.isActive()) {
+			_vm->_graphics->updateDisplay(false);
 			_vm->_system->delay_msecs(100);
-		};
+		}
 
 		closeTextObject(text[textCounter]);
 

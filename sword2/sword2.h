@@ -48,7 +48,6 @@ enum {
 
 class Sword2Engine : public Engine {
 private:
-	bool _quit;
 	uint32 _bootParam;
 	int32 _saveSlot;
 
@@ -130,6 +129,9 @@ public:
 	~Sword2Engine();
 	void go(void);
 	int32 initialiseGame(void);
+
+	bool _quit;
+
 	uint32 _features;
 	char *_targetName; // target name for saves
 

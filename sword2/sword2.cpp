@@ -293,6 +293,8 @@ void Sword2Engine::gameCycle(void) {
 void Sword2Engine::go() {
 	KeyboardEvent ke;
 
+	_quit = false;
+
 	debug(5, "CALLING: readOptionSettings");
 	_gui->readOptionSettings();
 
@@ -318,7 +320,6 @@ void Sword2Engine::go() {
 					// 1 in 4 frames, to speed up game
 
 	_gameCycle = 0;
-	_quit = false;
 
 	while (1) {
 		if (_debugger->isAttached())
