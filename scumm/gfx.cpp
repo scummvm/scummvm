@@ -1875,13 +1875,18 @@ void Gdi::decodeNESGfx(const byte *room) {
 
 void Gdi::drawStripNES(byte *dst, int dstPitch, int stripnr, int height) {
 //	printf("drawStripNES, pitch=%i, strip=%i, height=%i\n",dstPitch,stripnr,height);
-	if (height != 128)
-	{
-//		debug(0,"NES room data %i (not 128) pixels high!\n",height);
-		height = 128;
-	}
 	height /= 8;
 	int x = stripnr + 2;	// NES version has a 2 tile gap on each edge
+
+	if (height > 16) {
+//		debug(0,"NES room data %i (not 128) pixels high!\n",height);
+		height = 16;
+	}
+	if (x > 63)
+	{
+		debug(0,"NES tried to render invalid strip %i",stripnr);
+		return;
+	}
 	for (int y = 0; y < height; y++) {
 		int palette = (_NESAttributes[((y << 2) & 0x30) | ((x >> 2) & 0xF)] >> (((y & 2) << 1) | (x & 2))) & 0x3;
 		int tile = _NESNametable[y][x];
