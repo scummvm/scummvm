@@ -1196,6 +1196,32 @@ int ScummEngine_v90he::getWizImageStates(int resnum) {
 	}
 }
 
+int ScummEngine_v90he::isWizPixelNonTransparent(int restype, int resnum, int state, int x, int y, int flags) {
+	warning("ScummEngine_v90he::isWizPixelNonTransparent() unimplemented");
+	return 0;
+}
+
+uint8 ScummEngine_v90he::getWizPixelColor(int restype, int resnum, int state, int x, int y, int flags) {
+	uint8 color;
+	const uint8 *data = getResourceAddress(restype, resnum);
+	assert(data);
+	const uint8 *wizh = findWrappedBlock(MKID('WIZH'), data, state, 0);
+	assert(wizh);
+	uint32 c = READ_LE_UINT32(wizh + 0x0);
+	uint32 w = READ_LE_UINT32(wizh + 0x4);
+	uint32 h = READ_LE_UINT32(wizh + 0x8);
+	const uint8 *wizd = findWrappedBlock(MKID('WIZD'), data, state, 0);
+	assert(wizd);		
+	if (c == 1) {
+		color = gdi.getWizPixelColor_type1(wizd, x, y, w, h, VAR(VAR_WIZ_TCOLOR));
+	} else if (c == 0 || c == 2 || c == 3) {
+		color = gdi.getWizPixelColor_type0(wizd, x, y, w, h, VAR(VAR_WIZ_TCOLOR));
+	} else {
+		color = VAR(VAR_WIZ_TCOLOR);
+	}
+	return color;
+}
+
 void ScummEngine_v90he::o90_unknown29() {
 	int state, resId;
 	int32 w, h;
@@ -1234,18 +1260,18 @@ void ScummEngine_v90he::o90_unknown29() {
 		push(getWizImageStates(resId));
 		break;
 	case 15:
-		pop();
-		pop();
-		pop();
-		pop();
-		push(0);
+		y = pop();
+		x = pop();
+		state = pop();
+		resId = pop();
+		push(isWizPixelNonTransparent(rtImage, resId, state, x, y, 0));
 		break;
 	case 36:
-		pop();
-		pop();
-		pop();
-		pop();
-		push(0);
+		y = pop();
+		x = pop();
+		state = pop();
+		resId = pop();
+		push(getWizPixelColor(rtImage, resId, state, x, y, 0));
 		break;
 	case 100: // SO_GET_WIZ_HISTOGRAM
 		pop();

@@ -875,6 +875,8 @@ protected:
 	void drawWizComplexPolygon(int resnum, int state, int po_x, int po_y, int arg14, int angle, int zoom, const Common::Rect *r);
 	void displayWizComplexImage(const WizParameters *params);
 	void processWizImage(const WizParameters *params);
+	int isWizPixelNonTransparent(int restype, int resnum, int state, int x, int y, int flags);
+	uint8 getWizPixelColor(int restype, int resnum, int state, int x, int y, int flags);
 	
 	/* HE version 90 script opcodes */
 	void o90_dup();

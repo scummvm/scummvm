@@ -1767,13 +1767,15 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, const WizImage *pwi) {
 			warning("drawWizImage() unhandled flag 0x2");
 			// XXX modify 'RMAP' buffer
 		}
+		if (pwi->flags & 4) {
+			warning("WizImage printing is unimplemented");
+			return NULL;
+		}
 		uint32 cw, ch;
-		if (pwi->flags & 0x24) { // printing (0x4) or rendering to memory (0x20)
+		if (pwi->flags & 0x20) {
 			dst = (uint8 *)malloc(width * height);
-			if (pwi->flags & 0x20) {
-				int color = 255; // FIXME: should be (VAR_WIZ_TCOLOR != 0xFF) ? VAR(VAR_WIZ_TCOLOR) : 5;
-				memset(dst, color, width * height);
-			}
+			int color = 255; // FIXME: should be (VAR_WIZ_TCOLOR != 0xFF) ? VAR(VAR_WIZ_TCOLOR) : 5;
+			memset(dst, color, width * height);
 			cw = width;
 			ch = height;
 		} else {
@@ -1807,11 +1809,8 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, const WizImage *pwi) {
 		} else {
 			warning("unhandled wiz compression type %d", comp);
 		}
-		if (pwi->flags & 4) {
-			warning("WizImage printing is unimplemented");
-			free(dst);
-			dst = NULL;
-		} else if (!(pwi->flags & 0x20)) {
+
+		if (!(pwi->flags & 0x20)) {
 			Common::Rect rImage(pwi->x1, pwi->y1, pwi->x1 + width, pwi->y1 + height);
 			if (rImage.intersects(rScreen)) {
 				rImage.clip(rScreen);

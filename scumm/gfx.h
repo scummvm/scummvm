@@ -280,6 +280,8 @@ public:
 	void copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect);
 	void copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor);
 	void decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRect, const uint8 *src, const Common::Rect &srcRect);
+	uint8 getWizPixelColor_type0(const uint8 *data, int x, int y, int w, int h, uint8 color);
+	uint8 getWizPixelColor_type1(const uint8 *data, int x, int y, int w, int h, uint8 color);
 	void copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect);
 	void decompressAuxImage(uint8 *dst1, uint8 *dst2, int dstPitch, const Common::Rect &dstRect, const uint8 *src, const Common::Rect &srcRect);
 	void copyVirtScreenBuffers(const Common::Rect &rect);

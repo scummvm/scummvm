@@ -1478,7 +1478,6 @@ void Gdi::copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int src
 	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
 		for (int i = 0; i < 256; i++)
 			_wizImagePalette[i] = i;
-		dst += r2.left + r2.top * dstw;
 		decompressWizImage(dst, dstw, r2, src, r1);
 	}
 }
@@ -1486,13 +1485,13 @@ void Gdi::copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int src
 void Gdi::copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor) {
 	Common::Rect r1, r2;
 	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
-		if (flags & 0x40) {
+		if (flags & 0x400) {
 			int l = r1.left;
 			int r = r1.right;
 			r1.left = srcw - r;
 			r1.right = srcw - l;
 		}
-		if (flags & 0x80) {
+		if (flags & 0x800) {
 			int t = r1.top;
 			int b = r1.bottom;
 			r1.top = srch - b;
@@ -1506,12 +1505,12 @@ void Gdi::copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int 
 		}
 		int h = r1.height();
 		int w = r1.width();
-		dst += r2.top * dstw;
+		dst += r2.left + r2.top * dstw;
 		while (h--) {
 			for (int i = 0; i < w; ++i) {
 				uint8 col = *src++;
 				if (transColor == -1 || transColor != col) {
-					dst[r2.left + i] = palPtr[col];
+					dst[i] = palPtr[col];
 				}
 			}
 			dst += dstw;
@@ -1528,7 +1527,7 @@ void Gdi::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRe
 	uint16 off;
 	int color;
 	
-	dstPtr = dst;
+	dstPtr = dst + dstRect.left + dstRect.top * dstPitch;
 	dataPtr = src;
 	
 	// Skip over the first 'srcRect->top' lines in the data
@@ -1536,10 +1535,10 @@ void Gdi::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRe
 	while (h--) {
 		dataPtr += READ_LE_UINT16(dataPtr) + 2;
 	}
-	h = srcRect.bottom - srcRect.top;
+	h = srcRect.height();
 	if (h <= 0)
 		return;
-	w = srcRect.right - srcRect.left;
+	w = srcRect.width();
 	if (w <= 0)
 		return;
 		
@@ -1625,6 +1624,61 @@ dec_next:
 	}
 }
 
+uint8 Gdi::getWizPixelColor_type0(const uint8 *data, int x, int y, int w, int h, uint8 color) {
+	uint8 c;
+	if (x >= 0 && x < w && y >= 0 && y < h) {
+		c = *(data + y * w + x);
+	} else {
+		c = color;
+	}
+	return c;
+}
+
+uint8 Gdi::getWizPixelColor_type1(const uint8 *data, int x, int y, int w, int h, uint8 color) {
+	uint8 c = color;
+	if (x >= 0 && x < w && y >= 0 && y < h) {
+		while (y != 0) {
+			data += READ_LE_UINT16(data) + 2;
+			--y;
+		}
+		uint16 off = READ_LE_UINT16(data);
+		if (off != 0) {
+			if (x == 0) {
+				c = (*data & 1) ? color : *data;
+			} else {
+				do {
+					uint8 code = *data++;
+					if (code & 1) {
+						code >>= 1;
+						if (code > x) {
+							c = color;
+							break;
+						}
+						x -= code;
+					} else if (code & 2) {
+						code = (code >> 2) + 1;
+						if (code > x) {
+							c = *data;
+							break;
+						}
+						x -= code;
+						++data;
+					} else {
+						code = (code >> 2) + 1;
+						if (code > x) {
+							c = *(data + x);
+							break;
+						}
+						x -= code;
+						data += code;
+					}				
+				} while (x > 0);
+			}
+		}
+	}
+	return c;
+}
+
 void Gdi::copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect) {
 	Common::Rect r1, r2;
 	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
@@ -1648,10 +1702,10 @@ void Gdi::decompressAuxImage(uint8 *dst1, uint8 *dst2, int dstPitch, const Commo
 	while (h--) {
 		dataPtr += READ_LE_UINT16(dataPtr) + 2;
 	}
-	h = srcRect.bottom - srcRect.top;
+	h = srcRect.height();
 	if (h <= 0)
 		return;
-	w = srcRect.right - srcRect.left;
+	w = srcRect.width();
 	if (w <= 0)
 		return;
 
