@@ -1894,7 +1894,6 @@ void Scumm::o5_roomOps()
 	}
 
 	_opcode = fetchScriptByte();
-
 	switch (_opcode & 0x1F) {
 	case 1:											/* room scroll */
 		if (!(_features & GF_OLD256)) {
@@ -2240,7 +2239,7 @@ void Scumm::o5_soundKludge()
 	int i;
 
 	if (_features & GF_SMALL_HEADER)	// Is dummy function in
-		return;											// SCUMM V3
+		return;				// SCUMM V3
 
 	for (i = 0; i < 15; i++)
 		items[i] = 0;
@@ -2693,7 +2692,8 @@ void Scumm::decodeParseString()
 		textSlot = 0;
 	}
 
-	setStringVars(textSlot);
+	if (_gameId != GID_INDY3_256)	 // Indy3 seems to need to keep the string positions.
+		setStringVars(textSlot); // See, for example, the text positioning in the grail diary
 
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		switch (_opcode & 0xF) {

@@ -692,6 +692,9 @@ void Scumm::drawString(int a)
 		charset._ypos2 = charset._top;
 	} 
 
+
+	_string[a].xpos = charset._strRight + 8;	// Indy3: Fixes Grail Diary text positioning
+
 	if (_features & GF_AFTER_V7) {
 		charset._hasMask = true;
 		if (charset._strLeft < gdi._mask_left)
