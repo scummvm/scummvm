@@ -71,6 +71,15 @@ Interp.c
  threadBase.withObject     threadVars[kVarWithObject]
  threadBase.theActor       threadVars[kVarActor]
 
+Actor.h
+=======
+ GOF_PROTAGONIST           kProtagonist
+ GOF_FOLLOWER              kFollower
+ GOF_CYCLE                 kCycle
+ GOF_FASTER                kFaster
+ GOF_FASTEST               kFastest
+ GOF_EXTENDED              kExtended
+
 Actor.c
 =======
  abortAllSpeeches()        SThreadAbortAll()
