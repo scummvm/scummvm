@@ -127,9 +127,9 @@ protected:
 
 	void setBox(int box);
 	int updateActorDirection(bool is_walking);
-	void adjustActorPos();
 
 public:
+	void adjustActorPos();
 	AdjustBoxResult adjustXYToBeInBox(int dstX, int dstY, int pathfrom);
 
 	void setDirection(int direction);

@@ -1143,7 +1143,7 @@ byte *Scumm::getStringAddress(int i)
 {
 	byte *b = getResourceAddress(rtString, i);
 	if (!b)
-		return b;
+		return NULL;
 
 	if (_features & GF_NEW_OPCODES)
 		return ((ArrayHeader *)b)->data;

@@ -284,25 +284,25 @@ bool ScummDebugger::Cmd_LoadGame(int argc, const char **argv) {
 		_s->_saveLoadCompatible = false;
 		
 		_detach_now = true;
-	} else {
-		Debug_Printf("Syntax: savegame <slotnum>\n");
+		return false;
 	}
-	return false;
+
+	Debug_Printf("Syntax: loadgame <slotnum>\n");
+	return true;
 }
 	
 bool ScummDebugger::Cmd_SaveGame(int argc, const char **argv) {
-	if (argc > 1) {
+	if (argc > 2) {
 		int slot = atoi(argv[1]);
-		
+
+		strcpy(_s->_saveLoadName, argv[2]);
 		_s->_saveLoadSlot = slot;
 		_s->_saveLoadFlag = 1;
 		_s->_saveLoadCompatible = false;
-		
-		_detach_now = true;
-	} else {
-		Debug_Printf("Syntax: savegame <slotnum>\n");
-	}
-	return false;
+	} else
+		Debug_Printf("Syntax: savegame <slotnum> <name>\n");
+
+	return true;
 }
 
 bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {

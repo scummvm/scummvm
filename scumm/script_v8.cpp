@@ -249,7 +249,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_pickupObject),
 		OPCODE(o6_setBoxFlags),
 		/* A8 */
-		OPCODE(o6_createBoxMatrix),
+		OPCODE(o8_createBoxMatrix),
 		OPCODE(o6_invalid),
 		OPCODE(o8_resourceRoutines),
 		OPCODE(o8_roomOps),
@@ -865,6 +865,20 @@ void Scumm_v8::o8_cursorCommand()
 	_vars[VAR_USERPUT] = _userPut;
 }
 
+void Scumm_v8::o8_createBoxMatrix()
+{
+	int i;
+	Actor *a;
+
+	createBoxMatrix();
+
+	for(i = 1; i < NUM_ACTORS; i++) {
+		a = &_actors[i];
+		if (a && a->isInCurrentRoom())
+			a->adjustActorPos();
+	}
+}
+
 void Scumm_v8::o8_resourceRoutines()
 {
 	// TODO
@@ -1457,15 +1471,35 @@ void Scumm_v8::o8_kernelSetFunctions()
 	case 24:	// clearTextQueue
 		warning("o8_kernelSetFunctions: clearTextQueue()");
 		break;
-	case 25:	// saveGameWrite
-		warning("o8_kernelSetFunctions: saveGameWrite(%d, %d)", args[1], args[2]);
+	case 25: {	// saveGameReadName
+		SaveFileManager *mgr = _system->get_savefile_manager();
+		char *address = (char*)getStringAddress(args[2]);
+		char name[30];
+
+		if (!address) {
+			warning("o8_kernelSetFunctions: saveGameReadName failed finding slot string %d", args[2]);
+			break;
+		}
+		getSavegameName(args[1] - 1, name, mgr);
+		if (strlen(name) > 0 && strlen(name) < 30)
+			strcpy(address, name);
 		break;
-	case 26:	// saveGameRead
-		warning("o8_kernelSetFunctions: saveGameRead(%d, %d)", args[1], args[2]);
+	}
+	case 26: {	// saveGame?
+		//SaveFileManager *mgr = _system->get_savefile_manager();
+		//char *address = (char*)getStringAddress(args[2]);
+		char address[30];
+		warning("o8_kernelSetFunctions: saveGame?(%d, %s)", args[1], address);
 		break;
-	case 27:	// saveGameReadName
-		warning("o8_kernelSetFunctions: saveGameReadName(%d)", args[1]);
+	}
+	case 27: {	// FIXME: This doesn't work
+			// saveGameRead
+		_saveLoadSlot = 0;
+		_saveLoadFlag = 2;
+		_saveLoadCompatible = false;
+		warning("Sgl: %d\n", args[1]);
 		break;
+	}
 	case 28:	// saveGameStampScreenshot
 		warning("o8_kernelSetFunctions: saveGameStampScreenshot(%d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6]);
 		break;
@@ -1686,14 +1720,18 @@ void Scumm_v8::o8_getObjectImageHeight()
 
 void Scumm_v8::o8_getStringWidth()
 {
+	char temp[1024];
 	int charset = pop();
 	int len = resStrLen(_scriptPointer);
 	int oldID = _charset->getCurID(); 
 	int width;
 	
+	// Parse the string to get rid of substitution codes
+	strcpy(temp, (char*)_scriptPointer);
+	addMessageToStack((byte*)&temp);
 	// Temporary set the specified charset id
 	_charset->setCurID(charset);
-	width = _charset->getStringWidth(0, _scriptPointer);
+	width = _charset->getStringWidth(0, (byte*)temp);
 	_charset->setCurID(oldID);
 	
 	push(width);

@@ -1,6 +1,6 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
- * wCopyright (C) 2001/2002 The ScummVM project
+ * Copyright (C) 2001-2003 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -461,7 +461,7 @@ int Scumm::scummLoop(int delta)
 	_vars[VAR_GAME_LOADED] = 0;
 	if (_saveLoadFlag) {
 		bool success;
-		const char *errMsg = "Succesfully saved game state to file:\n\n%s";
+		const char *errMsg = "Succesfully saved/loaded game state in file:\n\n%s";
 		char filename[256];
 
 		if (_saveLoadFlag == 1) {
