@@ -30,7 +30,6 @@ class BundleDirCache {
 public:
 	struct AudioTable {
 		char filename[13];
-		int32 size;
 		int32 offset;
 	};
 private:

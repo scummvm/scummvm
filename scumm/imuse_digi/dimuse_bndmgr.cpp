@@ -104,7 +104,6 @@ int BundleDirCache::matchFile(const char *filename, const char *directory) {
 			name[z] = '\0';
 			strcpy(_budleDirCache[freeSlot].bundleTable[i].filename, name);
 			_budleDirCache[freeSlot].bundleTable[i].offset = file.readUint32BE();
-			_budleDirCache[freeSlot].bundleTable[i].size = file.readUint32BE();
 		}
 		return freeSlot;
 	} else {
