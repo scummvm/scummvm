@@ -399,7 +399,7 @@ void Logic::initialise() {
 }
 
 
-ObjectData* Logic::objectData(int index) {
+ObjectData* Logic::objectData(int index) const {
 	index = abs(index); // cyx: is that really necessary ?
 	if (index <= _numObjects)
 		return &_objectData[index];
@@ -407,19 +407,23 @@ ObjectData* Logic::objectData(int index) {
 		error("[Logic::objectData] Invalid object data index: %i", index);
 }
 
-uint16 Logic::roomData(int room) {
+uint16 Logic::roomData(int room) const {
 	return _roomData[room];
 }
 
-uint16 Logic::objMax(int room) {
+uint16 Logic::objMax(int room) const {
 	return _objMax[room];
 }
 
-Area *Logic::area(int room, int num) {
+GraphicData *Logic::graphicData(int index) const {
+	return &_graphicData[index];
+}
+
+Area *Logic::area(int room, int num) const {
 	return &_area[room][num];
 }
 
-Area *Logic::currentRoomArea(int num) {
+Area *Logic::currentRoomArea(int num) const {
 	if (num == 0 || num > _areaMax[_currentRoom]) {
 		error("Logic::currentRoomArea() - Bad area number = %d (max = %d), currentRoom = %d", num, _areaMax[_currentRoom], _currentRoom);
 	}
@@ -427,24 +431,20 @@ Area *Logic::currentRoomArea(int num) {
 	return &_area[_currentRoom][num];
 }
 
-uint16 Logic::areaMax(int room) {
+uint16 Logic::areaMax(int room) const {
 	return _areaMax[room];
 }
 
-uint16 Logic::currentRoomAreaMax() {
+uint16 Logic::currentRoomAreaMax() const {
 	return _areaMax[_currentRoom];
 }
 
-uint16 Logic::walkOffCount() {
+uint16 Logic::walkOffCount() const {
 	return _numWalkOffs;
 }
 
-WalkOffData *Logic::walkOffData(int index) {
+WalkOffData *Logic::walkOffData(int index) const {
 	return &_walkOffData[index];
-}
-
-GraphicData *Logic::graphicData(int index) {
-	return &_graphicData[index];
 }
 
 uint16 Logic::findBob(uint16 obj) {
@@ -1962,10 +1962,11 @@ uint16 Logic::findObjectRoomNumber(uint16 zoneNum) const {
 	// l.316-327 select.c
 	uint16 noun = zoneNum;
 	uint16 objectMax = _objMax[_currentRoom];
+	debug(0, "Logic::findObjectRoomNumber(%X, %X)", zoneNum, objectMax);
 	if (zoneNum > objectMax) {
 		// this is an area box, check for associated object
 		uint16 obj = _area[_currentRoom][zoneNum - objectMax].object;
-		if (obj != 0 && _objectData[obj].name != 0) {
+		if (obj != 0 && objectData(obj)->name != 0) {
 			// there is an object, get its number
 			noun = obj - _roomData[_currentRoom];
 		}

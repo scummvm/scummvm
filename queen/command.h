@@ -66,7 +66,6 @@ struct CurrentCmdState {
 	Verb action;
 	int16 oldNoun;
 	int16 noun;
-	//! current level of the command (max=2 for GIVE and USE verbs)
 	int commandLevel;
 	int16 subject1;
 	int16 subject2;
@@ -77,7 +76,6 @@ struct SelectedCmdState {
 
 	void init();
 	
-	//! locked verb (using 2nd mouse button)
 	Verb defaultVerb;
 	Verb action;
 	int16 noun;
@@ -108,7 +106,10 @@ public:
 		MAX_MATCHING_CMDS = 50
 	};
 
+
 private:
+
+	void executeCommand(uint16 comId, int16 condResult);
 
 	int16 makeJoeWalkTo(int16 x, int16 y, int16 objNum, const Verb &v, bool mustWalk);
 
@@ -121,7 +122,7 @@ private:
 	bool executeIfCutaway(const char *description);
 	bool executeIfDialog(const char *description);
 	
-	bool handleBadCommand(bool walk);
+	bool handleDefaultCommand(bool walk);
 	void executeStandardStuff(const Verb& action, int16 subj1, int16 subj2);
 	void changeObjectState(const Verb& action, int16 obj, int16 song, bool cutDone);
 	void cleanupCurrentAction();

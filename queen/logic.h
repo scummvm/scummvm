@@ -143,10 +143,10 @@ public:
 			error("Invalid room number: %i", room);
 	}
 
-	ObjectData *objectData(int index);
-	uint16 roomData(int room);
-	uint16 objMax(int room);
-	GraphicData *graphicData(int index);
+	ObjectData *objectData(int index) const;
+	uint16 roomData(int room) const;
+	uint16 objMax(int room) const;
+	GraphicData *graphicData(int index) const;
 	ItemData *itemData(int index) const { return &_itemData[index]; }
 	uint16 itemDataCount() const { return _numItems; }
 
@@ -155,12 +155,12 @@ public:
 	uint16 objectForPerson(uint16 bobnum) const; // OBJ_PERSON
 	WalkOffData *walkOffPointForObject(uint16 obj) const;
 
-	Area *area(int room, int num);
-	Area *currentRoomArea(int num);
-	uint16 areaMax(int room);
-	uint16 currentRoomAreaMax();
-	uint16 walkOffCount();
-	WalkOffData *walkOffData(int index);
+	Area *area(int room, int num) const;
+	Area *currentRoomArea(int num) const;
+	uint16 areaMax(int room) const;
+	uint16 currentRoomAreaMax() const;
+	uint16 walkOffCount() const;
+	WalkOffData *walkOffData(int index) const;
 	uint16 currentRoomObjMax() const { return _objMax[_currentRoom]; }
 	uint16 currentRoomData() const { return _roomData[_currentRoom]; }
 	ObjectDescription *objectDescription(uint16 objNum) const { return &_objectDescription[objNum]; }
@@ -271,8 +271,6 @@ public:
 
 	uint16 findObjectRoomNumber(uint16 zoneNum) const;
 	uint16 findObjectGlobalNumber(uint16 zoneNum) const;
-
-	const char *lockedVerbPrefix() const { return _joeResponse[39]; }
 
 	void inventorySetup();
 	uint16 findInventoryItem(int invSlot) const;

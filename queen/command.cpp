@@ -32,7 +32,6 @@
 namespace Queen {
 
 
-
 void CmdText::clear() {
 
 	memset(_command, 0, sizeof(_command));
@@ -50,7 +49,7 @@ void CmdText::displayTemp(uint8 color, bool locked, const Verb& v, const char *n
 
 	char temp[MAX_COMMAND_LEN];
 	if (locked) {
-		sprintf(temp, "%s%s", _logic->lockedVerbPrefix(), v.name());
+		sprintf(temp, "%s%s", _logic->joeResponse(39), v.name());
 	}
 	else {
 		strcpy(temp, v.name());
@@ -145,12 +144,11 @@ void Command::clear(bool clearTexts) {
 }
 
 
+// FIXME: walk argument is useless (always true), as we don't handle the 
+//        pinnacle room exactly like the original
 void Command::executeCurrentAction(bool walk) {
 
 	_logic->entryObj(0);
-
-	const char *obj1Name = NULL;
-	const char *obj2Name = NULL;
 
 	if (_curCmd.commandLevel == 2 && _mouseKey == Input::MOUSE_RBUTTON) {
 		_mouseKey = Input::MOUSE_LBUTTON;
@@ -158,31 +156,20 @@ void Command::executeCurrentAction(bool walk) {
 
 	// XXX SUBJ1=SUBJECT[1]; SUBJ2=SUBJECT[2];
 
-	uint16 objMax = _logic->currentRoomObjMax();
-	uint16 roomData = _logic->currentRoomData();
-
 	if (_mouseKey == Input::MOUSE_RBUTTON && _curCmd.subject1 != 0) {
 		// check to see if selecting default command for object/item
 		if (_curCmd.subject1 > 0) {
-			// an object
-			int16 i = _curCmd.subject1;
-			if (_curCmd.noun > objMax) {
-				int16 aObj = _logic->currentRoomArea(_curCmd.noun - objMax)->object;
-				int16 aObjName = _logic->objectData(aObj)->name;
-				if (aObjName > 0) {
-					_curCmd.noun = objMax;
-					i = aObj;
-				}
-			}
-			ObjectData *od = _logic->objectData(ABS(i));
-			obj1Name = _logic->objectName(od->name);
 
-			if (_curCmd.noun == 0 || _curCmd.noun > objMax || _logic->objectData(i)->name <= 0) {
+			int16 i = _logic->findObjectGlobalNumber(_curCmd.noun);
+
+			if (_curCmd.noun == 0 || 
+				_curCmd.noun > _logic->currentRoomObjMax() || 
+				_logic->objectData(i)->name <= 0) {
 				cleanupCurrentAction();
 				return;
 			}
 
-			uint16 obj = roomData + _curCmd.noun;
+			uint16 obj = _logic->currentRoomData() + _curCmd.noun;
 			_curCmd.verb = findDefault(obj, false);
 			if (_curCmd.verb.isNone()) {
 				// no match made, so command not yet completed, redefine as WALK_TO
@@ -195,11 +182,6 @@ void Command::executeCurrentAction(bool walk) {
 			}
 			_cmdText.addObject(_logic->objectName(_logic->objectData(obj)->name));
 		}
-		else {
-			// an item
-			int16 name = _logic->itemData(ABS(_curCmd.subject1))->name;
-			obj1Name = _logic->objectName(name);
-		}
 	}
 
 	// make sure that command is always highlighted when actioned!
@@ -210,21 +192,16 @@ void Command::executeCurrentAction(bool walk) {
 
 	// XXX SUBJECT[2]=0;
 
-	// get objects names
-	obj1Name = _logic->objectOrItemName(_curCmd.subject1);
-	obj2Name = _logic->objectOrItemName(_curCmd.subject2);
-
-	if (handleBadCommand(walk)) {
+	if (handleDefaultCommand(walk)) {
 		cleanupCurrentAction();
 		return;
 	}
-
-	uint16 i;
 
 	// get the commands associated with object/item
 	uint16 comMax = 0;
 	uint16 matchingCmds[MAX_MATCHING_CMDS];
 	CmdListData *cmdList = &_cmdList[1];
+	uint16 i;
 	for (i = 1; i <= _numCmdList; ++i, ++cmdList) {
 		if (cmdList->match(_selCmd.action, _curCmd.subject1, _curCmd.subject2)) {
 			matchingCmds[comMax] = i;
@@ -260,18 +237,7 @@ void Command::executeCurrentAction(bool walk) {
 		if (cond == -1 && i == comMax) {
 			// only exit on a condition fail if at last command
 			// Joe hasnt spoken, so do normal LOOK command
-			if (_selCmd.action.value() == VERB_LOOK_AT) {
-				// Look At, do standard look at routine
-				look();
-			}
-			else {
-				if (com->song < 0) {
-					_sound->playSong(-com->song);
-				}
-				clear(true);
-			}
-			cleanupCurrentAction();
-			return;
+			break;
 		}
 		else if (cond == -2 && i == comMax) {
 			// only exit on a condition fail if at last command
@@ -281,159 +247,23 @@ void Command::executeCurrentAction(bool walk) {
 		}
 		else if (cond >= 0) {
 			// we've had a successful Gamestate check, so we must now exit
+			executeCommand(comId, cond);
 			break;
 		}
 	}
 
-	debug(0, "Command::executeCurrentAction() - cond = %X, com = %X", cond, comId);
 
-	if (com->setAreas) {
-		setAreas(comId);
-	}
-
-	// Don't grab if action is TALK or WALK
-	if (_selCmd.action.value() != VERB_TALK_TO && _selCmd.action.value() != VERB_WALK_TO) {
-		if (_curCmd.subject1 > 0) {
-			_logic->joeGrab(_logic->objectData(_curCmd.subject1)->state, 0);
-		}
-		if (_curCmd.subject2 > 0) {
-			_logic->joeGrab(_logic->objectData(_curCmd.subject2)->state, 0);
-		}
-	}
-
-	bool cutDone = false;
-	if (cond > 0) {
-		// FIXME: this stuff must be seriously re-designed !
-
-		// CR 2 - 7/3/95, Because we may be calling a cutaway triggered from walking
-		// to the pinnacle (which connects to Map room 7), we'll be caught in the
-		// R_MAP routine until we select a location and then call this very procedure
-		// again - the result being that COM will be reset. So to avoid that, we'll
-		// keep a copy of COM until we return from the recursive call...
-		// Otherwise, all remaining commands will be wiped and not carried out!
-		uint16 comTempId = comId;
-		CmdListData *comTemp = com;
-
-		const char *desc = _logic->objectTextualDescription(cond);
-		if (executeIfCutaway(desc)) {
-			cond = 0;
-			cutDone = true;
-		}
-
-		comId = comTempId;
-		com = comTemp;
-
-		// check for dialogs before updating Objects
-		if (executeIfDialog(desc)) {
-			cond = 0;
-		}
-	}
-
-	int16 oldImage = 0;
-	if (_curCmd.subject1 > 0) {
-		// an object (not an item)
-		oldImage = _logic->objectData(_curCmd.subject1)->image;
-	}
-
-	if (com->setObjects) {
-		setObjects(comId);
-	}
-	if (com->setItems) {
-		setItems(comId);
-	}
-
-	if (com->imageOrder != 0) {
-		ObjectData* od = _logic->objectData(_curCmd.subject1);
-		// we must update the graphic image of the object
-		if (com->imageOrder < 0) {
-			// instead of setting to -1 or -2, flag as negative
-			if (od->image > 0) {
-				// make sure that object is not already updated
-				od->image = -(od->image + 10);
-			}
-		}
-		else {
-			od->image = com->imageOrder;
-		}
-		_logic->roomRefreshObject(_curCmd.subject1);
+	if (_selCmd.action.value() == VERB_LOOK_AT) {
+		// Look At, do standard look at routine
+		look();
 	}
 	else {
-		// this object is not being updated by command list, see if
-		// it has another image copied to it
-		if (_curCmd.subject1 > 0) {
-			// an object (not an item)
-			if (_logic->objectData(_curCmd.subject1)->image != oldImage) {
-				_logic->roomRefreshObject(_curCmd.subject1);
-			}
+		// only play song if it's a PLAY AFTER type
+		if (com->song < 0) {
+			_sound->playSong(-com->song);
 		}
+		clear(true);
 	}
-
-	// don't play music on an OPEN/CLOSE command - in case the command fails
-	if (_selCmd.action.value() != VERB_OPEN && _selCmd.action.value() != VERB_CLOSE) {
-		// only play song if it's a PLAY BEFORE type
-		if (com->song > 0) {
-			_sound->playSong(com->song);
-		}
-	}
-
-	// do a special hardcoded section
-	// l.419-452 execute.c
-	switch (com->specialSection) {
-	case 1:
-		_logic->useJournal();
-		return;
-	case 2:
-		_logic->joeUseDress(true);
-		break;
-	case 3:
-		_logic->joeUseClothes(true);
-		break;
-	case 4:
-		_logic->joeUseUnderwear();
-		break;
-	}
-
-	changeObjectState(_selCmd.action, _curCmd.subject1, com->song, cutDone);
-
-	if (_selCmd.action.value() == VERB_TALK_TO && cond > 0) {
-		if (executeIfDialog(_logic->objectTextualDescription(cond))) {
-			cleanupCurrentAction();
-			return;
-		}
-	}
-
-// EXECUTE_EXIT1:
-
-	if (cond > 0) {
-		const char *desc = _logic->objectTextualDescription(cond);
-		// Joe needs to say something as a result of a Gamestate
-		// check first to see if it is a cutaway scene!
-		if (executeIfCutaway(desc)) {
-		}
-		else if (executeIfDialog(desc)) {
-			cleanupCurrentAction();
-			return;
-		}
-		else {
-			_logic->joeSpeak(cond, true);
-		}
-	}
-	else {
-		// we've failed commands with nothing to say
-		if (_selCmd.action.value() == VERB_LOOK_AT) {
-			// Look At, do standard look at routine
-			look();
-			cleanupCurrentAction();
-			return;
-		}
-	}
-
-	// only play song if it's a PLAY AFTER type
-	if (com->song < 0) {
-		_sound->playSong(-com->song);
-	}
-
-	clear(true);
 	cleanupCurrentAction();
 }
 
@@ -528,6 +358,128 @@ void Command::readCommandsFrom(byte *&ptr) {
 }
 
 
+void Command::executeCommand(uint16 comId, int16 condResult) {
+
+	// execute.c l.313-452
+	debug(0, "Command::executeCommand() - cond = %X, com = %X", condResult, comId);
+
+	CmdListData *com = &_cmdList[comId];
+
+	if (com->setAreas) {
+		setAreas(comId);
+	}
+
+	// Don't grab if action is TALK or WALK
+	if (_selCmd.action.value() != VERB_TALK_TO && _selCmd.action.value() != VERB_WALK_TO) {
+		if (_curCmd.subject1 > 0) {
+			_logic->joeGrab(_logic->objectData(_curCmd.subject1)->state, 0);
+		}
+		if (_curCmd.subject2 > 0) {
+			_logic->joeGrab(_logic->objectData(_curCmd.subject2)->state, 0);
+		}
+	}
+
+	bool cutDone = false;
+	if (condResult > 0) {
+		// as we don't handle the pinnacle room exactly like the original, 
+		// the hack described on l.334-339 in execute.c became useless
+
+		// check for cutaway/dialogs before updating Objects
+		const char *desc = _logic->objectTextualDescription(condResult);
+		if (executeIfCutaway(desc)) {
+			condResult = 0;
+			cutDone = true;
+		}
+		else if (executeIfDialog(desc)) {
+			condResult = 0;
+		}
+	}
+
+	int16 oldImage = 0;
+	if (_curCmd.subject1 > 0) {
+		// an object (not an item)
+		oldImage = _logic->objectData(_curCmd.subject1)->image;
+	}
+
+	if (com->setObjects) {
+		setObjects(comId);
+	}
+
+	if (com->setItems) {
+		setItems(comId);
+	}
+
+	if (com->imageOrder != 0) {
+		ObjectData *od = _logic->objectData(_curCmd.subject1);
+		// we must update the graphic image of the object
+		if (com->imageOrder < 0) {
+			// instead of setting to -1 or -2, flag as negative
+			if (od->image > 0) {
+				// make sure that object is not already updated
+				od->image = -(od->image + 10);
+			}
+		}
+		else {
+			od->image = com->imageOrder;
+		}
+		_logic->roomRefreshObject(_curCmd.subject1);
+	}
+	else {
+		// this object is not being updated by command list, see if
+		// it has another image copied to it
+		if (_curCmd.subject1 > 0) {
+			// an object (not an item)
+			if (_logic->objectData(_curCmd.subject1)->image != oldImage) {
+				_logic->roomRefreshObject(_curCmd.subject1);
+			}
+		}
+	}
+
+	// don't play music on an OPEN/CLOSE command - in case the command fails
+	if (_selCmd.action.value() != VERB_OPEN && _selCmd.action.value() != VERB_CLOSE) {
+		// only play song if it's a PLAY BEFORE type
+		if (com->song > 0) {
+			_sound->playSong(com->song);
+		}
+	}
+
+	// do a special hardcoded section
+	// l.419-452 execute.c
+	switch (com->specialSection) {
+	case 1:
+		_logic->useJournal();
+		return;
+	case 2:
+		_logic->joeUseDress(true);
+		break;
+	case 3:
+		_logic->joeUseClothes(true);
+		break;
+	case 4:
+		_logic->joeUseUnderwear();
+		break;
+	}
+
+	changeObjectState(_selCmd.action, _curCmd.subject1, com->song, cutDone);
+
+	// execute.c l.533-548
+	// FIXME: useless test, as .dog has already been played
+	// if (_selCmd.action.value() == VERB_TALK_TO && cond > 0) {
+	//	if (executeIfDialog(_logic->objectTextualDescription(cond))) {
+	//		cleanupCurrentAction();
+	//		return;
+	//	}
+	// }
+
+	// execute.c l.550-589
+	// FIXME: the EXECUTE_EXIT1 stuff can be omitted as it is 
+	//        more or less redundant code
+	if (condResult > 0) {
+		_logic->joeSpeak(condResult, true);
+	}
+}
+
+
 int16 Command::makeJoeWalkTo(int16 x, int16 y, int16 objNum, const Verb &v, bool mustWalk) {
 
 	// Check to see if object is actually an exit to another
@@ -570,7 +522,10 @@ int16 Command::makeJoeWalkTo(int16 x, int16 y, int16 objNum, const Verb &v, bool
 		}
 		else {
 			p = _walk->moveJoe(facing, x, y, false); // XXX inCutaway parameter
-			// XXX if(P != 0) P = FIND_VERB
+			if (p != 0) {
+				_logic->newRoom(0); // cancel makeJoeWalkTo, that should be equivalent to cr10 fix
+				// XXX if(P != 0) P = FIND_VERB
+			}			
 		}
 	}
 	return p;
@@ -588,7 +543,6 @@ void Command::grabCurrentSelection() {
 
 	_selPosX += _logic->display()->horizontalScroll();
 
-	debug(0, "Command::grabCurrentSelection() - _curCmd.noun = %d, _curCmd.verb = %d, objMax=%d", _curCmd.noun, _curCmd.verb.value(), _logic->currentRoomObjMax());
 	if (_curCmd.verb.isAction()) {
 		grabSelectedVerb();
 	}
@@ -600,7 +554,6 @@ void Command::grabCurrentSelection() {
 	}
 	else if (_selPosY < ROOM_ZONE_HEIGHT && _curCmd.verb.isNone()) {
 		// select without a command, do a WALK
-		_logic->newRoom(0); // cancel makeJoeWalkTo, that should be equivalent to cr10 fix
 		clear(true);
 		_logic->joeWalk(JWM_EXECUTE);
 	}
@@ -644,6 +597,7 @@ void Command::grabSelectedObject(int16 objNum, uint16 objState, uint16 objName) 
 
 	if (_parse) {
 		_curCmd.verb = Verb(VERB_NONE);
+		//_logic->newRoom(0);
 		_logic->joeWalk(JWM_EXECUTE);
 		_selCmd.action = _curCmd.action;
 		_curCmd.action = Verb(VERB_NONE);
@@ -744,10 +698,11 @@ void Command::grabSelectedNoun() {
 
 	uint16 objNum = _logic->currentRoomData() + _curCmd.noun;
 	int16 objName = _logic->objectData(objNum)->name;
-	if (objName < 0) {
+	if (objName <= 0) {
 		// selected a turned off object, so just walk
-		_curCmd.noun = 0;
 		clear(true);
+		_curCmd.noun = 0;
+		//_logic->newRoom(0);
 		_logic->joeWalk(JWM_EXECUTE);
 		return;
 	}
@@ -808,6 +763,8 @@ void Command::grabSelectedNoun() {
 	}
 
 	_selCmd.noun = 0;
+	// XXX PARSE=1;
+	// XXX if((ACTION==6 || ACTION==5) && CLEVEL==1) PARSE=0;
 	grabSelectedObject(objNum, _logic->objectData(objNum)->state, objName);
 }
 
@@ -886,7 +843,7 @@ bool Command::executeIfDialog(const char *description) {
 }
 
 
-bool Command::handleBadCommand(bool walk) {
+bool Command::handleDefaultCommand(bool walk) {
 
 	// l.96-141 execute.c
 	uint16 objMax = _logic->currentRoomObjMax();
@@ -905,7 +862,7 @@ bool Command::handleBadCommand(bool walk) {
 	if (_curCmd.subject1 > 0 && _logic->objectData(_curCmd.subject1)->name <= 0) {
 		return true;
 	}
-	if (_selCmd.action.value() == VERB_GIVE && 
+	if (// _selCmd.action.value() == VERB_GIVE &&  // can be TALK_TO !
 		_curCmd.subject2 > 0 && _logic->objectData(_curCmd.subject2)->name <= 0) {
 		return true;
 	}
@@ -966,8 +923,6 @@ void Command::executeStandardStuff(const Verb& action, int16 subj1, int16 subj2)
 		_logic->joeSpeak(2);
 		break;
 
-	case 4: // weird, isn't it ? l.193 execute.c
-		warning("Command::executeStandardStuff() - Use of verb 4");
 	case VERB_MOVE:
 		// 'I can't move it'
 		if (subj1 > 0) {
@@ -1153,6 +1108,7 @@ void Command::alterDefault(const Verb& def, bool itemType) {
 
 void Command::openOrCloseAssociatedObject(const Verb& action, int16 otherObj) {
 
+	warning("using Command::openOrCloseAssociatedObject()");
 	CmdListData *cmdList = &_cmdList[1];
 	uint16 com = 0;
 	uint16 i;
@@ -1623,4 +1579,4 @@ void Command::lookCurrentIcon() {
 	}
 }
 
-}
+} // End of namespace Queen
