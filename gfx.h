@@ -128,6 +128,7 @@ struct Gdi {
 	byte *_mask_ptr_dest;
 	byte *_z_plane_ptr;
 
+	byte _palette_mod;
 	byte _decomp_shr, _decomp_mask;
 	byte _transparency;
 	uint16 _vertStripNextInc;

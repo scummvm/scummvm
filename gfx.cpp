@@ -749,9 +749,13 @@ void Gdi::decompressBitmap()
 	_useOrDecompress = false;
 
 	byte code = *_smap_ptr++;
-
 	assert(_numLinesToProcess);
 
+	if (_vm->_features & GF_AMIGA)
+		_palette_mod = 16;
+	else
+		_palette_mod = 0;
+	
 	switch (code) {
 	case 1:
 		unkDecode7();
@@ -1053,7 +1057,7 @@ void Gdi::unkDecode1()
 	do {
 		_currentX = 8;
 		do {
-			FILL_BITS * dst++ = color;
+			FILL_BITS * dst++ = color + _palette_mod;;
 
 		againPos:;
 
@@ -1071,7 +1075,7 @@ void Gdi::unkDecode1()
 							if (!--_tempNumLines)
 								return;
 						}
-						*dst++ = color;
+						*dst++ = color + _palette_mod;
 					} while (--reps);
 					bits >>= 8;
 					bits |= (*src++) << (cl - 8);
@@ -1105,7 +1109,7 @@ void Gdi::unkDecode2()
 		_currentX = 8;
 		do {
 			FILL_BITS if (color != _transparency)
-				*dst = color;
+				*dst = color + _palette_mod;
 			dst++;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
@@ -1140,7 +1144,7 @@ void Gdi::unkDecode3()
 		_currentX = 8;
 		do {
 			FILL_BITS if (color != _transparency)
-				*dst = color;
+				*dst = color + _palette_mod;
 			dst++;
 
 		againPos:;
@@ -1172,7 +1176,7 @@ void Gdi::unkDecode3()
 								if (!--_tempNumLines)
 									return;
 							}
-							*dst++ = color;
+							*dst++ = color + _palette_mod;
 						} while (--reps);
 					}
 					bits >>= 8;
@@ -1205,7 +1209,7 @@ void Gdi::unkDecode4()
 		_tempNumLines = _numLinesToProcess;
 		do {
 			FILL_BITS if (color != _transparency)
-				*dst = color;
+				*dst = color + _palette_mod;
 			dst += 320;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
@@ -1239,7 +1243,7 @@ void Gdi::unkDecode5()
 	do {
 		_currentX = 8;
 		do {
-			FILL_BITS * dst++ = color;
+			FILL_BITS * dst++ = color + _palette_mod;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
 				FILL_BITS color = bits & _decomp_mask;
@@ -1271,7 +1275,7 @@ void Gdi::unkDecode6()
 	do {
 		_tempNumLines = _numLinesToProcess;
 		do {
-			FILL_BITS * dst = color;
+			FILL_BITS * dst = color + _palette_mod;
 			dst += 320;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
@@ -2191,8 +2195,7 @@ void Scumm::setCursorHotspot2(int x, int y)
 byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem)
 {
 	int w, h, i;
-	if (_features & GF_SMALL_HEADER)
-		return 0;
+
 	l >>= 3;
 	if (l < 0)
 		l = 0;
@@ -2210,8 +2213,10 @@ byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem)
 
 	do {
 		for (i = 0; i <= w; i++)
-			if (mem[i])
+			if (mem[i]) {
+				//printf("memi is %d\n", mem[i]);
 				return true;
+			}
 		mem += 40;
 	} while (--h);
 

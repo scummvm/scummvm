@@ -37,6 +37,7 @@ public:
 	byte _music_volume;
 	byte _sfx_volume;
 	bool _mt32emulate;
+	bool _amiga;
 
 	uint16 _debugMode;
 	uint16 _noSubtitles;

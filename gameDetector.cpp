@@ -46,7 +46,7 @@ static const char USAGE_STRING[] =
 	"\tr       - emulate roland mt32 instruments\n"
 	"\tf       - fullscreen mode\n"
 	"\tg<mode> - graphics mode. normal,2x,3x,2xsai,super2xsai,supereagle\n"
-	"\ta       - load autosave game (for recovering from crashes)\n"
+	"\ta       - specify game is amiga version\n"
 ;
 
 void GameDetector::parseCommandLine(int argc, char **argv)
@@ -70,7 +70,7 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 			while (*s) {
 				switch (tolower(*s)) {
 				case 'a':
-					_restore = true;
+					_amiga = true;
 					break;
 				case 'b':
 					if (*(s + 1) == '\0')
@@ -387,6 +387,9 @@ int GameDetector::detectMain(int argc, char **argv)
 		warning("No path was provided. Assuming the data files are in the current directory");
 		_gameDataPath = strdup("");
 	}
+
+	if (_amiga)
+		_features = _features | GF_AMIGA;
 
 	return (0);
 }
