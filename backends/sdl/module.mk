@@ -6,7 +6,7 @@ MODULE_OBJS := \
 	backends/sdl/sdl.o
 
 MODULE_DIRS += \
-	backend/sdl
+	backends/sdl
 
 # We don't use the common.rules here on purpose
 OBJS := $(MODULE_OBJS) $(OBJS)
