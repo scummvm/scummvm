@@ -522,10 +522,10 @@ void Sound::processSfxQueues() {
 				if (_mouthSyncMode != b) {
 					_mouthSyncMode = b;
 					if (_talk_sound_frame != -1) {
-						a->startAnimActor(_talk_sound_frame);
+						a->runActorTalkScript(_talk_sound_frame);
 						_talk_sound_frame = -1;
 					} else
-						a->startAnimActor(b ? a->talkStopFrame : a->talkStartFrame);
+						a->runActorTalkScript(b ? a->talkStopFrame : a->talkStartFrame);
 				}
 			}
 		}

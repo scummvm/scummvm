@@ -80,8 +80,6 @@ void ScummEngine::CHARSET_1() {
 	int frme = -1;
 	Actor *a;
 	byte *buffer;
-	bool has_talk_sound = false;
-	bool has_anim = false;
 
 	if (!_haveMsg)
 		return;
@@ -152,7 +150,7 @@ void ScummEngine::CHARSET_1() {
 	}
 
 	if (a && !_string[0].no_talk_anim) {
-		has_anim = true;
+		a->runActorTalkScript(a->talkStartFrame);
 		_useTalkAnims = true;
 	}
 
@@ -230,14 +228,15 @@ void ScummEngine::CHARSET_1() {
 			case 9:
 				frme = *buffer++;
 				frme |= *buffer++ << 8;
-				has_anim = true;
+				a->startAnimActor(frme != -1 ? frme : a->talkStartFrame);
 				break;
 			case 10:
 				talk_sound_a = buffer[0] | (buffer[1] << 8) | (buffer[4] << 16) | (buffer[5] << 24);
 				talk_sound_b = buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] << 24);
-				has_talk_sound = true;
 				buffer += 14;
 	
+				_sound->talkSound(talk_sound_a, talk_sound_b, 2, frme);
+
 				// Set flag that speech variant exist of this msg.
 				// TODO: This does not work for the speech system in V7+ games
 				// since they encode the voice information differently, and it
@@ -302,16 +301,6 @@ void ScummEngine::CHARSET_1() {
 				_talkDelay += (int)VAR(VAR_CHARINC);
 		}
 	} while (c != 2 && c != 3);
-
-	// Even if talkSound() is called, we may still have to call
-	// startAnimActor() since actorTalk() may already have caused the
-	// wrong animation frame to be drawn, and the talkSound() won't be
-	// processed until after the next screen update. Bleah.
-
-	if (has_talk_sound)
-		_sound->talkSound(talk_sound_a, talk_sound_b, 2, frme);
-	if (a && has_anim)
-		a->startAnimActor(frme != -1 ? frme : a->talkStartFrame);
 
 	_charsetBufPos = buffer - _charsetBuffer;
 

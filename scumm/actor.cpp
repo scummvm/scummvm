@@ -1192,7 +1192,7 @@ void ScummEngine::actorTalk(const byte *msg) {
 				stopTalk();
 			setTalkingActor(a->number);
 			if (!_string[0].no_talk_anim) {
-				a->startAnimActor(a->talkStartFrame);
+				a->runActorTalkScript(a->talkStartFrame);
 				_useTalkAnims = true;
 			}
 			oldact = getTalkingActor();
@@ -1216,6 +1216,19 @@ void ScummEngine::actorTalk(const byte *msg) {
 	CHARSET_1();
 }
 
+void Actor::runActorTalkScript(int f) {
+	if (talkScript) {
+		int script = talkScript;
+		int args[16];
+		memset(args, 0, sizeof(args));
+		args[1] = f;
+		args[0] = number;
+
+		_vm->runScript(script, 1, 0, args);
+	} else
+		startAnimActor(f);
+}
+
 void ScummEngine::stopTalk() {
 	int act;
 
@@ -1228,7 +1241,7 @@ void ScummEngine::stopTalk() {
 	if (act && act < 0x80) {
 		Actor *a = derefActor(act, "stopTalk");
 		if ((a->isInCurrentRoom() && _useTalkAnims) || (_features & GF_NEW_COSTUMES)) {
-			a->startAnimActor(a->talkStopFrame);
+			a->runActorTalkScript(a->talkStopFrame);
 			_useTalkAnims = false;
 		}
 		if (!(_features & GF_HUMONGOUS))
