@@ -49,7 +49,7 @@ static const LogicTable logicTable[] = {
 	&SkyLogic::simpleAnim,	 // 16 Module anim without x,y's
 };
 
-SkyLogic::SkyLogic(SkyScreen *skyScreen, SkyDisk *skyDisk, SkyGrid *skyGrid, SkyText *skyText, SkyMusicBase *skyMusic, SkyMouse *skyMouse, SkySound *skySound, uint32 gameVersion) {
+SkyLogic::SkyLogic(SkyScreen *skyScreen, SkyDisk *skyDisk, SkyGrid *skyGrid, SkyText *skyText, SkyMusicBase *skyMusic, SkyMouse *skyMouse, SkySound *skySound) {
 	_skyScreen = skyScreen;
 	_skyDisk = skyDisk;
 	_skyGrid = skyGrid;
@@ -57,7 +57,6 @@ SkyLogic::SkyLogic(SkyScreen *skyScreen, SkyDisk *skyDisk, SkyGrid *skyGrid, Sky
 	_skyMusic = skyMusic;
 	_skySound = skySound;
 	_skyMouse = skyMouse;
-	_gameVersion = gameVersion;
 	_skyAutoRoute = new SkyAutoRoute(_skyGrid);
 
 	for (int i = 0; i < ARRAYSIZE(_moduleList); i++)
@@ -497,9 +496,9 @@ void SkyLogic::talk() {
 
 	// If speech is allowed then check for it to finish before finishing animations
 
-	if (false // system_flags & (1 << sf_play_vocs) // sblaster?
-			|| _compact->extCompact->spTextId == 0xffff // is this a voc file?
-			|| false) {// !(system_flags & (1 << sf_voc_playing))) { // finished?
+	if ((SkyState::_systemVars.systemFlags & SF_PLAY_VOCS) && // sblaster?
+		(_compact->extCompact->spTextId == 0xFFFF) && // is this a voc file?
+		(!(SkyState::_systemVars.systemFlags & SF_VOC_PLAYING))) { // finished?
 
 		_compact->logic = L_SCRIPT; // restart character control
 
@@ -525,7 +524,7 @@ void SkyLogic::talk() {
 				goto past_speech_anim;
 			}
 
-			if (false) { //system_flags & (1 << sf_voc_playing)) {
+			if (SkyState::_systemVars.systemFlags & SF_VOC_PLAYING) {
 				_compact->extCompact->spTime++;
 				return;
 			}
@@ -541,7 +540,7 @@ past_speech_anim:
 
 	// ok, speech has finished
 
-	if (false) { //system_flags & (1 << sf_voc_playing)) {
+	if (SkyState::_systemVars.systemFlags & SF_VOC_PLAYING) {
 		_compact->extCompact->spTime++;
 		return;
 	}
@@ -596,7 +595,7 @@ void SkyLogic::choose() {
 
 	fnNoHuman(0, 0, 0); // kill mouse again
 
-	// system_flags &= ~(1 << SF_CHOOSING); // restore save/restore
+	SkyState::_systemVars.systemFlags &= ~SF_CHOOSING; // restore save/restore
 
 	_compact->logic = L_SCRIPT; // and continue script
 	logicScript();
@@ -2062,7 +2061,7 @@ bool SkyLogic::fnCursorUp(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnLeaveSection(uint32 sectionNo, uint32 b, uint32 c) {
-	if (SkyState::isDemo(_gameVersion))
+	if (SkyState::isDemo())
 		error("End of demo");
 	
 	if (sectionNo == 5) //linc section - has different mouse icons
@@ -2073,7 +2072,7 @@ bool SkyLogic::fnLeaveSection(uint32 sectionNo, uint32 b, uint32 c) {
 
 bool SkyLogic::fnEnterSection(uint32 sectionNo, uint32 b, uint32 c) {
 
-	if (SkyState::isDemo(_gameVersion))
+	if (SkyState::isDemo())
 		if (sectionNo > 2)
 			error("End of demo");
 
@@ -2222,7 +2221,7 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 	target->getToFlag = *animPtr++;
 	target->grafixProg = animPtr;
 
-	if (SkyState::isCDVersion(_gameVersion))
+	if (SkyState::isCDVersion())
 		_skySound->fnStartSpeech((uint16)textNum);
 
 	//now form the text sprite

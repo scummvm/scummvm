@@ -23,6 +23,7 @@
 #define ADLIBMUSIC_H
 
 #include "stdafx.h"
+#include "sky/sky.h"
 #include "sound/mixer.h"
 #include "common/engine.h"
 #include "adlibchannel.h"
@@ -30,7 +31,7 @@
 
 class SkyAdlibMusic : public SkyMusicBase {
 public:
-	SkyAdlibMusic(SoundMixer *pMixer, SkyDisk *pSkyDisk, uint32 version);
+	SkyAdlibMusic(SoundMixer *pMixer, SkyDisk *pSkyDisk);
 	~SkyAdlibMusic(void);
 private:
 	SoundMixer *_mixer;

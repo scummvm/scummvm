@@ -32,7 +32,7 @@ struct HuffTree {
 
 class SkyText {
 public:
-	SkyText(SkyDisk *skyDisk, uint32 gameVersion, uint16 _language);
+	SkyText(SkyDisk *skyDisk);
 	~SkyText(void);
 	void getText(uint32 textNr);
 	struct displayText_t displayText(uint8 *dest, bool centre, uint16 pixelWidth, uint8 color);
@@ -47,8 +47,6 @@ protected:
 	char getTextChar();
 
 	SkyDisk *_skyDisk;
-	uint16 	_language;
-	uint32	_gameVersion;
 	uint8	_inputValue;
 	uint8	_shiftBits;
 	uint8	*_textItemPtr;

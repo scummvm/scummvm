@@ -34,10 +34,8 @@
 #define CHAR_SET_HEADER	128
 #define	MAX_NO_LINES	10
 
-SkyText::SkyText(SkyDisk *skyDisk, uint32 gameVersion, uint16 language) {
+SkyText::SkyText(SkyDisk *skyDisk) {
 	_skyDisk = skyDisk;
-	_language = language;
-	_gameVersion = gameVersion;
 
 	initHuffTree();
 
@@ -47,7 +45,7 @@ SkyText::SkyText(SkyDisk *skyDisk, uint32 gameVersion, uint16 language) {
 	
 	fnSetFont(0);
 
-	if (!SkyState::isDemo(_gameVersion)) {
+	if (!SkyState::isDemo()) {
 		_controlCharacterSet.addr = _skyDisk->loadFile(60520, NULL);
 		_controlCharacterSet.charHeight = 12;
 		_controlCharacterSet.charSpacing = 1;
@@ -60,7 +58,7 @@ SkyText::SkyText(SkyDisk *skyDisk, uint32 gameVersion, uint16 language) {
 		_linkCharacterSet.addr = NULL;
 	}
 
-	if (SkyState::isCDVersion(_gameVersion)) {
+	if (SkyState::isCDVersion()) {
 		_preAfterTableArea = _skyDisk->loadFile(60522, NULL);
 	} else _preAfterTableArea = NULL;
 }
@@ -103,7 +101,7 @@ void SkyText::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 		debug(5, "Loading Text item(s) for Section %d", (sectionNo>>2));
 		
 		uint32 fileNo = (sectionNo >> 2); 
-		fileNo += ((_language * NO_OF_TEXT_SECTIONS) + 60600);
+		fileNo += ((SkyState::_systemVars.language * NO_OF_TEXT_SECTIONS) + 60600);
 		SkyState::_itemList[FIRST_TEXT_SEC + sectionNo] = (void **)_skyDisk->loadFile((uint16)fileNo, NULL);
 	}
 	_textItemPtr = (uint8 *)SkyState::_itemList[FIRST_TEXT_SEC + sectionNo];
@@ -1441,7 +1439,7 @@ static const HuffTree huffTree_00372[] = {
 };
 
 void SkyText::initHuffTree() {
-	switch (_gameVersion) {
+	switch (SkyState::_systemVars.gameVersion) {
 	case 267:
 		_huffTree = huffTree_00267;
 		break;

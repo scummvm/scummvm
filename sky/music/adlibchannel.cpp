@@ -22,9 +22,8 @@
 #include "adlibchannel.h"
 #include "sound/fmopl.h"
 
-SkyAdlibChannel::SkyAdlibChannel(uint8 *pMusicData, uint16 startOfData, uint32 version)
+SkyAdlibChannel::SkyAdlibChannel(uint8 *pMusicData, uint16 startOfData)
 {
-	_gameVersion = version;
 	_musicData = pMusicData;
 	_channelData.startOfData = startOfData;
 	_channelData.eventDataPtr = startOfData;
@@ -42,7 +41,7 @@ SkyAdlibChannel::SkyAdlibChannel(uint8 *pMusicData, uint16 startOfData, uint32 v
 
 	uint16 instrumentDataLoc;
 
-	if (_gameVersion == 267) {
+	if (SkyState::_systemVars.gameVersion == 267) {
 		instrumentDataLoc = (_musicData[0x11FC] << 8) | _musicData[0x11FB];
 		_frequenceTable = (uint16*)(_musicData+0x7F4);
 		_registerTable = _musicData+0xDF4;

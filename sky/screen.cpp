@@ -175,7 +175,7 @@ void SkyScreen::recreate(void) {
 
 void SkyScreen::flip(void) {
 
-	// mouse_flag |= MF_NO_UPDATE;
+	SkyState::_systemVars.mouseFlag |= MF_NO_UPDATE;
 	// drawMouseToBackScreen();
 	uint8 *screenPos = _currentScreen;
 	uint8 *backPos = _backScreen;
@@ -197,7 +197,7 @@ void SkyScreen::flip(void) {
 		screenPos += (GRID_H - 1) * GAME_SCREEN_WIDTH;
 		backPos += (GRID_H - 1) * GAME_SCREEN_WIDTH;
 	}
-	// mouse_flag &= ~MF_NO_UPDATE;
+	SkyState::_systemVars.mouseFlag &= ~MF_NO_UPDATE;
 	// _skyMouse->restoreDataToBackScreen();
 }
 
@@ -215,8 +215,7 @@ void SkyScreen::fnDrawScreen(uint32 palette, uint32 scroll) {
 
 void SkyScreen::fnFadeDown(uint32 scroll) {
 
-	if (scroll) {
-		printf("warning: SkyScreen::fnFadeDown doesn't check (SYSTEM_FLAGS & SF_NO_SCROLL)\n");
+	if (scroll && (!(SkyState::_systemVars.systemFlags & SF_NO_SCROLL))) {
 		// scrolling is performed by fnFadeUp. It's just prepared here
 		_scrollScreen = _currentScreen;
 		_currentScreen = (uint8*)malloc(FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
@@ -284,9 +283,19 @@ void SkyScreen::fnFadeUp(uint32 palNum, uint32 scroll) {
 
 	//_currentScreen points to new screen,
 	//_scrollScreen points to graphic showing old room
-	//if (!(systemFlags & SF_NO_SCROLL) && (!scroll)) {
-	if (scroll) printf("warning: fnFadeUp doesn't check (systemFlags & SF_NO_SCROLL)");
-	if (scroll == 123) {
+	if ((scroll == 0) || (SkyState::_systemVars.systemFlags & SF_NO_SCROLL)) {
+		uint8 *palette = (uint8*)SkyState::fetchCompact(palNum);
+		if (palette == NULL)
+			error("SkyScreen::fnFadeUp: can't fetch compact %X.\n", palNum);
+#ifdef SCUMM_BIG_ENDIAN
+		byte tmpPal[256 * 3];
+		for (uint16 cnt = 0; cnt < 256*3; cnt++)
+			tmpPal[cnt] = palette[cnt ^ 1];
+		paletteFadeUp(tmpPal);
+#else
+		paletteFadeUp(palette);
+#endif
+	} else if (scroll == 123) {
 		// scroll left (going right)
 		if (!_currentScreen) error("SkyScreen::fnFadeUp[Scroll L]: _currentScreen is NULL!\n");
 		if (!_scrollScreen) error("SkyScreen::fnFadeUp[Scroll L]: _scrollScreen is NULL!\n");
@@ -324,19 +333,7 @@ void SkyScreen::fnFadeUp(uint32 palNum, uint32 scroll) {
 		}
 		showScreen(_currentScreen);
 		free(_scrollScreen);
-	} else {
-		uint8 *palette = (uint8*)SkyState::fetchCompact(palNum);
-		if (palette == NULL)
-			error("SkyScreen::fnFadeUp: can't fetch compact %X.\n", palNum);
-#ifdef SCUMM_BIG_ENDIAN
-		byte tmpPal[256 * 3];
-		for (uint16 cnt = 0; cnt < 256*3; cnt++)
-			tmpPal[cnt] = palette[cnt ^ 1];
-		paletteFadeUp(tmpPal);
-#else
-		paletteFadeUp(palette);
-#endif
-	}
+	} else error("Unknown scroll parameter: %d\n",scroll);
 }
 
 void SkyScreen::waitForTimer(void) {

@@ -206,7 +206,7 @@ void SkyState::doCDIntro() {
 	uint32 loadedVocSize, bgVocSize;
 	byte *vocBuffer, *bgVocBuffer;
 
-	assert(isCDVersion(_gameVersion));
+	assert(isCDVersion());
 	
 	vocBuffer = _skyDisk->loadFile(cdv_00, NULL);
 	loadedVocSize = _skyDisk->_lastLoadedFileSize;

@@ -56,7 +56,8 @@ enum scriptVariableOffsets {
 	MENU_LENGTH = 100,
 	SCROLL_OFFSET = 101,
 	MENU = 102,
-	CUR_SECTION = 143
+	CUR_SECTION = 143,
+	REICH_DOOR_FLAG = 470
 };
 
 class SkyAutoRoute;
@@ -64,7 +65,7 @@ class SkyScreen;
 
 class SkyLogic {
 public:
-	SkyLogic(SkyScreen *skyScreen, SkyDisk *skyDisk, SkyGrid *skyGrid, SkyText *skyText, SkyMusicBase *skyMusic, SkyMouse *skyMouse, SkySound *skySound, uint32 gameVersion);
+	SkyLogic(SkyScreen *skyScreen, SkyDisk *skyDisk, SkyGrid *skyGrid, SkyText *skyText, SkyMusicBase *skyMusic, SkyMouse *skyMouse, SkySound *skySound);
 	void engine();
 
 	void nop();
@@ -227,8 +228,6 @@ protected:
 
 	uint32 _currentSection;
 	uint32 _saveCurrentSection;
-	
-	uint32 _gameVersion;
 	
 	SkyScreen *_skyScreen;
 	SkyDisk *_skyDisk;

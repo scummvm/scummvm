@@ -39,6 +39,16 @@
 #include "sky/music/mt32music.h"
 #include "sky/mouse.h"
 
+struct SystemVars {
+	uint32 systemFlags;
+	uint32 gameVersion;
+	uint32 mouseFlag;
+	uint16 language;
+	/* uint16 sfxVolume;
+	uint16 musicVolume;
+	uint16 gameSpeed; */
+};
+
 class SkyLogic;
 class SkyGrid;
 class SkyAutoRoute;
@@ -48,7 +58,6 @@ class SkyState : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
 protected:
 	byte _game;
-	uint32 _gameVersion;
 	byte _key_pressed;
 
 	//intro related
@@ -58,7 +67,6 @@ protected:
 
 	uint16 _debugMode;
 	uint16 _debugLevel;
-	uint16 _language;
 	uint _mouse_x, _mouse_y;
 	uint _mouse_x_old, _mouse_y_old;
 	bool _mouse_pos_changed;
@@ -90,13 +98,15 @@ public:
 	SkyState(GameDetector *detector, OSystem *syst);
 	virtual ~SkyState();
 
-	static bool isDemo(uint32 version);
-	static bool isCDVersion(uint32 version);
+	static bool isDemo(void);
+	static bool isCDVersion(void);
 
 	static Compact *fetchCompact(uint32 a);
 	static void **fetchItem(uint32 num);
 	
 	static void **_itemList[300];
+
+	static SystemVars _systemVars;
 
 	//intro related
 	void prepareText(uint32 *&cmdPtr);

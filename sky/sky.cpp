@@ -54,6 +54,8 @@ Engine *Engine_SKY_create(GameDetector *detector, OSystem *syst) {
 
 void **SkyState::_itemList[300];
 
+SystemVars SkyState::_systemVars = {0, 0, 0, 0};
+
 SkyState::SkyState(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst) {
 	
@@ -66,7 +68,7 @@ SkyState::SkyState(GameDetector *detector, OSystem *syst)
 	
 	_debugMode = detector->_debugMode;
 	_debugLevel = detector->_debugLevel;
-	_language = detector->_language;
+	_systemVars.language = detector->_language;
 	_detector = detector;
 
 	_introTextSpace = 0;
@@ -79,7 +81,7 @@ void SkyState::showQuitMsg(void) {
 	uint8 *textBuf2 = (uint8*)calloc(GAME_SCREEN_WIDTH * 14 + sizeof(struct dataFileHeader),1);
 	char *vText1, *vText2;
 	uint8 *screenData = _skyScreen->giveCurrent();
-	switch (_language) {
+	switch (_systemVars.language) {
 		case DE_DEU: vText1 = VIG_DE1; vText2 = VIG_DE2; break;
 		case FR_FRA: vText1 = VIG_FR1; vText2 = VIG_FR2; break;
 		case IT_ITA: vText1 = VIG_IT1; vText2 = VIG_IT2; break;
@@ -137,7 +139,7 @@ void SkyState::go() {
 
 	initialise();
 
-	if (!isDemo(_gameVersion) || isCDVersion(_gameVersion))
+	if (!isDemo() || isCDVersion())
 		intro();
 
 	_skyDisk->flushPrefetched();
@@ -161,15 +163,17 @@ void SkyState::initialise(void) {
 	_skyDisk = new SkyDisk(_gameDataPath);
 	_skySound = new SkySound(_mixer, _skyDisk);
 	
-	_gameVersion = _skyDisk->determineGameVersion();
+	_systemVars.gameVersion = _skyDisk->determineGameVersion();
 
 	if (_detector->getMidiDriverType() == MD_ADLIB) {
-		_skyMusic = new SkyAdlibMusic(_mixer, _skyDisk, _gameVersion);
+		_systemVars.systemFlags |= SF_SBLASTER;
+		_skyMusic = new SkyAdlibMusic(_mixer, _skyDisk);
 	} else {
-		_skyMusic = new SkyGmMusic(_detector->createMidi(), _skyDisk, _gameVersion);
+		_systemVars.systemFlags |= SF_ROLAND;
+		_skyMusic = new SkyGmMusic(_detector->createMidi(), _skyDisk);
 	}
 
-	_skyText = new SkyText(_skyDisk, _gameVersion, _language);
+	_skyText = new SkyText(_skyDisk);
 	_skyMouse = new SkyMouse(_system, _skyDisk);
 	_skyScreen = new SkyScreen(_system, _skyDisk);
 
@@ -180,7 +184,7 @@ void SkyState::initialise(void) {
 	//initialiseRouter();
 	loadFixedItems();
 	_skyGrid = new SkyGrid(_skyDisk);
-	_skyLogic = new SkyLogic(_skyScreen, _skyDisk, _skyGrid, _skyText, _skyMusic, _skyMouse, _skySound, _gameVersion);
+	_skyLogic = new SkyLogic(_skyScreen, _skyDisk, _skyGrid, _skyText, _skyMusic, _skyMouse, _skySound);
 	
 	_timer = Engine::_timer; // initialize timer *after* _skyScreen has been initialized.
 	_timer->installProcedure(&timerHandler, 1000000 / 50); //call 50 times per second
@@ -197,7 +201,7 @@ void SkyState::initItemList() {
 	_itemList[119] = (void **)SkyCompact::data_0; // Compacts - Section 0
 	_itemList[120] = (void **)SkyCompact::data_1; // Compacts - Section 1
 	
-	if (isDemo(_gameVersion)) {
+	if (isDemo()) {
 		_itemList[121] = _itemList[122] = _itemList[123] = _itemList[124] = _itemList[125] = (void **)SkyCompact::data_0;
 	} else {
 		_itemList[121] = (void **)SkyCompact::data_2; // Compacts - Section 2
@@ -217,7 +221,7 @@ void SkyState::loadBase0(void) {
 
 void SkyState::loadFixedItems(void) {
 
-	if (!isDemo(_gameVersion))
+	if (!isDemo())
 		_itemList[36] = (void **)_skyDisk->loadFile(26, NULL);
 
 	_itemList[49] = (void **)_skyDisk->loadFile(49, NULL);
@@ -225,7 +229,7 @@ void SkyState::loadFixedItems(void) {
 	_itemList[73] = (void **)_skyDisk->loadFile(73, NULL);
 	_itemList[262] = (void **)_skyDisk->loadFile(262, NULL);
 
-	if (isDemo(_gameVersion)) 
+	if (isDemo()) 
 		return;
 	
 	_itemList[263] = (void **)_skyDisk->loadFile(263, NULL);
@@ -320,8 +324,8 @@ void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
 	} while (cur < start + amount);
 }
 
-bool SkyState::isDemo(uint32 version) {
-	switch (version) {
+bool SkyState::isDemo(void) {
+	switch (_systemVars.gameVersion) {
 	case 267:
 		return true;
 	case 288:
@@ -341,9 +345,9 @@ bool SkyState::isDemo(uint32 version) {
 	}
 }
 
-bool SkyState::isCDVersion(uint32 version) {
+bool SkyState::isCDVersion(void) {
 
-	switch (version) {
+	switch (_systemVars.gameVersion) {
 	case 267:
 		return false;
 	case 288:

@@ -20,6 +20,7 @@
  */
 
 #include "grid.h"
+#include "compact.h"
 
 #define	GRID_FILE_START	60000
 
@@ -124,11 +125,6 @@ int8 SkyGrid::_gridConvertTable[] = {
 	69,	//96
 };
 
-/*void SkyState::initialiseGrids() {
-
-	_gameGrids = (uint8 *)malloc(TOT_NO_GRIDS * GRID_SIZE);
-}*/
-
 SkyGrid::SkyGrid(SkyDisk *pDisk) {
 
 	_gameGrids = (uint8 *)malloc(TOT_NO_GRIDS * GRID_SIZE);
@@ -145,7 +141,12 @@ void SkyGrid::loadGrids(void) {
 	// no endian conversion necessary as I'm using uint8* instead of uint32*
 	for (uint8 cnt = 0; cnt < TOT_NO_GRIDS; cnt++)
 		_skyDisk->loadFile(GRID_FILE_START + cnt, _gameGrids + (cnt * GRID_SIZE));
-	// todo: add BASS hack for Reich's door (grid.asm, load_grids proc)
+	if (!SkyState::isDemo()) { // single disk demos never get that far
+		// Reloading the grids can sometimes cause problems eg when reichs door is
+		// open the door grid bit gets replaced so you can't get back in (or out)
+		if (SkyLogic::_scriptVariables[REICH_DOOR_FLAG])
+			removeGrid(256, 280, 1, &SkyCompact::reich_door_20);
+	}
 }
 
 bool SkyGrid::getGridValues(Compact *cpt, uint32 *resBitNum, uint32 *resWidth) {

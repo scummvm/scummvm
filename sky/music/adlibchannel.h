@@ -24,6 +24,7 @@
 
 #include "stdafx.h"
 #include "common/engine.h"
+#include "sky/sky.h"
 #include "sky/music/musicbase.h"
 
 typedef struct {
@@ -59,12 +60,11 @@ typedef struct {
 
 class SkyAdlibChannel : public SkyChannelBase {
 public:
-	SkyAdlibChannel(uint8 *pMusicData, uint16 startOfData, uint32 version);
+	SkyAdlibChannel(uint8 *pMusicData, uint16 startOfData);
 	virtual void stopNote(void);
 	virtual uint8 process(uint16 aktTime);
 	virtual void updateVolume(uint16 pVolume);
 private:
-	uint32 _gameVersion;
 	uint8 *_musicData;
 	uint16 _musicVolume;
 	AdlibChannelType _channelData;

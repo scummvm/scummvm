@@ -21,9 +21,8 @@
 
 #include "musicbase.h"
 
-SkyMusicBase::SkyMusicBase(SkyDisk *pSkyDisk, uint32 version) {
+SkyMusicBase::SkyMusicBase(SkyDisk *pSkyDisk) {
 
-	_gameVersion = version;
 	_musicData = NULL;
 	_allowedCommands = 0;
 	_skyDisk = pSkyDisk;

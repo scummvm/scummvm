@@ -204,7 +204,7 @@ void SkyState::intro(void) {
 	delay(3000); //keep virgin screen up for 3 seconds
 	CHECK_ESC
 	
-	if (!isCDVersion(_gameVersion))
+	if (!isCDVersion())
 		_skyMusic->startMusic(1);
 	
 	delay(3000); //and another 3 seconds.
@@ -232,7 +232,7 @@ void SkyState::intro(void) {
 	_skyScreen->paletteFadeUp(60115);
 
 
-	if (isCDVersion(_gameVersion)) {
+	if (isCDVersion()) {
 		doCDIntro();
 	} else {
 		_skyDisk->prefetchFile(FN_A_PAL);

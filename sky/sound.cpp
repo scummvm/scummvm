@@ -1117,10 +1117,10 @@ bool SkySound::fnStartFx(uint32 sound) {
 
 	uint8 volume = 0x7f; // start with max vol
 
-	// if (system_flags & (1 << sf_sblaster))
+	if (SkyState::_systemVars.systemFlags & SF_SBLASTER)
 		volume = roomList[i].adlibVolume;
-	// if (system_flags & (1 << sf_roland)) {
-	// 	volume = roomList[i].rolandVolume;
+	if (SkyState::_systemVars.systemFlags & SF_ROLAND)
+	 	volume = roomList[i].rolandVolume;
 
 	// Check the flags, the sound may come on after a delay.
 	if (sfx->flags & SFXF_START_DELAY) {
