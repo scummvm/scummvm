@@ -22,47 +22,89 @@
 #include "audiostream.h"
 #include "mixer.h"
 
-template<bool stereo, int sampleSize>
+
+template<bool is16Bit, bool isUnsigned>
+static inline int16 readSample(const byte *ptr) {
+	if (is16Bit) {
+		if (isUnsigned)
+			return (int16)(READ_BE_UINT16(ptr) ^ 0x8000);
+		else
+			return (int16)READ_BE_UINT16(ptr);
+	} else {
+		if (isUnsigned)
+			return (int8)(*ptr ^ 0x80) << 8;
+		else
+			return (int8)*ptr << 8;
+	}
+}
+
+#pragma mark -
+#pragma mark --- WrappedMemoryStream ---
+#pragma mark -
+
+
+template<bool stereo, bool is16Bit, bool isUnsigned>
 class LinearMemoryStream : public AudioInputStream {
 protected:
 	const byte *_ptr;
 	const byte *_end;
-	void advance() { _ptr += sampleSize; }
+
 public:
-	LinearMemoryStream(const byte *ptr, uint len) : _ptr(ptr), _end(ptr+len) { }
-	virtual int size() const { return (_end - _ptr) / sampleSize; }
-	virtual bool isStereo() const { return stereo; }
+	LinearMemoryStream(const byte *ptr, uint len)
+		: _ptr(ptr), _end(ptr+len) {
+		if (stereo)	// Stereo requires even sized data
+			assert(len % 2 == 0);
+	}
+	int16 read() {
+		assert(_ptr < _end);
+		int16 val = readSample<is16Bit, isUnsigned>(_ptr);
+		_ptr += (is16Bit ? 2 : 1);
+		return val;
+	}
+	int size() const {
+		return (_end - _ptr) / (is16Bit ? 2 : 1);
+	}
+	bool isStereo() const {
+		return stereo;
+	}
 };
 
 
 #pragma mark -
+#pragma mark --- WrappedMemoryStream ---
+#pragma mark -
 
 
-template<bool stereo, int sampleSize>
-WrappedMemoryStream<stereo, sampleSize>::WrappedMemoryStream(const byte *buffer, uint bufferSize)
-	: _bufferStart(buffer), _bufferEnd(buffer+bufferSize) {
+template<bool stereo, bool is16Bit, bool isUnsigned>
+WrappedMemoryStream<stereo, is16Bit, isUnsigned>::WrappedMemoryStream(const byte *buffer, uint bufferSize)
+	: _bufferStart(buffer), _bufferEnd(buffer+bufferSize), _pos(buffer), _end(buffer) {
 	if (stereo)	// Stereo requires an even sized buffer
 		assert(bufferSize % 2 == 0);
 }
 
-template<bool stereo, int sampleSize>
-void WrappedMemoryStream<stereo, sampleSize>::advance() {
-	_pos += sampleSize;
+template<bool stereo, bool is16Bit, bool isUnsigned>
+int16 WrappedMemoryStream<stereo, is16Bit, isUnsigned>::read() {
+	assert(_pos != _end);
+	int16 val = readSample<is16Bit, isUnsigned>(_ptr);
+	_pos += (is16Bit ? 2 : 1);
+
 	// Wrap around?
 	if (_pos >= _bufferEnd)
 		_pos = _pos - (_bufferEnd - _bufferStart);
+
+	return val;
 }
 
-template<bool stereo, int sampleSize>
-int WrappedMemoryStream<stereo, sampleSize>::size() const {
+template<bool stereo, bool is16Bit, bool isUnsigned>
+int WrappedMemoryStream<stereo, is16Bit, isUnsigned>::size() const {
 	int len = _end - _pos;
 	if (len < 0)
 		len += (_bufferEnd - _bufferStart);
-	return len / sampleSize;
+	return len / (is16Bit ? 2 : 1);
 }
 
-template<bool stereo, int sampleSize>
-void WrappedMemoryStream<stereo, sampleSize>::append(const byte *data, uint32 len) {
+template<bool stereo, bool is16Bit, bool isUnsigned>
+void WrappedMemoryStream<stereo, is16Bit, isUnsigned>::append(const byte *data, uint32 len) {
 	if (_end + len > _bufferEnd) {
 		// Wrap-around case
 		uint32 size_to_end_of_buffer = _bufferEnd - _end;
@@ -86,53 +128,22 @@ void WrappedMemoryStream<stereo, sampleSize>::append(const byte *data, uint32 le
 
 
 #pragma mark -
-
-
-template<bool stereo, class T = class LinearMemoryStream<stereo, 1> >
-class Input8bitSignedStream : public T {
-protected:
-	int16 readIntern() { int8 v = (int8)*_ptr; return v << 8; }
-public:
-	Input8bitSignedStream(const byte *ptr, int len) : T(ptr, len) { }
-};
-
-template<bool stereo, class T = class LinearMemoryStream<stereo, 1> >
-class Input8bitUnsignedStream : public T {
-protected:
-	int16 readIntern() { int8 v = (int8)(*_ptr ^ 0x80); return v << 8; }
-public:
-	Input8bitUnsignedStream(const byte *ptr, int len) : T(ptr, len) { }
-};
-
-template<bool stereo, class T = class LinearMemoryStream<stereo, 2> >
-class Input16bitSignedStream : public T {
-protected:
-	int16 readIntern() { return (int16)READ_BE_UINT16(_ptr); }
-public:
-	Input16bitSignedStream(const byte *ptr, int len) : T(ptr, len) { }
-};
-
-template<bool stereo, class T = class LinearMemoryStream<stereo, 2> >
-class Input16bitUnsignedStream : public T {
-protected:
-	int16 readIntern() { return (int16)(READ_BE_UINT16(_ptr) ^ 0x8000); }
-public:
-	Input16bitUnsignedStream(const byte *ptr, int len) : T(ptr, len) { }
-};
+#pragma mark --- Input stream factories ---
+#pragma mark -
 
 
 template<bool stereo>
 static AudioInputStream *makeInputStream(const byte *ptr, uint32 len, bool isUnsigned, bool is16Bit) {
 	if (isUnsigned) {
 		if (is16Bit)
-			return new Input16bitUnsignedStream<stereo>(ptr, len);
+			return new LinearMemoryStream<stereo, true, true>(ptr, len);
 		else
-			return new Input8bitUnsignedStream<stereo>(ptr, len);
+			return new LinearMemoryStream<stereo, false, true>(ptr, len);
 	} else {
 		if (is16Bit)
-			return new Input16bitSignedStream<stereo>(ptr, len);
+			return new LinearMemoryStream<stereo, true, false>(ptr, len);
 		else
-			return new Input8bitSignedStream<stereo>(ptr, len);
+			return new LinearMemoryStream<stereo, false, false>(ptr, len);
 	}
 }
 

@@ -35,29 +35,26 @@
  * Generic input stream for the resampling code.
  */
 class AudioInputStream {
-protected:
-	virtual int16 readIntern() = 0;
-	virtual void advance() = 0;
 public:
-	int16 read() { assert(size() > 0); int16 val = readIntern(); advance(); return val; }
+	virtual int16 read() = 0;
 	virtual int size() const = 0;
-	bool eof() const { return size() <= 0; }
 	virtual bool isStereo() const = 0;
+
+	bool eof() const { return size() <= 0; }
 };
 
 class ZeroInputStream : public AudioInputStream {
 protected:
 	int _len;
-	int16 readIntern() { return 0; }
-	void advance() { _len--; }
 public:
 	ZeroInputStream(uint len) : _len(len) { }
-	virtual int size() const { return _len; }
-	virtual bool isStereo() const { return false; }
+	int16 read() { assert(_len > 0); _len--; return 0; }
+	int size() const { return _len; }
+	bool isStereo() const { return false; }
 };
 
 // Wrapped memory stream, to be used by the ChannelStream class (and possibly others?)
-template<bool stereo, int sampleSize>
+template<bool stereo, bool is16Bit, bool isUnsigned>
 class WrappedMemoryStream : public AudioInputStream {
 protected:
 	byte *_bufferStart;
@@ -65,10 +62,11 @@ protected:
 	byte *_pos;
 	byte *_end;
 	
-	void advance();
 public:
 	WrappedMemoryStream(const byte *buffer, uint bufferSize);
-	virtual int size() const;
+	int16 read();
+	int size() const;
+
 	void append(const byte *data, uint32 len);
 };
 
