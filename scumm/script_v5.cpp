@@ -1462,6 +1462,15 @@ void Scumm_v5::o5_putActorInRoom() {
 
 	a = derefActor(act, "o5_putActorInRoom");
 	
+	// Fix for Bug #770710
+	// This fix fixes conflicting actor usage by two different scripts
+	// in MI1 Demo (PC GID_MONKEY_EGA or Amiga GID_MONKEY_VGA). The
+	// exit script for the LucasArts logo screen attempts to reset an
+	// actor that has already been set up for the next scene by the
+	// boot script. The fix cannot be used as a general behavior 
+	// because it does cause GFX glitches in other games that try to
+	// do legitimate cleanup of actors that are in another room.
+	// (The Indy3 "Indy at Donovan's" cutscene, for instance.)
 	if (_gameId == GID_MONKEY_EGA || _gameId == GID_MONKEY_VGA) {
 		if (room == 0 && a->room != _currentRoom && a->room != room && _currentRoom != room) {
 			warning ("o5_putActorInRoom (%d [%d], %d) ignored", act, a->room, room);
