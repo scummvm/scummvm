@@ -1095,7 +1095,7 @@ void Scumm_v2::o2_saveLoadGame() {
 	getResultPos();
 	byte a = getVarOrDirectByte(0x80);
 
-	error("TODO: o2_saveLoadGame(%d)", a);
+	warning("TODO: o2_saveLoadGame(%d)", a);
 	setResult(0);
 }
 
