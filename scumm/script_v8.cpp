@@ -1520,6 +1520,13 @@ void Scumm_v8::o8_getActorChore()
 	Actor *a = derefActorSafe(actnum, "o8_getActorChore");
 	assert(a);
 
+	// FIXME: This is a hack for the cannon scene, as something isn't quite right
+	// here yet..
+	if ((_roomResource == 10) && (vm.slot[_currentScript].number == 2021)) {
+		push(11);
+		return;
+	}
+
 	push(a->frame);
 }
 
