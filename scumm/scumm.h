@@ -1079,7 +1079,6 @@ protected:
 	LangIndexNode *_languageIndex;
 	int _languageIndexSize;
 	char _lastStringTag[12+1];
-	byte _transText[512];
 
 	void loadLanguageBundle();
 	void playSpeech(const byte *ptr);

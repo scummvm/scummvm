@@ -511,7 +511,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_existLanguageFile = false;
 	_languageBuffer = NULL;
 	_languageIndex = NULL;
-	memset(_transText, 0, sizeof(_transText));
 	_costumeRenderer = NULL;
 	_2byteFontPtr = 0;
 	_V1_talkingActor = 0;

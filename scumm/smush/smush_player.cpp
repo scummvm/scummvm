@@ -512,11 +512,12 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 		str++; // For Full Throttle text resources
 	}
 
+	byte transBuf[512];
 	if (_vm->_gameId == GID_CMI) {
-		_vm->translateText((const byte *)str - 1, _vm->_transText);
+		_vm->translateText((const byte *)str - 1, _transText);
 		while (*str++ != '/')
 			;
-		string2 = (char *)_vm->_transText;
+		string2 = (char *)transBuf;
 
 		// If string2 contains formatting information there probably
 		// wasn't any translation for it in the language.tab file. In

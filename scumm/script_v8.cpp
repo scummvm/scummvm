@@ -1559,13 +1559,14 @@ void ScummEngine_v8::o8_getStringWidth() {
 	int oldID = _charset->getCurID(); 
 	int width;
 	const byte *msg = _scriptPointer;
+	byte transBuf[512];
 	
 	// Skip to the next instruction
 	_scriptPointer += resStrLen(_scriptPointer) + 1;
 
 	if (msg[0] == '/') {
-		translateText(msg, _transText);
-		msg = _transText;
+		translateText(msg, transBuf);
+		msg = transBuf;
 	} 
 
 
