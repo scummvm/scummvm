@@ -36,15 +36,16 @@ int stricmp( const char *string1, const char *string2 );
 void assert( void* expression );
 void assert( int expression );
 long int strtol(const char *nptr, char **endptr, int base);
-char *strdup( const char *s);
-int _heapchk();
+char *_strdup(const char *s);
+char *strpbrk(const char *s, const char *accept);
 
 #endif
 
 #ifdef _WIN32_WCE
 
-void *bsearch(const void *, const void *, size_t,
-										 size_t, int (*x) (const void *, const void *));
+void *bsearch(const void *, const void *, size_t, size_t, int (*x) (const void *, const void *));
+char *getcwd(char *buf, int size);
+
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
