@@ -192,8 +192,6 @@ int Scumm::startTalkSound(uint32 offset, uint32 b, int mode)
 	byte file_byte, file_byte_2;
 	int size;
 
-	debug(1, "Starting sound %d.", offset);
-
 	if (!_sfxFile) {
 		warning("startTalkSound: SFX file is not open");
 		return -1;
@@ -234,7 +232,6 @@ int Scumm::startTalkSound(uint32 offset, uint32 b, int mode)
 		fileRead((FILE *) _sfxFile, &file_byte, sizeof(file_byte));
 		fileRead((FILE *) _sfxFile, &file_byte_2, sizeof(file_byte_2));
 		_mouthSyncTimes[i++] = file_byte | (file_byte_2 << 8);
-		debug(1, " - %d (0x%08x)", _mouthSyncTimes[i - 1], _mouthSyncTimes[i - 1]);
 		num--;
 	}
 	_mouthSyncTimes[i] = 0xFFFF;
@@ -276,8 +273,6 @@ int Scumm::isSoundRunning(int sound)
 {
 	IMuse *se;
 	int i;
-
-	debug(1, " -> %d", sound);
 
 	if (sound == current_cd_sound)
 		return _system->poll_cdrom();

@@ -310,8 +310,6 @@ void SoundMixer::Channel_MP3::destroy() {
 	mad_frame_finish(&_frame);
 	mad_stream_finish(&_stream);
 
-	debug(1, "Sound finished");
-
 	delete this;
 }
 
