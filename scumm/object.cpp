@@ -884,7 +884,7 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 	if (numobj > _numLocalObjects)
 		error("findObjectInRoom: More (%d) than %d objects in room %d", numobj, _numLocalObjects, room);
 
-	if (_features & GF_AFTER_V7) {
+	if (_features & GF_AFTER_V8) {
 		roomptr = getResourceAddress(rtRoomScripts, room);
 	}
 	if (findWhat & foCodeHeader) {
