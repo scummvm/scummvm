@@ -407,6 +407,8 @@ static const VersionSettings version_settings[] = {
 	 GF_USE_KEY | GF_ADLIB_DEFAULT},
 	{"playfate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4,
 	 5, 5, 0, GF_USE_KEY | GF_ADLIB_DEFAULT},
+	{"fate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4,
+	 5, 5, 0, GF_USE_KEY | GF_ADLIB_DEFAULT},
 
 	/* Scumm Version 6 */
 	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6, 4, 2,
