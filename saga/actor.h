@@ -140,6 +140,12 @@ struct Location {
 	int distance(const Location &location) const {
 		return MAX(ABS(x - location.x), ABS(y - location.y));
 	}
+	int &u() {
+		return x;
+	}
+	int &v() {
+		return y;
+	}
 	void delta(const Location &location, Location &result) const {
 		result.x = x - location.x;
 		result.y = y - location.y;

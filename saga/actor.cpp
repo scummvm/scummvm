@@ -410,10 +410,14 @@ void Actor::realLocation(Location &location, uint16 objectId, uint16 walkFlags) 
 	int angle;
 	int distance;
 	ActorData *actor;
+	ObjectData *obj;
 	if (walkFlags & kWalkUseAngle) {
-		// tiled stuff
 		if (_vm->_scene->getFlags() & kSceneFlagISO) {
-			//todo: it
+			angle = (location.x + 2) & 15;
+			distance = location.y;
+
+			location.u() = (angleLUT[angle][0] * distance) >> 8; 
+			location.v() = (angleLUT[angle][1] * distance) >> 8;
 		} else {
 			angle = location.x & 15;
 			distance = location.y;
@@ -426,9 +430,12 @@ void Actor::realLocation(Location &location, uint16 objectId, uint16 walkFlags) 
 	if (objectId != ID_NOTHING) {
 		if (validActorId(objectId)) {
 			actor = getActor(objectId);
-			location.add( actor->location);
+			location.add(actor->location);
 		} else {
-			warning("ObjectId unsupported"); //todo: do it
+			if (validObjId(objectId)) {
+				obj = getObj(objectId);
+				location.add(obj->location);
+			}			
 		}
 		
 	}
@@ -439,12 +446,16 @@ void Actor::actorFaceTowardsPoint(uint16 actorId, const Location &toLocation) {
 	Location delta;
 
 	actor = getActor(actorId);
+	
+	toLocation.delta(actor->location, delta);
 
-	// tiled stuff
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
-		//todo: it
+		if (delta.u() > 0) {
+			actor->facingDirection = (delta.v() > 0) ? kDirUp : kDirRight;
+		} else {
+			actor->facingDirection = (delta.v() > 0) ? kDirLeft : kDirDown;
+		}
 	} else {
-		toLocation.delta(actor->location, delta);
 
 		if (ABS(delta.y) > ABS(delta.x * 2)) {
 			actor->facingDirection = (delta.y > 0) ? kDirDown : kDirUp;
@@ -456,12 +467,16 @@ void Actor::actorFaceTowardsPoint(uint16 actorId, const Location &toLocation) {
 
 void Actor::actorFaceTowardsObject(uint16 actorId, uint16 objectId) {
 	ActorData *actor;
+	ObjectData *obj;
 
 	if (validActorId(objectId)) {
 		actor = getActor(objectId);
 		actorFaceTowardsPoint(actorId, actor->location);
 	} else {
-		warning("ObjectId unsupported"); //todo: do it
+		if (validObjId(objectId)) {
+			obj = getObj(objectId);
+			actorFaceTowardsPoint(actorId, obj->location);
+		}
 	}
 }
 
@@ -545,23 +560,22 @@ void Actor::updateActorsScene(int actorsEntrance) {
 	
 	if (actorsEntrance >= 0) {
 		sceneEntry = _vm->_scene->_entryList.getEntry(actorsEntrance);
-		// tiled stuff
 		if (_vm->_scene->getFlags() & kSceneFlagISO) {
-			//todo: it
+			_protagonist->location = sceneEntry->location;
 		} else {
 			_protagonist->location.x = sceneEntry->location.x * ACTOR_LMULT;
 			_protagonist->location.y = sceneEntry->location.y * ACTOR_LMULT;
 			_protagonist->location.z = sceneEntry->location.z * ACTOR_LMULT;
-			_protagonist->facingDirection = _protagonist->actionDirection = sceneEntry->facing;
 		}
+		_protagonist->facingDirection = _protagonist->actionDirection = sceneEntry->facing;
 	}
 
 	_protagonist->currentAction = kActionWait;
 
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
-		//todo: it
+		//nothing?
 	} else {
-		_vm->_scene->initDoorsState();
+		_vm->_scene->initDoorsState(); //TODO: move to _scene
 	}
 
 	followerDirection = _protagonist->facingDirection + 3;
@@ -1114,6 +1128,9 @@ bool Actor::getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber
 	}
 
 	if ((frameNumber < 0) || (spriteList->spriteCount <= frameNumber)) {
+		if (_vm->_scene->getFlags() & kSceneFlagISO) { // TODO: remove it
+			return false;
+		}
 		warning("Actor::getSpriteParams frameNumber invalid for object id 0x%X", commonObjectData->id);
 		return false;
 	}
@@ -1131,9 +1148,11 @@ int Actor::drawActors() {
 	back_buf = _vm->_gfx->getBackBuffer();
 
 	createDrawOrderList();
+	
 
 	for (drawOrderIterator = _drawOrderList.begin(); drawOrderIterator != _drawOrderList.end(); ++drawOrderIterator) {
 		drawObject = drawOrderIterator.operator*();
+
 		if (!getSpriteParams(drawObject, frameNumber, spriteList)) {
 			continue;
 		}

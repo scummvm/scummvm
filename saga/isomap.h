@@ -31,6 +31,8 @@ namespace Saga {
 #define SAGA_ISOTILEDATA_LEN 8
 #define SAGA_ISOTILE_WIDTH 32
 #define SAGA_ISOTILE_BASEHEIGHT 15
+#define SAGA_TILE_NOMINAL_H 16
+#define SAGA_MAX_TILE_H 64
 
 #define SAGA_TILEPLATFORMDATA_LEN 136
 #define SAGA_PLATFORM_W 8
@@ -42,6 +44,16 @@ namespace Saga {
 
 #define SAGA_METATILEDATA_LEN 36
 
+#define SAGA_MULTI_TILE (1 << 15)
+
+enum TileMapEdgeType {
+	kEdgeTypeBlack	= 0,
+	kEdgeTypeFill0	= 1,
+	kEdgeTypeFill1	= 2,
+	kEdgeTypeRpt	= 3,
+	kEdgeTypeWrap	= 4
+};
+
 struct IsoTileData {
 	byte height;
 	int8 attributes;
@@ -49,7 +61,6 @@ struct IsoTileData {
 	uint16 terrainMask;
 	byte FGBGAttr;
 };
-
 
 struct TilePlatformData {
 	int16 metaTile;	
@@ -94,12 +105,24 @@ public:
 	void loadMetaTiles(const byte * resourcePointer, size_t resourceLength);
 	void loadMulti(const byte * resourcePointer, size_t resourceLength);
 	void freeMem();
-	int draw(SURFACE *dst_s);
+	int draw(SURFACE *ds);
 private:
-	int drawTile(SURFACE *ds, uint16 tileNumber, const Point &point);
-	int drawMetaTile(SURFACE *ds, uint16 platformNumber, const Point &point);
-	int drawMetamap(SURFACE *dst_s, int map_x, int map_y);
+	void drawTiles(SURFACE *ds);
+	void drawMetaTile(SURFACE *ds, uint16 metaTileIndex, int16 x, int16 y, int16 absU, int16 absV);
+	void drawPlatform(SURFACE *ds, uint16 platformIndex, int16 x, int16 y, int16 absU, int16 absV, int16 absH);
+	void setTileClip(int16 left, int16 right, int16 top, int16 bottom) {
+		_tileClipLeft = left;
+		_tileClipRight = right;
+		_tileClipTop = top;
+		_tileClipBottom = bottom;
+	}
 	
+	
+	void drawTile(SURFACE *ds, uint16 tileIndex, const Point &point);
+	//int drawMetaTile(SURFACE *ds, uint16 platformNumber, const Point &point);
+	//int drawMetamap(SURFACE *dst_s, int map_x, int map_y);
+	
+
 	byte *_tileData;
 	size_t _tileDataLength;	
 	uint16 _tilesCount;
@@ -114,6 +137,10 @@ private:
 	MultiTileEntryData *_multiTable;
 
 	TileMapData _tileMap;
+	
+	Point _tileScroll;
+	Point _viewScroll;
+	int16 _tileClipLeft, _tileClipRight, _tileClipTop, _tileClipBottom;
 
 	SagaEngine *_vm;
 };

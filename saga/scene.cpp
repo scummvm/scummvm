@@ -898,20 +898,17 @@ int Scene::processSceneResources() {
 
 int Scene::draw(SURFACE *dst_s) {
 	BUFFER_INFO buf_info;
-	Point bg_pt;
+	Point bgPoint(0, 0);
 
 	assert(_initialized);
 
 	_vm->_render->getBufferInfo(&buf_info);
 
-	bg_pt.x = 0;
-	bg_pt.y = 0;
-
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 		_vm->_isoMap->draw(dst_s);
 	} else {
 		bufToSurface(dst_s, buf_info.bg_buf, _vm->getDisplayWidth(),
-						MAX(_vm->getSceneHeight(), _bg.h), NULL, &bg_pt);
+						MAX(_vm->getSceneHeight(), _bg.h), NULL, &bgPoint);
 	}
 
 	return SUCCESS;

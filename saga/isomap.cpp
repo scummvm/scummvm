@@ -40,6 +40,8 @@ IsoMap::IsoMap(SagaEngine *vm) : _vm(vm) {
 	_metaTilesCount = 0;
 	_multiTable = NULL;
 	_multiCount = 0;
+	_viewScroll.x = (128 - 8) * 16;
+	_viewScroll.x = (128 - 8) * 16 - 64;
 }
 
 void IsoMap::loadImages(const byte *resourcePointer, size_t resourceLength) {
@@ -169,10 +171,10 @@ void IsoMap::loadMulti(const byte * resourcePointer, size_t resourceLength) {
 	if (_multiTable == NULL) {
 		memoryError("IsoMap::loadMulti");
 	}
-	debug(0,"resourceLength=%d but should be %d",resourceLength, 12*_multiCount + 2);
+	debug(0,"resourceLength=%d but should be %d",resourceLength, 14*_multiCount + 2);
 	for (i = 0; i < _multiCount; i++) {
 		multiTileEntryData = &_multiTable[i];
-		readS.readUint16();//skip
+		readS.readUint32();//skip
 		multiTileEntryData->offset = readS.readSint16();
 		multiTileEntryData->u = readS.readByte();
 		multiTileEntryData->v = readS.readByte();
@@ -196,17 +198,195 @@ void IsoMap::freeMem() {
 	_multiCount = 0;
 }
 
-int IsoMap::draw(SURFACE *dst_s) {
+int IsoMap::draw(SURFACE *ds) {
 	
-/*	Rect iso_rect(disp_info.logical_w, disp_info.scene_h);
-	drawRect(dst_s, &iso_rect, 0);
-	drawMetamap(dst_s, -1000, -500);
-*/
+	Rect iso_rect(_vm->getDisplayWidth(), _vm->getDisplayInfo().sceneHeight);
+	drawRect(ds, &iso_rect, 0);
+	drawTiles(ds);
+
 	return SUCCESS;
 }
 
-int IsoMap::drawMetamap(SURFACE *dst_s, int map_x, int map_y) {
-/*	int meta_base_x = map_x;
+void IsoMap::drawTiles(SURFACE *ds) {
+	Point view1;
+	Point meta;
+	int16 u0, v0, 
+		  u1, v1,
+		  u2, v2,
+		  uc, vc;
+	int16 work_area_w;
+	int16 work_area_h;
+	int16 tx;
+	uint16 metaTileIndex;
+
+	_tileScroll.x = _viewScroll.x >> 4;
+	_tileScroll.y = _viewScroll.y >> 4;
+
+	view1.x = _tileScroll.x - (8 * SAGA_TILEMAP_W);
+	view1.y = (8 * SAGA_TILEMAP_W) - _tileScroll.y;
+
+	u0 = ((view1.y + 64) * 2 + view1.x) >> 4;
+	v0 = ((view1.y + 64) * 2 - view1.x) >> 4;
+	
+	meta.x = (u0 - v0) * 128 - view1.x * 16;
+	meta.y = view1.y * 16 - (u0 + v0) * 64;
+
+	work_area_w = _vm->getDisplayWidth();
+	work_area_h = _vm->getDisplayInfo().sceneHeight;
+	setTileClip(0, work_area_w, 0, work_area_h);
+
+
+	for (u1 = u0, v1 = v0; meta.y < work_area_h + 128 + 80; u1--, v1-- ) {
+		tx = meta.x;
+
+		for (u2 = u1, v2 = v1; tx < work_area_w + 128; u2++, v2--, tx += 256) {
+
+			uc = u2 & (SAGA_TILEMAP_W - 1);
+			vc = v2 & (SAGA_TILEMAP_W - 1);
+
+			if (uc != u2 || vc != v2) {					
+				metaTileIndex = 0;
+				switch ( _tileMap.edgeType) {				
+				case kEdgeTypeBlack: 
+					continue;
+				case kEdgeTypeFill0: 
+					metaTileIndex = 0; //TODO:remove
+					break;
+				case kEdgeTypeFill1:
+					metaTileIndex = 1; 
+					break;
+				case kEdgeTypeRpt:
+					uc = clamp( 0, u2, SAGA_TILEMAP_W - 1);
+					vc = clamp( 0, v2, SAGA_TILEMAP_W - 1);
+					metaTileIndex = _tileMap.tilePlatforms[uc][vc];
+					break;
+				case kEdgeTypeWrap:
+					metaTileIndex = _tileMap.tilePlatforms[uc][vc];
+					break;
+				}
+			} else {
+				metaTileIndex = _tileMap.tilePlatforms[uc][vc];
+			}
+
+			drawMetaTile(ds, metaTileIndex, tx, meta.y, u2 << 3, v2 << 3);
+		}
+
+		meta.y += 64;
+
+		tx = meta.x - 128;
+
+		for (u2 = u1 - 1, v2 = v1; tx < work_area_w + 128; u2++, v2--, tx += 256) {
+
+			uc = u2 & (SAGA_TILEMAP_W - 1);
+			vc = v2 & (SAGA_TILEMAP_W - 1);
+
+			if (uc != u2 || vc != v2) {
+				metaTileIndex = 0;
+				switch ( _tileMap.edgeType) {				
+				case kEdgeTypeBlack: 
+					continue;
+				case kEdgeTypeFill0: 
+					metaTileIndex = 0; //TODO:remove
+					break;
+				case kEdgeTypeFill1:
+					metaTileIndex = 1; 
+					break;
+				case kEdgeTypeRpt:
+					uc = clamp( 0, u2, SAGA_TILEMAP_W - 1);
+					vc = clamp( 0, v2, SAGA_TILEMAP_W - 1);
+					metaTileIndex = _tileMap.tilePlatforms[uc][vc];
+					break;
+				case kEdgeTypeWrap:
+					metaTileIndex = _tileMap.tilePlatforms[uc][vc];
+					break;
+				}
+			} else {
+				metaTileIndex = _tileMap.tilePlatforms[uc][vc];
+			}
+
+			drawMetaTile(ds, metaTileIndex, tx, meta.y, u2 << 3, v2 << 3);
+		}
+		meta.y += 64;
+	}
+
+}
+
+void IsoMap::drawMetaTile(SURFACE *ds, uint16 metaTileIndex, int16 x, int16 y, int16 absU, int16 absV) {
+	MetaTileData * metaTile;
+	uint16 high;
+	int16 platformIndex;
+	
+	if (_metaTilesCount <= metaTileIndex) {
+		error("IsoMap::drawMetaTile wrong metaTileIndex");
+	}
+
+	metaTile = &_metaTileList[metaTileIndex];
+
+	if (metaTile->highestPlatform > 18) {
+		metaTile->highestPlatform = 0;
+	}
+
+	for (high = 0; high <= metaTile->highestPlatform; high++, y -= 8) {
+		assert(SAGA_MAX_PLATFORM_H > high);
+		platformIndex = metaTile->stack[high];
+
+		if (platformIndex >= 0) {
+			drawPlatform( ds, platformIndex, x, y, absU, absV, high );
+		}
+	}	
+}
+
+void IsoMap::drawPlatform(SURFACE *ds, uint16 platformIndex, int16 x, int16 y, int16 absU, int16 absV, int16 absH) {
+	TilePlatformData *tilePlatform;
+	int16 u, v;
+	int16 sx0, sy0;
+	Point s;
+	int16 tileIndex;
+
+	if (_tilePlatformsCount <= platformIndex) {
+		error("IsoMap::drawPlatform wrong platformIndex");
+	}
+
+	tilePlatform = &_tilePlatformList[platformIndex];
+
+	if ((y <= _tileClipTop) || (y - SAGA_MAX_TILE_H - SAGA_PLATFORM_W * SAGA_TILE_NOMINAL_H >= _tileClipBottom)) {
+		return;
+	}
+		
+	sx0 = x;
+	sy0 = y - (((SAGA_PLATFORM_W - 1) + (SAGA_PLATFORM_W - 1)) * 8);
+
+	for (v = SAGA_PLATFORM_W - 1; v >= 0 && sy0 - SAGA_MAX_TILE_H < _tileClipBottom && sx0 - 128 < _tileClipRight; v--, sx0 += 16, sy0 += 8) {
+
+		if ((tilePlatform->vBits & (1 << v)) == 0) {
+			continue;
+		}
+
+		if (sx0 + 128 + 32 < _tileClipLeft) {
+			continue;
+		}
+
+		s.x = sx0;
+		s.y = sy0;
+
+		for (u = SAGA_PLATFORM_W - 1; u >= 0 && s.x + 32 > _tileClipLeft && s.y - SAGA_MAX_TILE_H < _tileClipBottom; u--, s.x -= 16, s.y += 8 ) {
+			if (s.x < _tileClipRight && s.y > _tileClipTop) {
+				
+				tileIndex = tilePlatform->tiles[u][v];
+				if (tileIndex > 1) {
+					if (tileIndex & SAGA_MULTI_TILE) {
+						warning("SAGA_MULTI_TILE"); //TODO: do it !
+					}
+
+					drawTile(ds, tileIndex, s);
+				}
+			}
+		}
+	}
+}
+
+/*int IsoMap::drawMetamap(SURFACE *dst_s, int map_x, int map_y) {
+	int meta_base_x = map_x;
 	int meta_base_y = map_y;
 	int meta_xi;
 	int meta_yi;
@@ -226,7 +406,6 @@ int IsoMap::drawMetamap(SURFACE *dst_s, int map_x, int map_y) {
 		meta_base_x -= 128;
 		meta_base_y += 64;
 	}
-*/
 	return SUCCESS;
 }
 
@@ -259,8 +438,8 @@ int IsoMap::drawMetaTile(SURFACE *ds, uint16 platformNumber, const Point &point)
 
 	return SUCCESS;
 }
-
-int IsoMap::drawTile(SURFACE *ds, uint16 tileNumber, const Point &point) {
+*/
+void IsoMap::drawTile(SURFACE *ds, uint16 tileIndex, const Point &point) {
 	const byte *tilePointer;
 	const byte *readPointer;
 	byte *drawPointer;
@@ -273,27 +452,32 @@ int IsoMap::drawTile(SURFACE *ds, uint16 tileNumber, const Point &point) {
 	int ct;
 
 
-	if (tileNumber >= _tilesCount) {
-		return FAILURE;
+	if (tileIndex >= _tilesCount) {
+		error("IsoMap::drawTile wrong tileIndex");
 	}
+
 
 	/* temporary x clip */
 	if (point.x < 0) {
-		return SUCCESS;
+		return;
 	}
 
 	/* temporary x clip */
-	if (point.x >= ds->w - 32) {
-		return SUCCESS;
+	if (point.x >= _tileClipRight - 32) {
+		return;
 	}
 
-	tilePointer = _tileData + _tilesTable[tileNumber].offset;
-	height = _tilesTable[tileNumber].height;
+	tilePointer = _tileData + _tilesTable[tileIndex].offset;
+	height = _tilesTable[tileIndex].height;
 
 	readPointer = tilePointer;
 	drawPointer = (byte *)ds->pixels + point.x + (point.y * ds->pitch);
 
 	drawPoint = point;
+
+	if (point.y - height >= _tileClipBottom) {
+		return;
+	}
 
 	if (height > SAGA_ISOTILE_BASEHEIGHT) {
 		drawPoint.y -= (height - SAGA_ISOTILE_BASEHEIGHT);
@@ -301,7 +485,7 @@ int IsoMap::drawTile(SURFACE *ds, uint16 tileNumber, const Point &point) {
 
 	// temporary y clip
 	if (drawPoint.y < 0) {
-		return SUCCESS;
+		return;
 	}
 
 	for (row = 0; row < height; row++) {
@@ -309,8 +493,8 @@ int IsoMap::drawTile(SURFACE *ds, uint16 tileNumber, const Point &point) {
 		widthCount = 0;
 
 		// temporary y clip
-		if ((drawPoint.y + row) >= _vm->getDisplayInfo().sceneHeight) {
-			return SUCCESS;
+		if ((drawPoint.y + row) >= _tileClipBottom) {
+			return;
 		}
 
 		for (;;) {
@@ -330,7 +514,6 @@ int IsoMap::drawTile(SURFACE *ds, uint16 tileNumber, const Point &point) {
 		}
 	}
 
-	return SUCCESS;
 }
 
 } // End of namespace Saga
