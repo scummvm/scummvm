@@ -265,10 +265,10 @@ void Debugger::buildDebugText(void) {
 		// "waiting for person" indicator - set form fnTheyDo and
 		// fnTheyDoWeWait
 
-		if (_vm->_logic->_speechScriptWaiting) {
+		if (_speechScriptWaiting) {
 			sprintf(buf, "script waiting for %s (%d)",
-				_vm->fetchObjectName(_vm->_logic->_speechScriptWaiting, name),
-				_vm->_logic->_speechScriptWaiting);
+				_vm->fetchObjectName(_speechScriptWaiting, name),
+				_speechScriptWaiting);
 			makeDebugTextBlock(buf, 0, 90);
 		}
 

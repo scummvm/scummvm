@@ -65,6 +65,8 @@ public:
 
 	bool _testingSnR;
 
+	int32 _speechScriptWaiting;
+
 	int32 _textNumber;
 
 	ObjectGraphic _playerGraphic;

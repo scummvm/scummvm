@@ -32,6 +32,412 @@
 
 namespace Sword2 {
 
+int32 Logic::fnAddSubject(int32 *params) {
+	// params:	0 id
+	//		1 daves reference number
+
+	if (_scriptVars[IN_SUBJECT] == 0) {
+		// This is the start of the new subject list. Set the default
+		// repsonse id to zero in case we're never passed one.
+		_defaultResponseId = 0;
+	}
+
+	if (params[0] == -1) {
+		// Id -1 is used for setting the default response, i.e. the
+		// response when someone uses an object on a person and he
+		// doesn't know anything about it. See fnChoose() below.
+
+		_defaultResponseId = params[1];
+	} else {
+		debug(5, "fnAddSubject res %d, uid %d", params[0], params[1]);
+		_subjectList[_scriptVars[IN_SUBJECT]].res = params[0];
+		_subjectList[_scriptVars[IN_SUBJECT]].ref = params[1];
+		_scriptVars[IN_SUBJECT]++;
+	}
+
+	return IR_CONT;
+}
+
+int32 Logic::fnChoose(int32 *params) {
+	// params:	none
+
+	// This opcode is used to open the conversation menu. The human is
+	// switched off so there will be no normal mouse engine.
+
+	// The player's choice is piggy-backed on the standard opcode return
+	// values, to be used with the CP_JUMP_ON_RETURNED opcode. As far as I
+	// can tell, this is the only function that uses that feature.
+
+	uint i;
+
+	_scriptVars[AUTO_SELECTED] = 0;
+
+	if (_scriptVars[OBJECT_HELD]) {
+		// The player used an object on a person. In this case it
+		// triggered a conversation menu. Act as if the user tried to
+		// talk to the person about that object. If the person doesn't
+		// know anything about it, use the default response.
+
+		uint32 response = _defaultResponseId;
+
+		for (i = 0; i < _scriptVars[IN_SUBJECT]; i++) {
+			if (_subjectList[i].res == _scriptVars[OBJECT_HELD]) {
+				response = _subjectList[i].ref;
+				break;
+			}
+		}
+
+		// The user won't be holding the object any more, and the
+		// conversation menu will be closed.
+
+		_scriptVars[OBJECT_HELD] = 0;
+		_scriptVars[IN_SUBJECT] = 0;
+		return IR_CONT | (response << 3);
+	}
+
+	if (_scriptVars[CHOOSER_COUNT_FLAG] == 0 && _scriptVars[IN_SUBJECT] == 1 && _subjectList[0].res == EXIT_ICON) {
+		// This is the first time the chooser is coming up in this
+		// conversation, there is only one subject and that's the
+		// EXIT icon.
+		//
+		// In other words, the player doesn't have anything to talk
+		// about. Skip it.
+
+		// The conversation menu will be closed. We set AUTO_SELECTED
+		// because the speech script depends on it.
+
+		_scriptVars[AUTO_SELECTED] = 1;
+		_scriptVars[IN_SUBJECT] = 0;
+		return IR_CONT | (_subjectList[0].ref << 3);
+	}
+
+	byte *icon;
+
+	if (!_choosing) {
+		// This is a new conversation menu.
+
+		if (!_scriptVars[IN_SUBJECT])
+			error("fnChoose with no subjects");
+
+		for (i = 0; i < _scriptVars[IN_SUBJECT]; i++) {
+			icon = _vm->_resman->openResource(_subjectList[i].res) + sizeof(StandardHeader) + RDMENU_ICONWIDE * RDMENU_ICONDEEP;
+			_vm->_graphics->setMenuIcon(RDMENU_BOTTOM, i, icon);
+			_vm->_resman->closeResource(_subjectList[i].res);
+		}
+
+		for (; i < 15; i++)
+			_vm->_graphics->setMenuIcon(RDMENU_BOTTOM, (uint8) i, NULL);
+
+		_vm->_graphics->showMenu(RDMENU_BOTTOM);
+		_vm->setMouse(NORMAL_MOUSE_ID);
+		_choosing = true;
+		return IR_REPEAT;
+	}
+
+	// The menu is there - we're just waiting for a click. We only care
+	// about left clicks and ignore mouse releases.
+
+	MouseEvent *me = _vm->_input->mouseEvent();
+
+	if (!me || !(me->buttons & RD_LEFTBUTTONDOWN) || _vm->_input->_mouseY < 400)
+		return IR_REPEAT;
+
+	// Check for click on a menu.
+
+	int hit = _vm->menuClick(_scriptVars[IN_SUBJECT]);
+	if (hit < 0)
+		return IR_REPEAT;
+
+	// Hilight the clicked icon by greying the others.
+
+	for (i = 0; i < _scriptVars[IN_SUBJECT]; i++) {
+		if ((int) i != hit) {
+			icon = _vm->_resman->openResource(_subjectList[i].res) + sizeof(StandardHeader);
+			_vm->_graphics->setMenuIcon(RDMENU_BOTTOM, i, icon);
+			_vm->_resman->closeResource(_subjectList[i].res);
+		}
+	}
+
+	// For non-speech scripts that manually call the chooser
+	_scriptVars[RESULT] = _subjectList[hit].res;
+
+	// The conversation menu will be closed
+
+	_choosing = false;
+	_scriptVars[IN_SUBJECT] = 0;
+	_vm->setMouse(0);
+
+	return IR_CONT | (_subjectList[hit].ref << 3);
+}
+
+/**
+ * Start a conversation.
+ *
+ * Note that fnStartConversation() might accidentally be called every time the
+ * script loops back for another chooser, but we only want to reset the chooser
+ * count flag the first time this function is called, i.e. when the talk flag
+ * is zero.
+ */
+
+int32 Logic::fnStartConversation(int32 *params) {
+	// params:	none
+
+	if (_scriptVars[TALK_FLAG] == 0) {
+		// See fnChooser & speech scripts
+		_scriptVars[CHOOSER_COUNT_FLAG] = 0;
+	}
+
+	fnNoHuman(params);
+	return IR_CONT;
+}
+
+/**
+ * End a conversation.
+ */
+
+int32 Logic::fnEndConversation(int32 *params) {
+	// params:	none
+
+	_vm->_graphics->hideMenu(RDMENU_BOTTOM);
+
+	if (_vm->_input->_mouseY > 399) {
+		// Will wait for cursor to move off the bottom menu
+		_vm->_mouseMode = MOUSE_holding;
+	}
+
+	// In case DC forgets
+	_scriptVars[TALK_FLAG] = 0;
+
+	return IR_CONT;
+}
+
+// To request the status of a target, we run its 4th script, get-speech-state.
+// This will cause RESULT to be set to either 1 (target is waiting) or 0
+// (target is busy).
+
+/**
+ * Wait for a target to become waiting, i.e. not busy, then send a command to
+ * it.
+ */
+
+int32 Logic::fnTheyDo(int32 *params) {
+	// params:	0 target
+	//		1 command
+	//		2 ins1
+	//		3 ins2
+	//		4 ins3
+	//		5 ins4
+	//		6 ins5
+
+	StandardHeader *head = (StandardHeader *) _vm->_resman->openResource(params[0]);
+	assert (head->fileType == GAME_OBJECT);
+
+	// Run the target's get-speech-state script
+
+	int32 target = params[0];
+	char *raw_script_ad = (char *) head;
+	uint32 null_pc = 5;
+
+	runScript(raw_script_ad, raw_script_ad, &null_pc);
+
+	_vm->_resman->closeResource(target);
+
+	if (_scriptVars[RESULT] == 1 && !_scriptVars[INS_COMMAND]) {
+		// The target is waiting, i.e. not busy, and there is no other
+		// command queued. Send the command.
+
+		debug(5, "fnTheyDo: sending command to %d", target);
+
+		_vm->_debugger->_speechScriptWaiting = 0;
+
+		_scriptVars[SPEECH_ID] = params[0];
+		_scriptVars[INS_COMMAND] = params[1];
+		_scriptVars[INS1] = params[2];
+		_scriptVars[INS2] = params[3];
+		_scriptVars[INS3] = params[4];
+		_scriptVars[INS4] = params[5];
+		_scriptVars[INS5] = params[6];
+
+		return IR_CONT;
+	}
+
+	// The target is busy. Come back again next cycle.
+
+	_vm->_debugger->_speechScriptWaiting = target;
+	return IR_REPEAT;
+}
+
+/**
+ * Wait for a target to become waiting, i.e. not busy, send a command to it,
+ * then wait for it to finish.
+ */
+
+int32 Logic::fnTheyDoWeWait(int32 *params) {
+	// params:	0 pointer to ob_logic
+	//		1 target
+	//		2 command
+	//		3 ins1
+	//		4 ins2
+	//		5 ins3
+	//		6 ins4
+	//		7 ins5
+
+	StandardHeader *head = (StandardHeader *) _vm->_resman->openResource(params[1]);
+	assert(head->fileType == GAME_OBJECT);
+
+	// Run the target's get-speech-state script
+
+	int32 target = params[1];
+	char *raw_script_ad = (char *) head;
+	uint32 null_pc = 5;
+
+	runScript(raw_script_ad, raw_script_ad, &null_pc);
+
+	_vm->_resman->closeResource(target);
+
+	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->decodePtr(params[0]);
+
+	if (_scriptVars[RESULT] == 1 && !_scriptVars[INS_COMMAND] && ob_logic->looping == 0) {
+		// The target is waiting, i.e. not busy, and there is no other
+		// command queued. We haven't sent the command yet, so do it.
+
+		debug(5, "fnTheyDoWeWait: sending command to %d", target);
+
+		_vm->_debugger->_speechScriptWaiting = target;
+		ob_logic->looping = 1;
+
+		_scriptVars[SPEECH_ID] = params[1];
+		_scriptVars[INS_COMMAND] = params[2];
+		_scriptVars[INS1] = params[3];
+		_scriptVars[INS2] = params[4];
+		_scriptVars[INS3] = params[5];
+		_scriptVars[INS4] = params[6];
+		_scriptVars[INS5] = params[7];
+
+		return IR_REPEAT;
+	}
+
+	if (ob_logic->looping == 0) {
+		// The command has not been sent yet. Keep waiting.
+		_vm->_debugger->_speechScriptWaiting = target;
+		return IR_REPEAT;
+	}
+
+	if (_scriptVars[RESULT] == 0) {
+		// The command has been sent, and the target is busy doing it.
+		// Wait for it to finish.
+
+		debug(5, "fnTheyDoWeWait: Waiting for %d to finish", target);
+
+		_vm->_debugger->_speechScriptWaiting = target;
+		return IR_REPEAT;
+	}
+
+	debug(5, "fnTheyDoWeWait: %d finished", target);
+
+	ob_logic->looping = 0;
+	_vm->_debugger->_speechScriptWaiting = 0;
+	return IR_CONT;
+}
+
+/**
+ * Wait for a target to become waiting, i.e. not busy.
+ */
+
+int32 Logic::fnWeWait(int32 *params) {
+	// params:	0 target
+
+	StandardHeader *head = (StandardHeader *) _vm->_resman->openResource(params[0]);
+	assert(head->fileType == GAME_OBJECT);
+
+	// Run the target's get-speech-state script
+
+	int32 target = params[0];
+	char *raw_script_ad = (char *) head;
+	uint32 null_pc = 5;
+
+	runScript(raw_script_ad, raw_script_ad, &null_pc);
+
+	_vm->_resman->closeResource(target);
+
+	if (_scriptVars[RESULT] == 0) {
+		// The target is busy. Try again.
+		_vm->_debugger->_speechScriptWaiting = target;
+		return IR_REPEAT;
+	}
+
+	// The target is waiting, i.e. not busy.
+
+	_vm->_debugger->_speechScriptWaiting = 0;
+	return IR_CONT;
+}
+
+/**
+ * Wait for a target to become waiting, i.e. not busy, or until we time out.
+ * This is useful when clicking on a target to talk to it, and it doesn't
+ * reply. This way, we won't lock up.
+ *
+ * If the target becomes waiting, RESULT is set to 0. If we time out, RESULT is
+ * set to 1.
+ */
+
+int32 Logic::fnTimedWait(int32 *params) {
+	// params:	0 ob_logic
+	//		1 target
+	//		2 number of cycles before give up
+
+	StandardHeader *head = (StandardHeader *) _vm->_resman->openResource(params[1]);
+	assert(head->fileType == GAME_OBJECT);
+
+	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->decodePtr(params[0]);
+
+	if (!ob_logic->looping) {
+		// This is the first time, so set up the time-out.
+		ob_logic->looping = params[2];
+	}
+
+	// Run the target's get-speech-state script
+
+	int32 target = params[1];
+	char *raw_script_ad = (char *) head;
+	uint32 null_pc = 5;
+
+	runScript(raw_script_ad, raw_script_ad, &null_pc);
+
+	_vm->_resman->closeResource(target);
+
+	if (_scriptVars[RESULT] == 1) {
+		// The target is waiting, i.e. not busy
+
+		_vm->_debugger->_speechScriptWaiting = 0;
+
+		ob_logic->looping = 0;
+		_scriptVars[RESULT] = 0;
+		return IR_CONT;
+	}
+
+	ob_logic->looping--;
+
+	if (!ob_logic->looping) {
+		// Time's up.
+
+		debug(5, "fnTimedWait: Timed out waiting for %d", target);
+		_vm->_debugger->_speechScriptWaiting = 0;
+
+		// Clear the event that hasn't been picked up - in theory,
+		// none of this should ever happen.
+
+		killAllIdsEvents(target);
+		_scriptVars[RESULT] = 1;
+		return IR_CONT;
+	}
+
+	// Target is busy. Keep trying.
+
+	_vm->_debugger->_speechScriptWaiting = target;
+	return IR_REPEAT;
+}
+
 enum {
 	INS_talk		= 1,
 	INS_anim		= 2,
@@ -52,522 +458,36 @@ enum {
 	INS_quit		= 42
 };
 
-int32 Logic::fnAddSubject(int32 *params) {
-	// params:	0 id
-	//		1 daves reference number
-
-	if (_scriptVars[IN_SUBJECT] == 0) {
-		// This is the start of the new subject list
-		// Set the default repsonse id to zero in case we're never
-		// passed one
-		_defaultResponseId = 0;
-	}
-
-	// - this just means we'd get the response for the 1st icon in the
-	// chooser which is better than crashing
-
-	if (params[0] == -1)
-	{
-		// this isn't an icon at all, it's telling us the id of the
-		// default response
-
-		// and here it is - this is the ref number we will return if
-		_defaultResponseId = params[1];
-
-		// a luggage icon is clicked on someone when it wouldn't have
-		// been in the chooser list (see fnChoose below)
-	} else {
-		_subjectList[_scriptVars[IN_SUBJECT]].res = params[0];
-		_subjectList[_scriptVars[IN_SUBJECT]].ref = params[1];
-
-		debug(5, "fnAddSubject res %d, uid %d", params[0], params[1]);
-
-		_scriptVars[IN_SUBJECT]++;
-	}
-
-	return IR_CONT;
-}
-
-int32 Logic::fnChoose(int32 *params) {
-	// params:	none
-
-	// the human is switched off so there will be no normal mouse engine
-
-	MouseEvent *me;
-	uint32 i;
-	int hit;
-	byte *icon;
-
-	_scriptVars[AUTO_SELECTED] = 0;	// see below
-
-	// new thing to intercept objects held at time of clicking on a person
-
-	if (_scriptVars[OBJECT_HELD]) {
-		// So that, if there is no match, the speech script uses the
-		// default text for objects that are not accounted for
-
-		int response = _defaultResponseId;
-
-		// If we are using a luggage icon on the person, scan the
-		// subject list to see if this icon would have been available
-		// at this time.
-		//
- 		// If it is there, return the relevant 'ref' number (as if it
-		// had been selected from within the conversation). If not,
-		// just return a special code to get the default text line(s)
-		// for unsupported objects.
-		//
-		// Note that we won't display the subject icons in this case!
-
-		// scan the subject list for a match with our 'object_held'
-
-		for (i = 0; i < _scriptVars[IN_SUBJECT]; i++) {
-			if (_subjectList[i].res == _scriptVars[OBJECT_HELD]) {
-				// Return special subject chosen code (same
-				// as in normal chooser routine below)
-				response = _subjectList[i].ref;
-				break;
-			}
-		}
-
-		_scriptVars[OBJECT_HELD] = 0;	// clear it so it doesn't keep happening!
-		_scriptVars[IN_SUBJECT] = 0;	// clear the subject list
-
-		return IR_CONT | (response << 3);
-	}
-
-	// new thing for skipping chooser with "nothing else to say" text
-
-	// If this is the 1st time the chooser is coming up in this
-	// conversation, AND there's only 1 subject, AND it's the EXIT icon
-
-	if (_scriptVars[CHOOSER_COUNT_FLAG] == 0 && _scriptVars[IN_SUBJECT] == 1 && _subjectList[0].res == EXIT_ICON) {
-		_scriptVars[AUTO_SELECTED] = 1;	// for speech script
-		_scriptVars[IN_SUBJECT] = 0;	// clear the subject list
-
-		// return special subject chosen code (same as in normal
-		// chooser routine below)
-		return IR_CONT | (_subjectList[0].ref << 3);
-	}
-
-	if (!_choosing) {
-		// new choose session
-		// build menus from subject_list
-
-		if (!_scriptVars[IN_SUBJECT])
-			error("fnChoose with no subjects :-O");
-
-		// init top menu from master list
-		// all icons are highlighted / full colour
-
-		for (i = 0; i < 15; i++) {
-			if (i < _scriptVars[IN_SUBJECT]) {
-				debug(5, " ICON res %d for %d", _subjectList[i].res, i);
-				icon = _vm->_resman->openResource(_subjectList[i].res) + sizeof(StandardHeader) + RDMENU_ICONWIDE * RDMENU_ICONDEEP;
-				_vm->_graphics->setMenuIcon(RDMENU_BOTTOM, (uint8) i, icon);
-				_vm->_resman->closeResource(_subjectList[i].res);
-			} else {
-				// no icon here
-				debug(5, " NULL for %d", i);
-				_vm->_graphics->setMenuIcon(RDMENU_BOTTOM, (uint8) i, NULL);
-			}
-		}
-
-		// start menus appearing
-		_vm->_graphics->showMenu(RDMENU_BOTTOM);
-
-		// lets have the mouse pointer back
-		_vm->setMouse(NORMAL_MOUSE_ID);
-
-		_choosing = true;
-		return IR_REPEAT;
-	}
-
-	// menu is there - we're just waiting for a click
-	debug(5, "choosing");
-
-	me = _vm->_input->mouseEvent();
-
-	// we only care about left clicks
-	// we ignore mouse releases
-
-	if (!me || !(me->buttons & RD_LEFTBUTTONDOWN) || _vm->_input->_mouseY < 400) {
-		debug(5, "end choose");
-		return IR_REPEAT;
-	}
-
-	// Check for click on a menu. If so then end the choose, highlight only
-	// the chosen, blank the mouse and return the ref code * 8
-
-	hit = _vm->menuClick(_scriptVars[IN_SUBJECT]);
-
-	if (hit < 0) {
-		debug(5, "end choose");
-		return IR_REPEAT;
-	}
-
-	debug(5, "Icons available:");
-
-	byte buf[NAME_LEN];
-
-	// change icons
-	for (i = 0; i < _scriptVars[IN_SUBJECT]; i++) {
-		debug(5, "%s", _vm->fetchObjectName(_subjectList[i].res, buf));
-
-		// change all others to grey
-		if (i != (uint32) hit) {
-			icon = _vm->_resman->openResource(_subjectList[i].res) + sizeof(StandardHeader);
-			_vm->_graphics->setMenuIcon(RDMENU_BOTTOM, (uint8) i, icon);
-			_vm->_resman->closeResource(_subjectList[i].res);
-		}
-	}
-
-	debug(2, "Selected: %s", _vm->fetchObjectName(_subjectList[hit].res, buf));
-
-	// this is our looping flag
-	_choosing = false;
-
-	_scriptVars[IN_SUBJECT] = 0;
-
-	// blank mouse again
-	_vm->setMouse(0);
-
-	debug(5, "hit %d - ref %d  ref*8 %d", hit, _subjectList[hit].ref, _subjectList[hit].ref * 8);
-
-	// for non-speech scripts that manually
-	// call the chooser
-	_scriptVars[RESULT] = _subjectList[hit].res;
-
-	// return special subject chosen code
-	return IR_CONT | (_subjectList[hit].ref << 3);
-}
-
-int32 Logic::fnStartConversation(int32 *params) {
-	// Start conversation
-
-	// reset 'chooser_count_flag' at the start of each conversation:
-
-	// Note that fnStartConversation might accidently be called every time
-	// the script loops back for another chooser but we only want to reset
-	// the chooser count flag the first time this function is called ie.
-	// when talk flag is zero
-
-	// params:	none
-
-	if (_scriptVars[TALK_FLAG] == 0)
-		_scriptVars[CHOOSER_COUNT_FLAG] = 0;	// see fnChooser & speech scripts
-
-	fnNoHuman(params);
-	return IR_CONT;
-}
-
-int32 Logic::fnEndConversation(int32 *params) {
-	// end conversation
-
-	// params:	none
-
-	_vm->_graphics->hideMenu(RDMENU_BOTTOM);
-
-	if (_vm->_input->_mouseY > 399) {
-		// will wait for cursor to move off the bottom menu
-		_vm->_mouseMode = MOUSE_holding;
-		debug(5, "   holding");
-	}
-
-	_scriptVars[TALK_FLAG] = 0;	// in-case DC forgets
-	return IR_CONT;
-}
-
-int32 Logic::fnTheyDo(int32 *params) {
-	// doesn't send the command until target is waiting - once sent we
-	// carry on
-
-	// params:	0 target
-	//		1 command
-	//		2 ins1
-	//		3 ins2
-	//		4 ins3
-	//		5 ins4
-	//		6 ins5
-
-	uint32 null_pc = 5;		// 4th script - get-speech-state
-	char *raw_script_ad;
-	StandardHeader *head;
-	int32 target = params[0];
-
-	// request status of target
-	head = (StandardHeader *) _vm->_resman->openResource(target);
-	if (head->fileType != GAME_OBJECT)
-		error("fnTheyDo %d not an object", target);
-
-	raw_script_ad = (char *) head;
-
-	// call the base script - this is the graphic/mouse service call
-	runScript(raw_script_ad, raw_script_ad, &null_pc);
-
-	_vm->_resman->closeResource(target);
-
-	// result is 1 for waiting, 0 for busy
-
-	if (_scriptVars[RESULT] == 1 && !_scriptVars[INS_COMMAND]) {
-		// its waiting and no other command is queueing
-		// reset debug flag now that we're no longer waiting - see
-		// debug.cpp
-
-		_speechScriptWaiting = 0;
-
-		_scriptVars[SPEECH_ID] = params[0];
-		_scriptVars[INS_COMMAND] = params[1];
-		_scriptVars[INS1] = params[2];
-		_scriptVars[INS2] = params[3];
-		_scriptVars[INS3] = params[4];
-		_scriptVars[INS4] = params[5];
-		_scriptVars[INS5] = params[6];
-
-		return IR_CONT;
-	}
-
-	// debug flag to indicate who we're waiting for - see debug.cpp
-	_speechScriptWaiting = target;
-
-	// target is busy so come back again next cycle
-	return IR_REPEAT;
-}
-
-int32 Logic::fnTheyDoWeWait(int32 *params) {
-	// give target a command and wait for it to register as finished
-
-	// params:	0 pointer to ob_logic
-	//		1 target
-	//		2 command
-	//		3 ins1
-	//		4 ins2
-	//		5 ins3
-	//		6 ins4
-	//		7 ins5
-
-	// 'looping' flag is used as a sent command yes/no
-
-	ObjectLogic *ob_logic;
-
-	uint32 null_pc = 5;		// 4th script - get-speech-state
-	char *raw_script_ad;
-	StandardHeader *head;
-	int32 target = params[1];
-
-	// ok, see if the target is busy - we must request this info from the
-	// target object
-
-	head = (StandardHeader *) _vm->_resman->openResource(target);
-	if (head->fileType != GAME_OBJECT)
-		error("fnTheyDoWeWait %d not an object", target);
-
-	raw_script_ad = (char *) head;
-
-	// call the base script - this is the graphic/mouse service call
-	runScript(raw_script_ad, raw_script_ad, &null_pc);
-
-	_vm->_resman->closeResource(target);
-
-	ob_logic = (ObjectLogic *) _vm->_memory->decodePtr(params[0]);
-
-	if (!_scriptVars[INS_COMMAND] && _scriptVars[RESULT] == 1 && ob_logic->looping == 0) {
-		// first time so set up targets command if target is waiting
-
-		debug(5, "fnTheyDoWeWait sending command to %d", target);
-
-		_scriptVars[SPEECH_ID] = params[1];
-		_scriptVars[INS_COMMAND] = params[2];
-		_scriptVars[INS1] = params[3];
-		_scriptVars[INS2] = params[4];
-		_scriptVars[INS3] = params[5];
-		_scriptVars[INS4] = params[6];
-		_scriptVars[INS5] = params[7];
-
-		ob_logic->looping = 1;
-
-		// debug flag to indicate who we're waiting for - see debug.cpp
-		_speechScriptWaiting = target;
-
-		// finish this cycle - but come back again to check for it
-		// being finished
-		return IR_REPEAT;
-	} else if (ob_logic->looping == 0) {
-		// did not send the command
-		// debug flag to indicate who we're waiting for - see debug.cpp
-		_speechScriptWaiting = target;
-
-		// come back next go and try again to send the instruction
-		return IR_REPEAT;
-	}
-
-	// ok, the command has been sent - has the target actually done it yet?
-
-	// result is 1 for waiting, 0 for busy
-
-	if (_scriptVars[RESULT] == 1) {
-		// its waiting now so we can be finished with all this
-		debug(5, "fnTheyDoWeWait finished");
-
-		// not looping anymore
-		ob_logic->looping = 0;
-
-		// reset debug flag now that we're no longer waiting - see
-		// debug.cpp
-		_speechScriptWaiting = 0;
-		return IR_CONT;
-	}
-
-	debug(5, "fnTheyDoWeWait just waiting");
-
-	// debug flag to indicate who we're waiting for - see debug.cpp
-	_speechScriptWaiting = target;
-	return IR_REPEAT;
-}
-
-int32 Logic::fnWeWait(int32 *params) {
-	// loop until the target is free
-
-	// params:	0 target
-
-	uint32 null_pc = 5;		// 4th script - get-speech-state
-	char *raw_script_ad;
-	StandardHeader *head;
-	int32 target = params[0];
-
-	// request status of target
-	head = (StandardHeader *) _vm->_resman->openResource(target);
-	if (head->fileType != GAME_OBJECT)
-		error("fnWeWait: %d not an object", target);
-
-	raw_script_ad = (char *) head;
-
-	// call the base script - this is the graphic/mouse service call
-	runScript(raw_script_ad, raw_script_ad, &null_pc);
-
-	_vm->_resman->closeResource(target);
-
-	// result is 1 for waiting, 0 for busy
-
-	if (_scriptVars[RESULT] == 1) {
-		// reset debug flag now that we're no longer waiting - see
-		// debug.cpp
-		_speechScriptWaiting = 0;
-		return IR_CONT;
-	}
-
-	// debug flag to indicate who we're waiting for - see debug.cpp
-	_speechScriptWaiting = target;
-
-	// target is busy so come back again next cycle
-	return IR_REPEAT;
-}
-
-int32 Logic::fnTimedWait(int32 *params) {
-	// loop until the target is free but only while the timer is high
-	// useful when clicking on a target to talk to them - if they never
-	// reply then this'll fall out avoiding a lock up
-
-	// params:	0 ob_logic
-	//		1 target
-	//		2 number of cycles before give up
-
-	uint32 null_pc = 5;		// 4th script - get-speech-state
-	char *raw_script_ad;
-	ObjectLogic *ob_logic;
-	StandardHeader *head;
-	int32 target = params[1];
-
-	ob_logic = (ObjectLogic *) _vm->_memory->decodePtr(params[0]);
-
-	if (!ob_logic->looping)
-		ob_logic->looping = params[2];	// first time in
-
-	// request status of target
-	head = (StandardHeader *) _vm->_resman->openResource(target);
-	if (head->fileType != GAME_OBJECT)
-		error("fnTimedWait %d not an object", target);
-
-	raw_script_ad = (char *) head;
-
-	// call the base script - this is the graphic/mouse service call
-	runScript(raw_script_ad, raw_script_ad, &null_pc);
-
-	_vm->_resman->closeResource(target);
-
-	// result is 1 for waiting, 0 for busy
-
-	if (_scriptVars[RESULT] == 1) {
-		// reset because counter is likely to be still high
-		ob_logic->looping = 0;
-
-		//means ok
-		_scriptVars[RESULT] = 0;
-
-		// reset debug flag now that we're no longer waiting - see
-		// debug.cpp
-		_speechScriptWaiting = 0;
-
-		return IR_CONT;
-	}
-
-	ob_logic->looping--;
-
-	if (!ob_logic->looping) {	// time up - caller must check RESULT
-		// not ok
-		_scriptVars[RESULT] = 1;
-
-		// clear the event that hasn't been picked up - in theory,
-		// none of this should ever happen
-		killAllIdsEvents(target);
-
-		debug(5, "EVENT timed out");
-
-		// reset debug flag now that we're no longer waiting - see
-		// debug.cpp
-		_speechScriptWaiting = 0;
-
-		return IR_CONT;
-	}
-
-	// debug flag to indicate who we're waiting for - see debug.cpp
-	_speechScriptWaiting = target;
-
-	// target is busy so come back again next cycle
-	return IR_REPEAT;
-}
+/**
+ * Receive and sequence the commands sent from the conversation script. We have
+ * to do this in a slightly tweeky manner as we can no longer have generic
+ * scripts.
+ */
 
 int32 Logic::fnSpeechProcess(int32 *params) {
-	// Receive and sequence the commands sent from the conversation
-	// script.
-
-	// We have to do this in a slightly tweeky manner as we can no longer
-	// have generic scripts.
-
-	// This function comes in with all the structures that will be
-	// required.
-
 	// params:	0 pointer to ob_graphic
 	//		1 pointer to ob_speech
 	//		2 pointer to ob_logic
 	//		3 pointer to ob_mega
 	//		4 pointer to ob_walkdata
 
-	// note - we could save a var and ditch wait_state and check
-	// 'command' for non zero means busy
-
-	ObjectSpeech *ob_speech;
-	int32 pars[9];
-
-	ob_speech = (ObjectSpeech *) _vm->_memory->decodePtr(params[1]);
-
-	debug(5, "  SP");
+	ObjectSpeech *ob_speech = (ObjectSpeech *) _vm->_memory->decodePtr(params[1]);
 
 	while (1) {
-		//we are currently running a command
+		int32 pars[9];
+
+		// Check which command we're waiting for, and call the
+		// appropriate function. Once we're done, clear the command
+		// and set wait_state to 1.
+		//
+		// Note: we could save a var and ditch wait_state and check
+		// 'command' for non zero means busy
+		//
+		// Note: I can't see that we ever check the value of wait_state
+		// but perhaps it accesses that memory location directly?
+
 		switch (ob_speech->command) {
 		case 0:
-			// Do nothing
 			break;
 		case INS_talk:
 			pars[0] = params[0];		// ob_graphic
@@ -580,18 +500,8 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 			pars[7] = ob_speech->ins4;	// anim table res id
 			pars[8] = ob_speech->ins5;	// animation mode - 0 lip synced, 1 just straight animation
 
-			debug(5, "speech-process talk");
-
-			// run the function - (it thinks it's been called from
-			// script - bloody fool)
-
 			if (fnISpeak(pars) != IR_REPEAT) {
-				debug(5, "speech-process talk finished");
-
-				// command finished
 				ob_speech->command = 0;
-
-				// waiting for command
 				ob_speech->wait_state = 1;
 			}
 
@@ -604,10 +514,7 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 			pars[4] = ob_speech->ins1;	// direction to turn to
 
 			if (fnTurn(pars) != IR_REPEAT) {
-				// command finished
 				ob_speech->command = 0;
-
-				// waiting for command
 				ob_speech->wait_state = 1;
 			}
 
@@ -620,10 +527,7 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 			pars[4] = ob_speech->ins1;	// target
 
 			if (fnFaceMega(pars) != IR_REPEAT) {
-				// command finished
 				ob_speech->command = 0;
-
-				// waiting for command
 				ob_speech->wait_state = 1;
 			}
 
@@ -634,10 +538,7 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 			pars[2] = ob_speech->ins1;	// anim res
 
 			if (fnAnim(pars) != IR_REPEAT) {
-				// command finished
 				ob_speech->command = 0;
-
-				// waiting for command
 				ob_speech->wait_state = 1;
 			}
 
@@ -648,10 +549,7 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 			pars[2] = ob_speech->ins1;	// anim res
 
 			if (fnReverseAnim(pars) != IR_REPEAT) {
-				// command finished
 				ob_speech->command = 0;
-
-				// waiting for command
 				ob_speech->wait_state = 1;
 			}
 
@@ -663,10 +561,7 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 			pars[3] = ob_speech->ins1;	// pointer to anim table
 
 			if (fnMegaTableAnim(pars) != IR_REPEAT) {
-				// command finished
 				ob_speech->command = 0;
-
-				// waiting for command
 				ob_speech->wait_state = 1;
 			}
 
@@ -678,33 +573,34 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 			pars[3] = ob_speech->ins1;	// pointer to anim table
 
 			if (fnReverseMegaTableAnim(pars) != IR_REPEAT) {
-				// command finished
 				ob_speech->command = 0;
-
-				// waiting for command
 				ob_speech->wait_state = 1;
 			}
 
 			return IR_REPEAT;
 		case INS_no_sprite:
 			fnNoSprite(params);		// ob_graphic
-			ob_speech->command = 0;		// command finished
-			ob_speech->wait_state = 1;	// waiting for command
+
+			ob_speech->command = 0;
+			ob_speech->wait_state = 1;
 			return IR_REPEAT ;
 		case INS_sort:
 			fnSortSprite(params);		// ob_graphic
-			ob_speech->command = 0;		// command finished
-			ob_speech->wait_state = 1;	// waiting for command
+
+			ob_speech->command = 0;
+			ob_speech->wait_state = 1;
 			return IR_REPEAT;
 		case INS_foreground:
 			fnForeSprite(params);		// ob_graphic
-			ob_speech->command = 0;		// command finished
-			ob_speech->wait_state = 1;	// waiting for command
+
+			ob_speech->command = 0;
+			ob_speech->wait_state = 1;
 			return IR_REPEAT;
 		case INS_background:
-			fnBackSprite(params);		// ob_graphic
-			ob_speech->command = 0;		// command finished
-			ob_speech->wait_state = 1;	// waiting for command
+			fnBackSprite(pars);		// ob_graphic
+
+			ob_speech->command = 0;
+			ob_speech->wait_state = 1;
 			return IR_REPEAT;
 		case INS_walk:
 			pars[0] = params[2];		// ob_logic
@@ -716,12 +612,7 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 			pars[6] = ob_speech->ins3;	// target direction
 
 			if (fnWalk(pars) != IR_REPEAT) {
-				debug(5, "speech-process walk finished");
-
-				// command finished
 				ob_speech->command = 0;
-
-				//waiting for command
 				ob_speech->wait_state = 1;
 			}
 
@@ -734,12 +625,7 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 			pars[4] = ob_speech->ins1;	// anim resource
 
 			if (fnWalkToAnim(pars) != IR_REPEAT) {
-				debug(5, "speech-process walk finished");
-
-				// command finished
 				ob_speech->command = 0;
-
-				// waiting for command
 				ob_speech->wait_state = 1;
 			}
 
@@ -748,37 +634,42 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 			pars[0] = params[0];		// ob_graphic
 			pars[1] = params[3];		// ob_mega
 			pars[2] = ob_speech->ins1;	// anim resource
+
 			fnStandAfterAnim(pars);
-			ob_speech->command = 0;		// command finished
-			ob_speech->wait_state = 1;	// waiting for command
+
+			ob_speech->command = 0;
+			ob_speech->wait_state = 1;
 			return IR_REPEAT;
 		case INS_set_frame:
 			pars[0] = params[0];		// ob_graphic
 			pars[1] = ob_speech->ins1;	// anim_resource
 			pars[2] = ob_speech->ins2;	// FIRST_FRAME or LAST_FRAME
 			fnSetFrame(pars);
-			ob_speech->command = 0;		// command finished
-			ob_speech->wait_state = 1;	// waiting for command
+
+			ob_speech->command = 0;
+			ob_speech->wait_state = 1;
 			return IR_REPEAT;
 		case INS_quit:
-			debug(5, "speech-process - quit");
-
-			ob_speech->command = 0;		// finish with all this
-			// ob_speech->wait_state = 0;	// start with waiting for command next conversation
-			return IR_CONT;			// thats it, we're finished with this
+			// That's it - we're finished with this
+			ob_speech->command = 0;
+			// ob_speech->wait_state = 0;
+			return IR_CONT;
 		default:
-			ob_speech->command = 0;		// not yet implemented - just cancel
-			ob_speech->wait_state = 1;	// waiting for command
+			// Unimplemented command - just cancel
+			ob_speech->command = 0;
+			ob_speech->wait_state = 1;
 			break;
 		}
 
 		if (_scriptVars[SPEECH_ID] == _scriptVars[ID]) {
-			// new command for us!
-			// clear this or it could trigger next go
-			_scriptVars[SPEECH_ID] = 0;
+			// There's a new command for us! Grab the command -
+			// potentially we only have this cycle to do this - and
+			// set things up so that the command will be picked up
+			// on the next iteration of the while loop.
 
-			// grab the command - potentially, we only have this
-			// cycle to do this
+			debug(5, "fnSpeechProcess: Received new command %d", _scriptVars[INS_COMMAND]);
+
+			_scriptVars[SPEECH_ID] = 0;
 
 			ob_speech->command = _scriptVars[INS_COMMAND];
 			ob_speech->ins1 = _scriptVars[INS1];
@@ -786,24 +677,13 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 			ob_speech->ins3 = _scriptVars[INS3];
 			ob_speech->ins4 = _scriptVars[INS4];
 			ob_speech->ins5 = _scriptVars[INS5];
-
-			debug(5, "received new command %d", _scriptVars[INS_COMMAND]);
-
-			// the current send has been received - i.e. separate
-			// multiple they-do's
-
-			_scriptVars[INS_COMMAND] = 0;
-
-			// now busy
 			ob_speech->wait_state = 0;
 
-			// we'll drop off and be caught by the while(1), so
-			// kicking in the new command straight away
+			_scriptVars[INS_COMMAND] = 0;
 		} else {
-			// no new command
-			// we could run a blink anim (or something) here
+			// No new command. We could run a blink anim (or
+			// something) here.
 
-			// now free
 			ob_speech->wait_state = 1;
 			return IR_REPEAT;
 		}
@@ -823,12 +703,14 @@ enum {
 	S_ANIM_MODE	= 8
 };
 
+/**
+ * It's the super versatile fnSpeak. Text and wavs can be selected in any
+ * combination.
+ *
+ * @note We can assume no human - there should be no human, at least!
+ */
+
 int32 Logic::fnISpeak(int32 *params) {
-	// its the super versatile fnSpeak
-	// text and wavs can be selected in any combination
-
-	// we can assume no human - there should be no human at least!
-
 	// params:	0 pointer to ob_graphic
 	//		1 pointer to ob_speech
 	//		2 pointer to ob_logic
@@ -840,30 +722,13 @@ int32 Logic::fnISpeak(int32 *params) {
 	//		8 animation mode	0 lip synced,
 	//					1 just straight animation
 
-	MouseEvent *me;
-	AnimHeader *anim_head;
-	ObjectLogic *ob_logic;
-	ObjectGraphic *ob_graphic;
-	ObjectMega *ob_mega;
-	byte *anim_file;
-	uint32 local_text;
-	uint32 text_res;
-	byte *text;
-	static bool speechRunning;
-	int32 *anim_table;
-	bool speechFinished = false;
-	int8 speech_pan;
-	char speechFile[256];
 	static bool cycle_skip = false;
-  	uint32 rv;
+	static bool speechRunning;
 
-	// for text/speech testing & checking for correct file type
-	StandardHeader *head;
+	// Set up the pointers which we know we'll always need
 
-	// set up the pointers which we know we'll always need
-
-	ob_logic = (ObjectLogic *) _vm->_memory->decodePtr(params[S_OB_LOGIC]);
-	ob_graphic = (ObjectGraphic *) _vm->_memory->decodePtr(params[S_OB_GRAPHIC]);
+	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->decodePtr(params[S_OB_LOGIC]);
+	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->decodePtr(params[S_OB_GRAPHIC]);
 
 	// FIRST TIME ONLY: create the text, load the wav, set up the anim,
 	// etc.
@@ -875,27 +740,34 @@ int32 Logic::fnISpeak(int32 *params) {
 		if (_vm->_sound->getSpeechStatus() != RDSE_SAMPLEFINISHED)
 			return IR_REPEAT;
 		
-		// New fudge for 'fx' subtitles
-		// If subtitles switched off, and we don't want to use a wav
-		// for this line either, then just quit back to script right
-		// now!
+		// New fudge for 'fx' subtitles: If subtitles switched off, and
+		// we don't want to use a wav for this line either, then just
+		// quit back to script right now!
 
 		if (!_vm->_gui->_subtitles && !wantSpeechForLine(params[S_WAV]))
 			return IR_CONT;
 
-		if (!cycle_skip) {
-			// drop out for 1st cycle to allow walks/anims to end
-			// & display last frame/ before system locks while
-			// speech loaded
+		// Drop out for 1st cycle to allow walks/anims to end and
+		// display last frame before system locks while speech loaded
 
+		if (!cycle_skip) {
 			cycle_skip = true;
 			return IR_REPEAT;
-		} else
-			cycle_skip = false;
+		}
 
-		_vm->_debugger->_textNumber = params[S_TEXT];	// for debug info
+		cycle_skip = false;
+
+		_vm->_debugger->_textNumber = params[S_TEXT];
+
+		// Pull out the text line to get the official text number
+		// (for wav id). Once the wav id's go into all script text
+		// commands, we'll only need this for debugging.
+
+		uint32 text_res = params[S_TEXT] / SIZE;
+		uint32 local_text = params[S_TEXT] & 0xffff;
 
 		// For testing all text & speech!
+		//
 		// A script loop can send any text number to fnISpeak and it
 		// will only run the valid ones or return with 'result' equal
 		// to '1' or '2' to mean 'invalid text resource' and 'text
@@ -905,82 +777,56 @@ int32 Logic::fnISpeak(int32 *params) {
 		// section of linc
 
 		if (_scriptVars[SYSTEM_TESTING_TEXT]) {
-			_scriptVars[RESULT] = 0;
-
-			text_res = params[S_TEXT] / SIZE;
-			local_text = params[S_TEXT] & 0xffff;
-
-			// if the resource number is within range & it's not
-			// a null resource
-
-			if (_vm->_resman->checkValid(text_res)) {
-				// open the resource
-				head = (StandardHeader *) _vm->_resman->openResource(text_res);
-
-				if (head->fileType == TEXT_FILE) {
-					// if it's not an animation file
-					// if line number is out of range
-					if (!_vm->checkTextLine((byte *) head, local_text)) {
-						// line number out of range
-						_scriptVars[RESULT] = 2;
-					}
-				} else {
-					// invalid (not a text resource)
-					_scriptVars[RESULT] = 1;
-				}
-
-				// close the resource
-				_vm->_resman->closeResource(text_res);
-
-				if (_scriptVars[RESULT])
-					return IR_CONT;
-			} else {
-				// not a valid resource number - invalid (null
+			if (!_vm->_resman->checkValid(text_res)) {
+				// Not a valid resource number - invalid (null
 				// resource)
 				_scriptVars[RESULT] = 1;
 				return IR_CONT;
 			}
+
+			StandardHeader *head = (StandardHeader *) _vm->_resman->openResource(text_res);
+
+			if (head->fileType != TEXT_FILE) {
+				// Invalid - not a text resource
+				_vm->_resman->closeResource(text_res);
+				_scriptVars[RESULT] = 1;
+				return IR_CONT;
+			}
+
+			if (!_vm->checkTextLine((byte *) head, local_text)) {
+				// Line number out of range
+				_vm->_resman->closeResource(text_res);
+				_scriptVars[RESULT] = 2;
+				return IR_CONT;
+			}
+
+			_vm->_resman->closeResource(text_res);
+			_scriptVars[RESULT] = 0;
 		}
 
-		// Pull out the text line to get the official text number
-		// (for wav id). Once the wav id's go into all script text
-		// commands, we'll only need this for _SWORD2_DEBUG
-
-		text_res = params[S_TEXT] / SIZE;
-		local_text = params[S_TEXT] & 0xffff;
-
-		// open text file & get the line
-		text = _vm->fetchTextLine(_vm->_resman->openResource(text_res), local_text);
+		byte *text = _vm->fetchTextLine(_vm->_resman->openResource(text_res), local_text);
 		_officialTextNumber = READ_LE_UINT16(text);
-
-		// now ok to close the text file
 		_vm->_resman->closeResource(text_res);
 
-		// prevent dud lines from appearing while testing text & speech
+		// Prevent dud lines from appearing while testing text & speech
 		// since these will not occur in the game anyway
 
-		if (_scriptVars[SYSTEM_TESTING_TEXT]) {	// if testing text & speech
-			// if actor number is 0 and text line is just a 'dash'
+		if (_scriptVars[SYSTEM_TESTING_TEXT]) {
+			// If actor number is 0 and text line is just a 'dash'
 			// character
 			if (_officialTextNumber == 0 && text[2] == '-' && text[3] == 0) {
-				// dud line - return & continue script
 				_scriptVars[RESULT] = 3;
 				return IR_CONT;
 			}
 		}
 
-		// set the 'looping_flag' & the text-click-delay
+		// Set the 'looping_flag' and the text-click-delays. We can
+		// left-click past the text after half a second, and
+		// right-click past it after a quarter of a second.
  
 		ob_logic->looping = 1;
-
-		// can't left-click past the text for the first half second
 		_leftClickDelay = 6;
-
-		// can't right-click past the text for the first quarter second
 		_rightClickDelay = 3;
-
-		// Write to walkthrough file (zebug0.txt)
-		// if (player_id != george), then player is controlling Nico
 
 		if (_scriptVars[PLAYER_ID] != CUR_PLAYER_ID)
 			debug(5, "(%d) Nico: %s", _officialTextNumber, text + 2);
@@ -993,91 +839,67 @@ int32 Logic::fnISpeak(int32 *params) {
 		// Set up the speech animation
 
 		if (params[S_ANIM]) {
-			// just a straight anim
-			_animId = params[S_ANIM];
-
-			// anim type
-			_speechAnimType = _scriptVars[SPEECHANIMFLAG];
-
-			// set the talker's graphic to this speech anim now
-			ob_graphic->anim_resource = _animId;
-
-			// set to first frame
-			ob_graphic->anim_pc = 0;
+			// Just a straight anim.
+			_animId = params[6];
 		} else if (params[S_DIR_TABLE]) {
-			// use this direction table to derive the anim
+			// Use this direction table to derive the anim
 			// NB. ASSUMES WE HAVE A MEGA OBJECT!!
 
-			ob_mega = (ObjectMega *) _vm->_memory->decodePtr(params[S_OB_MEGA]);
+			ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->decodePtr(params[S_OB_MEGA]);
+			int32 *anim_table = (int32 *) _vm->_memory->decodePtr(params[S_DIR_TABLE]);
 
-			// pointer to anim table
-			anim_table = (int32 *) _vm->_memory->decodePtr(params[S_DIR_TABLE]);
-
-			// appropriate anim resource is in 'table[direction]'
 			_animId = anim_table[ob_mega->current_dir];
-
-			// anim type
-			_speechAnimType = _scriptVars[SPEECHANIMFLAG];
-
-			// set the talker's graphic to this speech anim now
-			ob_graphic->anim_resource = _animId;
-
-			// set to first frame
-			ob_graphic->anim_pc = 0;
 		} else {
-			// no animation choosen
+			// No animation choosen
 			_animId = 0;
+		}
+
+		if (_animId) {
+			// Set the talker's graphic to the first frame of this
+			// speech anim for now.
+
+			_speechAnimType = _scriptVars[SPEECHANIMFLAG];
+			ob_graphic->anim_resource = _animId;
+			ob_graphic->anim_pc = 0;
 		}
 
 		// Default back to looped lip synced anims.
 		_scriptVars[SPEECHANIMFLAG] = 0;
 
-		// set up '_textX' & '_textY' for speech-pan and/or
-		// text-sprite position
+		// Set up _textX and _textY for speech panning and/or text
+		// sprite position.
 
 		locateTalker(params);
 
-		// is it to be speech or subtitles or both?
+		// Is it to be speech or subtitles or both?
 
-		// assume not running until know otherwise
+		// Assume not running until know otherwise
 		speechRunning = false;
 
-		// New fudge for 'fx' subtitles
-		// if speech is selected, and this line is allowed speech
-		// (not if it's an fx subtitle!)
+		// New fudge for 'fx' subtitles: If speech is selected, and
+		// this line is allowed speech (not if it's an fx subtitle!)
 
 		if (!_vm->_sound->isSpeechMute() && wantSpeechForLine(_officialTextNumber)) {
-			// if the wavId paramter is zero because not yet
+			// If the wavId parameter is zero because not yet
 			// compiled into speech command, we can still get it
-			// from the 1st 2 chars of the text line
+			// from the 1st 2 chars of the text line.
 
 			if (!params[S_WAV])
 				params[S_WAV] = (int32) _officialTextNumber;
 
-#define SPEECH_VOLUME	16	// 0..16
-#define SPEECH_PAN	0	// -16..16
+			// Panning goes from -16 (left) to 16 (right)
+			int8 speech_pan = ((_textX - 320) * 16) / 320;
 
-			speech_pan = ((_textX - 320) * 16) / 320;
-
-			// '_textX'	'speech_pan'
-			//  0		-16
-			//  320		0
-			//  640		16
-
-			// keep within limits of -16..16, just in case
 			if (speech_pan < -16)
 				speech_pan = -16;
 			else if (speech_pan > 16)
 				speech_pan = 16;
 
-			// set up path to speech cluster
-			// first checking if we have speech1.clu or
-			// speech2.clu in current directory (for translators
-			// to test)
-
-			File fp;
+			char speechFile[20];
 
 			sprintf(speechFile, "speech%d.clu", _vm->_resman->whichCd());
+
+			File fp;
 
 			if (fp.open(speechFile))
 				fp.close();
@@ -1085,23 +907,25 @@ int32 Logic::fnISpeak(int32 *params) {
 				strcpy(speechFile, "speech.clu");
 
 			// Load speech but don't start playing yet
-			rv = _vm->_sound->playCompSpeech(speechFile, params[S_WAV], SPEECH_VOLUME, speech_pan);
-			if (rv == RD_OK) {
-				// ok, we've got something to play
-				speechRunning = true;
+			uint32 rv = _vm->_sound->playCompSpeech(speechFile, params[S_WAV], 16, speech_pan);
 
-				// set it playing now (we might want to do
-				// this next cycle, don't know yet)
+			if (rv == RD_OK) {
+				// Ok, we've got something to play. Set it
+				// playing now. (We might want to do this the
+				// next cycle, don't know yet.)
+
+				speechRunning = true;
 				_vm->_sound->unpauseSpeech();
 			} else {
 				debug(5, "ERROR: PlayCompSpeech(speechFile=\"%s\", wav=%d (res=%d pos=%d)) returned %.8x", speechFile, params[S_WAV], text_res, local_text, rv);
 			}
 		}
 
-		// if we want subtitles, or speech failed to load
 		if (_vm->_gui->_subtitles || !speechRunning) {
-			// then we're going to show the text
-			// so create the text sprite
+			// We want subtitles, or the speech failed to load.
+			// Either way, we're going to show the text so create
+			// the text sprite.
+
 			formText(params);
 		}
 	}
@@ -1109,41 +933,32 @@ int32 Logic::fnISpeak(int32 *params) {
 	// EVERY TIME: run a cycle of animation, if there is one
 
 	if (_animId) {
-		// there is an animation
-		// increment the anim frame number
+		// There is an animation - Increment the anim frame number.
 		ob_graphic->anim_pc++;
 
-		// open the anim file
-		anim_file = _vm->_resman->openResource(ob_graphic->anim_resource);
-		anim_head = _vm->fetchAnimHeader(anim_file);
+		byte *anim_file = _vm->_resman->openResource(ob_graphic->anim_resource);
+		AnimHeader *anim_head = _vm->fetchAnimHeader(anim_file);
 
 		if (!_speechAnimType) {
 			// ANIM IS TO BE LIP-SYNC'ED & REPEATING
-			// if finished the anim
+
 			if (ob_graphic->anim_pc == (int32) (anim_head->noAnimFrames)) {
-				// restart from frame 0
+				// End of animation - restart from frame 0
 				ob_graphic->anim_pc = 0;
-			} else if (speechRunning) {
-				// if playing a sample
-				if (!_unpauseZone) {
-					// if we're at a quiet bit
-					if (_vm->_sound->amISpeaking() == RDSE_QUIET) {
-						// restart from frame 0
-						// ('closed mouth' frame)
-						ob_graphic->anim_pc = 0;
-					}
-				}
+			} else if (speechRunning && _vm->_sound->amISpeaking() == RDSE_QUIET) {
+				// The speech is running, but we're at a quiet
+				// bit. Restart from frame 0 (closed mouth).
+				ob_graphic->anim_pc = 0;
 			}
 		} else {
 			// ANIM IS TO PLAY ONCE ONLY
 			if (ob_graphic->anim_pc == (int32) (anim_head->noAnimFrames) - 1) {
-				// reached the last frame of the anim
-				// hold anim on this last frame
+				// Reached the last frame of the anim. Hold
+				// anim on this last frame
 				_animId = 0;
 			}
 		}
 
-		// close the anim file
 		_vm->_resman->closeResource(ob_graphic->anim_resource);
 	} else if (_speechAnimType) {
 		// Placed here so we actually display the last frame of the
@@ -1153,19 +968,18 @@ int32 Logic::fnISpeak(int32 *params) {
 
 	// EVERY TIME: FIND OUT IF WE NEED TO STOP THE SPEECH NOW...
 
-	// if there is a wav then we're using that to end the speech naturally
+	// If there is a wav then we're using that to end the speech naturally
 
-	// if playing a sample
+	bool speechFinished = false;
+
+	// If playing a sample
 
 	if (speechRunning) {
-		if (!_unpauseZone) {
-			// has it finished?
-			if (_vm->_sound->getSpeechStatus() == RDSE_SAMPLEFINISHED)
-				speechFinished = true;
-		} else
-			_unpauseZone--;
+		// Has it finished?
+		if (_vm->_sound->getSpeechStatus() == RDSE_SAMPLEFINISHED)
+			speechFinished = true;
 	} else if (!speechRunning && _speechTime) {
-		// counting down text time because there is no sample - this
+		// Counting down text time because there is no sample - this
 		// ends the speech
 
 		// if no sample then we're using _speechTime to end speech
@@ -1176,21 +990,21 @@ int32 Logic::fnISpeak(int32 *params) {
 			speechFinished = true;
 	}
 
-	// ok, all is running along smoothly - but a click means stop
+	// Ok, all is running along smoothly - but a click means stop
 	// unnaturally
 
-	// so that we can go to the options panel while text & speech is
+	// So that we can go to the options panel while text & speech is
 	// being tested
 	if (_scriptVars[SYSTEM_TESTING_TEXT] == 0 || _vm->_input->_mouseY > 0) {
-		me = _vm->_input->mouseEvent();
+		MouseEvent *me = _vm->_input->mouseEvent();
 
 		// Note that we now have TWO click-delays - one for LEFT
 		// button, one for RIGHT BUTTON
 
 		if ((!_leftClickDelay && me && (me->buttons & RD_LEFTBUTTONDOWN)) ||
 		    (!_rightClickDelay && me && (me->buttons & RD_RIGHTBUTTONDOWN))) {
-			// mouse click, after click_delay has expired -> end
-			// the speech we ignore mouse releases
+			// Mouse click, after click_delay has expired -> end
+			// the speech. We ignore mouse releases
 
 			// if testing text & speech
 			if (_scriptVars[SYSTEM_TESTING_TEXT]) {
@@ -1210,30 +1024,26 @@ int32 Logic::fnISpeak(int32 *params) {
 
 			speechFinished = true;
 
-			// if speech sample playing
-			if (speechRunning) {
-				// halt the sample prematurely
+			// if speech sample playing, halt it prematurely
+			if (speechRunning)
 				_vm->_sound->stopSpeech();
-			}
 		}
 	}
 
-	// if we are finishing the speech this cycle, do the business
+	// If we are finishing the speech this cycle, do the business
 
 	// !speechAnimType, as we want an anim which is playing once to have
 	// finished.
 
 	if (speechFinished && !_speechAnimType) {
-		// if there is text
+		// If there is text, kill it
 		if (_speechTextBlocNo) {
-			// kill the text block
 			_vm->_fontRenderer->killTextBloc(_speechTextBlocNo);
 			_speechTextBlocNo = 0;
 		}
 
-		// if there is a speech anim
+		// if there is a speech anim, end it on closed mouth frame
 		if (_animId) {
-			// end it on 1st frame (closed mouth)
 			_animId = 0;
 			ob_graphic->anim_pc = 0;
 		}
@@ -1243,21 +1053,18 @@ int32 Logic::fnISpeak(int32 *params) {
 		// no longer in a script function loop
 		ob_logic->looping = 0;
 
-		// reset for debug info
 		_vm->_debugger->_textNumber = 0;
 
 		// reset to zero, in case text line not even extracted (since
 		// this number comes from the text line)
 		_officialTextNumber = 0;
 
-		_scriptVars[RESULT] = 0;	// ok
+		_scriptVars[RESULT] = 0;
 		return IR_CONT;
 	}
 
-	// speech still going, so decrement the click_delay if it's still
+	// Speech still going, so decrement the click_delay if it's still
 	// active
-
-	// count down to clickability
 
 	if (_leftClickDelay)
 		_leftClickDelay--;
@@ -1268,12 +1075,15 @@ int32 Logic::fnISpeak(int32 *params) {
 	return IR_REPEAT;
 }
 
-#define GAP_ABOVE_HEAD	20	// distance kept above talking sprite
+// Distance kept above talking sprite
+#define GAP_ABOVE_HEAD 20
+
+/**
+ * Sets _textX and _textY for position of text sprite. Note that _textX is
+ * also used to calculate speech pan.
+ */
 
 void Logic::locateTalker(int32 *params) {
-	// sets '_textX' & '_textY' for position of text sprite
-	// but '_textX' also used to calculate speech-pan
-
 	// params:	0 pointer to ob_graphic
 	//		1 pointer to ob_speech
 	//		2 pointer to ob_logic
@@ -1285,91 +1095,76 @@ void Logic::locateTalker(int32 *params) {
 	//		8 animation mode	0 lip synced,
 	//					1 just straight animation
 
-	ObjectMega *ob_mega;
+	if (!_animId) {
+		// There is no animation. Assume it's voice-over text, and put
+		// it at the bottom of the screen.
 
-	byte *file;
-	FrameHeader *frame_head;
-	AnimHeader *anim_head;
-	CdtEntry *cdt_entry;
-	uint16 scale;
-
-	// if there's no anim
-	if (_animId == 0) {
-		// assume it's Voice-Over text, so it goes at bottom of screen
 		_textX = 320;
 		_textY = 400;
-	} else {
-		// Note: this code has been adapted from Register_frame() in
-		// build_display.cpp
-
-		// open animation file & set up the necessary pointers
-		file = _vm->_resman->openResource(_animId);
-
-		anim_head = _vm->fetchAnimHeader(file);
-
-		// '0' means 1st frame
-		cdt_entry = _vm->fetchCdtEntry(file, 0);
-
-		// '0' means 1st frame
-		frame_head = _vm->fetchFrameHeader(file, 0);
-
-		// check if this frame has offsets ie. this is a scalable
-		// mega frame
-
-		if (cdt_entry->frameType & FRAME_OFFSET) {
-			// this may be NULL
-			ob_mega = (ObjectMega *) _vm->_memory->decodePtr(params[S_OB_MEGA]);
-
-			// calc scale at which to print the sprite, based on
-			// feet y-coord & scaling constants (NB. 'scale' is
-			// actually 256 * true_scale, to maintain accuracy)
-
-			// Ay+B gives 256 * scale ie. 256 * 256 * true_scale
-			// for even better accuracy, ie. scale = (Ay + B) / 256
-			scale = (uint16) ((ob_mega->scale_a * ob_mega->feet_y + ob_mega->scale_b) / 256);
-
-			// calc suitable centre point above the head, based on
-			// scaled height
-
-			// just use 'feet_x' as centre
-			_textX = (int16) (ob_mega->feet_x);
-
-			// add scaled y-offset to feet_y coord to get top of
-			// sprite
-			_textY = (int16) (ob_mega->feet_y + (cdt_entry->y * scale) / 256);
-		} else {
-			// it's a non-scaling anim - calc suitable centre
-			// point above the head, based on scaled width
-
-			// x-coord + half of width
-			_textX = cdt_entry->x + (frame_head->width) / 2;
-			_textY = cdt_entry->y;
-		}
-
-		// leave space above their head
-		_textY -= GAP_ABOVE_HEAD;
-			
-		// adjust the text coords for RDSPR_DISPLAYALIGN
-
-		_textX -= _vm->_thisScreen.scroll_offset_x;
-		_textY -= _vm->_thisScreen.scroll_offset_y;
-
-		// release the anim resource
-		_vm->_resman->closeResource(_animId);
+		return;
 	}
+
+	byte *file = _vm->_resman->openResource(_animId);
+
+	// '0' means 1st frame
+
+	CdtEntry *cdt_entry = _vm->fetchCdtEntry(file, 0);
+	FrameHeader *frame_head = _vm->fetchFrameHeader(file, 0);
+
+	// Note: This part of the code is quite similar to registerFrame().
+
+	if (cdt_entry->frameType & FRAME_OFFSET) {
+		// The frame has offsets, i.e. it's a scalable mega frame
+		ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->decodePtr(params[S_OB_MEGA]);
+
+		// Calculate scale at which to print the sprite, based on feet
+		// y-coord and scaling constants (NB. 'scale' is actually
+		// 256 * true_scale, to maintain accuracy)
+
+		// Ay+B gives 256 * scale ie. 256 * 256 * true_scale for even
+		// better accuracy, ie. scale = (Ay + B) / 256
+
+		uint16 scale = (uint16) ((ob_mega->scale_a * ob_mega->feet_y + ob_mega->scale_b) / 256);
+
+		// Calc suitable centre point above the head, based on scaled
+		// height
+
+		// just use 'feet_x' as centre
+		_textX = (int16) ob_mega->feet_x;
+
+		// Add scaled y-offset to feet_y coord to get top of sprite
+		_textY = (int16) (ob_mega->feet_y + (cdt_entry->y * scale) / 256);
+	} else {
+		// It's a non-scaling anim - calc suitable centre point above
+		// the head, based on scaled width
+
+		// x-coord + half of width
+		_textX = cdt_entry->x + (frame_head->width) / 2;
+		_textY = cdt_entry->y;
+	}
+
+	_vm->_resman->closeResource(_animId);
+
+	// Leave space above their head
+	_textY -= GAP_ABOVE_HEAD;
+			
+	// Adjust the text coords for RDSPR_DISPLAYALIGN
+
+	_textX -= _vm->_thisScreen.scroll_offset_x;
+	_textY -= _vm->_thisScreen.scroll_offset_y;
 }
 
+/**
+ * This function is called the first time to build the text, if we need one. If
+ * If necessary it also brings in the wav and sets up the animation.
+ *
+ * If there is an animation it can be repeating lip-sync or run-once.
+ *
+ * If there is no wav, then the text comes up instead. There can be any
+ * combination of text/wav playing.
+ */
+
 void Logic::formText(int32 *params) {
-	// its the first time in so we build the text block if we need one
-	// we also bring in the wav if there is one
-	// also setup the animation if there is one
-
-	// anim is optional - anim can be a repeating lip-sync or a run-once
-	// anim
-
-	// if there is no wav then the text comes up instead
-	// there can be any combination of text/wav playing
-
 	// params	0 pointer to ob_graphic
 	// 		1 pointer to ob_speech
 	//		2 pointer to ob_logic
@@ -1381,62 +1176,44 @@ void Logic::formText(int32 *params) {
 	//		8 animation mode	0 lip synced,
 	//					1 just straight animation
 
-	uint32 local_text;
-	uint32 text_res;
-	byte *text;
-	uint32 textWidth;
-	ObjectSpeech *ob_speech;
+	// There should always be a text line, as all text is derived from it.
+	// If there is none, that's bad...
 
-	// should always be a text line, as all text is derived from line of
-	// text
-
-	if (params[S_TEXT]) {
-	 	ob_speech = (ObjectSpeech *) _vm->_memory->decodePtr(params[S_OB_SPEECH]);
-
-		// establish the max width allowed for this text sprite
-
-		// if a specific width has been set up for this character,
-		// then override the default
-
-		if (ob_speech->width)
-			textWidth = ob_speech->width;
-		else
-			textWidth = 400;
-
-		// pull out the text line & make the sprite & text block
-
-		text_res = params[S_TEXT] / SIZE;
-		local_text = params[S_TEXT] & 0xffff;
-
-		// open text file & get the line
-		text = _vm->fetchTextLine(_vm->_resman->openResource(text_res), local_text);
-
-		// 'text + 2' to skip the first 2 bytes which form the line
-		// reference number
-
-		_speechTextBlocNo = _vm->_fontRenderer->buildNewBloc(
-			text + 2, _textX, _textY,
-			textWidth, ob_speech->pen,
-			RDSPR_TRANS | RDSPR_DISPLAYALIGN,
-			_vm->_speechFontId, POSITION_AT_CENTRE_OF_BASE);
-
-		// now ok to close the text file
-		_vm->_resman->closeResource(text_res);
-
-		// set speech duration, in case not using wav
-		// no. of cycles = (no. of chars) + 30
-
-		_speechTime = strlen((char *) text) + 30;
-	} else {
-		// no text line passed? - this is bad
-		debug(5, "no text line for speech wav %d", params[S_WAV]);
+	if (!params[S_TEXT]) {
+		warning("No text line for speech wav %d", params[S_WAV]);
+		return;
 	}
+
+	ObjectSpeech *ob_speech = (ObjectSpeech *) _vm->_memory->decodePtr(params[S_OB_SPEECH]);
+
+	// Establish the max width allowed for this text sprite.
+	uint32 textWidth = ob_speech->width ? ob_speech->width : 400;
+
+	// Pull out the text line, and make the sprite and text block
+
+	uint32 text_res = params[S_TEXT] / SIZE;
+	uint32 local_text = params[S_TEXT] & 0xffff;
+	byte *text = _vm->fetchTextLine(_vm->_resman->openResource(text_res), local_text);
+
+	// 'text + 2' to skip the first 2 bytes which form the line reference
+	// number
+
+	_speechTextBlocNo = _vm->_fontRenderer->buildNewBloc(
+		text + 2, _textX, _textY,
+		textWidth, ob_speech->pen,
+		RDSPR_TRANS | RDSPR_DISPLAYALIGN,
+		_vm->_speechFontId, POSITION_AT_CENTRE_OF_BASE);
+
+	_vm->_resman->closeResource(text_res);
+
+	// Set speech duration, in case not using a wav.
+	_speechTime = strlen((char *) text) + 30;
 }
 
-// For preventing sfx subtitles from trying to load speech samples
-// - since the sfx are implemented as normal sfx, so we don't want them as
-// speech samples too
-// - and we only want the subtitles if selected, not if samples can't be found!
+/**
+ * There are some hard-coded cases where speech is used to illustrate a sound
+ * effect. In this case there is no sound associated with the speech itself.
+ */
 
 bool Logic::wantSpeechForLine(uint32 wavId) {
 	switch (wavId) {
@@ -1464,13 +1241,13 @@ bool Logic::wantSpeechForLine(uint32 wavId) {
 	case 528:	// PresidentaSpeech
 			//	SFX (528);
 			//	FX <Nearby Crash of Collapsing Masonry>
-	case 920:	// location 62
-	case 923:	// location 62
-	case 926:	// location 62
-		// don't want speech for these lines!
+	case 920:	// Zombie Island forest maze (bird)
+	case 923:	// Zombie Island forest maze (monkey)
+	case 926:	// Zombie Island forest maze (zombie)
+		// Don't want speech for these lines!
 		return false;
 	default:
-		// ok for all other lines
+		// Ok for all other lines
 		return true;
 	}
 }

@@ -170,8 +170,7 @@ public:
 		  _speechAnimType(0), _leftClickDelay(0), _rightClickDelay(0),
 		  _defaultResponseId(0), _totalStartups(0),
 		  _totalScreenManagers(0), _officialTextNumber(0),
-		  _speechScriptWaiting(0), _speechTextBlocNo(0),
-		  _choosing(false), _unpauseZone(0) {
+		  _speechTextBlocNo(0), _choosing(false) {
 		_scriptVars = NULL;
 		memset(_subjectList, 0, sizeof(_subjectList));
 		memset(_eventList, 0, sizeof(_eventList));
@@ -192,20 +191,11 @@ public:
 
 	int16 _officialTextNumber;
 
-	// usually 0; if non-zero then it's the id of whoever we're waiting for
-	// in a speech script see fnTheyDo, fnTheyDoWeWait and fnWeWait
-
-	int32 _speechScriptWaiting;
-
 	// so speech text cleared when running a new start-script
-
 	uint32 _speechTextBlocNo;
 
 	// could alternately use logic->looping of course
-
 	bool _choosing;
-
-	uint32 _unpauseZone;
 
 	void resetScriptVars(void);
 

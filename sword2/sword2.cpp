@@ -529,7 +529,6 @@ void Sword2Engine::unpauseGame(void) {
 	}
 
 	_gamePaused = false;
-	_logic->_unpauseZone = 2;
 
 	// if mouse is about or we're in a chooser menu
 	if (!_mouseStatus || _logic->_choosing)

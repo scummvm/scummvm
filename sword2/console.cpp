@@ -57,6 +57,11 @@ Debugger::Debugger(Sword2Engine *vm)
 					// object resources (except player) in
 					// fnAddHuman()
 
+	_speechScriptWaiting = 0;	// The id of whoever we're waiting for
+					// in a speech script. See fnTheyDo(),
+					// fnTheyDoWeWait(), fnWeWait(), and
+					// fnTimedWait().
+
 	_startTime = 0;			// "TIMEON" & "TIMEOFF" - system start
 					// time
 
