@@ -1217,18 +1217,11 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			a->flip = GW(2) != 0;
 			continue;
 		case AKC_CmdQue3:
-			// FIXME/TODO this is exception fot FT game for missing "half" footsteps
-			// see bug #886201
-			// this fix/hack was introduced a long time ago
-			if (_gameId == GID_FT)
-				tmp = GB(2) - 1;
-			else
-				tmp = GB(2);
+			tmp = GB(2) - 1;
 			if ((uint) tmp < 8)
 				akos_queCommand(3, a, a->sound[tmp], 0);
 			continue;
 		case AKC_CmdQue3Quick:
-//			akos_queCommand(3, a, a->sound[1], 0);	//previous
 			akos_queCommand(3, a, a->sound[0], 0);
 			continue;
 		case AKC_StartAnim:
@@ -1247,7 +1240,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			akos_queCommand(5, a, GB(2), 0);
 			continue;
 		case AKC_SoundStuff:
-			tmp = GB(2);
+			tmp = GB(2) - 1;
 			if (tmp >= 8)
 				continue;
 			tmp2 = GB(4);
@@ -1338,7 +1331,6 @@ void ScummEngine::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2) 
 		break;
 	case 4:
 		a->startAnimActor(param_1);
-		// param_2 ?
 		break;
 	case 5:
 		a->forceClip = param_1;
@@ -1350,21 +1342,21 @@ void ScummEngine::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2) 
 	case 7:
 		if (param_1 != 0) {
 			if (_imuseDigital) {
-				_imuseDigital->parseScriptCmds(12, param_1 - 1, 0x600, param_2, 0, 0, 0, 0);
+				_imuseDigital->setVolume(param_1, param_2);
 			}
 		}
 		break;
 	case 8:
 		if (param_1 != 0) {
 			if (_imuseDigital) {
-				_imuseDigital->parseScriptCmds(12, param_1 - 1, 0x700, param_2, 0, 0, 0, 0);
+				_imuseDigital->setPan(param_1, param_2);
 			}
 		}
 		break;
 	case 9:
 		if (param_1 != 0) {
 			if (_imuseDigital) {
-				_imuseDigital->parseScriptCmds(12, param_1 - 1, 0x500, param_2, 0, 0, 0, 0);
+//				_imuseDigital->setPriority(param_1, param_2);
 			}
 		}
 		break;
