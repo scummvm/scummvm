@@ -894,7 +894,11 @@ void Scumm_v8::o8_roomOps()
 	
 	switch (subOp) {
 	case 0x52:		// SO_ROOM_PALETTE Set room palette
-		error("o8_roomOps: default case 0x%x", subOp);
+                d = pop();
+                c = pop();
+                b = pop();
+                a = pop();
+                setPalColor(d, a, b, c);
 		break;
 	case 0x55:		// SO_ROOM_INTENSITY Set room intensity
 		// Not used in CMI???
