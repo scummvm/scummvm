@@ -223,11 +223,11 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	if (_width2 == 0)
 		return 0;
 
-	if ((uint) y_top > (uint) _outheight)
-		y_top = 0;
-
 	if (x_left < 0)
 		x_left = 0;
+
+	if ((uint) y_top > (uint) _outheight)
+		y_top = 0;
 
 	if ((uint) y_bottom > _outheight)
 		y_bottom = _outheight;
@@ -246,18 +246,6 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 
 	v1.mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + v1.y * _numStrips + _vm->_screenStartStrip;
 	v1.imgbufoffs = _vm->gdi._imgBufOffs[_zbuf];
-
-	// FIXME: Masking used to be conditional. Will it cause regressions
-	// to always do it? I don't think so, since the behaviour used to be
-	// to mask if there was a mask to apply, unless _zbuf is 0.
-	//
-	// However, when _zbuf is 0 masking and charset masking are the same
-	// thing. I believe the only thing that is ever written to the
-	// frontmost mask buffer is the charset mask, except in Sam & Max
-	// where it's also used for the inventory box and conversation icons.
-
-	_use_mask = true;
-	_use_charset_mask = true;
 
 	CHECK_HEAP
 
@@ -278,8 +266,6 @@ void CostumeRenderer::proc3() {
 	uint y;
 	bool masked;
 
-	mask = v1.mask_ptr + (v1.x >> 3);
-	maskbit = revBitMask[v1.x & 7];
 	y = v1.y;
 	src = _srcptr;
 	dst = v1.destptr;
@@ -287,6 +273,9 @@ void CostumeRenderer::proc3() {
 	color = v1.repcolor;
 	height = _height;
 	width = _width2;
+
+	maskbit = revBitMask[v1.x & 7];
+	mask = v1.mask_ptr + (v1.x >> 3);
 
 	if (len)
 		goto StartPos;
@@ -300,7 +289,7 @@ void CostumeRenderer::proc3() {
 
 		do {
 			if (_scaleY == 255 || cost_scaleTable[_scaleIndexY++] < _scaleY) {
-				masked = (_use_mask && (mask[v1.imgbufoffs] & maskbit)) || (_use_charset_mask && (mask[0] & maskbit));
+				masked = (y < _outheight) && v1.mask_ptr && ((mask[0] | mask[v1.imgbufoffs]) & maskbit);
 				
 				if (color && y < _outheight && !masked) {
 					// FIXME: Fully implement _shadow_mode.
@@ -369,7 +358,7 @@ void CostumeRenderer::proc3_ami() {
 			len = *src++;
 		do {
 			if (_scaleY == 255 || cost_scaleTable[_scaleIndexY] < _scaleY) {
-				masked = (_use_mask && (mask[v1.imgbufoffs] & maskbit)) || (_use_charset_mask && (mask[0] & maskbit));
+				masked = (y < _outheight) && v1.mask_ptr && ((mask[0] | mask[v1.imgbufoffs]) & maskbit);
 				
 				if (color && v1.x >= 0 && v1.x < _vm->_screenWidth && !masked) {
 					*dst = _palette[color];

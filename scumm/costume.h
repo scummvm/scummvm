@@ -47,7 +47,6 @@ class CostumeRenderer : public BaseCostumeRenderer {
 protected:
 	LoadedCostume _loaded;
 	
-	bool _use_mask, _use_charset_mask;
 	byte _width2;
 
 	byte _scaleIndexX;						/* must wrap at 256 */
