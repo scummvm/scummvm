@@ -351,6 +351,9 @@ void IMuseDigital::stopAllSounds(bool waitForStop) {
 		}
 	}
 
+	// FIXME: ignore wait, it can cause deadlock, it need better implementaion
+	return;
+
 	if (waitForStop) {
 		bool used;
 		do {
