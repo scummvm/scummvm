@@ -169,11 +169,8 @@ Sound::~Sound() {
  */
 
 void Sound::reverseStereo(void) {
-	for (int i = 0; i < 16; i++) {
-		int j = panTable[i];
-		panTable[i] = panTable[32 - i];
-		panTable[32 - i] = j;
-	}
+	for (int i = 0; i < 16; i++)
+		SWAP(panTable[i], panTable[32 - i]);
 }
 
 // Save/Restore information about current music so that we can restore it
@@ -1088,20 +1085,16 @@ void Sound::stopMusic(void) {
 }
 
 /**
- * Stops the music dead in its tracks.
+ * Stops the music dead in its tracks. Any music that is currently being
+ * streamed is paued.
  */
 
 void Sound::pauseMusic(void) {
 	Common::StackLock lock(_mutex);
 
 	if (_soundOn) {
-		for (int i = 0; i < MAXMUS; i++) {
-			if (_music[i]._streaming) {
-				_music[i]._paused = true;
-			} else {
-				_music[i]._paused = false;
-			}
-		}
+		for (int i = 0; i < MAXMUS; i++)
+			_music[i]._paused = _music[i]._streaming;
 	}
 }
 
