@@ -93,8 +93,8 @@ void ScummEngine::setupScummVars() {
 	if (_version >= 5) {
 		VAR_FADE_DELAY = 59;
 		VAR_MOUSEPRESENT = 67;
-		VAR_PERFORMANCE_1 = 68;
-		VAR_PERFORMANCE_2 = 69;	// Zak256 Note: Cashcard for Zak
+		VAR_MEMORY_PERFORMANCE = 68;
+		VAR_VIDEO_PERFORMANCE = 69;	// Zak256 Note: Cashcard for Zak
 		VAR_ROOM_FLAG = 70;	// Zak256 Note: Cashcard for Annie
 		VAR_GAME_LOADED = 71;	// Zak256 Note: Cashcard for Melissa
 		VAR_NEW_ROOM = 72;	// Zak256 Note: Cashcard for Leslie
@@ -234,8 +234,8 @@ void ScummEngine_v7he::setupScummVars() {
 	VAR_SOUNDPARAM = 51;
 	VAR_MUSIC_TIMER = 52;
 
-	VAR_PERFORMANCE_1 = 57;
-	VAR_PERFORMANCE_2 = 58;
+	VAR_MEMORY_PERFORMANCE = 57;
+	VAR_VIDEO_PERFORMANCE = 58;
 	VAR_NEW_ROOM = 59;
 	VAR_TMR_1 = 60;
 	VAR_TMR_2 = 61;
@@ -277,8 +277,8 @@ void ScummEngine_v7::setupScummVars() {
 	VAR_LEFTBTN_HOLD = 24;
 	VAR_RIGHTBTN_HOLD = 25;
 
-	VAR_PERFORMANCE_1 = 26;
-	VAR_PERFORMANCE_2 = 27;
+	VAR_MEMORY_PERFORMANCE = 26;
+	VAR_VIDEO_PERFORMANCE = 27;
 	VAR_GAME_LOADED = 29;
 	VAR_V6_EMSSPACE = 32;
 	VAR_VOICE_MODE = 33; // 0 is voice, 1 is voice+text, 2 is text only
