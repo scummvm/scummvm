@@ -847,7 +847,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 
 	// Create FT INSANE object
 	if (_gameId == GID_FT)
-		_insane = new Insane(this);
+		_insane = new Insane((ScummEngine_v6 *)this);
 	else
 		_insane = 0;
 }

@@ -23,7 +23,7 @@
 #define INSANE_H
 
 #include "base/engine.h"
-#include "scumm/scumm.h"
+#include "scumm/intern.h"
 #include "scumm/nut_renderer.h"
 
 #include "scumm/smush/smush_player.h"
@@ -53,7 +53,7 @@ namespace Scumm {
 
 class Insane {
  public:
-	Insane(ScummEngine *scumm);
+	Insane(ScummEngine_v6 *scumm);
 	~Insane();
 
 	void setSmushParams(int speed);
@@ -69,7 +69,7 @@ class Insane {
 
  private:
 	
-	ScummEngine *_vm;
+	ScummEngine_v6 *_vm;
 	SmushPlayer *_player;
 	
 	int32 _speed;

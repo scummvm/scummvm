@@ -315,6 +315,8 @@ protected:
 };
 
 class ScummEngine_v6 : public ScummEngine {
+	friend class Insane;
+
 protected:
 	typedef void (ScummEngine_v6::*OpcodeProcV6)();
 	struct OpcodeEntryV6 {
