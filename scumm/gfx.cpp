@@ -720,7 +720,7 @@ void Scumm::redrawBGStrip(int start, int num) {
 		setGfxUsageBit(s + i, USAGE_BIT_DIRTY);
 
 	gdi.drawBitmap(getResourceAddress(rtRoom, _roomResource) + _IM00_offs,
-								&virtscr[0], s, 0, virtscr[0].width, virtscr[0].height, s, num, 0);
+								&virtscr[0], s, 0, _scrWidth, virtscr[0].height, s, num, 0);
 }
 
 void Scumm::restoreCharsetBg() {
