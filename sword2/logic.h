@@ -59,12 +59,8 @@ private:
 	// Set this to turn debugging on
 	bool _debugFlag;
 
-	// FIXME: Some opcodes pass pointers in integer variables. I don't
-	// think that's entirely portable.
-
 	typedef int32 (Logic::*OpcodeProc)(int32 *);
 	struct OpcodeEntry {
-		byte numArgs;
 		OpcodeProc proc;
 		const char *desc;
 	};
