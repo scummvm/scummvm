@@ -235,6 +235,14 @@ SOURCE=..\..\queen\sound.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\queen\state.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\state.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\queen\talk.cpp
 # End Source File
 # Begin Source File
