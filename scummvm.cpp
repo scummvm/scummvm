@@ -1103,7 +1103,16 @@ void Scumm::destroy()
 	free(_classData);
 }
 
-int Scumm::newDirToOldDir(int dir)
+const int new_dir_table[4] = {
+	270,
+	90,
+	180,
+	0,
+};
+
+const int16 many_direction_tab[16] = {71, 109, 251, 289, -1, -1, -1, -1, 22, 72, 107, 157, 202, 252, 287, 337};
+
+int newDirToOldDir(int dir)
 {
 	if (dir >= 71 && dir <= 109)
 		return 1;
@@ -1114,29 +1123,20 @@ int Scumm::newDirToOldDir(int dir)
 	return 3;
 }
 
-const int new_dir_table[4] = {
-	270,
-	90,
-	180,
-	0,
-};
-
-int Scumm::oldDirToNewDir(int dir)
+int oldDirToNewDir(int dir)
 {
 	return new_dir_table[dir];
 }
 
 
-int Scumm::numSimpleDirDirections(int dirType)
+int numSimpleDirDirections(int dirType)
 {
 	return dirType ? 8 : 4;
 }
 
-const int16 many_direction_tab[16] = {71, 109, 251, 289, -1, -1, -1, -1, 22, 72, 107, 157, 202, 252, 287, 337};
-
 
 /* Convert an angle to a simple direction */
-int Scumm::toSimpleDir(int dirType, int dir)
+int toSimpleDir(int dirType, int dir)
 {
 	int num = dirType ? 8 : 4;
 	const int16 *dirtab = &many_direction_tab[dirType * 8];
@@ -1149,7 +1149,7 @@ int Scumm::toSimpleDir(int dirType, int dir)
 }
 
 /* Convert a simple direction to an angle */
-int Scumm::fromSimpleDir(int dirType, int dir)
+int fromSimpleDir(int dirType, int dir)
 {
 	if (!dirType)
 		return dir * 90;
@@ -1158,7 +1158,7 @@ int Scumm::fromSimpleDir(int dirType, int dir)
 }
 
 
-int Scumm::normalizeAngle(int angle)
+int normalizeAngle(int angle)
 {
 	int temp;
 

@@ -237,7 +237,7 @@ OSystem *OSystem_SDL_create(int gfx_mode, bool full_screen) {
 void OSystem_SDL::set_palette(const byte *colors, uint start, uint num) {
 	const byte *b = colors;
 	uint i;
-	SDL_Color *base = _cur_pal + start;
+
 	for(i=0;i!=num;i++) {
 	    fb2gl_palette(i+start,b[0],b[1],b[2]);
 	    b += 4;

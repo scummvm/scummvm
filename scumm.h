@@ -783,16 +783,7 @@ public:
 
 	uint32 *_classData;
 
-	static int newDirToOldDir(int dir);
-	static int oldDirToNewDir(int dir);
-
-	static int normalizeAngle(int angle);
 	int getAngleFromPos(int x, int y);
-	static int fromSimpleDir(int dirtype, int dir);
-	static int toSimpleDir(int dirtype, int dir);
-	static int numSimpleDirDirections(int dirType);
-	void startAnimActorEx(Actor *a, int frame, int direction);
-	int getProgrDirChange(Actor *a, int mode);
 
 	void walkActors();
 	void playActorSounds();
@@ -1490,5 +1481,15 @@ void CDECL NORETURN error(const char *s, ...);
 void CDECL warning(const char *s, ...);
 void CDECL debug(int level, const char *s, ...);
 void checkHeap();
+
+/* Direction conversion functions (between old dir and new dir format) */
+int newDirToOldDir(int dir);
+int oldDirToNewDir(int dir);
+
+int normalizeAngle(int angle);
+int fromSimpleDir(int dirtype, int dir);
+int toSimpleDir(int dirtype, int dir);
+int numSimpleDirDirections(int dirType);
+
 
 #endif

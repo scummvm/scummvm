@@ -109,7 +109,7 @@ int Scumm::getAngleFromPos(int x, int y)
 {
 	if (_gameId == GID_DIG) {
 		double temp = atan2((double)x, (double)-y);
-		return Scumm::normalizeAngle((int)(temp * 180 / 3.1415926535));
+		return normalizeAngle((int)(temp * 180 / 3.1415926535));
 	} else {
 		if (abs(y) * 2 < abs(x)) {
 			if (x > 0)
@@ -189,7 +189,7 @@ int Actor::remapDirection(int dir)
 			if (specdir & 0x8000) {
 				dir = specdir & 0x3FFF;
 			} else {
-				error("getProgrDirChange: special dir not implemented");
+				error("remapDirection: special dir not implemented");
 			}
 		}
 
@@ -231,7 +231,7 @@ int Actor::remapDirection(int dir)
 		}
 	}
 	/* Or 1024 in to signal direction interpolation should be done */
-	return Scumm::normalizeAngle(dir) | 1024;
+	return normalizeAngle(dir) | 1024;
 }
 
 int Actor::updateActorDirection()
@@ -245,12 +245,12 @@ int Actor::updateActorDirection()
 
 	dirType = _vm->akos_hasManyDirections(this);
 
-	from = Scumm::toSimpleDir(dirType, facing);
+	from = toSimpleDir(dirType, facing);
 	dir = remapDirection(newDirection);
 	shouldInterpolate = (dir & 1024);
-	to = Scumm::toSimpleDir(dirType, dir & 1023);
+	to = toSimpleDir(dirType, dir & 1023);
 	diff = to - from;
-	num = Scumm::numSimpleDirDirections(dirType);
+	num = numSimpleDirDirections(dirType);
 
 	if (shouldInterpolate) {
 		// Turn left or right, depending on which is shorter.
@@ -266,7 +266,7 @@ int Actor::updateActorDirection()
 	} else
 		from = to;
 
-	dir = Scumm::fromSimpleDir(dirType, from & (num - 1));
+	dir = fromSimpleDir(dirType, from % num);
 
 	return dir;
 }
@@ -464,7 +464,7 @@ void Actor::animateActor(int anim)
 	} else {
 
 		cmd = anim >> 2;
-		dir = Scumm::oldDirToNewDir(anim & 3);
+		dir = oldDirToNewDir(anim & 3);
 
 		// Convert into old cmd code
 		cmd = 0x3F - cmd + 2;
@@ -497,7 +497,7 @@ void Actor::setDirection(int direction)
 	if (facing == direction)
 		return;
 
-	facing = Scumm::normalizeAngle(direction);
+	facing = normalizeAngle(direction);
 
 	if (costume == 0)
 		return;

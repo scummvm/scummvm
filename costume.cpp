@@ -725,7 +725,7 @@ void CostumeRenderer::proc6_ami()
 	byte width, height, pcolor;
 	int color;
 	int step = _scaleIndexXStep;
-	int  x;
+	uint x;
 	uint y;
 	uint scrheight;
 
@@ -1359,7 +1359,7 @@ void CostumeRenderer::setPalette(byte *palette)
 
 void CostumeRenderer::setFacing(uint16 facing)
 {
-	_mirror = Scumm::newDirToOldDir(facing) != 0 || (_loaded._ptr[7] & 0x80);
+	_mirror = newDirToOldDir(facing) != 0 || (_loaded._ptr[7] & 0x80);
 }
 
 void CostumeRenderer::setCostume(int costume)
