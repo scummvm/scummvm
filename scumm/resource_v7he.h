@@ -118,17 +118,23 @@ class Win32ResExtractor {
  public:
 	Win32ResExtractor(ScummEngine *scumm);
 	~Win32ResExtractor();
-	byte *extractResource(const char *resType, char *resName);
+	int extractResource(const char *resType, char *resName, byte *data);
 	byte *extractCursor(int id);
+	int convertIcons(byte *data, int datasize);
 
  private:
 	bool _arg_raw;
 	ScummEngine *_vm;
 	char _fileName[256];
 
+	typedef Common::MemoryReadStream MemoryReadStream;
+
 /*
  * Structures 
  */
+
+#define PACKED __attribute__ ((packed))
+#pragma pack(1) 
 
 	struct WinLibrary {
 		File *file;
@@ -175,7 +181,7 @@ class Win32ResExtractor {
 		uint16 reserved;
 		uint16 type;
 		uint16 count;
-		Win32CursorIconDirEntry entries[1];
+		Win32CursorIconDirEntry entries[1] PACKED;
 	};
 
 	struct Win32CursorIconFileDirEntry {
@@ -220,7 +226,7 @@ class Win32ResExtractor {
 	struct Win32ImageResourceDirectoryEntry {
 		union {
 			struct {
-				#ifdef BITFIELDS_BIGENDIAN
+				#ifdef SCUMM_BIGENDIAN
 				unsigned name_is_string:1;
 				unsigned name_offset:31;
 	    	    #else
@@ -230,7 +236,7 @@ class Win32ResExtractor {
 			} s1;
 			uint32 name;
 			struct {
-	    	    #ifdef WORDS_BIGENDIAN
+	    	    #ifdef SCUMM_BIG_ENDIAN
 				uint16 __pad;
 				uint16 id;
 	    	    #else
@@ -242,7 +248,7 @@ class Win32ResExtractor {
 		union {
 			uint32 offset_to_data;
 			struct {
-	    	    #ifdef BITFIELDS_BIGENDIAN
+	    	    #ifdef SCUMM_BIG_ENDIAN
 				unsigned data_is_directory:1;
 				unsigned offset_to_directory:31;
 	    	    #else
@@ -410,6 +416,8 @@ class Win32ResExtractor {
 		uint16 number_of_id_entries;
 	};
 
+#pragma pack()
+
 /*
  * Function Prototypes
  */
@@ -417,18 +425,17 @@ class Win32ResExtractor {
 	WinResource *list_resources(WinLibrary *, WinResource *, int *);
 	bool read_library(WinLibrary *);
 	WinResource *find_resource(WinLibrary *, const char *, const char *, const char *, int *);
-	void *get_resource_entry(WinLibrary *, WinResource *, int *);
-	void do_resources(WinLibrary *, const char *, char *, char *, int);
-	void print_resources(WinLibrary *, WinResource *, WinResource *, WinResource *, WinResource *);
+	byte *get_resource_entry(WinLibrary *, WinResource *, int *);
+	int do_resources(WinLibrary *, const char *, char *, char *, int, byte *);
 	bool compare_resource_id(WinResource *, const char *);
 	const char *res_type_string_to_id(const char *);
 
 	const char *res_type_id_to_string(int);
 	char *get_destination_name(WinLibrary *, char *, char *, char *);
 
-	void *extract_resource(WinLibrary *, WinResource *, int *, bool *, char *, char *, bool);
-	void extract_resources(WinLibrary *, WinResource *, WinResource *, WinResource *, WinResource *);
-	void *extract_group_icon_cursor_resource(WinLibrary *, WinResource *, char *, int *, bool);
+	byte *extract_resource(WinLibrary *, WinResource *, int *, bool *, char *, char *, bool);
+	int extract_resources(WinLibrary *, WinResource *, WinResource *, WinResource *, WinResource *, byte *);
+	byte *extract_group_icon_cursor_resource(WinLibrary *, WinResource *, char *, int *, bool);
 
 	bool decode_pe_resource_id(WinLibrary *, WinResource *, uint32);
 	bool decode_ne_resource_id(WinLibrary *, WinResource *, uint16);
@@ -436,11 +443,21 @@ class Win32ResExtractor {
 	WinResource *list_ne_name_resources(WinLibrary *, WinResource *, int *);
 	WinResource *list_pe_resources(WinLibrary *, Win32ImageResourceDirectory *, int, int *);
 	int calc_vma_size(WinLibrary *);
-	void do_resources_recurs(WinLibrary *, WinResource *, WinResource *, WinResource *, WinResource *, const char *, char *, char *, int);
+	int do_resources_recurs(WinLibrary *, WinResource *, WinResource *, WinResource *, WinResource *, const char *, char *, char *, int, byte *);
 	char *get_resource_id_quoted(WinResource *);
 	WinResource *find_with_resource_array(WinLibrary *, WinResource *, const char *);
 
 	bool check_offset(byte *, int, const char *, void *, int);
+
+	uint32 simple_vec(byte *data, uint32 ofs, byte size);
+
+	void fix_win32_cursor_icon_file_dir_endian(Win32CursorIconFileDir *obj);
+	void fix_win32_bitmap_info_header_endian(Win32BitmapInfoHeader *obj);
+	void fix_win32_cursor_icon_file_dir_entry_endian(Win32CursorIconFileDirEntry *obj);
+	void fix_win32_image_section_header(Win32ImageSectionHeader *obj);
+	void fix_os2_image_header_endian(OS2ImageHeader *obj);
+	void fix_win32_image_header_endian(Win32ImageNTHeaders *obj);
+	void fix_win32_image_data_directory(Win32ImageDataDirectory *obj);
 };
 
 } // End of namespace Scumm

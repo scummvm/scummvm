@@ -28,6 +28,7 @@
 #include "scumm/intern.h"
 #include "scumm/resource.h"
 #include "scumm/resource_v7he.h"
+#include "common/stream.h"
 
 namespace Scumm {
 
@@ -54,17 +55,22 @@ Win32ResExtractor::Win32ResExtractor(ScummEngine *scumm) {
 
 byte *Win32ResExtractor::extractCursor(int id) {
 	char buf[20];
+	byte *cursor = 0;
+	int cursorsize;
 
 	snprintf(buf, 20, "%d", id);
 
-	return extractResource("group_cursor", buf);
+	cursorsize = extractResource("group_cursor", buf, cursor);
+
+	return 0;
 }
 
-byte *Win32ResExtractor::extractResource(const char *resType, char *resName) {
+int Win32ResExtractor::extractResource(const char *resType, char *resName, byte *data) {
 	char *arg_language = NULL;
 	const char *arg_type = resType;
 	char *arg_name = resName;
 	int arg_action = ACTION_LIST;
+	int ressize = 0;
 
 	_arg_raw = false;
 
@@ -114,7 +120,7 @@ byte *Win32ResExtractor::extractResource(const char *resType, char *resName) {
 		warning("%s: --language has no effect because file is 16-bit binary", fi.file->name());
 
 	/* errors will be printed by the callback */
-	do_resources(&fi, arg_type, arg_name, arg_language, arg_action);
+	ressize = do_resources(&fi, arg_type, arg_name, arg_language, arg_action, data);
 
 	/* free stuff and close file */
 	cleanup:
@@ -123,7 +129,7 @@ byte *Win32ResExtractor::extractResource(const char *resType, char *resName) {
 	if (fi.memory != NULL)
 		free(fi.memory);
 
-	return NULL;
+	return ressize;
 }
 
 
@@ -162,36 +168,43 @@ const char *Win32ResExtractor::res_type_string_to_id(const char *type) {
 	return type;
 }
 
-void Win32ResExtractor::extract_resources(WinLibrary *fi, WinResource *wr,
+int Win32ResExtractor::extract_resources(WinLibrary *fi, WinResource *wr,
                             WinResource *type_wr, WinResource *name_wr,
-                            WinResource *lang_wr) {
+							WinResource *lang_wr, byte *data) {
 	int size;
 	bool free_it;
-	void *memory;
-	FILE *out;
+	const char *type;
+	int32 id;
 
-	memory = extract_resource(fi, wr, &size, &free_it, type_wr->id, (lang_wr == NULL ? NULL : lang_wr->id), _arg_raw);
-	free_it = false;
-	if (memory == NULL) {
-		/* extract resource has printed error */
-		return;
+	if (data) {
+		error("Win32ResExtractor::extract_resources() more than one cursor");
+		return 0;
 	}
 
-	out = stdout;
+	data = extract_resource(fi, wr, &size, &free_it, type_wr->id, (lang_wr == NULL ? NULL : lang_wr->id), _arg_raw);
 
-	/* write the actual data */
-	fwrite(memory, size, 1, out);
-	
-	if (free_it)
-		free(memory);
-	if (out != NULL && out != stdout)
-		fclose(out);
+	if (data == NULL) {
+		warning("Win32ResExtractor::extract_resources() problem with resource extraction");
+		return 0;
+	}
+
+	/* get named resource type if possible */
+	type = NULL;
+	if ((id = strtol(type_wr->id, 0, 10)) != 0)
+		type = res_type_id_to_string(id);
+
+	warning("extractCursor(). Found cursor name: %s%s%s [size=%d]",
+	  get_resource_id_quoted(name_wr),
+	  (lang_wr->id[0] != '\0' ? " language: " : ""),
+	  get_resource_id_quoted(lang_wr), size);
+
+	return size;
 }
 
 /* extract_resource:
  *   Extract a resource, returning pointer to data.
  */
-void *Win32ResExtractor::extract_resource(WinLibrary *fi, WinResource *wr, int *size,
+byte *Win32ResExtractor::extract_resource(WinLibrary *fi, WinResource *wr, int *size,
                   bool *free_it, char *type, char *lang, bool raw) {
 	char *str;
 	int32 intval;
@@ -216,7 +229,6 @@ void *Win32ResExtractor::extract_resource(WinLibrary *fi, WinResource *wr, int *
 		}
 	}
 
-	warning("%s: don't know how to extract resource, try `--raw'", fi->file->name());
 	return NULL;
 }
 
@@ -232,12 +244,13 @@ void *Win32ResExtractor::extract_resource(WinLibrary *fi, WinResource *wr, int *
  *   `is_icon' indicates whether resource to be extracted is icon
  *   or cursor group.
  */
-void *Win32ResExtractor::extract_group_icon_cursor_resource(WinLibrary *fi, WinResource *wr, char *lang,
+byte *Win32ResExtractor::extract_group_icon_cursor_resource(WinLibrary *fi, WinResource *wr, char *lang,
                                    int *ressize, bool is_icon) {
 	Win32CursorIconDir *icondir;
 	Win32CursorIconFileDir *fileicondir;
-	char *memory;
-	int c, size, offset, skipped;
+	byte *memory;
+	int c, offset, skipped;
+	int size;
 
 	/* get resource data and size */
 	icondir = (Win32CursorIconDir *)get_resource_entry(fi, wr, &size);
@@ -279,8 +292,8 @@ void *Win32ResExtractor::extract_group_icon_cursor_resource(WinLibrary *fi, WinR
 				continue;
 		    }
 		    if ((uint32)iconsize != icondir->entries[c].bytes_in_res) {
-				warning("%s: mismatch of size in icon resource `%s' and group", 
-						fi->file->name(), name);
+				warning("%s: mismatch of size in icon resource `%s' and group (%d != %d)", 
+					fi->file->name(), name, iconsize, 1, icondir->entries[c].bytes_in_res);
 		    }
 		    size += iconsize; /* size += icondir->entries[c].bytes_in_res; */
 
@@ -295,8 +308,8 @@ void *Win32ResExtractor::extract_group_icon_cursor_resource(WinLibrary *fi, WinR
 	*ressize = size;
 
 	/* allocate that much memory */
-	memory = (char *)malloc(size);
-	fileicondir = (Win32CursorIconFileDir *) memory;
+	memory = (byte *)malloc(size);
+	fileicondir = (Win32CursorIconFileDir *)memory;
 
 	/* transfer Win32CursorIconDir structure members */
 	fileicondir->reserved = icondir->reserved;
@@ -361,7 +374,7 @@ void *Win32ResExtractor::extract_group_icon_cursor_resource(WinLibrary *fi, WinR
 		offset += icondir->entries[c].bytes_in_res;
 	}
 
-	return (void *)memory;
+	return memory;
 }
 
 /* check_offset:
@@ -372,7 +385,7 @@ void *Win32ResExtractor::extract_group_icon_cursor_resource(WinLibrary *fi, WinR
 bool Win32ResExtractor::check_offset(byte *memory, int total_size, const char *name, void *offset, int size) {
 	int need_size = (int)((byte *)offset - memory + size);
 
-	debugC(DEBUG_RESOURCE, "check_offset: size=%x vs %x offset=%x size=%x\n",
+	debugC(DEBUG_RESOURCE, "check_offset: size=%x vs %x offset=%x size=%x",
 		need_size, total_size, (byte *)offset - memory, size);
 
 	if (need_size < 0 || need_size > total_size) {
@@ -387,19 +400,21 @@ bool Win32ResExtractor::check_offset(byte *memory, int total_size, const char *n
 /* do_resources:
  *   Do something for each resource matching type, name and lang.
  */
-void Win32ResExtractor::do_resources(WinLibrary *fi, const char *type, char *name, char *lang, int action) {
+int Win32ResExtractor::do_resources(WinLibrary *fi, const char *type, char *name, char *lang, int action, byte *data) {
 	WinResource *type_wr;
 	WinResource *name_wr;
 	WinResource *lang_wr;
+	int size;
 
-	type_wr = (WinResource *)malloc(sizeof(WinResource)*3);
+	type_wr = (WinResource *)calloc(sizeof(WinResource)*3, 1);
 	name_wr = type_wr + 1;
 	lang_wr = type_wr + 2;
-	memset(type_wr, 0, sizeof(WinResource)*3);
 
-	do_resources_recurs(fi, NULL, type_wr, name_wr, lang_wr, type, name, lang, action);
+	size = do_resources_recurs(fi, NULL, type_wr, name_wr, lang_wr, type, name, lang, action, data);
 
 	free(type_wr);
+
+	return size;
 }
 
 /* what is each entry in this directory level for? type, name or language? */
@@ -408,16 +423,20 @@ void Win32ResExtractor::do_resources(WinLibrary *fi, const char *type, char *nam
 /* does the id of this entry match the specified id? */
 #define LEVEL_MATCHES(x) (x == NULL || x ## _wr->id[0] == '\0' || compare_resource_id(x ## _wr, x))
 
-void Win32ResExtractor::do_resources_recurs(WinLibrary *fi, WinResource *base, WinResource *type_wr,
-                          WinResource *name_wr, WinResource *lang_wr,
-						  const char *type, char *name, char *lang, int action) {
+int Win32ResExtractor::do_resources_recurs(WinLibrary *fi, WinResource *base, 
+		  WinResource *type_wr, WinResource *name_wr, WinResource *lang_wr,
+		  const char *type, char *name, char *lang, int action, byte *data) {
 	int c, rescnt;
 	WinResource *wr;
+	uint32 size = 0;
 
 	/* get a list of all resources at this level */
 	wr = list_resources(fi, base, &rescnt);
 	if (wr == NULL)
-		return;
+		if (size != 0)
+			return size;
+		else
+			return 0;
 
 	/* process each resource listed */
 	for (c = 0 ; c < rescnt ; c++) {
@@ -427,42 +446,17 @@ void Win32ResExtractor::do_resources_recurs(WinLibrary *fi, WinResource *base, W
 		/* go deeper unless there is something that does NOT match */
 		if (LEVEL_MATCHES(type) && LEVEL_MATCHES(name) && LEVEL_MATCHES(lang)) {
 			if (wr->is_directory)
-				do_resources_recurs(fi, wr+c, type_wr, name_wr, lang_wr, type, name, lang, action);
+				size = do_resources_recurs(fi, wr+c, type_wr, name_wr, lang_wr, type, name, lang, action, data);
 			else
-				if (action == ACTION_LIST)
-					print_resources(fi, wr+c, type_wr, name_wr, lang_wr);
-				else
-					extract_resources(fi, wr+c, type_wr, name_wr, lang_wr);
+				size = extract_resources(fi, wr+c, type_wr, name_wr, lang_wr, data);
 		}
 	}
 
 	/* since we're moving back one level after this, unset the
 	 * WinResource holder used on this level */
 	memset(WINRESOURCE_BY_LEVEL(wr[0].level), 0, sizeof(WinResource));
-}
 
-void Win32ResExtractor::print_resources(WinLibrary *fi, WinResource *wr,
-                          WinResource *type_wr, WinResource *name_wr,
-						  WinResource *lang_wr) {
-	const char *type;
-	byte *offset;
-	int32 id, size;
-
-	/* get named resource type if possible */
-	type = NULL;
-	if ((id = strtol(type_wr->id, 0, 10)) != 0)
-		type = res_type_id_to_string(id);
-
-	/* get offset and size info on resource */
-	offset = (byte *)get_resource_entry(fi, wr, &size);
-	if (offset == NULL)
-		return;
-
-	warning("extractCursor(). Found cursor name: %s%s%s [offset: 0x%x size=%d]\n",
-	  get_resource_id_quoted(name_wr),
-	  (lang_wr->id[0] != '\0' ? " language: " : ""),
-	  get_resource_id_quoted(lang_wr),
-	  offset - fi->memory, size);
+	return size;
 }
 
 /* return the resource id quoted if it's a string, otherwise just return it */
@@ -521,7 +515,7 @@ bool Win32ResExtractor::decode_pe_resource_id(WinLibrary *fi, WinResource *wr, u
 	return true;
 }
  
-void *Win32ResExtractor::get_resource_entry(WinLibrary *fi, WinResource *wr, int *size) {
+byte *Win32ResExtractor::get_resource_entry(WinLibrary *fi, WinResource *wr, int *size) {
 	if (fi->is_PE_binary) {
 		Win32ImageResourceDataEntry *dataent;
 
@@ -854,5 +848,335 @@ Win32ResExtractor::WinResource *Win32ResExtractor::find_resource(WinLibrary *fi,
 	wr = find_with_resource_array(fi, wr, language);
 	return wr;
 }
+
+#define ROW_BYTES(bits) ((((bits) + 31) >> 5) << 2)
+
+
+int Win32ResExtractor::convertIcons(byte *data, int datasize) {
+	Win32CursorIconFileDir dir;
+	Win32CursorIconFileDirEntry *entries = NULL;
+	uint32 offset;
+	uint32 c, d;
+	int completed;
+	int matched = 0;
+	MemoryReadStream *in = new MemoryReadStream(data, datasize);
+
+	if (!in->read(&dir, sizeof(Win32CursorIconFileDir)))
+		goto cleanup;
+	fix_win32_cursor_icon_file_dir_endian(&dir);
+
+	if (dir.reserved != 0) {
+		warning("not an icon or cursor file (reserved non-zero)");
+		goto cleanup;
+	}
+	if (dir.type != 1 && dir.type != 2) {
+		warning("not an icon or cursor file (wrong type)");
+		goto cleanup;
+	}
+
+	entries = (Win32CursorIconFileDirEntry *)malloc(dir.count * sizeof(Win32CursorIconFileDirEntry));
+	for (c = 0; c < dir.count; c++) {
+		if (in->read(&entries[c], sizeof(Win32CursorIconFileDirEntry)))
+			goto cleanup;
+		fix_win32_cursor_icon_file_dir_entry_endian(&entries[c]);
+		if (entries[c].reserved != 0)
+			warning("reserved is not zero");
+	}
+	offset = sizeof(Win32CursorIconFileDir) + dir.count * sizeof(Win32CursorIconFileDirEntry);
+
+	for (completed = 0; completed < dir.count; ) {
+		uint32 min_offset = (uint32)-1;
+		int previous = completed;
+
+		for (c = 0; c < dir.count; c++) {
+			if (entries[c].dib_offset == offset) {
+				Win32BitmapInfoHeader bitmap;
+				Win32RGBQuad *palette = NULL;
+				uint32 palette_count = 0;
+				uint32 image_size, mask_size;
+				uint32 width, height;
+				byte *image_data = NULL, *mask_data = NULL;
+				byte *row = NULL;
+
+				if (in->read(&bitmap, sizeof(Win32BitmapInfoHeader)))
+					goto local_cleanup;
+
+				fix_win32_bitmap_info_header_endian(&bitmap);
+				if (bitmap.size < sizeof(Win32BitmapInfoHeader)) {
+					warning("bitmap header is too short");
+					goto local_cleanup;
+				}
+				if (bitmap.compression != 0) {
+					warning("compressed image data not supported");
+					goto local_cleanup;
+				}
+				if (bitmap.x_pels_per_meter != 0)
+					warning("x_pels_per_meter field in bitmap should be zero");
+				if (bitmap.y_pels_per_meter != 0)
+					warning("y_pels_per_meter field in bitmap should be zero");
+				if (bitmap.clr_important != 0)
+					warning("clr_important field in bitmap should be zero");
+				if (bitmap.planes != 1)
+					warning("planes field in bitmap should be one");
+				if (bitmap.size != sizeof(Win32BitmapInfoHeader)) {
+					uint32 skip = bitmap.size - sizeof(Win32BitmapInfoHeader);
+					warning("skipping %d bytes of extended bitmap header", skip);
+					in->seek(skip);
+				}
+				offset += bitmap.size;
+
+				if (bitmap.clr_used != 0 || bitmap.bit_count < 24) {
+					palette_count = (bitmap.clr_used != 0 ? bitmap.clr_used : 1 << bitmap.bit_count);
+					palette = (Win32RGBQuad *)malloc(sizeof(Win32RGBQuad) * palette_count);
+					if (!in->read(palette, sizeof(Win32RGBQuad) * palette_count))
+						goto local_cleanup;
+					offset += sizeof(Win32RGBQuad) * palette_count;
+				}
+
+				width = bitmap.width;
+				height = ABS(bitmap.height)/2;
+				
+				image_size = height * ROW_BYTES(width * bitmap.bit_count);
+				mask_size = height * ROW_BYTES(width);
+
+				if (entries[c].dib_size	!= bitmap.size + image_size + mask_size + palette_count * sizeof(Win32RGBQuad))
+					warning("incorrect total size of bitmap (%d specified; %d real)",
+					    entries[c].dib_size,
+					    bitmap.size + image_size + mask_size + palette_count * sizeof(Win32RGBQuad)
+					);
+
+				image_data = (byte *)malloc(image_size);
+				if (!in->read(image_data, image_size))
+					goto local_cleanup;
+
+				mask_data = (byte *)malloc(mask_size);
+				if (!in->read(mask_data, mask_size))
+					goto local_cleanup;
+
+				offset += image_size;
+				offset += mask_size;
+				completed++;
+				matched++;
+
+				row = (byte *)malloc(width * 4);
+
+				for (d = 0; d < height; d++) {
+					uint32 x;
+					uint32 y = (bitmap.height < 0 ? d : height - d - 1);
+					uint32 imod = y * (image_size / height) * 8 / bitmap.bit_count;
+					uint32 mmod = y * (mask_size / height) * 8;
+
+					for (x = 0; x < width; x++) {
+						uint32 color = simple_vec(image_data, x + imod, bitmap.bit_count);
+
+						if (bitmap.bit_count <= 16) {
+							if (color >= palette_count) {
+								warning("color out of range in image data");
+								goto local_cleanup;
+							}
+							row[4*x+0] = palette[color].red;
+							row[4*x+1] = palette[color].green;
+							row[4*x+2] = palette[color].blue;
+						} else {
+							row[4*x+0] = (color >> 16) & 0xFF;
+							row[4*x+1] = (color >>  8) & 0xFF;
+							row[4*x+2] = (color >>  0) & 0xFF;
+						}
+						if (bitmap.bit_count == 32)
+						    row[4*x+3] = (color >> 24) & 0xFF;
+						else
+						    row[4*x+3] = simple_vec(mask_data, x + mmod, 1) ? 0 : 0xFF;
+					}
+
+					//png_write_row(png_ptr, row);
+				}
+
+
+				if (row != NULL)
+					free(row);
+				if (palette != NULL)
+					free(palette);
+				if (image_data != NULL) {
+					free(image_data);
+					free(mask_data);
+				}
+				continue;
+
+			local_cleanup:
+
+				if (row != NULL)
+					free(row);
+				if (palette != NULL)
+					free(palette);
+				if (image_data != NULL) {
+					free(image_data);
+					free(mask_data);
+				}
+				goto cleanup;
+			} else {
+				if (entries[c].dib_offset > offset)
+						min_offset = MIN(min_offset, entries[c].dib_offset);
+			}
+		}
+
+		if (previous == completed) {
+			if (min_offset < offset) {
+				warning("offset of bitmap header incorrect (too low)");
+				goto cleanup;
+			}
+			warning("skipping %d bytes of garbage at %d", min_offset-offset, offset);
+			in->seek(min_offset - offset);
+			offset = min_offset;
+		}
+	}
+
+	free(entries);
+	return matched;
+
+cleanup:
+
+	free(entries);
+	return -1;
+}
+
+uint32 Win32ResExtractor::simple_vec(byte *data, uint32 ofs, byte size) {
+	switch (size) {
+	case 1:
+		return (data[ofs/8] >> (7 - ofs%8)) & 1;
+	case 2:
+		return (data[ofs/4] >> ((3 - ofs%4) << 1)) & 3;
+	case 4:
+		return (data[ofs/2] >> ((1 - ofs%2) << 2)) & 15;
+	case 8:
+		return data[ofs];
+	case 16:
+		return data[2*ofs] | data[2*ofs+1] << 8;
+	case 24:
+		return data[3*ofs] | data[3*ofs+1] << 8 | data[3*ofs+2] << 16;
+	case 32:
+		return data[4*ofs] | data[4*ofs+1] << 8 | data[4*ofs+2] << 16 | data[4*ofs+3] << 24;
+	}
+
+	return 0;
+}
+
+#define LE16(x)      ((x) = TO_LE_16(x))
+#define LE32(x)      ((x) = TO_LE_32(x))
+
+void Win32ResExtractor::fix_win32_cursor_icon_file_dir_endian(Win32CursorIconFileDir *obj) {
+    LE16(obj->reserved);
+	LE16(obj->type);
+    LE16(obj->count);
+}
+
+void Win32ResExtractor::fix_win32_bitmap_info_header_endian(Win32BitmapInfoHeader *obj) {
+    LE32(obj->size);
+    LE32(obj->width);
+    LE32(obj->height);
+    LE16(obj->planes);
+    LE16(obj->bit_count);
+    LE32(obj->compression);
+    LE32(obj->size_image);
+    LE32(obj->x_pels_per_meter);
+    LE32(obj->y_pels_per_meter);
+    LE32(obj->clr_used);
+    LE32(obj->clr_important);
+}
+
+void Win32ResExtractor::fix_win32_cursor_icon_file_dir_entry_endian(Win32CursorIconFileDirEntry *obj) {
+    LE16(obj->hotspot_x);
+    LE16(obj->hotspot_y);
+    LE32(obj->dib_size);
+    LE32(obj->dib_offset);
+}
+
+void Win32ResExtractor::fix_win32_image_section_header(Win32ImageSectionHeader *obj) {
+    LE32(obj->misc.physical_address);
+    LE32(obj->virtual_address);
+    LE32(obj->size_of_raw_data);
+    LE32(obj->pointer_to_raw_data);
+    LE32(obj->pointer_to_relocations);
+    LE32(obj->pointer_to_linenumbers);
+    LE16(obj->number_of_relocations);
+    LE16(obj->number_of_linenumbers);
+    LE32(obj->characteristics);
+}
+
+void Win32ResExtractor::fix_os2_image_header_endian(OS2ImageHeader *obj) {
+    LE16(obj->magic);
+    LE16(obj->enttab);
+    LE16(obj->cbenttab);
+    LE32(obj->crc);
+    LE16(obj->flags);
+    LE16(obj->autodata);
+    LE16(obj->heap);
+    LE16(obj->stack);
+    LE32(obj->csip);
+    LE32(obj->sssp);
+    LE16(obj->cseg);
+    LE16(obj->cmod);
+    LE16(obj->cbnrestab);
+    LE16(obj->segtab);
+    LE16(obj->rsrctab);
+    LE16(obj->restab);
+    LE16(obj->modtab);
+    LE16(obj->imptab);
+    LE32(obj->nrestab);
+    LE16(obj->cmovent);
+    LE16(obj->align);
+    LE16(obj->cres);
+    LE16(obj->fastload_offset);
+    LE16(obj->fastload_length);
+    LE16(obj->swaparea);
+    LE16(obj->expver);
+}
+
+/* fix_win32_image_header_endian:
+ * NOTE: This assumes that the optional header is always available.
+ */
+void Win32ResExtractor::fix_win32_image_header_endian(Win32ImageNTHeaders *obj) {
+    LE32(obj->signature);
+    LE16(obj->file_header.machine);
+    LE16(obj->file_header.number_of_sections);
+    LE32(obj->file_header.time_date_stamp);
+    LE32(obj->file_header.pointer_to_symbol_table);
+    LE32(obj->file_header.number_of_symbols);
+    LE16(obj->file_header.size_of_optional_header);
+    LE16(obj->file_header.characteristics);
+    LE16(obj->optional_header.magic);
+    LE32(obj->optional_header.size_of_code);
+    LE32(obj->optional_header.size_of_initialized_data);
+    LE32(obj->optional_header.size_of_uninitialized_data);
+    LE32(obj->optional_header.address_of_entry_point);
+    LE32(obj->optional_header.base_of_code);
+    LE32(obj->optional_header.base_of_data);
+    LE32(obj->optional_header.image_base);
+    LE32(obj->optional_header.section_alignment);
+    LE32(obj->optional_header.file_alignment);
+    LE16(obj->optional_header.major_operating_system_version);
+    LE16(obj->optional_header.minor_operating_system_version);
+    LE16(obj->optional_header.major_image_version);
+    LE16(obj->optional_header.minor_image_version);
+    LE16(obj->optional_header.major_subsystem_version);
+    LE16(obj->optional_header.minor_subsystem_version);
+    LE32(obj->optional_header.win32_version_value);
+    LE32(obj->optional_header.size_of_image);
+    LE32(obj->optional_header.size_of_headers);
+    LE32(obj->optional_header.checksum);
+    LE16(obj->optional_header.subsystem);
+    LE16(obj->optional_header.dll_characteristics);
+    LE32(obj->optional_header.size_of_stack_reserve);
+    LE32(obj->optional_header.size_of_stack_commit);
+    LE32(obj->optional_header.size_of_heap_reserve);
+    LE32(obj->optional_header.size_of_heap_commit);
+    LE32(obj->optional_header.loader_flags);
+    LE32(obj->optional_header.number_of_rva_and_sizes);
+}
+
+void Win32ResExtractor::fix_win32_image_data_directory(Win32ImageDataDirectory *obj) {
+    LE32(obj->virtual_address);
+    LE32(obj->size);
+}
+
 
 } // End of namespace Scumm
