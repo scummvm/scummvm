@@ -986,7 +986,7 @@ void Scumm_v5::o5_getActorX() {
 	int a;
 	getResultPos();
 
-	if ((_gameId == GID_INDY3_256) || (_gameId == GID_INDY3))
+	if (_gameId == GID_INDY3_256 || _gameId == GID_INDY3)
 		a = getVarOrDirectByte(0x80);
 	else
 		a = getVarOrDirectWord(0x80);
@@ -998,9 +998,7 @@ void Scumm_v5::o5_getActorY() {
 	int a;
 	getResultPos();
 
-	if (_gameId == GID_INDY3)
-		a = getVarOrDirectByte(0x80);
-	else if (_gameId == GID_INDY3_256) {
+	if (_gameId == GID_INDY3_256 || _gameId == GID_INDY3) {
 		a = getVarOrDirectByte(0x80);
 
 		// Indy3 hack to cheat the 'Leap of Faith' grail test
@@ -1009,10 +1007,12 @@ void Scumm_v5::o5_getActorY() {
 			setResult(94);
 			return;
 		}
-		setResult(getObjY(a) - 1);	// FIXME: Is this right, or can it be less specific?
-						// It's here to fix bug 636433 in specific, the actors
-						// are one pixel off what the script waits for.
-		return;
+
+		// Hack to fix bug 636433 (can't get into Zeppelin) 
+		if (_roomResource == 36) {
+			setResult(getObjY(a) - 1);
+			return;
+		}
 	} else
 		a = getVarOrDirectWord(0x80);
 
