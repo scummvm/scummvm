@@ -20,7 +20,7 @@
  */
 
 #include <stdafx.h>
-#include "Chunk.h"
+#include "chunk.h"
 
 #include <stdio.h> // for FILE, fopen, fclose, fseek and ftell
 #include <string.h> // for memcpy

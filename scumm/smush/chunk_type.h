@@ -22,7 +22,7 @@
 #ifndef CHUNK_TYPE_H
 #define CHUNK_TYPE_H
 
-#include "Chunk.h"
+#include "chunk.h"
 
 #define MAKE_TYPE(a,b,c,d) (Chunk::type)( ((a) << 24) | ((b) << 16) | ((c) << 8) | (d) )
 

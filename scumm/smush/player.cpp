@@ -25,7 +25,7 @@
 
 #include "renderer.h"
 #include "channel.h"
-#include "Chunk_type.h"
+#include "chunk_type.h"
 #include "rect.h"
 #include "blitter.h"
 
