@@ -108,7 +108,7 @@ byte ScummEngine::getMaskFromBox(int box) {
 void ScummEngine::setBoxFlags(int box, int val) {
 	debug(2, "setBoxFlags(%d, 0x%02x)", box, val);
 
-	/* FULL_THROTTLE stuff */
+	/* SCUMM7+ stuff */
 	if (val & 0xC000) {
 		assert(box >= 0 && box < 65);
 		_extraBoxFlags[box] = val;
