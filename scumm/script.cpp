@@ -503,7 +503,8 @@ int ScummEngine::readVar(uint var) {
 					return 0;
 				} else if (var == 221 && bit == 14 && _gameId == GID_LOOM && (_features & GF_MACINTOSH)) {	// For Mac Loom
 					return 0;
-				} else if (var == 214 && bit == 15 && _gameId == GID_LOOM && (_features & GF_PC)) {	// For PC Loom
+				// For all other Loom versions? PC and FM Towns at least in any event
+				} else if (var == 214 && bit == 15 && _gameId == GID_LOOM) {
 					return 0;
 				} else if (_gameId == GID_ZAK256 && var == 151 && bit == 8) {
 					return 0;
