@@ -47,7 +47,7 @@ static UInt32 StackSize(UInt32 newSize) {
 static void MiscOptionsFormSave() {
 
 	FieldType *fld1P;
-	ControlType *cck1P, *cck2P, *cck3P, *cck4P, *cck5P, *cck6P, *cck7P, *cck8P;	
+	ControlType *cck1P, *cck2P, *cck3P, *cck4P, *cck5P, *cck6P, *cck7P, *cck8P, *cck9P, *cck10P;	
 	FormPtr frmP;
 
 	fld1P = (FieldType *)GetObjectPtr(MiscOptionsDebugLevelField);
@@ -60,6 +60,8 @@ static void MiscOptionsFormSave() {
 	cck6P = (ControlType *)GetObjectPtr(MiscOptionsAutoResetCheckbox);
 	cck7P = (ControlType *)GetObjectPtr(MiscOptionsDemoCheckbox);
 	cck8P = (ControlType *)GetObjectPtr(MiscOptionsFullscreenCheckbox);
+	cck9P = (ControlType *)GetObjectPtr(MiscOptionsAspectRatioCheckbox);
+	cck10P= (ControlType *)GetObjectPtr(MiscOptionsCopyProtectionCheckbox);
 
 	frmP = FrmGetActiveForm();
 
@@ -76,6 +78,8 @@ static void MiscOptionsFormSave() {
 	gPrefs->autoReset = CtlGetValue(cck6P);
 	gPrefs->demoMode = CtlGetValue(cck7P);
 	gPrefs->fullscreen = CtlGetValue(cck8P);
+	gPrefs->aspectRatio = CtlGetValue(cck9P);
+	gPrefs->copyProtection = CtlGetValue(cck10P);
 
 	gPrefs->debugLevel = StrAToI(FldGetTextPtr(fld1P));
 
@@ -142,7 +146,7 @@ static void MiscOptionsShowPalmOS(const FormPtr frmP, Boolean show) {
 }
 
 static void MiscOptionsShowScummVM(const FormPtr frmP, Boolean show) {
-	FrmShowHide(frmP, MiscOptionsTabTitleScummLabel, MiscOptionsDemoCheckbox, show);
+	FrmShowHide(frmP, MiscOptionsTabTitleScummLabel, MiscOptionsCopyProtectionCheckbox, show);
 
 	if (show)
 		FrmShowObject(frmP, FrmGetObjectIndex (frmP, MiscOptionsDebugLevelField));
@@ -169,7 +173,9 @@ static void MiscOptionsFormInit() {
 	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsDebugCheckbox), gPrefs->debug);
 	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsDemoCheckbox), gPrefs->demoMode);
 	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsFullscreenCheckbox), gPrefs->fullscreen);
-
+	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsAspectRatioCheckbox), gPrefs->aspectRatio);
+	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsCopyProtectionCheckbox), gPrefs->copyProtection);
+	
 	fld1P = (FieldType *)GetObjectPtr(MiscOptionsDebugLevelField);
 
 	levelH = MemHandleNew(FldGetMaxChars(fld1P)+1);
@@ -188,7 +194,7 @@ static void MiscOptionsFormInit() {
 	FrmSetTabSize(frmP, (TAB_START + tabNum), 16, 12);
 	MiscOptionsShowScummVM(frmP, false);
 	MiscOptionsShowPalmOS(frmP, true);
-	FrmSetObjectPosition(frmP, FrmGetObjectIndex (frmP, MiscOptionsDebugLevelField), 103, 35 + 12 * 2);
+	FrmSetObjectPosition(frmP, FrmGetObjectIndex (frmP, MiscOptionsDebugLevelField), 103, 35 + 12 * 3);
 
 	FrmDrawForm(frmP);
 
