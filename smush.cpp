@@ -23,9 +23,10 @@
 #include "smush.h"
 #include "timer.h"
 #include "mixer/mixer.h"
-#include "driver_gl.h"
 #include "resource.h"
 #include "engine.h"
+
+#include "driver_gl.h"
 
 Smush *g_smush;
 extern SoundMixer *g_mixer;
@@ -36,8 +37,10 @@ void Smush::timerCallback(void *refCon) {
 
 Smush::Smush() {
 	g_smush = this;
+	_mutex = create_mutex();
 	_nbframes = 0;
-	_dst = NULL;
+	_internalBuffer = NULL;
+	_externalBuffer = NULL;
 	_width = 0;
 	_height = 0;
 	_speed = 0;
@@ -48,19 +51,24 @@ Smush::Smush() {
 	_updateNeeded = false;
 	_stream = NULL;
 	_movieTime = 0;
-	_surface = NULL;
-	_bufSurface = NULL;
 }
 
 Smush::~Smush() {
 	deinit();
-	if (_surface)
-		SDL_FreeSurface(_surface);
-	if (_bufSurface)
-		SDL_FreeSurface(_bufSurface);
+	if (_internalBuffer) {
+		free(_internalBuffer);
+		_internalBuffer = NULL;
+	}
+	if (_externalBuffer) {
+		free(_externalBuffer);
+		_externalBuffer = NULL;
+	}
+
+	delete_mutex(_mutex);
 }
 
 void Smush::init() {
+	StackLock lock(_mutex);
 	_stream = NULL;
 	_frame = 0;
 	_movieTime = 0;
@@ -68,19 +76,18 @@ void Smush::init() {
 	_videoPause = false;
 	_updateNeeded = false;
 
-	if (!_surface) {
-		_surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, 16, 0x0000f800, 0x000007e0, 0x0000001f, 0x00000000);
-		_dst = (byte *)_surface->pixels;
+	if (!_internalBuffer) {
+		_internalBuffer = (byte *)malloc(_width * _height * 2);
 	}
-	if (!_bufSurface) {
-	    _bufSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, 16, 0x0000f800, 0x000007e0, 0x0000001f, 0x00000000);
-	    _buf = (byte *)_bufSurface->pixels;
+	if (!_externalBuffer) {
+		_externalBuffer = (byte *)malloc(_width * _height * 2);
 	}
 
 	g_timer->installTimerProc(&timerCallback, _speed, NULL);
 }
 
 void Smush::deinit() {
+	StackLock lock(_mutex);
     g_timer->removeTimerProc(&timerCallback);
 
 	_videoFinished = true;
@@ -88,12 +95,13 @@ void Smush::deinit() {
 	if (_stream) {
 		_stream->finish();
 		_stream = NULL;
+		g_mixer->stopHandle(_soundHandle);
 	}
  	_file.close();
 }
 
 void Smush::handleBlocky16(byte *src) {
-	_blocky16.decode(_dst, src);
+	_blocky16.decode(_internalBuffer, src);
 }
 
 static uint16 destTable[5786];
@@ -112,7 +120,6 @@ void Smush::handleWave(const byte *src, uint32 size) {
 #endif
 	
 	int flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE;
-//	int flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LITTLE_ENDIAN;
 	if (_channels == 2)
 		flags |= SoundMixer::FLAG_STEREO;
 
@@ -125,6 +132,7 @@ void Smush::handleWave(const byte *src, uint32 size) {
 }
 
 void Smush::handleFrame() {
+	StackLock lock(_mutex);
 	uint32 tag;
 	int32 size;
 	int pos = 0;
@@ -167,7 +175,7 @@ void Smush::handleFrame() {
 	} while (pos < size);
 	free(frame);
 
-	memcpy(_buf, _dst, _width * _height * 2);
+	memcpy(_externalBuffer, _internalBuffer, _width * _height * 2);
 	_updateNeeded = true;
 
 	_frame++;

@@ -56,6 +56,7 @@ private:
 	zlibFile _file;
 	PlayingSoundHandle _soundHandle;
 	AppendableAudioStream *_stream;
+	MutexRef _mutex;
 
  	int32 _frame;
 	bool _updateNeeded;
@@ -67,9 +68,7 @@ private:
 	bool _videoPause;
 	int _x, _y;
 	int _width, _height;
-	byte *_dst, *_buf;
-	SDL_Surface* _surface;
-	SDL_Surface* _bufSurface;
+	byte *_internalBuffer, *_externalBuffer;
 
 public:
 	Smush();
@@ -80,7 +79,7 @@ public:
 	void pause(bool pause) { _videoPause = pause; }
 	bool isPlaying() { return !_videoFinished; }
 	bool isUpdateNeeded() { return _updateNeeded; }
-	byte *getDstPtr() { return _buf; }
+	byte *getDstPtr() { return _externalBuffer; }
 	int getX() { return _x; }
 	int getY() { return _y; }
 	int getWidth() {return _width; }
