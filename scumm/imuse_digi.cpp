@@ -1164,15 +1164,15 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 	}
 }
 
-int IMuseDigital::getSoundStatus(int sound) {
+bool IMuseDigital::getSoundStatus(int sound) {
 	debug(5, "IMuseDigital::getSoundStatus(%d)", sound);
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		if ((_channel[l]._idSound == sound) && _channel[l]._used) {
-			return 1;
+			return true;
 		}
 	}
 
-	return 0;
+	return false;
 }
 
 
