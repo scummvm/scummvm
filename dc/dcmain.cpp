@@ -37,6 +37,14 @@ SoundEngine sound;
 SOUND_DRIVER_TYPE snd_driv;
 
 
+void cd_playtrack(int track, int offset, int delay) {
+  /* Not implemented yet => stub function */
+}
+
+void BoxTest(int num) {
+  /* No debugger on the DC => stub function */
+}
+
 void waitForTimer(Scumm *s, int time)
 {
   if(time<0)
