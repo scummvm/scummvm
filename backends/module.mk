@@ -15,9 +15,11 @@ MODULE_OBJS := \
 
 MODULE_DIRS += \
 	backends \
+	backends/fs \
 	backends/fs/posix \
 	backends/fs/morphos \
-	backends/fs/windows
+	backends/fs/windows \
+	backends/midi
 
 # Include common rules 
 include $(srcdir)/common.rules
