@@ -1283,7 +1283,10 @@ int SwordLogic::fnEnterSection(BsObject *cpt, int32 id, int32 screen, int32 d, i
 	if (screen >= TOTAL_SECTIONS)
 		error("mega %d tried entering section %d", id, screen);
 
-	if (cpt->o_type == TYPE_PLAYER)
+	/* if (cpt->o_type == TYPE_PLAYER)
+	   ^= this was the original condition from the game sourcecode.
+	   not sure why it doesn't work*/
+	if (id == PLAYER) 
 		_scriptVars[NEW_SCREEN] = screen;
 	else
 		cpt->o_screen = screen; // move the mega
