@@ -143,7 +143,7 @@ void Input::delay(uint amount) {
 int Input::checkKeys() {
 
 	if (_inKey)
-		debug(0, "[Input::checkKeys] _inKey = %i", _inKey);
+		debug(6, "[Input::checkKeys] _inKey = %i", _inKey);
 
 	switch (_inKey) {
 		case KEY_SPACE:
@@ -177,7 +177,7 @@ int Input::checkKeys() {
 		case KEY_ESCAPE:
 			if (_canQuit) {
 				if (_cutawayRunning) {
-					debug(0, "[Input::checkKeys] Setting _cutawayQuit to true!");
+					debug(6, "[Input::checkKeys] Setting _cutawayQuit to true!");
 					_cutawayQuit = true;
 				}
 

@@ -550,7 +550,7 @@ int16 Logic::gameState(int index) {
 
 void Logic::gameState(int index, int16 newValue) {
 	if (index >= 0 && index < GAME_STATE_COUNT) {
-//		debug(0, "Logic::gameState() - GAMESTATE[%d] = %d", index, newValue);
+//		debug(6, "Logic::gameState() - GAMESTATE[%d] = %d", index, newValue);
 		_gameState[index] = newValue;
 	}
 	else
@@ -894,7 +894,7 @@ void Logic::roomSetupObjects() {
 	for (i = firstRoomObj; i <= lastRoomObj; ++i) {
 		ObjectData *pod = &_objectData[i];
 		if (pod->image == -3 || pod->image == -4) {
-			debug(0, "Logic::roomSetupObjects() - Setting up person %X, name=%X", i, pod->name);
+			debug(6, "Logic::roomSetupObjects() - Setting up person %X, name=%X", i, pod->name);
 			uint16 noun = i - _roomData[_currentRoom];
 			if (pod->name > 0) {
 				curImage = personSetup(noun, curImage);
@@ -936,11 +936,11 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 		return curImage;
 	}
 
-	debug(0, "Logic::roomRefreshObject(%X, %s)", obj, _objName[ABS(pod->name)]);
+	debug(6, "Logic::roomRefreshObject(%X, %s)", obj, _objName[ABS(pod->name)]);
 
 	// check the object is in the current room
 	if (pod->room != _currentRoom) {
-		debug(0, "Refreshing an object (%i=%s) not in current room (object room=%i, current room=%i)", obj, _objName[ABS(pod->name)], pod->room, _currentRoom);
+		debug(6, "Refreshing an object (%i=%s) not in current room (object room=%i, current room=%i)", obj, _objName[ABS(pod->name)], pod->room, _currentRoom);
 		return curImage;
 	}
 
@@ -1054,7 +1054,7 @@ void Logic::roomSetup(const char *room, int comPanel, bool inCutaway) {
 
 void Logic::roomDisplay(uint16 room, RoomDisplayMode mode, uint16 scale, int comPanel, bool inCutaway) {
 
-	debug(0, "Logic::roomDisplay(%d, %d, %d, %d, %d)", room, mode, scale, comPanel, inCutaway);
+	debug(6, "Logic::roomDisplay(%d, %d, %d, %d, %d)", room, mode, scale, comPanel, inCutaway);
 
 	roomErase();
 
@@ -1135,7 +1135,7 @@ void Logic::personSetData(int16 noun, const char *actorName, bool loadBank, Pers
 			pp->anim = NULL;
 		}
 
-		debug(0, "Logic::personSetData() - name=%s n=%d", pp->name, actor);
+		debug(6, "Logic::personSetData() - name=%s n=%d", pp->name, actor);
 
 		if (loadBank) {
 			const char *actorFile = _aFile[pp->actor->actorFile];
@@ -1182,7 +1182,7 @@ uint16 Logic::personSetup(uint16 noun, uint16 curImage) {
 	pbs->frameNum = p.bobFrame;
 	pbs->xflip = xflip;
 
-	debug(0, "Logic::personSetup(%d, %d) - bob = %d name = %s", noun, curImage, pad->bobNum, p.name);
+	debug(6, "Logic::personSetup(%d, %d) - bob = %d name = %s", noun, curImage, pad->bobNum, p.name);
 
 	if (p.anim != NULL) {
 		_personFrames[pad->bobNum] = curImage + 1;
@@ -1423,7 +1423,7 @@ void Logic::joeSetup() {
 
 ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
 
-	debug(0, "Logic::joeSetupInRoom(%d, %d) joe.x=%d joe.y=%d", autoPosition, scale, _joe.x, _joe.y);
+	debug(6, "Logic::joeSetupInRoom(%d, %d) joe.x=%d joe.y=%d", autoPosition, scale, _joe.x, _joe.y);
 
 	uint16 oldx;
 	uint16 oldy;
@@ -1450,7 +1450,7 @@ ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
 		}
 	}
 
-	debug(0, "Logic::joeSetupInRoom() - oldx=%d, oldy=%d scale=%d", oldx, oldy, scale);
+	debug(6, "Logic::joeSetupInRoom() - oldx=%d, oldy=%d scale=%d", oldx, oldy, scale);
 
 	if (scale > 0 && scale < 100) {
 		joeScale(scale);
@@ -2368,7 +2368,7 @@ bool Logic::gameLoad(uint16 slot) {
 }
 
 void Logic::sceneStart() {
-	debug(0, "[Logic::sceneStart] _scene = %i", _scene);
+	debug(6, "[Logic::sceneStart] _scene = %i", _scene);
 	_scene++;
 
 	_vm->display()->showMouseCursor(false);
@@ -2381,7 +2381,7 @@ void Logic::sceneStart() {
 }
 
 void Logic::sceneStop() {
-	debug(0, "[Logic::sceneStop] _scene = %i", _scene);
+	debug(6, "[Logic::sceneStop] _scene = %i", _scene);
 	_scene--;
 
 	if (_scene > 0)
@@ -2636,9 +2636,10 @@ bool Logic::executeASM_Game(uint16 sm) {
 
 void Logic::executeSpecialMove(uint16 sm) {
 	
-	debug(0, "Special move: %d", sm);
-	if (!(this->*_executeASM)(sm))
-		warning("unhandled / invalid special move : %d", sm);
+	debug(6, "Special move: %d", sm);
+	if (sm)
+		if (!(this->*_executeASM)(sm))
+			warning("unhandled / invalid special move : %d", sm);
 }
 
 

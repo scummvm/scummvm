@@ -81,7 +81,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 	_oldSelectedSentenceIndex = 0;
 	_oldSelectedSentenceValue = 0;
 
-	debug(0, "----- talk(\"%s\") -----", filename);
+	debug(6, "----- talk(\"%s\") -----", filename);
 
 	cutawayFilename[0] = '\0';
 
@@ -143,7 +143,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 	// TODO: split this loop in several functions
 	while(retval != -1) {
-		// debug(0, "retval = %i", retval);
+		// debug(6, "retval = %i", retval);
 		
 		char otherVoiceFilePrefix    [MAX_STRING_SIZE];
 
@@ -191,7 +191,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 			}
 		}
 
-		debug(0, "choicesLeft = %i", choicesLeft);
+		debug(6, "choicesLeft = %i", choicesLeft);
 
 		if (1 == choicesLeft) {
 			// Automatically run the final dialogue option
@@ -369,7 +369,7 @@ void Talk::findDialogueString(byte *ptr, int16 id, int16 max, char *str) {
 		int16 currentId = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		if (id == currentId) {
 			ptr = getString(ptr, str, MAX_STRING_LENGTH, 4);
-			//debug(0, "Found string with ID %i: '%s'", id, str);
+			//debug(6, "Found string with ID %i: '%s'", id, str);
 			break;
 		}
 		else
@@ -395,7 +395,7 @@ byte *Talk::loadDialogFile(const char *filename) {
 			File fdog;
 			fdog.open(filename, _vm->getGameDataPath());
 			if (fdog.isOpen()) {
-				debug(0, "Loading dog file '%s' from game data path", filename);
+				debug(6, "Loading dog file '%s' from game data path", filename);
 				uint32 size = fdog.size() - DOG_HEADER_SIZE;
 				byte *buf = new byte[size];
 				fdog.seek(DOG_HEADER_SIZE);
@@ -423,7 +423,7 @@ void Talk::load(const char *filename) {
 
 	_levelMax = (int16)READ_BE_UINT16(ptr); ptr += 2;
 
-	//debug(0, "levelMax = %i", _levelMax);
+	//debug(6, "levelMax = %i", _levelMax);
 
 	if (_levelMax < 0) {
 		_levelMax = -_levelMax;
@@ -443,8 +443,8 @@ void Talk::load(const char *filename) {
 		_itemNumber[i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
 	}
 
-	//debug(0, "uniqueKey = %i", _uniqueKey);
-	//debug(0, "talkKey   = %i", _talkKey);
+	//debug(6, "uniqueKey = %i", _uniqueKey);
+	//debug(6, "talkKey   = %i", _talkKey);
 
 	_person1Ptr = _fileData + READ_BE_UINT16(ptr); ptr += 2;
 	_cutawayPtr = _fileData + READ_BE_UINT16(ptr); ptr += 2;
@@ -485,18 +485,18 @@ void Talk::initialTalk() {
 	char joeString[MAX_STRING_SIZE];
 	if (!hasNotString) {
 		ptr = getString(ptr, joeString, MAX_STRING_LENGTH);
-		//debug(0, "joeString = '%s'", joeString);
+		//debug(6, "joeString = '%s'", joeString);
 	}
 	else
 		joeString[0] = '\0';
 
 	ptr = _person2Ptr;
 	ptr = getString(ptr, _person2String, MAX_STRING_LENGTH);
-	//debug(0, "person2String = '%s'", _person2String);
+	//debug(6, "person2String = '%s'", _person2String);
 
 	char joe2String[MAX_STRING_SIZE];
 	ptr = getString(ptr, joe2String, MAX_STRING_LENGTH);
-	//debug(0, "joe2String = '%s'", joe2String);
+	//debug(6, "joe2String = '%s'", joe2String);
 
 	if (!hasTalkedTo()) {
 		
@@ -581,7 +581,7 @@ int Talk::getSpeakCommand(const char *sentence, unsigned &index) {
 				commandCode = atoi(sentence + index + 2);
 				int x = atoi(sentence + index + 5);
 				int y = atoi(sentence + index + 9);
-				debug(0, "Calling MOVE_SPEAK(person, %i, %i)",x, y);
+				debug(6, "Calling MOVE_SPEAK(person, %i, %i)",x, y);
 				// XXX MOVE_SPEAK(person, x, y)
 				index += 11;
 				/// XXX personWalking = true;
@@ -632,7 +632,7 @@ bool Talk::speak(const char *sentence, Person *person, const char *voiceFilePref
 		person = &joe_person;
 	}
 	
-	//debug(0, "Sentence '%s' is said by person '%s' and voice files with prefix '%s' played",
+	//debug(6, "Sentence '%s' is said by person '%s' and voice files with prefix '%s' played",
 	//		sentence, person->name, voiceFilePrefix);
 
 	if (sentence[0] == '\0') {
@@ -760,7 +760,7 @@ void Talk::stringAnimation(const SpeechParameters *parameters, int startFrame, i
 		return;
 	}
 	else if (!isdigit(parameters->animation[0])) {
-		debug(0, "Error in speak string animation: '%s'", parameters->animation);
+		debug(6, "Error in speak string animation: '%s'", parameters->animation);
 		return;
 	}
 	else
@@ -807,7 +807,7 @@ void Talk::defaultAnimation(
 	// lines 1730-1823 in talk.c
 
 #if 0
-	debug(0, "Talk::defaultAnimation(\"%s\", %s, {\"%s\", %i, ...}, %i, %i)",
+	debug(6, "Talk::defaultAnimation(\"%s\", %s, {\"%s\", %i, ...}, %i, %i)",
 			segment, 
 			isJoe ? "true" : "false",
 			parameters->name,
@@ -868,7 +868,7 @@ void Talk::defaultAnimation(
 					}
 				}
 				else {
-					debug(0, "[Talk::defaultAnimation] Body action!");
+					debug(6, "[Talk::defaultAnimation] Body action!");
 					// Just do a body action
 					_vm->graphics()->bankOverpack(parameters->body, startFrame, bankNum);
 				}
@@ -928,7 +928,7 @@ void Talk::speakSegment(
 	char voiceFileName[MAX_STRING_SIZE];
 	snprintf(voiceFileName, sizeof(voiceFileName), "%s%1x", voiceFilePrefix, index + 1);
 
-	// debug(0, "Sentence segment '%*s' is said by person '%s' and voice file '%s' is played",
+	// debug(6, "Sentence segment '%*s' is said by person '%s' and voice file '%s' is played",
 	//		length, segment, person->name, voiceFileName);
 
 	// FIXME - it seems the french talkie version has a useless voice file ; 
@@ -1192,7 +1192,7 @@ TalkSelected *Talk::talkSelected() {
 
 int Talk::splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]) {
 
-	//debug(0, "splitOption(\"%s\")", str);
+	//debug(6, "splitOption(\"%s\")", str);
 
 	// Check to see if option fits on one line, and exit early
 
@@ -1294,7 +1294,7 @@ int16 Talk::selectSentence() {
 				int j;
 				for (j = 0; j < optionLines; j++) {
 					if (yOffset < 5) {
-						//debug(0, "Draw text '%s'", optionText[j]);
+						//debug(6, "Draw text '%s'", optionText[j]);
 						_vm->graphics()->textSet(
 								(j == 0) ? 0 : 24, 
 								150 - PUSHUP + yOffset * LINE_HEIGHT, 
@@ -1333,14 +1333,14 @@ int16 Talk::selectSentence() {
 
 				if (5 == zone || 6 == zone) {
 					// XXX Arrow zones
-					debug(0, "Arrow zones");
+					debug(6, "Arrow zones");
 				}
 				else {
 					if (oldZone != zone) {
 						// Changed zone, change text colors
 						int y;
 
-						/*debug(0, "Changed zone. oldZone = %i, zone = %i",
+						/*debug(6, "Changed zone. oldZone = %i, zone = %i",
 								oldZone, zone);*/
 
 						if (zone > 0) {
@@ -1384,10 +1384,10 @@ int16 Talk::selectSentence() {
 
 
 	// XXX Begin debug stuff
-	// debug(0, "----- Select a sentence of these -----");
+	// debug(6, "----- Select a sentence of these -----");
 	for (i = 1; i <= 4; i++) {
 		if (_talkString[i][0] != '\0') {
-			// XXX debug(0, "%i: %s", i, _talkString[i]);
+			// XXX debug(6, "%i: %s", i, _talkString[i]);
 			if (!selectedSentence)
 				selectedSentence = i;
 		}
@@ -1395,7 +1395,7 @@ int16 Talk::selectSentence() {
 	// XXX End debug stuff
 
 
-	debug(0, "Selected sentence %i", selectedSentence);
+	debug(6, "Selected sentence %i", selectedSentence);
 
 	arrowBobUp->active    = false;
 	arrowBobDown->active  = false;

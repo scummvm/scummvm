@@ -163,7 +163,7 @@ void Command::executeCurrentAction() {
 		}
 	}
 
-	debug(0, "Command::executeCurrentAction() - comMax=%d subj1=%X subj2=%X", comMax, _state.subject[0], _state.subject[1]);
+	debug(6, "Command::executeCurrentAction() - comMax=%d subj1=%X subj2=%X", comMax, _state.subject[0], _state.subject[1]);
 
 	if (comMax == 0) {
 		sayInvalidAction(_state.selAction, _state.subject[0], _state.subject[1]);
@@ -317,7 +317,7 @@ ItemData *Command::findItemData(Verb invNum) const {
 
 int16 Command::executeCommand(uint16 comId, int16 condResult) {
 	// execute.c l.313-452
-	debug(0, "Command::executeCommand() - cond = %X, com = %X", condResult, comId);
+	debug(6, "Command::executeCommand() - cond = %X, com = %X", condResult, comId);
 
 	CmdListData *com = &_cmdList[comId];
 
@@ -462,7 +462,7 @@ int16 Command::makeJoeWalkTo(int16 x, int16 y, int16 objNum, Verb v, bool mustWa
 		_vm->logic()->newRoom(0);
 	}
 
-	debug(0, "Command::makeJoeWalkTo() - x=%d y=%d newRoom=%d", x, y, _vm->logic()->newRoom());
+	debug(6, "Command::makeJoeWalkTo() - x=%d y=%d newRoom=%d", x, y, _vm->logic()->newRoom());
 
 	int16 p = 0;
 	if (mustWalk) {
@@ -966,7 +966,7 @@ void Command::openOrCloseAssociatedObject(Verb action, int16 otherObj) {
 		}
 	}
 
-	debug(0, "Command::openOrCloseAssociatedObject() - com=%X", com);
+	debug(6, "Command::openOrCloseAssociatedObject() - com=%X", com);
 
 	if (com != 0) {
 
@@ -1011,7 +1011,7 @@ int16 Command::setConditions(uint16 command, bool lastCmd) {
 		if (cmdGs->id == command) {
 			if (cmdGs->gameStateSlot > 0) {
 				if (_vm->logic()->gameState(cmdGs->gameStateSlot) != cmdGs->gameStateValue) {
-					debug(0, "Command::setConditions() - GS[%d] == %d (should be %d)", cmdGs->gameStateSlot, _vm->logic()->gameState(cmdGs->gameStateSlot), cmdGs->gameStateValue);
+					debug(6, "Command::setConditions() - GS[%d] == %d (should be %d)", cmdGs->gameStateSlot, _vm->logic()->gameState(cmdGs->gameStateSlot), cmdGs->gameStateValue);
 					// failed test
 					ret = i;
 					break;
@@ -1083,7 +1083,7 @@ void Command::setObjects(uint16 command) {
 			uint16 dstObj = ABS(cmdObj->dstObj);
 			ObjectData *objData = _vm->logic()->objectData(dstObj);
 
-			debug(0, "Command::setObjects() - dstObj=%X srcObj=%X _state.subject[0]=%X", cmdObj->dstObj, cmdObj->srcObj, _state.subject[0]);
+			debug(6, "Command::setObjects() - dstObj=%X srcObj=%X _state.subject[0]=%X", cmdObj->dstObj, cmdObj->srcObj, _state.subject[0]);
 
 			if (cmdObj->dstObj > 0) {
 				// show the object
@@ -1182,7 +1182,7 @@ uint16 Command::nextObjectDescription(ObjectDescription* objDesc, uint16 firstDe
 	// l.69-103 select.c
 	uint16 i;
 	uint16 diff = objDesc->lastDescription - firstDesc;
-	debug(0, "Command::nextObjectDescription() - diff = %d, type = %d", diff, objDesc->type);
+	debug(6, "Command::nextObjectDescription() - diff = %d, type = %d", diff, objDesc->type);
 	switch (objDesc->type) {
 	case 0:
 		// random type, start with first description
@@ -1239,7 +1239,7 @@ void Command::lookAtSelectedObject() {
 		desc = objData->description;
 	}
 
-	debug(0, "Command::lookAtSelectedObject() - desc = %X, _state.subject[0] = %X", desc, _state.subject[0]);
+	debug(6, "Command::lookAtSelectedObject() - desc = %X, _state.subject[0] = %X", desc, _state.subject[0]);
 
 	// check to see if the object/item has a series of description
 	ObjectDescription *objDesc = _vm->logic()->objectDescription(1);

@@ -100,7 +100,7 @@ public:
 	void horizontalScroll(int16 scroll);
 	int16 horizontalScroll() const { return _horizontalScroll; }
 
-	void fullscreen(bool fs) { debug(0, "Display::fullscreen(%d)", fs); _fullscreen = fs; }
+	void fullscreen(bool fs) { debug(6, "Display::fullscreen(%d)", fs); _fullscreen = fs; }
 	bool fullscreen() const { return _fullscreen; }
 
 	void handleTimer();

@@ -175,7 +175,7 @@ void Display::dynalumUpdate(int16 x, int16 y) {
 
 	uint offset = (y / 4) * 160 + (x / 4);
 	if (offset >= sizeof(_dynalum.msk)) {
-		debug(0, "Graphics::dynalumUpdate(%d, %d) - invalid offset: %08x", x, y, offset);
+		debug(6, "Graphics::dynalumUpdate(%d, %d) - invalid offset: %08x", x, y, offset);
 		return;
 	}
 
@@ -621,7 +621,7 @@ void Display::palCustomLightsOn(uint16 roomNum) {
 
 
 void Display::screenMode(int comPanel, bool inCutaway) {
-	debug(0, "Display::screenMode(%d, %d)", comPanel, inCutaway);
+	debug(6, "Display::screenMode(%d, %d)", comPanel, inCutaway);
 
 	// FIXME: this is temporary, just to see if my theory is right
 	if (comPanel == 2 && !inCutaway) {
