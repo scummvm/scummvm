@@ -1489,7 +1489,7 @@ void Actor::walkActorOld() {
 		if (calcMovementFactor(p3.x, p3.y))
 			return;
 
-		walkbox = walkdata.destbox;
+		setBox(walkdata.curbox);
 	} while (1);
 
 	moving |= MF_LAST_LEG;
