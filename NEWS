@@ -1,7 +1,7 @@
 For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
-0.??
+0.6.1 (2004-07-25)
  General:
    - Fixed sound glitch when streaming two or more Ogg Vorbis sounds from the
      same file handle, e.g. in the Sam & Max intro when using monster.sog.
@@ -13,16 +13,10 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Fixed bug in Full Throttle, so battle difficulty matches original
    - Improved Digital iMUSE
 
- Queen:
-   - ???
-
  Sword1:
    - Warn the user if saving fails, instead of crashing.
    - Slightly more user-friendly save/restore dialog.
    - Fixed masking glitch outside Nico's apartment.
-
- Sword2:
-   - ???
 
  BASS:
    - Warn the user if saving a game doesn't work.
