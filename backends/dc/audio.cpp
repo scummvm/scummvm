@@ -34,7 +34,7 @@ void initSound()
   do_sound_command(CMD_SET_BUFFER(3));
 }
 
-bool OSystem_Dreamcast::set_sound_proc(SoundProc *proc, void *param, SoundFormat format)
+bool OSystem_Dreamcast::set_sound_proc(SoundProc proc, void *param, SoundFormat format)
 {
 #if SAMPLE_MODE == 0
   assert(format == SOUND_16BIT);

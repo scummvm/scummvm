@@ -31,20 +31,9 @@ Err HwrDisplayPalette(UInt8 operation, Int16 startIndex,
 			 	  			 UInt16 paletteEntries, RGBColorType *tableP)
 							SYS_TRAP(sysTrapHwrDisplayPalette);
 
-#define MAX_THREAD	2
-
-typedef struct {
-		bool active;
-		OSystem::ThreadProc *proc;
-		void *param;
-		bool sleep;
-		int old_time;
-
-} ThreadEmuType, *ThreadEmuPtr;
-
 typedef struct {
 	bool active;	
-	OSystem::SoundProc *proc;
+	OSystem::SoundProc proc;
 	void *param;
 	OSystem::SoundFormat format;
 	SndStreamRef sndRefNum;
@@ -95,9 +84,6 @@ public:
 	// Delay for a specified amount of milliseconds
 	void delay_msecs(uint msecs);
 	
-	// Create a thread
-	void create_thread(ThreadProc *proc, void *param);
-	
 	// Get the next event.
 	// Returns true if an event was retrieved.	
 	bool poll_event(Event *event);
@@ -113,7 +99,7 @@ public:
 	 * @param param		an arbitrary parameter which is stored and passed to proc.
 	 * @param format	the sample type format.
 	 */
-	bool set_sound_proc(SoundProc *proc, void *param, SoundFormat format);
+	bool set_sound_proc(SoundProc proc, void *param, SoundFormat format);
 	
 	/**
 	 * Remove any audio callback previously set via set_sound_proc, thus effectively
@@ -137,7 +123,7 @@ public:
 	void update_cdrom();
 
 	// Add a callback timer
-	void set_timer(int timer, int (*callback)(int));
+	void set_timer(TimerProc callback, int timer);
 
 	// Mutex handling
 	MutexRef create_mutex();
@@ -200,10 +186,6 @@ public:
 	int _offScreenPitch;
 	int _screenPitch;
 	
-	ThreadEmuType _thread[MAX_THREAD];	// 0: midi native, 1:multi-midi (adlib wrapper)
-	UInt8 _threadCounter;
-	UInt8 _threadID;
-
 private:
 	byte *_offScreenP;
 

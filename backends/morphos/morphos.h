@@ -37,7 +37,7 @@
 class OSystem_MorphOS : public OSystem
 {
 	public:
-					OSystem_MorphOS(SCALERTYPE gfx_mode, bool full_screen);
+		OSystem_MorphOS(SCALERTYPE gfx_mode, bool full_screen);
 		virtual ~OSystem_MorphOS();
 
 		bool Initialise();
@@ -85,16 +85,13 @@ class OSystem_MorphOS : public OSystem
 		virtual void delay_msecs(uint msecs);
 
 		// Add a new callback timer
-		virtual void set_timer(int timer, int (*callback)(int));
+		virtual void set_timer(TimerProc callback, int timer);
 
 		// Mutex handling
 		virtual MutexRef create_mutex();
 		virtual void lock_mutex(MutexRef mutex);
 		virtual void unlock_mutex(MutexRef mutex);
 		virtual void delete_mutex(MutexRef mutex);
-
-		// Create a thread
-		virtual void create_thread(ThreadProc *proc, void *param);
 
 		// Get the next event.
 		// Returns true if an event was retrieved.
@@ -104,7 +101,7 @@ class OSystem_MorphOS : public OSystem
 		virtual void warp_mouse(int x, int y);
 
 		// Set the function to be invoked whenever samples need to be generated
-		virtual bool set_sound_proc(SoundProc *proc, void *param, SoundFormat format);
+		virtual bool set_sound_proc(SoundProc proc, void *param, SoundFormat format);
 				  void fill_sound    (byte * stream, int len);
 				  void clear_sound_proc();
 
@@ -180,9 +177,8 @@ class OSystem_MorphOS : public OSystem
 		ColorMap *OvlCMap;
 
 		/* Sound-related attributes */
-		Process   *ScummMusicThread;
 		Process 	 *ScummSoundThread;
-		SoundProc *SoundProc;
+		SoundProc SoundProc;
 		void      *SoundParam;
 		MsgPort	 *ThreadPort;
 		Message 	  MusicStartup;

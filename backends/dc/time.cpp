@@ -53,7 +53,7 @@ void OSystem_Dreamcast::delay_msecs(uint msecs)
   get_msecs();
 }
 
-void OSystem_Dreamcast::set_timer(int timer, int (*callback)(int))
+void OSystem_Dreamcast::set_timer(TimerProc callback, int timer)
 {
   if (callback != NULL) {
     _timer_duration = timer;

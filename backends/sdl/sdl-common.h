@@ -28,7 +28,6 @@
 #include "backends/intern.h"
 
 #include <SDL.h>
-#include <SDL_thread.h>
 
 class OSystem_SDL_Common : public OSystem {
 public:
@@ -68,15 +67,12 @@ public:
 	// Delay for a specified amount of milliseconds
 	void delay_msecs(uint msecs);
 
-	// Create a thread
-	void create_thread(ThreadProc *proc, void *param);
-
 	// Get the next event.
 	// Returns true if an event was retrieved.	
 	bool poll_event(Event *event);
 
 	// Set function that generates samples 
-	bool set_sound_proc(SoundProc *proc, void *param, SoundFormat format);
+	bool set_sound_proc(SoundProc proc, void *param, SoundFormat format);
 	
 	void clear_sound_proc();
 
@@ -100,7 +96,7 @@ public:
 	uint32 property(int param, Property *value);
 
 	// Add a callback timer
-	void set_timer(int timer, int (*callback)(int));
+	void set_timer(TimerProc callback, int timer);
 
 	// Mutex handling
 	MutexRef create_mutex();

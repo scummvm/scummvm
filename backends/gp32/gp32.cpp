@@ -858,9 +858,6 @@ void OSystem_GP32::delay_msecs(uint msecs) {
 	while ( ( GpTickCountGet() - n ) < msecs) ;
 }
 	
-// Create a thread
-void OSystem_GP32::create_thread(ThreadProc *proc, void *param) { }
-	
 // Get the next event.
 // Returns true if an event was retrieved.	
 
@@ -979,7 +976,7 @@ bool OSystem_GP32::poll_event(Event *event) { 	// fixme: make more user-friendly
 // Set the function to be invoked whenever samples need to be generated
 // Format is the sample type format.
 // Only 16-bit signed mode is needed for simon & scumm
-bool OSystem_GP32::set_sound_proc(SoundProc *proc, void *param, SoundFormat format) { 
+bool OSystem_GP32::set_sound_proc(SoundProc proc, void *param, SoundFormat format) { 
 	return false; 
 }
 
@@ -1076,7 +1073,7 @@ void OSystem_GP32::stop_cdrom() { }
 void OSystem_GP32::update_cdrom() { }
 
 // Add a new callback timer
-void OSystem_GP32::set_timer(int timer, int (*callback)(int)) { }
+void OSystem_GP32::set_timer(TimerProc callback, int timer) { }
 
 // Mutex handling
 OSystem::MutexRef OSystem_GP32::create_mutex() {

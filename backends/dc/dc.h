@@ -44,15 +44,12 @@ class OSystem_Dreamcast : public OSystem {
   // Delay for a specified amount of milliseconds
   void delay_msecs(uint msecs);
   
-  // Create a thread
-  void create_thread(ThreadProc *proc, void *param);
-	
   // Get the next event.
   // Returns true if an event was retrieved.	
   bool poll_event(Event *event);
   
   // Set function that generates samples 
-  bool set_sound_proc(SoundProc *proc, void *param, SoundFormat format);
+  bool set_sound_proc(SoundProc proc, void *param, SoundFormat format);
   void clear_sound_proc();
 		
   // Poll cdrom status
@@ -82,7 +79,7 @@ class OSystem_Dreamcast : public OSystem {
   void copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h);
 
   // Add a callback timer
-  virtual void set_timer(int timer, int (*callback)(int));
+  virtual void set_timer(TimerProc callback, int timer);
 
   // Mutex handling
   virtual MutexRef create_mutex();
@@ -104,7 +101,7 @@ class OSystem_Dreamcast : public OSystem {
   int _current_shake_pos, _screen_w, _screen_h;
   int _overlay_x, _overlay_y;
   unsigned char *_ms_buf;
-  SoundProc *_sound_proc;
+  SoundProc _sound_proc;
   void *_sound_proc_param;
   bool _overlay_visible, _overlay_dirty, _screen_dirty;
   int _screen_buffer, _overlay_buffer, _mouse_buffer;

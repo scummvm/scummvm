@@ -646,22 +646,7 @@ void OSystem_PALMOS::delay_msecs(uint msecs) {
 	SysTaskDelay((SysTicksPerSecond()*msecs)/1000);
 }
 
-void OSystem_PALMOS::create_thread(ThreadProc *proc, void *param) {
-	if (_threadCounter == MAX_THREAD) {
-		warning("Cannot create thread.");
-		return;
-	}
-
-	_thread[_threadCounter].active = true;
-	_thread[_threadCounter].proc = proc;
-	_thread[_threadCounter].param = param;
-	_thread[_threadCounter].old_time = get_msecs();
-	_thread[_threadCounter].sleep = true;
-
-	_threadCounter++;
-}
-
-void OSystem_PALMOS::set_timer(int timer, int (*callback)(int)) {
+void OSystem_PALMOS::set_timer(TimerProc callback, int timer) {
 	if (callback != NULL) {
 		_timer.duration = timer;
 		_timer.next_expiry = get_msecs() + timer;
@@ -729,11 +714,6 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 	}
 
 	current_msecs = get_msecs();
-	//thread handler
-	for(_threadID = 0; _threadID < _threadCounter; _threadID++) {
-		if (_thread[_threadID].active)
-			_thread[_threadID].proc(_thread[_threadID].param);
-	}
 
 	// sound handler
 	if(_sound.active)
@@ -1242,9 +1222,6 @@ OSystem_PALMOS::OSystem_PALMOS() {
 	_paletteDirtyEnd = 0;
 	
 	memset(&_sound, 0, sizeof(SoundDataType));
-	memset(_thread, 0, sizeof(_thread));
-	_threadID = 0;
-	_threadCounter = 0;
 	
 	_currentPalette = NULL;
 
@@ -1350,7 +1327,7 @@ void OSystem_PALMOS::move_screen(int dx, int dy, int height) {
 	SysTaskDelay(1);
 }
 
-bool OSystem_PALMOS::set_sound_proc(SoundProc *proc, void *param, SoundFormat format) {
+bool OSystem_PALMOS::set_sound_proc(SoundProc proc, void *param, SoundFormat format) {
 	_sound.active = true;
 	_sound.proc = proc;
 	_sound.param = param;

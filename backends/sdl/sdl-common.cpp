@@ -83,7 +83,7 @@ void OSystem_SDL_Common::init_intern(int gfx_mode, bool full_screen, bool aspect
 	}
 }
 
-void OSystem_SDL_Common::set_timer(int timer, int (*callback)(int)) {
+void OSystem_SDL_Common::set_timer(TimerProc callback, int timer) {
 	SDL_SetTimer(timer, (SDL_TimerCallback) callback);
 }
 
@@ -507,10 +507,6 @@ void OSystem_SDL_Common::delay_msecs(uint msecs) {
 	SDL_Delay(msecs);
 }
 
-void OSystem_SDL_Common::create_thread(ThreadProc *proc, void *param) {
-	SDL_CreateThread(proc, param);
-}
-
 static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode)
 {
 	if (key >= SDLK_F1 && key <= SDLK_F9) {
@@ -900,7 +896,7 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 	return false;
 }
 
-bool OSystem_SDL_Common::set_sound_proc(SoundProc *proc, void *param, SoundFormat format) {
+bool OSystem_SDL_Common::set_sound_proc(SoundProc proc, void *param, SoundFormat format) {
 	SDL_AudioSpec desired;
 
 	memset(&desired, 0, sizeof(desired));

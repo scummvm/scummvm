@@ -46,7 +46,7 @@ Timer::Timer(OSystem *system) :
 	_thisTime = _system->get_msecs();
 
 	// Set the timer last, after everything has been initialised
-	_system->set_timer(10, &timer_handler);
+	_system->set_timer(&timer_handler, 10);
 
 }
 

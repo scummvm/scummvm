@@ -50,9 +50,6 @@
 
 
 #include "SDL.h"
-#include "SDL_audio.h"
-#include "SDL_timer.h"
-#include "SDL_thread.h"
 
 #include "dynamic_imports.h"
 
@@ -108,15 +105,12 @@ public:
 	// Delay for a specified amount of milliseconds
 	void delay_msecs(uint msecs);
 	
-	// Create a thread
-	void create_thread(ThreadProc *proc, void *param);
-	
 	// Get the next event.
 	// Returns true if an event was retrieved.	
 	bool poll_event(Event *event);
 	
 	// Set function that generates samples 
-	bool set_sound_proc(SoundProc *proc, void *param, SoundFormat format);
+	bool set_sound_proc(SoundProc proc, void *param, SoundFormat format);
 		
 	// Poll cdrom status
 	// Returns true if cd audio is playing
@@ -132,7 +126,7 @@ public:
 	void update_cdrom();
 
 	// Add a new callback timer
-	void set_timer(int timer, int (*callback)(int));
+	void set_timer(TimerProc callback, int timer);
 
 	// Quit
 	void quit();

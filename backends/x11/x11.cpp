@@ -89,15 +89,12 @@ public:
 	// Delay for a specified amount of milliseconds
 	void delay_msecs(uint msecs);
 
-	// Create a thread
-	void create_thread(ThreadProc *proc, void *param);
-
 	// Get the next event.
 	// Returns true if an event was retrieved.  
 	bool poll_event(Event *event);
 
 	// Set function that generates samples 
-	bool set_sound_proc(SoundProc *proc, void *param, SoundFormat format);
+	bool set_sound_proc(SoundProc proc, void *param, SoundFormat format);
 	
 	void clear_sound_proc();
 	
@@ -121,7 +118,7 @@ public:
 	uint32 property(int param, Property *value);
 
 	// Add a callback timer
-	void set_timer(int timer, int (*callback) (int));
+	void set_timer(TimerProc callback, int interval);
 
 	// Mutex handling
 	MutexRef create_mutex();
@@ -199,7 +196,7 @@ private:
 };
 
 typedef struct {
-	OSystem::SoundProc *sound_proc;
+	OSystem::SoundProc sound_proc;
 	void *param;
 	byte format;
 } THREAD_PARAM;
@@ -212,7 +209,7 @@ static void *sound_and_music_thread(void *params)
 	/* Init sound */
 	int sound_fd, param, frag_size;
 	uint8 sound_buffer[FRAG_SIZE];
-	OSystem::SoundProc *sound_proc = ((THREAD_PARAM *) params)->sound_proc;
+	OSystem::SoundProc sound_proc = ((THREAD_PARAM *) params)->sound_proc;
 	void *proc_param = ((THREAD_PARAM *) params)->param;
 
 #ifdef CAPTURE_SOUND
@@ -441,7 +438,7 @@ void OSystem_X11::init_size(uint w, uint h)
 	palette = (uint16 *)calloc(256, sizeof(uint16));
 }
 
-bool OSystem_X11::set_sound_proc(SoundProc *proc, void *param, SoundFormat format)
+bool OSystem_X11::set_sound_proc(SoundProc proc, void *param, SoundFormat format)
 {
 	static THREAD_PARAM thread_param;
 
@@ -779,12 +776,6 @@ void OSystem_X11::set_shake_pos(int shake_pos)
 	new_shake_pos = shake_pos;
 }
 
-void OSystem_X11::create_thread(ThreadProc *proc, void *param)
-{
-	pthread_t *thread = (pthread_t *) malloc(sizeof(pthread_t));
-	pthread_create(thread, NULL, (void *(*)(void *))proc, param);
-}
-
 uint32 OSystem_X11::property(int param, Property *value)
 {
 	switch (param) {
@@ -1029,7 +1020,7 @@ bool OSystem_X11::poll_event(Event *scumm_event)
 	return false;
 }
 
-void OSystem_X11::set_timer(int timer, int (*callback) (int))
+void OSystem_X11::set_timer(TimerProc callback, int interval)
 {
 	if (callback != NULL) {
 		_timer_duration = timer;

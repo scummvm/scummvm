@@ -64,9 +64,6 @@ typedef struct
 
 #define CURRENT_KEYS_VERSION 3
 
-typedef int (*tTimeCallback)(int);
-typedef void SoundProc(void *param, byte *buf, int len);
-
 // Dynamically linked Aygshell
 typedef BOOL (*tSHFullScreen)(HWND,DWORD);
 //typedef BOOL (WINSHELLAPI *tSHHandleWMSettingChange)(HWND,WPARAM,LPARAM,SHACTIVATEINFO*);
@@ -371,7 +368,7 @@ extern Scumm *g_scumm;
 //OSystem *g_system;
 //SoundMixer *g_mixer;
 Config *g_config;
-tTimeCallback timer_callback;
+OSystem::TimerProc timer_callback;
 int timer_interval;
 
 tSHFullScreen dynamicSHFullScreen = NULL;
@@ -444,7 +441,7 @@ dirty_square ds[MAX_NUMBER_OF_DIRTY_SQUARES];
 int num_of_dirty_square;
 
 
-SoundProc *real_soundproc;
+OSystem::SoundProc real_soundproc;
 
 extern void startFindGame();
 extern void displayGameInfo();
@@ -1347,7 +1344,7 @@ OSystem *OSystem_WINCE3_create() {
 	return OSystem_WINCE3::create(0, 0);
 }
 
-void OSystem_WINCE3::set_timer(int timer, int (*callback)(int)) {
+void OSystem_WINCE3::set_timer(TimerProc callback, int timer) {
 	if (!SetTimer(hWnd, 1, timer, NULL))
 		exit(1);
 	timer_interval = timer;
@@ -1705,13 +1702,6 @@ void OSystem_WINCE3::delay_msecs(uint msecs) {
 	Sleep(msecs);
 }
 	
-void OSystem_WINCE3::create_thread(ThreadProc *proc, void *param) {
-	// needed for emulated MIDI support (Sam'n'Max)
-	HANDLE handle;
-	handle = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)proc, param, 0, NULL);
-	SetThreadPriority(handle, THREAD_PRIORITY_NORMAL);
-}
-
 int mapKey(int key, byte mod)
 {
 	if (key>=VK_F1 && key<=VK_F9) {
@@ -1763,7 +1753,7 @@ void own_soundProc(void *buffer, byte *samples, int len) {
 		memset(samples, 0, len);
 }
 
-bool OSystem_WINCE3::set_sound_proc(SoundProc *proc, void *param, SoundFormat format) {
+bool OSystem_WINCE3::set_sound_proc(SoundProc proc, void *param, SoundFormat format) {
 	SDL_AudioSpec desired;
 
 	/* only one format supported at the moment */

@@ -33,15 +33,14 @@
  * and use it to interact with the system.
  *
  * In particular, a backend provides a video surface for ScummVM to draw in;
- * methods to create threads and timers, to handle user input events,
+ * methods to create timers, to handle user input events,
  * control audio CD playback, and sound output.
  */
 class OSystem {
 public:
 	typedef struct Mutex *MutexRef;
-	typedef int ThreadProc(void *param);
-	typedef void SoundProc(void *param, byte *buf, int len);
-	//typedef int TimerProc(int interval);
+	typedef void (*SoundProc)(void *param, byte *buf, int len);
+	typedef int (*TimerProc)(int interval);
 
 	/**
 	 * The types of events backends can generate.
@@ -213,7 +212,7 @@ public:
 	
 	
 
-	/** @name Events and Threads */
+	/** @name Events and Time */
 	//@{
 
 	/** Get the number of milliseconds since the program was started. */
@@ -222,16 +221,8 @@ public:
 	/** Delay/sleep for the specified amount of milliseconds. */
 	virtual void delay_msecs(uint msecs) = 0;
 	
-	/**
-	 * Create a thread with the given entry procedure.
-	 * @param proc	the thread main procedure
-	 * @param param	an arbitrary parameter which is stored and passed to proc
-	 * @return 
-	 */
-	virtual void create_thread(ThreadProc *proc, void *param) = 0;
-	
-	/** Add a new callback timer. */
-	virtual void set_timer(int timer, int (*callback)(int)) = 0;
+	/** Set the timer callback. */
+	virtual void set_timer(TimerProc callback, int interval) = 0;
 	
 	/**
 	 * Get the next event in the event queue.
@@ -253,7 +244,7 @@ public:
 	 * @param param		an arbitrary parameter which is stored and passed to proc.
 	 * @param format	the sample type format.
 	 */
-	virtual bool set_sound_proc(SoundProc *proc, void *param, SoundFormat format) = 0;
+	virtual bool set_sound_proc(SoundProc proc, void *param, SoundFormat format) = 0;
 	
 	/**
 	 * Remove any audio callback previously set via set_sound_proc, thus effectively

@@ -40,9 +40,8 @@ public:
 	void set_shake_pos(int shake_pos) {}
 	uint32 get_msecs();
 	void delay_msecs(uint msecs);
-	void create_thread(ThreadProc *proc, void *param) { }
 	bool poll_event(Event *event) { return false; }
-	bool set_sound_proc(SoundProc *proc, void *param, SoundFormat format) {}
+	bool set_sound_proc(SoundProc proc, void *param, SoundFormat format) {}
 	void quit() { exit(1); }
 	uint32 property(int param, Property *value) { return 0; }
 	static OSystem *create(int gfx_mode, bool full_screen);

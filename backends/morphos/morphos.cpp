@@ -97,7 +97,6 @@ OSystem_MorphOS::OSystem_MorphOS(SCALERTYPE gfx_mode, bool full_screen)
 	ScummScreenBuffer[1] = NULL;
 	ScummRenderTo = NULL;
 	ScummNoCursor = NULL;
-	ScummMusicThread = NULL;
 	ScummSoundThread = NULL;
 	ScummWinX = -1;
 	ScummWinY = -1;
@@ -323,22 +322,9 @@ void OSystem_MorphOS::delay_msecs(uint msecs)
    TimeDelay(UNIT_MICROHZ, 0, msecs*1000);
 }
 
-void OSystem_MorphOS::set_timer(int timer, int (*callback)(int))
+void OSystem_MorphOS::set_timer(TimerProc callback, int timer)
 {
 	warning("set_timer() unexpectedly called");
-}
-
-void OSystem_MorphOS::create_thread(ThreadProc *proc, void *param)
-{
-	MusicStartup.mn_Node.ln_Type = NT_MESSAGE;
-	MusicStartup.mn_ReplyPort = ThreadPort;
-	MusicStartup.mn_Length = sizeof(MusicStartup);
-
-	ScummMusicThread = CreateNewProcTags(NP_Entry, (ULONG) proc, NP_CodeType, CODETYPE_PPC,
-													 NP_Name, (ULONG) "ScummVM Music Thread",
-													 NP_Priority, 40, NP_StackSize, 32000,
-													 NP_StartupMsg, &MusicStartup,
-													 NP_PPC_Arg1, (ULONG) param, TAG_DONE);
 }
 
 OSystem::MutexRef OSystem_MorphOS::create_mutex()
@@ -518,13 +504,6 @@ void OSystem_MorphOS::quit()
 {
 	int num_threads = 0;
 
-	if (ScummMusicThread)
-	{
-		num_threads++;
-		Signal((Task *) ScummMusicThread, SIGBREAKF_CTRL_C);
-		ScummMusicThread = NULL;
-	}
-
 	if (ScummSoundThread)
 	{
 		num_threads++;
@@ -532,6 +511,8 @@ void OSystem_MorphOS::quit()
 		ScummSoundThread = NULL;
 	}
 
+	// TODO: this code could probably greatly simplified now that there is
+	// only one thread left...
 	while (num_threads > 0)
 	{
 		Message* msg;
@@ -1463,7 +1444,7 @@ void OSystem_MorphOS::set_mouse_cursor(const byte *buf, uint w, uint h, int hots
 	UndrawMouse();
 }
 
-bool OSystem_MorphOS::set_sound_proc(OSystem::SoundProc *proc, void *param, OSystem::SoundFormat format)
+bool OSystem_MorphOS::set_sound_proc(OSystem::SoundProc proc, void *param, OSystem::SoundFormat format)
 {
 	if (ScummSoundThread)
 	{

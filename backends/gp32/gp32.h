@@ -73,9 +73,6 @@ public:
 	// Delay for a specified amount of milliseconds
 	void delay_msecs(uint msecs);
 	
-	// Create a thread
-	void create_thread(ThreadProc *proc, void *param);
-	
 	// Get the next event.
 	// Returns true if an event was retrieved.	
 	bool poll_event(Event *event);
@@ -83,7 +80,7 @@ public:
 	// Set the function to be invoked whenever samples need to be generated
 	// Format is the sample type format.
 	// Only 16-bit signed mode is needed for simon & scumm
-	bool set_sound_proc(SoundProc *proc, void *param, SoundFormat format);
+	bool set_sound_proc(SoundProc proc, void *param, SoundFormat format);
 	void clear_sound_proc();
 	
 	// Get or set a property
@@ -103,7 +100,7 @@ public:
 	void update_cdrom();
 
 	// Add a new callback timer
-	void set_timer(int timer, int (*callback)(int));
+	void set_timer(TimerProc callback, int timer);
 
 	// Mutex handling
 	OSystem::MutexRef create_mutex();

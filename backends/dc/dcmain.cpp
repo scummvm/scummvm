@@ -127,11 +127,6 @@ void OSystem_Dreamcast::quit() {
   exit(0);
 }
 
-void OSystem_Dreamcast::create_thread(ThreadProc *proc, void *param) {
-  warning("Creating a thread! (not supported.)\n");
-}
-
-
 /* Mutex handling */
 OSystem::MutexRef OSystem_Dreamcast::create_mutex()
 {
