@@ -41,7 +41,10 @@ protected:
 	bool _soundsPaused2;
 	bool _soundVolumePreset;
 
+public:
 	const char *_nameBundleMusic;
+
+protected:
 	const char *_newNameBundleMusic;
 	byte _musicDisk;
 	byte _voiceDisk;

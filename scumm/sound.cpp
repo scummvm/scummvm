@@ -87,7 +87,7 @@ Sound::Sound(Scumm *parent) {
 	memset(this,0,sizeof(Sound));	// palmos
 	
 	_scumm = parent;
-	_nameBundleMusic = NULL;
+	_nameBundleMusic = "";
 	_musicBundleBufFinal = NULL;
 	_musicBundleBufOutput = NULL;
 	_musicDisk = 0;
@@ -1001,7 +1001,7 @@ void Sound::playBundleMusic(const char *song) {
 		return;
 	}
 
-	if (_nameBundleMusic == NULL) {
+	if (_nameBundleMusic[0] == 0) {
 		_outputMixerSize = 66150; // ((22050 * 2 * 2) / 4) * 3
 		if (_scumm->_gameId == GID_CMI) {
 			char bunfile[20];
@@ -1063,7 +1063,7 @@ void Sound::bundleMusicHandler(Scumm *scumm) {
 
 	if (_musicBundleToBeRemoved == true) {
 		_scumm->_timer->releaseProcedure(&music_handler);
-		_nameBundleMusic = NULL;
+		_nameBundleMusic = "";
 		if (_bundleMusicTrack != -1) {
 			_scumm->_mixer->stop(_bundleMusicTrack);
 		}

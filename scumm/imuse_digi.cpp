@@ -1134,7 +1134,8 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					if (_digStateMusicMap[l].room == b) {
 						int16 music = _digStateMusicMap[l].table_index;
 						debug(5, "Play imuse music: %s, %s, %s", _digStateMusicTable[music].name, _digStateMusicTable[music].title, _digStateMusicTable[music].filename);
-						if (_digStateMusicTable[music].filename[0] != 0) {
+						if ((_digStateMusicTable[music].filename[0] != 0) && 
+							(strcmp(_digStateMusicTable[_digStateMusicTable[music].unk3].filename, _scumm->_sound->_nameBundleMusic) != 0) ) {
 							_scumm->_sound->playBundleMusic((const char *)_digStateMusicTable[music].filename);
 						}
 						return 0;
