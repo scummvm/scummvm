@@ -43,6 +43,7 @@ class MidiChannel_MT32 : public MidiChannel_MPU401 {
 
 class MidiDriver_MT32 : public MidiDriver_Emulated {
 private:
+	PlayingSoundHandle _handle;
 	MidiChannel_MT32 _midiChannels[16];
 	uint16 _channelMask;
 	MT32Emu::Synth *_synth;
@@ -192,7 +193,7 @@ int MidiDriver_MT32::open() {
 	if (!_synth->open(prop))
 		return MERR_DEVICE_NOT_AVAILABLE;
 
-	_mixer->setupPremix(this);
+	_mixer->playInputStream(&_handle, this, false, 255, 0, -1, false);
 
 	return 0;
 }
@@ -232,7 +233,7 @@ void MidiDriver_MT32::close() {
 	_isOpen = false;
 
 	// Detach the premix callback handler
-	_mixer->setupPremix(0);
+	_mixer->stopHandle(_handle);
 
 	_synth->close();
 	delete _synth;
