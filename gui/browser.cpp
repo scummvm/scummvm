@@ -43,41 +43,6 @@ BrowserDialog::~BrowserDialog() {
 	CFRelease(_titleRef);
 }
 
-static void myNavEventProc(NavEventCallbackMessage message, NavCBRecPtr callBackParms, void * callBackUD) {
-	switch (message) {
-	case kNavCBStart: {
-		// Force the window to be in the shielding window level -- this way 
-		// it's visible even in fullscreen mode.
-		// Some glitches remain:
-		// - Need to center the nav dialog over the game window
-		// - In fullscreen mode, the game window won't be redrawn while the nav
-		//   dialog is up, since our event loop won't run.
-		// - It will not work well if you try to use it in 320x200 fullscreen mode.
-		//   Not that I have found any machine which actually supports that :-).
-		WindowGroupRef group;
-		OSStatus err;
-		err = CreateWindowGroup(0, &group);
-		SetWindowGroupLevel(group, CGShieldingWindowLevel());
-		err = SetWindowGroup(callBackParms->window, group);
-		break; }
-	case kNavCBTerminate: {
-		WindowGroupRef group;
-		OSStatus err;
-		
-		group = GetWindowGroup(callBackParms->window);
-		err = ReleaseWindowGroup(group);
-		break; }
-	case kNavCBEvent: {
-		// TODO: here we could try to redraw the ScummVM window.
-		// This will probably require direct interfacing with the (SDL) backend
-		// and/or with Cocoa.
-		break; }
-	}
-	
-}
-
-static NavEventUPP myNavEventUPP = NewNavEventUPP((NavEventProcPtr)myNavEventProc);
-
 int BrowserDialog::runModal() {
 	NavDialogRef dialogRef;
 	WindowRef windowRef = 0;
@@ -88,6 +53,11 @@ int BrowserDialog::runModal() {
 	
 	delete _choice;
 	_choice = 0;
+	
+	// If in fullscreen mode, switch to windowed mode
+	bool wasFullscreen = g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
+	if (wasFullscreen)
+		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, false);
 
 	// Temporarily show the real mouse
 	ShowCursor();
@@ -98,7 +68,7 @@ int BrowserDialog::runModal() {
 //	options.message = CFSTR("Select your game directory");
 	options.modality = kWindowModalityAppModal;
 	
-	err = NavCreateChooseFolderDialog(&options, myNavEventUPP, 0, g_system, &dialogRef);
+	err = NavCreateChooseFolderDialog(&options, 0, 0, 0, &dialogRef);
 	assert(err == noErr);
 	
 	windowRef = NavDialogGetWindow(dialogRef);
@@ -135,6 +105,10 @@ int BrowserDialog::runModal() {
 	}
 
 	NavDialogDispose(dialogRef);
+
+	// If we were in fullscreen mode, switch back
+	if (wasFullscreen)
+		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, true);
 
 	return (_choice != 0);
 }
