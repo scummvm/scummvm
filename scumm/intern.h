@@ -244,6 +244,7 @@ protected:
 	void setUserState(byte state);
 
 	void initV2MouseOver();
+	void initNESMouseOver();
 
 	/* Version 2 script opcodes */
 	void o2_actorFromPos();

@@ -40,11 +40,7 @@ void ScummEngine_v2::initV2MouseOver() {
 	int i;
 	int arrow_color, color, hi_color;
 
-	if (_features & GF_NES) {
-		color = 0;
-		hi_color = 0;
-		arrow_color = 0;
-	} else if (_version == 1) {
+	if (_version == 1) {
 		color = 16;
 		hi_color = 7;
 		arrow_color = 6;
@@ -59,32 +55,18 @@ void ScummEngine_v2::initV2MouseOver() {
 	// Inventory items
 
 	for (i = 0; i < 2; i++) {
-		if (_features & GF_NES) {
-			v2_mouseover_boxes[2 * i].rect.left = 0;
-			v2_mouseover_boxes[2 * i].rect.right = 104;
-			v2_mouseover_boxes[2 * i].rect.top = 48 + 8 * i;
-			v2_mouseover_boxes[2 * i].rect.bottom = v2_mouseover_boxes[2 * i].rect.top + 8;
-		} else {
-			v2_mouseover_boxes[2 * i].rect.left = 0;
-			v2_mouseover_boxes[2 * i].rect.right = 144;
-			v2_mouseover_boxes[2 * i].rect.top = 32 + 8 * i;
-			v2_mouseover_boxes[2 * i].rect.bottom = v2_mouseover_boxes[2 * i].rect.top + 8;
-		}
+		v2_mouseover_boxes[2 * i].rect.left = 0;
+		v2_mouseover_boxes[2 * i].rect.right = 144;
+		v2_mouseover_boxes[2 * i].rect.top = 32 + 8 * i;
+		v2_mouseover_boxes[2 * i].rect.bottom = v2_mouseover_boxes[2 * i].rect.top + 8;
 
 		v2_mouseover_boxes[2 * i].color = color;
 		v2_mouseover_boxes[2 * i].hicolor = hi_color;
 
-		if (_features & GF_NES) {
-			v2_mouseover_boxes[2 * i + 1].rect.left = 120;
-			v2_mouseover_boxes[2 * i + 1].rect.right = 224;
-			v2_mouseover_boxes[2 * i + 1].rect.top = v2_mouseover_boxes[2 * i].rect.top;
-			v2_mouseover_boxes[2 * i + 1].rect.bottom = v2_mouseover_boxes[2 * i].rect.bottom;
-		} else {
-			v2_mouseover_boxes[2 * i + 1].rect.left = 176;
-			v2_mouseover_boxes[2 * i + 1].rect.right = 320;
-			v2_mouseover_boxes[2 * i + 1].rect.top = v2_mouseover_boxes[2 * i].rect.top;
-			v2_mouseover_boxes[2 * i + 1].rect.bottom = v2_mouseover_boxes[2 * i].rect.bottom;
-		}
+		v2_mouseover_boxes[2 * i + 1].rect.left = 176;
+		v2_mouseover_boxes[2 * i + 1].rect.right = 320;
+		v2_mouseover_boxes[2 * i + 1].rect.top = v2_mouseover_boxes[2 * i].rect.top;
+		v2_mouseover_boxes[2 * i + 1].rect.bottom = v2_mouseover_boxes[2 * i].rect.bottom;
 
 		v2_mouseover_boxes[2 * i + 1].color = color;
 		v2_mouseover_boxes[2 * i + 1].hicolor = hi_color;
@@ -92,32 +74,18 @@ void ScummEngine_v2::initV2MouseOver() {
 
 	// Inventory arrows
 
-	if (_features & GF_NES) {
-		v2_mouseover_boxes[kInventoryUpArrow].rect.left = 104;
-		v2_mouseover_boxes[kInventoryUpArrow].rect.right = 112;
-		v2_mouseover_boxes[kInventoryUpArrow].rect.top = 48;
-		v2_mouseover_boxes[kInventoryUpArrow].rect.bottom = 56;
-	} else {
-		v2_mouseover_boxes[kInventoryUpArrow].rect.left = 144;
-		v2_mouseover_boxes[kInventoryUpArrow].rect.right = 176;
-		v2_mouseover_boxes[kInventoryUpArrow].rect.top = 32;
-		v2_mouseover_boxes[kInventoryUpArrow].rect.bottom = 40;
-	}
+	v2_mouseover_boxes[kInventoryUpArrow].rect.left = 144;
+	v2_mouseover_boxes[kInventoryUpArrow].rect.right = 176;
+	v2_mouseover_boxes[kInventoryUpArrow].rect.top = 32;
+	v2_mouseover_boxes[kInventoryUpArrow].rect.bottom = 40;
 
 	v2_mouseover_boxes[kInventoryUpArrow].color = arrow_color;
 	v2_mouseover_boxes[kInventoryUpArrow].hicolor = hi_color;
 
-	if (_features & GF_NES) {
-		v2_mouseover_boxes[kInventoryDownArrow].rect.left = 112;
-		v2_mouseover_boxes[kInventoryDownArrow].rect.right = 120;
-		v2_mouseover_boxes[kInventoryDownArrow].rect.top = 48;
-		v2_mouseover_boxes[kInventoryDownArrow].rect.bottom = 56;
-	} else {
-		v2_mouseover_boxes[kInventoryDownArrow].rect.left = 144;
-		v2_mouseover_boxes[kInventoryDownArrow].rect.right = 176;
-		v2_mouseover_boxes[kInventoryDownArrow].rect.top = 40;
-		v2_mouseover_boxes[kInventoryDownArrow].rect.bottom = 48;
-	}
+	v2_mouseover_boxes[kInventoryDownArrow].rect.left = 144;
+	v2_mouseover_boxes[kInventoryDownArrow].rect.right = 176;
+	v2_mouseover_boxes[kInventoryDownArrow].rect.top = 40;
+	v2_mouseover_boxes[kInventoryDownArrow].rect.bottom = 48;
 
 	v2_mouseover_boxes[kInventoryDownArrow].color = arrow_color;
 	v2_mouseover_boxes[kInventoryDownArrow].hicolor = hi_color;
@@ -125,10 +93,66 @@ void ScummEngine_v2::initV2MouseOver() {
 	// Sentence line
 
 	v2_mouseover_boxes[kSentenceLine].rect.left = 0;
-	if (_features & GF_NES)
-		v2_mouseover_boxes[kSentenceLine].rect.right = 224;
-	else
-		v2_mouseover_boxes[kSentenceLine].rect.right = 320;
+	v2_mouseover_boxes[kSentenceLine].rect.right = 320;
+	v2_mouseover_boxes[kSentenceLine].rect.top = 0;
+	v2_mouseover_boxes[kSentenceLine].rect.bottom = 8;
+
+	v2_mouseover_boxes[kSentenceLine].color = color;
+	v2_mouseover_boxes[kSentenceLine].hicolor = hi_color;
+}
+
+void ScummEngine_v2::initNESMouseOver() {
+	int i;
+	int arrow_color, color, hi_color;
+
+	color = 0;
+	hi_color = 0;
+	arrow_color = 0;
+
+	v2_mouseover_box = -1;
+
+	// Inventory items
+
+	for (i = 0; i < 2; i++) {
+		v2_mouseover_boxes[2 * i].rect.left = 0;
+		v2_mouseover_boxes[2 * i].rect.right = 104;
+		v2_mouseover_boxes[2 * i].rect.top = 48 + 8 * i;
+		v2_mouseover_boxes[2 * i].rect.bottom = v2_mouseover_boxes[2 * i].rect.top + 8;
+
+		v2_mouseover_boxes[2 * i].color = color;
+		v2_mouseover_boxes[2 * i].hicolor = hi_color;
+
+		v2_mouseover_boxes[2 * i + 1].rect.left = 120;
+		v2_mouseover_boxes[2 * i + 1].rect.right = 224;
+		v2_mouseover_boxes[2 * i + 1].rect.top = v2_mouseover_boxes[2 * i].rect.top;
+		v2_mouseover_boxes[2 * i + 1].rect.bottom = v2_mouseover_boxes[2 * i].rect.bottom;
+
+		v2_mouseover_boxes[2 * i + 1].color = color;
+		v2_mouseover_boxes[2 * i + 1].hicolor = hi_color;
+	}
+
+	// Inventory arrows
+
+	v2_mouseover_boxes[kInventoryUpArrow].rect.left = 104;
+	v2_mouseover_boxes[kInventoryUpArrow].rect.right = 112;
+	v2_mouseover_boxes[kInventoryUpArrow].rect.top = 48;
+	v2_mouseover_boxes[kInventoryUpArrow].rect.bottom = 56;
+
+	v2_mouseover_boxes[kInventoryUpArrow].color = arrow_color;
+	v2_mouseover_boxes[kInventoryUpArrow].hicolor = hi_color;
+
+	v2_mouseover_boxes[kInventoryDownArrow].rect.left = 112;
+	v2_mouseover_boxes[kInventoryDownArrow].rect.right = 120;
+	v2_mouseover_boxes[kInventoryDownArrow].rect.top = 48;
+	v2_mouseover_boxes[kInventoryDownArrow].rect.bottom = 56;
+
+	v2_mouseover_boxes[kInventoryDownArrow].color = arrow_color;
+	v2_mouseover_boxes[kInventoryDownArrow].hicolor = hi_color;
+
+	// Sentence line
+
+	v2_mouseover_boxes[kSentenceLine].rect.left = 0;
+	v2_mouseover_boxes[kSentenceLine].rect.right = 224;
 	v2_mouseover_boxes[kSentenceLine].rect.top = 0;
 	v2_mouseover_boxes[kSentenceLine].rect.bottom = 8;
 
@@ -238,6 +262,7 @@ void ScummEngine::redrawV2Inventory() {
 	int max_inv;
 	Common::Rect inventoryBox;
 	int inventoryArea = (_features & GF_NES) ? 48: 32;
+	int maxChars = (_features & GF_NES) ? 13: 18;
 
 	v2_mouseover_box = -1;
 
@@ -269,25 +294,13 @@ void ScummEngine::redrawV2Inventory() {
 		const byte *tmp = getObjOrActorName(obj);
 		assert(tmp);
 
-		if (_features & GF_NES) {
-			// Prevent inventory entries from overflowing by truncating the text
-			// after 104/8 = 13 chars
-			byte msg[13 + 1];
-			msg[13] = 0;
-			strncpy((char *)msg, (const char *)tmp, 13);
-			
-			// Draw it
-			drawString(1, msg);
-		} else {
-			// Prevent inventory entries from overflowing by truncating the text
-			// after 144/8 = 18 chars
-			byte msg[18 + 1];
-			msg[18] = 0;
-			strncpy((char *)msg, (const char *)tmp, 18);
-			
-			// Draw it
-			drawString(1, msg);
-		}
+		// Prevent inventory entries from overflowing by truncating the text
+		byte msg[20];
+		msg[maxChars] = 0;
+		strncpy((char *)msg, (const char *)tmp, maxChars);
+
+		// Draw it
+		drawString(1, msg);
 	}
 
 
