@@ -796,7 +796,7 @@ void Cutaway::handlePersonRecord(
 
 	if (0 != strcmp(sentence, "*")) {
 		if (sentence[0] == '#') {
-			debug(0, "Starting credits '%s'", sentence + 1);
+			debug(4, "Starting credits '%s'", sentence + 1);
 			_vm->logic()->startCredits(sentence + 1);
 		}
 		else {
