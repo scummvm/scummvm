@@ -43,7 +43,7 @@ byte BaseCostumeRenderer::drawCostume(const CostumeData &cost) {
 }
 
 void BaseCostumeRenderer::codec1_ignorePakCols(int num) {
-	int n = _height * num;
+	num *= _height;
 
 	do {
 		v1.replen = *_srcptr++;
@@ -54,7 +54,7 @@ void BaseCostumeRenderer::codec1_ignorePakCols(int num) {
 			v1.replen = *_srcptr++;
 
 		do {
-			if (!--n)
+			if (!--num)
 				return;
 		} while (--v1.replen);
 	} while (1);
