@@ -760,7 +760,7 @@ void Insane::smush_setToFinish(void) {
 
 // smlayer_stopSound
 void Insane::smlayer_stopSound(int idx) {
-	_vm->_sound->stopSound(readArray(idx));
+	_vm->_imuseDigital->stopSound(readArray(idx));
 }
 
 void Insane::switchSceneIfNeeded(void) {
@@ -1189,7 +1189,7 @@ void Insane::smlayer_setFluPalette(byte *pal, int shut_flag) {
 }
 
 bool Insane::smlayer_isSoundRunning(int32 sound) {
-	return _vm->_sound->isSoundRunning(readArray(sound)) != 0;
+	return _vm->_imuseDigital->getSoundStatus(readArray(sound)) != 0;
 }
 
 bool Insane::smlayer_startSfx(int32 sound) {
