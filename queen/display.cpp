@@ -141,6 +141,7 @@ void Display::dynalumInit(const char *roomName, uint16 roomNum) {
 	memset(_dynalum.msk, 0, sizeof(_dynalum.msk));
 	memset(_dynalum.lum, 0, sizeof(_dynalum.lum));
 	_dynalum.valid = false;
+	_dynalum.prevColMask = 0xFF;
 
 	if (!(IS_ALT_INTRO_ROOM(roomNum) || IS_CD_INTRO_ROOM(roomNum))) {
 		char filename[20];
@@ -181,7 +182,6 @@ void Display::dynalumUpdate(int16 x, int16 y) {
 
 	uint8 colMask = _dynalum.msk[offset];
 	debug(9, "Display::dynalumUpdate(%d, %d) - colMask = %d", x, y, colMask);
-
 	if (colMask != _dynalum.prevColMask) {
 		uint8 i;
 		for (i = 144; i < 160; ++i) {
