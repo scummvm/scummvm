@@ -1795,7 +1795,7 @@ void Insane::actor03Reaction(int32 buttons) {
 void Insane::chooseBenWeaponAnim(int buttons) {
 	// kick
 	if ((buttons & 1) && (_currEnemy != EN_TORQUE)) {
-		if (!_kickBenProgress && actor0StateFlags2(_actor[0].act[2].state + _actor[0].weapon * 238)) {
+		if (!_kickBenProgress && actor0StateFlags2(_actor[0].act[2].state + _actor[0].weapon * 119)) {
 			switch (_actor[0].weapon) {
 			case INV_CHAIN:
 				_actor[0].act[2].state = 10;

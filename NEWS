@@ -20,6 +20,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Fixed crash on 64 bit architectures (like AMD64)
    - Old zak256 target removed, use zakTowns instead
    - Numerous Humongous Entertainment games fixes
+   - Fixed bug in Full Throttle, so battle difficulty matches original
 
  Queen:
    - Various fixes [TODO: Somebody of the Queen team please fill this in]
