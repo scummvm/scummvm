@@ -844,7 +844,7 @@ void SmushPlayer::setupAnim(const char *file, const char *directory) {
 		}
 	} else if (_scumm->_gameId == GID_CMI) {
 		for (i = 0; i < 5; i++) {
-			if ((_scumm->_features & GF_DEMO) && (i == 5))
+			if ((_scumm->_features & GF_DEMO) && (i == 4))
 				break;
 			sprintf(file_font, "font%d.nut", i);
 			_sf[i] = new SmushFont(false, true);

@@ -1056,18 +1056,26 @@ void Sound::playBundleMusic(const char *song) {
 			_outputMixerSize = (22050 * 2 * 2);
 
 			char bunfile[20];
-			sprintf(bunfile, "musdisk%d.bun", _scumm->VAR(_scumm->VAR_CURRENTDISK));
-			if (_musicDisk != _scumm->VAR(_scumm->VAR_CURRENTDISK)) 
-				_bundle->closeMusicFile();
-
-			if (_bundle->openMusicFile(bunfile, _scumm->getGameDataPath()) == false) {
+			if (_scumm->_features & GF_DEMO) {
 				if (_bundle->openMusicFile("music.bun", _scumm->getGameDataPath()) == false) {
 					_outputMixerSize = 0;
 					return;
 				}
-			}
+			} else {
 
-			_musicDisk = (byte)_scumm->VAR(_scumm->VAR_CURRENTDISK);
+				sprintf(bunfile, "musdisk%d.bun", _scumm->VAR(_scumm->VAR_CURRENTDISK));
+				if (_musicDisk != _scumm->VAR(_scumm->VAR_CURRENTDISK)) 
+					_bundle->closeMusicFile();
+
+				if (_bundle->openMusicFile(bunfile, _scumm->getGameDataPath()) == false) {
+					if (_bundle->openMusicFile("music.bun", _scumm->getGameDataPath()) == false) {
+						_outputMixerSize = 0;
+						return;
+					}
+				}
+
+				_musicDisk = (byte)_scumm->VAR(_scumm->VAR_CURRENTDISK);
+			}
 		} else {
 			_outputMixerSize = ((22050 * 2 * 2) / 4) * 3;
 
@@ -1235,15 +1243,19 @@ void Sound::playBundleSound(char *sound, PlayingSoundHandle *handle) {
 
 	if (_scumm->_gameId == GID_CMI) {
 		char voxfile[20];
-		sprintf(voxfile, "voxdisk%d.bun", _scumm->VAR(_scumm->VAR_CURRENTDISK));
-		if (_voiceDisk != _scumm->VAR(_scumm->VAR_CURRENTDISK))
-			_bundle->closeVoiceFile();
-
-		result = _bundle->openVoiceFile(voxfile, _scumm->getGameDataPath());
-
-		if (result == false) 
+		if (_scumm->_features & GF_DEMO) {
 			result = _bundle->openVoiceFile("voice.bun", _scumm->getGameDataPath());
-		_voiceDisk = (byte)_scumm->VAR(_scumm->VAR_CURRENTDISK);
+		} else {
+			sprintf(voxfile, "voxdisk%d.bun", _scumm->VAR(_scumm->VAR_CURRENTDISK));
+			if (_voiceDisk != _scumm->VAR(_scumm->VAR_CURRENTDISK))
+				_bundle->closeVoiceFile();
+
+			result = _bundle->openVoiceFile(voxfile, _scumm->getGameDataPath());
+
+			if (result == false) 
+				result = _bundle->openVoiceFile("voice.bun", _scumm->getGameDataPath());
+			_voiceDisk = (byte)_scumm->VAR(_scumm->VAR_CURRENTDISK);
+		}
 	} else if (_scumm->_gameId == GID_DIG)
 		result = _bundle->openVoiceFile("digvoice.bun", _scumm->getGameDataPath());
 	else
