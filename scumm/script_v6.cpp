@@ -499,11 +499,6 @@ int ScummEngine_v6::readArray(int array, int idx, int base) {
 
 	base += idx * FROM_LE_16(ah->dim1);
 
-	// FIXME: comment this for the time being as it was causing ft to crash
-	// in the minefeild
-	// FIX THE FIXME: fixing an assert by commenting out is bad. It's evil.
-	// It's wrong. Find the proper cause, or at least, silently return
-	// from the function, but don't just go on overwriting memory!
 	assert(base >= 0 && base < FROM_LE_16(ah->dim1) * FROM_LE_16(ah->dim2));
 
 	if (FROM_LE_16(ah->type) == 4 || (_features & GF_HUMONGOUS
