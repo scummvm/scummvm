@@ -91,7 +91,7 @@ public:
 	uint speedx, speedy;
 	byte frame;
 	byte walkbox;
-	byte mask;
+	byte mask;	// This field is *NOT* used anymore, only kept around to make saveload.cpp happy
 	byte animProgress, animSpeed;
 	int16 new_1, new_2;
 	uint16 talk_script, walk_script;

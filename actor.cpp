@@ -274,7 +274,6 @@ int Actor::updateActorDirection()
 void Actor::setBox(int box)
 {
 	walkbox = box;
-	mask = _vm->getMaskFromBox(box);
 
 	setupActorScale();
 }
@@ -869,15 +868,14 @@ void Actor::drawActorCostume()
 
 		cr._outheight = _vm->virtscr->height;
 
-		if (isInClass(20))
-			mask = 0;
-		forceClip = isInClass(21) ? 1 : 0;
+		cr._zbuf = _vm->getMaskFromBox(walkbox);
 
-		cr._zbuf = mask;
-		if (cr._zbuf > _vm->gdi._numZBuffer)
-			cr._zbuf = (byte)_vm->gdi._numZBuffer;
 		if (forceClip)
-			cr._zbuf = forceClip;
+			cr._zbuf = 1;
+		else if (isInClass(20))
+			cr._zbuf = 0;
+		else if (cr._zbuf > _vm->gdi._numZBuffer)
+			cr._zbuf = (byte)_vm->gdi._numZBuffer;
 
 		cr._shadow_table = _vm->_shadowPalette;
 
@@ -903,7 +901,7 @@ void Actor::drawActorCostume()
 		ar.scale_y = scaley;
 		ar.clipping = forceClip;
 		if (ar.clipping == 100) {
-			ar.clipping = mask;
+			ar.clipping = _vm->getMaskFromBox(walkbox);
 			if (ar.clipping > (byte)_vm->gdi._numZBuffer)
 				ar.clipping = _vm->gdi._numZBuffer;
 		}
@@ -1259,7 +1257,6 @@ void Actor::walkActorOld()
 			return;
 
 		walkbox = walkdata.destbox;
-		mask = _vm->getMaskFromBox(walkbox);
 		goto restart;
 
 	}
@@ -1294,7 +1291,6 @@ void Actor::walkActorOld()
 	}
 
 	walkbox = walkdata.curbox;
-	mask = _vm->getMaskFromBox(walkbox);
 	moving &= MF_IN_LEG;
 	moving |= MF_NEW_LEG;
 	goto restart;
@@ -1398,6 +1394,7 @@ void Actor::classChanged(int cls, bool value)
 	case 20:	// Never clip
 		break;
 	case 21:	// Always clip
+		forceClip = value;
 		break;
 	case 22:	// Ignore boxes
 		ignoreBoxes = value;
