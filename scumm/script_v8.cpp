@@ -977,10 +977,33 @@ void Scumm_v8::o8_kludge()
 	int16 args[30];
 	getStackList(args, sizeof(args) / sizeof(args[0]));
 
-//	switch (args[0]) {
-//	default:
+	switch (args[0]) {
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+	case 20:
+	case 21:
+	case 22:
+	case 23:
+	case 24:
+	case 25:
+	case 26:
+	case 27:
+	case 28:
+	case 29:
+	case 30:
+	case 31:
+	case 32:
+	case 33:
+	case 34:
+	case 108:
+	case 109:
+	case 118:
+	case 119:
+	default:
 		warning("o8_kludge: default case %d", args[0]);
-//	}
+	}
 }
 
 void Scumm_v8::o8_kludge2()
