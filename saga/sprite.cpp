@@ -286,10 +286,10 @@ int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, c
 	CLIPINFO ci;
 
 	// BG mask variables
-	int mask_w;
-	int mask_h;
-	byte *mask_buf;
-	size_t mask_buf_len;
+	int maskWidth;
+	int maskHeight;
+	byte *maskBuffer;
+	size_t maskBufferLength;
 	byte *mask_row_p;
 	int mask_z;
 
@@ -326,7 +326,7 @@ int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, c
 
 	sprite_data_p = sprite_p + readS.pos();
 
-	_vm->_scene->getBGMaskInfo(&mask_w, &mask_h, &mask_buf, &mask_buf_len);
+	_vm->_scene->getBGMaskInfo(maskWidth, maskHeight, maskBuffer, maskBufferLength);
 
 	if (scale < 256)
 		scaleSpriteCoords(scale, &s_width, &s_height, &x_align, &y_align);
@@ -339,7 +339,7 @@ int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, c
 	spr_dst_rect.left = 0;
 	spr_dst_rect.top = 0;
 	spr_dst_rect.right = ds->clip_rect.right;
-	spr_dst_rect.bottom = MIN(ds->clip_rect.bottom, (int16)mask_h);
+	spr_dst_rect.bottom = MIN(ds->clip_rect.bottom, (int16)maskHeight);
 
 	spr_pt.x = screenCoord.x + x_align;
 	spr_pt.y = screenCoord.y + y_align;
@@ -363,7 +363,7 @@ int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, c
 	src_row_p = _decodeBuf + ci.src_draw_x + (ci.src_draw_y * s_width);
 
 	dst_row_p = (byte *)ds->pixels + ci.dst_draw_x + (ci.dst_draw_y * ds->pitch);
-	mask_row_p = mask_buf + ci.dst_draw_x + (ci.dst_draw_y * mask_w);
+	mask_row_p = maskBuffer + ci.dst_draw_x + (ci.dst_draw_y * maskWidth);
 
 	for (y = 0; y < ci.draw_h; y++) {
 		src_p = src_row_p;
@@ -381,7 +381,7 @@ int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, c
 			mask_p++;
 		}
 		dst_row_p += ds->pitch;
-		mask_row_p += mask_w;
+		mask_row_p += maskWidth;
 		src_row_p += s_width;
 	}
 /*

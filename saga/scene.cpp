@@ -318,8 +318,8 @@ int Scene::getMode() {
 }
 
 void Scene::getSlopes(int &beginSlope, int &endSlope) {
-	beginSlope = ITE_STATUS_Y - _desc.beginSlope; // fixme: implement also IHNM_STATUS_Y 
-	endSlope = ITE_STATUS_Y - _desc.endSlope;
+	beginSlope = _vm->getStatusYOffset() - _desc.beginSlope; 
+	endSlope = _vm->getStatusYOffset() - _desc.endSlope;
 }
 
 int Scene::getBGInfo(SCENE_BGINFO *bginfo) {
@@ -359,25 +359,132 @@ int Scene::getBGPal(PALENTRY **pal) {
 	return SUCCESS;
 }
 
-int Scene::getBGMaskInfo(int *w, int *h, byte **buf, size_t *buf_len) {
-	assert(_initialized);
-
+int Scene::getBGMaskType(const Point &testPoint) {
+	uint offset;
 	if (!_bgMask.loaded) {
-		return FAILURE;
+		return 0;
+	}
+	offset = testPoint.x + testPoint.y * _vm->getDisplayWidth();
+	if (offset >= _bgMask.buf_len) {
+		error("Scene::getBGMaskType offset 0x%X exceed bufferLength 0x%X", offset, _bgMask.buf_len);
 	}
 
-	*w = _bgMask.w;
-	*h = _bgMask.h;
-	*buf = _bgMask.buf;
-	*buf_len = _bgMask.buf_len;
-
-	return SUCCESS;
+	return (_bgMask.buf[offset] >> 4) & 0x0f;
 }
 
-int Scene::isBGMaskPresent() {
-	assert(_initialized);
+bool Scene::canWalk(const Point &testPoint) {
+	int maskType;
+	if (!_bgMask.loaded) {
+		return true;
+	}
+	if ((testPoint.x < 0) || (testPoint.x > _bgMask.w) ||
+		(testPoint.y < 0) || (testPoint.y > _bgMask.h)) {
+			return true;
+		}
+	maskType = getBGMaskType(testPoint);
+	return getDoorState(maskType) == 0;
+}
 
-	return _bgMask.loaded;
+bool Scene::offscreenPath(Point &testPoint) {
+	Point first;
+	Point second;
+	Point third;
+	int maskType;
+
+	if (!_bgMask.loaded) {
+		return false;
+	}
+
+
+	first.x = clamp( 0, testPoint.x, _vm->getDisplayWidth() - 1 );
+	first.y = clamp( 0, testPoint.y, _vm->getDisplayHeight() - 1 );
+	if (first == testPoint) {
+		return false;
+	}
+
+	if (first.y >= _vm->getDisplayHeight() - 1) {
+		first.y = 200 -1 - 1;
+	}
+	testPoint = first;
+
+	if (testPoint.y != first.y) {
+		second.x = third.x = testPoint.x;
+		second.y = third.y = first.y;
+		for (;; second.x--, third.x++ ) {
+			if (second.x > 1) {
+				maskType = getBGMaskType(second);
+				if (getDoorState(maskType) == 0) {
+					testPoint.x = second.x - 1;
+					break;
+				}
+			} else {
+				if (third.x >= _vm->getDisplayWidth()) {
+					return false;
+				}
+			}
+
+			if (third.x < _vm->getDisplayWidth()) {
+				maskType = getBGMaskType(third);
+				if (getDoorState(maskType) == 0) {
+					testPoint.x = third.x + 1;
+					break;
+				}
+			}
+		}
+	}
+
+	if (testPoint.x != first.x) {
+		second.y = third.y = testPoint.y;
+		second.x = third.x = first.x;
+		for (;; second.y--, third.y++ ) {
+			if (second.y > 1) {
+				maskType = getBGMaskType(second);
+				if (getDoorState(maskType) == 0) {
+					testPoint.y = second.y - 1;
+					break;
+				}
+			} else {
+				if (third.y > _vm->getDisplayHeight() - 1) {
+					return false;
+				}
+			}
+
+			if (third.y <= _vm->getDisplayHeight() - 1) {
+				maskType = getBGMaskType(third);
+				if (getDoorState(maskType) == 0) {
+					testPoint.y = third.y + 1;
+					break;
+				}
+			}
+		}
+	}
+	return true;
+}
+
+
+void Scene::getBGMaskInfo(int &width, int &height, byte *&buffer, size_t &bufferLength) {
+	if (!_bgMask.loaded) {
+		error("Scene::getBGMaskInfo _bgMask not loaded");
+	}
+
+	width = _bgMask.w;
+	height = _bgMask.h;
+	buffer = _bgMask.buf;
+	bufferLength = _bgMask.buf_len;
+}
+
+void Scene::setDoorState(int doorNumber, int doorState) {
+	if ((doorNumber < 0) || (doorNumber >= SCENE_DOORS_MAX))
+		error("Scene::setDoorState wrong doorNumber");
+
+	_sceneDoors[doorNumber] = doorState;
+}
+
+int Scene::getDoorState(int doorNumber) {
+	if ((doorNumber < 0) || (doorNumber >= SCENE_DOORS_MAX))
+		error("Scene::getDoorState wrong doorNumber");
+
+	return _sceneDoors[doorNumber];
 }
 
 int Scene::getInfo(SCENE_INFO *si) {

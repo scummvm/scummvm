@@ -215,6 +215,22 @@ inline int ticksToMSec(int tick) {
 	return tick * 1000 / kScriptTimeTicksPerSecond;
 }
 
+inline int clamp(int minValue, int value, int maxValue) {
+	if (value <= minValue) {
+		return minValue;
+	} else {
+		if (value >= maxValue) {
+			return maxValue;
+		} else {
+			return value;
+		}
+	}
+}
+
+inline int integerCompare(int i1, int i2) {
+	return ((i1) > (i2) ? 1 : ((i1) < (i2) ? -1 : 0));
+}
+
 class SagaEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
 
@@ -298,7 +314,10 @@ public:
 	const GAME_SOUNDINFO getSoundInfo(void);
 	int getDisplayInfo(GAME_DISPLAYINFO *disp_info);
 	int getSceneInfo(GAME_SCENEDESC *);
-
+	int getDisplayWidth();
+	int getDisplayHeight();
+	int getStatusYOffset();
+	int getPathYOffset();
 private:
 	int loadLanguage(void);
 	int loadGame(int game_n_p);

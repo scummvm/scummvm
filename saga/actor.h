@@ -32,17 +32,17 @@
 
 namespace Saga {
 
-#define ACTOR_BASE_SPEED 0.25
-#define ACTOR_BASE_ZMOD 0.5
+#define ACTOR_BARRIERS_MAX 16
 
 #define ACTOR_STEPS_COUNT 32
 #define ACTOR_STEPS_MAX (ACTOR_STEPS_COUNT*2)
 
-#define ACTOR_ACTIONTIME 80
-
 #define ACTOR_DIALOGUE_HEIGHT 100
 
 #define ACTOR_LMULT 4
+
+#define ACTOR_COLLISION_WIDTH       32
+#define ACTOR_COLLISION_HEIGHT       8
 
 #define ACTOR_DIRECTIONS_COUNT	4	// for ActorFrameSequence
 #define ACTOR_DIRECTION_RIGHT	0
@@ -112,6 +112,14 @@ enum ActorFlagsEx {
 };
 
 
+struct PathDirectionData {
+	int direction;
+	int	x;
+	int y;
+};
+
+typedef SortedList<PathDirectionData> PathDirectionList;
+
 struct ActorFrameRange {
 	int frameIndex;
 	int frameCount;
@@ -125,10 +133,24 @@ struct ActorLocation {
 	int x;					// Actor's logical coordinates
 	int y;					// 
 	int z;					// 
+	ActorLocation() {
+		x = y = z = 0;
+	}
 	int distance(const ActorLocation &location) {
-		return MAX(abs(x - location.x), abs(y - location.y));
+		return MAX(ABS(x - location.x), ABS(y - location.y));
+	}
+	void delta(const ActorLocation &location, ActorLocation &result) {
+		result.x = x - location.x;
+		result.y = x - location.y;
+		result.z = z - location.z;
+	}
+	void add(const ActorLocation &location) {
+		x += location.x;
+		y += location.y;
+		z += location.z;
 	}
 };
+
 struct ActorData {
 	bool disabled;				// Actor disabled in init section
 	int index;					// Actor index
@@ -175,6 +197,12 @@ struct ActorData {
 	void cycleWrap(int cycleLimit) {
 		if (actionCycle >= cycleLimit)
 			actionCycle = 0;
+	}
+	void addWalkPath(int x, int y) {
+		if (walkStepsCount + 2 > ACTOR_STEPS_MAX)
+			error("walkStepsCount exceeds");
+		walkPath[walkStepsCount++] = x;
+		walkPath[walkStepsCount++] = y;
 	}
 
 	ActorData() {
@@ -248,17 +276,40 @@ private:
 	void createDrawOrderList();
 	void calcActorScreenPosition(ActorData * actor);
 	bool followProtagonist(ActorData * actor);
+	void findActorPath(ActorData * actor, const Point &pointFrom, const Point &pointTo);
 	void handleSpeech(int msec);
 	void handleActions(int msec, bool setup);
-	
+	void setPathCell(const Point &testPoint, byte value) {
+		_pathCell[testPoint.x + testPoint.y * _xCellCount] = value;
+	}
+	byte getPathCell(const Point &testPoint) {
+		return _pathCell[testPoint.x + testPoint.y * _xCellCount];
+	}
+	bool scanPathLine(const Point &point1, const Point &point2);
+	int fillPathArray(const Point &pointFrom, const Point &pointTo, Point &bestPoint);
+
 	int _lastTickMsec;
 	SagaEngine *_vm;
 	RSCFILE_CONTEXT *_actorContext;
 	ActorOrderList _drawOrderList;
 	ActorData _actors[ACTORCOUNT];
 	SpeechData _activeSpeech;
+	Rect _barrierList[ACTOR_BARRIERS_MAX];
+	int _barrierCount;
+	byte *_pathCell;
+	int _pathCellCount;
+	int _xCellCount;
+	int _yCellCount;
+	Rect _pathRect;
+
 };
 
+inline int16 quickDistance(const Point &point1, const Point &point2) {
+	Point delta;
+	delta.x = ABS(point1.x - point2.x);
+	delta.y = ABS(point1.y - point2.y);
+	return ((delta.x < delta.y) ? (delta.y + delta.x / 2) : (delta.x + delta.y / 2));
+}
 } // End of namespace Saga
 
 #endif

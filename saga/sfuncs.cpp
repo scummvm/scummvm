@@ -66,11 +66,11 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(SF_setObjName),
 		OPCODE(SF_getObjImage),
 		OPCODE(SF_getNumber),
-		OPCODE(SF_openDoor),
-		OPCODE(SF_closeDoor),
+		OPCODE(sfScriptOpenDoor),
+		OPCODE(sfScriptCloseDoor),
 		OPCODE(sfSetBgdAnimSpeed),
 		OPCODE(SF_cycleColors),
-		OPCODE(SF_centerActor),
+		OPCODE(sfDoCenterActor),
 		OPCODE(sfStartBgdAnimSpeed),
 		OPCODE(SF_actorWalkToAsync),
 		OPCODE(SF_enableZone),
@@ -102,7 +102,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(SF_sceneID),
 		OPCODE(SF_changeActorScene),
 		OPCODE(SF_climb),
-		OPCODE(SF_setDoorState),
+		OPCODE(sfSetDoorState),
 		OPCODE(SF_setActorZ),
 		OPCODE(SF_text),
 		OPCODE(SF_getActorX),
@@ -404,20 +404,30 @@ int Script::SF_getNumber(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #21 (0x15)
-int Script::SF_openDoor(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
+// Param1: door #
+int Script::sfScriptOpenDoor(SCRIPTFUNC_PARAMS) {
+	int doorNumber;
+	doorNumber = getUWord(thread->pop());
 
-	debug(1, "stub: SF_openDoor(), %d args", nArgs);
+	if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
+		//todo: it
+	} else {
+		_vm->_scene->setDoorState(doorNumber, 0);
+	}
 	return SUCCESS;
 }
 
 // Script function #22 (0x16)
-int Script::SF_closeDoor(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
+// Param1: door #
+int Script::sfScriptCloseDoor(SCRIPTFUNC_PARAMS) {
+	int doorNumber;
+	doorNumber = getUWord(thread->pop());
 
-	debug(1, "stub: SF_closeDoor(), %d args", nArgs);
+	if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
+		//todo: it
+	} else {
+		_vm->_scene->setDoorState(doorNumber, 0xff);
+	}
 	return SUCCESS;
 }
 
@@ -442,10 +452,12 @@ int Script::SF_cycleColors(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #25 (0x19)
-int Script::SF_centerActor(SCRIPTFUNC_PARAMS) {
-	ScriptDataWord param = thread->pop();
+// Param1: actor id
+int Script::sfDoCenterActor(SCRIPTFUNC_PARAMS) {
+	uint16 actorId;
+	actorId = getSWord(thread->pop());
 
-	debug(1, "stub: SF_centerActor(%d)", param);
+	_vm->_actor->_centerActor = _vm->_actor->getActor(actorId);
 	return SUCCESS;
 }
 
@@ -986,11 +998,19 @@ int Script::SF_climb(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #57 (0x39)
-int Script::SF_setDoorState(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
+// Param1: door #
+// Param2: door state
+int Script::sfSetDoorState(SCRIPTFUNC_PARAMS) {
+	int doorNumber;
+	int doorState;
+	doorNumber = getUWord(thread->pop());
+	doorState = getUWord(thread->pop());
 
-	debug(1, "stub: SF_setDoorState(), %d args", nArgs);
+	if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
+		//todo: it
+	} else {
+		_vm->_scene->setDoorState(doorNumber, doorState);
+	}
 	return SUCCESS;
 }
 

@@ -178,7 +178,7 @@ int Events::handleContinuous(EVENT *event) {
 			size_t len;
 
 			_vm->_render->getBufferInfo(&buf_info);
-			_vm->_scene->getBGMaskInfo(&w, &h, &mask_buf, &len);
+			_vm->_scene->getBGMaskInfo(w, h, mask_buf, len);
 			_vm->transitionDissolve(buf_info.bg_buf, buf_info.bg_buf_w, 
 					buf_info.bg_buf_h, buf_info.bg_buf_w, mask_buf, w, h, 0, 1, 
 					(320 - w) / 2, (200 - h) / 2, event_pc);

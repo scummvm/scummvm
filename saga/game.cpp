@@ -790,6 +790,30 @@ const GAME_SOUNDINFO SagaEngine::getSoundInfo(void) {
 	return *GameModule.gamedesc->gd_soundinfo;
 }
 
+int SagaEngine::getDisplayWidth() {
+	return GameDescs[GameModule.game_number].gd_logical_w;
+}
+
+int SagaEngine::getDisplayHeight() {
+	return GameDescs[GameModule.game_number].gd_logical_h;
+}
+
+int SagaEngine::getPathYOffset() { //fixme: should be in GameDesc
+	if (_gameType == GType_ITE) {
+		return 35;
+	} else {
+		return 35; //fixme i don't know exact value
+	}
+}
+
+int SagaEngine::getStatusYOffset() { //fixme: should be in GameDesc
+	if (_gameType == GType_ITE) {
+		return ITE_STATUS_Y;
+	} else {
+		return IHNM_STATUS_Y;
+	}
+}
+
 int SagaEngine::getDisplayInfo(GAME_DISPLAYINFO *disp_info) {
 	int game_n;
 

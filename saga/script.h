@@ -319,11 +319,11 @@ private:
 	int SF_setObjName(SCRIPTFUNC_PARAMS);
 	int SF_getObjImage(SCRIPTFUNC_PARAMS);
 	int SF_getNumber(SCRIPTFUNC_PARAMS);
-	int SF_openDoor(SCRIPTFUNC_PARAMS);
-	int SF_closeDoor(SCRIPTFUNC_PARAMS);
+	int sfScriptOpenDoor(SCRIPTFUNC_PARAMS);
+	int sfScriptCloseDoor(SCRIPTFUNC_PARAMS);
 	int sfSetBgdAnimSpeed(SCRIPTFUNC_PARAMS);
 	int SF_cycleColors(SCRIPTFUNC_PARAMS);
-	int SF_centerActor(SCRIPTFUNC_PARAMS);
+	int sfDoCenterActor(SCRIPTFUNC_PARAMS);
 	int sfStartBgdAnimSpeed(SCRIPTFUNC_PARAMS);
 	int SF_actorWalkToAsync(SCRIPTFUNC_PARAMS);
 	int SF_enableZone(SCRIPTFUNC_PARAMS);
@@ -355,7 +355,7 @@ private:
 	int SF_sceneID(SCRIPTFUNC_PARAMS);
 	int SF_changeActorScene(SCRIPTFUNC_PARAMS);
 	int SF_climb(SCRIPTFUNC_PARAMS);
-	int SF_setDoorState(SCRIPTFUNC_PARAMS);
+	int sfSetDoorState(SCRIPTFUNC_PARAMS);
 	int SF_setActorZ(SCRIPTFUNC_PARAMS);
 	int SF_text(SCRIPTFUNC_PARAMS);
 	int SF_getActorX(SCRIPTFUNC_PARAMS);
