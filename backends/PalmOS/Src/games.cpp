@@ -24,6 +24,7 @@
 #include <VFSMgr.h>
 #include <ctype.h>
 
+#include "globals.h"
 #include "start.h"
 #include "games.h"
 #include "skin.h"
@@ -184,7 +185,6 @@ void GamImportDatabase() {
 		if (!e) {
 			UInt16 oCardNo, nCardNo;
 			LocalID oDbID, nDbID;
-			UInt32 type = 'ODAT';	// change the type to avoid the old db to be loaded in case of crash
 
 			VFSFileClose(file);
 			if (gPrefs->card.confirmMoveDB)
@@ -197,19 +197,12 @@ void GamImportDatabase() {
  			// get current db info and rename it
  			DmOpenDatabaseInfo(gameDB, &oDbID, 0, 0, &oCardNo, 0);
 			GamCloseDatabase(true);
-			DmSetDatabaseInfo(oCardNo, oDbID, "ScummVM-Data-old.pdb", 0, 0, 0, 0, 0, 0, 0, 0, &type, 0);
+			e = DmDeleteDatabase(oCardNo, oDbID);
 
-	
-			e = VFSImportDatabaseFromFile(gPrefs->card.volRefNum, "/Palm/Programs/ScummVM/listdata.pdb", &nCardNo, &nDbID);
-			if (e) {
-				type = 'DATA';
-				FrmCustomAlert(FrmErrorAlert, "Failed to import games database from memory card.", 0, 0);
-				DmSetDatabaseInfo(oCardNo, oDbID, "ScummVM-Data.pdb", 0, 0, 0, 0, 0, 0, 0, 0, &type, 0);
-			} else {
-				// in OS5 the localID may change ... ? (cause Free Handle error) TODO : check if this is still required, crash now with tapwave !!!
-//				oDbID = DmFindDatabase (oCardNo, "ScummVM-Data-old.pdb");
-				e = DmDeleteDatabase(oCardNo, oDbID);
-			}
+			if (!e)
+				if (e = VFSImportDatabaseFromFile(gPrefs->card.volRefNum, "/Palm/Programs/ScummVM/listdata.pdb", &nCardNo, &nDbID))
+					FrmCustomAlert(FrmErrorAlert, "Failed to import games database from memory card.", 0, 0);
+
 			GamOpenDatabase();
 		}
 	}
