@@ -1531,10 +1531,12 @@ void SimonState::vc_52_play_sound() {
 
 void SimonState::vc_53_no_op() {
 	/* no op */
+	error("vc_53 - Please report error message and where in game it occured");
 }
 
 void SimonState::vc_54_no_op() {
 	/* no op */
+	error("vc_54 - Please report error message and where in game it occured");
 }
 
 void SimonState::vc_55_offset_hit_area() {
@@ -1568,6 +1570,8 @@ void SimonState::vc_56_no_op() {
 
 		add_vga_timer(num + gss->VGA_DELAY_BASE, _vc_ptr, _vga_cur_sprite_id, _vga_cur_file_id);
 		_vc_ptr = (byte *)&vc_get_out_of_code;
+	} else {
+		error("vc_56 - Please report error message and where in game it occured");
 	}
 }
 
@@ -1587,6 +1591,8 @@ void SimonState::vc_59() {
 }
 
 void SimonState::vc_58() {
+	if (!(_game & GF_SIMON2))
+		error("vc_58 - Please report error message and where in game it occured");
 	uint sprite = _vga_cur_sprite_id;
 	uint file = _vga_cur_file_id;
 	byte *vc_ptr;
@@ -1608,6 +1614,7 @@ void SimonState::vc_58() {
 
 void SimonState::vc_57_no_op() {
 	/* no op */
+		error("vc_57 - Please report error message and where in game it occured");
 }
 
 void SimonState::vc_kill_sprite(uint file, uint sprite) {
