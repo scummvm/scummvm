@@ -255,6 +255,8 @@ void resMan::Close_ResMan(void) { //Tony29May96
 	free(count);
 }
 
+static void convertEndian(uint8 *file, uint32 len);
+
 uint8 *resMan::Res_open(uint32 res) {	//BHTony30May96
 	// returns ad of resource. Loads if not in memory
 	// retains a count
@@ -370,7 +372,7 @@ uint8 *resMan::Res_open(uint32 res) {	//BHTony30May96
 		file.close();
 
 #ifdef SCUMM_BIG_ENDIAN
-		convertEndian((uint8 *) resList[res]->ad);
+		convertEndian((uint8 *)resList[res]->ad, len);
 #endif
 	} else {
 		// Zdebug("RO %d, already open count=%d", res, count[res]);
@@ -390,7 +392,7 @@ uint8 *resMan::Res_open(uint32 res) {	//BHTony30May96
 	return (uint8 *) resList[res]->ad;
 }
 
-void resMan::convertEndian(uint8 *file) {
+static void convertEndian(uint8 *file, uint32 len) {
 	_standardHeader *hdr = (_standardHeader *)file;
 
 	hdr->compSize = SWAP_BYTES_32(hdr->compSize);
