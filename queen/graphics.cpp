@@ -804,7 +804,7 @@ uint16 Graphics::textLength(const char* text) {
 
 	uint16 len = 0;
 	while (*text) {
-		len += FONT_SIZES[ *text ];
+		len += FONT_SIZES[ (int)*text ];
 		++text;
 	}
 	return len;
