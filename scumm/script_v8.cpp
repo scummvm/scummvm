@@ -979,8 +979,8 @@ void Scumm_v8::o8_roomOps() {
 		error("o8_roomOps: unimplemented case %d", subOp);
 		break;
 	case 0x5C:		// SO_ROOM_NEW_PALETTE New palette
-		// FIXME: Used in the Crypt scene
-		warning("o8_roomOps: unimplemented case SO_ROOM_NEW_PALETTE(%d)", pop());
+		a = pop();
+		setPalette(a);
 		break;
 	case 0x5D:		// SO_ROOM_SAVE_GAME Save game
 		_saveLoadCompatible = true;
