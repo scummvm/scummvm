@@ -17,15 +17,7 @@
  * $Header$
  */
 
-#define WIN32_LEAN_AND_MEAN
-
-//#include <windows.h>
-//#include <windowsx.h>
-//#include <mmsystem.h>
 #include <stdio.h>
-
-//#include "ddraw.h"
-
 #include "stdafx.h"
 #include "driver96.h"
 #include "rdwin.h"
@@ -33,32 +25,16 @@
 #include "d_draw.h"
 #include "palette.h"
 
-//#include "ddutil.h"
-//CDisplay	*g_pDisplay        = NULL;
-
-
-
-
-
 #define SCREENYOFFSET	40
-
 #define MILLISECSPERCYCLE 83
 
-
-// Surface *lpPrimarySurface;
 Surface *lpBackBuffer;
 
 /*
-LPDIRECTDRAW7        m_pDD;
-
-
 static LPDIRECTDRAW		lpDraw;				// DirectDraw object
 LPDIRECTDRAW2			lpDD2;				// DirectDraw2 object
-LPDIRECTDRAWSURFACE		lpPrimarySurface;	// DirectDraw primary surface
 LPDIRECTDRAWSURFACE		lpBackBuffer;		// DirectDraw back surface
 LPDIRECTDRAWPALETTE		lpPalette = NULL;	// DirectDraw palette
-
-static PALETTEENTRY AppPalette[256];		// Application wide logical palette
 */
 
 
@@ -91,37 +67,14 @@ int32			dxHalCaps = 0;
 int32			dxHelCaps = 0;
 //DDCOLORKEY		blackColorKey;
 
-
-//static int32 platformIsNT = 0;
-
-
-//----------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------
-
-
-void FatalDirectDrawError(char *str, int32 code, char *filename, int32 line)
-{
-
+void FatalDirectDrawError(char *str, int32 code, char *filename, int32 line) {
 	char string[256];
 
-	RestoreDisplay();
-
 	sprintf(string, "FATAL: %s - code 0x%.8x - file %s - line %d", str, code, filename, line);
-	//MessageBox(hwnd, string, "DDraw error", MB_OK);
 	warning("%s", string);
-
 }
 
-
-
-
-//----------------------------------------------------------------------------------------------------------------
-
-
-
-int32 PlotDots(int16 x, int16 y, int16 count)
-
-{
+int32 PlotDots(int16 x, int16 y, int16 count) {
 
 	warning("stub PlotDots( %d, %d, %d )", x, y, count);
 /*
@@ -136,7 +89,6 @@ int32 PlotDots(int16 x, int16 y, int16 count)
 	hr = IDirectDrawSurface2_Lock(lpBackBuffer, NULL, &ddDescription, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
 	if (hr != DD_OK)
 	{
-		RestoreSurfaces();
 		hr = IDirectDrawSurface2_Lock(lpBackBuffer, NULL, &ddDescription, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
 	}
 
@@ -162,540 +114,31 @@ int32 PlotDots(int16 x, int16 y, int16 count)
 	return(RD_OK);
 
 }
-//----------------------------------------------------------------------------------------------------------------
 
-
-
-void RestoreSurfaces(void)
-
-{
-	warning("stub RestoreSurfaces");
-/*
-	IDirectDrawSurface2_Restore(lpPrimarySurface);
-	IDirectDrawSurface2_Restore(lpBackBuffer);
-*/
-}
-
-//----------------------------------------------------------------------------------------------------------------
-
-/*
-static PALETTEENTRY *CreateAppPalette(PALETTEENTRY *pe)
-{
-
-	HDC	screen_dc;
-
-//  Fill the palette with system colours
-	screen_dc = GetDC(NULL);
-	GetSystemPaletteEntries(screen_dc, 0, 256, pe);
-	ReleaseDC(NULL, screen_dc);
-
-	return pe;
-
-}
-*/
-
-
-//----------------------------------------------------------------------------------------------------------------
-
-int32 RestoreDisplay(void)
-
-{
-	warning("stub RestoreDisplay");
-/*
-    if( lpDraw != NULL )
-    {
-        if( lpPrimarySurface != NULL )
-        {
-            IDirectDrawSurface2_Release(lpPrimarySurface);
-            lpPrimarySurface = NULL;
-        }
-        if( lpPalette != NULL )
-        {
-            IDirectDrawPalette_Release(lpPalette);
-            lpPalette = NULL;
-        }
-		if (lpDD2 != NULL)
-		{
-			IDirectDraw2_Release(lpDD2);
-			lpDD2 = NULL;
-		}
-
-		IDirectDraw_Release(lpDraw);
-		lpDraw = NULL;
-    }
-*/
-	return(RD_OK);
-
-}
-
-
-//----------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------
-
-int32 InitialiseDisplay(int16 width, int16 height, int16 colourDepth, int32 windowType)
-{
+int32 InitialiseDisplay(int16 width, int16 height, int16 colourDepth, int32 windowType) {
 	screenWide = width;
 	screenDeep = height;
 
-//	lpPrimarySurface = new Surface(width, height);
 	lpBackBuffer = new Surface(width, height);
-
-/*
-	DDSURFACEDESC       ddsd;
-    DDSCAPS             ddscaps;
-    HRESULT             hr;
-	DDCAPS				helCaps;
-	long int timerFrequency;
-	int32 capsError = 0;
-
-
-   OSVERSIONINFO VersionInfo;
-   VersionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-   
-   if (GetVersionEx(&VersionInfo))
-   {
-
-	   switch (VersionInfo.dwPlatformId)
-	   {
-	   case VER_PLATFORM_WIN32s :
-	   case VER_PLATFORM_WIN32_WINDOWS :
-		  break;
-	   case VER_PLATFORM_WIN32_NT	:
-		   platformIsNT = 1;
-		   break;
-	   }
-   }
-
-
-	if (windowType == RD_FULLSCREEN)
-		bFullScreen = TRUE;
-	else
-		bFullScreen = FALSE;
-
-	// Colour depths of 8 bits only are currently supported
-	if (colourDepth != 8)
-	{
-		return(RDERR_COLOURDEPTH);
-	}
-
-	screenWide = width;
-	screenDeep = height;
-
-	// Create the directDraw object
-    hr = DirectDrawCreate(NULL, &lpDraw, NULL);
-//	hr=DirectDrawCreateEx( NULL, (VOID**)&m_pDD, IID_IDirectDraw7, NULL );
-
-
-    if ( hr != DD_OK )
-	{
-//		Zdebug(" DirectDrawCreate failed!");
-
-        DirectDrawError("DirectDraw unavailable", hr);
-		return(hr);
-	}
-
-
-    // Get exclusive mode
-	if (bFullScreen)
-	{
-
-//		hr = m_pDD->SetCooperativeLevel( hWnd, DDSCL_EXCLUSIVE|DDSCL_FULLSCREEN );
-	    hr = IDirectDraw2_SetCooperativeLevel(lpDraw, hwnd, DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
-		if (hr != DD_OK)
-		{
-			DirectDrawError("Exclusive mode unavailable", hr);
-			return(hr);
-		}
-
-		// TONY TEMP	
-
-
-		hr = IDirectDraw2_QueryInterface(lpDraw, &IID_IDirectDraw2, (LPVOID *) &lpDD2);
-		if (hr != DD_OK)
-		{
-			DirectDrawError("DirectDraw2 unavailable", hr);
-			return(hr);
-		}
-
-		// Set up the display mode which has been requested
-//		hr = lpDD2->lpVtbl->SetDisplayMode(lpDD2, width, height, colourDepth, 0, 0);
-		hr = IDirectDraw2_SetDisplayMode(lpDD2, width, height, colourDepth, 0, 0);
-		if (hr != DD_OK)
-		{
-			DirectDrawError("Unable to set display mode", hr);
-			return(hr);
-		}
-
-	    // Set up the primary surface descriptor
-		ddsd.dwSize = sizeof(ddsd);
-	    ddsd.dwFlags = DDSD_CAPS | DDSD_BACKBUFFERCOUNT;
-		ddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE | DDSCAPS_FLIP | DDSCAPS_COMPLEX;
-	    ddsd.dwBackBufferCount = 1;
-
-		// Create the primary surface
-	    hr = IDirectDraw2_CreateSurface(lpDD2, &ddsd, &lpPrimarySurface, NULL);
-		if (hr != DD_OK)
-		{
-		    DirectDrawError("Cannot create primary surface", hr);
-			return(hr);
-		}
-
-		// Create the back buffer as a page flipping surface
-		ddscaps.dwCaps = DDSCAPS_BACKBUFFER;
-	    hr = IDirectDrawSurface2_GetAttachedSurface(lpPrimarySurface, &ddscaps, &lpBackBuffer);
-		if (hr != DD_OK)
-		{
-		    DirectDrawError("Unable to attach back buffer", hr);
-			return(hr);
-		}
-
-		EraseBackBuffer();
-		FlipScreens();
-		EraseBackBuffer();
-		FlipScreens();
-
-		// Create a palette object
-		hr = IDirectDraw2_CreatePalette(lpDD2, DDPCAPS_8BIT | DDPCAPS_ALLOW256 | DDPCAPS_INITIALIZE,
-				CreateAppPalette(AppPalette), &lpPalette, NULL);
-	    if (hr != DD_OK )
-		{
-			DirectDrawError("Cannot create 8-bit palette", hr);
-			return(hr);
-		}
-
-		// Set our palette object active
-		hr = IDirectDrawSurface2_SetPalette(lpPrimarySurface, lpPalette);
-	    if (hr != DD_OK )
-		{
-			DirectDrawError("Unable to set palette", hr);
-			return(hr);
-		}
-
-	}
-	else
-	{
-        RECT rcWork;
-        RECT rc;
-        HDC hdc;
-        DWORD dwStyle;
-		uint32 GameBPP;
-
-
-
-		hr = IDirectDraw_SetCooperativeLevel(lpDraw, hwnd, DDSCL_NORMAL);
-		if (hr != DD_OK)
-		{
-			DirectDrawError("Cannot set normal cooperative level", hr);
-			return(hr);
-		}
-
-
-
-		hr = IDirectDraw_QueryInterface(lpDraw, &IID_IDirectDraw2, (LPVOID *) &lpDD2);
-		if (hr != DD_OK)
-		{
-			DirectDrawError("DirectDraw2 unavailable", hr);
-			return(hr);
-		}
-
-        //
-        //  when in windows we should use the current mode
-        //
-        hdc = GetDC(NULL);
-        GameBPP = GetDeviceCaps(hdc, PLANES) * GetDeviceCaps(hdc, BITSPIXEL);
-        ReleaseDC(NULL, hdc);
-
-		if ((GameBPP != 8) && (GameBPP != 16))
-		{
-			MessageBox(hwnd, "Cannot execute in high colour mode - going to full screen", "Broken Sword II", MB_OK);
-			return(RDERR_GOFULLSCREEN);
-		}
-		else if (GameBPP != 8)
-		{
-			if (MessageBox(hwnd, "Your display is not in 256 colour mode.  Would you like to go to full screen mode (better performance)", "Broken Sword II", MB_YESNO) == IDYES)
-			{
-				return(RDERR_GOFULLSCREEN);
-			}
-		}
-
-        //
-        // if we are still a WS_POPUP window we should convert to a
-        // normal app window so we look like a windows app.
-        //
-        dwStyle = GetWindowStyle(hwnd);
-        dwStyle &= ~WS_POPUP;
-        dwStyle |= WS_OVERLAPPED | WS_CAPTION | WS_THICKFRAME | WS_MINIMIZEBOX;
-        SetWindowLong(hwnd, GWL_STYLE, dwStyle);
-
-//        if (bStretch)
-//            SetRect(&rc, 0, 0, GameMode.cx*2, GameMode.cy*2);
-//        else
-//            SetRect(&rc, 0, 0, GameMode.cx, GameMode.cy);
-		SetRect(&rc, 0, 0, 640, 480);
-
-        AdjustWindowRectEx(&rc,
-            GetWindowStyle(hwnd),
-            GetMenu(hwnd) != NULL,
-            GetWindowExStyle(hwnd));
-
-        SetWindowPos(hwnd, NULL, 0, 0, rc.right-rc.left, rc.bottom-rc.top,
-            SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
-
-        SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, 0, 0,
-            SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
-
-        //
-        //  make sure our window does not hang outside of the work area
-        //  this will make people who have the tray on the top or left
-        //  happy.
-        //
-        SystemParametersInfo(SPI_GETWORKAREA, 0, &rcWork, 0);
-        GetWindowRect(hwnd, &rc);
-        if (rc.left < rcWork.left) rc.left = rcWork.left;
-        if (rc.top  < rcWork.top)  rc.top  = rcWork.top;
-        SetWindowPos(hwnd, NULL, rc.left, rc.top, 0, 0,
-            SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
-
-
-
-
-	    // Set up the primary surface descriptor
-		ddsd.dwSize = sizeof(ddsd);
-	    ddsd.dwFlags = DDSD_CAPS;
-	    ddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
-
-		// Create the primary surface
-		hr = IDirectDraw2_CreateSurface(lpDD2, &ddsd, &lpPrimarySurface, NULL);
-	    if (hr != DD_OK)
-		{
-			DirectDrawError("Cannot create primary surface", hr);
-			return(hr);
-		}
-
-		// Create the back buffer as a page flipping surface
-	    memset( &ddsd, 0, sizeof( ddsd ) );
-		ddsd.dwSize = sizeof( ddsd );
-		ddsd.dwFlags = DDSD_CAPS | DDSD_HEIGHT |DDSD_WIDTH;
-
-		ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
-	    ddsd.dwHeight = 480;
-	    ddsd.dwWidth = 640;
-
-	    hr = IDirectDraw2_CreateSurface(lpDD2, &ddsd, &lpBackBuffer, NULL );
-	    if (hr != DD_OK)
-		{
-	        DirectDrawError("Cannot attach back buffer", hr);
-			return(hr);
-		}
-
-	//    DDClear();
-
-		if (IDirectDrawSurface2_GetDC(lpPrimarySurface, &hdc) == DD_OK)
-	    {
-		    char *szMsg = "Broken Sword II is loading.......please wait.";
-			SetTextColor(hdc, RGB(255,255,255));
-	        SetBkMode(hdc, TRANSPARENT);
-		    TextOut(hdc, rcWindow.left, rcWindow.top, szMsg, lstrlen(szMsg));
-			IDirectDrawSurface2_ReleaseDC(lpPrimarySurface, hdc);
-	    }
-
-		// Create a palette object - only if we have a palette!
-		if (GameBPP == 8)
-		{
-			hr = IDirectDraw2_CreatePalette(lpDD2, DDPCAPS_8BIT, CreateAppPalette(AppPalette), &lpPalette, NULL);
-			if (hr != DD_OK )
-			{
-				DirectDrawError("Cannot create 8-bit palette", hr);
-				return(hr);
-			}
-
-			hr = IDirectDrawSurface2_SetPalette(lpPrimarySurface, lpPalette);
-			if (hr != DD_OK )
-			{
-				DirectDrawError("Cannot set palette", hr);
-				return(hr);
-			}
-		}
-	}
-
-	// Set my capability bits.
-	memset(&driverCaps, 0, sizeof(DDCAPS));
-	memset(&helCaps, 0, sizeof(DDCAPS));
-	driverCaps.dwSize = sizeof(DDCAPS);
-	helCaps.dwSize = sizeof(DDCAPS);
-	hr = IDirectDraw2_GetCaps(lpDD2, &driverCaps, &helCaps);
-	if (hr != DD_OK)
-	{
-		driverCaps.dwSize = sizeof(DDCAPS_DX3);
-		helCaps.dwSize = sizeof(DDCAPS_DX3);
-		hr = IDirectDraw2_GetCaps(lpDD2, &driverCaps, &helCaps);
-		if (hr != DD_OK)
-		{
-			MessageBox(hwnd, "Cannot get hardware capabilities.  Software emulation only.  Re-install DirectX!", "DDraw error", MB_OK);
-			capsError = 1;
-		}
-	}
-
-	blackColorKey.dwColorSpaceLowValue = 0;
-	blackColorKey.dwColorSpaceHighValue = 0;
-
-	if (capsError)
-	{
-		helCaps.dwCaps = DDCAPS_BLT + DDCAPS_BLTSTRETCH + DDCAPS_COLORKEY;
-		helCaps.dwCKeyCaps = DDCKEYCAPS_SRCBLT;
-		dxHelCaps += RDCAPS_BLTSTRETCH;
-		dxHelCaps += RDCAPS_SRCBLTCKEY;
-		renderCaps = RDBLTFX_MOUSEBLT | RDBLTFX_ARITHMETICSTRETCH | RDBLTFX_EDGEBLEND |
-						 RDBLTFX_SHADOWBLEND | RDBLTFX_FLATALPHA | RDBLTFX_GRADEDALPHA;
-	}
-	else
-	{
-		if ((helCaps.dwCaps & DDCAPS_BLT == 0) || 
-			(helCaps.dwCaps & DDCAPS_BLTSTRETCH == 0) ||
-			(helCaps.dwCaps & DDCAPS_COLORKEY == 0) ||
-			(helCaps.dwCKeyCaps & DDCKEYCAPS_SRCBLT == 0))
-		{
-			RestoreDisplay();
-			return(RDERR_NOEMULATION);
-		}
-
-//		if (driverCaps.dwCaps & DDCAPS_BLTSTRETCH)
-//		{
-//			if (driverCaps.dwFXCaps & (DDFXCAPS_BLTSHRINKX + DDFXCAPS_BLTSHRINKY + DDFXCAPS_BLTSTRETCHX + DDFXCAPS_BLTSTRETCHY) == 
-//				DDFXCAPS_BLTSHRINKX + DDFXCAPS_BLTSHRINKY + DDFXCAPS_BLTSTRETCHX + DDFXCAPS_BLTSTRETCHY)
-//				dxHalCaps += RDCAPS_BLTSTRETCH;
-//			else if (helCaps.dwCaps & DDCAPS_BLTSTRETCH)
-//				dxHelCaps += RDCAPS_BLTSTRETCH;
-//			else 
-//				return RDERR_DDRAWNOEMULATION;
-//		}
-//		else if (helCaps.dwCaps & DDCAPS_BLTSTRETCH)
-//			dxHelCaps += RDCAPS_BLTSTRETCH;
-//		else
-//			return(RDERR_DDRAWNOEMULATION);
-
-		if (helCaps.dwCaps & DDCAPS_BLTSTRETCH)
-			dxHelCaps += RDCAPS_BLTSTRETCH;
-		else
-			return(RDERR_DDRAWNOEMULATION);
-
-		if ((driverCaps.dwCaps & DDCAPS_BLT) && (driverCaps.dwCaps & DDCAPS_COLORKEY) && (driverCaps.dwCKeyCaps & DDCKEYCAPS_SRCBLT))
-			dxHalCaps += RDCAPS_SRCBLTCKEY;
-		else if ((helCaps.dwCaps & DDCAPS_BLT) && (helCaps.dwCaps & DDCAPS_COLORKEY) && (helCaps.dwCKeyCaps & DDCKEYCAPS_SRCBLT))
-			dxHelCaps += RDCAPS_SRCBLTCKEY;
-		else
-			return(RDERR_DDRAWNOEMULATION);
-
-
-		
-		// Do computer speed testing here to set bits. - this is the path we go through:
-		//
-		//	if (Can everything be done in hardware?)
-		//		renderCaps = RDBLTFX_ALLHARDWARE;
-		//	else
-		//		if (Everything fast enough in software)
-		//			turn everything on in software
-		//		else
-		//			Turn blending off
-		//			if (can everything but blending be done in hardware?)
-		//				renderCaps = RDBLTFX_ALLHARDWARE
-		//			else
-		//				if (everything but blending fast enough in software)
-		//					Do everything but blending in software
-		//				else
-		//					Turn off sprite effects
-		//				endif
-		//			endif
-		//		endif
-		//	endif
-
-
-
-
-		if ((driverCaps.dwCaps & DDCAPS_BLT) && (driverCaps.dwCaps & DDCAPS_COLORKEY) && (driverCaps.dwCKeyCaps & DDCKEYCAPS_SRCBLT)
-			&& (driverCaps.dwCaps & DDSCAPS_ALPHA) && (driverCaps.dwAlphaBltConstBitDepths))
-			renderCaps = RDBLTFX_ALLHARDWARE | RDBLTFX_GRADEDALPHA | RDBLTFX_FLATALPHA;
-		else if	((driverCaps.dwCaps & DDCAPS_BLT) && (driverCaps.dwCaps & DDCAPS_COLORKEY) && (driverCaps.dwCKeyCaps & DDCKEYCAPS_SRCBLT))
-			renderCaps = RDBLTFX_ALLHARDWARE;
-		else
-			renderCaps = RDBLTFX_MOUSEBLT | RDBLTFX_ARITHMETICSTRETCH | RDBLTFX_EDGEBLEND |
-						 RDBLTFX_SHADOWBLEND | RDBLTFX_FLATALPHA | RDBLTFX_GRADEDALPHA;
-
-		if (QueryPerformanceFrequency(&timerFrequency) == TRUE)
-			if (timerFrequency.QuadPart > 700000)
-				renderCaps = RDBLTFX_MOUSEBLT | RDBLTFX_ARITHMETICSTRETCH | RDBLTFX_EDGEBLEND |
-						 RDBLTFX_SHADOWBLEND | RDBLTFX_FLATALPHA | RDBLTFX_GRADEDALPHA;
-
-	//	if ((driverCaps.dwCaps & DDCAPS_BLT) && (driverCaps.dwCaps & DDCAPS_COLORKEY) && (driverCaps.dwCKeyCaps & DDCKEYCAPS_SRCBLT))
-	//		renderCaps = RDBLTFX_MOUSEBLT | RDBLTFX_ARITHMETICSTRETCH | RDBLTFX_EDGEBLEND |
-	//					 RDBLTFX_SHADOWBLEND | RDBLTFX_FLATALPHA | RDBLTFX_GRADEDALPHA | RDBLTFX_FGPARALLAX;
-	//	else
-	//		renderCaps = RDBLTFX_MOUSEBLT | RDBLTFX_ARITHMETICSTRETCH | RDBLTFX_EDGEBLEND |
-	//					 RDBLTFX_SHADOWBLEND | RDBLTFX_FLATALPHA | RDBLTFX_GRADEDALPHA;
-
-		//	renderCaps = RDBLTFX_MOUSEBLT | RDBLTFX_SHADOWBLEND | RDBLTFX_FLATALPHA | RDBLTFX_ALLHARDWARE;
-	}
-*/
-	return(RD_OK);
-
-}
-//----------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------
-
-
-
-int32 RenderHard(void)
-{
-	warning("stub RenderHard");
-/*
-	if (renderCaps & RDBLTFX_ALLHARDWARE)
-		return(RDERR_ALREADYON);
-	if	((driverCaps.dwCaps & DDCAPS_BLT) && (driverCaps.dwCaps & DDCAPS_COLORKEY) && (driverCaps.dwCKeyCaps & DDCKEYCAPS_SRCBLT))
-		renderCaps = RDBLTFX_ALLHARDWARE;
-	else
-		return(RDERR_NOHARDWARE);
-
-*/
 	return(RD_OK);
 }
 
-int32 RenderSoft(void)
-{
-	warning("stub RenderSoft");
-/*
-	if (!(renderCaps & RDBLTFX_ALLHARDWARE))
-		return(RDERR_ALREADYON);
-	renderCaps = RDBLTFX_MOUSEBLT | RDBLTFX_ARITHMETICSTRETCH | RDBLTFX_EDGEBLEND |
-			 RDBLTFX_SHADOWBLEND | RDBLTFX_FLATALPHA | RDBLTFX_GRADEDALPHA;
-*/
-	return(RD_OK);
-}
-
-int32 SetBltFx(void)
-{
+int32 SetBltFx(void) {
 	renderCaps |= RDBLTFX_EDGEBLEND + RDBLTFX_ARITHMETICSTRETCH;
 	return(RD_OK);
 }
 
-int32 ClearBltFx(void)
-{
+int32 ClearBltFx(void) { 
 	renderCaps &= (0xffffffff - RDBLTFX_EDGEBLEND - RDBLTFX_ARITHMETICSTRETCH);
 	return(RD_OK);
 }
 
-int32 ClearShadowFx(void)
-{
+int32 ClearShadowFx(void) {
 	renderCaps &= (0xffffffff - RDBLTFX_SHADOWBLEND);
 	return(RD_OK);
 }
 
-int32 SetShadowFx(void)
-{
+int32 SetShadowFx(void) {
 	renderCaps |= RDBLTFX_SHADOWBLEND;
 	return RD_OK;
 }
@@ -719,88 +162,6 @@ int32 GetRenderType(void)
 		}
 	}
 }
-
-int32 FlipScreens(void)
-
-{
-	// I think this function can be removed. We render to lpBackBuffer,
-	// and the backend acts as the primary buffer.
-
-	debug(0, "FlipScreens");
-
-/*
-    HRESULT		hr;
-	BOOL		vbl;
-	int32		startTime;
-
-	DrawMouse();
-
-	if (bFullScreen)
-	{
-		startTime = timeGetTime();
-
-		while(TRUE)
-	    {
-			if (!noVbl)
-			{
-				hr = IDirectDraw2_GetVerticalBlankStatus(lpDD2, &vbl);
-				if (hr != DD_OK)
-				{
-					DirectDrawError("Vertical blank status unavailable", hr);
-				}
-			}
-
-			if (vbl || noVbl)
-			{
-				hr = IDirectDrawSurface2_Flip(lpPrimarySurface, NULL, 0);
-				if (hr == DD_OK)
-    			{
-					break;
-				}
-
-				if (hr == DDERR_SURFACELOST)
-				{
-					if (gotTheFocus)
-					{
-    					hr = IDirectDrawSurface2_Restore(lpPrimarySurface);
-					
-        				if(hr != DD_OK)
-	          			{
-							if (++failCount == 32)
-								return(RDERR_CANNOTFLIP);
-						}
-					}
-
-				}
-				else
-					failCount = 0;
-
-				if(hr != DDERR_WASSTILLDRAWING)
-		  		{
-				    break;
-				}
-			}
-			if (timeGetTime() - startTime > 20)
-			{
-				noVbl = 1;
-			}
-		}
-    }
-	else
-	{
-
-		hr = IDirectDrawSurface2_Blt(lpPrimarySurface, &rcWindow, lpBackBuffer, NULL, DDBLT_WAIT, NULL);
-		if (hr != DD_OK)
-		{
-			return(RDERR_UNKNOWN);
-		}
-	}
-*/
-	return(RD_OK);
-
-}
-
-
 
 int32 WaitForVbl(void)
 {
@@ -832,66 +193,10 @@ int32 WaitForVbl(void)
 
 }
 
-
-
-
-int32 EraseBackBuffer( void )
-{
-	debug(0, "EraseBackBuffer");
+int32 EraseBackBuffer( void ) {
+	debug(9, "EraseBackBuffer");
 	lpBackBuffer->clear();
-
-/*
-    DDBLTFX     ddbltfx;
-    HRESULT     hr;
-	RECT		r = {0, 0, screenWide, screenDeep};
-
-
-    //	Erase the background
-    ddbltfx.dwSize = sizeof(ddbltfx);
-    ddbltfx.dwFillColor = 0;
-
-    while( 1 )
-    {
-
-        hr = IDirectDrawSurface2_Blt(lpBackBuffer, &r, NULL, NULL, DDBLT_COLORFILL, &ddbltfx );
-
-		if (hr == DDERR_SURFACELOST)
-        {
-
-			RestoreSurfaces();
-
-	        hr = IDirectDrawSurface2_Blt(lpBackBuffer, &r, NULL, NULL, DDBLT_COLORFILL, &ddbltfx );
-
-            if (hr != DD_OK)
-            {
-				if (++failCount == 32)
-				{
-	                DirectDrawError("Cannot render back buffer", hr);
-					return(hr);
-				}
-				else
-				{
-					failCount = 0;
-					return(RD_OK);
-				}
-            }
-
-        }
-
-		if (hr == DD_OK)
-        {
-            break;
-        }
-    
-		if (hr != DDERR_WASSTILLDRAWING)
-        {
-            DirectDrawError("Cannot render back buffer", hr);
-			return(hr);
-        }
-    }
-*/	
 	return(RD_OK);
-
 }
 
 
@@ -1024,14 +329,7 @@ int32 SaveScreenShot(uint8 *buffer, uint8 *palette)
 
 }
 
-
-
-
-
-
-int32 GrabScreenShot(void)
-
-{
+int32 GrabScreenShot(void) {
 	warning("stub GrabScreenShot");
 /*
 	uint8			*screenGrabBuffer;
@@ -1085,8 +383,7 @@ int32 GrabScreenShot(void)
 
 
 
-int32 NextSmackerFrame(void)
-{
+int32 NextSmackerFrame(void) {
 	warning("stub NextSmackerFrame");
 	return(RD_OK);
 }
@@ -1094,19 +391,16 @@ int32 NextSmackerFrame(void)
 
 uint32 textSurface = 0;
 
-void OpenTextObject(_movieTextObject *obj)
-{
+void OpenTextObject(_movieTextObject *obj) {
 	CreateSurface(obj->textSprite, &textSurface);
 }
 
-void CloseTextObject(_movieTextObject *obj)
-{
+void CloseTextObject(_movieTextObject *obj) {
 	DeleteSurface(textSurface);
 	textSurface = 0;
 }
 
-void DrawTextObject(_movieTextObject *obj)
-{
+void DrawTextObject(_movieTextObject *obj) {
 	warning("stub DrawTextObject");
 /*
 	HRESULT				hr;
@@ -1223,14 +517,11 @@ void DrawTextObject(_movieTextObject *obj)
 
 extern uint8 musicMuted;
 
-int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut)
-{
+int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 	warning("stub PlaySmacker %s", filename);
 	return(RD_OK);
 
 }
-
-
 
 void GetDrawStatus(_drvDrawStatus *s)
 {

@@ -183,7 +183,6 @@ void Sword2State::parseEvents() {
 			break;
 		case OSystem::EVENT_QUIT:
 			Close_game();
-			RestoreDisplay();
 			CloseAppWindow();
 			break;
 		default:

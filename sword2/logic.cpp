@@ -323,7 +323,6 @@ uint32	logic::Examine_run_list(void)	//Tony25Oct96
 				  	if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
 					{
 						Close_game();	//close engine systems down
-						RestoreDisplay();
 						CloseAppWindow();
 						exit(0);	//quit the game
 					}

@@ -303,14 +303,6 @@
 //
 //	---------------------------------------------------------------------------
 //
-//	int32 FlipScreens(void)
-//
-//	Waits for the vertical retrace and then flips the front and back buffers.
-//	If a vertical retrace flag is unavailable, it flips immediately.  Returns
-//	an RD code.
-//
-//	---------------------------------------------------------------------------
-//
 //	int32 EraseBackBuffer(void)
 //
 //	Fills the back buffer with palette colour zero.  Returns an RD code.
@@ -1478,16 +1470,12 @@ typedef struct {
 //  Display functions - from d_draw.c
 //-----------------------------------------------------------------------------
 extern int32 InitialiseDisplay(int16 width, int16 height, int16 colourDepth, int32 windowType);
-extern int32 RestoreDisplay(void);
-extern int32 FlipScreens(void);
 extern int32 WaitForVbl(void);
 extern int32 EraseBackBuffer(void);
 extern int32 SetBltFx(void);
 extern int32 ClearBltFx(void);
 extern int32 ClearShadowFx(void);
 extern int32 SetShadowFx(void);
-extern int32 RenderHard(void);
-extern int32 RenderSoft(void);
 extern int32 GetRenderType(void);
 extern int32 PlaySmacker(char *filename, _movieTextObject *textObjects[], uint8 *musicOut);
 extern void  GetDrawStatus(_drvDrawStatus *s);

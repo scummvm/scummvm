@@ -253,7 +253,6 @@ void	System_menu(void)	//Tony19Mar97
 
 					EraseBackBuffer();
 					ProcessMenu();	// drivers to redraw menu over this blank screen!
-					FlipScreens();
 					ResetRenderEngine();
   					//------------------------
 
@@ -295,7 +294,6 @@ void	System_menu(void)	//Tony19Mar97
 
 					EraseBackBuffer();
 					ProcessMenu();	// drivers to redraw menu over this blank screen!
-					FlipScreens();
 
 					//------------------------
 					// reset game palette, but not after a successful restore or restart!

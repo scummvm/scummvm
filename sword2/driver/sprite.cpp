@@ -258,15 +258,7 @@
 
 
 
-#define WIN32_LEAN_AND_MEAN
-
-//#include <windows.h>
-//#include <windowsx.h>
 #include <stdio.h>
-//#include <mmsystem.h>
-
-//#include "ddraw.h"
-
 #include "stdafx.h"
 #include "driver96.h"
 #include "d_draw.h"
@@ -1812,7 +1804,6 @@ int32 DrawSprite(_spriteInfo *s)
 			hr = IDirectDrawSurface2_Lock(lpBackBuffer, NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
 			if (hr != DD_OK)
 			{
-				RestoreSurfaces();
 				hr = IDirectDrawSurface2_Lock(lpBackBuffer, NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
 			}
 			if (hr == DD_OK)

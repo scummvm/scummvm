@@ -139,7 +139,6 @@ void	Console_mem_display(void)	//Tony13Aug96
 				if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
 				{
 					Close_game();	//close engine systems down
-					RestoreDisplay();
 					CloseAppWindow();
 					exit(0);	//quit the game
 				}

@@ -446,7 +446,6 @@ int32 FN_play_credits(int32 *params)
 	if (rv || DEMO)		// if Ctrl-Q pressed during credits, or if this is the playable demo
 	{
 		Close_game();	//close engine systems down
-		RestoreDisplay();
 		CloseAppWindow();
 		exit(0);		// quit the game
 	}

@@ -88,7 +88,6 @@ extern int32					dxHalCaps;			// Hardware capabilities.
 extern int32					dxHelCaps;			// Emulation capabilities.
 
 extern void FatalDirectDrawError(char *str, int32 dderr, char *file, int32 line);
-extern void RestoreSurfaces(void);					// Restores direct draw surfaces.
 
 #ifdef __cplusplus
 }

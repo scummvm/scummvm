@@ -222,7 +222,6 @@ uint32	Con_print_start_menu(void)	//Tony14Oct96
 					if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
 					{
 						Close_game();	//close engine systems down
-						RestoreDisplay();
 						CloseAppWindow();
 						exit(0);	//quit the game
 					}

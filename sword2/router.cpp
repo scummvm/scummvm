@@ -499,7 +499,6 @@ int32 RouteFinder(Object_mega *ob_mega, Object_walkdata *ob_walkdata, int32 x, i
 		#else
 		RenderOffScreenBuffer( scroll_offset_x, scroll_offset_y, SCREEN_WIDTH, SCREEN_DEPTH );
 		#endif
-		FlipScreens();
 
 		FlushMouseEvents();	// clear mouse buffer
 		while (!TestForMouseEvent());	// wait for a button press or release

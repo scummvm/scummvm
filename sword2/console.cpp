@@ -912,7 +912,6 @@ void	Con_help(void)	//Tony13Aug96
 				  	if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
 					{
 						Close_game();	//close engine systems down
-						RestoreDisplay();
 						CloseAppWindow();
 						exit(0);	//quit the game
 					}
@@ -1030,7 +1029,6 @@ void Con_fatal_error(const char *format,...)	//Tony17Oct96
 
 	Close_game();	//should down game services - free's mallocs, etc.
 
-	RestoreDisplay();	//reset the Windows stuff
 	CloseAppWindow();	//
 
 	exit(0);
@@ -1144,7 +1142,6 @@ void	Con_list_savegames(void)	// (James05feb97)	Tony1Apr97
 				  	if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
 					{
 						Close_game();	//close engine systems down
-						RestoreDisplay();
 						CloseAppWindow();
 						exit(0);	//quit the game
 					}

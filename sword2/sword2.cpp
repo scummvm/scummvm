@@ -189,11 +189,7 @@ int32 Sword2State::InitialiseGame(void)
 void	Close_game()	//Tony11Oct96
 {
 	Zdebug("Close_game() STARTING:");
-//avoid corruption when windows kicks back in
 	EraseBackBuffer();
-	FlipScreens();
-	EraseBackBuffer();
-	FlipScreens();
 
 	Kill_music();			// Stop music instantly! (James22aug97)
 	Close_memory_manager();	// free the memory again
@@ -315,7 +311,6 @@ void Sword2State::go()
 	if (InitialiseGame())
 	{
 	  	Zdebug("RETURNED from InitialiseGame - closing game");
-		RestoreDisplay();
 		CloseAppWindow();
 		return;
 	}
@@ -459,7 +454,6 @@ void Sword2State::go()
 	}
 
 	Close_game();	//close engine systems down
-	RestoreDisplay();
 	CloseAppWindow();
 
 	return;	//quit the game

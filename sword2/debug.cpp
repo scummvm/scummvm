@@ -105,7 +105,6 @@ void ExitWithReport(const char *format,...)	// (6dec96 JEL)
 	while (GetFadeStatus())	// wait for fade to finish before calling RestoreDisplay()
 		ServiceWindows();
 
-	RestoreDisplay();
 	ReportFatalError((const uint8 *)buf);	// display message box
 	CloseAppWindow();
 	while (ServiceWindows() != RDERR_APPCLOSED);

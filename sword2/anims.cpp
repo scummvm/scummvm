@@ -851,7 +851,6 @@ int32 FN_play_sequence(int32 *params)	// James(09apr97)
 	if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q during the smacker
 	{
 		Close_game();	//close engine systems down
-		RestoreDisplay();
 		CloseAppWindow();
 		exit(0);	//quit the game
 	}
@@ -884,7 +883,6 @@ int32 FN_play_sequence(int32 *params)	// James(09apr97)
 
 	EraseBackBuffer();				// for hardware rendering
 	EraseSoftwareScreenBuffer();	// for software rendering
-	FlipScreens();					// to get the new blank screen visible
 
  	//--------------------------------------------------
 	// zero the entire palette in case we're about to fade up!

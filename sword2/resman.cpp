@@ -862,7 +862,6 @@ void	resMan::Kill_all_res(uint8 wantInfo)	//Tony29Nov96
 				  			if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
 							{
 								Close_game();	//close engine systems down
-								RestoreDisplay();
 								CloseAppWindow();
 								exit(0);	//quit the game
 							}
@@ -953,7 +952,6 @@ void	resMan::Kill_all_objects(uint8 wantInfo)	// James17jan97
 				  				if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
 								{
 									Close_game();	//close engine systems down
-									RestoreDisplay();
 									CloseAppWindow();
 									exit(0);	//quit the game
 								}
@@ -1054,7 +1052,6 @@ void resMan::CacheNewCluster(uint32 newCluster)
 		if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
 		{
 			Close_game();	//close engine systems down
-			RestoreDisplay();
 			CloseAppWindow();
 			exit(0);	//quit the game
 		}
@@ -1074,7 +1071,6 @@ void resMan::CacheNewCluster(uint32 newCluster)
 			if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
 			{
 				Close_game();	//close engine systems down
-				RestoreDisplay();
 				CloseAppWindow();
 				exit(0);	//quit the game
 			}
@@ -1084,13 +1080,7 @@ void resMan::CacheNewCluster(uint32 newCluster)
 	}
 
 
-//get rid of top menu flash (tony 26Aug97)
 	EraseBackBuffer();
-	FlipScreens();
-	EraseBackBuffer();
-	FlipScreens();
-
-
 
 	Set_mouse(0);
 	Set_luggage(0);	//tw28Aug
@@ -1182,8 +1172,6 @@ void resMan::CacheNewCluster(uint32 newCluster)
 	textSprite.y = textY;
 
 	CopyScreenBuffer();
-	FlipScreens();
-
 	FadeUp((float)0.75);
 
 	do
@@ -1194,7 +1182,6 @@ void resMan::CacheNewCluster(uint32 newCluster)
 		if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
 		{
 			Close_game();	//close engine systems down
-			RestoreDisplay();
 			CloseAppWindow();
 			exit(0);	//quit the game
 		}
@@ -1243,8 +1230,6 @@ void resMan::CacheNewCluster(uint32 newCluster)
 			textSprite.y = textY;
 
 			CopyScreenBuffer();
-			FlipScreens();
-
 			fr += 1;
 		}
 		else
@@ -1257,7 +1242,6 @@ void resMan::CacheNewCluster(uint32 newCluster)
 		if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
 		{
 			Close_game();	//close engine systems down
-			RestoreDisplay();
 			CloseAppWindow();
 			exit(0);	//quit the game
 		}
@@ -1288,7 +1272,6 @@ void resMan::CacheNewCluster(uint32 newCluster)
 		if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
 		{
 			Close_game();	//close engine systems down
-			RestoreDisplay();
 			CloseAppWindow();
 			exit(0);	//quit the game
 		}
@@ -1297,7 +1280,6 @@ void resMan::CacheNewCluster(uint32 newCluster)
 	while(GetFadeStatus()==RDFADE_DOWN);
 
 	CopyScreenBuffer();
-	FlipScreens();
 	FadeUp((float)0.75);
 
 	SVM_SetFileAttributes(resource_files[newCluster], FILE_ATTRIBUTE_NORMAL);	// Git rid of read-only status.
@@ -1498,7 +1480,6 @@ void resMan::GetCd(int cd)
 		if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
 		{
 			Close_game();	//close engine systems down
-			RestoreDisplay();
 			CloseAppWindow();
 			exit(0);	//quit the game
 		}
@@ -1517,7 +1498,6 @@ void resMan::GetCd(int cd)
 			spriteInfo.y = oldY;			// Drivers change the y co-ordinate, don't know why...
 			spriteInfo.x = oldX;
 			CopyScreenBuffer();
-			FlipScreens();
 		}
 
 	} while (!done);

@@ -94,7 +94,6 @@ void DisplayConsole(void)
 		hr = IDirectDrawSurface_Lock(lpBackBuffer, NULL, &ddDescription, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
 		if (hr != DD_OK)
 		{
-			RestoreSurfaces();
 			hr = IDirectDrawSurface_Lock(lpBackBuffer, NULL, &ddDescription, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
 		}
 

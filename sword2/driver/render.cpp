@@ -366,7 +366,6 @@ int32 RestoreBackgroundLayer(_parallax *p, int16 l)
 		free(blockSurfaces[l]);
 		blockSurfaces[l] = NULL;
 	}
-	RestoreSurfaces();
 	InitialiseBackgroundLayer(p);
 	layer = oldLayer;
 
@@ -383,7 +382,6 @@ int32 RestoreBackgroundLayer(_parallax *p, int16 l)
 		free(blockSurfaces[l]);
 		blockSurfaces[l] = NULL;
 	}
-	RestoreSurfaces();
 	InitialiseBackgroundLayer(p);
 	layer = oldLayer;
 */
@@ -419,7 +417,6 @@ int32 PlotPoint(uint16 x, uint16 y, uint8 colour)
 		hr = IDirectDrawSurface2_Lock(lpBackBuffer, NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
 		if (hr != DD_OK)
 		{
-			RestoreSurfaces();
 			hr = IDirectDrawSurface2_Lock(lpBackBuffer, NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
 		}
 
@@ -467,7 +464,6 @@ int32 DrawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour)
 		hr = IDirectDrawSurface2_Lock(lpBackBuffer, NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
 		if (hr != DD_OK)
 		{
-			RestoreSurfaces();
 			hr = IDirectDrawSurface2_Lock(lpBackBuffer, NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
 		}
 		if (hr != DD_OK)
@@ -697,7 +693,7 @@ int32 RenderParallax(_parallax *p, int16 l) {
 	int16 i, j;
 	ScummVM::Rect r;
 
-	debug(0, "RenderParallax %d", l);
+	debug(9, "RenderParallax %d", l);
 
 	if (locationWide == screenWide)
 		x = 0;
@@ -733,251 +729,7 @@ int32 RenderParallax(_parallax *p, int16 l) {
 	parallaxScrollx = scrollx - x;
 	parallaxScrolly = scrolly - y;
 
-/*
-
-#if PROFILING == 1
-
-	long int startTime, endTime;
-
-	QueryPerformanceCounter(&startTime);
-
-#endif
-
-	if ((renderCaps & RDBLTFX_ALLHARDWARE) || ((renderCaps & RDBLTFX_FGPARALLAX) && (l > 2)))
-	{
-
-		int16 x, y;
-		int16 i, j;
-		int16 restoreSurfaces = 0;
-		HRESULT hr = 0;
-		RECT r, rd;
-
-		if (restoreLayer[l])
-		{
-			RestoreBackgroundLayer(p, l);
-			restoreLayer[l] = 0;
-		}
-
-		if (locationWide == screenWide)
-			x = 0;
-		else
-			x = ((int32) ((p->w - screenWide) * scrollx) / (int32) (locationWide - screenWide));
-
-		if (locationDeep == (screenDeep - MENUDEEP*2))
-			y = 0;
-		else
-			y = ((int32) ((p->h - (screenDeep - MENUDEEP*2)) * scrolly) / (int32) (locationDeep - (screenDeep - MENUDEEP*2)));
-
-
-		while (TRUE)
-		{
-			j = 0;
-			while (j < yblocks[l])
-			{
-				i = 0;
-				while (i < xblocks[l])
-				{
- 					if (*(blockSurfaces[l] + i + j * xblocks[l]))
-					{
-						r.left = i * BLOCKWIDTH - x;
-						r.right = r.left + BLOCKWIDTH;
-						r.top = j * BLOCKHEIGHT - y + 40;
-						r.bottom = r.top + BLOCKHEIGHT;
-						rd.left = 0;
-						rd.right = BLOCKWIDTH;
-						rd.top = 0;
-						rd.bottom = BLOCKHEIGHT;
-
-						if ((r.left < 0) && (r.left > 0 - BLOCKWIDTH))
-						{
-							rd.left = 0 - r.left;
-							r.left = 0;
-						}
-						if ((r.top < 40) && (r.top > 40 - BLOCKHEIGHT))
-						{
-							rd.top = 40 - r.top;
-							r.top = 40;
-						}
-						if ((r.right > 640) && (r.right < 640 + BLOCKWIDTH))
-						{
-							rd.right = BLOCKWIDTH - (r.right - 640);
-							r.right = 640;
-						}
-						if ((r.bottom > 440) && (r.bottom < 440 + BLOCKHEIGHT))
-						{
-							rd.bottom = BLOCKHEIGHT - (r.bottom - 440);
-							r.bottom = 440;
-						}
-						hr = IDirectDrawSurface2_Blt(lpBackBuffer, &r, *(blockSurfaces[l] + i + j * xblocks[l]), &rd, DDBLT_WAIT | DDBLT_KEYSRC, NULL);
-						if (hr == DDERR_INVALIDRECT)
-							hr = 0;
-						if (hr)
-							break;
-					}
-					i++;
-					if (hr)
-						break;
-				}
-				j++;
-				if (hr)
-					break;
-			}
-			if (hr)
-			{
-				if (hr == DDERR_SURFACELOST)
-				{
-					if (gotTheFocus)
-					{
-						if (++restoreSurfaces == 4)
-							return(RDERR_RESTORELAYERS);
-						else
-							RestoreBackgroundLayer(p, l);
-					}
-					else
-						return(RD_OK);
-				}
-				else
-					return(hr);
-
-			}
-			else
-				break;
-		}
-
-		parallaxScrollx = scrollx - x;
-		parallaxScrolly = scrolly - y;
-	}
-	else
-	{
-		uint8			zeros;
-		uint16			count;
-		uint16			skip;
-		uint16			i, j;
-		uint16			x;
-		int32			px, py;
-		uint8			*data;
-		uint8			*dst;
-		_parallaxLine	*line;
-
-		if (locationWide == screenWide)
-			px = 0;
-		else
-			px = ( (int32) ((p->w - screenWide) * scrollx) / (int32) (locationWide - screenWide));
-
-		if (locationDeep == (screenDeep - MENUDEEP*2))
-			py = 0;
-		else
-			py = ( (int32) ((p->h - (screenDeep - MENUDEEP*2)) * scrolly) / (int32) (locationDeep - (screenDeep - MENUDEEP*2)));
-
-
-		for (i = py; i < py + (screenDeep - MENUDEEP * 2); i++)
-		{
-			if (p->offset[i] == 0)
-				continue;
-
-			line = (_parallaxLine *) ((uint8 *) p + p->offset[i]);
-			data = (uint8 *) line + sizeof(_parallaxLine);
-			x = line->offset;
-			if (x > px)
-				skip = x - px;
-			else
-				skip = 0;
-
-			dst = myScreenBuffer + (i - py) * RENDERWIDE + skip;
-
-			
-			zeros = 0;
-			if (line->packets == 0)
-			{
-				data += px;
-				memcpy(dst, data, screenWide);
-				continue;
-			}
-
-			for (j=0; j<line->packets; j++)
-			{
-				if (zeros)
-				{
-					if (x >= px)
-					{
-						dst += *data;
-						x += *data;
-					}
-					else
-					{
-						x += *data;
-						if (x > px)
-						{
-							dst += (x - px);
-						}
-					}
-					data += 1;
-					zeros = 0;
-				}
-				else
-				{
-					if (*data == 0)
-					{
-						data ++;
-					}
-					else if (x >= px)
-					{
-						if (x + *data <= px + screenWide)
-						{
-							count = *data++;
-							memcpy(dst, data, count);
-							data += count;
-							dst += count;
-							x += count;
-						}
-						else if (x < px + screenWide)
-						{
-							data++;
-							count = screenWide - (x - px);
-							memcpy(dst, data, count);
-							j = line->packets;
-						}
-					}
-					else
-					{
-						count = *data++;
-
-						if (x + count > px)
-						{
-							skip = px - x;
-							data += skip;
-							count -= skip;
-							memcpy(dst, data, count);
-							data += count;
-							dst += count;
-							x += count + skip;
-						}
-						else
-						{
-							data += count;
-							x += count;
-							if (x > px)
-							{
-								dst += (x - px);
-							}
-						}
-					}
-					zeros = 1;
-				}
-			}
-		}
-
-		parallaxScrollx = scrollx - px;
-		parallaxScrolly = scrolly - py;
-	}
-
-#if PROFILING == 1
-	QueryPerformanceCounter(&endTime);
-	profileRenderLayers += (endTime.LowPart - startTime.LowPart);
-#endif
-*/
 	return(RD_OK);
-
 }
 
 
@@ -1120,7 +872,7 @@ int32 SetScrollTarget(int16 sx, int16 sy)
 int32 CopyScreenBuffer(void)
 
 {
-	debug(0, "CopyScreenBuffer");
+	debug(9, "CopyScreenBuffer");
 
 	// FIXME: The backend should keep track of dirty rects, but I have a
 	// feeling each one may be drawn several times, so we may have do add
@@ -1154,7 +906,6 @@ int32 CopyScreenBuffer(void)
 		hr = IDirectDrawSurface2_Lock(lpBackBuffer, NULL, &ddDescription, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
 		if (hr != DD_OK)
 		{
-			RestoreSurfaces();
 			hr = IDirectDrawSurface2_Lock(lpBackBuffer, NULL, &ddDescription, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
 		}
 		if (hr == DD_OK)
@@ -1340,7 +1091,6 @@ bailout:
 		if (layer == MAXLAYERS)
 		{
 			CloseBackgroundLayer();
-		//	RestoreSurfaces();		// for the primary and back buffer.
 		}
 		
 

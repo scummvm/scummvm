@@ -254,7 +254,6 @@ void	Build_display(void)	//Tony21Sept96
 			// ready - blit to screen
 
 			CopyScreenBuffer();
-			FlipScreens();
 
  			//----------------------------------------------------
 			// update our fps reading
@@ -304,7 +303,6 @@ void	Build_display(void)	//Tony21Sept96
 			ExitWithReport("Driver Error %.8x (drawing console) [%s line %u]", rv, __FILE__, __LINE__);
 
 		CopyScreenBuffer();
-		FlipScreens();
 	}
 	else
 	{
@@ -349,7 +347,6 @@ void DisplayMsg( uint8 *text, int time )	// Chris 15May97
 			if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
 			{
 				Close_game();	//close engine systems down
-				RestoreDisplay();
 				CloseAppWindow();
 				exit(0);	//quit the game
 			}
@@ -404,7 +401,6 @@ void DisplayMsg( uint8 *text, int time )	// Chris 15May97
 	SetPalette(0, 256, (uint8 *) pal, RDPAL_FADE);
 
 	CopyScreenBuffer();
-	FlipScreens();
 
 	FadeUp((float)0.75);
 
@@ -421,7 +417,6 @@ void DisplayMsg( uint8 *text, int time )	// Chris 15May97
 		if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
 		{
 			Close_game();	//close engine systems down
-			RestoreDisplay();
 			CloseAppWindow();
 			exit(0);	//quit the game
 		}
@@ -442,7 +437,6 @@ void DisplayMsg( uint8 *text, int time )	// Chris 15May97
 		if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
 		{
 			Close_game();	//close engine systems down
-			RestoreDisplay();
 			CloseAppWindow();
 			exit(0);	//quit the game
 		}
@@ -458,7 +452,6 @@ void DisplayMsg( uint8 *text, int time )	// Chris 15May97
 		spriteInfo.y = oldY;			// Drivers change the y co-ordinate, don't know why...
 		spriteInfo.x = oldX;
 		CopyScreenBuffer();
-		FlipScreens();
 	}
 
 	SetPalette(0, 256, (uint8 *) oldPal, RDPAL_FADE);
@@ -483,7 +476,6 @@ void RemoveMsg( void )		// Chris 15May97
 		if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
 		{
 			Close_game();	//close engine systems down
-			RestoreDisplay();
 			CloseAppWindow();
 			exit(0);	//quit the game
 		}
@@ -494,7 +486,6 @@ void RemoveMsg( void )		// Chris 15May97
 	EraseBackBuffer();				// for hardware rendering
 	EraseSoftwareScreenBuffer();	// for software rendering
 	CopyScreenBuffer();
-	FlipScreens();
 
 //	FadeUp((float)0.75);	
 //	removed by JEL (08oct97) to prevent "eye" smacker corruption when restarting game from CD2

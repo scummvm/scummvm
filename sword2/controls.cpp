@@ -275,7 +275,6 @@ uint32	Restore_control(void)	//Tony20Mar97
 	  	if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q during the smacker
 		{
 			Close_game();	//close engine systems down
-			RestoreDisplay();
 			CloseAppWindow();
 			exit(0);	//quit the game
 		}
@@ -416,14 +415,6 @@ uint32	Restore_control(void)	//Tony20Mar97
 			first++;
 			SetFullPalette(CONTROL_PANEL_PALETTE);	// see Build_display.cpp (James17jun97)
 		}
-
-		FlipScreens();
-
-
-
-
-
-
 
 
 //mouse over buttons?
@@ -972,7 +963,6 @@ void	Save_control(void)	//Tony1Apr97	not a joke
 	  	if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q during the smacker
 		{
 			Close_game();	//close engine systems down
-			RestoreDisplay();
 			CloseAppWindow();
 			exit(0);	//quit the game
 		}
@@ -1485,9 +1475,6 @@ void	Save_control(void)	//Tony1Apr97	not a joke
 			first++;
 			SetFullPalette(CONTROL_PANEL_PALETTE);	// see Build_display.cpp (James17jun97)
 		}
-
-		FlipScreens();
-
 	}	//while
 
 
@@ -1513,15 +1500,9 @@ void	Quit_control(void)	//Tony2Apr97
 
 	if	(!res)
 		return;	//just return to game
-
-//avoid corruption when windows kicks back in
 	EraseBackBuffer();
-	FlipScreens();
-	EraseBackBuffer();
-	FlipScreens();
 
 	Close_game();	//close engine systems down
-	RestoreDisplay();
 	CloseAppWindow();
 
 	exit(0);
@@ -1550,8 +1531,6 @@ void	Restart_control(void)	//Tony4Apr97
 	Kill_mini_surfaces();
 	EraseBackBuffer();
 	//ProcessMenu();	//draw menu
-	FlipScreens();
-
 
 //restart the game
 //clear all memory and reset the globals
@@ -1656,7 +1635,6 @@ uint32	Generic_mini_control(uint32	text_id)	//Tony2Apr97
 		if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
 		{
 			Close_game();	//close engine systems down
-			RestoreDisplay();
 			CloseAppWindow();
 			exit(0);	//quit the game
 		}
@@ -1747,7 +1725,6 @@ uint32	Generic_mini_control(uint32	text_id)	//Tony2Apr97
 		if	(breakOut)
 			break;
 
-		FlipScreens();
 		if	(!first)
 		{
 			first++;
@@ -1875,7 +1852,6 @@ void	Control_error(char* text)	//Tony13May97
 	  	if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q during the smacker
 		{
 			Close_game();	//close engine systems down
-			RestoreDisplay();
 			CloseAppWindow();
 			exit(0);	//quit the game
 		}
@@ -2379,7 +2355,6 @@ void	Option_control(void)	//Pete6Jun97
 	  	if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q during the smacker
 		{
 			Close_game();	//close engine systems down
-			RestoreDisplay();
 			CloseAppWindow();
 			exit(0);	//quit the game
 		}
@@ -2789,7 +2764,6 @@ void	Option_control(void)	//Pete6Jun97
 			first++;
 			SetFullPalette(CONTROL_PANEL_PALETTE);	// see Build_display.cpp (James17jun97)
 		}
-		FlipScreens();
 	}
 
 
@@ -2812,20 +2786,17 @@ void UpdateGraphicsLevel(uint8 oldLevel, uint8 newLevel)	// (James13jun97)
 					break;
 
 				case 1:
-					RenderSoft();
 					ClearBltFx();
 					ClearShadowFx();
 					CloseBackgroundLayer();
 					break;
 
 				case 2:
-					RenderSoft();
 					ClearBltFx();
 					CloseBackgroundLayer();
 					break;
 
 				case 3:	// same as case 2 until case 2 has edge-blending inactivated
-					RenderSoft();
 					CloseBackgroundLayer();
 					break;
 			}
@@ -2838,7 +2809,6 @@ void UpdateGraphicsLevel(uint8 oldLevel, uint8 newLevel)	// (James13jun97)
 					break;
 
 				case 0:
-					RenderHard();
 					SetUpBackgroundLayers();	// InitialiseBackgroundLayer for each layer! (see layers.cpp)
 					break;
 
@@ -2867,7 +2837,6 @@ void UpdateGraphicsLevel(uint8 oldLevel, uint8 newLevel)	// (James13jun97)
 					break;
 
 				case 0:
-					RenderHard();
 					SetUpBackgroundLayers();	// InitialiseBackgroundLayer for each layer! (see layers.cpp)
 					break;
 			}
@@ -2889,7 +2858,6 @@ void UpdateGraphicsLevel(uint8 oldLevel, uint8 newLevel)	// (James13jun97)
 					break;
 
 				case 0:
-					RenderHard();
 					SetUpBackgroundLayers();	// InitialiseBackgroundLayer for each layer! (see layers.cpp)
 					break;
 			}
