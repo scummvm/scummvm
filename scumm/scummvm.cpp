@@ -1171,10 +1171,10 @@ load_game:
 		if (_features & GF_AFTER_V2)
 			checkV2MouseOver(_mouse);
 
+		drawBlastTexts();
 		drawBlastObjects();
 		if (_features & GF_AFTER_V8)
 			processUpperActors();
-		drawBlastTexts();
 		drawDirtyScreenParts();
 		removeBlastObjects();
 		removeBlastTexts();
