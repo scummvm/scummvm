@@ -1638,7 +1638,7 @@ void Scumm::allocateArrays()
 	_inventory = (uint16 *)calloc(_numInventory, sizeof(uint16));
 	_verbs = (VerbSlot *)calloc(_numVerbs, sizeof(VerbSlot));
 	_objs = (ObjectData *)calloc(_numLocalObjects, sizeof(ObjectData));
-	_vars = (int16 *)calloc(_numVariables, sizeof(int16));
+	_vars = (int32 *)calloc(_numVariables, sizeof(int32));
 	_bitVars = (byte *)calloc(_numBitVariables >> 3, 1);
 
 	allocResTypeData(rtCostume, (_features & GF_NEW_COSTUMES) ? MKID('AKOS') : MKID('COST'),

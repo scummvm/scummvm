@@ -323,7 +323,7 @@ public:
 	uint16 *_inventory;
 	byte *_arrays;
 	uint16 *_newNames;
-	int16 *_vars;
+	int32 *_vars;
 	int16 _varwatch;
 	byte *_bitVars;
 
