@@ -615,8 +615,11 @@ void Scumm::drawString(int a)
 		charset._ignoreCharsetMask = 1;
 
 
-	// Verb text should never time out.
-	if (a == 4)
+	// In Full Throttle (and other games?), verb text should always mask
+	// and never time out. We can't do it blindly for all games, because
+	// it causes problem with the FOA intro.
+
+	if (_gameId == GID_FT && a == 4)
 		_talkDelay = -1;
 
 	if (!buf[0]) {
