@@ -34,7 +34,7 @@ struct CmdText {
 
 	void clear();
 	void display(uint8 color);
-	void displayTemp(uint8 color, bool locked, Verb v, const char *name = NULL);
+	void displayTemp(uint8 color, Verb v, const char *name = NULL);
 	void displayTemp(uint8 color, const char *name);
 	void setVerb(Verb v);
 	void addLinkWord(Verb v);
@@ -61,7 +61,6 @@ struct CmdState {
 	int commandLevel;
 	int16 subject[2];
 
-	Verb defaultVerb;
 	Verb selAction;
 	int16 selNoun;
 };
