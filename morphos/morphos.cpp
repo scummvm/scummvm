@@ -119,6 +119,7 @@ OSystem_MorphOS::OSystem_MorphOS( int game_id, SCALERTYPE gfx_mode, bool full_sc
 	Scumm16ColFmt16 = false;
 	ScummScrWidth = 0;
 	ScummScrHeight = 0;
+	ScreenChanged = false;
 	FullScreenMode = full_screen;
 	CDrive = NULL;
 	CDDATrackOffset = 0;
@@ -445,6 +446,7 @@ void OSystem_MorphOS::set_palette(const byte *colors, uint start, uint num)
 		ScummColors[ i ] = (data[ 0 ] << 16) | (data[ 1 ] << 8) | data[ 2 ];
 		data += 4;
 	}
+	ScreenChanged = true;
 }
 
 void OSystem_MorphOS::create_screen( CS_DSPTYPE dspType )
@@ -503,8 +505,8 @@ void OSystem_MorphOS::create_screen( CS_DSPTYPE dspType )
 
 		ScummScreen = OpenScreenTags( NULL, SA_AutoScroll, TRUE,
 														SA_Depth,		ScummDepth,
-														SA_Width,		ScummScrWidth,
-														SA_Height,		ScummScrHeight,
+														SA_Width,		STDSCREENWIDTH,
+														SA_Height,		STDSCREENHEIGHT,
 														SA_DisplayID,	mode,
 														SA_ShowTitle,	FALSE,
 														SA_Type,			CUSTOMSCREEN,
@@ -535,6 +537,15 @@ void OSystem_MorphOS::create_screen( CS_DSPTYPE dspType )
 			exit( 1 );
 		}
 
+		// Make both buffers black to avoid grey strip on bottom of screen
+		struct RastPort rp;
+		InitRastPort( &rp );
+		SetRGB32( &ScummScreen->ViewPort, 0, 0, 0, 0 );
+		rp.BitMap = ScummScreenBuffer[ 0 ]->sb_BitMap;
+		FillPixelArray( &ScummScreen->RastPort, 0, 0, ScummScreen->Width, ScummScreen->Height, 0 );
+		rp.BitMap = ScummRenderTo;
+		FillPixelArray( &rp, 0, 0, ScummScreen->Width, ScummScreen->Height, 0 );
+
 		if( ScummDepth == 8 )
 		{
 			for( int color = 0; color < 256; color++ )
@@ -562,8 +573,8 @@ void OSystem_MorphOS::create_screen( CS_DSPTYPE dspType )
 
 	ScummWindow = OpenWindowTags( NULL,	WA_Left,				(wb && ScummWinX >= 0) ? ScummWinX : 0,
 													WA_Top,				wb ? ((ScummWinY >= 0) ? ScummWinY : wb->BarHeight+1) : 0,
-													WA_InnerWidth,	   ScummScrWidth,
-													WA_InnerHeight,   ScummScrHeight,
+													WA_InnerWidth,	   FullScreenMode ? ScummScreen->Width : ScummScrWidth,
+													WA_InnerHeight,   FullScreenMode ? ScummScreen->Height : ScummScrHeight,
 													WA_Activate,		TRUE,
 													WA_Title,		   wb ? ScummWndTitle : NULL,
 													WA_ScreenTitle,	wb ? ScummWndTitle : NULL,
@@ -573,7 +584,6 @@ void OSystem_MorphOS::create_screen( CS_DSPTYPE dspType )
 													WA_DragBar,			!FullScreenMode,
 													WA_ReportMouse,	TRUE,
 													WA_RMBTrap,			TRUE,
-													WA_MouseQueue,		1,
 													WA_IDCMP,			IDCMP_RAWKEY 		|
 																			IDCMP_MOUSEMOVE 	|
 																			IDCMP_CLOSEWINDOW |
@@ -671,6 +681,7 @@ void OSystem_MorphOS::create_screen( CS_DSPTYPE dspType )
 			qlowpixelMask |= (qlowpixelMask << 16);
 		}
 	}
+	ScreenChanged = true;
 }
 
 void OSystem_MorphOS::SwitchScalerTo( SCALERTYPE newScaler )
@@ -728,11 +739,11 @@ bool OSystem_MorphOS::poll_event( Event *event )
 					 * Function key
 					 */
 					event->kbd.ascii = (ScummMsg->Code-0x50)+315;
-					event->kbd.keycode = 0; //ev.key.keysym.sym;
+					event->kbd.keycode = 0;
 				}
 				else if( MapRawKey( &FakedIEvent, &charbuf, 1, NULL ) == 1 )
 				{
-					if( qual & KBD_CTRL )
+					if( qual == KBD_CTRL )
 					{
 						switch( charbuf )
 						{
@@ -741,7 +752,7 @@ bool OSystem_MorphOS::poll_event( Event *event )
 								exit(1);
 						}
 					}
-					else if( qual & KBD_ALT )
+					else if( qual == KBD_ALT )
 					{
 						if( charbuf >= '0' && charbuf <= '9' && ScummScalers[ charbuf-'0' ].gs_Name )
 						{
@@ -756,11 +767,9 @@ bool OSystem_MorphOS::poll_event( Event *event )
                      return false;
 						}
 					}
-					else
-					{
-						event->kbd.ascii = charbuf;
-						event->kbd.keycode = 0; //ev.key.keysym.sym;
-					}
+
+					event->kbd.ascii = charbuf;
+					event->kbd.keycode = event->kbd.ascii;
 				}
 				break;
 			}
@@ -772,7 +781,7 @@ bool OSystem_MorphOS::poll_event( Event *event )
 				newx = (ScummMsg->MouseX-ScummWindow->BorderLeft) >> ScummScale;
 				newy = (ScummMsg->MouseY-ScummWindow->BorderTop) >> ScummScale;
 
-				if( !ScummDefaultMouse )
+				if( !FullScreenMode && !ScummDefaultMouse )
 				{
 					if( newx < 0 || newx > 320 ||
 						 newy < 0 || newy > 200
@@ -790,6 +799,9 @@ bool OSystem_MorphOS::poll_event( Event *event )
 						SetPointer( ScummWindow, ScummNoCursor, 1, 1, 0, 0 );
 					}
 				}
+				else if( FullScreenMode )
+					newy = newy <? (ScummScrHeight >> ScummScale)-2;
+
 				event->event_code = EVENT_MOUSEMOVE;
 				event->mouse.x = newx;
 				event->mouse.y = newy;
@@ -847,6 +859,7 @@ bool OSystem_MorphOS::poll_event( Event *event )
 void OSystem_MorphOS::set_shake_pos( int shake_pos )
 {
 	ScummShakePos = shake_pos;
+	ScreenChanged = true;
 }
 
 #define GET_RESULT(A, B, C, D) ((A != C || A != D) - (B != C || B != D))
@@ -1393,10 +1406,14 @@ void OSystem_MorphOS::copy_rect(const byte *src, int pitch, int x, int y, int w,
 		dst += 320;
 		src += pitch;
 	} while( --h );
+	ScreenChanged = true;
 }
 
 void OSystem_MorphOS::update_screen()
 {
+	if( !ScreenChanged )
+		return;
+
 	draw_mouse();
 
 	if( !ScummScale )
@@ -1462,6 +1479,7 @@ void OSystem_MorphOS::update_screen()
 		BltBitMapRastPort( ScummRenderTo, 0, 0, ScummWindow->RPort, ScummWindow->BorderLeft, ScummWindow->BorderTop, ScummScrWidth, ScummScrHeight, ABNC | ABC );
 		WaitBlit();
 	}
+	ScreenChanged = false;
 }
 
 void OSystem_MorphOS::draw_mouse()
@@ -1554,6 +1572,7 @@ void OSystem_MorphOS::set_mouse_pos(int x, int y)
 		MouseX = x;
 		MouseY = y;
 		undraw_mouse();
+		ScreenChanged = true;
 	}
 }
 
@@ -1568,6 +1587,7 @@ void OSystem_MorphOS::set_mouse_cursor(const byte *buf, uint w, uint h, int hots
 	MouseImage = (byte*)buf;
 
 	undraw_mouse();
+	ScreenChanged = true;
 }
 
 bool OSystem_MorphOS::set_sound_proc( void *param, OSystem::SoundProc *proc, byte format )

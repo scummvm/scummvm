@@ -142,6 +142,7 @@ class OSystem_MorphOS : public OSystem
 		bool			    		ScummOrigMouse;
 		int 			    		ScummShakePos;
 		bool						FullScreenMode;
+		bool 						ScreenChanged;
 
 		/* Scaling-related attributes */
 		uint32 					colorMask;
