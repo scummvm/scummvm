@@ -167,7 +167,11 @@ CheckboxWidget::CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, cons
 }
 
 void CheckboxWidget::handleMouseUp(int x, int y, int button, int clickCount) {
+#ifndef _WIN32_WCE
 	if (isEnabled() && x >= 0 && x < _w && y >= 0 && y < _h) {
+#else
+	if (isEnabled() && x >= 0 && x < 14 && y >= 0 && y < 14) {
+#endif
 		toggleState();
 	}
 }
