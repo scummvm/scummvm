@@ -21,6 +21,12 @@
 
 #include "screen.h"
 
+#ifdef SCUMM_BIG_ENDIAN
+#define ENDIAN16(x) ((x >> 8) | ((x & 0xFF) << 8))
+#else
+#define ENDIAN16(x) (x)
+#endif
+
 uint8 SkyScreen::_top16Colours[16*3] =
 {
 	0, 0, 0,
@@ -452,7 +458,7 @@ void SkyScreen::sortSprites(void) {
 								getchar();
 								spriteComp->status = 0;
 							} else {
-								sortList[spriteCnt].yCood = spriteComp->ycood + spriteData->s_offset_y + spriteData->s_height;
+								sortList[spriteCnt].yCood = spriteComp->ycood + (int16)ENDIAN16(spriteData->s_offset_y) + (int16)ENDIAN16(spriteData->s_height);
 								sortList[spriteCnt].compact = spriteComp;
 								sortList[spriteCnt].sprite = spriteData;
 								spriteCnt++;
@@ -534,12 +540,12 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 		return ;
 	}
 	dataFileHeader *sprDataFile = (dataFileHeader *)spriteInfo;
-	_sprWidth = sprDataFile->s_width;
-	_sprHeight = sprDataFile->s_height;
+	_sprWidth = ENDIAN16(sprDataFile->s_width);
+	_sprHeight = ENDIAN16(sprDataFile->s_height);
 	_maskX1 = _maskX2 = 0;
-	uint8 *spriteData = spriteInfo + (sprCompact->frame & 0x3F) * sprDataFile->s_sp_size;
+	uint8 *spriteData = spriteInfo + (sprCompact->frame & 0x3F) * ENDIAN16(sprDataFile->s_sp_size);
 	spriteData += sizeof(dataFileHeader);
-	int32 spriteY = sprCompact->ycood + (int16)sprDataFile->s_offset_y - TOP_LEFT_Y;
+	int32 spriteY = sprCompact->ycood + (int16)ENDIAN16(sprDataFile->s_offset_y) - TOP_LEFT_Y;
 	if (spriteY < 0) {
 		spriteY = ~spriteY;
 		if (_sprHeight <= (uint32)spriteY) {
@@ -547,10 +553,10 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 			return ;
 		}
 		_sprHeight -= spriteY;
-		spriteData += sprDataFile->s_width * spriteY;
+		spriteData += ENDIAN16(sprDataFile->s_width) * spriteY;
 		spriteY = 0;
 	} else {
-		int32 botClip = GAME_SCREEN_HEIGHT - sprDataFile->s_height - spriteY;
+		int32 botClip = GAME_SCREEN_HEIGHT - ENDIAN16(sprDataFile->s_height) - spriteY;
 		if (botClip < 0) {
 			if (botClip + _sprHeight <= 0) {
 				_sprWidth = 0;
@@ -560,7 +566,7 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 		}
 	}
 	_sprY = (uint32)spriteY;
-	int32 spriteX = sprCompact->xcood + (int16)sprDataFile->s_offset_x - TOP_LEFT_X;
+	int32 spriteX = sprCompact->xcood + (int16)ENDIAN16(sprDataFile->s_offset_x) - TOP_LEFT_X;
 	if (spriteX < 0) {
 		spriteX = ~spriteX;
 		if (_sprWidth <= (uint32)spriteX) {
@@ -571,7 +577,7 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 		_maskX1 = spriteX;
 		spriteX = 0;
 	} else {
-		int32 rightClip = GAME_SCREEN_WIDTH - sprDataFile->s_width - spriteX;
+		int32 rightClip = GAME_SCREEN_WIDTH - ENDIAN16(sprDataFile->s_width) - spriteX;
 		if (rightClip < 0) {
 			rightClip = ~rightClip;
 			if (_sprWidth <= (uint32)rightClip) {
@@ -624,12 +630,12 @@ void SkyScreen::vertMaskSub(uint16 *grid, uint32 gridOfs, uint8 *screenPtr, uint
 
 	for (uint32 cntx = 0; cntx < _sprHeight; cntx++) { // start_x | block_loop
 		if (grid[gridOfs]) {
-			if (!(grid[gridOfs] & 0x8000)) {
-	            uint32 gridVal = grid[gridOfs]-1;
+			if (!(ENDIAN16(grid[gridOfs]) & 0x8000)) {
+	            uint32 gridVal = ENDIAN16(grid[gridOfs]) - 1;
 				gridVal *= GRID_W * GRID_H;
 				uint8 *dataSrc = (uint8*)SkyState::fetchItem(SkyLogic::_scriptVariables[layerId]) + gridVal;
 				uint8 *dataTrg = screenPtr;
-				for (uint32 grdCntY = 0; grdCntY < GRID_H; grdCntY++) {				
+				for (uint32 grdCntY = 0; grdCntY < GRID_H; grdCntY++) {
 					for (uint32 grdCntX = 0; grdCntX < GRID_W; grdCntX++)
 						if (dataSrc[grdCntX]) dataTrg[grdCntX] = dataSrc[grdCntX];
 					dataSrc += GRID_W;
