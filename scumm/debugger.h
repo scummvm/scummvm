@@ -94,6 +94,7 @@ protected:
 	bool Cmd_Hide(int argc, const char **argv);
 	
 	void printBox(int box);
+	void drawBox(int box);
 
 #ifdef USE_CONSOLE
 	static bool debuggerInputCallback(ConsoleDialog *console, const char *input, void *refCon);

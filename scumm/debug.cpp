@@ -280,7 +280,7 @@ int ScummDebugger::get_command()
 			return CMD_CONTINUE;
 
 		i = strlen(_cmd_buffer);
-		while (i > 0 && _cmd_buffer[i - 1] == 10)
+		while (i > 0 && _cmd_buffer[i - 1] == '\n')
 			_cmd_buffer[--i] = 0;
 
 		if (i == 0)

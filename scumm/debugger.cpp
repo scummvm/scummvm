@@ -700,6 +700,11 @@ bool ScummDebugger::Cmd_DebugLevel(int argc, const char **argv) {
 bool ScummDebugger::Cmd_PrintBox(int argc, const char **argv) {
 	int num, i = 0;
 	num = _s->getNumBoxes();
+	
+	if (argc > 1) {
+		for (i = 1; i < argc; i++)
+			printBox(atoi(argv[i]));
+	} else {
 /*
 	byte *boxm = _s->getBoxMatrixBaseAddr();
 
@@ -713,9 +718,10 @@ bool ScummDebugger::Cmd_PrintBox(int argc, const char **argv) {
 		Debug_Printf("\n");
 	}
 */
-	Debug_Printf("\nWalk boxes:\n");
-	for (i = 0; i < num; i++)
-		printBox(i);
+		Debug_Printf("\nWalk boxes:\n");
+		for (i = 0; i < num; i++)
+			printBox(i);
+	}
 	return true;
 }
 
@@ -733,6 +739,136 @@ void ScummDebugger::printBox(int box) {
 								coords.ul.x, coords.ul.y, coords.ll.x, coords.ll.y,
 								coords.ur.x, coords.ur.y, coords.lr.x, coords.lr.y,
 								flags, mask, scale);
+	
+	// Draw the box
+	drawBox(box);
+}
+
+/************ ENDER: Temporary debug code for boxen **************/
+
+static int gfxPrimitivesCompareInt(const void *a, const void *b);
+
+
+static void hlineColor(Scumm *scumm, int x1, int x2, int y, byte color)
+{
+	VirtScreen *vs = scumm->findVirtScreen(y);
+	byte *ptr;
+
+	if (vs == NULL)
+		return;
+
+	if (x2 < x1)
+		SWAP(x2, x1);
+	
+	// Clip x1 / x2
+	const int left = scumm->_screenStartStrip * 8;
+	const int right = left + scumm->_screenWidth;
+	if (x1 < left)
+		x1 = left;
+	if (x2 >= right)
+		x2 = right - 1;
+
+	ptr = vs->screenPtr + x1
+			+ (y - vs->topline + scumm->camera._cur.y - scumm->_screenHeight / 2) * scumm->_screenWidth;
+
+	while (x1++ <= x2) {
+		*ptr++ = color;
+	}
+}
+
+static int gfxPrimitivesCompareInt(const void *a, const void *b)
+{
+	return (*(const int *)a) - (*(const int *)b);
+}
+
+static void fillQuad(Scumm *scumm, int16 vx[4], int16 vy[4], int color)
+{
+	const int N = 4;
+	int i;
+	int y;
+	int miny, maxy;
+	int x1, y1;
+	int x2, y2;
+	int ind1, ind2;
+	int ints;
+
+	int polyInts[N];
+
+
+	// Determine Y maxima
+	miny = vy[0];
+	maxy = vy[0];
+	for (i = 1; i < N; i++) {
+		if (vy[i] < miny) {
+			miny = vy[i];
+		} else if (vy[i] > maxy) {
+			maxy = vy[i];
+		}
+	}
+
+	// Draw, scanning y
+	for (y = miny; y <= maxy; y++) {
+		ints = 0;
+		for (i = 0; i < N; i++) {
+			if (i == 0) {
+				ind1 = N - 1;
+			} else {
+				ind1 = i - 1;
+			}
+			ind1 = (i - 1 + N) % N;
+			ind2 = i;
+			y1 = vy[ind1];
+			y2 = vy[i];
+			if (y1 < y2) {
+				x1 = vx[ind1];
+				x2 = vx[i];
+			} else if (y1 > y2) {
+				y2 = vy[ind1];
+				y1 = vy[i];
+				x2 = vx[ind1];
+				x1 = vx[i];
+			} else {
+				continue;
+			}
+			if ((y >= y1) && (y < y2)) {
+				polyInts[ints++] = (y - y1) * (x2 - x1) / (y2 - y1) + x1;
+			} else if ((y == maxy) && (y > y1) && (y <= y2)) {
+				polyInts[ints++] = (y - y1) * (x2 - x1) / (y2 - y1) + x1;
+			}
+		}
+		qsort(polyInts, ints, sizeof(int), gfxPrimitivesCompareInt);
+
+		for (i = 0; i < ints; i += 2) {
+			hlineColor(scumm, polyInts[i], polyInts[i + 1], y, color);
+		}
+	}
+
+	return;
+}
+
+void ScummDebugger::drawBox(int box) {
+	BoxCoords coords;
+	int16 rx[4], ry[4];
+
+	_s->getBoxCoordinates(box, &coords);
+
+	rx[0] = coords.ul.x;
+	ry[0] = coords.ul.y;
+	rx[1] = coords.ur.x;
+	ry[1] = coords.ur.y;
+	rx[2] = coords.lr.x;
+	ry[2] = coords.lr.y;
+	rx[3] = coords.ll.x;
+	ry[3] = coords.ll.y;
+
+	// TODO - maybe use different colors for each box, and/or print the box number inside it?
+	fillQuad(_s, rx, ry, 13);
+
+	VirtScreen *vs = _s->findVirtScreen(coords.ul.y);
+	if (vs != NULL)
+		_s->setVirtscreenDirty(vs, 0, 0, _s->_screenWidth, _s->_screenHeight);
+	_s->drawDirtyScreenParts();
+	_s->_system->update_screen();
 }
 
 bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
