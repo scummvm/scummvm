@@ -385,7 +385,10 @@ void Insane::initvars(void) {
 	_actor[0].inventory[INV_CHAINSAW] = 0;
 	_actor[0].inventory[INV_MACE] = 0;
 	_actor[0].inventory[INV_2X4] = 0;
-	_actor[0].inventory[INV_WRENCH] = 1;
+	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+		_actor[0].inventory[INV_WRENCH] = 0;
+	else
+		_actor[0].inventory[INV_WRENCH] = 1;
 	_actor[0].inventory[INV_BOOT] = 1;
 	_actor[0].inventory[INV_HAND] = 1;
 	_actor[0].inventory[INV_DUST] = 0;
@@ -629,17 +632,17 @@ void Insane::putActors(void) {
 }
 
 void Insane::readState(void) { // PATCH
-	_actor[0].inventory[INV_CHAIN] = readArray(50) != 0;
-	_actor[0].inventory[INV_CHAINSAW] = readArray(51) != 0;
-	_actor[0].inventory[INV_MACE] = readArray(52) != 0;
-	_actor[0].inventory[INV_2X4] = readArray(53) != 0;
-	_actor[0].inventory[INV_WRENCH] = readArray(54) != 0;
-	_actor[0].inventory[INV_DUST] = readArray(55) != 0;
-	_actor[0].inventory[INV_HAND] = 1;
-	_actor[0].inventory[INV_BOOT] = 1;
 
-	_enemy[EN_CAVEFISH].field_10 = readArray(56);
 	if (!((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))) {
+		_actor[0].inventory[INV_CHAIN] = readArray(50) != 0;
+		_actor[0].inventory[INV_CHAINSAW] = readArray(51) != 0;
+		_actor[0].inventory[INV_MACE] = readArray(52) != 0;
+		_actor[0].inventory[INV_2X4] = readArray(53) != 0;
+		_actor[0].inventory[INV_WRENCH] = readArray(54) != 0;
+		_actor[0].inventory[INV_DUST] = readArray(55) != 0;
+		_actor[0].inventory[INV_HAND] = 1;
+		_actor[0].inventory[INV_BOOT] = 1;
+		_enemy[EN_CAVEFISH].field_10 = readArray(56);
 		_smlayer_room = readArray(320);
 		_smlayer_room2 = readArray(321);
 		_posBrokenTruck = readArray(322);

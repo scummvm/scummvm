@@ -135,14 +135,14 @@ void Insane::runScene(int arraynum) {
 
 	_insaneIsRunning = false;
 
-	writeArray(50, _actor[0].inventory[INV_CHAIN]);
-	writeArray(51, _actor[0].inventory[INV_CHAINSAW]);
-	writeArray(52, _actor[0].inventory[INV_MACE]);
-	writeArray(53, _actor[0].inventory[INV_2X4]);
-	writeArray(54, _actor[0].inventory[INV_WRENCH]);
-	writeArray(55, _actor[0].inventory[INV_DUST]);
-	writeArray(56, _enemy[EN_CAVEFISH].field_10);
 	if (!((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))) {
+		writeArray(50, _actor[0].inventory[INV_CHAIN]);
+		writeArray(51, _actor[0].inventory[INV_CHAINSAW]);
+		writeArray(52, _actor[0].inventory[INV_MACE]);
+		writeArray(53, _actor[0].inventory[INV_2X4]);
+		writeArray(54, _actor[0].inventory[INV_WRENCH]);
+		writeArray(55, _actor[0].inventory[INV_DUST]);
+		writeArray(56, _enemy[EN_CAVEFISH].field_10);
 		writeArray(337, _enemy[EN_TORQUE].occurences);
 		writeArray(329, _enemy[EN_ROTT1].occurences);
 		writeArray(330, _enemy[EN_ROTT2].occurences);
