@@ -24,6 +24,7 @@ BuildRoot	: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: desktop-file-utils
 BuildRequires: libogg-devel
 BuildRequires: libvorbis-devel
+BuildRequires: flac-devel
 BuildRequires: SDL-devel >= 1.2.2
 
 #------------------------------------------------------------------------------
