@@ -34,8 +34,7 @@ namespace Saga {
 
 #define ACTOR_BARRIERS_MAX 16
 
-#define ACTOR_STEPS_COUNT 32
-#define ACTOR_STEPS_MAX (ACTOR_STEPS_COUNT*2)
+#define ACTOR_MAX_STEPS_COUNT 32
 
 #define ACTOR_DIALOGUE_HEIGHT 100
 
@@ -170,6 +169,14 @@ struct ActorLocation {
 		y = (screenPoint.y * ACTOR_LMULT);
 		z = 0;
 	}
+	void toScreenPointXY(Point &screenPoint) const {
+		screenPoint.x = x / ACTOR_LMULT;
+		screenPoint.y = y / ACTOR_LMULT;
+	}
+	void toScreenPointXYZ(Point &screenPoint) const {
+		screenPoint.x = x / ACTOR_LMULT;
+		screenPoint.y = y / ACTOR_LMULT - z;
+	}
 };
 
 struct ActorData {
@@ -208,9 +215,12 @@ struct ActorData {
 	int framesCount;			// Actor's frames count
 	int frameListResourceId;	// Actor's frame list resource id
 	
-	int walkPath[ACTOR_STEPS_MAX];
+//	int walkPath[ACTOR_STEPS_MAX]; //todo: will gone
 	int walkStepsCount;
+	int walkStepsAlloced;
 	int walkStepIndex;
+	Point *walkStepsPoints;
+
 	ActorLocation finalTarget;
 	ActorLocation partialTarget;
 	int walkFrameSequence;
@@ -219,15 +229,22 @@ struct ActorData {
 		if (actionCycle >= cycleLimit)
 			actionCycle = 0;
 	}
-	void addWalkPath(int x, int y) {
-		if (walkStepsCount + 2 > ACTOR_STEPS_MAX)
-			error("walkStepsCount exceeds");
-		walkPath[walkStepsCount++] = x;
-		walkPath[walkStepsCount++] = y;
+
+	void addWalkStepPoint(const Point &point) {
+		if (walkStepsCount + 1 > walkStepsAlloced) {
+			walkStepsAlloced += 100;
+			walkStepsPoints = (Point*)realloc(walkStepsPoints, walkStepsAlloced * sizeof(*walkStepsPoints));
+		}
+		walkStepsPoints[walkStepsCount++] = point;
 	}
 
 	ActorData() {
 		memset(this, 0xFE, sizeof(*this)); 
+		walkStepsPoints = NULL;
+		walkStepsAlloced = walkStepsCount = walkStepIndex = 0;
+	}
+	~ActorData() {
+		free(walkStepsPoints);
 	}
 };
 

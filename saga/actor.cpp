@@ -141,15 +141,15 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_centerActor = _protagonist = NULL;
 	_lastTickMsec = 0;
 
-	_yCellCount = _vm->getStatusYOffset() - _vm->getPathYOffset();
-	_xCellCount = _vm->getDisplayWidth() / 2;
+	_yCellCount = _vm->getStatusYOffset() + 1;
+	_xCellCount = _vm->getDisplayWidth();
 
 	_pathCellCount = _yCellCount * _xCellCount;
 	_pathCell = (int*)malloc(_pathCellCount * sizeof(*_pathCell));
 	
 
 	_pathRect.left = 0;
-	_pathRect.right = _vm->getDisplayWidth();
+	_pathRect.right = _vm->getDisplayWidth() - 1;
 	_pathRect.top = _vm->getPathYOffset();
 	_pathRect.bottom = _vm->getStatusYOffset();
 
@@ -291,7 +291,7 @@ void Actor::realLocation(ActorLocation &location, uint16 objectId, uint16 walkFl
 	if (objectId != ID_NOTHING) {
 		if (IS_VALID_ACTOR_ID(objectId)) {
 			actor = getActor(objectId);
-			location = actor->location;
+			location.add( actor->location);
 		} else {
 			warning("ObjectId unsupported"); //todo: do it
 		}
@@ -322,8 +322,7 @@ ActorData *Actor::getActor(uint16 actorId) {
 
 bool Actor::validFollowerLocation(const ActorLocation &location) {
 	Point point;
-	point.x = location.x / ACTOR_LMULT;
-	point.y = location.y / ACTOR_LMULT;
+	location.toScreenPointXY(point);
 	
 	if ((point.x < 5) || (point.x >= _vm->getDisplayWidth() - 5) ||
 		(point.y < 0) || (point.y >= _vm->getStatusYOffset())) {
@@ -561,233 +560,228 @@ void Actor::handleActions(int msec, bool setup) {
 			debug(9, "Action: %d Flags: %x", actor->currentAction, actor->flags);
 
 		switch(actor->currentAction) {
-		case kActionWait:
-			if (!setup && (actor->flags & kFollower)) {
-				followProtagonist(actor);
-				if (actor->currentAction != kActionWait)
-					break;
-			}
-
-			if (actor->targetObject != ID_NOTHING) {
-				//todo: facetowardsobject
-			}
-
-			if (actor->flags & kCycle) {
-				frameRange = getActorFrameRange(actor->actorId, kFrameStand);
-				if (frameRange->frameCount > 0) {
-					actor->actionCycle++;
-					actor->actionCycle = (actor->actionCycle) % frameRange->frameCount;
-				} else {
-					actor->actionCycle = 0;
-				}
-				actor->frameNumber = frameRange->frameIndex + actor->actionCycle;
-				break;
-			}
-
-			if ((actor->actionCycle & 3) == 0) {
-				actor->cycleWrap(100);
-
-				frameRange = getActorFrameRange(actor->actorId, kFrameWait);
-				if ((frameRange->frameCount < 1 || actor->actionCycle > 33))
-					frameRange = getActorFrameRange(actor->actorId, kFrameStand);
-
-				if (frameRange->frameCount) {
-					actor->frameNumber = frameRange->frameIndex + (uint16)rand() % frameRange->frameCount;
-				} else {
-					actor->frameNumber = frameRange->frameIndex;
-				}
-			}
-			actor->actionCycle++;
-			break;
-
-		case kActionWalkToPoint:
-		case kActionWalkToLink:
-			// tiled stuff
-			if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
-				//todo: it
-			} else {
-				actor->partialTarget.delta(actor->location, delta);
-
-				while ((delta.x == 0) && (delta.y == 0)) {
-					int xstep;
-
-					if (actor->walkStepIndex >= actor->walkStepsCount) {
-						actorEndWalk(actor->actorId, true); 
+			case kActionWait:
+				if (!setup && (actor->flags & kFollower)) {
+					followProtagonist(actor);
+					if (actor->currentAction != kActionWait)
 						break;
+				}
+
+				if (actor->targetObject != ID_NOTHING) {
+					//todo: facetowardsobject
+				}
+
+				if (actor->flags & kCycle) {
+					frameRange = getActorFrameRange(actor->actorId, kFrameStand);
+					if (frameRange->frameCount > 0) {
+						actor->actionCycle++;
+						actor->actionCycle = (actor->actionCycle) % frameRange->frameCount;
+					} else {
+						actor->actionCycle = 0;
 					}
+					actor->frameNumber = frameRange->frameIndex + actor->actionCycle;
+					break;
+				}
 
-					xstep = actor->walkPath[actor->walkStepIndex++];
-					if (xstep > 256 - 32) {
-						xstep -= 256;
+				if ((actor->actionCycle & 3) == 0) {
+					actor->cycleWrap(100);
+
+					frameRange = getActorFrameRange(actor->actorId, kFrameWait);
+					if ((frameRange->frameCount < 1 || actor->actionCycle > 33))
+						frameRange = getActorFrameRange(actor->actorId, kFrameStand);
+
+					if (frameRange->frameCount) {
+						actor->frameNumber = frameRange->frameIndex + (uint16)rand() % frameRange->frameCount;
+					} else {
+						actor->frameNumber = frameRange->frameIndex;
 					}
+				}
+				actor->actionCycle++;
+				break;
 
-					actor->partialTarget.x = xstep * 2 * ACTOR_LMULT;
-					actor->partialTarget.y = actor->walkPath[actor->walkStepIndex++] * ACTOR_LMULT;
-					actor->partialTarget.z = 0;
-
+			case kActionWalkToPoint:
+			case kActionWalkToLink:
+				// tiled stuff
+				if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
+					//todo: it
+				} else {
 					actor->partialTarget.delta(actor->location, delta);
 
-					if (ABS(delta.y) > ABS(delta.x)) {
-						actor->actionDirection = delta.y > 0 ? kDirDown : kDirUp;
-					} else {
-						actor->actionDirection = delta.x > 0 ? kDirRight : kDirLeft;
-					}
-				}
+					while ((delta.x == 0) && (delta.y == 0)) {
 
-				speed = (ACTOR_LMULT * 2 * actor->screenScale + 63) / 256;
-				if (speed < 1) {
-					speed = 1;
-				}
+						if (actor->walkStepIndex >= actor->walkStepsCount) {
+							actorEndWalk(actor->actorId, true); 
+							break;
+						}
+
+						actor->partialTarget.fromScreenPoint(actor->walkStepsPoints[actor->walkStepIndex++]);
+						if (actor->partialTarget.x > 224 * 2 * ACTOR_LMULT) {
+							actor->partialTarget.x -= 256 * 2 * ACTOR_LMULT;
+						}
+
+						actor->partialTarget.delta(actor->location, delta);
+
+						if (ABS(delta.y) > ABS(delta.x)) {
+							actor->actionDirection = delta.y > 0 ? kDirDown : kDirUp;
+						} else {
+							actor->actionDirection = delta.x > 0 ? kDirRight : kDirLeft;
+						}
+					}
+
+					speed = (ACTOR_LMULT * 2 * actor->screenScale + 63) / 256;
+					if (speed < 1) {
+						speed = 1;
+					}
 
 				if ((actor->actionDirection == kDirUp) || (actor->actionDirection == kDirDown)) {
 					// move by 2's in vertical dimension
-					addDelta.y = clamp(-speed, delta.y, speed);
-					if (addDelta.y == delta.y) {
-						addDelta.x = delta.x;
-					} else {
-						addDelta.x = delta.x * addDelta.y; 
-						addDelta.x += (addDelta.x > 0) ? (delta.y / 2) : (-delta.y / 2);
-						addDelta.x /= delta.y;
-						actor->facingDirection = actor->actionDirection;
+						addDelta.y = clamp(-speed, delta.y, speed);
+						if (addDelta.y == delta.y) {
+							addDelta.x = delta.x;
+						} else {
+							addDelta.x = delta.x * addDelta.y; 
+							addDelta.x += (addDelta.x > 0) ? (delta.y / 2) : (-delta.y / 2);
+							addDelta.x /= delta.y;
+							actor->facingDirection = actor->actionDirection;
+						}
+					} else {						
+						addDelta.x = clamp(-2 * speed, delta.x, 2 * speed);
+						if (addDelta.x == delta.x) {
+							addDelta.y = delta.y;
+						} else {
+							addDelta.y = delta.y * addDelta.x;
+							addDelta.y += (addDelta.y > 0) ? (delta.x / 2) : (-delta.x / 2);
+							addDelta.y /= delta.x;
+							actor->facingDirection = actor->actionDirection;
+						}
 					}
-				} else {						
-					addDelta.x = clamp(-2 * speed, delta.x, 2 * speed);
-					if (addDelta.x == delta.x) {
-						addDelta.y = delta.y;
-					} else {
-						addDelta.y = delta.y * addDelta.x;
-						addDelta.y += (addDelta.y > 0) ? (delta.x / 2) : (-delta.x / 2);
-						addDelta.y /= delta.x;
-						actor->facingDirection = actor->actionDirection;
-					}
+
+					actor->location.add(addDelta);
 				}
 
-				actor->location.add(addDelta);
-			}
-
-			if (actor->actorFlags & kActorBackwards) {
-				actor->facingDirection = (actor->actionDirection + 4) & 7;
-				actor->actionCycle--;
-			} else {
-				actor->actionCycle++;
-			}
-
-			frameRange = getActorFrameRange(actor->actorId, actor->walkFrameSequence);
-
-			if (actor->actionCycle < 0) {
-				actor->actionCycle = frameRange->frameCount - 1;
-			} else {
-				if (actor->actionCycle >= frameRange->frameCount) {
-					actor->actionCycle = 0;
+				if (actor->actorFlags & kActorBackwards) {
+					actor->facingDirection = (actor->actionDirection + 4) & 7;
+					actor->actionCycle--;
+				} else {
+					actor->actionCycle++;
 				}
-			}
-
-			actor->frameNumber = frameRange->frameIndex + actor->actionCycle;
-			break;
-
-		case kActionWalkDir:
-			// tiled stuff
-			if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
-				//todo: it
-			} else {
-				actor->location.x += directionLUT[actor->actionDirection][0] * 2;
-				actor->location.y += directionLUT[actor->actionDirection][1] * 2;
 
 				frameRange = getActorFrameRange(actor->actorId, actor->walkFrameSequence);
-				actor->actionCycle++;
-				actor->cycleWrap(frameRange->frameCount);
+
+				if (actor->actionCycle < 0) {
+					actor->actionCycle = frameRange->frameCount - 1;
+				} else {
+					if (actor->actionCycle >= frameRange->frameCount) {
+						actor->actionCycle = 0;
+					}
+				}
+
 				actor->frameNumber = frameRange->frameIndex + actor->actionCycle;
-			}
-			break;
+				break;
 
-		case kActionSpeak:
-			actor->actionCycle++;
-			actor->cycleWrap(64);
+			case kActionWalkDir:
+				// tiled stuff
+				if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
+					//todo: it
+				} else {
+					actor->location.x += directionLUT[actor->actionDirection][0] * 2;
+					actor->location.y += directionLUT[actor->actionDirection][1] * 2;
 
-			frameRange = getActorFrameRange(actor->actorId, kFrameGesture);
-			if (actor->actionCycle >= frameRange->frameCount) {
+					frameRange = getActorFrameRange(actor->actorId, actor->walkFrameSequence);
+					actor->actionCycle++;
+					actor->cycleWrap(frameRange->frameCount);
+					actor->frameNumber = frameRange->frameIndex + actor->actionCycle;
+				}
+				break;
+
+			case kActionSpeak:
+				actor->actionCycle++;
+				actor->cycleWrap(64);
+
+				frameRange = getActorFrameRange(actor->actorId, kFrameGesture);
+				if (actor->actionCycle >= frameRange->frameCount) {
 				if (actor->actionCycle & 1)
 					break;
-				frameRange = getActorFrameRange(actor->actorId, kFrameSpeak);
+					frameRange = getActorFrameRange(actor->actorId, kFrameSpeak);
 
-				state = (uint16)rand() % (frameRange->frameCount + 1);
+					state = (uint16)rand() % (frameRange->frameCount + 1);
 
-				if (state == 0) {
-					frameRange = getActorFrameRange(actor->actorId, kFrameStand);
+					if (state == 0) {
+						frameRange = getActorFrameRange(actor->actorId, kFrameStand);
+					} else {
+						state--;
+					}
 				} else {
-					state--;
-				}
-			} else {
-				state = actor->actionCycle;
-			}
-
-			actor->frameNumber = frameRange->frameIndex + state;
-			break;
-
-		case kActionAccept:
-		case kActionStoop:
-			break;
-
-		case kActionCycleFrames:
-		case kActionPongFrames:
-			if (actor->cycleTimeCount > 0) {
-				actor->cycleTimeCount--;
-				break;
-			}
-
-			actor->cycleTimeCount = actor->cycleDelay;
-			actor->actionCycle++;
-
-			frameRange = getActorFrameRange(actor->actorId, actor->cycleFrameSequence);
-				
-			if (actor->currentAction == kActionPongFrames) {
-				if (actor->actionCycle >= frameRange->frameCount * 2 - 2) {
-					if (actor->actorFlags & kActorContinuous) {
-						actor->actionCycle = 0;
-					} else {
-						actor->currentAction = kActionFreeze;
-						break;
-					}
+					state = actor->actionCycle;
 				}
 
-				state = actor->actionCycle;
-				if (state >= frameRange->frameCount) {
-					state = frameRange->frameCount * 2 - 2 - state;
-				}
-			} else {
-				if (actor->actionCycle >= frameRange->frameCount) {
-					if (actor->actorFlags & kActorContinuous) {
-						actor->actionCycle = 0;
-					} else {
-						actor->currentAction = kActionFreeze;
-						break;
-					}
-				}
-				state = actor->actionCycle;
-			}
-
-			if (frameRange->frameCount && (actor->actorFlags & kActorRandom)) {
-				state = rand() % frameRange->frameCount;
-			}
-
-			if (actor->actorFlags & kActorBackwards) {
-				actor->frameNumber = frameRange->frameIndex + frameRange->frameCount - 1 - state;
-			} else {
 				actor->frameNumber = frameRange->frameIndex + state;
-			}
-			break;
+				break;
 
-		case kActionFall:
-			debug(9, "kActionFall not implemented");
+			case kActionAccept:
+			case kActionStoop:
+				break;
 
-			//todo: do it
-			break;
+			case kActionCycleFrames:
+			case kActionPongFrames:
+				if (actor->cycleTimeCount > 0) {
+					actor->cycleTimeCount--;
+					break;
+				}
 
-		case kActionClimb:
-			debug(9, "kActionClimb not implemented");
+				actor->cycleTimeCount = actor->cycleDelay;
+				actor->actionCycle++;
 
-			//todo: do it
-			break;
+				frameRange = getActorFrameRange(actor->actorId, actor->cycleFrameSequence);
+				
+				if (actor->currentAction == kActionPongFrames) {
+					if (actor->actionCycle >= frameRange->frameCount * 2 - 2) {
+						if (actor->actorFlags & kActorContinuous) {
+							actor->actionCycle = 0;
+						} else {
+							actor->currentAction = kActionFreeze;
+							break;
+						}
+					}
+
+					state = actor->actionCycle;
+					if (state >= frameRange->frameCount) {
+						state = frameRange->frameCount * 2 - 2 - state;
+					}
+				} else {
+					if (actor->actionCycle >= frameRange->frameCount) {
+						if (actor->actorFlags & kActorContinuous) {
+							actor->actionCycle = 0;
+						} else {
+							actor->currentAction = kActionFreeze;
+							break;
+						}
+					}
+					state = actor->actionCycle;
+				}
+
+				if (frameRange->frameCount && (actor->actorFlags & kActorRandom)) {
+					state = rand() % frameRange->frameCount;
+				}
+
+				if (actor->actorFlags & kActorBackwards) {
+					actor->frameNumber = frameRange->frameIndex + frameRange->frameCount - 1 - state;
+				} else {
+					actor->frameNumber = frameRange->frameIndex + state;
+				}
+				break;
+
+			case kActionFall:
+				debug(9,"kActionFall not implemented");
+
+				//todo: do it
+				break;
+
+			case kActionClimb:
+				debug(9,"kActionClimb not implemented");
+
+				//todo: do it
+				break;
 		}
 	}
 
@@ -832,8 +826,7 @@ void Actor::calcActorScreenPosition(ActorData *actor) {
 			}
 		}
 
-		actor->screenPosition.x = (actor->location.x / ACTOR_LMULT);
-		actor->screenPosition.y = (actor->location.y / ACTOR_LMULT) - actor->location.z;
+		actor->location.toScreenPointXYZ(actor->screenPosition);
 	}
 
 	if (actor->index == 2)
@@ -1092,14 +1085,12 @@ bool Actor::actorWalkTo(uint16 actorId, const ActorLocation &toLocation) {
 	if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
 		//todo: it
 	} else {
-
-		pointFrom.x = actor->location.x / ACTOR_LMULT;
-		pointFrom.y = actor->location.y / ACTOR_LMULT;
+		
+		actor->location.toScreenPointXY(pointFrom);
 
 		extraStartNode = _vm->_scene->offscreenPath(pointFrom);
 
-		pointTo.x = toLocation.x / ACTOR_LMULT;
-		pointTo.y = toLocation.y / ACTOR_LMULT;
+		toLocation.toScreenPointXY(pointTo);
 
 		extraEndNode = _vm->_scene->offscreenPath(pointTo);
 
@@ -1186,23 +1177,25 @@ bool Actor::actorWalkTo(uint16 actorId, const ActorLocation &toLocation) {
 			actor->walkStepsCount = 0;
 			findActorPath(actor, pointFrom, pointTo);
 
+			if (actor->walkStepsCount == 0) {
+				error("actor->walkStepsCount == 0");
+			}
+
 			if (extraStartNode) {
 				actor->walkStepIndex = 0;
 			} else {
-				actor->walkStepIndex = 2;
-			}
-
-			if (actor->walkStepsCount == 0) {
-				actor->walkStepsCount = 2;
+				actor->walkStepIndex = 1;
 			}
 
 			if (extraEndNode) {
-				actor->walkPath[actor->walkStepsCount - 2] = pointTo.x / (ACTOR_LMULT * 2);
-				actor->walkPath[actor->walkStepsCount - 1] = pointTo.y / ACTOR_LMULT;
+				Point tempPoint;
+				toLocation.toScreenPointXY(tempPoint);
+				actor->walkStepsCount--;
+				actor->addWalkStepPoint(tempPoint);
 			}
 
-			pointBest.x = actor->walkPath[actor->walkStepsCount - 2] * 2;
-			pointBest.y = actor->walkPath[actor->walkStepsCount - 1];
+
+			pointBest = actor->walkStepsPoints[actor->walkStepsCount - 1];
 
 			pointFrom.x &= ~1;
 			delta.x = ABS(pointFrom.x - pointTo.x);
@@ -1220,9 +1213,8 @@ bool Actor::actorWalkTo(uint16 actorId, const ActorLocation &toLocation) {
 				actor->walkStepsCount = 0;
 			}			
 		} else {
-			actor->walkPath[0] = pointTo.x / 2;
-			actor->walkPath[1] = pointTo.y;
-			actor->walkStepsCount = 2;
+			actor->walkStepsCount = 0;
+			actor->addWalkStepPoint(pointTo);
 			actor->walkStepIndex = 0;
 		}
 
@@ -1236,7 +1228,7 @@ bool Actor::actorWalkTo(uint16 actorId, const ActorLocation &toLocation) {
 				_actors[1].actorFlags &= ~kActorNoFollow;
 				_actors[2].actorFlags &= ~kActorNoFollow;
 			}			
-			actor->currentAction = (actor->walkStepsCount == ACTOR_STEPS_COUNT) ? kActionWalkToLink : kActionWalkToPoint;
+			actor->currentAction = (actor->walkStepsCount >= ACTOR_MAX_STEPS_COUNT) ? kActionWalkToLink : kActionWalkToPoint;
 			actor->walkFrameSequence = kFrameWalk;
 		}
 
@@ -1315,32 +1307,25 @@ void Actor::abortSpeech() {
 }
 
 void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point &toPoint) {
-	Point tempPoint;
 	Point iteratorPoint;
 	Point bestPoint;
 	Point maskPoint;
-	int maskType1, maskType2;
+	int maskType;
 	int cellValue;
 	int i;
 	Rect intersect;
 	
-	tempPoint.y = toPoint.y;
-	tempPoint.x = toPoint.x >> 1;
 
 	actor->walkStepsCount = 0;
 	if (fromPoint == toPoint) {
-		actor->addWalkPath(tempPoint.x, tempPoint.y);
+		actor->addWalkStepPoint(toPoint);
 		return;
 	}
 		
 	for (iteratorPoint.y = 0; iteratorPoint.y < _yCellCount; iteratorPoint.y++) {
-		maskPoint.y = iteratorPoint.y + _vm->getPathYOffset();
 		for (iteratorPoint.x = 0; iteratorPoint.x < _xCellCount; iteratorPoint.x++) {
-			maskPoint.x = iteratorPoint.x * 2;
-			maskType1 = _vm->_scene->getBGMaskType(maskPoint);
-			maskPoint.x += 1;
-			maskType2 = _vm->_scene->getBGMaskType(maskPoint);
-			cellValue = (maskType1 | maskType2) ? kPathCellBarrier : kPathCellEmpty;
+			maskType = _vm->_scene->getBGMaskType(iteratorPoint);
+			cellValue = maskType ? kPathCellBarrier : kPathCellEmpty;
 			setPathCell(iteratorPoint, cellValue);
 		}
 	}
@@ -1351,14 +1336,9 @@ void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point 
 		intersect.right = MIN(_pathRect.right, _barrierList[i].right);
 		intersect.bottom = MIN(_pathRect.bottom, _barrierList[i].bottom);
 		
-		int16 w = intersect.width() >> 1;
-		intersect.left >>= 1;
-		intersect.top -= _vm->getPathYOffset();
-		intersect.right = intersect.left + w;
-		intersect.bottom -= _vm->getPathYOffset();
 
-		for (iteratorPoint.y = intersect.top; iteratorPoint.y < intersect.bottom; iteratorPoint.y++) {
-			for (iteratorPoint.x = intersect.left; iteratorPoint.x < intersect.right; iteratorPoint.x++) {
+		for (iteratorPoint.y = intersect.top; iteratorPoint.y <= intersect.bottom; iteratorPoint.y++) {
+			for (iteratorPoint.x = intersect.left; iteratorPoint.x <= intersect.right; iteratorPoint.x++) {
 				setPathCell(iteratorPoint, kPathCellBarrier);
 			}
 		}
@@ -1367,10 +1347,8 @@ void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point 
 
 
 	if (scanPathLine(fromPoint, toPoint)) {
-		iteratorPoint.y = fromPoint.y;
-		iteratorPoint.x = fromPoint.x >> 1;
-		actor->addWalkPath(iteratorPoint.x, iteratorPoint.y);
-		actor->addWalkPath(tempPoint.x, tempPoint.y);
+		actor->addWalkStepPoint(fromPoint);
+		actor->addWalkStepPoint(toPoint);
 		return;
 	}
 	
@@ -1378,9 +1356,7 @@ void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point 
 	i = fillPathArray(fromPoint, toPoint, bestPoint);
 
 	if (fromPoint == bestPoint) {
-		iteratorPoint.y = bestPoint.y;
-		iteratorPoint.x = bestPoint.x >> 1;
-		actor->addWalkPath(iteratorPoint.x, iteratorPoint.y);
+		actor->addWalkStepPoint(bestPoint);
 		return;
 	}
 
@@ -1393,7 +1369,6 @@ bool Actor::scanPathLine(const Point &point1, const Point &point2) {
 	Point delta;
 	bool interchange = false;
 	Point fDelta;
-	Point iteratorPoint;
 	int errterm;
 	int s1;
 	int s2;
@@ -1432,20 +1407,17 @@ bool Actor::scanPathLine(const Point &point1, const Point &point2) {
 
 		errterm += fDelta.y;
 
-		iteratorPoint.x = point.x >> 1;
-		iteratorPoint.y = point.y - _vm->getPathYOffset();
-		if (validPathCellPoint(iteratorPoint)) {
-			if (getPathCell(iteratorPoint) == kPathCellBarrier) {
-				return false;
-			}
+		if (!validPathCellPoint(point)) {
+			return false;
+		}
+		if (getPathCell(point) == kPathCellBarrier) {
+			return false;
 		}
 	}
 	return true;
 }
 
 int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &bestPoint) {
-	Point  pathFromPoint;
-	Point  pathToPoint;
 	int bestRating;
 	int currentRating;
 	Point bestPath;
@@ -1458,27 +1430,21 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 	PathDirectionList::iterator newPathDirectionIterator;
 	int directionCount;
 
-
-	pathFromPoint.x = fromPoint.x >> 1;
-	pathFromPoint.y = fromPoint.y - _vm->getPathYOffset();
-
-	pathToPoint.x = toPoint.x >> 1;
-	pathToPoint.y = toPoint.y - _vm->getPathYOffset();
-
 	pointCounter = 0;
-	bestRating = quickDistance(pathFromPoint, pathToPoint);
-	bestPath = pathFromPoint;
+	bestRating = quickDistance(fromPoint, toPoint);
+	bestPath = fromPoint;
 	
 	for (startDirection = 0; startDirection < 4; startDirection++) {
 		newPathDirectionIterator = pathDirectionList.pushBack();
 		pathDirection = newPathDirectionIterator.operator->();
-		pathDirection->x = pathFromPoint.x;
-		pathDirection->y = pathFromPoint.y;
+		pathDirection->x = fromPoint.x;
+		pathDirection->y = fromPoint.y;
 		pathDirection->direction = startDirection;
 	}
-	if (validPathCellPoint(pathFromPoint)) {
-		setPathCell(pathFromPoint, 0);
-	}
+
+	if (validPathCellPoint(fromPoint)) {
+		setPathCell(fromPoint, 0);
+	}	
 	
 	pathDirectionIterator = pathDirectionList.begin();
 
@@ -1489,7 +1455,8 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 			Point nextPoint;
 			nextPoint.x = samplePathDirection->x + pathDirection->x;
 			nextPoint.y = samplePathDirection->y + pathDirection->y;
-			if ((nextPoint.x >= 0) && (nextPoint.y >= 0) && (nextPoint.x < _xCellCount) && (nextPoint.y < _yCellCount) && (getPathCell(nextPoint) == kPathCellEmpty)) {
+			if (validPathCellPoint(nextPoint) && 
+				(getPathCell(nextPoint) == kPathCellEmpty)) {
 				setPathCell(nextPoint, samplePathDirection->direction);
 
 				newPathDirectionIterator = pathDirectionList.pushBack();
@@ -1498,12 +1465,12 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 				pathDirection->y = nextPoint.y;
 				pathDirection->direction = samplePathDirection->direction;
 				++pointCounter;
-				if (nextPoint == pathToPoint) {
+				if (nextPoint == toPoint) {
 					bestPoint.x = toPoint.x & ~1;
 					bestPoint.y = toPoint.y;
 					return pointCounter;
 				}
-				currentRating = quickDistance(nextPoint, pathToPoint);
+				currentRating = quickDistance(nextPoint, toPoint);
 				if (currentRating  < bestRating) {
 					bestRating = currentRating;
 					bestPath = nextPoint;
@@ -1513,51 +1480,49 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 		++pathDirectionIterator;
 	} while (pathDirectionIterator != pathDirectionList.end());
 
-	bestPoint.x = bestPath.x * 2;
-	bestPoint.y = bestPath.y + _vm->getPathYOffset();
-
+	bestPoint = bestPath;	
 	return pointCounter;
 }
 
 void Actor::setActorPath(ActorData *actor, const Point &fromPoint, const Point &toPoint) {
-	Point  pathFromPoint;
-	Point  pathToPoint;
 	Point *point;
 	Point nextPoint;
 	int direction;
 	PathNode *node;
 	int i, last;
 
-	pathFromPoint.x = fromPoint.x >> 1;
+/*	pathFromPoint.x = fromPoint.x >> 1;
 	pathFromPoint.y = fromPoint.y - _vm->getPathYOffset();
 
 	pathToPoint.x = toPoint.x >> 1;
-	pathToPoint.y = toPoint.y - _vm->getPathYOffset();
+	pathToPoint.y = toPoint.y - _vm->getPathYOffset();*/
 
 
 
-	_pathList[0].x = pathToPoint.x;
-	_pathList[0].y = toPoint.y;
-	nextPoint = pathToPoint;
+	_pathList[0] = toPoint;
+	nextPoint = toPoint;
 	_pathListIndex = 0;
 
 	point = _pathList;
-	while ( !(nextPoint == pathFromPoint)) {
+	while ( !(nextPoint == fromPoint)) {
 		_pathListIndex++;
 		if (_pathListIndex >= PATH_LIST_MAX) {
 			error("Actor::setActorPath PATH_LIST_MAX");
 		}
 		point++;
 		direction = getPathCell(nextPoint);
+		if ((direction < 0) || (direction > 8)) {
+			error("Actor::setActorPath error direction");
+		}
 		nextPoint.x -= pathDirectionLUT2[direction][0];
 		nextPoint.y -= pathDirectionLUT2[direction][1];
 		point->x = nextPoint.x;
-		point->y = nextPoint.y + _vm->getPathYOffset();
+		point->y = nextPoint.y;
 	}
 
 	pathToNode();
 
-	removeNodes();
+	removeNodes();	
 
     nodeToPath();
 
@@ -1566,7 +1531,9 @@ void Actor::setActorPath(ActorData *actor, const Point &fromPoint, const Point &
 	_pathNodeIndex++;
 	last = MIN(_pathNodeIndex, PATH_NODE_MAX);
 	for (i = 0, node = _pathNodeList; i < last; i++, node++) {
-		actor->addWalkPath(node->x, node->y);
+		nextPoint.x = node->x;
+		nextPoint.y = node->y;
+		actor->addWalkStepPoint(nextPoint);
 	}
 
 }
@@ -1692,9 +1659,9 @@ void Actor::removeNodes() {
 	Point point1, point2;
 	fNode = &_pathNodeList[_pathNodeIndex];
 	
-	point1.x = _pathNodeList[0].x * 2;
+	point1.x = _pathNodeList[0].x;
 	point1.y = _pathNodeList[0].y;
-	point2.x = fNode->x * 2;
+	point2.x = fNode->x;
 	point2.y = fNode->y;
 
 	if (scanPathLine(point1, point2)) {
@@ -1711,9 +1678,9 @@ void Actor::removeNodes() {
 			continue;
 		}
 
-		point1.x = _pathNodeList[0].x * 2;
+		point1.x = _pathNodeList[0].x;
 		point1.y = _pathNodeList[0].y;
-		point2.x = iNode->x * 2;
+		point2.x = iNode->x;
 		point2.y = iNode->y;
 
 		if (scanPathLine(point1, point2)) {
@@ -1727,9 +1694,9 @@ void Actor::removeNodes() {
 		if (iNode->x == PATH_NODE_EMPTY) {
 			continue;
 		}
-		point1.x = fNode->x * 2;
+		point1.x = fNode->x;
 		point1.y = fNode->y;
-		point2.x = iNode->x * 2;
+		point2.x = iNode->x;
 		point2.y = iNode->y;
 
 		if (scanPathLine(point1, point2)) {
@@ -1744,15 +1711,15 @@ void Actor::removeNodes() {
 		if (iNode->x == PATH_NODE_EMPTY) {
 			continue;
 		}
-		for (j = i + 2,jNode = iNode + 2; j < _pathNodeIndex; j++, jNode++)
+		for (j = i + 2, jNode = iNode + 2; j < _pathNodeIndex; j++, jNode++)
 		{
 			if (jNode->x == PATH_NODE_EMPTY) {
 				continue;
 			}
 
-			point1.x = iNode->x * 2;
+			point1.x = iNode->x;
 			point1.y = iNode->y;
-			point2.x = jNode->x * 2;
+			point2.x = jNode->x;
 			point2.y = jNode->y;
 
 			if (scanPathLine(point1, point2)) {
@@ -1830,9 +1797,9 @@ void Actor::removePathPoints() {
 			point1.y = _pathList[start].y;
 			point2.y = _pathList[end].y;
 			
-			point3.x = point1.x * 2;
+			point3.x = point1.x;
 			point3.y = point1.y;
-			point4.x = point2.x * 2;
+			point4.x = point2.x;
 			point4.y = point2.y;
 			if (scanPathLine( point3, point4)) {
 				for (l = 1; l <= newPathNodeIndex; l++) {
