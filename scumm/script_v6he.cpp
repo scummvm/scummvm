@@ -579,6 +579,7 @@ void ScummEngine_v6he::o6_actorOps() {
 		break;
 	case 64:
 		// _heversion >= 72
+		l = pop();
 		k = pop();
 		j = pop();
 		i = pop();
