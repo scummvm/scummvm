@@ -101,15 +101,14 @@ void Sound::processSoundQues() {
 				);
 #endif
 			
-			if (!(_scumm->_features & GF_AFTER_V7)) {
+			if (_scumm->_features & GF_AFTER_V7) {
+				if (_scumm->_imuseDigital)
+					_scumm->_imuseDigital->doCommand(data[0], data[1], data[2], data[3], data[4],
+																	data[5], data[6], data[7]);
+			} else {
 				if (_scumm->_imuse)
 					_scumm->VAR(_scumm->VAR_SOUNDRESULT) =
 						(short)_scumm->_imuse->doCommand(data[0], data[1], data[2], data[3], data[4],
-																	data[5], data[6], data[7]);
-			} else {
-				if (_scumm->_imuseDigital)
-					_scumm->VAR(_scumm->VAR_SOUNDRESULT) =
-						(short)_scumm->_imuseDigital->doCommand(data[0], data[1], data[2], data[3], data[4],
 																	data[5], data[6], data[7]);
 			}
 		}
