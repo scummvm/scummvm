@@ -30,31 +30,22 @@
 
 #ifdef NEW_MIXER_CODE
 #include "rate.h"
-#endif
 
 class Channel {
 protected:
 	SoundMixer *_mixer;
 	PlayingSoundHandle *_handle;
-#ifdef NEW_MIXER_CODE
 	RateConverter *_converter;
 	AudioInputStream *_input;
-#endif
 public:
 	int _id;
 	Channel(SoundMixer *mixer, PlayingSoundHandle *handle)
-		: _mixer(mixer), _handle(handle),
-#ifdef NEW_MIXER_CODE
-		_converter(0), _input(0), 
-#endif
-		_id(-1) {
+		: _mixer(mixer), _handle(handle), _converter(0), _input(0), _id(-1) {
 		assert(mixer);
 	}
 	virtual ~Channel() {
-#ifdef NEW_MIXER_CODE
 		delete _converter;
 		delete _input;
-#endif
 		if (_handle)
 			*_handle = 0;
 	}
@@ -63,7 +54,6 @@ public:
 	   10 means that the buffer contains twice 10 sample, each
 	   16 bits, for a total of 40 bytes.
 	 */
-#ifdef NEW_MIXER_CODE
 	virtual void mix(int16 *data, uint len) {
 		assert(_input);
 		assert(_converter);
@@ -77,9 +67,6 @@ public:
 		const int volume = isMusicChannel() ? _mixer->getMusicVolume() : _mixer->getVolume();
 		_converter->flow(*_input, data, len, volume);
 	}
-#else
-	virtual void mix(int16 *data, uint len) = 0;
-#endif
 	void destroy() {
 		for (int i = 0; i != SoundMixer::NUM_CHANNELS; i++)
 			if (_mixer->_channels[i] == this)
@@ -91,7 +78,79 @@ public:
 
 class ChannelRaw : public Channel {
 	byte *_ptr;
-#ifndef NEW_MIXER_CODE
+public:
+	ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id, uint32 loopStart, uint32 loopEnd);
+	~ChannelRaw();
+	bool isMusicChannel() const		{ return false; }
+};
+
+class ChannelStream : public Channel {
+	bool _finished;
+public:
+	ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size);
+	void mix(int16 *data, uint len);
+	void append(void *sound, uint32 size);
+	bool isMusicChannel() const		{ return true; }
+	void finish()					{ _finished = true; }
+};
+
+#ifdef USE_MAD
+class ChannelMP3 : public Channel {
+public:
+	ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, uint size);
+	bool isMusicChannel() const		{ return false; }
+};
+
+class ChannelMP3CDMusic : public Channel {
+public:
+	ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration);
+	bool isMusicChannel() const		{ return true; }
+};
+#endif // USE_MAD
+
+#ifdef USE_VORBIS
+class ChannelVorbis : public Channel {
+	bool _is_cd_track;
+public:
+	ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track);
+	bool isMusicChannel() const		{ return _is_cd_track; }
+};
+#endif
+
+
+#else // NEW_MIXER_CODE
+
+class Channel {
+protected:
+	SoundMixer *_mixer;
+	PlayingSoundHandle *_handle;
+public:
+	int _id;
+	Channel(SoundMixer *mixer, PlayingSoundHandle *handle)
+		: _mixer(mixer), _handle(handle), _id(-1) {
+		assert(mixer);
+	}
+	virtual ~Channel() {
+		if (_handle)
+			*_handle = 0;
+	}
+	
+	/* len indicates the number of sample *pairs*. So a value of
+	   10 means that the buffer contains twice 10 sample, each
+	   16 bits, for a total of 40 bytes.
+	 */
+	virtual void mix(int16 *data, uint len) = 0;
+	void destroy() {
+		for (int i = 0; i != SoundMixer::NUM_CHANNELS; i++)
+			if (_mixer->_channels[i] == this)
+				_mixer->_channels[i] = 0;
+		delete this;
+	}
+	virtual bool isMusicChannel() const	= 0;
+};
+
+class ChannelRaw : public Channel {
+	byte *_ptr;
 	byte _flags;
 	uint32 _pos;
 	uint32 _size;
@@ -100,20 +159,16 @@ class ChannelRaw : public Channel {
 	uint32 _realSize, _rate;
 	byte *_loop_ptr;
 	uint32 _loop_size;
-#endif
 
 public:
 	ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id, uint32 loopStart, uint32 loopEnd);
 	~ChannelRaw();
 
-#ifndef NEW_MIXER_CODE
 	void mix(int16 *data, uint len);
-#endif
 	bool isMusicChannel() const		{ return false; }
 };
 
 class ChannelStream : public Channel {
-#ifndef NEW_MIXER_CODE
 	byte *_ptr;
 	byte *_endOfData;
 	byte *_endOfBuffer;
@@ -123,7 +178,6 @@ class ChannelStream : public Channel {
 	uint32 _bufferSize;
 	uint32 _rate;
 	byte _flags;
-#endif
 	bool _finished;
 
 public:
@@ -136,24 +190,7 @@ public:
 	void finish()					{ _finished = true; }
 };
 
-
 #ifdef USE_MAD
-
-#ifdef NEW_MIXER_CODE
-
-class ChannelMP3 : public Channel {
-public:
-	ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, uint size);
-	bool isMusicChannel() const		{ return false; }
-};
-
-class ChannelMP3CDMusic : public Channel {
-public:
-	ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration);
-	bool isMusicChannel() const		{ return true; }
-};
-
-#else // NEW_MIXER_CODE
 class ChannelMP3Common : public Channel {
 protected:
 	byte *_ptr;
@@ -190,27 +227,20 @@ public:
 	void mix(int16 *data, uint len);
 	bool isMusicChannel() const		{ return true; }
 };
-#endif // NEW_MIXER_CODE
-
 #endif // USE_MAD
-
 
 #ifdef USE_VORBIS
 class ChannelVorbis : public Channel {
-#ifndef NEW_MIXER_CODE
 	OggVorbis_File *_ov_file;
 	int _end_pos;
-#endif
 	bool _is_cd_track;
-
 public:
 	ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track);
-
-#ifndef NEW_MIXER_CODE
 	void mix(int16 *data, uint len);
-#endif
 	bool isMusicChannel() const		{ return _is_cd_track; }
 };
+#endif
+
 #endif
 
 
@@ -460,8 +490,116 @@ void SoundMixer::setMusicVolume(int volume) {
 }
 
 #ifdef NEW_MIXER_CODE
-#define clamped_add_16(a, b)	clampedAdd(a, b)
-#else
+
+/* RAW mixer */
+ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id, uint32 loopStart, uint32 loopEnd)
+	: Channel(mixer, handle) {
+	_id = id;
+	_ptr = (byte *)sound;
+	
+	// Create the input stream
+	if (flags & SoundMixer::FLAG_LOOP) {
+		if (loopEnd == 0) {
+			_input = makeLinearInputStream(flags, _ptr, size, 0, size);
+		} else {
+			assert(loopStart < loopEnd && loopEnd <= size);
+			_input = makeLinearInputStream(flags, _ptr, size, loopStart, loopEnd - loopStart);
+		}
+	} else {
+		_input = makeLinearInputStream(flags, _ptr, size, 0, 0);
+	}
+
+	// Get a rate converter instance
+	_converter = makeRateConverter(rate, mixer->getOutputRate(), _input->isStereo(), (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0);
+
+	if (!(flags & SoundMixer::FLAG_AUTOFREE))
+		_ptr = 0;
+}
+
+ChannelRaw::~ChannelRaw() {
+	free(_ptr);
+}
+
+ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle,
+                             void *sound, uint32 size, uint rate,
+                             byte flags, uint32 buffer_size)
+	: Channel(mixer, handle) {
+	assert(size <= buffer_size);
+
+	// Create the input stream
+	_input = makeWrappedInputStream(flags, buffer_size);
+	
+	// Append the initial data
+	((WrappedAudioInputStream *)_input)->append((const byte *)sound, size);
+
+	// Get a rate converter instance
+	_converter = makeRateConverter(rate, mixer->getOutputRate(), _input->isStereo(), (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0);
+
+	_finished = false;
+}
+
+void ChannelStream::append(void *data, uint32 len) {
+	((WrappedAudioInputStream *)_input)->append((const byte *)data, len);
+}
+
+void ChannelStream::mix(int16 *data, uint len) {
+	assert(_input);
+	assert(_converter);
+
+	if (_input->eos()) {
+		// TODO: call drain method
+
+		// Normally, the stream stays around even if all its data is used up.
+		// This is in case more data is streamed into it. To make the stream
+		// go away, one can either stop() it (which takes effect immediately,
+		// ignoring any remaining sound data), or finish() it, which means
+		// it will finish playing before it terminates itself.
+		if (_finished) {
+			destroy();
+		}
+
+		return;
+	}
+
+	const int volume = _mixer->getVolume();	// FIXME: Shouldn't this be music volume instead??
+//	const int volume = isMusicChannel() ? _mixer->getMusicVolume() : _mixer->getVolume();
+	_converter->flow(*_input, data, len, volume);
+}
+
+#ifdef USE_MAD
+ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, uint size)
+	: Channel(mixer, handle) {
+	// Create the input stream
+	_input = makeMP3Stream(file, mad_timer_zero, size);
+
+	// Get a rate converter instance
+	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo());
+}
+
+ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration) 
+	: Channel(mixer, handle) {
+	// Create the input stream
+	_input = makeMP3Stream(file, duration, 0);
+
+	// Get a rate converter instance
+	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo());
+}
+#endif // USE_MAD
+
+#ifdef USE_VORBIS
+ChannelVorbis::ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track)
+	: Channel(mixer, handle) {
+	// Create the input stream
+	_input = makeVorbisStream(ov_file, duration);
+
+	// Get a rate converter instance
+	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo());
+	_is_cd_track = is_cd_track;
+}
+#endif // USE_VORBIS
+
+#else // NEW_MIXER_CODE
+
 /*
  * Class that performs cubic interpolation on integer data.
  * It is expected that the data is equidistant, i.e. all have the same
@@ -674,7 +812,6 @@ static int16 mixer_element_size[] = {
 	2, 2,
 	4, 4
 };
-#endif
 
 /* RAW mixer */
 ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id, uint32 loopStart, uint32 loopEnd)
@@ -682,25 +819,6 @@ ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *soun
 	_id = id;
 	_ptr = (byte *)sound;
 	
-#ifdef NEW_MIXER_CODE
-	// Create the input stream
-	if (flags & SoundMixer::FLAG_LOOP) {
-		if (loopEnd == 0) {
-			_input = makeLinearInputStream(flags, _ptr, size, 0, size);
-		} else {
-			assert(loopStart < loopEnd && loopEnd <= size);
-			_input = makeLinearInputStream(flags, _ptr, size, loopStart, loopEnd - loopStart);
-		}
-	} else {
-		_input = makeLinearInputStream(flags, _ptr, size, 0, 0);
-	}
-
-	// Get a rate converter instance
-	_converter = makeRateConverter(rate, mixer->getOutputRate(), _input->isStereo(), (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0);
-
-	if (!(flags & SoundMixer::FLAG_AUTOFREE))
-		_ptr = 0;
-#else
 	_flags = flags;
 	_pos = 0;
 	_fpPos = 0;
@@ -722,19 +840,13 @@ ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *soun
 		_loop_ptr = _ptr;
 		_loop_size = _size;
 	}
-#endif
 }
 
 ChannelRaw::~ChannelRaw() {
-#ifdef NEW_MIXER_CODE
-	free(_ptr);
-#else
 	if (_flags & SoundMixer::FLAG_AUTOFREE)
 		free(_ptr);
-#endif
 }
 
-#ifndef NEW_MIXER_CODE
 void ChannelRaw::mix(int16 *data, uint len) {
 	byte *s, *end;
 
@@ -760,26 +872,15 @@ void ChannelRaw::mix(int16 *data, uint len) {
 		}
 	}
 }
-#endif
 
 #define WARP_WORKAROUND 50000
 
-ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate,
-										 byte flags, uint32 buffer_size)
+ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle,
+                             void *sound, uint32 size, uint rate,
+                             byte flags, uint32 buffer_size)
 	: Channel(mixer, handle) {
 	assert(size <= buffer_size);
 
-#ifdef NEW_MIXER_CODE
-	
-	// Create the input stream
-	_input = makeWrappedInputStream(flags, buffer_size);
-	
-	// Append the initial data
-	((WrappedAudioInputStream *)_input)->append((const byte *)sound, size);
-
-	// Get a rate converter instance
-	_converter = makeRateConverter(rate, mixer->getOutputRate(), _input->isStereo(), (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0);
-#else
 	_flags = flags;
 	_bufferSize = buffer_size;
 	_ptr = (byte *)malloc(_bufferSize + WARP_WORKAROUND);
@@ -795,20 +896,14 @@ ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle, void
 		size >>= 1, rate = (rate >> 1) + 1;
 
 	_rate = rate;
-#endif
 	_finished = false;
 }
 
 ChannelStream::~ChannelStream() {
-#ifndef NEW_MIXER_CODE
 	free(_ptr);
-#endif
 }
 
 void ChannelStream::append(void *data, uint32 len) {
-#ifdef NEW_MIXER_CODE
-	((WrappedAudioInputStream *)_input)->append((const byte *)data, len);
-#else
 	if (_endOfData + len > _endOfBuffer) {
 		/* Wrap-around case */
 		uint32 size_to_end_of_buffer = _endOfBuffer - _endOfData;
@@ -828,33 +923,9 @@ void ChannelStream::append(void *data, uint32 len) {
 		memcpy(_endOfData, data, len);
 		_endOfData += len;
 	}
-#endif
 }
 
 void ChannelStream::mix(int16 *data, uint len) {
-#ifdef NEW_MIXER_CODE
-	assert(_input);
-	assert(_converter);
-
-	if (_input->eos()) {
-		// TODO: call drain method
-
-		// Normally, the stream stays around even if all its data is used up.
-		// This is in case more data is streamed into it. To make the stream
-		// go away, one can either stop() it (which takes effect immediately,
-		// ignoring any remaining sound data), or finish() it, which means
-		// it will finish playing before it terminates itself.
-		if (_finished) {
-			destroy();
-		}
-
-		return;
-	}
-
-	const int volume = _mixer->getVolume();	// FIXME: Shouldn't this be music volume instead??
-//	const int volume = isMusicChannel() ? _mixer->getMusicVolume() : _mixer->getVolume();
-	_converter->flow(*_input, data, len, volume);
-#else
 	if (_pos == _endOfData) {
 		// Normally, the stream stays around even if all its data is used up.
 		// This is in case more data is streamed into it. To make the stream
@@ -902,32 +973,9 @@ void ChannelStream::mix(int16 *data, uint len) {
 			mixProc(data, len, _pos, _fpPos, _fpSpeed, _mixer->getVolume(), _endOfData, (_flags & SoundMixer::FLAG_REVERSE_STEREO) ? true : false);
 		}
 	}
-#endif
 }
 
 #ifdef USE_MAD
-
-#ifdef NEW_MIXER_CODE
-ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, uint size)
-	: Channel(mixer, handle) {
-	// Create the input stream
-	_input = makeMP3Stream(file, mad_timer_zero, size);
-
-	// Get a rate converter instance
-	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo());
-}
-
-ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration) 
-	: Channel(mixer, handle) {
-	// Create the input stream
-	_input = makeMP3Stream(file, duration, 0);
-
-	// Get a rate converter instance
-	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo());
-}
-
-#else // NEW_MIXER_CODE
-
 ChannelMP3Common::ChannelMP3Common(SoundMixer *mixer, PlayingSoundHandle *handle)
 	: Channel(mixer, handle) {
 	mad_stream_init(&_stream);
@@ -1137,23 +1185,9 @@ void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 		_posInFrame = 0;
 	}
 }
-#endif // NEW_MIXER_CODE
-
 #endif // USE_MAD
 
 #ifdef USE_VORBIS
-
-#ifdef NEW_MIXER_CODE
-ChannelVorbis::ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track)
-	: Channel(mixer, handle) {
-	// Create the input stream
-	_input = makeVorbisStream(ov_file, duration);
-
-	// Get a rate converter instance
-	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo());
-	_is_cd_track = is_cd_track;
-}
-#else // NEW_MIXER_CODE
 ChannelVorbis::ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track)
 	: Channel(mixer, handle) {
 	_ov_file = ov_file;
@@ -1222,6 +1256,7 @@ void ChannelVorbis::mix(int16 *data, uint len) {
 	if (eof_flag)
 		destroy();
 }
+#endif // USE_VORBIS
+
 #endif // NEW_MIXER_CODE
 
-#endif // USE_VORBIS
