@@ -836,7 +836,9 @@ enum MouseButtonStatus {
 
 enum VideoMode {
 	VIDEO_SCALE = 0,
-	VIDEO_2XSAI = 1
+	VIDEO_2XSAI = 1,
+	VIDEO_SUPERSAI = 2,
+	VIDEO_SUPEREAGLE = 3
 };
 
 struct BoxCoords {

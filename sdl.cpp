@@ -44,6 +44,9 @@ static SDL_Surface *sdl_hwscreen;
 static SDL_Surface *sdl_tmpscreen;
 int Init_2xSaI (uint32 BitFormat);	
 void _2xSaI (uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr, uint32 dstPitch, int width, int height);
+void Super2xSaI (uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr, uint32 dstPitch, int width, int height);
+void SuperEagle(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr, uint32 dstPitch, int width, int height);
+
 
 static int current_shake_pos;
 
@@ -393,17 +396,31 @@ void blitToScreen(Scumm *s, byte *src,int x, int y, int w, int h) {
 	SDL_UnlockSurface(screen);
 }
 
-void Draw2xSaI(SDL_Rect *r) {
+void Draw2xSaI(SDL_Rect *r, int vidmode) {
 	if (SDL_BlitSurface(screen, r, sdl_tmpscreen, r) != 0)
 		error("SDL_BlitSurface failed");
 
 	SDL_LockSurface(sdl_tmpscreen);
 	SDL_LockSurface(sdl_hwscreen);
 
-	/* Apply the 2xsai algorithm */
-	_2xSaI((byte*)sdl_tmpscreen->pixels + r->x*2 + r->y*640, 640, NULL, 
-		(byte*)sdl_hwscreen->pixels + r->x*4 + r->y*640*4, 640*2, r->w, r->h);
-
+	switch(vidmode) {
+		case VIDEO_2XSAI:
+				_2xSaI((byte*)sdl_tmpscreen->pixels + r->x*2 + r->y*640, 640, NULL, 
+						(byte*)sdl_hwscreen->pixels + r->x*4 + r->y*640*4, 640*2, r->w, r->h);
+				break;
+		case VIDEO_SUPERSAI:
+				Super2xSaI((byte*)sdl_tmpscreen->pixels + r->x*2 + r->y*640, 640, NULL, 
+						(byte*)sdl_hwscreen->pixels + r->x*4 + r->y*640*4, 640*2, r->w, r->h);
+				break;
+		case VIDEO_SUPEREAGLE:
+				SuperEagle((byte*)sdl_tmpscreen->pixels + r->x*2 + r->y*640, 640, NULL, 
+						(byte*)sdl_hwscreen->pixels + r->x*4 + r->y*640*4, 640*2, r->w, r->h);
+				break;
+		default:
+				error("Unknown graphics mode %d", vidmode);
+				break;
+	}
+	
 	/* scale the rect to fit in SDL_UpdateRects */
 	r->x <<= 1;
 	r->y <<= 1;
@@ -434,7 +451,7 @@ void updateScreen2xSaI(Scumm *s) {
 		r.y = 0;
 		r.w = 320;
 		r.h = 200;
-		Draw2xSaI(&r);
+		Draw2xSaI(&r, s->_videoMode);
 		fullRedraw = false;
 
 		return;
@@ -444,7 +461,7 @@ void updateScreen2xSaI(Scumm *s) {
 		
 		for (i = 0; i <= numDirtyRects; i++) {
 			dr = &dirtyRects[i];
-			Draw2xSaI(dr);
+			Draw2xSaI(dr, s->_videoMode);
 		}
 	}
 
@@ -478,10 +495,8 @@ void updateScreen(Scumm *s) {
 
 	if (s->_videoMode == VIDEO_SCALE)
 		updateScreenScale(s);
-	else if (s->_videoMode == VIDEO_2XSAI)
-		updateScreen2xSaI(s);
 	else
-		error("Unknown graphics mode!");
+		updateScreen2xSaI(s);	
 }
 
 void drawMouse(Scumm *s, int xdraw, int ydraw, int w, int h, byte *buf, bool visible) {
@@ -713,7 +728,9 @@ void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor) {
 		SDL_CreateThread((int (*)(void *))&music_thread, &scumm);
 	}
 
-	if (s->_videoMode == VIDEO_2XSAI) {
+	if (s->_videoMode == VIDEO_SCALE) {
+				screen = SDL_SetVideoMode(320 * scale, 200 * scale, 8, fullScreen ? (SDL_SWSURFACE | SDL_FULLSCREEN) : (SDL_SWSURFACE | SDL_DOUBLEBUF));
+	} else {
 		uint16 *tmp_screen = (uint16*)calloc(320*202 + 8,sizeof(uint16));
 		Init_2xSaI(565);
 
@@ -724,8 +741,6 @@ void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor) {
 			error("sdl_tmpscreen failed");
 
 		scale = 1;
-	} else {
-		screen = SDL_SetVideoMode(320 * scale, 200 * scale, 8, fullScreen ? (SDL_SWSURFACE | SDL_FULLSCREEN) : (SDL_SWSURFACE | SDL_DOUBLEBUF));
 	}
 
 // SDL_SWSURFACE 	0x00000000	/* Surface is in system memory */
@@ -1310,7 +1325,6 @@ void SuperEagle (uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 {
     uint8  *dP;
     uint16 *bP;
-    uint16 *xP;
     uint32 inc_bP;
 
     {
@@ -1321,7 +1335,6 @@ void SuperEagle (uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 	while (height--)
 	{
 	    bP = (uint16 *) srcPtr;
-	    xP = (uint16 *) deltaPtr;
 	    dP = dstPtr;
 	    for (uint32 finish = width; finish; finish -= inc_bP)
 	    {
@@ -1354,7 +1367,6 @@ void SuperEagle (uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 		    {
 			product1a = INTERPOLATE (color2, color5);
 			product1a = INTERPOLATE (color2, product1a);
-//                       product1a = color2;
 		    }
 		    else
 		    {
@@ -1365,7 +1377,6 @@ void SuperEagle (uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 		    {
 			product2b = INTERPOLATE (color2, color3);
 			product2b = INTERPOLATE (color2, product2b);
-//                       product2b = color2;
 		    }
 		    else
 		    {
@@ -1380,7 +1391,6 @@ void SuperEagle (uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 		    {
 			product1b = INTERPOLATE (color5, color6);
 			product1b = INTERPOLATE (color5, product1b);
-//                       product1b = color5;
 		    }
 		    else
 		    {
@@ -1391,7 +1401,6 @@ void SuperEagle (uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 		    {
 			product2a = INTERPOLATE (color5, color2);
 			product2a = INTERPOLATE (color5, product2a);
-//                       product2a = color5;
 		    }
 		    else
 		    {
@@ -1433,25 +1442,16 @@ void SuperEagle (uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 			Q_INTERPOLATE (color5, color5, color5, product1a);
 
 		    product2a = product1b = INTERPOLATE (color5, color3);
-		    product2a =
-			Q_INTERPOLATE (color2, color2, color2, product2a);
-		    product1b =
-			Q_INTERPOLATE (color6, color6, color6, product1b);
-
-//                    product1a = color5;
-//                    product1b = color6;
-//                    product2a = color2;
-//                    product2b = color3;
+		    product2a = Q_INTERPOLATE (color2, color2, color2, product2a);
+		    product1b = Q_INTERPOLATE (color6, color6, color6, product1b);
 		}
 		product1a = product1a | (product1b << 16);
 		product2a = product2a | (product2b << 16);
 
 		*((uint32 *) dP) = product1a;
 		*((uint32 *) (dP + dstPitch)) = product2a;
-		*xP = color5;
 
 		bP += inc_bP;
-		xP += inc_bP;
 		dP += sizeof (uint32);
 	    }			// end of for ( finish= width etc..)
 
