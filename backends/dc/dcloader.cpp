@@ -226,6 +226,9 @@ bool DLObject::load(int fd)
 
   DBG("segment @ %p\n", segment);
 
+  if(phdr.p_memsz > phdr.p_filesz)
+    memset(((char *)segment) + phdr.p_filesz, 0, phdr.p_memsz - phdr.p_filesz);
+
   if(lseek(fd, phdr.p_offset, SEEK_SET)<0 ||
      read(fd, segment, phdr.p_filesz) != phdr.p_filesz) {
     seterror("Segment load failed.");
