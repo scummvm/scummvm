@@ -483,6 +483,8 @@ int ScummEngine_v6::findFreeArrayId() {
 	return -1;
 }
 
+#define SWAP16(x)  x = SWAP_BYTES_16(x)
+
 ArrayHeader *ScummEngine_v6::getArray(int array) {
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
 	if (!ah)
@@ -492,10 +494,10 @@ ArrayHeader *ScummEngine_v6::getArray(int array) {
 	// endianness, instead of a fixed endianness. We try to detect savegames
 	// which were created on a big endian system and convert them to little
 	// endian.
-	if ((ah->dim1 & 0xF000) || (ah->dim2 & 0xF000) || (ah->type & 0xFF00)) {
-		SWAP_BYTES_16(ah->dim1);
-		SWAP_BYTES_16(ah->dim2);
-		SWAP_BYTES_16(ah->type);
+	if ((FROM_LE_16(ah->dim1) & 0xF000) || (FROM_LE_16(ah->dim2) & 0xF000) || (FROM_LE_16(ah->type) & 0xFF00)) {
+		SWAP16(ah->dim1);
+		SWAP16(ah->dim2);
+		SWAP16(ah->type);
 	}
 	
 	return ah;
@@ -518,7 +520,6 @@ int ScummEngine_v6::readArray(int array, int idx, int base) {
 	if (_gameId == GID_FT && array == 447 && _currentRoom == 95 && vm.slot[_currentScript].number == 2010 && idx == -1 && base == -1) {
 		return 0;
 	}
-
 
 	const int offset = base + idx * FROM_LE_16(ah->dim1);
 
