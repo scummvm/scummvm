@@ -29,7 +29,7 @@
 #include "sound.h"
 
 #define SCUMMVM_VERSION "0.2.2 CVS"
-#define SCUMMVM_CVS "2002-08-03"
+#define SCUMMVM_CVS "2002-08-21"
 
 #define SWAP(a,b) do{int tmp=a; a=b; b=tmp; } while(0)
 #define ARRAYSIZE(x) (sizeof(x)/sizeof(x[0]))

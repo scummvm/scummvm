@@ -6,6 +6,10 @@ DEFINES  =
 LDFLAGS :=
 INCLUDES:= -I. -Icommon -Iscumm
 LIBS	 = -lncurses
+OBJS	 =
+
+# Load the build rules & settings for the chosen backend
+-include build.rules
 
 # Enable this if you want ScummVM to dump all scripts it runs.
 # This is mainly interesting for developers.
@@ -19,32 +23,7 @@ LIBS    += -lmad
 # DEFINES += -DUSE_ALSA
 # LIBS    += -lasound
 
-# Now, please choose a graphical output system between SDL, SDL/GL and X11.
-# Beware, only define one of them, otherwise the compilation will blow up.
-
-# Comment this if you want to disable SDL output
-OBJS	 = backends/sdl/sdl.o
-INCLUDES += `sdl-config --cflags`
-LIBS    += `sdl-config --libs`
-DEFINES += -DUNIX
-
-# Uncomment this (instead of the above) to activate the SDL with OpenGL output
-# OBJS	 = backends/sdl/sdl_gl.o
-# INCLUDES += `sdl-config --cflags`
-# LIBS    += `sdl-config --libs` -lGL
-# DEFINES += -DUNIX
-
-# Uncomment this in addition to the above if you compile on Mac OS X
-LIBS	+= -framework QuickTime -framework AudioUnit
-DEFINES += -DMACOSX
-
-# Uncomment this if you rather want X11 output
-# OBJS     = backends/x11/x11.o
-# DEFINES += -DUNIX -DX11_BACKEND
-# LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib
-# INCLUDES+= -I/usr/X11R6/include
-# LIBS    += -lpthread -lXext -lX11
-
+# Concat DEFINES and INCLUDES to for the CPPFLAGS
 CPPFLAGS= $(DEFINES) $(INCLUDES)
 
 include Makefile.common
@@ -52,3 +31,7 @@ include Makefile.common
 dist:
 	rm -f $(ZIPFILE)
 	zip -q $(ZIPFILE) $(DISTFILES)
+
+# Until we add a nice configure tool, default to the SDL build rules
+build.rules:
+	ln -s backends/sdl/build.rules

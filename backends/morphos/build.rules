@@ -1,0 +1,5 @@
+CC      = g++
+CFLAGS  = -Wno-multichar -fstrength-reduce -fno-rtti -O2
+DEFINES = -DNO_PPCINLINE_STDARG -DNO_PPCINLINE_VARARGS
+LDFLAGS = -noixemul -s
+LIBS	= -lamiga -lamigastubs -lcdda

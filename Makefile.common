@@ -3,7 +3,7 @@
 # common rules, a list of common object files etc.
 
 # List of all sub modules
-MODULES := common gui scumm simon sound
+MODULES += common gui scumm simon sound
 
 ZIPFILE := scummvm-`date '+%Y-%m-%d'`.zip
 
