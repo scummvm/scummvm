@@ -196,14 +196,11 @@ void WinScreenGetPitch() {
 
 void PINGetScreenDimensions() {
 	UInt32 ftr;
-
-	gVars->pinUpdate = false;
-
 	// if feature set, not set on Garmin iQue3600 ???
 	if (!(FtrGet(sysFtrCreator, sysFtrNumInputAreaFlags, &ftr))) {
 		if (ftr & grfFtrInputAreaFlagCollapsible) {
 
-			RectangleType r;
+			Coord x, y;
 			UInt16 curOrientation = SysGetOrientation();
 
 			OPTIONS_SET(kOptCollapsible);
@@ -215,9 +212,9 @@ void PINGetScreenDimensions() {
 			PINSetInputAreaState(pinInputAreaClosed);
 			StatHide();
 
-			WinGetBounds(WinGetDisplayWindow(), &r);
-			gVars->screenFullWidth = r.extent.x << 1;
-			gVars->screenFullHeight = r.extent.y << 1;
+			WinGetDisplayExtent(&x, &y);
+			gVars->screenFullWidth = x << 1;
+			gVars->screenFullHeight = y << 1;
 
 			OPTIONS_SET(kOptModeWide);
 			
@@ -231,8 +228,6 @@ void PINGetScreenDimensions() {
 			PINSetInputTriggerState(pinInputTriggerDisabled);
 		}
 	}
-
-	gVars->pinUpdate = true;
 }
 
 static void AppStartCheckScreenSize() {
@@ -249,7 +244,6 @@ static void AppStartCheckScreenSize() {
 	slkRefNum = SilkInit(&version);
 	gVars->slkRefNum = slkRefNum;
 	gVars->slkVersion = version;
-
 	if (slkRefNum != sysInvalidRefNum) {
 		if (version == vskVersionNum1) {
 			SilkLibEnableResize(slkRefNum);
@@ -335,7 +329,6 @@ Err AppStart(void) {
 	gVars->HRrefNum = sysInvalidRefNum;
 	gVars->volRefNum = sysInvalidRefNum;
 	gVars->slkRefNum = sysInvalidRefNum;
-	gVars->skinSet = false;
 	gVars->options = kOptNone;
 
 #ifndef DISABLE_TAPWAVE
@@ -427,8 +420,8 @@ Err AppStart(void) {
 	if (error) return (error);
 	GamImportDatabase();
 
-	AppStartCheckNotify(); 		// not fatal error if not avalaible
 	AppStartCheckScreenSize();
+	AppStartCheckNotify(); 		// not fatal error if not avalaible
 	AppStartSetMemory();		// set memory required by the differents engines
 
 	// force ARM option if bDirectMode
