@@ -59,6 +59,13 @@ static inline bool isColor(int num) {
 	return false;
 }
 
+static inline bool isFont(int num) {
+	lua_Object param = lua_getparam(num);
+	if (lua_isuserdata(param) && lua_tag(param) == MKID('FONT'))
+		return true;
+	return false;
+}
+
 // Helper functions to ensure the arguments we get are what we expect
 static inline ObjectState *check_object(int num) {
 	lua_Object param = lua_getparam(num);
@@ -83,7 +90,15 @@ static inline Color *check_color(int num) {
 	luaL_argerror(num, "color expected");
 	return NULL;
 }
-
+/*
+static inline Font *check_font(int num) {
+	lua_Object param = lua_getparam(num);
+	if (lua_isuserdata(param) && lua_tag(param) == MKID('FONT'))
+		return static_cast<Font *>(lua_getuserdata(param));
+	luaL_argerror(num, "font expected");
+	return NULL;
+}
+*/
 static inline int check_int(int num) {
 	double val = luaL_check_number(num);
 
