@@ -1,6 +1,11 @@
 For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
+0.6.1b (2004-07-28)
+ General:
+   - Fixed copy/paste bug in launcher that may corrupt the Savegame Path 
+   - ScummVM should no longer crash on 64-bit architectures
+
 0.6.1 (2004-07-25)
  General:
    - Fixed sound glitch when streaming two or more Ogg Vorbis sounds from the
