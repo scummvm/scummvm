@@ -378,12 +378,19 @@ void Scumm::setupSound()
 	IMuse *se = _imuse;
 	if (se) {
 		se->setBase(res.address[rtSound]);
-		if (se->get_music_volume() == 0)
-			se->set_music_volume(60);
-		se->set_master_volume(125);
+		if (!_soundVolumePreset) {
+			if (se->get_music_volume() == 0)
+				se->set_music_volume(60);
+			se->set_master_volume(125);
+			_sound_volume_music = se->get_music_volume();
+			//_sound_volume_master = (se->get_master_volume() / 127);
+			_sound_volume_master = se->get_master_volume();
 
-		_sound_volume_music = se->get_music_volume();
-		_sound_volume_master = (se->get_master_volume() / 127);
+		}
+		else {
+			se->set_music_volume(_sound_volume_music);
+			se->set_master_volume(_sound_volume_master);
+		}
 	}
 	_sfxFile = openSfxFile();
 }
@@ -579,6 +586,8 @@ void Scumm::playBundleSound(char *sound)
 
 void Scumm::playSfxSound(void *sound, uint32 size, uint rate)
 {
+	if (_soundsPaused)
+		return;
 	_mixer->play_raw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE);
 }
 
@@ -586,7 +595,8 @@ void Scumm::playSfxSound_MP3(void *sound, uint32 size)
 {
 
 #ifdef COMPRESSED_SOUND_FILE
-
+	if (_soundsPaused)
+		return;
 	_mixer->play_mp3(NULL, sound, size, SoundMixer::FLAG_AUTOFREE);
 
 #endif
@@ -690,6 +700,9 @@ void Scumm::playMP3CDTrack(int track, int num_loops, int start, int delay) {
 	long offset;
 	float frame_size;
 	mad_timer_t duration;
+
+	if (_soundsPaused)
+		return;
 
 	if (!start && !delay) {
 		_mixer->stop(_mp3_handle);

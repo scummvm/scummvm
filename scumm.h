@@ -44,7 +44,11 @@ extern Scumm *g_scumm;
 
 /* System Wide Constants */
 enum {
+#ifdef _WIN32_WCE
+	SAMPLES_PER_SEC =  11025,
+#else
 	SAMPLES_PER_SEC =  22050,
+#endif
 	BITS_PER_SAMPLE = 16,
 	NUM_MIXER = 4,
 	NUM_SCRIPT_SLOT = 25,
@@ -987,6 +991,7 @@ public:
 	int16 _soundQuePos, _soundQue[0x100];
 	byte _soundQue2Pos, _soundQue2[10];
 	bool _soundsPaused, _soundsPaused2;
+	bool _soundVolumePreset;
 
 	void setupSound();
 	void processSoundQues();
