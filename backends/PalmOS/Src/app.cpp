@@ -452,6 +452,10 @@ Err AppStart(void) {
 	AppStartCheckScreenSize();
 	AppStartSetMemory();		// set memory required by the differents engines
 
+	// force ARM option if bDirectMode
+	if (!error)
+		if (bDirectMode && OPTIONS_TST(kOptDeviceARM))
+			gPrefs->arm = true;
 
 	return error;
 }
