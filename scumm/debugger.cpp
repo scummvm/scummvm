@@ -334,6 +334,11 @@ bool ScummDebugger::Cmd_Show(int argc, const char **argv) {
 	if (!strcmp(argv[1], "hex")) {
 		_s->_hexdumpScripts = true;
 		Debug_Printf("Script hex dumping on\n");
+	} else if (!strncmp(argv[1], "sta", 3)) {
+		_s->_showStack = true;
+		Debug_Printf("Stack tracing on\n");
+	} else {
+		Debug_Printf("Unknown show parameter '%s'\n", argv[1]);
 	}
 	return true;
 }
@@ -348,6 +353,11 @@ bool ScummDebugger::Cmd_Hide(int argc, const char **argv) {
 	if (!strcmp(argv[1], "hex")) {
 		_s->_hexdumpScripts = false;
 		Debug_Printf("Script hex dumping off\n");
+	} else if (!strncmp(argv[1], "sta", 3)) {
+		_s->_showStack = false;
+		Debug_Printf("Stack tracing off\n");
+	} else {
+		Debug_Printf("Unknown hide parameter '%s'\n", argv[1]);
 	}
 	return true;
 }

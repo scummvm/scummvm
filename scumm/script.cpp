@@ -277,16 +277,29 @@ void Scumm::getScriptEntryPoint() {
 
 /* Execute a script - Read opcode, and execute it from the table */
 void Scumm::executeScript() {
+	int c;
 	while (_currentScript != 0xFF) {
+		
+		if (_showStack == true) {
+			printf("Stack:");
+			for (c=0; c < _scummStackPos; c++) {
+				printf(" %d", _scummStack[c]); 
+			}
+			printf("\n");
+		}
 		_opcode = fetchScriptByte();
 		vm.slot[_currentScript].didexec = 1;
-		debug(7, "Script %d, offset 0x%x: [%X] %s()",
+		debug(7, " Script %d, offset 0x%x: [%X] %s()",
 				vm.slot[_currentScript].number,
 				_scriptPointer - _scriptOrgPointer,
 				_opcode,
 				getOpcodeDesc(_opcode));
-		if (_hexdumpScripts == true)
-			hexdump(_scriptPointer - 1, 8);
+		if (_hexdumpScripts == true) {
+			for (c= -1; c < 15; c++) {
+				printf(" %02x", *(_scriptPointer + c));
+			}
+			printf("\n");
+		}
 		executeOpcode(_opcode);
 	}
 	CHECK_HEAP;
