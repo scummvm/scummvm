@@ -2180,7 +2180,7 @@ void Scumm_v5::o5_startMusic() {
 			// can look at the global script #9 (0x888A in 49.LFL). 
 			break;
 		}
-		warning("unknown: o5_startMusic(%d)", b);
+		debug(4,"o5_startMusic(%d)", b);
 		setResult(result);
 	} else {
 		_sound->addSoundToQueue(getVarOrDirectByte(0x80));
