@@ -676,13 +676,14 @@ void CostumeRenderer::drawNESCostume(const Actor *a, int limb) {
 	int offset, numSprites, spritesOffset, numAnims;
 	byte *table, *ptr, *spritesDefs, *spritesOffsetTab, *numSpritesTab, *spritesPal;
 	const CostumeData &cost = a->_cost;
-	int frame = cost.frame[limb];
+	int anim = cost.frame[limb];
+	int frameNum = cost.curpos[limb];
 
 	src = _loaded._dataOffsets;
 
 	// Cost(a)
-	offset = src[frame * 2];
-	numAnims = src[frame * 2 + 1];
+	offset = src[anim * 2];
+	numAnims = src[anim * 2 + 1];
 
 	// Lookup & desc
 	table = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_v1MMNESCostumeSet][0]);
@@ -700,9 +701,7 @@ void CostumeRenderer::drawNESCostume(const Actor *a, int limb) {
 	// data
 	spritesPal = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_v1MMNESCostumeSet][5]) + 2;
 
-	int frameNum = 0;
-
-	offset = READ_LE_UINT16(table + v1MMNESLookup[_loaded._id] * 2 + 2 + frameNum * 2);
+	offset = READ_LE_UINT16(table + v1MMNESLookup[_loaded._id] * 2 + 2) + frameNum;
 	numSprites = numSpritesTab[offset + 2] + 1;
 	spritesOffset = READ_LE_UINT16(spritesOffsetTab + offset * 2 + 2);
 
@@ -856,7 +855,7 @@ void ScummEngine::cost_decodeData(Actor *a, int frame, uint usemask) {
 	}
 
 	if (_features & GF_NES) {
-		a->_cost.curpos[0] = 1;
+		a->_cost.curpos[0] = 0;
 		a->_cost.start[0] = 0;
 		a->_cost.frame[0] = frame;
 		return;
@@ -973,6 +972,9 @@ byte LoadedCostume::increaseAnim(Actor *a, int slot) {
 	byte code, nc;
 
 	if (_vm->_features & GF_NES) {
+		a->_cost.curpos[slot]++;
+		if (a->_cost.curpos[slot] == _numAnim)
+			a->_cost.curpos[slot] = a->_cost.start[slot];
 		return 0;
 	}
 
