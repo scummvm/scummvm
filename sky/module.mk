@@ -19,7 +19,6 @@ MODULE_OBJS = \
 	sky/screen.o \
 	sky/sky.o \
 	sky/sound.o \
-	sky/timer.o \
 	sky/text.o \
 
 # Include common rules 
