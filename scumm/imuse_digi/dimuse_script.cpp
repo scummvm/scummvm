@@ -169,7 +169,7 @@ void IMuseDigital::refreshScripts() {
 	}
 
 	if ((!found) && (_curMusicSeq != 0)) {
-		parseScriptCmds(0x2000, 0, 0, 0, 0, 0, 0, 0);
+		parseScriptCmds(0x1001, 0, 0, 0, 0, 0, 0, 0);
 	}
 }
 
