@@ -131,7 +131,13 @@ void NORETURN CDECL error(const char *s, ...) {
 #endif
 
 #if defined( USE_WINDBG )
+#if defined( _WIN32_WCE )
+	TCHAR buf_output_unicode[1024];
+	MultiByteToWideChar(CP_ACP, 0, buf_output, strlen(buf_output) + 1, buf_output_unicode, sizeof(buf_output_unicode));
+	OutputDebugString(buf_output_unicode);
+#else
 	OutputDebugString(buf_output);
+#endif
 #endif
 
 #if defined ( _WIN32_WCE )
@@ -168,7 +174,13 @@ void CDECL warning(const char *s, ...) {
 #endif
 #if defined( USE_WINDBG )
 	strcat(buf, "\n");
+#if defined( _WIN32_WCE )
+	TCHAR buf_unicode[1024];
+	MultiByteToWideChar(CP_ACP, 0, buf, strlen(buf) + 1, buf_unicode, sizeof(buf_unicode));
+	OutputDebugString(buf_unicode);
+#else
 	OutputDebugString(buf);
+#endif
 #endif
 }
 
@@ -192,7 +204,13 @@ void CDECL debug(int level, const char *s, ...) {
 
 #if defined( USE_WINDBG )
 	strcat(buf, "\n");
+#if defined( _WIN32_WCE )
+	TCHAR buf_unicode[1024];
+	MultiByteToWideChar(CP_ACP, 0, buf, strlen(buf) + 1, buf_unicode, sizeof(buf_unicode));
+	OutputDebugString(buf_unicode);
+#else
 	OutputDebugString(buf);
+#endif
 #endif
 
 	fflush(stdout);
