@@ -526,7 +526,10 @@ void Actor::animateActor(int anim) {
 		turnToDirection(dir);
 		break;
 	default:
-		startAnimActor(anim);
+		if (_vm->_features & GF_AFTER_V2)
+			startAnimActor(anim / 4);
+		else
+			startAnimActor(anim);
 	}
 }
 
