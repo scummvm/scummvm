@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2004 The ScummVM project
+ * Copyright (C) 2002-2005 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,6 +35,6 @@ void md5_starts( md5_context *ctx );
 void md5_update( md5_context *ctx, const uint8 *input, uint32 length );
 void md5_finish( md5_context *ctx, uint8 digest[16] );
 
-bool md5_file( const char *name, uint8 digest[16], const char *directory = NULL );
+bool md5_file( const char *name, uint8 digest[16], const char *directory = NULL, uint32 length = 0 );
 
 #endif
