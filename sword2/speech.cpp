@@ -1564,28 +1564,14 @@ int32 FN_i_speak(int32 *params)	//Tony18Oct96 (revamped by James01july97)
 			//------------------------------
 			// set up path to speech cluster
 			// first checking if we have speech1.clu or speech2.clu in current directory (for translators to test)
-			// FIXME better way to do this? debug configs used to use res_man.WhichCd
-			// to determine the cd but we always return 0 for that currently
+
 			File fp;
 
-			strcpy(speechFile,"speech.clu");
-			if (fp.open(speechFile, g_sword2->getGameDataPath()) == false) {
-				uint8	cd;	// 1, 2 or 0 (if speech on both cd's, ie. no need to change)
+			sprintf(speechFile, "speech%d.clu", res_man.WhichCd());
+			if (fp.open(speechFile, g_sword2->getGameDataPath()))
 				fp.close();
-				
-				if (fp.open("cd.bin",g_sword2->getGameDataPath()) == false) {
-					warning("Need cd.bin file to determine which speech cluster to use");
-				} else {
-					fp.seek(params[S_WAV], SEEK_SET);
-					fp.read(&cd, 1);
-	
-					if (cd < 2) 
-						strcpy(speechFile,"speech1.clu");
-					else 
-						strcpy(speechFile,"speech2.clu");
-				}
-			}
-			fp.close();
+			else
+				strcpy(speechFile, "speech.clu");
 
 			rv = g_sword2->_sound->PlayCompSpeech(speechFile, params[S_WAV], SPEECH_VOLUME, speech_pan);	// Load speech but don't start playing yet
 			if (rv == RD_OK)
