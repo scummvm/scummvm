@@ -354,7 +354,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_draw_images_debug = 0;
 	_dump_images = 0;
 	_speech = true;
-	_subtitles = false;
+	_subtitles = true;
 	_fade = true;
 	_mouse_cursor = 0;
 	_vga_var9 = 0;
@@ -576,7 +576,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	if ((_game & GF_SIMON2) && ConfMan.hasKey("speech_mute") && ConfMan.getBool("speech_mute") == 1)
 		_speech = 0;
 
-	if (!(_game & GF_SIMON2) && _language > 1) {
+	if ((!(_game & GF_SIMON2) && _language > 1) || ((_game & GF_SIMON2) && _language == 20)) {
 		if (ConfMan.hasKey("subtitles") && ConfMan.getBool("subtitles") == 0)
 			_subtitles = 0;
 	} else
