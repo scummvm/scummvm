@@ -968,13 +968,16 @@ void Gui::loop()
 	if (_s->_mouseButStat & MBS_LEFT_CLICK) {
 		leftMouseClick(_s->mouse.x, _s->mouse.y);
 	} else if (_s->_lastKeyHit) {
-		if (_dialog != KEYS_DIALOG)
-			addLetter((unsigned char)_s->_lastKeyHit);
+		if (_dialog != KEYS_DIALOG) {
+			if (_s->_lastKeyHit == 27)
+				close();
+			else
+				addLetter((unsigned char)_s->_lastKeyHit);
 #ifdef _WIN32_WCE
-		else if (_s->_lastKeyHit > 1000)	// GAPI
+		} else if (_s->_lastKeyHit > 1000) {	// GAPI
 			addLetter(_s->_lastKeyHit - 1000);
 #endif
-
+		}
 	}
 
 	if (_clickTimer && !--_clickTimer) {
