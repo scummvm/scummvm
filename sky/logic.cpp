@@ -522,10 +522,9 @@ bool SkyLogic::collide(Compact *cpt) {
 	MegaSet *m1 = (MegaSet *)SkyCompact::getCompactElem(_compact, C_GRID_WIDTH + _compact->extCompact->megaSet);
 	MegaSet *m2 = (MegaSet *)SkyCompact::getCompactElem(cpt, C_GRID_WIDTH + cpt->extCompact->megaSet);
 
-	uint16 x = cpt->xcood; // target's base coordinates
-	x &= 0xfff8;
-	uint16 y = cpt->ycood;
-	y &= 0xfff8;
+	// target's base coordinates
+	uint16 x = cpt->xcood & 0xfff8;
+	uint16 y = cpt->ycood & 0xfff8;
 
 	// The collision is direction dependant
 	switch (_compact->extCompact->dir) {
@@ -1714,28 +1713,59 @@ uint32 SkyLogic::fnMouseOff(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnMouseOff");
 }
 
-uint32 SkyLogic::fnFetchX(uint32 a, uint32 b, uint32 c) {
-	Compact *cpt = SkyState::fetchCompact(a);
+uint32 SkyLogic::fnFetchX(uint32 id, uint32 b, uint32 c) {
+	Compact *cpt = SkyState::fetchCompact(id);
 	_scriptVariables[RESULT] = cpt->xcood;
 	return 1;
 }
 
-uint32 SkyLogic::fnFetchY(uint32 a, uint32 b, uint32 c) {
-	Compact *cpt = SkyState::fetchCompact(a);
+uint32 SkyLogic::fnFetchY(uint32 id, uint32 b, uint32 c) {
+	Compact *cpt = SkyState::fetchCompact(id);
 	_scriptVariables[RESULT] = cpt->ycood;
 	return 1;
 }
 
-uint32 SkyLogic::fnTestList(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnTestList");
+uint32 SkyLogic::fnTestList(uint32 id, uint32 x, uint32 y) {
+	_scriptVariables[RESULT] = 0; // assume fail
+	uint16 *list = (uint16 *)SkyState::fetchCompact(id);
+
+	while (*list) { // end of list?
+		if (*list++ >= x) // left x
+			continue;
+			
+		if (*list++ < x) // right x
+			continue;
+
+		if (*list++ >= y) // top y
+			continue;
+
+		if (*list++ < y) // bottom y
+			continue;
+
+		// get value
+		_scriptVariables[RESULT] = *list++;
+	}
+	return 1;
 }
 
-uint32 SkyLogic::fnFetchPlace(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnFetchPlace");
+uint32 SkyLogic::fnFetchPlace(uint32 id, uint32 b, uint32 c) {
+	Compact *cpt = SkyState::fetchCompact(id);
+	_scriptVariables[RESULT] = cpt->place;
+	return 1;
 }
 
-uint32 SkyLogic::fnCustomJoey(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnCustomJoey");
+uint32 SkyLogic::fnCustomJoey(uint32 id, uint32 b, uint32 c) {
+	// return id's x & y coordinate & c_mood (i.e. stood still yes/no)
+	// used by Joey-Logic - done in code like this because scripts can't
+	// get access to another megas compact as easily
+
+	Compact *cpt = SkyState::fetchCompact(id);
+	
+	_scriptVariables[PLAYER_X] = cpt->xcood;
+	_scriptVariables[PLAYER_Y] = cpt->ycood;
+	_scriptVariables[PLAYER_MOOD] = cpt->mood;
+	_scriptVariables[PLAYER_SCREEN] = cpt->screen;
+	return 1;
 }
 
 uint32 SkyLogic::fnSetPalette(uint32 a, uint32 b, uint32 c) {
@@ -1909,6 +1939,7 @@ uint32 SkyLogic::fnStopMusic(uint32 a, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnFadeDown(uint32 a, uint32 b, uint32 c) {
+	// this is actually already implemented in SkyScreen
 	error("Stub: fnFadeDown");
 }
 

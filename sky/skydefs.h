@@ -43,6 +43,10 @@
 #define MOUSE_STATUS 13
 #define MOUSE_STOP 14
 #define GET_OFF	18
+#define PLAYER_X 27
+#define PLAYER_Y 28
+#define PLAYER_MOOD 29
+#define PLAYER_SCREEN 30
 #define HIT_ID 37
 #define THE_CHOSEN_ONE 51
 #define TEXT1 53
