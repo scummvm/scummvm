@@ -355,7 +355,7 @@ void akos_generic_decode(AkosRenderer * ar)
 
 				if (ar->v1.scaletable[ar->v1.tmp_x] < ar->scale_x) {
 					ar->v1.x += ar->v1.scaleXstep;
-					if ((uint) ar->v1.x >= g_scumm->_realWidth)
+					if (ar->v1.x >= g_scumm->_realWidth)
 						return;
 					maskbit = revBitMask[ar->v1.x & 7];
 					ar->v1.destptr += ar->v1.scaleXstep;
@@ -423,7 +423,7 @@ void akos_c1_spec1(AkosRenderer * ar)
 
 				if (ar->v1.scaletable[ar->v1.tmp_x] < ar->scale_x) {
 					ar->v1.x += ar->v1.scaleXstep;
-					if ((uint) ar->v1.x >= g_scumm->_realWidth)
+					if (ar->v1.x >= g_scumm->_realWidth)
 						return;
 					maskbit = revBitMask[ar->v1.x & 7];
 					ar->v1.destptr += ar->v1.scaleXstep;
