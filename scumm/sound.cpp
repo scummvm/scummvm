@@ -125,8 +125,7 @@ void Sound::addSoundToQueue2(int sound) {
 }
 
 void Sound::processSoundQues() {
-	int d;
-	int num;
+	int i = 0, d, num;
 	int16 data[16];
 
 	processSfxQueues();
@@ -137,7 +136,7 @@ void Sound::processSoundQues() {
 			playSound(d);
 	}
 
-	for (int i = 0; i < _soundQuePos;) {
+	while (i < _soundQuePos) {
 		num = _soundQue[i++];
 		if (i + num > _soundQuePos) {
 			warning("processSoundQues: invalid num value");
@@ -832,7 +831,11 @@ void Sound::soundKludge(int *list, int num) {
 	}
 
 	if ((_soundQuePos + num) > 0x100) {
-		warning("Sound que buffer overflow (%d + %d = %d)", _soundQuePos, num, _soundQuePos+num);
+		// FIXME: temporarily changed this to an error to help track down what
+		// is causing the sound queue overflows(in particular, to figure out
+		// the room/script/offset where the bug occurs). Please report your
+		// findings to Fingolfin.
+		error("Sound que buffer overflow (%d + %d = %d)", _soundQuePos, num, _soundQuePos+num);
 		return;
 	}
 
