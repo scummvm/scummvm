@@ -699,7 +699,7 @@ void ScummEngine_v6he::o6_actorOps() {
 		a->needRedraw = true;
 		a->needBgReset = true;
 		break;
-	case 225:		// SO_ALWAYS_ZCLIP
+	case 225:
 		i = pop(); // talkie slot
 		warning("o6_actorOps: stub case %d", b);
 		break;
