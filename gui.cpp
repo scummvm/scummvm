@@ -825,11 +825,14 @@ void Gui::loop()
 {
 	if (_active == 1) {
 		_active++;
-		draw(0, 200);								// was 100
-		_old_cursor_mode = _s->_system->show_mouse(true);
+		draw(0, 200);								// was 100		
 		_s->pauseSounds(true);
-	}
 
+		_old_cursor_mode = _s->_system->show_mouse(true);
+		_s->_cursorAnimate++;
+		_s->gdi._cursorActive = 1;
+	}
+	_s->animateCursor();
 	_s->getKeyInput(0);
 	if (_s->_mouseButStat & MBS_LEFT_CLICK) {
 		leftMouseClick(_s->mouse.x, _s->mouse.y);
@@ -858,7 +861,7 @@ void Gui::close()
 {
 	_s->_fullRedraw = true;
 	_s->_completeScreenRedraw = true;
-	
+	_s->_cursorAnimate--;
 	_s->_system->show_mouse(_old_cursor_mode);
 
 	_s->pauseSounds(false);
