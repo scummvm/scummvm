@@ -259,7 +259,7 @@ void ScummEngine::akos_decodeData(Actor *a, int frame, uint usemask) {
 					a->cost.curpos[i] = start;
 					a->cost.seq3[i] = 0;
 					if (akst) {
-						int size = getResourceDataSize(akst);
+						int size = getResourceDataSize(akst) / 8;
 						if (size > 0) {
 							bool found = false;
 							while (size--) {
