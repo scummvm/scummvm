@@ -539,6 +539,9 @@ Platform GameDetector::parsePlatform(const String &str) {
 }
 
 int GameDetector::parseMusicDriver(const String &str) {
+	if (str == String::emptyString)
+		return -1;
+
 	const char *s = str.c_str();
 	const MidiDriverDescription *md = getAvailableMidiDrivers();
 
