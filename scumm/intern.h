@@ -659,10 +659,6 @@ protected:
 	void appendSubstring(int dst, int src, int len2, int len);
 
 	int findObject(int x, int y, int num, int *args);
-	void polygonErase(int fromId, int toId);
-	bool polygonContains(const WizPolygon &pol, int x, int y);
-	bool polygonDefined(int id);
-	int polygonHit(int id, int x, int y);
 
 	virtual void setCursorFromImg(uint img, uint room, uint imgindex);
 
@@ -709,25 +705,14 @@ protected:
 		byte data[1];    //14
 	} GCC_PACK;
 
-	struct WizImage {
-		int resNum;
-		int x1;
-		int y1;
-		int flags;
-		int state;
-		int unk;
-	};
-
 #if !defined(__GNUC__)
 	#pragma END_PACK_STRUCTS
 #endif
 
 	const OpcodeEntryV72he *_opcodesV72he;
-	WizImage _wizImages[255];
-	uint16 _wizImagesNum;
 
 public:
-	ScummEngine_v72he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v70he(detector, syst, gs, md5sum), _wizImagesNum(0) {}
+	ScummEngine_v72he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v70he(detector, syst, gs, md5sum) {}
 
 protected:
 	virtual void setupScummVars();
@@ -747,12 +732,12 @@ protected:
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int resID);
 
+	void captureWizImage(int restype, int resnum, const Common::Rect& r, bool frontBuffer, int compType);
 	void displayWizImage(const WizImage *pwi);
 	void getWizImageDim(int resnum, int state,  int32 &w, int32 &h);
 	uint8 *drawWizImage(int restype, const WizImage *pwi);
 	void drawWizPolygon(int resnum, int state, int id, int flags);
 	void flushWizBuffer();
-	void captureWizImage(int restype, int resnum, const Common::Rect& r, bool frontBuffer, int compType);
 
 	virtual void decodeParseString(int a, int b);
 	void decodeScriptString(byte *dst, bool scriptString = false);
@@ -856,31 +841,6 @@ protected:
 
 	int _heObject, _heObjectNum;
 	int _hePaletteNum;
-
-	struct WizParameters {
-		byte filename[260];
-		Common::Rect box;
-		int processFlags;
-		int processMode;
-		int unk_11C;
-		int unk_120;
-		int unk_124;
-		int unk_128;
-		int unk_12C;
-		int unk_130;
-		int unk_134;
-		int unk_138;
-		int compType;
-		int unk_14C;
-		int angle;
-		int zoom;
-		int unk_15C;
-		int unk_160;
-		uint8 remapColor[256];
-		uint8 remapIndex[256];
-		int remapNum;
-		WizImage img;
-	};
 	
 	const OpcodeEntryV90he *_opcodesV90he;
 	WizParameters _wizParams;
@@ -895,10 +855,10 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 	
-	int getWizImageStates(int resnum);
 	void drawWizComplexPolygon(int resnum, int state, int po_x, int po_y, int arg14, int angle, int zoom, const Common::Rect *r);
 	void displayWizComplexImage(const WizParameters *params);
 	void processWizImage(const WizParameters *params);
+	int getWizImageStates(int resnum);	
 	int isWizPixelNonTransparent(int restype, int resnum, int state, int x, int y, int flags);
 	uint8 getWizPixelColor(int restype, int resnum, int state, int x, int y, int flags);
 	int computeWizHistogram(int resnum, int state, int x, int y, int w, int h);

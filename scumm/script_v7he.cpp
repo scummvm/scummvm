@@ -416,8 +416,8 @@ int ScummEngine_v70he::findObject(int x, int y, int num, int *args) {
 			continue;
 
 		// Check polygon bounds
-		if (polygonDefined(_objs[i].obj_nr)) {
-			if (polygonHit(_objs[i].obj_nr, x, y) != 0)
+		if (_wiz.polygonDefined(_objs[i].obj_nr)) {
+			if (_wiz.polygonHit(_objs[i].obj_nr, x, y) != 0)
 				result = _objs[i].obj_nr;
 			else if (VAR_POLYGONS_ONLY != 0xFF && VAR(VAR_POLYGONS_ONLY))
 				continue;
@@ -1042,116 +1042,23 @@ void ScummEngine_v70he::o70_polygonOps() {
 		vert1y = pop();
 		vert1x = pop();
 		id = pop();
-
-		polygonStore(id, (subOp == 69 || subOp == 248), vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, 
-					 vert4x, vert4y);
+		_wiz.polygonStore(id, (subOp == 69 || subOp == 248), vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y);
 		break;
 	case 28: // HE 100
 	case 247:
 		toId = pop();
 		fromId = pop();
-
-		polygonErase(fromId, toId);
+		_wiz.polygonErase(fromId, toId);
 		break;
 	default:
 		error("o70_polygonOps: default case %d", subOp);
 	}
 }
 
-void ScummEngine::polygonStore(int id, bool flag, int vert1x, int vert1y, int vert2x, 
-							int vert2y, int vert3x, int vert3y, int vert4x, int vert4y) {
-	WizPolygon *wp = NULL;
-	for (int i = 0; i < _wizNumPolygons; ++i) {
-		if (_wizPolygons[i].id == 0) {
-			wp = &_wizPolygons[i];
-			break;
-		}
-	}
-	if (!wp) {
-		error("ScummEngine::polygonStore: out of polygon slot, max = %d", 
-			  _wizNumPolygons);
-	}
-
-	wp->vert[0].x = vert1x;
-	wp->vert[0].y = vert1y;
-	wp->vert[1].x = vert2x;
-	wp->vert[1].y = vert2y;
-	wp->vert[2].x = vert3x;
-	wp->vert[2].y = vert3y;
-	wp->vert[3].x = vert4x;
-	wp->vert[3].y = vert4y;
-	wp->vert[4].x = vert1x;
-	wp->vert[4].y = vert1y;
-	wp->id = id;
-	wp->numVerts = 5;
-	wp->flag = flag;	
-
-	wp->bound.left = 10000;
-	wp->bound.top = 10000;
-	wp->bound.right = -10000;
-	wp->bound.bottom = -10000;
-
-	// compute bounding box
-	for (int j = 0; j < wp->numVerts; j++) {
-		Common::Rect r(wp->vert[j].x, wp->vert[j].y, wp->vert[j].x + 1, wp->vert[j].y + 1);
-		wp->bound.extend(r);
-	}
-}
-
-void ScummEngine_v70he::polygonErase(int fromId, int toId) {
-	for (int i = 0; i < _wizNumPolygons; i++) {
-		if (_wizPolygons[i].id >= fromId && _wizPolygons[i].id <= toId)
-			memset(&_wizPolygons[i], 0, sizeof(WizPolygon));
-	}
-}
-
 void ScummEngine_v70he::o70_polygonHit() {
 	int y = pop();
 	int x = pop();
-
-	push(polygonHit(0, x, y));
-}
-
-int ScummEngine_v70he::polygonHit(int id, int x, int y) {
-	for (int i = 0; i < _wizNumPolygons; i++) {
-		if ((!id || _wizPolygons[i].id == id) && _wizPolygons[i].bound.contains(x, y)) {
-			if (polygonContains(_wizPolygons[i], x, y)) {
-				return _wizPolygons[i].id;
-			}
-		}
-	}
-
-	return 0;
-}
-
-bool ScummEngine_v70he::polygonDefined(int id) {
-	for (int i = 0; i < _wizNumPolygons; i++)
-		if (_wizPolygons[i].id == id)
-			return true;
-
-	return false;
-}
-
-bool ScummEngine_v70he::polygonContains(const WizPolygon &pol, int x, int y) {
-	int pi = pol.numVerts - 1;
-	bool diry = (y < pol.vert[pi].y);
-	bool curdir;
-	bool r = false;
-
-	for (int i = 0; i < pol.numVerts; i++) {
-		curdir = (y <= pol.vert[i].y);
-
-		if (curdir != diry) {
-			if (((pol.vert[pi].y - pol.vert[i].y) * (pol.vert[i].x - x) <=
-				 (pol.vert[pi].x - pol.vert[i].x) * (pol.vert[i].y - y)) == diry)
-				r = !r;
-		}
-
-		pi = i;
-		diry = curdir;
-	}
-
-	return r;
+	push(_wiz.polygonHit(0, x, y));
 }
 
 } // End of namespace Scumm

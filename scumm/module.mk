@@ -51,6 +51,7 @@ MODULE_OBJS := \
 	scumm/usage_bits.o \
 	scumm/vars.o \
 	scumm/verbs.o \
+	scumm/wiz_he.o \
 	scumm/imuse_digi/dimuse.o \
 	scumm/imuse_digi/dimuse_bndmgr.o \
 	scumm/imuse_digi/dimuse_codecs.o \

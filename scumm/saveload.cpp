@@ -727,7 +727,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		s->saveLoadArrayOf(vm.slot, NUM_SCRIPT_SLOT, sizeof(vm.slot[0]), scriptSlotEntries);
 
 	if (_heversion >= 71)
-		s->saveLoadArrayOf(_wizPolygons, _wizNumPolygons, sizeof(_wizPolygons[0]), polygonEntries);
+		s->saveLoadArrayOf(_wiz._polygons, ARRAYSIZE(_wiz._polygons), sizeof(_wiz._polygons[0]), polygonEntries);
 	s->saveLoadArrayOf(_objs, _numLocalObjects, sizeof(_objs[0]), objectEntries);
 	if (s->isLoading() && savegameVersion < VER(13)) {
 		// Since roughly v13 of the save games, the objs storage has changed a bit

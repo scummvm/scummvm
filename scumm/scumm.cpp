@@ -690,8 +690,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_costumeRenderer = NULL;
 	_2byteFontPtr = 0;
 	_V1TalkingActor = 0;
-	_wizNumPolygons = 200; // Used as constant in original
-	_wizPolygons = NULL;
 
 	_actorClipOverride.top = 0;
 	_actorClipOverride.bottom = 480;
@@ -1300,12 +1298,6 @@ void ScummEngine_v60he::scummInit() {
 	// setCursorHotspot(8, 7);
 	if (_gameId == GID_FUNPACK)
 		setCursorHotspot(16, 16);
-
-	if (_heversion >= 70) {
-		free(_wizPolygons);
-
-		_wizPolygons = (WizPolygon *)calloc(_wizNumPolygons, sizeof(WizPolygon));
-	}
 }
 
 void ScummEngine_v90he::scummInit() {
@@ -1797,8 +1789,8 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		stopCycle(0);
 	_sound->processSoundQues();
 
-	if (_heversion >= 71 && _wizPolygons) {		
-		memset(_wizPolygons, 0, _wizNumPolygons * sizeof(WizPolygon));
+	if (_heversion >= 71) {
+		memset(_wiz._polygons, 0, sizeof(_wiz._polygons));
 	}
 
 	// For HE80+ games
@@ -2354,7 +2346,7 @@ void ScummEngine::initRoomSubBlocks() {
 				vert4y = READ_LE_UINT32(ptr + 36);
 
 				ptr += 40;
-				polygonStore(id, flag, vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y);
+				_wiz.polygonStore(id, flag, vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y);
 			}
 		}
 

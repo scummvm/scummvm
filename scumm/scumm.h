@@ -31,6 +31,7 @@
 
 #include "scumm/gfx.h"
 #include "scumm/script.h"
+#include "scumm/wiz_he.h"
 
 namespace GUI {
 	class Dialog;
@@ -311,14 +312,6 @@ struct LangIndexNode {
 	int32 offset;
 };
 
-struct WizPolygon {
-	Common::Point vert[5];
-	Common::Rect bound;
-	int id;
-	int numVerts;
-	bool flag;
-};
-
 struct AuxBlock {
 	bool visible;
 	Common::Rect r;
@@ -362,6 +355,9 @@ public:
 
 	/** Graphics manager */
 	Gdi gdi;
+	
+	/** Wiz graphics manager (HE) */
+	Wiz _wiz;
 
 protected:
 	/** Central resource data. */
@@ -663,8 +659,6 @@ protected:
 	uint32 *_heV7RoomIntOffsets;
 	const byte *_resourceLastSearchBuf; // FIXME: need to put it to savefile?
 	uint32 _resourceLastSearchSize;    // FIXME: need to put it to savefile?
-	int _wizNumPolygons;
-	WizPolygon *_wizPolygons;
 
 	void allocateArrays();
 	void openRoom(int room);
@@ -705,8 +699,6 @@ protected:
 	void loadRoomObjects();
 	void loadRoomObjectsSmall();
 	void loadRoomObjectsOldBundle();
-	void polygonStore(int id, bool flag, int vert1x, int vert1y, int vert2x, int vert2y, 
-					  int vert3x, int vert3y, int vert4x, int vert4y);
 
 	virtual void readArrayFromIndexFile();
 	virtual void readMAXS(int blockSize);

@@ -1921,7 +1921,7 @@ void ScummEngine::postProcessAuxQueue() {
 					uint8 *dst2 = pvs->getBackPixels(0, pvs->topline);
 					switch (comp) {
 					case 1:
-						gdi.copyAuxImage(dst1, dst2, axfd + 10, pvs->w, pvs->h, x, y, w, h, NULL);
+						_wiz.copyAuxImage(dst1, dst2, axfd + 10, pvs->w, pvs->h, x, y, w, h);
 						break;
 					default:
 						warning("unimplemented compression type %d", comp);

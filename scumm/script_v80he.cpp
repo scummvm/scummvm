@@ -543,52 +543,6 @@ void ScummEngine_v80he::o80_cursorCommand() {
 	VAR(VAR_USERPUT) = _userPut;
 }
 
-void ScummEngine_v80he::loadImgSpot(int resId, int state, int16 &x, int16 &y) {
-	const uint8 *dataPtr = getResourceAddress(rtImage, resId);
-	if (!dataPtr) {
-		warning("loadImgSpot: unknown Image %d", resId);
-		x = y = 0;
-		return;
-	}
-
-	const uint8 *spotPtr = findWrappedBlock(MKID('SPOT'), dataPtr, state, 0);
-
-	if (spotPtr) {
-		x = (int16)READ_LE_UINT32(spotPtr + 0);
-		y = (int16)READ_LE_UINT32(spotPtr + 4);
-	} else {
-		x = 0;
-		y = 0;
-	}
-}
-
-void ScummEngine_v80he::loadWizCursor(int resId, int resType, bool state) {
-	int16 x, y;
-	loadImgSpot(resId, 0, x, y);
-	if (x < 0) {
-		x = 0;
-	} else if (x > 32) {
-		x = 32;
-	}
-	if (y < 0) {
-		y = 0;
-	} else if (y > 32) {
-		y = 32;
-	}
-
-	WizImage wi;
-	wi.resNum = resId;
-	wi.x1 = wi.y1 = 0;
-	wi.state = 0;
-	wi.flags = 0x20;	
-	uint8 *cursor = drawWizImage(rtImage, &wi);
-	int32 cw, ch;	
-	getWizImageDim(resId, 0, cw, ch);
-	setCursorFromBuffer(cursor, cw, ch, cw);
-	setCursorHotspot(x, y);
-	free(cursor);
-}
-
 void ScummEngine_v80he::o80_setState() {
 	int state = pop();
 	int obj = pop();

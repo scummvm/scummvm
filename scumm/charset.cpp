@@ -1394,10 +1394,10 @@ void CharsetRendererClassic::printChar(int chr) {
 		src = dst;
 		src.moveTo(0, 0);
 
-		memset(_vm->gdi._wizImagePalette, 255, sizeof(_vm->gdi._wizImagePalette));
-		memcpy(_vm->gdi._wizImagePalette, _vm->_charsetColorMap, 16);
-
-		_vm->gdi.decompressWizImage(dstPtr, vs->w, dst, charPtr, src);
+		byte imagePalette[256];
+		memset(imagePalette, 255, sizeof(imagePalette));
+		memcpy(imagePalette, _vm->_charsetColorMap, 16);
+		_vm->_wiz.decompressWizImage(dstPtr, vs->w, dst, charPtr, src, imagePalette);
 
 		if (_blitAlso && vs->hasTwoBuffers)
 			_vm->gdi.copyVirtScreenBuffers(dst);

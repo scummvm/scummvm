@@ -1234,10 +1234,7 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 		_draw_bottom = dst.bottom;
 
 	byte *dstPtr = (byte *)_out.pixels + dst.left + dst.top * _out.pitch;
-
-	for (int i = 0; i < 256; i++)
-		_vm->gdi._wizImagePalette[i] = i;
-	_vm->gdi.decompressWizImage(dstPtr, _out.pitch, dst, _srcptr, src);
+	_vm->_wiz.decompressWizImage(dstPtr, _out.pitch, dst, _srcptr, src);
 	return 0;
 }
 
