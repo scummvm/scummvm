@@ -331,7 +331,7 @@ void Sword2Engine::dragMouse(void) {
 
 		_logic->setPlayerActionEvent(CUR_PLAYER_ID, _mouseTouching);
 
-		debug(5, "Used \"%s\" on \"%s\"", fetchObjectName(OBJECT_HELD), fetchObjectName(CLICKED_ID));
+		debug(2, "Used \"%s\" on \"%s\"", fetchObjectName(OBJECT_HELD), fetchObjectName(CLICKED_ID));
 
 		// Hide menu - back to normal menu mode
 
@@ -647,7 +647,26 @@ void Sword2Engine::normalMouse(void) {
 		EXIT_CLICK_ID = 0;
 		EXIT_FADING = 0;
 
-		_logic->setPlayerActionEvent(CUR_PLAYER_ID, _mouseTouching);
+		// WORKAROUND: Examining the lift while at the top of the
+		// pyramid causes the game to hang. It looks like a script
+		// bug to me: the script hides the mouse cursor, checks if the
+		// player pressed the left mouse button and, if not, jumps to
+		// an end of script instruction.
+		//
+		// One idea would be to redirect the action to the elevator
+		// object at the bottom of the pyramid instead, but I don't
+		// know if that's a safe thing to do so for now I've disabled
+		// it. Maybe we could find a better workaround if we had a
+		// script decompiler...
+		//
+		// I'm checking the status of the left button rather than the
+		// right button because that's what I think the script does.
+
+		if (_mouseTouching == 2773 && !LEFT_BUTTON) {
+			warning("Ignoring action to work around script bug at pyramid top");
+			// _logic->setPlayerActionEvent(CUR_PLAYER_ID, 2737);
+		} else
+			_logic->setPlayerActionEvent(CUR_PLAYER_ID, _mouseTouching);
 
 		if (OBJECT_HELD)
 			debug(2, "Used \"%s\" on \"%s\"", fetchObjectName(OBJECT_HELD), fetchObjectName(CLICKED_ID));

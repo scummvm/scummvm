@@ -50,46 +50,47 @@ struct _standardHeader {
 	uint8 name[NAME_LEN];		// Name of object
 } GCC_PACK;
 
-//----------------------------------------------------------
 // fileType
 
-// 0 something's wrong!
-
-#define ANIMATION_FILE		1	// All normal animations & sprites
+enum {
+	// 0 something's wrong!
+	ANIMATION_FILE		= 1,	// All normal animations & sprites
 					// including mega-sets & font files
 					// which are the same format (but all
 					// frames always uncompressed)
-#define	SCREEN_FILE		2	// Each contains background, palette,
+	SCREEN_FILE		= 2,	// Each contains background, palette,
 					// layer sprites, parallax layers &
 					// shading mask
-#define	GAME_OBJECT		3	// Each contains object hub +
+	GAME_OBJECT		= 3,	// Each contains object hub +
 					// structures + script data
-#define	WALK_GRID_FILE		4	// Walk-grid data
-#define	GLOBAL_VAR_FILE		5	// All the global script variables in
+	WALK_GRID_FILE		= 4,	// Walk-grid data
+	GLOBAL_VAR_FILE		= 5,	// All the global script variables in
 					// one file; "there can be only one"
-#define PARALLAX_FILE_null	6	// NOT USED
-#define	RUN_LIST		7	// Each contains a list of object
+	PARALLAX_FILE_null	= 6,	// NOT USED
+	RUN_LIST		= 7,	// Each contains a list of object
 					// resource id's
-#define	TEXT_FILE		8	// Each contains all the lines of text
+	TEXT_FILE		= 8,	// Each contains all the lines of text
 					// for a location or a character's
 					// conversation script
-#define	SCREEN_MANAGER		9	// One for each location; this contains
+	SCREEN_MANAGER		= 9,	// One for each location; this contains
 					// special startup scripts
-#define MOUSE_FILE		10	// Mouse pointers and luggage icons
+	MOUSE_FILE		= 10,	// Mouse pointers and luggage icons
 					// (sprites in General / Mouse pointers
 					// & Luggage icons)
-#define WAV_FILE		11	// WAV file
-#define	ICON_FILE		12	// Menu icon (sprites in General \ Menu
-					// icons
-#define PALETTE_FILE		13	// separate palette file (see also
+	WAV_FILE		= 11,	// WAV file
+	ICON_FILE		= 12,	// Menu icon (sprites in General / Menu
+					// icons)
+	PALETTE_FILE		= 13	// separate palette file (see also
 					// _paletteHeader)
+};
 
-//----------------------------------------------------------
 // compType
 
-#define NO_COMPRESSION		0
-#define FILE_COMPRESSION	1	// standard whole-file compression
+enum {
+	NO_COMPRESSION		= 0,
+	FILE_COMPRESSION	= 1	// standard whole-file compression
 					// (not yet devised!)
+};
 
 //----------------------------------------------------------
 // (1) ANIMATION FILES
@@ -103,7 +104,6 @@ struct _standardHeader {
 // a 16-byte colour table ONLY if (runTimeComp==RLE16)
 // a string of groups of (frame header + frame data)
 
-//----------------------------------------------------------
 // Animation Header
 
 struct _animHeader {
@@ -122,17 +122,17 @@ struct _animHeader {
 	uint16 blend;
 } GCC_PACK;
 
-//----------------------------------------------------------
 // runtimeComp - compression used on each frame of the anim
 
-#define NONE	0		// No frame compression
-#define RLE256	1		// James's RLE for 256-colour sprites
-#define RLE16	2		// James's RLE for 16- or 17-colour sprites
+enum {
+	NONE	= 0,		// No frame compression
+	RLE256	= 1,		// James's RLE for 256-colour sprites
+	RLE16	= 2		// James's RLE for 16- or 17-colour sprites
 				// (raw blocks have max 16 colours for 2 pixels
 				// per byte, so '0's are encoded only as FLAT
 				// for 17-colour sprites eg. George's mega-set)
+};
 
-//----------------------------------------------------------
 // CDT Entry
 
 struct _cdtEntry {
@@ -147,14 +147,16 @@ struct _cdtEntry {
 } GCC_PACK;
 
 // 'frameType' bit values
-#define FRAME_OFFSET	1	// Print at (feetX + x, feetY + y), with
-				// scaling according to feetY
-#define FRAME_FLIPPED	2	// Print the frame flipped Left->Right
-#define FRAME_256_FAST	4	// Frame has been compressed using Pauls fast
-				// RLE 256 compression.
 
-//----------------------------------------------------------
-//Frame Header
+enum {
+	FRAME_OFFSET	= 1,	// Print at (feetX + x, feetY + y), with
+				// scaling according to feetY
+	FRAME_FLIPPED	= 2,	// Print the frame flipped Left->Right
+	FRAME_256_FAST	= 4	// Frame has been compressed using Pauls fast
+				// RLE 256 compression.
+};
+
+// Frame Header
 
 struct _frameHeader {
 	uint32 compSize;	// Compressed size of frame - NB. compression
@@ -178,7 +180,6 @@ struct _frameHeader {
 // a string of layer headers
 // a string of layer masks
 
-//----------------------------------------------------------
 // Multi screen header
 // Goes at the beginning of a screen file after the standard header.
 // Gives offsets from start of table of each of the components
@@ -193,7 +194,6 @@ struct _multiScreenHeader {
 	uint32 maskOffset;
 } GCC_PACK;
 
-//------------------------------------------------------------
 // Palette Data
 
 struct _palEntry {
@@ -203,7 +203,6 @@ struct _palEntry {
 	uint8 alpha;
 } GCC_PACK;
 
-//------------------------------------------------------------
 // Screen Header
 
 struct _screenHeader {
@@ -212,12 +211,10 @@ struct _screenHeader {
 	uint16 noLayers;	// number of layer areas
 } GCC_PACK;
 
-//------------------------------------------------------------
 // Layer Header
 
-// Note that all the layer headers are kept together,
-// rather than being placed before each layer mask,
-// in order to simplify the sort routine.
+// Note that all the layer headers are kept together, rather than being placed
+// before each layer mask, in order to simplify the sort routine.
 
 struct _layerHeader {
 	uint16 x;		// coordinates of top-left pixel of area
@@ -247,7 +244,6 @@ struct _layerHeader {
 // walk-grid file header
 // walk-grid data
 
-//----------------------------------------------------------
 // Walk-Grid Header - taken directly from old "header.h" in STD_INC
 
 struct _walkGridHeader {
@@ -263,8 +259,6 @@ struct _walkGridHeader {
 // standard file header
 // 4 * 256 bytes of palette data
 // 256k palette match table
-
-//----------------------------------------------------------
 
 // an object hub - which represents all that remains of the compact concept
 
@@ -292,8 +286,6 @@ struct _textHeader {
 //	look up table, to
 //	line of text,0
 //	line of text,0
-
-// ----------------------------------------------------------
 
 #if !defined(__GNUC__)
 	#pragma END_PACK_STRUCTS

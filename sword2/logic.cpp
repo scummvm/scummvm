@@ -53,7 +53,7 @@ int Logic::processSession(void) {
 	// processing on the current list
 
 	while (_pc != 0xffffffff) {
-		head = (_standardHeader*) _vm->_resman->openResource(run_list);
+		head = (_standardHeader *) _vm->_resman->openResource(run_list);
 
 		if (head->fileType != RUN_LIST)
 			error("Logic_engine %d not a run_list", run_list);
@@ -77,7 +77,7 @@ int Logic::processSession(void) {
 			return 0;
 		}
 
-		head = (_standardHeader*) _vm->_resman->openResource(ID);
+		head = (_standardHeader *) _vm->_resman->openResource(ID);
 
 		if (head->fileType != GAME_OBJECT)
 			error("Logic_engine %d not an object", ID);
@@ -111,7 +111,7 @@ int Logic::processSession(void) {
 				// this is the script data
 				// raw_script_ad = (char *) (_curObjectHub + 1);
 
-				raw_script_ad = (char*) head;
+				raw_script_ad = (char *) head;
 
 				// script and data object are us/same
 				ret = runScript(raw_script_ad, raw_script_ad, &_curObjectHub->script_pc[LEVEL]);
@@ -121,19 +121,19 @@ int Logic::processSession(void) {
 
 				// get the foreign objects script data address
 
-				raw_data_ad = (char*) head;
+				raw_data_ad = (char *) head;
 
 				far_head = (_standardHeader*) _vm->_resman->openResource(script / SIZE);
 
 				if (far_head->fileType != GAME_OBJECT && far_head->fileType != SCREEN_MANAGER)
 					error("Logic_engine %d not a far object (its a %d)", script / SIZE, far_head->fileType);
 
-				// raw_script_ad = (char*) (head + 1) + sizeof(_standardHeader);
+				// raw_script_ad = (char *) (head + 1) + sizeof(_standardHeader);
 
 				// get our objects data address
-				// raw_data_ad = (char*) (_curObjectHub + 1);
+				// raw_data_ad = (char *) (_curObjectHub + 1);
 
-				raw_script_ad = (char*) far_head;
+				raw_script_ad = (char *) far_head;
 
 				ret = runScript(raw_script_ad, raw_data_ad, &_curObjectHub->script_pc[LEVEL]);
 

@@ -27,27 +27,14 @@
 namespace Sword2 {
 
 // ---------------------------------------------------------------------------
-// welcome to the easy resource manager - written in simple code for easy
+// Welcome to the easy resource manager - written in simple code for easy
 // maintenance
 // 
-// the resource compiler will create two files
+// The resource compiler will create two files
 //
 //	resource.inf which is a list of ascii cluster file names
 //	resource.tab which is a table which tells us which cluster a resource
 //      is located in and the number within the cluster
-// ---------------------------------------------------------------------------
-
-#define NONE	 0
-#define FETCHING 1
-
-#define BUFFERSIZE	4096
-
-// ---------------------------------------------------------------------------
-//
-//
-//	resman.
-//
-//
 // ---------------------------------------------------------------------------
 
 enum {
@@ -214,7 +201,7 @@ ResourceManager::~ResourceManager(void) {
 
 void convertEndian(uint8 *file, uint32 len) {
 	int i;
-	_standardHeader *hdr = (_standardHeader *)file;
+	_standardHeader *hdr = (_standardHeader *) file;
 	
 	file += sizeof(_standardHeader);
 
@@ -223,7 +210,7 @@ void convertEndian(uint8 *file, uint32 len) {
 
 	switch (hdr->fileType) {
 	case ANIMATION_FILE: {
-		_animHeader *animHead = (_animHeader *)file;
+		_animHeader *animHead = (_animHeader *) file;
 
 		SWAP16(animHead->noAnimFrames);
 		SWAP16(animHead->feetStartX);
@@ -360,7 +347,7 @@ void convertEndian(uint8 *file, uint32 len) {
 		}
 
 		uint16 *node = (uint16 *) (file + sizeof(_walkGridHeader) + walkGridHeader->numBars * sizeof(_barData));
-		for (i = 0; i < walkGridHeader->numNodes*2; i++) {
+		for (i = 0; i < walkGridHeader->numNodes * 2; i++) {
 			SWAP16(*node);
 			node++;
 		}
@@ -372,7 +359,7 @@ void convertEndian(uint8 *file, uint32 len) {
 	case PARALLAX_FILE_null:
 		break;
 	case RUN_LIST: {
-		uint32 *list = (uint32 *)file;
+		uint32 *list = (uint32 *) file;
 		while (*list) {
 			SWAP32(*list);
 			list++;
@@ -380,7 +367,7 @@ void convertEndian(uint8 *file, uint32 len) {
 		break;
 	}
 	case TEXT_FILE: {
-		_textHeader *textHeader = (_textHeader *)file;
+		_textHeader *textHeader = (_textHeader *) file;
 		SWAP32(textHeader->noOfLines);
 		break;
 	}
@@ -393,7 +380,7 @@ void convertEndian(uint8 *file, uint32 len) {
 	}
 }
 
-uint8 *ResourceManager::openResource(uint32 res) {
+uint8 *ResourceManager::openResource(uint32 res, bool dump) {
 	// returns ad of resource. Loads if not in memory
 	// retains a count
 	// resource can be aged out of memory if count = 0
@@ -407,10 +394,7 @@ uint8 *ResourceManager::openResource(uint32 res) {
 
 	uint32	table_offset;
 
-//#ifdef _SWORD2_DEBUG
-	if (res >= _totalResFiles)
-		error("open illegal resource %d (there are %d resources 0-%d)", res, _totalResFiles, _totalResFiles - 1);
-//#endif
+	assert(res < _totalResFiles);
 
 	// is the resource in memory already?
 	// if the file is not in memory then age should and MUST be 0
@@ -422,10 +406,7 @@ uint8 *ResourceManager::openResource(uint32 res) {
 		// points to the number of the ascii filename
 		parent_res_file = _resConvTable[res * 2];
 
-//#ifdef _SWORD2_DEBUG
-		if (parent_res_file == 0xffff)
-			error("open tried to open null & void resource number %d", res);
-//#endif
+		assert(parent_res_file != 0xffff);
 
 		// relative resource within the file
 		actual_res = _resConvTable[(res * 2) + 1];
@@ -438,9 +419,8 @@ uint8 *ResourceManager::openResource(uint32 res) {
 		// of the CDs, remember which one so that we can play the
 		// correct music.
 
-		if (!(_cdTab[parent_res_file] & LOCAL_PERM)) {
+		if (!(_cdTab[parent_res_file] & LOCAL_PERM))
 			_curCd = _cdTab[parent_res_file] & 3;
-		}
 
 		// Actually, as long as the file can be found we don't really
 		// care which CD it's on. But if we can't find it, keep asking
@@ -482,6 +462,69 @@ uint8 *ResourceManager::openResource(uint32 res) {
 		// hurray, load it in.
 		file.read(_resList[res]->ad, len);
 
+		if (dump) {
+			_standardHeader *header = (_standardHeader *) _resList[res]->ad;
+			char buf[256];
+			char tag[10];
+			File out;
+
+			switch (header->fileType) {
+			case ANIMATION_FILE:
+				strcpy(tag, "anim");
+				break;
+			case SCREEN_FILE:
+				strcpy(tag, "layer");
+				break;
+			case GAME_OBJECT:
+				strcpy(tag, "object");
+				break;
+			case WALK_GRID_FILE:
+				strcpy(tag, "walkgrid");
+				break;
+			case GLOBAL_VAR_FILE:
+				strcpy(tag, "globals");
+				break;
+			case PARALLAX_FILE_null:
+				strcpy(tag, "parallax");	// Not used!
+				break;
+			case RUN_LIST:
+				strcpy(tag, "runlist");
+				break;
+			case TEXT_FILE:
+				strcpy(tag, "text");
+				break;
+			case SCREEN_MANAGER:
+				strcpy(tag, "screen");
+				break;
+			case MOUSE_FILE:
+				strcpy(tag, "mouse");
+				break;
+			case ICON_FILE:
+				strcpy(tag, "icon");
+				break;
+			default:
+				strcpy(tag, "unknown");
+				break;
+			}
+
+#if defined(MACOS_CARBON)
+			sprintf(buf, ":dumps:%s-%d", tag, res);
+#else
+			sprintf(buf, "dumps/%s-%d", tag, res);
+#endif
+
+			out.open(buf, "");
+
+			if (!out.isOpen()) {
+				out.open(buf, "", File::kFileWriteMode);
+				if (out.isOpen())
+					out.write(_resList[res]->ad, len);
+			}
+
+			if (out.isOpen())
+				out.close();
+		}
+
 		// close the cluster
 		file.close();
 
@@ -489,7 +532,7 @@ uint8 *ResourceManager::openResource(uint32 res) {
 		convertEndian((uint8 *) _resList[res]->ad, len);
 #endif
 	} else {
-		debug(5, "RO %d, already open count=%d", res, _count[res]);
+		debug(9, "RO %d, already open count=%d", res, _count[res]);
 	}
 
 	// number of times opened - the file won't move in memory while count
@@ -531,16 +574,12 @@ void ResourceManager::nextCycle(void) {
 	// increment the cycle and calculate actual per-cycle memory useage
 
 #ifdef _SWORD2_DEBUG
-	uint32 j;
-#endif
-
-#ifdef _SWORD2_DEBUG
 	_currentMemoryUsage = 0;
 
-	for (j = 1; j < _totalResFiles; j++) {
+	for (int i = 1; i < _totalResFiles; i++) {
 		// was accessed last cycle
-		if (_age[j] == _resTime)
-			_currentMemoryUsage += _resList[j]->size;
+		if (_age[i] == _resTime)
+			_currentMemoryUsage += _resList[i]->size;
 	}
 #endif
 
@@ -566,14 +605,8 @@ void ResourceManager::closeResource(uint32 res) {
 	// decrements the count
 	// resource floats when count = 0
 
-//#ifdef _SWORD2_DEBUG
-	if (res >= _totalResFiles)
-		error("closing illegal resource %d (there are %d resources 0-%d)", res, _totalResFiles, _totalResFiles - 1);
-
-	//closing but isnt open?
-	if (!(_count[res]))
-		error("closeResource: closing %d but it isn't open", res);
-//#endif
+	assert(res < _totalResFiles);
+	assert(_count[res]);
 
 	//one less has it open
 	_count[res]--;
@@ -712,47 +745,12 @@ void ResourceManager::examine(int res) {
 		Debug_Printf("%d is a null & void resource number\n", res);
 	else {
 		// open up the resource and take a look inside!
-		file_header = (_standardHeader*) openResource(res);
+		file_header = (_standardHeader *) openResource(res);
 
 		// Debug_Printf("%d\n", file_header->fileType);
 		// Debug_Printf("%s\n", file_header->name);
 
-		//----------------------------------------------------
-		// resource types: (taken from header.h)
-
-		// 1:  ANIMATION_FILE
-		//      all normal animations & sprites including mega-sets &
-		//	font files which are the same format
-		// 2:  SCREEN_FILE
-		//      each contains background, palette, layer sprites,
-		//	parallax layers & shading mask
-		// 3:  GAME_OBJECT
-		//      each contains object hub + structures + script data
-		// 4:  WALK_GRID_FILE
-		//      walk-grid data
-		// 5:  GLOBAL_VAR_FILE
-		//      all the global script variables in one file; "there can
-		//	be only one"
-		// 6:  PARALLAX_FILE_null
-		//      NOT USED
-		// 7:  RUN_LIST
-		//      each contains a list of object resource ids
-		// 8:  TEXT_FILE
-		//      each contains all the lines of text for a location or a
-		//	character's conversation script
-		// 9:  SCREEN_MANAGER
-		//      one for each location; this contains special startup
-		//	scripts
-		// 10: MOUSE_FILE
-		//      mouse pointers and luggage icons (sprites in General,
-		//	Mouse pointers & Luggage icons)
-		// 11: WAV_FILE
-		//      NOT USED HERE
-		// 12: ICON_FILE
-		//      menu icon (sprites in General and Menu icons)
-		// 13: PALETTE_FILE
-		//      NOT USED HERE
-		//----------------------------------------------------
+		// Resource types. See header.h
 
 		switch (file_header->fileType) {
 		case ANIMATION_FILE:

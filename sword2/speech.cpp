@@ -87,15 +87,20 @@ int32 Logic::fnChoose(int32 *params) {
 	// the human is switched off so there will be no normal mouse engine
 
 	_mouseEvent *me;
-	uint32 j, hit;
+	uint32 i;
+	int hit;
 	uint8 *icon;
-	uint32 pos = 0;
 
 	AUTO_SELECTED = 0;	// see below
 
 	// new thing to intercept objects held at time of clicking on a person
 
 	if (OBJECT_HELD) {
+		// So that, if there is no match, the speech script uses the
+		// default text for objects that are not accounted for
+
+		int response = _defaultResponseId;
+
 		// If we are using a luggage icon on the person, scan the
 		// subject list to see if this icon would have been available
 		// at this time.
@@ -108,28 +113,20 @@ int32 Logic::fnChoose(int32 *params) {
 		// Note that we won't display the subject icons in this case!
 
 		// scan the subject list for a match with our 'object_held'
-		while (pos < IN_SUBJECT) {
-			if (_subjectList[pos].res == OBJECT_HELD) {
-				// if we've found a match, clear it so it
-				// doesn't keep happening!
-				OBJECT_HELD = 0;
 
-				// clear the subject list
-				IN_SUBJECT = 0;
-
-				// return special subject chosen code (same
+		for (i = 0; i < IN_SUBJECT; i++) {
+			if (_subjectList[i].res == OBJECT_HELD) {
+				// Return special subject chosen code (same
 				// as in normal chooser routine below)
-				return IR_CONT + (_subjectList[pos].ref << 3);
+				response = _subjectList[i].ref;
+				break;
 			}
-			pos++;
 		}
 
 		OBJECT_HELD = 0; // clear it so it doesn't keep happening!
 		IN_SUBJECT = 0;	 // clear the subject list
 
-		// so that the speech script uses the default text for
-		// objects that are not accounted for
-		return IR_CONT + (_defaultResponseId << 3);
+		return IR_CONT + (response << 3);
 	}
 
 	// new thing for skipping chooser with "nothing else to say" text
@@ -156,16 +153,16 @@ int32 Logic::fnChoose(int32 *params) {
 		// init top menu from master list
 		// all icons are highlighted / full colour
 
-		for (j = 0; j < 15; j++) {
-			if (j < IN_SUBJECT) {
-				debug(5, " ICON res %d for %d", _subjectList[j].res, j);
-				icon = _vm->_resman->openResource(_subjectList[j].res) + sizeof(_standardHeader) + RDMENU_ICONWIDE * RDMENU_ICONDEEP;
-				_vm->_graphics->setMenuIcon(RDMENU_BOTTOM, (uint8) j, icon);
-				_vm->_resman->closeResource(_subjectList[j].res);
+		for (i = 0; i < 15; i++) {
+			if (i < IN_SUBJECT) {
+				debug(5, " ICON res %d for %d", _subjectList[i].res, i);
+				icon = _vm->_resman->openResource(_subjectList[i].res) + sizeof(_standardHeader) + RDMENU_ICONWIDE * RDMENU_ICONDEEP;
+				_vm->_graphics->setMenuIcon(RDMENU_BOTTOM, (uint8) i, icon);
+				_vm->_resman->closeResource(_subjectList[i].res);
 			} else {
-				//no icon here
-				debug(5, " NULL for %d", j);
-				_vm->_graphics->setMenuIcon(RDMENU_BOTTOM, (uint8) j, NULL);
+				// no icon here
+				debug(5, " NULL for %d", i);
+				_vm->_graphics->setMenuIcon(RDMENU_BOTTOM, (uint8) i, NULL);
 			}
 		}
 
@@ -179,68 +176,63 @@ int32 Logic::fnChoose(int32 *params) {
 
 		// again next cycle
 		return IR_REPEAT;
-	} else {
-		// menu is there - we're just waiting for a click
-		debug(5, "choosing");
+	}
 
-		me = _vm->_input->mouseEvent();
+	// menu is there - we're just waiting for a click
+	debug(5, "choosing");
 
-		// we only care about left clicks
-		// we ignore mouse releases
+	me = _vm->_input->mouseEvent();
 
-		if (me && (me->buttons & RD_LEFTBUTTONDOWN)) {
-			// check for click on a menu
-			// if so then end the choose, highlight only the
-			// chosen, blank the mouse and return the ref code * 8
+	// we only care about left clicks
+	// we ignore mouse releases
 
-			if (_vm->_input->_mouseY > 399 && _vm->_input->_mouseX >= 24 && _vm->_input->_mouseX < 640 - 24) {
-				//which are we over?
-				hit = (_vm->_input->_mouseX - 24) / 40;
-
-				//clicked on something - what button?
-				if (hit < IN_SUBJECT) {
-					debug(5, "Icons available:");
-
-					// change icons
-					for (j = 0; j < IN_SUBJECT; j++) {
-						debug(5, "%s", _vm->fetchObjectName(_subjectList[j].res));
-
-						// change all others to grey
-						if (j != hit) {
-							icon = _vm->_resman->openResource( _subjectList[j].res ) + sizeof(_standardHeader);
-							_vm->_graphics->setMenuIcon(RDMENU_BOTTOM, (uint8) j, icon);
-							_vm->_resman->closeResource(_subjectList[j].res);
-						}
-					}
-
-
-					debug(5, "Selected: %s", _vm->fetchObjectName(_subjectList[hit].res));
-
-					// this is our looping flag
-					_choosing = false;
-
-					IN_SUBJECT = 0;
-
-					// blank mouse again
-					_vm->setMouse(0);
-
-					debug(5, "hit %d - ref %d  ref*8 %d", hit, _subjectList[hit].ref, _subjectList[hit].ref * 8);
-
-					// for non-speech scripts that manually
-					// call the chooser
-					RESULT = _subjectList[hit].res;
-
-					// return special subject chosen code
-					return IR_CONT + (_subjectList[hit].ref << 3);
-				}
-			}
-		}
-
+	if (!me || !(me->buttons & RD_LEFTBUTTONDOWN) || _vm->_input->_mouseY < 400) {
 		debug(5, "end choose");
-
-		// again next cycle
 		return IR_REPEAT;
 	}
+
+	// Check for click on a menu. If so then end the choose, highlight only
+	// the chosen, blank the mouse and return the ref code * 8
+
+	hit = _vm->menuClick(IN_SUBJECT);
+
+	if (hit < 0) {
+		debug(5, "end choose");
+		return IR_REPEAT;
+	}
+
+	debug(5, "Icons available:");
+
+	// change icons
+	for (i = 0; i < IN_SUBJECT; i++) {
+		debug(5, "%s", _vm->fetchObjectName(_subjectList[i].res));
+
+		// change all others to grey
+		if (i != (uint32) hit) {
+			icon = _vm->_resman->openResource(_subjectList[i].res) + sizeof(_standardHeader);
+			_vm->_graphics->setMenuIcon(RDMENU_BOTTOM, (uint8) i, icon);
+			_vm->_resman->closeResource(_subjectList[i].res);
+		}
+	}
+
+	debug(2, "Selected: %s", _vm->fetchObjectName(_subjectList[hit].res));
+
+	// this is our looping flag
+	_choosing = false;
+
+	IN_SUBJECT = 0;
+
+	// blank mouse again
+	_vm->setMouse(0);
+
+	debug(5, "hit %d - ref %d  ref*8 %d", hit, _subjectList[hit].ref, _subjectList[hit].ref * 8);
+
+	// for non-speech scripts that manually
+	// call the chooser
+	RESULT = _subjectList[hit].res;
+
+	// return special subject chosen code
+	return IR_CONT + (_subjectList[hit].ref << 3);
 }
 
 int32 Logic::fnStartConversation(int32 *params) {
@@ -380,7 +372,7 @@ int32 Logic::fnTheyDoWeWait(int32 *params) {
 	if (!INS_COMMAND && RESULT == 1 && ob_logic->looping == 0) {
 		// first time so set up targets command if target is waiting
 
-		debug(5, "FNtdww sending command to %d", target);
+		debug(5, "fnTheyDoWeWait sending command to %d", target);
 
 		SPEECH_ID = params[1];
 		INS_COMMAND = params[2];
@@ -413,7 +405,7 @@ int32 Logic::fnTheyDoWeWait(int32 *params) {
 
 	if (RESULT == 1) {
 		// its waiting now so we can be finished with all this
-		debug(5, "FNtdww finished");
+		debug(5, "fnTheyDoWeWait finished");
 
 		// not looping anymore
 		ob_logic->looping = 0;
@@ -424,7 +416,7 @@ int32 Logic::fnTheyDoWeWait(int32 *params) {
 		return IR_CONT;
 	}
 
-	debug(5, "FNtdww just waiting");
+	debug(5, "fnTheyDoWeWait just waiting");
 
 	// debug flag to indicate who we're waiting for - see debug.cpp
 	_speechScriptWaiting = target;
@@ -572,7 +564,7 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 
 	debug(5, "  SP");
 
-	while(1) {
+	while (1) {
 		//we are currently running a command
 		switch (ob_speech->command) {
 		case 0:

@@ -36,7 +36,7 @@ public:
 	// The resource is locked while count != 0
 	// Resource floats when count = 0
 
-	uint8 *openResource(uint32 res);
+	uint8 *openResource(uint32 res, bool dump = false);
 	void closeResource(uint32 res);		// decrements the count
 
 	// returns '0' if resource out of range or null, otherwise '1' for ok

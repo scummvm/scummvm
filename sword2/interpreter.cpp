@@ -18,6 +18,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/util.h"
 #include "sword2/sword2.h"
 #include "sword2/interpreter.h"
 
@@ -193,6 +194,9 @@ void Logic::setupOpcodes(void) {
 
 int32 Logic::executeOpcode(int i, int32 *params) {
 	OpcodeProc op = _opcodes[i].proc;
+
+	debug(5, "%s", _opcodes[i].desc);
+
 	return (this->*op) (params);
 }
 
@@ -315,8 +319,6 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			assert(parameter <= MAX_FN_NUMBER);
 			// amount to adjust stack by (no of parameters)
 			Read8ip(value);
-			debug(5, "Call mcode %d with stack = %x", parameter, stack2 + stackPointer2 - value);
-
 			retVal = executeOpcode(parameter, stack2 + stackPointer2 - value);
 
 			stackPointer2 -= value;
