@@ -154,6 +154,9 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 
 			int len = _promptEndPos - _promptStartPos;
 			char str[len + 1];
+
+			if (len < 0) len = 0;	// Prevent overflow from forced Ctrl-D deletion
+
 			for (i = 0; i < len; i++)
 				str[i] = _buffer[(_promptStartPos + i) % kBufferSize];
 			str[len] = '\0';
