@@ -1,6 +1,6 @@
 ScummVM README
-Last updated:    2002-12-04
-Release version: 0.3.1cvs
+Last updated:    2003-03-07
+Release version: 0.3.2cvs
 ------------------------------------------------------------------------
 
 For more information, compatibility lists, details on donating, the latest
@@ -56,7 +56,8 @@ your own risk, and please do not file bug reports about them. If you want
 the latest updates on game compatibility, visit our web site and view the
 compatibility chart.
 
-        Full Throttle                            [Game: ft]
+        Full Throttle                              [Game: ft]
+        Curse of Monkey Island                     [Game: comi]
 
 The following games are SCUMM engine, but NOT supported by ScummVM (yet).
 
@@ -64,7 +65,6 @@ The following games are SCUMM engine, but NOT supported by ScummVM (yet).
         Zak McKracken (16 color floppy version)
         Monkey Island 1 (EGA, 16 color floppy version)
         Loom (16 color floppy version)
-        Curse of Monkey Island
 
 Please be aware that the engine may contain bugs and unimplemented features
 that sometimes make it impossible to finish the game. Save often, and please
@@ -82,7 +82,7 @@ ScummVM and wish to commit it into the main CVS, feel free to contact us!
         Windows         - SDL
         Windows CE      - SDL           (iPaq and other handheld devices)
         Unix            - SDL/X11       (includes iPaq devices running Linux)
-        Macintosh       - SDL/CUSTOM    (Including Classic and Mac OS X)
+        Mac OS X        - SDL
         AmigaOS         - SDL/AGA
         MorphOS         - SDL
         BeOS            - SDL
