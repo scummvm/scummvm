@@ -1123,6 +1123,7 @@ void Scumm::processKbd()
 
 		if (_features & GF_AFTER_V7)
 			runScript(_vars[VAR_UNK_SCRIPT_2], 0, 0, 0);
+		return;
 	} else if (_lastKeyHit == _vars[VAR_TALKSTOP_KEY]) {
 		_talkDelay = 0;
 		if (_sound->_sfxMode & 2)
