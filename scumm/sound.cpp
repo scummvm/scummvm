@@ -1791,19 +1791,19 @@ int MP3TrackInfo::play(SoundMixer *mixer, int startFrame, int duration) {
 
 	// Calc offset. As all bitrates are in kilobit per seconds, the division by 200 is always exact
 	offset = (startFrame * (_mad_header.bitrate / (8 * 25))) / 3;
+	_file->seek(offset, SEEK_SET);
 
 	// Calc delay
 	if (!duration) {
+		// FIXME: Using _size here is a problem if offset (or equivalently
+		// startFrame) is non-zero.
 		mad_timer_set(&durationTime, (_size * 8) / _mad_header.bitrate,
 		              (_size * 8) % _mad_header.bitrate, _mad_header.bitrate);
 	} else {
 		mad_timer_set(&durationTime, duration / 75, duration % 75, 75);
-	}	
+	}
 
-printf("startFrame %d, duration %d\n", startFrame, duration);
-	// Go
-	_file->seek(offset, SEEK_SET);
-
+	// Play it
 	return mixer->playMP3CDTrack(NULL, _file, durationTime);
 }
 
