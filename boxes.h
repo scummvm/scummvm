@@ -20,6 +20,10 @@
  *
  */
 
+#if !defined(__GNUC__)
+	#pragma START_PACK_STRUCTS
+#endif
+
 #define SIZEOF_BOX 20
 struct Box {				/* Internal walkbox file format */
 	int16 ulx,uly;
@@ -30,6 +34,10 @@ struct Box {				/* Internal walkbox file format */
 	byte flags;
 	uint16 scale;
 } GCC_PACK;
+
+#if !defined(__GNUC__)
+	#pragma END_PACK_STRUCTS
+#endif
 
 struct AdjustBoxResult {	/* Result type of AdjustBox functions */
 	int16 x,y;

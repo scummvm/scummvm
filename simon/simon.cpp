@@ -8248,6 +8248,10 @@ void SimonState::initSound() {
 	}
 }
 
+#if !defined(__GNUC__)
+	#pragma START_PACK_STRUCTS
+#endif	
+
 struct WaveHeader {
 	uint32 riff;
 	uint32 unk;
@@ -8264,6 +8268,11 @@ struct WaveHeader {
 	uint16 block_align;
 	uint16 bits_per_sample;
 } GCC_PACK;
+
+#if !defined(__GNUC__)
+	#pragma END_PACK_STRUCTS
+#endif	
+
 
 void SimonState::playVoice(uint voice) {
 	WaveHeader wave_hdr;

@@ -82,10 +82,18 @@ struct BlastObject {		/* BlastObjects to draw */
 	uint16 mode;
 };
 
+#if !defined(__GNUC__)
+	#pragma START_PACK_STRUCTS
+#endif
+
 struct BompHeader {			/* Bomp header */
 	uint16 unk;
 	uint16 width,height;
 } GCC_PACK;
+
+#if !defined(__GNUC__)
+	#pragma END_PACK_STRUCTS
+#endif
 
 struct BompDrawData {		/* Bomp graphics data */
 	byte *out;
