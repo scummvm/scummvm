@@ -50,15 +50,13 @@ Logic::Logic(QueenEngine *vm)
 	initialise();
 	if (_vm->resource()->isDemo()) {
 		_preChangeRoom = &Logic::preChangeRoom_Demo;
-		setupASM_Demo();
-	}
-	else if (_vm->resource()->isInterview()) {
+		_executeASM = &Logic::executeASM_Demo;
+	} else if (_vm->resource()->isInterview()) {
 		_preChangeRoom = &Logic::preChangeRoom_Interview;
-		setupASM_Interview();
-	}
-	else {
+		_executeASM = &Logic::executeASM_Interview;
+	} else {
 		_preChangeRoom = &Logic::preChangeRoom_Game;
-		setupASM_Game();
+		_executeASM = &Logic::executeASM_Game;
 	}
 }
 
@@ -1100,8 +1098,6 @@ void Logic::roomDisplay(uint16 room, RoomDisplayMode mode, uint16 scale, int com
 	debug(0, "Logic::roomDisplay(%d, %d, %d, %d, %d)", room, mode, scale, comPanel, inCutaway);
 
 	roomErase();
-
-	// XXX _vm->sound()->loadSFX(SFXNAME[_currentRoom]);
 
 	roomSetup(roomName(room), comPanel, inCutaway);
 	ObjectData *pod = NULL;
@@ -2446,7 +2442,7 @@ void Logic::sceneStart() {
 
 	_vm->display()->showMouseCursor(false);
 
-	if (1 == _scene) { // && _vm->input()->cutawayRunning()) { // sceneStart is always called when cutaway is running
+	if (1 == _scene) {
 		_vm->display()->palFadePanel();
 	}
 
@@ -2624,40 +2620,33 @@ bool Logic::preChangeRoom_Game() {
 }
 
 
-void Logic::setupASM_Demo() {
-	static const SpecialMoveProc proc[] = {
-		/* 00 */
-		NULL,
-		NULL,
-		&Logic::asmMakeJoeUseDress,
-		&Logic::asmMakeJoeUseNormalClothes,
-		/* 04 */
-		&Logic::asmMakeJoeUseUnderwear,
-		&Logic::asmSwitchToDressPalette,
-		&Logic::asmSwitchToNormalPalette,
-		NULL,
-		/* 08 */
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		/* 12 */
-		NULL,
-		NULL,
-		&Logic::asmEndDemo
-	};
-	_asmTable = proc;
-	_asmCount = ARRAYSIZE(proc);
+bool Logic::executeASM_Demo(uint16 sm) {
+	switch (sm) {
+	case 4:
+		asmMakeJoeUseUnderwear();
+		break;
+	case 5:
+		asmSwitchToDressPalette();
+		break;
+	case 14:
+		asmEndDemo();
+		break;
+	default:
+		return false;
+		break;
+	}
+	return true;
 }
 
-
-void Logic::setupASM_Interview() {
+bool Logic::executeASM_Interview(uint16 sm) {
 	// XXX
+	return false;
 }
 
 
-void Logic::setupASM_Game() {
-	static const SpecialMoveProc proc[] = {
+bool Logic::executeASM_Game(uint16 sm) {
+	typedef void (Logic::*SpecialMoveProc)();
+	static const SpecialMoveProc asmTable[] = {
 		/* 00 */
 		NULL,
 		NULL,
@@ -2667,10 +2656,10 @@ void Logic::setupASM_Game() {
 		&Logic::asmMakeJoeUseUnderwear,
 		&Logic::asmSwitchToDressPalette,
 		&Logic::asmSwitchToNormalPalette,
-		&Logic::asmStartCarAnimation,
+		&Logic::asmStartCarAnimation,    // room 74
 		/* 08 */
-		&Logic::asmStopCarAnimation,
-		&Logic::asmStartFightAnimation,
+		&Logic::asmStopCarAnimation,     // room 74
+		&Logic::asmStartFightAnimation,  // room 69
 		&Logic::asmWaitForFrankPosition, // c69e.cut
 		&Logic::asmMakeFrankGrowing,     // c69z.cut
 		/* 12 */
@@ -2702,26 +2691,25 @@ void Logic::setupASM_Game() {
 		&Logic::asmShakeScreen,
 		&Logic::asmAttemptPuzzle,
 		&Logic::asmScaleTitle,
-		NULL, // XXX PC Demo ?
+		NULL,
 		/* 36 */
 		&Logic::asmPanRightToHugh,
 		&Logic::asmMakeWhiteFlash,
 		&Logic::asmPanRightToJoeAndRita,
 		&Logic::asmPanLeftToBomb // cdint.cut
 	};
-	_asmTable = proc;
-	_asmCount = ARRAYSIZE(proc);
+	if (sm >= ARRAYSIZE(asmTable) || asmTable[sm] == NULL)
+		return false;
+	(this->*asmTable[sm])();
+	return true;
 }
 
 
 void Logic::executeSpecialMove(uint16 sm) {
-	if (sm >= _asmCount || _asmTable[sm] == NULL) {
+	
+	debug(0, "Special move: %d", sm);
+	if (!(this->*_executeASM)(sm))
 		warning("unhandled / invalid special move : %d", sm);
-	}
-	else {
-		debug(0, "Special move: %d", sm);
-		(this->*_asmTable[sm])();
-	}
 }
 
 
@@ -2751,7 +2739,6 @@ void Logic::asmSwitchToNormalPalette() {
 
 
 void Logic::asmStartCarAnimation() {
-	// Carbam background animation - room 74
 	_vm->bam()->_flag = BamScene::F_PLAY;
 	_vm->bam()->prepareAnimation();
 }
@@ -2766,7 +2753,6 @@ void Logic::asmStopCarAnimation() {
 
 
 void Logic::asmStartFightAnimation() {
-	// Fight1 background animation - room 69
 	_vm->bam()->_flag = BamScene::F_PLAY;
 	_vm->bam()->prepareAnimation();
 	gameState(148, 1);
@@ -3191,13 +3177,11 @@ void Logic::asmPanRightToHugh() {
 	i *= 2;
 
 	int horizontalScroll = 0;
-	while (horizontalScroll < k) {
+	while (horizontalScroll < k && !_vm->input()->cutawayQuit()) {
 
 		horizontalScroll = horizontalScroll + i;
 		if (horizontalScroll > k)
 			horizontalScroll = k;
-
-		//debug(0, "horizontalScroll = %i", horizontalScroll);
 
 		_vm->display()->horizontalScroll(horizontalScroll);
 
@@ -3213,9 +3197,6 @@ void Logic::asmPanRightToHugh() {
 		bob_thugB2->x -= i * 4;
 
 		update();
-
-		if (_vm->input()->cutawayQuit())
-			return;
 	}
 
 	_vm->input()->fastMode(false);
@@ -3246,13 +3227,11 @@ void Logic::asmPanRightToJoeAndRita() { // cdint.cut
 	int horizontalScroll = _vm->display()->horizontalScroll();
 
 	int i = 1;
-	while (horizontalScroll < 290) {
+	while (horizontalScroll < 290 && !_vm->input()->cutawayQuit()) {
 
 		horizontalScroll = horizontalScroll + i;
 		if (horizontalScroll > 290)
 			horizontalScroll = 290;
-
-		//debug(0, "horizontalScroll = %i", horizontalScroll);
 
 		_vm->display()->horizontalScroll(horizontalScroll);
 
@@ -3263,9 +3242,6 @@ void Logic::asmPanRightToJoeAndRita() { // cdint.cut
 		bob_hands->x -= i * 2;
 
 		update();
-
-		if (_vm->input()->cutawayQuit())
-			return;
 	}
 	_vm->input()->fastMode(false);
 }
@@ -3281,13 +3257,12 @@ void Logic::asmPanLeftToBomb() {
 	int horizontalScroll = _vm->display()->horizontalScroll();
 
 	int i = 5;
-	while (horizontalScroll > 0 || bob21->x < 136) {
+	while ((horizontalScroll > 0 || bob21->x < 136) && !_vm->input()->cutawayQuit()) {
 
 		horizontalScroll -= i;
 		if (horizontalScroll < 0)
 			horizontalScroll = 0;
 
-		//debug(0, "horizontalScroll = %i", horizontalScroll);
 		_vm->display()->horizontalScroll(horizontalScroll);
 
 		if (horizontalScroll < 272 && bob21->x < 136)
@@ -3296,9 +3271,6 @@ void Logic::asmPanLeftToBomb() {
 		bob22->x += i;
 
 		update();
-
-		if (_vm->input()->cutawayQuit())
-			return;
 	}
 
 	_vm->input()->fastMode(false);
@@ -3306,10 +3278,6 @@ void Logic::asmPanLeftToBomb() {
 
 
 void Logic::asmEndDemo() {
-	int i;
-	for (i = 0; i < 40; ++i) {
-		update();
-	}
 	debug(0, "Flight of the Amazon Queen, released January 95");
 	OSystem::instance()->quit();	
 }

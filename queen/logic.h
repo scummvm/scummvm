@@ -251,9 +251,9 @@ public:
 	bool preChangeRoom_Interview();
 	bool preChangeRoom_Game();
 
-	void setupASM_Demo();
-	void setupASM_Interview();
-	void setupASM_Game();
+	bool executeASM_Demo(uint16 sm);
+	bool executeASM_Interview(uint16 sm);
+	bool executeASM_Game(uint16 sm);
 
 	void executeSpecialMove(uint16 sm);
 
@@ -296,8 +296,8 @@ public:
 	void asmPanLeftToBomb();
 	void asmEndDemo();
 
+	typedef bool (Logic::*ExecuteASMProc)(uint16);
 	typedef bool (Logic::*PreChangeRoomProc)();
-	typedef void (Logic::*SpecialMoveProc)();
 
 	enum {
 		MAX_ZONES_NUMBER   = 32,
@@ -434,9 +434,7 @@ protected:
 
 	bool _subtitles;
 
-	const SpecialMoveProc *_asmTable;
-	uint16 _asmCount;
-
+	ExecuteASMProc _executeASM;
 	PreChangeRoomProc _preChangeRoom;
 
 	QueenEngine *_vm;
