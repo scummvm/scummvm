@@ -556,6 +556,7 @@ void Player_V2::clear_channel(int i) {
 	channel->d.freqmod_incr = 0;
 	channel->d.freqmod_multiplier = 0;
 	channel->d.freqmod_modulo = 0;
+	channel->d.music_timer = 0;
 }
 
 int Player_V2::getMusicTimer() const {

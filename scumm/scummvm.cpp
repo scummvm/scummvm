@@ -1052,7 +1052,7 @@ void Scumm::initScummVars() {
 	} else {
 		VAR(VAR_CURRENTDRIVE) = 0;
 		VAR(VAR_FIXEDDISK) = true;
-		VAR(VAR_SOUNDCARD) = 3;
+		VAR(VAR_SOUNDCARD) = (_midiDriver == MD_PCSPK || _midiDriver == MD_PCJR) ? 0 : 3;
 		VAR(VAR_VIDEOMODE) = 0x13;
 		VAR(VAR_HEAPSPACE) = 1400;
 		VAR(VAR_MOUSEPRESENT) = true; // FIXME - used to be 0, but that seems odd?!?
