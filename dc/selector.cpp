@@ -151,8 +151,9 @@ static bool isGame(const char *fn, char *base)
     base[l-4]='\0';
     return true;
   }
-  if(!strcasecmp(fn, "ZAK.EXP")) {
-    strcpy(base, "ZAK256");
+  if(!strcasecmp(fn, "00.LFL") ||
+     !strcasecmp(fn, "000.LFL")) {
+    *base = '\0';
     return true;
   }
   return false;
@@ -227,6 +228,18 @@ static int findGames(Scumm *s, Game *games, int max)
 	  else if(curr_game < max &&
 	     isGame(entry->d_name, games[curr_game].filename_base)) {
 	    strcpy(games[curr_game].dir, dirs[curr_dir-1].name);
+	    if(!*games[curr_game].filename_base) {
+	      int i;
+	      for(i=strlen(games[curr_game].dir)-1; --i>=0; )
+		if(games[curr_game].dir[i]=='/')
+		  break;
+	      if(i>=0) {
+		games[curr_game].dir[strlen(games[curr_game].dir)-1]='\0';
+		strcpy(games[curr_game].filename_base,
+		       games[curr_game].dir+i+1);
+		games[curr_game].dir[i+1]='\0';
+	      }
+	    }
 	    checkName(s, games[curr_game]);
 	    curr_game++;
 	  }
