@@ -305,15 +305,6 @@ enum {
 	kQuitCmd = 'QUIT'
 };
 
-/*
- * TODO
- * - Maybe go back to the old way of differentiating between the save and the load mode?
- *   This would include that in the load mode the list is not editable.
- * - Currently the savegame list is only loaded once when the dialog is created. Instead,
- *   it should be loaded whenever the dialog is opened. Might want to add an open()
- *   method to Dialog for that.
- */
-
 SaveLoadDialog::SaveLoadDialog(NewGui *gui, Scumm *scumm)
 	: ScummDialog(gui, scumm, 30, 18, 260, 162)
 {
