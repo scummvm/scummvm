@@ -1119,6 +1119,7 @@ void OSystem_SDL_Common::setup_icon() {
 
 	SDL_Surface *sdl_surf = SDL_CreateRGBSurfaceFrom(icon, 32, 32, 32, 32 * 4, 0xFF0000, 0x00FF00, 0x0000FF, 0xFF000000);
 	SDL_WM_SetIcon(sdl_surf, (unsigned char *) mask);
+	SDL_FreeSurface(sdl_surf);
 }
 
 void *OSystem_SDL_Common::create_mutex(void) {
