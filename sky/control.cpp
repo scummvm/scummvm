@@ -22,6 +22,7 @@
 #include "common/file.h"
 #include "common/util.h"
 #include "common/system.h"
+#include "common/config-manager.h"
 #include "gui/message.h"
 #include "sky/compact.h"
 #include "sky/control.h"
@@ -726,6 +727,8 @@ uint16 Control::toggleText(void) {
 		_statusBar->setToText(0x7000 + 35); // text only
 	}
 
+	ConfMan.set("subtitles", (bool)(flags & SF_ALLOW_TEXT));
+	
 	SkyEngine::_systemVars.systemFlags |= flags;
 
 	drawTextCross(flags);
@@ -1758,6 +1761,7 @@ void Control::showGameQuitMsg(bool useScreen) {
 	_skyScreen->showScreen(screenData);
 	free(textBuf1); free(textBuf2);
 	delay(1500);
+	ConfMan.flushToDisk();
 	_system->quit();
 }
 
