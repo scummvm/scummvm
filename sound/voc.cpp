@@ -50,24 +50,22 @@ byte *readVOCFromMemory(byte *ptr, int &size, int &rate, int &loops, int &begin_
 	assert(version == 0x010A || version == 0x0114);
 	assert(code == ~version + 0x1234);
 	
-	bool quit = false;
+	int len;
 	byte *ret_sound = 0;
 	size = 0;
 	begin_loop = 0;
 	end_loop = 0;
+	
+	ptr += offset;
+	while ((code = *ptr++)) {
+		len = *ptr++;
+		len |= *ptr++ << 8;
+		len |= *ptr++ << 16;
 
-	while (!quit) {
-		int len = READ_LE_UINT32(ptr + offset);
-		offset += 4;
-		code = len & 0xFF;
-		len >>= 8;
 		switch(code) {
-		case 0:
-			quit = true;
-			break;
 		case 1: {
-			int time_constant = ptr[offset++];
-			int packing = ptr[offset++];
+			int time_constant = *ptr++;
+			int packing = *ptr++;
 			len -= 2;
 			rate = getSampleRateFromVOCRate(time_constant);
 			debug(9, "VOC Data Block: %d, %d, %d", rate, packing, len);
@@ -77,7 +75,7 @@ byte *readVOCFromMemory(byte *ptr, int &size, int &rate, int &loops, int &begin_
 				} else {
 					ret_sound = (byte *)malloc(len);
 				}
-				memcpy(ret_sound + size, ptr + offset, len);
+				memcpy(ret_sound + size, ptr, len);
 				begin_loop = size;
 				size += len;
 				end_loop = size;
@@ -86,17 +84,16 @@ byte *readVOCFromMemory(byte *ptr, int &size, int &rate, int &loops, int &begin_
 			}
 			} break;
 		case 6:	// begin of loop
-			loops = (uint16)READ_LE_UINT16(ptr + offset);
+			loops = (uint16)READ_LE_UINT16(ptr);
 			break;
 		case 7:	// end of loop
 			break;
 		default:
 			warning("Invalid code in VOC file : %d", code);
-			quit = true;
-			break;
+			return ret_sound;
 		}
 		// FIXME some FT samples (ex. 362) has bad length, 2 bytes too short
-		offset += len;
+		ptr += len;
 	}
 	debug(4, "VOC Data Size : %d", size);
 	return ret_sound;
@@ -132,18 +129,16 @@ byte *loadVOCFile(File *file, int &size, int &rate) {
 	assert(version == 0x010A || version == 0x0114);
 	assert(code == ~version + 0x1234);
 
-	bool quit = false;
+	int len;
 	byte *ret_sound = 0;
 	size = 0;
 
-	while (!quit) {
-		int len = file->readUint32LE();
-		code = len & 0xFF;
-		len >>= 8;
+	while ((code = file->readByte())) {
+		len = file->readByte();
+		len |= file->readByte() << 8;
+		len |= file->readByte() << 16;
+
 		switch(code) {
-		case 0:
-			quit = true;
-			break;
 		case 1: {
 			int time_constant = file->readByte();
 			int packing = file->readByte();
@@ -164,8 +159,7 @@ byte *loadVOCFile(File *file, int &size, int &rate) {
 			} break;
 		default:
 			warning("Invalid code in VOC file : %d", code);
-			quit = true;
-			break;
+			return ret_sound;
 		}
 	}
 	debug(4, "VOC Data Size : %d", size);
