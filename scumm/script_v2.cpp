@@ -572,8 +572,10 @@ void Scumm_v2::o2_actorSet() {
 			a->sound[0] = arg;
 			break;
 
-		case 2:		// Unknown - Init?
-			warning("o2_actorSet(%d, %d) - Init(?) Not Implemented", act, arg);
+		case 2:	{	// Unknown - Init?
+			int unk1 = fetchScriptByte();
+			warning("o2_actorSet(%d, %d, %d) - Init(?) Not Implemented", act, arg, unk1);
+		}
 			break;
 
 		case 3:		// Actor Name
