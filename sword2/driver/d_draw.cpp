@@ -403,16 +403,20 @@ int32 NextSmackerFrame(void) {
 uint8 *textSurface = NULL;
 
 void OpenTextObject(_movieTextObject *obj) {
-	CreateSurface(obj->textSprite, &textSurface);
+	if (obj->textSprite)
+		CreateSurface(obj->textSprite, &textSurface);
 }
 
 void CloseTextObject(_movieTextObject *obj) {
-	DeleteSurface(textSurface);
-	textSurface = 0;
+	if (textSurface) {
+		DeleteSurface(textSurface);
+		textSurface = 0;
+	}
 }
 
 void DrawTextObject(_movieTextObject *obj) {
-	DrawSurface(obj->textSprite, textSurface);
+	if (obj->textSprite && textSurface)
+		DrawSurface(obj->textSprite, textSurface);
 	
 /*
 	HRESULT				hr;
@@ -573,17 +577,14 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 
 			if (frameCounter == text[textCounter]->startFrame) {
 				EraseBackBuffer();
-				if (text[textCounter]->textSprite) {
-					OpenTextObject(text[textCounter]);
-					DrawTextObject(text[textCounter]);
-				}
+				OpenTextObject(text[textCounter]);
+				DrawTextObject(text[textCounter]);
 				if (text[textCounter]->speech)
 					debug(0, "FIXME: Play subtitle speech");
 			}
 
 			if (frameCounter == text[textCounter]->endFrame) {
-				if (text[textCounter]->textSprite)
-					CloseTextObject(text[textCounter]);
+				CloseTextObject(text[textCounter]);
 				EraseBackBuffer();
 				textCounter++;
 			}
@@ -607,8 +608,7 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 
 		BS2_SetPalette(0, 256, oldPal, RDPAL_INSTANT);
 
-		if (textSurface)
-			CloseTextObject(text[textCounter]);
+		CloseTextObject(text[textCounter]);
 	}
 
 	return(RD_OK);
