@@ -1,4 +1,4 @@
-vpath %.cpp ../:../sound/
+vpath %.cpp ../:../sound/:../v3/:../v4/
 
 CC      = g++
 CFLAGS  = -Wno-multichar -fstrength-reduce -O2
@@ -14,7 +14,8 @@ INCS	= ../scumm.h ../scummsys.h ../stdafx.h
 OBJS	= actor.o akos.o boxes.o costume.o gfx.o object.o resource.o \
 	saveload.o script.o scummvm.o sound.o string.o \
 	sys.o verbs.o morphos.o morphos_sound.o script_v1.o script_v2.o debug.o gui.o \
-	imuse.o fmopl.o adlib.o gmidi.o debugrl.o vars.o insane.o
+	imuse.o fmopl.o adlib.o gmidi.o debugrl.o vars.o insane.o \
+	gameDetector.o init.o resource_v3.o resource_v4.o
 
 DISTFILES=$(OBJS:.o=.cpp) Makefile scumm.h scummsys.h stdafx.h stdafx.cpp \
 	windows.cpp debugrl.h whatsnew.txt readme.txt copying.txt \

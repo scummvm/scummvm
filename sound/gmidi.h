@@ -61,6 +61,7 @@ static const byte mt32_to_gmidi[128] = {
 	#define NO_PPCINLINE_VARARGS
 	#include <clib/alib_protos.h>
 	#include <proto/exec.h>
+	#undef CMD_INVALID
 
 	extern struct IOMidiRequest *ScummMidiRequest;
 #endif

@@ -25,7 +25,6 @@
 
 #include "stdafx.h"
 #include "scumm.h"
-#include "sound.h"
 
 #include <dos/dos.h>
 #include <exec/memory.h>
@@ -210,7 +209,14 @@ int morphos_music_thread( Scumm *s, ULONG MidiUnit, bool NoMusic )
 		for(;;)
 		{
 			if( CheckSignal( SIGBREAKF_CTRL_F ) )
+			{
+				if( ahiReqSent[ ahiCurBuf ] )
+				{
+					AbortIO( (struct IORequest *)ahiReq[ ahiCurBuf ] );
+					WaitIO ( (struct IORequest *)ahiReq[ ahiCurBuf ] );
+				}
 				break;
+			}
 
 			if( !snd_driv.wave_based() )
 			{
@@ -241,10 +247,7 @@ int morphos_music_thread( Scumm *s, ULONG MidiUnit, bool NoMusic )
 				UWORD ahiOtherBuf = !ahiCurBuf;
 
 				if( ahiReqSent[ ahiCurBuf ] )
-				{
 					WaitIO( (struct IORequest *)req );
-					ahiReqSent[ ahiCurBuf ] = FALSE;
-				}
 
 				if( CheckSignal( SIGBREAKF_CTRL_F ) )
 					break;
@@ -266,12 +269,6 @@ int morphos_music_thread( Scumm *s, ULONG MidiUnit, bool NoMusic )
 				ahiCurBuf = ahiOtherBuf;
 			}
 		}
-	}
-
-	if( ahiReqSent[ ahiCurBuf ] )
-	{
-		AbortIO( (struct IORequest *)ahiReq[ ahiCurBuf ] );
-		WaitIO ( (struct IORequest *)ahiReq[ ahiCurBuf ] );
 	}
 
 	if( TimerAvailable )

@@ -26,7 +26,7 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "gui.h"
-#include "sound.h"
+#include "gameDetector.h"
 
 #include <exec/types.h>
 #include <exec/memory.h>
@@ -58,9 +58,11 @@
 
 extern "C" struct WBStartup *_WBenchMsg;
 
-Scumm scumm;
+Scumm *scumm = NULL;
 ScummDebugger debugger;
 Gui gui;
+OSystem _system;
+GameDetector detector;
 
 SoundEngine sound;
 SOUND_DRIVER_TYPE snd_driv;
@@ -198,9 +200,9 @@ static int   cd_track = 0, cd_num_loops = 0, cd_start_frame = 0;
 static ULONG cd_end_time = 0;
 static ULONG cd_stop_time = 0;
 
-void cd_play( int track, int num_loops, int start_frame, int length )
+void cd_play( Scumm *s, int track, int num_loops, int start_frame, int length )
 {
-	scumm._vars[14] = 0;
+	scumm->_vars[14] = 0;
 	if( CDrive && start_frame >= 0 )
 	{
 		struct CDS_TrackInfo ti;
@@ -1590,9 +1592,7 @@ void initGraphics( Scumm *s, bool fullScreen, unsigned int scaleFactor )
 
 	memset( ScummColors, 0, 256*sizeof( ULONG ) );
 
-	char *gameName;
-	sprintf( ScummWndTitle, "ScummVM MorphOS - %s", gameName = s->getGameName());
-	free( gameName );
+	sprintf( ScummWndTitle, "ScummVM MorphOS - %s", s->_gameText);
 
 	createScreen( args[ USG_WBWINDOW ] ? CSDSPTYPE_WINDOWED : CSDSPTYPE_FULLSCREEN );
 
@@ -1858,14 +1858,36 @@ int main( int argc, char *argv[] )
 			strcat( ScummPath, "/" );
 	}
 
-	scumm._gui = &gui;
-	sound.initialize( &scumm, &snd_driv );
 	char *argvfake[] = { "ScummVM", (char *)ScummStory, "-e5", (char *)ScummPath };
-	scumm.scummMain( ScummPath ? 4 : 3, argvfake);
+	if( detector.detectMain( ScummPath ? 4 : 3, argvfake ) )
+		exit( 1 );
 
-	/* Fix up argument flags */
-	if( args[ USG_NOSUBTITLES ] )
-		scumm._noSubtitles = true;
+	if( detector._features & GF_OLD256 )
+		scumm = new Scumm_v3;
+	else if( detector._features & GF_SMALL_HEADER ) // this force loomCD as v4
+		scumm = new Scumm_v4;
+	else if( detector._features & GF_AFTER_V7 )
+		scumm = new Scumm_v7;
+	else if( detector._features & GF_AFTER_V6 ) // this force SamnmaxCD as v6
+		scumm = new Scumm_v6;
+	else
+		scumm = new Scumm_v5;
+
+	scumm->_fullScreen = detector._fullScreen;
+	scumm->_debugMode = detector._debugMode;
+	scumm->_bootParam = detector._bootParam;
+	scumm->_scale = detector._scale;
+	scumm->_gameDataPath = detector._gameDataPath;
+	scumm->_gameTempo = detector._gameTempo;
+	scumm->_soundEngine = detector._soundEngine;
+	scumm->_videoMode = detector._videoMode;
+	scumm->_exe_name = detector._exe_name;
+	scumm->_gameId = detector._gameId;
+	scumm->_gameText = detector._gameText;
+	scumm->_features = detector._features;
+	scumm->_soundCardType = detector._soundCardType;
+	scumm->_noSubtitles = args[ USG_NOSUBTITLES ] != FALSE;
+
 	if( args[ USG_VOLUME ] )
 	{
 		int vol = *(LONG *)args[ USG_VOLUME ];
@@ -1873,29 +1895,47 @@ int main( int argc, char *argv[] )
 			sound.set_music_volume( vol );
 	}
 	if( args[ USG_TEMPO ] )
-		scumm._gameTempo = *(LONG *)args[ USG_TEMPO ];
+		scumm->_gameTempo = *(LONG *)args[ USG_TEMPO ];
 
-	gui.init(&scumm);
+	scumm->delta=6;
 
-	last_time = GetTicks();
-	delta = 0;
-	do
-	{
-		updateScreen( &scumm );
+	scumm->_gui = &gui;
+	sound.initialize(scumm, &snd_driv);
 
-		new_time = GetTicks();
-		waitForTimer( &scumm, delta * 15 + last_time - new_time );
-		last_time = GetTicks();
+	scumm->delta=0;
+	scumm->_system = &_system;
 
-		if( gui._active )
-		{
-			gui.loop();
-			delta = 5;
-		}
-		else
-			delta = scumm.scummLoop( delta );
-	} while( 1 );
+	_system.last_time=0;
+
+	scumm->launch();
+
+	gui.init(scumm);	/* Reinit GUI after loading a game */
+	scumm->mainRun();
 
 	return 0;
+}
+
+int OSystem::waitTick(int delta)
+{
+	do
+	{
+		updateScreen( scumm );
+		new_time = GetTicks();
+		waitForTimer( scumm, delta * 15 + last_time - new_time );
+		last_time = GetTicks();
+		if( gui._active )
+		{
+			gui.loop( scumm );
+			delta = 5;
+		}
+	}
+	while( gui._active );
+
+	return( delta );
+}
+
+OSystem::OSystem()
+{
+	last_time = GetTicks();
 }
 
