@@ -133,20 +133,16 @@ void IMuseDigital::callback() {
 				do {
 					if (_sound->getBits(_track[l].soundHandle) == 12) {
 						byte *ptr = NULL;
+
 						mixer_size += _track[l].mod;
-						int length = (((mixer_size * 3) / 4) / 3) * 3;	// == (mixer_size / 4) * 3  != (mixer_size / 3) * 4
-						_track[l].mod = ((mixer_size * 3) / 4) - length;
-						mixer_size = length;
+						int mixer_size_12 = (mixer_size * 3) / 4;
+						int length = (mixer_size_12 / 3) * 4;
+						_track[l].mod = mixer_size - length;
 
 						int32 offset = (_track[l].regionOffset * 3) / 4;
-						result = _sound->getDataFromRegion(_track[l].soundHandle, _track[l].curRegion, &ptr, offset, mixer_size);
-						int32 result2 = BundleCodecs::decode12BitsSample(ptr, &data, result);
-						result = (result * 4) / 3;
-						if (result != result2) {
-							debug(5, "result: %d, result2: %d", result, result2);
-							result &= ~1;
-						}
-						mixer_size = (mixer_size * 4) / 3;
+						int result2 = _sound->getDataFromRegion(_track[l].soundHandle, _track[l].curRegion, &ptr, offset, mixer_size_12);
+						result = BundleCodecs::decode12BitsSample(ptr, &data, result2);
+
 						free(ptr);
 					} else if (_sound->getBits(_track[l].soundHandle) == 16) {
 						result = _sound->getDataFromRegion(_track[l].soundHandle, _track[l].curRegion, &data, _track[l].regionOffset, mixer_size);
@@ -166,6 +162,9 @@ void IMuseDigital::callback() {
 						}
 					}
 
+					if (result > mixer_size)
+						result = mixer_size;
+
 					if (_scumm->_mixer->isReady()) {
 						_scumm->_mixer->setChannelVolume(_track[l].handle, _track[l].vol / 1000);
 						_scumm->_mixer->setChannelPan(_track[l].handle, pan);
@@ -181,9 +180,6 @@ void IMuseDigital::callback() {
 							break;
 					}
 					mixer_size -= result;
-					if (mixer_size < 0)
-						mixer_size = 0;
-					assert(mixer_size >= 0);
 				} while (mixer_size != 0);
 			}
 		}
