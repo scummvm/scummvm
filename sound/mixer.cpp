@@ -397,7 +397,7 @@ bool SoundMixer::isSoundIDActive(int id) {
 bool SoundMixer::hasActiveChannelOfType(SoundType type) {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++)
-		if (_channels[i] && !_channels[i]->_type == type)
+		if (_channels[i] && _channels[i]->_type == type)
 			return true;
 	return false;
 }
