@@ -169,6 +169,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"fbdemo", "Fatty Bear's Birthday Surprise (DOS Demo)", GID_FBEAR, 6, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+
 	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY, 0},
 	{"dottdemo", "Day Of The Tentacle (Demo)", GID_TENTACLE, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
@@ -176,7 +177,6 @@ static const ScummGameSettings scumm_settings[] = {
 
 	{"samnmax", "Sam & Max", GID_SAMNMAX, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER, 0},
-
 	{"samdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER, 0},
 	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
