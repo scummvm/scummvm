@@ -71,7 +71,7 @@ Cutaway::Cutaway(
 		Logic *logic,
 		Resource *resource) 
 : _graphics(graphics), _logic(logic), _resource(resource), _walk(logic->walk()),
-	_quit(false), _personFaceCount(0), _lastSong(0), _songBeforeComic(0) {
+	_quit(false), _personFaceCount(0), _personDataCount(0), _lastSong(0), _songBeforeComic(0) {
 	memset(&_bankNames, 0, sizeof(_bankNames));
 	load(filename); 
 }
@@ -632,6 +632,8 @@ void Cutaway::handlePersonRecord(
 
 	Person p;
 
+	_personFaceCount = 0;	//Hello, please verify me. (Fixes crash on OSX)
+	
 	if (object.objectNumber == OBJECT_JOE) {
 		if (object.moveToX || object.moveToY) {
 			_walk->joeMove(0, object.moveToX, object.moveToY, true);
