@@ -125,6 +125,7 @@ void EditTextWidget::drawWidget(bool hilite)
 	gui->hline(_x, _y, _x+_w-1, gui->_color);
 	gui->hline(_x, _y+_h-1, _x+_w-1, gui->_shadowcolor);
 	gui->vline(_x, _y, _y+_h-1, gui->_color);
+	gui->vline(_x+_w-1, _y, _y+_h-1, gui->_shadowcolor);
 
 	// Draw the text
 	_align = (gui->getStringWidth(_label) > _w-6) ? kTextAlignRight : kTextAlignLeft;
