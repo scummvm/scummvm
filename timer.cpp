@@ -73,7 +73,7 @@ int Timer::handler(int * t) {
 	if (interval > 10000) interval = 10000;
 	_osystem->unlock_mutex(_mutex);
 
-	_osystem->set_timer (interval, &timer_handler);
+//	_osystem->set_timer (interval, &timer_handler);
 
 	return *t;
 }
