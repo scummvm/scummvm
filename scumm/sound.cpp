@@ -294,8 +294,8 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		}
 
 		// TODO: Set sound channel based on heChannel
-		if (heFlags & 1)
-			flags |= SoundMixer::FLAG_LOOP;
+		//if (heFlags & 1)
+		//	flags |= SoundMixer::FLAG_LOOP;
 
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
