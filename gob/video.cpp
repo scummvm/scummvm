@@ -331,9 +331,9 @@ void vid_setPalElem(int16 index, char red, char green, char blue, int16 unused,
 		error("vid_setPalElem: Video mode 0x%x is not supported!",
 		    vidMode);
 
-	pal[0] = red << 2;
-	pal[1] = green << 2;
-	pal[2] = blue << 2;
+	pal[0] = (red << 2) | (red & 3);
+	pal[1] = (green << 2) | (green & 3);
+	pal[2] = (blue << 2) | (blue & 3);
 	pal[3] = 0;
 	g_system->setPalette(pal, index, 1);
 }
@@ -353,9 +353,9 @@ void vid_setPalette(PalDesc *palDesc) {
 		numcolors = 16;
 
 	for (i = 0; i < numcolors; i++) {
-		pal[i * 4 + 0] = palDesc->vgaPal[i].red << 2;
-		pal[i * 4 + 1] = palDesc->vgaPal[i].green << 2;
-		pal[i * 4 + 2] = palDesc->vgaPal[i].blue << 2;
+		pal[i * 4 + 0] = (palDesc->vgaPal[i].red << 2) | (palDesc->vgaPal[i].red & 3);
+		pal[i * 4 + 1] = (palDesc->vgaPal[i].green << 2) | (palDesc->vgaPal[i].green & 3);
+		pal[i * 4 + 2] = (palDesc->vgaPal[i].blue << 2) | (palDesc->vgaPal[i].blue & 3);
 		pal[i * 4 + 3] = 0;
 	}
 	
@@ -376,9 +376,9 @@ void vid_setFullPalette(PalDesc *palDesc) {
 		}
 
 		for (i = 0; i < 256; i++) {
-			pal[i * 4 + 0] = colors[i].red << 2;
-			pal[i * 4 + 1] = colors[i].green << 2;
-			pal[i * 4 + 2] = colors[i].blue << 2;
+			pal[i * 4 + 0] = (colors[i].red << 2) | (colors[i].red & 3);
+			pal[i * 4 + 1] = (colors[i].green << 2) | (colors[i].green & 3);
+			pal[i * 4 + 2] = (colors[i].blue << 2) | (colors[i].blue & 3);
 			pal[i * 4 + 3] = 0;
 		}
 		g_system->setPalette(pal, 0, 256);
