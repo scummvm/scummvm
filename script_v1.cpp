@@ -1345,6 +1345,10 @@ void Scumm::o5_getDist()
 	o2 = getVarOrDirectWord(0x40);
 	r = getObjActToObjActDist(o1, o2);
 
+	/* FIXME: MI2 race workaround, see bug 597022 */
+	if (_gameId == GID_MONKEY2 && vm.slot[_currentScript].number == 40 && r < 60) 
+		r = 60; 
+
 	setResult(r);
 }
 
