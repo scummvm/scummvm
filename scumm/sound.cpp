@@ -66,16 +66,9 @@ Sound::~Sound() {
 }
 
 void Sound::addSoundToQueue(int sound) {
-	if (!(_scumm->_features & GF_DIGI_IMUSE)) {
-		_scumm->VAR(_scumm->VAR_LAST_SOUND) = sound;
-		_scumm->ensureResourceLoaded(rtSound, sound);
-		addSoundToQueue2(sound);
-	} else {
-		// WARNING ! This may break something, maybe this sould be put inside if (_gameID == GID_FT || _gameID == GID_FTDEMO) ? 
-		// But why addSoundToQueue should not queue sound ?
-		_scumm->ensureResourceLoaded(rtSound, sound);
-		addSoundToQueue2(sound);
-	}
+	_scumm->VAR(_scumm->VAR_LAST_SOUND) = sound;
+	_scumm->ensureResourceLoaded(rtSound, sound);
+	addSoundToQueue2(sound);
 }
 
 void Sound::addSoundToQueue2(int sound) {
@@ -107,17 +100,13 @@ void Sound::processSoundQues() {
 				data[j] = _soundQue[i + j];
 			i += num;
 
-#if 0
-			debug(1, "processSoundQues(%d,%d,%d,%d,%d,%d,%d,%d,%d)",
-						data[0] >> 8,
-						data[0] & 0xFF,
-						data[1], data[2], data[3], data[4], data[5], data[6], data[7]
-				);
-#endif
-			
+			debug(5, "processSoundQues(%d,%d,%d,%d,%d,%d,%d,%d,%d)",
+						data[0] >> 8, data[0] & 0xFF,
+						data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
+
 			if (_scumm->_features & GF_DIGI_IMUSE) {
 				if (_scumm->_imuseDigital)
-					_scumm->_imuseDigital->doCommand(data[0], data[1], data[2], data[3], data[4],
+					_scumm->_imuseDigital->parseScriptQues(data[0], data[1], data[2], data[3], data[4],
 																	data[5], data[6], data[7]);
 			} else if (_scumm->_imuse) {
 				_scumm->VAR(_scumm->VAR_SOUNDRESULT) = (short)_scumm->_imuse->doCommand (num, data);

@@ -5923,7 +5923,7 @@ bool Insane::smlayer_startSound1(int32 sound) {
 	//		 4 - background music)
 	// there are no equivalents in scummvm
 	if (smlayer_loadSound(sound, 0, 2)) {
-		_scumm->_sound->addSoundToQueue(readArray(_numberArray, sound));
+		_scumm->_sound->playSound(readArray(_numberArray, sound));
 		return true;
 	} else
 		return false;
@@ -5938,18 +5938,17 @@ bool Insane::smlayer_startSound2(int32 sound) {
 	//		 4 - background music)
 	// there are no equivalents in scummvm
 	if (smlayer_loadSound(sound, 0, 2)) {
-		_scumm->_sound->addSoundToQueue(readArray(_numberArray, sound));
+		_scumm->_sound->playSound(readArray(_numberArray, sound));
 		return true;
 	} else
 		return false;
 }
 
 void Insane::smlayer_soundSetPan(int32 soundid, int32 pan) {
-	_scumm->_imuseDigital->doCommand(12, soundid, 0x700, pan, 0, 0, 0, 0);
+	_scumm->_imuseDigital->parseScriptQues(12, soundid, 0x700, pan, 0, 0, 0, 0);
 }
 
 void Insane::smlayer_soundSetPriority(int32 sound, int32 priority) {
-	// FIXME: waits for complete iMUSE digital
 }
 
 void Insane::smlayer_drawSomething(byte *renderBitmap, int32 codecparam, 

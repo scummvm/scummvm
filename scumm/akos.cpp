@@ -1325,7 +1325,10 @@ void ScummEngine::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2) 
 		break;
 	case 3:
 		if (param_1 != 0) {
-			_sound->addSoundToQueue(param_1);
+			if (_features & GF_DIGI_IMUSE)
+				_sound->playSound(param_1);
+			else
+				_sound->addSoundToQueue(param_1);
 		}
 		break;
 	case 4:
