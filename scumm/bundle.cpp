@@ -108,10 +108,10 @@ Bundle::Bundle() {
 }
 
 Bundle::~Bundle() {
- if (_bundleVoiceTable)
 	free(_bundleVoiceTable);
- if (_bundleMusicTable)
 	free(_bundleMusicTable);
+	free(_compVoiceTable);
+	free(_compMusicTable);
 }
 
 void Bundle::initializeImcTables() {
@@ -276,9 +276,7 @@ int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte **comp_final) {
 		return 0;
 	}
 
-	if (_compVoiceTable)
-		free(_compVoiceTable);
-
+	free(_compVoiceTable);
 	_compVoiceTable = (CompTable *)malloc(sizeof(CompTable) * num);
 	for (i = 0; i < num; i++) {
 		_compVoiceTable[i].offset = _voiceFile.readUint32BE();
@@ -335,8 +333,7 @@ int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp
 			return 0;
 		}
 
-		if (_compMusicTable)
-			free(_compMusicTable);
+		free(_compMusicTable);
 		_compMusicTable = (CompTable *)malloc(sizeof(CompTable) * num);
 
 		for (i = 0; i < num; i++) {
