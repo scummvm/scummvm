@@ -45,19 +45,20 @@ public:
 
 	virtual int16	getChildY() const;
 
-// use Dialog::releaseFocus() when changing to another tab
-
-// Problem: how to add items to a tab?
-// First off, widget should allow non-dialog bosses, (i.e. also other widgets)
-// Could add a common base class for Widgets and Dialogs.
-// Then you add tabs using the following method, which returns a unique ID
+	// Problem: how to add items to a tab?
+	// First off, widget should allow non-dialog bosses, (i.e. also other widgets)
+	// Could add a common base class for Widgets and Dialogs.
+	// Then you add tabs using the following method, which returns a unique ID
 	int addTab(const String &title);
-// Maybe we need to remove tabs again? Hm
+
+	// Maybe we need to remove tabs again? Hm
 	//void removeTab(int tabID);
-// Setting the active tab:
+
+	/** Set the active tab by specifying a valid tab ID.
+     * setActiveTab changes the value of _firstWidget. This means new Widgets
+	 * are always added to the active tab.
+	 */
 	void setActiveTab(int tabID);
-// setActiveTab changes the value of _firstWidget. This means Widgets added afterwards
-// will be added to the active tab.
 
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
 	virtual bool handleKeyDown(uint16 ascii, int keycode, int modifiers);
