@@ -34,6 +34,7 @@
 #define FB2GL_AUDIO 8   // Activate SDL Audio
 #define FB2GL_PITCH 16  // On fb2l_update, use pitch (else bytes per pixel)
 #define FB2GL_EXPAND 32 // Create a RGB fb with the color lookup table
+#define FB2GL_16BIT 64  // 16 BIT Color Depth
 
 // This extension isn't defined in OpenGL 1.1
 #ifndef GL_EXT_paletted_texture
@@ -183,13 +184,14 @@ int FB2GL::init(int width, int height, int xfix, int yfix, char _flags)
   flags = _flags;
   
   // Fullscreen?
-  if ((flags & FB2GL_FS) && !screen) {
-    screen = SDL_SetVideoMode(width, height, 0, SDL_HWSURFACE | SDL_OPENGL | SDL_GL_DOUBLEBUFFER | SDL_FULLSCREEN);
-  }
-  else if (!screen) {
-    screen = SDL_SetVideoMode(width, height, 0, SDL_HWPALETTE | SDL_HWSURFACE | SDL_OPENGL | SDL_GL_DOUBLEBUFFER);
+  if (!screen) {
+    screen = SDL_SetVideoMode(width, height, (flags & FB2GL_16BIT? 16: 0), 
+	SDL_HWPALETTE | SDL_HWSURFACE | SDL_OPENGL | SDL_GL_DOUBLEBUFFER | 
+	(flags & FB2GL_FS? SDL_FULLSCREEN: 0));
   }
 
+  fprintf(stderr,"Screen BitsPerPixel: %d\n",screen->format->BitsPerPixel);
+  
   if (!screen) {
     fprintf(stderr, "Couldn't start video res %dx%d\n", width, height);
     return 0;

@@ -55,8 +55,8 @@ public:
 
 protected:
 	FB2GL fb2gl;
-	SDL_Surface *glEnd; // Black rectangle at end of the GL screen
-	SDL_Rect blackrect2; // Needed for blitting the above surface
+	SDL_Surface *tmpSurface; // Used for black rectangles blitting 
+	SDL_Rect tmpBlackRect; // Black rectangle at end of the GL screen
 	typedef void ScalerProc(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 								uint8 *dstPtr, uint32 dstPitch, int width, int height);
 
@@ -208,6 +208,14 @@ void OSystem_SDL_Normal::undraw_mouse() {
 }
 
 void OSystem_SDL_Normal::load_gfx_mode() {
+	uint32 Rmask, Gmask, Bmask, Amask;
+	// I have to force 16 bit color depth with 565 ordering
+	// SDL_SetVideoMode sometimes doesn't accept your color depth definition
+	Rmask = 0xF800; // 5
+	Gmask = 0x07E0; // 6
+	Bmask = 0x001F; // 5
+	Amask = 0;
+	
 	_forceFull = true;
 	_mode_flags = DF_WANT_RECT_OPTIM | DF_UPDATE_EXPAND_1_PIXEL;
 	_scaleFactor = 2;
@@ -228,15 +236,7 @@ void OSystem_SDL_Normal::load_gfx_mode() {
 	// Create the surface that contains the scaled graphics in 16 bit mode
 	//
 
-//	SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 5 );
-//	if (fb2gl.screen->format->Rmask == 0x7C00)
-//	  SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, 5 );
-//	else
-//	  SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, 6 );
-//	SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE, 5 );
-//        SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 16 );
-	
-	int gl_flags =  FB2GL_320 | FB2GL_RGBA | FB2GL_EXPAND;
+	int gl_flags =  FB2GL_320 | FB2GL_RGBA | FB2GL_16BIT;
         if (_full_screen) gl_flags |= (FB2GL_FS);
 	// 640x480 screen resolution
 	fb2gl.init(640,480,0,_screenStart? 15: 70,gl_flags);
@@ -252,24 +252,26 @@ void OSystem_SDL_Normal::load_gfx_mode() {
 	uint16 *tmp_screen = (uint16*)calloc(TMP_SCREEN_WIDTH*(_screenHeight+3),sizeof(uint16));
 	sdl_tmpscreen = SDL_CreateRGBSurfaceFrom(tmp_screen,
 						TMP_SCREEN_WIDTH, _screenHeight + 3, 16, TMP_SCREEN_WIDTH*2,
-						fb2gl.screen->format->Rmask,
-						fb2gl.screen->format->Gmask,
-						fb2gl.screen->format->Bmask,
-						fb2gl.screen->format->Amask);
+						Rmask,
+						Gmask,
+						Bmask,
+						Amask);
 
-	glEnd = SDL_CreateRGBSurface(SDL_SWSURFACE, _screenWidth, 
+	fprintf(stderr,"bits: %d\n",sdl_tmpscreen->format->BitsPerPixel);
+	
+	tmpSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, _screenWidth, 
 						// 320x256 texture (black end)
 						256-_screenHeight-_screenStart,
 						16,
-						fb2gl.screen->format->Rmask,
-						fb2gl.screen->format->Gmask,
-						fb2gl.screen->format->Bmask,
-						fb2gl.screen->format->Amask);
+						Rmask,
+						Gmask,
+						Bmask,
+						Amask);
 
-	blackrect2.x = 0;
-	blackrect2.y = 0;
-	blackrect2.w = _screenWidth;
-	blackrect2.h = 256-_screenHeight-_screenStart;
+	tmpBlackRect.x = 0;
+	tmpBlackRect.y = 0;
+	tmpBlackRect.w = _screenWidth;
+	tmpBlackRect.h = 256-_screenHeight-_screenStart;
 	
 	if (sdl_tmpscreen == NULL)
 		error("sdl_tmpscreen failed");
@@ -305,9 +307,9 @@ void OSystem_SDL_Normal::update_screen() {
 	// If the shake position changed, fill the dirty area with blackness
 	if (_currentShakePos != _newShakePos) {
 		SDL_Rect blackrect = {0, _screenStart, _screenWidth, _newShakePos+_screenStart};
-		SDL_FillRect(sdl_tmpscreen, &blackrect, 0);
-
-		fb2gl.blit16(sdl_tmpscreen,1,&blackrect,0,0);
+		
+		SDL_FillRect(tmpSurface, &blackrect, 0);
+		fb2gl.blit16(tmpSurface,1,&blackrect,0,0);
 
 		_currentShakePos = _newShakePos;
 
@@ -362,8 +364,8 @@ void OSystem_SDL_Normal::update_screen() {
 		    _currentShakePos+_screenStart);
 
 		
-		SDL_FillRect(glEnd, &blackrect2, 0);
-		fb2gl.blit16(glEnd,1,&blackrect2,0,_screenHeight+_screenStart);
+		SDL_FillRect(tmpSurface, &tmpBlackRect, 0);
+		fb2gl.blit16(tmpSurface,1,&tmpBlackRect,0,_screenHeight+_screenStart);
 
 		fb2gl.display();
 	}
