@@ -1586,6 +1586,40 @@ byte *Actor::getActorName() {
 	return ptr;
 }
 
+void Actor::remapActorPaletteColor(int color, int new_color) {
+	const byte *akos, *akpl;
+	int akpl_size, i;
+	byte akpl_color;
+
+	akos = _vm->getResourceAddress(rtCostume, costume);
+	if (!akos) {
+		warning("Can't remap actor %d, costume %d not found", number, costume);
+		return;
+	}
+
+	akpl = findResource(MKID('AKPL'), akos);
+	if (!akpl) {
+		warning("Can't remap actor %d, costume %d doesn't contain an AKPL block", number, costume);
+		return;
+	}
+
+	//get num palette entries
+	akpl_size = RES_SIZE(akpl) - 8;
+
+	//skip resource header
+	akpl = RES_DATA(akpl);
+
+	for (i = 0; i < akpl_size; i++) {
+		akpl_color = *akpl++;
+		if (akpl_color == color) {
+			palette[i] = new_color;
+			return;
+		}
+	}
+
+	warning("Color %d not found in actor %d", color, number);
+}
+
 void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold) {
 	const byte *akos, *rgbs, *akpl;
 	int akpl_size, i;

@@ -167,6 +167,7 @@ public:
 	void startAnimActor(int frame);
 
 	void remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold);
+	void remapActorPaletteColor(int slot, int color);
 
 	void animateActor(int anim);
 
