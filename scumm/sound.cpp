@@ -350,8 +350,8 @@ void Sound::playSound(int soundID) {
 					int waveSize = READ_LE_UINT32(ptr + 0x0C);
 					int loopStart = READ_LE_UINT32(ptr + 0x10);
 					int loopEnd = READ_LE_UINT32(ptr + 0x14);
-					if (loopEnd < waveSize && loopEnd > 0)
-						waveSize = loopEnd;
+					if (loopEnd == 0 && loopStart > 0)
+						waveSize = loopStart;
 					// it's not exactly * 10, maybe it's not even linear, but * 10 sounds ok.
 					rate = READ_LE_UINT32(ptr + 0x18) * 10;
 
