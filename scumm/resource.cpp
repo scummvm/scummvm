@@ -355,6 +355,8 @@ void ScummEngine::readIndexFile() {
 				_fileHandle.read(_objectStateTable, num);
 				_fileHandle.read(_objectOwnerTable, num);
 				_fileHandle.read(_objectRoomTable, num);
+				if (_heversion >= 72)
+					_fileHandle.seek(num, SEEK_CUR);
 			} else {
 				_fileHandle.read(_objectOwnerTable, num);
 				for (i = 0; i < num; i++) {
