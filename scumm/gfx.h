@@ -114,17 +114,18 @@ class Gdi {
 public:
 	Scumm *_vm;
 
-protected:
-	byte *_readPtr;
-	uint _readOffs;
-
 public:
 	int _numZBuffer;
 	int _imgBufOffs[5];
 	byte _disable_zbuffer;
 	int32 _numStrips;
+public:
+	int16 _mask_top, _mask_bottom, _mask_right, _mask_left;
 
 protected:
+	byte *_readPtr;
+	uint _readOffs;
+
 	bool _useOrDecompress;
 	int _numLinesToProcess;
 	int _tempNumLines;
@@ -135,9 +136,6 @@ protected:
 
 	int16 _drawMouseX;
 	int16 _drawMouseY;
-public:
-	int16 _mask_top, _mask_bottom, _mask_right, _mask_left;
-protected:
 	byte _mouseColors[4];
 	byte _mouseColor;
 	byte _mouseClipMask1, _mouseClipMask2, _mouseClipMask3;
@@ -169,14 +167,6 @@ protected:
 	void unkDecode10();
 	void unkDecode11();
 
-public:
-	void drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h, int stripnr, int numstrip, byte flag);
-	void clearUpperMask();
-
-	void disableZBuffer() { _disable_zbuffer++; }
-	void enableZBuffer() { _disable_zbuffer--; }
-
-protected:
 	void draw8ColWithMasking(byte *dst, byte *src, int height, byte *mask);
 	void draw8Col(byte *dst, byte *src, int height);
 	void clear8ColWithMasking(byte *dst, int height, byte *mask);
@@ -185,15 +175,21 @@ protected:
 	void decompressMaskImg(byte *dst, byte *src, int height);
 
 public:
+	void drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h, int stripnr, int numstrip, byte flag);
+	void clearUpperMask();
+
+	void disableZBuffer() { _disable_zbuffer++; }
+	void enableZBuffer() { _disable_zbuffer--; }
+
+	void resetBackground(int top, int bottom, int strip);
+	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
+	void updateDirtyScreen(VirtScreen *vs);
+
 	enum DrawBitmapFlags {
 		dbAllowMaskOr = 1,
 		dbDrawMaskOnAll = 2,
 		dbClear = 4
 	};
-
-	void resetBackground(int top, int bottom, int strip);
-	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
-	void updateDirtyScreen(VirtScreen *vs);
 };
 
 #endif

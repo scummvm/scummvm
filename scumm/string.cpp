@@ -27,6 +27,51 @@
 #include "verbs.h"
 #include "scumm/sound.h"
 
+void CharsetRenderer::setCurID(byte id) {
+	_curId = id;
+	_fontPtr = getFontPtr(id);
+}
+
+byte *CharsetRenderer::getFontPtr(byte id)
+{
+	byte *ptr = _vm->getResourceAddress(rtCharset, id);
+	assert(ptr);
+	if (_vm->_features & GF_SMALL_HEADER)
+		ptr += 17;
+	else
+		ptr += 29;
+	return ptr;
+}
+
+// do spacing for variable width old-style font
+int CharsetRenderer::getSpacing(byte chr, byte *charset)
+{
+	int spacing = 0;
+	
+	if (_vm->_features & GF_OLD256) {
+		spacing = *(charset - 11 + chr);
+	} else {
+		int offs = READ_LE_UINT32(charset + chr * 4 + 4);
+		if (offs) {
+			spacing = charset[offs];
+			if (charset[offs + 2] >= 0x80) {
+				spacing += charset[offs + 2] - 0x100;
+			} else {
+				spacing += charset[offs + 2];
+			}
+		}
+	}
+
+	// FIXME - this fixes the inventory icons in Zak256/Indy3
+	//  see bug #613109.
+	// chars 1,2: up arrow chars 3,4: down arrow
+	if ((_vm->_gameId == GID_ZAK256 || _vm->_gameId == GID_INDY3_256)
+			&& (chr >= 1 && chr <= 4))
+		spacing = 6;
+	
+	return spacing;
+}
+
 int CharsetRenderer::getStringWidth(int arg, byte *text, int pos)
 {
 	byte *ptr;
@@ -34,9 +79,7 @@ int CharsetRenderer::getStringWidth(int arg, byte *text, int pos)
 	byte chr;
 
 	width = 1;
-	ptr = _vm->getResourceAddress(rtCharset, _curId) + 29;
-	if (_vm->_features & GF_SMALL_HEADER)
-		ptr -= 12;
+	ptr = _fontPtr;
 
 	while ((chr = text[pos++]) != 0) {
 		if (chr == 0xD)
@@ -63,9 +106,7 @@ int CharsetRenderer::getStringWidth(int arg, byte *text, int pos)
 			if (chr == 14) {
 				int set = text[pos] | (text[pos + 1] << 8);
 				pos += 2;
-				ptr = _vm->getResourceAddress(rtCharset, set) + 29;
-				if (_vm->_features & GF_SMALL_HEADER)
-					ptr -= 12;
+				ptr = getFontPtr(set);
 				continue;
 			}
 		}
@@ -82,9 +123,7 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth)
 	byte *ptr;
 	byte chr;
 
-	ptr = _vm->getResourceAddress(rtCharset, _curId) + 29;
-	if (_vm->_features & GF_SMALL_HEADER)
-		ptr -= 12;
+	ptr = _fontPtr;
 
 	while ((chr = str[pos++]) != 0) {
 		if (chr == '@')
@@ -117,9 +156,7 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth)
 			if (chr == 14) {
 				int set = str[pos] | (str[pos + 1] << 8);
 				pos += 2;
-				ptr = _vm->getResourceAddress(rtCharset, set) + 29;
-				if (_vm->_features & GF_SMALL_HEADER)
-					ptr -= 12;
+				ptr = getFontPtr(set);
 				continue;
 			}
 		}
@@ -136,6 +173,220 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth)
 			pos = lastspace + 1;
 			lastspace = -1;
 		}
+	}
+}
+
+
+void CharsetRenderer::printCharOld(int chr)
+{																// Indy3 / Zak256
+	VirtScreen *vs;
+	byte *char_ptr, *dest_ptr;
+	unsigned int buffer = 0, mask = 0, x = 0, y = 0;
+	unsigned char color;
+
+	_vm->checkRange(_vm->_maxCharsets - 1, 0, _curId, "Printing with bad charset %d");
+
+	if ((vs = _vm->findVirtScreen(_top)) == NULL)
+		return;
+
+	if (chr == '@')
+		return;
+
+	if (_firstChar) {
+		_strLeft = _left;
+		_strTop = _top;
+		_strRight = _left;
+		_strBottom = _top;
+		_firstChar = false;
+	}
+	char_ptr = _fontPtr + 207 + (chr + 1) * 8;
+	dest_ptr = vs->screenPtr + vs->xstart + (_top - vs->topline) * _vm->_realWidth + _left;
+	_vm->updateDirtyRect(vs->number, _left, _left + 8, _top - vs->topline, _top - vs->topline + 8, 0);
+
+	for (y = 0; y < 8; y++) {
+		for (x = 0; x < 8; x++) {
+			if ((mask >>= 1) == 0) {
+				buffer = *char_ptr++;
+				mask = 0x80;
+			}
+			color = ((buffer & mask) != 0);
+			if (color)
+				*(dest_ptr + y * _vm->_realWidth + x) = _color;
+		}
+	}
+
+	// FIXME
+	_left += getSpacing(chr, _fontPtr);
+
+	if (_left > _strRight)
+		_strRight = _left;
+
+	if (_top + 8 > _strBottom)
+		_strBottom = _top + 8;
+
+}
+
+
+void CharsetRenderer::printChar(int chr)
+{
+	int d, right;
+	VirtScreen *vs;
+
+	_vm->checkRange(_vm->_maxCharsets - 1, 1, _curId, "Printing with bad charset %d");
+	
+	if ((vs = _vm->findVirtScreen(_top)) == NULL)
+		return;
+
+	if (chr == '@')
+		return;
+
+	_bpp = *_fontPtr;
+	_colorMap[1] = _color;
+
+	_charOffs = READ_LE_UINT32(_fontPtr + chr * 4 + 4);
+
+	if (!_charOffs)
+		return;
+
+	assert(_charOffs < 0x10000);
+
+	_charPtr = _fontPtr + _charOffs;
+
+	_width = _charPtr[0];
+	_height = _charPtr[1];
+	if (_firstChar) {
+		_strLeft = 0;
+		_strTop = 0;
+		_strRight = 0;
+		_strBottom = 0;
+	}
+
+	if (_disableOffsX) {
+		_offsX = 0;
+	} else {
+		d = _charPtr[2];
+		if (d >= 0x80)
+			d -= 0x100;
+		_offsX = d;
+	}
+
+	d = _charPtr[3];
+	if (d >= 0x80)
+		d -= 0x100;
+	_offsY = d;
+
+	_top += _offsY;
+	_left += _offsX;
+
+	right = _left + _width;
+
+	if (right > _right + 1 || _left < 0) {
+		_left = right;
+		_top -= _offsY;
+		return;
+	}
+
+	_disableOffsX = false;
+
+	if (_firstChar) {
+		_strLeft = _left;
+		_strTop = _top;
+		_strRight = _left;
+		_strBottom = _top;
+		_firstChar = false;
+	}
+
+	if (_left < _strLeft)
+		_strLeft = _left;
+
+	if (_top < _strTop)
+		_strTop = _top;
+
+	_drawTop = _top - vs->topline;
+	if (_drawTop < 0)
+		_drawTop = 0;
+
+	_bottom = _drawTop + _height + _offsY;
+
+	_vm->updateDirtyRect(vs->number, _left, right, _drawTop, _bottom, 0);
+
+	if (vs->number != 0)
+		_blitAlso = false;
+	if (vs->number == 0 && _blitAlso == 0)
+		_hasMask = true;
+
+	_virtScreenHeight = vs->height;
+	_charPtr += 4;
+
+	byte *mask = _vm->getResourceAddress(rtBuffer, 9)
+		+ _drawTop * _vm->gdi._numStrips + _left / 8 + _vm->_screenStartStrip;
+
+	byte *dst = vs->screenPtr + vs->xstart + _drawTop * _vm->_realWidth + _left;
+
+	if (_blitAlso) {
+		byte *back = dst;
+		dst = _vm->getResourceAddress(rtBuffer, vs->number + 5)
+			+ vs->xstart + _drawTop * _vm->_realWidth + _left;
+
+		drawBits(dst, mask);
+
+		_vm->blit(back, dst, _width, _height);
+	} else {
+		drawBits(dst, mask);
+	}
+	
+	_left += _width;
+	if (_left > _strRight)
+		_strRight = _left;
+
+	if (_top + _height > _strBottom)
+		_strBottom = _top + _height;
+
+	_top -= _offsY;
+}
+
+void CharsetRenderer::drawBits(byte *dst, byte *mask)
+{
+	bool usemask;
+	byte maskmask;
+	int y, x;
+	int maskpos;
+	int color;
+	byte numbits, bits;
+
+	usemask = (_vm->_curVirtScreen->number == 0 && _ignoreCharsetMask == 0);
+
+	bits = *_charPtr++;
+	numbits = 8;
+
+	y = 0;
+
+	for (y = 0; y < _height && y + _drawTop < _virtScreenHeight;) {
+		maskmask = revBitMask[_left & 7];
+		maskpos = 0;
+
+		for (x = 0; x < _width; x++) {
+			color = (bits >> (8 - _bpp)) & 0xFF;
+			if (color) {
+				if (usemask) {
+					mask[maskpos] |= maskmask;
+				}
+				*dst = _colorMap[color];
+			}
+			dst++;
+			bits <<= _bpp;
+			if ((numbits -= _bpp) == 0) {
+				bits = *_charPtr++;
+				numbits = 8;
+			}
+			if ((maskmask >>= 1) == 0) {
+				maskmask = 0x80;
+				maskpos++;
+			}
+		}
+		dst += _vm->_realWidth - _width;
+		mask += _vm->gdi._numStrips;
+		y++;
 	}
 }
 
@@ -243,10 +494,12 @@ void Scumm::CHARSET_1()
 	charset._top = _string[0].ypos;
 	charset._left = _string[0].xpos;
 	charset._startLeft = _string[0].xpos;
-	charset._curId = _string[0].charset;
 
 	if (a && a->charset)
-		charset._curId = a->charset;
+		charset.setCurID(a->charset);
+	else
+		charset.setCurID(_string[0].charset);
+
 
 	charset._center = _string[0].center;
 	charset._right = _string[0].right;
@@ -254,10 +507,7 @@ void Scumm::CHARSET_1()
 
 	if (!(_features & GF_OLD256))	// FIXME
 		for (i = 0; i < 4; i++)
-			if (_features & GF_SMALL_HEADER)
-				charset._colorMap[i] = _charsetData[charset._curId][i - 12];	// FIXME - do we really want to access index -12 to -9 ?
-			else
-				charset._colorMap[i] = _charsetData[charset._curId][i];
+			charset._colorMap[i] = _charsetData[charset.getCurID()][i];
 
 	if (_keepText) {
 		charset._strLeft = gdi._mask_left;
@@ -342,10 +592,7 @@ void Scumm::CHARSET_1()
 				if (charset._center) {
 					charset._xpos2 -= charset.getStringWidth(0, buffer, 0) >> 1;
 				}
-				if (_features & GF_SMALL_HEADER)
-					charset._ypos2 += getResourceAddress(rtCharset, charset._curId)[30 - 12];
-				else
-					charset._ypos2 += getResourceAddress(rtCharset, charset._curId)[30];
+				charset._ypos2 += charset.getFontPtr()[1];
 				charset._disableOffsX = true;
 				continue;
 			}
@@ -416,23 +663,13 @@ void Scumm::CHARSET_1()
 			buffer += 2;
 			break;
 		case 14: {
-			int oldy;
-			if (_features & GF_SMALL_HEADER)
-				oldy = getResourceAddress(rtCharset, charset._curId)[30 - 12];
-			else
-				oldy = getResourceAddress(rtCharset, charset._curId)[30];
+			int oldy = charset.getFontPtr()[1];
 
-			charset._curId = *buffer++;
+			charset.setCurID(*buffer++);
 			buffer += 2;
 			for (i = 0; i < 4; i++)
-				if (_features & GF_SMALL_HEADER)
-					charset._colorMap[i] = _charsetData[charset._curId][i - 12];	// FIXME - do we really want to access index -12 to -9 ?
-				else
-					charset._colorMap[i] = _charsetData[charset._curId][i];
-			if (_features & GF_SMALL_HEADER)
-				charset._ypos2 -= getResourceAddress(rtCharset, charset._curId)[30 - 12] - oldy;
-			else
-				charset._ypos2 -= getResourceAddress(rtCharset, charset._curId)[30] - oldy;
+				charset._colorMap[i] = _charsetData[charset.getCurID()][i];
+			charset._ypos2 -= charset.getFontPtr()[1] - oldy;
 			break;
 			}
 		default:
@@ -480,7 +717,7 @@ void Scumm::description()
 	charset._xpos2 = _string[0].xpos;
 	charset._ypos2 = _string[0].ypos;
 	charset._disableOffsX = charset._firstChar = true;
-	charset._curId = 3;
+	charset.setCurID(3);
 	charset._center = false;
 	charset._color = 15;
 	// FIXME: _talkdelay = 1 - display description, not correct ego actor talking,
@@ -527,7 +764,7 @@ void Scumm::drawDescString(byte *msg)
 	charset._right = _realWidth - 1;
 	charset._xpos2 = _string[0].xpos;
 	charset._ypos2 = _string[0].ypos;
-	charset._curId = _string[0].charset;
+	charset.setCurID(_string[0].charset);
 	charset._center = _string[0].center;
 	charset._color = _string[0].color;
 
@@ -566,7 +803,7 @@ void Scumm::drawDescString(byte *msg)
 void Scumm::drawString(int a)
 {
 	byte buf[256];
-	byte *charsetptr, *space;
+	byte *space;
 	int i;
 	byte fontHeight = 0, chr;
 	uint color;
@@ -576,26 +813,17 @@ void Scumm::drawString(int a)
 
 	charset._startLeft = charset._left = _string[a].xpos;
 	charset._top = _string[a].ypos;
-	charset._curId = _string[a].charset;
+	charset.setCurID(_string[a].charset);
 	charset._center = _string[a].center;
 	charset._right = _string[a].right;
 	charset._color = _string[a].color;
 	charset._disableOffsX = charset._firstChar = true;
 
 	if (!(_features & GF_OLD256)) {
-		charsetptr = getResourceAddress(rtCharset, charset._curId);
-		assert(charsetptr);
-		charsetptr += 29;
-		if (_features & GF_SMALL_HEADER)
-			charsetptr -= 12;
-
 		for (i = 0; i < 4; i++)
-			if (_features & GF_SMALL_HEADER)
-				charset._colorMap[i] = _charsetData[charset._curId][i - 12];	// FIXME - do we really want to access index -12 to -9 ?
-			else
-				charset._colorMap[i] = _charsetData[charset._curId][i];
+			charset._colorMap[i] = _charsetData[charset.getCurID()][i];
 
-		fontHeight = charsetptr[1];
+		fontHeight = charset.getFontPtr()[1];
 	}
 
 	_msgPtrToAdd = buf;
@@ -873,262 +1101,8 @@ void Scumm::initCharset(int charsetno)
 	_string[1].t_charset = charsetno;
 
 	for (i = 0; i < 16; i++)
-		if (_features & GF_SMALL_HEADER)
-			charset._colorMap[i] = _charsetData[charset._curId][i - 12];	// FIXME - do we really want to access index -12 to -9 ?
-		else
-			charset._colorMap[i] = _charsetData[charset._curId][i];
+		charset._colorMap[i] = _charsetData[charset.getCurID()][i];
 }
-
-void CharsetRenderer::printCharOld(int chr)
-{																// Indy3 / Zak256
-	VirtScreen *vs;
-	byte *char_ptr, *dest_ptr;
-	unsigned int buffer = 0, mask = 0, x = 0, y = 0;
-	unsigned char color;
-
-	_vm->checkRange(_vm->_maxCharsets - 1, 0, _curId, "Printing with bad charset %d");
-
-	if ((vs = _vm->findVirtScreen(_top)) == NULL)
-		return;
-
-	if (chr == '@')
-		return;
-
-	byte *ptr = _vm->getResourceAddress(rtCharset, _curId);
-
-	if (_firstChar) {
-		_strLeft = _left;
-		_strTop = _top;
-		_strRight = _left;
-		_strBottom = _top;
-		_firstChar = false;
-	}
-	char_ptr = ptr + 224 + (chr + 1) * 8;
-	dest_ptr = vs->screenPtr + vs->xstart + (_top - vs->topline) * _vm->_realWidth + _left;
-	_vm->updateDirtyRect(vs->number, _left, _left + 8, _top - vs->topline, _top - vs->topline + 8, 0);
-
-	for (y = 0; y < 8; y++) {
-		for (x = 0; x < 8; x++) {
-			if ((mask >>= 1) == 0) {
-				buffer = *char_ptr++;
-				mask = 0x80;
-			}
-			color = ((buffer & mask) != 0);
-			if (color)
-				*(dest_ptr + y * _vm->_realWidth + x) = _color;
-		}
-	}
-
-	// FIXME
-	_left += getSpacing(chr, ptr + 29 - 12);
-
-	if (_left > _strRight)
-		_strRight = _left;
-
-	if (_top + 8 > _strBottom)
-		_strBottom = _top + 8;
-
-}
-
-
-void CharsetRenderer::printChar(int chr)
-{
-	int d, right;
-	VirtScreen *vs;
-
-	_vm->checkRange(_vm->_maxCharsets - 1, 1, _curId, "Printing with bad charset %d");
-	
-	if ((vs = _vm->findVirtScreen(_top)) == NULL)
-		return;
-
-	if (chr == '@')
-		return;
-
-	byte *ptr = _vm->getResourceAddress(rtCharset, _curId) + 29;
-	if (_vm->_features & GF_SMALL_HEADER)
-		ptr -= 12;
-
-	_bpp = *ptr;
-	_colorMap[1] = _color;
-
-	_charOffs = READ_LE_UINT32(ptr + chr * 4 + 4);
-
-	if (!_charOffs)
-		return;
-
-	assert(_charOffs < 0x10000);
-
-	_charPtr = ptr + _charOffs;
-
-	_width = _charPtr[0];
-	_height = _charPtr[1];
-	if (_firstChar) {
-		_strLeft = 0;
-		_strTop = 0;
-		_strRight = 0;
-		_strBottom = 0;
-	}
-
-	if (_disableOffsX) {
-		_offsX = 0;
-	} else {
-		d = _charPtr[2];
-		if (d >= 0x80)
-			d -= 0x100;
-		_offsX = d;
-	}
-
-	d = _charPtr[3];
-	if (d >= 0x80)
-		d -= 0x100;
-	_offsY = d;
-
-	_top += _offsY;
-	_left += _offsX;
-
-	right = _left + _width;
-
-	if (right > _right + 1 || _left < 0) {
-		_left = right;
-		_top -= _offsY;
-		return;
-	}
-
-	_disableOffsX = false;
-
-	if (_firstChar) {
-		_strLeft = _left;
-		_strTop = _top;
-		_strRight = _left;
-		_strBottom = _top;
-		_firstChar = false;
-	}
-
-	if (_left < _strLeft)
-		_strLeft = _left;
-
-	if (_top < _strTop)
-		_strTop = _top;
-
-	_drawTop = _top - vs->topline;
-	if (_drawTop < 0)
-		_drawTop = 0;
-
-	_bottom = _drawTop + _height + _offsY;
-
-	_vm->updateDirtyRect(vs->number, _left, right, _drawTop, _bottom, 0);
-
-	if (vs->number != 0)
-		_blitAlso = false;
-	if (vs->number == 0 && _blitAlso == 0)
-		_hasMask = true;
-
-	byte *_backbuff_ptr;
-	byte *_mask_ptr;
-	byte *_dest_ptr;
-
-	_dest_ptr = _backbuff_ptr = vs->screenPtr + vs->xstart + _drawTop * _vm->_realWidth + _left;
-
-	if (_blitAlso) {
-		_dest_ptr = _vm->getResourceAddress(rtBuffer, vs->number + 5)
-			+ vs->xstart + _drawTop * _vm->_realWidth + _left;
-	}
-
-	_mask_ptr = _vm->getResourceAddress(rtBuffer, 9)
-		+ _drawTop * _vm->gdi._numStrips + _left / 8 + _vm->_screenStartStrip;
-
-	_virtScreenHeight = vs->height;
-	_charPtr += 4;
-
-	drawBits(_dest_ptr, _mask_ptr);
-
-	if (_blitAlso)
-		_vm->blit(_backbuff_ptr, _dest_ptr, _width, _height);
-
-	_left += _width;
-	if (_left > _strRight)
-		_strRight = _left;
-
-	if (_top + _height > _strBottom)
-		_strBottom = _top + _height;
-
-	_top -= _offsY;
-}
-
-void CharsetRenderer::drawBits(byte *dst, byte *mask)
-{
-	bool usemask;
-	byte maskmask;
-	int y, x;
-	int maskpos;
-	int color;
-	byte numbits, bits;
-
-	usemask = (_vm->_curVirtScreen->number == 0 && _ignoreCharsetMask == 0);
-
-	bits = *_charPtr++;
-	numbits = 8;
-
-	y = 0;
-
-	for (y = 0; y < _height && y + _drawTop < _virtScreenHeight;) {
-		maskmask = revBitMask[_left & 7];
-		maskpos = 0;
-
-		for (x = 0; x < _width; x++) {
-			color = (bits >> (8 - _bpp)) & 0xFF;
-			if (color) {
-				if (usemask) {
-					mask[maskpos] |= maskmask;
-				}
-				*dst = _colorMap[color];
-			}
-			dst++;
-			bits <<= _bpp;
-			if ((numbits -= _bpp) == 0) {
-				bits = *_charPtr++;
-				numbits = 8;
-			}
-			if ((maskmask >>= 1) == 0) {
-				maskmask = 0x80;
-				maskpos++;
-			}
-		}
-		dst += _vm->_realWidth - _width;
-		mask += _vm->gdi._numStrips;
-		y++;
-	}
-}
-
-// do spacing for variable width old-style font
-int CharsetRenderer::getSpacing(byte chr, byte *charset)
-{
-	int spacing = 0;
-	
-	if (_vm->_features & GF_OLD256) {
-		spacing = *(charset - 11 + chr);
-	} else {
-		int offs = READ_LE_UINT32(charset + chr * 4 + 4);
-		if (offs) {
-			spacing = charset[offs];
-			if (charset[offs + 2] >= 0x80) {
-				spacing += charset[offs + 2] - 0x100;
-			} else {
-				spacing += charset[offs + 2];
-			}
-		}
-	}
-
-	// FIXME - this fixes the inventory icons in Zak256/Indy3
-	//  see bug #613109.
-	// chars 1,2: up arrow chars 3,4: down arrow
-	if ((_vm->_gameId == GID_ZAK256 || _vm->_gameId == GID_INDY3_256)
-			&& (chr >= 1 && chr <= 4))
-		spacing = 6;
-	
-	return spacing;
-}
-
 void Scumm::loadLanguageBundle() {
 	File file;
 

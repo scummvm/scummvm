@@ -171,7 +171,12 @@ enum {
 
 #define _roomFileOffsets res.roomoffs[rtRoom]
 
-struct CharsetRenderer {
+class CharsetRenderer {
+protected:
+	byte _curId;
+	byte *_fontPtr;
+
+public:
 	Scumm *_vm;
 	int _top;
 	int _drawTop;
@@ -183,7 +188,6 @@ struct CharsetRenderer {
 	bool _blitAlso;
 	
 	int _strLeft, _strRight, _strTop, _strBottom;
-	byte _curId;
 
 	int _xpos2, _ypos2;
 	
@@ -209,6 +213,12 @@ struct CharsetRenderer {
 	int getSpacing(byte chr, byte *charset);
 	int getStringWidth(int a, byte *str, int pos);
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
+	
+	void setCurID(byte id);
+	int getCurID() { return _curId; }
+	
+	byte *getFontPtr() { return _fontPtr; }
+	byte *getFontPtr(byte id);
 };
 
 #define ARRAY_HDR_SIZE 6

@@ -455,6 +455,8 @@ void Scumm::loadCharset(int no)
 
 //  ensureResourceLoaded(rtCharset, no);
 	ptr = getResourceAddress(rtCharset, no);
+	if (_features & GF_SMALL_HEADER)
+		ptr -= 12;
 
 	for (i = 0; i < 15; i++) {
 		_charsetData[no][i + 1] = ptr[i + 14];
