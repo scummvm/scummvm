@@ -22,12 +22,9 @@
 
 #include <ctype.h>
 #include "stdafx.h"
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "scumm/saveload.h"
 #include "palm.h"
 
-#define	MAX_BLOCK 64000	// store in memory, before dump to file
+#define	MAX_BLOCK	64000			// store in memory, before dump to file
 
 // SaveFile class
 
@@ -38,14 +35,15 @@ public:
 	
 	bool isOpen() const { return file != NULL; }
 
-	uint32 read(void *buf, uint32 cnt);
-	uint32 write(const void *buf, uint32 cnt);
+	uint32 read(void *buf, uint32 size);
+	uint32 write(const void *buf, uint32 size);
 
 private :
 	FILE *file;
-	UInt8 * _readWriteData;
+	UInt8 *_readWriteData;
 	UInt32 _readWritePos;
 	bool _needDump;
+	UInt32 length;
 };
 
 PalmSaveFile::PalmSaveFile(const char *filename, bool saveOrLoad) {
@@ -54,56 +52,101 @@ PalmSaveFile::PalmSaveFile(const char *filename, bool saveOrLoad) {
 	_needDump = false;
 
 	file = ::fopen(filename, (saveOrLoad ? "wb" : "rb"));
+
+	if (file) {
+		if (saveOrLoad) {
+			_readWriteData = (byte *)malloc(MAX_BLOCK);
+			
+		} else {
+			// read : cache the whole file
+			::fseek(file, 0, SEEK_END);
+			length = ::ftell(file);
+			::fseek(file, 0, SEEK_SET);
+			
+			_readWriteData = (byte *)malloc(length);
+			_readWritePos = 0;				
+
+			if (_readWriteData)
+				::fread(_readWriteData, 1, length, file);
+		}
+	}
 }
 
 PalmSaveFile::~PalmSaveFile() {
 	if (file) {
-		if (_needDump && _readWriteData) {
+		if (_needDump)
 			::fwrite(_readWriteData, _readWritePos, 1, file);
+	
+		if (_readWriteData)
 			free(_readWriteData);
-		}
 
 		::fclose(file);
 	}
 }
 
-uint32 PalmSaveFile::read(void *buf, uint32 cnt) {
-	return ::fread(buf, 1, cnt, file);
-}
+uint32 PalmSaveFile::read(void *buf, uint32 size) {
+	if (!_readWriteData)
+		// we must return the size, where fread return nitems upon success ( 1 <=> size)
+		return (::fread(buf, 1, size, file));
 
-uint32 PalmSaveFile::write(const void *buf, uint32 cnt) {
-	UInt32 fullsize = cnt;
-
-	if (fullsize <= MAX_BLOCK)
-	{
-		if (!_readWriteData)
-			_readWriteData = (byte *)malloc(MAX_BLOCK);
-
-		if ((_readWritePos+fullsize)>MAX_BLOCK) {
-			::fwrite(_readWriteData, _readWritePos, 1, file);
-			_readWritePos = 0;
-			_needDump = false;
-		}
-			
-		MemMove(_readWriteData + _readWritePos, buf, fullsize);
-		_readWritePos += fullsize;
-		_needDump = true;
-
-		return cnt;
+	if (_readWritePos < length) {
+		MemMove(buf, _readWriteData + _readWritePos, size);
+		_readWritePos += size;
+		return size;
 	}
 
-	return ::fwrite(buf, 1, cnt, file);
+	return 0;
+}
+
+uint32 PalmSaveFile::write(const void *buf, uint32 size) {
+	if (_readWriteData) {
+
+		if ((_readWritePos + size) > MAX_BLOCK) {
+			if (_readWritePos > 0)
+				::fwrite(_readWriteData, _readWritePos, 1, file);
+
+			_readWritePos = 0;
+			_needDump = false;
+
+		} else {
+			// save new block
+			MemMove(_readWriteData + _readWritePos, buf, size);
+			_readWritePos += size;
+			_needDump = true;
+
+			return size;
+		}
+	}
+
+	// we must return the size, where fwrite return nitems upon success ( 1 <=> size)
+	return ::fwrite(buf, 1, size, file);
 }
 
 // SaveFileManager class
 
-class PalmSaveFileManager : public DefaultSaveFileManager {
+class PalmSaveFileManager : public SaveFileManager {
 public:
+	SaveFile *open_savefile(const char *filename, const char *directory, bool saveOrLoad);
 	void list_savefiles(const char *prefix, const char *directory, bool *marks, int num);
 
 protected:
 	SaveFile *makeSaveFile(const char *filename, bool saveOrLoad);
 };
+
+SaveFile *PalmSaveFileManager::open_savefile(const char *filename, const char *directory, bool saveOrLoad) {
+	char buf[256];
+
+	strncpy(buf, directory, sizeof(buf));
+	strncat(buf, filename, sizeof(buf));
+
+	SaveFile *sf = makeSaveFile(buf, saveOrLoad);
+	if (!sf->isOpen()) {
+		delete sf;
+		sf = NULL;
+	}
+
+	return sf;
+}
 
 void PalmSaveFileManager::list_savefiles(const char *prefix, const char *directory, bool *marks, int num) {
 	FileRef fileRef;
