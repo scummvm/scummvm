@@ -642,10 +642,6 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 	if (vs->hasTwoBuffers && _currentRoom != 0 && isLightOn()) {
 		blit(screenBuf, vs->pitch, vs->getBackPixels(rect.left, rect.top), vs->pitch, width, height);
 		if (vs->number == kMainVirtScreen && _charset->_hasMask) {
-			// Note: At first sight it may look as if this could
-			// be optimized to (rect.right - rect.left) / 8 and
-			// thus to width / 8, but that's not the case since
-			// we are dealing with integer math here.
 			const int mask_width = rect.width();
 			byte *mask = (byte *)gdi._textSurface.pixels + gdi._textSurface.pitch * rect.top + rect.left;
 			while (height--) {
@@ -683,13 +679,12 @@ void CharsetRenderer::restoreCharsetBg() {
 		byte *screenBuf = vs->getPixels(0, 0);
 
 		if (vs->hasTwoBuffers && _vm->_currentRoom != 0 && _vm->isLightOn()) {
-			const byte *backBuf = vs->getBackPixels(0, 0);
-
 			if (vs->number == kMainVirtScreen) {
 				// Clean out the charset mask
 				memset(_vm->gdi._textSurface.pixels, CHARSET_MASK_TRANSPARENCY, _vm->gdi._textSurface.pitch * _vm->gdi._textSurface.h);
 			} else {
 				// Restore from back buffer
+				const byte *backBuf = vs->getBackPixels(0, 0);
 				blit(screenBuf, vs->pitch, backBuf, vs->pitch, vs->w, vs->h);
 			}
 		} else {
