@@ -1842,6 +1842,7 @@ void Scumm::o5_walkActorTo() {
 void Scumm::o5_walkActorToActor() {
 	int b,x,y;
 	Actor *a, *a2;
+	int nr;
 
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_walkActorToActor");
 	if (a->room != _currentRoom) {
@@ -1850,7 +1851,14 @@ void Scumm::o5_walkActorToActor() {
 		return;
 	}
 
-	a2 = derefActorSafe(getVarOrDirectByte(0x40), "o5_walkActorToActor(2)");
+	nr = getVarOrDirectByte(0x40);
+	if (nr==106 && _gameId==GID_INDY4) {
+		warning("Bypassing Indy4 bug");
+		fetchScriptByte();
+		return;
+	}
+
+	a2 = derefActorSafe(nr, "o5_walkActorToActor(2)");
 	if (a2->room != _currentRoom) {
 		fetchScriptByte();
 		return;
