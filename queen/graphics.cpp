@@ -193,7 +193,14 @@ void BobSlot::clear() {
 static int compareBobDrawOrder(const void *a, const void *b) {
 	const BobSlot *bob1 = *(const BobSlot * const *)a;
 	const BobSlot *bob2 = *(const BobSlot * const *)b;
-	return bob1->y - bob2->y;
+	int d = bob1->y - bob2->y;
+	// As the qsort() function may reorder "equal" elements,
+	// we use the bob slot number when needed. This is required 
+	// during the introduction, to hide a crate behind the clock.
+	if (d == 0) {
+		d = bob1 - bob2;
+	}
+	return d;
 }
 
 const Box Graphics::_gameScreenBox(0, 0, GAME_SCREEN_WIDTH - 1, ROOM_ZONE_HEIGHT - 1);
