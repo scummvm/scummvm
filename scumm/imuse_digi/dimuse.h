@@ -148,8 +148,7 @@ public:
 	void setFade(int soundId, int destVolume, int delay60HzTicks);
 	void setMasterVolume(int vol) {}
 	void stopSound(int soundId);
-	void stopAllSounds() { stopAllSounds(false); }
-	void stopAllSounds(bool waitForStop);
+	void stopAllSounds();
 	void pause(bool pause);
 	void parseScriptCmds(int a, int b, int c, int d, int e, int f, int g, int h);
 	void refreshScripts();

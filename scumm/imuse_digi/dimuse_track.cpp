@@ -105,7 +105,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 			int bits = 0, freq = 0, channels = 0;
 
 			if (input) {
-				_track[l]->iteration = 1; // ?
+				_track[l]->iteration = 0;
 				// Do nothing here, we already have an audio stream
 			} else {
 				_track[l]->soundHandle = _sound->openSound(soundId, soundName, soundType, volGroupId);

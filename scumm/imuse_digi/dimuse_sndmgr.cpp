@@ -232,7 +232,7 @@ bool ImuseDigiSndMgr::openMusicBundle(int slot) {
 			if (_disk != _vm->VAR(_vm->VAR_CURRENTDISK)) {
 				_vm->_imuseDigital->parseScriptCmds(0x1000, 0, 0, 0, 0, 0, 0, 0);
 				_vm->_imuseDigital->parseScriptCmds(0x2000, 0, 0, 0, 0, 0, 0, 0);
-				_vm->_imuseDigital->stopAllSounds(true);
+				_vm->_imuseDigital->stopAllSounds();
 				_sounds[slot].bundle->closeFile();
 			}
 
@@ -263,7 +263,7 @@ bool ImuseDigiSndMgr::openVoiceBundle(int slot) {
 			if (_disk != _vm->VAR(_vm->VAR_CURRENTDISK)) {
 				_vm->_imuseDigital->parseScriptCmds(0x1000, 0, 0, 0, 0, 0, 0, 0);
 				_vm->_imuseDigital->parseScriptCmds(0x2000, 0, 0, 0, 0, 0, 0, 0);
-				_vm->_imuseDigital->stopAllSounds(true);
+				_vm->_imuseDigital->stopAllSounds();
 				_sounds[slot].bundle->closeFile();
 			}
 

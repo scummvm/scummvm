@@ -256,12 +256,19 @@ void IMuseDigital::stopSound(int soundId) {
 	Common::StackLock lock(_mutex, "IMuseDigital::stopSound()");
 	debug(5, "IMuseDigital::stopSound(%d)", soundId);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
-		if ((_track[l]->soundId == soundId) && _track[l]->used) {
+		if ((_track[l]->soundId == soundId) && (_track[l]->used)) {
 			if (_track[l]->stream) {
-				_track[l]->toBeRemoved = true;
-			}
-			else if (_track[l]->stream2)
+				_track[l]->stream->finish();
+				_track[l]->stream = NULL;
 				_vm->_mixer->stopHandle(_track[l]->handle);
+				_sound->closeSound(_track[l]->soundHandle);
+				_track[l]->soundHandle = NULL;
+			} else if (_track[l]->stream2) {
+				_vm->_mixer->stopHandle(_track[l]->handle);
+				delete _track[l]->stream2;
+				_track[l]->stream2 = NULL;
+			}
+			_track[l]->used = false;
 		}
 	}
 }
@@ -337,33 +344,25 @@ int32 IMuseDigital::getCurMusicLipSyncHeight(int syncId) {
 	return height;
 }
 
-void IMuseDigital::stopAllSounds(bool waitForStop) {
+void IMuseDigital::stopAllSounds() {
+	Common::StackLock lock(_mutex, "IMuseDigital::stopAllSounds()");
 	debug(5, "IMuseDigital::stopAllSounds");
-	{
-		Common::StackLock lock(_mutex, "IMuseDigital::stopAllSounds()");
-		for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
-			if (_track[l]->used) {
-				if (_track[l]->stream) {
-					_track[l]->toBeRemoved = true;
-				} else if (_track[l]->stream2)
-					_vm->_mixer->stopHandle(_track[l]->handle);
+
+	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
+		if (_track[l]->used) {
+			if (_track[l]->stream) {
+				_track[l]->stream->finish();
+				_track[l]->stream = NULL;
+				_vm->_mixer->stopHandle(_track[l]->handle);
+				_sound->closeSound(_track[l]->soundHandle);
+				_track[l]->soundHandle = NULL;
+			} else if (_track[l]->stream2) {
+				_vm->_mixer->stopHandle(_track[l]->handle);
+				delete _track[l]->stream2;
+				_track[l]->stream2 = NULL;
 			}
+			_track[l]->used = false;
 		}
-	}
-
-	// FIXME: ignore wait, it can cause deadlock, it need better implementaion
-	return;
-
-	if (waitForStop) {
-		bool used;
-		do {
-			used = false;
-			for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
-				if (_track[l]->used)
-					used = true;
-			}
-			g_system->delay_msecs(10);
-		} while (used);
 	}
 }
 
