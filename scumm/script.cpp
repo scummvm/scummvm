@@ -353,8 +353,10 @@ void ScummEngine::nukeArrays(int script) {
 		return;
 
 	for (i = 1; i < _numArray; i++) {
-		if (_arraySlot[i] == script)
+		if (_arraySlot[i] == script) {
 			nukeResource(rtString, i);
+			_arraySlot[i] = 0;
+		}
 	}
 }
 
