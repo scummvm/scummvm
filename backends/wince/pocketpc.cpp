@@ -586,6 +586,7 @@ private:
 
 	void draw_mouse();
 	void undraw_mouse();
+	void warp_mouse(int x, int y);
 
 	void load_gfx_mode();
 	void unload_gfx_mode();
@@ -1805,6 +1806,9 @@ void OSystem_WINCE3::undraw_mouse() {
 	}
 }
 
+
+void OSystem_WINCE3::warp_mouse(int x, int y) {
+}
 	
 void OSystem_WINCE3::set_mouse_pos(int x, int y) {
 	if (x != _ms_cur.x || y != _ms_cur.y) {
@@ -1955,7 +1959,7 @@ void OSystem_WINCE3::play_cdrom(int track, int num_loops, int start_frame, int e
 bool OSystem_WINCE3::poll_cdrom() {return 0;}
 void OSystem_WINCE3::update_cdrom() {;}
 
-void ScummDebugger::attach(Scumm *s) {;}
+//void ScummDebugger::attach(Scumm *s) {;}
 
 /* Mutex stuff */
 void* OSystem_WINCE3::create_mutex() {
