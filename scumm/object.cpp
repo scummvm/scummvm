@@ -1515,7 +1515,7 @@ void ScummEngine::drawBlastObject(BlastObject *eo) {
 		drawBomp(bdd, false);
 	}
 
-	updateDirtyRect(vs->number, bdd.x, bdd.x + bdd.srcwidth, bdd.y, bdd.y + bdd.srcheight, 0);
+	markRectAsDirty(vs->number, bdd.x, bdd.x + bdd.srcwidth, bdd.y, bdd.y + bdd.srcheight, 0);
 }
 
 void ScummEngine::removeBlastObjects() {
@@ -1569,7 +1569,7 @@ void ScummEngine::removeBlastObject(BlastObject *eo) {
 	for (i = left_strip; i <= right_strip; i++)
 		gdi.resetBackground(top, bottom, i);
 
-	updateDirtyRect(0, left, right, top, bottom, USAGE_BIT_RESTORED);
+	markRectAsDirty(kMainVirtScreen, left, right, top, bottom, USAGE_BIT_RESTORED);
 }
 
 int ScummEngine::findLocalObjectSlot() {

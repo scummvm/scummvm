@@ -977,7 +977,7 @@ void CharsetRendererV3::printChar(int chr) {
 	mask_ptr = _vm->getMaskBuffer(_left, drawTop, 0);
 	useMask = (vs->number == 0 && !_ignoreCharsetMask);
 
-	_vm->updateDirtyRect(vs->number, _left, _left + w, drawTop, drawTop + h, 0);
+	_vm->markRectAsDirty(vs->number, _left, _left + w, drawTop, drawTop + h, 0);
 	if (vs->number == 0)
 		_hasMask = true;
 
@@ -1082,7 +1082,7 @@ void CharsetRendererClassic::printChar(int chr) {
 
 	int drawTop = _top - vs->topline;
 
-	_vm->updateDirtyRect(vs->number, _left, _left + width, drawTop, drawTop + height + offsY, 0);
+	_vm->markRectAsDirty(vs->number, _left, _left + width, drawTop, drawTop + height + offsY, 0);
 
 	if (vs->number != 0)
 		_blitAlso = false;
@@ -1296,7 +1296,7 @@ void CharsetRendererNut::printChar(int chr) {
 
 	_hasMask = true;
 	_current->drawShadowChar(chr, _left, _top - _vm->_screenTop, _color, !_ignoreCharsetMask);
-	_vm->updateDirtyRect(0, shadow_left, shadow_right, shadow_top, shadow_bottom, 0);
+	_vm->markRectAsDirty(kMainVirtScreen, shadow_left, shadow_right, shadow_top, shadow_bottom, 0);
 
 	_left += width;
 

@@ -48,15 +48,16 @@ struct CameraData {
 };
 
 /** Virtual screen identifiers */
-enum {
+enum VirtScreenNumber {
 	kMainVirtScreen = 0,	// The 'stage'
 	kTextVirtScreen = 1,	// In V1-V3 games: the area where text is printed
-	kVerbVirtScreen = 2		// The verb area
+	kVerbVirtScreen = 2,	// The verb area
+	kUnkVirtScreen = 3		// ?? Not sure what this one is good for...
 };
 
 /** Virtual screen areas */
 struct VirtScreen {
-	int number;
+	VirtScreenNumber number;
 	uint16 topline;
 	uint16 width, height;
 	byte alloctwobuffers;
@@ -111,13 +112,7 @@ struct BompDrawData {
 	BompDrawData() { memset(this, 0, sizeof(*this)); }
 };
 
-struct StripTable {
-	int offsets[160];
-	int run[160];
-	int color[160];
-	int zoffsets[120];	// FIXME: Why only 120 here?
-	int zrun[120];		// FIXME: Why only 120 here?
-};
+struct StripTable;
 
 class Gdi {
 	friend class ScummEngine;	// Mostly for the code in saveload.cpp ...

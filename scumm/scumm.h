@@ -792,7 +792,7 @@ protected:
 	StripTable *_roomStrips;
 
 	void initScreens(int b, int w, int h);
-	void initVirtScreen(int slot, int number, int top, int width, int height, bool twobufs, bool scrollable);
+	void initVirtScreen(VirtScreenNumber slot, int number, int top, int width, int height, bool twobufs, bool scrollable);
 	void initBGBuffers(int height);
 	void initCycl(const byte *ptr);	// Color cycle
 
@@ -855,10 +855,10 @@ protected:
 
 
 public:
-	void updateDirtyRect(int virt, int left, int right, int top, int bottom, int dirtybit);
+	void markRectAsDirty(VirtScreenNumber virt, int left, int right, int top, int bottom, int dirtybit);
 protected:
 	void drawDirtyScreenParts();
-	void updateDirtyScreen(int slot);
+	void updateDirtyScreen(VirtScreenNumber slot);
 
 public:
 	VirtScreen *findVirtScreen(int y);

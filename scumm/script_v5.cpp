@@ -2854,7 +2854,7 @@ void ScummEngine_v5::o5_oldRoomEffect() {
 				VirtScreen *vs = &virtscr[0];
 				restoreBG(Common::Rect(0,vs->topline, vs->width, vs->topline + vs->height));
 				virtscr[0].setDirtyRange(0, virtscr[0].height);
-				updateDirtyScreen(0);
+				updateDirtyScreen(kMainVirtScreen);
 				
 				if (byte_2FCCF) {
 					// Here now "sub_1C44" is called, which sets byte_2FCCF to 0 then

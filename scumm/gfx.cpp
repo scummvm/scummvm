@@ -31,6 +31,14 @@
 
 namespace Scumm {
 
+struct StripTable {
+	int offsets[160];
+	int run[160];
+	int color[160];
+	int zoffsets[120];	// FIXME: Why only 120 here?
+	int zrun[120];		// FIXME: Why only 120 here?
+};
+
 enum {
 	kScrolltime = 500,  // ms scrolling is supposed to take
 	kPictureDelay = 20
@@ -223,9 +231,9 @@ void ScummEngine::initScreens(int b, int w, int h) {
 		// Since the size of screen 3 is fixed, there is no need to reallocate it
 		// if its size changed.
 		if (_version >= 7) {
-			initVirtScreen(3, 0, (_screenHeight / 2) - 10, _screenWidth, 13, false, false);
+			initVirtScreen(kUnkVirtScreen, 0, (_screenHeight / 2) - 10, _screenWidth, 13, false, false);
 		} else {
-			initVirtScreen(3, 0, 80, _screenWidth, 13, false, false);
+			initVirtScreen(kUnkVirtScreen, 0, 80, _screenWidth, 13, false, false);
 		}
 	}
 	initVirtScreen(kMainVirtScreen, 0, b, _screenWidth, h - b, true, true);
@@ -236,7 +244,7 @@ void ScummEngine::initScreens(int b, int w, int h) {
 	_screenH = h;
 }
 
-void ScummEngine::initVirtScreen(int slot, int number, int top, int width, int height, bool twobufs,
+void ScummEngine::initVirtScreen(VirtScreenNumber slot, int number, int top, int width, int height, bool twobufs,
 													 bool scrollable) {
 	VirtScreen *vs = &virtscr[slot];
 	int size;
@@ -292,7 +300,7 @@ VirtScreen *ScummEngine::findVirtScreen(int y) {
 	return NULL;
 }
 
-void ScummEngine::updateDirtyRect(int virt, int left, int right, int top, int bottom, int dirtybit) {
+void ScummEngine::markRectAsDirty(VirtScreenNumber virt, int left, int right, int top, int bottom, int dirtybit) {
 	VirtScreen *vs = &virtscr[virt];
 	int lp, rp;
 
@@ -306,7 +314,7 @@ void ScummEngine::updateDirtyRect(int virt, int left, int right, int top, int bo
 	if (bottom > vs->height)
 		bottom = vs->height;
 
-	if (virt == 0 && dirtybit) {
+	if (virt == kMainVirtScreen && dirtybit) {
 		lp = left / 8 + _screenStartStrip;
 		if (lp < 0)
 			lp = 0;
@@ -382,7 +390,7 @@ void ScummEngine::drawDirtyScreenParts() {
 	}
 }
 
-void ScummEngine::updateDirtyScreen(int slot) {
+void ScummEngine::updateDirtyScreen(VirtScreenNumber slot) {
 	gdi.updateDirtyScreen(&virtscr[slot]);
 }
 
@@ -449,12 +457,6 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b) {
 
 	ptr = vs->screenPtr + (x + vs->xstart) + (_vm->_screenTop + t) * _vm->_screenWidth;
 	_vm->_system->copy_rect(ptr, _vm->_screenWidth, x, vs->topline + t, w, height);
-}
-
-void Gdi::clearCharsetMask() {
-	memset(_vm->getResourceAddress(rtBuffer, 9), 0, _imgBufOffs[1]);
-	_mask.top = _mask.left = 32767;
-	_mask.right = _mask.bottom = 0;
 }
 
 /**
@@ -550,14 +552,14 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 	else if (y2 > vs->height)
 		y2 = vs->height;
 	
-	updateDirtyRect(vs->number, x, x2, y, y2, 0);
+	markRectAsDirty(vs->number, x, x2, y, y2, 0);
 
 	backbuff = vs->screenPtr + vs->xstart + y * _screenWidth + x;
 
 	width = x2 - x;
 	height = y2 - y;
 	if (color == -1) {
-		if (vs->number != 0)
+		if (vs->number != kMainVirtScreen)
 			error("can only copy bg to main window");
 		bgbuff = getResourceAddress(rtBuffer, vs->number + 5) + vs->xstart + y * _screenWidth + x;
 		blit(backbuff, bgbuff, width, height);
@@ -630,7 +632,7 @@ void ScummEngine::drawFlashlight() {
 
 	// Remove the flash light first if it was previously drawn
 	if (_flashlight.isDrawn) {
-		updateDirtyRect(0, _flashlight.x, _flashlight.x + _flashlight.w,
+		markRectAsDirty(kMainVirtScreen, _flashlight.x, _flashlight.x + _flashlight.w,
 										_flashlight.y, _flashlight.y + _flashlight.h, USAGE_BIT_DIRTY);
 		
 		if (_flashlight.buffer) {
@@ -820,7 +822,7 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 	if (rect.bottom >= height)
 		rect.bottom = height;
 
-	updateDirtyRect(vs->number, rect.left, rect.right, rect.top - topline, rect.bottom - topline, USAGE_BIT_RESTORED);
+	markRectAsDirty(vs->number, rect.left, rect.right, rect.top - topline, rect.bottom - topline, USAGE_BIT_RESTORED);
 
 	int offset = (rect.top - topline) * _screenWidth + vs->xstart + rect.left;
 	backbuff = vs->screenPtr + offset;
@@ -830,11 +832,11 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 	width = rect.width();
 
 	// Check whether lights are turned on or not
-	lightsOn = (_features & GF_NEW_OPCODES) || (vs->number != 0) || (VAR(VAR_CURRENT_LIGHTS) & LIGHTMODE_screen);
+	lightsOn = (_features & GF_NEW_OPCODES) || (vs->number != kMainVirtScreen) || (VAR(VAR_CURRENT_LIGHTS) & LIGHTMODE_screen);
 
 	if (vs->alloctwobuffers && _currentRoom != 0 && lightsOn ) {
 		blit(backbuff, bgbak, width, height);
-		if (vs->number == 0 && _charset->_hasMask && height) {
+		if (vs->number == kMainVirtScreen && _charset->_hasMask && height) {
 			byte *mask;
 			// Note: At first sight it may look as if this could
 			// be optimized to (rect.right - rect.left) / 8 and
@@ -846,7 +848,7 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 				mask_width++;
 
 			mask = getMaskBuffer(rect.left, rect.top, 0);
-			if (vs->number == 0)
+			if (vs->number == kMainVirtScreen)
 				mask += vs->topline * gdi._numStrips;
 
 			do {
@@ -860,6 +862,12 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 			backbuff += _screenWidth;
 		}
 	}
+}
+
+void Gdi::clearCharsetMask() {
+	memset(_vm->getResourceAddress(rtBuffer, 9), 0, _imgBufOffs[1]);
+	_mask.top = _mask.left = 32767;
+	_mask.right = _mask.bottom = 0;
 }
 
 bool ScummEngine::hasCharsetMask(int left, int top, int right, int bottom) {
@@ -901,7 +909,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	bool useOrDecompress = false;
 
 	// Check whether lights are turned on or not
-	lightsOn = (_vm->_features & GF_NEW_OPCODES) || (vs->number != 0) || (_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_screen);
+	lightsOn = (_vm->_features & GF_NEW_OPCODES) || (vs->number != kMainVirtScreen) || (_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_screen);
 
 	CHECK_HEAP;
 	if (_vm->_features & GF_SMALL_HEADER)

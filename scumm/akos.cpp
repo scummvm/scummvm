@@ -673,7 +673,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 		if (_actorHitX < x_left || _actorHitX >= x_right || _actorHitY < y_top || _actorHitY >= y_bottom)
 			return 0;
 	} else
-		_vm->updateDirtyRect(0, x_left, x_right, y_top, y_bottom, _dirty_id);
+		_vm->markRectAsDirty(kMainVirtScreen, x_left, x_right, y_top, y_bottom, _dirty_id);
 
 	if (y_top >= (int)_outheight || y_bottom <= 0)
 		return 0;
@@ -763,7 +763,7 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	maxw = _outwidth - 1;
 	maxh = _outheight - 1;
 
-	_vm->updateDirtyRect(0, clip_left, clip_right + 1, clip_top, clip_bottom + 1, _dirty_id);
+	_vm->markRectAsDirty(kMainVirtScreen, clip_left, clip_right + 1, clip_top, clip_bottom + 1, _dirty_id);
 
 	if (clip_top < 0) {
 		clip_top = 0;
@@ -980,7 +980,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	cur_x = _width - 1;
 	cur_y = _height - 1;
 
-	_vm->updateDirtyRect(0, clip_left, clip_right + 1, clip_top, clip_bottom + 1, _dirty_id);
+	_vm->markRectAsDirty(kMainVirtScreen, clip_left, clip_right + 1, clip_top, clip_bottom + 1, _dirty_id);
 
 	if (clip_left < 0) {
 		skip_x = -clip_left;
