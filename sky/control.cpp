@@ -1459,8 +1459,10 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 	LODSD(srcPos, gameVersion);
 	if (gameVersion != SkyEngine::_systemVars.gameVersion) {
 		if ((!SkyEngine::isCDVersion()) || (gameVersion < 365)) { // cd versions are compatible
-			printf("This savegame was created by Beneath a Steel Sky v0.0%03d\n", gameVersion);
-			printf("It cannot be loaded by this version (v0.0%3d)\n", SkyEngine::_systemVars.gameVersion);
+			displayMessage(NULL, "This savegame was created by\n"
+				"Beneath a Steel Sky v0.0%03d\n"
+				"It cannot be loaded by this version (v0.0%3d)",
+				gameVersion, SkyEngine::_systemVars.gameVersion);
 			return RESTORE_FAILED;
 		}
 	}
