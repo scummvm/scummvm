@@ -4679,7 +4679,7 @@ bool SimonState::load_game(uint slot)
 void SimonState::initSound()
 {
 	/* only read voice file in windows game */
-	if (_game & GAME_TALKIE || _game & GAME_WIN) {
+	if (_game & GAME_TALKIE) {
 		const char *m = gss->mp3_filename;
 		const char *s = gss->wav_filename;
 		const char *s2 = gss->voc_filename;

@@ -386,7 +386,7 @@ int SimonState::runScript()
 			break;
 
 		case 67:{									/* set array 3 and 4 */
-				if (_game & GAME_TALKIE || _game & GAME_WIN) {
+				if (_game & GAME_TALKIE) {
 					uint var = getVarOrByte();
 					uint string_id = getNextStringID();
 					uint value = getNextWord();
