@@ -502,11 +502,7 @@ void Command::grabCurrentSelection() {
 
 	_selPosX += _vm->display()->horizontalScroll();
 
-	if (_state.verb == VERB_SCROLL_UP || _state.verb == VERB_SCROLL_DOWN) {
-		// move through inventory (by four if right mouse button)
-		uint16 scroll = (_mouseKey == Input::MOUSE_RBUTTON) ? 4 : 1;
-		_vm->logic()->inventoryScroll(scroll, _state.verb == VERB_SCROLL_UP);
-	} else if (isVerbAction(_state.verb)) {
+	if (isVerbAction(_state.verb) || isVerbInvScroll(_state.verb)) {
 		grabSelectedVerb();
 	} else if (isVerbInv(_state.verb)) {
 		grabSelectedItem();
@@ -549,7 +545,6 @@ void Command::grabSelectedObject(int16 objNum, uint16 objState, uint16 objName) 
 
 	if (_parse) {
 		_state.verb = VERB_NONE;
-//		_vm->logic()->newRoom(0);
 		_vm->logic()->joeWalk(JWM_EXECUTE);
 		_state.selAction = _state.action;
 		_state.action = VERB_NONE;
@@ -654,18 +649,24 @@ void Command::grabSelectedNoun() {
 }
 
 void Command::grabSelectedVerb() {
-	_state.action = _state.verb;
-	_state.subject[0] = 0;
-	_state.subject[1] = 0;
+	if (isVerbInvScroll(_state.verb)) {
+		// move through inventory (by four if right mouse button)
+		uint16 scroll = (_mouseKey == Input::MOUSE_RBUTTON) ? 4 : 1;
+		_vm->logic()->inventoryScroll(scroll, _state.verb == VERB_SCROLL_UP);
+	} else {
+		_state.action = _state.verb;
+		_state.subject[0] = 0;
+		_state.subject[1] = 0;
 
-	if (_vm->logic()->joeWalk() == JWM_MOVE && _state.verb != VERB_NONE) {
-		_vm->logic()->joeWalk(JWM_NORMAL);
+		if (_vm->logic()->joeWalk() == JWM_MOVE && _state.verb != VERB_NONE) {
+			_vm->logic()->joeWalk(JWM_NORMAL);
+		}
+		_state.commandLevel = 1;
+		_state.oldVerb = VERB_NONE;
+		_state.oldNoun = 0;
+		_cmdText.setVerb(_state.verb);
+		_cmdText.display(INK_CMD_NORMAL);
 	}
-	_state.commandLevel = 1;
-	_state.oldVerb = VERB_NONE;
-	_state.oldNoun = 0;
-	_cmdText.setVerb(_state.verb);
-	_cmdText.display(INK_CMD_NORMAL);
 }
 
 bool Command::executeIfCutaway(const char *description) {
