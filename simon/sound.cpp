@@ -446,7 +446,7 @@ void SimonSound::playVoice(uint sound) {
 	if (!_voice)
 		return;
 
-	if (_voice)
+	if (_voice_handle)
 		_mixer->stop(_voice_index);
 
 	if (_game == GAME_SIMON1CD32)
