@@ -933,6 +933,7 @@ protected:
 	void o100_unknown28();
 	void o100_resourceRoutines();
 	void o100_wizImageOps();
+	void o100_loadSBNG();
 	void o100_dim2dim2Array();
 	void o100_paletteOps();
 	void o100_redimArray();

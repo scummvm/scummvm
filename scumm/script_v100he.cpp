@@ -69,7 +69,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_loadRoomWithEgo),
 		OPCODE(o6_invalid),
 		OPCODE(o72_setFilePath),
-		OPCODE(o6_invalid),
+		OPCODE(o100_loadSBNG),
 		/* 18 */
 		OPCODE(o6_cutscene),
 		OPCODE(o6_pop),
@@ -699,6 +699,27 @@ void ScummEngine_v100he::o100_arrayOps() {
 	default:
 		error("o100_arrayOps: default case %d (array %d)", subOp, array);
 	}
+}
+
+void ScummEngine_v100he::o100_loadSBNG() {
+	// Loads SBNG sound resource
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
+	case 0:
+		//_heSBNGId = pop();
+		break;
+	case 53:
+		//loadSBNG(_heSBNGId, -1);
+		break;
+	case 128:
+		pop();
+		//loadSBNG(_heSBNGId, pop();
+		break;
+	default:
+		warning("o100_loadSBNG: default case %d", subOp);
+	}
+	debug(1,"o100_loadSBNG stub (%d)",subOp);
 }
 
 void ScummEngine_v100he::o100_dim2dimArray() {
@@ -1395,6 +1416,17 @@ void ScummEngine_v100he::o100_startSound() {
 	case 6:
 		_heSndFlags |= 16;
 		pop();
+		break;
+	case 55:
+		_heSndFlags |= 8;
+		break;
+	case 83:
+		{
+		int value = pop();
+		int var = pop();
+		int snd = pop();
+		debug(1,"o70_startSound: case 29 (snd %d, var %d, value %d)", snd, var, value);
+		}
 		break;
 	case 92:
 		debug(0, "o100_startSound (ID %d, Offset %d, Channel %d, Flags %d)", _heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags);
