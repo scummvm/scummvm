@@ -42,6 +42,7 @@ Player_V1::Player_V1(ScummEngine *scumm, bool pcjr) : Player_V2(scumm, pcjr) {
 	_mplex_step = (_sample_rate << FIXP_SHIFT) / 1193000;
 	_next_chunk = _repeat_chunk = 0;
 	_forced_level = 0;
+	_random_lsr = 0;
 }
 
 Player_V1::~Player_V1() {

@@ -543,24 +543,7 @@ void Player_V2::premix_proc(void *param, int16 *buf, uint len) {
 
 void Player_V2::clear_channel(int i) {
 	ChannelInfo *channel = &_channels[i];
-	channel->d.time_left  = 0;
-	channel->d.next_cmd   = 0;
-	channel->d.base_freq  = 0;
-	channel->d.freq_delta = 0;
-	channel->d.freq = 0;
-	channel->d.volume = 0;
-	channel->d.volume_delta = 0;
-	channel->d.inter_note_pause = 0;
-	channel->d.transpose = 0;
-	channel->d.hull_curve = 0;
-	channel->d.hull_offset = 0;
-	channel->d.hull_counter = 0;
-	channel->d.freqmod_table = 0;
-	channel->d.freqmod_offset = 0;
-	channel->d.freqmod_incr = 0;
-	channel->d.freqmod_multiplier = 0;
-	channel->d.freqmod_modulo = 0;
-	channel->d.music_timer = 0;
+	memset(channel, 0, sizeof(ChannelInfo));
 }
 
 int Player_V2::getMusicTimer() const {
