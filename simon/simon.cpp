@@ -3451,12 +3451,12 @@ void SimonEngine::processSpecialKeys() {
 			_exit_cutscene = true;
 		break;
 	case 't':
-		if ((_game & GF_SIMON2 && _game & GF_TALKIE) ||( _game & GF_TALKIE && _language > 1))
+		if ((_game & GF_SIMON2 && _game & GF_TALKIE) || ( _game & GF_TALKIE && _language > 1))
 			if (_speech)
 				_subtitles ^= 1;
 		break;
 	case 'v':
-		if (_game & GF_SIMON2 && _game & GF_TALKIE)
+		if ((_game & GF_SIMON2) && (_game & GF_TALKIE))
 			if (_subtitles)
 				_speech ^= 1;
 	case '+':
