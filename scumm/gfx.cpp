@@ -1364,14 +1364,15 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 		copyWizImage(dst, ptr, vs->w, vs->h, x - scrX, y, w, h, &rScreen);
 	}
 
-	Common::Rect rect1(x, y, w, h);
+	Common::Rect rect1(x, y, x + w, y + h);
 	Common::Rect rect2(scrX, 0, vs->w + scrX, vs->h);
 
-	if (rect1.intersects(rect2) && rect1.top <= rect1.bottom && rect1.left <= rect1.right) {
+	if (rect1.intersects(rect2)) {
 		rect1.left -= rect2.left;
 		rect1.right -= rect2.left;
 		rect1.top -= rect2.top;
 		rect1.bottom -= rect2.top;
+
 		copyVirtScreenBuffers(rect1);
 	}
 }
