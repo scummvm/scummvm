@@ -152,8 +152,8 @@ void Scumm::getObjectXYPos(int object) {
 		x = od->x_pos + (int16)READ_LE_UINT16(&imhd->hotspot[state].x);
 		y = od->y_pos + (int16)READ_LE_UINT16(&imhd->hotspot[state].y);
 	} else {
-		x = od->walk_x;
-		y = od->walk_y;
+		x = (int16)READ_LE_UINT16(&od->walk_x);
+		y = (int16)READ_LE_UINT16(&od->walk_y);
 	}
 
 //	abr = adjustXYToBeInBox(0, x, y);

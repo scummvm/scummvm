@@ -162,6 +162,7 @@ int Scumm::calcMovementFactor(Actor *a, int newX, int newY) {
 int Scumm::remapDirection(Actor *a, int dir) {
 	int specdir;
 	byte flags;
+	byte dirflag;
 
 	if (!a->ignoreBoxes) {
 		specdir = _extraBoxFlags[a->walkbox];
@@ -174,20 +175,26 @@ int Scumm::remapDirection(Actor *a, int dir) {
 		}
 
 		flags = getBoxFlags(a->walkbox);
+		
+		dirflag = ((a->walkdata.XYFactor>0) ? 1 : 0) |
+			        ((a->walkdata.YXFactor>0) ? 2 : 0);
+
 
 		if ((flags&8) || getClass(a->number, 0x1E)) {
 			dir = 360 - dir;
+			dirflag ^= 1;
 		}
 
 		if ((flags&0x10) || getClass(a->number, 0x1D)) {
 			dir = 180 - dir;
+			dirflag ^= 2;
 		}
 
 		switch(flags & 7) {
 		case 1:
-			return a->walkdata.XYFactor >0 ? 90 : 270;
+			return (dirflag&1) ? 90 : 270;
 		case 2: 
-			return a->walkdata.YXFactor >0 ? 180 : 0;
+			return (dirflag&2) ? 180 : 0;
 		case 3: return 270;
 		case 4: return 90;
 		case 5: return 0;

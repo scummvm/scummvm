@@ -287,6 +287,18 @@ void blitToScreen(Scumm *s, byte *src,int x, int y, int w, int h) {
 #else
 	dst = (byte*)screen->pixels + y*640*2 + x*2;
 	addDirtyRect(x,y,w,h);		
+#ifdef DEBUG_CODE
+	byte black = GetAsyncKeyState(VK_SHIFT)<0 ? 0 : 0xFF;
+	do {
+		i=0;
+		do {
+			dst[i*2] = dst[i*2+1] = src[i] & black;
+		} while (++i!=w);
+		memcpy(dst+640, dst, w*2);
+		dst += 640*2;
+		src += 320;
+	} while (--h);
+#else
 	do {
 		i=0;
 		do {
@@ -296,7 +308,7 @@ void blitToScreen(Scumm *s, byte *src,int x, int y, int w, int h) {
 		dst += 640*2;
 		src += 320;
 	} while (--h);
-
+#endif
 #endif
 
 	SDL_UnlockSurface(screen);
@@ -326,7 +338,7 @@ void updateScreen(Scumm *s) {
 		int area = 0,i;
 		for (i=0; i<numDirtyRects; i++)
 			area += (dirtyRects[i].w * dirtyRects[i].h);
-		debug(2,"update area %f %%", (float)area/640);
+		debug(2,"update area %f %%", (float)area/(640*400/100));
 #endif
 
 		SDL_UpdateRects(screen, numDirtyRects, dirtyRects);	
@@ -500,7 +512,6 @@ void initGraphics(Scumm *s, bool fullScreen) {
 		/* Create Music Thread */
 		SDL_CreateThread((int (*)(void *))&music_thread, &scumm);
 	}
-
 	
 
 #if !defined(SCALEUP_2x2)
