@@ -25,10 +25,10 @@
 #include "sky/skydefs.h"
 #include "sky/sky.h"
 
-#define WAIT_SEQUENCE	while (_tseqFrames != 0) { checkCommands(commandPtr); delay(50); CHECK_ESC }
-#define CHECK_ESC	if (_key_pressed == 27) { _tseqFrames = 0; REMOVE_INTRO return; }
+//#define WAIT_SEQUENCE	while (_tseqFrames != 0) { checkCommands(commandPtr); delay(50); CHECK_ESC }
+//#define CHECK_ESC	if (_key_pressed == 27) { _tseqFrames = 0; REMOVE_INTRO return; }
 #define FREE_IF_NOT_0(ptr)	if (ptr != NULL) { free (ptr); ptr = 0; }
-#define REMOVE_INTRO	commandPtr = (uint32 *)zeroCommands; \
+/*#define REMOVE_INTRO	commandPtr = (uint32 *)zeroCommands; \
 			FREE_IF_NOT_0(_vgaData) \
 			FREE_IF_NOT_0(_diffData) \
 			FREE_IF_NOT_0(_workBase) \
@@ -36,7 +36,12 @@
 			FREE_IF_NOT_0(seq1) \
 			FREE_IF_NOT_0(seq2) \
 			FREE_IF_NOT_0(_introTextSpace) \
-			FREE_IF_NOT_0(_introTextSave) 
+			FREE_IF_NOT_0(_introTextSave) */
+#define REMOVE_INTRO	commandPtr = (uint32 *)zeroCommands; \
+			FREE_IF_NOT_0(_introTextSpace) \
+			FREE_IF_NOT_0(_introTextSave)
+#define CHECK_ESC if (_key_pressed == 27) { _skyScreen->stopSequence(); REMOVE_INTRO return; }
+#define WAIT_SEQUENCE while (_skyScreen->sequenceRunning()) { checkCommands(commandPtr); delay(50); CHECK_ESC }
 
 #define INTRO_TEXT_WIDTH    128
 
@@ -192,28 +197,16 @@ static const commandRoutinesProc commandRoutines[] = {
 
 void SkyState::initVirgin() {
 	
-	_tempPal = _skyDisk->loadFile(60111, NULL);
-	if (_tempPal != NULL)
-		setPalette(_tempPal);
-
-	_workScreen = _skyDisk->loadFile(60110, NULL);
-
-	if (_workScreen != NULL)
-		showScreen();
-
-	// free the memory that was malloc'ed indirectly via load_file
-	free(_workScreen);
-	free(_tempPal);
+	_skyScreen->setPalette(60111);
+	_skyScreen->showScreen(60110);
 }
 
 void SkyState::intro(void) {
 
-	uint8 *seq1 = 0;
-	uint8 *seq2 = 0;
 	uint32 *commandPtr = (uint32 *)zeroCommands;
 
-	_workScreen = _skyDisk->loadFile(60112, NULL); //while virgin screen is up, load rev screen
-	_tempPal = _skyDisk->loadFile(60113, NULL);
+	_skyDisk->prefetchFile(60112); // revolution screen
+	_skyDisk->prefetchFile(60113); // revolution palette
 
 	_skyMusic->loadSectionMusic(0);
 	
@@ -225,15 +218,15 @@ void SkyState::intro(void) {
 	
 	delay(3000); //and another 3 seconds.
 	CHECK_ESC
-	fnFadeDown(0); //remove virgin screen
-	showScreen();
-	paletteFadeUp(_tempPal);
-	free (_tempPal);
-	free (_workScreen);
 	
+	_skyScreen->fnFadeDown(0); //remove virgin screen
+	
+	_skyScreen->showScreen(60112);
+	_skyScreen->paletteFadeUp(60113);
+
 	//while rev is up, load gibbons screen
-	_workScreen = _skyDisk->loadFile(60114, NULL);
-	_tempPal = _skyDisk->loadFile(60115, NULL);
+	_skyDisk->prefetchFile(60114); // gibbo screen
+	_skyDisk->prefetchFile(60115); // gibbo palette
 
 	_introTextSpace = (uint8 *)calloc(10000, 1);
 	_introTextSave = (uint8 *)calloc(10000, 1);
@@ -243,220 +236,165 @@ void SkyState::intro(void) {
 	delay(8000); // keep revolution up for 8 seconds
 	CHECK_ESC
 	
-	fnFadeDown(0);
-	showScreen();
-	paletteFadeUp(_tempPal);
+	_skyScreen->fnFadeDown(0);
+	_skyScreen->showScreen(60114);
+	_skyScreen->paletteFadeUp(60115);
 
-	free (_tempPal);
-	free (_workScreen);
 
 	if (isCDVersion(_gameVersion)) {
 		doCDIntro();
 	} else {
-
-		_tempPal = _skyDisk->loadFile(FN_A_PAL, NULL);
-		_workScreen = _skyDisk->loadFile(FN_1A_LOG, NULL);
-		seq2 = _skyDisk->loadFile(FN_1A, NULL);
+		_skyDisk->prefetchFile(FN_A_PAL);
+		_skyDisk->prefetchFile(FN_1A_LOG);
+		_skyDisk->prefetchFile(FN_1A);
 
 		//keep gibbo up for 2 seconds
 		delay(2000);
 		CHECK_ESC
-		fnFadeDown(0);
-		showScreen();
-		paletteFadeUp(_tempPal);
+		_skyScreen->fnFadeDown(0);
 
-		startTimerSequence(seq2);
-		free(_tempPal);
-		
-		seq1 = _skyDisk->loadFile(FN_1B, NULL);
-		WAIT_SEQUENCE;
-		free (seq2);
-		seq2 = _skyDisk->loadFile(FN_1C, NULL);
-
-		startTimerSequence(seq1);
-		WAIT_SEQUENCE;
-		startTimerSequence(seq2);
+		_skyScreen->showScreen(FN_1A_LOG);
+		_skyScreen->paletteFadeUp(FN_A_PAL);
+		_skyScreen->startSequence(FN_1A);	
+		_skyDisk->prefetchFile(FN_1B);
 		WAIT_SEQUENCE;
 
-		free(seq1);
-		free(seq2);
-		seq1 = _skyDisk->loadFile(FN_1D, NULL);
-		seq2 = _skyDisk->loadFile(FN_1E, NULL);
-
-		startTimerSequence(seq1);
+		_skyScreen->startSequence(FN_1B);
+		_skyDisk->prefetchFile(FN_1C);
 		WAIT_SEQUENCE;
-		startTimerSequence(seq2);
 
-		free(seq1);
+		_skyScreen->startSequence(FN_1C);
+		_skyDisk->prefetchFile(FN_1D);
+		WAIT_SEQUENCE;
 
-		_vgaData = _skyDisk->loadFile(60100, NULL);
-		_vgaPointer = _vgaData;
-		_diffData = _skyDisk->loadFile(60101, NULL);
-	
-		_noFrames = READ_LE_UINT16(_diffData);
-		_diffPointer = _diffData + 2;
+		_skyScreen->startSequence(FN_1D);
+		_skyDisk->prefetchFile(FN_1E);
+		WAIT_SEQUENCE;
 
-		seq1 = _skyDisk->loadFile(FN_4A, NULL);
+		_skyScreen->startSequence(FN_1E);
+
+		uint8 *vgaData, *diffData, *vgaPointer, *diffPointer, *scrollData;
+		uint8 *currScreenPos;
+		vgaData = _skyDisk->loadFile(60100, NULL);
+		vgaPointer = vgaData;
+		diffData = _skyDisk->loadFile(60101, NULL);
+		diffPointer = diffData + 2;
+		uint16 noFrames = READ_LE_UINT16(diffData);
+
+		_skyDisk->prefetchFile(FN_4A);
 		
 		WAIT_SEQUENCE;		
 
-		free (seq2);
 		
 		//set up the scrolling intro
-		_workBase = (byte *)malloc(GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT * 2);
-
+		scrollData = (byte *)malloc(GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT * 2);
 		//clear the base
-		memset(_workBase, 0, GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT);	
-
-		WAIT_SEQUENCE;	//1e
-
-		memcpy(_workBase + (GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT), _workScreen, GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT); 
-		free(_workScreen); 
-		_workScreen = _workBase + (GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT);
-		_workScreenEnd = _workScreen + (GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT);	
-
-		_frameCounter = 1;
+		memset(scrollData, 0, GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT);	
+		memcpy(scrollData + (GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT), _skyScreen->giveCurrent(), GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT); 
+		currScreenPos = scrollData + (GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT);
 
 		byte scrollByte; 
-
-		while (_frameCounter < _noFrames) {
-	
-			scrollByte = *_diffPointer++;
-			if (scrollByte) {
-				_workScreen -= scrollByte * GAME_SCREEN_WIDTH;
-				_workScreenEnd -= scrollByte * GAME_SCREEN_WIDTH;
-			}
+		for (uint16 frameCounter = 1; frameCounter < noFrames; frameCounter++) {
+			scrollByte = *diffPointer++;
+			if (scrollByte)
+				currScreenPos -= scrollByte * GAME_SCREEN_WIDTH;
 
 			delay(40); 
 			if (_key_pressed == 27) {
-				_workScreen = (byte *)calloc(FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT, 1);
 				REMOVE_INTRO;
 				return;
 			}
 			
 			//non-scrolling frame update
-			introFrame();
-
+			introFrame(&diffPointer, &vgaPointer, currScreenPos);
+			_skyScreen->showScreen(currScreenPos);
 		}
-
-		startTimerSequence(seq1);
-		free(_vgaData);
-		_vgaData = 0;
-		free(_diffData);
-		_diffData = 0;
+		memcpy(_skyScreen->giveCurrent(), currScreenPos, GAME_SCREEN_HEIGHT * GAME_SCREEN_WIDTH);
+		_skyScreen->startSequence(FN_4A);
+		free(scrollData);
+		free(vgaData);
+		free(diffData);
 		WAIT_SEQUENCE;
  		
-		free(_workBase);
-		_workBase = 0;
-		_workScreen = _skyDisk->loadFile(FN_4B_LOG, NULL);
-		seq2 = _skyDisk->loadFile(FN_4B, NULL);	
+		_skyDisk->prefetchFile(FN_4B);
+		_skyScreen->showScreen(FN_4B_LOG);
 
-		showScreen();
-
-		commandPtr = (uint32 *)anim4aCommands; 
-		WAIT_SEQUENCE; 
+		/*commandPtr = (uint32 *)anim4aCommands; 
+		WAIT_SEQUENCE; */
+		printf("anim 4A commands skipped.\n");
 
 		commandPtr = (uint32 *)cockpitCommands;
-		startTimerSequence(seq2); 
+		_skyScreen->startSequence(FN_4B);
 
 		checkCommands(commandPtr);
 		checkCommands(commandPtr);
 
 		WAIT_SEQUENCE; //4b
-		free (_workScreen);
-		_workScreen = 0;
-		free (seq1);
 
-		_workScreen = _skyDisk->loadFile(FN_4C_LOG, NULL);
-		seq1 = _skyDisk->loadFile(FN_4C, NULL);
+		_skyDisk->prefetchFile(FN_4C);
 
-		showScreen();
-		startTimerSequence(seq1);
-		free(seq2);
+		_skyScreen->showScreen(FN_4C_LOG);
+		_skyScreen->startSequence(FN_4C);
 
 		commandPtr = (uint32 *)anim4cCommands;
 		WAIT_SEQUENCE; //4c
-		free (_workScreen);
 		
-		_tempPal = _skyDisk->loadFile(FN_5_PAL, NULL);
-		_workScreen = _skyDisk->loadFile(FN_5_LOG, NULL);
-		seq2 = _skyDisk->loadFile(FN_5, NULL);
+		_skyDisk->prefetchFile(FN_5_PAL);
+		_skyDisk->prefetchFile(FN_5_LOG);
+		_skyDisk->prefetchFile(FN_5);
 		
-		fnFadeDown(0);
-		showScreen();
-		paletteFadeUp(_tempPal);
+		_skyScreen->fnFadeDown(0);
+		_skyScreen->showScreen(FN_5_LOG);
+		_skyScreen->paletteFadeUp(FN_5_PAL);
 		
-		startTimerSequence(seq2);
-		free (_tempPal);
-		free (seq1);
+		_skyScreen->startSequence(FN_5);
 
 		commandPtr = (uint32 *)anim5Commands;
 		
 		WAIT_SEQUENCE;
-		free (_workScreen);
-		_tempPal = _skyDisk->loadFile(FN_6_PAL, NULL);
-		_workScreen = _skyDisk->loadFile(FN_6_LOG, NULL);
-		seq1 = _skyDisk->loadFile(FN_6A, NULL);
+		_skyDisk->prefetchFile(FN_6_PAL);
+		_skyDisk->prefetchFile(FN_6_LOG);
+		_skyDisk->prefetchFile(FN_6A);
 
-		fnFadeDown(0);
-		showScreen();
+		_skyScreen->fnFadeDown(0);
+		_skyScreen->showScreen(FN_6_LOG);
 
 		_skyMusic->startMusic(2);
-		paletteFadeUp(_tempPal);
+		_skyScreen->paletteFadeUp(FN_6_PAL);
 
-		startTimerSequence(seq1);
-		free (seq2);
-		seq2 = _skyDisk->loadFile(FN_6B, NULL);
+		_skyScreen->startSequence(FN_6A);
+		_skyDisk->prefetchFile(FN_6B);
 		
 		commandPtr = (uint32 *)anim6aCommands;
 		WAIT_SEQUENCE; //6a
 		
-		free (seq1);
-		free (_tempPal);
-		
-		startTimerSequence(seq2);
+		_skyScreen->startSequence(FN_6B);
 		commandPtr = (uint32 *)anim6bCommands;
 		WAIT_SEQUENCE; //6b
-		free (seq2);
-
 	}
-
 }
 
-void SkyState::showScreen(void) {
-	
-	_system->copy_rect(_workScreen, 320, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
-	_system->update_screen();
-}
+void SkyState::introFrame(uint8 **diffPtr, uint8 **vgaPtr, uint8 *screenData) {
 
-void SkyState::introFrame(void) {
-
-	_frameCounter++;
-	byte *diffPtr = _diffPointer;
-	byte *vgaPtr = _vgaPointer;
-	byte *scrPtr = _workScreen;
-	byte count;
+	uint32 scrPos = 0;
+	uint8 nrToSkip, nrToDo;
 
 	do {
 		do {
-			count = *diffPtr++;
-			scrPtr += count;
-		} while (count == 255);
+			nrToSkip = **diffPtr;
+			(*diffPtr)++;
+			scrPos += nrToSkip;
+		} while (nrToSkip == 255);
 
 		do {
-			count = *diffPtr++;
-			memcpy(scrPtr, vgaPtr, count);
-			scrPtr += count;
-			vgaPtr += count;
-		} while (*(diffPtr - 1) == 255);
+			nrToDo = **diffPtr;
+			(*diffPtr)++;
+			memcpy(screenData + scrPos, *vgaPtr, nrToDo);
+			scrPos += nrToDo;
+			*vgaPtr += nrToDo;
+		} while (nrToDo == 255);
 
-	} while (scrPtr < _workScreenEnd);
-
-	_diffPointer = diffPtr;
-	_vgaPointer = vgaPtr;
-
-	showScreen();
-
+	} while (scrPos < GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT);
 }
 
 void SkyState::checkCommands(uint32 *&cmdPtr) {
@@ -466,7 +404,7 @@ void SkyState::checkCommands(uint32 *&cmdPtr) {
 	
 	uint32 afterFrame = *(cmdPtr);
 	
-	if (afterFrame >= _tseqFrames) { 
+	if (afterFrame >= _skyScreen->seqFramesLeft()) { 
 
 		//do a command
 		uint32 command = *(cmdPtr + 1);
@@ -482,6 +420,7 @@ void SkyState::prepareText(uint32 *&cmdPtr) {
 	cmdPtr += 3;  
 }
 
+#define _workScreen _skyScreen->giveCurrent()
 void SkyState::showIntroText(uint32 *&cmdPtr) {
 	
 	uint32 xPos = *(cmdPtr + 2); 
@@ -550,6 +489,7 @@ void SkyState::removeText(uint32 *&cmdPtr) {
 
 	cmdPtr += 2;
 }
+#undef _workScreen
 
 void SkyState::introFx(uint32 *&cmdPtr) {
 

@@ -195,30 +195,28 @@
 #define LOAD_NEW_VOICE(num)	( free (vocBuffer), vocBuffer = _skyDisk->loadFile(num, NULL), loadedVocSize = _skyDisk->_lastLoadedFileSize ) 
 #define LOAD_NEW_BG(num)	( free (bgVocBuffer), bgVocBuffer = _skyDisk->loadFile(num, NULL), bgVocSize = _skyDisk->_lastLoadedFileSize )
 #define WAIT_VOICE	while (_skySound->_voiceHandle != 0) { delay(50); CHECK_ESC }
-#define WAIT_SEQUENCE	while (_tseqFrames != 0) { delay(50); CHECK_ESC }
-#define CHECK_ESC	if (_key_pressed == 27) { _tseqFrames = 0; return; }
+#define CHECK_ESC if (_key_pressed == 27) { _skyScreen->stopSequence(); return; }
+#define WAIT_SEQUENCE while (_skyScreen->sequenceRunning()) { delay(50); CHECK_ESC }
 #define WAIT_RELATIVE(x)	( delay(20 * (x)) )
-#define COPY_SCREEN	( memcpy(_workScreen, workScreen2, GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT) )
 
 void SkyState::doCDIntro() {
 
 	uint32 loadedVocSize, bgVocSize;
-	byte *vocBuffer, *bgVocBuffer, *cd2_seq_data_1, *cd2_seq_data_2;
+	byte *vocBuffer, *bgVocBuffer;
 
 	assert(isCDVersion(_gameVersion));
 	
 	vocBuffer = _skyDisk->loadFile(cdv_00, NULL);
 	loadedVocSize = _skyDisk->_lastLoadedFileSize;
 
-	_tempPal = _skyDisk->loadFile(cd_pal, NULL);
-	_workScreen = _skyDisk->loadFile(cd_1_log, NULL);
-	
-	cd2_seq_data_1 = _skyDisk->loadFile(cd_1, NULL);
+	_skyDisk->prefetchFile(cd_pal);
+	_skyDisk->prefetchFile(cd_1_log);
+	_skyDisk->prefetchFile(cd_1);
+
 	bgVocBuffer = _skyDisk->loadFile(59499, NULL);
 	bgVocSize = _skyDisk->_lastLoadedFileSize;
-
 	delay(2000); //keep gibbons screen up for 2 seconds
-	fnFadeDown(0); //and fade out
+	_skyScreen->fnFadeDown(0); //and fade out
 
 	START_VOICE;
 	START_BG; 
@@ -226,22 +224,22 @@ void SkyState::doCDIntro() {
 
 	vocBuffer = _skyDisk->loadFile(cdv_01, NULL);
 	loadedVocSize = _skyDisk->_lastLoadedFileSize;
-	
 	WAIT_VOICE; //wait for the voice to finish
+
 	START_VOICE;
 	START_BG; 
-	showScreen();
-	paletteFadeUp(_tempPal);
-	startTimerSequence(cd2_seq_data_1);
+	_skyScreen->showScreen(cd_1_log);
+	_skyScreen->paletteFadeUp(cd_pal);
+	_skyScreen->startSequence(cd_1);
+
 	LOAD_NEW_VOICE(cdv_02);
 	WAIT_VOICE;
 	START_VOICE;
 	START_BG; 
-	cd2_seq_data_2 = _skyDisk->loadFile(cd_2, NULL); //load seq 2 while 1 is playing
+	_skyDisk->prefetchFile(cd_2); //load seq 2 while 1 is playing
 	LOAD_NEW_VOICE(cdv_03);
-	//WAIT_SEQUENCE;
 	WAIT_VOICE;
-	startTimerSequence(cd2_seq_data_2); //start second sequence
+	_skyScreen->startSequence(cd_2); //start second sequence
 	START_VOICE; //03
 	START_BG;
 	
@@ -251,8 +249,7 @@ void SkyState::doCDIntro() {
 	START_VOICE; //04
 	START_BG;
 
-	free(cd2_seq_data_1);
-	cd2_seq_data_1 = _skyDisk->loadFile(cd_3, NULL);
+	_skyDisk->prefetchFile(cd_3);
 	LOAD_NEW_VOICE(cdv_05);
 	
 	WAIT_SEQUENCE; //2
@@ -263,21 +260,20 @@ void SkyState::doCDIntro() {
 	
 	WAIT_RELATIVE(100); 
 
-	startTimerSequence(cd2_seq_data_1);
+	_skyScreen->startSequence(cd_3);
 	LOAD_NEW_VOICE(cdv_06);
 	WAIT_VOICE; //5
 	START_VOICE; //6
 	START_BG;
 
-	free (cd2_seq_data_2);
-	cd2_seq_data_2 = _skyDisk->loadFile(cd_5, NULL);
+	_skyDisk->prefetchFile(cd_5);
 	LOAD_NEW_VOICE(cdv_07);
 
 	WAIT_SEQUENCE; //3
 	WAIT_VOICE; //6
 
 	START_VOICE; //7
-	startTimerSequence(cd2_seq_data_2); //5
+	_skyScreen->startSequence(cd_5);
 	START_BG;
 
 	LOAD_NEW_VOICE(cdv_08);
@@ -289,31 +285,28 @@ void SkyState::doCDIntro() {
 	START_VOICE; //9
 	START_BG;
 
-	free (cd2_seq_data_1);
-	cd2_seq_data_1 = _skyDisk->loadFile(cd_7, NULL);
+	_skyDisk->prefetchFile(cd_7);
 	LOAD_NEW_VOICE(cdv_10);
 
 	WAIT_SEQUENCE; //5
 	WAIT_VOICE; //9
 
 	START_VOICE; //10
-	startTimerSequence(cd2_seq_data_1); //7
+	_skyScreen->startSequence(cd_7);
 	START_BG;
 	
-	_skyDisk->loadFile(cd_11_pal, _tempPal);
-	byte *workScreen2 = _skyDisk->loadFile(cd_11_log, NULL); //need an extra screen or else the sequence will get messed up
-	free (cd2_seq_data_2);
-	cd2_seq_data_2 = _skyDisk->loadFile(cd_11, NULL);
+	_skyDisk->prefetchFile(cd_11_pal);
+	_skyDisk->prefetchFile(cd_11_log);
+	_skyDisk->prefetchFile(cd_11);
 	LOAD_NEW_VOICE(cdv_11);
 
 	WAIT_VOICE; //10
 	START_VOICE; //11
 	START_BG;
 
-	fnFadeDown(0);
-	COPY_SCREEN;
-	showScreen();
-	paletteFadeUp(_tempPal);
+	_skyScreen->fnFadeDown(0);
+	_skyScreen->showScreen(cd_11_log);
+	_skyScreen->paletteFadeUp(cd_11_pal);
 
 	LOAD_NEW_VOICE(cdv_12);
 	WAIT_SEQUENCE; //7
@@ -322,15 +315,14 @@ void SkyState::doCDIntro() {
 	START_BG;
 
 	WAIT_RELATIVE(80);
-	startTimerSequence(cd2_seq_data_2); //11
+	_skyScreen->startSequence(cd_11);
 
 	LOAD_NEW_VOICE(cdv_13);
 	WAIT_VOICE; //12
 	START_VOICE; //13
 	START_BG;
 
-	free(cd2_seq_data_1);
-	cd2_seq_data_1 = _skyDisk->loadFile(cd_13, NULL);
+	_skyDisk->prefetchFile(cd_13);
 	LOAD_NEW_VOICE(cdv_14);
 
 	LOAD_NEW_BG(59498);
@@ -339,89 +331,85 @@ void SkyState::doCDIntro() {
 	WAIT_VOICE; //13
 
 	START_VOICE; //14
-	startTimerSequence(cd2_seq_data_1); //13
+	_skyScreen->startSequence(cd_13);
 	START_BG;
 
 	LOAD_NEW_VOICE(cdv_15);
-	_skyDisk->loadFile(cd_15_pal, _tempPal);
-	_skyDisk->loadFile(cd_15_log, workScreen2);
+	_skyDisk->prefetchFile(cd_15_pal);
+	_skyDisk->prefetchFile(cd_15_log);
 
 	WAIT_SEQUENCE; //13
 	WAIT_VOICE; //14
 
 	START_VOICE; //15
 	START_BG;
-	fnFadeDown(0);
-	COPY_SCREEN;
-	showScreen();
-	paletteFadeUp(_tempPal);
+	_skyScreen->fnFadeDown(0);
+	_skyScreen->showScreen(cd_15_log);
+	_skyScreen->paletteFadeUp(cd_15_pal);
 
 	LOAD_NEW_VOICE(cdv_16);
 	WAIT_VOICE; //15
 	START_VOICE; //16
 	START_BG;
 
-	_skyDisk->loadFile(cd_17_log, workScreen2);
-	free (cd2_seq_data_2);
-	cd2_seq_data_2 = _skyDisk->loadFile(cd_17, NULL);
+	_skyDisk->prefetchFile(cd_17_log);
+	_skyDisk->prefetchFile(cd_17);
 	LOAD_NEW_VOICE(cdv_17);
 
 	WAIT_VOICE; //16
 	START_VOICE; //17
 
 	WAIT_RELATIVE(40);
-	COPY_SCREEN;
-	showScreen();
+	_skyScreen->showScreen(cd_17_log);
 
 	LOAD_NEW_VOICE(cdv_18);
 	LOAD_NEW_BG(59497); //Loud heli
 	
 	WAIT_VOICE; //17
-	startTimerSequence(cd2_seq_data_2); //17
+	_skyScreen->startSequence(cd_17);
 	START_VOICE; //18
 	START_BG;
 
 	LOAD_NEW_VOICE(cdv_19);
-	_skyDisk->loadFile(cd_19_pal, _tempPal);
-	_skyDisk->loadFile(cd_19_log, workScreen2);
+	_skyDisk->prefetchFile(cd_19_pal);
+	_skyDisk->prefetchFile(cd_19_log);
 	START_BG;
 	LOAD_NEW_BG(59496); //loud heli to quiet
 
 	WAIT_SEQUENCE; //17
 	WAIT_VOICE; //18
 
-	fnFadeDown(0);
-	COPY_SCREEN;
-	showScreen();
-	paletteFadeUp(_tempPal);
+	_skyScreen->fnFadeDown(0);
+	_skyScreen->showScreen(cd_19_log);
+	_skyScreen->paletteFadeUp(cd_19_pal);
 
 	START_VOICE; //19
 	START_BG;
 	LOAD_NEW_VOICE(cdv_20);
-	_skyDisk->loadFile(cd_20_log, workScreen2);
 	LOAD_NEW_BG(59496); //quiet heli
+	_skyDisk->prefetchFile(cd_20_log);
+	_skyDisk->prefetchFile(cd_19_pal);
 
 	WAIT_VOICE; //19
 	START_VOICE; //20
 	START_BG;
 
-	fnFadeDown(0);
-	COPY_SCREEN;
-	showScreen();
-	paletteFadeUp(_tempPal);
+	_skyScreen->fnFadeDown(0);
+	_skyScreen->showScreen(cd_20_log);
+	_skyScreen->paletteFadeUp(cd_19_pal);
 
 	LOAD_NEW_VOICE(cdv_21);
-	_skyDisk->loadFile(cd_21_log, workScreen2);
+	_skyDisk->prefetchFile(cd_21_log);
 
 	START_BG;
+	_skyDisk->prefetchFile(cd_19_pal);
 	WAIT_SEQUENCE; //19
 	WAIT_VOICE; //20
 	START_VOICE; //21
 	START_BG;
-	fnFadeDown(0);
-	COPY_SCREEN;
-	showScreen();
-	paletteFadeUp(_tempPal);
+	_skyScreen->fnFadeDown(0);
+	_skyScreen->showScreen(cd_21_log);
+	_skyScreen->paletteFadeUp(cd_19_pal);
 
 	LOAD_NEW_VOICE(cdv_22);
 	LOAD_NEW_BG(59494); //heli whine
@@ -434,18 +422,16 @@ void SkyState::doCDIntro() {
 	LOAD_NEW_VOICE(cdv_23);
 	WAIT_VOICE; //22
 	START_VOICE; //23
-	fnFadeDown(0);
+	_skyScreen->fnFadeDown(0);
 
-	_skyDisk->loadFile(cd_23_pal, _tempPal);
-	_skyDisk->loadFile(cd_24_log, workScreen2);
+	_skyDisk->prefetchFile(cd_23_pal);
+	_skyDisk->prefetchFile(cd_24_log);
 	LOAD_NEW_VOICE(cdv_24);
 	WAIT_VOICE; //23
 
-	COPY_SCREEN;
-	showScreen();
-	paletteFadeUp(_tempPal);
+	_skyScreen->showScreen(cd_24_log);
+	_skyScreen->paletteFadeUp(cd_23_pal);
 	START_VOICE; //24
-	showScreen();
 	LOAD_NEW_VOICE(cdv_25);
 	WAIT_VOICE; //24
 	START_VOICE; //25
@@ -453,16 +439,14 @@ void SkyState::doCDIntro() {
 	WAIT_VOICE; //25
 	START_VOICE; //26
 
-	free (cd2_seq_data_1);
-	cd2_seq_data_1 = _skyDisk->loadFile(cd_27, NULL);
+	_skyDisk->prefetchFile(cd_27);
 	LOAD_NEW_VOICE(cdv_27);
-	_skyDisk->loadFile(cd_27_pal, _tempPal);
-	_skyDisk->loadFile(cd_27_log, workScreen2);
+	_skyDisk->prefetchFile(cd_27_pal);
+	_skyDisk->prefetchFile(cd_27_log);
 	WAIT_VOICE; //26
-	fnFadeDown(0);
-	COPY_SCREEN;
-	showScreen();	
-	paletteFadeUp(_tempPal);
+	_skyScreen->fnFadeDown(0);
+	_skyScreen->showScreen(cd_27_log);
+	_skyScreen->paletteFadeUp(cd_27_pal);
 	START_VOICE; //27
 	LOAD_NEW_VOICE(cdv_29);
 	WAIT_VOICE; //27
@@ -472,7 +456,8 @@ void SkyState::doCDIntro() {
 	START_VOICE; //30
 	LOAD_NEW_VOICE(cdv_31);
 	WAIT_VOICE; //30
-	startTimerSequence(cd2_seq_data_1);
+
+	_skyScreen->startSequence(cd_27);
 	START_VOICE; //31
 	LOAD_NEW_VOICE(cdv_32);
 	WAIT_VOICE; //31
@@ -488,44 +473,40 @@ void SkyState::doCDIntro() {
 	WAIT_VOICE; //34
 	START_VOICE; //35
 
-	free (cd2_seq_data_2);
-	cd2_seq_data_2 = _skyDisk->loadFile(cd_35, NULL);
+	_skyDisk->prefetchFile(cd_35);
 	LOAD_NEW_VOICE(cdv_36);
-	_skyDisk->loadFile(cd_35_pal, _tempPal);
-	_skyDisk->loadFile(cd_35_log, workScreen2);
+	_skyDisk->prefetchFile(cd_35_pal);
+	_skyDisk->prefetchFile(cd_35_log);
 	WAIT_VOICE; //35
 	START_VOICE; //36
-	fnFadeDown(0);
-	COPY_SCREEN;
-	showScreen();
-	paletteFadeUp(_tempPal);
+	_skyScreen->fnFadeDown(0);
+	_skyScreen->showScreen(cd_35_log);
+	_skyScreen->paletteFadeUp(cd_35_pal);
 	
 	LOAD_NEW_VOICE(cdv_37);
 	WAIT_VOICE; //36
-	startTimerSequence(cd2_seq_data_2);
+	_skyScreen->startSequence(cd_35);
 	START_VOICE; //37
 
-	free (cd2_seq_data_1);
-	cd2_seq_data_1 = _skyDisk->loadFile(cd_37, NULL);
+	_skyDisk->prefetchFile(cd_37);
 	LOAD_NEW_VOICE(cdv_38);
 
 	WAIT_SEQUENCE; //35
 	WAIT_VOICE; //37
 	START_VOICE; //38
-	startTimerSequence(cd2_seq_data_1);
+	_skyScreen->startSequence(cd_37);
 	LOAD_NEW_VOICE(cdv_39);
 	WAIT_SEQUENCE; //37
 	WAIT_VOICE; //38
 	START_VOICE; //39
 
 	LOAD_NEW_VOICE(cdv_40);
-	_skyDisk->loadFile(cd_40_pal, _tempPal);
-	_skyDisk->loadFile(cd_40_log, workScreen2);
+	_skyDisk->prefetchFile(cd_40_pal);
+	_skyDisk->prefetchFile(cd_40_log);
 	WAIT_VOICE; //39
-	fnFadeDown(0);
-	COPY_SCREEN;
-	showScreen();
-	paletteFadeUp(_tempPal);
+	_skyScreen->fnFadeDown(0);
+	_skyScreen->showScreen(cd_40_log);
+	_skyScreen->paletteFadeUp(cd_40_pal);
 
 	START_VOICE; //40
 	LOAD_NEW_VOICE(cdv_41);
@@ -536,74 +517,66 @@ void SkyState::doCDIntro() {
 	START_VOICE; //42
 	LOAD_NEW_VOICE(cdv_43);
 
-	_skyDisk->loadFile(cd_43_pal, _tempPal);
-	_skyDisk->loadFile(cd_43_log, workScreen2);
+	_skyDisk->prefetchFile(cd_43_pal);
+	_skyDisk->prefetchFile(cd_43_log);
 	WAIT_VOICE; //42
 
-	fnFadeDown(0);
-	COPY_SCREEN;
-	showScreen();
-	paletteFadeUp(_tempPal);
+	_skyScreen->fnFadeDown(0);
+	_skyScreen->showScreen(cd_43_log);
+	_skyScreen->paletteFadeUp(cd_43_pal);
 
 	START_VOICE; //43
-	free (cd2_seq_data_2);
-	cd2_seq_data_2 = _skyDisk->loadFile(cd_43, NULL);
+	_skyDisk->prefetchFile(cd_43);
 	WAIT_VOICE; //43
-	startTimerSequence(cd2_seq_data_2);
+	_skyScreen->startSequence(cd_43);
 	LOAD_NEW_VOICE(cdv_45);
-	_skyDisk->loadFile(cd_45_pal, _tempPal);
-	_skyDisk->loadFile(cd_45_log, workScreen2);
+	_skyDisk->prefetchFile(cd_45_pal);
+	_skyDisk->prefetchFile(cd_45_log);
 	WAIT_SEQUENCE; //43
 	START_VOICE; //45
-	fnFadeDown(0);
-	COPY_SCREEN;
-	showScreen();
-	paletteFadeUp(_tempPal);
-	free (cd2_seq_data_1);
-	cd2_seq_data_1 = _skyDisk->loadFile(cd_45, NULL);
+	_skyScreen->fnFadeDown(0);
+	_skyScreen->showScreen(cd_45_log);
+	_skyScreen->paletteFadeUp(cd_45_pal);
+	_skyDisk->prefetchFile(cd_45);
 	LOAD_NEW_VOICE(cdv_46);
 	WAIT_VOICE; //45
-	startTimerSequence(cd2_seq_data_1);
+	_skyScreen->startSequence(cd_45);
 	START_VOICE; //46
 	LOAD_NEW_VOICE(cdv_47);
 
-	_skyDisk->loadFile(cd_47_pal, _tempPal);
-	_skyDisk->loadFile(cd_47_log, workScreen2);
+	_skyDisk->prefetchFile(cd_47_pal);
+	_skyDisk->prefetchFile(cd_47_log);
 
 	WAIT_SEQUENCE; //45
 	WAIT_VOICE; //46
 
-	fnFadeDown(0);
-	COPY_SCREEN;
-	showScreen();
-	paletteFadeUp(_tempPal);
+	_skyScreen->fnFadeDown(0);
+	_skyScreen->showScreen(cd_47_log);
+	_skyScreen->paletteFadeUp(cd_47_pal);
 	START_VOICE; //47
 	LOAD_NEW_VOICE(cdv_48);
-	_skyDisk->loadFile(cd_48_pal, _tempPal);
-	_skyDisk->loadFile(cd_48_log, workScreen2);
+	_skyDisk->prefetchFile(cd_48_pal);
+	_skyDisk->prefetchFile(cd_48_log);
 	WAIT_VOICE; //47
 	START_VOICE; //48
-	fnFadeDown(0);
-	COPY_SCREEN;
-	showScreen();
-	paletteFadeUp(_tempPal);
+	_skyScreen->fnFadeDown(0);
+	_skyScreen->showScreen(cd_48_log);
+	_skyScreen->paletteFadeUp(cd_48_pal);
 
-	free (cd2_seq_data_2);
-	cd2_seq_data_2 = _skyDisk->loadFile(cd_48, NULL);
+	_skyDisk->prefetchFile(cd_48);
 	LOAD_NEW_VOICE(cdv_49);
 	WAIT_VOICE; //48
-	startTimerSequence(cd2_seq_data_2);
+	_skyScreen->startSequence(cd_48);
 	START_VOICE; //49
 	LOAD_NEW_VOICE(cdv_50);
 	WAIT_VOICE; //49
 	START_VOICE; //50
-	free (cd2_seq_data_1);
-	cd2_seq_data_1 = _skyDisk->loadFile(cd_49, NULL);
+	_skyDisk->prefetchFile(cd_49);
 	LOAD_NEW_VOICE(cdv_51);
 	WAIT_SEQUENCE; //48
 	WAIT_VOICE; //50
 	START_VOICE; //51
-	startTimerSequence(cd2_seq_data_1);
+	_skyScreen->startSequence(cd_49);
 	LOAD_NEW_VOICE(cdv_52);
 	WAIT_VOICE; //51
 	START_VOICE; //52
@@ -611,48 +584,44 @@ void SkyState::doCDIntro() {
 	WAIT_VOICE; //52
 	START_VOICE; //53
 	LOAD_NEW_VOICE(cdv_54);
-	free (cd2_seq_data_2);
-	cd2_seq_data_2 = _skyDisk->loadFile(cd_50, NULL);
+	_skyDisk->prefetchFile(cd_50);
 	WAIT_VOICE; //53
 	WAIT_SEQUENCE; //49
 
 	START_VOICE; //54
-	startTimerSequence(cd2_seq_data_2);
+	_skyScreen->startSequence(cd_50);
 	LOAD_NEW_VOICE(cdv_55);
 	WAIT_SEQUENCE; //50
 	WAIT_VOICE; //54
 	START_VOICE; //55
 
-	_skyDisk->loadFile(cd_55_pal, _tempPal);
-	_skyDisk->loadFile(cd_55_log, workScreen2);
+	_skyDisk->prefetchFile(cd_55_pal);
+	_skyDisk->prefetchFile(cd_55_log);
 	LOAD_NEW_VOICE(cdv_56);
 	WAIT_VOICE; //55
 	START_VOICE; //56
 
-	fnFadeDown(0);
-	COPY_SCREEN;
-	showScreen();
-	paletteFadeUp(_tempPal);
+	_skyScreen->fnFadeDown(0);
+	_skyScreen->showScreen(cd_55_log);
+	_skyScreen->paletteFadeUp(cd_55_pal);
 
 	LOAD_NEW_VOICE(cdv_57);
 	WAIT_VOICE; //56
 	START_VOICE; //57
 
 	LOAD_NEW_VOICE(cdv_58);
-	_skyDisk->loadFile(cd_58_pal, _tempPal);
-	_skyDisk->loadFile(cd_58_log, workScreen2);
+	_skyDisk->prefetchFile(cd_58_pal);
+	_skyDisk->prefetchFile(cd_58_log);
 
 	WAIT_VOICE; //57
-	fnFadeDown(0);
-	COPY_SCREEN;
-	showScreen();
-	paletteFadeUp(_tempPal);
+	_skyScreen->fnFadeDown(0);
+	_skyScreen->showScreen(cd_58_log);
+	_skyScreen->paletteFadeUp(cd_58_pal);
 	START_VOICE; //58
 	LOAD_NEW_VOICE(cdv_59);
 	WAIT_VOICE; //48
 	START_VOICE; //59
-	free (cd2_seq_data_1);
-	cd2_seq_data_1 = _skyDisk->loadFile(cd_58, NULL);
+	_skyDisk->prefetchFile(cd_58);
 	WAIT_VOICE; //59
 	LOAD_NEW_VOICE(cdv_60);
 	START_VOICE; //60
@@ -662,7 +631,7 @@ void SkyState::doCDIntro() {
 	LOAD_NEW_VOICE(cdv_62);
 	WAIT_VOICE; //61
 	START_VOICE; //62
-	startTimerSequence(cd2_seq_data_1); //58
+	_skyScreen->startSequence(cd_58);
 	LOAD_NEW_VOICE(cdv_63);
 	WAIT_VOICE; //62
 	START_VOICE; //63
@@ -673,60 +642,57 @@ void SkyState::doCDIntro() {
 	WAIT_SEQUENCE; //58
 	WAIT_VOICE; //64
 	START_VOICE; //65
-	fnFadeDown(0);
+	_skyScreen->fnFadeDown(0);
 	LOAD_NEW_VOICE(cdv_66);
-	_skyDisk->loadFile(cd_66_pal, _tempPal);
-	_skyDisk->loadFile(cd_66_log, _workScreen);
+	_skyDisk->prefetchFile(cd_66_pal);
+	_skyDisk->prefetchFile(cd_66_log);
 	WAIT_VOICE; //65
-	showScreen();
-	paletteFadeUp(_tempPal);
+	_skyScreen->showScreen(cd_66_log);
+	_skyScreen->paletteFadeUp(cd_66_pal);
 	START_VOICE; //66
 	LOAD_NEW_VOICE(cdv_67);
 	WAIT_VOICE; //66
 	START_VOICE; //67
-	_skyDisk->loadFile(cd_67_pal, _tempPal);
-	_skyDisk->loadFile(cd_67_log, workScreen2);
-	fnFadeDown(0);
-	COPY_SCREEN;
-	showScreen();
-	paletteFadeUp(_tempPal);
+	_skyDisk->prefetchFile(cd_67_pal);
+	_skyDisk->prefetchFile(cd_67_log);
+	_skyScreen->fnFadeDown(0);
+	_skyScreen->showScreen(cd_67_log);
+	_skyScreen->paletteFadeUp(cd_67_pal);
 	LOAD_NEW_VOICE(cdv_68);
 	WAIT_VOICE; //67
 	START_VOICE; //68
-	free (cd2_seq_data_2);
-	cd2_seq_data_2 = _skyDisk->loadFile(cd_69, NULL);
+	_skyDisk->prefetchFile(cd_69);
 	LOAD_NEW_VOICE(cdv_69);
-	_skyDisk->loadFile(cd_69_pal, _tempPal);
-	_skyDisk->loadFile(cd_69_log, workScreen2);
+	_skyDisk->prefetchFile(cd_69_pal);
+	_skyDisk->prefetchFile(cd_69_log);
 	WAIT_VOICE; //68
 	START_VOICE; //69
-	fnFadeDown(0);
-	COPY_SCREEN;
-	showScreen();
-	paletteFadeUp(_tempPal);
+	_skyScreen->fnFadeDown(0);
+	_skyScreen->showScreen(cd_69_log);
+	_skyScreen->paletteFadeUp(cd_69_pal);
 	LOAD_NEW_VOICE(cdv_70);
 	WAIT_VOICE; //69
-	startTimerSequence(cd2_seq_data_2);
+	_skyScreen->startSequence(cd_69);
 	START_VOICE; //70
 	LOAD_NEW_VOICE(cdv_71);
 	WAIT_VOICE; //70
-	fnFadeDown(0);
+	_skyScreen->fnFadeDown(0);
 	START_VOICE; //71
-	_skyDisk->loadFile(cd_72_pal, _tempPal);
-	_skyDisk->loadFile(cd_72_log, _workScreen);
+	_skyDisk->prefetchFile(cd_72_pal);
+	_skyDisk->prefetchFile(cd_72_log);
 	WAIT_VOICE; //71
-	showScreen();
-	paletteFadeUp(_tempPal);
+	_skyScreen->showScreen(cd_72_log);
+	_skyScreen->paletteFadeUp(cd_72_pal);
 	LOAD_NEW_VOICE(cdv_72);
 	START_VOICE; //72
 
-	_skyDisk->loadFile(cd_73_pal, _tempPal);
-	_skyDisk->loadFile(cd_73_log, _workScreen);
+	_skyDisk->prefetchFile(cd_73_pal);
+	_skyDisk->prefetchFile(cd_73_log);
 	LOAD_NEW_VOICE(cdv_73);
 	WAIT_VOICE; //72
-	fnFadeDown(0);
-	showScreen();
-	paletteFadeUp(_tempPal);
+	_skyScreen->fnFadeDown(0);
+	_skyScreen->showScreen(cd_73_log);
+	_skyScreen->paletteFadeUp(cd_73_pal);
 	START_VOICE; //73
 	LOAD_NEW_VOICE(cdv_74);
 	WAIT_VOICE; //73
@@ -734,13 +700,11 @@ void SkyState::doCDIntro() {
 	LOAD_NEW_VOICE(cdv_75);
 	WAIT_VOICE; //74
 	START_VOICE; //75
-	_skyDisk->loadFile(cd_76_pal, _tempPal);
-	free (workScreen2);
-	workScreen2 = _skyDisk->loadFile(cd_76_log, NULL);
-	fnFadeDown(0);
-	COPY_SCREEN;
-	showScreen();
-	paletteFadeUp(_tempPal);
+	_skyDisk->prefetchFile(cd_76_pal);
+	_skyDisk->prefetchFile(cd_76_log);
+	_skyScreen->fnFadeDown(0);
+	_skyScreen->showScreen(cd_76_log);
+	_skyScreen->paletteFadeUp(cd_76_pal);
 
 	LOAD_NEW_VOICE(cdv_76);
 	WAIT_VOICE; //75
@@ -749,17 +713,14 @@ void SkyState::doCDIntro() {
 	WAIT_VOICE; //76
 	START_VOICE; //77
 
-	free (cd2_seq_data_1);
-	cd2_seq_data_1 = _skyDisk->loadFile(cd_100, NULL);
-	_skyDisk->loadFile(cd_78_pal, _tempPal);
-	free (workScreen2);
-	workScreen2 = _skyDisk->loadFile(cd_78_log, NULL);
+	_skyDisk->prefetchFile(cd_100);
+	_skyDisk->prefetchFile(cd_78_pal);
+	_skyDisk->prefetchFile(cd_78_log);
 	LOAD_NEW_VOICE(cdv_78);
 	WAIT_VOICE; //77
-	fnFadeDown(0);
-	COPY_SCREEN;
-	showScreen();	
-	paletteFadeUp(_tempPal);
+	_skyScreen->fnFadeDown(0);
+	_skyScreen->showScreen(cd_78_log);
+	_skyScreen->paletteFadeUp(cd_78_pal);
 	START_VOICE; //78
 	LOAD_NEW_VOICE(cdv_79);
 	WAIT_VOICE; //78
@@ -767,7 +728,7 @@ void SkyState::doCDIntro() {
 	LOAD_NEW_VOICE(cdv_80);
 	WAIT_VOICE; //79
 	START_VOICE; //80
-	startTimerSequence(cd2_seq_data_1);
+	_skyScreen->startSequence(cd_100);
 	LOAD_NEW_VOICE(cdv_81);
 	WAIT_VOICE; //80
 	START_VOICE; //81
@@ -776,13 +737,11 @@ void SkyState::doCDIntro() {
 	START_VOICE; //82
 	LOAD_NEW_VOICE(cdv_83);
 	WAIT_VOICE; //82
-	_skyDisk->loadFile(cd_101_log, workScreen2);
-	free (cd2_seq_data_2);
-	cd2_seq_data_2 = _skyDisk->loadFile(cd_101, NULL);
+	_skyDisk->prefetchFile(cd_101_log);
+	_skyDisk->prefetchFile(cd_101);
 	WAIT_SEQUENCE; //100
-	COPY_SCREEN;
-	showScreen();
-	startTimerSequence(cd2_seq_data_2);
+	_skyScreen->showScreen(cd_101_log);
+	_skyScreen->startSequence(cd_101);
 	START_VOICE; //83
 	LOAD_NEW_VOICE(cdv_84);
 	WAIT_VOICE; //83
@@ -793,50 +752,35 @@ void SkyState::doCDIntro() {
 	LOAD_NEW_VOICE(cdv_86);
 	WAIT_VOICE; //85
 
-	free (workScreen2);
-	workScreen2 = _skyDisk->loadFile(cd_102_log, NULL);
-	free (cd2_seq_data_1);
-	cd2_seq_data_1 = _skyDisk->loadFile(cd_102, NULL);
+	_skyDisk->prefetchFile(cd_102_log);
+	_skyDisk->prefetchFile(cd_102);
 	WAIT_SEQUENCE; //101
-	COPY_SCREEN;
-	showScreen();
-	startTimerSequence(cd2_seq_data_1);
+	_skyScreen->showScreen(cd_102_log);
+	_skyScreen->startSequence(cd_102);
 	START_VOICE; //86
 	LOAD_NEW_VOICE(cdv_87);
-	_skyDisk->loadFile(cd_103_pal, _tempPal);
-	free (workScreen2);
-	workScreen2 = _skyDisk->loadFile(cd_103_log, NULL);
-	free (cd2_seq_data_2);
-	cd2_seq_data_2 = _skyDisk->loadFile(cd_103, NULL);
+	_skyDisk->prefetchFile(cd_103_pal);
+	_skyDisk->prefetchFile(cd_103_log);
+	_skyDisk->prefetchFile(cd_103);
 	WAIT_SEQUENCE; //102
-	fnFadeDown(0);
-	COPY_SCREEN;
-	showScreen();
-	paletteFadeUp(_tempPal);
-	startTimerSequence(cd2_seq_data_2);
+	_skyScreen->fnFadeDown(0);
+	_skyScreen->showScreen(cd_103_log);
+	_skyScreen->paletteFadeUp(cd_103_pal);
+	_skyScreen->startSequence(cd_103);
 	WAIT_VOICE; //86
 	START_VOICE; //87
-	_skyDisk->loadFile(cd_104_pal, _tempPal);
-	free (workScreen2);
-	workScreen2 = _skyDisk->loadFile(cd_104_log, NULL);
-	free (cd2_seq_data_1);
-	cd2_seq_data_1 = _skyDisk->loadFile(cd_104, NULL);
+	_skyDisk->prefetchFile(cd_104_pal);
+	_skyDisk->prefetchFile(cd_104_log);
+	_skyDisk->prefetchFile(cd_104);
 	WAIT_SEQUENCE; //103
 
 	_skyMusic->startMusic(2);
-	fnFadeDown(0);
-	COPY_SCREEN;
-	showScreen();
-	paletteFadeUp(_tempPal);
-	startTimerSequence(cd2_seq_data_1);
-	free (cd2_seq_data_2);
-	cd2_seq_data_2 = _skyDisk->loadFile(cd_105, NULL);
+	_skyScreen->fnFadeDown(0);
+	_skyScreen->showScreen(cd_104_log);
+	_skyScreen->paletteFadeUp(cd_104_pal);
+	_skyScreen->startSequence(cd_104);
+	_skyDisk->prefetchFile(cd_105);
 	WAIT_SEQUENCE; //104
-	startTimerSequence(cd2_seq_data_2);
+	_skyScreen->startSequence(cd_105);
 	WAIT_SEQUENCE; //105
-	
-	free (cd2_seq_data_1);
-	free (cd2_seq_data_2);
-	free (workScreen2);
 }
-

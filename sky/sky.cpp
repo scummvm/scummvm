@@ -105,7 +105,6 @@ void SkyState::go() {
 void SkyState::initialise(void) {
 
 	//initialise_memory();
-	initTimer();
 
 	_skySound = new SkySound(_mixer);
 	_skyDisk = new SkyDisk(_gameDataPath);
@@ -123,7 +122,7 @@ void SkyState::initialise(void) {
 	_skyText = new SkyText(_skyDisk, _gameVersion, _language);
 	_skyMouse = new SkyMouse(_skyDisk);
 	
-	initialiseScreen();
+	_skyScreen = new SkyScreen(_system, _skyDisk);
 	initVirgin();
 	//initMouse();
 	initItemList();
@@ -132,6 +131,9 @@ void SkyState::initialise(void) {
 	loadFixedItems();
 	_skyGrid = new SkyGrid(_skyDisk);
 	_skyLogic = new SkyLogic(_skyDisk, _skyGrid, _skyText, _skyMusic, _skyMouse, _gameVersion);
+	
+	_timer = Engine::_timer; // initialize timer *after* _skyScreen has been initialized.
+	_timer->installProcedure(&timerHandler, 1000000 / 50); //call 50 times per second
 }
 
 void SkyState::initItemList() {
@@ -186,6 +188,16 @@ void SkyState::loadFixedItems(void) {
 	_itemList[271] = (void **)_skyDisk->loadFile(271, NULL);
 	_itemList[272] = (void **)_skyDisk->loadFile(272, NULL);
 		
+}
+
+void SkyState::timerHandler(void *ptr) {
+
+	((SkyState*)ptr)->gotTimerTick();
+}
+
+void SkyState::gotTimerTick(void) {
+
+	_skyScreen->handleTimer();
 }
 
 Compact *SkyState::fetchCompact(uint32 a) {
@@ -272,6 +284,7 @@ bool SkyState::isDemo(uint32 version) {
 }
 
 bool SkyState::isCDVersion(uint32 version) {
+
 	switch (version) {
 	case 267:
 		return false;

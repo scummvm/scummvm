@@ -31,6 +31,7 @@ static const char *dataFilename = "sky.dsk";
 static const char *dinnerFilename = "sky.dnr";
 
 SkyDisk::SkyDisk(char *gameDataPath) {
+	_prefRoot = NULL;
 	_gameDataPath = gameDataPath;
 
 	_dataDiskHandle = new File();
@@ -58,6 +59,21 @@ SkyDisk::SkyDisk(char *gameDataPath) {
 		error("Error opening %s%s!\n", _gameDataPath, dataFilename);
 }
 
+SkyDisk::~SkyDisk(void) {
+
+	prefFile **fEntry = &_prefRoot;
+	while (*fEntry) {
+		free((*fEntry)->data);
+		prefFile *fTemp = *fEntry;
+		fEntry = &((*fEntry)->next);
+		delete fTemp;
+	}
+	if (_dnrHandle->isOpen()) _dnrHandle->close();
+	if (_dataDiskHandle->isOpen()) _dataDiskHandle->close();
+	delete _dnrHandle;
+	delete _dataDiskHandle;
+}
+
 //load in file file_nr to address dest
 //if dest == NULL, then allocate memory for this file
 uint8 *SkyDisk::loadFile(uint16 fileNr, uint8 *dest) {
@@ -66,6 +82,16 @@ uint8 *SkyDisk::loadFile(uint16 fileNr, uint8 *dest) {
 	int32 bytesRead;
 	uint8 *filePtr, *inputPtr, *outputPtr;
 	dataFileHeader fileHeader;
+
+	uint8 *prefData = givePrefetched(fileNr, &_lastLoadedFileSize);
+	if (prefData) {
+		if (dest == NULL) return prefData;
+		else {
+			memcpy(dest, prefData, _lastLoadedFileSize);
+			free(prefData);
+			return dest;
+		}
+	}
 
 	#ifdef file_order_chk
 		warning("File order checking not implemented yet!\n");
@@ -172,6 +198,45 @@ uint8 *SkyDisk::loadFile(uint16 fileNr, uint8 *dest) {
 	return _compDest;
 }
 
+void SkyDisk::prefetchFile(uint16 fileNr) {
+
+    prefFile **fEntry = &_prefRoot;
+	bool found = false;
+	while (*fEntry) {
+		if ((*fEntry)->fileNr == fileNr) found = true;
+		fEntry = &((*fEntry)->next);
+	}
+	if (found) {
+		debug(1,"SkyDisk::prefetchFile: File %d was already prefetched.\n",fileNr);
+		return ;
+	}
+	*fEntry = new prefFile;
+	(*fEntry)->data = loadFile(fileNr, NULL);
+	(*fEntry)->fileSize = _lastLoadedFileSize;
+	(*fEntry)->fileNr = fileNr;
+	(*fEntry)->next = NULL;
+}
+
+uint8 *SkyDisk::givePrefetched(uint16 fileNr, uint32 *fSize) {
+	
+	prefFile **fEntry = &_prefRoot;
+	bool found = false;
+	while ((*fEntry) && (!found)) {
+		if ((*fEntry)->fileNr == fileNr) found = true;
+		else fEntry = &((*fEntry)->next);
+	}
+	if (!found) {
+		*fSize = 0;
+		return NULL;
+	}
+	uint8 *retPtr = (*fEntry)->data;
+	prefFile *retStr = *fEntry;
+	*fEntry = (*fEntry)->next;
+	*fSize = retStr->fileSize;
+	delete retStr;
+    return retPtr;
+}
+
 uint8 *SkyDisk::getFileInfo(uint16 fileNr) {
 	
 	uint16 i;
@@ -237,4 +302,3 @@ uint32 SkyDisk::determineGameVersion() {
 		break;
 	}
 }
-
