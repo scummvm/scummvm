@@ -539,7 +539,7 @@ void SmushPlayer::parseFRME() {
 }
 
 void SmushPlayer::init() {
-	_renderBitmap = (byte*)malloc(320*200);
+	_renderBitmap = sm->_videoBuffer;
 	codec37_init(&pcd37, 320, 200);
 }
 
@@ -609,7 +609,7 @@ void SmushPlayer::startVideo(short int arg, byte* videoFile)
 			sm->setDirtyColors(0, 255);
 		}
 
-		blitToScreen(sm,_renderBitmap, 0, 0, 320 ,200);
+		blitToScreen(sm,sm->_videoBuffer, 0, 0, 320 ,200);
 		updateScreen(sm);
 
 		waitForTimer(sm,20);
