@@ -418,12 +418,12 @@ void Sound::playSound(int soundID) {
 						if (loopEnd > 0) {
 							flags |= SoundMixer::FLAG_LOOP;
 							if ((loopEnd < waveSize) || (loopStart > 0)) {
-								// FIXME: Implement partial loops
-								warning("Partial loops not implemented. Loop at 0x%X thru 0x%X", loopStart, loopEnd);
+								// FIXME: Test partial loops
+								warning("Partial loops now are implemented. Loop at 0x%X thru 0x%X - does it sound right?", loopStart, loopEnd);
 							}
 						}
 
-						_scumm->_mixer->playRaw(NULL, sound, waveSize, rate, flags, soundID);
+						_scumm->_mixer->playRaw(NULL, sound, waveSize, rate, flags, soundID, loopStart, loopEnd);
 					}
 					break;
 				}
