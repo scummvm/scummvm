@@ -220,10 +220,30 @@ void ScummEngine_v90he::spriteInfoGet_dx_dy(int spriteId, int32 &dx, int32 &dy) 
 // spriteGroupGet functions
 //
 int ScummEngine_v90he::spriteGroupGet_allocateGroupSpritesList(int spriteGroupId) {
+	int i, j, sprites = 0;
+
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
-	// TODO
-	return 0;
+	for (i = 1; i < _varNumSprites; i++) {
+		if (_spriteTable[i].group_num == spriteGroupId)
+			sprites++;
+	}
+
+	if (!sprites)
+		return 0;
+
+	writeVar(0, 0);
+	defineArray(0, kDwordArray, 0, 0, 0, sprites);
+	writeArray(0, 0, 0, sprites);
+	
+	i = _varNumSpriteGroups - 1;
+	while (i) {
+		if (_spriteTable[i].group_num == spriteGroupId)
+			writeArray(0, 0, i, j++);
+		i--;
+	}
+	
+	return readVar(0);
 }
 
 int ScummEngine_v90he::spriteGroupGet_field_10(int spriteGroupId) {
