@@ -448,6 +448,7 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 
 		MKLINE(Scumm, _numNestedScripts, sleByte, VER_V8),
 		MKLINE(Scumm, _userPut, sleByte, VER_V8),
+		MKLINE(Scumm, _userState, sleUint16, VER_V17),
 		MKLINE(Scumm, _cursor.state, sleByte, VER_V8),
 		MKLINE(Scumm, gdi._cursorActive, sleByte, VER_V8),
 		MKLINE(Scumm, _currentCursor, sleByte, VER_V8),

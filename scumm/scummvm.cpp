@@ -983,6 +983,10 @@ load_game:
 		for (int i = 0; i < _maxVerbs; i++)
 			drawVerb(i, 0);
 		verbMouseOver(0);
+
+		if (_features & GF_AFTER_V2)
+			redrawV2Inventory();
+
 		_verbRedraw = false;
 		_fullRedraw = true;
 	}
