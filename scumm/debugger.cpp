@@ -61,6 +61,8 @@ void ScummDebugger::attach(Scumm *s)
 		DCmd_Register("actors", &ScummDebugger::Cmd_PrintActor);
 		DCmd_Register("box", &ScummDebugger::Cmd_PrintBox);
 		DCmd_Register("room", &ScummDebugger::Cmd_Room);
+		DCmd_Register("objects", &ScummDebugger::Cmd_PrintObjects);
+		DCmd_Register("object", &ScummDebugger::Cmd_Object);
 
 		DCmd_Register("loadgame", &ScummDebugger::Cmd_LoadGame);
 		DCmd_Register("savegame", &ScummDebugger::Cmd_SaveGame);
@@ -357,6 +359,64 @@ bool ScummDebugger::Cmd_PrintActor(int argc, const char **argv) {
 						 a->scalex, a->speedx, a->facing, int(_s->_classData[a->number]&0xFF));
 	}
 	Debug_Printf("+--------------------------------------------------------------------+\n");
+	return true;
+}
+
+bool ScummDebugger::Cmd_PrintObjects(int argc, const char **argv) {
+	int i;
+	ObjectData *o;
+	Debug_Printf("Objects in current room\n"); 
+	Debug_Printf("+---------------------------------+\n");
+	Debug_Printf("|num |  x |  y |width|height|state|\n");
+	Debug_Printf("+----+----+----+-----+------+-----+\n");
+	
+	for (i = 1; (i < _s->_numLocalObjects) && (_s->_objs[i].obj_nr != 0) ; i++) {
+		o = &(_s->_objs[i]);
+		Debug_Printf("|%4d|%4d|%4d|%5d|%6d|%5d|\n", 
+				o->obj_nr, o->x_pos, o->y_pos, o->width, o->height, o->state);
+	}
+	Debug_Printf("\n");
+	return true;
+}
+
+bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
+	int i;
+	int obj;
+	
+	if (argc < 3) {
+		Debug_Printf("Syntax: object <objectnum> <command> <parameter>\n");
+		return true;
+	}
+
+	obj = atoi(argv[1]);
+	if (obj >= _s->_numGlobalObjects) {
+		Debug_Printf("Object %d is out of range (range: 1 - %d)\n", obj, _s->_numGlobalObjects);
+		return true;
+	}
+
+	if (!strcmp(argv[2], "pickup")) {
+		for (i = 1; i < _s->_maxInventoryItems; i++) {
+                	if (_s->_inventory[i] == (uint16)obj) {
+                        	_s->putOwner(obj, _s->_vars[_s->VAR_EGO]);
+                        	_s->runHook(obj);
+                        	return true;
+                	}
+        	}
+		
+		if (argc == 3)
+        		_s->addObjectToInventory(obj, _s->_currentRoom);
+		else
+        		_s->addObjectToInventory(obj, atoi(argv[3]));
+       		_s->putOwner(obj, _s->_vars[_s->VAR_EGO]);
+        	_s->putClass(obj, 32, 1);
+        	_s->putState(obj, 1);
+        	_s->removeObjectFromRoom(obj);
+        	_s->clearDrawObjectQueue();
+        	_s->runHook(obj);
+	} else {
+		Debug_Printf("Unknown object command '%s'\n", argv[2]);
+	}
+
 	return true;
 }
 

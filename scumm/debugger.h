@@ -75,7 +75,9 @@ protected:
 
 	bool Cmd_PrintActor(int argc, const char **argv);
 	bool Cmd_PrintBox(int argc, const char **argv);
+	bool Cmd_PrintObjects(int argc, const char **argv);
 	bool Cmd_Actor(int argc, const char **argv);
+	bool Cmd_Object(int argc, const char **argv);
 	
 	bool Cmd_DebugLevel(int argc, const char **argv);
 	bool Cmd_Help(int argc, const char **argv);
