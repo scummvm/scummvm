@@ -30,6 +30,255 @@
 #define SWAP2(a) ((((a)>>24)&0xFF) | (((a)>>8)&0xFF00) | (((a)<<8)&0xFF0000) | (((a)<<24)&0xFF000000))
 #define MAX_STREAMER 10
 
+byte * SmushPlayer::loadTres()
+{
+	byte buf[100];
+	FILE * f_tres;
+	uint32 tmp, l;
+
+	sprintf((char *)buf, "%sVIDEO/%sTXT.TRS", (char *)sm->_gameDataPath, 
+			(char *)sm->_exe_name);
+	f_tres = fopen((char *)buf, "rb");
+	
+	if (f_tres == NULL) {
+		sprintf((char *)buf, "%svideo/%stxt.trs", (char *)sm->_gameDataPath,
+				(char *)sm->_exe_name);
+		f_tres = fopen((char *)buf, "rb");
+		if (f_tres == NULL) 
+			return NULL;
+	}
+
+	if (fread(&tmp, 4, 1, f_tres) != 1) // read tag
+		error("error while reading TRES");
+	
+	tmp = READ_BE_UINT32(&tmp); 
+	if (tmp == 'ETRS')
+	{
+		fread(&tmp, 4, 1, f_tres); // read length
+		tmp = READ_BE_UINT32(&tmp);
+		tmp -= 8;
+		_buffer_tres = (byte*)malloc (tmp + 1);
+		fread(_buffer_tres, 8, 1, f_tres); // skip 8 bytes
+		fread(_buffer_tres, tmp, 1, f_tres);
+		for (l = 0; l < tmp; l++) 
+			*(_buffer_tres + l) ^= 0xcc;
+		_buffer_tres[tmp] = 0;
+	}
+	fclose (f_tres);
+
+	return _buffer_tres;
+}
+
+void SmushPlayer::loadFonts()
+{
+	byte buf[100];
+	FILE * f_tres;
+	uint32 tmp, l;
+	byte * buffer = NULL;
+
+	for (l = 0; l < SP_MAX_FONTS; l++)
+	{
+		_fonts [l] = NULL;
+		sprintf((char *)buf, "%sVIDEO/FONT%d.NUT", (char *)sm->_gameDataPath, l);
+		f_tres = fopen((char *)buf, "rb");
+
+		if (f_tres == NULL) {
+			sprintf((char *)buf, "%svideo/font%d.nut", (char *)sm->_gameDataPath, l);
+			f_tres = fopen((char *)buf, "rb");
+			if (f_tres == NULL) 
+				continue;
+		}
+
+		fread(&tmp, 4, 1, f_tres); // read tag
+		tmp = READ_BE_UINT32(&tmp);
+		if (tmp == 'ANIM') {
+			fread(&tmp, 4, 1, f_tres); // read length
+			tmp = READ_BE_UINT32(&tmp);
+			buffer = (byte *)malloc(tmp);
+			fread(buffer, tmp, 1, f_tres);
+			_fonts[l] = buffer;
+		}
+		fclose (f_tres);
+	}
+}
+
+byte * SmushPlayer::getStringTRES(int32 number)
+{
+	byte * txt = NULL;
+	uint32 l, i, j;
+
+	for (l = 0;; l++) {
+		char t = *(_buffer_tres + l);
+		if (t == 0)
+			break;
+		if (t == '#') {
+			byte buf[10];
+			strncpy ((char*)buf, (char*)_buffer_tres + l + 1, 9);
+			buf[9] = 0;
+			if (strcmp ((char*)buf, "define a ") == 0) {
+				l += 10;
+				for (i = 0; i < 5; i++) {
+					buf[i] = *(_buffer_tres + l + i);
+					if (buf[i] == 0x0d)
+					{
+						buf[i] = 0;
+						l += 2;
+						break;
+					}
+				}
+				if (atol((char*)buf) == number) {
+					for (j = 0; j < 200; j++) {
+						t = *(_buffer_tres + l + j + i);
+						if ((t == 0) || (t == '#'))
+							break;
+					}
+					txt = (byte *)malloc(j + 1);
+					strncpy((char*)txt, (char*)_buffer_tres + l + i, j);
+					txt[j] = 0;
+					return txt;
+				}
+			}
+		}
+	}
+
+	return txt;
+}
+
+void SmushPlayer::drawStringTRES(uint32 x, uint32 y, uint8 color, byte * txt)
+{
+	char buf[4];
+	uint32 c_line = 0, l = 0, i, tmp_x;
+
+	if ((txt[l] == '^') && (txt[l + 1] == 'f')) {
+		buf[0] = txt[l + 2];
+		buf[1] = txt[l + 3];
+		buf[2] = 0;
+		l += 4;
+		_c_font = atoi(buf);
+		if (_c_font >= SP_MAX_FONTS)
+			error ("SP: number font out of range");
+	}
+	if ((txt[l] == '^') && (txt[l + 1] == 'c')) {
+		buf[0] = txt[l + 2];
+		buf[1] = txt[l + 3];
+		buf[2] = txt[l + 4];
+		buf[3] = 0;
+		l += 5;
+		_c_color = atoi(buf);
+	}
+
+	for (;;) {
+		tmp_x = x;
+		for (i = 0;; i++) {
+			if (txt[l + i] == 0)
+				goto exit_loop;
+			if (txt[l + i] == 0x0d) {
+				l += i + 2;
+				break;
+			}
+			drawCharTRES (&tmp_x, y, c_line, color, txt[l + i]);
+			
+			// this is hack
+			if (y + c_line * 0xe > 170) continue;
+			
+			if (tmp_x > 320) {
+				tmp_x = 0;
+				c_line++;
+			}
+		}
+		c_line++;
+	}
+exit_loop: ;
+
+}
+
+void codec44_depack(byte *dst, byte *src, uint32 len, uint8 color)
+{
+	byte val;
+	uint16 size_line;
+	uint16 num;
+
+	do {
+		if (len <= 0) break;
+		size_line = READ_LE_UINT16(src);
+		src += 2;
+		len -= 2;
+
+		for (; size_line != 0;) {
+			num = *src++;
+			val = *src++;
+			memset(dst, val, num);
+			dst += num;
+			len -= 2;
+			size_line -= 2;
+			if (size_line == 0) break;
+
+			num = READ_LE_UINT16(src) + 1;
+			src += 2;
+			for (uint16 l = 0; l < num; l++) {
+				uint8 tmp = *src++;
+//				tmp -= 2;
+				*dst++ = tmp;
+			}
+			len -= num + 2;
+			size_line -= num + 2;
+
+		}
+		dst--;
+
+	} while (len > 1);
+}
+
+void SmushPlayer::drawCharTRES(uint32 * x, uint32 y, uint32 c_line, uint8 color, uint8 txt)
+{
+	byte * font = _fonts[_c_font];
+	uint32 offset = 0, t_offset, l, width, height, length;
+	
+	if (font == NULL)
+		return;
+	
+	if (READ_BE_UINT32(font) != 'AHDR')
+		return;
+	
+	offset = READ_BE_UINT32(font + 4) + 8;
+	for (l = 0; l <= txt; l++) {
+		if (READ_BE_UINT32(font + offset) == 'FRME') {
+			offset += 8;
+			if (READ_BE_UINT32(font + offset) == 'FOBJ') {
+				t_offset = offset + 8;
+				length = READ_BE_UINT32(font + offset + 4) - 0xe;
+				offset += READ_BE_UINT32(font + offset + 4) + 8;
+			}
+			else
+				return;
+		}
+		else
+			return;
+	}
+
+	byte * dst = (byte*)malloc (1000);
+	byte * src = (byte*)(font + t_offset + 0x0e);
+
+	memset (dst, 0, 1000);
+	
+	codec44_depack (dst, src, length, color);
+
+	width = *(uint16*)(font + t_offset + 6);
+	height = *(uint16*)(font + t_offset + 8);
+
+	y += c_line * height;
+	for (uint32 ty = 0; ty < height; ty++) {
+		for (uint32 tx = 0; tx < width; tx++) {
+			byte pixel = *(dst + ty * width + tx);
+			if (pixel != 0) {
+				 *(_renderBitmap + ((ty + y) * 320 + *x + tx)) = pixel;
+			}
+		}
+	}
+	*x += width;
+	free (dst);
+}
+
 void invalidblock(uint32 tag)
 {
 	error("Encountered invalid block %c%c%c%c", tag >> 24, tag >> 16, tag >> 8, tag);
@@ -870,7 +1119,10 @@ void SmushPlayer::parsePSAD()		// FIXME: Needs to append to
 
 void SmushPlayer::parseTRES()
 {
-//  printf("parse TRES\n");
+	byte * txt = getStringTRES (READ_LE_UINT16(_cur + 16));
+	drawStringTRES (READ_LE_UINT16(_cur), READ_LE_UINT16(_cur + 2), *(_cur + 4), txt);
+	if (txt != NULL)
+		free (txt);
 }
 
 void SmushPlayer::parseXPAL()
@@ -953,6 +1205,35 @@ void SmushPlayer::init()
 	memset(_imusTrk, 0, sizeof(_imusTrk));
 	memset(_imusData, 0, sizeof(_imusData));
 	memset(_imusPos, 0, sizeof(_imusPos));
+	memset(_imusChan, 0, sizeof(_imusChan));
+	
+	if (sm->_gameId == GID_DIG)
+	{
+		for (uint8 l = 0; l < SP_MAX_FONTS; l++) {
+			_fonts[l] = NULL;
+		}
+		_buffer_tres = NULL;
+		_c_font = 0;
+		_c_color = 0;
+		loadTres();
+		loadFonts();
+	}
+}
+
+void SmushPlayer::deinit()
+{
+	if (sm->_gameId == GID_DIG)
+	{
+		if (_buffer_tres != NULL)
+			free (_buffer_tres);
+
+		for (int l = 0; l < SP_MAX_FONTS; l++) {
+			if (_fonts[l] != NULL) {
+				free (_fonts[l]);
+				_fonts[l] = NULL;
+			}
+		}
+	}
 }
 
 void SmushPlayer::go()
@@ -964,34 +1245,18 @@ void SmushPlayer::go()
 void SmushPlayer::setPalette()
 {
 	int i;
-
-
-
 	byte palette_colors[1024];
-
 	byte *p = palette_colors;
-
-
-
 	byte *data = _fluPalette;
 
-
-
 	for (i = 0; i != 256; i++, data += 3, p += 4) {
-
 		p[0] = data[0];
-
 		p[1] = data[1];
-
 		p[2] = data[2];
-
 		p[3] = 0;
-
 	}
 
 	sm->_system->set_palette(palette_colors, 0, 256);
-
-
 }
 
 void SmushPlayer::startVideo(short int arg, byte *videoFile)
@@ -1071,9 +1336,9 @@ void SmushPlayer::startVideo(short int arg, byte *videoFile)
 
 	} while (!sm->videoFinished);
 
-	sm->_insaneState = 0;
+	deinit();
 
-//  if (sm->_lastKeyHit==sm->_vars[sm->VAR_CUTSCENEEXIT_KEY])
+	sm->_insaneState = 0;
 	sm->exitCutscene();
 
 }

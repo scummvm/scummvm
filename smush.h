@@ -20,6 +20,8 @@
  *
  */
 
+#define SP_MAX_FONTS 5
+
 struct PersistentCodecData37 {
         byte *deltaBuf;
         byte *deltaBufs[2];
@@ -59,11 +61,22 @@ struct SmushPlayer {
         byte *_deltaBuf; 
         int _deltaBufSize; 
 
+	byte * _fonts[SP_MAX_FONTS];
+	byte * _buffer_tres;
+	uint8 _c_font;
+	uint8 _c_color;
+
         PersistentCodecData37 pcd37;
         
         byte _fluPalette[768];
         uint16 _fluPalMul129[768];
         uint16 _fluPalWords[768];
+
+	byte * loadTres();
+	void loadFonts();
+	byte * getStringTRES(int32 number);
+	void drawStringTRES(uint32 x, uint32 y, uint8 color, byte * txt);
+	void drawCharTRES(uint32 * x, uint32 y, uint32 c_line, uint8 color, uint8 txt);
 
 		/* PSAD: Full Throttle audio */
 		uint32 _saudSize[8], _saudSubSize[8];
