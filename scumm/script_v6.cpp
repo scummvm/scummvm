@@ -2519,7 +2519,7 @@ void Scumm_v6::o6_kernelSetFunctions() {
 			enqueueObject(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], 0);
 			break;
 		case 120:
-			// FIXME: isn't it likely that this does the same as the pre-V7 opcode with the same id?
+			// FIXME: isn't it likely that this does the same as the pre-V7 opcode with the same id, i.e. swapPalColors?
 			warning("o6_kernelSetFunctions: stub120(%d,%d)", args[1], args[2]);
 			break;
 		case 124:

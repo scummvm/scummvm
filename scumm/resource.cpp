@@ -1627,12 +1627,6 @@ void Scumm::resourceStats() {
 	debug(1, "Total allocated size=%d, locked=%d(%d)\n", _allocatedSize, lockedSize, lockedNum);
 }
 
-void Scumm::heapClear(int mode) {
-}
-
-void Scumm::unkHeapProc2(int a, int b) {
-}
-
 void Scumm::readMAXS() {
 	if (_features & GF_AFTER_V8) {                    // CMI
 		_fileHandle.seek(50 + 50, SEEK_CUR);            // 176 - 8

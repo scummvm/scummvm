@@ -252,7 +252,6 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_bootParam = 0;
 	_dumpScripts = false;
 	_debugMode = 0;
-	_soundCardType = 0;
 	_language = 0;
 	_objectOwnerTable = NULL;
 	_objectRoomTable = NULL;
@@ -534,9 +533,9 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_lastLoadedRoom = 0;
 	_expire_counter = 0;
 	_dynamicRoomOffsets = 0;
-	_shakeEnabled = 0;
-	_hexdumpScripts = 0;
-	_showStack = 0;
+	_shakeEnabled = false;
+	_hexdumpScripts = false;
+	_showStack = false;
 
 	if (_gameId == GID_ZAK256) {	// FmTowns is 320x240
 		_screenWidth = 320;

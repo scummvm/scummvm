@@ -1601,8 +1601,8 @@ void Scumm_v5::o5_resourceRoutines() {
 		break;
 
 	case 17:											// clear heap
-		heapClear(0);
-		unkHeapProc2(0, 0);
+		//heapClear(0);
+		//unkHeapProc2(0, 0);
 		break;
 	case 18:											// load charset
 		loadCharset(resid);

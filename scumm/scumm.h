@@ -297,10 +297,6 @@ public:
 		int32 localvar[NUM_SCRIPT_SLOT][26];
 	} vm;
 
-	struct {
-		int16 x, y;
-	} mouse;
-
 	// Constructor / Destructor
 	Scumm(GameDetector *detector, OSystem *syst);
 	virtual ~Scumm();
@@ -329,6 +325,7 @@ public:
 	int checkKeyHit();
 	void convertKeysToClicks();
 	int getKeyInput();
+	void clearClickedStatus();
 
 	// Misc utility functions
 	void checkRange(int max, int min, int no, const char *str);
@@ -393,8 +390,14 @@ public:
 	#define VAR(x)	scummVar(x, #x, __FILE__, __LINE__)
 	inline int32& scummVar(byte var, const char *varName, const char *file, int line)
 	{
-		if (var == 0xFF)
+		if (var == 0xFF) {
 			warning("Illegal access to variable %s in file %s, line %d", varName, file, line);
+			// Return a fake memory location, so that at least no innocent variable
+			// gets overwritten.
+			static int32 fake;
+			fake = 0;
+			return fake;
+		}
 		return _scummVars[var];
 	}
 
@@ -428,28 +431,22 @@ public:
 protected:
 	int _keyPressed;
 	uint16 _lastKeyHit;
+
+	struct {
+		int16 x, y;
+	} mouse;
+	int16 _virtual_mouse_x, _virtual_mouse_y;
+
 	uint16 _mouseButStat;
 	byte _leftBtnPressed, _rightBtnPressed;
 
-	int16 _virtual_mouse_x, _virtual_mouse_y;
-	int _bootParam;
-	bool _dumpScripts, _hexdumpScripts;
-	int _showStack;
-	uint16 _debugMode, _soundCardType;
-
-	/* Not sure where this stuff goes */
-	uint16 _language;
-	void startScene(int room, Actor *a, int b);
-	byte *_objectOwnerTable, *_objectRoomTable, *_objectStateTable;
-	ObjectIDMap _objectIDMap;
-	byte _numObjectsInRoom;
-	int8 _userPut;
-	int _resourceHeaderSize;
-	void clearClickedStatus();
-	void startManiac();
-
-	/* GUI class */
-	void drawString(int a);
+	int _bootParam;		// The bootparam, to be passed to the script 1, the bootscript
+	
+	// Various options useful for debugging
+	bool _dumpScripts;
+	bool _hexdumpScripts;
+	bool _showStack;
+	uint16 _debugMode;
 
 protected:
 	/* Save/Load class - some of this may be GUI */
@@ -488,9 +485,6 @@ protected:
 	uint32 _maxHeapThreshold, _minHeapThreshold;
 	void lock(int type, int i);
 	void unlock(int type, int i);
-	void heapClear(int mode);
-	void unkHeapProc2(int a, int b);
-
 
 	/* Script VM - should be in Script class */
 	uint32 _localScriptList[NUM_LOCALSCRIPT];
@@ -508,6 +502,9 @@ protected:
 
 	void initializeLocals(int slot, int *vars);
 	int	getScriptSlot();
+
+	void startScene(int room, Actor *a, int b);
+	void startManiac();
 
 public:
 	void runScript(int script, int a, int b, int *lvarptr);
@@ -528,9 +525,7 @@ protected:
 	void setResult(int result);
 	void push(int a);
 	int pop();
-public:
-	virtual int readVar(uint var);	// FIXME - should be protected, used in scumm/dialogs.cpp
-protected:
+	virtual int readVar(uint var);
 	virtual void writeVar(uint var, int value);
 	void runHook(int i);
 	bool isScriptInUse(int script);
@@ -567,6 +562,7 @@ protected:
 	byte _encbyte;
 	File _fileHandle;
 	uint32 _fileOffset;
+	int _resourceHeaderSize;
 	char *_exe_name;	// This is the name we use for opening resource files
 	char *_game_name;	// This is the game the user calls it, so use for saving
 	bool _dynamicRoomOffsets;
@@ -646,6 +642,11 @@ public:
 	int findInventory(int owner, int index);
 	int getInventoryCount(int owner);
 
+protected:
+	byte *_objectOwnerTable, *_objectRoomTable, *_objectStateTable;
+	ObjectIDMap _objectIDMap;
+	byte _numObjectsInRoom;
+
 	void setupRoomObject(ObjectData *od, byte *room, byte *searchptr = NULL);
 	void removeObjectFromRoom(int obj);
 	void loadFlObject(uint object, uint room);
@@ -654,7 +655,9 @@ public:
 	int findLocalObjectSlot();
 	void addObjectToInventory(uint obj, uint room);
 	void fixObjectFlags();
-	bool getClass(int obj, int cls);
+public:
+	bool getClass(int obj, int cls);		// Used in actor.cpp, hence public
+protected:
 	void putClass(int obj, int cls, bool set);
 	int getState(int obj);
 	void putState(int obj, int state);
@@ -674,7 +677,9 @@ public:
 	int whereIsObject(int object);
 	int findObject(int x, int y);
 	void findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint object, uint room);	
-	int getObjectOrActorXY(int object, int &x, int &y);		 // Object and Actor...
+public:
+	int getObjectOrActorXY(int object, int &x, int &y);	// Used in actor.cpp, hence public
+protected:
 	int getObjActToObjActDist(int a, int b); // Not sure how to handle
 	byte *getObjOrActorName(int obj);		 // these three..
 
@@ -690,7 +695,9 @@ public:
 protected:
 	/* Should be in Verb class */
 	uint16 _verbMouseOver;
-	int _inventoryOffset;	
+	int _inventoryOffset;
+	int8 _userPut;
+
 	void redrawVerbs();
 	void checkExecVerbs();
 	void verbMouseOver(int verb);
@@ -998,12 +1005,13 @@ public:
 	int _charsetBufPos;
 	byte _charsetBuffer[512];
 
-	bool _noSubtitles;	// Skip all subtitles?
+	bool _noSubtitles;	// Whether to skip all subtitles
 
 	void initCharset(int charset);
 	void restoreCharsetBg();
 	bool hasCharsetMask(int x, int y, int x2, int y2);
 	void CHARSET_1();
+	void drawString(int a);
 	void drawDescString(byte *msg);
 	byte *addMessageToStack(byte *msg);
 	void addIntToStack(int var);
@@ -1019,6 +1027,7 @@ public:
 	byte *_messagePtr;
 	int16 _talkDelay;
 	bool _keepText;
+	uint16 _language;
 	bool _existLanguageFile;
 	char *_languageBuffer;
 	struct langIndexNode *_languageIndex;

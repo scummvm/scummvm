@@ -142,7 +142,7 @@ static ResString string_map_table_v6[] = {
 	{98, "Play"}, 
 	{99, "Cancel"}, 
 	{100, "Quit"}, 
-	{101, "Ok"}, 
+	{101, "OK"}, 
 	{93, "Game paused"}, 
 };
 
@@ -155,7 +155,7 @@ static ResString string_map_table_v5[] = {
 	{9, "Play"},
 	{10, "Cancel"},
 	{11, "Quit"},
-	{12, "Ok"},
+	{12, "OK"},
 	{4, "Game paused"}
 };
 #endif
@@ -170,124 +170,36 @@ void ScummDialog::addResText(int x, int y, int w, int h, int resID) {
 
 
 const ScummVM::String ScummDialog::queryResString(int stringno) {
-	char *result;
-	int string;
+	byte *result;
 
 	if (stringno == 0)
 		return String();
 
 	if (_scumm->_features & GF_AFTER_V7)
-		string = _scumm->readVar(string_map_table_v7[stringno - 1].num);
+		result = _scumm->getStringAddressVar(string_map_table_v7[stringno - 1].num);
 	else if (_scumm->_features & GF_AFTER_V6)
-		string = _scumm->readVar(string_map_table_v6[stringno - 1].num);
+		result = _scumm->getStringAddressVar(string_map_table_v6[stringno - 1].num);
 	else
-		string = string_map_table_v5[stringno - 1].num;
+		result = _scumm->getStringAddress(string_map_table_v5[stringno - 1].num);
 
-	result = (char *)_scumm->getStringAddress(string);
 	if (result && *result == '/') {
 		byte tmp[256];
-		_scumm->translateText((byte *)result, tmp);
-		strcpy(result, (char *)tmp);
+		_scumm->translateText(result, tmp);
+		strcpy((char *)result, (char *)tmp);
 	}
 
-	if (!result || *result == '\0') {								// Gracelessly degrade to english :)
-		if (_scumm->_features & GF_AFTER_V6)
-			result = string_map_table_v6[stringno - 1].string;
-		else
-			result = string_map_table_v5[stringno - 1].string;
+	if (!result || *result == '\0') {	// Gracelessly degrade to english :)
+		return string_map_table_v5[stringno - 1].string;
 	}
 
 	// Convert to a proper string (take care of FF codes)
-	int value;
 	byte chr;
 	String tmp;
-
 	while ((chr = *result++)) {		
 		if (chr == 0xFF) {
-			chr = *result++;			
-			switch (chr) {
-			case 4: { // add value
-				value = _scumm->readVar(READ_LE_UINT16(result));
-				if (value < 0) {
-					tmp += '-';
-					value = -value;
-				}
-
-				int flag = 0;
-				int max = 10000;
-				do {
-					if (value >= max || flag) {
-						tmp += value / max + '0';
-						value %= max;
-						flag = 1;
-					}
-					max /= 10;
-					if (max == 1)
-						flag = 1;
-				} while (max);
-				result += 2;
-				break;
-			}
-
-			case 5: { //add verb
-				value = _scumm->readVar(READ_LE_UINT16(result));
-				int i;
-				if (!value)
-					break;
-				
-				for (i = 1; i < _scumm->_maxVerbs; i++) {
-					if (value == _scumm->_verbs[i].verbid && !_scumm->_verbs[i].type && !_scumm->_verbs[i].saveid) {
-						char *verb = (char *)_scumm->getResourceAddress(rtVerb, i);
-						if (verb) {
-							tmp += verb;
-						}
-						break;
-					}
-				}
-				result += 2;
-				break;
-			}
-
-			case 6: { // add object or actor name
-				value = _scumm->readVar(READ_LE_UINT16(result));
-				if (!value)
-					break;
-
-				char *name = (char *)_scumm->getObjOrActorName(value);
-				if (name) {
-					tmp += name;
-				}
-				result += 2;
-				break;
-			}
-			case 7: { // add string
-				value = READ_LE_UINT16(result);
-				if (_scumm->_features & GF_AFTER_V6 || _scumm->_gameId == GID_INDY3_256)			
-					value = _scumm->readVar(value);
-
-				if (value) {
-					char *str = (char *)_scumm->getStringAddress(value);
-					if (str) {
-						tmp += str;
-					}
-				}
-				result += 2;
-				break;
-			}
-				// Do these ever occur in the Gui?
-			case 9:
-			case 10:
-			case 12:
-			case 13:
-			case 14:				
-				result += 2;				
-			default:
-				warning("Ignoring unknown resource string of type %d", (int)chr);
-			}
-		} else {
-			if (chr != '@') {
-				tmp += chr;
-			}
+			result += 3;
+		} else if (chr != '@') {
+			tmp += chr;
 		}
 	}
 	return tmp;
