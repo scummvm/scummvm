@@ -1842,11 +1842,12 @@ void Gdi::decodeNESGfx(const byte *room) {
 	int tileset = *gdata++;
 	int width = READ_LE_UINT16(room + 0x04);
 	// int height = READ_LE_UINT16(room + 0x06);
+	int i;
 
 	DecodeNESTileData(_vm->getResourceAddress(rtCostume, 37 + tileset), _NESPatTable + _NESBaseTiles * 16);
-	for (int i = 0; i < 16; i++)
+	for (i = 0; i < 16; i++)
 		_NESPalette[i] = *gdata++;
-	for (int i = 0; i < 16; i++) {
+	for (i = 0; i < 16; i++) {
 		int n = 0;
 		_NESNametable[i][0] = _NESNametable[i][1] = 0;
 		while (n < width) {
