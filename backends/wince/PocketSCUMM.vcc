@@ -78,6 +78,7 @@ Type=1
 Class=?
 Command1=IDM_SMARTFON_SCAN
 Command2=IDM_SMARTFON_QUIT
-Command3=IDM_SMARTFON_MUSIC
-CommandCount=3
+Command3=IDM_SMARTFON_SOUND
+Command4=IDM_SMARTFON_HELP
+CommandCount=4
 

@@ -54,7 +54,7 @@ CFG=scumm - Win32 (WCE MIPS) Debug
 # PROP Target_Dir ""
 CPP=clmips.exe
 # ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "_LIB" /YX /Oxs /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../" /I "../../.." /I "../../../common" /I "../../../scumm" /I "../missing" /D "WIN32" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "_LIB" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../" /I "../../.." /I "../../../common" /I "../../../scumm" /I "../missing" /D "WIN32" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "_LIB" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /YX /Oxs /M$(CECrtMT) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -80,7 +80,7 @@ BSC32=bscmake.exe
 # PROP Target_Dir ""
 CPP=clmips.exe
 # ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
-# ADD CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /D "NONSTANDARD_PORT" /YX /M$(CECrtMTDebug) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -106,7 +106,7 @@ BSC32=bscmake.exe
 # PROP Target_Dir ""
 CPP=shcl.exe
 # ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "_LIB" /YX /Oxs /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../" /I "../../.." /I "../../../common" /I "../../../scumm" /I "../missing" /D "WIN32" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "_LIB" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../" /I "../../.." /I "../../../common" /I "../../../scumm" /I "../missing" /D "WIN32" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "_LIB" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /YX /Oxs /M$(CECrtMT) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -132,7 +132,7 @@ BSC32=bscmake.exe
 # PROP Target_Dir ""
 CPP=shcl.exe
 # ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
-# ADD CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /D "NONSTANDARD_PORT" /YX /M$(CECrtMTDebug) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -158,7 +158,7 @@ BSC32=bscmake.exe
 # PROP Target_Dir ""
 CPP=clarm.exe
 # ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /Oxs /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /O2 /I "../" /I "../../.." /I "../../../common" /I "../../../scumm" /I "../missing" /D "_LIB" /D "ARM" /D "_ARM_" /D "NDEBUG" /D "WIN32" /D UNDER_CE=$(CEVersion) /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /FR /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /O2 /I "../" /I "../../.." /I "../../../common" /I "../../../scumm" /I "../missing" /D "_LIB" /D "ARM" /D "_ARM_" /D "NDEBUG" /D "WIN32" /D UNDER_CE=$(CEVersion) /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "USE_VORBIS" /D "NONSTANDARD_PORT" /FR /YX /Oxs /M$(CECrtMT) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -184,7 +184,7 @@ BSC32=bscmake.exe
 # PROP Target_Dir ""
 CPP=clarm.exe
 # ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
-# ADD CPP /nologo /W3 /Zi /Od /I "../" /I "../../.." /I "../../../common" /I "../../../scumm" /I "../missing" /D "_LIB" /D "ARM" /D "_ARM_" /D "NDEBUG" /D "WIN32" /D UNDER_CE=$(CEVersion) /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /I "../" /I "../../.." /I "../../../common" /I "../../../scumm" /I "../missing" /D "_LIB" /D "ARM" /D "_ARM_" /D "NDEBUG" /D "WIN32" /D UNDER_CE=$(CEVersion) /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "USE_VORBIS" /D "NONSTANDARD_PORT" /YX /M$(CECrtMTDebug) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -264,294 +264,6 @@ BSC32=bscmake.exe
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\..\..\scumm\smush\blitter.cpp
-
-!IF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
-
-DEP_CPP_BLITT=\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_BLITT=\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
-
-DEP_CPP_BLITT=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\config.h"\
-	
-NODEP_CPP_BLITT=\
-	"..\..\..\scumm\smush\common\rect.h"\
-	"..\..\..\scumm\smush\common\util.h"\
-	"..\..\..\scumm\smush\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
-
-DEP_CPP_BLITT=\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_BLITT=\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
-
-DEP_CPP_BLITT=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\config.h"\
-	
-NODEP_CPP_BLITT=\
-	"..\..\..\scumm\smush\common\rect.h"\
-	"..\..\..\scumm\smush\common\util.h"\
-	"..\..\..\scumm\smush\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
-
-DEP_CPP_BLITT=\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	
-NODEP_CPP_BLITT=\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_BLITT=\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_BLITT=\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
-
-DEP_CPP_BLITT=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\config.h"\
-	
-NODEP_CPP_BLITT=\
-	"..\..\..\scumm\smush\common\rect.h"\
-	"..\..\..\scumm\smush\common\util.h"\
-	"..\..\..\scumm\smush\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Debug"
-
-DEP_CPP_BLITT=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\config.h"\
-	
-NODEP_CPP_BLITT=\
-	"..\..\..\scumm\smush\common\rect.h"\
-	"..\..\..\scumm\smush\common\util.h"\
-	"..\..\..\scumm\smush\stdafx.h"\
-	
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\scumm\smush\blitter.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\scumm\smush\brenderer.cpp
-
-!IF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
-
-DEP_CPP_BREND=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_BREND=\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
-
-DEP_CPP_BREND=\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	
-NODEP_CPP_BREND=\
-	"..\..\..\scumm\smush\common\engine.h"\
-	"..\..\..\scumm\smush\common\rect.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
-
-DEP_CPP_BREND=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_BREND=\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
-
-DEP_CPP_BREND=\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	
-NODEP_CPP_BREND=\
-	"..\..\..\scumm\smush\common\engine.h"\
-	"..\..\..\scumm\smush\common\rect.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
-
-DEP_CPP_BREND=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	
-NODEP_CPP_BREND=\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_BREND=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_BREND=\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
-
-DEP_CPP_BREND=\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	
-NODEP_CPP_BREND=\
-	"..\..\..\scumm\smush\common\engine.h"\
-	"..\..\..\scumm\smush\common\rect.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Debug"
-
-DEP_CPP_BREND=\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	
-NODEP_CPP_BREND=\
-	"..\..\..\scumm\smush\common\engine.h"\
-	"..\..\..\scumm\smush\common\rect.h"\
-	
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\scumm\smush\brenderer.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\scumm\smush\channel.h
 # End Source File
 # Begin Source File
@@ -570,24 +282,23 @@ DEP_CPP_CHUNK=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\config.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHUNK=\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
 
 DEP_CPP_CHUNK=\
 	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\config.h"\
 	
 NODEP_CPP_CHUNK=\
 	"..\..\..\scumm\smush\common\engine.h"\
 	"..\..\..\scumm\smush\common\file.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
 	"..\..\..\scumm\smush\common\str.h"\
 	
 
@@ -603,24 +314,23 @@ DEP_CPP_CHUNK=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\config.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHUNK=\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
 
 DEP_CPP_CHUNK=\
 	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\config.h"\
 	
 NODEP_CPP_CHUNK=\
 	"..\..\..\scumm\smush\common\engine.h"\
 	"..\..\..\scumm\smush\common\file.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
 	"..\..\..\scumm\smush\common\str.h"\
 	
 
@@ -636,9 +346,9 @@ DEP_CPP_CHUNK=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\config.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHUNK=\
 	"..\..\..\common\macos.h"\
@@ -656,24 +366,23 @@ DEP_CPP_CHUNK=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\config.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHUNK=\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
 
 DEP_CPP_CHUNK=\
 	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\config.h"\
 	
 NODEP_CPP_CHUNK=\
 	"..\..\..\scumm\smush\common\engine.h"\
 	"..\..\..\scumm\smush\common\file.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
 	"..\..\..\scumm\smush\common\str.h"\
 	
 
@@ -681,11 +390,11 @@ NODEP_CPP_CHUNK=\
 
 DEP_CPP_CHUNK=\
 	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\config.h"\
 	
 NODEP_CPP_CHUNK=\
 	"..\..\..\scumm\smush\common\engine.h"\
 	"..\..\..\scumm\smush\common\file.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
 	"..\..\..\scumm\smush\common\str.h"\
 	
 
@@ -707,80 +416,49 @@ SOURCE=..\..\..\scumm\smush\codec1.cpp
 !IF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
 
 DEP_CPP_CODEC=\
-	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec1.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC=\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
 
-DEP_CPP_CODEC=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec1.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	
 NODEP_CPP_CODEC=\
-	"..\..\..\scumm\smush\common\rect.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
 
 DEP_CPP_CODEC=\
-	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec1.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC=\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
 
-DEP_CPP_CODEC=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec1.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	
 NODEP_CPP_CODEC=\
-	"..\..\..\scumm\smush\common\rect.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
 
 DEP_CPP_CODEC=\
-	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec1.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC=\
 	"..\..\..\common\macos.h"\
@@ -789,54 +467,30 @@ NODEP_CPP_CODEC=\
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
 
 DEP_CPP_CODEC=\
-	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec1.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC=\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
 
-DEP_CPP_CODEC=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec1.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	
 NODEP_CPP_CODEC=\
-	"..\..\..\scumm\smush\common\rect.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Debug"
 
-DEP_CPP_CODEC=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec1.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	
 NODEP_CPP_CODEC=\
-	"..\..\..\scumm\smush\common\rect.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
 	
 
 !ENDIF 
 
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\scumm\smush\codec1.h
 # End Source File
 # Begin Source File
 
@@ -846,90 +500,68 @@ SOURCE=..\..\..\scumm\smush\codec37.cpp
 
 DEP_CPP_CODEC3=\
 	"..\..\..\common\engine.h"\
-	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC3=\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
 
 DEP_CPP_CODEC3=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
 	
 NODEP_CPP_CODEC3=\
 	"..\..\..\scumm\smush\common\engine.h"\
-	"..\..\..\scumm\smush\common\rect.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
 
 DEP_CPP_CODEC3=\
 	"..\..\..\common\engine.h"\
-	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC3=\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
 
 DEP_CPP_CODEC3=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
 	
 NODEP_CPP_CODEC3=\
 	"..\..\..\scumm\smush\common\engine.h"\
-	"..\..\..\scumm\smush\common\rect.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
 
 DEP_CPP_CODEC3=\
 	"..\..\..\common\engine.h"\
-	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC3=\
 	"..\..\..\common\macos.h"\
@@ -939,50 +571,37 @@ NODEP_CPP_CODEC3=\
 
 DEP_CPP_CODEC3=\
 	"..\..\..\common\engine.h"\
-	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC3=\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
 
 DEP_CPP_CODEC3=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
 	
 NODEP_CPP_CODEC3=\
 	"..\..\..\scumm\smush\common\engine.h"\
-	"..\..\..\scumm\smush\common\rect.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Debug"
 
 DEP_CPP_CODEC3=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
 	
 NODEP_CPP_CODEC3=\
 	"..\..\..\scumm\smush\common\engine.h"\
-	"..\..\..\scumm\smush\common\rect.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
 	
 
 !ENDIF 
@@ -994,335 +613,114 @@ SOURCE=..\..\..\scumm\smush\codec37.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\scumm\smush\codec44.cpp
-
-!IF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
-
-DEP_CPP_CODEC4=\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec44.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_CODEC4=\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
-
-DEP_CPP_CODEC4=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec44.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	
-NODEP_CPP_CODEC4=\
-	"..\..\..\scumm\smush\common\rect.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
-
-DEP_CPP_CODEC4=\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec44.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_CODEC4=\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
-
-DEP_CPP_CODEC4=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec44.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	
-NODEP_CPP_CODEC4=\
-	"..\..\..\scumm\smush\common\rect.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
-
-DEP_CPP_CODEC4=\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec44.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	
-NODEP_CPP_CODEC4=\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_CODEC4=\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec44.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_CODEC4=\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
-
-DEP_CPP_CODEC4=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec44.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	
-NODEP_CPP_CODEC4=\
-	"..\..\..\scumm\smush\common\rect.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Debug"
-
-DEP_CPP_CODEC4=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec44.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	
-NODEP_CPP_CODEC4=\
-	"..\..\..\scumm\smush\common\rect.h"\
-	
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\scumm\smush\codec44.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\scumm\smush\codec47.cpp
 
 !IF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
 
-DEP_CPP_CODEC47=\
+DEP_CPP_CODEC4=\
 	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\scumm\boxes.h"\
-	"..\..\..\scumm\gfx.h"\
-	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
-NODEP_CPP_CODEC47=\
+NODEP_CPP_CODEC4=\
 	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
 
-DEP_CPP_CODEC47=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
+DEP_CPP_CODEC4=\
 	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
 	
-NODEP_CPP_CODEC47=\
-	"..\..\..\scumm\smush\common\rect.h"\
-	"..\..\..\scumm\smush\engine.h"\
-	"..\..\..\scumm\smush\scumm\scumm.h"\
+NODEP_CPP_CODEC4=\
+	"..\..\..\scumm\smush\common\engine.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
 
-DEP_CPP_CODEC47=\
+DEP_CPP_CODEC4=\
 	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\scumm\boxes.h"\
-	"..\..\..\scumm\gfx.h"\
-	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
-NODEP_CPP_CODEC47=\
+NODEP_CPP_CODEC4=\
 	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
 
-DEP_CPP_CODEC47=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
+DEP_CPP_CODEC4=\
 	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
 	
-NODEP_CPP_CODEC47=\
-	"..\..\..\scumm\smush\common\rect.h"\
-	"..\..\..\scumm\smush\engine.h"\
-	"..\..\..\scumm\smush\scumm\scumm.h"\
+NODEP_CPP_CODEC4=\
+	"..\..\..\scumm\smush\common\engine.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
 
-DEP_CPP_CODEC47=\
+DEP_CPP_CODEC4=\
 	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\scumm\boxes.h"\
-	"..\..\..\scumm\gfx.h"\
-	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	
-NODEP_CPP_CODEC47=\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_CODEC47=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\scumm\boxes.h"\
-	"..\..\..\scumm\gfx.h"\
-	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
-NODEP_CPP_CODEC47=\
+NODEP_CPP_CODEC4=\
 	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_CODEC4=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\scumm\smush\codec47.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_CODEC4=\
+	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
 
-DEP_CPP_CODEC47=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
+DEP_CPP_CODEC4=\
 	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
 	
-NODEP_CPP_CODEC47=\
-	"..\..\..\scumm\smush\common\rect.h"\
-	"..\..\..\scumm\smush\engine.h"\
-	"..\..\..\scumm\smush\scumm\scumm.h"\
+NODEP_CPP_CODEC4=\
+	"..\..\..\scumm\smush\common\engine.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Debug"
 
-DEP_CPP_CODEC47=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\chunk.h"\
+DEP_CPP_CODEC4=\
 	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
 	
-NODEP_CPP_CODEC47=\
-	"..\..\..\scumm\smush\common\rect.h"\
-	"..\..\..\scumm\smush\engine.h"\
-	"..\..\..\scumm\smush\scumm\scumm.h"\
+NODEP_CPP_CODEC4=\
+	"..\..\..\scumm\smush\common\engine.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
 	
 
 !ENDIF 
@@ -1331,334 +729,6 @@ NODEP_CPP_CODEC47=\
 # Begin Source File
 
 SOURCE=..\..\..\scumm\smush\codec47.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\scumm\smush\color.cpp
-
-!IF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
-
-DEP_CPP_COLOR=\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_COLOR=\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
-
-DEP_CPP_COLOR=\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
-
-DEP_CPP_COLOR=\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_COLOR=\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
-
-DEP_CPP_COLOR=\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
-
-DEP_CPP_COLOR=\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	
-NODEP_CPP_COLOR=\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_COLOR=\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_COLOR=\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
-
-DEP_CPP_COLOR=\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Debug"
-
-DEP_CPP_COLOR=\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\scumm\smush\color.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\scumm\smush\config.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\scumm\smush\decoder.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\scumm\smush\frenderer.cpp
-
-!IF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
-
-DEP_CPP_FREND=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\scumm\boxes.h"\
-	"..\..\..\scumm\gfx.h"\
-	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\frenderer.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_FREND=\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
-
-DEP_CPP_FREND=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\frenderer.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	
-NODEP_CPP_FREND=\
-	"..\..\..\scumm\smush\common\engine.h"\
-	"..\..\..\scumm\smush\common\rect.h"\
-	"..\..\..\scumm\smush\common\util.h"\
-	"..\..\..\scumm\smush\scumm\scumm.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
-
-DEP_CPP_FREND=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\scumm\boxes.h"\
-	"..\..\..\scumm\gfx.h"\
-	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\frenderer.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_FREND=\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
-
-DEP_CPP_FREND=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\frenderer.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	
-NODEP_CPP_FREND=\
-	"..\..\..\scumm\smush\common\engine.h"\
-	"..\..\..\scumm\smush\common\rect.h"\
-	"..\..\..\scumm\smush\common\util.h"\
-	"..\..\..\scumm\smush\scumm\scumm.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
-
-DEP_CPP_FREND=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\scumm\boxes.h"\
-	"..\..\..\scumm\gfx.h"\
-	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\frenderer.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	
-NODEP_CPP_FREND=\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_FREND=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\scumm\boxes.h"\
-	"..\..\..\scumm\gfx.h"\
-	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\frenderer.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_FREND=\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
-
-DEP_CPP_FREND=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\frenderer.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	
-NODEP_CPP_FREND=\
-	"..\..\..\scumm\smush\common\engine.h"\
-	"..\..\..\scumm\smush\common\rect.h"\
-	"..\..\..\scumm\smush\common\util.h"\
-	"..\..\..\scumm\smush\scumm\scumm.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Debug"
-
-DEP_CPP_FREND=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\frenderer.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	
-NODEP_CPP_FREND=\
-	"..\..\..\scumm\smush\common\engine.h"\
-	"..\..\..\scumm\smush\common\rect.h"\
-	"..\..\..\scumm\smush\common\util.h"\
-	"..\..\..\scumm\smush\scumm\scumm.h"\
-	
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\scumm\smush\frenderer.h
 # End Source File
 # Begin Source File
 
@@ -1675,13 +745,12 @@ DEP_CPP_IMUSE=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	"..\..\..\scumm\smush\config.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE=\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -1690,10 +759,10 @@ DEP_CPP_IMUSE=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	"..\..\..\scumm\smush\config.h"\
 	
 NODEP_CPP_IMUSE=\
 	"..\..\..\scumm\smush\common\engine.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -1707,13 +776,12 @@ DEP_CPP_IMUSE=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	"..\..\..\scumm\smush\config.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE=\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -1722,10 +790,10 @@ DEP_CPP_IMUSE=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	"..\..\..\scumm\smush\config.h"\
 	
 NODEP_CPP_IMUSE=\
 	"..\..\..\scumm\smush\common\engine.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -1739,9 +807,9 @@ DEP_CPP_IMUSE=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	"..\..\..\scumm\smush\config.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE=\
 	"..\..\..\common\macos.h"\
@@ -1758,13 +826,12 @@ DEP_CPP_IMUSE=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	"..\..\..\scumm\smush\config.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE=\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -1773,10 +840,10 @@ DEP_CPP_IMUSE=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	"..\..\..\scumm\smush\config.h"\
 	
 NODEP_CPP_IMUSE=\
 	"..\..\..\scumm\smush\common\engine.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Debug"
@@ -1785,343 +852,14 @@ DEP_CPP_IMUSE=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	"..\..\..\scumm\smush\config.h"\
 	
 NODEP_CPP_IMUSE=\
 	"..\..\..\scumm\smush\common\engine.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
 	
 
 !ENDIF 
 
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\scumm\smush\mixer.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\scumm\smush\palette.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\scumm\smush\player.cpp
-
-!IF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
-
-DEP_CPP_PLAYE=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\scumm\boxes.h"\
-	"..\..\..\scumm\gfx.h"\
-	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\channel.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\chunk_type.h"\
-	"..\..\..\scumm\smush\codec1.h"\
-	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\codec44.h"\
-	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	"..\..\..\scumm\smush\frenderer.h"\
-	"..\..\..\scumm\smush\mixer.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\player.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_PLAYE=\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
-
-DEP_CPP_PLAYE=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\channel.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\chunk_type.h"\
-	"..\..\..\scumm\smush\codec1.h"\
-	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\codec44.h"\
-	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	"..\..\..\scumm\smush\frenderer.h"\
-	"..\..\..\scumm\smush\mixer.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\player.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	
-NODEP_CPP_PLAYE=\
-	"..\..\..\scumm\smush\common\engine.h"\
-	"..\..\..\scumm\smush\common\file.h"\
-	"..\..\..\scumm\smush\common\rect.h"\
-	"..\..\..\scumm\smush\common\util.h"\
-	"..\..\..\scumm\smush\scumm\scumm.h"\
-	"..\..\..\scumm\smush\sound\mixer.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
-
-DEP_CPP_PLAYE=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\scumm\boxes.h"\
-	"..\..\..\scumm\gfx.h"\
-	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\channel.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\chunk_type.h"\
-	"..\..\..\scumm\smush\codec1.h"\
-	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\codec44.h"\
-	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	"..\..\..\scumm\smush\frenderer.h"\
-	"..\..\..\scumm\smush\mixer.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\player.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_PLAYE=\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
-
-DEP_CPP_PLAYE=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\channel.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\chunk_type.h"\
-	"..\..\..\scumm\smush\codec1.h"\
-	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\codec44.h"\
-	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	"..\..\..\scumm\smush\frenderer.h"\
-	"..\..\..\scumm\smush\mixer.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\player.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	
-NODEP_CPP_PLAYE=\
-	"..\..\..\scumm\smush\common\engine.h"\
-	"..\..\..\scumm\smush\common\file.h"\
-	"..\..\..\scumm\smush\common\rect.h"\
-	"..\..\..\scumm\smush\common\util.h"\
-	"..\..\..\scumm\smush\scumm\scumm.h"\
-	"..\..\..\scumm\smush\sound\mixer.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
-
-DEP_CPP_PLAYE=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\scumm\boxes.h"\
-	"..\..\..\scumm\gfx.h"\
-	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\channel.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\chunk_type.h"\
-	"..\..\..\scumm\smush\codec1.h"\
-	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\codec44.h"\
-	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	"..\..\..\scumm\smush\frenderer.h"\
-	"..\..\..\scumm\smush\mixer.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\player.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	
-NODEP_CPP_PLAYE=\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_PLAYE=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\scumm\boxes.h"\
-	"..\..\..\scumm\gfx.h"\
-	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\channel.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\chunk_type.h"\
-	"..\..\..\scumm\smush\codec1.h"\
-	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\codec44.h"\
-	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	"..\..\..\scumm\smush\frenderer.h"\
-	"..\..\..\scumm\smush\mixer.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\player.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_PLAYE=\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
-
-DEP_CPP_PLAYE=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\channel.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\chunk_type.h"\
-	"..\..\..\scumm\smush\codec1.h"\
-	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\codec44.h"\
-	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	"..\..\..\scumm\smush\frenderer.h"\
-	"..\..\..\scumm\smush\mixer.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\player.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	
-NODEP_CPP_PLAYE=\
-	"..\..\..\scumm\smush\common\engine.h"\
-	"..\..\..\scumm\smush\common\file.h"\
-	"..\..\..\scumm\smush\common\rect.h"\
-	"..\..\..\scumm\smush\common\util.h"\
-	"..\..\..\scumm\smush\scumm\scumm.h"\
-	"..\..\..\scumm\smush\sound\mixer.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Debug"
-
-DEP_CPP_PLAYE=\
-	"..\..\..\scumm\smush\blitter.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\channel.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\chunk_type.h"\
-	"..\..\..\scumm\smush\codec1.h"\
-	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\codec44.h"\
-	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	"..\..\..\scumm\smush\frenderer.h"\
-	"..\..\..\scumm\smush\mixer.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\player.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	
-NODEP_CPP_PLAYE=\
-	"..\..\..\scumm\smush\common\engine.h"\
-	"..\..\..\scumm\smush\common\file.h"\
-	"..\..\..\scumm\smush\common\rect.h"\
-	"..\..\..\scumm\smush\common\util.h"\
-	"..\..\..\scumm\smush\scumm\scumm.h"\
-	"..\..\..\scumm\smush\sound\mixer.h"\
-	
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\scumm\smush\player.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\scumm\smush\renderer.h
 # End Source File
 # Begin Source File
 
@@ -2138,13 +876,12 @@ DEP_CPP_SAUD_=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	"..\..\..\scumm\smush\config.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAUD_=\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -2153,10 +890,10 @@ DEP_CPP_SAUD_=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	"..\..\..\scumm\smush\config.h"\
 	
 NODEP_CPP_SAUD_=\
 	"..\..\..\scumm\smush\common\engine.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -2170,13 +907,12 @@ DEP_CPP_SAUD_=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	"..\..\..\scumm\smush\config.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAUD_=\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -2185,10 +921,10 @@ DEP_CPP_SAUD_=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	"..\..\..\scumm\smush\config.h"\
 	
 NODEP_CPP_SAUD_=\
 	"..\..\..\scumm\smush\common\engine.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -2202,9 +938,9 @@ DEP_CPP_SAUD_=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	"..\..\..\scumm\smush\config.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAUD_=\
 	"..\..\..\common\macos.h"\
@@ -2221,13 +957,12 @@ DEP_CPP_SAUD_=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	"..\..\..\scumm\smush\config.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAUD_=\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -2236,10 +971,10 @@ DEP_CPP_SAUD_=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	"..\..\..\scumm\smush\config.h"\
 	
 NODEP_CPP_SAUD_=\
 	"..\..\..\scumm\smush\common\engine.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Debug"
@@ -2248,10 +983,10 @@ DEP_CPP_SAUD_=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	"..\..\..\scumm\smush\config.h"\
 	
 NODEP_CPP_SAUD_=\
 	"..\..\..\scumm\smush\common\engine.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
 	
 
 !ENDIF 
@@ -2259,17 +994,16 @@ NODEP_CPP_SAUD_=\
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\scumm\smush\scumm_renderer.cpp
+SOURCE=..\..\..\scumm\smush\smush_font.cpp
 
 !IF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
 
-DEP_CPP_SCUMM=\
+DEP_CPP_SMUSH=\
 	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
-	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -2277,49 +1011,208 @@ DEP_CPP_SCUMM=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\scumm\actor.h"\
 	"..\..\..\scumm\boxes.h"\
 	"..\..\..\scumm\gfx.h"\
-	"..\..\..\scumm\imuse.h"\
-	"..\..\..\scumm\imuse_digi.h"\
 	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\channel.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\mixer.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\..\..\scumm\smush\scumm_renderer.h"\
-	"..\..\..\scumm\sound.h"\
-	"..\..\..\sound\mixer.h"\
+	"..\..\..\scumm\smush\smush_font.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
-NODEP_CPP_SCUMM=\
+NODEP_CPP_SMUSH=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
 
-DEP_CPP_SCUMM=\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\channel.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\mixer.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\..\..\scumm\smush\scumm_renderer.h"\
+DEP_CPP_SMUSH=\
+	"..\..\..\scumm\smush\smush_font.h"\
 	
-NODEP_CPP_SCUMM=\
+NODEP_CPP_SMUSH=\
 	"..\..\..\scumm\smush\common\engine.h"\
-	"..\..\..\scumm\smush\common\rect.h"\
+	"..\..\..\scumm\smush\common\file.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
 	"..\..\..\scumm\smush\common\util.h"\
-	"..\..\..\scumm\smush\scumm\actor.h"\
+	"..\..\..\scumm\smush\scumm\scumm.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
+
+DEP_CPP_SMUSH=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\scumm\boxes.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\smush\smush_font.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_SMUSH=\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
+
+DEP_CPP_SMUSH=\
+	"..\..\..\scumm\smush\smush_font.h"\
+	
+NODEP_CPP_SMUSH=\
+	"..\..\..\scumm\smush\common\engine.h"\
+	"..\..\..\scumm\smush\common\file.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
+	"..\..\..\scumm\smush\common\util.h"\
+	"..\..\..\scumm\smush\scumm\scumm.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
+
+DEP_CPP_SMUSH=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\scumm\boxes.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\smush\smush_font.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_SMUSH=\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_SMUSH=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\scumm\boxes.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\smush\smush_font.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_SMUSH=\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
+
+DEP_CPP_SMUSH=\
+	"..\..\..\scumm\smush\smush_font.h"\
+	
+NODEP_CPP_SMUSH=\
+	"..\..\..\scumm\smush\common\engine.h"\
+	"..\..\..\scumm\smush\common\file.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
+	"..\..\..\scumm\smush\common\util.h"\
+	"..\..\..\scumm\smush\scumm\scumm.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Debug"
+
+DEP_CPP_SMUSH=\
+	"..\..\..\scumm\smush\smush_font.h"\
+	
+NODEP_CPP_SMUSH=\
+	"..\..\..\scumm\smush\common\engine.h"\
+	"..\..\..\scumm\smush\common\file.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
+	"..\..\..\scumm\smush\common\util.h"\
+	"..\..\..\scumm\smush\scumm\scumm.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\scumm\smush\smush_font.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\scumm\smush\smush_mixer.cpp
+
+!IF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
+
+DEP_CPP_SMUSH_=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\scumm\boxes.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\imuse.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\smush\channel.h"\
+	"..\..\..\scumm\smush\smush_mixer.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_SMUSH_=\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
+
+DEP_CPP_SMUSH_=\
+	"..\..\..\scumm\smush\channel.h"\
+	"..\..\..\scumm\smush\smush_mixer.h"\
+	
+NODEP_CPP_SMUSH_=\
+	"..\..\..\scumm\smush\common\engine.h"\
+	"..\..\..\scumm\smush\common\util.h"\
 	"..\..\..\scumm\smush\scumm\imuse.h"\
 	"..\..\..\scumm\smush\scumm\scumm.h"\
 	"..\..\..\scumm\smush\scumm\sound.h"\
@@ -2328,13 +1221,12 @@ NODEP_CPP_SCUMM=\
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
 
-DEP_CPP_SCUMM=\
+DEP_CPP_SMUSH_=\
 	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
-	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -2342,49 +1234,33 @@ DEP_CPP_SCUMM=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\scumm\actor.h"\
 	"..\..\..\scumm\boxes.h"\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\imuse.h"\
-	"..\..\..\scumm\imuse_digi.h"\
 	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
 	"..\..\..\scumm\smush\channel.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\mixer.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\..\..\scumm\smush\scumm_renderer.h"\
+	"..\..\..\scumm\smush\smush_mixer.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
-NODEP_CPP_SCUMM=\
+NODEP_CPP_SMUSH_=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
 
-DEP_CPP_SCUMM=\
-	"..\..\..\scumm\smush\brenderer.h"\
+DEP_CPP_SMUSH_=\
 	"..\..\..\scumm\smush\channel.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\mixer.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\..\..\scumm\smush\scumm_renderer.h"\
+	"..\..\..\scumm\smush\smush_mixer.h"\
 	
-NODEP_CPP_SCUMM=\
+NODEP_CPP_SMUSH_=\
 	"..\..\..\scumm\smush\common\engine.h"\
-	"..\..\..\scumm\smush\common\rect.h"\
 	"..\..\..\scumm\smush\common\util.h"\
-	"..\..\..\scumm\smush\scumm\actor.h"\
 	"..\..\..\scumm\smush\scumm\imuse.h"\
 	"..\..\..\scumm\smush\scumm\scumm.h"\
 	"..\..\..\scumm\smush\scumm\sound.h"\
@@ -2393,13 +1269,12 @@ NODEP_CPP_SCUMM=\
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
 
-DEP_CPP_SCUMM=\
+DEP_CPP_SMUSH_=\
 	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
-	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -2407,60 +1282,12 @@ DEP_CPP_SCUMM=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\scumm\actor.h"\
 	"..\..\..\scumm\boxes.h"\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\imuse.h"\
-	"..\..\..\scumm\imuse_digi.h"\
 	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
 	"..\..\..\scumm\smush\channel.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\mixer.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\..\..\scumm\smush\scumm_renderer.h"\
-	"..\..\..\scumm\sound.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	
-NODEP_CPP_SCUMM=\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_SCUMM=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\scumm\actor.h"\
-	"..\..\..\scumm\boxes.h"\
-	"..\..\..\scumm\gfx.h"\
-	"..\..\..\scumm\imuse.h"\
-	"..\..\..\scumm\imuse_digi.h"\
-	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\channel.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\mixer.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\..\..\scumm\smush\scumm_renderer.h"\
+	"..\..\..\scumm\smush\smush_mixer.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
@@ -2468,28 +1295,58 @@ DEP_CPP_SCUMM=\
 	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
-NODEP_CPP_SCUMM=\
+NODEP_CPP_SMUSH_=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
 	
 
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_SMUSH_=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\scumm\boxes.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\imuse.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\smush\channel.h"\
+	"..\..\..\scumm\smush\smush_mixer.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_SMUSH_=\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
+	
+
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
 
-DEP_CPP_SCUMM=\
-	"..\..\..\scumm\smush\brenderer.h"\
+DEP_CPP_SMUSH_=\
 	"..\..\..\scumm\smush\channel.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\mixer.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\..\..\scumm\smush\scumm_renderer.h"\
+	"..\..\..\scumm\smush\smush_mixer.h"\
 	
-NODEP_CPP_SCUMM=\
+NODEP_CPP_SMUSH_=\
 	"..\..\..\scumm\smush\common\engine.h"\
-	"..\..\..\scumm\smush\common\rect.h"\
 	"..\..\..\scumm\smush\common\util.h"\
-	"..\..\..\scumm\smush\scumm\actor.h"\
 	"..\..\..\scumm\smush\scumm\imuse.h"\
 	"..\..\..\scumm\smush\scumm\scumm.h"\
 	"..\..\..\scumm\smush\scumm\sound.h"\
@@ -2498,21 +1355,13 @@ NODEP_CPP_SCUMM=\
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Debug"
 
-DEP_CPP_SCUMM=\
-	"..\..\..\scumm\smush\brenderer.h"\
+DEP_CPP_SMUSH_=\
 	"..\..\..\scumm\smush\channel.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\mixer.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\..\..\scumm\smush\scumm_renderer.h"\
+	"..\..\..\scumm\smush\smush_mixer.h"\
 	
-NODEP_CPP_SCUMM=\
+NODEP_CPP_SMUSH_=\
 	"..\..\..\scumm\smush\common\engine.h"\
-	"..\..\..\scumm\smush\common\rect.h"\
 	"..\..\..\scumm\smush\common\util.h"\
-	"..\..\..\scumm\smush\scumm\actor.h"\
 	"..\..\..\scumm\smush\scumm\imuse.h"\
 	"..\..\..\scumm\smush\scumm\scumm.h"\
 	"..\..\..\scumm\smush\scumm\sound.h"\
@@ -2524,7 +1373,279 @@ NODEP_CPP_SCUMM=\
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\scumm\smush\scumm_renderer.h
+SOURCE=..\..\..\scumm\smush\smush_mixer.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\scumm\smush\smush_player.cpp
+
+!IF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
+
+DEP_CPP_SMUSH_P=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\scumm\boxes.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\imuse.h"\
+	"..\..\..\scumm\imuse_digi.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\smush\channel.h"\
+	"..\..\..\scumm\smush\chunk.h"\
+	"..\..\..\scumm\smush\chunk_type.h"\
+	"..\..\..\scumm\smush\codec37.h"\
+	"..\..\..\scumm\smush\codec47.h"\
+	"..\..\..\scumm\smush\smush_font.h"\
+	"..\..\..\scumm\smush\smush_mixer.h"\
+	"..\..\..\scumm\smush\smush_player.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_SMUSH_P=\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
+
+DEP_CPP_SMUSH_P=\
+	"..\..\..\scumm\smush\channel.h"\
+	"..\..\..\scumm\smush\chunk.h"\
+	"..\..\..\scumm\smush\chunk_type.h"\
+	"..\..\..\scumm\smush\codec37.h"\
+	"..\..\..\scumm\smush\codec47.h"\
+	"..\..\..\scumm\smush\smush_font.h"\
+	"..\..\..\scumm\smush\smush_mixer.h"\
+	"..\..\..\scumm\smush\smush_player.h"\
+	
+NODEP_CPP_SMUSH_P=\
+	"..\..\..\scumm\smush\common\engine.h"\
+	"..\..\..\scumm\smush\common\file.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
+	"..\..\..\scumm\smush\common\util.h"\
+	"..\..\..\scumm\smush\scumm\imuse.h"\
+	"..\..\..\scumm\smush\scumm\imuse_digi.h"\
+	"..\..\..\scumm\smush\scumm\scumm.h"\
+	"..\..\..\scumm\smush\scumm\sound.h"\
+	"..\..\..\scumm\smush\sound\mixer.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
+
+DEP_CPP_SMUSH_P=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\scumm\boxes.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\imuse.h"\
+	"..\..\..\scumm\imuse_digi.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\smush\channel.h"\
+	"..\..\..\scumm\smush\chunk.h"\
+	"..\..\..\scumm\smush\chunk_type.h"\
+	"..\..\..\scumm\smush\codec37.h"\
+	"..\..\..\scumm\smush\codec47.h"\
+	"..\..\..\scumm\smush\smush_font.h"\
+	"..\..\..\scumm\smush\smush_mixer.h"\
+	"..\..\..\scumm\smush\smush_player.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_SMUSH_P=\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
+
+DEP_CPP_SMUSH_P=\
+	"..\..\..\scumm\smush\channel.h"\
+	"..\..\..\scumm\smush\chunk.h"\
+	"..\..\..\scumm\smush\chunk_type.h"\
+	"..\..\..\scumm\smush\codec37.h"\
+	"..\..\..\scumm\smush\codec47.h"\
+	"..\..\..\scumm\smush\smush_font.h"\
+	"..\..\..\scumm\smush\smush_mixer.h"\
+	"..\..\..\scumm\smush\smush_player.h"\
+	
+NODEP_CPP_SMUSH_P=\
+	"..\..\..\scumm\smush\common\engine.h"\
+	"..\..\..\scumm\smush\common\file.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
+	"..\..\..\scumm\smush\common\util.h"\
+	"..\..\..\scumm\smush\scumm\imuse.h"\
+	"..\..\..\scumm\smush\scumm\imuse_digi.h"\
+	"..\..\..\scumm\smush\scumm\scumm.h"\
+	"..\..\..\scumm\smush\scumm\sound.h"\
+	"..\..\..\scumm\smush\sound\mixer.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
+
+DEP_CPP_SMUSH_P=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\scumm\boxes.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\imuse.h"\
+	"..\..\..\scumm\imuse_digi.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\smush\channel.h"\
+	"..\..\..\scumm\smush\chunk.h"\
+	"..\..\..\scumm\smush\chunk_type.h"\
+	"..\..\..\scumm\smush\codec37.h"\
+	"..\..\..\scumm\smush\codec47.h"\
+	"..\..\..\scumm\smush\smush_font.h"\
+	"..\..\..\scumm\smush\smush_mixer.h"\
+	"..\..\..\scumm\smush\smush_player.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_SMUSH_P=\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_SMUSH_P=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\scumm\boxes.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\imuse.h"\
+	"..\..\..\scumm\imuse_digi.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\smush\channel.h"\
+	"..\..\..\scumm\smush\chunk.h"\
+	"..\..\..\scumm\smush\chunk_type.h"\
+	"..\..\..\scumm\smush\codec37.h"\
+	"..\..\..\scumm\smush\codec47.h"\
+	"..\..\..\scumm\smush\smush_font.h"\
+	"..\..\..\scumm\smush\smush_mixer.h"\
+	"..\..\..\scumm\smush\smush_player.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_SMUSH_P=\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
+
+DEP_CPP_SMUSH_P=\
+	"..\..\..\scumm\smush\channel.h"\
+	"..\..\..\scumm\smush\chunk.h"\
+	"..\..\..\scumm\smush\chunk_type.h"\
+	"..\..\..\scumm\smush\codec37.h"\
+	"..\..\..\scumm\smush\codec47.h"\
+	"..\..\..\scumm\smush\smush_font.h"\
+	"..\..\..\scumm\smush\smush_mixer.h"\
+	"..\..\..\scumm\smush\smush_player.h"\
+	
+NODEP_CPP_SMUSH_P=\
+	"..\..\..\scumm\smush\common\engine.h"\
+	"..\..\..\scumm\smush\common\file.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
+	"..\..\..\scumm\smush\common\util.h"\
+	"..\..\..\scumm\smush\scumm\imuse.h"\
+	"..\..\..\scumm\smush\scumm\imuse_digi.h"\
+	"..\..\..\scumm\smush\scumm\scumm.h"\
+	"..\..\..\scumm\smush\scumm\sound.h"\
+	"..\..\..\scumm\smush\sound\mixer.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Debug"
+
+DEP_CPP_SMUSH_P=\
+	"..\..\..\scumm\smush\channel.h"\
+	"..\..\..\scumm\smush\chunk.h"\
+	"..\..\..\scumm\smush\chunk_type.h"\
+	"..\..\..\scumm\smush\codec37.h"\
+	"..\..\..\scumm\smush\codec47.h"\
+	"..\..\..\scumm\smush\smush_font.h"\
+	"..\..\..\scumm\smush\smush_mixer.h"\
+	"..\..\..\scumm\smush\smush_player.h"\
+	
+NODEP_CPP_SMUSH_P=\
+	"..\..\..\scumm\smush\common\engine.h"\
+	"..\..\..\scumm\smush\common\file.h"\
+	"..\..\..\scumm\smush\common\scummsys.h"\
+	"..\..\..\scumm\smush\common\util.h"\
+	"..\..\..\scumm\smush\scumm\imuse.h"\
+	"..\..\..\scumm\smush\scumm\imuse_digi.h"\
+	"..\..\..\scumm\smush\scumm\scumm.h"\
+	"..\..\..\scumm\smush\scumm\sound.h"\
+	"..\..\..\scumm\smush\sound\mixer.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\scumm\smush\smush_player.h
 # End Source File
 # End Group
 # Begin Source File
@@ -2560,12 +1681,12 @@ DEP_CPP_ACTOR=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ACTOR=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -2626,12 +1747,12 @@ DEP_CPP_ACTOR=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ACTOR=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -2692,6 +1813,8 @@ DEP_CPP_ACTOR=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ACTOR=\
 	"..\..\..\common\macos.h"\
@@ -2727,12 +1850,17 @@ DEP_CPP_ACTOR=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ACTOR=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -2829,11 +1957,11 @@ DEP_CPP_AKOS_=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_AKOS_=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -2885,11 +2013,11 @@ DEP_CPP_AKOS_=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_AKOS_=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -2937,10 +2065,13 @@ DEP_CPP_AKOS_=\
 	"..\..\..\scumm\boxes.h"\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\imuse.h"\
-	"..\..\..\scumm\imuse_digi.h"\
 	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_AKOS_=\
 	"..\..\..\common\macos.h"\
@@ -2968,15 +2099,22 @@ DEP_CPP_AKOS_=\
 	"..\..\..\scumm\boxes.h"\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\imuse.h"\
-	"..\..\..\scumm\imuse_digi.h"\
 	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_AKOS_=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -3063,11 +2201,11 @@ DEP_CPP_BOXES=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BOXES=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -3111,11 +2249,11 @@ DEP_CPP_BOXES=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BOXES=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -3159,6 +2297,7 @@ DEP_CPP_BOXES=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BOXES=\
 	"..\..\..\common\macos.h"\
@@ -3186,11 +2325,11 @@ DEP_CPP_BOXES=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BOXES=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -3265,11 +2404,11 @@ DEP_CPP_BUNDL=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BUNDL=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -3314,11 +2453,11 @@ DEP_CPP_BUNDL=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BUNDL=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -3363,6 +2502,7 @@ DEP_CPP_BUNDL=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BUNDL=\
 	"..\..\..\common\macos.h"\
@@ -3390,11 +2530,11 @@ DEP_CPP_BUNDL=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BUNDL=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -3472,11 +2612,11 @@ DEP_CPP_CHARS=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHARS=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -3522,11 +2662,11 @@ DEP_CPP_CHARS=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHARS=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -3572,6 +2712,7 @@ DEP_CPP_CHARS=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHARS=\
 	"..\..\..\common\macos.h"\
@@ -3600,11 +2741,11 @@ DEP_CPP_CHARS=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHARS=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -3685,12 +2826,12 @@ DEP_CPP_COSTU=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COSTU=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -3741,12 +2882,12 @@ DEP_CPP_COSTU=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COSTU=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -3797,6 +2938,8 @@ DEP_CPP_COSTU=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COSTU=\
 	"..\..\..\common\macos.h"\
@@ -3828,12 +2971,17 @@ DEP_CPP_COSTU=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COSTU=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -3920,11 +3068,11 @@ DEP_CPP_DEBUG=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -3977,11 +3125,11 @@ DEP_CPP_DEBUG=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -4034,6 +3182,7 @@ DEP_CPP_DEBUG=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\macos.h"\
@@ -4067,11 +3216,11 @@ DEP_CPP_DEBUG=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -4159,12 +3308,12 @@ DEP_CPP_DEBUGG=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUGG=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -4220,12 +3369,12 @@ DEP_CPP_DEBUGG=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUGG=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -4281,6 +3430,8 @@ DEP_CPP_DEBUGG=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUGG=\
 	"..\..\..\common\macos.h"\
@@ -4315,12 +3466,17 @@ DEP_CPP_DEBUGG=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUGG=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -4476,12 +3632,12 @@ DEP_CPP_DIALO=\
 	"..\gapi_keys.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIALO=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -4548,12 +3704,12 @@ DEP_CPP_DIALO=\
 	"..\gapi_keys.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIALO=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -4611,7 +3767,6 @@ DEP_CPP_DIALO=\
 	"..\..\..\scumm\dialogs.h"\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\imuse.h"\
-	"..\..\..\scumm\imuse_digi.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
@@ -4620,6 +3775,13 @@ DEP_CPP_DIALO=\
 	"..\gapi_keys.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_DIALO=\
 	"..\..\..\common\macos.h"\
@@ -4650,7 +3812,6 @@ DEP_CPP_DIALO=\
 	"..\..\..\scumm\dialogs.h"\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\imuse.h"\
-	"..\..\..\scumm\imuse_digi.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
@@ -4659,12 +3820,17 @@ DEP_CPP_DIALO=\
 	"..\gapi_keys.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIALO=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -4764,11 +3930,11 @@ DEP_CPP_GFX_C=\
 	"..\..\..\scumm\usage_bits.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GFX_C=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -4818,11 +3984,11 @@ DEP_CPP_GFX_C=\
 	"..\..\..\scumm\usage_bits.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GFX_C=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -4872,6 +4038,7 @@ DEP_CPP_GFX_C=\
 	"..\..\..\scumm\usage_bits.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GFX_C=\
 	"..\..\..\common\macos.h"\
@@ -4902,11 +4069,11 @@ DEP_CPP_GFX_C=\
 	"..\..\..\scumm\usage_bits.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GFX_C=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -4994,12 +4161,12 @@ DEP_CPP_IMUSE_=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE_=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -5044,12 +4211,12 @@ DEP_CPP_IMUSE_=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE_=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -5084,7 +4251,6 @@ DEP_CPP_IMUSE_=\
 	"..\..\..\scumm\boxes.h"\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\imuse.h"\
-	"..\..\..\scumm\imuse_digi.h"\
 	"..\..\..\scumm\instrument.h"\
 	"..\..\..\scumm\saveload.h"\
 	"..\..\..\scumm\scumm.h"\
@@ -5094,6 +4260,8 @@ DEP_CPP_IMUSE_=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE_=\
 	"..\..\..\common\macos.h"\
@@ -5118,7 +4286,6 @@ DEP_CPP_IMUSE_=\
 	"..\..\..\scumm\boxes.h"\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\imuse.h"\
-	"..\..\..\scumm\imuse_digi.h"\
 	"..\..\..\scumm\instrument.h"\
 	"..\..\..\scumm\saveload.h"\
 	"..\..\..\scumm\scumm.h"\
@@ -5128,12 +4295,17 @@ DEP_CPP_IMUSE_=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE_=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -5198,12 +4370,12 @@ DEP_CPP_IMUSE_D=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE_D=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -5238,12 +4410,12 @@ DEP_CPP_IMUSE_D=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE_D=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -5278,6 +4450,8 @@ DEP_CPP_IMUSE_D=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE_D=\
 	"..\..\..\common\macos.h"\
@@ -5307,12 +4481,17 @@ DEP_CPP_IMUSE_D=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE_D=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -5367,11 +4546,11 @@ DEP_CPP_INSTR=\
 	"..\..\..\sound\mididrv.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSTR=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -5407,11 +4586,11 @@ DEP_CPP_INSTR=\
 	"..\..\..\sound\mididrv.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSTR=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -5447,6 +4626,7 @@ DEP_CPP_INSTR=\
 	"..\..\..\sound\mididrv.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSTR=\
 	"..\..\..\common\macos.h"\
@@ -5476,11 +4656,11 @@ DEP_CPP_INSTR=\
 	"..\..\..\sound\mididrv.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSTR=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -5539,11 +4719,11 @@ DEP_CPP_NUT_R=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_NUT_R=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -5586,11 +4766,11 @@ DEP_CPP_NUT_R=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_NUT_R=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -5633,6 +4813,7 @@ DEP_CPP_NUT_R=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_NUT_R=\
 	"..\..\..\common\macos.h"\
@@ -5660,11 +4841,11 @@ DEP_CPP_NUT_R=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_NUT_R=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -5740,11 +4921,11 @@ DEP_CPP_OBJEC=\
 	"..\..\..\scumm\usage_bits.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_OBJEC=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -5794,11 +4975,11 @@ DEP_CPP_OBJEC=\
 	"..\..\..\scumm\usage_bits.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_OBJEC=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -5848,6 +5029,7 @@ DEP_CPP_OBJEC=\
 	"..\..\..\scumm\usage_bits.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_OBJEC=\
 	"..\..\..\common\macos.h"\
@@ -5878,11 +5060,11 @@ DEP_CPP_OBJEC=\
 	"..\..\..\scumm\usage_bits.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_OBJEC=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -5970,12 +5152,12 @@ DEP_CPP_RESOU=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOU=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -6031,12 +5213,12 @@ DEP_CPP_RESOU=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOU=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -6083,6 +5265,7 @@ DEP_CPP_RESOU=\
 	"..\..\..\gui\message.h"\
 	"..\..\..\gui\widget.h"\
 	"..\..\..\scumm\boxes.h"\
+	"..\..\..\scumm\bundle.h"\
 	"..\..\..\scumm\dialogs.h"\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\resource.h"\
@@ -6092,6 +5275,8 @@ DEP_CPP_RESOU=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOU=\
 	"..\..\..\common\macos.h"\
@@ -6126,12 +5311,17 @@ DEP_CPP_RESOU=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOU=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -6217,11 +5407,11 @@ DEP_CPP_RESOUR=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOUR=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -6266,11 +5456,11 @@ DEP_CPP_RESOUR=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOUR=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -6315,6 +5505,7 @@ DEP_CPP_RESOUR=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOUR=\
 	"..\..\..\common\macos.h"\
@@ -6343,11 +5534,11 @@ DEP_CPP_RESOUR=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOUR=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -6419,11 +5610,11 @@ DEP_CPP_RESOURC=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOURC=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -6468,11 +5659,11 @@ DEP_CPP_RESOURC=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOURC=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -6517,6 +5708,7 @@ DEP_CPP_RESOURC=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOURC=\
 	"..\..\..\common\macos.h"\
@@ -6545,11 +5737,11 @@ DEP_CPP_RESOURC=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOURC=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -6620,11 +5812,11 @@ DEP_CPP_RESOURCE=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOURCE=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -6667,11 +5859,11 @@ DEP_CPP_RESOURCE=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOURCE=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -6714,6 +5906,7 @@ DEP_CPP_RESOURCE=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOURCE=\
 	"..\..\..\common\macos.h"\
@@ -6741,11 +5934,11 @@ DEP_CPP_RESOURCE=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOURCE=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -6824,12 +6017,12 @@ DEP_CPP_SAVEL=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAVEL=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -6894,12 +6087,12 @@ DEP_CPP_SAVEL=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAVEL=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -6960,10 +6153,11 @@ DEP_CPP_SAVEL=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
-	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAVEL=\
 	"..\..\..\common\macos.h"\
@@ -6997,16 +6191,20 @@ DEP_CPP_SAVEL=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
-	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAVEL=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -7104,11 +6302,11 @@ DEP_CPP_SCRIP=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIP=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -7154,11 +6352,11 @@ DEP_CPP_SCRIP=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIP=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -7204,6 +6402,7 @@ DEP_CPP_SCRIP=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIP=\
 	"..\..\..\common\macos.h"\
@@ -7232,11 +6431,11 @@ DEP_CPP_SCRIP=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIP=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -7286,7 +6485,7 @@ NODEP_CPP_SCRIP=\
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\scumm\script_v5.cpp
+SOURCE=..\..\..\scumm\script_v2.cpp
 
 !IF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
 
@@ -7434,6 +6633,13 @@ DEP_CPP_SCRIPT=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_SCRIPT=\
 	"..\..\..\common\macos.h"\
@@ -7468,6 +6674,11 @@ DEP_CPP_SCRIPT=\
 	"..\portdefs.h"\
 	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_SCRIPT=\
 	"..\..\..\common\macos.h"\
@@ -7513,6 +6724,258 @@ DEP_CPP_SCRIPT=\
 	"..\..\..\scumm\verbs.h"\
 	
 NODEP_CPP_SCRIPT=\
+	"..\..\..\scumm\common\engine.h"\
+	"..\..\..\scumm\common\file.h"\
+	"..\..\..\scumm\common\gameDetector.h"\
+	"..\..\..\scumm\common\map.h"\
+	"..\..\..\scumm\common\scummsys.h"\
+	"..\..\..\scumm\common\str.h"\
+	"..\..\..\scumm\common\timer.h"\
+	"..\..\..\scumm\common\util.h"\
+	"..\..\..\scumm\scummsys.h"\
+	"..\..\..\scumm\sound\mixer.h"\
+	"..\..\..\scumm\stdafx.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\scumm\script_v5.cpp
+
+!IF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
+
+DEP_CPP_SCRIPT_=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\scumm\actor.h"\
+	"..\..\..\scumm\boxes.h"\
+	"..\..\..\scumm\charset.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\intern.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\scumm\verbs.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_SCRIPT_=\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
+
+DEP_CPP_SCRIPT_=\
+	"..\..\..\scumm\actor.h"\
+	"..\..\..\scumm\boxes.h"\
+	"..\..\..\scumm\charset.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\intern.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\scumm\verbs.h"\
+	
+NODEP_CPP_SCRIPT_=\
+	"..\..\..\scumm\common\engine.h"\
+	"..\..\..\scumm\common\file.h"\
+	"..\..\..\scumm\common\gameDetector.h"\
+	"..\..\..\scumm\common\map.h"\
+	"..\..\..\scumm\common\scummsys.h"\
+	"..\..\..\scumm\common\str.h"\
+	"..\..\..\scumm\common\timer.h"\
+	"..\..\..\scumm\common\util.h"\
+	"..\..\..\scumm\scummsys.h"\
+	"..\..\..\scumm\sound\mixer.h"\
+	"..\..\..\scumm\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
+
+DEP_CPP_SCRIPT_=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\scumm\actor.h"\
+	"..\..\..\scumm\boxes.h"\
+	"..\..\..\scumm\charset.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\intern.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\scumm\verbs.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_SCRIPT_=\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
+
+DEP_CPP_SCRIPT_=\
+	"..\..\..\scumm\actor.h"\
+	"..\..\..\scumm\boxes.h"\
+	"..\..\..\scumm\charset.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\intern.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\scumm\verbs.h"\
+	
+NODEP_CPP_SCRIPT_=\
+	"..\..\..\scumm\common\engine.h"\
+	"..\..\..\scumm\common\file.h"\
+	"..\..\..\scumm\common\gameDetector.h"\
+	"..\..\..\scumm\common\map.h"\
+	"..\..\..\scumm\common\scummsys.h"\
+	"..\..\..\scumm\common\str.h"\
+	"..\..\..\scumm\common\timer.h"\
+	"..\..\..\scumm\common\util.h"\
+	"..\..\..\scumm\scummsys.h"\
+	"..\..\..\scumm\sound\mixer.h"\
+	"..\..\..\scumm\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
+
+DEP_CPP_SCRIPT_=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\scumm\actor.h"\
+	"..\..\..\scumm\boxes.h"\
+	"..\..\..\scumm\charset.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\intern.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\scumm\verbs.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_SCRIPT_=\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_SCRIPT_=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\scumm\actor.h"\
+	"..\..\..\scumm\boxes.h"\
+	"..\..\..\scumm\charset.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\intern.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\scumm\verbs.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_SCRIPT_=\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
+
+DEP_CPP_SCRIPT_=\
+	"..\..\..\scumm\actor.h"\
+	"..\..\..\scumm\boxes.h"\
+	"..\..\..\scumm\charset.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\intern.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\scumm\verbs.h"\
+	
+NODEP_CPP_SCRIPT_=\
+	"..\..\..\scumm\common\engine.h"\
+	"..\..\..\scumm\common\file.h"\
+	"..\..\..\scumm\common\gameDetector.h"\
+	"..\..\..\scumm\common\map.h"\
+	"..\..\..\scumm\common\scummsys.h"\
+	"..\..\..\scumm\common\str.h"\
+	"..\..\..\scumm\common\timer.h"\
+	"..\..\..\scumm\common\util.h"\
+	"..\..\..\scumm\scummsys.h"\
+	"..\..\..\scumm\sound\mixer.h"\
+	"..\..\..\scumm\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Debug"
+
+DEP_CPP_SCRIPT_=\
+	"..\..\..\scumm\actor.h"\
+	"..\..\..\scumm\boxes.h"\
+	"..\..\..\scumm\charset.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\intern.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\scumm\verbs.h"\
+	
+NODEP_CPP_SCRIPT_=\
 	"..\..\..\scumm\common\engine.h"\
 	"..\..\..\scumm\common\file.h"\
 	"..\..\..\scumm\common\gameDetector.h"\
@@ -7535,7 +6998,7 @@ SOURCE=..\..\..\scumm\script_v6.cpp
 
 !IF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
 
-DEP_CPP_SCRIPT_=\
+DEP_CPP_SCRIPT_V=\
 	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\gameDetector.h"\
@@ -7560,12 +7023,22 @@ DEP_CPP_SCRIPT_=\
 	"..\..\..\scumm\imuse_digi.h"\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
 	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec1.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\codec44.h"\
 	"..\..\..\scumm\smush\codec47.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\scumm\verbs.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_SCRIPT_V=\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\scumm\smush\brenderer.h"\
+	"..\..\..\scumm\smush\codec1.h"\
+	"..\..\..\scumm\smush\codec44.h"\
 	"..\..\..\scumm\smush\color.h"\
 	"..\..\..\scumm\smush\config.h"\
 	"..\..\..\scumm\smush\decoder.h"\
@@ -7573,23 +7046,13 @@ DEP_CPP_SCRIPT_=\
 	"..\..\..\scumm\smush\player.h"\
 	"..\..\..\scumm\smush\renderer.h"\
 	"..\..\..\scumm\smush\scumm_renderer.h"\
-	"..\..\..\scumm\sound.h"\
-	"..\..\..\scumm\verbs.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_SCRIPT_=\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
 
-DEP_CPP_SCRIPT_=\
+DEP_CPP_SCRIPT_V=\
 	"..\..\..\scumm\actor.h"\
 	"..\..\..\scumm\boxes.h"\
 	"..\..\..\scumm\charset.h"\
@@ -7599,23 +7062,13 @@ DEP_CPP_SCRIPT_=\
 	"..\..\..\scumm\imuse_digi.h"\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
 	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec1.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\codec44.h"\
 	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\player.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\..\..\scumm\smush\scumm_renderer.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	
-NODEP_CPP_SCRIPT_=\
+NODEP_CPP_SCRIPT_V=\
 	"..\..\..\scumm\common\engine.h"\
 	"..\..\..\scumm\common\file.h"\
 	"..\..\..\scumm\common\gameDetector.h"\
@@ -7626,8 +7079,18 @@ NODEP_CPP_SCRIPT_=\
 	"..\..\..\scumm\common\util.h"\
 	"..\..\..\scumm\gui\dialog.h"\
 	"..\..\..\scumm\scummsys.h"\
+	"..\..\..\scumm\smush\brenderer.h"\
+	"..\..\..\scumm\smush\codec1.h"\
+	"..\..\..\scumm\smush\codec44.h"\
+	"..\..\..\scumm\smush\color.h"\
 	"..\..\..\scumm\smush\common\rect.h"\
 	"..\..\..\scumm\smush\common\util.h"\
+	"..\..\..\scumm\smush\config.h"\
+	"..\..\..\scumm\smush\decoder.h"\
+	"..\..\..\scumm\smush\palette.h"\
+	"..\..\..\scumm\smush\player.h"\
+	"..\..\..\scumm\smush\renderer.h"\
+	"..\..\..\scumm\smush\scumm_renderer.h"\
 	"..\..\..\scumm\sound\mididrv.h"\
 	"..\..\..\scumm\sound\mixer.h"\
 	"..\..\..\scumm\stdafx.h"\
@@ -7635,7 +7098,7 @@ NODEP_CPP_SCRIPT_=\
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
 
-DEP_CPP_SCRIPT_=\
+DEP_CPP_SCRIPT_V=\
 	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\gameDetector.h"\
@@ -7660,12 +7123,22 @@ DEP_CPP_SCRIPT_=\
 	"..\..\..\scumm\imuse_digi.h"\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
 	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec1.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\codec44.h"\
 	"..\..\..\scumm\smush\codec47.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\scumm\verbs.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_SCRIPT_V=\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\scumm\smush\brenderer.h"\
+	"..\..\..\scumm\smush\codec1.h"\
+	"..\..\..\scumm\smush\codec44.h"\
 	"..\..\..\scumm\smush\color.h"\
 	"..\..\..\scumm\smush\config.h"\
 	"..\..\..\scumm\smush\decoder.h"\
@@ -7673,23 +7146,13 @@ DEP_CPP_SCRIPT_=\
 	"..\..\..\scumm\smush\player.h"\
 	"..\..\..\scumm\smush\renderer.h"\
 	"..\..\..\scumm\smush\scumm_renderer.h"\
-	"..\..\..\scumm\sound.h"\
-	"..\..\..\scumm\verbs.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_SCRIPT_=\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
 
-DEP_CPP_SCRIPT_=\
+DEP_CPP_SCRIPT_V=\
 	"..\..\..\scumm\actor.h"\
 	"..\..\..\scumm\boxes.h"\
 	"..\..\..\scumm\charset.h"\
@@ -7699,23 +7162,13 @@ DEP_CPP_SCRIPT_=\
 	"..\..\..\scumm\imuse_digi.h"\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
 	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec1.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\codec44.h"\
 	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\player.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\..\..\scumm\smush\scumm_renderer.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	
-NODEP_CPP_SCRIPT_=\
+NODEP_CPP_SCRIPT_V=\
 	"..\..\..\scumm\common\engine.h"\
 	"..\..\..\scumm\common\file.h"\
 	"..\..\..\scumm\common\gameDetector.h"\
@@ -7726,8 +7179,18 @@ NODEP_CPP_SCRIPT_=\
 	"..\..\..\scumm\common\util.h"\
 	"..\..\..\scumm\gui\dialog.h"\
 	"..\..\..\scumm\scummsys.h"\
+	"..\..\..\scumm\smush\brenderer.h"\
+	"..\..\..\scumm\smush\codec1.h"\
+	"..\..\..\scumm\smush\codec44.h"\
+	"..\..\..\scumm\smush\color.h"\
 	"..\..\..\scumm\smush\common\rect.h"\
 	"..\..\..\scumm\smush\common\util.h"\
+	"..\..\..\scumm\smush\config.h"\
+	"..\..\..\scumm\smush\decoder.h"\
+	"..\..\..\scumm\smush\palette.h"\
+	"..\..\..\scumm\smush\player.h"\
+	"..\..\..\scumm\smush\renderer.h"\
+	"..\..\..\scumm\smush\scumm_renderer.h"\
 	"..\..\..\scumm\sound\mididrv.h"\
 	"..\..\..\scumm\sound\mixer.h"\
 	"..\..\..\scumm\stdafx.h"\
@@ -7735,13 +7198,12 @@ NODEP_CPP_SCRIPT_=\
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
 
-DEP_CPP_SCRIPT_=\
+DEP_CPP_SCRIPT_V=\
 	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
-	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -7757,74 +7219,12 @@ DEP_CPP_SCRIPT_=\
 	"..\..\..\scumm\dialogs.h"\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\imuse.h"\
-	"..\..\..\scumm\imuse_digi.h"\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
 	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec1.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\codec44.h"\
 	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\player.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\..\..\scumm\smush\scumm_renderer.h"\
-	"..\..\..\scumm\sound.h"\
-	"..\..\..\scumm\verbs.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	
-NODEP_CPP_SCRIPT_=\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_SCRIPT_=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gui\dialog.h"\
-	"..\..\..\gui\widget.h"\
-	"..\..\..\scumm\actor.h"\
-	"..\..\..\scumm\boxes.h"\
-	"..\..\..\scumm\charset.h"\
-	"..\..\..\scumm\dialogs.h"\
-	"..\..\..\scumm\gfx.h"\
-	"..\..\..\scumm\imuse.h"\
-	"..\..\..\scumm\imuse_digi.h"\
-	"..\..\..\scumm\intern.h"\
-	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec1.h"\
-	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\codec44.h"\
-	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\player.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\..\..\scumm\smush\scumm_renderer.h"\
+	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\mididrv.h"\
@@ -7834,14 +7234,62 @@ DEP_CPP_SCRIPT_=\
 	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
-NODEP_CPP_SCRIPT_=\
+NODEP_CPP_SCRIPT_V=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
 	
 
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_SCRIPT_V=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\widget.h"\
+	"..\..\..\scumm\actor.h"\
+	"..\..\..\scumm\boxes.h"\
+	"..\..\..\scumm\charset.h"\
+	"..\..\..\scumm\dialogs.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\imuse.h"\
+	"..\..\..\scumm\intern.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\smush\chunk.h"\
+	"..\..\..\scumm\smush\codec37.h"\
+	"..\..\..\scumm\smush\codec47.h"\
+	"..\..\..\scumm\smush\smush_player.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\scumm\verbs.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_SCRIPT_V=\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
+	
+
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
 
-DEP_CPP_SCRIPT_=\
+DEP_CPP_SCRIPT_V=\
 	"..\..\..\scumm\actor.h"\
 	"..\..\..\scumm\boxes.h"\
 	"..\..\..\scumm\charset.h"\
@@ -7851,23 +7299,13 @@ DEP_CPP_SCRIPT_=\
 	"..\..\..\scumm\imuse_digi.h"\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
 	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec1.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\codec44.h"\
 	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\player.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\..\..\scumm\smush\scumm_renderer.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	
-NODEP_CPP_SCRIPT_=\
+NODEP_CPP_SCRIPT_V=\
 	"..\..\..\scumm\common\engine.h"\
 	"..\..\..\scumm\common\file.h"\
 	"..\..\..\scumm\common\gameDetector.h"\
@@ -7878,8 +7316,18 @@ NODEP_CPP_SCRIPT_=\
 	"..\..\..\scumm\common\util.h"\
 	"..\..\..\scumm\gui\dialog.h"\
 	"..\..\..\scumm\scummsys.h"\
+	"..\..\..\scumm\smush\brenderer.h"\
+	"..\..\..\scumm\smush\codec1.h"\
+	"..\..\..\scumm\smush\codec44.h"\
+	"..\..\..\scumm\smush\color.h"\
 	"..\..\..\scumm\smush\common\rect.h"\
 	"..\..\..\scumm\smush\common\util.h"\
+	"..\..\..\scumm\smush\config.h"\
+	"..\..\..\scumm\smush\decoder.h"\
+	"..\..\..\scumm\smush\palette.h"\
+	"..\..\..\scumm\smush\player.h"\
+	"..\..\..\scumm\smush\renderer.h"\
+	"..\..\..\scumm\smush\scumm_renderer.h"\
 	"..\..\..\scumm\sound\mididrv.h"\
 	"..\..\..\scumm\sound\mixer.h"\
 	"..\..\..\scumm\stdafx.h"\
@@ -7887,7 +7335,7 @@ NODEP_CPP_SCRIPT_=\
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Debug"
 
-DEP_CPP_SCRIPT_=\
+DEP_CPP_SCRIPT_V=\
 	"..\..\..\scumm\actor.h"\
 	"..\..\..\scumm\boxes.h"\
 	"..\..\..\scumm\charset.h"\
@@ -7897,23 +7345,13 @@ DEP_CPP_SCRIPT_=\
 	"..\..\..\scumm\imuse_digi.h"\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
 	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec1.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\codec44.h"\
 	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\player.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\..\..\scumm\smush\scumm_renderer.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	
-NODEP_CPP_SCRIPT_=\
+NODEP_CPP_SCRIPT_V=\
 	"..\..\..\scumm\common\engine.h"\
 	"..\..\..\scumm\common\file.h"\
 	"..\..\..\scumm\common\gameDetector.h"\
@@ -7924,8 +7362,18 @@ NODEP_CPP_SCRIPT_=\
 	"..\..\..\scumm\common\util.h"\
 	"..\..\..\scumm\gui\dialog.h"\
 	"..\..\..\scumm\scummsys.h"\
+	"..\..\..\scumm\smush\brenderer.h"\
+	"..\..\..\scumm\smush\codec1.h"\
+	"..\..\..\scumm\smush\codec44.h"\
+	"..\..\..\scumm\smush\color.h"\
 	"..\..\..\scumm\smush\common\rect.h"\
 	"..\..\..\scumm\smush\common\util.h"\
+	"..\..\..\scumm\smush\config.h"\
+	"..\..\..\scumm\smush\decoder.h"\
+	"..\..\..\scumm\smush\palette.h"\
+	"..\..\..\scumm\smush\player.h"\
+	"..\..\..\scumm\smush\renderer.h"\
+	"..\..\..\scumm\smush\scumm_renderer.h"\
 	"..\..\..\scumm\sound\mididrv.h"\
 	"..\..\..\scumm\sound\mixer.h"\
 	"..\..\..\scumm\stdafx.h"\
@@ -7940,7 +7388,7 @@ SOURCE=..\..\..\scumm\script_v8.cpp
 
 !IF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
 
-DEP_CPP_SCRIPT_V=\
+DEP_CPP_SCRIPT_V8=\
 	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\gameDetector.h"\
@@ -7960,12 +7408,21 @@ DEP_CPP_SCRIPT_V=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
 	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec1.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\codec44.h"\
 	"..\..\..\scumm\smush\codec47.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\scumm\verbs.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_SCRIPT_V8=\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\scumm\smush\brenderer.h"\
+	"..\..\..\scumm\smush\codec1.h"\
+	"..\..\..\scumm\smush\codec44.h"\
 	"..\..\..\scumm\smush\color.h"\
 	"..\..\..\scumm\smush\config.h"\
 	"..\..\..\scumm\smush\decoder.h"\
@@ -7973,45 +7430,26 @@ DEP_CPP_SCRIPT_V=\
 	"..\..\..\scumm\smush\player.h"\
 	"..\..\..\scumm\smush\renderer.h"\
 	"..\..\..\scumm\smush\scumm_renderer.h"\
-	"..\..\..\scumm\sound.h"\
-	"..\..\..\scumm\verbs.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_SCRIPT_V=\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
 
-DEP_CPP_SCRIPT_V=\
+DEP_CPP_SCRIPT_V8=\
 	"..\..\..\scumm\actor.h"\
 	"..\..\..\scumm\boxes.h"\
 	"..\..\..\scumm\charset.h"\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
 	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec1.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\codec44.h"\
 	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\player.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\..\..\scumm\smush\scumm_renderer.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	
-NODEP_CPP_SCRIPT_V=\
+NODEP_CPP_SCRIPT_V8=\
 	"..\..\..\scumm\common\engine.h"\
 	"..\..\..\scumm\common\file.h"\
 	"..\..\..\scumm\common\gameDetector.h"\
@@ -8021,15 +7459,25 @@ NODEP_CPP_SCRIPT_V=\
 	"..\..\..\scumm\common\timer.h"\
 	"..\..\..\scumm\common\util.h"\
 	"..\..\..\scumm\scummsys.h"\
+	"..\..\..\scumm\smush\brenderer.h"\
+	"..\..\..\scumm\smush\codec1.h"\
+	"..\..\..\scumm\smush\codec44.h"\
+	"..\..\..\scumm\smush\color.h"\
 	"..\..\..\scumm\smush\common\rect.h"\
 	"..\..\..\scumm\smush\common\util.h"\
+	"..\..\..\scumm\smush\config.h"\
+	"..\..\..\scumm\smush\decoder.h"\
+	"..\..\..\scumm\smush\palette.h"\
+	"..\..\..\scumm\smush\player.h"\
+	"..\..\..\scumm\smush\renderer.h"\
+	"..\..\..\scumm\smush\scumm_renderer.h"\
 	"..\..\..\scumm\sound\mixer.h"\
 	"..\..\..\scumm\stdafx.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
 
-DEP_CPP_SCRIPT_V=\
+DEP_CPP_SCRIPT_V8=\
 	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\gameDetector.h"\
@@ -8049,12 +7497,21 @@ DEP_CPP_SCRIPT_V=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
 	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec1.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\codec44.h"\
 	"..\..\..\scumm\smush\codec47.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\scumm\verbs.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_SCRIPT_V8=\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\scumm\smush\brenderer.h"\
+	"..\..\..\scumm\smush\codec1.h"\
+	"..\..\..\scumm\smush\codec44.h"\
 	"..\..\..\scumm\smush\color.h"\
 	"..\..\..\scumm\smush\config.h"\
 	"..\..\..\scumm\smush\decoder.h"\
@@ -8062,45 +7519,26 @@ DEP_CPP_SCRIPT_V=\
 	"..\..\..\scumm\smush\player.h"\
 	"..\..\..\scumm\smush\renderer.h"\
 	"..\..\..\scumm\smush\scumm_renderer.h"\
-	"..\..\..\scumm\sound.h"\
-	"..\..\..\scumm\verbs.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_SCRIPT_V=\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
 
-DEP_CPP_SCRIPT_V=\
+DEP_CPP_SCRIPT_V8=\
 	"..\..\..\scumm\actor.h"\
 	"..\..\..\scumm\boxes.h"\
 	"..\..\..\scumm\charset.h"\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
 	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec1.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\codec44.h"\
 	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\player.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\..\..\scumm\smush\scumm_renderer.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	
-NODEP_CPP_SCRIPT_V=\
+NODEP_CPP_SCRIPT_V8=\
 	"..\..\..\scumm\common\engine.h"\
 	"..\..\..\scumm\common\file.h"\
 	"..\..\..\scumm\common\gameDetector.h"\
@@ -8110,21 +7548,30 @@ NODEP_CPP_SCRIPT_V=\
 	"..\..\..\scumm\common\timer.h"\
 	"..\..\..\scumm\common\util.h"\
 	"..\..\..\scumm\scummsys.h"\
+	"..\..\..\scumm\smush\brenderer.h"\
+	"..\..\..\scumm\smush\codec1.h"\
+	"..\..\..\scumm\smush\codec44.h"\
+	"..\..\..\scumm\smush\color.h"\
 	"..\..\..\scumm\smush\common\rect.h"\
 	"..\..\..\scumm\smush\common\util.h"\
+	"..\..\..\scumm\smush\config.h"\
+	"..\..\..\scumm\smush\decoder.h"\
+	"..\..\..\scumm\smush\palette.h"\
+	"..\..\..\scumm\smush\player.h"\
+	"..\..\..\scumm\smush\renderer.h"\
+	"..\..\..\scumm\smush\scumm_renderer.h"\
 	"..\..\..\scumm\sound\mixer.h"\
 	"..\..\..\scumm\stdafx.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
 
-DEP_CPP_SCRIPT_V=\
+DEP_CPP_SCRIPT_V8=\
 	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
-	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -8138,65 +7585,10 @@ DEP_CPP_SCRIPT_V=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
 	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec1.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\codec44.h"\
 	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\player.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\..\..\scumm\smush\scumm_renderer.h"\
-	"..\..\..\scumm\sound.h"\
-	"..\..\..\scumm\verbs.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	
-NODEP_CPP_SCRIPT_V=\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_SCRIPT_V=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\scumm\actor.h"\
-	"..\..\..\scumm\boxes.h"\
-	"..\..\..\scumm\charset.h"\
-	"..\..\..\scumm\gfx.h"\
-	"..\..\..\scumm\intern.h"\
-	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
-	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec1.h"\
-	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\codec44.h"\
-	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\player.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\..\..\scumm\smush\scumm_renderer.h"\
+	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\mixer.h"\
@@ -8205,37 +7597,70 @@ DEP_CPP_SCRIPT_V=\
 	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
-NODEP_CPP_SCRIPT_V=\
+NODEP_CPP_SCRIPT_V8=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
 	
 
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
 
-DEP_CPP_SCRIPT_V=\
+DEP_CPP_SCRIPT_V8=\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\scumm\actor.h"\
 	"..\..\..\scumm\boxes.h"\
 	"..\..\..\scumm\charset.h"\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
 	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec1.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\codec44.h"\
 	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\player.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\..\..\scumm\smush\scumm_renderer.h"\
+	"..\..\..\scumm\smush\smush_player.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\scumm\verbs.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_SCRIPT_V8=\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
+
+DEP_CPP_SCRIPT_V8=\
+	"..\..\..\scumm\actor.h"\
+	"..\..\..\scumm\boxes.h"\
+	"..\..\..\scumm\charset.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\intern.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\smush\chunk.h"\
+	"..\..\..\scumm\smush\codec37.h"\
+	"..\..\..\scumm\smush\codec47.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	
-NODEP_CPP_SCRIPT_V=\
+NODEP_CPP_SCRIPT_V8=\
 	"..\..\..\scumm\common\engine.h"\
 	"..\..\..\scumm\common\file.h"\
 	"..\..\..\scumm\common\gameDetector.h"\
@@ -8245,38 +7670,38 @@ NODEP_CPP_SCRIPT_V=\
 	"..\..\..\scumm\common\timer.h"\
 	"..\..\..\scumm\common\util.h"\
 	"..\..\..\scumm\scummsys.h"\
+	"..\..\..\scumm\smush\brenderer.h"\
+	"..\..\..\scumm\smush\codec1.h"\
+	"..\..\..\scumm\smush\codec44.h"\
+	"..\..\..\scumm\smush\color.h"\
 	"..\..\..\scumm\smush\common\rect.h"\
 	"..\..\..\scumm\smush\common\util.h"\
+	"..\..\..\scumm\smush\config.h"\
+	"..\..\..\scumm\smush\decoder.h"\
+	"..\..\..\scumm\smush\palette.h"\
+	"..\..\..\scumm\smush\player.h"\
+	"..\..\..\scumm\smush\renderer.h"\
+	"..\..\..\scumm\smush\scumm_renderer.h"\
 	"..\..\..\scumm\sound\mixer.h"\
 	"..\..\..\scumm\stdafx.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Debug"
 
-DEP_CPP_SCRIPT_V=\
+DEP_CPP_SCRIPT_V8=\
 	"..\..\..\scumm\actor.h"\
 	"..\..\..\scumm\boxes.h"\
 	"..\..\..\scumm\charset.h"\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\smush\brenderer.h"\
 	"..\..\..\scumm\smush\chunk.h"\
-	"..\..\..\scumm\smush\codec1.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	"..\..\..\scumm\smush\codec44.h"\
 	"..\..\..\scumm\smush\codec47.h"\
-	"..\..\..\scumm\smush\color.h"\
-	"..\..\..\scumm\smush\config.h"\
-	"..\..\..\scumm\smush\decoder.h"\
-	"..\..\..\scumm\smush\palette.h"\
-	"..\..\..\scumm\smush\player.h"\
-	"..\..\..\scumm\smush\renderer.h"\
-	"..\..\..\scumm\smush\scumm_renderer.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	
-NODEP_CPP_SCRIPT_V=\
+NODEP_CPP_SCRIPT_V8=\
 	"..\..\..\scumm\common\engine.h"\
 	"..\..\..\scumm\common\file.h"\
 	"..\..\..\scumm\common\gameDetector.h"\
@@ -8286,8 +7711,18 @@ NODEP_CPP_SCRIPT_V=\
 	"..\..\..\scumm\common\timer.h"\
 	"..\..\..\scumm\common\util.h"\
 	"..\..\..\scumm\scummsys.h"\
+	"..\..\..\scumm\smush\brenderer.h"\
+	"..\..\..\scumm\smush\codec1.h"\
+	"..\..\..\scumm\smush\codec44.h"\
+	"..\..\..\scumm\smush\color.h"\
 	"..\..\..\scumm\smush\common\rect.h"\
 	"..\..\..\scumm\smush\common\util.h"\
+	"..\..\..\scumm\smush\config.h"\
+	"..\..\..\scumm\smush\decoder.h"\
+	"..\..\..\scumm\smush\palette.h"\
+	"..\..\..\scumm\smush\player.h"\
+	"..\..\..\scumm\smush\renderer.h"\
+	"..\..\..\scumm\smush\scumm_renderer.h"\
 	"..\..\..\scumm\sound\mixer.h"\
 	"..\..\..\scumm\stdafx.h"\
 	
@@ -8305,7 +7740,7 @@ SOURCE=..\..\..\scumm\scummvm.cpp
 
 !IF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
 
-DEP_CPP_SCUMMV=\
+DEP_CPP_SCUMM=\
 	"..\..\..\common\config-file.h"\
 	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
@@ -8343,17 +7778,17 @@ DEP_CPP_SCUMMV=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
-NODEP_CPP_SCUMMV=\
+NODEP_CPP_SCUMM=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
 
-DEP_CPP_SCUMMV=\
+DEP_CPP_SCUMM=\
 	"..\..\..\scumm\actor.h"\
 	"..\..\..\scumm\boxes.h"\
 	"..\..\..\scumm\bundle.h"\
@@ -8370,7 +7805,7 @@ DEP_CPP_SCUMMV=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	
-NODEP_CPP_SCUMMV=\
+NODEP_CPP_SCUMM=\
 	"..\..\..\scumm\common\config-file.h"\
 	"..\..\..\scumm\common\engine.h"\
 	"..\..\..\scumm\common\file.h"\
@@ -8393,7 +7828,7 @@ NODEP_CPP_SCUMMV=\
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
 
-DEP_CPP_SCUMMV=\
+DEP_CPP_SCUMM=\
 	"..\..\..\common\config-file.h"\
 	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
@@ -8431,17 +7866,17 @@ DEP_CPP_SCUMMV=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
-NODEP_CPP_SCUMMV=\
+NODEP_CPP_SCUMM=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
 
-DEP_CPP_SCUMMV=\
+DEP_CPP_SCUMM=\
 	"..\..\..\scumm\actor.h"\
 	"..\..\..\scumm\boxes.h"\
 	"..\..\..\scumm\bundle.h"\
@@ -8458,7 +7893,7 @@ DEP_CPP_SCUMMV=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	
-NODEP_CPP_SCUMMV=\
+NODEP_CPP_SCUMM=\
 	"..\..\..\scumm\common\config-file.h"\
 	"..\..\..\scumm\common\engine.h"\
 	"..\..\..\scumm\common\file.h"\
@@ -8481,53 +7916,7 @@ NODEP_CPP_SCUMMV=\
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
 
-DEP_CPP_SCUMMV=\
-	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gui\console.h"\
-	"..\..\..\gui\dialog.h"\
-	"..\..\..\gui\message.h"\
-	"..\..\..\gui\newgui.h"\
-	"..\..\..\gui\widget.h"\
-	"..\..\..\scumm\actor.h"\
-	"..\..\..\scumm\boxes.h"\
-	"..\..\..\scumm\bundle.h"\
-	"..\..\..\scumm\charset.h"\
-	"..\..\..\scumm\debugger.h"\
-	"..\..\..\scumm\dialogs.h"\
-	"..\..\..\scumm\gfx.h"\
-	"..\..\..\scumm\imuse.h"\
-	"..\..\..\scumm\imuse_digi.h"\
-	"..\..\..\scumm\intern.h"\
-	"..\..\..\scumm\object.h"\
-	"..\..\..\scumm\resource.h"\
-	"..\..\..\scumm\scumm.h"\
-	"..\..\..\scumm\sound.h"\
-	"..\..\..\scumm\verbs.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	
-NODEP_CPP_SCUMMV=\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_SCUMMV=\
+DEP_CPP_SCUMM=\
 	"..\..\..\common\config-file.h"\
 	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
@@ -8568,14 +7957,67 @@ DEP_CPP_SCUMMV=\
 	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
-NODEP_CPP_SCUMMV=\
+NODEP_CPP_SCUMM=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
 	
 
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_SCUMM=\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\gui\console.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\message.h"\
+	"..\..\..\gui\newgui.h"\
+	"..\..\..\gui\widget.h"\
+	"..\..\..\scumm\actor.h"\
+	"..\..\..\scumm\boxes.h"\
+	"..\..\..\scumm\bundle.h"\
+	"..\..\..\scumm\charset.h"\
+	"..\..\..\scumm\debugger.h"\
+	"..\..\..\scumm\dialogs.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\imuse.h"\
+	"..\..\..\scumm\imuse_digi.h"\
+	"..\..\..\scumm\intern.h"\
+	"..\..\..\scumm\object.h"\
+	"..\..\..\scumm\resource.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\scumm\verbs.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_SCUMM=\
+	"..\..\..\common\macos.h"\
+	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
+	
+
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
 
-DEP_CPP_SCUMMV=\
+DEP_CPP_SCUMM=\
 	"..\..\..\scumm\actor.h"\
 	"..\..\..\scumm\boxes.h"\
 	"..\..\..\scumm\bundle.h"\
@@ -8592,7 +8034,7 @@ DEP_CPP_SCUMMV=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	
-NODEP_CPP_SCUMMV=\
+NODEP_CPP_SCUMM=\
 	"..\..\..\scumm\common\config-file.h"\
 	"..\..\..\scumm\common\engine.h"\
 	"..\..\..\scumm\common\file.h"\
@@ -8615,7 +8057,7 @@ NODEP_CPP_SCUMMV=\
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Debug"
 
-DEP_CPP_SCUMMV=\
+DEP_CPP_SCUMM=\
 	"..\..\..\scumm\actor.h"\
 	"..\..\..\scumm\boxes.h"\
 	"..\..\..\scumm\bundle.h"\
@@ -8632,7 +8074,7 @@ DEP_CPP_SCUMMV=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	
-NODEP_CPP_SCUMMV=\
+NODEP_CPP_SCUMM=\
 	"..\..\..\scumm\common\config-file.h"\
 	"..\..\..\scumm\common\engine.h"\
 	"..\..\..\scumm\common\file.h"\
@@ -8688,12 +8130,12 @@ DEP_CPP_SOUND=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -8753,12 +8195,12 @@ DEP_CPP_SOUND=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -8818,6 +8260,8 @@ DEP_CPP_SOUND=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\macos.h"\
@@ -8852,12 +8296,17 @@ DEP_CPP_SOUND=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -8957,12 +8406,12 @@ DEP_CPP_STRIN=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_STRIN=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -9019,12 +8468,12 @@ DEP_CPP_STRIN=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_STRIN=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -9081,6 +8530,8 @@ DEP_CPP_STRIN=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_STRIN=\
 	"..\..\..\common\macos.h"\
@@ -9115,12 +8566,17 @@ DEP_CPP_STRIN=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_STRIN=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -9203,11 +8659,11 @@ DEP_CPP_USAGE=\
 	"..\..\..\scumm\usage_bits.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_USAGE=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -9250,11 +8706,11 @@ DEP_CPP_USAGE=\
 	"..\..\..\scumm\usage_bits.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_USAGE=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -9297,6 +8753,7 @@ DEP_CPP_USAGE=\
 	"..\..\..\scumm\usage_bits.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_USAGE=\
 	"..\..\..\common\macos.h"\
@@ -9324,11 +8781,11 @@ DEP_CPP_USAGE=\
 	"..\..\..\scumm\usage_bits.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_USAGE=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -9401,11 +8858,11 @@ DEP_CPP_VARS_=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VARS_=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -9448,11 +8905,11 @@ DEP_CPP_VARS_=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VARS_=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -9495,6 +8952,7 @@ DEP_CPP_VARS_=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VARS_=\
 	"..\..\..\common\macos.h"\
@@ -9522,11 +8980,11 @@ DEP_CPP_VARS_=\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VARS_=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
@@ -9598,11 +9056,11 @@ DEP_CPP_VERBS=\
 	"..\..\..\scumm\verbs.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VERBS=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -9653,11 +9111,11 @@ DEP_CPP_VERBS=\
 	"..\..\..\scumm\verbs.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VERBS=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -9708,6 +9166,7 @@ DEP_CPP_VERBS=\
 	"..\..\..\scumm\verbs.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VERBS=\
 	"..\..\..\common\macos.h"\
@@ -9738,11 +9197,11 @@ DEP_CPP_VERBS=\
 	"..\..\..\scumm\verbs.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VERBS=\
 	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE x86em) Release"
