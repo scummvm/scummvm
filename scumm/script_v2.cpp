@@ -2824,10 +2824,10 @@ void Scumm::o6_miscOps()
 				addMessageToStack(getStringAddressVar(VAR_STRING2DRAW));
 				if (strncmp("/SYSTEM.007/ /", (char*)&buf, 14) == 0) {
 					translateText((char*)&buf + 13, (char*)&charset._buffer);
-					description();
+					//description();
 				}	else if (strncmp("/SYSTEM.007/ ", (char*)&buf, 13) == 0) {
 					strcpy((char*)&charset._buffer, (char*)&buf + 13);
-					description();
+					//description();
 				}
 			} else { 
 				setStringVars(0);
