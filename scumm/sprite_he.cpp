@@ -199,6 +199,15 @@ int ScummEngine_v90he::spriteInfoGet_field_80(int spriteId) {
 	return _spriteTable[spriteId].field_80;
 }
 
+int ScummEngine_v90he::spriteInfoGet_field_88(int spriteId, int type) {
+	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+
+	if (type == 0x7B)
+		return _spriteTable[spriteId].field_88;
+	else
+		return 0;
+}
+
 void ScummEngine_v90he::getSpriteImageDim(int spriteId, int32 &w, int32 &h) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
@@ -525,11 +534,11 @@ void ScummEngine_v90he::spriteInfoSet_resetClassFlags(int spriteId) {
 	_spriteTable[spriteId].class_flags = 0;
 }
 
-void ScummEngine_v90he::spriteInfoSet_field_88(int spriteId, int value1, int value2) {
+void ScummEngine_v90he::spriteInfoSet_field_88(int spriteId, int type, int value) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	if (value1 == 0x7B) {
-		_spriteTable[spriteId].field_88 = value2;
+	if (type == 0x7B) {
+		_spriteTable[spriteId].field_88 = value;
 		_spriteTable[spriteId].flags |= kSF01 | kSFNeedRedraw;
 	}
 }
