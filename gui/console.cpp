@@ -149,6 +149,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 				_buffer[_promptEndPos % kBufferSize] = ' ';
 				_promptEndPos--;
 			}
+			scrollToCurrent();
 			draw();	// FIXME - not nice to redraw the full console just for one char!
 			break;
 /*
@@ -194,6 +195,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 					_buffer[(i+1) % kBufferSize] = _buffer[i % kBufferSize];
 				_promptEndPos++;
 				putchar((char)ascii);
+				scrollToCurrent();
 			}
 	}
 }
@@ -351,4 +353,17 @@ void ConsoleDialog::drawCaret(bool erase)
 	_gui->addDirtyRect(x, y, kCharWidth, kLineHeight);
 	
 	_caretVisible = !erase;
+}
+
+void ConsoleDialog::scrollToCurrent()
+{
+	int line = _currentPos / _lineWidth;
+	int displayLine = line - _scrollLine + _linesPerPage - 1;
+	
+	if (displayLine < 0) {
+		// TODO - this should only occur for loong edit lines, though
+	} else if (displayLine >= _linesPerPage) {
+		_scrollLine = _currentPos / _lineWidth;
+		updateScrollBar();
+	}
 }

@@ -77,6 +77,7 @@ protected:
 	void print(const char *str);
 	void nextLine();
 	void updateScrollBar();
+	void scrollToCurrent();
 	inline int getBufferPos() const { return _currentPos % kBufferSize; }
 
 	// Line editing
