@@ -1,30 +1,76 @@
-(C) 2003- The ScummVM-Residual team
-http://www.scummvm.org/                           Version 0.0-CVS
-------------------------------------------------------------------
-README: Still needs writing
+Residual: A LucasArts 3D game interpreter            Version 0.01-CVS
+(C) 2003- The ScummVM-Residual team                  Last Updated: 21st Aug 2003
+--------------------------------------------------------------------------------
 
-What is Residual:
- Residual is a ScummVM sub-project to create an engine to play the remaining 
- (residual) LucasArts adventures that ScummVM does not support. This means the
- 3D titles Grim Fandango (and eventually, maybe, perhaps) Escape from 
- Monkey Island. It's a word pun, as 'grime' is a residue (as is scum). 
+What is Residual?
+-----------------
+Residual is a ScummVM (http://www.scummvm.org/) sub-project to play LucasArts'
+LUA-bassed 3D adventures. The 2D adventures based on the SCUMM-engine can be run
+by the main ScummVM software, Residual handles the residual (remaining) games.
+It is also a word pun, as the engine used in the first LUA-based adventure was
+gamed GrimE, which is a residue. Residual is an OpenGL program, and requirs a
+3D card and OpenGL support.
+
+What games does it support?
+---------------------------
+Residual is a very new project, and still very much in an alpha stage. Currently
+it contains some support for Grim Fandango. We hope to later be able to support 
+the other LucasArts LUA-based title 'Escape from Monkey Island'.
 
 How do I run Residual?
- Create ~/.residualrc (UNIX) or C:\residual.ini (Win32)
- Add:
-  DataDir=[path to all the .lab files]
-  good_times=TRUE
+----------------------
+Again, as Residual is still under heavy development, it is not yet stable, easy
+to use, nor complete. However, if you do wish to try it you can do so by:
 
-Notes about Residual:
+UNIX:
+     Create a ~/.residualrc file, containing the following lines:
+       DataDir=[path to all the .lab files]
+       good_times=TRUE
+Win32:
+     Copy 'residual.exe' into the directory containing your .lab files, and
+create a file in this directory called 'residual.ini'. This file should contain
+the lines:
+       DataDir=.
+       good_times=TRUE
+
+What is the state of Residual?
+-------------------------------
+Many features are not yet supported. 2D graphics and text are not yet drawn,
+although you can interact with objects that do not appear (eg, the mail tube)
+It may crash. There is no kind of zbuffering, so Manny is always 'in front'
+of objects. You can walk off the screen and into places you should not be
+able to. There is no lighting. Basically, not all that great.
+
+However, the game itself is in a fairly decent state. You can (using the
+default Grim keys, such as 'e' for examine, 'u' to use, 'p' to pickup and
+'i' for inventory) interact with things and actually 'play' it.
+
+How do I report bugs?
+---------------------
+See above. There is no point yet.
+
+What else should I know?
+------------------------
   * Exit with 'q', and don't press f1, as things will go loopy.
   * Won't compile in MSVC (see TODO), but will on MingW32.
-  * Windows you must put .exe in the DataDir and set it to '.' in residual.ini,
-    Windows-style path slashing isn't parsed yet.
   * See TODO for other stuff
 
+ScummVM-Residual Team Credits:
+------------------------------
 ScummVM-Residual Team Credits:
  Daniel Schepler         Initial engine codebase & LUA upgrades
  James Brown          	 ScummVM project leader, core engine developer
  Vincent Hamm            Core engine developer
  Lionel Ulmer            OpenGL optimisations
  Pawel Kolodziejski      SMUSH/iMUSE implemention
+
+Special Thanks To:
+------------------ 
+ The LUA developers, for creating a nice compact script interpreter.
+ 
+ Tim Schafer, for obvious reasons, and everybody else who helped make
+ Grim Fandango a brilliant game; and the EMI team for giving it their
+ best try.
+ 
+ Bret Mogilefsky, for managing to create a SPUTM-style 3D LUA engine,
+ and avoiding the horrible mess it could have been.
