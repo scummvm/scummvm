@@ -49,7 +49,7 @@ public:
 	void parseCommandLine(int argc, char **argv);
 	int detectMain();
 	void setGame(const String &name);
-	const char *getGameName(void);
+	const String& getGameName(void);
 
 	bool _fullScreen;
 	byte _gameId;
@@ -71,7 +71,7 @@ public:
 	int _gameTempo;
 	int _midi_driver;
 	String _gameFileName;
-	const char *_gameText;
+	String _gameText;
 	uint32 _features;
 
 	int _gfx_driver;

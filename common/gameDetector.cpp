@@ -94,7 +94,6 @@ GameDetector::GameDetector()
 	_gameDataPath = 0;
 	_gameTempo = 0;
 	_midi_driver = MD_AUTO;
-	_gameText = 0;
 	_features = 0;
 
 	_cdrom = 0;
@@ -520,7 +519,7 @@ bool GameDetector::detectGame()
 	const VersionSettings *gnl = version_settings;
 
 	_gameId = 0;
-	_gameText = NULL;
+	_gameText.clear();
 	do {
 		if (!scumm_stricmp(_gameFileName.c_str(), gnl->filename)) {
 			_gameId = gnl->id;
@@ -538,12 +537,12 @@ bool GameDetector::detectGame()
 	return false;
 }
 
-const char *GameDetector::getGameName()
+const ScummVM::String& GameDetector::getGameName()
 {
-	if (_gameText == NULL) {
-		char buf[256];
-		sprintf(buf, "Unknown game: \"%s\"", _gameFileName.c_str());
-		_gameText = strdup(buf);
+	if (_gameText.isEmpty()) {
+		_gameText = "Unknown game: \"";
+		_gameText += _gameFileName;
+		_gameText += "\"";
 	}
 	return _gameText;
 }
@@ -570,7 +569,7 @@ int GameDetector::detectMain()
 
 	if (!_gameDataPath) {
 		warning("No path was provided. Assuming the data files are in the current directory");
-		_gameDataPath = strdup("");
+		_gameDataPath = "";
 	} else if (_gameDataPath[strlen(_gameDataPath)-1] != '/'
 #ifdef __MORPHOS__
 					&& _gameDataPath[strlen(_gameDataPath)-1] != ':'

@@ -191,7 +191,7 @@ int main(int argc, char *argv[])
 	
 	// Set the window caption (for OSystems that support it)
 	OSystem::Property prop;
-	prop.caption = (char *)detector.getGameName();
+	prop.caption = detector.getGameName().c_str();
 	system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
 
 	// Create the game engine
