@@ -166,7 +166,7 @@ void Sound::playSound(int soundID, int offset) {
 		debug(0, "playSound #%d", soundID);
 
 		int music_offs, total_size;
-		uint tunes, skip = 0;
+		uint tracks, skip = 0;
 		char buf[32];
 		File musicFile;
 
@@ -178,16 +178,16 @@ void Sound::playSound(int soundID, int offset) {
 		musicFile.seek(4, SEEK_SET);
 		total_size = musicFile.readUint32BE();
 		musicFile.seek(+8, SEEK_CUR);
-		tunes = musicFile.readUint32LE();
+		tracks = musicFile.readUint32LE();
 
 		if (soundID >= 8500)
 			skip = (soundID - 8500);
-		if (soundID >= 8000)
+		else if (soundID >= 8000)
 			skip = (soundID - 8000);
 		else if	(soundID >= 4000)
 			skip = (soundID - 4000);
 		
-		if (skip > tunes)
+		if (skip > tracks)
 			skip = 0;
 
 		musicFile.seek(+28, SEEK_CUR);
@@ -242,11 +242,10 @@ void Sound::playSound(int soundID, int offset) {
 		return;
 	}
 
-	Common::hexdump(ptr, 0x30);
 	// Support for SFX in Monkey Island 1, Mac version
 	// This is rather hackish right now, but works OK. SFX are not sounding
 	// 100% correct, though, not sure right now what is causing this.
-	if (READ_UINT32(ptr) == MKID('Mac1')) {
+	else if (READ_UINT32(ptr) == MKID('Mac1')) {
 
 		// Read info from the header
 		size = READ_BE_UINT32(ptr+0x60);
