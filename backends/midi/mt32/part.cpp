@@ -215,7 +215,7 @@ unsigned int Part::getAbsTimbreNum() {
 
 void Part::setPatch(int patchNum) {
 	int absTimbreNum = -1; // Initialised to please compiler
-	TimbreParam timSrc;
+	const TimbreParam *timbre;
 	if (isRhythm) {
 		// "patchNum" is treated as "timbreNum" for rhythm part
 		if (patchNum < 128) {
@@ -223,7 +223,7 @@ void Part::setPatch(int patchNum) {
 			return;
 		}
 		absTimbreNum = patchNum;
-		timSrc = synth->mt32ram.params.timbres[absTimbreNum].timbre;
+		timbre = &synth->mt32ram.params.timbres[absTimbreNum].timbre;
 	} else {
 		if (patchNum >= 0) {
 			setPatch(&synth->mt32ram.params.patches[patchNum]);
@@ -231,21 +231,21 @@ void Part::setPatch(int patchNum) {
 		if (patchNum >= 0) {
 			setTimbre(&synth->mt32ram.params.timbres[getAbsTimbreNum()].timbre);
 		}
-		timSrc = *timbreTemp;
+		timbre = timbreTemp;
 #if 0
 		// Immediately stop all partials on this part (this is apparently *not* the correct behaviour)
 		for (int m = 0; m < MT32EMU_MAX_POLY; m++) {
 			AbortPoly(poly);
 		}
 #else
-		// check if any partials are still playing on this part
+		// check if any partials are still playing with the old patch cache
 		// if so then duplicate the cached data from the part to the partial so that
 		// we can change the part's cache without affecting the partial.
-		// Hopefully this is fairly rare.
+		// We delay this until now to avoid a copy operation with every note played
 		for (int m = 0; m < MT32EMU_MAX_POLY; m++) {
 			for (int i = 0; i < 4; i++) {
 				Partial *partial = polyTable[m].partials[i];
-				if (partial != NULL) {
+				if (partial != NULL && partial->patchCache == &patchCache[i]) {
 					// copy cache data
 					partial->cachebackup = patchCache[i];
 					// update pointers
@@ -256,11 +256,11 @@ void Part::setPatch(int patchNum) {
 #endif
 	}
 
-	memcpy(currentInstr, timSrc.common.name, 10);
+	memcpy(currentInstr, timbre->common.name, 10);
 
 	int partialCount = 0;
-	for (int t=0;t<4;t++) {
-		if ( ((timSrc.common.pmute >> (t)) & 0x1) == 1 ) {
+	for (int t = 0; t < 4; t++) {
+		if (((timbre->common.pmute >> t) & 0x1) == 1) {
 			patchCache[t].playPartial = true;
 			partialCount++;
 		} else {
@@ -270,31 +270,31 @@ void Part::setPatch(int patchNum) {
 
 		// Calculate and cache common parameters
 
-		patchCache[t].pcm = timSrc.partial[t].wg.pcmwave;
-		patchCache[t].useBender = (timSrc.partial[t].wg.bender == 1);
+		patchCache[t].pcm = timbre->partial[t].wg.pcmwave;
+		patchCache[t].useBender = (timbre->partial[t].wg.bender == 1);
 
 		switch (t) {
 		case 0:
-			patchCache[t].PCMPartial = (PartialStruct[(int)timSrc.common.pstruct12] & 0x2) ? true : false;
-			patchCache[t].structureMix = PartialMixStruct[(int)timSrc.common.pstruct12];
+			patchCache[t].PCMPartial = (PartialStruct[(int)timbre->common.pstruct12] & 0x2) ? true : false;
+			patchCache[t].structureMix = PartialMixStruct[(int)timbre->common.pstruct12];
 			patchCache[t].structurePosition = 0;
 			patchCache[t].structurePair = 1;
 			break;
 		case 1:
-			patchCache[t].PCMPartial = (PartialStruct[(int)timSrc.common.pstruct12] & 0x1) ? true : false;
-			patchCache[t].structureMix = PartialMixStruct[(int)timSrc.common.pstruct12];
+			patchCache[t].PCMPartial = (PartialStruct[(int)timbre->common.pstruct12] & 0x1) ? true : false;
+			patchCache[t].structureMix = PartialMixStruct[(int)timbre->common.pstruct12];
 			patchCache[t].structurePosition = 1;
 			patchCache[t].structurePair = 0;
 			break;
 		case 2:
-			patchCache[t].PCMPartial = (PartialStruct[(int)timSrc.common.pstruct34] & 0x2) ? true : false;
-			patchCache[t].structureMix = PartialMixStruct[(int)timSrc.common.pstruct34];
+			patchCache[t].PCMPartial = (PartialStruct[(int)timbre->common.pstruct34] & 0x2) ? true : false;
+			patchCache[t].structureMix = PartialMixStruct[(int)timbre->common.pstruct34];
 			patchCache[t].structurePosition = 0;
 			patchCache[t].structurePair = 3;
 			break;
 		case 3:
-			patchCache[t].PCMPartial = (PartialStruct[(int)timSrc.common.pstruct34] & 0x1) ? true : false;
-			patchCache[t].structureMix = PartialMixStruct[(int)timSrc.common.pstruct34];
+			patchCache[t].PCMPartial = (PartialStruct[(int)timbre->common.pstruct34] & 0x1) ? true : false;
+			patchCache[t].structureMix = PartialMixStruct[(int)timbre->common.pstruct34];
 			patchCache[t].structurePosition = 1;
 			patchCache[t].structurePair = 2;
 			break;
@@ -302,15 +302,15 @@ void Part::setPatch(int patchNum) {
 			break;
 		}
 
-		patchCache[t].waveform = timSrc.partial[t].wg.waveform;
-		patchCache[t].pulsewidth = timSrc.partial[t].wg.pulsewid;
-		patchCache[t].pwsens = timSrc.partial[t].wg.pwvelo;
-		patchCache[t].pitchkeyfollow = fixKeyfollow(timSrc.partial[t].wg.keyfollow, &patchCache[t].pitchkeydir);
+		patchCache[t].waveform = timbre->partial[t].wg.waveform;
+		patchCache[t].pulsewidth = timbre->partial[t].wg.pulsewid;
+		patchCache[t].pwsens = timbre->partial[t].wg.pwvelo;
+		patchCache[t].pitchkeyfollow = fixKeyfollow(timbre->partial[t].wg.keyfollow, &patchCache[t].pitchkeydir);
 
 		// Calculate and cache pitch stuff
-		patchCache[t].pitchshift = timSrc.partial[t].wg.coarse;
+		patchCache[t].pitchshift = timbre->partial[t].wg.coarse;
 		Bit32s pFine, fShift;
-		pFine = (Bit32s)timSrc.partial[t].wg.fine;
+		pFine = (Bit32s)timbre->partial[t].wg.fine;
 		if (isRhythm) {
 			patchCache[t].pitchshift += 24;
 			fShift = pFine + 50;
@@ -320,16 +320,16 @@ void Part::setPatch(int patchNum) {
 		}
 		patchCache[t].fineshift = finetable[fShift];
 
-		patchCache[t].pitchEnv = timSrc.partial[t].env;
+		patchCache[t].pitchEnv = timbre->partial[t].env;
 		patchCache[t].pitchEnv.sensitivity = (char)((float)patchCache[t].pitchEnv.sensitivity*1.27);
 		patchCache[t].pitchsustain = patchCache[t].pitchEnv.level[3];
 
 		// Calculate and cache TVA envelope stuff
-		patchCache[t].ampEnv = timSrc.partial[t].tva;
+		patchCache[t].ampEnv = timbre->partial[t].tva;
 		for (int i = 0; i < 4; i++)
-			patchCache[t].ampEnv.envlevel[i] = (char)((float)patchCache[t].ampEnv.envlevel[i]*1.27);
-		patchCache[t].ampEnv.level = (char)((float)patchCache[t].ampEnv.level*1.27);
-		float tvelo = ((float)timSrc.partial[t].tva.velosens / 100.0f);
+			patchCache[t].ampEnv.envlevel[i] = (char)((float)patchCache[t].ampEnv.envlevel[i] * 1.27f);
+		patchCache[t].ampEnv.level = (char)((float)patchCache[t].ampEnv.level * 1.27f);
+		float tvelo = ((float)timbre->partial[t].tva.velosens / 100.0f);
 		float velo = fabs(tvelo-0.5f) * 2.0f;
 		velo *= 63.0f;
 		patchCache[t].ampEnv.velosens = (char)velo;
@@ -347,7 +347,7 @@ void Part::setPatch(int patchNum) {
 		patchCache[t].amplevel = patchCache[t].ampEnv.level;
 
 		// Calculate and cache filter stuff
-		patchCache[t].filtEnv = timSrc.partial[t].tvf;
+		patchCache[t].filtEnv = timbre->partial[t].tvf;
 		patchCache[t].tvfdepth = patchCache[t].filtEnv.envdkf;
 		patchCache[t].filtkeyfollow  = fixKeyfollow(patchCache[t].filtEnv.keyfollow, &patchCache[t].keydir);
 		patchCache[t].filtEnv.envdepth = (char)((float)patchCache[t].filtEnv.envdepth * 1.27);
@@ -356,15 +356,15 @@ void Part::setPatch(int patchNum) {
 		patchCache[t].filtsustain  = patchCache[t].filtEnv.envlevel[3];
 
 		// Calculate and cache LFO stuff
-		patchCache[t].lfodepth = timSrc.partial[t].lfo.depth;
-		patchCache[t].lfoperiod = lfotable[(int)timSrc.partial[t].lfo.rate];
-		patchCache[t].lforate = timSrc.partial[t].lfo.rate;
-		patchCache[t].modsense = timSrc.partial[t].lfo.modsense;
+		patchCache[t].lfodepth = timbre->partial[t].lfo.depth;
+		patchCache[t].lfoperiod = lfotable[(int)timbre->partial[t].lfo.rate];
+		patchCache[t].lforate = timbre->partial[t].lfo.rate;
+		patchCache[t].modsense = timbre->partial[t].lfo.modsense;
 	}
 	for (int t = 0; t < 4; t++) {
 		// Common parameters, stored redundantly
 		patchCache[t].partialCount = partialCount;
-		patchCache[t].sustain = (timSrc.common.nosustain == 0);
+		patchCache[t].sustain = (timbre->common.nosustain == 0);
 		if (isRhythm) {
 			patchCache[t].benderRange = 0;
 		} else {
@@ -380,7 +380,7 @@ void Part::setPatch(int patchNum) {
 #if MT32EMU_MONITOR_INSTRUMENTS == 1
 	synth->printDebug("%s: Recache, param %d (timbre: %s)", name, patchNum, currentInstr);
 	for (int i = 0; i < 4; i++) {
-		synth->printDebug(" %d: play=%s, pcm=%s (%d), wave=%d", i, patchCache[i].playPartial ? "YES" : "NO", patchCache[i].PCMPartial ? "YES" : "NO", timSrc.partial[i].wg.pcmwave, timSrc.partial[i].wg.waveform);
+		synth->printDebug(" %d: play=%s, pcm=%s (%d), wave=%d", i, patchCache[i].playPartial ? "YES" : "NO", patchCache[i].PCMPartial ? "YES" : "NO", timbre->partial[i].wg.pcmwave, timbre->partial[i].wg.waveform);
 	}
 #endif
 }
@@ -395,55 +395,60 @@ void Part::setVolume(int vol) {
 
 void Part::setPan(int pan) {
 	// FIXME:KG: This is unchangeable for drums (they always use drumPan), is that correct?
-	// FIXME:KG: There is no way to get a centred balance here... And the middle two
-	// pan settings have a distance of 1024, double the usual.
-	// Perhaps we should multiply by 516? 520? 520.111..?
-	// KG: Changed to 516, to mostly eliminate that jump in the middle
+	// FIXME:KG: Tweaked this a bit so that we have a left 100%, centre and right 100%
+	// (But this makes the range somewhat skewed)
 	if (pan < 64) {
 		volumesetting.leftvol = 32767;
-		volumesetting.rightvol = (Bit16s)(pan * 516);
+		volumesetting.rightvol = (Bit16s)(pan * 512);
+	} else if (pan == 64) {
+		volumesetting.leftvol = 32767;
+		volumesetting.rightvol = 32767;
 	} else {
 		volumesetting.rightvol = 32767;
-		volumesetting.leftvol = (Bit16s)((127 - pan) * 516);
+		volumesetting.leftvol = (Bit16s)((127 - pan) * 520);
 	}
 	//synth->printDebug("%s (%s): Set pan to %d", name, currentInstr, panpot);
 }
 
-void Part::playNote(PartialManager *partialManager, int f, int vel) {
+void Part::playNote(PartialManager *partialManager, unsigned int key, int vel) {
 	int drumNum = -1; // Initialised to please compiler
 	int drumTimbre = -1; // As above
 	int freqNum;
 
 	if (isRhythm) {
-		if (f < 24 || f > 87) {
-			synth->printDebug("%s: Attempted to play invalid note %d", name, f);
+		if (key < 24 || key > 87) {
+			synth->printDebug("%s: Attempted to play invalid key %d", name, key);
 			return;
 		}
-		drumNum = f - 24;
+		drumNum = key - 24;
 		drumTimbre = rhythmTemp[drumNum].timbre;
 		if (drumTimbre >= 94) {
-			synth->printDebug("%s: Attempted to play unmapped note %d!", name, f);
+			synth->printDebug("%s: Attempted to play unmapped key %d", name, key);
 			return;
 		}
 		memcpy(patchCache, drumCache[drumTimbre], sizeof(patchCache));
 		memcpy(&currentInstr, synth->mt32ram.params.timbres[128 + drumTimbre].timbre.common.name, 10);
-		currentInstr[10] = 0;
 		freqNum = MIDDLEC;
 	} else {
-		if (f < 12 || f > 108) {
-			synth->printDebug("%s (%s): Attempted to play invalid note %d", name, currentInstr, f);
-			return;
+		if (key < 12) {
+			synth->printDebug("%s (%s): Attempted to play invalid key %d < 12; moving up by octave", name, currentInstr, key);
+			key += 12;
+		} else if (key > 108) {
+			synth->printDebug("%s (%s): Attempted to play invalid key %d > 108; moving down by octave", name, currentInstr, key);
+			while (key > 108) {
+				key -= 12;
+			}
 		}
-		freqNum = f;
+		freqNum = key;
 	}
 	// POLY1 mode, Single Assign
 	// Haven't found any software that uses any of the other poly modes
 	// FIXME:KG: Should this also apply to rhythm?
 	if (!isRhythm) {
-		for (int i = 0; i < MT32EMU_MAX_POLY; i++) {
-			if (polyTable[i].isActive() && (polyTable[i].note == f)) {
+		for (unsigned int i = 0; i < MT32EMU_MAX_POLY; i++) {
+			if (polyTable[i].isActive() && (polyTable[i].key == key)) {
 				//AbortPoly(&polyTable[i]);
-				stopNote(f);
+				stopNote(key);
 				break;
 			}
 		}
@@ -453,11 +458,11 @@ void Part::playNote(PartialManager *partialManager, int f, int vel) {
 
 	if (needPartials > partialManager->GetFreePartialCount()) {
 		if (!partialManager->FreePartials(needPartials, partNum)) {
-			synth->printDebug("%s (%s): Insufficient free partials to play note %d (vel=%d)", name, currentInstr, f, vel);
+			synth->printDebug("%s (%s): Insufficient free partials to play key %d (vel=%d)", name, currentInstr, key, vel);
 			return;
 		}
 	}
-	// Find free note
+	// Find free poly
 	int m;
 	for (m = 0; m < MT32EMU_MAX_POLY; m++) {
 		if (!polyTable[m].isActive()) {
@@ -465,17 +470,15 @@ void Part::playNote(PartialManager *partialManager, int f, int vel) {
 		}
 	}
 	if (m == MT32EMU_MAX_POLY) {
-		synth->printDebug("%s (%s): No free poly to play note %d (vel %d)", name, currentInstr, f, vel);
+		synth->printDebug("%s (%s): No free poly to play key %d (vel %d)", name, currentInstr, key, vel);
 		return;
 	}
 
 	dpoly *tpoly = &polyTable[m];
-	Bit16s freq = freqtable[freqNum];
 
 	tpoly->isPlaying = true;
-	tpoly->note = f;
+	tpoly->key = key;
 	tpoly->isDecay = false;
-	tpoly->freq = freq;
 	tpoly->freqnum = freqNum;
 	tpoly->vel = vel;
 	tpoly->pedalhold = false;
@@ -505,9 +508,9 @@ void Part::playNote(PartialManager *partialManager, int f, int vel) {
 
 #if MT32EMU_MONITOR_INSTRUMENTS == 1
 	if (isRhythm) {
-		synth->printDebug("%s (%s): starting poly %d (drum %d, timbre %d) - Vel %d Key %d Vol %d", name, currentInstr, m, drumNum, drumTimbre, vel, f, volume);
+		synth->printDebug("%s (%s): starting poly %d (drum %d, timbre %d) - Vel %d Key %d Vol %d", name, currentInstr, m, drumNum, drumTimbre, vel, key, volume);
 	} else {
-		synth->printDebug("%s (%s): starting poly %d - Vel %d Key %d Vol %d", name, currentInstr, m, vel, f, volume);
+		synth->printDebug("%s (%s): starting poly %d - Vel %d Key %d Vol %d", name, currentInstr, m, vel, key, volume);
 	}
 #endif
 
@@ -548,23 +551,22 @@ void Part::stopPedalHold() {
 		dpoly *tpoly;
 		tpoly = &polyTable[q];
 		if (tpoly->isActive() && tpoly->pedalhold)
-			stopNote(tpoly->note);
+			stopNote(tpoly->key);
 	}
 }
 
-void Part::stopNote(int f) {
-	// Non-sustaining instruments ignore stop note commands.
+void Part::stopNote(unsigned int key) {
+	// Non-sustaining instruments ignore stop commands.
 	// They die away eventually anyway
-	//if (!tpoly->sustain) return;
 
 #if MT32EMU_MONITOR_INSTRUMENTS == 1
-	synth->printDebug("%s (%s): stopping key %d", name, currentInstr, f);
+	synth->printDebug("%s (%s): stopping key %d", name, currentInstr, key);
 #endif
 
-	if (f != -1) {
+	if (key != 255) {
 		for (int q = 0; q < MT32EMU_MAX_POLY; q++) {
 			dpoly *tpoly = &polyTable[q];
-			if (tpoly->isPlaying && tpoly->note == f) {
+			if (tpoly->isPlaying && tpoly->key == key) {
 				if (holdpedal)
 					tpoly->pedalhold = true;
 				else if (tpoly->sustain)
@@ -574,7 +576,7 @@ void Part::stopNote(int f) {
 		return;
 	}
 
-	// Find oldest note... yes, the MT-32 can be reconfigured to kill different note first
+	// Find oldest poly... yes, the MT-32 can be reconfigured to kill different poly first
 	// This is simplest
 	int oldest = -1;
 	Bit64s oldage = -1;

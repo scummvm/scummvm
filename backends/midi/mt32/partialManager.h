@@ -22,8 +22,6 @@
 #ifndef MT32EMU_PARTIALMANAGER_H
 #define MT32EMU_PARTIALMANAGER_H
 
-#define MAXPARTIALS 32
-
 namespace MT32Emu {
 
 class Synth;
@@ -32,8 +30,8 @@ class PartialManager {
 private:
 	Synth *synth; // Only used for sending debug output
 
-	Partial *partialTable[MAXPARTIALS];
-	Bit32s PartialReserveTable[MAXPARTIALS];
+	Partial *partialTable[MT32EMU_MAX_PARTIALS];
+	Bit32s PartialReserveTable[MT32EMU_MAX_PARTIALS];
 	Bit32s partialPart[9]; // The count of partials played per part
 
 public:

@@ -361,7 +361,6 @@ Bit16s *Partial::generateSamples(long length) {
 					else
 						ptemp = waveforms[3][noteVal][waveoff % waveformsize[3][noteVal]];
 					ptemp = ptemp * 4;
-
 					// This is the correct way
 					// Seems slow to me (though bandlimited) -- doesn't seem to
 					// sound any better though
@@ -654,7 +653,7 @@ Bit32s Partial::getFiltEnvelope() {
 					tStat->envbase = patchCache->filtEnv.envlevel[tStat->envstat];
 				tStat->envstat++;
 				tStat->envpos = 0;
-				if (tStat->envstat==3)
+				if (tStat->envstat == 3)
 					tStat->envsize = lasttimetable[(int)patchCache->filtEnv.envtime[tStat->envstat]];
 				else
 					tStat->envsize = (envtimetable[(int)patchCache->filtEnv.envtime[tStat->envstat]] * timekeytable[(int)patchCache->filtEnv.envtkf][poly->freqnum]) >> 8;

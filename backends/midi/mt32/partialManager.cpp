@@ -27,30 +27,30 @@ using namespace MT32Emu;
 
 PartialManager::PartialManager(Synth *useSynth) {
 	this->synth = useSynth;
-	for (int i = 0; i < MAXPARTIALS; i++)
+	for (int i = 0; i < MT32EMU_MAX_PARTIALS; i++)
 		partialTable[i] = new Partial(synth);
 }
 
 PartialManager::~PartialManager(void) {
-	for (int i = 0; i < MAXPARTIALS; i++)
+	for (int i = 0; i < MT32EMU_MAX_PARTIALS; i++)
 		delete partialTable[i];
 }
 
 void PartialManager::GetPerPartPartialUsage(int usage[9]) {
 	memset(usage, 0, 9 * sizeof (int));
-	for (int i = 0; i < MAXPARTIALS; i++) {
+	for (int i = 0; i < MT32EMU_MAX_PARTIALS; i++) {
 		if (partialTable[i]->isActive())
 			usage[partialTable[i]->getOwnerPart()]++;
 	}
 }
 
 void PartialManager::ClearAlreadyOutputed() {
-	for (int i = 0; i < MAXPARTIALS; i++)
+	for (int i = 0; i < MT32EMU_MAX_PARTIALS; i++)
 		partialTable[i]->alreadyOutputed = false;
 }
 
 void PartialManager::AgeAll() {
-	for (int i = 0; i < MAXPARTIALS; i++)
+	for (int i = 0; i < MT32EMU_MAX_PARTIALS; i++)
 		partialTable[i]->age++;
 }
 
@@ -63,7 +63,7 @@ bool PartialManager::ProduceOutput(int i, Bit16s *buffer, Bit32u bufferLength) {
 }
 
 void PartialManager::DeactivateAll() {
-	for (int i = 0; i < MAXPARTIALS; i++) {
+	for (int i = 0; i < MT32EMU_MAX_PARTIALS; i++) {
 		partialTable[i]->deactivate();
 	}
 }
@@ -84,7 +84,7 @@ Partial * PartialManager::AllocPartial(int partNum) {
 
 	// Use the first inactive partial reserved for the specified part (if there are any)
 	// Otherwise, use the last inactive partial, if any
-	for (int i = 0; i < MAXPARTIALS; i++) {
+	for (int i = 0; i < MT32EMU_MAX_PARTIALS; i++) {
 		if (!partialTable[i]->isActive()) {
 			outPartial = partialTable[i];
 			if (PartialReserveTable[i] == partNum)
@@ -101,7 +101,7 @@ Partial * PartialManager::AllocPartial(int partNum) {
 unsigned int PartialManager::GetFreePartialCount(void) {
 	int count = 0;
 	memset(partialPart, 0, sizeof(partialPart));
-	for (int i = 0; i < MAXPARTIALS; i++) {
+	for (int i = 0; i < MT32EMU_MAX_PARTIALS; i++) {
 		if (!partialTable[i]->isActive())
 			count++;
 		else
@@ -147,7 +147,7 @@ bool PartialManager::FreePartials(unsigned int needed, int partNum) {
 				oldest = -1;
 				oldnum = -1;
 				found = false;
-				for (i = 0; i < MAXPARTIALS; i++) {
+				for (i = 0; i < MT32EMU_MAX_PARTIALS; i++) {
 					if (partialTable[i]->isActive) {
 						if (partialTable[i]->ownerPart == selectPart) {
 							found = true;
@@ -176,7 +176,7 @@ bool PartialManager::FreePartials(unsigned int needed, int partNum) {
 			oldest = -1;
 			oldnum = -1;
 			found = false;
-			for (i = 0; i < MAXPARTIALS; i++) {
+			for (i = 0; i < MT32EMU_MAX_PARTIALS; i++) {
 				if (partialTable[i]->isActive) {
 					if (partialTable[i]->ownerPart == partNum) {
 						found = true;
@@ -205,7 +205,7 @@ bool PartialManager::FreePartials(unsigned int needed, int partNum) {
 	// Reclaim partials reserved for this part
 	// Kill those that are already decaying first
 	/*
-	for (int i = 0; i < MAXPARTIALS; i++) {
+	for (int i = 0; i < MT32EMU_MAX_PARTIALS; i++) {
 		if (PartialReserveTable[i] == partNum) {
 			if (partialTable[i]->ownerPart != partNum) {
 				if (partialTable[i]->partCache->envs[AMPENV].decaying) {
@@ -222,7 +222,7 @@ bool PartialManager::FreePartials(unsigned int needed, int partNum) {
 		Bit64s prior = -1;
 		int priornum = -1;
 
-		for (int i = 0; i < MAXPARTIALS; i++) {
+		for (int i = 0; i < MT32EMU_MAX_PARTIALS; i++) {
 			if (PartialReserveTable[i] == partNum && partialTable[i]->isActive() && partialTable[i]->getOwnerPart() != partNum) {
 				/*
 				if (mt32ram.params.system.reserveSettings[partialTable[i]->ownerPart] < prior) {
@@ -248,7 +248,7 @@ bool PartialManager::FreePartials(unsigned int needed, int partNum) {
 	while (needed > 0) {
 		Bit64s oldest = -1;
 		Bit64s oldlist = -1;
-		for (int i = 0; i < MAXPARTIALS; i++) {
+		for (int i = 0; i < MT32EMU_MAX_PARTIALS; i++) {
 			if (partialTable[i]->isActive()) {
 				if (partialTable[i]->getOwnerPart() == partNum) {
 					if (partialTable[i]->age > oldest) {

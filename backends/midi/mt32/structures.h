@@ -273,8 +273,7 @@ class Partial; // Forward reference for class defined in partial.h
 struct dpoly {
 	bool isPlaying;
 
-	int note;
-	int freq;
+	unsigned int key;
 	int freqnum;
 	int vel;
 

@@ -63,8 +63,8 @@ private:
 public:
 	Part(Synth *synth, int usePartNum);
 	char *getName();
-	void playNote(PartialManager *partialManager, int f, int vel);
-	void stopNote(int f);
+	void playNote(PartialManager *partialManager, unsigned int key, int vel);
+	void stopNote(unsigned int key);
 	void allStop();
 	void setVolume(int vol);
 	void setPan(int vol);
