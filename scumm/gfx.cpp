@@ -1134,7 +1134,7 @@ void Scumm::buildStripOffsets() {
 	int x, y, length = 0;
 	int run = 1;
 
-	for (x = 0 ; x < room_width << 3; x++) {
+	for (x = 0 ; x < (room_width << 3); x++) {
 
 		if ((x % 8) == 0) {
 			_egaStripRun[x >> 3] = run;
@@ -1206,9 +1206,14 @@ void Gdi::decodeStripOldEGA(byte *dst, byte *src, int height, int stripnr) {
 
 // FIXME - for now only draw the full height stuff.
 // There are also cases where e.g. height = 48. We ignore those for a single
-// reason: in the intro screen, they overdraw the kids faces with a blue
-// rect. Not sure whether that's one purpose or a bug; but for the sake of
-// making it look "more impressive" I put in this temporary hack.
+// reason: in the intro screen, they overdraw the kids faces with a blue rect.
+// For the sake of making it look "more impressive" I put in this temporary hack.
+// The reason for the whole problem seems to be the _egaStripFOO hack (see also buildStripOffsets)
+// Apparently it currently only works for the room graphics, but not for objects.
+// I think instead of forcing all this into drawBitmap(), maybe we should just
+// provide an alternative drawBitmap implementation for V2 games. That might be
+// much easier than trying to coerce the old graphics data into behaving like the
+// newer formats.
 if (height != 128)
 	return;
 	
