@@ -90,8 +90,8 @@ GameList Engine_SIMON_gameList() {
 	return games;
 }
 
-GameList Engine_SIMON_detectGames(const FSList &fslist) {
-	GameList detectedGames;
+DetectedGameList Engine_SIMON_detectGames(const FSList &fslist) {
+	DetectedGameList detectedGames;
 	const SimonGameSettings *g;
 	char detectName[128];
 	char detectName2[128];

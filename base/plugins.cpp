@@ -32,7 +32,7 @@ typedef Engine *(*EngineFactory)(GameDetector *detector, OSystem *syst);
 
 typedef const char *(*NameFunc)();
 typedef GameList (*TargetListFunc)();
-typedef GameList (*DetectFunc)(const FSList &fslist);
+typedef DetectedGameList (*DetectFunc)(const FSList &fslist);
 
 
 #ifdef DYNAMIC_MODULES
@@ -81,7 +81,7 @@ public:
 	}
 
 	GameList getSupportedGames() const { return _games; }
-	GameList detectGames(const FSList &fslist) const {
+	DetectedGameList detectGames(const FSList &fslist) const {
 		return (*_df)(fslist);
 	}
 };
@@ -113,7 +113,7 @@ public:
 	}
 
 	GameList getSupportedGames() const { return _games; }
-	GameList detectGames(const FSList &fslist) const {
+	DetectedGameList detectGames(const FSList &fslist) const {
 		assert(_df);
 		return (*_df)(fslist);
 	}
@@ -274,4 +274,17 @@ bool PluginManager::tryLoadPlugin(Plugin *plugin) {
 		delete plugin;
 		return false;
 	}
+}
+
+DetectedGameList PluginManager::detectGames(const FSList &fslist) const {
+	DetectedGameList candidates;
+
+	// Iterate over all known games and for each check if it might be
+	// the game in the presented directory.
+	PluginList::ConstIterator iter;
+	for (iter = _plugins.begin(); iter != _plugins.end(); ++iter) {
+		candidates.push_back((*iter)->detectGames(fslist));
+	}
+	
+	return candidates;
 }

@@ -60,8 +60,8 @@ GameList Engine_SWORD2_gameList() {
 	return games;
 }
 
-GameList Engine_SWORD2_detectGames(const FSList &fslist) {
-	GameList detectedGames;
+DetectedGameList Engine_SWORD2_detectGames(const FSList &fslist) {
+	DetectedGameList detectedGames;
 	const Sword2GameSettings *g;
 	
 	// TODO: It would be nice if we had code here which distinguishes

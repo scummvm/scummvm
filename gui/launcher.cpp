@@ -403,15 +403,7 @@ void LauncherDialog::addGame() {
 
 		// ...so let's determine a list of candidates, games that
 		// could be contained in the specified directory.
-		GameList candidates;
-	
-		// Iterate over all known games and for each check if it might be
-		// the game in the presented directory.
-		const PluginList &plugins = PluginManager::instance().getPlugins();
-		PluginList::ConstIterator iter = plugins.begin();
-		for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-			candidates.push_back((*iter)->detectGames(*files));
-		}
+		DetectedGameList candidates(PluginManager::instance().detectGames(*files));
 
 		int idx;
 		if (candidates.isEmpty()) {
@@ -433,7 +425,7 @@ void LauncherDialog::addGame() {
 			idx = dialog.runModal();
 		}
 		if (0 <= idx && idx < candidates.size()) {
-			GameSettings result = candidates[idx];
+			DetectedGame result = candidates[idx];
 
 			// The auto detector or the user made a choice.
 			// Pick a domain name which does not yet exist (after all, we
@@ -453,6 +445,14 @@ void LauncherDialog::addGame() {
 			}
 			ConfMan.set("path", dir->path(), domain);
 
+			// Set language if specified
+			if (result.language != Common::UNK_LANG)
+				ConfMan.set("language", Common::getLanguageString(result.language), domain);
+
+			// Set platform if specified
+			if (result.platform != Common::kPlatformUnknown)
+				ConfMan.set("platform", Common::getPlatformString(result.platform), domain);
+
 			// Display edit dialog for the new entry
 			EditGameDialog editDialog(domain, result);
 			if (editDialog.runModal()) {
@@ -460,7 +460,7 @@ void LauncherDialog::addGame() {
 
 				// Write config to disk
 				ConfMan.flushToDisk();
-				
+
 				// Update the ListWidget and force a redraw
 				updateListing();
 				draw();

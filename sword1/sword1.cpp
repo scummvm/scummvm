@@ -51,8 +51,8 @@ GameList Engine_SWORD1_gameList() {
 	return games;
 }
 
-GameList Engine_SWORD1_detectGames(const FSList &fslist) {
-	GameList detectedGames;
+DetectedGameList Engine_SWORD1_detectGames(const FSList &fslist) {
+	DetectedGameList detectedGames;
 
 	// Iterate over all files in the given directory
 	for (FSList::ConstIterator file = fslist.begin(); file != fslist.end(); ++file) {

@@ -25,6 +25,7 @@
 
 #include "common/list.h"
 #include "common/singleton.h"
+#include "common/util.h"
 
 class Engine;
 class FSList;
@@ -32,8 +33,26 @@ class GameDetector;
 class OSystem;
 struct GameSettings;
 
-/** List of GameSettings- */
+/** List of games. */
 typedef Common::List<GameSettings> GameList;
+
+/**
+ * A detected game. Carries the GameSettings, but also (optionally)
+ * information about the language and platform of the detected game.
+ */
+struct DetectedGame : GameSettings {
+	Common::Language language;
+	Common::Platform platform;
+	DetectedGame() : language(Common::UNK_LANG), platform(Common::kPlatformUnknown) {}
+	DetectedGame(const GameSettings &game,
+	             Common::Language l = Common::UNK_LANG,
+	             Common::Platform p = Common::kPlatformUnknown)
+		: GameSettings(game), language(l), platform(p) {}
+};
+
+/** List of detected games. */
+typedef Common::List<DetectedGame> DetectedGameList;
+
 
 /**
  * Abstract base class for the plugin system.
@@ -52,7 +71,7 @@ public:
 	
 	virtual GameList getSupportedGames() const = 0;
 	virtual GameSettings findGame(const char *gameName) const;
-	virtual GameList detectGames(const FSList &fslist) const = 0;
+	virtual DetectedGameList detectGames(const FSList &fslist) const = 0;
 
 	virtual Engine *createInstance(GameDetector *detector, OSystem *syst) const = 0;
 };
@@ -75,7 +94,7 @@ public:
 		const char *PLUGIN_name() { return name; } \
 		GameList PLUGIN_getSupportedGames() { return gameListFactory(); } \
 		Engine *PLUGIN_createEngine(GameDetector *detector, OSystem *syst) { return engineFactory(detector, syst); } \
-		GameList PLUGIN_detectGames(const FSList &fslist) { return detectGames(fslist); } \
+		DetectedGameList PLUGIN_detectGames(const FSList &fslist) { return detectGames(fslist); } \
 	}
 #endif
 
@@ -106,6 +125,8 @@ public:
 	void unloadPlugins();
 	
 	const PluginList &getPlugins()	{ return _plugins; }
+
+	DetectedGameList detectGames(const FSList &fslist) const;
 };
 
 
@@ -114,7 +135,7 @@ public:
 #define DECLARE_PLUGIN(name) \
 	extern GameList Engine_##name##_gameList(); \
 	extern Engine *Engine_##name##_create(GameDetector *detector, OSystem *syst); \
-	extern GameList Engine_##name##_detectGames(const FSList &fslist);
+	extern DetectedGameList Engine_##name##_detectGames(const FSList &fslist);
 
 // Factory functions => no need to include the specific classes
 // in this header. This serves two purposes:

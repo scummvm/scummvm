@@ -87,8 +87,8 @@ GameList Engine_SKY_gameList() {
 	return games;
 }
 
-GameList Engine_SKY_detectGames(const FSList &fslist) {
-	GameList detectedGames;
+DetectedGameList Engine_SKY_detectGames(const FSList &fslist) {
+	DetectedGameList detectedGames;
 	// Iterate over all files in the given directory
 	for (FSList::ConstIterator file = fslist.begin(); file != fslist.end(); ++file) {
 		const char *fileName = file->displayName().c_str();
@@ -271,7 +271,7 @@ void SkyEngine::initialise(void) {
 		_systemVars.systemFlags |= SF_ALLOW_SPEECH;
 		if (ConfMan.hasKey("nosubtitles")) {
 			warning("Configuration key 'nosubtitles' is deprecated. Use 'subtitles' instead");
-			if (ConfMan.getBool("nosubtitles") == false)
+			if (!ConfMan.getBool("nosubtitles"))
 				_systemVars.systemFlags |= SF_ALLOW_TEXT;
 		}
 

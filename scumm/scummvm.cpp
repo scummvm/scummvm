@@ -2866,8 +2866,8 @@ GameList Engine_SCUMM_gameList() {
 	return games;
 }
 
-GameList Engine_SCUMM_detectGames(const FSList &fslist) {
-	GameList detectedGames;
+DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
+	DetectedGameList detectedGames;
 	const ScummGameSettings *g;
 	char detectName[128];
 	char detectName2[128];

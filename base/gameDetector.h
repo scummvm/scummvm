@@ -34,6 +34,8 @@ class Plugin;
 
 /** Global (shared) game feature flags. */
 enum {
+//	GF_HAS_SPEECH = 1 << 29,
+//	GF_HAS_SUBTITLES = 1 << 30,
 	GF_DEFAULT_TO_1X_SCALER = 1 << 31
 };
 
