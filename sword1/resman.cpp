@@ -249,14 +249,14 @@ void *ResMan::mouseResOpen(uint32 id) {
 	BsMemHandle *memHandle = resHandle(id);
 	if (memHandle->cond == MEM_FREED) {
 		resOpen(id);
-#ifdef SCUMM_BIG_ENDIAN
 		uint16 *head = (uint16*)memHandle->data;
+#ifdef SCUMM_BIG_ENDIAN
 		for (uint8 endCnt = 0; endCnt < 5; endCnt++)
 			head[endCnt] = READ_LE_UINT16(head + endCnt);
 #endif
 		// fix transparency:
 		uint8 *rawData = (uint8*)memHandle->data;
-		uint32 size = READ_LE_UINT16(rawData) * READ_LE_UINT16(rawData + 2) * READ_LE_UINT16(rawData + 4);
+		uint32 size = head[0] * head[1] * head[2];
 		rawData += 0x3A;
 		for (uint32 cnt = 0; cnt < size; cnt++)
 			if (rawData[cnt] == 0)
