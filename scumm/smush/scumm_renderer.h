@@ -57,7 +57,7 @@ protected:
 	virtual void clean();
 	virtual bool startDecode(const char *fname, int32 version, int32 nbframes);
 	virtual bool setPalette(const Palette & pal);
-	virtual void save(int32 frame = -1);
+	virtual void save();
 	virtual Mixer *getMixer();
 	virtual bool prematureClose();
 };

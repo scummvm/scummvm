@@ -41,7 +41,7 @@ FontRenderer::~FontRenderer() {
 	}
 }
 
-void FontRenderer::save(int32 frame) {
+void FontRenderer::save() {
 	_chars[_nbChars].width = _width;
 	_chars[_nbChars].height = _height;
 	int size = _width * _height;

@@ -293,7 +293,7 @@ bool ScummRenderer::setPalette(const Palette &pal) {
 	return BaseRenderer::setPalette(pal); // For compatibility with possible subclass...
 }
 
-void ScummRenderer::save(int32 frame) {
+void ScummRenderer::save() {
 	int width = MIN(_width, _scumm->_realWidth); 
 	int height = MIN(_height, _scumm->_realHeight);
 

@@ -66,7 +66,7 @@ public:
 	virtual ~FontRenderer();
 	virtual bool wait(int32 ms) { return true; };
 protected:
-	virtual void save(int32 frame = -1);
+	virtual void save();
 	/*!	@brief get the width of a character.
 		
 		@param c	the character we want the width from.

@@ -42,7 +42,7 @@ protected:
 	int32 _height;		//!< The current frame's height
 	const char *_fname;	//!< The filename of the animation being played
 protected:
-	virtual void save(int32 frame = -1) = 0;
+	virtual void save() = 0;
 
 protected:
 	const char *getFilename() const { return _fname; };	//!< accessor for animation filename
@@ -71,7 +71,7 @@ public:
 */
 class NullRenderer : public BaseRenderer {
 protected:
-	void save(int32 frame = -1) {};
+	void save() {};
 public:
 	NullRenderer() {};
 	virtual ~NullRenderer() {};
