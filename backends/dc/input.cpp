@@ -29,6 +29,7 @@
 int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
 		byte &shiftFlags)
 {
+  static const char numpadmap[] = "0000039601740285";
   int lmb=0, rmb=0, newkey=0;
   static int lastkey = 0;
   static byte lastlmb = 0, lastrmb = 0;
@@ -44,7 +45,7 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
 
       if(!(buttons & 8)) newkey = 319;
       else if(!(buttons & 512)) newkey = ' ';
-      else if(!(buttons & 1024)) newkey = '0';
+      else if(!(buttons & 1024)) newkey = numpadmap[(buttons>>4)&15];
 
       if(!(buttons & 128)) mouse_x++;
       if(!(buttons & 64)) mouse_x--;
