@@ -34,7 +34,7 @@ public:
 
 	typedef typename Common::List<T>::iterator        iterator;
 	typedef typename Common::List<T>::const_iterator  const_iterator;
-
+	
 public:
 
 	iterator pushFront(const T& element) {
@@ -83,7 +83,7 @@ public:
 		return pushBack(element);
 	}
 
-	void reorderUp(iterator pos, CompareFunction* compareFunction) {
+	iterator reorderUp(iterator pos, CompareFunction* compareFunction) {
 		iterator i(pos);		
 		int res;
 
@@ -94,15 +94,15 @@ public:
 
 				T temp(*pos);
 				erase(pos);
-				++i;
-				Common::List<T>::insert(i, temp);
-				return;
+				++i;				
+				return insert(i, temp);
 			}
 			--i;
 		}
+		return pos;
 	}
 
-	void reorderDown(iterator pos, CompareFunction* compareFunction) {
+	iterator reorderDown(iterator pos, CompareFunction* compareFunction) {
 		iterator i(pos);		
 		int res;
 		
@@ -113,11 +113,11 @@ public:
 
 				T temp(*pos);
 				erase(pos);
-				Common::List<T>::insert(i, temp);
-				return;
+				return insert(i, temp);
 			}
 			++i;
 		}
+		return pos;
 	}
 
 	iterator eraseAndPrev(iterator pos) {
