@@ -136,14 +136,6 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 				assert(channels == 1 || channels == 2);
 				assert(0 < freq && freq <= 65535);
 
-				// Round the frequency to a multiple of 25. This is done to 
-				// ensure we don't run into data under-/overflows (this is a
-				// design limitation of the current IMuseDigital code, which
-				// pushes data 'blindly' into the mixer, instead of providing
-				// a pull based interface, i.e. a custom AudioInputStream
-				// subclass).
-				freq -= (freq % 25);
-
 				_track[l]->iteration = freq * channels;
 				if (channels == 2)
 					_track[l]->mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
