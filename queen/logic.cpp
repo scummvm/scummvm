@@ -47,6 +47,7 @@ Logic::Logic(QueenEngine *vm)
 	:  _queen2jas(NULL), _credits(NULL), _vm(vm) {
 	_joe.x = _joe.y = 0;
 	_joe.scale = 100;
+	_joe.walk = JWM_NORMAL;
 	memset(_gameState, 0, sizeof(_gameState));
 	memset(_talkSelected, 0, sizeof(_talkSelected));
 	_puzzleAttemptCount = 0;
