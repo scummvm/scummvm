@@ -1119,7 +1119,7 @@ struct Scumm {
 	uint16 _lastKeyHit;
 
 	int _scummStackPos;
-	int16 _scummStack[100];
+	int16 _scummStack[150];
 
 	int _maxBoxVertexHeap;
 	byte *_boxMatrixPtr4, *_boxMatrixPtr1, *_boxMatrixPtr3;
