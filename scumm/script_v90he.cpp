@@ -1974,12 +1974,6 @@ void ScummEngine_v90he::o90_getPaletteData() {
 
 	switch (subOp) {
 	case 0:
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
 		break;
 	case 7:
 		pop();
@@ -2007,7 +2001,7 @@ void ScummEngine_v90he::o90_getPaletteData() {
 }
 
 void ScummEngine_v90he::o90_paletteOps() {
-	int idx, state;
+	int a, b, c, d, e;
 
 	byte subOp = fetchScriptByte();
 	subOp -= 57;
@@ -2017,37 +2011,57 @@ void ScummEngine_v90he::o90_paletteOps() {
 		_hePaletteNum = pop();
 		break;
 	case 6:
-		{
-		state = pop();
-		idx = pop();
-		const uint8 *dataPtr = getResourceAddress(rtImage, idx);
-		const uint8 *pal = findWrappedBlock(MKID('RGBS'), dataPtr, state, 0);
-		assert(pal);
+		b = pop();
+		a = pop();
+		if (_hePaletteNum != 0) {
+			setHEPaletteFromImage(_hePaletteNum, a, b);
 		}
 		break;
 	case 9:
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
+		e = pop();
+		d = pop();
+		c = pop();
+		b = pop();
+		a = pop();
+		if (_hePaletteNum != 0) {
+			for (; a <= b; ++a) {
+				setHEPaletteColor(_hePaletteNum, a, c, d, e);
+			}
+		}
 		break;
 	case 13:
-		pop();
-		pop();
-		pop();
+		c = pop();
+		b = pop();
+		a = pop();
+		if (_hePaletteNum) {
+			for (; a <= b; ++a) {
+				copyHEPaletteColor(_hePaletteNum, a, c);
+			}
+		}
 		break;
 	case 19: //HE99+
-		pop();
+		a = pop();
+		if (_hePaletteNum != 0) {
+			setHEPaletteFromCostume(_hePaletteNum, a);
+		}
 		break;
 	case 29:
-		pop();
+		a = pop();
+		if (_hePaletteNum != 0) {
+			copyHEPalette(_hePaletteNum, a);
+		}
 		break;
 	case 118:
-		pop();
-		pop();
+		b = pop();
+		a = pop();
+		if (_hePaletteNum != 0) {
+			setHEPaletteFromRoom(_hePaletteNum, a, b);
+		}
 		break;
 	case 160:
+		if (_hePaletteNum != 0) {
+			restoreHEPalette(_hePaletteNum);
+		}
 		break;
 	case 198:
 		_hePaletteNum = 0;

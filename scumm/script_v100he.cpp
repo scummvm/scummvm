@@ -1360,6 +1360,7 @@ void ScummEngine_v100he::o100_redim2dimArray() {
 
 void ScummEngine_v100he::o100_paletteOps() {
 	int a, b, c, d, e;
+
 	byte subOp = fetchScriptByte();
 	switch (subOp) {
 	case 0:
