@@ -425,10 +425,10 @@ void ScummEngine_v8::writeVar(uint var, int value) {
 		if (var == VAR_CHARINC) {
 			if (ConfMan.hasKey("talkspeed")) {
 				int talkspeed = ConfMan.getInt("talkspeed") / 20;
-				if (talkspeed >= 0 && talkspeed <= 180)
-				VAR(VAR_CHARINC) = talkspeed;
+				if (talkspeed >= 0 && talkspeed <= 9)
+					VAR(VAR_CHARINC) = talkspeed;
 			} else
-				VAR(VAR_CHARINC) = 9 - value;
+				VAR(VAR_CHARINC) = (_features & GF_DEMO) ? value : (9 - value);
 		} else
 			_scummVars[var] = value;
 
