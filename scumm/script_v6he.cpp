@@ -346,7 +346,7 @@ void ScummEngine_v6he::setupOpcodes() {
 		/* EC */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o6_unknownEE),
 		OPCODE(o6_invalid),
 		/* F0 */
 		OPCODE(o6_invalid),
@@ -360,7 +360,7 @@ void ScummEngine_v6he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		/* F8 */
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o6_unknownF9),
 		OPCODE(o6_unknownFA),
 		OPCODE(o6_invalid),
 		/* FC */
@@ -1187,6 +1187,12 @@ void ScummEngine_v6he::unknownEA_func(int a, int b, int c, int d, int e) {
 	warning("unknownEA_func(%d, %d, %d, %d, %d) stub", a, b, c, d, e);
 }
 
+void ScummEngine_v6he::o6_unknownEE() {
+	int a;
+	a = pop();
+	loadPtrToResource(rtVerb, _curVerbSlot, getStringAddress(a));
+}
+
 void ScummEngine_v6he::o6_readINI() {
 	int len;
 
@@ -1208,8 +1214,29 @@ void ScummEngine_v6he::o6_localizeArray() {
 	}
 }
 
+void ScummEngine_v6he::o6_unknownF9() {
+	// File related
+	int len, r;
+	byte filename[100];
+
+	_msgPtrToAdd = filename;
+	_messagePtr = _scriptPointer;
+	addMessageToStack(_messagePtr);
+
+	len = resStrLen(_scriptPointer);
+	_scriptPointer += len + 1;
+
+	for (r = strlen((char*)filename); r != 0; r--) {
+		if (filename[r - 1] == '\\')
+			break;
+	}
+
+	warning("stub o6_unknownF9(\"%s\")", filename + r);
+}
+
 void ScummEngine_v6he::decodeParseString(int m, int n) {
 	byte b;
+	int c;
 
 	b = fetchScriptByte();
 
@@ -1263,6 +1290,14 @@ void ScummEngine_v6he::decodeParseString(int m, int n) {
 		}
 		return;
 	case 0xF9:
+		c = pop();
+		if (c == 1) {
+			_string[m].color = pop();
+		} else {	
+			push(c);
+			int args[16];
+			getStackList(args, ARRAYSIZE(args));
+		}
 		warning("decodeParseString case 0xF9 stub");
 		return;
 	case 0xFE:

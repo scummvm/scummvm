@@ -589,9 +589,11 @@ protected:
 	void o6_unknownE4();
 	void o6_seekFile();
 	void o6_localizeArray();
+	void o6_unknownEE();
 	void o6_unknownFA();
 	void o6_unknownEA();
 	void o6_readINI();
+	void o6_unknownF9();
 };
 
 class ScummEngine_v7 : public ScummEngine_v6 {
