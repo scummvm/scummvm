@@ -214,7 +214,7 @@ void Scumm::scummInit()
 
 	memset(_charsetData, 0, sizeof(_charsetData));
 	
-	if (!(_features & GF_SMALL_NAMES))
+	if (!(_features & GF_SMALL_NAMES) && !(_features & GF_AFTER_V8))
 		loadCharset(1);
 
 	if (_features & GF_AFTER_V7) {
