@@ -1036,6 +1036,9 @@ void SmushPlayer::parseNextFrame() {
 	Chunk *sub = _base->subBlock();
 
 	switch (sub->getType()) {
+	case TYPE_AHDR: // FT INSANE may seek file to the beginning
+		handleAnimHeader(*sub);
+		break;
 	case TYPE_FRME:
 		handleFrame(*sub);
 		break;
