@@ -14,6 +14,7 @@ unpack()					Graphics::bankUnpack
 
 COMMAND
 =======
+CLEAR_COMMAND()
 -
 ACTION,ACTION2
 CLEVEL
@@ -66,22 +67,22 @@ AREAVAR						(boolean, if true display objects/areas boxes)
 GRAPHICS
 ========
 bob()						Graphics::bobDraw
-Box()						Graphics::boxDraw
-calc_screen_scroll()
-CHECK_PARALLAX()
+Box()
+calc_screen_scroll()		Display::horizontalScrollUpdate
+CHECK_PARALLAX()			Graphics::bobCustomParallax
 clearallbobs()				Graphics::bobClearAll
 clearbob()					Graphisc::bobClear
-clearpanel()				Graphics::panelClear
+clearpanel()				Display::prepareUpdate
 drawbobs()					Graphics::bobDrawAll
-drawbackdrop()				Graphics::backdropDraw
-drawpanel()					Graphics::panelDraw
-drawscreen()
+drawbackdrop()				Display::prepareUpdate
+drawpanel()					Display::prepareUpdate
+drawscreen()				Display::update
 freeallframes()				Graphics::frameEraseAll(true)
 freeframes()				Graphics::frameEraseAll(false)
 invbob()					Graphics::bobDrawInventoryItem
-loadbackdrop()				Graphics::backdropLoad
+loadbackdrop()				Graphics::loadBackdrop
 loadfont()					*not needed*
-loadpanel()					Graphics::panelLoad
+loadpanel()					Graphics::loadPanel
 makeanim()					Graphics::bobAnimNormal
 movebob()					Graphics::bobMove
 pastebob()					Graphics::bobPaste
@@ -91,16 +92,16 @@ sortbobs()					Graphics::bobSortAll
 stringanim()				Graphics::bobAnimString
 -
 bobs						Graphics::_bobs
-BDxres						Graphics::_backdropWidth
-BDyres						Graphics::_backdropHeight
+BDxres						Display::_bdWidth
+BDyres						display::_bdHeight
 cambob						Graphics::_cameraBob
 clothespal
 dresspal
-font						Graphics::FONT
-font_sizes					Graphics::FONT_SIZES
-OUTLINE
+font						TextRenderer::FONT
+font_sizes					TextRenderer::charWidth
+OUTLINE						*not needed*
 sortedbobs					Graphics::_sortedBobs
-scrollx						Graphics::_horizontalScroll
+scrollx						Display::_horizontalScroll
 
 
 INPUT
@@ -253,13 +254,13 @@ tseek() 					*not needed*
 SCREEN
 ======
 changejoepal()
-check_colors()
-dynalum()					Graphics::dynalumUpdate
-fadein()
-fadeout()
-palscroll()
-putcharacter()				Graphics::displayChar
-setpal()
+check_colors()				Display::palCustomColors
+dynalum()					Display::dynalumUpdate
+fadein()					Display::palFadeIn
+fadeout()					Display::palFadeOut
+palscroll()					Display::palScroll
+putcharacter()				TextRenderer::drawChar
+setpal()					Display::palSet
 -
 COMPANEL
 FULLSCREEN					Graphics::_fullscreen
@@ -338,7 +339,7 @@ MOVE_OTHER()				Walk::personMove
 AREALIST					Walk::_areaList
 AREASTRIKE					Walk::_areaStrike
 movdata						Walk::_moveData
-NEWP,OLDP					* locals in joeMove && personMove
+NEWP,OLDP					* locals in joeMove && personMove *
 OLDX,X,OLDY,Y				* passed as arguments *
 WALK_DATA					Walk::_walkData
 WALKI						Walk::_walkDataCount
@@ -361,7 +362,6 @@ game_save()
 game_load()
 R_MAP()
 check_cut_quit()
-CLEAR_COMMAND()
 EXECUTE_ACTION()
 CHECK_PLAYER()
 SETUP_VARS()
