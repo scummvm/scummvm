@@ -4998,7 +4998,7 @@ IMuseDigital::IMuseDigital(Scumm *scumm) {
 	memset(_channel, 0, sizeof(channel) * MAX_DIGITAL_CHANNELS);
 	_scumm = scumm;
 	for (int32 l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
-		_channel[l]._mixerTrack = -1;
+		_channel[l]._initialized = false;
 	}
 	_scumm->_mixer->beginSlots(MAX_DIGITAL_CHANNELS + 1);
 	_scumm->_timer->installProcedure(imus_digital_handler, 200);
@@ -5411,8 +5411,12 @@ void IMuseDigital::handler() {
 	for (l = 0; l < MAX_DIGITAL_CHANNELS;l ++) {
 		if (_channel[l]._used) {
 			if (_channel[l]._toBeRemoved == true) {
-				_channel[l]._used = false;
-				free(_channel[l]._data);
+				_scumm->_mixer->stop(l);
+				if (_scumm->_mixer->_channels[l] == NULL) {
+					free(_channel[l]._data);
+					_channel[l]._used = false;
+					_channel[l]._initialized = false;
+				}
 				continue;
 			}
 
@@ -5457,10 +5461,9 @@ void IMuseDigital::handler() {
 			uint32 new_size = _channel[l]._mixerSize;
 			uint32 mixer_size = new_size;
 
-			if (_channel[l]._mixerTrack == -1) {
+			if (_channel[l]._initialized == false) {
 				mixer_size *= 2;
 				new_size *= 2;
-			} else {
 			}
 
 			if (_channel[l]._isJump == false) {
@@ -5481,7 +5484,7 @@ void IMuseDigital::handler() {
 			}
 
 			byte *buf = (byte*)malloc(mixer_size);
-			
+
 			memcpy(buf, _channel[l]._data + _channel[l]._offset, new_size);
 			if ((new_size != mixer_size) && (_channel[l]._isJump == true)) {
 				memcpy(buf + new_size, _channel[l]._data + _channel[l]._jump[0]._dest, mixer_size - new_size);
@@ -5513,12 +5516,12 @@ void IMuseDigital::handler() {
 				}
 			}
 
-			if (_channel[l]._mixerTrack == -1) {
-				_channel[l]._mixerTrack = _scumm->_mixer->playStream(NULL, l, buf, mixer_size,
-																				 _channel[l]._freq, _channel[l]._mixerFlags, -1, 800000);
+			if (_channel[l]._initialized == false) {
+				_scumm->_mixer->playStream(NULL, l, buf, mixer_size,
+																				 _channel[l]._freq, _channel[l]._mixerFlags, 3, 2000000);
+				_channel[l]._initialized = true;
 			} else {
-				_scumm->_mixer->append(l, buf, mixer_size,
-															 _channel[l]._freq, _channel[l]._mixerFlags);
+				_scumm->_mixer->append(l, buf, mixer_size, _channel[l]._freq, _channel[l]._mixerFlags);
 			}
 		}
 	}
@@ -5624,10 +5627,10 @@ void IMuseDigital::startSound(int sound) {
 					if (tag == MKID_BE('DATA')) break;
 				}
 
-				if ((sound == 123) || (sound == 122)) {
+//				if ((sound == 131) || (sound == 123) || (sound == 122)) {
 					_channel[l]._isJump = false;
 					_channel[l]._numJumps = 0;
-				}
+//				}
 
 				uint32 header_size = ptr - s_ptr;
 				_channel[l]._offsetStop -= header_size;

@@ -105,7 +105,7 @@ private:
 		uint8 _mixerFlags;
 		bool _used;
 		bool _toBeRemoved;
-		int32 _mixerTrack;
+		bool _initialized;
 	} _channel[MAX_DIGITAL_CHANNELS];
 
 	Scumm * _scumm;
