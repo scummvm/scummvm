@@ -1200,16 +1200,13 @@ void Scumm::waitForTimer(int msec_delay) {
 		while (_system->poll_event(&event)) {
 			switch(event.event_code) {
 			case OSystem::EVENT_KEYDOWN:
-				_keyPressed = event.kbd.ascii;
-
-				if (event.kbd.keycode >= '0' && event.kbd.keycode<='9') {
-					if (event.kbd.flags == OSystem::KBD_SHIFT ||
-							event.kbd.flags == OSystem::KBD_CTRL) {
-						_saveLoadSlot = event.kbd.keycode - '0';
-						sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
-						_saveLoadFlag = (event.kbd.flags == OSystem::KBD_SHIFT) ? 1 : 2;
-						_saveLoadCompatible = false;
-					} 
+				if (event.kbd.keycode >= '0' && event.kbd.keycode<='9'
+					&& (event.kbd.flags == OSystem::KBD_SHIFT ||
+						event.kbd.flags == OSystem::KBD_CTRL)) {
+					_saveLoadSlot = event.kbd.keycode - '0';
+					sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
+					_saveLoadFlag = (event.kbd.flags == OSystem::KBD_SHIFT) ? 1 : 2;
+					_saveLoadCompatible = false;
 				} else if (event.kbd.flags==OSystem::KBD_CTRL) {
 					if (event.kbd.keycode=='f')
 						_fastMode ^= 1;
@@ -1219,7 +1216,8 @@ void Scumm::waitForTimer(int msec_delay) {
 						g_debugger.attach(this);
 					else if (event.kbd.keycode=='s')
 						resourceStats();
-				}
+				} else
+					_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
 				break;
 
 			case OSystem::EVENT_MOUSEMOVE:
