@@ -2458,25 +2458,15 @@ void Logic::changeRoom() {
 
 	if (currentRoom() == ROOM_JUNGLE_PINNACLE) {
 		handlePinnacleRoom();
-	}
-	else if (currentRoom() == FOTAQ_LOGO && gameState(VAR_INTRO_PLAYED) == 0) {
-		// FIXME: this should be rewritten in a more elegant way
-		bool pcGamesDemo = _vm->resource()->isDemo() && !_vm->resource()->exists("pclogo.cut");
+	} else if (currentRoom() == FOTAQ_LOGO && gameState(VAR_INTRO_PLAYED) == 0) {
 
-		if (pcGamesDemo) {
+		if (_vm->resource()->isDemo())
 			currentRoom(79);
-		}
 		roomDisplay(currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
 
 		if (_vm->resource()->isDemo()) {
-			if (pcGamesDemo) {
-				playCutaway("clogo.cut");
-			}
-			else {
-				playCutaway("pclogo.cut");
-			}
-		}
-		else {
+			playCutaway("clogo.cut");
+		} else {
 			playCutaway("copy.cut");
 			playCutaway("clogo.cut");
 
@@ -2485,8 +2475,7 @@ void Logic::changeRoom() {
 			if (ConfMan.getBool("alt_intro")) {
 				_vm->graphics()->loadPanel();
 				playCutaway("cintr.cut");
-			}
-			else {
+			} else {
 				playCutaway("cdint.cut");
 				_vm->graphics()->loadPanel();
 			}
@@ -2507,8 +2496,7 @@ void Logic::changeRoom() {
 
 		inventorySetup();
 		inventoryRefresh();
-	}
-	else {
+	} else {
 		roomDisplay(currentRoom(), RDM_FADE_JOE, 100, 1, false);
 	}
 	_vm->display()->showMouseCursor(true); // _drawMouseFlag = 1;
@@ -2569,7 +2557,7 @@ void Logic::checkOptionSettings() {
 	// XXX check master_volume value
 
 	// only CD-ROM version has speech
-	if (_vm->resource()->JASVersion()[0] != 'C' && _vm->sound()->speechOn()) {
+	if (_vm->resource()->isFloppy() && _vm->sound()->speechOn()) {
 		_vm->sound()->speechToggle(false);
 	}
 

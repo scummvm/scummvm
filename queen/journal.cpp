@@ -543,7 +543,7 @@ void Journal::showInformationBox() {
 		_vm->graphics()->textSetCentered(144, "Fran\x87""ais", false);
 		break;
 	}
-	char versionId[12];
+	char versionId[13];
 	sprintf(versionId, "Version %c.%c%c", ver[2], ver[3], ver[4]);
 	_vm->graphics()->textSetCentered(156, versionId, false);
 }

@@ -28,17 +28,17 @@ namespace Queen {
 const char *Resource::_tableFilename = "queen.tbl";
 
 const GameVersion Resource::_gameVersions[] = {
-	{ "PEM10", false, 0x00000008,  22677657 },
-	{ "CEM10", false, 0x0000584E, 190787021 },
-	{ "PFM10", false, 0x0002CD93,  22157304 },
-	{ "CFM10", false, 0x00032585, 186689095 },
-	{ "PGM10", false, 0x00059ACA,  22240013 },
-	{ "CGM10", false, 0x0005F2A7, 217648975 },
-	{ "PIM10", false, 0x000866B1,  22461366 },
-	{ "CIM10", false, 0x0008BEE2, 190795582 },
-	{ "CSM10", false, 0x000B343C, 190730602 },
-	{ "PE100", true,  0x000DA981,   3724538 },
-	{ "PE100", true,  0x000DB63A,   3732177 }
+	{ "PEM10", 0x00000008,  22677657 },
+	{ "CEM10", 0x0000584E, 190787021 },
+	{ "PFM10", 0x0002CD93,  22157304 },
+	{ "CFM10", 0x00032585, 186689095 },
+	{ "PGM10", 0x00059ACA,  22240013 },
+	{ "CGM10", 0x0005F2A7, 217648975 },
+	{ "PIM10", 0x000866B1,  22461366 },
+	{ "CIM10", 0x0008BEE2, 190795582 },
+	{ "CSM10", 0x000B343C, 190730602 },
+	{ "PE100", 0x000DA981,   3724538 },
+	{ "PE100", 0x000DB63A,   3732177 }
 };
 
 
@@ -46,46 +46,23 @@ Resource::Resource(const Common::String &datafilePath, SaveFileManager *mgr, con
 	: _JAS2Pos(0), _datafilePath(datafilePath), _savePath(savePath), _resourceEntries(0), _resourceTable(NULL), _saveFileManager(mgr) {
 
 	_resourceFile = new File();
-	_resourceFile->open("queen.1", _datafilePath);
-	if (_resourceFile->isOpen() == false)
-		_resourceFile->open("queen.1c", _datafilePath);
-	if (_resourceFile->isOpen() == false)
+	if (!findNormalVersion() && !findCompressedVersion())
 		error("Could not open resource file '%s%s'", _datafilePath.c_str(), "queen.1");
-
-	if (_resourceFile->readUint32BE() == 'QTBL') {
-		readTableCompResource();
-	} else {
-		_compression = COMPRESSION_NONE;
-		_gameVersion = detectGameVersion(_resourceFile->size());
-
-		if (!readTableFile()) {
-			//check if it is the english floppy version, for which we have a hardcoded version of the tables
-			if (!strcmp(_gameVersion->versionString, _gameVersions[VER_ENG_FLOPPY].versionString)) {
-				_gameVersion = &_gameVersions[VER_ENG_FLOPPY];
-				_resourceEntries = 1076;
-				_resourceTable = _resourceTablePEM10;
-			} else {
-				error("Couldn't find tablefile '%s%s'",  _datafilePath.c_str(), _tableFilename);
-			}
-		}
-	}
-	if (strcmp(_gameVersion->versionString, JASVersion()))
-		error("Verifying game version failed! (expected: '%s', found: '%s')", _gameVersion->versionString, JASVersion());
-
-	debug(5, "Detected game version: %s, which has %d resource entries", _gameVersion->versionString, _resourceEntries);
-
+	checkJASVersion();
+	debug(5, "Detected game version: %s, which has %d resource entries", _versionString, _resourceEntries);
 	_JAS2Ptr = (char *)loadFile("QUEEN2.JAS", 0);
 }
 
 Resource::~Resource() {
 	_resourceFile->close();
+	delete _resourceFile;
 	if(_resourceTable != _resourceTablePEM10) 
 		delete[] _resourceTable;
 	delete[] _JAS2Ptr;
 	delete _saveFileManager;
 }
 
-int32 Resource::resourceIndex(const char *filename) {
+int32 Resource::resourceIndex(const char *filename) const {
 
 	char entryName[14];
 	char *ptr = entryName;
@@ -136,14 +113,6 @@ char *Resource::getJAS2Line() {
 	return startOfLine;
 }
 
-uint32 Resource::fileSize(const char *filename) {
-	return _resourceTable[resourceIndex(filename)].size;
-}
-
-uint32 Resource::fileOffset(const char *filename) {
-	return _resourceTable[resourceIndex(filename)].offset;
-}
-
 uint8 *Resource::loadFile(const char *filename, uint32 skipBytes, byte *dstBuf) {
 	uint32 size = fileSize(filename) - skipBytes;
 	if (dstBuf == NULL) 
@@ -158,30 +127,60 @@ uint8 *Resource::loadFileMalloc(const char *filename, uint32 skipBytes, byte *ds
 	return loadFile(filename, skipBytes, (byte *)malloc(fileSize(filename) - skipBytes));
 }
 
-bool Resource::exists(const char *filename) {
-	return resourceIndex(filename) >= 0;
+bool Resource::findNormalVersion() {
+	_resourceFile->open("queen.1", _datafilePath);
+	if (!_resourceFile->isOpen()) {
+		return false;
+	}
+
+	_compression = COMPRESSION_NONE;
+
+	// detect game version based on resource file size ; we try to 
+	// verify that it is indeed the version we think it is later on
+	const GameVersion *gameVersion = detectGameVersion(_resourceFile->size());
+	if (gameVersion == NULL)
+		error("Unknown/unsupported FOTAQ version");
+
+	strcpy(_versionString, gameVersion->versionString);
+	if (!readTableFile(gameVersion)) {
+		// check if it is the english floppy version, for which we have a hardcoded version of the table
+		if (!strcmp(gameVersion->versionString, _gameVersions[VER_ENG_FLOPPY].versionString)) {
+			_resourceEntries = 1076;
+			_resourceTable = _resourceTablePEM10;
+		} else {
+			error("Could not find tablefile '%s%s'",  _datafilePath.c_str(), _tableFilename);
+		}
+	}
+	return true;
 }
 
-const char *Resource::JASVersion() {
-	static char versionStr[6];
+bool Resource::findCompressedVersion() {
+	_resourceFile->open("queen.1c", _datafilePath);
+	if (!_resourceFile->isOpen()) {
+		return false;
+	}
+	readTableCompResource();
+	return true;
+}
+
+void Resource::checkJASVersion() {
+	int32 offset = fileOffset("QUEEN.JAS");
 	if (isDemo())
-		_resourceFile->seek(fileOffset("QUEEN.JAS") + JAS_VERSION_OFFSET_DEMO, SEEK_SET);
-	else
-		_resourceFile->seek(fileOffset("QUEEN.JAS") + JAS_VERSION_OFFSET, SEEK_SET);
+		offset += JAS_VERSION_OFFSET_DEMO;
+	else if (isInterview())
+		offset += JAS_VERSION_OFFSET_INTV;
+	else 
+		offset += JAS_VERSION_OFFSET;
+	_resourceFile->seek(offset, SEEK_SET);
+
+	char versionStr[6];
 	_resourceFile->read(versionStr, 6);
-	return versionStr;
-}
-
-bool Resource::isDemo() const {
-	return _gameVersion->isDemo;
-}
-
-bool Resource::isFloppy() const {
-	return _gameVersion->versionString[0] == 'P';
+	if (strcmp(_versionString, versionStr))
+		error("Verifying game version failed! (expected: '%s', found: '%s')", _versionString, versionStr);
 }
 
 Language Resource::getLanguage() const {
-	switch (_gameVersion->versionString[1]) {
+	switch (_versionString[1]) {
 	case 'E':
 		return ENGLISH;
 	case 'G':
@@ -197,61 +196,52 @@ Language Resource::getLanguage() const {
 	}
 }
 
-const GameVersion *Resource::detectGameVersion(uint32 dataFilesize) {
-	//detect game version based on resource file size.
-	//we try to verify that it is indeed the version we think it is later on
-	const GameVersion *pgv = _gameVersions;
-	int i;
-	for (i = 0; i < VER_COUNT; ++i, ++pgv) {
-		if (pgv->dataFileSize == dataFilesize) {
-			return pgv;
-		}
-	}
-	error("Unknown/unsupported FOTAQ version");
-	return NULL;
-}
-
-bool Resource::readTableFile() {
+bool Resource::readTableFile(const GameVersion *gameVersion) {
 	File tableFile;
 	tableFile.open(_tableFilename, _datafilePath);
 	if (!tableFile.isOpen())	
-		tableFile.open(_tableFilename, ""); //try current directory
+		tableFile.open(_tableFilename, ""); // try current directory
 	if (tableFile.isOpen() && tableFile.readUint32BE() == 'QTBL') {
-		tableFile.seek(_gameVersion->tableOffset);
-		_resourceEntries = tableFile.readUint16BE();
-		_resourceTable = new ResourceEntry[_resourceEntries];
-		ResourceEntry *pre = _resourceTable;
-		for (uint32 i = 0; i < _resourceEntries; ++i, ++pre) {
-			tableFile.read(pre->filename, 12);
-			pre->filename[12] = '\0';
-			pre->inBundle = tableFile.readByte();
-			pre->offset = tableFile.readUint32BE();
-			pre->size = tableFile.readUint32BE();
-		}
+		tableFile.seek(gameVersion->tableOffset);
+		readTableEntries(&tableFile);
 		return true;
 	}
 	return false;
 }
 
 void Resource::readTableCompResource() {
-	GameVersion *gv = new GameVersion;
-	_resourceFile->read(gv->versionString, 6);
-	_resourceFile->readByte();
-	gv->isDemo = _resourceFile->readByte() != 0;
+	if (_resourceFile->readUint32BE() != 'QTBL')
+		error("Invalid table header");
+
+	_resourceFile->read(_versionString, 6);
+	_resourceFile->readByte(); // obsolete
+	_resourceFile->readByte(); // obsolete
 	_compression = _resourceFile->readByte();
-	_resourceEntries = _resourceFile->readUint16BE();
-	_gameVersion = gv;
-	
-	_resourceFile->seek(15, SEEK_SET);
+
+	readTableEntries(_resourceFile);
+}
+
+void Resource::readTableEntries(File *file) {
+	_resourceEntries = file->readUint16BE();
 	_resourceTable = new ResourceEntry[_resourceEntries];
-	ResourceEntry *pre = _resourceTable;
-	for (uint32 i = 0; i < _resourceEntries; ++i, ++pre) {
-		_resourceFile->read(pre->filename, 12);
-		pre->filename[12] = '\0';
-		pre->inBundle = _resourceFile->readByte();
-		pre->offset = _resourceFile->readUint32BE();
-		pre->size = _resourceFile->readUint32BE();
+	for (uint16 i = 0; i < _resourceEntries; ++i) {
+		ResourceEntry *re = &_resourceTable[i];
+		file->read(re->filename, 12);
+		re->filename[12] = '\0';
+		re->bundle = file->readByte();
+		re->offset = file->readUint32BE();
+		re->size = file->readUint32BE();
 	}
+}
+
+const GameVersion *Resource::detectGameVersion(uint32 size) const {
+	const GameVersion *pgv = _gameVersions;
+	for (int i = 0; i < VER_COUNT; ++i, ++pgv) {
+		if (pgv->dataFileSize == size) {
+			return pgv;
+		}
+ 	}
+	return NULL;
 }
 
 File *Resource::giveCompressedSound(const char *filename) {

@@ -37,23 +37,26 @@ enum Version {
 	VER_GER_TALKIE   = 5,
 	VER_ITA_FLOPPY   = 6,
 	VER_ITA_TALKIE   = 7,
+	// VER_ITA_FLOPPY
 	VER_SPA_TALKIE   = 8,
+	// VER_HEB_FLOPPY
+	// VER_HEB_TALKIE
 	VER_DEMO_PCGAMES = 9,
 	VER_DEMO         = 10,
+	// VER_INTERVIEW
 
 	VER_COUNT        = 11
 };
 
 struct ResourceEntry {
 	char filename[13];
-	uint8 inBundle;
+	uint8 bundle;
 	uint32 offset;
 	uint32 size;
 };
 
 struct GameVersion {
 	char versionString[6];
-	bool isDemo;
 	uint32 tableOffset;
 	uint32 dataFileSize;
 };
@@ -64,18 +67,23 @@ class Resource {
 public:
 	Resource(const Common::String &datafilePath, SaveFileManager *mgr, const char *savePath);
 	~Resource(void);
+
 	uint8 *loadFile(const char *filename, uint32 skipBytes = 0, byte *dstBuf = NULL);
 	uint8 *loadFileMalloc(const char *filename, uint32 skipBytes = 0, byte *dstBuf = NULL);
-	char *getJAS2Line();
-	bool exists(const char *filename);
-	bool isDemo() const;
-	bool isFloppy() const;
-	uint8 compression()	{ return _compression; }
-	uint32 fileSize(const char *filename);
-	uint32 fileOffset(const char *filename);
+	bool exists(const char *filename) const { return resourceIndex(filename) >= 0; }
+	uint32 fileSize(const char *filename) const { return _resourceTable[resourceIndex(filename)].size; }
+	uint32 fileOffset(const char *filename) const { return _resourceTable[resourceIndex(filename)].offset; }
+
 	File *giveCompressedSound(const char *filename);
+
+	bool isDemo() const { return !strcmp(_versionString, "PE100"); }
+	bool isInterview() const { return !strcmp(_versionString, "PEint"); }
+	bool isFloppy() const { return _versionString[0] == 'P'; }
+	uint8 compression()	const { return _compression; }
+	const char *JASVersion() const { return _versionString; }
 	Language getLanguage() const;
-	const char *JASVersion();
+	char *getJAS2Line();
+
 	bool writeSave(uint16 slot, const byte *saveData, uint32 size);
 	bool readSave(uint16 slot, byte *&ptr);
 
@@ -91,21 +99,24 @@ protected:
 	uint32 _JAS2Pos;
 	uint8 _compression;
 	const Common::String _datafilePath;
-	const GameVersion *_gameVersion;
+	char _versionString[6];
 	const char *_savePath;
 	uint32 _resourceEntries;
 	ResourceEntry *_resourceTable;
+	SaveFileManager *_saveFileManager;
+
+	bool findNormalVersion();
+	bool findCompressedVersion();
+	void checkJASVersion();
+	int32 resourceIndex(const char *filename) const;
+	bool readTableFile(const GameVersion *gameVersion);
+	void readTableCompResource();
+	void readTableEntries(File *file);
+	const GameVersion *detectGameVersion(uint32 size) const;
 
 	static const char *_tableFilename;
 	static const GameVersion _gameVersions[];
 	static ResourceEntry _resourceTablePEM10[];
-
-	int32 resourceIndex(const char *filename);
-	bool readTableFile();
-	void readTableCompResource();
-	static const GameVersion *detectGameVersion(uint32 dataFilesize);
-
-	SaveFileManager *_saveFileManager;
 };
 
 } // End of namespace Queen
