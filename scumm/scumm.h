@@ -1075,7 +1075,6 @@ public:
 	void clearMsgQueue();	// Used by Actor::putActor
 protected:
 	byte *_msgPtrToAdd;
-	const byte *_messagePtr;
 	bool _keepText;
 public:
 	Common::Language _language;

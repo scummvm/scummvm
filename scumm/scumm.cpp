@@ -501,7 +501,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_demoMode = false;
 	_confirmExit = false;
 	_msgPtrToAdd = NULL;
-	_messagePtr = NULL;
 	_talkDelay = 0;
 	_keepText = false;
 	_existLanguageFile = false;
