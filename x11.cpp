@@ -382,7 +382,7 @@ bool OSystem_X11::set_sound_proc(void *param, SoundProc *proc, byte format) {
 	thread_param.format = format;
 
 	if (format == SOUND_16BIT)
-	  ; /* pthread_create(&sound_thread, NULL, sound_and_music_thread, (void *) &thread_param); */
+		pthread_create(&sound_thread, NULL, sound_and_music_thread, (void *) &thread_param);
 	else
 		warning("Only support 16 bit sound for now. Disabling sound ");
 
