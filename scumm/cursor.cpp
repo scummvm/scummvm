@@ -353,6 +353,35 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 				*dst++ = palette[((c0 >> (7 - j)) & 1) | (((c1 >> (7 - j)) & 1) << 1) | ((idx == 3) ? 4 : 0)];
 		}
 
+	} else if (_version <= 2 && _features & GF_AMIGA) {
+		_cursor.width = 15;
+		_cursor.height = 15;
+		_cursor.hotspotX = 7;
+		_cursor.hotspotY = 7;
+
+		byte *hotspot = _grabbedCursor + _cursor.hotspotY * _cursor.width + _cursor.hotspotX;
+
+		// Crosshair, symmetric
+		// TODO: Instead of setting this up via code, we should simply extend
+		//       default_cursor_images to contain this shape.
+		for (i = 0; i < 5; i++) {
+			*(hotspot - 3 - i) = color;
+			*(hotspot + 3 + i) = color;
+			*(hotspot - _cursor.width * (3 + i)) = color;
+			*(hotspot + _cursor.width * (3 + i)) = color;
+		}
+
+		// Arrow heads, diagonal lines
+		for (i = 1; i <= 2; i++) {
+			*(hotspot - _cursor.width * i - (3 + i)) = color;
+			*(hotspot + _cursor.width * i - (3 + i)) = color;
+			*(hotspot - _cursor.width * i + (3 + i)) = color;
+			*(hotspot + _cursor.width * i + (3 + i)) = color;
+			*(hotspot - _cursor.width * (3 + i) - i) = color;
+			*(hotspot + _cursor.width * (3 + i) - i) = color;
+			*(hotspot - _cursor.width * (3 + i) + i) = color;
+			*(hotspot + _cursor.width * (3 + i) + i) = color;
+		}
 	} else if (_version <= 2) {
 		_cursor.width = 23;
 		_cursor.height = 21;
