@@ -260,7 +260,6 @@ SCUMM
   - Add mask support to akos codec32, charset shouldn't be drawn under moving actors
   - Add support for song sync. in HE80+ games. (Used in ff2-demo/freddi2/pajama)
   - Add support for SBNG sound resources for songs (Used in ff2-demo/freddi2/pajama)
-  - Add support for wizImage compression types 2/3 (For freddicove)
   - Add support for processWizImage mode 6 (For lost/smaller)
   - Add support for processWizImage mode 9 (For freddicove/bb2demo/footdemo)
   - Add support for additional drawWizImage flags (cyx)
