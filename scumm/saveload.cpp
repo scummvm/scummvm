@@ -806,9 +806,6 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 			s->saveLoadArrayOf(_roomPalette, sizeof(_roomPalette), 1, sleByte);
 	}
 
-	if (savegameVersion >= VER(32) && _heversion == 70)
-		s->saveLoadArrayOf(_HEV7ActorPalette, sizeof(_HEV7ActorPalette), 1, sleByte);
-
 	// PalManip data was not saved before V10 save games
 	if (savegameVersion < VER(10))
 		_palManipCounter = 0;
