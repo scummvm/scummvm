@@ -111,7 +111,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		/* 34 */
 		OPCODE(o90_unknown34),
-		OPCODE(o6_invalid),
+		OPCODE(o90_unknown35),
 		OPCODE(o90_unknown36),
 		OPCODE(o90_unknown37),
 		/* 38 */
@@ -967,6 +967,34 @@ void ScummEngine_v90he::o90_unknown34() {
 	}
 	
 	push(readVar(0));
+}
+
+void ScummEngine_v90he::o90_unknown35() {
+	// Polygons related
+	int args[32];
+	int args2[32];
+
+	getStackList(args, ARRAYSIZE(args));
+	getStackList(args2, ARRAYSIZE(args2));
+
+	int subOp = pop();
+
+	switch (subOp) {
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	// HE 98+
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+		break;
+	default:
+		error("o90_unknown35: default case %d", subOp);
+	}
+	push(0);
 }
 
 void ScummEngine_v90he::o90_unknown36() {
