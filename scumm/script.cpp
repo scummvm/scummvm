@@ -383,6 +383,9 @@ int Scumm::readVar(uint var) {
 		var &= ~0x2000;
 	}
 
+	if (!(_features & GF_AFTER_V2) && !(var & 0xF000))
+			return _vars[var];
+
 	if (var & 0x8000) {
 		if ((_gameId == GID_ZAK256) || (_features & GF_OLD_BUNDLE)) {
 			// Emulate a wierd hack in Zak256 to read individual
