@@ -179,11 +179,11 @@ StackLock::~StackLock() {
 
 void StackLock::lock() {
 	assert(_syst);
-	g_system->lock_mutex(_mutex);
+	_syst->lock_mutex(_mutex);
 }
 
 void StackLock::unlock() {
 	assert(_syst);
-	g_system->unlock_mutex(_mutex);
+	_syst->unlock_mutex(_mutex);
 }
 
