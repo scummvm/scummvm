@@ -404,6 +404,9 @@ void SmushPlayer::handleTextResource(Chunk & b) {
 	else if(flags == 8) {
 		fr->drawStringWrap(str, _curBuffer, _frameSize, pos_x, MAX(pos_y, top), width);
 	}
+	else if(flags == 9) {
+		fr->drawStringCentered(str, _curBuffer, _frameSize, MAX(pos_y, top), left, width, pos_x);
+	}
 	else if(flags == 12) {
 		fr->drawStringWrap(str, _curBuffer, _frameSize, pos_x, MAX(pos_y, top), width);
 	}
