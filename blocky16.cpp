@@ -321,7 +321,7 @@ void Blocky16::level3(byte *d_dst) {
 	} else if (code == 0xFD) {
 		t = *_d_src++;
 		t = READ_LE_UINT16(_param6_7Ptr + t * 2);
-		t = ((t << 16) & 0xffff0000) | (t & 0xffff);
+		t = (t << 16) | t;
 		for (i = 0; i < 2; i++) {
 			*(uint32 *)(d_dst +  0) = t;
 			d_dst += _d_pitch;
@@ -329,7 +329,7 @@ void Blocky16::level3(byte *d_dst) {
 	} else if (code == 0xFE) {
 		t = READ_LE_UINT16(_d_src);
 		_d_src += 2;
-		t = ((t << 16) & 0xffff0000) | (t & 0xffff);
+		t = (t << 16) | t;
 		for (i = 0; i < 2; i++) {
 			*(uint32 *)(d_dst +  0) = t;
 			d_dst += _d_pitch;
@@ -343,19 +343,19 @@ void Blocky16::level3(byte *d_dst) {
 	} else if (code == 0xF7) {
 		tmp2 = READ_LE_UINT32(_d_src);
 		_d_src += 4;
-		val = READ_LE_UINT16(_param6_7Ptr + (tmp2 & 0xff) * 2);
+		val = READ_LE_UINT16(_param6_7Ptr + (byte)tmp2 * 2);
 		*(uint16 *)(d_dst +  0) = val;
-		val = READ_LE_UINT16(_param6_7Ptr + ((tmp2 >> 8) & 0xff) * 2);
+		val = READ_LE_UINT16(_param6_7Ptr + (byte)(tmp2 >> 8) * 2);
 		*(uint16 *)(d_dst +  2) = val;
 		tmp2 >>= 16;
 		d_dst += _d_pitch;
-		val = READ_LE_UINT16(_param6_7Ptr + (tmp2 & 0xff) * 2);
+		val = READ_LE_UINT16(_param6_7Ptr + (byte)tmp2 * 2);
 		*(uint16 *)(d_dst +  0) = val;
-		val = READ_LE_UINT16(_param6_7Ptr + ((tmp2 >> 8) & 0xff) * 2);
+		val = READ_LE_UINT16(_param6_7Ptr + (byte)(tmp2 >> 8) * 2);
 		*(uint16 *)(d_dst +  2) = val;
 	} else if ((code == 0xF9) || (code == 0xFA) || (code == 0xFB) || (code == 0xFC))  {
 		t = READ_LE_UINT16(_paramPtr + code * 2);
-		t = ((t << 16) & 0xffff0000) | (t & 0xffff);
+		t = (t << 16) | t;
 		for (i = 0; i < 2; i++) {
 			*(uint32 *)(d_dst +  0) = t;
 			d_dst += _d_pitch;
@@ -405,15 +405,15 @@ void Blocky16::level2(byte *d_dst) {
 			_d_src += 4;
 		} else {
 			tmp2 = READ_LE_UINT16(_d_src);
-			val = READ_LE_UINT16(_param6_7Ptr + ((tmp2 >> 8) & 0xff) * 2) << 16;
-			val |= READ_LE_UINT16(_param6_7Ptr + (tmp2 & 0xff) * 2);
+			val = READ_LE_UINT16(_param6_7Ptr + (byte)(tmp2 >> 8) * 2) << 16;
+			val |= READ_LE_UINT16(_param6_7Ptr + (byte)tmp2 * 2);
 			_d_src += 2;
 		}
-		byte *tmp_ptr = _tableSmall + (tmp << 7);
+		byte *tmp_ptr = _tableSmall + (tmp * 128);
 		byte l = tmp_ptr[96];
 		int16 *tmp_ptr2 = (int16 *)tmp_ptr;
 		while (l--) {
-			*(uint16* )(d_dst + READ_LE_UINT16(tmp_ptr2) * 2) = val & 0xffff;
+			*(uint16* )(d_dst + READ_LE_UINT16(tmp_ptr2) * 2) = val;
 			tmp_ptr2++;
 		}
 		l = tmp_ptr[97];
@@ -427,14 +427,14 @@ void Blocky16::level2(byte *d_dst) {
 		if (code == 0xFD) {
 			t = *_d_src++;
 			t = READ_LE_UINT16(_param6_7Ptr + t * 2);
-			t = ((t << 16) & 0xffff0000) | (t & 0xffff);
+			t = (t << 16) | t;
 		} else if (code == 0xFE) {
 			t = READ_LE_UINT16(_d_src);
-			t = ((t << 16) & 0xffff0000) | (t & 0xffff);
+			t = (t << 16) | t;
 			_d_src += 2;
 		} else if ((code == 0xF9) || (code == 0xFA) || (code == 0xFB) || (code == 0xFC))  {
 			t = READ_LE_UINT16(_paramPtr + code * 2);
-			t = ((t << 16) & 0xffff0000) | (t & 0xffff);
+			t = (t << 16) | t;
 		}
 		for (i = 0; i < 4; i++) {
 			*(uint32 *)(d_dst +  0) = t;
@@ -490,15 +490,15 @@ void Blocky16::level1(byte *d_dst) {
 			_d_src += 4;
 		} else {
 			tmp2 = READ_LE_UINT16(_d_src);
-			val = READ_LE_UINT16(_param6_7Ptr + ((tmp2 >> 8) & 0xff) * 2) << 16;
-			val |= READ_LE_UINT16(_param6_7Ptr + (tmp2 & 0xff) * 2);
+			val = READ_LE_UINT16(_param6_7Ptr + (byte)(tmp2 >> 8) * 2) << 16;
+			val |= READ_LE_UINT16(_param6_7Ptr + (byte)tmp2 * 2);
 			_d_src += 2;
 		}
-		byte *tmp_ptr = _tableBig + (tmp * 4) + (tmp << 7) + (tmp << 7) + (tmp << 7);
+		byte *tmp_ptr = _tableBig + (tmp * 388);
 		byte l = tmp_ptr[384];
 		int16 *tmp_ptr2 = (int16 *)tmp_ptr;
 		while (l--) {
-			*(uint16* )(d_dst + READ_LE_UINT16(tmp_ptr2) * 2) = val & 0xffff;
+			*(uint16* )(d_dst + READ_LE_UINT16(tmp_ptr2) * 2) = val;
 			tmp_ptr2++;
 		}
 		l = tmp_ptr[385];
@@ -512,14 +512,14 @@ void Blocky16::level1(byte *d_dst) {
 		if (code == 0xFD) {
 			t = *_d_src++;
 			t = READ_LE_UINT16(_param6_7Ptr + t * 2);
-			t = ((t << 16) & 0xffff0000) | (t & 0xffff);
+			t = (t << 16) | t;
 		} else if (code == 0xFE) {
 			t = READ_LE_UINT16(_d_src);
-			t = ((t << 16) & 0xffff0000) | (t & 0xffff);
+			t = (t << 16) | t;
 			_d_src += 2;
 		} else if ((code == 0xF9) || (code == 0xFA) || (code == 0xFB) || (code == 0xFC))  {
 			t = READ_LE_UINT16(_paramPtr + code * 2);
-			t = ((t << 16) & 0xffff0000) | (t & 0xffff);
+			t = (t << 16) | t;
 		}
 		for (i = 0; i < 8; i++) {
 			*(uint32 *)(d_dst +  0) = t;
