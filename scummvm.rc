@@ -1,43 +1,7 @@
-//Microsoft Developer Studio generated resource script.
-//
 #include "winresrc.h"
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// Icon
-//
+IDI_ICON               ICON    DISCARDABLE     "scummvm.ico"
 
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-IDI_ICON1               ICON    DISCARDABLE     "scummvm.ico"
-
-#ifdef APSTUDIO_INVOKED
-/////////////////////////////////////////////////////////////////////////////
-//
-// TEXTINCLUDE
-//
-
-1 TEXTINCLUDE DISCARDABLE 
-BEGIN
-    "resource.h\0"
-END
-
-2 TEXTINCLUDE DISCARDABLE 
-BEGIN
-    "#include ""afxres.h""\r\n"
-    "\0"
-END
-
-3 TEXTINCLUDE DISCARDABLE 
-BEGIN
-    "\r\n"
-    "\0"
-END
-
-#endif    // APSTUDIO_INVOKED
-
-
-#ifndef _MAC
 /////////////////////////////////////////////////////////////////////////////
 //
 // Version
@@ -65,8 +29,8 @@ BEGIN
             VALUE "FileDescription", "http://www.scummvm.org/\0"
             VALUE "FileVersion", "0.5.7cvs\0"
             VALUE "InternalName", "scummvm\0"
-            VALUE "LegalCopyright", "Copyright © 2001-2003 The ScummVM Team\0"
-            VALUE "LegalTrademarks", "'SCUMM', and all SCUMM games are a TM of LucasArts. Simon The Sorcerer is a TM of AdventureSoft. Beneath a Steel Sky is TM of Revolution.\0"
+            VALUE "LegalCopyright", "Copyright © 2001-2004 The ScummVM Team\0"
+            VALUE "LegalTrademarks", "'SCUMM', and all SCUMM games are a TM of LucasArts. Simon The Sorcerer is a TM of AdventureSoft. Broken Sword and Beneath a Steel Sky is TM of Revolution.\0"
             VALUE "OriginalFilename", "scummvm.exe\0"
             VALUE "PrivateBuild", "\0"
             VALUE "ProductName", "ScummVM\0"
@@ -79,6 +43,3 @@ BEGIN
         VALUE "Translation", 0x409, 1200
     END
 END
-
-#endif    // !_MAC
-
