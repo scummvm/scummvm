@@ -1890,39 +1890,32 @@ void ScummEngine::postProcessAuxQueue() {
 			if (ae->actorNum != -1) {
 				Actor *a = derefActor(ae->actorNum, "postProcessAuxQueue");
 				const uint8 *cost = getResourceAddress(rtCostume, a->costume);
-				
 				int dy = a->offs_y + a->_pos.y - a->getElevation();
 				int dx = a->offs_x + a->_pos.x;
 
 				const uint8 *akax = findResource(MKID('AKAX'), cost);
-				if (!akax) {
-					error("No AKAX block for actor %d", ae->actorNum);
-				}
+				assert(akax);
 				const uint8 *auxd = findPalInPals(akax, ae->subIndex) - _resourceHeaderSize;
-				if (!auxd) {
-					error("No AUXD block for actor %d", ae->actorNum);
-				}
+				assert(auxd);
 				const uint8 *axfd = findResourceData(MKID('AXFD'), auxd);
-				if (!axfd) {
-					error("No AXFD block for actor %d", ae->actorNum);
-				} else {
-					uint16 comp = READ_LE_UINT16(axfd);
-					if (comp != 0) {
-						int x = (int16)READ_LE_UINT16(axfd + 2) + dx;
-						int y = (int16)READ_LE_UINT16(axfd + 4) + dy;
-						int w = (int16)READ_LE_UINT16(axfd + 6);
-						int h = (int16)READ_LE_UINT16(axfd + 8);
-						VirtScreen *pvs = &virtscr[kMainVirtScreen];
-						uint8 *dst1 = pvs->getPixels(0, pvs->topline);
-						uint8 *dst2 = pvs->getBackPixels(0, pvs->topline);
-						switch (comp) {
-						case 1:
-							gdi.copyAuxImage(dst1, dst2, axfd + 10, pvs->w, pvs->h, x, y, w, h, NULL);
-							break;
-						default:
-							warning("unimplemented compression type %d", comp);
-							break;
-						}
+				assert(axfd);
+
+				uint16 comp = READ_LE_UINT16(axfd);
+				if (comp != 0) {
+					int x = (int16)READ_LE_UINT16(axfd + 2) + dx;
+					int y = (int16)READ_LE_UINT16(axfd + 4) + dy;
+					int w = (int16)READ_LE_UINT16(axfd + 6);
+					int h = (int16)READ_LE_UINT16(axfd + 8);
+					VirtScreen *pvs = &virtscr[kMainVirtScreen];
+					uint8 *dst1 = pvs->getPixels(0, pvs->topline);
+					uint8 *dst2 = pvs->getBackPixels(0, pvs->topline);
+					switch (comp) {
+					case 1:
+						gdi.copyAuxImage(dst1, dst2, axfd + 10, pvs->w, pvs->h, x, y, w, h, NULL);
+						break;
+					default:
+						warning("unimplemented compression type %d", comp);
+						break;
 					}
 				}
 				const uint8 *axur = findResourceData(MKID('AXUR'), auxd);
@@ -1932,8 +1925,8 @@ void ScummEngine::postProcessAuxQueue() {
 						int x1 = (int16)READ_LE_UINT16(axur + 0) + dx;
 						int y1 = (int16)READ_LE_UINT16(axur + 2) + dy;
 						int x2 = (int16)READ_LE_UINT16(axur + 4) + dx;
-						int y2 = (int16)READ_LE_UINT16(axur + 6) + dy;
-						markRectAsDirty(kMainVirtScreen, x1, x2, y1, y2);
+						int y2 = (int16)READ_LE_UINT16(axur + 6) + dy;					
+						markRectAsDirty(kMainVirtScreen, x1, x2, y1, y2 + 1);
 						axur += 8;
 					}
 				}

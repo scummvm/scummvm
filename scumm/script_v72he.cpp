@@ -1454,7 +1454,7 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, int resnum, int state, int x
 			cw = pvs->w;
 			ch = pvs->h;
 		}
-		Common::Rect rScreen(0, 0, cw, ch);
+		Common::Rect rScreen(0, 0, cw - 1, ch - 1);
 		if (flags & 0x80) {    
 //  		drawWizImageHelper2(p, wizd, cw, ch, x1, y1, width, height, &rScreen, 0, 2);
 			warning("drawWizImage() unhandled flag 0x80");
@@ -1470,15 +1470,13 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, int resnum, int state, int x
 			warning("printing Wiz image is unimplemented");
 			dst = NULL;
 		} else {
-			Common::Rect rImage(x1, y1, x1 + width, y1 + height);
+			Common::Rect rImage(x1, y1, x1 + width - 1, y1 + height - 1);
 			if (rImage.intersects(rScreen)) {
 				rImage.clip(rScreen);
 				if (flags & 0x18) {
 					++rImage.bottom;
 					markRectAsDirty(kMainVirtScreen, rImage);
 				} else {
-					--rImage.right;
-					--rImage.bottom;
 					gdi.copyVirtScreenBuffers(rImage);
 				}
 			}
@@ -1497,12 +1495,12 @@ struct PolygonDrawData {
 		int16 y2;
 	};
 	struct ResArea {
-		int16 off;
+		uint16 off;
 		int16 x_step;
 		int16 y_step;
 		int16 x_s;
 		int16 y_s;
-		uint16 w;
+		int16 w;
 	};
 	Common::Point pts[4];
 	ResArea *ra;
@@ -1556,7 +1554,7 @@ struct PolygonDrawData {
   			x3 += x_step_2;
   			y3 += y_step;
   			
-  			if (p2->y > p1->y) {
+  			if (p2->y <= p1->y) {
   				--iaidx;
   			} else {
   				++iaidx;
@@ -1663,6 +1661,7 @@ void ScummEngine_v72he::drawWizPolygon(int resnum, int state, int id, int flags)
 			uint16 rw = pra->w;
 			while (rw--) {
 				uint srcWizOff = (y_acc >> 0x10) * wizW + (x_acc >> 0x10);
+				assert(srcWizOff < wizW * wizH);
 				x_acc += pra->x_step;
 				y_acc += pra->y_step;
 				*dstPtr++ = srcWizBuf[srcWizOff];
@@ -1679,7 +1678,6 @@ void ScummEngine_v72he::drawWizPolygon(int resnum, int state, int id, int flags)
 
 		free(srcWizBuf);
 	}
-
 }
 
 void ScummEngine_v72he::redrawBGAreas() {

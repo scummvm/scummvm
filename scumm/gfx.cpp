@@ -1404,21 +1404,21 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 }
 
 static bool calcClipRects(int dst_w, int dst_h, int src_x, int src_y, int src_w, int src_h, const Common::Rect *rect, Common::Rect &srcRect, Common::Rect &dstRect) {
-	srcRect = Common::Rect(0, 0, src_w, src_h);
-	dstRect = Common::Rect(src_x, src_y, src_x + src_w, src_y + src_h);
+	srcRect = Common::Rect(0, 0, src_w - 1, src_h - 1);
+	dstRect = Common::Rect(src_x, src_y, src_x + src_w - 1, src_y + src_h - 1);
 	Common::Rect r3;
 	int diff;
 
 	if (rect) {
 		r3 = *rect;
-		Common::Rect r4(0, 0, dst_w, dst_h);
+		Common::Rect r4(0, 0, dst_w - 1, dst_h - 1);
 		if (r3.intersects(r4)) {
 			r3.clip(r4);
 		} else {
 			return false;
 		}
 	} else {
-		r3 = Common::Rect(0, 0, dst_w, dst_h);
+		r3 = Common::Rect(0, 0, dst_w - 1, dst_h - 1);
 	}
 	diff = dstRect.left - r3.left;
 	if (diff < 0) {
@@ -1564,8 +1564,6 @@ void Gdi::copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int
 	Common::Rect r1, r2;
 	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
 		if (r1.isValidRect() && r2.isValidRect()) {
-			--r1.right;
-			--r1.bottom;
 			decompressAuxImage(dst1, dst2, dstw, r2, src, r1);
 		}
 	}
