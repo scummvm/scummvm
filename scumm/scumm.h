@@ -344,6 +344,7 @@ public:
 public:
 	ResourceManager(ScummEngine *vm);
 
+	byte *createResource(int type, int index, uint32 size);
 	void nukeResource(int type, int i);	
 
 	void freeResources();
@@ -356,6 +357,9 @@ public:
 
 	void setResourceCounter(int type, int index, byte flag);
 	void increaseResourceCounter();
+
+	void resourceStats();
+	void expireResources(uint32 size);
 };
 
 class ScummEngine : public Engine {
@@ -363,6 +367,7 @@ class ScummEngine : public Engine {
 	friend class SmushPlayer;
 	friend class Insane;
 	friend class CharsetRenderer;
+	friend class ResourceManager;
 	
 	void errorString(const char *buf_input, char *buf_output);
 public:
@@ -699,7 +704,7 @@ protected:
 	void loadPtrToResource(int type, int i, const byte *ptr);
 	virtual void readResTypeList(int id, uint32 tag, const char *name);
 	void allocResTypeData(int id, uint32 tag, int num, const char *name, int mode);
-	byte *createResource(int type, int index, uint32 size);
+//	byte *createResource(int type, int index, uint32 size);
 	int loadResource(int type, int i);
 //	void nukeResource(int type, int i);	
 	int getResourceSize(int type, int idx);
@@ -735,10 +740,6 @@ public:
 	const byte *findResource(uint32 tag, const byte *ptr);
 	int getResourceDataSize(const byte *ptr) const;
 	void dumpResource(const char *tag, int index, const byte *ptr, int length = -1);
-
-protected:
-	void resourceStats();
-	void expireResources(uint32 size);
 
 public:
 	/* Should be in Object class */

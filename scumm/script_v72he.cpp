@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "stdafx.h"
 
 #include "common/config-manager.h"
@@ -411,7 +410,7 @@ ScummEngine_v72he::ArrayHeader *ScummEngine_v72he::defineArray(int array, int ty
 	size *= dim1end - dim1start + 1;
 	size >>= 3;
 
-	ah = (ArrayHeader *)createResource(rtString, id, size + sizeof(ArrayHeader));
+	ah = (ArrayHeader *)res.createResource(rtString, id, size + sizeof(ArrayHeader));
 
 	ah->type = TO_LE_32(type);
 	ah->dim1start = TO_LE_32(dim1start);

@@ -648,7 +648,7 @@ int ScummEngine::loadResource(int type, int idx) {
 		size = _fileHandle->readUint32BE();
 		_fileHandle->seek(-8, SEEK_CUR);
 	}
-	_fileHandle->read(createResource(type, idx, size), size);
+	_fileHandle->read(res.createResource(type, idx, size), size);
 
 	// dump the resource if requested
 	if (_dumpScripts && type == rtScript) {
@@ -743,15 +743,15 @@ void ResourceManager::setResourceCounter(int type, int idx, byte flag) {
 /* 2 bytes safety area to make "precaching" of bytes in the gdi drawer easier */
 #define SAFETY_AREA 2
 
-byte *ScummEngine::createResource(int type, int idx, uint32 size) {
+byte *ResourceManager::createResource(int type, int idx, uint32 size) {
 	byte *ptr;
 
 	CHECK_HEAP
-	debugC(DEBUG_RESOURCE, "createResource(%s,%d,%d)", resTypeFromId(type), idx, size);
+	debugC(DEBUG_RESOURCE, "res.createResource(%s,%d,%d)", resTypeFromId(type), idx, size);
 
-	if (!res.validateResource("allocating", type, idx))
+	if (!validateResource("allocating", type, idx))
 		return NULL;
-	res.nukeResource(type, idx);
+	nukeResource(type, idx);
 
 	expireResources(size);
 
@@ -761,11 +761,11 @@ byte *ScummEngine::createResource(int type, int idx, uint32 size) {
 		error("Out of memory while allocating %d", size);
 	}
 
-	res._allocatedSize += size;
+	_allocatedSize += size;
 
-	res.address[type][idx] = ptr;
+	address[type][idx] = ptr;
 	((MemBlkHeader *)ptr)->size = size;
-	res.setResourceCounter(type, idx, 1);
+	setResourceCounter(type, idx, 1);
 	return ptr + sizeof(MemBlkHeader);	/* skip header */
 }
 
@@ -857,32 +857,32 @@ bool ScummEngine::isResourceInUse(int type, int i) const {
 	}
 }
 
-void ScummEngine::expireResources(uint32 size) {
+void ResourceManager::expireResources(uint32 size) {
 	int i, j;
 	byte flag;
 	byte best_counter;
 	int best_type, best_res = 0;
 	uint32 oldAllocatedSize;
 
-	if (res._expireCounter != 0xFF) {
-		res._expireCounter = 0xFF;
-		res.increaseResourceCounter();
+	if (_expireCounter != 0xFF) {
+		_expireCounter = 0xFF;
+		increaseResourceCounter();
 	}
 
-	if (size + res._allocatedSize < res._maxHeapThreshold)
+	if (size + _allocatedSize < _maxHeapThreshold)
 		return;
 
-	oldAllocatedSize = res._allocatedSize;
+	oldAllocatedSize = _allocatedSize;
 
 	do {
 		best_type = 0;
 		best_counter = 2;
 
 		for (i = rtFirst; i <= rtLast; i++)
-			if (res.mode[i]) {
-				for (j = res.num[i]; --j >= 0;) {
-					flag = res.flags[i][j];
-					if (!(flag & RF_LOCK) && flag >= best_counter && res.address[i][j] && !isResourceInUse(i, j)) {
+			if (mode[i]) {
+				for (j = num[i]; --j >= 0;) {
+					flag = flags[i][j];
+					if (!(flag & RF_LOCK) && flag >= best_counter && address[i][j] && !_vm->isResourceInUse(i, j)) {
 						best_counter = flag;
 						best_type = i;
 						best_res = j;
@@ -892,12 +892,12 @@ void ScummEngine::expireResources(uint32 size) {
 
 		if (!best_type)
 			break;
-		res.nukeResource(best_type, best_res);
-	} while (size + res._allocatedSize > res._minHeapThreshold);
+		nukeResource(best_type, best_res);
+	} while (size + _allocatedSize > _minHeapThreshold);
 
-	res.increaseResourceCounter();
+	increaseResourceCounter();
 
-	debugC(DEBUG_RESOURCE, "Expired resources, mem %d -> %d", oldAllocatedSize, res._allocatedSize);
+	debugC(DEBUG_RESOURCE, "Expired resources, mem %d -> %d", oldAllocatedSize, _allocatedSize);
 }
 
 void ResourceManager::freeResources() {
@@ -927,7 +927,7 @@ void ScummEngine::loadPtrToResource(int type, int resindex, const byte *source) 
 	if (len <= 0)
 		return;
 
-	alloced = createResource(type, resindex, len);
+	alloced = res.createResource(type, resindex, len);
 
 	if (!source) {
 		alloced[0] = fetchScriptByte();
@@ -945,21 +945,21 @@ bool ResourceManager::isResourceLoaded(int type, int idx) const {
 	return address[type][idx] != NULL;
 }
 
-void ScummEngine::resourceStats() {
+void ResourceManager::resourceStats() {
 	int i, j;
 	uint32 lockedSize = 0, lockedNum = 0;
 	byte flag;
 
 	for (i = rtFirst; i <= rtLast; i++)
-		for (j = res.num[i]; --j >= 0;) {
-			flag = res.flags[i][j];
-			if (flag & RF_LOCK && res.address[i][j]) {
-				lockedSize += ((MemBlkHeader *)res.address[i][j])->size;
+		for (j = num[i]; --j >= 0;) {
+			flag = flags[i][j];
+			if (flag & RF_LOCK && address[i][j]) {
+				lockedSize += ((MemBlkHeader *)address[i][j])->size;
 				lockedNum++;
 			}
 		}
 
-	debug(1, "Total allocated size=%d, locked=%d(%d)", res._allocatedSize, lockedSize, lockedNum);
+	debug(1, "Total allocated size=%d, locked=%d(%d)", _allocatedSize, lockedSize, lockedNum);
 }
 
 void ScummEngine::readMAXS(int blockSize) {

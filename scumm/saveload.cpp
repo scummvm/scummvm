@@ -941,7 +941,7 @@ void ScummEngine::saveLoadResource(Serializer *ser, int type, int idx) {
 		} else {
 			size = ser->loadUint32();
 			if (size) {
-				createResource(type, idx, size);
+				res.createResource(type, idx, size);
 				ser->loadBytes(getResourceAddress(type, idx), size);
 				if (type == rtInventory) {
 					_inventory[idx] = ser->loadUint16();
@@ -992,7 +992,7 @@ void ScummEngine::loadResource(Serializer *ser, int type, int idx) {
 	if (res.mode[type] == 0) {
 		uint32 size = ser->loadUint32();
 		assert(size);
-		createResource(type, idx, size);
+		res.createResource(type, idx, size);
 		ser->loadBytes(getResourceAddress(type, idx), size);
 
 		if (type == rtInventory) {

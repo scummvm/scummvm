@@ -69,7 +69,7 @@ void ScummEngine::parseEvents() {
 				else if (event.kbd.keycode == 'd')
 					_debugger->attach();
 				else if (event.kbd.keycode == 's')
-					resourceStats();
+					res.resourceStats();
 				else
 					_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
 			} else if (event.kbd.flags & OSystem::KBD_ALT) {

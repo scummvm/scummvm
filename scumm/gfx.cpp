@@ -331,12 +331,12 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int number, int top, int
 		}
 	}
 
-	createResource(rtBuffer, slot + 1, size);
+	res.createResource(rtBuffer, slot + 1, size);
 	vs->pixels = getResourceAddress(rtBuffer, slot + 1);
 	memset(vs->pixels, 0, size);	// reset background
 
 	if (twobufs) {
-		vs->backBuf = createResource(rtBuffer, slot + 5, size);
+		vs->backBuf = res.createResource(rtBuffer, slot + 5, size);
 	}
 
 	if (slot != 3) {
@@ -709,7 +709,7 @@ void ScummEngine::initBGBuffers(int height) {
 
 
 	size = itemsize * gdi._numZBuffer;
-	memset(createResource(rtBuffer, 9, size), 0, size);
+	memset(res.createResource(rtBuffer, 9, size), 0, size);
 
 	for (i = 0; i < (int)ARRAYSIZE(gdi._imgBufOffs); i++) {
 		if (i < gdi._numZBuffer)

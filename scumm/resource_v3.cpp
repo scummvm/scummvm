@@ -118,7 +118,7 @@ void ScummEngine_v3::loadCharset(int no) {
 	}
 
 	size = file.readUint16LE();
-	file.read(createResource(rtCharset, no, size), size);
+	file.read(res.createResource(rtCharset, no, size), size);
 }
 
 } // End of namespace Scumm

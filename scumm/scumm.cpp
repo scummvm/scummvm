@@ -2371,13 +2371,13 @@ void ScummEngine::initRoomSubBlocks() {
 			else
 				size = numOfBoxes * SIZEOF_BOX + 1;
 
-			createResource(rtMatrix, 2, size);
+			res.createResource(rtMatrix, 2, size);
 			memcpy(getResourceAddress(rtMatrix, 2), ptr, size);
 			ptr += size;
 
 			size = getResourceDataSize(ptr - size - _resourceHeaderSize) - size;
 			if (size > 0) {					// do this :)
-				createResource(rtMatrix, 1, size);
+				res.createResource(rtMatrix, 1, size);
 				memcpy(getResourceAddress(rtMatrix, 1), ptr, size);
 			}
 
@@ -2386,7 +2386,7 @@ void ScummEngine::initRoomSubBlocks() {
 		ptr = findResourceData(MKID('BOXD'), roomptr);
 		if (ptr) {
 			int size = getResourceDataSize(ptr);
-			createResource(rtMatrix, 2, size);
+			res.createResource(rtMatrix, 2, size);
 			roomptr = getResourceAddress(rtRoom, _roomResource);
 			ptr = findResourceData(MKID('BOXD'), roomptr);
 			memcpy(getResourceAddress(rtMatrix, 2), ptr, size);
@@ -2395,7 +2395,7 @@ void ScummEngine::initRoomSubBlocks() {
 		ptr = findResourceData(MKID('BOXM'), roomptr);
 		if (ptr) {
 			int size = getResourceDataSize(ptr);
-			createResource(rtMatrix, 1, size);
+			res.createResource(rtMatrix, 1, size);
 			roomptr = getResourceAddress(rtRoom, _roomResource);
 			ptr = findResourceData(MKID('BOXM'), roomptr);
 			memcpy(getResourceAddress(rtMatrix, 1), ptr, size);
@@ -2709,7 +2709,7 @@ void ScummEngine_v3old::initRoomSubBlocks() {
 		else
 			size = numOfBoxes * SIZEOF_BOX_V3 + 1;
 
-		createResource(rtMatrix, 2, size);
+		res.createResource(rtMatrix, 2, size);
 		memcpy(getResourceAddress(rtMatrix, 2), ptr, size);
 		ptr += size;
 		if (_version <= 2) {
@@ -2720,7 +2720,7 @@ void ScummEngine_v3old::initRoomSubBlocks() {
 		}
 
 		if (size > 0) {					// do this :)
-			createResource(rtMatrix, 1, size);
+			res.createResource(rtMatrix, 1, size);
 			memcpy(getResourceAddress(rtMatrix, 1), ptr, size);
 		}
 

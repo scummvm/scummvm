@@ -1125,7 +1125,7 @@ void ScummEngine::addObjectToInventory(uint obj, uint room) {
 
 	slot = getInventorySlot();
 	_inventory[slot] = obj;
-	dst = createResource(rtInventory, slot, size);
+	dst = res.createResource(rtInventory, slot, size);
 	assert(dst);
 	memcpy(dst, ptr, size);
 
@@ -1661,7 +1661,7 @@ void ScummEngine::loadFlObject(uint object, uint room) {
 
 	// Allocate slot & memory for floating object
 	slot = findFlObjectSlot();
-	flob = createResource(rtFlObject, slot, flob_size);
+	flob = res.createResource(rtFlObject, slot, flob_size);
 	assert(flob);
 
 	// Copy object code + object image to floating object

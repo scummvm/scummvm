@@ -810,7 +810,7 @@ void ScummEngine_v72he::captureWizImage(int resNum, const Common::Rect& r, bool 
 		dataSize = (dataSize + 1) & ~1;
 		int wizSize = headerSize + dataSize;
 		// write header
-		uint8 *wizImg = createResource(rtImage, resNum, dataSize + headerSize);
+		uint8 *wizImg = res.createResource(rtImage, resNum, dataSize + headerSize);
 		*(uint32 *)(wizImg + 0x00) = MKID('AWIZ');
 		*(uint32 *)(wizImg + 0x04) = TO_BE_32(wizSize);
 		*(uint32 *)(wizImg + 0x08) = MKID('WIZH');
@@ -1374,7 +1374,7 @@ void ScummEngine_v90he::createWizEmptyImage(const WizParameters *params) {
 	}
 	res_size += 8 + img_w * img_h;
 	
-	uint8 *res_data = createResource(rtImage, params->img.resNum, res_size);
+	uint8 *res_data = res.createResource(rtImage, params->img.resNum, res_size);
 	if (!res_data) {
 		VAR(119) = -1;
 	} else {
@@ -1478,7 +1478,7 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 				} else {
 					uint32 size = f.readUint32BE();
 					f.seek(0, SEEK_SET);
-					byte *p = createResource(rtImage, params->img.resNum, size);
+					byte *p = res.createResource(rtImage, params->img.resNum, size);
 					if (f.read(p, size) != size) {
 						res.nukeResource(rtImage, params->img.resNum);
 						warning("i/o error when reading '%s'", params->filename);

@@ -451,7 +451,7 @@ ScummEngine_v6::ArrayHeader *ScummEngine_v6::defineArray(int array, int type, in
 	size *= dim2 + 1;
 	size *= dim1 + 1;
 
-	ah = (ArrayHeader *)createResource(rtString, id, size + sizeof(ArrayHeader));
+	ah = (ArrayHeader *)res.createResource(rtString, id, size + sizeof(ArrayHeader));
 
 	ah->type = TO_LE_16(type);
 	ah->dim1 = TO_LE_16(dim1 + 1);
@@ -3095,7 +3095,7 @@ void ScummEngine_v6::o6_setBoxSet() {
 		error("ScummEngine_v6::o6_setBoxSet: Can't find dboxes for set %d", arg);
 
 	dboxSize = READ_BE_UINT32(boxd + 4) - 8;
-	byte *matrix = createResource(rtMatrix, 2, dboxSize);
+	byte *matrix = res.createResource(rtMatrix, 2, dboxSize);
 
 	assert(matrix);
 	memcpy(matrix, boxd + 8, dboxSize);
@@ -3108,7 +3108,7 @@ void ScummEngine_v6::o6_setBoxSet() {
 		error("ScummEngine_v6::o6_setBoxSet: Can't find mboxes for set %d", arg);
 
 	mboxSize = READ_BE_UINT32(boxm + 4) - 8;
-	matrix = createResource(rtMatrix, 1, mboxSize);
+	matrix = res.createResource(rtMatrix, 1, mboxSize);
 
 	assert(matrix);
 	memcpy(matrix, boxm + 8, mboxSize);

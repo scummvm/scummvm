@@ -1265,7 +1265,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 	if (basetag == MKID('MIDI') || basetag == MKID('iMUS')) {
 		if (_midiDriver != MD_PCSPK && _midiDriver != MD_PCJR) {
 			_fileHandle->seek(-8, SEEK_CUR);
-			_fileHandle->read(createResource(type, idx, total_size + 8), total_size + 8);
+			_fileHandle->read(res.createResource(type, idx, total_size + 8), total_size + 8);
 			return 1;
 		}
 	} else if (basetag == MKID('SOU ')) {
@@ -1327,7 +1327,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 
 		if (best_pri != -1) {
 			_fileHandle->seek(best_offs - 8, SEEK_SET);
-			_fileHandle->read(createResource(type, idx, best_size), best_size);
+			_fileHandle->read(res.createResource(type, idx, best_size), best_size);
 			return 1;
 		}
 	} else if (basetag == MKID('Mac0')) {
@@ -1342,27 +1342,27 @@ int ScummEngine::readSoundResource(int type, int idx) {
 	} else if (basetag == MKID('Mac1')) {
 		_fileHandle->seek(-12, SEEK_CUR);
 		total_size = _fileHandle->readUint32BE();
-		_fileHandle->read(createResource(type, idx, total_size), total_size - 8);
+		_fileHandle->read(res.createResource(type, idx, total_size), total_size - 8);
 		return 1;
 	} else if (basetag == MKID('RIFF')) {
 		_fileHandle->seek(-12, SEEK_CUR);
 		total_size = _fileHandle->readUint32BE();
-		_fileHandle->read(createResource(type, idx, total_size), total_size - 8);
+		_fileHandle->read(res.createResource(type, idx, total_size), total_size - 8);
 		return 1;
 	} else if (basetag == MKID('HSHD')) {
 		_fileHandle->seek(-12, SEEK_CUR);
 		total_size = _fileHandle->readUint32BE();
-		_fileHandle->read(createResource(type, idx, total_size), total_size - 8);
+		_fileHandle->read(res.createResource(type, idx, total_size), total_size - 8);
 		return 1;
 	} else if (basetag == MKID('TALK')) {
 		_fileHandle->seek(-12, SEEK_CUR);
 		total_size = _fileHandle->readUint32BE();
-		_fileHandle->read(createResource(type, idx, total_size), total_size - 8);
+		_fileHandle->read(res.createResource(type, idx, total_size), total_size - 8);
 		return 1;
 	} else if (basetag == MKID('DIGI')) {
 		_fileHandle->seek(-12, SEEK_CUR);
 		total_size = _fileHandle->readUint32BE();
-		_fileHandle->read(createResource(type, idx, total_size), total_size - 8);
+		_fileHandle->read(res.createResource(type, idx, total_size), total_size - 8);
 		return 1;
 	} else if (basetag == MKID('FMUS')) {
 		// Used in 3DO version of puttputt joins the parade and probably others
@@ -1396,19 +1396,19 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		total_size = dmuFile.readUint32BE();
 		debugC(DEBUG_SOUND, "dmu file size %d", total_size);
 		dmuFile.seek(-8, SEEK_CUR);
-		dmuFile.read(createResource(type, idx, total_size), total_size);
+		dmuFile.read(res.createResource(type, idx, total_size), total_size);
 		dmuFile.close();
 		return 1;
 	} else if (basetag == MKID('Crea')) {
 		_fileHandle->seek(-12, SEEK_CUR);
 		total_size = _fileHandle->readUint32BE();
-		_fileHandle->read(createResource(type, idx, total_size), total_size - 8);
+		_fileHandle->read(res.createResource(type, idx, total_size), total_size - 8);
 		return 1;
 	} else if (FROM_LE_32(basetag) == max_total_size) {
 		_fileHandle->seek(-12, SEEK_CUR);
 		total_size = _fileHandle->readUint32BE();
 		_fileHandle->seek(-8, SEEK_CUR);
-		_fileHandle->read(createResource(type, idx, total_size), total_size);
+		_fileHandle->read(res.createResource(type, idx, total_size), total_size);
 		return 1;
 	} else {
 		warning("Unrecognized base tag 0x%08x in sound %d", basetag, idx);
@@ -1645,7 +1645,7 @@ void ScummEngine::convertMac0Resource(int type, int idx, byte *src_ptr, int size
 	*/
 
 #if 0
-	byte *ptr = createResource(type, idx, size);
+	byte *ptr = res.createResource(type, idx, size);
 	memcpy(ptr, src_ptr, size);
 #else
 	const int ppqn = 480;
@@ -1687,7 +1687,7 @@ void ScummEngine::convertMac0Resource(int type, int idx, byte *src_ptr, int size
 	assert(*src_ptr == 0x09);
 	
 	// Create sound resource
-	start_ptr = createResource(type, idx, total_size);
+	start_ptr = res.createResource(type, idx, total_size);
 	
 	// Insert MIDI header
 	ptr = writeMIDIHeader(start_ptr, "GMD ", ppqn, total_size);
@@ -1794,7 +1794,7 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 	int total_size = kMIDIHeaderSize + 7 + 8 * sizeof(ADLIB_INSTR_MIDI_HACK) + size;
 	total_size += 24;	// Up to 24 additional bytes are needed for the jump sysex
 	
-	ptr = createResource(type, idx, total_size);
+	ptr = res.createResource(type, idx, total_size);
 
 	src_ptr += 2;
 	size -= 2;
@@ -2187,7 +2187,7 @@ int ScummEngine::readSoundResourceSmallHeader(int type, int idx) {
 		_fileHandle->seek(ro_offs + 4, SEEK_SET);
 		_fileHandle->read(src_ptr, ro_size -4);
 
-		ptr = createResource(type, idx, ro_size + 2);
+		ptr = res.createResource(type, idx, ro_size + 2);
 		memcpy(ptr, "RO", 2); ptr += 2;
 		memcpy(ptr, src_ptr, ro_size - 4); ptr += ro_size - 4;
 		return 1;
@@ -2268,15 +2268,15 @@ int ScummEngine::readSoundResourceSmallHeader(int type, int idx) {
 	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && wa_offs != 0) {
 		if (_features & GF_OLD_BUNDLE) {
 			_fileHandle->seek(wa_offs, SEEK_SET);
-			_fileHandle->read(createResource(type, idx, wa_size), wa_size);
+			_fileHandle->read(res.createResource(type, idx, wa_size), wa_size);
 		} else {
 			_fileHandle->seek(wa_offs - 6, SEEK_SET);
-			_fileHandle->read(createResource(type, idx, wa_size + 6), wa_size + 6);
+			_fileHandle->read(res.createResource(type, idx, wa_size + 6), wa_size + 6);
 		}
 		return 1;
 	} else if (ro_offs != 0) {
 		_fileHandle->seek(ro_offs - 2, SEEK_SET);
-		_fileHandle->read(createResource(type, idx, ro_size - 4), ro_size - 4);
+		_fileHandle->read(res.createResource(type, idx, ro_size - 4), ro_size - 4);
 		return 1;
 	}
 	res.roomoffs[type][idx] = 0xFFFFFFFF;

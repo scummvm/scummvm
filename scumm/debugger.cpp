@@ -324,7 +324,7 @@ bool ScummDebugger::Cmd_ImportRes(int argc, const char** argv) {
 			file.seek(-8, SEEK_CUR);
 		}
 
-		file.read(_vm->createResource(rtScript, resnum, size), size);
+		file.read(_vm->res.createResource(rtScript, resnum, size), size);
 
 	} else
 		DebugPrintf("Unknown importres type '%s'\n", argv[1]);

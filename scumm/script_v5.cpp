@@ -2289,7 +2289,7 @@ void ScummEngine_v5::o5_stringOps() {
 		b = getVarOrDirectByte(PARAM_2);
 		res.nukeResource(rtString, a);
 		if (b) {
-			ptr = createResource(rtString, a, b);
+			ptr = res.createResource(rtString, a, b);
 			if (ptr) {
 				for (i = 0; i < b; i++)
 					ptr[i] = 0;
