@@ -94,10 +94,6 @@ void Engine::mainLoop() {
 				}
 				g_driver->drawSmushFrame(g_smush->getX(), g_smush->getY());
 			}
-			// Draw text
-			for (text_list_type::iterator i = textObjects_.begin(); i != textObjects_.end(); i++) {
-				(*i)->draw();
-			}
 			g_driver->flipBuffer();
 		} else if (_mode == ENGINE_MODE_NORMAL) {
 			if (SCREENBLOCKS_GLOBAL == 1)
