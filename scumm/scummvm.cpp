@@ -232,7 +232,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"freddi", "Freddi Fish 1: The Case of the Missing Kelp Seeds", GID_PUTTPUTT, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_DEFAULT_TO_1X_SCALER, 0},
-	{"freddemo", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo)", GID_PUTTPUTT, 6, MDT_NONE,
+	{"freddemo", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo)", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_DEFAULT_TO_1X_SCALER, 0},
 
 	// Humongous Entertainment Scumm Version 8.0 ?  Scummsrc.80 
