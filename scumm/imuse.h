@@ -66,7 +66,6 @@ public:
 	int set_music_volume(uint vol);
 	int get_music_volume();
 	void setMasterVolume(int vol);
-	int get_master_volume();
 	void startSound(int sound);
 	void stopSound(int sound);
 	void stopAllSounds();

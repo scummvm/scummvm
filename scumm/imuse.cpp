@@ -22,7 +22,6 @@
 
 #include "stdafx.h"
 
-#include "base/gameDetector.h"	// For kDefaultMasterVolume etc.
 #include "common/util.h"
 
 #include "scumm/imuse.h"
@@ -610,10 +609,6 @@ int IMuseInternal::setMasterVolume(uint vol) {
 	return 0;
 }
 
-int IMuseInternal::get_master_volume() {
-	return _master_volume;
-}
-
 int IMuseInternal::terminate1() {
 	_initialized = false;
 	stopAllSounds();
@@ -1150,8 +1145,6 @@ int IMuseInternal::initialize(OSystem *syst, SoundMixer *mixer, MidiDriver *nati
 
 	if (!_tempoFactor) _tempoFactor = 100;
 	_master_volume = 255;
-	if (_music_volume < 1)
-		_music_volume = kDefaultMusicVolume;
 
 	for (i = 0; i != 8; i++)
 		_channel_volume[i] = _channel_volume_eff[i] = _volchan_table[i] = 127;
@@ -1784,7 +1777,6 @@ int IMuse::save_or_load(Serializer *ser, ScummEngine *scumm) { in(); int ret = _
 int IMuse::set_music_volume(uint vol) { in(); int ret = _target->set_music_volume(vol); out(); return ret; }
 int IMuse::get_music_volume() { in(); int ret = _target->get_music_volume(); out(); return ret; }
 void IMuse::setMasterVolume(int vol) { in(); _target->setMasterVolume(vol); out(); }
-int IMuse::get_master_volume() { in(); int ret = _target->get_master_volume(); out(); return ret; }
 void IMuse::startSound(int sound) { in(); _target->startSound(sound); out(); }
 void IMuse::stopSound(int sound) { in(); _target->stopSound(sound); out(); }
 void IMuse::stopAllSounds() { in(); _target->stopAllSounds(); out(); }

@@ -456,7 +456,6 @@ public:
 	int set_music_volume(uint vol);
 	int get_music_volume();
 	int setMasterVolume(uint vol);
-	int get_master_volume();
 	bool startSound(int sound);
 	int stopSound(int sound);
 	int stopAllSounds();

@@ -32,15 +32,6 @@ class OSystem;
 class SoundMixer;
 class Plugin;
 
-/** Default sound/music volumes.
- * @todo move this to a better place.
- */
-enum {
-	kDefaultMasterVolume = 192,
-	kDefaultSFXVolume = 192,
-	kDefaultMusicVolume = 192
-};
-
 /** Global (shared) game feature flags. */
 enum {
 	GF_DEFAULT_TO_1X_SCALER = 1 << 31

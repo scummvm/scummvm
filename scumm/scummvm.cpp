@@ -660,8 +660,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 		_silentDigitalImuse = true;
 		_noDigitalSamples = true;
 	}
-	_mixer->setVolume(kDefaultSFXVolume * kDefaultMasterVolume / 255);
-	_mixer->setMusicVolume(kDefaultMusicVolume);
+	_mixer->setVolume(_sound->_sound_volume_sfx * _sound->_sound_volume_master / 255);
+	_mixer->setMusicVolume(_sound->_sound_volume_music);
 
 	// Init iMuse
 	if (_features & GF_DIGI_IMUSE) {
