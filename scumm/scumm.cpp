@@ -465,6 +465,7 @@ static struct substDataFileNames {
 	{ "dog", "Dog on a Stick", kGenMac},
 	{ "f3-mdemo", "F3-Mdemo", kGenMac },
 	{ "f4-demo", "Freddi 4 Demo", kGenMac },
+	{ "f4-demo", "ff4demo", kGenPC }, // FIXME: check this with joostp. Used by NL version?
 	{ "farmdemo", "Farm Demo", kGenMac},
 	{ "fbear", "Fatty Bear", kGenMacNoParens },
 	{ "fbdemo", "Fatty Bear Demo", kGenMacNoParens },
@@ -489,6 +490,7 @@ static struct substDataFileNames {
 	{ "pajama2", "Pajama Sam 2", kGenMac},
 	{ "pj2demo", "PJ2Demo", kGenMac },
 	{ "pj3-demo", "Pajama Sam 3-Demo", kGenMac },
+	{ "pj3-demo", "pj3demo", kGenPC }, // FIXME: check this with joostp. Used by NL version?
 	{ "pjs-demo", "Pajama Sam Demo", kGenMac },
 	{ "pjs-demo", "PjSamDemo", kGenPC },
 	{ "pjs-demo", "PjSamDemo", kGenMac },
@@ -498,11 +500,11 @@ static struct substDataFileNames {
 	{ "puttputt", "Putt-Putt Parade", kGenMacNoParens },
 	{ "PuttsFunShop", "Putt's FunShop", kGenMac },
 	{ "putttime", "PuttTTT", kGenPC },
-	{ "putttime-demo", "TimeDemo", kGenMac },
 	{ "puttzoo", "PuttZoo", kGenMac },
 	{ "racedemo", "RaceDemo", kGenMac },
 	{ "SamsFunShop", "Sam's FunShop", kGenMac },
 	{ "sf2-demo", "Spy Fox 2 - Demo", kGenMac },
+	{ "sf2-demo", "sf2demo", kGenPC }, // FIXME: check this with joostp. Used by NL version?
 	{ "sf3-demo", "Spy Ozone Demo", kGenMac },
 	{ "socks", "SockWorks", kGenMac },
 	{ "spyfox", "SPYFox", kGenMac },
