@@ -2281,7 +2281,7 @@ void Scumm::o5_wait()
 
 	oldaddr = _scriptPointer - 1;
 
-	if (_opcode == 0xAE && _gameId == GID_INDY3_256) {
+	if (_gameId == GID_INDY3_256) {
 		_opcode = 2;
 	} else
 		_opcode = fetchScriptByte();
@@ -2544,11 +2544,8 @@ void Scumm::o5_pickupObjectOld()
 {
 	int obj = getVarOrDirectWord(0x80);
 
-	// FIXME: Zak256 (Zaire): Why does this happen at all?
 	if (obj < 1) {
-		warning("pickupObjectOld received negative index %d (0x%02x)", obj, obj);
-printf("_currentScript = %d / %d\n", _currentScript, vm.slot[_currentScript].number);
-		return;
+		error("pickupObjectOld received invalid index %d (script %d)", obj, vm.slot[_currentScript].number);
 	}
 
 	if (getObjectIndex(obj) == -1)
