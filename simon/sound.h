@@ -56,9 +56,10 @@ private:
 	byte _game;
 	const char *_gameDataPath;
 
+	SoundMixer *_mixer;
+
 	int _voice_index;
 	int _ambient_index;
-	SoundMixer *_mixer;
 
 	Sound *_voice;
 	Sound *_effects;

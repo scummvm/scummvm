@@ -27,16 +27,24 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const c
 	_gameDataPath = gameDataPath;
 	_mixer = mixer;
 	
+	_voice_index = 0;
+	_ambient_index = 0;
+
+	_voice = 0;
+	_effects = 0;
+
 	_effects_paused = false;
 	_ambient_paused = false;
+
+	_filenums = 0;
+	_offsets = 0;
 
 	_voice_handle = 0;
 	_effects_handle = 0;
 	_ambient_handle = 0;
 
-	_ambient_playing = 0;
-
 	_voice_file = false;
+	_ambient_playing = 0;
 
 	File *file = new File();
 	File *file2 = new File();
