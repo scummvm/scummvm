@@ -594,9 +594,9 @@ void Gui::handleSoundDialogCommand(int cmd)
 			imuse->set_music_volume(_s->_sound_volume_music);
 			imuse->set_master_volume(_s->_sound_volume_master);
 			_s->_mixer->set_volume(_s->_sound_volume_sfx);
-			scummcfg->set("master_volume", _s->_sound_volume_master, "scummvm");
-			scummcfg->set("music_volume", _s->_sound_volume_music, "scummvm");
-			scummcfg->set("sfx_volume", _s->_sound_volume_sfx, "scummvm");
+			scummcfg->set("master_volume", _s->_sound_volume_master);
+			scummcfg->set("music_volume", _s->_sound_volume_music);
+			scummcfg->set("sfx_volume", _s->_sound_volume_sfx);
 			scummcfg->flush();
 		}
 
