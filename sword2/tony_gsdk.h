@@ -20,7 +20,7 @@
 #ifndef	TONY_GSDK
 #define	TONY_GSDK
 
-#include "bs2/memory.h"
+#include "sword2/memory.h"
 
 namespace Sword2 {
 

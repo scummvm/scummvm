@@ -20,9 +20,9 @@
 #include "stdafx.h"
 #include "common/util.h"
 #include "base/engine.h"
-#include "bs2/sword2.h"
-#include "bs2/driver/d_draw.h"
-#include "bs2/driver/driver96.h"
+#include "sword2/sword2.h"
+#include "sword2/driver/d_draw.h"
+#include "sword2/driver/driver96.h"
 
 namespace Sword2 {
 

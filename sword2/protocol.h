@@ -22,8 +22,8 @@
 #ifndef	_PROTOCOL
 #define	_PROTOCOL
 
-#include "bs2/driver/driver96.h"
-#include "bs2/header.h"
+#include "sword2/driver/driver96.h"
+#include "sword2/header.h"
 
 namespace Sword2 {
 

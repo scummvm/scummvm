@@ -20,7 +20,7 @@
 #ifndef	_SYNC
 #define	_SYNC
 
-#include "bs2/object.h"
+#include "sword2/object.h"
 
 namespace Sword2 {
 

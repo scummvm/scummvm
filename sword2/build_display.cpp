@@ -22,19 +22,19 @@
 // ---------------------------------------------------------------------------
 
 #include "stdafx.h"
-#include "bs2/sword2.h"
-#include "bs2/debug.h"
-#include "bs2/build_display.h"
-#include "bs2/console.h"
-#include "bs2/defs.h"
-#include "bs2/interpreter.h"
-#include "bs2/layers.h"
-#include "bs2/logic.h"
-#include "bs2/maketext.h"
-#include "bs2/mouse.h"
-#include "bs2/object.h"
-#include "bs2/protocol.h"
-#include "bs2/resman.h"
+#include "sword2/sword2.h"
+#include "sword2/debug.h"
+#include "sword2/build_display.h"
+#include "sword2/console.h"
+#include "sword2/defs.h"
+#include "sword2/interpreter.h"
+#include "sword2/layers.h"
+#include "sword2/logic.h"
+#include "sword2/maketext.h"
+#include "sword2/mouse.h"
+#include "sword2/object.h"
+#include "sword2/protocol.h"
+#include "sword2/resman.h"
 
 namespace Sword2 {
 

@@ -74,17 +74,17 @@
  ****************************************************************************/
 
 #include "stdafx.h"
-#include "bs2/driver/driver96.h"
-#include "bs2/sword2.h"
-#include "bs2/console.h"
-#include "bs2/debug.h"
-#include "bs2/defs.h"
-#include "bs2/header.h"
-#include "bs2/interpreter.h"
-#include "bs2/memory.h"
-#include "bs2/object.h"
-#include "bs2/resman.h"
-#include "bs2/router.h"
+#include "sword2/driver/driver96.h"
+#include "sword2/sword2.h"
+#include "sword2/console.h"
+#include "sword2/debug.h"
+#include "sword2/defs.h"
+#include "sword2/header.h"
+#include "sword2/interpreter.h"
+#include "sword2/memory.h"
+#include "sword2/object.h"
+#include "sword2/resman.h"
+#include "sword2/router.h"
 
 namespace Sword2 {
 

@@ -57,8 +57,8 @@
 #ifndef _MAKETEXT_H
 #define _MAKETEXT_H
 
-#include "bs2/memory.h"
-#include "bs2/debug.h"
+#include "sword2/memory.h"
+#include "sword2/debug.h"
 
 // Output colour for character border - should be be black but note that we
 // have to use a different pen number during sequences

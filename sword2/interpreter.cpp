@@ -18,10 +18,10 @@
  */
 
 #include "stdafx.h"
-#include "bs2/driver/driver96.h"
-#include "bs2/console.h"
-#include "bs2/interpreter.h"
-#include "bs2/logic.h"
+#include "sword2/driver/driver96.h"
+#include "sword2/console.h"
+#include "sword2/interpreter.h"
+#include "sword2/logic.h"
 
 namespace Sword2 {
 

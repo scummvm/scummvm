@@ -20,11 +20,11 @@
 // general odds and ends
 
 #include "stdafx.h"
-#include "bs2/driver/driver96.h"
-#include "bs2/debug.h"
-#include "bs2/memory.h"
-#include "bs2/tony_gsdk.h"
-#include "bs2/sword2.h"
+#include "sword2/driver/driver96.h"
+#include "sword2/debug.h"
+#include "sword2/memory.h"
+#include "sword2/tony_gsdk.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 

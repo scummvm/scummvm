@@ -20,7 +20,7 @@
 #ifndef MOUSE_H
 #define MOUSE_H
 
-#include "bs2/object.h"
+#include "sword2/object.h"
 
 namespace Sword2 {
 

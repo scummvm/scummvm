@@ -20,7 +20,7 @@
 #ifndef	D_DEBUG
 #define D_DEBUG
 
-#include "bs2/object.h"
+#include "sword2/object.h"
 
 // FIXME: I don't know how large this constant used to be
 #define MAX_DEBUG_TEXT_BLOCKS 50

@@ -20,7 +20,7 @@
 #ifndef RENDER_H
 #define RENDER_H
 
-#include "bs2/driver/menu.h"
+#include "sword2/driver/menu.h"
 
 namespace Sword2 {
 

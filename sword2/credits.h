@@ -20,7 +20,7 @@
 #ifndef _CREDITS_H
 #define _CREDITS_H
 
-#include "bs2/driver/driver96.h"
+#include "sword2/driver/driver96.h"
 
 namespace Sword2 {
 

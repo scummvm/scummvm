@@ -1,48 +1,48 @@
-MODULE := bs2
+MODULE := sword2
 
 MODULE_OBJS := \
-	bs2/anims.o \
-	bs2/build_display.o \
-	bs2/console.o \
-	bs2/controls.o \
-	bs2/debug.o \
-	bs2/events.o \
-	bs2/function.o \
-	bs2/icons.o \
-	bs2/interpreter.o \
-	bs2/layers.o \
-	bs2/logic.o \
-	bs2/maketext.o \
-	bs2/memory.o \
-	bs2/mem_view.o \
-	bs2/mouse.o \
-	bs2/protocol.o \
-	bs2/resman.o \
-	bs2/router.o \
-	bs2/save_rest.o \
-	bs2/scroll.o \
-	bs2/sound.o \
-	bs2/speech.o \
-	bs2/startup.o \
-	bs2/sword2.o \
-	bs2/sync.o \
-	bs2/tony_gsdk.o \
-	bs2/walker.o \
-	bs2/driver/d_draw.o \
-	bs2/driver/d_sound.o \
-	bs2/driver/keyboard.o \
-	bs2/driver/language.o \
-	bs2/driver/menu.o \
-	bs2/driver/misc.o \
-	bs2/driver/_mouse.o \
-	bs2/driver/palette.o \
-	bs2/driver/rdwin.o \
-	bs2/driver/render.o \
-	bs2/driver/sprite.o
+	sword2/anims.o \
+	sword2/build_display.o \
+	sword2/console.o \
+	sword2/controls.o \
+	sword2/debug.o \
+	sword2/events.o \
+	sword2/function.o \
+	sword2/icons.o \
+	sword2/interpreter.o \
+	sword2/layers.o \
+	sword2/logic.o \
+	sword2/maketext.o \
+	sword2/memory.o \
+	sword2/mem_view.o \
+	sword2/mouse.o \
+	sword2/protocol.o \
+	sword2/resman.o \
+	sword2/router.o \
+	sword2/save_rest.o \
+	sword2/scroll.o \
+	sword2/sound.o \
+	sword2/speech.o \
+	sword2/startup.o \
+	sword2/sword2.o \
+	sword2/sync.o \
+	sword2/tony_gsdk.o \
+	sword2/walker.o \
+	sword2/driver/d_draw.o \
+	sword2/driver/d_sound.o \
+	sword2/driver/keyboard.o \
+	sword2/driver/language.o \
+	sword2/driver/menu.o \
+	sword2/driver/misc.o \
+	sword2/driver/_mouse.o \
+	sword2/driver/palette.o \
+	sword2/driver/rdwin.o \
+	sword2/driver/render.o \
+	sword2/driver/sprite.o
 
 MODULE_DIRS += \
-	bs2 \
-	bs2/driver
+	sword2 \
+	sword2/driver
 
 # This module can be built as a plugin
 ifdef BUILD_PLUGINS

@@ -18,21 +18,21 @@
  */
 
 #include "stdafx.h"
-#include "bs2/driver/driver96.h"
-#include "bs2/sword2.h"
-#include "bs2/debug.h"
-#include "bs2/build_display.h"		// for 'fps'
-#include "bs2/console.h"
-#include "bs2/defs.h"
-#include "bs2/events.h"			// for CountEvents()
-#include "bs2/layers.h"
-#include "bs2/logic.h"
-#include "bs2/maketext.h"
-#include "bs2/mouse.h"
-#include "bs2/protocol.h"
-#include "bs2/resman.h"
-#include "bs2/router.h"			// for plotWalkGrid()
-#include "bs2/speech.h"			// for 'officialTextNumber' and
+#include "sword2/driver/driver96.h"
+#include "sword2/sword2.h"
+#include "sword2/debug.h"
+#include "sword2/build_display.h"		// for 'fps'
+#include "sword2/console.h"
+#include "sword2/defs.h"
+#include "sword2/events.h"			// for CountEvents()
+#include "sword2/layers.h"
+#include "sword2/logic.h"
+#include "sword2/maketext.h"
+#include "sword2/mouse.h"
+#include "sword2/protocol.h"
+#include "sword2/resman.h"
+#include "sword2/router.h"			// for plotWalkGrid()
+#include "sword2/speech.h"			// for 'officialTextNumber' and
 					// 'speechScriptWaiting'
 
 namespace Sword2 {

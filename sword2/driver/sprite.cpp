@@ -18,12 +18,12 @@
  */
 
 #include "stdafx.h"
-#include "bs2/driver/driver96.h"
-#include "bs2/driver/d_draw.h"
-#include "bs2/driver/render.h"
-#include "bs2/driver/menu.h"
-#include "bs2/driver/palette.h"
-#include "bs2/driver/rdwin.h"
+#include "sword2/driver/driver96.h"
+#include "sword2/driver/d_draw.h"
+#include "sword2/driver/render.h"
+#include "sword2/driver/menu.h"
+#include "sword2/driver/palette.h"
+#include "sword2/driver/rdwin.h"
 
 namespace Sword2 {
 

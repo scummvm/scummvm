@@ -18,25 +18,25 @@
  */
 
 #include "stdafx.h"
-#include "bs2/sword2.h"		// for CloseGame()
-#include "bs2/build_display.h"
-#include "bs2/console.h"
-#include "bs2/debug.h"
-#include "bs2/defs.h"
-#include "bs2/header.h"
-#include "bs2/interpreter.h"
-#include "bs2/logic.h"
-#include "bs2/maketext.h"	// for Kill_text_bloc()
-#include "bs2/memory.h"
-#include "bs2/mouse.h"
-#include "bs2/object.h"
-#include "bs2/resman.h"
-#include "bs2/router.h"
-#include "bs2/sound.h"
-#include "bs2/speech.h"		// for 'speech_text_bloc_no' - so that speech text can be cleared when running a new start-script
-#include "bs2/startup.h"
-#include "bs2/sync.h"
-#include "bs2/tony_gsdk.h"
+#include "sword2/sword2.h"		// for CloseGame()
+#include "sword2/build_display.h"
+#include "sword2/console.h"
+#include "sword2/debug.h"
+#include "sword2/defs.h"
+#include "sword2/header.h"
+#include "sword2/interpreter.h"
+#include "sword2/logic.h"
+#include "sword2/maketext.h"	// for Kill_text_bloc()
+#include "sword2/memory.h"
+#include "sword2/mouse.h"
+#include "sword2/object.h"
+#include "sword2/resman.h"
+#include "sword2/router.h"
+#include "sword2/sound.h"
+#include "sword2/speech.h"		// for 'speech_text_bloc_no' - so that speech text can be cleared when running a new start-script
+#include "sword2/startup.h"
+#include "sword2/sync.h"
+#include "sword2/tony_gsdk.h"
 
 namespace Sword2 {
 

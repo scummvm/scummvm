@@ -20,8 +20,8 @@
 #ifndef _ROUTER_H
 #define _ROUTER_H
 
-#include "bs2/memory.h"
-#include "bs2/object.h"
+#include "sword2/memory.h"
+#include "sword2/object.h"
 
 // This used to be a variable, but it was never set. Actually, it wasn't even
 // initialised!

@@ -18,23 +18,23 @@
  */
 
 #include "stdafx.h"
-#include "bs2/sword2.h"
-#include "bs2/driver/driver96.h"
-#include "bs2/build_display.h"
-#include "bs2/console.h"
-#include "bs2/debug.h"
-#include "bs2/defs.h"
-#include "bs2/function.h"
-#include "bs2/header.h"
-#include "bs2/interpreter.h"
-#include "bs2/logic.h"
-#include "bs2/maketext.h"
-#include "bs2/memory.h"
-#include "bs2/mouse.h"	// for system Set_mouse & Set_luggage routines
-#include "bs2/protocol.h"
-#include "bs2/resman.h"
-#include "bs2/sound.h"	// for Clear_fx_queue() called from cacheNewCluster()
-#include "bs2/router.h"
+#include "sword2/sword2.h"
+#include "sword2/driver/driver96.h"
+#include "sword2/build_display.h"
+#include "sword2/console.h"
+#include "sword2/debug.h"
+#include "sword2/defs.h"
+#include "sword2/function.h"
+#include "sword2/header.h"
+#include "sword2/interpreter.h"
+#include "sword2/logic.h"
+#include "sword2/maketext.h"
+#include "sword2/memory.h"
+#include "sword2/mouse.h"	// for system Set_mouse & Set_luggage routines
+#include "sword2/protocol.h"
+#include "sword2/resman.h"
+#include "sword2/sound.h"	// for Clear_fx_queue() called from cacheNewCluster()
+#include "sword2/router.h"
 
 namespace Sword2 {
 

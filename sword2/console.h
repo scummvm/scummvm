@@ -21,7 +21,7 @@
 #define	C_ONSOLE_H
 
 #include "common/debugger.h"
-#include "bs2/memory.h"
+#include "sword2/memory.h"
 
 #define Debug_Printf g_sword2->_debugger->DebugPrintf
 

@@ -38,10 +38,10 @@
 // MemMan v1.1
 
 #include "stdafx.h"
-#include "bs2/driver/driver96.h"
-#include "bs2/debug.h"
-#include "bs2/memory.h"
-#include "bs2/resman.h"
+#include "sword2/driver/driver96.h"
+#include "sword2/debug.h"
+#include "sword2/memory.h"
+#include "sword2/resman.h"
 
 namespace Sword2 {
 

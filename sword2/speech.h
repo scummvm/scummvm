@@ -20,7 +20,7 @@
 #ifndef	_SPEECH
 #define	_SPEECH
 
-#include "bs2/header.h"
+#include "sword2/header.h"
 
 namespace Sword2 {
 

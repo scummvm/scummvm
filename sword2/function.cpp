@@ -18,20 +18,20 @@
  */
 
 #include "stdafx.h"
-#include "bs2/driver/driver96.h"
-#include "bs2/driver/rdwin.h"
-#include "bs2/build_display.h"
-#include "bs2/credits.h"
-#include "bs2/debug.h"
-#include "bs2/defs.h"
-#include "bs2/function.h"
-#include "bs2/interpreter.h"
-#include "bs2/layers.h"		// for 'this_screen' structure
-#include "bs2/logic.h"
-#include "bs2/protocol.h"
-#include "bs2/resman.h"
-#include "bs2/sound.h"
-#include "bs2/sword2.h"
+#include "sword2/driver/driver96.h"
+#include "sword2/driver/rdwin.h"
+#include "sword2/build_display.h"
+#include "sword2/credits.h"
+#include "sword2/debug.h"
+#include "sword2/defs.h"
+#include "sword2/function.h"
+#include "sword2/interpreter.h"
+#include "sword2/layers.h"		// for 'this_screen' structure
+#include "sword2/logic.h"
+#include "sword2/protocol.h"
+#include "sword2/resman.h"
+#include "sword2/sound.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 

@@ -28,15 +28,15 @@
 // ---------------------------------------------------------------------------
 
 #include "stdafx.h"
-#include "bs2/sword2.h"
-#include "bs2/console.h"
-#include "bs2/defs.h"		// for RESULT
-#include "bs2/interpreter.h"
-#include "bs2/logic.h"
-#include "bs2/protocol.h"	// for FetchObjectName() for debugging fnPlayFx
-#include "bs2/resman.h"
-#include "bs2/sound.h"
-#include "bs2/sword2.h"
+#include "sword2/sword2.h"
+#include "sword2/console.h"
+#include "sword2/defs.h"		// for RESULT
+#include "sword2/interpreter.h"
+#include "sword2/logic.h"
+#include "sword2/protocol.h"	// for FetchObjectName() for debugging fnPlayFx
+#include "sword2/resman.h"
+#include "sword2/sound.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 

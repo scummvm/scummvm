@@ -22,8 +22,8 @@
 #ifndef _LOGIC
 #define _LOGIC
 
-// #include "bs2/defs.h"
-#include "bs2/header.h"
+// #include "sword2/defs.h"
+#include "sword2/header.h"
 
 namespace Sword2 {
 

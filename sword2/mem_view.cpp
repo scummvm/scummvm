@@ -18,12 +18,12 @@
  */
 
 #include "stdafx.h"
-#include "bs2/sword2.h"
-#include "bs2/build_display.h"
-#include "bs2/console.h"
-#include "bs2/header.h"
-#include "bs2/memory.h"
-#include "bs2/resman.h"
+#include "sword2/sword2.h"
+#include "sword2/build_display.h"
+#include "sword2/console.h"
+#include "sword2/header.h"
+#include "sword2/memory.h"
+#include "sword2/resman.h"
 
 namespace Sword2 {
 

@@ -18,16 +18,16 @@
  */
 
 #include "stdafx.h"
-#include "bs2/sword2.h"
-#include "bs2/defs.h"
-#include "bs2/build_display.h"
-#include "bs2/console.h"
-#include "bs2/debug.h"
-#include "bs2/interpreter.h"
-#include "bs2/logic.h"
-#include "bs2/router.h"		// for clearWalkGridList()
-#include "bs2/sound.h"
-#include "bs2/sync.h"
+#include "sword2/sword2.h"
+#include "sword2/defs.h"
+#include "sword2/build_display.h"
+#include "sword2/console.h"
+#include "sword2/debug.h"
+#include "sword2/interpreter.h"
+#include "sword2/logic.h"
+#include "sword2/router.h"		// for clearWalkGridList()
+#include "sword2/sound.h"
+#include "sword2/sync.h"
 
 namespace Sword2 {
 

@@ -20,7 +20,7 @@
 #ifndef	SAVE_REST_H
 #define	SAVE_REST_H
 
-#include "bs2/memory.h"
+#include "sword2/memory.h"
 
 namespace Sword2 {
 

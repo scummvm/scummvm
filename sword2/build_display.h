@@ -20,7 +20,7 @@
 #ifndef	_BUILD_DISPLAY
 #define	_BUILD_DISPLAY
 
-#include "bs2/driver/driver96.h"
+#include "sword2/driver/driver96.h"
 
 namespace Sword2 {
 

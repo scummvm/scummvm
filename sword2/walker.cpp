@@ -23,17 +23,17 @@
 // on them
 
 #include "stdafx.h"
-#include "bs2/sword2.h"
-#include "bs2/console.h"
-#include "bs2/defs.h"
-#include "bs2/events.h"
-#include "bs2/function.h"
-#include "bs2/interpreter.h"
-#include "bs2/logic.h"
-#include "bs2/object.h"
-#include "bs2/protocol.h"
-#include "bs2/router.h"
-#include "bs2/sync.h"
+#include "sword2/sword2.h"
+#include "sword2/console.h"
+#include "sword2/defs.h"
+#include "sword2/events.h"
+#include "sword2/function.h"
+#include "sword2/interpreter.h"
+#include "sword2/logic.h"
+#include "sword2/object.h"
+#include "sword2/protocol.h"
+#include "sword2/router.h"
+#include "sword2/sync.h"
 
 namespace Sword2 {
 

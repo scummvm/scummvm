@@ -25,9 +25,9 @@
 #include "common/map.h"
 #include "common/rect.h"
 #include "common/str.h"
-#include "bs2/console.h"
-#include "bs2/driver/d_sound.h"
-#include "bs2/driver/d_draw.h"
+#include "sword2/console.h"
+#include "sword2/driver/d_sound.h"
+#include "sword2/driver/d_draw.h"
 
 enum {
 	GF_DEMO	= 1 << 0

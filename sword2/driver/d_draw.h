@@ -20,7 +20,7 @@
 #ifndef D_DRAW_H
 #define D_DRAW_H
 
-#include "bs2/driver/driver96.h"
+#include "sword2/driver/driver96.h"
 
 namespace Sword2 {
 

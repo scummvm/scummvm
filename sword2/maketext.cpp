@@ -47,16 +47,16 @@
 #define DUD		64	// the first "chequered flag" (dud) symbol in
 				// our character set is in the '@' position
 #include "stdafx.h"
-#include "bs2/driver/driver96.h"
-#include "bs2/console.h"
-#include "bs2/debug.h"
-#include "bs2/defs.h"		// for SPEECH_FONT_ID & CONSOLE_FONT_ID
-#include "bs2/header.h"
-#include "bs2/maketext.h"
-#include "bs2/memory.h"
-#include "bs2/protocol.h"	// for FetchFrameHeader()
-#include "bs2/resman.h"
-#include "bs2/sword2.h"
+#include "sword2/driver/driver96.h"
+#include "sword2/console.h"
+#include "sword2/debug.h"
+#include "sword2/defs.h"		// for SPEECH_FONT_ID & CONSOLE_FONT_ID
+#include "sword2/header.h"
+#include "sword2/maketext.h"
+#include "sword2/memory.h"
+#include "sword2/protocol.h"	// for FetchFrameHeader()
+#include "sword2/resman.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 
