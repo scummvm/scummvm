@@ -60,7 +60,7 @@ void Scumm_v3::readIndexFile() {
 
 		_fileHandle.readUint16LE(); /* version magic number */
 		_fileHandle.readUint16LE(); /* nb global objects */
-		_fileHandle.seek(_numGlobalObjects, SEEK_CUR); // Skip object flags
+		_fileHandle.seek(_numGlobalObjects * 4, SEEK_CUR); // Skip object flags
 		readResTypeList(rtRoom, MKID('ROOM'), "room");
 		readResTypeList(rtCostume, MKID('COST'), "costume");
 		readResTypeList(rtScript, MKID('SCRP'), "script");
