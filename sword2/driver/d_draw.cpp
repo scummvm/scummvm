@@ -19,14 +19,12 @@
 
 #include "stdafx.h"
 #include "sound/mixer.h"
+#include "sword2/sword2.h"
 #include "sword2/driver/driver96.h"
-#include "sword2/driver/rdwin.h"
 #include "sword2/driver/d_draw.h"
-#include "sword2/driver/palette.h"
 #include "sword2/driver/render.h"
 #include "sword2/header.h"		// HACK: For cutscenes instruction message
 #include "sword2/maketext.h"	// HACK: For cutscenes instruction message
-#include "sword2/sword2.h"
 
 namespace Sword2 {
 

@@ -24,7 +24,6 @@
 #include "sword2/console.h"
 #include "sword2/debug.h"
 #include "sword2/defs.h"
-#include "sword2/function.h"
 #include "sword2/header.h"
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"

@@ -23,7 +23,6 @@
 #include "sword2/debug.h"
 #include "sword2/console.h"
 #include "sword2/defs.h"
-#include "sword2/events.h"			// for CountEvents()
 #include "sword2/layers.h"
 #include "sword2/logic.h"
 #include "sword2/maketext.h"

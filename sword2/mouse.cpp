@@ -23,7 +23,6 @@
 #include "sword2/console.h"
 #include "sword2/controls.h"
 #include "sword2/defs.h"
-#include "sword2/events.h"
 #include "sword2/icons.h"
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"

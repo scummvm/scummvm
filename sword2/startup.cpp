@@ -35,8 +35,6 @@
 #include "sword2/sound.h"
 #include "sword2/speech.h"		// for '_speechTextBlocNo' - so that speech text can be cleared when running a new start-script
 #include "sword2/startup.h"
-#include "sword2/sync.h"
-#include "sword2/tony_gsdk.h"
 
 namespace Sword2 {
 

@@ -20,7 +20,6 @@
 #include "stdafx.h"
 #include "sword2/driver/driver96.h"
 #include "sword2/driver/d_draw.h"
-#include "sword2/driver/rdwin.h"
 #include "sword2/driver/_mouse.h"
 #include "sword2/driver/render.h"
 #include "sword2/driver/menu.h"

@@ -27,10 +27,10 @@
 // ---------------------------------------------------------------------------
 
 #include "stdafx.h"
+#include "sword2/sword2.h"
 #include "sword2/driver/driver96.h"
 #include "sword2/console.h"
 #include "sword2/defs.h"
-#include "sword2/function.h"	// for engine_logic, engine_graph, etc
 #include "sword2/interpreter.h"	// for IR_CONT, etc
 #include "sword2/layers.h"
 #include "sword2/logic.h"
@@ -40,10 +40,7 @@
 #include "sword2/resman.h"
 #include "sword2/router.h"
 #include "sword2/save_rest.h"
-#include "sword2/scroll.h"		// for Set_scrolling()
 #include "sword2/sound.h"
-#include "sword2/sword2.h"
-#include "sword2/walker.h"
 
 namespace Sword2 {
 

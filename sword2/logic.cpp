@@ -27,7 +27,6 @@
 #include "sword2/logic.h"
 #include "sword2/router.h"		// for clearWalkGridList()
 #include "sword2/sound.h"
-#include "sword2/sync.h"
 
 namespace Sword2 {
 

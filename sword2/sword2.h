@@ -27,7 +27,6 @@
 #include "common/str.h"
 #include "sword2/build_display.h"
 #include "sword2/console.h"
-#include "sword2/events.h"
 #include "sword2/header.h"
 #include "sword2/icons.h"
 #include "sword2/layers.h"

@@ -26,7 +26,6 @@
 #include "sword2/interpreter.h"
 #include "sword2/layers.h"
 #include "sword2/logic.h"
-#include "sword2/scroll.h"
 
 namespace Sword2 {
 

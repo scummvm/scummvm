@@ -22,16 +22,19 @@
 #ifndef _LOGIC
 #define _LOGIC
 
-#include "sword2/events.h"
+#include "sword2/driver/driver96.h"
 #include "sword2/header.h"
 #include "sword2/memory.h"
 #include "sword2/router.h"
 #include "sword2/speech.h"
 #include "sword2/startup.h"
-#include "sword2/sync.h"
-#include "sword2/driver/driver96.h"
 
 namespace Sword2 {
+
+#define	MAX_events 10
+
+// There won't be many, will there? Probably 2 at most i reckon
+#define	MAX_syncs 10
 
 #define	TREE_SIZE 3
 
@@ -384,7 +387,6 @@ public:
 	void totalRestart(void);
 	void examineRunList(void);
 	void resetKillList(void);
-
 };
 
 extern Logic *g_logic;

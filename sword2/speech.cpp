@@ -18,13 +18,11 @@
  */
 
 #include "stdafx.h"
-#include "sword2/anims.h"
+#include "sword2/sword2.h"
 #include "sword2/console.h"
 #include "sword2/controls.h"	// for 'subtitles' & 'speechSelected'
 #include "sword2/debug.h"
 #include "sword2/defs.h"
-#include "sword2/events.h"
-#include "sword2/function.h"
 #include "sword2/interpreter.h"
 #include "sword2/layers.h"		// for 'this_screen'
 #include "sword2/logic.h"
@@ -36,8 +34,6 @@
 #include "sword2/resman.h"
 #include "sword2/sound.h"
 #include "sword2/speech.h"
-#include "sword2/sword2.h"
-#include "sword2/walker.h"
 
 namespace Sword2 {
 

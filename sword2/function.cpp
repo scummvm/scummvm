@@ -19,12 +19,10 @@
 
 #include "stdafx.h"
 #include "sword2/driver/driver96.h"
-#include "sword2/driver/rdwin.h"
 #include "sword2/build_display.h"
 #include "sword2/credits.h"
 #include "sword2/debug.h"
 #include "sword2/defs.h"
-#include "sword2/function.h"
 #include "sword2/interpreter.h"
 #include "sword2/layers.h"		// for '_thisScreen' structure
 #include "sword2/logic.h"

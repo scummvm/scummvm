@@ -27,7 +27,6 @@
 #include "sword2/sword2.h"
 #include "sword2/driver/driver96.h"
 #include "sword2/driver/d_draw.h"
-#include "sword2/anims.h"
 #include "sword2/console.h"
 #include "sword2/controls.h"		// for 'subtitles'
 #include "sword2/defs.h"
@@ -38,8 +37,6 @@
 #include "sword2/object.h"
 #include "sword2/protocol.h"
 #include "sword2/resman.h"
-#include "sword2/sword2.h"
-#include "sword2/sync.h"
 #include "sword2/sound.h"			// for Speech stuff.
 
 namespace Sword2 {

@@ -19,11 +19,11 @@
 
 #include "stdafx.h"
 #include "common/util.h"
+#include "sword2/sword2.h"
 #include "sword2/debug.h"
 #include "sword2/defs.h"
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
-#include "sword2/sync.h"
 
 namespace Sword2 {
 

@@ -26,14 +26,11 @@
 #include "sword2/sword2.h"
 #include "sword2/console.h"
 #include "sword2/defs.h"
-#include "sword2/events.h"
-#include "sword2/function.h"
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
 #include "sword2/object.h"
 #include "sword2/protocol.h"
 #include "sword2/router.h"
-#include "sword2/sync.h"
 
 namespace Sword2 {
 
