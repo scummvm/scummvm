@@ -1276,13 +1276,14 @@ void ScummEngine::scummInit() {
 
 void ScummEngine::initScummVars() {
 
-	if (_version <= 2 || _heversion == 70) {
-		// This needs to be at least greater than 40 to get the more
-		// elaborate version of the EGA Zak into. I don't know where
-		// else it makes any difference.
+	// This needs to be at least greater than 40 to get the more
+	// elaborate version of the EGA Zak into. I don't know where
+	// else it makes any difference.
+	if (_gameId == GID_ZAK)
 		VAR(VAR_MACHINE_SPEED) = 0x7FFF;
+
+	if (_version <= 2)
 		return;
-	}
 
 	if (_version >= 4 && _version <= 5)
 		VAR(VAR_V5_TALK_STRING_Y) = -0x50;
