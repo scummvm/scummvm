@@ -1203,7 +1203,7 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 			memcpy(ptr, "\xf0\x13\x7d\x30\00", 5); ptr += 5;	// maybe_jump
 			memcpy(ptr, "\x00\x00", 2); ptr += 2;			// cmd -> 0 means always jump
 			memcpy(ptr, "\x00\x00\x00\x00", 4); ptr += 4;	// track -> there is only one track, 0
-			memcpy(ptr, "\x00\x00\x00\x00", 4); ptr += 4;	// beat -> for now, 0
+			memcpy(ptr, "\x00\x00\x00\x01", 4); ptr += 4;	// beat -> for now, 1 (first beat)
 			// Ticks
 			*ptr++ = (byte)((jump_offset >> 12) & 0x0F);
 			*ptr++ = (byte)((jump_offset >> 8) & 0x0F);
