@@ -251,7 +251,7 @@ protected:
 	void o2_isNotEqual();
 	void o2_equalZero();
 	void o2_notEqualZero();
-
+	void o2_startScript();
 };
 
 class Scumm_v4 : public Scumm_v3 {

@@ -115,7 +115,7 @@ void Scumm_v2::setupOpcodes() {
 		/* 40 */
 		OPCODE(o5_cutscene),
 		OPCODE(o2_putActor),
-		OPCODE(o5_startScript),
+		OPCODE(o2_startScript),
 		OPCODE(o5_getActorX),
 		/* 44 */
 		OPCODE(o2_isLess),
@@ -143,7 +143,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_getActorMoving),
 		OPCODE(o2_setState02),
 		/* 58 */
-		OPCODE(o5_overRide),
+		OPCODE(beginOverride),
 		OPCODE(o5_doSentence),
 		OPCODE(o5_add),
 		OPCODE(o2_setBitVar),
@@ -191,7 +191,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_isSoundRunning),
 		OPCODE(o5_getActorElevation),
 		OPCODE(o2_walkActorTo),
-		OPCODE(o5_drawBox),
+		OPCODE(o2_ifNotState01),
 		/* 80 */
 		OPCODE(o5_breakHere),
 		OPCODE(o2_putActor),
@@ -275,7 +275,7 @@ void Scumm_v2::setupOpcodes() {
 		/* C0 */
 		OPCODE(o5_endCutscene),
 		OPCODE(o2_putActor),
-		OPCODE(o5_startScript),
+		OPCODE(o2_startScript),
 		OPCODE(o5_getActorX),
 		/* C4 */
 		OPCODE(o2_isLess),
@@ -903,4 +903,9 @@ void Scumm_v2::o2_putActor() {
 	y = getVarOrDirectByte(0x20);
 
 	a->putActor(x, y, a->room);
+}
+
+void Scumm_v2::o2_startScript() {
+	int script = getVarOrDirectByte(0x80);
+	runScript(script, 0, 0, 0);	// FIXME: Need to confirm runScript parameters/mode
 }
