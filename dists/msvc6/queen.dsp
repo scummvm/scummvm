@@ -139,11 +139,27 @@ LIB32=link.exe -lib
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=..\..\queen\command.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\command.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\queen\cutaway.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\queen\cutaway.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\debug.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\debug.h
 # End Source File
 # Begin Source File
 
@@ -171,11 +187,23 @@ SOURCE=..\..\queen\input.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\queen\journal.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\journal.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\queen\logic.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\queen\logic.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\musicdata.cpp
 # End Source File
 # Begin Source File
 
