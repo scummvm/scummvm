@@ -1578,7 +1578,7 @@ int32 FN_i_speak(int32 *params)	//Tony18Oct96 (revamped by James01july97)
 #endif	// _SWORD2_DEBUG
 				{
 					strcpy(speechFile,res_man.GetCdPath());
-					strcat(speechFile,"CLUSTERS\\SPEECH.CLU");
+					strcat(speechFile,"CLUSTERS/SPEECH.CLU");
 				}
 			}
  			//------------------------------

@@ -596,7 +596,7 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[])	// (James23may97)
 					#endif	// _SWORD2_DEBUG
 					{
 						strcpy(speechFile,res_man.GetCdPath());
-						strcat(speechFile,"CLUSTERS\\SPEECH.CLU");
+						strcat(speechFile,"CLUSTERS/SPEECH.CLU");
 					}
 			}
 			//------------------------------
