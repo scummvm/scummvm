@@ -317,7 +317,7 @@ void PopUpWidget::drawWidget(bool hilite) {
 
 	// Draw the label, if any
 	if (_labelWidth > 0)
-		gui->drawString(_label, _x, _y + 2, _labelWidth, isEnabled() ? gui->_textcolor : gui->_color, kTextAlignRight);
+		gui->drawString(_label, _x, _y + 3, _labelWidth, isEnabled() ? gui->_textcolor : gui->_color, kTextAlignRight);
 
 	// Draw a thin frame around us.
 	gui->hLine(x, _y, x + w - 1, gui->_color);

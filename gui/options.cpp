@@ -79,7 +79,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 	// TODO - add an API to query the list of available GFX modes, and to get/set the mode
 	//new StaticTextWidget(tab, 5, vBorder+2, 100, kLineHeight, "Graphics mode: ", kTextAlignRight);
 	PopUpWidget *gfxPopUp;
-	gfxPopUp = new PopUpWidget(tab, 6, vBorder, 280, kLineHeight, "Graphics mode: ", 100);
+	gfxPopUp = new PopUpWidget(tab, 5, vBorder, 280, kLineHeight, "Graphics mode: ", 100);
 	gfxPopUp->appendEntry("<default>");
 	gfxPopUp->appendEntry("");
 	gfxPopUp->appendEntry("Normal (no scaling)");
@@ -107,7 +107,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 
 	// The MIDI mode popup & a label
 	//new StaticTextWidget(tab, 5, vBorder+2, 100, kLineHeight, "Music driver: ", kTextAlignRight);
-	_midiPopUp = new PopUpWidget(tab, 6, vBorder, 280, kLineHeight, "Music driver: ", 100);
+	_midiPopUp = new PopUpWidget(tab, 5, vBorder, 280, kLineHeight, "Music driver: ", 100);
 	
 	// Populate it
 	const MidiDriverDescription *md = getAvailableMidiDrivers();
