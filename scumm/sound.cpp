@@ -308,7 +308,7 @@ void Sound::playSound(int soundID) {
 			return;
 		} else if (_scumm->_features & GF_OLD256) {
 			size = READ_LE_UINT32(ptr);
-	#if 0
+#if 0
 			// FIXME - this is just some debug output for Zak256
 			if (size != 30) {
 				char name[9];
@@ -340,8 +340,7 @@ void Sound::playSound(int soundID) {
 			83 84 86 88 89 8b 89 89  |........|
 			
 			As you can see, there are quite some patterns, e.g.
-			the "3c 00 00 00" - the sound data seems to start at
-			offset 54 = 0x36, but it could also be 0x3c...
+			the "3c 00 00 00" - the sound data starts at offset 0x36
 			
 			Indy 3 uses a different format. The very first sound played
 			in Indy 3 looks as follows:
@@ -367,11 +366,9 @@ void Sound::playSound(int soundID) {
 			So there seems to be a "SO" chunk which contains again a SO chunk and a WA chunk.
 			WA probably again contains audio data?
 			*/
-	#endif
+#endif
 			rate = 11000;
 			int type = *(ptr + 0x0D);
-			int loop_start = READ_LE_UINT32(ptr+0x26);
-			int loop_end = READ_LE_UINT32(ptr+0x2A);
 
 			// Check if it is a CD playback resource
 			if (type == 2) {
@@ -389,29 +386,40 @@ void Sound::playSound(int soundID) {
 				_currentCDSound = soundID;
 				return;
 			}
-	
-			ptr += 0x36;
-			size -= 0x36;
-			sound = (char *)malloc(size);
-			for (int x = 0; x < size; x++) {
-				int bit = *ptr++;
-				if (bit < 0x80)
-					sound[x] = 0x7F - bit;
-				else
-					sound[x] = bit;
-			}
-	
-			if (loop_end > 0) {
-				flags |= SoundMixer::FLAG_LOOP;
+			// Check if it is sound effect
+			// FIXME: Remove " || type == 1" when the kazoo tune format is supported
+			if (type == 0 || type == 1) {
+				int waveSize = READ_LE_UINT32(ptr + 0x22);
+				int loopStart = READ_LE_UINT32(ptr + 0x26);
+				int loopEnd = READ_LE_UINT32(ptr + 0x2A);
 
-				if ((loop_end < size) || (loop_start > 0)) {
-					// FIXME: Implement partial loops
-					warning("Partial loops not implemented. Loop at 0x%X thru 0x%X", loop_start, loop_end);
+				if (size - 0x36 < waveSize) {
+					warning("Wrong wave size in sound #%i: %i", soundID, waveSize);
+					waveSize = size - 0x36;
 				}
+				ptr += 0x36;
+				sound = (char *)malloc(waveSize);
+				for (int x = 0; x < waveSize; x++) {
+					int bit = *ptr++;
+					if (bit < 0x80)
+						sound[x] = 0x7F - bit;
+					else
+						sound[x] = bit;
+				}
+				// FIXME: Remove " && type == 0" when the kazoo tune format is supported
+				if (loopEnd > 0 && type == 0) {
+					flags |= SoundMixer::FLAG_LOOP;
+					if ((loopEnd < waveSize) || (loopStart > 0)) {
+						// FIXME: Implement partial loops
+						warning("Partial loops not implemented. Loop at 0x%X thru 0x%X", loopStart, loopEnd);
+					}
+				}
+				_scumm->_mixer->playRaw(NULL, sound, waveSize, 11000, flags, soundID);
+				return;
 			}
-
-			_scumm->_mixer->playRaw(NULL, sound, size, 11000, flags, soundID);
-			return;
+			// TODO: Kazoo tune
+//  			if (type == 1) {
+//  			}
 		}
 	
 	}
@@ -463,9 +471,7 @@ void Sound::playSound(int soundID) {
 		// This hack relays on the fact that we currently don't support SFX
 		// in these games, only music. Once we add SFX support, we'll have to
 		// revise it / replace it by a proper fix.
-		if (_scumm->_features & GF_AMIGA) 
-			return;
-		else if (ptr) {
+		if (ptr) {
 			_scumm->_imuse->stop_all_sounds();
 		}
 	}
