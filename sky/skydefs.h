@@ -38,6 +38,7 @@
 
 // scriptVariable offsets
 #define RESULT 1
+#define LOGIC_LIST_NO 3
 #define CUR_ID 13
 #define HIT_ID 38
 #define THE_CHOSEN_ONE 52

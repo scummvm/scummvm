@@ -62,7 +62,7 @@ SkyLogic::SkyLogic(SkyDisk *skyDisk, SkyGrid *skyGrid, SkyText *skyText) {
 }
 
 void SkyLogic::engine() {
-	Compact *compact2 = SkyState::fetchCompact(141); // logic list
+	Compact *compact2 = SkyState::fetchCompact(_scriptVariables[LOGIC_LIST_NO]);
 
 	while (compact2->logic) { // 0 means end of list
 		if (compact2->logic == 0xffff) {
@@ -172,7 +172,7 @@ void SkyLogic::arAnim() {
 		// fine because the later collision will almost certainly
 		// take longer to clear than the earlier one.
 
-		if (!collide(SkyState::fetchCompact(_compact->extCompact->waitingFor)))
+		if (collide(SkyState::fetchCompact(_compact->extCompact->waitingFor)))
 			error("stop_and_wait not implemented\n");
 
 		// we are not in fact hitting this person so clr & continue
@@ -183,14 +183,11 @@ void SkyLogic::arAnim() {
 
 	// ok, our turn to check for collisions
 
-#define logic_list_no 141
-	uint16 *logicList = (uint16 *)SkyState::fetchCompact(logic_list_no);
+	uint16 *logicList = (uint16 *)SkyState::fetchCompact(_scriptVariables[LOGIC_LIST_NO]);
 	Compact *cpt = 0;
 
-	for (;;) {
-		uint16 id = *logicList++; // get an id
-		if (!id) // 0 is list end
-			break;
+	uint16 id;
+	while ((id = *logicList++) != 0) { // get an id
 
 		if (id == 0xffff) { // address change?
 			logicList = (uint16 *)SkyState::fetchCompact(*logicList); // get new logic list
@@ -241,6 +238,7 @@ void SkyLogic::arAnim() {
 	if (_compact->extCompact->request) {
 		_compact->mode = C_ACTION_MODE; // put into action mode
 		_compact->extCompact->actionSub = _compact->extCompact->request;
+		_compact->extCompact->actionSub_off = 0;
 		_compact->extCompact->request = 0; // trash request
 		_compact->logic = L_SCRIPT;
 		logicScript();
@@ -251,7 +249,7 @@ void SkyLogic::arAnim() {
 	// if change then re-run the current script, which must be
 	// a position independent get-to		 ----
 
-	if (_compact->extCompact->atWatch) { // any flag set?
+	if (!_compact->extCompact->atWatch) { // any flag set?
 		mainAnim();
 		return;
 	}
@@ -281,7 +279,9 @@ void SkyLogic::mainAnim() {
 		if (!*sequence) { // end of route?
 			// ok, sequence has finished
 
-			_compact->extCompact->arAnimIndex = 0; // will start afresh if new sequence continues in last direction
+			// will start afresh if new sequence continues in last direction
+			_compact->extCompact->arAnimIndex = 0;
+
 			_compact->downFlag = 0; // pass back ok to script
 			_compact->logic = L_SCRIPT;
 			logicScript();
@@ -307,21 +307,21 @@ void SkyLogic::mainAnim() {
 		}
 	};
 
-	uint16 *animUp = (uint16 *)SkyCompact::getCompactElem(_compact,
-			C_ANIM_UP + _compact->extCompact->megaSet + (dir << 4));
+	uint16 **anim = (uint16 **)SkyCompact::getCompactElem(_compact,
+			C_ANIM_UP + _compact->extCompact->megaSet + dir * 4);
 
 	uint16 arAnimIndex = _compact->extCompact->arAnimIndex;
-	if (!animUp[arAnimIndex/2]) {
+	if (!(*anim)[arAnimIndex/2]) {
 		 arAnimIndex = 0;
 		_compact->extCompact->arAnimIndex = 0; // reset
 	}
 
 	_compact->extCompact->arAnimIndex += S_LENGTH;
 
-	*sequence       -= animUp[(S_COUNT + arAnimIndex)/2]; // reduce the distance to travel
-	_compact->frame  = animUp[(S_FRAME + arAnimIndex)/2]; // new graphic frame
-	_compact->xcood += animUp[(S_AR_X  + arAnimIndex)/2]; // update x coordinate
-	_compact->ycood += animUp[(S_AR_Y  + arAnimIndex)/2]; // update y coordinate
+	*sequence       -= (*anim)[(S_COUNT + arAnimIndex)/2]; // reduce the distance to travel
+	_compact->frame  = (*anim)[(S_FRAME + arAnimIndex)/2]; // new graphic frame
+	_compact->xcood += (*anim)[(S_AR_X  + arAnimIndex)/2]; // update x coordinate
+	_compact->ycood += (*anim)[(S_AR_Y  + arAnimIndex)/2]; // update y coordinate
 }
 
 void SkyLogic::arTurn() {
@@ -1320,18 +1320,15 @@ uint32 SkyLogic::fnClearRequest(uint32 a, uint32 b, uint32 c) {
 uint32 SkyLogic::fnCheckRequest(uint32 a, uint32 b, uint32 c) {
 	// check for interaction request
 	
-	a = (a & 0xffffff00) | 1; // assume script continue
-
-	ExtCompact *ecpt = _compact->extCompact;
-
-	if (!ecpt->request)
-		return a;
+	if (!_compact->extCompact->request)
+		return 1;
 
 	_compact->mode = C_ACTION_MODE; // into action mode
 
-	ecpt->actionSub = ecpt->request;
+	_compact->extCompact->actionSub = _compact->extCompact->request;
+	_compact->extCompact->actionSub_off = 0;
 
-	ecpt->request = 0; // trash request
+	_compact->extCompact->request = 0; // trash request
 	return 0; // drop from script
 }
 

@@ -155,7 +155,7 @@ void *getCompactElem(Compact *cpt, uint32 off) {
 
 	off -= MEGASET_SIZE;
 	if (off < TURNTABLE_SIZE)
-		return ((uint8 *)(cpt->extCompact->megaSet0->turnTable) + turnTableOffsets[off]);
+		return ((uint8 *)(cpt->extCompact->megaSet1->turnTable) + turnTableOffsets[off]);
 
 	off -= TURNTABLE_SIZE;
 	if (off < MEGASET_SIZE)
@@ -163,7 +163,7 @@ void *getCompactElem(Compact *cpt, uint32 off) {
 
 	off -= MEGASET_SIZE;
 	if (off < TURNTABLE_SIZE)
-		return ((uint8 *)(cpt->extCompact->megaSet0->turnTable) + turnTableOffsets[off]);
+		return ((uint8 *)(cpt->extCompact->megaSet2->turnTable) + turnTableOffsets[off]);
 
 	off -= TURNTABLE_SIZE;
 	if (off < MEGASET_SIZE)
@@ -171,10 +171,10 @@ void *getCompactElem(Compact *cpt, uint32 off) {
 
 	off -= MEGASET_SIZE;
 	if (off < TURNTABLE_SIZE)
-		return ((uint8 *)(cpt->extCompact->megaSet0->turnTable) + turnTableOffsets[off]);
+		return ((uint8 *)(cpt->extCompact->megaSet3->turnTable) + turnTableOffsets[off]);
 	off -= TURNTABLE_SIZE;
 
-	error("Offset %X out of bounds of compact", off + COMPACT_SIZE + EXTCOMPACT_SIZE + 4 * MEGASET_SIZE + 4 * 5*5*4);
+	error("Offset %X out of bounds of compact", off + COMPACT_SIZE + EXTCOMPACT_SIZE + 4 * MEGASET_SIZE + 4 * TURNTABLE_SIZE);
 }
 };
 
