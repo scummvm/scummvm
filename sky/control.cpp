@@ -1326,8 +1326,8 @@ void SkyControl::showGameQuitMsg(bool useScreen) {
 		case PT_BRA: textNum = 5; break;
 		default: textNum = 0; break;
 	}
-	_skyText->displayText(_quitTexts[textNum + 0], textBuf1, true, 320, 255);
-	_skyText->displayText(_quitTexts[textNum + 1], textBuf2, true, 320, 255);
+	_skyText->displayText(_quitTexts[textNum * 2 + 0], textBuf1, true, 320, 255);
+	_skyText->displayText(_quitTexts[textNum * 2 + 1], textBuf2, true, 320, 255);
 	uint8 *curLine1 = textBuf1 + sizeof(dataFileHeader);
 	uint8 *curLine2 = textBuf2 + sizeof(dataFileHeader);
 	uint8 *targetLine = screenData + GAME_SCREEN_WIDTH * 80;
