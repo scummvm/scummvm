@@ -144,8 +144,23 @@ struct Dir
 
 static Game the_game;
 
+static bool checkName(const char *base, char *text = 0)
+{
+  const VersionSettings *gnl = version_settings;
+
+  do {
+    if (!scumm_stricmp(base, gnl->filename)) {
+      if(text != NULL)
+	strcpy(text, gnl->gamename);
+      return true;
+    }
+  } while ((++gnl)->filename);
+  return false;
+}
+
 static bool isGame(const char *fn, char *base)
 {
+#if 0
   int l = strlen(fn);
   if(l>4 && (!strcasecmp(fn+l-4, ".000") ||
 	     !strcasecmp(fn+l-4, ".SM0") ||
@@ -155,25 +170,21 @@ static bool isGame(const char *fn, char *base)
     base[l-4]='\0';
     return true;
   }
+#else
+  char *dot;
+  if((dot = strchr(fn, '.'))!=NULL) {
+    strcpy(base, fn);
+    base[dot-fn]='\0';
+    if(checkName(base))
+      return true;
+  }
+#endif  
   if(!strcasecmp(fn, "00.LFL") ||
      !strcasecmp(fn, "000.LFL")) {
     *base = '\0';
     return true;
   }
   return false;
-}
-
-static void checkName(Game &game)
-{
-  const VersionSettings *gnl = version_settings;
-
-  do {
-    if (!scumm_stricmp(game.filename_base, gnl->filename)) {
-      strcpy(game.text, gnl->gamename);
-      return;
-    }
-  } while ((++gnl)->filename);
-  strcpy(game.text, game.filename_base);
 }
 
 static bool checkExe(const char *dir, const char *f)
@@ -218,6 +229,17 @@ static void makeDefIcon(Icon &icon)
   icon.load(NULL, 0);
 }
 
+static bool uniqueGame(const char *base, const char *dir, Game *games, int cnt)
+{
+  while(cnt--)
+    if(!strcmp(dir, games->dir) &&
+       !strcmp(base, games->filename_base))
+      return false;
+    else
+      games++;
+  return true;
+}
+
 static int findGames(Game *games, int max)
 {
   Dir *dirs = new Dir[MAX_DIR];
@@ -242,7 +264,7 @@ static int findGames(Game *games, int max)
 	  if(isIcon(entry->d_name))
 	    strcpy(dirs[curr_dir-1].deficon, entry->d_name);
 	  else if(curr_game < max &&
-	     isGame(entry->d_name, games[curr_game].filename_base)) {
+		  isGame(entry->d_name, games[curr_game].filename_base)) {
 	    strcpy(games[curr_game].dir, dirs[curr_dir-1].name);
 	    if(!*games[curr_game].filename_base) {
 	      int i;
@@ -261,14 +283,20 @@ static int findGames(Game *games, int max)
 	      if(checkExe(games[curr_game].dir, "loom"))
 		strcpy(games[curr_game].filename_base, "loomcd");
 	    }
-	    checkName(games[curr_game]);
+	    if(uniqueGame(games[curr_game].filename_base,
+			  games[curr_game].dir, games, curr_game)) {
+
+	      if(!checkName(games[curr_game].filename_base,
+			    games[curr_game].text))
+		strcpy(games[curr_game].text, games[curr_game].filename_base);
 #if 0
-	    printf("Registered game <%s> in <%s> <%s> because of <%s> <%s>\n",
-		   games[curr_game].text, games[curr_game].dir,
-		   games[curr_game].filename_base,
-		   dirs[curr_dir-1].name, entry->d_name);
+	      printf("Registered game <%s> in <%s> <%s> because of <%s> <%s>\n",
+		     games[curr_game].text, games[curr_game].dir,
+		     games[curr_game].filename_base,
+		     dirs[curr_dir-1].name, entry->d_name);
 #endif
-	    curr_game++;
+	      curr_game++;
+	    }
 	  }
       closedir(dirp);
     }
@@ -411,7 +439,7 @@ int gameMenu(Game *games, int num_games)
 	float x = 50.0/256.0*(256-fade) + 160.0/256.0*fade;
 	float scale = 1.0+9.0/256.0*fade;
 
-	drawGameLabel(games[selector_pos], 48+(selected_game&15), x, y,
+	drawGameLabel(games[selected_game], 48+(selected_game&15), x, y,
 		      0xffff00, 0, scale);
 
 	ta_commit_frame();
