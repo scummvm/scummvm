@@ -152,22 +152,24 @@ void Timer::TimerService(Timer *this_ptr)
 
 								if (tmsg->tsm_Interval > 1000)
 									unit = UNIT_VBLANK;
-								OSystem_MorphOS::OpenATimer(&timer_slots[timers].ts_Port, (IORequest **) &timer_slots[timers].ts_IORequest, unit);
-								timer_slots[timers].ts_Callback = tmsg->tsm_Callback;
-								timer_slots[timers].ts_Interval = tmsg->tsm_Interval;
-								timer_slots[timers].ts_SignalBit = 1 << timer_slots[timers].ts_Port->mp_SigBit;
+								if (OSystem_MorphOS::OpenATimer(&timer_slots[timers].ts_Port, (IORequest **) &timer_slots[timers].ts_IORequest, unit))
+								{
+									timer_slots[timers].ts_Callback = tmsg->tsm_Callback;
+									timer_slots[timers].ts_Interval = tmsg->tsm_Interval;
+									timer_slots[timers].ts_SignalBit = 1 << timer_slots[timers].ts_Port->mp_SigBit;
 
-								signal_mask |= timer_slots[timers].ts_SignalBit;
-								timer_bits |= timer_slots[timers].ts_SignalBit;
+									signal_mask |= timer_slots[timers].ts_SignalBit;
+									timer_bits |= timer_slots[timers].ts_SignalBit;
 
-								timerequest *req = timer_slots[timers].ts_IORequest;
-								interval = timer_slots[timers].ts_Interval;
-								req->tr_node.io_Command  = TR_ADDREQUEST;
-								req->tr_time.tv_secs  = interval/1000;
-								req->tr_time.tv_micro = (interval%1000)*1000;
-								SendIO(req);
+									timerequest *req = timer_slots[timers].ts_IORequest;
+									interval = timer_slots[timers].ts_Interval;
+									req->tr_node.io_Command  = TR_ADDREQUEST;
+									req->tr_time.tv_secs  = interval/1000;
+									req->tr_time.tv_micro = (interval%1000)*1000;
+									SendIO(req);
 
-								timers++;
+									timers++;
+								}
 							}
 							break;
 
@@ -216,7 +218,7 @@ void Timer::TimerService(Timer *this_ptr)
 					(*timer_slots[t].ts_Callback)(interval);
 					GetSysTime(&end_callback);
 					SubTime(&end_callback, &start_callback);
-					interval -= end_callback.tv_sec*1000+end_callback.tv_micro/1000+20;
+					interval -= end_callback.tv_sec*1000+end_callback.tv_micro/1000+40;
 
 					req->tr_node.io_Command  = TR_ADDREQUEST;
 					req->tr_time.tv_secs  = interval/1000;

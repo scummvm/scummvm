@@ -38,80 +38,80 @@
 
 #define AHI_BUF_SIZE	 (8*1024)
 
-struct SignalSemaphore ScummMusicThreadRunning;
-struct SignalSemaphore ScummSoundThreadRunning;
+SignalSemaphore ScummMusicThreadRunning;
+SignalSemaphore ScummSoundThreadRunning;
 
-static struct MsgPort     *ahiPort    		 = NULL;
-static struct AHIRequest  *ahiReq[ 2 ]		 = { NULL, NULL };
-static UWORD					ahiCurBuf		 = 0;
-static bool						ahiReqSent[ 2 ] = { false, false };
-static BYTE						ahiDevice		 = -1;
-		 UBYTE					ahiUnit  		 = AHI_DEFAULT_UNIT;
-static char					  *ahiBuf[ 2 ]		 = { NULL, NULL };
+static MsgPort    *ahiPort    	  = NULL;
+static AHIRequest *ahiReq[2]	   = { NULL, NULL };
+static UWORD		ahiCurBuf		 = 0;
+static bool			ahiReqSent[2] = { false, false };
+static BYTE			ahiDevice		 = -1;
+		 UBYTE		ahiUnit  		 = AHI_DEFAULT_UNIT;
+static char			*ahiBuf[2]	   = { NULL, NULL };
 
-static struct MsgPort 		 *ScummMidiPort = NULL;
-		 struct IOMidiRequest *ScummMidiRequest = NULL;
-static struct MsgPort       *MusicTimerMsgPort = NULL;
-		 struct timerequest   *MusicTimerIORequest = NULL;
+static MsgPort 	   *ScummMidiPort = NULL;
+		 IOMidiRequest *ScummMidiRequest = NULL;
+static MsgPort       *MusicTimerMsgPort = NULL;
+		 timerequest   *MusicTimerIORequest = NULL;
 
-bool init_morphos_music( ULONG MidiUnit )
+bool init_morphos_music(ULONG MidiUnit)
 {
-	if( ScummMusicDriver && !stricmp( ScummMusicDriver, "-eamidi" ) )	  // just as ugly as the line below ...
+	if (ScummMusicDriver && !stricmp(ScummMusicDriver, "-eamidi"))	  // just as ugly as the line below ...
 	{
 		MidiUnit = ScummMidiUnit;	// Ugly fix, but ...
 		ScummMidiPort = CreateMsgPort();
-		if( ScummMidiPort )
+		if (ScummMidiPort)
 		{
-			ScummMidiRequest = (struct IOMidiRequest *)CreateIORequest( ScummMidiPort, sizeof( struct IOMidiRequest ) );
-			if( ScummMidiRequest )
+			ScummMidiRequest = (IOMidiRequest *) CreateIORequest(ScummMidiPort, sizeof (IOMidiRequest));
+			if (ScummMidiRequest)
 			{
 				ScummMidiRequest->amr_Version = 2;
-				if( OpenDevice( "amidi.device", MidiUnit, (struct IORequest *)ScummMidiRequest, AMIDIF_MIDISERVER ) )
+				if (OpenDevice("amidi.device", MidiUnit, (IORequest *) ScummMidiRequest, AMIDIF_MIDISERVER))
 				{
-					DeleteIORequest( (struct IORequest *)ScummMidiRequest );
-					DeleteMsgPort( ScummMidiPort );
+					DeleteIORequest((IORequest *) ScummMidiRequest);
+					DeleteMsgPort(ScummMidiPort);
 					ScummMidiRequest = NULL;
 					ScummMidiPort = NULL;
 				}
 			}
 			else
 			{
-				DeleteMsgPort( ScummMidiPort );
+				DeleteMsgPort(ScummMidiPort);
 				ScummMidiPort = NULL;
 			}
 		}
 
-		if( !ScummMidiRequest )
+		if (!ScummMidiRequest)
 		{
-			warning( "Could not open AMidi - music will not play" );
+			warning("Could not open AMidi - music will not play");
 			return false;
 		}
 	}
 
 	MusicTimerMsgPort = CreateMsgPort();
-	if( MusicTimerMsgPort )
+	if (MusicTimerMsgPort)
 	{
-		MusicTimerIORequest = (struct timerequest *)CreateIORequest( MusicTimerMsgPort, sizeof( struct timerequest ) );
-		if( MusicTimerIORequest )
+		MusicTimerIORequest = (timerequest *) CreateIORequest(MusicTimerMsgPort, sizeof (timerequest));
+		if (MusicTimerIORequest)
 		{
-			if( OpenDevice( "timer.device", UNIT_MICROHZ, (struct IORequest *)MusicTimerIORequest, 0 ) )
+			if (OpenDevice("timer.device", UNIT_MICROHZ, (IORequest *) MusicTimerIORequest, 0))
 			{
-				DeleteIORequest( (struct IORequest *)MusicTimerIORequest );
-				DeleteMsgPort( MusicTimerMsgPort );
+				DeleteIORequest((IORequest *) MusicTimerIORequest);
+				DeleteMsgPort(MusicTimerMsgPort);
 				MusicTimerIORequest = NULL;
 				MusicTimerMsgPort = NULL;
 			}
 		}
 		else
 		{
-			DeleteMsgPort( MusicTimerMsgPort );
+			DeleteMsgPort(MusicTimerMsgPort);
 			MusicTimerMsgPort = NULL;
 		}
 	}
 
-	if( !MusicTimerIORequest )
+	if (!MusicTimerIORequest)
 	{
-		warning( "Could not open timer device - music will not play" );
+		warning("Could not open timer device - music will not play");
 		return false;
 	}
 
@@ -121,74 +121,74 @@ bool init_morphos_music( ULONG MidiUnit )
 
 void exit_morphos_music()
 {
-	if( ScummMidiRequest )
+	if (ScummMidiRequest)
 	{
-		CloseDevice( (struct IORequest *)ScummMidiRequest );
-		DeleteIORequest( (struct IORequest *)ScummMidiRequest );
-		DeleteMsgPort( ScummMidiPort );
+		CloseDevice((IORequest *) ScummMidiRequest);
+		DeleteIORequest((IORequest *) ScummMidiRequest);
+		DeleteMsgPort(ScummMidiPort);
 	}
 
-	if( MusicTimerIORequest )
+	if (MusicTimerIORequest)
 	{
-		CloseDevice( (struct IORequest *)MusicTimerIORequest );
-		DeleteIORequest( (struct IORequest *)MusicTimerIORequest );
-		DeleteMsgPort( MusicTimerMsgPort );
+		CloseDevice((IORequest *) MusicTimerIORequest);
+		DeleteIORequest((IORequest *) MusicTimerIORequest);
+		DeleteMsgPort(MusicTimerMsgPort);
 	}
 }
 
 
 static bool init_morphos_sound()
 {
-	if( !(ahiPort = CreateMsgPort()) )
+	if (!(ahiPort = CreateMsgPort()))
 		return false;
 
-	if( !(ahiReq[ 0 ] = (struct AHIRequest *)CreateIORequest( ahiPort, sizeof( struct AHIRequest ) )) )
+	if (!(ahiReq[0] = (AHIRequest *) CreateIORequest(ahiPort, sizeof (AHIRequest))))
 	{
-		DeleteMsgPort( ahiPort );
+		DeleteMsgPort(ahiPort);
 		ahiPort = NULL;
 		return false;
 	}
 
-	if( !(ahiReq[ 1 ] = (struct AHIRequest *)AllocVec( sizeof( struct AHIRequest ), MEMF_ANY | MEMF_PUBLIC )) )
+	if (!(ahiReq[1] = (AHIRequest *) AllocVec(sizeof (AHIRequest), MEMF_PUBLIC)))
 	{
-		DeleteIORequest( ahiReq[ 0 ] );
-		DeleteMsgPort( ahiPort );
-		ahiReq[ 0 ] = NULL;
+		DeleteIORequest(ahiReq[0]);
+		DeleteMsgPort(ahiPort);
+		ahiReq[0] = NULL;
 		ahiPort = NULL;
 		return false;
 	}
 
-	if( !(ahiBuf[ 0 ] = (char *)AllocVec( 2*AHI_BUF_SIZE, MEMF_ANY | MEMF_PUBLIC )) )
+	if (!(ahiBuf[0] = (char *) AllocVec(2*AHI_BUF_SIZE, MEMF_PUBLIC)))
 	{
-		FreeVec( ahiReq[ 1 ] );
-		DeleteIORequest( ahiReq[ 0 ] );
-		DeleteMsgPort( ahiPort );
-		ahiReq[ 0 ] = NULL;
-		ahiReq[ 1 ] = NULL;
+		FreeVec(ahiReq[1]);
+		DeleteIORequest(ahiReq[0]);
+		DeleteMsgPort(ahiPort);
+		ahiReq[0] = NULL;
+		ahiReq[1] = NULL;
 		ahiPort = NULL;
 		return false;
 	}
-	ahiBuf[ 1 ] = &ahiBuf[ 0 ][ AHI_BUF_SIZE ];
+	ahiBuf[1] = &ahiBuf[0][AHI_BUF_SIZE];
 
-	ahiReq[ 0 ]->ahir_Version = 4;
-	if( ahiDevice = OpenDevice( AHINAME, 0, (struct IORequest *)ahiReq[ 0 ], 0 ) )
+	ahiReq[0]->ahir_Version = 4;
+	if (ahiDevice = OpenDevice(AHINAME, 0, (IORequest *) ahiReq[0], 0))
 	{
-		FreeVec( ahiBuf[ 0 ] );
-		FreeVec( ahiReq[ 1 ] );
-		DeleteIORequest( ahiReq[ 0 ] );
-		DeleteMsgPort( ahiPort );
-		ahiBuf[ 0 ] = NULL;
-		ahiReq[ 0 ] = NULL;
-		ahiReq[ 1 ] = NULL;
+		FreeVec(ahiBuf[0]);
+		FreeVec(ahiReq[1]);
+		DeleteIORequest(ahiReq[0]);
+		DeleteMsgPort(ahiPort);
+		ahiBuf[0] = NULL;
+		ahiReq[0] = NULL;
+		ahiReq[1] = NULL;
 		ahiPort = NULL;
 		return false;
 	}
 
-	CopyMem( ahiReq[ 0 ], ahiReq[ 1 ], sizeof( struct AHIRequest ) );
+	CopyMem(ahiReq[0], ahiReq[1], sizeof (AHIRequest));
 
 	ahiCurBuf = 0;
-	ahiReqSent[ 0 ] = FALSE;
-	ahiReqSent[ 1 ] = FALSE;
+	ahiReqSent[0] = FALSE;
+	ahiReqSent[1] = FALSE;
 
 	return true;
 }
@@ -196,89 +196,89 @@ static bool init_morphos_sound()
 
 static void exit_morphos_sound()
 {
-	if( ahiReq[ 1 ] )
-		FreeVec( ahiReq[ 1 ] );
+	if (ahiReq[1])
+		FreeVec(ahiReq[1]);
 
-	if( ahiReq[ 0 ] )
+	if (ahiReq[0])
 	{
-		CloseDevice( (struct IORequest *)ahiReq[ 0 ] );
-		DeleteIORequest( ahiReq[ 0 ] );
+		CloseDevice((IORequest *) ahiReq[0]);
+		DeleteIORequest(ahiReq[0]);
 	}
 
-	if( ahiBuf[ 0 ] )
-		FreeVec( (APTR)ahiBuf[ 0 ] );
+	if (ahiBuf[0])
+		FreeVec((APTR) ahiBuf[0]);
 
-	if( ahiPort )
-		DeleteMsgPort( ahiPort );
+	if (ahiPort)
+		DeleteMsgPort(ahiPort);
 }
 
-int morphos_sound_thread( OSystem_MorphOS *syst, ULONG SampleType )
+int morphos_sound_thread(OSystem_MorphOS *syst, ULONG SampleType)
 {
 	ULONG signals;
 	bool  initialized;
 
-	ObtainSemaphore( &ScummSoundThreadRunning );
+	ObtainSemaphore(&ScummSoundThreadRunning);
 
 	initialized = init_morphos_sound();
-	if( !initialized )
+	if (!initialized)
 	{
-		warning( "Sound could not be initialized. The game may hang at some point (press Ctrl-z then)." );
-		Wait( SIGBREAKF_CTRL_C );
+		warning("Sound could not be initialized. The game may hang at some point (press Ctrl-z then).");
+		Wait(SIGBREAKF_CTRL_C);
 	}
 	else
 	{
-		for(;;)
+		for (;;)
 		{
-			while( !ahiReqSent[ ahiCurBuf ] || CheckIO( (struct IORequest *)ahiReq[ ahiCurBuf ] ) )
+			while (!ahiReqSent[ahiCurBuf] || CheckIO((IORequest *) ahiReq[ahiCurBuf]))
 			{
-				struct AHIRequest *req = ahiReq[ ahiCurBuf ];
+				AHIRequest *req = ahiReq[ahiCurBuf];
 				UWORD ahiOtherBuf = !ahiCurBuf;
 
-				if( ahiReqSent[ ahiCurBuf ] )
-					WaitIO( (struct IORequest *)req );
+				if (ahiReqSent[ahiCurBuf])
+					WaitIO((IORequest *) req);
 
-				syst->fill_sound( (byte *)ahiBuf[ ahiCurBuf ], AHI_BUF_SIZE );
+				syst->fill_sound((byte *) ahiBuf[ahiCurBuf], AHI_BUF_SIZE);
 	
 				req->ahir_Std.io_Message.mn_Node.ln_Pri = 0;
 				req->ahir_Std.io_Command = CMD_WRITE;
-				req->ahir_Std.io_Data    = ahiBuf[ ahiCurBuf ];
+				req->ahir_Std.io_Data    = ahiBuf[ahiCurBuf];
 				req->ahir_Std.io_Length  = AHI_BUF_SIZE;
 				req->ahir_Type				 = SampleType;
 				req->ahir_Frequency		 = SAMPLES_PER_SEC;
 				req->ahir_Position  		 = 0x8000;
 				req->ahir_Volume			 = 0x10000;
-				req->ahir_Link				 = (ahiReqSent[ ahiOtherBuf ] && !CheckIO( (struct IORequest *)ahiReq[ ahiOtherBuf ] )) ? ahiReq[ ahiOtherBuf ] : NULL;
-				SendIO( (struct IORequest *)req );
+				req->ahir_Link				 = (ahiReqSent[ahiOtherBuf] && !CheckIO((IORequest *) ahiReq[ahiOtherBuf])) ? ahiReq[ahiOtherBuf] : NULL;
+				SendIO((IORequest *)req);
 
-				ahiReqSent[ ahiCurBuf ] = true;
+				ahiReqSent[ahiCurBuf] = true;
 				ahiCurBuf = ahiOtherBuf;
 			}
 
-			signals = Wait( SIGBREAKF_CTRL_C | (1 << ahiPort->mp_SigBit) );
+			signals = Wait(SIGBREAKF_CTRL_C | (1 << ahiPort->mp_SigBit));
 
-			if( signals & SIGBREAKF_CTRL_C )
+			if (signals & SIGBREAKF_CTRL_C)
 				break;
 		}
 
-		if( ahiReqSent[ ahiCurBuf ] )
+		if (ahiReqSent[ahiCurBuf])
 		{
-			AbortIO( (struct IORequest *)ahiReq[ ahiCurBuf ] );
-			WaitIO ( (struct IORequest *)ahiReq[ ahiCurBuf ] );
-			ahiReqSent[ ahiCurBuf ] = false;
+			AbortIO((IORequest *) ahiReq[ahiCurBuf]);
+			WaitIO((IORequest *) ahiReq[ahiCurBuf]);
+			ahiReqSent[ahiCurBuf] = false;
 		}
 
-		if( ahiReqSent[ !ahiCurBuf ] )
+		if (ahiReqSent[!ahiCurBuf])
 		{
-			AbortIO( (struct IORequest *)ahiReq[ !ahiCurBuf ] );
-			WaitIO ( (struct IORequest *)ahiReq[ !ahiCurBuf ] );
-			ahiReqSent[ !ahiCurBuf ] = false;
+			AbortIO((IORequest *) ahiReq[!ahiCurBuf]);
+			WaitIO((IORequest *) ahiReq[!ahiCurBuf]);
+			ahiReqSent[!ahiCurBuf] = false;
 		}
 	}
 
 	exit_morphos_sound();
 
-	ReleaseSemaphore( &ScummSoundThreadRunning );
-	RemTask( NULL );
+	ReleaseSemaphore(&ScummSoundThreadRunning);
+	RemTask(NULL);
 	return 0;
 }
 

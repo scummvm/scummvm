@@ -37,14 +37,15 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "morphos.h"
+#include "morphos_scaler.h"
 
-extern "C" struct WBStartup *_WBenchMsg;
+extern "C" WBStartup *_WBenchMsg;
 
 // For command line parsing
 static STRPTR usageTemplate = "STORY/A,DATAPATH/K,WBWINDOW/S,SCALER/K,AMIGA/S,MIDIUNIT/K/N,MUSIC/K,MUSICVOL/K/N,SFXVOL/K/N,TEMPO/K/N,TALKSPEED/K/N,NOSUBTITLES=NST/S";
-typedef enum 					{ USG_STORY = 0,	USG_DATAPATH, 	USG_WBWINDOW,	USG_SCALER, 	USG_AMIGA,	USG_MIDIUNIT,	USG_MUSIC,	 USG_MUSICVOL,	USG_SFXVOL,	   USG_TEMPO,   USG_TALKSPEED, USG_NOSUBTITLES } usageFields;
-static LONG	  args[ 13 ] =  { (ULONG)NULL, 	 (ULONG)NULL,	 FALSE, 			 (ULONG)NULL,	false,      (ULONG)NULL,   (ULONG)NULL, (ULONG)NULL, (ULONG)NULL,	  (ULONG)NULL,  (ULONG)NULL,   false };
-static struct RDArgs *ScummArgs = NULL;
+typedef enum { USG_STORY = 0,	 USG_DATAPATH,  USG_WBWINDOW,	 USG_SCALER, 	 USG_AMIGA,	 USG_MIDIUNIT,	 USG_MUSIC,	  USG_MUSICVOL, USG_SFXVOL,    USG_TEMPO,   USG_TALKSPEED, USG_NOSUBTITLES } usageFields;
+static LONG	args[13] =  { (ULONG) NULL, (ULONG) NULL, FALSE, (ULONG) NULL, false, (ULONG) NULL, (ULONG) NULL, (ULONG) NULL, (ULONG) NULL,	(ULONG) NULL, (ULONG) NULL, false };
+static RDArgs *ScummArgs = NULL;
 
 static char*ScummStory = NULL;
 static char*ScummPath = NULL;
@@ -54,184 +55,184 @@ static LONG ScummMidiVolume = 0;
 static LONG ScummMidiTempo = 0;
 static LONG ScummSfxVolume = 0;
 static LONG ScummTalkSpeed = 0;
-static OSystem_MorphOS::SCALERTYPE ScummGfxScaler = OSystem_MorphOS::ST_INVALID;
+static SCALERTYPE ScummGfxScaler = ST_INVALID;
 
 static BPTR OrigDirLock = 0;
 
-struct Library *CDDABase = NULL;
-struct Device *TimerBase = NULL;
+Library *CDDABase = NULL;
+Device *TimerBase = NULL;
 
 OSystem_MorphOS *TheSystem = NULL;
 
-OSystem *OSystem_MorphOS_create( int game_id, int gfx_mode, bool full_screen)
+OSystem *OSystem_MorphOS_create(int game_id, int gfx_mode, bool full_screen)
 {
-	if( TheSystem )
+	if (TheSystem)
 		delete TheSystem;
 
-	OSystem_MorphOS::SCALERTYPE gfx_scaler = OSystem_MorphOS::ST_NONE;
-	switch( gfx_mode )
+	SCALERTYPE gfx_scaler = ST_NONE;
+	switch (gfx_mode)
 	{
 		case GFX_DOUBLESIZE:
-			gfx_scaler = OSystem_MorphOS::ST_POINT;
+			gfx_scaler = ST_POINT;
 			break;
 
 		case GFX_SUPEREAGLE:
-			gfx_scaler = OSystem_MorphOS::ST_SUPEREAGLE;
+			gfx_scaler = ST_SUPEREAGLE;
 			break;
 
 		case GFX_SUPER2XSAI:
-			gfx_scaler = OSystem_MorphOS::ST_SUPER2XSAI;
+			gfx_scaler = ST_SUPER2XSAI;
 			break;
 	}
 
-	TheSystem = OSystem_MorphOS::create( game_id, gfx_scaler, full_screen );
+	TheSystem = OSystem_MorphOS::create(game_id, gfx_scaler, full_screen);
 	return TheSystem;
 }
 
 void close_resources()
 {
-	if( TheSystem )
+	if (TheSystem)
 		delete TheSystem;
 
-	if( g_scumm )
+	if (g_scumm)
 		delete g_scumm;
 
-	if( ScummPath )
-		FreeVec( ScummPath );
+	if (ScummPath)
+		FreeVec(ScummPath);
 
-	if( ScummStory )
-		FreeVec( ScummStory );
+	if (ScummStory)
+		FreeVec(ScummStory);
 
-	if( ScummArgs )
-		FreeArgs( ScummArgs );
+	if (ScummArgs)
+		FreeArgs(ScummArgs);
 
-	if( OrigDirLock )
-		CurrentDir( OrigDirLock );
+	if (OrigDirLock)
+		CurrentDir(OrigDirLock);
 
-	if( CDDABase )
-		CloseLibrary( CDDABase );
+	if (CDDABase)
+		CloseLibrary(CDDABase);
 }
 
-static STRPTR FindMusicDriver( STRPTR argval )
+static STRPTR FindMusicDriver(STRPTR argval)
 {
-	if( !stricmp( argval, "off" ) )   return "-enull";
-	if( !stricmp( argval, "midi" ) )	 return "-eamidi";
-	if( !stricmp( argval, "midiemu" ) )	 return "-emidiemu";
-	if( !stricmp( argval, "adlib" ) ) return "-eadlib";
+	if (!stricmp(argval, "off"))  	return "-enull";
+	if (!stricmp(argval, "midi"))	 	return "-eamidi";
+	if (!stricmp(argval, "midiemu"))	return "-emidiemu";
+	if (!stricmp(argval, "adlib")) 	return "-eadlib";
 
-	error( "No such music driver supported. Possible values are off, Midi, MidiEmu and Adlib." );
+	error("No such music driver supported. Possible values are off, Midi, MidiEmu and Adlib.");
 	return NULL;
 }
 
-static void ReadToolTypes( struct WBArg *OfFile )
+static void ReadToolTypes(WBArg *OfFile)
 {
-	struct DiskObject *dobj;
-	char 	*ToolValue;
-	char IconPath[ 256 ];
+	DiskObject *dobj;
+	char *ToolValue;
+	char IconPath[256];
 
-	NameFromLock( OfFile->wa_Lock, IconPath, 256 );
-	AddPart( IconPath, OfFile->wa_Name, 256 );
+	NameFromLock(OfFile->wa_Lock, IconPath, 256);
+	AddPart(IconPath, OfFile->wa_Name, 256);
 
-	dobj = GetDiskObject( IconPath );
-	if( dobj == NULL )
+	dobj = GetDiskObject(IconPath);
+	if (dobj == NULL)
 		return;
 
-	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "STORY" ) )
+	if (ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "STORY"))
 	{
-		if( ScummStory )
-			FreeVec( ScummStory );
-		ScummStory = (char *)AllocVec( strlen( ToolValue )+1, MEMF_PUBLIC );
-		strcpy( ScummStory, ToolValue );
+		if (ScummStory)
+			FreeVec(ScummStory);
+		ScummStory = (char *) AllocVec(strlen(ToolValue)+1, MEMF_PUBLIC);
+		strcpy(ScummStory, ToolValue);
 	}
 
-	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "DATAPATH" ) )
+	if (ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "DATAPATH"))
 	{
-		if( ScummPath )
-			FreeVec( ScummPath );
-		ScummPath = (char *)AllocVec( strlen( ToolValue )+4, MEMF_PUBLIC );
-		strcpy( ScummPath, "-p" );
-		strcat( ScummPath, ToolValue );
+		if (ScummPath)
+			FreeVec(ScummPath);
+		ScummPath = (char *) AllocVec(strlen(ToolValue)+4, MEMF_PUBLIC);
+		strcpy(ScummPath, "-p");
+		strcat(ScummPath, ToolValue);
 	}
 
-	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "WBWINDOW" ) )
+	if (ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "WBWINDOW"))
 	{
-		if( MatchToolValue( ToolValue, "YES" ) )
-			args[ USG_WBWINDOW ] = TRUE;
-		else if( MatchToolValue( ToolValue, "NO" ) )
-			args[ USG_WBWINDOW ] = FALSE;
+		if (MatchToolValue(ToolValue, "YES"))
+			args[USG_WBWINDOW] = TRUE;
+		else if (MatchToolValue(ToolValue, "NO"))
+			args[USG_WBWINDOW] = FALSE;
 	}
 
-	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "SCALER" ) )
+	if (ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "SCALER"))
 	{
-		if( (ScummGfxScaler = OSystem_MorphOS::FindScaler( ToolValue )) == OSystem_MorphOS::ST_INVALID )
+		if ((ScummGfxScaler = MorphOSScaler::FindByName(ToolValue)) == ST_INVALID)
 		{
-			FreeDiskObject( dobj );
-			exit( 1 );
+			FreeDiskObject(dobj);
+			exit(1);
 		}
 	}
 
-	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "MUSIC" ) )
+	if (ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "MUSIC"))
 	{
-		if( !(ScummMusicDriver = FindMusicDriver( ToolValue )) )
+		if (!(ScummMusicDriver = FindMusicDriver(ToolValue)))
 		{
-			FreeDiskObject( dobj );
-			exit( 1 );
+			FreeDiskObject(dobj);
+			exit(1);
 		}
-		args[ USG_MUSIC ] = (ULONG)&ScummMusicDriver;
+		args[USG_MUSIC] = (ULONG) &ScummMusicDriver;
 	}
 
-	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "MIDIUNIT" ) )
-		ScummMidiUnit = atoi( ToolValue );
+	if( ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "MIDIUNIT"))
+		ScummMidiUnit = atoi(ToolValue);
 
-	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "MUSICVOL" ) )
+	if( ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "MUSICVOL"))
 	{
-		int vol = atoi( ToolValue );
-		if( vol >= 0 && vol <= 100 )
+		int vol = atoi(ToolValue);
+		if (vol >= 0 && vol <= 100)
 		{
 			ScummMidiVolume = vol;
-			args[ USG_MUSICVOL ] = (ULONG)&ScummMidiVolume;
+			args[USG_MUSICVOL] = (ULONG) &ScummMidiVolume;
 		}
 	}
 
-	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "SFXVOL" ) )
+	if (ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "SFXVOL"))
 	{
-		int vol = atoi( ToolValue );
-		if( vol >= 0 && vol <= 255 )
+		int vol = atoi(ToolValue);
+		if (vol >= 0 && vol <= 255)
 		{
 			ScummSfxVolume = vol;
-			args[ USG_SFXVOL ] = (ULONG)&ScummSfxVolume;
+			args[USG_SFXVOL] = (ULONG) &ScummSfxVolume;
 		}
 	}
 
-	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "TEMPO" ) )
+	if (ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "TEMPO"))
 	{
-		ScummMidiTempo = atoi( ToolValue );
-		args[ USG_TEMPO ] = (ULONG)&ScummMidiTempo;
+		ScummMidiTempo = atoi(ToolValue);
+		args[USG_TEMPO] = (ULONG) &ScummMidiTempo;
 	}
 
-	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "TALKSPEED" ) )
+	if (ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "TALKSPEED"))
 	{
-		ScummTalkSpeed = atoi( ToolValue );
-		args[ USG_TALKSPEED ] = (ULONG)&ScummMidiTempo;
+		ScummTalkSpeed = atoi(ToolValue);
+		args[USG_TALKSPEED] = (ULONG) &ScummMidiTempo;
 	}
 
-	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "SUBTITLES" ) )
+	if (ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "SUBTITLES"))
 	{
-		if( MatchToolValue( ToolValue, "YES" ) )
-			args[ USG_NOSUBTITLES ] = FALSE;
-		else if( MatchToolValue( ToolValue, "NO" ) )
-			args[ USG_NOSUBTITLES ] = TRUE;
+		if (MatchToolValue(ToolValue, "YES"))
+			args[USG_NOSUBTITLES] = FALSE;
+		else if (MatchToolValue(ToolValue, "NO"))
+			args[USG_NOSUBTITLES] = TRUE;
 	}
 
-	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "AMIGA" ) )
+	if (ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "AMIGA"))
 	{
-		if( MatchToolValue( ToolValue, "YES" ) )
-			args[ USG_AMIGA ] = FALSE;
-		else if( MatchToolValue( ToolValue, "NO" ) )
-			args[ USG_AMIGA ] = TRUE;
+		if (MatchToolValue(ToolValue, "YES"))
+			args[USG_AMIGA] = FALSE;
+		else if (MatchToolValue(ToolValue, "NO"))
+			args[USG_AMIGA] = TRUE;
 	}
 
-	FreeDiskObject( dobj );
+	FreeDiskObject(dobj);
 }
 
 #undef main
@@ -240,120 +241,119 @@ int main()
 {
 	int delta;
 	int last_time, new_time;
-	char *argv[ 20 ];
-	char musicvol[ 6 ], sfxvol[ 6 ], talkspeed[ 12 ], tempo[ 12 ], scaler[ 14 ];
-	char *SVMScalers[] = { "", "normal", "2x", "advmame2x", "supereagle", "super2xsai" };
+	char *argv[20];
+	char musicvol[6], sfxvol[6], talkspeed[12], tempo[12], scaler[14];
 	int argc = 0;
 
-	InitSemaphore( &ScummSoundThreadRunning );
-	InitSemaphore( &ScummMusicThreadRunning );
+	InitSemaphore(&ScummSoundThreadRunning);
+	InitSemaphore(&ScummMusicThreadRunning);
 
 	g_scumm = NULL;
-	atexit( &close_resources );
+	atexit(&close_resources);
 
-	if( _WBenchMsg == NULL )
+	if (_WBenchMsg == NULL)
 	{
 		/* Parse the command line here */
-		ScummArgs = ReadArgs( usageTemplate, args, NULL );
-		if( ScummArgs == NULL )
+		ScummArgs = ReadArgs(usageTemplate, args, NULL);
+		if (ScummArgs == NULL)
 		{
-			puts( "Error in command line - type \"ScummVM ?\" for usage.\n" );
-			exit( 1 );
+			puts("Error in command line - type \"ScummVM ?\" for usage.");
+			exit(1);
 		}
 
-		if( args[ USG_STORY ] )
+		if (args[USG_STORY])
 		{
-			ScummStory = (char *)AllocVec( strlen( (char *)args[ USG_STORY ] )+1, MEMF_PUBLIC );
-			strcpy( ScummStory, (char *)args[ USG_STORY ] );
+			ScummStory = (char *) AllocVec(strlen((char *) args[USG_STORY])+1, MEMF_PUBLIC);
+			strcpy(ScummStory, (char *) args[USG_STORY]);
 		}
 
-		if( args[ USG_DATAPATH ] )
+		if (args[USG_DATAPATH])
 		{
-			ScummPath = (char *)AllocVec( strlen( (char *)args[ USG_DATAPATH ] )+4, MEMF_PUBLIC );
-			strcpy( ScummPath, "-p" );
-			strcat( ScummPath, (char *)args[ USG_DATAPATH ] );
+			ScummPath = (char *) AllocVec(strlen((char *) args[USG_DATAPATH])+4, MEMF_PUBLIC);
+			strcpy(ScummPath, "-p");
+			strcat(ScummPath, (char *) args[USG_DATAPATH]);
 		}
 
-		if( args[ USG_SCALER ] )
+		if (args[USG_SCALER])
 		{
-			if( (ScummGfxScaler = OSystem_MorphOS::FindScaler( (char *)args[ USG_SCALER ] )) == OSystem_MorphOS::ST_INVALID )
-				exit( 1 );
+			if ((ScummGfxScaler = MorphOSScaler::FindByName((char *) args[USG_SCALER])) == ST_INVALID)
+				exit(1);
 		}
 
-		if( args[ USG_MUSIC ] )
+		if (args[USG_MUSIC])
 		{
-			if( !(ScummMusicDriver = FindMusicDriver( (char *)args[ USG_MUSIC ] )) )
-				exit( 1 );
+			if (!(ScummMusicDriver = FindMusicDriver((char *) args[USG_MUSIC])))
+				exit(1);
 		}
 
-		if( args[ USG_MIDIUNIT ] )
-			ScummMidiUnit = *((LONG *)args[ USG_MIDIUNIT ]);
+		if (args[USG_MIDIUNIT])
+			ScummMidiUnit = *((LONG *) args[USG_MIDIUNIT]);
 
-		if( args[ USG_TEMPO ] )
-			ScummMidiTempo = *((LONG *)args[ USG_TEMPO ]);
+		if (args[USG_TEMPO])
+			ScummMidiTempo = *((LONG *) args[USG_TEMPO]);
 
-		if( args[ USG_MUSICVOL ] )
-			ScummMidiVolume = *((LONG *)args[ USG_MUSICVOL ]);
+		if (args[USG_MUSICVOL])
+			ScummMidiVolume = *((LONG *) args[USG_MUSICVOL]);
 
-		if( args[ USG_SFXVOL ] )
-			ScummSfxVolume = *((LONG *)args[ USG_SFXVOL ]);
+		if (args[USG_SFXVOL])
+			ScummSfxVolume = *((LONG *) args[USG_SFXVOL]);
 
-		if( args[ USG_TALKSPEED ] )
-			ScummTalkSpeed = *((LONG *)args[ USG_TALKSPEED ]);
+		if (args[USG_TALKSPEED])
+			ScummTalkSpeed = *((LONG *) args[USG_TALKSPEED]);
 	}
 	else
 	{
 		/* We've been started from Workbench */
-		ReadToolTypes( &_WBenchMsg->sm_ArgList[ 0 ] );
-		if( _WBenchMsg->sm_NumArgs > 1 )
+		ReadToolTypes(&_WBenchMsg->sm_ArgList[0]);
+		if (_WBenchMsg->sm_NumArgs > 1)
 		{
-			ReadToolTypes( &_WBenchMsg->sm_ArgList[ 1 ] );
-			OrigDirLock = CurrentDir( _WBenchMsg->sm_ArgList[ 1 ].wa_Lock );
+			ReadToolTypes(&_WBenchMsg->sm_ArgList[1]);
+			OrigDirLock = CurrentDir(_WBenchMsg->sm_ArgList[1].wa_Lock);
 		}
 	}
 
-	if( ScummPath )
+	if (ScummPath)
 	{
-		char c = ScummPath[ strlen( ScummPath )-1 ];
-		if( c != '/' && c != ':' )
-			strcat( ScummPath, "/" );
+		char c = ScummPath[strlen(ScummPath)-1];
+		if (c != '/' && c != ':')
+			strcat(ScummPath, "/");
 	}
 
-	argv[ argc++ ] = "ScummVM";
-	if( ScummPath ) 					argv[ argc++ ] = ScummPath;
-	if( !args[ USG_WBWINDOW ]   ) argv[ argc++ ] = "-f";
-	if( args[ USG_NOSUBTITLES ] ) argv[ argc++ ] = "-n";
-	if( args[ USG_AMIGA ]		 ) argv[ argc++ ] = "-a";
-	if( args[ USG_MUSIC ]	    ) argv[ argc++ ] = ScummMusicDriver;
-	if( ScummGfxScaler != OSystem_MorphOS::ST_INVALID )
+	argv[argc++] = "ScummVM";
+	if (ScummPath) 				   argv[argc++] = ScummPath;
+	if (!args[ USG_WBWINDOW ]) 	argv[argc++] = "-f";
+	if (args[ USG_NOSUBTITLES ]) 	argv[argc++] = "-n";
+	if (args[ USG_AMIGA ]) 			argv[argc++] = "-a";
+	if (args[ USG_MUSIC ]) 			argv[argc++] = ScummMusicDriver;
+	if (ScummGfxScaler != ST_INVALID)
 	{
-		sprintf( scaler, "-g%s", SVMScalers[ (int)ScummGfxScaler ] );
-		argv[ argc++ ] = scaler;
+		sprintf(scaler, "-g%s", MorphOSScaler::GetParamName(ScummGfxScaler));
+		argv[argc++] = scaler;
 	}
 	else
-		argv[ argc++ ] = "-gsuper2xsai";
-	if( args[ USG_MUSICVOL ] && ScummMidiVolume >= 0 && ScummMidiVolume <= 100 )
+		argv[argc++] = "-gsuper2xsai";
+	if (args[USG_MUSICVOL] && ScummMidiVolume >= 0 && ScummMidiVolume <= 100)
 	{
-		sprintf( musicvol, "-m%d", ScummMidiVolume );
-		argv[ argc++ ] = musicvol;
+		sprintf(musicvol, "-m%d", ScummMidiVolume);
+		argv[argc++] = musicvol;
 	}
-	if( args[ USG_SFXVOL ] && ScummSfxVolume >= 0 && ScummSfxVolume <= 255 )
+	if (args[USG_SFXVOL] && ScummSfxVolume >= 0 && ScummSfxVolume <= 255)
 	{
-		sprintf( sfxvol, "-s%d", ScummSfxVolume );
-		argv[ argc++ ] = sfxvol;
+		sprintf(sfxvol, "-s%d", ScummSfxVolume);
+		argv[argc++] = sfxvol;
 	}
-	if( args[ USG_TEMPO ] && ScummMidiTempo > 0 )
+	if (args[USG_TEMPO] && ScummMidiTempo > 0)
 	{
-		sprintf( tempo, "-t%lx", ScummMidiTempo );
-		argv[ argc++ ] = tempo;
+		sprintf(tempo, "-t%lx", ScummMidiTempo);
+		argv[argc++] = tempo;
 	}
-	if( args[ USG_TALKSPEED ] && ScummTalkSpeed >= 0 && ScummTalkSpeed <= 255 )
+	if (args[USG_TALKSPEED] && ScummTalkSpeed >= 0 && ScummTalkSpeed <= 255)
 	{
-		sprintf( talkspeed, "-y%d", ScummTalkSpeed );
-		argv[ argc++ ] = talkspeed;
+		sprintf(talkspeed, "-y%d", ScummTalkSpeed);
+		argv[argc++] = talkspeed;
 	}
-	argv[ argc++ ] = ScummStory;
+	argv[argc++] = ScummStory;
 
-	return morphos_main( argc, argv );
+	return morphos_main(argc, argv);
 }
 

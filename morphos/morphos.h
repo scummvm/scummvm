@@ -21,15 +21,22 @@
  *
  */
 
+#ifndef MORPHOS_MORPHOS_H
+#define MORPHOS_MORPHOS_H
+
 #include <exec/semaphores.h>
+#include <devices/amidi.h>
+#include <graphics/regions.h>
+#include <intuition/intuition.h>
+#include <intuition/screens.h>
 #include <libraries/cdda.h>
+
+#include "morphos_scaler.h"
 
 class OSystem_MorphOS : public OSystem
 {
 	public:
-		typedef enum { ST_INVALID = 0, ST_NONE, ST_POINT, ST_ADVMAME2X, ST_SUPEREAGLE, ST_SUPER2XSAI } SCALERTYPE;
-
-					OSystem_MorphOS( int game_id, SCALERTYPE gfx_mode, bool full_screen );
+					OSystem_MorphOS(int game_id, SCALERTYPE gfx_mode, bool full_screen);
 		virtual ~OSystem_MorphOS();
 
 		// Set colors of the palette
@@ -102,87 +109,66 @@ class OSystem_MorphOS : public OSystem
 		// Quit
 		virtual void quit();
 
-		static OSystem_MorphOS *create  ( int game_id, SCALERTYPE gfx_scaler, bool full_screen );
-		static uint32 make_color( int pixfmt, int r, int g, int b );
+		static OSystem_MorphOS *create(int game_id, SCALERTYPE gfx_scaler, bool full_screen);
 
-		static void OpenATimer( struct MsgPort **port, struct IORequest **req, ULONG unit );
-
-		static SCALERTYPE  FindScaler		  ( const char *ScalerName );
+		static bool OpenATimer(MsgPort **port, IORequest **req, ULONG unit, bool required = true);
 
 	private:
-		typedef void (*ScalerFunc)( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height );
 		typedef enum { CSDSPTYPE_WINDOWED, CSDSPTYPE_FULLSCREEN, CSDSPTYPE_TOGGLE, CSDSPTYPE_KEEP } CS_DSPTYPE;
-
-		struct GfxScaler
-		{
-			STRPTR 		gs_Name;
-			SCALERTYPE	gs_Type;
-		};
 
 		static const int MAX_MOUSE_W = 40;
 		static const int MAX_MOUSE_H = 40;
 
-		void   		  create_screen   ( CS_DSPTYPE dspType );
-		void 	 		  SwitchScalerTo  ( SCALERTYPE newScaler );
-		void   		  Super2xSaI		( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height );
-		void   		  SuperEagle		( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height );
-		void 			  AdvMame2xScaler ( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height );
-		void   		  PointScaler		( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height );
+		void   CreateScreen(CS_DSPTYPE dspType);
+		void 	 SwitchScalerTo(SCALERTYPE newScaler);
+		bool   AddUpdateRect(WORD x, WORD y, WORD w, WORD h);
 
-		void   draw_mouse();
-		void   undraw_mouse();
+		void   DrawMouse();
+		void   UndrawMouse();
 
 		/* Display-related attributes */
-		struct Screen  	  *ScummScreen;
-		struct Window  	  *ScummWindow;
-		char 						ScummWndTitle[ 125 ];
-		APTR            		ScummBuffer;
-		int						ScummBufferWidth;
-		int						ScummBufferHeight;
-		struct ScreenBuffer *ScummScreenBuffer[ 2 ];
-		struct BitMap  	  *ScummRenderTo;
-		bool			    		ScummPCMode;
-		ULONG			   		ScummPaintBuffer;
-		int						ScummScrWidth;
-		int 						ScummScrHeight;
-		int						ScummDepth;
-		bool 						Scumm16ColFmt16;
-		UWORD 		   	  *ScummNoCursor;
-		ULONG 		    		ScummColors[256];
-		USHORT 		    		ScummColors16[256];
-		WORD			    		ScummWinX;
-		WORD			    		ScummWinY;
-		bool			    		ScummDefaultMouse;
-		bool			    		ScummOrigMouse;
-		int 			    		ScummShakePos;
-		bool						FullScreenMode;
-		bool 						ScreenChanged;
-
-		/* Scaling-related attributes */
-		uint32 					colorMask;
-		uint32 					lowPixelMask;
-		uint32 					qcolorMask;
-		uint32 					qlowpixelMask;
-		uint32 					redblueMask;
-		uint32 					greenMask;
-		int 						PixelsPerMask;
-		byte 					  *src_line[4];
-		byte 					  *dst_line[2];
+		Screen  	    *ScummScreen;
+		Window  	    *ScummWindow;
+		char 			  ScummWndTitle[125];
+		APTR          ScummBuffer;
+		int			  ScummBufferWidth;
+		int			  ScummBufferHeight;
+		ScreenBuffer *ScummScreenBuffer[2];
+		BitMap  	    *ScummRenderTo;
+		ULONG			  ScummPaintBuffer;
+		int			  ScummScrWidth;
+		int 			  ScummScrHeight;
+		int			  ScummDepth;
+		bool 			  Scumm16ColFmt16;
+		UWORD 		 *ScummNoCursor;
+		ULONG 		  ScummColors[256];
+		USHORT 		  ScummColors16[256];
+		WORD			  ScummWinX;
+		WORD			  ScummWinY;
+		bool			  ScummDefaultMouse;
+		bool			  ScummOrigMouse;
+		int 			  ScummShakePos;
+		bool			  FullScreenMode;
+		bool 			  ScreenChanged;
+		UWORD			**BlockColors;
+		bool			 *DirtyBlocks;
+		Region 		 *UpdateRegion;
+		Region 		 *NewUpdateRegion;
 
 		/* Sound-related attributes */
-		struct Process *ScummMusicThread;
-		struct Process *ScummSoundThread;
-		SoundProc 		*SoundProc;
-		void      		*SoundParam;
+		Process   *ScummMusicThread;
+		Process 	 *ScummSoundThread;
+		SoundProc *SoundProc;
+		void      *SoundParam;
 
 		/* CD-ROM related attributes */
-		CDRIVEPTR 		 CDrive;
-		ULONG 			 CDDATrackOffset;
+		CDRIVEPTR CDrive;
+		ULONG 	 CDDATrackOffset;
 
 		/* Scaling-related attributes */
 		SCALERTYPE ScummScaler;
 		int  		  ScummScale;
-		static GfxScaler ScummScalers[ 10 ];
+		MorphOSScaler *Scaler;
 
 		/* Mouse cursor-related attributes */
 		bool  MouseVisible, MouseDrawn;
@@ -191,28 +177,30 @@ class OSystem_MorphOS : public OSystem
 		int   MouseOldX, MouseOldY;
 		int   MouseOldWidth, MouseOldHeight;
 		int   MouseHotspotX, MouseHotspotY;
-		byte *MouseImage, MouseBackup[ MAX_MOUSE_W*MAX_MOUSE_H ];
+		byte *MouseImage, MouseBackup[MAX_MOUSE_W*MAX_MOUSE_H];
 
 		/* Timer-related attributes */
-		struct MsgPort 	 *TimerMsgPort;
-		struct timerequest *TimerIORequest;
+		MsgPort 	   *TimerMsgPort;
+		timerequest *TimerIORequest;
 
 		/* Game-related attributes */
 		int   GameID;
 };
 
-int morphos_sound_thread( OSystem_MorphOS *syst, ULONG SampleType );
-bool init_morphos_music( ULONG MidiUnit );
+int morphos_sound_thread(OSystem_MorphOS *syst, ULONG SampleType);
+bool init_morphos_music(ULONG MidiUnit);
 void exit_morphos_music();
 
-int morphos_main( int argc, char *argv[] );
+int morphos_main(int argc, char *argv[]);
 
 extern OSystem_MorphOS *TheSystem;
-extern struct SignalSemaphore ScummMusicThreadRunning;
-extern struct SignalSemaphore ScummSoundThreadRunning;
+extern SignalSemaphore ScummMusicThreadRunning;
+extern SignalSemaphore ScummSoundThreadRunning;
 
 extern STRPTR ScummMusicDriver;
 extern LONG   ScummMidiUnit;
-extern struct IOMidiRequest *ScummMidiRequest;
-extern struct timerequest   *MusicTimerIORequest;
+extern IOMidiRequest *ScummMidiRequest;
+extern timerequest   *MusicTimerIORequest;
+
+#endif
 
