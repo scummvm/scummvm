@@ -318,7 +318,7 @@ Pajama Sam 1: No Need to Hide When It's Dark Outside
 	Demo	Windows	en	d7ab7cd6105546016e6a0d46fb36b964	pjsamdemo	khalek
 
 Pajama Sam 2: Thunder and Lightning Aren't so Frightening
-	-	Windows	en	d4e79c3d8645b8266cd78c325bc35154	pajama2	Kirben
+	-	All	en	d4e79c3d8645b8266cd78c325bc35154	pajama2	Kirben
 	Demo	All	en	36a6750e03fb505fc19fc2bf3e4dbe91	pj2demo	sev
 
 Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
