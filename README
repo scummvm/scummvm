@@ -91,52 +91,6 @@ ScummVM and wish to commit it into the main CVS, feel free to contact us!
         UNIX            - SDL           (SDL may work on Solaris, IRIX, *BSD)
 
 
-Known Bugs:
------------
-This release has the following known bugs. There is no need to report them,
-although patches to fix them are welcome. If you discover a bug that is not
-listed here, nor in the compatibility table on the web site, please see
-the section on Reporting Bugs.
-
-       Simon The Sorcerer:
-                - No inventory scrolling arrows shown in simon1dos and simon1talkie,
-                  can still move around inventory though. 
-                - simon1dos freezes briefly after Swampling leaves his house and
-                  when talking to demons in Sordid's Tower
-                - Some minor graphical glitches
-
-       Simon The Sorcerer II:
-                - No music in simon2dos and simon2talkie
-                - Some music is missing or wrong in simon2win
-                - Some graphical glitches
-
-       Indy 3 (The Last Crusade):
-                - Music and Sound may not play
-                - In some rooms Indy may be able to walk to odd places
-                - Fighting is slightly unpredictable, use the numpad (with numlock)
-                  or the top row number keys. Fighting is best avoided.
-                - There are some minor graphical glitches
-
-       Indy 4 (Fate Of Atlantis):
-                - Keyboard fighting does not work. ScummVM now defaults to
-                  using mouse fighting.
-
-       Sam and Max:
-                - Subgames are not all fully functional.
-
-       Zak McKracken Fm Towns:
-                - The Fm Towns 256 color version of Zak McKracken is rare,
-                  And as the ScummVM team does not encourage piracy in any
-                  way, we do not know where to buy or download a copy of this
-                  game. Petition LucasArts to re-release it :)
-
-       All CD games:
-               - If you are experiencing random crashes, and your game
-                 plays music from CD, you have encountered a Windows bug.
-                 Try copying the data files from CD to your hard disk, and
-                 running them from there.
-
-
 Simon the Sorcerer 1 and 2 games note
 --------------------------------------
 The Simon the Sorcerer 1 & 2 games were split into six targets to make 
