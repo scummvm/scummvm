@@ -32,20 +32,19 @@ clean:
 .PHONY: all clean dist
 
 # Default (dumb) compile & dependcy rules
-.cpp.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-$(OBJS): $(INCS)
+#.cpp.o:
+#	$(CC) $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+#$(OBJS): $(INCS)
 
 
 # If you use GCC, disable the above and enable this for intelligent
 # dependency tracking. 
-#DEPDIR := .deps
-#.cpp.o:
-#	mkdir -p $(DEPDIR)
-#	$(CC) -Wp,-MMD,"$(DEPDIR)/$(*F).d2" $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-#	echo -n "$(*D)/" > $(DEPDIR)/$(*F).d
-#	cat "$(DEPDIR)/$(*F).d2" >> "$(DEPDIR)/$(*F).d"
-#	rm -f "$(DEPDIR)/$(*F).d2"
-#
-#-include $(DEPDIR)/*.d
+DEPDIR := .deps
+.cpp.o:
+	mkdir -p $(DEPDIR)
+	$(CC) -Wp,-MMD,"$(DEPDIR)/$(*F).d2" $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+	echo -n "$(*D)/" > $(DEPDIR)/$(*F).d
+	cat "$(DEPDIR)/$(*F).d2" >> "$(DEPDIR)/$(*F).d"
+	rm -f "$(DEPDIR)/$(*F).d2"
 
+-include $(DEPDIR)/*.d

@@ -22,6 +22,7 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include <stdio.h>
 
 /* Open a room */
 void Scumm::openRoom(int room)
@@ -174,7 +175,7 @@ bool Scumm::openResourceFile(const char *filename)
 
 	debug(9, "openResourceFile(%s)", filename);
 	strcpy(buf, filename);
-
+        printf("asked to open %s\n", filename);
 	if (_fileHandle != NULL) {
 		fileClose(_fileHandle);
 		_fileHandle = NULL;
@@ -182,9 +183,19 @@ bool Scumm::openResourceFile(const char *filename)
 
 	_fileHandle = fileOpen(buf, 1);
 	if (!_fileHandle) {
-		char *e = buf;
+                char *e=strrchr(buf, '/');
+		if (!e) e=buf; 
 		do
 			*e = tolower(*e);
+		while (*e++);
+		_fileHandle = fileOpen(buf, 1);
+	}
+
+	if (!_fileHandle) {
+                char *e=strrchr(buf, '/');
+		if (!e) e=buf;
+		do
+			*e = toupper(*e);
 		while (*e++);
 		_fileHandle = fileOpen(buf, 1);
 	}

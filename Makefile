@@ -8,8 +8,8 @@ INCLUDES:= -I./ -I./sound
 LIBS	 = -lncurses
 
 # Uncomment this to activate the MAD lib for compressed sound files
-DEFINES += -DCOMPRESSED_SOUND_FILE
-LIBS    += -lmad
+#DEFINES += -DCOMPRESSED_SOUND_FILE
+#LIBS    += -lmad
 
 # Uncomment this to activate the ALSA lib for midi
 # DEFINES += -DUSE_ALSA
