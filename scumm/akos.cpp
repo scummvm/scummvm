@@ -1249,7 +1249,7 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 		dst.bottom -= diff;
 	}	
 
-	_vm->markRectAsDirty(kMainVirtScreen, dst);
+	markRectAsDirty(dst);
 
 	if (_draw_top > dst.top)
 		_draw_top = dst.top;
