@@ -197,7 +197,10 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 			skip = -v1.x;
 		if (skip > 0) {
 			v1.skip_width -= skip;
-			codec1_ignorePakCols(skip);
+			if (_vm->_version != 1)
+				codec1_ignorePakCols(skip);
+			else 
+				warning ("TODO: ignore columns for v1 gfx costume codec");
 			v1.x = 0;
 		} else {
 			skip = x_right - _vm->_screenWidth;
@@ -212,7 +215,10 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 			skip = x_right - _vm->_screenWidth;
 		if (skip > 0) {
 			v1.skip_width -= skip;
-			codec1_ignorePakCols(skip);
+			if (_vm->_version != 1)
+				codec1_ignorePakCols(skip);
+			else 
+				warning ("TODO: ignore columns for v1 gfx costume codec");
 			v1.x = _vm->_screenWidth - 1;
 		} else {
 			skip = -1 - x_left;
@@ -252,13 +258,46 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 
 	CHECK_HEAP
 
-	if (_vm->_features & GF_AMIGA && (_vm->_gameId == GID_INDY4 || _vm->_gameId == GID_MONKEY2))
+	if (_vm->_version == 1)
+		procC64();
+	else if (_vm->_features & GF_AMIGA && (_vm->_gameId == GID_INDY4 || _vm->_gameId == GID_MONKEY2))
 		proc3_ami();
 	else
 		proc3();
 
 	CHECK_HEAP
 	return drawFlag;
+}
+
+void CostumeRenderer::procC64() {
+	const byte *src;
+	byte *dst;
+	byte color;
+	byte len;
+
+	int y = 0;
+	src = _srcptr;
+	dst = v1.destptr;
+
+	for (int x = 0; x < (_width >> 3); x++) {
+		color = *src++;
+		if (color & 0x80) {
+			len &= 0x7f;
+			color = *src++;
+			for (int z = 0; z < len; z++) {
+				dst[0] = dst[1] = _vm->gdi._C64Colors[(color >> 6) & 3];
+				dst[2] = dst[3] = _vm->gdi._C64Colors[(color >> 4) & 3];
+				dst[4] = dst[5] = _vm->gdi._C64Colors[(color >> 2) & 3];
+				dst[6] = dst[7] = _vm->gdi._C64Colors[(color >> 0) & 3];
+				dst += _outwidth;
+				y++;
+				if (y >= (_height >> 3)) {
+					y = 0;
+					dst = v1.destptr + (x << 3);
+				}
+			}
+		}
+	}
 }
 
 void CostumeRenderer::proc3() {

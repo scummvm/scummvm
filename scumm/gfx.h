@@ -113,6 +113,7 @@ public:
 	int _imgBufOffs[8];
 	int32 _numStrips;
 	ScummVM::Rect _mask;
+	byte _C64Colors[4];
 
 protected:
 	byte _palette_mod;
@@ -122,7 +123,7 @@ protected:
 
 	bool _zbufferDisabled;
 
-	byte _C64Colors[4], _C64CharMap[2048], _C64ObjectMap[2048], _C64PicMap[4096], _C64ColorMap[4096];
+	byte _C64CharMap[2048], _C64ObjectMap[2048], _C64PicMap[4096], _C64ColorMap[4096];
 	byte _C64MaskMap[4096], _C64MaskChar[4096];
 	bool _C64ObjectMode;
 

@@ -62,6 +62,7 @@ protected:
 	byte drawLimb(const CostumeData &cost, int limb);
 
 	void proc3();
+	void procC64();
 	void proc3_ami();
 	byte mainRoutine(int xmoveCur, int ymoveCur);
 };
