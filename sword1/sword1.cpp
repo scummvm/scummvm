@@ -1090,8 +1090,7 @@ void SwordEngine::mainLoop(void) {
 			_logic->engine();
 			_logic->updateScreenParams(); // sets scrolling
 
-			_screen->recreate();
-			_screen->spritesAndParallax();
+			_screen->draw();
 			_mouse->animate();
 
 			newTime = _system->get_msecs();

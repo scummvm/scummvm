@@ -75,13 +75,11 @@ public:
 
 	void addToGraphicList(uint8 listId, uint32 objId);
 
-	void recreate();
-	void spritesAndParallax(void);
+	void draw(void);
 
 	void fadeDownPalette(void);
 	void fadeUpPalette(void);
 	void fnSetPalette(uint8 start, uint16 length, uint32 id, bool fadeUp);
-	//void fnSetFadeTargetPalette(uint32 id);
 	bool stillFading(void);
 
 	void updateScreen(void);

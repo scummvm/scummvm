@@ -276,13 +276,24 @@ void SwordScreen::quitScreen(void) {
 		_resMan->resClose(_roomDefTable[_currentScreen].parallax[1]);
 }
 
-void SwordScreen::recreate() {
-	memcpy(_screenBuf, _layerBlocks[0], _scrnSizeX * _scrnSizeY);
-}
-
-void SwordScreen::spritesAndParallax(void) {
-	if ((_currentScreen == 54) && _parallax[0])
-		renderParallax(_parallax[0]); // rm54 has a BACKGROUND parallax layer in parallax[0]
+void SwordScreen::draw(void) {
+	if (_currentScreen == 54) {
+		// rm54 has a BACKGROUND parallax layer in parallax[0]
+		if (_parallax[0])
+			renderParallax(_parallax[0]);
+		uint8 *src = _layerBlocks[0];
+		uint8 *dest = _screenBuf;
+		for (uint16 cnty = 0; cnty < _scrnSizeY; cnty++)
+			for (uint16 cntx = 0; cntx < _scrnSizeX; cntx++) {
+				if (*src)
+					*dest = *src;
+				dest++;
+				src++;
+			}
+	} else
+		memcpy(_screenBuf, _layerBlocks[0], _scrnSizeX * _scrnSizeY);
+	
+		
 
 	for (uint8 cnt = 0; cnt < _backLength; cnt++)
 		processImage(_backList[cnt]);
@@ -454,7 +465,7 @@ void SwordScreen::renderParallax(uint8 *data) {
 
 	for (uint16 cnty = 0; cnty < SCREEN_DEPTH; cnty++) {
 		uint8 *src = data + READ_LE_UINT32(header->lineIndexes + cnty + scrlY);
-		uint8 *dest = _screenBuf + SwordLogic::_scriptVars[SCROLL_OFFSET_X] + cnty * _scrnSizeX;
+		uint8 *dest = _screenBuf + SwordLogic::_scriptVars[SCROLL_OFFSET_X] + (cnty + SwordLogic::_scriptVars[SCROLL_OFFSET_Y]) * _scrnSizeX;
 		uint16 remain = scrlX;
 		uint16 xPos = 0;
 		bool copyFirst = false;
