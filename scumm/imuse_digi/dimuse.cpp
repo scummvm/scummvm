@@ -126,10 +126,6 @@ int IMuseDigital::pullProc(CustomProcInputStream *stream, byte *mixerBuffer, int
 							result &= ~2;
 					}
 				} else if (bits == 8) {
-					memset(mixerBuffer, 0x80, pullSize); 
-					_track[l]->toBeRemoved = true;
-					return pullSize;
-
 					result = _sound->getDataFromRegion(_track[l]->soundHandle, _track[l]->curRegion, &data, _track[l]->regionOffset, mixer_size);
 					if (_sound->getChannels(_track[l]->soundHandle) == 2) {
 						result &= ~1;
