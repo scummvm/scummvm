@@ -597,7 +597,7 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 			ob_speech->wait_state = 1;
 			return IR_REPEAT;
 		case INS_background:
-			fnBackSprite(pars);		// ob_graphic
+			fnBackSprite(params);		// ob_graphic
 
 			ob_speech->command = 0;
 			ob_speech->wait_state = 1;
