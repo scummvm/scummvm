@@ -712,7 +712,7 @@ void ScummEngine_v5::o5_cursorCommand() {
 		break;
 	}
 
-	if (!(_gameId == GID_LOOM || _gameId == GID_INDY3)) {
+	if (_version >= 4) {
 		VAR(VAR_CURSORSTATE) = _cursor.state;
 		VAR(VAR_USERPUT) = _userPut;
 	}
