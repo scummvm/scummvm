@@ -117,7 +117,7 @@ ScummVM and wish to commit it into the main CVS, feel free to contact us!
         PalmOS          - custom backend
         UNIX            - SDL           (Linux, Solaris, IRIX, *BSD)
 
-The DreamCast and Palm ports do not support Beneath a Steel Sky, The Dig
+The Dreamcast and Palm ports do not support Beneath a Steel Sky, The Dig
 nor the Curse of Monkey Island. The PalmOS port is also not capable of
 running either of the Simon games. (FIXME: Dreamcast is certainly
 capable of it, but the game detector was broken last i checked. verify
@@ -790,7 +790,7 @@ Credits:
         Joost Peters         - Engine: Beneath a Steel Sky
         Chris Apers          - Port: PalmOS
         Nicolas Bacca        - Port: PocketPC/WinCE port
-        Marcus Comstedt      - Port: DreamCast
+        Marcus Comstedt      - Port: Dreamcast
         Ruediger Hanke       - Port: MorphOS
         Travis Howell        - Port: Win32, Engine: Simon
         Peter Moraliyski     - Port: GP32
