@@ -108,6 +108,7 @@ void SkyScreen::setPaletteEndian(uint8 *pal) {
 	convertPalette(endPal, _palette);
 #else
 	convertPalette(pal, _palette);
+#endif
 	_system->set_palette(_palette, 0, GAME_COLOURS);
 	_system->update_screen();
 }
