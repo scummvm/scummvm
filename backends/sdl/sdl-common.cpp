@@ -400,8 +400,8 @@ void OSystem_SDL_Common::set_mouse_pos(int x, int y) {
 }
 
 void OSystem_SDL_Common::warp_mouse(int x, int y) {
-	SDL_WarpMouse(x * _scaleFactor, y * _scaleFactor);
-//	set_mouse_pos(x, y);
+	if (_mouseCurState.x != x || _mouseCurState.y != y)
+		SDL_WarpMouse(x * _scaleFactor, y * _scaleFactor);
 }
 	
 void OSystem_SDL_Common::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {
