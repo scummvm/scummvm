@@ -70,17 +70,15 @@ public:
 
 class MidiDriver_MPU401 : public MidiDriver {
 private:
-	typedef void (*TimerProc)(void *refCon); // Copied from class Timer
-
 	MidiChannel_MPU401 _midi_channels [16];
-	TimerProc _timer_proc;
+	Timer::TimerProc _timer_proc;
 	uint16 _channel_mask;
 
 public:
 	MidiDriver_MPU401();
 
 	virtual void close();
-	void setTimerCallback(void *timer_param, TimerProc timer_proc);
+	void setTimerCallback(void *timer_param, Timer::TimerProc timer_proc);
 	uint32 getBaseTempo(void) { return 10000; }
 	uint32 property(int prop, uint32 param);
 

@@ -537,8 +537,6 @@ static void create_lookup_table() {
 		lookup_table[i][0] = 0;
 }
 
-typedef void TimerCallback (void *);
-
 ////////////////////////////////////////
 //
 // Adlib MIDI driver
@@ -561,7 +559,7 @@ public:
 	void setPitchBendRange(byte channel, uint range); 
 	void sysEx_customInstrument(byte channel, uint32 type, byte *instr);
 
-	void setTimerCallback(void *timer_param, TimerProc timer_proc);
+	void setTimerCallback(void *timer_param, Timer::TimerProc timer_proc);
 	uint32 getBaseTempo() {
 		return 1000000 / BASE_FREQ;
 	}
@@ -577,7 +575,7 @@ private:
 	byte *_adlib_reg_cache;
 	SoundMixer *_mixer;
 
-	TimerCallback *_timer_proc;
+	Timer::TimerProc _timer_proc;
 	void *_timer_param;
 
 	int _adlib_timer_counter;
@@ -966,7 +964,7 @@ void MidiDriver_ADLIB::sysEx_customInstrument(byte channel, uint32 type, byte *i
 	_parts[channel].sysEx_customInstrument(type, instr);
 }
 
-void MidiDriver_ADLIB::setTimerCallback(void *timer_param, TimerProc timer_proc) {
+void MidiDriver_ADLIB::setTimerCallback(void *timer_param, Timer::TimerProc timer_proc) {
 	_timer_proc = timer_proc;
 	_timer_param = timer_param;
 }

@@ -125,7 +125,7 @@ public:
 	virtual void metaEvent (byte type, byte*data, uint16 length) { }
 
 	// Timing functions - MidiDriver now operates timers
-	virtual void setTimerCallback (void *timer_param, TimerProc timer_proc) = 0;
+	virtual void setTimerCallback (void *timer_param, Timer::TimerProc timer_proc) = 0;
 	virtual uint32 getBaseTempo (void) = 0;
 
 	// Channel allocation functions

@@ -26,13 +26,14 @@
 
 #define MAX_TIMERS 2
 
-typedef void (*TimerProc)(void *refCon);
 
 #ifdef __MORPHOS__
 #include "morphos_timer.h"
 #else
 
 class Timer {
+public:
+	typedef void (*TimerProc)(void *refCon);
 
 private:
 	OSystem *_system;
