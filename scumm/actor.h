@@ -101,7 +101,6 @@ public:
 	byte frame;
 
 	byte walkbox;
-	byte mask;	// FIXME: This field is *NOT* used - remove next time save game format changes
 	byte animProgress, animSpeed;
 	int16 new_1, new_2;
 	uint16 talk_script, walk_script;

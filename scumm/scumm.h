@@ -359,7 +359,6 @@ public:
 	void convertKeysToClicks();
 
 	/* Random number generation */
-	uint32 _randSeed1, _randSeed2; // FIXME: can be removed when new savegame system is implemented
 	RandomSource _rnd;
 
 	/* Core variable definitions */
@@ -426,6 +425,8 @@ public:
 	bool _doAutosave;
 	bool _saveLoadCompatible;
 	char _saveLoadName[32];
+
+	uint32 _savegameVersion;
 
 	bool saveState(int slot, bool compat);
 	bool loadState(int slot, bool compat);
@@ -692,7 +693,7 @@ public:
 	ColorCycle _colorCycle[16];	// Palette cycles
 
 	uint32 _ENCD_offs, _EXCD_offs;
-	uint32 _CLUT_offs, _EPAL_offs;
+	uint32 _CLUT_offs;
 	uint32 _IM00_offs, _PALS_offs;
 
 	//ender: fullscreen
@@ -856,7 +857,6 @@ public:
 	bool _silentDigitalImuse;
 	int _saveSound;
 	int current_cd_sound;
-	int _cd_loops, _cd_frame, _cd_track, _cd_end;	// FIXME - these are not used anymore
 
 	/* Walkbox / Navigation class */
 	int _maxBoxVertexHeap, _boxPathVertexHeapIndex, _boxMatrixItem;

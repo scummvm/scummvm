@@ -455,8 +455,8 @@ private:
 	void fix_parts_after_load();
 	void fix_players_after_load(Scumm *scumm);
 
-	static int saveReference(IMuseInternal *me, byte type, void *ref);
-	static void *loadReference(IMuseInternal *me, byte type, int ref);
+	static int saveReference(void *me_ref, byte type, void *ref);
+	static void *loadReference(void *me_ref, byte type, int ref);
 
 	void lock();
 	void unlock();
@@ -3143,8 +3143,9 @@ enum {
 	TYPE_PLAYER = 2,
 };
 
-int IMuseInternal::saveReference(IMuseInternal *me, byte type, void *ref)
+int IMuseInternal::saveReference(void *me_ref, byte type, void *ref)
 {
+	IMuseInternal *me = (IMuseInternal *)me_ref;
 	switch (type) {
 	case TYPE_PART:
 		return (Part *)ref - me->_parts;
@@ -3155,8 +3156,9 @@ int IMuseInternal::saveReference(IMuseInternal *me, byte type, void *ref)
 	}
 }
 
-void *IMuseInternal::loadReference(IMuseInternal *me, byte type, int ref)
+void *IMuseInternal::loadReference(void *me_ref, byte type, int ref)
 {
+	IMuseInternal *me = (IMuseInternal *)me_ref;
 	switch (type) {
 	case TYPE_PART:
 		return &me->_parts[ref];
@@ -3170,88 +3172,88 @@ void *IMuseInternal::loadReference(IMuseInternal *me, byte type, int ref)
 int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm)
 {
 	const SaveLoadEntry mainEntries[] = {
-		MKLINE(IMuseInternal, _queue_end, sleUint8),
-		MKLINE(IMuseInternal, _queue_pos, sleUint8),
-		MKLINE(IMuseInternal, _queue_sound, sleUint16),
-		MKLINE(IMuseInternal, _queue_adding, sleByte),
-		MKLINE(IMuseInternal, _queue_marker, sleByte),
-		MKLINE(IMuseInternal, _queue_cleared, sleByte),
-		MKLINE(IMuseInternal, _master_volume, sleByte),
-		MKLINE(IMuseInternal, _trigger_count, sleUint16),
-		MKARRAY(IMuseInternal, _channel_volume[0], sleUint16, 8),
-		MKARRAY(IMuseInternal, _volchan_table[0], sleUint16, 8),
+		MKLINE(IMuseInternal, _queue_end, sleUint8, VER_V8),
+		MKLINE(IMuseInternal, _queue_pos, sleUint8, VER_V8),
+		MKLINE(IMuseInternal, _queue_sound, sleUint16, VER_V8),
+		MKLINE(IMuseInternal, _queue_adding, sleByte, VER_V8),
+		MKLINE(IMuseInternal, _queue_marker, sleByte, VER_V8),
+		MKLINE(IMuseInternal, _queue_cleared, sleByte, VER_V8),
+		MKLINE(IMuseInternal, _master_volume, sleByte, VER_V8),
+		MKLINE(IMuseInternal, _trigger_count, sleUint16, VER_V8),
+		MKARRAY(IMuseInternal, _channel_volume[0], sleUint16, 8, VER_V8),
+		MKARRAY(IMuseInternal, _volchan_table[0], sleUint16, 8, VER_V8),
 		MKEND()
 	};
 
 	const SaveLoadEntry playerEntries[] = {
-		MKREF(Player, _parts, TYPE_PART),
-		MKLINE(Player, _active, sleByte),
-		MKLINE(Player, _id, sleUint16),
-		MKLINE(Player, _priority, sleByte),
-		MKLINE(Player, _volume, sleByte),
-		MKLINE(Player, _pan, sleInt8),
-		MKLINE(Player, _transpose, sleByte),
-		MKLINE(Player, _detune, sleInt8),
-		MKLINE(Player, _vol_chan, sleUint16),
-		MKLINE(Player, _vol_eff, sleByte),
-		MKLINE(Player, _speed, sleByte),
-		MKLINE(Player, _song_index, sleUint16),
-		MKLINE(Player, _track_index, sleUint16),
-		MKLINE(Player, _timer_counter, sleUint16),
-		MKLINE(Player, _loop_to_beat, sleUint16),
-		MKLINE(Player, _loop_from_beat, sleUint16),
-		MKLINE(Player, _loop_counter, sleUint16),
-		MKLINE(Player, _loop_to_tick, sleUint16),
-		MKLINE(Player, _loop_from_tick, sleUint16),
-		MKLINE(Player, _tempo, sleUint32),
-		MKLINE(Player, _cur_pos, sleUint32),
-		MKLINE(Player, _next_pos, sleUint32),
-		MKLINE(Player, _song_offset, sleUint32),
-		MKLINE(Player, _tick_index, sleUint16),
-		MKLINE(Player, _beat_index, sleUint16),
-		MKLINE(Player, _ticks_per_beat, sleUint16),
-		MKLINE(Player, _hook._jump, sleByte),
-		MKLINE(Player, _hook._transpose, sleByte),
-		MKARRAY(Player, _hook._part_onoff[0], sleByte, 16),
-		MKARRAY(Player, _hook._part_volume[0], sleByte, 16),
-		MKARRAY(Player, _hook._part_program[0], sleByte, 16),
-		MKARRAY(Player, _hook._part_transpose[0], sleByte, 16),
+		MKREF(Player, _parts, TYPE_PART, VER_V8),
+		MKLINE(Player, _active, sleByte, VER_V8),
+		MKLINE(Player, _id, sleUint16, VER_V8),
+		MKLINE(Player, _priority, sleByte, VER_V8),
+		MKLINE(Player, _volume, sleByte, VER_V8),
+		MKLINE(Player, _pan, sleInt8, VER_V8),
+		MKLINE(Player, _transpose, sleByte, VER_V8),
+		MKLINE(Player, _detune, sleInt8, VER_V8),
+		MKLINE(Player, _vol_chan, sleUint16, VER_V8),
+		MKLINE(Player, _vol_eff, sleByte, VER_V8),
+		MKLINE(Player, _speed, sleByte, VER_V8),
+		MKLINE(Player, _song_index, sleUint16, VER_V8),
+		MKLINE(Player, _track_index, sleUint16, VER_V8),
+		MKLINE(Player, _timer_counter, sleUint16, VER_V8),
+		MKLINE(Player, _loop_to_beat, sleUint16, VER_V8),
+		MKLINE(Player, _loop_from_beat, sleUint16, VER_V8),
+		MKLINE(Player, _loop_counter, sleUint16, VER_V8),
+		MKLINE(Player, _loop_to_tick, sleUint16, VER_V8),
+		MKLINE(Player, _loop_from_tick, sleUint16, VER_V8),
+		MKLINE(Player, _tempo, sleUint32, VER_V8),
+		MKLINE(Player, _cur_pos, sleUint32, VER_V8),
+		MKLINE(Player, _next_pos, sleUint32, VER_V8),
+		MKLINE(Player, _song_offset, sleUint32, VER_V8),
+		MKLINE(Player, _tick_index, sleUint16, VER_V8),
+		MKLINE(Player, _beat_index, sleUint16, VER_V8),
+		MKLINE(Player, _ticks_per_beat, sleUint16, VER_V8),
+		MKLINE(Player, _hook._jump, sleByte, VER_V8),
+		MKLINE(Player, _hook._transpose, sleByte, VER_V8),
+		MKARRAY(Player, _hook._part_onoff[0], sleByte, 16, VER_V8),
+		MKARRAY(Player, _hook._part_volume[0], sleByte, 16, VER_V8),
+		MKARRAY(Player, _hook._part_program[0], sleByte, 16, VER_V8),
+		MKARRAY(Player, _hook._part_transpose[0], sleByte, 16, VER_V8),
 		MKEND()
 	};
 
 	const SaveLoadEntry volumeFaderEntries[] = {
-		MKREF(VolumeFader, player, TYPE_PLAYER),
-		MKLINE(VolumeFader, active, sleUint8),
-		MKLINE(VolumeFader, curvol, sleUint8),
-		MKLINE(VolumeFader, speed_lo_max, sleUint16),
-		MKLINE(VolumeFader, num_steps, sleUint16),
-		MKLINE(VolumeFader, speed_hi, sleInt8),
-		MKLINE(VolumeFader, direction, sleInt8),
-		MKLINE(VolumeFader, speed_lo, sleInt8),
-		MKLINE(VolumeFader, speed_lo_counter, sleUint16),
+		MKREF(VolumeFader, player, TYPE_PLAYER, VER_V8),
+		MKLINE(VolumeFader, active, sleUint8, VER_V8),
+		MKLINE(VolumeFader, curvol, sleUint8, VER_V8),
+		MKLINE(VolumeFader, speed_lo_max, sleUint16, VER_V8),
+		MKLINE(VolumeFader, num_steps, sleUint16, VER_V8),
+		MKLINE(VolumeFader, speed_hi, sleInt8, VER_V8),
+		MKLINE(VolumeFader, direction, sleInt8, VER_V8),
+		MKLINE(VolumeFader, speed_lo, sleInt8, VER_V8),
+		MKLINE(VolumeFader, speed_lo_counter, sleUint16, VER_V8),
 		MKEND()
 	};
 
 	const SaveLoadEntry partEntries[] = {
-		MKREF(Part, _next, TYPE_PART),
-		MKREF(Part, _prev, TYPE_PART),
-		MKREF(Part, _player, TYPE_PLAYER),
-		MKLINE(Part, _pitchbend, sleInt16),
-		MKLINE(Part, _pitchbend_factor, sleUint8),
-		MKLINE(Part, _transpose, sleInt8),
-		MKLINE(Part, _vol, sleUint8),
-		MKLINE(Part, _detune, sleInt8),
-		MKLINE(Part, _pan, sleInt8),
-		MKLINE(Part, _on, sleUint8),
-		MKLINE(Part, _modwheel, sleUint8),
-		MKLINE(Part, _pedal, sleUint8),
-		MKLINE(Part, _program, sleUint8),
-		MKLINE(Part, _pri, sleUint8),
-		MKLINE(Part, _chan, sleUint8),
-		MKLINE(Part, _effect_level, sleUint8),
-		MKLINE(Part, _chorus, sleUint8),
-		MKLINE(Part, _percussion, sleUint8),
-		MKLINE(Part, _bank, sleUint8),
+		MKREF(Part, _next, TYPE_PART, VER_V8),
+		MKREF(Part, _prev, TYPE_PART, VER_V8),
+		MKREF(Part, _player, TYPE_PLAYER, VER_V8),
+		MKLINE(Part, _pitchbend, sleInt16, VER_V8),
+		MKLINE(Part, _pitchbend_factor, sleUint8, VER_V8),
+		MKLINE(Part, _transpose, sleInt8, VER_V8),
+		MKLINE(Part, _vol, sleUint8, VER_V8),
+		MKLINE(Part, _detune, sleInt8, VER_V8),
+		MKLINE(Part, _pan, sleInt8, VER_V8),
+		MKLINE(Part, _on, sleUint8, VER_V8),
+		MKLINE(Part, _modwheel, sleUint8, VER_V8),
+		MKLINE(Part, _pedal, sleUint8, VER_V8),
+		MKLINE(Part, _program, sleUint8, VER_V8),
+		MKLINE(Part, _pri, sleUint8, VER_V8),
+		MKLINE(Part, _chan, sleUint8, VER_V8),
+		MKLINE(Part, _effect_level, sleUint8, VER_V8),
+		MKLINE(Part, _chorus, sleUint8, VER_V8),
+		MKLINE(Part, _percussion, sleUint8, VER_V8),
+		MKLINE(Part, _bank, sleUint8, VER_V8),
 		MKEND()
 	};
 
@@ -3261,7 +3263,8 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm)
 #endif
 
 	ser->_ref_me = this;
-	ser->_saveload_ref = ser->isSaving()? ((void *)&saveReference) : ((void *)&loadReference);
+	ser->_save_ref = saveReference;
+	ser->_load_ref = loadReference;
 
 	ser->saveLoadEntries(this, mainEntries);
 	ser->saveLoadArrayOf(_players, ARRAYSIZE(_players), sizeof(_players[0]), playerEntries);

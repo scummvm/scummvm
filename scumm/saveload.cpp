@@ -38,23 +38,12 @@ struct SaveGameHeader {
 	char name[32];
 };
 
-// Support for "old" savegames (made with 2501 CVS build)
-// Can be useful for other ports too :)
-
-#define VER_V9 9
-#define VER_V8 8
-#define VER_V7 7
-
-#define CURRENT_VER VER_V9
-
-static uint32 _current_version = CURRENT_VER;
 
 bool Scumm::saveState(int slot, bool compat)
 {
 	char filename[256];
 	SerializerStream out;
 	SaveGameHeader hdr;
-	Serializer ser;
 
 	makeSavegameName(filename, slot, compat);
 
@@ -65,12 +54,13 @@ bool Scumm::saveState(int slot, bool compat)
 
 	hdr.type = MKID('SCVM');
 	hdr.size = 0;
-	hdr.ver = TO_LE_32(_current_version);
+	hdr.ver = TO_LE_32(CURRENT_VER);
 
 	out.fwrite(&hdr, sizeof(hdr), 1);
 
-	ser._saveLoadStream = out;
-	ser._saveOrLoad = true;
+	Serializer ser(out, true, CURRENT_VER);
+
+	_savegameVersion = CURRENT_VER;
 	saveOrLoad(&ser);
 
 	out.fclose();
@@ -84,7 +74,6 @@ bool Scumm::loadState(int slot, bool compat)
 	SerializerStream out;
 	int i, j;
 	SaveGameHeader hdr;
-	Serializer ser;
 	int sb, sh;
 
 	makeSavegameName(filename, slot, compat);
@@ -100,16 +89,23 @@ bool Scumm::loadState(int slot, bool compat)
 
 	// In older versions of ScummVM, the header version was not endian safe.
 	// We account for that by retrying once with swapped byte order.
-	if (hdr.ver < VER_V7 || hdr.ver > _current_version)
+	if (hdr.ver > CURRENT_VER)
 		hdr.ver = SWAP_BYTES(hdr.ver);
-	if (hdr.ver < VER_V7 || hdr.ver > _current_version)
+	if (hdr.ver < VER_V7 || hdr.ver > CURRENT_VER)
 	{
 		warning("Invalid version of '%s'", filename);
 		out.fclose();
 		return false;
 	}
+	
+	// Due to a bug in scummvm up to and including 0.3.0, save games could be saved
+	// in the V8/V9 format but were tagged with a V7 mark. Ouch. So we just pretend V7 == V8 here
+	if (hdr.ver == VER_V7)
+		hdr.ver = VER_V8;
 
-	_current_version = hdr.ver;
+	// _savegameVersion is set so that the load code can know which data format to expect
+	_savegameVersion = hdr.ver;
+	
 	memcpy(_saveLoadName, hdr.name, sizeof(hdr.name));
 
 	if (_imuseDigital) {
@@ -133,8 +129,7 @@ bool Scumm::loadState(int slot, bool compat)
 
 	initScummVars();
 
-	ser._saveLoadStream = out;
-	ser._saveOrLoad = false;
+	Serializer ser(out, false, _savegameVersion);
 	saveOrLoad(&ser);
 	out.fclose();
 
@@ -181,7 +176,6 @@ void Scumm::makeSavegameName(char *out, int slot, bool compatible)
 {
 	const char *dir = getSavePath();
 
-	// snprintf should be used here, but it's not portable enough
 	sprintf(out, "%s%s.%c%.2d", dir, _game_name, compatible ? 'c' : 's', slot);
 }
 
@@ -205,9 +199,9 @@ bool Scumm::getSavegameName(int slot, char *desc)
 		return false;
 	}
 
-	if (hdr.ver < VER_V7 || hdr.ver > _current_version)
+	if (hdr.ver > CURRENT_VER)
 		hdr.ver = TO_LE_32(hdr.ver);
-	if (hdr.ver < VER_V7 || hdr.ver > _current_version) {
+	if (hdr.ver < VER_V7 || hdr.ver > CURRENT_VER) {
 		strcpy(desc, "Invalid version");
 		return false;
 	}
@@ -220,410 +214,314 @@ bool Scumm::getSavegameName(int slot, char *desc)
 void Scumm::saveOrLoad(Serializer *s)
 {
 	const SaveLoadEntry objectEntries[] = {
-		MKLINE(ObjectData, offs_obim_to_room, sleUint32),
-		MKLINE(ObjectData, offs_obcd_to_room, sleUint32),
-		MKLINE(ObjectData, walk_x, sleUint16),
-		MKLINE(ObjectData, walk_y, sleUint16),
-		MKLINE(ObjectData, obj_nr, sleUint16),
-		MKLINE(ObjectData, x_pos, sleInt16),
-		MKLINE(ObjectData, y_pos, sleInt16),
-		MKLINE(ObjectData, width, sleUint16),
-		MKLINE(ObjectData, height, sleUint16),
-		MKLINE(ObjectData, actordir, sleByte),
-		MKLINE(ObjectData, parentstate, sleByte),
-		MKLINE(ObjectData, parent, sleByte),
-		MKLINE(ObjectData, state, sleByte),
-		MKLINE(ObjectData, fl_object_index, sleByte),
+		MKLINE(ObjectData, offs_obim_to_room, sleUint32, VER_V8),
+		MKLINE(ObjectData, offs_obcd_to_room, sleUint32, VER_V8),
+		MKLINE(ObjectData, walk_x, sleUint16, VER_V8),
+		MKLINE(ObjectData, walk_y, sleUint16, VER_V8),
+		MKLINE(ObjectData, obj_nr, sleUint16, VER_V8),
+		MKLINE(ObjectData, x_pos, sleInt16, VER_V8),
+		MKLINE(ObjectData, y_pos, sleInt16, VER_V8),
+		MKLINE(ObjectData, width, sleUint16, VER_V8),
+		MKLINE(ObjectData, height, sleUint16, VER_V8),
+		MKLINE(ObjectData, actordir, sleByte, VER_V8),
+		MKLINE(ObjectData, parentstate, sleByte, VER_V8),
+		MKLINE(ObjectData, parent, sleByte, VER_V8),
+		MKLINE(ObjectData, state, sleByte, VER_V8),
+		MKLINE(ObjectData, fl_object_index, sleByte, VER_V8),
 		MKEND()
 	};
 
 	const SaveLoadEntry actorEntries[] = {
-		MKLINE(Actor, x, sleInt16),
-		MKLINE(Actor, y, sleInt16),
-		MKLINE(Actor, top, sleInt16),
-		MKLINE(Actor, bottom, sleInt16),
-		MKLINE(Actor, elevation, sleInt16),
-		MKLINE(Actor, width, sleUint16),
-		MKLINE(Actor, facing, sleUint16),
-		MKLINE(Actor, costume, sleUint16),
-		MKLINE(Actor, room, sleByte),
-		MKLINE(Actor, talkColor, sleByte),
-		MKLINE(Actor, scalex, sleByte),
-		MKLINE(Actor, scaley, sleByte),
-		MKLINE(Actor, charset, sleByte),
-		MKARRAY(Actor, sound[0], sleByte, 8),
-		MKARRAY(Actor, animVariable[0], sleUint16, 8),
-		MKLINE(Actor, newDirection, sleUint16),
-		MKLINE(Actor, moving, sleByte),
-		MKLINE(Actor, ignoreBoxes, sleByte),
-		MKLINE(Actor, forceClip, sleByte),
-		MKLINE(Actor, initFrame, sleByte),
-		MKLINE(Actor, walkFrame, sleByte),
-		MKLINE(Actor, standFrame, sleByte),
-		MKLINE(Actor, talkFrame1, sleByte),
-		MKLINE(Actor, talkFrame2, sleByte),
-		MKLINE(Actor, speedx, sleUint16),
-		MKLINE(Actor, speedy, sleUint16),
-		MKLINE(Actor, cost.animCounter1, sleUint16),
-		MKLINE(Actor, cost.animCounter2, sleByte),
-		// TODO: increase actor palette to 256
-		MKARRAY(Actor, palette[0], sleByte, 64),
-		MKLINE(Actor, mask, sleByte), // FIXME: see actor.h comment
-		MKLINE(Actor, shadow_mode, sleByte),
-		MKLINE(Actor, visible, sleByte),
+		MKLINE(Actor, x, sleInt16, VER_V8),
+		MKLINE(Actor, y, sleInt16, VER_V8),
+		MKLINE(Actor, top, sleInt16, VER_V8),
+		MKLINE(Actor, bottom, sleInt16, VER_V8),
+		MKLINE(Actor, elevation, sleInt16, VER_V8),
+		MKLINE(Actor, width, sleUint16, VER_V8),
+		MKLINE(Actor, facing, sleUint16, VER_V8),
+		MKLINE(Actor, costume, sleUint16, VER_V8),
+		MKLINE(Actor, room, sleByte, VER_V8),
+		MKLINE(Actor, talkColor, sleByte, VER_V8),
+		MKLINE(Actor, scalex, sleByte, VER_V8),
+		MKLINE(Actor, scaley, sleByte, VER_V8),
+		MKLINE(Actor, charset, sleByte, VER_V8),
+		MKARRAY(Actor, sound[0], sleByte, 8, VER_V8),
+		MKARRAY(Actor, animVariable[0], sleUint16, 8, VER_V8),
+		MKLINE(Actor, newDirection, sleUint16, VER_V8),
+		MKLINE(Actor, moving, sleByte, VER_V8),
+		MKLINE(Actor, ignoreBoxes, sleByte, VER_V8),
+		MKLINE(Actor, forceClip, sleByte, VER_V8),
+		MKLINE(Actor, initFrame, sleByte, VER_V8),
+		MKLINE(Actor, walkFrame, sleByte, VER_V8),
+		MKLINE(Actor, standFrame, sleByte, VER_V8),
+		MKLINE(Actor, talkFrame1, sleByte, VER_V8),
+		MKLINE(Actor, talkFrame2, sleByte, VER_V8),
+		MKLINE(Actor, speedx, sleUint16, VER_V8),
+		MKLINE(Actor, speedy, sleUint16, VER_V8),
+		MKLINE(Actor, cost.animCounter1, sleUint16, VER_V8),
+		MKLINE(Actor, cost.animCounter2, sleByte, VER_V8),
+
+		// Actor palette grew from 64 to 256 bytes
+		MKARRAY_OLD(Actor, palette[0], sleByte, 64, VER_V8, VER_V9),
+		MKARRAY(Actor, palette[0], sleByte, 256, VER_V10),
+
+		MK_OBSOLETE(Actor, mask, sleByte, VER_V8, VER_V9),
+		MKLINE(Actor, shadow_mode, sleByte, VER_V8),
+		MKLINE(Actor, visible, sleByte, VER_V8),
 		// FIXME - frame is never set and thus always 0! See actor.h comment
-		MKLINE(Actor, frame, sleByte),
-		MKLINE(Actor, animSpeed, sleByte),
-		MKLINE(Actor, animProgress, sleByte),
-		MKLINE(Actor, walkbox, sleByte),
-		MKLINE(Actor, needRedraw, sleByte),
-		MKLINE(Actor, needBgReset, sleByte),
-		MKLINE(Actor, costumeNeedsInit, sleByte),
+		MKLINE(Actor, frame, sleByte, VER_V8),
+		MKLINE(Actor, animSpeed, sleByte, VER_V8),
+		MKLINE(Actor, animProgress, sleByte, VER_V8),
+		MKLINE(Actor, walkbox, sleByte, VER_V8),
+		MKLINE(Actor, needRedraw, sleByte, VER_V8),
+		MKLINE(Actor, needBgReset, sleByte, VER_V8),
+		MKLINE(Actor, costumeNeedsInit, sleByte, VER_V8),
 
-		MKLINE(Actor, new_1, sleInt16),
-		MKLINE(Actor, new_2, sleInt16),
-		MKLINE(Actor, new_3, sleByte),
+		MKLINE(Actor, new_1, sleInt16, VER_V8),
+		MKLINE(Actor, new_2, sleInt16, VER_V8),
+		MKLINE(Actor, new_3, sleByte, VER_V8),
 
-		MKLINE(Actor, layer, sleByte),
+		MKLINE(Actor, layer, sleByte, VER_V8),
 
-		MKLINE(Actor, talk_script, sleUint16),
-		MKLINE(Actor, walk_script, sleUint16),
+		MKLINE(Actor, talk_script, sleUint16, VER_V8),
+		MKLINE(Actor, walk_script, sleUint16, VER_V8),
 
-		MKLINE(Actor, walkdata.destx, sleInt16),
-		MKLINE(Actor, walkdata.desty, sleInt16),
-		MKLINE(Actor, walkdata.destbox, sleByte),
-		MKLINE(Actor, walkdata.destdir, sleUint16),
-		MKLINE(Actor, walkdata.curbox, sleByte),
-		MKLINE(Actor, walkdata.x, sleInt16),
-		MKLINE(Actor, walkdata.y, sleInt16),
-		MKLINE(Actor, walkdata.newx, sleInt16),
-		MKLINE(Actor, walkdata.newy, sleInt16),
-		MKLINE(Actor, walkdata.XYFactor, sleInt32),
-		MKLINE(Actor, walkdata.YXFactor, sleInt32),
-		MKLINE(Actor, walkdata.xfrac, sleUint16),
-		MKLINE(Actor, walkdata.yfrac, sleUint16),
+		MKLINE(Actor, walkdata.destx, sleInt16, VER_V8),
+		MKLINE(Actor, walkdata.desty, sleInt16, VER_V8),
+		MKLINE(Actor, walkdata.destbox, sleByte, VER_V8),
+		MKLINE(Actor, walkdata.destdir, sleUint16, VER_V8),
+		MKLINE(Actor, walkdata.curbox, sleByte, VER_V8),
+		MKLINE(Actor, walkdata.x, sleInt16, VER_V8),
+		MKLINE(Actor, walkdata.y, sleInt16, VER_V8),
+		MKLINE(Actor, walkdata.newx, sleInt16, VER_V8),
+		MKLINE(Actor, walkdata.newy, sleInt16, VER_V8),
+		MKLINE(Actor, walkdata.XYFactor, sleInt32, VER_V8),
+		MKLINE(Actor, walkdata.YXFactor, sleInt32, VER_V8),
+		MKLINE(Actor, walkdata.xfrac, sleUint16, VER_V8),
+		MKLINE(Actor, walkdata.yfrac, sleUint16, VER_V8),
 
-		MKARRAY(Actor, cost.active[0], sleByte, 16),
-		MKLINE(Actor, cost.stopped, sleUint16),
-		MKARRAY(Actor, cost.curpos[0], sleUint16, 16),
-		MKARRAY(Actor, cost.start[0], sleUint16, 16),
-		MKARRAY(Actor, cost.end[0], sleUint16, 16),
-		MKARRAY(Actor, cost.frame[0], sleUint16, 16),
+		MKARRAY(Actor, cost.active[0], sleByte, 16, VER_V8),
+		MKLINE(Actor, cost.stopped, sleUint16, VER_V8),
+		MKARRAY(Actor, cost.curpos[0], sleUint16, 16, VER_V8),
+		MKARRAY(Actor, cost.start[0], sleUint16, 16, VER_V8),
+		MKARRAY(Actor, cost.end[0], sleUint16, 16, VER_V8),
+		MKARRAY(Actor, cost.frame[0], sleUint16, 16, VER_V8),
 		MKEND()
 	};
 
 	const SaveLoadEntry verbEntries[] = {
-		MKLINE(VerbSlot, x, sleInt16),
-		MKLINE(VerbSlot, y, sleInt16),
-		MKLINE(VerbSlot, right, sleInt16),
-		MKLINE(VerbSlot, bottom, sleInt16),
-		MKLINE(VerbSlot, oldleft, sleInt16),
-		MKLINE(VerbSlot, oldtop, sleInt16),
-		MKLINE(VerbSlot, oldright, sleInt16),
-		MKLINE(VerbSlot, oldbottom, sleInt16),
-		MKLINE(VerbSlot, verbid, sleByte),
-		MKLINE(VerbSlot, color, sleByte),
-		MKLINE(VerbSlot, hicolor, sleByte),
-		MKLINE(VerbSlot, dimcolor, sleByte),
-		MKLINE(VerbSlot, bkcolor, sleByte),
-		MKLINE(VerbSlot, type, sleByte),
-		MKLINE(VerbSlot, charset_nr, sleByte),
-		MKLINE(VerbSlot, curmode, sleByte),
-		MKLINE(VerbSlot, saveid, sleByte),
-		MKLINE(VerbSlot, key, sleByte),
-		MKLINE(VerbSlot, center, sleByte),
-		MKLINE(VerbSlot, field_1B, sleByte),
-		MKLINE(VerbSlot, imgindex, sleUint16),
+		MKLINE(VerbSlot, x, sleInt16, VER_V8),
+		MKLINE(VerbSlot, y, sleInt16, VER_V8),
+		MKLINE(VerbSlot, right, sleInt16, VER_V8),
+		MKLINE(VerbSlot, bottom, sleInt16, VER_V8),
+		MKLINE(VerbSlot, oldleft, sleInt16, VER_V8),
+		MKLINE(VerbSlot, oldtop, sleInt16, VER_V8),
+		MKLINE(VerbSlot, oldright, sleInt16, VER_V8),
+		MKLINE(VerbSlot, oldbottom, sleInt16, VER_V8),
+		MKLINE(VerbSlot, verbid, sleByte, VER_V8),
+		MKLINE(VerbSlot, color, sleByte, VER_V8),
+		MKLINE(VerbSlot, hicolor, sleByte, VER_V8),
+		MKLINE(VerbSlot, dimcolor, sleByte, VER_V8),
+		MKLINE(VerbSlot, bkcolor, sleByte, VER_V8),
+		MKLINE(VerbSlot, type, sleByte, VER_V8),
+		MKLINE(VerbSlot, charset_nr, sleByte, VER_V8),
+		MKLINE(VerbSlot, curmode, sleByte, VER_V8),
+		MKLINE(VerbSlot, saveid, sleByte, VER_V8),
+		MKLINE(VerbSlot, key, sleByte, VER_V8),
+		MKLINE(VerbSlot, center, sleByte, VER_V8),
+		MKLINE(VerbSlot, field_1B, sleByte, VER_V8),
+		MKLINE(VerbSlot, imgindex, sleUint16, VER_V8),
 		MKEND()
 	};
 
-	const SaveLoadEntry mainEntriesV9[] = {
-		MKLINE(Scumm, _scrWidth, sleUint16),
-		MKLINE(Scumm, _scrHeight, sleUint16),
-		MKLINE(Scumm, _ENCD_offs, sleUint32),
-		MKLINE(Scumm, _EXCD_offs, sleUint32),
-		MKLINE(Scumm, _IM00_offs, sleUint32),
-		MKLINE(Scumm, _CLUT_offs, sleUint32),
-		/* XXX Remove _EPAL_offs next time format changes */
-		MKLINE(Scumm, _EPAL_offs, sleUint32),
-		MKLINE(Scumm, _PALS_offs, sleUint32),
-		MKLINE(Scumm, _curPalIndex, sleByte),
-		MKLINE(Scumm, _currentRoom, sleByte),
-		MKLINE(Scumm, _roomResource, sleByte),
-		MKLINE(Scumm, _numObjectsInRoom, sleByte),
-		MKLINE(Scumm, _currentScript, sleByte),
-		MKARRAY(Scumm, _localScriptList[0], sleUint32, NUM_LOCALSCRIPT),
-		MKARRAY(Scumm, vm.localvar[0][0], sleUint16, NUM_SCRIPT_SLOT * 17),
-		MKARRAY(Scumm, _resourceMapper[0], sleByte, 128),
-		MKARRAY(Scumm, charset._colorMap[0], sleByte, 16),
-		MKARRAY(Scumm, _charsetData[0][0], sleByte, 10 * 16),	// FIXME - _charsetData is 15*16 these days
-		MKLINE(Scumm, _curExecScript, sleUint16),
+	const SaveLoadEntry mainEntries[] = {
+		MKLINE(Scumm, _scrWidth, sleUint16, VER_V8),
+		MKLINE(Scumm, _scrHeight, sleUint16, VER_V8),
+		MKLINE(Scumm, _ENCD_offs, sleUint32, VER_V8),
+		MKLINE(Scumm, _EXCD_offs, sleUint32, VER_V8),
+		MKLINE(Scumm, _IM00_offs, sleUint32, VER_V8),
+		MKLINE(Scumm, _CLUT_offs, sleUint32, VER_V8),
+		MK_OBSOLETE(Scumm, _EPAL_offs, sleUint32, VER_V8, VER_V9),
+		MKLINE(Scumm, _PALS_offs, sleUint32, VER_V8),
+		MKLINE(Scumm, _curPalIndex, sleByte, VER_V8),
+		MKLINE(Scumm, _currentRoom, sleByte, VER_V8),
+		MKLINE(Scumm, _roomResource, sleByte, VER_V8),
+		MKLINE(Scumm, _numObjectsInRoom, sleByte, VER_V8),
+		MKLINE(Scumm, _currentScript, sleByte, VER_V8),
+		MKARRAY(Scumm, _localScriptList[0], sleUint32, NUM_LOCALSCRIPT, VER_V8),
 
-		MKLINE(Scumm, camera._dest.x, sleInt16),
-		MKLINE(Scumm, camera._dest.y, sleInt16),
-		MKLINE(Scumm, camera._cur.x, sleInt16),
-		MKLINE(Scumm, camera._cur.y, sleInt16),
-		MKLINE(Scumm, camera._last.x, sleInt16),
-		MKLINE(Scumm, camera._last.y, sleInt16),
-		MKLINE(Scumm, camera._accel.x, sleInt16),
-		MKLINE(Scumm, camera._accel.y, sleInt16),
-		MKLINE(Scumm, _screenStartStrip, sleInt16),
-		MKLINE(Scumm, _screenEndStrip, sleInt16),
-		MKLINE(Scumm, camera._mode, sleByte),
-		MKLINE(Scumm, camera._follows, sleByte),
-		MKLINE(Scumm, camera._leftTrigger, sleInt16),
-		MKLINE(Scumm, camera._rightTrigger, sleInt16),
-		MKLINE(Scumm, camera._movingToActor, sleUint16),
+		// vm.localvar grew from 25 to 40 entries
+		MKARRAY_OLD(Scumm, vm.localvar[0][0], sleUint16, 25 * 17, VER_V8, VER_V8),
+		MKARRAY(Scumm, vm.localvar[0][0], sleUint16, NUM_SCRIPT_SLOT * 17, VER_V9),
 
-		MKLINE(Scumm, _actorToPrintStrFor, sleByte),
-		MKLINE(Scumm, _charsetColor, sleByte),
-		/* XXX Convert into word next time format changes */
-		MKLINE(Scumm, charset._bufPos, sleByte),
-		MKLINE(Scumm, _haveMsg, sleByte),
-		MKLINE(Scumm, _useTalkAnims, sleByte),
+		MKARRAY(Scumm, _resourceMapper[0], sleByte, 128, VER_V8),
+		MKARRAY(Scumm, charset._colorMap[0], sleByte, 16, VER_V8),
+		
+		// _charsetData grew from 10*16 to 15*16 bytes
+		MKARRAY_OLD(Scumm, _charsetData[0][0], sleByte, 10 * 16, VER_V8, VER_V9),
+		MKARRAY(Scumm, _charsetData[0][0], sleByte, 15 * 16, VER_V10),
 
-		MKLINE(Scumm, _talkDelay, sleInt16),
-		MKLINE(Scumm, _defaultTalkDelay, sleInt16),
-		MKLINE(Scumm, _numInMsgStack, sleInt16),
-		MKLINE(Scumm, _sentenceNum, sleByte),
+		MKLINE(Scumm, _curExecScript, sleUint16, VER_V8),
 
-		MKLINE(Scumm, vm.cutSceneStackPointer, sleByte),
-		MKARRAY(Scumm, vm.cutScenePtr[0], sleUint32, 5),
-		MKARRAY(Scumm, vm.cutSceneScript[0], sleByte, 5),
-		MKARRAY(Scumm, vm.cutSceneData[0], sleInt16, 5),
-		MKLINE(Scumm, vm.cutSceneScriptIndex, sleInt16),
+		MKLINE(Scumm, camera._dest.x, sleInt16, VER_V8),
+		MKLINE(Scumm, camera._dest.y, sleInt16, VER_V8),
+		MKLINE(Scumm, camera._cur.x, sleInt16, VER_V8),
+		MKLINE(Scumm, camera._cur.y, sleInt16, VER_V8),
+		MKLINE(Scumm, camera._last.x, sleInt16, VER_V8),
+		MKLINE(Scumm, camera._last.y, sleInt16, VER_V8),
+		MKLINE(Scumm, camera._accel.x, sleInt16, VER_V8),
+		MKLINE(Scumm, camera._accel.y, sleInt16, VER_V8),
+		MKLINE(Scumm, _screenStartStrip, sleInt16, VER_V8),
+		MKLINE(Scumm, _screenEndStrip, sleInt16, VER_V8),
+		MKLINE(Scumm, camera._mode, sleByte, VER_V8),
+		MKLINE(Scumm, camera._follows, sleByte, VER_V8),
+		MKLINE(Scumm, camera._leftTrigger, sleInt16, VER_V8),
+		MKLINE(Scumm, camera._rightTrigger, sleInt16, VER_V8),
+		MKLINE(Scumm, camera._movingToActor, sleUint16, VER_V8),
 
-		/* nest */
-		MKLINE(Scumm, _numNestedScripts, sleByte),
-		MKLINE(Scumm, _userPut, sleByte),
-		MKLINE(Scumm, _cursor.state, sleByte),
-		MKLINE(Scumm, gdi._cursorActive, sleByte),
-		MKLINE(Scumm, _currentCursor, sleByte),
+		MKLINE(Scumm, _actorToPrintStrFor, sleByte, VER_V8),
+		MKLINE(Scumm, _charsetColor, sleByte, VER_V8),
 
-		MKLINE(Scumm, _doEffect, sleByte),
-		MKLINE(Scumm, _switchRoomEffect, sleByte),
-		MKLINE(Scumm, _newEffect, sleByte),
-		MKLINE(Scumm, _switchRoomEffect2, sleByte),
-		MKLINE(Scumm, _BgNeedsRedraw, sleByte),
+		// charset._bufPos was changed from byte to int
+		MKLINE_OLD(Scumm, charset._bufPos, sleByte, VER_V8, VER_V9),
+		MKLINE(Scumm, charset._bufPos, sleInt16, VER_V10),
 
-		// Jamieson630: variables for palManipulate
-		// TODO: Add these next time save game format changes.
-		// MKLINE(Scumm, _palManipStart, sleByte),
-		// MKLINE(Scumm, _palManipEnd, sleByte),
-		// MKLINE(Scumm, _palManipCounter, sleUint16),
+		MKLINE(Scumm, _haveMsg, sleByte, VER_V8),
+		MKLINE(Scumm, _useTalkAnims, sleByte, VER_V8),
 
-		// MKARRAY(Scumm, gfxUsageBits[0], sleUint32, 410),
-		// replace below:
-		MKARRAY(Scumm, gfxUsageBits[0], sleUint32, 200),
-		MKLINE(Scumm, gdi._transparency, sleByte),
-		MKARRAY(Scumm, _currentPalette[0], sleByte, 768),
+		MKLINE(Scumm, _talkDelay, sleInt16, VER_V8),
+		MKLINE(Scumm, _defaultTalkDelay, sleInt16, VER_V8),
+		MKLINE(Scumm, _numInMsgStack, sleInt16, VER_V8),
+		MKLINE(Scumm, _sentenceNum, sleByte, VER_V8),
 
-		MKARRAY(Scumm, _proc_special_palette[0], sleByte, 256),
-		/* virtscr */
+		MKLINE(Scumm, vm.cutSceneStackPointer, sleByte, VER_V8),
+		MKARRAY(Scumm, vm.cutScenePtr[0], sleUint32, 5, VER_V8),
+		MKARRAY(Scumm, vm.cutSceneScript[0], sleByte, 5, VER_V8),
+		MKARRAY(Scumm, vm.cutSceneData[0], sleInt16, 5, VER_V8),
+		MKLINE(Scumm, vm.cutSceneScriptIndex, sleInt16, VER_V8),
 
-		MKARRAY(Scumm, charset._buffer[0], sleByte, 256),
+		MKLINE(Scumm, _numNestedScripts, sleByte, VER_V8),
+		MKLINE(Scumm, _userPut, sleByte, VER_V8),
+		MKLINE(Scumm, _cursor.state, sleByte, VER_V8),
+		MKLINE(Scumm, gdi._cursorActive, sleByte, VER_V8),
+		MKLINE(Scumm, _currentCursor, sleByte, VER_V8),
 
-		MKLINE(Scumm, _egoPositioned, sleByte),
+		MKLINE(Scumm, _doEffect, sleByte, VER_V8),
+		MKLINE(Scumm, _switchRoomEffect, sleByte, VER_V8),
+		MKLINE(Scumm, _newEffect, sleByte, VER_V8),
+		MKLINE(Scumm, _switchRoomEffect2, sleByte, VER_V8),
+		MKLINE(Scumm, _BgNeedsRedraw, sleByte, VER_V8),
 
-		// FIXME: Should be 5, not 4 :
-		MKARRAY(Scumm, gdi._imgBufOffs[0], sleUint16, 4),
-		MKLINE(Scumm, gdi._numZBuffer, sleByte),
+		// The state of palManipulate is stored only since V10
+		MKLINE(Scumm, _palManipStart, sleByte, VER_V10),
+		MKLINE(Scumm, _palManipEnd, sleByte, VER_V10),
+		MKLINE(Scumm, _palManipCounter, sleUint16, VER_V10),
 
-		MKLINE(Scumm, _screenEffectFlag, sleByte),
+		// gfxUsageBits grew from 200 to 410 entries:
+		MKARRAY_OLD(Scumm, gfxUsageBits[0], sleUint32, 200, VER_V8, VER_V9),
+		MKARRAY(Scumm, gfxUsageBits[0], sleUint32, 410, VER_V10),
 
-		// FIXME: remove when new savegame system is implemented
-		MKLINE(Scumm, _randSeed1, sleUint32),
-		MKLINE(Scumm, _randSeed2, sleUint32),
+		MKLINE(Scumm, gdi._transparency, sleByte, VER_V8),
+		MKARRAY(Scumm, _currentPalette[0], sleByte, 768, VER_V8),
 
-		/* XXX: next time the save game format changes,
-		 * convert _shakeEnabled to boolean and add a _shakeFrame field */
-		MKLINE(Scumm, _shakeEnabled, sleInt16),
+		MKARRAY(Scumm, _proc_special_palette[0], sleByte, 256, VER_V8),
 
-		MKLINE(Scumm, _keepText, sleByte),
+		MKARRAY(Scumm, charset._buffer[0], sleByte, 256, VER_V8),
 
-		MKLINE(Scumm, _screenB, sleUint16),
-		MKLINE(Scumm, _screenH, sleUint16),
+		MKLINE(Scumm, _egoPositioned, sleByte, VER_V8),
 
-		MKLINE(Scumm, _cd_track, sleInt16),	// FIXME - remove next time save format changes
-		MKLINE(Scumm, _cd_loops, sleInt16),	// FIXME - remove next time save format changes
-		MKLINE(Scumm, _cd_frame, sleInt16),	// FIXME - remove next time save format changes
-		MKLINE(Scumm, _cd_end, sleInt16),	// FIXME - remove next time save format changes
+		// gdi._imgBufOffs grew from 4 to 5 entries :
+		MKARRAY_OLD(Scumm, gdi._imgBufOffs[0], sleUint16, 4, VER_V8, VER_V9),
+		MKARRAY(Scumm, gdi._imgBufOffs[0], sleUint16, 5, VER_V10),
 
-		MKEND()
-	};
+		MKLINE(Scumm, gdi._numZBuffer, sleByte, VER_V8),
 
-	const SaveLoadEntry mainEntriesV8[] = {
-		MKLINE(Scumm, _scrWidth, sleUint16),
-		MKLINE(Scumm, _scrHeight, sleUint16),
-		MKLINE(Scumm, _ENCD_offs, sleUint32),
-		MKLINE(Scumm, _EXCD_offs, sleUint32),
-		MKLINE(Scumm, _IM00_offs, sleUint32),
-		MKLINE(Scumm, _CLUT_offs, sleUint32),
-		/* XXX Remove _EPAL_offs next time format changes */
-		MKLINE(Scumm, _EPAL_offs, sleUint32),
-		MKLINE(Scumm, _PALS_offs, sleUint32),
-		MKLINE(Scumm, _curPalIndex, sleByte),
-		MKLINE(Scumm, _currentRoom, sleByte),
-		MKLINE(Scumm, _roomResource, sleByte),
-		MKLINE(Scumm, _numObjectsInRoom, sleByte),
-		MKLINE(Scumm, _currentScript, sleByte),
-		MKARRAY(Scumm, _localScriptList[0], sleUint32, NUM_LOCALSCRIPT),
-		MKARRAY(Scumm, vm.localvar[0][0], sleUint16, 25 * 17),
-		MKARRAY(Scumm, _resourceMapper[0], sleByte, 128),
-		MKARRAY(Scumm, charset._colorMap[0], sleByte, 16),
-		MKARRAY(Scumm, _charsetData[0][0], sleByte, 10 * 16),	// FIXME - _charsetData is 15*16 these days
-		MKLINE(Scumm, _curExecScript, sleUint16),
+		MKLINE(Scumm, _screenEffectFlag, sleByte, VER_V8),
 
-		MKLINE(Scumm, camera._dest.x, sleInt16),
-		MKLINE(Scumm, camera._dest.y, sleInt16),
-		MKLINE(Scumm, camera._cur.x, sleInt16),
-		MKLINE(Scumm, camera._cur.y, sleInt16),
-		MKLINE(Scumm, camera._last.x, sleInt16),
-		MKLINE(Scumm, camera._last.y, sleInt16),
-		MKLINE(Scumm, camera._accel.x, sleInt16),
-		MKLINE(Scumm, camera._accel.y, sleInt16),
-		MKLINE(Scumm, _screenStartStrip, sleInt16),
-		MKLINE(Scumm, _screenEndStrip, sleInt16),
-		MKLINE(Scumm, camera._mode, sleByte),
-		MKLINE(Scumm, camera._follows, sleByte),
-		MKLINE(Scumm, camera._leftTrigger, sleInt16),
-		MKLINE(Scumm, camera._rightTrigger, sleInt16),
-		MKLINE(Scumm, camera._movingToActor, sleUint16),
+		MK_OBSOLETE(Scumm, _randSeed1, sleUint32, VER_V8, VER_V9),
+		MK_OBSOLETE(Scumm, _randSeed2, sleUint32, VER_V8, VER_V9),
 
-		MKLINE(Scumm, _actorToPrintStrFor, sleByte),
-		MKLINE(Scumm, _charsetColor, sleByte),
-		/* XXX Convert into word next time format changes */
-		MKLINE(Scumm, charset._bufPos, sleByte),
-		MKLINE(Scumm, _haveMsg, sleByte),
-		MKLINE(Scumm, _useTalkAnims, sleByte),
+		// Converted _shakeEnabled to boolean and added a _shakeFrame field.
+		MKLINE_OLD(Scumm, _shakeEnabled, sleInt16, VER_V8, VER_V9),
+		MKLINE(Scumm, _shakeEnabled, sleByte, VER_V10),
+		MKLINE(Scumm, _shakeFrame, sleUint32, VER_V10),
 
-		MKLINE(Scumm, _talkDelay, sleInt16),
-		MKLINE(Scumm, _defaultTalkDelay, sleInt16),
-		MKLINE(Scumm, _numInMsgStack, sleInt16),
-		MKLINE(Scumm, _sentenceNum, sleByte),
+		MKLINE(Scumm, _keepText, sleByte, VER_V8),
 
-		MKLINE(Scumm, vm.cutSceneStackPointer, sleByte),
-		MKARRAY(Scumm, vm.cutScenePtr[0], sleUint32, 5),
-		MKARRAY(Scumm, vm.cutSceneScript[0], sleByte, 5),
-		MKARRAY(Scumm, vm.cutSceneData[0], sleInt16, 5),
-		MKLINE(Scumm, vm.cutSceneScriptIndex, sleInt16),
+		MKLINE(Scumm, _screenB, sleUint16, VER_V8),
+		MKLINE(Scumm, _screenH, sleUint16, VER_V8),
 
-		/* nest */
-		MKLINE(Scumm, _numNestedScripts, sleByte),
-		MKLINE(Scumm, _userPut, sleByte),
-		MKLINE(Scumm, _cursor.state, sleByte),
-		MKLINE(Scumm, gdi._cursorActive, sleByte),
-		MKLINE(Scumm, _currentCursor, sleByte),
-
-		MKLINE(Scumm, _doEffect, sleByte),
-		MKLINE(Scumm, _switchRoomEffect, sleByte),
-		MKLINE(Scumm, _newEffect, sleByte),
-		MKLINE(Scumm, _switchRoomEffect2, sleByte),
-		MKLINE(Scumm, _BgNeedsRedraw, sleByte),
-
-		// Jamieson630: variables for palManipulate
-		// TODO: Add these next time save game format changes.
-		// MKLINE(Scumm, _palManipStart, sleByte),
-		// MKLINE(Scumm, _palManipEnd, sleByte),
-		// MKLINE(Scumm, _palManipCounter, sleUint16),
-
-		// MKARRAY(Scumm, gfxUsageBits[0], sleUint32, 410),
-		// replace below:
-		MKARRAY(Scumm, gfxUsageBits[0], sleUint32, 200),
-		MKLINE(Scumm, gdi._transparency, sleByte),
-		MKARRAY(Scumm, _currentPalette[0], sleByte, 768),
-
-		MKARRAY(Scumm, _proc_special_palette[0], sleByte, 256),
-		/* virtscr */
-
-		MKARRAY(Scumm, charset._buffer[0], sleByte, 256),
-
-		MKLINE(Scumm, _egoPositioned, sleByte),
-
-		// FIXME: Should be 5, not 4 :
-		MKARRAY(Scumm, gdi._imgBufOffs[0], sleUint16, 4),
-		MKLINE(Scumm, gdi._numZBuffer, sleByte),
-
-		MKLINE(Scumm, _screenEffectFlag, sleByte),
-
-		// FIXME: remove when new savegame system is implemented
-		MKLINE(Scumm, _randSeed1, sleUint32),
-		MKLINE(Scumm, _randSeed2, sleUint32),
-
-		/* XXX: next time the save game format changes,
-		 * convert _shakeEnabled to boolean and add a _shakeFrame field */
-		MKLINE(Scumm, _shakeEnabled, sleInt16),
-
-		MKLINE(Scumm, _keepText, sleByte),
-
-		MKLINE(Scumm, _screenB, sleUint16),
-		MKLINE(Scumm, _screenH, sleUint16),
-
+		MK_OBSOLETE(Scumm, _cd_track, sleInt16, VER_V9, VER_V9),
+		MK_OBSOLETE(Scumm, _cd_loops, sleInt16, VER_V9, VER_V9),
+		MK_OBSOLETE(Scumm, _cd_frame, sleInt16, VER_V9, VER_V9),
+		MK_OBSOLETE(Scumm, _cd_end, sleInt16, VER_V9, VER_V9),
+		
 		MKEND()
 	};
 
 	const SaveLoadEntry scriptSlotEntries[] = {
-		MKLINE(ScriptSlot, offs, sleUint32),
-		MKLINE(ScriptSlot, delay, sleInt32),
-		MKLINE(ScriptSlot, number, sleUint16),
-		MKLINE(ScriptSlot, delayFrameCount, sleUint16),
-		MKLINE(ScriptSlot, status, sleByte),
-		MKLINE(ScriptSlot, where, sleByte),
-		MKLINE(ScriptSlot, unk1, sleByte),
-		MKLINE(ScriptSlot, unk2, sleByte),
-		MKLINE(ScriptSlot, freezeCount, sleByte),
-		MKLINE(ScriptSlot, didexec, sleByte),
-		MKLINE(ScriptSlot, cutsceneOverride, sleByte),
-		MKLINE(ScriptSlot, unk5, sleByte),
+		MKLINE(ScriptSlot, offs, sleUint32, VER_V8),
+		MKLINE(ScriptSlot, delay, sleInt32, VER_V8),
+		MKLINE(ScriptSlot, number, sleUint16, VER_V8),
+		MKLINE(ScriptSlot, delayFrameCount, sleUint16, VER_V8),
+		MKLINE(ScriptSlot, status, sleByte, VER_V8),
+		MKLINE(ScriptSlot, where, sleByte, VER_V8),
+		MKLINE(ScriptSlot, unk1, sleByte, VER_V8),
+		MKLINE(ScriptSlot, unk2, sleByte, VER_V8),
+		MKLINE(ScriptSlot, freezeCount, sleByte, VER_V8),
+		MKLINE(ScriptSlot, didexec, sleByte, VER_V8),
+		MKLINE(ScriptSlot, cutsceneOverride, sleByte, VER_V8),
+		MKLINE(ScriptSlot, unk5, sleByte, VER_V8),
 		MKEND()
 	};
 
 	const SaveLoadEntry nestedScriptEntries[] = {
-		MKLINE(NestedScript, number, sleUint16),
-		MKLINE(NestedScript, where, sleByte),
-		MKLINE(NestedScript, slot, sleByte),
+		MKLINE(NestedScript, number, sleUint16, VER_V8),
+		MKLINE(NestedScript, where, sleByte, VER_V8),
+		MKLINE(NestedScript, slot, sleByte, VER_V8),
 		MKEND()
 	};
 
 	const SaveLoadEntry sentenceTabEntries[] = {
-		MKLINE(SentenceTab, unk5, sleUint8),
-		MKLINE(SentenceTab, unk2, sleUint8),
-		MKLINE(SentenceTab, unk4, sleUint16),
-		MKLINE(SentenceTab, unk3, sleUint16),
-		MKLINE(SentenceTab, unk, sleUint8),
+		MKLINE(SentenceTab, unk5, sleUint8, VER_V8),
+		MKLINE(SentenceTab, unk2, sleUint8, VER_V8),
+		MKLINE(SentenceTab, unk4, sleUint16, VER_V8),
+		MKLINE(SentenceTab, unk3, sleUint16, VER_V8),
+		MKLINE(SentenceTab, unk, sleUint8, VER_V8),
 		MKEND()
 	};
 
 	const SaveLoadEntry stringTabEntries[] = {
 		// TODO - It makes no sense to have all these t_* fields in StringTab
 		// Rather let's dump them all when the save game format changes, and 
-		// keep two StringTab objects: one normal, and a "t_" one.
-		// Then copying them can be done in one line etc.
-		MKLINE(StringTab, xpos, sleInt16),
-		MKLINE(StringTab, t_xpos, sleInt16),
-		MKLINE(StringTab, ypos, sleInt16),
-		MKLINE(StringTab, t_ypos, sleInt16),
-		MKLINE(StringTab, right, sleInt16),
-		MKLINE(StringTab, t_right, sleInt16),
-		MKLINE(StringTab, color, sleInt8),
-		MKLINE(StringTab, t_color, sleInt8),
-		MKLINE(StringTab, charset, sleInt8),
-		MKLINE(StringTab, t_charset, sleInt8),
-		MKLINE(StringTab, center, sleByte),
-		MKLINE(StringTab, t_center, sleByte),
-		MKLINE(StringTab, overhead, sleByte),
-		MKLINE(StringTab, t_overhead, sleByte),
-		MKLINE(StringTab, no_talk_anim, sleByte),
-		MKLINE(StringTab, t_no_talk_anim, sleByte),
+		// keep two StringTab objects where we have one now: a "normal" one,
+		// and a temporar y"t_" one.
+		// Then backup/restore of a StringTab entry becomes a one liner.
+		MKLINE(StringTab, xpos, sleInt16, VER_V8),
+		MKLINE(StringTab, t_xpos, sleInt16, VER_V8),
+		MKLINE(StringTab, ypos, sleInt16, VER_V8),
+		MKLINE(StringTab, t_ypos, sleInt16, VER_V8),
+		MKLINE(StringTab, right, sleInt16, VER_V8),
+		MKLINE(StringTab, t_right, sleInt16, VER_V8),
+		MKLINE(StringTab, color, sleInt8, VER_V8),
+		MKLINE(StringTab, t_color, sleInt8, VER_V8),
+		MKLINE(StringTab, charset, sleInt8, VER_V8),
+		MKLINE(StringTab, t_charset, sleInt8, VER_V8),
+		MKLINE(StringTab, center, sleByte, VER_V8),
+		MKLINE(StringTab, t_center, sleByte, VER_V8),
+		MKLINE(StringTab, overhead, sleByte, VER_V8),
+		MKLINE(StringTab, t_overhead, sleByte, VER_V8),
+		MKLINE(StringTab, no_talk_anim, sleByte, VER_V8),
+		MKLINE(StringTab, t_no_talk_anim, sleByte, VER_V8),
 		MKEND()
 	};
 
 	const SaveLoadEntry colorCycleEntries[] = {
-		MKLINE(ColorCycle, delay, sleUint16),
-		MKLINE(ColorCycle, counter, sleUint16),
-		MKLINE(ColorCycle, flags, sleUint16),
-		MKLINE(ColorCycle, start, sleByte),
-		MKLINE(ColorCycle, end, sleByte),
+		MKLINE(ColorCycle, delay, sleUint16, VER_V8),
+		MKLINE(ColorCycle, counter, sleUint16, VER_V8),
+		MKLINE(ColorCycle, flags, sleUint16, VER_V8),
+		MKLINE(ColorCycle, start, sleByte, VER_V8),
+		MKLINE(ColorCycle, end, sleByte, VER_V8),
 		MKEND()
 	};
 
@@ -642,17 +540,15 @@ void Scumm::saveOrLoad(Serializer *s)
 		}
 	}
 
-	if (_current_version == VER_V9)
-		s->saveLoadEntries(this, mainEntriesV9);
-	else
-		s->saveLoadEntries(this, mainEntriesV8);
+	s->saveLoadEntries(this, mainEntries);
 
 	s->saveLoadArrayOf(_actors, NUM_ACTORS, sizeof(_actors[0]), actorEntries);
 
-	if (_current_version < VER_V9)
+	if (_savegameVersion < VER_V9)
 		s->saveLoadArrayOf(vm.slot, 25, sizeof(vm.slot[0]), scriptSlotEntries);
 	else
 		s->saveLoadArrayOf(vm.slot, NUM_SCRIPT_SLOT, sizeof(vm.slot[0]), scriptSlotEntries);
+
 	s->saveLoadArrayOf(_objs, _numLocalObjects, sizeof(_objs[0]), objectEntries);
 	s->saveLoadArrayOf(_verbs, _numVerbs, sizeof(_verbs[0]), verbEntries);
 	s->saveLoadArrayOf(vm.nest, 16, sizeof(vm.nest[0]), nestedScriptEntries);
@@ -674,7 +570,9 @@ void Scumm::saveOrLoad(Serializer *s)
 	if (_shadowPaletteSize)
 		s->saveLoadArrayOf(_shadowPalette, _shadowPaletteSize, 1, sleByte);
 
-	_palManipCounter = 0; // TODO: Remove this once it's being loaded from disk
+	// PalManip data was not saved before V10 save games
+	if (_savegameVersion < VER_V10)
+		_palManipCounter = 0;
 	if (_palManipCounter) {
 		if (!_palManipPalette)
 			_palManipPalette = (byte *)calloc(0x300, 1);
@@ -823,83 +721,92 @@ byte Serializer::loadByte()
 	return e;
 }
 
-void Serializer::saveLoadArrayOf(void *b, int len, int datasize, byte filetype)
+void Serializer::saveArrayOf(void *b, int len, int datasize, byte filetype)
 {
 	byte *at = (byte *)b;
 	uint32 data;
 
-	/* speed up byte arrays */
+	// speed up byte arrays
 	if (datasize == 1 && filetype == sleByte) {
-		if (isSaving())
-			saveBytes(b, len);
-		else
-			loadBytes(b, len);
+		saveBytes(b, len);
 		return;
 	}
 
 	while (--len >= 0) {
-		if (isSaving()) {
-			/* saving */
-			if (datasize == 1) {
-				data = *(byte *)at;
-				at += 1;
-			} else if (datasize == 2) {
-				data = *(uint16 *)at;
-				at += 2;
-			} else if (datasize == 4) {
-				data = *(uint32 *)at;
-				at += 4;
-			} else {
-				error("saveLoadArrayOf: invalid size %d", datasize);
-			}
-			switch (filetype) {
-			case sleByte:
-				saveByte((byte)data);
-				break;
-			case sleUint16:
-			case sleInt16:
-				saveWord((int16)data);
-				break;
-			case sleInt32:
-			case sleUint32:
-				saveUint32(data);
-				break;
-			default:
-				error("saveLoadArrayOf: invalid filetype %d", filetype);
-			}
+		if (datasize == 1) {
+			data = *(byte *)at;
+			at += 1;
+		} else if (datasize == 2) {
+			data = *(uint16 *)at;
+			at += 2;
+		} else if (datasize == 4) {
+			data = *(uint32 *)at;
+			at += 4;
 		} else {
-			/* loading */
-			switch (filetype) {
-			case sleByte:
-				data = loadByte();
-				break;
-			case sleUint16:
-				data = loadWord();
-				break;
-			case sleInt16:
-				data = (int16)loadWord();
-				break;
-			case sleUint32:
-				data = loadUint32();
-				break;
-			case sleInt32:
-				data = (int32)loadUint32();
-				break;
-			default:
-				error("saveLoadArrayOf: invalid filetype %d", filetype);
-			}
-			if (datasize == 1) {
-				*(byte *)at = (byte)data;
-				at += 1;
-			} else if (datasize == 2) {
-				*(uint16 *)at = (uint16)data;
-				at += 2;
-			} else if (datasize == 4) {
-				*(uint32 *)at = data;
-				at += 4;
-			} else {
-				error("saveLoadArrayOf: invalid size %d", datasize);
-			}
+			error("saveLoadArrayOf: invalid size %d", datasize);
+		}
+		switch (filetype) {
+		case sleByte:
+			saveByte((byte)data);
+			break;
+		case sleUint16:
+		case sleInt16:
+			saveWord((int16)data);
+			break;
+		case sleInt32:
+		case sleUint32:
+			saveUint32(data);
+			break;
+		default:
+			error("saveLoadArrayOf: invalid filetype %d", filetype);
+		}
+	}
+}
+
+void Serializer::loadArrayOf(void *b, int len, int datasize, byte filetype)
+{
+	byte *at = (byte *)b;
+	uint32 data;
+
+	// speed up byte arrays
+	if (datasize == 1 && filetype == sleByte) {
+		loadBytes(b, len);
+		return;
+	}
+
+	while (--len >= 0) {
+		switch (filetype) {
+		case sleByte:
+			data = loadByte();
+			break;
+		case sleUint16:
+			data = loadWord();
+			break;
+		case sleInt16:
+			data = (int16)loadWord();
+			break;
+		case sleUint32:
+			data = loadUint32();
+			break;
+		case sleInt32:
+			data = (int32)loadUint32();
+			break;
+		default:
+			error("saveLoadArrayOf: invalid filetype %d", filetype);
+		}
+		if (datasize == 0) {
+			// Do nothing for obsolete data
+		} else if (datasize == 1) {
+			*(byte *)at = (byte)data;
+			at += 1;
+		} else if (datasize == 2) {
+			*(uint16 *)at = (uint16)data;
+			at += 2;
+		} else if (datasize == 4) {
+			*(uint32 *)at = data;
+			at += 4;
+		} else {
+			error("saveLoadArrayOf: invalid size %d", datasize);
 		}
 	}
 }
@@ -908,45 +815,99 @@ void Serializer::saveLoadArrayOf(void *b, int num, int datasize, const SaveLoadE
 {
 	byte *data = (byte *)b;
 
-	while (--num >= 0) {
-		saveLoadEntries(data, sle);
-		data += datasize;
+	if (isSaving()) {
+		while (--num >= 0) {
+			saveEntries(data, sle);
+			data += datasize;
+		}
+	} else {
+		while (--num >= 0) {
+			loadEntries(data, sle);
+			data += datasize;
+		}
 	}
 }
 
+void Serializer::saveLoadArrayOf(void *b, int len, int datasize, byte filetype)
+{
+	if (isSaving())
+		saveArrayOf(b, len, datasize, filetype);
+	else
+		loadArrayOf(b, len, datasize, filetype);
+}
 
 void Serializer::saveLoadEntries(void *d, const SaveLoadEntry *sle)
 {
-	int replen;
+	if (isSaving())
+		saveEntries(d, sle);
+	else
+		loadEntries(d, sle);
+}
+
+void Serializer::saveEntries(void *d, const SaveLoadEntry *sle)
+{
 	byte type;
 	byte *at;
 	int size;
-	int num;
-	void *ptr;
 
 	while (sle->offs != 0xFFFF) {
 		at = (byte *)d + sle->offs;
 		size = sle->size;
 		type = sle->type;
 
-		if (size == 0xFF) {
-			if (isSaving()) {
-				/* save reference */
-				ptr = *((void **)at);
-				saveWord(ptr ? ((*_save_ref) (_ref_me, type, ptr) + 1) : 0);
-			} else {
-				/* load reference */
-				num = loadWord();
-				*((void **)at) = num ? (*_load_ref) (_ref_me, type, num - 1) : NULL;
-			}
+		if (sle->maxVersion != CURRENT_VER) {
+			// Skip obsolete entries
+			if (type & 128)
+				sle++;
+		} else if (size == 0xFF) {
+			// save reference
+			void *ptr = *((void **)at);
+			saveWord(ptr ? ((*_save_ref) (_ref_me, type, ptr) + 1) : 0);
 		} else {
-			replen = 1;
+			// save entry
+			int replen = 1;
 			if (type & 128) {
 				sle++;
 				replen = sle->offs;
 				type &= ~128;
 			}
-			saveLoadArrayOf(at, replen, size, type);
+			saveArrayOf(at, replen, size, type);
+		}
+		sle++;
+	}
+}
+
+void Serializer::loadEntries(void *d, const SaveLoadEntry *sle)
+{
+	byte type;
+	byte *at;
+	int size;
+
+	while (sle->offs != 0xFFFF) {
+		at = (byte *)d + sle->offs;
+		size = sle->size;
+		type = sle->type;
+
+		if (_savegameVersion < sle->minVersion || _savegameVersion > sle->maxVersion) {
+			// Skip entries which are not present in this save game version
+			if (type & 128)
+				sle++;
+		} else if (size == 0xFF) {
+			// load reference...
+			int num = loadWord();
+			// ...but only use it if it's still there in CURRENT_VER
+			if (sle->maxVersion == CURRENT_VER)
+				*((void **)at) = num ? (*_load_ref) (_ref_me, type, num - 1) : NULL;
+		} else {
+			// load entry
+			int replen = 1;
+
+			if (type & 128) {
+				sle++;
+				replen = sle->offs;
+				type &= ~128;
+			}
+			loadArrayOf(at, replen, size, type);
 		}
 		sle++;
 	}
