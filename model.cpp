@@ -690,7 +690,7 @@ void Model::Mesh::draw() const {
 				bestDepth = winZ;
 		}
 
-		if (SCREENBLOCKS_GLOBAL == 1)
+		if (SCREENBLOCKS_GLOBAL)
 			screenBlocksAddRectangle( (int)top, (int)right, (int)left, (int)bottom, (int)bestDepth );
 	}
 	/*

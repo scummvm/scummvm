@@ -204,7 +204,7 @@ void Bitmap::draw() const {
 		glEnable(GL_DEPTH_TEST);
 	} else if (format_ == 5) {	// ZBuffer image
 		// Only draw the manual zbuffer when we are not using screenblocks, and when enabled
-		if ((ZBUFFER_GLOBAL == 0) || (SCREENBLOCKS_GLOBAL == 1))
+		if ((! ZBUFFER_GLOBAL) || SCREENBLOCKS_GLOBAL)
 			return;
 
 		g_driver->drawDepthBitmap(x_, y_, width_, height_, data_[curr_image_ - 1]);

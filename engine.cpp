@@ -96,7 +96,7 @@ void Engine::mainLoop() {
 			}
 			g_driver->flipBuffer();
 		} else if (_mode == ENGINE_MODE_NORMAL) {
-			if (SCREENBLOCKS_GLOBAL == 1)
+			if (SCREENBLOCKS_GLOBAL)
 				screenBlocksReset();
 
 			// Update actor costumes
@@ -109,7 +109,7 @@ void Engine::mainLoop() {
 
 			g_driver->clearScreen();
 
-			if (SCREENBLOCKS_GLOBAL == 1)
+			if (SCREENBLOCKS_GLOBAL)
 				screenBlocksBlitDirtyBlocks();
 
 			if (currScene_ != NULL) {

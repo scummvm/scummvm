@@ -35,7 +35,7 @@
 #endif
 
 // Hacky global toggles for experimental/debug code
-int ZBUFFER_GLOBAL, SCREENBLOCKS_GLOBAL;
+bool ZBUFFER_GLOBAL, SCREENBLOCKS_GLOBAL;
 
 static void saveRegistry() {
 	Registry::instance()->save();
@@ -50,23 +50,50 @@ int PASCAL WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdL
 extern SoundMixer *g_mixer;
 extern Timer *g_timer;
 
+static bool parseBoolStr(const char *val) {
+	if (val == NULL || val[0] == 0)
+		return false;
+	switch (val[0]) {
+	case 'y': case 'Y':	// yes
+	case 't': case 'T':	// true
+	case '1':
+		return true;
+	case 'n': case 'N':	// no
+	case 'f': case 'F':	// false
+	case '0':
+		return false;
+	case 'o':
+		switch (val[1]) {
+		case 'n': case 'N': // on
+			return true;
+		case 'f': case 'F': // off
+			return false;
+		}
+	}
+	error("Unrecognized boolean value %s\n", val);
+}
+
 int main(int argc, char *argv[]) {
 	int i;
 
 	// Parse command line
-	ZBUFFER_GLOBAL = 0;
-	SCREENBLOCKS_GLOBAL = 0;
+	ZBUFFER_GLOBAL = parseBoolStr(Registry::instance()->get("zbuffer"));
+	SCREENBLOCKS_GLOBAL = parseBoolStr(Registry::instance()->get("screenblocks"));
 	for (i=1;i<argc;i++) {
 		if (strcmp(argv[i], "-zbuffer") == 0)
-			ZBUFFER_GLOBAL = 1;
-		else if (strcmp(argv[i], "-screenblocks") ==0)
-			SCREENBLOCKS_GLOBAL = 1;
+			ZBUFFER_GLOBAL = true;
+		else if (strcmp(argv[i], "-nozbuffer") == 0)
+			ZBUFFER_GLOBAL = false;
+		else if (strcmp(argv[i], "-screenblocks") == 0)
+			SCREENBLOCKS_GLOBAL = true;
+		else if (strcmp(argv[i], "-noscreenblocks") == 0)
+			SCREENBLOCKS_GLOBAL = false;
 		else {
 			printf("Residual CVS Version\n");
 			printf("--------------------\n");
 			printf("Recognised options:\n");
-			printf("\t-zbuffer\t\tEnable ZBuffers (Very slow on older cards)\n");
-			printf("\t-screenblocks\t\tEnable Screenblocks (Experimental zbuffer speedup on older cards - BROKEN!!\n");
+			printf("\t-[no]zbuffer\t\tEnable/disable ZBuffers (Very slow on older cards)\n");
+			printf("\t-[no]screenblocks\t\tEnable/disable Screenblocks (Experimental zbuffer speedup on older cards - BROKEN!!\n");
 			exit(-1);
 		}
 	}
