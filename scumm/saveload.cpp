@@ -219,9 +219,6 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 		                                     _roomWidth, _roomHeight, _roomStrips);
 	}
 
-	if ((_features & GF_AUDIOTRACKS) && VAR(VAR_MUSIC_TIMER) > 0)
-		_sound->startCDTimer();
-
 	CHECK_HEAP debug(1, "State loaded from '%s'", filename);
 
 	_sound->pauseSounds(false);
