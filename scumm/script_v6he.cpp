@@ -174,9 +174,9 @@ void ScummEngine_v6he::setupOpcodes() {
 		OPCODE(o6_startObject),
 		OPCODE(o6_drawObject),
 		OPCODE(o6_drawObjectAt),
-		OPCODE(o6_drawBlastObject),
+		OPCODE(o6_invalid),
 		/* 64 */
-		OPCODE(o6_setBlastObjectWindow),
+		OPCODE(o6_invalid),
 		OPCODE(o6_stopObjectCode),
 		OPCODE(o6_stopObjectCode),
 		OPCODE(o6_endCutscene),
@@ -739,23 +739,6 @@ void ScummEngine_v6he::o6_soundKludge() {
 
 void ScummEngine_v6he::o6_dummy() {
 	stopObjectCode();
-}
-
-void ScummEngine_v6he::o6_drawBlastObject() {
-	int args[16];
-	getStackList(args, ARRAYSIZE(args));
-	pop();
-	pop();
-	pop();
-	pop();
-	pop();
-}
-
-void ScummEngine_v6he::o6_setBlastObjectWindow() {
-	pop();
-	pop();
-	pop();
-	pop();
 }
 
 void ScummEngine_v6he::o6_kernelSetFunctions() {

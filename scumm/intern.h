@@ -570,8 +570,6 @@ protected:
 	virtual void decodeParseString(int a, int b);
 
 	/* Version 6 script opcodes */
-	void o6_drawBlastObject();
-	void o6_setBlastObjectWindow();
 	void o6_setState();
 	void o6_roomOps();
 	void o6_actorOps();

@@ -175,9 +175,9 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_startObject),
 		OPCODE(o6_drawObject),
 		OPCODE(o6_drawObjectAt),
-		OPCODE(o6_drawBlastObject),
+		OPCODE(o6_invalid),
 		/* 64 */
-		OPCODE(o6_setBlastObjectWindow),
+		OPCODE(o6_invalid),
 		OPCODE(o6_stopObjectCode),
 		OPCODE(o6_stopObjectCode),
 		OPCODE(o6_endCutscene),
