@@ -29,6 +29,7 @@ namespace Queen {
 class Graphics;
 class Logic;
 class Resource;
+class Sound;
 struct BobSlot;
 
 class Talk {
@@ -41,7 +42,8 @@ class Talk {
 		char *cutawayFilename, 
 		Graphics *graphics,
 		Logic *logic,
-		Resource *resource);
+		Resource *resource,
+		Sound *sound);
 
 	//! Public interface to speak a sentence
 	static bool speak(
@@ -50,7 +52,8 @@ class Talk {
 		const char *voiceFilePrefix,
 		Graphics *graphics,
 		Logic *logic,
-		Resource *resource);
+		Resource *resource,
+		Sound *sound);
 
 	//! Read a string from ptr and return new ptr
 	static byte *getString(byte *ptr, char *str, int maxLength, int align = 2);
@@ -107,6 +110,7 @@ class Talk {
 	Graphics  *_graphics;
 	Logic     *_logic;
 	Resource  *_resource;
+	Sound     *_sound;
 
 	//! Raw .dog file data (without 20 byte header)
 	byte *_fileData;
@@ -155,7 +159,7 @@ class Talk {
 
 	static const SpeechParameters _speechParameters[];
 
-	Talk(Graphics *graphics, Logic *logic, Resource *resource);
+	Talk(Graphics *graphics, Logic *logic, Resource *resource, Sound *sound);
 	~Talk();
 
 	//! Perform talk in file and return a cutaway filename

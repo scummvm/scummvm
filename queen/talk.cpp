@@ -20,8 +20,9 @@
  */
 
 #include "stdafx.h"
-#include "talk.h"
-#include "graphics.h"
+#include "queen/talk.h"
+#include "queen/graphics.h"
+#include "queen/sound.h"
 
 namespace Queen {
 
@@ -38,8 +39,9 @@ void Talk::talk(
 		char *cutawayFilename,
 		Graphics *graphics,
 		Logic *logic,
-		Resource *resource) {
-	Talk *talk = new Talk(graphics, logic, resource);
+		Resource *resource,
+		Sound *sound) {
+	Talk *talk = new Talk(graphics, logic, resource, sound);
 	talk->talk(filename, personInRoom, cutawayFilename);
 	delete talk;
 }
@@ -50,8 +52,9 @@ bool Talk::speak(
 		const char *voiceFilePrefix,
 		Graphics *graphics,
 		Logic *logic,
-		Resource *resource) {
-	Talk *talk = new Talk(graphics, logic, resource);
+		Resource *resource,
+	       	Sound *sound) {
+	Talk *talk = new Talk(graphics, logic, resource, sound);
 	bool result = talk->speak(sentence, person, voiceFilePrefix);
 	delete talk;
 	return result;
@@ -60,8 +63,9 @@ bool Talk::speak(
 Talk::Talk(
 		Graphics *graphics,
 		Logic *logic,
-		Resource *resource) 
-: _graphics(graphics), _logic(logic), _resource(resource), _fileData(NULL), _quit(false) {
+		Resource *resource,
+		Sound *sound) 
+: _graphics(graphics), _logic(logic), _resource(resource), _sound(sound), _fileData(NULL), _quit(false) {
 
 	//! TODO Move this to the Logic class later!
 	memset(_talkSelected, 0, sizeof(_talkSelected));
@@ -635,6 +639,7 @@ void Talk::speakSegment(
 	//debug(0, "Sentence segment '%*s' is said by person '%s' and voice file '%s' is played",
 	//		length, segment, person, voiceFileName);
 
+	_sound->sfxPlay(voiceFileName);
 	debug(0, "Playing voice file '%s'", voiceFileName);
 
 	int faceDirectionCommand = 0;

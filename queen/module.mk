@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	queen/queen.o \
 	queen/resource.o \
 	queen/restables.o \
+	queen/sound.o \
 	queen/talk.o \
 	queen/walk.o
 

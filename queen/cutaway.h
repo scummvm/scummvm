@@ -30,6 +30,7 @@ namespace Queen {
 class Graphics;
 class Logic;
 class Resource;
+class Sound;
 class Walk;
 
 
@@ -41,7 +42,8 @@ class Cutaway {
 				char *nextFilename,
 				Graphics *graphics,
 				Logic *logic,
-				Resource *resource);
+				Resource *resource,
+				Sound *sound);
 
 	public:
 		//! Collection of constants used by QueenCutaway
@@ -136,6 +138,7 @@ class Cutaway {
 		Graphics    *_graphics;
 		Logic       *_logic;
 		Resource    *_resource;
+		Sound       *_sound;
 		Walk        *_walk;
 
 		//! Raw .cut file data (without 20 byte header)
@@ -212,7 +215,8 @@ class Cutaway {
 				const char *filename, 
 				Graphics *graphics,
 				Logic *logic,
-				Resource *resource);
+				Resource *resource,
+				Sound *sound);
 		~Cutaway();
 
 		//! Run this cutaway object 

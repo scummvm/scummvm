@@ -29,6 +29,7 @@
 #include "queen/display.h"
 #include "queen/graphics.h"
 #include "queen/queen.h"
+#include "queen/sound.h"
 #include "queen/talk.h"
 #include "queen/walk.h"
 
@@ -137,29 +138,29 @@ void QueenEngine::roomChanged() {
 
 		if (_resource->isDemo()) {
 			if (_resource->exists("pclogo.cut"))
-				Cutaway::run("pclogo.cut", nextFilename, _graphics, _logic, _resource);
+				Cutaway::run("pclogo.cut", nextFilename, _graphics, _logic, _resource, _sound);
 			else
-				Cutaway::run("clogo.cut",  nextFilename, _graphics, _logic, _resource);
+				Cutaway::run("clogo.cut",  nextFilename, _graphics, _logic, _resource, _sound);
 		}
 		else {
-			Cutaway::run("copy.cut",  nextFilename, _graphics, _logic, _resource);
-			Cutaway::run("clogo.cut", nextFilename, _graphics, _logic, _resource);
+			Cutaway::run("copy.cut",  nextFilename, _graphics, _logic, _resource, _sound);
+			Cutaway::run("clogo.cut", nextFilename, _graphics, _logic, _resource, _sound);
 
 			// TODO enable talking for talkie version
 
-			Cutaway::run("cdint.cut", nextFilename, _graphics, _logic, _resource);
+			Cutaway::run("cdint.cut", nextFilename, _graphics, _logic, _resource, _sound);
 
 			// restore palette colors ranging from 144 to 256
 			_graphics->loadPanel();
 			
-			Cutaway::run("cred.cut",  nextFilename, _graphics, _logic, _resource);
+			Cutaway::run("cred.cut",  nextFilename, _graphics, _logic, _resource, _sound);
 		}
 
 		_logic->currentRoom(73);
 		_logic->entryObj(584);
 
 		_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), RDM_FADE_JOE, 100, 2, true);
-		Cutaway::run("c70d.cut", nextFilename, _graphics, _logic, _resource);
+		Cutaway::run("c70d.cut", nextFilename, _graphics, _logic, _resource, _sound);
 
 		_logic->gameState(VAR_INTRO_PLAYED, 1);
 
@@ -220,8 +221,8 @@ void QueenEngine::initialise(void) {
 	_resource = new Resource(_gameDataPath, _detector->_game.detectname);
 	_display = new Display(_system);
 	_graphics = new Graphics(_display, _resource);
-	_logic = new Logic(_resource, _graphics, _display);
-	//_sound = new Sound(_mixer, _detector->_sfx_volume);
+	_sound = Sound::giveSound(_mixer, _resource, _resource->compression());
+	_logic = new Logic(_resource, _graphics, _display, _sound);
 	_timer->installTimerProc(&timerHandler, 1000000 / 50, this); //call 50 times per second
 }
 

@@ -64,8 +64,9 @@ void Cutaway::run(
 		char *nextFilename,
 		Graphics *graphics,
 		Logic *logic,
-		Resource *resource) {
-	Cutaway *cutaway = new Cutaway(filename, graphics, logic, resource);
+		Resource *resource,
+		Sound *sound) {
+	Cutaway *cutaway = new Cutaway(filename, graphics, logic, resource, sound);
 	cutaway->run(nextFilename);
 	delete cutaway;
 }
@@ -74,8 +75,9 @@ Cutaway::Cutaway(
 		const char *filename, 
 		Graphics *graphics,
 		Logic *logic,
-		Resource *resource) 
-: _graphics(graphics), _logic(logic), _resource(resource), _walk(logic->walk()),
+		Resource *resource,
+		Sound *sound) 
+: _graphics(graphics), _logic(logic), _resource(resource), _sound(sound), _walk(logic->walk()),
 	_quit(false), _personDataCount(0), _personFaceCount(0), _lastSong(0), _songBeforeComic(0) {
 	memset(&_bankNames, 0, sizeof(_bankNames));
 	load(filename); 
@@ -1040,7 +1042,7 @@ void Cutaway::handlePersonRecord(
 			char voiceFilePrefix[MAX_STRING_SIZE];
 			findCdCut(_basename, index, voiceFilePrefix);
 			Talk::speak(sentence, (object.objectNumber == OBJECT_JOE) ? NULL : &p, voiceFilePrefix,
-				_graphics, _logic, _resource);
+				_graphics, _logic, _resource, _sound);
 		}
 
 	}
@@ -1398,7 +1400,7 @@ void Cutaway::talk(char *nextFilename) {
 	if (0 == scumm_stricmp(right(_talkFile, 4), ".dog")) {
 		nextFilename[0] = '\0';
 
-		Talk::talk(_talkFile, 0 /* XXX */, nextFilename, _graphics, _logic, _resource);
+		Talk::talk(_talkFile, 0 /* XXX */, nextFilename, _graphics, _logic, _resource, _sound);
 	}
 }
 

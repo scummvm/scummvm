@@ -30,8 +30,8 @@
 
 namespace Queen {
 
-Logic::Logic(Resource *resource, Graphics *graphics, Display *theDisplay)
-	: _resource(resource), _graphics(graphics), _display(theDisplay), _talkSpeed(DEFAULT_TALK_SPEED) {
+Logic::Logic(Resource *resource, Graphics *graphics, Display *theDisplay, Sound *sound)
+	: _resource(resource), _graphics(graphics), _display(theDisplay), _sound(sound), _talkSpeed(DEFAULT_TALK_SPEED) {
 	_jas = _resource->loadFile("QUEEN.JAS", 20);
 	_joe.x = _joe.y = 0;
 	_joe.scale = 100;
@@ -1838,7 +1838,7 @@ void Logic::joeUseUnderwear() {
 void Logic::playCutaway(const char* cutFile) {
 
 	char next[20];
-	Cutaway::run(cutFile, next, _graphics, this, _resource);
+	Cutaway::run(cutFile, next, _graphics, this, _resource, _sound);
 }
 
 

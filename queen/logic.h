@@ -54,12 +54,13 @@ struct Command {
 class Graphics;
 class Resource;
 class Display;
+class Sound;
 class Walk;
 
 class Logic {
 
 public:
-	Logic(Resource *resource, Graphics *graphics, Display *display);
+	Logic(Resource *resource, Graphics *graphics, Display *display, Sound *sound);
 	~Logic();
 
 	uint16 currentRoom();
@@ -276,6 +277,7 @@ protected:
 	Resource *_resource;
 	Graphics *_graphics;
 	Display *_display;
+	Sound *_sound;
 	Walk *_walk;
 
 	int _talkSpeed;	// TALKSPD
