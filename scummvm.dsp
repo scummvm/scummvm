@@ -4,7 +4,7 @@
 
 # TARGTYPE "Win32 (x86) Console Application" 0x0103
 
-CFG=scummvm - Win32 OpenGL Debug
+CFG=scummvm - Win32 mad mp3 Debug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
@@ -13,14 +13,14 @@ CFG=scummvm - Win32 OpenGL Debug
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "scummvm.mak" CFG="scummvm - Win32 OpenGL Debug"
+!MESSAGE NMAKE /f "scummvm.mak" CFG="scummvm - Win32 mad mp3 Debug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
 !MESSAGE "scummvm - Win32 Release" (based on "Win32 (x86) Console Application")
 !MESSAGE "scummvm - Win32 Debug" (based on "Win32 (x86) Console Application")
-!MESSAGE "scummvm - Win32 OpenGL Debug" (based on "Win32 (x86) Console Application")
-!MESSAGE "scummvm - Win32 OpenGL Release" (based on "Win32 (x86) Console Application")
+!MESSAGE "scummvm - Win32 mad mp3 Debug" (based on "Win32 (x86) Console Application")
+!MESSAGE "scummvm - Win32 mad mp3 Release" (based on "Win32 (x86) Console Application")
 !MESSAGE 
 
 # Begin Project
@@ -44,7 +44,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /G6 /MT /W3 /WX /GR /GX /O2 /Ob2 /I "." /I "sound" /I "common" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "USE_ADLIB" /D "BYPASS_COPY_PROT" /D "USE_MAD" /FD /c
+# ADD CPP /nologo /G6 /MT /W3 /WX /GR /GX /O2 /Ob2 /I "." /I "sound" /I "common" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "USE_ADLIB" /D "BYPASS_COPY_PROT" /FD /c
 # SUBTRACT CPP /YX /Yc /Yu
 # ADD BASE RSC /l 0x41d /d "NDEBUG"
 # ADD RSC /l 0x41d /d "NDEBUG"
@@ -70,7 +70,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /MTd /W3 /WX /Gm /GR /GX /ZI /Od /I "." /I "sound" /I "common" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "ALLOW_GDI" /D "BYPASS_COPY_PROT" /D "USE_MAD" /YX /FD /GZ /c
+# ADD CPP /nologo /MTd /W3 /WX /Gm /GR /GX /ZI /Od /I "." /I "sound" /I "common" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "ALLOW_GDI" /D "BYPASS_COPY_PROT" /YX /FD /GZ /c
 # SUBTRACT CPP /Fr
 # ADD BASE RSC /l 0x41d /d "_DEBUG"
 # ADD RSC /l 0x41d /d "_DEBUG"
@@ -82,18 +82,18 @@ LINK32=link.exe
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib libmad.lib simon___Debug\simon.lib scumm___Debug\scumm.lib sky___Debug\sky.lib /nologo /subsystem:console /debug /machine:I386 /nodefaultlib:"libc" /pdbtype:sept /fixed:no
 # SUBTRACT LINK32 /pdb:none
 
-!ELSEIF  "$(CFG)" == "scummvm - Win32 OpenGL Debug"
+!ELSEIF  "$(CFG)" == "scummvm - Win32 mad mp3 Debug"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
-# PROP BASE Output_Dir "scummvm___Win32_OpenGL_Debug"
-# PROP BASE Intermediate_Dir "scummvm___Win32_OpenGL_Debug"
+# PROP BASE Output_Dir "scummvm___Win32_mad mp3_Debug"
+# PROP BASE Intermediate_Dir "scummvm___Win32_mad mp3_Debug"
 # PROP BASE Ignore_Export_Lib 0
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "scummvm___OpenGL_Debug"
-# PROP Intermediate_Dir "scummvm___OpenGL_Debug"
+# PROP Output_Dir "scummvm___mad_mp3_Debug"
+# PROP Intermediate_Dir "scummvm___mad_mp3_Debug"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /I "./sound" /I "./" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "ALLOW_GDI" /D "BYPASS_COPY_PROT" /D "USE_ADLIB" /D "USE_MAD" /Yu"stdafx.h" /FD /GZ /c
@@ -107,21 +107,21 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib libmad.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib libmad.lib wsock32.lib opengl32.lib scumm___OpenGL_Debug\scumm.lib simon___OpenGL_Debug\simon.lib /nologo /subsystem:console /debug /machine:I386 /nodefaultlib:"libc" /nodefaultlib:"libcd" /pdbtype:sept /fixed:no
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib libmad.lib wsock32.lib scumm___mad_mp3_Debug\scumm.lib simon___mad_mp3_Debug\simon.lib sky___mad_mp3_Debug\sky.lib /nologo /subsystem:console /debug /machine:I386 /nodefaultlib:"libc" /nodefaultlib:"libcd" /pdbtype:sept /fixed:no
 # SUBTRACT LINK32 /pdb:none /map
 
-!ELSEIF  "$(CFG)" == "scummvm - Win32 OpenGL Release"
+!ELSEIF  "$(CFG)" == "scummvm - Win32 mad mp3 Release"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
-# PROP BASE Output_Dir "scummvm___Win32_OpenGL_Release"
-# PROP BASE Intermediate_Dir "scummvm___Win32_OpenGL_Release"
+# PROP BASE Output_Dir "scummvm___Win32_mad mp3_Release"
+# PROP BASE Intermediate_Dir "scummvm___Win32_mad mp3_Release"
 # PROP BASE Ignore_Export_Lib 0
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 0
-# PROP Output_Dir "scummvm___OpenGL_Release"
-# PROP Intermediate_Dir "scummvm___OpenGL_Release"
+# PROP Output_Dir "scummvm___mad_mp3_Release"
+# PROP Intermediate_Dir "scummvm___mad_mp3_Release"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /G6 /MD /W3 /O2 /Ob2 /I "." /I "sound" /I "common" /I "scumm" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "USE_ADLIB" /D "USE_MAD" /FD /c
@@ -135,7 +135,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib libmad.lib simon___Release\simon.lib scumm___Release\scumm.lib sdl.lib /nologo /subsystem:console /machine:I386 /nodefaultlib
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib libmad.lib opengl32.lib scumm___OpenGL_Release\scumm.lib simon___OpenGL_Release\simon.lib /nologo /subsystem:console /incremental:yes /debug /machine:I386 /nodefaultlib:"libc" /nodefaultlib:"libcd"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib libmad.lib scumm___mad_mp3_Release\scumm.lib simon___mad_mp3_Release\simon.lib  sky___mad_mp3_Release\sky.lib /nologo /subsystem:console /incremental:yes /debug /machine:I386 /nodefaultlib:"libc" /nodefaultlib:"libcd"
 # SUBTRACT LINK32 /pdb:none
 
 !ENDIF 
@@ -144,8 +144,8 @@ LINK32=link.exe
 
 # Name "scummvm - Win32 Release"
 # Name "scummvm - Win32 Debug"
-# Name "scummvm - Win32 OpenGL Debug"
-# Name "scummvm - Win32 OpenGL Release"
+# Name "scummvm - Win32 mad mp3 Debug"
+# Name "scummvm - Win32 mad mp3 Release"
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
@@ -423,32 +423,9 @@ SOURCE=.\backends\sdl\sdl.cpp
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
 
-!ELSEIF  "$(CFG)" == "scummvm - Win32 OpenGL Debug"
+!ELSEIF  "$(CFG)" == "scummvm - Win32 mad mp3 Debug"
 
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 OpenGL Release"
-
-# PROP Exclude_From_Build 1
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\backends\sdl\sdl_gl.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 OpenGL Debug"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 OpenGL Release"
+!ELSEIF  "$(CFG)" == "scummvm - Win32 mad mp3 Release"
 
 !ENDIF 
 
