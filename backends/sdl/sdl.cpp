@@ -277,17 +277,17 @@ void OSystem_SDL::update_screen() {
 		if (!_overlayVisible) {
 			for(r = _dirty_rect_list; r != last_rect; ++r) {
 				dst = *r;
-				dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
-				dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
 				if (_scaler_proc == Normal1x) {
 					if (SDL_BlitSurface(_screen, r, _hwscreen, &dst) != 0)
 						error("SDL_BlitSurface failed: %s", SDL_GetError());
 				} else {
+					dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
+					dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
 					if (SDL_BlitSurface(_screen, r, _tmpscreen, &dst) != 0)
 						error("SDL_BlitSurface failed: %s", SDL_GetError());
 				}
 			}
-		} else {
+		} else if (_scaler_proc == Normal1x) {
 			for(r = _dirty_rect_list; r != last_rect; ++r) {
 				dst = *r;
 				if (SDL_BlitSurface(_tmpscreen, r, _hwscreen, &dst) != 0)
