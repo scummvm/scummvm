@@ -10,7 +10,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Added support for FLAC (lossless) encoded audio files
    - Added an 'On Screen Display' to the SDL backend
    - Partially rewrote the backend API
-   - Comments in config files are preserved now
+   - Comments and the order of section in config files are preserved now
    - Updated AdvMame scalers based on scale2x 2.0 - AdvMame3x looks nicer now,
      and AdvMame2x is MMX accelerated
    - Added MMX i386 assembler versions of the HQ2x and HQ3x scalers
@@ -23,10 +23,13 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Removed the old zak256 target, use zakTowns instead
    - Added native support for Macintosh versions using a special container
      file. This removes the need for using the 'RESCUMM' program
+   - Added smooth horizontal scrolling for The Dig, Full Throttle and COMI
+     (matching the original engine)
    - Partially rewrote the text engine, fixing various bugs, especially in 
      newer games (The Dig, COMI)
    - Fixed actor drawing glitches in V1 Maniac and Zak
    - Fixed ship-to-ship graphic glitches in COMI
+   - Fixed palette glitches in COMI
 
  Queen:
    - Fixed some issues with the Dreamcast backend.

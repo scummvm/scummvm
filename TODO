@@ -59,14 +59,19 @@ README / Manual
     - Contacting the developers
     - Reporting bugs
   + Supported Platforms
+    - Windows, Linux, Mac OS X, WinCE, PalmOS, Dreamcast, ...
+      One section for each, indicating basic installation & usage.
+      Actually, we may  not need this chapter at all, rather the
+      "Installation" and "Running ScummVM" chapters might be subdivided
+      as needed...
   + Supported Games
-    - Copy Protection
-    - Simon
-    - BS notes
-    - Using mac data files
+      Here we list *all* supported games, with some information on each
+      like known problems, which versions are supported precisely,
+      where to get cutscene packs etc.
   + Getting started
     - How to get ScummVM (binary, source)
-    - Compiling (with more detail than now)
+    - Compiling (with more detail than now); pointer to
+      the to-be-written "Developer's Guide to ScummVM"
     - First steps (basic setup, getting a first game to run)
   + Running ScummVM
     - Command line options
@@ -81,6 +86,16 @@ README / Manual
   + Credits
   + Index? (would be nice, for example 'fullscreen' would link to the hotkey,
      the config file setting, and the command line option)
+* Independant of that, create a "Developer's Guide to ScummVM"
+  which explains the ScummVM framework, and also the engines, i.e.
+  - stuff in common/, like the config manager etc.
+  - the backend API, and how to create new backends
+  - the sound system
+  - how to create a new engine
+  - a chapter for each engine, with as many/little details as the resp.
+    engine teams deem appropriate...
+  - ...
+
 
 Web site
 ========
@@ -189,6 +204,8 @@ GUI
   most other bitmap fonts have it on the right, though). To this end, we maybe
   should backup the background before drawing the caret, and restore it when
   erasing the caret.
+* Eye candy: add a nice credits scroller to the AboutDialog class, which then
+  displays (scrolling) all the ScummVM credits...
 
 Launcher
 ========
@@ -225,8 +242,6 @@ SCUMM
 * Add support for TFMX music format in Amiga version of Monkey Island 1
   Check http://darkstar.tabu.uni-bonn.de/~neo/audio.html for music format
   details
-* V7-8 games: Implement smooth horizontal scrolling (instead of scrolling in
-  increments of 8 pixels). See bug #629417.
 * Add tool and support for compress *.la* file resources (ex. sounds) to fit
   on small devices 
 * Fix codec44 for nut fonts
