@@ -235,12 +235,14 @@ public:
 	/**
 	 * Replace the specified range of the palette with new colors.
 	 * The palette entries from 'start' till (start+num-1) will be replaced - so
-	 * a full palette update is acomplished via start=0, num=256.
-	 * The palette data is specified in interleaved RGB format. That is, the
+	 * a full palette update is accomplished via start=0, num=256.
+	 *
+	 * The palette data is specified in interleaved RGBA format. That is, the
 	 * first byte of the memory block 'colors' points at is the red component
 	 * of the first new color; the second byte the blue component of the first
-	 * new color; the third byte the green compont. Then the second color
-	 * starts, and so on. So memory looks like this: R1-G1-B1-R2-G2-B2-R3-...
+	 * new color; the third byte the green component, the last byte to the alpha
+	 * (transparency) value. Then the second color starts, and so on. So memory
+	 * looks like this: R1-G1-B1-A1-R2-G2-B2-A2-R3-...
 	 *
 	 * @param colors	the new colors, in interleaved RGB format
 	 * @param start		the first palette entry to be updated
@@ -248,6 +250,8 @@ public:
 	 *
 	 * @note It is an error if start+num exceeds 256, behaviour is undefined
 	 *       in that case (the backend may ignore it silently or assert).
+	 * @note The alpha value is not actually used, and future revisions of this
+	 *       API are probably going to remove it.
 	 */
 	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
 
