@@ -47,6 +47,8 @@ _ranlib=ranlib
 _sdlconfig=sdl-config
 _sdlpath="$PATH"
 
+_srcdir=`dirname $0`
+
 # For cross compiling
 _host=""
 _host_cpu=""
@@ -337,7 +339,7 @@ if test "$_host" = "linupy"; then
     _host_os=linux
     _host_cpu=arm
 else
-	guessed_host=`./config.guess`
+	guessed_host=`$_srcdir/config.guess`
     _host_cpu=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
     _host_os=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
     _host_vendor=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\2/'`
@@ -932,7 +934,6 @@ EOF
 # TODO: Add a better check than just looking for 'Makefile'
 #
 if test ! -f Makefile ; then
-_srcdir=`dirname $0`
 echo "Creating Makefile"
 
 cat > Makefile << EOF
