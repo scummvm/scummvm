@@ -5523,6 +5523,8 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 		switch (cmd) {
 		case 0: // play music (state)
 			debug(1, "IMuseDigital::doCommand 0x1000 (%d)", b);
+			if (_scumm->_gameId == GID_FT)
+				return 0;
 			for(l = 0;; l++) {
 				if (_digStateMusicMap[l].index == -1) {
 					return 1;
