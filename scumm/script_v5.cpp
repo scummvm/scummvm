@@ -1132,6 +1132,9 @@ void Scumm_v5::o5_getDist() {
 	if (_gameId == GID_MONKEY2 && vm.slot[_currentScript].number == 40 && r < 60) 
 		r = 60; 
 
+	if (_features & GF_AFTER_V2)
+		r /= 8;
+
 	setResult(r);
 }
 
