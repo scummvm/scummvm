@@ -1305,6 +1305,8 @@ void ScummEngine_v72he::drawWizImage(int restype, int resnum, int x1, int y1, in
 				++rImage.bottom;
 				markRectAsDirty(kMainVirtScreen, rImage);
 			} else {
+				--rImage.right;
+				--rImage.bottom;
 				gdi.copyVirtScreenBuffers(rImage);
 			}
 		}
