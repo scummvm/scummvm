@@ -72,6 +72,8 @@ static const char *credits[] = {
 "\\L\\c2""    Several fixes for Simon1",
 "\\L\\c0""  Jeroen Janssen",
 "\\L\\c2""    Numerous readability and bugfix patches",
+"\\L\\c0""  Robert Kelsen",
+"\\L\\c2""    Packaging for SlackWare",
 "\\L\\c0""  Claudio Matsuoka",
 "\\L\\c2""    Daily Linux/BeOS builds",
 "\\L\\c0""  Mikesch Nepomuk",
