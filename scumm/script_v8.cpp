@@ -1592,7 +1592,8 @@ void Scumm_v8::o8_kernelGetFunctions()
 	case 0xDA:		// lipSyncWidth
 	case 0xDB:		// lipSyncHeight
 		// TODO - get lip sync data for the currently active voice
-		push(255);
+		// HACK - return random values for now, to make things look half decent
+		push(_rnd.getRandomNumber(255));
 		break;
 	case 0xDC:		// actorTalkAnimation
 		{
