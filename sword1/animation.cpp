@@ -74,8 +74,14 @@ bool AnimationState::init(const char *basename) {
 
 	p = 0;
 	while (!feof(f)) {
-		if (fscanf(f, "%i %i", &palettes[p].end, &palettes[p].cnt) != 2)
+		int end, cnt;
+
+		if (fscanf(f, "%i %i", &end, &cnt) != 2)
 			break;
+
+		palettes[p].end = (uint) end;
+		palettes[p].cnt = (uint) cnt;
+
 		for (i = 0; i < palettes[p].cnt; i++) {
 			int r, g, b;
 			fscanf(f, "%i", &r);

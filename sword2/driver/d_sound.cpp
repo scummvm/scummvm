@@ -252,10 +252,15 @@ bool MusicHandle::endOfData(void) const {
  */
 
 bool Sound::getWavInfo(uint8 *data, WavInfo *wavInfo) {
+	uint32 wavLength;
+	uint32 offset;
+
 	if (READ_UINT32(data) != MKID('RIFF')) {
 		warning("getWavInfo: No 'RIFF' header");
 		return false;
 	}
+
+	wavLength = READ_LE_UINT32(data + 4) + 8;
 
 	if (READ_UINT32(data + 8) != MKID('WAVE')) {
 		warning("getWavInfo: No 'WAVE' header");
@@ -270,15 +275,21 @@ bool Sound::getWavInfo(uint8 *data, WavInfo *wavInfo) {
 	wavInfo->channels = READ_LE_UINT16(data + 22);
 	wavInfo->rate = READ_LE_UINT16(data + 24);
 
-	data += READ_LE_UINT32(data + 16) + 20;
+	offset = READ_LE_UINT32(data + 16) + 20;
 
-	if (READ_UINT32(data) != MKID('data')) {
-		warning("getWavInfo: No 'data' header");
-		return false;
+	// It's almost certainly a WAV file, but we still need to find its
+	// 'data' chunk.
+
+	while (READ_UINT32(data + offset) != MKID('data')) {
+		if (offset >= wavLength) {
+			warning("getWavInfo: Can't find 'data' chunk");
+			return false;
+		}
+		offset += (READ_LE_UINT32(data + offset + 4) + 8);
 	}
 
-	wavInfo->samples = READ_LE_UINT32(data + 4);
-	wavInfo->data = data + 8;
+	wavInfo->samples = READ_LE_UINT32(data + offset + 4);
+	wavInfo->data = data + offset + 8;
 	return true;
 }
 
@@ -429,20 +440,11 @@ void Sound::restoreMusicState(void) {
 	}
 }
 
-void Sound::playLeadOut(uint8 *leadOut) {
-	int i;
+void Sound::waitForLeadOut(void) {
+	int i = getFxIndex(-1);
 
-	if (!leadOut)
+	if (i == MAXFX)
 		return;
-
-	playFx(0, leadOut, 0, 0, RDSE_FXLEADOUT);
-
-	i = getFxIndex(-1);
-
-	if (i == MAXFX) {
-		warning("playLeadOut: Can't find lead-out sound handle");
-		return;
-	}
 
 	while (_fx[i]._handle.isActive()) {
 		_vm->_graphics->updateDisplay();
