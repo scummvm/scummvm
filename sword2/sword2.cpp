@@ -388,9 +388,7 @@ void Sword2Engine::go() {
 
 		// skip GameCycle if we're paused
 		if (!_gamePaused) {
-#ifdef _SWORD2_DEBUG
 			_gameCycle++;
-#endif
 			gameCycle();
 		}
 
