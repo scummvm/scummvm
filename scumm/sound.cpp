@@ -763,7 +763,7 @@ int Sound::isSoundRunning(int sound) const {
 		if (sound == -2 || sound >= 10001) {
 			// Maybe checks sound channel?
 			return !isSfxFinished();
-		} else if (sound == -1 || sound == 10000 || sound == _currentMusic) {
+		} else if (sound == -1 || sound == 10000) {
 			// getSoundStatus(), with a -1, will return the
 			// ID number of the first active music it finds.
 			if (_vm->_heversion >= 70  || _currentMusic)
