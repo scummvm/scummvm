@@ -589,10 +589,9 @@ void Actor::putActor(int dstX, int dstY, byte newRoom) {
 		_vm->stopTalk();
 	}
 
-	// HACK: The green transparency of the tank in the Hall of Oddities is
+	// WORKAROUND: The green transparency of the tank in the Hall of Oddities is
 	// is positioned one pixel too far to the left. This appears to be a
 	// bug in the original game as well.
-
 	if (_vm->_gameId == GID_SAMNMAX && newRoom == 16 && number == 5 && dstX == 235 && dstY == 236)
 		dstX++;
 
@@ -1491,8 +1490,6 @@ void Actor::walkActor() {
 	Common::Point foundPath;
 
 	if (_vm->_version >= 7) {
-		// FIXME - this is kind of a hack right now but it fixes the
-		// walk scripts in The Dig.
 		if (moving & MF_FROZEN) {
 			if (moving & MF_TURN) {
 				new_dir = updateActorDirection(false);

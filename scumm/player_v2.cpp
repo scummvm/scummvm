@@ -382,7 +382,7 @@ Player_V2::Player_V2(ScummEngine *scumm, bool pcjr) {
 Player_V2::~Player_V2() {
 	mutex_up();
 	// Detach the premix callback handler
-	_mixer->setupPremix(0, 0);
+	_mixer->setupPremix(0);
 	mutex_down();
 	_system->deleteMutex (_mutex);
 }
@@ -536,10 +536,6 @@ int Player_V2::getSoundStatus(int nr) const {
 	return _current_nr == nr || _next_nr == nr;
 }
 
-
-void Player_V2::premix_proc(void *param, int16 *buf, uint len) {
-	((Player_V2 *) param)->do_mix(buf, len);
-}
 
 void Player_V2::clear_channel(int i) {
 	ChannelInfo *channel = &_channels[i];
@@ -794,6 +790,10 @@ void Player_V2::next_freqs(ChannelInfo *channel) {
 			}
 		}
 	}
+}
+
+void Player_V2::premix_proc(void *param, int16 *buf, uint len) {
+	((Player_V2 *) param)->do_mix(buf, len);
 }
 
 void Player_V2::do_mix(int16 *data, uint len) {

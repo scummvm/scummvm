@@ -51,7 +51,7 @@ Player_MOD::Player_MOD(ScummEngine *scumm) {
 
 Player_MOD::~Player_MOD() {
 	// Detach the premix callback handler
-	_mixer->setupPremix(0, 0);
+	_mixer->setupPremix(0);
 	for (int i = 0; i < MOD_MAXCHANS; i++) {
 		if (!_channels[i].id)
 			continue;
