@@ -878,9 +878,11 @@ int Scumm::scummLoop(int delta) {
 	VAR(VAR_HAVE_MSG) = (_haveMsg == 0xFE) ? 0xFF : _haveMsg;
 	VAR(VAR_VIRT_MOUSE_X) = _virtual_mouse_x;
 	VAR(VAR_VIRT_MOUSE_Y) = _virtual_mouse_y;
-	VAR(VAR_MOUSE_X) = mouse.x;
-	VAR(VAR_MOUSE_Y) = mouse.y;
-	VAR(VAR_DEBUGMODE) = _debugMode;
+	if (!(_features & GF_AFTER_V2)) {
+		VAR(VAR_MOUSE_X) = mouse.x;
+		VAR(VAR_MOUSE_Y) = mouse.y;
+		VAR(VAR_DEBUGMODE) = _debugMode;
+	}
 
 	if (_features & GF_AUDIOTRACKS) {
 		// Covered automatically by the Sound class

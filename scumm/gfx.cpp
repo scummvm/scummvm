@@ -2759,9 +2759,14 @@ void Scumm::cyclePalette() {
 	byte *start, *end;
 	byte tmp[3];
 
-	valueToAdd = VAR(VAR_TIMER);
-	if (valueToAdd < VAR(VAR_TIMER_NEXT))
+	if (_features & GF_AFTER_V2) {
+		// FIXME - no idea if this is right :-/
 		valueToAdd = VAR(VAR_TIMER_NEXT);
+	} else {
+		valueToAdd = VAR(VAR_TIMER);
+		if (valueToAdd < VAR(VAR_TIMER_NEXT))
+			valueToAdd = VAR(VAR_TIMER_NEXT);
+	}
 
 	if (!_colorCycle)							// FIXME
 		return;
