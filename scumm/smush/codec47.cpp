@@ -82,6 +82,9 @@ static int8 codec47_table_big2[] = {
   0, 0, 0, 0, 1, 3, 4, 6, 7, 7, 7, 7, 6, 4, 3, 1,
 };
 
+#ifdef __PALM_OS__
+static int8 *codec47_table;
+#else
 static int8 codec47_table[] = {
 		0,   0,  -1, -43,   6, -43,  -9, -42,  13, -41,
 	-16, -40,  19, -39, -23, -36,  26, -34,  -2, -33,
@@ -135,6 +138,7 @@ static int8 codec47_table[] = {
 	 23,  36, -19,  39,  16,  40, -13,  41,   9,  42,
 	 -6,  43,   1,  43,   0,   0,   0,   0,   0,   0
 };
+#endif
 
 void Codec47Decoder::makeTablesInterpolation(int param) {
 	int32 variable1, variable2;
@@ -612,3 +616,15 @@ bool Codec47Decoder::decode(byte *dst, const byte *src) {
 	return true;
 }
 
+#ifdef __PALM_OS__
+#include "scumm_globals.h"
+
+_GINIT(Codec47)
+_GSETPTR(codec47_table, GBVARS_CODEC47TABLE_INDEX, int8, GBVARS_SCUMM)
+_GEND
+
+_GRELEASE(Codec47)
+_GRELEASEPTR(GBVARS_CODEC47TABLE_INDEX, GBVARS_SCUMM)
+_GEND
+
+#endif

@@ -28,6 +28,9 @@
 
 const byte revBitMask[8] = { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 };
 
+#ifdef __PALM_OS__
+const byte *cost_scaleTable;
+#else
 const byte cost_scaleTable[256] = {
 	0xFF, 0xFD, 0x7D, 0xBD, 0x3D, 0xDD, 0x5D, 0x9D,
 	0x1D, 0xED, 0x6D, 0xAD, 0x2D, 0xCD, 0x4D, 0x8D,
@@ -62,6 +65,7 @@ const byte cost_scaleTable[256] = {
 	0x0E, 0x8E, 0x4E, 0xCE, 0x2E, 0xAE, 0x6E, 0xEE,
 	0x1E, 0x9E, 0x5E, 0xDE, 0x3E, 0xBE, 0x7E, 0xFE
 };
+#endif
 
 byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	int i, skip;
@@ -844,3 +848,16 @@ bool Scumm::isCostumeInUse(int cost) const {
 
 	return false;
 }
+
+#ifdef __PALM_OS__
+#include "scumm_globals.h"
+
+_GINIT(Costume)
+_GSETPTR(cost_scaleTable, GBVARS_COSTSCALETABLE_INDEX, byte, GBVARS_SCUMM)
+_GEND
+
+_GRELEASE(Costume)
+_GRELEASEPTR(GBVARS_COSTSCALETABLE_INDEX, GBVARS_SCUMM)
+_GEND
+
+#endif

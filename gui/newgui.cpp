@@ -516,9 +516,14 @@ void NewGui::animateCursor() {
 }
 
 #ifdef __PALM_OS__
-#include "scumm_globals.h"	// init globals
-void NewGui_initGlobals()	{
-	GSETPTR(guifont, GBVARS_GUIFONT_INDEX, byte, GBVARS_SCUMM)
-}
-void NewGui_releaseGlobals(){	GRELEASEPTR(GBVARS_GUIFONT_INDEX, GBVARS_SCUMM)				}
+#include "scumm_globals.h"
+
+_GINIT(NewGui)
+_GSETPTR(guifont, GBVARS_GUIFONT_INDEX, byte, GBVARS_SCUMM)
+_GEND
+
+_GRELEASE(NewGui)
+_GRELEASEPTR(GBVARS_GUIFONT_INDEX, GBVARS_SCUMM)
+_GEND
+
 #endif

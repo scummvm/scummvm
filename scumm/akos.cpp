@@ -1366,11 +1366,14 @@ void Scumm::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2) {
 }
 
 #ifdef __PALM_OS__
-#include "scumm_globals.h" // init globals
-void Akos_initGlobals()		{	
-	GSETPTR(defaultScaleTable, GBVARS_DEFAULTSCALETABLE_INDEX, byte, GBVARS_SCUMM)
-}
-void Akos_releaseGlobals()	{
-	GRELEASEPTR(GBVARS_DEFAULTSCALETABLE_INDEX, GBVARS_SCUMM)
-}
+#include "scumm_globals.h"
+
+_GINIT(Akos)
+_GSETPTR(defaultScaleTable, GBVARS_DEFAULTSCALETABLE_INDEX, byte, GBVARS_SCUMM)
+_GEND
+
+_GRELEASE(Akos)
+_GRELEASEPTR(GBVARS_DEFAULTSCALETABLE_INDEX, GBVARS_SCUMM)
+_GEND
+
 #endif
