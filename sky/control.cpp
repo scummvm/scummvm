@@ -1505,6 +1505,10 @@ void Control::delay(unsigned int amount) {
 				_mouseY = event.mouse.y;
 				break;
 			case OSystem::EVENT_LBUTTONDOWN:
+#ifdef __PALM_OS__
+				_mouseX = event.mouse.x;
+				_mouseY = event.mouse.y;
+#endif
 				_mouseClicked = true;
 				break;
 			case OSystem::EVENT_LBUTTONUP:
@@ -1521,6 +1525,7 @@ void Control::delay(unsigned int amount) {
 			}
 		}
 
+#ifndef __PALM_OS__
 		uint this_delay = 20; // 1?
 #ifdef _WIN32_WCE
 		this_delay = 10;
@@ -1529,7 +1534,7 @@ void Control::delay(unsigned int amount) {
 			this_delay = amount;
 
 		if (this_delay > 0)	_system->delayMillis(this_delay);
-
+#endif
 		cur = _system->getMillis();
 	} while (cur < start + amount);
 }

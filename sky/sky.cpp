@@ -423,9 +423,17 @@ void SkyEngine::delay(int32 amount) {
 				}
 				break;
 			case OSystem::EVENT_LBUTTONDOWN:
+#ifdef __PALM_OS__
+				_mouseX = event.mouse.x;
+				_mouseY = event.mouse.y;
+#endif
 				_skyMouse->buttonPressed(2);
 				break;
 			case OSystem::EVENT_RBUTTONDOWN:
+#ifdef __PALM_OS__
+				_mouseX = event.mouse.x;
+				_mouseY = event.mouse.y;
+#endif
 				_skyMouse->buttonPressed(1);
 				break;
 			case OSystem::EVENT_QUIT:
@@ -436,8 +444,11 @@ void SkyEngine::delay(int32 amount) {
 				break;
 			}
 		}
+
+#ifndef __PALM_OS__
 		if (amount > 0)
 			_system->delayMillis((amount > 10) ? 10 : amount);
+#endif
 
 	} while (_system->getMillis() < start + amount);
 }
