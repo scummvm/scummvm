@@ -177,16 +177,14 @@ WrappedMemoryStream<stereo, is16Bit, isUnsigned>::WrappedMemoryStream(int rate, 
 
 template<bool stereo, bool is16Bit, bool isUnsigned>
 inline int16 WrappedMemoryStream<stereo, is16Bit, isUnsigned>::read() {
-	if (eosIntern()) {
-		// If the stream contains no more data, it is silent...
-		return 0;
-	}
-	int16 val = READSAMPLE(is16Bit, isUnsigned, _pos);
-	_pos += (is16Bit ? 2 : 1);
+	assert(!eosIntern());
 
 	// Wrap around?
 	if (_pos >= _bufferEnd)
 		_pos = _pos - (_bufferEnd - _bufferStart);
+
+	int16 val = READSAMPLE(is16Bit, isUnsigned, _pos);
+	_pos += (is16Bit ? 2 : 1);
 
 	return val;
 }
@@ -195,6 +193,10 @@ template<bool stereo, bool is16Bit, bool isUnsigned>
 int WrappedMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffer, const int numSamples) {
 	int samples = 0;
 	while (samples < numSamples && !eosIntern()) {
+		// Wrap around?
+		if (_pos >= _bufferEnd)
+			_pos = _pos - (_bufferEnd - _bufferStart);
+
 		const byte *endMarker = (_pos > _end) ? _bufferEnd : _end;
 		const int len = MIN(numSamples, samples + (int)(endMarker - _pos) / (is16Bit ? 2 : 1));
 		while (samples < len) {
@@ -202,9 +204,6 @@ int WrappedMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffer, 
 			_pos += (is16Bit ? 2 : 1);
 			samples++;
 		}
-		// Wrap around?
-		if (_pos >= _bufferEnd)
-			_pos = _pos - (_bufferEnd - _bufferStart);
 	}
 	return samples;
 }
@@ -226,7 +225,7 @@ void WrappedMemoryStream<stereo, is16Bit, isUnsigned>::append(const byte *data, 
 		uint32 size_to_end_of_buffer = _bufferEnd - _end;
 		len -= size_to_end_of_buffer;
 		if ((_end < _pos) || (_bufferStart + len >= _pos)) {
-			debug(2, "WrappedMemoryStream: buffer overflow (A)");
+			warning("WrappedMemoryStream: buffer overflow (A)");
 			return;
 		}
 		memcpy(_end, data, size_to_end_of_buffer);
@@ -234,7 +233,7 @@ void WrappedMemoryStream<stereo, is16Bit, isUnsigned>::append(const byte *data, 
 		_end = _bufferStart + len;
 	} else {
 		if ((_end < _pos) && (_end + len >= _pos)) {
-			debug(2, "WrappedMemoryStream: buffer overflow (B)");
+			warning("WrappedMemoryStream: buffer overflow (B)");
 			return;
 		}
 		memcpy(_end, data, len);
@@ -319,17 +318,18 @@ public:
 #define MAKE_LINEAR(STEREO, UNSIGNED) \
 		if (is16Bit) { \
 			if (isLE) \
-				return new LinearMemoryStream<STEREO, true, UNSIGNED, true>(rate, ptr, len, loopOffset, loopLen, autoFreeMemory); \
+				return new LinearMemoryStream<STEREO, true, UNSIGNED, true>(rate, ptr, len, loopOffset, loopLen, autoFree); \
 			else  \
-				return new LinearMemoryStream<STEREO, true, UNSIGNED, false>(rate, ptr, len, loopOffset, loopLen, autoFreeMemory); \
+				return new LinearMemoryStream<STEREO, true, UNSIGNED, false>(rate, ptr, len, loopOffset, loopLen, autoFree); \
 		} else \
-			return new LinearMemoryStream<STEREO, false, UNSIGNED, false>(rate, ptr, len, loopOffset, loopLen, autoFreeMemory)
+			return new LinearMemoryStream<STEREO, false, UNSIGNED, false>(rate, ptr, len, loopOffset, loopLen, autoFree)
 
-AudioInputStream *makeLinearInputStream(int rate, byte _flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen, bool autoFreeMemory) {
-	const bool isStereo = (_flags & SoundMixer::FLAG_STEREO) != 0;
-	const bool is16Bit = (_flags & SoundMixer::FLAG_16BITS) != 0;
+AudioInputStream *makeLinearInputStream(int rate, byte _flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen) {
+	const bool isStereo   = (_flags & SoundMixer::FLAG_STEREO) != 0;
+	const bool is16Bit    = (_flags & SoundMixer::FLAG_16BITS) != 0;
 	const bool isUnsigned = (_flags & SoundMixer::FLAG_UNSIGNED) != 0;
-	const bool isLE    = (_flags & SoundMixer::FLAG_LITTLE_ENDIAN) != 0;
+	const bool isLE       = (_flags & SoundMixer::FLAG_LITTLE_ENDIAN) != 0;
+	const bool autoFree   = (_flags & SoundMixer::FLAG_AUTOFREE) != 0;
 	
 	if (isStereo) {
 		if (isUnsigned) {

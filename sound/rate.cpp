@@ -192,6 +192,8 @@ the_end:
 
 /**
  * Simple audio rate converter for the case that the inrate equals the outrate.
+ * @todo This is inefficient, it would be better if this used readBuffer()
+ *       instead of read().
  */
 template<bool stereo, bool reverseStereo>
 class CopyRateConverter : public RateConverter {

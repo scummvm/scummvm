@@ -219,13 +219,11 @@ void SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
 void SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id, byte volume, int8 pan, uint32 loopStart, uint32 loopEnd) {
 	Common::StackLock lock(_mutex);
 
-	const bool autoFreeMemory = (flags & SoundMixer::FLAG_AUTOFREE) != 0;
-
 	// Prevent duplicate sounds
 	if (id != -1) {
 		for (int i = 0; i != NUM_CHANNELS; i++)
 			if (_channels[i] != 0 && _channels[i]->getId() == id) {
-				if (autoFreeMemory)
+				if ((flags & SoundMixer::FLAG_AUTOFREE) != 0)
 					free(sound);
 				return;
 			}
@@ -235,13 +233,13 @@ void SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, u
 	AudioInputStream *input;
 	if (flags & SoundMixer::FLAG_LOOP) {
 		if (loopEnd == 0) {
-			input = makeLinearInputStream(rate, flags, (byte *)sound, size, 0, size, autoFreeMemory);
+			input = makeLinearInputStream(rate, flags, (byte *)sound, size, 0, size);
 		} else {
 			assert(loopStart < loopEnd && loopEnd <= size);
-			input = makeLinearInputStream(rate, flags, (byte *)sound, size, loopStart, loopEnd - loopStart, autoFreeMemory);
+			input = makeLinearInputStream(rate, flags, (byte *)sound, size, loopStart, loopEnd - loopStart);
 		}
 	} else {
-		input = makeLinearInputStream(rate, flags, (byte *)sound, size, 0, 0, autoFreeMemory);
+		input = makeLinearInputStream(rate, flags, (byte *)sound, size, 0, 0);
 	}
 
 	// Create the channel
