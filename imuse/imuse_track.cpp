@@ -25,9 +25,6 @@
 #include "imuse.h"
 #include "imuse_sndmgr.h"
 
-extern SoundMixer *g_mixer;
-
-
 int Imuse::allocSlot(int priority) {
 	int l, lowest_priority = 127;
 	int trackId = -1;
@@ -185,6 +182,8 @@ int Imuse::getVolume(const char *soundName) {
 			return track->vol / 1000;
 		}
 	}
+
+	return 0;
 }
 
 int Imuse::getCountPlayedTracks() {

@@ -234,14 +234,14 @@ static void gc_Color() {
 
 static void ReadRegistryValue() {
 	char *key = luaL_check_string(1);
-	const char *val = Registry::instance()->get(key);
+	const char *val = g_registry->get(key);
 	lua_pushstring(const_cast<char *>(val));
 }
 
 static void WriteRegistryValue() {
 	char *key = luaL_check_string(1);
 	char *val = luaL_check_string(2);
-	Registry::instance()->set(key, val);
+	g_registry->set(key, val);
 }
 
 // Localization function

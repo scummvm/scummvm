@@ -26,9 +26,7 @@
 #include "imuse.h"
 #include "imuse_sndmgr.h"
 
-extern SoundMixer *g_mixer;
-
-Imuse *g_imuse;
+Imuse *g_imuse = NULL;
 
 Imuse::Track::Track()
 	: used(false), stream(NULL) {

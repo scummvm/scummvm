@@ -26,8 +26,6 @@
 #include "imuse.h"
 #include "imuse_sndmgr.h"
 
-extern SoundMixer *g_mixer;
-
 void Imuse::flushTracks() {
 	for (int l = 0; l < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; l++) {
 		Track *track = _track[l];

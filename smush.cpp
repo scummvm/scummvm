@@ -29,7 +29,6 @@
 #include "driver_gl.h"
 
 Smush *g_smush;
-extern SoundMixer *g_mixer;
 static uint16 smushDestTable[5786];
 void vimaInit(uint16 *destTable);
 void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable);

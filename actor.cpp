@@ -26,8 +26,6 @@
 #include "driver_gl.h"
 #include "mixer/mixer.h"
 
-extern SoundMixer *g_mixer;
-
 Actor::Actor(const char *name) :
 		_name(name), _talkColor(255, 255, 255), _pos(0, 0, 0),
 		_pitch(0), _yaw(0), _roll(0), _walkRate(0), _turnRate(0),

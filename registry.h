@@ -23,15 +23,14 @@
 
 class Registry {
 public:
-	static Registry *instance();
-
 	const char *get(const char *key) const;
 	void set(const char *key, const char *val);
 	void save();
 
-private:
 	Registry();
 	~Registry() { }
+
+private:
 
 	static Registry *_instance;
 
@@ -39,5 +38,7 @@ private:
 	Group _settings;
 	bool _dirty;
 };
+
+extern Registry *g_registry;
 
 #endif

@@ -20,6 +20,8 @@
 #include "debug.h"
 #include <cstdlib>
 
+Registry *g_registry = NULL;
+
 Registry::Registry() : _dirty(false) {
 #ifdef WIN32
 	std::string filename = "residual.ini";
@@ -43,14 +45,6 @@ Registry::Registry() : _dirty(false) {
 		}
 		std::fclose(f);
 	}
-}
-
-Registry *Registry::_instance = NULL;
-
-Registry *Registry::instance() {
-	if (_instance == NULL)
-		_instance = new Registry;
-	return _instance;
 }
 
 const char *Registry::get(const char *key) const {

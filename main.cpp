@@ -39,19 +39,13 @@
 // Hacky global toggles for experimental/debug code
 bool ZBUFFER_GLOBAL, SCREENBLOCKS_GLOBAL, SHOWFPS_GLOBAL;
 
-static void saveRegistry() {
-	Registry::instance()->save();
-}
-
 #ifdef __MINGW32__
 int PASCAL WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
 	return main(0, NULL);
 }
 #endif
 
-extern SoundMixer *g_mixer;
-extern Timer *g_timer;
-extern Imuse *g_imuse;
+static bool g_lua_initialized = false;
 
 static bool parseBoolStr(const char *val) {
 	if (val == NULL || val[0] == 0)
@@ -84,10 +78,26 @@ void quit();
 int main(int argc, char *argv[]) {
 	int i;
 
+	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+		return 1;
+
+	atexit(quit);
+
+	g_registry = new Registry();
+	g_engine = new Engine();
+	g_resourceloader = new ResourceLoader();
+	g_localizer = new Localizer();
+	g_mixer = new SoundMixer();
+	g_mixer->setVolume(255);
+	g_timer = new Timer();
+	g_smush = new Smush();
+	g_driver = new Driver(640, 480, 24);
+	g_imuse = new Imuse(10);
+
 	// Parse command line
-	ZBUFFER_GLOBAL = parseBoolStr(Registry::instance()->get("zbuffer"));
-	SCREENBLOCKS_GLOBAL = parseBoolStr(Registry::instance()->get("screenblocks"));
-	SHOWFPS_GLOBAL = parseBoolStr(Registry::instance()->get("fps"));
+	ZBUFFER_GLOBAL = parseBoolStr(g_registry->get("zbuffer"));
+	SCREENBLOCKS_GLOBAL = parseBoolStr(g_registry->get("screenblocks"));
+	SHOWFPS_GLOBAL = parseBoolStr(g_registry->get("fps"));
 	for (i = 1; i < argc; i++) {
 		if (strcmp(argv[i], "-zbuffer") == 0)
 			ZBUFFER_GLOBAL = true;
@@ -111,21 +121,6 @@ int main(int argc, char *argv[]) {
 			exit(-1);
 		}
 	}
-
-	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
-		return 1;
-
-	atexit(quit);
-
-	g_engine = new Engine();
-	g_resourceloader = new ResourceLoader();
-	g_localizer = new Localizer();
-	g_mixer = new SoundMixer();
-	g_mixer->setVolume(255);
-	g_timer = new Timer();
-	g_smush = new Smush();
-	g_driver = new Driver(640, 480, 24);
-	g_imuse = new Imuse(10);
 
 	Bitmap *splash_bm = g_resourceloader->loadBitmap("splash.bm");
 
@@ -153,6 +148,8 @@ int main(int argc, char *argv[]) {
 	lua_mathlibopen();
 
 	register_lua();
+	g_lua_initialized = true;
+
 	bundle_dofile("_system.lua");
 
 	lua_pushnil();		// resumeSave
@@ -169,20 +166,48 @@ int main(int argc, char *argv[]) {
 }
 
 void quit() {
-	saveRegistry();
-
-	delete g_smush;
-	delete g_imuse;
-	delete g_localizer;
-	delete g_resourceloader;
-	delete g_engine;
-	delete g_timer;
-	delete g_mixer;
-	delete g_driver;
-
-	lua_removelibslists();
-	lua_close();
-
+	if (g_lua_initialized) {
+		lua_removelibslists();
+		lua_close();
+		g_lua_initialized = false;
+	}
+	if (g_registry) {
+		g_registry->save();
+		delete g_registry;
+		g_registry = NULL;
+	}
+	if (g_smush) {
+		delete g_smush;
+		g_smush = NULL;
+	}
+	if (g_imuse) {
+		delete g_imuse;
+		g_imuse = NULL;
+	}
+	if (g_localizer) {
+		delete g_localizer;
+		g_localizer = NULL;
+	}
+	if (g_resourceloader) {
+		delete g_resourceloader;
+		g_resourceloader = NULL;
+	}
+	if (g_engine) {
+		delete g_engine;
+		g_engine = NULL;
+	}
+	if (g_timer) {
+		delete g_timer;
+		g_timer = NULL;
+	}
+	if (g_mixer) {
+		delete g_mixer;
+		g_mixer = NULL;
+	}
+	if (g_driver) {
+		delete g_driver;
+		g_driver = NULL;
+	}
 	SDL_Quit();
 }
 

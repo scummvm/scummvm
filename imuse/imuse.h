@@ -147,4 +147,6 @@ public:
 	int32 getCurMusicPosInMs();
 };
 
+extern Imuse *g_imuse;
+
 #endif
