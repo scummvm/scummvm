@@ -2,8 +2,15 @@
 # This file is used by Makefile and Makefile.mingw and declares common build rules,
 # a list of common object files etc.
 
+######################################################################
 # The defaul build target: just build the scummvm executable
+######################################################################
 all: scummvm$(EXEEXT)
+
+
+######################################################################
+# Various minor settings
+######################################################################
 
 # Files that are to be included in the archive built by "make dist"
 DISTFILES := \
@@ -19,10 +26,24 @@ ZIPFILE := scummvm-`date '+%Y-%m-%d'`.zip
 # The name for the directory used for depenency tracking
 DEPDIR := .deps
 
-# List of all sub modules (note: order is important, don't mess with it)
-# TODO - the nested ones (scumm/smush, backends/...) should be handled from the
-# module.mk of their parents. In fact the only reason they are listed here is to ensure the
-# DEPDIRS directive works correctly.
+
+######################################################################
+# Plugin settings
+######################################################################
+
+# For now we only support "static" plugins
+STATIC_PLUGINS := 1
+
+# Plugin prefix. Typically "lib" on Unix, and nothing everywhere else
+PLUGIN_PREFIX := lib
+# Plugin suffix. For static/shared libs this is typically ".so"/".a" on Unix,
+# ".dll"/".lib" on Windows, ".bundle"/".a" on OS X, etc.
+PLUGIN_SUFFIX := .a
+
+
+######################################################################
+# Module settings
+######################################################################
 
 ifdef DISABLE_SCUMM
 DEFINES += -DDISABLE_SCUMM
@@ -48,6 +69,7 @@ else
 MODULES += bs2 bs2/driver
 endif
 
+# After the game specific modules follow the shared modules
 MODULES += \
 	common \
 	gui \
@@ -57,6 +79,12 @@ MODULES += \
 	backends/fs/morphos \
 	backends/fs/windows \
 	backends/midi
+
+
+######################################################################
+# The build rules follow - normally you should have no need to
+# touch whatever comes after here.
+######################################################################
 
 # Concat DEFINES and INCLUDES to form the CPPFLAGS
 CPPFLAGS:= $(DEFINES) $(INCLUDES)
@@ -80,15 +108,14 @@ clean:
 
 .PHONY: all clean dist distclean
 
-# Default (dumb) compile & dependcy rules
+DEPDIRS = $(addsuffix /$(DEPDIR),$(MODULES))
+DEPFILES = $(wildcard $(addsuffix /*.d,$(DEPDIRS)))
+
+# Old (dumb) compile & dependcy rules
 #INCS	= scumm/scumm.h common/scummsys.h common/stdafx.h
 #.cpp.o:
 #	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 #$(OBJS): $(INCS)
-
-
-DEPDIRS = $(addsuffix /$(DEPDIR),$(MODULES))
-DEPFILES = $(wildcard $(addsuffix /*.d,$(DEPDIRS)))
 
 ifndef HAVE_GCC3
 # If you use GCC, disable the above and enable this for intelligent
