@@ -814,14 +814,8 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 
 	if (_vm->_features & GF_SMALL_HEADER) {
 		/* this is really ugly, FIXME */
-		if (ptr[-2] == 'B' && ptr[-1] == 'M' && READ_LE_UINT32(ptr - 6) > (READ_LE_UINT32(ptr) + 10)) {
-			zplane_list[1] = smap_ptr + READ_LE_UINT32(ptr);
-			// FIXME - how does GF_OLD256 encode the multiple zplanes?
-			if (!(_vm->_features & GF_OLD256))
-				for (i = 2; i < numzbuf; i++) {
-					zplane_list[i] = zplane_list[i-1] + READ_LE_UINT16(zplane_list[i-1]);
-			}
-		} else if (ptr[-4] == 'O' && ptr[-3] == 'I' && READ_LE_UINT32(ptr - 8) > READ_LE_UINT32(ptr) + 12) {
+		if ((ptr[-2] == 'B' && ptr[-1] == 'M' && READ_LE_UINT32(ptr - 6) > (READ_LE_UINT32(ptr) + 10)) ||
+		    (ptr[-4] == 'O' && ptr[-3] == 'I' && READ_LE_UINT32(ptr - 8) > READ_LE_UINT32(ptr) + 12)) {
 			zplane_list[1] = smap_ptr + READ_LE_UINT32(ptr);
 			// FIXME - how does GF_OLD256 encode the multiple zplanes?
 			if (!(_vm->_features & GF_OLD256))
@@ -946,12 +940,11 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 				if (!zplane_list[i])
 					continue;
 
-				if (_vm->_features & GF_SMALL_HEADER) {
-					if (_vm->_features & GF_OLD256)
-						offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 4);
-					else
-						offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 2);
-				} else if (_vm->_features & GF_AFTER_V8)
+				if (_vm->_features & GF_OLD256)
+					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 4);
+				else if (_vm->_features & GF_SMALL_HEADER)
+					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 2);
+				else if (_vm->_features & GF_AFTER_V8)
 					offs = READ_LE_UINT32(zplane_list[i] + stripnr * 4 + 8);
 				else
 					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 8);
