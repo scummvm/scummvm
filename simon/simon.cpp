@@ -2154,6 +2154,8 @@ void SimonState::loadTablesIntoMem(uint subr_id) {
 				memcpy(filename, "SFXXXX", 6);
 				readSfxFile(filename);
 
+				alignTableMem();
+	
 				_tablesheap_ptr_new = _tablesheap_ptr;
 				_tablesheap_curpos_new = _tablesheap_curpos;
 
@@ -2434,7 +2436,7 @@ void SimonState::setup_cond_c_helper() {
 			handle_unk_hitarea(_last_hitarea->fcs);
 		} else if (_last_hitarea->item_ptr != NULL) {
 			_hitarea_object_item = _last_hitarea->item_ptr;
-			_variableArray[0x78/2] = (_last_hitarea->flags&1) ? (_last_hitarea->flags>>8) : 0xFFFF;
+			_variableArray[60] = (_last_hitarea->flags&1) ? (_last_hitarea->flags>>8) : 0xFFFF;
 			break;
 		}
 	}
@@ -2820,7 +2822,7 @@ bool SimonState::hitarea_proc_2(uint a) {
 	if (_game & GAME_SIMON2) {
 		if (_bit_array[4]&0x8000) {
 			Subroutine *sub;
-			_variableArray[0xA8/2] = a;
+			_variableArray[84] = a;
 			sub = getSubroutineByID(5003);
 			if (sub != NULL)
 				startSubroutineEx(sub);
@@ -3249,7 +3251,7 @@ if_1:;
 				id = 0xFFFF;
 				if (ha->flags&1)
 					id = ha->flags>>8;
-				_variableArray[0x78/2] = id;
+				_variableArray[60] = id;
 				new_current_hitarea(ha);
 				if (_verb_hitarea != 0)
 					break;
@@ -3886,8 +3888,11 @@ void SimonState::run_vga_script() {
 
 #ifdef DUMP_CONTINOUS_VGASCRIPT
 		if ((void*)_vc_ptr != (void*)&vc_get_out_of_code) {
-			fprintf(_dump_file,"%.5X: %5d %4d ", _vc_ptr -_cur_vga_file_1, _vga_cur_sprite_id, _vga_cur_file_id);
-			dump_video_script(_vc_ptr, true);
+//			if (_vga_cur_sprite_id==62 && _vga_cur_file_id==68 ||
+//			    _vga_cur_sprite_id==1 && _vga_cur_file_id==2) {
+				fprintf(_dump_file,"%.5d %.5X: %5d %4d ", _vga_tick_counter, _vc_ptr -_cur_vga_file_1, _vga_cur_sprite_id, _vga_cur_file_id);
+				dump_video_script(_vc_ptr, true);
+//			}
 		}
 #endif
 
@@ -3908,8 +3913,8 @@ void SimonState::run_vga_script() {
 	}
 }
 
-int SimonState::vc_read_var_or_word(void *ptr) {
-	int16 var = READ_BE_UINT16_UNALIGNED(ptr);
+int SimonState::vc_read_var_or_word() {
+	int16 var = vc_read_next_word();
 	if (var < 0)
 		var = vc_read_var(-var);
 	return var;
@@ -3976,7 +3981,7 @@ void SimonState::vc_2() {
 	byte *old_file_1, *old_file_2;
 	byte *b,*bb, *vc_ptr_org;
 
-	num = vc_read_var_or_word(_vc_ptr);
+	num = vc_read_var_or_word();
 
 	old_file_1 = _cur_vga_file_1;
 	old_file_2 = _cur_vga_file_2;
@@ -4015,7 +4020,7 @@ void SimonState::vc_2() {
 	_cur_vga_file_1 = old_file_1;
 	_cur_vga_file_2 = old_file_2;
 
-	_vc_ptr = vc_ptr_org + 2;
+	_vc_ptr = vc_ptr_org;
 }
 
 void SimonState::vc_3() {
@@ -4724,8 +4729,7 @@ void SimonState::vc_12_sleep_variable() {
 	uint num;
 
 	if (!(_game & GAME_SIMON2)) {
-		num = vc_read_var_or_word(_vc_ptr);
-		_vc_ptr += 2;
+		num = vc_read_var_or_word();
 	} else {
 		num = vc_read_next_byte() * _vga_base_delay;
 	}
@@ -4897,8 +4901,7 @@ void SimonState::vc_23_set_pri() {
 
 void SimonState::vc_24_set_image_xy() {
 	VgaSprite *vsp = find_cur_sprite();
-	vsp->image = vc_read_var_or_word(_vc_ptr);
-	_vc_ptr += 2;
+	vsp->image = vc_read_var_or_word();
 
 	if (vsp->id==0) {
 		warning("Trying to set XY of nonexistent sprite '%d'", _vga_cur_sprite_id);
@@ -5304,8 +5307,12 @@ void SimonState::vc_55_offset_hit_area() {
 void SimonState::vc_56_no_op() {
 	/* No-Op in simon1 */
 	if (_game & GAME_SIMON2) {
-		uint num = vc_read_var_or_word(_vc_ptr) * _vga_base_delay;
-		_vc_ptr += 2;
+		uint num = vc_read_var_or_word() * _vga_base_delay;
+
+#ifdef DUMP_CONTINOUS_VGASCRIPT
+		fprintf(_dump_file,"; sleep_ex = %d\n", num + gss->VGA_DELAY_BASE);
+#endif
+
 		add_vga_timer(num + gss->VGA_DELAY_BASE, _vc_ptr, _vga_cur_sprite_id, _vga_cur_file_id);
 		_vc_ptr = (byte*)&vc_get_out_of_code;
 	}
@@ -5417,8 +5424,7 @@ void SimonState::vc_60() {
 void SimonState::vc_61_sprite_change() {
 	VgaSprite *vsp = find_cur_sprite();	
 
-	vsp->image = vc_read_var_or_word(_vc_ptr);
-	_vc_ptr += 2;
+	vsp->image = vc_read_var_or_word();
 
 	vsp->x += vc_read_next_word();
 	vsp->y += vc_read_next_word();
@@ -6924,10 +6930,16 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 
 	len_div_3 = (strlen(string_ptr) + 3) / 3;
 
-	if (_variableArray[0x11a/2] == 0)
-		_variableArray[0x11a/2] = 9;
+	if (!(_game & GAME_SIMON2)) {
+		if (_variableArray[141] == 0)
+			_variableArray[141] = 9;
+		_variableArray[85] = _variableArray[141] * len_div_3;
+	} else {
+		if (_variableArray[86] == 0) len_div_3 >>= 1;
+		if (_variableArray[86] == 2) len_div_3 <<= 1;
+		_variableArray[85] = len_div_3 * 5;
+	}
 
-	_variableArray[0xAA/2] = _variableArray[0x11A/2] * len_div_3;
 	num_of_rows = strlen(string_ptr) / letters_per_row;
 
 	while(num_of_rows==1 && j!=-1) {
@@ -8066,6 +8078,9 @@ void decompressIcon(byte *dst, byte *src, uint pitch, byte base) {
 	}
 }
 
+#define SIMON2
+#define SIMON2WIN
+
 static const char * const opcode_name_table[256] = {
 	/* 0 */
 	"|INV_COND",
@@ -8457,8 +8472,6 @@ void SimonState::dumpSubroutines() {
 	}
 }
 
-
-
 const char * const video_opcode_name_table[] = {
 	/* 0 */
 	"x|RET",
@@ -8540,7 +8553,7 @@ const char * const video_opcode_name_table[] = {
 	"ddd|OFFSET_HIT_AREA",
 	/* 56 */
 #ifdef SIMON2
-	"d|SLEEP_EX",
+	"i|SLEEP_EX",
 #else
 	"|DUMMY_7",
 #endif

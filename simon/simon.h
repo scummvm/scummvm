@@ -901,7 +901,7 @@ public:
 
 	void delete_vga_timer(VgaTimerEntry *vte);
 	void vc_resume_thread(byte *code_ptr, uint16 cur_file, uint16 cur_sprite);
-	int vc_read_var_or_word(void *ptr);
+	int vc_read_var_or_word();
 	uint vc_read_next_word();
 	uint vc_read_next_byte();
 	uint vc_read_var(uint var);
