@@ -82,6 +82,7 @@ SkyMouse::SkyMouse(OSystem *system, SkyDisk *skyDisk) {
 	_skyDisk = skyDisk;
 	_system = system;
 	_mouseB = 0;
+	_currentCursor = 6;
 	
 	_miceData = _skyDisk->loadFile(MICE_FILE, NULL);
 	fixMouseTransparency(_miceData, _skyDisk->_lastLoadedFileSize);
