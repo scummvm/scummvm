@@ -1008,7 +1008,7 @@ void Scumm_v2::o2_getActorX() {
 	getResultPos();
 
 	a = getVarOrDirectByte(0x80);
-	setResult(getObjX(a));
+	setResult(getObjX(a) / 8);
 }
 
 void Scumm_v2::o2_getActorY() {
@@ -1016,7 +1016,7 @@ void Scumm_v2::o2_getActorY() {
 	getResultPos();
 
 	a = getVarOrDirectByte(0x80);
-	setResult(getObjY(a));
+	setResult(getObjY(a) / 2);
 }
 
 void Scumm_v2::o2_loadRoomWithEgo() {
