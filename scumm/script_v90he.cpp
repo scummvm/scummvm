@@ -995,7 +995,6 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 	int args[16];
 	int spriteId;
 	int32 tmp[2];
-	static int storedFields[2];
 	int n;
 
 	byte subOp = fetchScriptByte();
@@ -1013,7 +1012,6 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++) {
 			spriteInfoGet_dx_dy(spriteId, tmp[0], tmp[1]);
-			storedFields[0] = tmp[0];
 			spriteInfoSet_dx_dy(spriteId, args[0], tmp[1]);
 		}
 		break;
@@ -1027,7 +1025,6 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++) {
 			spriteInfoGet_dx_dy(spriteId, tmp[0], tmp[1]);
-			storedFields[1] = tmp[1];
 			spriteInfoSet_dx_dy(spriteId, tmp[0], args[0]);
 		}
 		break;
