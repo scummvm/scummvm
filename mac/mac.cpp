@@ -773,7 +773,7 @@ void About()
     osError = RunAppModalLoopForWindow(aboutWin);
 }
 
-ControlRef radioGroupRef;
+ControlRef radioGroupRef, musicVolumeSlider, masterVolumeSlider;
 
 OSStatus prefsEventHandler(EventHandlerCallRef eventHandlerCallRef,EventRef eventRef,
                              void *userData)
@@ -801,6 +801,12 @@ OSStatus prefsEventHandler(EventHandlerCallRef eventHandlerCallRef,EventRef even
         short scale = GetControlValue(radioGroupRef);
         if(scale != wm->_scumm->_scale)
         	wm->ChangeScaling(scale);
+        short music_vol = GetControlValue(musicVolumeSlider);
+        if(music_vol != sound.get_music_volume())
+        	sound.set_music_volume(music_vol);
+        short master_vol = GetControlValue(masterVolumeSlider);
+        if(master_vol != sound.get_master_volume())
+        	sound.set_master_volume(master_vol);
         QuitAppModalLoopForWindow((WindowRef)userData);
         DisposeWindow((WindowRef)userData);
         result = noErr;
@@ -812,10 +818,9 @@ OSStatus prefsEventHandler(EventHandlerCallRef eventHandlerCallRef,EventRef even
 void Preferences()
 {
 	WindowRef	prefsWin;
-	OSStatus      osError = noErr;
-	Rect          rect = { 0,0,150,300 };
-	Rect          pushButtonRect = { 125,125,145,175 };
-	Rect		checkboxRect = { 30, 10, 45, 90 };
+	OSStatus    osError = noErr;
+	Rect        rect = { 0,0,210,300 };
+	Rect        okButtonRect;
 	ControlID	controlID;
 	ControlRef	controlRef;
 	EventTypeSpec dialogEvents[] = { kEventClassControl, kEventControlHit };
@@ -826,28 +831,42 @@ void Preferences()
 	SetThemeWindowBackground(prefsWin,kThemeBrushDialogBackgroundActive,false);
 	CreateRootControl(prefsWin,&controlRef);
 	
-    CreatePushButtonControl(prefsWin,&pushButtonRect,CFSTR("OK"),&controlRef);
+	SetRect(&rect, 5, 5, 150, 21);
+	
+	CreateStaticTextControl(prefsWin, &rect, CFSTR("ScummVM Preferences"), NULL, &controlRef);
+	AutoEmbedControl(controlRef, prefsWin);
+	
+	SetRect(&okButtonRect, 225, 180, 295, 200);
+	
+    CreatePushButtonControl(prefsWin,&okButtonRect,CFSTR("OK"),&controlRef);
     SetWindowDefaultButton(prefsWin,controlRef);
     controlID.id = 'okay';
     SetControlID(controlRef,&controlID);
     AutoEmbedControl(controlRef,prefsWin);
     
-    CreateCheckBoxControl(prefsWin,&checkboxRect, CFSTR("Subtitles"), 1,
-    				true, &checkBoxControlRef);
-    AutoEmbedControl(checkBoxControlRef,prefsWin);
+    SetRect(&rect, 150, 35, 260, 51);
+    
+    CreateCheckBoxControl(prefsWin,&rect, CFSTR("Subtitles"), 1, true, &checkBoxControlRef);
+    AutoEmbedControl(checkBoxControlRef, prefsWin);
     
     if(wm->_scumm->_noSubtitles)
     	SetControlValue(checkBoxControlRef, false);
     
+    OffsetRect(&rect, 0, 20);
+    
+    CreateCheckBoxControl(prefsWin,&rect, CFSTR("Fullscreen"), 0, true, &controlRef);
+    AutoEmbedControl(controlRef, prefsWin);
+    DeactivateControl(controlRef);
+    
     Rect RadioGroupRect;
-    SetRect(&RadioGroupRect, 120, 10, 290, 120);
+    SetRect(&RadioGroupRect, 5, 35, 120, 100);
     CreateRadioGroupControl(prefsWin, &RadioGroupRect, &radioGroupRef);
     AutoEmbedControl(radioGroupRef, prefsWin);
     
     ControlRef radioButton;
     
     Rect RadioButtonRect;	
-    SetRect(&RadioButtonRect, 125, 30, 285, 45);
+    SetRect(&RadioButtonRect, 5, 35, 120, 51);
     CreateRadioButtonControl(prefsWin, &RadioButtonRect, CFSTR("Scaling 1x"), 0, true, &radioButton);
     AutoEmbedControl(radioButton, prefsWin);
     	
@@ -860,6 +879,29 @@ void Preferences()
     AutoEmbedControl(radioButton, prefsWin);
     
     SetControlValue(radioGroupRef, wm->_scumm->_scale);
+    
+    SetRect(&rect, 5, 110, 175, 146);
+    
+    CreateSliderControl(prefsWin, &rect, sound.get_music_volume(), 1, 100,
+    		kControlSliderPointsDownOrRight, 10, false, NULL, &musicVolumeSlider);
+    AutoEmbedControl(musicVolumeSlider, prefsWin);
+    
+    OffsetRect(&rect, 0, 36);
+    
+    CreateSliderControl(prefsWin, &rect, sound.get_master_volume(), 1, 100,
+    		kControlSliderPointsDownOrRight, 10, false, NULL, &masterVolumeSlider);
+    AutoEmbedControl(masterVolumeSlider, prefsWin);
+    
+    OffsetRect(&rect, 180, -36);
+    
+    CreateStaticTextControl(prefsWin, &rect, CFSTR("Music Volume"), NULL, &controlRef);
+	AutoEmbedControl(controlRef, prefsWin);
+	
+	OffsetRect(&rect, 0, 36);
+    
+    CreateStaticTextControl(prefsWin, &rect, CFSTR("Master Volume"), NULL, &controlRef);
+	AutoEmbedControl(controlRef, prefsWin);
+    
     InstallWindowEventHandler(prefsWin, NewEventHandlerUPP((EventHandlerProcPtr) prefsEventHandler),
                               GetEventTypeCount(dialogEvents),dialogEvents,prefsWin,NULL);
     ShowWindow(prefsWin);
