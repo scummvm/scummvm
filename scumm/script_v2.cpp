@@ -719,10 +719,14 @@ void Scumm_v2::o2_resourceRoutines() {
 			unlock(rtRoom, resid);
 			return;
 		default:
-			error("o2_resourceRoutines: unknown lock/unlock opcode");
+			error("o2_resourceRoutines: unknown lock/unlock opcode %d", (opcode & 0xF1));
 		}
 	} else {
 		switch (opcode & 0xf1) {
+		// FIXME why is this case happening?
+		case 0:
+			warning("o2_resourceRoutines: unknown lock/unlock opcode 0");
+			return;
 		case 96:
 		case 80:
 		case 32:
@@ -741,7 +745,7 @@ void Scumm_v2::o2_resourceRoutines() {
 			ensureResourceLoaded(rtRoom, resid);
 			return;
 		default:
-			error("o2_resourceRoutines: unknown load/nuke opcode");
+			error("o2_resourceRoutines: unknown load/nuke opcode %d", (opcode & 0xF1));
 		}
 	}
 }
