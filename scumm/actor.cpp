@@ -859,8 +859,10 @@ void Actor::drawActorCostume()
 	if (!needRedraw)
 		return;
 
-	// FIXME: ugly fix for samnmax inventory
-	if (_vm->_gameId == GID_SAMNMAX && _vm->getState(995))
+	// FIXME: ugly fix for samnmax inventory (otherwise actors get drawn over the
+	// inventory). We make an exception for room 66 (the Car Bomb game), for otherwise
+	// that will be drawn incorrectly. Oh well....
+	if (_vm->_gameId == GID_SAMNMAX && _vm->getState(995) && _vm->_currentRoom != 66)
 		return;
 
 	needRedraw = false;
