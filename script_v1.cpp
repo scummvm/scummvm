@@ -1074,7 +1074,7 @@ void Scumm::o5_drawObject()
 
 	if (_features & GF_SMALL_HEADER) {
 		int temp = getVarOrDirectWord(0x40);
-		getVarOrDirectWord(0x20);		// Room
+		int temp2= getVarOrDirectWord(0x20);		// Room
 
 		idx = getObjectIndex(obj);
 		if (idx == -1)
@@ -1082,11 +1082,10 @@ void Scumm::o5_drawObject()
 		od = &_objs[idx];
 		xpos = ypos = 255;
 		if (temp != 0xFF) {
-			od->walk_x += (xpos << 3) - od->x_pos;
-			od->x_pos = xpos << 3;
-			od->walk_y += (ypos << 3) - od->y_pos;
-			od->y_pos = ypos << 3;
+			od->x_pos = temp<<3;
+			od->y_pos = temp2<<3;
 		}
+
 		addObjectToDrawQue(idx);
 
 		x = od->x_pos;
@@ -1881,7 +1880,7 @@ void Scumm::o5_roomOps()
 	if (_features & GF_OLD256) {
 		a = getVarOrDirectByte(0x80);
 		b = getVarOrDirectByte(0x40);
-		if (_gameId == GID_INDY3_256 && a == 16 && b == 0) {	/* FIXME */
+		if (_gameId == GID_INDY3_256 && (a == 0 || a ==16) && b == 0) {	/* FIXME */
 			// Set screen height
 			c = fetchScriptByte();
 			d = fetchScriptByte();

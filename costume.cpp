@@ -847,9 +847,10 @@ byte CostumeRenderer::drawOneSlot(Actor * a, int slot)
 			return 0;
 
 		i = cd->curpos[slot] & 0x7FFF;
+
 		_frameptr =
-			_loaded._ptr + READ_LE_UINT16(_loaded._ptr + _loaded._numColors +
-																		slot * 2 + 10);
+			_loaded._ptr + READ_LE_UINT16(_loaded._ptr + _loaded._numColors + slot * 2 + 10);
+
 		code = _loaded._dataptr[i] & 0x7F;
 
 		_srcptr = _loaded._ptr + READ_LE_UINT16(_frameptr + code * 2);
