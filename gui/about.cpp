@@ -30,19 +30,19 @@ AboutDialog::AboutDialog(NewGui *gui)
 	
 	ScummVM::String version("ScummVM ");
 	version += gScummVMVersion;
-	new StaticTextWidget(this, 10, 10, _w - 20, 16, version, kTextAlignCenter);
+	new StaticTextWidget(this, 10, 10, _w - 20, kLineHeight, version, kTextAlignCenter);
 
 	ScummVM::String date("(built on ");
 	date += gScummVMBuildDate;
 	date += ')';
-	new StaticTextWidget(this, 10, 20, _w - 20, 16, date, kTextAlignCenter);
+	new StaticTextWidget(this, 10, 20, _w - 20, kLineHeight, date, kTextAlignCenter);
 
 	// TODO: Probably should display something regarding GPL
-	new StaticTextWidget(this, 10, 35, _w - 20, 16, "Copyright (C) 2002-2003 The ScummVM project", kTextAlignCenter);
-	new StaticTextWidget(this, 10, 45, _w - 20, 16, "http://www.scummvm.org", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 35, _w - 20, kLineHeight, "Copyright (C) 2002-2003 The ScummVM project", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 45, _w - 20, kLineHeight, "http://www.scummvm.org", kTextAlignCenter);
 
-	new StaticTextWidget(this, 10, 65, _w - 20, 16, "SCUMM Games (C) LucasArts", kTextAlignCenter);
-	new StaticTextWidget(this, 10, 75, _w - 20, 16, "Simon the Sorcerer (C) Adventuresoft", kTextAlignCenter);
-	new StaticTextWidget(this, 10, 85, _w - 20, 16, "Beneath a Steel Sky (C) Revolution", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 65, _w - 20, kLineHeight, "SCUMM Games (C) LucasArts", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 75, _w - 20, kLineHeight, "Simon the Sorcerer (C) Adventuresoft", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 85, _w - 20, kLineHeight, "Beneath a Steel Sky (C) Revolution", kTextAlignCenter);
 }
 
