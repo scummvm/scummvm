@@ -22,7 +22,6 @@ request tracker for things that need work.
 
 General
 ========
-* Add more Doxygen comments. However, quality is preferable over quantity
 * Add port specific user documentation (dreamcast/palm especially). That
   would include things like:
   - How to use ScummVM on system XYZ
@@ -58,6 +57,10 @@ README / Manual
     engine teams deem appropriate...
   - ...
 
+Code
+====
+* Add more Doxygen comments. However, quality is preferable over quantity
+* Document the OSystem overlay API, it badly needs it...
 
 Web site
 ========
