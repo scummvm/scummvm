@@ -1994,7 +1994,10 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 		MKARRAY_OLD(Actor, sound[0], sleByte, 8, VER(8), VER(36)),
 		MKARRAY(Actor, sound[0], sleByte, 32, VER(37)),
 
-		MKARRAY(Actor, animVariable[0], sleUint16, 8, VER(8)),
+		// Actor animVariable grew from 8 to 27
+		MKARRAY_OLD(Actor, animVariable[0], sleUint16, 8, VER(8), VER(40)),
+		MKARRAY(Actor, animVariable[0], sleUint16, 27, VER(41)),
+
 		MKLINE(Actor, targetFacing, sleUint16, VER(8)),
 		MKLINE(Actor, moving, sleByte, VER(8)),
 		MKLINE(Actor, ignoreBoxes, sleByte, VER(8)),

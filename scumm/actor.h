@@ -152,7 +152,7 @@ protected:
 	byte animProgress, animSpeed;
 	bool costumeNeedsInit;
 	ActorWalkData walkdata;
-	int16 animVariable[16];
+	int16 animVariable[27];
 
 	static ScummEngine *_vm;
 
@@ -222,9 +222,11 @@ public:
 	}
 
 	int getAnimVar(byte var) const {
+		checkRange(26, 0, var, "getAnimVar %d out of range(r)");
 		return animVariable[var];
 	}
 	void setAnimVar(byte var, int value) {
+		checkRange(26, 0, var, "setAnimVar %d out of range(r)");
 		animVariable[var] = value;
 	}
 	
