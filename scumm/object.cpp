@@ -1576,8 +1576,10 @@ int ScummEngine::findLocalObjectSlot() {
 	int i;
 
 	for (i = 1; i < _numLocalObjects; i++) {
-		if (!_objs[i].obj_nr)
+		if (!_objs[i].obj_nr) {
+			memset(&_objs[i], 0, sizeof(_objs[i]));
 			return i;
+		}
 	}
 
 	return -1;
