@@ -56,16 +56,16 @@ extern uint16 _debugLevel;
 
 static const VersionSettings scumm_settings[] = {
 	/* Scumm Version 1 */
-//	{"maniac64",      "Maniac Mansion (C64)",                         GID_MANIAC64, 1, 0, 0,},
-//      {"zak64",         "Zak McKracken and the Alien Mindbenders (C64)", GID_ZAK64, 1, 0, 0,},
+//	{"maniac64",      "Maniac Mansion (C64)",                          GID_MANIAC64, 1, 0, 0,},
+//	{"zak64",         "Zak McKracken and the Alien Mindbenders (C64)", GID_ZAK64, 1, 0, 0,},
 
 	/* Scumm Version 2 */
 	{"maniac", "Maniac Mansion", GID_MANIAC, 2, 0, 0,
-	 GF_AFTER_V2 | GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "MANIAC.EXE"},
+	 GF_AFTER_V2 | GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "00.LFL"},
 //	{"zak",         "Zak McKracken and the Alien Mindbenders",      GID_ZAK,     2, 0, 0,
-//	 GF_AFTER_V2 | GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "ZAK.EXE"},
+//	 GF_AFTER_V2 | GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "00.LFL"},
 //	{"indy3EGA",       "Indiana Jones and the Last Crusade",           GID_INDY3,   2, 0, 0,},
-//	 GF_AFTER_V2 | GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "INDY3.EXE"},
+//	 GF_AFTER_V2 | GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "00.LFL"},
 
 	/* Scumm Version 3 */
 	{"indy3", "Indiana Jones and the Last Crusade (256)", GID_INDY3_256, 3, 0, 22,
