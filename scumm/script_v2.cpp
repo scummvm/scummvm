@@ -2763,8 +2763,17 @@ void Scumm::o6_miscOps()
 					 case 2:
  						sp->play("tovista1.san", getGameDataPath());
 						break;
-					 case 3:
- 						sp->play("minefite.san", getGameDataPath());
+					 case 3: {
+						warning("FT-INSANE: Mine Fight scene not implemented. Just skipping it and giving you everything you need");
+						writeArray(233, 0, 50, 1); // INSANE callback: Chain
+						writeArray(233, 0, 51, 1); // INSANE callback: Chainsaw
+						writeArray(233, 0, 52, 1); // INSANE callback: Mace
+						writeArray(233, 0, 53, 1); // INSANE callback: 2x4
+						writeArray(233, 0, 54, 1); // INSANE callback: Wrench
+						writeArray(233, 0, 55, 1); // INSANE callback: Dust
+						writeArray(233, 0, 8, 1);  // INSANE callback: 
+// 						sp->play("minefite.san", getGameDataPath());
+					 }
 						break;
 					 case 4:
  						sp->play("rottopen.san", getGameDataPath());
