@@ -45,7 +45,6 @@ public:
 	void deinit();
 protected:
 	void maketable(int, int);
-	void bompDecode(byte *dst, const byte *src, int len);
 	void proc3WithFDFE(byte *dst, const byte *src, int32, int, int, int, int16 *);
 	void proc3WithoutFDFE(byte *dst, const byte *src, int32, int, int, int, int16 *);
 	void proc4WithFDFE(byte *dst, const byte *src, int32, int, int, int, int16 *);

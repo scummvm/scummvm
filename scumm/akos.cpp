@@ -24,6 +24,7 @@
 #include "scumm.h"
 #include "actor.h"
 #include "akos.h"
+#include "bomp.h"
 #include "imuse.h"
 #include "sound.h"
 
@@ -919,7 +920,7 @@ void AkosRenderer::akos16Decompress(byte *dest, int32 pitch, const byte *src, in
 	assert(t_width > 0);
 	while (t_height--) {
 		akos16DecodeLine(tmp_buf, t_width, dir);
-		_vm->bompApplyShadow(_shadow_mode, akos16.buffer, dest, t_width, transparency);
+		bompApplyShadow(_shadow_mode, _shadow_table, akos16.buffer, dest, t_width, transparency);
 
 		if (numskip_after != 0)	{
 			akos16SkipData(numskip_after);
@@ -950,7 +951,7 @@ void AkosRenderer::akos16DecompressMask(byte *dest, int32 pitch, const byte *src
 	while (t_height--) {
 		akos16DecodeLine(tmp_buf, t_width, dir);
 		akos16ApplyMask(akos16.buffer, maskptr, (byte)bitpos_start, t_width, transparency);
-		_vm->bompApplyShadow(_shadow_mode, akos16.buffer, dest, t_width, transparency);
+		bompApplyShadow(_shadow_mode, _shadow_table, akos16.buffer, dest, t_width, transparency);
 
 		if (numskip_after != 0)	{
 			akos16SkipData(numskip_after);

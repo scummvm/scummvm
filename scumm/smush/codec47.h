@@ -49,7 +49,6 @@ private:
 
 	void makeTables47(int32 width);
 	void makeTables37(int32 param);
-	void bompDecode(byte *dst, const byte *src, int len);
 	void level1(byte *d_dst);
 	void level2(byte *d_dst);
 	void level3(byte *d_dst);

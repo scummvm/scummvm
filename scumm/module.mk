@@ -4,6 +4,7 @@ SCUMM_OBJS = \
 	scumm/actor.o \
 	scumm/akos.o \
 	scumm/base-costume.o \
+	scumm/bomp.o \
 	scumm/boxes.o \
 	scumm/bundle.o \
 	scumm/camera.o \

@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 #include "codec47.h"
+#include "scumm/bomp.h"
 
 #include "common/engine.h"
 
@@ -472,27 +473,6 @@ void Codec47Decoder::makeTables47(int32 width) {
 	} while (c < 32768);
 }
 
-void Codec47Decoder::bompDecode(byte *dst, const byte *src, int len) {
-	byte code;
-	byte color;
-	int32 num;
-
-	do {
-		code = *src++;
-		num = (code >> 1) + 1;
-		if (code & 1) {
-			color = *src++;
-			memset(dst, color, num);
-		} else {
-			memcpy(dst, src, num);
-			src += num;
-		}
-		dst += num;
-		len -= num;
-	} while (len > 0);
-	assert(len == 0);
-}
-
 void Codec47Decoder::level3(byte *d_dst) {
 	int32 tmp;
 	byte code = *_d_src++;
@@ -740,7 +720,7 @@ bool Codec47Decoder::decode(byte *dst, const byte *src) {
 		memcpy(_curBuf, _deltaBufs[0], _frameSize);
 		break;
 	case 5:
-		bompDecode(_curBuf, gfx_data, READ_LE_UINT32(src + 14));
+		bompDecodeLine(_curBuf, gfx_data, READ_LE_UINT32(src + 14));
 		break;
 	}
 

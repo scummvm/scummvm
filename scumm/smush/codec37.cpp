@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 #include "codec37.h"
+#include "scumm/bomp.h"
 
 #include "common/engine.h"
 
@@ -246,27 +247,6 @@ void Codec37Decoder::maketable(int pitch, int index) {
 	}
 }
 
-void Codec37Decoder::bompDecode(byte *dst, const byte *src, int len) {
-	byte code;
-	byte color;
-	int32 num;
-
-	do {
-		code = *src++;
-		num = (code >> 1) + 1;
-		if (code & 1) {
-			color = *src++;
-			memset(dst, color, num);
-		} else {
-			memcpy(dst, src, num);
-			src += num;
-		}
-		dst += num;
-		len -= num;
-	} while (len > 0);
-	assert(len == 0);
-}
-
 #if defined(SCUMM_NEED_ALIGNMENT)
 
 #define DECLARE_LITERAL_TEMP(v)			\
@@ -486,7 +466,7 @@ void Codec37Decoder::decode(byte *dst, const byte *src) {
 		error("codec37: missing opcode 1");
 		break;
 	case 2:
-		bompDecode(_deltaBufs[_curtable], src + 16, decoded_size);
+		bompDecodeLine(_deltaBufs[_curtable], src + 16, decoded_size);
 		if ((_deltaBufs[_curtable] - _deltaBuf) > 0) {
 			memset(_deltaBuf, 0, _deltaBufs[_curtable] - _deltaBuf);
 		}
