@@ -1,0 +1,41 @@
+vpath %.cpp ../:../sound/
+
+CC      = g++
+CFLAGS  = -Wno-multichar -fstrength-reduce -O2
+DEFINES =
+LDFLAGS := -noixemul -s
+INCLUDES:= -I../ -I../sound
+CPPFLAGS= $(DEFINES) $(INCLUDES)
+LIBS	= -lamiga -lamigastubs
+ZIPFILE := scummvm-`date '+%Y-%m-%d'`.zip
+
+INCS	= ../scumm.h ../scummsys.h ../stdafx.h
+
+OBJS	= actor.o akos.o boxes.o costume.o gfx.o object.o resource.o \
+	saveload.o script.o scummvm.o sound.o string.o \
+	sys.o verbs.o morphos.o morphos_sound.o script_v1.o script_v2.o debug.o gui.o \
+	imuse.o fmopl.o adlib.o gmidi.o debugrl.o vars.o insane.o
+
+DISTFILES=$(OBJS:.o=.cpp) Makefile scumm.h scummsys.h stdafx.h stdafx.cpp \
+	windows.cpp debugrl.h whatsnew.txt readme.txt copying.txt \
+	scummvm.dsp scummvm.dsw sound/fmopl.h
+
+.cpp.o:
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+
+all: scummvm
+
+scummvm: $(OBJS)
+	$(CC) $(LDFLAGS) -o $(@) $(OBJS) $(LIBS)
+
+#$(OBJS): Makefile
+
+clean:
+	rm -f $(OBJS) scummvm
+
+dist:
+	rm -f $(ZIPFILE)
+	zip -q $(ZIPFILE) $(DISTFILES)
+
+check:
+$(OBJS): $(INCS)
