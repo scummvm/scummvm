@@ -20,38 +20,19 @@
  *
  */
 
-#ifndef SOUND_VOC_H
-#define SOUND_VOC_H
-
 #include "stdafx.h"
-#include "common/scummsys.h"
+#include "common/util.h"
+#include "sound/voc.h"
 
-#if !defined(__GNUC__)
-#pragma START_PACK_STRUCTS
-#endif
 
-struct VocHeader {
-	uint8 desc[20];
-	uint16 datablock_offset;
-	uint16 version;
-	uint16 id;
-} GCC_PACK;
-
-struct VocBlockHeader {
-	uint8 blocktype;
-	uint8 size[3];
-	uint8 sr;
-	uint8 pack;
-} GCC_PACK;
-
-#if !defined(__GNUC__)
-#pragma END_PACK_STRUCTS
-#endif
-
-/**
- * Take a sample rate parameter as it occurs in a VOC sound header, and
- * return the corresponding sample frequency.
- */
-extern int getSampleRateFromVOCRate(int vocSR);
-
-#endif
+int getSampleRateFromVOCRate(int vocSR) {
+	if (vocSR == 0xa5 || vocSR == 0xa6) {
+		return 11025;
+	} else if (vocSR == 0xd2 || vocSR == 0xd3) {
+		return 22050;
+	} else {
+		int sr = 1000000L / (256L - vocSR);
+		warning("inexact sample rate used: %i (0x%x)", sr, vocSR);
+		return sr;
+	}
+}

@@ -8,8 +8,9 @@ MODULE_OBJS = \
 	sound/midiparser_xmidi.o \
 	sound/mixer.o \
 	sound/mpu401.o \
-	sound/rate.o
-#	sound/resample.o
+	sound/rate.o \
+#	sound/resample.o \
+	sound/voc.o
 
 # Include common rules 
 include common.rules

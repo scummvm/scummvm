@@ -21,7 +21,6 @@
  */
 
 #include "stdafx.h"
-#include "common/engine.h"	// for warning/error/debug
 #include "common/file.h"
 #include "common/util.h"
 

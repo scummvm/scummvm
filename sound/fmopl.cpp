@@ -32,7 +32,7 @@
 
 #include "fmopl.h"
 
-#include "common/engine.h"	// for warning/error/debug
+#include "common/util.h"
 
 #ifndef PI
 #define PI 3.14159265358979323846
