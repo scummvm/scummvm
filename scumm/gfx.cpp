@@ -992,8 +992,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 				}
 			}
 			if (left <= theX && theX < right) {
-				dst -= _vm->_screenWidth * height;
-				dst++;
+				dst -= height * _vm->_screenWidth - 1;
 			}
 		}
 
@@ -1013,7 +1012,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 					theY++;
 					if (theY >= height) {
 						if (left <= theX && theX < right) {
-							mask_ptr -= _numStrips * height - 1;
+							mask_ptr -= height * _numStrips - 1;
 						}
 						theY = 0;
 						theX += 8;
