@@ -26,7 +26,7 @@
 #ifndef SAGA_STHREAD_H__
 #define SAGA_STHREAD_H__
 
-#include "saga/sstack.h"
+#include "common/stack.h"
 
 namespace Saga {
 
@@ -45,7 +45,7 @@ struct R_SCRIPT_THREAD_tag {
 	unsigned long i_offset; // Instruction offset
 
 	R_SEMAPHORE sem;
-	SSTACK stack;
+	Common::Stack<SDataWord_T> *stack;
 };
 
 R_SCRIPT_THREAD *STHREAD_Create();

@@ -33,6 +33,7 @@
 
 #include "saga/script.h"
 #include "saga/sfuncs.h"
+#include "common/stack.h"
 
 namespace Saga {
 
@@ -124,7 +125,7 @@ int SF_sleep(R_SCRIPTFUNC_PARAMS) {
 	SDataWord_T time_param;
 	int time;
 
-	SSTACK_Pop(thread->stack, &time_param);
+	time_param = thread->stack->pop();
 	time = _vm->_sdata->readWordU(time_param);
 	thread->sleep_time = time * 10;
 	return R_SUCCESS;
@@ -136,8 +137,8 @@ int SF_sleep(R_SCRIPTFUNC_PARAMS) {
 int SF_3(R_SCRIPTFUNC_PARAMS) {
 	// INCOMPLETE
 	SDataWord_T param1;
-	SSTACK_Pop(thread->stack, &param1);
-	SSTACK_Push(thread->stack, 0);	// push for now to allow intro faire 
+	param1 = thread->stack->pop();
+	thread->stack->push(0);	// push for now to allow intro faire 
 									// setup to run completely
 
 	return R_SUCCESS;
@@ -149,7 +150,7 @@ int SF_3(R_SCRIPTFUNC_PARAMS) {
 int SF_setCommandText(R_SCRIPTFUNC_PARAMS) {
 	SDataWord_T s_idx_parm;
 
-	SSTACK_Pop(thread->stack, &s_idx_parm);
+	s_idx_parm = thread->stack->pop();
 	// INCOMPLETE
 
 	return R_SUCCESS;
@@ -168,9 +169,9 @@ int SF_actorWalkTo(R_SCRIPTFUNC_PARAMS) {
 	int actor_idx;
 	R_POINT pt;
 
-	SSTACK_Pop(thread->stack, &actor_parm);
-	SSTACK_Pop(thread->stack, &x_parm);
-	SSTACK_Pop(thread->stack, &y_parm);
+	actor_parm = thread->stack->pop();
+	x_parm = thread->stack->pop();
+	y_parm = thread->stack->pop();
 
 	actor_id = _vm->_sdata->readWordS(actor_parm);
 	actor_idx = _vm->_actor->getActorIndex(actor_id);
@@ -203,8 +204,8 @@ int SF_setFacing(R_SCRIPTFUNC_PARAMS) {
 	int actor_idx;
 	int orientation;
 
-	SSTACK_Pop(thread->stack, &actor_parm);
-	SSTACK_Pop(thread->stack, &orient_parm);
+	actor_parm = thread->stack->pop();
+	orient_parm = thread->stack->pop();
 
 	actor_id = _vm->_sdata->readWordS(actor_parm);
 	orientation = _vm->_sdata->readWordS(orient_parm);
@@ -226,7 +227,7 @@ int SF_setFacing(R_SCRIPTFUNC_PARAMS) {
 int SF_freezeInterface(R_SCRIPTFUNC_PARAMS) {
 	SDataWord_T b_param;
 
-	SSTACK_Pop(thread->stack, &b_param);
+	b_param = thread->stack->pop();
 
 	if (b_param) {
 		_vm->_interface->deactivate();
@@ -265,9 +266,9 @@ int SF_startAnim(R_SCRIPTFUNC_PARAMS) {
 	int frame_count;
 	int anim_id;
 
-	SSTACK_Pop(thread->stack, &anim_id_parm);
-	SSTACK_Pop(thread->stack, &frame_parm);
-	SSTACK_Pop(thread->stack, &unk_parm);
+	anim_id_parm = thread->stack->pop();
+	frame_parm = thread->stack->pop();
+	unk_parm = thread->stack->pop();
 
 	frame_count = _vm->_sdata->readWordS(frame_parm);
 	anim_id = _vm->_sdata->readWordS(anim_id_parm);
@@ -293,9 +294,9 @@ int SF_actorWalkToAsync(R_SCRIPTFUNC_PARAMS) {
 	int actor_idx;
 	R_POINT pt;
 
-	SSTACK_Pop(thread->stack, &actor_parm);
-	SSTACK_Pop(thread->stack, &x_parm);
-	SSTACK_Pop(thread->stack, &y_parm);
+	actor_parm = thread->stack->pop();
+	x_parm = thread->stack->pop();
+	y_parm = thread->stack->pop();
 
 	actor_id = _vm->_sdata->readWordS(actor_parm);
 	actor_idx = _vm->_actor->getActorIndex(actor_id);
@@ -332,9 +333,9 @@ int SF_moveTo(R_SCRIPTFUNC_PARAMS) {
 	int result;
 	R_POINT pt;
 
-	SSTACK_Pop(thread->stack, &actor_parm);
-	SSTACK_Pop(thread->stack, &x_parm);
-	SSTACK_Pop(thread->stack, &y_parm);
+	actor_parm = thread->stack->pop();
+	x_parm = thread->stack->pop();
+	y_parm = thread->stack->pop();
 
 	actor_id = _vm->_sdata->readWordS(actor_parm);
 	pt.x = _vm->_sdata->readWordS(x_parm);
@@ -374,10 +375,10 @@ int SF_actorWalk(R_SCRIPTFUNC_PARAMS) {
 	int actor_idx;
 	R_POINT pt;
 
-	SSTACK_Pop(thread->stack, &actor_parm);
-	SSTACK_Pop(thread->stack, &x_parm);
-	SSTACK_Pop(thread->stack, &y_parm);
-	SSTACK_Pop(thread->stack, &unk_parm);
+	actor_parm = thread->stack->pop();
+	x_parm = thread->stack->pop();
+	y_parm = thread->stack->pop();
+	unk_parm = thread->stack->pop();
 
 	actor_idx = _vm->_actor->getActorIndex(_vm->_sdata->readWordS(actor_parm));
 	if (actor_idx < 0) {
@@ -414,10 +415,10 @@ int SF_cycleActorFrames(R_SCRIPTFUNC_PARAMS) {
 	int action;
 	//uint16 flags;
 
-	SSTACK_Pop(thread->stack, &actor_parm);
-	SSTACK_Pop(thread->stack, &unk1_parm);
-	SSTACK_Pop(thread->stack, &action_parm);
-	SSTACK_Pop(thread->stack, &unk2_parm);
+	actor_parm = thread->stack->pop();
+	unk1_parm = thread->stack->pop();
+	action_parm = thread->stack->pop();
+	unk2_parm = thread->stack->pop();
 	actor_id = _vm->_sdata->readWordS(actor_parm);
 	action = _vm->_sdata->readWordS(action_parm);
 	actor_idx = _vm->_actor->getActorIndex(actor_id);
@@ -447,9 +448,9 @@ int SF_setFrame(R_SCRIPTFUNC_PARAMS) {
 	int action;
 	//uint16 flags;
 
-	SSTACK_Pop(thread->stack, &actor_parm);
-	SSTACK_Pop(thread->stack, &action_parm);
-	SSTACK_Pop(thread->stack, &unk1_parm);
+	actor_parm = thread->stack->pop();
+	action_parm = thread->stack->pop();
+	unk1_parm = thread->stack->pop();
 
 	actor_id = _vm->_sdata->readWordS(actor_parm);
 	action = _vm->_sdata->readWordS(action_parm);
@@ -479,10 +480,10 @@ int SF_linkAnim(R_SCRIPTFUNC_PARAMS) {
 	uint16 anim_id1;
 	uint16 anim_id2;
 
-	SSTACK_Pop(thread->stack, &anim1_parm);
-	SSTACK_Pop(thread->stack, &anim2_parm);
-	SSTACK_Pop(thread->stack, &tframes_parm);
-	SSTACK_Pop(thread->stack, &unk_parm);
+	anim1_parm = thread->stack->pop();
+	anim2_parm = thread->stack->pop();
+	tframes_parm = thread->stack->pop();
+	unk_parm = thread->stack->pop();
 	tframes = _vm->_sdata->readWordS(tframes_parm);
 	anim_id1 = _vm->_sdata->readWordU(anim1_parm);
 	anim_id2 = _vm->_sdata->readWordU(anim2_parm);
@@ -522,12 +523,12 @@ int SF_placeActor(R_SCRIPTFUNC_PARAMS) {
 	int result;
 	R_POINT pt;
 
-	SSTACK_Pop(thread->stack, &actor_parm);
-	SSTACK_Pop(thread->stack, &x_parm);
-	SSTACK_Pop(thread->stack, &y_parm);
-	SSTACK_Pop(thread->stack, &unknown_parm);
-	SSTACK_Pop(thread->stack, &action_parm);
-	SSTACK_Pop(thread->stack, &unknown_parm);
+	actor_parm = thread->stack->pop();
+	x_parm = thread->stack->pop();
+	y_parm = thread->stack->pop();
+	unknown_parm = thread->stack->pop();
+	action_parm = thread->stack->pop();
+	unknown_parm = thread->stack->pop();
 
 	actor_id = _vm->_sdata->readWordS(actor_parm);
 	pt.x = _vm->_sdata->readWordS(x_parm);
@@ -557,7 +558,7 @@ int SF_placeActor(R_SCRIPTFUNC_PARAMS) {
 // game cinematic. Pushes a zero or positive value if the game 
 // has not been interrupted.
 int SF_checkUserInterrupt(R_SCRIPTFUNC_PARAMS) {
-	SSTACK_Push(thread->stack, 0);
+	thread->stack->push(0);
 
 	// INCOMPLETE
 

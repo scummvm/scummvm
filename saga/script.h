@@ -26,7 +26,6 @@
 #ifndef SAGA_SCRIPT_H
 #define SAGA_SCRIPT_H
 
-#include "saga/sstack.h"
 #include "saga/sdata.h"
 #include "saga/text.h"
 #include "saga/yslib.h"

@@ -30,7 +30,6 @@ MODULE_OBJS = \
 	saga/sfuncs.o \
 	saga/sndres.o \
 	saga/sprite.o \
-	saga/sstack.o \
 	saga/sthread.o \
 	saga/text.o \
 	saga/transitions.o \

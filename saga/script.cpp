@@ -33,7 +33,6 @@
 
 #include "saga/script_mod.h"
 #include "saga/script.h"
-#include "saga/sstack.h"
 #include "saga/sthread.h"
 
 namespace Saga {

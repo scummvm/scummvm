@@ -29,6 +29,7 @@
 #include "saga/scene.h"
 #include "saga/font.h"
 
+#include "saga/script_mod.h"
 #include "saga/script.h"
 #include "saga/sthread.h"
 
