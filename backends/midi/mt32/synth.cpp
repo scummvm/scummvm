@@ -125,7 +125,7 @@ Synth::~Synth() {
 	close(); // Make sure we're closed and everything is freed
 }
 
-void Synth::report(ReportType type, void *data) {
+void Synth::report(ReportType type, const void *data) {
 	if (myProp.report != NULL) {
 		myProp.report(myProp.userData, type, data);
 	}
@@ -716,7 +716,7 @@ void Synth::close(void) {
 		}
 	}
 
-	isOpen=false;
+	isOpen = false;
 }
 
 void Synth::playMsg(Bit32u msg) {

@@ -122,10 +122,10 @@ static void MT32_PrintDebug(void *userData, const char *fmt, va_list list) {
 	//vdebug(0, fmt, list); // FIXME: Use a higher debug level
 }
 
-static void MT32_Report(void *userData, MT32Emu::ReportType type, void *reportData) {
+static void MT32_Report(void *userData, MT32Emu::ReportType type, const void *reportData) {
 	switch(type) {
 	case MT32Emu::ReportType_lcdMessage:
-		g_system->displayMessageOnOSD((char *)reportData);
+		g_system->displayMessageOnOSD((const char *)reportData);
 		break;
 	case MT32Emu::ReportType_errorPreset1:
 		error("Couldn't open Preset1.syx file");

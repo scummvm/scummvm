@@ -84,7 +84,7 @@ struct SynthProperties {
 	// This is used as the first argument to all callbacks
 	void *userData;
 	// Callback for reporting various errors and information. May be NULL
-	void (*report)(void *userData, ReportType type, void *reportData);
+	void (*report)(void *userData, ReportType type, const void *reportData);
 	// Callback for debug messages, in vprintf() format
 	void (*printDebug)(void *userData, const char *fmt, va_list list);
 	// Callback for providing an implementation of File, opened and ready for use
@@ -163,7 +163,7 @@ private:
 	int dumpSysex(char *filename);
 
 protected:
-	void report(ReportType type, void *reportData);
+	void report(ReportType type, const void *reportData);
 	File *openFile(const char *filename, File::OpenMode mode);
 	void closeFile(File *file);
 	void printDebug(const char *fmt, ...);
