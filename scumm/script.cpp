@@ -1172,8 +1172,6 @@ void Scumm::doSentence(int c, int b, int a)
 		_sentenceNum++;
 		st++;
 
-		warning("doSentence(%d,%d,%d)", c, b, a);
-
 	} else {
 
 		st = &_sentence[_sentenceNum++];
