@@ -38,8 +38,6 @@ private:
 	int32 _offset1, _offset2;
 	byte *_tableBig;
 	byte *_tableSmall;
-//	byte _tableBig[99328];
-//	byte _tableSmall[32768];
 	int16 _table[256];
 	int32 _frameSize;
 	int _width, _height;
