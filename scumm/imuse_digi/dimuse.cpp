@@ -126,6 +126,9 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 	int i;
 
 	ser->_ref_me = this;
+	ser->_save_ref = NULL;
+	ser->_load_ref = NULL;
+
 	ser->saveLoadEntries(this, mainEntries);
 	for (i = 0; i < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; i++) {
 		ser->saveLoadEntries(_track[i], trackEntries);

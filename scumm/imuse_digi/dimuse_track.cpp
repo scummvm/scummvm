@@ -286,8 +286,11 @@ int IMuseDigital::cloneToFadeOutTrack(int track, int fadeDelay, int killNormalTr
 	_track[track]->mod = _track[fadeTrack]->mod;
 	_track[track]->used = _track[fadeTrack]->used;
 	_track[track]->toBeRemoved = _track[fadeTrack]->toBeRemoved;
+	_track[track]->souStream = _track[fadeTrack]->souStream;
 	_track[track]->started = _track[fadeTrack]->started;
 	_track[track]->stream2 = _track[fadeTrack]->stream2;
+	strcpy(_track[track]->soundName, _track[fadeTrack]->soundName);
+	_track[track]->soundType = _track[fadeTrack]->soundType;
 
 	_track[track]->soundHandle = NULL;
 	_track[track]->stream = NULL;
