@@ -3679,7 +3679,7 @@ void IMuseAdlib::adlib_setup_channel(int chan, Instrument * instr, byte vol_1, b
 	port = channel_mappings[chan];
 	adlib_write(port + 0x20, instr->flags_1);
 
-	if ((g_scumm->_gameId != GID_MONKEY_VGA) || (instr->feedback & 1))
+        if (!(g_scumm->_features & GF_SMALL_HEADER) || (instr->feedback & 1))
 		adlib_write(port + 0x40, (instr->oplvl_1 | 0x3F) - vol_1 );
 	else
 		adlib_write(port + 0x40, instr->oplvl_1);

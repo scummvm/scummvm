@@ -1,6 +1,6 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001/2002 The ScummVM project
+ * wCopyright (C) 2001/2002 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -81,7 +81,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 
 	_debugMode = detector->_debugMode;
 	_bootParam = detector->_bootParam;
-	_exe_name = detector->_gameFileName.c_str();
+	_exe_name = (char*)detector->_gameFileName.c_str();
 	_gameId = detector->_gameId;
 	_gameText = detector->_gameText;
 	_features = detector->_features;
