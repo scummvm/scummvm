@@ -703,10 +703,6 @@ void ScummEngine_v6he::o6_actorOps() {
 		}
 		break;
 	case 219:
-		if (_heversion <= 70) {
-			error("o6_actorOps: default case %d", b);
-		}
-
 		a->forceClip = false;
 		a->needRedraw = true;
 		a->needBgReset = true;
