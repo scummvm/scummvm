@@ -609,6 +609,11 @@ if test "$_build_sky" = yes ; then
 fi
 if test "$_build_bs1" = yes ; then
   echo "    Broken Sword I"
+  if test "$_mpeg2" = yes ; then
+	echo " (w/ mpeg2 cutscenes)"
+  else
+	echo " (without mpeg2 cutscenes)"
+  fi
 fi
 if test "$_build_bs2" = yes ; then
   echo -n "    Broken Sword II"
