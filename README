@@ -409,7 +409,7 @@ They are:
         super2xsai - Enhanced 2xsai filtering. 640x400 screen/window size
         supereagle - Less blurry than 2xsai, but slower. Also 640x400
         advmame2x  - 640x400 scaling. Doesn't rely on blurring like 2xSAI.
-	advmame3x  - 960x600 scaling. Doesn't rely on blurring like 2xSAI.
+        advmame3x  - 960x600 scaling. Doesn't rely on blurring like 2xSAI.
         tv2x       - 640x400 scaling. Horizontal scanlines.
         dotmatrix  - 640x400 scaling. Dot matrix effect.
 
