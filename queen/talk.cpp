@@ -151,7 +151,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 	initialTalk();
 
 	// Lines 906-? in talk.c
-	_logic->display()->mouseCursorShow(true);
+	_logic->display()->showMouseCursor(true);
 	
 	int16 level=1, retval=0;
 	int16 head = _dialogueTree[level][0].head;

@@ -121,11 +121,11 @@ void Walk::animateJoe() {
 			return;
 		}
 		if (lastDirection != pwd->anim.facing) {
-			_graphics->bobAnimNormal(0, pwd->anim.firstFrame, pwd->anim.lastFrame, 1, false, false);
+			pbs->animNormal(pwd->anim.firstFrame, pwd->anim.lastFrame, 1, false, false);
 		}
 
 		uint16 moveSpeed = _logic->findScale(pbs->x, pbs->y) * 6 / 100;
-		_graphics->bobMove(0, pbs->x + pwd->dx, pbs->y + pwd->dy, moveSpeed);
+		pbs->move(pbs->x + pwd->dx, pbs->y + pwd->dy, moveSpeed);
 		pbs->xflip = (pbs->xdir < 0);
 		while (pbs->moving) {
 			// adjust Joe's movespeed according to scale
@@ -259,15 +259,15 @@ void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum,
 		}
 		// pass across bobs direction ONLY if walk is a mirror flip!
 		if (ABS(mpd->walkLeft1) == ABS(mpd->walkRight1)) {
-			_graphics->bobAnimNormal(bobNum, image, dstFrame - 1, mpd->animSpeed, false, pbs->xflip);
+			pbs->animNormal(image, dstFrame - 1, mpd->animSpeed, false, pbs->xflip);
 		}
 		else {
-			_graphics->bobAnimNormal(bobNum, image, dstFrame - 1, mpd->animSpeed, false, false);
+			pbs->animNormal(image, dstFrame - 1, mpd->animSpeed, false, false);
 		}
 
 		// move other actors at correct speed relative to scale
 		uint16 moveSpeed = _logic->findScale(pbs->x, pbs->y) * mpd->moveSpeed / 100;
-		_graphics->bobMove(bobNum, pbs->x + pwd->dx, pbs->y + pwd->dy, moveSpeed);
+		pbs->move(pbs->x + pwd->dx, pbs->y + pwd->dy, moveSpeed);
 
 		// flip if one set of frames for actor
 		if (mpd->walkLeft1 < 0 || ABS(mpd->walkLeft1) == ABS(mpd->walkRight1)) {

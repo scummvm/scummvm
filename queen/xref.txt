@@ -130,13 +130,13 @@ invbob()					Graphics::bobDrawInventoryItem
 loadbackdrop()				Graphics::loadBackdrop
 loadpanel()					Graphics::loadPanel
 MAKE_SPEAK_BOB()			Graphics::bobSetText
-makeanim()					Graphics::bobAnimNormal
-movebob()					Graphics::bobMove
+makeanim()					BobSlot::animNormal
+movebob()					BobSlot::move
 pastebob()					Graphics::bobPaste
 requestor()
 shrinkbob()					Graphics::bobShrink
 sortbobs()					Graphics::bobSortAll
-stringanim()				Graphics::bobAnimString
+stringanim()				BobSlot::animString
 -
 bobs						Graphics::_bobs
 cambob						Graphics::_cameraBob
@@ -148,7 +148,7 @@ INPUT
 check_keys()				Input::checkKeys()
 get_key()					*not needed*
 -
-drawmouseflag				*not needed* (equivalent to _display->mouseCursorShow(bool))
+drawmouseflag				*not needed* (equivalent to _display->showMouseCursor(bool))
 key_commands				Input::_currentCommandKeys
 key_language				Input::_commandKeys
 KEYVERB						Input::_keyVerb

@@ -134,7 +134,7 @@ void QueenEngine::roomChanged() {
 		if (pcGamesDemo) {
 			_logic->currentRoom(79);
 		}
-		_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), RDM_FADE_NOJOE, 100, 2, true);
+		_logic->roomDisplay(_logic->currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
 
 		if (_resource->isDemo()) {
 			if (pcGamesDemo) {
@@ -164,7 +164,7 @@ void QueenEngine::roomChanged() {
 		_logic->currentRoom(ROOM_HOTEL_LOBBY);
 		_logic->entryObj(584);
 
-		_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), RDM_FADE_JOE, 100, 2, true);
+		_logic->roomDisplay(_logic->currentRoom(), RDM_FADE_JOE, 100, 2, true);
 		_logic->playCutaway("c70d.cut");
 
 		_logic->gameState(VAR_INTRO_PLAYED, 1);
@@ -173,9 +173,9 @@ void QueenEngine::roomChanged() {
 		_logic->inventoryRefresh();
 	}
 	else {
-		_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), RDM_FADE_JOE, 100, 1, false);
+		_logic->roomDisplay(_logic->currentRoom(), RDM_FADE_JOE, 100, 1, false);
 	}
-	_display->mouseCursorShow(true); // _drawMouseFlag = 1;
+	_display->showMouseCursor(true); // _drawMouseFlag = 1;
 }
 
 

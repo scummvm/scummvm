@@ -135,7 +135,7 @@ class Input {
 		bool _canQuit;	// inverse of CANTQUIT
 
 		//! moved Cutaway::_quit here
-		bool _cutawayQuit;          // cutawayQuit
+		bool _cutawayQuit;
 
 		//! set if a dialogue is running
 		bool _dialogueRunning;

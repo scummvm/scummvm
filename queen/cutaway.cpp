@@ -821,7 +821,7 @@ void Cutaway::changeRooms(CutawayObject &object) {
 			mode = RDM_FADE_JOE_XY;
 	}
 
-	_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), mode, 0, _comPanel, true);
+	_logic->roomDisplay(_logic->currentRoom(), mode, 0, _comPanel, true);
 
 	_currentImage = _logic->numFrames();
 
@@ -1059,11 +1059,7 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 		if (objAnim[i].mx || objAnim[i].my) {
 			BobSlot *bob = _graphics->bob(objAnim[i].object);
 			bob->frameNum = objAnim[i].originalFrame;
-			_graphics->bobMove(
-					objAnim[i].object, 
-					objAnim[i].mx, 
-					objAnim[i].my,
-					(object.specialMove > 0) ? object.specialMove : 4);
+			bob->move(objAnim[i].mx, objAnim[i].my,	(object.specialMove > 0) ? object.specialMove : 4);
 		}
 	}
 
@@ -1071,11 +1067,7 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 	if (_logic->currentRoom() == ROOM_TEMPLE_OUTSIDE) {
 		BobSlot *bob = _graphics->bob(0);
 		if (bob->x < 320)
-			_graphics->bobMove(
-					0, 
-					bob->x + 346, 
-					bob->y,
-					4);
+			bob->move(bob->x + 346, bob->y,	4);
 	}
 
 	// Normal cutaway
@@ -1513,7 +1505,7 @@ void Cutaway::stop() {
 		_logic->joeY(joeY);
 		_logic->currentRoom(joeRoom);
 		_logic->oldRoom(_initialRoom);
-		_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), RDM_FADE_JOE_XY, 0, _comPanel, true);
+		_logic->roomDisplay(_logic->currentRoom(), RDM_FADE_JOE_XY, 0, _comPanel, true);
 	}
 
 	if (_input->cutawayQuit()) {
@@ -1755,7 +1747,7 @@ int Cutaway::makeComplexAnimation(int16 currentImage, Cutaway::CutawayAnim *objA
 		}
 	}
 
-	_graphics->bobAnimString(bobNum, _cutAnim[bobNum]);
+	bob->animString(_cutAnim[bobNum]);
 
 	return currentImage;
 }

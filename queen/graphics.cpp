@@ -140,28 +140,7 @@ void Graphics::bobSetupControl() {
 	bankErase(17);
 
 	BobFrame *bf = &_frames[1];
-	_display->mouseCursorInit(bf->data, bf->width, bf->height, bf->xhotspot, bf->yhotspot);
-}
-
-
-void Graphics::bobAnimString(uint32 bobnum, const AnimFrame *animBuf) {
-
-	debug(9, "Graphics::bobAnimString(%d)", bobnum);
-	_bobs[bobnum].animString(animBuf);
-}
-
-
-void Graphics::bobAnimNormal(uint32 bobnum, uint16 firstFrame, uint16 lastFrame, uint16 speed, bool rebound, bool xflip) {
-
-	debug(9, "Graphics::bobAnimNormal(%d, %d, %d, %d)", bobnum, firstFrame, lastFrame, speed);
-	_bobs[bobnum].animNormal(firstFrame, lastFrame, speed, rebound, xflip);
-}
-
-
-void Graphics::bobMove(uint32 bobnum, int16 endx, int16 endy, int16 speed) {
-
-	debug(9, "Graphics::bobMove(%d, %d, %d, %d)", bobnum, endx, endy, speed);
-	_bobs[bobnum].move(endx, endy, speed);
+	_display->setMouseCursor(bf->data, bf->width, bf->height, bf->xhotspot, bf->yhotspot);
 }
 
 
@@ -417,11 +396,11 @@ void Graphics::bobPaste(uint32 frameNum, int16 x, int16 y) {
 }
 
 
-void Graphics::bobShrink(const BobFrame* pbf, uint16 percentage) {
+void Graphics::bobShrink(const BobFrame *bf, uint16 percentage) {
 
 	// computing new size, rounding to upper value
-	uint16 new_w = (pbf->width  * percentage + 50) / 100;
-	uint16 new_h = (pbf->height * percentage + 50) / 100;
+	uint16 new_w = (bf->width  * percentage + 50) / 100;
+	uint16 new_h = (bf->height * percentage + 50) / 100;
 
 	debug(9, "Graphics::bobShrink() - scale = %d, bufsize = %d", percentage, new_w * new_h);
 
@@ -432,10 +411,10 @@ void Graphics::bobShrink(const BobFrame* pbf, uint16 percentage) {
 
 		uint32 shrinker = (100 << 0x10) / percentage;
 		uint16 x_scale = shrinker >> 0x10;
-		uint16 y_scale = x_scale * pbf->width;   
+		uint16 y_scale = x_scale * bf->width;   
 		shrinker &= 0xFFFF;
 
-		uint8* src = pbf->data;
+		uint8* src = bf->data;
 		uint8* dst = _shrinkBuffer.data;
 
 		uint32 y_count = 0;
@@ -455,7 +434,7 @@ void Graphics::bobShrink(const BobFrame* pbf, uint16 percentage) {
 			src += y_scale;
 			y_count += shrinker;
 			if (y_count > 0xFFFF) {
-				src += pbf->width;
+				src += bf->width;
 				y_count &= 0xFFFF;
 			}
 		}
@@ -734,7 +713,6 @@ void Graphics::frameEraseAll(bool joe) {
 
 void Graphics::loadBackdrop(const char* name, uint16 room) {
 
-	// init Dynalum
 	char roomPrefix[20];
 	strcpy(roomPrefix, name);
 	roomPrefix[ strlen(roomPrefix) - 4 ] = '\0';
@@ -835,6 +813,7 @@ void Graphics::initFightBamScene() {
 	_bobs[7].active = true;
 	_bam.flag = 1;
 	_bam.index = 0;
+	_bam._screenShaked = false;
 	_bam._fightData = _bam._fight1Data;
 }
 

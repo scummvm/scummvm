@@ -73,7 +73,7 @@ public:
 	void palConvert(uint8 *outPal, const uint8 *inPal, int start, int end);
 	void palSet(const uint8 *pal, int start, int end, bool updateScreen = false);
 	void palSetJoe(JoePalette pal);
-	void palFadeIn(int start, int end, uint16 roomNum, bool dynalum, int16 dynaX, int16 dynaY);
+	void palFadeIn(int start, int end, uint16 roomNum, bool dynalum = false, int16 dynaX = 0, int16 dynaY = 0);
 	void palFadeOut(int start, int end, uint16 roomNum);
 	void palFadePanel();
 	void palScroll(int start, int end);
@@ -85,7 +85,7 @@ public:
 	void screenMode(int comPanel, bool inCutaway);
 
 	void prepareUpdate();
-	void update(bool dynalum, int16 dynaX, int16 dynaY);
+	void update(bool dynalum = false, int16 dynaX = 0, int16 dynaY = 0);
 
 	void blit(RenderingBuffer dstBuf, uint16 dstX, uint16 dstY, const uint8 *srcBuf, uint16 srcW, uint16 srcH, uint16 srcPitch, bool xflip, bool masked);
 	void fill(RenderingBuffer dstBuf, uint16 x, uint16 y, uint16 w, uint16 h, uint8 color);
@@ -107,8 +107,8 @@ public:
 	void handleTimer();
 	void waitForTimer();
 
-	void mouseCursorInit(uint8 *buf, uint16 w, uint16 h, uint16 xhs, uint16 yhs);
-	void mouseCursorShow(bool show);
+	void setMouseCursor(uint8 *buf, uint16 w, uint16 h, uint16 xhs, uint16 yhs);
+	void showMouseCursor(bool show);
 
 	void drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint8 col);
 

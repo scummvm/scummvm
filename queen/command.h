@@ -87,7 +87,7 @@ struct SelectedCmdState {
 class Command {
 public:
 	
-	Command(Logic*, Graphics*, Input*, Walk*, Sound*);
+	Command(Logic *, Graphics *, Input *, Walk *, Sound *);
 	
 	//! initialise command construction
 	void clear(bool clearTexts);

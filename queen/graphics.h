@@ -54,7 +54,7 @@ struct BobSlot {
 	//! animation stuff
 	bool animating;
 	struct {
-		int16 speed, speedBak;	// Must be signed!
+		int16 speed, speedBak;
 
 		//! string based animation
 		struct {
@@ -144,13 +144,10 @@ public:
 	void bankErase(uint32 bankslot); // erase()
 
 	void bobSetupControl();
-	void bobAnimString(uint32 bobnum, const AnimFrame *buf); // stringanim()
-	void bobAnimNormal(uint32 bobnum, uint16 firstFrame, uint16 lastFrame, uint16 speed, bool rebound, bool xflip); // makeanim()
-	void bobMove(uint32 bobnum, int16 endx, int16 endy, int16 speed); // movebob()
 	void bobDraw(uint32 frameNum, int16 x, int16 y, uint16 scale, bool xflip, const Box& box); // bob()
 	void bobDrawInventoryItem(uint32 bobnum, uint16 x, uint16 y); // invbob()
 	void bobPaste(uint32 frameNum, int16 x, int16 y); // bobpaste()
-	void bobShrink(const BobFrame* pbf, uint16 percentage); // shrinkbob()
+	void bobShrink(const BobFrame *bf, uint16 percentage);
 	void bobClear(uint32 bobnum); // clearbob()
 	void bobSortAll(); // sortbobs()
 	void bobDrawAll(); // drawbobs()

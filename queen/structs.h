@@ -143,11 +143,11 @@ struct GraphicData {
 			</tr>
 			<tr>
 				<td>firstFrame < 0</td>
-				<td>bobAnimString (animation is described by a string)</td>
+				<td>BobSlot::animString (animation is described by a string)</td>
 			</tr>
 			<tr>
 				<td>firstFrame > 0</td>
-				<td>bobAnimNormal (animation is a sequence of frames)</td>
+				<td>BobSlot::animNormal (animation is a sequence of frames)</td>
 			</tr>
 		</table>
 	*/

@@ -66,7 +66,7 @@ void Journal::use() {
 	prepare();
 	redraw();
 	update();
-	_display->palFadeIn(0, 255, JOURNAL_ROOM, false, 0, 0);
+	_display->palFadeIn(0, 255, JOURNAL_ROOM);
 
 	_quitCleanly = true;
 	_quit = false;
@@ -154,7 +154,7 @@ void Journal::restore() {
 	_logic->joeCutFacing(_logic->joeFacing());
 
 	_logic->oldRoom(_logic->currentRoom());
-	_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), RDM_FADE_JOE, 0, 0, false);
+	_logic->roomDisplay(_logic->currentRoom(), RDM_FADE_JOE, 0, 0, false);
 }
 
 
@@ -175,7 +175,7 @@ void Journal::update() {
 		int16 y = 9 + _currentSaveSlot * 13 + 8;
 		_display->drawBox(x, y, x + 6, y, INK_JOURNAL);
 	}
-	_display->update(false, 0, 0);
+	_display->update();
 }
 
 

@@ -218,7 +218,7 @@ public:
 	void roomSetupObjects(); // DISP_OBJECTS
 	uint16 roomRefreshObject(uint16 obj); // REDISP_OBJECT
 	void roomSetup(const char *room, int comPanel, bool inCutaway);
-	void roomDisplay(const char *room, RoomDisplayMode mode, uint16 joeScale, int comPanel, bool inCutaway); // DISP_ROOM
+	void roomDisplay(uint16 room, RoomDisplayMode mode, uint16 joeScale, int comPanel, bool inCutaway); // DISP_ROOM
 
 	uint16 findScale(uint16 x, uint16 y);
 

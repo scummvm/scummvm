@@ -932,8 +932,8 @@ void Logic::roomSetupFurniture() {
 					_graphics->bankUnpack(k, curImage, 15);
 					++_numFrames;
 				}
-				_graphics->bobAnimNormal(5 + curBob, image, curImage, pgd->speed / 4, rebound, false);
 				BobSlot *pbs = _graphics->bob(5 + curBob);
+				pbs->animNormal(image, curImage, pgd->speed / 4, rebound, false);
 				pbs->x = pgd->x;
 				pbs->y = pgd->y;
 				++curBob;
@@ -1024,7 +1024,7 @@ void Logic::roomSetupObjects() {
 					pbs->y = pgd->y;
 					pbs->frameNum = firstFrame;
 					if (pgd->speed > 0) {
-						_graphics->bobAnimNormal(curBob, firstFrame, curImage, pgd->speed / 4, rebound, false);
+						pbs->animNormal(firstFrame, curImage, pgd->speed / 4, rebound, false);
 					}
 				}
 				++numObjectAnimated;
@@ -1055,7 +1055,7 @@ void Logic::roomSetupObjects() {
 	for (i = firstRoomObj; i <= lastRoomObj; ++i) {
 		ObjectData *pod = &_objectData[i];
 		if (pod->image == -3 || pod->image == -4) {
-			debug(9, "Logic::roomSetupObjects() - Setting up person %d", i);
+			debug(0, "Logic::roomSetupObjects() - Setting up person %X, name=%X", i, pod->name);
 			uint16 noun = i - _roomData[_currentRoom];
 			if (pod->name > 0) {
 				curImage = personSetup(noun, curImage);
@@ -1177,7 +1177,7 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 		pbs->y = pgd->y;
 		pbs->frameNum = firstImage;
 		if (pgd->speed > 0) {
-			_graphics->bobAnimNormal(curBob, firstImage, curImage, pgd->speed / 4, rebound, false);
+			pbs->animNormal(firstImage, curImage, pgd->speed / 4, rebound, false);
 		}
 	}
 	else {
@@ -1222,13 +1222,15 @@ void Logic::roomSetup(const char *room, int comPanel, bool inCutaway) {
 }
 
 
-void Logic::roomDisplay(const char *room, RoomDisplayMode mode, uint16 scale, int comPanel, bool inCutaway) {
+void Logic::roomDisplay(uint16 room, RoomDisplayMode mode, uint16 scale, int comPanel, bool inCutaway) {
 
-	debug(9, "Logic::roomDisplay(%s, %d, %d, %d, %d)", room, mode, scale, comPanel, inCutaway);
+	debug(9, "Logic::roomDisplay(%d, %d, %d, %d, %d)", room, mode, scale, comPanel, inCutaway);
 
 	roomErase();
-	// TODO: _sound->loadSFX(SFXNAME[_currentRoom]);
-	roomSetup(room, comPanel, inCutaway);
+
+	// XXX _sound->loadSFX(SFXNAME[_currentRoom]);
+
+	roomSetup(roomName(room), comPanel, inCutaway);
 	ObjectData *pod = NULL;
 	if (mode != RDM_FADE_NOJOE) {
 		pod = joeSetupInRoom(mode != RDM_FADE_JOE_XY, scale);
@@ -1487,7 +1489,7 @@ uint16 Logic::animCreate(uint16 curImage, const Person *person) {
 	}
 
 	// start animation
-	_graphics->bobAnimString(person->actor->bobNum, animFrames);
+	_graphics->bob(person->actor->bobNum)->animString(animFrames);
 
 	return curImage;
 }
@@ -2296,7 +2298,7 @@ void Logic::handlePinnacleRoom() {
 
 	// camera does not follow Joe anymore
 	_graphics->cameraBob(-1);
-	roomDisplay(roomName(ROOM_JUNGLE_PINNACLE), RDM_NOFADE_JOE, 100, 2, true);
+	roomDisplay(ROOM_JUNGLE_PINNACLE, RDM_NOFADE_JOE, 100, 2, true);
 
 	BobSlot *joe   = _graphics->bob(6);
 	BobSlot *piton = _graphics->bob(7);
@@ -2562,7 +2564,7 @@ void Logic::sceneStart() {
 	debug(0, "[Logic::sceneStart] _scene = %i", _scene);
 	_scene++;
 
-	_display->mouseCursorShow(false);
+	_display->showMouseCursor(false);
 
 	if (1 == _scene) { // && _input->cutawayRunning()) { // sceneStart is always called when cutaway is running
 		_display->palFadePanel();
@@ -2579,7 +2581,7 @@ void Logic::sceneStop() {
 		return;
 
 	_display->palSetAllDirty();
-	_display->mouseCursorShow(true);
+	_display->showMouseCursor(true);
 	zoneSetupPanel();
 }
 

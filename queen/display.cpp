@@ -817,7 +817,7 @@ void Display::waitForTimer() {
 }
 
 
-void Display::mouseCursorInit(uint8 *buf, uint16 w, uint16 h, uint16 xhs, uint16 yhs) {
+void Display::setMouseCursor(uint8 *buf, uint16 w, uint16 h, uint16 xhs, uint16 yhs) {
 
 	// change transparency color match the one expected by the backend (0xFF)
 	uint16 size = w * h;
@@ -835,7 +835,7 @@ void Display::mouseCursorInit(uint8 *buf, uint16 w, uint16 h, uint16 xhs, uint16
 }
 
 
-void Display::mouseCursorShow(bool show) {
+void Display::showMouseCursor(bool show) {
 
 	_system->show_mouse(show);
 }
