@@ -5,10 +5,10 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 - many bugfixes for Zak256, + sound and music support. Game considered complete
 - support for Monkey1 VGA Floppy. Game considered complete
 - much work on The Dig - added music, etc. Still considered experimental
-- bugfixes galore for many other games, exp. Sam and Max, Loom and Simon
+- bugfixes galore for many other games, esp. Sam and Max, Loom and Simon
 - Loom CD speech+music syncronisation improved greatly
 - added midi-emulation via adlib, for platforms without sequencer support
-- code seperation of various engine parts into seperate libraries
+- code seperation of various engine parts into several libraries
 - new SMUSH video engine, for Full Throttle and The Dig
 - new in-game GUI
 - launcher dialog
