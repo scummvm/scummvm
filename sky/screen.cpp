@@ -421,7 +421,7 @@ void SkyScreen::processSequence(void) {
 				_seqInfo.seqDataPos++;
 
 				uint8 gridSta = (uint8)((screenPos / (GAME_SCREEN_WIDTH * 16))*20 + ((screenPos % GAME_SCREEN_WIDTH) >> 4));
-				uint8 gridEnd = (uint8)(((screenPos+nrToDo+15) / (GAME_SCREEN_WIDTH * 16))*20 + (((screenPos+nrToDo+15) % GAME_SCREEN_WIDTH) >> 4));
+				uint8 gridEnd = (uint8)(((screenPos+nrToDo) / (GAME_SCREEN_WIDTH * 16))*20 + (((screenPos+nrToDo) % GAME_SCREEN_WIDTH) >> 4));
                 for (cnt = gridSta; cnt <= gridEnd; cnt++)
 					_seqGrid[cnt] = 1;
 				for (cnt = 0; cnt < nrToDo; cnt++) {

@@ -782,6 +782,7 @@ uint16 SkyControl::saveRestorePanel(bool allowSave) {
 	while (!quitPanel) {
 		if (refreshNames || refreshAll) {
 			if (refreshAll) {
+				_text->flushForRedraw();
 				_savePanel->drawToScreen(NO_MASK);
 				_quitButton->drawToScreen(NO_MASK);
 			}
