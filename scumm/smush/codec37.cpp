@@ -327,11 +327,11 @@ void Codec37Decoder::bompDecode(byte *dst, byte *src, int32 len) {
 
 #define LITERAL_4X4(src, dst, pitch)				\
 	do {							\
-		int i;						\
+		int x;						\
 		DECLARE_LITERAL_TEMP(t);			\
 		READ_LITERAL_PIXEL(src, t);			\
-		for(i=0; i<4; i++) {				\
-			WRITE_4X1_LINE(dst + pitch * i, t);	\
+		for(x=0; x<4; x++) {				\
+			WRITE_4X1_LINE(dst + pitch * x, t);	\
 		}						\
 		dst += 4;					\
 	} while(0)
@@ -341,11 +341,11 @@ void Codec37Decoder::bompDecode(byte *dst, byte *src, int32 len) {
 
 #define LITERAL_4X1(src, dst, pitch)				\
 	do {							\
-  		int i;						\
+  		int x;						\
 		DECLARE_LITERAL_TEMP(t);			\
-		for(i=0; i<4; i++) {				\
+		for(x=0; x<4; x++) {				\
 			READ_LITERAL_PIXEL(src, t);		\
-			WRITE_4X1_LINE(dst + pitch * i, t);	\
+			WRITE_4X1_LINE(dst + pitch * x, t);	\
 		}						\
 		dst += 4;					\
 	} while(0)
@@ -355,9 +355,9 @@ void Codec37Decoder::bompDecode(byte *dst, byte *src, int32 len) {
 
 #define LITERAL_1X1(src, dst, pitch)				\
 	do {							\
-		int i;						\
-		for(i=0; i<4; i++) {				\
-			COPY_4X1_LINE(dst + pitch * i, src);	\
+		int x;						\
+		for(x=0; x<4; x++) {				\
+			COPY_4X1_LINE(dst + pitch * x, src);	\
 			src += 4;				\
 		}						\
 		dst += 4;					\
@@ -368,9 +368,9 @@ void Codec37Decoder::bompDecode(byte *dst, byte *src, int32 len) {
 
 #define COPY_4X4(dst2, dst, pitch)					  \
 	do {								  \
-		int i;							  \
-		for(i=0; i<4; i++) {					  \
-			COPY_4X1_LINE(dst + pitch * i, dst2 + pitch * i); \
+		int x;							  \
+		for(x=0; x<4; x++) {					  \
+			COPY_4X1_LINE(dst + pitch * x, dst2 + pitch * x); \
 		}							  \
 		dst += 4;						  \
 	} while(0)
