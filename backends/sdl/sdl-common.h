@@ -211,7 +211,7 @@ protected:
 	void add_dirty_rgn_auto(const byte *buf);
 	void mk_checksums(const byte *buf);
 
-	void add_dirty_rect(int x, int y, int w, int h);
+	virtual void add_dirty_rect(int x, int y, int w, int h);
 
 	virtual void draw_mouse();
 	virtual void undraw_mouse();
