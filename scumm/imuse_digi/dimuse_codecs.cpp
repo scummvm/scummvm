@@ -44,14 +44,22 @@ uint32 decode12BitsSample(const byte *src, byte **dst, uint32 size) {
 	return s_size;
 }
 
+/*
+ * The "IMC" codec below (see cases 13 & 15 in decompressCodec) is actually a
+ * variant of the IMA codec, see also
+ *   <http://home.pcisys.net/~melanson/codecs/simpleaudio.html>
+ * Based on that information, we might be able to simplify this code.
+ * Thanks to LordNightmare for helping me figure this out :-)
+ */
+
 #ifdef __PALM_OS__
 static byte *_destImcTable = NULL;		// save 23k of memory !
 static uint32 *_destImcTable2 = NULL;
 
 static const int16 *imcTable;
 #else
-static byte _destImcTable[93];
-static uint32 _destImcTable2[5697];
+static byte _destImcTable[89];
+static uint32 _destImcTable2[89 * 64];
 
 static const int16 imcTable[] = {
 	0x0007, 0x0008, 0x0009, 0x000A, 0x000B, 0x000C, 0x000D, 0x000E, 0x0010, 0x0011,
@@ -131,21 +139,19 @@ void releaseImcTables() {
 
 void initializeImcTables() {
 	int32 destTablePos = 0;
-	int32 imcTable1Pos = 0;
+	int32 pos = 0;
 	
 #ifdef __PALM_OS__
-	if (!_destImcTable) _destImcTable = (byte *)calloc(93, sizeof(byte));
-	if (!_destImcTable2) _destImcTable2 = (uint32 *)calloc(5697, sizeof(uint32));
+	if (!_destImcTable) _destImcTable = (byte *)calloc(89, sizeof(byte));
+	if (!_destImcTable2) _destImcTable2 = (uint32 *)calloc(89 * 64, sizeof(uint32));
 #endif
 	
 	do {
 		byte put = 1;
-		int32 tableValue = ((imcTable[imcTable1Pos] * 4) / 7) / 2;
-		if (tableValue != 0) {
-			do {
-				tableValue /= 2;
-				put++;
-			} while (tableValue != 0);
+		int32 tableValue = ((imcTable[pos] * 4) / 7) / 2;
+		while (tableValue != 0) {
+			tableValue /= 2;
+			put++;
 		}
 		if (put < 3) {
 			put = 3;
@@ -154,18 +160,18 @@ void initializeImcTables() {
 			put = 8;
 		}
 		put--;
-		_destImcTable[destTablePos] = put;
-		destTablePos++;
-	} while (++imcTable1Pos <= 88);
+		assert(pos < 89);
+		_destImcTable[pos] = put;
+	} while (++pos <= 88);
 	_destImcTable[89] = 0;
 
 	for (int n = 0; n < 64; n++) {
-		imcTable1Pos = 0;
+		pos = 0;
 		destTablePos = n;
 		do {
 			int32 count = 32;
 			int32 put = 0;
-			int32 tableValue = imcTable[imcTable1Pos];
+			int32 tableValue = imcTable[pos];
 	 		do {
 				if ((count & n) != 0) {
 					put += tableValue;
@@ -173,9 +179,10 @@ void initializeImcTables() {
 				count /= 2;
 				tableValue /= 2;
 			} while (count != 0);
+			assert(destTablePos < 89 * 64);
 			_destImcTable2[destTablePos] = put;
 			destTablePos += 64;
-		} while (++imcTable1Pos <= 88);
+		} while (++pos <= 88);
 	}
 }
 #define NextBit                            \
@@ -643,8 +650,7 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 						outputWord = 0x7fff;
 					if (outputWord < -0x8000)
 						outputWord = -0x8000;
-					dst[destPos] = ((int16)outputWord) >> 8;
-					dst[destPos + 1] = (byte)(outputWord);
+					WRITE_BE_UINT16(dst + destPos, outputWord);
 
 					// Adjust the curTablePos / imcTableEntry
 					assert(decompTable < 6);
