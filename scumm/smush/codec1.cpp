@@ -19,7 +19,7 @@
  *
  */
 
-#include <stdafx.h>
+#include "stdafx.h"
 #include "common/scummsys.h"
 
 void smush_decode_codec1(byte *dst, byte *src, int height) {

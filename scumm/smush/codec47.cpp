@@ -19,7 +19,7 @@
  *
  */
 
-#include <stdafx.h>
+#include "stdafx.h"
 #include "codec47.h"
 
 #include "common/engine.h"
@@ -39,6 +39,7 @@
 		(dst)[0] = (src)[0];	\
 		(dst)[1] = (src)[1];	\
 	} while(0)
+
 
 #else /* SCUMM_NEED_ALIGNMENT */
 
@@ -64,6 +65,10 @@
 		(dst)[1] = val;	\
 	} while(0)
 
+#ifdef __PALM_OS__
+static int32 *codec37_table;
+static int16 *codec47_table;
+#else
 static int32 codec37_table[] = {
        0,       1,       2,       3,       3,       3,
        3,       2,       1,       0,       0,       0,
@@ -260,6 +265,7 @@ static int16 codec47_table[] = {
 	 23,  36, -19,  39,  16,  40, -13,  41,   9,  42,
 	 -6,  43,   1,  43,   0,   0,   0,   0,   0,   0
 };
+#endif
 
 void Codec47Decoder::makeTables37(int32 param) {
 	int32 variable1, variable2;
@@ -669,6 +675,10 @@ void Codec47Decoder::init(int width, int height) {
 }
 
 Codec47Decoder::Codec47Decoder() {
+#ifdef __PALM_OS__
+	_tableBig = (byte *)calloc(99328, sizeof(byte));
+	_tableSmall = (byte *)calloc(32768, sizeof(byte));
+#endif
 	_deltaBuf = 0;
 }
 
@@ -685,6 +695,10 @@ void Codec47Decoder::deinit() {
 
 Codec47Decoder::~Codec47Decoder() {
 	deinit();
+#ifdef __PALM_OS__
+	free(_tableBig);
+	free(_tableSmall);
+#endif
 }
 
 bool Codec47Decoder::decode(byte *dst, const byte *src) {
@@ -748,3 +762,15 @@ bool Codec47Decoder::decode(byte *dst, const byte *src) {
 
 	return true;
 }
+
+#ifdef __PALM_OS__
+#include "scumm_globals.h" // init globals
+void Codec47_initGlobals() {
+	GSETPTR(codec37_table,	GBVARS_CODEC37TABLE_INDEX,	int32	, GBVARS_SCUMM)
+	GSETPTR(codec47_table,	GBVARS_CODEC47TABLE_INDEX,	int16	, GBVARS_SCUMM)
+}
+void Codec47_releaseGlobals() {
+	GRELEASEPTR(GBVARS_CODEC37TABLE_INDEX		, GBVARS_SCUMM)
+	GRELEASEPTR(GBVARS_CODEC47TABLE_INDEX		, GBVARS_SCUMM)
+}
+#endif

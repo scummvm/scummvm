@@ -19,7 +19,7 @@
  *
  */
 
-#include <stdafx.h>
+#include "stdafx.h"
 #include "common/util.h"
 #include "smush_mixer.h"
 #include "channel.h"

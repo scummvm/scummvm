@@ -19,7 +19,7 @@
  *
  */
 
-#include <stdafx.h>
+#include "stdafx.h"
 #include "common/util.h"
 #include "common/engine.h"
 #include "common/file.h"
@@ -34,6 +34,8 @@ SmushFont::SmushFont(bool use_original_colors, bool new_colors) :
 	_original(use_original_colors) {
 	for(int i = 0; i < 256; i++)
 		_chars[i].chr = NULL;
+
+	_dataSrc = NULL;
 }
 
 SmushFont::~SmushFont() {

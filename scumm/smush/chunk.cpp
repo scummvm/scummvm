@@ -19,7 +19,7 @@
  *
  */
 
-#include <stdafx.h>
+#include "stdafx.h"
 #include "chunk.h"
 
 #include "common/engine.h"

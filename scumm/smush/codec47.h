@@ -36,8 +36,13 @@ private:
 	const byte *_d_src, *_paramPtr;
 	int _d_pitch;
 	int32 _offset1, _offset2;
+#ifdef __PALM_OS__
+	byte *_tableBig;
+	byte *_tableSmall;
+#else
 	byte _tableBig[99328];
 	byte _tableSmall[32768];
+#endif
 	int16 _table[256];
 	int32 _frameSize;
 	int _width, _height;

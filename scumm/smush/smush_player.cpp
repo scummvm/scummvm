@@ -19,7 +19,7 @@
  *
  */
 
-#include <stdafx.h>
+#include "stdafx.h"
 #include "common/file.h"
 #include "common/util.h"
 #include "common/engine.h"
@@ -384,7 +384,7 @@ void SmushPlayer::handleImuseAction(Chunk &b) {
 	int flags = b.getWord();
 	int unknown = b.getShort();
 	int track_flags = b.getWord();
-	
+
 	if (flags != 46)
 		return;
 	assert(flags == 46 && unknown == 0);

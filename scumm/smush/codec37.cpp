@@ -19,7 +19,7 @@
  *
  */
 
-#include <stdafx.h>
+#include "stdafx.h"
 #include "codec37.h"
 
 #include "common/engine.h"
@@ -30,8 +30,7 @@ void Codec37Decoder::init(int width, int height) {
 	_height = height;
 	_frameSize = _width * _height;
 	_deltaSize = _frameSize * 3 + 0x13600;
-	_deltaBuf = new byte[_deltaSize];
-	memset(_deltaBuf, 0, _deltaSize);
+	_deltaBuf = (byte *)calloc(_deltaSize, sizeof(byte));
 	if(_deltaBuf == 0)
 		error("unable to allocate decoder buffer");
 	_deltaBufs[0] = _deltaBuf + 0x4D80;
@@ -64,7 +63,7 @@ void Codec37Decoder::deinit() {
 		_tableLastIndex = -1;
 	}
 	if(_deltaBuf) {
-		delete []_deltaBuf;
+		free(_deltaBuf);
 		_deltaSize = 0;
 		_deltaBuf = 0;
 		_deltaBufs[0] = 0;

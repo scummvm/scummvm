@@ -19,7 +19,7 @@
  *
  */
 
-#include <stdafx.h>
+#include "stdafx.h"
 #include "channel.h"
 #include "chunk.h"
 #include "chunk_type.h"
