@@ -141,7 +141,7 @@ void ControlButton::draw(void) {
 		dst += SCREEN_WIDTH;
 		src += FROM_LE_16(fHead->width);
 	}
-	_system->copy_rect(_dstBuf, SCREEN_WIDTH, _x, _y, _width, _height);
+	_system->copyRectToScreen(_dstBuf, SCREEN_WIDTH, _x, _y, _width, _height);
 }
 
 bool ControlButton::wasClicked(uint16 mouseX, uint16 mouseY) {
@@ -197,7 +197,7 @@ void Control::askForCd(void) {
 			memset(_screenBuf, 0, 640 * 480);
 			renderText(textA, 320, 220, TEXT_CENTER);
 			renderText(_lStrings[STR_INSERT_CD_B], 320, 240, TEXT_CENTER);
-			_system->copy_rect(_screenBuf, 640, 0, 0, 640, 480);
+			_system->copyRectToScreen(_screenBuf, 640, 0, 0, 640, 480);
 			_system->updateScreen();
 		}
 		delay(300);
@@ -206,7 +206,7 @@ void Control::askForCd(void) {
 			if (!test.isOpen()) {
 				memset(_screenBuf, 0, 640 * 480);
 				renderText(_lStrings[STR_INCORRECT_CD], 320, 230, TEXT_CENTER);
-				_system->copy_rect(_screenBuf, 640, 0, 0, 640, 480);
+				_system->copyRectToScreen(_screenBuf, 640, 0, 0, 640, 480);
 				_system->updateScreen();
 				delay(2000);
 				refreshText = true;
@@ -284,7 +284,7 @@ uint8 Control::runPanel(void) {
 		}
 		if (fullRefresh) {
 			fullRefresh = false;
-			_system->copy_rect(_screenBuf, SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, 480);
+			_system->copyRectToScreen(_screenBuf, SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, 480);
 		}
 		_system->updateScreen();
 		delay(1000 / 12);
@@ -294,7 +294,7 @@ uint8 Control::runPanel(void) {
 	_resMan->resClose(fontId);
 	_resMan->resClose(redFontId);
 	memset(_screenBuf, 0, 640 * 480);
-	_system->copy_rect(_screenBuf, 640, 0, 0, 640, 480);
+	_system->copyRectToScreen(_screenBuf, 640, 0, 0, 640, 480);
 	free(_screenBuf);
 	_mouse->controlPanel(false);
 	_music->startMusic(Logic::_scriptVars[CURRENT_MUSIC], 1);
@@ -840,7 +840,7 @@ void Control::renderText(const uint8 *str, uint16 x, uint16 y, uint8 mode) {
 		destX += FROM_LE_16(chSpr->width) - 3;
 		str++;
 	}
-	_system->copy_rect(_screenBuf + y * SCREEN_WIDTH + x, SCREEN_WIDTH, x, y, (destX - x) + 3, 28);
+	_system->copyRectToScreen(_screenBuf + y * SCREEN_WIDTH + x, SCREEN_WIDTH, x, y, (destX - x) + 3, 28);
 }
 
 void Control::renderVolumeBar(uint8 id, uint8 volL, uint8 volR) {
@@ -857,7 +857,7 @@ void Control::renderVolumeBar(uint8 id, uint8 volL, uint8 volR) {
 			srcMem += FROM_LE_16(frHead->width);
 			destMem += SCREEN_WIDTH;
 		}
-		_system->copy_rect(_screenBuf + destY * SCREEN_WIDTH + destX, SCREEN_WIDTH, destX, destY, FROM_LE_16(frHead->width), FROM_LE_16(frHead->height));
+		_system->copyRectToScreen(_screenBuf + destY * SCREEN_WIDTH + destX, SCREEN_WIDTH, destX, destY, FROM_LE_16(frHead->width), FROM_LE_16(frHead->height));
 		_resMan->resClose(SR_VLIGHT);
 		destX += 32;
 	}

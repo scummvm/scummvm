@@ -532,7 +532,7 @@ void OSystem_SDL::setFullscreenMode(bool enable) {
 	}
 }
 
-void OSystem_SDL::copy_rect(const byte *src, int pitch, int x, int y, int w, int h) {
+void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) {
 	if (_screen == NULL)
 		return;
 
@@ -829,15 +829,15 @@ void OSystem_SDL::set_shake_pos(int shake_pos) {
 #pragma mark --- Overlays ---
 #pragma mark -
 
-void OSystem_SDL::show_overlay() {
+void OSystem_SDL::showOverlay() {
 	// hide the mouse
 	undraw_mouse();
 
 	_overlayVisible = true;
-	clear_overlay();
+	clearOverlay();
 }
 
-void OSystem_SDL::hide_overlay() {
+void OSystem_SDL::hideOverlay() {
 	// hide the mouse
 	undraw_mouse();
 
@@ -845,7 +845,7 @@ void OSystem_SDL::hide_overlay() {
 	_forceFull = true;
 }
 
-void OSystem_SDL::clear_overlay() {
+void OSystem_SDL::clearOverlay() {
 	if (!_overlayVisible)
 		return;
 	
@@ -866,7 +866,7 @@ void OSystem_SDL::clear_overlay() {
 	_forceFull = true;
 }
 
-void OSystem_SDL::grab_overlay(OverlayColor *buf, int pitch) {
+void OSystem_SDL::grabOverlay(OverlayColor *buf, int pitch) {
 	if (!_overlayVisible)
 		return;
 
@@ -890,7 +890,7 @@ void OSystem_SDL::grab_overlay(OverlayColor *buf, int pitch) {
 	SDL_UnlockSurface(_tmpscreen);
 }
 
-void OSystem_SDL::copy_rect_overlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
+void OSystem_SDL::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
 	if (!_overlayVisible)
 		return;
 
@@ -953,7 +953,7 @@ void OSystem_SDL::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
 #pragma mark --- Mouse ---
 #pragma mark -
 
-bool OSystem_SDL::show_mouse(bool visible) {
+bool OSystem_SDL::showMouse(bool visible) {
 	if (_mouseVisible == visible)
 		return visible;
 	
@@ -977,7 +977,7 @@ void OSystem_SDL::set_mouse_pos(int x, int y) {
 	}
 }
 
-void OSystem_SDL::warp_mouse(int x, int y) {
+void OSystem_SDL::warpMouse(int x, int y) {
 	if (_mouseCurState.x != x || _mouseCurState.y != y) {
 		SDL_WarpMouse(x * _scaleFactor, y * _scaleFactor);
 
@@ -992,7 +992,7 @@ void OSystem_SDL::warp_mouse(int x, int y) {
 	}
 }
 	
-void OSystem_SDL::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {
+void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {
 
 	undraw_mouse();
 

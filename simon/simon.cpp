@@ -1548,11 +1548,11 @@ void SimonEngine::handle_mouse_moved() {
 	uint x;
 
 	if (_lock_counter) {
-		_system->show_mouse(false);
+		_system->showMouse(false);
 		return;
 	}
 
-	_system->show_mouse(true);
+	_system->showMouse(true);
 	pollMouseXY();
 
 	if (_mouse_x >= 32768)
@@ -3764,9 +3764,9 @@ static const byte _simon2_cursors[10][256] = {
 
 void SimonEngine::draw_mouse_pointer() {
 	if (_game & GF_SIMON2)
-		_system->set_mouse_cursor(_simon2_cursors[_mouse_cursor], 16, 16, 7, 7);
+		_system->setMouseCursor(_simon2_cursors[_mouse_cursor], 16, 16, 7, 7);
 	else
-		_system->set_mouse_cursor(_simon1_cursor, 16, 16, 0, 0);
+		_system->setMouseCursor(_simon1_cursor, 16, 16, 0, 0);
 }
 
 // Thanks to Stuart Caie for providing the original
@@ -4434,7 +4434,7 @@ void SimonEngine::dx_copy_rgn_from_3_to_2(uint b, uint r, uint y, uint x) {
 void SimonEngine::dx_clear_surfaces(uint num_lines) {
 	memset(_sdl_buf_attached, 0, num_lines * 320);
 
-	_system->copy_rect(_sdl_buf_attached, 320, 0, 0, 320, 200);
+	_system->copyRectToScreen(_sdl_buf_attached, 320, 0, 0, 320, 200);
 
 	if (_dx_use_3_or_4_for_lock) {
 		memset(_sdl_buf, 0, num_lines * 320);
@@ -4485,7 +4485,7 @@ void SimonEngine::dx_update_screen_and_palette() {
 		}
 	}
 
-	_system->copy_rect(_sdl_buf_attached, 320, 0, 0, 320, 200);
+	_system->copyRectToScreen(_sdl_buf_attached, 320, 0, 0, 320, 200);
 	_system->updateScreen();
 
 	memcpy(_sdl_buf_attached, _sdl_buf, 320 * 200);

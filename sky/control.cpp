@@ -82,7 +82,7 @@ void ConResource::drawToScreen(bool doMask) {
 			spriteData += _spriteData->s_width;
 		}
 	}
-	_system->copy_rect(updatePos, GAME_SCREEN_WIDTH, _x, _y, _spriteData->s_width, _spriteData->s_height);
+	_system->copyRectToScreen(updatePos, GAME_SCREEN_WIDTH, _x, _y, _spriteData->s_width, _spriteData->s_height);
 }
 
 TextResource::TextResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, uint16 pX, uint16 pY, uint32 pText, uint8 pOnClick, OSystem *system, uint8 *screen) :
@@ -121,7 +121,7 @@ void TextResource::drawToScreen(bool doMask) {
 			cpHeight = PAN_CHAR_HEIGHT;
 		for (cnty = 0; cnty < cpHeight; cnty++)
 			memcpy(_screen + (cnty + _oldY) * GAME_SCREEN_WIDTH + _oldX, _oldScreen + cnty * PAN_LINE_WIDTH, cpWidth);
-		_system->copy_rect(_screen + _oldY * GAME_SCREEN_WIDTH + _oldX, GAME_SCREEN_WIDTH, _oldX, _oldY, cpWidth, PAN_CHAR_HEIGHT);
+		_system->copyRectToScreen(_screen + _oldY * GAME_SCREEN_WIDTH + _oldX, GAME_SCREEN_WIDTH, _oldX, _oldY, cpWidth, PAN_CHAR_HEIGHT);
 	}
 	if (!_spriteData) {
 		_oldX = GAME_SCREEN_WIDTH;
@@ -145,7 +145,7 @@ void TextResource::drawToScreen(bool doMask) {
 		copyDest += PAN_LINE_WIDTH;
 		screenPos += GAME_SCREEN_WIDTH;
 	}
-	_system->copy_rect(_screen + _y * GAME_SCREEN_WIDTH + _x, GAME_SCREEN_WIDTH, _x, _y, cpWidth, cpHeight);
+	_system->copyRectToScreen(_screen + _y * GAME_SCREEN_WIDTH + _x, GAME_SCREEN_WIDTH, _x, _y, cpWidth, cpHeight);
 }
 
 ControlStatus::ControlStatus(Text *skyText, OSystem *system, uint8 *scrBuf) {
@@ -367,7 +367,7 @@ void Control::drawCross(uint16 x, uint16 y) {
 		crossPos += CROSS_SZ_X;
 	}
 	bufPos = _screenBuf + y * GAME_SCREEN_WIDTH + x;
-	_system->copy_rect(bufPos, GAME_SCREEN_WIDTH, x, y, CROSS_SZ_X, CROSS_SZ_Y);
+	_system->copyRectToScreen(bufPos, GAME_SCREEN_WIDTH, x, y, CROSS_SZ_X, CROSS_SZ_Y);
 	_text->drawToScreen(WITH_MASK);
 }
 
@@ -391,7 +391,7 @@ void Control::animClick(ConResource *pButton) {
 void Control::drawMainPanel(void) {
 
 	memset(_screenBuf, 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
-	_system->copy_rect(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
+	_system->copyRectToScreen(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
 	_controlPanel->drawToScreen(NO_MASK);
 	_exitButton->drawToScreen(NO_MASK);
 	_savePanButton->drawToScreen(NO_MASK);
@@ -430,7 +430,7 @@ void Control::doLoadSavePanel(void) {
 	saveRestorePanel(false);
 
 	memset(_screenBuf, 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
-	_system->copy_rect(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
+	_system->copyRectToScreen(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
 	_system->updateScreen();
 	_skyScreen->forceRefresh();
 	_skyScreen->setPaletteEndian((uint8 *)SkyEngine::fetchCompact(SkyEngine::_systemVars.currentPalette));
@@ -496,7 +496,7 @@ void Control::doControlPanel(void) {
 
 	}
 	memset(_screenBuf, 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
-	_system->copy_rect(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
+	_system->copyRectToScreen(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
 	_system->updateScreen();
 	_skyScreen->forceRefresh();
 	_skyScreen->setPaletteEndian((uint8 *)SkyEngine::fetchCompact(SkyEngine::_systemVars.currentPalette));
@@ -992,7 +992,7 @@ void Control::showSprites(dataFileHeader **nameSprites, bool allowSave) {
 				drawResource->setXY(GAME_NAME_X + _enteredTextWidth + 1, GAME_NAME_Y + cnt * PAN_CHAR_HEIGHT + 4);
 				drawResource->drawToScreen(WITH_MASK);
 			}
-			_system->copy_rect(_screenBuf + (GAME_NAME_Y + cnt * PAN_CHAR_HEIGHT) * GAME_SCREEN_WIDTH + GAME_NAME_X, GAME_SCREEN_WIDTH, GAME_NAME_X, GAME_NAME_Y + cnt * PAN_CHAR_HEIGHT, PAN_LINE_WIDTH, PAN_CHAR_HEIGHT);
+			_system->copyRectToScreen(_screenBuf + (GAME_NAME_Y + cnt * PAN_CHAR_HEIGHT) * GAME_SCREEN_WIDTH + GAME_NAME_X, GAME_SCREEN_WIDTH, GAME_NAME_X, GAME_NAME_Y + cnt * PAN_CHAR_HEIGHT, PAN_LINE_WIDTH, PAN_CHAR_HEIGHT);
 		} else 
 			drawResource->drawToScreen(NO_MASK);
 	}
@@ -1546,7 +1546,7 @@ uint16 Control::quickXRestore(uint16 slot) {
 	_savedCharSet = _skyText->giveCurrentCharSet();
 	_skyText->fnSetFont(0);
 
-	_system->copy_rect(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
+	_system->copyRectToScreen(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
 	_system->updateScreen();
 
 	if (SkyEngine::_systemVars.gameVersion < 331)
@@ -1570,7 +1570,7 @@ uint16 Control::quickXRestore(uint16 slot) {
 		_skyScreen->setPaletteEndian((uint8 *)SkyEngine::fetchCompact(SkyEngine::_systemVars.currentPalette));
 	} else {
 		memset(_screenBuf, 0, FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
-		_system->copy_rect(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
+		_system->copyRectToScreen(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
 		_system->updateScreen();
 		_skyScreen->showScreen(_skyScreen->giveCurrent());
 		_skyScreen->setPalette(60111);

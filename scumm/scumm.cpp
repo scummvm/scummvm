@@ -1587,7 +1587,7 @@ load_game:
 	animateCursor();
 	
 	/* show or hide mouse */
-	_system->show_mouse(_cursor.state > 0);
+	_system->showMouse(_cursor.state > 0);
 
 	if (VAR_TIMER != 0xFF)
 		VAR(VAR_TIMER) = 0;

@@ -57,7 +57,7 @@ public:
 	// Overloaded from SDL_Common (new scaler handling)
 	void add_dirty_rect(int x, int y, int w, int h);
 	// Overloaded from SDL_Common (new scaler handling)
-	void warp_mouse(int x, int y);
+	void warpMouse(int x, int y);
 	// Overloaded from SDL_Commmon
 	void quit();
 	// Overloaded from SDL_Commmon (master volume and sample rate subtleties)

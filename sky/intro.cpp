@@ -792,7 +792,7 @@ bool Intro::floppyScrollFlirt(void) {
 				vgaPtr += nrToDo;
 			} while (nrToDo == 255);
 		}
-		_system->copy_rect(scrollPos, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
+		_system->copyRectToScreen(scrollPos, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 		_system->updateScreen();
 #ifndef _WIN32_WCE
 		if (!escDelay(40))
@@ -868,7 +868,7 @@ void Intro::showTextBuf(void) {
 		saveBuf += width;
 	}
 	screenBuf = _skyScreen->giveCurrent() + y * GAME_SCREEN_WIDTH + x;
-	_system->copy_rect(screenBuf, GAME_SCREEN_WIDTH, x, y, width, height);
+	_system->copyRectToScreen(screenBuf, GAME_SCREEN_WIDTH, x, y, width, height);
 }
 
 void Intro::restoreScreen(void) {
@@ -884,7 +884,7 @@ void Intro::restoreScreen(void) {
 		screenBuf += GAME_SCREEN_WIDTH;
 		saveBuf += width;
 	}
-	_system->copy_rect(_saveBuf + sizeof(dataFileHeader), width, x, y, width, height);
+	_system->copyRectToScreen(_saveBuf + sizeof(dataFileHeader), width, x, y, width, height);
 }
 
 bool Intro::escDelay(uint32 msecs) {

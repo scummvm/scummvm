@@ -93,7 +93,7 @@ Screen::~Screen(void) {
 void Screen::clearScreen(void) {
 	 
 	memset(_currentScreen, 0, FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
-	_system->copy_rect(_currentScreen, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
+	_system->copyRectToScreen(_currentScreen, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 	_system->updateScreen();
 }
 
@@ -151,7 +151,7 @@ void Screen::showScreen(uint16 fileNum) {
 
 void Screen::showScreen(uint8 *pScreen) {
 
-	_system->copy_rect(pScreen, 320, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
+	_system->copyRectToScreen(pScreen, 320, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 	_system->updateScreen();
 }
 
@@ -211,12 +211,12 @@ void Screen::flip(bool doUpdate) {
 				if (!copyWidth) copyX = cntx * GRID_W;
 				copyWidth += GRID_W;
 			} else if (copyWidth) {
-				_system->copy_rect(_currentScreen + cnty * GRID_H * GAME_SCREEN_WIDTH + copyX, GAME_SCREEN_WIDTH, copyX, cnty * GRID_H, copyWidth, GRID_H);
+				_system->copyRectToScreen(_currentScreen + cnty * GRID_H * GAME_SCREEN_WIDTH + copyX, GAME_SCREEN_WIDTH, copyX, cnty * GRID_H, copyWidth, GRID_H);
 				copyWidth = 0;
 			}
 		}
 		if (copyWidth) {
-			_system->copy_rect(_currentScreen + cnty * GRID_H * GAME_SCREEN_WIDTH + copyX, GAME_SCREEN_WIDTH, copyX, cnty * GRID_H, copyWidth, GRID_H);
+			_system->copyRectToScreen(_currentScreen + cnty * GRID_H * GAME_SCREEN_WIDTH + copyX, GAME_SCREEN_WIDTH, copyX, cnty * GRID_H, copyWidth, GRID_H);
 			copyWidth = 0;
 		}
 	}
@@ -470,14 +470,14 @@ void Screen::processSequence(void) {
 					}
 					rectWid++;
 				} else if (rectWid) {
-					_system->copy_rect(rectPtr, GAME_SCREEN_WIDTH, rectX << 4, rectY << 4, rectWid << 4, 16);
+					_system->copyRectToScreen(rectPtr, GAME_SCREEN_WIDTH, rectX << 4, rectY << 4, rectWid << 4, 16);
 					rectWid = 0;
 				}
 				scrPtr += 16;
 				gridPtr++;
 			}
 			if (rectWid) {
-				_system->copy_rect(rectPtr, GAME_SCREEN_WIDTH, rectX << 4, rectY << 4, rectWid << 4, 16);
+				_system->copyRectToScreen(rectPtr, GAME_SCREEN_WIDTH, rectX << 4, rectY << 4, rectWid << 4, 16);
 				rectWid = 0;
 			}
 			scrPtr += 15 * GAME_SCREEN_WIDTH;
@@ -781,7 +781,7 @@ void Screen::showGrid(uint8 *gridBuf) {
 			gridData <<= 1;
 		}
 	}
-	_system->copy_rect(_currentScreen, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
+	_system->copyRectToScreen(_currentScreen, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 
 }
 

@@ -966,7 +966,7 @@ void SmushPlayer::updateScreen() {
 #endif
 
 	uint32 end_time, start_time = _vm->_system->get_msecs();
-	_vm->_system->copy_rect(_dst, _width, 0, 0, _width, _height);
+	_vm->_system->copyRectToScreen(_dst, _width, 0, 0, _width, _height);
 	_updateNeeded = true;
 	end_time = _vm->_system->get_msecs();
 	debug(4, "Smush stats: updateScreen( %03d )", end_time - start_time);
@@ -1026,7 +1026,7 @@ void SmushPlayer::play(const char *filename, const char *directory, int32 offset
 	_updateNeeded = false;
 	
 	// Hide mouse
-	bool oldMouseState = _vm->_system->show_mouse(false);
+	bool oldMouseState = _vm->_system->showMouse(false);
 
 	// Load the video
 	setupAnim(filename, directory);
@@ -1065,7 +1065,7 @@ void SmushPlayer::play(const char *filename, const char *directory, int32 offset
 	deinit();
 	
 	// Reset mouse state
-	_vm->_system->show_mouse(oldMouseState);
+	_vm->_system->showMouse(oldMouseState);
 }
 
 } // End of namespace Scumm

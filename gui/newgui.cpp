@@ -91,8 +91,8 @@ void NewGui::runLoop() {
 		if (_needRedraw) {
 			// Restore the overlay to its initial state, then draw all dialogs.
 			// This is necessary to get the blending right.
-			_system->clear_overlay();
-			_system->grab_overlay((OverlayColor *)_screen.pixels, _screenPitch);
+			_system->clearOverlay();
+			_system->grabOverlay((OverlayColor *)_screen.pixels, _screenPitch);
 			for (int i = 0; i < _dialogStack.size(); i++)
 				_dialogStack[i]->drawDialog();
 			_needRedraw = false;
@@ -184,21 +184,21 @@ void NewGui::runLoop() {
 void NewGui::saveState() {
 
 	// Backup old cursor
-	_oldCursorMode = _system->show_mouse(true);
+	_oldCursorMode = _system->showMouse(true);
 
 	// Enable the overlay
-	_system->show_overlay();
+	_system->showOverlay();
 
 	// Create a screen buffer for the overlay data, and fill it with
 	// whatever is visible on the screen rught now.
-	_screen.h = _system->get_overlay_height();
-	_screen.w = _system->get_overlay_width();
+	_screen.h = _system->getOverlayHeight();
+	_screen.w = _system->getOverlayWidth();
 	_screen.bytesPerPixel = sizeof(OverlayColor);
 	_screen.pitch = _screen.w * _screen.bytesPerPixel;
 	_screenPitch = _screen.w;
 	_screen.pixels = (OverlayColor*)calloc(_screen.w * _screen.h, sizeof(OverlayColor));
 
-	_system->grab_overlay((OverlayColor *)_screen.pixels, _screenPitch);
+	_system->grabOverlay((OverlayColor *)_screen.pixels, _screenPitch);
 
 	_currentKeyDown.keycode = 0;
 	_lastClick.x = _lastClick.y = 0;
@@ -209,9 +209,9 @@ void NewGui::saveState() {
 }
 
 void NewGui::restoreState() {
-	_system->show_mouse(_oldCursorMode);
+	_system->showMouse(_oldCursorMode);
 
-	_system->hide_overlay();
+	_system->hideOverlay();
 	if (_screen.pixels) {
 		free(_screen.pixels);
 		_screen.pixels = 0;
@@ -357,7 +357,7 @@ void NewGui::addDirtyRect(int x, int y, int w, int h) {
 	// blit the affected area directly to the overlay. At least for our current
 	// GUI/widget/dialog code that is just fine.
 	OverlayColor *buf = getBasePtr(x, y);
-	_system->copy_rect_overlay(buf, _screenPitch, x, y, w, h);
+	_system->copyRectToOverlay(buf, _screenPitch, x, y, w, h);
 }
 
 void NewGui::drawChar(byte chr, int xx, int yy, OverlayColor color) {
@@ -439,7 +439,7 @@ void NewGui::animateCursor() {
 			}
 		}
 	
-		_system->set_mouse_cursor(_cursor, 16, 16, 7, 7);
+		_system->setMouseCursor(_cursor, 16, 16, 7, 7);
 
 		_cursorAnimateTimer = time;
 		_cursorAnimateCounter = (_cursorAnimateCounter + 1) % 4;

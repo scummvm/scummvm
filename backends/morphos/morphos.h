@@ -51,30 +51,30 @@ class OSystem_MorphOS : public OSystem
 
 		// Draw a bitmap to screen.
 		// The screen will not be updated to reflect the new bitmap
-		virtual void copy_rect(const byte *buf, int pitch, int x, int y, int w, int h);
+		virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 		void move_screen(int dx, int dy, int height);
 
 		// Update the dirty areas of the screen
 		virtual void updateScreen();
 
 		// Either show or hide the mouse cursor
-		virtual bool show_mouse(bool visible);
+		virtual bool showMouse(bool visible);
 
 		// Set the position of the mouse cursor
 		virtual void set_mouse_pos(int x, int y);
 
 		// Set the bitmap that's used when drawing the cursor.
-		virtual void set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y);
+		virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y);
 
 		// Shaking is used in SCUMM. Set current shake position.
 		virtual void set_shake_pos(int shake_pos);
 
 		// Overlay
-		virtual void show_overlay();
-		virtual void hide_overlay();
-		virtual void clear_overlay();
-		virtual void grab_overlay(int16 *buf, int pitch);
-		virtual void copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h);
+		virtual void showOverlay();
+		virtual void hideOverlay();
+		virtual void clearOverlay();
+		virtual void grabOverlay(int16 *buf, int pitch);
+		virtual void copyRectToOverlay(const int16 *buf, int pitch, int x, int y, int w, int h);
 		virtual int16 getHeight();
 		virtual int16 getWidth();
 
@@ -98,7 +98,7 @@ class OSystem_MorphOS : public OSystem
 		virtual bool poll_event(Event *event);
 
 		// Moves mouse pointer to specified position
-		virtual void warp_mouse(int x, int y);
+		virtual void warpMouse(int x, int y);
 
 		// Set the function to be invoked whenever samples need to be generated
 		virtual bool setSoundCallback(SoundProc proc, void *param);

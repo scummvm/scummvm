@@ -260,7 +260,7 @@ public:
 	 * flicker.
 	 * @see updateScreen
 	 */
-	virtual void copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) = 0;
+	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) = 0;
 
 	/** Update the dirty areas of the screen. */
 	virtual void updateScreen() = 0;
@@ -284,7 +284,7 @@ public:
 	 * (always positive) offset. The area at the bottom of the screen which is moved
 	 * into view by this is filled by black. This does not cause any graphic data to
 	 * be lost - that is, to restore the original view, the game engine only has to
-	 * call this method again with a 0 offset. No calls to copy_rect are necessary.
+	 * call this method again with a 0 offset. No calls to copyRectToScreen are necessary.
 	 * @param shakeOffset	the shake offset
 	 *
 	 * @todo This is a rather special screen effect, only used by the SCUMM
@@ -299,13 +299,13 @@ public:
 
 	/** @name Overlay */
 	//@{
-	virtual void show_overlay() = 0;
-	virtual void hide_overlay() = 0;
-	virtual void clear_overlay() = 0;
-	virtual void grab_overlay(OverlayColor *buf, int pitch) = 0;
-	virtual void copy_rect_overlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) = 0;
-	virtual int16 get_overlay_height()	{ return getHeight(); }
-	virtual int16 get_overlay_width()	{ return getWidth(); }
+	virtual void showOverlay() = 0;
+	virtual void hideOverlay() = 0;
+	virtual void clearOverlay() = 0;
+	virtual void grabOverlay(OverlayColor *buf, int pitch) = 0;
+	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) = 0;
+	virtual int16 getOverlayHeight()  { return getHeight(); }
+	virtual int16 getOverlayWidth()   { return getWidth(); }
 
 	/**
 	* Convert the given RGB triplet into an OverlayColor. A OverlayColor can
@@ -339,7 +339,7 @@ public:
 	//@{
 
 	/** Show or hide the mouse cursor. */
-	virtual bool show_mouse(bool visible) = 0;
+	virtual bool showMouse(bool visible) = 0;
 
 	/** 
 	 * Move ("warp") the mouse cursor to the specified position in virtual 
@@ -347,7 +347,7 @@ public:
 	 * @param x		the new x position of the mouse
 	 * @param y		the new x position of the mouse
 	 */
-	virtual void warp_mouse(int x, int y) = 0;
+	virtual void warpMouse(int x, int y) = 0;
 
 	/**
 	 * Set the bitmap used for drawing the cursor.
@@ -358,7 +358,7 @@ public:
 	 * @param hotspotX	horizontal offset from the left side to the hotspot
 	 * @param hotspotY	vertical offset from the top side to the hotspot
 	 */
-	virtual void set_mouse_cursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY) = 0;
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY) = 0;
 
 	//@}
 

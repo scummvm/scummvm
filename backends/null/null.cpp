@@ -31,12 +31,12 @@ class OSystem_NULL : public OSystem {
 public:
 	void setPalette(const byte *colors, uint start, uint num) {}
 	void initSize(uint w, uint h);
-	void copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {}
+	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {}
 	void move_screen(int dx, int dy) {}
 	void updateScreen() {}
-	bool show_mouse(bool visible) { return false; }
+	bool showMouse(bool visible) { return false; }
 	void set_mouse_pos(int x, int y) {}
-	void set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {}
+	void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {}
 	void set_shake_pos(int shake_pos) {}
 	uint32 get_msecs();
 	void delay_msecs(uint msecs);

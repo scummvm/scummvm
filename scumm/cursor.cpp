@@ -168,7 +168,7 @@ void ScummEngine::setCursorHotspot(int x, int y) {
 }
 
 void ScummEngine::updateCursor() {
-	_system->set_mouse_cursor(_grabbedCursor, _cursor.width, _cursor.height,
+	_system->setMouseCursor(_grabbedCursor, _cursor.width, _cursor.height,
 							_cursor.hotspotX, _cursor.hotspotY);
 }
 

@@ -88,7 +88,7 @@ public:
 
 	// Draw a bitmap to screen.
 	// The screen will not be updated to reflect the new bitmap
-	void copy_rect(const byte *buf, int pitch, int x, int y, int w, int h);
+	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 
 	void move_screen(int dx, int dy, int height);
 
@@ -96,7 +96,7 @@ public:
 	void updateScreen();
 
 	// Either show or hide the mouse cursor
-	bool show_mouse(bool visible);
+	bool showMouse(bool visible);
 
 	// Set the position of the mouse cursor
 	void set_mouse_pos(int x, int y);
@@ -104,10 +104,10 @@ public:
 	// Warp the mouse cursor. Where set_mouse_pos() only informs the
 	// backend of the mouse cursor's current position, this function
 	// actually moves the cursor to the specified position.
-	void warp_mouse(int x, int y);
+	void warpMouse(int x, int y);
 
 	// Set the bitmap that's used when drawing the cursor.
-	void set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y);
+	void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y);
 
 	// Shaking is used in SCUMM. Set current shake position.
 	void set_shake_pos(int shake_pos);
@@ -159,11 +159,11 @@ public:
 	void deleteMutex(MutexRef mutex);
 
 	// Overlay handling for the new menu system
-	void show_overlay();
-	void hide_overlay();
-	void clear_overlay();
-	void grab_overlay(int16 *, int);
-	void copy_rect_overlay(const int16 *, int, int, int, int, int);
+	void showOverlay();
+	void hideOverlay();
+	void clearOverlay();
+	void grabOverlay(int16 *, int);
+	void copyRectToOverlay(const int16 *, int, int, int, int, int);
 	virtual int16 getHeight();
 	virtual int16 getWidth();
 
@@ -550,7 +550,7 @@ void OSystem_X11::setPalette(const byte *colors, uint start, uint num) {
     num_of_dirty_square++;					\
   }
 
-void OSystem_X11::copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {
+void OSystem_X11::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
 	uint8 *dst;
 
 	if (y < 0) {
@@ -586,12 +586,12 @@ void OSystem_X11::move_screen(int dx, int dy, int height) {
 			// move down
 			// copy from bottom to top
 			for (int y = height - 1; y >= dy; y--)
-				copy_rect(local_fb + fb_width * (y - dy), fb_width, 0, y, fb_width, 1);
+				copyRectToScreen(local_fb + fb_width * (y - dy), fb_width, 0, y, fb_width, 1);
 		} else {
 			// move up
 			// copy from top to bottom
 			for (int y = 0; y < height + dx; y++)
-				copy_rect(local_fb + fb_width * (y - dy), fb_width, 0, y, fb_width, 1);
+				copyRectToScreen(local_fb + fb_width * (y - dy), fb_width, 0, y, fb_width, 1);
 		}
 	} else if (dy == 0) {
 		// horizontal movement
@@ -599,12 +599,12 @@ void OSystem_X11::move_screen(int dx, int dy, int height) {
 			// move right
 			// copy from right to left
 			for (int x = fb_width - 1; x >= dx; x--)
-				copy_rect(local_fb + x - dx, fb_width, x, 0, 1, height);
+				copyRectToScreen(local_fb + x - dx, fb_width, x, 0, 1, height);
 		} else {
 			// move left
 			// copy from left to right
 			for (int x = 0; x < fb_width; x++)
-				copy_rect(local_fb + x - dx, fb_width, x, 0, 1, height);
+				copyRectToScreen(local_fb + x - dx, fb_width, x, 0, 1, height);
 		}
 	} else {
 		// free movement
@@ -697,7 +697,7 @@ void OSystem_X11::updateScreen() {
 	}
 }
 
-bool OSystem_X11::show_mouse(bool visible)
+bool OSystem_X11::showMouse(bool visible)
 {
 	if (_mouse_visible == visible)
 		return visible;
@@ -804,11 +804,11 @@ void OSystem_X11::set_mouse_pos(int x, int y) {
 	}
 }
 
-void OSystem_X11::warp_mouse(int x, int y) {
+void OSystem_X11::warpMouse(int x, int y) {
 	set_mouse_pos(x, y);
 }
 
-void OSystem_X11::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {
+void OSystem_X11::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {
 	cur_state.w = w;
 	cur_state.h = h;
 	cur_state.hot_x = hotspot_x;
@@ -1095,16 +1095,16 @@ void OSystem_X11::deleteMutex(MutexRef mutex) {
 	free(mutex);
 }
 
-void OSystem_X11::show_overlay() {
+void OSystem_X11::showOverlay() {
 	_overlay_visible = true;
 }
 
-void OSystem_X11::hide_overlay() {
+void OSystem_X11::hideOverlay() {
 	_overlay_visible = false;
 	_palette_changed = true; // This is to force a full redraw to hide the overlay
 }
 
-void OSystem_X11::clear_overlay() {
+void OSystem_X11::clearOverlay() {
 	if (_overlay_visible == false)
 		return;
 	dirty_square d = { 0, 0, fb_width, fb_height };
@@ -1112,7 +1112,7 @@ void OSystem_X11::clear_overlay() {
 	blit_convert(&d, local_fb_overlay, fb_width);
 }
 
-void OSystem_X11::grab_overlay(int16 *dest, int pitch) {
+void OSystem_X11::grabOverlay(int16 *dest, int pitch) {
 	if (_overlay_visible == false)
 		return;
 	
@@ -1120,7 +1120,7 @@ void OSystem_X11::grab_overlay(int16 *dest, int pitch) {
 	blit_convert(&d, (uint16 *) dest, pitch);
 }
 
-void OSystem_X11::copy_rect_overlay(const int16 *src, int pitch, int x, int y, int w, int h) {
+void OSystem_X11::copyRectToOverlay(const int16 *src, int pitch, int x, int y, int w, int h) {
 	if (_overlay_visible == false)
 		return;
 	uint16 *dst = local_fb_overlay + x + (y * fb_width);

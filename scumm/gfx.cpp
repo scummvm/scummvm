@@ -408,7 +408,7 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int botto
 	// We don't clip height and width here, rather we rely on the backend to
 	// perform any needed clipping.
 	ptr = vs->screenPtr + (x + vs->xstart) + top * vs->width;
-	_vm->_system->copy_rect(ptr, vs->width, x, vs->topline + top - _vm->_screenTop, width, height);
+	_vm->_system->copyRectToScreen(ptr, vs->width, x, vs->topline + top - _vm->_screenTop, width, height);
 }
 
 #pragma mark -
@@ -2548,7 +2548,7 @@ void ScummEngine::dissolveEffect(int width, int height) {
 	for (i = 0; i < w * h; i++) {
 		x = offsets[i] % vs->width;
 		y = offsets[i] / vs->width;
-		_system->copy_rect(vs->screenPtr + vs->xstart + y * vs->width + x, vs->width, x, y + vs->topline, width, height);
+		_system->copyRectToScreen(vs->screenPtr + vs->xstart + y * vs->width + x, vs->width, x, y + vs->topline, width, height);
 
 		if (++blits >= blits_before_refresh) {
 			blits = 0;
@@ -2584,7 +2584,7 @@ void ScummEngine::scrollEffect(int dir) {
 		y = 1 + step;
 		while (y < vs->height) {
 			_system->move_screen(0, -step, vs->height);
-			_system->copy_rect(vs->screenPtr + vs->xstart + (y - step) * vs->width,
+			_system->copyRectToScreen(vs->screenPtr + vs->xstart + (y - step) * vs->width,
 				vs->width,
 				0, vs->height - step,
 				vs->width, step);
@@ -2599,7 +2599,7 @@ void ScummEngine::scrollEffect(int dir) {
 		y = 1 + step;
 		while (y < vs->height) {
 			_system->move_screen(0, step, vs->height);
-			_system->copy_rect(vs->screenPtr + vs->xstart + vs->width * (vs->height-y),
+			_system->copyRectToScreen(vs->screenPtr + vs->xstart + vs->width * (vs->height-y),
 				vs->width,
 				0, 0,
 				vs->width, step);
@@ -2614,7 +2614,7 @@ void ScummEngine::scrollEffect(int dir) {
 		x = 1 + step;
 		while (x < vs->width) {
 			_system->move_screen(-step, 0, vs->height);
-			_system->copy_rect(vs->screenPtr + vs->xstart + x - step,
+			_system->copyRectToScreen(vs->screenPtr + vs->xstart + x - step,
 				vs->width,
 				vs->width - step, 0,
 				step, vs->height);
@@ -2629,7 +2629,7 @@ void ScummEngine::scrollEffect(int dir) {
 		x = 1 + step;
 		while (x < vs->width) {
 			_system->move_screen(step, 0, vs->height);
-			_system->copy_rect(vs->screenPtr + vs->xstart + vs->width - x,
+			_system->copyRectToScreen(vs->screenPtr + vs->xstart + vs->width - x,
 				vs->width,
 				0, 0,
 				step, vs->height);

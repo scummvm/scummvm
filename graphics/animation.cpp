@@ -38,7 +38,7 @@ BaseAnimationState::~BaseAnimationState() {
 	delete mpgfile;
 	delete sndfile;
 #ifndef BACKEND_8BIT
-	_sys->hide_overlay();
+	_sys->hideOverlay();
 	free(overlay);
 #endif
 	if (bgSoundStream)
@@ -108,7 +108,7 @@ bool BaseAnimationState::init(const char *name) {
 #else
 	buildLookup();
 	overlay = (OverlayColor*)calloc(MOVIE_WIDTH * MOVIE_HEIGHT, sizeof(OverlayColor));
-	_sys->show_overlay();
+	_sys->showOverlay();
 #endif
 
 	// Open MPEG2 stream

@@ -54,7 +54,7 @@ public:
 
 	// Draw a bitmap to screen.
 	// The screen will not be updated to reflect the new bitmap
-	void copy_rect(const byte *buf, int pitch, int x, int y, int w, int h);
+	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 
 	// Moves the screen content around by the given amount of pixels
 	// but only the top height pixel rows, the rest stays untouched
@@ -64,7 +64,7 @@ public:
 	void updateScreen();
 
 	// Either show or hide the mouse cursor
-	bool show_mouse(bool visible);
+	bool showMouse(bool visible);
 
 	// Set the position of the mouse cursor
 	void set_mouse_pos(int x, int y);
@@ -72,11 +72,11 @@ public:
 	// Warp the mouse cursor. Where set_mouse_pos() only informs the
 	// backend of the mouse cursor's current position, this function
 	// actually moves the cursor to the specified position.
-	void warp_mouse(int x, int y);
+	void warpMouse(int x, int y);
 
 
 	// Set the bitmap that's used when drawing the cursor.
-	void set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y);
+	void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y);
 
 	// Shaking is used in SCUMM. Set current shake position.
 	void set_shake_pos(int shake_pos);
@@ -140,11 +140,11 @@ public:
 	UInt8 _quitCount;
 
 	// Overlay
-	void show_overlay();
-	void hide_overlay();
-	void clear_overlay();
-	void grab_overlay(byte *buf, int pitch);
-	void copy_rect_overlay(const byte *buf, int pitch, int x, int y, int w, int h);
+	void showOverlay();
+	void hideOverlay();
+	void clearOverlay();
+	void grabOverlay(byte *buf, int pitch);
+	void copyRectToOverlay(const byte *buf, int pitch, int x, int y, int w, int h);
 
 	int16 getWidth();
 	int16 getHeight();

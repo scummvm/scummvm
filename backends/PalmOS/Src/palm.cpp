@@ -324,7 +324,7 @@ void OSystem_PALMOS::initSize(uint w, uint h) {
 	load_gfx_mode();
 }
 
-void OSystem_PALMOS::copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {
+void OSystem_PALMOS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
 	/* Clip the coordinates */
 	if (x < 0) {
 		w += x;
@@ -674,7 +674,7 @@ void OSystem_PALMOS::updateScreen() {
 
 }
 
-bool OSystem_PALMOS::show_mouse(bool visible) {
+bool OSystem_PALMOS::showMouse(bool visible) {
 	if (_mouseVisible == visible)
 		return visible;
 	
@@ -689,7 +689,7 @@ bool OSystem_PALMOS::show_mouse(bool visible) {
 	return last;
 }
 
-void OSystem_PALMOS::warp_mouse(int x, int y) {
+void OSystem_PALMOS::warpMouse(int x, int y) {
 	set_mouse_pos(x, y);
 }
 
@@ -701,7 +701,7 @@ void OSystem_PALMOS::set_mouse_pos(int x, int y) {
 	}
 }
 
-void OSystem_PALMOS::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {
+void OSystem_PALMOS::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {
 	_mouseCurState.w = w;
 	_mouseCurState.h = h;
 
@@ -1649,7 +1649,7 @@ void OSystem_PALMOS::timer_handler(UInt32 current_msecs) {
 	}
 }
 
-void OSystem_PALMOS::show_overlay() {
+void OSystem_PALMOS::showOverlay() {
 	// hide the mouse
 	undraw_mouse();
 	// save background
@@ -1673,18 +1673,18 @@ void OSystem_PALMOS::show_overlay() {
 	}
 
 	_overlayVisible = true;
-	clear_overlay();
+	clearOverlay();
 }
 
-void OSystem_PALMOS::hide_overlay() {
+void OSystem_PALMOS::hideOverlay() {
 	// hide the mouse
 	undraw_mouse();
 
 	_overlayVisible = false;
-	copy_rect(_tmpBackupP, _screenWidth, 0, 0, _screenWidth, _screenHeight);
+	copyRectToScreen(_tmpBackupP, _screenWidth, 0, 0, _screenWidth, _screenHeight);
 }
 
-void OSystem_PALMOS::clear_overlay() {
+void OSystem_PALMOS::clearOverlay() {
 	if (!_overlayVisible)
 		return;
 
@@ -1697,7 +1697,7 @@ void OSystem_PALMOS::clear_overlay() {
 		MemMove(_tmpScreenP, _tmpBackupP, _screenWidth * _screenHeight);
 }
 
-void OSystem_PALMOS::grab_overlay(byte *buf, int pitch) {
+void OSystem_PALMOS::grabOverlay(byte *buf, int pitch) {
 	if (!_overlayVisible)
 		return;
 
@@ -1714,7 +1714,7 @@ void OSystem_PALMOS::grab_overlay(byte *buf, int pitch) {
 	} while (--h);
 }
 
-void OSystem_PALMOS::copy_rect_overlay(const byte *buf, int pitch, int x, int y, int w, int h) {
+void OSystem_PALMOS::copyRectToOverlay(const byte *buf, int pitch, int x, int y, int w, int h) {
 	if (!_overlayVisible)
 		return;
 

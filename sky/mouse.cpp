@@ -120,7 +120,7 @@ bool Mouse::fnAddHuman(void) {
 		if (_mouseY < 2) //stop mouse activating top line
 			_mouseY = 2;
 		
-		_system->warp_mouse(_mouseX, _mouseY);
+		_system->warpMouse(_mouseX, _mouseY);
 	
 		//force the pointer engine into running a get-off
 		//even if it's over nothing
@@ -207,9 +207,9 @@ void Mouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
 	uint16 mouseWidth = ((struct dataFileHeader *)_miceData)->s_width;
 	uint16 mouseHeight = ((struct dataFileHeader *)_miceData)->s_height;
 
-	_system->set_mouse_cursor(newCursor, mouseWidth, mouseHeight, mouseX, mouseY);
-	if (frameNum == MOUSE_BLANK) _system->show_mouse(false);
-	else _system->show_mouse(true);
+	_system->setMouseCursor(newCursor, mouseWidth, mouseHeight, mouseX, mouseY);
+	if (frameNum == MOUSE_BLANK) _system->showMouse(false);
+	else _system->showMouse(true);
 }
 
 void Mouse::mouseEngine(uint16 mouseX, uint16 mouseY) {

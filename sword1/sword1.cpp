@@ -170,7 +170,7 @@ void SwordEngine::reinitialize(void) {
 	_logic->initialize();     // now reinitialize these objects as they (may) have locked
 	_objectMan->initialize(); // resources which have just been wiped.
 	_mouse->initialize();
-	_system->warp_mouse(320, 240);
+	_system->warpMouse(320, 240);
 	_systemVars.wantFade = true;
 }
 

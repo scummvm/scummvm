@@ -48,7 +48,7 @@ public:
 
 	// Draw a bitmap to screen.
 	// The screen will not be updated to reflect the new bitmap
-	void copy_rect(const byte *src, int pitch, int x, int y, int w, int h);
+	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h);
 
 	void move_screen(int dx, int dy, int height);
 
@@ -56,15 +56,15 @@ public:
 	void updateScreen();
 
 	// Either show or hide the mouse cursor
-	bool show_mouse(bool visible);
+	bool showMouse(bool visible);
 	
 	// Warp the mouse cursor. Where set_mouse_pos() only informs the
 	// backend of the mouse cursor's current position, this function
 	// actually moves the cursor to the specified position.
-	void warp_mouse(int x, int y);
+	void warpMouse(int x, int y);
 
 	// Set the bitmap that's used when drawing the cursor.
-	void set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y);
+	void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y);
 
 	// Shaking is used in SCUMM. Set current shake position.
 	void set_shake_pos(int shake_pos);
@@ -111,11 +111,11 @@ public:
 	void deleteMutex(MutexRef mutex);
 
 	// Overlay
-	virtual void show_overlay();
-	virtual void hide_overlay();
-	virtual void clear_overlay();
-	virtual void grab_overlay(OverlayColor *buf, int pitch);
-	virtual void copy_rect_overlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
+	virtual void showOverlay();
+	virtual void hideOverlay();
+	virtual void clearOverlay();
+	virtual void grabOverlay(OverlayColor *buf, int pitch);
+	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
 	virtual int16 getHeight();
 	virtual int16 getWidth();
 

@@ -28,7 +28,7 @@ typedef struct {
 
 DECLARE(OSystem_PALMOS_update_screen__wide_portrait)
 DECLARE(OSystem_PALMOS_update_screen__wide_landscape)
-DECLARE(OSystem_PALMOS_copy_rect)
+DECLARE(OSystem_PALMOS_copyRectToScreen)
 
 // rsrc
 #define ARMCODE_1	1000

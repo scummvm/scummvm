@@ -80,10 +80,10 @@ ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
 
 void ConsoleDialog::reflowLayout() {
 	// Calculate the real width/height (rounded to char/line multiples)
-	_w = (uint16)(_widthPercent * g_system->get_overlay_width());
-//	_w = (_widthPercent * g_system->get_overlay_width() - kScrollBarWidth - 2) / kCharWidth;
+	_w = (uint16)(_widthPercent * g_system->getOverlayWidth());
+//	_w = (_widthPercent * g_system->getOverlayWidth() - kScrollBarWidth - 2) / kCharWidth;
 //	_w = _w * kCharWidth + kScrollBarWidth + 2;
-	_h = (uint16)((_heightPercent * g_system->get_overlay_height() - 2) / kLineHeight);
+	_h = (uint16)((_heightPercent * g_system->getOverlayHeight() - 2) / kLineHeight);
 	_h = _h * kLineHeight + 2;
 
 	// Calculate depending values

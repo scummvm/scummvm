@@ -99,7 +99,7 @@ void Graphics::updateDisplay(bool redrawScene) {
 			// Update the entire screen. This is necessary when
 			// scrolling, fading, etc.
 
-			_vm->_system->copy_rect(_buffer + MENUDEEP * _screenWide, _screenWide, 0, MENUDEEP, _screenWide, _screenDeep - 2 * MENUDEEP);
+			_vm->_system->copyRectToScreen(_buffer + MENUDEEP * _screenWide, _screenWide, 0, MENUDEEP, _screenWide, _screenDeep - 2 * MENUDEEP);
 			_needFullRedraw = false;
 		} else {
 			// Update only the dirty areas of the screen
@@ -116,7 +116,7 @@ void Graphics::updateDisplay(bool redrawScene) {
 					} else if (stripWide) {
 						x = CELLWIDE * (j - stripWide);
 						y = CELLDEEP * i;
-						_vm->_system->copy_rect(_buffer + y * _screenWide + x, _screenWide, x, y, stripWide * CELLWIDE, CELLDEEP);
+						_vm->_system->copyRectToScreen(_buffer + y * _screenWide + x, _screenWide, x, y, stripWide * CELLWIDE, CELLDEEP);
 						stripWide = 0;
 					}
 				}
@@ -124,7 +124,7 @@ void Graphics::updateDisplay(bool redrawScene) {
 				if (stripWide) {
 					x = CELLWIDE * (j - stripWide);
 					y = CELLDEEP * i;
-					_vm->_system->copy_rect(_buffer + y * _screenWide + x, _screenWide, x, y, stripWide * CELLWIDE, CELLDEEP);
+					_vm->_system->copyRectToScreen(_buffer + y * _screenWide + x, _screenWide, x, y, stripWide * CELLWIDE, CELLDEEP);
 					stripWide = 0;
 				}
 			}

@@ -599,7 +599,7 @@ void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 	}
 //	_fullRefresh = 1;
 	if (_fullRefresh) {
-		_system->copy_rect(_screenBuf, SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
+		_system->copyRectToScreen(_screenBuf, SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
 		--_fullRefresh;
 		if (_fullRefresh) {
 			memset(_dirtyBlocks, 0, _dirtyBlocksWidth * _dirtyBlocksHeight);
@@ -618,14 +618,14 @@ void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 					++accW;
 				} else if (accW != 0) {
 					x = (i - accW) * D_BLOCK_W;
-					_system->copy_rect(scrBuf + x, SCREEN_W, x, j * D_BLOCK_H, accW * D_BLOCK_W, D_BLOCK_H);
+					_system->copyRectToScreen(scrBuf + x, SCREEN_W, x, j * D_BLOCK_H, accW * D_BLOCK_W, D_BLOCK_H);
 					accW = 0;
 					++count;
 				}
 			}
 			if (accW != 0) {
 				x = (_dirtyBlocksWidth - accW) * D_BLOCK_W;
-				_system->copy_rect(scrBuf + x, SCREEN_W, x, j * D_BLOCK_H, accW * D_BLOCK_W, D_BLOCK_H);
+				_system->copyRectToScreen(scrBuf + x, SCREEN_W, x, j * D_BLOCK_H, accW * D_BLOCK_W, D_BLOCK_H);
 				++count;
 			}
 			dbBuf += _dirtyBlocksWidth;
@@ -802,11 +802,11 @@ void Display::setMouseCursor(uint8 *buf, uint16 w, uint16 h) {
 		}
 		++p;
 	}
-	_system->set_mouse_cursor(_mousePtr, 14, 14, 1, 1);
+	_system->setMouseCursor(_mousePtr, 14, 14, 1, 1);
 }
 
 void Display::showMouseCursor(bool show) {
-	_system->show_mouse(show);
+	_system->showMouse(show);
 }
 
 void Display::initFont() {
@@ -966,7 +966,7 @@ void Display::blankScreenEffect1() {
 			const int inc[] = { -1, 1 };
 			x += inc[_rnd.getRandomNumber(1)];
 			y += inc[_rnd.getRandomNumber(1)];
-			_system->copy_rect(buf, 32, x, y, 32, 32);
+			_system->copyRectToScreen(buf, 32, x, y, 32, 32);
 			_system->updateScreen();
 			_vm->input()->delay(10);
 		}
@@ -999,7 +999,7 @@ void Display::blankScreenEffect2() {
 			memset(p, c, 2);
 			p += SCREEN_W;
 		}
-		_system->copy_rect(buf, SCREEN_W, x, y, 2, 2);
+		_system->copyRectToScreen(buf, SCREEN_W, x, y, 2, 2);
 			_system->updateScreen();
 		_vm->input()->delay(10);
 	}
@@ -1010,7 +1010,7 @@ void Display::blankScreenEffect3() {
 	while (_vm->input()->idleTime() >= Input::DELAY_SCREEN_BLANKER) {
 		if (i > 4000000) {
 			memset(_screenBuf, 0, SCREEN_W * SCREEN_H);
-			_system->copy_rect(_screenBuf, SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);			
+			_system->copyRectToScreen(_screenBuf, SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);			
 		} else {
 			uint16 x = _rnd.getRandomNumber(SCREEN_W - 2);
 			uint16 y = _rnd.getRandomNumber(SCREEN_H - 2);
@@ -1027,7 +1027,7 @@ void Display::blankScreenEffect3() {
 				p += SCREEN_W;
 			}
 			++i;
-			_system->copy_rect(buf, SCREEN_W, x, y, 2, 2);
+			_system->copyRectToScreen(buf, SCREEN_W, x, y, 2, 2);
 		}
 			_system->updateScreen();
 		_vm->input()->delay(10);

@@ -168,7 +168,7 @@ void Graphics::drawMouse(void) {
 	if (_mouseAnim)
 		decompressMouse(_mouseData, _mouseSprite, _mouseAnim->mousew, _mouseAnim->mouseh, mouse_width);
 
-	_vm->_system->set_mouse_cursor(_mouseData, mouse_width, mouse_height, hotspot_x, hotspot_y);
+	_vm->_system->setMouseCursor(_mouseData, mouse_width, mouse_height, hotspot_x, hotspot_y);
 }
 
 /**
@@ -222,12 +222,12 @@ int32 Graphics::setMouseAnim(uint8 *ma, int32 size, int32 mouseFlash) {
 		animateMouse();
 		drawMouse();
 
-		_vm->_system->show_mouse(true);
+		_vm->_system->showMouse(true);
 	} else {
 		if (_luggageAnim)
 			drawMouse();
 		else
-			_vm->_system->show_mouse(false);
+			_vm->_system->showMouse(false);
 	}
 
 	return RD_OK;
@@ -257,12 +257,12 @@ int32 Graphics::setLuggageAnim(uint8 *ma, int32 size) {
 		animateMouse();
 		drawMouse();
 
-		_vm->_system->show_mouse(true);
+		_vm->_system->showMouse(true);
 	} else {
 		if (_mouseAnim)
 			drawMouse();
 		else
-			_vm->_system->show_mouse(false);
+			_vm->_system->showMouse(false);
 	}
 
 	return RD_OK;

@@ -48,7 +48,7 @@ void AnimationState::drawYUV(int width, int height, byte *const *dat) {
 	_scr->plotYUV(lut, width, height, dat);
 #else
 	plotYUV(lookup, width, height, dat);
-	_sys->copy_rect_overlay(overlay, MOVIE_WIDTH, 0, 40, MOVIE_WIDTH, MOVIE_HEIGHT);
+	_sys->copyRectToOverlay(overlay, MOVIE_WIDTH, 0, 40, MOVIE_WIDTH, MOVIE_HEIGHT);
 #endif
 }
 

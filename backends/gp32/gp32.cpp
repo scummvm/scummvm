@@ -185,7 +185,7 @@ void OSystem_GP32::add_dirty_rgn_auto(const byte *buf) {
 
 // Draw a bitmap to screen.
 // The screen will not be updated to reflect the new bitmap
-void OSystem_GP32::copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) { 
+void OSystem_GP32::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) { 
 	if (_screen == NULL)
 		return;
 
@@ -361,12 +361,12 @@ void OSystem_GP32::move_screen(int dx, int dy, int height) {
 			// move down
 			// copy from bottom to top
 			for (int y = height - 1; y >= dy; y--)
-				copy_rect((byte *)_screen->pixels + _screenWidth * (y - dy), _screenWidth, 0, y, _screenWidth, 1);
+				copyRectToScreen((byte *)_screen->pixels + _screenWidth * (y - dy), _screenWidth, 0, y, _screenWidth, 1);
 		} else {
 			// move up
 			// copy from top to bottom
 			for (int y = 0; y < height + dx; y++)
-				copy_rect((byte *)_screen->pixels + _screenWidth * (y - dy), _screenWidth, 0, y, _screenWidth, 1);
+				copyRectToScreen((byte *)_screen->pixels + _screenWidth * (y - dy), _screenWidth, 0, y, _screenWidth, 1);
 		}
 	} else if (dy == 0) {
 		// horizontal movement
@@ -374,12 +374,12 @@ void OSystem_GP32::move_screen(int dx, int dy, int height) {
 			// move right
 			// copy from right to left
 			for (int x = _screenWidth - 1; x >= dx; x--)
-				copy_rect((byte *)_screen->pixels + x - dx, _screenWidth, x, 0, 1, height);
+				copyRectToScreen((byte *)_screen->pixels + x - dx, _screenWidth, x, 0, 1, height);
 		} else {
 			// move left
 			// copy from left to right
 			for (int x = 0; x < _screenWidth; x++)
-				copy_rect((byte *)_screen->pixels + x - dx, _screenWidth, x, 0, 1, height);
+				copyRectToScreen((byte *)_screen->pixels + x - dx, _screenWidth, x, 0, 1, height);
 		}
 	} else {
 		// free movement
@@ -798,7 +798,7 @@ void OSystem_GP32::updateScreen() {
 }
 
 // Either show or hide the mouse cursor
-bool OSystem_GP32::show_mouse(bool visible) { 
+bool OSystem_GP32::showMouse(bool visible) { 
 	if (_mouseVisible == visible)
 		return visible;
 	
@@ -825,12 +825,12 @@ void OSystem_GP32::set_mouse_pos(int x, int y) {
 	}
 }
 
-void OSystem_GP32::warp_mouse(int x, int y) {
+void OSystem_GP32::warpMouse(int x, int y) {
 	set_mouse_pos(x, y);	
 }
 
 // Set the bitmap that's used when drawing the cursor.
-void OSystem_GP32::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) { 
+void OSystem_GP32::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) { 
 	_mouse_cur_state.w = w;
 	_mouse_cur_state.h = h;
 
@@ -1014,7 +1014,7 @@ void OSystem_GP32::hotswap_gfx_mode() {
 	SDL_SetColors(_screen, _currentPalette, 0, 256);
 
 	// blit image
-	copy_rect(bak_mem, _screenWidth, 0, 0, _screenWidth, _screenHeight);
+	copyRectToScreen(bak_mem, _screenWidth, 0, 0, _screenWidth, _screenHeight);
 	free(bak_mem);
 
 	updateScreen();
@@ -1086,7 +1086,7 @@ void OSystem_GP32::quit() {
 }
 	
 // Overlay
-void OSystem_GP32::show_overlay() { 
+void OSystem_GP32::showOverlay() { 
 	// hide the mouse
 
 	undraw_mouse();
@@ -1107,10 +1107,10 @@ GpGraphicModeSet(16, NULL); //ph0x
 //GpRectFill(NULL,&gpDraw[GAME_SURFACE], 0, 0, 320, 240*2, 0); //black border
 
 	_overlay_visible = true;
-	clear_overlay();
+	clearOverlay();
 }
 
-void OSystem_GP32::hide_overlay() { 
+void OSystem_GP32::hideOverlay() { 
 	// hide the mouse
 	undraw_mouse();
 
@@ -1121,7 +1121,7 @@ GpRectFill(NULL,&gpDraw[GAME_SURFACE], 0, 200, 320, 40, 0); //black border
 	_forceFull = true;
 }
 
-void OSystem_GP32::clear_overlay() { 
+void OSystem_GP32::clearOverlay() { 
 	if (!_overlay_visible)
 		return;
 	
@@ -1140,7 +1140,7 @@ void OSystem_GP32::clear_overlay() {
 	_forceFull = true;
 }
 
-void OSystem_GP32::grab_overlay(int16 *buf, int pitch) { 
+void OSystem_GP32::grabOverlay(int16 *buf, int pitch) { 
 	if (!_overlay_visible)
 		return;
 
@@ -1164,7 +1164,7 @@ void OSystem_GP32::grab_overlay(int16 *buf, int pitch) {
 	///SDL_UnlockSurface(sdl_tmpscreen);
 }
 
-void OSystem_GP32::copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h) { 
+void OSystem_GP32::copyRectToOverlay(const int16 *buf, int pitch, int x, int y, int w, int h) { 
 	if (!_overlay_visible)
 		return;
 

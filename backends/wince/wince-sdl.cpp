@@ -944,7 +944,7 @@ void OSystem_WINCE3::fillMouseEvent(Event &event, int x, int y) {
 	event.mouse.y = event.mouse.y * _scaleFactorYd / _scaleFactorYm;
 }
 
-void OSystem_WINCE3::warp_mouse(int x, int y) {
+void OSystem_WINCE3::warpMouse(int x, int y) {
 		if (_mouseCurState.x != x || _mouseCurState.y != y) {
 		SDL_WarpMouse(x * _scaleFactorXm / _scaleFactorXd, y * _scaleFactorYm / _scaleFactorYd);
 

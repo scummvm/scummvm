@@ -188,7 +188,7 @@ static int launcherDialog(GameDetector &detector, OSystem *system) {
 	
 	// FIXME - mouse cursors are currently always set via 8 bit data.
 	// Thus for now we need to setup a dummy palette. On the long run, we might
-	// want to add a set_mouse_cursor_overlay() method to OSystem, which would serve
+	// want to add a setMouseCursor_overlay() method to OSystem, which would serve
 	// two purposes:
 	// 1) allow for 16 bit mouse cursors in overlay mode
 	// 2) no need to backup & restore the mouse cursor before/after the overlay is shown

@@ -969,7 +969,7 @@ bool OSystem_MorphOS::poll_event(Event *event)
 	return false;
 }
 
-void OSystem_MorphOS::warp_mouse(int x, int y)
+void OSystem_MorphOS::warpMouse(int x, int y)
 {
 	if (InputIORequest)
 	{
@@ -1017,7 +1017,7 @@ void OSystem_MorphOS::set_shake_pos(int shake_pos)
 		(MouseOldY+MouseOldHeight <= y) || (MouseOldY >= y+h)))
 
 /* Copy part of bitmap */
-void OSystem_MorphOS::copy_rect(const byte *src, int pitch, int x, int y, int w, int h)
+void OSystem_MorphOS::copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h)
 {
 	byte *dst;
 
@@ -1119,13 +1119,13 @@ void OSystem_MorphOS::move_screen(int dx, int dy, int height) {
 		// move down
 		// copy from bottom to top
 		for (int y = height - 1; y >= dy; y--)
-			copy_rect((byte *)ScummBuffer + ScummBufferWidth * (y - dy), ScummBufferWidth, 0, y, ScummBufferWidth, 1);
+			copyRectToScreen((byte *)ScummBuffer + ScummBufferWidth * (y - dy), ScummBufferWidth, 0, y, ScummBufferWidth, 1);
 	} else if (dy < 0) {
 		// move up
 		// copy from top to bottom
 		dy = -dy;
 		for (int y = dy; y < height; y++)
-			copy_rect((byte *)ScummBuffer + ScummBufferWidth * y, ScummBufferWidth, 0, y - dy, ScummBufferWidth, 1);
+			copyRectToScreen((byte *)ScummBuffer + ScummBufferWidth * y, ScummBufferWidth, 0, y - dy, ScummBufferWidth, 1);
 	}
 
 	// horizontal movement
@@ -1133,13 +1133,13 @@ void OSystem_MorphOS::move_screen(int dx, int dy, int height) {
 		// move right
 		// copy from right to left
 		for (int x = ScummBufferWidth - 1; x >= dx; x--)
-			copy_rect((byte *)ScummBuffer + x - dx, ScummBufferWidth, x, 0, 1, height);
+			copyRectToScreen((byte *)ScummBuffer + x - dx, ScummBufferWidth, x, 0, 1, height);
 	} else if (dx < 0) {
 		// move left
 		// copy from left to right
 		dx = -dx;
 		for (int x = dx; x < ScummBufferWidth; x++)
-			copy_rect((byte *)ScummBuffer + x, ScummBufferWidth, x, 0, 1, height);
+			copyRectToScreen((byte *)ScummBuffer + x, ScummBufferWidth, x, 0, 1, height);
 	}
 }
 
@@ -1399,7 +1399,7 @@ void OSystem_MorphOS::UndrawMouse()
 	}
 }
 
-bool OSystem_MorphOS::show_mouse(bool visible)
+bool OSystem_MorphOS::showMouse(bool visible)
 {
 	if (MouseVisible == visible)
 		return visible;
@@ -1423,7 +1423,7 @@ void OSystem_MorphOS::set_mouse_pos(int x, int y)
 	}
 }
 
-void OSystem_MorphOS::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y)
+void OSystem_MorphOS::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y)
 {
 	MouseWidth = w;
 	MouseHeight	= h;
@@ -1577,11 +1577,11 @@ int16 OSystem_MorphOS::getHeight()
 	return ScummScrHeight;
 }
 
-void OSystem_MorphOS::show_overlay()
+void OSystem_MorphOS::showOverlay()
 {
 	UndrawMouse();
 	memcpy(OvlSavedBuffer, ScummBuffer, ScummBufferWidth*ScummBufferHeight);
-	clear_overlay();
+	clearOverlay();
 	for (int c = 0; c < 256; c++)
 	{
 		ULONG r, g, b;
@@ -1592,18 +1592,18 @@ void OSystem_MorphOS::show_overlay()
 	}
 }
 
-void OSystem_MorphOS::hide_overlay()
+void OSystem_MorphOS::hideOverlay()
 {
-	copy_rect((byte *) OvlSavedBuffer, ScummBufferWidth, 0, 0, ScummBufferWidth, ScummBufferHeight);
+	copyRectToScreen((byte *) OvlSavedBuffer, ScummBufferWidth, 0, 0, ScummBufferWidth, ScummBufferHeight);
 }
 
-void OSystem_MorphOS::clear_overlay()
+void OSystem_MorphOS::clearOverlay()
 {
 	AUTO_LOCK
 
 	UBYTE *src = (UBYTE *) ScummBuffer;
 	UBYTE *dest = (UBYTE *) OvlBitMap;
-	copy_rect((byte *) OvlSavedBuffer, ScummBufferWidth, 0, 0, ScummBufferWidth, ScummBufferHeight);
+	copyRectToScreen((byte *) OvlSavedBuffer, ScummBufferWidth, 0, 0, ScummBufferWidth, ScummBufferHeight);
 	for (int y = 0; y < ScummBufferHeight; y++)
 		for (int x = 0; x < ScummBufferWidth; x++)
 		{
@@ -1613,7 +1613,7 @@ void OSystem_MorphOS::clear_overlay()
 		}
 }
 
-void OSystem_MorphOS::grab_overlay(int16 *buf, int pitch)
+void OSystem_MorphOS::grabOverlay(int16 *buf, int pitch)
 {
 	int h = ScummBufferHeight;
 	int x;
@@ -1630,7 +1630,7 @@ void OSystem_MorphOS::grab_overlay(int16 *buf, int pitch)
 	} while (--h);
 }
 
-void OSystem_MorphOS::copy_rect_overlay(const int16 *ovl, int pitch, int x, int y, int w, int h)
+void OSystem_MorphOS::copyRectToOverlay(const int16 *ovl, int pitch, int x, int y, int w, int h)
 {
 	int x1, y1;
 	UBYTE *dest;
@@ -1672,7 +1672,7 @@ void OSystem_MorphOS::copy_rect_overlay(const int16 *ovl, int pitch, int x, int 
 			dest += (ScummBufferWidth-w)*3;
 			ovl += pitch-w;
 		}
-		copy_rect(bmap, w, x, y, w, h);
+		copyRectToScreen(bmap, w, x, y, w, h);
 		FreeVec(bmap);
 	}
 }

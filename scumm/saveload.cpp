@@ -644,7 +644,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 
 	if (s->isLoading() && savegameVersion >= VER(20)) {
 		updateCursor();
-		_system->warp_mouse(_mouse.x, _mouse.y);
+		_system->warpMouse(_mouse.x, _mouse.y);
 	}
 
 	s->saveLoadArrayOf(_actors, _numActors, sizeof(_actors[0]), actorEntries);

@@ -32,7 +32,7 @@ namespace Sword2 {
 #define BLOCKHBITS		6
 
 void Graphics::updateRect(Common::Rect *r) {
-	_vm->_system->copy_rect(_buffer + r->top * _screenWide + r->left,
+	_vm->_system->copyRectToScreen(_buffer + r->top * _screenWide + r->left,
 		_screenWide, r->left, r->top, r->right - r->left,
 		r->bottom - r->top);
 }

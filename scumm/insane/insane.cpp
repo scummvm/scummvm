@@ -619,7 +619,7 @@ void Insane::startVideo(const char *filename, int num, int argC, int frameRate,
 }
 
 void Insane::smush_warpMouse(int x, int y, int buttons) {
-	_vm->_system->warp_mouse(x, y);
+	_vm->_system->warpMouse(x, y);
 }
 
 void Insane::putActors(void) {

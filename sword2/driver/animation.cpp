@@ -93,9 +93,9 @@ void AnimationState::updateScreen(void) {
 #ifdef BACKEND_8BIT
 	byte *buf = _vm->_graphics->getScreen() + ((480 - MOVIE_HEIGHT) / 2) * RENDERWIDE + (640 - MOVIE_WIDTH) / 2;
 
-	_vm->_system->copy_rect(buf, MOVIE_WIDTH, (640 - MOVIE_WIDTH) / 2, (480 - MOVIE_HEIGHT) / 2, MOVIE_WIDTH, MOVIE_HEIGHT);
+	_vm->_system->copyRectToScreen(buf, MOVIE_WIDTH, (640 - MOVIE_WIDTH) / 2, (480 - MOVIE_HEIGHT) / 2, MOVIE_WIDTH, MOVIE_HEIGHT);
 #else
-	_sys->copy_rect_overlay(overlay, MOVIE_WIDTH, 0, 0, MOVIE_WIDTH, MOVIE_HEIGHT);
+	_sys->copyRectToOverlay(overlay, MOVIE_WIDTH, 0, 0, MOVIE_WIDTH, MOVIE_HEIGHT);
 #endif
 	_vm->_system->updateScreen();
 }

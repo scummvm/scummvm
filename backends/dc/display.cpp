@@ -192,7 +192,7 @@ void OSystem_Dreamcast::initSize(uint w, uint h)
   //  dc_reset_screen(0, 0);
 }
 
-void OSystem_Dreamcast::copy_rect(const byte *buf, int pitch, int x, int y,
+void OSystem_Dreamcast::copyRectToScreen(const byte *buf, int pitch, int x, int y,
 				  int w, int h)
 {
   unsigned char *dst = screen + y*SCREEN_W + x;
@@ -215,12 +215,12 @@ void OSystem_Dreamcast::move_screen(int dx, int dy, int height) {
 			// move down
 			// copy from bottom to top
 			for (int y = height - 1; y >= dy; y--)
-				copy_rect(screen + SCREEN_W * (y - dy), SCREEN_W, 0, y, _screen_w, 1);
+				copyRectToScreen(screen + SCREEN_W * (y - dy), SCREEN_W, 0, y, _screen_w, 1);
 		} else {
 			// move up
 			// copy from top to bottom
 			for (int y = 0; y < height + dx; y++)
-				copy_rect(screen + SCREEN_W * (y - dy), SCREEN_W, 0, y, _screen_w, 1);
+				copyRectToScreen(screen + SCREEN_W * (y - dy), SCREEN_W, 0, y, _screen_w, 1);
 		}
 	} else if (dy == 0) {
 		// horizontal movement
@@ -228,12 +228,12 @@ void OSystem_Dreamcast::move_screen(int dx, int dy, int height) {
 			// move right
 			// copy from right to left
 			for (int x = _screen_w - 1; x >= dx; x--)
-				copy_rect(screen + x - dx, SCREEN_W, x, 0, 1, height);
+				copyRectToScreen(screen + x - dx, SCREEN_W, x, 0, 1, height);
 		} else {
 			// move left
 			// copy from left to right
 			for (int x = 0; x < _screen_w; x++)
-				copy_rect(screen + x - dx, SCREEN_W, x, 0, 1, height);
+				copyRectToScreen(screen + x - dx, SCREEN_W, x, 0, 1, height);
 		}
 	} else {
 		// free movement
@@ -244,7 +244,7 @@ void OSystem_Dreamcast::move_screen(int dx, int dy, int height) {
 }
 
 
-bool OSystem_Dreamcast::show_mouse(bool visible)
+bool OSystem_Dreamcast::showMouse(bool visible)
 {	
   bool last = _ms_visible;
   _ms_visible = visible;
@@ -252,13 +252,13 @@ bool OSystem_Dreamcast::show_mouse(bool visible)
   return last;
 }
 
-void OSystem_Dreamcast::warp_mouse(int x, int y)
+void OSystem_Dreamcast::warpMouse(int x, int y)
 {
   _ms_cur_x = x;
   _ms_cur_y = y;
 }
 
-void OSystem_Dreamcast::set_mouse_cursor(const byte *buf, uint w, uint h,
+void OSystem_Dreamcast::setMouseCursor(const byte *buf, uint w, uint h,
 					 int hotspot_x, int hotspot_y)
 {
   _ms_cur_w = w;
@@ -511,18 +511,18 @@ void OSystem_Dreamcast::drawMouse(int xdraw, int ydraw, int w, int h,
 }
 
 
-void OSystem_Dreamcast::show_overlay()
+void OSystem_Dreamcast::showOverlay()
 {
   _overlay_visible = true;
-  clear_overlay();
+  clearOverlay();
 }
 
-void OSystem_Dreamcast::hide_overlay()
+void OSystem_Dreamcast::hideOverlay()
 {
   _overlay_visible = false;
 }
 
-void OSystem_Dreamcast::clear_overlay()
+void OSystem_Dreamcast::clearOverlay()
 {
   if(!_overlay_visible)
     return;
@@ -541,7 +541,7 @@ void OSystem_Dreamcast::clear_overlay()
   _overlay_dirty = true;
 }
 
-void OSystem_Dreamcast::grab_overlay(int16 *buf, int pitch)
+void OSystem_Dreamcast::grabOverlay(int16 *buf, int pitch)
 {
   int h = OVL_H;
   unsigned short *src = overlay;
@@ -552,7 +552,7 @@ void OSystem_Dreamcast::grab_overlay(int16 *buf, int pitch)
   } while (--h);
 }
 
-void OSystem_Dreamcast::copy_rect_overlay(const int16 *buf, int pitch,
+void OSystem_Dreamcast::copyRectToOverlay(const int16 *buf, int pitch,
 					  int x, int y, int w, int h)
 {
   unsigned short *dst = overlay + y*OVL_W + x;

@@ -31,7 +31,7 @@ unsigned long PNO_Main(const void *emulStateP, void *userData68KP, Call68KFuncTy
 /*	const PnoProc call[] = {
 		(PnoProc)__ARMlet_Take_Func_Addr__(OSystem_PALMOS_update_screen__wide_portrait),
 		(PnoProc)__ARMlet_Take_Func_Addr__(OSystem_PALMOS_update_screen__wide_landscape),
-		//OSystem_PALMOS_copy_rect
+		//OSystem_PALMOS_copyRectToScreen
 	};
 */
 #ifndef WIN32

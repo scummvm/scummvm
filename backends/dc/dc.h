@@ -72,20 +72,20 @@ class OSystem_Dreamcast : public OSystem {
 
   // Draw a bitmap to screen.
   // The screen will not be updated to reflect the new bitmap
-  void copy_rect(const byte *buf, int pitch, int x, int y, int w, int h);
+  void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
   void move_screen(int dx, int dy, int height);
 
   // Update the dirty areas of the screen
   void updateScreen();
 
   // Either show or hide the mouse cursor
-  bool show_mouse(bool visible);
+  bool showMouse(bool visible);
 
   // Move ("warp") the mouse cursor to the specified position.
-  void warp_mouse(int x, int y);
+  void warpMouse(int x, int y);
 
   // Set the bitmap that's used when drawing the cursor.
-  void set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y);
+  void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y);
   
   // Shaking is used in SCUMM. Set current shake position.
   void set_shake_pos(int shake_pos);
@@ -128,11 +128,11 @@ class OSystem_Dreamcast : public OSystem {
   void quit();
 
   // Overlay
-  void show_overlay();
-  void hide_overlay();
-  void clear_overlay();
-  void grab_overlay(int16 *buf, int pitch);
-  void copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h);
+  void showOverlay();
+  void hideOverlay();
+  void clearOverlay();
+  void grabOverlay(int16 *buf, int pitch);
+  void copyRectToOverlay(const int16 *buf, int pitch, int x, int y, int w, int h);
 
   // Add a callback timer
   void setTimerCallback(TimerProc callback, int timer);
