@@ -27,20 +27,19 @@
 #include "common/system.h"
 
 #include "Toolbar.h"
-#include "KeysBuffer.h"
+#include "EventsBuffer.h"
 
-using CEKEYS::KeysBuffer;
 using CEKEYS::Key;
+using CEKEYS::EventsBuffer;
 
 namespace CEGUI {
 
 	class PanelKeyboard : public Toolbar {
 	public:
-		PanelKeyboard(WORD reference, KeysBuffer *buffer);
+		PanelKeyboard(WORD reference);
 		virtual ~PanelKeyboard(); 
 		virtual bool action(int x, int y, bool pushed);
 	private:
-		KeysBuffer *_buffer;
 		Key _key;
 	};
 }

@@ -21,7 +21,6 @@
 
 #include "ToolbarHandler.h"
 #include "Panel.h"
-#include "ItemSendKey.h"
 #include "ItemSwitch.h"
 #include "PanelKeyboard.h"
 

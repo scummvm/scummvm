@@ -27,9 +27,8 @@
 #include "common/system.h"
 
 #include "Panel.h"
-#include "KeysBuffer.h"
+#include "EventsBuffer.h"
 
-using CEKEYS::KeysBuffer;
 using CEKEYS::Key;
 
 namespace CEGUI {

@@ -29,9 +29,8 @@ namespace CEGUI {
 	const char KEYBOARD_MAPPING_ALPHA_LOW[] = {"nopqrstuvwxyz"};
 	const char KEYBOARD_MAPPING_NUMERIC_LOW[] = {"67890"};
 
-	PanelKeyboard::PanelKeyboard(WORD reference, KeysBuffer *buffer) : Toolbar() {
+	PanelKeyboard::PanelKeyboard(WORD reference) : Toolbar() {
 		setBackground(reference);
-		_buffer = buffer->Instance(); 
 	} 
 
 	
@@ -73,12 +72,10 @@ namespace CEGUI {
 				keyCode = 10;
 			}
 
-			if (keyAscii != 0) {
+			if (keyAscii != 0 && pushed) {
 				_key.setAscii(keyAscii);
 				_key.setKeycode(tolower(keyAscii));
-				_key.setPushed(pushed);
-				_buffer->add(&_key);
-				return true;
+				return EventsBuffer::simulateKey(&_key);
 			}
 			else
 				return false;
