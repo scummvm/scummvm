@@ -1252,8 +1252,8 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 
 		lock(rtFlObject, objidx);
 
-//		if (ObjData.field28 != 0) {
-//			ObjData.field32 = 1;
+//		if (ObjData.fl_object_index != 0) {
+//			ObjData.locked = 1;
 //		}
 		break;
 	}
@@ -1266,8 +1266,8 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 
 		unlock(rtFlObject, objidx);
 
-//		if (ObjData.field28 != 0) {
-//			ObjData.field32 = 0;
+//		if (ObjData.fl_object_index != 0) {
+//			ObjData.locked = 0;
 //		}
 		break;
 	}
