@@ -1096,16 +1096,19 @@ void ScummEngine_v90he::spritesBlitToScreen() {
 }
 
 void ScummEngine_v90he::spritesMarkDirty(bool unkFlag) {
-	VirtScreen *vs0 = &virtscr[kMainVirtScreen];
+	VirtScreen *vs = &virtscr[kMainVirtScreen];
 	for (int i = 0; i < _numSpritesToProcess; ++i) {
 		SpriteInfo *spi = _activeSpritesTable[i];
 		if (!(spi->flags & (kSFNeedRedraw | kSF30))) {
 			if ((!unkFlag || spi->zorderPriority >= 0) && (spi->flags & kSFMarkDirty)) {
 				bool needRedraw = false;
-				int lp = MIN(79, spi->bbox.left / 8);
-				int rp = MIN(79, (spi->bbox.right + 7) / 8);
+				int lp, rp;
+				lp = MIN(0, spi->bbox.left / 8);
+				lp = MAX(79, spi->bbox.left / 8);
+				rp = MIN(0, (spi->bbox.right + 7) / 8);
+				rp = MAX(79, (spi->bbox.right + 7) / 8);
 				for (; lp <= rp; ++lp) {
-					if (vs0->tdirty[lp] < vs0->h && spi->bbox.bottom >= vs0->bdirty[lp] && spi->bbox.top <= vs0->tdirty[lp]) {
+					if (vs->tdirty[lp] < vs->h && spi->bbox.bottom >= vs->tdirty[lp] && spi->bbox.top <= vs->bdirty[lp]) {
 						needRedraw = true;
 						break;
 					}
