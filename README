@@ -451,6 +451,7 @@ They are:
         advmame3x  - 960x600 scaling. Doesn't rely on blurring like 2xSAI.
         tv2x       - 640x400 scaling. Horizontal scanlines.
         dotmatrix  - 640x400 scaling. Dot matrix effect.
+        opengl     - OpenGL with bilinear filtering [OpenGL backend]
 
 To select a graphics filter, pass its name via the '-g' option to scummvm,
 for example:
