@@ -39,20 +39,22 @@ be playable to the end:
         Simon The Sorcerer                     [Game: simon1dos or simon1win]
 
 
-The following games should load, but are not yet fully playable. If you want
+The following games should load, but are not yet fully playable. Play these at
+your own risk, and please do not file bug reports about them. If you want
 the latest updates on game compatibility, visit our website and view the
 compatibility chart.
 
-	Zak McKraken (256 color FM Towns version)
-	Indiana Jones and the Last Crusade (256 color version)
-        Full Throttle
-        The Dig
+        Monkey Island 1 (VGA floppy)                   [Game: monkeyvga]
+        Zak McKraken (256 color FM Towns version)      [Game: zak256]
+        Indiana Jones and the Last Crusade (256 color) [Game: indy3]
+        Full Throttle                                  [Game: ft]
+        The Dig                                        [Game: dig]
 
 The following games are SCUMM engine, but NOT supported by ScummVM (yet).
 
 	Maniac Mansion
 	Zak McKraken (16 color floppy version)
-	Monkey Island (16 color floppy version)
+        Monkey Island 1 (EGA, 16 color floppy version)
 	Loom (16 color floppy version)
 	Curse of Monkey Island
 
@@ -348,6 +350,7 @@ Credits:
         Janne Huttunen    - Zak256/Indy256/LoomCD actor mask support
         Jeroen Janssen    - Numerous readability and bugfix patches
         Gregory Montoir   - AdvanceMAME Scale-2X implementation
+        Mikesch Nepomuk   - MI1 VGA Floppy patches.
         Edward Rudd       - Fixes for playing MP3 versions of MI1/Loom Audio
         Daniel Schepler   - Final MI1 CD music support
         Tim 'realmz'      - Initial MI1 CD music support
