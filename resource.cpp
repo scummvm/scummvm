@@ -70,7 +70,7 @@ void Scumm::openRoom(int room) {
                         _encbyte = (_features & GF_USE_KEY) ? 0x69 : 0;
                 } else if(!(_features & GF_SMALL_NAMES)) {
 			if(room==0 || room>=900) {
-				sprintf(buf, "%s//%.3d.lfl",_exe_name,room);	
+                                sprintf(buf, "%s%.3d.lfl",_gameDataPath,room); 
 				_encbyte = 0;
 				if (openResourceFile(buf)) {
 					return;
