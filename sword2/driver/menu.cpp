@@ -135,15 +135,15 @@ static uint8 pocketStatus[2][RDMENU_MAXPOCKETS] = {
 static uint8 iconCount = 0;
 
 int32 ProcessMenu(void) {
-	uint8	menu;
-	uint8	i;
-	uint8	complete;
-	uint8	frameCount;
-	int32	curx, xoff;
-	int32	cury, yoff;
+	uint8 menu;
+	uint8 i;
+	uint8 complete;
+	uint8 frameCount;
+	int32 curx, xoff;
+	int32 cury, yoff;
 	ScummVM::Rect r;
-	int32	delta;
-	static	int32 lastTime = 0;
+	int32 delta;
+	static int32 lastTime = 0;
 
 	if (lastTime == 0) {
 		lastTime = SVM_timeGetTime();
@@ -231,16 +231,21 @@ int32 ProcessMenu(void) {
 						r.bottom = cury + yoff;
 					}
 
-					if ((xoff != 0) && (yoff != 0)) {
-						SquashImage(
-							lpBackBuffer->_pixels + r.top * lpBackBuffer->_width + r.left,
-							lpBackBuffer->_width,
-							r.right - r.left,
-							r.bottom - r.top,
-							icons[menu][i],
-							RDMENU_ICONWIDE,
-							RDMENU_ICONWIDE,
-							RDMENU_ICONDEEP);
+					if (xoff != 0 && yoff != 0) {
+						byte *dst = lpBackBuffer->_pixels + r.top * lpBackBuffer->_width + r.left;
+						byte *src = icons[menu][i];
+
+						if (pocketStatus[menu][i] != MAXMENUANIMS) {
+							SquashImage(
+								dst, lpBackBuffer->_width, r.right - r.left, r.bottom - r.top,
+								src, RDMENU_ICONWIDE, RDMENU_ICONWIDE, RDMENU_ICONDEEP);
+						} else {
+							for (int j = 0; j < RDMENU_ICONDEEP; j++) {
+								memcpy(dst, src, RDMENU_ICONWIDE);
+								src += RDMENU_ICONWIDE;
+								dst += lpBackBuffer->_width;
+							}
+						}
 						lpBackBuffer->upload(&r);
 					}
 				}
