@@ -13,33 +13,30 @@ Visual C++ are supported. If you wish to use MP3-compressed CD tracks or
 USE\_MAD. Tools for compressing .SOU files to .SO3 files can be
 found in the 'tools' CVS module, or in the 'scummvm-tools' package.
 
-You can also comment/uncomment appropriate lines in the build.rules file to
-use sdl\_gl.cpp instead of sdl.cpp. This allows hardware accelerated bilinear
-filtering by using OpenGL textures.
-
 On Win9x/NT/XP you can define USE\_WINDBG and attach WinDbg to browse debug 
 messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
 
-GCC:
+\subsection{GCC}
   \begin{itemize}
-  \item Type ./configure
-  \item Type make (or gmake if that's what GNU make is called on your
-        system) and hopefully ScummVM will compile for you.
+  \item Type \texttt{./configure}
+  \item Type \texttt{make} (or \texttt{gmake}, or \texttt{gnumake}, depending
+        on what GNU make is called on your system) and hopefully ScummVM will
+        compile for you.
   \end{itemize}
-MingW -  Windows 5/98/ME/NT/2000/XP/2003:
+\subsection{MingW -  Windows 5/98/ME/NT/2000/XP/2003}
   \begin{itemize}
   \item Open Makefile.mingw, alter SDL paths and choose compiling
     options.
   \item Type make -f Makefile.mingw,  hopefully ScummVM will compile for you.
   \end{itemize}
-MS Visual C++:
+\subsection{MS Visual C++}
   \begin{itemize}
   \item Open the workspace, scummwm.dsw
   \item Enter the path to the SDL include files in
     Tools|Options|Directories
   \item Now it should compile successfully. 
   \end{itemize}
-PocketPC Windows CE:
+\subsection{PocketPC Windows CE}
   \begin{itemize}
   \item Download the SDLAudio library:\\
     http://arisme.free.fr/PocketScumm/sources/SDLAudio-1.2.3-src.zip
@@ -50,7 +47,7 @@ PocketPC Windows CE:
   \item Enter the compiled SDLAudio.lib to your link libraries list
   \item Now it should compile successfully
   \end{itemize}
-Debian GNU/Linux:
+\subsection{Debian GNU/Linux}
   \begin{itemize}
   \item Install the packages 'build-essential', 'fakeroot', 'debhelper',
           and 'libsdl1.2-dev' on your system.
@@ -61,16 +58,18 @@ Debian GNU/Linux:
   \item Run 'make deb'
   \item Finally run 'dpkg -i ../scummvm-cvs*deb', and you're done.
   \end{itemize}
-Mac OS X:
+\subsection{Mac OS X}
 \begin{itemize}
 \item Make sure you have the developer tools installed.
-\item Edit backends/sdl/build.rules, and enable the Mac OS X specific 
-      line(s).
-\item Depending on where you have installed SDL, you have to add the
-      location of its headers to the INCLUDES variables. For example if you
-      installed SDL via Fink, you can add this at the end of build.rules:
-      INCLUDES+= -I/sw/include
-\item You can now 'make' to create a command line binary.
-\item To get a version you can run from Finder, type 'make bundle' which
-      will create ScummVM.app.
+\item The SDL developer package for OS X available on the SDL web site is
+      \textit{not} suitable. Rather, you require a unix-style build of SDL. One
+      way to get that is to install SDL via Fink (http://fink.sf.net).
+      Alternatively you could compile SDL manually from source using its
+      unix build system (\texttt{configure \&\& make}).
+\item Type \texttt{./configure} in the ScummVM directory
+\item You can now type \texttt{make} to create a command line binary.
+\item To get a version you can run from Finder, type \texttt{make bundle} which
+      will create ScummVM.app (this only works if you installed SDL
+      etc. via Fink and into /sw. If you have installed SDL in another
+      way, you'll have to edit the Makefile).
 \end{itemize}

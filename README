@@ -912,17 +912,13 @@ Visual C++ are supported. If you wish to use MP3-compressed CD tracks or
 USE_MAD. Tools for compressing .SOU files to .SO3 files can be
 found in the 'tools' CVS module, or in the 'scummvm-tools' package.
 
-You can also comment/uncomment appropriate lines in the build.rules file to
-use sdl_gl.cpp instead of sdl.cpp. This allows hardware accelerated bilinear
-filtering by using OpenGL textures.
-
 On Win9x/NT/XP you can define USE_WINDBG and attach WinDbg to browse debug 
 messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
 
     GCC:
         * Type ./configure
-        * Type make (or gmake if that's what GNU make is called on your
-          system) and hopefully ScummVM will compile for you.
+        * Type make (or gmake, or gnumake, depending on what GNU make is
+          called on your system) and hopefully ScummVM will compile for you.
 
     Mingw - Windows 95/98/ME/NT/2000/XP/2003:
         * Open Makefile.mingw, alter SDL paths and choose compiling options.
@@ -959,15 +955,17 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
         
     Mac OS X:
         * Make sure you have the developer tools installed.
-        * Edit backends/sdl/build.rules, and enable the Mac OS X specific 
-          line(s).
-        * Depending on where you have installed SDL, you have to add the
-          location of its headers to the INCLUDES variables. For example if you
-          installed SDL via Fink, you can add this at the end of build.rules:
-          INCLUDES+= -I/sw/include
-        * You can now 'make' to create a command line binary.
+        * The SDL developer package for OS X available on the SDL web site is
+          _not_ suitable. Rather, you require a unix-style build of SDL. One
+          way to get that is to install SDL via Fink (http://fink.sf.net).
+          Alternatively you could compile SDL manually from source using its
+          unix build system (configure && make).
+        * Type ./configure in the ScummVM directory
+        * You can now type 'make' to create a command line binary.
         * To get a version you can run from Finder, type 'make bundle' which
-          will create ScummVM.app.
+          will create ScummVM.app (this only works if you installed SDL
+          etc. via Fink and into \texttt{/sw}. If you have installed SDL
+          in another way, you'll have to edit the Makefile).
 
 X.X Credits:
 --- --------
