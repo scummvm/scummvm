@@ -23,6 +23,7 @@
 #include "cutaway.h"
 #include "graphics.h"
 #include "talk.h"
+#include "walk.h"
 
 namespace Queen {
 
@@ -49,8 +50,6 @@ namespace Queen {
 	 CURRSONG
 	 JOEF					(Joe's face direction)
 	 JX,JY        (Joe's coordintes)
-	 PERSON_FACE
-	 PERSON_FACE_MAX
 
  */
 
@@ -59,8 +58,9 @@ void Cutaway::run(
 		char *nextFilename,
 		Graphics *graphics,
 		Logic *logic,
-		Resource *resource) {
-	Cutaway *cutaway = new Cutaway(filename, graphics,logic, resource);
+		Resource *resource,
+		Walk *walk) {
+	Cutaway *cutaway = new Cutaway(filename, graphics,logic, resource, walk);
 	cutaway->run(nextFilename);
 	delete cutaway;
 }
@@ -69,8 +69,10 @@ Cutaway::Cutaway(
 		const char *filename, 
 		Graphics *graphics,
 		Logic *logic,
-		Resource *resource) 
-: _logic(logic), _resource(resource), _graphics(graphics), _quit(false), _lastSong(0), _songBeforeComic(0) {
+		Resource *resource,
+		Walk *walk) 
+: _graphics(graphics), _logic(logic), _resource(resource), _walk(walk),
+	_quit(false), _personFaceCount(0), _lastSong(0), _songBeforeComic(0) {
 	memset(&_bankNames, 0, sizeof(_bankNames));
 	load(filename); 
 }
@@ -81,6 +83,8 @@ Cutaway::~Cutaway() {
 
 void Cutaway::load(const char *filename) {
 	byte *ptr;
+
+	debug(0, "----- Cutaway::load(\"%s\") -----", filename);
 
 	ptr = _fileData = _resource->loadFile(filename, 20);
 	if (!_fileData) {
@@ -302,7 +306,7 @@ void Cutaway::limitBob(CutawayObject &object) {
 			warning("QueenCutaway::limitBob called with objectNumber = %i", object.objectNumber);
 			return;
 		}	
-		
+
 		BobSlot *bob = 
 			_graphics->bob( _logic->findBob(object.objectNumber) );
 
@@ -335,7 +339,7 @@ void Cutaway::changeRooms(CutawayObject &object) {
 
 	if (_finalRoom != object.room) {
 		int firstObjectInRoom = _logic->roomData(object.room) + 1;
-		int lastObjectInRoom  = _logic->roomData(object.room) + 0; // XXX _logic->objMax(object.room);
+		int lastObjectInRoom  = _logic->roomData(object.room) + _logic->objMax(object.room);
 
 		for (int i = firstObjectInRoom; i <= lastObjectInRoom; i++) {
 			ObjectData *objectData  = _logic->objectData(i);
@@ -372,35 +376,36 @@ void Cutaway::changeRooms(CutawayObject &object) {
 
 	// set coordinates for Joe if he is on screen
 
-	// XXX this is global data!
-	int joeX = 0;
-	int joeY = 0;
+	_logic->joeX(0);
+	_logic->joeY(0);
 
 	for (int i = 0; i < object.personCount; i++) {
 		if (PERSON_JOE == object.person[i]) {
-			joeX = object.bobStartX;
-			joeY = object.bobStartY;
+			_logic->joeX(object.bobStartX);
+			_logic->joeY(object.bobStartY);
 		}
 	}
 
-	// XXX OLDROOM=IROOM;
+	_logic->oldRoom(_initialRoom);
 
-	if (!joeX && !joeY) {
-		// XXX DISP_ROOM(ROOM_NAMEstr[ROOM],0,SF);
+	RoomDisplayMode mode;
+
+	if (!_logic->joeX() && !_logic->joeY()) {
+		mode = RDM_FADE_NOJOE;
 	}
 	else {
-		// XXX We need to display Joe on screen
-#if 0
-		if(ROOMFADE==1)
-			DISP_ROOM(ROOM_NAMEstr[ROOM],2,SF);
+		// We need to display Joe on screen
+		if (_roomFade == 1)
+			mode = RDM_NOFADE_JOE;
 		else
-			DISP_ROOM(ROOM_NAMEstr[ROOM],3,SF);
-#endif
+			mode = RDM_FADE_JOE_XY;
 	}
+
+	_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), mode, 0, 0 /*COMPANEL*/, true);
 
 	// XXX CI=FRAMES;
 
-	// XXX TROOM=ROOM;
+	_temporaryRoom = _logic->currentRoom();
 
 	restorePersonData();
 
@@ -597,6 +602,15 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 	return ptr;
 }
 
+static void findCdCut(const char *basename, int index, char *result) {
+	// Function find_cd_cut, lines 5-15 in execute.c
+	
+	strcpy(result, basename);
+	for (int i = strlen(basename); i < 5; i++)
+		result[i] = '_';
+	snprintf(result + 5, 2, "%02i", index);
+}
+
 void Cutaway::handlePersonRecord(
 		int index, 
 		CutawayObject &object, 
@@ -607,8 +621,7 @@ void Cutaway::handlePersonRecord(
 
 	if (object.objectNumber == OBJECT_JOE) {
 		if (object.moveToX || object.moveToY) {
-			// XXX X=IX ; Y=IY;
-			// XXX MOVE_JOE(0);
+			// XXX _walk->joeMove(0, object.moveToX, object.moveToY, true);
 		} 
 		strcpy(name, "JOE");
 	}
@@ -644,23 +657,26 @@ void Cutaway::handlePersonRecord(
 		}
 		else {
 			if (object.objectNumber > 0) {
-				// XXX
-#if 0
-				MTCH=0;
-				for(K=1;K<=PERSON_FACE_MAX;K++)
-				{
-					if(PERSON_FACE[K][0]==OBJECT) MTCH=1;
+				bool foundPerson = false;
+
+				for (int i = 1; i <= _personFaceCount; i++) {
+					if (_personFace[i].index == object.objectNumber) {
+						foundPerson = true;
+						break;
+					}
 				}
-				if(MTCH==0)
-				{
-					PERSON_FACE_MAX++;
-					PERSON_FACE[PERSON_FACE_MAX][0]=OBJECT;
-					PERSON_FACE[PERSON_FACE_MAX][1]=OBJECT_DATA[OBJECT][7];
+
+				if (!foundPerson) {
+					_personFaceCount++;
+					_personFace[_personFaceCount].index = object.objectNumber;
+					_personFace[_personFaceCount].image = _logic->objectData(object.objectNumber)->image;
 				}
-#endif
 			}
 
-			// XXX SPEAK(sentence, name, findCdCut(_basename, index));
+			char voiceFilePrefix[MAX_STRING_SIZE];
+			findCdCut(_basename, index, voiceFilePrefix);
+			Talk::speak(sentence, name, voiceFilePrefix,
+				_graphics, _logic, _resource);
 		}
 
 	}
@@ -711,11 +727,11 @@ void Cutaway::run(char *nextFilename) {
 		debug(0, "Sentence = '%s'", sentence);
 
 		if (OBJECT_ROOMFADE == object.objectNumber) {
-			// ROOMFADE = 1;
+			_roomFade = true;
 			object.objectNumber = OBJECT_JOE;
 		}
 		else {
-			// ROOMFADE = 0;
+			_roomFade = false;
 		}
 
 		if (object.room != _temporaryRoom)
@@ -784,10 +800,12 @@ void Cutaway::run(char *nextFilename) {
 		warning("Clean-up stuff needed but not yet implemented");
 	}
 
-	// XXX bobs[0].animating=0;
-	// XXX bobs[0].moving=0;
+	BobSlot *joeBob = _graphics->bob(0);
+	joeBob->animating = 0;
+	joeBob->moving    = 0;
 	// Make sure Joe is clipped!
-	// XXX bobs[0].y2=149;
+	joeBob->box.y2    = 149;
+
 	// XXX CUTON=0;
 	_quit = false;
 
@@ -808,7 +826,7 @@ void Cutaway::objectCopy(int dummyObjectIndex, int realObjectIndex) {
 	
 	int fromState = (dummyObject->name < 0) ? -1 : 0;
 
-	int frameCountReal = 1;
+	int frameCountReal  = 1;
 	int frameCountDummy = 1;
 
 	int graphic = realObject->image;
@@ -816,17 +834,20 @@ void Cutaway::objectCopy(int dummyObjectIndex, int realObjectIndex) {
 		if (graphic > 5000)
 			graphic -= 5000;
 
-		// XXX FIND_GRAPHIC(graphic)
-		// XXX if(EFRAME>0) frameCountReal=(EFRAME-SFRAME)+1;
+		GraphicData *data = _logic->graphicData(graphic);
+
+		if (data->lastFrame > 0) 
+			frameCountReal = data->lastFrame - data->firstFrame + 1;
 
 		graphic = dummyObject->image;
 		if (graphic > 0) {
 			if (graphic > 5000)
 				graphic -= 5000;
 
-		// XXX FIND_GRAPHIC(graphic)
-		// XXX if(EFRAME>0) frameCountDummy=(EFRAME-SFRAME)+1;
+			data = _logic->graphicData(graphic);
 
+			if (data->lastFrame > 0) 
+				frameCountDummy = data->lastFrame - data->firstFrame + 1;
 		}
 	}
 
@@ -872,13 +893,11 @@ void Cutaway::goToFinalRoom() {
 			joeRoom != _temporaryRoom &&
 			joeRoom != 0) {
 
-		// XXX update global Joe coordinates
-		// JX = joeX;
-		// JY = joeY;
-
+		_logic->joeX(joeX);
+		_logic->joeY(joeX);
 		_logic->currentRoom(joeRoom);
 		_logic->oldRoom(_initialRoom);
-		// XXX  DISP_ROOM(ROOM_NAMEstr[ROOM],3,0);
+		_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), RDM_FADE_JOE_XY, 0, 0 /*COMPANEL*/, true);
 	}
 
 	if (_quit) {
@@ -926,11 +945,11 @@ void Cutaway::goToFinalRoom() {
 			joeRoom != 105 &&   // XXX hard coded room number
 			joeRoom != 106 &&   // XXX hard coded room number
 			(joeX || joeY)) {
-		// XXX bobs[0].x=J_X;
-		// XXX bobs[0].y=J_Y;
-		// XXX FIND_SCALE(J_X,J_Y);
-		// XXX SFACTOR=Param;
-		// XXX FACE_JOE()
+		BobSlot *joeBob = _graphics->bob(0);
+		joeBob->x = joeX;
+		joeBob->y = joeY;
+		joeBob->scale = _logic->findScale(joeX, joeY);
+		_walk->joeFace();
 	}
 }
 
@@ -1012,7 +1031,7 @@ void Cutaway::talk(char *nextFilename) {
 		warning("Cutaway::talk() used but not fully implemented");
 		nextFilename[0] = '\0';
 
-		Talk::run(_talkFile, nextFilename, _graphics, _logic, _resource);
+		Talk::talk(_talkFile, nextFilename, _graphics, _logic, _resource);
 	}
 }
 

@@ -32,7 +32,7 @@ namespace Queen {
 
  */
 
-void Talk::run(
+void Talk::talk(
 		const char *filename, 
 		char *cutawayFilename,
 		Graphics *graphics,
@@ -41,6 +41,19 @@ void Talk::run(
 	Talk *talk = new Talk(graphics, logic, resource);
 	talk->talk(filename, cutawayFilename);
 	delete talk;
+}
+
+bool Talk::speak(
+		const char *sentence, 
+		const char *person, 
+		const char *voiceFilePrefix,
+		Graphics *graphics,
+		Logic *logic,
+		Resource *resource) {
+	Talk *talk = new Talk(graphics, logic, resource);
+	bool result = talk->speak(sentence, person, voiceFilePrefix);
+	delete talk;
+	return result;
 }
 
 Talk::Talk(
@@ -415,11 +428,163 @@ void Talk::initialTalk() {
 
 }
 
+int Talk::getSpeakCommand(const char *sentence, unsigned &index) {
+	// Lines 1299-1362 in talk.c
+	int commandCode = SPEAK_DEFAULT;
+
+	switch (sentence[index]) {
+		case 'A':
+			if (sentence[index + 1] == 'O')
+				commandCode = SPEAK_AMAL_ON;
+			else
+				warning("Unknown command string: '%2s'", sentence + index);
+			break;
+			
+		case 'F':
+			switch (sentence[index + 1]) {
+				case 'L':
+					commandCode = SPEAK_FACE_LEFT;
+					break;
+				case 'F':
+					commandCode = SPEAK_FACE_FRONT;
+					break;
+				case 'B':
+					commandCode = SPEAK_FACE_BACK;
+					break;
+				case 'R':
+					commandCode = SPEAK_FACE_RIGHT;
+					break;
+				default:
+					warning("Unknown command string: '%2s'", sentence + index);
+					break;
+			}
+			break;
+
+		case 'G':
+			switch (sentence[index + 1]) {
+				case 'D':
+					// XXX GRAB_DIR("DOWN",0);
+					break;
+				case 'M':
+					// XXX GRAB_DIR("MID",0);
+					break; 
+				default:
+					warning("Unknown command string: '%2s'", sentence + index);
+					break;
+			}
+			commandCode = SPEAK_NONE;
+			break;
+			
+		case 'X':
+			// For example *XY00(237,112)
+			if (sentence[index + 1] == 'Y') {
+				commandCode = atoi(sentence + index + 2);
+				// XXX int x = atoi(sentence + index + 5);
+				// XXX int y = atoi(sentence + index + 9);
+				// XXX MOVE_SPEAK(person, x, y)
+				index += 11;
+				/// XXX personWalking = true;
+			}
+			else
+				warning("Unknown command string: '%2s'", sentence + index);
+			break;
+
+		default:
+			if (sentence[index + 0] >= '0' && sentence[index + 0] <= '9' &&
+					sentence[index + 1] >= '0' && sentence[index + 1] <= '9') {
+				commandCode = (sentence[index] - '0') * 10 + (sentence[index + 1] - '0');
+			}
+			else
+				warning("Unknown command string: '%2s'", sentence + index);
+	}
+
+	index += 2;
+
+	return commandCode;
+}
+
+
 bool Talk::speak(const char *sentence, const char *person, const char *voiceFilePrefix) {
+	// Function SPEAK, lines 1266-1384 in talk.c
+	bool personWalking = false;
+	bool talkHead;
+	unsigned segmentIndex = 0;
+	unsigned segmentStart = 0;
+	unsigned i;
+	
 	debug(0, "Sentence '%s' is said by person '%s' and voice files with prefix '%s' played",
 			sentence, person, voiceFilePrefix);
-	return false; // XXX
+
+	if (sentence[0] == '\0') {
+		goto exit;
+	}
+
+	if (0 == strcmp(person, "FAYE-H") ||
+			0 == strcmp(person, "FRANK-H") ||
+			0 == strcmp(person, "AZURA-H") ||
+			0 == strcmp(person, "X3_RITA-H")) 
+		talkHead = true;
+	else
+		talkHead = false;
+
+	// XXX CLEAR_COMMAND(false)
+
+	for (i = 0; i < strlen(sentence); i++) {
+		if (sentence[i] == '*') {
+			int segmentLength = i - segmentStart;
+
+			i++;
+			int command = getSpeakCommand(sentence, i);
+
+			if (SPEAK_NONE != command) {
+				speakSegment(
+						sentence + segmentStart, 
+						segmentLength,
+						person,
+						command,
+						voiceFilePrefix,
+						segmentIndex);
+				// XXX if (JOEWALK == 2) break
+			}
+
+			segmentIndex++;
+			segmentStart = i;
+		}
+	}
+
+	if (segmentStart != i) {
+		speakSegment(
+				sentence + segmentStart, 
+				i - segmentStart,
+				person,
+				0,
+				voiceFilePrefix,
+				segmentIndex);
+	}
+
+exit:
+	return personWalking;
 }
+
+void Talk::speakSegment(
+		const char *segment, 
+		int length,
+		const char *person, 
+		int command,
+		const char *voiceFilePrefix,
+		int index) {
+	// Function SPEAK_SUB, lines 1406-1870 in talk.c
+	char voiceFileName[MAX_STRING_SIZE];
+	snprintf(voiceFileName, sizeof(voiceFileName), "%s%1x", voiceFilePrefix, index);
+
+	//debug(0, "Sentence segment '%*s' is said by person '%s' and voice file '%s' is played",
+	//		length, segment, person, voiceFileName);
+
+	debug(0, "Playing voice file '%s'", voiceFileName);
+
+
+}
+
 
 byte *Talk::getString(byte *ptr, char *str, int maxLength, int align) {
 	int length = *ptr;

@@ -26,9 +26,10 @@
 
 namespace Queen {
 
-class Resource;
-class Logic;
 class Graphics;
+class Logic;
+class Resource;
+class Walk;
 
 class Cutaway {
 	public:
@@ -38,7 +39,8 @@ class Cutaway {
 				char *nextFilename,
 				Graphics *graphics,
 				Logic *logic,
-				Resource *resource);
+				Resource *resource,
+				Walk *walk);
 	private:
 		//! Collection of constants used by QueenCutaway
 		enum {
@@ -52,6 +54,7 @@ class Cutaway {
 			MAX_BANK_NAME_COUNT = 5,
 			MAX_FILENAME_LENGTH = 12,
 			MAX_FILENAME_SIZE = (MAX_FILENAME_LENGTH + 1),
+			MAX_PERSON_FACE_COUNT = 12,
 			MAX_STRING_LENGTH = 255,
 			MAX_STRING_SIZE = (MAX_STRING_LENGTH + 1),
 			LEFT = 1,
@@ -121,9 +124,15 @@ class Cutaway {
 			int16 image;
 		};
 
-		Logic 		*_logic;
-		Resource  *_resource;
-		Graphics 	*_graphics;
+		struct PersonFace {
+		  int16 index;
+		  int16 image;
+		};
+
+		Graphics    *_graphics;
+		Logic       *_logic;
+		Resource    *_resource;
+		Walk        *_walk;
 
 		//! Raw .cut file data (without 20 byte header)
 		byte *_fileData;
@@ -136,6 +145,9 @@ class Cutaway {
 
 		//! Pointer to next sentence string in _fileData
 		byte *_nextSentence;
+
+		//! ???
+		bool _roomFade;
 
 		//! Number of cutaway objects at _cutawayData
 		int _cutawayObjectCount;
@@ -173,6 +185,12 @@ class Cutaway {
 		//! Number of elements used in _personData array
 		int _personDataCount;
 
+		//! Used by handlePersonRecord()
+		PersonFace _personFace[MAX_PERSON_FACE_COUNT];
+
+		//! Number of entries in _personFace array
+		int _personFaceCount;
+
 		//! Play this song when leaving cutaway
 		int16 _lastSong;
 
@@ -184,7 +202,8 @@ class Cutaway {
 				const char *filename, 
 				Graphics *graphics,
 				Logic *logic,
-				Resource *resource);
+				Resource *resource,
+				Walk *walk);
 		~Cutaway();
 
 		//! Run this cutaway object 

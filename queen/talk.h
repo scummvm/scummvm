@@ -31,128 +31,151 @@ class Logic;
 class Resource;
 
 class Talk {
-	public:
+  public:
 
-		//! Public interface to run a talk from a file
-		static void run(
-				const char *filename,
-				char *cutawayFilename,
-				Graphics *graphics,
-				Logic *logic,
-				Resource *resource);
+	//! Public interface to run a talk from a file
+	static void talk(
+		const char *filename,
+		char *cutawayFilename,
+		Graphics *graphics,
+		Logic *logic,
+		Resource *resource);
 
-		//! Public interface to speak a sentence
-#if 0
-		static void run(
-				const char *sentence,
-				const char *person,
-				int noun,
-				Logic *logic,
-				Resource *resource);
-#endif
+	//! Public interface to speak a sentence
+	static bool speak(
+		const char *sentence, 
+		const char *person, 
+		const char *voiceFilePrefix,
+		Graphics *graphics,
+		Logic *logic,
+		Resource *resource);
 
-		//! Read a string from ptr and return new ptr
-		static byte *getString(byte *ptr, char *str, int maxLength, int align = 2);
+	//! Read a string from ptr and return new ptr
+	static byte *getString(byte *ptr, char *str, int maxLength, int align = 2);
 
-	private:
-		//!  Collection of constants used by Talk
-		enum {
-			MAX_STRING_LENGTH = 255,
-			MAX_STRING_SIZE = (MAX_STRING_LENGTH + 1),
-			MAX_TEXT_WIDTH = (320-18),
-			PUSHUP = 4,
-			TALK_SELECTED_COUNT = 86,
-			SENTENCE_BOB_1 = 62,
-			SENTENCE_BOB_2 = 63
-		};
+  private:
+	//!  Collection of constants used by Talk
+	enum {
+	  MAX_STRING_LENGTH = 255,
+	  MAX_STRING_SIZE = (MAX_STRING_LENGTH + 1),
+	  MAX_TEXT_WIDTH = (320-18),
+	  PUSHUP = 4,
+	  TALK_SELECTED_COUNT = 86,
+	  SENTENCE_BOB_1 = 62,
+	  SENTENCE_BOB_2 = 63
+	};
 
-		//! TODO Move this to struct.h later!
-		struct TalkSelected {
-			int16 hasTalkedTo;
-			int16 values[4];
-		};
+	//! Special commands for speech
+	enum {
+	  SPEAK_DEFAULT      =  0,
+	  SPEAK_FACE_LEFT    = -1,
+	  SPEAK_FACE_RIGHT   = -2,
+	  SPEAK_FACE_FRONT   = -3,
+	  SPEAK_FACE_BACK    = -4,
+	  SPEAK_AMAL_ON      = -7,
+	  SPEAK_PAUSE        = -8,
+	  SPEAK_NONE         = -9
+	};
 
-		struct DialogueNode {
-			int16 head;
-			int16 dialogueNodeValue1;
-			int16 gameStateIndex;
-			int16 gameStateValue;
-		};
+	//! TODO Move this to struct.h later!
+	struct TalkSelected {
+	  int16 hasTalkedTo;
+	  int16 values[4];
+	};
 
-		Graphics  *_graphics;
-		Logic     *_logic;
-		Resource  *_resource;
-		
-		//! Raw .dog file data (without 20 byte header)
-		byte *_fileData;
+	struct DialogueNode {
+	  int16 head;
+	  int16 dialogueNodeValue1;
+	  int16 gameStateIndex;
+	  int16 gameStateValue;
+	};
 
-		//! Number of dialogue levels
-		int16 _levelMax;
+	Graphics  *_graphics;
+	Logic     *_logic;
+	Resource  *_resource;
 
-		//! Unique key for this dialogue
-		int16 _uniqueKey;
+	//! Raw .dog file data (without 20 byte header)
+	byte *_fileData;
 
-		//! Used to select voice files
-		int16 _talkKey;
+	//! Number of dialogue levels
+	int16 _levelMax;
 
-		//! Used by findDialogueString
-		int16 _pMax;
+	//! Unique key for this dialogue
+	int16 _uniqueKey;
 
-		//! String data
-		byte *_person1Ptr;
+	//! Used to select voice files
+	int16 _talkKey;
 
-		//! Data used if we have talked to the person before
-		byte *_person2Ptr;
+	//! Used by findDialogueString
+	int16 _pMax;
 
-		//! Data used if we haven't talked to the person before
-		byte *_joePtr;
+	//! String data
+	byte *_person1Ptr;
 
-		//! Set to true to quit talking
-		bool _quit;
+	//! Data used if we have talked to the person before
+	byte *_person2Ptr;
 
-		//! IDs for sentences
-		DialogueNode _dialogueTree[18][6];
+	//! Data used if we haven't talked to the person before
+	byte *_joePtr;
 
-		//! TODO Move this to the Logic class later!
-		TalkSelected _talkSelected[TALK_SELECTED_COUNT];
+	//! Set to true to quit talking
+	bool _quit;
 
-		//! Greeting from person Joe has talked to before
-		char _person2String[MAX_STRING_SIZE];
+	//! IDs for sentences
+	DialogueNode _dialogueTree[18][6];
 
-		int _oldSelectedSentenceIndex;
-		int _oldSelectedSentenceValue;
+	//! TODO Move this to the Logic class later!
+	TalkSelected _talkSelected[TALK_SELECTED_COUNT];
 
-		char _talkString[5][MAX_STRING_SIZE];
-		char _joeVoiceFilePrefix[5][MAX_STRING_SIZE];
+	//! Greeting from person Joe has talked to before
+	char _person2String[MAX_STRING_SIZE];
 
-		Talk(Graphics *graphics, Logic *logic, Resource *resource);
-		~Talk();
+	int _oldSelectedSentenceIndex;
+	int _oldSelectedSentenceValue;
 
-		//! Perform talk in file and return a cutaway filename
-		void talk(const char *filename, char *cutawayFilename);
+	char _talkString[5][MAX_STRING_SIZE];
+	char _joeVoiceFilePrefix[5][MAX_STRING_SIZE];
 
-		//! Load talk data from .dog file 
-		void load(const char *filename);
+	Talk(Graphics *graphics, Logic *logic, Resource *resource);
+	~Talk();
 
-		//! First things spoken
-		void initialTalk();
+	//! Perform talk in file and return a cutaway filename
+	void talk(const char *filename, char *cutawayFilename);
 
-		//! Find a string in the dialogue tree
-		void findDialogueString(byte *ptr, int16 id, char *str);
+	//! Load talk data from .dog file 
+	void load(const char *filename);
 
-		//! Speak sentence
-		bool speak(const char *sentence, const char *person, const char *voiceFilePrefix);
+	//! First things spoken
+	void initialTalk();
 
-		//! Get TalkSelected struct for this talk
-		TalkSelected *talkSelected();
+	//! Find a string in the dialogue tree
+	void findDialogueString(byte *ptr, int16 id, char *str);
 
-		//! The sentence will not be displayed again
-		void disableSentence(int oldLevel, int selectedSentence);
+	//! Get TalkSelected struct for this talk
+	TalkSelected *talkSelected();
 
-		//! Select what to say
-		int16 selectSentence();
+	//! The sentence will not be displayed again
+	void disableSentence(int oldLevel, int selectedSentence);
 
-		static int splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]);
+	//! Select what to say
+	int16 selectSentence();
+
+	//! Speak sentence
+	bool speak(const char *sentence, const char *person, const char *voiceFilePrefix);
+
+	//! Convert command in sentence to command code
+	int getSpeakCommand(const char *sentence, unsigned &index);
+
+	//! Speak a part of a sentence
+	void speakSegment(
+		const char *segment, 
+		int length,
+		const char *person, 
+		int command,
+		const char *voiceFilePrefix,
+		int index);
+
+	static int splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]);
 
 
 };
