@@ -113,6 +113,9 @@ public:
 	// Set a parameter
 	uint32 property(int param, Property *value);
 
+	// Add a callback timer
+	void set_timer(int timer, int (*callback)(int));
+
 	static OSystem *create(int gfx_mode, bool full_screen);
 
 private:
@@ -174,6 +177,10 @@ private:
 	byte _ms_backup[BAK_WIDTH * BAK_HEIGHT];
 	bool _mouse_drawn;
 	bool _mouse_visible;
+
+	unsigned int _timer_duration, _timer_next_expiry;
+	bool _timer_active;
+	int (*_timer_callback)(int);
 };
 
 typedef struct {
@@ -366,6 +373,9 @@ OSystem_X11::OSystem_X11()
 out_of_loop:
 	create_empty_cursor();
 
+	/* Initialize the timer routines */
+	_timer_active = false;
+
 	/* And finally start the local timer */
 	gettimeofday(&start_time, NULL);
 }
@@ -467,6 +477,8 @@ void OSystem_X11::set_palette(const byte *colors, uint start, uint num) {
 void OSystem_X11::copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {
 	unsigned char *dst;
 
+	fprintf(stderr, "%d %d %d %d %d %p\n", pitch, x, y, w, h, buf);
+
 	if (y < 0) {
 		h += y;
 		buf -= y * pitch;
@@ -486,6 +498,7 @@ void OSystem_X11::copy_rect(const byte *buf, int pitch, int x, int y, int w, int
 
 	AddDirtyRec(x, y, w, h);
 	while (h-- > 0) {
+	  fprintf(stderr, " => %d %p\n", h, buf);
 		memcpy(dst, buf, w);
 		dst += fb_width;
 		buf += pitch;
@@ -720,6 +733,8 @@ uint32 OSystem_X11::property(int param, Property *value) {
 	{
 		case PROP_GET_SAMPLE_RATE:
 			return 22050;
+		case PROP_GET_FULLSCREEN:
+			return 0;
 	}
 	warning("Property not implemented yet (%d) ", param);
 	return 0;
@@ -743,6 +758,14 @@ void OSystem_X11::delay_msecs(uint msecs) {
 }
 
 bool OSystem_X11::poll_event(Event *scumm_event) {
+	/* First, handle timers */
+	uint32 current_msecs = get_msecs();
+
+	if (_timer_active && (current_msecs >= _timer_next_expiry)) {
+		_timer_duration = _timer_callback(_timer_duration);
+		_timer_next_expiry = current_msecs + _timer_duration;
+	}
+
 	while (XPending(display)) {
 		XEvent event;
 
@@ -902,4 +925,15 @@ bool OSystem_X11::poll_event(Event *scumm_event) {
 	}
 
 	return false;
+}
+
+void OSystem_X11::set_timer(int timer, int (*callback)(int)) {
+	if (callback != NULL) {
+		_timer_duration = timer;
+		_timer_next_expiry = get_msecs() + timer;
+		_timer_callback = callback;
+		_timer_active = true;
+	} else {
+		_timer_active = false;
+	}
 }
