@@ -17,7 +17,6 @@ Table of Contents:
  * 3.2 Simon the Sorcerer notes
  * 3.3 Known Bugs
 4.0) Supported Platforms
-
 5.0) Running ScummVM
  * 5.1 Command Line Options
  * 5.2 Language Options
@@ -177,12 +176,12 @@ any answer. Chances are that it will work.
 ---- ---------------------------------
 The Simon the Sorcerer 1 & 2 games were split into several targets to make
 coding easier and to make it more clear which target should be used:
-       simon1dos - Use for Simon the Sorcerer 1 for DOS (Disk)
-       simon2dos - Use for Simon the Sorcerer 2 for DOS (Disk)
+       simon1dos    - Use for Simon the Sorcerer 1 for DOS (Disk)
+       simon2dos    - Use for Simon the Sorcerer 2 for DOS (Disk)
        simon1talkie - Use for Simon the Sorcerer 1 Talkie for DOS (CD)
        simon2talkie - Use for Simon the Sorcerer 2 Talkie for DOS (CD)
-       simon1win - Use for Simon the Sorcerer 1 Talkie for Windows (CD)
-       simon2win - Use for Simon the Sorcerer 2 Talkie for Windows (CD)
+       simon1win    - Use for Simon the Sorcerer 1 Talkie for Windows (CD)
+       simon2win    - Use for Simon the Sorcerer 2 Talkie for Windows (CD)
        simon2mac    - Use for Simon the Sorcerer 2 Talkie for Amiga or Mac (CD)
 
 If you have the dual version of Simon the Sorcerer 1 or 2 on CD,
