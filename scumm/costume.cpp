@@ -26,6 +26,11 @@
 #include "scumm/costume.h"
 #include "scumm/sound.h"
 
+#if defined(__PALM_OS__)
+#include "arm/native.h"
+#include "arm/macros.h"
+#endif
+
 namespace Scumm {
 
 const byte revBitMask[8] = { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 };
@@ -399,6 +404,27 @@ void CostumeRenderer::procC64(int actor) {
 #undef MASK_AT
 
 void CostumeRenderer::proc3() {
+#ifdef __PALM_OS__
+	ARM_START(CostumeProc3Type)
+		ARM_ADDP(v1)
+		ARM_ADDM(revBitMask)
+		ARM_ADDM(_srcptr)
+		ARM_ADDM(_height)
+		ARM_ADDM(_scaleIndexX)
+		ARM_ADDM(_scaleIndexY)
+		ARM_ADDM(_scaleX)
+		ARM_ADDM(_scaleY)
+		ARM_ADDM(_numStrips)
+		ARM_ADDM(_outwidth)
+		ARM_ADDM(_outheight)
+		ARM_ADDM(_shadow_mode)
+		ARM_ADDM(_shadow_table)
+		ARM_ADDV(_vm_proc_special_palette, _vm->_proc_special_palette)
+		ARM_ADDM(_palette)
+		PCE_CALL_RETURN(PNO_COSTUMEPROC3, ARM_DATA(), _scaleIndexX)
+	ARM_END()
+#endif
+
 	const byte *mask, *src;
 	byte *dst;
 	byte len, maskbit;
@@ -839,4 +865,3 @@ _GRELEASEPTR(GBVARS_COSTSCALETABLE_INDEX, GBVARS_SCUMM)
 _GEND
 
 #endif
-
