@@ -321,6 +321,10 @@ byte AkosRenderer::drawLimb(const CostumeData &cost, int limb) {
 		case 16:
 			result |= codec16(xmoveCur, ymoveCur);
 			break;
+		case 32:
+			// TODO Add codec32
+			result = 1;
+			break;
 		default:
 			error("akos_drawLimb: invalid codec %d", codec);
 		}
@@ -357,6 +361,10 @@ byte AkosRenderer::drawLimb(const CostumeData &cost, int limb) {
 				break;
 			case 16:
 				result |= codec16(xmoveCur, ymoveCur);
+				break;
+			case 32:
+				// TODO Add codec32
+				result = 1;
 				break;
 			default:
 				error("akos_drawLimb: invalid codec %d", codec);
@@ -722,6 +730,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 
 		rect.top = cur_y;
 		rect.bottom = cur_y + _height;
+		rect.bottom = 400;
 
 		startScaleIndexX = value;
 		startScaleIndexY = value;
@@ -1002,6 +1011,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	clip.top = _actorY + ymoveCur;
 	clip.right = clip.left + _width;
 	clip.bottom = clip.top + _height;
+	clip.bottom = 400;
 	maxw = _outwidth;
 	maxh = _outheight;
 
