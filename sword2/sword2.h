@@ -57,7 +57,6 @@ class Sword2State : public Engine {
 		void parseEvents(void);
 		void Start_game(void);
 		int32 InitialiseGame(void);
-		OSystem *_syst;
 		GameDetector *_detector;
 		uint32 _features;
 		byte _gameId;

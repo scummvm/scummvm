@@ -423,7 +423,7 @@ void FadeServer(void *)
 			currentTime = SVM_timeGetTime();
 			if (currentTime >= fadeStartTime + fadeTotalTime) {
 				fadeStatus = RDFADE_NONE;
-				g_sword2->_syst->set_palette((const byte *) palCopy, 0, 256);
+				g_system->set_palette((const byte *) palCopy, 0, 256);
 			} else {
 				fadeMultiplier = (int16) (((int32) (currentTime - fadeStartTime) * 256) / fadeTotalTime);
 				for (i=0; i<256; i++) {
@@ -431,7 +431,7 @@ void FadeServer(void *)
 					fadePalette[i][1] = (palCopy[i][1] * fadeMultiplier) >> 8;
 					fadePalette[i][2] = (palCopy[i][2] * fadeMultiplier) >> 8;
 				}
-				g_sword2->_syst->set_palette((const byte *) fadePalette, 0, 256);
+				g_system->set_palette((const byte *) fadePalette, 0, 256);
 			}
 			break;
 
@@ -448,7 +448,7 @@ void FadeServer(void *)
 					fadePalette[i][2] = (palCopy[i][2] * fadeMultiplier) >> 8;
 				}
 			}
-			g_sword2->_syst->set_palette((const byte *) fadePalette, 0, 256);
+			g_system->set_palette((const byte *) fadePalette, 0, 256);
 			break;
 		}
 

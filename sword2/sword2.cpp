@@ -103,7 +103,6 @@ Sword2State::Sword2State(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst) {
 	
 	_detector = detector;
-	_syst = syst;
 	g_sword2 = this;
 	_features = detector->_game.features;
 	_gameId = detector->_game.id;
@@ -270,14 +269,14 @@ void Sword2State::go()
 		return;
 	}
 
-	_paletteMutex = _syst->create_mutex();
+	_paletteMutex = _system->create_mutex();
 	_timer->installProcedure(&FadeServer, 40000 / 25);
 
 
 	
 	Zdebug("CALLING: InitialiseDisplay");
 	// rv = InitialiseDisplay(640, 480, 8, RD_FULLSCREEN);
-	_syst->init_size(640, 480);
+	_system->init_size(640, 480);
 	rv = RD_OK;
 		
 	Zdebug("RETURNED with rv = %.8x", rv);

@@ -168,7 +168,7 @@ void Sword2State::parseEvents() {
 		case OSystem::EVENT_MOUSEMOVE:
 			mousex = event.mouse.x;
 			mousey = event.mouse.y;
-			_syst->set_mouse_pos(event.mouse.x, event.mouse.y);
+			_system->set_mouse_pos(event.mouse.x, event.mouse.y);
 			break;
 		case OSystem::EVENT_LBUTTONDOWN:
 			LogMouseEvent(RD_LEFTBUTTONDOWN);
@@ -537,7 +537,7 @@ int32 CloseAppWindow(void)
 	DestroyWindow(hwnd);
 */
 	// just quit for now
-	g_sword2->_syst->quit();
+	g_system->quit();
 	return(RD_OK);
 
 }

@@ -22,7 +22,7 @@
 #include "../sword2.h"
 
 uint32 SVM_timeGetTime(void) {
-	return g_sword2->_syst->get_msecs();
+	return g_system->get_msecs();
 }
 
 void SVM_VirtualUnlock(uint8 *free_memman, uint32 total_free_memory) {
