@@ -57,7 +57,7 @@ static const uint16 dotmatrix_555[16] = {
 };
 static const uint16 *dotmatrix;
 
-static void InitLUTs(uint32 BitFormat);
+static void InitLUT(uint32 BitFormat);
 
 void InitScalers(uint32 BitFormat) {
 	if (BitFormat == 565) {
@@ -84,7 +84,7 @@ void InitScalers(uint32 BitFormat) {
 		error("Unknwon bit format %d\n", BitFormat);
 	}
 
-	InitLUTs(BitFormat);
+	InitLUT(BitFormat);
 }
 
 static inline int GetResult(uint32 A, uint32 B, uint32 C, uint32 D) { 
@@ -664,6 +664,7 @@ void DotMatrix(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPi
 // The HQ3x filter (C++ version) by Maxim Stepin (see http://www.hiend3d.com/hq3x.html).
 // Adapted to 16 bit output and optimized by Max Horn
 //
+
 static int   RGBtoYUV[65536];
 
 #define INTERPOLATE_3_1(x, y)	Q_INTERPOLATE(x, x, x, y)
@@ -761,6 +762,18 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 	const unsigned int nextlineDst = dstPitch / sizeof(uint16);
 	const unsigned int nextlineDst2 = 2 * nextlineDst;
 	uint16 *q = (uint16 *)dstPtr;
+	
+	// TODO: The YUV access could be finetuned and optimized; depending on the
+	// target processor, various different courses could prove to be "best".
+	// For example, it might be better to get rid of the RGBtoYUV table - it
+	// is 256kb big, which is be a problem for processors with a small cache.
+	// For those, doing the YUV conversion on the fly might be faster. On the
+	// other end of spectrum, for procs with large cache, getting rid of yuv[]
+	// might better - just always write RGBtoYUV[w[idx]].
+	//
+	// Maybe we can reduce the size of RGBtoYUV to half its size since
+	// diffYUV doesn't need full 8 bits for each component
+	
   
 
 	//	 +----+----+----+
@@ -775,35 +788,31 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 	//	 +----+----+----+
 
 	while (height--) {
-		w[2] = *(p - 1 - nextlineSrc);
-		w[5] = *(p - 1);
-		w[8] = *(p - 1 + nextlineSrc);
+		w[2] = *(p - 1 - nextlineSrc);  yuv[2] = RGBtoYUV[w[2]];
+		w[5] = *(p - 1);                yuv[5] = RGBtoYUV[w[5]];
+		w[8] = *(p - 1 + nextlineSrc);  yuv[8] = RGBtoYUV[w[8]];
 
-		w[3] = *(p - nextlineSrc);
-		w[6] = *(p);
-		w[9] = *(p + nextlineSrc);
+		w[3] = *(p - nextlineSrc);      yuv[3] = RGBtoYUV[w[3]];
+		w[6] = *(p);                    yuv[6] = RGBtoYUV[w[6]];
+		w[9] = *(p + nextlineSrc);      yuv[9] = RGBtoYUV[w[9]];
 
 		for (i = 0; i < width; i++) {
 			p++;
 
-			w[1] = w[2];
-			w[4] = w[5];
-			w[7] = w[8];
+			w[1] = w[2];                yuv[1] = yuv[2];
+			w[4] = w[5];                yuv[4] = yuv[5];
+			w[7] = w[8];                yuv[7] = yuv[8];
 
-			w[2] = w[3];
-			w[5] = w[6];
-			w[8] = w[9];
+			w[2] = w[3];                yuv[2] = yuv[3];
+			w[5] = w[6];                yuv[5] = yuv[6];
+			w[8] = w[9];                yuv[8] = yuv[9];
 
-			w[3] = *(p - nextlineSrc);
-			w[6] = *(p);
-			w[9] = *(p + nextlineSrc);
+			w[3] = *(p - nextlineSrc);	yuv[3] = RGBtoYUV[w[3]];
+			w[6] = *(p);				yuv[6] = RGBtoYUV[w[6]];
+			w[9] = *(p + nextlineSrc);	yuv[9] = RGBtoYUV[w[9]];
 
 			int pattern = 0;
 			int flag = 1;
-
-			for (k = 1; k <= 9; k++) {
-				yuv[k] = RGBtoYUV[w[k]];
-			}
 
 			for (k = 1; k <= 9; k++) {
 				if (k == 5) continue;
@@ -3586,19 +3595,26 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 	}
 }
 
-void InitLUTs(uint32 BitFormat) {
-	int i, j, k, r, g, b, Y, u, v;
+void InitLUT(uint32 BitFormat) {
+	int r, g, b;
+	int Y, u, v;
+	int gInc, gShift;
+	
+	if (BitFormat == 565) {
+		gInc = 256 >> 6;
+		gShift = 6 - 3;
+	} else {
+		gInc = 256 >> 5;
+		gShift = 5 - 3;
+	}
 
-	for (i = 0; i < 32; i++) {
-		r = i << 3;
-		for (j = 0; j < 64; j++) {
-			g = j << 2;
-			for (k = 0; k < 32; k++) {
-				b = k << 3;
+	for (r = 0; r < 256; r += 8) {
+		for (g = 0; g < 256; g += gInc) {
+			for (b = 0; b < 256; b += 8) {
 				Y = (r + g + b) >> 2;
 				u = 128 + ((r - b) >> 2);
 				v = 128 + ((-r + 2 * g -b) >> 3);
-				RGBtoYUV[ (i << 11) + (j << 5) + k ] = (Y << 16) + (u << 8) + v;
+				RGBtoYUV[ (r << (5+gShift)) + (g << gShift) + (b >> 3) ] = (Y << 16) + (u << 8) + v;
 			}
 		}
 	}
