@@ -1875,10 +1875,8 @@ void ScummEngine_v6::o6_verbOps() {
 		vs->curmode = 0;
 		break;
 	case 131:		// SO_VERB_DELETE
-		if (_features & GF_HUMONGOUS) {
-			// delete verb supposedly...
-			pop();
-		}
+		if (_features & GF_HUMONGOUS)
+			slot = getVerbSlot(pop(), 0);
 		killVerb(slot);
 		break;
 	case 132:		// SO_VERB_NEW
@@ -2946,7 +2944,7 @@ void ScummEngine_v6::o6_pickOneOfDefault() {
 void ScummEngine_v6::o6_stampObject() {
 	int object, x, y, state;
 	
-	// dummy opcode in the tentacle
+	// dummy opcode in tentacle
 	if (_gameId == GID_TENTACLE)
 		return;
 
