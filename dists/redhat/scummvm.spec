@@ -8,8 +8,8 @@
 #   Prologue information
 #------------------------------------------------------------------------------
 Name		: scummvm
-Version		: 0.6.0
-Release		: 2
+Version		: 0.6.1
+Release		: 1
 Summary		: Graphic adventure game interpreter
 Group		: Interpreters
 License		: GPL
@@ -19,7 +19,6 @@ Url             : http://www.scummvm.org
 Source		: %{name}-%{version}.tar.bz2
 Source1		: libmad-0.15.1b.tar.bz2
 Source2		: mpeg2dec-0.4.0b.tar.bz2
-Source3		: scummvm.desktop
 BuildRoot	: %{_tmppath}/%{name}-%{version}-root
 
 BuildRequires: desktop-file-utils
@@ -53,7 +52,7 @@ make
 install -m755 -D scummvm %{buildroot}%{_bindir}/scummvm
 install -m644 -D scummvm.6 %{buildroot}%{_mandir}/man6/scummvm.6
 install -m644 -D scummvm.xpm %{buildroot}%{_datadir}/pixmaps/scummvm.xpm
-desktop-file-install --vendor scummvm --dir=%{buildroot}/%{_datadir}/applications %{SOURCE3}
+desktop-file-install --vendor scummvm --dir=%{buildroot}/%{_datadir}/applications scummvm.desktop
 
 %clean
 rm -Rf ${RPM_BUILD_ROOT}
