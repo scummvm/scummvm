@@ -4412,15 +4412,12 @@ void SimonState::dx_update_screen_and_palette()
 		}
 	}
 
-	if (!_fast_mode || !(rand() & 7)) {
-
 		if (_mouse_pos_changed) {
 			_mouse_pos_changed = false;
 			_system->set_mouse_pos(_sdl_mouse_x, _sdl_mouse_y);
 		}
 		_system->copy_rect(_sdl_buf_attached, 320, 0, 0, 320, 200);
 		_system->update_screen();
-	}
 
 	memcpy(_sdl_buf_attached, _sdl_buf, 320 * 200);
 
@@ -4504,7 +4501,7 @@ void SimonState::go()
 	} else {
 		_vk_t_toggle = true;
 	}
-
+	
 	while (1) {
 		hitarea_stuff();
 		handle_verb_clicked(_verb_hitarea);
@@ -4807,21 +4804,26 @@ bool SimonState::load_game(uint slot)
 	return true;
 }
 
-void SimonState::playMusic(uint music)
+void SimonState::playMusic(uint music_unk, uint music)
 {
-	/* TODO */
-	/* Simon 2 dos / talkie music requires xmi midi format support */
-	if (_game & GAME_WIN) {	
+	if (_game & GAME_SIMON2) {        // Simon 2 music
+		if (_game & GAME_WIN) {	
+			midi.shutdown();
+			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music - 1], SEEK_SET);
+			midi.read_all_songs(_game_file, music);
+			_midi_unk1 = music;
+		} else
+			warning ("XMI music not supported");
+		_vc72_var1 = music_unk;
+		_vc70_var1 = 0xFFFF;
+		_vc72_var3 = 0xFFFF;
+		_midi_unk2 = 0xFFFF;
+	} else if (!(_game & GAME_DEMO)){ // Simon 1 music
 		midi.shutdown();
-		_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
-		midi.read_all_songs(_game_file, music);
-	
-		midi.initialize();
-		midi.play();
-	} else if (!(_game & GAME_SIMON2) && !(_game & GAME_DEMO)){
-		midi.shutdown();
-
-		if (_game & GAME_TALKIE) {
+		if (_game & GAME_WIN) {	
+			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
+			midi.read_all_songs(_game_file, music);
+		} else if (_game & GAME_TALKIE) {
 			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
 			midi.read_all_songs_old(_game_file, music);
 		} else {
@@ -4836,7 +4838,6 @@ void SimonState::playMusic(uint music)
 			midi.read_all_songs_old(f, music);
 			delete f;
 		}
-
 		midi.initialize();
 		midi.play();
 	}

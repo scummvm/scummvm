@@ -1779,9 +1779,15 @@ void SimonState::vc_62_palette_thing()
 
 	vc_29_stop_all_sounds();
 
-	if ((_game & GAME_SIMON2) && (!_video_var_3)) {
-		if (_debugMode)
-			warning("vc_62_palette_thing: music stuff?");
+	if (!_video_var_3) {
+		if (_game & GAME_SIMON2) {
+		//FIXME The screen should be cleared elsewhere.
+		dx_clear_surfaces(_video_palette_mode == 4 ? 134 : 200);
+			if (_midi_unk2 != 0xffff) {
+				playMusic(999, _midi_unk2);
+			}
+		}
+	return;
 	}
 
 	_video_var_3 = true;
@@ -1897,6 +1903,19 @@ void SimonState::vc_69()
 
 	if (_debugMode)
 		warning("vc_69(%d,%d): music stuff?", a, b);
+
+	if (_vc72_var1 == 999) {
+		_vc70_var2 = b;
+		midi.initialize();
+		midi.play();
+		_vc72_var1 = b;
+	} else if (_vc72_var1 != 0xFFFF) {
+		if (_vc72_var1 != a) {
+			_vc72_var3 = a;
+			_vc72_var2 = a;
+		}
+	}
+
 }
 
 void SimonState::vc_70()
@@ -1906,6 +1925,9 @@ void SimonState::vc_70()
 
 	_vc70_var1 = a;
 	_vc70_var2 = b;
+
+	if (_debugMode)
+		warning("vc_70(%d,%d): music stuff?", a, b);
 }
 
 
@@ -1923,6 +1945,9 @@ void SimonState::vc_72()
 		_vc72_var2 = b;
 		_vc72_var3 = a;
 	}
+
+	if (_debugMode)
+		warning("vc_72(%d,%d): music stuff?", a, b);
 }
 
 void SimonState::vc_73_set_op189_flag()

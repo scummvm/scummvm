@@ -753,7 +753,9 @@ int SimonState::runScript()
 		case 134:{
 				if (_debugMode)
 					warning("stopMidiMusic: not implemented");
-				/* dummy proc */
+				_vc70_var2 = 0xFFFF;
+				_midi_unk1 = 0xFFFF;
+				_vc72_var1 = 0xFFFF;
 			}
 			break;
 
@@ -1472,25 +1474,37 @@ void SimonState::o_unk_132_helper_2(FillOrCopyStruct *fcs, int x)
 
 void SimonState::o_unk_127()
 {
+	uint a = getVarOrWord();
+	uint b = getVarOrWord();
 	if (_game & GAME_SIMON2) {
-		uint a = getVarOrWord();
-		uint b = getVarOrWord();
 		uint c = getVarOrByte();
 
 		if (_debugMode)
 			warning("o_unk_127(%d,%d,%d) not implemented properly", a, b, c);
 
-		if (a != _last_music_played) {
-			_last_music_played = a;
-			playMusic(a - 1);
+		if (_midi_unk1 == a) {
+			if (b == _vc72_var1 || b == 999) {
+				return;
+			}
+			if (_vc72_var1 != 0xFFFF || _vc72_var1 != 999)  {
+				_vc70_var2 = c;
+				_vc70_var1 = 0xffff;
+				_vc72_var3 = 0xffff;
+				_midi_unk2 = 0xffff;
+				midi.initialize();
+				midi.play();
+				_vc72_var1 = b;
+			} else {
+				_vc72_var3 = b;
+				_vc72_var2 = c;
+			}
+		} else if (b == 999) {
+			_midi_unk2 = a;
 		}
 	} else {
-		uint a = getVarOrWord();
-		/*uint b = */ getVarOrWord();
-
 		if (a != _last_music_played) {
 			_last_music_played = a;
-			playMusic(a);
+			playMusic(0, a);
 		}
 	}
 }
