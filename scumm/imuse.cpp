@@ -1464,7 +1464,7 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 		case 19:
 			return stop_sound(b);
 		case 20: // FIXME: Deferred command system? - Sam and Max
-			return;
+			return 0;
 		case 2:
 		case 3:
 			return 0;
