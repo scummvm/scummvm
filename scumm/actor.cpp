@@ -906,8 +906,6 @@ void Actor::drawActorCostume() {
 	if (!(_vm->_features & GF_NEW_COSTUMES)) {
 		CostumeRenderer& cr = *(CostumeRenderer *)bcr;
 
-		cr._outheight = _vm->virtscr[0].height;
-
 		if (forceClip)
 			cr._zbuf = forceClip;
 		else if (isInClass(kObjectClassNeverClip))
@@ -930,13 +928,13 @@ void Actor::drawActorCostume() {
 				ar._zbuf = _vm->gdi._numZBuffer;
 		}
 
-		ar.outptr = _vm->virtscr[0].screenPtr + _vm->virtscr[0].xstart;
-		ar.outwidth = _vm->virtscr[0].width;
-		ar.outheight = _vm->virtscr[0].height;
-
 		ar._draw_top = top = 0x7fffffff;
 		ar._draw_bottom = bottom = 0;
 	}
+
+	bcr->_outptr = _vm->virtscr[0].screenPtr + _vm->virtscr[0].xstart;
+	bcr->_outwidth = _vm->virtscr[0].width;
+	bcr->_outheight = _vm->virtscr[0].height;
 
 	// If the actor is partially hidden, redraw it next frame.
 	// Note: for akos, this only works for codec 1 so far; we need to look

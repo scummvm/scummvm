@@ -42,35 +42,22 @@ protected:
 	byte increaseAnim(Actor *a, int slot);
 };
 
-class CostumeRenderer : public BaseCostumeRenderer {
-public:
-	uint _outheight;
 
+class CostumeRenderer : public BaseCostumeRenderer {
 protected:
 	LoadedCostume _loaded;
 	
 	byte *_frameptr;
-	byte *_srcptr;
-	byte *_bgbak_ptr, *_backbuff_ptr, *_mask_ptr, *_mask_ptr_dest;
-	byte _maskval;
+	const byte *_srcptr;
 	bool _use_mask, _use_charset_mask;
-	byte _shrval;
 	byte _width2;
-	byte _height2;
-	int _xpos, _ypos;
 
 	int _scaleIndexXStep;
 	int _scaleIndexYStep;
 	byte _scaleIndexX;						/* must wrap at 256 */
 	byte _scaleIndexY, _scaleIndexYTop;
-	int _left, _right;
-	int _top, _bottom;
 	int _ypostop;
-	int _ypitch;
 	byte _docontinue;
-	int _imgbufoffs;
-	byte _repcolor;
-	byte _replen;
 	byte _palette[32];
 
 public:

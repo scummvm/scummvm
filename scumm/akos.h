@@ -30,13 +30,9 @@ struct AkosHeader;
 struct AkosOffset;
 
 class AkosRenderer : public BaseCostumeRenderer {
-public:
-	byte *outptr;
-	uint outwidth, outheight;
-
 protected:
 	uint16 codec;
-	const byte *srcptr;
+	const byte *_srcptr;
 
 	// movement of cel to decode
 	int _xmoveCur, _ymoveCur;
@@ -53,23 +49,6 @@ protected:
 	const byte *akcd;
 
 	struct {
-		/* codec stuff */
-		const byte *scaletable;
-		byte mask, shr;
-		bool doContinue;
-		byte repcolor;
-		byte replen;
-		int scaleXstep;
-		int x, y;
-		int tmp_x, tmp_y;
-		int y_pitch;
-		int skip_width;
-		byte *destptr;
-		byte *mask_ptr;
-		int imgbufoffs;
-	} v1;
-
-	struct {
 		byte unk5;
 		int unk6;
 		byte mask;
@@ -83,8 +62,7 @@ protected:
 
 public:
 	AkosRenderer(Scumm *scumm) : BaseCostumeRenderer(scumm) {
-		outptr = 0;
-		srcptr = 0;
+		_srcptr = 0;
 		akos = 0;
 		akhd = 0;
 		akpl = 0;

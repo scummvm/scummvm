@@ -57,6 +57,10 @@ public:
 
 	int _draw_top, _draw_bottom;
 
+	// Destination params
+	byte *_outptr;
+	uint _outwidth, _outheight;
+
 protected:
 	Scumm *_vm;
 	int32 _numStrips;
@@ -69,6 +73,21 @@ protected:
 
 	// width and height of cel to decode
 	int _width, _height;
+
+	struct {
+		/* codec stuff */
+		const byte *scaletable;
+		byte mask, shr;
+		byte repcolor;
+		byte replen;
+		int scaleXstep;
+		int x, y;
+		int tmp_x, tmp_y;
+		int skip_width;
+		byte *destptr;
+		const byte *mask_ptr;
+		int imgbufoffs;
+	} v1;
 
 public:
 	BaseCostumeRenderer(Scumm *scumm) {
@@ -85,6 +104,9 @@ public:
 		_xmove = _ymove = 0;
 		_mirror = false;
 		_width = _height = 0;
+		
+		_outptr = 0;
+		_outwidth = _outheight = 0;
 	}
 
 	virtual void setPalette(byte *palette) = 0;

@@ -256,7 +256,7 @@ byte AkosRenderer::drawLimb(const CostumeData &cost, int limb) {
 		assert((code & 0xFFF) * 6 < READ_BE_UINT32_UNALIGNED((const byte *)akof - 4) - 8);
 		assert((code & 0x7000) == 0);
 
-		srcptr = akcd + READ_LE_UINT32(&off->akcd);
+		_srcptr = akcd + READ_LE_UINT32(&off->akcd);
 		costumeInfo = (const CostumeInfo *) (akci + READ_LE_UINT16(&off->akci));
 
 		_width = READ_LE_UINT16(&costumeInfo->width);
@@ -289,7 +289,7 @@ byte AkosRenderer::drawLimb(const CostumeData &cost, int limb) {
 				code = ((code & 0xF) << 8) | p[5];
 			off = akof + code;
 
-			srcptr = akcd + READ_LE_UINT32(&off->akcd);
+			_srcptr = akcd + READ_LE_UINT32(&off->akcd);
 			costumeInfo = (const CostumeInfo *) (akci + READ_LE_UINT16(&off->akci));
 
 			_width = READ_LE_UINT16(&costumeInfo->width);
@@ -327,10 +327,9 @@ void AkosRenderer::codec1_genericDecode() {
 	const byte *scaleytab, *mask;
 
 	y = v1.y;
-
-	len = v1.replen;
-	src = srcptr;
+	src = _srcptr;
 	dst = v1.destptr;
+	len = v1.replen;
 	color = v1.repcolor;
 	height = _height;
 
@@ -350,12 +349,12 @@ void AkosRenderer::codec1_genericDecode() {
 
 		do {
 			if (*scaleytab++ < _scaleY) {
-				if (color && y < outheight
+				if (color && y < _outheight
 						&& (!v1.mask_ptr || !((mask[0] | mask[v1.imgbufoffs]) & maskbit))) {
 					*dst = palette[color];
 				}
 				mask += _numStrips;
-				dst += outwidth;
+				dst += _outwidth;
 				y++;
 			}
 			if (!--height) {
@@ -391,10 +390,9 @@ void AkosRenderer::codec1_spec1() {
 	const byte *scaleytab, *mask;
 
 	y = v1.y;
-
-	len = v1.replen;
-	src = srcptr;
+	src = _srcptr;
 	dst = v1.destptr;
+	len = v1.replen;
 	color = v1.repcolor;
 	height = _height;
 
@@ -414,7 +412,7 @@ void AkosRenderer::codec1_spec1() {
 
 		do {
 			if (*scaleytab++ < _scaleY) {
-				if (color && y < outheight
+				if (color && y < _outheight
 						&& (!v1.mask_ptr || !((mask[0] | mask[v1.imgbufoffs]) & maskbit))) {
 					pcolor = palette[color];
 					if (pcolor == 13)
@@ -422,7 +420,7 @@ void AkosRenderer::codec1_spec1() {
 					*dst = pcolor;
 				}
 				mask += _numStrips;
-				dst += outwidth;
+				dst += _outwidth;
 				y++;
 			}
 			if (!--height) {
@@ -462,10 +460,9 @@ void AkosRenderer::codec1_spec3() {
 	const byte *scaleytab, *mask;
 
 	y = v1.y;
-
-	len = v1.replen;
-	src = srcptr;
+	src = _srcptr;
 	dst = v1.destptr;
+	len = v1.replen;
 	color = v1.repcolor;
 	height = _height;
 
@@ -485,7 +482,7 @@ void AkosRenderer::codec1_spec3() {
 
 		do {
 			if (*scaleytab++ < _scaleY) {
-				if (color && y < outheight
+				if (color && y < _outheight
 						&& (!v1.mask_ptr || !((mask[0] | mask[v1.imgbufoffs]) & maskbit))) {
 					pcolor = palette[color];
 					if (pcolor < 8) {
@@ -496,7 +493,7 @@ void AkosRenderer::codec1_spec3() {
 					}
 				}
 				mask += _numStrips;
-				dst += outwidth;
+				dst += _outwidth;
 				y++;
 			}
 			if (!--height) {
@@ -632,7 +629,8 @@ byte AkosRenderer::codec1() {
 	int num_colors;
 	bool use_scaling;
 	int i, j;
-	int cur_x, x_right, x_left, skip = 0, startScaleIndexX, tmp_y;
+	int skip = 0, startScaleIndexX, tmp_y;
+	int cur_x, x_right, x_left;
 	int cur_y, y_top, y_bottom;
 	bool y_clipping;
 	bool charsetmask, masking;
@@ -709,7 +707,7 @@ byte AkosRenderer::codec1() {
 
 			j = startScaleIndexX;
 			for (i = 0, skip = 0; i < _width; i++) {
-				if (x_left >= (int)outwidth) {
+				if (x_left >= (int)_outwidth) {
 					startScaleIndexX = j;
 					skip++;
 				}
@@ -771,17 +769,15 @@ byte AkosRenderer::codec1() {
 	if (_mirror)
 		v1.scaleXstep = -v1.scaleXstep;
 
-	if ((int) y_top >= (int)outheight || y_bottom <= 0)
+	if ((int) y_top >= (int)_outheight || y_bottom <= 0)
 		return 0;
 
-	if ((int)x_left >= (int)outwidth || x_right <= 0)
+	if ((int)x_left >= (int)_outwidth || x_right <= 0)
 		return 1;
 
 	v1.replen = 0;
-	v1.y_pitch = _height * outwidth;
 
 	if (_mirror) {
-		v1.y_pitch--;
 		if (!use_scaling)
 			skip = -cur_x;
 		if (skip > 0) {
@@ -789,7 +785,7 @@ byte AkosRenderer::codec1() {
 			codec1_ignorePakCols(skip);
 			cur_x = 0;
 		} else {
-			skip = x_right - outwidth;
+			skip = x_right - _outwidth;
 			if (skip <= 0) {
 				drawFlag = 2;
 			} else {
@@ -797,14 +793,12 @@ byte AkosRenderer::codec1() {
 			}
 		}
 	} else {
-		v1.y_pitch++;
-		if (!use_scaling) {
-			skip = x_right - outwidth + 1;
-		}
+		if (!use_scaling)
+			skip = x_right - _outwidth + 1;
 		if (skip > 0) {
 			v1.skip_width -= skip;
 			codec1_ignorePakCols(skip);
-			cur_x = outwidth - 1;
+			cur_x = _outwidth - 1;
 		} else {
 			skip = -1 - x_left;
 			if (skip <= 0) {
@@ -823,13 +817,13 @@ byte AkosRenderer::codec1() {
 
 	_vm->updateDirtyRect(0, x_left, x_right, y_top, y_bottom, _dirty_id);
 
-	y_clipping = ((uint) y_bottom > outheight || y_top < 0);
+	y_clipping = ((uint) y_bottom > _outheight || y_top < 0);
 
-	if ((uint) y_top > (uint) outheight)
+	if ((uint) y_top > (uint) _outheight)
 		y_top = 0;
 
-	if ((uint) y_bottom > (uint) outheight)
-		y_bottom = outheight;
+	if ((uint) y_bottom > (uint) _outheight)
+		y_bottom = _outheight;
 
 	if (_draw_top > y_top)
 		_draw_top = y_top;
@@ -839,7 +833,7 @@ byte AkosRenderer::codec1() {
 	if (cur_x == -1)
 		cur_x = 0;									/* ?? */
 
-	v1.destptr = outptr + cur_x + cur_y * outwidth;
+	v1.destptr = _outptr + cur_x + cur_y * _outwidth;
 
 	charsetmask =
 		_vm->hasCharsetMask(x_left, y_top + _vm->virtscr[0].topline, x_right,
@@ -886,11 +880,12 @@ void AkosRenderer::codec1_ignorePakCols(int num) {
 	n = _height;
 	if (num > 1)
 		n *= num;
+
 	do {
-		v1.repcolor = *srcptr++;
+		v1.repcolor = *_srcptr++;
 		v1.replen = v1.repcolor & v1.mask;
 		if (v1.replen == 0) {
-			v1.replen = *srcptr++;
+			v1.replen = *_srcptr++;
 		}
 		do {
 			if (!--n) {
@@ -913,8 +908,8 @@ byte AkosRenderer::codec5() {
 	clip_right = (clip_left + _width) - 1;
 	clip_top = _actorY + _ymoveCur;
 	clip_bottom = (clip_top + _height) - 1;
-	maxw = outwidth - 1;
-	maxh = outheight - 1;
+	maxw = _outwidth - 1;
+	maxh = _outheight - 1;
 
 	if (clip_left < 0) {
 		clip_left = 0;
@@ -949,10 +944,10 @@ byte AkosRenderer::codec5() {
 
 	bdd.srcwidth = _width;
 	bdd.srcheight = _height;
-	bdd.out = outptr;
-	bdd.outwidth = outwidth;
-	bdd.outheight = outheight;
-	bdd.dataptr = srcptr;
+	bdd.out = _outptr;
+	bdd.outwidth = _outwidth;
+	bdd.outheight = _outheight;
+	bdd.dataptr = _srcptr;
 	bdd.scale_x = 255;
 	bdd.scale_y = 255;
 	bdd.shadowMode = _shadow_mode;
@@ -1198,8 +1193,8 @@ byte AkosRenderer::codec16() {
 	int32 skip_y = 0;
 	int32 cur_x = _width - 1;
 	int32 cur_y = _height - 1;
-	int32 maxw = outwidth - 1;
-	int32 maxh = outheight - 1;
+	int32 maxw = _outwidth - 1;
+	int32 maxh = _outheight - 1;
 	int32 tmp_x, tmp_y;
 	byte transparency = (_vm->_features & GF_HUMONGOUS) ? 0 : 255;
 
@@ -1282,16 +1277,16 @@ byte AkosRenderer::codec16() {
 	int32 numskip_before = skip_x + (skip_y * _width);
 	int32 numskip_after = _width - cur_x;
 
-	byte *dest = outptr + width_unk + height_unk * _vm->_screenWidth;
+	byte *dest = _outptr + width_unk + height_unk * _outwidth;
 
 	if (_zbuf == 0) {
-		akos16Decompress(dest, pitch, srcptr, cur_x, out_height, dir, numskip_before, numskip_after, transparency);
+		akos16Decompress(dest, pitch, _srcptr, cur_x, out_height, dir, numskip_before, numskip_after, transparency);
 		return 0;
 	}
 
 	byte *ptr = _vm->_screenStartStrip + _vm->getResourceAddress(rtBuffer, 9) + _vm->gdi._imgBufOffs[_zbuf];
 	ptr += _numStrips * clip_top + (clip_left / 8);
-	akos16DecompressMask(dest, pitch, srcptr, cur_x, out_height, dir, numskip_before, numskip_after, transparency, ptr, clip_left / 8);
+	akos16DecompressMask(dest, pitch, _srcptr, cur_x, out_height, dir, numskip_before, numskip_after, transparency, ptr, clip_left / 8);
 
 	return 0;
 }
