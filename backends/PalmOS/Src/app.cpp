@@ -289,6 +289,39 @@ static void AppStopSilk() {
 		SilkLibClose(gVars->slkRefNum);
 }
 
+#define max(id,value)	gVars->memory[id] = (gVars->memory[id] < value ? value : gVars->memory[id])
+#define min(id,value)	gVars->memory[id] = (gVars->memory[id] > value ? value : gVars->memory[id])
+#define threshold 		500
+
+static void AppStartSetMemory() {
+	UInt32 mem, def;
+	GetMemory(0,0,0,&mem);
+	def = (mem > threshold) ? (mem - threshold) * 1024 : 0;
+
+	// default values
+	gVars->memory[kMemScummOldCostGames] = (mem >= 550 + threshold) ? 550000 : def;
+	gVars->memory[kMemScummNewCostGames] = (mem >= 2500 + threshold) ? 2500000 : def;
+	gVars->memory[kMemSimon1Games] = (mem >= 1000 + threshold) ? 1000000 : def;
+	gVars->memory[kMemSimon2Games] = (mem >= 2000 + threshold) ? 2000000 : def;
+
+	// set min required values
+	max(kMemScummOldCostGames, 450000);
+	max(kMemScummNewCostGames, 450000);
+	max(kMemSimon1Games, 500000);
+	max(kMemSimon2Games, 500000);
+
+	// set max required values
+	min(kMemScummOldCostGames, 550000);
+	min(kMemScummNewCostGames, 2500000);
+	min(kMemSimon1Games, 1000000);
+	min(kMemSimon2Games, 2000000);
+	
+}
+
+#undef threshold
+#undef min
+#undef max
+
 Err AppStart(void) {
 	UInt16 dataSize, checkSize = 0;
 	UInt32 ulProcessorType;
@@ -307,6 +340,7 @@ Err AppStart(void) {
 	gVars->slkRefNum = sysInvalidRefNum;
 	gVars->skinSet = false;
 	gVars->options = optNone;
+
 
 	// OS5 ?
 	if (!FtrGet(sysFtrCreator, sysFtrNumROMVersion, &romVersion))
@@ -373,6 +407,8 @@ Err AppStart(void) {
 
 	AppStartCheckNotify(); // not fatal error if not avalaible
 	AppStartCheckScreenSize();
+	AppStartSetMemory();	// set memory required by the differents engines
+
 
 	return error;
 }

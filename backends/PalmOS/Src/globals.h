@@ -39,8 +39,18 @@ enum {
 	optHas16BitMode			=	1 <<	8,
 };
 
+enum {
+	kMemScummOldCostGames = 0,
+	kMemScummNewCostGames,
+	kMemSimon1Games,	
+	kMemSimon2Games,
+
+	kMemGamesCount
+};
+
 typedef struct {
 	DmOpenRef globals[GBVARS_COUNT];
+	UInt32 memory[kMemGamesCount];
 
 	UInt32 options;
 
