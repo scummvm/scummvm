@@ -351,6 +351,9 @@ protected:
 	bool _save_or_load;
 	bool _saveload_flag;
 
+	byte _saveLoadFlag, _saveLoadSlot;
+	char _saveLoadName[32];
+
 	int _sdl_mouse_x, _sdl_mouse_y;
 	
 	byte *_sdl_buf_3;

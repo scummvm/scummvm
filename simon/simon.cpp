@@ -29,6 +29,8 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 
+#include "gui/message.h"
+
 #include "simon/simon.h"
 #include "simon/intern.h"
 #include "simon/vga.h"
@@ -470,6 +472,10 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_timer_id = 0;
 
 	_dump_file = 0;
+
+	_saveLoadFlag = 0;
+	_saveLoadSlot = 0;
+	memset(_saveLoadName, 0, sizeof(_saveLoadName));
 
 	_saveload_row_curpos = 0;
 	_num_savegame_rows = 0;
@@ -4787,7 +4793,40 @@ void SimonEngine::delay(uint amount) {
 		while (_system->poll_event(&event)) {
 			switch (event.event_code) {
 			case OSystem::EVENT_KEYDOWN:
-				if (event.kbd.flags==OSystem::KBD_CTRL) {
+			// First attempt at quick load/save keys support
+			// For some reason Simon often walks into a location when loading
+			// and sometimes Simon isn't shown until he is moved.
+
+/*				if (event.kbd.keycode >= '0' && event.kbd.keycode<='9'
+					&& (event.kbd.flags == OSystem::KBD_ALT ||
+						event.kbd.flags == OSystem::KBD_CTRL)) {
+					_saveLoadSlot = event.kbd.keycode - '0';
+
+					sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
+					_saveLoadFlag = (event.kbd.flags == OSystem::KBD_ALT) ? 1 : 2;
+
+					// We should only allow a load or save when it was possible in original
+					// This stops load/save during cutscenes
+					// But can still load/save during converstation
+					// TODO: Add dialog to confirm game was saved.
+					if (!_lock_counter) {
+						if (_saveLoadFlag == 2) {
+							Subroutine *sub;
+							load_game(_saveLoadSlot);
+							// Redraw Inventory
+							lock();
+							fcs_unk_proc_1(2, getItem1Ptr(), 0, 0);
+							unlock();
+							// Reset engine?
+							sub = getSubroutineByID(7);
+							startSubroutine(sub);
+						} else {
+							save_game(_saveLoadSlot, _saveLoadName);
+						}
+						_saveLoadFlag = 0;
+					}
+*/
+				if (event.kbd.flags == OSystem::KBD_CTRL) {
 					if (event.kbd.keycode == 'f')
 						_fast_mode ^= 1;
 				}
