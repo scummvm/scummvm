@@ -1699,7 +1699,7 @@ void ScummEngine_v72he::o72_pickVarRandom() {
 	int value = fetchScriptWord();
 
 	if (readVar(value) == 0) {
-		defineArray(value, kDwordArray, 0, 0, 0, num + 1);
+		defineArray(value, kDwordArray, 0, 0, 0, num);
 		if (num > 0) {
 			int16 counter = 0;
 			do {
@@ -1707,7 +1707,7 @@ void ScummEngine_v72he::o72_pickVarRandom() {
 			} while (++counter < num);
 		}
 
-		shuffleArray(value, 1, num-1);
+		shuffleArray(value, 1, num);
 		writeArray(value, 0, 0, 2);
 		push(readArray(value, 0, 1));
 		return;

@@ -614,7 +614,7 @@ void ScummEngine_v80he::o80_pickVarRandom() {
 	int value = fetchScriptWord();
 
 	if (readVar(value) == 0) {
-		defineArray(value, kDwordArray, 0, 0, 0, num + 1);
+		defineArray(value, kDwordArray, 0, 0, 0, num);
 		if (value & 0x8000)
 			localizeArray(readVar(value), 0xFFFFFFFF);
 		else if (value & 0x4000)
@@ -627,7 +627,7 @@ void ScummEngine_v80he::o80_pickVarRandom() {
 			} while (++counter < num);
 		}
 
-		shuffleArray(value, 1, num-1);
+		shuffleArray(value, 1, num);
 		writeArray(value, 0, 0, 2);
 		push(readArray(value, 0, 1));
 		return;
@@ -638,7 +638,7 @@ void ScummEngine_v80he::o80_pickVarRandom() {
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(value));
 	dim1end = FROM_LE_32(ah->dim1end);
 
-	if (dim1end <= num) {
+	if (dim1end < num) {
 		int16 var_2 = readArray(value, 0, num - 1);
 		shuffleArray(value, 1, dim1end);
 		if (readArray(value, 0, 1) == var_2 && var_2 >= 3) {
