@@ -190,7 +190,7 @@ void Logic::setupOpcodes(void) {
 	};
 
 	_opcodes = opcodes;
-};
+}
 
 int32 Logic::executeOpcode(int i, int32 *params) {
 	OpcodeProc op = _opcodes[i].proc;

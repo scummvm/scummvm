@@ -416,7 +416,7 @@ void Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc) 
 
 	// Release the anim resource
 	_parent->_gui->_vm->_resman->closeResource(res);
-};
+}
 
 void Widget::linkSurfaceImage(Widget *from, int state, int x, int y) {
 	_sprites[state].x = x;
@@ -429,7 +429,7 @@ void Widget::linkSurfaceImage(Widget *from, int state, int x, int y) {
 
 	_surfaces[state]._surface = from->_surfaces[state]._surface;
 	_surfaces[state]._original = false;
-};
+}
 
 void Widget::createSurfaceImages(uint32 res, int x, int y) {
 	for (int i = 0; i < _numStates; i++)
