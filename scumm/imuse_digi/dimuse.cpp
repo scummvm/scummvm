@@ -450,7 +450,10 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 		}
 		break;
 	case 25: // ImuseStartStream
-		debug(5, "ImuseStartStream (%d, %d, %d)", b, c, d);
+		debug(5, "ImuseStartStream (%d, %d, %d)", sample, c, d);
+		break;
+	case 26: // ImuseSwitchStream
+		debug(5, "ImuseSwitchStream (%d, %d, %d, %d, %d)", sample, c, d, e, f);
 		break;
 	case 0x1000: // ImuseSetState
 		debug(5, "ImuseSetState (%d)", b);
