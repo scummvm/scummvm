@@ -669,6 +669,7 @@ void AdlibPart::pitchBend(int16 bend) {
 
 void AdlibPart::controlChange(byte control, byte value) {
 	switch (control) {
+	case 0:   break; // Bank select. Not supported
 	case 1:   modulationWheel(value); break;
 	case 7:   volume(value); break;
 	case 10:  break; // Pan position. Not supported.
@@ -679,10 +680,15 @@ void AdlibPart::controlChange(byte control, byte value) {
 	case 91:  break; // Effects level. Not supported.
 	case 93:  break; // Chorus level. Not supported.
 	case 119: break; // Unknown, used in Simon the Sorcerer 2
-	case 121: break; // Unknown, used in Simon the Sorcerer 1
+	case 121: // reset all controllers
+		modulationWheel(0);
+		pitchBendFactor(0);
+		detune(0);
+		sustain(0);
+		break;
 	case 123: allNotesOff(); break;
 	default:
-		warning("Adlib: Unknown control change message %d", (int) control);
+		warning("Adlib: Unknown control change message %d (%d)", (int) control, (int)value);
 	}
 }
 
