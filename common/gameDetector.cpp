@@ -61,7 +61,7 @@ static const char USAGE_STRING[] =
 	"\t-o<num>    - set master volume to <num> (0-255)\n"
 	"\t-p<path>   - look for game in <path>\n"
 	"\t-s<num>    - set sfx volume to <num> (0-255)\n"
-	"\t-t<num>    - set music tempo (default- adlib: 0x1F0000, midi: 0x460000)\n"
+	"\t-t<num>    - set music tempo (default- adlib: 0x1D9000, midi: 0x4A0000)\n"
 	"\t-v         - show version info and exit\n"
 #if defined(UNIX)
 	"\t-w[<file>] - write to config file [~/.scummvmrc]\n"
