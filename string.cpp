@@ -203,7 +203,11 @@ void Scumm::CHARSET_1()
 	if (!_haveMsg)
 		return;
 
-	if (!(_features & GF_AFTER_V7)) {
+	// FIXME: This Zak check fixes several hangs (Yak hang, and opening
+	// 'secret room while walking' hang. It doesn't do the camera check
+	// when the talk target isn't an actor. The question is, can we make
+	// this a more general case? Does it really need to be Zak specific?
+	if (!(_features & GF_AFTER_V7) && !(_gameId==GID_ZAK256 && _vars[VAR_TALK_ACTOR] == 0xFF)) {
 		if ((camera._dest.x >> 3) != (camera._cur.x >> 3) || camera._cur.x != camera._last.x)
 			return;
 	}
