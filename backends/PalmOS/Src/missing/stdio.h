@@ -41,6 +41,7 @@ typedef UInt32 size_t;
 #define clearerr(a)
 #define fflush(a)
 #define vsnprintf(a,b,c,d)	vsprintf(a,c,d)
+#define getc(a)				fgetc(a)
 
 #define	SEEK_SET			vfsOriginBeginning 
 #define	SEEK_CUR			vfsOriginCurrent  
@@ -49,6 +50,7 @@ typedef UInt32 size_t;
 UInt16		fclose	(FileRef *stream);
 UInt16		feof	(FileRef *stream);
 Char *		fgets	(Char *s, UInt32 n, FileRef *stream);
+Int16		fgetc	(FileRef *stream);
 FileRef *	fopen	(const Char *filename, const Char *type);
 UInt32		fread	(void *ptr, UInt32 size, UInt32 nitems, FileRef *stream);
 UInt32		fwrite	(const void *ptr, UInt32 size, UInt32 nitems, FileRef *stream);

@@ -29,6 +29,8 @@ static UInt16	gStdioVolRefNum = sysInvalidRefNum;
 
 static void dummy(Boolean){};
 
+// TODO : implement "errno"
+
 void StdioInit(UInt16 volRefNum, const Char *output, LedProc ledProc) {
 	gStdioVolRefNum = volRefNum;
 	
@@ -37,7 +39,6 @@ void StdioInit(UInt16 volRefNum, const Char *output, LedProc ledProc) {
 	else
 		gStdioLedProc = dummy;
 		
-
 	VFSFileDelete(gStdioVolRefNum, output);
 	VFSFileCreate(gStdioVolRefNum, output);
 	VFSFileOpen  (gStdioVolRefNum, output,vfsModeWrite, &gStdioOutput);
@@ -53,7 +54,7 @@ UInt16 fclose(FileRef *stream) {
 	if (error == errNone)
 		MemPtrFree(stream);
 
-#ifdef DEBUG
+#ifdef _DEBUG_STDIO
 	FrmCustomAlert(FrmWarnAlert,"error fclose",0,0);
 #endif
 	return error;
@@ -62,7 +63,7 @@ UInt16 fclose(FileRef *stream) {
 UInt16 feof(FileRef *stream) {
 	Err error = VFSFileEOF(*stream);
 
-#ifdef DEBUG
+#ifdef _DEBUG_STDIO
 		switch (error)
 		{
 			case vfsErrFileEOF:
@@ -86,6 +87,15 @@ UInt16 feof(FileRef *stream) {
 	return error;
 }
 
+Int16 fgetc(FileRef *stream) {
+	UInt32 numBytesRead;
+	Err e;
+	Char c;
+	
+	e = VFSFileRead(*stream, 1, &c, &numBytesRead);
+	return (int)(!e ? c : EOF);
+}
+
 Char *fgets(Char *s, UInt32 n, FileRef *stream) {
 	UInt32 numBytesRead;
 	gStdioLedProc(true);
@@ -104,7 +114,7 @@ Char *fgets(Char *s, UInt32 n, FileRef *stream) {
 	
 		return s;
 	}
-#ifdef DEBUG
+#ifdef _DEBUG_STDIO
 		switch (error)
 		{
 			case expErrNotOpen:
@@ -180,7 +190,7 @@ FileRef *fopen(const Char *filename, const Char *type) {
 		}
 	}
 
-#ifdef DEBUG
+#ifdef _DEBUG_STDIO
 	else
 	{
 		switch (err)
@@ -222,7 +232,7 @@ UInt32 fread(void *ptr, UInt32 size, UInt32 nitems, FileRef *stream) {
 	if (error == errNone || error == vfsErrFileEOF)
 		return (UInt32)(numBytesRead/size);
 
-#ifdef DEBUG
+#ifdef _DEBUG_STDIO
 		switch (error)
 		{
 			case expErrNotOpen:
