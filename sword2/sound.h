@@ -62,8 +62,6 @@ enum {
 	FX_LOOPING	= 4
 };
 
-extern void sword2_sound_handler(void *refCon);
-
 class CLUInputStream : public AudioStream {
 private:
 	File *_file;
@@ -142,7 +140,7 @@ class Sound : public AudioStream {
 private:
 	Sword2Engine *_vm;
 
-	Common::MutexRef _mutex;
+	Common::Mutex _mutex;
 
 	struct FxQueueEntry {
 		PlayingSoundHandle handle;	// sound handle

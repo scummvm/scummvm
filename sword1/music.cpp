@@ -251,11 +251,9 @@ void MusicHandle::stop() {
 	_looping = false;
 }
 
-Music::Music(OSystem *system, SoundMixer *pMixer) {
-	_system = system;
+Music::Music(SoundMixer *pMixer) {
 	_mixer = pMixer;
 	_sampleRate = pMixer->getOutputRate();
-	_mutex = _system->createMutex();
 	_converter[0] = NULL;
 	_converter[1] = NULL;
 	_volumeL = _volumeR = 192;
@@ -266,8 +264,6 @@ Music::~Music() {
 	_mixer->setupPremix(0);
 	delete _converter[0];
 	delete _converter[1];
-	if (_mutex)
-		_system->deleteMutex(_mutex);
 }
 
 void Music::mixer(int16 *buf, uint32 len) {

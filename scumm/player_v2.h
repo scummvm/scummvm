@@ -97,7 +97,6 @@ public:
 protected:
 	bool _isV3Game;
 	SoundMixer *_mixer;
-	OSystem *_system;
 	ScummEngine *_vm;
 
 	bool _pcjr;
@@ -133,7 +132,7 @@ private:
 
 	const uint16 *_freqs_table;
 
-	Common::MutexRef _mutex;
+	Common::Mutex _mutex;
 	ChannelInfo _channels[5];
 
 protected:

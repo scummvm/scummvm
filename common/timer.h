@@ -39,7 +39,7 @@ public:
 
 private:
 	OSystem *_system;
-	Common::MutexRef _mutex;
+	Common::Mutex _mutex;
 	void *_timerHandler;
 	int32 _thisTime;
 	int32 _lastTime;

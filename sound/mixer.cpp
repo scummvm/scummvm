@@ -102,7 +102,6 @@ public:
 
 SoundMixer::SoundMixer() {
 	_syst = &OSystem::instance();
-	_mutex = _syst->createMutex();
 
 	_premixChannel = 0;
 	int i = 0;
@@ -130,8 +129,6 @@ SoundMixer::~SoundMixer() {
 
 	delete _premixChannel;
 	_premixChannel = 0;
-
-	_syst->deleteMutex(_mutex);
 }
 
 bool SoundMixer::isPaused() {

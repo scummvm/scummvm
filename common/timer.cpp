@@ -30,11 +30,8 @@ Timer *g_timer = NULL;
 
 Timer::Timer(OSystem *system) :
 	_system(system),
-	_mutex(0),
 	_timerHandler(0),
 	_lastTime(0) {
-
-	_mutex = _system->createMutex();
 
 	g_timer = this;
 
@@ -65,8 +62,6 @@ Timer::~Timer() {
 			_timerSlots[i].counter = 0;
 		}
 	}
-
-	_system->deleteMutex(_mutex);
 }
 
 int Timer::timer_handler(int t) {

@@ -378,7 +378,7 @@ public:
 
 class MidiDriver_ThreadedMT32 : public MidiDriver_MT32 {
 private:
-	OSystem::MutexRef _eventMutex;
+	OSystem::Mutex _eventMutex;
 	MidiEvent_MT32 *_events;
 	Timer::TimerProc _timer_proc;
 
@@ -391,7 +391,6 @@ protected:
 
 public:
 	MidiDriver_ThreadedMT32(SoundMixer *mixer);
-	virtual ~MidiDriver_ThreadedMT32();
 
 	void onTimer();
 	void close();
@@ -400,13 +399,8 @@ public:
 
 
 MidiDriver_ThreadedMT32::MidiDriver_ThreadedMT32(SoundMixer *mixer) : MidiDriver_MT32(mixer) {
-	_eventMutex = g_system->createMutex();
 	_events = NULL;
 	_timer_proc = NULL;
-}
-
-MidiDriver_ThreadedMT32::~MidiDriver_ThreadedMT32() {
-	g_system->deleteMutex(_eventMutex);
 }
 
 void MidiDriver_ThreadedMT32::close() {
@@ -427,7 +421,7 @@ void MidiDriver_ThreadedMT32::setTimerCallback(void *timer_param, Timer::TimerPr
 }
 
 void MidiDriver_ThreadedMT32::pushMidiEvent(MidiEvent_MT32 *event) {
-	g_system->lockMutex(_eventMutex);
+	Common::StackLock lock(_eventMutex);
 	if (_events == NULL) {
 		_events = event;
 	} else {
@@ -436,16 +430,14 @@ void MidiDriver_ThreadedMT32::pushMidiEvent(MidiEvent_MT32 *event) {
 			last = last->_next;
 		last->_next = event;
 	}
-	g_system->unlockMutex(_eventMutex);
 }
 
 MidiEvent_MT32 *MidiDriver_ThreadedMT32::popMidiEvent() {
+	Common::StackLock lock(_eventMutex);
 	MidiEvent_MT32 *event;
-	g_system->lockMutex(_eventMutex);
 	event = _events;
 	if (event != NULL)
 		_events = event->_next;
-	g_system->unlockMutex(_eventMutex);
 	return event;
 }
 

@@ -22,7 +22,6 @@
 
 #include "stdafx.h"
 #include "base/engine.h"
-#include "common/system.h"
 #include "scumm/player_v2.h"
 #include "scumm/scumm.h"
 #include "sound/mididrv.h"
@@ -347,10 +346,8 @@ Player_V2::Player_V2(ScummEngine *scumm, bool pcjr) {
 
 	_isV3Game = (scumm->_version >= 3);
 	_vm = scumm;
-	_system = scumm->_system;
 	_mixer = scumm->_mixer;
 	_sample_rate = _mixer->getOutputRate();
-	_mutex = _system->createMutex();
 
 	_header_len = (scumm->_features & GF_OLD_BUNDLE) ? 4 : 6;
 
@@ -385,7 +382,6 @@ Player_V2::~Player_V2() {
 	// Detach the premix callback handler
 	_mixer->setupPremix(0);
 	mutex_down();
-	_system->deleteMutex (_mutex);
 }
 
 void Player_V2::set_pcjr(bool pcjr) {
@@ -965,11 +961,11 @@ void Player_V2::generatePCjrSamples(int16 *data, uint len) {
 }
 
 void Player_V2::mutex_up() {
-	_system->lockMutex (_mutex);
+	_mutex.lock();
 }
 
 void Player_V2::mutex_down() {
-	_system->unlockMutex (_mutex);
+	_mutex.unlock();
 }
 
 } // End of namespace Scumm

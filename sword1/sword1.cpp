@@ -170,7 +170,7 @@ int SwordEngine::init(GameDetector &detector) {
 	_mixer->setVolumeForSoundType(SoundMixer::kMusicAudioDataType, SoundMixer::kMaxMixerVolume);
 	_mouse = new Mouse(_system, _resMan, _objectMan);
 	_screen = new Screen(_system, _resMan, _objectMan);
-	_music = new Music(_system, _mixer);
+	_music = new Music(_mixer);
 	_sound = new Sound("", _mixer, _resMan);
 	_menu = new Menu(_screen, _mouse);
 	_logic = new Logic(_objectMan, _resMan, _screen, _mouse, _sound, _music, _menu, _system, _mixer);

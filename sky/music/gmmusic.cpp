@@ -32,8 +32,8 @@ void GmMusic::passTimerFunc(void *param) {
 	((GmMusic*)param)->timerCall();
 }
 
-GmMusic::GmMusic(MidiDriver *pMidiDrv, Disk *pDisk, OSystem *system)
-	: MusicBase(pDisk, system) {
+GmMusic::GmMusic(MidiDriver *pMidiDrv, Disk *pDisk)
+	: MusicBase(pDisk) {
 
 	_driverFileBase = 60200;
 	_midiDrv = pMidiDrv;

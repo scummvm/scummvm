@@ -32,8 +32,8 @@ void MT32Music::passTimerFunc(void *param) {
 	((MT32Music*)param)->timerCall();
 }
 
-MT32Music::MT32Music(MidiDriver *pMidiDrv, Disk *pDisk, OSystem *system)
-	: MusicBase(pDisk, system) {
+MT32Music::MT32Music(MidiDriver *pMidiDrv, Disk *pDisk)
+	: MusicBase(pDisk) {
 
 	_driverFileBase = 60200;
 	_midiDrv = pMidiDrv;

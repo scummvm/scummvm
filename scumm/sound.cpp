@@ -29,7 +29,6 @@
 #include "scumm/sound.h"
 
 #include "common/config-manager.h"
-#include "common/system.h"
 #include "common/timer.h"
 #include "common/util.h"
 
@@ -2249,7 +2248,7 @@ int ScummEngine::readSoundResourceSmallHeader(int type, int idx) {
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
 class AppendableMemoryStream : public AppendableAudioStream {
 protected:
-	OSystem::MutexRef _mutex;
+	Common::Mutex _mutex;
 
 	byte *_bufferStart;
 	byte *_bufferEnd;
@@ -2287,14 +2286,11 @@ AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::AppendableMemoryStrea
 	_bufferStart = (byte *)malloc(bufferSize);
 	_pos = _end = _bufferStart;
 	_bufferEnd = _bufferStart + bufferSize;
-
-	_mutex = g_system->createMutex();
 }
 
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
 AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::~AppendableMemoryStream() {
 	free(_bufferStart);
-	g_system->deleteMutex(_mutex);
 }
 
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>

@@ -26,8 +26,6 @@
 #include "common/scummsys.h"
 #include "common/mutex.h"
 
-class OSystem;
-
 namespace Sky {
 
 class Disk;
@@ -50,7 +48,7 @@ private:
 
 class MusicBase {
 public:
-	MusicBase(Disk *pDisk, OSystem *system);
+	MusicBase(Disk *pDisk);
 	virtual ~MusicBase(void);
 	void loadSection(uint8 pSection);
 	void musicCommand(uint16 command);
@@ -62,7 +60,6 @@ public:
 	
 protected:
 
-	OSystem *_system;
 	Disk *_skyDisk;
 	uint8 *_musicData;
 	uint8 _allowedCommands;
@@ -77,7 +74,7 @@ protected:
 	uint32 _aktTime;
 	Actions _onNextPoll;
 	ChannelBase *_channels[10];
-	Common::MutexRef _mutex;
+	Common::Mutex _mutex;
 	
 	virtual void setupPointers(void) = 0;
 	virtual void setupChannels(uint8 *channelData) = 0;

@@ -46,7 +46,6 @@ Sound::Sound(Sword2Engine *vm) {
 	int i;
 
 	_vm = vm;
-	_mutex = _vm->_system->createMutex();
 
 	for (i = 0; i < FXQ_LENGTH; i++)
 		_fxQueue[i].resource = 0;
@@ -79,9 +78,6 @@ Sound::~Sound() {
 		delete _music[i];
 
 	free(_mixBuffer);
-
-	if (_mutex)
-		_vm->_system->deleteMutex(_mutex);
 }
 
 /**

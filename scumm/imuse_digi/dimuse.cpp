@@ -44,7 +44,6 @@ void IMuseDigital::timer_handler(void *refCon) {
 
 IMuseDigital::IMuseDigital(ScummEngine *scumm, int fps)
 	: _vm(scumm) {
-	_mutex = g_system->createMutex();
 	_pause = false;
 	_sound = new ImuseDigiSndMgr(_vm);
 	_callbackFps = fps;
@@ -64,7 +63,6 @@ IMuseDigital::~IMuseDigital() {
 		delete _track[l];
 	}
 	delete _sound;
-	g_system->deleteMutex(_mutex);
 }
 
 void IMuseDigital::resetState() {

@@ -22,20 +22,17 @@
 #include "sky/music/musicbase.h"
 #include "sky/disk.h"
 #include "common/util.h"
-#include "common/system.h"
 
 namespace Sky {
 
-MusicBase::MusicBase(Disk *pDisk, OSystem *system) {
+MusicBase::MusicBase(Disk *pDisk) {
 
 	_musicData = NULL;
 	_allowedCommands = 0;
 	_skyDisk = pDisk;
 	_currentMusic = 0;
 	_musicVolume = 127;
-	_system = system;
 	_numberOfChannels = _currentMusic = 0;
-	_mutex = _system->createMutex();
 }
 
 MusicBase::~MusicBase(void) {
@@ -46,7 +43,7 @@ MusicBase::~MusicBase(void) {
 
 void MusicBase::loadSection(uint8 pSection) {
 
-	_system->lockMutex(_mutex);
+	_mutex.lock();
 	if (_currentMusic)
 		stopMusic();
 	if (_musicData)
@@ -63,7 +60,7 @@ void MusicBase::loadSection(uint8 pSection) {
 	_numberOfChannels = _currentMusic = 0;
 	setupPointers();
 	startDriver();
-	_system->unlockMutex(_mutex);
+	_mutex.unlock();
 }
 
 bool MusicBase::musicIsPlaying(void) {
@@ -166,7 +163,7 @@ void MusicBase::loadNewMusic(void) {
 
 void MusicBase::pollMusic(void) {
 
-	_system->lockMutex(_mutex);
+	_mutex.lock();
 	uint8 newTempo;
 	if (_onNextPoll.doReInit) startDriver();
 	if (_onNextPoll.doStopMusic) stopMusic();
@@ -182,7 +179,7 @@ void MusicBase::pollMusic(void) {
 			updateTempo();
 		}
 	}
-	_system->unlockMutex(_mutex);
+	_mutex.unlock();
 	_aktTime &= 0xFFFF;
 }
 

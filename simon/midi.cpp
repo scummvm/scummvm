@@ -55,8 +55,6 @@ MidiPlayer::MidiPlayer(OSystem *system) {
 	// Since initialize() is called every time the music changes,
 	// this is where we'll initialize stuff that must persist
 	// between songs.
-	_system = system;
-	_mutex = system->createMutex();
 	_driver = 0;
 	_map_mt32_to_gm = false;
 	_passThrough = false;
@@ -75,10 +73,9 @@ MidiPlayer::MidiPlayer(OSystem *system) {
 }
 
 MidiPlayer::~MidiPlayer() {
-	_system->lockMutex(_mutex);
+	_mutex.lock();
 	close();
-	_system->unlockMutex(_mutex);
-	_system->deleteMutex(_mutex);
+	_mutex.unlock();
 }
 
 int MidiPlayer::open() {
@@ -156,9 +153,9 @@ void MidiPlayer::metaEvent (byte type, byte *data, uint16 length) {
 		// Have to unlock it before calling jump()
 		// (which locks it itself), and then relock it
 		// upon returning.
-		_system->unlockMutex(_mutex);
+		_mutex.unlock();
 		startTrack (destination);
-		_system->lockMutex(_mutex);
+		_mutex.lock();
 	} else {
 		stop();
 	}
@@ -189,7 +186,7 @@ void MidiPlayer::startTrack (int track) {
 		if (track >= _music.num_songs)
 			return;
 
-		_system->lockMutex(_mutex);
+		_mutex.lock();
 
 		if (_music.parser) {
 			_current = &_music;
@@ -211,9 +208,9 @@ void MidiPlayer::startTrack (int track) {
 		_currentTrack = (byte) track;
 		_music.parser = parser; // That plugs the power cord into the wall
 	} else if (_music.parser) {
-		_system->lockMutex(_mutex);
+		_mutex.lock();
 		if (!_music.parser->setTrack(track)) {
-			_system->unlockMutex(_mutex);
+			_mutex.unlock();
 			return;
 		}
 		_currentTrack = (byte) track;
@@ -222,7 +219,7 @@ void MidiPlayer::startTrack (int track) {
 		_current = 0;
 	}
 
-	_system->unlockMutex(_mutex);
+	_mutex.unlock();
 }
 
 void MidiPlayer::stop() {
@@ -292,15 +289,15 @@ void MidiPlayer::setLoop (bool loop) {
 }
 
 void MidiPlayer::queueTrack (int track, bool loop) {
-	_system->lockMutex(_mutex);
+	_mutex.lock();
 	if (_currentTrack == 255) {
-		_system->unlockMutex(_mutex);
+		_mutex.unlock();
 		setLoop(loop);
 		startTrack(track);
 	} else {
 		_queuedTrack = track;
 		_loopQueuedTrack = loop;
-		_system->unlockMutex(_mutex);
+		_mutex.unlock();
 	}
 }
 

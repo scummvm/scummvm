@@ -89,7 +89,7 @@ private:
 	};
 
 	OSystem *_syst;
-	Common::MutexRef _mutex;
+	Common::Mutex _mutex;
 
 	Channel *_premixChannel;
 

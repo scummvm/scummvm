@@ -32,7 +32,7 @@ namespace Sky {
 
 class AdlibMusic : public AudioStream, public MusicBase {
 public:
-	AdlibMusic(SoundMixer *pMixer, Disk *pDisk, OSystem *system);
+	AdlibMusic(SoundMixer *pMixer, Disk *pDisk);
 	~AdlibMusic(void);
 	virtual void setVolume(uint8 volume);
 

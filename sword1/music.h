@@ -84,7 +84,7 @@ public:
 
 class Music : public AudioStream {
 public:
-	Music(OSystem *system, SoundMixer *pMixer);
+	Music(SoundMixer *pMixer);
 	~Music();
 	void startMusic(int32 tuneId, int32 loopFlag);
 	void fadeDown();
@@ -104,10 +104,9 @@ private:
 	st_volume_t _volumeL, _volumeR;
 	MusicHandle _handles[2];
 	RateConverter *_converter[2];
-	OSystem *_system;
 	SoundMixer *_mixer;
 	uint32 _sampleRate;
-	Common::MutexRef _mutex;
+	Common::Mutex _mutex;
 
 	static void passMixerFunc(void *param, int16 *buf, uint len);
 	void mixer(int16 *buf, uint32 len);

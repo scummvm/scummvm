@@ -27,7 +27,6 @@
 #include "common/mutex.h"
 
 class File;
-class OSystem;
 
 namespace Simon {
 
@@ -52,8 +51,7 @@ struct MusicInfo {
 
 class MidiPlayer : public MidiDriver {
 protected:
-	OSystem *_system;
-	Common::MutexRef _mutex;
+	Common::Mutex _mutex;
 	MidiDriver *_driver;
 	bool _map_mt32_to_gm;
 	bool _passThrough;
