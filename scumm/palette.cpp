@@ -294,8 +294,7 @@ void ScummEngine::cyclePalette() {
 			setDirtyColors(cycl->start, cycl->end);
 			moveMemInPalRes(cycl->start, cycl->end, cycl->flags & 2);
 
-			if (!(_features & GF_SMALL_HEADER && _version > 2))
-				doCyclePalette(_currentPalette, cycl->start, cycl->end, 3, !(cycl->flags & 2));
+			doCyclePalette(_currentPalette, cycl->start, cycl->end, 3, !(cycl->flags & 2));
 
 			// Also cycle the other, indirect palettes
 			if (_proc_special_palette) {
