@@ -109,7 +109,7 @@ void IMuseDigital::fadeOutMusic() {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		_track[l].locked = true;
 		if (_track[l].used) {
-			parseScriptCmds(14, _track[l].soundId, 0x600, 0, 0x200, 0, 0, 0);
+			parseScriptCmds(14, _track[l].soundId, 0x600, 0, 200, 0, 0, 0);
 		}
 		_track[l].locked = false;
 	}

@@ -54,8 +54,8 @@ IMuseDigital::IMuseDigital(ScummEngine *scumm)
 }
 
 IMuseDigital::~IMuseDigital() {
-	_vm->_timer->removeTimerProc(timer_handler);
 	stopAllSounds(true);
+	_vm->_timer->removeTimerProc(timer_handler);
 	delete _sound;
 }
 
