@@ -146,8 +146,8 @@ win32dist: scummvm$(EXEEXT)
 	cp COPYING $(WIN32PATH)/copying.txt
 	cp README $(WIN32PATH)/readme.txt
 	cp NEWS $(WIN32PATH)/news.txt
-	cp SDL/README-SDL.txt $(WIN32PATH)
-	cp SDL/lib/SDL.dll $(WIN32PATH)
+	cp /usr/local/README-SDL.txt $(WIN32PATH)
+	cp /usr/local/bin/SDL.dll $(WIN32PATH)
 	u2d $(WIN32PATH)/*.txt
 
 
