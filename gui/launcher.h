@@ -25,6 +25,7 @@
 #include "common/str.h"
 #include "common/list.h"
 
+class BrowserDialog;
 class GameDetector;
 class ListWidget;
 
@@ -33,14 +34,18 @@ class LauncherDialog : public Dialog {
 	typedef ScummVM::StringList StringList;
 public:
 	LauncherDialog(NewGui *gui, GameDetector &detector);
+	~LauncherDialog();
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
-	ListWidget	*_list;
-	Widget *_startButton;
-	StringList	_filenames;
-	GameDetector &_detector;
+	ListWidget		*_list;
+	Widget			*_startButton;
+	StringList		_filenames;
+	GameDetector 	&_detector;
+	BrowserDialog	*_browser;
+
+	void updateListing();
 };
 
 #endif
