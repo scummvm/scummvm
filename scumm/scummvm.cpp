@@ -566,8 +566,8 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_timer = Engine::_timer;
 
 	_sound->_sound_volume_master = detector->_master_volume;
-	_sound->_sound_volume_sfx = detector->_sfx_volume;	
-	_sound->_sound_volume_music = detector->_music_volume;	
+	_sound->_sound_volume_sfx = detector->_sfx_volume;
+	_sound->_sound_volume_music = detector->_music_volume;
 
 	// Override global scaler with any game-specific define
 	if (g_config->get("gfx_mode")) {
@@ -2295,7 +2295,9 @@ void Scumm::launch() {
 
 	_sound->setupSound();
 
-	runScript(1, 0, 0, &_bootParam);
+	// If requested, load a save game instead of running the boot script
+	if (_saveLoadFlag != 2 || !loadState(_saveLoadSlot, _saveLoadCompatible))
+		runScript(1, 0, 0, &_bootParam);
 }
 
 void Scumm::go() {
