@@ -123,7 +123,7 @@ void OSystem_SDL_Common::copy_rect(const byte *buf, int pitch, int x, int y, int
 	if (_screen == NULL)
 		return;
 
-	if (pitch == _screenWidth && x==0 && y==0 && w==_screenWidth && h==_screenHeight && _mode_flags&DF_WANT_RECT_OPTIM) {
+	if (((uint32)buf & 3) == 0 && pitch == _screenWidth && x==0 && y==0 && w==_screenWidth && h==_screenHeight && _mode_flags&DF_WANT_RECT_OPTIM) {
 		/* Special, optimized case for full screen updates.
 		 * It tries to determine what areas were actually changed,
 		 * and just updates those, on the actual display. */
