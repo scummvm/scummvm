@@ -69,7 +69,7 @@ void OSystem_PALMOS::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 }
 
 void OSystem_PALMOS::draw_mouse() {
-	if (_mouseDrawn || !_mouseVisible || _quitCount)
+	if (_mouseDrawn || !_mouseVisible)
 		return;
 
 	_mouseCurState.y = _mouseCurState.y >= _screenHeight ? _screenHeight - 1 : _mouseCurState.y;
@@ -156,7 +156,7 @@ void OSystem_PALMOS::draw_mouse() {
 }
 
 void OSystem_PALMOS::undraw_mouse() {
-	if (!_mouseDrawn || _quitCount)
+	if (!_mouseDrawn)
 		return;
 
 	_mouseDrawn = false;
