@@ -1323,14 +1323,31 @@ void ScummEngine::scummInit() {
 	} else if (_features & GF_16COLOR) {
 		for (i = 0; i < 16; i++)
 			_shadowPalette[i] = i;
-		if ((_features & GF_AMIGA) || (_features & GF_ATARI_ST) || _renderMode == Common::kRenderAmiga)
-			setupAmigaPalette();
-		else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG)
-			setupHercPalette();
-		else if (_renderMode == Common::kRenderCGA)
-			setupCGAPalette();
-		else
+
+		switch (_renderMode) {
+		case Common::kRenderEGA:
 			setupEGAPalette();
+			break;
+
+		case Common::kRenderAmiga:
+			setupAmigaPalette();
+			break;
+
+		case Common::kRenderCGA:
+			setupCGAPalette();
+			break;
+
+		case Common::kRenderHercA:
+		case Common::kRenderHercG:
+			setupHercPalette();
+			break;
+
+		default:
+			if ((_features & GF_AMIGA) || (_features & GF_ATARI_ST))
+				setupAmigaPalette();
+			else
+				setupEGAPalette();
+		}
 	}
 
 	if (_version > 3 && _version < 8)

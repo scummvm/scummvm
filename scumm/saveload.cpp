@@ -252,10 +252,30 @@ bool ScummEngine::loadState(int slot, bool compat) {
 		else
 			setupV1ZakPalette();
 	} else if (_features & GF_16COLOR) {
-		if ((_features & GF_AMIGA) || (_features & GF_ATARI_ST))
-			setupAmigaPalette();
-		else
+		switch (_renderMode) {
+		case Common::kRenderEGA:
 			setupEGAPalette();
+			break;
+
+		case Common::kRenderAmiga:
+			setupAmigaPalette();
+			break;
+
+		case Common::kRenderCGA:
+			setupCGAPalette();
+			break;
+
+		case Common::kRenderHercA:
+		case Common::kRenderHercG:
+			setupHercPalette();
+			break;
+
+		default:
+			if ((_features & GF_AMIGA) || (_features & GF_ATARI_ST))
+				setupAmigaPalette();
+			else
+				setupEGAPalette();
+		}
 	} else
 		setDirtyColors(0, 255);
 
