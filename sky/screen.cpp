@@ -601,11 +601,12 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 	} else {
 		int32 botClip = GAME_SCREEN_HEIGHT - FROM_LE_16(sprDataFile->s_height) - spriteY;
 		if (botClip < 0) {
-			if (botClip + _sprHeight <= 0) {
+			botClip = -botClip;
+			if (_sprHeight <= botClip) {
 				_sprWidth = 0;
 				return ;
 			}
-			_sprHeight += botClip;
+			_sprHeight -= botClip;
 		}
 	}
 	_sprY = (uint32)spriteY;
@@ -633,13 +634,17 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 	}
 	_sprX = (uint32)spriteX;
 	uint8 *screenPtr = _backScreen + _sprY * GAME_SCREEN_WIDTH + _sprX;
+	if ((_sprHeight > 192) || (_sprY > 192)) {
+		_sprWidth = 0;
+		return;
+	}
 	if ((_sprX + _sprWidth > 320) || (_sprY + _sprHeight > 192)) {
 		warning("SkyScreen::drawSprite fatal error: got x = %d, y = %d, w = %d, h = %d\n",_sprX, _sprY, _sprWidth, _sprHeight);
 		_sprWidth = 0;
 		return ;
 	}
 	
-	for (uint8 cnty = 0; cnty < _sprHeight; cnty++) {
+	for (uint16 cnty = 0; cnty < _sprHeight; cnty++) {
 		for (uint16 cntx = 0; cntx < _sprWidth; cntx++)
 			if (spriteData[cntx + _maskX1]) screenPtr[cntx] = spriteData[cntx + _maskX1];
 		spriteData += _sprWidth + _maskX2 + _maskX1;

@@ -1877,7 +1877,7 @@ bool SkyLogic::fnResetId(uint32 id, uint32 resetBlock, uint32 c) {
 
 	Compact *cpt = SkyState::fetchCompact(id);
 	uint16 *rst = (uint16 *)SkyState::fetchCompact(resetBlock);
-	SkyCompact::jobsworth;
+
 	if (!cpt) {
 		warning("fnResetId(): Compact %d (id) == NULL\n",id);
 		return true;
