@@ -1405,13 +1405,13 @@ void ScummEngine_v72he::o72_arrayOps() {
 		if (id == 0) {
 			defineArray(array, kDwordArray, dim2start, dim2end, dim1start, dim1end);
 		}
-		tmp2 = len;
+		tmp2 = 0;
 		while (dim2start <= dim2end) {
 			tmp = dim1start;
 			while (tmp <= dim1end) {
-				writeArray(array, dim2start, tmp, list[--tmp2]);
-				if (tmp2 == 0)
-					tmp2 = len;
+				writeArray(array, dim2start, tmp, list[tmp2++]);
+				if (tmp2 == len)
+					tmp2 = 0;
 				tmp++;
 			}
 			dim2start++;
@@ -1601,10 +1601,7 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, const WizImage *pwi) {
 	const uint8 *dataPtr = getResourceAddress(restype, pwi->resNum);
 	if (dataPtr) {
 		const uint8 *wizh = findWrappedBlock(MKID('WIZH'), dataPtr, pwi->state, 0);
-		if (!wizh) {
-			warning("WIZH not found");
-			return 0;
-		}
+		assert(wizh);
 		uint32 comp   = READ_LE_UINT32(wizh + 0x0);
 		uint32 width  = READ_LE_UINT32(wizh + 0x4);
 		uint32 height = READ_LE_UINT32(wizh + 0x8);
