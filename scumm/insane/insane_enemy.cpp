@@ -2643,9 +2643,7 @@ void Insane::actor13Reaction(int32 buttons) {
 			_actor[1].act[3].state = 70;
 		break;
 	case 70:
-		if (!_actor[1].scenePropSubIdx || ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))) {
-			_actor[1].act[3].state = 118;
-		} else {
+		if (_actor[1].scenePropSubIdx) {
 			smlayer_setActorFacing(1, 3, 4, 180);
 			tmp = _currScenePropIdx + _actor[1].scenePropSubIdx;
 			if (!smlayer_startVoice(_sceneProp[tmp].sound))
@@ -2653,6 +2651,8 @@ void Insane::actor13Reaction(int32 buttons) {
 			else
 				_actor[1].runningSound = _sceneProp[tmp].sound;
 			_actor[1].act[3].state = 72;
+		} else {
+			_actor[1].act[3].state = 118;
 		}
 		break;
 	case 71:

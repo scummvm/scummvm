@@ -808,10 +808,8 @@ void Insane::prepareScenePropScene(int32 scenePropNum, bool arg_4, bool arg_8) {
 
 	debugC(DEBUG_INSANE, "Insane::prepareScenePropScene(%d, %d, %d)", scenePropNum, arg_4, arg_8);
 
-	if (!((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))) {
-		if (!loadScenePropSounds(idx))
+	if (((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)) || !loadScenePropSounds(idx))
 			return;
-	}
 
 	_actor[0].defunct = arg_4;
 	_actor[1].defunct = arg_8;
