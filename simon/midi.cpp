@@ -25,7 +25,6 @@
 #include "system.h"
 #include "simon.h"
 
-
 void MidiPlayer::read_from_file(void *dst, uint size) {
 	if (fread(dst, size, 1, _input) != 1)
 		error("Midi read error");
@@ -188,6 +187,7 @@ byte MidiPlayer::track_read_byte(Track *t) {
 }
 
 void MidiPlayer::initialize() {
+#ifdef WIN32
 	uint i;
 	MyMidiHdr *mmh;
 	MIDIPROPTIMEDIV mptd;
@@ -236,6 +236,7 @@ void MidiPlayer::initialize() {
 	}
 
 	_midi_var9 = true;
+#endif
 }
 
 int MidiPlayer::fill(uint x, MyMidiHdr *mmh) {
@@ -294,6 +295,7 @@ int MidiPlayer::fill(uint x, MyMidiHdr *mmh) {
 }
 
 int MidiPlayer::fill_helper(NoteRec *nr, MyMidiHdr *mmh) {
+#ifdef WIN32
 	byte *lpdata;
 	uint b;
 
@@ -338,7 +340,7 @@ int MidiPlayer::fill_helper(NoteRec *nr, MyMidiHdr *mmh) {
 	
 		mmh->b += 12;
 	}
-
+#endif
 	return 0;
 }
 

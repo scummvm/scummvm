@@ -2,7 +2,6 @@
 
 #include "stdafx.h"
 #include "scumm.h"
-#include "gui.h"
 #include "SDL_thread.h"
 #include "gameDetector.h"
 
@@ -208,40 +207,17 @@ void OSystem_SDL::load_gfx_mode() {
 	scaling = 1;
 	_internal_scaling = 1;
 	_driver_flags = 0;
-
+	
+	_sai_func = NULL;
 	switch(_driver) {
 	case GFX_2XSAI:
 		_sai_func = _2xSaI;
-		goto def_2xsai_drv;
+		break;
 	case GFX_SUPER2XSAI:
 		_sai_func = Super2xSaI;
-		goto def_2xsai_drv;
+		break;
 	case GFX_SUPEREAGLE:
 		_sai_func = SuperEagle;
-		def_2xsai_drv:;
-
-		_driver_flags = DF_FORCE_FULL_ON_PALETTE | DF_WANT_RECT_OPTIM | DF_2xSAI | DF_SEPARATE_HWSCREEN;
-
-		Init_2xSaI(565);
-		sdl_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
-		if (sdl_screen == NULL)
-			error("SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0) failed");
-
-		sdl_hwscreen = SDL_SetVideoMode(640, 400, 16, SDL_SWSURFACE);
-		if (sdl_hwscreen == NULL)
-			error("sdl_hwscreen failed");
-
-		{
-			/* Need some extra bytes around when using 2XSAI */
-			uint16 *tmp_screen = (uint16*)calloc(320*204 + 16,sizeof(uint16));
-			sdl_tmpscreen = SDL_CreateRGBSurfaceFrom(tmp_screen + TMP_SCREEN_OFFS, 320, 200, 16,
-				320*2, 0,0,0,0);
-			if (sdl_tmpscreen == NULL)
-				error("sdl_tmpscreen failed");
-		}
-
-		dirty_checksums = (uint32*)calloc(CKSUM_NUM*2, sizeof(uint32));
-		scaling = 2;
 		break;
 
 	case GFX_DOUBLESIZE:
@@ -267,6 +243,29 @@ void OSystem_SDL::load_gfx_mode() {
 		if (sdl_screen == NULL)
 			error("sdl_screen failed");
 		break;
+	}
+
+	if (_sai_func) {
+		uint16 *tmp_screen = (uint16*)calloc(320*204 + 16,sizeof(uint16));
+		_driver_flags = DF_FORCE_FULL_ON_PALETTE | DF_WANT_RECT_OPTIM | DF_2xSAI | DF_SEPARATE_HWSCREEN;
+
+		Init_2xSaI(565);
+		sdl_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
+		if (sdl_screen == NULL)
+			error("SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0) failed");
+
+		sdl_hwscreen = SDL_SetVideoMode(640, 400, 16, SDL_SWSURFACE);
+		if (sdl_hwscreen == NULL)
+			error("sdl_hwscreen failed");
+
+		/* Need some extra bytes around when using 2XSAI */
+		sdl_tmpscreen = SDL_CreateRGBSurfaceFrom(tmp_screen + TMP_SCREEN_OFFS, 320, 200, 16,
+			320*2, 0,0,0,0);
+		if (sdl_tmpscreen == NULL)
+			error("sdl_tmpscreen failed");
+
+		dirty_checksums = (uint32*)calloc(CKSUM_NUM*2, sizeof(uint32));
+		scaling = 2;		
 	}
 }
 

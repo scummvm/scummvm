@@ -161,10 +161,6 @@ SOURCE=.\simon\midi.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\sdl.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\simon\simon.cpp
 # End Source File
 # Begin Source File
@@ -368,6 +364,10 @@ SOURCE=.\scummvm.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\sdl.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\sound.cpp
 
 !IF  "$(CFG)" == "scummvm - Win32 Release"
@@ -485,6 +485,10 @@ SOURCE=.\sound\gmidi.h
 # Begin Source File
 
 SOURCE=.\gui.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\guimaps.h
 # End Source File
 # Begin Source File
 

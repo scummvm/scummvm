@@ -415,7 +415,7 @@ void Scumm::allocResTypeData(int id, uint32 tag, int num, const char *name,
 
 void Scumm::loadCharset(int no)
 {
-	int i, line = 0;
+	int i;
 	byte *ptr;
 
 	debug(9, "loadCharset(%d)", no);
@@ -923,7 +923,7 @@ void Scumm::expireResources(uint32 size)
 	int i, j;
 	byte flag;
 	byte best_counter;
-	int best_type, best_res;
+	int best_type, best_res = 0;
 	uint32 oldAllocatedSize;
 
 //	return;
