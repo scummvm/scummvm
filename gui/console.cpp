@@ -36,6 +36,9 @@ This code is not finished, so please don't complain :-)
 
 */
 
+
+#define PROMPT	"$ "
+
 /* TODO:
  * - it is very inefficient to redraw the full thingy when just one char is added/removed.
  *   Instead, we could just copy the GFX of the blank console (i.e. after the transparent
@@ -55,10 +58,17 @@ ConsoleDialog::ConsoleDialog(NewGui *gui)
 	
 	_currentColumn = 0;
 	_currentLine = 0;
-	_scrollLine = 0;
+	_scrollLine = _linesPerPage - 1;
 	
 	print("ScummVM "SCUMMVM_VERSION" (" SCUMMVM_CVS ")\n");
 	print("Console is ready\n");
+	
+	print(PROMPT);
+	_promptLine = _currentLine;
+
+
+	_caretVisible = false;
+	_caretTime = 0;
 }
 
 void ConsoleDialog::drawDialog()
@@ -71,9 +81,7 @@ void ConsoleDialog::drawDialog()
 
 	// Draw text
 	int start = _scrollLine - _linesPerPage + 1;
-	int y = _y + 1;
-	if (start < 0)
-		start = 0;
+	int y = _y + 2;
 	for (int line = 0; line < _linesPerPage; line++) {
 		int x = _x + 1;
 		for (int column = 0; column < _lineWidth; column++) {
@@ -87,6 +95,58 @@ void ConsoleDialog::drawDialog()
 
 	// Finally blit it all to the screen
 	_gui->addDirtyRect(_x, _y, _w, _h);
+}
+
+void ConsoleDialog::handleTickle()
+{
+	uint32 time = _gui->get_time();
+	if (_caretTime < time) {
+		_caretTime = time + kCaretBlinkTime;
+		if (_caretVisible) {
+			drawCaret(true);
+		} else {
+			drawCaret(false);
+		}
+	}
+}
+
+void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
+
+	switch (keycode) {
+		case '\n':	// enter/return
+		case '\r':
+			nextLine();
+			print(PROMPT);
+			_promptLine = _currentLine;
+			
+			if (_caretVisible)
+				drawCaret(true);
+			draw();
+			break;
+		case 27:	// escape
+			close();
+			break;
+		case 8:		// backspace
+			if (_currentColumn == 0 && _currentLine > _promptLine) {
+				_currentColumn = _lineWidth - 1;
+				_currentLine--;
+			} else if (_currentColumn > 0) {
+				if (_currentLine > _promptLine || _currentColumn >= (int)sizeof(PROMPT))
+					_currentColumn--;
+			}
+			_buffer[(_currentLine % _linesInBuffer) * _lineWidth + _currentColumn] = ' ';
+
+			if (_caretVisible)
+				drawCaret(true);
+			draw();	// FIXME - not nice to redraw the full console just for one char!
+			break;
+		default:
+			if (ascii == '~' || ascii == '#') {
+				close();
+			} else if (isprint((char)ascii)) {
+				putchar(ascii);
+			}
+	}
 }
 
 void ConsoleDialog::nextLine()
@@ -149,24 +209,22 @@ void ConsoleDialog::print(const char *str)
 	draw();
 }
 
-void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
-	if (ascii == '~' || (keycode == 27) || ascii == '#') {		// Total abort on tilde or escape
-		close();
-	} else if (ascii == '\r' || ascii == '\n') {		// Run command on enter/newline
-		nextLine();
-		draw();
-	} else if (keycode == 8) {				// Backspace
-		if (_currentColumn == 0) {
-			_currentColumn = _lineWidth - 1;
-			if (_currentLine > 0)
-				_currentLine--;
-		} else
-			_currentColumn--;
-		_buffer[(_currentLine % _linesInBuffer) * _lineWidth + _currentColumn] = ' ';
-		draw();	// FIXME - not nice to redraw the full console just for one char!
-	} else if ((ascii >= 31) && (ascii <= 122)) {	// Printable ASCII, add to string
-		putchar(ascii);
-	} else {
-		debug(2, "Unhandled keycode from ConsoleDialog: %d\n", keycode);
-	}
+void ConsoleDialog::drawCaret(bool erase)
+{
+	// Only draw if item is visible
+	if (!isVisible())
+		return;
+	
+	int displayLine = _currentLine - _scrollLine + _linesPerPage - 1;
+
+	if (displayLine < 0 || displayLine >= _linesPerPage)
+		return;
+
+	int x = _x + 1 + _currentColumn * kCharWidth;
+	int y = _y + displayLine * kLineHeight;
+
+	_gui->fillRect(x, y, kCharWidth, kLineHeight, erase ? _gui->_bgcolor : _gui->_textcolor);
+	_gui->addDirtyRect(x, y, kCharWidth, kLineHeight);
+	
+	_caretVisible = !erase;
 }

@@ -29,6 +29,7 @@
 
 enum {
 	kBufferSize	= 32768,
+	kLineBufferSize = 256,
 	kCharWidth = 8
 };
 
@@ -45,6 +46,11 @@ protected:
 	int		_currentLine;
 	int		_scrollLine;
 	
+//	char	_lineBuffer[kLineBufferSize];
+	int		_promptLine;
+
+	bool	_caretVisible;
+	uint32	_caretTime;
 
 public:
 	ConsoleDialog(NewGui *gui);
@@ -52,8 +58,10 @@ public:
 //	void open();
 //	void close();
 
-	virtual void drawDialog();
-	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
+	void drawDialog();
+
+	void handleTickle();
+	void handleKeyDown(uint16 ascii, int keycode, int modifiers);
 //	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 	int printf(const char *format, ...);
@@ -62,6 +70,7 @@ public:
 	void putchar(int c);
 
 protected:
+	void drawCaret(bool erase);
 	void print(const char *str);
 	void nextLine();
 };
