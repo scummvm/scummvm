@@ -71,6 +71,7 @@ public:
 
 protected:
 	byte drawLimb(const Actor *a, int limb);
+	void drawNESCostume(const Actor *a, int limb);
 
 	void proc3(Codec1 &v1);
 	void proc3_ami(Codec1 &v1);

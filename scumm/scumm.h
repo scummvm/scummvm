@@ -472,6 +472,7 @@ public:
 	BaseCostumeRenderer* _costumeRenderer;
 
 	int _v1MMNESCostumeSet;
+	byte *_v1MMNESCostumeGfx[2];
 	
 	char *_audioNames;
 	int32 _numAudioNames;
@@ -838,6 +839,7 @@ public:
 	// Costume class
 	void cost_decodeData(Actor *a, int frame, uint usemask);
 	int cost_frameToAnim(Actor *a, int frame);
+	void cost_decodeNESCostumeGfx();
 
 	// Akos Class
 	struct {

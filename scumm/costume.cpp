@@ -583,15 +583,8 @@ static const int v1MMNEScostTables[2][6] = {
 void LoadedCostume::loadNEScostume(void) {
 	const byte *src;
 	int frameset, framenum;
-	int offset, numSprites, spritesOffset, maxSprites, numAnims;
-	byte *table, *ptr, *patTable, *spritesDefs, *spritesOffsetTab, *numSpritesTab;
-	bool flip;
-	int palette, tile;
-	byte patData[16 * 256];
-	int len;
-	int i, j;
-	byte x, y;
-	int8 x1, y1;
+	int offset;
+	byte *table;
 
 	_format = 0x01;
 	_mirror = 0;
@@ -603,7 +596,6 @@ void LoadedCostume::loadNEScostume(void) {
 	src = _baseptr + 4;
 	// Cost(a)
 	offset = src[(frameset * 4 + framenum) * 2];
-	numAnims = src[(frameset * 4 + framenum) * 2 + 1];
 
 	// Lookup & desc
 	table = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_v1MMNESCostumeSet][0]);
@@ -614,133 +606,6 @@ void LoadedCostume::loadNEScostume(void) {
 	} else {
 		_numAnim = (READ_LE_UINT16(table + v1MMNESLookup[_id] * 2 + 4) - offset) / 2;
 	}
-
-	// lens
-	numSpritesTab = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_v1MMNESCostumeSet][1]);
-
-	// offs
-	spritesOffsetTab = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_v1MMNESCostumeSet][2]);
-
-	// data
-	spritesDefs = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_v1MMNESCostumeSet][3]);
-
-	// gfx
-	patTable = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_v1MMNESCostumeSet][4]);
-
-	for (int frameNum = 0; frameNum < _numAnim; frameNum++) {
-		offset = READ_LE_UINT16(table + v1MMNESLookup[_id] * 2 + 2 + frameNum * 2);
-		numSprites = numSpritesTab[offset + 2] + 1;
-		spritesOffset = READ_LE_UINT16(spritesOffsetTab + offset * 2 + 2);
-
-
-		//printf("spritesOffset: %x", spritesOffset);
-		ptr = spritesDefs + spritesOffset + 2;
-
-		byte mask;
-		// decode costumegfx and get data
-		maxSprites = patTable[3];
-		len = READ_LE_UINT16(patTable);
-
-		j = 0;
-		i = 3;
-		while (i < len) {
-			if (patTable[i] > 0x80) {
-				for (int cnt = (patTable[i++] & ~0x80); cnt > 0; cnt--)
-					patData[j++] = patTable[i++];
-			} else {
-				for (int cnt = patTable[i++]; cnt > 0; cnt--)
-					patData[j++] = patTable[i];
-				i++;
-			}
-		}
-		/*
-		printf("extracted len: %d", j);
-
-		for (j = 0; j < 5; j++) {
-			for (i = 0; i < 16; i++)
-				printf("%02x ", patData[j * 16 + i]);
-			printf("\n");
-		}
-		*/
-
-		byte pic[256][256];
-		for (i = 0; i < 256; i++)
-			for(j = 0; j < 256; j++)
-				pic[i][j] = ' ';
-
-		for (int spr = 0; spr < numSprites; spr++) {
-			flip = ((*ptr & 0x80) != 0);
-			
-			y1 = *ptr++;
-			y1 |= (int8)0x80;
-			y1 += (int8)0x80;
-			y = y1;
-
-			tile = *ptr++;
-
-			x1 = *ptr >> 2;
-
-			if (*ptr & 0x80)
-				x1 |= (int8)0xc0;
-			x1 += (int8)0x80;
-			x = x1;
-
-			palette = *ptr++ & 0x3;
-
-			mask = flip ? 0x01 : 0x80;
-
-#define SHIFT 0
-
-			for (i = 0; i < 8; i++) {
-				byte c = patData[tile * 16 + i];
-				for (j = 0; j < 8; j++) {
-					pic[SHIFT + j + x][SHIFT + i + y] = (c & mask) ? '.' : ' ';
-					if (flip)
-						c >>= 1;
-					else
-						c <<= 1;
-				}
-			}
-			for (i = 0; i < 8; i++) {
-				byte c = patData[tile * 16 + i + 8];
-				for (j = 0; j < 8; j++) {
-					if (pic[SHIFT + j + x][SHIFT + i + y] == '.')
-						pic[SHIFT + j + x][SHIFT + i + y] = (c & mask) ? '#' : '.';
-					else
-						pic[SHIFT + j + x][SHIFT + i + y] = (c & mask) ? '*' : ' ';
-					if (flip)
-						c >>= 1;
-					else
-						c <<= 1;
-				}
-			}
-			//printf("flip: %d (%d), tile: %x, x: %d, y: %d, pal: %d", flip, (tile % 1) ? flip : !flip, tile, x, y, palette);
-		}
-	
-		int left = 256, top = 256, right = 0, bottom = 0;
-		
-		for (i = 0; i < 256; i++)
-			for(j = 0; j < 256; j++)
-				if (pic[j][i] != ' ') {
-					if (left > j)
-						left = j;
-					if (right < j)
-						right = j;
-					if (top > i)
-						top = i;
-					if (bottom < i)
-						bottom = i;
-			}
-
-		/*	
-		for (i = top; i <= bottom; i++) {
-			for(j = left; j <= right; j++)
-				printf("%c", pic[j][i]);
-			printf("\n");
-		}
-		*/
-	}
-		
 }
 
 void LoadedCostume::loadCostume(int id) {
@@ -806,6 +671,126 @@ void LoadedCostume::loadCostume(int id) {
 	_animCmds = _baseptr + READ_LE_UINT16(ptr);
 }
 
+void CostumeRenderer::drawNESCostume(const Actor *a, int limb) {
+	const byte *src;
+	int offset, numSprites, spritesOffset, numAnims;
+	byte *table, *ptr, *spritesDefs, *spritesOffsetTab, *numSpritesTab;
+	bool flip;
+	int palette, tile;
+	int i, j;
+	byte x, y;
+	int8 x1, y1;
+	const CostumeData &cost = a->_cost;
+	int frame = cost.frame[limb];
+
+	src = _loaded._dataOffsets;
+
+	// Cost(a)
+	offset = src[frame * 2];
+	numAnims = src[frame * 2 + 1];
+
+	// Lookup & desc
+	table = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_v1MMNESCostumeSet][0]);
+	offset = READ_LE_UINT16(table + v1MMNESLookup[_loaded._id] * 2 + 2);
+
+	// lens
+	numSpritesTab = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_v1MMNESCostumeSet][1]);
+
+	// offs
+	spritesOffsetTab = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_v1MMNESCostumeSet][2]);
+
+	// data
+	spritesDefs = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_v1MMNESCostumeSet][3]);
+
+	int frameNum = 0;
+
+	offset = READ_LE_UINT16(table + v1MMNESLookup[_loaded._id] * 2 + 2 + frameNum * 2);
+	numSprites = numSpritesTab[offset + 2] + 1;
+	spritesOffset = READ_LE_UINT16(spritesOffsetTab + offset * 2 + 2);
+
+	ptr = spritesDefs + spritesOffset + 2;
+
+	byte mask;
+
+	byte pic[256][256];
+	for (i = 0; i < 256; i++)
+		for(j = 0; j < 256; j++)
+			pic[i][j] = 0;
+
+	for (int spr = 0; spr < numSprites; spr++) {
+		flip = ((*ptr & 0x80) != 0);
+			
+		y1 = *ptr++;
+		y1 |= (int8)0x80;
+		y1 += (int8)0x80;
+		y = y1;
+
+		tile = *ptr++;
+
+		x1 = *ptr >> 2;
+
+		if (*ptr & 0x80)
+			x1 |= (int8)0xc0;
+		x1 += (int8)0x80;
+		x = x1;
+
+		palette = *ptr++ & 0x3;
+		
+		mask = flip ? 0x01 : 0x80;
+
+#define SHIFT 0
+
+		for (i = 0; i < 8; i++) {
+			byte c = _vm->_v1MMNESCostumeGfx[_vm->_v1MMNESCostumeSet][tile * 16 + i];
+			for (j = 0; j < 8; j++) {
+				pic[SHIFT + j + x][SHIFT + i + y] = (c & mask) ? 1 : 0;
+				if (flip)
+					c >>= 1;
+				else
+					c <<= 1;
+			}
+		}
+		for (i = 0; i < 8; i++) {
+			byte c = _vm->_v1MMNESCostumeGfx[_vm->_v1MMNESCostumeSet][tile * 16 + i + 8];
+			for (j = 0; j < 8; j++) {
+				if (pic[SHIFT + j + x][SHIFT + i + y] == 1)
+					pic[SHIFT + j + x][SHIFT + i + y] = (c & mask) ? 3 : 1;
+				else
+					pic[SHIFT + j + x][SHIFT + i + y] = (c & mask) ? 2 : 0;
+				if (flip)
+					c >>= 1;
+				else
+					c <<= 1;
+			}
+		}
+	}
+	
+	int left = 256, top = 256, right = 0, bottom = 0;
+		
+	for (i = 0; i < 256; i++)
+		for(j = 0; j < 256; j++)
+			if (pic[j][i] != 0) {
+				if (left > j)
+					left = j;
+				if (right < j)
+					right = j;
+				if (top > i)
+					top = i;
+				if (bottom < i)
+					bottom = i;
+			}
+
+	byte *dest = (byte *)_out.pixels + (_actorY + top - 128) * _out.pitch + 
+		_actorX + left - 128;
+
+	for (i = top; i <= bottom; i++) {
+		for(j = left; j <= right; j++)
+			if (pic[j][i])
+				dest[j - left] = pic[j][i];
+		dest += _out.pitch;
+	}
+}
+
 byte CostumeRenderer::drawLimb(const Actor *a, int limb) {
 	int i;
 	int code;
@@ -815,6 +800,11 @@ byte CostumeRenderer::drawLimb(const Actor *a, int limb) {
 	// If the specified limb is stopped or not existing, do nothing.
 	if (cost.curpos[limb] == 0xFFFF || cost.stopped & (1 << limb))
 		return 0;
+
+	if (_vm->_features & GF_NES) {
+		drawNESCostume(a, limb);
+		return 0;
+	}
 
 	// Determine the position the limb is at
 	i = cost.curpos[limb] & 0x7FFF;
@@ -860,6 +850,35 @@ byte CostumeRenderer::drawLimb(const Actor *a, int limb) {
 
 }
 
+void ScummEngine::cost_decodeNESCostumeGfx() {
+	for (int n = 0; n < 2; n++) {
+		byte *patTable = getResourceAddress(rtCostume, v1MMNEScostTables[n][4]);
+		int j = 0;
+		int i = 3;
+		int maxSprites = 256; //patTable[3];
+		int len = READ_LE_UINT16(patTable);
+
+		if (maxSprites == 0)
+			maxSprites = 256;
+
+		_v1MMNESCostumeGfx[n] = (byte *)calloc(maxSprites * 16, 1);
+
+		while (i < len) {
+			if (patTable[i] > 0x80) {
+				for (int cnt = (patTable[i++] & ~0x80); cnt > 0; cnt--)
+					_v1MMNESCostumeGfx[n][j++] = patTable[i++];
+			} else {
+				for (int cnt = patTable[i++]; cnt > 0; cnt--)
+					_v1MMNESCostumeGfx[n][j++] = patTable[i];
+				i++;
+			}
+		}
+
+		// We will not need it anymore
+		nukeResource(rtCostume, v1MMNEScostTables[n][4]);
+	}
+}
+
 int ScummEngine::cost_frameToAnim(Actor *a, int frame) {
 	return newDirToOldDir(a->getFacing()) + frame * 4;
 }
@@ -881,7 +900,7 @@ void ScummEngine::cost_decodeData(Actor *a, int frame, uint usemask) {
 	}
 
 	if (_features & GF_NES) {
-		a->_cost.curpos[0] = 0xFFFF;
+		a->_cost.curpos[0] = 1;
 		a->_cost.start[0] = 0;
 		a->_cost.frame[0] = frame;
 		return;
@@ -996,6 +1015,10 @@ byte LoadedCostume::increaseAnim(Actor *a, int slot) {
 	int highflag;
 	int i, end;
 	byte code, nc;
+
+	if (_vm->_features & GF_NES) {
+		return 0;
+	}
 
 	if (a->_cost.curpos[slot] == 0xFFFF)
 		return 0;

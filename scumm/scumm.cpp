@@ -1492,6 +1492,9 @@ void ScummEngine::scummInit() {
 
 	clearDrawObjectQueue();
 
+	if (_features & GF_NES)
+		cost_decodeNESCostumeGfx();
+
 	for (i = 0; i < 6; i++) {
 		if (_version == 3) { // FIXME - what is this?
 			_string[i]._default.xpos = 0;
