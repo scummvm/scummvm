@@ -3,6 +3,7 @@
 #include "start.h"
 #include "formTabs.h"
 #include "forms.h"
+#include "globals.h"
 
 #ifndef DISABLE_LIGHTSPEED
 #include "lightspeed_public.h"
@@ -150,6 +151,10 @@ static void MiscFormInit() {
 		FrmHideObject(frmP, FrmGetObjectIndex(frmP, TabPalmOSLightspeedCheckbox));
 		FrmHideObject(frmP, FrmGetObjectIndex(frmP, TabPalmOSLightspeedPopTrigger));
 	}
+#ifndef DISABLE_ARM
+	if (!OPTIONS_TST(kOptDeviceARM))
+#endif
+	{	FrmHideObject(frmP, FrmGetObjectIndex(frmP, TabPalmOSARMCheckbox)); }
 
 	myTabP = tabP;
 }
@@ -179,6 +184,10 @@ Boolean MiscFormHandleEvent(EventPtr eventP) {
 						FrmHideObject(frmP, FrmGetObjectIndex(frmP, TabPalmOSLightspeedCheckbox));
 						FrmHideObject(frmP, FrmGetObjectIndex(frmP, TabPalmOSLightspeedPopTrigger));
 					}
+#ifndef DISABLE_ARM
+					if (!OPTIONS_TST(kOptDeviceARM))
+#endif
+					{	FrmHideObject(frmP, FrmGetObjectIndex(frmP, TabPalmOSARMCheckbox)); }
 					break;
 
 				case TabPalmOSLightspeedPopTrigger:
