@@ -44,7 +44,7 @@ struct Area {
 
 
 struct WalkOffData {
-	int16 entryobj;
+	int16 entryObj;
 	uint16 x;
 	uint16 y;
 };
@@ -66,6 +66,14 @@ struct ObjectData {
 	uint16 room;
 	int16 state;
 	int16 image;
+};
+
+
+struct ObjectDescription {
+	uint16 field1;
+	uint16 field2;
+	uint16 field3;
+	uint16 field4;
 };
 
 

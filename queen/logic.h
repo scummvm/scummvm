@@ -51,7 +51,7 @@ public:
 
 	int16 *area(int index, int subIndex);
 	uint16 walkOffCount();
-	uint16 *walkOffData(int index);
+	WalkOffData *walkOffData(int index);
 
 	int16 gameState(int index);
 	void gameState(int index, int16 newValue);
@@ -70,19 +70,21 @@ protected:
 
 	uint16 _numObjectBoxes;
 	uint16 _numWalkOffs;
+	uint16 _numObjDesc;
 
 	uint16 *_roomData;
 	uint16 *_sfxName;
 	int16 *_objMax;
 	int16 *_areaMax;
-	uint16 (*_objectBox)[4]; // FIXME: Box *_objectBox;
-	uint16 (*_itemData)[5]; // FIXME: ItemData *_itemData;
+	Box *_objectBox;
+	ItemData *_itemData;
 	GraphicData *_graphicData;
 	ObjectData *_objectData;
+	ObjectDescription *_objectDescription;
 	uint16 (*_actorData)[12]; // FIXME: ActorData *_actorData;
 	int16 (*_area)[11][8]; // FIXME: Area *_area[11];
-	uint16 (*_walkOffData)[3]; // FIXME: WalkOffData *_walkOffData;
-
+	WalkOffData *_walkOffData;
+	
 	enum {
 		GAME_STATE_COUNT = 211
 	};

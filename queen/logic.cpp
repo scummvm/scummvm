@@ -50,7 +50,6 @@ void Logic::initialise() {
 	_numDescriptions = READ_BE_UINT16(ptr);
 	ptr += 2;
 	
-
 	//Object data
 	_objectData = new ObjectData[_numObjects + 1];
 	//clear first object
@@ -62,7 +61,7 @@ void Logic::initialise() {
 	_objectData[0].room = 0;
 	_objectData[0].state = 0;
 	_objectData[0].image = 0;	
-	for (i = 1; i < (_numObjects + 1); i++) {
+	for (i = 1; i <= _numObjects; i++) {
 		_objectData[i].name = (int16)READ_BE_UINT16(ptr);
 		ptr += 2;
 		_objectData[i].x = READ_BE_UINT16(ptr);
@@ -83,7 +82,7 @@ void Logic::initialise() {
 	
 	//Room data
 	_roomData = new uint16[_numRooms + 2];
-	for (i = 1; i < (_numRooms + 2); i++) {
+	for (i = 1; i <= (_numRooms + 1); i++) {
 		_roomData[i] = READ_BE_UINT16(ptr);
 		ptr += 2;
 	}
@@ -98,7 +97,7 @@ void Logic::initialise() {
 	else {
 		_sfxName = new uint16[_numRooms + 1];
 
-		for (i = 1; i < (_numRooms + 1); i++) {
+		for (i = 1; i <= _numRooms; i++) {
 			_sfxName[i] = READ_BE_UINT16(ptr);
 			ptr += 2;
 		}	
@@ -108,15 +107,19 @@ void Logic::initialise() {
 	_numItems = READ_BE_UINT16(ptr);
 	ptr += 2;
 
-	_itemData = new uint16[_numItems + 1][5];
-	
-	for (i = 1; i < (_numItems + 1); i++) {
-		_itemData[i][0] = READ_BE_UINT16(ptr);
+	_itemData = new ItemData[_numItems + 1];	
+
+	for (i = 1; i <= _numItems; i++) {
+		_itemData[i].name = (int16)READ_BE_UINT16(ptr);
 		ptr += 2;
-		for (j = 1; j < 5; j++) {
-		       _itemData[i][j] = READ_BE_UINT16(ptr);
-		       ptr += 2;
-		}
+		_itemData[i].description = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;
+		_itemData[i].state = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;
+		_itemData[i].bobFrame = READ_BE_UINT16(ptr);
+		ptr += 2;
+		_itemData[i].sfxDescription = READ_BE_UINT16(ptr);
+		ptr += 2;
 	}
 		
 	//Graphic Image Data
@@ -126,7 +129,7 @@ void Logic::initialise() {
 
 	_graphicData = new GraphicData[_numGraphics + 1];
 
-	for (i = 1; i < (_numGraphics + 1); i++) {
+	for (i = 1; i <= _numGraphics; i++) {
 		_graphicData[i].x = READ_BE_UINT16(ptr);
 		ptr += 2;
 		_graphicData[i].y = READ_BE_UINT16(ptr);
@@ -143,30 +146,67 @@ void Logic::initialise() {
 	_areaMax  = new int16[_numRooms + 1];
 	_area     = new int16[_numRooms + 1][11][8];
 
-	for (i = 1; i < (_numRooms + 1); i++) {
+	for (i = 1; i <= _numRooms; i++) {
 		_objMax[i] = (int16)READ_BE_UINT16(ptr);
 		ptr += 2;
 		_areaMax[i] = (int16)READ_BE_UINT16(ptr);
 		ptr += 2;
 		
-		for (j = 1; j < (_areaMax[i] + 1); j++)
+		for (j = 1; j <= _areaMax[i]; j++)
 			for (k = 0; k < 8; k++) {
-				if (j > 11)
-					error("j (%i) too large, _areaMax[i] = %i", j, _areaMax[i]);
+				assert(j < 12);
 				_area[i][j][k] = READ_BE_UINT16(ptr);
 				ptr += 2;
 			}
 				
 	}	
 	
-	_objectBox = new uint16[_numObjects + 1][4];
-	for (i = 1; i < (_numObjects + 1); i++)
-		for (j = 0; j < 4; j++) {
-			_objectBox[i][j] = READ_BE_UINT16(ptr);
-			ptr += 2;
-		}
+	_objectBox = new Box[_numObjects + 1];
+	for (i = 1; i <= _numObjects; i++) {
+		_objectBox[i].x1 = READ_BE_UINT16(ptr);
+		ptr += 2;
+		_objectBox[i].y1 = READ_BE_UINT16(ptr);
+		ptr += 2;
+		_objectBox[i].x2 = READ_BE_UINT16(ptr);
+		ptr += 2;
+		_objectBox[i].y2 = READ_BE_UINT16(ptr);
+		ptr += 2;
+	}
+		
+	//Walk OFF Data
 
-	_numWalkOffs = 0;
+	_numWalkOffs = READ_BE_UINT16(ptr);
+	ptr += 2;
+
+	_walkOffData = new WalkOffData[_numWalkOffs + 1];
+	for (i = 1; i <= _numWalkOffs; i++) {
+		_walkOffData[i].entryObj = (int16)READ_BE_UINT16(ptr);
+		ptr += 2;
+		_walkOffData[i].x = READ_BE_UINT16(ptr);
+		ptr += 2;
+		_walkOffData[i].y = READ_BE_UINT16(ptr);
+		ptr += 2;
+	}
+
+	//Special Object Descriptions
+
+	_numObjDesc = READ_BE_UINT16(ptr);
+	ptr += 2;
+
+	_objectDescription = new ObjectDescription[_numObjDesc + 1];
+	for (i = 1; i <= _numObjDesc; i++) {
+		_objectDescription[i].field1 = READ_BE_UINT16(ptr);
+		ptr += 2;
+		_objectDescription[i].field2 = READ_BE_UINT16(ptr);
+		ptr += 2;
+		_objectDescription[i].field3 = READ_BE_UINT16(ptr);
+		ptr += 2;
+		_objectDescription[i].field4 = READ_BE_UINT16(ptr);
+		ptr += 2;
+	}
+
+	//Command List Data
+
 }
 
 uint16 Logic::currentRoom() {
@@ -201,8 +241,8 @@ uint16 Logic::walkOffCount() {
 	return _numWalkOffs;
 }
 
-uint16 *Logic::walkOffData(int index) {
-	return _walkOffData[index];
+WalkOffData *Logic::walkOffData(int index) {
+	return &_walkOffData[index];
 }
 
 GraphicData *Logic::findGraphic(int index) {
