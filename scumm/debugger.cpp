@@ -348,7 +348,7 @@ bool ScummDebugger::Cmd_PrintScript(int argc, const char **argv) {
 bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 	Actor *a;
 	int actnum;
-	int value;
+	int value = 0;
 
 	if (argc < 3) {
 		DebugPrintf("Syntax: actor <actornum> <command> <parameter>\n");
@@ -362,7 +362,8 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 	}
 
 	a = &_vm->_actors[actnum];
-	value = atoi(argv[3]);
+	if (argc > 3)
+		value = atoi(argv[3]);
 
 	if (!strcmp(argv[2], "ignoreboxes")) {
 		a->ignoreBoxes = (value > 0);
@@ -381,7 +382,7 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 		_vm->_fullRedraw = 1;
 	} else if (!strcmp(argv[2], "costume")) {
 		if (value >= _vm->res.num[rtCostume])
-				DebugPrintf("Costume not changed as %d exceeds max of %d\n", value, _vm->res.num[rtCostume]);
+			DebugPrintf("Costume not changed as %d exceeds max of %d\n", value, _vm->res.num[rtCostume]);
 		else {
 			a->setActorCostume( value );
 			_vm->_fullRedraw = 1;
