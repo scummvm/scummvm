@@ -811,6 +811,7 @@ void Scumm::playBundleMusic(int32 song) {
 }
 
 void Scumm::stopBundleMusic() {
+	_timer->releaseProcedure(&music_handler);
 	_numberBundleMusic = -1;
 	if (_musicBundleBufFinal) 
 		free(_musicBundleBufFinal);

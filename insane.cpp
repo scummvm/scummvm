@@ -1511,6 +1511,7 @@ void SmushPlayer::startVideo(short int arg, byte *videoFile)
 	pcd37.table_last_pitch = 0;
 	pcd37.table_last_flags = 0;
 
+	sm->stopBundleMusic();
 	init();
 	openFile(videoFile);
 
