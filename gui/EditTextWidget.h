@@ -51,7 +51,7 @@ protected:
 	void drawCaret(bool erase);
 	void lostFocusWidget() { _backupString = _label; drawCaret(true); }
 
-	int getCaretPos();
+	int getCaretPos() const;
 	bool adjustOffset();
 };
 
