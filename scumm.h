@@ -1294,7 +1294,7 @@ public:
 	CharsetRenderer charset;
 	byte _charsetColor;
 	uint16 _noSubtitles;	// Skip all subtitles?
-	byte _charsetData[10][16];
+	byte _charsetData[15][16];
 	void initCharset(int charset);
 	void restoreCharsetBg();
 	int hasCharsetMask(int x, int y, int x2, int y2);
