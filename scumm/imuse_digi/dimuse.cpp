@@ -78,9 +78,6 @@ void IMuseDigital::resetState() {
 
 void IMuseDigital::saveOrLoad(Serializer *ser) {
 	Common::StackLock lock(_mutex, "IMuseDigital::saveOrLoad()");
-	
-	// save-load disabled
-	return;
 
 	const SaveLoadEntry mainEntries[] = {
 		MKLINE(IMuseDigital, _volVoice, sleInt32, VER(31)),
@@ -123,14 +120,12 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 		MKEND()
 	};
 
-	int i;
-
 	ser->_ref_me = this;
 	ser->_save_ref = NULL;
 	ser->_load_ref = NULL;
 
 	ser->saveLoadEntries(this, mainEntries);
-	for (i = 0; i < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; i++) {
+	for (int i = 0; i < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; i++) {
 		ser->saveLoadEntries(_track[i], trackEntries);
 		if (!ser->isSaving()) {
 			if (!_track[i]->used)

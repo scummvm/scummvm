@@ -263,7 +263,6 @@ SCUMM
 * Fix codec44 for nut fonts
 * iMUSE Digital:
   - Fix music code (done, but not tested yet)
-  - Add save/load code
   - Add code for MP3 and Ogg Vorbis compressed datafiles
 * SMUSH:
   - Add support for codec 37 opcode 1, for PC version of FT demo
