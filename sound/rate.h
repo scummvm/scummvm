@@ -59,14 +59,62 @@ static inline void clampedAdd(int16& a, int b) {
 // Resample (high quality)
 int st_resample_getopts(eff_t effp, int n, char **argv);
 int st_resample_start(eff_t effp, st_rate_t inrate, st_rate_t outrate);
-int st_resample_flow(eff_t effp, InputStream &input, st_sample_t *obuf, st_size_t *osamp);
+int st_resample_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp);
 int st_resample_drain(eff_t effp, st_sample_t *obuf, st_size_t *osamp);
 int st_resample_stop(eff_t effp);
 
 // Rate (linear filter, low quality)
 int st_rate_getopts(eff_t effp, int n, char **argv);
 int st_rate_start(eff_t effp, st_rate_t inrate, st_rate_t outrate);
-int st_rate_flow(eff_t effp, InputStream &input, st_sample_t *obuf, st_size_t *osamp);
+int st_rate_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp);
 int st_rate_stop(eff_t effp);
+
+#if 1
+class RateConverter {
+protected:
+	eff_struct effp;
+public:
+	RateConverter() {}
+	virtual ~RateConverter() {}
+	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp) = 0;
+	virtual int drain(st_sample_t *obuf, st_size_t *osamp) = 0;
+};
+
+class LinearRateConverter : public RateConverter {
+public:
+	LinearRateConverter(st_rate_t inrate, st_rate_t outrate) {
+		st_rate_getopts(&effp, 0, NULL);
+		st_rate_start(&effp, inrate, outrate);
+	}
+	~LinearRateConverter() {
+		st_rate_stop(&effp);
+	}
+	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp) {
+		return st_rate_flow(&effp, input, obuf, osamp);
+	}
+	virtual int drain(st_sample_t *obuf, st_size_t *osamp) {
+		return (ST_SUCCESS);
+	}
+};
+
+class ResampleRateConverter : public RateConverter {
+public:
+	ResampleRateConverter(st_rate_t inrate, st_rate_t outrate) {
+		st_resample_getopts(&effp, 0, NULL);
+		st_resample_start(&effp, inrate, outrate);
+	}
+	~ResampleRateConverter() {
+		st_resample_stop(&effp);
+	}
+	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp) {
+		return st_resample_flow(&effp, input, obuf, osamp);
+	}
+	virtual int drain(st_sample_t *obuf, st_size_t *osamp) {
+		return st_resample_drain(&effp, obuf, osamp);
+	}
+};
+
+#endif
+
 
 #endif

@@ -104,7 +104,7 @@ int st_rate_start(eff_t effp, st_rate_t inrate, st_rate_t outrate)
  * Processed signed long samples from ibuf to obuf.
  * Return number of samples processed.
  */
-int st_rate_flow(eff_t effp, InputStream &input, st_sample_t *obuf, st_size_t *osamp)
+int st_rate_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp)
 {
 	rate_t rate = (rate_t) effp->priv;
 	st_sample_t *ostart, *oend;

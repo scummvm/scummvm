@@ -262,7 +262,7 @@ int st_resample_start(eff_t effp, st_rate_t inrate, st_rate_t outrate) {
  * Processed signed long samples from ibuf to obuf.
  * Return number of samples processed.
  */
-int st_resample_flow(eff_t effp, InputStream &input, st_sample_t *obuf, st_size_t *osamp) {
+int st_resample_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp) {
 	resample_t r = (resample_t) effp->priv;
 	long i, k, last;
 	long Nout;		// The number of bytes we effectively output
