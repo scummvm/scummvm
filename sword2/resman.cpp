@@ -40,8 +40,9 @@ namespace Sword2 {
 //      is located in and the number within the cluster
 
 // If 0, resouces are expelled immediately when they are closed. At the moment
-// this causes the game to crash, which seems like a bug to me. In fact, it
-// could be a clue to the mysterious and infrequent crashes...
+// this causes the sound queue to run out of slots. My only theory is that it's
+// a script that gets reloaded over and over. That'd clear its local variables
+// which I guess may cause it to set up the sounds over and over.
 
 #define CACHE_CLUSTERS 1
 
@@ -767,6 +768,12 @@ void ResourceManager::removeAll(void) {
 
 void ResourceManager::killAll(bool wantInfo) {
 	int nuked = 0;
+
+	// We need to clear the FX queue, because otherwise the sound system
+	// will still believe that the sound resources are in memory, and that
+	// it's ok to close them.
+
+	_vm->clearFxQueue();
 
 	for (uint i = 0; i < _totalResFiles; i++) {
 		// Don't nuke the global variables or the player object!

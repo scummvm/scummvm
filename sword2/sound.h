@@ -38,10 +38,14 @@ namespace Sword2 {
 // fx types
 
 enum {
+	// These three types correspond to types set by the scripts
 	FX_SPOT		= 0,
 	FX_LOOP		= 1,
 	FX_RANDOM	= 2,
-	FX_SPOT2	= 3
+
+	// These are used for FX queue bookkeeping
+	FX_SPOT2	= 3,
+	FX_LOOPING	= 4
 };
 
 } // End of namespace Sword2

@@ -326,8 +326,8 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], byte *mus
 	// the animated cut-scenes, so this seems like a good place to close
 	// both of them.
 
-	_vm->_sound->closeFx(-1);
-	_vm->_sound->closeFx(-2);
+	_vm->_sound->stopFx(-1);
+	_vm->_sound->stopFx(-2);
 
 	return RD_OK;
 #else
@@ -478,8 +478,8 @@ int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte
 	// the animated cut-scenes, so this seems like a good place to close
 	// both of them.
 
-	_vm->_sound->closeFx(-1);
-	_vm->_sound->closeFx(-2);
+	_vm->_sound->stopFx(-1);
+	_vm->_sound->stopFx(-2);
 
 	return RD_OK;
 }

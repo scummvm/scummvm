@@ -1029,77 +1029,13 @@ bool Sound::isFxPlaying(int32 id) {
 }
 
 /**
- * This function opens a sound effect ready for playing. A unique id should be
- * passed in so that each effect can be referenced individually.
- * @param id the unique sound id
- * @param data the WAV data
- * @warning Zero is not a valid id
- */
-
-int32 Sound::openFx(int32 id, byte *data) {
-	if (!_soundOn)
-		return RD_OK;
-
-	if (id == 0)
-		return RDERR_INVALIDID;
-
-	if (getFxIndex(id) != MAXFX)
-		return RDERR_FXALREADYOPEN;
-
-	// Find a free slot
-	int32 fxi = getFxIndex(0);
-
-	if (fxi == MAXFX) {
-		warning("openFx: Running out of sound slots");
-
-		// There isn't any free sound handle available. This usually
-		// shouldn't happen, but if it does we expire the first sound
-		// effect that isn't currently playing.
-
-		for (fxi = 0; fxi < MAXFX; fxi++)
-			if (!_fx[fxi]._handle.isActive())
-				break;
-
-		// Still no dice? I give up!
-
-		if (fxi == MAXFX) {
-			warning("openFx: No free sound slots");
-			return RDERR_NOFREEBUFFERS;
-		}
-	}
-
-	_fx[fxi]._id = id;
-	_fx[fxi]._flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_LITTLE_ENDIAN;
-
-	WavInfo wavInfo;
-
-	if (!getWavInfo(data, &wavInfo)) {
-		warning("openFx: Not a valida WAV file");
-		return RDERR_INVALIDWAV;
-	}
-
-	if (wavInfo.channels == 2)
-		_fx[fxi]._flags |= SoundMixer::FLAG_STEREO;
-
-	_fx[fxi]._rate = wavInfo.rate;
-	_fx[fxi]._bufSize = wavInfo.samples;
-
-	// Fill the speech buffer with data
-	free(_fx[fxi]._buf);
-	_fx[fxi]._buf = (uint16 *) malloc(_fx[fxi]._bufSize);
-	memcpy(_fx[fxi]._buf, wavInfo.data, _fx[fxi]._bufSize);
-
-	return RD_OK;
-}
-
-/**
  * This function closes a sound effect which has been previously opened for
  * playing. Sound effects must be closed when they are finished with, otherwise
  * you will run out of sound effect buffers.
  * @param id the id of the sound to close
  */
 
-int32 Sound::closeFx(int32 id) {
+int32 Sound::stopFx(int32 id) {
 	int i;
 
 	if (!_soundOn)
@@ -1133,43 +1069,69 @@ int32 Sound::playFx(int32 id, byte *data, uint8 vol, int8 pan, uint8 type) {
 		return RD_OK;
 
 	byte volume = _fxMuted ? 0 : vol * _fxVol;
-	int8 p = _panTable[pan + 16];
-	int32 i, hr;
 
-	if (data) {
-		// All lead-ins and lead-outs I've heard are music, so we use
-		// the music volume setting for them.
+	// All lead-ins and lead-outs I've heard are music, so we use
+	// the music volume setting for them.
 
-		if (type == RDSE_FXLEADIN || type == RDSE_FXLEADOUT) {
-			id = (type == RDSE_FXLEADIN) ? -2 : -1;
-			volume = _musicMuted ? 0 : _musicVolTable[_musicVol];
-		}
-
-		hr = openFx(id, data);
-		if (hr != RD_OK)
-			return hr;
+	if (type == RDSE_FXLEADIN || type == RDSE_FXLEADOUT) {
+		id = (type == RDSE_FXLEADIN) ? -2 : -1;
+		volume = _musicMuted ? 0 : _musicVolTable[_musicVol];
 	}
 
-	i = getFxIndex(id);
+	WavInfo wavInfo;
 
-	if (i == MAXFX) {
-		if (data) {
-			warning("playFx(%d, %d, %d, %d) - Not found", id, vol, pan, type);
-			return RDERR_FXFUCKED;
-		} else {
-			warning("playFx(%d, %d, %d, %d) - Not open", id, vol, pan, type);
-			return RDERR_FXNOTOPEN;
-		}
+	if (!getWavInfo(data, &wavInfo)) {
+		warning("playFx: Not a valid WAV file");
+		return RDERR_INVALIDWAV;
 	}
+
+	int32 fxi = getFxIndex(id);
+
+	if (fxi == MAXFX) {
+		// Find a free slot
+		fxi = getFxIndex(0);
+
+		if (fxi == MAXFX) {
+			warning("openFx: Running out of sound slots");
+
+			// There aren't any free sound handles available. This
+			// usually shouldn't happen, but if it does we expire
+			// the first sound effect that isn't currently playing.
+
+			for (fxi = 0; fxi < MAXFX; fxi++)
+				if (!_fx[fxi]._handle.isActive())
+					break;
+
+			// Still no dice? I give up!
+
+			if (fxi == MAXFX) {
+				warning("openFx: No free sound slots");
+				return RDERR_NOFREEBUFFERS;
+			}
+		}
+
+		_fx[fxi]._id = id;
+	}
+
+	if (_fx[fxi]._handle.isActive())
+		return RDERR_FXALREADYOPEN;
+
+	uint32 flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_LITTLE_ENDIAN;
+
+	if (wavInfo.channels == 2)
+		flags |= SoundMixer::FLAG_STEREO;
+
 
 	if (type == RDSE_FXLOOP)
-		_fx[i]._flags |= SoundMixer::FLAG_LOOP;
+		flags |= SoundMixer::FLAG_LOOP;
 	else 
-		_fx[i]._flags &= ~SoundMixer::FLAG_LOOP;
+		flags &= ~SoundMixer::FLAG_LOOP;
 
-	_fx[i]._volume = vol;
+	_fx[fxi]._volume = vol;
 
-	_vm->_mixer->playRaw(&_fx[i]._handle, _fx[i]._buf, _fx[i]._bufSize, _fx[i]._rate, _fx[i]._flags, -1, volume, p);
+	int8 p = _panTable[pan + 16];
+
+	_vm->_mixer->playRaw(&_fx[fxi]._handle, wavInfo.data, wavInfo.samples, wavInfo.rate, flags, -1, volume, p);
 
 	return RD_OK;
 }
@@ -1177,12 +1139,8 @@ int32 Sound::playFx(int32 id, byte *data, uint8 vol, int8 pan, uint8 type) {
 void Sound::stopFxHandle(int i) {
 	if (_fx[i]._id) {
 		_vm->_mixer->stopHandle(_fx[i]._handle);
-		free(_fx[i]._buf);
 		_fx[i]._id = 0;
 		_fx[i]._paused = false;
-		_fx[i]._flags = 0;
-		_fx[i]._bufSize = 0;
-		_fx[i]._buf = NULL;
 	}
 }
 

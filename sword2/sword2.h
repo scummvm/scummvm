@@ -321,16 +321,6 @@ public:
 
 	void setScrolling(void);
 
-	struct FxQueueEntry {
-		uint32 resource;	// resource id of sample
-		uint16 delay;		// cycles to wait before playing (or 'random chance' if FX_RANDOM)
-		uint8 volume;		// 0..16
-		int8 pan;		// -16..16
-		uint8 type;		// FX_SPOT, FX_RANDOM or FX_LOOP
-	};
-
-	FxQueueEntry _fxQueue[FXQ_LENGTH];
-
 	// used to store id of tunes that loop, for save & restore
 	uint32 _loopingMusicId;
 

@@ -44,10 +44,6 @@ struct FxHandle {
 	int32 _id;
 	bool _paused;
 	int8 _volume;
-	uint16 _rate;
-	uint32 _flags;
-	uint16 *_buf;
-	int32 _bufSize;
 	PlayingSoundHandle _handle;
 };
 
@@ -157,9 +153,8 @@ public:
 	void pauseFxForSequence(void);
 	void unpauseFx(void);
 	bool isFxPlaying(int32 id);
-	int32 openFx(int32 id, uint8 *data);
-	int32 closeFx(int32 id);
 	int32 playFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type);
+	int32 stopFx(int32 id);
 	void clearAllFx(void);
 };
 
