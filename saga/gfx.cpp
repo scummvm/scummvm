@@ -1060,26 +1060,28 @@ int GFX_BlackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 }
 
 void GFX_SetCursor(int best_white) {
-	int white = (best_white == 255) ? 254 : best_white;
 	int i;
+	byte keycolor = (best_white == 0) ? 1 : 0;
 
 	// Set up the mouse cursor
-	static byte cursor_img[R_CURSOR_W * R_CURSOR_H] = {
-		255, 255, 255, 0,   255, 255, 255,
-		255, 255, 255, 0,   255, 255, 255,
-		255, 255, 255, 255, 255, 255, 255,
-		0,   0,   255, 255, 255, 0,   0,
-		255, 255, 255, 255, 255, 255, 255,
-		255, 255, 255, 0,   255, 255, 255,
-		255, 255, 255, 0,   255, 255, 255,
+	byte cursor_img[R_CURSOR_W * R_CURSOR_H] = {
+		  0,   0,   0, 255,   0,   0,   0,
+		  0,   0,   0, 255,   0,   0,   0,
+		  0,   0,   0,   0,   0,   0,   0,
+		255, 255,   0,   0,   0, 255, 255,
+		  0,   0,   0,   0,   0,   0,   0,
+		  0,   0,   0, 255,   0,   0,   0,
+		  0,   0,   0, 255,   0,   0,   0,
 	};
 
 	for (i = 0; i < R_CURSOR_W * R_CURSOR_H; i++) {
-		if (cursor_img[i] != 255)
-			cursor_img[i] = white;
+		if (cursor_img[i] != 0)
+			cursor_img[i] = best_white;
+		else
+			cursor_img[i] = keycolor;
 	}
 
-	_system->setMouseCursor(cursor_img, R_CURSOR_W, R_CURSOR_H, 4, 4);
+	_system->setMouseCursor(cursor_img, R_CURSOR_W, R_CURSOR_H, 4, 4, keycolor);
 }
 
 } // End of namespace Saga
