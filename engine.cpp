@@ -138,6 +138,9 @@ void Engine::mainLoop() {
 
 		g_driver->flipBuffer();
 
+		// don't kill CPU
+		SDL_Delay(1);
+
 		// Update timing information
 		unsigned newStart = SDL_GetTicks();
 		frameTime_ = newStart - frameStart_;
