@@ -27,6 +27,8 @@
 #include "guimaps.h"
 #include "config-file.h"
 
+#include <ctype.h>
+
 #define hline(x, y, x2, color) line(x, y, x2, y, color);
 #define vline(x, y, y2, color) line(x, y, x, y2, color);
 
@@ -1120,7 +1122,7 @@ void Gui::checkHotKey(int keycode)
 				// Only check for widgets that are on the current GUI page (otherwise save dialog problems occur)
 				if (w->_page == page) {
 					// Check the actual key pressed, and the uppercase version. For people who have caps lock on
-					if (keycode == w->_hotkey || (keycode - 32) == w->_hotkey)
+					if (keycode == w->_hotkey || toupper(keycode) == w->_hotkey)
 						handleCommand(w->_id);
 				}
 				w++;
