@@ -946,7 +946,7 @@ void Scumm_v2::o2_drawSentence() {
 			{ " ", " dans", " avec", " sur", " <" },	// French
 			{ " ", " in", " con", " su", " a" },	// Italian
 			{ " ", " in", " with", " on", " to" },	// Portugese
-			{ " ", " in", " with", " on", " to" },	// Spanish
+			{ " ", " an", " con", " on", " a" },	// Spanish
 			{ " ", " in", " with", " on", " to" },	// Japanese
 			{ " ", " in", " with", " on", " to" },	// Chinese
 			{ " ", " in", " with", " on", " to" }	// Korean
