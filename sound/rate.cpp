@@ -80,7 +80,7 @@ protected:
 
 public:
 	LinearRateConverter(st_rate_t inrate, st_rate_t outrate);
-	int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol, byte vol_p, int8 pan);
+	int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r);
 	int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) {
 		return (ST_SUCCESS);
 	}
@@ -124,10 +124,10 @@ LinearRateConverter<stereo, reverseStereo>::LinearRateConverter(st_rate_t inrate
  * Return number of samples processed.
  */
 template<bool stereo, bool reverseStereo>
-int LinearRateConverter<stereo, reverseStereo>::flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol, byte vol_p, int8 pan)
+int LinearRateConverter<stereo, reverseStereo>::flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r)
 {
 	st_sample_t *ostart, *oend;
-	st_sample_t out[2], tmpOut;
+	st_sample_t out[2];
 	
 	const int numChannels = stereo ? 2 : 1;
 	int i;
@@ -159,30 +159,19 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioInputStream &input, st
 		while (ipos > opos) {
 
 			// interpolate
-			tmpOut = (st_sample_t)(ilast[0] + (((icur[0] - ilast[0]) * opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS));
-			// adjust volume
-			out[0] = out[1] = (st_sample_t)((tmpOut * vol) >> 8);
-			
+			out[0] = out[1] = (st_sample_t)(ilast[0] + (((icur[0] - ilast[0]) * opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS));
+
 			if (stereo) {
 				// interpolate
-				tmpOut = (st_sample_t)(ilast[1] + (((icur[1] - ilast[1]) * opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS));
-				// adjust volume
-				out[reverseStereo ? 0 : 1] = (st_sample_t)((tmpOut * vol) >> 8);
+				out[reverseStereo ? 0 : 1] = (st_sample_t)(ilast[1] + (((icur[1] - ilast[1]) * opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS));
 			}
-	
-			byte pan_l = abs(pan - 128);
-			byte pan_r = abs(pan + 128);
-			out[0] = (st_sample_t)((out[0] * vol_p) >> 8);
-			out[1] = (st_sample_t)((out[1] * vol_p) >> 8);
-			out[0] = (st_sample_t)((out[0] * pan_l) >> 8);
-			out[1] = (st_sample_t)((out[1] * pan_r) >> 8);
 
 			// output left channel
-			clampedAdd(*obuf++, out[0]);
-	
+			clampedAdd(*obuf++, (out[0] * (int)vol_l) >> 8);
+
 			// output right channel
-			clampedAdd(*obuf++, out[1]);
-	
+			clampedAdd(*obuf++, (out[1] * (int)vol_r) >> 8);
+
 			// Increment output position
 			unsigned long tmp = opos_frac + opos_inc_frac;
 			opos += opos_inc + (tmp >> FRAC_BITS);
@@ -208,22 +197,20 @@ the_end:
 template<bool stereo, bool reverseStereo>
 class CopyRateConverter : public RateConverter {
 public:
-	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol, byte vol_p, int8 pan) {
+	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) {
 		int16 tmp[2];
 		st_size_t len = osamp;
 		assert(input.isStereo() == stereo);
 		while (!input.eos() && len--) {
-			tmp[0] = tmp[1] = (input.read() * vol) >> 8;
+			tmp[0] = tmp[1] = input.read();
 			if (stereo)
-				tmp[reverseStereo ? 0 : 1] = (input.read() * vol) >> 8;
-			byte pan_l = abs(pan - 128);
-			byte pan_r = abs(pan + 128);
-			tmp[0] = ((tmp[0] * vol_p) >> 8);
-			tmp[1] = ((tmp[1] * vol_p) >> 8);
-			tmp[0] = ((tmp[0] * pan_l) >> 8);
-			tmp[1] = ((tmp[1] * pan_r) >> 8);
-			clampedAdd(*obuf++, tmp[0]);
-			clampedAdd(*obuf++, tmp[1]);
+				tmp[reverseStereo ? 0 : 1] = input.read();
+
+			// output left channel
+			clampedAdd(*obuf++, (tmp[0] * (int)vol_l) >> 8);
+	
+			// output right channel
+			clampedAdd(*obuf++, (tmp[1] * (int)vol_r) >> 8);
 		}
 		return (ST_SUCCESS);
 	}

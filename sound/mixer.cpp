@@ -68,8 +68,6 @@ public:
 		_volume = volume;
 	}
 	virtual void setChannelPan(const int8 pan) {
-		if (pan != 0)
-			printf("Pan set to %d\n", pan);
 		_pan = pan;
 	}
 	virtual int getVolume() const {
@@ -503,7 +501,21 @@ void Channel::mix(int16 *data, uint len) {
 		destroy();
 	} else {
 		assert(_converter);
-		_converter->flow(*_input, data, len, getVolume(), _volume, _pan);
+
+		// The pan value ranges from -127 to +127. That's 255 different values.
+		// From the channel pan/volume and the global volume, we compute the
+		// effective volume for the left and right channel.
+		// Note the slightly odd divisor: the 255 reflects the fact that
+		// the maximal value for _volume is 255, while the 254 is there
+		// because the maximal left/right pan value is 2*127 = 254.
+		// The value getVolume() returns is in the range 0 - 256.
+		// Hence, the vol_l/vol_r values will be in that range, too
+		
+		int vol = getVolume() * _volume;
+		st_volume_t vol_l = (127 - _pan) * vol / (255 * 254);
+		st_volume_t vol_r = (127 + _pan) * vol / (255 * 254);
+
+		_converter->flow(*_input, data, len, vol_l, vol_r);
 	}
 }
 
@@ -575,11 +587,10 @@ void ChannelStream::mix(int16 *data, uint len) {
 		if (_finished) {
 			destroy();
 		}
-		return;
+	} else {
+		// Invoke the parent implementation.
+		Channel::mix(data, len);
 	}
-
-	assert(_converter);
-	_converter->flow(*_input, data, len, getVolume(), _volume, _pan);
 }
 
 #ifdef USE_MAD
