@@ -52,6 +52,8 @@
 // FIXME: 4702 & 4706 - may be enabled
 #pragma warning( disable : 4702 ) // turn off "unreachable code" warning
 #pragma warning( disable : 4706 ) // turn off "assignment within conditional expression" warning
+
+#define vsnprintf _vsnprintf
 #endif
 
 #if !defined(_WIN32_WCE)
