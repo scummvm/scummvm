@@ -13,7 +13,7 @@ T= $(BIN)/luac
 all: $T
 
 $T: $(OBJS) $(LIB)/liblua.a
-	$(CC) -o $@ $(OBJS) -L$(LIB) -llua
+	$(CC) -o $@ $(OBJS) -L$(LIB) -llua `sdl-config --libs`
 
 $(LIB)/liblua.a:
 	cd ..; make
