@@ -666,6 +666,19 @@ static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint1
 	}
 #else
 	// Not fully accurate, but a bit faster
+	
+	if (width & 1) {
+		// For efficency reasons we normally blit two pixels at a time; but if the 
+		// width is odd, we first blit a single pixel.
+		width--;
+		if (scale == 1) {
+			uint32 B = *srcB++;
+			*dst++ = (uint16)Q_INTERPOLATE(*srcA++, B, B, B);
+		} else {
+			*dst++ = (uint16)INTERPOLATE(*srcA++, *srcB++);
+		}
+	}
+
 	width /= 2;
 	const uint32 *sA = (const uint32 *)srcA;
 	const uint32 *sB = (const uint32 *)srcB;
