@@ -437,7 +437,10 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 
 	memset(_stringid_array_2, 0, sizeof(_stringid_array_2));
 	memset(_stringid_array_3, 0, sizeof(_stringid_array_3));
+	memset(_stringid_array_3_backup, 0, sizeof(_stringid_array_3_backup));
 	memset(_speechid_array_4, 0, sizeof(_speechid_array_4));
+	memset(_speechid_array_4_backup, 0, sizeof(_speechid_array_4_backup));
+	_reset_arrays = 0;
 
 	memset(_bit_array, 0, sizeof(_bit_array));
 	memset(_variableArray, 0, sizeof(_variableArray));

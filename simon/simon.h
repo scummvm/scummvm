@@ -295,7 +295,10 @@ protected:
 
 	uint16 _stringid_array_2[20];
 	uint16 _stringid_array_3[20];
+	uint16 _stringid_array_3_backup[20];
 	uint16 _speechid_array_4[20];
+	uint16 _speechid_array_4_backup[20];
+	bool _reset_arrays;
 
 	uint16 _bit_array[32];
 	int16 _variableArray[256];
