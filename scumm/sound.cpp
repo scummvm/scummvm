@@ -546,6 +546,10 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 			_vm->_musicEngine->startSound(soundID);
 		}
 	}
+
+
+	if (soundID > _vm->_numSounds)
+		delete ptr;
 }
 
 void Sound::processSfxQueues() {
@@ -1307,7 +1311,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		total_size = _fileHandle.readUint32BE();
 		_fileHandle.read(createResource(type, idx, total_size), total_size - 8);
 		return 1;
-	} else if (basetag == MKID('WSOU')) {
+	} else if (basetag == MKID('RIFF')) {
 		_fileHandle.seek(-12, SEEK_CUR);
 		total_size = _fileHandle.readUint32BE();
 		_fileHandle.read(createResource(type, idx, total_size), total_size - 8);
