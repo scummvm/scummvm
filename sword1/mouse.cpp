@@ -152,8 +152,12 @@ void SwordMouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 	} else
 		SwordLogic::_scriptVars[SPECIAL_ITEM] = 0;
 	if (_state & MOUSE_DOWN_MASK) {
-		if (_inTopMenu && SwordLogic::_scriptVars[SECOND_ITEM])
-			_logic->runMouseScript(NULL, _menu->_objectDefs[SwordLogic::_scriptVars[SECOND_ITEM]].useScript);
+		if (_inTopMenu) {
+			if (SwordLogic::_scriptVars[SECOND_ITEM])
+				_logic->runMouseScript(NULL, _menu->_objectDefs[SwordLogic::_scriptVars[SECOND_ITEM]].useScript);
+			if (SwordLogic::_scriptVars[MENU_LOOKING])
+				_logic->cfnPresetScript(NULL, -1, PLAYER, SCR_menu_look, 0, 0, 0, 0);
+		}
 		
 		SwordLogic::_scriptVars[MOUSE_BUTTON] = _state & MOUSE_DOWN_MASK;
 		if (SwordLogic::_scriptVars[SPECIAL_ITEM]) {

@@ -60,6 +60,8 @@ public:
 	int fnMegaSet		(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnNoSprite		(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 
+// public for mouse (menu looking)
+	int cfnPresetScript	(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 private:
 	ObjectMan *_objMan;
 	ResMan *_resMan;
@@ -124,7 +126,6 @@ private:
 	
 	int cfnClickInteract(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int cfnSetScript	(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
-	int cfnPresetScript	(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 
 	int fnInteract		(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnIssueEvent	(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);

@@ -125,6 +125,12 @@ uint8 SwordMenu::checkMenuClick(uint8 menuType) {
 	} else {
 		for (uint8 cnt = 0; cnt < _inMenu; cnt++) {
 			if (_objects[cnt]->wasClicked(x, y))
+				if (mouseEvent & BS1R_BUTTON_DOWN) { // looking at item
+					SwordLogic::_scriptVars[OBJECT_HELD] = _menuList[cnt];
+					SwordLogic::_scriptVars[MENU_LOOKING] = 1;
+					SwordLogic::_scriptVars[DEFAULT_ICON_TEXT] = _objectDefs[_menuList[cnt]].textDesc;
+					refreshMenus = true;
+				}
 				if (mouseEvent & BS1L_BUTTON_DOWN) {
 					if (SwordLogic::_scriptVars[OBJECT_HELD]) {
 						if (SwordLogic::_scriptVars[OBJECT_HELD] == _menuList[cnt]) {

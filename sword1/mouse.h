@@ -75,7 +75,6 @@ public:
 	void animate(void);
 	void engine(uint16 x, uint16 y, uint16 eventFlags);
 	uint16 testEvent(void);
-	//void flushEvents(void);
 	void giveCoords(uint16 *x, uint16 *y);
 	void fnNoHuman(void);
 	void fnAddHuman(void);
@@ -96,13 +95,9 @@ private:
 
 	uint32 _currentPtrId, _currentLuggageId, _frame;
 	MousePtr *_currentPtr;
-	//uint8 _mouseCount;
 	uint16 _numObjs;
 	uint16 _lastState, _state;
 	uint32 _getOff;
-	//uint32 _specialPtrId; // for special mouse cursors which aren't in the _pointers[] array.
-	//MousePtr *_specialPtr;
-	//MousePtr *_pointers[17];
 	bool _inTopMenu, _mouseOverride;
 };
 

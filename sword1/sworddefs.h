@@ -1551,6 +1551,7 @@ enum ScriptVariableNames {
 #define GUARD_ROOF_63 4128781
 #define LEFT_TREE_POINTER_71 4653058
 #define RIGHT_TREE_POINTER_71 4653059
+#define SCR_menu_look (0*0x10000 + 24)
 #define SCR_icon_combine_script (0*0x10000 + 25)
 
 #endif //SWORDDEFS_H
