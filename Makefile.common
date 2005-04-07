@@ -76,7 +76,7 @@ OBJS =\
 	matrix4.o \
 	model.o \
 	objectstate.o \
-	primitive.o \
+	primitives.o \
 	registry.o \
 	resource.o \
 	scene.o \
