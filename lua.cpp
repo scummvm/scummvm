@@ -1540,6 +1540,40 @@ static void PauseMovie() {
 	g_smush->pause(lua_isnil(lua_getparam(1)) != 0);
 }
 
+static void BlastRect() {
+	int x1 = check_int(1);
+	int y1 = check_int(2);
+	int x2 = check_int(3);
+	int y2 = check_int(4);
+	lua_Object tableObj = lua_getparam(5);
+	Color color;
+	color._vals[0] = 255;
+	color._vals[1] = 255;
+	color._vals[2] = 255;
+	bool filled = false;
+
+	if (lua_istable(tableObj)){
+		lua_pushobject(tableObj);
+		lua_pushstring("color");
+		lua_Object colorObj = lua_gettable();
+		if (lua_isuserdata(colorObj) && lua_tag(colorObj) == MKID('COLR')) {
+			color = static_cast<Color *>(lua_getuserdata(colorObj));
+		}
+
+		lua_pushobject(tableObj);
+		lua_pushstring("filled");
+		lua_Object objFilled = lua_gettable();
+		if (!lua_isnil(objFilled)) 
+			filled = true;
+	}
+
+	//g_driver->CreateFilledRectangle(x1, x2, y1, y2, color, filled);
+}
+
+static void DimScreen() {
+	warning("DimScreen()");
+}
+
 static void GetDiskFreeSpace() {
 	// amount of free space in MB, used for creating saves
 	lua_pushnumber(50);
@@ -1751,7 +1785,6 @@ STUB_FUNC(GetTextSpeed)
 STUB_FUNC(SetTextSpeed)
 STUB_FUNC(GetSaveGameData)
 STUB_FUNC(SubmitSaveGameData)
-STUB_FUNC(BlastRect)
 STUB_FUNC(BlastImage)
 STUB_FUNC(FreeImage)
 STUB_FUNC(GetImage)
@@ -1782,7 +1815,6 @@ STUB_FUNC(SetActorShadowPlane)
 STUB_FUNC(ActivateActorShadow)
 STUB_FUNC(SetShadowColor)
 STUB_FUNC(DimRegion)
-STUB_FUNC(DimScreen)
 STUB_FUNC(ForceRefresh)
 STUB_FUNC(SetGamma)
 STUB_FUNC(LightMgrStartup)

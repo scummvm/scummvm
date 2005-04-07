@@ -468,3 +468,9 @@ void DriverTinyGL::destroyTextBitmap(TextObjectHandle *handle) {
 	delete handle->bitmapData;
 	SDL_FreeSurface((SDL_Surface *)handle->surface);
 }
+
+void DriverTinyGL::getSnapshot(int x, int y, int w, int h, char **data, int flags) {
+}
+
+void DriverTinyGL::drawDim() {
+}

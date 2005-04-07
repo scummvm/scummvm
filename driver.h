@@ -37,6 +37,7 @@ public:
 		_screenHeight = screenH;
 		_screenBPP = screenBPP;
 		_isFullscreen = fullscreen;
+		_dim = false;
 	}
 
 	struct TextObjectHandle {
@@ -77,6 +78,10 @@ public:
 
 	virtual void drawDepthBitmap(int x, int y, int w, int h, char *data) = 0;
 
+	virtual void getSnapshot(int x, int y, int w, int h, char **data, int flags) = 0;
+	virtual void enableDim(int x, int y, int w, int h) = 0;
+	virtual void disableDim(int x, int y, int w, int h) = 0;
+
 	virtual void drawEmergString(int x, int y, const char *text, const Color &fgColor) = 0;
 	virtual void loadEmergFont() = 0;
 	virtual TextObjectHandle *createTextBitmap(uint8 *bitmap, int width, int height, const Color &fgColor) = 0;
@@ -89,6 +94,9 @@ public:
 protected:
 	int _screenWidth, _screenHeight, _screenBPP;
 	bool _isFullscreen;
+	bool _dim;
+
+	virtual void drawDim() = 0;
 };
 
 extern Driver *g_driver;

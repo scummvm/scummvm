@@ -680,3 +680,9 @@ void DriverGL::destroyTextBitmap(TextObjectHandle *handle) {
 	glDeleteTextures(handle->numTex, (GLuint *)handle->texIds);
 	delete[] (GLuint *)handle->texIds;
 }
+
+void DriverGL::getSnapshot(int x, int y, int w, int h, char **data, int flags) {
+}
+
+void DriverGL::drawDim() {
+}

@@ -63,6 +63,10 @@ public:
 	void drawDepthBitmap(int x, int y, int w, int h, char *data);
 	void drawBitmap();
 
+	void getSnapshot(int x, int y, int w, int h, char **data, int flags);
+	void enableDim(int x, int y, int w, int h) { _dim = true; }
+	void disableDim(int x, int y, int w, int h) { _dim = false; }
+
 	void drawEmergString(int x, int y, const char *text, const Color &fgColor);
 	void loadEmergFont();
 	TextObjectHandle *createTextBitmap(uint8 *bitmap, int width, int height, const Color &fgColor);
@@ -71,6 +75,9 @@ public:
 
 	void prepareSmushFrame(int width, int height, byte *bitmap);
 	void drawSmushFrame(int offsetX, int offsetY);
+
+protected:
+	void drawDim();
 
 private:
 	GLuint _emergFont;
