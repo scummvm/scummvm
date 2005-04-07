@@ -901,7 +901,6 @@ protected:
 
 	int _heObject, _heObjectNum;
 	int _hePaletteNum;
-	uint8 *_hePalettes;
 	
 	const OpcodeEntryV90he *_opcodesV90he;
 	FloodStateParameters _floodStateParams;
@@ -940,6 +939,7 @@ protected:
 	void sortArray(int array, int dim2start, int dim2end, int dim1start, int dim1end, int sortOrder);
 	
 	uint8 *getHEPalette(int palSlot);
+	uint8 *getHEPaletteIndex(int palSlot);
 	int getHEPaletteColor(int palSlot, int color);
 	void setHEPaletteColor(int palSlot, uint8 color, uint8 r, uint8 g, uint8 b);
 	void setHEPaletteFromPtr(int palSlot, const uint8 *palData);
@@ -1089,7 +1089,19 @@ protected:
 	void o90_kernelSetFunctions();
 };
 
-class ScummEngine_v100he : public ScummEngine_v90he {
+class ScummEngine_v99he : public ScummEngine_v90he {
+public:
+	ScummEngine_v99he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v90he(detector, syst, gs, md5sum) {}
+
+protected:
+	virtual void copyPalColor(int dst, int src);
+	virtual void darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor);
+	virtual void setPaletteFromPtr(const byte *ptr, int numcolor = -1);
+	virtual void setPalColor(int index, int r, int g, int b);
+	virtual void updatePalette();
+};
+
+class ScummEngine_v100he : public ScummEngine_v99he {
 protected:
 	typedef void (ScummEngine_v100he::*OpcodeProcV100he)();
 	struct OpcodeEntryV100he {
@@ -1102,7 +1114,7 @@ protected:
 	const OpcodeEntryV100he *_opcodesV100he;
 
 public:
-	ScummEngine_v100he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v90he(detector, syst, gs, md5sum) {}
+	ScummEngine_v100he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v99he(detector, syst, gs, md5sum) {}
 
 protected:
 	virtual void setupOpcodes();

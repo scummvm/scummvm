@@ -289,23 +289,26 @@ void AkosRenderer::setPalette(byte *new_palette) {
 	uint size, i;
 
 	size = _vm->getResourceDataSize(akpl);
+	if (size == 0)
+		return;
 
 	if (size > 256)
 		error("akos_setPalette: %d is too many colors", size);
 
-	for (i = 0; i < size; i++) {
-		palette[i] = new_palette[i] != 0xFF ? new_palette[i] : akpl[i];
+	if (_vm->_heversion >= 99 && _paletteNum) {
+		for (i = 0; i < size; i++)
+			palette[i] = (byte)_vm->_hePalettes[_paletteNum * 1024 + 768 + akpl[i]];
+	} else {
+		for (i = 0; i < size; i++) {
+			palette[i] = new_palette[i] != 0xFF ? new_palette[i] : akpl[i];
+		}
 	}
 
-	if (_paletteNum) {
-		// TODO
-		// Sets palette number to use for actor palette
-	}
 
-	if (_vm->_heversion == 70 && size) {
+	if (_vm->_heversion == 70) {
 		for (i = 0; i < size; i++)
 			palette[i] = _vm->_HEV7ActorPalette[palette[i]];
-	}
+	} 
 
 	if (size == 256) {
 		byte color = new_palette[0];
@@ -1256,8 +1259,13 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 	if (_draw_bottom < dst.bottom)
 		_draw_bottom = dst.bottom;
 
+	const uint8 *palPtr = NULL;
+	if (_vm->_heversion >= 99) {
+		palPtr = _vm->_hePalettes + 1792;
+	}
+
 	byte *dstPtr = (byte *)_out.pixels + dst.left + dst.top * _out.pitch;
-	Wiz::decompressWizImage(dstPtr, _out.pitch, dst, _srcptr, src);
+	Wiz::decompressWizImage(dstPtr, _out.pitch, dst, _srcptr, src, palPtr);
 	return 0;
 }
 

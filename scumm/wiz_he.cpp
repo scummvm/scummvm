@@ -271,11 +271,11 @@ static bool calcClipRects(int dst_w, int dst_h, int src_x, int src_y, int src_w,
 	return srcRect.isValidRect() && dstRect.isValidRect();
 }
 
-void Wiz::copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect) {
+void Wiz::copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, const uint8 *palPtr) {
 	Common::Rect r1, r2;
 	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
 		dst += r2.left + r2.top * dstw;
-		decompressWizImage(dst, dstw, r2, src, r1);
+		decompressWizImage(dst, dstw, r2, src, r1, palPtr);
 	}
 }
 
@@ -324,7 +324,7 @@ void Wiz::copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int 
 	}
 }
 
-void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRect, const uint8 *src, const Common::Rect &srcRect, const uint8 *imagePal) {
+void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRect, const uint8 *src, const Common::Rect &srcRect, const uint8 *palPtr) {
 	const uint8 *dataPtr, *dataPtrNext;
 	uint8 *dstPtr, *dstPtrNext;
 	uint32 code;
@@ -332,6 +332,14 @@ void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRe
 	int h, w, xoff;
 	uint16 off;
 	
+	byte imagePal[256];
+	if (!palPtr) {
+		for (int i = 0; i < 256; i++) {
+			imagePal[i] = i;
+		}
+		palPtr = imagePal;
+	}
+
 	dstPtr = dst;
 	dataPtr = src;
 	
@@ -406,10 +414,7 @@ dec_sub2:			w -= code;
 					if (w < 0) {
 						code += w;
 					}
-					uint8 color = *dataPtr++;
-					if (imagePal) {
-						color = imagePal[color];
-					}
+					uint8 color = imagePal[*dataPtr++];
 					memset(dstPtr, color, code);
 					dstPtr += code;
 				} else {
@@ -417,14 +422,8 @@ dec_sub3:			w -= code;
 					if (w < 0) {
 						code += w;
 					}
-					if (imagePal) {
-						while (code--) {
-							*dstPtr++ = imagePal[*dataPtr++];
-						}
-					} else {
-						memcpy(dstPtr, dataPtr, code);
-						dstPtr += code;
-						dataPtr += code;
+					while (code--) {
+						*dstPtr++ = imagePal[*dataPtr++];
 					}
 				}
 			}
@@ -785,7 +784,12 @@ void ScummEngine_v72he::captureWizImage(int resNum, const Common::Rect& r, bool 
 	Common::Rect rCapt(pvs->w, pvs->h);
 	if (rCapt.intersects(r)) {
 		rCapt.clip(r);
-		const uint8 *palPtr = _currentPalette;
+		const uint8 *palPtr;
+		if (_heversion >= 99) {
+			palPtr = _hePalettes + 1024;
+		} else {
+			palPtr = _currentPalette;
+		}
 
 		int w = rCapt.width();
 		int h = rCapt.height();
@@ -873,12 +877,20 @@ void ScummEngine_v72he::displayWizImage(WizImage *pwi) {
 }
 
 uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, int xmapNum, const Common::Rect *clipBox, int flags, int dstResNum, int paletteNum) {
-	debug(1, "drawWizImage(%d, %d, %d, 0x%X)", resNum, x1, y1, flags);
+	debug(1, "drawWizImage(resNum %d, x1 %d, y1 %d, flags 0x%X, xmapNum %d paletteNum %d)", resNum, x1, y1, flags, xmapNum, paletteNum);
 	uint8 *dst = NULL;
+	const uint8 *palPtr = NULL;
+	if (_heversion >= 99) {
+		if (paletteNum) {
+			palPtr = _hePalettes + paletteNum * 1024 + 768;
+		} else {
+			palPtr = _hePalettes + 1792;
+		}
+	}
 	uint8 *dataPtr = getResourceAddress(rtImage, resNum);
 	if (dataPtr) {
 		uint8 *rmap = NULL;
-		uint8 *xmap = findWrappedBlock(MKID('XMAP'), dataPtr, state, 0);
+		//uint8 *xmap = findWrappedBlock(MKID('XMAP'), dataPtr, state, 0);
 		
 		uint8 *wizh = findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
 		assert(wizh);
@@ -959,16 +971,15 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 			} else if (flags & 0x100) {
 				warning("drawWizImage() unhandled flag 0x100");
 			} else {
-				_wiz.copyWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen);
+				_wiz.copyWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, palPtr);
 			}
 		} else if (comp == 0 || comp == 2 || comp == 3) {
 			uint8 *trns = findWrappedBlock(MKID('TRNS'), dataPtr, state, 0);
 			int color = (trns == NULL) ? VAR(VAR_WIZ_TCOLOR) : -1;
-			const uint8 *pal = xmap;
 			if (flags & kWIFRemapPalette) {
-				pal = rmap + 4;
+				palPtr = rmap + 4;
 			}
-			_wiz.copyRawWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, pal, color);
+			_wiz.copyRawWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, color);
 		} else {
 			warning("unhandled wiz compression type %d", comp);
 		}
@@ -1114,6 +1125,7 @@ void ScummEngine_v72he::drawWizComplexPolygon(int resNum, int state, int po_x, i
 }
 
 void ScummEngine_v72he::drawWizPolygon(int resNum, int state, int id, int flags, int xmapNum, int dstResNum, int paletteNum) {
+	debug(1, "drawWizPolygon(resNum %d, id %d, flags 0x%X, xmapNum %d paletteNum %d)", resNum, id, flags, xmapNum, paletteNum);
 	int i;
 	WizPolygon *wp = NULL;
 	for (i = 0; i < ARRAYSIZE(_wiz._polygons); ++i) {
@@ -1374,6 +1386,12 @@ void ScummEngine_v90he::createWizEmptyImage(const WizParameters *params) {
 	}
 	res_size += 8 + img_w * img_h;
 	
+	const uint8 *palPtr;
+	if (_heversion >= 99) {
+		palPtr = _hePalettes + 1024;
+	} else {
+		palPtr = _currentPalette;
+	}
 	uint8 *res_data = res.createResource(rtImage, params->img.resNum, res_size);
 	if (!res_data) {
 		VAR(119) = -1;
@@ -1389,7 +1407,7 @@ void ScummEngine_v90he::createWizEmptyImage(const WizParameters *params) {
 		if (flags & 1) {
 			WRITE_BE_UINT32(res_data, 'RGBS'); res_data += 4;
 			WRITE_BE_UINT32(res_data, 0x308); res_data += 4;
-			memcpy(res_data, _currentPalette, 0x300); res_data += 0x300;			
+			memcpy(res_data, palPtr, 0x300); res_data += 0x300;			
 		}
 		if (flags & 2) {
 			WRITE_BE_UINT32(res_data, 'SPOT'); res_data += 4;

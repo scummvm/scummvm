@@ -439,7 +439,7 @@ public:
 	// Cursor/palette
 	void updateCursor();
 	virtual void animateCursor() {}
-	void updatePalette();
+	virtual void updatePalette();
 	virtual void saveOrLoadCursorImages(Serializer *s) {}
 
 	/**
@@ -983,12 +983,12 @@ protected:
 	void setupV1ManiacPalette();
 	void setupV1ZakPalette();
 	void setPalette(int pal, int room);
-	void setPaletteFromPtr(const byte *ptr, int numcolor = -1);
-	void setPalColor(int index, int r, int g, int b);
+	virtual void setPaletteFromPtr(const byte *ptr, int numcolor = -1);
+	virtual void setPalColor(int index, int r, int g, int b);
 	void setDirtyColors(int min, int max);
 	const byte *findPalInPals(const byte *pal, int index);
 	void swapPalColors(int a, int b);
-	void copyPalColor(int dst, int src);
+	virtual void copyPalColor(int dst, int src);
 	void cyclePalette();
 	void stopCycle(int i);
 	virtual void palManipulateInit(int resID, int start, int end, int time);
@@ -999,7 +999,7 @@ protected:
 	void moveMemInPalRes(int start, int end, byte direction);
 	void setupShadowPalette(int slot, int redScale, int greenScale, int blueScale, int startColor, int endColor);
 	void setupShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor, int start, int end);
-	void darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor);
+	virtual void darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor);
 	void desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor);
 
 	void setupCursor();
@@ -1089,6 +1089,7 @@ protected:
 	bool testGfxOtherUsageBits(int strip, int bit);
 
 public:
+	uint8 *_hePalettes;
 	byte _HEV7ActorPalette[256];
 	byte _roomPalette[256];
 	byte *_shadowPalette;

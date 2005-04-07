@@ -23,6 +23,7 @@ MODULE_OBJS := \
 	scumm/nut_renderer.o \
 	scumm/object.o \
 	scumm/palette.o \
+	scumm/palette_he.o \
 	scumm/player_mod.o \
 	scumm/player_v1.o \
 	scumm/player_nes.o \

@@ -2131,11 +2131,20 @@ void ScummEngine_v90he::o90_getObjectData() {
 }
 
 uint8 *ScummEngine_v90he::getHEPalette(int palSlot) {
-	assert(palSlot >= 1 && palSlot <= _numPalettes);
-	if (palSlot == 1) {
-		return _currentPalette; // XXX won't work, as size == 768
+	if (palSlot) {
+		assert(palSlot >= 1 && palSlot <= _numPalettes);
+		return _hePalettes + palSlot * 1024 + 768;
 	} else {
-		return _hePalettes + (palSlot - 2) * 1024;
+		return _hePalettes + 1768;
+	}
+}
+
+uint8 *ScummEngine_v90he::getHEPaletteIndex(int palSlot) {
+	if (palSlot) {
+		assert(palSlot >= 1 && palSlot <= _numPalettes);
+		return _hePalettes + palSlot * 1024;
+	} else {
+		return _hePalettes + 1024;
 	}
 }
 
@@ -2165,6 +2174,11 @@ void ScummEngine_v90he::setHEPaletteFromPtr(int palSlot, const uint8 *palData) {
 		*pc++ = *palData++;
 		*pi++ = i;
 	}
+	for (int i = 0; i < 10; ++i)
+		_hePalettes[palSlot * 1024 + 768 + i] = 1;
+	for (int i = 246; i < 256; ++i)
+		_hePalettes[palSlot * 1024 + 768 + i] = 1;
+	
 }
 
 void ScummEngine_v90he::setHEPaletteFromCostume(int palSlot, int resId) {
@@ -2205,7 +2219,7 @@ void ScummEngine_v90he::copyHEPalette(int dstPalSlot, int srcPalSlot) {
 	assert(dstPalSlot >= 1 && dstPalSlot <= _numPalettes);
 	assert(srcPalSlot >= 1 && srcPalSlot <= _numPalettes);
 	if (dstPalSlot != srcPalSlot) {
-		memcpy(_hePalettes + srcPalSlot * 1024, _hePalettes + dstPalSlot * 1024, 1024);
+		memcpy(_hePalettes + dstPalSlot * 1024, _hePalettes + srcPalSlot * 1024, 1024);
 	}
 }
 
@@ -2214,7 +2228,7 @@ void ScummEngine_v90he::copyHEPaletteColor(int palSlot, uint8 dstColor, uint8 sr
 	uint8 *dstPal = _hePalettes + palSlot * 1024 + dstColor * 3;
 	uint8 *srcPal = _hePalettes + (palSlot + 1) * 1024 + srcColor * 3;
 	memcpy(dstPal, srcPal, 3);
-	*(_hePalettes + palSlot * 1024 + 768 + dstColor) = srcColor;
+	_hePalettes[palSlot * 1024 + 768] = srcColor;
 }
 
 void ScummEngine_v90he::o90_getPaletteData() {
@@ -2225,6 +2239,13 @@ void ScummEngine_v90he::o90_getPaletteData() {
 
 	switch (subOp) {
 	case 0:
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		push(0);
 		break;
 	case 7:
 		pop();
@@ -2251,7 +2272,7 @@ void ScummEngine_v90he::o90_getPaletteData() {
 	default:
 		error("o90_getPaletteData: Unknown case %d", subOp);
 	}
-	debug(1,"o90_getPaletteData stub (%d)", subOp);
+	debug(0,"o90_getPaletteData stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_paletteOps() {
@@ -2323,7 +2344,7 @@ void ScummEngine_v90he::o90_paletteOps() {
 	default:
 		error("o90_paletteOps: Unknown case %d", subOp);
 	}
-	debug(1,"o90_paletteOps stub (%d)", subOp);
+	debug(0,"o90_paletteOps stub (%d)", subOp);
 }
 
 
