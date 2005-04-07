@@ -47,37 +47,37 @@ Sound *Sound::giveSound(SoundMixer *mixer, QueenEngine *vm, uint8 compression) {
 	if (!mixer->isReady())
 		return new SilentSound(mixer, vm);
 	
-	switch(compression) {
-		case COMPRESSION_NONE:
-				return new SBSound(mixer, vm);
-				break;
-		case COMPRESSION_MP3:
-				#ifndef USE_MAD
-					warning("Using MP3 compressed datafile, but MP3 support not compiled in");
-					return new SilentSound(mixer, vm);
-				#else
-					return new MP3Sound(mixer, vm);
-				#endif
-				break;
-		case COMPRESSION_OGG:
-				#ifndef USE_VORBIS
-					warning("Using OGG compressed datafile, but OGG support not compiled in");
-					return new SilentSound(mixer, vm);
-				#else
-					return new OGGSound(mixer, vm);
-				#endif
-				break;
-		case COMPRESSION_FLAC:
-				#ifndef USE_FLAC
-					warning("Using FLAC compressed datafile, but FLAC support not compiled in");
-					return new SilentSound(mixer, vm);
-				#else
-					return new FLACSound(mixer, vm);
-				#endif
-				break;
-		default:
-				warning("Unknown compression type");
-				return new SilentSound(mixer, vm);
+	switch (compression) {
+	case COMPRESSION_NONE:
+		return new SBSound(mixer, vm);
+		break;
+	case COMPRESSION_MP3:
+#ifndef USE_MAD
+		warning("Using MP3 compressed datafile, but MP3 support not compiled in");
+		return new SilentSound(mixer, vm);
+#else
+		return new MP3Sound(mixer, vm);
+#endif
+		break;
+	case COMPRESSION_OGG:
+#ifndef USE_VORBIS
+		warning("Using OGG compressed datafile, but OGG support not compiled in");
+		return new SilentSound(mixer, vm);
+#else
+		return new OGGSound(mixer, vm);
+#endif
+		break;
+	case COMPRESSION_FLAC:
+#ifndef USE_FLAC
+		warning("Using FLAC compressed datafile, but FLAC support not compiled in");
+		return new SilentSound(mixer, vm);
+#else
+		return new FLACSound(mixer, vm);
+#endif
+		break;
+	default:
+		warning("Unknown compression type");
+		return new SilentSound(mixer, vm);
 	}
 }
 
@@ -161,15 +161,15 @@ void Sound::playSong(int16 songNum) {
 
 	int override = (_vm->resource()->isDemo()) ? _songDemo[songNum - 1].override : _song[songNum - 1].override;
 	switch (override) {
-		// Override all songs
-		case  1:
-			break;
-		// Alter song settings (such as volume) and exit
-		case  2:
-			_vm->music()->toggleVChange();
-		default:
-			return;
-			break;
+	// Override all songs
+	case  1:
+		break;
+	// Alter song settings (such as volume) and exit
+	case  2:
+		_vm->music()->toggleVChange();
+	default:
+		return;
+		break;
 	}
 	
 	_lastOverride = songNum;

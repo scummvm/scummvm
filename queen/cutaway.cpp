@@ -440,7 +440,7 @@ Cutaway::ObjectType Cutaway::getObjectType(CutawayObject &object) {
 		objectType = OBJECT_TYPE_NO_ANIMATION;
 	}
 
-	switch(object.objectNumber) {
+	switch (object.objectNumber) {
 	case -2:
 		// Text to be spoken
 		objectType = OBJECT_TYPE_TEXT_SPEAK;

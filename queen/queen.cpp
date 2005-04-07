@@ -71,17 +71,17 @@ GameList Engine_QUEEN_gameList() {
 }
 
 GameSettings determineTarget(uint32 size) {
-	switch(size) {
-		case 3724538:	//regular demo
-		case 3732177:
-			return queen_setting[1];
-			break;
-		case 1915913:   //interview demo
-			return queen_setting[2];
-			break;
-		default:	//non-demo
-			return queen_setting[0];
-			break;
+	switch (size) {
+	case 3724538:	//regular demo
+	case 3732177:
+		return queen_setting[1];
+		break;
+	case 1915913:   //interview demo
+		return queen_setting[2];
+		break;
+	default:	//non-demo
+		return queen_setting[0];
+		break;
 	}
 	return queen_setting[0];
 }
