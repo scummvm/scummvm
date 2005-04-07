@@ -890,7 +890,7 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 	uint8 *dataPtr = getResourceAddress(rtImage, resNum);
 	if (dataPtr) {
 		uint8 *rmap = NULL;
-		//uint8 *xmap = findWrappedBlock(MKID('XMAP'), dataPtr, state, 0);
+		uint8 *xmap = findWrappedBlock(MKID('XMAP'), dataPtr, state, 0);
 		
 		uint8 *wizh = findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
 		assert(wizh);
@@ -965,20 +965,24 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 		}
 
 		// XXX handle 'XMAP' / 'RMAP' data
+		if (xmap) {
+			palPtr = xmap;
+		}
+		if (flags & kWIFRemapPalette) {
+			palPtr = rmap + 4;
+		}
 		if (comp == 1) {
+			// TODO Adding masking for flags 0x80 and 0x100
 			if (flags & 0x80) {
-				warning("drawWizImage() unhandled flag 0x80");
+				error("drawWizImage() unhandled flag 0x80");
 			} else if (flags & 0x100) {
-				warning("drawWizImage() unhandled flag 0x100");
+				error("drawWizImage() unhandled flag 0x100");
 			} else {
 				_wiz.copyWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, palPtr);
 			}
 		} else if (comp == 0 || comp == 2 || comp == 3) {
 			uint8 *trns = findWrappedBlock(MKID('TRNS'), dataPtr, state, 0);
 			int color = (trns == NULL) ? VAR(VAR_WIZ_TCOLOR) : -1;
-			if (flags & kWIFRemapPalette) {
-				palPtr = rmap + 4;
-			}
 			_wiz.copyRawWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, color);
 		} else {
 			warning("unhandled wiz compression type %d", comp);
