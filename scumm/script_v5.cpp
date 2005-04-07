@@ -1136,7 +1136,7 @@ void ScummEngine_v5::o5_saveLoadGame() {
 		slot = 1;
 		if (a == 1)
 			_opcode = 0x40;
-		else if (a == 2)
+		else if ((a == 2) || (_features & GF_NES))
 			_opcode = 0x80;
 	} else {
 		_opcode = a & 0xE0;

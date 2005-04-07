@@ -519,6 +519,9 @@ void ScummEngine_v2::o2_assignVarByte() {
 void ScummEngine_v2::o2_setObjPreposition() {
 	int obj = getVarOrDirectWord(PARAM_1);
 	int unk = fetchScriptByte();
+	
+	if (_features & GF_NES)
+		return;
 
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
 		// FIXME: this might not work properly the moment we save and restore the game.
@@ -1280,16 +1283,15 @@ void ScummEngine_v2::o2_lights() {
 	c = fetchScriptByte();
 
 	if (c == 0) {
-		if (_gameId == GID_MANIAC && _version == 1) {
+		if (_gameId == GID_MANIAC && _version == 1 && !(_features & GF_NES)) {
 			// Convert older light mode values into
 			// equivalent values.of later games
 			// 0 Darkness
 			// 1 Flashlight
 			// 2 Lighted area
-			// 11 and 12 are used by NES version
-			if (a == 2 || a == 11)
+			if (a == 2)
 				VAR(VAR_CURRENT_LIGHTS) = 11; 
-			else if (a == 1 || a == 12)
+			else if (a == 1)
 				VAR(VAR_CURRENT_LIGHTS) = 4;
 			else 
 				VAR(VAR_CURRENT_LIGHTS) = 0;
@@ -1353,7 +1355,7 @@ void ScummEngine_v2::o2_delay() {
 	delay = 0xFFFFFF - delay;
 
 	vm.slot[_currentScript].delay = delay;
-	vm.slot[_currentScript].status = 1;
+	vm.slot[_currentScript].status = ssPaused;
 	o5_breakHere();
 }
 

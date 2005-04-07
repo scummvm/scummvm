@@ -579,32 +579,27 @@ void APU_Reset (void) {
 	Frame.Cycles = 1;
 }
 
-int16 sample_pos = 0;
-bool sample_ok = false;
+int16 APU_GetSample(void) {
+	int sampcycles = 0, samppos = 0;
+	int NewBufPos = APU.BufPos;
+	while (NewBufPos == APU.BufPos) {
+		NewBufPos = APU.SampleRate * ++APU.Cycles / 1789773;
+		if (APU.Cycles == 1789773) // we've generated 1 second, so we can reset our counters now
+			APU.Cycles = NewBufPos = 0;
 
-void APU_Run(void) {
-	static int sampcycles = 0, samppos = 0;
-	int NewBufPos = APU.SampleRate * ++APU.Cycles / 1789773;
+		Frame_Run();
+		Square0_Run();
+		Square1_Run();
+		Triangle_Run();
+		Noise_Run();
 
-	if (NewBufPos == APU.SampleRate)	/* we've generated 1 second, so we can reset our counters now */
-		APU.Cycles = NewBufPos = 0;
-
-	Frame_Run();
-	Square0_Run();
-	Square1_Run();
-	Triangle_Run();
-	Noise_Run();
-
-	samppos += Square0.Pos + Square1.Pos + Triangle.Pos + Noise.Pos;
-	sampcycles++;
-	
-	if (NewBufPos != APU.BufPos) {
-		APU.BufPos = NewBufPos;
-		samppos = (samppos << 6) / sampcycles;
-		sample_pos = samppos;
-		sample_ok = true;
-		samppos = sampcycles = 0;
+		samppos += Square0.Pos + Square1.Pos + Triangle.Pos + Noise.Pos;
+		sampcycles++;
 	}
+
+	APU.BufPos = NewBufPos;
+
+	return (samppos << 6) / sampcycles;
 }
 
 }
@@ -652,15 +647,12 @@ Player_NES::~Player_NES() {
 }
 
 void Player_NES::setMusicVolume (int vol) {
+	_maxvol = vol;
 }
 
 int Player_NES::readBuffer(int16 *buffer, const int numSamples) {
 	for (int n = 0; n < numSamples; n++) {
-		while (!APUe::sample_ok)
-			APUe::APU_Run();
-
-		APUe::sample_ok = false;
-		buffer[n] = APUe::sample_pos;
+		buffer[n] = APUe::APU_GetSample() * _maxvol / 255;
 		_current_sample++;
 
 		if (_current_sample == _samples_per_frame) {

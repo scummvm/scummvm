@@ -642,7 +642,7 @@ byte NESCostumeRenderer::drawLimb(const Actor *a, int limb) {
 	if (cost.curpos[limb] == 0xFFFF)
 		return 0;
 
-	if (_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color)
+	if (_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_base)
 		palette = _vm->_NESPalette[1];
 	else
 		palette = darkpalette;
