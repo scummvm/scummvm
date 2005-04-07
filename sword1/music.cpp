@@ -111,20 +111,20 @@ AudioStream *MusicHandle::createAudioSource(void) {
 	_file.seek(0);
 	switch (_musicMode) {
 #ifdef USE_MAD
-		case MusicMp3:
-			return makeMP3Stream(&_file, _file.size());			
+	case MusicMp3:
+		return makeMP3Stream(&_file, _file.size());			
 #endif
 #ifdef USE_VORBIS
-		case MusicVorbis:
-			return makeVorbisStream(&_file, _file.size());
+	case MusicVorbis:
+		return makeVorbisStream(&_file, _file.size());
 #endif
-		case MusicWave:
-			return makeWaveStream(&_file, 0);
-		case MusicNone: // shouldn't happen
-			warning("createAudioSource ran into null create\n");
-			return NULL;
-		default:
-			error("MusicHandle::createAudioSource: called with illegal MusicMode");
+	case MusicWave:
+		return makeWaveStream(&_file, 0);
+	case MusicNone: // shouldn't happen
+		warning("createAudioSource ran into null create\n");
+		return NULL;
+	default:
+		error("MusicHandle::createAudioSource: called with illegal MusicMode");
 	}
 	return NULL; // never reached
 }

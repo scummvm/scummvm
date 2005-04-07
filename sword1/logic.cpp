@@ -132,12 +132,12 @@ void Logic::engine(void) {
 				if (compact->o_status & STAT_LOGIC) { // does the object want to be processed?
 					if (compact->o_status & STAT_EVENTS) {
 						//subscribed to the global-event-switcher? and in logic mode
-						switch(compact->o_logic) {
-							case LOGIC_pause_for_event:
-							case LOGIC_idle:
-							case LOGIC_AR_animate:
-								_eventMan->checkForEvent(compact);
-								break;
+						switch (compact->o_logic) {
+						case LOGIC_pause_for_event:
+						case LOGIC_idle:
+						case LOGIC_AR_animate:
+							_eventMan->checkForEvent(compact);
+							break;
 						}
 					}
 					debug(7, "Logic::engine: handling compact %d (%X)", currentId, currentId);
@@ -166,84 +166,84 @@ void Logic::engine(void) {
 void Logic::processLogic(Object *compact, uint32 id) {
 	int logicRet;
 	do {
-		switch(compact->o_logic) {
-			case LOGIC_idle:
+		switch (compact->o_logic) {
+		case LOGIC_idle:
+			logicRet = 0;
+			break;
+		case LOGIC_pause:
+		case LOGIC_pause_for_event:
+			if (compact->o_pause) {
+				compact->o_pause--;
 				logicRet = 0;
-				break;
-			case LOGIC_pause:
-			case LOGIC_pause_for_event:
-				if (compact->o_pause) {
-					compact->o_pause--;
-					logicRet = 0;
-				} else {
-					compact->o_logic = LOGIC_script;
-					logicRet = 1;
-				}
-				break;
-			case LOGIC_quit:
-				compact->o_logic = LOGIC_script;
-				logicRet = 0;
-				break;
-			case LOGIC_wait_for_sync:
-				if (compact->o_sync) {
-					logicRet = 1;
-					compact->o_logic = LOGIC_script;
-				} else
-					logicRet = 0;
-				break;
-			case LOGIC_choose:
-				_scriptVars[CUR_ID] = id;
-				logicRet = _menu->logicChooser(compact);
-				break;
-			case LOGIC_wait_for_talk:
-				logicRet = logicWaitTalk(compact);
-				break;
-			case LOGIC_start_talk:
-				logicRet = logicStartTalk(compact);
-				break;
-			case LOGIC_script:
-				_scriptVars[CUR_ID] = id;
-				logicRet = scriptManager(compact, id);
-				break;
-			case LOGIC_new_script:
-				compact->o_tree.o_script_pc[compact->o_tree.o_script_level] = _newScript;
-				compact->o_tree.o_script_id[compact->o_tree.o_script_level] = _newScript;
+			} else {
 				compact->o_logic = LOGIC_script;
 				logicRet = 1;
-				break;
-			case LOGIC_AR_animate:
-				logicRet = logicArAnimate(compact, id);
-				break;
-			case LOGIC_restart:
-				compact->o_tree.o_script_pc[compact->o_tree.o_script_level] = compact->o_tree.o_script_id[compact->o_tree.o_script_level];
+			}
+			break;
+		case LOGIC_quit:
+			compact->o_logic = LOGIC_script;
+			logicRet = 0;
+			break;
+		case LOGIC_wait_for_sync:
+			if (compact->o_sync) {
+				logicRet = 1;
 				compact->o_logic = LOGIC_script;
-				logicRet=1;
-				break;
-			case LOGIC_bookmark:
-				memcpy(&(compact->o_tree.o_script_level), &(compact->o_bookmark.o_script_level), sizeof(ScriptTree));
-				if (id == GMASTER_79) {
-					// workaround for ending script.
-					// GMASTER_79 is not prepared for mega_interact receiving INS_quit
-					fnSuicide(compact, id, 0, 0, 0, 0, 0, 0);
-					logicRet = 0;
-				} else {
-					compact->o_logic = LOGIC_script;
-					logicRet = 1;
-				}
-				break;
-			case LOGIC_speech:
-				logicRet = speechDriver(compact);
-				break;
-			case LOGIC_full_anim:
-				logicRet = fullAnimDriver(compact);
-				break;
-			case LOGIC_anim:
-				logicRet = animDriver(compact);
-				break;
+			} else
+				logicRet = 0;
+			break;
+		case LOGIC_choose:
+			_scriptVars[CUR_ID] = id;
+			logicRet = _menu->logicChooser(compact);
+			break;
+		case LOGIC_wait_for_talk:
+			logicRet = logicWaitTalk(compact);
+			break;
+		case LOGIC_start_talk:
+			logicRet = logicStartTalk(compact);
+			break;
+		case LOGIC_script:
+			_scriptVars[CUR_ID] = id;
+			logicRet = scriptManager(compact, id);
+			break;
+		case LOGIC_new_script:
+			compact->o_tree.o_script_pc[compact->o_tree.o_script_level] = _newScript;
+			compact->o_tree.o_script_id[compact->o_tree.o_script_level] = _newScript;
+			compact->o_logic = LOGIC_script;
+			logicRet = 1;
+			break;
+		case LOGIC_AR_animate:
+			logicRet = logicArAnimate(compact, id);
+			break;
+		case LOGIC_restart:
+			compact->o_tree.o_script_pc[compact->o_tree.o_script_level] = compact->o_tree.o_script_id[compact->o_tree.o_script_level];
+			compact->o_logic = LOGIC_script;
+			logicRet=1;
+			break;
+		case LOGIC_bookmark:
+			memcpy(&(compact->o_tree.o_script_level), &(compact->o_bookmark.o_script_level), sizeof(ScriptTree));
+			if (id == GMASTER_79) {
+				// workaround for ending script.
+				// GMASTER_79 is not prepared for mega_interact receiving INS_quit
+				fnSuicide(compact, id, 0, 0, 0, 0, 0, 0);
+				logicRet = 0;
+			} else {
+				compact->o_logic = LOGIC_script;
+				logicRet = 1;
+			}
+			break;
+		case LOGIC_speech:
+			logicRet = speechDriver(compact);
+			break;
+		case LOGIC_full_anim:
+			logicRet = fullAnimDriver(compact);
+			break;
+		case LOGIC_anim:
+			logicRet = animDriver(compact);
+			break;
 
-			default:
-				error("Fatal error: compact %d's logic == %X!", id, compact->o_logic);
-				break;
+		default:
+			error("Fatal error: compact %d's logic == %X!", id, compact->o_logic);
+			break;
 		}
 	} while(logicRet);
 }
@@ -483,201 +483,200 @@ int Logic::interpretScript(Object *compact, int id, Header *scriptModule, int sc
 	while (1) {
 		assert((stackIdx >= 0) && (stackIdx <= MAX_STACK_SIZE));
 		switch (scriptCode[pc++]) {
-			case IT_MCODE:
-				a = b = c = d = e = f = 0;
-				mCodeNumber = scriptCode[pc++];
-				mCodeArguments = scriptCode[pc++];
-				switch (mCodeArguments) {
-					case 6: f = stack[--stackIdx];
-					case 5: e = stack[--stackIdx];
-					case 4: d = stack[--stackIdx];
-					case 3: c = stack[--stackIdx];
-					case 2: b = stack[--stackIdx];
-					case 1: a = stack[--stackIdx];
-					case 0:
-						Debug::callMCode(mCodeNumber, mCodeArguments, a, b, c, d, e, f);
-						mCodeReturn = (this->*_mcodeTable[mCodeNumber])(compact, id, a, b, c, d, e, f);
-						break;
-					default:
-						warning("mcode[%d]: too many arguments(%d)", mCodeNumber, mCodeArguments);
-				}
-				if (mCodeReturn == 0) 
-					return pc;
-				break;
-			case IT_PUSHNUMBER:
-				debug(9, "IT_PUSH: %d", scriptCode[pc]);
-				stack[stackIdx++] = scriptCode[pc++];
-				break;
-			case IT_PUSHVARIABLE:
-				debug(9, "IT_PUSHVARIABLE: ScriptVar[%d] => %d", scriptCode[pc], _scriptVars[scriptCode[pc]]);
-				varNum = scriptCode[pc++];
-				if (SwordEngine::_systemVars.isDemo) {
-					if (varNum >= 397) // BS1 Demo has different number of script variables
-						varNum++;
-					if (varNum >= 699)
-						varNum++;
-				}
-				stack[stackIdx++] = _scriptVars[varNum];
-				break;
-			case IT_NOTEQUAL:
-				stackIdx--;
-				debug(9, "IT_NOTEQUAL: RESULT = %d", stack[stackIdx - 1] != stack[stackIdx]);
-				stack[stackIdx - 1] = (stack[stackIdx - 1] != stack[stackIdx]);
-				break;
-			case IT_ISEQUAL:
-				stackIdx--;
-				debug(9, "IT_ISEQUAL: RESULT = %d", stack[stackIdx - 1] == stack[stackIdx]);
-				stack[stackIdx - 1] = (stack[stackIdx - 1] == stack[stackIdx]);
-				break;
-			case IT_PLUS:
-				stackIdx--;
-				debug(9, "IT_PLUS: RESULT = %d", stack[stackIdx - 1] + stack[stackIdx]);
-				stack[stackIdx - 1] = (stack[stackIdx - 1] + stack[stackIdx]);
-				break;
-			case IT_TIMES:
-				stackIdx--;
-				debug(9, "IT_TIMES: RESULT = %d", stack[stackIdx - 1] * stack[stackIdx]);
-				stack[stackIdx - 1] = (stack[stackIdx - 1] * stack[stackIdx]);
-				break;
-			case IT_ANDAND:
-				stackIdx--;
-				debug(9, "IT_ANDAND: RESULT = %d", stack[stackIdx - 1] && stack[stackIdx]);
-				stack[stackIdx - 1] = (stack[stackIdx - 1] && stack[stackIdx]);
-				break;
-			case IT_OROR:           // ||
-				stackIdx--;
-				debug(9, "IT_OROR: RESULT = %d", stack[stackIdx - 1] || stack[stackIdx]);
-				stack[stackIdx - 1] = (stack[stackIdx - 1] || stack[stackIdx]);
-				break;
-			case IT_LESSTHAN:
-				stackIdx--;
-				debug(9, "IT_LESSTHAN: RESULT = %d", stack[stackIdx - 1] < stack[stackIdx]);
-				stack[stackIdx - 1] = (stack[stackIdx - 1] < stack[stackIdx]);
-				break;
-			case IT_NOT:
-				debug(9, "IT_NOT: RESULT = %d", stack[stackIdx - 1] ? 0 : 1);
-				if (stack[stackIdx - 1])
-					stack[stackIdx - 1] = 0;
-				else
-					stack[stackIdx - 1] = 1;
-				break;
-			case IT_MINUS:
-				stackIdx--;
-				debug(9, "IT_MINUS: RESULT = %d", stack[stackIdx - 1] - stack[stackIdx]);
-				stack[stackIdx - 1] = (stack[stackIdx - 1] - stack[stackIdx]);
-				break;
-			case IT_AND:
-				stackIdx--;
-				debug(9, "IT_AND: RESULT = %d", stack[stackIdx - 1] & stack[stackIdx]);
-				stack[stackIdx - 1] = (stack[stackIdx - 1] & stack[stackIdx]);
-				break;
-			case IT_OR:
-				stackIdx--;
-				debug(9, "IT_OR: RESULT = %d", stack[stackIdx - 1] | stack[stackIdx]);
-				stack[stackIdx - 1] = (stack[stackIdx - 1] | stack[stackIdx]);
-				break;
-			case IT_GTE:
-				stackIdx--;
-				debug(9, "IT_GTE: RESULT = %d", stack[stackIdx - 1] >= stack[stackIdx]);
-				stack[stackIdx - 1] = (stack[stackIdx - 1] >= stack[stackIdx]);
-				break;
-			case IT_LTE:
-				stackIdx--;
-				debug(9, "IT_LTE: RESULT = %d", stack[stackIdx - 1] <= stack[stackIdx]);
-				stack[stackIdx - 1] = (stack[stackIdx - 1] <= stack[stackIdx]);
-				break;
-			case IT_DEVIDE:
-				stackIdx--;
-				debug(9, "IT_DEVIDE: RESULT = %d", stack[stackIdx - 1] / stack[stackIdx]);
-				stack[stackIdx - 1] = (stack[stackIdx - 1] / stack[stackIdx]);
-				break;
-			case IT_GT:
-				stackIdx--;
-				debug(9, "IT_GT: RESULT = %d", stack[stackIdx - 1] > stack[stackIdx]);
-				stack[stackIdx - 1] = (stack[stackIdx - 1] > stack[stackIdx]);
-				break;
-			case IT_SCRIPTEND:
-				debug(9, "IT_SCRIPTEND");
-				return 0;
-			case IT_POPVAR:         // pop a variable
-				debug(9, "IT_POPVAR: ScriptVars[%d] = %d", scriptCode[pc], stack[stackIdx-1]);
-				varNum = scriptCode[pc++];
-				if (SwordEngine::_systemVars.isDemo) {
-					if (varNum >= 397) // BS1 Demo has different number of script variables
-						varNum++;
-					if (varNum >= 699)
-						varNum++;
-				}
-				_scriptVars[varNum] = stack[--stackIdx];
-				break;
-			case IT_POPLONGOFFSET:
-				offset = scriptCode[pc++];
-				debug(9, "IT_POPLONGOFFSET: Cpt[%d] = %d", offset, stack[stackIdx - 1]);
-				*((int32 *)((uint8*)compact + offset)) = stack[--stackIdx];
-				break;
-			case IT_PUSHLONGOFFSET:
-				offset = scriptCode[pc++];
-				debug(9, "IT_PUSHLONGOFFSET: PUSH Cpt[%d] (==%d)", offset, *((int32 *)((uint8*)compact + offset)));
-				stack[stackIdx++] = *((int32 *)((uint8*)compact + offset));
-				break;
-			case IT_SKIPONFALSE:
-				debug(9, "IT_SKIPONFALSE: %d (%s)", scriptCode[pc], (stack[stackIdx-1] ? "IS TRUE (NOT SKIPPED)" : "IS FALSE (SKIPPED)"));
-				if (stack[--stackIdx])
-					pc++;
-				else
-					pc += scriptCode[pc];
-				break;
-			case IT_SKIP:
-				debug(9, "IT_SKIP: %d", scriptCode[pc]);
-				pc += scriptCode[pc];
-				break;
-			case IT_SWITCH:         // The mega switch statement
-				debug(9, "IT_SWITCH: [SORRY, NO DEBUG INFO]");
-				{
-					int switchValue = stack[--stackIdx];
-					int switchCount = scriptCode[pc++];
-					int doneSwitch=0;
-					
-					for (int cnt = 0; (cnt < switchCount) && (doneSwitch==0); cnt++) {
-						if (switchValue == scriptCode[pc]) {
-							pc += scriptCode[pc+1];
-							doneSwitch=1;
-						} else
-							pc += 2;
-						
-					}
-					if (doneSwitch == 0)
-						pc += scriptCode[pc];
-				}
-				break;
-			case IT_SKIPONTRUE:     // skip if expression true
-				debug(9, "IT_SKIPONTRUE: %d (%s)", scriptCode[pc], (stack[stackIdx-1] ? "IS TRUE (SKIPPED)" : "IS FALSE (NOT SKIPPED)"));
-				stackIdx--;
-				if (stack[stackIdx])
-					pc += scriptCode[pc];
-				else
-					pc++;
-				break;
-			case IT_PRINTF:
-				debug(0, "IT_PRINTF(%d)",stack[stackIdx]);
-				break;
-			case IT_RESTARTSCRIPT:
-				debug(9, "IT_RESTARTSCRIPT");
-				pc = startOfScript;
-				break;
-			case IT_POPWORDOFFSET:
-				offset = scriptCode[pc++];
-				debug(9, "IT_POPWORDOFFSET: Cpt[%d] = %d", offset, stack[stackIdx - 1] & 0xFFFF);
-				*((int32 *)((uint8*)compact + offset)) = stack[--stackIdx] & 0xffff;
-				break;
-			case IT_PUSHWORDOFFSET:
-				offset = scriptCode[pc++];
-				debug(9, "IT_PUSHWORDOFFSET: PUSH Cpt[%d] == %d", offset, (*((int32 *)((uint8*)compact + offset))) & 0xffff);
-				stack[stackIdx++] = (*((int32 *)((uint8*)compact + offset))) & 0xffff;
+		case IT_MCODE:
+			a = b = c = d = e = f = 0;
+			mCodeNumber = scriptCode[pc++];
+			mCodeArguments = scriptCode[pc++];
+			switch (mCodeArguments) {
+			case 6: f = stack[--stackIdx];
+			case 5: e = stack[--stackIdx];
+			case 4: d = stack[--stackIdx];
+			case 3: c = stack[--stackIdx];
+			case 2: b = stack[--stackIdx];
+			case 1: a = stack[--stackIdx];
+			case 0:
+				Debug::callMCode(mCodeNumber, mCodeArguments, a, b, c, d, e, f);
+				mCodeReturn = (this->*_mcodeTable[mCodeNumber])(compact, id, a, b, c, d, e, f);
 				break;
 			default:
-				error("Invalid operator %d",scriptCode[pc-1]);
-				return 0;
+				warning("mcode[%d]: too many arguments(%d)", mCodeNumber, mCodeArguments);
+			}
+			if (mCodeReturn == 0) 
+				return pc;
+			break;
+		case IT_PUSHNUMBER:
+			debug(9, "IT_PUSH: %d", scriptCode[pc]);
+			stack[stackIdx++] = scriptCode[pc++];
+			break;
+		case IT_PUSHVARIABLE:
+			debug(9, "IT_PUSHVARIABLE: ScriptVar[%d] => %d", scriptCode[pc], _scriptVars[scriptCode[pc]]);
+			varNum = scriptCode[pc++];
+			if (SwordEngine::_systemVars.isDemo) {
+				if (varNum >= 397) // BS1 Demo has different number of script variables
+					varNum++;
+				if (varNum >= 699)
+					varNum++;
+			}
+			stack[stackIdx++] = _scriptVars[varNum];
+			break;
+		case IT_NOTEQUAL:
+			stackIdx--;
+			debug(9, "IT_NOTEQUAL: RESULT = %d", stack[stackIdx - 1] != stack[stackIdx]);
+			stack[stackIdx - 1] = (stack[stackIdx - 1] != stack[stackIdx]);
+			break;
+		case IT_ISEQUAL:
+			stackIdx--;
+			debug(9, "IT_ISEQUAL: RESULT = %d", stack[stackIdx - 1] == stack[stackIdx]);
+			stack[stackIdx - 1] = (stack[stackIdx - 1] == stack[stackIdx]);
+			break;
+		case IT_PLUS:
+			stackIdx--;
+			debug(9, "IT_PLUS: RESULT = %d", stack[stackIdx - 1] + stack[stackIdx]);
+			stack[stackIdx - 1] = (stack[stackIdx - 1] + stack[stackIdx]);
+			break;
+		case IT_TIMES:
+			stackIdx--;
+			debug(9, "IT_TIMES: RESULT = %d", stack[stackIdx - 1] * stack[stackIdx]);
+			stack[stackIdx - 1] = (stack[stackIdx - 1] * stack[stackIdx]);
+			break;
+		case IT_ANDAND:
+			stackIdx--;
+			debug(9, "IT_ANDAND: RESULT = %d", stack[stackIdx - 1] && stack[stackIdx]);
+			stack[stackIdx - 1] = (stack[stackIdx - 1] && stack[stackIdx]);
+			break;
+		case IT_OROR:           // ||
+			stackIdx--;
+			debug(9, "IT_OROR: RESULT = %d", stack[stackIdx - 1] || stack[stackIdx]);
+			stack[stackIdx - 1] = (stack[stackIdx - 1] || stack[stackIdx]);
+			break;
+		case IT_LESSTHAN:
+			stackIdx--;
+			debug(9, "IT_LESSTHAN: RESULT = %d", stack[stackIdx - 1] < stack[stackIdx]);
+			stack[stackIdx - 1] = (stack[stackIdx - 1] < stack[stackIdx]);
+			break;
+		case IT_NOT:
+			debug(9, "IT_NOT: RESULT = %d", stack[stackIdx - 1] ? 0 : 1);
+			if (stack[stackIdx - 1])
+				stack[stackIdx - 1] = 0;
+			else
+				stack[stackIdx - 1] = 1;
+			break;
+		case IT_MINUS:
+			stackIdx--;
+			debug(9, "IT_MINUS: RESULT = %d", stack[stackIdx - 1] - stack[stackIdx]);
+			stack[stackIdx - 1] = (stack[stackIdx - 1] - stack[stackIdx]);
+			break;
+		case IT_AND:
+			stackIdx--;
+			debug(9, "IT_AND: RESULT = %d", stack[stackIdx - 1] & stack[stackIdx]);
+			stack[stackIdx - 1] = (stack[stackIdx - 1] & stack[stackIdx]);
+			break;
+		case IT_OR:
+			stackIdx--;
+			debug(9, "IT_OR: RESULT = %d", stack[stackIdx - 1] | stack[stackIdx]);
+			stack[stackIdx - 1] = (stack[stackIdx - 1] | stack[stackIdx]);
+			break;
+		case IT_GTE:
+			stackIdx--;
+			debug(9, "IT_GTE: RESULT = %d", stack[stackIdx - 1] >= stack[stackIdx]);
+			stack[stackIdx - 1] = (stack[stackIdx - 1] >= stack[stackIdx]);
+			break;
+		case IT_LTE:
+			stackIdx--;
+			debug(9, "IT_LTE: RESULT = %d", stack[stackIdx - 1] <= stack[stackIdx]);
+			stack[stackIdx - 1] = (stack[stackIdx - 1] <= stack[stackIdx]);
+			break;
+		case IT_DEVIDE:
+			stackIdx--;
+			debug(9, "IT_DEVIDE: RESULT = %d", stack[stackIdx - 1] / stack[stackIdx]);
+			stack[stackIdx - 1] = (stack[stackIdx - 1] / stack[stackIdx]);
+			break;
+		case IT_GT:
+			stackIdx--;
+			debug(9, "IT_GT: RESULT = %d", stack[stackIdx - 1] > stack[stackIdx]);
+			stack[stackIdx - 1] = (stack[stackIdx - 1] > stack[stackIdx]);
+			break;
+		case IT_SCRIPTEND:
+			debug(9, "IT_SCRIPTEND");
+			return 0;
+		case IT_POPVAR:         // pop a variable
+			debug(9, "IT_POPVAR: ScriptVars[%d] = %d", scriptCode[pc], stack[stackIdx-1]);
+			varNum = scriptCode[pc++];
+			if (SwordEngine::_systemVars.isDemo) {
+				if (varNum >= 397) // BS1 Demo has different number of script variables
+					varNum++;
+				if (varNum >= 699)
+					varNum++;
+			}
+			_scriptVars[varNum] = stack[--stackIdx];
+			break;
+		case IT_POPLONGOFFSET:
+			offset = scriptCode[pc++];
+			debug(9, "IT_POPLONGOFFSET: Cpt[%d] = %d", offset, stack[stackIdx - 1]);
+			*((int32 *)((uint8*)compact + offset)) = stack[--stackIdx];
+			break;
+		case IT_PUSHLONGOFFSET:
+			offset = scriptCode[pc++];
+			debug(9, "IT_PUSHLONGOFFSET: PUSH Cpt[%d] (==%d)", offset, *((int32 *)((uint8*)compact + offset)));
+			stack[stackIdx++] = *((int32 *)((uint8*)compact + offset));
+			break;
+		case IT_SKIPONFALSE:
+			debug(9, "IT_SKIPONFALSE: %d (%s)", scriptCode[pc], (stack[stackIdx-1] ? "IS TRUE (NOT SKIPPED)" : "IS FALSE (SKIPPED)"));
+			if (stack[--stackIdx])
+				pc++;
+			else
+				pc += scriptCode[pc];
+			break;
+		case IT_SKIP:
+			debug(9, "IT_SKIP: %d", scriptCode[pc]);
+			pc += scriptCode[pc];
+			break;
+		case IT_SWITCH:         // The mega switch statement
+			debug(9, "IT_SWITCH: [SORRY, NO DEBUG INFO]");
+			{
+				int switchValue = stack[--stackIdx];
+				int switchCount = scriptCode[pc++];
+				int doneSwitch=0;
+					
+				for (int cnt = 0; (cnt < switchCount) && (doneSwitch==0); cnt++) {
+					if (switchValue == scriptCode[pc]) {
+						pc += scriptCode[pc+1];
+						doneSwitch=1;
+					} else
+						pc += 2;
+				}
+				if (doneSwitch == 0)
+					pc += scriptCode[pc];
+			}
+			break;
+		case IT_SKIPONTRUE:     // skip if expression true
+			debug(9, "IT_SKIPONTRUE: %d (%s)", scriptCode[pc], (stack[stackIdx-1] ? "IS TRUE (SKIPPED)" : "IS FALSE (NOT SKIPPED)"));
+			stackIdx--;
+			if (stack[stackIdx])
+				pc += scriptCode[pc];
+			else
+				pc++;
+			break;
+		case IT_PRINTF:
+			debug(0, "IT_PRINTF(%d)",stack[stackIdx]);
+			break;
+		case IT_RESTARTSCRIPT:
+			debug(9, "IT_RESTARTSCRIPT");
+			pc = startOfScript;
+			break;
+		case IT_POPWORDOFFSET:
+			offset = scriptCode[pc++];
+			debug(9, "IT_POPWORDOFFSET: Cpt[%d] = %d", offset, stack[stackIdx - 1] & 0xFFFF);
+			*((int32 *)((uint8*)compact + offset)) = stack[--stackIdx] & 0xffff;
+			break;
+		case IT_PUSHWORDOFFSET:
+			offset = scriptCode[pc++];
+			debug(9, "IT_PUSHWORDOFFSET: PUSH Cpt[%d] == %d", offset, (*((int32 *)((uint8*)compact + offset))) & 0xffff);
+			stack[stackIdx++] = (*((int32 *)((uint8*)compact + offset))) & 0xffff;
+			break;
+		default:
+			error("Invalid operator %d",scriptCode[pc-1]);
+			return 0;
 		}
 	}
 }
@@ -1709,46 +1708,46 @@ void Logic::runStartScript(const uint8 *data) {
 	uint32 param1 = 0;
 	while (*data != opcSeqEnd) {
 		switch (*data++) {
-			case opcCallFn:
-				fnId = *data++;
-				param1 = *data++;
-				startPosCallFn(fnId, param1, 0, 0);
-				break;
-			case opcCallFnLong:
-				fnId = *data++;
-				startPosCallFn(fnId, READ_LE_UINT32(data), READ_LE_UINT32(data + 4), READ_LE_UINT32(data + 8));
-				data += 12;
-				break;
-			case opcSetVar8:
-				varId = READ_LE_UINT16(data);
-				_scriptVars[varId] = data[2];
-				data += 3;
-				break;
-			case opcSetVar16:
-				varId = READ_LE_UINT16(data);
-				_scriptVars[varId] = READ_LE_UINT16(data + 2);
-				data += 4;
-				break;				
-			case opcSetVar32:
-				varId = READ_LE_UINT16(data);
-				_scriptVars[varId] = READ_LE_UINT32(data + 2);
-				data += 6;
-				break;
-			case opcGeorge:
-				_scriptVars[CHANGE_X]     = READ_LE_UINT16(data + 0);
-				_scriptVars[CHANGE_Y]     = READ_LE_UINT16(data + 2);
-				_scriptVars[CHANGE_DIR]   = data[4];
-				_scriptVars[CHANGE_PLACE] = READ_LE_UINT24(data + 5);
-				data += 8;
-				break;
-			case opcRunStart:
-				data = _startData[*data];
-				break;
-			case opcRunHelper:
-				data = _helperData[*data];
-				break;
-			default:
-				error("Unexpected opcode in StartScript");
+		case opcCallFn:
+			fnId = *data++;
+			param1 = *data++;
+			startPosCallFn(fnId, param1, 0, 0);
+			break;
+		case opcCallFnLong:
+			fnId = *data++;
+			startPosCallFn(fnId, READ_LE_UINT32(data), READ_LE_UINT32(data + 4), READ_LE_UINT32(data + 8));
+			data += 12;
+			break;
+		case opcSetVar8:
+			varId = READ_LE_UINT16(data);
+			_scriptVars[varId] = data[2];
+			data += 3;
+			break;
+		case opcSetVar16:
+			varId = READ_LE_UINT16(data);
+			_scriptVars[varId] = READ_LE_UINT16(data + 2);
+			data += 4;
+			break;				
+		case opcSetVar32:
+			varId = READ_LE_UINT16(data);
+			_scriptVars[varId] = READ_LE_UINT32(data + 2);
+			data += 6;
+			break;
+		case opcGeorge:
+			_scriptVars[CHANGE_X]     = READ_LE_UINT16(data + 0);
+			_scriptVars[CHANGE_Y]     = READ_LE_UINT16(data + 2);
+			_scriptVars[CHANGE_DIR]   = data[4];
+			_scriptVars[CHANGE_PLACE] = READ_LE_UINT24(data + 5);
+			data += 8;
+			break;
+		case opcRunStart:
+			data = _startData[*data];
+			break;
+		case opcRunHelper:
+			data = _helperData[*data];
+			break;
+		default:
+			error("Unexpected opcode in StartScript");
 		}
 	}
 }
