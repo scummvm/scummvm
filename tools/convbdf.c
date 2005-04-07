@@ -146,12 +146,12 @@ void getopts(int *pac, char ***pav)
 	av = *pav;
 	while (ac > 0 && av[0][0] == '-') {
 		p = &av[0][1]; 
-		while( *p)
-			switch(*p++) {
+		while (*p) {
+			switch (*p++) {
 			case ' ':			/* multiple -args on av[]*/
-				while( *p && *p == ' ')
+				while (*p && *p == ' ')
 					p++;
-				if( *p++ != '-')	/* next option must have dash*/
+				if (*p++ != '-')	/* next option must have dash*/
 					p = "";
 				break;			/* proceed to next option*/
 			case 'n':			/* don't gen bitmap comments*/
@@ -197,6 +197,7 @@ void getopts(int *pac, char ***pav)
 			default:
 				fprintf(stderr, "Unknown option ignored: %c\r\n", *(p-1));
 			}
+		}
 		++av; --ac;
 	}
 	*pac = ac;
@@ -211,12 +212,12 @@ char *basename(char *path)
 
 	/* remove prepended path and extension*/
 	b = path;
-	for (p=path; *p; ++p) {
+	for (p = path; *p; ++p) {
 		if (*p == '/')
 			b = p + 1;
 	}
 	strcpy(base, b);
-	for (p=base; *p; ++p) {
+	for (p = base; *p; ++p) {
 		if (*p == '.') {
 			*p = 0;
 			break;
@@ -469,7 +470,7 @@ int bdf_read_bitmaps(FILE *fp, struct font* pf)
 	fseek(fp, 0L, SEEK_SET);
 
 	/* initially mark offsets as not used*/
-	for (i=0; i<pf->size; ++i)
+	for (i = 0; i < pf->size; ++i)
 		pf->offset[i] = -1;
 
 	for (;;) {
@@ -541,7 +542,7 @@ int bdf_read_bitmaps(FILE *fp, struct font* pf)
 #define BITMAP_NIBBLES	(BITMAP_BITSPERIMAGE/4)
 
 			/* read bitmaps*/
-			for (i=0; ; ++i) {
+			for (i = 0; ; ++i) {
 				int hexnibbles;
 
 				if (!bdf_getline(fp, buf, sizeof(buf))) {
@@ -552,7 +553,7 @@ int bdf_read_bitmaps(FILE *fp, struct font* pf)
 					break;
 
 				hexnibbles = strlen(buf);
-				for (k=0; k<ch_words; ++k) {
+				for (k = 0; k < ch_words; ++k) {
 					int ndx = k * BITMAP_NIBBLES;
 					int padnibbles = hexnibbles - ndx;
 					bitmap_t value;
@@ -588,7 +589,7 @@ int bdf_read_bitmaps(FILE *fp, struct font* pf)
 	pf->maxwidth = maxwidth;
 
 	/* change unused offset/width values to default char values*/
-	for (i=0; i<pf->size; ++i) {
+	for (i = 0; i < pf->size; ++i) {
 		int defchar = pf->defaultchar - pf->firstchar;
 
 		if (pf->offset[i] == (unsigned long)-1) {
@@ -599,7 +600,7 @@ int bdf_read_bitmaps(FILE *fp, struct font* pf)
 
 	/* determine whether font doesn't require encode table*/
 	l = 0;
-	for (i=0; i<pf->size; ++i) {
+	for (i = 0; i < pf->size; ++i) {
 		if (pf->offset[i] != l) {
 			encodetable = 1;
 			break;
@@ -612,7 +613,7 @@ int bdf_read_bitmaps(FILE *fp, struct font* pf)
 	}
 
 	/* determine whether font is fixed-width*/
-	for (i=0; i<pf->size; ++i) {
+	for (i = 0; i < pf->size; ++i) {
 		if (pf->width[i] != maxwidth) {
 			proportional = 1;
 			break;
@@ -674,7 +675,7 @@ bitmap_t bdf_hexval(unsigned char *buf, int ndx1, int ndx2)
 	bitmap_t val = 0;
 	int i, c;
 
-	for (i=ndx1; i<=ndx2; ++i) {
+	for (i = ndx1; i <= ndx2; ++i) {
 		c = buf[i];
 		if (c >= '0' && c <= '9')
 			c -= '0';
@@ -734,7 +735,7 @@ int gen_c_source(struct font* pf, char *path)
 	}
 
 	strcpy(buf, ctime(&t));
-	buf[strlen(buf)-1] = 0;
+	buf[strlen(buf) - 1] = 0;
 
 	fprintf(ofp, hdr1, buf, 
 			pf->name,
@@ -749,7 +750,7 @@ int gen_c_source(struct font* pf, char *path)
 			pf->copyright? pf->copyright: "");
 
 	/* generate bitmaps*/
-	for (i=0; i<pf->size; ++i) {
+	for (i = 0; i < pf->size; ++i) {
 		int x;
 		int bitcount = 0;
 		int width = pf->width ? pf->width[i] : pf->maxwidth;
@@ -798,14 +799,14 @@ int gen_c_source(struct font* pf, char *path)
 				}
 			}
 			fprintf(ofp, "   +");
-			for (x=0; x<width; ++x)
+			for (x = 0; x < width; ++x)
 				fprintf(ofp, "-");
 			fprintf(ofp, "+\n*/\n");
 		} else
 			fprintf(ofp, "\n*/\n");
 
 		bits = pf->bits + (pf->offset? pf->offset[i]: (pf->height * i));
-		for (x=BITMAP_WORDS(width)*pf->height; x>0; --x) {
+		for (x = BITMAP_WORDS(width) * pf->height; x > 0; --x) {
 			fprintf(ofp, "0x%04x,\n", *bits);
 			if (!did_syncmsg && *bits++ != *ofs++) {
 				fprintf(stderr, "Warning: found encoding values in non-sorted order (not an error).\n");
@@ -820,7 +821,7 @@ int gen_c_source(struct font* pf, char *path)
 		fprintf(ofp, "/* Character->glyph mapping. */\n"
 				"static const unsigned long _sysfont_offset[] = {\n");
 
-		for (i=0; i<pf->size; ++i)
+		for (i = 0; i < pf->size; ++i)
 			fprintf(ofp, "	%ld,\t/* (0x%02x) */\n", 
 					pf->offset[i], i+pf->firstchar);
 		fprintf(ofp, "};\n\n");
@@ -831,7 +832,7 @@ int gen_c_source(struct font* pf, char *path)
 		fprintf(ofp, "/* Character width data. */\n"
 				"static const unsigned char _sysfont_width[] = {\n");
 
-		for (i=0; i<pf->size; ++i)
+		for (i = 0; i < pf->size; ++i)
 			fprintf(ofp, "	%d,\t/* (0x%02x) */\n", 
 					pf->width[i], i+pf->firstchar);
 		fprintf(ofp, "};\n\n");
