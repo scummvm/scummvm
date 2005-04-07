@@ -388,7 +388,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 
 	if (!(_game & GF_SIMON2) && (_game & GF_TALKIE)) {
 		// Add default file directories
-		switch(_language) {
+		switch (_language) {
 		case 20:
 			File::addDefaultDirectory(_gameDataPath + "hebrew/");
 			File::addDefaultDirectory(_gameDataPath + "HEBREW/");
