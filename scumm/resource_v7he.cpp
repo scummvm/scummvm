@@ -1657,4 +1657,104 @@ void ScummEngine_v70he::readGlobalObjects() {
 #endif
 }
 
+void ScummEngine_v99he::readMAXS(int blockSize) {
+	debug(9, "readMAXS: MAXS has blocksize %d", blockSize);
+
+	printf("C++ based engine\n");
+
+	_numVariables = _fileHandle->readUint16LE();
+	_fileHandle->readUint16LE();
+	_numRoomVariables = _fileHandle->readUint16LE();
+	_numLocalObjects = _fileHandle->readUint16LE();
+	_numArray = _fileHandle->readUint16LE();
+	_fileHandle->readUint16LE(); // unknown
+	_fileHandle->readUint16LE(); // unknown
+	_numFlObject = _fileHandle->readUint16LE();
+	_numInventory = _fileHandle->readUint16LE();
+	_numRooms = _fileHandle->readUint16LE();
+	_numScripts = _fileHandle->readUint16LE();
+	_numSounds = _fileHandle->readUint16LE();
+	_numCharsets = _fileHandle->readUint16LE();
+	_numCostumes = _fileHandle->readUint16LE();
+	_numGlobalObjects = _fileHandle->readUint16LE();
+	_numImages = _fileHandle->readUint16LE();
+	_numSprites = _fileHandle->readUint16LE();
+	_numLocalScripts = _fileHandle->readUint16LE();
+	_fileHandle->readUint16LE(); // heap related
+	_numPalettes = _fileHandle->readUint16LE();
+	_numUnk = _fileHandle->readUint16LE();
+	_numTalkies = _fileHandle->readUint16LE();
+	_numNewNames = 10;
+
+	_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
+	_numGlobalScripts = 2048;
+
+	allocateArrays();
+	_dynamicRoomOffsets = true;
+}
+
+void ScummEngine_v90he::readMAXS(int blockSize) {
+	debug(9, "readMAXS: MAXS has blocksize %d", blockSize);
+
+	printf("Scummsys.9x\n");
+
+	_numVariables = _fileHandle->readUint16LE();
+	_fileHandle->readUint16LE();
+	_numRoomVariables = _fileHandle->readUint16LE();
+	_numLocalObjects = _fileHandle->readUint16LE();
+	_numArray = _fileHandle->readUint16LE();
+	_fileHandle->readUint16LE(); // unknown
+	_fileHandle->readUint16LE(); // unknown
+	_numFlObject = _fileHandle->readUint16LE();
+	_numInventory = _fileHandle->readUint16LE();
+	_numRooms = _fileHandle->readUint16LE();
+	_numScripts = _fileHandle->readUint16LE();
+	_numSounds = _fileHandle->readUint16LE();
+	_numCharsets = _fileHandle->readUint16LE();
+	_numCostumes = _fileHandle->readUint16LE();
+	_numGlobalObjects = _fileHandle->readUint16LE();
+	_numImages = _fileHandle->readUint16LE();
+	_numSprites = _fileHandle->readUint16LE();
+	_numLocalScripts = _fileHandle->readUint16LE();
+	_fileHandle->readUint16LE(); // heap releated
+	_numNewNames = 10;
+
+	_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
+	if (_gameId == GID_FREDDI4)
+		_numGlobalScripts = 2048;
+	else
+		_numGlobalScripts = 200;
+
+	allocateArrays();
+	_dynamicRoomOffsets = true;
+}
+
+void ScummEngine_v72he::readMAXS(int blockSize) {
+	debug(9, "readMAXS: MAXS has blocksize %d", blockSize);
+
+	_numVariables = _fileHandle->readUint16LE();
+	_fileHandle->readUint16LE();
+	_numBitVariables = _numRoomVariables = _fileHandle->readUint16LE();
+	_numLocalObjects = _fileHandle->readUint16LE();
+	_numArray = _fileHandle->readUint16LE();
+	_fileHandle->readUint16LE();
+	_numVerbs = _fileHandle->readUint16LE();
+	_numFlObject = _fileHandle->readUint16LE();
+	_numInventory = _fileHandle->readUint16LE();
+	_numRooms = _fileHandle->readUint16LE();
+	_numScripts = _fileHandle->readUint16LE();
+	_numSounds = _fileHandle->readUint16LE();
+	_numCharsets = _fileHandle->readUint16LE();
+	_numCostumes = _fileHandle->readUint16LE();
+	_numGlobalObjects = _fileHandle->readUint16LE();
+	_numImages = _fileHandle->readUint16LE();
+	_numNewNames = 10;
+
+	_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
+	_numGlobalScripts = 200;
+
+	allocateArrays();
+	_dynamicRoomOffsets = true;
+}
+
 } // End of namespace Scumm

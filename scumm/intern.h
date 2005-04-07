@@ -754,6 +754,8 @@ public:
 	ScummEngine_v72he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v70he(detector, syst, gs, md5sum) {}
 
 protected:
+	virtual void readMAXS(int blockSize);
+
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
@@ -922,6 +924,8 @@ public:
 	virtual void scummInit();
 
 protected:
+	virtual void readMAXS(int blockSize);
+
 	virtual void allocateArrays();
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);
@@ -1096,6 +1100,8 @@ public:
 	virtual void scummInit();
 
 protected:
+	virtual void readMAXS(int blockSize);
+
 	virtual void copyPalColor(int dst, int src);
 	virtual void darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor);
 	virtual void setPaletteFromPtr(const byte *ptr, int numcolor = -1);

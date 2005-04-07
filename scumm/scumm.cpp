@@ -3302,6 +3302,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 			break;
 		case 99:
 			engine = new ScummEngine_v99he(detector, syst, game, md5sum);
+			break;
 		case 90:
 		case 98:
 			engine = new ScummEngine_v90he(detector, syst, game, md5sum);
