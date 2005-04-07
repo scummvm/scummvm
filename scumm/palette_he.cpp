@@ -210,7 +210,7 @@ void ScummEngine_v99he::copyPalColor(int dst, int src) {
 	dp[0] = sp[0];
 	dp[1] = sp[1];
 	dp[2] = sp[2];
-	_hePalettes[1768 + dst] = _hePalettes[1768 + src];
+	_hePalettes[1792 + dst] = dst;
 
 	setDirtyColors(dst, dst);
 }

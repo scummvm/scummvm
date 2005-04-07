@@ -414,7 +414,7 @@ dec_sub2:			w -= code;
 					if (w < 0) {
 						code += w;
 					}
-					uint8 color = imagePal[*dataPtr++];
+					uint8 color = palPtr[*dataPtr++];
 					memset(dstPtr, color, code);
 					dstPtr += code;
 				} else {
@@ -423,7 +423,7 @@ dec_sub3:			w -= code;
 						code += w;
 					}
 					while (code--) {
-						*dstPtr++ = imagePal[*dataPtr++];
+						*dstPtr++ = palPtr[*dataPtr++];
 					}
 				}
 			}
