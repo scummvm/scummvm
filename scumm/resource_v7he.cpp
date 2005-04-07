@@ -1660,15 +1660,13 @@ void ScummEngine_v70he::readGlobalObjects() {
 void ScummEngine_v99he::readMAXS(int blockSize) {
 	debug(9, "readMAXS: MAXS has blocksize %d", blockSize);
 
-	printf("C++ based engine\n");
-
 	_numVariables = _fileHandle->readUint16LE();
 	_fileHandle->readUint16LE();
 	_numRoomVariables = _fileHandle->readUint16LE();
 	_numLocalObjects = _fileHandle->readUint16LE();
 	_numArray = _fileHandle->readUint16LE();
-	_fileHandle->readUint16LE(); // unknown
-	_fileHandle->readUint16LE(); // unknown
+	_fileHandle->readUint16LE();
+	_fileHandle->readUint16LE();
 	_numFlObject = _fileHandle->readUint16LE();
 	_numInventory = _fileHandle->readUint16LE();
 	_numRooms = _fileHandle->readUint16LE();
@@ -1696,15 +1694,13 @@ void ScummEngine_v99he::readMAXS(int blockSize) {
 void ScummEngine_v90he::readMAXS(int blockSize) {
 	debug(9, "readMAXS: MAXS has blocksize %d", blockSize);
 
-	printf("Scummsys.9x\n");
-
 	_numVariables = _fileHandle->readUint16LE();
 	_fileHandle->readUint16LE();
 	_numRoomVariables = _fileHandle->readUint16LE();
 	_numLocalObjects = _fileHandle->readUint16LE();
 	_numArray = _fileHandle->readUint16LE();
-	_fileHandle->readUint16LE(); // unknown
-	_fileHandle->readUint16LE(); // unknown
+	_fileHandle->readUint16LE();
+	_fileHandle->readUint16LE();
 	_numFlObject = _fileHandle->readUint16LE();
 	_numInventory = _fileHandle->readUint16LE();
 	_numRooms = _fileHandle->readUint16LE();
