@@ -1563,7 +1563,7 @@ static void BlastRect() {
 		lua_pushobject(tableObj);
 		lua_pushstring("filled");
 		lua_Object objFilled = lua_gettable();
-		if (!lua_isnil(objFilled)) 
+		if (!lua_isnil(objFilled))
 			filled = true;
 	}
 

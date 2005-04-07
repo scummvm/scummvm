@@ -124,14 +124,14 @@ DriverTinyGL::~DriverTinyGL() {
 }
 
 void DriverTinyGL::toggleFullscreenMode() {
-	Uint32 flags = SDL_HWSURFACE;
+	uint32 flags = SDL_HWSURFACE;
 
-	if (! _isFullscreen)
+	if (!_isFullscreen)
 		flags |= SDL_FULLSCREEN;
 	if (SDL_SetVideoMode(_screenWidth, _screenHeight, _screenBPP, flags) == 0)
 		warning("Could not change fullscreen mode");
 	else
-		_isFullscreen = ! _isFullscreen;
+		_isFullscreen = !_isFullscreen;
 }
 
 void DriverTinyGL::setupCamera(float fov, float nclip, float fclip, float roll) {
@@ -473,4 +473,36 @@ void DriverTinyGL::getSnapshot(int x, int y, int w, int h, char **data, int flag
 }
 
 void DriverTinyGL::drawDim() {
+}
+
+void DriverTinyGL::drawRectangle(PrimitiveObject *primitive) {
+	uint16 *dst = (uint16 *)_screen->pixels;
+	int x1 = primitive->getX1();
+	int x2 = primitive->getX2();
+	int y1 = primitive->getY1();
+	int y2 = primitive->getY2();
+
+	Color color = primitive->getColor();
+	uint16 c = ((color.red() & 0xF8) << 8) | ((color.green() & 0xFC) << 3) | (color.blue() >> 3);
+
+	if (primitive->isFilled()) {
+		for (; y1 < y2; y1++) {
+			for (int x = x1; x < x2; x++) {
+				WRITE_LE_UINT16(dst + 640 * y1 + x, c);
+			}
+		}
+	} else {
+		for (int x = x1; x < x2; x++) {
+			WRITE_LE_UINT16(dst + 640 * y1 + x, c);
+		}
+		for (int x = x1; x < x2; x++) {
+			WRITE_LE_UINT16(dst + 640 * y2 + x, c);
+		}
+		for (int y = y1; y1 < y2; y++) {
+			WRITE_LE_UINT16(dst + 640 * y + x1, c);
+		}
+		for (int y = y1; y1 < y2; y++) {
+			WRITE_LE_UINT16(dst + 640 * y + x2, c);
+		}
+	}
 }

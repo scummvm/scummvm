@@ -230,6 +230,11 @@ void Engine::mainLoop() {
 			}
 		}
 
+		// Draw Primitives
+		for (PrimitiveListType::iterator i = _primitiveObjects.begin(); i != _primitiveObjects.end(); i++) {
+			(*i)->draw();
+		}
+
 		// Draw text
 		for (TextListType::iterator i = _textObjects.begin(); i != _textObjects.end(); i++) {
 			(*i)->draw();

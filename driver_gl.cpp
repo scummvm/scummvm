@@ -686,3 +686,43 @@ void DriverGL::getSnapshot(int x, int y, int w, int h, char **data, int flags) {
 
 void DriverGL::drawDim() {
 }
+
+void DriverGL::drawRectangle(PrimitiveObject *primitive) {
+	int x1 = primitive->getX1();
+	int x2 = primitive->getX2();
+	int y1 = primitive->getY1();
+	int y2 = primitive->getY2();
+
+	Color color = primitive->getColor();
+	uint32 c = (color.red() << 24) | (color.green() << 16) | (color.blue() << 8) | 255;
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, 640, 480, 0, 0, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glDisable(GL_LIGHTING);
+	glEnable(GL_TEXTURE_2D);
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	if (primitive->isFilled()) {
+		glBegin(GL_QUADS);
+	} else {
+		glBegin(GL_LINES);
+	}
+	
+	glColor3i(color.red(), color.green(), color.blue());
+
+	glVertex2i(x1, 480 - y1);
+	glVertex2i(x2, 480 - y1);
+	glVertex2i(x2, 480 - y2);
+	glVertex2i(x1, 480 - y2);
+	glEnd();
+
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+	glDepthMask(GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LIGHTING);
+}

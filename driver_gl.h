@@ -73,6 +73,8 @@ public:
 	void drawTextBitmap(int x, int y, TextObjectHandle *handle);
 	void destroyTextBitmap(TextObjectHandle *handle);
 
+	void drawRectangle(PrimitiveObject *primitive);
+
 	void prepareSmushFrame(int width, int height, byte *bitmap);
 	void drawSmushFrame(int offsetX, int offsetY);
 

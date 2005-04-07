@@ -781,6 +781,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\primitives.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\primitives.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\registry.cpp"
 			>
 		</File>

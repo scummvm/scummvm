@@ -21,6 +21,7 @@
 #include "bits.h"
 #include "scene.h"
 #include "textobject.h"
+#include "primitives.h"
 #include "font.h"
 #include "lua.h"
 
@@ -87,7 +88,7 @@ enum {
 	SDLK_AXIS_MOUSE_Y,
 	SDLK_AXIS_MOUSE_Z,
 	SDLK_EXTRA_LAST
-	};
+};
 
 class Engine {
 public:
@@ -144,6 +145,26 @@ public:
 		}
 	}
 
+	// Primitives Object Registration
+	typedef std::list<PrimitiveObject *> PrimitiveListType;
+	PrimitiveListType::const_iterator primitivesBegin() const {
+		return _primitiveObjects.begin();
+	}
+	PrimitiveListType::const_iterator primitivesEnd() const {
+		return _primitiveObjects.end();
+	}
+
+	void registerPrimitiveObject(PrimitiveObject *a) { _primitiveObjects.push_back(a); }
+	void killPrimitiveObject(PrimitiveObject *a) {
+		_primitiveObjects.remove(a);
+	}
+	void killPrimitiveObjects() {
+		while (!_primitiveObjects.empty()) {
+			delete _primitiveObjects.back();
+			_primitiveObjects.pop_back();
+		}
+	}
+
 	void savegameSave();
 	void savegameRestore();
 	static void savegameGzread(void *data, int size);
@@ -173,6 +194,7 @@ private:
 	ActorListType _actors;
 	Actor *_selectedActor;
 	TextListType _textObjects;
+	PrimitiveListType _primitiveObjects;
 };
 
 extern Engine *g_engine;
