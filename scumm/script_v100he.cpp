@@ -475,8 +475,7 @@ void ScummEngine_v100he::o100_actorOps() {
 		a->_needRedraw = true;
 		break;
 	case 59:
-		// Uses reverse order of layering, so we adjust
-		a->_layer = -pop();
+		a->_layer = pop();
 		a->_needRedraw = true;
 		break;
 	case 63:
