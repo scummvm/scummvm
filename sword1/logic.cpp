@@ -1679,26 +1679,26 @@ uint16 Logic::inRange(uint16 a, uint16 b, uint16 c) {
 
 void Logic::startPosCallFn(uint8 fnId, uint32 param1, uint32 param2, uint32 param3) {
 	Object *obj = NULL;
-	switch(fnId) {
-		case opcPlaySequence:
-			fnPlaySequence(NULL, 0, param1, 0, 0, 0, 0, 0);
-			break;
-		case opcAddObject:
-			fnAddObject(NULL, 0, param1, 0, 0, 0, 0, 0);
-			break;
-        case opcRemoveObject:
-			fnRemoveObject(NULL, 0, param1, 0, 0, 0, 0, 0);
-			break;
-		case opcMegaSet:
-			obj = _objMan->fetchObject(param1);
-			fnMegaSet(obj, param1, param2, param3, 0, 0, 0, 0);
-			break;
-		case opcNoSprite:
-			obj = _objMan->fetchObject(param1);
-			fnNoSprite(obj, param1, param2, param3, 0, 0, 0, 0);
-			break;
-		default:
-			error("Illegal fnCallfn argument %d", fnId);
+	switch (fnId) {
+	case opcPlaySequence:
+		fnPlaySequence(NULL, 0, param1, 0, 0, 0, 0, 0);
+		break;
+	case opcAddObject:
+		fnAddObject(NULL, 0, param1, 0, 0, 0, 0, 0);
+		break;
+	case opcRemoveObject:
+		fnRemoveObject(NULL, 0, param1, 0, 0, 0, 0, 0);
+		break;
+	case opcMegaSet:
+		obj = _objMan->fetchObject(param1);
+		fnMegaSet(obj, param1, param2, param3, 0, 0, 0, 0);
+		break;
+	case opcNoSprite:
+		obj = _objMan->fetchObject(param1);
+		fnNoSprite(obj, param1, param2, param3, 0, 0, 0, 0);
+		break;
+	default:
+		error("Illegal fnCallfn argument %d", fnId);
 	}
 }
 

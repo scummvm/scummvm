@@ -262,39 +262,39 @@ uint8 Control::runPanel(void) {
 				_cursorVisible = false;
 		}
 		switch (mode) {
-			case BUTTON_MAIN_PANEL:
-				if (fullRefresh)
-					setupMainPanel();
-				break;
-			case BUTTON_SAVE_PANEL:
-				if (fullRefresh) {
-					_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
-					setupSaveRestorePanel(true);
-				}
-				if (_selectedSavegame < 255) {
-					bool visible = _cursorVisible;
-					if (_cursorTick == 0)
-						_cursorVisible = true;
-					else if (_cursorTick == 3)
-						_cursorVisible = false;
-					if (_keyPressed)
-						handleSaveKey(_keyPressed);
-					else if (_cursorVisible != visible)
-						showSavegameNames();
-					if (++_cursorTick > 5)
-						_cursorTick = 0;
-				}
-				break;
-			case BUTTON_RESTORE_PANEL:
-				if (fullRefresh)
-					setupSaveRestorePanel(false);
-				break;
-			case BUTTON_VOLUME_PANEL:
-				if (fullRefresh)
-					setupVolumePanel();
-				break;
-			default:
-				break;
+		case BUTTON_MAIN_PANEL:
+			if (fullRefresh)
+				setupMainPanel();
+			break;
+		case BUTTON_SAVE_PANEL:
+			if (fullRefresh) {
+				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+				setupSaveRestorePanel(true);
+			}
+			if (_selectedSavegame < 255) {
+				bool visible = _cursorVisible;
+				if (_cursorTick == 0)
+					_cursorVisible = true;
+				else if (_cursorTick == 3)
+					_cursorVisible = false;
+				if (_keyPressed)
+					handleSaveKey(_keyPressed);
+				else if (_cursorVisible != visible)
+					showSavegameNames();
+				if (++_cursorTick > 5)
+					_cursorTick = 0;
+			}
+			break;
+		case BUTTON_RESTORE_PANEL:
+			if (fullRefresh)
+				setupSaveRestorePanel(false);
+			break;
+		case BUTTON_VOLUME_PANEL:
+			if (fullRefresh)
+				setupVolumePanel();
+			break;
+		default:
+			break;
 		}
 		if (fullRefresh) {
 			fullRefresh = false;
@@ -363,51 +363,51 @@ uint8 Control::getClicks(uint8 mode, uint8 *retVal) {
 }
 
 uint8 Control::handleButtonClick(uint8 id, uint8 mode, uint8 *retVal) {
-	switch(mode) {
-		case BUTTON_MAIN_PANEL:
-			if (id == BUTTON_RESTART) {
-				if (SwordEngine::_systemVars.controlPanelMode) // if player is dead or has just started, don't ask for confirmation
-					*retVal |= CONTROL_RESTART_GAME;
-				else if (getConfirm(_lStrings[STR_RESTART]))
-					*retVal |= CONTROL_RESTART_GAME;
-				else
-					return mode;
-			} else if ((id == BUTTON_RESTORE_PANEL) || (id == BUTTON_SAVE_PANEL) ||
-				(id == BUTTON_DONE) || (id == BUTTON_VOLUME_PANEL))
-				return id;
-			else if (id == BUTTON_TEXT) {
-				SwordEngine::_systemVars.showText ^= 1;
-				_buttons[5]->setSelected(SwordEngine::_systemVars.showText);
-			} else if (id == BUTTON_QUIT) {
-				if (getConfirm(_lStrings[STR_QUIT]))
-					SwordEngine::_systemVars.engineQuit = true;
+	switch (mode) {
+	case BUTTON_MAIN_PANEL:
+		if (id == BUTTON_RESTART) {
+			if (SwordEngine::_systemVars.controlPanelMode) // if player is dead or has just started, don't ask for confirmation
+				*retVal |= CONTROL_RESTART_GAME;
+			else if (getConfirm(_lStrings[STR_RESTART]))
+				*retVal |= CONTROL_RESTART_GAME;
+			else
 				return mode;
-			}
-			break;
-		case BUTTON_SAVE_PANEL:
-		case BUTTON_RESTORE_PANEL:
-			if ((id >= BUTTON_SCROLL_UP_FAST) && (id <= BUTTON_SCROLL_DOWN_FAST))
-				saveNameScroll(id, mode == BUTTON_SAVE_PANEL);
-			else if ((id >= BUTTON_SAVE_SELECT1) && (id <= BUTTON_SAVE_SELECT8))
-				saveNameSelect(id, mode == BUTTON_SAVE_PANEL);
-			else if (id == BUTTON_SAVE_RESTORE_OKAY) {
-				if (mode == BUTTON_SAVE_PANEL) {
-					_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
-					if (saveToFile()) // don't go back to main panel if save fails.
-						return BUTTON_MAIN_PANEL;
-				} else {
-					if (restoreFromFile()) { // don't go back to main panel if restore fails.
-						*retVal |= CONTROL_GAME_RESTORED;
-						return BUTTON_MAIN_PANEL;
-					}
-				}
-			} else if (id == BUTTON_SAVE_CANCEL) {
-				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
-				return BUTTON_MAIN_PANEL; // mode down to main panel
-			}
-			break;
-		case BUTTON_VOLUME_PANEL:
+		} else if ((id == BUTTON_RESTORE_PANEL) || (id == BUTTON_SAVE_PANEL) ||
+			(id == BUTTON_DONE) || (id == BUTTON_VOLUME_PANEL))
 			return id;
+		else if (id == BUTTON_TEXT) {
+			SwordEngine::_systemVars.showText ^= 1;
+			_buttons[5]->setSelected(SwordEngine::_systemVars.showText);
+		} else if (id == BUTTON_QUIT) {
+			if (getConfirm(_lStrings[STR_QUIT]))
+				SwordEngine::_systemVars.engineQuit = true;
+			return mode;
+		}
+		break;
+	case BUTTON_SAVE_PANEL:
+	case BUTTON_RESTORE_PANEL:
+		if ((id >= BUTTON_SCROLL_UP_FAST) && (id <= BUTTON_SCROLL_DOWN_FAST))
+			saveNameScroll(id, mode == BUTTON_SAVE_PANEL);
+		else if ((id >= BUTTON_SAVE_SELECT1) && (id <= BUTTON_SAVE_SELECT8))
+			saveNameSelect(id, mode == BUTTON_SAVE_PANEL);
+		else if (id == BUTTON_SAVE_RESTORE_OKAY) {
+			if (mode == BUTTON_SAVE_PANEL) {
+				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+				if (saveToFile()) // don't go back to main panel if save fails.
+					return BUTTON_MAIN_PANEL;
+			} else {
+				if (restoreFromFile()) { // don't go back to main panel if restore fails.
+					*retVal |= CONTROL_GAME_RESTORED;
+					return BUTTON_MAIN_PANEL;
+				}
+			}
+		} else if (id == BUTTON_SAVE_CANCEL) {
+			_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+			return BUTTON_MAIN_PANEL; // mode down to main panel
+		}
+		break;
+	case BUTTON_VOLUME_PANEL:
+		return id;
    	}
 	return 0;
 }
