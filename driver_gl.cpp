@@ -90,6 +90,10 @@ void DriverGL::flipBuffer() {
 	SDL_GL_SwapBuffers();
 }
 
+bool DriverGL::isHardwareAccelerated() {
+	return true;
+}
+
 void DriverGL::startActorDraw(Vector3d pos, float yaw, float pitch, float roll) {
 	glEnable(GL_TEXTURE_2D);
 	glMatrixMode(GL_MODELVIEW);

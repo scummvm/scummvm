@@ -43,6 +43,8 @@ public:
 	void clearScreen(); 
 	void flipBuffer();
 
+	bool isHardwareAccelerated();
+
 	void startActorDraw(Vector3d pos, float yaw, float pitch, float roll);
 	void finishActorDraw();
 	

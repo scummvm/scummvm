@@ -52,6 +52,8 @@ public:
 
 	virtual void toggleFullscreenMode() = 0;
 
+	virtual bool isHardwareAccelerated() = 0;
+
 	virtual void setupCamera(float fov, float nclip, float fclip, float roll) = 0;
 	virtual void positionCamera(Vector3d pos, Vector3d interest) = 0;
 

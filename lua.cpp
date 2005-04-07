@@ -498,7 +498,27 @@ static void IsActorMoving() {
 }
 
 static void Is3DHardwareEnabled() {
-	pushbool(true);
+	pushbool(g_driver->isHardwareAccelerated());
+}
+
+static void SetHardwareState() {
+	// ignore changing hardware state
+}
+
+static void SetVideoDevices() {
+	// ignore setting video devices
+}
+
+static void GetVideoDevices() {
+	// ignore getting of video devices
+}
+
+static void EnumerateVideoDevices() {
+	// ignore list of video devices
+}
+
+static void Enumerate3DDevices() {
+	// ignore list of 3d devices
 }
 
 static void IsActorResting() {
@@ -1882,13 +1902,8 @@ STUB_FUNC(ActorPuckOrient)
 STUB_FUNC(GetMemoryUsage)
 STUB_FUNC(GetFontDimensions)
 STUB_FUNC(PurgeText)
-STUB_FUNC(GetVideoDevices)
-STUB_FUNC(SetVideoDevices)
-STUB_FUNC(SetHardwareState)
-STUB_FUNC(Enumerate3DDevices)
-STUB_FUNC(EnumerateVideoDevices)
 
-	// new Monkey 4 opcodes:
+// new Monkey 4 opcodes:
 
 STUB_FUNC(SetActiveCD)
 STUB_FUNC(GetActiveCD)

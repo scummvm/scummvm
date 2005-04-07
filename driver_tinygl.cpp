@@ -164,6 +164,10 @@ void DriverTinyGL::flipBuffer() {
 	SDL_Flip(_screen);
 }
 
+bool DriverTinyGL::isHardwareAccelerated() {
+	return false;
+}
+
 void DriverTinyGL::startActorDraw(Vector3d pos, float yaw, float pitch, float roll) {
 #ifndef TURN_ON_LIGTHS_WITHOUT_TEXTURES
 	tglEnable(TGL_TEXTURE_2D);
