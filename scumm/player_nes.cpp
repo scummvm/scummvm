@@ -607,7 +607,7 @@ void APU_Run(void) {
 	}
 }
 
-};
+}
 
 Player_NES::Player_NES(ScummEngine *scumm) {
 	int i;
