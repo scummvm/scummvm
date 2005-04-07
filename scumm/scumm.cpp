@@ -46,6 +46,7 @@
 #include "scumm/insane/insane.h"
 #include "scumm/intern.h"
 #include "scumm/object.h"
+#include "scumm/player_nes.h"
 #include "scumm/player_v1.h"
 #include "scumm/player_v2.h"
 #include "scumm/player_v2a.h"
@@ -1652,11 +1653,13 @@ void ScummEngine::setupMusic(int midi) {
 	// Init iMuse
 	if (_features & GF_DIGI_IMUSE) {
 		_musicEngine = _imuseDigital = new IMuseDigital(this, 10);
+	} else if (_features & GF_NES) {
+		_musicEngine = new Player_NES(this);
 	} else if ((_features & GF_AMIGA) && (_version == 2)) {
 		_musicEngine = new Player_V2A(this);
 	} else if ((_features & GF_AMIGA) && (_version == 3)) {
 		_musicEngine = new Player_V3A(this);
-	} else if (((_features & GF_AMIGA) && (_version < 5)) || (_features & GF_NES)) {
+	} else if ((_features & GF_AMIGA) && (_version < 5)) {
 		_musicEngine = NULL;
 	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && ((_version > 2) && (_version < 5))) {
 		_musicEngine = new Player_V2(this, _midiDriver != MD_PCSPK);

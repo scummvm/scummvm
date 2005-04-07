@@ -25,6 +25,7 @@ MODULE_OBJS := \
 	scumm/palette.o \
 	scumm/player_mod.o \
 	scumm/player_v1.o \
+	scumm/player_nes.o \
 	scumm/player_v2.o \
 	scumm/player_v2a.o \
 	scumm/player_v3a.o \

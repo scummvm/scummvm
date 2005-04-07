@@ -1305,7 +1305,6 @@ static V2A_Sound *findSound (unsigned long crc) {
 Player_V2A::Player_V2A(ScummEngine *scumm) {
 	int i;
 	_vm = scumm;
-	_system = scumm->_system;
 
 #ifdef __PALM_OS__
 	if (!CRCtable) CRCtable = (uint32 *)calloc(256, sizeof(uint32));

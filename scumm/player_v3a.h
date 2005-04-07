@@ -27,7 +27,6 @@
 #include "scumm/music.h"
 #include "scumm/player_mod.h"
 
-class OSystem;
 class SoundMixer;
 
 namespace Scumm {
@@ -75,7 +74,6 @@ private:
 		int16 _pitadjust;
 	};
 
-	OSystem *_system;
 	ScummEngine *_vm;
 	Player_MOD *_mod;
 

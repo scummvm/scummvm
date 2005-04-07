@@ -27,7 +27,6 @@
 #include "scumm/music.h"
 #include "scumm/player_mod.h"
 
-class OSystem;
 class SoundMixer;
 
 namespace Scumm {
@@ -60,7 +59,6 @@ private:
 		V2A_Sound *sound;
 	};
 
-	OSystem *_system;
 	ScummEngine *_vm;
 	Player_MOD *_mod;
 	soundSlot _slot[V2A_MAXSLOTS];

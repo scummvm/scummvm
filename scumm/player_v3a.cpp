@@ -37,7 +37,6 @@ static const uint16 note_freqs[4][12] = {
 Player_V3A::Player_V3A(ScummEngine *scumm) {
 	int i;
 	_vm = scumm;
-	_system = scumm->_system;
 	for (i = 0; i < V3A_MAXMUS; i++) {
 		_mus[i].id = 0;
 		_mus[i].dur = 0;
