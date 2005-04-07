@@ -29,6 +29,107 @@
 
 namespace Scumm {
 
+uint8 *ScummEngine_v90he::getHEPalette(int palSlot) {
+	if (palSlot) {
+		assert(palSlot >= 1 && palSlot <= _numPalettes);
+		return _hePalettes + palSlot * 1024 + 768;
+	} else {
+		return _hePalettes + 1768;
+	}
+}
+
+uint8 *ScummEngine_v90he::getHEPaletteIndex(int palSlot) {
+	if (palSlot) {
+		assert(palSlot >= 1 && palSlot <= _numPalettes);
+		return _hePalettes + palSlot * 1024;
+	} else {
+		return _hePalettes + 1024;
+	}
+}
+
+int ScummEngine_v90he::getHEPaletteColor(int palSlot, int color) {
+	assert(palSlot >= 1 && palSlot <= _numPalettes);
+	assert(color >= 1 && color <= 255);
+
+	return _hePalettes[palSlot * 1024 + 768 + color];
+}
+
+void ScummEngine_v90he::setHEPaletteColor(int palSlot, uint8 color, uint8 r, uint8 g, uint8 b) {
+	assert(palSlot >= 1 && palSlot <= _numPalettes);
+	uint8 *p = _hePalettes + palSlot * 1024 + color * 3;
+	*(p + 0) = r;
+	*(p + 1) = g;
+	*(p + 2) = b;
+	*(_hePalettes + palSlot * 1024 + 768 + color) = color;
+}
+
+void ScummEngine_v90he::setHEPaletteFromPtr(int palSlot, const uint8 *palData) {
+	assert(palSlot >= 1 && palSlot <= _numPalettes);
+	uint8 *pc = _hePalettes + palSlot * 1024;
+	uint8 *pi = pc + 768;
+	for (int i = 0; i < 256; ++i) {
+		*pc++ = *palData++;
+		*pc++ = *palData++;
+		*pc++ = *palData++;
+		*pi++ = i;
+	}
+	for (int i = 0; i < 10; ++i)
+		_hePalettes[palSlot * 1024 + 768 + i] = 1;
+	for (int i = 246; i < 256; ++i)
+		_hePalettes[palSlot * 1024 + 768 + i] = 1;
+	
+}
+
+void ScummEngine_v90he::setHEPaletteFromCostume(int palSlot, int resId) {
+	assert(palSlot >= 1 && palSlot <= _numPalettes);
+	const uint8 *data = getResourceAddress(rtCostume, resId);
+	assert(data);
+	const uint8 *rgbs = findResourceData(MKID('RGBS'), data);
+	assert(rgbs);
+	setHEPaletteFromPtr(palSlot, rgbs);
+}
+
+void ScummEngine_v90he::setHEPaletteFromImage(int palSlot, int resId, int state) {
+	assert(palSlot >= 1 && palSlot <= _numPalettes);
+	uint8 *data = getResourceAddress(rtImage, resId);
+	assert(data);
+	uint8 *rgbs = findWrappedBlock(MKID('RGBS'), data, state, 0);
+	assert(rgbs);
+	setHEPaletteFromPtr(palSlot, rgbs);
+}
+
+void ScummEngine_v90he::setHEPaletteFromRoom(int palSlot, int resId, int state) {
+	assert(palSlot >= 1 && palSlot <= _numPalettes);
+	uint8 *data = getResourceAddress(rtRoom, resId);
+	assert(data);
+	uint8 *rgbs = findWrappedBlock(MKID('PALS'), data, state, 0);
+	assert(rgbs);
+	setHEPaletteFromPtr(palSlot, rgbs);
+}
+
+void ScummEngine_v90he::restoreHEPalette(int palSlot) {
+	assert(palSlot >= 1 && palSlot <= _numPalettes);
+	if (palSlot != 1) {
+		memcpy(_hePalettes + palSlot * 1024, _hePalettes + 1024, 1024);
+	}
+}
+
+void ScummEngine_v90he::copyHEPalette(int dstPalSlot, int srcPalSlot) {
+	assert(dstPalSlot >= 1 && dstPalSlot <= _numPalettes);
+	assert(srcPalSlot >= 1 && srcPalSlot <= _numPalettes);
+	if (dstPalSlot != srcPalSlot) {
+		memcpy(_hePalettes + dstPalSlot * 1024, _hePalettes + srcPalSlot * 1024, 1024);
+	}
+}
+
+void ScummEngine_v90he::copyHEPaletteColor(int palSlot, uint8 dstColor, uint8 srcColor) {
+	assert(palSlot >= 1 && palSlot <= _numPalettes);
+	uint8 *dstPal = _hePalettes + palSlot * 1024 + dstColor * 3;
+	uint8 *srcPal = _hePalettes + (palSlot + 1) * 1024 + srcColor * 3;
+	memcpy(dstPal, srcPal, 3);
+	_hePalettes[palSlot * 1024 + 768] = srcColor;
+}
+
 void ScummEngine_v99he::setPaletteFromPtr(const byte *ptr, int numcolor) {
 	int i;
 	byte *dest, r, g, b;
