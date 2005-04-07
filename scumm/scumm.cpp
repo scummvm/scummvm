@@ -1629,8 +1629,13 @@ void ScummEngine_v90he::scummInit() {
 	_hePaletteNum = 0;
 
 	spritesResetTables(0);
-	_hePalettes = (uint8 *)malloc((_numPalettes + 1) * 1024);
 	memset(&_wizParams, 0, sizeof(_wizParams));
+}
+
+void ScummEngine_v99he::scummInit() {
+	ScummEngine_v90he::scummInit();
+
+	_hePalettes = (uint8 *)malloc((_numPalettes + 1) * 1024);
 }
 
 void ScummEngine::setupMusic(int midi) {
