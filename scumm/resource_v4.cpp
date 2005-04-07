@@ -258,7 +258,7 @@ void ScummEngine_v7::readMAXS(int blockSize) {
 	_fileHandle->seek(50 + 50, SEEK_CUR);
 	_numVariables = _fileHandle->readUint16LE();
 	_numBitVariables = _fileHandle->readUint16LE();
-	_fileHandle->readUint16LE();                      // 40 in FT; 16 in Dig
+	_fileHandle->readUint16LE();
 	_numGlobalObjects = _fileHandle->readUint16LE();
 	_numLocalObjects = _fileHandle->readUint16LE();
 	_numNewNames = _fileHandle->readUint16LE();
@@ -291,11 +291,11 @@ void ScummEngine_v6::readMAXS(int blockSize) {
 	debug(9, "readMAXS: MAXS has blocksize %d", blockSize);
 
 	_numVariables = _fileHandle->readUint16LE();
-	_fileHandle->readUint16LE();                      // 16 in Sam/DOTT
+	_fileHandle->readUint16LE();
 	_numBitVariables = _fileHandle->readUint16LE();
 	_numLocalObjects = _fileHandle->readUint16LE();
 	_numArray = _fileHandle->readUint16LE();
-	_fileHandle->readUint16LE();                      // 0 in Sam/DOTT
+	_fileHandle->readUint16LE();
 	_numVerbs = _fileHandle->readUint16LE();
 	_numFlObject = _fileHandle->readUint16LE();
 	_numInventory = _fileHandle->readUint16LE();
