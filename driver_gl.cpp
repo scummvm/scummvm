@@ -694,7 +694,6 @@ void DriverGL::drawRectangle(PrimitiveObject *primitive) {
 	int y2 = primitive->getY2();
 
 	Color color = primitive->getColor();
-	uint32 c = (color.red() << 24) | (color.green() << 16) | (color.blue() << 8) | 255;
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
