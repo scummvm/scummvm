@@ -1692,16 +1692,22 @@ static void FreeObjectState() {
 
 static void SendObjectToBack() {
 	stubWarning("VERIFY: SendObjectToBack");
-	ObjectState *state = check_object(1);
-	// moving object to top in list ?
-	g_engine->currScene()->moveObjectStateToFirst(state);
+	lua_Object param = lua_getparam(1);
+	if (lua_isuserdata(param) && lua_tag(param) == MKID('STAT')) {
+		ObjectState *state = static_cast<ObjectState *>(lua_getuserdata(param));
+		// moving object to top in list ?
+		g_engine->currScene()->moveObjectStateToFirst(state);
+	}
 }
 
 static void SendObjectToFront() {
 	stubWarning("VERIFY: SendObjectToFront");
-	ObjectState *state = check_object(1);
-	g_engine->currScene()->moveObjectStateToLast(state);
-	// moving object to last in list ?
+	lua_Object param = lua_getparam(1);
+	if (lua_isuserdata(param) && lua_tag(param) == MKID('STAT')) {
+		ObjectState *state = static_cast<ObjectState *>(lua_getuserdata(param));
+		// moving object to last in list ?
+		g_engine->currScene()->moveObjectStateToLast(state);
+	}
 }
 
 static void SetObjectType() {
@@ -1835,6 +1841,27 @@ static void EngineDisplay() {
 		printf("EngineDisplay() Disable\n");
 }
 
+
+static void GetSaveGameData() {
+	error("OPCODE USAGE VERIFICATION: GetSaveGameData");
+}
+
+static void SubmitSaveGameData() {
+	error("OPCODE USAGE VERIFICATION: SubmitSaveGameData");
+}
+
+static void JustLoaded() {
+	error("OPCODE USAGE VERIFICATION: JustLoaded");
+}
+
+static void PlaySound() {
+	error("OPCODE USAGE VERIFICATION: PlaySound");
+}
+
+static void SetEmergencyFont() {
+	error("OPCODE USAGE VERIFICATION: SetEmergencyFont");
+}
+
 // Stub function for builtin functions not yet implemented
 
 static void stubWarning(char *funcName) {
@@ -1878,18 +1905,14 @@ STUB_FUNC(NukeResources)
 STUB_FUNC(UnShrinkBoxes)
 STUB_FUNC(ShrinkBoxes)
 STUB_FUNC(ResetTextures)
-STUB_FUNC(JustLoaded)
 STUB_FUNC(AttachToResources)
 STUB_FUNC(DetachFromResources)
-STUB_FUNC(GetSaveGameData)
-STUB_FUNC(SubmitSaveGameData)
 STUB_FUNC(GetSaveGameImage)
 STUB_FUNC(ScreenShot)
 STUB_FUNC(TextFileGetLine)
 STUB_FUNC(TextFileGetLineCount)
 STUB_FUNC(IrisUp)
 STUB_FUNC(IrisDown)
-STUB_FUNC(PlaySound)
 STUB_FUNC(FadeInChore)
 STUB_FUNC(FadeOutChore)
 STUB_FUNC(SetActorClipPlane)
@@ -1950,7 +1973,6 @@ STUB_FUNC(SetActorTimeScale)
 STUB_FUNC(GetActorTimeScale)
 STUB_FUNC(SetActorScale)
 STUB_FUNC(SetActorColormap)
-STUB_FUNC(SetEmergencyFont)
 STUB_FUNC(GetTranslationMode)
 STUB_FUNC(SetTranslationMode)
 STUB_FUNC(PrintLine)
