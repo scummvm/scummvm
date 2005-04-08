@@ -509,7 +509,13 @@ static void Is3DHardwareEnabled() {
 }
 
 static void SetHardwareState() {
-	// ignore changing hardware state
+	// changing only in config setup (software/hardware rendering)
+	bool accel = getbool(1);
+	if (accel)
+		g_registry->set("soft", "FALSE");
+	else
+		g_registry->set("soft", "TRUE");
+	g_registry->save();
 }
 
 static void SetVideoDevices() {
@@ -517,15 +523,31 @@ static void SetVideoDevices() {
 }
 
 static void GetVideoDevices() {
-	// ignore getting of video devices
+	lua_pushnumber(0.0);
+	lua_pushnumber(-1.0);
 }
 
 static void EnumerateVideoDevices() {
-	// ignore list of video devices
+	lua_Object result = lua_createtable();
+	lua_pushobject(result);
+	lua_pushnumber(0); // id of device
+	lua_pushstring("SDL Video Device"); // name of device
+	lua_settable();
+	lua_pushobject(result);
 }
 
 static void Enumerate3DDevices() {
-	// ignore list of 3d devices
+	int num = check_int(1);
+	lua_Object result = lua_createtable();
+	lua_pushobject(result);
+	lua_pushnumber(-1);
+	if (g_driver->isHardwareAccelerated()) {
+		lua_pushstring("OpenGL"); // type of 3d renderer
+	} else {
+		lua_pushstring("/engn003/Software"); // type of 3d renderer
+	}
+	lua_settable();
+	lua_pushobject(result);
 }
 
 static void IsActorResting() {

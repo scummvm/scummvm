@@ -26,6 +26,7 @@ class Bitmap : public Resource {
 public:
 	// Construct a bitmap from the given data.
 	Bitmap(const char *filename, const char *data, int len);
+	Bitmap(const char *data, int width, int height, const char *filename);
 
 	void draw() const;
 

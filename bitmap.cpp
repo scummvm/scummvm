@@ -77,6 +77,21 @@ Bitmap::Bitmap(const char *filename, const char *data, int len) :
 	g_driver->createBitmap(this);
 }
 
+Bitmap::Bitmap(const char *data, int width, int height, const char *filename) :
+		Resource(filename) {
+	strcpy(_filename, filename);
+	_currImage = 1;
+	_numImages = 1;
+	_x = 0;
+	_y = 0;
+	_width = width;
+	_height = height;
+	_data = new char *[_numImages];
+	_data[0] = new char[2 * _width * _height];
+	memcpy(_data[0], data, 2 * _width * _height);
+	g_driver->createBitmap(this);
+}
+
 void Bitmap::draw() const {
 	if (_currImage == 0)
 		return;
