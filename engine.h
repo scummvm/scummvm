@@ -206,7 +206,7 @@ extern int g_imuseState;
 
 extern Actor *g_currentUpdatedActor;
 
-#ifdef _MSC_VER
+#ifdef _WIN32
 
 extern WIN32_FIND_DATAA g_find_file_data;
 extern HANDLE g_searchFile;

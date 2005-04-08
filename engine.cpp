@@ -36,7 +36,7 @@ Engine *g_engine = NULL;
 extern Imuse *g_imuse;
 int g_imuseState = -1;
 
-#ifdef _MSC_VER
+#ifdef _WIN32
 
 WIN32_FIND_DATAA g_find_file_data;
 HANDLE g_searchFile;

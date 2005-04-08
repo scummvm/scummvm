@@ -45,7 +45,7 @@ ResourceLoader::ResourceLoader() {
 	dir_str += '/';
 	int lab_counter = 0;
 
-#ifdef _MSC_VER
+#ifdef _WIN32
 	WIN32_FIND_DATAA find_file_data;
 	std::string dir_strWin32 = dir_str + '*';
 	HANDLE d = FindFirstFile(dir_strWin32.c_str(), &find_file_data);
@@ -59,7 +59,7 @@ ResourceLoader::ResourceLoader() {
 	if (d == NULL)
 		error("Cannot open DataDir (%s)- check configuration file", dir_str.c_str());
 
-#ifdef _MSC_VER
+#ifdef _WIN32
 	do {
 		int namelen = strlen(find_file_data.cFileName);
 		if ((namelen > 4) && (stricmp(find_file_data.cFileName + namelen - 4, ".lab") == 0)) {
@@ -74,7 +74,7 @@ ResourceLoader::ResourceLoader() {
 			else
 				delete l;
 		}
-	} while (FindNextFile(d, &find_file_data) != NULL);
+	} while (FindNextFile(d, &find_file_data));
 	FindClose(d);
 #else
 	dirent *de;

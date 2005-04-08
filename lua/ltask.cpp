@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <search.h>
 
 #include "ltask.h"
 #include "lauxlib.h"

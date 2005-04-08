@@ -1242,7 +1242,7 @@ static void PlaySoundAt() {
 
 static void FileFindDispose() {
 	if (g_searchFile) {
-#ifdef _MSC_VER
+#ifdef _WIN32
 		FindClose(g_searchFile);
 #else
 		closedir(g_searchFile);
@@ -1253,12 +1253,12 @@ static void FileFindDispose() {
 
 static void luaFileFindNext() {
 	bool found = false;
-#ifndef _MSC_VER
+#ifndef _WIN32
 	dirent *de;
 #endif
 
 	if (g_searchFile) {
-#ifdef _MSC_VER
+#ifdef _WIN32
 		if (g_firstFind) {
 			found = true;
 			g_firstFind = false;
@@ -1275,7 +1275,7 @@ static void luaFileFindNext() {
 		} while (de && (de->d_type == 6/* DT_DIR ? */));
 #endif
 
-#ifdef _MSC_VER
+#ifdef _WIN32
 		if (g_find_file_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
 #else
 		if (de->d_type == 6/* DT_DIR ? */)
@@ -1285,7 +1285,7 @@ static void luaFileFindNext() {
 	}
 
 	if (found) {
-#ifdef _MSC_VER
+#ifdef _WIN32
 		lua_pushstring(g_find_file_data.cFileName);
 #else
 		lua_pushstring(de->d_name);
@@ -1308,7 +1308,7 @@ static void luaFileFindFirst() {
 		sprintf(path, "%s", extension);
 	}
 
-#ifdef _MSC_VER
+#ifdef _WIN32
 	std::string dir_strWin32 = path;
 	g_searchFile = FindFirstFile(dir_strWin32.c_str(), &g_find_file_data);
 	g_firstFind = true;
