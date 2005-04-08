@@ -727,7 +727,6 @@ void DriverGL::drawRectangle(PrimitiveObject *primitive) {
 	glVertex2f(x1, y2);
 	glEnd();
 
-	// I don't know why it's needed back to white color
 	glColor3f(1.0f, 1.0f, 1.0f);
 
 	glDepthMask(GL_TRUE);
