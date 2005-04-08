@@ -45,6 +45,7 @@ Engine::Engine() :
 		_controlsEnabled[i] = false;
 	_speechMode = 3; // VOICE + TEXT
 	_menuMode = 0;
+	_textSpeed = 6;
 
 	textObjectDefaults.x = 0;
 	textObjectDefaults.y = 200;
@@ -436,4 +437,11 @@ void Engine::setScene(const char *name) {
 	_currScene = new Scene(name, b->data(), b->len());
 	_currScene->setSoundParameters(20, 127);
 	delete b;
+}
+void Engine::setTextSpeed(int speed) {
+	if (speed < 1)
+		_textSpeed = 1;
+	if (speed > 10)
+		_textSpeed = 10;
+	_textSpeed = speed;
 }

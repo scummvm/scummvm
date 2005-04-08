@@ -103,6 +103,8 @@ public:
 
 	float perSecond(float rate) const { return rate * _frameTime / 1000; }
 
+	int getTextSpeed() { return _textSpeed; }
+	void setTextSpeed(int speed);
 	void setMenuMode(int mode) { _menuMode = mode; }
 	int getMenuMode() { return _menuMode; }
 
@@ -186,6 +188,7 @@ private:
 	Scene *_currScene;
 	int _mode, _menuMode;
 	int _speechMode;
+	int _textSpeed;
 
 	unsigned _frameStart, _frameTime, _movieTime;
 

@@ -1501,8 +1501,12 @@ static void ChangeTextObject() {
  * we're not currently using the value
  */
 static void GetTextSpeed() {
-	stubWarning("GetTextSpeed");
-	lua_pushnumber(2);
+	lua_pushnumber(g_engine->getTextSpeed());
+}
+
+static void SetTextSpeed() {
+	int speed = check_int(2);
+	g_engine->setTextSpeed(speed);
 }
 
 /* Make a text object, known to be used by the menu
@@ -1858,7 +1862,6 @@ STUB_FUNC(ResetTextures)
 STUB_FUNC(JustLoaded)
 STUB_FUNC(AttachToResources)
 STUB_FUNC(DetachFromResources)
-STUB_FUNC(SetTextSpeed)
 STUB_FUNC(GetSaveGameData)
 STUB_FUNC(SubmitSaveGameData)
 STUB_FUNC(GetSaveGameImage)
