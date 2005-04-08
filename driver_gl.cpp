@@ -30,7 +30,7 @@ DriverGL::DriverGL(int screenW, int screenH, int screenBPP, bool fullscreen) {
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-	Uint32 flags = SDL_OPENGL;
+	uint32 flags = SDL_OPENGL;
 	if (fullscreen)
 		flags |= SDL_FULLSCREEN;
 	if (SDL_SetVideoMode(screenW, screenH, screenBPP, flags) == 0)
@@ -50,14 +50,19 @@ DriverGL::DriverGL(int screenW, int screenH, int screenBPP, bool fullscreen) {
 }
 
 void DriverGL::toggleFullscreenMode() {
-	Uint32 flags = SDL_OPENGL;
-
-	if (! _isFullscreen)
+	warning("Switching on fly to Fullscreen mode is not allowed");
+	// switching to fullscreen mode it cause lost of texture
+	// and after that recreating
+	// for now it's not allowed
+/*
+	uint32 flags = SDL_OPENGL;
+	if (!_isFullscreen)
 		flags |= SDL_FULLSCREEN;
 	if (SDL_SetVideoMode(_screenWidth, _screenHeight, _screenBPP, flags) == 0)
 		warning("Could not change fullscreen mode");
 	else
-		_isFullscreen = ! _isFullscreen;
+		_isFullscreen = !_isFullscreen;
+*/
 }
 
 void DriverGL::setupCamera(float fov, float nclip, float fclip, float roll) {
@@ -108,7 +113,6 @@ void DriverGL::finishActorDraw() {
 	glPopMatrix();
 	glDisable(GL_TEXTURE_2D);
 }
-
 
 void DriverGL::set3DMode() {
 	glMatrixMode(GL_MODELVIEW);
@@ -704,27 +708,28 @@ void DriverGL::drawRectangle(PrimitiveObject *primitive) {
 	glOrtho(0, 640, 480, 0, 0, 1);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+
 	glDisable(GL_LIGHTING);
-	glEnable(GL_TEXTURE_2D);
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
+
+	glColor3f(color.red() / 255.0f, color.green() / 255.0f, color.blue() / 255.0f);
 
 	if (primitive->isFilled()) {
 		glBegin(GL_QUADS);
 	} else {
 		glBegin(GL_LINES);
 	}
-	
-	glColor3i(color.red(), color.green(), color.blue());
 
-	glVertex2i(x1, 480 - y1);
-	glVertex2i(x2, 480 - y1);
-	glVertex2i(x2, 480 - y2);
-	glVertex2i(x1, 480 - y2);
+	glVertex2f(x1, y1);
+	glVertex2f(x2, y1);
+	glVertex2f(x2, y2);
+	glVertex2f(x1, y2);
 	glEnd();
 
-	glDisable(GL_TEXTURE_2D);
-	glDisable(GL_BLEND);
+	// I don't know why it's needed back to white color
+	glColor3f(1.0f, 1.0f, 1.0f);
+
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
