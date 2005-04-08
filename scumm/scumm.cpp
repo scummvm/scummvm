@@ -664,7 +664,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 
 	// We read data directly from NES ROM instead of extracting it with
 	// external tool
-	if (_features & GF_NES)
+	if ((_features & GF_NES) && _substResFileNameIndex)
 		_fileHandle = new ScummNESFile();
 	else
 		_fileHandle = new ScummFile();
@@ -3254,6 +3254,9 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		break;
 	case Common::kPlatformMacintosh:
 		game.features |= GF_MACINTOSH;
+		break;
+	case Common::kPlatformNES:
+		game.features |= GF_NES;
 		break;
 	case Common::kPlatformWindows:
 		game.features |= GF_WINDOWS;
