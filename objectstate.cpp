@@ -30,3 +30,9 @@ ObjectState::ObjectState(int setupID, ObjectState::Position pos, const char *bit
 	if (_zbitmap)
 		_zbitmap->setNumber(initialImage);
 }
+
+ObjectState::~ObjectState() {
+	g_resourceloader->uncache(_bitmap->getFilename());
+	if (_zbitmap)
+		g_resourceloader->uncache(_zbitmap->getFilename());
+}

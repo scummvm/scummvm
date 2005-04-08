@@ -34,6 +34,8 @@ class ObjectState {
 	};
 
 	ObjectState(int setupID, ObjectState::Position pos, const char *bitmap, const char *zbitmap, bool visible);
+	ObjectState::~ObjectState();
+
 	int setupID() const { return _setupID; }
 	Position pos() const { return _pos; }
 	const char *bitmapFilename() const {

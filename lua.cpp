@@ -1686,9 +1686,8 @@ static void NewObjectState() {
 }
 
 static void FreeObjectState() {
-	/*ObjectState *object = */check_object(1);
-	warning("State: freeObjectState(...)");
-	//scene.deleteObjectState(object);
+	ObjectState *object = check_object(1);
+	g_engine->currScene()->deleteObjectState(object);
 }
 
 static void GetCurrentScript() {

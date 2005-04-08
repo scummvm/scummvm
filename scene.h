@@ -86,6 +86,13 @@ public:
 	void addObjectState(ObjectState *s) {
 		_states.push_back(s);
 	}
+	void deleteObjectState(ObjectState *s) {
+		while (!_states.empty()) {
+			delete _states.back();
+			_states.pop_back();
+		}
+	}
+
 	ObjectState *findState(const char *filename);
 
 	struct Setup {		// Camera setup data
