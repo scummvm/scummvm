@@ -519,6 +519,8 @@ static void SetHardwareState() {
 }
 
 static void SetVideoDevices() {
+	int devId = check_int(1);
+	int modeId = check_int(2);
 	// ignore setting video devices
 }
 
@@ -530,7 +532,7 @@ static void GetVideoDevices() {
 static void EnumerateVideoDevices() {
 	lua_Object result = lua_createtable();
 	lua_pushobject(result);
-	lua_pushnumber(0); // id of device
+	lua_pushnumber(0.0); // id of device
 	lua_pushstring("SDL Video Device"); // name of device
 	lua_settable();
 	lua_pushobject(result);
@@ -540,7 +542,7 @@ static void Enumerate3DDevices() {
 	int num = check_int(1);
 	lua_Object result = lua_createtable();
 	lua_pushobject(result);
-	lua_pushnumber(-1);
+	lua_pushnumber(-1.0);
 	if (g_driver->isHardwareAccelerated()) {
 		lua_pushstring("OpenGL"); // type of 3d renderer
 	} else {
