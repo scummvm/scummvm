@@ -24,6 +24,7 @@
 
 #include "scumm/intern.h"
 #include "scumm/resource.h"
+#include "scumm/saveload.h"
 #include "scumm/scumm.h"
 #include "scumm/sprite_he.h"
 #include "scumm/usage_bits.h"
@@ -1354,6 +1355,75 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 		}
 		displayWizComplexImage(&wiz);
 	}
+}
+
+void ScummEngine_v90he::saveOrLoadSpriteData(Serializer *s, uint32 savegameVersion) {
+	static const SaveLoadEntry spriteEntries[] = {
+		MKLINE(SpriteInfo, id, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, zorder, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, flags, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, resId, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, resState, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, groupNum, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, paletteNum, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, zorderPriority, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, bbox.left, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, bbox.top, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, bbox.right, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, bbox.bottom, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, dx, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, dy, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, pos.x, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, pos.y, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, tx, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, ty, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, field_44, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, curImageState, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, curResId, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, imglistNum, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, xmapNum, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, res_wiz_states, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, angle, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, zoom, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, delayCount, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, curAngle, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, curZoom, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, imgFlags, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, field_74, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, delayAmount, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, field_7C, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, field_80, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, classFlags, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, field_88, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, field_8C, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, field_90, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, field_94, sleInt32, VER(48)),
+		MKEND()
+	};
+	
+	static const SaveLoadEntry spriteGroupEntries[] = {
+		MKLINE(SpriteGroup, bbox.left, sleInt32, VER(48)),
+		MKLINE(SpriteGroup, bbox.top, sleInt32, VER(48)),
+		MKLINE(SpriteGroup, bbox.right, sleInt32, VER(48)),
+		MKLINE(SpriteGroup, bbox.bottom, sleInt32, VER(48)),
+		MKLINE(SpriteGroup, zorderPriority, sleInt32, VER(48)),
+		MKLINE(SpriteGroup, flags, sleInt32, VER(48)),
+		MKLINE(SpriteGroup, tx, sleInt32, VER(48)),
+		MKLINE(SpriteGroup, ty, sleInt32, VER(48)),
+		MKLINE(SpriteGroup, dstResNum, sleInt32, VER(48)),
+		MKLINE(SpriteGroup, scaling, sleInt32, VER(48)),
+		MKLINE(SpriteGroup, scaleX, sleInt32, VER(48)),
+		MKLINE(SpriteGroup, scaleY, sleInt32, VER(48)),
+		MKLINE(SpriteGroup, scale_x_ratio_mul, sleInt32, VER(48)),
+		MKLINE(SpriteGroup, scale_x_ratio_div, sleInt32, VER(48)),
+		MKLINE(SpriteGroup, scale_y_ratio_mul, sleInt32, VER(48)),
+		MKLINE(SpriteGroup, scale_y_ratio_div, sleInt32, VER(48)),
+		MKEND()
+	};
+
+	s->saveLoadArrayOf(_activeSpritesTable, _varNumSprites, sizeof(_activeSpritesTable[0]), spriteEntries);
+	s->saveLoadArrayOf(_spriteTable, _varNumSprites, sizeof(_spriteTable[0]), spriteEntries);
+	s->saveLoadArrayOf(_spriteGroups, _varNumSpriteGroups, sizeof(_spriteGroups[0]), spriteGroupEntries);
 }
 
 } // End of namespace Scumm

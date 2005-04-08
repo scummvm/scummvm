@@ -81,6 +81,7 @@ struct SpriteInfo {
 	int field_88;
 	int field_8C;
 	int field_90;
+	int field_94;
 };
 
 struct SpriteGroup {

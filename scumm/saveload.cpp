@@ -759,6 +759,9 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		else
 			NES_loadCostumeSet(_NESCostumeSet);
 
+	if (_heversion >= 90) {
+		((ScummEngine_v90he *)this)->saveOrLoadSpriteData(&*s, savegameVersion);
+	}
 	if (_heversion >= 71) {
 		Wiz *wiz = &((ScummEngine_v70he *)this)->_wiz;
 		s->saveLoadArrayOf(wiz->_polygons, ARRAYSIZE(wiz->_polygons), sizeof(wiz->_polygons[0]), polygonEntries);

@@ -1048,6 +1048,7 @@ protected:
 	void spriteAddImageToList(int spriteId, int imageNum, int *spriteIdptr);
 
 public:
+	void saveOrLoadSpriteData(Serializer *s, uint32 savegameVersion);
 	void spritesBlitToScreen();
 	void spritesMarkDirty(bool unkFlag);
 	void spritesSortActiveSprites();
