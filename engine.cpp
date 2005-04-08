@@ -36,6 +36,18 @@ Engine *g_engine = NULL;
 extern Imuse *g_imuse;
 int g_imuseState = -1;
 
+#ifdef _MSC_VER
+
+WIN32_FIND_DATAA g_find_file_data;
+HANDLE g_searchFile;
+bool g_firstFind;
+
+#else
+
+DIR *g_searchFile;
+
+#endif
+
 // hack for access current upated actor to allow access position of actor to sound costume component
 Actor *g_currentUpdatedActor = NULL;
 
@@ -46,6 +58,7 @@ Engine::Engine() :
 	_speechMode = 3; // VOICE + TEXT
 	_menuMode = 0;
 	_textSpeed = 6;
+	g_searchFile = NULL;
 
 	textObjectDefaults.x = 0;
 	textObjectDefaults.y = 200;
@@ -129,15 +142,6 @@ void Engine::mainLoop() {
 			if (event.type == SDL_KEYDOWN && _controlsEnabled[event.key.keysym.sym])
 				handleButton(SDL_KEYDOWN, event.key.keysym.sym);
 			if (event.type == SDL_KEYUP && _controlsEnabled[event.key.keysym.sym]) {
-				// temporary hack for save/load request until game menu will work
-				if (event.key.keysym.sym == SDLK_F7) {
-					_savegameLoadRequest = true;
-					continue;
-				} else if (event.key.keysym.sym == SDLK_F8) {
-					_savegameSaveRequest = true;
-					continue;
-				}
-
 				handleButton(SDL_KEYUP, event.key.keysym.sym);
 			}
 			if (event.type == SDL_QUIT) {

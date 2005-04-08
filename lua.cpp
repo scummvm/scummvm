@@ -36,6 +36,7 @@
 #include <cmath>
 #include <SDL_keysym.h>
 #include <SDL_keyboard.h>
+#include <zlib.h>
 
 extern Imuse *g_imuse;
 
@@ -1239,6 +1240,89 @@ static void PlaySoundAt() {
 	// dummy
 }
 
+static void FileFindDispose() {
+	if (g_searchFile) {
+#ifdef _MSC_VER
+		FindClose(g_searchFile);
+#else
+		closedir(g_searchFile);
+#endif
+		g_searchFile = NULL;
+	}
+}
+
+static void luaFileFindNext() {
+	bool found = false;
+#ifndef _MSC_VER
+	dirent *de;
+#endif
+
+	if (g_searchFile) {
+#ifdef _MSC_VER
+		if (g_firstFind) {
+			found = true;
+			g_firstFind = false;
+		}
+		while (found && (g_find_file_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+			if (FindNextFile(g_searchFile, &g_find_file_data) == 0)
+				found = true;
+		};
+#else
+		do {
+			de = readdir(g_searchFile);
+			if (de)
+				found = true;
+		} while (de && (de->d_type == 6/* DT_DIR ? */));
+#endif
+
+#ifdef _MSC_VER
+		if (g_find_file_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+#else
+		if (de->d_type == 6/* DT_DIR ? */)
+#endif
+			found = false;
+		}
+	}
+
+	if (found) {
+#ifdef _MSC_VER
+		lua_pushstring(g_find_file_data.cFileName);
+#else
+		lua_pushstring(de->d_name);
+#endif
+	} else {
+		lua_pushnil();
+	}
+}
+
+static void luaFileFindFirst() {
+	char path[255];
+	char *extension = luaL_check_string(1);
+	lua_Object pathObj = lua_getparam(2);
+
+	FileFindDispose();
+
+	if (!lua_isnil(pathObj)) {
+		sprintf(path, "%s/%s", lua_getstring(pathObj), extension);
+	} else {
+		sprintf(path, "%s", extension);
+	}
+
+#ifdef _MSC_VER
+	std::string dir_strWin32 = path;
+	g_searchFile = FindFirstFile(dir_strWin32.c_str(), &g_find_file_data);
+	g_firstFind = true;
+#else
+	g_searchFile = opendir(path);
+#endif
+
+	if (g_searchFile) {
+		luaFileFindNext();
+	} else {
+		lua_pushnil();
+	}
+}
+
 void setFrameTime(float frameTime) {
 	lua_pushobject(lua_getglobal("system"));
 	lua_pushstring("frameTime");
@@ -1796,6 +1880,80 @@ static void GetCurrentScript() {
 	current_script();
 }
 
+static void ScreenShot() {
+}
+
+static void SubmitSaveGameData() {
+	lua_Object table = lua_getparam(1);
+	lua_Object table2;
+	int dataSize = 0;
+	int count = 0;
+	char *str;
+
+	for (;;) {
+		lua_pushobject(table);
+		lua_pushnumber(count);
+		count++;
+		table2 = lua_gettable();
+		if (lua_isnil(table2))
+			break;
+		str = lua_getstring(table2);
+		dataSize += strlen(str) + 1;
+		dataSize += 4;
+	}
+	if (dataSize == 0)
+		return;
+
+	g_engine->savegameGzwrite(&dataSize, sizeof(int));
+	count = 0;
+	for (;;) {
+		lua_pushobject(table);
+		lua_pushnumber(count);
+		count++;
+		table2 = lua_gettable();
+		if (lua_isnil(table2))
+			break;
+		str = lua_getstring(table2);
+		int len = strlen(str) + 1;
+		g_engine->savegameGzwrite(&len, sizeof(int));
+		g_engine->savegameGzwrite(str, len);
+	}
+}
+
+static void GetSaveGameData() {
+	lua_Object result;
+	int dataSize;
+	char *filename = luaL_check_string(1);
+	gzFile file = gzopen(filename, "rb");
+	if (!file)
+		return;
+
+	result = lua_createtable();
+	gzread(file, &dataSize, sizeof(int));
+
+	char str[128];
+	int strSize;
+	int count = 0;
+
+	for (;;) {
+		if (dataSize <= 0)
+			break;
+		gzread(file, &strSize, sizeof(int));
+		gzread(file, str, strSize);
+		lua_pushobject(result);
+		lua_pushnumber(count);
+		lua_pushstring(str);
+		lua_settable();
+		dataSize -= strSize;
+		dataSize -= 4;
+		count++;
+	}
+
+	lua_pushobject(result);
+
+	gzclose(file);
+}
+
 static void Load() {
 	lua_Object fileName = lua_getparam(1);
 	if (lua_isnil(fileName)) {
@@ -1917,15 +2075,6 @@ static void EngineDisplay() {
 		printf("EngineDisplay() Disable\n");
 }
 
-
-static void GetSaveGameData() {
-	error("OPCODE USAGE VERIFICATION: GetSaveGameData");
-}
-
-static void SubmitSaveGameData() {
-	error("OPCODE USAGE VERIFICATION: SubmitSaveGameData");
-}
-
 static void JustLoaded() {
 	error("OPCODE USAGE VERIFICATION: JustLoaded");
 }
@@ -1984,7 +2133,6 @@ STUB_FUNC(ResetTextures)
 STUB_FUNC(AttachToResources)
 STUB_FUNC(DetachFromResources)
 STUB_FUNC(GetSaveGameImage)
-STUB_FUNC(ScreenShot)
 STUB_FUNC(IrisUp)
 STUB_FUNC(IrisDown)
 STUB_FUNC(FadeInChore)
@@ -2023,9 +2171,6 @@ STUB_FUNC(PrintActorCostumes)
 STUB_FUNC(SpewStartup)
 STUB_FUNC(PreRender)
 STUB_FUNC(GetSectorOppositeEdge)
-STUB_FUNC(FileFindDispose)
-STUB_FUNC(FileFindNext)
-STUB_FUNC(FileFindFirst)
 STUB_FUNC(PreviousSetup)
 STUB_FUNC(NextSetup)
 STUB_FUNC(UnLockSet)
@@ -2433,8 +2578,8 @@ struct luaL_reg mainOpcodes[] = {
 	{ "PlaySoundAt", PlaySoundAt },
 	{ "IsSoundPlaying", IsSoundPlaying },
 	{ "SetSoundPosition", SetSoundPosition },
-	{ "FileFindFirst", FileFindFirst },
-	{ "FileFindNext", FileFindNext },
+	{ "FileFindFirst", luaFileFindFirst },
+	{ "FileFindNext", luaFileFindNext },
 	{ "FileFindDispose", FileFindDispose },
 	{ "InputDialog", InputDialog },
 	{ "WriteRegistryValue", WriteRegistryValue },
