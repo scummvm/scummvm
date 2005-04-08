@@ -44,6 +44,7 @@ Engine::Engine() :
 	for (int i = 0; i < SDLK_EXTRA_LAST; i++)
 		_controlsEnabled[i] = false;
 	_speechMode = 3; // VOICE + TEXT
+	_menuMode = 0;
 
 	textObjectDefaults.x = 0;
 	textObjectDefaults.y = 200;
@@ -277,8 +278,9 @@ void Engine::mainLoop() {
 			}
 		}
 
-		// Run asynchronous tasks
-		lua_runtasks();
+		if (!_menuMode)
+			// Run asynchronous tasks
+			lua_runtasks();
 
 		if (g_imuseState != -1) {
 			g_imuse->setMusicState(g_imuseState);
