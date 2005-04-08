@@ -1809,17 +1809,17 @@ void ScummEngine_v72he::o72_writeFile() {
 
 void ScummEngine_v72he::o72_findAllObjects() {
 	int room = pop();
-	int i = 1;
+	int i;
 
 	if (room != _currentRoom)
-		warning("o72_findAllObjects: current room is not %d", room);
+		error("o72_findAllObjects: current room is not %d", room);
+
 	writeVar(0, 0);
-	defineArray(0, kDwordArray, 0, 0, 0, _numLocalObjects + 1);
+	defineArray(0, kDwordArray, 0, 0, 0, _numLocalObjects);
 	writeArray(0, 0, 0, _numLocalObjects);
 	
-	while (i < _numLocalObjects) {
+	for (int i = 1; i < _numLocalObjects; i++) {
 		writeArray(0, 0, i, _objs[i].obj_nr);
-		i++;
 	}
 	
 	push(readVar(0));

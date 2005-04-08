@@ -1698,13 +1698,13 @@ void ScummEngine_v90he::o90_findAllObjectsWithClassOf() {
 
 	num = getStackList(args, ARRAYSIZE(args));
 	int room = pop();
-	int j = 1;
+	int numObjs = 0;
 
 	if (room != _currentRoom)
-		warning("o90_findAllObjectsWithClassOf: current room is not %d", room);
+		error("o90_findAllObjectsWithClassOf: current room is not %d", room);
 
 	writeVar(0, 0);
-	defineArray(0, kDwordArray, 0, 0, 0, _numLocalObjects + 1);
+	defineArray(0, kDwordArray, 0, 0, 0, _numLocalObjects);
 	for (int i = 1; i < _numLocalObjects; i++) {
 		cond = 1;
 		tmp = num;
@@ -1715,11 +1715,13 @@ void ScummEngine_v90he::o90_findAllObjectsWithClassOf() {
 				cond = 0;
 		}
 
-		if (cond)
-			writeArray(0, 0, j++, _objs[i].obj_nr);
+		if (cond) {
+			numObjs++;
+			writeArray(0, 0, numObjs, _objs[i].obj_nr);
+		}
 	}
 
-	writeArray(0, 0, 0, j);
+	writeArray(0, 0, 0, numObjs);
 	
 	push(readVar(0));
 }
