@@ -157,6 +157,8 @@ void ScummEngine_v99he::setPaletteFromPtr(const byte *ptr, int numcolor) {
 		}
 	}
 
+	memcpy(_hePalettes, _hePalettes + 1024, 768);
+
 	for (i = 0; i < 10; ++i)
 		_hePalettes[1792 + i] = i;
 	for (i = 246; i < 256; ++i)
