@@ -259,3 +259,13 @@ void Scene::getSoundParameters(int *minVolume, int *maxVolume) {
 	*minVolume = _minVolume;
 	*maxVolume = _maxVolume;
 }
+
+void Scene::moveObjectStateToFirst(ObjectState *s) {
+	_states.remove(s);
+	_states.push_front(s);
+}
+
+void Scene::moveObjectStateToLast(ObjectState *s) {
+	_states.remove(s);
+	_states.push_back(s);
+}

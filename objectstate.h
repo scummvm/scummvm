@@ -26,7 +26,7 @@
 #include <list>
 
 class ObjectState {
-	public:
+public:
 	enum Position {
 		OBJSTATE_UNDERLAY = 1,
 		OBJSTATE_OVERLAY = 2,
@@ -38,6 +38,8 @@ class ObjectState {
 
 	int setupID() const { return _setupID; }
 	Position pos() const { return _pos; }
+	void setPos(Position pos) { _pos = pos; }
+
 	const char *bitmapFilename() const {
 		return _bitmap->filename();
 	}
@@ -53,7 +55,8 @@ class ObjectState {
 			_zbitmap->draw();
 	}
 
-	private:
+private:
+
 	int _setupID;
 	Position _pos;
 	ResPtr<Bitmap> _bitmap, _zbitmap;

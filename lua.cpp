@@ -1669,7 +1669,7 @@ static void NewObjectState() {
 		OBJSTATE_STATE = 3
 	};
 
-	ObjectState *object = NULL;
+	ObjectState *state = NULL;
 
 	int setupID = check_int(1);		// Setup ID
 	ObjectState::Position pos = check_objstate_pos(2); // When to draw
@@ -1680,14 +1680,34 @@ static void NewObjectState() {
 	if (!lua_isnil(lua_getparam(4)))
 		zbitmap = luaL_check_string(4);
 
-	object = new ObjectState(setupID, pos, bitmap, zbitmap, visible);
-	g_engine->currScene()->addObjectState(object);
-	lua_pushusertag(object, MKID('STAT'));
+	state = new ObjectState(setupID, pos, bitmap, zbitmap, visible);
+	g_engine->currScene()->addObjectState(state);
+	lua_pushusertag(state, MKID('STAT'));
 }
 
 static void FreeObjectState() {
-	ObjectState *object = check_object(1);
-	g_engine->currScene()->deleteObjectState(object);
+	ObjectState *state = check_object(1);
+	g_engine->currScene()->deleteObjectState(state);
+}
+
+static void SendObjectToBack() {
+	stubWarning("VERIFY: SendObjectToBack");
+	ObjectState *state = check_object(1);
+	// moving object to top in list ?
+	g_engine->currScene()->moveObjectStateToFirst(state);
+}
+
+static void SendObjectToFront() {
+	stubWarning("VERIFY: SendObjectToFront");
+	ObjectState *state = check_object(1);
+	g_engine->currScene()->moveObjectStateToLast(state);
+	// moving object to last in list ?
+}
+
+static void SetObjectType() {
+	ObjectState *state = check_object(1);
+	ObjectState::Position pos = check_objstate_pos(2);
+	state->setPos(pos);
 }
 
 static void GetCurrentScript() {
@@ -1878,9 +1898,6 @@ STUB_FUNC(SetActorCollisionScale)
 STUB_FUNC(SetActorCollisionMode)
 STUB_FUNC(FlushControls)
 STUB_FUNC(ActorToClean)
-STUB_FUNC(SendObjectToFront)
-STUB_FUNC(SendObjectToBack)
-STUB_FUNC(SetObjectType)
 STUB_FUNC(SetActorShadowValid)
 STUB_FUNC(AddShadowPlane)
 STUB_FUNC(KillActorShadows)
