@@ -67,7 +67,7 @@ public:
 	void drawDepthBitmap(int x, int y, int w, int h, char *data);
 	void drawBitmap();
 
-	void getSnapshot(int x, int y, int w, int h, char **data, int flags);
+	Bitmap *getScreenshot(int w, int h);
 	void enableDim(int x, int y, int w, int h) { _dim = true; }
 	void disableDim(int x, int y, int w, int h) { _dim = false; }
 

@@ -473,7 +473,22 @@ void DriverTinyGL::destroyTextBitmap(TextObjectHandle *handle) {
 	SDL_FreeSurface((SDL_Surface *)handle->surface);
 }
 
-void DriverTinyGL::getSnapshot(int x, int y, int w, int h, char **data, int flags) {
+Bitmap *DriverTinyGL::getScreenshot(int w, int h) {
+	uint16 *buffer = new uint16[w * h];
+	assert(buffer);
+
+	float step_x = 640.0 / w;
+	float step_y = 480.0 / h;
+	int step = 0;
+	for (float y = 0; y < 479; y += step_y) {
+		for (float x = 0; x < 639; x += step_x) {
+			buffer[step++] = *((uint16 *)(_screen->pixels) + (int)y * 640 + (int)x); 
+		}
+	}
+
+	Bitmap *screenshot = new Bitmap((char *)buffer, w, h, "screenshot");
+	delete []buffer;
+	return screenshot;
 }
 
 void DriverTinyGL::drawDim() {

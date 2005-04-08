@@ -1312,6 +1312,8 @@ static void luaFileFindFirst() {
 	std::string dir_strWin32 = path;
 	g_searchFile = FindFirstFile(dir_strWin32.c_str(), &g_find_file_data);
 	g_firstFind = true;
+	if (g_searchFile == INVALID_HANDLE_VALUE)
+		g_searchFile = NULL;
 #else
 	g_searchFile = opendir(path);
 #endif
@@ -1532,7 +1534,7 @@ static void menuHandler() {
 	 * a lot of the operations necessary to use the menu
 	 */
 	bool menuChanged = false, sliderChanged = false;
-	switch(key) {
+	switch (key) {
 		case SDLK_ESCAPE:
 		{
 			lua_Object close = getTableFunction(menuTable, "cancel");
@@ -1881,6 +1883,15 @@ static void GetCurrentScript() {
 }
 
 static void ScreenShot() {
+	int width = check_int(1);
+	int height = check_int(2);
+			
+	Bitmap *screenshot = g_driver->getScreenshot(width, height);
+	if (screenshot) {
+		lua_pushusertag(screenshot, MKID('VBUF'));
+	} else {
+		lua_pushnil();
+	}
 }
 
 static void SubmitSaveGameData() {

@@ -81,7 +81,7 @@ public:
 
 	virtual void drawDepthBitmap(int x, int y, int w, int h, char *data) = 0;
 
-	virtual void getSnapshot(int x, int y, int w, int h, char **data, int flags) = 0;
+	virtual Bitmap *getScreenshot(int w, int h) = 0;
 	virtual void enableDim(int x, int y, int w, int h) = 0;
 	virtual void disableDim(int x, int y, int w, int h) = 0;
 
