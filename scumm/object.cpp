@@ -373,6 +373,10 @@ int ScummEngine::findObject(int x, int y) {
 			}
 		} while ((_objs[b].state & mask) == a);
 	}
+	
+	if ((_features & GF_NES) && (v2_mouseover_box != -1))
+		return findInventory(VAR(VAR_EGO), v2_mouseover_box + _inventoryOffset + 1);
+
 	return 0;
 }
 
