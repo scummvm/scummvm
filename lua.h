@@ -45,6 +45,7 @@ void setTableValue(lua_Object table, char *name, lua_Object newvalue);
 
 // get the value of a table item
 lua_Object getTableValue(lua_Object table, char *name);
+lua_Object getIndexedTableValue(lua_Object table, int index);
 
 // get a function stored in a table
 lua_Object getTableFunction(lua_Object table, char *name);

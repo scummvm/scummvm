@@ -1252,50 +1252,89 @@ static void CleanBuffer() {
 	g_engine->killTextObjects();
 }
  
-/*
- *
+/* Check to see if the menu item at a specific index has
+ * the "disabled" flag set
  */
-static void mainMenuHandler() {
+bool itemDisabled(lua_Object itemTable, int menuItem) {
+	lua_Object table = getTableValue(itemTable, "items");
+	lua_Object item = getIndexedTableValue(table, menuItem);
+	lua_Object itemdata = getTableValue(item, "props");
+	lua_Object disabled = getTableValue(itemdata, "disabled");
+
+	if (!lua_isnil(disabled) && atoi(lua_getstring(disabled)) == 1)
+		return true;
+	else
+		return false;
+}
+
+/* Find the text representing an item in the menu
+ */
+char *itemText(lua_Object itemTable, int menuItem) {
+	lua_Object table = getTableValue(itemTable, "items");
+	lua_Object item = getIndexedTableValue(table, menuItem);
+	lua_Object itemtext = getTableValue(item, "text");
+
+	if (!lua_isnil(itemtext) && lua_isstring(itemtext))
+		return lua_getstring(itemtext);
+	else
+		return NULL;
+}
+
+/* This function provides all of the menu
+ * handling that has been observed
+ */
+static void menuHandler() {
 	lua_Object menuTable = lua_getparam(1);
 	lua_Object keycode = lua_getparam(2);
 	lua_Object pushcode = lua_getparam(3);
-	lua_Object itemTable;
+	lua_Object itemTable, item;
+	int sliderValue = 0;
 	int key, operation;
-	int _menuItem = 1, _menuItems = 1;
-         
-	stubWarning("mainMenuHandler");
+	int menuItem = 1, menuItems = 1;
+
 	if (!lua_isnumber(keycode) || !lua_istable(menuTable))
 		return;
 	if (lua_isnil(pushcode))
 		operation = 0;
 	else
 		return;
-         
+
 	// get the item list
 	itemTable = getTableValue(menuTable, "menu");
 	if (!lua_istable(itemTable))
 		return;
 
-		key = atoi(lua_getstring(keycode));
+	key = atoi(lua_getstring(keycode));
 
 	// get the current item
-	_menuItem = atoi(lua_getstring(getTableValue(itemTable, "cur_item")));
-	_menuItems = atoi(lua_getstring(getTableValue(itemTable, "num_items")));
+	menuItem = atoi(lua_getstring(getTableValue(itemTable, "cur_item")));
+	menuItems = atoi(lua_getstring(getTableValue(itemTable, "num_items")));
+
+	// handle hotkeys
+	if (key >= SDLK_a && key <= SDLK_z) {
+		char keychar[2];
+
+		lua_Object handler = getTableFunction(menuTable, "characterHandler");
+		lua_beginblock();
+		lua_pushobject(menuTable);
+		keychar[0] = key;
+		keychar[1] = '\0';
+		lua_pushstring(keychar);
+		lua_pushnil();
+		lua_callfunction(handler);
+		lua_endblock();
+		key = 0;
+		return; // stop processing (we don't need to handle normal keystrokes)
+	}
+
+	// hack the "&Return to Game" command so it actually works
+	if (key == SDLK_RETURN && strmatch(itemText(itemTable, menuItem), "/sytx247/"))
+		key = SDLK_ESCAPE;
 
 	/* if we're running the menu then we need to manually handle
 	 * a lot of the operations necessary to use the menu
 	 */
-	bool menuChanged = false;
-	if (key == SDLK_RETURN) {
-		switch(_menuItem) {
-		case 10:
-			key = SDLK_r;
-			break;
-		default:
-			key = SDLK_RETURN;
-		}
-	}
-
+	bool menuChanged = false, sliderChanged = false;
 	switch(key) {
 		case SDLK_r:
 		case SDLK_ESCAPE:
@@ -1305,72 +1344,55 @@ static void mainMenuHandler() {
 
 			lua_beginblock();
 			lua_pushobject(menuTable);
-			lua_callfunction(destroy);
-			lua_endblock();
-
-			lua_beginblock();
-			lua_Object is_active = lua_createtable();
-			lua_pushobject(is_active);
-			lua_pushstring("is_active");
-			lua_pushnumber(1);
-			lua_settable();
-			lua_pushobject(is_active);
+			lua_pushnil();
 			lua_callfunction(close);
 			lua_endblock();
-			break;
-		}
-        case SDLK_RETURN:
-		{
-			lua_Object choose = getTableFunction(menuTable, "choose_item");
 			lua_beginblock();
-			lua_pushnumber(_menuItem);
-			lua_callfunction(choose);
+			lua_pushnumber(menuItem);
+			lua_callfunction(destroy);
 			lua_endblock();
 			break;
 		}
 		case SDLK_DOWN:
+			do {
+				menuItem++;
+				if (menuItem > menuItems)
+					return;
+			} while (itemDisabled(itemTable, menuItem));
 			menuChanged = true;
-			_menuItem++;
 			break;
 		case SDLK_UP:
+			do {
+				menuItem--;
+				if (menuItem < 1)
+					return;
+			} while (itemDisabled(itemTable, menuItem));
 			menuChanged = true;
-			_menuItem--;
 			break;
-		case SDLK_h:
-			menuChanged = true;
-			_menuItem = 1; // help
+		case SDLK_LEFT:
+			sliderValue = -1;
 			break;
-		case SDLK_o:
-			menuChanged = true;
-			_menuItem = 2; // options
-			break;
-		case SDLK_s:
-			menuChanged = true;
-			_menuItem = 3; // load game
-			break;
-		case SDLK_l:
-			menuChanged = true;
-			_menuItem = 4; // load game
-			break;
-		case SDLK_d:
-			menuChanged = true;
-			_menuItem = 6; // dialog transcripts
+		case SDLK_RIGHT:
+			sliderValue = 1;
 			break;
 	}
-	if (menuChanged) {
-		if (_menuItem < 1)
-			_menuItem = 1;
-		if (_menuItem > _menuItems)
-			_menuItem = _menuItems;
-
-		setTableValue(itemTable, "cur_item", _menuItem);
+	if (menuChanged)
+		setTableValue(itemTable, "cur_item", menuItem);
+	if (sliderValue != 0) {
+		lua_Object change = getTableFunction(menuTable, "change_value");
+		lua_beginblock();
+		lua_pushobject(menuTable);
+		lua_pushnil();
+		lua_pushnumber(sliderValue);
+		lua_pushnil();
+		lua_callfunction(change);
+		lua_endblock();
 	}
 }
   
 /* Clean the requested menu
  */
-static void CloseMenu() {
-	stubWarning("CloseMenu");
+static void destroyMenu() {
 	CleanBuffer();
 	lua_Object system_table = lua_getglobal("system");
 	setTableValue(system_table, "menuHandler", (lua_Object) 0);
@@ -1420,19 +1442,6 @@ static void ChangeTextObject() {
 	lua_Object tableObj = lua_getparam(2);
 
 	modifyObject = TextObjectExists((char *)textObject->name());
-	if (modifyObject == NULL) {
-		warning("ChangeTextObject(): Cannot find active text object");
-		return;
-	}
-
-	for (Engine::TextListType::const_iterator i = g_engine->textsBegin(); i != g_engine->textsEnd(); i++) {
-		TextObject *textO = *i;
-
-		if (strstr(textO->name(), textObject->name())) {
-			modifyObject = textO;
-			break;
-		}
-	}
 	if (!modifyObject)
 		error("ChangeTextObject(): Cannot find active text object");
 
@@ -1447,6 +1456,15 @@ static void ChangeTextObject() {
 
 	lua_pushnumber(modifyObject->getBitmapWidth());
 	lua_pushnumber(modifyObject->getBitmapHeight());
+}
+
+/* Return the "text speed", this option must be handled
+ * to prevent errors in the "Options" menu even though
+ * we're not currently using the value
+ */
+static void GetTextSpeed() {
+	stubWarning("GetTextSpeed");
+	lua_pushnumber(2);
 }
 
 /* Make a text object, known to be used by the menu
@@ -1497,8 +1515,8 @@ static void ExpireText() {
 
 static void GetTextCharPosition() {
 	TextObject *textObjectParam = check_textobject(1);
-	int pos = lua_getnumber(lua_getparam(2));
-	lua_pushnumber(textObjectParam->getTextCharPosition(pos));
+	int pos = (int)lua_getnumber(lua_getparam(2));
+	lua_pushnumber((double)textObjectParam->getTextCharPosition(pos));
 }
 
 static void BlastText() {
@@ -1723,17 +1741,17 @@ static void RenderModeUser() {
 static void Display() {
 	stubWarning("Display");
 	lua_Object system_table = lua_getglobal("system");
-	// Install Menu Close Handler
+	// Install Menu Destroy Handler
 	lua_pushobject(system_table);
 	lua_pushstring(const_cast<char *>("userPaintHandler"));
 	lua_pushobject(lua_gettable());
 	lua_pushstring(const_cast<char *>("destroy"));
-	lua_pushcfunction(CloseMenu);
+	lua_pushcfunction(destroyMenu);
 	lua_settable();
 	// Install Menu Key Handler
 	lua_pushobject(system_table);
 	lua_pushstring(const_cast<char *>("menuHandler"));
-	lua_pushcfunction(mainMenuHandler);
+	lua_pushcfunction(menuHandler);
 	lua_settable();
 }
 
@@ -1748,7 +1766,6 @@ static void EngineDisplay() {
 	} else {
 		error("EngineDisplay() Unknown type of param");
 	}
-	g_engine->setMenuMode(!mode);
 	if (mode)
 		printf("EngineDisplay() Enable\n");
 	else
@@ -1801,7 +1818,6 @@ STUB_FUNC(ResetTextures)
 STUB_FUNC(JustLoaded)
 STUB_FUNC(AttachToResources)
 STUB_FUNC(DetachFromResources)
-STUB_FUNC(GetTextSpeed)
 STUB_FUNC(SetTextSpeed)
 STUB_FUNC(GetSaveGameData)
 STUB_FUNC(SubmitSaveGameData)
@@ -2654,6 +2670,20 @@ lua_Object getTableValue(lua_Object table, char *name) {
 	}
 	
 	return 0;
+}
+
+lua_Object getIndexedTableValue(lua_Object table, int index) {
+	if (!lua_istable(table)) {
+		error("getIndexedTableValue(): Parameter not a table!\n");
+		return 0;
+	}
+	lua_pushobject(table);
+	if (index == 1)
+		lua_pushnil();
+	else
+		lua_pushnumber(index - 1);
+	lua_call("next");
+	return lua_getresult(2);
 }
 
 void setTableValue(lua_Object table, char *name, int newvalue) {
