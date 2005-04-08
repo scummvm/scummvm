@@ -1818,7 +1818,7 @@ void ScummEngine_v72he::o72_findAllObjects() {
 	defineArray(0, kDwordArray, 0, 0, 0, _numLocalObjects);
 	writeArray(0, 0, 0, _numLocalObjects);
 	
-	for (int i = 1; i < _numLocalObjects; i++) {
+	for (i = 1; i < _numLocalObjects; i++) {
 		writeArray(0, 0, i, _objs[i].obj_nr);
 	}
 	
