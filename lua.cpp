@@ -1505,7 +1505,7 @@ static void GetTextSpeed() {
 }
 
 static void SetTextSpeed() {
-	int speed = check_int(2);
+	int speed = check_int(1);
 	g_engine->setTextSpeed(speed);
 }
 
