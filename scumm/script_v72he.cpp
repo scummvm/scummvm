@@ -1672,28 +1672,6 @@ void ScummEngine_v72he::o72_openFile() {
 		debug(0,"Converted filename to %s", filename);
 	}
 
-	// Original games read path & filenames from INI file
-	// We only need to add the required game name
-	if (!strcmp((char *)filename,".he3")) {
-		// For freddicove (Unencrypted and Updated Ru)
-		memset(filename, 0, sizeof(filename));
-		sprintf((char *)filename, "%s.he3", _gameName.c_str());
-		debug(0,"New filename %s", filename);
-
-	} else if (!strcmp((char *)filename,".he7")) {
-		// For mustard
-		memset(filename, 0, sizeof(filename));
-		sprintf((char *)filename, "%s.he7", _gameName.c_str());
-		debug(0,"New filename %s", filename);
-
-	} else if (!strcmp((char *)filename,".HE9")) {
-		// For bb2demo
-		memset(filename, 0, sizeof(filename));
-		sprintf((char *)filename, "%s.he9", _gameName.c_str());
-		debug(0,"New filename %s", filename);
-
-	}
-
 	if (_substResFileNameIndex > 0) {
 		char buf1[128];
 

@@ -1636,6 +1636,12 @@ void ScummEngine_v99he::scummInit() {
 	ScummEngine_v90he::scummInit();
 
 	_hePalettes = (uint8 *)malloc((_numPalettes + 1) * 1024);
+
+	// Array 129 is set to base name
+	int len = resStrLen((const byte *)_gameName.c_str()) + 1;
+	ArrayHeader *ah = defineArray(129, kStringArray, 0, 0, 0, len);
+	memcpy(ah->data, _gameName.c_str(), len);
+
 }
 
 void ScummEngine::setupMusic(int midi) {
