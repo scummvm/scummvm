@@ -334,7 +334,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		/* E8 */
 		OPCODE(o6_invalid),
-		OPCODE(o60_seekFilePos),
+		OPCODE(o70_seekFilePos),
 		OPCODE(o72_redimArray),
 		OPCODE(o60_readFilePos),
 		/* EC */

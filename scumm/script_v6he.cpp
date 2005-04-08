@@ -1197,11 +1197,7 @@ void ScummEngine_v60he::o60_seekFilePos() {
 	offset = pop();
 	slot = pop();
 
-	seekFilePos(slot, offset, mode - 1);
-}
-
-void ScummEngine_v60he::seekFilePos(int slot, int offset, int mode) {
-	if (slot == 1)
+	if (slot == -1)
 		return;
 
 	switch (mode) {
@@ -1215,7 +1211,7 @@ void ScummEngine_v60he::seekFilePos(int slot, int offset, int mode) {
 		_hFileTable[slot].seek(offset, SEEK_END);
 		break;
 	default:
-		error("seekFilePos: default case 0x%x", mode);
+		error("o60_seekFilePos: default case %d", mode);
 	}
 }
 

@@ -636,7 +636,6 @@ protected:
 	void writeFileFromArray(int slot, int resID);
 	int virtScreenSave(byte *dst, int x1, int y1, int x2, int y2);
 	void virtScreenLoad(int resIdx, int x1, int y1, int x2, int y2);
-	void seekFilePos(int slot, int offset, int mode);
 	virtual void decodeParseString(int a, int b);
 	void swapObjects(int object1, int object2);
 
@@ -706,6 +705,7 @@ protected:
 	void o70_resourceRoutines();
 	void o70_quitPauseRestart();
 	void o70_kernelSetFunctions();
+	void o70_seekFilePos();
 	void o70_copyString();
 	void o70_getStringWidth();
 	void o70_getStringLen();
