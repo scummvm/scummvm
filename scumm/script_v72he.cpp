@@ -1075,8 +1075,8 @@ void ScummEngine_v72he::o72_actorOps() {
 		break;
 	case 43: // HE 90+
 		a->_layer = pop();
-		if (_gameId == GID_PAJAMA3) {
-			// pajama3 uses reverse order of layering, so we adjust
+		if (_gameId != GID_FREDDICOVE) {
+			// HE gmaes use reverse order of layering, so we adjust
 			a->_layer = -a->_layer;
 		}
 		a->_needRedraw = true;

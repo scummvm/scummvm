@@ -255,7 +255,7 @@ enum ScummGameId {
 	GID_FBEAR,
 	GID_FUNPACK,
 	GID_FREDDI4,
-	GID_PAJAMA3
+	GID_FREDDICOVE
 };
 
 struct SentenceTab {
