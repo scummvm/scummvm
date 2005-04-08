@@ -35,9 +35,12 @@ PrimitiveObject::PrimitiveObject() {
 	_color._vals[2] = 0;
 	_filled = false;
 	_type = 0;
+	_bitmap = NULL;
 }
 
 PrimitiveObject::~PrimitiveObject() {
+	if (_type == 2)
+		g_driver->destroyBitmap(_bitmap);
 }
 
 void PrimitiveObject::createRectangle(int x1, int x2, int y1, int y2, Color color, bool filled) {
@@ -50,9 +53,20 @@ void PrimitiveObject::createRectangle(int x1, int x2, int y1, int y2, Color colo
 	_type = 1;
 }
 
+void PrimitiveObject::createBitmap(Bitmap *bitmap, int x, int y, bool transparent) {
+	_type = 2;
+	_bitmap = bitmap;
+	_bitmap->setX(x);
+	_bitmap->setY(y);
+	// transparent: what to do ?
+	g_driver->createBitmap(_bitmap);
+}
+
 void PrimitiveObject::draw() {
 	assert(_type);
 
 	if (_type == 1)
 		g_driver->drawRectangle(this);
+	else if (_type == 2)
+		g_driver->drawBitmap(_bitmap);
 }

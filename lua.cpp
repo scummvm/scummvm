@@ -71,6 +71,13 @@ static inline bool isFont(int num) {
 	return false;
 }
 
+static inline bool isBitmapObject(int num) {
+	lua_Object param = lua_getparam(num);
+	if (lua_isuserdata(param) && lua_tag(param) == MKID('VBUF'))
+		return true;
+	return false;
+}
+
 // Helper functions to ensure the arguments we get are what we expect
 static inline ObjectState *check_object(int num) {
 	lua_Object param = lua_getparam(num);
@@ -114,7 +121,7 @@ static inline TextObject *check_textobject(int num) {
 
 static inline Bitmap *check_bitmapobject(int num) {
 	lua_Object param = lua_getparam(num);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID('IMAG'))
+	if (lua_isuserdata(param) && lua_tag(param) == MKID('VBUF'))
 		return static_cast<Bitmap *>(lua_getuserdata(param));
 	luaL_argerror(num, "image object expected");
 	return NULL;
@@ -1201,6 +1208,37 @@ void GetControlState() {
 	}
 }
 
+static void GetImage() {
+	char *bitmapName = luaL_check_string(1);
+	Bitmap *image = g_resourceloader->loadBitmap(bitmapName);
+	lua_pushusertag(image, MKID('VBUF'));
+}
+
+static void FreeImage() {
+	Bitmap *bitmap = check_bitmapobject(1);
+
+	for (Engine::PrimitiveListType::const_iterator i = g_engine->primitivesBegin(); i != g_engine->primitivesEnd(); i++) {
+		PrimitiveObject *p = *i;
+		if (p->isBitmap() && p->getBitmapHandle() == bitmap) {
+			g_engine->killPrimitiveObject(p);
+			break;
+		}
+	}
+
+	g_resourceloader->uncache(bitmap->getFilename());
+}
+
+static void BlastImage() {
+	Bitmap *bitmap = check_bitmapobject(1);
+	int x = check_int(2);
+	int y = check_int(3);
+	bool transparent = getbool(4);
+
+	PrimitiveObject *p = new PrimitiveObject();
+	p->createBitmap(bitmap, x, y, transparent);
+	g_engine->registerPrimitiveObject(p);
+}
+
 void getTextObjectParams(TextObject *textObject, lua_Object table_obj) {
 	char *key_text = NULL;
 	lua_Object key;
@@ -1823,9 +1861,6 @@ STUB_FUNC(DetachFromResources)
 STUB_FUNC(SetTextSpeed)
 STUB_FUNC(GetSaveGameData)
 STUB_FUNC(SubmitSaveGameData)
-STUB_FUNC(BlastImage)
-STUB_FUNC(FreeImage)
-STUB_FUNC(GetImage)
 STUB_FUNC(GetSaveGameImage)
 STUB_FUNC(ScreenShot)
 STUB_FUNC(TextFileGetLine)

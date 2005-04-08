@@ -33,6 +33,7 @@ public:
 	~PrimitiveObject();
 
 	void createRectangle(int x1, int x2, int y1, int y2, Color color, bool filled);
+	void createBitmap(Bitmap *bitmap, int x, int y, bool transparent);
 	int getX1() { return _x1; }
 	int getX2() { return _x2; }
 	int getY1() { return _y1; }
@@ -40,12 +41,15 @@ public:
 	Color getColor() { return _color; }
 	bool isFilled() { return _filled; }
 	void draw();
+	bool isBitmap() { return _type == 2; }
+	Bitmap *getBitmapHandle() { assert(_bitmap); return _bitmap; }
 
 private:
 	int _x1, _x2, _y1, _y2;
 	Color _color;
 	bool _filled;
 	int _type;
+	Bitmap *_bitmap;
 };
 
 #endif

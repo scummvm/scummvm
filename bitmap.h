@@ -39,8 +39,12 @@ public:
 	int height() const { return _height; }
 	int x() const { return _x; }
 	int y() const { return _y; }
+	void setX(int x) { _x = x; }
+	void setY(int y) { _y = y; }
 
 	char *getData() { return _data[_currImage]; }
+
+	char *getFilename() { return _filename; }
 
 	~Bitmap();
 
@@ -52,6 +56,7 @@ public:
 	int _numTex;
 	void *_texIds;
 	bool _hasTransparency;
+	char _filename[32];
 };
 
 #endif

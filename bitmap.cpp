@@ -33,6 +33,8 @@ Bitmap::Bitmap(const char *filename, const char *data, int len) :
 	if (len < 8 || memcmp(data, "BM  F\0\0\0", 8) != 0)
 		error("Invalid magic loading bitmap\n");
 
+	strcpy(_filename, filename);
+
 	int codec = READ_LE_UINT32(data + 8);
 //	_paletteIncluded = READ_LE_UINT32(data + 12);
 	_numImages = READ_LE_UINT32(data + 16);
