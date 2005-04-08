@@ -818,6 +818,56 @@ std::string parseMsgText(const char *msg, char *msgId) {
 	return translation;
 }
 
+static void TextFileGetLine() {
+	char textBuf[512];
+	textBuf[0] = 0;
+	char *filename = luaL_check_string(1);
+	FILE *file = fopen(filename, "r");
+	if (!file) {
+		lua_pushnil();
+		return;
+	}
+
+	int pos = check_int(2);
+	fseek(file, pos, SEEK_SET);
+	fgets(textBuf, 512, file);
+	fclose(file);
+
+	lua_pushstring(textBuf);
+}
+
+static void TextFileGetLineCount() {
+	char textBuf[512];
+	char *filename = luaL_check_string(1);
+	FILE *file = fopen(filename, "r");
+	if (!file) {
+		lua_pushnil();
+		return;
+	}
+
+	lua_Object result = lua_createtable();
+
+	int line = 0;
+	for (;;) {
+		if (feof(file))
+			break;
+		lua_pushobject(result);
+		lua_pushnumber(line);
+		int pos = ftell(file);
+		lua_pushnumber(pos);
+		lua_settable();
+		fgets(textBuf, 512, file);
+		line++;
+	}
+	fclose(file);
+
+	lua_pushobject(result);
+	lua_pushstring("count");
+	lua_pushnumber(line);
+	lua_settable();
+	lua_pushobject(result);
+}
+
 // Localization function
 
 static void LocalizeString() {
@@ -1504,8 +1554,10 @@ static void ChangeTextObject() {
 	lua_Object tableObj = lua_getparam(2);
 
 	modifyObject = TextObjectExists((char *)textObject->name());
-	if (!modifyObject)
-		error("ChangeTextObject(): Cannot find active text object");
+	if (!modifyObject) {
+		warning("ChangeTextObject(): Cannot find active text object");
+		return;
+	}
 
 	if (lua_istable(tableObj))
 		getTextObjectParams(modifyObject, tableObj);
@@ -1933,8 +1985,6 @@ STUB_FUNC(AttachToResources)
 STUB_FUNC(DetachFromResources)
 STUB_FUNC(GetSaveGameImage)
 STUB_FUNC(ScreenShot)
-STUB_FUNC(TextFileGetLine)
-STUB_FUNC(TextFileGetLineCount)
 STUB_FUNC(IrisUp)
 STUB_FUNC(IrisDown)
 STUB_FUNC(FadeInChore)
