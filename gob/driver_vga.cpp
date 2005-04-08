@@ -21,7 +21,11 @@
  */
 #include "gob/driver_vga.h"
 
+#ifdef _MSC_VER
+#define STUB_FUNC	printf("STUB:")
+#else
 #define STUB_FUNC	printf("STUB: %s\n", __PRETTY_FUNCTION__)
+#endif
 
 namespace Gob {
 
