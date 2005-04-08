@@ -426,8 +426,10 @@ int ScummEngine_v90he::spriteGroupGet_allocateGroupSpritesList(int spriteGroupId
 	
 	numSprites = 1;
 	for (i = (_varNumSprites - 1); i > 0; i--) {
-		if (_spriteTable[i].groupNum == spriteGroupId)
+		if (_spriteTable[i].groupNum == spriteGroupId) {
 			writeArray(0, 0, numSprites, i);
+			numSprites++;
+		}
 	}
 	
 	return readVar(0);
