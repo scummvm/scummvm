@@ -916,7 +916,7 @@ static void MakeSectorActive(void) {
 	} else if (lua_isnumber(sectorName)) {
 		int id = check_int(1);
 
-		for (i = 0; i<numSectors; i++) {
+		for (i = 0; i < numSectors; i++) {
 			Sector *sector = g_engine->currScene()->getSectorBase(i);
 			if (sector->id() == id) {
 				sector->setVisible(visible);
