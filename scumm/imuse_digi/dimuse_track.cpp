@@ -310,7 +310,7 @@ IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDel
 			}
 		}
 		if (fadeTrack == 0)
-			error("IMuseDigital::cloneTofadeTrackId() Can't find free fade track");
+			error("IMuseDigital::cloneToFadeOutTrack() Can't find free fade track");
 
 		fadeTrack->pan = track->pan;
 		fadeTrack->vol = track->vol;

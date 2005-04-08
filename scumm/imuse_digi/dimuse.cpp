@@ -379,11 +379,11 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 					Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
 					fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundHandle, fadeTrack->curRegion);
 					fadeTrack->regionOffset = 0;
-					debug(5, "switchToNextRegion-sound(%d) select %d region, curHookId: %d", fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
+					debug(5, "switchToNextRegion-sound(%d) select region %d, curHookId: %d", fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
 					fadeTrack->curHookId = 0;
 				}
 				track->curRegion = region;
-				debug(5, "switchToNextRegion-sound(%d) jump to %d region, curHookId: %d", track->soundId, track->curRegion, track->curHookId);
+				debug(5, "switchToNextRegion-sound(%d) jump to region %d, curHookId: %d", track->soundId, track->curRegion, track->curHookId);
 				track->curHookId = 0;
 			}
 		} else {
@@ -391,14 +391,14 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 				Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
 				fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundHandle, fadeTrack->curRegion);
 				fadeTrack->regionOffset = 0;
-				debug(5, "switchToNextRegion-sound(%d) select %d region, curHookId: %d", fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
+				debug(5, "switchToNextRegion-sound(%d) select region %d, curHookId: %d", fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
 			}
 			track->curRegion = region;
-			debug(5, "switchToNextRegion-sound(%d) jump to %d region, curHookId: %d", track->soundId, track->curRegion, track->curHookId);
+			debug(5, "switchToNextRegion-sound(%d) jump to region %d, curHookId: %d", track->soundId, track->curRegion, track->curHookId);
 		}
 	}
 
-	debug(5, "switchToNextRegion-sound(%d) select %d region, curHookId: %d", track->soundId, track->curRegion, track->curHookId);
+	debug(5, "switchToNextRegion-sound(%d) select region %d, curHookId: %d", track->soundId, track->curRegion, track->curHookId);
 	track->dataOffset = _sound->getRegionOffset(soundHandle, track->curRegion);
 	track->regionOffset = 0;
 }
