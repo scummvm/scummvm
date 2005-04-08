@@ -1336,7 +1336,6 @@ static void menuHandler() {
 	 */
 	bool menuChanged = false, sliderChanged = false;
 	switch(key) {
-		case SDLK_r:
 		case SDLK_ESCAPE:
 		{
 			lua_Object close = getTableFunction(menuTable, "cancel");
