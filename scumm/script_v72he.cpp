@@ -1630,9 +1630,11 @@ void ScummEngine_v72he::o72_unknownCF() {
 	byte string[255];
 
 	copyScriptString(string);
+	int len = resStrLen(string) + 1;
+
 	writeVar(0, 0);
-	defineArray(0, kStringArray, 0, 0, 0, 0);
-	writeArray(0, 0, 0, 0);
+	ArrayHeader *ah = defineArray(0, kStringArray, 0, 0, 0, len);
+	memcpy(ah->data, string, len);
 	push(readVar(0));
 	debug(1,"o72_unknownCF: String %s", string);
 }
