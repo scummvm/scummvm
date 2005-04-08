@@ -94,7 +94,7 @@ static void lookAt(TGLfloat eyex, TGLfloat eyey, TGLfloat eyez, TGLfloat centerx
 }
 
 DriverTinyGL::DriverTinyGL(int screenW, int screenH, int screenBPP, bool fullscreen) {
-	Uint32 flags = SDL_HWSURFACE;
+	uint32 flags = SDL_HWSURFACE;
 	if (fullscreen)
 		flags |= SDL_FULLSCREEN;
 	_screen = SDL_SetVideoMode(screenW, screenH, screenBPP, flags);
@@ -373,7 +373,7 @@ void DriverTinyGL::createMaterial(Material *material, const char *data, const CM
 
 void DriverTinyGL::selectMaterial(const Material *material) {
 #ifdef TURN_ON_LIGTHS_WITHOUT_TEXTURES
-return;
+	return;
 #endif
 	TGLuint *textures = (TGLuint *)material->_textures;
 	tglBindTexture(TGL_TEXTURE_2D, textures[material->_currImage]);
@@ -502,10 +502,10 @@ void DriverTinyGL::drawRectangle(PrimitiveObject *primitive) {
 		for (int x = x1; x < x2; x++) {
 			WRITE_LE_UINT16(dst + 640 * y2 + x, c);
 		}
-		for (int y = y1; y1 < y2; y++) {
+		for (int y = y1; y < y2; y++) {
 			WRITE_LE_UINT16(dst + 640 * y + x1, c);
 		}
-		for (int y = y1; y1 < y2; y++) {
+		for (int y = y1; y < y2; y++) {
 			WRITE_LE_UINT16(dst + 640 * y + x2, c);
 		}
 	}

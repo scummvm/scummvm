@@ -15,6 +15,7 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+#include "stdafx.h"
 #include "debug.h"
 #include "font.h"
 #include "color.h"
@@ -39,7 +40,7 @@ PrimitiveObject::PrimitiveObject() {
 PrimitiveObject::~PrimitiveObject() {
 }
 
-void PrimitiveObject::createRectangle(int x1, int y1, int x2, int y2, Color color, bool filled) {
+void PrimitiveObject::createRectangle(int x1, int x2, int y1, int y2, Color color, bool filled) {
 	_x1 = x1;
 	_y1 = y1;
 	_x2 = x2;

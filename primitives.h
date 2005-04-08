@@ -18,6 +18,7 @@
 #ifndef PRIMITIVESOBJECT_H
 #define PRIMITIVESOBJECT_H
 
+#include "stdafx.h"
 #include "debug.h"
 #include "font.h"
 #include "color.h"
@@ -31,7 +32,7 @@ public:
 	PrimitiveObject();
 	~PrimitiveObject();
 
-	void createRectangle(int x1, int y1, int x2, int y2, Color color, bool filled);
+	void createRectangle(int x1, int x2, int y1, int y2, Color color, bool filled);
 	int getX1() { return _x1; }
 	int getX2() { return _x2; }
 	int getY1() { return _y1; }

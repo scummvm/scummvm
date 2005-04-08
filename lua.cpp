@@ -1196,7 +1196,7 @@ void GetControlState() {
 	else if (num >= SDLK_AXIS_JOY1_X && num <= SDLK_AXIS_MOUSE_Z)
 		lua_pushnumber(0);
 	else {
-		Uint8 *keystate = SDL_GetKeyState(NULL);
+		uint8 *keystate = SDL_GetKeyState(NULL);
 		pushbool(keystate[num] != 0);
 	}
 }
@@ -1245,10 +1245,11 @@ void getTextObjectParams(TextObject *textObject, lua_Object table_obj) {
 	}
 }
 
-/* Clean the buffer of text objects
+/* Clean the buffer of text objects and primitives
  * this is known to be used when changing between menus
  */
 static void CleanBuffer() {
+	g_engine->killPrimitiveObjects();
 	g_engine->killTextObjects();
 }
  
@@ -1287,7 +1288,7 @@ static void menuHandler() {
 	lua_Object menuTable = lua_getparam(1);
 	lua_Object keycode = lua_getparam(2);
 	lua_Object pushcode = lua_getparam(3);
-	lua_Object itemTable, item;
+	lua_Object itemTable/*, item*/;
 	int sliderValue = 0;
 	int key, operation;
 	int menuItem = 1, menuItems = 1;
@@ -1604,7 +1605,9 @@ static void BlastRect() {
 			filled = true;
 	}
 
-	//g_driver->CreateFilledRectangle(x1, x2, y1, y2, color, filled);
+	PrimitiveObject *p = new PrimitiveObject();
+	p->createRectangle(x1, x2, y1, y2, color, filled);
+	g_engine->registerPrimitiveObject(p);
 }
 
 static void DimScreen() {
