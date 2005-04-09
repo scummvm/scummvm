@@ -1214,13 +1214,13 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 	case 11: {	// lockObject
 		int objidx = getObjectIndex(args[1]);
 		assert(objidx != -1);
-		res.lock(rtFlObject, objidx);
+		res.lock(rtFlObject, _objs[objidx].fl_object_index);
 		break;
 	}
 	case 12: {	// unlockObject
 		int objidx = getObjectIndex(args[1]);
 		assert(objidx != -1);
-		res.unlock(rtFlObject, objidx);
+		res.unlock(rtFlObject, _objs[objidx].fl_object_index);
 		break;
 	}
 	case 13:	// remapCostume

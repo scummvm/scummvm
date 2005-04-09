@@ -510,10 +510,11 @@ void ScummEngine_v70he::o70_getActorRoom() {
 }
 
 void ScummEngine_v70he::o70_resourceRoutines() {
-	int resid, op;
-	op = fetchScriptByte();
+	int objidx, resid, subOp;
 
-	switch (op) {
+	subOp = fetchScriptByte();
+
+	switch (subOp) {
 	case 100:		// SO_LOAD_SCRIPT
 		resid = pop();
 		ensureResourceLoaded(rtScript, resid);
@@ -607,7 +608,7 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 	case 122:
 	case 123:
 	case 203:
-		debug(5,"stub queueload (%d) resource %d", op, pop());
+		debug(5,"stub queueload (%d) resource %d", subOp, pop());
 		break;
 	case 159:
 		resid = pop();
@@ -627,17 +628,25 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 		break;
 	case 233:
 		resid = pop();
-		debug(5,"stub o70_resourceRoutines lock object %d", resid);
+		objidx = getObjectIndex(resid);
+		if (objidx == -1)
+			break;
+		res.lock(rtFlObject, _objs[objidx].fl_object_index);
+		debug(0,"stub o70_resourceRoutines lock object %d", resid);
 		break;
 	case 235:
 		resid = pop();
-		debug(5,"stub o70_resourceRoutines unlock object %d", resid);
+		objidx = getObjectIndex(resid);
+		if (objidx == -1)
+			break;
+		res.unlock(rtFlObject, _objs[objidx].fl_object_index);
+		debug(0,"stub o70_resourceRoutines unlock object %d", resid);
 		break;
 	case 239:
 		// Used in airport
 		break;
 	default:
-		debug(1,"o70_resourceRoutines: default case %d", op);
+		debug(1,"o70_resourceRoutines: default case %d", subOp);
 	}
 }
 
