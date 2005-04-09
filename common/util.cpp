@@ -170,7 +170,7 @@ const PlatformDescription g_platforms[] = {
 	{"macintosh", "mac", "Macintosh", kPlatformMacintosh},
 	{"nes", "nes", "NES", kPlatformNES},
 	{"pc", "dos", "DOS", kPlatformPC},
-	{"windows", "windows", "Windows", kPlatformWindows},
+	{"windows", "win", "Windows", kPlatformWindows},
 
 	{0, 0, "Default", kPlatformUnknown}
 };
