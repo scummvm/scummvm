@@ -1429,15 +1429,15 @@ void ScummEngine_v72he::o72_arrayOps() {
 		break;
 	case 127:
 		{
-			int a1_dim1end = pop();
-			int a1_dim1start = pop();
-			int a1_dim2end = pop();
-			int a1_dim2start = pop();
-			int array2 = fetchScriptWord();
 			int a2_dim1end = pop();
 			int a2_dim1start = pop();
 			int a2_dim2end = pop();
 			int a2_dim2start = pop();
+			int array2 = fetchScriptWord();
+			int a1_dim1end = pop();
+			int a1_dim1start = pop();
+			int a1_dim2end = pop();
+			int a1_dim2start = pop();
 			if (a1_dim1end - a1_dim1start != a2_dim1end - a2_dim1start || a2_dim2end - a2_dim2start != a1_dim2end - a1_dim2start) {
 				warning("Source and dest ranges size are mismatched");
 			}
@@ -2047,7 +2047,7 @@ void ScummEngine_v72he::copyArrayHelper(ArrayHeader *ah, int idx2, int idx1, int
 	case kStringArray:
 		*num = len1 - idx1 + 1;
 		*size = pitch;
-		*data = ah->data + offset + 1;
+		*data = ah->data + offset;
 		break;
 	case kIntArray:
 		*num = (len1 - idx1) * 2;
