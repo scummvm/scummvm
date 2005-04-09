@@ -74,7 +74,7 @@
 extern bool isSmartphone(void);
 #endif
 
-static int generateSubstResFileName_(const char *filename, char *buf, int bufsize, int cont = 0, int index = 0);
+static int generateSubstResFileName_(const char *filename, char *buf, int bufsize, int index);
 
 namespace Scumm {
 
@@ -2958,8 +2958,8 @@ void ScummEngine::errorString(const char *buf1, char *buf2) {
 	}
 }
 
-int ScummEngine::generateSubstResFileName(const char *filename, char *buf, int bufsize, int cont, int index) {
-	return generateSubstResFileName_(filename, buf, bufsize, cont, index);
+int ScummEngine::generateSubstResFileName(const char *filename, char *buf, int bufsize) {
+	return generateSubstResFileName_(filename, buf, bufsize, _substResFileNameIndex);
 }
 
 
@@ -2982,7 +2982,6 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 	const ScummGameSettings *g;
 	char detectName[128];
 	char tempName[128];
-	bool substIsOver;
 	int substLastIndex = 0;
 
 	typedef Common::Map<Common::String, bool> StringSet;
@@ -3015,10 +3014,9 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 		}
 		strcpy(tempName, detectName);
 
-		substIsOver = false;
 		substLastIndex = 0;
 
-		while (!substIsOver) {
+		while (substLastIndex != -1) {
 			// Iterate over all files in the given directory
 			for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 				if (!file->isDirectory()) {
@@ -3042,9 +3040,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 				}
 			}
 
-			if ((substLastIndex = generateSubstResFileName_(tempName, detectName, 128, 
-															substLastIndex)) == -1)
-				substIsOver = true;
+			substLastIndex = generateSubstResFileName_(tempName, detectName, sizeof(detectName), substLastIndex+1);
 		}
 	}
 	
@@ -3101,12 +3097,9 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 	return detectedGames;
 }
 
-static int generateSubstResFileName_(const char *filename, char *buf, int bufsize, int cont, int index) {
-	if (cont == -1)
+static int generateSubstResFileName_(const char *filename, char *buf, int bufsize, int index) {
+	if (index <= 0)
 		return -1;
-
-	if (cont >= 0)
-		cont++;
 
 	char num = filename[strlen(filename) - 1];
 	
@@ -3117,10 +3110,7 @@ static int generateSubstResFileName_(const char *filename, char *buf, int bufsiz
 	const char *ext = strrchr(filename, '.');
 	int len = ext - filename;
 
-	if (index > 0)
-		cont = index;
-
-	for (int i = cont; i < ARRAYSIZE(substResFileNameTable); i++) {
+	for (int i = index; i < ARRAYSIZE(substResFileNameTable); i++) {
 		if (!scumm_strnicmp(filename, substResFileNameTable[i].winName, len)) {
 			switch (substResFileNameTable[i].genMethod) {
 			case kGenMac:
@@ -3194,16 +3184,13 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	}
 	strcpy(tempName, detectName);
 
-	bool substIsOver = false;
 	File f;
 
-	while (!substIsOver) {
+	while (substLastIndex != -1) {
 		if (f.exists(detectName, ConfMan.get("path").c_str()))
 			break;
 
-		if ((substLastIndex = generateSubstResFileName_(tempName, detectName, 256, 
-														substLastIndex)) == -1)
-			substIsOver = true;
+		substLastIndex = generateSubstResFileName_(tempName, detectName, sizeof(detectName), substLastIndex + 1);
 	}
 
 	// Force game to have Mac platform if needed

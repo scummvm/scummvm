@@ -1679,7 +1679,7 @@ void ScummEngine_v72he::o72_openFile() {
 	if (_substResFileNameIndex > 0) {
 		char buf1[128];
 
-		generateSubstResFileName((char *)filename, buf1, 256, 0, _substResFileNameIndex);
+		generateSubstResFileName((char *)filename, buf1, sizeof(buf1));
 		strcpy((char *)filename, buf1);
 	}
 

@@ -134,9 +134,9 @@ void ScummEngine::openRoom(int room) {
 		if (_substResFileNameIndex > 0 && !(_features & GF_NES)) {
 			char tmpBuf[128];
 
-			generateSubstResFileName(buf, tmpBuf, 128, 0, _substResFileNameIndex);
+			generateSubstResFileName(buf, tmpBuf, sizeof(tmpBuf));
 			strcpy(buf, tmpBuf);
-			generateSubstResFileName(buf2, tmpBuf, 128, 0, _substResFileNameIndex);
+			generateSubstResFileName(buf2, tmpBuf, sizeof(tmpBuf));
 			strcpy(buf2, tmpBuf);
 		}
 

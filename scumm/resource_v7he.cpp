@@ -146,7 +146,7 @@ int Win32ResExtractor::extractResource(const char *resType, char *resName, byte 
 		if (_vm->_substResFileNameIndex > 0) {
 			char buf1[128];
 
-			_vm->generateSubstResFileName(_fileName, buf1, 128, 0, _vm->_substResFileNameIndex);
+			_vm->generateSubstResFileName(_fileName, buf1, sizeof(buf1));
 			strcpy(_fileName, buf1);
 		}
 	}
@@ -1282,7 +1282,7 @@ void MacResExtractor::setCursor(int id) {
 			char buf1[128];
 
 			snprintf(buf1, 128, "%s.he3", _vm->getGameName());
-			_vm->generateSubstResFileName(buf1, _fileName, 128, 0, _vm->_substResFileNameIndex);
+			_vm->generateSubstResFileName(buf1, _fileName, sizeof(buf1));
 
 			// Some programs write it as .bin. Try that too
 			if (!f.exists(_fileName)) {
