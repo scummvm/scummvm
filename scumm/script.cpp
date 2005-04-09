@@ -488,7 +488,7 @@ int ScummEngine::readVar(uint var) {
 
 	debugC(DEBUG_VARS, "readvar(%d)", var);
 
-	if (var & 0x2000 && !(_features & GF_NEW_OPCODES)) {
+	if ((var & 0x2000) && (_version <= 5)) {
 		a = fetchScriptWord();
 		if (a & 0x2000)
 			var += readVar(a & ~0x2000);

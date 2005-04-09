@@ -78,9 +78,6 @@ enum {
  * Note that some of them could be replaced by checks for the SCUMM version.
  */
 enum GameFeatures {
-	/** Games with the new stack based opcodes (ScummEngine_v6 and subclasses). */
-	GF_NEW_OPCODES         = 1 << 0,
-	
 	/** Games with the new camera system (ScummEngine_v7 and subclasses). */
 	GF_NEW_CAMERA          = 1 << 1,
 

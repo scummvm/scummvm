@@ -712,7 +712,7 @@ byte *ScummEngine::getStringAddress(int i) {
 	if (_heversion >= 72)
 		return (addr + 0x14);	// ArrayHeader->data
 
-	if (_features & GF_NEW_OPCODES)
+	if (_version >= 6)
 		return (addr + 0x6);	// ArrayHeader->data
 	return addr;
 }
