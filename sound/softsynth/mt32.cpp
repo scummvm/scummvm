@@ -174,7 +174,7 @@ static MT32Emu::File *MT32_OpenFile(void *userData, const char *filename, MT32Em
 static void MT32_PrintDebug(void *userData, const char *fmt, va_list list) {
 	char buf[512];
 	if (((MidiDriver_MT32 *)userData)->_initialising) {
-		vsprintf(buf, fmt, list);
+		vsnprintf(buf, 512, fmt, list);
 		buf[70] = 0; // Truncate to a reasonable length
 		drawMessage(1, buf);
 	}

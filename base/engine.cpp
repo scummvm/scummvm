@@ -92,7 +92,7 @@ void NORETURN CDECL error(const char *s, ...) {
 	va_list va;
 
 	va_start(va, s);
-	vsprintf(buf_input, s, va);
+	vsnprintf(buf_input, STRINGBUFLEN, s, va);
 	va_end(va);
 
 	if (g_engine) {

@@ -26,7 +26,7 @@
 namespace Gob {
 
 static int16 logFile = -2;
-static char buf[256];
+static char buf[STRINGBUFLEN];
 
 extern uint32 always0_dword_23EC_560;
 
@@ -50,7 +50,7 @@ void log_write(const char *format, ...) {
 
 	log_init();
 	if (logFile >= 0) {
-		vsprintf(buf, format, lst);
+		vsnprintf(buf, STRINGBUFLEN, format, lst);
 		write(logFile, buf, strlen(buf));
 	}
 

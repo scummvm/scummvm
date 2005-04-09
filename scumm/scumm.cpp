@@ -2924,7 +2924,7 @@ char ScummEngine::displayMessage(const char *altButton, const char *message, ...
 	va_list va;
 
 	va_start(va, message);
-	vsprintf(buf, message, va);
+	vsnprintf(buf, STRINGBUFLEN, message, va);
 	va_end(va);
 
 	GUI::MessageDialog dialog(buf, "OK", altButton);

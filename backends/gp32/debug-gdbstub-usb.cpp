@@ -994,7 +994,7 @@ void DEBUG_Print(char *pFormat, ...)
 	if (!g_GDBConnected) return;
 	
 	va_start(VaList , pFormat);
-	vsprintf(Temp , pFormat , VaList);
+	vsnprintf(Temp, 0x100, pFormat , VaList);
 	va_end(VaList);
 
 	iLength = strlen(Temp);

@@ -223,7 +223,7 @@ void SimonEngine::showMessageFormat(const char *s, ...) {
 	va_list va;
 
 	va_start(va, s);
-	vsprintf(buf, s, va);
+	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
 	if (!_fcs_data_1[_fcs_unk_1]) {

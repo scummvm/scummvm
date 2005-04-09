@@ -51,7 +51,7 @@ void CDECL debugC(int channel, const char *s, ...) {
 		return;
 
 	va_start(va, s);
-	vsprintf(buf, s, va);
+	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
 	debug(buf);

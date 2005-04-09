@@ -2430,7 +2430,7 @@ int gpprintf(const char *fmt, ...) {
 		return 0;
 	busy = true;
 	va_start(marker, fmt);
-	vsprintf(s, fmt, marker);
+	vsnprintf(s, 1024, fmt, marker);
 	va_end(marker);
 
 #ifdef GPDEBUG
@@ -2460,7 +2460,7 @@ int gpfprintf(FILE *stream, const char *fmt, ...) {
 	va_list marker;
 
 	va_start(marker, fmt);
-	vsprintf(s, fmt, marker);
+	vsnprintf(s, 256, fmt, marker);
 	va_end(marker);
 
 	return fwrite(s, 1, strlen(s), stream);

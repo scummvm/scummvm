@@ -567,7 +567,7 @@ int fprintf(FILE *stream, const char *format, ...) {
 	va_list va;
 
 	va_start(va, format);
-	vsprintf(buf, format, va);
+	vsnprintf(buf, 1024, format, va);
 	va_end(va);
 
 	if (buf[strlen(buf) - 1] == '\n') {
