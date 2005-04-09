@@ -572,8 +572,10 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 				break;
 			case 's':
 				src = getStringAddress(args[val--]);
-				while (*src != 0)
-					*dst++ = *src++;
+				if (src) {
+					while (*src != 0)
+						*dst++ = *src++;
+				}
 				break;
 			case 'x':
 				dst += sprintf((char *)dst, "%x", args[val--]);

@@ -682,8 +682,14 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, SoundHandle *handl
 		if (_vm->_features & GF_HUMONGOUS) {
 			_sfxMode |= mode;
 
-			// Skip the TALK (8) and HSHD (24) chunks
-			_sfxFile->seek(offset + 32, SEEK_SET);
+			_sfxFile->seek(offset, SEEK_SET);
+			if (_sfxFile->readUint32LE() == TO_LE_32(MKID('WSOU'))) {
+				debug(1, "IMA ADPCM compression not supported");
+				return;
+			} else {
+				// Skip the TALK (8) and HSHD (24) chunks
+				_sfxFile->seek(28, SEEK_CUR);
+			}
 
 			if (_sfxFile->readUint32LE() == TO_LE_32(MKID('SBNG'))) {
 				// Skip the SBNG, so we end up at the SDAT chunk
