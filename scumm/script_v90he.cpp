@@ -112,7 +112,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o90_dim2dim2Array),
 		/* 38 */
 		OPCODE(o90_redim2dimArray),
-		OPCODE(o6_invalid),
+		OPCODE(o90_unknown39),
 		OPCODE(o90_sortArray),
 		OPCODE(o6_invalid),
 		/* 3C */
@@ -692,7 +692,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		error("o90_wizImageOps: unhandled case %d", subOp);
 	}
 
-	debug(1,"o90_wizImageOps stub (%d)", subOp);
+	debug(1,"o90_wizImageOps (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_getDistanceBetweenPoints() {
@@ -1962,6 +1962,24 @@ void ScummEngine_v90he::o90_redim2dimArray() {
 	}
 }
 
+void ScummEngine_v90he::o90_unknown39() {
+	// TODO: Array related
+
+	int array1 = fetchScriptWord();
+	int array2 = fetchScriptWord();
+	int a2_dim1end = pop();
+	int a2_dim1start = pop();
+	int a2_dim2end = pop();
+	int a2_dim2start = pop();
+	int a1_dim1end = pop();
+	int a1_dim1start = pop();
+	int a1_dim2end = pop();
+	int a1_dim2start = pop();
+
+	push(0);
+	debug(1,"o90_unknown39 stub array1 %d (%d, %d, %d, %d) array2 %d (%d, %d, %d, %d)", array1, a2_dim2start, a2_dim2end, a2_dim1start, a2_dim1end, array2, a1_dim2start, a1_dim2end, a1_dim1start, a1_dim1end);
+}
+
 void ScummEngine_v90he::getArrayDim(int array, int *dim2start, int *dim2end, int *dim1start, int *dim1end) {
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
 	assert(ah);
@@ -2129,7 +2147,7 @@ void ScummEngine_v90he::o90_getObjectData() {
 	default:
 		error("o90_getObjectData: Unknown case %d", subOp);
 	}
-	debug(1,"o90_getObjectData stub (%d)", subOp);
+	debug(1,"o90_getObjectData (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_getPaletteData() {
@@ -2245,7 +2263,7 @@ void ScummEngine_v90he::o90_paletteOps() {
 	default:
 		error("o90_paletteOps: Unknown case %d", subOp);
 	}
-	debug(0,"o90_paletteOps stub (%d)", subOp);
+	debug(0,"o90_paletteOps (%d)", subOp);
 }
 
 

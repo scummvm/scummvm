@@ -263,7 +263,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		/* B0 */
 		OPCODE(o72_findObjectWithClassOf),
 		OPCODE(o70_polygonHit),
-		OPCODE(o6_invalid),
+		OPCODE(o90_unknown39),
 		OPCODE(o6_invalid),
 		/* B4 */
 		OPCODE(o72_getNumFreeArrays),
@@ -1377,7 +1377,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 	default:
 		error("o100_wizImageOps: Unknown case %d", subOp);
 	}
-	debug(1,"o100_wizImageOps stub (%d)", subOp);
+	debug(1,"o100_wizImageOps (%d)", subOp);
 }
 
 void ScummEngine_v100he::o100_dim2dim2Array() {
@@ -1513,7 +1513,7 @@ void ScummEngine_v100he::o100_paletteOps() {
 	default:
 		error("o100_paletteOps: Unknown case %d", subOp);
 	}
-	debug(1, "o100_paletteOps stub (%d)", subOp);
+	debug(1, "o100_paletteOps (%d)", subOp);
 }
 
 void ScummEngine_v100he::o100_jumpToScriptUnk() {

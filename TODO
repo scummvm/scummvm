@@ -268,6 +268,7 @@ SCUMM
   - Add support for o80_unknownE0 type1 (For binoculars in pajama2)
   - Add support for o80_unknownE0 type2 (For black board in freddi2 and paper in spyfox)
   - Add support for o80_readConfigFile (For loading map.ini details in mustard)
+  - Add support for o90_unknown39 (For chase/soccer2004)
   - Add support for IMA ADPCM compression for speech files (For soccer2004)
   - Add support for U32 code, triggered by case 2001 of kernelGet/Set (For footdemo/soccer2004)
     The U32 code seems to control the players movements on field.
