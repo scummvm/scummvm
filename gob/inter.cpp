@@ -43,7 +43,7 @@ int16 *inter_breakFromLevel;
 int16 *inter_nestLevel;
 
 int16 inter_load16(void) {
-	int16 tmp = READ_LE_UINT16(inter_execPtr);
+	int16 tmp = (int16)READ_LE_UINT16(inter_execPtr);
 	inter_execPtr += 2;
 	return tmp;
 }
@@ -803,12 +803,11 @@ void inter_loadCursor(void) {
 	Game_TotResItem *itemPtr;
 	int16 width;
 	int16 height;
-	int16 offset;
+	int32 offset;
 	char *dataBuf;
 	int16 id;
 	int8 index;
 
-	debug(0, "inter_loadCursor");
 	id = inter_load16();
 	index = *inter_execPtr++;
 	itemPtr = &game_totResourceTable->items[id];

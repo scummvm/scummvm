@@ -113,15 +113,15 @@ char *game_loadExtData(int16 itemId, int16 *pResWidth, int16 *pResHeight) {
 	if (pResWidth != 0) {
 		*pResWidth = item->width & 0x7fff;
 		*pResHeight = item->height;
-		debug(0, "game_loadExtData(%d, %d, %d)", itemId, *pResWidth, *pResHeight);
+		debug(7, "game_loadExtData(%d, %d, %d)", itemId, *pResWidth, *pResHeight);
 	}
 
-	debug(0, "game_loadExtData(%d, 0, 0)", itemId);
+	debug(7, "game_loadExtData(%d, 0, 0)", itemId);
 
 	if (item->height == 0)
 		size += (item->width & 0x7fff) << 16;
 
-	debug(0, "size: %d off: %d", size, offset);
+	debug(7, "size: %d off: %d", size, offset);
 	if (offset >= 0) {
 		handle = game_extHandle;
 	} else {
@@ -134,7 +134,7 @@ char *game_loadExtData(int16 itemId, int16 *pResWidth, int16 *pResHeight) {
 		handle = commonHandle;
 	}
 
-	debug(0, "off: %ld size: %ld", offset, tableSize);
+	debug(7, "off: %ld size: %ld", offset, tableSize);
 	data_seekData(handle, offset + tableSize, SEEK_SET);
 	if (isPacked)
 		dataBuf = (char *)malloc(size);
@@ -160,10 +160,6 @@ char *game_loadExtData(int16 itemId, int16 *pResWidth, int16 *pResHeight) {
 		unpackData(packedBuf, dataBuf);
 		free(packedBuf);
 	}
-
-	for (int16 i = 0; i < 16; i++)
-		printf("%02x ", (byte)dataBuf[i]);
-	printf("\n");
 
 	return dataBuf;
 
@@ -381,8 +377,7 @@ char *game_loadTotResource(int16 id) {
 		return ((char *)game_totResourceTable) + szGame_TotResTable +
 		    szGame_TotResItem * game_totResourceTable->itemsCount + offset;
 	} else {
-		return (char *)(game_imFileData +
-		    ((int32 *)game_imFileData)[-offset - 1]);
+		return (char *)(game_imFileData + ((int32 *)game_imFileData)[-offset - 1]);
 	}
 }
 
@@ -1693,7 +1688,6 @@ void game_loadImFile(void) {
 	char path[20];
 	int16 handle;
 
-	// If demo
 	if (game_totFileData[0x3d] != 0 && game_totFileData[0x3b] == 0)
 		return;
 

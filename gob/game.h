@@ -44,8 +44,8 @@ typedef struct Game_ExtTable {
 
 #define szGame_TotResItem (4 + 2 + 2 + 2)
 typedef struct Game_TotResItem {
-	int32 offset;		// if > 0, then offset from end of resource table.
-	// If < 0, then -offset-1 is index in .IM file table
+	int32 offset;	// if > 0, then offset from end of resource table.
+					// If < 0, then -offset-1 is index in .IM file table
 	int16 size;
 	int16 width;
 	int16 height;

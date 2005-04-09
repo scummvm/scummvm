@@ -140,7 +140,7 @@ char pal_fadeStep(int16 oper) {
 	return 1;
 }
 
-void pal_fade(PalDesc * palDesc, int16 fade, int16 allColors) {
+void pal_fade(PalDesc *palDesc, int16 fade, int16 allColors) {
 	char stop;
 	int16 i;
 

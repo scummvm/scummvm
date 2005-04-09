@@ -115,7 +115,7 @@ int32 data_readChunk(int16 handle, char *buf, int16 size) {
 		offset =
 		    chunkOffset[file * MAX_SLOT_COUNT + slot] +
 		    chunkPos[file * MAX_SLOT_COUNT + slot];
-		debug(0, "seek: %ld, %ld", chunkOffset[file * MAX_SLOT_COUNT + slot], chunkPos[file * MAX_SLOT_COUNT + slot]);
+		debug(7, "seek: %ld, %ld", chunkOffset[file * MAX_SLOT_COUNT + slot], chunkPos[file * MAX_SLOT_COUNT + slot]);
 		file_getHandle(dataFileHandles[file])->seek(offset, SEEK_SET);
 	}
 
@@ -207,7 +207,7 @@ void data_openDataFile(const char *src) {
 
 	numDataChunks[file] = file_getHandle(dataFileHandles[file])->readUint16LE();
 
-	debug(0, "DataChunks: %d [for %s]", numDataChunks[file], path);
+	debug(7, "DataChunks: %d [for %s]", numDataChunks[file], path);
 
 	dataFiles[file] = dataDesc = 
 	    (struct ChunkDesc *)malloc(sizeof(struct ChunkDesc) *
@@ -221,7 +221,7 @@ void data_openDataFile(const char *src) {
 	}
 
 	for (i = 0; i < numDataChunks[file]; i++)
-		debug(0, "%d: %s %d", i, dataDesc[i].chunkName, dataDesc[i].size);
+		debug(7, "%d: %s %d", i, dataDesc[i].chunkName, dataDesc[i].size);
 
 	for (i = 0; i < MAX_SLOT_COUNT; i++)
 		chunkPos[file * MAX_SLOT_COUNT + i] = -1;

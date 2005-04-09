@@ -111,7 +111,6 @@ int16 scen_loadStatic(char search) {
 
 	ptr->layersCount = (int16)READ_LE_UINT16(dataPtr);
 	dataPtr += 2;
-	debug("layer: %d", ptr->layersCount);
 
 	ptr->layers = (Scen_StaticLayer **)malloc(sizeof(Scen_StaticLayer *) * ptr->layersCount);
 	ptr->pieces = (Scen_PieceDesc **)malloc(sizeof(Scen_PieceDesc *) * picsCount);

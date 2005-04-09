@@ -93,8 +93,6 @@ SurfaceDesc *vid_initSurfDesc(int16 vidMode, int16 width, int16 height, int16 fl
 	int16 someFlags = 1;
 	SurfaceDesc *descPtr;
 
-	debug(0, "stub: vid_initSurfDesc()");
-
 	if (flags != PRIMARY_SURFACE)
 		sprAllocated++;
 
@@ -440,8 +438,6 @@ char vid_spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 	uint16 cmdVar;
 	int16 bufPos;
 	int16 strLen;
-
-	warning("vid_spriteUncompressor called");
 
 	if ((destDesc->vidMode & 0x7f) != 0x13)
 		error("vid_spriteUncompressor: Video mode 0x%x is not supported!",
