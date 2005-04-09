@@ -25,7 +25,7 @@
 #include "gob/video.h"
 #include "gob/game.h"
 #include "gob/util.h"
-#include "gob/debug.h"
+#include "gob/scenery.h"
 #include "gob/inter.h"
 #include "gob/video.h"
 #include "gob/palanim.h"

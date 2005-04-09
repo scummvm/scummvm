@@ -27,7 +27,7 @@
 #include "gob/inter.h"
 #include "gob/goblin.h"
 #include "gob/sound.h"
-#include "gob/debug.h"
+#include "gob/scenery.h"
 
 namespace Gob {
 

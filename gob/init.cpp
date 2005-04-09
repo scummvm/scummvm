@@ -25,7 +25,6 @@
 #include "gob/global.h"
 #include "gob/init.h"
 #include "gob/video.h"
-#include "gob/debug.h"
 #include "gob/sound.h"
 #include "gob/timer.h"
 #include "gob/sound.h"

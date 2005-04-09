@@ -21,7 +21,6 @@
  */
 #include "gob/gob.h"
 #include "gob/scenery.h"
-#include "gob/debug.h"
 #include "gob/inter.h"
 #include "gob/video.h"
 #include "gob/draw.h"
@@ -729,7 +728,7 @@ void scen_interStoreParams(void) {
 	int16 layer;
 	int16 var;
 
-	log_write("scen_interStoreParams: Storing...\n");
+	warning("scen_interStoreParams: Storing...");
 
 	inter_evalExpr(&animation);
 	inter_evalExpr(&layer);

@@ -22,7 +22,6 @@
 #include "gob/gob.h"
 #include "gob/global.h"
 #include "gob/video.h"
-#include "gob/debug.h"
 #include "gob/dataio.h"
 
 #include "gob/driver_vga.h"
@@ -63,8 +62,8 @@ int32 vid_getRectSize(int16 width, int16 height, int16 flag, int16 mode) {
 	int32 size;
 
 	if ((mode & 0x7f) != 0x13)
-		log_write
-		    ("vid_getRectSize: Warning! Video mode %d is not fully supported!\n",
+		warning
+		    ("vid_getRectSize: Video mode %d is not fully supported!",
 		    mode & 0x7f);
 	switch (mode & 0x7f) {
 	case 5:

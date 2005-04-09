@@ -29,7 +29,6 @@
 #include "gob/inter.h"
 #include "gob/parse.h"
 #include "gob/global.h"
-#include "gob/debug.h"
 #include "gob/sound.h"
 #include "gob/palanim.h"
 #include "gob/game.h"

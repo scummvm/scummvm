@@ -25,7 +25,7 @@
 #include "gob/video.h"
 #include "gob/dataio.h"
 #include "gob/pack.h"
-#include "gob/debug.h"
+#include "gob/scenery.h"
 #include "gob/inter.h"
 #include "gob/parse.h"
 #include "gob/draw.h"

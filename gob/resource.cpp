@@ -23,7 +23,6 @@
 #include "gob/global.h"
 #include "gob/video.h"
 #include "gob/resource.h"
-#include "gob/debug.h"
 
 namespace Gob {
 

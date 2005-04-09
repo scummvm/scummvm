@@ -23,7 +23,6 @@
 #include "gob/global.h"
 #include "gob/timer.h"
 #include "gob/util.h"
-#include "gob/debug.h"
 #include "gob/draw.h"
 #include "gob/game.h"
 
@@ -315,13 +314,13 @@ void util_cutFromStr(char *str, int16 from, int16 cutlen) {
 	int16 len;
 	int16 i;
 
-	log_write("util_cutFromStr: str = %s, ", str);
+	//log_write("util_cutFromStr: str = %s, ", str);
 	len = strlen(str);
 	if (from >= len)
 		return;
 	if (from + cutlen > len) {
 		str[from] = 0;
-		log_write("res = %s\n", str);
+		//log_write("res = %s\n", str);
 		return;
 	}
 
@@ -330,7 +329,7 @@ void util_cutFromStr(char *str, int16 from, int16 cutlen) {
 		str[i] = str[i + cutlen];
 		i++;
 	} while (str[i] != 0);
-	log_write("res = %s\n", str);
+	//log_write("res = %s\n", str);
 }
 
 int16 util_strstr(const char *str1, char *str2) {
@@ -338,7 +337,7 @@ int16 util_strstr(const char *str1, char *str2) {
 	uint16 len1;
 	uint16 i;
 
-	log_write("util_strstr: str1 = %s, str2 = %s\n", str1, str2);
+	//log_write("util_strstr: str1 = %s, str2 = %s\n", str1, str2);
 
 	for (i = 0, len1 = strlen(str1); strlen(str2 + i) >= len1; i++) {
 		c = str2[i + len1];
@@ -377,7 +376,7 @@ void util_listInsertBack(Util_List * list, void *data) {
 	if (list->pHead != 0) {
 		if (list->pTail == 0) {
 			list->pTail = list->pHead;
-			log_write("util_listInsertBack: Broken list!");
+			warning("util_listInsertBack: Broken list!");
 		}
 
 		node =

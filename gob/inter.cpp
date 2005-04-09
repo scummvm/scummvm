@@ -23,7 +23,7 @@
 #include "gob/global.h"
 #include "gob/inter.h"
 #include "gob/util.h"
-#include "gob/debug.h"
+#include "gob/scenery.h"
 #include "gob/parse.h"
 #include "gob/game.h"
 #include "gob/draw.h"

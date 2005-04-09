@@ -24,7 +24,6 @@
 #include "gob/util.h"
 #include "gob/global.h"
 #include "gob/palanim.h"
-#include "gob/debug.h"
 
 namespace Gob {
 

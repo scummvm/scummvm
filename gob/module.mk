@@ -3,7 +3,6 @@ MODULE := gob
 MODULE_OBJS := \
 	gob/anim.o \
 	gob/dataio.o \
-	gob/debug.o \
 	gob/draw.o \
 	gob/driver_vga.o \
 	gob/game.o \

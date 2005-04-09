@@ -22,7 +22,6 @@
 #include "gob/gob.h"
 #include "gob/global.h"
 #include "gob/dataio.h"
-#include "gob/debug.h"
 #include "gob/pack.h"
 
 namespace Gob {

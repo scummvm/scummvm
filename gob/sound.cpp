@@ -21,7 +21,6 @@
  */
 #include "gob/gob.h"
 #include "gob/global.h"
-#include "gob/debug.h"
 #include "gob/sound.h"
 namespace Gob {
 	int16 snd_checkProAudio(void) {return 0;}

@@ -21,7 +21,6 @@
  */
 #include "gob/gob.h"
 #include "gob/pack.h"
-#include "gob/debug.h"
 
 namespace Gob {
 
