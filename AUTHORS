@@ -38,11 +38,13 @@ Contributors:
        Kovacs Endre Janos    - Several fixes for Simon1
        Jeroen Janssen        - Numerous readability and bugfix patches
        Robert Kelsen         - Packaging for SlackWare
-       Claudio Matsuoka      - Daily Linux/BeOS builds
+       Claudio Matsuoka      - Daily Linux builds
        Mikesch Nepomuk       - MI1 VGA floppy patches
        Nicolas Noble         - Config file and ALSA support
        Willem Jan Palenstijn - Packaging for Fedora/RedHat
-       Quietust              - Sound support for Amiga SCUMM V2/V3 games
+       Stefan Parviainen     - Packaging for BeOS
+       Quietust              - Sound support for Amiga SCUMM V2/V3 games, MM
+                               NES suport
        Andreas Roever        - Broken Sword 1/2 MPEG2 cutscene support
        Edward Rudd           - Fixes for playing MP3 versions of MI1/Loom
                                audio
