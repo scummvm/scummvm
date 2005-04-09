@@ -974,7 +974,7 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 		if (comp == 1) {
 			// TODO Adding masking for flags 0x80 and 0x100
 			if (flags & 0x80) {
-				error("drawWizImage() unhandled flag 0x80");
+				warning("drawWizImage() unhandled flag 0x80");
 			} else if (flags & 0x100) {
 				error("drawWizImage() unhandled flag 0x100");
 			} else {

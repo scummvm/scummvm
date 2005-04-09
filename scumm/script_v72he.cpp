@@ -568,7 +568,7 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 			chr = string[num++];
 			switch(chr) {
 			case 'b':
-				dst += sprintf((char *)dst, "%b", args[val++]);
+				//dst += sprintf((char *)dst, "%b", args[val++]);
 				break;
 			case 'c':
 				*dst++ = args[val++];
