@@ -1634,7 +1634,8 @@ void ScummEngine::loadFlObject(uint object, uint room) {
 	findObjectInRoom(&foir, foImageHeader | foCodeHeader, object, room);
 
 	// Add an entry for the new floating object in the local object table
-	if (!(objslot = findLocalObjectSlot()))
+	objslot = findLocalObjectSlot();
+	if (objslot == -1)
 		error("loadFlObject: Local Object Table overflow");
 
 	od = &_objs[objslot];
