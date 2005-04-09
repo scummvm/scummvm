@@ -818,7 +818,7 @@ void inter_loadCursor(void) {
 		    ((char *)game_totResourceTable) + szGame_TotResTable +
 		    szGame_TotResItem * game_totResourceTable->itemsCount + offset;
 	} else {
-		dataBuf = game_imFileData + ((int32 *)game_imFileData)[-offset - 1];
+		dataBuf = game_imFileData + (int32)READ_LE_UINT32(&((int32 *)game_imFileData)[-offset - 1]);
 	}
 
 	width = itemPtr->width;

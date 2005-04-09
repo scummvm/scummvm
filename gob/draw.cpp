@@ -404,9 +404,9 @@ void draw_spriteOperation(int16 operation) {
 			    szGame_TotResTable + szGame_TotResItem *
 			    game_totResourceTable->itemsCount + offset;
 		} else {
-			dataBuf =
+			dataBuf = 
 			    game_imFileData +
-			    ((int32 *)game_imFileData)[-offset - 1];
+			    (int32)READ_LE_UINT32(&((int32 *)game_imFileData)[-offset - 1]);
 		}
 
 		draw_spriteRight = itemPtr->width;

@@ -377,7 +377,7 @@ char *game_loadTotResource(int16 id) {
 		return ((char *)game_totResourceTable) + szGame_TotResTable +
 		    szGame_TotResItem * game_totResourceTable->itemsCount + offset;
 	} else {
-		return (char *)(game_imFileData + ((int32 *)game_imFileData)[-offset - 1]);
+		return (char *)(game_imFileData + (int32)READ_LE_UINT32(&((int32 *)game_imFileData)[-offset - 1]));
 	}
 }
 
