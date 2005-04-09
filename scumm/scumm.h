@@ -726,7 +726,7 @@ protected:
 	virtual void loadRoomObjects();
 
 	virtual void readArrayFromIndexFile();
-	virtual void readMAXS(int blockSize);
+	virtual void readMAXS(int blockSize) = 0;
 	virtual void readGlobalObjects();
 	virtual void readIndexFile();
 	virtual void loadCharset(int i);

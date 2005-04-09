@@ -962,7 +962,7 @@ void ResourceManager::resourceStats() {
 	debug(1, "Total allocated size=%d, locked=%d(%d)", _allocatedSize, lockedSize, lockedNum);
 }
 
-void ScummEngine::readMAXS(int blockSize) {
+void ScummEngine_v5::readMAXS(int blockSize) {
 	debug(9, "readMAXS: MAXS has blocksize %d", blockSize);
 
 	_numVariables = _fileHandle->readUint16LE();      // 800

@@ -63,6 +63,8 @@ protected:
 	virtual void setupScummVars();
 	virtual void decodeParseString();
 
+	virtual void readMAXS(int blockSize);
+
 	int getWordVararg(int *ptr);
 	void saveVars();
 	void loadVars();
