@@ -412,6 +412,7 @@ protected:
 	virtual void decodeParseString(int a, int b);
 	virtual void readArrayFromIndexFile();
 
+	virtual byte *getStringAddress(int i);
 	virtual void readMAXS(int blockSize);
 
 	virtual void palManipulateInit(int resID, int start, int end, int time);
@@ -754,15 +755,16 @@ public:
 	ScummEngine_v72he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v70he(detector, syst, gs, md5sum) {}
 
 protected:
-	virtual void readMAXS(int blockSize);
-
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void setupScummVars();
 	virtual void readArrayFromIndexFile();
-	
+
+	virtual byte *getStringAddress(int i);
+	virtual void readMAXS(int blockSize);
+
 	virtual void redrawBGAreas();
 
 	ArrayHeader *defineArray(int array, int type, int dim2start, int dim2end, int dim1start, int dim1end);
@@ -924,13 +926,13 @@ public:
 	virtual void scummInit();
 
 protected:
-	virtual void readMAXS(int blockSize);
-
 	virtual void allocateArrays();
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 	
+	virtual void readMAXS(int blockSize);
+
 	void createWizEmptyImage(const WizParameters *params);
 	void fillWizRect(const WizParameters *params);
 	void processWizImage(const WizParameters *params);

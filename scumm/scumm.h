@@ -709,7 +709,7 @@ protected:
 
 public:
 	byte *getResourceAddress(int type, int i);
-	byte *getStringAddress(int i);
+	virtual byte *getStringAddress(int i);
 	byte *getStringAddressVar(int i);
 	void ensureResourceLoaded(int type, int i);
 	int getResourceRoomNr(int type, int index);

@@ -1753,4 +1753,11 @@ void ScummEngine_v72he::readMAXS(int blockSize) {
 	_dynamicRoomOffsets = true;
 }
 
+byte *ScummEngine_v72he::getStringAddress(int i) {
+	byte *addr = getResourceAddress(rtString, i);
+	if (addr == NULL)
+		return NULL;
+	return ((ScummEngine_v72he::ArrayHeader *)addr)->data;
+}
+
 } // End of namespace Scumm
