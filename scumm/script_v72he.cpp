@@ -539,13 +539,17 @@ void ScummEngine_v72he::copyScriptString(byte *dst) {
 void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 	const byte *src;
 	int args[31];
-	int num = 0, len, val;
+	int num, len, val;
 	byte chr, string[256];
+	memset(args, 0, sizeof(args));
 	memset(string, 0, sizeof(string));
 
-	val = getStackList(args, ARRAYSIZE(args));
-	args[val] = pop();
+	// Get stack list, plus one
+	num = pop();
+	for (int i = num; i >= 0; i--)
+		args[i] = pop();
 
+	// Get string
 	if (scriptString) {
 		addMessageToStack(_scriptPointer, string, sizeof(string));
 		len = resStrLen(_scriptPointer);
@@ -555,34 +559,38 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 		len = resStrLen(string) + 1;
 	}
 
+	// Decode string
+	num = 0;
+	val = 0;
 	while (len--) {
 		chr = string[num++];
 		if (chr == '%') {
 			chr = string[num++];
 			switch(chr) {
 			case 'b':
-				// FIXME TODO
-				//dst += sprintf((char *)dst, "%b", args[val--]);
+				dst += sprintf((char *)dst, "%b", args[val++]);
 				break;
 			case 'c':
-				*dst++ = args[val--];
+				*dst++ = args[val++];
 				break;
 			case 'd':
-				dst += sprintf((char *)dst, "%d", args[val--]);
+				dst += sprintf((char *)dst, "%d", args[val++]);
 				break;
 			case 's':
-				src = getStringAddress(args[val--]);
+				src = getStringAddress(args[val++]);
 				if (src) {
 					while (*src != 0)
 						*dst++ = *src++;
 				}
 				break;
 			case 'x':
-				dst += sprintf((char *)dst, "%x", args[val--]);
+				dst += sprintf((char *)dst, "%x", args[val++]);
 				break;
 			default:
 				error("decodeScriptString: Unknown type %d", chr);
 			}
+
+
 			continue;	
 		}
 		*dst++ = chr;
