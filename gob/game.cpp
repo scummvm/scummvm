@@ -1577,7 +1577,6 @@ void game_collisionsBlock(void) {
 		WRITE_LE_UINT32(inter_variables + 0x08, inter_mouseX);
 		WRITE_LE_UINT32(inter_variables + 0x0c, inter_mouseY);
 		WRITE_LE_UINT32(inter_variables + 0x10, game_mouseButtons);
-		WRITE_LE_UINT32(inter_variables + 0x40, array[(uint16)game_activeCollResId & ~0x8000]);
 
 		if (READ_LE_UINT32(inter_variables + 0x40) == 0) {
 			WRITE_LE_UINT32(inter_variables + 0x40, array[(uint16)game_activeCollResId & ~0x8000]);
