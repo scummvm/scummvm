@@ -664,7 +664,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 
 	// We read data directly from NES ROM instead of extracting it with
 	// external tool
-	if ((_features & GF_NES) && _substResFileNameIndex)
+	if ((_features & GF_NES) && (_substResFileNameIndex || gs.detectFilename))
 		_fileHandle = new ScummNESFile();
 	else
 		_fileHandle = new ScummFile();
