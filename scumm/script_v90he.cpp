@@ -104,7 +104,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o90_mod),
 		OPCODE(o90_shl),
 		OPCODE(o90_shr),
-		OPCODE(o6_invalid),
+		OPCODE(o90_xor),
 		/* 34 */
 		OPCODE(o90_findAllObjectsWithClassOf),
 		OPCODE(o90_getPolygonOverlap),
@@ -1684,6 +1684,11 @@ void ScummEngine_v90he::o90_shr() {
 	push(pop() >> a);
 }
 
+void ScummEngine_v90he::o90_xor() {
+	int a = pop();
+	push(pop() ^ a);
+}
+
 void ScummEngine_v90he::o90_mod() {
 	int a = pop();
 	if (a == 0)
@@ -1976,7 +1981,7 @@ void ScummEngine_v90he::o90_unknown39() {
 	int a1_dim2end = pop();
 	int a1_dim2start = pop();
 
-	push(0);
+	push(1);
 	debug(1,"o90_unknown39 stub array1 %d (%d, %d, %d, %d) array2 %d (%d, %d, %d, %d)", array1, a2_dim2start, a2_dim2end, a2_dim1start, a2_dim1end, array2, a1_dim2start, a1_dim2end, a1_dim1start, a1_dim1end);
 }
 

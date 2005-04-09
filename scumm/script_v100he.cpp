@@ -54,7 +54,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_delayFrames),
 		OPCODE(o90_shl),
 		OPCODE(o90_shr),
-		OPCODE(o6_invalid),
+		OPCODE(o90_xor),
 		/* 0C */
 		OPCODE(o6_setCameraAt),
 		OPCODE(o6_actorFollowCamera),
