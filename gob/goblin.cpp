@@ -943,6 +943,7 @@ void gob_targetItem(void) {
 		}
 
 		if (gob_gobAction == 4 && gob_destActionItem != 0 &&
+			gob_itemToObject[gob_destActionItem] != -1 &&
 		    gob_objects[gob_itemToObject[gob_destActionItem]]->
 		    pickable == 1) {
 
