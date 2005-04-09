@@ -719,7 +719,7 @@ void DriverGL::drawRectangle(PrimitiveObject *primitive) {
 	if (primitive->isFilled()) {
 		glBegin(GL_QUADS);
 	} else {
-		glBegin(GL_LINES);
+		glBegin(GL_LINE_LOOP);
 	}
 
 	glVertex2f(x1, y1);

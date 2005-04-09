@@ -505,22 +505,22 @@ void DriverTinyGL::drawRectangle(PrimitiveObject *primitive) {
 	uint16 c = ((color.red() & 0xF8) << 8) | ((color.green() & 0xFC) << 3) | (color.blue() >> 3);
 
 	if (primitive->isFilled()) {
-		for (; y1 < y2; y1++) {
-			for (int x = x1; x < x2; x++) {
+		for (; y1 <= y2; y1++) {
+			for (int x = x1; x <= x2; x++) {
 				WRITE_LE_UINT16(dst + 640 * y1 + x, c);
 			}
 		}
 	} else {
-		for (int x = x1; x < x2; x++) {
+		for (int x = x1; x <= x2; x++) {
 			WRITE_LE_UINT16(dst + 640 * y1 + x, c);
 		}
-		for (int x = x1; x < x2; x++) {
+		for (int x = x1; x <= x2; x++) {
 			WRITE_LE_UINT16(dst + 640 * y2 + x, c);
 		}
-		for (int y = y1; y < y2; y++) {
+		for (int y = y1; y <= y2; y++) {
 			WRITE_LE_UINT16(dst + 640 * y + x1, c);
 		}
-		for (int y = y1; y < y2; y++) {
+		for (int y = y1; y <= y2; y++) {
 			WRITE_LE_UINT16(dst + 640 * y + x2, c);
 		}
 	}
