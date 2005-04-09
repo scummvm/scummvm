@@ -57,6 +57,7 @@ enum {
 
 // gfx modes
 enum {
+	GFX_NORMAL = 0,
 	GFX_FLIPPING = 100,	// Palmos
 	GFX_BUFFERED = 101,	// Palmos
 	GFX_WIDE = 102 // palmos

@@ -28,7 +28,6 @@
 #include "common/file.h"
 #include "common/timer.h"
 #include "common/savefile.h"
-#include "common/scaler.h"	// For GFX_NORMAL
 #include "common/system.h"
 #include "sound/mixer.h"
 
@@ -65,7 +64,10 @@ void Engine::initCommonGFX(GameDetector &detector) {
 
 	// See if the game should default to 1x scaler
 	if (useDefaultGraphicsMode && (detector._game.features & GF_DEFAULT_TO_1X_SCALER)) {
-		_system->setGraphicsMode(GFX_NORMAL);
+		// FIXME: As a hack, we use "1x" here. Would be nicer to use
+		// getDefaultGraphicsMode() instead, but right now, we do not specify
+		// whether that is a 1x scaler or not...
+		_system->setGraphicsMode(_system->getDefaultGraphicsMode());
 	} else {
 		// Override global scaler with any game-specific define
 		if (ConfMan.hasKey("gfx_mode")) {

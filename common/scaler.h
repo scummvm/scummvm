@@ -59,20 +59,5 @@ extern void makeRectStretchable(int &x, int &y, int &w, int &h);
 
 extern int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY);
 
-enum {
-	GFX_NORMAL = 0,
-	GFX_DOUBLESIZE = 1,
-	GFX_TRIPLESIZE = 2,
-	GFX_2XSAI = 3,
-	GFX_SUPER2XSAI = 4,
-	GFX_SUPEREAGLE = 5,
-	GFX_ADVMAME2X = 6,
-	GFX_ADVMAME3X = 7,
-	GFX_HQ2X = 8,
-	GFX_HQ3X = 9,
-	GFX_TV2X = 10,
-	GFX_DOTMATRIX = 11
-};
-
 
 #endif
