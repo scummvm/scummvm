@@ -164,33 +164,33 @@ void ScummEngine_v99he::setPaletteFromPtr(const byte *ptr, int numcolor) {
 
 void ScummEngine_v99he::darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor) {
 	if (startColor <= endColor) {
-		const byte *cptr;
-		const byte *palptr;
-		int color, idx, j;
+		uint8 *src, *dest;
+		int color, j;
 
-		palptr = getPalettePtr(_curPalIndex, _roomResource);
 		for (j = startColor; j <= endColor; j++) {
-			idx = _hePalettes[1792 + j];
-			cptr = palptr + idx * 3;
-			setDirtyColors(idx, idx);
+			src = _hePalettes + j * 3;
+			dest = src + 1024;
 
-			color = *cptr++;
+			color = *src++;
 			color = color * redScale / 0xFF;
 			if (color > 255)
 				color = 255;
-			_hePalettes[1024 + idx * 3 + 0] = color;
+			*dest++ = color;
 
-			color = *cptr++;
+			color = *src++;
 			color = color * greenScale / 0xFF;
 			if (color > 255)
 				color = 255;
-			_hePalettes[1024 + idx * 3 + 1] = color;
+			*dest++ = color;
 
-			color = *cptr++;
+			color = *src++;
 			color = color * blueScale / 0xFF;
 			if (color > 255)
 				color = 255;
-			_hePalettes[1024 + idx * 3 + 2] = color;
+			*dest++ = color;
+
+			_hePalettes[1768 + startColor + j] = j;
+			setDirtyColors(j, endColor);
 		}
 	}
 }
