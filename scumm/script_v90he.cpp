@@ -2232,7 +2232,7 @@ void ScummEngine_v90he::o90_paletteOps() {
 		c = pop();
 		b = pop();
 		a = pop();
-		if (_hePaletteNum) {
+		if (_hePaletteNum != 0) {
 			for (; a <= b; ++a) {
 				copyHEPaletteColor(_hePaletteNum, a, c);
 			}

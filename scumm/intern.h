@@ -942,7 +942,6 @@ protected:
 	void getArrayDim(int array, int *dim2start, int *dim2end, int *dim1start, int *dim1end);
 	void sortArray(int array, int dim2start, int dim2end, int dim1start, int dim1end, int sortOrder);
 	
-	uint8 *getHEPalette(int palSlot);
 	uint8 *getHEPaletteIndex(int palSlot);
 	int getHEPaletteColor(int palSlot, int color);
 	void setHEPaletteColor(int palSlot, uint8 color, uint8 r, uint8 g, uint8 b);
