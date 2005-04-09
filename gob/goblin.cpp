@@ -2674,7 +2674,7 @@ void gob_interFunc(void) {
 
 		if (cmd == 42) {
 			xPos = READ_LE_UINT32(inter_variables + xPos * 4);
-			yPos = READ_LE_UINT32(inter_variables + xPos * 4);
+			yPos = READ_LE_UINT32(inter_variables + yPos * 4);
 			item = READ_LE_UINT32(inter_variables + item * 4);
 		}
 
@@ -2825,7 +2825,7 @@ void gob_interFunc(void) {
 
 		if (cmd == 43) {
 			xPos = READ_LE_UINT32(inter_variables + xPos * 4);
-			yPos = READ_LE_UINT32(inter_variables + xPos * 4);
+			yPos = READ_LE_UINT32(inter_variables + yPos * 4);
 		}
 
 		if ((map_itemsMap[yPos][xPos] & 0xff00) != 0) {
