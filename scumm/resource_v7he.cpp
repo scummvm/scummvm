@@ -1686,8 +1686,6 @@ void ScummEngine_v99he::readMAXS(int blockSize) {
 
 	_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 	_numGlobalScripts = 2048;
-
-	allocateArrays();
 }
 
 void ScummEngine_v90he::readMAXS(int blockSize) {
@@ -1719,8 +1717,6 @@ void ScummEngine_v90he::readMAXS(int blockSize) {
 		_numGlobalScripts = 2048;
 	else
 		_numGlobalScripts = 200;
-
-	allocateArrays();
 }
 
 void ScummEngine_v72he::readMAXS(int blockSize) {
@@ -1746,8 +1742,6 @@ void ScummEngine_v72he::readMAXS(int blockSize) {
 
 	_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 	_numGlobalScripts = 200;
-
-	allocateArrays();
 }
 
 byte *ScummEngine_v72he::getStringAddress(int i) {

@@ -1169,6 +1169,9 @@ ScummEngine::~ScummEngine() {
 	delete _costumeRenderer;
 
 	free(_shadowPalette);
+
+	free(_palManipPalette);
+	free(_palManipIntermediatePal);
 	
 	res.freeResources();
 	if (_heversion >= 70) {
@@ -1402,6 +1405,8 @@ void ScummEngine::scummInit() {
 	} else {
 		initScreens(16, 144);
 	}
+
+	_palManipCounter = 0;
 
 	for (i = 0; i < 256; i++)
 		_roomPalette[i] = i;

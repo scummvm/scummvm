@@ -81,11 +81,7 @@ void ScummEngine_v3old::readIndexFile() {
 	_fileHandle->seek(0, SEEK_SET);
 
 	readMAXS(0);
-
-	// Jamieson630: palManipulate variable initialization
-	_palManipCounter = 0;
-	_palManipPalette = 0; // Will allocate when needed
-	_palManipIntermediatePal = 0; // Will allocate when needed
+	allocateArrays();
 
 	_fileHandle->readUint16LE(); /* version magic number */
 	readGlobalObjects();

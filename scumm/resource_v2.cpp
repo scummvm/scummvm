@@ -65,11 +65,7 @@ void ScummEngine_v2::readClassicIndexFile() {
 	_fileHandle->seek(0, SEEK_SET);
 
 	readMAXS(0);
-
-	// Jamieson630: palManipulate variable initialization
-	_palManipCounter = 0;
-	_palManipPalette = 0; // Will allocate when needed
-	_palManipIntermediatePal = 0; // Will allocate when needed
+	allocateArrays();
 
 	_fileHandle->readUint16LE(); /* version magic number */
 	for (i = 0; i != _numGlobalObjects; i++) {
@@ -122,7 +118,7 @@ void ScummEngine_v2::readEnhancedIndexFile() {
 		_musicEngine = new Player_V2(this, _midiDriver != MD_PCSPK);
 
 	_numGlobalObjects = _fileHandle->readUint16LE();
-	_fileHandle->seek(_numGlobalObjects, SEEK_CUR); // Skip object flags
+	_fileHandle->seek(_numGlobalObjects, SEEK_CUR);
 	_numRooms = _fileHandle->readByte();
 	_fileHandle->seek(_numRooms * 3, SEEK_CUR);
 	_numCostumes = _fileHandle->readByte();
@@ -135,24 +131,26 @@ void ScummEngine_v2::readEnhancedIndexFile() {
 	_fileHandle->seek(0, SEEK_SET);
 
 	readMAXS(0);
-
-	// Jamieson630: palManipulate variable initialization
-	_palManipCounter = 0;
-	_palManipPalette = 0; // Will allocate when needed
-	_palManipIntermediatePal = 0; // Will allocate when needed
+	allocateArrays();
 
 	_fileHandle->readUint16LE(); /* version magic number */
-	int num = _fileHandle->readUint16LE();
-	assert(num == _numGlobalObjects);
-	for (int i = 0; i != num; i++) {
-		byte tmp = _fileHandle->readByte();
-		_objectOwnerTable[i] = tmp & OF_OWNER_MASK;
-		_objectStateTable[i] = tmp >> OF_STATE_SHL;
-	}
+	readGlobalObjects();
 	readResTypeList(rtRoom, MKID('ROOM'), "room");
 	readResTypeList(rtCostume, MKID('COST'), "costume");
 	readResTypeList(rtScript, MKID('SCRP'), "script");
 	readResTypeList(rtSound, MKID('SOUN'), "sound");
+}
+
+void ScummEngine_v2::readGlobalObjects() {
+	int i;
+	int num = _fileHandle->readUint16LE();
+	assert(num == _numGlobalObjects);
+
+	for (i = 0; i != num; i++) {
+		byte tmp = _fileHandle->readByte();
+		_objectOwnerTable[i] = tmp & OF_OWNER_MASK;
+		_objectStateTable[i] = tmp >> OF_STATE_SHL;
+	}
 }
 
 void ScummEngine_v2::readIndexFile() {

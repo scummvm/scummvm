@@ -410,6 +410,7 @@ void ScummEngine::readIndexFile() {
 
 		case MKID('MAXS'):
 			readMAXS(itemsize);
+			allocateArrays();
 			break;
 
 		case MKID('DIRN'):
@@ -984,8 +985,6 @@ void ScummEngine_v5::readMAXS(int blockSize) {
 
 	if (_shadowPaletteSize)
 		_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
-
-	allocateArrays();
 }
 
 void ScummEngine_v8::readMAXS(int blockSize) {
@@ -1015,8 +1014,6 @@ void ScummEngine_v8::readMAXS(int blockSize) {
 
 	_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
 	_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
-
-	allocateArrays();
 }
 
 void ScummEngine_v7::readMAXS(int blockSize) {
@@ -1049,8 +1046,6 @@ void ScummEngine_v7::readMAXS(int blockSize) {
 
 	_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
 	_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
-
-	allocateArrays();
 }
 
 void ScummEngine_v6::readMAXS(int blockSize) {
@@ -1082,8 +1077,6 @@ void ScummEngine_v6::readMAXS(int blockSize) {
 
 	_shadowPaletteSize = 256;
 	_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
-
-	allocateArrays();
 }
 
 void ScummEngine::readGlobalObjects() {

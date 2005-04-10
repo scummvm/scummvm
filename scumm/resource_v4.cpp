@@ -71,11 +71,7 @@ void ScummEngine_v4::readIndexFile() {
 	_fileHandle->seek(0, SEEK_SET);
 
 	readMAXS(0);
-
-	// Jamieson630: palManipulate variable initialization
-	_palManipCounter = 0;
-	_palManipPalette = 0; // Will allocate when needed
-	_palManipIntermediatePal = 0; // Will allocate when needed
+	allocateArrays();
 
 	while (1) {
 		itemsize = _fileHandle->readUint32LE();
@@ -165,7 +161,6 @@ void ScummEngine_v4::readMAXS(int blockSize) {
 	_shadowPaletteSize = 256;
 
 	_shadowPalette = (byte *) calloc(_shadowPaletteSize, 1);	// FIXME - needs to be removed later
-	allocateArrays();
 }
 
 void ScummEngine_v4::readGlobalObjects() {

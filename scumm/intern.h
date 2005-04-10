@@ -261,6 +261,7 @@ protected:
 	virtual void readIndexFile();
 	void readClassicIndexFile();	// V1
 	void readEnhancedIndexFile();	// V2
+	virtual void readGlobalObjects();
 	virtual void loadCharset(int no);
 
 
