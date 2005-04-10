@@ -1613,7 +1613,7 @@ void gob_moveAdvance(Gob_Object *gobDesc, int16 nextAct, int16 framesCount) {
 
 		newY =
 		    scen_animations[gobDesc->animation].
-		    layers[gob_gobStateLayer]->animDeltaX + gobDesc->yPos;
+		    layers[gob_gobStateLayer]->animDeltaY + gobDesc->yPos;
 
 		gob_gobStateLayer = gob_nextLayer(gobDesc);
 
