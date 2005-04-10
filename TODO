@@ -213,6 +213,13 @@ Plugins
   needs to search in the plugin dir of the active bundle. So use the 
   CF bundle API, inside a #ifdef MACOSX block.
 
+OSystem
+=======
+* Right now gBitFormat is part of common/scaler.cpp; we might want to move it
+  to common/system.cpp, or replace it with something better.
+  No hasty changes here, please, make sure you understand how it is used right
+  now before messing with it ;-)
+
 
 #######################################################################
 # Engines / frontends
