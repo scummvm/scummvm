@@ -182,13 +182,16 @@ void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 		return;
 	r += offs;
 
-	const uint8 *akst = _vm->findResourceData(MKID('AKST'), _akos);
-	const uint8 *aksf = _vm->findResourceData(MKID('AKSF'), _akos);
+	const uint8 *akstPtr = _vm->findResourceData(MKID('AKST'), _akos);
+	const uint8 *aksfPtr = _vm->findResourceData(MKID('AKSF'), _akos);
 
 	i = 0;
 	mask = READ_LE_UINT16(r); r += 2;
 	do {
 		if (mask & 0x8000) {
+			const uint8 *akst = akstPtr;
+			const uint8 *aksf = aksfPtr;
+
 			code = *r++;
 			if (usemask & 0x8000) {
 				switch (code) {
@@ -213,7 +216,7 @@ void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 								akst += 8;
 							}
 							if (!found) {
-								warning("Sequence not found in actor 0x%X costume %d", a, a->_costume);
+								error("Sequence not found in actor 0x%X costume %d", a, a->_costume);
 							}
 						}
 					}
@@ -244,7 +247,7 @@ void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 								aksf += 6;
 							}
 							if (!found) {
-								warning("Sequence not found in actor 0x%X costume %d", a, a->_costume);
+								error("Sequence not found in actor 0x%X costume %d", a, a->_costume);
 							}							
 						}
 					}
@@ -268,7 +271,7 @@ void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 								akst += 8;
 							}
 							if (!found) {
-								warning("Sequence not found in actor 0x%X costume %d", a, a->_costume);
+								error("Sequence not found in actor 0x%X costume %d", a, a->_costume);
 							}
 						}
 					}					
