@@ -145,6 +145,16 @@ Config Manager
   setting is changed, the code doing so has to updated the SoundMixer etc.
   That's cumbersome, and error prone. Would be much nicer if updating the
   volume config value automatically notifies the SoundMixer, iMuse etc.
+* Split it into a Config Manager, and a Config File class. Maybe even follow
+  the pentagram (http://pentragram.sf.net) approach and have three class:
+  - SettingsManager (like our current ConfigManager)
+  - ConfigFileManager (manages a set of config files, possibly merging the data
+    from multiple config files)
+  - INIFile (a simple .ini file accessor).
+  This makes it easy to add additional config sources (e.g. XMLConfigFile);
+  makes it possible to treat the command line data like another config file
+  (CommandLineConfig); and simply follows the good old MVC approach, which
+  is always a good idea.
 
 Files
 =====
@@ -158,6 +168,7 @@ Files
   - convert said string representation back to FSNode
   Of course that can be added w/o a FileManager class, too - but it might be
   nice to have all of these integrated.
+* Add error handling API to SaveFile
 
 GUI
 ===
