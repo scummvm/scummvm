@@ -235,12 +235,15 @@ void ScummEngine::initRoomSubBlocks() {
 	if (_version == 8) {
 		_roomWidth = READ_LE_UINT32(&(rmhd->v8.width));
 		_roomHeight = READ_LE_UINT32(&(rmhd->v8.height));
+		_numObjectsInRoom = (byte)READ_LE_UINT32(&(rmhd->v8.numObjects));
 	} else if (_version == 7) {
 		_roomWidth = READ_LE_UINT16(&(rmhd->v7.width));
 		_roomHeight = READ_LE_UINT16(&(rmhd->v7.height));
+		_numObjectsInRoom = (byte)READ_LE_UINT16(&(rmhd->v7.numObjects));
 	} else {
 		_roomWidth = READ_LE_UINT16(&(rmhd->old.width));
 		_roomHeight = READ_LE_UINT16(&(rmhd->old.height));
+		_numObjectsInRoom = (byte)READ_LE_UINT16(&(rmhd->old.numObjects));
 	}
 
 	//
@@ -550,14 +553,14 @@ void ScummEngine_v3old::initRoomSubBlocks() {
 	
 	if (_version == 1) {
 		if (_features & GF_NES) {
-			_roomWidth = READ_LE_UINT16(roomptr + 4) * 8;
+			_roomWidth = READ_LE_UINT16(&(rmhd->old.width));
+			_roomHeight = READ_LE_UINT16(&(rmhd->old.height));
 
 			// HACK: To let our code work normal with narrow rooms we
 			// adjust width. It will render garbage on right edge but we do
 			// not render it anyway
 			if (_roomWidth < 32 * 8)
 				_roomWidth = 32 * 8;
-			_roomHeight = READ_LE_UINT16(roomptr + 6) * 8;
 		} else {
 			_roomWidth = roomptr[4] * 8;
 			_roomHeight = roomptr[5] * 8;
@@ -566,6 +569,7 @@ void ScummEngine_v3old::initRoomSubBlocks() {
 		_roomWidth = READ_LE_UINT16(&(rmhd->old.width));
 		_roomHeight = READ_LE_UINT16(&(rmhd->old.height));
 	}
+	_numObjectsInRoom = roomptr[20];
 
 	//
 	// Find the room image data

@@ -546,19 +546,10 @@ void ScummEngine::loadRoomObjects() {
 	uint16 obim_id;
 	const byte *room, *searchptr, *rootptr;
 	const ImageHeader *imhd;
-	const RoomHeader *roomhdr;
 	const CodeHeader *cdhd;
 
 	CHECK_HEAP
 	room = getResourceAddress(rtRoom, _roomResource);
-	roomhdr = (const RoomHeader *)findResourceData(MKID('RMHD'), room);
-
-	if (_version == 8)
-		_numObjectsInRoom = (byte)READ_LE_UINT32(&(roomhdr->v8.numObjects));
-	else if (_version == 7)
-		_numObjectsInRoom = (byte) READ_LE_UINT16(&(roomhdr->v7.numObjects));
-	else
-		_numObjectsInRoom = (byte) READ_LE_UINT16(&(roomhdr->old.numObjects));
 
 	if (_numObjectsInRoom == 0)
 		return;
@@ -639,8 +630,6 @@ void ScummEngine_v3old::loadRoomObjects() {
 	CHECK_HEAP
 	room = getResourceAddress(rtRoom, _roomResource);
 
-	_numObjectsInRoom = room[20];
-
 	if (_numObjectsInRoom == 0)
 		return;
 
@@ -677,13 +666,9 @@ void ScummEngine_v4::loadRoomObjects() {
 	const byte *ptr;
 	uint16 obim_id;
 	const byte *room;
-	const RoomHeader *roomhdr;
 
 	CHECK_HEAP
 	room = getResourceAddress(rtRoom, _roomResource);
-	roomhdr = (const RoomHeader *)findResourceData(MKID('RMHD'), room);
-
-	_numObjectsInRoom = (byte) READ_LE_UINT16(&(roomhdr->old.numObjects));
 
 	if (_numObjectsInRoom == 0)
 		return;
@@ -1191,7 +1176,7 @@ void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id,
 
 		for (i = 0; i < numobj; i++) {
 			obimptr = roomptr + READ_LE_UINT16(searchptr);
-			obcdptr = roomptr + READ_LE_UINT16(searchptr + 2 * _numObjectsInRoom);
+			obcdptr = roomptr + READ_LE_UINT16(searchptr + 2 * numobj);
 			id2 = READ_LE_UINT16(obcdptr + 4);
 
 			if (id2 == (uint16)id) {
