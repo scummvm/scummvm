@@ -31,17 +31,28 @@
 #include "gob/sound.h"
 #include "gob/init.h"
 
-static const GameSettings gob_games[] = {
-	{"gob1", "Gobliiins", 0},
-	{0, 0, 0}
+struct GobGameSettings {
+	const char *name;
+	const char *description;
+	uint32 features;
+	const char *detectname;
+	GameSettings toGameSettings() const {
+		GameSettings dummy = { name, description, features };
+		return dummy;
+	}
+};
+
+static const GobGameSettings gob_games[] = {
+	{"gob1", "Gobliiins", 0, "all.ask"},
+	{0, 0, 0, 0}
 };
 
 GameList Engine_GOB_gameList() {
 	GameList games;
-	const GameSettings *g = gob_games;
+	const GobGameSettings *g = gob_games;
 
 	while (g->name) {
-		games.push_back(*g);
+		games.push_back(g->toGameSettings());
 		g++;
 	}
 
@@ -50,7 +61,22 @@ GameList Engine_GOB_gameList() {
 
 DetectedGameList Engine_GOB_detectGames(const FSList &fslist) {
 	DetectedGameList detectedGames;
+	const GobGameSettings *g;
 
+	for (g = gob_games; g->name; ++g) {
+		// Iterate over all files in the given directory
+		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+			if (!file->isDirectory()) {
+				const char *gameName = file->displayName().c_str();
+
+				if (0 == scumm_stricmp(g->detectname, gameName)) {
+					// Match found, add to list of candidates, then abort inner loop.
+					detectedGames.push_back(g->toGameSettings());
+					break;
+				}
+			}
+		}
+	}
 	return detectedGames;
 }
 
