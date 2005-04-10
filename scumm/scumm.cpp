@@ -502,6 +502,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "00.LFL", "Maniac Mansion (F).prg", kGenAsIs },
 	{ "00.LFL", "Maniac Mansion (SW).prg", kGenAsIs },
 	{ "00.LFL", "Maniac Mansion (U).prg", kGenAsIs },
+	{ "monkey", "monkey1", kGenPC},
 	{ "racedemo", "500demo", kGenPC},
 	{ "Spydemo", "foxdemo", kGenPC},
 	{ "Spydemo", "FoxDemo", kGenMac },
@@ -2406,19 +2407,6 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 					detectedGames.clear();	// Clear all the non-exact candidates
 
 				const char *target = elem->target;
-
-				// HACK to work around bug #1009344
-				if (!strcmp(target, "monkey")) {
-					const char *str = name;
-					int len = 0;
-					// Scan to the end of the string...
-					while (*str++)
-						len++;
-					// ...so that we can check if it ends with 'monkey1.000'
-					const char *monkey1 = "monkey1.000";	// Len: 11
-					if (len >= 11 && !scumm_stricmp(str-11-1, monkey1))
-						target = "monkey1";
-				}
 
 				// Find the GameSettings for that target
 				for (g = scumm_settings; g->name; ++g) {
