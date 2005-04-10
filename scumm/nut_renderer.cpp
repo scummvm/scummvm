@@ -22,6 +22,7 @@
 #include "scumm/scumm.h"
 #include "scumm/nut_renderer.h"
 #include "scumm/bomp.h"
+#include "scumm/util.h"
 
 
 namespace Scumm {

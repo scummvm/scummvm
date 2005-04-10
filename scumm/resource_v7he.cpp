@@ -28,6 +28,8 @@
 #include "scumm/intern.h"
 #include "scumm/resource.h"
 #include "scumm/resource_v7he.h"
+#include "scumm/util.h"
+
 #include "common/stream.h"
 #include "common/system.h"
 

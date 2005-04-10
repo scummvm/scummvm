@@ -26,6 +26,8 @@
 
 #include "common/scummsys.h"
 #include "scumm/scumm.h"
+
+
 namespace Scumm {
 
 enum MoveFlags {
@@ -225,14 +227,8 @@ public:
 		return _facing;
 	}
 
-	int getAnimVar(byte var) const {
-		checkRange(26, 0, var, "getAnimVar %d out of range(r)");
-		return _animVariable[var];
-	}
-	void setAnimVar(byte var, int value) {
-		checkRange(26, 0, var, "setAnimVar %d out of range(r)");
-		_animVariable[var] = value;
-	}
+	int getAnimVar(byte var) const;
+	void setAnimVar(byte var, int value);
 	
 	void setAnimSpeed(byte newAnimSpeed) {
 		_animSpeed = newAnimSpeed;

@@ -2265,6 +2265,15 @@ char ScummEngine::displayMessage(const char *altButton, const char *message, ...
 #pragma mark --- Miscellaneous ---
 #pragma mark -
 
+
+uint32 ScummEngine::fileReadDword() {
+#if defined(SCUMM_LITTLE_ENDIAN)
+	return _fileHandle->readUint32LE();
+#elif defined(SCUMM_BIG_ENDIAN)
+	return _fileHandle->readUint32BE();
+#endif
+}
+
 void ScummEngine::errorString(const char *buf1, char *buf2) {
 	if (_currentScript != 0xFF) {
 		ScriptSlot *ss = &vm.slot[_currentScript];

@@ -275,7 +275,31 @@ const char *tag2str(uint32 tag) {
 #pragma mark --- ScummNESFile ---
 #pragma mark -
 
-	ScummNESFile::ScummNESFile() : _stream(0), _buf(0), _ROMset(kROMsetNum) {
+enum ResType {
+	NES_UNKNOWN,
+	NES_GLOBDATA,
+	NES_ROOM,
+	NES_SCRIPT, 
+	NES_SOUND,
+	NES_COSTUME,
+	NES_ROOMGFX,
+	NES_COSTUMEGFX,
+	NES_SPRPALS,
+	NES_SPRDESC,
+	NES_SPRLENS,
+	NES_SPROFFS,
+	NES_SPRDATA,
+	NES_CHARSET,
+	NES_PREPLIST 
+};
+
+struct ScummNESFile::Resource {
+	uint32 offset[kROMsetNum];
+	uint16 length[kROMsetNum];
+	ResType type;
+};
+
+ScummNESFile::ScummNESFile() : _stream(0), _buf(0), _ROMset(kROMsetNum) {
 }
 
 uint32 ScummNESFile::write(const void *, uint32) {
@@ -287,7 +311,7 @@ void ScummNESFile::setEnc(byte enc) {
 	_stream->setEnc(enc);
 }
 
-static ScummNESFile::t_resource res_roomgfx[40] = {
+static ScummNESFile::Resource res_roomgfx[40] = {
 	{ {0x04001,0x04001,0x04001,0x04001}, {0x03C9,0x03B9,0x03F0,0x0426}, NES_ROOMGFX },
 	{ {0x043CA,0x043BA,0x043F1,0x04427}, {0x069E,0x069E,0x069E,0x069E}, NES_ROOMGFX },
 	{ {0x04A68,0x04A58,0x04A8F,0x04AC5}, {0x0327,0x0327,0x0327,0x0327}, NES_ROOMGFX },
@@ -330,12 +354,12 @@ static ScummNESFile::t_resource res_roomgfx[40] = {
 	{ {0x1312E,0x132C7,0x12F15,0x12F10}, {0x037A,0x037A,0x037A,0x037A}, NES_ROOMGFX }
 };
 
-static ScummNESFile::t_resource res_costumegfx[2] = {
+static ScummNESFile::Resource res_costumegfx[2] = {
 	{ {0x30001,0x30001,0x2EFE1,0x30001}, {0x0EB8,0x0EB8,0x0EB8,0x0EB8}, NES_COSTUMEGFX },
 	{ {0x2F9F1,0x2F9F1,0x30001,0x2F608}, {0x0340,0x0340,0x0340,0x0340}, NES_COSTUMEGFX }
 };
 
-static ScummNESFile::t_resource res_rooms[55] = {
+static ScummNESFile::Resource res_rooms[55] = {
 	{ {0x00000,0x00000,0x00000,0x00000}, {0x0000,0x0000,0x0000,0x0000}, NES_ROOM },
 	{ {0x14001,0x14001,0x14001,0x14001}, {0x0D0C,0x0D0C,0x0D12,0x0D76}, NES_ROOM },
 	{ {0x134A8,0x13641,0x1328F,0x1328A}, {0x04B3,0x04B3,0x04B3,0x04C6}, NES_ROOM },
@@ -393,7 +417,7 @@ static ScummNESFile::t_resource res_rooms[55] = {
 	{ {0x13E42,0x2BDD7,0x27CF6,0x2C4BF}, {0x0169,0x0169,0x0169,0x0169}, NES_ROOM }
 };
 
-static ScummNESFile::t_resource res_scripts[179] = {
+static ScummNESFile::Resource res_scripts[179] = {
 	{ {0x00000,0x00000,0x00000,0x00000}, {0x0000,0x0000,0x0000,0x0000}, NES_SCRIPT }, // 0
 	{ {0x29966,0x29966,0x28F80,0x2947D}, {0x044D,0x044D,0x043B,0x0480}, NES_SCRIPT },
 	{ {0x29DB3,0x29DB3,0x293BB,0x298FD}, {0x0207,0x0207,0x0209,0x0226}, NES_SCRIPT },
@@ -575,7 +599,7 @@ static ScummNESFile::t_resource res_scripts[179] = {
 	{ {0x2AD35,0x2AD47,0x2A3A6,0x2A93A}, {0x009C,0x009C,0x009C,0x009C}, NES_SCRIPT }
 };
 
-static ScummNESFile::t_resource res_sounds[82] = {
+static ScummNESFile::Resource res_sounds[82] = {
 	{ {0x0FFE8,0x0BF54,0x0BF58,0x07F74}, {0x000A,0x000A,0x000A,0x000A}, NES_SOUND },
 	{ {0x30ECA,0x30ECA,0x30352,0x30ECA}, {0x0832,0x0832,0x0832,0x0832}, NES_SOUND },
 	{ {0x30ECA,0x30ECA,0x30352,0x30ECA}, {0x0832,0x0832,0x0832,0x0832}, NES_SOUND },
@@ -660,7 +684,7 @@ static ScummNESFile::t_resource res_sounds[82] = {
 	{ {0x3B099,0x3B27F,0x3A429,0x3A858}, {0x0BE4,0x0BE4,0x0BE4,0x0BE4}, NES_SOUND }
 };
 
-static ScummNESFile::t_resource res_costumes[25] = {
+static ScummNESFile::Resource res_costumes[25] = {
 	{ {0x17F05,0x0BEFF,0x0FEF5,0x0BF17}, {0x0055,0x0055,0x0055,0x0055}, NES_COSTUME },
 	{ {0x17F05,0x0BEFF,0x0FEF5,0x0BF17}, {0x0055,0x0055,0x0055,0x0055}, NES_COSTUME },
 	{ {0x17F05,0x0BEFF,0x0FEF5,0x0BF17}, {0x0055,0x0055,0x0055,0x0055}, NES_COSTUME },
@@ -688,43 +712,43 @@ static ScummNESFile::t_resource res_costumes[25] = {
 	{ {0x13FAB,0x0FEA2,0x17E9A,0x13E77}, {0x004B,0x004B,0x004B,0x004B}, NES_COSTUME }
 };
 
-static ScummNESFile::t_resource res_globdata =
+static ScummNESFile::Resource res_globdata =
 	{ {0x2CA11,0x2CA11,0x2C001,0x2C628}, {0x0307,0x0307,0x0307,0x0307}, NES_GLOBDATA };
 
 // sprite palette data
-static ScummNESFile::t_resource res_sprpals[2] = {
+static ScummNESFile::Resource res_sprpals[2] = {
 	{ {0x0BFC1,0x07F61,0x07F55,0x07ED8}, {0x0010,0x0010,0x0010,0x0010}, NES_SPRPALS },
 	{ {0x0BFD1,0x0BEB2,0x07F65,0x07EE8}, {0x0010,0x0010,0x0010,0x0010}, NES_SPRPALS }
 };
 
 // associates costume IDs with sprite sets (indexes into SPRLENS/SPROFFS)
-static ScummNESFile::t_resource res_sprdesc[2] = {
+static ScummNESFile::Resource res_sprdesc[2] = {
 	{ {0x0FFB7,0x0BEC2,0x0BF1B,0x07EF8}, {0x0031,0x0031,0x0031,0x0031}, NES_SPRDESC },
 	{ {0x0BFE1,0x07F71,0x07F75,0x07F29}, {0x0009,0x0009,0x0009,0x0009}, NES_SPRDESC }
 };
 
 // number of sprites in each set (indicates length within SPRDATA)
-static ScummNESFile::t_resource res_sprlens[2] = {
+static ScummNESFile::Resource res_sprlens[2] = {
 	{ {0x0FEA2,0x1BE32,0x13E6A,0x0FE61}, {0x0115,0x0115,0x0115,0x0115}, NES_SPRLENS },
 	{ {0x07FF5,0x07F5B,0x07F4F,0x07ED2}, {0x0006,0x0006,0x0006,0x0006}, NES_SPRLENS }
 };
 
 // offset of each sprite set (indexes into SPRDATA)
-static ScummNESFile::t_resource res_sproffs[2] = {
+static ScummNESFile::Resource res_sproffs[2] = {
 	{ {0x2BDC5,0x2FD42,0x2BCE0,0x2F959}, {0x022A,0x022A,0x022A,0x022A}, NES_SPROFFS },
 	{ {0x0BFEA,0x0BEF3,0x0BF4C,0x07F32}, {0x000C,0x000C,0x000C,0x000C}, NES_SPROFFS }
 };
 
 // sprite data sets (packed NES sprite data)
-static ScummNESFile::t_resource res_sprdata[2] = {
+static ScummNESFile::Resource res_sprdata[2] = {
 	{ {0x2CE11,0x2CE11,0x2C401,0x2CA28}, {0x2BE0,0x2BE0,0x2BE0,0x2BE0}, NES_SPRDATA },
 	{ {0x07F6B,0x0BE28,0x0FE6B,0x07E48}, {0x008A,0x008A,0x008A,0x008A}, NES_SPRDATA }
 };
 
-static ScummNESFile::t_resource res_charset =
+static ScummNESFile::Resource res_charset =
 	{ {0x3F6EE,0x3F724,0x3F739,0x3F739}, {0x0090,0x0090,0x0090,0x0090}, NES_CHARSET };
 
-static ScummNESFile::t_resource res_preplist =
+static ScummNESFile::Resource res_preplist =
 	{ {0x3FB5A,0x3FB90,0x3FBA9,0x3FBAF}, {0x000E,0x000E,0x000E,0x0010}, NES_PREPLIST };
 
 uint16 write_byte(Common::MemoryWriteStream *out, byte val) {
@@ -741,25 +765,25 @@ uint16 write_word(Common::MemoryWriteStream *out, uint16 val) {
 	return 2;
 }
 
-byte ScummNESFile::FileReadByte() {
+byte ScummNESFile::fileReadByte() {
 	byte b = 0;
 	File::read(&b, 1);
 	return b;
 }
 
-uint16 ScummNESFile::FileReadUint16LE() {
-	uint16 a = FileReadByte();
-	uint16 b = FileReadByte();
+uint16 ScummNESFile::fileReadUint16LE() {
+	uint16 a = fileReadByte();
+	uint16 b = fileReadByte();
 	return a | (b << 8);
 }
-uint32 ScummNESFile::resOffset(p_resource res) {
+uint32 ScummNESFile::resOffset(Resource *res) {
 	return res->offset[_ROMset];
 }
-uint16 ScummNESFile::resLength(p_resource res) {
+uint16 ScummNESFile::resLength(Resource *res) {
 	return res->length[_ROMset];
 }
 
-uint16 ScummNESFile::extractResource(Common::MemoryWriteStream *output, p_resource res) {
+uint16 ScummNESFile::extractResource(Common::MemoryWriteStream *output, Resource *res) {
 	uint16 len, i, j;
 	byte val;
 	byte cnt;
@@ -778,14 +802,14 @@ uint16 ScummNESFile::extractResource(Common::MemoryWriteStream *output, p_resour
 		len = resLength(res);
 
 		for (i = 0; i < len; i++)
-			reslen += write_byte(output, FileReadByte());
+			reslen += write_byte(output, fileReadByte());
 
 		break;
 
 	case NES_ROOMGFX:
 	case NES_COSTUMEGFX:
 		reslen += write_word(output, (uint16)(resLength(res) + 2));
-		len = FileReadByte();
+		len = fileReadByte();
 		reslen += write_byte(output, (byte)len);
 
 		if (!len)
@@ -793,10 +817,10 @@ uint16 ScummNESFile::extractResource(Common::MemoryWriteStream *output, p_resour
 		len = len << 4;
 
 		for (i = 0; i < len;) {
-			reslen += write_byte(output, cnt = FileReadByte());
+			reslen += write_byte(output, cnt = fileReadByte());
 			for (j = 0; j < (cnt & 0x7F); j++, i++)
 				if ((cnt & 0x80) || (j == 0))
-					reslen += write_byte(output, FileReadByte());
+					reslen += write_byte(output, fileReadByte());
 		}
 
 		if (File::pos() - resOffset(res) != resLength(res))
@@ -806,7 +830,7 @@ uint16 ScummNESFile::extractResource(Common::MemoryWriteStream *output, p_resour
 
 	case NES_ROOM:
 	case NES_SCRIPT:
-		len = FileReadUint16LE();
+		len = fileReadUint16LE();
 
 		if (len != resLength(res))
 			error("extract_resource - length mismatch while extracting room/script resource (was %04X, should be %04X)", len, resLength(res));
@@ -814,29 +838,29 @@ uint16 ScummNESFile::extractResource(Common::MemoryWriteStream *output, p_resour
 		File::seek(-2, SEEK_CUR);
 
 		for (i = 0; i < len; i++)
-			reslen += write_byte(output, FileReadByte());
+			reslen += write_byte(output, fileReadByte());
 
 		break;
 
 	case NES_SOUND:
 		len = resLength(res) + 2;
-		val = FileReadByte();
-		cnt = FileReadByte();
+		val = fileReadByte();
+		cnt = fileReadByte();
 
 		if ((val == 2) && (cnt == 100)) {
 			reslen += write_word(output, len);
 			reslen += write_byte(output, val);
 			reslen += write_byte(output, cnt);
 
-			cnt = FileReadByte();
+			cnt = fileReadByte();
 			reslen += write_byte(output, cnt);
 			for (i = 0; i < cnt; i++)
-				reslen += write_byte(output, FileReadByte());
+				reslen += write_byte(output, fileReadByte());
 			for (i = 0; i < cnt; i++)
-				reslen += write_byte(output, FileReadByte());
+				reslen += write_byte(output, fileReadByte());
 
 			while (1) {
-				reslen += write_byte(output, val = FileReadByte());
+				reslen += write_byte(output, val = fileReadByte());
 				if (val >= 0xFE)
 					break;
 			}
@@ -845,18 +869,18 @@ uint16 ScummNESFile::extractResource(Common::MemoryWriteStream *output, p_resour
 			reslen += write_byte(output, val);
 			reslen += write_byte(output, cnt);
 			while (1) {
-				reslen += write_byte(output, val = FileReadByte());
+				reslen += write_byte(output, val = fileReadByte());
 
 				if (val >= 0xFE)
 					break;
 
 				if (val >= 0x10)
-					reslen += write_byte(output, FileReadByte());
+					reslen += write_byte(output, fileReadByte());
 				else {
-					reslen += write_byte(output, FileReadByte());
-					reslen += write_byte(output, FileReadByte());
-					reslen += write_byte(output, FileReadByte());
-					reslen += write_byte(output, FileReadByte());
+					reslen += write_byte(output, fileReadByte());
+					reslen += write_byte(output, fileReadByte());
+					reslen += write_byte(output, fileReadByte());
+					reslen += write_byte(output, fileReadByte());
 				}
 			}
 		} else
@@ -878,7 +902,7 @@ uint16 ScummNESFile::extractResource(Common::MemoryWriteStream *output, p_resour
 		reslen += write_word(output, (uint16)(len + 2));
 
 		for (i = 0; i < len; i++)
-			reslen += write_byte(output, FileReadByte());
+			reslen += write_byte(output, fileReadByte());
 
 		break;
 
@@ -893,7 +917,7 @@ uint16 ScummNESFile::extractResource(Common::MemoryWriteStream *output, p_resour
 		for (j = 0; j < 4; j++)
 		{
 			reslen += write_byte(output,' ');
-			for (i = 1; val = FileReadByte(); i++)
+			for (i = 1; (val = fileReadByte()); i++)
 				reslen += write_byte(output, val);
 			for (; i < 8; i++)
 				reslen += write_byte(output, 0);
@@ -910,66 +934,66 @@ uint16 ScummNESFile::extractResource(Common::MemoryWriteStream *output, p_resour
 // based on structure of Classic PC Maniac Mansion LFL files
 // (roomgfx resources are arranged in order, one per file, 
 // after the room blocks) */
-static ScummNESFile::p_resource lfl_01[] = { &res_rooms[1], &res_roomgfx[1], &res_scripts[57], &res_scripts[61], &res_scripts[76], &res_scripts[105], &res_scripts[111], &res_sounds[5], &res_scripts[132], &res_scripts[148], &res_scripts[155], &res_scripts[156], &res_sounds[39], NULL };
-static ScummNESFile::p_resource lfl_02[] = { &res_rooms[2], &res_roomgfx[2], NULL };
-static ScummNESFile::p_resource lfl_03[] = { &res_rooms[3], &res_roomgfx[3], &res_scripts[21], &res_sounds[26], NULL };
-static ScummNESFile::p_resource lfl_04[] = { &res_rooms[4], &res_roomgfx[4], &res_scripts[46], &res_scripts[56], &res_scripts[137], &res_scripts[146], &res_sounds[12], &res_sounds[11], &res_sounds[13], &res_sounds[42], NULL };
-static ScummNESFile::p_resource lfl_05[] = { &res_rooms[5], &res_roomgfx[5], &res_scripts[30], &res_scripts[31], &res_scripts[32], &res_scripts[33], &res_scripts[34], &res_scripts[35], &res_sounds[22], &res_sounds[23], &res_sounds[24], &res_sounds[21], &res_sounds[46], NULL };
-static ScummNESFile::p_resource lfl_06[] = { &res_rooms[6], &res_roomgfx[6], NULL };
-static ScummNESFile::p_resource lfl_07[] = { &res_rooms[7], &res_roomgfx[7], &res_scripts[17], &res_scripts[58], &res_scripts[59], &res_scripts[60], &res_scripts[74], &res_scripts[81], &res_scripts[82], &res_scripts[150], &res_sounds[14], &res_sounds[15], &res_sounds[16], &res_sounds[17], NULL };
-static ScummNESFile::p_resource lfl_08[] = { &res_rooms[8], &res_roomgfx[8], &res_scripts[7], &res_scripts[12], &res_scripts[13], &res_scripts[47], &res_scripts[48], &res_scripts[49], &res_scripts[154], &res_sounds[32], &res_sounds[33], &res_sounds[36], NULL };
-static ScummNESFile::p_resource lfl_09[] = { &res_rooms[9], &res_roomgfx[9], &res_scripts[10], &res_scripts[11], &res_scripts[45], &res_scripts[55], &res_scripts[84], &res_scripts[85], &res_scripts[86], NULL };
-static ScummNESFile::p_resource lfl_10[] = { &res_rooms[10], &res_roomgfx[10], &res_scripts[24], &res_scripts[149], &res_sounds[28], NULL };
-static ScummNESFile::p_resource lfl_11[] = { &res_rooms[11], &res_roomgfx[11], &res_scripts[166], &res_scripts[167], &res_scripts[168], NULL };
-static ScummNESFile::p_resource lfl_12[] = { &res_rooms[12], &res_roomgfx[12], &res_scripts[51], &res_scripts[103], &res_scripts[104], &res_scripts[161], &res_sounds[63], &res_costumes[14], NULL };
-static ScummNESFile::p_resource lfl_13[] = { &res_rooms[13], &res_roomgfx[13], NULL };
-static ScummNESFile::p_resource lfl_14[] = { &res_rooms[14], &res_roomgfx[14], NULL };
-static ScummNESFile::p_resource lfl_15[] = { &res_rooms[15], &res_roomgfx[15], &res_sounds[27], NULL };
-static ScummNESFile::p_resource lfl_16[] = { &res_rooms[16], &res_roomgfx[16], &res_scripts[14], &res_scripts[121], &res_scripts[122], &res_sounds[40], &res_sounds[64], &res_sounds[68], NULL };
-static ScummNESFile::p_resource lfl_17[] = { &res_rooms[17], &res_roomgfx[17], &res_scripts[20], &res_scripts[100], &res_sounds[25], &res_sounds[44], &res_sounds[2], &res_sounds[50], &res_sounds[52], NULL };
-static ScummNESFile::p_resource lfl_18[] = { &res_rooms[18], &res_roomgfx[18], &res_scripts[25], &res_scripts[26], &res_scripts[27], &res_scripts[28], &res_scripts[64], &res_scripts[65], &res_scripts[66], &res_scripts[67], &res_scripts[68], &res_scripts[69], &res_scripts[70], &res_scripts[71], &res_scripts[73], &res_scripts[101], &res_sounds[35], NULL };
-static ScummNESFile::p_resource lfl_19[] = { &res_rooms[19], &res_roomgfx[19], &res_scripts[36], &res_scripts[37], &res_scripts[38], &res_scripts[39], &res_scripts[40], &res_scripts[152], &res_scripts[153], &res_costumes[10], NULL };
-static ScummNESFile::p_resource lfl_20[] = { &res_rooms[20], &res_roomgfx[20], &res_scripts[107], &res_scripts[108], &res_scripts[109], &res_scripts[110], &res_scripts[159], NULL };
-static ScummNESFile::p_resource lfl_21[] = { &res_rooms[21], &res_roomgfx[21], &res_scripts[41], &res_scripts[42], &res_scripts[43], &res_scripts[53], &res_scripts[136], &res_sounds[29], &res_sounds[20], &res_sounds[37], NULL };
-static ScummNESFile::p_resource lfl_22[] = { &res_rooms[22], &res_roomgfx[22], &res_scripts[15], NULL };
-static ScummNESFile::p_resource lfl_23[] = { &res_rooms[23], &res_roomgfx[23], &res_scripts[77], &res_scripts[79], &res_scripts[80], &res_scripts[83], &res_sounds[41], NULL };
-static ScummNESFile::p_resource lfl_24[] = { &res_rooms[24], &res_roomgfx[24], &res_scripts[18], &res_scripts[19], &res_scripts[78], &res_sounds[7], &res_sounds[3], &res_sounds[18], &res_sounds[34], &res_costumes[12], NULL };
-static ScummNESFile::p_resource lfl_25[] = { &res_rooms[25], &res_roomgfx[25], &res_scripts[29], &res_sounds[30], &res_sounds[31], NULL };
-static ScummNESFile::p_resource lfl_26[] = { &res_rooms[26], &res_roomgfx[26], &res_scripts[87], &res_scripts[88], &res_scripts[89], &res_scripts[90], &res_scripts[91], &res_scripts[92], &res_scripts[93], &res_scripts[94], &res_scripts[95], &res_scripts[96], &res_scripts[97], &res_scripts[98], &res_scripts[116], &res_scripts[151], &res_scripts[174], &res_costumes[11], NULL };
-static ScummNESFile::p_resource lfl_27[] = { &res_rooms[27], &res_roomgfx[27], &res_scripts[16], &res_scripts[52], &res_scripts[54], &res_scripts[113], &res_sounds[45], &res_costumes[19], NULL };
-static ScummNESFile::p_resource lfl_28[] = { &res_rooms[28], &res_roomgfx[28], &res_scripts[22], &res_scripts[23], NULL };
-static ScummNESFile::p_resource lfl_29[] = { &res_rooms[29], &res_roomgfx[29], &res_scripts[75], &res_sounds[43], NULL };
-static ScummNESFile::p_resource lfl_30[] = { &res_rooms[30], &res_roomgfx[30], &res_scripts[63], &res_sounds[0], &res_scripts[123], &res_scripts[125], &res_scripts[126], &res_scripts[127], &res_scripts[129], &res_sounds[55], &res_sounds[59], &res_sounds[60], &res_costumes[8], NULL };
-static ScummNESFile::p_resource lfl_31[] = { &res_rooms[31], &res_roomgfx[31], &res_scripts[99], &res_scripts[115], &res_scripts[117], &res_scripts[119], &res_scripts[147], &res_scripts[157], &res_scripts[158], &res_scripts[160], &res_costumes[13], &res_costumes[9], &res_costumes[23], &res_costumes[24], NULL };
-static ScummNESFile::p_resource lfl_32[] = { &res_rooms[32], &res_roomgfx[32], &res_costumes[15], NULL };
-static ScummNESFile::p_resource lfl_33[] = { &res_rooms[33], &res_roomgfx[33], &res_scripts[120], &res_scripts[135], &res_sounds[56], &res_sounds[57], &res_sounds[58], &res_sounds[1], &res_costumes[22], NULL };
-static ScummNESFile::p_resource lfl_34[] = { &res_rooms[34], &res_roomgfx[34], NULL };
-static ScummNESFile::p_resource lfl_35[] = { &res_rooms[35], &res_roomgfx[35], NULL };
-static ScummNESFile::p_resource lfl_36[] = { &res_rooms[36], &res_roomgfx[36], &res_sounds[10], &res_sounds[4], NULL };
-static ScummNESFile::p_resource lfl_37[] = { &res_rooms[37], &res_roomgfx[37], NULL };
-static ScummNESFile::p_resource lfl_38[] = { &res_rooms[38], &res_roomgfx[38], &res_scripts[138], &res_scripts[139], &res_scripts[140], &res_scripts[141], &res_scripts[142], &res_scripts[143], &res_scripts[144], &res_scripts[145], NULL };
-static ScummNESFile::p_resource lfl_39[] = { &res_rooms[39], &res_roomgfx[39], NULL };
-static ScummNESFile::p_resource lfl_40[] = { &res_rooms[40], &res_roomgfx[0], &res_scripts[112], &res_costumes[17], NULL };
-static ScummNESFile::p_resource lfl_41[] = { &res_rooms[41], &res_scripts[106], &res_sounds[47], &res_sounds[48], &res_sounds[53], &res_sounds[49], &res_sounds[51], NULL };
-static ScummNESFile::p_resource lfl_42[] = { &res_rooms[42], &res_scripts[124], &res_costumes[18],  NULL };
-static ScummNESFile::p_resource lfl_43[] = { &res_rooms[43], &res_scripts[44], &res_sounds[19], NULL };
-static ScummNESFile::p_resource lfl_44[] = { &res_rooms[44], &res_scripts[102], &res_sounds[6], &res_sounds[38], &res_sounds[8], &res_sounds[9], &res_costumes[1], &res_costumes[2], &res_costumes[5], &res_costumes[6], &res_costumes[3], &res_costumes[4], &res_costumes[7], NULL };
-static ScummNESFile::p_resource lfl_45[] = { &res_rooms[45], &res_scripts[1], &res_scripts[2], &res_scripts[3], &res_scripts[4], &res_scripts[5], &res_scripts[9], &res_scripts[114], &res_scripts[131], &res_scripts[164], &res_scripts[165], &res_scripts[169], &res_scripts[170], &res_scripts[171], &res_scripts[172], &res_scripts[173], &res_scripts[175], &res_sounds[54], NULL };
-static ScummNESFile::p_resource lfl_46[] = { &res_rooms[46], &res_scripts[130], &res_sounds[65], &res_costumes[0], &res_costumes[21], NULL };
-static ScummNESFile::p_resource lfl_47[] = { &res_rooms[47], &res_scripts[62], &res_sounds[69], NULL };
-static ScummNESFile::p_resource lfl_48[] = { &res_rooms[48], NULL };
-static ScummNESFile::p_resource lfl_49[] = { &res_rooms[49], NULL };
-static ScummNESFile::p_resource lfl_50[] = { &res_rooms[50], &res_scripts[133], &res_scripts[163], NULL };
-static ScummNESFile::p_resource lfl_51[] = { &res_rooms[51], &res_scripts[118], &res_scripts[128], &res_sounds[61], &res_sounds[62], &res_sounds[67], &res_sounds[66], &res_costumes[16], &res_costumes[20], NULL };
-static ScummNESFile::p_resource lfl_52[] = { &res_rooms[52], NULL };
+static ScummNESFile::Resource *lfl_01[] = { &res_rooms[1], &res_roomgfx[1], &res_scripts[57], &res_scripts[61], &res_scripts[76], &res_scripts[105], &res_scripts[111], &res_sounds[5], &res_scripts[132], &res_scripts[148], &res_scripts[155], &res_scripts[156], &res_sounds[39], NULL };
+static ScummNESFile::Resource *lfl_02[] = { &res_rooms[2], &res_roomgfx[2], NULL };
+static ScummNESFile::Resource *lfl_03[] = { &res_rooms[3], &res_roomgfx[3], &res_scripts[21], &res_sounds[26], NULL };
+static ScummNESFile::Resource *lfl_04[] = { &res_rooms[4], &res_roomgfx[4], &res_scripts[46], &res_scripts[56], &res_scripts[137], &res_scripts[146], &res_sounds[12], &res_sounds[11], &res_sounds[13], &res_sounds[42], NULL };
+static ScummNESFile::Resource *lfl_05[] = { &res_rooms[5], &res_roomgfx[5], &res_scripts[30], &res_scripts[31], &res_scripts[32], &res_scripts[33], &res_scripts[34], &res_scripts[35], &res_sounds[22], &res_sounds[23], &res_sounds[24], &res_sounds[21], &res_sounds[46], NULL };
+static ScummNESFile::Resource *lfl_06[] = { &res_rooms[6], &res_roomgfx[6], NULL };
+static ScummNESFile::Resource *lfl_07[] = { &res_rooms[7], &res_roomgfx[7], &res_scripts[17], &res_scripts[58], &res_scripts[59], &res_scripts[60], &res_scripts[74], &res_scripts[81], &res_scripts[82], &res_scripts[150], &res_sounds[14], &res_sounds[15], &res_sounds[16], &res_sounds[17], NULL };
+static ScummNESFile::Resource *lfl_08[] = { &res_rooms[8], &res_roomgfx[8], &res_scripts[7], &res_scripts[12], &res_scripts[13], &res_scripts[47], &res_scripts[48], &res_scripts[49], &res_scripts[154], &res_sounds[32], &res_sounds[33], &res_sounds[36], NULL };
+static ScummNESFile::Resource *lfl_09[] = { &res_rooms[9], &res_roomgfx[9], &res_scripts[10], &res_scripts[11], &res_scripts[45], &res_scripts[55], &res_scripts[84], &res_scripts[85], &res_scripts[86], NULL };
+static ScummNESFile::Resource *lfl_10[] = { &res_rooms[10], &res_roomgfx[10], &res_scripts[24], &res_scripts[149], &res_sounds[28], NULL };
+static ScummNESFile::Resource *lfl_11[] = { &res_rooms[11], &res_roomgfx[11], &res_scripts[166], &res_scripts[167], &res_scripts[168], NULL };
+static ScummNESFile::Resource *lfl_12[] = { &res_rooms[12], &res_roomgfx[12], &res_scripts[51], &res_scripts[103], &res_scripts[104], &res_scripts[161], &res_sounds[63], &res_costumes[14], NULL };
+static ScummNESFile::Resource *lfl_13[] = { &res_rooms[13], &res_roomgfx[13], NULL };
+static ScummNESFile::Resource *lfl_14[] = { &res_rooms[14], &res_roomgfx[14], NULL };
+static ScummNESFile::Resource *lfl_15[] = { &res_rooms[15], &res_roomgfx[15], &res_sounds[27], NULL };
+static ScummNESFile::Resource *lfl_16[] = { &res_rooms[16], &res_roomgfx[16], &res_scripts[14], &res_scripts[121], &res_scripts[122], &res_sounds[40], &res_sounds[64], &res_sounds[68], NULL };
+static ScummNESFile::Resource *lfl_17[] = { &res_rooms[17], &res_roomgfx[17], &res_scripts[20], &res_scripts[100], &res_sounds[25], &res_sounds[44], &res_sounds[2], &res_sounds[50], &res_sounds[52], NULL };
+static ScummNESFile::Resource *lfl_18[] = { &res_rooms[18], &res_roomgfx[18], &res_scripts[25], &res_scripts[26], &res_scripts[27], &res_scripts[28], &res_scripts[64], &res_scripts[65], &res_scripts[66], &res_scripts[67], &res_scripts[68], &res_scripts[69], &res_scripts[70], &res_scripts[71], &res_scripts[73], &res_scripts[101], &res_sounds[35], NULL };
+static ScummNESFile::Resource *lfl_19[] = { &res_rooms[19], &res_roomgfx[19], &res_scripts[36], &res_scripts[37], &res_scripts[38], &res_scripts[39], &res_scripts[40], &res_scripts[152], &res_scripts[153], &res_costumes[10], NULL };
+static ScummNESFile::Resource *lfl_20[] = { &res_rooms[20], &res_roomgfx[20], &res_scripts[107], &res_scripts[108], &res_scripts[109], &res_scripts[110], &res_scripts[159], NULL };
+static ScummNESFile::Resource *lfl_21[] = { &res_rooms[21], &res_roomgfx[21], &res_scripts[41], &res_scripts[42], &res_scripts[43], &res_scripts[53], &res_scripts[136], &res_sounds[29], &res_sounds[20], &res_sounds[37], NULL };
+static ScummNESFile::Resource *lfl_22[] = { &res_rooms[22], &res_roomgfx[22], &res_scripts[15], NULL };
+static ScummNESFile::Resource *lfl_23[] = { &res_rooms[23], &res_roomgfx[23], &res_scripts[77], &res_scripts[79], &res_scripts[80], &res_scripts[83], &res_sounds[41], NULL };
+static ScummNESFile::Resource *lfl_24[] = { &res_rooms[24], &res_roomgfx[24], &res_scripts[18], &res_scripts[19], &res_scripts[78], &res_sounds[7], &res_sounds[3], &res_sounds[18], &res_sounds[34], &res_costumes[12], NULL };
+static ScummNESFile::Resource *lfl_25[] = { &res_rooms[25], &res_roomgfx[25], &res_scripts[29], &res_sounds[30], &res_sounds[31], NULL };
+static ScummNESFile::Resource *lfl_26[] = { &res_rooms[26], &res_roomgfx[26], &res_scripts[87], &res_scripts[88], &res_scripts[89], &res_scripts[90], &res_scripts[91], &res_scripts[92], &res_scripts[93], &res_scripts[94], &res_scripts[95], &res_scripts[96], &res_scripts[97], &res_scripts[98], &res_scripts[116], &res_scripts[151], &res_scripts[174], &res_costumes[11], NULL };
+static ScummNESFile::Resource *lfl_27[] = { &res_rooms[27], &res_roomgfx[27], &res_scripts[16], &res_scripts[52], &res_scripts[54], &res_scripts[113], &res_sounds[45], &res_costumes[19], NULL };
+static ScummNESFile::Resource *lfl_28[] = { &res_rooms[28], &res_roomgfx[28], &res_scripts[22], &res_scripts[23], NULL };
+static ScummNESFile::Resource *lfl_29[] = { &res_rooms[29], &res_roomgfx[29], &res_scripts[75], &res_sounds[43], NULL };
+static ScummNESFile::Resource *lfl_30[] = { &res_rooms[30], &res_roomgfx[30], &res_scripts[63], &res_sounds[0], &res_scripts[123], &res_scripts[125], &res_scripts[126], &res_scripts[127], &res_scripts[129], &res_sounds[55], &res_sounds[59], &res_sounds[60], &res_costumes[8], NULL };
+static ScummNESFile::Resource *lfl_31[] = { &res_rooms[31], &res_roomgfx[31], &res_scripts[99], &res_scripts[115], &res_scripts[117], &res_scripts[119], &res_scripts[147], &res_scripts[157], &res_scripts[158], &res_scripts[160], &res_costumes[13], &res_costumes[9], &res_costumes[23], &res_costumes[24], NULL };
+static ScummNESFile::Resource *lfl_32[] = { &res_rooms[32], &res_roomgfx[32], &res_costumes[15], NULL };
+static ScummNESFile::Resource *lfl_33[] = { &res_rooms[33], &res_roomgfx[33], &res_scripts[120], &res_scripts[135], &res_sounds[56], &res_sounds[57], &res_sounds[58], &res_sounds[1], &res_costumes[22], NULL };
+static ScummNESFile::Resource *lfl_34[] = { &res_rooms[34], &res_roomgfx[34], NULL };
+static ScummNESFile::Resource *lfl_35[] = { &res_rooms[35], &res_roomgfx[35], NULL };
+static ScummNESFile::Resource *lfl_36[] = { &res_rooms[36], &res_roomgfx[36], &res_sounds[10], &res_sounds[4], NULL };
+static ScummNESFile::Resource *lfl_37[] = { &res_rooms[37], &res_roomgfx[37], NULL };
+static ScummNESFile::Resource *lfl_38[] = { &res_rooms[38], &res_roomgfx[38], &res_scripts[138], &res_scripts[139], &res_scripts[140], &res_scripts[141], &res_scripts[142], &res_scripts[143], &res_scripts[144], &res_scripts[145], NULL };
+static ScummNESFile::Resource *lfl_39[] = { &res_rooms[39], &res_roomgfx[39], NULL };
+static ScummNESFile::Resource *lfl_40[] = { &res_rooms[40], &res_roomgfx[0], &res_scripts[112], &res_costumes[17], NULL };
+static ScummNESFile::Resource *lfl_41[] = { &res_rooms[41], &res_scripts[106], &res_sounds[47], &res_sounds[48], &res_sounds[53], &res_sounds[49], &res_sounds[51], NULL };
+static ScummNESFile::Resource *lfl_42[] = { &res_rooms[42], &res_scripts[124], &res_costumes[18],  NULL };
+static ScummNESFile::Resource *lfl_43[] = { &res_rooms[43], &res_scripts[44], &res_sounds[19], NULL };
+static ScummNESFile::Resource *lfl_44[] = { &res_rooms[44], &res_scripts[102], &res_sounds[6], &res_sounds[38], &res_sounds[8], &res_sounds[9], &res_costumes[1], &res_costumes[2], &res_costumes[5], &res_costumes[6], &res_costumes[3], &res_costumes[4], &res_costumes[7], NULL };
+static ScummNESFile::Resource *lfl_45[] = { &res_rooms[45], &res_scripts[1], &res_scripts[2], &res_scripts[3], &res_scripts[4], &res_scripts[5], &res_scripts[9], &res_scripts[114], &res_scripts[131], &res_scripts[164], &res_scripts[165], &res_scripts[169], &res_scripts[170], &res_scripts[171], &res_scripts[172], &res_scripts[173], &res_scripts[175], &res_sounds[54], NULL };
+static ScummNESFile::Resource *lfl_46[] = { &res_rooms[46], &res_scripts[130], &res_sounds[65], &res_costumes[0], &res_costumes[21], NULL };
+static ScummNESFile::Resource *lfl_47[] = { &res_rooms[47], &res_scripts[62], &res_sounds[69], NULL };
+static ScummNESFile::Resource *lfl_48[] = { &res_rooms[48], NULL };
+static ScummNESFile::Resource *lfl_49[] = { &res_rooms[49], NULL };
+static ScummNESFile::Resource *lfl_50[] = { &res_rooms[50], &res_scripts[133], &res_scripts[163], NULL };
+static ScummNESFile::Resource *lfl_51[] = { &res_rooms[51], &res_scripts[118], &res_scripts[128], &res_sounds[61], &res_sounds[62], &res_sounds[67], &res_sounds[66], &res_costumes[16], &res_costumes[20], NULL };
+static ScummNESFile::Resource *lfl_52[] = { &res_rooms[52], NULL };
 /*	remaining 'standard' resources (not used by any of the original LFL files) */
-static ScummNESFile::p_resource lfl_53[] = { &res_rooms[53], &res_scripts[177], &res_scripts[178], &res_sounds[70], &res_sounds[71], &res_sounds[72], &res_sounds[73], &res_sounds[74], &res_sounds[75], &res_sounds[76], &res_sounds[77], &res_sounds[78], &res_sounds[79], &res_sounds[80], &res_sounds[81], NULL };
+static ScummNESFile::Resource *lfl_53[] = { &res_rooms[53], &res_scripts[177], &res_scripts[178], &res_sounds[70], &res_sounds[71], &res_sounds[72], &res_sounds[73], &res_sounds[74], &res_sounds[75], &res_sounds[76], &res_sounds[77], &res_sounds[78], &res_sounds[79], &res_sounds[80], &res_sounds[81], NULL };
 /*	all 'non-standard' resources (the costume-related stuff) */
-static ScummNESFile::p_resource lfl_54[] = { &res_rooms[54], &res_sprdesc[0], &res_sprdesc[1], &res_sprlens[0], &res_sprlens[1], &res_sproffs[0], &res_sproffs[1], &res_sprdata[0], &res_sprdata[1], &res_costumegfx[0], &res_costumegfx[1], &res_sprpals[0], &res_sprpals[1], &res_charset, &res_preplist, NULL };
+static ScummNESFile::Resource *lfl_54[] = { &res_rooms[54], &res_sprdesc[0], &res_sprdesc[1], &res_sprlens[0], &res_sprlens[1], &res_sproffs[0], &res_sproffs[1], &res_sprdata[0], &res_sprdata[1], &res_costumegfx[0], &res_costumegfx[1], &res_sprpals[0], &res_sprpals[1], &res_charset, &res_preplist, NULL };
 
 typedef	struct _lfl {
 	int num;
-	ScummNESFile::p_resource *entries;
+	ScummNESFile::Resource **entries;
 } t_lfl, *p_lfl;
 
 t_lfl lfls[] = {
@@ -1058,7 +1082,7 @@ bool ScummNESFile::generateResource(int res) {
 	Common::MemoryWriteStream out(_buf, bufsize);
 
 	for (j = 0; lfl->entries[j] != NULL; j++) {
-		p_resource entry = lfl->entries[j];
+		Resource *entry = lfl->entries[j];
 		extractResource(&out, entry);
 	}
 	write_byte(&out, 0xD1);
@@ -1080,7 +1104,7 @@ bool ScummNESFile::generateIndex() {
 		uint16 respos = 0;
 
 		for (j = 0; lfl->entries[j] != NULL; j++) {
-			p_resource entry = lfl->entries[j];
+			Resource *entry = lfl->entries[j];
 			
 			switch (entry->type) {
 			case NES_ROOM:

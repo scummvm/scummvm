@@ -65,54 +65,32 @@ public:
 	uint32 write(const void *ptr, uint32 size);
 };
 
-typedef enum _res_type {
-	NES_UNKNOWN,
-	NES_GLOBDATA,
-	NES_ROOM,
-	NES_SCRIPT, 
-	NES_SOUND,
-	NES_COSTUME,
-	NES_ROOMGFX,
-	NES_COSTUMEGFX,
-	NES_SPRPALS,
-	NES_SPRDESC,
-	NES_SPRLENS,
-	NES_SPROFFS,
-	NES_SPRDATA,
-	NES_CHARSET,
-	NES_PREPLIST 
-} res_type;
-
 class ScummNESFile : public BaseScummFile {
 public:
-	typedef	enum _romset {
+	enum ROMset {
 		kROMsetUSA,
 		kROMsetEurope,
 		kROMsetSweden,
 		kROMsetFrance,
 		kROMsetNum 
-	} t_romset;
+	};
 
-	typedef	struct	_resource {
-		uint32 offset[kROMsetNum];
-		uint16 length[kROMsetNum];
-		res_type type;
-	}	t_resource, *p_resource;
+	struct Resource;
 
 private:
 	Common::MemoryReadStream *_stream;
-	t_romset _ROMset;
+	ROMset _ROMset;
 	byte *_buf;
 
 	bool generateIndex();
 	bool generateResource(int res);
-	uint16 extractResource(Common::MemoryWriteStream *out, p_resource res);
+	uint16 extractResource(Common::MemoryWriteStream *out, Resource *res);
 
-	uint32 resOffset(p_resource res);
-	uint16 resLength(p_resource res);
+	uint32 resOffset(Resource *res);
+	uint16 resLength(Resource *res);
 
-	byte FileReadByte();
-	uint16 FileReadUint16LE();
+	byte fileReadByte();
+	uint16 fileReadUint16LE();
 
 public:
 	ScummNESFile();

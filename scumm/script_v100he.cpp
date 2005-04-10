@@ -33,6 +33,7 @@
 #include "scumm/resource_v7he.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
+#include "scumm/util.h"
 
 namespace Scumm {
 

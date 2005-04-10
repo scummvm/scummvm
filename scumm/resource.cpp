@@ -22,6 +22,7 @@
 
 #include "stdafx.h"
 #include "common/str.h"
+
 #include "scumm/dialogs.h"
 #include "scumm/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
@@ -30,8 +31,11 @@
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
+#include "scumm/util.h"
 #include "scumm/verbs.h"
+
 #include "sound/mididrv.h" // Need MD_ enum values
+
 
 namespace Scumm {
 

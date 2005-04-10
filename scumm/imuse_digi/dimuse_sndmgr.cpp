@@ -21,10 +21,13 @@
 #include "stdafx.h"
 #include "common/scummsys.h"
 #include "common/util.h"
+
 #include "sound/voc.h"
 #include "sound/vorbis.h"
 #include "sound/mp3.h"
+
 #include "scumm/scumm.h"
+#include "scumm/util.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse_digi/dimuse_sndmgr.h"
 #include "scumm/imuse_digi/dimuse_bndmgr.h"

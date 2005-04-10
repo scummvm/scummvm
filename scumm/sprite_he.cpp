@@ -28,6 +28,7 @@
 #include "scumm/scumm.h"
 #include "scumm/sprite_he.h"
 #include "scumm/usage_bits.h"
+#include "scumm/util.h"
 #include "scumm/wiz_he.h"
 
 namespace Scumm {

@@ -32,6 +32,7 @@
 #include "scumm/saveload.h"
 #include "scumm/sound.h"
 #include "scumm/usage_bits.h"
+#include "scumm/util.h"
 #include "scumm/wiz_he.h"
 
 namespace Scumm {
@@ -1745,6 +1746,16 @@ byte *Actor::getActorName() {
 		warning("Failed to find name of actor %d", _number);
 	}
 	return ptr;
+}
+
+int Actor::getAnimVar(byte var) const {
+	checkRange(26, 0, var, "getAnimVar %d out of range(r)");
+	return _animVariable[var];
+}
+
+void Actor::setAnimVar(byte var, int value) {
+	checkRange(26, 0, var, "setAnimVar %d out of range(r)");
+	_animVariable[var] = value;
 }
 
 void Actor::remapActorPaletteColor(int color, int new_color) {

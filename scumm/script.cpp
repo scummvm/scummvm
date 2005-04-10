@@ -28,6 +28,7 @@
 #include "scumm/actor.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
+#include "scumm/util.h"
 #include "scumm/scumm.h"
 
 namespace Scumm {

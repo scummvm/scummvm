@@ -24,6 +24,8 @@
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
 #include "scumm/boxes.h"
+#include "scumm/util.h"
+
 #include "common/util.h"
 
 namespace Scumm {

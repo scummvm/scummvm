@@ -23,6 +23,7 @@
 #include "scumm/scumm.h"
 #include "scumm/akos.h"
 #include "scumm/bomp.h"
+#include "scumm/util.h"
 
 
 namespace Scumm {

@@ -28,6 +28,7 @@
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/usage_bits.h"
+#include "scumm/util.h"
 
 namespace Scumm {
 

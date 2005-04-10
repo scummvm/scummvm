@@ -27,6 +27,7 @@
 #include "scumm/scumm.h"
 #include "scumm/saveload.h"
 #include "scumm/sound.h"
+#include "scumm/util.h"
 
 #include "common/config-manager.h"
 #include "common/timer.h"

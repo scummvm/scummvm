@@ -25,6 +25,7 @@
 #include "scumm/actor.h"
 #include "scumm/costume.h"
 #include "scumm/sound.h"
+#include "scumm/util.h"
 
 #if defined(__PALM_OS__)
 #include "arm/native.h"

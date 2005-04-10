@@ -31,7 +31,6 @@
 
 #include "scumm/gfx.h"
 #include "scumm/script.h"
-#include "scumm/util.h"
 
 namespace GUI {
 	class Dialog;
@@ -45,6 +44,7 @@ namespace Scumm {
 class Actor;
 class BaseCostumeLoader;
 class BaseCostumeRenderer;
+class BaseScummFile;
 class CharsetRenderer;
 class IMuse;
 class IMuseDigital;
@@ -1210,12 +1210,7 @@ public:
 protected:
 	byte *_2byteFontPtr;
 
-	
-#if defined(SCUMM_LITTLE_ENDIAN)
-	uint32 fileReadDword() { return _fileHandle->readUint32LE(); }
-#elif defined(SCUMM_BIG_ENDIAN)
-	uint32 fileReadDword() { return _fileHandle->readUint32BE(); }
-#endif
+	uint32 fileReadDword();
 
 public:
 

@@ -23,6 +23,7 @@
 #include "stdafx.h"
 #include "scumm/scumm.h"
 #include "scumm/intern.h"
+#include "scumm/util.h"
 
 namespace Scumm {
 

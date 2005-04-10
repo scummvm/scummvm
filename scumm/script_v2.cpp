@@ -27,6 +27,7 @@
 #include "scumm/object.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
+#include "scumm/util.h"
 #include "scumm/verbs.h"
 
 namespace Scumm {
