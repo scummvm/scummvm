@@ -515,6 +515,11 @@ void ScummEngine_v80he::o80_cursorCommand() {
 		a = pop();
 		loadWizCursor(a);
 		break;
+	case 0x3C:
+		pop();
+		a = pop();
+		loadWizCursor(a);
+		break;
 	case 0x90:		// SO_CURSOR_ON Turn cursor on
 		_cursor.state = 1;
 		break;
