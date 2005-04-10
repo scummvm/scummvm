@@ -30,11 +30,9 @@
 namespace Scumm {
 
 void ScummEngine_v72he::remapPalette(uint8 *src, uint8 *dst) {
-	int a, b, c, eax, ebx, tmp;
+	int r, g, b, sum, bestitem, bestsum;
+	int ar, ag, ab;
 	uint8 *palPtr;
-
-	int startColor = 10;
-	int endColor = 246;
 	src += 30;
 
 	if (_heversion >= 99) {
@@ -43,32 +41,30 @@ void ScummEngine_v72he::remapPalette(uint8 *src, uint8 *dst) {
 		palPtr = _currentPalette + 30;
 	}
 
-	for (int j = startColor; j < endColor; j++) {
-		ebx = 0xFFFF;
-		tmp = 0xFFFF;
+	for (int j = 10; j < 246; j++) {
+		bestitem = 0xFFFF;
+		bestsum = 0xFFFF;
 
-		a = *src++;
+		r = *src++;
+		g = *src++;
 		b = *src++;
-		c = *src++;
 
 		uint8 *curPal = palPtr;
 
-		for (int k = startColor; k < endColor; k++) {
-			a -= *curPal++;
-			b -= *curPal++;
-			c -= *curPal++;
+		for (int k = 10; k < 246; k++) {
+			ar = r - *curPal++;
+			ag = g - *curPal++;
+			ab = b - *curPal++;
 
-			eax = (a * 2) + (b * 2) + (c * 2);
+			sum = (ar * ar) + (ag * ag) + (ab * ab);
 
-			if (ebx == 0xFFFF || eax <= tmp) {
-				ebx = k;
-				tmp = eax;
+			if (bestitem == 0xFFFF || sum <= bestsum) {
+				bestitem = k;
+				bestsum = sum;
 			}
 		}
 
-		if (ebx != 0xFFFF) {
-			dst[j] = ebx;
-		}
+		dst[j] = bestitem;
 	}
 }
 
