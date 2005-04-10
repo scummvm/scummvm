@@ -406,7 +406,7 @@ public:
 	ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
 	virtual ~ScummEngine();
 
-	/** Startup function: Calls mainInit and then mainRun. */
+	/** Startup function, main loop. */
 	int go();
 
 	// Init functions
