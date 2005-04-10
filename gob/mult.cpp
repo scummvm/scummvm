@@ -396,10 +396,10 @@ void mult_interGetObjAnimSize(void) {
 		    pAnimData->animation, 0, *(mult_objects[objIndex].pPosX),
 		    *(mult_objects[objIndex].pPosY), 0);
 	}
-	WRITE_LE_UINT32(inter_variables + parse_parseVarIndex(), scen_toRedrawLeft);
-	WRITE_LE_UINT32(inter_variables + parse_parseVarIndex(), scen_toRedrawTop);
-	WRITE_LE_UINT32(inter_variables + parse_parseVarIndex(), scen_toRedrawRight);
-	WRITE_LE_UINT32(inter_variables + parse_parseVarIndex(), scen_toRedrawBottom);
+	WRITE_VAR_OFFSET(parse_parseVarIndex(), scen_toRedrawLeft);
+	WRITE_VAR_OFFSET(parse_parseVarIndex(), scen_toRedrawTop);
+	WRITE_VAR_OFFSET(parse_parseVarIndex(), scen_toRedrawRight);
+	WRITE_VAR_OFFSET(parse_parseVarIndex(), scen_toRedrawBottom);
 }
 
 void mult_interInitMult(void) {
@@ -896,7 +896,7 @@ void mult_playMult(int16 startFrame, int16 endFrame, char checkEscape,
 	do {
 		stop = 1;
 
-		if (READ_LE_UINT32(inter_variables + 0xe8) == 0) {
+		if (VAR(58) == 0) {
 			stop = mult_drawStatics(stop);
 			mult_drawAnims();
 		}
@@ -908,7 +908,7 @@ void mult_playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			draw_blitInvalidated();
 		}
 
-		if (READ_LE_UINT32(inter_variables + 0xe8) == 0) {
+		if (VAR(58) == 0) {
 			mult_drawText(&stop, &stopNoClear);
 		}
 
@@ -964,9 +964,9 @@ void mult_playMult(int16 startFrame, int16 endFrame, char checkEscape,
 		if (snd_playingSound != 0)
 			snd_stopSound(10);
 
-		WRITE_LE_UINT32(inter_variables + 0xe4, (uint32)-1);
+		WRITE_VAR(57, (uint32)-1);
 	} else {
-		WRITE_LE_UINT32(inter_variables + 0xe4, mult_frame - 1 - mult_frameStart);
+		WRITE_VAR(57, mult_frame - 1 - mult_frameStart);
 	}
 }
 

@@ -440,14 +440,13 @@ void game_freeSoundSlot(int16 slot) {
 int16 game_checkKeys(int16 *pMouseX, int16 *pMouseY, int16 *pButtons, char handleMouse) {
 	util_processInput();
 
-	if (READ_LE_UINT32(inter_variables + 0xe8) != 0) {
-		if (mult_frameStart != (int)READ_LE_UINT32(inter_variables + 0xe8) - 1)
+	if (VAR(58) != 0) {
+		if (mult_frameStart != (int)VAR(58) - 1)
 			mult_frameStart++;
 		else
 			mult_frameStart = 0;
 
-		mult_playMult(mult_frameStart + READ_LE_UINT32(inter_variables + 0xe4),
-		    mult_frameStart + READ_LE_UINT32(inter_variables + 0xe4), 1,
+		mult_playMult(mult_frameStart + VAR(57), mult_frameStart + VAR(57), 1,
 		    handleMouse);
 	}
 
@@ -950,7 +949,7 @@ int16 game_multiEdit(int16 time, int16 index, int16 *pCurPos, Game_InputDesc * i
 	}
 
 	for (i = 0; i < 40; i++) {
-		WRITE_LE_UINT32(inter_variables + i * 4 + 0x44, 0);
+		WRITE_VAR_OFFSET(i * 4 + 0x44, 0);
 	}
 
 	while (1) {
@@ -1128,7 +1127,7 @@ void game_collisionsBlock(void) {
 	inter_execPtr += 6;
 
 	startIP = inter_execPtr;
-	WRITE_LE_UINT32(inter_variables + 0x40, 0);
+	WRITE_VAR(16, 0);
 	var_22 = 0;
 	index = 0;
 	curEditIndex = 0;
@@ -1371,7 +1370,7 @@ void game_collisionsBlock(void) {
 				}
 			} else {
 
-				if (deltaTime != 0 && READ_LE_UINT32(inter_variables + 0x40) == 0) {
+				if (deltaTime != 0 && VAR(16) == 0) {
 					if (stackPos2 != 0) {
 						collStackPos = 0;
 						collPtr = game_collisionAreas;
@@ -1386,10 +1385,10 @@ void game_collisionsBlock(void) {
 
 							game_activeCollResId = collPtr->id;
 							game_activeCollIndex = i;
-							WRITE_LE_UINT32(inter_variables + 0x08, inter_mouseX);
-							WRITE_LE_UINT32(inter_variables + 0x0c, inter_mouseY);
-							WRITE_LE_UINT32(inter_variables + 0x10, game_mouseButtons);
-							WRITE_LE_UINT32(inter_variables + 0x40, array[(uint16)game_activeCollResId & ~0x8000]);
+							WRITE_VAR(2, inter_mouseX);
+							WRITE_VAR(3, inter_mouseY);
+							WRITE_VAR(4, game_mouseButtons);
+							WRITE_VAR(16, array[(uint16)game_activeCollResId & ~0x8000]);
 
 							if (collPtr->funcLeave != 0) {
 								timeKey = util_getTimeKey();
@@ -1410,7 +1409,7 @@ void game_collisionsBlock(void) {
 									deltaTime = 2;
 							}
 
-							if (READ_LE_UINT32(inter_variables + 0x40) == 0)
+							if (VAR(16) == 0)
 								game_activeCollResId = 0;
 							break;
 						}
@@ -1475,10 +1474,10 @@ void game_collisionsBlock(void) {
 		if (game_collisionAreas[game_activeCollIndex].funcLeave != 0)
 			continue;
 
-		WRITE_LE_UINT32(inter_variables + 0x08, inter_mouseX);
-		WRITE_LE_UINT32(inter_variables + 0x0c, inter_mouseY);
-		WRITE_LE_UINT32(inter_variables + 0x10, game_mouseButtons);
-		WRITE_LE_UINT32(inter_variables + 0x40, array[(uint16)game_activeCollResId & ~0x8000]);
+		WRITE_VAR(2, inter_mouseX);
+		WRITE_VAR(3, inter_mouseY);
+		WRITE_VAR(4, game_mouseButtons);
+		WRITE_VAR(16, array[(uint16)game_activeCollResId & ~0x8000]);
 
 		if (game_collisionAreas[game_activeCollIndex].funcEnter != 0) {
 			savedIP = inter_execPtr;
@@ -1496,7 +1495,7 @@ void game_collisionsBlock(void) {
 			inter_execPtr = savedIP;
 		}
 
-		WRITE_LE_UINT32(inter_variables + 0x40, 0);
+		WRITE_VAR(16, 0);
 		game_activeCollResId = 0;
 	}
 	while (game_activeCollResId == 0 && inter_terminate == 0);
@@ -1549,24 +1548,23 @@ void game_collisionsBlock(void) {
 						util_prepareStr(game_collStr);
 
 					if (strcmp(game_tempStr, game_collStr) == 0) {
-						WRITE_LE_UINT32(inter_variables + 0x44, 
-										READ_LE_UINT32(inter_variables + 0x44) + 1);
-						WRITE_LE_UINT32(inter_variables + 0x44 + var_26 * 4, 1);
+						VAR(17)++;
+						WRITE_VAR(17 + var_26, 1);
 						break;
 					}
 				} while (READ_LE_UINT16(descArray[var_24].ptr - 2) > pos);
 				collStackPos++;
 			} else {
-				WRITE_LE_UINT32(inter_variables + 0x44 + var_26 * 4, 2);
+				VAR(17 + var_26) = 2;
 			}
 			var_24++;
 			var_26++;
 		}
 
-		if (collStackPos != READ_LE_UINT16(inter_variables + 0x44))
-			WRITE_LE_UINT32(inter_variables + 0x44, 0);
+		if (collStackPos != (int16)VAR(17))
+			WRITE_VAR(17, 0);
 		else
-			WRITE_LE_UINT32(inter_variables + 0x44, 1);
+			WRITE_VAR(17, 1);
 	}
 
 	savedIP = 0;
@@ -1574,12 +1572,12 @@ void game_collisionsBlock(void) {
 		savedIP = (char *)game_totFileData +
 		    game_collisionAreas[game_activeCollIndex].funcLeave;
 
-		WRITE_LE_UINT32(inter_variables + 0x08, inter_mouseX);
-		WRITE_LE_UINT32(inter_variables + 0x0c, inter_mouseY);
-		WRITE_LE_UINT32(inter_variables + 0x10, game_mouseButtons);
+		WRITE_VAR(2, inter_mouseX);
+		WRITE_VAR(3, inter_mouseY);
+		WRITE_VAR(4, game_mouseButtons);
 
-		if (READ_LE_UINT32(inter_variables + 0x40) == 0) {
-			WRITE_LE_UINT32(inter_variables + 0x40, array[(uint16)game_activeCollResId & ~0x8000]);
+		if (VAR(16) == 0) {
+			WRITE_VAR(16, array[(uint16)game_activeCollResId & ~0x8000]);
 		}
 	}
 
@@ -1813,7 +1811,7 @@ void game_playTot(int16 skipPlay) {
 				variablesCount = READ_LE_UINT32((char *)game_totFileData + 0x2c);
 				inter_variables = (char *)malloc(variablesCount * 4);
 				for (i = 0; i < variablesCount; i++)
-					WRITE_LE_UINT32(inter_variables + i * 4, 0);
+					WRITE_VAR(i, 0);
 			}
 
 			inter_execPtr = (char *)game_totFileData;
@@ -1831,10 +1829,10 @@ void game_playTot(int16 skipPlay) {
 
 			inter_renewTimeInVars();
 
-			WRITE_LE_UINT32(inter_variables + 0x34, useMouse);
-			WRITE_LE_UINT32(inter_variables + 0x38, soundFlags);
-			WRITE_LE_UINT32(inter_variables + 0x3c,videoMode);
-			WRITE_LE_UINT32(inter_variables + 0x40, language);
+			WRITE_VAR(13, useMouse);
+			WRITE_VAR(14, soundFlags);
+			WRITE_VAR(15, videoMode);
+			WRITE_VAR(16, language);
 
 			inter_callSub(2);
 

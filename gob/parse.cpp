@@ -77,7 +77,7 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 
 			case 23:
 				*operPtr = 20;
-				*valPtr = READ_LE_UINT32(inter_variables + inter_load16() * 4);
+				*valPtr = VAR(inter_load16());
 				break;
 
 			case 25:
@@ -88,6 +88,7 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 					inter_execPtr++;
 					temp += parse_parseValExpr();
 					*operPtr = 20;
+					//XXX: Checkme
 					*valPtr = *(inter_variables + temp);
 				}
 				break;
@@ -107,7 +108,7 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 				}
 
 				if (operation == 26) {
-					*valPtr = READ_LE_UINT32(inter_variables + temp * 4 + offset * 4);
+					*valPtr = VAR(temp + offset);
 					break;
 				}
 				*valPtr = (int32)(inter_variables + temp * 4 + offset * inter_animDataSize * 4);
@@ -115,6 +116,7 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 					inter_execPtr++;
 					temp2 = parse_parseValExpr();
 					*operPtr = 20;
+					//XXX: Checkme
 					*valPtr = *(inter_variables + temp * 4 + offset * 4 * inter_animDataSize + temp2);
 				}
 				break;
@@ -720,13 +722,14 @@ int16 parse_parseValExpr() {
 				break;
 
 			case 23:
-				*valPtr = READ_LE_UINT16(inter_variables + inter_load16() * 4);
+				*valPtr = (uint16)VAR(inter_load16());
 				break;
 
 			case 25:
 				temp = inter_load16() * 4;
 				inter_execPtr++;
 				temp += parse_parseValExpr();
+				//XXX: Checkme
 				*valPtr = *(inter_variables + temp);
 				break;
 
@@ -742,10 +745,11 @@ int16 parse_parseValExpr() {
 					offset = arrDesc[dim] * offset + temp2;
 				}
 				if (operation == 26) {
-					*valPtr = READ_LE_UINT16(inter_variables + temp * 4 + offset * 4);
+					*valPtr = (uint16)VAR(temp + offset);
 				} else {
 					inter_execPtr++;
 					temp2 = parse_parseValExpr();
+					//XXX: Checkme
 					*valPtr = *(inter_variables + temp * 4 + offset * 4 * inter_animDataSize + temp2);
 				}
 				break;

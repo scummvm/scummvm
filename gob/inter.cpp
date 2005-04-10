@@ -106,7 +106,7 @@ void inter_evaluateStore(void) {
 	switch (savedPos[0]) {
 	case 23:
 	case 26:
-		WRITE_LE_UINT32(inter_variables + varOff, inter_resVal);
+		WRITE_VAR_OFFSET(varOff, inter_resVal);
 		break;
 
 	case 25:
@@ -173,7 +173,7 @@ void inter_printText(void) {
 			switch (*inter_execPtr) {
 			case 23:
 			case 26:
-				sprintf(buf + i, "%d", READ_LE_UINT32(inter_variables + parse_parseVarIndex()));
+				sprintf(buf + i, "%d", VAR_OFFSET(parse_parseVarIndex()));
 				break;
 
 			case 25:
@@ -235,7 +235,7 @@ void inter_playMult(void) {
 	int16 checkEscape;
 
 	checkEscape = inter_load16();
-	mult_playMult(READ_LE_UINT32(inter_variables + 0xe4), -1, checkEscape, 0);
+	mult_playMult(VAR(57), -1, checkEscape, 0);
 }
 
 void inter_freeMult(void) {
@@ -433,8 +433,8 @@ void inter_getFreeMem(void) {
 	maxFreeVar = parse_parseVarIndex();
 
 	// HACK
-	WRITE_LE_UINT32(inter_variables + freeVar, 1000000);
-	WRITE_LE_UINT32(inter_variables + maxFreeVar, 1000000);
+	WRITE_VAR_OFFSET(freeVar, 1000000);
+	WRITE_VAR_OFFSET(maxFreeVar, 1000000);
 }
 
 void inter_manageDataFile(void) {
@@ -459,7 +459,7 @@ void inter_writeData(void) {
 	size = parse_parseValExpr();
 	offset = parse_parseValExpr();
 
-	WRITE_LE_UINT32(inter_variables + 4, 1);
+	WRITE_VAR(1, 1);
 	handle = data_openData(inter_resStr, File::kFileWriteMode);
 
 	if (handle < 0)
@@ -474,7 +474,7 @@ void inter_writeData(void) {
 	retSize = file_getHandle(handle)->write(inter_variables + dataVar, size);
 
 	if (retSize == size)
-		WRITE_LE_UINT32(inter_variables + 4, 0);
+		WRITE_VAR(1, 0);
 
 	data_closeData(handle);
 }
@@ -488,7 +488,7 @@ void inter_checkData(void) {
 	varOff = parse_parseVarIndex();
 	handle = data_openData(inter_resStr);
 
-	WRITE_LE_UINT32(inter_variables + varOff, handle);
+	WRITE_VAR_OFFSET(varOff, handle);
 	if (handle >= 0)
 		data_closeData(handle);
 }
@@ -509,7 +509,7 @@ void inter_readData(void) {
 	if (game_extHandle >= 0)
 		data_closeData(game_extHandle);
 
-	WRITE_LE_UINT32(inter_variables + 4, 1);
+	WRITE_VAR(1, 1);
 	handle = data_openData(inter_resStr);
 	if (handle >= 0) {
 		draw_animateCursor(4);
@@ -522,7 +522,7 @@ void inter_readData(void) {
 		data_closeData(handle);
 
 		if (retSize == size)
-			WRITE_LE_UINT32(inter_variables + 4, 0);
+			WRITE_VAR(1, 0);
 	}
 
 	if (game_extHandle >= 0)
@@ -597,7 +597,7 @@ void inter_strstr(void) {
 	resVar = parse_parseVarIndex();
 
 	pos = util_strstr(inter_resStr, inter_variables + strVar);
-	WRITE_LE_UINT32(inter_variables + resVar, pos - 1);
+	WRITE_VAR_OFFSET(resVar, pos - 1);
 }
 
 void inter_setFrameRate(void) {
@@ -612,7 +612,7 @@ void inter_strlen(void) {
 	len = strlen(inter_variables + var);
 	var = parse_parseVarIndex();
 
-	WRITE_LE_UINT32(inter_variables + var, len);
+	WRITE_VAR_OFFSET(var, len);
 }
 
 void inter_strToLong(void) {
@@ -626,7 +626,7 @@ void inter_strToLong(void) {
 	res = atol(str);
 
 	destVar = parse_parseVarIndex();
-	WRITE_LE_UINT32(inter_variables + destVar, res);
+	WRITE_VAR_OFFSET(destVar, res);
 }
 
 void inter_invalidate(void) {
@@ -733,15 +733,15 @@ void inter_renewTimeInVars(void) {
 	time /= 1000; // convert to seconds
 
 	// hours
-	WRITE_LE_UINT32(inter_variables + 0x24, time / 3600);
+	WRITE_VAR(9, time / 3600);
 	time %= 3600;
 
 	// minutes
-	WRITE_LE_UINT32(inter_variables + 0x28, time / 60);
+	WRITE_VAR(10, time / 60);
 	time %= 60;
 
 	// seconds
-	WRITE_LE_UINT32(inter_variables + 0x2c, time);
+	WRITE_VAR(11, time);
 }
 
 void inter_playComposition(void) {
@@ -753,7 +753,7 @@ void inter_playComposition(void) {
 	dataVar = parse_parseVarIndex();
 	freqVal = parse_parseValExpr();
 	for (i = 0; i < 50; i++)
-		inter_composition[i] = READ_LE_UINT32(inter_variables + dataVar + i * 4);
+		inter_composition[i] = (int16)VAR_OFFSET(dataVar + i * 4);
 
 	snd_playComposition(game_soundSamples, inter_composition, freqVal);
 }
@@ -874,12 +874,12 @@ void inter_loadTot(void) {
 }
 
 void inter_storeKey(int16 key) {
-	WRITE_LE_UINT32(inter_variables + 0x30, util_getTimeKey() - game_startTimeKey);
+	WRITE_VAR(12, util_getTimeKey() - game_startTimeKey);
 
-	WRITE_LE_UINT32(inter_variables + 0x08, inter_mouseX);
-	WRITE_LE_UINT32(inter_variables + 0x0c, inter_mouseX);
-	WRITE_LE_UINT32(inter_variables + 0x10, game_mouseButtons);
-	WRITE_LE_UINT32(inter_variables + 0x04, snd_playingSound);
+	WRITE_VAR(2, inter_mouseX);
+	WRITE_VAR(3, inter_mouseY);
+	WRITE_VAR(4, game_mouseButtons);
+	WRITE_VAR(1, snd_playingSound);
 
 	if (key == 0x4800)
 		key = 0x0b;
@@ -894,7 +894,7 @@ void inter_storeKey(int16 key) {
 	else if ((key & 0xff) != 0)
 		key &= 0xff;
 
-	WRITE_LE_UINT32(inter_variables, key);
+	WRITE_VAR(0, key);
 
 	if (key != 0)
 		util_waitKey();
@@ -964,7 +964,7 @@ void inter_keyFunc(void) {
 			if (pressedKeys[0x3e])
 				key |= 0x4000;
 
-			WRITE_LE_UINT32(inter_variables, key);
+			WRITE_VAR(0, key);			
 			util_waitKey();
 			return;
 		}
@@ -995,7 +995,7 @@ void inter_checkSwitchTable(char **ppExec) {
 	notFound = 1;
 	*ppExec = 0;
 	value = parse_parseVarIndex();
-	value = READ_LE_UINT32(inter_variables + value);
+	value = VAR_OFFSET(value);
 
 	do {
 		len = *inter_execPtr++;

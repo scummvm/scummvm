@@ -735,16 +735,16 @@ void scen_interStoreParams(void) {
 	layerPtr = scen_animations[animation].layers[layer];
 
 	var = parse_parseVarIndex();
-	WRITE_LE_UINT32(inter_variables + var, layerPtr->animDeltaX);
+	WRITE_VAR_OFFSET(var, layerPtr->animDeltaX);
 
 	var = parse_parseVarIndex();
-	WRITE_LE_UINT32(inter_variables + var, layerPtr->animDeltaY);
+	WRITE_VAR_OFFSET(var, layerPtr->animDeltaY);
 
 	var = parse_parseVarIndex();
-	WRITE_LE_UINT32(inter_variables + var, layerPtr->unknown0);
+	WRITE_VAR_OFFSET(var, layerPtr->unknown0);
 
 	var = parse_parseVarIndex();
-	WRITE_LE_UINT32(inter_variables + var, layerPtr->framesCount);
+	WRITE_VAR_OFFSET(var, layerPtr->framesCount);
 }
 
 }				// End of namespace Gob

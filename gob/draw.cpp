@@ -628,10 +628,8 @@ void draw_animateCursor(int16 cursor) {
 		newX = inter_mouseX;
 		newY = inter_mouseY;
 		if (draw_cursorXDeltaVar != -1) {
-			newX -= READ_LE_UINT16(inter_variables + draw_cursorIndex * 4 +
-			    (draw_cursorXDeltaVar / 4) * 4);
-			newY -= READ_LE_UINT16(inter_variables + draw_cursorIndex * 4 +
-			    (draw_cursorYDeltaVar / 4) * 4);
+			newX -= (uint16)VAR_OFFSET(draw_cursorIndex * 4 + (draw_cursorXDeltaVar / 4) * 4);
+			newY -= (uint16)VAR_OFFSET(draw_cursorIndex * 4 + (draw_cursorYDeltaVar / 4) * 4); 
 		}
 
 		minX = MIN(newX, draw_cursorX);
@@ -850,7 +848,7 @@ void draw_printText(void) {
 			cmd = ptr2[17] & 0x7f;
 			if (cmd == 0) {
 				val = READ_LE_UINT16(ptr2 + 18) * 4;
-				sprintf(buf, "%d",  READ_LE_UINT32(inter_variables + val));
+				sprintf(buf, "%d",  VAR_OFFSET(val));
 			} else if (cmd == 1) {
 				val = READ_LE_UINT16(ptr2 + 18) * 4;
 
@@ -858,7 +856,7 @@ void draw_printText(void) {
 			} else {
 				val = READ_LE_UINT16(ptr2 + 18) * 4;
 
-				sprintf(buf, "%d",  READ_LE_UINT32(inter_variables + val));
+				sprintf(buf, "%d",  VAR_OFFSET(val));
 				if (buf[0] == '-') {
 					while (strlen(buf) - 1 < (uint32)ptr2[17]) {
 						util_insertStr("0", buf, 1);

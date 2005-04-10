@@ -636,8 +636,7 @@ void gob_showBoredom(int16 gobIndex) {
 			}
 		}
 		gobDesc->nextState = 21;
-	} else if (state >= 18 && state <= 21
-			   && READ_LE_UINT32(inter_variables + 0xec) == 0) {
+	} else if (state >= 18 && state <= 21 && VAR(59) == 0) {
 		if (state == 30 || state == 31)	// ???
 			return;
 
@@ -655,7 +654,7 @@ void gob_switchGoblin(int16 index) {
 	int16 tmp;
 
 	debug(0, "gob_switchGoblin");
-	if (READ_LE_UINT32(inter_variables + 0xec) != 0)
+	if (VAR(59) != 0)
 		return;
 
 	if (gob_goblins[gob_currentGoblin]->state <= 39 &&
@@ -1124,7 +1123,7 @@ void gob_moveInitStep(int16 framesCount, int16 action, int16 cont,
 	int16 posY;
 
 	if (cont != 0 && gob_goesAtTarget == 0 &&
-	    gob_readyToAct == 0 && READ_LE_UINT32(inter_variables + 0xec) == 0 &&
+	    gob_readyToAct == 0 && VAR(59) == 0 &&
 	    gobDesc->type != 1 &&
 	    gobDesc->state != 10 && gobDesc->state != 11) {
 		if (gobDesc->state >= 40) {
@@ -1809,7 +1808,7 @@ int16 gob_doMove(Gob_Object *gobDesc, int16 cont, int16 action) {
 	framesCount =
 	    scen_animations[gobDesc->animation].layers[layer]->framesCount;
 
-	if (READ_LE_UINT32(inter_variables + 0xec) == 0 &&
+	if (VAR(59) == 0 &&
 	    gobDesc->state != 30 && gobDesc->state != 31) {
 		gobDesc->order = (gobDesc->bottom) / 24 + 3;
 	}
@@ -2011,58 +2010,56 @@ void gob_saveGobDataToVars(int16 xPos, int16 yPos, int16 someVal) {
 }
 
 void gob_initVarPointers(void) {
-	// FIXME: All this is not endian-safe
-	gob_curGobStateVarPtr = (int32 *)(inter_variables + 0xf0);
-	gob_curGobNoTickVarPtr = (int32 *)(inter_variables + 0x120);
-	gob_curGobNextStateVarPtr = (int32 *)(inter_variables + 0xfc);
-	gob_curGobMultStateVarPtr = (int32 *)(inter_variables + 0xf8);
-	gob_curGobLookDirVarPtr = (int32 *)(inter_variables + 0x134);
-	gob_curGobPickableVarPtr = (int32 *)(inter_variables + 0x140);
-	gob_curGobRelaxVarPtr = (int32 *)(inter_variables + 0x144);
-	gob_curGobTypeVarPtr = (int32 *)(inter_variables + 0x124);
-	gob_curGobMaxFrameVarPtr = (int32 *)(inter_variables + 0x1b8);
-	gob_curGobTickVarPtr = (int32 *)(inter_variables + 0x12c);
-	gob_curGobFrameVarPtr = (int32 *)(inter_variables + 0xf4);
-	gob_curGobOrderVarPtr = (int32 *)(inter_variables + 0x11c);
-	gob_curGobMaxTickVarPtr = (int32 *)(inter_variables + 0x128);
-	gob_curGobActStartStateVarPtr = (int32 *)(inter_variables + 0x130);
-	gob_curGobDoAnimVarPtr = (int32 *)(inter_variables + 0x118);
-	gob_curGobLeftVarPtr = (int32 *)(inter_variables + 0x108);
-	gob_curGobRightVarPtr = (int32 *)(inter_variables + 0x110);
-	gob_curGobScrXVarPtr = (int32 *)(inter_variables + 0x100);
-	gob_curGobTopVarPtr = (int32 *)(inter_variables + 0x10c);
-	gob_curGobBottomVarPtr = (int32 *)(inter_variables + 0x114);
-	gob_curGobScrYVarPtr = (int32 *)(inter_variables + 0x104);
-
-	gob_destItemStateVarPtr = (int32 *)(inter_variables + 0x148);
-	gob_destItemNoTickVarPtr = (int32 *)(inter_variables + 0x178);
-	gob_destItemNextStateVarPtr = (int32 *)(inter_variables + 0x154);
-	gob_destItemMultStateVarPtr = (int32 *)(inter_variables + 0x150);
-	gob_destItemLookDirVarPtr = (int32 *)(inter_variables + 0x18c);
-	gob_destItemPickableVarPtr = (int32 *)(inter_variables + 0x198);
-	gob_destItemRelaxVarPtr = (int32 *)(inter_variables + 0x19c);
-	gob_destItemTypeVarPtr = (int32 *)(inter_variables + 0x17c);
-	gob_destItemMaxFrameVarPtr = (int32 *)(inter_variables + 0x1a4);
-	gob_destItemTickVarPtr = (int32 *)(inter_variables + 0x184);
-	gob_destItemFrameVarPtr = (int32 *)(inter_variables + 0x14c);
-	gob_destItemOrderVarPtr = (int32 *)(inter_variables + 0x174);
-	gob_destItemMaxTickVarPtr = (int32 *)(inter_variables + 0x180);
-	gob_destItemActStartStVarPtr = (int32 *)(inter_variables + 0x188);
-	gob_destItemDoAnimVarPtr = (int32 *)(inter_variables + 0x170);
-	gob_destItemLeftVarPtr = (int32 *)(inter_variables + 0x160);
-	gob_destItemRightVarPtr = (int32 *)(inter_variables + 0x168);
-	gob_destItemScrXVarPtr = (int32 *)(inter_variables + 0x158);
-	gob_destItemTopVarPtr = (int32 *)(inter_variables + 0x164);
-	gob_destItemBottomVarPtr = (int32 *)(inter_variables + 0x16c);
-	gob_destItemScrYVarPtr = (int32 *)(inter_variables + 0x15c);
-
-	gob_some0ValPtr = (int32 *)(inter_variables + 0x1ac);
-	gob_curGobXPosVarPtr = (int32 *)(inter_variables + 0x1b0);
-	gob_curGobYPosVarPtr = (int32 *)(inter_variables + 0x1b4);
-	gob_itemInPocketVarPtr = (int32 *)(inter_variables + 0x1c8);
-	gob_gobRetVarPtr = (int32 *)(inter_variables + 0xec);
-	gob_curGobVarPtr = (int32 *)(inter_variables + 0x1a8);
-
+	gob_gobRetVarPtr = (int32 *)VAR_ADDRESS(59);
+	gob_curGobStateVarPtr = (int32 *)VAR_ADDRESS(60);
+	gob_curGobFrameVarPtr = (int32 *)VAR_ADDRESS(61);
+	gob_curGobMultStateVarPtr = (int32 *)VAR_ADDRESS(62);
+	gob_curGobNextStateVarPtr = (int32 *)VAR_ADDRESS(63);
+	gob_curGobScrXVarPtr = (int32 *)VAR_ADDRESS(64);
+	gob_curGobScrYVarPtr = (int32 *)VAR_ADDRESS(65);
+	gob_curGobLeftVarPtr = (int32 *)VAR_ADDRESS(66);	
+	gob_curGobTopVarPtr = (int32 *)VAR_ADDRESS(67);
+	gob_curGobRightVarPtr = (int32 *)VAR_ADDRESS(68);
+	gob_curGobBottomVarPtr = (int32 *)VAR_ADDRESS(69);	
+	gob_curGobDoAnimVarPtr = (int32 *)VAR_ADDRESS(70);
+	gob_curGobOrderVarPtr = (int32 *)VAR_ADDRESS(71);
+	gob_curGobNoTickVarPtr = (int32 *)VAR_ADDRESS(72);
+	gob_curGobTypeVarPtr = (int32 *)VAR_ADDRESS(73);
+	gob_curGobMaxTickVarPtr = (int32 *)VAR_ADDRESS(74);
+	gob_curGobTickVarPtr = (int32 *)VAR_ADDRESS(75);
+	gob_curGobActStartStateVarPtr = (int32 *)VAR_ADDRESS(76);
+	gob_curGobLookDirVarPtr = (int32 *)VAR_ADDRESS(77);
+	gob_curGobPickableVarPtr = (int32 *)VAR_ADDRESS(80);
+	gob_curGobRelaxVarPtr = (int32 *)VAR_ADDRESS(81);
+	gob_destItemStateVarPtr = (int32 *)VAR_ADDRESS(82);
+	gob_destItemFrameVarPtr = (int32 *)VAR_ADDRESS(83);
+	gob_destItemMultStateVarPtr = (int32 *)VAR_ADDRESS(84);
+	gob_destItemNextStateVarPtr = (int32 *)VAR_ADDRESS(85);
+	gob_destItemScrXVarPtr = (int32 *)VAR_ADDRESS(86);
+	gob_destItemScrYVarPtr = (int32 *)VAR_ADDRESS(87);
+	gob_destItemLeftVarPtr = (int32 *)VAR_ADDRESS(88);
+	gob_destItemTopVarPtr = (int32 *)VAR_ADDRESS(89);
+	gob_destItemRightVarPtr = (int32 *)VAR_ADDRESS(90);
+	gob_destItemBottomVarPtr = (int32 *)VAR_ADDRESS(91);
+	gob_destItemDoAnimVarPtr = (int32 *)VAR_ADDRESS(92);
+	gob_destItemOrderVarPtr = (int32 *)VAR_ADDRESS(93);
+	gob_destItemNoTickVarPtr = (int32 *)VAR_ADDRESS(94);
+	gob_destItemTypeVarPtr = (int32 *)VAR_ADDRESS(95);
+	gob_destItemMaxTickVarPtr = (int32 *)VAR_ADDRESS(96);
+	gob_destItemTickVarPtr = (int32 *)VAR_ADDRESS(97);
+	gob_destItemActStartStVarPtr = (int32 *)VAR_ADDRESS(98);
+	gob_destItemLookDirVarPtr = (int32 *)VAR_ADDRESS(99);
+	gob_destItemPickableVarPtr = (int32 *)VAR_ADDRESS(102);
+	gob_destItemRelaxVarPtr = (int32 *)VAR_ADDRESS(103);
+	gob_destItemMaxFrameVarPtr = (int32 *)VAR_ADDRESS(105);
+	gob_curGobVarPtr = (int32 *)VAR_ADDRESS(106);
+	gob_some0ValPtr = (int32 *)VAR_ADDRESS(107);
+	gob_curGobXPosVarPtr = (int32 *)VAR_ADDRESS(108);
+	gob_curGobYPosVarPtr = (int32 *)VAR_ADDRESS(109);
+	gob_curGobMaxFrameVarPtr = (int32 *)VAR_ADDRESS(110);
+	
+	gob_itemInPocketVarPtr = (int32 *)VAR_ADDRESS(114);
+	
 	*gob_itemInPocketVarPtr = -2;
 }
 
@@ -2477,7 +2474,7 @@ void gob_interFunc(void) {
 	int16 state;
 	int32 *retVarPtr;
 
-	retVarPtr = (int32 *)(inter_variables + 0xec);
+	retVarPtr = (int32 *)VAR_ADDRESS(59);
 
 	cmd = inter_load16();
 	inter_execPtr += 2;
@@ -2673,9 +2670,9 @@ void gob_interFunc(void) {
 		item = inter_load16();
 
 		if (cmd == 42) {
-			xPos = READ_LE_UINT32(inter_variables + xPos * 4);
-			yPos = READ_LE_UINT32(inter_variables + yPos * 4);
-			item = READ_LE_UINT32(inter_variables + item * 4);
+			xPos = VAR(xPos);
+			yPos = VAR(yPos);
+			item = VAR(item);
 		}
 
 		for (y = 0; y < 28; y++) {
@@ -2824,8 +2821,8 @@ void gob_interFunc(void) {
 		yPos = inter_load16();
 
 		if (cmd == 43) {
-			xPos = READ_LE_UINT32(inter_variables + xPos * 4);
-			yPos = READ_LE_UINT32(inter_variables + yPos * 4);
+			xPos = VAR(xPos);
+			yPos = VAR(yPos);
 		}
 
 		if ((map_itemsMap[yPos][xPos] & 0xff00) != 0) {
@@ -3149,7 +3146,7 @@ void gob_interFunc(void) {
 		if (game_extHandle >= 0)
 			data_closeData(game_extHandle);
 
-		gob_loadObjects(inter_variables + extraData * 4);
+		gob_loadObjects((char *)VAR_ADDRESS(extraData));
 		game_extHandle = data_openData(game_curExtFile);
 		break;
 
@@ -3173,10 +3170,10 @@ void gob_interFunc(void) {
 		extraData = inter_load16();
 		xPos = inter_load16();
 
-		if (READ_LE_UINT16(inter_variables + xPos * 4) == 0) {
+		if ((uint16)VAR(xPos) == 0) {
 			item =
 			    gob_doMove(gob_goblins[gob_currentGoblin], 1,
-			    READ_LE_UINT16(inter_variables + extraData * 4));
+			    (uint16)VAR(extraData));
 		} else {
 			item =
 			    gob_doMove(gob_goblins[gob_currentGoblin], 1, 3);
@@ -3199,13 +3196,12 @@ void gob_interFunc(void) {
 		cmd = inter_load16();
 		xPos = inter_load16();
 
-		if (READ_LE_UINT16(inter_variables + xPos * 4) == 0) {
-			WRITE_LE_UINT32(inter_variables + cmd * 4,
-							gob_treatItem(READ_LE_UINT16(inter_variables + extraData * 4)));
+		if ((uint16)VAR(xPos) == 0) {
+			WRITE_VAR(cmd, gob_treatItem((uint16)VAR(extraData)));
 			break;
 		}
 
-		WRITE_LE_UINT32(inter_variables + cmd * 4, gob_treatItem(3));
+		WRITE_VAR(cmd, gob_treatItem(3));
 		break;
 
 	case 1010:
@@ -3214,7 +3210,7 @@ void gob_interFunc(void) {
 
 	case 1011:
 		extraData = inter_load16();
-		if (READ_LE_UINT32(inter_variables + extraData * 4) != 0)
+		if (VAR(extraData) != 0)
 			gob_goesAtTarget = 1;
 		else
 			gob_goesAtTarget = 0;
@@ -3222,11 +3218,11 @@ void gob_interFunc(void) {
 
 	case 1015:
 		extraData = inter_load16();
-		extraData = READ_LE_UINT32(inter_variables + extraData * 4);
+		extraData = VAR(extraData);
 		gob_objects[10]->xPos = extraData;
 
 		extraData = inter_load16();
-		extraData = READ_LE_UINT32(inter_variables + extraData * 4);
+		extraData = VAR(extraData);
 		gob_objects[10]->yPos = extraData;
 		break;
 
