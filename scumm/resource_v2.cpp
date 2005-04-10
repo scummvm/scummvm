@@ -22,8 +22,6 @@
 #include "stdafx.h"
 #include "scumm/scumm.h"
 #include "scumm/intern.h"
-#include "scumm/player_v2.h"
-#include "scumm/player_v1.h"
 #include "scumm/resource.h"
 #include "sound/mididrv.h"
 
@@ -33,9 +31,6 @@ void ScummEngine_v2::readClassicIndexFile() {
 	int i;
 
 	if (_gameId == GID_MANIAC) {
-		if (!(_features & GF_AMIGA) && !(_features & GF_NES))
-			_musicEngine = new Player_V1(this, _midiDriver != MD_PCSPK);
-
 		if (_features & GF_NES)
 			_numGlobalObjects = 775;
 		else
@@ -52,9 +47,6 @@ void ScummEngine_v2::readClassicIndexFile() {
 		_numScripts = 200;
 		_numSounds = 100;
 	} else if (_gameId == GID_ZAK) {
-		if (!(_features & GF_AMIGA))
-			_musicEngine = new Player_V2(this, _midiDriver != MD_PCSPK);
-
 		_numGlobalObjects = 775;
 		_numRooms = 61;
 		_numCostumes = 37;
@@ -113,9 +105,6 @@ void ScummEngine_v2::readClassicIndexFile() {
 }
 
 void ScummEngine_v2::readEnhancedIndexFile() {
-
-	if (!(_features & GF_AMIGA))
-		_musicEngine = new Player_V2(this, _midiDriver != MD_PCSPK);
 
 	_numGlobalObjects = _fileHandle->readUint16LE();
 	_fileHandle->seek(_numGlobalObjects, SEEK_CUR);

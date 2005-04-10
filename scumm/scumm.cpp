@@ -1671,6 +1671,10 @@ void ScummEngine::setupMusic(int midi) {
 		_musicEngine = new Player_V3A(this);
 	} else if ((_features & GF_AMIGA) && (_version < 5)) {
 		_musicEngine = NULL;
+	} else if (_gameId == GID_MANIAC && (_version == 1)) {
+		_musicEngine = new Player_V1(this, _midiDriver != MD_PCSPK);
+	} else if (_version <= 2) {
+		_musicEngine = new Player_V2(this, _midiDriver != MD_PCSPK);;
 	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && ((_version > 2) && (_version < 5))) {
 		_musicEngine = new Player_V2(this, _midiDriver != MD_PCSPK);
 	} else if (_version > 2 && _heversion <= 60) {
