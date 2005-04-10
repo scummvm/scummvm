@@ -2941,8 +2941,8 @@ void gob_interFunc(void) {
 		map_curGoblinX = xPos;
 
 		gob_gobPositions[item].y = yPos;
-		gob_pressedMapX = yPos;
-		map_curGoblinX = yPos;
+		gob_pressedMapY = yPos;
+		map_curGoblinY = yPos;
 
 		*gob_curGobScrXVarPtr = objDesc->xPos;
 		*gob_curGobScrYVarPtr = objDesc->yPos;
