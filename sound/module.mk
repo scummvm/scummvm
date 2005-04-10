@@ -18,6 +18,7 @@ MODULE_OBJS := \
 	sound/wave.o \
 	sound/softsynth/adlib.o \
 	sound/softsynth/ym2612.o \
+	sound/softsynth/fluidsynth.o \
 	sound/softsynth/mt32.o \
 
 MODULE_DIRS += \

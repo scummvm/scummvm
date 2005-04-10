@@ -183,6 +183,8 @@ GUI
   Problem: It's not fully clear to me how to "best" deal with global vs. local
   settings here...
 * Maybe add the ScummVM logo (+typeface?) to the about dialog
+* Unify DirBrowserDialog and FileBrowserDialog.
+* MacOS X version of FileBrowserDialog, since there is one of DirBrowserDialog.
 
 Launcher
 ========

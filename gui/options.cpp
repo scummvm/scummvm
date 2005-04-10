@@ -50,7 +50,7 @@
 namespace GUI {
 
 // TODO - allow changing options for:
-// - the save path (use _browser!)
+// - the save path (use _dirBrowser!)
 // - music & graphics driver (but see also the comments on EditGameDialog
 //   for some techincal difficulties with this)
 // - default volumes (sfx/speech/music)
@@ -60,6 +60,7 @@ enum {
 	kMusicVolumeChanged		= 'muvc',
 	kSfxVolumeChanged		= 'sfvc',
 	kSpeechVolumeChanged	= 'vcvc',
+	kChooseSoundFontCmd		= 'chsf',
 	kChooseSaveDirCmd		= 'chos',
 	kChooseExtraDirCmd		= 'chex'
 };
@@ -343,18 +344,24 @@ int OptionsDialog::addMIDIControls(GuiObject *boss, int yoffset) {
 		_midiPopUp->appendEntry(md->description, md->id);
 		md++;
 	}
+
+	// SoundFont
+	new ButtonWidget(boss, x, yoffset, kButtonWidth + 14, 16, "SoundFont: ", kChooseSoundFontCmd, 0);
+	_soundFont = new StaticTextWidget(boss, x + kButtonWidth + 20, yoffset + 3, _w - (x + kButtonWidth + 20) - 10, kLineHeight, "None", kTextAlignLeft);
+
+	yoffset += 18;
 	
 	// Multi midi setting
 	_multiMidiCheckbox = new CheckboxWidget(boss, x, yoffset, w, 16, "Mixed Adlib/MIDI mode");
-	yoffset += 16;
+	yoffset += 15;
 	
 	// Native mt32 setting
 	_mt32Checkbox = new CheckboxWidget(boss, x, yoffset, w, 16, "True Roland MT-32 (disable GM emulation)");
-	yoffset += 16;
+	yoffset += 15;
 
 	// Subtitles on/off
 	_subCheckbox = new CheckboxWidget(boss, x, yoffset, w, 16, "Display subtitles");
-	yoffset += 16;
+	yoffset += 15;
 	
 	_enableAudioSettings = true;
 
@@ -448,8 +455,9 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 	addButton(_w - 2 * (kButtonWidth + 10), _h - 24, "Cancel", kCloseCmd, 0);
 	addButton(_w - (kButtonWidth + 10), _h - 24, "OK", kOKCmd, 0);
 
-	// Create file browser dialog
-	_browser = new BrowserDialog("Select directory for savegames");
+	// Create file browser dialogs
+	_dirBrowser = new DirBrowserDialog("Select directory for savegames");
+	_fileBrowser = new FileBrowserDialog("Select SoundFont");
 
 #ifdef _WIN32_WCE
 	_keysDialog = new CEKeysDialog();
@@ -457,7 +465,8 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 }
 
 GlobalOptionsDialog::~GlobalOptionsDialog() {
-	delete _browser;
+	delete _dirBrowser;
+	delete _fileBrowser;
 
 #ifdef _WIN32_WCE
 	delete _keysDialog;
@@ -471,6 +480,7 @@ void GlobalOptionsDialog::open() {
 	// Set _savePath to the current save path
 	Common::String dir(ConfMan.get("savepath", _domain));
 	Common::String extraPath(ConfMan.get("extrapath", _domain));
+	Common::String soundFont(ConfMan.get("soundfont", _domain));
 
 	if (!dir.isEmpty()) {
 		_savePath->setLabel(dir);
@@ -486,6 +496,12 @@ void GlobalOptionsDialog::open() {
 	} else {
 		_extraPath->setLabel(extraPath);
 	}
+
+	if (soundFont.isEmpty() || !ConfMan.hasKey("soundfont", _domain)) {
+		_soundFont->setLabel("None");
+	} else {
+		_soundFont->setLabel(soundFont);
+	}
 #endif
 }
 
@@ -497,6 +513,10 @@ void GlobalOptionsDialog::close() {
 		String extraPath = _extraPath->getLabel();
 		if (!extraPath.isEmpty() && (extraPath != "None"))
 			ConfMan.set("extrapath", extraPath, _domain);
+
+		String soundFont = _soundFont->getLabel();
+		if (!soundFont.isEmpty() && (soundFont != "None"))
+			ConfMan.set("soundfont", soundFont, _domain);
 	}
 	OptionsDialog::close();
 }
@@ -504,18 +524,25 @@ void GlobalOptionsDialog::close() {
 void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kChooseSaveDirCmd:
-		if (_browser->runModal() > 0) {
+		if (_dirBrowser->runModal() > 0) {
 			// User made his choice...
-			FilesystemNode dir(_browser->getResult());
+			FilesystemNode dir(_dirBrowser->getResult());
 			_savePath->setLabel(dir.path());
 			// TODO - we should check if the directory is writeable before accepting it
 		}
 		break;
 	case kChooseExtraDirCmd:
-		if (_browser->runModal() > 0) {
+		if (_dirBrowser->runModal() > 0) {
 			// User made his choice...
-			FilesystemNode dir(_browser->getResult());
+			FilesystemNode dir(_dirBrowser->getResult());
 			_extraPath->setLabel(dir.path());
+		}
+		break;
+	case kChooseSoundFontCmd:
+		if (_fileBrowser->runModal() > 0) {
+			// User made his choice...
+			FilesystemNode file(_fileBrowser->getResult());
+			_soundFont->setLabel(file.path());
 		}
 		break;
 #ifdef _WIN32_WCE

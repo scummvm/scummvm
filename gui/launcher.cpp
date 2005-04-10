@@ -349,7 +349,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 	// Change path for the game
 	case kCmdGameBrowser: {
-		BrowserDialog *_browser = new BrowserDialog("Select additional game directory");
+		DirBrowserDialog *_browser = new DirBrowserDialog("Select additional game directory");
 		if (_browser->runModal() > 0) {
 			// User made his choice...
 			FilesystemNode dir(_browser->getResult());
@@ -366,7 +366,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 	// Change path for extra game data (eg, using sword cutscenes when playing via CD)
 	case kCmdExtraBrowser: { 
-		BrowserDialog *_browser = new BrowserDialog("Select additional game directory");
+		DirBrowserDialog *_browser = new DirBrowserDialog("Select additional game directory");
 		if (_browser->runModal() > 0) {
 			// User made his choice...
 			FilesystemNode dir(_browser->getResult());
@@ -377,7 +377,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 	// Change path for stored save game (perm and temp) data
 	case kCmdSaveBrowser: {
-		BrowserDialog *_browser = new BrowserDialog("Select directory for saved games");
+		DirBrowserDialog *_browser = new DirBrowserDialog("Select directory for saved games");
 		if (_browser->runModal() > 0) {
 			// User made his choice...
 			FilesystemNode dir(_browser->getResult());
@@ -449,7 +449,7 @@ LauncherDialog::LauncherDialog(GameDetector &detector)
 	updateButtons();
 
 	// Create file browser dialog
-	_browser = new BrowserDialog("Select directory with game data");
+	_browser = new DirBrowserDialog("Select directory with game data");
 }
 
 void LauncherDialog::selectGame(const String &name) {

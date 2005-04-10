@@ -20,6 +20,7 @@ _mad=auto
 _alsa=auto
 _zlib=auto
 _mpeg2=auto
+_fluidsynth=auto
 _mt32emu=yes
 # default option behaviour yes/no
 _build_scumm=yes
@@ -294,6 +295,9 @@ Optional Libraries:
   --with-mpeg2-prefix=DIR  Prefix where libmpeg2 is installed (optional)
   --disable-mpeg2          disable mpeg2 codec for cutscenes [autodetect]
 
+  --with-fluidsynth-prefix=DIR  Prefix where libfluidsynth is installed (optional)
+  --disable-fluidsynth     disable fluidsynth MIDI driver [autodetect]
+
   --with-sdl-prefix=DIR    Prefix where the sdl-config script is installed (optional)
 
   --with-nasm-prefix=DIR   Prefix where nasm executable is installed (optional)
@@ -338,9 +342,15 @@ for ac_option in $@; do
       --enable-nasm)            _nasm=yes       ;;
       --disable-nasm)           _nasm=no        ;;
       --disable-mpeg2)          _mpeg2=no       ;;
+      --disable-fluidsynth)     _fluidsynth=no  ;;
       --enable-plugins)         _build_plugins=yes ;;
       --enable-mt32emu)         _mt32emu=yes    ;;
       --disable-mt32emu)        _mt32emu=no     ;;
+      --with-fluidsynth-prefix=*)
+        _prefix=`echo $ac_option | cut -d '=' -f 2`
+        FLUIDSYNTH_CFLAGS="-I$_prefix/include"
+        FLUIDSYNTH_LIBS="-L$_prefix/lib"
+        ;;
       --with-mpeg2-prefix=*)
         _prefix=`echo $ac_option | cut -d '=' -f 2`
         MPEG2_CFLAGS="-I$_prefix/include"
@@ -991,6 +1001,28 @@ echo "$_mpeg2"
 rm -f $TMPC $TMPO$EXEEXT
 
 #
+# Check for libfluidsynth
+#
+echocheck "libfluidsynth"
+if test "$_fluidsynth" = auto ; then
+	_fluidsynth=no
+	cat > $TMPC << EOF
+#include <fluidsynth.h>
+int main(void) { return 0; }
+EOF
+	cc_check $LDFLAGS $CXXFLAGS $FLUIDSYNTH_CFLAGS $FLUIDSYNTH_LIBS -lfluidsynth && _fluidsynth=yes
+fi
+if test "$_fluidsynth" = yes ; then
+	_def_fluidsynth='#define USE_FLUIDSYNTH'
+	LIBS="$LIBS $FLUIDSYNTH_LIBS -lfluidsynth"
+	INCLUDE="$INCLUDES $FLUIDSYNTH_CFLAGS"
+else
+	_def_fluidsynth='#undef USE_FLUIDSYNTH'
+fi
+echo "$_fluidsynth"
+rm -f $TMPC $TMPO$EXEEXT
+
+#
 # Check for nasm
 #
 if test "$_have_x86" = yes ; then
@@ -1126,6 +1158,7 @@ $_def_mad
 $_def_alsa
 $_def_zlib
 $_def_mpeg2
+$_def_fluidsynth
 $_def_mt32emu
 
 /* Whether we should use i386 assembly routines */

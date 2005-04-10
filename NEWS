@@ -10,6 +10,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
  General:
    - Reworked cursor handling in SDL backend. Now cursors can have their own
      palette and scaling. This is used by Humongous Entertainment games now.
+   - Added FluidSynth MIDI driver.
 
  SCUMM:
    - Added support for Mac Humongous Entertainment titles

@@ -31,12 +31,13 @@ Table of Contents:
  * 6.1 Autosaves
 7.0) Music and Sound
  * 7.1 Adlib emulation
- * 7.2 MT-32 emulation
- * 7.3 MIDI emulation
- * 7.4 Native MIDI support
- * 7.5 UNIX native & ALSA sequencer support
- * 7.6 Using compressed audiofiles (MP3, Ogg Vorbis, Flac)
- * 7.7 Output sample rate
+ * 7.2 FluidSynth MIDI emulation
+ * 7.3 MT-32 emulation
+ * 7.4 MIDI emulation
+ * 7.5 Native MIDI support
+ * 7.6 UNIX native & ALSA sequencer support
+ * 7.7 Using compressed audiofiles (MP3, Ogg Vorbis, Flac)
+ * 7.8 Output sample rate
 8.0) Configuration Files
 9.0) Compiling
 
@@ -369,6 +370,8 @@ arguments - see the next section.
   --platform=WORD          Specify version of game (allowed values: amiga,
                            atari, fmtowns, mac, pc, windows)
   --savepath=PATH          Path to where savegames are stored
+  --soundfont=FILE         Select the SoundFont for MIDI playback. (Only
+                           supported by some MIDI drivers.)
   --multi-midi             Enable combination of Adlib and native MIDI
   --native-mt32            True Roland MT-32 (disable GM emulation)
   --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)
@@ -705,20 +708,21 @@ emulation. MIDI may not be available on all operating systems or may need
 manual configuration. If you ARE using MIDI, you have several different
 choices of output, depending on your operating system and configuration.
         
-        null      - Null output. Don't play any music.
+        null       - Null output. Don't play any music.
 
-        adlib     - Internal Adlib emulation (default)
-        mt32      - Internal MT-32 emulation
-        pcjr      - Internal PCjr emulation 
-        pcspk     - Internal PC Speaker emulation
-        towns     - Internal FM-TOWNS YM2612 emulation
+        adlib      - Internal Adlib emulation (default)
+        fluidsynth - FluidSynth MIDI emulation
+        mt32       - Internal MT-32 emulation
+        pcjr       - Internal PCjr emulation 
+        pcspk      - Internal PC Speaker emulation
+        towns      - Internal FM-TOWNS YM2612 emulation
 
-        alsa      - Output using ALSA sequencer device. See below.
-        amidi     - Use the MorphOS MIDI system, for MorphOS users
-        core      - CoreAudio sound, for Mac OS X users.
-        qt        - Quicktime sound, for Macintosh users.
-        seq       - Use /dev/sequencer for MIDI, *nix users. See below.
-        windows   - Windows MIDI. Uses built-in sequencer, for Windows users
+        alsa       - Output using ALSA sequencer device. See below.
+        amidi      - Use the MorphOS MIDI system, for MorphOS users
+        core       - CoreAudio sound, for Mac OS X users.
+        qt         - Quicktime sound, for Macintosh users.
+        seq        - Use /dev/sequencer for MIDI, *nix users. See below.
+        windows    - Windows MIDI. Uses built-in sequencer, for Windows users
 
 To select a sound driver, pass its name via the '-e' option to scummvm,
 for example:
@@ -732,7 +736,18 @@ By default an Adlib card will be emulated and ScummVM will output the music
 as sampled waves. This is the default mode for most games, and offers the
 best compatibility between machines and games.
 
-7.2) Playing sound with MT-32 emulation:
+
+7.2) Playing sound with FluildSynth MIDI emulation:
+---- ----------------------------------------------
+If ScummVM was build with libfluildsynth support it will be able to play MIDI
+music through the FluidSynth driver. You will have to specify a SoundFont to
+use, however.
+
+NOTE: The processor requirements for FluidSynth can be fairly high in some
+cases. A fast CPU is recommended.
+
+
+7.3) Playing sound with MT-32 emulation:
 ---- -----------------------------------
 Some games which contain MIDI music data also have improved tracks designed
 for the MT-32 sound module. ScummVM can now emulate this device, however you
@@ -749,25 +764,27 @@ gets turned on.
 NOTE: The processor requirements for the emulator are quite high; a fast CPU is
 strongly recommended.
 
-7.3) Playing sound with MIDI emulation:
+
+7.4) Playing sound with MIDI emulation:
 ---- ----------------------------------
 Some games (such as Sam and Max) only contain MIDI music data.  This once
 prevented music for these games from working on platforms that do not support
 MIDI, or soundcards that do not provide MIDI drivers (e.g, many soundcards will
 not play MIDI under Linux). ScummVM can now emulate MIDI mode using sampled
-waves and Adlib or MT-32 emulation using the -eadlib or -emt32 options
-respectively.  However, if you are capable of using native MIDI, we recommend
-using one of the MIDI modes below for best sound.
+waves and Adlib, FluidSynth MIDI emulation or MT-32 emulation using the
+-eadlib, -efluidsynth or -emt32 options respectively.  However, if you are
+capable of using native MIDI, we recommend using one of the MIDI modes below
+for best sound.
 
 
-7.4) Playing sound with Native MIDI:
+7.5) Playing sound with Native MIDI:
 ---- -------------------------------
 Use the appropriate -e<mode> command line option from the list above to
 select your preferred MIDI device. For example, if you wish to use the
 Windows MIDI driver, use the -ewindows option.
 
 
-7.5.0) Playing sound with Sequencer MIDI:                        [UNIX ONLY]
+7.6.0) Playing sound with Sequencer MIDI:                        [UNIX ONLY]
 ------ ----------------------------------
 If your soundcard driver supports a sequencer, you may set the environment
 variable "SCUMMVM_MIDI" to your sequencer device - e.g., /dev/sequencer
@@ -780,7 +797,7 @@ performance and quality than Adlib emulation. However, for those systems where
 sequencer support does not work, you can always fall back on Adlib emulation.
 
 
-7.5.1) Playing sound with ALSA sequencer:                        [UNIX ONLY]
+7.6.1) Playing sound with ALSA sequencer:                        [UNIX ONLY]
 ------ ----------------------------------
 If you have installed the ALSA driver with the sequencer support, then
 set the environment variable SCUMMVM_PORT or the config file parameter
@@ -829,7 +846,7 @@ Asking FluidSynth to become an ALSA sequencer (using SoundFonts):
 Once either TiMidity or FluidSynth are running, use the 'aconnect -o -l' 
 command as described earlier in this section.
 
-7.6.0) Using MP3 files for CD audio:
+7.7.0) Using MP3 files for CD audio:
 ------ -----------------------------
 Use LAME or some other MP3 encoder to rip the cd audio tracks to files. Name
 the files track1.mp3 track2.mp3 etc. ScummVM must be compiled with MAD support
@@ -840,7 +857,7 @@ following LAME command line:
   lame -t -q 0 -b 96 track1.wav track1.mp3
 
 
-7.6.1) Using Ogg Vorbis files for CD audio:
+7.7.1) Using Ogg Vorbis files for CD audio:
 ------ ------------------------------------
 Use oggenc or some other vorbis encoder to encode the audio tracks to files.
 Name the files track1.ogg track2.ogg etc. ScummVM must be compiled with vorbis
@@ -851,7 +868,7 @@ command line with the value after q specifying the desired quality from 0 to 10:
   oggenc -q 5 track1.wav
 
 
-7.6.2) Using Flac files for CD audio:
+7.7.2) Using Flac files for CD audio:
 ------ ------------------------------------
 Use flac or some other flac encoder to encode the audio tracks to files.
 Name the files track1.flac track2.flac etc. In your filesystem only allows 
@@ -866,7 +883,7 @@ Remember that the quality is always the same, varying encoder options will only
 affect the encoding time and resulting filesize. 
 
 
-7.6.3) Compressing MONSTER.SOU with MP3:
+7.7.3) Compressing MONSTER.SOU with MP3:
 ------ ---------------------------------
 You need LAME, and our compress_scumm_sou util from the scummvm-tools package
 to perform this task, and ScummVM must be compiled with MAD support.
@@ -877,7 +894,7 @@ Eventually you will have a much smaller monster.so3 file, copy this file
 to your game directory. You can safely remove the monster.sou file.
 
 
-7.6.4) Compressing MONSTER.SOU with Ogg Vorbis:
+7.7.4) Compressing MONSTER.SOU with Ogg Vorbis:
 ------ ----------------------------------------
 As above, but ScummVM must be compiled with OGG support. Run:
 
@@ -888,7 +905,7 @@ game directory. Ogg encoding may take a considerable longer amount of time
 than MP3, so have a good book handy.
 
 
-7.6.5) Compressing MONSTER.SOU with Flac:
+7.7.5) Compressing MONSTER.SOU with Flac:
 ------ ----------------------------------------
 As above, but ScummVM must be compiled with Flac support. Run:
 
@@ -902,7 +919,7 @@ filesize - 1152 seems to be a good value for those kind of soundfiles. Be sure
 to read the encoder documentation before you use other values.
 
 
-7.6.6) Compressing sfx/speech in Simon the Sorcerer 1 and 2
+7.7.6) Compressing sfx/speech in Simon the Sorcerer 1 and 2
 ------ ----------------------------------------------------
 Use our compress_simon util from the scummvm-tools package to perform this
 task. You can choose between multiple target formats, but note that you can
@@ -929,7 +946,7 @@ For Flac add --flac and optional parameters, i.e.
 Eventually you will have a much smaller *.mp3, *.ogg or *.fla file, copy this
 file to your game dir. You can safely remove the old file.
 
-7.6.7) Compressing speech/music in Broken Sword 1
+7.7.7) Compressing speech/music in Broken Sword 1
 ------ ------------------------------------------
 The compress_sword1 tool from the scummvm-tools package can encode music and
 speech to MP3 as well as Ogg Vorbis.
@@ -945,7 +962,7 @@ instead of MP3.
 Use "compress_sword1 --help" to get a full list of the options.
 
 
-7.6.8) Compressing speech/music in Broken Sword 2
+7.7.8) Compressing speech/music in Broken Sword 2
 ------ ------------------------------------------
 Use our compress_sword2 util from the scummvm-tools package to perform this
 task. You can choose between multiple target formats, but note  that you can
@@ -970,7 +987,7 @@ files in Broken Sword 2. It will not work with any of the other *.clu files,
 nor will it work with the speech files from Broken Sword 1.
 
 
-7.7) Output sample rate:
+7.8) Output sample rate:
 ---- -------------------
 The output sample rate tells ScummVM how many sound samples to play per channel
 per second. There is much that could be said on this subject, but most of it
@@ -1087,6 +1104,8 @@ The following keywords are recognized:
         music_volume    number   The music volume setting (0-255)
         multi_midi      bool     If true, enable combination Adlib and native
                                  MIDI.
+        soundfont       string   The SoundFont to use for MIDI playback. (Only
+                                 supported by some MIDI drivers.)
         native_mt32     bool     If true, disable GM emulation and assume that
                                  there is a true Roland MT-32 available.
         sfx_volume      number   The sfx volume setting (0-255)
@@ -1150,20 +1169,20 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
     Microsoft Visual C++ 6.0:
         * Open the workspace, scummwm.dsw
         * Enter the path to the needed libraries and includes in
-	  Tools|Options|Directories
+          Tools|Options|Directories
         * Now it should compile successfully.
 
     Microsoft Visual C++ 7.0:
         * Open the solution file scummwm.sln
         * Enter the path to the needed libraries and includes in
-	  Tools|Options|Projects|VC++ Directories
+          Tools|Options|Projects|VC++ Directories
         * Now it should compile successfully.
 
     Windows Mobile with Microsoft eMbedded Visual C++ 3 or 4 :
         * Download SDL with additional Windows Mobile tweaks:
           http://arisme.free.fr/ports/SDL.php
         * Download additional third party libraries:
-          http://arisme.free.fr/ports	 
+          http://arisme.free.fr/ports
         * Modify your include and library paths accordingly in EVC3/EVC4.
         * Open the ScummVM project dists\msevc4\PocketSCUMM.vcw
         * Modify the libraries and config parameters if necessary.

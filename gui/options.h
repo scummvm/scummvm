@@ -32,7 +32,8 @@ class GameDetector;
 
 namespace GUI {
 
-class BrowserDialog;
+class DirBrowserDialog;
+class FileBrowserDialog; 
 class CheckboxWidget;
 class PopUpWidget;
 class SliderWidget;
@@ -55,6 +56,8 @@ protected:
 	/** Config domain this dialog is used to edit. */
 	String _domain;
 	
+	StaticTextWidget *_soundFont;
+
 	int addGraphicControls(GuiObject *boss, int yoffset);
 	int addMIDIControls(GuiObject *boss, int yoffset);
 	int addVolumeControls(GuiObject *boss, int yoffset);
@@ -109,7 +112,8 @@ public:
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
-	BrowserDialog *_browser;
+	DirBrowserDialog *_dirBrowser;
+	FileBrowserDialog *_fileBrowser;
 #ifdef _WIN32_WCE
 	CEKeysDialog *_keysDialog;
 #endif

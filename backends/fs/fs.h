@@ -131,10 +131,15 @@ public:
 	virtual FSList listDir(ListMode mode = kListDirectoriesOnly) const = 0;
 
 	/**
-	 * Compare the name of this node to the name of another.
+	 * Compare the name of this node to the name of another. Directories
+	 * go before normal files.
 	 */
 	virtual bool operator< (const AbstractFilesystemNode& node) const
 	{
+		if (isDirectory() && !node.isDirectory())
+			return true;
+		if (!isDirectory() && node.isDirectory())
+			return false;
 		return scumm_stricmp(displayName().c_str(), node.displayName().c_str()) < 0;
 	}
 

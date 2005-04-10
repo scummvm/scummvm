@@ -34,16 +34,16 @@ namespace GUI {
  * other operating systems.
  */
 
-BrowserDialog::BrowserDialog(const char *title)
+DirBrowserDialog::DirBrowserDialog(const char *title)
 	: Dialog(20, 10, 320 -2 * 20, 200 - 2 * 10) {
 	_titleRef = CFStringCreateWithCString(0, title, CFStringGetSystemEncoding());
 }
 
-BrowserDialog::~BrowserDialog() {
+DirBrowserDialog::~DirBrowserDialog() {
 	CFRelease(_titleRef);
 }
 
-int BrowserDialog::runModal() {
+int DirBrowserDialog::runModal() {
 	NavDialogRef dialogRef;
 	WindowRef windowRef = 0;
 	NavDialogCreationOptions options;
@@ -125,7 +125,7 @@ enum {
 	kGoUpCmd = 'GoUp'
 };
 
-BrowserDialog::BrowserDialog(const char *title)
+DirBrowserDialog::DirBrowserDialog(const char *title)
 	: Dialog(20, 10, 320 -2 * 20, 200 - 2 * 10)
 	{
 
@@ -150,7 +150,7 @@ BrowserDialog::BrowserDialog(const char *title)
 	addButton(_w - (kButtonWidth+10), _h - 24, "Choose", kChooseCmd, 0);
 }
 
-void BrowserDialog::open() {
+void DirBrowserDialog::open() {
 	// If no node has been set, or the last used one is now invalid,
 	// go back to the root/default dir.
 	if (!_node.isValid()) {
@@ -164,7 +164,7 @@ void BrowserDialog::open() {
 	Dialog::open();
 }
 
-void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+void DirBrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kChooseCmd: {
 			// If nothing is selected in the list widget, choose the current dir.
@@ -193,7 +193,7 @@ void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	}
 }
 
-void BrowserDialog::updateListing() {
+void DirBrowserDialog::updateListing() {
 	// Update the path display
 	_currentPath->setLabel(_node.path());
 
@@ -215,5 +215,107 @@ void BrowserDialog::updateListing() {
 }
 
 #endif	// MACOSX
+
+FileBrowserDialog::FileBrowserDialog(const char *title)
+	: Dialog(20, 10, 320 -2 * 20, 200 - 2 * 10)
+	{
+
+	_fileList = NULL;
+	_currentPath = NULL;
+
+	// Headline - TODO: should be customizable during creation time
+	new StaticTextWidget(this, 10, 8, _w - 2 * 10, kLineHeight, title, kTextAlignCenter);
+
+	// Current path - TODO: handle long paths ?
+	_currentPath = new StaticTextWidget(this, 10, 20, _w - 2 * 10, kLineHeight,
+								"DUMMY", kTextAlignLeft);
+
+	// Add file list
+	_fileList = new ListWidget(this, 10, 34, _w - 2 * 10, _h - 34 - 24 - 10);
+	_fileList->setNumberingMode(kListNumberingOff);
+	_fileList->setEditable(false);
+
+	// Buttons
+	addButton(10, _h - 24, "Go up", kGoUpCmd, 0);
+	addButton(_w - 2 * (kButtonWidth + 10), _h - 24, "Cancel", kCloseCmd, 0);
+	addButton(_w - (kButtonWidth+10), _h - 24, "Choose", kChooseCmd, 0);
+}
+
+void FileBrowserDialog::open() {
+	// If no node has been set, or the last used one is now invalid,
+	// go back to the root/default dir.
+	if (!_node.isValid()) {
+		_node = FilesystemNode();
+	}
+
+	// Alway refresh file list
+	updateListing();
+	
+	// Call super implementation
+	Dialog::open();
+}
+
+void FileBrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	switch (cmd) {
+	case kChooseCmd: {
+			int selection = _fileList->getSelected();
+			if (selection < 0)
+				break;
+			if (_nodeContent[selection].isDirectory()) {
+				_node = _nodeContent[selection];
+				updateListing();
+			} else {
+				_choice = _nodeContent[selection];
+				setResult(1);
+				close();
+			}
+		}
+		break;
+	case kGoUpCmd:
+		_node = _node.getParent();
+		updateListing();
+		break;
+	case kListItemActivatedCmd:
+	case kListItemDoubleClickedCmd:
+		if (_nodeContent[data].isDirectory()) {
+			_node = _nodeContent[data];
+			updateListing();
+		} else {
+			_choice = _nodeContent[data];
+			setResult(1);
+			close();
+		}
+		break;
+	default:
+		Dialog::handleCommand(sender, cmd, data);
+	}
+}
+
+void FileBrowserDialog::updateListing() {
+	// Update the path display
+	_currentPath->setLabel(_node.path());
+
+	// Read in the data from the file system
+	_nodeContent = _node.listDir(AbstractFilesystemNode::kListAll);
+	_nodeContent.sort();
+
+	// Populate the ListWidget
+	Common::StringList list;
+	int size = _nodeContent.size();
+	int i;
+
+	for (i = 0; i < size; i++) {
+		if (_nodeContent[i].isDirectory())
+			list.push_back(_nodeContent[i].displayName() + "/");
+		else
+			list.push_back(_nodeContent[i].displayName());
+	}
+
+	_fileList->setList(list);
+	_fileList->scrollTo(0);
+
+	// Finally, redraw
+	draw();
+}
 
 } // End of namespace GUI

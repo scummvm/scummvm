@@ -48,7 +48,8 @@ enum {
 	MD_TOWNS = 13,
 	MD_YPA1 = 14, // PalmOS
 	MD_ZODIAC = 15, // PalmOS
-	MD_MT32 = 16
+	MD_MT32 = 16,
+	MD_FLUIDSYNTH = 17
 };
 
 enum MidiDriverType {
@@ -195,6 +196,9 @@ extern MidiDriver *MidiDriver_CORE_create();
 extern MidiDriver *MidiDriver_ETUDE_create();
 extern MidiDriver *MidiDriver_ALSA_create();
 extern MidiDriver *MidiDriver_YM2612_create(SoundMixer *mixer);
+#ifdef USE_FLUIDSYNTH
+extern MidiDriver *MidiDriver_FluidSynth_create(SoundMixer *mixer);
+#endif
 #ifdef USE_MT32EMU
 extern MidiDriver *MidiDriver_MT32_create(SoundMixer *mixer);
 #endif

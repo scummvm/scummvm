@@ -92,12 +92,14 @@ static const char USAGE_STRING[] =
 	"  --platform=WORD          Specify version of game (allowed values: amiga,\n"
 	"                           atari, fmtowns, nes, mac, pc, windows)\n"
 	"  --savepath=PATH          Path to where savegames are stored\n"
+	"  --soundfont=FILE         Select the SoundFont for MIDI playback. (Only\n"
+	"                           supported by some MIDI drivers.)\n"
 	"  --multi-midi             Enable combination Adlib and native MIDI\n"
 	"  --native-mt32            True Roland MT-32 (disable GM emulation)\n"
 	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
 	"  --aspect-ratio           Enable aspect ratio correction\n"
 	"  --render-mode=MODE       Enable additional render modes (cga, ega, hercGreen,\n"
-    "                           hercAmber, amiga)\n"
+	"                           hercAmber, amiga)\n"
 	"  --force-1x-overlay       Make inner GUI 320x200\n"
 	"\n"
 #if !defined(DISABLE_SKY) || !defined(DISABLE_QUEEN)
@@ -470,6 +472,10 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 					goto ShowHelpAndExit;
 
 				ConfMan.set("platform", option, kTransientDomain);
+			END_OPTION
+
+			DO_LONG_OPTION("soundfont")
+				ConfMan.set("soundfont", option, kTransientDomain);
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("multi-midi")

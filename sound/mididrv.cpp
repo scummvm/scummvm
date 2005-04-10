@@ -58,6 +58,9 @@ static const struct MidiDriverDescription midiDrivers[] = {
 	{"towns", "FM Towns", MD_TOWNS},
 	{"pcspk", "PC Speaker", MD_PCSPK},
 	{"pcjr", "IBM PCjr", MD_PCJR},
+#ifdef USE_FLUIDSYNTH
+	{"fluidsynth", "FluidSynth", MD_FLUIDSYNTH},
+#endif
 #ifdef USE_MT32EMU
 	{"mt32", "MT-32", MD_MT32},
 #endif
@@ -172,6 +175,9 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 	// driver.
 	case MD_ADLIB:     return NULL;
 
+#ifdef USE_FLUIDSYNTH
+	case MD_FLUIDSYNTH:	return MidiDriver_FluidSynth_create(g_engine->_mixer);
+#endif
 #ifdef USE_MT32EMU
 	case MD_MT32:      return MidiDriver_MT32_create(g_engine->_mixer);
 #endif
