@@ -1276,12 +1276,11 @@ static void luaFileFindNext() {
 #endif
 
 #ifdef _WIN32
-		if (g_find_file_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+		if (g_find_file_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 #else
 		if (de->d_type == 6/* DT_DIR ? */)
 #endif
 			found = false;
-		}
 	}
 
 	if (found) {
