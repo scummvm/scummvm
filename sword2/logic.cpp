@@ -33,7 +33,7 @@
 namespace Sword2 {
 
 Logic::Logic(Sword2Engine *vm) :
-	_vm(vm), _kills(0), _smackerLeadOut(0), _sequenceTextLines(0),
+	_vm(vm), _kills(0), _currentRunList(0), _smackerLeadOut(0), _sequenceTextLines(0),
 	_speechTime(0), _animId(0), _speechAnimType(0), _leftClickDelay(0),
 	_rightClickDelay(0), _defaultResponseId(0), _totalStartups(0),
 	_totalScreenManagers(0), _officialTextNumber(0), _speechTextBlocNo(0),
