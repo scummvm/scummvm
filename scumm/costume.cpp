@@ -877,7 +877,7 @@ void ClassicCostumeRenderer::setPalette(byte *palette) {
 		}
 		_palette[_loaded._palette[0]] = _palette[0];
 	} else {
-		if ((_vm->VAR_CURRENT_LIGHTS != 0xFF) && (_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color)) {
+		if ((_vm->VAR_CURRENT_LIGHTS == 0xFF) || (_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color)) {
 			for (i = 0; i < _loaded._numColors; i++) {
 				color = palette[i];
 				if (color == 255)
