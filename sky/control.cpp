@@ -784,14 +784,14 @@ uint16 Control::shiftUp(uint8 speed) {
 bool Control::autoSaveExists(void) {
 
 	bool test = false;
-	SaveFile *f;
+	InSaveFile *f;
 	char fName[20];
 	if (SkyEngine::isCDVersion())
 		strcpy(fName, "SKY-VM-CD.ASD");
 	else
 		sprintf(fName, "SKY-VM%03d.ASD", SkyEngine::_systemVars.gameVersion);
 
-	f = _saveFileMan->openSavefile(fName, false);
+	f = _saveFileMan->openForLoading(fName);
 	if (f != NULL) {
 		test = true;
 		delete f;
@@ -1012,8 +1012,8 @@ void Control::loadDescriptions(uint8 *destBuf) {
 
 	memset(destBuf, 0, MAX_SAVE_GAMES * MAX_TEXT_LEN);
 
-	SaveFile *inf;
-	inf = _saveFileMan->openSavefile("SKY-VM.SAV", false);
+	InSaveFile *inf;
+	inf = _saveFileMan->openForLoading("SKY-VM.SAV");
 	if (inf != NULL) {
 		uint8 *tmpBuf = (uint8 *)malloc(MAX_SAVE_GAMES * MAX_TEXT_LEN);
 		inf->read(tmpBuf, MAX_SAVE_GAMES * MAX_TEXT_LEN);
@@ -1084,9 +1084,9 @@ void Control::saveDescriptions(uint8 *srcBuf) {
 		tmpPos++;
 		srcPos += MAX_TEXT_LEN;
 	}
-	SaveFile *outf;
+	OutSaveFile *outf;
 
-	outf = _saveFileMan->openSavefile("SKY-VM.SAV", true);
+	outf = _saveFileMan->openForSaving("SKY-VM.SAV");
 	if (outf != NULL) {
 		outf->write(tmpBuf, tmpPos - tmpBuf);
 		delete outf;
@@ -1100,9 +1100,9 @@ void Control::doAutoSave(void) {
 		strcpy(fName, "SKY-VM-CD.ASD");
 	else
 		sprintf(fName, "SKY-VM%03d.ASD", SkyEngine::_systemVars.gameVersion);
-	SaveFile *outf;
+	OutSaveFile *outf;
 
-	outf = _saveFileMan->openSavefile(fName, true);
+	outf = _saveFileMan->openForSaving(fName);
 	if (outf == NULL) {
 		displayMessage(0, "Unable to create autosave file '%s' in directory '%s'", fName, _saveFileMan->getSavePath());
 		return;
@@ -1121,8 +1121,8 @@ uint16 Control::saveGameToFile(void) {
 	char fName[20];
 	sprintf(fName,"SKY-VM.%03d", _selectedGame);
 
-	SaveFile *outf;
-	outf = _saveFileMan->openSavefile(fName, true);
+	OutSaveFile *outf;
+	outf = _saveFileMan->openForSaving(fName);
 	if (outf == NULL) {
 		return NO_DISK_SPACE;
 	}
@@ -1396,8 +1396,8 @@ uint16 Control::restoreGameFromFile(bool autoSave) {
 	} else
 		sprintf(fName,"SKY-VM.%03d", _selectedGame);
 
-	SaveFile *inf;
-	inf = _saveFileMan->openSavefile(fName, false);
+	InSaveFile *inf;
+	inf = _saveFileMan->openForLoading(fName);
 	if (inf == NULL) {
 		return RESTORE_FAILED;
 	}

@@ -134,15 +134,16 @@ static void join_paths(const char *filename, const char *directory,
 	strncat(buf, filename, bufsize-1);
 }
 
-SaveFile *DefaultSaveFileManager::openSavefile(const char *filename, bool saveOrLoad) {
+OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename) {
 	char buf[256];
 	join_paths(filename, getSavePath(), buf, sizeof(buf));
-	SaveFile *sf = makeSaveFile(buf, saveOrLoad);
-	if (!sf->isOpen()) {
-		delete sf;
-		sf = 0;
-	}
-	return sf;
+	return makeSaveFile(buf, true);
+}
+
+InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename) {
+	char buf[256];
+	join_paths(filename, getSavePath(), buf, sizeof(buf));
+	return makeSaveFile(buf, false);
 }
 
 void DefaultSaveFileManager::listSavefiles(const char * /* prefix */, bool *marks, int num) {
@@ -151,8 +152,13 @@ void DefaultSaveFileManager::listSavefiles(const char * /* prefix */, bool *mark
 
 SaveFile *DefaultSaveFileManager::makeSaveFile(const char *filename, bool saveOrLoad) {
 #ifdef USE_ZLIB
-	return new GzipSaveFile(filename, saveOrLoad);
+	GzipSaveFile *sf = new GzipSaveFile(filename, saveOrLoad);
 #else
-	return new StdioSaveFile(filename, saveOrLoad);
+	StdioSaveFile *sf = new StdioSaveFile(filename, saveOrLoad);
 #endif
+	if (!sf->isOpen()) {
+		delete sf;
+		sf = 0;
+	}
+	return sf;
 }

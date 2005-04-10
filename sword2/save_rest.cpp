@@ -183,9 +183,9 @@ uint32 Sword2Engine::saveData(uint16 slotNo, byte *buffer, uint32 bufferSize) {
 
 	sprintf(saveFileName, "%s.%.3d", _targetName.c_str(), slotNo);
 
-	SaveFile *out;
+	OutSaveFile *out;
 
-	if (!(out = _saveFileMan->openSavefile(saveFileName, true))) {
+	if (!(out = _saveFileMan->openForSaving(saveFileName))) {
 		return SR_ERR_FILEOPEN;
 	}
 
@@ -261,9 +261,9 @@ uint32 Sword2Engine::restoreData(uint16 slotNo, byte *buffer, uint32 bufferSize)
 
 	sprintf(saveFileName, "%s.%.3d", _targetName.c_str(), slotNo);
 
-	SaveFile *in;
+	InSaveFile *in;
 
-	if (!(in = _saveFileMan->openSavefile(saveFileName, false))) {
+	if (!(in = _saveFileMan->openForLoading(saveFileName))) {
 		// error: couldn't open file
 		return SR_ERR_FILEOPEN;
 	}
@@ -405,9 +405,9 @@ uint32 Sword2Engine::getSaveDescription(uint16 slotNo, byte *description) {
 
 	sprintf(saveFileName, "%s.%.3d", _targetName.c_str(), slotNo);
 
-	SaveFile *in;
+	InSaveFile *in;
 
-	if (!(in = _saveFileMan->openSavefile(saveFileName, false))) {
+	if (!(in = _saveFileMan->openForLoading(saveFileName))) {
 		return SR_ERR_FILEOPEN;
 	}
 
@@ -432,9 +432,9 @@ bool Sword2Engine::saveExists(uint16 slotNo) {
 
 	sprintf(saveFileName, "%s.%.3d", _targetName.c_str(), slotNo);
 
-	SaveFile *in;
+	InSaveFile *in;
 
-	if (!(in = _saveFileMan->openSavefile(saveFileName, false))) {
+	if (!(in = _saveFileMan->openForLoading(saveFileName))) {
 		return false;
 	}
 

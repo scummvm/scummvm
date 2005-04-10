@@ -68,12 +68,12 @@ void ScummEngine::requestLoad(int slot) {
 
 bool ScummEngine::saveState(int slot, bool compat) {
 	char filename[256];
-	SaveFile *out;
+	OutSaveFile *out;
 	SaveGameHeader hdr;
 
 	makeSavegameName(filename, slot, compat);
 
-	if (!(out = _saveFileMan->openSavefile(filename, true)))
+	if (!(out = _saveFileMan->openForSaving(filename)))
 		return false;
 
 	memcpy(hdr.name, _saveLoadName, sizeof(hdr.name));
@@ -84,7 +84,7 @@ bool ScummEngine::saveState(int slot, bool compat) {
 
 	out->write(&hdr, sizeof(hdr));
 
-	Serializer ser(out, true, CURRENT_VER);
+	Serializer ser(0, out, CURRENT_VER);
 	saveOrLoad(&ser, CURRENT_VER);
 	delete out;
 	debug(1, "State saved as '%s'", filename);
@@ -93,14 +93,14 @@ bool ScummEngine::saveState(int slot, bool compat) {
 
 bool ScummEngine::loadState(int slot, bool compat) {
 	char filename[256];
-	SaveFile *in;
+	InSaveFile *in;
 	int i, j;
 	SaveGameHeader hdr;
 	int sb, sh;
 	byte *roomptr;
 
 	makeSavegameName(filename, slot, compat);
-	if (!(in = _saveFileMan->openSavefile(filename, false)))
+	if (!(in = _saveFileMan->openForLoading(filename)))
 		return false;
 
 	in->read(&hdr, sizeof(hdr));
@@ -179,7 +179,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	//
 	// Now do the actual loading
 	//
-	Serializer ser(in, false, hdr.ver);
+	Serializer ser(in, 0, hdr.ver);
 	saveOrLoad(&ser, hdr.ver);
 	delete in;
 	
@@ -349,17 +349,17 @@ void ScummEngine::listSavegames(bool *marks, int num) {
 
 bool ScummEngine::getSavegameName(int slot, char *desc) {
 	char filename[256];
-	SaveFile *out;
+	InSaveFile *in;
 	SaveGameHeader hdr;
 	int len;
 
 	makeSavegameName(filename, slot, false);
-	if (!(out = _saveFileMan->openSavefile(filename, false))) {
+	if (!(in = _saveFileMan->openForLoading(filename))) {
 		strcpy(desc, "");
 		return false;
 	}
-	len = out->read(&hdr, sizeof(hdr));
-	delete out;
+	len = in->read(&hdr, sizeof(hdr));
+	delete in;
 
 	if (len != sizeof(hdr) || hdr.type != MKID('SCVM')) {
 		strcpy(desc, "Invalid savegame");
@@ -1010,35 +1010,35 @@ void ScummEngine::loadResource(Serializer *ser, int type, int idx) {
 }
 
 void Serializer::saveBytes(void *b, int len) {
-	_saveLoadStream->write(b, len);
+	_saveStream->write(b, len);
 }
 
 void Serializer::loadBytes(void *b, int len) {
-	_saveLoadStream->read(b, len);
+	_loadStream->read(b, len);
 }
 
 void Serializer::saveUint32(uint32 d) {
-	_saveLoadStream->writeUint32LE(d);
+	_saveStream->writeUint32LE(d);
 }
 
 void Serializer::saveUint16(uint16 d) {
-	_saveLoadStream->writeUint16LE(d);
+	_saveStream->writeUint16LE(d);
 }
 
 void Serializer::saveByte(byte b) {
-	_saveLoadStream->writeByte(b);
+	_saveStream->writeByte(b);
 }
 
 uint32 Serializer::loadUint32() {
-	return _saveLoadStream->readUint32LE();
+	return _loadStream->readUint32LE();
 }
 
 uint16 Serializer::loadUint16() {
-	return _saveLoadStream->readUint16LE();
+	return _loadStream->readUint16LE();
 }
 
 byte Serializer::loadByte() {
-	return _saveLoadStream->readByte();
+	return _loadStream->readByte();
 }
 
 void Serializer::saveArrayOf(void *b, int len, int datasize, byte filetype) {

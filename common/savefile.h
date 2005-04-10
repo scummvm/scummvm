@@ -27,11 +27,38 @@
 #include "common/stream.h"
 
 
-class SaveFile : public Common::ReadStream, public Common::WriteStream {
+/**
+ * A class which allows game engines to load game state data.
+ * That typically means "save games", but also includes things like the
+ * IQ points in Indy3.
+ *
+ * @todo Add error checking abilities.
+ * @todo Change base class to SeekableReadStream; or alternatively,
+ *       add a simple 'skip()' method which would allow skipping
+ *       a number of bytes in the savefile.
+ */
+class InSaveFile : public Common::ReadStream {
 public:
-	virtual ~SaveFile() {}
+	virtual ~InSaveFile() {}
+};
 
-	virtual bool isOpen() const = 0;
+/**
+ * A class which allows game engines to save game state data.
+ * That typically means "save games", but also includes things like the
+ * IQ points in Indy3.
+ *
+ * @todo Add error checking abilities.
+ */
+class OutSaveFile : public Common::WriteStream {
+public:
+	virtual ~OutSaveFile() {}
+};
+
+/**
+ * Convenience intermediate class, to be removed.
+ */
+class SaveFile : public InSaveFile, public OutSaveFile {
+public:
 };
 
 class SaveFileManager {
@@ -40,13 +67,19 @@ public:
 	virtual ~SaveFileManager() {}
 
 	/**
-	 * Open the file with name filename in the given directory for saving or loading.
+	 * Open the file with name filename in the given directory for saving.
 	 * @param filename	the filename
-	 * @param directory	the directory
-	 * @param saveOrLoad	true for saving, false for loading
-	 * @return pointer to a SaveFile object
+	 * @return pointer to a SaveFile object, or NULL if an error occured.
 	 */
-	virtual SaveFile *openSavefile(const char *filename, bool saveOrLoad) = 0;
+	virtual OutSaveFile *openForSaving(const char *filename) = 0;
+
+	/**
+	 * Open the file with name filename in the given directory for loading.
+	 * @param filename	the filename
+	 * @return pointer to a SaveFile object, or NULL if an error occured.
+	 */
+	virtual InSaveFile *openForLoading(const char *filename) = 0;
+
 	virtual void listSavefiles(const char * /* prefix */, bool *marks, int num) = 0;
 
 	/** Get the path to the save game directory. */
@@ -55,11 +88,12 @@ public:
 
 class DefaultSaveFileManager : public SaveFileManager {
 public:
-	virtual SaveFile *openSavefile(const char *filename, bool saveOrLoad);
+	virtual OutSaveFile *openForSaving(const char *filename);
+	virtual InSaveFile *openForLoading(const char *filename);
 	virtual void listSavefiles(const char * /* prefix */, bool *marks, int num);
 
 protected:
-	virtual SaveFile *makeSaveFile(const char *filename, bool saveOrLoad);
+	SaveFile *makeSaveFile(const char *filename, bool saveOrLoad);
 };
 
 #endif

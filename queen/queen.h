@@ -25,7 +25,7 @@
 #include "base/engine.h"
 
 class GameDetector;
-class SaveFile;
+class InSaveFile;
 
 #if defined(_WIN32_WCE) && (_WIN32_WCE <= 300)
 
@@ -114,7 +114,7 @@ public:
 	void loadGameState(uint16 slot);
 	void makeGameStateName(uint16 slot, char *buf);
 	void findGameStateDescriptions(char descriptions[100][32]);
-	SaveFile *readGameStateHeader(uint16 slot, GameStateHeader *gsh);
+	InSaveFile *readGameStateHeader(uint16 slot, GameStateHeader *gsh);
 
 	enum {
 		SAVESTATE_CUR_VER = 1,

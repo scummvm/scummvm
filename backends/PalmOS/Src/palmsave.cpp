@@ -126,6 +126,13 @@ uint32 PalmSaveFile::write(const void *buf, uint32 size) {
 
 class PalmSaveFileManager : public SaveFileManager {
 public:
+	virtual OutSaveFile *openForSaving(const char *filename) {
+		return openSavefile(filename, true);
+	}
+	virtual InSaveFile *openForLoading(const char *filename) {
+		return openSavefile(filename, false);
+	}
+
 	SaveFile *openSavefile(const char *filename, bool saveOrLoad);
 	void listSavefiles(const char *prefix, bool *marks, int num);
 

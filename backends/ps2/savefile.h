@@ -38,7 +38,14 @@ public:
 	Ps2SaveFileManager(const char *path, SaveMode mode, Gs2dScreen *screen);
 	virtual ~Ps2SaveFileManager();
 
-	virtual SaveFile *openSavefile(const char *filename, bool saveOrLoad);
+
+	virtual SaveFile *openForSaving(const char *filename) {
+		return openSavefile(filename, true);
+	}
+	virtual SaveFile *openForLoading(const char *filename) {
+		return openSavefile(filename, false);
+	}
+
 	virtual void listSavefiles(const char * /* prefix */, bool *marks, int num);
 
 	/** Get the path to the save game directory. */
@@ -59,6 +66,8 @@ private:
 
 	static const iconIVECTOR _bgcolor[4];
 	static const iconFVECTOR _lightdir[3], _lightcol[3], _ambient;
+
+	SaveFile *openSavefile(const char *filename, bool saveOrLoad);
 };
 
 #endif // __PS2_SAVEFILE__

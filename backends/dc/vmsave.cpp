@@ -258,7 +258,15 @@ public:
 
 class VMSaveManager : public SaveFileManager {
 public:
-  virtual SaveFile *openSavefile(const char *filename, bool saveOrLoad);
+  
+  virtual OutSaveFile *openForSaving(const char *filename) {
+	return openSavefile(filename, true);
+  }
+  virtual IntSaveFile *openForLoading(const char *filename) {
+	return openSavefile(filename, false);
+  }
+  
+  SaveFile *openSavefile(const char *filename, bool saveOrLoad);
   virtual void listSavefiles(const char *prefix, bool *marks, int num);
 };
 

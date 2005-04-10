@@ -48,7 +48,7 @@ void SimonEngine::o_load_game() {
 }
 
 int SimonEngine::count_savegames() {
-	SaveFile *f;
+	InSaveFile *f;
 	uint i = 1;
 	bool marks[256];
 
@@ -58,7 +58,7 @@ int SimonEngine::count_savegames() {
 
 	while (i < 256) {
 		if (marks[i] &&
-		    (f = _saveFileMan->openSavefile(gen_savename(i), false))) {
+		    (f = _saveFileMan->openForLoading(gen_savename(i)))) {
 			i++;
 			delete f;
 		} else
@@ -69,7 +69,7 @@ int SimonEngine::count_savegames() {
 
 int SimonEngine::display_savegame_list(int curpos, bool load, char *dst) {
 	int slot, last_slot;
-	SaveFile *in;
+	InSaveFile *in;
 
 	showMessageFormat("\xC");
 
@@ -78,7 +78,7 @@ int SimonEngine::display_savegame_list(int curpos, bool load, char *dst) {
 	slot = curpos;
 
 	while (curpos + 6 > slot) {
-		if(!(in = _saveFileMan->openSavefile(gen_savename(slot), false)))
+		if(!(in = _saveFileMan->openForLoading(gen_savename(slot))))
 			break;
 
 		in->read(dst, 18);
@@ -102,7 +102,7 @@ int SimonEngine::display_savegame_list(int curpos, bool load, char *dst) {
 		}
 	} else {
 		if (curpos + 6 == slot) {
-			if((in = _saveFileMan->openSavefile(gen_savename(slot), false))) {
+			if((in = _saveFileMan->openForLoading(gen_savename(slot)))) {
 				slot++;
 				delete in;
 			}
@@ -407,7 +407,7 @@ loop:;
 }
 
 bool SimonEngine::save_game(uint slot, char *caption) {
-	SaveFile *f;
+	OutSaveFile *f;
 	uint item_index, num_item, i, j;
 	TimeEvent *te;
 
@@ -418,7 +418,7 @@ bool SimonEngine::save_game(uint slot, char *caption) {
 #endif
 
 
-	f = _saveFileMan->openSavefile(gen_savename(slot), true);
+	f = _saveFileMan->openForSaving(gen_savename(slot));
 	if (f == NULL) {
 		_lock_word &= ~0x100;
 		return false;
@@ -509,7 +509,7 @@ char *SimonEngine::gen_savename(int slot) {
 
 bool SimonEngine::load_game(uint slot) {
 	char ident[18];
-	SaveFile *f;
+	InSaveFile *f;
 	uint num, item_index, i, j;
 
 	_lock_word |= 0x100;
@@ -519,7 +519,7 @@ bool SimonEngine::load_game(uint slot) {
 #endif
 
 
-	f = _saveFileMan->openSavefile(gen_savename(slot), false);
+	f = _saveFileMan->openForLoading(gen_savename(slot));
 	if (f == NULL) {
 		_lock_word &= ~0x100;
 		return false;
