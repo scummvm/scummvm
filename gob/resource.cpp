@@ -38,20 +38,15 @@ void res_Free(void) {
 }
 
 void res_Init(void) {
-	int16 handle;
-	int16 fileSize;
-	struct stat statBuf;
-	handle = open("ALL.ASK", O_RDONLY);
-	if (handle < 0) {
+	File f;
+	uint32 fileSize;
+	if (!f.open("ALL.ASK", File::kFileReadMode)) {
 		error("ALL.ASK is missing.");
 	}
-	if (stat("ALL.ASK", &statBuf) == -1)
-		error("res_Init: Error with stat()\n");
-	fileSize = statBuf.st_size;
-
+	fileSize = f.size();
 	resourceBuf = (char *)malloc(fileSize * 4);
-	read(handle, resourceBuf, fileSize);
-	close(handle);
+	f.read(resourceBuf, fileSize);
+	f.close();
 }
 
 void res_Search(char resid) {
