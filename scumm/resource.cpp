@@ -345,10 +345,15 @@ void ScummEngine::readIndexFile() {
 			break;
 
 		case MKID('RNAM'):
-			// Names of rooms. Maybe we should read them and put them
-			// into a table, for use by the debugger?
-			_fileHandle->seek(itemsize - 8, SEEK_CUR);
-			debug(9, "found RNAM block, skipping");
+			// Names of rooms. Maybe we should put them into a table, for use by the debugger?
+			for (int room; (room = _fileHandle->readByte()); ) {
+				char buf[10];
+				_fileHandle->read(buf, 9);
+				buf[9] = 0;
+				for (i = 0; i < 9; i++)
+					buf[i] ^= 0xFF;
+				debug(5, "Room %d: '%s'\n", room, buf);
+			}
 			break;
 		
 		case MKID('DLFL'):
@@ -994,7 +999,8 @@ void ScummEngine_v5::readMAXS(int blockSize) {
 void ScummEngine_v8::readMAXS(int blockSize) {
 	debug(9, "readMAXS: MAXS has blocksize %d", blockSize);
 
-	_fileHandle->seek(50 + 50, SEEK_CUR);            // 176 - 8
+	_fileHandle->seek(50, SEEK_CUR);                 // Skip over SCUMM engine version
+	_fileHandle->seek(50, SEEK_CUR);                 // Skip over data file version
 	_numVariables = _fileHandle->readUint32LE();     // 1500
 	_numBitVariables = _fileHandle->readUint32LE();  // 2048
 	_fileHandle->readUint32LE();                     // 40
@@ -1023,7 +1029,8 @@ void ScummEngine_v8::readMAXS(int blockSize) {
 void ScummEngine_v7::readMAXS(int blockSize) {
 	debug(9, "readMAXS: MAXS has blocksize %d", blockSize);
 
-	_fileHandle->seek(50 + 50, SEEK_CUR);
+	_fileHandle->seek(50, SEEK_CUR);                 // Skip over SCUMM engine version
+	_fileHandle->seek(50, SEEK_CUR);                 // Skip over data file version
 	_numVariables = _fileHandle->readUint16LE();
 	_numBitVariables = _fileHandle->readUint16LE();
 	_fileHandle->readUint16LE();

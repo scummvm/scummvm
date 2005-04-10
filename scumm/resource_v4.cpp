@@ -87,9 +87,15 @@ void ScummEngine_v4::readIndexFile() {
 		switch (blocktype) {
 
 		case 0x4E52:	// 'NR'
-			// Names of rooms. Maybe we should read them and put them
-			// into a table, for use by the debugger?
-			_fileHandle->seek(itemsize - 6, SEEK_CUR);
+			// Names of rooms. Maybe we should put them into a table, for use by the debugger?
+			for (int room; (room = _fileHandle->readByte()); ) {
+				char buf[10];
+				_fileHandle->read(buf, 9);
+				buf[9] = 0;
+				for (int i = 0; i < 9; i++)
+					buf[i] ^= 0xFF;
+				debug(5, "Room %d: '%s'\n", room, buf);
+			}
 			break;
 
 		case 0x5230:	// 'R0'
