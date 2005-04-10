@@ -413,7 +413,10 @@ void ScummEngine_v2::decodeParseString() {
 	int textSlot = 0;
 	_string[textSlot].xpos = 0;
 	_string[textSlot].ypos = 0;
-	_string[textSlot].right = 320;
+	if (_features & GF_NES)
+		_string[textSlot].right = 256;
+	else
+		_string[textSlot].right = 320;
 	_string[textSlot].center = false;
 	_string[textSlot].overhead = false;
 
@@ -1022,7 +1025,10 @@ void ScummEngine_v2::o2_drawSentence() {
 			{ " ", " in", " with", " on", " to" }	// Korean
 			};
 		int lang = (_language <= 8) ? _language : 0;	// Default to english
-		strcat(sentence, prepositions[lang][VAR(VAR_SENTENCE_PREPOSITION)]);
+		if (_features & GF_NES) {
+			strcat(sentence, (const char *)(getResourceAddress(rtCostume, 78) + VAR(VAR_SENTENCE_PREPOSITION) * 8 + 2));
+		} else
+			strcat(sentence, prepositions[lang][VAR(VAR_SENTENCE_PREPOSITION)]);
 	}
 
 	if (VAR(VAR_SENTENCE_OBJECT2) > 0) {
@@ -1058,12 +1064,14 @@ void ScummEngine_v2::o2_drawSentence() {
 		ptr++;
 	}
 
-	sentenceline.top = virtscr[2].topline;
-	sentenceline.bottom = virtscr[2].topline + 8;
-	if (_features & GF_NES) {
+	if (_features & GF_NES) {	// TODO - get multiline sentences working
+		sentenceline.top = virtscr[2].topline;
+		sentenceline.bottom = virtscr[2].topline + 16;
 		sentenceline.left = 16;
 		sentenceline.right = 255;
 	} else {
+		sentenceline.top = virtscr[2].topline;
+		sentenceline.bottom = virtscr[2].topline + 8;
 		sentenceline.left = 0;
 		sentenceline.right = 319;
 	}

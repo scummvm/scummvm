@@ -38,9 +38,12 @@ void ScummEngine_v2::readClassicIndexFile() {
 		_numRooms = 55;
 
 		if (_features & GF_NES)
-			// costumes 25-37 are special. see v1MMNEScostTables[] in costume.cpp
-			// costumes 38-77 are room graphics resources, to be referenced in 
-			_numCostumes = 77;
+			// costumes 25-36 are special. see v1MMNEScostTables[] in costume.cpp
+			// costumes 37-76 are room graphics resources
+			// costume 77 is a character set translation table
+			// costume 78 is a preposition list
+			// costume 79 is unused but allocated, so the total is a nice even number :)
+			_numCostumes = 80;
 		else
 			_numCostumes = 35;
 

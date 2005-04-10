@@ -715,12 +715,17 @@ static ScummNESFile::t_resource res_sproffs[2] = {
 	{ {0x0BFEA,0x0BEF3,0x0BF4C,0x07F32}, {0x000C,0x000C,0x000C,0x000C}, NES_SPROFFS }
 };
 
-
 // sprite data sets (packed NES sprite data)
 static ScummNESFile::t_resource res_sprdata[2] = {
 	{ {0x2CE11,0x2CE11,0x2C401,0x2CA28}, {0x2BE0,0x2BE0,0x2BE0,0x2BE0}, NES_SPRDATA },
 	{ {0x07F6B,0x0BE28,0x0FE6B,0x07E48}, {0x008A,0x008A,0x008A,0x008A}, NES_SPRDATA }
 };
+
+static ScummNESFile::t_resource res_charset =
+	{ {0x3F6EE,0x3F724,0x3F739,0x3F739}, {0x0090,0x0090,0x0090,0x0090}, NES_CHARSET };
+
+static ScummNESFile::t_resource res_preplist =
+	{ {0x3FB5A,0x3FB90,0x3FBA9,0x3FBAF}, {0x000E,0x000E,0x000E,0x0010}, NES_PREPLIST };
 
 uint16 write_byte(Common::MemoryWriteStream *out, byte val) {
 	val ^= 0xFF;
@@ -822,6 +827,14 @@ uint16 ScummNESFile::extractResource(Common::MemoryWriteStream *output, p_resour
 			reslen += write_word(output, len);
 			reslen += write_byte(output, val);
 			reslen += write_byte(output, cnt);
+
+			cnt = FileReadByte();
+			reslen += write_byte(output, cnt);
+			for (i = 0; i < cnt; i++)
+				reslen += write_byte(output, FileReadByte());
+			for (i = 0; i < cnt; i++)
+				reslen += write_byte(output, FileReadByte());
+
 			while (1) {
 				reslen += write_byte(output, val = FileReadByte());
 				if (val >= 0xFE)
@@ -860,12 +873,31 @@ uint16 ScummNESFile::extractResource(Common::MemoryWriteStream *output, p_resour
 	case NES_SPRLENS:
 	case NES_SPROFFS:
 	case NES_SPRDATA:
+	case NES_CHARSET:
 		len = resLength(res);
 		reslen += write_word(output, (uint16)(len + 2));
 
 		for (i = 0; i < len; i++)
 			reslen += write_byte(output, FileReadByte());
 
+		break;
+
+	case NES_PREPLIST:
+		len = resLength(res);
+                reslen += write_word(output, 0x002A);
+
+		reslen += write_byte(output, ' ');
+		for (i = 1; i < 8; i++)
+			reslen += write_byte(output, 0);
+
+		for (j = 0; j < 4; j++)
+		{
+			reslen += write_byte(output,' ');
+			for (i = 1; val = FileReadByte(); i++)
+				reslen += write_byte(output, val);
+			for (; i < 8; i++)
+				reslen += write_byte(output, 0);
+		}
 		break;
 
 	default:
@@ -933,7 +965,7 @@ static ScummNESFile::p_resource lfl_52[] = { &res_rooms[52], NULL };
 /*	remaining 'standard' resources (not used by any of the original LFL files) */
 static ScummNESFile::p_resource lfl_53[] = { &res_rooms[53], &res_scripts[177], &res_scripts[178], &res_sounds[70], &res_sounds[71], &res_sounds[72], &res_sounds[73], &res_sounds[74], &res_sounds[75], &res_sounds[76], &res_sounds[77], &res_sounds[78], &res_sounds[79], &res_sounds[80], &res_sounds[81], NULL };
 /*	all 'non-standard' resources (the costume-related stuff) */
-static ScummNESFile::p_resource lfl_54[] = { &res_rooms[54], &res_sprdesc[0], &res_sprdesc[1], &res_sprlens[0], &res_sprlens[1], &res_sproffs[0], &res_sproffs[1], &res_sprdata[0], &res_sprdata[1], &res_costumegfx[0], &res_costumegfx[1], &res_sprpals[0], &res_sprpals[1], NULL };
+static ScummNESFile::p_resource lfl_54[] = { &res_rooms[54], &res_sprdesc[0], &res_sprdesc[1], &res_sprlens[0], &res_sprlens[1], &res_sproffs[0], &res_sproffs[1], &res_sprdata[0], &res_sprdata[1], &res_costumegfx[0], &res_costumegfx[1], &res_sprpals[0], &res_sprpals[1], &res_charset, &res_preplist, NULL };
 
 typedef	struct _lfl {
 	int num;
@@ -1002,8 +1034,8 @@ t_lfl lfls[] = {
 struct _lfl_index {
 	byte	room_lfl[55];
 	uint16	room_addr[55];
-	byte	costume_lfl[77];
-	uint16	costume_addr[77];
+	byte	costume_lfl[80];
+	uint16	costume_addr[80];
 	byte	script_lfl[200];
 	uint16	script_addr[200];
 	byte	sound_lfl[100];
@@ -1095,6 +1127,14 @@ bool ScummNESFile::generateIndex() {
 				lfl_index.sound_lfl[entry - res_sounds] = lfl->num;
 				lfl_index.sound_addr[entry - res_sounds] = TO_LE_16(respos);
 				break;
+			case NES_CHARSET:
+				lfl_index.costume_lfl[77] = lfl->num;
+				lfl_index.costume_addr[77] = TO_LE_16(respos);
+				break;
+			case NES_PREPLIST:
+				lfl_index.costume_lfl[78] = lfl->num;
+				lfl_index.costume_addr[78] = TO_LE_16(respos);
+				break;
 			default:
 				error("Unindexed entry found!");
 				break;
@@ -1117,9 +1157,6 @@ bool ScummNESFile::generateIndex() {
 	write_byte(&out, 0x46);
 
 	extractResource(&out, &res_globdata);
-
-	for (i = res_globdata.length[_ROMset]; i < 775; i++)
-		write_byte(&out, 0);
 
 	for (i = 0; i < (int)sizeof(lfl_index); i++)
 		write_byte(&out, ((byte *)&lfl_index)[i]);

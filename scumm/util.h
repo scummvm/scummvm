@@ -65,7 +65,6 @@ public:
 	uint32 write(const void *ptr, uint32 size);
 };
 
-
 typedef enum _res_type {
 	NES_UNKNOWN,
 	NES_GLOBDATA,
@@ -79,7 +78,9 @@ typedef enum _res_type {
 	NES_SPRDESC,
 	NES_SPRLENS,
 	NES_SPROFFS,
-	NES_SPRDATA 
+	NES_SPRDATA,
+	NES_CHARSET,
+	NES_PREPLIST 
 } res_type;
 
 class ScummNESFile : public BaseScummFile {
