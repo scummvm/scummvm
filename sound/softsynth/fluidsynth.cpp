@@ -1,0 +1,217 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2001-2005 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Header$
+ */
+
+#if defined(HAVE_CONFIG_H)
+#include "config.h"
+#endif
+
+#ifdef USE_FLUIDSYNTH
+
+#include "stdafx.h"
+#include "common/config-manager.h"
+#include "sound/mpu401.h"
+#include "sound/softsynth/emumidi.h"
+
+#include <fluidsynth.h>
+
+class MidiDriver_FluidSynth : public MidiDriver_Emulated {
+private:
+	MidiChannel_MPU401 _midiChannels[16];
+	fluid_settings_t *_settings;
+	fluid_synth_t *_synth;
+	int _soundFont;
+	int _outputRate;
+	SoundHandle _handle;
+
+protected:
+	// Because GCC complains about casting from const to non-const...
+	void setInt(const char *name, int val);
+	void setNum(const char *name, double num);
+	void setStr(const char *name, const char *str);
+
+	void generateSamples(int16 *buf, int len);
+
+public:
+	MidiDriver_FluidSynth(SoundMixer *mixer);
+
+	int open();
+	void close();
+	void send(uint32 b);
+
+	MidiChannel *allocateChannel();
+	MidiChannel *getPercussionChannel();
+
+	// AudioStream API
+	bool isStereo() const { return true; }
+	int getRate() const { return _outputRate; }
+};
+
+// MidiDriver method implementations
+
+MidiDriver_FluidSynth::MidiDriver_FluidSynth(SoundMixer *mixer)
+	: MidiDriver_Emulated(mixer) {
+
+	for (int i = 0; i < ARRAYSIZE(_midiChannels); i++) {
+		_midiChannels[i].init(this, i);
+	}
+
+	// It ought to be possible to get FluidSynth to generate samples at
+	// lower 
+
+	_outputRate = _mixer->getOutputRate();
+	if (_outputRate < 22050)
+		_outputRate = 22050;
+	else if (_outputRate > 96000)
+		_outputRate = 96000;
+}
+
+void MidiDriver_FluidSynth::setInt(const char *name, int val) {
+	char *name2 = strdup(name);
+
+	fluid_settings_setint(_settings, name2, val);
+	free(name2);
+}
+
+void MidiDriver_FluidSynth::setNum(const char *name, double val) {
+	char *name2 = strdup(name);
+
+	fluid_settings_setnum(_settings, name2, val);
+	free(name2);
+}
+
+void MidiDriver_FluidSynth::setStr(const char *name, const char *val) {
+	char *name2 = strdup(name);
+	char *val2 = strdup(val);
+
+	fluid_settings_setstr(_settings, name2, val2);
+	free(name2);
+	free(val2);
+}
+
+int MidiDriver_FluidSynth::open() {
+	if (_isOpen)
+		return MERR_ALREADY_OPEN;
+
+	if (!ConfMan.hasKey("soundfont"))
+		error("FluidSynth recquires a 'soundfont' setting");
+
+	_settings = new_fluid_settings();
+
+	// The default gain setting is ridiculously low, but we can't set it
+	// too high either or sound will be clipped. This may need tuning...
+
+	setNum("synth.gain", 2.1);
+	setNum("synth.sample-rate", _outputRate);
+
+	_synth = new_fluid_synth(_settings);
+
+	// In theory, this ought to reduce CPU load... but it doesn't make any
+	// noticeable difference for me, so disable it for now.
+
+	// fluid_synth_set_interp_method(_synth, -1, FLUID_INTERP_LINEAR);
+	// fluid_synth_set_reverb_on(_synth, 0);
+	// fluid_synth_set_chorus_on(_synth, 0);
+
+	const char *soundfont = ConfMan.get("soundfont").c_str();
+
+	_soundFont = fluid_synth_sfload(_synth, soundfont, 1);
+	if (_soundFont == -1)
+		error("Failed loading custom sound font '%s'", soundfont);
+
+	MidiDriver_Emulated::open();
+
+	// The MT-32 emulator uses kSFXSoundType here. I don't know why.
+	_mixer->playInputStream(SoundMixer::kMusicSoundType, &_handle, this, -1, 255, 0, false, true);
+	return 0;
+}
+
+void MidiDriver_FluidSynth::close() {
+	if (!_isOpen)
+		return;
+	_isOpen = false;
+
+	_mixer->stopHandle(_handle);
+
+	if (_soundFont != -1)
+		fluid_synth_sfunload(_synth, _soundFont, 1);
+
+	delete_fluid_synth(_synth);
+	delete_fluid_settings(_settings);
+}
+
+void MidiDriver_FluidSynth::send(uint32 b) {
+	//byte param3 = (byte) ((b >> 24) & 0xFF);
+	uint param2 = (byte) ((b >> 16) & 0xFF);
+	uint param1 = (byte) ((b >>  8) & 0xFF);
+	byte cmd    = (byte) (b & 0xF0);
+	byte chan   = (byte) (b & 0x0F);
+
+	switch (cmd) {
+	case 0x80:	// Note Off
+		fluid_synth_noteoff(_synth, chan, param1);
+		break;
+	case 0x90:	// Note On
+		fluid_synth_noteon(_synth, chan, param1, param2);
+		break;
+	case 0xA0:	// Aftertouch
+		break;
+	case 0xB0:	// Control Change
+		fluid_synth_cc(_synth, chan, param1, param2);
+		break;
+	case 0xC0:	// Program Change
+		fluid_synth_program_change(_synth, chan, param1);
+		break;
+	case 0xD0:	// Channel Pressure
+		break;
+	case 0xE0:	// Pitch Bend
+		fluid_synth_pitch_bend(_synth, chan, (param2 << 7) | param1);
+		break;
+	case 0xF0:	// SysEx
+		// We should never get here! SysEx information has to be
+		// sent via high-level semantic methods.
+		warning("MidiDriver_FluidSynth: Receiving SysEx command on a send() call");
+		break;
+	default:
+		warning("MidiDriver_FluidSynth: Unknown send() command 0x%02X", cmd);
+		break;
+	}
+}
+
+MidiChannel *MidiDriver_FluidSynth::allocateChannel() {
+	for (int i = 0; i < ARRAYSIZE(_midiChannels); i++) {
+		if (i != 9 && _midiChannels[i].allocate())
+			return &_midiChannels[i];
+	}
+	return NULL;
+}
+
+MidiChannel *MidiDriver_FluidSynth::getPercussionChannel() {
+	return &_midiChannels[9];
+}
+
+MidiDriver *MidiDriver_FluidSynth_create(SoundMixer *mixer) {
+	return new MidiDriver_FluidSynth(mixer);
+}
+
+void MidiDriver_FluidSynth::generateSamples(int16 *data, int len) {
+	fluid_synth_write_s16(_synth, len, data, 0, 2, data, 1, 2);
+}
+
+#endif
