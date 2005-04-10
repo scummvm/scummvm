@@ -128,11 +128,14 @@ static const ScummGameSettings scumm_settings[] = {
 	{"pass", "Passport to Adventure", GID_PASS, 4, 0, 13, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, 0, 0},
 
-	/* Scumm version 5 */
+	/* Scumm version 5, small header -- we treat these as V4 games, since internally
+	   they really are much closer to the V4 games than to all other V5 games. */
 	{"monkeyVGA", "Monkey Island 1 (256 color Floppy version)", GID_MONKEY_VGA, 4, 0, 13, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
 	 GF_SMALL_HEADER | GF_USE_KEY, 0, 0},
 	{"loomcd", "Loom (256 color CD version)", GID_LOOM256, 4, 0, 13, MDT_NONE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS, 0, 0},
+
+	/* Scumm version 5 */
 	{"monkey", "Monkey Island 1", GID_MONKEY, 5, 0, 13, /*MDT_PCSPK |*/ MDT_ADLIB,
 	 GF_USE_KEY | GF_AUDIOTRACKS, 0, 0},
 	{"monkey1", "Monkey Island 1 (alt)", GID_MONKEY, 5, 0, 13, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
