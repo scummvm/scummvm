@@ -106,16 +106,17 @@ void CEActionsSmartphone::initInstanceGame() {
 	bool is_simon = (strncmp(_detector->_targetName.c_str(), "simon", 5) == 0);
 	bool is_sky = (_detector->_targetName == "sky");
 	bool is_queen = (_detector->_targetName == "queen");
+	bool is_gob = (strncmp(_detector->_targetName.c_str(), "gob", 3) == 0);
 	
 	CEActions::initInstanceGame();
 
 	// See if a right click mapping could be needed
-	if (is_sky || _detector->_targetName == "samnmax")
+	if (is_sky || _detector->_targetName == "samnmax" || is_gob)
 		_right_click_needed = true;
 
 	// Initialize keys for different actions
 	// Save
-	if (is_simon) 
+	if (is_simon || is_gob) 
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = false;
 	else
 	if (is_queen) {
@@ -133,7 +134,7 @@ void CEActionsSmartphone::initInstanceGame() {
 	}
 	// Skip
 	_action_enabled[SMARTPHONE_ACTION_SKIP] = true;
-	if (is_simon || is_sky)
+	if (is_simon || is_sky || is_gob)
 		_key_action[SMARTPHONE_ACTION_SKIP].setAscii(VK_ESCAPE);
 	else
 		_key_action[SMARTPHONE_ACTION_SKIP].setAscii(Scumm::KEY_ALL_SKIP);

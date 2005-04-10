@@ -95,11 +95,12 @@ void CEActionsPocket::initInstanceGame() {
 	bool is_queen = (_detector->_targetName == "queen");
 	bool is_sky = (_detector->_targetName == "sky");
 	bool is_comi = (strncmp(_detector->_targetName.c_str(), "comi", 4) == 0);
+	bool is_gob = (strncmp(_detector->_targetName.c_str(), "gob", 3) == 0);
 
 	CEActions::initInstanceGame();
 
 	// See if a right click mapping could be needed
-	if (is_sword1 || is_sword2 || is_sky || is_queen || is_comi ||
+	if (is_sword1 || is_sword2 || is_sky || is_queen || is_comi || is_gob ||
 		_detector->_targetName == "samnmax")
 		_right_click_needed = true;
 
@@ -112,7 +113,7 @@ void CEActionsPocket::initInstanceGame() {
 	_key_action[POCKET_ACTION_PAUSE].setAscii(VK_SPACE);
 	_action_enabled[POCKET_ACTION_PAUSE] = true;
 	// Save
-	if (is_simon || is_sword2) 
+	if (is_simon || is_sword2 || is_gob) 
 		_action_enabled[POCKET_ACTION_SAVE] = false;
 	else
 	if (is_queen) {
@@ -132,7 +133,7 @@ void CEActionsPocket::initInstanceGame() {
 	_action_enabled[POCKET_ACTION_QUIT] = true;
 	// Skip
 	_action_enabled[POCKET_ACTION_SKIP] = true;
-	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1)
+	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob)
 		_key_action[POCKET_ACTION_SKIP].setAscii(VK_ESCAPE);
 	else
 		_key_action[POCKET_ACTION_SKIP].setAscii(Scumm::KEY_ALL_SKIP);
