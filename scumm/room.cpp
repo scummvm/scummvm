@@ -554,8 +554,8 @@ void ScummEngine_v3old::initRoomSubBlocks() {
 	
 	if (_version == 1) {
 		if (_features & GF_NES) {
-			_roomWidth = READ_LE_UINT16(&(rmhd->old.width));
-			_roomHeight = READ_LE_UINT16(&(rmhd->old.height));
+			_roomWidth = READ_LE_UINT16(&(rmhd->old.width)) * 8;
+			_roomHeight = READ_LE_UINT16(&(rmhd->old.height)) * 8;
 
 			// HACK: To let our code work normal with narrow rooms we
 			// adjust width. It will render garbage on right edge but we do
