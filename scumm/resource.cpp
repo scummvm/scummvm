@@ -46,7 +46,7 @@ static const byte *findResourceSmall(uint32 tag, const byte *searchin);
 
 
 /* Open a room */
-void ScummEngine::openRoom(int room) {
+void ScummEngine::openRoom(const int room) {
 	int room_offs;
 	bool result;
 	char buf[128];
@@ -67,6 +67,8 @@ void ScummEngine::openRoom(int room) {
 		_fileHandle->close();
 		return;
 	}
+
+	const int diskNumber = (room == 0 ? 0 : res.roomno[rtRoom][room]);
 
 	/* Either xxx.lfl or monkey.xxx file name */
 	while (1) {
@@ -92,10 +94,10 @@ void ScummEngine::openRoom(int room) {
 				if (openResourceFile(buf, encByte)) {
 					return;
 				}
-				askForDisk(buf, room == 0 ? 0 : res.roomno[rtRoom][room]);
+				askForDisk(buf, diskNumber);
 
 			} else {
-				sprintf(buf, "disk%.2d.lec", room == 0 ? 0 : res.roomno[rtRoom][room]);
+				sprintf(buf, "disk%.2d.lec", diskNumber);
 				encByte = 0x69;
 			}
 		} else {
@@ -121,15 +123,15 @@ void ScummEngine::openRoom(int room) {
 			} else if (_version >= 7) {
 				if (room > 0 && (_version == 8))
 					VAR(VAR_CURRENTDISK) = res.roomno[rtRoom][room];
-				sprintf(buf, "%s.la%d", _gameName.c_str(), room == 0 ? 0 : res.roomno[rtRoom][room]);
+				sprintf(buf, "%s.la%d", _gameName.c_str(), diskNumber);
 
-				sprintf(buf2, "%s.%.3d", _gameName.c_str(), room == 0 ? 0 : res.roomno[rtRoom][room]);
+				sprintf(buf2, "%s.%.3d", _gameName.c_str(), diskNumber);
 			} else if (_features & GF_HUMONGOUS) {
-				sprintf(buf, "%s.he%.1d", _gameName.c_str(), room == 0 ? 0 : res.roomno[rtRoom][room]);
+				sprintf(buf, "%s.he%.1d", _gameName.c_str(), diskNumber);
 			} else {
-				sprintf(buf, "%s.%.3d",  _gameName.c_str(), room == 0 ? 0 : res.roomno[rtRoom][room]);
+				sprintf(buf, "%s.%.3d",  _gameName.c_str(), diskNumber);
 				if (_gameId == GID_SAMNMAX)
-					sprintf(buf2, "%s.sm%.1d",  _gameName.c_str(), room == 0 ? 0 : res.roomno[rtRoom][room]);
+					sprintf(buf2, "%s.sm%.1d",  _gameName.c_str(), diskNumber);
 			}
 
 			encByte = (_features & GF_USE_KEY) ? 0x69 : 0;
@@ -166,7 +168,7 @@ void ScummEngine::openRoom(int room) {
 			error("Room %d not in %s", room, buf);
 			return;
 		}
-		askForDisk(buf, room == 0 ? 0 : res.roomno[rtRoom][room]);
+		askForDisk(buf, diskNumber);
 	}
 
 	do {
@@ -174,7 +176,7 @@ void ScummEngine::openRoom(int room) {
 		encByte = 0;
 		if (openResourceFile(buf, encByte))
 			break;
-		askForDisk(buf, room == 0 ? 0 : res.roomno[rtRoom][room]);
+		askForDisk(buf, diskNumber);
 	} while (1);
 
 	deleteRoomOffsets();
