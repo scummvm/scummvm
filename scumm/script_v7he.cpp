@@ -603,12 +603,25 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 			loadFlObject(obj, room);
 			break;
 		}
-	case 120: 					/* queue for load */
+	case 120:
+		// Queue load script
+		resid = pop();
+		break;
 	case 121:
+		// Queue load sound
+		resid = pop();
+		break;
 	case 122:
+		// Queue load costume
+		resid = pop();
+		break;
 	case 123:
+		// Queue load room image
+		resid = pop();
+		break;
 	case 203:
-		debug(5,"stub queueload (%d) resource %d", subOp, pop());
+		// Queue load image
+		resid = pop();
 		break;
 	case 159:
 		resid = pop();
@@ -632,7 +645,6 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 		if (objidx == -1)
 			break;
 		res.lock(rtFlObject, _objs[objidx].fl_object_index);
-		debug(0,"stub o70_resourceRoutines lock object %d", resid);
 		break;
 	case 235:
 		resid = pop();
@@ -640,7 +652,6 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 		if (objidx == -1)
 			break;
 		res.unlock(rtFlObject, _objs[objidx].fl_object_index);
-		debug(0,"stub o70_resourceRoutines unlock object %d", resid);
 		break;
 	case 239:
 		// Used in airport

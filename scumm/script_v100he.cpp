@@ -1075,7 +1075,7 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 }
 
 void ScummEngine_v100he::o100_resourceRoutines() {
-	int obj, objidx, room;
+	int objidx, room;
 
 	byte subOp = fetchScriptByte();
 
@@ -1098,9 +1098,8 @@ void ScummEngine_v100he::o100_resourceRoutines() {
 		break;
 	case 47:
 		if (_heResType == rtFlObject) {
-			obj = _heResId;
-			room= getObjectRoom(obj);
-			loadFlObject(obj, room);
+			room = getObjectRoom(_heResId);
+			loadFlObject(_heResId, room);
 		} else if (_heResType == rtCharset) {
 			loadCharset(_heResId);
 		} else {
@@ -1127,8 +1126,9 @@ void ScummEngine_v100he::o100_resourceRoutines() {
 
 		if (_heResType == rtFlObject) {
 			objidx = getObjectIndex(_heResId);
-			//assert(objidx != -1);
-			//res.lock(_heResType, objidx);
+			if (objidx == -1)
+				break;
+			res.lock(rtFlObject, _objs[objidx].fl_object_index);
 		} else {
 			res.lock(_heResType, _heResId);
 		}
@@ -1144,7 +1144,7 @@ void ScummEngine_v100he::o100_resourceRoutines() {
 		// Heap related
 		break;
 	case 136:
-		debug(5,"stub queueload (%d) resource %d", _heResType, _heResId);
+		// Queue loading
 		break;
 	case 137:
 		if (_heResType == rtScript && _heResId >= _numGlobalScripts)
@@ -1152,8 +1152,9 @@ void ScummEngine_v100he::o100_resourceRoutines() {
 
 		if (_heResType == rtFlObject) {
 			objidx = getObjectIndex(_heResId);
-			//assert(objidx != -1);
-			//res.unlock(_heResType, objidx);
+			if (objidx == -1)
+				break;
+			res.unlock(rtFlObject, _objs[objidx].fl_object_index);
 		} else {
 			res.unlock(_heResType, _heResId);
 		}
