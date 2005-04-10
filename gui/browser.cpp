@@ -29,6 +29,12 @@
 
 namespace GUI {
 
+enum {
+	kChooseCmd = 'Chos',
+	kGoUpCmd = 'GoUp'
+};
+
+
 #ifdef MACOSX
 /* On Mac OS X, use the native file selector dialog. We could do the same for
  * other operating systems.
@@ -119,11 +125,6 @@ int DirBrowserDialog::runModal() {
  * - to select the place where save games are stored
  * - others???
  */
-
-enum {
-	kChooseCmd = 'Chos',
-	kGoUpCmd = 'GoUp'
-};
 
 DirBrowserDialog::DirBrowserDialog(const char *title)
 	: Dialog(20, 10, 320 -2 * 20, 200 - 2 * 10)
