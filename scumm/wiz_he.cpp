@@ -1325,10 +1325,10 @@ void ScummEngine_v72he::displayWizComplexImage(const WizParameters *params) {
 		assert(iwiz);
 		uint8 *rmap = findWrappedBlock(MKID('RMAP'), iwiz, st, 0) ;
 		assert(rmap);
-		*(uint32 *)(rmap + 8) = TO_BE_32(0x12345678);
+		*(uint32 *)(rmap) = TO_BE_32(0x12345678);
 		while (num--) {
 			uint8 idx = *index++;
-			rmap[0xC + idx] = params->remapColor[idx];
+			rmap[4 + idx] = params->remapColor[idx];
 		}
 	}
 
@@ -1556,10 +1556,10 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 			assert(iwiz);
 			uint8 *rmap = findWrappedBlock(MKID('RMAP'), iwiz, state, 0) ;
 			assert(rmap);
-			*(uint32 *)(rmap + 8) = TO_BE_32(0x12345678);
+			*(uint32 *)(rmap) = TO_BE_32(0x12345678);
 			while (num--) {
 				uint8 idx = *index++;
-				rmap[0xC + idx] = params->remapColor[idx];
+				rmap[4 + idx] = params->remapColor[idx];
 			}
 		}
 		break;
