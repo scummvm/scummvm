@@ -783,6 +783,8 @@ protected:
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int resID);
 
+	void remapPalette(uint8 *src, uint8 *dst);
+
 	void displayWizImage(WizImage *pwi);
 	void displayWizComplexImage(const WizParameters *params);
 	void drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int xmapNum, int angle, int zoom, const Common::Rect *r, int flags, int dstResNum, int paletteNum);

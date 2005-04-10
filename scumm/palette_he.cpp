@@ -29,6 +29,49 @@
 
 namespace Scumm {
 
+void ScummEngine_v72he::remapPalette(uint8 *src, uint8 *dst) {
+	int a, b, c, eax, ebx, tmp;
+	uint8 *palPtr;
+
+	int startColor = 10;
+	int endColor = 246;
+	src += 30;
+
+	if (_heversion >= 99) {
+		palPtr = _hePalettes + 1024 + 30;
+	} else {
+		palPtr = _currentPalette + 30;
+	}
+
+	for (int j = startColor; j < endColor; j++) {
+		ebx = 0xFFFF;
+		tmp = 0xFFFF;
+
+		a = *src++;
+		b = *src++;
+		c = *src++;
+
+		uint8 *curPal = palPtr;
+
+		for (int k = startColor; k < endColor; k++) {
+			a -= *curPal++;
+			b -= *curPal++;
+			c -= *curPal++;
+
+			eax = (a * 2) + (b * 2) + (c * 2);
+
+			if (ebx == 0xFFFF || eax <= tmp) {
+				ebx = k;
+				tmp = eax;
+			}
+		}
+
+		if (ebx != 0xFFFF) {
+			dst[j] = ebx;
+		}
+	}
+}
+
 uint8 *ScummEngine_v90he::getHEPaletteIndex(int palSlot) {
 	if (palSlot) {
 		assert(palSlot >= 1 && palSlot <= _numPalettes);

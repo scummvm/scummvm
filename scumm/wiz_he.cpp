@@ -912,8 +912,8 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 			assert(rmap);
 			uint8 *rgbs = findWrappedBlock(MKID('RGBS'), dataPtr, state, 0);
 			assert(rgbs);
-			warning("drawWizImage() unhandled flag 0x2");
-			// XXX modify 'RMAP' buffer
+			remapPalette(rgbs, rmap + 4);
+			warning("drawWizImage() flag 0x2");
 		}
 		if (flags & kWIFPrint) {
 			warning("WizImage printing is unimplemented");
