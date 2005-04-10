@@ -187,9 +187,6 @@ void ScummEngine::closeRoom() {
 
 /** Delete the currently loaded room offsets. */
 void ScummEngine::deleteRoomOffsets() {
-	if (!(_features & GF_SMALL_HEADER) && !_dynamicRoomOffsets)
-		return;
-
 	for (int i = 0; i < _numRooms; i++) {
 		if (res.roomoffs[rtRoom][i] != 0xFFFFFFFF)
 			res.roomoffs[rtRoom][i] = 0;
@@ -202,13 +199,10 @@ void ScummEngine::readRoomsOffsets() {
 
 	debug(9, "readRoomOffsets()");
 
-	if (!(_features & GF_SMALL_HEADER)) {
-		if (!_dynamicRoomOffsets)
-			return;
-
-		_fileHandle->seek(16, SEEK_SET);
-	} else {
+	if (_features & GF_SMALL_HEADER) {
 		_fileHandle->seek(12, SEEK_SET);	// Directly searching for the room offset block would be more generic...
+	} else {
+		_fileHandle->seek(16, SEEK_SET);
 	}
 
 	num = _fileHandle->readByte();
@@ -289,7 +283,7 @@ void ScummEngine::readIndexFile() {
 	openRoom(0);
 
 	if (_version <= 5) {
-		/* Figure out the sizes of various resources */
+		// Figure out the sizes of various resources
 		while (!_fileHandle->eof()) {
 			blocktype = fileReadDword();
 			itemsize = _fileHandle->readUint32BE();
@@ -347,7 +341,8 @@ void ScummEngine::readIndexFile() {
 			break;
 
 		case MKID('RNAM'):
-			// Names of rooms
+			// Names of rooms. Maybe we should read them and put them
+			// into a table, for use by the debugger?
 			_fileHandle->seek(itemsize - 8, SEEK_CUR);
 			debug(9, "found RNAM block, skipping");
 			break;
@@ -991,7 +986,6 @@ void ScummEngine_v5::readMAXS(int blockSize) {
 		_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
 
 	allocateArrays();
-	_dynamicRoomOffsets = true;
 }
 
 void ScummEngine_v8::readMAXS(int blockSize) {
@@ -1023,7 +1017,6 @@ void ScummEngine_v8::readMAXS(int blockSize) {
 	_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
 
 	allocateArrays();
-	_dynamicRoomOffsets = true;
 }
 
 void ScummEngine_v7::readMAXS(int blockSize) {
@@ -1058,7 +1051,6 @@ void ScummEngine_v7::readMAXS(int blockSize) {
 	_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
 
 	allocateArrays();
-	_dynamicRoomOffsets = true;
 }
 
 void ScummEngine_v6::readMAXS(int blockSize) {
@@ -1092,7 +1084,6 @@ void ScummEngine_v6::readMAXS(int blockSize) {
 	_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
 
 	allocateArrays();
-	_dynamicRoomOffsets = true;
 }
 
 void ScummEngine::readGlobalObjects() {

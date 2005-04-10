@@ -683,7 +683,6 @@ protected:
 	int _resourceHeaderSize;
 	Common::String _gameName;	// This is the name we use for opening resource files
 	Common::String _targetName;	// This is the game the user calls it, so use for saving
-	bool _dynamicRoomOffsets;
 	byte _resourceMapper[128];
 	byte *_heV7DiskOffsets;
 	byte *_heV7RoomOffsets;

@@ -1688,7 +1688,6 @@ void ScummEngine_v99he::readMAXS(int blockSize) {
 	_numGlobalScripts = 2048;
 
 	allocateArrays();
-	_dynamicRoomOffsets = true;
 }
 
 void ScummEngine_v90he::readMAXS(int blockSize) {
@@ -1722,7 +1721,6 @@ void ScummEngine_v90he::readMAXS(int blockSize) {
 		_numGlobalScripts = 200;
 
 	allocateArrays();
-	_dynamicRoomOffsets = true;
 }
 
 void ScummEngine_v72he::readMAXS(int blockSize) {
@@ -1750,7 +1748,6 @@ void ScummEngine_v72he::readMAXS(int blockSize) {
 	_numGlobalScripts = 200;
 
 	allocateArrays();
-	_dynamicRoomOffsets = true;
 }
 
 byte *ScummEngine_v72he::getStringAddress(int i) {

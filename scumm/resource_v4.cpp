@@ -38,6 +38,7 @@ void ScummEngine_v4::readIndexFile() {
 	openRoom(0);
 
 	while (!_fileHandle->eof()) {
+		// Figure out the sizes of various resources
 		itemsize = _fileHandle->readUint32LE();
 		blocktype = _fileHandle->readUint16LE();
 		if (_fileHandle->ioFailed())
@@ -89,6 +90,8 @@ void ScummEngine_v4::readIndexFile() {
 		switch (blocktype) {
 
 		case 0x4E52:	// 'NR'
+			// Names of rooms. Maybe we should read them and put them
+			// into a table, for use by the debugger?
 			_fileHandle->seek(itemsize - 6, SEEK_CUR);
 			break;
 

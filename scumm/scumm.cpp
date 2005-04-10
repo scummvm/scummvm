@@ -774,7 +774,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_keyScriptKey = 0;
 	_keyScriptNo = 0;
 	_fileOffset = 0;
-	_dynamicRoomOffsets = false;
 	memset(_resourceMapper, 0, sizeof(_resourceMapper));
 	_lastLoadedRoom = 0;
 	_roomResource = 0;
