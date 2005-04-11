@@ -135,23 +135,16 @@ int16 scen_loadStatic(char search) {
 			ptr->pieces[i] =
 			    (Scen_PieceDesc *) game_loadExtData(pictDescId, 0,
 			    0);
-
-			ptr->pieces[i]->left = (int16)READ_LE_UINT16(&ptr->pieces[i]->left);
-			ptr->pieces[i]->right = (int16)READ_LE_UINT16(&ptr->pieces[i]->right);
-			ptr->pieces[i]->top = (int16)READ_LE_UINT16(&ptr->pieces[i]->top);
-			ptr->pieces[i]->bottom = (int16)READ_LE_UINT16(&ptr->pieces[i]->bottom);
-			
 		} else {
 			ptr->pieces[i] =
 			    (Scen_PieceDesc *)
 			    game_loadTotResource(pictDescId);
-		
-			ptr->pieces[i]->left = (int16)READ_LE_UINT16(&ptr->pieces[i]->left);
-			ptr->pieces[i]->right = (int16)READ_LE_UINT16(&ptr->pieces[i]->right);
-			ptr->pieces[i]->top = (int16)READ_LE_UINT16(&ptr->pieces[i]->top);
-			ptr->pieces[i]->bottom = (int16)READ_LE_UINT16(&ptr->pieces[i]->bottom);
-	
 		}
+
+		ptr->pieces[i]->left = (int16)READ_LE_UINT16(&ptr->pieces[i]->left);
+ 		ptr->pieces[i]->right = (int16)READ_LE_UINT16(&ptr->pieces[i]->right);
+		ptr->pieces[i]->top = (int16)READ_LE_UINT16(&ptr->pieces[i]->top);
+		ptr->pieces[i]->bottom = (int16)READ_LE_UINT16(&ptr->pieces[i]->bottom);
 
 		width = inter_load16();
 		height = inter_load16();
@@ -454,22 +447,17 @@ int16 scen_loadAnim(char search) {
 			ptr->pieces[i] =
 			    (Scen_PieceDesc *) game_loadExtData(pictDescId, 0,
 			    0);
-
-			ptr->pieces[i]->left = (int16)READ_LE_UINT16(&ptr->pieces[i]->left);
-			ptr->pieces[i]->right = (int16)READ_LE_UINT16(&ptr->pieces[i]->right);
-			ptr->pieces[i]->top = (int16)READ_LE_UINT16(&ptr->pieces[i]->top);
-			ptr->pieces[i]->bottom = (int16)READ_LE_UINT16(&ptr->pieces[i]->bottom);
-
 		} else {
 			ptr->pieces[i] =
 			    (Scen_PieceDesc *)
 			    game_loadTotResource(pictDescId);
-
-			ptr->pieces[i]->left = (int16)READ_LE_UINT16(&ptr->pieces[i]->left);
- 			ptr->pieces[i]->right = (int16)READ_LE_UINT16(&ptr->pieces[i]->right);
- 			ptr->pieces[i]->top = (int16)READ_LE_UINT16(&ptr->pieces[i]->top);
- 			ptr->pieces[i]->bottom = (int16)READ_LE_UINT16(&ptr->pieces[i]->bottom);
 		}
+
+
+ 		ptr->pieces[i]->left = (int16)READ_LE_UINT16(&ptr->pieces[i]->left);
+		ptr->pieces[i]->right = (int16)READ_LE_UINT16(&ptr->pieces[i]->right);
+ 		ptr->pieces[i]->top = (int16)READ_LE_UINT16(&ptr->pieces[i]->top);
+		ptr->pieces[i]->bottom = (int16)READ_LE_UINT16(&ptr->pieces[i]->bottom);
 
 		width = inter_load16();
 		height = inter_load16();
