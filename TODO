@@ -290,8 +290,9 @@ SCUMM
   - Add support for o80_readConfigFile (For loading map.ini details in mustard)
   - Add support for o90_unknown39 (For chase/soccer2004)
   - Add support for IMA ADPCM compression for speech files (For soccer2004)
-  - Add support for U32 code, triggered by case 2001 of kernelGet/Set (For footdemo/soccer2004)
-    The U32 code seems to control the players movements on field.
+  - Add support for U32 library calls, triggered by case 2001 of o90_kernelGetFunctions/o90_kernelSetFunctions
+    The U32 code controls the players movements on field.of footdemo/soccer2004
+    The U32 code controls the racing segment at end of puttrace
   - Fix actor parts disappearing in pajama2/racedemo
     The decflag in akos_drawLimb() isn't been set correctly
   - Fix cursor transparency in puzzle of pajama2 (Related to floodState support?)
