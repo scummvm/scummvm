@@ -26,10 +26,10 @@ namespace Gob {
 
 #pragma START_PACK_STRUCTS
 typedef struct Scen_PieceDesc {
-	int16 left;
-	int16 right;
-	int16 top;
-	int16 bottom;
+	int16 left;		//NOTE:
+	int16 right;		//These are stored in Little Endian format
+	int16 top;		//And should be converted by client code when accessed
+	int16 bottom;		//i.e. use FROM_LE_16()
 } GCC_PACK Scen_PieceDesc;
 
 typedef struct Scen_StaticPlane {
