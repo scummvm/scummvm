@@ -405,18 +405,15 @@ void map_loadItemToObject(void) {
 	int16 count;
 	int16 i;
 
-	map_loadDataFromAvo((char *)&flag, 2);
-	flag = FROM_LE_16(flag);
+	flag = map_loadFromAvo_LE_UINT16();
 	if (flag == 0)
 		return;
 
 	map_avoDataPtr += 1456;
-	map_loadDataFromAvo((char *)&count, 2);
-	count = FROM_LE_16(count);
+	count = map_loadFromAvo_LE_UINT16();
 	for (i = 0; i < count; i++) {
 		map_avoDataPtr += 20;
-		map_loadDataFromAvo((char *)(&gob_itemToObject[i]), 2);
-		gob_itemToObject[i] = FROM_LE_16(gob_itemToObject[i]);
+		gob_itemToObject[i] = map_loadFromAvo_LE_UINT16();
 		map_avoDataPtr += 5;
 	}
 }
@@ -462,10 +459,8 @@ void map_loadMapObjects(char *avjFile) {
 		}
 
 		for (i = 0; i < 40; i++) {
-			map_loadDataFromAvo((char *)(&map_wayPoints[i].x), 2);
-			map_wayPoints[i].x = FROM_LE_16(map_wayPoints[i].x);
-			map_loadDataFromAvo((char *)(&map_wayPoints[i].y), 2);
-			map_wayPoints[i].y = FROM_LE_16(map_wayPoints[i].y);
+			map_wayPoints[i].x = map_loadFromAvo_LE_UINT16();
+			map_wayPoints[i].y = map_loadFromAvo_LE_UINT16();
 		}
 		map_loadDataFromAvo((char *)map_itemPoses, szMap_ItemPos * 20);
 	} else {
@@ -480,23 +475,19 @@ void map_loadMapObjects(char *avjFile) {
 	map_avoDataPtr += 20;
 
 	for (i = 0; i < 3; i++) {
-		map_loadDataFromAvo((char *)&tmp, 2);
-		tmp = FROM_LE_16(tmp);
+		tmp = map_loadFromAvo_LE_UINT16();
 		map_avoDataPtr += tmp * 14;
 	}
 
-	map_loadDataFromAvo((char *)&soundCount, 2);
-	soundCount = FROM_LE_16(soundCount);
+	soundCount = map_loadFromAvo_LE_UINT16();
 	savedPtr = map_avoDataPtr;
 
 	map_avoDataPtr += 14 * soundCount;
 	map_avoDataPtr += 4;
 	map_avoDataPtr += 24;
 
-	map_loadDataFromAvo((char *)&count2, 2);
-	count2 = FROM_LE_16(count2);
-	map_loadDataFromAvo((char *)&count3, 2);
-	count3 = FROM_LE_16(count3);
+	count2 = map_loadFromAvo_LE_UINT16();
+	count3 = map_loadFromAvo_LE_UINT16();
 
 	savedPtr2 = map_avoDataPtr;
 	map_avoDataPtr += count2 * 8;
@@ -504,8 +495,7 @@ void map_loadMapObjects(char *avjFile) {
 	savedPtr3 = map_avoDataPtr;
 	map_avoDataPtr += count3 * 8;
 
-	map_loadDataFromAvo((char *)&gob_gobsCount, 2);
-	gob_gobsCount = FROM_LE_16(gob_gobsCount);
+	gob_gobsCount = map_loadFromAvo_LE_UINT16();
 	for (i = 0; i < gob_gobsCount; i++) {
 		gob_goblins[i] = (Gob_Object *)malloc(sizeof(Gob_Object));
 
