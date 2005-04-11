@@ -1445,7 +1445,7 @@ void ScummEngine_v90he::fillWizRect(const WizParameters *params) {
 		uint32 iw = READ_LE_UINT32(wizh + 0x4);
 		uint32 ih = READ_LE_UINT32(wizh + 0x8);
 		assert(ic == 0 || ic == 2 || ic == 3);	
-		Common::Rect r1(iw, ih);
+		Common::Rect r1(iw + 1, ih + 1);
 		if (params->processFlags & kWPFClipBox) {
 			if (!r1.intersects(params->box)) {
 				return;
@@ -1455,11 +1455,9 @@ void ScummEngine_v90he::fillWizRect(const WizParameters *params) {
 		if (params->processFlags & kWPFClipBox2) {
 			r1.clip(params->box2);
 		}
-		uint8 color;
+		uint8 color = VAR(93);
 		if (params->processFlags & kWPFFillColor) {
 			color = params->fillColor;
-		} else {
-			color = VAR(93);
 		}
 		uint8 *wizd = findWrappedBlock(MKID('WIZD'), dataPtr, state, 0);
 		assert(wizd);
@@ -1469,6 +1467,94 @@ void ScummEngine_v90he::fillWizRect(const WizParameters *params) {
 		while (dy--) {
 			memset(wizd, color, dx);
 			wizd += iw;
+		}
+	}
+}
+
+void ScummEngine_v90he::fillWizParallelogram(const WizParameters *params) {	
+	if (params->processFlags & kWPFClipBox2) {
+		int state = 0;
+		if (params->processFlags & kWPFNewState) {
+			state = params->img.state;
+		}
+		uint8 *dataPtr = getResourceAddress(rtImage, params->img.resNum);
+		if (dataPtr) {
+			uint8 *wizh = findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
+			assert(wizh);
+			uint32 ic = READ_LE_UINT32(wizh + 0x0);
+			uint32 iw = READ_LE_UINT32(wizh + 0x4);
+			uint32 ih = READ_LE_UINT32(wizh + 0x8);
+			assert(ic == 0 || ic == 2 || ic == 3);
+			Common::Rect r1(iw + 1, ih + 1);
+			if (params->processFlags & kWPFClipBox) {
+				if (!r1.intersects(params->box)) {
+					return;
+				}
+				r1.clip(params->box);
+			}
+			uint8 color = VAR(93);
+			if (params->processFlags & kWPFFillColor) {
+				color = params->fillColor;
+			}
+			uint8 *wizd = findWrappedBlock(MKID('WIZD'), dataPtr, state, 0);
+			assert(wizd);
+			int x1 = params->box2.left;
+			int y1 = params->box2.top;
+			int x2 = params->box2.right;
+			int y2 = params->box2.bottom;
+			
+			int dx = x2 - x1;
+			int incx = 0;
+			if (dx > 0) {
+				incx = 1;
+			} else if (dx < 0) {
+				incx = -1;
+			}
+			int dy = y2 - y1;
+			int incy = 0;
+			if (dy > 0) {
+				incy = 1;
+			} else if (dy < 0) {
+				incy = -1;
+			}
+			
+			if (r1.contains(x1, y1)) {
+				*(wizd + y1 * iw + x1) = color;
+			}
+			
+			if (dx >= dy) {
+				int step1_y = (dy - dx) * 2;
+				int step2_y = dy * 2;
+				int accum_y = dy * 2 - dx;
+				while (x1 != x2) {
+					if (accum_y <= 0) {
+						accum_y += step2_y;
+					} else {
+						accum_y += step1_y;
+						y1 += incy;
+					}
+					x1 += incx;
+					if (r1.contains(x1, y1)) {
+						*(wizd + y1 * iw + x1) = color;
+					}
+				}
+			} else {
+				int step1_x = (dx - dy) * 2;
+				int step2_x = dx * 2;
+				int accum_x = dx * 2 - dy;
+				while (y1 != y2) {
+					if (accum_x <= 0) {
+						accum_x += step2_x;
+					} else {
+						accum_x += step1_x;
+						x1 += incx;
+					}
+					y1 += incy;
+					if (r1.contains(x1, y1)) {
+						*(wizd + y1 * iw + x1) = color;
+					}					
+				}
+			}
 		}
 	}
 }
@@ -1575,8 +1661,7 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 		fillWizRect(params);
 		break;
 	case 10:
-		// Used in footdemo
-		// TODO
+		fillWizParallelogram(params);
 		break;
 	default:
 		error("Unhandled processWizImage mode %d", params->processMode);

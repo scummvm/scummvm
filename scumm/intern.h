@@ -940,6 +940,7 @@ protected:
 
 	void createWizEmptyImage(const WizParameters *params);
 	void fillWizRect(const WizParameters *params);
+	void fillWizParallelogram(const WizParameters *params);
 	void processWizImage(const WizParameters *params);
 	int getWizImageStates(int resnum);	
 	int isWizPixelNonTransparent(int resnum, int state, int x, int y, int flags);
