@@ -57,6 +57,7 @@ Mouse::Mouse(Sword2Engine *vm) {
 	_vm = vm;
 
 	setPos(0, 0);
+	resetMouseList();
 
 	_mouseTouching = 0;
 	_oldMouseTouching = 0;
