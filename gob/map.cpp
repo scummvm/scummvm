@@ -601,6 +601,7 @@ void map_loadMapObjects(char *avjFile) {
 	}
 
 	map_loadDataFromAvo((char *)&gob_objCount, 2);
+	gob_objCount = FROM_LE_16(gob_objCount);
 	for (i = 0; i < gob_objCount; i++) {
 		gob_objects[i] =
 		    (Gob_Object *) malloc(sizeof(Gob_Object));
@@ -674,10 +675,11 @@ void map_loadMapObjects(char *avjFile) {
 	gob_objects[10]->unk14 = 1;
 
 	map_loadDataFromAvo((char *)&state, 2);
+	state = FROM_LE_16(state);
 	for (i = 0; i < state; i++) {
 		map_avoDataPtr += 30;
 
-		map_loadDataFromAvo((char *)&flag, 4);
+		map_loadDataFromAvo((char *)&flag, 4);	// FIXME: Endian conversion needed?
 		map_avoDataPtr += 56;
 
 		if (flag != 0)
