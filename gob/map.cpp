@@ -394,6 +394,12 @@ void map_loadDataFromAvo(char *dest, int16 size) {
 	map_avoDataPtr += size;
 }
 
+uint16 map_loadFromAvo_LE_UINT16() {
+	uint16 tmp = READ_LE_UINT16(map_avoDataPtr);
+	map_avoDataPtr += 2;
+	return tmp;
+}
+
 void map_loadItemToObject(void) {
 	int16 flag;
 	int16 count;
@@ -533,21 +539,26 @@ void map_loadMapObjects(char *avjFile) {
 				if (gob_goblins[i]->stateMach[state][col] == 0)
 					continue;
 
-				gob_goblins[i]->stateMach[state][col] = (Gob_State *)malloc(sizeof(Gob_State));
+				Gob_State *tmpState = (Gob_State *)malloc(sizeof(Gob_State));
+				gob_goblins[i]->stateMach[state][col] = tmpState;
 
-				map_loadDataFromAvo((char *)gob_goblins[i]->stateMach[state][col], 4);
+				tmpState->animation = map_loadFromAvo_LE_UINT16();
+				tmpState->layer = map_loadFromAvo_LE_UINT16();
 				map_avoDataPtr += 8;
-				map_loadDataFromAvo(((char *)gob_goblins[i]->stateMach[state][col]) + 4, 4);
+				tmpState->unk0 = map_loadFromAvo_LE_UINT16();
+				tmpState->unk1 = map_loadFromAvo_LE_UINT16();
 
 				map_avoDataPtr += 2;
 				if (READ_LE_UINT32(map_avoDataPtr) != 0) {
 					map_avoDataPtr += 4;
-					map_loadDataFromAvo((char *)(&gob_goblins[i]->stateMach[state][col]->sndItem), 2);
+					tmpState->sndItem = map_loadFromAvo_LE_UINT16();
 				} else {
 					map_avoDataPtr += 6;
-					gob_goblins[i]->stateMach[state][col]->sndItem = -1;
+					tmpState->sndItem = -1;
 				}
-				map_loadDataFromAvo((char *)(&gob_goblins[i]->stateMach[state][col]->freq), 6);
+				tmpState->freq = map_loadFromAvo_LE_UINT16();
+				tmpState->repCount = map_loadFromAvo_LE_UINT16();
+				tmpState->unk2 = map_loadFromAvo_LE_UINT16();
 			}
 		}
 	}
@@ -595,8 +606,7 @@ void map_loadMapObjects(char *avjFile) {
 		pState->unk2 = 0;
 	}
 
-	map_loadDataFromAvo((char *)&gob_objCount, 2);
-	gob_objCount = FROM_LE_16(gob_objCount);
+	gob_objCount = map_loadFromAvo_LE_UINT16();
 	for (i = 0; i < gob_objCount; i++) {
 		gob_objects[i] =
 		    (Gob_Object *) malloc(sizeof(Gob_Object));
@@ -626,21 +636,26 @@ void map_loadMapObjects(char *avjFile) {
 				if (gob_objects[i]->stateMach[state][col] == 0)
 					continue;
 
-				gob_objects[i]->stateMach[state][col] = (Gob_State *)malloc(sizeof(Gob_State));
+				Gob_State *tmpState = (Gob_State *)malloc(sizeof(Gob_State));
+				gob_objects[i]->stateMach[state][col] = tmpState;
 
-				map_loadDataFromAvo((char *)gob_objects[i]->stateMach[state][col], 4);
+				tmpState->animation = map_loadFromAvo_LE_UINT16();
+				tmpState->layer = map_loadFromAvo_LE_UINT16();
 				map_avoDataPtr += 8;
-				map_loadDataFromAvo(((char *)gob_objects[i]->stateMach[state][col]) + 4, 4);
+				tmpState->unk0 = map_loadFromAvo_LE_UINT16();
+				tmpState->unk1 = map_loadFromAvo_LE_UINT16();
 
 				map_avoDataPtr += 2;
 				if (READ_LE_UINT32(map_avoDataPtr) != 0) {
 					map_avoDataPtr += 4;
-					map_loadDataFromAvo((char *)(&gob_objects[i]->stateMach[state][col]->sndItem), 2);
+					tmpState->sndItem = map_loadFromAvo_LE_UINT16();
 				} else {
 					map_avoDataPtr += 6;
-					gob_objects[i]->stateMach[state][col]->sndItem = -1;
+					tmpState->sndItem = -1;
 				}
-				map_loadDataFromAvo((char *)(&gob_objects[i]->stateMach[state][col]->freq), 6);
+				tmpState->freq = map_loadFromAvo_LE_UINT16();
+				tmpState->repCount = map_loadFromAvo_LE_UINT16();
+				tmpState->unk2 = map_loadFromAvo_LE_UINT16();
 			}
 		}
 
@@ -669,8 +684,7 @@ void map_loadMapObjects(char *avjFile) {
 	gob_objects[10]->type = 1;
 	gob_objects[10]->unk14 = 1;
 
-	map_loadDataFromAvo((char *)&state, 2);
-	state = FROM_LE_16(state);
+	state = map_loadFromAvo_LE_UINT16();
 	for (i = 0; i < state; i++) {
 		map_avoDataPtr += 30;
 
