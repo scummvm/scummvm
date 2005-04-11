@@ -77,8 +77,8 @@ struct SpriteInfo {
 	int32 delayAmount;
 	int32 field_7C;
 	int32 field_80;
+	int32 field_84;
 	int32 classFlags;
-	int32 field_88;
 	int32 field_8C;
 	int32 field_90;
 	int32 field_94;

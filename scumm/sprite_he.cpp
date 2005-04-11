@@ -372,13 +372,21 @@ int ScummEngine_v90he::spriteInfoGet_field_80(int spriteId) {
 	return _spriteTable[spriteId].field_80;
 }
 
-int ScummEngine_v90he::spriteInfoGet_field_88(int spriteId, int type) {
+int ScummEngine_v90he::spriteInfoGet_field_8C_90(int spriteId, int type) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	if (type == 0x7B)
-		return _spriteTable[spriteId].field_88;
-	else
-		return 0;
+	// XXX U32 related check
+
+	switch(type) {
+	case 0x7B:
+		return _spriteTable[spriteId].field_8C;
+	case 0x7D:
+		return _spriteTable[spriteId].field_90;
+	case 0x7E:
+		return _spriteTable[spriteId].delayCount;
+	default:
+		error("spriteInfoGet_field_8C_90: Invalid type %d", type);
+	}
 }
 
 void ScummEngine_v90he::getSpriteImageDim(int spriteId, int32 &w, int32 &h) {
@@ -709,12 +717,6 @@ void ScummEngine_v90he::spriteInfoSet_delay(int spriteId, int value) {
 	_spriteTable[spriteId].delayCount = value;
 }
 
-void ScummEngine_v90he::spriteInfoSet_setClassFlags(int spriteId, int value) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
-	
-	_spriteTable[spriteId].classFlags = value;
-}
-
 void ScummEngine_v90he::spriteInfoSet_setClassFlag(int spriteId, int classId, int toggle) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 	checkRange(32, 1, classId, "class %d out of range in statement");
@@ -732,12 +734,35 @@ void ScummEngine_v90he::spriteInfoSet_resetClassFlags(int spriteId) {
 	_spriteTable[spriteId].classFlags = 0;
 }
 
-void ScummEngine_v90he::spriteInfoSet_field_88(int spriteId, int type, int value) {
+void ScummEngine_v90he::spriteInfoSet_field_84(int spriteId, int value) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	if (type == 0x7B) {
-		_spriteTable[spriteId].field_88 = value;
+	_spriteTable[spriteId].field_84 = value;
+}
+
+void ScummEngine_v90he::spriteInfoSet_field_8C_90(int spriteId, int type, int value) {
+	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	int delay;
+
+	// XXX U32 related check
+
+	switch(type) {
+	case 0x7B:
+		_spriteTable[spriteId].field_8C = value;
 		_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
+		break;
+	case 0x7D:
+		_spriteTable[spriteId].field_90 = value;
+		_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
+		break;
+	case 0x7E:
+		delay = MAX(0, value);
+		delay = MIN(value, _spriteTable[spriteId].delayAmount);
+
+		_spriteTable[spriteId].delayCount = value;
+		break;
+	default:
+		error("spriteInfoSet_field_8C_90: Invalid value %d", type);
 	}
 }
 
@@ -767,7 +792,9 @@ void ScummEngine_v90he::spriteInfoSet_resetSprite(int spriteId) {
 	_spriteTable[spriteId].field_7C = 0;
 	_spriteTable[spriteId].field_80 = 0;
 	_spriteTable[spriteId].zorderPriority = 0;
-	_spriteTable[spriteId].field_88 = 0;
+	_spriteTable[spriteId].field_84 = 0;
+	_spriteTable[spriteId].field_8C = 0;
+	_spriteTable[spriteId].field_90 = 0;
 }
 
 void ScummEngine_v90he::spriteAddImageToList(int spriteId, int imageNum, int *spriteIdptr) {
@@ -1394,8 +1421,8 @@ void ScummEngine_v90he::saveOrLoadSpriteData(Serializer *s, uint32 savegameVersi
 		MKLINE(SpriteInfo, delayAmount, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, field_7C, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, field_80, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, field_84, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, classFlags, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, field_88, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, field_8C, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, field_90, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, field_94, sleInt32, VER(48)),

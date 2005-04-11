@@ -1726,7 +1726,6 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 	int args[16];
 	int spriteId, n;
 	int32 tmp[2];
-	static int storedFields[2];
 	byte string[80];
 
 	byte subOp = fetchScriptByte();
@@ -1889,9 +1888,16 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			spriteInfoSet_resetSprite(spriteId);
 		break;
 	case 54:
-		// TODO
-		pop();
-		pop();
+		args[1] = pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_field_8C_90(spriteId, args[0], args[1]);
 		break;
 	case 57:
 		args[0] = pop();
@@ -2003,7 +2009,6 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++) {
 			spriteInfoGet_dx_dy(spriteId, tmp[0], tmp[1]);
-			storedFields[0] = tmp[0];
 			spriteInfoSet_dx_dy(spriteId, args[0], tmp[1]);
 		}
 		break;
@@ -2017,7 +2022,6 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++) {
 			spriteInfoGet_dx_dy(spriteId, tmp[0], tmp[1]);
-			storedFields[1] = tmp[1];
 			spriteInfoSet_dx_dy(spriteId, tmp[0], args[0]);
 		}
 		break;
@@ -2053,7 +2057,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_setClassFlags(spriteId, args[0]);
+			spriteInfoSet_field_84(spriteId, args[0]);
 		break;
 	case 89:
 		if (_curSpriteId > _curMaxSpriteId)
@@ -2063,7 +2067,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_resetClassFlags(spriteId);
+			spriteInfoSet_field_84(spriteId, 0);
 		break;
 	default:
 		error("o100_setSpriteInfo: Unknown case %d", subOp);
@@ -2288,7 +2292,7 @@ void ScummEngine_v100he::o100_getSpriteGroupInfo() {
 			push(0);
 		break;
 	case 54:
-		// TODO
+		// TODO: U32 related
 		pop();
 		pop();
 		push(0);
@@ -2613,10 +2617,12 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 			push(0);
 		break;
 	case 54:
-		// TODO
-		pop();
-		pop();
-		push(0);
+		flags = pop();
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_field_8C_90(spriteId, flags));
+		else
+			push(0);
 		break;
 	case 57:
 		spriteId = pop();

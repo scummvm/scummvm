@@ -969,7 +969,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		flags = pop();
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_field_88(spriteId, flags));
+			push(spriteInfoGet_field_8C_90(spriteId, flags));
 		else
 			push(0);
 		break;
@@ -1284,7 +1284,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_field_88(spriteId, args[0], args[1]);
+			spriteInfoSet_field_8C_90(spriteId, args[0], args[1]);
 		break;
 	case 106: // HE 99+
 		args[0] = pop();
