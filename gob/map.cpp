@@ -523,7 +523,6 @@ void map_loadMapObjects(char *avjFile) {
 		map_avoDataPtr += 2;
 
 		gob_goblins[i]->realStateMach = gob_goblins[i]->stateMach;
-
 		for (state = 0; state < 40; state++) {
 			for (col = 0; col < 6; col++) {
 				if (gob_goblins[i]->stateMach[state][col] == 0)
@@ -678,7 +677,7 @@ void map_loadMapObjects(char *avjFile) {
 	for (i = 0; i < state; i++) {
 		map_avoDataPtr += 30;
 
-		map_loadDataFromAvo((char *)&flag, 4);	// FIXME: Endian conversion needed?
+		map_loadDataFromAvo((char *)&flag, 4);
 		map_avoDataPtr += 56;
 
 		if (flag != 0)
