@@ -117,6 +117,14 @@ int16 scen_loadStatic(char search) {
 	for (i = 0; i < ptr->layersCount; i++) {
 		offset = (int16)READ_LE_UINT16(&((int16 *)dataPtr)[i]);
 		ptr->layers[i] = (Scen_StaticLayer *)(dataPtr + offset - 2);
+		
+		ptr->layers[i]->planeCount = (int16)READ_LE_UINT16(&ptr->layers[i]->planeCount);
+
+		for (int j = 0; j < ptr->layers[i]->planeCount; ++j) {
+			ptr->layers[i]->planes[j].destX = (int16)READ_LE_UINT16(&ptr->layers[i]->planes[j].destX);
+			ptr->layers[i]->planes[j].destY = (int16)READ_LE_UINT16(&ptr->layers[i]->planes[j].destY);
+		}
+		
 		ptr->layers[i]->backResId = (int16)READ_LE_UINT16(backsPtr);
 		backsPtr++;
 	}
@@ -127,10 +135,22 @@ int16 scen_loadStatic(char search) {
 			ptr->pieces[i] =
 			    (Scen_PieceDesc *) game_loadExtData(pictDescId, 0,
 			    0);
+
+			ptr->pieces[i]->left = (int16)READ_LE_UINT16(&ptr->pieces[i]->left);
+			ptr->pieces[i]->right = (int16)READ_LE_UINT16(&ptr->pieces[i]->right);
+			ptr->pieces[i]->top = (int16)READ_LE_UINT16(&ptr->pieces[i]->top);
+			ptr->pieces[i]->bottom = (int16)READ_LE_UINT16(&ptr->pieces[i]->bottom);
+			
 		} else {
 			ptr->pieces[i] =
 			    (Scen_PieceDesc *)
 			    game_loadTotResource(pictDescId);
+		
+			ptr->pieces[i]->left = (int16)READ_LE_UINT16(&ptr->pieces[i]->left);
+			ptr->pieces[i]->right = (int16)READ_LE_UINT16(&ptr->pieces[i]->right);
+			ptr->pieces[i]->top = (int16)READ_LE_UINT16(&ptr->pieces[i]->top);
+			ptr->pieces[i]->bottom = (int16)READ_LE_UINT16(&ptr->pieces[i]->bottom);
+	
 		}
 
 		width = inter_load16();
@@ -419,6 +439,13 @@ int16 scen_loadAnim(char search) {
 	for (i = 0; i < ptr->layersCount; i++) {
 		offset = (int16)READ_LE_UINT16(&((int16 *)dataPtr)[i]);
 		ptr->layers[i] = (Scen_AnimLayer *) (dataPtr + offset - 2);
+
+		ptr->layers[i]->unknown0 = (int16)READ_LE_UINT16(&ptr->layers[i]->unknown0);
+		ptr->layers[i]->posX = (int16)READ_LE_UINT16(&ptr->layers[i]->posX);
+		ptr->layers[i]->posY = (int16)READ_LE_UINT16(&ptr->layers[i]->posY);
+		ptr->layers[i]->animDeltaX = (int16)READ_LE_UINT16(&ptr->layers[i]->animDeltaX);
+		ptr->layers[i]->animDeltaY = (int16)READ_LE_UINT16(&ptr->layers[i]->animDeltaY);
+		ptr->layers[i]->framesCount = (int16)READ_LE_UINT16(&ptr->layers[i]->framesCount);
 	}
 
 	for (i = 0; i < picsCount; i++) {
@@ -427,10 +454,21 @@ int16 scen_loadAnim(char search) {
 			ptr->pieces[i] =
 			    (Scen_PieceDesc *) game_loadExtData(pictDescId, 0,
 			    0);
+
+			ptr->pieces[i]->left = (int16)READ_LE_UINT16(&ptr->pieces[i]->left);
+			ptr->pieces[i]->right = (int16)READ_LE_UINT16(&ptr->pieces[i]->right);
+			ptr->pieces[i]->top = (int16)READ_LE_UINT16(&ptr->pieces[i]->top);
+			ptr->pieces[i]->bottom = (int16)READ_LE_UINT16(&ptr->pieces[i]->bottom);
+
 		} else {
 			ptr->pieces[i] =
 			    (Scen_PieceDesc *)
 			    game_loadTotResource(pictDescId);
+
+			ptr->pieces[i]->left = (int16)READ_LE_UINT16(&ptr->pieces[i]->left);
+ 			ptr->pieces[i]->right = (int16)READ_LE_UINT16(&ptr->pieces[i]->right);
+ 			ptr->pieces[i]->top = (int16)READ_LE_UINT16(&ptr->pieces[i]->top);
+ 			ptr->pieces[i]->bottom = (int16)READ_LE_UINT16(&ptr->pieces[i]->bottom);
 		}
 
 		width = inter_load16();
