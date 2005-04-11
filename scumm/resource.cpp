@@ -348,13 +348,25 @@ void ScummEngine::readIndexFile() {
 
 		case MKID('RNAM'):
 			// Names of rooms. Maybe we should put them into a table, for use by the debugger?
-			for (int room; (room = _fileHandle->readByte()); ) {
-				char buf[10];
-				_fileHandle->read(buf, 9);
-				buf[9] = 0;
-				for (i = 0; i < 9; i++)
-					buf[i] ^= 0xFF;
-				debug(5, "Room %d: '%s'\n", room, buf);
+			if (_heversion >= 80) {
+				for (int room; (room = _fileHandle->readUint16LE()); ) {
+					char buf[20];
+					i = 0;
+					for (byte s; (s = _fileHandle->readByte()); ) {
+						buf[i++] = s;
+					}
+					buf[i] = 0;
+					debug(5, "Room %d: '%s'", room, buf);
+				}
+			} else {
+				for (int room; (room = _fileHandle->readByte()); ) {
+					char buf[10];
+					_fileHandle->read(buf, 9);
+					buf[9] = 0;
+					for (i = 0; i < 9; i++)
+						buf[i] ^= 0xFF;
+					debug(5, "Room %d: '%s'", room, buf);
+				}
 			}
 			break;
 		
