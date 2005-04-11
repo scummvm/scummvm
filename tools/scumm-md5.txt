@@ -1,5 +1,9 @@
 Maniac Mansion
 	V1	DOS	en	7f45ddd6dbfbf8f80c0c0efea4c295bc	maniac
+	V1.5	NES	se	22d07d6c386c9c25aca5dac2a0c0d94b	maniac
+	V1.5	NES	en	d8d07efcb88f396bee0b402b10c3b1c9	maniac
+	V1.5	NES	en	3905799e081b80a61d4460b7b733c206	maniac
+	V1.5	NES	fr	81bbfa181184cb494e7a81dcfa94fbd9	maniac
 	V2	DOS	en	624cdb93654667c869d204a64af7e57f	maniac	Kirben, Andrea Petrucci
 	V2 (alt?)	DOS	en	b250d0f9cc83f80ced56fe11a4fb057c	maniac	Andrea Petrucci
 	V2	DOS	de	183d7464902d40d00800e8ee1f04117c	maniac
@@ -110,9 +114,7 @@ The Secret of Monkey Island
 	CD	DOS	es	f049e38c1f8302b5db6170f1872af89a	monkey	Andrej Sinicyn, Andrea Petrucci
 	CD	DOS	it	da6269b18fcb08189c0aa9c95533cce2	monkey	Andrej Sinicyn, Andrea Petrucci
 	CD	DOS	fr	aa8a0cb65f3afbbe2c14c3f9f92775a3	monkey	Andrej Sinicyn, Andrea Petrucci
-
-	-	DOS	fr	aa8a0cb65f3afbbe2c14c3f9f92775a3	monkey1	Nicolas Sauz&egrave;de
-	-	Mac	en	2ccd8891ce4d3f1a334d21bff6a88ca2	monkey1	Lars N&aelig;sbye Christensen
+	-	Mac	en	2ccd8891ce4d3f1a334d21bff6a88ca2	monkey	Lars N&aelig;sbye Christensen
 	-	SEGA	en	c13225cb1bbd3bc9fe578301696d8021	game
 
 	FM-TOWNS	FM-TOWNS	en	8eb84cee9b429314c7f0bdcf560723eb	monkey	Paul Priest, Andrea Petrucci
