@@ -141,11 +141,6 @@ int16 scen_loadStatic(char search) {
 			    game_loadTotResource(pictDescId);
 		}
 
-		ptr->pieces[i]->left = (int16)READ_LE_UINT16(&ptr->pieces[i]->left);
- 		ptr->pieces[i]->right = (int16)READ_LE_UINT16(&ptr->pieces[i]->right);
-		ptr->pieces[i]->top = (int16)READ_LE_UINT16(&ptr->pieces[i]->top);
-		ptr->pieces[i]->bottom = (int16)READ_LE_UINT16(&ptr->pieces[i]->bottom);
-
 		width = inter_load16();
 		height = inter_load16();
 		sprResId = inter_load16();
@@ -256,10 +251,10 @@ void scen_renderStatic(int16 scenery, int16 layer) {
 
 			draw_destSpriteX = planePtr->destX;
 			draw_destSpriteY = planePtr->destY;
-			left = ptr->pieces[pictIndex][pieceIndex].left;
-			right = ptr->pieces[pictIndex][pieceIndex].right;
-			top = ptr->pieces[pictIndex][pieceIndex].top;
-			bottom = ptr->pieces[pictIndex][pieceIndex].bottom;
+			left = FROM_LE_16(ptr->pieces[pictIndex][pieceIndex].left);
+			right = FROM_LE_16(ptr->pieces[pictIndex][pieceIndex].right);
+			top = FROM_LE_16(ptr->pieces[pictIndex][pieceIndex].top);
+			bottom = FROM_LE_16(ptr->pieces[pictIndex][pieceIndex].bottom);
 
 			draw_sourceSurface =
 			    scen_staticPictToSprite[scenery * 7 + pictIndex];
@@ -325,10 +320,10 @@ void scen_updateStatic(int16 orderFrom) {
 			draw_destSpriteX = planePtr->destX;
 			draw_destSpriteY = planePtr->destY;
 
-			left = pictPtr[pictIndex][pieceIndex].left;
-			right = pictPtr[pictIndex][pieceIndex].right;
-			top = pictPtr[pictIndex][pieceIndex].top;
-			bottom = pictPtr[pictIndex][pieceIndex].bottom;
+			left = FROM_LE_16(pictPtr[pictIndex][pieceIndex].left);
+			right = FROM_LE_16(pictPtr[pictIndex][pieceIndex].right);
+			top = FROM_LE_16(pictPtr[pictIndex][pieceIndex].top);
+			bottom = FROM_LE_16(pictPtr[pictIndex][pieceIndex].bottom);
 
 			if (draw_destSpriteX > scen_toRedrawRight)
 				continue;
@@ -452,12 +447,6 @@ int16 scen_loadAnim(char search) {
 			    (Scen_PieceDesc *)
 			    game_loadTotResource(pictDescId);
 		}
-
-
- 		ptr->pieces[i]->left = (int16)READ_LE_UINT16(&ptr->pieces[i]->left);
-		ptr->pieces[i]->right = (int16)READ_LE_UINT16(&ptr->pieces[i]->right);
- 		ptr->pieces[i]->top = (int16)READ_LE_UINT16(&ptr->pieces[i]->top);
-		ptr->pieces[i]->bottom = (int16)READ_LE_UINT16(&ptr->pieces[i]->bottom);
 
 		width = inter_load16();
 		height = inter_load16();
@@ -602,10 +591,10 @@ void scen_updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 
 		pictIndex = (pictIndex & 15) - 1;
 
-		left = pictPtr[pictIndex][pieceIndex].left;
-		right = pictPtr[pictIndex][pieceIndex].right;
-		top = pictPtr[pictIndex][pieceIndex].top;
-		bottom = pictPtr[pictIndex][pieceIndex].bottom;
+		left = FROM_LE_16(pictPtr[pictIndex][pieceIndex].left);
+		right = FROM_LE_16(pictPtr[pictIndex][pieceIndex].right);
+		top = FROM_LE_16(pictPtr[pictIndex][pieceIndex].top);
+		bottom = FROM_LE_16(pictPtr[pictIndex][pieceIndex].bottom);
 
 		if (flags & 2) {
 			if (destX < anim_animAreaLeft) {
