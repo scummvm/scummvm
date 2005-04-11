@@ -267,7 +267,7 @@ void OSystem_SDL::initSize(uint w, uint h, int overlayScale) {
 
 	if (overlayScale != -1) {
 		_overlayScale = overlayScale;
-		if (w != 320)
+		if (w != 320 && w != 256) // 256 is for MM NES
 			_overlayScale = 1;
 
 		_overlayWidth = w * _overlayScale;
