@@ -2331,7 +2331,7 @@ void ScummEngine_v90he::o90_kernelGetFunctions() {
 		break;
 	case 2001:
 		// Used in football
-		warning("o90_kernelGetFunctions: U32 code (Num %d, args1 %d args 2 %d)", num, args[1], args[2]);
+		debug(0, "o90_kernelGetFunctions: U32 code %d (args %d)", args[1], num - 2);
 		push(0);
 		break;
 	default:
@@ -2387,7 +2387,7 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 		break;
 	case 2001:
 		// Used in SoccerMLS/Soccer2004
-		warning("o90_kernelSetFunctions: U32 code (Num %d, args1 %d args 2 %d)", num, args[1], args[2]);
+		debug(0, "o90_kernelSetFunctions: U32 code %d (args %d)", args[1], num - 2);
 		break;
 	default:
 		error("o90_kernelSetFunctions: default case %d (param count %d)", args[0], num);
