@@ -255,7 +255,6 @@ SCUMM
 * Figure out how to extract resources from Turbografx/PC Engine version of Loom
 * Indiana Jones and the Last Crusade EGA: Add inventory support for Macintosh version
 * Loom EGA: Add support for music and sound effects in Macintosh version
-* Add support for NES version of Maniac Mansion
 * Add support for handling Kanji in FM-Towns games (foreground is rendered on a
   second plane at 640x480), text uses Shift_JIS encoding
   [implementation now that currently depends on font rom, not needing the rom
@@ -283,7 +282,7 @@ SCUMM
   - Add support for drawWizComplexPolygon (For Ski Ride & Credits of pajama3)
   - Add support for processWizImage mode 7 (For soccer2004)
   - Add support for processWizImage mode 10 (For footdemo)
-  - Add support for RMAP/XMAP resources in drawWizImage (Used by akos codec 32 too)
+  - Add support for XMAP resources in drawWizImage (Used by akos codec 32 too)
   - Add support for floodState (For puzzle in pajama2)
   - Add support for o80_unknownE0 type1 (For binoculars in pajama2)
   - Add support for o80_unknownE0 type2 (For black board in freddi2 and paper in spyfox)
