@@ -757,7 +757,7 @@ void ScummEngine_v90he::spriteInfoSet_field_8C_90(int spriteId, int type, int va
 		break;
 	case 0x7E:
 		delay = MAX(0, value);
-		delay = MIN(value, _spriteTable[spriteId].delayAmount);
+		delay = MIN((int32)value, _spriteTable[spriteId].delayAmount);
 
 		_spriteTable[spriteId].delayCount = value;
 		break;
