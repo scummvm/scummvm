@@ -1790,6 +1790,14 @@ void game_playTot(int16 skipPlay) {
 				game_totTextData =
 				    (Game_TotTextTable *) (curPtr +
 				    READ_LE_UINT32((char *)game_totFileData + 0x30));
+				
+				game_totTextData->itemsCount = (int16)READ_LE_UINT16(&game_totTextData->itemsCount);
+
+				for (i = 0; i < game_totTextData->itemsCount; ++i) {
+					game_totTextData->items[i].offset = (int16)READ_LE_UINT16(&game_totTextData->items[i].offset);
+					game_totTextData->items[i].size = (int16)READ_LE_UINT16(&game_totTextData->items[i].size);
+				}
+				
 				needTextFree = 0;
 			}
 
@@ -1800,6 +1808,16 @@ void game_playTot(int16 skipPlay) {
 				game_totResourceTable = 
 					(Game_TotResTable *)(curPtr +
 				    READ_LE_UINT32((char *)game_totFileData + 0x34));
+				
+				game_totResourceTable->itemsCount = (int16)READ_LE_UINT16(&game_totResourceTable->itemsCount);
+				
+				for (i = 0; i < game_totResourceTable->itemsCount; ++i) {
+					game_totResourceTable->items[i].offset = (int32)READ_LE_UINT32(&game_totResourceTable->items[i].offset);
+					game_totResourceTable->items[i].size = (int16)READ_LE_UINT16(&game_totResourceTable->items[i].size);
+					game_totResourceTable->items[i].width = (int16)READ_LE_UINT16(&game_totResourceTable->items[i].width);
+					game_totResourceTable->items[i].height = (int16)READ_LE_UINT16(&game_totResourceTable->items[i].height);
+				}
+				
 				needFreeResTable = 0;
 			}
 
