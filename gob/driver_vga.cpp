@@ -106,7 +106,42 @@ void VGAVideoDriver::drawLine(SurfaceDesc *dest, int16 x0, int16 y0, int16 x1, i
 }
 
 void VGAVideoDriver::drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, int16 y, byte transp, SurfaceDesc *dest) {
-	STUB_FUNC;
+	int destRight = x + width;
+	int destBottom = y + height;
+
+	byte* dst = dest->vidPtr + x + dest->width * y;
+
+	int curx = x;
+	int cury = y;
+
+	while (1) {
+		uint8 val = *sprBuf++;
+		unsigned int repeat = val & 7;
+		val &= 0xF8;
+		if (!(val & 8)) {
+			repeat <<= 8;
+			repeat |= *sprBuf++;
+		}
+		repeat++;
+		val >>= 4;
+
+		for (unsigned int i = 0; i < repeat; ++i) {
+			if (curx < dest->width && cury < dest->height)
+				if (!transp || val)
+					*dst = val;
+
+			dst++;
+			curx++;
+			if (curx == destRight) {
+				dst += dest->width + x - curx;
+				curx = x;
+				cury++;
+				if (cury == destBottom)
+					return;
+			}
+		}
+	}
+
 }
 
 }
