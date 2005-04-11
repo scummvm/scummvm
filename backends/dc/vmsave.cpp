@@ -262,7 +262,7 @@ public:
   virtual OutSaveFile *openForSaving(const char *filename) {
 	return openSavefile(filename, true);
   }
-  virtual IntSaveFile *openForLoading(const char *filename) {
+  virtual InSaveFile *openForLoading(const char *filename) {
 	return openSavefile(filename, false);
   }
   
