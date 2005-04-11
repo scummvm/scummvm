@@ -407,6 +407,18 @@ void inter_drawOperations(void) {
 		scen_interLoadCurLayer();
 		break;
 
+	case 32:
+		// FIXME
+		warning("unimplemented drawOperation: %d", cmd);
+		inter_evalExpr(0);
+		break;
+
+	case 33:
+		// FIXME
+		warning("unimplemented drawOperation: %d", cmd);
+		WRITE_VAR(5, 32767);
+		break;		
+
 	case 48:
 		i = inter_load16();
 		draw_fontToSprite[i].sprite = inter_load16();
@@ -422,6 +434,9 @@ void inter_drawOperations(void) {
 		draw_fontToSprite[i].width = -1;
 		draw_fontToSprite[i].height = -1;
 		break;
+
+	default:
+		warning("unimplemented drawOperation: %d", cmd);
 	}
 }
 
