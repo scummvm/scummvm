@@ -815,29 +815,29 @@ void ScummEngine_v72he::captureWizImage(int resNum, const Common::Rect& r, bool 
 		int wizSize = headerSize + dataSize;
 		// write header
 		uint8 *wizImg = res.createResource(rtImage, resNum, dataSize + headerSize);
-		*(uint32 *)(wizImg + 0x00) = MKID('AWIZ');
-		*(uint32 *)(wizImg + 0x04) = TO_BE_32(wizSize);
-		*(uint32 *)(wizImg + 0x08) = MKID('WIZH');
-		*(uint32 *)(wizImg + 0x0C) = TO_BE_32(0x14);
-		*(uint32 *)(wizImg + 0x10) = TO_LE_32(compType);
-		*(uint32 *)(wizImg + 0x14) = TO_LE_32(w);
-		*(uint32 *)(wizImg + 0x18) = TO_LE_32(h);
+		WRITE_BE_UINT32(wizImg + 0x00, 'AWIZ');
+		WRITE_BE_UINT32(wizImg + 0x04, wizSize);
+		WRITE_BE_UINT32(wizImg + 0x08, 'WIZH');
+		WRITE_BE_UINT32(wizImg + 0x0C, 0x14);
+		WRITE_LE_UINT32(wizImg + 0x10, compType);
+		WRITE_LE_UINT32(wizImg + 0x14, w);
+		WRITE_LE_UINT32(wizImg + 0x18, h);
 		int curSize = 0x1C;
 		if (palPtr) {
-			*(uint32 *)(wizImg + 0x1C) = MKID('RGBS');
-			*(uint32 *)(wizImg + 0x20) = TO_BE_32(0x308);
+			WRITE_BE_UINT32(wizImg + 0x1C, 'RGBS');
+			WRITE_BE_UINT32(wizImg + 0x20, 0x308);
 			memcpy(wizImg + 0x24, palPtr, 0x300);
-			*(uint32 *)(wizImg + 0x324) = MKID('RMAP');
-			*(uint32 *)(wizImg + 0x328) = TO_BE_32(0x10C);
-			*(uint32 *)(wizImg + 0x32C) = 0;
+			WRITE_BE_UINT32(wizImg + 0x324, 'RMAP');
+			WRITE_BE_UINT32(wizImg + 0x328, 0x10C);
+			WRITE_BE_UINT32(wizImg + 0x32C, 0);
 			curSize = 0x330;
 			for (int i = 0; i < 256; ++i) {
 				wizImg[curSize] = i;
 				++curSize;
 			}
 		}
-		*(uint32 *)(wizImg + curSize + 0x0) = MKID('WIZD');
-		*(uint32 *)(wizImg + curSize + 0x4) = TO_BE_32(dataSize + 8);
+		WRITE_BE_UINT32(wizImg + curSize + 0x0, 'WIZD');
+		WRITE_BE_UINT32(wizImg + curSize + 0x4, dataSize + 8);
 		curSize += 8;
 
 		// write compressed data
@@ -1325,7 +1325,7 @@ void ScummEngine_v72he::displayWizComplexImage(const WizParameters *params) {
 		assert(iwiz);
 		uint8 *rmap = findWrappedBlock(MKID('RMAP'), iwiz, st, 0) ;
 		assert(rmap);
-		*(uint32 *)(rmap) = TO_BE_32(0x12345678);
+		WRITE_BE_UINT32(rmap, 0x12345678);
 		while (num--) {
 			uint8 idx = *index++;
 			rmap[4 + idx] = params->remapColor[idx];
@@ -1642,7 +1642,7 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 			assert(iwiz);
 			uint8 *rmap = findWrappedBlock(MKID('RMAP'), iwiz, state, 0) ;
 			assert(rmap);
-			*(uint32 *)(rmap) = TO_BE_32(0x12345678);
+			WRITE_BE_UINT32(rmap, 0x12345678);
 			while (num--) {
 				uint8 idx = *index++;
 				rmap[4 + idx] = params->remapColor[idx];
