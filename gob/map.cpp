@@ -46,7 +46,7 @@ int16 map_destY;
 Map_ItemPos map_itemPoses[40];
 char map_loadFromAvo;
 char map_sourceFile[15];
-char *map_avoDataPtr;
+static char *map_avoDataPtr;
 
 int16 map_getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 	int16 dir;
@@ -516,9 +516,9 @@ void map_loadMapObjects(char *avjFile) {
 		savedPtr2 += 2;
 
 		if (i == 3)
-			gob_goblins[i]->stateMach = (Gob_StateLine *)malloc(sizeof(Gob_StateLine) * 70);
+			gob_goblins[i]->stateMach = (Gob_StateLine *)malloc(szGob_StateLine * 70);
 		else
-			gob_goblins[i]->stateMach = (Gob_StateLine *)malloc(sizeof(Gob_StateLine) * 40);
+			gob_goblins[i]->stateMach = (Gob_StateLine *)malloc(szGob_StateLine * 40);
 
 		// FIXME: All is wrong further. We should unwind calls to map_loadDataFromAvo()
 		map_loadDataFromAvo((char *)gob_goblins[i]->stateMach, 40 * szGob_StateLine);
@@ -542,17 +542,12 @@ void map_loadMapObjects(char *avjFile) {
 				map_avoDataPtr += 2;
 				if (READ_LE_UINT32(map_avoDataPtr) != 0) {
 					map_avoDataPtr += 4;
-					map_loadDataFromAvo((char
-						*)(&gob_goblins[i]->
-						stateMach[state][col]->
-						sndItem), 2);
+					map_loadDataFromAvo((char *)(&gob_goblins[i]->stateMach[state][col]->sndItem), 2);
 				} else {
 					map_avoDataPtr += 6;
-					gob_goblins[i]->stateMach[state][col]->
-					    sndItem = -1;
+					gob_goblins[i]->stateMach[state][col]->sndItem = -1;
 				}
-				map_loadDataFromAvo((char *)(&gob_goblins[i]->
-					stateMach[state][col]->freq), 6);
+				map_loadDataFromAvo((char *)(&gob_goblins[i]->stateMach[state][col]->freq), 6);
 			}
 		}
 	}
@@ -618,7 +613,7 @@ void map_loadMapObjects(char *avjFile) {
 		gob_objects[i]->state = READ_LE_UINT16(savedPtr3);
 		savedPtr3 += 2;
 
-		gob_objects[i]->stateMach = (Gob_StateLine *)malloc(sizeof(Gob_StateLine) * 40);
+		gob_objects[i]->stateMach = (Gob_StateLine *)malloc(szGob_StateLine * 40);
 
 		map_loadDataFromAvo((char *)gob_objects[i]->stateMach, 40 * szGob_StateLine);
 		map_avoDataPtr += 160;
@@ -654,8 +649,8 @@ void map_loadMapObjects(char *avjFile) {
 	gob_objects[10] = (Gob_Object *)malloc(sizeof(Gob_Object));
 	memset(gob_objects[10], 0, sizeof(Gob_Object));
 
-	gob_objects[10]->stateMach = (Gob_StateLine *)malloc(sizeof(Gob_StateLine) * 40);
-	memset(gob_objects[10]->stateMach, 0, sizeof(Gob_StateLine) * 40);
+	gob_objects[10]->stateMach = (Gob_StateLine *)malloc(szGob_StateLine * 40);
+	memset(gob_objects[10]->stateMach, 0, szGob_StateLine * 40);
 
 	pState = (Gob_State *)malloc(sizeof(Gob_State));
 	gob_objects[10]->stateMach[0][0] = pState;

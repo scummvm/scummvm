@@ -53,7 +53,6 @@ extern char map_loadFromAvo;
 
 extern Map_ItemPos map_itemPoses[40];
 extern char map_sourceFile[15];
-extern char *map_avoDataPtr;
 
 int16 map_getDirection(int16 x0, int16 y0, int16 x1, int16 y1);
 void map_findNearestToGob(void);
