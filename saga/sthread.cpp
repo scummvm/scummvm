@@ -691,10 +691,8 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 		debug(8, operandName);
 		_vm->_console->DebugPrintf("%s\n", operandName);
 
-		
 		if (thread->_flags & (kTFlagFinished | kTFlagAborted)) {
-			error("Wrong flags in thread");			
-			
+			error("Wrong flags %d in thread", thread->_flags);
 		} 
 
 		// Set instruction offset only if a previous instruction didn't branch
