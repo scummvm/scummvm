@@ -15,7 +15,6 @@ MODULE_OBJS := \
 	gob/pack.o \
 	gob/palanim.o \
 	gob/parse.o \
-	gob/resource.o \
 	gob/scenery.o \
 	gob/util.o \
 	gob/video.o \
