@@ -872,7 +872,7 @@ protected:
 
 	void loadImgSpot(int resId, int state, int16 &x, int16 &y);
 	void loadWizCursor(int resId);
-	void unknownE0(int x1, int y1, int x, int cycles, int arg_10, int type, int resNum);
+	void unknownE0(int x1, int y1, int x, int unk1, int unk2, int type, int id);
 	void unknownE0Helper(int x, int y, int flags);
 	
 	/* HE version 80 script opcodes */
