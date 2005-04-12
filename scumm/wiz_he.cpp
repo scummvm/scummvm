@@ -1145,7 +1145,7 @@ void ScummEngine_v72he::drawWizPolygon(int resNum, int state, int id, int flags,
 		error("Invalid point count %d for Polygon %d", wp->numVerts, id);
 	}
 	const Common::Rect *r = NULL;
-	uint8 *srcWizBuf = drawWizImage(resNum, state, 0, 0, xmapNum, r, kWIFBlitToMemBuffer, dstResNum, paletteNum);
+	uint8 *srcWizBuf = drawWizImage(resNum, state, 0, 0, xmapNum, r, kWIFBlitToMemBuffer, 0, paletteNum);
 	if (srcWizBuf) {
 		uint8 *dst;
 		VirtScreen *pvs = &virtscr[kMainVirtScreen];
@@ -1228,10 +1228,10 @@ void ScummEngine_v72he::flushWizBuffer() {
 	for (int i = 0; i < _wiz._imagesNum; ++i) {
 		WizImage *pwi = &_wiz._images[i];
 		if (pwi->flags & kWIFIsPolygon) {
-			drawWizPolygon(pwi->resNum, pwi->state, pwi->x1, pwi->flags, pwi->xmapNum, 0, 0);
+			drawWizPolygon(pwi->resNum, pwi->state, pwi->x1, pwi->flags, pwi->xmapNum, 0, pwi->paletteNum);
 		} else {
 			const Common::Rect *r = NULL;
-			drawWizImage(pwi->resNum, pwi->state, pwi->x1, pwi->y1, pwi->xmapNum, r, pwi->flags, 0, 0);
+			drawWizImage(pwi->resNum, pwi->state, pwi->x1, pwi->y1, pwi->xmapNum, r, pwi->flags, 0, pwi->paletteNum);
 		}
 	}
 	_wiz._imagesNum = 0;
