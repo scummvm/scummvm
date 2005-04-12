@@ -473,7 +473,7 @@ void ScummEngine_v80he::o80_readConfigFile() {
 	default:
 		error("o80_readConfigFile: default type %d", type);
 	}
-	debug(1, "o80_readConfigFile: Filename %s Section %s Name %s", filename, section, name);
+	debug(0, "o80_readConfigFile: Filename %s Section %s Name %s", filename, section, name);
 }
 
 void ScummEngine_v80he::o80_writeConfigFile() {
@@ -601,14 +601,8 @@ void ScummEngine_v80he::o80_drawWizPolygon() {
 void ScummEngine_v80he::unknownE0(int x1, int y1, int x, int unk1, int unk2, int type, int id) {
 	debug(0,"unknownE0: x1 %d y1 %d x %d unk1 %d, unk2 %d type %d id %d", x1, y1, x, unk1, unk2, type, id);	
 
-	int eax, ebx, ecx, y, edp, edx, esi;
-	int var_4, var_8, var_C;
-
-	// edx is never set?
-	edx = 0;
-
-	ebx = 0;
-	var_C = 0;
+	int eax, ebx, ecx, edx, esi;
+	int var_4, var_8, var_C, y;
 
 	if (unk2 < 0) {
 		unk2 = -unk2;
@@ -617,37 +611,16 @@ void ScummEngine_v80he::unknownE0(int x1, int y1, int x, int unk1, int unk2, int
 		unk2 = 1;
 	}
 
-	eax = x;
-	ecx = x1;
-
-	esi = unk1;
-	y = y1;
-
-	eax -= ecx;
-	esi -= y;
-
-	var_8 = eax;
-	var_4 = esi;
-
-	edp = eax;
-	eax = esi;
-
-	edp ^= edx;
-	edp -= edx;
-
-	eax ^= edx;
-	eax -= edx;
-
-	esi = edp;
-
-	y1 = eax;
-
-	if (eax > edp) {
-		esi = eax;
-	}
+	var_4 = unk1 - y1;
+	var_8 = x - x1;
 
 	x = x1;
-	x1 = 0;
+	y = var_4;
+
+	esi = var_8;
+	if (var_4 > var_8) {
+		esi = var_4;
+	}
 
 	if (type == 2) {
 		Actor *a = derefActorSafe(id, "unknownE0");
@@ -664,10 +637,14 @@ void ScummEngine_v80he::unknownE0(int x1, int y1, int x, int unk1, int unk2, int
 		unknownE0Helper(x1, y1, id);
 	}
 
+	x1 = 0;
+	ebx = 0;
+	edx = 0;
+	var_C = 0;
 	for (int i = 0; i <= esi; i++) {
 		ecx = x1;
-		eax = y1;	
-		ebx += edp;
+		eax = y;	
+		ebx += var_8;
 		ecx += eax;
 
 		eax ^= eax;
@@ -678,30 +655,26 @@ void ScummEngine_v80he::unknownE0(int x1, int y1, int x, int unk1, int unk2, int
 			edx -= esi;
 
 			eax = 1;
-			int tmp = edx;
-			edx = x;
-			if (tmp >= 0) {
-				edx++;
+			if (edx >= 0) {
+				x++;
 			} else {
-				edx--;
+				x--;
 			}
-
-			x = edx;
 		}
+
 		if (ecx > esi) {
 			eax = var_4;
-			ecx -= esi;
+			x1 -= esi;
 
-			x1 = ecx;
 			if (eax >= 0) {
 				y++;
 			} else {
 				y--;
 			}
+		} else {
+			if (eax == 0)
+				continue;
 		}
-
-		if (eax == 0)
-			continue;
 
 		ecx = var_C;
 		eax = ecx;
