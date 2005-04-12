@@ -1714,7 +1714,6 @@ void game_playTot(int16 skipPlay) {
 	int32 variablesCount;
 	char *filePtr;
 	char *savedIP;
-	//struct date dateVal;
 	int16 i;
 
 	oldNestLevel = inter_nestLevel;
@@ -1834,16 +1833,6 @@ void game_playTot(int16 skipPlay) {
 
 			inter_execPtr = (char *)game_totFileData;
 			inter_execPtr += READ_LE_UINT32((char *)game_totFileData + 0x64);
-
-/*
- * removed by olki to get it to compile.
-			getdate(&dateVal);
-
-			WRITE_LE_UINT32(inter_variables + 0x14), dateVal.da_year);
-			WRITE_LE_UINT32(inter_variables + 0x18), dateVal.da_mon);
-			WRITE_LE_UINT32(inter_variables + 0x1c), 0);
-			WRITE_LE_UINT32(inter_variables + 0x20), dateVal.da_day);
-*/
 
 			inter_renewTimeInVars();
 

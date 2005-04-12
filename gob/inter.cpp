@@ -745,20 +745,18 @@ void inter_freeSprite(void) {
 }
 
 void inter_renewTimeInVars(void) {
-	uint32 time = g_system->getMillis();
+	struct tm *t;
+	time_t now = time(NULL);
 
-	time /= 1000; // convert to seconds
+	t = localtime(&now);
 
-	// hours
-	WRITE_VAR(9, time / 3600);
-	time %= 3600;
-
-	// minutes
-	WRITE_VAR(10, time / 60);
-	time %= 60;
-
-	// seconds
-	WRITE_VAR(11, time);
+	WRITE_VAR(5, 1900 + t->tm_year);
+	WRITE_VAR(6, t->tm_mon);
+	WRITE_VAR(7, 0);
+	WRITE_VAR(8, t->tm_mday);
+	WRITE_VAR(9, t->tm_hour);
+	WRITE_VAR(10, t->tm_min);
+	WRITE_VAR(11, t->tm_sec);
 }
 
 void inter_playComposition(void) {
