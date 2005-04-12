@@ -41,7 +41,10 @@ void Wiz::imageNumClear() {
 }
 
 void Wiz::polygonClear() {
-	memset(&_polygons, 0, sizeof(_polygons));
+	for (int i = 0; i < ARRAYSIZE(_polygons); i++) {
+		if (_polygons[i].flag == 1)
+			memset(&_polygons[i], 0, sizeof(WizPolygon));
+	}
 }
 
 void Wiz::polygonLoad(const uint8 *polData) {
@@ -157,10 +160,10 @@ bool Wiz::polygonContains(const WizPolygon &pol, int x, int y) {
 	bool r = false;
 
 	for (int i = 0; i < pol.numVerts; i++) {
-		curdir = (y <= pol.vert[i].y);
+		curdir = (y < pol.vert[i].y);
 
 		if (curdir != diry) {
-			if (((pol.vert[pi].y - pol.vert[i].y) * (pol.vert[i].x - x) <=
+			if (((pol.vert[pi].y - pol.vert[i].y) * (pol.vert[i].x - x) <
 				 (pol.vert[pi].x - pol.vert[i].x) * (pol.vert[i].y - y)) == diry)
 				r = !r;
 		}

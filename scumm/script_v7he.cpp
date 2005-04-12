@@ -1038,8 +1038,8 @@ void ScummEngine_v70he::o70_setWindowCaption() {
 
 void ScummEngine_v70he::o70_polygonOps() {
 	int vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y;
-	int id;
-	int fromId, toId;
+	int id, fromId, toId;
+	bool flag;
 
 	byte subOp = fetchScriptByte();
 
@@ -1056,8 +1056,9 @@ void ScummEngine_v70he::o70_polygonOps() {
 		vert2x = pop();
 		vert1y = pop();
 		vert1x = pop();
+		flag = (subOp == 69 || subOp == 248);
 		id = pop();
-		_wiz.polygonStore(id, (subOp == 69 || subOp == 248), vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y);
+		_wiz.polygonStore(id, flag, vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y);
 		break;
 	case 28: // HE 100
 	case 247:
