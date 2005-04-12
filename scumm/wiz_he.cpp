@@ -1101,11 +1101,17 @@ void ScummEngine_v72he::drawWizComplexPolygon(int resNum, int state, int po_x, i
 	} else {
 		warning("drawWizComplexPolygon() angle partially implemented");
 
+		if (angle < 0) {
+			angle = 360 - (angle / 360);
+		} else {
+			angle /= 360;
+		}
+
 		Common::Rect bounds;
 		_wiz.polygonCalcBoundBox(pts, 4, bounds);
 		int x1 = bounds.left;
 		int y1 = bounds.top;
-		// XXX angle changed
+
 		switch(angle) {
 		case 270:
 			flags |= kWIFFlipX | kWIFFlipY;
