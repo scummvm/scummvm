@@ -1531,8 +1531,14 @@ void Part::noteOn(byte note, byte velocity) {
 		mc = _player->getMidiDriver()->getPercussionChannel();
 		if (!mc)
 			return;
-		mc->volume(_vol_eff);
-//		mc->programChange(_bank);
+  		static byte prev_vol_eff = 128;
+		if (_vol_eff != prev_vol_eff){
+			mc->volume(_vol_eff);
+			prev_vol_eff = _vol_eff;
+		}
+		if ((note < 35) && (!_player->_se->isNativeMT32()))
+			note = Instrument::_gmRhythmMap[note];
+
 		mc->noteOn(note, velocity);
 	}
 }

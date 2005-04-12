@@ -57,6 +57,7 @@ public:
 	Instrument() : _type (0), _instrument (0) { }
 	~Instrument() { delete _instrument; }
 	static void nativeMT32 (bool native);
+	static const byte _gmRhythmMap[35];
 
 	void clear();
 	void copy_to (Instrument *dest) { if (_instrument) _instrument->copy_to (dest); else dest->clear(); }
