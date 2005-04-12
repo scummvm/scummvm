@@ -21,7 +21,6 @@
  */
 #include "gob/gob.h"
 #include "gob/dataio.h"
-#include "gob/resource.h"
 #include "gob/global.h"
 #include "gob/init.h"
 #include "gob/video.h"
