@@ -409,12 +409,14 @@ void inter_drawOperations(void) {
 
 	case 32:
 		// FIXME
+		// Used in gob1 CD
 		warning("unimplemented drawOperation: %d", cmd);
 		inter_evalExpr(0);
 		break;
 
 	case 33:
 		// FIXME
+		// Used in gob1 CD
 		warning("unimplemented drawOperation: %d", cmd);
 		WRITE_VAR(5, 32767);
 		break;		
