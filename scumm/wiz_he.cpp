@@ -172,6 +172,43 @@ bool Wiz::polygonContains(const WizPolygon &pol, int x, int y) {
 		diry = curdir;
 	}
 
+	// HE80+
+	int a, b;
+	pi = pol.numVerts - 1;
+	if (r == 0) {
+		for (int i = 0; i < pol.numVerts; i++) {
+			if (pol.vert[i].y == y && pol.vert[i].y == pol.vert[pi].y) {
+
+				a = pol.vert[i].x;
+				b = pol.vert[pi].x;
+
+				if (pol.vert[i].x >= pol.vert[pi].x)
+					a = pol.vert[pi].x;
+
+				if (pol.vert[i].x > pol.vert[pi].x)
+					b = pol.vert[i].x;
+
+				if (x >= a && x <= b)
+					return 1;
+
+			} else if (pol.vert[i].x == x && pol.vert[i].x == pol.vert[pi].x) {
+
+				a = pol.vert[i].y;
+				b = pol.vert[i].y;
+
+				if (pol.vert[i].y >= pol.vert[pi].y)
+					a = pol.vert[pi].y;
+
+				if (pol.vert[i].y <= pol.vert[pi].y)
+					b = pol.vert[pi].y;
+
+				if (y >= a && y <= b)
+					return 1;
+			}
+			pi = i;
+		}
+	}
+
 	return r;
 }
 
