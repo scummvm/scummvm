@@ -191,6 +191,7 @@ public:
 	void turnToDirection(int newdir);
 	void walkActor();
 	void walkActorOld();
+	void drawActorToBackBuf(int x, int y);
 	void drawActorCostume(bool hitTestMode = false);
 	void animateCostume();
 	void setActorCostume(int c);

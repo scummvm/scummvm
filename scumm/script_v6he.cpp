@@ -725,23 +725,7 @@ void ScummEngine_v60he::o60_actorOps() {
 		a->initActor(2);
 		break;
 	case 218:		
-		{
-			int top_actor = a->_top;
-			int bottom_actor = a->_bottom;
-			a->_drawToBackBuf = true;
-			a->_needRedraw = true;
-			a->drawActorCostume();
-			a->_drawToBackBuf = false;
-			a->_needRedraw = true;
-			a->drawActorCostume();
-			a->_needRedraw = false;
-
-			if (a->_top > top_actor)
-				a->_top = top_actor;
-			if (a->_bottom < bottom_actor)
-				a->_bottom = bottom_actor;
-
-		}
+		a->drawActorToBackBuf(a->_pos.x, a->_pos.y);
 		break;
 	case 219:
 		a->_drawToBackBuf = false;

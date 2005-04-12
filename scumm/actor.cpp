@@ -578,6 +578,29 @@ void Actor::setDirection(int direction) {
 	_needRedraw = true;
 }
 
+void Actor::drawActorToBackBuf(int x, int y) {
+	int curTop = _top;
+	int curBottom = _bottom;
+
+	_pos.x = x;
+	_pos.y = y;
+
+	_drawToBackBuf = true;
+	_needRedraw = true;
+	drawActorCostume();
+
+	_drawToBackBuf = false;
+	_needRedraw = true;
+	drawActorCostume();
+	_needRedraw = false;
+
+	if (_top > curTop)
+		_top = curTop;
+	if (_bottom < curBottom)
+		_bottom = curBottom;
+}
+
+
 void Actor::putActor(int dstX, int dstY, byte newRoom) {
 	if (_visible && _vm->_currentRoom != newRoom && _vm->getTalkingActor() == _number) {
 		_vm->stopTalk();

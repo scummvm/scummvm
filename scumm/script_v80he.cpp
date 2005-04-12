@@ -598,14 +598,171 @@ void ScummEngine_v80he::o80_drawWizPolygon() {
 	displayWizImage(&wi);	
 }
 
-void ScummEngine_v80he::o80_unknownE0() {
-	// wizImage related
-	int b, c, d, num, x1, y1, type = 0;
+void ScummEngine_v80he::unknownE0(int x1, int y1, int x, int unk1, int unk2, int type, int id) {
+	debug(0,"unknownE0: x1 %d y1 %d x %d unk1 %d, unk2 %d type %d id %d", x1, y1, x, unk1, unk2, type, id);	
 
-	b = pop();
-	num = pop();
-	c = pop();
-	d = pop();
+	int eax, ebx, ecx, y, edp, edx, esi;
+	int var_4, var_8, var_C;
+
+	// edx is never set?
+	edx = 0;
+
+	ebx = 0;
+	var_C = 0;
+
+	if (unk2 < 0) {
+		unk2 = -unk2;
+	}
+	if (unk2 == 0) {
+		unk2 = 1;
+	}
+
+	eax = x;
+	ecx = x1;
+
+	esi = unk1;
+	y = y1;
+
+	eax -= ecx;
+	esi -= y;
+
+	var_8 = eax;
+	var_4 = esi;
+
+	edp = eax;
+	eax = esi;
+
+	edp ^= edx;
+	edp -= edx;
+
+	eax ^= edx;
+	eax -= edx;
+
+	esi = edp;
+
+	y1 = eax;
+
+	if (eax > edp) {
+		esi = eax;
+	}
+
+	x = x1;
+	x1 = 0;
+
+	if (type == 2) {
+		Actor *a = derefActorSafe(id, "unknownE0");
+		a->drawActorToBackBuf(x1, y1);
+	} else if (type == 3) {
+		WizImage wi;
+		wi.flags = 0;
+		wi.y1 = y1;
+		wi.x1 = x1;
+		wi.resNum = id;
+		wi.state = 0;
+		displayWizImage(&wi);
+	} else {
+		unknownE0Helper(x1, y1, id);
+	}
+
+	for (int i = 0; i <= esi; i++) {
+		ecx = x1;
+		eax = y1;	
+		ebx += edp;
+		ecx += eax;
+
+		eax ^= eax;
+		x1 = ecx;
+
+		if (ebx > esi) {
+			edx = var_8;
+			edx -= esi;
+
+			eax = 1;
+			int tmp = edx;
+			edx = x;
+			if (tmp >= 0) {
+				edx++;
+			} else {
+				edx--;
+			}
+
+			x = edx;
+		}
+		if (ecx > esi) {
+			eax = var_4;
+			ecx -= esi;
+
+			x1 = ecx;
+			if (eax >= 0) {
+				y++;
+			} else {
+				y--;
+			}
+		}
+
+		if (eax == 0)
+			continue;
+
+		ecx = var_C;
+		eax = ecx;
+		eax /= unk2;
+		ecx++;
+		var_C = ecx;
+
+		if (edx != 0 && esi != i)
+			continue;
+
+		if (type == 2) {
+			Actor *a = derefActorSafe(id, "unknownE0");
+			a->drawActorToBackBuf(x, y);
+		} else if (type == 3) {
+			WizImage wi;
+			wi.flags = 0;
+			wi.y1 = y;
+			wi.x1 = x;
+			wi.resNum = id;
+			wi.state = 0;
+			displayWizImage(&wi);
+		} else {
+			unknownE0Helper(x, y, id);
+		}
+	}		
+}
+
+void ScummEngine_v80he::unknownE0Helper(int x, int y, int flags) {
+	VirtScreen *vs;
+
+	if (x < 0 || x > 639)
+		return;
+
+	if (y < 0)
+		return;
+
+	if ((vs = findVirtScreen(y)) == NULL)
+		return;
+
+	markRectAsDirty(vs->number, x, y, x, y + 1);
+
+	// TODO flags
+	if (flags & 0x4000) {
+
+
+	} else if (flags & 0x2000) {
+
+
+	} else if (flags & 0x8000) {
+
+
+	}
+}
+
+void ScummEngine_v80he::o80_unknownE0() {
+	int id, unk1, unk2, x, x1, y1, type;
+
+	unk2 = pop();
+	id = pop();
+	unk1 = pop();
+	x = pop();
 	y1 = pop();
 	x1 = pop();
 
@@ -613,47 +770,21 @@ void ScummEngine_v80he::o80_unknownE0() {
 
 	switch (subOp) {
 	case 55:
-		{
-			Actor *a = derefActorSafe(num, "o80_unknownE0");
-			int top_actor = a->_top;
-			int bottom_actor = a->_bottom;
-			a->_drawToBackBuf = true;
-			a->_needRedraw = true;
-			a->drawActorCostume();
-			a->_drawToBackBuf = false;
-			a->_needRedraw = true;
-			a->drawActorCostume();
-			a->_needRedraw = false;
-
-			if (a->_top > top_actor)
-				a->_top = top_actor;
-			if (a->_bottom < bottom_actor)
-				a->_bottom = bottom_actor;
-
-			type = 2;
-		}
+		type = 2;
+		unknownE0(x1, y1, x, unk1, unk2, type, id);
 		break;
 	case 63:
-		{
-			WizImage wi;
-			wi.flags = 0;
-			wi.y1 = y1;
-			wi.x1 = x1;
-			wi.resNum = num;
-			wi.state = 0;
-			displayWizImage(&wi);
-
-			type = 3;
-		}
+		type = 3;
+		unknownE0(x1, y1, x, unk1, unk2, type, id);
 		break;
 	case 66:
 		type = 1;
+		unknownE0(x1, y1, x, unk1, unk2, type, id);
 		break;
 	default:
 		error("o80_unknownE0: default case %d", subOp);
 	}
 
-	debug(1,"o80_unknownE0 stub: type %d (%d, num %d, %d, %d, y %d, x %d)", type, b, num, c, d, y1, x1);	
 }
 
 void ScummEngine_v80he::o80_pickVarRandom() {

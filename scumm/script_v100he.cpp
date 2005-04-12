@@ -817,13 +817,12 @@ void ScummEngine_v100he::o100_dimArray() {
 }
 
 void ScummEngine_v100he::o100_unknownE0() {
-	// wizImage related
-	int b, c, d, num, x1, y1, type = 0;
+	int id, unk1, unk2, x, x1, y1, type;
 
-	b = pop();
-	num = pop();
-	c = pop();
-	d = pop();
+	unk2 = pop();
+	id = pop();
+	unk1 = pop();
+	x = pop();
 	y1 = pop();
 	x1 = pop();
 
@@ -831,45 +830,20 @@ void ScummEngine_v100he::o100_unknownE0() {
 
 	switch (subOp) {
 	case 1:
-		{
-		Actor *a = derefActorSafe(num, "o100_unknownE0");
-		int top_actor = a->_top;
-		int bottom_actor = a->_bottom;
-		a->_drawToBackBuf = true;
-		a->_needRedraw = true;
-		a->drawActorCostume();
-		a->_drawToBackBuf = false;
-		a->_needRedraw = true;
-		a->drawActorCostume();
-		a->_needRedraw = false;
-
-		if (a->_top > top_actor)
-			a->_top = top_actor;
-		if (a->_bottom < bottom_actor)
-			a->_bottom = bottom_actor;
-
 		type = 2;
-		}
+		unknownE0(x1, y1, x, unk1, unk2, type, id);
 		break;
 	case 20:
 		type = 1;
+		unknownE0(x1, y1, x, unk1, unk2, type, id);
 		break;
 	case 40:
-		_wizParams.processFlags |= kWPFSetPos;
-		_wizParams.img.flags = 0;
-		_wizParams.img.state = 0;
-		_wizParams.img.y1 = y1;
-		_wizParams.img.x1 = x1;
-		_wizParams.img.resNum = num;
-		displayWizComplexImage(&_wizParams);
-
 		type = 3;
+		unknownE0(x1, y1, x, unk1, unk2, type, id);
 		break;
 	default:
 		error("o100_unknownE0: default case %d", subOp);
 	}
-
-	debug(1,"o100_unknownE0 stub: type %d (%d, num %d, %d, %d, y %d, x %d)", type, b, num, c, d, y1, x1);	
 }
 
 void ScummEngine_v100he::o100_drawObject() {
