@@ -964,6 +964,10 @@ void parse_printExpr(char arg_0) {
 	char saved = 0;
 	static char *savedPos = 0;
 
+	// printExpr() is not safe function. It suffers from unability to process
+	// stopTokens. So ebnable it only temporary when you need debugging.
+	return;
+
 	if (savedPos == 0) {
 		savedPos = inter_execPtr;
 		saved = 1;
