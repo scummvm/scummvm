@@ -369,10 +369,12 @@ void ScummEngine::checkExecVerbs() {
 			}
 		}
 		
-		if (_gameId == GID_INDY4 && _mouseButStat >= '0' && _mouseButStat <= '9') {
+		if ((_gameId == GID_INDY4 || _gameId == GID_PASS) && _mouseButStat >= '0' && _mouseButStat <= '9') {
 			// To support keyboard fighting in FOA, we need to remap the number keys.
 			// FOA apparently expects PC scancode values (see script 46 if you want
-			// to know where I got these numbers from).
+			// to know where I got these numbers from). Oddly enough, the The Indy 3
+			// part of the "Passport to Adventure" demo expects the same keyboard
+			// mapping, even though the full game doesn't.
 			static const int numpad[10] = {
 					'0',
 					335, 336, 337,
