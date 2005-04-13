@@ -1402,7 +1402,11 @@ int ScummEngine::init(GameDetector &detector) {
 	if (_imuse) {
 		_imuse->setBase(res.address[rtSound]);
 	}
-	_sound->setupSound();
+
+	// Since MM NES substitutes whole file class we get monster.sou file
+	// name badly generated, so avoid even attempts to open it
+	if (!(_features & GF_NES))
+		_sound->setupSound();
 
 	// Create debugger
 	if (!_debugger)
