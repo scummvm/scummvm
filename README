@@ -374,7 +374,7 @@ arguments - see the next section.
                            supported by some MIDI drivers)
   --multi-midi             Enable combination of Adlib and native MIDI
   --native-mt32            True Roland MT-32 (disable GM emulation)
-  --enable-gs	      	    Enable Roland GS mode for MIDI playback
+  --enable-gs              Enable Roland GS mode for MIDI playback
   --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)
   --aspect-ratio           Enable aspect ratio correction
   --render-mode=MODE       Enable additional render modes (cga, ega, hercGreen
@@ -1141,7 +1141,7 @@ The following keywords are recognized:
                                  supported by some MIDI drivers.)
         native_mt32     bool     If true, disable GM emulation and assume that
                                  there is a true Roland MT-32 available.
-	 enable_gs       bool     If true, enable Roland GS-specific features to
+        enable_gs       bool     If true, enable Roland GS-specific features to
                                  enhance GM emulation. If native_mt32 is also
                                  true, the GS device will select an MT-32 map
                                  to play the correct instruments.
