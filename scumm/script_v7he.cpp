@@ -844,7 +844,6 @@ void ScummEngine_v70he::o70_appendString() {
 	appendSubstring(dst, src, srcOffs, len);
 
 	push(dst);
-	debug(1,"o70_appendString");
 }
 
 void ScummEngine_v70he::o70_concatString() {
@@ -861,7 +860,6 @@ void ScummEngine_v70he::o70_concatString() {
 	appendSubstring(dst, src2, 0, -1);
 
 	push(dst);
-	debug(1,"o70_concatString");
 }
 
 void ScummEngine_v70he::o70_compareString() {
@@ -890,15 +888,14 @@ void ScummEngine_v70he::o70_compareString() {
 
 	result = (*string1 > *string2) ? -1 : 1;
 	push(result);
-	debug(1,"o70_compareString (%d, %d, %d)", array1, array2, result);
 }
 
 void ScummEngine_v70he::o70_readINI() {
-	int len;
-	int type;
 	byte option[256];
+	ArrayHeader *ah;
+	const char *entry;
+	int len, type;
 
-	// we pretend that we don't have .ini file
 	addMessageToStack(_scriptPointer, option, sizeof(option));
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
@@ -909,13 +906,17 @@ void ScummEngine_v70he::o70_readINI() {
 		if (!strcmp((char *)option, "NoPrinting"))
 			push(1);
 		else
-			push(0);
+			push(ConfMan.getInt((char *)option));
 		break;
 	case 2: // string
+		entry = (ConfMan.get((char *)option).c_str());
+
 		writeVar(0, 0);
-		defineArray(0, kStringArray, 0, 0);
-		writeArray(0, 0, 0, 0);
-		push(readVar(0)); // var ID string
+		len = resStrLen((const byte *)entry) + 1;
+		ah = defineArray(0, kStringArray, 0, len);
+		memcpy(ah->data, entry, len);
+
+		push(readVar(0));
 		break;
 	default:
 		error("o70_readINI: default type %d", type);
@@ -924,7 +925,7 @@ void ScummEngine_v70he::o70_readINI() {
 
 void ScummEngine_v70he::o70_writeINI() {
 	int type, value;
-	byte option[256], option2[256];
+	byte option[256], string[256];
 	int len;
 	
 	type = pop();
@@ -936,13 +937,13 @@ void ScummEngine_v70he::o70_writeINI() {
 
 	switch (type) {
 	case 1: // number
-		debug(1, "o70_writeINI: %s set to %d", option, value);
+		ConfMan.set((char *)option, value); 
 		break;
 	case 2: // string
-		addMessageToStack(_scriptPointer, option2, sizeof(option2));
+		addMessageToStack(_scriptPointer, string, sizeof(string));
 		len = resStrLen(_scriptPointer);
 		_scriptPointer += len + 1;
-		debug(1, "o70_writeINI: %s set to %s", option, option2);
+		ConfMan.set((char *)option, (char *)string); 
 		break;
 	default:
 		error("o70_writeINI: default type %d", type);
@@ -971,7 +972,6 @@ void ScummEngine_v70he::o70_getStringLenForWidth() {
 	}
 
 	push(len);
-	debug(1,"o70_getStringLenForWidth (%d)", len);
 }
 
 void ScummEngine_v70he::o70_getCharIndexInString() {
@@ -1013,7 +1013,6 @@ void ScummEngine_v70he::o70_getCharIndexInString() {
 	}
 
 	push(-1);
-	debug(1,"o70_getCharIndexInString");
 }
 
 void ScummEngine_v70he::o70_setFilePath() {

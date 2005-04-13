@@ -2069,7 +2069,9 @@ void ScummEngine_v72he::o72_checkGlobQueue() {
 
 void ScummEngine_v72he::o72_readINI() {
 	byte option[100];
-	int type;
+	ArrayHeader *ah;
+	const char *entry;
+	int len, type;
 
 	// we pretend that we don't have .ini file
 	copyScriptString(option);
@@ -2081,19 +2083,22 @@ void ScummEngine_v72he::o72_readINI() {
 		if (!strcmp((char *)option, "NoPrinting"))
 			push(1);
 		else
-			push(0);
+			push(ConfMan.getInt((char *)option));
 		break;
 	case 77: // HE 100
 	case 7: // string
+		entry = (ConfMan.get((char *)option).c_str());
+
 		writeVar(0, 0);
-		defineArray(0, kStringArray, 0, 0, 0, 0);
-		writeArray(0, 0, 0, 0);
-		push(readVar(0)); // var ID string
+		len = resStrLen((const byte *)entry) + 1;
+		ah = defineArray(0, kStringArray, 0, 0, 0, len);
+		memcpy(ah->data, entry, len);
+
+		push(readVar(0));
 		break;
 	default:
 		error("o72_readINI: default type %d", type);
 	}
-	debug(0, "o72_readINI (%d) %s", type, option);
 }
 
 void ScummEngine_v72he::o72_writeINI() {
@@ -2107,17 +2112,19 @@ void ScummEngine_v72he::o72_writeINI() {
 	case 6: // number
 		value = pop();
 		copyScriptString(option);
-		debug(1,"o72_writeINI: %s set to %d", option, value);
+		ConfMan.set((char *)option, value); 
 		break;
 	case 77: // HE 100
 	case 7: // string
 		copyScriptString(string);
 		copyScriptString(option);
-		debug(1,"o72_writeINI: %s set to %s", option, string);
+		ConfMan.set((char *)option, (char *)string); 
 		break;
 	default:
 		error("o72_writeINI: default type %d", type);
 	}
+
+	ConfMan.flushToDisk();
 }
 
 void ScummEngine_v72he::o72_getResourceSize() {
