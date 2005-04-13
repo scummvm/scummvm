@@ -874,8 +874,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	memset(_charsetData, 0, sizeof(_charsetData));
 	_charsetBufPos = 0;
 	memset(_charsetBuffer, 0, sizeof(_charsetBuffer));
-	_stringLength = 0;
-	memset(_stringBuffer, 0, sizeof(_stringBuffer));
 	_copyProtection = false;
 	_demoMode = false;
 	_confirmExit = false;
@@ -1646,8 +1644,16 @@ void ScummEngine_v60he::scummInit() {
 		setCursorHotspot(16, 16);
 }
 
+void ScummEngine_v72he::scummInit() {
+	ScummEngine_v60he::scummInit();
+
+	_stringLength = 1;
+	_stringStart = 1;
+	memset(_stringBuffer, 0, sizeof(_stringBuffer));
+}
+
 void ScummEngine_v90he::scummInit() {
-	ScummEngine_v80he::scummInit();
+	ScummEngine_v72he::scummInit();
 
 	_heObject = 0;
 	_heObjectNum = 0;

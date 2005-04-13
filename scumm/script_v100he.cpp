@@ -446,7 +446,7 @@ void ScummEngine_v100he::o100_actorOps() {
 		debug(1,"o100_actorOps: case 32 (%d)", i);
 		break;
 	case 52:		// SO_ACTOR_NAME
-		copyScriptString(string);
+		copyScriptString(string, sizeof(string));
 		loadPtrToResource(rtActorName, a->_number, string);
 		break;
 	case 53:		// SO_ACTOR_NEW
@@ -483,7 +483,7 @@ void ScummEngine_v100he::o100_actorOps() {
 		break;
 	case 78:
 		{
-		copyScriptString(string);
+		copyScriptString(string, sizeof(string));
 		int slot = pop();
 
 		int len = resStrLen(string) + 1;
@@ -596,7 +596,7 @@ void ScummEngine_v100he::o100_arrayOps() {
 		memcpy(ah->data, string, len);
 		break;
 	case 77:			// SO_ASSIGN_STRING
-		copyScriptString(string);
+		copyScriptString(string, sizeof(string));
 		len = resStrLen(string) + 1;
 		ah = defineArray(array, kStringArray, 0, 0, 0, len);
 		memcpy(ah->data, string, len);
@@ -979,7 +979,7 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 		spriteGroupSet_inc_tx_ty(_curSpriteGroupId, value1, value2);
 		break;
 	case 52:
-		copyScriptString(string);
+		copyScriptString(string, sizeof(string));
 		break;
 	case 53:
 		if (!_curSpriteGroupId)
@@ -1200,7 +1200,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 	case 47:
 		_wizParams.processFlags |= kWPFUseFile;
 		_wizParams.processMode = 3;
-		copyScriptString(_wizParams.filename);
+		copyScriptString(_wizParams.filename, sizeof(_wizParams.filename));
 		break;
 	case 53:
 		_wizParams.processMode = 8;
@@ -1235,7 +1235,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 	case 64:
 		_wizParams.processFlags |= kWPFUseFile;
 		_wizParams.processMode = 4;
-		copyScriptString(_wizParams.filename);
+		copyScriptString(_wizParams.filename, sizeof(_wizParams.filename));
 		_wizParams.fileWriteMode = pop();
 		break;
 	case 65:
@@ -1272,7 +1272,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		pop();
 		pop();
 		pop();
-		copyScriptString(filename);
+		copyScriptString(filename, sizeof(filename));
 		_wizParams.processMode = 15;
 		break;
 	case 129:
@@ -1282,7 +1282,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.processMode = 16;
 		pop();
 		pop();
-		copyScriptString(filename);
+		copyScriptString(filename, sizeof(filename));
 		break;
 	case 131:
 		_wizParams.processMode = 13;
@@ -1589,7 +1589,7 @@ void ScummEngine_v100he::o100_roomOps() {
 		break;
 
 	case 137:
-		copyScriptString(filename);
+		copyScriptString(filename, sizeof(filename));
 		_saveLoadFlag = pop();
 		_saveLoadSlot = 1;
 		_saveTemporaryState = true;
@@ -1833,7 +1833,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			spriteInfoSet_Inc_tx_ty(spriteId, args[0], args[1]);
 		break;
 	case 52:
-		copyScriptString(string);
+		copyScriptString(string, sizeof(string));
 		break;
 	case 53:
 		if (_curSpriteId > _curMaxSpriteId)

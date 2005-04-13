@@ -541,12 +541,12 @@ void ScummEngine_v90he::o90_wizImageOps() {
 	case 3:
 		_wizParams.processFlags |= kWPFUseFile;
 		_wizParams.processMode = 3;
-		copyScriptString(_wizParams.filename);
+		copyScriptString(_wizParams.filename, sizeof(_wizParams.filename));
 		break;
 	case 4:
 		_wizParams.processFlags |= kWPFUseFile;
 		_wizParams.processMode = 4;
-		copyScriptString(_wizParams.filename);
+		copyScriptString(_wizParams.filename, sizeof(_wizParams.filename));
 		_wizParams.fileWriteMode = pop();
 		break;
 	case 5:
@@ -2285,7 +2285,7 @@ void ScummEngine_v90he::o90_unknownA5() {
 	case 42:
 		a = pop();
 		if (a == 2) {
-			copyScriptString(string);
+			copyScriptString(string, sizeof(string));
 			push(-1);
 		} else if (a == 1) {
 			pop();

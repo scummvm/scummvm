@@ -518,20 +518,39 @@ void ScummEngine_v72he::readArrayFromIndexFile() {
 	}
 }
 
-void ScummEngine_v72he::copyScriptString(byte *dst) {
-	int i = 0;
-	byte b;
+void ScummEngine_v72he::copyScriptString(byte *dst, int dstSize) {
+	byte string[256];
+	byte chr;
+	int pos = 0;
 
 	int array = pop();
 	if (array == -1) {
-		int len = resStrLen(_stringBuffer) + 1;
+		if (_stringLength == 1)
+			error("String stack underflow");
+
+		_stringLength -= 2;
+		 while ((chr = _stringBuffer[_stringLength]) != 0) {
+			string[pos] = chr;
+			pos++;
+
+			if (pos > dstSize)
+				error("String too long to pop");
+
+			_stringLength--;
+		}
+
+		string[pos] = 0;
+		_stringLength++;
+
+		// Reverse string
+		int len = resStrLen(string);
 		while (len--)
-			*dst++ = _stringBuffer[i++];
+			*dst++ = string[len];
 	} else {
 		writeVar(0, array);
-		while ((b = readArray(0, 0, i)) != 0) {
-			*dst++ = b;
-			i++;
+		while ((chr = readArray(0, 0, pos)) != 0) {
+			*dst++ = chr;
+			pos++;
 		}
 	}
 	*dst = 0;
@@ -556,7 +575,7 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 		len = resStrLen(_scriptPointer);
 		_scriptPointer += len + 1;
 	} else {
-		copyScriptString(string);
+		copyScriptString(string, sizeof(string));
 		len = resStrLen(string) + 1;
 	}
 
@@ -719,14 +738,18 @@ void ScummEngine_v72he::o72_pushDWord() {
 }
 
 void ScummEngine_v72he::o72_addMessageToStack() {
-	_stringLength = resStrLen(_scriptPointer) + 1;
-	addMessageToStack(_scriptPointer, _stringBuffer, _stringLength);
+	byte chr;
 
-	// Filter out pointless trace messages, which often flood
-	if (strcmp((char *)_stringBuffer, "no trace") && strcmp((char *)_stringBuffer, "trace on"))
-		debug(1,"o72_addMessageToStack(\"%s\")", _scriptPointer);
+	while ((chr = fetchScriptByte()) != 0) {
+		_stringBuffer[_stringLength] = chr;
+		_stringLength++;
 
-	_scriptPointer += _stringLength;
+		if (_stringLength >= 4096)
+			error("String stack overflow");
+	}
+
+	_stringBuffer[_stringLength] = 0;
+	_stringLength++;
 }
 
 void ScummEngine_v72he::o72_isAnyOf() {
@@ -1030,7 +1053,7 @@ void ScummEngine_v72he::o72_roomOps() {
 		break;
 
 	case 221:
-		copyScriptString(filename);
+		copyScriptString(filename, sizeof(filename));
 		_saveLoadFlag = pop();
 		_saveLoadSlot = 1;
 		_saveTemporaryState = true;
@@ -1166,7 +1189,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		a->_talkColor = pop();
 		break;
 	case 88:		// SO_ACTOR_NAME
-		copyScriptString(string);
+		copyScriptString(string, sizeof(string));
 		loadPtrToResource(rtActorName, a->_number, string);
 		break;
 	case 89:		// SO_INIT_ANIMATION
@@ -1239,7 +1262,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		break;
 	case 225:
 		{
-		copyScriptString(string);
+		copyScriptString(string, sizeof(string));
 		int slot = pop();
 
 		int len = resStrLen(string) + 1;
@@ -1280,7 +1303,7 @@ void ScummEngine_v72he::o72_verbOps() {
 		}
 		break;
 	case 125:		// SO_VERB_NAME
-		copyScriptString(name);
+		copyScriptString(name, sizeof(name));
 		loadPtrToResource(rtVerb, slot, name);
 		vs->type = kTextVerbType;
 		vs->imgindex = 0;
@@ -1394,7 +1417,7 @@ void ScummEngine_v72he::o72_arrayOps() {
 	debug(1,"o72_arrayOps: case %d", subOp);
 	switch (subOp) {
 	case 7:			// SO_ASSIGN_STRING
-		copyScriptString(string);
+		copyScriptString(string, sizeof(string));
 		len = resStrLen(string) + 1;
 		ah = defineArray(array, kStringArray, 0, 0, 0, len);
 		memcpy(ah->data, string, len);
@@ -1590,7 +1613,7 @@ void ScummEngine_v72he::o72_dim2dimArray() {
 void ScummEngine_v72he::o72_traceStatus() {
 	byte string[80];
 
-	copyScriptString(string);
+	copyScriptString(string, sizeof(string));
 	pop();
 }
 
@@ -1624,7 +1647,7 @@ void ScummEngine_v72he::o72_drawWizImage() {
 void ScummEngine_v72he::o72_unknownCF() {
 	byte string[255];
 
-	copyScriptString(string);
+	copyScriptString(string, sizeof(string));
 	int len = resStrLen(string) + 1;
 
 	writeVar(0, 0);
@@ -1651,7 +1674,7 @@ void ScummEngine_v72he::o72_openFile() {
 	byte filename[256];
 
 	mode = pop();
-	copyScriptString(filename);
+	copyScriptString(filename, sizeof(filename));
 
 	debug(0,"Original filename %s", filename);
 
@@ -1823,15 +1846,15 @@ void ScummEngine_v72he::o72_findAllObjects() {
 void ScummEngine_v72he::o72_deleteFile() {
 	byte filename[100];
 
-	copyScriptString(filename);
+	copyScriptString(filename, sizeof(filename));
 	debug(1, "stub o72_deleteFile(%s)", filename);
 }
 
 void ScummEngine_v72he::o72_rename() {
 	byte oldFilename[256],newFilename[256];
 
-	copyScriptString(newFilename);
-	copyScriptString(oldFilename);
+	copyScriptString(newFilename, sizeof(newFilename));
+	copyScriptString(oldFilename, sizeof(oldFilename));
 
 	debug(1, "stub o72_rename(%s to %s)", oldFilename, newFilename);
 }
@@ -2074,7 +2097,7 @@ void ScummEngine_v72he::o72_readINI() {
 	int len, type;
 
 	// we pretend that we don't have .ini file
-	copyScriptString(option);
+	copyScriptString(option, sizeof(option));
 	type = fetchScriptByte();
 
 	switch (type) {
@@ -2111,13 +2134,13 @@ void ScummEngine_v72he::o72_writeINI() {
 	case 43: // HE 100
 	case 6: // number
 		value = pop();
-		copyScriptString(option);
+		copyScriptString(option, sizeof(option));
 		ConfMan.set((char *)option, value); 
 		break;
 	case 77: // HE 100
 	case 7: // string
-		copyScriptString(string);
-		copyScriptString(option);
+		copyScriptString(string, sizeof(string));
+		copyScriptString(option, sizeof(option));
 		ConfMan.set((char *)option, (char *)string); 
 		break;
 	default:
@@ -2169,13 +2192,13 @@ void ScummEngine_v72he::o72_getResourceSize() {
 void ScummEngine_v72he::o72_setFilePath() {
 	// File related
 	byte filename[100];
-	copyScriptString(filename);
+	copyScriptString(filename, sizeof(filename));
 	debug(1,"o72_setFilePath: %s", filename);
 }
 
 void ScummEngine_v72he::o72_setWindowCaption() {
 	byte name[100];
-	copyScriptString(name);
+	copyScriptString(name, sizeof(name));
 	int id = fetchScriptByte();
 
 	debug(1,"o72_setWindowCaption: (%d) %s", id, name);

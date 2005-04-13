@@ -402,7 +402,7 @@ void ScummEngine_v80he::o80_loadSBNG() {
 void ScummEngine_v80he::o80_getFileSize() {
 	byte filename[256];
 
-	copyScriptString(filename);
+	copyScriptString(filename, sizeof(filename));
 
 	File f;
 	if (f.open((char *)filename) == false) {
@@ -453,9 +453,9 @@ void ScummEngine_v80he::o80_readConfigFile() {
 	int type;
 
 	// we pretend that we don't have .ini file
-	copyScriptString(section);
-	copyScriptString(name);
-	copyScriptString(filename);
+	copyScriptString(section, sizeof(section));
+	copyScriptString(name, sizeof(name));
+	copyScriptString(filename, sizeof(filename));
 	type = fetchScriptByte();
 
 	switch (type) {
@@ -487,17 +487,17 @@ void ScummEngine_v80he::o80_writeConfigFile() {
 	case 43: // HE 100
 	case 6: // number
 		value = pop();
-		copyScriptString(section);
-		copyScriptString(name);
-		copyScriptString(filename);
+		copyScriptString(section, sizeof(section));
+		copyScriptString(name, sizeof(name));
+		copyScriptString(filename, sizeof(filename));
 		debug(1,"o80_writeConfigFile: Filename %s Section %s Name %s Value %d", filename, section, name, value);
 		break;
 	case 77: // HE 100
 	case 7: // string
-		copyScriptString(string);
-		copyScriptString(section);
-		copyScriptString(name);
-		copyScriptString(filename);
+		copyScriptString(string, sizeof(string));
+		copyScriptString(section, sizeof(section));
+		copyScriptString(name, sizeof(name));
+		copyScriptString(filename, sizeof(filename));
 		debug(1,"o80_writeConfigFile: Filename %s Section %s Name %s String %s", filename, section, name, string);
 		break;
 	default:

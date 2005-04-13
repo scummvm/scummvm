@@ -752,10 +752,16 @@ protected:
 #endif
 
 	const OpcodeEntryV72he *_opcodesV72he;
+
+	int _stringLength, _stringStart;
+	byte _stringBuffer[4096];
+
 	WizParameters _wizParams;
 
 public:
 	ScummEngine_v72he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v70he(detector, syst, gs, md5sum) {}
+
+	virtual void scummInit();
 
 protected:
 	virtual void setupOpcodes();
@@ -796,7 +802,7 @@ protected:
 
 	virtual void decodeParseString(int a, int b);
 	void decodeScriptString(byte *dst, bool scriptString = false);
-	void copyScriptString(byte *dst);
+	void copyScriptString(byte *dst, int dstSize);
 
 	byte *heFindResourceData(uint32 tag, byte *ptr);
 	byte *heFindResource(uint32 tag, byte *ptr);
