@@ -423,7 +423,7 @@ loc_avoid_ks_fe:
 }
 
 void ScummEngine::drawString(int a, const byte *msg) {
-	byte buf[256];
+	byte buf[270];
 	byte *space;
 	int i, c;
 	byte fontHeight = 0;
