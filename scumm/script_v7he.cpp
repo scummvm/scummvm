@@ -912,7 +912,7 @@ void ScummEngine_v70he::o70_readINI() {
 		entry = (ConfMan.get((char *)option).c_str());
 
 		writeVar(0, 0);
-		len = resStrLen((const byte *)entry) + 1;
+		len = resStrLen((const byte *)entry);
 		ah = defineArray(0, kStringArray, 0, len);
 		memcpy(ah->data, entry, len);
 
