@@ -20,6 +20,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Implemented CGA and Hercules render modes in early LEC titles
    - Added dialogs which are shown when you modify the talkspeed or music
      volume using hotkeys.
+   - Added support for NES version of Maniac Mansion
 
  Sword2:
    - Made the resource manager expire resources more intelligently.
