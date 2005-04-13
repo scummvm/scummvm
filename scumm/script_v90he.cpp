@@ -113,7 +113,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o90_dim2dim2Array),
 		/* 38 */
 		OPCODE(o90_redim2dimArray),
-		OPCODE(o90_unknown39),
+		OPCODE(o90_getLinesIntersectionPoint),
 		OPCODE(o90_sortArray),
 		OPCODE(o6_invalid),
 		/* 3C */
@@ -1968,22 +1968,24 @@ void ScummEngine_v90he::o90_redim2dimArray() {
 	}
 }
 
-void ScummEngine_v90he::o90_unknown39() {
-	// TODO: Array related
-
-	int array1 = fetchScriptWord();
-	int array2 = fetchScriptWord();
-	int a2_dim1end = pop();
-	int a2_dim1start = pop();
-	int a2_dim2end = pop();
-	int a2_dim2start = pop();
-	int a1_dim1end = pop();
-	int a1_dim1start = pop();
-	int a1_dim2end = pop();
-	int a1_dim2start = pop();
-
-	push(1);
-	debug(1,"o90_unknown39 stub array1 %d (%d, %d, %d, %d) array2 %d (%d, %d, %d, %d)", array1, a2_dim2start, a2_dim2end, a2_dim1start, a2_dim1end, array2, a1_dim2start, a1_dim2end, a1_dim1start, a1_dim1end);
+void ScummEngine_v90he::o90_getLinesIntersectionPoint() {
+	int var_ix = fetchScriptWord();
+	int var_iy = fetchScriptWord();
+	int line2_y2 = pop();
+	int line2_x2 = pop();
+	int line2_y1 = pop();
+	int line2_x1 = pop();
+	int line1_y2 = pop();
+	int line1_x2 = pop();
+	int line1_y1 = pop();
+	int line1_x1 = pop();
+	
+	// XXX compute the intersection point of the 2 lines
+	writeVar(var_ix, 0);
+	writeVar(var_iy, 0);
+	push(0);
+	
+	debug(1, "o90_getLinesIntersectionPoint stub var_x=%d var y=%d line1=(%d,%d,%d,%d) line2=(%d,%d,%d,%d)", var_ix, var_iy, line1_x1, line1_y1, line1_x2, line1_y2, line2_x1, line2_y1, line2_x2, line2_y2);
 }
 
 void ScummEngine_v90he::getArrayDim(int array, int *dim2start, int *dim2end, int *dim1start, int *dim1end) {
