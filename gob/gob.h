@@ -30,11 +30,11 @@
 #include "base/engine.h"
 
 #define	VAR_OFFSET(offs)		(*(uint32 *)(inter_variables + (offs)))
-#define	VAR(var)			VAR_OFFSET((var << 2))
+#define	VAR(var)			VAR_OFFSET((var) << 2)
 #define VAR_ADDRESS(var)		(&VAR(var))
 
-#define	WRITE_VAR_OFFSET(offs, val)	(VAR_OFFSET(offs) = val)
-#define WRITE_VAR(var, val)		WRITE_VAR_OFFSET((var << 2), val)
+#define	WRITE_VAR_OFFSET(offs, val)	(VAR_OFFSET(offs) = (val))
+#define WRITE_VAR(var, val)		WRITE_VAR_OFFSET((var) << 2, (val))
 
 namespace Gob {
 
