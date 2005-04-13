@@ -21,13 +21,6 @@
 
 #include "stdafx.h"
 
-#ifndef _WIN32_WCE
-// FIXME TODO FIXME: Using errno is not really portable!
-// We should get rid of this, possibly by adding (clear)ioFailed methods
-// to the SaveFile class.
-#include <errno.h>
-#endif
-
 #include "gui/about.h"
 #include "gui/message.h"
 
@@ -413,11 +406,6 @@ bool SimonEngine::save_game(uint slot, char *caption) {
 
 	_lock_word |= 0x100;
 
-#ifndef _WIN32_WCE
-	errno = 0;
-#endif
-
-
 	f = _saveFileMan->openForSaving(gen_savename(slot));
 	if (f == NULL) {
 		_lock_word &= ~0x100;
@@ -514,11 +502,6 @@ bool SimonEngine::load_game(uint slot) {
 
 	_lock_word |= 0x100;
 
-#ifndef _WIN32_WCE
-	errno = 0;
-#endif
-
-
 	f = _saveFileMan->openForLoading(gen_savename(slot));
 	if (f == NULL) {
 		_lock_word &= ~0x100;
@@ -606,17 +589,16 @@ bool SimonEngine::load_game(uint slot) {
 	// Write the bits in array 1 & 2
 	for (i = 0; i != 32; i++)
 		_bit_array[i] = f->readUint16BE();
+	
+	if (f->readingFailed()) {
+		error("load failed");
+	}
 
 	delete f;
 
 	_no_parent_notify = false;
 
 	_lock_word &= ~0x100;
-
-#ifndef _WIN32_WCE
-	if (errno != 0)
-		error("load failed");
-#endif
 
 	return true;
 }

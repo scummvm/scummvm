@@ -22,7 +22,6 @@
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
-#include <errno.h>
 
 #include "mt32emu.h"
 
@@ -395,7 +394,7 @@ bool Synth::open(SynthProperties &useProp) {
 	if (!loadControlROM("CM32L_CONTROL.ROM")) {
 		if (!loadControlROM("MT32_CONTROL.ROM")) {
 			printDebug("Init Error - Missing or invalid MT32_CONTROL.ROM");
-			report(ReportType_errorControlROM, &errno);
+			report(ReportType_errorControlROM, NULL);
 			return false;
 		}
 	}
@@ -410,7 +409,7 @@ bool Synth::open(SynthProperties &useProp) {
 	if (!loadPCMROM("CM32L_PCM.ROM")) {
 		if (!loadPCMROM("MT32_PCM.ROM")) {
 			printDebug("Init Error - Missing MT32_PCM.ROM");
-			report(ReportType_errorPCMROM, &errno);
+			report(ReportType_errorPCMROM, NULL);
 			return false;
 		}
 	}

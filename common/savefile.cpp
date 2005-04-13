@@ -65,17 +65,24 @@ class StdioSaveFile : public SaveFile {
 private:
 	FILE *fh;
 public:
-	StdioSaveFile(const char *filename, bool saveOrLoad)
-		{ fh = ::fopen(filename, (saveOrLoad? "wb" : "rb")); }
-	~StdioSaveFile()
-		{ if(fh) ::fclose(fh); }
+	StdioSaveFile(const char *filename, bool saveOrLoad) {
+		fh = ::fopen(filename, (saveOrLoad? "wb" : "rb"));
+	}
+	~StdioSaveFile() {
+		if(fh)
+			::fclose(fh);
+	}
 
+	bool readingFailed() const { return ferror(fh); }
+	bool writingFailed() const { return ferror(fh); }
 	bool isOpen() const { return fh != 0; }
 
-	uint32 read(void *buf, uint32 cnt)
-		{ return ::fread(buf, 1, cnt, fh); }
-	uint32 write(const void *buf, uint32 cnt)
-		{ return ::fwrite(buf, 1, cnt, fh); }
+	uint32 read(void *buf, uint32 cnt) {
+		return ::fread(buf, 1, cnt, fh);
+	}
+	uint32 write(const void *buf, uint32 cnt) {
+		return ::fwrite(buf, 1, cnt, fh);
+	}
 };
 
 
@@ -83,16 +90,26 @@ public:
 class GzipSaveFile : public SaveFile {
 private:
 	gzFile fh;
+	bool _ioError;
 public:
-	GzipSaveFile(const char *filename, bool saveOrLoad)
-		{ fh = ::gzopen(filename, (saveOrLoad? "wb" : "rb")); }
-	~GzipSaveFile()
-		{ if(fh) ::gzclose(fh); }
+	GzipSaveFile(const char *filename, bool saveOrLoad) {
+		_ioError = false;
+		fh = ::gzopen(filename, (saveOrLoad? "wb" : "rb"));
+	}
+	~GzipSaveFile() {
+		if(fh)
+			::gzclose(fh);
+	}
 
+	bool readingFailed() const { return _ioError; }
+	bool writingFailed() const { return _ioError; }
 	bool isOpen() const { return fh != 0; }
 
 	uint32 read(void *buf, uint32 cnt) {
-		return ::gzread(fh, buf, cnt);
+		int ret = ::gzread(fh, buf, cnt);
+		if (ret <= -1)
+			_ioError = true;
+		return ret;
 	}
 	uint32 write(const void *buf, uint32 cnt) {
 		// Due to a "bug" in the zlib headers (or maybe I should say,
@@ -102,7 +119,10 @@ public:
 		// which you might think is the same as "const void *" but it
 		// is not - rather it is equal to "void const *" which is the 
 		// same as "void *". Hrmpf
-		return ::gzwrite(fh, const_cast<void *>(buf), cnt);
+		int ret = ::gzwrite(fh, const_cast<void *>(buf), cnt);
+		if (ret <= 0)
+			_ioError = true;
+		return ret;
 	}
 };
 #endif

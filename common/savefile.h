@@ -40,6 +40,9 @@
 class InSaveFile : public Common::ReadStream {
 public:
 	virtual ~InSaveFile() {}
+
+	virtual bool readingFailed() const { return false; }
+	//bool eof() const;
 };
 
 /**
@@ -52,6 +55,8 @@ public:
 class OutSaveFile : public Common::WriteStream {
 public:
 	virtual ~OutSaveFile() {}
+
+	virtual bool writingFailed() const { return false; }
 };
 
 /**

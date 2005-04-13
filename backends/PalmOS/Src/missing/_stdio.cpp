@@ -29,8 +29,6 @@ static UInt16	gStdioVolRefNum = sysInvalidRefNum;
 
 static void dummy(Boolean){};
 
-// TODO : implement "errno"
-
 void StdioInit(UInt16 volRefNum, const Char *output, LedProc ledProc) {
 	gStdioVolRefNum = volRefNum;
 	
