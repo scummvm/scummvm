@@ -463,6 +463,7 @@ int16 game_checkKeys(int16 *pMouseX, int16 *pMouseY, int16 *pButtons, char handl
 
 	if (*pButtons == 3)
 		*pButtons = 0;
+
 	return util_checkKey();
 }
 
@@ -520,17 +521,27 @@ int16 game_checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 				draw_blitInvalidated();
 		}
 
-		key = game_checkKeys(&inter_mouseX, &inter_mouseY, &game_mouseButtons, handleMouse);
+		// NOTE: the original asm does the below game_checkKeys call
+		// _before_ this check. However, that can cause keypresses to get lost
+		// since there's a return statement in this check.
+		// Additionally, I added a 'deltaTime == -1' check there, since
+		// when this function is called with deltaTime == -1 in game_inputArea,
+		// and the return value is then discarded.
 		if (deltaTime < 0) {
-			if (util_getTimeKey() + deltaTime > timeKey) {
+			uint32 curtime = util_getTimeKey();
+			if (deltaTime == -1 || curtime + deltaTime > timeKey) {
 				if (pResId != 0)
 					*pResId = 0;
-
+				
 				if (pResIndex != 0)
 					*pResIndex = 0;
+				
 				return 0;
 			}
 		}
+
+		key = game_checkKeys(&inter_mouseX, &inter_mouseY,
+							 &game_mouseButtons, handleMouse);
 
 		if (handleMouse == 0 && game_mouseButtons != 0) {
 			util_waitMouseRelease(0);
@@ -892,11 +903,15 @@ int16 game_inputArea(int16 xPos, int16 yPos, int16 width, int16 height, int16 ba
 					util_cutFromStr(str, strlen(str) - 1,
 					    1);
 
+				if (key >= 'a' && key <= 'z')
+					key += ('A' - 'a');
+
 				pos++;
 				game_tempStr[0] = key;
 				game_tempStr[1] = 0;
 
 				util_insertStr(game_tempStr, str, pos - 1);
+
 				//strupr(str);
 			}
 		}

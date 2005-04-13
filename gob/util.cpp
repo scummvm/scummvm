@@ -28,17 +28,44 @@
 
 namespace Gob {
 
-static int16 _mouseX, _mouseY, _keyPressed, _mouseButtons;
+static const int kKeyBufSize = 16;
+
+static int16 _mouseX, _mouseY, _mouseButtons;
+static int16 _keyBuffer[kKeyBufSize], _keyBufferHead, _keyBufferTail;
+
+static void addKeyToBuffer(int16 key) {
+	if ((_keyBufferHead + 1) % kKeyBufSize == _keyBufferTail) {
+		warning("key buffer overflow!");
+		return;
+	}
+
+	_keyBuffer[_keyBufferHead] = key;
+	_keyBufferHead = (_keyBufferHead + 1) % kKeyBufSize;
+}
+
+static bool keyBufferEmpty() {
+	return (_keyBufferHead == _keyBufferTail);
+}
+
+static bool getKeyFromBuffer(int16& key) {
+	if (_keyBufferHead == _keyBufferTail) return false;
+
+	key = _keyBuffer[_keyBufferTail];
+	_keyBufferTail = (_keyBufferTail + 1) % kKeyBufSize;
+
+	return true;
+}
+
 
 void util_initInput(void) {
-	_mouseX = _mouseY = _keyPressed = _mouseButtons = 0;
+	_mouseX = _mouseY = _mouseButtons = 0;
+	_keyBufferHead = _keyBufferTail = 0;
 }
 
 void util_waitKey(void) {
-	while (_keyPressed) {
-		util_processInput();
-		g_system->delayMillis(10);
-	}
+	// FIXME: wrong function name? This functions clears the keyboard buffer.
+	util_processInput();
+	_keyBufferHead = _keyBufferTail = 0;
 }
 
 int16 util_translateKey(int16 key) {
@@ -71,26 +98,29 @@ int16 util_translateKey(int16 key) {
 		if (key == keys[i].from)
 			return keys[i].to;
 
+	if (key < 32 || key >= 128)
+		return 0;
+
 	return key;
 }
 
 int16 util_getKey(void) {
-	while (!_keyPressed) {
+	int16 key;
+
+	while (!getKeyFromBuffer(key)) {
 		util_processInput();
 
-		if (_keyPressed)
-			break;
-
-		g_system->delayMillis(10);
+		if (keyBufferEmpty())
+			g_system->delayMillis(10);
 	}
-	return util_translateKey(_keyPressed);
+	return util_translateKey(key);
 }
 
 int16 util_checkKey(void) {
-	int key = _keyPressed;
+	int16 key;
 
-	if (_keyPressed)
-		_keyPressed = 0;
+	if (!getKeyFromBuffer(key))
+		key = 0;
 
 	return util_translateKey(key);
 }
@@ -120,10 +150,9 @@ void util_processInput() {
 			_mouseButtons &= ~2;
 			break;
 		case OSystem::EVENT_KEYDOWN:
-			_keyPressed = event.kbd.keycode;
+			addKeyToBuffer(event.kbd.keycode);
 			break;
 		case OSystem::EVENT_KEYUP:
-			_keyPressed = 0;
 			break;
 		case OSystem::EVENT_QUIT:
 			g_system->quit();
