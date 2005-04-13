@@ -92,7 +92,7 @@ static const char USAGE_STRING[] =
 	"  --platform=WORD          Specify version of game (allowed values: amiga,\n"
 	"                           atari, fmtowns, nes, mac, pc, windows)\n"
 	"  --savepath=PATH          Path to where savegames are stored\n"
-	"  --soundfont=FILE         Select the SoundFont for MIDI playback (Only\n"
+	"  --soundfont=FILE         Select the SoundFont for MIDI playback (only\n"
 	"                           supported by some MIDI drivers)\n"
 	"  --multi-midi             Enable combination Adlib and native MIDI\n"
 	"  --native-mt32            True Roland MT-32 (disable GM emulation)\n"
