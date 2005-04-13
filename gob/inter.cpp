@@ -29,6 +29,7 @@
 #include "gob/draw.h"
 #include "gob/mult.h"
 #include "gob/goblin.h"
+#include "gob/cdrom.h"
 
 namespace Gob {
 
@@ -408,18 +409,20 @@ void inter_drawOperations(void) {
 		break;
 
 	case 32:
-		// FIXME
 		// Used in gob1 CD
-		warning("unimplemented drawOperation: %d", cmd);
 		inter_evalExpr(0);
+		cd_startTrack(inter_resStr);
 		break;
 
 	case 33:
-		// FIXME
 		// Used in gob1 CD
-		warning("unimplemented drawOperation: %d", cmd);
-		WRITE_VAR(5, 32767);
-		break;		
+		WRITE_VAR(5, cd_getTrackPos());
+		break;
+
+	case 34:
+		// Used in gob1 CD
+		cd_stopPlaying();
+		break;
 
 	case 48:
 		i = inter_load16();

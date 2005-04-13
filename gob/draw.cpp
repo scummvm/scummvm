@@ -29,6 +29,7 @@
 #include "gob/inter.h"
 #include "gob/video.h"
 #include "gob/palanim.h"
+#include "gob/cdrom.h"
 
 namespace Gob {
 
@@ -759,6 +760,9 @@ void draw_printText(void) {
 	char buf[20];
 
 	index = inter_load16();
+
+	cd_playMultMusic();
+
 	dataPtr = (char *)game_totTextData + game_totTextData->items[index].offset;
 	ptr = dataPtr;
 

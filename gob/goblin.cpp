@@ -31,6 +31,7 @@
 #include "gob/sound.h"
 #include "gob/game.h"
 #include "gob/dataio.h"
+#include "gob/cdrom.h"
 
 namespace Gob {
 
@@ -3160,6 +3161,9 @@ void gob_interFunc(void) {
 
 	case 1003:
 		gob_drawObjects();
+
+		if (cd_getTrackPos() == -1)
+			cd_playBgMusic();
 		break;
 
 	case 1004:

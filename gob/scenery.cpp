@@ -29,6 +29,7 @@
 #include "gob/util.h"
 #include "gob/anim.h"
 #include "gob/parse.h"
+#include "gob/cdrom.h"
 
 namespace Gob {
 
@@ -382,6 +383,12 @@ int16 scen_loadAnim(char search) {
 	int16 height;
 	int16 sprResId;
 	int16 sprIndex;
+
+	if (cd_globFlag) {
+		while (cd_getTrackPos() != -1);
+
+		cd_globFlag = false;
+	}
 
 	inter_evalExpr(&sceneryIndex);
 	picsCount = inter_load16();

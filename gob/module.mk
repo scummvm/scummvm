@@ -2,6 +2,7 @@ MODULE := gob
 
 MODULE_OBJS := \
 	gob/anim.o \
+	gob/cdrom.o \
 	gob/dataio.o \
 	gob/draw.o \
 	gob/driver_vga.o \

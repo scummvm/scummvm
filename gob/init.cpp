@@ -30,6 +30,7 @@
 #include "gob/game.h"
 #include "gob/draw.h"
 #include "gob/util.h"
+#include "gob/cdrom.h"
 
 namespace Gob {
 
@@ -276,7 +277,13 @@ memBlocks	= word ptr -2*/
 		memset(inter_variables, 0, varsCount * 4);
 
 		strcpy(game_curTotFile, buffer);
+
+		cd_testCD(1, "GOB");
+		cd_readLIC("gob.lic");
 		game_start();
+
+		cd_stopPlaying();
+		cd_freeLICbuffer();
 
 		if (inter_variables != 0)
 			free(inter_variables);
