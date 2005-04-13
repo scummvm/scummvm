@@ -370,10 +370,11 @@ arguments - see the next section.
   --platform=WORD          Specify version of game (allowed values: amiga,
                            atari, fmtowns, mac, nes, pc, windows)
   --savepath=PATH          Path to where savegames are stored
-  --soundfont=FILE         Select the SoundFont for MIDI playback. (Only
-                           supported by some MIDI drivers.)
+  --soundfont=FILE         Select the SoundFont for MIDI playback (Only
+                           supported by some MIDI drivers)
   --multi-midi             Enable combination of Adlib and native MIDI
   --native-mt32            True Roland MT-32 (disable GM emulation)
+  --enable-gs	      	    Enable Roland GS mode for MIDI playback
   --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)
   --aspect-ratio           Enable aspect ratio correction
   --render-mode=MODE       Enable additional render modes (cga, ega, hercGreen
@@ -784,6 +785,37 @@ select your preferred MIDI device. For example, if you wish to use the
 Windows MIDI driver, use the -ewindows option.
 
 
+7.5.1) Using MIDI options to customize Native MIDI output:
+------ ---------------------------------------------------
+ScummVM supports a variety of MIDI modes, depending on the capabilities
+of your MIDI device.
+
+If --native-mt32 is specified, ScummVM will treat your device as a real
+MT-32. Because the instrument mappings and system exclusive commands of
+the MT-32 vary from those of General MIDI devices, you should only
+enable this option if you are using an actual Roland MT-32, LAPC-I, CM-64,
+CM-32L, CM-500, or GS device with an MT-32 map.
+
+If --enable-gs is specified, ScummVM will initialize your GS-compatible
+device with settings that mimic the MT-32's reverb, (lack of) chorus,
+pitch bend sensitivity, etc. If it is specified in conjunction with
+--native-mt32, ScummVM will select the MT-32-compatible map and drumset on
+your GS device. This setting works better than default GM or GS emulation
+with games that do not have custom instrument mappings (Loom and Monkey1).
+You should only specify both settings if you are using a GS device that
+has an MT-32 map, such as an SC-55, SC-88, SC-88 Pro, SC-8820, SC-8850, etc.
+Please note that --enable-gs is automatically disabled in both DOTT and
+Samnmax, since they use General MIDI natively.
+
+If neither of the above settings is enabled, ScummVM will initialize your
+device in General MIDI mode and use GM emulation in games with MT-32
+soundtracks.
+
+Some games contain sound effects that are exclusive to the Adlib soundtrack.
+For these games, you may wish to specify --multi-midi in order to combine
+MIDI music with Adlib sound effects.
+
+
 7.6.0) Playing sound with Sequencer MIDI:                        [UNIX ONLY]
 ------ ----------------------------------
 If your soundcard driver supports a sequencer, you may set the environment
@@ -845,6 +877,7 @@ Asking FluidSynth to become an ALSA sequencer (using SoundFonts):
 
 Once either TiMidity or FluidSynth are running, use the 'aconnect -o -l' 
 command as described earlier in this section.
+
 
 7.7.0) Using MP3 files for CD audio:
 ------ -----------------------------
@@ -1108,11 +1141,15 @@ The following keywords are recognized:
                                  supported by some MIDI drivers.)
         native_mt32     bool     If true, disable GM emulation and assume that
                                  there is a true Roland MT-32 available.
+	 enable_gs       bool     If true, enable Roland GS-specific features to
+                                 enhance GM emulation. If native_mt32 is also
+                                 true, the GS device will select an MT-32 map
+                                 to play the correct instruments.
         sfx_volume      number   The sfx volume setting (0-255)
         tempo           number   The music tempo (50-200) (default: 100)
         speech_volume   number   The speech volume setting (0-255)
 
-        copy_protection bool     Enable copy protection in SCUMM games ,when
+        copy_protection bool     Enable copy protection in SCUMM games, when
                                  ScummVM disables it by default.
         demo_mode       bool     Start demo in Maniac Mansion
         alt_intro       bool     Use alternative intro for CD versions of
