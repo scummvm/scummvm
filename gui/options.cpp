@@ -78,7 +78,9 @@ OptionsDialog::OptionsDialog(const String &domain, int x, int y, int w, int h)
 	_enableGraphicSettings(false),
 	_gfxPopUp(0), _renderModePopUp(0), _fullscreenCheckbox(0), _aspectCheckbox(0),
 	_enableAudioSettings(false),
-	_multiMidiCheckbox(0), _mt32Checkbox(0), _subCheckbox(0),
+	_subCheckbox(0),
+	_enableMIDISettings(false),
+	_multiMidiCheckbox(0), _mt32Checkbox(0), _enableGSCheckbox(0),
 	_enableVolumeSettings(false),
 	_musicVolumeSlider(0), _musicVolumeLabel(0),
 	_sfxVolumeSlider(0), _sfxVolumeLabel(0),
@@ -131,7 +133,7 @@ void OptionsDialog::open() {
 #endif
 	}
 
-	if (_multiMidiCheckbox) {
+	if (_subCheckbox) {
 		// Music driver
 		const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();
 		int i = 0;
@@ -145,15 +147,22 @@ void OptionsDialog::open() {
 		}
 		_midiPopUp->setSelected(md->name ? i : 0);
 
+		// Subtitles setting
+		_subCheckbox->setState(ConfMan.getBool("subtitles", _domain));
+	}
+
+	if (_multiMidiCheckbox) {
+		
 		// Multi midi setting
 		_multiMidiCheckbox->setState(ConfMan.getBool("multi_midi", _domain));
 
 		// Native mt32 setting
 		_mt32Checkbox->setState(ConfMan.getBool("native_mt32", _domain));
 
-		// Subtitles setting
-		_subCheckbox->setState(ConfMan.getBool("subtitles", _domain));
+		// GS extensions setting
+		_enableGSCheckbox->setState(ConfMan.getBool("enable_gs", _domain));
 	}
+	
 
 	if (_musicVolumeSlider) {
 		int vol;
@@ -204,10 +213,8 @@ void OptionsDialog::close() {
 			}
 		}
 
-		if (_multiMidiCheckbox) {
+		if (_subCheckbox) {
 			if (_enableAudioSettings) {
-				ConfMan.set("multi_midi", _multiMidiCheckbox->getState(), _domain);
-				ConfMan.set("native_mt32", _mt32Checkbox->getState(), _domain);
 				ConfMan.set("subtitles", _subCheckbox->getState(), _domain); 
 				const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();
 				while (md->name && md->id != (int)_midiPopUp->getSelectedTag())
@@ -217,10 +224,20 @@ void OptionsDialog::close() {
 				else
 					ConfMan.removeKey("music_driver", _domain);
 			} else {
-				ConfMan.removeKey("multi_midi", _domain);
-				ConfMan.removeKey("native_mt32", _domain);
 				ConfMan.removeKey("music_driver", _domain);
 				ConfMan.removeKey("subtitles", _domain); 
+			}
+		}
+
+		if (_multiMidiCheckbox) {
+			if (_enableMIDISettings) {
+				ConfMan.set("multi_midi", _multiMidiCheckbox->getState(), _domain);
+				ConfMan.set("native_mt32", _mt32Checkbox->getState(), _domain);
+				ConfMan.set("enable_gs", _enableGSCheckbox->getState(), _domain);
+			} else {
+				ConfMan.removeKey("multi_midi", _domain);
+				ConfMan.removeKey("native_mt32", _domain);
+				ConfMan.removeKey("enable_gs", _domain);
 			}
 		}
 
@@ -269,9 +286,15 @@ void OptionsDialog::setAudioSettingsState(bool enabled) {
 	_enableAudioSettings = enabled;
 
 	_midiPopUp->setEnabled(enabled);
+	_subCheckbox->setEnabled(enabled);
+}
+
+void OptionsDialog::setMIDISettingsState(bool enabled) {
+	_enableMIDISettings = enabled;
+
 	_multiMidiCheckbox->setEnabled(enabled);
 	_mt32Checkbox->setEnabled(enabled);
-	_subCheckbox->setEnabled(enabled);
+	_enableGSCheckbox->setEnabled(enabled);
 }
 
 void OptionsDialog::setVolumeSettingsState(bool enabled) {
@@ -330,13 +353,13 @@ int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset) {
 	return yoffset;
 }
 
-int OptionsDialog::addMIDIControls(GuiObject *boss, int yoffset) {
+int OptionsDialog::addAudioControls(GuiObject *boss, int yoffset) {
 	const int x = 10;
 	const int w = _w - 20;
 
 	// The MIDI mode popup & a label
 	_midiPopUp = new PopUpWidget(boss, x-5, yoffset, w+5, kLineHeight, "Music driver: ", 100);
-	yoffset += 16;
+	yoffset += 18;
 	
 	// Populate it
 	const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();
@@ -345,25 +368,39 @@ int OptionsDialog::addMIDIControls(GuiObject *boss, int yoffset) {
 		md++;
 	}
 
+	// Subtitles on/off
+	_subCheckbox = new CheckboxWidget(boss, x, yoffset, w, 16, "Display subtitles");
+	yoffset += 16;
+
+	yoffset += 18;
+		
+	_enableAudioSettings = true;
+
+	return yoffset;
+}
+
+int OptionsDialog::addMIDIControls(GuiObject *boss, int yoffset) {
+	const int x = 10;
+	const int w = _w - 20;
+
 	// SoundFont
 	new ButtonWidget(boss, x, yoffset, kButtonWidth + 14, 16, "SoundFont: ", kChooseSoundFontCmd, 0);
 	_soundFont = new StaticTextWidget(boss, x + kButtonWidth + 20, yoffset + 3, _w - (x + kButtonWidth + 20) - 10, kLineHeight, "None", kTextAlignLeft);
-
 	yoffset += 18;
-	
+
 	// Multi midi setting
 	_multiMidiCheckbox = new CheckboxWidget(boss, x, yoffset, w, 16, "Mixed Adlib/MIDI mode");
-	yoffset += 15;
+	yoffset += 16;
 	
 	// Native mt32 setting
 	_mt32Checkbox = new CheckboxWidget(boss, x, yoffset, w, 16, "True Roland MT-32 (disable GM emulation)");
-	yoffset += 15;
+	yoffset += 16;
 
-	// Subtitles on/off
-	_subCheckbox = new CheckboxWidget(boss, x, yoffset, w, 16, "Display subtitles");
-	yoffset += 15;
+	// GS Extensions setting
+	_enableGSCheckbox = new CheckboxWidget(boss, x, yoffset, w, 16, "Enable Roland GS Mode");
+	yoffset += 16;
 	
-	_enableAudioSettings = true;
+	_enableMIDISettings = true;
 
 	return yoffset;
 }
@@ -417,13 +454,19 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 	//
 	tab->addTab("Audio");
 	yoffset = vBorder;
-	yoffset = addMIDIControls(tab, yoffset);
+	yoffset = addAudioControls(tab, yoffset);
 	yoffset = addVolumeControls(tab, yoffset);
 	// TODO: cd drive setting
 	
+	//
+	// 3) The MIDI tab
+	//
+	tab->addTab("MIDI");
+	yoffset = vBorder;
+	yoffset = addMIDIControls(tab, yoffset);
 
 	//
-	// 3) The miscellaneous tab
+	// 4) The miscellaneous tab
 	//
 	tab->addTab("Paths");
 	yoffset = vBorder;

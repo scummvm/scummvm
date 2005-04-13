@@ -61,6 +61,7 @@ enum {
 	
 	kCmdGlobalGraphicsOverride = 'OGFX',
 	kCmdGlobalAudioOverride = 'OSFX',
+	kCmdGlobalMIDIOverride = 'OMID',
 	kCmdGlobalVolumeOverride = 'OVOL',
 
 	kCmdExtraBrowser = 'PEXT',
@@ -128,6 +129,7 @@ protected:
 
 	CheckboxWidget *_globalGraphicsOverride;
 	CheckboxWidget *_globalAudioOverride;
+	CheckboxWidget *_globalMIDIOverride;
 	CheckboxWidget *_globalVolumeOverride;
 };
 
@@ -215,7 +217,7 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	yoffset += 18;
 
 	//
-	// 2) The graphics tab
+	// 3) The graphics tab
 	//
 	tab->addTab("Gfx");
 	yoffset = vBorder;
@@ -226,7 +228,7 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	yoffset = addGraphicControls(tab, yoffset);
 
 	//
-	// 3) The audio tab
+	// 4) The audio tab
 	//
 	tab->addTab("Audio");
 	yoffset = vBorder;
@@ -234,10 +236,21 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	_globalAudioOverride = new CheckboxWidget(tab, x, yoffset, w, 16, "Override global audio settings", kCmdGlobalAudioOverride);
 	yoffset += 16;
 
+	yoffset = addAudioControls(tab, yoffset);
+
+	//
+	// 5) The MIDI tab
+	//
+	tab->addTab("MIDI");
+	yoffset = vBorder;
+
+	_globalMIDIOverride = new CheckboxWidget(tab, x, yoffset, w, 16, "Override global MIDI settings", kCmdGlobalMIDIOverride);
+	yoffset += 16;
+
 	yoffset = addMIDIControls(tab, yoffset);
 
 	//
-	// 3) The volume tab
+	// 6) The volume tab
 	//
 	tab->addTab("Volume");
 	yoffset = vBorder;
@@ -269,9 +282,13 @@ void EditGameDialog::open() {
 	_globalGraphicsOverride->setState(e);
 
 	e = ConfMan.hasKey("music_driver", _domain) ||
-		ConfMan.hasKey("multi_midi", _domain) ||
-		ConfMan.hasKey("native_mt32", _domain);
+		ConfMan.hasKey("subtitles", _domain);
 	_globalAudioOverride->setState(e);
+
+	e = ConfMan.hasKey("multi_midi", _domain) ||
+		ConfMan.hasKey("native_mt32", _domain)||
+		ConfMan.hasKey("enable_gs", _domain);
+	_globalMIDIOverride->setState(e);
 
 	e = ConfMan.hasKey("music_volume", _domain) ||
 		ConfMan.hasKey("sfx_volume", _domain) ||
@@ -340,6 +357,10 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kCmdGlobalAudioOverride:
 		setAudioSettingsState(data != 0);
+		draw();
+		break;
+	case kCmdGlobalMIDIOverride:
+		setMIDISettingsState(data != 0);
 		draw();
 		break;
 	case kCmdGlobalVolumeOverride:

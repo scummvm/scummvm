@@ -59,11 +59,13 @@ protected:
 	StaticTextWidget *_soundFont;
 
 	int addGraphicControls(GuiObject *boss, int yoffset);
+	int addAudioControls(GuiObject *boss, int yoffset);
 	int addMIDIControls(GuiObject *boss, int yoffset);
 	int addVolumeControls(GuiObject *boss, int yoffset);
 
 	void setGraphicSettingsState(bool enabled);
 	void setAudioSettingsState(bool enabled);
+	void setMIDISettingsState(bool enabled);
 	void setVolumeSettingsState(bool enabled);
 
 private:
@@ -81,9 +83,15 @@ private:
 	//
 	bool _enableAudioSettings;
 	PopUpWidget *_midiPopUp;
+	CheckboxWidget *_subCheckbox;
+
+	//
+	// MIDI controls
+	//
+	bool _enableMIDISettings;
 	CheckboxWidget *_multiMidiCheckbox;
 	CheckboxWidget *_mt32Checkbox;
-	CheckboxWidget *_subCheckbox;
+	CheckboxWidget *_enableGSCheckbox;
 
 	//
 	// Volume controls

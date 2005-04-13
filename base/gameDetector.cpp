@@ -92,10 +92,11 @@ static const char USAGE_STRING[] =
 	"  --platform=WORD          Specify version of game (allowed values: amiga,\n"
 	"                           atari, fmtowns, nes, mac, pc, windows)\n"
 	"  --savepath=PATH          Path to where savegames are stored\n"
-	"  --soundfont=FILE         Select the SoundFont for MIDI playback. (Only\n"
-	"                           supported by some MIDI drivers.)\n"
+	"  --soundfont=FILE         Select the SoundFont for MIDI playback (Only\n"
+	"                           supported by some MIDI drivers)\n"
 	"  --multi-midi             Enable combination Adlib and native MIDI\n"
 	"  --native-mt32            True Roland MT-32 (disable GM emulation)\n"
+	"  --enable-gs              Enable Roland GS mode for MIDI playback\n"
 	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
 	"  --aspect-ratio           Enable aspect ratio correction\n"
 	"  --render-mode=MODE       Enable additional render modes (cga, ega, hercGreen,\n"
@@ -136,6 +137,7 @@ GameDetector::GameDetector() {
 
 	ConfMan.registerDefault("multi_midi", false);
 	ConfMan.registerDefault("native_mt32", false);
+	ConfMan.registerDefault("enable_gs", false);
 //	ConfMan.registerDefault("music_driver", ???);
 
 	ConfMan.registerDefault("cdrom", 0);
@@ -484,6 +486,10 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 
 			DO_LONG_OPTION_BOOL("native-mt32")
 				ConfMan.set("native_mt32", cmdValue, kTransientDomain);
+			END_OPTION
+
+			DO_LONG_OPTION_BOOL("enable-gs")
+				ConfMan.set("enable_gs", cmdValue, kTransientDomain);
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("aspect-ratio")

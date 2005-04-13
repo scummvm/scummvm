@@ -346,6 +346,8 @@ class IMuseInternal {
 
 protected:
 	bool _native_mt32;
+	bool _enable_gs;
+	bool _sc55;
 	MidiDriver *_midi_adlib;
 	MidiDriver *_midi_native;
 
@@ -392,6 +394,7 @@ protected:
 	void handle_marker(uint id, byte data);
 	int get_channel_volume(uint a);
 	void initMidiDriver(MidiDriver *midi);
+	void initGM(MidiDriver *midi);
 	void initMT32(MidiDriver *midi);
 	void init_players();
 	void init_parts();

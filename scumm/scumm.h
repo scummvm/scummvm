@@ -1111,6 +1111,7 @@ protected:
 	int _tempMusic;
 	int _saveSound;
 	bool _native_mt32;
+	bool _enable_gs;
 	int _midi;
 	int _midiDriver; // Use the MD_ values from mididrv.h
 	bool _copyProtection;

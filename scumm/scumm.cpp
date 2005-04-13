@@ -1672,6 +1672,10 @@ void ScummEngine_v99he::scummInit() {
 void ScummEngine::setupMusic(int midi) {
 	_midiDriver = MidiDriver::detectMusicDriver(midi);
 	_native_mt32 = (ConfMan.getBool("native_mt32") || (_midiDriver == MD_MT32));
+	if ((_gameId == GID_TENTACLE) || (_gameId == GID_SAMNMAX))
+		_enable_gs = false;
+	else 
+		_enable_gs = ConfMan.getBool("enable_gs");
 
 #ifndef __GP32__ //ph0x FIXME, "quick dirty hack"
 	/* Bind the mixer to the system => mixer will be invoked
@@ -1720,6 +1724,7 @@ void ScummEngine::setupMusic(int midi) {
 			if (ConfMan.hasKey("tempo"))
 				_imuse->property(IMuse::PROP_TEMPO_BASE, ConfMan.getInt("tempo"));
 			_imuse->property(IMuse::PROP_NATIVE_MT32, _native_mt32);
+			_imuse->property(IMuse::PROP_GS, _enable_gs);
 			if (_features & GF_HUMONGOUS || midi == MDT_TOWNS) {
 				_imuse->property(IMuse::PROP_LIMIT_PLAYERS, 1);
 				_imuse->property(IMuse::PROP_RECYCLE_PLAYERS, 1);
