@@ -753,7 +753,7 @@ protected:
 
 	const OpcodeEntryV72he *_opcodesV72he;
 
-	int _stringLength, _stringStart;
+	int _stringLength;
 	byte _stringBuffer[4096];
 
 	WizParameters _wizParams;

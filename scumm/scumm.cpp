@@ -1648,7 +1648,6 @@ void ScummEngine_v72he::scummInit() {
 	ScummEngine_v60he::scummInit();
 
 	_stringLength = 1;
-	_stringStart = 1;
 	memset(_stringBuffer, 0, sizeof(_stringBuffer));
 }
 
