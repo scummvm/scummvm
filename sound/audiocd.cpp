@@ -151,14 +151,15 @@ int AudioCDManager::getCachedTrack(int track) {
 	// First, delete the previous track info object
 	delete _track_info[current_index];
 	_track_info[current_index] = NULL;
-
-	_cached_tracks[current_index] = track;
+	_cached_tracks[current_index] = 0;
 
 	for (i = 0; i < ARRAYSIZE(TRACK_FORMATS)-1 && _track_info[current_index] == NULL; ++i)
 		_track_info[current_index] = TRACK_FORMATS[i].openTrackFunction(track);
 
-	if (_track_info[current_index] != NULL)
+	if (_track_info[current_index] != NULL) {
+		_cached_tracks[current_index] = track;
 		return current_index;
+	}
 
 	debug(2, "Track %d not available in compressed format", track);
 	return -1;
