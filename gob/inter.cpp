@@ -931,7 +931,7 @@ void inter_keyFunc(void) {
 
 		if (flag != 1) {
 			if (flag != 2) {
-				util_delay(flag);
+				util_longDelay(flag);
 				return;
 			}
 

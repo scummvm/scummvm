@@ -46,6 +46,7 @@ int16 util_checkKey(void);
 int16 util_getRandom(int16 max);
 void util_getMouseState(int16 *pX, int16 *pY, int16 *pButtons);
 void util_setMousePos(int16 x, int16 y);
+void util_longDelay(uint16 msecs);
 void util_delay(uint16 msecs);
 void util_beep(int16 freq);
 uint32 util_getTimeKey(void);
@@ -67,7 +68,7 @@ void util_clearPalette(void);
 void util_insertStr(const char *str1, char *str2, int16 pos);
 void util_cutFromStr(char *str, int16 from, int16 cutlen);
 int16 util_strstr(const char *str1, char *str2);
-void util_waitEndFrame(void);
+void util_waitEndFrame();
 void util_setFrameRate(int16 rate);
 
 void util_listInsertBack(Util_List * list, void *data);

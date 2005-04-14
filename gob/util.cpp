@@ -175,6 +175,15 @@ void util_setMousePos(int16 x, int16 y) {
 	g_system->warpMouse(x, y);
 }
 
+void util_longDelay(uint16 msecs)
+{
+	uint32 time = g_system->getMillis() + msecs;
+	do {
+		util_processInput();
+		util_delay(10);
+	} while (g_system->getMillis() < time);
+}
+
 void util_delay(uint16 msecs) {
 	g_system->delayMillis(msecs);
 }
@@ -198,7 +207,9 @@ void util_waitMouseUp(void) {
 	int16 buttons;
 
 	do {
+		util_processInput();
 		util_getMouseState(&x, &y, &buttons);
+		if (buttons != 0) util_delay(10);
 	} while (buttons != 0);
 }
 
@@ -208,7 +219,9 @@ void util_waitMouseDown(void) {
 	int16 buttons;
 
 	do {
+		util_processInput();
 		util_getMouseState(&x, &y, &buttons);
+		if (buttons == 0) util_delay(10);
 	} while (buttons == 0);
 }
 
@@ -246,7 +259,6 @@ void util_waitEndFrame() {
 	if (timer_enabled) {
 		do {
 			time = util_getTimeKey();
-
 		} while (time - startFrameTime < frameWaitTime);
 	} else {
 		if (frameWaitTime - time > 0)
