@@ -1753,4 +1753,58 @@ byte *ScummEngine_v72he::getStringAddress(int i) {
 	return ((ScummEngine_v72he::ArrayHeader *)addr)->data;
 }
 
+int ScummEngine_v72he::getMusicResourceSize(int id) {
+	int size, total_size;
+	uint tracks, skip;
+	char buf[32], buf1[128];
+	File musicFile;
+
+	sprintf(buf, "%s.he4", getGameName());
+
+	if (_substResFileNameIndex > 0) {
+		generateSubstResFileName(buf, buf1, sizeof(buf1));
+		strcpy(buf, buf1);
+	}
+	if (musicFile.open(buf) == false) {
+		warning("getMusicResourceSize: Music file is not open");
+		return 0;
+	}
+	musicFile.seek(4, SEEK_SET);
+	total_size = musicFile.readUint32BE();
+	musicFile.seek(+8, SEEK_CUR);
+	tracks = musicFile.readUint32LE();
+
+	skip = 0;
+	if (id >= 8500)
+		skip = (id - 8500);
+	else if (id >= 8000)
+		skip = (id - 8000);
+	else if	(id >= 4000)
+		skip = (id - 4000);
+	
+	if (skip > tracks - 1)
+		skip = 0;
+
+	if (_heversion >= 80) {
+		// Skip to offsets
+		musicFile.seek(+40, SEEK_CUR);
+
+		// Skip to correct music header
+		skip *= 21;
+	} else {
+		// Skip to offsets
+		musicFile.seek(+4, SEEK_CUR);
+
+		// Skip to correct music header
+		skip *= 25;
+	}
+
+	musicFile.seek(+skip, SEEK_CUR);
+	musicFile.readUint32LE();
+	size = musicFile.readUint32LE();
+	musicFile.close();
+
+	return size;
+}
+
 } // End of namespace Scumm

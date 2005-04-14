@@ -2191,9 +2191,9 @@ void ScummEngine_v100he::o100_writeFile() {
 }
 
 void ScummEngine_v100he::o100_getResourceSize() {
-	int size = 0, type;
+	int size, type;
 
-	int idx = pop();
+	int resid = pop();
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
@@ -2210,9 +2210,8 @@ void ScummEngine_v100he::o100_getResourceSize() {
 		type = rtScript;
 		break;
 	case 72:
-		if (idx > _numSounds) {
-			// TODO Music resource size
-			push(100);
+		if (resid > _numSounds) {
+			push(getMusicResourceSize(resid));
 			return;
 		}
 		type = rtSound;
@@ -2221,9 +2220,9 @@ void ScummEngine_v100he::o100_getResourceSize() {
 		error("o100_getResourceSize: default type %d", subOp);
 	}
 
-	const byte *ptr = getResourceAddress(type, idx);
-	if (ptr)
-		size = READ_BE_UINT32(ptr + 4) - 8;
+	const byte *ptr = getResourceAddress(type, resid);
+	assert(ptr);
+	size = READ_BE_UINT32(ptr + 4) - 8;
 	push(size);
 }
 

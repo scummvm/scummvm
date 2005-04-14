@@ -2151,41 +2151,17 @@ void ScummEngine_v72he::o72_writeINI() {
 }
 
 void ScummEngine_v72he::o72_getResourceSize() {
-	int size = 0, type;
+	int resid, size;
 
-	int idx = pop();
-	byte subOp = fetchScriptByte();
-
-	switch (subOp) {
-	case 13:
-		if (idx > _numSounds) {
-			// TODO Music resource size
-			push(100);
-			return;
-		}
-		type = rtSound;
-		break;
-	case 14:
-		type = rtRoomImage;
-		break;
-	case 15:
-		type = rtImage;
-		break;
-	case 16:
-		type = rtCostume;
-		break;
-	case 17:
-		type = rtScript;
-		break;
-	default:
-		warning("o72_getResourceSize: default type %d", subOp);
-		push(0);
+	resid = pop();
+	if (resid > _numSounds) {
+		push(getMusicResourceSize(resid));
 		return;
 	}
 
-	const byte *ptr = getResourceAddress(type, idx);
-	if (ptr)
-		size = READ_BE_UINT32(ptr + 4) - 8;
+	const byte *ptr = getResourceAddress(rtSound, resid);
+	assert(ptr);
+	size = READ_BE_UINT32(ptr + 4) - 8;
 	push(size);
 }
 
