@@ -1022,6 +1022,9 @@ void ScummEngine::processUpperActors() {
 }
 
 void Actor::drawActorCostume(bool hitTestMode) {
+	if (_costume == 0)
+		return;
+
 	if (!hitTestMode) {
 		if (!_needRedraw)
 			return;
