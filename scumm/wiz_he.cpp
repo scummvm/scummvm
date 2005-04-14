@@ -1376,6 +1376,7 @@ void ScummEngine_v72he::displayWizComplexImage(const WizParameters *params) {
 			uint8 idx = *index++;
 			rmap[4 + idx] = params->remapColor[idx];
 		}
+		flags |= kWIFRemapPalette;
 	}
 
 	if (_fullRedraw && dstResNum == 0) {
