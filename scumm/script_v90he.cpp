@@ -1983,7 +1983,7 @@ void ScummEngine_v90he::o90_getLinesIntersectionPoint() {
 	// XXX compute the intersection point of the 2 lines
 	writeVar(var_ix, 0);
 	writeVar(var_iy, 0);
-	push(0);
+	push(1);
 	
 	debug(1, "o90_getLinesIntersectionPoint stub var_x=%d var y=%d line1=(%d,%d,%d,%d) line2=(%d,%d,%d,%d)", var_ix, var_iy, line1_x1, line1_y1, line1_x2, line1_y2, line2_x1, line2_y1, line2_x2, line2_y2);
 }
