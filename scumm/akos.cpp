@@ -869,7 +869,8 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	v1.scaleXstep = _mirror ? 1 : -1;
 
 	if (_vm->_heversion >= 71) {
-		rect.clip(_clipOverride);
+		if (_clipOverride.right > _clipOverride.left && _clipOverride.bottom > _clipOverride.top)
+			rect.clip(_clipOverride);
 	}
 
 	if (_actorHitMode) {
@@ -1139,7 +1140,8 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	maxh = _out.h;
 
 	if (_vm->_heversion >= 71) {
-		clip.clip(_clipOverride);
+		if (_clipOverride.right > _clipOverride.left && _clipOverride.bottom > _clipOverride.top)
+			clip.clip(_clipOverride);
 	}
 
 	markRectAsDirty(clip);
