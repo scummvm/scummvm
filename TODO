@@ -291,7 +291,8 @@ SCUMM
   - Add support for floodState (For puzzle in pajama2)
   - Add support for o80_unknownE0 type1 (For binoculars in pajama2)
   - Add support for o80_unknownE0 type2 (For black board in freddi2 and paper in spyfox)
-  - Add support for o80_readConfigFile (For loading map.ini details in mustard)
+  - Add support for o80_readConfigFile/o80_readConfigFile (For balloon/maze/mustard/socks/water)
+    The config file is used to read current level details
   - Add support for o90_getLinesIntersectionPoint (For chase/soccer2004)
   - Add support for IMA ADPCM compression for speech files (For soccer2004)
   - Add support for U32 library calls, triggered by case 2001 of o90_kernelGetFunctions/o90_kernelSetFunctions
