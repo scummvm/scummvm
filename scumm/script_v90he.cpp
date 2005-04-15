@@ -465,9 +465,8 @@ void ScummEngine_v90he::o90_getActorData() {
 		push(a->isUserConditionSet(val));
 		break;
 	case 2:
-		// Get actor limb?
 		checkRange(15, 0, val, "Limb %d out of range");
-		push(0);
+		push(a->_cost.frame[val]);
 		break;
 	case 3:
 		push(a->getAnimSpeed());
