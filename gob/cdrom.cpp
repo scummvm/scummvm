@@ -183,7 +183,7 @@ void cd_startTrack(const char *trackname) {
 	cd_play(start, end);
 
 	cd_startTime = util_getTimeKey();
-	cd_trackStop = cd_startTime + (end - start + 1 + 150) * 40 / 3 + 500;
+	cd_trackStop = cd_startTime + (end - start + 1 + 150) * 40 / 3;
 }
 
 void cd_play(uint32 from, uint32 to) {

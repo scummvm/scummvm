@@ -368,6 +368,10 @@ void inter_drawOperations(void) {
 		scen_interUpdateAnim();
 		break;
 
+	case 19:
+		warning("Gob2 mult stub");
+		break;
+
 	case 20:
 		mult_interInitMult();
 		break;

@@ -32,6 +32,7 @@
 #include "gob/mult.h"
 #include "gob/util.h"
 #include "gob/goblin.h"
+#include "gob/cdrom.h"
 
 namespace Gob {
 
@@ -1750,6 +1751,7 @@ void game_playTot(int16 skipPlay) {
 				draw_fontToSprite[i].height = -1;
 			}
 
+			cd_stopPlaying();
 			draw_animateCursor(4);
 			inter_initControlVars();
 			mult_initAll();
