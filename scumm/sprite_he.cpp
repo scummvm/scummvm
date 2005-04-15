@@ -51,8 +51,8 @@ void ScummEngine_v90he::getSpriteBounds(int spriteId, bool checkGroup, Common::R
 		SpriteGroup *spg = &_spriteGroups[spi->groupNum];
 
 		if (spg->scaling) {
-			x1 = spi->tx * spg->scaleX - spr_wiz_x + spg->tx;
-			y1 = spi->ty * spg->scaleY - spr_wiz_y + spg->ty;
+			x1 = spi->tx * spg->scale_x_ratio_mul / spg->scale_x_ratio_div - spr_wiz_x + spg->tx;
+			y1 = spi->ty * spg->scale_y_ratio_mul / spg->scale_y_ratio_div - spr_wiz_y + spg->ty;
 		} else {
 			x1 = spi->tx - spr_wiz_x + spg->tx;
 			y1 = spi->ty - spr_wiz_y + spg->ty;
@@ -989,8 +989,6 @@ void ScummEngine_v90he::spriteGroupSet_scale_x_ratio_mul(int spriteGroupId, int 
 
 	if (_spriteGroups[spriteGroupId].scale_x_ratio_mul != value) {
 		_spriteGroups[spriteGroupId].scale_x_ratio_mul = value;
-		_spriteGroups[spriteGroupId].scaleX = _spriteGroups[spriteGroupId].scale_x_ratio_mul / _spriteGroups[spriteGroupId].scale_x_ratio_div;
-
 		spriteGroupSet_scaling(spriteGroupId);
 		redrawSpriteGroup(spriteGroupId);
 	}
@@ -1004,8 +1002,6 @@ void ScummEngine_v90he::spriteGroupSet_scale_x_ratio_div(int spriteGroupId, int 
 
 	if (_spriteGroups[spriteGroupId].scale_x_ratio_div != value) {
 		_spriteGroups[spriteGroupId].scale_x_ratio_div = value;
-		_spriteGroups[spriteGroupId].scaleX = _spriteGroups[spriteGroupId].scale_x_ratio_mul / _spriteGroups[spriteGroupId].scale_x_ratio_div;
-
 		spriteGroupSet_scaling(spriteGroupId);
 		redrawSpriteGroup(spriteGroupId);
 	}
@@ -1016,8 +1012,6 @@ void ScummEngine_v90he::spriteGroupSet_scale_y_ratio_mul(int spriteGroupId, int 
 
 	if (_spriteGroups[spriteGroupId].scale_y_ratio_mul != value) {
 		_spriteGroups[spriteGroupId].scale_y_ratio_mul = value;
-		_spriteGroups[spriteGroupId].scaleY = _spriteGroups[spriteGroupId].scale_y_ratio_mul / _spriteGroups[spriteGroupId].scale_y_ratio_div;
-
 		spriteGroupSet_scaling(spriteGroupId);
 		redrawSpriteGroup(spriteGroupId);
 	}
@@ -1031,8 +1025,6 @@ void ScummEngine_v90he::spriteGroupSet_scale_y_ratio_div(int spriteGroupId, int 
 
 	if (_spriteGroups[spriteGroupId].scale_y_ratio_div != value) {
 		_spriteGroups[spriteGroupId].scale_y_ratio_div = value;
-		_spriteGroups[spriteGroupId].scaleY = _spriteGroups[spriteGroupId].scale_y_ratio_mul / _spriteGroups[spriteGroupId].scale_y_ratio_div;
-
 		spriteGroupSet_scaling(spriteGroupId);
 		redrawSpriteGroup(spriteGroupId);
 	}
@@ -1067,10 +1059,8 @@ void ScummEngine_v90he::spritesResetGroup(int spriteGroupId) {
 
 	spg->dstResNum = 0;
 	spg->scaling = 0;
-	spg->scaleX = 0x3F800000;
 	spg->scale_x_ratio_mul = 1;
 	spg->scale_x_ratio_div = 1;
-	spg->scaleY = 0x3F800000;
 	spg->scale_y_ratio_mul = 1;
 	spg->scale_y_ratio_div = 1;
 }
@@ -1270,8 +1260,8 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 			SpriteGroup *spg = &_spriteGroups[spi->groupNum];
 
 			if (spg->scaling) {
-				wiz.img.x1 = spi->tx * spg->scaleX - spr_wiz_x + spg->tx;
-				wiz.img.y1 = spi->ty * spg->scaleY - spr_wiz_y + spg->ty;
+				wiz.img.x1 = spi->tx * spg->scale_x_ratio_mul / spg->scale_x_ratio_div - spr_wiz_x + spg->tx;
+				wiz.img.y1 = spi->ty * spg->scale_y_ratio_mul / spg->scale_y_ratio_div - spr_wiz_y + spg->ty;
 			} else {
 				wiz.img.x1 = spi->tx - spr_wiz_x + spg->tx;
 				wiz.img.y1 = spi->ty - spr_wiz_y + spg->ty;
@@ -1440,8 +1430,8 @@ void ScummEngine_v90he::saveOrLoadSpriteData(Serializer *s, uint32 savegameVersi
 		MKLINE(SpriteGroup, ty, sleInt32, VER(48)),
 		MKLINE(SpriteGroup, dstResNum, sleInt32, VER(48)),
 		MKLINE(SpriteGroup, scaling, sleInt32, VER(48)),
-		MKLINE(SpriteGroup, scaleX, sleInt32, VER(48)),
-		MKLINE(SpriteGroup, scaleY, sleInt32, VER(48)),
+		MK_OBSOLETE(SpriteGroup, scaleX, sleInt32, VER(48), VER(48)),
+		MK_OBSOLETE(SpriteGroup, scaleY, sleInt32, VER(48), VER(48)),
 		MKLINE(SpriteGroup, scale_x_ratio_mul, sleInt32, VER(48)),
 		MKLINE(SpriteGroup, scale_x_ratio_div, sleInt32, VER(48)),
 		MKLINE(SpriteGroup, scale_y_ratio_mul, sleInt32, VER(48)),

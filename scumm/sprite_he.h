@@ -92,8 +92,8 @@ struct SpriteGroup {
 	int32 ty;
 	int32 dstResNum;
 	int32 scaling;
-	int32 scaleX;
-	int32 scaleY;
+//	int32 scaleX;
+//	int32 scaleY;
 	int32 scale_x_ratio_mul;
 	int32 scale_x_ratio_div;
 	int32 scale_y_ratio_mul;
