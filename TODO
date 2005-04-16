@@ -273,7 +273,6 @@ SCUMM
   - Add sound pitch support for piano keys in piano mini game of fbear (DOS)
   - Add rename/delete file support, to make file opcodes function correctly
 * Humongous entertainment >= v7 titles:
-  - Add support for masking in akos codec32, the charset shouldn't be drawn under moving actors
   - Add support for song sync. in HE80+ games. (Used in ff2-demo/freddi2/pajama)
   - Add support for SBNG sound resources for songs (Used in ff2-demo/freddi2/pajama)
   - Add support for displayWizComplexImage 0x80000 flag (Used in ff5demo/freddicove)
