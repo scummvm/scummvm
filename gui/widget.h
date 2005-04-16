@@ -134,9 +134,9 @@ protected:
 public:
 	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, TextAlignment align);
 	void setValue(int value);
-	void setLabel(const String &label)	{ _label = label; }
+	void setLabel(const String &label);
 	const String &getLabel() const		{ return _label; }
-	void setAlign(TextAlignment align)	{ _align = align; }
+	void setAlign(TextAlignment align);
 	TextAlignment getAlign() const		{ return _align; }
 
 protected:

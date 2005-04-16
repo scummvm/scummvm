@@ -111,7 +111,7 @@ StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, 
 	: Widget(boss, x, y, w, h), _align(align) {
 	_flags = WIDGET_ENABLED;
 	_type = kStaticTextWidget;
-	setLabel(text);
+	_label = text;
 }
 
 void StaticTextWidget::setValue(int value) {
@@ -119,6 +119,22 @@ void StaticTextWidget::setValue(int value) {
 	sprintf(buf, "%d", value);
 	_label = buf;
 }
+
+void StaticTextWidget::setLabel(const String &label) {
+	_label = label;
+	// TODO: We should automatically redraw when the label is changed.
+	// The following doesn't quite work when we are using tabs, plus it
+	// is rather clumsy to force a full redraw for a single static text.
+	// However, as long as we do blending, it might be the only way.
+	//_boss->draw();
+}
+
+void StaticTextWidget::setAlign(TextAlignment align) {
+	_align = align;
+	// TODO: We should automatically redraw when the alignment is changed.
+	// See setLabel() for more insights.
+}
+
 
 void StaticTextWidget::drawWidget(bool hilite) {
 	NewGui *gui = &g_gui;
