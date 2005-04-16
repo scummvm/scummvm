@@ -120,6 +120,7 @@ public:
 	void stop(uint16 animId);
 	void finish(uint16 animId);
 	void resume(uint16 animId, int cycles);
+	int16 getCurrentFrame(uint16 anim_id);
 
 private:
 	int ITE_DecodeFrame(const byte *anim_resource, size_t anim_resource_len, size_t frame_offset, byte *buf, size_t buf_len);

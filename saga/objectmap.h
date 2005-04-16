@@ -37,8 +37,8 @@ private:
 		int pointsCount;
 		Point *points;
 	};
+
 public:
-	
 	HitZone(MemoryReadStreamEndian *readStream, int index);
 	~HitZone();
 	
@@ -60,6 +60,12 @@ public:
 	int getFlags() const {
 		return _flags;
 	}
+	void setFlag(HitZoneFlags flag) {
+		_flags |= flag;
+	}
+	void clearFlag(HitZoneFlags flag) {
+		_flags &= ~flag;
+	}
 	int getDirection() const {
 		return ((_flags >> 4) & 0xF);
 	}
@@ -72,6 +78,7 @@ public:
 	bool getSpecialPoint(Point &specialPoint) const;
 	void draw(SURFACE *ds, int color);	
 	bool hitTest(const Point &testPoint);
+
 private:
 	int _flags;				// Saga::HitZoneFlags 
 	int _clickAreasCount;
@@ -99,7 +106,7 @@ public:
 
 	void draw(SURFACE *drawSurface, const Point& testPoint, int color, int color2);
 	int hitTest(const Point& testPoint);
-	const HitZone * getHitZone(int index) const {
+	HitZone *getHitZone(int16 index) {
 		if ((index < 0) || (index >= _hitZoneListCount)) {
 			error("ObjectMap::getHitZone wrong index 0x%X", index);
 		}

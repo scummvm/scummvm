@@ -157,7 +157,7 @@ int Anim::link(int16 anim_id1, int16 anim_id2) {
 
 void Anim::setCycles(uint animId, int cycles) {
 	if (animId >= _anim_count) {
-		warning("Anim::setStopFrame(): wrong animation number (%d)", animId);
+		warning("Anim::setCycles(): wrong animation number (%d)", animId);
 		return;
 	}
 	
@@ -391,6 +391,15 @@ int Anim::setFrameTime(uint16 anim_id, int time) {
 	anim->frame_time = time;
 
 	return SUCCESS;
+}
+
+int16 Anim::getCurrentFrame(uint16 animId) {
+	if (animId >= _anim_count) {
+		warning("Anim::stop(): wrong animation number (%d)", animId);
+		return 0;
+	}
+	
+	return _anim_tbl[animId]->current_frame;
 }
 
 int Anim::freeId(uint16 anim_id) {

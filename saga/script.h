@@ -486,7 +486,7 @@ private:
 	void sfDoCenterActor(SCRIPTFUNC_PARAMS);
 	void sfStartBgdAnimSpeed(SCRIPTFUNC_PARAMS);
 	void sfScriptWalkToAsync(SCRIPTFUNC_PARAMS);
-	void SF_enableZone(SCRIPTFUNC_PARAMS);
+	void sfEnableZone(SCRIPTFUNC_PARAMS);
 	void sfSetActorState(SCRIPTFUNC_PARAMS);
 	void sfScriptMoveTo(SCRIPTFUNC_PARAMS);
 	void SF_sceneEq(SCRIPTFUNC_PARAMS);
@@ -530,7 +530,7 @@ private:
 	void sfEnableEscape(SCRIPTFUNC_PARAMS);
 	void sfPlaySound(SCRIPTFUNC_PARAMS);
 	void SF_playLoopedSound(SCRIPTFUNC_PARAMS);
-	void SF_getDeltaFrame(SCRIPTFUNC_PARAMS);
+	void sfGetDeltaFrame(SCRIPTFUNC_PARAMS);
 	void SF_showProtect(SCRIPTFUNC_PARAMS);
 	void SF_protectResult(SCRIPTFUNC_PARAMS);
 	void sfRand(SCRIPTFUNC_PARAMS);

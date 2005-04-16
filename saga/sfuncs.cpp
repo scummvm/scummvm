@@ -78,7 +78,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfDoCenterActor),
 		OPCODE(sfStartBgdAnimSpeed),
 		OPCODE(sfScriptWalkToAsync),
-		OPCODE(SF_enableZone),
+		OPCODE(sfEnableZone),
 		OPCODE(sfSetActorState),
 		OPCODE(sfScriptMoveTo),
 		OPCODE(SF_sceneEq),
@@ -122,7 +122,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfEnableEscape),
 		OPCODE(sfPlaySound),
 		OPCODE(SF_playLoopedSound),
-		OPCODE(SF_getDeltaFrame),
+		OPCODE(sfGetDeltaFrame),
 		OPCODE(SF_showProtect),
 		OPCODE(SF_protectResult),
 		OPCODE(sfRand),
@@ -610,7 +610,6 @@ void Script::sfSetBgdAnimSpeed(SCRIPTFUNC_PARAMS) {
 
 	_vm->_anim->setFrameTime(animId, ticksToMSec(speed));
 	debug(1, "sfSetBgdAnimSpeed(%d, %d)", animId, speed);
-
 }
 
 // Script function #24 (0x18)
@@ -665,11 +664,20 @@ void Script::sfScriptWalkToAsync(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #28 (0x1C)
-void Script::SF_enableZone(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
+void Script::sfEnableZone(SCRIPTFUNC_PARAMS) {
+	int16 hitZoneIndex = objectIdToIndex(thread->pop());
+	int16 flag = thread->pop();
+	HitZone *hitZone;
 
-	debug(1, "stub: SF_enableZone(), %d args", nArgs);
+	debug(0, "sfEnableZone(%d, %d)", hitZoneIndex, flag);
+	hitZone = _vm->_scene->_objectMap->getHitZone(hitZoneIndex);
+
+	if (flag) {
+		hitZone->setFlag(kHitZoneEnabled);
+	} else {
+		hitZone->clearFlag(kHitZoneEnabled);
+		_vm->_actor->_protagonist->lastZone = NULL;
+	}
 }
 
 // Script function #29 (0x1D)
@@ -1587,11 +1595,10 @@ void Script::SF_playLoopedSound(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #72 (0x48)
-void Script::SF_getDeltaFrame(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
+void Script::sfGetDeltaFrame(SCRIPTFUNC_PARAMS) {
+	uint16 animId = (uint16)thread->pop();
 
-	debug(1, "stub: SF_getDeltaFrame(), %d args", nArgs);
+	thread->_returnValue = _vm->_anim->getCurrentFrame(animId);
 }
 
 // Script function #73 (0x49)
