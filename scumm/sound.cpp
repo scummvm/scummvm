@@ -313,8 +313,8 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		}
 
 		if (heFlags & 1) {
-			_vm->_mixer->stopHandle(_heSoundChannels[heChannel]);
-			flags |= SoundMixer::FLAG_LOOP;
+			// TODO
+			// flags |= SoundMixer::FLAG_LOOP;
 		}
 
 		// Allocate a sound buffer, copy the data into it, and play
