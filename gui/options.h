@@ -32,8 +32,7 @@ class GameDetector;
 
 namespace GUI {
 
-class DirBrowserDialog;
-class FileBrowserDialog; 
+class BrowserDialog;
 class CheckboxWidget;
 class PopUpWidget;
 class SliderWidget;
@@ -120,8 +119,8 @@ public:
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
-	DirBrowserDialog *_dirBrowser;
-	FileBrowserDialog *_fileBrowser;
+	BrowserDialog *_dirBrowser;
+	BrowserDialog *_fileBrowser;
 #ifdef _WIN32_WCE
 	CEKeysDialog *_keysDialog;
 #endif

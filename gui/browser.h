@@ -34,16 +34,14 @@ namespace GUI {
 class ListWidget;
 class StaticTextWidget;
 
-// TODO: Common parent class for DirBrowserDialog and FileBrowserDialog
-
-class DirBrowserDialog : public Dialog {
+class BrowserDialog : public Dialog {
 	typedef Common::String String;
 	typedef Common::StringList StringList;
 public:
-	DirBrowserDialog(const char *title);
+	BrowserDialog(const char *title, bool dirBrowser);
 
 #ifdef MACOSX
-	~DirBrowserDialog();
+	~BrowserDialog();
 	virtual int runModal();
 #else
 	virtual void open();
@@ -62,33 +60,11 @@ protected:
 	FSList			_nodeContent;
 #endif
 	FilesystemNode	_choice;
+	bool			_isDirBrowser;
 
 #ifndef MACOSX
 	void updateListing();
 #endif
-};
-
-// TODO: MACOSX version
-
-class FileBrowserDialog : public Dialog {
-	typedef Common::String String;
-	typedef Common::StringList StringList;
-public:
-	FileBrowserDialog(const char *title);
-
-	virtual void open();
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-
-	const FilesystemNode &getResult() { return _choice; }
-
-protected:
-	ListWidget *_fileList;
-	StaticTextWidget *_currentPath;
-	FilesystemNode _node;
-	FSList _nodeContent;
-	FilesystemNode _choice;
-
-	void updateListing();
 };
 
 } // End of namespace GUI

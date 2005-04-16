@@ -28,7 +28,7 @@ class GameDetector;
 
 namespace GUI {
 
-class DirBrowserDialog;
+class BrowserDialog;
 class ListWidget;
 
 class LauncherDialog : public Dialog {
@@ -47,7 +47,7 @@ protected:
 	Widget			*_removeButton;
 	StringList		_domains;
 	GameDetector 	&_detector;
-	DirBrowserDialog	*_browser;
+	BrowserDialog	*_browser;
 
 	void updateListing();
 	void updateButtons();

@@ -194,8 +194,8 @@ GUI
   Problem: It's not fully clear to me how to "best" deal with global vs. local
   settings here...
 * Maybe add the ScummVM logo (+typeface?) to the about dialog
-* Unify DirBrowserDialog and FileBrowserDialog.
-* MacOS X version of FileBrowserDialog, since there is one of DirBrowserDialog.
+* There is currently no way to unset the SoundFont from the GUI, if any was set. 
+  Maybe add a 'clear' button for it? The same holds for other path settings.
 
 Launcher
 ========
@@ -217,10 +217,9 @@ Plugins
 * When building with the fake static plugins: instead of hardcoding the list
   of plugins, plugins should automatically be "hooked in". This can be achieved
   by modifying REGISTER_PLUGIN to insert special code into the plugins.
-* Likewise, when building with real dynamic plugins: instead of hardcoding
-  plugin names and pathes, we should scan in specific locations for all
-  available plugins, etc.. For example, try to load all "plugins/lib*.so"
-  files. To this end consider special file names for the plugins
+  UPDATE: I tried this, but it doesn't really work due to constraints
+  imposed by the way most C++ compilers/linkers out there realize global
+  constructors.
 * On OSX: Support a plugin build in the bundle target: *.plugin files should
   be put into ScummVM.app/Contents/PlugIns/; this also means that the loader
   needs to search in the plugin dir of the active bundle. So use the 

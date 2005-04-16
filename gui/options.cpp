@@ -499,8 +499,8 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 	addButton(_w - (kButtonWidth + 10), _h - 24, "OK", kOKCmd, 0);
 
 	// Create file browser dialogs
-	_dirBrowser = new DirBrowserDialog("Select directory for savegames");
-	_fileBrowser = new FileBrowserDialog("Select SoundFont");
+	_dirBrowser = new BrowserDialog("Select directory for savegames", true);
+	_fileBrowser = new BrowserDialog("Select SoundFont", false);
 
 #ifdef _WIN32_WCE
 	_keysDialog = new CEKeysDialog();
@@ -571,6 +571,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			// User made his choice...
 			FilesystemNode dir(_dirBrowser->getResult());
 			_savePath->setLabel(dir.path());
+			draw();
 			// TODO - we should check if the directory is writeable before accepting it
 		}
 		break;
@@ -579,6 +580,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			// User made his choice...
 			FilesystemNode dir(_dirBrowser->getResult());
 			_extraPath->setLabel(dir.path());
+			draw();
 		}
 		break;
 	case kChooseSoundFontCmd:
@@ -586,6 +588,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			// User made his choice...
 			FilesystemNode file(_fileBrowser->getResult());
 			_soundFont->setLabel(file.path());
+			draw();
 		}
 		break;
 #ifdef _WIN32_WCE

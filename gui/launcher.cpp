@@ -370,16 +370,17 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 	// Change path for the game
 	case kCmdGameBrowser: {
-		DirBrowserDialog *_browser = new DirBrowserDialog("Select additional game directory");
-		if (_browser->runModal() > 0) {
+		BrowserDialog browser("Select additional game directory", true);
+		if (browser.runModal() > 0) {
 			// User made his choice...
-			FilesystemNode dir(_browser->getResult());
+			FilesystemNode dir(browser.getResult());
 
 			// TODO: Verify the game can be found in the new directory... Best
 			// done with optional specific gameid to pluginmgr detectgames?
 			// FSList files = dir.listDir(FilesystemNode::kListFilesOnly);
 
 			_gamePathWidget->setLabel(dir.path());
+			draw();
 		}
 		draw();
 		break;
@@ -387,22 +388,24 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 	// Change path for extra game data (eg, using sword cutscenes when playing via CD)
 	case kCmdExtraBrowser: { 
-		DirBrowserDialog *_browser = new DirBrowserDialog("Select additional game directory");
-		if (_browser->runModal() > 0) {
+		BrowserDialog browser("Select additional game directory", true);
+		if (browser.runModal() > 0) {
 			// User made his choice...
-			FilesystemNode dir(_browser->getResult());
+			FilesystemNode dir(browser.getResult());
 			_extraPathWidget->setLabel(dir.path());
+			draw();
 		}
 		draw();
 		break;
 	}
 	// Change path for stored save game (perm and temp) data
 	case kCmdSaveBrowser: {
-		DirBrowserDialog *_browser = new DirBrowserDialog("Select directory for saved games");
-		if (_browser->runModal() > 0) {
+		BrowserDialog browser("Select directory for saved games", true);
+		if (browser.runModal() > 0) {
 			// User made his choice...
-			FilesystemNode dir(_browser->getResult());
+			FilesystemNode dir(browser.getResult());
 			_savePathWidget->setLabel(dir.path());
+			draw();
 		}
 		draw();
 		break;
@@ -470,7 +473,7 @@ LauncherDialog::LauncherDialog(GameDetector &detector)
 	updateButtons();
 
 	// Create file browser dialog
-	_browser = new DirBrowserDialog("Select directory with game data");
+	_browser = new BrowserDialog("Select directory with game data", true);
 }
 
 void LauncherDialog::selectGame(const String &name) {

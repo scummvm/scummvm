@@ -40,16 +40,17 @@ enum {
  * other operating systems.
  */
 
-DirBrowserDialog::DirBrowserDialog(const char *title)
+BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 	: Dialog(20, 10, 320 -2 * 20, 200 - 2 * 10) {
 	_titleRef = CFStringCreateWithCString(0, title, CFStringGetSystemEncoding());
+	_isDirBrowser = dirBrowser;
 }
 
-DirBrowserDialog::~DirBrowserDialog() {
+BrowserDialog::~BrowserDialog() {
 	CFRelease(_titleRef);
 }
 
-int DirBrowserDialog::runModal() {
+int BrowserDialog::runModal() {
 	NavDialogRef dialogRef;
 	WindowRef windowRef = 0;
 	NavDialogCreationOptions options;
@@ -72,7 +73,10 @@ int DirBrowserDialog::runModal() {
 //	options.message = CFSTR("Select your game directory");
 	options.modality = kWindowModalityAppModal;
 	
-	err = NavCreateChooseFolderDialog(&options, 0, 0, 0, &dialogRef);
+	if (_isDirBrowser)
+		err = NavCreateChooseFolderDialog(&options, 0, 0, 0, &dialogRef);
+	else
+		err = NavCreateChooseFileDialog(&options, 0, 0, 0, 0, 0, &dialogRef);
 	assert(err == noErr);
 	
 	windowRef = NavDialogGetWindow(dialogRef);
@@ -126,10 +130,11 @@ int DirBrowserDialog::runModal() {
  * - others???
  */
 
-DirBrowserDialog::DirBrowserDialog(const char *title)
+BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 	: Dialog(20, 10, 320 -2 * 20, 200 - 2 * 10)
 	{
 
+	_isDirBrowser = dirBrowser;
 	_fileList = NULL;
 	_currentPath = NULL;
 
@@ -151,7 +156,7 @@ DirBrowserDialog::DirBrowserDialog(const char *title)
 	addButton(_w - (kButtonWidth+10), _h - 24, "Choose", kChooseCmd, 0);
 }
 
-void DirBrowserDialog::open() {
+void BrowserDialog::open() {
 	// If no node has been set, or the last used one is now invalid,
 	// go back to the root/default dir.
 	if (!_node.isValid()) {
@@ -165,9 +170,10 @@ void DirBrowserDialog::open() {
 	Dialog::open();
 }
 
-void DirBrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
-	case kChooseCmd: {
+	case kChooseCmd:
+		if (_isDirBrowser) {
 			// If nothing is selected in the list widget, choose the current dir.
 			// Else, choose the dir that is selected.
 			int selection = _fileList->getSelected();
@@ -178,87 +184,7 @@ void DirBrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 d
 			}
 			setResult(1);
 			close();
-		}
-		break;
-	case kGoUpCmd:
-		_node = _node.getParent();
-		updateListing();
-		break;
-	case kListItemActivatedCmd:
-	case kListItemDoubleClickedCmd:
-		_node = _nodeContent[data];
-		updateListing();
-		break;
-	default:
-		Dialog::handleCommand(sender, cmd, data);
-	}
-}
-
-void DirBrowserDialog::updateListing() {
-	// Update the path display
-	_currentPath->setLabel(_node.path());
-
-	// Read in the data from the file system
-	_nodeContent = _node.listDir();
-	_nodeContent.sort();
-
-	// Populate the ListWidget
-	Common::StringList list;
-	int size = _nodeContent.size();
-	for (int i = 0; i < size; i++) {
-		list.push_back(_nodeContent[i].displayName());
-	}
-	_fileList->setList(list);
-	_fileList->scrollTo(0);
-
-	// Finally, redraw
-	draw();
-}
-
-#endif	// MACOSX
-
-FileBrowserDialog::FileBrowserDialog(const char *title)
-	: Dialog(20, 10, 320 -2 * 20, 200 - 2 * 10)
-	{
-
-	_fileList = NULL;
-	_currentPath = NULL;
-
-	// Headline - TODO: should be customizable during creation time
-	new StaticTextWidget(this, 10, 8, _w - 2 * 10, kLineHeight, title, kTextAlignCenter);
-
-	// Current path - TODO: handle long paths ?
-	_currentPath = new StaticTextWidget(this, 10, 20, _w - 2 * 10, kLineHeight,
-								"DUMMY", kTextAlignLeft);
-
-	// Add file list
-	_fileList = new ListWidget(this, 10, 34, _w - 2 * 10, _h - 34 - 24 - 10);
-	_fileList->setNumberingMode(kListNumberingOff);
-	_fileList->setEditable(false);
-
-	// Buttons
-	addButton(10, _h - 24, "Go up", kGoUpCmd, 0);
-	addButton(_w - 2 * (kButtonWidth + 10), _h - 24, "Cancel", kCloseCmd, 0);
-	addButton(_w - (kButtonWidth+10), _h - 24, "Choose", kChooseCmd, 0);
-}
-
-void FileBrowserDialog::open() {
-	// If no node has been set, or the last used one is now invalid,
-	// go back to the root/default dir.
-	if (!_node.isValid()) {
-		_node = FilesystemNode();
-	}
-
-	// Alway refresh file list
-	updateListing();
-	
-	// Call super implementation
-	Dialog::open();
-}
-
-void FileBrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	switch (cmd) {
-	case kChooseCmd: {
+		} else {
 			int selection = _fileList->getSelected();
 			if (selection < 0)
 				break;
@@ -292,31 +218,33 @@ void FileBrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 	}
 }
 
-void FileBrowserDialog::updateListing() {
+void BrowserDialog::updateListing() {
 	// Update the path display
 	_currentPath->setLabel(_node.path());
 
 	// Read in the data from the file system
-	_nodeContent = _node.listDir(AbstractFilesystemNode::kListAll);
+	if (_isDirBrowser)
+		_nodeContent = _node.listDir(AbstractFilesystemNode::kListDirectoriesOnly);
+	else
+		_nodeContent = _node.listDir(AbstractFilesystemNode::kListAll);
 	_nodeContent.sort();
 
 	// Populate the ListWidget
 	Common::StringList list;
 	int size = _nodeContent.size();
-	int i;
-
-	for (i = 0; i < size; i++) {
-		if (_nodeContent[i].isDirectory())
+	for (int i = 0; i < size; i++) {
+		if (!_isDirBrowser && _nodeContent[i].isDirectory())
 			list.push_back(_nodeContent[i].displayName() + "/");
 		else
 			list.push_back(_nodeContent[i].displayName());
 	}
-
 	_fileList->setList(list);
 	_fileList->scrollTo(0);
 
 	// Finally, redraw
 	draw();
 }
+
+#endif	// MACOSX
 
 } // End of namespace GUI
