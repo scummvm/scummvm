@@ -1194,18 +1194,29 @@ void ScummEngine_v72he::drawWizPolygon(int resNum, int state, int id, int flags,
 	uint8 *srcWizBuf = drawWizImage(resNum, state, 0, 0, xmapNum, r, kWIFBlitToMemBuffer, 0, paletteNum);
 	if (srcWizBuf) {
 		uint8 *dst;
+		int32 wizW, wizH;
 		VirtScreen *pvs = &virtscr[kMainVirtScreen];
-		if (flags & kWIFMarkBufferDirty) {
-			dst = pvs->getPixels(0, 0);
+
+		if (dstResNum) {
+			uint8 *dstPtr = getResourceAddress(rtImage, dstResNum);
+			assert(dstPtr);
+			dst = findWrappedBlock(MKID('WIZD'), dstPtr, state, 0);
+			assert(dst);
+
+			getWizImageDim(dstResNum, 0, wizW, wizH);
 		} else {
-			dst = pvs->getBackPixels(0, 0);
+			if (flags & kWIFMarkBufferDirty) {
+				dst = pvs->getPixels(0, 0);
+			} else {
+				dst = pvs->getBackPixels(0, 0);
+			}
+
+			getWizImageDim(resNum, state, wizW, wizH);
 		}
 		if (wp->bound.left < 0 || wp->bound.top < 0 || wp->bound.right >= pvs->w || wp->bound.bottom >= pvs->h) {
 			error("Invalid coords polygon %d", wp->id);
 		}
 
-		int32 wizW, wizH;
-		getWizImageDim(resNum, state, wizW, wizH);
 		Common::Point bbox[4];
 		bbox[0].x = 0;
 		bbox[0].y = 0;
