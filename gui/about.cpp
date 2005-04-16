@@ -121,6 +121,7 @@ void AboutDialog::open() {
 	_modifiers = 0;
 	_willClose = false;
 	_canvas.pixels = NULL;
+	_screenHasChanged = false;
 
 	Dialog::open();
 }
@@ -138,6 +139,7 @@ void AboutDialog::drawDialog() {
 		// static background for the remainder of the credits.
 		g_gui.blendRect(_x, _y, _w, _h, g_gui._bgcolor);
 		g_gui.copyToSurface(&_canvas, _x, _y, _w, _h);
+		_screenHasChanged = false;
 	}
 
 	g_gui.drawSurface(_canvas, _x, _y);
@@ -212,6 +214,11 @@ void AboutDialog::drawDialog() {
 
 
 void AboutDialog::handleTickle() {
+	// We're in the process of doing a full redraw. This will be used as
+	// background for the text, so we don't want any text on it.
+	if (_screenHasChanged)
+		return;
+
 	const uint32 t = getMillis();
 	int scrollOffset = ((int)t - (int)_scrollTime) / kScrollMillisPerPixel;
 	if (scrollOffset > 0) {
@@ -235,10 +242,12 @@ void AboutDialog::handleTickle() {
 }
 
 void AboutDialog::handleScreenChanged() {
-	// The screen has changed. Reset the canvas, to ensure it gets
-	// refreshed next time a redraw takes place.
+	// The screen has changed. Reset the canvas, and issue a full redraw.
+	// Until we have a new canvas, don't draw any credits text.
 	free(_canvas.pixels);
 	_canvas.pixels = NULL;
+	_screenHasChanged = true;
+	draw();
 }
 
 void AboutDialog::handleMouseUp(int x, int y, int button, int clickCount) {

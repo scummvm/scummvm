@@ -37,6 +37,7 @@ protected:
 	byte		_modifiers;
 	bool		_willClose;
 	Graphics::Surface	_canvas;
+	bool		_screenHasChanged;
 
 public:
 	AboutDialog();
