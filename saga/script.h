@@ -500,11 +500,11 @@ private:
 	void sfSetPortrait(SCRIPTFUNC_PARAMS);
 	void sfSetProtagPortrait(SCRIPTFUNC_PARAMS);
 	void sfChainBgdAnim(SCRIPTFUNC_PARAMS);
-	void SF_scriptSpecialWalk(SCRIPTFUNC_PARAMS);
+	void sfScriptSpecialWalk(SCRIPTFUNC_PARAMS);
 	void sfPlaceActor(SCRIPTFUNC_PARAMS);
 	void SF_checkUserInterrupt(SCRIPTFUNC_PARAMS);
-	void SF_walkRelative(SCRIPTFUNC_PARAMS);
-	void SF_moveRelative(SCRIPTFUNC_PARAMS);
+	void sfScriptWalkRelative(SCRIPTFUNC_PARAMS);
+	void sfScriptMoveRelative(SCRIPTFUNC_PARAMS);
 	void SF_simulSpeech2(SCRIPTFUNC_PARAMS);
 	void sfPlacard(SCRIPTFUNC_PARAMS);
 	void sfPlacardOff(SCRIPTFUNC_PARAMS);

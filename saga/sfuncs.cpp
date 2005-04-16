@@ -92,11 +92,11 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfSetPortrait),
 		OPCODE(sfSetProtagPortrait),
 		OPCODE(sfChainBgdAnim),
-		OPCODE(SF_scriptSpecialWalk),
+		OPCODE(sfScriptSpecialWalk),
 		OPCODE(sfPlaceActor),
 		OPCODE(SF_checkUserInterrupt),
-		OPCODE(SF_walkRelative),
-		OPCODE(SF_moveRelative),
+		OPCODE(sfScriptWalkRelative),
+		OPCODE(sfScriptMoveRelative),
 		OPCODE(SF_simulSpeech2),
 		OPCODE(sfPlacard),
 		OPCODE(sfPlacardOff),
@@ -392,8 +392,8 @@ void Script::sfKillActorThreads(SCRIPTFUNC_PARAMS) {
 	for (threadIterator = _threadList.begin(); threadIterator != _threadList.end(); ++threadIterator) {
 		anotherThread = threadIterator.operator->();
 		if ((anotherThread != thread) && (anotherThread->_threadVars[kThreadVarActor] == actorId)) {
-			thread->_flags &= ~kTFlagWaiting;
-			thread->_flags |= kTFlagAborted;
+			anotherThread->_flags &= ~kTFlagWaiting;
+			anotherThread->_flags |= kTFlagAborted;
 		}
 	}
 }
@@ -968,13 +968,27 @@ void Script::sfChainBgdAnim(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #42 (0x2A)
-void Script::SF_scriptSpecialWalk(SCRIPTFUNC_PARAMS) {
-	thread->pop();
-	thread->pop();
-	thread->pop();
-	thread->pop();
+// Param1: actor id
+// Param2: actor x
+// Param3: actor y
+// Param4: frame seq
+void Script::sfScriptSpecialWalk(SCRIPTFUNC_PARAMS) {
+	int16 actorId;
+	int16 walkFrameSequence;
+	Location actorLocation;
+	ActorData *actor;
 
-	//debug(1, "stub: SF_scriptSpecialWalk(%d, %d, %d, %d)", param1, param2, param3, param4);
+	actorId = thread->pop();
+	actorLocation.x = thread->pop();
+	actorLocation.y = thread->pop();
+	walkFrameSequence =  thread->pop();
+
+	actor = _vm->_actor->getActor(actorId);
+	actorLocation.z = actor->location.z;
+
+	_vm->_actor->actorWalkTo(actorId, actorLocation);
+
+	actor->walkFrameSequence = walkFrameSequence;	
 }
 
 // Script function #43 (0x2B) nonblocking
@@ -1040,25 +1054,69 @@ void Script::SF_checkUserInterrupt(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #45 (0x2D)
-void Script::SF_walkRelative(SCRIPTFUNC_PARAMS) {
-	thread->pop();
-	thread->pop();
-	thread->pop();
-	thread->pop();
-	thread->pop();
+// Param1: actor id
+// Param2: object id
+// Param3: actor x
+// Param4: actor y
+// Param5: actor walk flag
+void Script::sfScriptWalkRelative(SCRIPTFUNC_PARAMS) {
+	int16 actorId;
+	int16 objectId;
+	uint16 walkFlags;
+	Location actorLocation;
+	ActorData *actor;
 
-	//debug(1, "stub: SF_walkRelative(%d, %d, %d, %d, %d)", param1, param2, param3, param4, param5);
+	actorId = thread->pop();
+	objectId = thread->pop();
+	actorLocation.x = thread->pop();
+	actorLocation.y = thread->pop();
+	walkFlags =  thread->pop();
+
+	actor = _vm->_actor->getActor(actorId);
+	actorLocation.z = actor->location.z;
+
+	_vm->_actor->realLocation(actorLocation, objectId, walkFlags);
+
+	actor->flags &= ~kFollower;
+
+	if (_vm->_actor->actorWalkTo(actorId, actorLocation) && !(walkFlags & kWalkAsync)) {
+		thread->waitWalk(actor);
+	}
+
+	if (walkFlags & kWalkBackPedal) {
+		actor->actorFlags |= kActorBackwards;
+	}
+
+	actor->actorFlags = (actor->actorFlags & ~kActorFacingMask) | (walkFlags & kActorFacingMask);	
 }
 
 // Script function #46 (0x2E)
-void Script::SF_moveRelative(SCRIPTFUNC_PARAMS) {
-	thread->pop();
-	thread->pop();
-	thread->pop();
-	thread->pop();
-	thread->pop();
+// Param1: actor id
+// Param2: object id
+// Param3: actor x
+// Param4: actor y
+// Param5: actor walk flag
+void Script::sfScriptMoveRelative(SCRIPTFUNC_PARAMS) {
+	int16 actorId;
+	int16 objectId;
+	uint16 walkFlags;
+	Location actorLocation;
+	ActorData *actor;
 
-	//debug(1, "stub: SF_moveRelative(%d, %d, %d, %d, %d)", param1, param2, param3, param4, param5);
+	actorId = thread->pop();
+	objectId = thread->pop();
+	actorLocation.x = thread->pop();
+	actorLocation.y = thread->pop();
+	walkFlags =  thread->pop();
+
+	actor = _vm->_actor->getActor(actorId);
+	actorLocation.z = actor->location.z;
+
+	_vm->_actor->realLocation(actorLocation, objectId, walkFlags);
+
+
+	actor->location = actorLocation;
+	actor->actorFlags = (actor->actorFlags & ~kActorFacingMask) | (walkFlags & kActorFacingMask);
 }
 
 // Script function #47 (0x2F)
