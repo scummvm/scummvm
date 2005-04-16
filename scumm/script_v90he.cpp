@@ -1979,12 +1979,111 @@ void ScummEngine_v90he::o90_getLinesIntersectionPoint() {
 	int line1_y1 = pop();
 	int line1_x1 = pop();
 	
-	// XXX compute the intersection point of the 2 lines
-	writeVar(var_ix, 0);
-	writeVar(var_iy, 0);
-	push(1);
+	int result = 0;
+	int ix = 0;
+	int iy = 0;
 	
-	debug(1, "o90_getLinesIntersectionPoint stub var_x=%d var y=%d line1=(%d,%d,%d,%d) line2=(%d,%d,%d,%d)", var_ix, var_iy, line1_x1, line1_y1, line1_x2, line1_y2, line2_x1, line2_y1, line2_x2, line2_y2);
+	bool isLine1Point = (line1_x1 == line1_x2 && line1_y1 == line1_y2);
+	bool isLine2Point = (line2_x1 == line2_x2 && line2_y1 == line2_y2);
+	
+	if (isLine1Point) {
+		if (isLine2Point) {
+			if (line1_x1 == line2_x1 && line1_y1 == line2_y2) {
+				ix = line1_x1;
+				iy = line2_x1;
+				result = 1;
+			}
+		} else {
+			// 1 point and 1 line
+			int dx2 = line2_x2 - line2_x1;
+			if (dx2 != 0) {
+				int dy2 = line2_y2 - line2_y1;
+				float y = (float)dy2 / dx2 * (line1_x1 - line2_x1) + line2_y1 + .5f;
+				if (line1_y1 == (int)y) {
+					ix = line1_x1;
+					iy = line1_y1;
+					result = 1;
+				}
+			} else {
+				// vertical line
+				if (line1_x1 == line2_x1) {
+					if (line2_y1 > line2_y2) {
+						if (line1_y1 >= line2_y2 && line1_y1 <= line2_y1) {
+							ix = line1_x1;
+							iy = line1_y1;
+							result = 1;
+						}
+					} else {
+						if (line1_y1 >= line2_y1 && line1_y1 <= line2_y2) {
+							ix = line1_x1;
+							iy = line1_y1;
+							result = 1;
+						}
+					}
+				}
+			}
+		}
+	} else {
+		if (isLine2Point) {
+			// 1 point and 1 line
+			int dx1 = line1_x2 - line1_x1;
+			if (dx1 != 0) {
+				int dy1 = line1_y2 - line1_y1;
+				float y = (float)dy1 / dx1 * (line2_x1 - line1_x1) + line1_y1 + .5f;
+				if (line2_y1 == (int)y) {
+					ix = line2_x1;
+					iy = line2_y1;
+					result = 1;
+				}
+			} else {
+				// vertical line
+				if (line2_x1 == line1_x1) {
+					if (line1_y1 > line1_y2) {
+						if (line2_y1 >= line1_y2 && line2_y1 <= line1_y1) {
+							ix = line2_x1;
+							iy = line2_y1;
+							result = 1;
+						}
+					} else {
+						if (line2_y1 >= line1_y1 && line2_y1 <= line1_y2) {
+							ix = line2_x2;
+							iy = line2_y1;
+							result = 1;
+						}
+					}
+				}
+			}			
+		} else {
+			// 2 lines
+			int dy1 = line1_y2 - line1_y1;
+			int dx1 = line1_x2 - line1_x1;
+			int dy2 = line2_y2 - line2_y1;
+			int dx2 = line2_x2 - line2_x1;
+			int det = dx1 * dy2 - dx2 * dy1;
+			int cross_p1 = dx1 * (line1_y1 - line2_y1) - dy1 * (line1_x1 - line2_x1);
+			int cross_p2 = dx2 * (line1_y1 - line2_y1) - dy2 * (line1_x1 - line2_x1);
+			if (det == 0) {
+				// parallel lines
+				if (cross_p2 == 0) {
+					ix = ABS(line2_x2 + line2_x1) / 2;
+					iy = ABS(line2_y2 + line2_y1) / 2;
+					result = 2;
+				}
+			} else {
+				float rcp1 = (float)cross_p1 / det;
+				float rcp2 = (float)cross_p2 / det;
+				if (rcp1 >= 0 && rcp1 <= 1 && rcp2 >= 0 && rcp2 <= 1) {
+					ix = (int)(dx1 * rcp2 + line1_x1 + .5f);
+					iy = (int)(dy1 * rcp2 + line1_y1 + .5f);
+					result = 1;
+				}
+			}
+		}
+	}
+
+	writeVar(var_ix, ix);
+	writeVar(var_iy, iy);
+	push(result);
 }
 
 void ScummEngine_v90he::getArrayDim(int array, int *dim2start, int *dim2end, int *dim1start, int *dim1end) {
