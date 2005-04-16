@@ -420,7 +420,12 @@ void inter_drawOperations(void) {
 
 	case 33:
 		// Used in gob1 CD
-		WRITE_VAR(5, cd_getTrackPos());
+		{
+		int pos = cd_getTrackPos();
+		if (pos == -1)
+			pos = 32767;
+		WRITE_VAR(5, pos);
+		}
 		break;
 
 	case 34:
