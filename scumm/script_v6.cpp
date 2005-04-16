@@ -386,7 +386,7 @@ const char *ScummEngine_v6::getOpcodeDesc(byte i) {
 int ScummEngine_v6::popRoomAndObj(int *room) {
 	int obj;
 
-	if (_version >= 7 || _heversion >= 70) {
+	if (_version >= 7) {
 		obj = pop();
 		*room = getObjectRoom(obj);
 	} else {
@@ -986,7 +986,13 @@ void ScummEngine_v6::o6_cursorCommand() {
 		break;
 	case 0x99: 		// SO_CURSOR_IMAGE Set cursor image
 		{
-			int room, obj = popRoomAndObj(&room);
+			int room, obj;
+			if (_heversion >= 70) {
+				obj = pop();
+				room = getObjectRoom(obj);
+			} else {
+				obj = popRoomAndObj(&room);
+			}
 			setCursorFromImg(obj, room, 1);
 			break;
 		}
@@ -1239,11 +1245,7 @@ void ScummEngine_v6::o6_putActorAtObject() {
 	int room, obj, x, y;
 	Actor *a;
 
-	if (_features & GF_HUMONGOUS) {
-		room = pop();
-		obj = pop();
-	} else
-		obj = popRoomAndObj(&room);
+	obj = popRoomAndObj(&room);
 
 	a = derefActor(pop(), "o6_putActorAtObject");
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
@@ -1323,11 +1325,7 @@ void ScummEngine_v6::o6_loadRoomWithEgo() {
 	y = pop();
 	x = pop();
 
-	if (_features & GF_HUMONGOUS) {
-		room = pop();
-		obj = pop();
-	} else
-		obj = popRoomAndObj(&room);
+	obj = popRoomAndObj(&room);
 
 	a = derefActor(VAR(VAR_EGO), "o6_loadRoomWithEgo");
 	a->putActor(0, 0, room);

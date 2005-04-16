@@ -599,7 +599,8 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 		break;
 	case 119:		// SO_LOAD_OBJECT
 		{
-			int room, obj = popRoomAndObj(&room);
+			int obj = pop();
+			int room = getObjectRoom(obj);
 			loadFlObject(obj, room);
 			break;
 		}
