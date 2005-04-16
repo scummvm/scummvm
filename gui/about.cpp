@@ -121,7 +121,6 @@ void AboutDialog::open() {
 	_modifiers = 0;
 	_willClose = false;
 	_canvas.pixels = NULL;
-	_screenHasChanged = false;
 
 	Dialog::open();
 }
@@ -139,7 +138,6 @@ void AboutDialog::drawDialog() {
 		// static background for the remainder of the credits.
 		g_gui.blendRect(_x, _y, _w, _h, g_gui._bgcolor);
 		g_gui.copyToSurface(&_canvas, _x, _y, _w, _h);
-		_screenHasChanged = false;
 	}
 
 	g_gui.drawSurface(_canvas, _x, _y);
@@ -216,7 +214,7 @@ void AboutDialog::drawDialog() {
 void AboutDialog::handleTickle() {
 	// We're in the process of doing a full redraw. This will be used as
 	// background for the text, so we don't want any text on it.
-	if (_screenHasChanged)
+	if (!_canvas.pixels)
 		return;
 
 	const uint32 t = getMillis();
@@ -246,7 +244,6 @@ void AboutDialog::handleScreenChanged() {
 	// Until we have a new canvas, don't draw any credits text.
 	free(_canvas.pixels);
 	_canvas.pixels = NULL;
-	_screenHasChanged = true;
 	draw();
 }
 
