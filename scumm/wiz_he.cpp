@@ -960,7 +960,7 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 			return NULL;
 		}
 
-		uint32 cw, ch;
+		int32 cw, ch;
 		if (flags & kWIFBlitToMemBuffer) {
 			dst = (uint8 *)malloc(width * height);
 			int color = 255; // FIXME: should be (VAR_WIZ_TCOLOR != 0xFF) ? VAR(VAR_WIZ_TCOLOR) : 5;
@@ -971,12 +971,10 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 			if (dstResNum) {
 				uint8 *dstPtr = getResourceAddress(rtImage, dstResNum);
 				assert(dstPtr);
-				wizh = findWrappedBlock(MKID('WIZH'), dstPtr, 0, 0);
-				assert(wizh);
-				cw  = READ_LE_UINT32(wizh + 0x4);
-				ch = READ_LE_UINT32(wizh + 0x8);
-				dst = findWrappedBlock(MKID('WIZD'), dstPtr, state, 0);
+				dst = findWrappedBlock(MKID('WIZD'), dstPtr, 0, 0);
 				assert(dst);
+
+				getWizImageDim(dstResNum, 0, cw, ch);
 			} else {
 				VirtScreen *pvs = &virtscr[kMainVirtScreen];
 				if (flags & kWIFMarkBufferDirty) {
@@ -1200,7 +1198,7 @@ void ScummEngine_v72he::drawWizPolygon(int resNum, int state, int id, int flags,
 		if (dstResNum) {
 			uint8 *dstPtr = getResourceAddress(rtImage, dstResNum);
 			assert(dstPtr);
-			dst = findWrappedBlock(MKID('WIZD'), dstPtr, state, 0);
+			dst = findWrappedBlock(MKID('WIZD'), dstPtr, 0, 0);
 			assert(dst);
 
 			getWizImageDim(dstResNum, 0, wizW, wizH);
