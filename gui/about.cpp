@@ -243,8 +243,10 @@ void AboutDialog::handleTickle() {
 }
 
 void AboutDialog::handleScreenChanged() {
-	// The screen has changed. Reset the canvas, and issue a full redraw.
-	// Until we have a new canvas, don't draw any credits text.
+	// The screen has changed. That means the overlay colors in the canvas
+	// may no longer be correct. Reset it, and issue a full redraw.
+	// TODO: We could check if the bit format has changed, like we do in
+	// the MPEG player.
 	free(_canvas.pixels);
 	_canvas.pixels = NULL;
 	draw();
