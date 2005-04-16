@@ -233,7 +233,7 @@ void Part::setPatch(const PatchParam *patch) {
 	patchTemp->patch = *patch;
 }
 
-void RhythmPart::setTimbre(TimbreParam *timbre) {
+void RhythmPart::setTimbre(TimbreParam * /*timbre*/) {
 	synth->printDebug("%s: Attempted to call setTimbre() - doesn't make sense for rhythm", name);
 }
 

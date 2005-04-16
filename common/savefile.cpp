@@ -73,8 +73,8 @@ public:
 			::fclose(fh);
 	}
 
-	bool readingFailed() const { return ferror(fh); }
-	bool writingFailed() const { return ferror(fh); }
+	bool readingFailed() const { return ferror(fh) != 0; }
+	bool writingFailed() const { return ferror(fh) != 0; }
 	bool isOpen() const { return fh != 0; }
 
 	uint32 read(void *buf, uint32 cnt) {

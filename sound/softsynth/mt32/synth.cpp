@@ -715,7 +715,7 @@ void Synth::playSysexWithoutHeader(unsigned char device, unsigned char command, 
 	}
 }
 
-void Synth::readSysex(unsigned char device, const Bit8u *sysex, Bit32u len) {
+void Synth::readSysex(unsigned char /*device*/, const Bit8u * /*sysex*/, Bit32u /*len*/) {
 }
 
 const MemoryRegion memoryRegions[8] = {
