@@ -1052,6 +1052,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_NUM_SPRITES = 0xFF;
 	VAR_NUM_PALETTES = 0xFF;
 	VAR_NUM_UNK = 0xFF;
+	VAR_MOUSE_STATE = 0xFF;
 	VAR_POLYGONS_ONLY = 0xFF;
 	VAR_WINDOWS_VERSION = 0xFF;
 	VAR_KEY_STATE = 0xFF;

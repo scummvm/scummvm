@@ -261,6 +261,7 @@ void ScummEngine_v72he::setupScummVars() {
 	VAR_NUM_IMAGES = 72;
 	VAR_NUM_CHARSETS = 73;
 	VAR_NUM_GLOBAL_OBJS = 74;
+	VAR_MOUSE_STATE = 75;
 	VAR_POLYGONS_ONLY = 76;
 
 	if (_heversion >= 80)

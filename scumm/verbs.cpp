@@ -353,8 +353,14 @@ void ScummEngine::checkExecVerbs() {
 	int i, over;
 	VerbSlot *vs;
 
+	if (VAR_MOUSE_STATE != 0xFF)
+		VAR(VAR_MOUSE_STATE) = 0;
+
 	if (_userPut <= 0 || _mouseButStat == 0)
 		return;
+
+	if (VAR_MOUSE_STATE != 0xFF)
+		VAR(VAR_MOUSE_STATE) = _mouseButStat;
 
 	if (_mouseButStat < MBS_MAX_KEY) {
 		/* Check keypresses */
