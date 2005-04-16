@@ -950,10 +950,12 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 		if (flags & kWIFRemapPalette) {
 			rmap = findWrappedBlock(MKID('RMAP'), dataPtr, state, 0);
 			assert(rmap);
-			uint8 *rgbs = findWrappedBlock(MKID('RGBS'), dataPtr, state, 0);
-			assert(rgbs);
-			remapPalette(rgbs, rmap + 4);
-			warning("drawWizImage() flag 0x2");
+			if (_heversion <= 80 || READ_BE_UINT32(rmap) != 0x01234567) {
+				uint8 *rgbs = findWrappedBlock(MKID('RGBS'), dataPtr, state, 0);
+				assert(rgbs);
+				remapPalette(rgbs, rmap + 4);
+				debug(0, "drawWizImage() flag 0x2");
+			}
 		}
 		if (flags & kWIFPrint) {
 			warning("WizImage printing is unimplemented");
@@ -1380,7 +1382,7 @@ void ScummEngine_v72he::displayWizComplexImage(const WizParameters *params) {
 		assert(iwiz);
 		uint8 *rmap = findWrappedBlock(MKID('RMAP'), iwiz, st, 0) ;
 		assert(rmap);
-		WRITE_BE_UINT32(rmap, 0x12345678);
+		WRITE_BE_UINT32(rmap, 0x01234567);
 		while (num--) {
 			uint8 idx = *index++;
 			rmap[4 + idx] = params->remapColor[idx];
@@ -1698,7 +1700,7 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 			assert(iwiz);
 			uint8 *rmap = findWrappedBlock(MKID('RMAP'), iwiz, state, 0) ;
 			assert(rmap);
-			WRITE_BE_UINT32(rmap, 0x12345678);
+			WRITE_BE_UINT32(rmap, 0x01234567);
 			while (num--) {
 				uint8 idx = *index++;
 				rmap[4 + idx] = params->remapColor[idx];
