@@ -86,7 +86,7 @@ static const char *credits[] = {
 "\\L\\c2""    Packaging for BeOS",
 "\\L\\c0""  Quietust",
 "\\L\\c2""    Sound support for Amiga SCUMM V2/V3 games,",
-"\\L\\c2""    MM NES suport",
+"\\L\\c2""    MM NES support",
 "\\L\\c0""  Andreas Roever",
 "\\L\\c2""    Broken Sword 1/2 MPEG2 cutscene support",
 "\\L\\c0""  Edward Rudd",

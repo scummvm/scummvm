@@ -356,7 +356,7 @@ begin_credits("Credits");
 	add_person("Nicolas Noble", "pixels", "Config file and ALSA support");
 	add_person("Willem Jan Palenstijn", "wjp", "Packaging for Fedora/RedHat");
 	add_person("Stefan Parviainen", "", "Packaging for BeOS");
-	add_person("", "Quietust", "Sound support for Amiga SCUMM V2/V3 games, MM NES suport");
+	add_person("", "Quietust", "Sound support for Amiga SCUMM V2/V3 games, MM NES support");
 	add_person("Andreas R&ouml;ver", "", "Broken Sword 1/2 MPEG2 cutscene support");
 	add_person("Edward Rudd", "", "Fixes for playing MP3 versions of MI1/Loom audio");
 	add_person("Daniel Schepler", "", "Final MI1 CD music support, initial Ogg Vorbis support");
