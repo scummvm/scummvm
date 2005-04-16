@@ -122,7 +122,7 @@ void ScummEngine::openRoom(const int room) {
 					sprintf(buf, "%s.he%.1d", _gameName.c_str(), room == 0 ? 0 : 1);
 			} else if (_version >= 7) {
 				if (room > 0 && (_version == 8))
-					VAR(VAR_CURRENTDISK) = res.roomno[rtRoom][room];
+					VAR(VAR_CURRENTDISK) = diskNumber;
 				sprintf(buf, "%s.la%d", _gameName.c_str(), diskNumber);
 
 				sprintf(buf2, "%s.%.3d", _gameName.c_str(), diskNumber);
