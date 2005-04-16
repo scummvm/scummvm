@@ -839,8 +839,13 @@ void ScummEngine_v80he::o80_getResourceSize() {
 	}
 
 	const byte *ptr = getResourceAddress(type, resid);
-	assert(ptr);
-	size = READ_BE_UINT32(ptr + 4) - 8;
+	if (ptr) {
+		size = getResourceDataSize(ptr);
+	} else {
+		debug(0, "o80_getResourceSize: invalid resource type %d id %d", type, resid);
+		size = 0;
+	}
+
 	push(size);
 }
 

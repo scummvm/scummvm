@@ -2161,7 +2161,7 @@ void ScummEngine_v72he::o72_getResourceSize() {
 
 	const byte *ptr = getResourceAddress(rtSound, resid);
 	assert(ptr);
-	size = READ_BE_UINT32(ptr + 4) - 8;
+	size = getResourceDataSize(ptr);
 	push(size);
 }
 
