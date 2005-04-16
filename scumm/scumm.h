@@ -248,7 +248,6 @@ enum ScummGameId {
 	GID_MONKEY_SEGA,
 	GID_HEGAME,      // Generic name for all HE games with default behaviour
 	GID_PUTTDEMO,
-	GID_PUTTMOON,
 	GID_FBEAR,
 	GID_FUNPACK,
 	GID_FREDDI4,

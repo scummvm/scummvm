@@ -218,7 +218,7 @@ static const ScummGameSettings scumm_settings[] = {
 	  GF_USE_KEY | GF_HUMONGOUS | GF_MULTIPLE_VERSIONS, 0, 0},
 	{"moondemo", "Putt-Putt Goes To The Moon (Demo)", GID_HEGAME, 6, 60, 13, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
-	{"puttmoon", "Putt-Putt Goes To The Moon", GID_PUTTMOON, 6, 60, 13, MDT_ADLIB | MDT_NATIVE,
+	{"puttmoon", "Putt-Putt Goes To The Moon", GID_HEGAME, 6, 60, 13, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
 	{"funpack", "Putt-Putt's Fun Pack", GID_FUNPACK, 6, 60, 13, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
