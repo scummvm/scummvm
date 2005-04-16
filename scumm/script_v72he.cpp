@@ -2152,8 +2152,6 @@ void ScummEngine_v72he::o72_writeINI() {
 		error("o72_writeINI: default type %d", type);
 	}
 
-	debug(0, "o72_writeINI: option %s", option);
-
 	ConfMan.flushToDisk();
 }
 
