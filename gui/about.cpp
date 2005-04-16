@@ -212,8 +212,11 @@ void AboutDialog::drawDialog() {
 
 
 void AboutDialog::handleTickle() {
-	// We're in the process of doing a full redraw. This will be used as
-	// background for the text, so we don't want any text on it.
+	// We're in the process of doing a full redraw to re-create the
+	// background image for the text. That means we need to wait for the
+	// GUI itself to clear the overlay and call drawDialog() in all of the
+	// dialogs, otherwise we'll only redraw this one and it'll still have
+	// the remains of the old image, including the text that was on it.
 	if (!_canvas.pixels)
 		return;
 
