@@ -509,14 +509,6 @@ void ScummEngine_v60he::o60_roomOps() {
 			setupShadowPalette(a, b, c, d, e, 0, 256);
 		break;
 
-	case 184:		// SO_SAVE_STRING
-		error("save string not implemented");
-		break;
-
-	case 185:		// SO_LOAD_STRING
-		error("load string not implemented");
-		break;
-
 	case 186:		// SO_ROOM_TRANSFORM
 		d = pop();
 		c = pop();
@@ -1289,9 +1281,6 @@ void ScummEngine_v60he::decodeParseString(int m, int n) {
 	case 72:		// SO_OVERHEAD
 		_string[m].overhead = true;
 		_string[m].no_talk_anim = false;
-		break;
-	case 73:		// SO_SAY_VOICE
-		error("decodeParseString: case 73");
 		break;
 	case 74:		// SO_MUMBLE
 		_string[m].no_talk_anim = true;

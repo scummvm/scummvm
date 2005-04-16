@@ -646,7 +646,7 @@ void Wiz::computeRawWizHistogram(uint32 *histogram, const uint8 *data, int srcPi
 struct wizPackCtx {
 	uint32 len;
 	uint8 saveCode;
-	uint8 saveBuf[0x100];
+	uint8 saveBuf[256];
 };
 
 static void wizPackType1Helper1(uint8 *&dst, int len, byte newColor, byte prevColor, wizPackCtx *ctx) {
@@ -846,8 +846,7 @@ void ScummEngine_v72he::captureWizImage(int resNum, const Common::Rect& r, bool 
 			dataSize = wizPackType0(0, src, pvs->pitch, rCapt, tColor);
 			break;
 		default:
-			warning("unhandled compression type %d", compType);
-			break;
+			error("unhandled compression type %d", compType);
 		}
 
 		// alignment
@@ -1004,28 +1003,29 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 			}
 		}
 
-		// XXX handle 'XMAP' / 'RMAP' data
+		// XXX handle 'XMAP' data
 		if (xmap) {
 			palPtr = xmap;
 		}
 		if (flags & kWIFRemapPalette) {
 			palPtr = rmap + 4;
 		}
+
 		if (comp == 1) {
 			// TODO Adding masking for flags 0x80 and 0x100
 			if (flags & 0x80) {
-				warning("drawWizImage() unhandled flag 0x80");
-			} else if (flags & 0x100) {
-				error("drawWizImage() unhandled flag 0x100");
-			} else {
-				_wiz.copyWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, palPtr);
+				warning("drawWizImage: Unhandled flag 0x80");
 			}
+			if (flags & 0x100) {
+				error("drawWizImage: Unhandled flag 0x100");
+			}
+			_wiz.copyWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, palPtr);
 		} else if (comp == 0 || comp == 2 || comp == 3) {
 			uint8 *trns = findWrappedBlock(MKID('TRNS'), dataPtr, state, 0);
 			int color = (trns == NULL) ? VAR(VAR_WIZ_TCOLOR) : -1;
 			_wiz.copyRawWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, color);
 		} else {
-			warning("unhandled wiz compression type %d", comp);
+			error("drawWizImage: Unhandled wiz compression type %d", comp);
 		}
 
 		if (!(flags & kWIFBlitToMemBuffer) && dstResNum == 0) {
@@ -1481,7 +1481,7 @@ void ScummEngine_v90he::createWizEmptyImage(const WizParameters *params) {
 			WRITE_BE_UINT32(res_data, 'RMAP'); res_data += 4;
 			WRITE_BE_UINT32(res_data, 0x10C); res_data += 4;
 			WRITE_BE_UINT32(res_data, 0); res_data += 4;
-			for (int i = 0; i < 0x100; ++i) {
+			for (int i = 0; i < 256; ++i) {
 				*res_data++ = i;
 			}
 		}
@@ -1811,16 +1811,16 @@ int ScummEngine_v90he::computeWizHistogram(int resNum, int state, int x, int y, 
 		Common::Rect rCap(x, y, w + 1, h + 1);
 		if (rCap.intersects(rWiz)) {
 			rCap.clip(rWiz);
-			uint32 histogram[0x100];
+			uint32 histogram[256];
 			memset(histogram, 0, sizeof(histogram));
 			if (ic == 1) {
 				_wiz.computeWizHistogram(histogram, wizd, &rCap);
 			} else if (ic == 0 || ic == 2 || ic == 3) {
 				_wiz.computeRawWizHistogram(histogram, wizd, w, &rCap);
 			} else {
-				warning("Unable to return histogram for type %d", ic);
+				error("computeWizHistogram: Unable to return histogram for type %d", ic);
 			}
-			for (int i = 0; i < 0x100; ++i) {
+			for (int i = 0; i < 256; ++i) {
 				writeArray(0, 0, i, histogram[i]);
 			}
 		}

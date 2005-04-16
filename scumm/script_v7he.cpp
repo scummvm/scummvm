@@ -379,8 +379,7 @@ int ScummEngine_v70he::getStringCharWidth(byte chr) {
 	int charset = _string[0]._default.charset;
 
 	byte *ptr = getResourceAddress(rtCharset, charset);
-	if (ptr == 0)
-		error("getStringCharWidth::charset %d not found!", charset);
+	assert(ptr);
 	ptr += 29;
 
 	int spacing = 0;

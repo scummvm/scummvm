@@ -547,9 +547,6 @@ void ScummEngine_v80he::o80_cursorCommand() {
 	case 0x97:		// SO_USERPUT_SOFT_OFF
 		_userPut--;
 		break;
-	case 0x99: 		// SO_CURSOR_IMAGE Set cursor image
-		warning("o80_cursorCommand: Can't set cursors to ID. Use images.");
-		break;
 	case 0x9C:		// SO_CHARSET_SET
 		initCharset(pop());
 		break;
