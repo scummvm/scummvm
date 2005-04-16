@@ -34,6 +34,7 @@
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
+#include "scumm/usage_bits.h"
 #include "scumm/util.h"
 #include "scumm/verbs.h"
 
@@ -409,13 +410,12 @@ void ScummEngine_v60he::o60_setState() {
 		putState(obj, state);
 		if (_heversion >= 72)
 			removeObjectFromDrawQue(obj);
-		return;
+	} else {
+		putState(obj, state);
+		markObjectRectAsDirty(obj);
+		if (_bgNeedsRedraw)
+			clearDrawObjectQueue();
 	}
-
-	putState(obj, state);
-	markObjectRectAsDirty(obj);
-	if (_bgNeedsRedraw)
-		clearDrawObjectQueue();
 }
 
 void ScummEngine_v60he::o60_roomOps() {
@@ -567,14 +567,12 @@ void ScummEngine_v60he::o60_roomOps() {
 void ScummEngine_v60he::swapObjects(int object1, int object2) {
 	int idx1 = -1, idx2 = -1;
 	
-	if (_numObjectsInRoom >= 0) { // how could it be negative?
-		for (int i = 0; i < _numObjectsInRoom; i++) {
-			if (_objs[i].obj_nr == object1)
-				idx1 = i;
+	for (int i = 0; i < _numObjectsInRoom; i++) {
+		if (_objs[i].obj_nr == object1)
+			idx1 = i;
 
-			if (_objs[i].obj_nr == object2)
-				idx2 = i;
-		}
+		if (_objs[i].obj_nr == object2)
+			idx2 = i;
 	}
 	
 	if (idx1 == -1 || idx2 == -1 || idx1 >= idx2)
@@ -816,7 +814,7 @@ void ScummEngine_v60he::o60_kernelSetFunctions() {
 void ScummEngine_v60he::virtScreenLoad(int resIdx, int x1, int y1, int x2, int y2) {
 	vsUnpackCtx ctx;
 	memset(&ctx, 0, sizeof(ctx));
-	VirtScreen &vs = virtscr[kMainVirtScreen]; // XXX gdi_virtScreen = 0;
+	VirtScreen &vs = virtscr[kMainVirtScreen];
 
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, resIdx);
 	virtScreenLoadUnpack(&ctx, ah->data);
@@ -832,7 +830,7 @@ void ScummEngine_v60he::virtScreenLoad(int resIdx, int x1, int y1, int x2, int y
 			}
 		}
 	}
-	markRectAsDirty(kMainVirtScreen, x1, x2, y1, y2 + 1); // XXX , 0x4000);
+	markRectAsDirty(kMainVirtScreen, x1, x2, y1, y2 + 1, USAGE_BIT_RESTORED);
 }
 
 uint8 virtScreenLoadUnpack(vsUnpackCtx *ctx, byte *data) {
@@ -890,7 +888,7 @@ void ScummEngine_v60he::o60_kernelGetFunctions() {
 
 int ScummEngine_v60he::virtScreenSave(byte *dst, int x1, int y1, int x2, int y2) {
 	int packedSize = 0;
-	VirtScreen &vs = virtscr[kMainVirtScreen]; // XXX gdi_virtScreen = 0;
+	VirtScreen &vs = virtscr[kMainVirtScreen];
 
 	for (int j = y1; j <= y2; ++j) {
 		uint8 *p = vs.getBackPixels(x1, j - vs.topline);
