@@ -2402,6 +2402,125 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 					const char *name = file->displayName().c_str();
 
 					if (0 == scumm_stricmp(detectName, name)) {
+						if (g->version <= 4) {
+							// We take a look at the file now, to narrow
+							// down the list of possible candidates a bit further.
+							// E.g. it's trivial to distinguish V1 from V3 games.
+							File tmp;
+							byte buf[6];
+							printf("Candidate game '%s', version %d, trying to open '%s'\n", g->name, g->version, file->path().c_str());
+							if (!tmp.open(file->path().c_str()))
+								break;
+							tmp.read(buf, 6);
+							Common::hexdump(buf, 6);
+	
+							if (buf[0] == 0xCE && buf[1] == 0xF5) {
+								// Looks like V1. However, we currently do not distinguish between V1 and V2
+								// in the scumm_settings list.
+								if (g->version != 1 && g->version != 2)
+									break;
+	
+								// Candidates: maniac clasic, zak classic
+								
+								// TODO: Maybe we can use the filesize to distinguish these two?
+								// English V1 Zak: 1896 bytes
+								// English V1 MM:  1972 bytes
+								// It would be interesting if those sizes are the same for other language
+								// variants of these games, or for demos?
+							} else if (buf[0] == 0xFF && buf[1] == 0xFE) {
+								// GF_OLD_BUNDLE: could be V2 or old V3.
+								if (!(g->features & GF_OLD_BUNDLE) || (g->version != 2 && g->version != 3))
+									break;
+								// Candidates: maniac enhanced, zak enhanced, indy3ega, loom
+								/*
+								TODO: MIght be possible to distinguish those by the script count.
+								Specifically, my versions of these games have this in their headers:
+	
+								Loom (en; de; en demo; en MAC):
+								_numGlobalObjects 1000
+								_numRooms 100
+								_numCostumes 200
+								_numScripts 200
+								_numSounds 80
+								
+								Indy3EGA (en PC; en Mac; en demo):
+								_numGlobalObjects 1000
+								_numRooms 99
+								_numCostumes 129
+								_numScripts 139
+								_numSounds 84
+								
+								MM (en; de):
+								_numGlobalObjects 780
+								_numRooms 61
+								_numCostumes 40
+								_numScripts 179
+								_numSounds 120
+								
+								Zak (de; en demo):
+								_numGlobalObjects 780
+								_numRooms 61
+								_numCostumes 40
+								_numScripts 155
+								_numSounds 120
+								
+								So, they all have a different number of scripts.
+								*/
+							} else if (buf[4] == '0' && buf[5] == 'R') {
+								// newer V3 game
+								if (g->version != 3 || (g->features & GF_OLD_BUNDLE))
+									break;
+								// Candidates: indy3, indy3Towns, zakTowns, loomTowns
+								/*
+								Considering that we know about *all* TOWNS versions,
+								and know their MD5s, we could simply rely on this and
+								if we find something which has an unknown MD5, assume
+								that it is an (so far unknown) version of Indy3.
+								
+								We can combin this with a look at the resource headers:
+								
+								Indy3:
+								_numGlobalObjects 1000
+								_numRooms 99
+								_numCostumes 129
+								_numScripts 139
+								_numSounds 84
+								
+								Indy3Towns, ZakTowns, ZakLoom demo:
+								_numGlobalObjects 1000
+								_numRooms 99
+								_numCostumes 199
+								_numScripts 199
+								_numSounds 199
+								
+								Assuming that all the town variants look like the latter, we can
+								do the chceck like this:
+								  if (numScripts == 139)
+									assume Indy3
+								  else if (numScripts == 199)
+									assume towns game
+								  else
+									unknown, do not accept it
+								*/
+							} else if (buf[4] == 'R' && buf[5] == 'N') {
+								// V4 game
+								if (g->version != 4)
+									break;
+								// Candidates: monkeyEGA, pass, monkeyVGA, loomcd
+								/*
+								For all of them, we have:
+								_numGlobalObjects 1000
+								_numRooms 99
+								_numCostumes 199
+								_numScripts 199
+								_numSounds 199
+								*/
+							} else {
+								// This is not a V1-V4 game
+								break;
+							}
+						}
+					
 						// Match found, add to list of candidates, then abort inner loop.
 						if (substLastIndex > 0 && // HE Mac versions.
 							(substResFileNameTable[substLastIndex].genMethod == kGenMac ||
@@ -2422,7 +2541,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 			substLastIndex = generateSubstResFileName_(tempName, detectName, sizeof(detectName), substLastIndex+1);
 		}
 	}
-	
+
 	// Now, we check the MD5 sums of the 'candidate' files. If we have an exact match,
 	// only return that.
 	bool exactMatch = false;
@@ -2459,7 +2578,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 			}
 		}
 	}
-	
+
 	return detectedGames;
 }
 
