@@ -739,6 +739,12 @@ void Actor::handleSpeech(int msec) {
 				actor->currentAction = kActionSpeak;
 				actor->actionCycle = _vm->_rnd.getRandomNumber(63);
 			}
+			for (i = 0; i < _activeSpeech.actorsCount; i++) {
+				actor = getActor(_activeSpeech.actorIds[i]);
+				_activeSpeech.speechCoords[i] = actor->screenPosition;
+				_activeSpeech.speechCoords[i].y -= ACTOR_DIALOGUE_HEIGHT;
+				_activeSpeech.speechCoords[i].y = MAX(_activeSpeech.speechCoords[i].y, (int16)10);
+			}
 		}
 		_activeSpeech.playing = true;			
 		return;
@@ -770,15 +776,6 @@ void Actor::handleSpeech(int msec) {
 			_activeSpeech.strings[i - 1] = _activeSpeech.strings[i];
 		}
 		_activeSpeech.stringsCount--;
-		if (_activeSpeech.stringsCount > 0 && _activeSpeech.actorIds[0] != 0) {
-			// Update actor speech position for the next string.
-			// Note that we only need to do this for the first
-			// actor since simultaneous speech is never more than
-			// one string at a time.
-			actor = getActor(_activeSpeech.actorIds[0]);
-			_activeSpeech.speechCoords[0] = actor->screenPosition;
-			_activeSpeech.speechCoords[0].y -= ACTOR_DIALOGUE_HEIGHT;
-		}
 	}
 
 	if (!isSpeaking())
@@ -1280,7 +1277,7 @@ int Actor::drawActors() {
 	}
 
 // draw speeches
-	if (isSpeaking() && !_vm->_script->_skipSpeeches) {
+	if (isSpeaking() && _activeSpeech.playing && !_vm->_script->_skipSpeeches) {
 		int i;
 		int textDrawFlags;
 		char oneChar[2];
@@ -1699,12 +1696,11 @@ void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, 
 	for (i = 0; i < stringsCount; i++) {
 		_activeSpeech.strings[i] = strings[i];
 	}
+	 
 	_activeSpeech.stringsCount = stringsCount;
 	_activeSpeech.speechFlags = speechFlags;
 	_activeSpeech.actorsCount = 1;
 	_activeSpeech.actorIds[0] = actorId;
-	_activeSpeech.speechCoords[0] = actor->screenPosition;
-	_activeSpeech.speechCoords[0].y -= ACTOR_DIALOGUE_HEIGHT;
 	_activeSpeech.speechColor[0] = actor->speechColor;
 	_activeSpeech.outlineColor[0] = kITEColorBlack;
 	_activeSpeech.sampleResourceId = sampleResourceId;
@@ -1746,8 +1742,6 @@ void Actor::simulSpeech(const char *string, uint16 *actorIds, int actorIdsCount,
 
 		actor = getActor(actorIds[i]);
 		_activeSpeech.actorIds[i] = actorIds[i];
-		_activeSpeech.speechCoords[i] = actor->screenPosition;
-		_activeSpeech.speechCoords[i].y -= ACTOR_DIALOGUE_HEIGHT;
 		_activeSpeech.speechColor[i] = actor->speechColor;
 		_activeSpeech.outlineColor[i] = 0; // disable outline
 	}

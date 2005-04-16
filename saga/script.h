@@ -512,7 +512,7 @@ private:
 	void sfResumeBgdAnim(SCRIPTFUNC_PARAMS);
 	void SF_throwActor(SCRIPTFUNC_PARAMS);
 	void sfWaitWalk(SCRIPTFUNC_PARAMS);
-	void SF_sceneID(SCRIPTFUNC_PARAMS);
+	void sfScriptSceneID(SCRIPTFUNC_PARAMS);
 	void SF_changeActorScene(SCRIPTFUNC_PARAMS);
 	void SF_climb(SCRIPTFUNC_PARAMS);
 	void sfSetDoorState(SCRIPTFUNC_PARAMS);

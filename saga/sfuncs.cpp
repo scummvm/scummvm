@@ -104,7 +104,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfResumeBgdAnim),
 		OPCODE(SF_throwActor),
 		OPCODE(sfWaitWalk),
-		OPCODE(SF_sceneID),
+		OPCODE(sfScriptSceneID),
 		OPCODE(SF_changeActorScene),
 		OPCODE(SF_climb),
 		OPCODE(sfSetDoorState),
@@ -1346,7 +1346,7 @@ void Script::sfWaitWalk(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #54 (0x36)
-void Script::SF_sceneID(SCRIPTFUNC_PARAMS) {
+void Script::sfScriptSceneID(SCRIPTFUNC_PARAMS) {
 	thread->_returnValue = _vm->_scene->currentSceneNumber();
 }
 

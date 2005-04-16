@@ -241,8 +241,6 @@ bool Sprite::hitTest(SpriteList &spriteList, int spriteNumber, const Point &scre
 	const byte *spriteBuffer;
 	int i, j;
 	const byte *srcRowPointer;
-	int clipWidth;
-	int clipHeight;
 	int width;
 	int height;
 	int xAlign;
@@ -255,27 +253,10 @@ bool Sprite::hitTest(SpriteList &spriteList, int spriteNumber, const Point &scre
 	spritePointer.x = screenCoord.x + xAlign;
 	spritePointer.y = screenCoord.y + yAlign;
 
-	if (spritePointer.x < 0) {
+	if ((testPoint.y < spritePointer.y) || (testPoint.y >= spritePointer.y + height)) {
 		return false;
 	}
-	if (spritePointer.y < 0) {
-		return false;
-	}
-
-	clipWidth = width;
-	if (width > (_vm->getDisplayWidth() - spritePointer.x)) {
-		clipWidth = (_vm->getDisplayWidth() - spritePointer.x);
-	}
-	
-	clipHeight = height;
-	if (height > (_vm->getDisplayHeight() - spritePointer.y)) {
-		clipHeight = (_vm->getDisplayHeight() - spritePointer.y);
-	}
-	
-	if ((testPoint.y < spritePointer.y) || (testPoint.y >= spritePointer.y + clipHeight)) {
-		return false;
-	}
-	if ((testPoint.x < spritePointer.x) || (testPoint.x >= spritePointer.x + clipWidth)) {
+	if ((testPoint.x < spritePointer.x) || (testPoint.x >= spritePointer.x + width)) {
 		return false;
 	}
 	i = testPoint.y - spritePointer.y;
