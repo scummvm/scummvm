@@ -273,19 +273,18 @@ SCUMM
   - Add sound pitch support for piano keys in piano mini game of fbear (DOS)
   - Add rename/delete file support, to make file opcodes function correctly
 * Humongous entertainment >= v7 titles:
-  - Add support for palette slots (_numPalettes * 1024) in HE99+ games.(For ff5demo/freddicove/pajama3) (Kirben)
   - Add support for masking in akos codec32, the charset shouldn't be drawn under moving actors
   - Add support for song sync. in HE80+ games. (Used in ff2-demo/freddi2/pajama)
   - Add support for SBNG sound resources for songs (Used in ff2-demo/freddi2/pajama)
   - Add support for displayWizComplexImage 0x80000 flag (Used in ff5demo/freddicove)
-  - Add support for drawWizImage masking, trigger by flags 0x80/0x100 (0x80 used in maze)
+  - Add support for drawWizImage masking, triggered by flag 0x80 (Used in maze)
   - Add support for drawWizComplexPolygon (For Ski Ride & Credits of pajama3)
   - Add support for processWizImage mode 7 (For soccer2004)
   - Add support for XMAP resources in drawWizImage (Used by akos codec 32 too)
   - Add support for floodState (For puzzle in pajama2)
   - Add support for o80_unknownE0 type1 (For binoculars in pajama2)
   - Add support for o80_unknownE0 type2 (For black board in freddi2 and paper in spyfox)
-  - Add support for o80_readConfigFile/o80_readConfigFile (For balloon/maze/mustard/socks/water)
+  - Add support for o80_readConfigFile/o80_writeConfigFile (For balloon/maze/mustard/socks/water)
     The config file is used to read current level details
   - Add support for IMA ADPCM compression for speech files (For soccer2004)
   - Add support for U32 library calls, triggered by case 2001 of o90_kernelGetFunctions/o90_kernelSetFunctions
