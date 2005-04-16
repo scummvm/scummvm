@@ -229,7 +229,7 @@ void ScummEngine_v99he::darkenPalette(int redScale, int greenScale, int blueScal
 				color = 255;
 			*dest++ = color;
 
-			_hePalettes[1768 + startColor + j] = j;
+			_hePalettes[1792 + j] = j;
 			setDirtyColors(j, endColor);
 		}
 	}
