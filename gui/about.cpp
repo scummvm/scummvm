@@ -120,16 +120,33 @@ void AboutDialog::open() {
 	_scrollPos = 0;
 	_modifiers = 0;
 	_willClose = false;
+	_canvas.pixels = NULL;
 
 	Dialog::open();
 }
 
+void AboutDialog::close() {
+	free(_canvas.pixels);
+	Dialog::close();
+}
+
 void AboutDialog::drawDialog() {
-	// Blend over the background
-	g_gui.blendRect(_x, _y, _w, _h, g_gui._bgcolor);
+	if (!_canvas.pixels) {
+		// Blend over the background. Since we can't afford to do that
+		// every time the text is updated (it's horribly CPU intensive)
+		// we do it just once and then use a copy of the result as our
+		// static background for the remainder of the credits.
+		g_gui.blendRect(_x, _y, _w, _h, g_gui._bgcolor);
+		g_gui.copyToSurface(&_canvas, _x, _y, _w, _h);
+	}
+
+	g_gui.drawSurface(_canvas, _x, _y);
 
 	// Draw text
 	// TODO: Add a "fade" effect for the top/bottom text lines
+	// TODO: Maybe prerender all of the text into another surface,
+	//       and then simply compose that over the screen surface
+	//       in the right way. Should be even faster...
 	const int firstLine = _scrollPos / _lineHeight;
 	const int lastLine = MIN((_scrollPos + _h) / _lineHeight + 1, (uint32)_lines.size());
 	int y = _y + kYOff - (_scrollPos % _lineHeight);
@@ -212,11 +229,16 @@ void AboutDialog::handleTickle() {
 		} else if ((uint32)_scrollPos > _lines.size() * _lineHeight) {
 			_scrollPos = 0;
 			_scrollTime += kScrollStartDelay;
-		} else {
-			g_gui.addDirtyRect(_x, _y, _w, _h);
 		}
-		draw();	// Issue a full redraw
+		drawDialog();
 	}
+}
+
+void AboutDialog::handleScreenChanged() {
+	// The screen has changed. Reset the canvas, to ensure it gets
+	// refreshed next time a redraw takes place.
+	free(_canvas.pixels);
+	_canvas.pixels = NULL;
 }
 
 void AboutDialog::handleMouseUp(int x, int y, int button, int clickCount) {

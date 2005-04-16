@@ -23,6 +23,7 @@
 
 #include "gui/dialog.h"
 #include "common/str.h"
+#include "graphics/surface.h"
 
 namespace GUI {
 
@@ -35,13 +36,16 @@ protected:
 	uint32		_lineHeight;
 	byte		_modifiers;
 	bool		_willClose;
+	Graphics::Surface	_canvas;
 
 public:
 	AboutDialog();
 
 	void open();
+	void close();
 	void drawDialog();
 	void handleTickle();
+	void handleScreenChanged();
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	void handleKeyDown(uint16 ascii, int keycode, int modifiers);
 	void handleKeyUp(uint16 ascii, int keycode, int modifiers);

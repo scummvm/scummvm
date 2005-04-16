@@ -134,6 +134,19 @@ public:
 	void box(int x, int y, int width, int height, OverlayColor colorA, OverlayColor colorB);
 	void hLine(int x, int y, int x2, OverlayColor color);
 	void vLine(int x, int y, int y2, OverlayColor color);
+
+	/**
+	 * Copy the specified screen rectangle into a new graphics surfaces.
+	 * New memory for the GFX data is allocated via malloc; it is the
+	 * callers responsibilty to free that data.
+	 */
+	void copyToSurface(Graphics::Surface *s, int x, int y, int w, int h);
+	
+	/**
+	 * Draw the graphics contained in the given surface at the specified coordinates.
+	 */
+	void drawSurface(const Graphics::Surface &s, int x, int y);
+
 	void blendRect(int x, int y, int w, int h, OverlayColor color, int level = 3);
 	void fillRect(int x, int y, int w, int h, OverlayColor color);
 	void frameRect(int x, int y, int w, int h, OverlayColor color);

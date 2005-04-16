@@ -301,6 +301,54 @@ void NewGui::vLine(int x, int y, int y2, OverlayColor color) {
 	_screen.vLine(x * _scaleFactor, y * _scaleFactor, y2 * _scaleFactor, color);
 }
 
+void NewGui::copyToSurface(Graphics::Surface *s, int x, int y, int w, int h) {
+	Common::Rect rect(x * _scaleFactor, y * _scaleFactor, (x + w) * _scaleFactor, (y + h) * _scaleFactor);
+	rect.clip(_screen.w, _screen.h);
+
+	if (!rect.isValidRect())
+		return;
+
+	s->w = rect.width();
+	s->h = rect.height();
+	s->bytesPerPixel = sizeof(OverlayColor);
+	s->pitch = s->w * s->bytesPerPixel;
+	s->pixels = (OverlayColor *)malloc(s->pitch * s->h);
+
+	w = s->w;
+	h = s->h;
+
+	OverlayColor *dst = (OverlayColor *)s->pixels;
+	OverlayColor *src = getBasePtr(rect.left, rect.top);
+
+	while (h--) {
+		memcpy(dst, src, s->pitch);
+		src += _screenPitch;
+		dst += s->w;
+	}
+}
+
+void NewGui::drawSurface(const Graphics::Surface &s, int x, int y) {
+	Common::Rect rect(x * _scaleFactor, y * _scaleFactor, x * _scaleFactor + s.w, y * _scaleFactor + s.h);
+	rect.clip(_screen.w, _screen.h);
+
+	if (!rect.isValidRect())
+		return;
+	
+	assert(s.bytesPerPixel == sizeof(OverlayColor));
+
+	OverlayColor *src = (OverlayColor *)s.pixels;
+	OverlayColor *dst = getBasePtr(rect.left, rect.top);
+
+	int w = rect.width();
+	int h = rect.height();
+
+	while (h--) {
+		memcpy(dst, src, s.pitch);
+		src += w;
+		dst += _screenPitch;
+	}
+}
+
 void NewGui::blendRect(int x, int y, int w, int h, OverlayColor color, int level) {
 #ifdef NEWGUI_256
 	fillRect(x, y, w, h, color);

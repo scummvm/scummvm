@@ -196,12 +196,6 @@ GUI
 * Maybe add the ScummVM logo (+typeface?) to the about dialog
 * Unify DirBrowserDialog and FileBrowserDialog.
 * MacOS X version of FileBrowserDialog, since there is one of DirBrowserDialog.
-* The credits scroll is too CPU intensive. This is because for each time the
-  text is redrawn it has to do a full redraw, which causes blendRect() to be
-  called twice. Perhaps AboutDialog could keep a private copy of the blended
-  background so that it wouldn't have to be re-generated each time? Of course
-  we'd probably have to take screen changes into account, but there already is
-  a mechanism for that, I believe.
 
 Launcher
 ========
