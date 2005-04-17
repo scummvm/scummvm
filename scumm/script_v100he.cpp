@@ -585,7 +585,7 @@ void ScummEngine_v100he::o100_arrayOps() {
 	int id, len, b, c;
 	ArrayHeader *ah;
 	int list[128];
-	byte string[2048];
+	byte string[1024];
 
 	debug(1,"o100_arrayOps: case %d", subOp);
 	switch (subOp) {

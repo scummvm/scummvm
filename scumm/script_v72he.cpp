@@ -519,7 +519,7 @@ void ScummEngine_v72he::readArrayFromIndexFile() {
 }
 
 void ScummEngine_v72he::copyScriptString(byte *dst, int dstSize) {
-	byte string[256];
+	byte string[1024];
 	byte chr;
 	int pos = 0;
 
@@ -560,7 +560,7 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 	const byte *src;
 	int args[31];
 	int num, len, val;
-	byte chr, string[256];
+	byte chr, string[1024];
 	memset(args, 0, sizeof(args));
 	memset(string, 0, sizeof(string));
 
@@ -1411,7 +1411,7 @@ void ScummEngine_v72he::o72_arrayOps() {
 	int id, len, b, c;
 	ArrayHeader *ah;
 	int list[128];
-	byte string[2048];
+	byte string[1024];
 
 
 	debug(1,"o72_arrayOps: case %d", subOp);
@@ -1844,14 +1844,14 @@ void ScummEngine_v72he::o72_findAllObjects() {
 }
 
 void ScummEngine_v72he::o72_deleteFile() {
-	byte filename[100];
+	byte filename[256];
 
 	copyScriptString(filename, sizeof(filename));
 	debug(1, "stub o72_deleteFile(%s)", filename);
 }
 
 void ScummEngine_v72he::o72_rename() {
-	byte oldFilename[256],newFilename[256];
+	byte oldFilename[100],newFilename[100];
 
 	copyScriptString(newFilename, sizeof(newFilename));
 	copyScriptString(oldFilename, sizeof(oldFilename));
@@ -2091,7 +2091,7 @@ void ScummEngine_v72he::o72_checkGlobQueue() {
 }
 
 void ScummEngine_v72he::o72_readINI() {
-	byte option[100];
+	byte option[128];
 	ArrayHeader *ah;
 	const char *entry;
 	int len, type;
@@ -2172,13 +2172,13 @@ void ScummEngine_v72he::o72_getResourceSize() {
 
 void ScummEngine_v72he::o72_setFilePath() {
 	// File related
-	byte filename[100];
+	byte filename[255];
 	copyScriptString(filename, sizeof(filename));
 	debug(1,"o72_setFilePath: %s", filename);
 }
 
 void ScummEngine_v72he::o72_setWindowCaption() {
-	byte name[100];
+	byte name[1024];
 	copyScriptString(name, sizeof(name));
 	int id = fetchScriptByte();
 
