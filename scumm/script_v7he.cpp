@@ -657,7 +657,7 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 		// Used in airport
 		break;
 	default:
-		debug(1,"o70_resourceRoutines: default case %d", subOp);
+		error("o70_resourceRoutines: default case %d", subOp);
 	}
 }
 
@@ -733,7 +733,6 @@ void ScummEngine_v70he::o70_copyString() {
 	appendSubstring(dst, src, -1, -1);
 
 	push(dst);
-	debug(1,"o70_copyString");
 }
 
 void ScummEngine_v70he::o70_getStringWidth() {
@@ -759,7 +758,6 @@ void ScummEngine_v70he::o70_getStringWidth() {
 	}
 
 	push(width);
-	debug(1,"o70_getStringWidth (%d)", width);
 }
 
 void ScummEngine_v70he::o70_kernelSetFunctions() {

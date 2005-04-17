@@ -1226,7 +1226,7 @@ void ScummEngine_v72he::o72_actorOps() {
 	case 98:		// SO_SHADOW
 		a->_shadowMode = pop();
 		a->_needRedraw = true;
-		debug(0, "Set actor XMAP idx to %d", a->_shadowMode);
+		debug(1, "Set actor XMAP idx to %d", a->_shadowMode);
 		break;
 	case 99:		// SO_TEXT_OFFSET
 		a->_talkPosY = pop();
