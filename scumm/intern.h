@@ -679,10 +679,13 @@ protected:
 	Win32ResExtractor *_win32ResExtractor;
 	MacResExtractor *_macResExtractor;
 
+	byte *_heV7RoomOffsets;
+
 	int _heSndSoundFreq, _heSndOffset, _heSndChannel, _heSndSoundId, _heSndFlags, _heSBNGId;
 
 public:
 	ScummEngine_v70he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
+	~ScummEngine_v70he();
 
 	Wiz _wiz;
 
@@ -693,6 +696,7 @@ protected:
 	
 	virtual void readRoomsOffsets();
 	virtual void readGlobalObjects();
+	virtual void readIndexBlock(uint32 blocktype, uint32 itemsize);
 
 	virtual void redrawBGAreas();
 

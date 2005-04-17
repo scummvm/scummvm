@@ -682,7 +682,6 @@ protected:
 	Common::String _targetName;	// This is the game the user calls it, so use for saving
 	byte _resourceMapper[128];
 	byte *_heV7DiskOffsets;
-	byte *_heV7RoomOffsets;
 	uint32 *_heV7RoomIntOffsets;
 	const byte *_resourceLastSearchBuf; // FIXME: need to put it to savefile?
 	uint32 _resourceLastSearchSize;    // FIXME: need to put it to savefile?
@@ -725,6 +724,7 @@ protected:
 	virtual void readMAXS(int blockSize) = 0;
 	virtual void readGlobalObjects();
 	virtual void readIndexFile();
+	virtual void readIndexBlock(uint32 block, uint32 itemsize);
 	virtual void loadCharset(int i);
 	void nukeCharset(int i);
 

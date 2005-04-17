@@ -768,7 +768,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_dumpScripts = false;
 	_debugMode = 0;
 	_heV7DiskOffsets = NULL;
-	_heV7RoomOffsets = NULL;
+	_heV7RoomIntOffsets = NULL;
 	_objectOwnerTable = NULL;
 	_objectRoomTable = NULL;
 	_objectStateTable = NULL;
@@ -1194,10 +1194,6 @@ ScummEngine::~ScummEngine() {
 	free(_palManipIntermediatePal);
 	
 	res.freeResources();
-	if (_heversion >= 70) {
-		free(_heV7RoomIntOffsets);
-		free(_heV7RoomOffsets);
-	}
 
 	free(_objectStateTable);
 	free(_objectRoomTable);
@@ -1259,12 +1255,20 @@ ScummEngine_v70he::ScummEngine_v70he(GameDetector *detector, OSystem *syst, cons
 	 _win32ResExtractor = new Win32ResExtractor(this);
 	 _macResExtractor = new MacResExtractor(this);
 
+	_heV7RoomOffsets = NULL;
+
 	_heSndSoundId = 0;
 	_heSndOffset = 0;
 	_heSndChannel = 0;
 	_heSndFlags = 0;
 	_heSndSoundFreq = 0;
 	_heSBNGId = 0;
+}
+
+ScummEngine_v70he::~ScummEngine_v70he() {
+	free(_heV7DiskOffsets);
+	free(_heV7RoomIntOffsets);
+	free(_heV7RoomOffsets);
 }
 
 #pragma mark -

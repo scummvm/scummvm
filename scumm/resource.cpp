@@ -280,8 +280,6 @@ void ScummEngine::askForDisk(const char *filename, int disknum) {
 void ScummEngine::readIndexFile() {
 	uint32 blocktype, itemsize;
 	int numblock = 0;
-	int i;
-	bool stop = false;
 
 	debugC(DEBUG_GENERAL, "readIndexFile()");
 
@@ -326,141 +324,152 @@ void ScummEngine::readIndexFile() {
 		_fileHandle->seek(0, SEEK_SET);
 	}
 
-	while (!stop) {
+	while (true) {
 		blocktype = fileReadDword();
+		itemsize = _fileHandle->readUint32BE();
 
 		if (_fileHandle->ioFailed())
 			break;
-		itemsize = _fileHandle->readUint32BE();
 
 		numblock++;
-
-		switch (blocktype) {
-		case MKID('DCHR'):
-		case MKID('DIRF'):
-			readResTypeList(rtCharset, MKID('CHAR'), "charset");
-			break;
-		
-		case MKID('DOBJ'):
-			debug(9, "found DOBJ block, reading object table");
-			readGlobalObjects();
-			break;
-
-		case MKID('RNAM'):
-			// Names of rooms. Maybe we should put them into a table, for use by the debugger?
-			if (_heversion >= 80) {
-				for (int room; (room = _fileHandle->readUint16LE()); ) {
-					char buf[20];
-					i = 0;
-					for (byte s; (s = _fileHandle->readByte()); ) {
-						buf[i++] = s;
-					}
-					buf[i] = 0;
-					debug(5, "Room %d: '%s'", room, buf);
-				}
-			} else {
-				for (int room; (room = _fileHandle->readByte()); ) {
-					char buf[10];
-					_fileHandle->read(buf, 9);
-					buf[9] = 0;
-					for (i = 0; i < 9; i++)
-						buf[i] ^= 0xFF;
-					debug(5, "Room %d: '%s'", room, buf);
-				}
-			}
-			break;
-		
-		case MKID('DLFL'):
-			i = _fileHandle->readUint16LE();
-			_fileHandle->seek(-2, SEEK_CUR);
-			_heV7RoomOffsets = (byte *)calloc(2 + (i * 4), 1);
-			_fileHandle->read(_heV7RoomOffsets, (2 + (i * 4)) );
-			break;
-
-		case MKID('DIRM'):
-			readResTypeList(rtImage, MKID('AWIZ'), "images");
-			break;
-			
-		case MKID('DIRT'):
-			readResTypeList(rtTalkie, MKID('TLKE'), "talkie");
-			break;
-
-		case MKID('SVER'):
-			_fileHandle->seek(itemsize - 8, SEEK_CUR);
-			warning("SVER index block not yet handled, skipping");
-			break;
-
-		case MKID('DISK'):
-			i = _fileHandle->readUint16LE();
-			_heV7DiskOffsets = (byte *)calloc(i, 1);
-			_fileHandle->read(_heV7DiskOffsets, i);
-			break;
-
-		case MKID('INIB'):
-			_fileHandle->seek(itemsize - 8, SEEK_CUR);
-			debug(2, "INIB index block not yet handled, skipping");
-			break;
-
-		case MKID('DIRI'):
-			readResTypeList(rtRoomImage, MKID('RMIM'), "room image");
-			break;
-
-		case MKID('ANAM'):		// Used by: The Dig, FT
-			debug(9, "found ANAM block, reading audio names");
-			_numAudioNames = _fileHandle->readUint16LE();
-			_audioNames = (char*)malloc(_numAudioNames * 9);
-			_fileHandle->read(_audioNames, _numAudioNames * 9);
-			break;
-
-		case MKID('DIRR'):
-		case MKID('DROO'):
-			readResTypeList(rtRoom, MKID('ROOM'), "room");
-			break;
-
-		case MKID('DRSC'):
-			readResTypeList(rtRoomScripts, MKID('RMSC'), "room script");
-			break;
-
-		case MKID('DSCR'):
-		case MKID('DIRS'):
-			readResTypeList(rtScript, MKID('SCRP'), "script");
-			break;
-
-		case MKID('DCOS'):
-		case MKID('DIRC'):
-			readResTypeList(rtCostume, MKID('COST'), "costume");
-			break;
-
-		case MKID('MAXS'):
-			readMAXS(itemsize);
-			allocateArrays();
-			break;
-
-		case MKID('DIRN'):
-		case MKID('DSOU'):
-			readResTypeList(rtSound, MKID('SOUN'), "sound");
-			break;
-
-		case MKID('AARY'):
-			readArrayFromIndexFile();
-			break;
-
-		case MKID('LECF'):
-			_fileHandle->seek(itemsize - 8, SEEK_CUR);
-			debug(2, "LECF index block not yet handled, skipping");
-			break;
-
-		default:
-			error("Bad ID %04X('%s') found in index file directory!", blocktype,
-					tag2str(blocktype));
-			return;
-		}
+		readIndexBlock(blocktype, itemsize);
 	}
 
 //  if (numblock!=9)
 //    error("Not enough blocks read from directory");
 
 	closeRoom();
+}
+
+void ScummEngine_v70he::readIndexBlock(uint32 blocktype, uint32 itemsize) {
+	int i;
+	switch (blocktype) {
+	case MKID('DLFL'):
+		i = _fileHandle->readUint16LE();
+		_fileHandle->seek(-2, SEEK_CUR);
+		_heV7RoomOffsets = (byte *)calloc(2 + (i * 4), 1);
+		_fileHandle->read(_heV7RoomOffsets, (2 + (i * 4)) );
+		break;
+
+	case MKID('DISK'):
+		i = _fileHandle->readUint16LE();
+		_heV7DiskOffsets = (byte *)calloc(i, 1);
+		_fileHandle->read(_heV7DiskOffsets, i);
+		break;
+
+	default:
+		ScummEngine::readIndexBlock(blocktype, itemsize);
+	}
+}
+
+void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
+	int i;
+	switch (blocktype) {
+	case MKID('DCHR'):
+	case MKID('DIRF'):
+		readResTypeList(rtCharset, MKID('CHAR'), "charset");
+		break;
+	
+	case MKID('DOBJ'):
+		debug(9, "found DOBJ block, reading object table");
+		readGlobalObjects();
+		break;
+
+	case MKID('RNAM'):
+		// Names of rooms. Maybe we should put them into a table, for use by the debugger?
+		if (_heversion >= 80) {
+			for (int room; (room = _fileHandle->readUint16LE()); ) {
+				char buf[20];
+				i = 0;
+				for (byte s; (s = _fileHandle->readByte()); ) {
+					buf[i++] = s;
+				}
+				buf[i] = 0;
+				debug(5, "Room %d: '%s'", room, buf);
+			}
+		} else {
+			for (int room; (room = _fileHandle->readByte()); ) {
+				char buf[10];
+				_fileHandle->read(buf, 9);
+				buf[9] = 0;
+				for (i = 0; i < 9; i++)
+					buf[i] ^= 0xFF;
+				debug(5, "Room %d: '%s'", room, buf);
+			}
+		}
+		break;
+	
+	case MKID('DIRM'):
+		readResTypeList(rtImage, MKID('AWIZ'), "images");
+		break;
+		
+	case MKID('DIRT'):
+		readResTypeList(rtTalkie, MKID('TLKE'), "talkie");
+		break;
+
+	case MKID('SVER'):
+		_fileHandle->seek(itemsize - 8, SEEK_CUR);
+		warning("SVER index block not yet handled, skipping");
+		break;
+
+	case MKID('INIB'):
+		_fileHandle->seek(itemsize - 8, SEEK_CUR);
+		debug(2, "INIB index block not yet handled, skipping");
+		break;
+
+	case MKID('DIRI'):
+		readResTypeList(rtRoomImage, MKID('RMIM'), "room image");
+		break;
+
+	case MKID('ANAM'):		// Used by: The Dig, FT
+		debug(9, "found ANAM block, reading audio names");
+		_numAudioNames = _fileHandle->readUint16LE();
+		_audioNames = (char*)malloc(_numAudioNames * 9);
+		_fileHandle->read(_audioNames, _numAudioNames * 9);
+		break;
+
+	case MKID('DIRR'):
+	case MKID('DROO'):
+		readResTypeList(rtRoom, MKID('ROOM'), "room");
+		break;
+
+	case MKID('DRSC'):
+		readResTypeList(rtRoomScripts, MKID('RMSC'), "room script");
+		break;
+
+	case MKID('DSCR'):
+	case MKID('DIRS'):
+		readResTypeList(rtScript, MKID('SCRP'), "script");
+		break;
+
+	case MKID('DCOS'):
+	case MKID('DIRC'):
+		readResTypeList(rtCostume, MKID('COST'), "costume");
+		break;
+
+	case MKID('MAXS'):
+		readMAXS(itemsize);
+		allocateArrays();
+		break;
+
+	case MKID('DIRN'):
+	case MKID('DSOU'):
+		readResTypeList(rtSound, MKID('SOUN'), "sound");
+		break;
+
+	case MKID('AARY'):
+		readArrayFromIndexFile();
+		break;
+
+	case MKID('LECF'):
+		_fileHandle->seek(itemsize - 8, SEEK_CUR);
+		debug(2, "LECF index block not yet handled, skipping");
+		break;
+
+	default:
+		error("Bad ID %04X('%s') found in index file directory!", blocktype,
+				tag2str(blocktype));
+	}
 }
 
 void ScummEngine::readArrayFromIndexFile() {
