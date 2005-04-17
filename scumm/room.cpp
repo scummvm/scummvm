@@ -81,7 +81,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 
 	if (_heversion >= 71)
 		((ScummEngine_v70he *)this)->_wiz.polygonClear();
-	if (_heversion >= 72)
+	if (_heversion >= 80)
 		((ScummEngine_v72he *)this)->_wiz.imageNumClear();
 
 	// For HE80+ games
