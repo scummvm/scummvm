@@ -1708,7 +1708,7 @@ void ScummEngine_v5::o5_resourceRoutines() {
 
 	int op = _opcode & 0x3F;
 
-	switch (_opcode & 0x3F) {
+	switch (op) {
 	case 1:			// SO_LOAD_SCRIPT
 	case 2:			// SO_LOAD_SOUND
 	case 3:			// SO_LOAD_COSTUME
@@ -1787,32 +1787,32 @@ void ScummEngine_v5::o5_resourceRoutines() {
 	// TODO: For the following see also Hibarnatus' information on bug #805691.
 	case 32:
 		// TODO (apparently never used in FM-TOWNS)
-		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode & 0x3F,  vm.slot[_currentScript].number);
+		warning("o5_resourceRoutines %d not yet handled (script %d)", op,  vm.slot[_currentScript].number);
 		break;
 	case 33:
 		// TODO (apparently never used in FM-TOWNS)
-		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode & 0x3F,  vm.slot[_currentScript].number);
+		warning("o5_resourceRoutines %d not yet handled (script %d)", op,  vm.slot[_currentScript].number);
 		break;
 	case 35:
 		// TODO: Might be used to set CD volume in FM-TOWNS Loom
 		foo = getVarOrDirectByte(PARAM_2);
-		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode & 0x3F,  vm.slot[_currentScript].number);
+		warning("o5_resourceRoutines %d not yet handled (script %d)", op,  vm.slot[_currentScript].number);
 		break;
 	case 36:
 		// TODO: Sets the loudness of a sound resource. Used in Indy3 and Zak. 
 		foo = getVarOrDirectByte(PARAM_2);
 		bar = fetchScriptByte();
-		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode & 0x3F,  vm.slot[_currentScript].number);
+		warning("o5_resourceRoutines %d not yet handled (script %d)", op,  vm.slot[_currentScript].number);
 		break;
 	case 37:
 		// TODO: Sets the pitch of a sound resource (pitch = foo - center semitones.
 		// "center" is at 0x32 in the sfx resource (always 0x3C in zak256, but sometimes different in Indy3). 
 		foo = getVarOrDirectByte(PARAM_2);
-		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode & 0x3F,  vm.slot[_currentScript].number);
+		warning("o5_resourceRoutines %d not yet handled (script %d)", op,  vm.slot[_currentScript].number);
 		break;
 
 	default:
-		warning("Unknown o5_resourceRoutines: %d", _opcode & 0x3F);
+		warning("Unknown o5_resourceRoutines: %d", op);
 		break;
 	}
 }
