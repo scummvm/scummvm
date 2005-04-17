@@ -2413,7 +2413,6 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 							if (!tmp.open(file->path().c_str()))
 								break;
 							tmp.read(buf, 6);
-							Common::hexdump(buf, 6);
 	
 							if (buf[0] == 0xCE && buf[1] == 0xF5) {
 								// Looks like V1. However, we currently do not distinguish between V1 and V2
