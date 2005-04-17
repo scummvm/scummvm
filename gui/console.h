@@ -86,8 +86,6 @@ protected:
 
 	float _widthPercent, _heightPercent;
 
-	void reflowLayout();
-	
 	void slideUpAndClose();
 
 public:

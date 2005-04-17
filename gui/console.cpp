@@ -57,9 +57,21 @@ ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
 	: Dialog(0, 0, 1, 1),
 	_widthPercent(widthPercent), _heightPercent(heightPercent) {
 
-	// Setup basic layout/dialog size
-	reflowLayout();
+	// Calculate the real width/height (rounded to char/line multiples)
+	_w = (uint16)(_widthPercent * g_system->getOverlayWidth());
+	_h = (uint16)((_heightPercent * g_system->getOverlayHeight() - 2) / kConsoleLineHeight);
+	_h = _h * kConsoleLineHeight + 2;
 
+	// Add scrollbar
+	int scrollBarWidth = kDefaultScrollBarWidth;
+	if (g_system->getOverlayWidth() >= 640)
+		scrollBarWidth = 14;
+	_scrollBar = new ScrollBarWidget(this, _w - scrollBarWidth - 1, 0, scrollBarWidth, _h);
+	_scrollBar->setTarget(this);
+
+	// Reset the line buffer
+	_lineWidth = (_w - scrollBarWidth - 2) / kConsoleCharWidth;
+	_linesPerPage = (_h - 2) / kConsoleLineHeight;
 	memset(_buffer, ' ', kBufferSize);
 	_linesInBuffer = kBufferSize / _lineWidth;
 
@@ -73,9 +85,6 @@ ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
 	_slideMode = kNoSlideMode;
 	_slideTime = 0;
 
-	// Add scrollbar
-	_scrollBar = new ScrollBarWidget(this, _w - kDefaultScrollBarWidth - 1, 0, kDefaultScrollBarWidth, _h);
-	_scrollBar->setTarget(this);
 
 	// Init callback
 	_callbackProc = 0;
@@ -93,19 +102,6 @@ ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
 	// Display greetings & prompt
 	print(gScummVMFullVersion);
 	print("\nConsole is ready\n");
-}
-
-void ConsoleDialog::reflowLayout() {
-	// Calculate the real width/height (rounded to char/line multiples)
-	_w = (uint16)(_widthPercent * g_system->getOverlayWidth());
-//	_w = (_widthPercent * g_system->getOverlayWidth() - kDefaultScrollBarWidth - 2) / kConsoleCharWidth;
-//	_w = _w * kConsoleCharWidth + kDefaultScrollBarWidth + 2;
-	_h = (uint16)((_heightPercent * g_system->getOverlayHeight() - 2) / kConsoleLineHeight);
-	_h = _h * kConsoleLineHeight + 2;
-
-	// Calculate depending values
-	_lineWidth = (_w - kDefaultScrollBarWidth - 2) / kConsoleCharWidth;
-	_linesPerPage = (_h - 2) / kConsoleLineHeight;
 }
 
 void ConsoleDialog::slideUpAndClose() {
