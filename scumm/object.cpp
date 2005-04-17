@@ -170,29 +170,6 @@ int ScummEngine::getObjectIndex(int object) const {
 	return -1;
 }
 
-int ScummEngine::getObjectImageCount(int object) {
-	const byte *ptr;
-	const ImageHeader *imhd;
-	int objnum;
-
-	objnum = getObjectIndex(object);
-	if (objnum == -1);
-		return 0;
-
-	ptr = getOBIMFromObject(_objs[objnum]);
-	imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), ptr);
-	if (!imhd)
-		return 0;
-
-	if (_version == 8) {
-		return (READ_LE_UINT32(&imhd->v8.image_count));
-	} else if (_version == 7) {
-		return(READ_LE_UINT16(&imhd->v7.image_count));
-	} else {
-		return (READ_LE_UINT16(&imhd->old.image_count));
-	}
-}
-
 int ScummEngine::whereIsObject(int object) const {
 	int i;
 
@@ -1079,6 +1056,49 @@ const byte *ScummEngine::getObjectImage(const byte *ptr, int state) {
 	return ptr;
 }
 
+int ScummEngine::getObjectImageCount(int object) {
+	const byte *ptr;
+	const ImageHeader *imhd;
+	int objnum;
+
+	objnum = getObjectIndex(object);
+	if (objnum == -1);
+		return 0;
+
+	ptr = getOBIMFromObject(_objs[objnum]);
+	imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), ptr);
+	if (!imhd)
+		return 0;
+
+	if (_version == 8) {
+		return (READ_LE_UINT32(&imhd->v8.image_count));
+	} else if (_version == 7) {
+		return(READ_LE_UINT16(&imhd->v7.image_count));
+	} else {
+		return (READ_LE_UINT16(&imhd->old.image_count));
+	}
+}
+
+int ScummEngine_v8::getObjectIdFromOBIM(const byte *obim) {
+	// In V8, IMHD has no obj_id, but rather a name string. We map the name
+	// back to an object id using a table derived from the DOBJ resource.
+	const ImageHeader *imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), obim);
+	return _objectIDMap[imhd->v8.name];
+}
+
+int ScummEngine_v7::getObjectIdFromOBIM(const byte *obim) {
+	const ImageHeader *imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), obim);
+	return READ_LE_UINT16(&imhd->v7.obj_id);
+}
+
+int ScummEngine::getObjectIdFromOBIM(const byte *obim) {
+	if (_features & GF_SMALL_HEADER)
+		return READ_LE_UINT16(obim + 6);
+
+	const ImageHeader *imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), obim);
+	return READ_LE_UINT16(&imhd->old.obj_id);
+}
+
 void ScummEngine::addObjectToInventory(uint obj, uint room) {
 	int idx, slot;
 	uint32 size;
@@ -1234,27 +1254,6 @@ void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id,
 			error("findObjectInRoom: Object %d image not found in room %d", id, room);
 	}
 }
-
-int ScummEngine_v8::getObjectIdFromOBIM(const byte *obim) {
-	// In V8, IMHD has no obj_id, but rather a name string. We map the name
-	// back to an object id using a table derived from the DOBJ resource.
-	const ImageHeader *imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), obim);
-	return _objectIDMap[imhd->v8.name];
-}
-
-int ScummEngine_v7::getObjectIdFromOBIM(const byte *obim) {
-	const ImageHeader *imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), obim);
-	return READ_LE_UINT16(&imhd->v7.obj_id);
-}
-
-int ScummEngine::getObjectIdFromOBIM(const byte *obim) {
-	if (_features & GF_SMALL_HEADER)
-		return READ_LE_UINT16(obim + 6);
-
-	const ImageHeader *imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), obim);
-	return READ_LE_UINT16(&imhd->old.obj_id);
-}
-
 
 int ScummEngine::getInventorySlot() {
 	int i;
