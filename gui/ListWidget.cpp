@@ -28,7 +28,7 @@
 namespace GUI {
 
 ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h)
-	: EditableWidget(boss, x, y, w - kScrollBarWidth, h), CommandSender(boss) {
+	: EditableWidget(boss, x, y, w - kDefaultScrollBarWidth, h), CommandSender(boss) {
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE;
 	_type = kListWidget;
 	_editMode = false;
@@ -36,7 +36,7 @@ ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h)
 	_entriesPerPage = (_h - 2) / kLineHeight;
 	_currentPos = 0;
 	_selectedItem = -1;
-	_scrollBar = new ScrollBarWidget(boss, _x + _w, _y, kScrollBarWidth, _h);
+	_scrollBar = new ScrollBarWidget(boss, _x + _w, _y, kDefaultScrollBarWidth, _h);
 	_scrollBar->setTarget(this);
 	_currentKeyDown = 0;
 	

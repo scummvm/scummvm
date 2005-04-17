@@ -26,7 +26,7 @@
 
 namespace GUI {
 
-#define UP_DOWN_BOX_HEIGHT	10
+#define UP_DOWN_BOX_HEIGHT	(_w+1)
 
 // Up arrow
 static uint32 up_arrow[8] = {
@@ -215,13 +215,13 @@ void ScrollBarWidget::drawWidget(bool hilite) {
 
 	// Up arrow
 	gui->frameRect(_x, _y, _w, UP_DOWN_BOX_HEIGHT, gui->_color);
-	gui->drawBitmap(up_arrow, _x + 1, _y,
+	gui->drawBitmap(up_arrow, _x + 1 + (_w - 8) / 2, _y + (_w - 8) / 2,
 					isSinglePage ? gui->_color :
 					(hilite && _part == kUpArrowPart) ? gui->_textcolorhi : gui->_textcolor);
 
 	// Down arrow
 	gui->frameRect(_x, bottomY - UP_DOWN_BOX_HEIGHT, _w, UP_DOWN_BOX_HEIGHT, gui->_color);
-	gui->drawBitmap(down_arrow, _x + 1, bottomY - UP_DOWN_BOX_HEIGHT,
+	gui->drawBitmap(down_arrow, _x + 1 + (_w - 8) / 2, bottomY - UP_DOWN_BOX_HEIGHT + (_w - 8) / 2,
 					isSinglePage ? gui->_color :
 					(hilite && _part == kDownArrowPart) ? gui->_textcolorhi : gui->_textcolor);
 

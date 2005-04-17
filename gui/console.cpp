@@ -74,7 +74,7 @@ ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
 	_slideTime = 0;
 
 	// Add scrollbar
-	_scrollBar = new ScrollBarWidget(this, _w - kScrollBarWidth - 1, 0, kScrollBarWidth, _h);
+	_scrollBar = new ScrollBarWidget(this, _w - kDefaultScrollBarWidth - 1, 0, kDefaultScrollBarWidth, _h);
 	_scrollBar->setTarget(this);
 
 	// Init callback
@@ -98,13 +98,13 @@ ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
 void ConsoleDialog::reflowLayout() {
 	// Calculate the real width/height (rounded to char/line multiples)
 	_w = (uint16)(_widthPercent * g_system->getOverlayWidth());
-//	_w = (_widthPercent * g_system->getOverlayWidth() - kScrollBarWidth - 2) / kConsoleCharWidth;
-//	_w = _w * kConsoleCharWidth + kScrollBarWidth + 2;
+//	_w = (_widthPercent * g_system->getOverlayWidth() - kDefaultScrollBarWidth - 2) / kConsoleCharWidth;
+//	_w = _w * kConsoleCharWidth + kDefaultScrollBarWidth + 2;
 	_h = (uint16)((_heightPercent * g_system->getOverlayHeight() - 2) / kConsoleLineHeight);
 	_h = _h * kConsoleLineHeight + 2;
 
 	// Calculate depending values
-	_lineWidth = (_w - kScrollBarWidth - 2) / kConsoleCharWidth;
+	_lineWidth = (_w - kDefaultScrollBarWidth - 2) / kConsoleCharWidth;
 	_linesPerPage = (_h - 2) / kConsoleLineHeight;
 }
 
