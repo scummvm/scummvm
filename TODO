@@ -196,6 +196,11 @@ GUI
 * Maybe add the ScummVM logo (+typeface?) to the about dialog
 * There is currently no way to unset the SoundFont from the GUI, if any was set. 
   Maybe add a 'clear' button for it? The same holds for other path settings.
+* ScrollBarWidget: Add auto-repeat: if user clicks & holds on one of the arrows,
+  then after a brief delay, it should start to contiously scroll.
+* AboutDialog: Add a "fade" effect for the top/bottom text lines
+* AboutDialog: Maybe prerender all of the text into another surface, and then
+  simply compose that over the screen surface in the right way.
 
 Launcher
 ========

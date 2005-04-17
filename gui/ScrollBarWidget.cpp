@@ -26,16 +26,6 @@
 
 namespace GUI {
 
-/*
- * TODO:
- * - Auto-repeat: if user clicks & holds on one of the arrows, then after a
- *   brief delay, it should start to contiously scroll
- * - Allow for a horizontal scrollbar, too?
- * - If there are less items than fit on one pages, no scrolling can be done
- *   and we thus should not highlight the arrows/slider.
- * - Allow the mouse wheel to scroll more than one line at a time
- */
-
 #define UP_DOWN_BOX_HEIGHT	10
 
 // Up arrow
