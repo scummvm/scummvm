@@ -1573,13 +1573,13 @@ void ScummEngine_v100he::o100_roomOps() {
 
 	case 134:		// SO_ROOM_NEW_PALETTE
 		a = pop();
-		setPalette(a, _roomResource);
+		setPalette(a);
 		break;
 
 	case 135:
 		b = pop();
 		a = pop();
-		setPalette(a, b);
+		setRoomPalette(a, b);
 		break;
 
 	case 136:		// SO_ROOM_SAVEGAME

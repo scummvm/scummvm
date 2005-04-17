@@ -1043,7 +1043,7 @@ void ScummEngine_v72he::o72_roomOps() {
 
 	case 213:		// SO_ROOM_NEW_PALETTE
 		a = pop();
-		setPalette(a, _roomResource);
+		setPalette(a);
 		break;
 
 	case 220:
@@ -1068,7 +1068,7 @@ void ScummEngine_v72he::o72_roomOps() {
 	case 236:
 		b = pop();
 		a = pop();
-		setPalette(a, b);
+		setRoomPalette(a, b);
 		break;
 
 	default:

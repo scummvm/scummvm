@@ -978,7 +978,8 @@ protected:
 	void setupEGAPalette();
 	void setupV1ManiacPalette();
 	void setupV1ZakPalette();
-	void setPalette(int pal, int room);
+	void setPalette(int pal);
+	void setRoomPalette(int pal, int room);
 	virtual void setPaletteFromPtr(const byte *ptr, int numcolor = -1);
 	virtual void setPalColor(int index, int r, int g, int b);
 	void setDirtyColors(int min, int max);

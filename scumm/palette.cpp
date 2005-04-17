@@ -857,12 +857,22 @@ void ScummEngine::setPalColor(int idx, int r, int g, int b) {
 	setDirtyColors(idx, idx);
 }
 
-void ScummEngine::setPalette(int palindex, int room) {
+void ScummEngine::setPalette(int palindex) {
 	const byte *pals;
 
 	_curPalIndex = palindex;
-	pals = getPalettePtr(_curPalIndex, room);
+	pals = getPalettePtr(_curPalIndex, _roomResource);
 	setPaletteFromPtr(pals);
+}
+
+void ScummEngine::setRoomPalette(int palindex, int room) {
+	const byte *roomptr = getResourceAddress(rtRoom, room);
+	assert(roomptr);
+	const byte *pals = findResource(MKID('PALS'), roomptr);
+	assert(pals);
+	const byte *rgbs = findPalInPals(pals, palindex);
+	assert(rgbs);
+	setPaletteFromPtr(rgbs);
 }
 
 const byte *ScummEngine::findPalInPals(const byte *pal, int idx) {

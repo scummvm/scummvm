@@ -1757,7 +1757,7 @@ void ScummEngine_v6::o6_roomOps() {
 		if (_gameId == GID_SAMNMAX && vm.slot[_currentScript].number == 64)
 			setDirtyColors(0, 255);
 		else
-			setPalette(a, _roomResource);
+			setPalette(a);
 		break;
 	default:
 		error("o6_roomOps: default case %d", op);
