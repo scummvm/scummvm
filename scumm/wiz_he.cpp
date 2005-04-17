@@ -1503,7 +1503,7 @@ void ScummEngine_v90he::fillWizRect(const WizParameters *params) {
 		uint32 iw = READ_LE_UINT32(wizh + 0x4);
 		uint32 ih = READ_LE_UINT32(wizh + 0x8);
 		assert(ic == 0 || ic == 2 || ic == 3);	
-		Common::Rect r1(iw + 1, ih + 1);
+		Common::Rect r1(iw, ih);
 		if (params->processFlags & kWPFClipBox) {
 			if (!r1.intersects(params->box)) {
 				return;
