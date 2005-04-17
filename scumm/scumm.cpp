@@ -2274,18 +2274,18 @@ void ScummEngine::mainMenuDialog() {
 	runDialog(*_mainMenuDialog);
 }
 
-void ScummEngine::confirmexitDialog() {
-	ConfirmDialog confirmExitDialog(this, "Do you really want to quit (y/n)?");
+void ScummEngine::confirmExitDialog() {
+	ConfirmDialog d(this, "Do you really want to quit (y/n)?");
 
-	if (runDialog(confirmExitDialog)) {
+	if (runDialog(d)) {
 		_quit = true;
 	}
 }
 
-void ScummEngine::confirmrestartDialog() {
-	ConfirmDialog confirmRestartDialog(this, "Do you really want to restart (y/n)?");
+void ScummEngine::confirmRestartDialog() {
+	ConfirmDialog d(this, "Do you really want to restart (y/n)?");
 
-	if (runDialog(confirmRestartDialog)) {
+	if (runDialog(d)) {
 		restart();
 	}
 }

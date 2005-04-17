@@ -384,7 +384,6 @@ public:
 	byte _gameId;
 	byte _version;
 	byte _heversion;
-	byte _numActors;
 	uint32 _features;						// Should only be accessed for reading (TODO enforce it compiler-wise with making it private and creating an accessor)
 	uint8 _gameMD5[16];
 
@@ -465,19 +464,18 @@ protected:
 	Dialog *_versionDialog;
 	Dialog *_mainMenuDialog;
 
-protected:
 	int runDialog(Dialog &dialog);
-	void confirmexitDialog();
-	void confirmrestartDialog();
+	void confirmExitDialog();
+	void confirmRestartDialog();
 	void pauseDialog();
 	void versionDialog();
 	void mainMenuDialog();
-protected:
+
 	char displayMessage(const char *altButton, const char *message, ...);
 
-protected:
 	byte _fastMode;
 
+	byte _numActors;
 	Actor *_actors;	// Has _numActors elements
 	
 	byte *_arraySlot;

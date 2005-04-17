@@ -1307,7 +1307,7 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		break;
 	case 34:	// queryQuit
 		if (_confirmExit)
-			confirmexitDialog();
+			confirmExitDialog();
 		else
 			_quit = true;
 		break;

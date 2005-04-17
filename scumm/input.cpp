@@ -193,7 +193,7 @@ void ScummEngine::parseEvents() {
 	
 		case OSystem::EVENT_QUIT:
 			if (_confirmExit)
-				confirmexitDialog();
+				confirmExitDialog();
 			else
 				_quit = true;
 			break;
@@ -375,7 +375,7 @@ void ScummEngine::processKbd(bool smushMode) {
 
 	if (VAR_RESTART_KEY != 0xFF && _lastKeyHit == VAR(VAR_RESTART_KEY) ||
 	   (((_version <= 2) || (_features & GF_FMTOWNS && _version == 3)) && _lastKeyHit == 8)) {
-		confirmrestartDialog();
+		confirmRestartDialog();
 		return;
 	}
 
