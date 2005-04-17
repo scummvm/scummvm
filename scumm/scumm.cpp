@@ -2409,7 +2409,6 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 							// E.g. it's trivial to distinguish V1 from V3 games.
 							File tmp;
 							byte buf[6];
-							printf("Candidate game '%s', version %d, trying to open '%s'\n", g->name, g->version, file->path().c_str());
 							if (!tmp.open(file->path().c_str()))
 								break;
 							tmp.read(buf, 6);
