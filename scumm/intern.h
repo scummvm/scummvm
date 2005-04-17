@@ -1203,6 +1203,8 @@ protected:
 	virtual void setCameraFollows(Actor *a);
 	virtual void moveCamera();
 	virtual void panCameraTo(int x, int y);
+
+	virtual int getObjectIdFromOBIM(const byte *obim);
 };
 
 class ScummEngine_v8 : public ScummEngine_v7 {
@@ -1214,7 +1216,9 @@ protected:
 	};
 	
 	const OpcodeEntryV8 *_opcodesV8;
-	
+
+	ObjectIDMap _objectIDMap;
+
 public:
 	ScummEngine_v8(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v7(detector, syst, gs, md5sum) {}
 
@@ -1235,6 +1239,8 @@ protected:
 	
 	virtual int readVar(uint var);
 	virtual void writeVar(uint var, int value);
+
+	virtual int getObjectIdFromOBIM(const byte *obim);
 
 	/* Version 8 script opcodes */
 	void o8_mod();

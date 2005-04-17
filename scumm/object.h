@@ -165,7 +165,6 @@ struct ImageHeader { /* file format */
 struct FindObjectInRoom {
 	const CodeHeader *cdhd;
 	const byte *obcd;
-	const ImageHeader *imhd;
 	const byte *obim;
 	const byte *roomptr;
 };

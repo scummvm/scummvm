@@ -744,7 +744,6 @@ public:
 
 protected:
 	byte *_objectOwnerTable, *_objectRoomTable, *_objectStateTable;
-	ObjectIDMap _objectIDMap;
 	int _numObjectsInRoom;
 
 	virtual void setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
@@ -794,6 +793,7 @@ protected:
 	byte *getOBCDFromObject(int obj);
 	const byte *getOBIMFromObject(const ObjectData &od);
 	const byte *getObjectImage(const byte *ptr, int state);
+	virtual int getObjectIdFromOBIM(const byte *obim);
 
 	int getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e, int f);
 

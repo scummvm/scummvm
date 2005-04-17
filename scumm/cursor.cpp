@@ -157,26 +157,28 @@ void ScummEngine_v6::setCursorFromImg(uint img, uint room, uint imgindex) {
 	const byte *dataptr, *bomp;
 	uint32 size;
 	FindObjectInRoom foir;
+	const ImageHeader *imhd;
 
 	if (room == (uint) - 1)
 		room = getObjectRoom(img);
 
 	findObjectInRoom(&foir, foCodeHeader | foImageHeader | foCheckAlreadyLoaded, img, room);
+	imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), foir.obim);
 
 	if (_version == 8) {
-		setCursorHotspot(READ_LE_UINT32(&foir.imhd->v8.hotspot[0].x),
-		                  READ_LE_UINT32(&foir.imhd->v8.hotspot[0].y));
-		w = READ_LE_UINT32(&foir.imhd->v8.width) / 8;
-		h = READ_LE_UINT32(&foir.imhd->v8.height) / 8;
+		setCursorHotspot(READ_LE_UINT32(&imhd->v8.hotspot[0].x),
+		                  READ_LE_UINT32(&imhd->v8.hotspot[0].y));
+		w = READ_LE_UINT32(&imhd->v8.width) / 8;
+		h = READ_LE_UINT32(&imhd->v8.height) / 8;
 	} else if (_version == 7) {
-		setCursorHotspot(READ_LE_UINT16(&foir.imhd->v7.hotspot[0].x),
-		                  READ_LE_UINT16(&foir.imhd->v7.hotspot[0].y));
-		w = READ_LE_UINT16(&foir.imhd->v7.width) / 8;
-		h = READ_LE_UINT16(&foir.imhd->v7.height) / 8;
+		setCursorHotspot(READ_LE_UINT16(&imhd->v7.hotspot[0].x),
+		                  READ_LE_UINT16(&imhd->v7.hotspot[0].y));
+		w = READ_LE_UINT16(&imhd->v7.width) / 8;
+		h = READ_LE_UINT16(&imhd->v7.height) / 8;
 	} else {
 		if (!(_features & GF_HUMONGOUS))
-			setCursorHotspot(READ_LE_UINT16(&foir.imhd->old.hotspot[0].x),
-		        	          READ_LE_UINT16(&foir.imhd->old.hotspot[0].y));
+			setCursorHotspot(READ_LE_UINT16(&imhd->old.hotspot[0].x),
+		        	          READ_LE_UINT16(&imhd->old.hotspot[0].y));
 		w = READ_LE_UINT16(&foir.cdhd->v6.w) / 8;
 		h = READ_LE_UINT16(&foir.cdhd->v6.h) / 8;
 	}
