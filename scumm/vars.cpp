@@ -513,11 +513,12 @@ void ScummEngine::initScummVars() {
 			VAR(VAR_NUM_CHARSETS) = _numCharsets - 1;
 			VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
 		}
-		if (_heversion >= 80)
+		if (_heversion >= 80) {
 			VAR(78) = 1;
 			VAR(VAR_WINDOWS_VERSION) = 40;
 
 			VAR(VAR_NUM_ACTIVE_SOUND_CHANNELS) = (_heversion >= 90) ? 8 : 4;
+		}
 		if (_heversion >= 90) {
 			VAR(VAR_SCRIPT_CYCLE) = 1;
 			VAR(VAR_NUM_SCRIPT_CYCLES) = 1;
