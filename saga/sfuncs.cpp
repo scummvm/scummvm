@@ -81,7 +81,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfEnableZone),
 		OPCODE(sfSetActorState),
 		OPCODE(sfScriptMoveTo),
-		OPCODE(SF_sceneEq),
+		OPCODE(sfSceneEq),
 		OPCODE(SF_dropObject),
 		OPCODE(sfFinishBgdAnim),
 		OPCODE(sfSwapActors),
@@ -94,7 +94,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfChainBgdAnim),
 		OPCODE(sfScriptSpecialWalk),
 		OPCODE(sfPlaceActor),
-		OPCODE(SF_checkUserInterrupt),
+		OPCODE(sfCheckUserInterrupt),
 		OPCODE(sfScriptWalkRelative),
 		OPCODE(sfScriptMoveRelative),
 		OPCODE(SF_simulSpeech2),
@@ -377,7 +377,7 @@ void Script::sfPreDialog(SCRIPTFUNC_PARAMS) {
 		; // display zero text
 	_vm->_interface->setMode(kPanelNull);
 
-	debug(1, "stub: SF_preDialog()");
+	debug(0, "STUB: SF_preDialog()");
 }
 
 // Script function #13 (0x0D)
@@ -522,7 +522,7 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 
 // Script function #17 (0x11)
 void Script::SF_setObjImage(SCRIPTFUNC_PARAMS) {
-	error("Not implemented");
+	error("SF_setObjImage Not implemented");
 /*	int16 obj_param = getSWord(thread->pop());
 	int16 sprite_param = getSWord(thread->pop());
 
@@ -540,7 +540,7 @@ void Script::SF_setObjImage(SCRIPTFUNC_PARAMS) {
 
 // Script function #18 (0x12)
 void Script::SF_setObjName(SCRIPTFUNC_PARAMS) {
-	error("Not implemented");
+	error("SF_setObjName Not implemented");
 
 /*	int obj_param = getSWord(thread->pop());
 	int name_param = getSWord(thread->pop());
@@ -556,7 +556,7 @@ void Script::SF_setObjName(SCRIPTFUNC_PARAMS) {
 
 // Script function #19 (0x13)
 void Script::SF_getObjImage(SCRIPTFUNC_PARAMS) {
-	error("Not implemented");
+	error("SF_getObjImage Not implemented");
 
 /*	int param = getSWord(thread->pop());
 	int index = param & 0x1FFF;
@@ -574,7 +574,7 @@ void Script::SF_getNumber(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	debug(1, "stub: SF_getNumber(), %d args", nArgs);
+	debug(0, "STUB: SF_getNumber(), %d args", nArgs);
 }
 
 // Script function #21 (0x15)
@@ -617,7 +617,7 @@ void Script::SF_cycleColors(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	debug(1, "stub: SF_cycleColors(), %d args", nArgs);
+	debug(0, "STUB: SF_cycleColors(), %d args", nArgs);
 }
 
 // Script function #25 (0x19)
@@ -721,7 +721,7 @@ void Script::sfScriptMoveTo(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #31 (0x21)
-void Script::SF_sceneEq(SCRIPTFUNC_PARAMS) {
+void Script::sfSceneEq(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 
 	if (_vm->_scene->getSceneLUT(param) == _vm->_scene->currentSceneNumber())
@@ -732,7 +732,7 @@ void Script::SF_sceneEq(SCRIPTFUNC_PARAMS) {
 
 // Script function #32 (0x20)
 void Script::SF_dropObject(SCRIPTFUNC_PARAMS) {
-	error("Not implemented");
+	error("SF_dropObject Not implemented");
 
 /*	ScriptDataWord obj_param = thread->pop();
 	ScriptDataWord sprite_param = thread->pop();
@@ -1056,7 +1056,7 @@ void Script::sfPlaceActor(SCRIPTFUNC_PARAMS) {
 // Checks to see if the user has interrupted a currently playing 
 // game cinematic. Pushes a zero or positive value if the game 
 // has not been interrupted.
-void Script::SF_checkUserInterrupt(SCRIPTFUNC_PARAMS) {
+void Script::sfCheckUserInterrupt(SCRIPTFUNC_PARAMS) {
 	thread->_returnValue = (_skipSpeeches == true);
 
 }
@@ -1132,7 +1132,7 @@ void Script::SF_simulSpeech2(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	debug(1, "stub: SF_simulSpeech2(), %d args", nArgs);
+	debug(0, "STUB: SF_simulSpeech2(), %d args", nArgs);
 }
 
 static TEXTLIST_ENTRY *placardTextEntry;
@@ -1311,7 +1311,7 @@ void Script::SF_setProtagState(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	debug(1, "stub: SF_setProtagState(), %d args", nArgs);
+	debug(0, "STUB: SF_setProtagState(), %d args", nArgs);
 }
 
 // Script function #51 (0x33)
@@ -1326,14 +1326,16 @@ void Script::sfResumeBgdAnim(SCRIPTFUNC_PARAMS) {
 
 // Script function #52 (0x34)
 void Script::SF_throwActor(SCRIPTFUNC_PARAMS) {
-	thread->pop();
-	thread->pop();
-	thread->pop();
-	thread->pop();
-	thread->pop();
-	thread->pop();
+	int param1, param2, param3, param4, param5, param6;
 
-	//debug(1, "stub: SF_throwActor(%d, %d, %d, %d, %d, %d)", param1, param2, param3, param4, param5, param6);
+	param1 = thread->pop();
+	param2 = thread->pop();
+	param3 = thread->pop();
+	param4 = thread->pop();
+	param5 = thread->pop();
+	param6 = thread->pop();
+
+	debug(0, "STUB: SF_throwActor(%d, %d, %d, %d, %d, %d)", param1, param2, param3, param4, param5, param6);
 }
 
 // Script function #53 (0x35)
@@ -1360,20 +1362,20 @@ void Script::sfScriptSceneID(SCRIPTFUNC_PARAMS) {
 
 // Script function #55 (0x37)
 void Script::SF_changeActorScene(SCRIPTFUNC_PARAMS) {
-	thread->pop();
-	thread->pop();
+	int param1 = thread->pop();
+	int param2 = thread->pop();
 
-	//debug(1, "stub: SF_changeActorScene(%d, %d)", param1, param2);
+	debug(0, "STUB: SF_changeActorScene(%d, %d)", param1, param2);
 }
 
 // Script function #56 (0x38)
 void Script::SF_climb(SCRIPTFUNC_PARAMS) {
-	thread->pop();
-	thread->pop();
-	thread->pop();
-	thread->pop();
+	int param1 = thread->pop();
+	int param2 = thread->pop();
+	int param3 = thread->pop();
+	int param4 = thread->pop();
 
-	//debug(1, "stub: SF_climb(%d, %d, %d, %d)", param1, param2, param3, param4);
+	debug(0, "STUB: SF_climb(%d, %d, %d, %d)", param1, param2, param3, param4);
 }
 
 // Script function #57 (0x39)
@@ -1394,10 +1396,10 @@ void Script::sfSetDoorState(SCRIPTFUNC_PARAMS) {
 
 // Script function #58 (0x3A)
 void Script::SF_setActorZ(SCRIPTFUNC_PARAMS) {
-	thread->pop();
-	thread->pop();
+	int param1 = thread->pop();
+	int param2 = thread->pop();
 
-	//debug(1, "stub: SF_setActorZ(%d, %d)", param1, param2);
+	debug(0, "STUB: SF_setActorZ(%d, %d)", param1, param2);
 }
 
 // Script function #59 (0x3B)
@@ -1405,21 +1407,21 @@ void Script::SF_text(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	debug(1, "stub: SF_text(), %d args", nArgs);
+	debug(0, "STUB: SF_text(), %d args", nArgs);
 }
 
 // Script function #60 (0x3C)
 void Script::SF_getActorX(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 
-	debug(1, "stub: SF_getActorX(%d)", param);
+	debug(0, "STUB: SF_getActorX(%d)", param);
 }
 
 // Script function #61 (0x3D)
 void Script::SF_getActorY(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 
-	debug(1, "stub: SF_getActorY(%d)", param);
+	debug(0, "STUB: SF_getActorY(%d)", param);
 }
 
 // Script function #62 (0x3E)
@@ -1427,7 +1429,7 @@ void Script::SF_eraseDelta(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	debug(1, "stub: SF_eraseDelta(), %d args", nArgs);
+	debug(0, "STUB: SF_eraseDelta(), %d args", nArgs);
 }
 
 // Script function #63 (0x3F)
@@ -1443,7 +1445,7 @@ void Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
 		int16 param1 = thread->pop();
 		int16 param2 = thread->pop();
 
-		debug(1, "Stub: sfPlayMusic(%d, %d)", param1, param2);
+		debug(0, "STUB: sfPlayMusic(%d, %d)", param1, param2);
 	}
 
 }
@@ -1453,7 +1455,7 @@ void Script::SF_pickClimbOutPos(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	debug(1, "stub: SF_pickClimbOutPos(), %d args", nArgs);
+	debug(0, "STUB: SF_pickClimbOutPos(), %d args", nArgs);
 }
 
 // Script function #65 (0x41)
@@ -1461,7 +1463,7 @@ void Script::SF_tossRif(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	debug(1, "stub: SF_tossRif(), %d args", nArgs);
+	debug(0, "STUB: SF_tossRif(), %d args", nArgs);
 }
 
 // Script function #66 (0x42)
@@ -1469,7 +1471,7 @@ void Script::SF_showControls(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	debug(1, "stub: SF_showControls(), %d args", nArgs);
+	debug(0, "STUB: SF_showControls(), %d args", nArgs);
 }
 
 // Script function #67 (0x43)
@@ -1477,7 +1479,7 @@ void Script::SF_showMap(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	debug(1, "stub: SF_showMap(), %d args", nArgs);
+	debug(0, "STUB: SF_showMap(), %d args", nArgs);
 }
 
 // Script function #68 (0x44)
@@ -1485,7 +1487,7 @@ void Script::SF_puzzleWon(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	debug(1, "stub: SF_puzzleWon(), %d args", nArgs);
+	debug(0, "STUB: SF_puzzleWon(), %d args", nArgs);
 }
 
 // Script function #69 (0x45)
@@ -1591,7 +1593,7 @@ void Script::SF_playLoopedSound(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	debug(1, "stub: SF_playLoopedSound(), %d args", nArgs);
+	debug(0, "STUB: SF_playLoopedSound(), %d args", nArgs);
 }
 
 // Script function #72 (0x48)
@@ -1606,7 +1608,7 @@ void Script::SF_showProtect(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	debug(1, "stub: SF_showProtect(), %d args", nArgs);
+	debug(0, "STUB: SF_showProtect(), %d args", nArgs);
 }
 
 // Script function #74 (0x4A)
@@ -1614,7 +1616,7 @@ void Script::SF_protectResult(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	debug(1, "stub: SF_protectResult(), %d args", nArgs);
+	debug(0, "STUB: SF_protectResult(), %d args", nArgs);
 }
 
 // Script function #75 (0x4b)
@@ -1625,7 +1627,7 @@ void Script::sfRand(SCRIPTFUNC_PARAMS) {
 		// I don't know what this function does in IHNM, but apparently
 		// it can take three parameters.
 
-		debug(1, "stub: sfRand()");
+		debug(0, "STUB: sfRand()");
 
 		for (int i = 0; i < nArgs; i++) {
 			thread->pop();
@@ -1640,7 +1642,7 @@ void Script::sfRand(SCRIPTFUNC_PARAMS) {
 
 // Script function #76 (0x4c)
 void Script::SF_fadeMusic(SCRIPTFUNC_PARAMS) {
-	debug(1, "stub: SF_fadeMusic()");
+	debug(0, "STUB: SF_fadeMusic()");
 }
 
 // Script function #77 (0x4d)
@@ -1648,7 +1650,7 @@ void Script::SF_playVoice(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	debug(1, "stub: SF_playVoice(), %d args", nArgs);
+	debug(0, "STUB: SF_playVoice(), %d args", nArgs);
 }
 
 void Script::finishDialog(int replyID, int flags, int bitOffset) {
@@ -1675,7 +1677,7 @@ void Script::SF_stub(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	debug(1, "stub: SF_stub(), %d args", nArgs);
+	debug(0, "STUB: SF_stub(), %d args", nArgs);
 }
 
 } // End of namespace Saga

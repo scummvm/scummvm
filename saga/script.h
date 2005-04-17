@@ -489,7 +489,7 @@ private:
 	void sfEnableZone(SCRIPTFUNC_PARAMS);
 	void sfSetActorState(SCRIPTFUNC_PARAMS);
 	void sfScriptMoveTo(SCRIPTFUNC_PARAMS);
-	void SF_sceneEq(SCRIPTFUNC_PARAMS);
+	void sfSceneEq(SCRIPTFUNC_PARAMS);
 	void SF_dropObject(SCRIPTFUNC_PARAMS);
 	void sfFinishBgdAnim(SCRIPTFUNC_PARAMS);
 	void sfSwapActors(SCRIPTFUNC_PARAMS);
@@ -502,7 +502,7 @@ private:
 	void sfChainBgdAnim(SCRIPTFUNC_PARAMS);
 	void sfScriptSpecialWalk(SCRIPTFUNC_PARAMS);
 	void sfPlaceActor(SCRIPTFUNC_PARAMS);
-	void SF_checkUserInterrupt(SCRIPTFUNC_PARAMS);
+	void sfCheckUserInterrupt(SCRIPTFUNC_PARAMS);
 	void sfScriptWalkRelative(SCRIPTFUNC_PARAMS);
 	void sfScriptMoveRelative(SCRIPTFUNC_PARAMS);
 	void SF_simulSpeech2(SCRIPTFUNC_PARAMS);
