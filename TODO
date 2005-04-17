@@ -267,31 +267,6 @@ SCUMM
 * When SMUSH movies end, their music track sometimes should last a bit longer;
   currently, we stop the audio together with the animation, leading to cut off
   music.
-* Humongous Entertainment Games
-  - Add proper handling of sound looping in Humongous games
-  - Add sound pitch support for piano keys in piano mini game of fbear (DOS)
-  - Add rename/delete file support, to make file opcodes function correctly
-* Humongous entertainment >= v7 titles:
-  - Add support for song sync. in HE80+ games. (Used in ff2-demo/freddi2/pajama)
-  - Add support for SBNG sound resources for songs (Used in ff2-demo/freddi2/pajama)
-  - Add support for displayWizComplexImage 0x80000 flag (Used in ff5demo/freddicove)
-  - Add support for drawWizImage masking, triggered by flag 0x80 (Used in maze)
-  - Add support for drawWizComplexPolygon (For Ski Ride & Credits of pajama3)
-  - Add support for processWizImage mode 7 (For soccer2004)
-  - Add support for XMAP resources in drawWizImage (Used by akos codec 32 too)
-  - Add support for floodState (For puzzle in pajama2)
-  - Add support for o80_unknownE0 type1 (For binoculars in pajama2)
-  - Add support for o80_unknownE0 type2 (For black board in freddi2 and paper in spyfox)
-  - Add support for o80_readConfigFile/o80_writeConfigFile (For balloon/maze/mustard/socks/water)
-    The config file is used to read current level details
-  - Add support for IMA ADPCM compression for speech files (For soccer2004)
-  - Add support for U32 library calls, triggered by case 2001 of o90_kernelGetFunctions/o90_kernelSetFunctions
-    The U32 code controls the players movements on field.of footdemo/soccer2004
-    The U32 code controls the racing segment at end of puttrace
-  - Fix actor parts disappearing in pajama2/racedemo
-    The decflag in akos_drawLimb() isn't been set correctly
-  - Fix cursor transparency in puzzle of pajama2 (Related to floodState support?)
-  - Fix inventory background/items disappearing in puttzoo/zoodemo/putttime/timedemo
 * Clean up class Gdi. This class right now mostly is about decoding various
   graphic formats. However some other functionality has crept into it, too.
   It would be nice if class Gdi would only contain the GFX decoding code, and
