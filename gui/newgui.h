@@ -67,9 +67,6 @@ public:
 
 	bool isActive() const	{ return ! _dialogStack.empty(); }
 
-	int getScaleFactor() const { return _scaleFactor; }
-	void enableScaling(bool enable) { _scaleEnable = enable; updateScaleFactor(); }
-
 protected:
 	OSystem			*_system;
 	Graphics::Surface	_screen;
@@ -116,6 +113,7 @@ protected:
 
 	void animateCursor();
 	void updateColors();
+
 	void updateScaleFactor();
 
 	OverlayColor *getBasePtr(int x, int y);

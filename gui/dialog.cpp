@@ -99,6 +99,10 @@ void Dialog::draw() {
 	g_gui._needRedraw = true;
 }
 
+bool Dialog::wantsScaling() const {
+	return true;
+}
+
 void Dialog::drawDialog() {
 
 	if (!isVisible())

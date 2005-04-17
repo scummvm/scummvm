@@ -116,9 +116,6 @@ void ConsoleDialog::slideUpAndClose() {
 }
 
 void ConsoleDialog::open() {
-	// disable scaling because the console is using non fixed positions
-	g_gui.enableScaling(false);
-
 	// Initiate sliding the console down. We do a very simple trick to achieve
 	// this effect: we simply move the console dialog just above (outside) the
 	// visible screen area, then shift it down in handleTickle() over a
@@ -191,7 +188,6 @@ void ConsoleDialog::handleTickle() {
 		} else if (_slideMode == kUpSlideMode && _y <= -_h) {
 			// End the slide
 			_slideMode = kNoSlideMode;
-			g_gui.enableScaling(true);
 			close();
 		} else
 			draw();

@@ -106,6 +106,7 @@ void NewGui::runLoop() {
 	// EVENT_SCREEN_CHANGED is received. However, not yet all backends support
 	// that event, so we also do it "manually" whenever a run loop is entered.
 	updateColors();
+	_scaleEnable = activeDialog->wantsScaling();
 	updateScaleFactor();
 
 	if (!_stateIsSaved) {
@@ -121,8 +122,13 @@ void NewGui::runLoop() {
 			// This is necessary to get the blending right.
 			_system->clearOverlay();
 			_system->grabOverlay((OverlayColor *)_screen.pixels, _screenPitch);
-			for (int i = 0; i < _dialogStack.size(); i++)
+			for (int i = 0; i < _dialogStack.size(); i++) {
+				// For each dialog we draw we have to ensure the correct
+				// scaling mode is active.
+				_scaleEnable = _dialogStack[i]->wantsScaling();
+				updateScaleFactor();
 				_dialogStack[i]->drawDialog();
+			}
 			_needRedraw = false;
 		}
 
