@@ -1011,7 +1011,15 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 			palPtr = rmap + 4;
 		}
 
-		if (comp == 1) {
+		switch (comp) {
+		case 0:
+			{
+			uint8 *trns = findWrappedBlock(MKID('TRNS'), dataPtr, state, 0);
+			int color = (trns == NULL) ? VAR(VAR_WIZ_TCOLOR) : -1;
+			_wiz.copyRawWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, color);
+			}
+			break;
+		case 1:
 			// TODO Adding masking for flags 0x80 and 0x100
 			if (flags & 0x80) {
 				warning("drawWizImage: Unhandled flag 0x80");
@@ -1020,11 +1028,11 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 				error("drawWizImage: Unhandled flag 0x100");
 			}
 			_wiz.copyWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, palPtr);
-		} else if (comp == 0 || comp == 2 || comp == 3) {
-			uint8 *trns = findWrappedBlock(MKID('TRNS'), dataPtr, state, 0);
-			int color = (trns == NULL) ? VAR(VAR_WIZ_TCOLOR) : -1;
-			_wiz.copyRawWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, color);
-		} else {
+			break;
+		case 2:
+			warning("drawWizImage: Unhandled wiz compression type %d", comp);
+			break;
+		default:
 			error("drawWizImage: Unhandled wiz compression type %d", comp);
 		}
 
