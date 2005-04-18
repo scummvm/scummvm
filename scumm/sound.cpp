@@ -161,6 +161,60 @@ void Sound::setOverrideFreq(int freq) {
 	_overrideFreq = freq;
 }
 
+void Sound::getHEMusicDetails(int id, int &musicOffs, int &musicSize) {
+	int musicID, offs, tracks, total_size;
+	char buf[32], buf1[128];
+	File musicFile;
+
+	sprintf(buf, "%s.he4", _vm->getGameName());
+
+	if (_vm->_substResFileNameIndex > 0) {
+		_vm->generateSubstResFileName(buf, buf1, sizeof(buf1));
+		strcpy(buf, buf1);
+	}
+	if (musicFile.open(buf) == false) {
+		warning("getHEMusicDetails: Music file is not open");
+		return;
+	}
+	musicFile.seek(4, SEEK_SET);
+	total_size = musicFile.readUint32BE();
+	musicFile.seek(16, SEEK_SET);
+	tracks = musicFile.readUint32LE();
+
+	int musicStart = (_vm->_heversion >= 80) ? 56 : 20;
+
+	musicFile.seek(musicStart, SEEK_SET);
+	int musicStartID = musicFile.readUint32LE();
+
+	// Music is off by one in freddi2/puttzoo
+	offs = id - musicStartID - 1;
+	if (offs < 0 || offs > tracks)
+		offs = 0;
+
+	offs *= (_vm->_heversion >= 80) ? 21 : 25;
+	musicFile.seek(musicStart + offs, SEEK_SET);
+
+	// Adjust all other games.
+	musicID = musicFile.readUint32LE();
+	if (id == musicID + 1) {
+		offs += (_vm->_heversion >= 80) ? 21 : 25;
+		musicFile.seek(musicStart + offs, SEEK_SET);
+		musicID = musicFile.readUint32LE();
+	}
+
+	musicOffs = musicFile.readUint32LE();
+	musicSize = musicFile.readUint32LE();
+
+	if (id != musicID) {
+		debug(0, "getHEMusicDetails: Music track doesn't match (%d, %d)", id, musicID);
+	}
+	if (musicOffs > total_size || (musicSize + musicOffs > total_size) || musicSize < 0) {
+		error("getHEMusicDetails: Invalid music offset (%d) in music %d", id);
+	}
+
+	musicFile.close();
+}
+
 void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 	debug(5,"playSound: soundID %d heOffset %d heChannel %d heFlags %d\n", soundID, heOffset, heChannel, heFlags);
 	byte *mallocedPtr = NULL;
@@ -176,8 +230,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 	if (_vm->_heversion >= 70 && soundID > _vm->_numSounds) {
 		debug(1, "playSound #%d", soundID);
 
-		int music_offs, total_size;
-		uint tracks, skip = 0;
+		int music_offs;
 		char buf[32], buf1[128];
 		File musicFile;
 
@@ -191,43 +244,8 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 			warning("playSound: Music file is not open");
 			return;
 		}
-		musicFile.seek(4, SEEK_SET);
-		total_size = musicFile.readUint32BE();
-		musicFile.seek(+8, SEEK_CUR);
-		tracks = musicFile.readUint32LE();
 
-		if (soundID >= 8500)
-			skip = (soundID - 8500);
-		else if (soundID >= 8000)
-			skip = (soundID - 8000);
-		else if	(soundID >= 4000)
-			skip = (soundID - 4000);
-		
-		if (skip > tracks - 1)
-			skip = 0;
-
-		if (_vm->_heversion >= 80) {
-			// Skip to offsets
-			musicFile.seek(+40, SEEK_CUR);
-
-			// Skip to correct music header
-			skip *= 21;
-		} else {
-			// Skip to offsets
-			musicFile.seek(+4, SEEK_CUR);
-
-			// Skip to correct music header
-			skip *= 25;
-		}
-
-		musicFile.seek(+skip, SEEK_CUR);
-		music_offs = musicFile.readUint32LE();
-		size = musicFile.readUint32LE();
-
-		if (music_offs > total_size || (size + music_offs > total_size) || size < 0) {
-			error("playSound: Invalid music offset (%d) in music %d", soundID);
-		}
-
+		getHEMusicDetails(soundID, music_offs, size);
 		musicFile.seek(music_offs, SEEK_SET);
 		ptr = (byte *)malloc(size);
 		musicFile.read(ptr, size);

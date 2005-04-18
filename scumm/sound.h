@@ -120,6 +120,8 @@ public:
 	void updateCD();
 	int getCurrentCDSound() const { return _currentCDSound; }
 
+	void getHEMusicDetails(int id, int &musicOffs, int &musicSize);
+
 	// Used by the save/load system:
 	const SaveLoadEntry *getSaveLoadEntries();
 

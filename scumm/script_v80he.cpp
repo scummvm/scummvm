@@ -814,7 +814,9 @@ void ScummEngine_v80he::o80_getResourceSize() {
 	switch (subOp) {
 	case 13:
 		if (resid > _numSounds) {
-			push(getMusicResourceSize(resid));
+			int offs;
+			_sound->getHEMusicDetails(resid, offs, size);
+			push(size);
 			return;
 		}
 		type = rtSound;

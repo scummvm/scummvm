@@ -2160,7 +2160,9 @@ void ScummEngine_v72he::o72_getResourceSize() {
 
 	resid = pop();
 	if (resid > _numSounds) {
-		push(getMusicResourceSize(resid));
+		int offs;
+		_sound->getHEMusicDetails(resid, offs, size);
+		push(size);
 		return;
 	}
 
