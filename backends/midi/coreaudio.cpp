@@ -28,11 +28,11 @@
 #include <AudioUnit/AudioUnit.h>
 
 
-// FIXME - the following disables reverb support in the QuickTime / CoreAudio
-// midi backends. For some reasons, reverb will suck away a *lot* of CPU time.
-// Until we know for sure what is causing this and if there is a better way to
-// fix the problem, we just disable all reverb for these backends.
-//#define COREAUDIO_REVERB_HACK
+// Activating the following switch disables reverb support in the CoreAudio
+// midi backend. Reverb will suck away a *lot* of CPU time, so on slower
+// systems, you may want to turn it off completely.
+// TODO: Maybe make this a config option?
+//#define COREAUDIO_DISABLE_REVERB
 
 
 /* CoreAudio MIDI driver
@@ -59,13 +59,21 @@ int MidiDriver_CORE::open() {
 
 	OSStatus err;
 	AudioUnitConnection auconnect;
+	ComponentDescription compdesc;
+	Component compid;
 
 	// Open the Music Device
-	au_MusicDevice = (AudioUnit) OpenDefaultComponent(kAudioUnitComponentType, kAudioUnitSubType_MusicDevice);
+	compdesc.componentType = kAudioUnitComponentType;
+	compdesc.componentSubType = kAudioUnitSubType_MusicDevice;
+	compdesc.componentManufacturer = kAudioUnitID_DLSSynth;
+	compdesc.componentFlags = 0;
+	compdesc.componentFlagsMask = 0;
+	compid = FindNextComponent(NULL, &compdesc);
+	au_MusicDevice = static_cast<AudioUnit>(OpenComponent(compid));
 	
 	if (au_MusicDevice == 0)
 		error("Failed opening CoreAudio music device");
-	
+
 	// Load custom soundfont, if specified
 	// FIXME: This is kind of a temporary hack. Better (IMO) would be to
 	// query QuickTime for whatever custom soundfont was set in the
@@ -96,6 +104,8 @@ int MidiDriver_CORE::open() {
 
 	// open the output unit
 	au_output = (AudioUnit) OpenDefaultComponent(kAudioUnitComponentType, kAudioUnitSubType_Output);
+	if (au_output == 0)
+		error("Failed opening output audio unit");
 
 	// connect the units
 	auconnect.sourceAudioUnit = au_MusicDevice;
@@ -104,6 +114,12 @@ int MidiDriver_CORE::open() {
 	err =
 		AudioUnitSetProperty(au_output, kAudioUnitProperty_MakeConnection, kAudioUnitScope_Input, 0,
 												 (void *)&auconnect, sizeof(AudioUnitConnection));
+
+#ifdef COREAUDIO_DISABLE_REVERB
+    UInt32 usesReverb = 0;
+    AudioUnitSetProperty (au_MusicDevice, kMusicDeviceProperty_UsesInternalReverb,
+        kAudioUnitScope_Global,    0, &usesReverb, sizeof (usesReverb));
+#endif
 
 	// initialize the units
 	AudioUnitInitialize(au_MusicDevice);
@@ -123,24 +139,25 @@ void MidiDriver_CORE::close() {
 
 	// Cleanup
 	CloseComponent(au_output);
+	au_output = 0;
 	CloseComponent(au_MusicDevice);
+	au_MusicDevice = 0;
 }
 
 void MidiDriver_CORE::send(uint32 b) {
+	assert(au_output != NULL);
+	assert(au_MusicDevice != NULL);
 	unsigned char first_byte, second_byte, status_byte;
 	status_byte = (b & 0x000000FF);
 	first_byte = (b & 0x0000FF00) >> 8;
 	second_byte = (b & 0x00FF0000) >> 16;
 
-#ifdef COREAUDIO_REVERB_HACK
-	if ((status_byte&0xF0) == 0xB0 && first_byte == 0x5b)
-		return;
-#endif
-
 	MusicDeviceMIDIEvent(au_MusicDevice, status_byte, first_byte, second_byte, 0);
 }
 
 void MidiDriver_CORE::sysEx(byte *msg, uint16 length) {
+	assert(au_output != NULL);
+	assert(au_MusicDevice != NULL);
 	MusicDeviceSysEx(au_MusicDevice, msg, length);
 }
 
