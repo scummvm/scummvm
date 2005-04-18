@@ -216,6 +216,7 @@ typedef SortedList<CommonObjectDataPointer> CommonObjectOrderList;
 class ObjectData: public CommonObjectData {	
 public:
 	uint16 interactBits;
+	int32 spritelistRn;
 };
 
 class ActorData: public CommonObjectData {

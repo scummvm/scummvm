@@ -186,7 +186,7 @@ void Script::sfTakeObject(SCRIPTFUNC_PARAMS) {
 	obj = _vm->_actor->getObj(objectId);
 	if (obj->sceneNumber != ITE_SCENE_INV) {
 		obj->sceneNumber = ITE_SCENE_INV;
-		//_vm->_interface->addToInventory(index); TODO: do it
+		_vm->_interface->addToInventory(objectId);
 	}
 }
 
@@ -370,14 +370,12 @@ void Script::sfLockUser(SCRIPTFUNC_PARAMS) {
 // Disables mouse input, etc.
 void Script::sfPreDialog(SCRIPTFUNC_PARAMS) {
 	_vm->_interface->deactivate();
-	; // clear converse text
+	_vm->_interface->converseClear();
 	if (_vm->_interface->isInMainMode())
 		_vm->_interface->setMode(kPanelConverse);
 	else
-		; // display zero text
+		_vm->_interface->converseDisplayText(0);
 	_vm->_interface->setMode(kPanelNull);
-
-	debug(0, "STUB: SF_preDialog()");
 }
 
 // Script function #13 (0x0D)
@@ -732,28 +730,27 @@ void Script::sfSceneEq(SCRIPTFUNC_PARAMS) {
 
 // Script function #32 (0x20)
 void Script::SF_dropObject(SCRIPTFUNC_PARAMS) {
-	error("SF_dropObject Not implemented");
-
-/*	ScriptDataWord obj_param = thread->pop();
-	ScriptDataWord sprite_param = thread->pop();
-	ScriptDataWord x_param = thread->pop();
-	ScriptDataWord y_param = thread->pop();
+	uint16 obj_param = thread->pop();
+	uint16 sprite_param = thread->pop();
+	int16 x_param = thread->pop();
+	int16 y_param = thread->pop();
+	ObjectData *obj;
 
 	int index = obj_param & 0x1FFF;
 
-	if (index >= ARRAYSIZE(ObjectTable)) {
-		return FAILURE;
-	}
+	if (!_vm->_actor->validObjId(_vm->_actor->objIndexToId(index)))
+		return;
 
-	if (ObjectTable[index].sceneIndex == -1) {
+	obj = _vm->_actor->getObj(_vm->_actor->objIndexToId(index));
+
+	if (obj->sceneNumber == -1) {
 		_vm->_interface->removeFromInventory(index);
 	}
 
-	ObjectTable[index].sceneIndex = _vm->_scene->currentSceneNumber();
-	ObjectTable[index].spritelistRn = 9 + sprite_param;
-	ObjectTable[index].x = x_param;
-	ObjectTable[index].y = y_param;
-*/
+	obj->sceneNumber = _vm->_scene->currentSceneNumber();
+	obj->spritelistRn = 9 + sprite_param;
+	obj->location.x = x_param;
+	obj->location.y = y_param;
 }
 
 // Script function #33 (0x21)

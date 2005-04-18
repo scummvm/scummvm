@@ -260,6 +260,8 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 			obj->location.y = ITE_ObjectTable[i].y;
 			obj->location.z = ITE_ObjectTable[i].z;
 			obj->disabled = false;
+
+			obj->spritelistRn = 0;
 		}
 	
 	} else {

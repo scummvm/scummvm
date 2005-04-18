@@ -533,7 +533,6 @@ void Interface::removeFromInventory(int sprite) {
 void Interface::drawInventory() {
 	if (_panelMode != kPanelMain)
 		return;
-/*
 	SURFACE *back_buf = _vm->_gfx->getBackBuffer();
 
 	// TODO: Inventory scrolling
@@ -548,14 +547,14 @@ void Interface::drawInventory() {
 	Point drawPoint;
 
 	for (int i = 0; i < _inventoryCount; i++) {
-		if (_inventory[i] >= ARRAYSIZE(ObjectTable)) {
+		if (!_vm->_actor->validObjId(_vm->_actor->objIndexToId(_inventory[i]))) {
 			continue;
 		}
 		drawPoint.x = x + col * width;
 		drawPoint.y = y + row * height;
 
 		_vm->_sprite->draw(back_buf, _vm->_sprite->_mainSprites,
-			ObjectTable[_inventory[i]].spritelistRn,
+			_vm->_actor->getObj(_vm->_actor->objIndexToId(_inventory[i]))->spritelistRn,
 			drawPoint, 256);
 
 		if (++col >= _vm->getDisplayInfo().inventoryColumns) {
@@ -564,7 +563,7 @@ void Interface::drawInventory() {
 			}
 			col = 0;
 		}
-	}*/
+	}
 }
 
 int Interface::inventoryTest(const Point& imousePt, int *ibutton) {

@@ -217,7 +217,7 @@ void Sprite::drawClip(SURFACE *ds, Rect clip, const Point &spritePointer, int wi
 	}
 }
 
-int Sprite::draw(SURFACE *ds, SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale) {
+int Sprite::draw(SURFACE *ds, SpriteList &spriteList, int32 spriteNumber, const Point &screenCoord, int scale) {
 	const byte *spriteBuffer;
 	int width;
 	int height;
