@@ -354,7 +354,7 @@ public:
 	bool isVoiceLUTPresent() const { return _voiceLUTPresent; }
 
 	void doVerb();
-	void showVerb(int statuscolor = -1);
+	void showVerb(int statusColor = -1);
 	void setVerb(int verb);
 	int getCurrentVerb() const { return _currentVerb; }
 	void setPointerVerb();

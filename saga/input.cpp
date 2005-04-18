@@ -38,7 +38,7 @@ namespace Saga {
 int SagaEngine::processInput() {
 	OSystem::Event event;
 
-	Point imousePt;
+//	Point imousePt;
 
 	while (g_system->pollEvent(event)) {
 		switch (event.type) {
@@ -101,17 +101,24 @@ int SagaEngine::processInput() {
 				break;
 			}
 			break;
+		case OSystem::EVENT_LBUTTONUP:
+			_leftMouseButtonPressed = false;
+			break;
+		case OSystem::EVENT_RBUTTONUP:
+			_rightMouseButtonPressed = false;
+			break;
 		case OSystem::EVENT_LBUTTONDOWN:
+			_leftMouseButtonPressed = true;
+			_mousePos = event.mouse;
+			_interface->update(_mousePos, UPDATE_LEFTBUTTONCLICK);
+			break;
 		case OSystem::EVENT_RBUTTONDOWN:
-			_mousePos.x = event.mouse.x;
-			_mousePos.y = event.mouse.y;
-			imousePt = _mousePos;
-			_interface->update(imousePt, (event.type == OSystem::EVENT_LBUTTONDOWN) ? UPDATE_LEFTBUTTONCLICK : UPDATE_RIGHTBUTTONCLICK);
+			_rightMouseButtonPressed = true;
+			_mousePos = event.mouse;
+			_interface->update(_mousePos, UPDATE_RIGHTBUTTONCLICK);
 			break;
 		case OSystem::EVENT_MOUSEMOVE:
-			_mousePos.x = event.mouse.x;
-			_mousePos.y = event.mouse.y;
-			imousePt = _mousePos;
+			_mousePos = event.mouse;
 			break;
 		case OSystem::EVENT_QUIT:
 			_system->quit();
@@ -124,9 +131,6 @@ int SagaEngine::processInput() {
 	return SUCCESS;
 }
 
-Point SagaEngine::getMousePos() {
-	return _mousePos;
-}
 
 } // End of namespace Saga
 

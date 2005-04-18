@@ -374,7 +374,8 @@ void Script::sfPreDialog(SCRIPTFUNC_PARAMS) {
 	if (_vm->_interface->isInMainMode())
 		_vm->_interface->setMode(kPanelConverse);
 	else
-		_vm->_interface->converseDisplayText(0);
+		_vm->_interface->converseDisplayText();
+		
 	_vm->_interface->setMode(kPanelNull);
 }
 
@@ -748,7 +749,7 @@ void Script::SF_dropObject(SCRIPTFUNC_PARAMS) {
 	}
 
 	obj->sceneNumber = _vm->_scene->currentSceneNumber();
-	obj->spritelistRn = 9 + sprite_param;
+	obj->spriteListResourceId = 9 + sprite_param;
 	obj->location.x = x_param;
 	obj->location.y = y_param;
 }

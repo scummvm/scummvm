@@ -49,6 +49,7 @@ enum InterfaceUpdateFlags {
 #define CONVERSE_MAX_TEXT_WIDTH (256 - 60)
 #define CONVERSE_TEXT_HEIGHT	10
 #define CONVERSE_TEXT_LINES     4
+#define CONVERSE_MAX_WORK_STRING      128
 
 enum PanelModes {
 	kPanelNull,
@@ -78,6 +79,13 @@ struct InterfacePanel {
 	int buttonsCount;
 	PanelButton *buttons;
 	SpriteList sprites;
+	
+	void calcPanelButtonRect(const PanelButton* panelButton, Rect &rect) {
+		rect.left = x + panelButton->xOffset;
+		rect.right = rect.left + panelButton->width;
+		rect.top = y + panelButton->yOffset;
+		rect.bottom = rect.top + panelButton->height;
+	}
 };
 
 
@@ -106,7 +114,6 @@ enum ITEColors {
 
 class Interface {
 public:
-	bool _playfieldClicked;
 
 	Interface(SagaEngine *vm);
 	~Interface(void);
@@ -119,14 +126,13 @@ public:
 	void rememberMode();
 	void restoreMode();
 	bool isInMainMode() { return _inMainMode; }
-	int setStatusText(const char *new_txt);
-	void setStatusOnceColor(int color) { _statusOnceColor = color; }
+	void setStatusText(const char *text, int statusColor = -1);
 	int loadScenePortraits(int resourceId);
 	int setLeftPortrait(int portrait);
 	int setRightPortrait(int portrait);
 	int draw();
 	int update(const Point& mousePoint, int updateFlag);
-	int drawStatusBar(SURFACE *ds);
+	void drawStatusBar();
 	void drawVerb(int verb, int state);
 
 	bool processKeyCode(int keyCode);
@@ -138,25 +144,29 @@ public:
 private:
 	int inventoryTest(const Point& imousePt, int *ibutton);
 	PanelButton *verbHitTest(const Point& mousePoint);
-	void handleCommandUpdate(SURFACE *ds, const Point& mousePoint);
-	void handleCommandClick(SURFACE *ds, const Point& mousePoint);
+	void handleCommandUpdate(const Point& mousePoint);
+	void handleCommandClick(const Point& mousePoint);
+	PanelButton *converseHitTest(const Point& mousePoint);
+	void handleConverseUpdate(const Point& mousePoint);
+	void handleConverseClick(const Point& mousePoint);
 	
 	void lockMode() { _lockedMode = _panelMode; }
 	void unlockMode() { _panelMode = _lockedMode; }
 
 	void drawPanelButtonText(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton, int textColor, int textShadowColor);
+	void drawPanelButtonArrow(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton);
 
 public:
 	void converseInit(void);
 	void converseClear(void);
 	bool converseAddText(const char *text, int replyId, byte replyFlags, int replyBit);
-	void converseDisplayText(int pos);
-	void converseSetTextLines(int row, int textcolor, bool btnDown);
+	void converseDisplayText();
+	void converseSetTextLines(int row);
 	void converseChangePos(int chg);
 	void converseSetPos(int key);
 
 private:
-	void converseDisplayTextLine(int textcolor, bool btnUp, bool rebuild);
+	void converseDisplayTextLines(SURFACE *ds);
 	PanelButton *getPanelButtonByVerbType(int verb) {
 		if ((verb < 0) || (verb >= kVerbTypesMax)) {
 			error("Interface::getPanelButtonByVerbType wrong verb");
@@ -190,14 +200,13 @@ private:
 	int _inventorySize;
 	byte _inventoryCount;
 
+	char _converseWorkString[CONVERSE_MAX_WORK_STRING];
 	Converse _converseText[CONVERSE_MAX_TEXTS];
 	int _converseTextCount;
 	int _converseStrCount;
 	int _converseStartPos;
 	int _converseEndPos;
 	int _conversePos;
-
-	byte _converseLastColors[2][CONVERSE_TEXT_LINES];
 };
 
 } // End of namespace Saga

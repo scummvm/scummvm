@@ -139,7 +139,8 @@ enum HitZoneFlags {
 
 enum PanelButtonType {
 	kPanelButtonVerb = 0,
-	kPanelButtonArrow = 1
+	kPanelButtonArrow = 1,
+	kPanelButtonConverseText = 2
 };
 
 enum TextStringIds {
@@ -311,6 +312,8 @@ struct PanelButton {
 	int keyChar;
 	int upSpriteNumber;
 	int downSpriteNumber;
+	int overSpriteNumber;
+	int flag;
 };
 
 struct GameDisplayInfo {
@@ -348,6 +351,8 @@ struct GameDisplayInfo {
 	int inventoryYSpacing;
 	int mainPanelButtonsCount;
 	PanelButton *mainPanelButtons;
+	int conversePanelButtonsCount;
+	PanelButton *conversePanelButtons;
 };
 
 
@@ -475,10 +480,26 @@ public:
 			double percent);
 
 	int processInput(void);
-	Point getMousePos();
+	const Point &mousePos() const {
+		return _mousePos;
+	}
+
+	const bool leftMouseButtonPressed() const {
+		return _leftMouseButtonPressed;
+	}
+
+	const bool rightMouseButtonPressed() const {
+		return _rightMouseButtonPressed;
+	}
+
+	const bool mouseButtonPressed() const {
+		return _leftMouseButtonPressed || _rightMouseButtonPressed;
+	}
 
  private:
 	Point _mousePos;
+	bool _leftMouseButtonPressed;
+	bool _rightMouseButtonPressed;
 
 	bool _quit;
 	RSCFILE_CONTEXT **_gameFileContexts;

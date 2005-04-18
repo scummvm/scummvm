@@ -67,7 +67,6 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 		return;
 	}
 	
-	_playfieldClicked = false;
 
 	// Load interface module resource file context
 	_interfaceContext = _vm->getFileContext(GAME_RESOURCEFILE, 0);
@@ -96,6 +95,9 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 		&_mainPanel.imageLength, &_mainPanel.imageWidth, &_mainPanel.imageHeight);
 	
 	RSC_FreeResource(resource);
+
+	_conversePanel.buttons = _vm->getDisplayInfo().conversePanelButtons;
+	_conversePanel.buttonsCount = _vm->getDisplayInfo().conversePanelButtonsCount;
 
 	result = RSC_LoadResource(_interfaceContext, _vm->getResourceDescription()->conversePanelResourceId, &resource, &resourceLength);
 	if ((result != SUCCESS) || (resourceLength == 0)) {
@@ -219,6 +221,7 @@ int Interface::setMode(int mode, bool force) {
 	} else {
 		if (_panelMode == kPanelConverse) {
 			_conversePanel.currentButton = NULL;
+			converseDisplayText();
 		}
 	}
 
@@ -277,13 +280,13 @@ bool Interface::processKeyCode(int keyCode) {
 	return false;
 }
 
-int Interface::setStatusText(const char *new_txt) {
-	assert(new_txt != NULL);
+void Interface::setStatusText(const char *text, int statusColor) {
+	assert(text != NULL);
+	assert(strlen(text) < STATUS_TEXT_LEN);
 
-	strncpy(_statusText, new_txt, STATUS_TEXT_LEN);
-	_statusOnceColor = -1;
-
-	return SUCCESS;
+	strncpy(_statusText, text, STATUS_TEXT_LEN);
+	_statusOnceColor = statusColor;
+	drawStatusBar();	
 }
 
 int Interface::loadScenePortraits(int resourceId) {
@@ -310,7 +313,6 @@ int Interface::draw() {
 	SURFACE *backBuffer;
 	int i;
 
-	Point base;
 	Point leftPortraitPoint;
 	Point rightPortraitPoint;	
 	Point origin;
@@ -321,11 +323,9 @@ int Interface::draw() {
 		return SUCCESS;
 
 
-	drawStatusBar(backBuffer);
+	drawStatusBar();
 
 	if (_panelMode == kPanelMain) {
-		base.x = _mainPanel.x;
-		base.y = _mainPanel.y;
 
 		origin.x = 0;
 		origin.y = _vm->getDisplayHeight() - _mainPanel.imageHeight;
@@ -338,28 +338,29 @@ int Interface::draw() {
 			}
 		}
 	} else {
-		base.x = _conversePanel.x;
-		base.y = _conversePanel.y;
+		if (_panelMode == kPanelConverse) {	
 
-		origin.x = 0;
-		origin.y = _vm->getDisplayHeight() - _mainPanel.imageHeight;
+			origin.x = 0;
+			origin.y = _vm->getDisplayHeight() - _mainPanel.imageHeight;
 
-		bufToSurface(backBuffer, _conversePanel.image, _conversePanel.imageWidth,
-						_conversePanel.imageHeight, NULL, &origin);
-		converseDisplayText(0);
+			bufToSurface(backBuffer, _conversePanel.image, _conversePanel.imageWidth,
+				_conversePanel.imageHeight, NULL, &origin);
+
+			converseDisplayTextLines(backBuffer);
+		}
 	}
 
 	if (_panelMode == kPanelMain || _panelMode == kPanelConverse ||
 		_lockedMode == kPanelMain || _lockedMode == kPanelConverse) {
-			leftPortraitPoint.x = base.x + _vm->getDisplayInfo().leftPortraitXOffset;
-			leftPortraitPoint.y = base.y + _vm->getDisplayInfo().leftPortraitYOffset;
+			leftPortraitPoint.x = _mainPanel.x + _vm->getDisplayInfo().leftPortraitXOffset;
+			leftPortraitPoint.y = _mainPanel.y + _vm->getDisplayInfo().leftPortraitYOffset;
 			_vm->_sprite->draw(backBuffer, _defPortraits, _leftPortrait, leftPortraitPoint, 256);
 		}
 		
 
 	if (!_inMainMode && _vm->getDisplayInfo().rightPortraitXOffset >= 0) {
-		rightPortraitPoint.x = base.x + _vm->getDisplayInfo().rightPortraitXOffset;
-		rightPortraitPoint.y = base.y + _vm->getDisplayInfo().rightPortraitYOffset;
+		rightPortraitPoint.x = _mainPanel.x + _vm->getDisplayInfo().rightPortraitXOffset;
+		rightPortraitPoint.y = _mainPanel.y + _vm->getDisplayInfo().rightPortraitYOffset;
 
 		_vm->_sprite->draw(backBuffer, _scenePortraits, _rightPortrait, rightPortraitPoint, 256);
 	}
@@ -371,14 +372,9 @@ int Interface::draw() {
 }
 
 int Interface::update(const Point& mousePoint, int updateFlag) {
-	SURFACE *backBuffer;
 	
 	if (_vm->_scene->isInDemo() || _panelMode == kPanelFade)
 		return SUCCESS;
-
-	
-	backBuffer = _vm->_gfx->getBackBuffer();
-
 
 	if (_panelMode == kPanelMain) {
 		if (updateFlag & UPDATE_MOUSEMOVE) {
@@ -389,39 +385,51 @@ int Interface::update(const Point& mousePoint, int updateFlag) {
 				if (_lastMousePoint.y < _vm->getSceneHeight()) {
 					_vm->_script->setNonPlayfieldVerb();
 				}
-				handleCommandUpdate(backBuffer, mousePoint);
+				handleCommandUpdate(mousePoint);
 			}
 
 		} else {
 
 			if (updateFlag & UPDATE_MOUSECLICK) {
 				if (mousePoint.y < _vm->getSceneHeight()) {
-					_playfieldClicked = true;
 					_vm->_script->playfieldClick(mousePoint, (updateFlag & UPDATE_LEFTBUTTONCLICK) != 0);										
-					_playfieldClicked = false;
 				} else {
-					handleCommandClick(backBuffer, mousePoint);
+					handleCommandClick(mousePoint);
 				}
 			}
 		}
 	}
 
-	drawStatusBar(backBuffer);
+	if (_panelMode == kPanelConverse) {
+		if (updateFlag & UPDATE_MOUSEMOVE) {
+
+			handleConverseUpdate(mousePoint);
+
+		} else {
+			if (updateFlag & UPDATE_MOUSECLICK) {
+				handleConverseClick(mousePoint);
+			}
+		}
+	}
+
 	_lastMousePoint = mousePoint;
 	return SUCCESS;
 }
 
-int Interface::drawStatusBar(SURFACE *ds) {
+void Interface::drawStatusBar() {
+	SURFACE *backBuffer;
 	Rect rect;
 
 	int string_w;
 	int color;
 
+	backBuffer = _vm->_gfx->getBackBuffer();
+
 	// Disable this for IHNM for now, since that game uses the full screen
 	// in some cases.
 
 	if (_vm->getGameType() == GType_IHNM) {
-		return SUCCESS;
+		return;
 	}
 
 
@@ -431,7 +439,7 @@ int Interface::drawStatusBar(SURFACE *ds) {
 	rect.right = _vm->getDisplayWidth();
 	rect.bottom = _vm->getDisplayInfo().statusY + _vm->getDisplayInfo().statusHeight;
 
-	drawRect(ds, &rect, _vm->getDisplayInfo().statusBGColor);
+	drawRect(backBuffer, &rect, _vm->getDisplayInfo().statusBGColor);
 
 	string_w = _vm->_font->getStringWidth(SMALL_FONT_ID, _statusText, 0, 0);
 
@@ -440,13 +448,12 @@ int Interface::drawStatusBar(SURFACE *ds) {
 	else
 		color = _statusOnceColor;
 
-	_vm->_font->draw(SMALL_FONT_ID, ds, _statusText, 0, (_vm->getDisplayInfo().statusWidth / 2) - (string_w / 2),
+	_vm->_font->draw(SMALL_FONT_ID, backBuffer, _statusText, 0, (_vm->getDisplayInfo().statusWidth / 2) - (string_w / 2),
 			_vm->getDisplayInfo().statusY + _vm->getDisplayInfo().statusTextY, color, 0, 0);
 
-	return SUCCESS;
 }
 
-void Interface::handleCommandClick(SURFACE *ds, const Point& mousePoint) {
+void Interface::handleCommandClick(const Point& mousePoint) {
 
 	PanelButton *panelButton;
 
@@ -457,7 +464,7 @@ void Interface::handleCommandClick(SURFACE *ds, const Point& mousePoint) {
 	}
 }
 
-void Interface::handleCommandUpdate(SURFACE *ds, const Point& mousePoint) {
+void Interface::handleCommandUpdate(const Point& mousePoint) {
 	PanelButton *panelButton;
 
 	panelButton = verbHitTest(mousePoint);
@@ -489,10 +496,7 @@ PanelButton *Interface::verbHitTest(const Point& mousePoint) {
 	for (i = 0; i < kVerbTypesMax; i++) {
 		panelButton = _verbTypeToPanelButton[i];
 		if (panelButton != NULL) {
-			rect.left = _mainPanel.x + panelButton->xOffset;
-			rect.right = rect.left + panelButton->width;
-			rect.top = _mainPanel.y + panelButton->yOffset;
-			rect.bottom = rect.top + panelButton->height;
+			_mainPanel.calcPanelButtonRect(panelButton, rect);
 			if (rect.contains(mousePoint))
 				return panelButton;
 		}
@@ -554,7 +558,7 @@ void Interface::drawInventory() {
 		drawPoint.y = y + row * height;
 
 		_vm->_sprite->draw(back_buf, _vm->_sprite->_mainSprites,
-			_vm->_actor->getObj(_vm->_actor->objIndexToId(_inventory[i]))->spritelistRn,
+			_vm->_actor->getObj(_vm->_actor->objIndexToId(_inventory[i]))->spriteListResourceId,
 			drawPoint, 256);
 
 		if (++col >= _vm->getDisplayInfo().inventoryColumns) {
@@ -642,6 +646,26 @@ void Interface::drawVerb(int verb, int state) {
 	drawPanelButtonText(backBuffer, &_mainPanel, panelButton, textColor, _vm->getDisplayInfo().verbTextShadowColor);
 }
 
+void Interface::drawPanelButtonArrow(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton) {
+	Point point;
+	int spriteNumber;
+
+	if (panel->currentButton == panelButton) {
+		if (panelButton->flag != 0) {
+			spriteNumber = panelButton->downSpriteNumber;
+		} else {
+			spriteNumber = panelButton->overSpriteNumber;
+		}
+	} else {
+		spriteNumber = panelButton->upSpriteNumber;
+	}
+		
+	point.x = panel->x + panelButton->xOffset;
+	point.y = panel->y + panelButton->yOffset;
+
+	_vm->_sprite->draw(ds, _vm->_sprite->_mainSprites, spriteNumber, point, 256);
+}
+
 void Interface::drawPanelButtonText(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton, int textColor, int textShadowColor) {
 	const char *text;
 	int textWidth;
@@ -674,9 +698,10 @@ void Interface::converseInit(void) {
 
 void Interface::converseClear(void) {
 	for (int i = 0; i < CONVERSE_MAX_TEXTS; i++) {
-		if (_converseText[i].text)
+		if (_converseText[i].text != NULL) {
 			free(_converseText[i].text);
-		_converseText[i].text = NULL;
+			_converseText[i].text = NULL;
+		}
 		_converseText[i].stringNum = -1;
 		_converseText[i].replyId = 0;
 		_converseText[i].replyFlags = 0;
@@ -688,41 +713,39 @@ void Interface::converseClear(void) {
 	_converseStartPos = 0;
 	_converseEndPos = 0;
 	_conversePos = -1;
-
-	for (int i = 0; i < CONVERSE_TEXT_LINES; i++) {
-		_converseLastColors[0][i] = 0;
-		_converseLastColors[1][i] = 0;
-	}
 }
 
 bool Interface::converseAddText(const char *text, int replyId, byte replyFlags, int replyBit) {
 	int count = 0;         // count how many pieces of text per string
-	char temp[128];
+	int i;
+	int len;
+	byte c;
 
-	assert(strlen(text) < 128);
+	assert(strlen(text) < CONVERSE_MAX_WORK_STRING);
 
-	strncpy(temp, text, 128);
+	strncpy(_converseWorkString, text, CONVERSE_MAX_WORK_STRING);
 
 	while (1) {
-		int i;
-		int len = strlen(temp);
+		len = strlen(_converseWorkString);
 
 		for (i = len; i >= 0; i--) {
-			byte c = temp[i];
+			c = _converseWorkString[i];
 
 			if ((c == ' ' || c == '\0')
-				&& _vm->_font->getStringWidth(SMALL_FONT_ID, temp, i, 0) 
+				&& _vm->_font->getStringWidth(SMALL_FONT_ID, _converseWorkString, i, 0) 
 					<= CONVERSE_MAX_TEXT_WIDTH)
 				break;
 		}
-		if (i < 0) 
+		if (i < 0) {
 			return true;
+		}
 
-		if (_converseTextCount == CONVERSE_MAX_TEXTS)
+		if (_converseTextCount == CONVERSE_MAX_TEXTS) {
 			return true;
+		}
 
 		_converseText[_converseTextCount].text = (char *)malloc(i + 1);
-		strncpy(_converseText[_converseTextCount].text, temp, i);
+		strncpy(_converseText[_converseTextCount].text, _converseWorkString, i);
 
 		_converseText[_converseTextCount].text[i] = 0;
 		_converseText[_converseTextCount].textNum = count;
@@ -737,7 +760,7 @@ bool Interface::converseAddText(const char *text, int replyId, byte replyFlags, 
 		if (len == i) 
 			break;
 
-		strncpy(temp, &temp[i + 1], len - i);
+		strncpy(_converseWorkString, &_converseWorkString[i + 1], len - i);
 	}
 
 	_converseStrCount++;
@@ -745,15 +768,10 @@ bool Interface::converseAddText(const char *text, int replyId, byte replyFlags, 
 	return false;
 }
 
-void Interface::converseDisplayText(int pos) {
-	int end;
+void Interface::converseDisplayText() {
+	int end;	
 
-	if (pos >= _converseTextCount)
-		pos = _converseTextCount - 1;
-	if (pos < 0)
-		pos = 0;
-
-	_converseStartPos = pos;
+	_converseStartPos = 0;
 
 	end = _converseTextCount - CONVERSE_TEXT_LINES;
 
@@ -761,93 +779,86 @@ void Interface::converseDisplayText(int pos) {
 		end = 0;
 
 	_converseEndPos = end;
-
-	converseDisplayTextLine(kITEColorBrightWhite, false, true);
+	draw();
 }
 
 
-void Interface::converseSetTextLines(int row, int textcolor, bool btnDown) {
-	_conversePos = row + _converseStartPos;
-	if (_conversePos >= _converseTextCount)
-		_conversePos = -1;
-
-	converseDisplayTextLine(textcolor, btnDown, false);
-}
-
-void Interface::converseDisplayTextLine(int textcolor, bool btnDown, bool rebuild) {
-	int x = 52; // FIXME: remove hardcoded value
-	int y = 6; // FIXME: remove hardcoded value
-	int pos = _converseStartPos;
-	byte textcolors[2][CONVERSE_TEXT_LINES];
-	SURFACE *ds;
-
-	ds = _vm->_gfx->getBackBuffer(); // FIXME: probably best to move this out
-
-	for (int i = 0; i < CONVERSE_TEXT_LINES; i++) {
-		int relpos = pos + i;
-
-		if (_conversePos >= 0
-			&& _converseText[_conversePos].stringNum
-						== _converseText[relpos].stringNum) {
-			textcolors[0][i] = textcolor;
-			textcolors[1][i] = (!btnDown) ? kITEColorDarkGrey : kITEColorGrey;
-		} else {
-			textcolors[0][i] = kITEColorBlue;
-			textcolors[1][i] = kITEColorDarkGrey;
-		}
+void Interface::converseSetTextLines(int row) {
+	int pos = row + _converseStartPos;
+	if (pos >= _converseTextCount)
+		pos = -1;
+	if (pos != _conversePos) {
+		_conversePos = pos;
+		draw();
 	}
-		// if no colors have changed, exit
-	if (!rebuild && memcmp(textcolors, _converseLastColors, sizeof(textcolors)) == 0)
-		return;
+}
 
-	memcpy(_converseLastColors, textcolors, sizeof(textcolors));
-
+void Interface::converseDisplayTextLines(SURFACE *ds) {
+	int relPos;
+	byte foregnd;
+	byte backgnd;
+	byte bulletForegnd;
+	byte bulletBackgnd;
+	const char *str;
+	char bullet[2] = {
+		(char)0xb7, 0 
+	};
+	Point point;
 	Rect rect(8, CONVERSE_TEXT_LINES * CONVERSE_TEXT_HEIGHT);
-	int scrx = _conversePanel.x + x;
+	
+	assert(_conversePanel.buttonsCount >= 6);
 
-	rect.moveTo(_conversePanel.x + x, _conversePanel.y + y);
+	bulletForegnd = kITEColorGreen;
+	bulletBackgnd = kITEColorBlack;
+	
+	rect.moveTo(_conversePanel.x + _conversePanel.buttons[0].xOffset, 
+		_conversePanel.y + _conversePanel.buttons[0].yOffset);
 
-	drawRect(ds, &rect, kITEColorDarkGrey);
-
-	rect.top = rect.left = 0;
-	rect.right = CONVERSE_MAX_TEXT_WIDTH;
-	rect.bottom = CONVERSE_TEXT_HEIGHT;
-
+	drawRect(ds, &rect, kITEColorDarkGrey); //fill bullet place
+	
 	for (int i = 0; i < CONVERSE_TEXT_LINES; i++) {
-		byte foregnd = textcolors[0][i];
-		byte backgnd = textcolors[1][i];
-		int relpos = pos + i;
+		relPos = _converseStartPos + i;
 
-		rect.moveTo(_conversePanel.x + x + 7 + 1, 
-					_conversePanel.y + y + i * CONVERSE_TEXT_HEIGHT);
+		if (_converseTextCount <= relPos) {
+			break;
+		}
 
+		if (_conversePos >= 0 && _converseText[_conversePos].stringNum == _converseText[relPos].stringNum) {
+			foregnd = kITEColorBrightWhite;
+			backgnd = (!_vm->leftMouseButtonPressed()) ? kITEColorDarkGrey : kITEColorGrey;
+		} else {
+			foregnd = kITEColorBlue;
+			backgnd = kITEColorDarkGrey;
+		}
+
+		_conversePanel.calcPanelButtonRect(&_conversePanel.buttons[i], rect);
+		rect.left += 8;
 		drawRect(ds, &rect, backgnd);
 
-		if (_converseTextCount > i) {
-			const char *str = _converseText[relpos].text;
-			char bullet[] = { (char)0xb7, 0 };
-			int scry = i * CONVERSE_TEXT_HEIGHT + _conversePanel.y + y;
-			byte tcolor, bcolor;
+		str = _converseText[relPos].text;
 
-			if (_converseText[relpos].textNum == 0) { // first entry
-				tcolor = kITEColorGreen;
-				bcolor = kITEColorBlack;
-				_vm->_font->draw(SMALL_FONT_ID, ds, bullet, strlen(bullet),
-								 scrx + 2, scry, tcolor, bcolor, FONT_SHADOW | FONT_DONTMAP);
-			}
-			_vm->_font->draw(SMALL_FONT_ID, ds, str, strlen(str),
-							 scrx + 9, scry, foregnd, kITEColorBlack, FONT_SHADOW);
+		if (_converseText[relPos].textNum == 0) { // first entry
+			_vm->_font->draw(SMALL_FONT_ID, ds, bullet, 1,
+				rect.left - 6, rect.top, bulletForegnd, bulletBackgnd, FONT_SHADOW | FONT_DONTMAP);
 		}
+		_vm->_font->draw(SMALL_FONT_ID, ds, str, strlen(str),
+			rect.left + 1, rect.top, foregnd, kITEColorBlack, FONT_SHADOW);
 	}
 
-	// FIXME: TODO: arrows
+	if (_converseStartPos != 0) {
+		drawPanelButtonArrow(ds, &_conversePanel, &_conversePanel.buttons[4]);
+	}
+
+	if (_converseStartPos != _converseEndPos) {
+		drawPanelButtonArrow(ds, &_conversePanel, &_conversePanel.buttons[5]);
+	}
 }
 
 void Interface::converseChangePos(int chg) {
 	if ((chg < 0 && _converseStartPos + chg >= 0) ||
 		(chg > 0 && _converseStartPos  < _converseEndPos)) {
 		_converseStartPos += chg;
-		converseDisplayTextLine(kITEColorBlue, false, true);
+		draw();
 	}
 }
 
@@ -858,8 +869,7 @@ void Interface::converseSetPos(int key) {
 	if (selection >= _converseTextCount)
 		return;
 
-	// FIXME: wait until Andrew defines proper color
-	converseSetTextLines(selection, kITEColorBrightWhite, false);
+	converseSetTextLines(selection);
 
 	ct = &_converseText[_conversePos];
 
@@ -868,6 +878,80 @@ void Interface::converseSetPos(int key) {
 	// FIXME: TODO: Puzzle
 
 	_conversePos = -1;
+}
+
+PanelButton *Interface::converseHitTest(const Point& mousePoint) {
+	PanelButton *panelButton;
+	Rect rect;
+	int i;
+	for (i = 0; i < _conversePanel.buttonsCount; i++) {
+		panelButton = &_conversePanel.buttons[i];
+		if (panelButton != NULL) {
+			_conversePanel.calcPanelButtonRect(panelButton, rect);
+			if (rect.contains(mousePoint)) {
+				return panelButton;
+			}
+		}
+	}
+
+	return NULL;
+}
+
+void Interface::handleConverseUpdate(const Point& mousePoint) {
+	Rect rect;
+	bool changed;
+
+	PanelButton *last = _conversePanel.currentButton;
+	
+	if (!_vm->mouseButtonPressed()) {			// remove pressed flag
+		_conversePanel.buttons[4].flag = 0;
+		_conversePanel.buttons[5].flag = 0;
+	}
+
+	_conversePanel.currentButton = converseHitTest(mousePoint);
+	changed = last != _conversePanel.currentButton;
+	
+
+	if (_conversePanel.currentButton == NULL) {
+		_conversePos = -1;
+		if (changed) {
+			draw();
+		}
+		return;
+	}
+
+	if (_conversePanel.currentButton->type == kPanelButtonConverseText) {
+		converseSetTextLines(_conversePanel.currentButton->id);
+	}
+	
+	if (_conversePanel.currentButton->type == kPanelButtonArrow) {
+		if (_conversePanel.currentButton->flag == 1) {
+			//TODO: insert timeout catchup
+			converseChangePos((_conversePanel.currentButton->id == 0) ? -1 : 1);
+		}
+		draw();
+	}	
+}
+
+
+void Interface::handleConverseClick(const Point& mousePoint) {
+	Rect rect;
+
+	_conversePanel.currentButton = converseHitTest(mousePoint);
+
+	if (_conversePanel.currentButton == NULL) {
+		return;
+	}
+
+	if (_conversePanel.currentButton->type == kPanelButtonConverseText) {
+		converseSetPos(_conversePanel.currentButton->keyChar);
+	}
+
+	if (_conversePanel.currentButton->type == kPanelButtonArrow) {
+		_conversePanel.currentButton->flag = 1;
+		converseChangePos((_conversePanel.currentButton->id == 0) ? -1 : 1);
+	}	
+
 }
 
 

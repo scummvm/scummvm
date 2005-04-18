@@ -112,7 +112,7 @@ int Render::drawScene() {
 	backbuf_surface = _backbuf_surface;
 
 	// Get mouse coordinates
-	mouse_pt = _vm->getMousePos();
+	mouse_pt = _vm->mousePos();
 
 	_vm->_scene->getBGInfo(&bg_info);
 	bg_pt.x = 0;

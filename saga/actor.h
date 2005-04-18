@@ -194,6 +194,8 @@ public:
 	int sceneNumber;			// scene
 	int scriptEntrypointNumber;	// script entrypoint number
 
+	int32 spriteListResourceId;	// sprite list resource id
+
 	Location location;			// logical coordinates
 	Point screenPosition;		// screen coordinates
 	int screenDepth;			//
@@ -205,6 +207,7 @@ public:
 		screenDepth = screenScale = 0;
 		flags = 0;
 		frameNumber = 0;
+		spriteListResourceId = 0;
 	}
 
 };
@@ -216,7 +219,6 @@ typedef SortedList<CommonObjectDataPointer> CommonObjectOrderList;
 class ObjectData: public CommonObjectData {	
 public:
 	uint16 interactBits;
-	int32 spritelistRn;
 };
 
 class ActorData: public CommonObjectData {
@@ -238,7 +240,6 @@ public:
 	uint8 cycleFlags;
 
 	SpriteList spriteList;		// sprite list data
-	int spriteListResourceId;	// sprite list resource id
 
 	ActorFrameSequence *frames;	// Actor's frames
 	int framesCount;			// Actor's frames count
@@ -354,7 +355,7 @@ public:
 
 	void drawPathTest();
 
-	uint16 hitTest(const Point &testPoint);
+	uint16 hitTest(const Point &testPoint, bool skipProtagonist);
 	void takeExit(uint16 actorId, const HitZone *hitZone);
 	bool actorEndWalk(uint16 actorId, bool recurse);
 	bool actorWalkTo(uint16 actorId, const Location &toLocation);		

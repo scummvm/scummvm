@@ -50,8 +50,17 @@ static PanelButton ITE_MainPanelButtons[] = {
 	{kPanelButtonVerb, 110, 15, 56, 10, kVerbClose, 'c', 8, 9},
 	{kPanelButtonVerb, 110, 26, 56, 10, kVerbUse, 'u', 10, 11},
 	{kPanelButtonVerb, 110, 37, 56, 10, kVerbGive, 'g', 12, 13},
-	{kPanelButtonArrow, 306, 6, 8, 5, 0, 'U', 0, 0},
-	{kPanelButtonArrow, 306, 41, 8, 5, 1, 'D', 0, 0}
+	{kPanelButtonArrow, 306, 6, 8, 5, 0, 'u', 0, 0},
+	{kPanelButtonArrow, 306, 41, 8, 5, 1, 'd', 0, 0}
+};
+
+static PanelButton ITE_ConversePanelButtons[] = {
+	{kPanelButtonConverseText, 52, 6 + CONVERSE_TEXT_HEIGHT * 0, CONVERSE_MAX_TEXT_WIDTH, CONVERSE_TEXT_HEIGHT, 0, '1', 0, 0},
+	{kPanelButtonConverseText, 52, 6 + CONVERSE_TEXT_HEIGHT * 1, CONVERSE_MAX_TEXT_WIDTH, CONVERSE_TEXT_HEIGHT, 1, '2', 0, 0},
+	{kPanelButtonConverseText, 52, 6 + CONVERSE_TEXT_HEIGHT * 2, CONVERSE_MAX_TEXT_WIDTH, CONVERSE_TEXT_HEIGHT, 2, '3', 0, 0},
+	{kPanelButtonConverseText, 52, 6 + CONVERSE_TEXT_HEIGHT * 3, CONVERSE_MAX_TEXT_WIDTH, CONVERSE_TEXT_HEIGHT, 3, '4', 0, 0},
+	{kPanelButtonArrow, 257, 6, 9, 6, 0, 'u',  0, 4, 2, 0},
+	{kPanelButtonArrow, 257, 41, 9, 6, 1, 'd', 1, 5, 3, 0}, 
 };
 
 static GameDisplayInfo ITE_DisplayInfo = {
@@ -80,7 +89,9 @@ static GameDisplayInfo ITE_DisplayInfo = {
 	1, 0,			// inventory icon x, y offset
 	3, 1,			// inventory x, y icon spacing
 	ARRAYSIZE(ITE_MainPanelButtons),
-	ITE_MainPanelButtons
+	ITE_MainPanelButtons,
+	ARRAYSIZE(ITE_ConversePanelButtons),
+	ITE_ConversePanelButtons
 };
 
 static GameResourceDescription ITE_Resources = {
@@ -196,6 +207,10 @@ static PanelButton IHNM_MainPanelButtons[] = {
 	{kPanelButtonVerb, 0, 0, 0, 0, kVerbWalkTo, ' ', 0, 0}, //TODO
 };
 
+static PanelButton IHNM_ConversePanelButtons[] = {
+	{kPanelButtonConverseText, 0, 0, 0, 0, 0, '1', 0, 0}, //TODO
+};
+
 static GameDisplayInfo IHNM_DisplayInfo = {
 	640, 480,
 	
@@ -222,7 +237,9 @@ static GameDisplayInfo IHNM_DisplayInfo = {
 	0, 0,
 	0, 0,
 	ARRAYSIZE(IHNM_MainPanelButtons),
-	IHNM_MainPanelButtons
+	IHNM_MainPanelButtons,
+	ARRAYSIZE(IHNM_ConversePanelButtons),
+	IHNM_ConversePanelButtons
 };
 
 static GameResourceDescription IHNM_Resources = {

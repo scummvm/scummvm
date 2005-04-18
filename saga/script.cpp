@@ -350,7 +350,7 @@ void Script::scriptExec(int argc, const char **argv) {
 }
 
 // verb
-void Script::showVerb(int statuscolor) {
+void Script::showVerb(int statusColor) {
 	const char *verbName;
 	const char *object1Name;
 	const char *object2Name;
@@ -365,7 +365,7 @@ void Script::showVerb(int statuscolor) {
 	verbName = _mainStrings.getString(_leftButtonVerb - 1);
 
 	if (objectTypeId(_currentObject[0]) == kGameObjectNone) {
-		_vm->_interface->setStatusText(verbName);
+		_vm->_interface->setStatusText(verbName, statusColor);
 		return;
 	}
 
@@ -373,7 +373,7 @@ void Script::showVerb(int statuscolor) {
 
 	if (!_secondObjectNeeded) {
 		snprintf(statusString, STATUS_TEXT_LEN, "%s %s", verbName, object1Name);
-		_vm->_interface->setStatusText(statusString);
+		_vm->_interface->setStatusText(statusString, statusColor);
 		return;
 	}
 
@@ -386,18 +386,16 @@ void Script::showVerb(int statuscolor) {
 
 	if (_leftButtonVerb == kVerbGive) {
 		snprintf(statusString, STATUS_TEXT_LEN, "Give %s to %s", object1Name, object2Name);
-		_vm->_interface->setStatusText(statusString);
+		_vm->_interface->setStatusText(statusString, statusColor);
 	} else {
 		if (_leftButtonVerb == kVerbUse) {
 			snprintf(statusString, STATUS_TEXT_LEN, "Use %s with %s", object1Name, object2Name);
-			_vm->_interface->setStatusText(statusString);
+			_vm->_interface->setStatusText(statusString, statusColor);
 		} else {
 			snprintf(statusString, STATUS_TEXT_LEN, "%s %s", verbName, object1Name);
-			_vm->_interface->setStatusText(statusString);
+			_vm->_interface->setStatusText(statusString, statusColor);
 		}
 	}
-	if (statuscolor != -1)
-		_vm->_interface->setStatusOnceColor(statuscolor);
 }
 
 void Script::setVerb(int verb) {
@@ -518,11 +516,9 @@ void Script::doVerb() {
 }
 
 void Script::setPointerVerb() {
-	Point mousePoint;
-	mousePoint = _vm->getMousePos();
 	if (_vm->_interface->isActive()) {
 		_pointerObject = ID_PROTAG;
-		whichObject(mousePoint);
+		whichObject(_vm->mousePos());
 	}
 }
 
@@ -689,7 +685,7 @@ void Script::whichObject(const Point& mousePoint) {
 
 	if (_vm->_actor->_protagonist->currentAction == kActionWalkDir) {
 	} else {
-		newObjectId = _vm->_actor->hitTest(mousePoint);
+		newObjectId = _vm->_actor->hitTest(mousePoint, true);
 
 		if (newObjectId != ID_NOTHING) {
 			if (objectTypeId(newObjectId) == kGameObjectObject) {

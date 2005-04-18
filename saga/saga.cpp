@@ -116,6 +116,8 @@ SagaEngine *_vm = NULL;
 SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 	: Engine(syst) {
 
+	_leftMouseButtonPressed = _rightMouseButtonPressed = false;
+
 	_console = NULL;
 	_gameFileContexts = NULL;
 	_quit = false;

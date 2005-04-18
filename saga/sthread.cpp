@@ -654,6 +654,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 				_vm->_interface->activate();
 				_vm->_interface->setMode(kPanelConverse);
 				thread->wait(kWaitTypeDialogEnd);
+				return false;
 			}
 			break;
 		CASEOP(opReply) {

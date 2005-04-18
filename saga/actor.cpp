@@ -260,8 +260,6 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 			obj->location.y = ITE_ObjectTable[i].y;
 			obj->location.z = ITE_ObjectTable[i].z;
 			obj->disabled = false;
-
-			obj->spritelistRn = 0;
 		}
 	
 	} else {
@@ -857,8 +855,8 @@ void Actor::handleActions(int msec, bool setup) {
 					
 				while ((delta.u() == 0) && (delta.v() == 0)) {
 
-					if ((actor == _protagonist) && (_vm->_interface->_playfieldClicked)) {
-						_vm->_isoMap->screenPointToTileCoords(_vm->getMousePos(), pickLocation);
+					if ((actor == _protagonist) && (_vm->mouseButtonPressed())) {
+						_vm->_isoMap->screenPointToTileCoords(_vm->mousePos(), pickLocation);
 
 						if (!actorWalkTo(_protagonist->id, pickLocation)) {
 							break;
@@ -1170,7 +1168,7 @@ void Actor::calcScreenPosition(CommonObjectData *commonObjectData) {
 
 }
 
-uint16 Actor::hitTest(const Point &testPoint) {
+uint16 Actor::hitTest(const Point &testPoint, bool skipProtagonist) {
 	CommonObjectOrderList::iterator drawOrderIterator;
 	CommonObjectDataPointer drawObject;
 	int frameNumber;
@@ -1178,6 +1176,9 @@ uint16 Actor::hitTest(const Point &testPoint) {
 	createDrawOrderList();
 	for (drawOrderIterator = _drawOrderList.begin(); drawOrderIterator != _drawOrderList.end(); ++drawOrderIterator) {
 		drawObject = drawOrderIterator.operator*();
+		if (skipProtagonist && (drawObject == _protagonist)) {
+			continue;
+		}
 		if (!getSpriteParams(drawObject, frameNumber, spriteList)) {
 			continue;
 		}

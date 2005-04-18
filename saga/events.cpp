@@ -378,11 +378,11 @@ int Events::handleOneShot(EVENT *event) {
 			break;
 		case EVENT_SET_STATUS:
 			_vm->_interface->setStatusText((const char*)event->data);
-			_vm->_interface->drawStatusBar(_vm->_gfx->getBackBuffer());
+			_vm->_interface->drawStatusBar();
 			break;
 		case EVENT_CLEAR_STATUS:
 			_vm->_interface->setStatusText("");
-			_vm->_interface->drawStatusBar(_vm->_gfx->getBackBuffer());
+			_vm->_interface->drawStatusBar();
 			break;
 		case EVENT_RESTORE_MODE:
 			_vm->_interface->restoreMode();
