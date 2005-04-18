@@ -106,11 +106,12 @@ void OSystem_SDL::endGFXTransaction(void) {
 		loadGFXMode();
 		clearOverlay();
 	} else {
-		if (!_transactionDetails.fsChanged)
+		if (!_transactionDetails.fsChanged) {
 			if (_transactionDetails.needHotswap)
 				hotswapGFXMode();
 			else if (_transactionDetails.needUpdatescreen)
 				internUpdateScreen();
+		}
 	}
 
 	if (_transactionDetails.fsChanged)
