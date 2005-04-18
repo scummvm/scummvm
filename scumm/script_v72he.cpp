@@ -2163,13 +2163,12 @@ void ScummEngine_v72he::o72_getResourceSize() {
 		int offs;
 		_sound->getHEMusicDetails(resid, offs, size);
 		push(size);
-		return;
+	} else {
+		const byte *ptr = getResourceAddress(rtSound, resid);
+		assert(ptr);
+		size = READ_BE_UINT32(ptr + 4) - 40;
+		push(size);
 	}
-
-	const byte *ptr = getResourceAddress(rtSound, resid);
-	assert(ptr);
-	size = getResourceDataSize(ptr);
-	push(size);
 }
 
 void ScummEngine_v72he::o72_setFilePath() {

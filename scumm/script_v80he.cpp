@@ -806,6 +806,7 @@ void ScummEngine_v80he::o80_pickVarRandom() {
 }
 
 void ScummEngine_v80he::o80_getResourceSize() {
+	const byte *ptr;
 	int size, type;
 
 	int resid = pop();
@@ -817,10 +818,13 @@ void ScummEngine_v80he::o80_getResourceSize() {
 			int offs;
 			_sound->getHEMusicDetails(resid, offs, size);
 			push(size);
-			return;
+		} else {
+			ptr = getResourceAddress(rtSound, resid);
+			assert(ptr);
+			size = READ_BE_UINT32(ptr + 4) - 40;
+			push(size);
 		}
-		type = rtSound;
-		break;
+		return;
 	case 14:
 		type = rtRoomImage;
 		break;
@@ -837,14 +841,9 @@ void ScummEngine_v80he::o80_getResourceSize() {
 		error("o80_getResourceSize: default type %d", subOp);
 	}
 
-	const byte *ptr = getResourceAddress(type, resid);
-	if (ptr) {
-		size = getResourceDataSize(ptr);
-	} else {
-		debug(0, "o80_getResourceSize: invalid resource type %d id %d", type, resid);
-		size = 0;
-	}
-
+	ptr = getResourceAddress(type, resid);
+	assert(ptr);
+	size = READ_BE_UINT32(ptr + 4) - 8;
 	push(size);
 }
 

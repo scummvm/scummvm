@@ -2191,6 +2191,7 @@ void ScummEngine_v100he::o100_writeFile() {
 }
 
 void ScummEngine_v100he::o100_getResourceSize() {
+	const byte *ptr;
 	int size, type;
 
 	int resid = pop();
@@ -2214,15 +2215,18 @@ void ScummEngine_v100he::o100_getResourceSize() {
 			int offs;
 			_sound->getHEMusicDetails(resid, offs, size);
 			push(size);
-			return;
+		} else {
+			ptr = getResourceAddress(rtSound, resid);
+			assert(ptr);
+			size = READ_BE_UINT32(ptr + 4) - 40;
+			push(size);
 		}
-		type = rtSound;
-		break;
+		return;
 	default:
 		error("o100_getResourceSize: default type %d", subOp);
 	}
 
-	const byte *ptr = getResourceAddress(type, resid);
+	ptr = getResourceAddress(type, resid);
 	assert(ptr);
 	size = READ_BE_UINT32(ptr + 4) - 8;
 	push(size);
