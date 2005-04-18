@@ -385,7 +385,7 @@ void ScummEngine::drawRoomObjects(int arg) {
 
 	if (_features & GF_HUMONGOUS) {
 		// In HE games, normal objects are drawn, followed by FlObjects.
-		for (i = (_numLocalObjects-1); i > 0; i--)
+		for (i = (_numLocalObjects-1); i > 0; i--) {
 			if (_objs[i].obj_nr > 0 && (_objs[i].state & mask) && _objs[i].fl_object_index == 0)
 				drawRoomObject(i, arg);
 		}
