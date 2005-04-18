@@ -371,7 +371,7 @@ void ScummEngine::drawRoomObject(int i, int arg) {
 	do {
 		a = od->parentstate;
 		if (!od->parent) {
-			if ((_version <= 6 && !(_features & GF_HUMONGOUS)) || od->fl_object_index == 0)
+			if (_version <= 6 || od->fl_object_index == 0)
 				drawObject(i, arg);
 			break;
 		}
@@ -383,7 +383,21 @@ void ScummEngine::drawRoomObjects(int arg) {
 	int i;
 	const int mask = (_version <= 2) ? 0x8 : 0xF;
 
-	if (_gameId == GID_SAMNMAX) {
+	if (_features & GF_HUMONGOUS) {
+		// In HE games, normal objects are drawn, followed by FlObjects.
+		for (i = (_numLocalObjects-1); i > 0; i--)
+			if (_objs[i].obj_nr > 0 && (_objs[i].state & mask) && _objs[i].fl_object_index == 0)
+				drawRoomObject(i, arg);
+		}
+		// HACK: Reverse order is required to draw inventory background and items 
+		// in correct order in putttime/puttzoo. Otherwise the inventory background 
+		// is drawn over the items. But this doesn't match original, maybe masking 
+		// issue somewhere?
+		for (i = 1; i < _numLocalObjects; i++) {
+			if (_objs[i].obj_nr > 0 && (_objs[i].state & mask) && _objs[i].fl_object_index != 0)
+				drawRoomObject(i, arg);
+		}
+	if (_gameId == GID_SAMNMAX || _heversion >= 72) {
 		// In Sam & Max, objects are drawn in reverse order.
 		for (i = 1; i < _numLocalObjects; i++)
 			if (_objs[i].obj_nr > 0)
