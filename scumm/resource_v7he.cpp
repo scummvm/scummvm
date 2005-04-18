@@ -28,6 +28,7 @@
 #include "scumm/intern.h"
 #include "scumm/resource.h"
 #include "scumm/resource_v7he.h"
+#include "scumm/sound.h"
 #include "scumm/util.h"
 
 #include "common/stream.h"
@@ -1751,6 +1752,34 @@ byte *ScummEngine_v72he::getStringAddress(int i) {
 	if (addr == NULL)
 		return NULL;
 	return ((ScummEngine_v72he::ArrayHeader *)addr)->data;
+}
+
+int ScummEngine_v72he::getSoundResourceSize(int id) {
+	const byte *ptr;
+	int offs, size;
+
+	if (id > _numSounds) {
+		_sound->getHEMusicDetails(id, offs, size);
+	} else {
+		ptr = getResourceAddress(rtSound, id);
+		if (!ptr)
+			return 0;
+
+		if (READ_UINT32(ptr) == MKID('HSHD')) {
+			ptr += READ_BE_UINT32(ptr + 4);
+		} else {
+			ptr += 8 + READ_BE_UINT32(ptr + 12);
+		}
+
+		if (READ_UINT32(ptr) == MKID('SBNG')) {
+			ptr += READ_BE_UINT32(ptr + 4);
+		}
+
+		assert(READ_UINT32(ptr) == MKID('SDAT'));
+		size = READ_BE_UINT32(ptr + 4) - 8;
+	}
+
+	return size;
 }
 
 } // End of namespace Scumm

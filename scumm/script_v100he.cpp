@@ -2211,16 +2211,7 @@ void ScummEngine_v100he::o100_getResourceSize() {
 		type = rtScript;
 		break;
 	case 72:
-		if (resid > _numSounds) {
-			int offs;
-			_sound->getHEMusicDetails(resid, offs, size);
-			push(size);
-		} else {
-			ptr = getResourceAddress(rtSound, resid);
-			assert(ptr);
-			size = READ_BE_UINT32(ptr + 4) - 40;
-			push(size);
-		}
+		push (getSoundResourceSize(resid));
 		return;
 	default:
 		error("o100_getResourceSize: default type %d", subOp);

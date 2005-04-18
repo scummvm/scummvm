@@ -2156,19 +2156,8 @@ void ScummEngine_v72he::o72_writeINI() {
 }
 
 void ScummEngine_v72he::o72_getResourceSize() {
-	int resid, size;
-
-	resid = pop();
-	if (resid > _numSounds) {
-		int offs;
-		_sound->getHEMusicDetails(resid, offs, size);
-		push(size);
-	} else {
-		const byte *ptr = getResourceAddress(rtSound, resid);
-		assert(ptr);
-		size = READ_BE_UINT32(ptr + 4) - 40;
-		push(size);
-	}
+	int resid = pop();
+	push(getSoundResourceSize(resid));
 }
 
 void ScummEngine_v72he::o72_setFilePath() {

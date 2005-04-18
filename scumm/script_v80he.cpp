@@ -814,16 +814,7 @@ void ScummEngine_v80he::o80_getResourceSize() {
 
 	switch (subOp) {
 	case 13:
-		if (resid > _numSounds) {
-			int offs;
-			_sound->getHEMusicDetails(resid, offs, size);
-			push(size);
-		} else {
-			ptr = getResourceAddress(rtSound, resid);
-			assert(ptr);
-			size = READ_BE_UINT32(ptr + 4) - 40;
-			push(size);
-		}
+		push (getSoundResourceSize(resid));
 		return;
 	case 14:
 		type = rtRoomImage;

@@ -812,6 +812,7 @@ protected:
 	byte *heFindResource(uint32 tag, byte *ptr);
 	byte *findWrappedBlock(uint32 tag, byte *ptr, int state, bool flagError);
 	int findObject(int x, int y, int num, int *args);
+	int getSoundResourceSize(int id);
 
 	/* HE version 72 script opcodes */
 	void o72_pushDWord();
