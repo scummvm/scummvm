@@ -1687,7 +1687,8 @@ void ScummEngine_v99he::scummInit() {
 void ScummEngine::setupMusic(int midi) {
 	_midiDriver = MidiDriver::detectMusicDriver(midi);
 	_native_mt32 = (ConfMan.getBool("native_mt32") || (_midiDriver == MD_MT32));
-	if ((_gameId == GID_TENTACLE) || (_gameId == GID_SAMNMAX))
+	// FIXME: MD_TOWNS should not be _midi_native in the first place!! iMuse code needs to be restructured.
+	if ((_gameId == GID_TENTACLE) || (_gameId == GID_SAMNMAX) || (_midiDriver == MD_TOWNS))
 		_enable_gs = false;
 	else 
 		_enable_gs = ConfMan.getBool("enable_gs");
