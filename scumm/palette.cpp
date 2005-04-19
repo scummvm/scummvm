@@ -609,7 +609,7 @@ void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale
 		if (b > max)
 			b = max;
 
-		bestsum = 32000;
+		bestsum = 0x7FFFFFFF;
 
 		r &= ~3;
 		g &= ~3;
