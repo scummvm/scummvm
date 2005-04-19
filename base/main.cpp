@@ -368,6 +368,10 @@ extern "C" int main(int argc, char *argv[]) {
 	// Load the plugins
 	PluginManager::instance().loadPlugins();
 
+	// Ensure the system object exists (it may have already been created 
+	// at an earlier point, though!)
+	OSystem &system = OSystem::instance();
+
 	// Parse the command line information
 #ifndef _WIN32_WCE
 	GameDetector detector;
@@ -378,9 +382,9 @@ extern "C" int main(int argc, char *argv[]) {
 	ArgsFree(argv);
 #endif
 
-	// Ensure the system object exists (it may have already been created 
-	// at an earlier point, though!)
-	OSystem &system = OSystem::instance();
+	// Init the backend. Must take place after all config data (including
+	// the command line params) was read.
+	system.initBackend();
 
 	// Create the timer services
 	g_timer = new Timer(&system);

@@ -69,6 +69,8 @@ public:
 	OSystem_SDL();
 	virtual ~OSystem_SDL();
 
+	virtual void initBackend();
+
 	void beginGFXTransaction(void);
 	void endGFXTransaction(void);
 
@@ -188,7 +190,7 @@ public:
 #endif
 
 protected:
-	void initIntern();
+	bool _inited;
 
 #ifdef USE_OSD
 	SDL_Surface *_osdSurface;

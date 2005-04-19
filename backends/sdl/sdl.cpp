@@ -35,7 +35,8 @@ OSystem *OSystem_SDL_create() {
 	return new OSystem_SDL();
 }
 
-void OSystem_SDL::initIntern() {
+void OSystem_SDL::initBackend() {
+	assert(!_inited);
 
 	int joystick_num = ConfMan.getInt("joystick_num");
 	uint32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER;
@@ -89,6 +90,8 @@ void OSystem_SDL::initIntern() {
 		printf("Using joystick: %s\n", SDL_JoystickName(0));
 		_joystick = SDL_JoystickOpen(joystick_num);
 	}
+	
+	_inited = true;
 }
 
 OSystem_SDL::OSystem_SDL()
@@ -120,7 +123,7 @@ OSystem_SDL::OSystem_SDL()
 	memset(&_km, 0, sizeof(_km));
 	memset(&_mouseCurState, 0, sizeof(_mouseCurState));
 	
-	initIntern();
+	_inited = false;
 }
 
 OSystem_SDL::~OSystem_SDL() {

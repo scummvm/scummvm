@@ -301,6 +301,7 @@ void OSystem_SDL::initSize(uint w, uint h, int overlayScale) {
 }
 
 void OSystem_SDL::loadGFXMode() {
+	assert(_inited);
 	_forceFull = true;
 	_modeFlags |= DF_UPDATE_EXPAND_1_PIXEL;
 
