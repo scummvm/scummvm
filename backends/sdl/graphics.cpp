@@ -787,7 +787,7 @@ void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int
 
 	byte *dst = (byte *)_screen->pixels + y * _screenWidth + x;
 
-	if (_screenWidth==pitch && pitch == w) {
+	if (_screenWidth == pitch && pitch == w) {
 		memcpy(dst, src, h*w);
 	} else {
 		do {
