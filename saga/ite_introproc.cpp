@@ -365,7 +365,7 @@ int Scene::ITEIntroCave1Proc(int param, SCENE_INFO *scene_info) {
 		},
 		{
 			RID_CAVE_VOICE_1,
-			"Long before we came to exist, the humans ruled the"
+			"Long before we came to exist, the humans ruled the "
 			"Earth."
 		},
 		{
