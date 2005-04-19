@@ -1155,6 +1155,9 @@ void ScummEngine_v6::o6_setCameraAt() {
 void ScummEngine_v6::o6_loadRoom() {
 	int room = pop();
 	startScene(room, 0, 0);
+	if (_features & GF_HUMONGOUS) {
+		setCameraAt(camera._cur.x, 0);
+	}
 	_fullRedraw = 1;
 }
 
