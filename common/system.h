@@ -110,7 +110,12 @@ public:
 		 * Entertainment games. If backend doesn't implement this feature then
 		 * engine switches to b/w version of cursors.
 		 */
-		kFeatureCursorHasPalette
+		kFeatureCursorHasPalette,
+
+		/**
+		 * Set to true if the overlay pixel format has an alpha channel.
+		 */
+		kFeatureOverlaySupportsAlpha
 	};
 	
 	/**
@@ -459,13 +464,6 @@ public:
 	virtual int screenToOverlayY(int y) { return y; }
 	virtual int overlayToScreenX(int x) { return x; }
 	virtual int overlayToScreenY(int y) { return y; }
-
-	/**
-	 * Return true if the overlay pixel format has an alpha channel.
-	 */
-	virtual bool hasAlpha() const {
-		return false;
-	}
 
 	/**
 	* Convert the given RGB triplet into an OverlayColor. A OverlayColor can

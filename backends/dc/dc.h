@@ -133,7 +133,6 @@ class OSystem_Dreamcast : public OSystem {
   void clearOverlay();
   void grabOverlay(int16 *buf, int pitch);
   void copyRectToOverlay(const int16 *buf, int pitch, int x, int y, int w, int h);
-  bool hasAlpha() const { return true; }
   OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b) { return ARGBToColor(255, r, g, b); }
   void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
     uint8 tmp; colorToARGB(color, tmp, r, g, b);

@@ -365,7 +365,7 @@ void NewGui::blendRect(int x, int y, int w, int h, OverlayColor color, int level
 	if (!rect.isValidRect())
 		return;
 
-	if (_system->hasAlpha()) {
+	if (_system->hasFeature(OSystem::kFeatureOverlaySupportsAlpha)) {
 
 		int a, r, g, b;
 		uint8 aa, ar, ag, ab;
