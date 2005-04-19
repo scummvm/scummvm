@@ -1670,27 +1670,13 @@ void ScummEngine_v72he::o72_jumpToScript() {
 }
 
 void ScummEngine_v72he::o72_openFile() {
-	int mode, slot, len, i, j;
+	int mode, slot, len, i;
 	byte filename[256];
 
 	mode = pop();
 	copyScriptString(filename, sizeof(filename));
 
 	debug(0,"Original filename %s", filename);
-
-	// HACK: Convert paths in lost/smaller
-	if (filename[0] == ':') {
-		len = resStrLen(filename) + 1;
-		j = 0;
-		for (i = 1; i < len; i++) {
-			if (filename[i] == ':')
-				filename[j++] = '/';
-			else
-				filename[j++] = filename[i];
-		}
-		filename[j] = 0;
-		debug(0,"Converted filename to %s", filename);
-	}
 
 	if (_substResFileNameIndex > 0) {
 		char buf1[128];
