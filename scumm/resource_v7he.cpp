@@ -30,6 +30,7 @@
 #include "scumm/resource_v7he.h"
 #include "scumm/sound.h"
 #include "scumm/util.h"
+#include "sound/wave.h"
 
 #include "common/stream.h"
 #include "common/system.h"
@@ -1765,18 +1766,30 @@ int ScummEngine_v72he::getSoundResourceSize(int id) {
 		if (!ptr)
 			return 0;
 
-		if (READ_UINT32(ptr) == MKID('HSHD')) {
-			ptr += READ_BE_UINT32(ptr + 4);
+		if (READ_UINT32(ptr) == MKID('RIFF')) {
+			byte flags;
+			int rate;
+
+			size = READ_BE_UINT32(ptr + 4);
+			Common::MemoryReadStream stream(ptr, size);
+
+			if (!loadWAVFromStream(stream, size, rate, flags)) {
+				error("getSoundResourceSize: Not a valid WAV file");
+			}
 		} else {
-			ptr += 8 + READ_BE_UINT32(ptr + 12);
-		}
+			if (READ_UINT32(ptr) == MKID('HSHD')) {
+				ptr += READ_BE_UINT32(ptr + 4);
+			} else {
+				ptr += 8 + READ_BE_UINT32(ptr + 12);
+			}
 
-		if (READ_UINT32(ptr) == MKID('SBNG')) {
-			ptr += READ_BE_UINT32(ptr + 4);
-		}
+			if (READ_UINT32(ptr) == MKID('SBNG')) {
+				ptr += READ_BE_UINT32(ptr + 4);
+			}
 
-		assert(READ_UINT32(ptr) == MKID('SDAT'));
-		size = READ_BE_UINT32(ptr + 4) - 8;
+			assert(READ_UINT32(ptr) == MKID('SDAT'));
+			size = READ_BE_UINT32(ptr + 4) - 8;
+		}
 	}
 
 	return size;

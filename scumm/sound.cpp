@@ -293,8 +293,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		Common::MemoryReadStream stream(ptr, size);
 
 		if (!loadWAVFromStream(stream, size, rate, flags)) {
-			warning("playSound: Not a valid WAV file");
-			return;
+			error("playSound: Not a valid WAV file");
 		}
 
 		// Allocate a sound buffer, copy the data into it, and play
