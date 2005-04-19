@@ -1147,8 +1147,8 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.img.x1 = pop();
 		break;
 	case 7:
-		_wizParams.processFlags |= 0x80000;
-		_wizParams.unk_178  = pop();
+		_wizParams.processFlags |= kWPFMaskImg;
+		_wizParams.maskImgResNum = pop();
 		break;
 	case 11:
 		_wizParams.processFlags |= kWPFClipBox | 0x100;

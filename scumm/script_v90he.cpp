@@ -586,8 +586,8 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.img.flags = 0;
 		break;
 	case 16: // HE99+
-		_wizParams.processFlags |= 0x80000;
-		_wizParams.unk_178  = pop();
+		_wizParams.processFlags |= kWPFMaskImg;
+		_wizParams.maskImgResNum = pop();
 		break;
 	case 19:
 		_wizParams.processFlags |= kWPFSetPos;

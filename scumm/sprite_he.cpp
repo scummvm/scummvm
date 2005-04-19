@@ -1335,8 +1335,8 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 		if (spr_flags & kSFNeedPaletteRemap)
 			wiz.img.flags |= kWIFRemapPalette;
 		if (spi->field_7C) {
-			wiz.processFlags |= 0x80000;
-			wiz.unk_178 = spi->field_7C;
+			wiz.processFlags |= kWPFMaskImg;
+			wiz.maskImgResNum = spi->field_7C;
 		}
 		wiz.processFlags |= kWPFNewFlags;
 		

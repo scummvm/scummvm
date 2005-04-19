@@ -995,7 +995,7 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 			} else {
 				return 0;
 			}
-		} else if (_wiz._rectOverrideEnabled == true) {
+		} else if (_wiz._rectOverrideEnabled) {
 			if (rScreen.intersects(_wiz._rectOverride)) {
 				rScreen.clip(_wiz._rectOverride);
 			} else {
@@ -1149,10 +1149,9 @@ void ScummEngine_v72he::drawWizComplexPolygon(int resNum, int state, int po_x, i
 	} else {
 		warning("drawWizComplexPolygon() angle partially implemented");
 
+		angle %= 360;
 		if (angle < 0) {
-			angle = 360 - (angle / 360);
-		} else {
-			angle /= 360;
+			angle += 360;
 		}
 
 		Common::Rect bounds;
@@ -1339,9 +1338,9 @@ void ScummEngine_v80he::loadWizCursor(int resId) {
 }
 
 void ScummEngine_v72he::displayWizComplexImage(const WizParameters *params) {
-	int unk_178 = 0;
-	if (params->processFlags & 0x80000) {
-		unk_178  = params->unk_178;
+	int maskImgResNum = 0;
+	if (params->processFlags & kWPFMaskImg) {
+		maskImgResNum = params->maskImgResNum;
 		warning("displayWizComplexImage() unhandled flag 0x80000");
 	}
 	int paletteNum = 0;
@@ -1399,7 +1398,7 @@ void ScummEngine_v72he::displayWizComplexImage(const WizParameters *params) {
 	}
 
 	if (_fullRedraw && dstResNum == 0) {
-		if (unk_178 != 0 || (params->processFlags & (kWPFZoom | kWPFRotate)))
+		if (maskImgResNum != 0 || (params->processFlags & (kWPFZoom | kWPFRotate)))
 			error("Can't do this command in the enter script.");
 
 		assert(_wiz._imagesNum < ARRAYSIZE(_wiz._images));
@@ -1413,7 +1412,7 @@ void ScummEngine_v72he::displayWizComplexImage(const WizParameters *params) {
 		pwi->paletteNum = paletteNum;
 		++_wiz._imagesNum;
 	} else {
-		if (unk_178 != 0) {
+		if (maskImgResNum != 0) {
 			// TODO
 		} else if (params->processFlags & (kWPFZoom | kWPFRotate)) {
 			drawWizComplexPolygon(params->img.resNum, state, po_x, po_y, xmapNum, rotationAngle, zoom, r, flags, dstResNum, paletteNum);
