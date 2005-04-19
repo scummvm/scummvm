@@ -42,23 +42,23 @@ static int detectGame(const FSList &fslist, bool mode = false);
 
 // ITE section
 static PanelButton ITE_MainPanelButtons[] = {
-	{kPanelButtonVerb, 52, 4, 57, 10, kVerbWalkTo, 'w', 0, 1},
-	{kPanelButtonVerb, 52, 15, 57, 10, kVerbLookAt, 'l', 2, 3},
-	{kPanelButtonVerb, 52, 26, 57, 10, kVerbPickUp, 'p', 4, 5}, 
-	{kPanelButtonVerb, 52, 37, 57, 10, kVerbTalkTo, 't', 0, 1},
-	{kPanelButtonVerb, 110, 4, 56, 10, kVerbOpen, 'o', 6, 7},
-	{kPanelButtonVerb, 110, 15, 56, 10, kVerbClose, 'c', 8, 9},
-	{kPanelButtonVerb, 110, 26, 56, 10, kVerbUse, 'u', 10, 11},
-	{kPanelButtonVerb, 110, 37, 56, 10, kVerbGive, 'g', 12, 13},
-	{kPanelButtonArrow, 306, 6, 8, 5, 0, 'u', 0, 0},
-	{kPanelButtonArrow, 306, 41, 8, 5, 1, 'd', 0, 0}
+	{kPanelButtonVerb, 52, 4, 57, 10, kVerbWalkTo, 'w', 0, 1, 0, 0},
+	{kPanelButtonVerb, 52, 15, 57, 10, kVerbLookAt, 'l', 2, 3, 0, 0},
+	{kPanelButtonVerb, 52, 26, 57, 10, kVerbPickUp, 'p', 4, 5, 0, 0}, 
+	{kPanelButtonVerb, 52, 37, 57, 10, kVerbTalkTo, 't', 0, 1, 0, 0},
+	{kPanelButtonVerb, 110, 4, 56, 10, kVerbOpen, 'o', 6, 7, 0, 0},
+	{kPanelButtonVerb, 110, 15, 56, 10, kVerbClose, 'c', 8, 9, 0, 0},
+	{kPanelButtonVerb, 110, 26, 56, 10, kVerbUse, 'u', 10, 11, 0, 0},
+	{kPanelButtonVerb, 110, 37, 56, 10, kVerbGive, 'g', 12, 13, 0, 0},
+	{kPanelButtonArrow, 306, 6, 8, 5, 0, 'u', 0, 0, 0, 0},
+	{kPanelButtonArrow, 306, 41, 8, 5, 1, 'd', 0, 0, 0, 0}
 };
 
 static PanelButton ITE_ConversePanelButtons[] = {
-	{kPanelButtonConverseText, 52, 6 + CONVERSE_TEXT_HEIGHT * 0, CONVERSE_MAX_TEXT_WIDTH, CONVERSE_TEXT_HEIGHT, 0, '1', 0, 0},
-	{kPanelButtonConverseText, 52, 6 + CONVERSE_TEXT_HEIGHT * 1, CONVERSE_MAX_TEXT_WIDTH, CONVERSE_TEXT_HEIGHT, 1, '2', 0, 0},
-	{kPanelButtonConverseText, 52, 6 + CONVERSE_TEXT_HEIGHT * 2, CONVERSE_MAX_TEXT_WIDTH, CONVERSE_TEXT_HEIGHT, 2, '3', 0, 0},
-	{kPanelButtonConverseText, 52, 6 + CONVERSE_TEXT_HEIGHT * 3, CONVERSE_MAX_TEXT_WIDTH, CONVERSE_TEXT_HEIGHT, 3, '4', 0, 0},
+	{kPanelButtonConverseText, 52, 6 + CONVERSE_TEXT_HEIGHT * 0, CONVERSE_MAX_TEXT_WIDTH, CONVERSE_TEXT_HEIGHT, 0, '1', 0, 0, 0, 0},
+	{kPanelButtonConverseText, 52, 6 + CONVERSE_TEXT_HEIGHT * 1, CONVERSE_MAX_TEXT_WIDTH, CONVERSE_TEXT_HEIGHT, 1, '2', 0, 0, 0, 0},
+	{kPanelButtonConverseText, 52, 6 + CONVERSE_TEXT_HEIGHT * 2, CONVERSE_MAX_TEXT_WIDTH, CONVERSE_TEXT_HEIGHT, 2, '3', 0, 0, 0, 0},
+	{kPanelButtonConverseText, 52, 6 + CONVERSE_TEXT_HEIGHT * 3, CONVERSE_MAX_TEXT_WIDTH, CONVERSE_TEXT_HEIGHT, 3, '4', 0, 0, 0, 0},
 	{kPanelButtonArrow, 257, 6, 9, 6, 0, 'u',  0, 4, 2, 0},
 	{kPanelButtonArrow, 257, 41, 9, 6, 1, 'd', 1, 5, 3, 0}, 
 };
@@ -204,11 +204,11 @@ static GameSoundInfo ITECD_GameSound = {
 // IHNM section
 
 static PanelButton IHNM_MainPanelButtons[] = {
-	{kPanelButtonVerb, 0, 0, 0, 0, kVerbWalkTo, ' ', 0, 0}, //TODO
+	{kPanelButtonVerb, 0, 0, 0, 0, kVerbWalkTo, ' ', 0, 0, 0, 0}, //TODO
 };
 
 static PanelButton IHNM_ConversePanelButtons[] = {
-	{kPanelButtonConverseText, 0, 0, 0, 0, 0, '1', 0, 0}, //TODO
+	{kPanelButtonConverseText, 0, 0, 0, 0, 0, '1', 0, 0, 0, 0}, //TODO
 };
 
 static GameDisplayInfo IHNM_DisplayInfo = {

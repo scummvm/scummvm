@@ -803,7 +803,6 @@ void Interface::converseDisplayTextLines(SURFACE *ds) {
 	char bullet[2] = {
 		(char)0xb7, 0 
 	};
-	Point point;
 	Rect rect(8, CONVERSE_TEXT_LINES * CONVERSE_TEXT_HEIGHT);
 	
 	assert(_conversePanel.buttonsCount >= 6);
@@ -898,7 +897,6 @@ PanelButton *Interface::converseHitTest(const Point& mousePoint) {
 }
 
 void Interface::handleConverseUpdate(const Point& mousePoint) {
-	Rect rect;
 	bool changed;
 
 	PanelButton *last = _conversePanel.currentButton;
@@ -935,8 +933,6 @@ void Interface::handleConverseUpdate(const Point& mousePoint) {
 
 
 void Interface::handleConverseClick(const Point& mousePoint) {
-	Rect rect;
-
 	_conversePanel.currentButton = converseHitTest(mousePoint);
 
 	if (_conversePanel.currentButton == NULL) {
