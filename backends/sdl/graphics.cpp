@@ -43,7 +43,7 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 };
 
 // Table of relative scalers magnitudes
-// [definedScale-1][_scaleFactor-1]
+// [definedScale - 1][_scaleFactor - 1]
 static ScalerProc *scalersMagn[3][3] = {
 	{ Normal1x, AdvMame2x, AdvMame3x },
 	{ Normal1x, Normal1x, Normal1o5x },
@@ -539,7 +539,7 @@ void OSystem_SDL::internUpdateScreen() {
 		srcSurf = _tmpscreen2;
 		width = _overlayWidth;
 		height = _overlayHeight;
-		scalerProc = scalersMagn[_overlayScale-1][_scaleFactor-1];
+		scalerProc = scalersMagn[_overlayScale - 1][_scaleFactor - 1];
 
 		scale1 = _scaleFactor;
 		scale2 = _overlayScale;
@@ -1055,7 +1055,7 @@ void OSystem_SDL::clearOverlay() {
 	} else {
 		// Quality is degraded here. It is possible to run one-less scaler here, but is it
 		// really needed? Quality will anyway be degraded because of 1.5x scaler.
-		(scalersMagn[0][_overlayScale-1])((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2, 
+		(scalersMagn[0][_overlayScale - 1])((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2, 
 					  _tmpscreen->pitch, (byte *)_overlayscreen->pixels, _overlayscreen->pitch, _screenWidth, _screenHeight);
 	}
 	SDL_UnlockSurface(_tmpscreen);
@@ -1076,7 +1076,7 @@ void OSystem_SDL::grabOverlay(OverlayColor *buf, int pitch) {
 	byte *src = (byte *)_overlayscreen->pixels;
 	int h = _overlayHeight;
 	do {
-		memcpy(buf, src, _overlayWidth*2);
+		memcpy(buf, src, _overlayWidth * 2);
 		src += _overlayscreen->pitch;
 		buf += pitch;
 	} while (--h);
