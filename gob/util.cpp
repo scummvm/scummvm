@@ -135,7 +135,7 @@ void util_processInput() {
 		switch (event.type) {
 		case OSystem::EVENT_MOUSEMOVE:
 			_mouseX = event.mouse.x;
-		    _mouseY = event.mouse.y;
+			_mouseY = event.mouse.y;
 			break;
 		case OSystem::EVENT_LBUTTONDOWN:
 			_mouseButtons |= 1;
