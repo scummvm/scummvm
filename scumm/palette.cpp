@@ -643,6 +643,13 @@ void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int
 	if (_roomResource == 0) // FIXME - HACK to get COMI demo working
 		return;
 
+	int max;
+	if ((_features & GF_FMTOWNS) && (_version == 5)) {
+		max = 63;
+	} else {
+		max = 255;
+	}
+
 	if (startColor <= endColor) {
 		const byte *cptr;
 		const byte *palptr;
@@ -662,20 +669,20 @@ void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int
 
 			color = *cptr++;
 			color = color * redScale / 0xFF;
-			if (color > 255)
-				color = 255;
+			if (color > max)
+				color = max;
 			_currentPalette[idx * 3 + 0] = color;
 
 			color = *cptr++;
 			color = color * greenScale / 0xFF;
-			if (color > 255)
-				color = 255;
+			if (color > max)
+				color = max;
 			_currentPalette[idx * 3 + 1] = color;
 
 			color = *cptr++;
 			color = color * blueScale / 0xFF;
-			if (color > 255)
-				color = 255;
+			if (color > max)
+				color = max;
 			_currentPalette[idx * 3 + 2] = color;
 		}
 		if (_heversion != 70)
