@@ -1095,6 +1095,7 @@ public:
 protected:
 	int _shadowPaletteSize;
 	byte _currentPalette[3 * 256];
+	byte _darkenPalette[3 * 256];
 
 	int _palDirtyMin, _palDirtyMax;
 

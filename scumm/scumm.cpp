@@ -857,6 +857,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_shadowPalette = NULL;
 	_shadowPaletteSize = 0;
 	memset(_currentPalette, 0, sizeof(_currentPalette));
+	memset(_darkenPalette, 0, sizeof(_darkenPalette));
 	memset(_HEV7ActorPalette, 0, sizeof(_HEV7ActorPalette));
 	_palDirtyMin = 0;
 	_palDirtyMax = 0;

@@ -238,14 +238,29 @@ void ScummEngine::setPaletteFromPtr(const byte *ptr, int numcolor) {
 		// off there, too... I wonder if it hurts other games, too? What exactly is broken
 		// if we remove this patch?
 		// Since it also causes problems in Zak256, I am turning it off for all V4 games and older.
-		if ((_version <= 4) || (_version >= 7) || (i <= 15 || r < 252 || g < 252 || b < 252)) {
+		if (_version >= 5 || _version <= 6) {
+			if ((_heversion >= 80) && (i == 15 || r < 252 || g < 252 || b < 252)) {
+				*dest++ = r;
+				*dest++ = g;
+				*dest++ = b;
+			} else if (i <= 15 || r < 252 || g < 252 || b < 252) {
+				*dest++ = r;
+				*dest++ = g;
+				*dest++ = b;
+			} else {
+				dest += 3;
+			}
+		} else {
 			*dest++ = r;
 			*dest++ = g;
 			*dest++ = b;
-		} else {
-			dest += 3;
 		}
 	}
+
+	if (_heversion >= 90) {
+		memcpy(_darkenPalette, _currentPalette, 768);
+	}
+
 	setDirtyColors(0, numcolor - 1);
 }
 
@@ -633,7 +648,11 @@ void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int
 		const byte *palptr;
 		int color, idx, j;
 
-		palptr = getPalettePtr(_curPalIndex, _roomResource);
+		if (_heversion >= 90) {
+			palptr = _darkenPalette;
+		} else {
+			palptr = getPalettePtr(_curPalIndex, _roomResource);
+		}
 		for (j = startColor; j <= endColor; j++) {
 			idx = (_heversion == 70) ? _HEV7ActorPalette[j] : j;
 			cptr = palptr + idx * 3;
