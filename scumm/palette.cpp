@@ -231,13 +231,7 @@ void ScummEngine::setPaletteFromPtr(const byte *ptr, int numcolor) {
 		g = *ptr++;
 		b = *ptr++;
 
-		// This comparison might look weird, but it's what the disassembly (DOTT) says!
-		// FIXME: Fingolfin still thinks it looks weird: the value 252 = 4*63 clearly comes from
-		// the days 6/6/6 palettes were used, OK. But it breaks MonkeyVGA, so I had to add a
-		// check for that. And somebody before me added a check for V7 games, turning this
-		// off there, too... I wonder if it hurts other games, too? What exactly is broken
-		// if we remove this patch?
-		// Since it also causes problems in Zak256, I am turning it off for all V4 games and older.
+		// Only SCUMM 5/6 games use 6/6/6 style palettes
 		if (_version >= 5 && _version <= 6) {
 			if ((_heversion <= 72 && i < 15) || i == 15 || r < 252 || g < 252 || b < 252) {
 				*dest++ = r;
