@@ -160,6 +160,10 @@ struct Location {
 		result.y = y - location.y;
 		result.z = z - location.z;
 	}
+	void addXY(const Location &location) {
+		x += location.x;
+		y += location.y;
+	}
 	void add(const Location &location) {
 		x += location.x;
 		y += location.y;

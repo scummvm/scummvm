@@ -450,11 +450,11 @@ void Actor::realLocation(Location &location, uint16 objectId, uint16 walkFlags) 
 	if (objectId != ID_NOTHING) {
 		if (validActorId(objectId)) {
 			actor = getActor(objectId);
-			location.add(actor->location);
+			location.addXY(actor->location);
 		} else {
 			if (validObjId(objectId)) {
 				obj = getObj(objectId);
-				location.add(obj->location);
+				location.addXY(obj->location);
 			}			
 		}
 		
@@ -694,92 +694,97 @@ void Actor::handleSpeech(int msec) {
 	int talkspeed;
 	ActorData *actor;
 
-	if (!isSpeaking()) return;
+	if (_activeSpeech.playing) {
+		_activeSpeech.playingTime -= msec;
+		stringLength = strlen(_activeSpeech.strings[0]);
 
-	stringLength = strlen(_activeSpeech.strings[0]);
+		removeFirst = false;
+		if (_activeSpeech.playingTime <= 0) {
+			if (_activeSpeech.speechFlags & kSpeakSlow) {
+				_activeSpeech.slowModeCharIndex++;
+				if (_activeSpeech.slowModeCharIndex >= stringLength)
+					removeFirst = true;
+			} else {
+				removeFirst = true;
+			}		
+			_activeSpeech.playing = false;
+			if (_activeSpeech.actorIds[0] != 0) {
+				actor = getActor(_activeSpeech.actorIds[0]);
+				if (!(_activeSpeech.speechFlags & kSpeakNoAnimate)) {
+					actor->currentAction = kActionWait;
+				}
+			}
+		}
 
-	if (stringLength == 0)
-		error("Empty strings not allowed");
+		if (removeFirst) {
+			for (i = 1; i < _activeSpeech.stringsCount; i++) {
+				_activeSpeech.strings[i - 1] = _activeSpeech.strings[i];
+			}
+			_activeSpeech.stringsCount--;
+		}
+
+		if (_vm->_script->_skipSpeeches) {
+			_activeSpeech.stringsCount = 0;
+			_vm->_script->wakeUpThreads(kWaitTypeSpeech);
+			return;
+		}
+
+		if (_activeSpeech.stringsCount == 0) {
+			_vm->_script->wakeUpThreadsDelayed(kWaitTypeSpeech, ticksToMSec(kScriptTimeTicksPerSecond / 3));
+		}
+
+		return;
+	}
 
 	if (_vm->_script->_skipSpeeches) {
 		_activeSpeech.stringsCount = 0;
-		_vm->_sound->stopVoice();
-		_vm->_script->wakeUpThreads(kWaitTypeSpeech);
+		_vm->_script->wakeUpThreads(kWaitTypeSpeech);		
+	}
+
+	if (_activeSpeech.stringsCount == 0) {
 		return;
 	}
 
-	if (!_activeSpeech.playing) {  // just added
-		talkspeed = ConfMan.getInt("talkspeed");
-		if (_activeSpeech.speechFlags & kSpeakSlow) {
-			if (_activeSpeech.slowModeCharIndex >= stringLength)
-				error("Wrong string index");
+	stringLength = strlen(_activeSpeech.strings[0]);
 
-			debug(0 , "Slow string!");
-			_activeSpeech.playingTime = 10 * talkspeed;
-			// 10 - fix it
+	talkspeed = ConfMan.getInt("talkspeed");
+	if (_activeSpeech.speechFlags & kSpeakSlow) {
+		if (_activeSpeech.slowModeCharIndex >= stringLength)
+			error("Wrong string index");
 
+		debug(0 , "Slow string!");
+		_activeSpeech.playingTime = 10 * talkspeed;
+		// 10 - fix it
+
+	} else {
+		sampleLength = _vm->_sndRes->getVoiceLength(_activeSpeech.sampleResourceId); //fixme - too fast
+
+		if (sampleLength < 0) {
+			_activeSpeech.playingTime = stringLength * talkspeed;
 		} else {
-			sampleLength = _vm->_sndRes->getVoiceLength(_activeSpeech.sampleResourceId); //fixme - too fast
-
-			if (sampleLength < 0) {
-				_activeSpeech.playingTime = stringLength * talkspeed;
-			} else {
-				_activeSpeech.playingTime = sampleLength;
-			}
-		}
-
-		if (_activeSpeech.sampleResourceId != -1) {
-			_vm->_sndRes->playVoice(_activeSpeech.sampleResourceId);
-			_activeSpeech.sampleResourceId++;
-		}
-
-		if (_activeSpeech.actorIds[0] != 0) {
-			actor = getActor(_activeSpeech.actorIds[0]);
-			if (!(_activeSpeech.speechFlags & kSpeakNoAnimate)) {
-				actor->currentAction = kActionSpeak;
-				actor->actionCycle = _vm->_rnd.getRandomNumber(63);
-			}
-			for (i = 0; i < _activeSpeech.actorsCount; i++) {
-				actor = getActor(_activeSpeech.actorIds[i]);
-				_activeSpeech.speechCoords[i] = actor->screenPosition;
-				_activeSpeech.speechCoords[i].y -= ACTOR_DIALOGUE_HEIGHT;
-				_activeSpeech.speechCoords[i].y = MAX(_activeSpeech.speechCoords[i].y, (int16)10);
-			}
-		}
-		_activeSpeech.playing = true;			
-		return;
-	}
-
-
-	_activeSpeech.playingTime -= msec;
-
-	removeFirst = false;
-	if (_activeSpeech.playingTime <= 0) {
-		if (_activeSpeech.speechFlags & kSpeakSlow) {
-			_activeSpeech.slowModeCharIndex++;
-			if (_activeSpeech.slowModeCharIndex >= stringLength)
-				removeFirst = true;
-		} else {
-			removeFirst = true;
-		}		
-		_activeSpeech.playing = false;
-		if (_activeSpeech.actorIds[0] != 0) {
-			actor = getActor(_activeSpeech.actorIds[0]);
-			if (!(_activeSpeech.speechFlags & kSpeakNoAnimate)) {
-				actor->currentAction = kActionWait;
-			}
+			_activeSpeech.playingTime = sampleLength;
 		}
 	}
 
-	if (removeFirst) {
-		for (i = 1; i < _activeSpeech.stringsCount; i++) {
-			_activeSpeech.strings[i - 1] = _activeSpeech.strings[i];
-		}
-		_activeSpeech.stringsCount--;
+	if (_activeSpeech.sampleResourceId != -1) {
+		_vm->_sndRes->playVoice(_activeSpeech.sampleResourceId);
+		_activeSpeech.sampleResourceId++;
 	}
 
-	if (!isSpeaking())
-		_vm->_script->wakeUpThreadsDelayed(kWaitTypeSpeech, ticksToMSec(kScriptTimeTicksPerSecond / 3));
+	if (_activeSpeech.actorIds[0] != 0) {
+		actor = getActor(_activeSpeech.actorIds[0]);
+		if (!(_activeSpeech.speechFlags & kSpeakNoAnimate)) {
+			actor->currentAction = kActionSpeak;
+			actor->actionCycle = _vm->_rnd.getRandomNumber(63);
+		}
+		for (i = 0; i < _activeSpeech.actorsCount; i++) {
+			actor = getActor(_activeSpeech.actorIds[i]);
+			_activeSpeech.speechCoords[i] = actor->screenPosition;
+			_activeSpeech.speechCoords[i].y -= ACTOR_DIALOGUE_HEIGHT;
+			_activeSpeech.speechCoords[i].y = MAX(_activeSpeech.speechCoords[i].y, (int16)10);
+		}
+	}
+	_activeSpeech.playing = true;			
 }
 
 void Actor::handleActions(int msec, bool setup) {
@@ -1760,6 +1765,8 @@ void Actor::simulSpeech(const char *string, uint16 *actorIds, int actorIdsCount,
 }
 
 void Actor::abortAllSpeeches() {
+	abortSpeech();
+
 	if (_vm->_script->_abortEnabled)
 		_vm->_script->_skipSpeeches = true;
 

@@ -158,6 +158,7 @@ int Interface::activate() {
 	if (!_active) {
 		_active = true;
 		_vm->_script->_skipSpeeches = false;
+		_vm->_actor->_protagonist->targetObject = ID_NOTHING;
 		_vm->_gfx->showCursor(true);
 		unlockMode();
 		if (_panelMode == kPanelMain)
