@@ -239,11 +239,7 @@ void ScummEngine::setPaletteFromPtr(const byte *ptr, int numcolor) {
 		// if we remove this patch?
 		// Since it also causes problems in Zak256, I am turning it off for all V4 games and older.
 		if (_version >= 5 && _version <= 6) {
-			if ((_heversion >= 80) && (i == 15 || r < 252 || g < 252 || b < 252)) {
-				*dest++ = r;
-				*dest++ = g;
-				*dest++ = b;
-			} else if (i <= 15 || r < 252 || g < 252 || b < 252) {
+			if ((_heversion <= 72 && i < 15) || i == 15 || r < 252 || g < 252 || b < 252) {
 				*dest++ = r;
 				*dest++ = g;
 				*dest++ = b;
