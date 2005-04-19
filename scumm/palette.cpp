@@ -586,6 +586,13 @@ void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale
 	// from within Room 23 (the big machine), as it has no shadow effects
 	// and thus doesn't result in any visual differences.
 
+	int max;
+	if (_version >= 5 && _version <= 6) {
+		max = 252;
+	} else {
+		max = 255;
+	}
+
 	if (_gameId == GID_SAMNMAX) {
 		for (i = 0; i < 256; i++)
 			_shadowPalette[i] = i;
@@ -605,12 +612,12 @@ void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale
 		int ar, ag, ab;
 		uint sum, bestsum, bestitem = 0;
 
-		if (r > 255)
-			r = 255;
-		if (g > 255)
-			g = 255;
-		if (b > 255)
-			b = 255;
+		if (r > max)
+			r = max;
+		if (g > max)
+			g = max;
+		if (b > max)
+			b = max;
 
 		bestsum = 32000;
 
@@ -644,8 +651,8 @@ void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int
 		return;
 
 	int max;
-	if ((_features & GF_FMTOWNS) && (_version == 5)) {
-		max = 63;
+	if (_version >= 5 && _version <= 6 && _heversion <= 60) {
+		max = 252;
 	} else {
 		max = 255;
 	}
