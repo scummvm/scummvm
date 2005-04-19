@@ -111,6 +111,11 @@ void GobEngine::errorString(const char *buf1, char *buf2) {
 }
 
 int GobEngine::init(GameDetector &detector) {
+	_system->beginGFXTransaction();
+		initCommonGFX(detector);
+		_system->initSize(320, 200);
+	_system->endGFXTransaction();
+
 	debugFlag = 1;
 	breakSet = 0;
 	doRangeClamp = 1;

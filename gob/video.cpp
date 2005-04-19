@@ -46,8 +46,6 @@ char vid_initDriver(int16 vidMode) {
 	warning("STUB: vid_initDriver");
 
 	// FIXME: Finish all this stuff :)
-	g_system->initSize(320, 200);
-
 	_videoDriver = new VGAVideoDriver();
 	
 	return 1;
