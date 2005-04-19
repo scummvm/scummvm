@@ -139,7 +139,7 @@ bool MidiParser_S1D::loadMusic(byte *data, uint32 size) {
 	// will persist beyond this call, i.e. we do NOT
 	// copy the data to our own buffer. Take warning....
 	resetTracking();
-	setTempo(500000);
+	setTempo(666667);
 	setTrack(0);
 	return true;
 }
