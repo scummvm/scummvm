@@ -360,7 +360,7 @@ void ScummEngine::updateScriptPtr() {
 void ScummEngine::nukeArrays(byte scriptSlot) {
 	int i;
 
-	if (_heversion < 60 || scriptSlot == 0)
+	if (_heversion == 0 || scriptSlot == 0)
 		return;
 
 	for (i = 1; i < _numArray; i++) {
@@ -584,7 +584,7 @@ void ScummEngine::writeVar(uint var, int value) {
 		// stay in sync with loom cd subtitle var
 		if ((_gameId == GID_LOOM256 || _heversion >= 60) && var == VAR_NOSUBTITLES) {
 			assert(value == 0 || value == 1);
-			if (_heversion == 60 && vm.slot[_currentScript].number == 1)
+			if (_heversion <= 61 && vm.slot[_currentScript].number == 1)
 				value = !ConfMan.getBool("subtitles");
 			else
 				ConfMan.set("subtitles", (value == 0));
