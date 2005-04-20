@@ -62,9 +62,9 @@ DECLARE_SINGLETON(AudioCDManager);
 
 AudioCDManager::AudioCDManager() {
 	memset(&_cd, 0, sizeof(_cd));
-	memset(_cached_tracks, 0, sizeof(_cached_tracks));
-	memset(_track_info, 0, sizeof(_track_info));
-	_current_cache = 0;
+	memset(_cachedTracks, 0, sizeof(_cachedTracks));
+	memset(_trackInfo, 0, sizeof(_trackInfo));
+	_currentCache = 0;
 }
 
 void AudioCDManager::play(int track, int numLoops, int startFrame, int duration) {
@@ -82,7 +82,7 @@ void AudioCDManager::play(int track, int numLoops, int startFrame, int duration)
 		if (index >= 0) {
 			g_engine->_mixer->stopHandle(_cd.handle);
 			_cd.playing = true;
-			_track_info[index]->play(g_engine->_mixer, &_cd.handle, _cd.start, _cd.duration);
+			_trackInfo[index]->play(g_engine->_mixer, &_cd.handle, _cd.start, _cd.duration);
 		} else {
 			g_system->playCD(track, numLoops, startFrame, duration);
 			_cd.playing = false;
@@ -113,7 +113,7 @@ void AudioCDManager::updateCD() {
 			if (_cd.numLoops == -1 || --_cd.numLoops > 0) {
 				int index = getCachedTrack(_cd.track);
 				assert(index >= 0);
-				_track_info[index]->play(g_engine->_mixer, &_cd.handle, _cd.start, _cd.duration);
+				_trackInfo[index]->play(g_engine->_mixer, &_cd.handle, _cd.start, _cd.duration);
 			} else {
 				g_engine->_mixer->stopHandle(_cd.handle);
 				_cd.playing = false;
@@ -134,32 +134,31 @@ AudioCDManager::Status AudioCDManager::getStatus() const {
 
 int AudioCDManager::getCachedTrack(int track) {
 	int i;
-	int current_index;
 
 	// See if we find the track in the cache
 	for (i = 0; i < CACHE_TRACKS; i++)
-		if (_cached_tracks[i] == track) {
-			if (_track_info[i])
+		if (_cachedTracks[i] == track) {
+			if (_trackInfo[i])
 				return i;
 			else
 				return -1;
 		}
-	current_index = _current_cache++;
-	_current_cache %= CACHE_TRACKS;
+	int currentIndex = _currentCache++;
+	_currentCache %= CACHE_TRACKS;
 
 	// Not found, see if it exists
 
 	// First, delete the previous track info object
-	delete _track_info[current_index];
-	_track_info[current_index] = NULL;
-	_cached_tracks[current_index] = 0;
+	delete _trackInfo[currentIndex];
+	_trackInfo[currentIndex] = NULL;
+	_cachedTracks[currentIndex] = 0;
 
-	for (i = 0; i < ARRAYSIZE(TRACK_FORMATS)-1 && _track_info[current_index] == NULL; ++i)
-		_track_info[current_index] = TRACK_FORMATS[i].openTrackFunction(track);
+	for (i = 0; i < ARRAYSIZE(TRACK_FORMATS)-1 && _trackInfo[currentIndex] == NULL; ++i)
+		_trackInfo[currentIndex] = TRACK_FORMATS[i].openTrackFunction(track);
 
-	if (_track_info[current_index] != NULL) {
-		_cached_tracks[current_index] = track;
-		return current_index;
+	if (_trackInfo[currentIndex] != NULL) {
+		_cachedTracks[currentIndex] = track;
+		return currentIndex;
 	}
 
 	debug(2, "Track %d not available in compressed format", track);

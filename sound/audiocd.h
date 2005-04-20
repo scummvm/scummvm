@@ -69,9 +69,9 @@ private:
 	enum {
 		CACHE_TRACKS = 10
 	};
-	int _cached_tracks[CACHE_TRACKS];
-	DigitalTrackInfo *_track_info[CACHE_TRACKS];
-	int _current_cache;
+	int _cachedTracks[CACHE_TRACKS];
+	DigitalTrackInfo *_trackInfo[CACHE_TRACKS];
+	int _currentCache;
 
 };
 
