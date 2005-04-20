@@ -1452,7 +1452,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		CHECK_HEAP;
 
 		// COMI and HE games only uses flag value
-		if (_vm->_version == 8 || (_vm->_features & GF_HUMONGOUS))
+		if (_vm->_version == 8 || _vm->_heversion >= 60)
 			useOrDecompress = true;
 
 		if (_vm->_version == 1) {

@@ -383,7 +383,7 @@ void ScummEngine::drawRoomObjects(int arg) {
 	int i;
 	const int mask = (_version <= 2) ? 0x8 : 0xF;
 
-	if (_features & GF_HUMONGOUS) {
+	if (_heversion >= 60) {
 		// In HE games, normal objects are drawn, followed by FlObjects.
 		for (i = (_numLocalObjects-1); i > 0; i--) {
 			if (_objs[i].obj_nr > 0 && (_objs[i].state & mask) && _objs[i].fl_object_index == 0)
@@ -795,7 +795,7 @@ void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *
 		od->parent = cdhd->v6.parent;
 		od->actordir = cdhd->v6.actordir;
 
-		if (_features & GF_HUMONGOUS && imhd)
+		if (_heversion >= 60 && imhd)
 			od->flags = ((imhd->old.flags & 1) != 0) ? Gdi::dbAllowMaskOr : 0;
 
 	} else {

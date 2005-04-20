@@ -742,10 +742,10 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	byte drawFlag = 1;
 	Codec1 v1;
 
-	const int scaletableSize = (_vm->_features & GF_HUMONGOUS) ? 128 : 384;
+	const int scaletableSize = (_vm->_heversion >= 61) ? 128 : 384;
 
 	/* implement custom scale table */
-	v1.scaletable = (_vm->_features & GF_HUMONGOUS) ? oldScaleTable : defaultScaleTable;
+	v1.scaletable = (_vm->_heversion >= 61) ? oldScaleTable : defaultScaleTable;
 	if (_vm->VAR_CUSTOMSCALETABLE != 0xFF && _vm->res.isResourceLoaded(rtString, _vm->VAR(_vm->VAR_CUSTOMSCALETABLE))) {
 		v1.scaletable = _vm->getStringAddressVar(_vm->VAR_CUSTOMSCALETABLE);
 	}
@@ -1120,7 +1120,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	Common::Rect clip;
 	int32 maxw, maxh;
 	int32 skip_x, skip_y, cur_x, cur_y;
-	byte transparency = (_vm->_features & GF_HUMONGOUS) ? palette[0] : 255;
+	byte transparency = (_vm->_heversion >= 61) ? palette[0] : 255;
 
 	if (_actorHitMode) {
 		warning("codec16: _actorHitMode not yet implemented");
@@ -1355,7 +1355,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 				curpos += 3;
 				break;
 			case AKC_SoundStuff:
-				if (_features & GF_HUMONGOUS) 
+				if (_heversion >= 61) 
 					curpos += 6;
 				else
 					curpos += 8;
@@ -1472,7 +1472,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			continue;
 		case AKC_CmdQue3:
 		case AKC_C042:
-			if (_features & GF_HUMONGOUS)
+			if (_heversion >= 61)
 				tmp = GB(2);
 			else
 				tmp = GB(2) - 1;
@@ -1498,7 +1498,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			akos_queCommand(5, a, GB(2), 0);
 			continue;
 		case AKC_SoundStuff:
-			if (_features & GF_HUMONGOUS)
+			if (_heversion >= 61)
 				continue;
 			tmp = GB(2) - 1;
 			if (tmp >= 8)

@@ -162,7 +162,7 @@ void ScummEngine_v6::setupScummVars() {
 	VAR_LEFTBTN_HOLD = 74;
 	VAR_RIGHTBTN_HOLD = 75;
 
-	if (!(_features & GF_HUMONGOUS)) {
+	if (_heversion == 0) {
 		VAR_SAVELOAD_SCRIPT = 61;
 		VAR_SAVELOAD_SCRIPT2 = 62;
 	}
@@ -564,7 +564,7 @@ void ScummEngine::initScummVars() {
 			}
 		}
 		if (_gameId == GID_LOOM256 || _version >= 5) {
-			if (_features & GF_HUMONGOUS) {
+			if (_heversion >= 60) {
 				VAR(VAR_SOUNDPARAM) = 1; // soundblaster for music
 				VAR(VAR_SOUNDPARAM2) = 1; // soundblaster for sfx
 			} else {

@@ -506,7 +506,7 @@ int ScummEngine::readVar(uint var) {
 		}
 
 		if (var == VAR_NOSUBTITLES) {
-			if (_gameId == GID_LOOM256 || _features & GF_HUMONGOUS) 
+			if (_gameId == GID_LOOM256 || _heversion >= 60) 
 				return !ConfMan.getBool("subtitles");	
 			else if (_gameId == GID_SAMNMAX)
 				// Used as VAR_SUBTITLES in Sam & Max during Conroy Bumpus song
@@ -582,9 +582,9 @@ void ScummEngine::writeVar(uint var, int value) {
 			_scummVars[var] = value;
 
 		// stay in sync with loom cd subtitle var
-		if ((_gameId == GID_LOOM256 || _features & GF_HUMONGOUS) && var == VAR_NOSUBTITLES) {
+		if ((_gameId == GID_LOOM256 || _heversion >= 60) && var == VAR_NOSUBTITLES) {
 			assert(value == 0 || value == 1);
-			if ((_features & GF_HUMONGOUS) && vm.slot[_currentScript].number == 1)
+			if (_heversion == 60 && vm.slot[_currentScript].number == 1)
 				value = !ConfMan.getBool("subtitles");
 			else
 				ConfMan.set("subtitles", (value == 0));

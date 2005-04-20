@@ -97,7 +97,7 @@ void Sound::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags)
 }
 
 void Sound::addSoundToQueue2(int sound, int heOffset, int heChannel, int heFlags) {
-	if ((_vm->_features & GF_HUMONGOUS) && _soundQue2Pos) {
+	if (_vm->_heversion >= 60 && _soundQue2Pos) {
 		int i = _soundQue2Pos;
 		while (i--) {
 			if (_soundQue2[i].sound == sound)
@@ -697,7 +697,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, SoundHandle *handl
 			return;
 		}
 
-		if (_vm->_features & GF_HUMONGOUS) {
+		if (_vm->_heversion >= 60) {
 			_sfxMode |= mode;
 
 			_sfxFile->seek(offset, SEEK_SET);
@@ -862,7 +862,11 @@ int Sound::isSoundRunning(int sound) const {
 	if (sound == _currentCDSound)
 		return pollCD();
 
-	if (_vm->_features & GF_HUMONGOUS) {
+	if (_vm->_heversion >= 70) {
+		if (sound >= 10000) {
+			return _vm->_mixer->getSoundID(_heSoundChannels[sound - 10000]);
+		}
+	} else if (_vm->_heversion >= 60) {
 		if (sound == -2) {
 			return !isSfxFinished();
 		} else if (sound == -1) {
@@ -872,8 +876,6 @@ int Sound::isSoundRunning(int sound) const {
 				return (_vm->_mixer->isSoundIDActive(_currentMusic) ? _currentMusic : 0);
 			else if (_vm->_imuse)
 				return (_vm->_imuse->getSoundStatus(sound));
-		} else if (sound >= 10000) {
-			return _vm->_mixer->getSoundID(_heSoundChannels[sound - 10000]);
 		}
 	}
 
@@ -948,7 +950,11 @@ bool Sound::isSoundInQueue(int sound) const {
 void Sound::stopSound(int sound) {
 	int i;
 
-	if (_vm->_features & GF_HUMONGOUS) {
+	if (_vm->_heversion >= 70) {
+		if ( sound >= 10000) {
+			_vm->_mixer->stopHandle(_heSoundChannels[sound - 10000]);
+		}
+	} else if (_vm->_heversion >= 60) {
 		if (sound == -2) {
 		} else if (sound == -1) {
 			// Stop current music
@@ -956,9 +962,6 @@ void Sound::stopSound(int sound) {
 				_vm->_mixer->stopID(_currentMusic);
 			else if (_vm->_imuse)
 				_vm->_imuse->stopSound(_vm->_imuse->getSoundStatus(-1));
-		} else if ( sound >= 10000) {
-			int channel = sound - 10000;
-			_vm->_mixer->stopHandle(_heSoundChannels[channel]);
 		}
 	}
 

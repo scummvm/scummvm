@@ -176,9 +176,10 @@ void ScummEngine_v6::setCursorFromImg(uint img, uint room, uint imgindex) {
 		w = READ_LE_UINT16(&imhd->v7.width) / 8;
 		h = READ_LE_UINT16(&imhd->v7.height) / 8;
 	} else {
-		if (!(_features & GF_HUMONGOUS))
+		if (_heversion == 0) {
 			setCursorHotspot(READ_LE_UINT16(&imhd->old.hotspot[0].x),
 		        	          READ_LE_UINT16(&imhd->old.hotspot[0].y));
+		}
 		w = READ_LE_UINT16(&foir.cdhd->v6.w) / 8;
 		h = READ_LE_UINT16(&foir.cdhd->v6.h) / 8;
 	}

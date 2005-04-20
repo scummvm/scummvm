@@ -119,7 +119,7 @@ void Actor::initActor(int mode) {
 	_forceClip = (_vm->_version >= 7) ? 100 : 0;
 	_ignoreTurns = false;
 
-	if (_vm->_features & GF_HUMONGOUS)
+	if (_vm->_heversion >= 61)
 		_flip = 0;
 
 	_talkFrequency = 256;
@@ -1368,11 +1368,11 @@ void ScummEngine::stopTalk() {
 			a->runActorTalkScript(a->_talkStopFrame);
 			_useTalkAnims = false;
 		}
-		if (_version <= 7 && !(_features & GF_HUMONGOUS))
+		if (_version <= 7 && _heversion == 0)
 			setTalkingActor(0xFF);
 		a->_heTalking = false;
 	}
-	if (_version == 8 || _features & GF_HUMONGOUS)
+	if (_version == 8 || _heversion >= 60)
 		setTalkingActor(0);
 	if (_version == 8)
 		VAR(VAR_HAVE_MSG) = 0;
@@ -1383,7 +1383,7 @@ void ScummEngine::stopTalk() {
 void Actor::setActorCostume(int c) {
 	int i;
 
-	if ((_vm->_features & GF_HUMONGOUS) && (c == -1  || c == -2)) {
+	if (_vm->_heversion >= 61 && (c == -1  || c == -2)) {
 		_heSkipLimbs = (c == -1);
 		_needRedraw = true;
 		return;
@@ -1391,7 +1391,7 @@ void Actor::setActorCostume(int c) {
 
 	// Based on disassembly. It seems that high byte is not used at all, though
 	// it is attached to all horizontally flipped object, like left eye.
-	if (_vm->_heversion == 60)
+	if (_vm->_heversion == 61)
 		c &= 0xff;
 
 	_costumeNeedsInit = true;

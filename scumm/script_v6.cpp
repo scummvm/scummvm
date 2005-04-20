@@ -398,9 +398,6 @@ int ScummEngine_v6::popRoomAndObj(int *room) {
 }
 
 ScummEngine_v6::ArrayHeader *ScummEngine_v6::defineArray(int array, int type, int dim2, int dim1) {
-	if (_heversion >= 72)
-		error("Call to old defineArray");
-
 	int id;
 	int size;
 	ArrayHeader *ah;
@@ -408,7 +405,7 @@ ScummEngine_v6::ArrayHeader *ScummEngine_v6::defineArray(int array, int type, in
 	assert(0 <= type && type <= 5);
 
 	
-	if (_heversion >= 60) {
+	if (_heversion >= 61) {
 		if (type == kBitArray || type == kNibbleArray)
 			type = kByteArray;
 	} else {
@@ -467,7 +464,7 @@ void ScummEngine_v6::nukeArray(int a) {
 
 	if (data)
 		res.nukeResource(rtString, data);
-	if (_features & GF_HUMONGOUS)
+	if (_heversion >= 60)
 		_arraySlot[data] = 0;
 
 	writeVar(a, 0);
@@ -506,9 +503,6 @@ ScummEngine_v6::ArrayHeader *ScummEngine_v6::getArray(int array) {
 }
 
 int ScummEngine_v6::readArray(int array, int idx, int base) {
-	if (_heversion >= 72)
-		error("Call to old readArray");
-
 	ArrayHeader *ah = getArray(array);
 
 	if (ah == NULL || ah->data == NULL)
@@ -542,9 +536,6 @@ int ScummEngine_v6::readArray(int array, int idx, int base) {
 }
 
 void ScummEngine_v6::writeArray(int array, int idx, int base, int value) {
-	if (_heversion >= 72)
-		error("Call to old writeArray");
-
 	ArrayHeader *ah = getArray(array);
 	if (!ah)
 		return;
@@ -1095,7 +1086,7 @@ void ScummEngine_v6::o6_startSound() {
 	// In Fatty Bear's Birthday Surprise the piano uses offsets 1 - 23 to
 	// indicate which note to play, but only when using the standard piano
 	// sound. See also o6_soundOps()
-	if ((_features & GF_HUMONGOUS) && (_gameId != GID_PUTTDEMO))
+	if (_heversion >= 61)
 		offset = pop();
 		
 	if (_features & GF_DIGI_IMUSE)
@@ -1155,7 +1146,7 @@ void ScummEngine_v6::o6_setCameraAt() {
 void ScummEngine_v6::o6_loadRoom() {
 	int room = pop();
 	startScene(room, 0, 0);
-	if (_features & GF_HUMONGOUS) {
+	if (_heversion >= 61) {
 		setCameraAt(camera._cur.x, 0);
 	}
 	_fullRedraw = 1;
@@ -1941,7 +1932,7 @@ void ScummEngine_v6::o6_verbOps() {
 		if (_curVerbSlot) {
 			setVerbObject(_roomResource, a, slot);
 			vs->type = kImageVerbType;
-			if (_heversion >= 60)
+			if (_heversion >= 61)
 				vs->imgindex = a;
 		}
 		break;
@@ -1967,8 +1958,9 @@ void ScummEngine_v6::o6_verbOps() {
 		vs->curmode = 0;
 		break;
 	case 131:		// SO_VERB_DELETE
-		if (_features & GF_HUMONGOUS)
+		if (_heversion >= 60) {
 			slot = getVerbSlot(pop(), 0);
+		}
 		killVerb(slot);
 		break;
 	case 132:		// SO_VERB_NEW
@@ -2399,9 +2391,9 @@ void ScummEngine_v6::o6_dimArray() {
 }
 
 void ScummEngine_v6::o6_dummy() {
-	if (_features & GF_HUMONGOUS)	
+	if (_heversion >= 60) {
 		stopObjectCode();
-	/* nothing */
+	}
 }
 
 void ScummEngine_v6::o6_dim2dimArray() {

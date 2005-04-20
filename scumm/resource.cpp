@@ -126,7 +126,7 @@ void ScummEngine::openRoom(const int room) {
 				sprintf(buf, "%s.la%d", _gameName.c_str(), diskNumber);
 
 				sprintf(buf2, "%s.%.3d", _gameName.c_str(), diskNumber);
-			} else if (_features & GF_HUMONGOUS) {
+			} else if (_heversion >= 60) {
 				sprintf(buf, "%s.he%.1d", _gameName.c_str(), diskNumber);
 			} else {
 				sprintf(buf, "%s.%.3d",  _gameName.c_str(), diskNumber);
@@ -1184,7 +1184,7 @@ void ScummEngine::allocateArrays() {
 	_roomVars = (int32 *)calloc(_numRoomVariables, sizeof(int32));
 	_scummVars = (int32 *)calloc(_numVariables, sizeof(int32));
 	_bitVars = (byte *)calloc(_numBitVariables >> 3, 1);
-	if (_features & GF_HUMONGOUS)
+	if (_heversion >= 60)
 		_arraySlot = (byte *)calloc(_numArray, 1);
 
 	allocResTypeData(rtCostume, (_features & GF_NEW_COSTUMES) ? MKID('AKOS') : MKID('COST'),
