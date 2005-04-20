@@ -472,6 +472,16 @@ D:\scummsys.98\sputm.98\*.c
 a2e2010e75a1fd164ef6fc58eae7238d freddi4.he4
 24b409ff575c52d385cdc6b7e91b5b79 freddi4.w32
 
+(russian freddi4 alt)
+sev
+D:\scummsys.98\sputm.98\*.c
+41c340501caa1bf90cb0107679bf3e03 FREDDI4.(A)
+07b810e37be7489263f7bc7627d4765d FREDDI4.HE0
+b90be0993b688bfcdd361c55fd263ccc FREDDI4.HE2
+d1c47dfa05160c783da89e6dc9894d3e FREDDI4.HE4
+5ca0db2096e2b2c1593f93f9aab756e2 FREDDI4.INF
+8da938ee682f5f83aa2d51789e9602f4 FREDDI4.W32
+
 (russian freddi4 updated}
 sev
 C:\HESystems\SPUTM\Src\*.cpp
