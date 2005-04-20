@@ -711,15 +711,11 @@ void ScummEngine::stopObjectCode() {
 }
 
 void ScummEngine::runInventoryScript(int i) {
-	if (_version <= 2) {
-		redrawV2Inventory();
-	} else {
-		int args[24];
-		memset(args, 0, sizeof(args));
-		args[0] = i;
-		if (VAR(VAR_INVENTORY_SCRIPT)) {
-			runScript(VAR(VAR_INVENTORY_SCRIPT), 0, 0, args);
-		}
+	int args[24];
+	memset(args, 0, sizeof(args));
+	args[0] = i;
+	if (VAR(VAR_INVENTORY_SCRIPT)) {
+		runScript(VAR(VAR_INVENTORY_SCRIPT), 0, 0, args);
 	}
 }
 

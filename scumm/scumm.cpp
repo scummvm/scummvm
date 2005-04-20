@@ -2026,8 +2026,8 @@ load_game:
 		verbMouseOver(0);
 
 		if (_version <= 2) {
-			redrawV2Inventory();
-			checkV2MouseOver(_mouse);
+			((ScummEngine_v2 *)this)->redrawV2Inventory();
+			((ScummEngine_v2 *)this)->checkV2MouseOver(_mouse);
 		}
 
 		_fullRedraw = true;
@@ -2089,17 +2089,13 @@ load_game:
 		}
 		if (_heversion >= 71) {
 			preProcessAuxQueue();
-
-			if (_heversion >= 90) {
-				((ScummEngine_v90he *)this)->spritesMarkDirty(0);
-				((ScummEngine_v90he *)this)->spritesProcessWiz(true);
-			}
-
-			processActors();
-
-		} else {
-			processActors();
 		}
+		if (_heversion >= 90) {
+			((ScummEngine_v90he *)this)->spritesMarkDirty(0);
+			((ScummEngine_v90he *)this)->spritesProcessWiz(true);
+		}
+
+		processActors();
 		
 		_fullRedraw = false;
 
@@ -2128,9 +2124,9 @@ load_game:
 				// FIXME/TODO: Reset and redraw the sentence line
 				oldEgo = VAR(VAR_EGO);
 				_inventoryOffset = 0;
-				redrawV2Inventory();
+				((ScummEngine_v2 *)this)->redrawV2Inventory();
 			}
-			checkV2MouseOver(_mouse);
+			((ScummEngine_v2 *)this)->checkV2MouseOver(_mouse);
 		}
 
 		// For the Full Throttle credits to work properly, the blast

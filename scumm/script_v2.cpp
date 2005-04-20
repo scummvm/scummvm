@@ -1225,10 +1225,16 @@ void ScummEngine_v2::o2_actorFromPos() {
 }
 
 void ScummEngine_v2::o2_findObject() {
+	int obj;
 	getResultPos();
 	int x = getVarOrDirectByte(PARAM_1) * 8;
 	int y = getVarOrDirectByte(PARAM_2) * 2;
-	setResult(findObject(x, y));
+	obj = findObject(x, y);
+	if (obj == 0 && (_platform == Common::kPlatformNES) && (_userState & 0x40)) {
+		if (_mouseOverBoxV2 >= 0 && _mouseOverBoxV2 < 4)
+			obj = findInventory(VAR(VAR_EGO), _mouseOverBoxV2 + _inventoryOffset + 1);
+	}
+	setResult(obj);
 }
 
 void ScummEngine_v2::o2_getActorX() {
@@ -1583,6 +1589,10 @@ void ScummEngine_v2::resetSentence() {
 	VAR(VAR_SENTENCE_OBJECT1) = 0;
 	VAR(VAR_SENTENCE_OBJECT2) = 0;
 	VAR(VAR_SENTENCE_PREPOSITION) = 0;
+}
+
+void ScummEngine_v2::runInventoryScript(int i) {
+	redrawV2Inventory();
 }
 
 #undef PARAM_1

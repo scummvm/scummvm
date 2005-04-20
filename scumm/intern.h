@@ -246,10 +246,17 @@ protected:
 
 	const OpcodeEntryV2 *_opcodesV2;
 
+	V2MouseoverBox _mouseOverBoxesV2[7];
+	int8 _mouseOverBoxV2;
+
 public:
 	ScummEngine_v2(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
 
 	virtual void scummInit();
+
+	void checkV2MouseOver(Common::Point pos);
+	void checkV2Inventory(int x, int y);
+	void redrawV2Inventory();
 
 protected:
 	virtual void setupOpcodes();
@@ -266,6 +273,7 @@ protected:
 	virtual void readGlobalObjects();
 	virtual void loadCharset(int no);
 
+	virtual void runInventoryScript(int i);
 
 	virtual int getVar();
 

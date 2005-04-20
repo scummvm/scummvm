@@ -54,55 +54,55 @@ void ScummEngine_v2::initV2MouseOver() {
 		arrow_color = 1;
 	}
 
-	v2_mouseover_box = -1;
+	_mouseOverBoxV2 = -1;
 
 	// Inventory items
 
 	for (i = 0; i < 2; i++) {
-		v2_mouseover_boxes[2 * i].rect.left = 0;
-		v2_mouseover_boxes[2 * i].rect.right = 144;
-		v2_mouseover_boxes[2 * i].rect.top = 32 + 8 * i;
-		v2_mouseover_boxes[2 * i].rect.bottom = v2_mouseover_boxes[2 * i].rect.top + 8;
+		_mouseOverBoxesV2[2 * i].rect.left = 0;
+		_mouseOverBoxesV2[2 * i].rect.right = 144;
+		_mouseOverBoxesV2[2 * i].rect.top = 32 + 8 * i;
+		_mouseOverBoxesV2[2 * i].rect.bottom = _mouseOverBoxesV2[2 * i].rect.top + 8;
 
-		v2_mouseover_boxes[2 * i].color = color;
-		v2_mouseover_boxes[2 * i].hicolor = hi_color;
+		_mouseOverBoxesV2[2 * i].color = color;
+		_mouseOverBoxesV2[2 * i].hicolor = hi_color;
 
-		v2_mouseover_boxes[2 * i + 1].rect.left = 176;
-		v2_mouseover_boxes[2 * i + 1].rect.right = 320;
-		v2_mouseover_boxes[2 * i + 1].rect.top = v2_mouseover_boxes[2 * i].rect.top;
-		v2_mouseover_boxes[2 * i + 1].rect.bottom = v2_mouseover_boxes[2 * i].rect.bottom;
+		_mouseOverBoxesV2[2 * i + 1].rect.left = 176;
+		_mouseOverBoxesV2[2 * i + 1].rect.right = 320;
+		_mouseOverBoxesV2[2 * i + 1].rect.top = _mouseOverBoxesV2[2 * i].rect.top;
+		_mouseOverBoxesV2[2 * i + 1].rect.bottom = _mouseOverBoxesV2[2 * i].rect.bottom;
 
-		v2_mouseover_boxes[2 * i + 1].color = color;
-		v2_mouseover_boxes[2 * i + 1].hicolor = hi_color;
+		_mouseOverBoxesV2[2 * i + 1].color = color;
+		_mouseOverBoxesV2[2 * i + 1].hicolor = hi_color;
 	}
 
 	// Inventory arrows
 
-	v2_mouseover_boxes[kInventoryUpArrow].rect.left = 144;
-	v2_mouseover_boxes[kInventoryUpArrow].rect.right = 176;
-	v2_mouseover_boxes[kInventoryUpArrow].rect.top = 32;
-	v2_mouseover_boxes[kInventoryUpArrow].rect.bottom = 40;
+	_mouseOverBoxesV2[kInventoryUpArrow].rect.left = 144;
+	_mouseOverBoxesV2[kInventoryUpArrow].rect.right = 176;
+	_mouseOverBoxesV2[kInventoryUpArrow].rect.top = 32;
+	_mouseOverBoxesV2[kInventoryUpArrow].rect.bottom = 40;
 
-	v2_mouseover_boxes[kInventoryUpArrow].color = arrow_color;
-	v2_mouseover_boxes[kInventoryUpArrow].hicolor = hi_color;
+	_mouseOverBoxesV2[kInventoryUpArrow].color = arrow_color;
+	_mouseOverBoxesV2[kInventoryUpArrow].hicolor = hi_color;
 
-	v2_mouseover_boxes[kInventoryDownArrow].rect.left = 144;
-	v2_mouseover_boxes[kInventoryDownArrow].rect.right = 176;
-	v2_mouseover_boxes[kInventoryDownArrow].rect.top = 40;
-	v2_mouseover_boxes[kInventoryDownArrow].rect.bottom = 48;
+	_mouseOverBoxesV2[kInventoryDownArrow].rect.left = 144;
+	_mouseOverBoxesV2[kInventoryDownArrow].rect.right = 176;
+	_mouseOverBoxesV2[kInventoryDownArrow].rect.top = 40;
+	_mouseOverBoxesV2[kInventoryDownArrow].rect.bottom = 48;
 
-	v2_mouseover_boxes[kInventoryDownArrow].color = arrow_color;
-	v2_mouseover_boxes[kInventoryDownArrow].hicolor = hi_color;
+	_mouseOverBoxesV2[kInventoryDownArrow].color = arrow_color;
+	_mouseOverBoxesV2[kInventoryDownArrow].hicolor = hi_color;
 
 	// Sentence line
 
-	v2_mouseover_boxes[kSentenceLine].rect.left = 0;
-	v2_mouseover_boxes[kSentenceLine].rect.right = 320;
-	v2_mouseover_boxes[kSentenceLine].rect.top = 0;
-	v2_mouseover_boxes[kSentenceLine].rect.bottom = 8;
+	_mouseOverBoxesV2[kSentenceLine].rect.left = 0;
+	_mouseOverBoxesV2[kSentenceLine].rect.right = 320;
+	_mouseOverBoxesV2[kSentenceLine].rect.top = 0;
+	_mouseOverBoxesV2[kSentenceLine].rect.bottom = 8;
 
-	v2_mouseover_boxes[kSentenceLine].color = color;
-	v2_mouseover_boxes[kSentenceLine].hicolor = hi_color;
+	_mouseOverBoxesV2[kSentenceLine].color = color;
+	_mouseOverBoxesV2[kSentenceLine].hicolor = hi_color;
 }
 
 void ScummEngine_v2::initNESMouseOver() {
@@ -113,58 +113,58 @@ void ScummEngine_v2::initNESMouseOver() {
 	hi_color = 0;
 	arrow_color = 0;
 
-	v2_mouseover_box = -1;
+	_mouseOverBoxV2 = -1;
 
 	// Inventory items
 
 	for (i = 0; i < 2; i++) {
-		v2_mouseover_boxes[2 * i].rect.left = 16;
-		v2_mouseover_boxes[2 * i].rect.right = 120;
-		v2_mouseover_boxes[2 * i].rect.top = 48 + 8 * i;
-		v2_mouseover_boxes[2 * i].rect.bottom = v2_mouseover_boxes[2 * i].rect.top + 8;
+		_mouseOverBoxesV2[2 * i].rect.left = 16;
+		_mouseOverBoxesV2[2 * i].rect.right = 120;
+		_mouseOverBoxesV2[2 * i].rect.top = 48 + 8 * i;
+		_mouseOverBoxesV2[2 * i].rect.bottom = _mouseOverBoxesV2[2 * i].rect.top + 8;
 
-		v2_mouseover_boxes[2 * i].color = color;
-		v2_mouseover_boxes[2 * i].hicolor = hi_color;
+		_mouseOverBoxesV2[2 * i].color = color;
+		_mouseOverBoxesV2[2 * i].hicolor = hi_color;
 
-		v2_mouseover_boxes[2 * i + 1].rect.left = 152;
-		v2_mouseover_boxes[2 * i + 1].rect.right = 256;
-		v2_mouseover_boxes[2 * i + 1].rect.top = v2_mouseover_boxes[2 * i].rect.top;
-		v2_mouseover_boxes[2 * i + 1].rect.bottom = v2_mouseover_boxes[2 * i].rect.bottom;
+		_mouseOverBoxesV2[2 * i + 1].rect.left = 152;
+		_mouseOverBoxesV2[2 * i + 1].rect.right = 256;
+		_mouseOverBoxesV2[2 * i + 1].rect.top = _mouseOverBoxesV2[2 * i].rect.top;
+		_mouseOverBoxesV2[2 * i + 1].rect.bottom = _mouseOverBoxesV2[2 * i].rect.bottom;
 
-		v2_mouseover_boxes[2 * i + 1].color = color;
-		v2_mouseover_boxes[2 * i + 1].hicolor = hi_color;
+		_mouseOverBoxesV2[2 * i + 1].color = color;
+		_mouseOverBoxesV2[2 * i + 1].hicolor = hi_color;
 	}
 
 	// Inventory arrows
 
-	v2_mouseover_boxes[kInventoryUpArrow].rect.left = 128;
-	v2_mouseover_boxes[kInventoryUpArrow].rect.right = 136;
-	v2_mouseover_boxes[kInventoryUpArrow].rect.top = 48;
-	v2_mouseover_boxes[kInventoryUpArrow].rect.bottom = 56;
+	_mouseOverBoxesV2[kInventoryUpArrow].rect.left = 128;
+	_mouseOverBoxesV2[kInventoryUpArrow].rect.right = 136;
+	_mouseOverBoxesV2[kInventoryUpArrow].rect.top = 48;
+	_mouseOverBoxesV2[kInventoryUpArrow].rect.bottom = 56;
 
-	v2_mouseover_boxes[kInventoryUpArrow].color = arrow_color;
-	v2_mouseover_boxes[kInventoryUpArrow].hicolor = hi_color;
+	_mouseOverBoxesV2[kInventoryUpArrow].color = arrow_color;
+	_mouseOverBoxesV2[kInventoryUpArrow].hicolor = hi_color;
 
-	v2_mouseover_boxes[kInventoryDownArrow].rect.left = 136;
-	v2_mouseover_boxes[kInventoryDownArrow].rect.right = 144;
-	v2_mouseover_boxes[kInventoryDownArrow].rect.top = 48;
-	v2_mouseover_boxes[kInventoryDownArrow].rect.bottom = 56;
+	_mouseOverBoxesV2[kInventoryDownArrow].rect.left = 136;
+	_mouseOverBoxesV2[kInventoryDownArrow].rect.right = 144;
+	_mouseOverBoxesV2[kInventoryDownArrow].rect.top = 48;
+	_mouseOverBoxesV2[kInventoryDownArrow].rect.bottom = 56;
 
-	v2_mouseover_boxes[kInventoryDownArrow].color = arrow_color;
-	v2_mouseover_boxes[kInventoryDownArrow].hicolor = hi_color;
+	_mouseOverBoxesV2[kInventoryDownArrow].color = arrow_color;
+	_mouseOverBoxesV2[kInventoryDownArrow].hicolor = hi_color;
 
 	// Sentence line
 
-	v2_mouseover_boxes[kSentenceLine].rect.left = 16;
-	v2_mouseover_boxes[kSentenceLine].rect.right = 256;
-	v2_mouseover_boxes[kSentenceLine].rect.top = 0;
-	v2_mouseover_boxes[kSentenceLine].rect.bottom = 8;
+	_mouseOverBoxesV2[kSentenceLine].rect.left = 16;
+	_mouseOverBoxesV2[kSentenceLine].rect.right = 256;
+	_mouseOverBoxesV2[kSentenceLine].rect.top = 0;
+	_mouseOverBoxesV2[kSentenceLine].rect.bottom = 8;
 
-	v2_mouseover_boxes[kSentenceLine].color = color;
-	v2_mouseover_boxes[kSentenceLine].hicolor = hi_color;
+	_mouseOverBoxesV2[kSentenceLine].color = color;
+	_mouseOverBoxesV2[kSentenceLine].hicolor = hi_color;
 }
 
-void ScummEngine::checkV2MouseOver(Common::Point pos) {
+void ScummEngine_v2::checkV2MouseOver(Common::Point pos) {
 	VirtScreen *vs = &virtscr[kVerbVirtScreen];
 	Common::Rect rect;
 	byte *ptr, *dst;
@@ -172,30 +172,30 @@ void ScummEngine::checkV2MouseOver(Common::Point pos) {
 
 	// Don't do anything unless the inventory is active
 	if (!(_userState & 64)) {
-		v2_mouseover_box = -1;
+		_mouseOverBoxV2 = -1;
 		return;
 	}
 
 	if (_cursor.state > 0) {
-		for (i = 0; i < ARRAYSIZE(v2_mouseover_boxes); i++) {
-			if (v2_mouseover_boxes[i].rect.contains(pos.x, pos.y - vs->topline)) {
+		for (i = 0; i < ARRAYSIZE(_mouseOverBoxesV2); i++) {
+			if (_mouseOverBoxesV2[i].rect.contains(pos.x, pos.y - vs->topline)) {
 				new_box = i;
 				break;
 			}
 		}
 	}
 
-	if (new_box != v2_mouseover_box) {
-		if (v2_mouseover_box != -1) {
-			rect = v2_mouseover_boxes[v2_mouseover_box].rect;
+	if (new_box != _mouseOverBoxV2) {
+		if (_mouseOverBoxV2 != -1) {
+			rect = _mouseOverBoxesV2[_mouseOverBoxV2].rect;
 
 			dst = ptr = vs->getPixels(rect.left, rect.top);
 
 			// Remove highlight.
 			for (y = rect.height() - 1; y >= 0; y--) {
 				for (x = rect.width() - 1; x >= 0; x--) {
-					if (dst[x] == v2_mouseover_boxes[v2_mouseover_box].hicolor)
-						dst[x] = v2_mouseover_boxes[v2_mouseover_box].color;
+					if (dst[x] == _mouseOverBoxesV2[_mouseOverBoxV2].hicolor)
+						dst[x] = _mouseOverBoxesV2[_mouseOverBoxV2].color;
 				}
 				dst += vs->pitch;
 			}
@@ -204,15 +204,15 @@ void ScummEngine::checkV2MouseOver(Common::Point pos) {
 		}
 
 		if (new_box != -1) {
-			rect = v2_mouseover_boxes[new_box].rect;
+			rect = _mouseOverBoxesV2[new_box].rect;
 
 			dst = ptr = vs->getPixels(rect.left, rect.top);
 
 			// Apply highlight
 			for (y = rect.height() - 1; y >= 0; y--) {
 				for (x = rect.width() - 1; x >= 0; x--) {
-					if (dst[x] == v2_mouseover_boxes[new_box].color)
-						dst[x] = v2_mouseover_boxes[new_box].hicolor;
+					if (dst[x] == _mouseOverBoxesV2[new_box].color)
+						dst[x] = _mouseOverBoxesV2[new_box].hicolor;
 				}
 				dst += vs->pitch;
 			}
@@ -220,11 +220,11 @@ void ScummEngine::checkV2MouseOver(Common::Point pos) {
 			markRectAsDirty(kVerbVirtScreen, rect);
 		}
 
-		v2_mouseover_box = new_box;
+		_mouseOverBoxV2 = new_box;
 	}
 }
 
-void ScummEngine::checkV2Inventory(int x, int y) {
+void ScummEngine_v2::checkV2Inventory(int x, int y) {
 	int inventoryArea = (_platform == Common::kPlatformNES) ? 48: 32;
 	int object = 0;
 
@@ -233,12 +233,12 @@ void ScummEngine::checkV2Inventory(int x, int y) {
 	if ((y < inventoryArea) || !(_mouseAndKeyboardStat & MBS_LEFT_CLICK)) 
 		return;
 
-	if (v2_mouseover_boxes[kInventoryUpArrow].rect.contains(x, y)) {
+	if (_mouseOverBoxesV2[kInventoryUpArrow].rect.contains(x, y)) {
 		if (_inventoryOffset >= 2) {
 			_inventoryOffset -= 2;
 			redrawV2Inventory();
 		}
- 	} else if (v2_mouseover_boxes[kInventoryDownArrow].rect.contains(x, y)) {
+ 	} else if (_mouseOverBoxesV2[kInventoryDownArrow].rect.contains(x, y)) {
  		if (_inventoryOffset + 4 < getInventoryCount(_scummVars[VAR_EGO])) {
 			_inventoryOffset += 2;
 			redrawV2Inventory();
@@ -246,7 +246,7 @@ void ScummEngine::checkV2Inventory(int x, int y) {
 	}
 
 	for (object = 0; object < 4; object++) {
-		if (v2_mouseover_boxes[object].rect.contains(x, y)) {
+		if (_mouseOverBoxesV2[object].rect.contains(x, y)) {
 			break;
 		}
 	}
@@ -261,7 +261,7 @@ void ScummEngine::checkV2Inventory(int x, int y) {
 	}
 }
 
-void ScummEngine::redrawV2Inventory() {
+void ScummEngine_v2::redrawV2Inventory() {
 	VirtScreen *vs = &virtscr[kVerbVirtScreen];
 	int i;
 	int max_inv;
@@ -269,7 +269,7 @@ void ScummEngine::redrawV2Inventory() {
 	int inventoryArea = (_platform == Common::kPlatformNES) ? 48: 32;
 	int maxChars = (_platform == Common::kPlatformNES) ? 13: 18;
 
-	v2_mouseover_box = -1;
+	_mouseOverBoxV2 = -1;
 
 	if (!(_userState & 64))	// Don't draw inventory unless active
 		return;
@@ -291,10 +291,10 @@ void ScummEngine::redrawV2Inventory() {
 		if (obj == 0)
 			break;
 		
-		_string[1].ypos = v2_mouseover_boxes[i].rect.top + vs->topline;
-		_string[1].xpos = v2_mouseover_boxes[i].rect.left;
+		_string[1].ypos = _mouseOverBoxesV2[i].rect.top + vs->topline;
+		_string[1].xpos = _mouseOverBoxesV2[i].rect.left;
 
-		_string[1].color = v2_mouseover_boxes[i].color;
+		_string[1].color = _mouseOverBoxesV2[i].color;
 
 		const byte *tmp = getObjOrActorName(obj);
 		assert(tmp);
@@ -311,9 +311,9 @@ void ScummEngine::redrawV2Inventory() {
 
 	// If necessary, draw "up" arrow
 	if (_inventoryOffset > 0) {
-		_string[1].xpos = v2_mouseover_boxes[kInventoryUpArrow].rect.left;
-		_string[1].ypos = v2_mouseover_boxes[kInventoryUpArrow].rect.top + vs->topline;
-		_string[1].color = v2_mouseover_boxes[kInventoryUpArrow].color;
+		_string[1].xpos = _mouseOverBoxesV2[kInventoryUpArrow].rect.left;
+		_string[1].ypos = _mouseOverBoxesV2[kInventoryUpArrow].rect.top + vs->topline;
+		_string[1].color = _mouseOverBoxesV2[kInventoryUpArrow].color;
 		if (_platform == Common::kPlatformNES)
 			drawString(1, (const byte *)"\x7E");
 		else
@@ -322,9 +322,9 @@ void ScummEngine::redrawV2Inventory() {
 
 	// If necessary, draw "down" arrow
 	if (_inventoryOffset + 4 < getInventoryCount(_scummVars[VAR_EGO])) {
-		_string[1].xpos = v2_mouseover_boxes[kInventoryDownArrow].rect.left;
-		_string[1].ypos = v2_mouseover_boxes[kInventoryDownArrow].rect.top + vs->topline;
-		_string[1].color = v2_mouseover_boxes[kInventoryDownArrow].color;
+		_string[1].xpos = _mouseOverBoxesV2[kInventoryDownArrow].rect.left;
+		_string[1].ypos = _mouseOverBoxesV2[kInventoryDownArrow].rect.top + vs->topline;
+		_string[1].color = _mouseOverBoxesV2[kInventoryDownArrow].color;
 		if (_platform == Common::kPlatformNES)
 			drawString(1, (const byte *)"\x7F");
 		else
@@ -402,7 +402,7 @@ void ScummEngine::checkExecVerbs() {
 			runInputScript(5, 0, 0);
 		} else if (_version <= 2 && zone->number == 2 && _mouse.y > zone->topline + inventoryArea) {
 			// Click into V2 inventory
-			checkV2Inventory(_mouse.x, _mouse.y);
+			((ScummEngine_v2 *)this)->checkV2Inventory(_mouse.x, _mouse.y);
 		} else {
 			over = findVerbAtPos(_mouse.x, _mouse.y);
 			if (over != 0) {

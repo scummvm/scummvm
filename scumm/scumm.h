@@ -613,7 +613,7 @@ protected:
 	void runScriptNested(int script);
 	void executeScript();
 	void updateScriptPtr();
-	void runInventoryScript(int i);
+	virtual void runInventoryScript(int i);
 	void checkAndRunSentenceScript();
 	void runExitScript();
 	void runEntryScript();
@@ -788,7 +788,6 @@ protected:
 
 	int getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e, int f);
 
-
 protected:
 	/* Should be in Verb class */
 	uint16 _verbMouseOver;
@@ -807,15 +806,6 @@ protected:
 	int getVerbSlot(int id, int mode) const;
 	void killVerb(int slot);
 	void setVerbObject(uint room, uint object, uint verb);
-
-
-	// TODO: This should be moved into ScummEngine_v2 if possible
-	V2MouseoverBox v2_mouseover_boxes[7];
-	int8 v2_mouseover_box;
-
-	void checkV2MouseOver(Common::Point pos);
-	void checkV2Inventory(int x, int y);
-	void redrawV2Inventory();
 
 public:
 	/* Should be in Actor class */
