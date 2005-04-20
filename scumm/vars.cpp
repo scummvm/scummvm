@@ -480,60 +480,97 @@ void ScummEngine_v8::setupScummVars() {
 	VAR_SYNC = 134;
 }
 
-void ScummEngine::initScummVars() {
+void ScummEngine_v2::initScummVars() {
 
 	// This needs to be at least greater than 40 to get the more
 	// elaborate version of the EGA Zak into. I don't know where
 	// else it makes any difference.
 	if (_gameId == GID_ZAK)
 		VAR(VAR_MACHINE_SPEED) = 0x7FFF;
+}
 
-	if (_version <= 2)
-		return;
+void ScummEngine_v5::initScummVars() {
+	ScummEngine::initScummVars();
 
 	if (_version >= 4 && _version <= 5)
 		VAR(VAR_V5_TALK_STRING_Y) = -0x50;
 
-	if (_version == 8) {	// Fixme: How do we deal with non-cd installs?
+	if (VAR_CURRENT_LIGHTS != 0xFF) {
+		// Setup light
+		VAR(VAR_CURRENT_LIGHTS) = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
+	}
+	
+	if (_gameId == GID_MONKEY || _gameId == GID_MONKEY_SEGA)
+		_scummVars[74] = 1225;
+}
+
+void ScummEngine_v7::initScummVars() {
+	ScummEngine::initScummVars();
+
+	if (_version == 8) {	// FIXME: How do we deal with non-cd installs?
 		VAR(VAR_CURRENTDISK) = 1;
 		VAR(VAR_LANGUAGE) = _language;
-	} else if (_version >= 7) {
+	} else {
 		VAR(VAR_V6_EMSSPACE) = 10000;
 		VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
-	} else if (_heversion >= 70) {
-		VAR(VAR_NUM_SOUND_CHANNELS) = 8;
-		VAR(VAR_MUSIC_CHANNEL) = 1;
-		VAR(VAR_SOUND_CHANNEL) = 2;
+	}
 
-		if (_heversion >= 72) {
-			VAR(VAR_NUM_ROOMS) = _numRooms - 1;
-			VAR(VAR_NUM_SCRIPTS) = _numScripts - 1;
-			VAR(VAR_NUM_SOUNDS) = _numSounds - 1;
-			VAR(VAR_NUM_COSTUMES) = _numCostumes - 1;
-			VAR(VAR_NUM_IMAGES) = _numImages - 1;
-			VAR(VAR_NUM_CHARSETS) = _numCharsets - 1;
-			VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
-		}
-		if (_heversion >= 80) {
-			VAR(78) = 1;
-			VAR(VAR_WINDOWS_VERSION) = 40;
+	VAR(VAR_DEFAULT_TALK_DELAY) = 60;
+	VAR(VAR_VOICE_MODE) = ConfMan.getBool("subtitles");
+}
 
-			VAR(VAR_NUM_ACTIVE_SOUND_CHANNELS) = (_heversion >= 90) ? 8 : 4;
-		}
-		if (_heversion >= 90) {
-			VAR(VAR_SCRIPT_CYCLE) = 1;
-			VAR(VAR_NUM_SCRIPT_CYCLES) = 1;
-		}
-		if (_heversion >= 95) {
-			VAR(VAR_NUM_SPRITE_GROUPS) = MAX(64, _numSprites / 4) - 1;
-			VAR(VAR_NUM_SPRITES) = _numSprites - 1;
-			VAR(VAR_WIZ_TCOLOR) = 5;
-		}
-		if (_heversion >= 99) {
-			VAR(VAR_NUM_PALETTES) = _numPalettes;
-			VAR(VAR_NUM_UNK) = _numUnk;
-		}
-	} else {
+void ScummEngine_v70he::initScummVars() {
+	ScummEngine::initScummVars();
+
+	VAR(VAR_NUM_SOUND_CHANNELS) = 8;
+	VAR(VAR_MUSIC_CHANNEL) = 1;
+	VAR(VAR_SOUND_CHANNEL) = 2;
+}
+
+void ScummEngine_v72he::initScummVars() {
+	ScummEngine_v70he::initScummVars();
+
+	VAR(VAR_NUM_ROOMS) = _numRooms - 1;
+	VAR(VAR_NUM_SCRIPTS) = _numScripts - 1;
+	VAR(VAR_NUM_SOUNDS) = _numSounds - 1;
+	VAR(VAR_NUM_COSTUMES) = _numCostumes - 1;
+	VAR(VAR_NUM_IMAGES) = _numImages - 1;
+	VAR(VAR_NUM_CHARSETS) = _numCharsets - 1;
+	VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
+}
+
+void ScummEngine_v80he::initScummVars() {
+	ScummEngine_v72he::initScummVars();
+
+	VAR(78) = 1;
+	VAR(VAR_WINDOWS_VERSION) = 40;
+
+	VAR(VAR_NUM_ACTIVE_SOUND_CHANNELS) = (_heversion >= 90) ? 8 : 4;
+}
+
+void ScummEngine_v90he::initScummVars() {
+	ScummEngine_v80he::initScummVars();
+
+	VAR(VAR_SCRIPT_CYCLE) = 1;
+	VAR(VAR_NUM_SCRIPT_CYCLES) = 1;
+
+	if (_heversion >= 95) {
+		VAR(VAR_NUM_SPRITE_GROUPS) = MAX(64, _numSprites / 4) - 1;
+		VAR(VAR_NUM_SPRITES) = _numSprites - 1;
+		VAR(VAR_WIZ_TCOLOR) = 5;
+	}
+}
+
+void ScummEngine_v99he::initScummVars() {
+	ScummEngine_v90he::initScummVars();
+
+	VAR(VAR_NUM_PALETTES) = _numPalettes;
+	VAR(VAR_NUM_UNK) = _numUnk;
+}
+
+void ScummEngine::initScummVars() {
+
+	if (_heversion < 70 && _version <= 6) {
 		switch (_midiDriver) {
 		case MD_NULL:  VAR(VAR_SOUNDCARD) = 0; break;
 		case MD_PCSPK:
@@ -610,19 +647,6 @@ void ScummEngine::initScummVars() {
 			VAR(VAR_V6_EMSSPACE) = 10000;
 	}
 	
-	if (VAR_CURRENT_LIGHTS != 0xFF) {
-		// Setup light
-		VAR(VAR_CURRENT_LIGHTS) = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
-	}
-	
-	if (_gameId == GID_MONKEY || _gameId == GID_MONKEY_SEGA)
-		_scummVars[74] = 1225;
-
-	if (_version >= 7) {
-		VAR(VAR_DEFAULT_TALK_DELAY) = 60;
-		VAR(VAR_VOICE_MODE) = ConfMan.getBool("subtitles");
-	}
-
 	if (VAR_FADE_DELAY != 0xFF)
 		VAR(VAR_FADE_DELAY) = 3;
 		

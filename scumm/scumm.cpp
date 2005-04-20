@@ -1046,22 +1046,9 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_NUM_SCRIPT_CYCLES = 0xFF;
 	VAR_SCRIPT_CYCLE = 0xFF;
 
-	VAR_NUM_ROOMS = 0xFF;
-	VAR_NUM_SCRIPTS = 0xFF;
-	VAR_NUM_SOUNDS = 0xFF;
-	VAR_NUM_COSTUMES = 0xFF;
-	VAR_NUM_IMAGES = 0xFF;
-	VAR_NUM_CHARSETS = 0xFF;
 	VAR_NUM_GLOBAL_OBJS = 0xFF;
-	VAR_NUM_SPRITE_GROUPS = 0xFF;
-	VAR_NUM_SPRITES = 0xFF;
-	VAR_NUM_PALETTES = 0xFF;
-	VAR_NUM_UNK = 0xFF;
-	VAR_MOUSE_STATE = 0xFF;
-	VAR_POLYGONS_ONLY = 0xFF;
-	VAR_WINDOWS_VERSION = 0xFF;
 	VAR_KEY_STATE = 0xFF;
-	VAR_WIZ_TCOLOR = 0xFF;
+	VAR_MOUSE_STATE = 0xFF;
 
 	// Use g_scumm from error() ONLY
 	g_scumm = this;
@@ -1274,6 +1261,23 @@ ScummEngine_v70he::~ScummEngine_v70he() {
 	free(_heV7DiskOffsets);
 	free(_heV7RoomIntOffsets);
 	free(_heV7RoomOffsets);
+}
+
+ScummEngine_v72he::ScummEngine_v72he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
+ : ScummEngine_v70he(detector, syst, gs, md5sum) {
+	VAR_NUM_ROOMS = 0xFF;
+	VAR_NUM_SCRIPTS = 0xFF;
+	VAR_NUM_SOUNDS = 0xFF;
+	VAR_NUM_COSTUMES = 0xFF;
+	VAR_NUM_IMAGES = 0xFF;
+	VAR_NUM_CHARSETS = 0xFF;
+	VAR_NUM_SPRITE_GROUPS = 0xFF;
+	VAR_NUM_SPRITES = 0xFF;
+	VAR_NUM_PALETTES = 0xFF;
+	VAR_NUM_UNK = 0xFF;
+	VAR_POLYGONS_ONLY = 0xFF;
+	VAR_WINDOWS_VERSION = 0xFF;
+	VAR_WIZ_TCOLOR = 0xFF;
 }
 
 #pragma mark -

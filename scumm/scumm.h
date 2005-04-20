@@ -405,7 +405,7 @@ public:
 	int init(GameDetector &detector);
 
 	virtual void setupScummVars();
-	void initScummVars();
+	virtual void initScummVars();
 
 	virtual void scummInit();
 
@@ -1337,22 +1337,10 @@ public:
 	byte VAR_SCRIPT_CYCLE;
 	byte VAR_NUM_SCRIPT_CYCLES;
 
-	byte VAR_NUM_ROOMS;
-	byte VAR_NUM_SCRIPTS;
-	byte VAR_NUM_SOUNDS;
-	byte VAR_NUM_COSTUMES;
-	byte VAR_NUM_IMAGES;
-	byte VAR_NUM_CHARSETS;
-	byte VAR_NUM_GLOBAL_OBJS;
-	byte VAR_NUM_SPRITE_GROUPS;
-	byte VAR_NUM_SPRITES;
-	byte VAR_NUM_PALETTES;
-	byte VAR_NUM_UNK;
+	byte VAR_NUM_GLOBAL_OBJS;	// Exists both in V7 and in V72HE
+
+	byte VAR_KEY_STATE;		// Used in parseEvents()
 	byte VAR_MOUSE_STATE;
-	byte VAR_POLYGONS_ONLY;
-	byte VAR_WINDOWS_VERSION;
-	byte VAR_KEY_STATE;
-	byte VAR_WIZ_TCOLOR;
 };
 
 } // End of namespace Scumm

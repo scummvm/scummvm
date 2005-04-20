@@ -61,6 +61,7 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void setupScummVars();
+	virtual void initScummVars();
 	virtual void decodeParseString();
 
 	virtual void readMAXS(int blockSize);
@@ -256,6 +257,7 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void setupScummVars();
+	virtual void initScummVars();
 	virtual void decodeParseString();
 
 	virtual void readIndexFile();
@@ -694,6 +696,8 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 	
+	virtual void initScummVars();
+
 	virtual void readRoomsOffsets();
 	virtual void readGlobalObjects();
 	virtual void readIndexBlock(uint32 blocktype, uint32 itemsize);
@@ -763,7 +767,7 @@ protected:
 	WizParameters _wizParams;
 
 public:
-	ScummEngine_v72he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v70he(detector, syst, gs, md5sum) {}
+	ScummEngine_v72he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
 
 	virtual void scummInit();
 
@@ -773,6 +777,7 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void setupScummVars();
+	virtual void initScummVars();
 	virtual void readArrayFromIndexFile();
 
 	virtual byte *getStringAddress(int i);
@@ -861,6 +866,20 @@ protected:
 	void o72_getResourceSize();
 	void o72_setFilePath();
 	void o72_setWindowCaption();
+
+	byte VAR_NUM_ROOMS;
+	byte VAR_NUM_SCRIPTS;
+	byte VAR_NUM_SOUNDS;
+	byte VAR_NUM_COSTUMES;
+	byte VAR_NUM_IMAGES;
+	byte VAR_NUM_CHARSETS;
+	byte VAR_NUM_SPRITE_GROUPS;
+	byte VAR_NUM_SPRITES;
+	byte VAR_NUM_PALETTES;
+	byte VAR_NUM_UNK;
+	byte VAR_POLYGONS_ONLY;
+	byte VAR_WINDOWS_VERSION;
+	byte VAR_WIZ_TCOLOR;
 };
 
 class ScummEngine_v80he : public ScummEngine_v72he {
@@ -880,6 +899,8 @@ protected:
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
+
+	virtual void initScummVars();
 
 	void loadImgSpot(int resId, int state, int16 &x, int16 &y);
 	void loadWizCursor(int resId);
@@ -949,6 +970,8 @@ protected:
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
+
+	virtual void initScummVars();
 	
 	virtual void readMAXS(int blockSize);
 
@@ -1126,6 +1149,8 @@ public:
 	virtual void scummInit();
 
 protected:
+	virtual void initScummVars();
+
 	virtual void readMAXS(int blockSize);
 
 	virtual void copyPalColor(int dst, int src);
@@ -1197,6 +1222,7 @@ public:
 
 protected:
 	virtual void setupScummVars();
+	virtual void initScummVars();
 
 	virtual void readMAXS(int blockSize);
 	virtual void readGlobalObjects();
