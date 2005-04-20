@@ -1329,7 +1329,7 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 		}
 		if (spi->xmapNum) {
 			wiz.img.flags |= 0x200;
-			wiz.processFlags |= 4;
+			wiz.processFlags |= kWPFXmapNum;
 			wiz.xmapNum = spi->xmapNum;
 		}
 		if (spr_flags & kSFNeedPaletteRemap)

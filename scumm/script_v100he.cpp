@@ -1251,7 +1251,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.unk_160 = _wizParams.img.y1 = _wizParams.img.x1 = pop();
 		break;
 	case 70:
-		_wizParams.processFlags |= 4;
+		_wizParams.processFlags |= kWPFXmapNum;
 		_wizParams.xmapNum = pop();
 		break;
 	case 73:

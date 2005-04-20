@@ -91,6 +91,7 @@ enum WizImageFlags {
 
 enum WizProcessFlags {
 	kWPFSetPos = 0x1,
+	kWPFXmapNum = 0x4,
 	kWPFZoom = 0x8,
 	kWPFRotate = 0x10,
 	kWPFNewFlags = 0x20,
