@@ -120,6 +120,8 @@ enum GameFeatures {
 	/** Games with multiple versions */
 	GF_MULTIPLE_VERSIONS   = 1 << 13,
 	
+#if 1
+	// TODO: Remove this in favor of using _platform !
 	GF_FMTOWNS             = 1 << 14,
 	GF_AMIGA               = 1 << 15,
 	GF_NES                 = 1 << 16,
@@ -127,7 +129,8 @@ enum GameFeatures {
 	GF_MACINTOSH           = 1 << 18,
 	GF_PC                  = 1 << 19,
 	GF_WINDOWS             = 1 << 20,
-	
+#endif
+
 	GF_DEMO                = 1 << 21
 };
 
@@ -386,6 +389,7 @@ public:
 	byte _version;
 	uint8 _heversion;
 	uint32 _features;						// Should only be accessed for reading (TODO enforce it compiler-wise with making it private and creating an accessor)
+	Common::Platform _platform;
 	uint8 _gameMD5[16];
 
 	/** Random number generator */
