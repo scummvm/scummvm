@@ -214,7 +214,7 @@ static const ScummGameSettings scumm_settings[] = {
 	// Humongous Entertainment Scumm Version 6
 	{"puttputt", "Putt-Putt Joins The Parade", GID_HEGAME, 6, 61, 13, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
-	{"puttdemo", "Putt-Putt Joins The Parade (Demo)", GID_PUTTDEMO, 6, 60, 13, MDT_ADLIB | MDT_NATIVE,
+	{"puttdemo", "Putt-Putt Joins The Parade (Demo)", GID_HEGAME, 6, 60, 13, MDT_ADLIB | MDT_NATIVE,
 	  GF_USE_KEY | GF_MULTIPLE_VERSIONS, 0, 0},
 	{"moondemo", "Putt-Putt Goes To The Moon (Demo)", GID_HEGAME, 6, 61, 13, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
@@ -471,7 +471,7 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY, 0, 0},
 	{"6a30a07f353a75cdc602db27d73e1b42", "Putt-Putt Joins The Parade (Windows)", GID_HEGAME, 6, 70, 13, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_WINDOWS, 0, 0},
-	{"37ff1b308999c4cca7319edfcc1280a0", "Putt-Putt Joins The Parade (Windows Demo)", GID_PUTTDEMO, 6, 70, 13, MDT_NONE,
+	{"37ff1b308999c4cca7319edfcc1280a0", "Putt-Putt Joins The Parade (Windows Demo)", GID_HEGAME, 6, 70, 13, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, 0, 0},
 
 	{"92e7727e67f5cd979d8a1070e4eb8cb3", "Putt-Putt Saves the Zoo (Updated)", GID_FREDDI4, 6, 98, 30, MDT_NONE,
