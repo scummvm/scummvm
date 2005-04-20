@@ -91,41 +91,41 @@ enum GameFeatures {
 	GF_USE_KEY             = 1 << 4,
 	
 	/** Small header games (ScummEngine_v4 and subclasses). */
-	GF_SMALL_HEADER        = 1 << 6,
+	GF_SMALL_HEADER        = 1 << 5,
 
 	/** Old bundle games (ScummEngine_v3old and subclasses). */
-	GF_OLD_BUNDLE          = 1 << 8,
+	GF_OLD_BUNDLE          = 1 << 6,
 
 	/** EGA games. */
-	GF_16COLOR             = 1 << 9,
+	GF_16COLOR             = 1 << 7,
 
 	/** VGA versions of V3 games. */
-	GF_OLD256              = 1 << 10,
+	GF_OLD256              = 1 << 8,
 
 	/** Games which have Audio CD tracks. */
-	GF_AUDIOTRACKS         = 1 << 11,
+	GF_AUDIOTRACKS         = 1 << 9,
 
 	/** Games without actor scaling (ScummEngine_v3 and subclasses). */
-	GF_NO_SCALING          = 1 << 12,
+	GF_NO_SCALING          = 1 << 10,
 
 	/**
 	 * Games using only very few local variables in scripts.
 	 * Apparently that is only the case for 256 color version of Indy3.
 	 */
-	GF_FEW_LOCALS          = 1 << 13,
+	GF_FEW_LOCALS          = 1 << 11,
 
 	/** Games with multiple versions */
-	GF_MULTIPLE_VERSIONS   = 1 << 15,
+	GF_MULTIPLE_VERSIONS   = 1 << 12,
 	
-	GF_FMTOWNS             = 1 << 17,
-	GF_AMIGA               = 1 << 18,
-	GF_NES                 = 1 << 19,
-	GF_ATARI_ST            = 1 << 20,
-	GF_MACINTOSH           = 1 << 21,
-	GF_PC                  = 1 << 22,
-	GF_WINDOWS             = 1 << 23,
+	GF_FMTOWNS             = 1 << 13,
+	GF_AMIGA               = 1 << 14,
+	GF_NES                 = 1 << 15,
+	GF_ATARI_ST            = 1 << 16,
+	GF_MACINTOSH           = 1 << 17,
+	GF_PC                  = 1 << 18,
+	GF_WINDOWS             = 1 << 19,
 	
-	GF_DEMO                = 1 << 24
+	GF_DEMO                = 1 << 20
 };
 
 /* SCUMM Debug Channels */
