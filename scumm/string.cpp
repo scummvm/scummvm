@@ -329,6 +329,7 @@ void ScummEngine::CHARSET_1() {
 					a->startAnimActor(frme);
 				break;
 			case 10:
+				// Note the similarity to the code in unkMessage1()
 				talk_sound_a = buffer[0] | (buffer[1] << 8) | (buffer[4] << 16) | (buffer[5] << 24);
 				talk_sound_b = buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] << 24);
 				buffer += 14;
@@ -339,6 +340,10 @@ void ScummEngine::CHARSET_1() {
 				// This is actually a hack added by ScummVM; the original did
 				// subtitle hiding in some other way. I am not sure exactly
 				// how, though.
+				// FIXME: This is actually a rather ugly hack, and we should consider
+				// replacing it with something better; problem is that _haveMsg is saved,
+				// so we need to cope with old save games if we ever change this.
+				// And BTW Fingolfin was responsible for this silly bad hack. Stupid me! :-).
 				if (_haveMsg == 0xFF)
 					_haveMsg = 0xFE;
 				break;
