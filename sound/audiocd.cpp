@@ -85,6 +85,7 @@ void AudioCDManager::play(int track, int numLoops, int startFrame, int duration)
 			_track_info[index]->play(g_engine->_mixer, &_cd.handle, _cd.start, _cd.duration);
 		} else {
 			g_system->playCD(track, numLoops, startFrame, duration);
+			_cd.playing = false;
 		}
 	}
 }
