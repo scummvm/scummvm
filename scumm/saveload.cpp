@@ -248,7 +248,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// ever add options for using different 16-colour palettes.
 	if (_version == 1) {
 		if (_gameId == GID_MANIAC)
-			if (_features & GF_NES)
+			if (_platform == Common::kPlatformNES)
 				setupNESPalette();
 			else
 				setupV1ManiacPalette();
@@ -274,7 +274,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 			break;
 
 		default:
-			if ((_features & GF_AMIGA) || (_features & GF_ATARI_ST))
+			if ((_platform == Common::kPlatformAmiga) || (_platform == Common::kPlatformAtariST))
 				setupAmigaPalette();
 			else
 				setupEGAPalette();
@@ -753,7 +753,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		}
 	}
 
-	if (_features & GF_NES)
+	if (_platform == Common::kPlatformNES)
 		if (savegameVersion < VER(47))
 			NES_loadCostumeSet(_NESCostumeSet = 0);
 		else

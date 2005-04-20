@@ -120,18 +120,8 @@ enum GameFeatures {
 	/** Games with multiple versions */
 	GF_MULTIPLE_VERSIONS   = 1 << 13,
 	
-#if 1
-	// TODO: Remove this in favor of using _platform !
-	GF_FMTOWNS             = 1 << 14,
-	GF_AMIGA               = 1 << 15,
-	GF_NES                 = 1 << 16,
-	GF_ATARI_ST            = 1 << 17,
-	GF_MACINTOSH           = 1 << 18,
-	GF_PC                  = 1 << 19,
-	GF_WINDOWS             = 1 << 20,
-#endif
-
-	GF_DEMO                = 1 << 21
+	/** A demo, not a full blown game. */
+	GF_DEMO                = 1 << 14
 };
 
 /* SCUMM Debug Channels */

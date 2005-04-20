@@ -414,7 +414,7 @@ void ScummEngine_v2::decodeParseString() {
 	int textSlot = 0;
 	_string[textSlot].xpos = 0;
 	_string[textSlot].ypos = 0;
-	if (_features & GF_NES)
+	if (_platform == Common::kPlatformNES)
 		_string[textSlot].right = 256;
 	else
 		_string[textSlot].right = 320;
@@ -524,7 +524,7 @@ void ScummEngine_v2::o2_setObjPreposition() {
 	int obj = getVarOrDirectWord(PARAM_1);
 	int unk = fetchScriptByte();
 	
-	if (_features & GF_NES)
+	if (_platform == Common::kPlatformNES)
 		return;
 
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
@@ -825,7 +825,7 @@ void ScummEngine_v2::o2_verbOps() {
 		slot = getVarOrDirectByte(PARAM_1) + 1;
 		int prep = fetchScriptByte(); // Only used in V1?
 		// V1 Maniac verbs are relative to the 'verb area' - under the sentence
-		if (_features & GF_NES)
+		if (_platform == Common::kPlatformNES)
 			x += 8;
 		else if ((_gameId == GID_MANIAC) && (_version == 1))
 			y += 8;
@@ -838,7 +838,7 @@ void ScummEngine_v2::o2_verbOps() {
 
 		vs = &_verbs[slot];
 		vs->verbid = verb;
-		if (_features & GF_NES) {
+		if (_platform == Common::kPlatformNES) {
 			vs->color = 1;
 			vs->hicolor = 1;
 			vs->dimcolor = 1;
@@ -981,7 +981,7 @@ void ScummEngine_v2::o2_drawSentence() {
 	const byte *temp;
 	int slot = getVerbSlot(VAR(VAR_SENTENCE_VERB), 0);
 
-	if (!((_userState & 32) || (_features & GF_NES && _userState & 0xe0)))
+	if (!((_userState & 32) || (_platform == Common::kPlatformNES && _userState & 0xe0)))
 		return;
 
 	if (getResourceAddress(rtVerb, slot))
@@ -998,7 +998,7 @@ void ScummEngine_v2::o2_drawSentence() {
 	
 		// For V1 games, the engine must compute the preposition.
 		// In all other Scumm versions, this is done by the sentence script.
-		if ((_gameId == GID_MANIAC && _version == 1 && !(_features & GF_NES)) && (VAR(VAR_SENTENCE_PREPOSITION) == 0)) {
+		if ((_gameId == GID_MANIAC && _version == 1 && !(_platform == Common::kPlatformNES)) && (VAR(VAR_SENTENCE_PREPOSITION) == 0)) {
 			if (_verbs[slot].prep == 0xFF) {
 				byte *ptr = getOBCDFromObject(VAR(VAR_SENTENCE_OBJECT1));
 				assert(ptr);
@@ -1026,7 +1026,7 @@ void ScummEngine_v2::o2_drawSentence() {
 			{ " ", " in", " with", " on", " to" }	// Korean
 			};
 		int lang = (_language <= 8) ? _language : 0;	// Default to english
-		if (_features & GF_NES) {
+		if (_platform == Common::kPlatformNES) {
 			strcat(sentence, (const char *)(getResourceAddress(rtCostume, 78) + VAR(VAR_SENTENCE_PREPOSITION) * 8 + 2));
 		} else
 			strcat(sentence, prepositions[lang][VAR(VAR_SENTENCE_PREPOSITION)]);
@@ -1043,7 +1043,7 @@ void ScummEngine_v2::o2_drawSentence() {
 	_string[2].charset = 1;
 	_string[2].ypos = virtscr[2].topline;
 	_string[2].xpos = 0;
-	if (_features & GF_NES) {
+	if (_platform == Common::kPlatformNES) {
 		_string[2].xpos = 16;
 		_string[2].color = 0;
 	} else if (_version == 1)
@@ -1065,7 +1065,7 @@ void ScummEngine_v2::o2_drawSentence() {
 		ptr++;
 	}
 
-	if (_features & GF_NES) {	// TODO - get multiline sentences working
+	if (_platform == Common::kPlatformNES) {	// TODO - get multiline sentences working
 		sentenceline.top = virtscr[2].topline;
 		sentenceline.bottom = virtscr[2].topline + 16;
 		sentenceline.left = 16;
@@ -1292,7 +1292,7 @@ void ScummEngine_v2::o2_lights() {
 	c = fetchScriptByte();
 
 	if (c == 0) {
-		if (_gameId == GID_MANIAC && _version == 1 && !(_features & GF_NES)) {
+		if (_gameId == GID_MANIAC && _version == 1 && !(_platform == Common::kPlatformNES)) {
 			// Convert older light mode values into
 			// equivalent values.of later games
 			// 0 Darkness
@@ -1448,7 +1448,7 @@ void ScummEngine_v2::o2_endCutscene() {
 	// Reset user state to values before cutscene
 	setUserState(vm.cutSceneData[0] | 7);
 	
-	if ((_gameId == GID_MANIAC) && !(_features & GF_NES)) {
+	if ((_gameId == GID_MANIAC) && !(_platform == Common::kPlatformNES)) {
 		camera._mode = (byte) vm.cutSceneData[3];
 		if (camera._mode == kFollowActorCameraMode) {
 			actorFollowCamera(VAR(VAR_EGO));
@@ -1496,7 +1496,7 @@ void ScummEngine_v2::o2_pickupObject() {
 	clearDrawObjectQueue();
 
 	runInventoryScript(1);
-	if (_features & GF_NES)
+	if (_platform == Common::kPlatformNES)
 		_sound->addSoundToQueue(51);	// play 'pickup' sound
 }
 
@@ -1513,7 +1513,7 @@ void ScummEngine_v2::o2_cursorCommand() {	// TODO: Define the magic numbers
 
 void ScummEngine_v2::setUserState(byte state) {
 	if (state & 4) {						// Userface
-		if (_features & GF_NES)
+		if (_platform == Common::kPlatformNES)
 			_userState = (_userState & ~0xE0) | (state & 0xE0);
 		else
 			_userState = state & (32 | 64 | 128);
@@ -1527,7 +1527,7 @@ void ScummEngine_v2::setUserState(byte state) {
 	}
 
 	if (state & 2) {						// Cursor Show/Hide
-		if (_features & GF_NES)
+		if (_platform == Common::kPlatformNES)
 			_userState = (_userState & ~0x10) | (state & 0x10);
 		if (state & 16) {
 			_userPut = 1;
@@ -1542,7 +1542,7 @@ void ScummEngine_v2::setUserState(byte state) {
 	Common::Rect rect;
 	rect.top = virtscr[2].topline;
 	rect.bottom = virtscr[2].topline + 8 * 88;
-	if (_features & GF_NES) {
+	if (_platform == Common::kPlatformNES) {
 		rect.left = 16;
 		rect.right = 255;
 	} else {
@@ -1572,7 +1572,7 @@ void ScummEngine_v2::o2_dummy() {
 void ScummEngine_v2::o2_switchCostumeSet() {
 	// NES version of maniac uses this to switch between the two
 	// groups of costumes it has
-	if (_features & GF_NES)
+	if (_platform == Common::kPlatformNES)
 		NES_loadCostumeSet(fetchScriptByte());
 	else
 		o2_dummy();

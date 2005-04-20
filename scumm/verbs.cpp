@@ -40,7 +40,7 @@ void ScummEngine_v2::initV2MouseOver() {
 	int i;
 	int arrow_color, color, hi_color;
 
-	if (_features & GF_NES) {
+	if (_platform == Common::kPlatformNES) {
 		color = 0;
 		hi_color = 0;
 		arrow_color = 0;
@@ -225,7 +225,7 @@ void ScummEngine::checkV2MouseOver(Common::Point pos) {
 }
 
 void ScummEngine::checkV2Inventory(int x, int y) {
-	int inventoryArea = (_features & GF_NES) ? 48: 32;
+	int inventoryArea = (_platform == Common::kPlatformNES) ? 48: 32;
 	int object = 0;
 
 	y -= virtscr[kVerbVirtScreen].topline;
@@ -266,8 +266,8 @@ void ScummEngine::redrawV2Inventory() {
 	int i;
 	int max_inv;
 	Common::Rect inventoryBox;
-	int inventoryArea = (_features & GF_NES) ? 48: 32;
-	int maxChars = (_features & GF_NES) ? 13: 18;
+	int inventoryArea = (_platform == Common::kPlatformNES) ? 48: 32;
+	int maxChars = (_platform == Common::kPlatformNES) ? 13: 18;
 
 	v2_mouseover_box = -1;
 
@@ -314,7 +314,7 @@ void ScummEngine::redrawV2Inventory() {
 		_string[1].xpos = v2_mouseover_boxes[kInventoryUpArrow].rect.left;
 		_string[1].ypos = v2_mouseover_boxes[kInventoryUpArrow].rect.top + vs->topline;
 		_string[1].color = v2_mouseover_boxes[kInventoryUpArrow].color;
-		if (_features & GF_NES)
+		if (_platform == Common::kPlatformNES)
 			drawString(1, (const byte *)"\x7E");
 		else
 			drawString(1, (const byte *)" \1\2");
@@ -325,7 +325,7 @@ void ScummEngine::redrawV2Inventory() {
 		_string[1].xpos = v2_mouseover_boxes[kInventoryDownArrow].rect.left;
 		_string[1].ypos = v2_mouseover_boxes[kInventoryDownArrow].rect.top + vs->topline;
 		_string[1].color = v2_mouseover_boxes[kInventoryDownArrow].color;
-		if (_features & GF_NES)
+		if (_platform == Common::kPlatformNES)
 			drawString(1, (const byte *)"\x7F");
 		else
 			drawString(1, (const byte *)" \3\4");
@@ -395,7 +395,7 @@ void ScummEngine::checkExecVerbs() {
 	} else if (_mouseButStat & MBS_MOUSE_MASK) {
 		VirtScreen *zone = findVirtScreen(_mouse.y);
 		byte code = _mouseButStat & MBS_LEFT_CLICK ? 1 : 2;
-		int inventoryArea = (_features & GF_NES) ? 48: 32;
+		int inventoryArea = (_platform == Common::kPlatformNES) ? 48: 32;
 
 		if (_version <= 2 && zone->number == 2 && _mouse.y <= zone->topline + 8) {
 			// Click into V2 sentence line

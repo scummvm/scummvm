@@ -1093,7 +1093,7 @@ void ScummEngine_v60he::o60_readFile() {
 	int val;
 
 	// Fatty Bear uses positive values
-	if ((_features & GF_PC) && (_gameId == GID_FBEAR))
+	if ((_platform == Common::kPlatformPC) && (_gameId == GID_FBEAR))
 		size = -size;
 
 	if (size == -2) {
@@ -1121,7 +1121,7 @@ void ScummEngine_v60he::o60_writeFile() {
 	int slot = pop();
 
 	// Fatty Bear uses positive values
-	if ((_features & GF_PC) && (_gameId == GID_FBEAR))
+	if ((_platform == Common::kPlatformPC) && (_gameId == GID_FBEAR))
 		size = -size;
 
 	if (size == -2) {

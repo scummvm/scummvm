@@ -195,7 +195,7 @@ Gdi::Gdi(ScummEngine *vm) {
 	_vm = vm;
 	_roomPalette = vm->_roomPalette;
 	_roomStrips = 0;
-	if ((vm->_features & GF_AMIGA) && (vm->_version >= 4))
+	if ((vm->_platform == Common::kPlatformAmiga) && (vm->_version >= 4))
 		_roomPalette += 16;
 }
 
@@ -225,7 +225,7 @@ void Gdi::init() {
 
 void Gdi::roomChanged(byte *roomptr, uint32 IM00_offs) {
 	if (_vm->_version == 1) {
-		if (_vm->_features & GF_NES) {
+		if (_vm->_platform == Common::kPlatformNES) {
 			decodeNESGfx(roomptr);
 		} else {
 			for (int i = 0; i < 4; i++){
@@ -272,7 +272,7 @@ void ScummEngine::initScreens(int b, int h) {
 		}
 	}
 
-	if ((_features & GF_NES) && (h != _screenHeight)) {
+	if ((_platform == Common::kPlatformNES) && (h != _screenHeight)) {
 		adj = 16;
 		initVirtScreen(kUnkVirtScreen, 0, 0, _screenWidth, adj, false, false);
 	}
@@ -555,7 +555,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		// NES can address negative number strips and that poses problem for
 		// our code. So instead adding zillions of fixes and potentially break
 		// other games we shift it right on rendering stage
-		if ((_features & GF_NES) && (((_NESStartStrip > 0) && (vs->number == kMainVirtScreen)) || (vs->number == kTextVirtScreen))) {
+		if ((_platform == Common::kPlatformNES) && (((_NESStartStrip > 0) && (vs->number == kMainVirtScreen)) || (vs->number == kTextVirtScreen))) {
 			x += 16;
 		}
 
@@ -1340,7 +1340,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	_objectMode = (flag & dbObjectMode) == dbObjectMode;
 	
 	if (_objectMode && _vm->_version == 1) {
-		if (_vm->_features & GF_NES) {
+		if (_vm->_platform == Common::kPlatformNES) {
 			// TODO: Maybe call decodeNESObject here?
 		} else {
 			decodeC64Gfx(ptr, _C64.objectMap, (width / 8) * (height / 8) * 3);
@@ -1405,7 +1405,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			dstPtr = (byte *)vs->pixels + y * vs->pitch + x * 8;
 
 		if (_vm->_version == 1) {
-			if (_vm->_features & GF_NES) {
+			if (_vm->_platform == Common::kPlatformNES) {
 				mask_ptr = getMaskBuffer(x, y, 0);
 				drawStripNES(dstPtr, mask_ptr, vs->pitch, stripnr, y, height);
 			}
@@ -1457,7 +1457,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 		if (_vm->_version == 1) {
 			mask_ptr = getMaskBuffer(x, y, 1);
-			if (_vm->_features & GF_NES) {
+			if (_vm->_platform == Common::kPlatformNES) {
 				drawStripNESMask(mask_ptr, stripnr, height);
 			} else {
 				drawStripC64Mask(mask_ptr, stripnr, width, height);

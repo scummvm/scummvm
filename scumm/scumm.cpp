@@ -112,16 +112,16 @@ static const ScummGameSettings scumm_settings[] = {
 	{"indy3EGA", "Indiana Jones and the Last Crusade", GID_INDY3, 3, 0, 13, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE, Common::kPlatformUnknown, 0, 0},
 	{"indy3Towns", "Indiana Jones and the Last Crusade (FM-TOWNS)", GID_INDY3, 3, 0, 13, MDT_TOWNS,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS | GF_FMTOWNS | GF_AUDIOTRACKS, Common::kPlatformFMTowns, 0, 0},
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS | GF_AUDIOTRACKS, Common::kPlatformFMTowns, 0, 0},
 	{"indy3", "Indiana Jones and the Last Crusade (256)", GID_INDY3, 3, 0, 13, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, Common::kPlatformUnknown, 0, 0},
 
 	{"zakTowns", "Zak McKracken and the Alien Mindbenders (FM-TOWNS)", GID_ZAK256, 3, 0, 13, MDT_TOWNS,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FMTOWNS | GF_AUDIOTRACKS, Common::kPlatformFMTowns, 0, 0},
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns, 0, 0},
 	{"loom", "Loom", GID_LOOM, 3, 0, 13, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE, Common::kPlatformUnknown, 0, 0},
 	{"loomTowns", "Loom (FM Towns)", GID_LOOM, 3, 0, 13, MDT_TOWNS,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FMTOWNS | GF_AUDIOTRACKS, Common::kPlatformFMTowns, 0, 0},
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns, 0, 0},
 
 	/* Scumm Version 4 */
 	{"monkeyEGA", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4, 0, 13, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
@@ -400,9 +400,9 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0}, // Football2002
 
 	{"179879b6e35c1ead0d93aab26db0951b", "Fatty Bear's Birthday Surprise (Windows)", GID_FBEAR, 6, 70, 13, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_WINDOWS, Common::kPlatformWindows, 0, 0},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
 	{"22c9eb04455440131ffc157aeb8d40a8", "Fatty Bear's Birthday Surprise (Windows Demo)", GID_FBEAR, 6, 70, 13, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_WINDOWS, Common::kPlatformWindows, 0, 0},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
 
 	{"d4cccb5af88f3e77f370896e9ba8c5f9", "Freddi Fish 1: The Case of the Missing Kelp Seeds", GID_HEGAME, 6, 71, 30, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
@@ -438,13 +438,13 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
 
 	{"d8d07efcb88f396bee0b402b10c3b1c9", "Maniac Mansion (NES E)", GID_MANIAC, 1, 0, 25, MDT_NONE,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES, Common::kPlatformNES, 0, "Maniac Mansion (E).prg"},
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformNES, 0, "Maniac Mansion (E).prg"},
 	{"81bbfa181184cb494e7a81dcfa94fbd9", "Maniac Mansion (NES F)", GID_MANIAC, 1, 0, 25, MDT_NONE,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES, Common::kPlatformNES, 0, "Maniac Mansion (F).prg"},
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformNES, 0, "Maniac Mansion (F).prg"},
 	{"22d07d6c386c9c25aca5dac2a0c0d94b", "Maniac Mansion (NES SW)", GID_MANIAC, 1, 0, 25, MDT_NONE,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES, Common::kPlatformNES, 0, "Maniac Mansion (SW).prg"},
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformNES, 0, "Maniac Mansion (SW).prg"},
 	{"3905799e081b80a61d4460b7b733c206", "Maniac Mansion (NES U)", GID_MANIAC, 1, 0, 25, MDT_NONE,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES, Common::kPlatformNES, 0, "Maniac Mansion (U).prg"},
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformNES, 0, "Maniac Mansion (U).prg"},
 	{"7f45ddd6dbfbf8f80c0c0efea4c295bc", "Maniac Mansion (v1)", GID_MANIAC, 1, 0, 25, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformUnknown, 0, 0},
 
@@ -464,14 +464,14 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0}, // 500demo
 
 	{"9c92eeaf517a31b7221ec2546ab669fd", "Putt-Putt Goes To The Moon (Windows)", GID_HEGAME, 6, 70, 13, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_WINDOWS, Common::kPlatformWindows, 0, 0},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
 	{"9c143c5905055d5df7a0f014ab379aee", "Putt-Putt Goes To The Moon (Windows Demo)", GID_HEGAME, 6, 70, 13, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_WINDOWS, Common::kPlatformWindows, 0, 0},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
 
 	{"0b3222aaa7efcf283eb621e0cefd26cc", "Putt-Putt Joins The Parade (early version)", GID_HEGAME, 6, 0, 13, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, Common::kPlatformUnknown, 0, 0},
 	{"6a30a07f353a75cdc602db27d73e1b42", "Putt-Putt Joins The Parade (Windows)", GID_HEGAME, 6, 70, 13, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_WINDOWS, Common::kPlatformWindows, 0, 0},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
 	{"37ff1b308999c4cca7319edfcc1280a0", "Putt-Putt Joins The Parade (Windows Demo)", GID_HEGAME, 6, 70, 13, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
 
@@ -642,13 +642,13 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
 
 	// Add default file directories.
-	if (((_features & GF_AMIGA) || (_features & GF_ATARI_ST)) && (_version <= 4)) {
+	if (((_platform == Common::kPlatformAmiga) || (_platform == Common::kPlatformAtariST)) && (_version <= 4)) {
 		// This is for the Amiga version of Indy3/Loom/Maniac/Zak
 		File::addDefaultDirectory(_gameDataPath + "ROOMS/");
 		File::addDefaultDirectory(_gameDataPath + "rooms/");
 	}
 
-	if ((_features & GF_MACINTOSH) && (_version == 3)) {
+	if ((_platform == Common::kPlatformMacintosh) && (_version == 3)) {
 		// This is for the Mac version of Indy3/Loom
 		File::addDefaultDirectory(_gameDataPath + "Rooms 1/");
 		File::addDefaultDirectory(_gameDataPath + "Rooms 2/");
@@ -687,7 +687,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 
 	// We read data directly from NES ROM instead of extracting it with
 	// external tool
-	if ((_features & GF_NES) && (_substResFileNameIndex || gs.detectFilename))
+	if ((_platform == Common::kPlatformNES) && (_substResFileNameIndex || gs.detectFilename))
 		_fileHandle = new ScummNESFile();
 	else
 		_fileHandle = new ScummFile();
@@ -1139,13 +1139,13 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		_features |= GF_DEFAULT_TO_1X_SCALER;
 	}
 
-	if (_features & GF_FMTOWNS && _version == 3) {	// FM-TOWNS V3 games use 320x240
+	if (_platform == Common::kPlatformFMTowns && _version == 3) {	// FM-TOWNS V3 games use 320x240
 		_screenWidth = 320;
 		_screenHeight = 240;
 	} else if (_features & GF_DEFAULT_TO_1X_SCALER) {
 		_screenWidth = 640;
 		_screenHeight = 480;
-	} else if (_features & GF_NES) {
+	} else if (_platform == Common::kPlatformNES) {
 		_screenWidth = 256;
 		_screenHeight = 240;
 	} else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
@@ -1322,7 +1322,7 @@ int ScummEngine::init(GameDetector &detector) {
 	loadCJKFont();
 
 	// Create the charset renderer
-	if (_features & GF_NES)
+	if (_platform == Common::kPlatformNES)
 		_charset = new CharsetRendererNES(this, _language);
 	else if (_version <= 2)
 		_charset = new CharsetRendererV2(this, _language);
@@ -1337,7 +1337,7 @@ int ScummEngine::init(GameDetector &detector) {
 	if (_features & GF_NEW_COSTUMES) {
 		_costumeRenderer = new AkosRenderer(this);
 		_costumeLoader = new AkosCostumeLoader(this);
-	} else if (_features & GF_NES) {
+	} else if (_platform == Common::kPlatformNES) {
 		_costumeRenderer = new NESCostumeRenderer(this);
 		_costumeLoader = new NESCostumeLoader(this);
 	} else {
@@ -1413,7 +1413,7 @@ int ScummEngine::init(GameDetector &detector) {
 
 	// Since MM NES substitutes whole file class we get monster.sou file
 	// name badly generated, so avoid even attempts to open it
-	if (!(_features & GF_NES))
+	if (!(_platform == Common::kPlatformNES))
 		_sound->setupSound();
 
 	// Create debugger
@@ -1429,7 +1429,7 @@ void ScummEngine::scummInit() {
 	_tempMusic = 0;
 	debug(9, "scummInit");
 
-	if ((_gameId == GID_MANIAC) && (_version == 1) && !(_features & GF_NES)) {
+	if ((_gameId == GID_MANIAC) && (_version == 1) && !(_platform == Common::kPlatformNES)) {
 		initScreens(16, 152);
 	} else if (_version >= 7 || _heversion >= 71) {
 		initScreens(0, _screenHeight);
@@ -1448,7 +1448,7 @@ void ScummEngine::scummInit() {
 		// Original games used some kind of dynamic
 		// color table remapping between rooms
 		if (_gameId == GID_MANIAC) {
-			if (_features & GF_NES)
+			if (_platform == Common::kPlatformNES)
 				setupNESPalette();
 			else
 				setupV1ManiacPalette();
@@ -1477,7 +1477,7 @@ void ScummEngine::scummInit() {
 			break;
 
 		default:
-			if ((_features & GF_AMIGA) || (_features & GF_ATARI_ST))
+			if ((_platform == Common::kPlatformAmiga) || (_platform == Common::kPlatformAtariST))
 				setupAmigaPalette();
 			else
 				setupEGAPalette();
@@ -1544,7 +1544,7 @@ void ScummEngine::scummInit() {
 		VAR(VAR_CAMERA_ACCEL_X) = 100;
 		VAR(VAR_CAMERA_ACCEL_Y) = 100;
 	} else if (!(_features & GF_NEW_CAMERA)) {
-		if (_features & GF_NES) {
+		if (_platform == Common::kPlatformNES) {
 			camera._leftTrigger = 6;	// 6
 			camera._rightTrigger = 21;	// 25
 		} else {
@@ -1596,7 +1596,7 @@ void ScummEngine::scummInit() {
 
 	clearDrawObjectQueue();
 
-	if (_features & GF_NES)
+	if (_platform == Common::kPlatformNES)
 		decodeNESBaseTiles();
 
 	for (i = 0; i < 6; i++) {
@@ -1624,7 +1624,7 @@ void ScummEngine::scummInit() {
 void ScummEngine_v2::scummInit() {
 	ScummEngine::scummInit();
 
-	if (_features & GF_NES) {
+	if (_platform == Common::kPlatformNES) {
 		initNESMouseOver();
 		_switchRoomEffect2 = _switchRoomEffect = 6;
 	} else {
@@ -1714,13 +1714,13 @@ void ScummEngine::setupMusic(int midi) {
 	// Init iMuse
 	if (_features & GF_DIGI_IMUSE) {
 		_musicEngine = _imuseDigital = new IMuseDigital(this, 10);
-	} else if (_features & GF_NES) {
+	} else if (_platform == Common::kPlatformNES) {
 		_musicEngine = new Player_NES(this);
-	} else if ((_features & GF_AMIGA) && (_version == 2)) {
+	} else if ((_platform == Common::kPlatformAmiga) && (_version == 2)) {
 		_musicEngine = new Player_V2A(this);
-	} else if ((_features & GF_AMIGA) && (_version == 3)) {
+	} else if ((_platform == Common::kPlatformAmiga) && (_version == 3)) {
 		_musicEngine = new Player_V3A(this);
-	} else if ((_features & GF_AMIGA) && (_version < 5)) {
+	} else if ((_platform == Common::kPlatformAmiga) && (_version < 5)) {
 		_musicEngine = NULL;
 	} else if (_gameId == GID_MANIAC && (_version == 1)) {
 		_musicEngine = new Player_V1(this, _midiDriver != MD_PCSPK);
@@ -1902,7 +1902,7 @@ int ScummEngine::scummLoop(int delta) {
 		VAR(VAR_VIRT_MOUSE_Y) = _virtualMouse.y / 2;
 
 		// Adjust mouse coordinates as narrow rooms in NES are centered
-		if (_features & GF_NES && _NESStartStrip > 0) {
+		if (_platform == Common::kPlatformNES && _NESStartStrip > 0) {
 			VAR(VAR_VIRT_MOUSE_X) -= 2;
 			if (VAR(VAR_VIRT_MOUSE_X) < 0)
 				VAR(VAR_VIRT_MOUSE_X) = 0;
@@ -2003,11 +2003,11 @@ load_game:
 			memset(args, 0, sizeof(args));
 			args[0] = 2;
 
-			if (_features & GF_MACINTOSH)
+			if (_platform == Common::kPlatformMacintosh)
 				value = 105;
 			else
  				value = (_gameId == GID_LOOM256) ? 150 : 100;
-			byte restoreScript = (_features & GF_FMTOWNS) ? 17 : 18;
+			byte restoreScript = (_platform == Common::kPlatformFMTowns) ? 17 : 18;
 			// if verbs should be shown restore them
 			if (VAR(value) == 2)
 				runScript(restoreScript, 0, 0, args);
@@ -2397,7 +2397,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 		} else if (g->heversion >= 60) {
 			strcpy(detectName, base);
 			strcat(detectName, ".he0");
-		} else if (g->features & GF_NES) {
+		} else if (g->platform == Common::kPlatformNES) {
 			strcpy(detectName, base);
 		} else {
 			strcpy(detectName, base);
@@ -2692,7 +2692,6 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	if (substLastIndex > 0) {
 		if (substResFileNameTable[substLastIndex].genMethod == kGenMac ||
 			substResFileNameTable[substLastIndex].genMethod == kGenMacNoParens)
-			game.features |= GF_MACINTOSH;
 			game.platform = Common::kPlatformMacintosh;
 	}
 
@@ -2728,35 +2727,9 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	// -> potentially might cause troubles with FM-Towns/amiga versions?
 	if (ConfMan.hasKey("platform"))
 		game.platform = Common::parsePlatform(ConfMan.get("platform"));
-	else
-		game.platform = Common::kPlatformPC;
 
-	switch (game.platform) {
-	case Common::kPlatformAmiga:
-		game.features |= GF_AMIGA;
-		break;
-	case Common::kPlatformAtariST:
-		game.features |= GF_ATARI_ST;
-		break;
-	case Common::kPlatformMacintosh:
-		game.features |= GF_MACINTOSH;
-		break;
-	case Common::kPlatformNES:
-		game.features |= GF_NES;
-		break;
-	case Common::kPlatformWindows:
-		game.features |= GF_WINDOWS;
-		break;
-	case Common::kPlatformFMTowns:
-		game.features |= GF_FMTOWNS;
-		if (game.version == 3) {
-			game.midi = MDT_TOWNS;
-		}
-		break;
-	default:
-		if (!(game.features & GF_FMTOWNS))
-			game.features |= GF_PC;
-		break;
+	if (game.platform == Common::kPlatformFMTowns && game.version == 3) {
+		game.midi = MDT_TOWNS;
 	}
 
 	// Special cases for HE games

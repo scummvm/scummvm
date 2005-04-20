@@ -96,7 +96,7 @@ byte ClassicCostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 
 	
 	const int scaletableSize = 128;
-	const bool newAmiCost = (_vm->_version == 5) && (_vm->_features & GF_AMIGA);
+	const bool newAmiCost = (_vm->_version == 5) && (_vm->_platform == Common::kPlatformAmiga);
 
 	CHECK_HEAP
 

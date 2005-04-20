@@ -1163,7 +1163,7 @@ int CharsetRendererV3::getCharWidth(byte chr) {
 void CharsetRendererV3::setColor(byte color)
 {
 	_color = color;
-	_shadowColor = (_vm->_features & GF_FMTOWNS) ? 8 : 0;
+	_shadowColor = (_vm->_platform == Common::kPlatformFMTowns) ? 8 : 0;
 	// FM-TOWNS version of Loom uses old colour method as well
 	if ((_vm->_version >= 2) && (_vm->_features & GF_16COLOR || _vm->_gameId == GID_LOOM)) {
 		_dropShadow = ((_color & 0xF0) != 0);
@@ -1306,7 +1306,7 @@ void CharsetRendererClassic::printChar(int chr) {
 	int type = *_fontPtr;
 	if (is2byte) {
 		_dropShadow = true;
-		_shadowColor = (_vm->_features & GF_FMTOWNS) ? 8 : 0;
+		_shadowColor = (_vm->_platform == Common::kPlatformFMTowns) ? 8 : 0;
 		charPtr = _vm->get2byteCharPtr(chr);
 		width = _vm->_2byteWidth;
 		height = _vm->_2byteHeight;
@@ -1500,7 +1500,7 @@ void CharsetRendererClassic::drawChar(int chr, const Graphics::Surface &s, int x
 
 	if (is2byte) {
 		_dropShadow = true;
-		_shadowColor = (_vm->_features & GF_FMTOWNS) ? 8 : 0;
+		_shadowColor = (_vm->_platform == Common::kPlatformFMTowns) ? 8 : 0;
 		charPtr = _vm->get2byteCharPtr(chr);
 		width = _vm->_2byteWidth;
 		height = _vm->_2byteHeight;

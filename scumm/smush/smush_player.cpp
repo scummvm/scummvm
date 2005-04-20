@@ -984,13 +984,13 @@ void SmushPlayer::setupAnim(const char *file) {
 	handleAnimHeader(*sub);
 
 	if (_insanity) {
-		if (!((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)))
+		if (!((_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC)))
 			readString("mineroad.trs");
 	} else
 		readString(file);
 
 	if (_vm->_gameId == GID_FT) {
-		if (!((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))) {
+		if (!((_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC))) {
 			_sf[0] = new SmushFont(true, false);
 			_sf[1] = new SmushFont(true, false);
 			_sf[2] = new SmushFont(true, false);

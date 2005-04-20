@@ -216,7 +216,7 @@ void ScummEngine::processKbd(bool smushMode) {
 
 	_lastKeyHit = _keyPressed;
 	_keyPressed = 0;
-	if (((_version <= 2) || (_features & GF_FMTOWNS && _version == 3)) && 315 <= _lastKeyHit && _lastKeyHit < 315+12) {
+	if (((_version <= 2) || (_platform == Common::kPlatformFMTowns && _version == 3)) && 315 <= _lastKeyHit && _lastKeyHit < 315+12) {
 		// Convert F-Keys for V1/V2 games (they start at 1 instead of at 315)
 		_lastKeyHit -= 314;
 	}
@@ -374,7 +374,7 @@ void ScummEngine::processKbd(bool smushMode) {
 	}
 
 	if (VAR_RESTART_KEY != 0xFF && _lastKeyHit == VAR(VAR_RESTART_KEY) ||
-	   (((_version <= 2) || (_features & GF_FMTOWNS && _version == 3)) && _lastKeyHit == 8)) {
+	   (((_version <= 2) || (_platform == Common::kPlatformFMTowns && _version == 3)) && _lastKeyHit == 8)) {
 		confirmRestartDialog();
 		return;
 	}
@@ -392,7 +392,7 @@ void ScummEngine::processKbd(bool smushMode) {
 		return;
 	}
 
-	if ((_version <= 2) || (_features & GF_FMTOWNS && _version == 3))
+	if ((_version <= 2) || (_platform == Common::kPlatformFMTowns && _version == 3))
 		saveloadkey = 5;	// F5
 	else if ((_version <= 3) || (_gameId == GID_SAMNMAX) || (_gameId == GID_CMI) || (_heversion >= 72))
 		saveloadkey = 319;	// F5

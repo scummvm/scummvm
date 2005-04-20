@@ -119,7 +119,7 @@ void ScummEngine_v6::setCursorTransparency(int a) {
 void ScummEngine::updateCursor() {
 	_system->setMouseCursor(_grabbedCursor, _cursor.width, _cursor.height,
 							_cursor.hotspotX, _cursor.hotspotY, 
-							(_features & GF_NES ? _grabbedCursor[63] : 255),
+							(_platform == Common::kPlatformNES ? _grabbedCursor[63] : 255),
 							(_heversion == 70 ? 2 : 1));
 }
 
@@ -157,7 +157,7 @@ void ScummEngine::setCursorFromBuffer(byte *ptr, int width, int height, int pitc
 }
 
 void ScummEngine_v70he::setCursorFromImg(uint img, uint room, uint imgindex) {
-	if (_features & GF_MACINTOSH && _heversion == 72) 
+	if (_platform == Common::kPlatformMacintosh && _heversion == 72) 
 		_macResExtractor->setCursor(img);
 	else
 		_win32ResExtractor->setCursor(img);
@@ -382,7 +382,7 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 	else
 		color = default_cursor_colors[idx];
 
-	if (_features & GF_NES) {
+	if (_platform == Common::kPlatformNES) {
 		_cursor.width = 8;
 		_cursor.height = 8;
 		_cursor.hotspotX = 0;
@@ -399,7 +399,7 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 				*dst++ = palette[((c0 >> (7 - j)) & 1) | (((c1 >> (7 - j)) & 1) << 1) | ((idx == 3) ? 4 : 0)];
 		}
 
-	} else if (_version <= 2 && _features & GF_AMIGA) {
+	} else if (_version <= 2 && _platform == Common::kPlatformAmiga) {
 		_cursor.width = 15;
 		_cursor.height = 15;
 		_cursor.hotspotX = 7;

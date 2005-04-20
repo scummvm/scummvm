@@ -427,7 +427,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		memcpy(sound, ptr + 6, size);
 		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
-	else if ((_vm->_features & GF_FMTOWNS && _vm->_version == 3) || READ_UINT32(ptr) == MKID('SOUN') || READ_UINT32(ptr) == MKID('TOWS')) {
+	else if ((_vm->_platform == Common::kPlatformFMTowns && _vm->_version == 3) || READ_UINT32(ptr) == MKID('SOUN') || READ_UINT32(ptr) == MKID('TOWS')) {
 
 		bool tows = READ_UINT32(ptr) == MKID('TOWS');
 		if (_vm->_version == 3) {
@@ -511,7 +511,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 			break;
 		}
 	}
-	else if ((_vm->_gameId == GID_LOOM) && (_vm->_features & GF_MACINTOSH))  {
+	else if ((_vm->_gameId == GID_LOOM) && (_vm->_platform == Common::kPlatformMacintosh))  {
 		// Mac version of Loom uses yet another sound format
 		/*
 		playSound #9 (room 70)
@@ -534,7 +534,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		000070: 01 18 5a 00  10 00 02 28  5f 00 01 00  00 00 00 00   |..Z....(_.......|
 		*/
 	}
-	else if ((_vm->_features & GF_MACINTOSH) && (_vm->_gameId == GID_INDY3) && (ptr[26] == 0)) {
+	else if ((_vm->_platform == Common::kPlatformMacintosh) && (_vm->_gameId == GID_INDY3) && (ptr[26] == 0)) {
 		size = READ_BE_UINT16(ptr + 12);
 		rate = 3579545 / READ_BE_UINT16(ptr + 20);
 		sound = (char *)malloc(size);
@@ -545,9 +545,9 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 	else {
 		
 		if (_vm->_gameId == GID_MONKEY_VGA || _vm->_gameId == GID_MONKEY_EGA
-			|| (_vm->_gameId == GID_MONKEY && _vm->_features & GF_MACINTOSH)) {
+			|| (_vm->_gameId == GID_MONKEY && _vm->_platform == Common::kPlatformMacintosh)) {
 			// Sound is currently not supported at all in the amiga versions of these games
-			if (_vm->_features & GF_AMIGA) {
+			if (_vm->_platform == Common::kPlatformAmiga) {
 				int track = -1;
 				if (soundID == 50)
 					track = 17;
@@ -1133,7 +1133,7 @@ ScummFile *Sound::openSfxFile() {
 	}
 
 	if (!file->isOpen()) {
-		if ((_vm->_heversion == 60 && _vm->_features & GF_MACINTOSH) || (_vm->_heversion >= 70)) {
+		if ((_vm->_heversion == 60 && _vm->_platform == Common::kPlatformMacintosh) || (_vm->_heversion >= 70)) {
 			sprintf(buf, "%s.he2", _vm->getGameName());
 		} else {
 			sprintf(buf, "%s.tlk", _vm->getGameName());
@@ -2203,7 +2203,7 @@ int ScummEngine::readSoundResourceSmallHeader(int type, int idx) {
 
 	debug(4, "readSoundResourceSmallHeader(%d)", idx);
 
-	if ((_gameId == GID_LOOM) && (_features & GF_PC) && VAR(VAR_SOUNDCARD) == 4) {
+	if ((_gameId == GID_LOOM) && (_platform == Common::kPlatformPC) && VAR(VAR_SOUNDCARD) == 4) {
 		// Roland resources in Loom are tagless
 		// So we add an RO tag to allow imuse to detect format
 		byte *ptr, *src_ptr;
@@ -2223,7 +2223,7 @@ int ScummEngine::readSoundResourceSmallHeader(int type, int idx) {
 		wa_size = _fileHandle->readUint16LE();
 		_fileHandle->seek(wa_size - 2, SEEK_CUR);
 
-		if (!(_features & GF_ATARI_ST || _features & GF_MACINTOSH)) {
+		if (!(_platform == Common::kPlatformAtariST || _platform == Common::kPlatformMacintosh)) {
 			ad_offs = _fileHandle->pos();
 			ad_size = _fileHandle->readUint16LE();
 		}

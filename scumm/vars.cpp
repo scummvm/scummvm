@@ -541,7 +541,7 @@ void ScummEngine::initScummVars() {
 		case MD_ADLIB: VAR(VAR_SOUNDCARD) = 3; break;
 		default:       
 			if ((_gameId == GID_MONKEY_EGA || _gameId == GID_MONKEY_VGA || _gameId == GID_LOOM)
-			   &&  (_features & GF_PC)) {
+			   &&  (_platform == Common::kPlatformPC)) {
 				if (_gameId == GID_LOOM) {
 					char buf[50];
 					File f;
@@ -574,11 +574,11 @@ void ScummEngine::initScummVars() {
 			VAR(VAR_SOUNDPARAM3) = 0;
 		}
 
-		if (_features & GF_FMTOWNS)
+		if (_platform == Common::kPlatformFMTowns)
 			VAR(VAR_VIDEOMODE) = 42;
-		else if (_gameId == GID_INDY3 && (_features & GF_MACINTOSH))
+		else if (_gameId == GID_INDY3 && (_platform == Common::kPlatformMacintosh))
 			VAR(VAR_VIDEOMODE) = 50;
-		else if (_gameId == GID_MONKEY2 && (_features & GF_AMIGA))
+		else if (_gameId == GID_MONKEY2 && (_platform == Common::kPlatformAmiga))
 			VAR(VAR_VIDEOMODE) = 82;
 		else if (_renderMode == Common::kRenderCGA)
 			VAR(VAR_VIDEOMODE) = 4;
@@ -591,7 +591,7 @@ void ScummEngine::initScummVars() {
 
 		VAR(VAR_CURRENTDRIVE) = 0;
 		if (_gameId == GID_LOOM && (_features & GF_OLD_BUNDLE)) {
-			if (_features & GF_MACINTOSH) {
+			if (_platform == Common::kPlatformMacintosh) {
 				// This is the for the Mac version of Indy3/Loom
 				VAR(39) = 320;
 			} else {

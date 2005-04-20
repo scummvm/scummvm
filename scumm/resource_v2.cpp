@@ -35,13 +35,13 @@ void ScummEngine_v2::readClassicIndexFile() {
 	int i;
 
 	if (_gameId == GID_MANIAC) {
-		if (_features & GF_NES)
+		if (_platform == Common::kPlatformNES)
 			_numGlobalObjects = 775;
 		else
 			_numGlobalObjects = 800;
 		_numRooms = 55;
 
-		if (_features & GF_NES)
+		if (_platform == Common::kPlatformNES)
 			// costumes 25-36 are special. see v1MMNEScostTables[] in costume.cpp
 			// costumes 37-76 are room graphics resources
 			// costume 77 is a character set translation table
@@ -169,7 +169,7 @@ void ScummEngine_v2::readIndexFile() {
 			readClassicIndexFile();
 			break;
 		case 0x4643:
-			if (!(_features & GF_NES))
+			if (!(_platform == Common::kPlatformNES))
 				error("Use maniac target");
 			printf("NES V1 game detected\n");
 			_version = 1;

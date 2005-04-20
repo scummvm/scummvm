@@ -67,14 +67,14 @@ void Insane::runScene(int arraynum) {
 		break;
 	case 2:
 		setupValues();
-		if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+		if ((_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC))
 			smlayer_setActorCostume(0, 2, readArray(10));
 		else
 			smlayer_setActorCostume(0, 2, readArray(11));
 		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1 + 190, _smlayer_room2);
 
 		_mainRoadPos = readArray(2);
-		if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)) {
+		if ((_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC)) {
 			initScene(5);
 			startVideo("tovista.san", 1, 32, 12, 0);
 		} else if (_mainRoadPos == _posBrokenTruck) {
@@ -141,7 +141,7 @@ void Insane::runScene(int arraynum) {
 
 	_insaneIsRunning = false;
 
-	if (!((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))) {
+	if (!((_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC))) {
 		writeArray(50, _actor[0].inventory[INV_CHAIN]);
 		writeArray(51, _actor[0].inventory[INV_CHAINSAW]);
 		writeArray(52, _actor[0].inventory[INV_MACE]);
@@ -238,7 +238,7 @@ void Insane::stopSceneSounds(int sceneId) {
 		_actor[1].defunct = 0;
 		_actor[1].scenePropSubIdx = 0;
 		_actor[1].field_54 = 0;
-		if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)) {
+		if ((_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC)) {
 			smlayer_stopSound(59);
 			smlayer_stopSound(63);
 		} else {
@@ -314,7 +314,7 @@ void Insane::shutCurrentScene(void) {
 
 // insane_loadSceneData1 & insane_loadSceneData2
 int Insane::loadSceneData(int scene, int flag, int phase) {
-	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+	if ((_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC))
 		return 1;
 
 	int retvalue = 1;
@@ -648,7 +648,7 @@ void Insane::setSceneCostumes(int sceneId) {
 	case 4:
 	case 5:
 	case 6:
-		if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+		if ((_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC))
 			smlayer_setActorCostume(0, 2, readArray(10));
 		else
 			smlayer_setActorCostume(0, 2, readArray(11));
@@ -668,7 +668,7 @@ void Insane::setEnemyCostumes(void) {
 
 	debugC(DEBUG_INSANE, "setEnemyCostumes(%d)", _currEnemy);
 
-	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)) {
+	if ((_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC)) {
 		smlayer_setActorCostume(0, 2, readArray(11));
 		smlayer_setActorCostume(0, 0, readArray(13));
 		smlayer_setActorCostume(0, 1, readArray(12));
@@ -1132,7 +1132,7 @@ void Insane::postCase20(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 
 void Insane::postCase3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					   int32 setupsan13, int32 curFrame, int32 maxFrame) {
-	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+	if ((_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC))
 		turnBen(false);
 	else
 		turnBen(true);

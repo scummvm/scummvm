@@ -553,7 +553,7 @@ void ScummEngine_v3old::initRoomSubBlocks() {
 	rmhd = (const RoomHeader *)(roomptr + 4);
 	
 	if (_version == 1) {
-		if (_features & GF_NES) {
+		if (_platform == Common::kPlatformNES) {
 			_roomWidth = READ_LE_UINT16(&(rmhd->old.width)) * 8;
 			_roomHeight = READ_LE_UINT16(&(rmhd->old.height)) * 8;
 

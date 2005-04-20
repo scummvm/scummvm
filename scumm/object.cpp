@@ -352,7 +352,7 @@ int ScummEngine::findObject(int x, int y) {
 		} while ((_objs[b].state & mask) == a);
 	}
 	
-	if ((_features & GF_NES) && (_userState & 0x40) && (v2_mouseover_box >= 0) && 
+	if ((_platform == Common::kPlatformNES) && (_userState & 0x40) && (v2_mouseover_box >= 0) && 
 		(v2_mouseover_box < 4))
 		return findInventory(VAR(VAR_EGO), v2_mouseover_box + _inventoryOffset + 1);
 
@@ -487,7 +487,7 @@ void ScummEngine::drawObject(int obj, int arg) {
 		byte flags = od.flags | Gdi::dbObjectMode;
 
 		if (_version == 1) {
-			if (_features & GF_NES) {
+			if (_platform == Common::kPlatformNES) {
 				gdi.decodeNESObject(ptr, xpos, ypos, width, height);
 			}
 		}

@@ -445,7 +445,7 @@ void Actor::setupActorScale() {
 }
 
 void Actor::startAnimActor(int f) {
-	if (_vm->_version >= 7 && !((_vm->_gameId == GID_FT) && (_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))) {
+	if (_vm->_version >= 7 && !((_vm->_gameId == GID_FT) && (_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC))) {
 		switch (f) {
 		case 1001:
 			f = _initFrame;
@@ -512,7 +512,7 @@ void Actor::startAnimActor(int f) {
 void Actor::animateActor(int anim) {
 	int cmd, dir;
 
-	if (_vm->_version >= 7 && !((_vm->_gameId == GID_FT) && (_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))) {
+	if (_vm->_version >= 7 && !((_vm->_gameId == GID_FT) && (_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC))) {
 
 		if (anim == 0xFF)
 			anim = 2000;
@@ -825,14 +825,14 @@ void Actor::showActor() {
 // an internal variable. Emulate this to prevent overwriting script vars...
 // Maniac NES (V1), however, DOES have a ScummVar for VAR_TALK_ACTOR
 int ScummEngine::getTalkingActor() {
-	if (_gameId == GID_MANIAC && _version == 1 && !(_features & GF_NES))
+	if (_gameId == GID_MANIAC && _version == 1 && !(_platform == Common::kPlatformNES))
 		return _V1TalkingActor;
 	else
 		return VAR(VAR_TALK_ACTOR);
 }
 
 void ScummEngine::setTalkingActor(int value) {
-	if (_gameId == GID_MANIAC && _version == 1 && !(_features & GF_NES))
+	if (_gameId == GID_MANIAC && _version == 1 && !(_platform == Common::kPlatformNES))
 		_V1TalkingActor = value;
 	else
 		VAR(VAR_TALK_ACTOR) = value;
@@ -1041,7 +1041,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	bcr->_actorX = _pos.x + _offsX - _vm->virtscr[0].xstart;
 	bcr->_actorY = _pos.y + _offsY - _elevation;
 
-	if (_vm->_features & GF_NES) {
+	if (_vm->_platform == Common::kPlatformNES) {
 		// In the NES version, when the actor is facing right,
 		// we need to shift it 8 pixels to the left
 		if (_facing == 90)
@@ -1315,7 +1315,7 @@ void ScummEngine::actorTalk(const byte *msg) {
 
 	if (_heversion >= 72 || getTalkingActor() > 0x7F) {
 		_charsetColor = (byte)_string[0].color;
-	} else if (_features & GF_NES) {
+	} else if (_platform == Common::kPlatformNES) {
 		if (_NES_lastTalkingActor != getTalkingActor())
 			_NES_talkColor ^= 1;
 		_NES_lastTalkingActor = getTalkingActor();

@@ -138,7 +138,7 @@ void ScummEngine::openRoom(const int room) {
 		}
 
 		// If we have substitute
-		if (_substResFileNameIndex > 0 && !(_features & GF_NES)) {
+		if (_substResFileNameIndex > 0 && !(_platform == Common::kPlatformNES)) {
 			char tmpBuf[128];
 
 			generateSubstResFileName(buf, tmpBuf, sizeof(tmpBuf));
@@ -646,7 +646,7 @@ int ScummEngine::loadResource(int type, int idx) {
 	_fileHandle->seek(fileOffs + _fileOffset, SEEK_SET);
 
 	if (_features & GF_OLD_BUNDLE) {
-		if ((_version == 3) && !(_features & GF_AMIGA) && (type == rtSound)) {
+		if ((_version == 3) && !(_platform == Common::kPlatformAmiga) && (type == rtSound)) {
 			return readSoundResourceSmallHeader(type, idx);
 		} else {
 			size = _fileHandle->readUint16LE();
@@ -658,7 +658,7 @@ int ScummEngine::loadResource(int type, int idx) {
 		size = _fileHandle->readUint32LE();
 		tag = _fileHandle->readUint16LE();
 		_fileHandle->seek(-6, SEEK_CUR);
-		if ((type == rtSound) && !(_features & GF_AMIGA) && !(_features & GF_FMTOWNS)) {
+		if ((type == rtSound) && !(_platform == Common::kPlatformAmiga) && !(_platform == Common::kPlatformFMTowns)) {
 			return readSoundResourceSmallHeader(type, idx);
 		}
 	} else {
@@ -1073,7 +1073,7 @@ void ScummEngine_v7::readMAXS(int blockSize) {
 	_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 
 	if ((_gameId == GID_FT) && (_features & GF_DEMO) && 
-		(_features & GF_PC))
+		(_platform == Common::kPlatformPC))
 		_numGlobalScripts = 300;
 	else
 		_numGlobalScripts = 2000;

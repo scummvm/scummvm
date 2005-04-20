@@ -1099,7 +1099,7 @@ void ScummEngine_v5::o5_getActorX() {
 	int a;
 	getResultPos();
 
-	if ((_gameId == GID_INDY3) && !(_features & GF_MACINTOSH))
+	if ((_gameId == GID_INDY3) && !(_platform == Common::kPlatformMacintosh))
 		a = getVarOrDirectByte(PARAM_1);
 	else
 		a = getVarOrDirectWord(PARAM_1);
@@ -1111,7 +1111,7 @@ void ScummEngine_v5::o5_getActorY() {
 	int a;
 	getResultPos();
 
-	if ((_gameId == GID_INDY3) && !(_features & GF_MACINTOSH)) {
+	if ((_gameId == GID_INDY3) && !(_platform == Common::kPlatformMacintosh)) {
 		a = getVarOrDirectByte(PARAM_1);
 
 		// WORKAROUND bug #636433 (can't get into Zeppelin)
@@ -1138,7 +1138,7 @@ void ScummEngine_v5::o5_saveLoadGame() {
 		slot = 1;
 		if (a == 1)
 			_opcode = 0x40;
-		else if ((a == 2) || (_features & GF_NES))
+		else if ((a == 2) || (_platform == Common::kPlatformNES))
 			_opcode = 0x80;
 	} else {
 		_opcode = a & 0xE0;
@@ -1407,7 +1407,7 @@ void ScummEngine_v5::o5_lessOrEqual() {
 	int16 b = getVarOrDirectWord(PARAM_1);
 
 	// WORKAROUND bug #820507 : Work around a bug in Indy3Town.
-	if (_gameId == GID_INDY3 && (_features & GF_FMTOWNS) &&
+	if (_gameId == GID_INDY3 && (_platform == Common::kPlatformFMTowns) &&
 	    (vm.slot[_currentScript].number == 200 || vm.slot[_currentScript].number == 203) &&
 	    _currentRoom == 70 && b == -256) {
 		o5_jumpRelative();
@@ -1698,7 +1698,7 @@ void ScummEngine_v5::o5_resourceRoutines() {
 	_opcode = fetchScriptByte();
 	if (_opcode != 17)
 		resid = getVarOrDirectByte(PARAM_1);
-	if (!(_features & GF_FMTOWNS)) {
+	if (!(_platform == Common::kPlatformFMTowns)) {
 		// FIXME - this probably can be removed eventually, I don't think the following
 		// check will ever be triggered, but then I could be wrong and it's better
 		// to play it safe.
@@ -2106,7 +2106,7 @@ void ScummEngine_v5::o5_setVarRange() {
 }
 
 void ScummEngine_v5::o5_startMusic() {
-	if (_features & GF_FMTOWNS && _version == 3) {
+	if (_platform == Common::kPlatformFMTowns && _version == 3) {
 		// In FM-TOWNS games this is some kind of Audio CD status query function.
 		// See also bug #762589 (thanks to Hibernatus for providing the information).
 		getResultPos();
@@ -2348,7 +2348,7 @@ void ScummEngine_v5::o5_verbOps() {
 			vs->curRect.left = getVarOrDirectWord(PARAM_1);
 			vs->curRect.top = getVarOrDirectWord(PARAM_2);
 			// Macintosh verison of indy3ega used different interface, so adjust values.
-			if ((_features & GF_MACINTOSH) && (_gameId == GID_INDY3)) {
+			if ((_platform == Common::kPlatformMacintosh) && (_gameId == GID_INDY3)) {
 				if ((verb > 0) && (verb < 14) || (verb > 31) && (verb < 35)) {
 					switch (verb) {
 					case 1:
@@ -2482,7 +2482,7 @@ void ScummEngine_v5::o5_verbOps() {
 void ScummEngine_v5::o5_wait() {
 	const byte *oldaddr = _scriptPointer - 1;
 
-	if ((_gameId == GID_INDY3) && !(_features & GF_MACINTOSH)) {
+	if ((_gameId == GID_INDY3) && !(_platform == Common::kPlatformMacintosh)) {
 		_opcode = 2;
 	} else
 		_opcode = fetchScriptByte();
@@ -2745,7 +2745,7 @@ void ScummEngine_v5::o5_oldRoomEffect() {
 		a = getVarOrDirectWord(PARAM_1);
 
 #if 1
-		if (_features & GF_FMTOWNS && _version == 3) {
+		if (_platform == Common::kPlatformFMTowns && _version == 3) {
 			// FIXME / TODO: OK the first thing to note is: at least in Zak256,
 			// maybe also in other games, this opcode does a bit more. I added
 			// some stubs here, but somebody with a full IDA or more knowledge

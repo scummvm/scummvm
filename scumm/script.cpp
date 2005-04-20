@@ -524,12 +524,12 @@ int ScummEngine::readVar(uint var) {
 			return _roomVars[var];
 
 		} else if ((_gameId == GID_ZAK256) || (_features & GF_OLD_BUNDLE) || 
-			(_gameId == GID_LOOM && (_features & GF_FMTOWNS))) {
+			(_gameId == GID_LOOM && (_platform == Common::kPlatformFMTowns))) {
 			int bit = var & 0xF;
 			var = (var >> 4) & 0xFF;
 
 			if (!_copyProtection) {
-				if (_gameId == GID_LOOM && (_features & GF_FMTOWNS) && var == 214 && bit == 15) {
+				if (_gameId == GID_LOOM && (_platform == Common::kPlatformFMTowns) && var == 214 && bit == 15) {
 					return 0;
 				} else if (_gameId == GID_ZAK256 && var == 151 && bit == 8) {
 					return 0;
@@ -541,7 +541,7 @@ int ScummEngine::readVar(uint var) {
 		} else {
 			var &= 0x7FFF;
 			if (!_copyProtection) {
-				if (_gameId == GID_INDY3 && (_features & GF_FMTOWNS) && var == 1508)
+				if (_gameId == GID_INDY3 && (_platform == Common::kPlatformFMTowns) && var == 1508)
 					return 0;
 			}
 
@@ -607,7 +607,7 @@ void ScummEngine::writeVar(uint var, int value) {
 			_roomVars[var] = value;
 
 		} else if ((_gameId == GID_ZAK256) || (_features & GF_OLD_BUNDLE) ||
-			(_gameId == GID_LOOM && (_features & GF_FMTOWNS))) {
+			(_gameId == GID_LOOM && (_platform == Common::kPlatformFMTowns))) {
 			// In the old games, the bit variables were using the same memory
 			// as the normal variables!
 			int bit = var & 0xF;
