@@ -1068,6 +1068,8 @@ protected:
 	void spritesResetTables(bool refreshScreen);
 	void spriteAddImageToList(int spriteId, int imageNum, int *spriteIdptr);
 
+	void setDefaultCursor();
+
 public:
 	void saveOrLoadSpriteData(Serializer *s, uint32 savegameVersion);
 	void spritesBlitToScreen();

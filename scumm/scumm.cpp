@@ -314,7 +314,7 @@ static const ScummGameSettings scumm_settings[] = {
 	// these and later games can easily be identified by the .(a) file instead of a .he1
 	// and INIB chunk in the .he0
 	{"lost", "Pajama Sam's Lost & Found", GID_HEGAME, 6, 98, 61, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS | GF_MULTIPLE_VERSIONS, 0, 0},
 	{"racedemo", "Putt-Putt Enters the Race (Demo)", GID_HEGAME, 6, 98, 61, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
 	{"puttrace", "Putt-Putt Enters the Race", GID_HEGAME, 6, 98, 61, MDT_NONE,
@@ -333,7 +333,7 @@ static const ScummGameSettings scumm_settings[] = {
 	// Engine moved to c++ 
 	// Humongous Entertainment Scumm Version 9.9 ?  Scummsys.99
 	{"smaller", "Pajama Sam's Lost & Found (Test)", GID_HEGAME, 6, 99, 61, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, 0, 0},
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS, 0, 0},
 	{"puttcircus", "Putt-Putt Joins the Circus", GID_HEGAME, 6, 99, 61, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, 0, 0},
 	{"circdemo", "Putt-Putt Joins the Circus (Demo)", GID_HEGAME, 6, 99, 61, MDT_NONE,
@@ -1670,6 +1670,9 @@ void ScummEngine_v90he::scummInit() {
 
 	spritesResetTables(0);
 	memset(&_wizParams, 0, sizeof(_wizParams));
+
+	if (_features & GF_HE_CURSORLESS)
+		setDefaultCursor();
 }
 
 void ScummEngine_v99he::scummInit() {

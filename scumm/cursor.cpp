@@ -65,6 +65,17 @@ static const byte default_cursor_hotspots[10] = {
 	8, 7, //zak256
 };
 
+static const uint16 default_he_cursor[] = {
+	0x0000, 0x0000, 0x3800, 0x0000, 0x7e00, 0x0000, 0x5f80, 0x0000,
+	0x5fe0, 0x0000, 0x2ff8, 0x0000, 0x27fe, 0x0000, 0x17ff, 0x8000,
+	0x13ff, 0xe000, 0x09ff, 0xf000, 0x09ff, 0xf800, 0x04ff, 0xf800,
+	0x047f, 0xf000, 0x027f, 0xe000, 0x023f, 0xf000, 0x011f, 0xf800,
+	0x0111, 0xfc00, 0x0080, 0xfc00, 0x0084, 0x0c00, 0x004a, 0x0800,
+	0x0031, 0x1000, 0x0000, 0xe000, 0x0000, 0x0000, 0x0000, 0x0000,
+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
+};
+
 ScummEngine_v5::ScummEngine_v5(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
  : ScummEngine(detector, syst, gs, md5sum) {
 
@@ -150,6 +161,38 @@ void ScummEngine_v70he::setCursorFromImg(uint img, uint room, uint imgindex) {
 		_macResExtractor->setCursor(img);
 	else
 		_win32ResExtractor->setCursor(img);
+}
+
+void ScummEngine_v90he::setDefaultCursor() {
+	const uint16 *src;
+	int i, j;
+	static byte palette[] = { 0xff, 0xff, 0xff, 0,
+							  0,    0,    0,    0};
+
+	memset(_grabbedCursor, 0xFF, sizeof(_grabbedCursor));
+
+	_cursor.hotspotX = _cursor.hotspotY = 2;
+	src = default_he_cursor;
+
+	_cursor.width = 32;
+	_cursor.height = 32;
+
+	for (i = 0; i < 32; i++) {
+		for (j = 0; j < 32; j++) {
+			if (*src & (1 << (15 - (j % 16))))
+				_grabbedCursor[32 * i + j] = 0xfe;
+			if (j == 15)
+				src++;
+		}
+		src++;
+	}
+
+	// Since white color position is not guaranteed
+	// we setup our own palette if supported by backend
+	if (_system->hasFeature(OSystem::kFeatureCursorHasPalette))
+		_system->setCursorPalette(palette, 0xfe, 2);
+
+	updateCursor();
 }
 
 void ScummEngine_v6::setCursorFromImg(uint img, uint room, uint imgindex) {

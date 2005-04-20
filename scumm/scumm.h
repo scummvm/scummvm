@@ -114,18 +114,21 @@ enum GameFeatures {
 	 */
 	GF_FEW_LOCALS          = 1 << 11,
 
+	/** HE games without cursor resources */
+	GF_HE_CURSORLESS       = 1 << 12,
+
 	/** Games with multiple versions */
-	GF_MULTIPLE_VERSIONS   = 1 << 12,
+	GF_MULTIPLE_VERSIONS   = 1 << 13,
 	
-	GF_FMTOWNS             = 1 << 13,
-	GF_AMIGA               = 1 << 14,
-	GF_NES                 = 1 << 15,
-	GF_ATARI_ST            = 1 << 16,
-	GF_MACINTOSH           = 1 << 17,
-	GF_PC                  = 1 << 18,
-	GF_WINDOWS             = 1 << 19,
+	GF_FMTOWNS             = 1 << 14,
+	GF_AMIGA               = 1 << 15,
+	GF_NES                 = 1 << 16,
+	GF_ATARI_ST            = 1 << 17,
+	GF_MACINTOSH           = 1 << 18,
+	GF_PC                  = 1 << 19,
+	GF_WINDOWS             = 1 << 20,
 	
-	GF_DEMO                = 1 << 20
+	GF_DEMO                = 1 << 21
 };
 
 /* SCUMM Debug Channels */
