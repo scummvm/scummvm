@@ -1206,20 +1206,19 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.processMode = 8;
 		break;
 	case 54:
-		_wizParams.processFlags |= kWPFDstResNum;
-		//_wizParams.unk_17C = pop();
+		_wizParams.processFlags |= 0x100000;
 		//_wizParams.unk_180 = pop();
+		//_wizParams.unk_184 = pop();
 		pop();
 		pop();
 		break;
 	case 55:
-		_wizParams.processFlags |= kWPFSetPos | kWPFNewState | kWPFNewFlags;
 		_wizParams.img.flags = pop();
 		_wizParams.img.state = pop();
 		_wizParams.img.y1 = pop();
 		_wizParams.img.x1 = pop();
 		_wizParams.img.resNum = pop();
-		displayWizComplexImage(&_wizParams);
+		displayWizImage(&_wizParams.img);
 		break;
 	case 57:
 		_wizParams.processFlags |= kWPFPaletteNum;

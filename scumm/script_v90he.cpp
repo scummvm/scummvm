@@ -570,13 +570,12 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.img.flags = pop();
 		break;
 	case 10:
-		_wizParams.processFlags |= kWPFSetPos | kWPFNewState | kWPFNewFlags;
 		_wizParams.img.flags = pop();
 		_wizParams.img.state = pop();
 		_wizParams.img.y1 = pop();
 		_wizParams.img.x1 = pop();
 		_wizParams.img.resNum = pop();
-		displayWizComplexImage(&_wizParams);
+		displayWizImage(&_wizParams.img);
 		break;
 	case 11:
 		_wizParams.img.resNum = pop();
