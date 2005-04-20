@@ -696,6 +696,7 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 	
+	virtual void setupScummVars();
 	virtual void initScummVars();
 
 	virtual void readRoomsOffsets();
@@ -732,6 +733,8 @@ protected:
 	void o70_setWindowCaption();
 	void o70_polygonOps();
 	void o70_polygonHit();
+
+	byte VAR_NUM_SOUND_CHANNELS;
 };
 
 class ScummEngine_v72he : public ScummEngine_v70he {
@@ -866,6 +869,8 @@ protected:
 	void o72_getResourceSize();
 	void o72_setFilePath();
 	void o72_setWindowCaption();
+
+	byte VAR_NUM_ACTIVE_SOUND_CHANNELS;
 
 	byte VAR_NUM_ROOMS;
 	byte VAR_NUM_SCRIPTS;

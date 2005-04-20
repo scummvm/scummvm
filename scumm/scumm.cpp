@@ -1038,8 +1038,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_MUSIC_BUNDLE_LOADED = 0xFF;
 	VAR_VOICE_BUNDLE_LOADED = 0xFF;
 
-	VAR_NUM_ACTIVE_SOUND_CHANNELS = 0xFF;
-	VAR_NUM_SOUND_CHANNELS = 0xFF;
 	VAR_MUSIC_CHANNEL = 0xFF;
 	VAR_SOUND_CHANNEL = 0xFF;
 
@@ -1255,6 +1253,8 @@ ScummEngine_v70he::ScummEngine_v70he(GameDetector *detector, OSystem *syst, cons
 	_heSndFlags = 0;
 	_heSndSoundFreq = 0;
 	_heSBNGId = 0;
+
+	VAR_NUM_SOUND_CHANNELS = 0xFF;
 }
 
 ScummEngine_v70he::~ScummEngine_v70he() {
@@ -1265,6 +1265,8 @@ ScummEngine_v70he::~ScummEngine_v70he() {
 
 ScummEngine_v72he::ScummEngine_v72he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
  : ScummEngine_v70he(detector, syst, gs, md5sum) {
+	VAR_NUM_ACTIVE_SOUND_CHANNELS = 0xFF;
+
 	VAR_NUM_ROOMS = 0xFF;
 	VAR_NUM_SCRIPTS = 0xFF;
 	VAR_NUM_SOUNDS = 0xFF;

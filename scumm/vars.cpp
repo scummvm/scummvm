@@ -170,11 +170,7 @@ void ScummEngine_v6::setupScummVars() {
 	VAR_V6_EMSSPACE = 76;
 	VAR_RANDOM_NR = 118;
 	
-	if (_heversion >= 70) {
-		VAR_NUM_SOUND_CHANNELS = 9;
-		VAR_SOUND_CHANNEL = 10;
-		VAR_MUSIC_CHANNEL = 14;
-	} else {
+	if (_heversion < 70) {
 		VAR_V6_SOUNDMODE = 9;
 	}
 
@@ -187,6 +183,14 @@ void ScummEngine_v6::setupScummVars() {
 	// Sam & Max specific
 	VAR_CHARSET_MASK = 123;
 
+}
+
+void ScummEngine_v70he::setupScummVars() {
+	ScummEngine_v6::setupScummVars();
+
+	VAR_NUM_SOUND_CHANNELS = 9;
+	VAR_SOUND_CHANNEL = 10;
+	VAR_MUSIC_CHANNEL = 14;
 }
 
 void ScummEngine_v72he::setupScummVars() {

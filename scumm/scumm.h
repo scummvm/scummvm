@@ -1218,7 +1218,7 @@ public:
 	byte VAR_ME;
 	byte VAR_NUM_ACTOR;
 	byte VAR_CURRENT_LIGHTS;
-	byte VAR_CURRENTDRIVE;	// How about merging this with VAR_CURRENTDISK?
+	byte VAR_CURRENTDRIVE;
 	byte VAR_CURRENTDISK;
 	byte VAR_TMR_1;
 	byte VAR_TMR_2;
@@ -1268,6 +1268,7 @@ public:
 	byte VAR_FADE_DELAY;
 	byte VAR_NOSUBTITLES;
 
+	// V5+
 	byte VAR_SOUNDPARAM;
 	byte VAR_SOUNDPARAM2;
 	byte VAR_SOUNDPARAM3;
@@ -1277,16 +1278,17 @@ public:
 	byte VAR_ROOM_FLAG;
 	byte VAR_GAME_LOADED;
 	byte VAR_NEW_ROOM;
-	byte VAR_VERSION_KEY;
 
+	// V4/V5
 	byte VAR_V5_TALK_STRING_Y;
 
+	// V6+
 	byte VAR_ROOM_WIDTH;
 	byte VAR_ROOM_HEIGHT;
 	byte VAR_V6_EMSSPACE;
 
+	// V7/V8 (=GF_NEW_CAMERA) specific variables
 	byte VAR_CAMERA_POS_Y;
-
 	byte VAR_CAMERA_MIN_Y;
 	byte VAR_CAMERA_MAX_Y;
 	byte VAR_CAMERA_THRESHOLD_X;
@@ -1295,28 +1297,35 @@ public:
 	byte VAR_CAMERA_SPEED_Y;
 	byte VAR_CAMERA_ACCEL_X;
 	byte VAR_CAMERA_ACCEL_Y;
-
 	byte VAR_CAMERA_DEST_X;
-
 	byte VAR_CAMERA_DEST_Y;
-
 	byte VAR_CAMERA_FOLLOWED_ACTOR;
 
-	byte VAR_LEFTBTN_DOWN;
-	byte VAR_RIGHTBTN_DOWN;
-	byte VAR_LEFTBTN_HOLD;
-	byte VAR_RIGHTBTN_HOLD;
-	byte VAR_MOUSE_BUTTONS;
-	byte VAR_MOUSE_HOLD;
-	byte VAR_SAVELOAD_SCRIPT;
-	byte VAR_SAVELOAD_SCRIPT2;
-
+	// V7/V8 specific variables
+	byte VAR_VERSION_KEY;
 	byte VAR_DEFAULT_TALK_DELAY;
+	byte VAR_CUSTOMSCALETABLE;
+	byte VAR_BLAST_ABOVE_TEXT;
+	byte VAR_VOICE_MODE;
+	byte VAR_MUSIC_BUNDLE_LOADED;
+	byte VAR_VOICE_BUNDLE_LOADED;
+
+	byte VAR_LEFTBTN_DOWN;	// V7
+	byte VAR_RIGHTBTN_DOWN;	// V7
+	byte VAR_LEFTBTN_HOLD;	// V6/V72HE/V7
+	byte VAR_RIGHTBTN_HOLD;	// V6/V72HE/V7
+	byte VAR_MOUSE_BUTTONS;	// V8
+	byte VAR_MOUSE_HOLD;	// V8
+	byte VAR_SAVELOAD_SCRIPT;	// V6/V7 (not HE)
+	byte VAR_SAVELOAD_SCRIPT2;	// V6/V7 (not HE)
+
+	// V6/V7 specific variables (actually, they are only used in FT and Sam, it seems?)
 	byte VAR_CHARSET_MASK;
 
-	byte VAR_CUSTOMSCALETABLE;
+	// V6 specific variables
 	byte VAR_V6_SOUNDMODE;
 
+	// V1/V2 specific variables
 	byte VAR_CHARCOUNT;
 	byte VAR_VERB_ALLOWED;
 	byte VAR_ACTIVE_VERB;
@@ -1324,23 +1333,18 @@ public:
 	byte VAR_ACTIVE_OBJECT2;
 	byte VAR_CLICK_AREA;
 
-	byte VAR_BLAST_ABOVE_TEXT;
-	byte VAR_VOICE_MODE;
-	byte VAR_MUSIC_BUNDLE_LOADED;
-	byte VAR_VOICE_BUNDLE_LOADED;
-
-	byte VAR_NUM_ACTIVE_SOUND_CHANNELS;
-	byte VAR_NUM_SOUND_CHANNELS;
+	// HE specific variables
 	byte VAR_MUSIC_CHANNEL;
 	byte VAR_SOUND_CHANNEL;
 
 	byte VAR_SCRIPT_CYCLE;
 	byte VAR_NUM_SCRIPT_CYCLES;
 
-	byte VAR_NUM_GLOBAL_OBJS;	// Exists both in V7 and in V72HE
-
 	byte VAR_KEY_STATE;		// Used in parseEvents()
 	byte VAR_MOUSE_STATE;
+
+	// Exists both in V7 and in V72HE:
+	byte VAR_NUM_GLOBAL_OBJS;
 };
 
 } // End of namespace Scumm
