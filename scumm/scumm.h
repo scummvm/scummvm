@@ -114,7 +114,7 @@ enum GameFeatures {
 	 */
 	GF_FEW_LOCALS          = 1 << 13,
 
-	/** Games made by Humongous Entertainment. */
+	/** Games with multiple versions */
 	GF_MULTIPLE_VERSIONS   = 1 << 15,
 	
 	GF_FMTOWNS             = 1 << 17,
