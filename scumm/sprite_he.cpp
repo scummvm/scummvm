@@ -373,6 +373,7 @@ int ScummEngine_v90he::spriteInfoGet_field_80(int spriteId) {
 }
 
 int ScummEngine_v90he::spriteInfoGet_field_8C_90(int spriteId, int type) {
+	debug(0, "spriteInfoGet_field_8C_90: spriteId %d type 0x%x", spriteId, type);
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
 	// XXX U32 related check
@@ -741,7 +742,7 @@ void ScummEngine_v90he::spriteInfoSet_field_84(int spriteId, int value) {
 }
 
 void ScummEngine_v90he::spriteInfoSet_field_8C_90(int spriteId, int type, int value) {
-	debug(0, "spriteInfoSet_field_8C_90: spriteId %d type %d", spriteId, type);
+	debug(0, "spriteInfoSet_field_8C_90: spriteId %d type 0x%x", spriteId, type);
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 	int delay;
 
