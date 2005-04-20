@@ -203,7 +203,7 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGro
 				y += h / 2;
 			}
 
-			if(isWizPixelNonTransparent(resId, resState, x, y, spi->imgFlags))
+			if(isWizPixelNonTransparent(resId, resState, x, y, spi->curImgFlags))
 				return spi->id;
 		}
 	}
@@ -379,7 +379,7 @@ int ScummEngine_v90he::spriteInfoGet_field_8C_90(int spriteId, int type) {
 
 	switch(type) {
 	case 0x7B:
-		return _spriteTable[spriteId].field_8C;
+		return _spriteTable[spriteId].imgFlags;
 	case 0x7D:
 		return _spriteTable[spriteId].field_90;
 	case 0x7E:
@@ -741,6 +741,7 @@ void ScummEngine_v90he::spriteInfoSet_field_84(int spriteId, int value) {
 }
 
 void ScummEngine_v90he::spriteInfoSet_field_8C_90(int spriteId, int type, int value) {
+	debug(0, "spriteInfoSet_field_8C_90: spriteId %d type %d", spriteId, type);
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 	int delay;
 
@@ -748,7 +749,7 @@ void ScummEngine_v90he::spriteInfoSet_field_8C_90(int spriteId, int type, int va
 
 	switch(type) {
 	case 0x7B:
-		_spriteTable[spriteId].field_8C = value;
+		_spriteTable[spriteId].imgFlags = value;
 		_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 		break;
 	case 0x7D:
@@ -793,7 +794,7 @@ void ScummEngine_v90he::spriteInfoSet_resetSprite(int spriteId) {
 	_spriteTable[spriteId].field_80 = 0;
 	_spriteTable[spriteId].zorderPriority = 0;
 	_spriteTable[spriteId].field_84 = 0;
-	_spriteTable[spriteId].field_8C = 0;
+	_spriteTable[spriteId].imgFlags = 0;
 	_spriteTable[spriteId].field_90 = 0;
 }
 
@@ -1271,6 +1272,7 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 			wiz.img.y1 = spi->ty - spr_wiz_y;
 		}
 
+		//wiz.field_23EA = spi->field_90;
 		spi->curImageState = wiz.img.state = resState;
 		spi->curResId = wiz.img.resNum = resId;
 		wiz.processFlags = kWPFNewState | kWPFSetPos;
@@ -1334,11 +1336,17 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 		}
 		if (spr_flags & kSFNeedPaletteRemap)
 			wiz.img.flags |= kWIFRemapPalette;
+		if (spi->field_84) {
+			wiz.processFlags |= 0x200000;
+			//wiz.field_390 = spi->field_84;
+			//wiz.zorder = spi->zorderPriority;
+		}
 		if (spi->maskImgResNum) {
 			wiz.processFlags |= kWPFMaskImg;
 			wiz.maskImgResNum = spi->maskImgResNum;
 		}
 		wiz.processFlags |= kWPFNewFlags;
+		wiz.img.flags |= spi->imgFlags;
 		
 		if (spr_flags & kSFRotated) {
 			wiz.processFlags |= kWPFRotate;
@@ -1348,7 +1356,7 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 			wiz.processFlags |= kWPFZoom;
 			wiz.zoom = spi->zoom;
 		}
-		spi->imgFlags = wiz.img.flags;
+		spi->curImgFlags = wiz.img.flags;
 		
 		if (spi->groupNum && (_spriteGroups[spi->groupNum].flags & kSGFClipBox)) {
 			if (spi->bbox.intersects(_spriteGroups[spi->groupNum].bbox)) {
@@ -1406,16 +1414,15 @@ void ScummEngine_v90he::saveOrLoadSpriteData(Serializer *s, uint32 savegameVersi
 		MKLINE(SpriteInfo, delayCount, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, curAngle, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, curZoom, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, imgFlags, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, curImgFlags, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, field_74, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, delayAmount, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, maskImgResNum, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, field_80, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, field_84, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, classFlags, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, field_8C, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, imgFlags, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, field_90, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, field_94, sleInt32, VER(48)),
 		MKEND()
 	};
 	
@@ -1430,8 +1437,6 @@ void ScummEngine_v90he::saveOrLoadSpriteData(Serializer *s, uint32 savegameVersi
 		MKLINE(SpriteGroup, ty, sleInt32, VER(48)),
 		MKLINE(SpriteGroup, dstResNum, sleInt32, VER(48)),
 		MKLINE(SpriteGroup, scaling, sleInt32, VER(48)),
-		MK_OBSOLETE(SpriteGroup, scaleX, sleInt32, VER(48), VER(48)),
-		MK_OBSOLETE(SpriteGroup, scaleY, sleInt32, VER(48), VER(48)),
 		MKLINE(SpriteGroup, scale_x_ratio_mul, sleInt32, VER(48)),
 		MKLINE(SpriteGroup, scale_x_ratio_div, sleInt32, VER(48)),
 		MKLINE(SpriteGroup, scale_y_ratio_mul, sleInt32, VER(48)),

@@ -72,16 +72,15 @@ struct SpriteInfo {
 	int32 delayCount;
 	int32 curAngle;
 	int32 curZoom;
-	int32 imgFlags;
+	int32 curImgFlags;
 	int32 field_74;
 	int32 delayAmount;
 	int32 maskImgResNum;
 	int32 field_80;
 	int32 field_84;
 	int32 classFlags;
-	int32 field_8C;
+	int32 imgFlags;
 	int32 field_90;
-	int32 field_94;
 };
 
 struct SpriteGroup {
@@ -92,8 +91,6 @@ struct SpriteGroup {
 	int32 ty;
 	int32 dstResNum;
 	int32 scaling;
-//	int32 scaleX;
-//	int32 scaleY;
 	int32 scale_x_ratio_mul;
 	int32 scale_x_ratio_div;
 	int32 scale_y_ratio_mul;
