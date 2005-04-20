@@ -1383,7 +1383,6 @@ void OSystem_SDL::drawMouse() {
 	}
 
 	SDL_Rect src, dst;
-	bool scale;
 	int scale1, scale2;
 	int width, height;
 
@@ -1399,7 +1398,27 @@ void OSystem_SDL::drawMouse() {
 		height = _overlayHeight;
 	}
 
-	scale = (_scaleFactor > _cursorTargetScale);
+	// Note: _mouseCurState is in *virtual* coordinates. That means if initSize
+	// was used to set a 320x200 game screen, then _mouseCurState is bounded
+	// by that; if the overlay is visible, then it is bounded by the overlay
+	// size (typically 640x400).
+	//
+	// _mouseBackup is stored in "virtual" coordinates, too.
+	//
+	// On the other hand, _mouseSurface was scaled to screen coordinates in
+	// OSystem_SDL::blitCursor(), including aspect ratio corection. Its
+	// scaling is determined by _scaleFactor, but *not* by whatever value
+	// _overlayScale has.
+	// Atop of that, it was scaled by _cursorTargetScale.
+	//
+	// TODO/FIXME: Clean up and fix this code, see also bug #1184616
+	// and bug #1185275.
+	// Part of the problem here is that we keep converting between different
+	// scales and coordinate systems. In particular, we scale the top left
+	// corner of the mouse cursor, instead of its center, which causes
+	// it to be drawn in the wrong spot when scaled overlay mode is active.
+
+	const bool useScaling = (_scaleFactor > _cursorTargetScale);
 
 	dst.x = _mouseCurState.x - _mouseHotspotX / _cursorTargetScale;
 	dst.y = _mouseCurState.y - _mouseHotspotY / _cursorTargetScale;
@@ -1409,18 +1428,14 @@ void OSystem_SDL::drawMouse() {
 	src.x = src.y = 0;
 
 	// clip the mouse rect, and adjust the src pointer accordingly
-	int dx, dy;
-  
-	dx = dst.x; dy = dst.y;
-	dx = scale ? dst.x * scale1 / scale2 / _cursorTargetScale : dst.x;
-	dy = scale ? dst.y * scale1 / scale2 / _cursorTargetScale : dst.y;
-
 	if (dst.x < 0) {
+		const int dx = useScaling ? dst.x * scale1 / scale2 / _cursorTargetScale : dst.x;
 		dst.w += dx;
 		src.x -= dx;
 		dst.x = 0;
 	}
 	if (dst.y < 0) {
+		const int dy = useScaling ? dst.y * scale1 / scale2 / _cursorTargetScale : dst.y;
 		dst.h += dy;
 		src.y -= dy;
 		dst.y = 0;
@@ -1444,10 +1459,7 @@ void OSystem_SDL::drawMouse() {
 			dst.y--;
 	}
 
-	_mouseBackup.x = dst.x;
-	_mouseBackup.y = dst.y;
-	_mouseBackup.w = dst.w;
-	_mouseBackup.h = dst.h;
+	_mouseBackup = dst;
 
 	dst.x = dst.x * scale1 / scale2;
 	dst.y = (dst.y + _currentShakePos) * scale1 / scale2;
