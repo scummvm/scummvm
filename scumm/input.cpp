@@ -35,6 +35,10 @@
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 
+#ifdef _WIN32_WCE
+#define		KEY_ALL_SKIP	3457
+#endif
+
 namespace Scumm {
 
 enum MouseButtonStatus {

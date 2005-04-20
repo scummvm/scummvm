@@ -68,8 +68,7 @@ extern ScummEngine *g_scumm;
 /* System Wide Constants */
 enum {
 	NUM_SENTENCE = 6,
-	NUM_SHADOW_PALETTE = 8,
-	KEY_ALL_SKIP = 3457   // WinCE
+	NUM_SHADOW_PALETTE = 8
 };
 
 /**
@@ -99,7 +98,7 @@ enum GameFeatures {
 	/** EGA games. */
 	GF_16COLOR             = 1 << 7,
 
-	/** VGA versions of V3 games. */
+	/** VGA versions of V3 games.  Equivalent to (version == 3 && not GF_16COLOR) */
 	GF_OLD256              = 1 << 8,
 
 	/** Games which have Audio CD tracks. */

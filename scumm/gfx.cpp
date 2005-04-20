@@ -1270,11 +1270,12 @@ int Gdi::getZPlanes(const byte *ptr, const byte *zplane_list[9], bool bmapImage)
 		if (_vm->_features & GF_SMALL_HEADER) {
 			if (_vm->_features & GF_16COLOR)
 				zplane_list[1] = ptr + READ_LE_UINT16(ptr);
-			else
+			else {
 				zplane_list[1] = ptr + READ_LE_UINT32(ptr);
-			if (_vm->_features & GF_OLD256) {
-				if (0 == READ_LE_UINT32(zplane_list[1]))
-					zplane_list[1] = 0;
+				if (_vm->_features & GF_OLD256) {
+					if (0 == READ_LE_UINT32(zplane_list[1]))
+						zplane_list[1] = 0;
+				}
 			}
 			for (i = 2; i < numzbuf; i++) {
 				zplane_list[i] = zplane_list[i-1] + READ_LE_UINT16(zplane_list[i-1]);
@@ -2582,19 +2583,13 @@ void Gdi::unkDecode7(byte *dst, int dstPitch, const byte *src, int height) const
 			*dst = *src++;
 			NEXT_ROW;
 		}
-		return;
+	} else {
+		do {
+			memcpy(dst, src, 8);
+			dst += dstPitch;
+			src += 8;
+		} while (--height);
 	}
-
-	do {
-#if defined(SCUMM_NEED_ALIGNMENT)
-		memcpy(dst, src, 8);
-#else
-		((uint32 *)dst)[0] = ((const uint32 *)src)[0];
-		((uint32 *)dst)[1] = ((const uint32 *)src)[1];
-#endif
-		dst += dstPitch;
-		src += 8;
-	} while (--height);
 }
 
 void Gdi::unkDecode8(byte *dst, int dstPitch, const byte *src, int height) const {

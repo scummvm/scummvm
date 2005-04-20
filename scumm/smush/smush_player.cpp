@@ -991,10 +991,10 @@ void SmushPlayer::setupAnim(const char *file) {
 
 	if (_vm->_gameId == GID_FT) {
 		if (!((_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC))) {
-			_sf[0] = new SmushFont(true, false);
-			_sf[1] = new SmushFont(true, false);
-			_sf[2] = new SmushFont(true, false);
-			_sf[3] = new SmushFont(true, false);
+			_sf[0] = new SmushFont(_vm, true, false);
+			_sf[1] = new SmushFont(_vm, true, false);
+			_sf[2] = new SmushFont(_vm, true, false);
+			_sf[3] = new SmushFont(_vm, true, false);
 			_sf[0]->loadFont("scummfnt.nut");
 			_sf[1]->loadFont("techfnt.nut");
 			_sf[2]->loadFont("titlfnt.nut");
@@ -1004,7 +1004,7 @@ void SmushPlayer::setupAnim(const char *file) {
 		if (!(_vm->_features & GF_DEMO)) {
 			for (i = 0; i < 4; i++) {
 				sprintf(file_font, "font%d.nut", i);
-				_sf[i] = new SmushFont(i != 0, false);
+				_sf[i] = new SmushFont(_vm, i != 0, false);
 				_sf[i]->loadFont(file_font);
 			}
 		}
@@ -1013,7 +1013,7 @@ void SmushPlayer::setupAnim(const char *file) {
 			if ((_vm->_features & GF_DEMO) && (i == 4))
 				break;
 			sprintf(file_font, "font%d.nut", i);
-			_sf[i] = new SmushFont(false, true);
+			_sf[i] = new SmushFont(_vm, false, true);
 			_sf[i]->loadFont(file_font);
 		}
 	} else {

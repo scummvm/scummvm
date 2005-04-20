@@ -41,7 +41,7 @@ protected:
 	void drawSubstring(const char *str, byte *buffer, int dst_width, int x, int y);
 
 public:
-	SmushFont(bool use_original_colors, bool new_colors);
+	SmushFont(ScummEngine *vm, bool use_original_colors, bool new_colors);
 
 	void setColor(byte c) { _color = c; }
 	void drawString    (const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, bool center);

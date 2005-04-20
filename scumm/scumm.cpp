@@ -104,13 +104,13 @@ static const ScummGameSettings scumm_settings[] = {
 	/* Scumm Version 2 */
 
 	{"maniac", "Maniac Mansion", GID_MANIAC, 2, 0, 25, MDT_PCSPK,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_MULTIPLE_VERSIONS, Common::kPlatformUnknown, 0, 0},
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE | GF_MULTIPLE_VERSIONS, Common::kPlatformUnknown, 0, 0},
 	{"zak",         "Zak McKracken and the Alien Mindbenders", GID_ZAK, 2, 0, 13, MDT_PCSPK,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_MULTIPLE_VERSIONS, Common::kPlatformUnknown, 0, 0},
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE | GF_MULTIPLE_VERSIONS, Common::kPlatformUnknown, 0, 0},
 
 	/* Scumm Version 3 */
 	{"indy3EGA", "Indiana Jones and the Last Crusade", GID_INDY3, 3, 0, 13, MDT_PCSPK | MDT_ADLIB,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE, Common::kPlatformUnknown, 0, 0},
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformUnknown, 0, 0},
 	{"indy3Towns", "Indiana Jones and the Last Crusade (FM-TOWNS)", GID_INDY3, 3, 0, 13, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS | GF_AUDIOTRACKS, Common::kPlatformFMTowns, 0, 0},
 	{"indy3", "Indiana Jones and the Last Crusade (256)", GID_INDY3, 3, 0, 13, MDT_PCSPK | MDT_ADLIB,
@@ -119,7 +119,7 @@ static const ScummGameSettings scumm_settings[] = {
 	{"zakTowns", "Zak McKracken and the Alien Mindbenders (FM-TOWNS)", GID_ZAK256, 3, 0, 13, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns, 0, 0},
 	{"loom", "Loom", GID_LOOM, 3, 0, 13, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE, Common::kPlatformUnknown, 0, 0},
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformUnknown, 0, 0},
 	{"loomTowns", "Loom (FM Towns)", GID_LOOM, 3, 0, 13, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns, 0, 0},
 

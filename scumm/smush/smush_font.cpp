@@ -28,8 +28,8 @@
 
 namespace Scumm {
 
-SmushFont::SmushFont(bool use_original_colors, bool new_colors) :
-	NutRenderer(g_scumm),	// FIXME: evil hack
+SmushFont::SmushFont(ScummEngine *vm, bool use_original_colors, bool new_colors) :
+	NutRenderer(vm),
 	_color(-1),
 	_new_colors(new_colors),
 	_original(use_original_colors) {
@@ -44,8 +44,8 @@ int SmushFont::getStringWidth(const char *str) {
 
 	int width = 0;
 	while (*str) {
-		if(*str & 0x80 && g_scumm->_useCJKMode) {
-			width += g_scumm->_2byteWidth + 1;
+		if(*str & 0x80 && _vm->_useCJKMode) {
+			width += _vm->_2byteWidth + 1;
 			str += 2;
 		} else
 			width += getCharWidth(*str++);
@@ -131,7 +131,7 @@ int SmushFont::draw2byte(byte *buffer, int dst_width, int x, int y, int idx) {
 	if (_new_colors)
 		color = (char)0xff;
 
-	if (g_scumm->_gameId == GID_FT)
+	if (_vm->_gameId == GID_FT)
 		color = 1;
 
 	for (int j = 0; j < h; j++) {
