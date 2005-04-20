@@ -190,7 +190,7 @@ int Scene::startScene() {
 	scene_qdat = queueIterator.operator->();
 	assert(scene_qdat != NULL);
 
-	loadScene(scene_qdat->scene_n, scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->sceneDescription, scene_qdat->fadeType, -1);
+	loadScene(scene_qdat->scene_n, scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->sceneDescription, scene_qdat->fadeType, 0);
 
 	return SUCCESS;
 }
@@ -229,7 +229,7 @@ int Scene::nextScene() {
 	scene_qdat = queueIterator.operator->();
 	assert(scene_qdat != NULL);
 
-	loadScene(scene_qdat->scene_n, scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->sceneDescription, scene_qdat->fadeType, -1);
+	loadScene(scene_qdat->scene_n, scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->sceneDescription, scene_qdat->fadeType, 0);
 
 	return SUCCESS;
 }

@@ -597,6 +597,8 @@ void Actor::updateActorsScene(int actorsEntrance) {
 			_protagonist->location.z = sceneEntry->location.z * ACTOR_LMULT;
 		}
 		_protagonist->facingDirection = _protagonist->actionDirection = sceneEntry->facing;
+	} else {
+		warning("actorsEntrance < 0");
 	}
 
 	_protagonist->currentAction = kActionWait;
