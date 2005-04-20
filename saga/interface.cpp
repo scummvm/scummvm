@@ -535,6 +535,14 @@ void Interface::removeFromInventory(int sprite) {
 	}
 }
 
+int Interface::inventoryItemPosition(int sprite) {
+	for (int i = 0; i < _inventoryCount; i++)
+		if (_inventory[i] == sprite)
+			return i;
+
+	return -1;
+}
+
 void Interface::drawInventory() {
 	if (_panelMode != kPanelMain)
 		return;

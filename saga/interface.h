@@ -139,6 +139,7 @@ public:
 	
 	void addToInventory(int sprite);
 	void removeFromInventory(int sprite);
+	int inventoryItemPosition(int sprite);
 	void drawInventory();
 	
 private:
