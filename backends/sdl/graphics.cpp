@@ -1410,18 +1410,14 @@ void OSystem_SDL::drawMouse() {
 	// scaling is determined by _scaleFactor, but *not* by whatever value
 	// _overlayScale has.
 	// Atop of that, it was scaled by _cursorTargetScale.
+	// That means, we have to scale it by "scale2".
 	//
-	// TODO/FIXME: Clean up and fix this code, see also bug #1184616
-	// and bug #1185275.
-	// Part of the problem here is that we keep converting between different
-	// scales and coordinate systems. In particular, we scale the top left
-	// corner of the mouse cursor, instead of its center, which causes
-	// it to be drawn in the wrong spot when scaled overlay mode is active.
+	// TODO/FIXME: Clean up and fix this code, see also bug #1185275.
 
 	const bool useScaling = (_scaleFactor > _cursorTargetScale);
 
-	dst.x = _mouseCurState.x - _mouseHotspotX / _cursorTargetScale;
-	dst.y = _mouseCurState.y - _mouseHotspotY / _cursorTargetScale;
+	dst.x = _mouseCurState.x - _mouseHotspotX * scale2 / _cursorTargetScale;
+	dst.y = _mouseCurState.y - _mouseHotspotY * scale2 / _cursorTargetScale;
 
 	dst.w = _mouseCurState.hW;
 	dst.h = _mouseCurState.hH;
