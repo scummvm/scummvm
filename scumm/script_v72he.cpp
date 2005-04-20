@@ -1694,7 +1694,7 @@ void ScummEngine_v72he::o72_openFile() {
 		}
 	} else {
 		// Switch all \ to / for portablity
-		len = resStrLen(_scriptPointer) + 1;
+		len = resStrLen(filename) + 1;
 		for (i = 0; i < len; i++) {
 			if (filename[i] == '\\')
 				filename[i] = '/';
