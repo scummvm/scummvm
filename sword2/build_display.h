@@ -415,8 +415,9 @@ public:
 
 	void buildDisplay();
 
-	void plotPoint(int16 x, int16 y, uint8 colour);
-	void drawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint8 colour);
+	void plotPoint(int x, int y, uint8 colour);
+	void drawLine(int x0, int y0, int x1, int y1, uint8 colour);
+	void drawLine(int x0, int y0, int x1, int y1, int color, void (*plotProc)(int, int, int, void *), void *data);
 
 #ifdef BACKEND_8BIT
 	void plotYUV(byte *lut, int width, int height, byte *const *dat);

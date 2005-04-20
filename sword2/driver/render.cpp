@@ -198,7 +198,7 @@ void Screen::scaleImageGood(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 
  * @param colour colour of the point
  */
 
-void Screen::plotPoint(int16 x, int16 y, uint8 colour) {
+void Screen::plotPoint(int x, int y, uint8 colour) {
 	byte *buf = _buffer + MENUDEEP * RENDERWIDE;
 
 	x -= _scrollX;
@@ -210,6 +210,11 @@ void Screen::plotPoint(int16 x, int16 y, uint8 colour) {
 	}
 }
 
+static void plot(int x, int y, int colour, void *data) {
+	Screen *screen = (Screen *) data;
+	screen->plotPoint(x, y, (uint8) colour);
+}
+
 /**
  * Draws a line from one point to another. This is only used for debugging.
  * @param x0 x-coordinate of the start point
@@ -219,144 +224,48 @@ void Screen::plotPoint(int16 x, int16 y, uint8 colour) {
  * @param colour colour of the line
  */
 
-// Uses Bresenham's incremental algorithm!
+void Screen::drawLine(int x0, int y0, int x1, int y1, uint8 colour) {
+	drawLine(x0, y0, x1, y1, colour, &plot, this);
+}
 
-void Screen::drawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
-	int dxmod, dymod;
-	int ince, incne;
-	int d;
-	int x, y;
-	int addTo;
+// TODO: Main line-drawing function. Move this somewhere where other engines
+//	 can benefit from it.
 
-	// Make sure we're going from left to right
+void Screen::drawLine(int x0, int y0, int x1, int y1, int color, void (*plotProc)(int, int, int, void *), void *data) {
+	// Bresenham's line algorithm, as described by Wikipedia
+	bool steep = ABS(y1 - y0) > ABS(x1 - x0);
 
-	if (x1 < x0) {
-		SWAP(x0, x1);
-		SWAP(y0, y1);
+	if (steep) {
+		SWAP(x0, y0);
+		SWAP(x1, y1);
 	}
 
-	int dx = x1 - x0;
-	int dy = y1 - y0;
-	
-	if (dx < 0)
-		dxmod = -dx;
+	int delta_x = ABS(x1 - x0);
+	int delta_y = ABS(y1 - y0);
+	int err = 0;
+	int delta_err = delta_y;
+	int x = x0;
+	int y = y0;
+
+	int x_step = (x0 < x1) ? 1 : -1;
+	int y_step = (y0 < y1) ? 1 : -1;
+
+	if (steep)
+		(*plotProc)(y, x, color, data);
 	else
-		dxmod = dx;
+		(*plotProc)(x, y, color, data);
 
-	if (dy < 0)
-		dymod = -dy;
-	else
-		dymod = dy;
-
-	if (dxmod >= dymod) {
-		if (dy > 0) {
-			d = 2 * dy - dx;
-			ince = 2 * dy;
-			incne = 2 * (dy - dx);
-			x = x0;
-			y = y0;
-
-			plotPoint(x, y, colour);
-
-			while (x < x1) {
-				if (d <= 0) {
-					d += ince;
-					x++;
-				} else {
-					d += incne;
-					x++;
-					y++;
-				}
-
-				plotPoint(x, y, colour);
-			}
-		} else {
-			addTo = y0;
-			y0 = 0;
-			y1 -= addTo;
-			y1 = -y1;
-			dy = y1 - y0;
-
-			d = 2 * dy - dx;
-			ince = 2 * dy;
-			incne = 2 * (dy - dx);
-			x = x0;
-			y = y0;
-
-			plotPoint(x, addTo - y, colour);
-
-			while (x < x1) {
-				if (d <= 0) {
-					d += ince;
-					x++;
-				} else {
-					d += incne;
-					x++;
-					y++;
-				}
-
-				plotPoint(x, addTo - y, colour);
-			}
+	while (x != x1) {
+		x += x_step;
+		err += delta_err;
+		if (2 * err > delta_x) {
+			y += y_step;
+			err -= delta_x;
 		}
-	} else {
-		// OK, y is now going to be the single increment.
-		//	Ensure the line is going top to bottom
-		if (y1 < y0) {
-			SWAP(x0, x1);
-			SWAP(y0, y1);
-		}
-		dx = x1 - x0;
-		dy = y1 - y0;
-
-		if (dx > 0) {
-			d = 2 * dx - dy;
-			ince = 2 * dx;
-			incne = 2 * (dx - dy);
-			x = x0;
-			y = y0;
-
-			plotPoint(x, y, colour);
-
-			while (y < y1) {
-				if (d <= 0) {
-					d += ince;
-					y++;
-				} else {
-					d += incne;
-					x++;
-					y++;
-				}
-
-				plotPoint(x, y, colour);
-			}
-		} else {
-			addTo = x0;
-			x0 = 0;
-			x1 -= addTo;
-			x1 = -x1;
-			dx = x1 - x0;
-
-			d = 2 * dx - dy;
-			ince = 2 * dx;
-			incne = 2 * (dx - dy);
-			x = x0;
-			y = y0;
-
-			plotPoint(addTo - x, y, colour);
-
-			while (y < y1) {
-				if (d <= 0) {
-					d += ince;
-					y++;
-				} else {
-					d += incne;
-					x++;
-					y++;
-				}
-
-				plotPoint(addTo - x, y, colour);
-			}
-		}
+		if (steep)
+			(*plotProc)(y, x, color, data);
+		else
+			(*plotProc)(x, y, color, data);
 	}
 }
 
