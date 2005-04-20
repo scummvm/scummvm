@@ -1750,7 +1750,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_field_7C(spriteId, args[0]);
+			spriteInfoSet_maskImgResNum(spriteId, args[0]);
 		break;
 	case 16:
 		n = getStackList(args, ARRAYSIZE(args));
@@ -2490,7 +2490,7 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 	case 7:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_field_7C(spriteId));
+			push(spriteInfoGet_maskImgResNum(spriteId));
 		else
 			push(0);
 		break;

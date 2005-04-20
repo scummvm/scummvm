@@ -360,10 +360,10 @@ int ScummEngine_v90he::spriteInfoGet_delayAmount(int spriteId) {
 	return _spriteTable[spriteId].delayAmount;
 }
 
-int ScummEngine_v90he::spriteInfoGet_field_7C(int spriteId) {
+int ScummEngine_v90he::spriteInfoGet_maskImgResNum(int spriteId) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	return _spriteTable[spriteId].field_7C;
+	return _spriteTable[spriteId].maskImgResNum;
 }
 
 int ScummEngine_v90he::spriteInfoGet_field_80(int spriteId) {
@@ -500,11 +500,11 @@ void ScummEngine_v90he::spriteInfoSet_paletteNum(int spriteId, int value) {
 	}
 }
 
-void ScummEngine_v90he::spriteInfoSet_field_7C(int spriteId, int value) {
+void ScummEngine_v90he::spriteInfoSet_maskImgResNum(int spriteId, int value) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	if (_spriteTable[spriteId].field_7C != value) {
-		_spriteTable[spriteId].field_7C = value;
+	if (_spriteTable[spriteId].maskImgResNum != value) {
+		_spriteTable[spriteId].maskImgResNum = value;
 		_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 	}
 }
@@ -789,7 +789,7 @@ void ScummEngine_v90he::spriteInfoSet_resetSprite(int spriteId) {
 	_spriteTable[spriteId].delayCount = 0;
 	_spriteTable[spriteId].classFlags = 0;
 	_spriteTable[spriteId].paletteNum = 0;
-	_spriteTable[spriteId].field_7C = 0;
+	_spriteTable[spriteId].maskImgResNum = 0;
 	_spriteTable[spriteId].field_80 = 0;
 	_spriteTable[spriteId].zorderPriority = 0;
 	_spriteTable[spriteId].field_84 = 0;
@@ -1334,9 +1334,9 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 		}
 		if (spr_flags & kSFNeedPaletteRemap)
 			wiz.img.flags |= kWIFRemapPalette;
-		if (spi->field_7C) {
+		if (spi->maskImgResNum) {
 			wiz.processFlags |= kWPFMaskImg;
-			wiz.maskImgResNum = spi->field_7C;
+			wiz.maskImgResNum = spi->maskImgResNum;
 		}
 		wiz.processFlags |= kWPFNewFlags;
 		
@@ -1409,7 +1409,7 @@ void ScummEngine_v90he::saveOrLoadSpriteData(Serializer *s, uint32 savegameVersi
 		MKLINE(SpriteInfo, imgFlags, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, field_74, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, delayAmount, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, field_7C, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, maskImgResNum, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, field_80, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, field_84, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, classFlags, sleInt32, VER(48)),

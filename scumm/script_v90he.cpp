@@ -894,7 +894,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 	case 32:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_field_7C(spriteId));
+			push(spriteInfoGet_maskImgResNum(spriteId));
 		else
 			push(0);
 		break;
@@ -1135,7 +1135,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_field_7C(spriteId, args[0]);
+			spriteInfoSet_maskImgResNum(spriteId, args[0]);
 		break;
 	case 29:
 		args[0] = pop();
