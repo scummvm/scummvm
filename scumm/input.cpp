@@ -210,7 +210,7 @@ void ScummEngine::parseEvents() {
 
 void ScummEngine::clearClickedStatus() {
 	_keyPressed = 0;
-	_mouseButStat = 0;
+	_mouseAndKeyboardStat = 0;
 	_leftBtnPressed &= ~msClicked;
 	_rightBtnPressed &= ~msClicked;
 }
@@ -251,15 +251,15 @@ void ScummEngine::processKbd(bool smushMode) {
 	//
 	// Determine the mouse button state.
 	//
-	_mouseButStat = 0;
+	_mouseAndKeyboardStat = 0;
 
 	// Interpret 'return' as left click and 'tab' as right click
 	if (_lastKeyHit && _cursor.state > 0) {
 		if (_lastKeyHit == 9) {
-			_mouseButStat = MBS_RIGHT_CLICK;
+			_mouseAndKeyboardStat = MBS_RIGHT_CLICK;
 			_lastKeyHit = 0;
 		} else if (_lastKeyHit == 13) {
-			_mouseButStat = MBS_LEFT_CLICK;
+			_mouseAndKeyboardStat = MBS_LEFT_CLICK;
 			_lastKeyHit = 0;
 		}
 	}
@@ -269,19 +269,19 @@ void ScummEngine::processKbd(bool smushMode) {
 		// the cutscene exit key (i.e. ESC in most games). That mimicks
 		// the behaviour of the original engine where pressing both
 		// mouse buttons also skips the current cutscene.
-		_mouseButStat = 0;
+		_mouseAndKeyboardStat = 0;
 		_lastKeyHit = (uint)VAR(VAR_CUTSCENEEXIT_KEY);
 	} else if (_rightBtnPressed & msClicked && (_version < 4 && _gameId != GID_LOOM)) {
 		// Pressing right mouse button is treated as if you pressed
 		// the cutscene exit key (i.e. ESC in most games). That mimicks
 		// the behaviour of the original engine where pressing right
 		// mouse button also skips the current cutscene.
-		_mouseButStat = 0;
+		_mouseAndKeyboardStat = 0;
 		_lastKeyHit = (uint)VAR(VAR_CUTSCENEEXIT_KEY);
 	} else if (_leftBtnPressed & msClicked) {
-		_mouseButStat = MBS_LEFT_CLICK;
+		_mouseAndKeyboardStat = MBS_LEFT_CLICK;
 	} else if (_rightBtnPressed & msClicked) {
-		_mouseButStat = MBS_RIGHT_CLICK;
+		_mouseAndKeyboardStat = MBS_RIGHT_CLICK;
 	}
 
 	if (_version == 8) {
@@ -478,7 +478,7 @@ void ScummEngine::processKbd(bool smushMode) {
 		}
 	}
 
-	_mouseButStat = _lastKeyHit;
+	_mouseAndKeyboardStat = _lastKeyHit;
 }
 
 } // End of namespace Scumm

@@ -90,6 +90,9 @@ private:
 	ScummEngine *_vm;
 	ImuseDigiSndMgr *_sound;
 
+	char *_audioNames;
+	int32 _numAudioNames;
+
 	bool _pause;
 
 	int32 _attributes[188];
@@ -128,6 +131,8 @@ private:
 public:
 	IMuseDigital(ScummEngine *scumm, int fps);
 	virtual ~IMuseDigital();
+
+	void setAudioNames(int32 num, char *names);
 
 	void startVoice(int soundId, AudioStream *input);
 	void startVoice(int soundId, const char *soundName);

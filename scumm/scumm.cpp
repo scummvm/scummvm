@@ -755,8 +755,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_numTalkies = 0;
 	_numPalettes = 0;
 	_numUnk = 0;
-	_audioNames = NULL;
-	_numAudioNames = 0;
 	_curActor = 0;
 	_curVerb = 0;
 	_curVerbSlot = 0;
@@ -765,7 +763,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_egoPositioned = false;
 	_keyPressed = 0;
 	_lastKeyHit = 0;
-	_mouseButStat = 0;
+	_mouseAndKeyboardStat = 0;
 	_leftBtnPressed = 0;
 	_rightBtnPressed = 0;
 	_bootParam = 0;
@@ -1173,7 +1171,6 @@ ScummEngine::~ScummEngine() {
 
 	delete _sound;
 	free(_languageBuffer);
-	free(_audioNames);
 
 	delete _costumeLoader;
 	delete _costumeRenderer;

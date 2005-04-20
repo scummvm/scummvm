@@ -394,10 +394,16 @@ void IMuseDigital::setFtMusicCuePoint(int cueId) {
 	_curMusicCue = cueId;
 }
 
+void IMuseDigital::setAudioNames(int32 num, char *names) {
+	free(_audioNames);
+	_numAudioNames = num;
+	_audioNames = names;
+}
+
 int IMuseDigital::getSoundIdByName(const char *soundName) {
 	if (soundName && soundName[0] != 0) {
-		for (int r = 0; r < _vm->_numAudioNames; r++) {
-			if (strcmp(soundName, &_vm->_audioNames[r * 9]) == 0) {
+		for (int r = 0; r < _numAudioNames; r++) {
+			if (strcmp(soundName, &_audioNames[r * 9]) == 0) {
 				return r;
 			}
 		}

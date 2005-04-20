@@ -1231,6 +1231,7 @@ protected:
 
 	virtual void readMAXS(int blockSize);
 	virtual void readGlobalObjects();
+	virtual void readIndexBlock(uint32 blocktype, uint32 itemsize);
 
 	virtual void setCameraAt(int pos_x, int pos_y);
 	virtual void setCameraFollows(Actor *a);

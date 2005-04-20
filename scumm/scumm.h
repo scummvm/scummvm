@@ -524,9 +524,6 @@ public:
 	
 	int _NESStartStrip;
 
-	char *_audioNames;
-	int32 _numAudioNames;
-
 protected:
 	/* Current objects - can go in their respective classes */
 	byte _curActor;
@@ -550,7 +547,7 @@ protected:
 	Common::Point _mouse;
 	Common::Point _virtualMouse;
 
-	uint16 _mouseButStat;
+	uint16 _mouseAndKeyboardStat;
 	byte _leftBtnPressed, _rightBtnPressed;
 
 	/** The bootparam, to be passed to the script 1, the bootscript. */

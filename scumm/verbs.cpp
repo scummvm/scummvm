@@ -230,7 +230,7 @@ void ScummEngine::checkV2Inventory(int x, int y) {
 
 	y -= virtscr[kVerbVirtScreen].topline;
 
-	if ((y < inventoryArea) || !(_mouseButStat & MBS_LEFT_CLICK)) 
+	if ((y < inventoryArea) || !(_mouseAndKeyboardStat & MBS_LEFT_CLICK)) 
 		return;
 
 	if (v2_mouseover_boxes[kInventoryUpArrow].rect.contains(x, y)) {
@@ -356,18 +356,18 @@ void ScummEngine::checkExecVerbs() {
 	if (VAR_MOUSE_STATE != 0xFF)
 		VAR(VAR_MOUSE_STATE) = 0;
 
-	if (_userPut <= 0 || _mouseButStat == 0)
+	if (_userPut <= 0 || _mouseAndKeyboardStat == 0)
 		return;
 
 	if (VAR_MOUSE_STATE != 0xFF)
-		VAR(VAR_MOUSE_STATE) = _mouseButStat;
+		VAR(VAR_MOUSE_STATE) = _mouseAndKeyboardStat;
 
-	if (_mouseButStat < MBS_MAX_KEY) {
+	if (_mouseAndKeyboardStat < MBS_MAX_KEY) {
 		/* Check keypresses */
 		vs = &_verbs[1];
 		for (i = 1; i < _numVerbs; i++, vs++) {
 			if (vs->verbid && vs->saveid == 0 && vs->curmode == 1) {
-				if (_mouseButStat == vs->key) {
+				if (_mouseAndKeyboardStat == vs->key) {
 					// Trigger verb as if the user clicked it
 					runInputScript(1, vs->verbid, 1);
 					return;
@@ -375,7 +375,7 @@ void ScummEngine::checkExecVerbs() {
 			}
 		}
 		
-		if ((_gameId == GID_INDY4 || _gameId == GID_PASS) && _mouseButStat >= '0' && _mouseButStat <= '9') {
+		if ((_gameId == GID_INDY4 || _gameId == GID_PASS) && _mouseAndKeyboardStat >= '0' && _mouseAndKeyboardStat <= '9') {
 			// To support keyboard fighting in FOA, we need to remap the number keys.
 			// FOA apparently expects PC scancode values (see script 46 if you want
 			// to know where I got these numbers from). Oddly enough, the The Indy 3
@@ -387,14 +387,14 @@ void ScummEngine::checkExecVerbs() {
 					331, 332, 333,
 					327, 328, 329
 				};
-			_mouseButStat = numpad[_mouseButStat - '0'];
+			_mouseAndKeyboardStat = numpad[_mouseAndKeyboardStat - '0'];
 		}
 		
 		// Generic keyboard input
-		runInputScript(4, _mouseButStat, 1);
-	} else if (_mouseButStat & MBS_MOUSE_MASK) {
+		runInputScript(4, _mouseAndKeyboardStat, 1);
+	} else if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
 		VirtScreen *zone = findVirtScreen(_mouse.y);
-		byte code = _mouseButStat & MBS_LEFT_CLICK ? 1 : 2;
+		byte code = _mouseAndKeyboardStat & MBS_LEFT_CLICK ? 1 : 2;
 		int inventoryArea = (_platform == Common::kPlatformNES) ? 48: 32;
 
 		if (_version <= 2 && zone->number == 2 && _mouse.y <= zone->topline + 8) {

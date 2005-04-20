@@ -341,6 +341,23 @@ void ScummEngine::readIndexFile() {
 	closeRoom();
 }
 
+void ScummEngine_v7::readIndexBlock(uint32 blocktype, uint32 itemsize) {
+	int num;
+	char *ptr;
+	switch (blocktype) {
+	case MKID('ANAM'):		// Used by: The Dig, FT
+		debug(9, "found ANAM block, reading audio names");
+		num = _fileHandle->readUint16LE();
+		ptr = (char*)malloc(num * 9);
+		_fileHandle->read(ptr, num * 9);
+		_imuseDigital->setAudioNames(num, ptr);
+		break;
+
+	default:
+		ScummEngine::readIndexBlock(blocktype, itemsize);
+	}
+}
+
 void ScummEngine_v70he::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	int i;
 	switch (blocktype) {
@@ -419,13 +436,6 @@ void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 
 	case MKID('DIRI'):
 		readResTypeList(rtRoomImage, MKID('RMIM'), "room image");
-		break;
-
-	case MKID('ANAM'):		// Used by: The Dig, FT
-		debug(9, "found ANAM block, reading audio names");
-		_numAudioNames = _fileHandle->readUint16LE();
-		_audioNames = (char*)malloc(_numAudioNames * 9);
-		_fileHandle->read(_audioNames, _numAudioNames * 9);
 		break;
 
 	case MKID('DIRR'):

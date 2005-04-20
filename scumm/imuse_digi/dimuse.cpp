@@ -54,6 +54,9 @@ IMuseDigital::IMuseDigital(ScummEngine *scumm, int fps)
 		_track[l]->used = false;
 	}
 	_vm->_timer->installTimerProc(timer_handler, 1000000 / _callbackFps, this);
+
+	_audioNames = NULL;
+	_numAudioNames = 0;
 }
 
 IMuseDigital::~IMuseDigital() {
@@ -63,6 +66,7 @@ IMuseDigital::~IMuseDigital() {
 		delete _track[l];
 	}
 	delete _sound;
+	free(_audioNames);
 }
 
 void IMuseDigital::resetState() {
