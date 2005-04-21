@@ -407,8 +407,8 @@ void ScummEngine_v100he::o100_actorOps() {
 		a->setAnimSpeed(pop());
 		break;
 	case 6:
-		i = pop();
 		j = pop();
+		i = pop();
 		a->putActor(i, j, a->_room);
 		break;
 	case 8:

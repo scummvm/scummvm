@@ -1128,8 +1128,8 @@ void ScummEngine_v72he::o72_actorOps() {
 		a->_clipOverride.left = pop();
 		break;
 	case 65: // HE 98+
-		i = pop();
 		j = pop();
+		i = pop();
 		a->putActor(i, j, a->_room);
 		break;
 	case 68: // HE 90+
