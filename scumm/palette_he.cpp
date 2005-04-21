@@ -131,6 +131,14 @@ int ScummEngine_v90he::getPaletteUnk1(int palSlot, int arg_4, int arg_8, int sta
 	return bestitem;
 }
 
+int ScummEngine_v90he::getPaletteUnk2(int palSlot, int unk1, int unk2) {
+	assert(palSlot >= 1 && palSlot <= _numPalettes);
+	assert(unk1 >= 1 && unk1 <= 255);
+
+	return _hePalettes[palSlot * 1024 + unk1 * 3 + unk2 / 3];
+}
+
+
 int ScummEngine_v90he::getHEPaletteColor(int palSlot, int color) {
 	assert(palSlot >= 1 && palSlot <= _numPalettes);
 	assert(color >= 1 && color <= 255);

@@ -2273,10 +2273,10 @@ void ScummEngine_v90he::o90_getPaletteData() {
 		push(getPaletteUnk1(palSlot, b, c, d, e));
 		break;
 	case 7:
-		pop();
-		pop();
-		pop();
-		push(0);
+		c = pop();
+		b = pop();
+		palSlot = pop();
+		push(getPaletteUnk2(palSlot, b, c));
 		break;
 	case 21:
 		color = pop();
@@ -2284,9 +2284,9 @@ void ScummEngine_v90he::o90_getPaletteData() {
 		push(getHEPaletteColor(palSlot, color));
 		break;
 	case 87:
-		pop();
-		pop();
-		push(0);
+		c = pop();
+		b = pop();
+		push(getPaletteUnk2(1, b, c));
 		break;
 	case 172:
 		pop();
