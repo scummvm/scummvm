@@ -2256,6 +2256,7 @@ void ScummEngine_v90he::o90_getObjectData() {
 }
 
 void ScummEngine_v90he::o90_getPaletteData() {
+	int b, c, d, e;
 	int palSlot, color;
 
 	byte subOp = fetchScriptByte();
@@ -2263,13 +2264,13 @@ void ScummEngine_v90he::o90_getPaletteData() {
 
 	switch (subOp) {
 	case 0:
+		e = pop();
+		d = pop();
+		palSlot = pop();
 		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		push(0);
+		c = pop();
+		b = pop();
+		push(getPaletteUnk1(palSlot, b, c, d, e));
 		break;
 	case 7:
 		pop();
@@ -2289,9 +2290,13 @@ void ScummEngine_v90he::o90_getPaletteData() {
 		break;
 	case 172:
 		pop();
-		pop();
-		pop();
-		push(0);
+		c = pop();
+		c = MAX(0, c);
+		c = MIN(c, 255);
+		b = pop();
+		b = MAX(0, b);
+		b = MIN(b, 255);
+		push(getPaletteUnk1(1, b, c, 10, 245));
 		break;
 	default:
 		error("o90_getPaletteData: Unknown case %d", subOp);

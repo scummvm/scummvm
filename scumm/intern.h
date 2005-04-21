@@ -1002,6 +1002,8 @@ protected:
 	
 	uint8 *getHEPaletteIndex(int palSlot);
 	int getHEPaletteColor(int palSlot, int color);
+	int getPaletteUnk1(int palSlot, int arg_4, int arg_8, int start, int end);
+
 	void setHEPaletteColor(int palSlot, uint8 color, uint8 r, uint8 g, uint8 b);
 	void setHEPaletteFromPtr(int palSlot, const uint8 *palData);
 	void setHEPaletteFromCostume(int palSlot, int resId);

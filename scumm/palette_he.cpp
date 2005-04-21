@@ -78,6 +78,59 @@ uint8 *ScummEngine_v90he::getHEPaletteIndex(int palSlot) {
 	}
 }
 
+int ScummEngine_v90he::getPaletteUnk1(int palSlot, int arg_4, int arg_8, int start, int end) {
+	assert(palSlot >= 1 && palSlot <= _numPalettes);
+	assert(start >= 1 && start <= 255);
+	assert(end >= 1 && end <= 255);
+
+	int eax, edi, edp, edx, esi;
+	int sum, bestitem, bestsum;
+	uint8 *palPtr;
+
+	palPtr = _hePalettes + palSlot * 1024 + start * 3;
+
+	bestsum = 0xFFFFFFFF;
+	bestitem = start;
+	edp = arg_8;
+
+	for (int i = start; i <= end; i++) {
+		esi = arg_4;
+
+		edi = *palPtr++;
+		edx = *palPtr;
+		esi -= edi;
+		eax = edx;
+
+		edi = edp;
+		eax = -eax;
+		eax <<= 31;
+		eax -= edx;		
+		edi -= edx;
+
+		eax += edp;
+
+		edx = esi;
+
+		eax *= edi;
+		edx *= esi;
+
+		sum = edx + eax * 2;
+
+		palPtr += 2;
+
+		if (sum < bestsum) {
+			if (sum == 0) {
+				return i;
+			}
+
+			bestsum = sum;
+			bestitem = i;
+		}
+	}
+
+	return bestitem;
+}
+
 int ScummEngine_v90he::getHEPaletteColor(int palSlot, int color) {
 	assert(palSlot >= 1 && palSlot <= _numPalettes);
 	assert(color >= 1 && color <= 255);
