@@ -1445,8 +1445,11 @@ void Actor::setActorCostume(int c) {
 			_palette[i] = 0xFF;
 	}
 
-	if (_vm->_heversion >= 72 && _vm->getTalkingActor() == _number)
-		_vm->setTalkingActor(0);
+	if (_vm->_heversion >= 71 && _vm->getTalkingActor() == _number) {
+		if (_vm->_heversion <= 95 || (_vm->_heversion >= 98 && _vm->VAR(_vm->VAR_SKIP_RESET_TALK_ACTOR) == 0)) {
+			_vm->setTalkingActor(0);
+		}
+	}
 }
 
 void Actor::startWalkActor(int destX, int destY, int dir) {

@@ -1036,6 +1036,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_MUSIC_BUNDLE_LOADED = 0xFF;
 	VAR_VOICE_BUNDLE_LOADED = 0xFF;
 
+	VAR_SKIP_RESET_TALK_ACTOR = 0xFF;
 	VAR_MUSIC_CHANNEL = 0xFF;
 	VAR_SOUND_CHANNEL = 0xFF;
 
