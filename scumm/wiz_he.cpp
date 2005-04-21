@@ -834,14 +834,15 @@ void ScummEngine_v72he::captureWizImage(int resNum, const Common::Rect& r, bool 
 		int dataSize = 0;
 		int headerSize = palPtr ? 1080 : 36;
 		switch (compType) {
-		case 1:
-			dataSize = wizPackType1(0, src, pvs->pitch, rCapt, tColor);
-			break;
 		case 0:
 			dataSize = wizPackType0(0, src, pvs->pitch, rCapt, tColor);
 			break;
+		case 1:
+			dataSize = wizPackType1(0, src, pvs->pitch, rCapt, tColor);
+			break;
 		default:
 			error("unhandled compression type %d", compType);
+			break;
 		}
 
 		// alignment
@@ -876,11 +877,11 @@ void ScummEngine_v72he::captureWizImage(int resNum, const Common::Rect& r, bool 
 
 		// write compressed data
 		switch (compType) {
-		case 1:
-			wizPackType1(wizImg + headerSize, src, pvs->pitch, rCapt, tColor);
-			break;
 		case 0:
 			wizPackType0(wizImg + headerSize, src, pvs->pitch, rCapt, tColor);
+			break;
+		case 1:
+			wizPackType1(wizImg + headerSize, src, pvs->pitch, rCapt, tColor);
 			break;
 		default:
 			break;
@@ -931,8 +932,7 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 		uint32 comp   = READ_LE_UINT32(wizh + 0x0);
 		uint32 width  = READ_LE_UINT32(wizh + 0x4);
 		uint32 height = READ_LE_UINT32(wizh + 0x8);
-		debug(1, "wiz_header.comp = %d wiz_header.w = %d wiz_header.h = %d)", comp, width, height);
-		assert(comp == 0 || comp == 1 || comp == 2 || comp == 3 || comp == 10 || comp == 11);
+		debug(1, "wiz_header.comp = %d wiz_header.w = %d wiz_header.h = %d", comp, width, height);
 		
 		uint8 *wizd = findWrappedBlock(MKID('WIZD'), dataPtr, state, 0);
 		assert(wizd);
@@ -1025,6 +1025,7 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 			_wiz.copyWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, palPtr);
 			break;
 		case 2:
+			// RAW 16 bits in 555 format
 			warning("drawWizImage: Unhandled wiz compression type %d", comp);
 			break;
 		default:
@@ -1501,11 +1502,11 @@ void ScummEngine_v90he::fillWizRect(const WizParameters *params) {
 	if (dataPtr) {	
 		uint8 *wizh = findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
 		assert(wizh);
-		uint32 ic = READ_LE_UINT32(wizh + 0x0);
-		uint32 iw = READ_LE_UINT32(wizh + 0x4);
-		uint32 ih = READ_LE_UINT32(wizh + 0x8);
-		assert(ic == 0 || ic == 2 || ic == 3);	
-		Common::Rect r1(iw, ih);
+		int c = READ_LE_UINT32(wizh + 0x0);
+		int w = READ_LE_UINT32(wizh + 0x4);
+		int h = READ_LE_UINT32(wizh + 0x8);
+		assert(c == 0);
+		Common::Rect r1(w, h);
 		if (params->processFlags & kWPFClipBox) {
 			if (!r1.intersects(params->box)) {
 				return;
@@ -1523,10 +1524,10 @@ void ScummEngine_v90he::fillWizRect(const WizParameters *params) {
 		assert(wizd);
 		int dx = r1.width();
 		int dy = r1.height();
-		wizd += r1.top * iw + r1.left;
+		wizd += r1.top * w + r1.left;
 		while (dy--) {
 			memset(wizd, color, dx);
-			wizd += iw;
+			wizd += w;
 		}
 	}
 }
@@ -1541,11 +1542,11 @@ void ScummEngine_v90he::fillWizParallelogram(const WizParameters *params) {
 		if (dataPtr) {
 			uint8 *wizh = findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
 			assert(wizh);
-			uint32 ic = READ_LE_UINT32(wizh + 0x0);
-			uint32 iw = READ_LE_UINT32(wizh + 0x4);
-			uint32 ih = READ_LE_UINT32(wizh + 0x8);
-			assert(ic == 0 || ic == 2 || ic == 3);
-			Common::Rect r1(iw + 1, ih + 1);
+			int c = READ_LE_UINT32(wizh + 0x0);
+			int w = READ_LE_UINT32(wizh + 0x4);
+			int h = READ_LE_UINT32(wizh + 0x8);
+			assert(c == 0);
+			Common::Rect r1(w, h);
 			if (params->processFlags & kWPFClipBox) {
 				if (!r1.intersects(params->box)) {
 					return;
@@ -1579,7 +1580,7 @@ void ScummEngine_v90he::fillWizParallelogram(const WizParameters *params) {
 			}
 			
 			if (r1.contains(x1, y1)) {
-				*(wizd + y1 * iw + x1) = color;
+				*(wizd + y1 * w + x1) = color;
 			}
 			
 			if (dx >= dy) {
@@ -1595,7 +1596,7 @@ void ScummEngine_v90he::fillWizParallelogram(const WizParameters *params) {
 					}
 					x1 += incx;
 					if (r1.contains(x1, y1)) {
-						*(wizd + y1 * iw + x1) = color;
+						*(wizd + y1 * w + x1) = color;
 					}
 				}
 			} else {
@@ -1611,7 +1612,7 @@ void ScummEngine_v90he::fillWizParallelogram(const WizParameters *params) {
 					}
 					y1 += incy;
 					if (r1.contains(x1, y1)) {
-						*(wizd + y1 * iw + x1) = color;
+						*(wizd + y1 * w + x1) = color;
 					}					
 				}
 			}
@@ -1754,7 +1755,7 @@ int ScummEngine_v90he::isWizPixelNonTransparent(int resNum, int state, int x, in
 	assert(data);
 	uint8 *wizh = findWrappedBlock(MKID('WIZH'), data, state, 0);
 	assert(wizh);
-	uint32 c = READ_LE_UINT32(wizh + 0x0);
+	int c = READ_LE_UINT32(wizh + 0x0);
 	int w = READ_LE_UINT32(wizh + 0x4);
 	int h = READ_LE_UINT32(wizh + 0x8);
 	uint8 *wizd = findWrappedBlock(MKID('WIZD'), data, state, 0);
@@ -1766,10 +1767,16 @@ int ScummEngine_v90he::isWizPixelNonTransparent(int resNum, int state, int x, in
 		if (flags & kWIFFlipY) {
 			y = h - y - 1;
 		}
-		if (c == 1) {
-			ret = _wiz.isWizPixelNonTransparent(wizd, x, y, w, h);
-		} else if (c == 0 || c == 2 || c == 3) {
+		switch (c) {
+		case 0:
 			ret = _wiz.getRawWizPixelColor(wizd, x, y, w, h, VAR(VAR_WIZ_TCOLOR)) != VAR(VAR_WIZ_TCOLOR) ? 1 : 0;
+			break;
+		case 1:
+			ret = _wiz.isWizPixelNonTransparent(wizd, x, y, w, h);
+			break;
+		default:
+			error("isWizPixelNonTransparent: Unhandled wiz compression type %d", c);
+			break;
 		}
 	}
 	return ret;
@@ -1781,17 +1788,21 @@ uint8 ScummEngine_v90he::getWizPixelColor(int resNum, int state, int x, int y, i
 	assert(data);
 	uint8 *wizh = findWrappedBlock(MKID('WIZH'), data, state, 0);
 	assert(wizh);
-	uint32 c = READ_LE_UINT32(wizh + 0x0);
-	uint32 w = READ_LE_UINT32(wizh + 0x4);
-	uint32 h = READ_LE_UINT32(wizh + 0x8);
+	int c = READ_LE_UINT32(wizh + 0x0);
+	int w = READ_LE_UINT32(wizh + 0x4);
+	int h = READ_LE_UINT32(wizh + 0x8);
 	uint8 *wizd = findWrappedBlock(MKID('WIZD'), data, state, 0);
-	assert(wizd);		
-	if (c == 1) {
-		color = _wiz.getWizPixelColor(wizd, x, y, w, h, VAR(VAR_WIZ_TCOLOR));
-	} else if (c == 0 || c == 2 || c == 3) {
+	assert(wizd);
+	switch (c) {
+	case 0:
 		color = _wiz.getRawWizPixelColor(wizd, x, y, w, h, VAR(VAR_WIZ_TCOLOR));
-	} else {
-		color = VAR(VAR_WIZ_TCOLOR);
+		break;
+	case 1:
+		color = _wiz.getWizPixelColor(wizd, x, y, w, h, VAR(VAR_WIZ_TCOLOR));
+		break;
+	default:
+		error("getWizPixelColor: Unhandled wiz compression type %d", c);
+		break;
 	}
 	return color;
 }
@@ -1800,27 +1811,31 @@ int ScummEngine_v90he::computeWizHistogram(int resNum, int state, int x, int y, 
 	writeVar(0, 0);
 	defineArray(0, kDwordArray, 0, 0, 0, 255);
 	if (readVar(0) != 0) {
+		Common::Rect rCap(x, y, w + 1, h + 1);
 		uint8 *data = getResourceAddress(rtImage, resNum);
 		assert(data);
 		uint8 *wizh = findWrappedBlock(MKID('WIZH'), data, state, 0);
 		assert(wizh);
-		uint32 ic = READ_LE_UINT32(wizh + 0x0);
-		uint32 iw = READ_LE_UINT32(wizh + 0x4);
-		uint32 ih = READ_LE_UINT32(wizh + 0x8);
+		int c = READ_LE_UINT32(wizh + 0x0);
+		w = READ_LE_UINT32(wizh + 0x4);
+		h = READ_LE_UINT32(wizh + 0x8);
+		Common::Rect rWiz(w, h);
 		uint8 *wizd = findWrappedBlock(MKID('WIZD'), data, state, 0);
 		assert(wizd);
-		Common::Rect rWiz(iw, ih);
-		Common::Rect rCap(x, y, w + 1, h + 1);
 		if (rCap.intersects(rWiz)) {
 			rCap.clip(rWiz);
 			uint32 histogram[256];
 			memset(histogram, 0, sizeof(histogram));
-			if (ic == 1) {
-				_wiz.computeWizHistogram(histogram, wizd, &rCap);
-			} else if (ic == 0 || ic == 2 || ic == 3) {
+			switch (c) {
+			case 0:
 				_wiz.computeRawWizHistogram(histogram, wizd, w, &rCap);
-			} else {
-				error("computeWizHistogram: Unable to return histogram for type %d", ic);
+				break;
+			case 1:
+				_wiz.computeWizHistogram(histogram, wizd, &rCap);
+				break;
+			default:
+				error("computeWizHistogram: Unhandled wiz compression type %d", c);
+				break;
 			}
 			for (int i = 0; i < 256; ++i) {
 				writeArray(0, 0, i, histogram[i]);
