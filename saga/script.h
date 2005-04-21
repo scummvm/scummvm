@@ -389,9 +389,13 @@ private:
 	uint16 _modulesLUTEntryLen;
 	ModuleData *_modules;
 	int _modulesCount;
-	
-	byte* _commonBuffer;
+
+protected:
+	friend class SagaEngine;
+	byte *_commonBuffer;
 	uint _commonBufferSize;
+
+private:
 	uint _staticSize;
 
 	ScriptThreadList _threadList;
@@ -508,7 +512,7 @@ private:
 	void SF_simulSpeech2(SCRIPTFUNC_PARAMS);
 	void sfPlacard(SCRIPTFUNC_PARAMS);
 	void sfPlacardOff(SCRIPTFUNC_PARAMS);
-	void SF_setProtagState(SCRIPTFUNC_PARAMS);
+	void sfSetProtagState(SCRIPTFUNC_PARAMS);
 	void sfResumeBgdAnim(SCRIPTFUNC_PARAMS);
 	void SF_throwActor(SCRIPTFUNC_PARAMS);
 	void sfWaitWalk(SCRIPTFUNC_PARAMS);

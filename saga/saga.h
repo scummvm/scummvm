@@ -425,6 +425,9 @@ public:
 	virtual ~SagaEngine();
 	void shutDown() { _quit = true; }
 
+	void save();
+	void load();
+
 	int _soundEnabled;
 	int _musicEnabled;
 

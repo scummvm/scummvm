@@ -506,7 +506,13 @@ PanelButton *Interface::verbHitTest(const Point& mousePoint) {
 	return NULL;
 }
 
-void Interface::addToInventory(int sprite) {
+void Interface::addToInventory(int sprite, int pos) {
+	if (pos != -1) {
+		_inventory[pos] = sprite;
+		_inventoryCount++;
+		return;
+	}
+
 	if (_inventoryCount < _inventorySize) {
 		for (int i = _inventoryCount; i > 0; i--) {
 			_inventory[i] = _inventory[i - 1];
@@ -533,6 +539,13 @@ void Interface::removeFromInventory(int sprite) {
 			return;
 		}
 	}
+}
+
+void Interface::clearInventory() {
+	for (int i = 0; i < _inventoryCount; i++)
+		_inventory[i] = 0;
+
+	_inventoryCount = 0;
 }
 
 int Interface::inventoryItemPosition(int sprite) {

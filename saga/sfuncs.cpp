@@ -100,7 +100,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(SF_simulSpeech2),
 		OPCODE(sfPlacard),
 		OPCODE(sfPlacardOff),
-		OPCODE(SF_setProtagState),
+		OPCODE(sfSetProtagState),
 		OPCODE(sfResumeBgdAnim),
 		OPCODE(SF_throwActor),
 		OPCODE(sfWaitWalk),
@@ -1305,11 +1305,10 @@ void Script::sfPlacardOff(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #50 (0x32)
-void Script::SF_setProtagState(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
+void Script::sfSetProtagState(SCRIPTFUNC_PARAMS) {
+	int protagState = thread->pop();
 
-	debug(0, "STUB: SF_setProtagState(), %d args", nArgs);
+	_vm->_actor->setProtagState(protagState);
 }
 
 // Script function #51 (0x33)

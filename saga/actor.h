@@ -382,6 +382,9 @@ public:
 	bool isSpeaking() {
 		return _activeSpeech.stringsCount > 0;
 	}
+
+	void setProtagState(int state);
+	int getProtagState() { return _protagState; }
 	
 private:
 	bool loadActorResources(ActorData *actor);
@@ -428,14 +431,16 @@ private:
 	
 protected:
 	friend class IsoMap;
+	friend class SagaEngine;
 	int _actorsCount;
 	ActorData **_actors;
 
-private:
 	int _objsCount;
 	ObjectData **_objs;
 
+private:
 	SpeechData _activeSpeech;
+	int _protagState;
 
 //path stuff
 	struct PathNode {

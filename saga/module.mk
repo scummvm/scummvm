@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	saga/render.o \
 	saga/rscfile.o \
 	saga/saga.o \
+	saga/saveload.o \
 	saga/scene.o \
 	saga/script.o \
 	saga/sdebug.o \

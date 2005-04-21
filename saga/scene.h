@@ -261,6 +261,7 @@ class Scene {
 
 	int getSceneLUT(int num);
 	int currentSceneNumber() const { return _sceneNumber; }
+	int getOutsetSceneNumber() const { return _outsetSceneNumber; }
 	int currentSceneResourceId() const { return _sceneResourceId; }
 
  private:
@@ -282,6 +283,7 @@ class Scene {
 	int _firstScene;
 	bool _sceneLoaded;
 	int _sceneNumber;
+	int _outsetSceneNumber;
 	int _sceneResourceId;
 	bool _inGame;
 	bool _loadDesc;

@@ -180,6 +180,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_pathDirectionListAlloced = 0;
 		
 	_centerActor = _protagonist = NULL;
+	_protagState = 0;
 	_lastTickMsec = 0;
 
 	_yCellCount = _vm->getSceneHeight();
@@ -546,6 +547,11 @@ bool Actor::validFollowerLocation(const Location &location) {
 	}
 	
 	return (_vm->_scene->canWalk(point));
+}
+
+void Actor::setProtagState(int state) {
+	debug(0, "STUB: setProtagState(%d)", state);
+	_protagState = state;
 }
 
 void Actor::updateActorsScene(int actorsEntrance) {

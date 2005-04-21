@@ -581,6 +581,13 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SceneD
 		return FAILURE;
 	}
 
+	if (_desc.flags & kSceneFlagISO) {
+		_outsetSceneNumber = _sceneNumber;
+	} else {
+		if (!(_bg.w < _vm->getDisplayWidth() || _bg.h < _vm->getSceneHeight()))
+			_outsetSceneNumber = _sceneNumber;
+	}
+
 	_sceneLoaded = true;
 	
 	q_event = NULL;
@@ -875,7 +882,7 @@ int Scene::processSceneResources() {
 			_actionMap->load(res_data, res_data_len);
 			break;
 		case SAGA_ISO_IMAGES:
-			if (!(_vm->_scene->getFlags() & kSceneFlagISO)) {
+			if (!(_desc.flags & kSceneFlagISO)) {
 				error("Scene::ProcessSceneResources(): not Iso mode");
 			}
 
@@ -884,7 +891,7 @@ int Scene::processSceneResources() {
 			_vm->_isoMap->loadImages(res_data, res_data_len);
 			break;
 		case SAGA_ISO_MAP:
-			if (!(_vm->_scene->getFlags() & kSceneFlagISO)) {
+			if (!(_desc.flags & kSceneFlagISO)) {
 				error("Scene::ProcessSceneResources(): not Iso mode");
 			}
 
@@ -893,7 +900,7 @@ int Scene::processSceneResources() {
 			_vm->_isoMap->loadMap(res_data, res_data_len);
 			break;
 		case SAGA_ISO_PLATFORMS:
-			if (!(_vm->_scene->getFlags() & kSceneFlagISO)) {
+			if (!(_desc.flags & kSceneFlagISO)) {
 				error("Scene::ProcessSceneResources(): not Iso mode");
 			}
 
@@ -902,7 +909,7 @@ int Scene::processSceneResources() {
 			_vm->_isoMap->loadPlatforms(res_data, res_data_len);
 			break;
 		case SAGA_ISO_METATILES:
-			if (!(_vm->_scene->getFlags() & kSceneFlagISO)) {
+			if (!(_desc.flags & kSceneFlagISO)) {
 				error("Scene::ProcessSceneResources(): not Iso mode");
 			}
 
@@ -938,7 +945,7 @@ int Scene::processSceneResources() {
 			}
 			break;
 		case SAGA_ISO_MULTI:
-			if (!(_vm->_scene->getFlags() & kSceneFlagISO)) {
+			if (!(_desc.flags & kSceneFlagISO)) {
 				error("Scene::ProcessSceneResources(): not Iso mode");
 			}
 
@@ -973,7 +980,7 @@ int Scene::draw(SURFACE *dst_s) {
 
 	_vm->_render->getBufferInfo(&buf_info);
 
-	if (_vm->_scene->getFlags() & kSceneFlagISO) {
+	if (_desc.flags & kSceneFlagISO) {
 		_vm->_isoMap->adjustScroll(false);
 		_vm->_isoMap->draw(dst_s);
 	} else {

@@ -84,6 +84,12 @@ int SagaEngine::processInput() {
 			case 287: // F6
 				_render->toggleFlag(RF_ACTOR_PATH_TEST);
 				break;
+			case 288: // F7
+				save();
+				break;
+			case 289: // F8
+				load();
+				break;
 			case 9: // Tab
 				_script->SThreadDebugStep();
 				break;

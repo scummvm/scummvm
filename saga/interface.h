@@ -137,8 +137,9 @@ public:
 
 	bool processKeyCode(int keyCode);
 	
-	void addToInventory(int sprite);
+	void addToInventory(int sprite, int pos = -1);
 	void removeFromInventory(int sprite);
+	void clearInventory();
 	int inventoryItemPosition(int sprite);
 	void drawInventory();
 	

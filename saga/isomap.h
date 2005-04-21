@@ -167,6 +167,7 @@ public:
 	void findTilePath(ActorData* actor, const Location &start, const Location &end);
 	bool nextTileTarget(ActorData* actor);
 	void setTileDoorState(int doorNumber, int doorState);
+	Point getMapPosition() { return _mapPosition; }
 
 private:
 	void drawTiles(SURFACE *ds, const Location *location);
