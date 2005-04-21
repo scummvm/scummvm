@@ -259,7 +259,7 @@ Big Thinkers First Grade
 	Demo	Windows	en	0f5935bd5e88ba6f09e558d64459746d	1grademo	khalek
 
 Blue's ABC Time
-	Demo	Windows	en	7ddeaf52c8b9a50551ce0aa2ac811d07	BluesABCTimeDemo	khalek, sev
+	Demo	All	en	7ddeaf52c8b9a50551ce0aa2ac811d07	BluesABCTimeDemo	khalek, sev
 	Demo	Windows	en	810a9da887aefa597b0cf3c77d262897	BluesABCTimeDemo	sev
 
 Fatty Bears Birthday Surprise
