@@ -168,8 +168,10 @@ char *game_loadExtData(int16 itemId, int16 *pResWidth, int16 *pResHeight) {
 
 void game_clearCollisions() {
 	int16 i;
-	for (i = 0; i < 250; i++)
+	for (i = 0; i < 250; i++) {
+		game_collisionAreas[i].id = 0;
 		game_collisionAreas[i].left = -1;
+	}
 }
 
 void game_addNewCollision(int16 id, int16 left, int16 top, int16 right, int16 bottom,
