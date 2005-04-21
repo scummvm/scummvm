@@ -343,12 +343,7 @@ void Wiz::copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int 
 		}
 		int h = r1.height();
 		int w = r1.width();
-		if (srcx < 0) {
-			src -= srcx;
-		}
-		if (srcy < 0) {
-			src -= srcy * srcw;
-		}
+		src += r1.left + r1.top * srcw;
 		dst += r2.left + r2.top * dstw;
 		while (h--) {
 			const uint8 *p = src;
@@ -916,7 +911,7 @@ void ScummEngine_v72he::displayWizImage(WizImage *pwi) {
 }
 
 uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, int xmapNum, const Common::Rect *clipBox, int flags, int dstResNum, int paletteNum) {
-	debug(1, "drawWizImage(resNum %d, x1 %d, y1 %d, flags 0x%X, xmapNum %d paletteNum %d)", resNum, x1, y1, flags, xmapNum, paletteNum);
+	debug(1, "drawWizImage(resNum %d, x1 %d, y1 %d, flags 0x%X, xmapNum %d dstResNum %d paletteNum %d)", resNum, x1, y1, flags, xmapNum, dstResNum, paletteNum);
 	uint8 *dst = NULL;
 	const uint8 *palPtr = NULL;
 	if (_heversion >= 99) {
