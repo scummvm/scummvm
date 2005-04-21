@@ -2270,13 +2270,13 @@ void ScummEngine_v90he::o90_getPaletteData() {
 		pop();
 		c = pop();
 		b = pop();
-		push(getPaletteUnk1(palSlot, b, c, d, e));
+		push(getHEPaletteSimilarColor(palSlot, b, c, d, e));
 		break;
 	case 7:
 		c = pop();
 		b = pop();
 		palSlot = pop();
-		push(getPaletteUnk2(palSlot, b, c));
+		push(getHEPaletteColorComponent(palSlot, b, c));
 		break;
 	case 21:
 		color = pop();
@@ -2286,7 +2286,7 @@ void ScummEngine_v90he::o90_getPaletteData() {
 	case 87:
 		c = pop();
 		b = pop();
-		push(getPaletteUnk2(1, b, c));
+		push(getHEPaletteColorComponent(1, b, c));
 		break;
 	case 172:
 		pop();
@@ -2296,7 +2296,7 @@ void ScummEngine_v90he::o90_getPaletteData() {
 		b = pop();
 		b = MAX(0, b);
 		b = MIN(b, 255);
-		push(getPaletteUnk1(1, b, c, 10, 245));
+		push(getHEPaletteSimilarColor(1, b, c, 10, 245));
 		break;
 	default:
 		error("o90_getPaletteData: Unknown case %d", subOp);

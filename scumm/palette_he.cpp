@@ -78,64 +78,37 @@ uint8 *ScummEngine_v90he::getHEPaletteIndex(int palSlot) {
 	}
 }
 
-int ScummEngine_v90he::getPaletteUnk1(int palSlot, int arg_4, int arg_8, int start, int end) {
+int ScummEngine_v90he::getHEPaletteSimilarColor(int palSlot, int red, int green, int start, int end) {
 	assert(palSlot >= 1 && palSlot <= _numPalettes);
 	assert(start >= 1 && start <= 255);
 	assert(end >= 1 && end <= 255);
 
-	int eax, edi, edp, edx, esi;
-	int sum, bestitem, bestsum;
-	uint8 *palPtr;
+	uint8 *pal = _hePalettes + palSlot * 1024 + start * 3;
 
-	palPtr = _hePalettes + palSlot * 1024 + start * 3;
-
-	bestsum = 0xFFFFFFFF;
-	bestitem = start;
-	edp = arg_8;
+	int bestsum = 0xFFFFFFFF;
+	int bestitem = start;
 
 	for (int i = start; i <= end; i++) {
-		esi = arg_4;
-
-		edi = *palPtr++;
-		edx = *palPtr;
-		esi -= edi;
-		eax = edx;
-
-		edi = edp;
-		eax = -eax;
-		eax <<= 31;
-		eax -= edx;		
-		edi -= edx;
-
-		eax += edp;
-
-		edx = esi;
-
-		eax *= edi;
-		edx *= esi;
-
-		sum = edx + eax * 2;
-
-		palPtr += 2;
-
+		int dr = red - pal[0];
+		int dg = green - pal[1];
+		int sum = dr * dr + dg * dg * 2;
+		if (sum == 0) {
+			return i;
+		}
 		if (sum < bestsum) {
-			if (sum == 0) {
-				return i;
-			}
-
 			bestsum = sum;
 			bestitem = i;
 		}
+		pal += 3;
 	}
-
 	return bestitem;
 }
 
-int ScummEngine_v90he::getPaletteUnk2(int palSlot, int unk1, int unk2) {
+int ScummEngine_v90he::getHEPaletteColorComponent(int palSlot, int color, int component) {
 	assert(palSlot >= 1 && palSlot <= _numPalettes);
-	assert(unk1 >= 1 && unk1 <= 255);
+	assert(color >= 1 && color <= 255);
 
-	return _hePalettes[palSlot * 1024 + unk1 * 3 + unk2 / 3];
+	return _hePalettes[palSlot * 1024 + color * 3 + component % 3];
 }
 
 int ScummEngine_v90he::getHEPaletteColor(int palSlot, int color) {
