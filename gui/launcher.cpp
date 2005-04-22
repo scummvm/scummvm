@@ -704,7 +704,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		editGame(item);
 		break;
 	case kOptionsCmd: {
-		GlobalOptionsDialog options(_detector);
+		GlobalOptionsDialog options;
 		options.runModal();
 		}
 		break;

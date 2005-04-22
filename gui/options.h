@@ -28,8 +28,6 @@
 #include "backends/wince/CEKeysDialog.h"
 #endif
 
-class GameDetector;
-
 namespace GUI {
 
 class BrowserDialog;
@@ -111,7 +109,7 @@ private:
 class GlobalOptionsDialog : public OptionsDialog {
 	typedef Common::String String;
 public:
-	GlobalOptionsDialog(GameDetector &detector);
+	GlobalOptionsDialog();
 	~GlobalOptionsDialog();
 
 	void open();

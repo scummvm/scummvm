@@ -26,7 +26,6 @@
 #include "gui/PopUpWidget.h"
 #include "gui/TabWidget.h"
 
-#include "base/gameDetector.h"
 #include "backends/fs/fs.h"
 #include "common/config-manager.h"
 #include "common/scaler.h"
@@ -433,7 +432,7 @@ int OptionsDialog::addVolumeControls(GuiObject *boss, int yoffset) {
 #pragma mark -
 
 
-GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
+GlobalOptionsDialog::GlobalOptionsDialog()
 	: OptionsDialog(Common::ConfigManager::kApplicationDomain, 10, 20, 320 - 2 * 10, 200 - 1 * 20) {
 
 	const int vBorder = 4;
