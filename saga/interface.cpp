@@ -440,7 +440,7 @@ void Interface::drawStatusBar() {
 	rect.right = _vm->getDisplayWidth();
 	rect.bottom = _vm->getDisplayInfo().statusY + _vm->getDisplayInfo().statusHeight;
 
-	drawRect(backBuffer, &rect, _vm->getDisplayInfo().statusBGColor);
+	drawRect(backBuffer, rect, _vm->getDisplayInfo().statusBGColor);
 
 	string_w = _vm->_font->getStringWidth(SMALL_FONT_ID, _statusText, 0, 0);
 
@@ -835,7 +835,7 @@ void Interface::converseDisplayTextLines(SURFACE *ds) {
 	rect.moveTo(_conversePanel.x + _conversePanel.buttons[0].xOffset, 
 		_conversePanel.y + _conversePanel.buttons[0].yOffset);
 
-	drawRect(ds, &rect, kITEColorDarkGrey); //fill bullet place
+	drawRect(ds, rect, kITEColorDarkGrey); //fill bullet place
 	
 	for (int i = 0; i < CONVERSE_TEXT_LINES; i++) {
 		relPos = _converseStartPos + i;
@@ -854,7 +854,7 @@ void Interface::converseDisplayTextLines(SURFACE *ds) {
 
 		_conversePanel.calcPanelButtonRect(&_conversePanel.buttons[i], rect);
 		rect.left += 8;
-		drawRect(ds, &rect, backgnd);
+		drawRect(ds, rect, backgnd);
 
 		str = _converseText[relPos].text;
 

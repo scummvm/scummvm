@@ -35,6 +35,7 @@
 #include "saga/script.h"
 #include "saga/interface.h"
 #include "saga/scene.h"
+#include "saga/render.h"
 
 namespace Saga {
 
@@ -103,46 +104,49 @@ void SagaEngine::save() {
 }
 
 void SagaEngine::load() {
-	File out;
+	File in;
 	int actorsCount, objsCount, commonBufferSize;
 	int scenenum, inset;
+	int mapx, mapy;
 
-	out.open("ite.sav");
+	in.open("ite.sav");
 
-	if (!out.isOpen())
+	if (!in.isOpen())
 		return;
 
-	actorsCount = out.readSint16LE();
-	objsCount = out.readSint16LE();
-	commonBufferSize = out.readSint16LE();
-	_actor->setProtagState(out.readSint16LE());
+	actorsCount = in.readSint16LE();
+	objsCount = in.readSint16LE();
+	commonBufferSize = in.readSint16LE();
+	_actor->setProtagState(in.readSint16LE());
 
 	// Surrounding scene
-	scenenum = out.readSint32LE();
-	out.readSint32LE();
+	scenenum = in.readSint32LE();
+	in.readSint32LE();
 
 	// Inset scene
-	inset = out.readSint32LE();
-	out.readSint32LE();
+	inset = in.readSint32LE();
+	in.readSint32LE();
+
+	debug(0, "scene: %d out: %d", scenenum, inset);
 
 	uint16 i;
 
 	for (i = 0; i < actorsCount; i++) {
 		ActorData *a = _actor->_actors[i];
 
-		a->sceneNumber = out.readSint32LE();
-		a->location.x = out.readSint16LE();
-		a->location.y = out.readSint16LE();
-		a->location.z = out.readSint16LE();
-		a->finalTarget.x = out.readSint16LE();
-		a->finalTarget.y = out.readSint16LE();
-		a->finalTarget.z = out.readSint16LE();
-		a->currentAction = out.readByte();
-		a->facingDirection = out.readByte();
-		a->targetObject = out.readSint16LE();
-		a->flags = (a->flags & ~(kProtagonist | kFollower) | out.readByte());
-		a->frameNumber = out.readByte();
-		out.readSint16LE();
+		a->sceneNumber = in.readSint32LE();
+		a->location.x = in.readSint16LE();
+		a->location.y = in.readSint16LE();
+		a->location.z = in.readSint16LE();
+		a->finalTarget.x = in.readSint16LE();
+		a->finalTarget.y = in.readSint16LE();
+		a->finalTarget.z = in.readSint16LE();
+		a->currentAction = in.readByte();
+		a->facingDirection = in.readByte();
+		a->targetObject = in.readSint16LE();
+		a->flags = (a->flags & ~(kProtagonist | kFollower) | in.readByte());
+		a->frameNumber = in.readByte();
+		in.readSint16LE();
 	}
 	
 	_interface->clearInventory();
@@ -151,28 +155,29 @@ void SagaEngine::load() {
 		ObjectData *o = _actor->_objs[i];
 		int pos;
 
-		o->sceneNumber = out.readSint32LE();
-		o->id = out.readSint32LE();
-		o->location.x = out.readSint16LE();
-		o->location.y = out.readSint16LE();
-		o->location.z = out.readSint16LE();
-		o->nameIndex = out.readSint16LE();
+		o->sceneNumber = in.readSint32LE();
+		o->id = in.readSint32LE();
+		o->location.x = in.readSint16LE();
+		o->location.y = in.readSint16LE();
+		o->location.z = in.readSint16LE();
+		o->nameIndex = in.readSint16LE();
 		
-		pos = out.readSint16LE();
+		pos = in.readSint16LE();
 		if (o->sceneNumber == ITE_SCENE_INV) {
 			_interface->addToInventory(_actor->objIndexToId(i), pos);
 		}
-		out.readByte();
+		in.readByte();
 	}
 	
 	for (i = 0; i < commonBufferSize; i++)
-		_script->_commonBuffer[i] = out.readByte();
+		_script->_commonBuffer[i] = in.readByte();
 
-	_isoMap->getMapPosition().x = out.readSint16LE();
-	_isoMap->getMapPosition().y = out.readSint16LE();
+	mapx = in.readSint16LE();
+	mapy = in.readSint16LE();
 
-	out.close();
+	in.close();
 
+	_isoMap->setMapPosition(mapx, mapy);
 
 	// FIXME: When save/load screen will be implemented we should
 	// call these after that screen left by user
@@ -184,6 +189,7 @@ void SagaEngine::load() {
 	_scene->changeScene(scenenum, 0);
 
 	if (inset != scenenum) {
+		_render->drawScene();
 		_scene->clearSceneQueue();
 		_scene->changeScene(inset, 0);
 	}

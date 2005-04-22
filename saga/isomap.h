@@ -168,6 +168,7 @@ public:
 	bool nextTileTarget(ActorData* actor);
 	void setTileDoorState(int doorNumber, int doorState);
 	Point getMapPosition() { return _mapPosition; }
+	void setMapPosition(int x, int y);
 
 private:
 	void drawTiles(SURFACE *ds, const Location *location);

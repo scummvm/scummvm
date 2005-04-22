@@ -31,7 +31,7 @@
 
 namespace Saga {
 
-#define COMMON_BUFFER_SIZE 1024
+#define COMMON_BUFFER_SIZE 1024   // Why 1024?
 
 #define S_LUT_ENTRYLEN_ITECD 22
 #define S_LUT_ENTRYLEN_ITEDISK 16

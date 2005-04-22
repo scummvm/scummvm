@@ -380,11 +380,16 @@ int16 IsoMap::findMulti(int16 tileIndex, int16 absU, int16 absV, int16 absH) {
 int IsoMap::draw(SURFACE *ds) {
 	
 	Rect isoRect(_vm->getDisplayWidth(), _vm->getDisplayInfo().sceneHeight);
-	drawRect(ds, &isoRect, 0);
+	drawRect(ds, isoRect, 0);
 	_tileClip = isoRect;
 	drawTiles(ds, NULL);
 
 	return SUCCESS;
+}
+
+void IsoMap::setMapPosition(int x, int y) {
+	_mapPosition.x = x;
+	_mapPosition.y = y;
 }
 
 void IsoMap::drawSprite(SURFACE *ds, SpriteList &spriteList, int spriteNumber, const Location &location, const Point &screenPosition, int scale) {

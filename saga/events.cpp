@@ -302,7 +302,7 @@ int Events::handleOneShot(EVENT *event) {
 		break;
 	case BG_EVENT:
 		{
-		 BUFFER_INFO rbuf_info;
+			BUFFER_INFO rbuf_info;
 			Point bg_pt;
 
 			if (!(_vm->_scene->getFlags() & kSceneFlagISO)) {
@@ -317,6 +317,29 @@ int Events::handleOneShot(EVENT *event) {
 
 				bufToBuffer(rbuf_info.bg_buf, rbuf_info.bg_buf_w, rbuf_info.bg_buf_h,
 								bginfo.bg_buf, bginfo.bg_w, bginfo.bg_h, NULL, &bg_pt);
+
+				// If it is inset scene then draw black border
+				if (bginfo.bg_w < _vm->getDisplayWidth() || bginfo.bg_h < _vm->getSceneHeight()) {
+					SURFACE s;
+					s.pixels = rbuf_info.bg_buf;
+					s.w = s.pitch = rbuf_info.bg_buf_w;
+					s.h = rbuf_info.bg_buf_h;
+					s.bytesPerPixel = 1;
+					Common::Rect rect1(2, bginfo.bg_h + 4);
+					Common::Rect rect2(bginfo.bg_w + 4, 2);
+					Common::Rect rect3(2, bginfo.bg_h + 4);
+					Common::Rect rect4(bginfo.bg_w + 4, 2);
+					rect1.moveTo(bginfo.bg_x - 2, bginfo.bg_y - 2);
+					rect2.moveTo(bginfo.bg_x - 2, bginfo.bg_y - 2);
+					rect3.moveTo(bginfo.bg_x + bginfo.bg_w, bginfo.bg_y - 2);
+					rect4.moveTo(bginfo.bg_x - 2, bginfo.bg_y + bginfo.bg_h);
+
+					drawRect(&s, rect1, kITEColorBlack);
+					drawRect(&s, rect2, kITEColorBlack);
+					drawRect(&s, rect3, kITEColorBlack);
+					drawRect(&s, rect4, kITEColorBlack);
+				}
+
 				if (event->param == SET_PALETTE) {
 					PALENTRY *pal_p;
 					_vm->_scene->getBGPal(&pal_p);
@@ -436,7 +459,7 @@ int Events::handleOneShot(EVENT *event) {
 			rect.bottom = event->param3;
 			rect.left = event->param4;
 			rect.right = event->param5;
-			drawRect((SURFACE *)event->data, &rect, event->param);
+			drawRect((SURFACE *)event->data, rect, event->param);
 			break;
 		case EVENT_SETFLAG:
 			_vm->_render->setFlag(event->param);

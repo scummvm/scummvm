@@ -1013,6 +1013,12 @@ int Scene::endScene() {
 	_vm->_script->abortAllThreads();
 	_vm->_script->_skipSpeeches = false;
 
+	// Copy current screen to render buffer so inset rooms will get proper background
+	SURFACE *back_buf = _vm->_gfx->getBackBuffer();
+	BUFFER_INFO rbuf_info;
+
+	_vm->_render->getBufferInfo(&rbuf_info);
+	bufToBuffer(rbuf_info.bg_buf, rbuf_info.bg_buf_w, rbuf_info.bg_buf_h, (byte *)back_buf->pixels, back_buf->w, back_buf->h, NULL, NULL);
 	// Free scene background
 	if (_bg.loaded) {
 		free(_bg.buf);

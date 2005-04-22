@@ -87,7 +87,7 @@ int drawPalette(SURFACE *dst_s) {
 			pal_rect.left = (x * 8) + 4;
 			pal_rect.right = pal_rect.left + 8;
 
-			drawRect(dst_s, &pal_rect, color);
+			drawRect(dst_s, pal_rect, color);
 			color++;
 		}
 	}
@@ -355,20 +355,15 @@ int bufToBuffer(byte *dst_buf, int dst_w, int dst_h, const byte *src,
 
 // Fills a rectangle in the surface ds from point 'p1' to point 'p2' using
 // the specified color.
-int drawRect(SURFACE *ds, const Rect *dst_rect, int color) {
-	Rect r(ds->w, ds->h);
+int drawRect(SURFACE *ds, Rect &dst_rect, int color) {
+	dst_rect.clip(ds->w, ds->h);
 
-	if (dst_rect != NULL) {
-		r = *dst_rect;
-		r.clip(ds->w, ds->h);
-
-		if (!r.isValidRect()) {
-			// Empty or negative region
-			return FAILURE;
-		}
+	if (!dst_rect.isValidRect()) {
+		// Empty or negative region
+		return FAILURE;
 	}
 	
-	ds->fillRect(r, color);
+	ds->fillRect(dst_rect, color);
 
 	return SUCCESS;
 }
