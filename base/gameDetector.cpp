@@ -297,7 +297,6 @@ GameSettings GameDetector::findGame(const String &gameName, const Plugin **plugi
 	if (option == NULL) goto ShowHelpAndExit; \
 	char *endptr = 0; \
 	int intValue = (int)strtol(option, &endptr, 10); \
-	printf("option %d, endptr %d\n", (int)option, (int)endptr); \
 	if (endptr == NULL || *endptr != 0) goto ShowHelpAndExit;
 
 // Use this for boolean options; this distinguishes between "-x" and "-X",
