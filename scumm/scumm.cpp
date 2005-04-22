@@ -231,6 +231,9 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformUnknown, 0, 0},
 
 #ifndef __PALM_OS__
+	{"activity", "Putt-Putt & Fatty Bear's Activity Pack", GID_HEGAME, 6, 70, 28, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
+
 	// Humongous Entertainment Scumm Version 7.1
 	// The first version to use 640x480 resolution
 	// There are also 7.1 versions of freddi, freddemo, airdemo and farmdemo
