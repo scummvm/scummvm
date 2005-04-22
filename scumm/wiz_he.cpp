@@ -1621,7 +1621,7 @@ void ScummEngine_v90he::fillWizParallelogram(const WizParameters *params) {
 }
 
 void ScummEngine_v90he::processWizImage(const WizParameters *params) {
-	debug(1, "processWizImage: processMode %d", params->processMode);
+	debug(0, "processWizImage: processMode %d", params->processMode);
 	switch (params->processMode) {
 	case 0:
 		// Used in racedemo
@@ -1635,16 +1635,9 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 	case 3:
 		if (params->processFlags & kWPFUseFile) {
 			File f;
-			if (!f.open((const char *)params->filename, File::kFileReadMode)) {
-				VAR(VAR_GAME_LOADED) = -3;
-				VAR(119) = -3;
-				warning("Unable to open for read '%s'", params->filename);
-			} else {
-				uint32 id = f.readUint32BE();
-				if (id != MKID('AWIZ') && id != MKID('MULT')) {
-					VAR(VAR_GAME_LOADED) = -1;
-					VAR(119) = -1;
-				} else {
+			if (f.open((const char *)params->filename, File::kFileReadMode)) {
+				uint32 id = f.readUint32LE();
+				if (id == TO_LE_32(MKID('AWIZ')) || id == TO_LE_32(MKID('MULT'))) {
 					uint32 size = f.readUint32BE();
 					f.seek(0, SEEK_SET);
 					byte *p = res.createResource(rtImage, params->img.resNum, size);
@@ -1657,8 +1650,15 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 						VAR(VAR_GAME_LOADED) = 0;
 						VAR(119) = 0;
 					}
+				} else {
+					VAR(VAR_GAME_LOADED) = -1;
+					VAR(119) = -1;
 				}
 				f.close();
+			} else {
+				VAR(VAR_GAME_LOADED) = -3;
+				VAR(119) = -3;
+				warning("Unable to open for read '%s'", params->filename);
 			}
 		}
 		break;
