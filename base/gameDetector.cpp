@@ -277,26 +277,40 @@ GameSettings GameDetector::findGame(const String &gameName, const Plugin **plugi
 // Various macros used by the command line parser.
 //
 
+// Use this for options which have an *optional* value
 #define DO_OPTION_OPT(shortCmd, longCmd) \
 	if (isLongCmd ? (!memcmp(s, longCmd"=", sizeof(longCmd"=") - 1)) : (shortCmdLower == shortCmd)) { \
 		if (isLongCmd) \
 			s += sizeof(longCmd"=") - 1; \
 		if ((*s != '\0') && (current_option != NULL)) goto ShowHelpAndExit; \
-		option = (*s != '\0') ? s : current_option; \
+		char *option = (*s != '\0') ? s : current_option; \
 		current_option = NULL;
 
+// Use this for options which have a required (string) value
 #define DO_OPTION(shortCmd, longCmd) \
 	DO_OPTION_OPT(shortCmd, longCmd) \
 	if (option == NULL) goto ShowHelpAndExit;
 
+// Use this for options which have a required integer value
+#define DO_OPTION_INT(shortCmd, longCmd) \
+	DO_OPTION_OPT(shortCmd, longCmd) \
+	if (option == NULL) goto ShowHelpAndExit; \
+	char *endptr = 0; \
+	int intValue = (int)strtol(option, &endptr, 10); \
+	printf("option %d, endptr %d\n", (int)option, (int)endptr); \
+	if (endptr == NULL || *endptr != 0) goto ShowHelpAndExit;
+
+// Use this for boolean options; this distinguishes between "-x" and "-X",
+// resp. between "--some-option" and "--no-some-option".
 #define DO_OPTION_BOOL(shortCmd, longCmd) \
 	if (isLongCmd ? (!strcmp(s, longCmd) || !strcmp(s, "no-"longCmd)) : (shortCmdLower == shortCmd)) { \
 		if (isLongCmd) { \
-			cmdValue = !strcmp(s, longCmd); \
-			s += cmdValue ? (sizeof(longCmd) - 1) : (sizeof("no-"longCmd) - 1); \
+			boolValue = !strcmp(s, longCmd); \
+			s += boolValue ? (sizeof(longCmd) - 1) : (sizeof("no-"longCmd) - 1); \
 		} \
 		if ((*s != '\0') || (current_option != NULL)) goto ShowHelpAndExit;
 
+// Use this for options which never have a value, i.e. for 'commands', like "--help".
 #define DO_OPTION_CMD(shortCmd, longCmd) \
 	if (isLongCmd ? (!strcmp(s, longCmd)) : (shortCmdLower == shortCmd)) { \
 		if (isLongCmd) \
@@ -306,6 +320,7 @@ GameSettings GameDetector::findGame(const String &gameName, const Plugin **plugi
 
 #define DO_LONG_OPTION_OPT(longCmd) 	DO_OPTION_OPT(0, longCmd)
 #define DO_LONG_OPTION(longCmd) 		DO_OPTION(0, longCmd)
+#define DO_LONG_OPTION_INT(longCmd) 	DO_OPTION_INT(0, longCmd)
 #define DO_LONG_OPTION_BOOL(longCmd) 	DO_OPTION_BOOL(0, longCmd)
 #define DO_LONG_OPTION_CMD(longCmd) 	DO_OPTION_CMD(0, longCmd)
 
@@ -319,9 +334,8 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 	int i;
 	char *s;
 	char *current_option = NULL;
-	char *option = NULL;
 	char shortCmdLower;
-	bool isLongCmd, cmdValue;
+	bool isLongCmd, boolValue;
 
 	// Iterate over all command line arguments, backwards.
 	for (i = argc - 1; i >= 1; i--) {
@@ -344,15 +358,15 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 
 			shortCmdLower = tolower(s[1]);
 			isLongCmd = (s[0] == '-' && s[1] == '-');
-			cmdValue = (shortCmdLower == s[1]);
+			boolValue = (shortCmdLower == s[1]);
 			s += 2;
 
 			DO_OPTION('c', "config")
 				// Dummy
 			END_OPTION
 
-			DO_OPTION('b', "boot-param")
-				ConfMan.set("boot_param", (int)strtol(option, 0, 10), kTransientDomain);
+			DO_OPTION_INT('b', "boot-param")
+				ConfMan.set("boot_param", intValue, kTransientDomain);
 			END_OPTION
 			
 			DO_OPTION_OPT('d', "debuglevel")
@@ -375,12 +389,12 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				ConfMan.set("music_driver", option, kTransientDomain);
 			END_OPTION
 
-			DO_LONG_OPTION("output-rate")
-				ConfMan.set("output_rate", (int)strtol(option, 0, 10), kTransientDomain);
+			DO_LONG_OPTION_INT("output-rate")
+				ConfMan.set("output_rate", intValue, kTransientDomain);
 			END_OPTION
 
 			DO_OPTION_BOOL('f', "fullscreen")
-				ConfMan.set("fullscreen", cmdValue, kTransientDomain);
+				ConfMan.set("fullscreen", boolValue, kTransientDomain);
 			END_OPTION
 
 			DO_OPTION('g', "gfx-mode")
@@ -409,12 +423,12 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				exit(0);
 			END_OPTION
 
-			DO_OPTION('m', "music-volume")
-				ConfMan.set("music_volume", (int)strtol(option, 0, 10), kTransientDomain);
+			DO_OPTION_INT('m', "music-volume")
+				ConfMan.set("music_volume", intValue, kTransientDomain);
 			END_OPTION
 
 			DO_OPTION_BOOL('n', "subtitles")
-				ConfMan.set("subtitles", cmdValue, kTransientDomain);
+				ConfMan.set("subtitles", boolValue, kTransientDomain);
 			END_OPTION
 
 			DO_OPTION('p', "path")
@@ -428,12 +442,12 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				ConfMan.set("language", option, kTransientDomain);
 			END_OPTION
 
-			DO_OPTION('s', "sfx-volume")
-				ConfMan.set("sfx_volume", (int)strtol(option, 0, 10), kTransientDomain);
+			DO_OPTION_INT('s', "sfx-volume")
+				ConfMan.set("sfx_volume", intValue, kTransientDomain);
 			END_OPTION
 
-			DO_OPTION('r', "speech-volume")
-				ConfMan.set("speech_volume", (int)strtol(option, 0, 10), kTransientDomain);
+			DO_OPTION_INT('r', "speech-volume")
+				ConfMan.set("speech_volume", intValue, kTransientDomain);
 			END_OPTION
 
 			DO_OPTION_CMD('t', "list-targets")
@@ -451,7 +465,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				exit(0);
 			END_OPTION
 
-			DO_OPTION('x', "save-slot")
+			DO_OPTION_OPT('x', "save-slot")
 				ConfMan.set("save_slot", (option != NULL) ? (int)strtol(option, 0, 10) : 0, kTransientDomain);
 			END_OPTION
 
@@ -460,8 +474,8 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				exit(0);
 			END_OPTION
 
-			DO_LONG_OPTION("cdrom")
-				ConfMan.set("cdrom", (int)strtol(option, 0, 10), kTransientDomain);
+			DO_LONG_OPTION_INT("cdrom")
+				ConfMan.set("cdrom", intValue, kTransientDomain);
 			END_OPTION
 
 			DO_LONG_OPTION_OPT("joystick")
@@ -481,19 +495,19 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("multi-midi")
-				ConfMan.set("multi_midi", cmdValue, kTransientDomain);
+				ConfMan.set("multi_midi", boolValue, kTransientDomain);
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("native-mt32")
-				ConfMan.set("native_mt32", cmdValue, kTransientDomain);
+				ConfMan.set("native_mt32", boolValue, kTransientDomain);
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("enable-gs")
-				ConfMan.set("enable_gs", cmdValue, kTransientDomain);
+				ConfMan.set("enable_gs", boolValue, kTransientDomain);
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("aspect-ratio")
-				ConfMan.set("aspect_ratio", cmdValue, kTransientDomain);
+				ConfMan.set("aspect_ratio", boolValue, kTransientDomain);
 			END_OPTION
 
 			DO_LONG_OPTION("render-mode")
@@ -521,22 +535,22 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				ConfMan.set("tempo", (int)strtol(option, 0, 0), kTransientDomain);
 			END_OPTION
 
-			DO_LONG_OPTION("talkspeed")
-				ConfMan.set("talkspeed", (int)strtol(option, 0, 10), kTransientDomain);
+			DO_LONG_OPTION_INT("talkspeed")
+				ConfMan.set("talkspeed", intValue, kTransientDomain);
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("copy-protection")
-				ConfMan.set("copy_protection", cmdValue, kTransientDomain);
+				ConfMan.set("copy_protection", boolValue, kTransientDomain);
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("demo-mode")
-				ConfMan.set("demo_mode", cmdValue, kTransientDomain);
+				ConfMan.set("demo_mode", boolValue, kTransientDomain);
 			END_OPTION
 #endif
 
 #if !defined(DISABLE_SKY) || !defined(DISABLE_QUEEN)
 			DO_LONG_OPTION_BOOL("alt-intro")
-				ConfMan.set("alt_intro", cmdValue, kTransientDomain);
+				ConfMan.set("alt_intro", boolValue, kTransientDomain);
 			END_OPTION
 #endif
 
