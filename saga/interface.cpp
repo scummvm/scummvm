@@ -614,7 +614,7 @@ void Interface::inventorySetPos(int key) {
 }
 
 void Interface::updateInventory(int pos) {
-	BYTE cols = _vm->getDisplayInfo().inventoryColumns;
+	int cols = _vm->getDisplayInfo().inventoryColumns;
 	if (pos >= _inventoryCount) {
 		pos = _inventoryCount - 1;
 	}
