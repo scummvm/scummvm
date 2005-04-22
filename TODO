@@ -386,6 +386,19 @@ X11 backend
 * Make it work with multiple bitdepths
 * Add frills used by SDL backend like graphic filters usage and CD audio
 
+SDL backend
+===========
+* Right now, the WinCE backend subclasses the regular SDL backend. The
+  Symbian backend will do that, too (it is not yet in CVS, though).
+  They both overload a lot of methods (mostly the graphics stuff). Since
+  graphics.cpp uses the scalers (e.g. hq3x), these derived backends
+  carry that baggage around, too, even though they don't need that code.
+  Idea: split the SDL backend into two classes, one base class which only
+  has the code which is used by all subclasses; and a "desktop" subclass,
+  which implements the rest. Then WinCE/Symbian would only subclass the
+  "base" SDL class.
+  
+
 #######################################################################
 # Tools
 #######################################################################
