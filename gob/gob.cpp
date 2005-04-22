@@ -116,6 +116,10 @@ int GobEngine::init(GameDetector &detector) {
 		_system->initSize(320, 200);
 	_system->endGFXTransaction();
 
+	int cd_num = ConfMan.getInt("cdrom");
+	if (cd_num >= 0)
+		_system->openCD(cd_num);
+
 	debugFlag = 1;
 	breakSet = 0;
 	doRangeClamp = 1;
