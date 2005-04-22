@@ -21,9 +21,13 @@
 
 #include "stdafx.h"
 #include "common/stream.h"
+#include "common/str.h"
 
 namespace Common {
 
+void WriteStream::writeString(const String &str) {
+	write(str.c_str(), str.size());
+}
 
 void MemoryReadStream::seek(int32 offs, int whence) {
 	// Pre-Condition
@@ -46,6 +50,63 @@ void MemoryReadStream::seek(int32 offs, int whence) {
 	}
 	// Post-Condition
 	assert(_pos <= _bufSize);
+}
+
+#define LF 0x0A
+#define CR 0x0D
+
+char *SeekableReadStream::readLine(char *buf, size_t bufSize) {
+	assert(buf && bufSize > 0);
+	char *p = buf;
+	size_t len = 0;
+	char c;
+
+	if (buf == 0 || bufSize == 0 || eos()) {
+		return 0;
+	}
+
+	// We don't include the newline character(s) in the buffer, and we
+	// always terminate it - we never read more than len-1 characters.
+
+	// EOF is treated as a line break, unless it was the first character
+	// that was read.
+
+	// 0 is treated as a line break, even though it should never occur in
+	// a text file.
+
+	// DOS and Windows use CRLF line breaks
+	// Unix and OS X use LF line breaks
+	// Macintosh before OS X uses CR line breaks
+
+	
+	c = readByte();
+	if (eos() || ioFailed()) {
+		return 0;
+	}
+
+	while (!eos() && len + 1 < bufSize) {
+		
+		if (ioFailed())
+			return 0;
+
+		if (c == 0 || c == LF)
+			break;
+
+		if (c == CR) {
+			c = readByte();
+			if (c != LF && !eos())
+				seek(-1, SEEK_CUR);
+			break;
+		}
+
+		*p++ = c;
+		len++;
+		
+		c = readByte();
+	}
+
+	*p = 0;
+	return buf;
 }
 
 

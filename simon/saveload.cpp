@@ -590,7 +590,7 @@ bool SimonEngine::load_game(uint slot) {
 	for (i = 0; i != 32; i++)
 		_bit_array[i] = f->readUint16BE();
 	
-	if (f->readingFailed()) {
+	if (f->ioFailed()) {
 		error("load failed");
 	}
 

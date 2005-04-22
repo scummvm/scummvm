@@ -28,10 +28,38 @@
 
 namespace Common {
 
+class String;
+
+/**
+ * Virtual base class for both ReadStream and WriteStream.
+ */
+class Stream {
+public:
+	/**
+	 * Returns true if the end of the stream has been reached.
+	 */
+	virtual bool eos() const = 0;
+
+	/**
+	 * Returns true if any I/O failure occured.
+	 * This flag is never cleared automatically. In order to clear it,
+	 * client code has to call clearIOFailed() explicitly.
+	 * 
+	 * @todo Instead of returning a plain bool, maybe we should define
+	 *       a list of error codes which can be returned here.
+	 */
+	virtual bool ioFailed() const { return false; }
+	
+	/**
+	 * Reset the I/O error status.
+	 */
+	virtual void clearIOFailed() {}
+};
+
 /**
  * Generic interface for a writable data stream.
  */
-class WriteStream {
+class WriteStream : virtual public Stream {
 public:
 	/**
 	 * Write data into the stream. Subclasses must implement this
@@ -90,13 +118,15 @@ public:
 	void writeSint32BE(int32 value) {
 		writeUint32BE((uint32)value);
 	}
+	
+	void writeString(const String &str);
 };
 
 
 /**
  * Generic interface for a readable data stream.
  */
-class ReadStream {
+class ReadStream : virtual public Stream {
 public:
 	/**
 	 * Read data from the stream. Subclasses must implement this
@@ -175,11 +205,22 @@ public:
 class SeekableReadStream : public ReadStream {
 public:
 	
-	virtual bool eof() const = 0;
 	virtual uint32 pos() const = 0;
 	virtual uint32 size() const = 0;
 
 	virtual void seek(int32 offs, int whence = SEEK_SET) = 0;
+	
+	/**
+	 * Read one line of text from a CR or CR/LF terminated plain text file.
+	 * This method is a rough analog of the (f)gets function. 
+	 * 
+	 * @param buf	the buffer to store into
+	 * @param size	the size of the buffer
+	 * @return a pointer to the read string, or NULL if an error occured
+	 * @note The line terminator (CR or CR/LF) is stripped and not inserted
+	 *       into the buffer.
+	 */
+	virtual char *readLine(char *buf, size_t bufSize);
 };
 
 
@@ -199,6 +240,10 @@ public:
 	XORReadStream(ReadStream *in = 0, byte enc = 0) :  _encbyte(enc), _realStream(in) {}
 	void setStream(ReadStream *in) { _realStream = in; }
 	void setEnc(byte value) { _encbyte = value; }
+
+	virtual bool eos() const { return _realStream->eos(); }
+	virtual bool ioFailed() const { return _realStream->ioFailed(); }
+	virtual void clearIOFailed() { _realStream->clearIOFailed(); }
 
 	uint32 read(void *ptr, uint32 size) {
 		assert(_realStream);
@@ -249,7 +294,7 @@ public:
 		return len;
 	}
 
-	bool eof() const { return _pos == _bufSize; }
+	bool eos() const { return _pos == _bufSize; }
 	uint32 pos() const { return _pos; }
 	uint32 size() const { return _bufSize; }
 
@@ -279,7 +324,7 @@ public:
 		return len;
 	}
 
-	bool eof() const { return _pos == _bufSize; }
+	bool eos() const { return _pos == _bufSize; }
 	uint32 pos() const { return _pos; }
 	uint32 size() const { return _bufSize; }
 };

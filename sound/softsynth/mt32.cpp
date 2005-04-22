@@ -90,7 +90,7 @@ public:
 		return file.read(in, size);
 	}
 	bool readLine(char *in, size_t size) {
-		return file.gets(in, size) != NULL;
+		return file.readLine(in, size) != NULL;
 	}
 	bool readBit8u(MT32Emu::Bit8u *in) {
 		byte b = file.readByte();

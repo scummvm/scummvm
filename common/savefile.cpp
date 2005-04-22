@@ -73,8 +73,10 @@ public:
 			::fclose(fh);
 	}
 
-	bool readingFailed() const { return ferror(fh) != 0; }
-	bool writingFailed() const { return ferror(fh) != 0; }
+	bool eos() const { return feof(fh) != 0; }
+	bool ioFailed() const { return ferror(fh) != 0; }
+	void clearIOFailed() { clearerr(fh); }
+
 	bool isOpen() const { return fh != 0; }
 
 	uint32 read(void *buf, uint32 cnt) {
@@ -101,8 +103,10 @@ public:
 			::gzclose(fh);
 	}
 
-	bool readingFailed() const { return _ioError; }
-	bool writingFailed() const { return _ioError; }
+	bool eos() const { return gzeof(fh) != 0; }
+	bool ioFailed() const { return _ioError; }
+	void clearIOFailed() { _ioError = false; }
+
 	bool isOpen() const { return fh != 0; }
 
 	uint32 read(void *buf, uint32 cnt) {

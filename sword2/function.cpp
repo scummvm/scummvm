@@ -3032,7 +3032,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 		}
 
 		char buffer[80];
-		char *line = f.gets(buffer, sizeof(buffer));
+		char *line = f.readLine(buffer, sizeof(buffer));
 
 		if (!line || *line == 0) {
 			if (!hasCenterMark) {

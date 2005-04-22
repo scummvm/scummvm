@@ -402,7 +402,7 @@ void Sprite::decodeRLEBuffer(const byte *inputBuffer, size_t inLength, size_t ou
 
 	MemoryReadStream readS(inputBuffer, inLength);
 
-	while (!readS.eof() && (outPointer < outPointerEnd)) {
+	while (!readS.eos() && (outPointer < outPointerEnd)) {
 		bg_runcount = readS.readByte();
 		fg_runcount = readS.readByte();
 

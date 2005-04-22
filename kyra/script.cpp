@@ -413,10 +413,7 @@ void VMContext::loadScript(const char* file) {
 	uint8 chunkName[sizeof("EMC2ORDR") + 1];
 	
 	// so lets look for our chunks :)
-	while(true) {
-		if (script.eof()) {
-			break;
-		}
+	while (!script.eos()) {
 		// lets read only the first 4 chars
 		script.read(chunkName, sizeof(uint8) * 4);
 		chunkName[4] = '\0';
