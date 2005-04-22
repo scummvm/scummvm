@@ -223,7 +223,16 @@ int DCLauncherDialog::runModal()
   if(!selectGame(argv[2], argv[1], icon))
     exit(0);
 
+  FIXME: This is an evil hack:
   _detector.parseCommandLine(argc, argv);
+
+  But doing it properly isn't that hard, actually:
+  
+  // Set the game path.
+  ConfMan.set("path", the_desired_path, kTransientDomain);
+  
+  // Set the target.
+  _detector.setTarget(target_name);
 
   return 0;
 }
