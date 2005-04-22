@@ -823,6 +823,7 @@ protected:
 	virtual void decodeParseString(int a, int b);
 	void decodeScriptString(byte *dst, bool scriptString = false);
 	void copyScriptString(byte *dst, int dstSize);
+	void convertFilePath(byte *dst);
 
 	byte *heFindResourceData(uint32 tag, byte *ptr);
 	byte *heFindResource(uint32 tag, byte *ptr);

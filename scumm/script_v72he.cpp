@@ -518,6 +518,42 @@ void ScummEngine_v72he::readArrayFromIndexFile() {
 	}
 }
 
+void ScummEngine_v72he::convertFilePath(byte *dst) {
+	// Switch all \ to / for portablity
+	int len = resStrLen(dst) + 1;
+	for (int i = 0; i < len; i++) {
+		if (dst[i] == '\\')
+			dst[i] = '/';
+	}
+
+	// Strip path
+	int r = 0;
+	if (dst[0] == '.' && dst[1] == '/') {
+		r = 2;
+	} else if (dst[0] == 'c' && dst[1] == ':') {
+		for (r = len; r != 0; r--) {
+			if (dst[r - 1] == '/')
+				break;
+		}
+	}
+
+	File f;
+	char filePath[256], newFilePath[256];
+
+	sprintf(filePath, "%s%s", _gameDataPath.c_str(), dst + r);
+	if (f.exists(filePath)) {
+		sprintf(newFilePath, "%s%s", _gameDataPath.c_str(), dst + r);
+	} else {
+		sprintf(newFilePath, "%s%s", _saveFileMan->getSavePath(), dst + r);
+	}
+
+	len = resStrLen((const byte *)newFilePath);
+	memcpy(dst, newFilePath, len);
+	dst[len] = 0;
+
+	debug(0, "convertFilePath: newFilePath is %s", newFilePath);
+}	
+
 void ScummEngine_v72he::copyScriptString(byte *dst, int dstSize) {
 	byte string[1024];
 	byte chr;
@@ -1506,7 +1542,7 @@ void ScummEngine_v72he::o72_arrayOps() {
 		c = pop();
 		id = readVar(array);
 		if (id == 0) {
-			defineArray(array, kDwordArray, 0, 0, 0, b + c);
+			defineArray(array, kDwordArray, 0, 0, 0, b + c - 1);
 		}
 		while (c--) {
 			writeArray(array, 0, b + c, pop());
@@ -1670,7 +1706,7 @@ void ScummEngine_v72he::o72_jumpToScript() {
 }
 
 void ScummEngine_v72he::o72_openFile() {
-	int mode, slot, len, i;
+	int mode, slot, i;
 	byte filename[256];
 
 	mode = pop();
@@ -1686,22 +1722,8 @@ void ScummEngine_v72he::o72_openFile() {
 		strcpy((char *)filename, buf1);
 	}
 
-	int r = 0;
-	if (filename[0] == 'c' && filename[1] == ':') {
-		// Strip path
-		for (r = strlen((char*)filename); r != 0; r--) {
-			if (filename[r - 1] == '\\')
-				break;
-		}
-	} else {
-		// Switch all \ to / for portablity
-		len = resStrLen(filename) + 1;
-		for (i = 0; i < len; i++) {
-			if (filename[i] == '\\')
-				filename[i] = '/';
-		}
-	}
-	debug(0,"Final filename to %s", filename + r);
+	convertFilePath(filename);
+	debug(0,"Final filename to %s", filename);
 
 	slot = -1;
 	for (i = 0; i < 17; i++) {
@@ -1714,12 +1736,10 @@ void ScummEngine_v72he::o72_openFile() {
 	if (slot != -1) {
 		switch(mode) {
 		case 1:
-			_hFileTable[slot].open((char*)filename + r, File::kFileReadMode, _saveFileMan->getSavePath());
-			if (_hFileTable[slot].isOpen() == false)
-				_hFileTable[slot].open((char*)filename + r, File::kFileReadMode);
+			_hFileTable[slot].open((char*)filename, File::kFileReadMode);
 			break;
 		case 2:
-			_hFileTable[slot].open((char*)filename + r, File::kFileWriteMode, _saveFileMan->getSavePath());
+			_hFileTable[slot].open((char*)filename, File::kFileWriteMode);
 			break;
 		default:
 			error("o72_openFile(): wrong open file mode %d", mode);
