@@ -553,8 +553,10 @@ void Interface::handleCommandUpdate(const Point& mousePoint) {
 
 
 	if (!_vm->mouseButtonPressed()) {			// remove pressed flag
-		_inventoryUpButton->state = 0;
-		_inventoryDownButton->state = 0;
+		if (_inventoryUpButton) {
+			_inventoryUpButton->state = 0;
+			_inventoryDownButton->state = 0;
+		}
 	}
 
 	panelButton = _mainPanel.hitTest(mousePoint, kPanelAllButtons);
@@ -975,8 +977,10 @@ void Interface::handleConverseUpdate(const Point& mousePoint) {
 	PanelButton *last = _conversePanel.currentButton;
 	
 	if (!_vm->mouseButtonPressed()) {			// remove pressed flag
-		_converseUpButton->state = 0;
-		_converseDownButton->state = 0;
+		if (_converseUpButton) {
+			_converseUpButton->state = 0;
+			_converseDownButton->state = 0;
+		}
 	}
 
 	_conversePanel.currentButton = converseHitTest(mousePoint);
