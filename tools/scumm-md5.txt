@@ -276,9 +276,6 @@ Fatty Bears Fun Pack
 	-	DOS	hb	f06e66fd45b2f8b0f4a2833ff4476050	fbpack	sev
 	-	3DO	en	e01acc8c12ef44e8f778fe87e5f90f4e	fbpack	sev
 
-Putt-Putt & Fatty Bear's Activity Pack
-	-	Win	en	b628506f7def772e40de0aa5440fb8e1	activity
-
 Freddi Fish 1: The Case of the Missing Kelp Seeds
 	-	All	en	df047cc4792150f601290357566d36a6	freddi	khalek
 	-	Windows	ru	d4cccb5af88f3e77f370896e9ba8c5f9	freddi	sev
@@ -438,6 +435,9 @@ Putt-Putt and Pep's Dog on a Stick
 Putt-Putt's Fun Pack
 	-	DOS	en	46b53fd430adcfbed791b48a0d4b079f	funpack	khalek
 	-	3DO	en	8afb3cf9f95abf208358e984f0c9e738	funpack	sev
+
+Putt-Putt & Fatty Bear's Activity Pack
+	-	Windows	en	b628506f7def772e40de0aa5440fb8e1	activity
 
 Putt-Putt's One-Stop Fun Shop
 	-	All	en	5262a27afcaee04e5c4900220bd463e7	PuttsFunShop	Kirben
