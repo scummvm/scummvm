@@ -71,7 +71,7 @@ struct ObjectTableData {
 	int16 x;
 	int16 y;
 	int16 z;
-	int32 frameNumber;
+	int32 spriteListResourceId;
 	byte scriptEntrypointNumber;
 	uint16 interactBits;
 };

@@ -42,25 +42,35 @@ static int detectGame(const FSList &fslist, bool mode = false);
 
 // ITE section
 static PanelButton ITE_MainPanelButtons[] = {
-	{kPanelButtonVerb, 52, 4, 57, 10, kVerbWalkTo, 'w', 0, 1, 0, 0},
-	{kPanelButtonVerb, 52, 15, 57, 10, kVerbLookAt, 'l', 2, 3, 0, 0},
-	{kPanelButtonVerb, 52, 26, 57, 10, kVerbPickUp, 'p', 4, 5, 0, 0}, 
-	{kPanelButtonVerb, 52, 37, 57, 10, kVerbTalkTo, 't', 0, 1, 0, 0},
-	{kPanelButtonVerb, 110, 4, 56, 10, kVerbOpen, 'o', 6, 7, 0, 0},
-	{kPanelButtonVerb, 110, 15, 56, 10, kVerbClose, 'c', 8, 9, 0, 0},
-	{kPanelButtonVerb, 110, 26, 56, 10, kVerbUse, 'u', 10, 11, 0, 0},
-	{kPanelButtonVerb, 110, 37, 56, 10, kVerbGive, 'g', 12, 13, 0, 0},
-	{kPanelButtonArrow, 306, 6, 8, 5, 0, 'u', 0, 0, 0, 0},
-	{kPanelButtonArrow, 306, 41, 8, 5, 1, 'd', 0, 0, 0, 0}
+	{kPanelButtonVerb,		52,4,	57,10,	kVerbWalkTo,'w',0,	0,1,0},
+	{kPanelButtonVerb,		52,15,	57,10,	kVerbLookAt,'l',0,	2,3,0},
+	{kPanelButtonVerb,		52,26,	57,10,	kVerbPickUp,'p',0,	4,5,0}, 
+	{kPanelButtonVerb,		52,37,	57,10,	kVerbTalkTo,'t',0,	0,1,0},
+	{kPanelButtonVerb,		110,4,	56,10,	kVerbOpen,'o',0,	6,7,0},
+	{kPanelButtonVerb,		110,15,	56,10,	kVerbClose,'c',0,	8,9,0},
+	{kPanelButtonVerb,		110,26,	56,10,	kVerbUse,'u',0,		10,11,0},
+	{kPanelButtonVerb,		110,37,	56,10,	kVerbGive,'g',0,	12,13,0},
+	{kPanelButtonArrow,		306,6,	8,5,	-1,'U',0,			0,4,2},
+	{kPanelButtonArrow,		306,41,	8,5,	1,'D',0,			1,5,3},
+	
+	{kPanelButtonInventory,	181 + 32*0,6,	27,18,	0,'-',0,	0,0,0},
+	{kPanelButtonInventory,	181 + 32*1,6,	27,18,	1,'-',0,	0,0,0},
+	{kPanelButtonInventory,	181 + 32*2,6,	27,18,	2,'-',0,	0,0,0},
+	{kPanelButtonInventory,	181 + 32*3,6,	27,18,	3,'-',0,	0,0,0},
+
+	{kPanelButtonInventory,	181 + 32*0,27,	27,18,	4,'-',0,	0,0,0},
+	{kPanelButtonInventory,	181 + 32*1,27,	27,18,	5,'-',0,	0,0,0},
+	{kPanelButtonInventory,	181 + 32*2,27,	27,18,	6,'-',0,	0,0,0},
+	{kPanelButtonInventory,	181 + 32*3,27,	27,18,	7,'-',0,	0,0,0}
 };
 
 static PanelButton ITE_ConversePanelButtons[] = {
-	{kPanelButtonConverseText, 52, 6 + CONVERSE_TEXT_HEIGHT * 0, CONVERSE_MAX_TEXT_WIDTH, CONVERSE_TEXT_HEIGHT, 0, '1', 0, 0, 0, 0},
-	{kPanelButtonConverseText, 52, 6 + CONVERSE_TEXT_HEIGHT * 1, CONVERSE_MAX_TEXT_WIDTH, CONVERSE_TEXT_HEIGHT, 1, '2', 0, 0, 0, 0},
-	{kPanelButtonConverseText, 52, 6 + CONVERSE_TEXT_HEIGHT * 2, CONVERSE_MAX_TEXT_WIDTH, CONVERSE_TEXT_HEIGHT, 2, '3', 0, 0, 0, 0},
-	{kPanelButtonConverseText, 52, 6 + CONVERSE_TEXT_HEIGHT * 3, CONVERSE_MAX_TEXT_WIDTH, CONVERSE_TEXT_HEIGHT, 3, '4', 0, 0, 0, 0},
-	{kPanelButtonArrow, 257, 6, 9, 6, 0, 'u',  0, 4, 2, 0},
-	{kPanelButtonArrow, 257, 41, 9, 6, 1, 'd', 1, 5, 3, 0}, 
+	{kPanelButtonConverseText,	52,6 + CONVERSE_TEXT_HEIGHT * 0, CONVERSE_MAX_TEXT_WIDTH,CONVERSE_TEXT_HEIGHT,	0,'1',0,	0,0,0},
+	{kPanelButtonConverseText,	52,6 + CONVERSE_TEXT_HEIGHT * 1, CONVERSE_MAX_TEXT_WIDTH,CONVERSE_TEXT_HEIGHT,	1,'2',0,	0,0,0},
+	{kPanelButtonConverseText,	52,6 + CONVERSE_TEXT_HEIGHT * 2, CONVERSE_MAX_TEXT_WIDTH,CONVERSE_TEXT_HEIGHT,	2,'3',0,	0,0,0},
+	{kPanelButtonConverseText,	52,6 + CONVERSE_TEXT_HEIGHT * 3, CONVERSE_MAX_TEXT_WIDTH,CONVERSE_TEXT_HEIGHT,	3,'4',0,	0,0,0},
+	{kPanelButtonArrow,			257,6,	9,6,	-1,'u',0,	0,4,2},
+	{kPanelButtonArrow,			257,41,	9,6,	1,'d',0,	1,5,3}, 
 };
 
 static GameDisplayInfo ITE_DisplayInfo = {
@@ -68,8 +78,9 @@ static GameDisplayInfo ITE_DisplayInfo = {
 	
 	35,				// scene path y offset
 	137,			// scene height
-
-	137,			// status y
+	
+	0,				// status x offset
+	137,			// status y offset
 	320,			// status width
 	12,				// status height
 	2,				// status text y offset
@@ -83,13 +94,16 @@ static GameDisplayInfo ITE_DisplayInfo = {
 	5, 4,			// left portrait x, y offset
 	274, 4,			// right portrait x, y offset
 
-	181, 155,		// inventory x, y
-	2, 4,			// inventory rows, columns 
-	29, 20,			// inventory icon width, height
-	1, 0,			// inventory icon x, y offset
-	3, 1,			// inventory x, y icon spacing
+	8, 9,			// inventory Up & Down button indexies
+	2, 4,			// inventory rows, columns
+
+	0, 149,			// main panel offsets
 	ARRAYSIZE(ITE_MainPanelButtons),
 	ITE_MainPanelButtons,
+
+	4, 5,			// converse Up & Down button indexies
+
+	0, 149,			// converse panel offsets
 	ARRAYSIZE(ITE_ConversePanelButtons),
 	ITE_ConversePanelButtons
 };
@@ -204,40 +218,44 @@ static GameSoundInfo ITECD_GameSound = {
 // IHNM section
 
 static PanelButton IHNM_MainPanelButtons[] = {
-	{kPanelButtonVerb, 0, 0, 0, 0, kVerbWalkTo, ' ', 0, 0, 0, 0}, //TODO
+	{kPanelButtonVerb, 0,0, 0,0, kVerbWalkTo,' ',0, 0,0,0}, //TODO
 };
 
 static PanelButton IHNM_ConversePanelButtons[] = {
-	{kPanelButtonConverseText, 0, 0, 0, 0, 0, '1', 0, 0, 0, 0}, //TODO
+	{kPanelButtonConverseText, 0,0, 0,0, 0,'-',0, 0,0,0}, //TODO
 };
 
-static GameDisplayInfo IHNM_DisplayInfo = {
-	640, 480,
+static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
+	640, 480,	// logical width&height
 	
-	0, //TODO: correct pathStartY
-	304, //TODO: correct sceneHeight
+	0,			// scene path y offset
+	304,		// scene height
 
-	304,
-	640,
-	24,
-	8,
-	186,
-	11,
+	0,			// status x offset
+	304,		// status y offset
+	640,		// status width
+	24,			// status height
+	8,			// status text y offset
+	186,		// status text color
+	11,			// status BG color
 
-	147,
-	15,
-	96,
+	147,		// verb text color
+	15,			// verb text shadow color
+	96,			// verb text active color
 
-	5, 4,
-	-1, -1,
+	5, 4,		// left portrait x, y offset
+	-1, -1,		// right portrait x, y offset
 
-	0, 0, //TODO: fill it all
-	0, 0,
-	0, 0,
-	0, 0,
-	0, 0,
+	-1, -1,		// inventory Up & Down button indexies
+	0, 0,		// inventory rows, columns
+
+	0, 149,		// main panel offsets
 	ARRAYSIZE(IHNM_MainPanelButtons),
 	IHNM_MainPanelButtons,
+
+	-1, -1,		// converse Up & Down button indexies
+
+	0, 0,		// converse panel offsets
 	ARRAYSIZE(IHNM_ConversePanelButtons),
 	IHNM_ConversePanelButtons
 };

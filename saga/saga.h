@@ -138,9 +138,11 @@ enum HitZoneFlags {
 
 
 enum PanelButtonType {
-	kPanelButtonVerb = 0,
-	kPanelButtonArrow = 1,
-	kPanelButtonConverseText = 2
+	kPanelButtonVerb = 1,
+	kPanelButtonArrow = 2,
+	kPanelButtonConverseText = 4,
+	kPanelButtonInventory = 8,
+	kPanelAllButtons = 15
 };
 
 enum TextStringIds {
@@ -310,10 +312,10 @@ struct PanelButton {
 	int height;
 	int id;
 	int keyChar;
+	int state;
 	int upSpriteNumber;
 	int downSpriteNumber;
 	int overSpriteNumber;
-	int flag;
 };
 
 struct GameDisplayInfo {
@@ -323,7 +325,8 @@ struct GameDisplayInfo {
 	int pathStartY;
 	int sceneHeight;
 
-	int statusY;
+	int statusXOffset;
+	int statusYOffset;
 	int statusWidth;
 	int statusHeight;
 	int statusTextY;
@@ -339,18 +342,21 @@ struct GameDisplayInfo {
 	int rightPortraitXOffset;
 	int rightPortraitYOffset;
 
-	int inventoryX;
-	int inventoryY;
+	int inventoryUpButtonIndex;
+	int inventoryDownButtonIndex;
 	int inventoryRows;
 	int inventoryColumns;
-	int inventoryIconWidth;
-	int inventoryIconHeight;
-	int inventoryIconXOffset;
-	int inventoryIconYOffset;
-	int inventoryXSpacing;
-	int inventoryYSpacing;
+
+	int mainPanelXOffset;
+	int mainPanelYOffset;
 	int mainPanelButtonsCount;
 	PanelButton *mainPanelButtons;
+
+	int converseUpButtonIndex;
+	int converseDownButtonIndex;
+
+	int conversePanelXOffset;
+	int conversePanelYOffset;
 	int conversePanelButtonsCount;
 	PanelButton *conversePanelButtons;
 };

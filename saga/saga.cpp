@@ -392,7 +392,7 @@ void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPoin
 			error("SagaEngine::loadStrings wrong strings table");
 		}
 		stringsTable.strings[i] = (const char *)stringsTable.stringsPointer + offset;
-		//debug(9, "string[%i]=%s", i, stringsTable.strings[i]);
+		debug(9, "string[%i]=%s", i, stringsTable.strings[i]);
 		i++;
 	}
 	stringsTable.stringsCount = stringsCount;
@@ -405,7 +405,7 @@ const char *SagaEngine::getObjectName(uint16 objectId) {
 	switch (objectTypeId(objectId)) {
 	case kGameObjectObject:
 		obj = _actor->getObj(objectId);
-		_script->_mainStrings.getString(obj->nameIndex);
+		return _script->_mainStrings.getString(obj->nameIndex);
 		break;
 	case kGameObjectActor: 
 		actor = _actor->getActor(objectId);			

@@ -314,6 +314,8 @@ struct SpeechData {
 
 
 class Actor {
+	friend class IsoMap;
+	friend class SagaEngine;
 public:
 	ActorData *_centerActor;
 	ActorData *_protagonist;
@@ -430,8 +432,6 @@ private:
 	CommonObjectOrderList _drawOrderList;
 	
 protected:
-	friend class IsoMap;
-	friend class SagaEngine;
 	int _actorsCount;
 	ActorData **_actors;
 

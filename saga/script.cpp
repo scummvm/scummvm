@@ -417,10 +417,10 @@ void Script::setLeftButtonVerb(int verb) {
 
 	if ((_currentVerb != oldVerb) && (_vm->_interface->getMode() == kPanelMain)){
 			if (oldVerb > kVerbNone)
-				_vm->_interface->drawVerb(oldVerb, 2);
+				_vm->_interface->setVerbState(oldVerb, 2);
 
 			if (_currentVerb > kVerbNone)
-				_vm->_interface->drawVerb(_currentVerb, 2);
+				_vm->_interface->setVerbState(_currentVerb, 2);
 	}
 }
 
@@ -431,10 +431,10 @@ void Script::setRightButtonVerb(int verb) {
 
 	if ((_rightButtonVerb != oldVerb) && (_vm->_interface->getMode() == kPanelMain)){
 		if (oldVerb > kVerbNone)
-			_vm->_interface->drawVerb(oldVerb, 2);
+			_vm->_interface->setVerbState(oldVerb, 2);
 
 		if (_rightButtonVerb > kVerbNone)
-			_vm->_interface->drawVerb(_rightButtonVerb, 2);
+			_vm->_interface->setVerbState(_rightButtonVerb, 2);
 	}
 }
 
@@ -673,10 +673,12 @@ void Script::whichObject(const Point& mousePoint) {
 	int newRightButtonVerb;
 	uint16 newObjectId;
 	ActorData *actor;
+	ObjectData *obj;
 	Point pickPoint;
 	Location pickLocation;
 	int hitZoneIndex;
 	const HitZone * hitZone;
+	PanelButton * panelButton;
 
 	objectId = ID_NOTHING;
 	objectFlags = 0;
@@ -685,81 +687,103 @@ void Script::whichObject(const Point& mousePoint) {
 
 	if (_vm->_actor->_protagonist->currentAction == kActionWalkDir) {
 	} else {
-		newObjectId = _vm->_actor->hitTest(mousePoint, true);
+		if (_vm->getSceneHeight() >= mousePoint.y) {
+			newObjectId = _vm->_actor->hitTest(mousePoint, true);
 
-		if (newObjectId != ID_NOTHING) {
-			if (objectTypeId(newObjectId) == kGameObjectObject) {
-				objectId = newObjectId;
-				objectFlags = 0;
-				newRightButtonVerb = kVerbLookAt;
+			if (newObjectId != ID_NOTHING) {
+				if (objectTypeId(newObjectId) == kGameObjectObject) {
+					objectId = newObjectId;
+					objectFlags = 0;
+					newRightButtonVerb = kVerbLookAt;
 
-				if ((_currentVerb == kVerbTalkTo) || ((_currentVerb == kVerbGive) && _firstObjectSet)) {
-					objectId = ID_NOTHING;
-					newObjectId = ID_NOTHING;
-				}
-			} else {
-				actor = _vm->_actor->getActor(newObjectId);
-				objectId = newObjectId;
-				objectFlags = kObjUseWith;
-				newRightButtonVerb = kVerbTalkTo;
-				
-				if ((_currentVerb == kVerbPickUp) ||
-					(_currentVerb == kVerbOpen) ||
-					(_currentVerb == kVerbClose) ||
-					((_currentVerb == kVerbGive) && !_firstObjectSet) ||
-					((_currentVerb == kVerbUse) && !(actor->flags & kFollower))) {
-					objectId = ID_NOTHING;
-					newObjectId = ID_NOTHING;
-				}
-			}
-		}
-
-		if (newObjectId == ID_NOTHING) {		
-
-			pickPoint = mousePoint;
-
-			if (_vm->_scene->getFlags() & kSceneFlagISO) {
-				pickPoint.y -= _vm->_actor->_protagonist->location.z;
-				_vm->_isoMap->screenPointToTileCoords(pickPoint, pickLocation);
-				pickLocation.toScreenPointUV(pickPoint);
-			}
-			
-			hitZoneIndex = _vm->_scene->_objectMap->hitTest(pickPoint);
-		
-			if ((hitZoneIndex != -1)) {
-				hitZone = _vm->_scene->_objectMap->getHitZone(hitZoneIndex);
-				objectId = hitZone->getHitZoneId();
-				objectFlags = 0;
-				newRightButtonVerb = hitZone->getRightButtonVerb() & 0x7f;
-
-				if (newRightButtonVerb == kVerbWalkOnly) {
-					if (_firstObjectSet) {
+					if ((_currentVerb == kVerbTalkTo) || ((_currentVerb == kVerbGive) && _firstObjectSet)) {
 						objectId = ID_NOTHING;
-					} else {
-						newRightButtonVerb = _leftButtonVerb = kVerbWalkTo;
+						newObjectId = ID_NOTHING;
 					}
 				} else {
-					if (newRightButtonVerb == kVerbLookOnly) {
+					actor = _vm->_actor->getActor(newObjectId);
+					objectId = newObjectId;
+					objectFlags = kObjUseWith;
+					newRightButtonVerb = kVerbTalkTo;
+
+					if ((_currentVerb == kVerbPickUp) ||
+						(_currentVerb == kVerbOpen) ||
+						(_currentVerb == kVerbClose) ||
+						((_currentVerb == kVerbGive) && !_firstObjectSet) ||
+						((_currentVerb == kVerbUse) && !(actor->flags & kFollower))) {
+							objectId = ID_NOTHING;
+							newObjectId = ID_NOTHING;
+						}
+				}
+			}
+
+			if (newObjectId == ID_NOTHING) {		
+
+				pickPoint = mousePoint;
+
+				if (_vm->_scene->getFlags() & kSceneFlagISO) {
+					pickPoint.y -= _vm->_actor->_protagonist->location.z;
+					_vm->_isoMap->screenPointToTileCoords(pickPoint, pickLocation);
+					pickLocation.toScreenPointUV(pickPoint);
+				}
+
+				hitZoneIndex = _vm->_scene->_objectMap->hitTest(pickPoint);
+
+				if ((hitZoneIndex != -1)) {
+					hitZone = _vm->_scene->_objectMap->getHitZone(hitZoneIndex);
+					objectId = hitZone->getHitZoneId();
+					objectFlags = 0;
+					newRightButtonVerb = hitZone->getRightButtonVerb() & 0x7f;
+
+					if (newRightButtonVerb == kVerbWalkOnly) {
 						if (_firstObjectSet) {
 							objectId = ID_NOTHING;
 						} else {
-							newRightButtonVerb = _leftButtonVerb = kVerbLookAt;
+							newRightButtonVerb = _leftButtonVerb = kVerbWalkTo;
+						}
+					} else {
+						if (newRightButtonVerb == kVerbLookOnly) {
+							if (_firstObjectSet) {
+								objectId = ID_NOTHING;
+							} else {
+								newRightButtonVerb = _leftButtonVerb = kVerbLookAt;
+							}
+						}
+					}
+
+					if (newRightButtonVerb >= kVerbOptions) {
+						newRightButtonVerb = kVerbNone;
+					}
+
+					if ((_currentVerb == kVerbTalkTo) || ((_currentVerb == kVerbGive) && !_firstObjectSet)) {
+						objectId = ID_NOTHING;
+						newObjectId = ID_NOTHING;
+					}
+
+					if ((_leftButtonVerb == kVerbUse) && (hitZone->getRightButtonVerb() & 0x80)) {
+						objectFlags = kObjUseWith;
+					}					
+				}
+			}
+		} else {
+			if ((_currentVerb == kVerbTalkTo) || ((_currentVerb == kVerbGive) && !_firstObjectSet)) {
+				// no way
+			} else {
+				panelButton = _vm->_interface->inventoryHitTest(mousePoint);
+				if (panelButton) {
+					objectId = _vm->_interface->getInventoryContentByPanelButton(panelButton);		
+					if (objectId != 0) {
+						obj = _vm->_actor->getObj(objectId);
+						newRightButtonVerb = kVerbLookAt;
+						if (obj->interactBits & kObjUseWith) {
+							objectFlags = kObjUseWith;
 						}
 					}
 				}
+			}
 
-				if (newRightButtonVerb >= kVerbOptions) {
-					newRightButtonVerb = kVerbNone;
-				}
-
-				if ((_currentVerb == kVerbTalkTo) || ((_currentVerb == kVerbGive) && !_firstObjectSet)) {
-					objectId = ID_NOTHING;
-					newObjectId = ID_NOTHING;
-				}
-
-				if ((_leftButtonVerb == kVerbUse) && (hitZone->getRightButtonVerb() & 0x80)) {
-					objectFlags = kObjUseWith;
-				}					
+			if ((_currentVerb == kVerbPickUp) || (_currentVerb == kVerbTalkTo) || (_currentVerb == kVerbWalkTo)) {
+				_leftButtonVerb = kVerbLookAt;
 			}
 		}
 	}

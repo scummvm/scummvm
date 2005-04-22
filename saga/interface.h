@@ -80,12 +80,38 @@ struct InterfacePanel {
 	PanelButton *buttons;
 	SpriteList sprites;
 	
+	PanelButton *getButton(int index) {
+		if ((index >= 0) && (index < buttonsCount)) {
+			return &buttons[index];
+		}
+		return NULL;
+	}
+
 	void calcPanelButtonRect(const PanelButton* panelButton, Rect &rect) {
 		rect.left = x + panelButton->xOffset;
 		rect.right = rect.left + panelButton->width;
 		rect.top = y + panelButton->yOffset;
 		rect.bottom = rect.top + panelButton->height;
 	}
+
+	PanelButton *hitTest(const Point& mousePoint, int buttonType) {
+		PanelButton *panelButton;
+		Rect rect;
+		int i;
+		for (i = 0; i < buttonsCount; i++) {
+			panelButton = &buttons[i];
+			if (panelButton != NULL) {
+				if ((panelButton->type & buttonType) > 0) {
+					calcPanelButtonRect(panelButton, rect);
+					if (rect.contains(mousePoint)) {
+						return panelButton;
+					}
+				}
+			}
+		}
+		return NULL;
+	}
+
 };
 
 
@@ -133,22 +159,36 @@ public:
 	int draw();
 	int update(const Point& mousePoint, int updateFlag);
 	void drawStatusBar();
-	void drawVerb(int verb, int state);
+	void setVerbState(int verb, int state);
 
 	bool processKeyCode(int keyCode);
 	
+	void inventoryChangePos(int chg);
+	void inventorySetPos(int key);
 	void addToInventory(int sprite, int pos = -1);
 	void removeFromInventory(int sprite);
 	void clearInventory();
 	int inventoryItemPosition(int sprite);
 	void drawInventory();
+	void updateInventory(int pos);
+	int getInventoryContentByPanelButton(PanelButton * panelButton) {
+		int cell = _inventoryStart + panelButton->id;
+		if (cell >= _inventoryCount) {
+			return 0;
+		}
+		return _inventory[cell];
+	}
 	
+	PanelButton *inventoryHitTest(const Point& mousePoint) {
+		return _mainPanel.hitTest(mousePoint, kPanelButtonInventory);
+	}
 private:
-	int inventoryTest(const Point& imousePt, int *ibutton);
 	PanelButton *verbHitTest(const Point& mousePoint);
 	void handleCommandUpdate(const Point& mousePoint);
 	void handleCommandClick(const Point& mousePoint);
-	PanelButton *converseHitTest(const Point& mousePoint);
+	PanelButton *converseHitTest(const Point& mousePoint) {
+		return _conversePanel.hitTest(mousePoint, kPanelAllButtons);
+	}
 	void handleConverseUpdate(const Point& mousePoint);
 	void handleConverseClick(const Point& mousePoint);
 	
@@ -157,6 +197,7 @@ private:
 
 	void drawPanelButtonText(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton, int textColor, int textShadowColor);
 	void drawPanelButtonArrow(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton);
+	void drawVerbPanel(SURFACE *backBuffer, PanelButton* panelButton);
 
 public:
 	void converseInit(void);
@@ -181,7 +222,11 @@ private:
 	bool _initialized;
 	RSCFILE_CONTEXT *_interfaceContext;
 	InterfacePanel _mainPanel;
+	PanelButton *_inventoryUpButton;
+	PanelButton *_inventoryDownButton;
 	InterfacePanel _conversePanel;
+	PanelButton *_converseUpButton;
+	PanelButton *_converseDownButton;
 	SpriteList _defPortraits;
 	SpriteList _scenePortraits;
 	PanelButton *_verbTypeToPanelButton[kVerbTypesMax];
@@ -200,7 +245,11 @@ private:
 
 	uint16 *_inventory;
 	int _inventorySize;
-	byte _inventoryCount;
+	int _inventoryStart;
+	int _inventoryEnd;
+	int _inventoryPos;
+	int _inventoryBox;
+	int _inventoryCount;
 
 	char _converseWorkString[CONVERSE_MAX_WORK_STRING];
 	Converse _converseText[CONVERSE_MAX_TEXTS];
@@ -214,4 +263,3 @@ private:
 } // End of namespace Saga
 
 #endif				/* INTERFACE_H__ */
-/* end "r_interface.h" */

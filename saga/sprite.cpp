@@ -237,6 +237,33 @@ int Sprite::draw(SURFACE *ds, SpriteList &spriteList, int32 spriteNumber, const 
 	return SUCCESS;
 }
 
+int Sprite::draw(SURFACE *ds, SpriteList &spriteList, int32 spriteNumber, const Rect &screenRect, int scale) {
+	const byte *spriteBuffer;
+	int width;
+	int height;
+	int xAlign, spw;
+	int yAlign, sph;
+	Point spritePointer;
+	Rect clip(_vm->getDisplayWidth(),_vm->getDisplayHeight());
+
+	assert(_initialized);
+
+	getScaledSpriteBuffer(spriteList, spriteNumber, scale, width, height, xAlign, yAlign, spriteBuffer);
+	spw = (screenRect.width() - width) / 2;
+	sph = (screenRect.height() - height) / 2;
+	if (spw < 0) {
+		spw = 0;
+	}
+	if (sph < 0) {
+		sph = 0;
+	}
+	spritePointer.x = screenRect.left + xAlign + spw;
+	spritePointer.y = screenRect.top + yAlign + sph;
+	drawClip(ds, clip, spritePointer, width, height, spriteBuffer);
+
+	return SUCCESS;
+}
+
 bool Sprite::hitTest(SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, const Point &testPoint) {
 	const byte *spriteBuffer;
 	int i, j;

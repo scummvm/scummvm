@@ -252,7 +252,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 			debug(9, "init obj id=%d index=%d", obj->id, obj->index);
 			obj->nameIndex = ITE_ObjectTable[i].nameIndex;
 			obj->scriptEntrypointNumber = ITE_ObjectTable[i].scriptEntrypointNumber;
-			obj->frameNumber = ITE_ObjectTable[i].frameNumber;
+			obj->spriteListResourceId = ITE_ObjectTable[i].spriteListResourceId;
 			obj->sceneNumber = ITE_ObjectTable[i].sceneIndex;
 			obj->interactBits = ITE_ObjectTable[i].interactBits;
 			obj->flags = 0;
@@ -550,7 +550,7 @@ bool Actor::validFollowerLocation(const Location &location) {
 }
 
 void Actor::setProtagState(int state) {
-	debug(0, "STUB: setProtagState(%d)", state);
+	debug(0, "STUB: setProtagState(%d)", state); //TODO: do it
 	_protagState = state;
 }
 

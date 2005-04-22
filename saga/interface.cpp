@@ -116,13 +116,18 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	}
 
 
-	_mainPanel.x = 0;		//TODO: move constant to DisplayInfo
-	_mainPanel.y = 149;
+	_mainPanel.x = _vm->getDisplayInfo().mainPanelXOffset;
+	_mainPanel.y = _vm->getDisplayInfo().mainPanelYOffset;
 	_mainPanel.currentButton = NULL;
+	_inventoryUpButton = _mainPanel.getButton(_vm->getDisplayInfo().inventoryUpButtonIndex);
+	_inventoryDownButton = _mainPanel.getButton(_vm->getDisplayInfo().inventoryDownButtonIndex);
+	
 
-	_conversePanel.x = 0;	//TODO: move constant to DisplayInfo
-	_conversePanel.y = 149;
+	_conversePanel.x = _vm->getDisplayInfo().conversePanelXOffset;
+	_conversePanel.y = _vm->getDisplayInfo().conversePanelYOffset;
 	_conversePanel.currentButton = NULL;
+	_converseUpButton = _conversePanel.getButton(_vm->getDisplayInfo().converseUpButtonIndex);
+	_converseDownButton = _conversePanel.getButton(_vm->getDisplayInfo().converseDownButtonIndex);
 
 	_leftPortrait = 0;
 	_rightPortrait = 0;
@@ -135,6 +140,10 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	_statusOnceColor = -1;
 
 	_inventoryCount = 0;
+	_inventoryPos = 0;
+	_inventoryStart = 0;
+	_inventoryEnd = 0;
+	_inventoryBox = 0;
 	_inventorySize = ITE_INVENTORY_SIZE;
 
 	_inventory = (uint16 *)calloc(_inventorySize, sizeof(uint16));
@@ -233,6 +242,7 @@ int Interface::setMode(int mode, bool force) {
 
 bool Interface::processKeyCode(int keyCode) {
 	int i;
+	PanelButton *panelButton;
 	switch (_panelMode) {
 	case kPanelNull:
 		if (keyCode == 27) {// Esc
@@ -245,12 +255,16 @@ bool Interface::processKeyCode(int keyCode) {
 		}
 		break;
 	case kPanelMain:
-		for (i = 0; i < kVerbTypesMax; i++) {
-			if (_verbTypeToPanelButton[i] != NULL) {
-				if (_verbTypeToPanelButton[i]->keyChar == keyCode) {
-					_vm->_script->setVerb(_verbTypeToPanelButton[i]->id);
-					return true;
-				}
+		for (i = 0; i < _mainPanel.buttonsCount; i++) {
+			panelButton = &_mainPanel.buttons[i];
+			if (panelButton->keyChar == keyCode) {
+				if (panelButton->type == kPanelButtonVerb) {
+					_vm->_script->setVerb(panelButton->id);
+				}			
+				if (panelButton->type == kPanelButtonArrow) {
+					inventoryChangePos(panelButton->id);
+				}			
+				return true;
 			}
 		}
 		break;
@@ -310,6 +324,39 @@ int Interface::setRightPortrait(int portrait) {
 	return SUCCESS;
 }
 
+void Interface::drawVerbPanel(SURFACE *backBuffer, PanelButton* panelButton) {
+	PanelButton * rightButtonVerbPanelButton;
+	PanelButton * currentVerbPanelButton;
+	int textColor;
+	int spriteNumber;
+	Point point;
+
+	rightButtonVerbPanelButton = getPanelButtonByVerbType(_vm->_script->getRightButtonVerb());
+	currentVerbPanelButton = getPanelButtonByVerbType(_vm->_script->getCurrentVerb());
+
+	if (panelButton->state) {
+		textColor = _vm->getDisplayInfo().verbTextActiveColor;
+	} else {
+		if (panelButton == rightButtonVerbPanelButton) {
+			textColor = _vm->getDisplayInfo().verbTextActiveColor;
+		} else {
+			textColor = _vm->getDisplayInfo().verbTextColor;
+		}
+	}
+
+	if (panelButton == currentVerbPanelButton) {
+		spriteNumber = panelButton->downSpriteNumber;
+	} else {
+		spriteNumber = panelButton->upSpriteNumber;
+	}
+	point.x = _mainPanel.x + panelButton->xOffset;
+	point.y = _mainPanel.y + panelButton->yOffset;
+
+	_vm->_sprite->draw(backBuffer, _mainPanel.sprites, spriteNumber, point, 256);
+
+	drawPanelButtonText(backBuffer, &_mainPanel, panelButton, textColor, _vm->getDisplayInfo().verbTextShadowColor);
+}
+
 int Interface::draw() {
 	SURFACE *backBuffer;
 	int i;
@@ -332,10 +379,9 @@ int Interface::draw() {
 		origin.y = _vm->getDisplayHeight() - _mainPanel.imageHeight;
 
 		bufToSurface(backBuffer, _mainPanel.image, _mainPanel.imageWidth, _mainPanel.imageHeight, NULL, &origin);
-		//here we will draw verbs
 		for (i = 0; i < kVerbTypesMax; i++) {
 			if (_verbTypeToPanelButton[i] != NULL) {
-				drawPanelButtonText(backBuffer, &_mainPanel, _verbTypeToPanelButton[i], _vm->getDisplayInfo().verbTextColor, _vm->getDisplayInfo().verbTextShadowColor);
+				drawVerbPanel(backBuffer, _verbTypeToPanelButton[i]);
 			}
 		}
 	} else {
@@ -366,9 +412,7 @@ int Interface::draw() {
 		_vm->_sprite->draw(backBuffer, _scenePortraits, _rightPortrait, rightPortraitPoint, 256);
 	}
 
-	if (_inMainMode) {
-		drawInventory();
-	}
+	drawInventory();
 	return SUCCESS;
 }
 
@@ -379,11 +423,14 @@ int Interface::update(const Point& mousePoint, int updateFlag) {
 
 	if (_panelMode == kPanelMain) {
 		if (updateFlag & UPDATE_MOUSEMOVE) {
-	
+			bool lastWasPlayfield = _lastMousePoint.y < _vm->getSceneHeight();
 			if (mousePoint.y < _vm->getSceneHeight()) {
+				if (!lastWasPlayfield) {
+					handleCommandUpdate(mousePoint);
+				}
 				_vm->_script->whichObject(mousePoint);
 			} else {
-				if (_lastMousePoint.y < _vm->getSceneHeight()) {
+				if (lastWasPlayfield) {
 					_vm->_script->setNonPlayfieldVerb();
 				}
 				handleCommandUpdate(mousePoint);
@@ -435,10 +482,10 @@ void Interface::drawStatusBar() {
 
 
 	// Erase background of status bar
-	rect.left = 0;
-	rect.top = _vm->getDisplayInfo().statusY;
-	rect.right = _vm->getDisplayWidth();
-	rect.bottom = _vm->getDisplayInfo().statusY + _vm->getDisplayInfo().statusHeight;
+	rect.left = _vm->getDisplayInfo().statusXOffset;
+	rect.top = _vm->getDisplayInfo().statusYOffset;
+	rect.right = rect.left + _vm->getDisplayWidth();
+	rect.bottom = rect.top + _vm->getDisplayInfo().statusHeight;
 
 	drawRect(backBuffer, rect, _vm->getDisplayInfo().statusBGColor);
 
@@ -449,8 +496,8 @@ void Interface::drawStatusBar() {
 	else
 		color = _statusOnceColor;
 
-	_vm->_font->draw(SMALL_FONT_ID, backBuffer, _statusText, 0, (_vm->getDisplayInfo().statusWidth / 2) - (string_w / 2),
-			_vm->getDisplayInfo().statusY + _vm->getDisplayInfo().statusTextY, color, 0, 0);
+	_vm->_font->draw(SMALL_FONT_ID, backBuffer, _statusText, 0, _vm->getDisplayInfo().statusXOffset + (_vm->getDisplayInfo().statusWidth / 2) - (string_w / 2),
+			_vm->getDisplayInfo().statusYOffset + _vm->getDisplayInfo().statusTextY, color, 0, 0);
 
 }
 
@@ -463,6 +510,25 @@ void Interface::handleCommandClick(const Point& mousePoint) {
 		_vm->_script->setVerb(panelButton->id);
 		return;
 	}
+
+	panelButton = _mainPanel.hitTest(mousePoint, kPanelAllButtons);
+
+	if (panelButton != NULL) {
+		if (panelButton->type == kPanelButtonArrow) {
+			panelButton->state = 1;
+			converseChangePos(panelButton->id);
+		}
+
+		if (panelButton->type == kPanelButtonInventory) {
+			if (_vm->_script->_pointerObject != ID_NOTHING) {
+				_vm->_script->hitObject(_vm->leftMouseButtonPressed());
+			}
+			if (_vm->_script->_pendingVerb) {
+				_vm->_actor->_protagonist->currentAction = kActionWait;
+				_vm->_script->doVerb();
+			}
+		}		
+	}
 }
 
 void Interface::handleCommandUpdate(const Point& mousePoint) {
@@ -471,22 +537,47 @@ void Interface::handleCommandUpdate(const Point& mousePoint) {
 	panelButton = verbHitTest(mousePoint);
 	if (_mainPanel.currentButton != panelButton) {
 		if (_mainPanel.currentButton) {
-			drawVerb(_mainPanel.currentButton->id, 0);
+			if (_mainPanel.currentButton->type == kPanelButtonVerb) {
+				setVerbState(_mainPanel.currentButton->id, 0);
+			}
 		}
 		if (panelButton) {
-			drawVerb(panelButton->id, 1);			
+			setVerbState(panelButton->id, 1);			
 		}
 	}
-	_mainPanel.currentButton = panelButton;
+	
 	if (panelButton) {
+		_mainPanel.currentButton = panelButton;
 		return;
 	}
-/*	hit_button = inventoryTest(imousePointer, &ibutton_num);
 
-	if (hit_button == SUCCESS) {
-		// Hovering over an inventory object
-		return SUCCESS;
-	}*/
+
+	if (!_vm->mouseButtonPressed()) {			// remove pressed flag
+		_inventoryUpButton->state = 0;
+		_inventoryDownButton->state = 0;
+	}
+
+	panelButton = _mainPanel.hitTest(mousePoint, kPanelAllButtons);
+	
+	if (panelButton != NULL) {
+		if (panelButton->type == kPanelButtonArrow) {
+			if (panelButton->state == 1) {
+				//TODO: insert timeout catchup
+				inventoryChangePos(panelButton->id);
+			}
+			draw();
+		}
+
+		if (panelButton->type == kPanelButtonInventory) {
+			_vm->_script->whichObject(mousePoint);
+		}		
+	}
+
+	bool changed = (panelButton != _mainPanel.currentButton);
+	_mainPanel.currentButton = panelButton;
+	if (changed) {
+		draw();
+	}		
 
 }
 
@@ -506,39 +597,81 @@ PanelButton *Interface::verbHitTest(const Point& mousePoint) {
 	return NULL;
 }
 
+//inventory stuff
+void Interface::inventoryChangePos(int chg) {
+	if ((chg < 0 && _inventoryStart + chg >= 0) ||
+		(chg > 0 && _inventoryStart  < _inventoryEnd)) {
+			_inventoryStart += chg;
+			draw();
+		}
+}
+
+void Interface::inventorySetPos(int key) {
+	_inventoryBox = key - '1';
+	_inventoryPos = _inventoryStart + _inventoryBox;
+	if (_inventoryPos >= _inventoryCount)
+		_inventoryPos = -1;	
+}
+
+void Interface::updateInventory(int pos) {
+	BYTE cols = _vm->getDisplayInfo().inventoryColumns;
+	if (pos >= _inventoryCount) {
+		pos = _inventoryCount - 1;
+	}
+	if (pos < 0) {
+		pos = 0;
+	}
+	_inventoryStart = (pos - cols) / cols * cols;
+	if (_inventoryStart < 0) {
+		_inventoryStart = 0;
+	}
+	
+	_inventoryEnd = (_inventoryCount - 1  - cols) / cols * cols;
+	if (_inventoryEnd < 0) {
+		_inventoryEnd = 0;
+	}	
+}
+
 void Interface::addToInventory(int sprite, int pos) {
-	if (pos != -1) {
+	if (pos != -1) { 
 		_inventory[pos] = sprite;
-		_inventoryCount++;
+		_inventoryCount = MAX(_inventoryCount, pos + 1);
 		return;
 	}
 
-	if (_inventoryCount < _inventorySize) {
-		for (int i = _inventoryCount; i > 0; i--) {
-			_inventory[i] = _inventory[i - 1];
-		}
-
-		_inventory[0] = sprite;
-		_inventoryCount++;
-		draw();
+	if (_inventoryCount >= _inventorySize) {
+		return;
 	}
+		
+	for (int i = _inventoryCount; i > 0; i--) {
+		_inventory[i] = _inventory[i - 1];
+	}
+
+	_inventory[0] = sprite;
+	_inventoryCount++;
+
+	_inventoryPos = 0;
+	updateInventory(0);
+
+	draw();	
 }
 
 void Interface::removeFromInventory(int sprite) {
-	for (int i = 0; i < _inventoryCount; i++) {
-		if (_inventory[i] == sprite) {
-			int j;
-
-			for (j = i; i < _inventoryCount; j++) {
-				_inventory[j] = _inventory[j + 1];
-			}
-
-			_inventory[j] = 0;
-			_inventoryCount--;
-			draw();
-			return;
-		}
+	int j = inventoryItemPosition(sprite);
+	if (j == -1) {
+		return;
 	}
+
+	int i;
+
+	for (i = j; i < _inventoryCount; i++) {
+		_inventory[i] = _inventory[i + 1];
+	}
+
+	--_inventoryCount;
+	_inventory[_inventoryCount] = 0;
+	updateInventory(j);
+	draw();
 }
 
 void Interface::clearInventory() {
@@ -546,6 +679,7 @@ void Interface::clearInventory() {
 		_inventory[i] = 0;
 
 	_inventoryCount = 0;
+	updateInventory(0);
 }
 
 int Interface::inventoryItemPosition(int sprite) {
@@ -559,113 +693,46 @@ int Interface::inventoryItemPosition(int sprite) {
 void Interface::drawInventory() {
 	if (_panelMode != kPanelMain)
 		return;
-	SURFACE *back_buf = _vm->_gfx->getBackBuffer();
+	SURFACE *backBuffer = _vm->_gfx->getBackBuffer();
+	int i;
+	Rect rect;
+	int ci;
+	ObjectData *obj;
+	Point point;
+	ci = _inventoryStart;
+	if (_inventoryStart != 0) {
+		drawPanelButtonArrow(backBuffer, &_mainPanel, _inventoryUpButton);		
+	}
+	if (_inventoryStart != _inventoryEnd) {
+		drawPanelButtonArrow(backBuffer, &_mainPanel, _inventoryDownButton);		
+	}
 
-	// TODO: Inventory scrolling
-
-	int row = 0;
-	int col = 0;
-
-	int x = _vm->getDisplayInfo().inventoryX + _vm->getDisplayInfo().inventoryIconXOffset;
-	int y = _vm->getDisplayInfo().inventoryY + _vm->getDisplayInfo().inventoryIconYOffset;
-	int width = _vm->getDisplayInfo().inventoryIconWidth + _vm->getDisplayInfo().inventoryXSpacing;
-	int height = _vm->getDisplayInfo().inventoryIconHeight + _vm->getDisplayInfo().inventoryYSpacing;
-	Point drawPoint;
-
-	for (int i = 0; i < _inventoryCount; i++) {
-		if (!_vm->_actor->validObjId(_vm->_actor->objIndexToId(_inventory[i]))) {
+	for (i = 0; i < _mainPanel.buttonsCount; i++) {
+		if (ci >= _inventoryCount) {
+			break;
+		}
+		if (_mainPanel.buttons[i].type != kPanelButtonInventory) {
 			continue;
 		}
-		drawPoint.x = x + col * width;
-		drawPoint.y = y + row * height;
-
-		_vm->_sprite->draw(back_buf, _vm->_sprite->_mainSprites,
-			_vm->_actor->getObj(_vm->_actor->objIndexToId(_inventory[i]))->spriteListResourceId,
-			drawPoint, 256);
-
-		if (++col >= _vm->getDisplayInfo().inventoryColumns) {
-			if (++row >= _vm->getDisplayInfo().inventoryRows) {
-				break;
-			}
-			col = 0;
-		}
+		_mainPanel.calcPanelButtonRect(&_mainPanel.buttons[i], rect);
+		
+//4debug		drawRect(backBuffer, rect, kITEColorWhite); 
+		point.x = rect.left;
+		point.y = rect.top;
+		obj = _vm->_actor->getObj(_inventory[ci]);		
+		_vm->_sprite->draw(backBuffer, _vm->_sprite->_mainSprites, obj->spriteListResourceId, rect, 256);
+		
+		ci++;
 	}
 }
 
-int Interface::inventoryTest(const Point& imousePt, int *ibutton) {
-	int row = 0;
-	int col = 0;
-
-	int xbase = _vm->getDisplayInfo().inventoryX;
-	int ybase = _vm->getDisplayInfo().inventoryY;
-	int width = _vm->getDisplayInfo().inventoryIconWidth + _vm->getDisplayInfo().inventoryXSpacing;
-	int height = _vm->getDisplayInfo().inventoryIconHeight + _vm->getDisplayInfo().inventoryYSpacing;
-
-	for (int i = 0; i < _inventoryCount; i++) {
-		int x = xbase + col * width;
-		int y = ybase + row * height;
-
-		if (imousePt.x >= x && imousePt.x < x + _vm->getDisplayInfo().inventoryIconWidth && imousePt.y >= y && imousePt.y < y + _vm->getDisplayInfo().inventoryIconHeight) {
-			*ibutton = i;
-			return SUCCESS;
-		}
-
-		if (++col >= _vm->getDisplayInfo().inventoryColumns) {
-			if (++row >= _vm->getDisplayInfo().inventoryRows) {
-				break;
-			}
-			col = 0;
-		}
-	}
-
-	return FAILURE;
-}
-
-
-void Interface::drawVerb(int verb, int state) {
-	SURFACE *backBuffer;
-	PanelButton * panelButton;
-	PanelButton * rightButtonVerbPanelButton;
-	PanelButton * currentVerbPanelButton;
-	int textColor;
-	int spriteNumber;
-	Point point;
-
-	backBuffer = _vm->_gfx->getBackBuffer();
-
-	panelButton = getPanelButtonByVerbType(verb);
-	rightButtonVerbPanelButton = getPanelButtonByVerbType(_vm->_script->getRightButtonVerb());
-	currentVerbPanelButton = getPanelButtonByVerbType(_vm->_script->getCurrentVerb());
-
-	if (panelButton == NULL) {
-		warning("panelButton == NULL");
-		return;
-	}
+void Interface::setVerbState(int verb, int state) {
+	PanelButton * panelButton = getPanelButtonByVerbType(verb);
 	if (state == 2) {
 		state = (_mainPanel.currentButton == panelButton) ? 1 : 0;
-	}
-
-	if (state) {
-		textColor = _vm->getDisplayInfo().verbTextActiveColor;
-	} else {
-		if (panelButton == rightButtonVerbPanelButton) {
-			textColor = _vm->getDisplayInfo().verbTextActiveColor;
-		} else {
-			textColor = _vm->getDisplayInfo().verbTextColor;
-		}
-	}
-
-	if (panelButton == currentVerbPanelButton) {
-		spriteNumber = panelButton->downSpriteNumber;
-	} else {
-		spriteNumber = panelButton->upSpriteNumber;
-	}
-	point.x = _mainPanel.x + panelButton->xOffset;
-	point.y = _mainPanel.y + panelButton->yOffset;
-
-	_vm->_sprite->draw(backBuffer, _mainPanel.sprites, spriteNumber, point, 256);
-
-	drawPanelButtonText(backBuffer, &_mainPanel, panelButton, textColor, _vm->getDisplayInfo().verbTextShadowColor);
+	} 
+	panelButton->state = state;
+	draw();
 }
 
 void Interface::drawPanelButtonArrow(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton) {
@@ -673,7 +740,7 @@ void Interface::drawPanelButtonArrow(SURFACE *ds, InterfacePanel *panel, PanelBu
 	int spriteNumber;
 
 	if (panel->currentButton == panelButton) {
-		if (panelButton->flag != 0) {
+		if (panelButton->state != 0) {
 			spriteNumber = panelButton->downSpriteNumber;
 		} else {
 			spriteNumber = panelButton->overSpriteNumber;
@@ -867,11 +934,11 @@ void Interface::converseDisplayTextLines(SURFACE *ds) {
 	}
 
 	if (_converseStartPos != 0) {
-		drawPanelButtonArrow(ds, &_conversePanel, &_conversePanel.buttons[4]);
+		drawPanelButtonArrow(ds, &_conversePanel, _converseUpButton);
 	}
 
 	if (_converseStartPos != _converseEndPos) {
-		drawPanelButtonArrow(ds, &_conversePanel, &_conversePanel.buttons[5]);
+		drawPanelButtonArrow(ds, &_conversePanel, _converseDownButton);
 	}
 }
 
@@ -901,22 +968,6 @@ void Interface::converseSetPos(int key) {
 	_conversePos = -1;
 }
 
-PanelButton *Interface::converseHitTest(const Point& mousePoint) {
-	PanelButton *panelButton;
-	Rect rect;
-	int i;
-	for (i = 0; i < _conversePanel.buttonsCount; i++) {
-		panelButton = &_conversePanel.buttons[i];
-		if (panelButton != NULL) {
-			_conversePanel.calcPanelButtonRect(panelButton, rect);
-			if (rect.contains(mousePoint)) {
-				return panelButton;
-			}
-		}
-	}
-
-	return NULL;
-}
 
 void Interface::handleConverseUpdate(const Point& mousePoint) {
 	bool changed;
@@ -924,8 +975,8 @@ void Interface::handleConverseUpdate(const Point& mousePoint) {
 	PanelButton *last = _conversePanel.currentButton;
 	
 	if (!_vm->mouseButtonPressed()) {			// remove pressed flag
-		_conversePanel.buttons[4].flag = 0;
-		_conversePanel.buttons[5].flag = 0;
+		_converseUpButton->state = 0;
+		_converseDownButton->state = 0;
 	}
 
 	_conversePanel.currentButton = converseHitTest(mousePoint);
@@ -945,9 +996,9 @@ void Interface::handleConverseUpdate(const Point& mousePoint) {
 	}
 	
 	if (_conversePanel.currentButton->type == kPanelButtonArrow) {
-		if (_conversePanel.currentButton->flag == 1) {
+		if (_conversePanel.currentButton->state == 1) {
 			//TODO: insert timeout catchup
-			converseChangePos((_conversePanel.currentButton->id == 0) ? -1 : 1);
+			converseChangePos(_conversePanel.currentButton->id);
 		}
 		draw();
 	}	
@@ -966,8 +1017,8 @@ void Interface::handleConverseClick(const Point& mousePoint) {
 	}
 
 	if (_conversePanel.currentButton->type == kPanelButtonArrow) {
-		_conversePanel.currentButton->flag = 1;
-		converseChangePos((_conversePanel.currentButton->id == 0) ? -1 : 1);
+		_conversePanel.currentButton->state = 1;
+		converseChangePos(_conversePanel.currentButton->id);
 	}	
 
 }
