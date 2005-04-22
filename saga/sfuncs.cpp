@@ -665,12 +665,16 @@ void Script::sfScriptWalkToAsync(SCRIPTFUNC_PARAMS) {
 
 // Script function #28 (0x1C)
 void Script::sfEnableZone(SCRIPTFUNC_PARAMS) {
-	int16 hitZoneIndex = objectIdToIndex(thread->pop());
+	uint16 objectId = thread->pop();
 	int16 flag = thread->pop();
 	HitZone *hitZone;
 
-	debug(0, "sfEnableZone(%d, %d)", hitZoneIndex, flag);
-	hitZone = _vm->_scene->_objectMap->getHitZone(hitZoneIndex);
+	debug(0, "sfEnableZone(%d, %d)", objectId, flag);
+	if (objectTypeId(objectId) == kGameObjectHitZone) {
+		hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(objectId));
+	} else {
+		hitZone = _vm->_scene->_actionMap->getHitZone(objectIdToIndex(objectId));
+	}
 
 	if (flag) {
 		hitZone->setFlag(kHitZoneEnabled);
