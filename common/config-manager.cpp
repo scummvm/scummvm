@@ -23,6 +23,7 @@
 #include "stdafx.h"
 
 #include "common/config-manager.h"
+#include "common/file.h"
 #include "common/util.h"
 
 DECLARE_SINGLETON(Common::ConfigManager);
@@ -115,9 +116,9 @@ void ConfigManager::loadConfigFile(const String &filename) {
 }
 
 void ConfigManager::loadFile(const String &filename) {
-	FILE *cfg_file;
+	File cfg_file;
 
-	if (!(cfg_file = fopen(filename.c_str(), "r"))) {
+	if (!cfg_file.open(filename.c_str())) {
 		warning("Unable to open configuration file: %s", filename.c_str());
 	} else {
 		char buf[MAXLINELEN];
@@ -128,16 +129,17 @@ void ConfigManager::loadFile(const String &filename) {
 		// TODO: Detect if a domain occurs multiple times (or likewise, if
 		// a key occurs multiple times inside one domain).
 
-		while (!feof(cfg_file)) {
+		while (!cfg_file.eof()) {
 			lineno++;
-			if (!fgets(buf, MAXLINELEN, cfg_file))
-				continue;
+			if (!cfg_file.readLine(buf, MAXLINELEN))
+				break;
 
 			if (buf[0] == '#') {
 				// Accumulate comments here. Once we encounter either the start
 				// of a new domain, or a key-value-pair, we associate the value
 				// of the 'comment' variable with that entity.
 				comment += buf;
+				comment += '\n';
 			} else if (buf[0] == '[') {
 				// It's a new domain which begins here.
 				char *p = buf + 1;
@@ -199,7 +201,6 @@ void ConfigManager::loadFile(const String &filename) {
 				comment.clear();
 			}
 		}
-		fclose(cfg_file);
 	}
 }
 
