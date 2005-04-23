@@ -458,7 +458,7 @@ void ScummEngine_v80he::o80_readConfigFile() {
 	copyScriptString(option, sizeof(option));
 	copyScriptString(section, sizeof(section));
 	copyScriptString(filename, sizeof(filename));
-	convertFilePath(filename);
+	convertFilePath(filename, true);
 	type = fetchScriptByte();
 
 	ConfMan.loadConfigFile((const char *)filename);
@@ -502,7 +502,7 @@ void ScummEngine_v80he::o80_writeConfigFile() {
 		copyScriptString(option, sizeof(option));
 		copyScriptString(section, sizeof(section));
 		copyScriptString(filename, sizeof(filename));
-		convertFilePath(filename);
+		convertFilePath(filename, true);
 
 		ConfMan.loadConfigFile((const char *)filename);
 		ConfMan.set((char *)option, value, (char *)section); 
@@ -514,7 +514,7 @@ void ScummEngine_v80he::o80_writeConfigFile() {
 		copyScriptString(option, sizeof(option));
 		copyScriptString(section, sizeof(section));
 		copyScriptString(filename, sizeof(filename));
-		convertFilePath(filename);
+		convertFilePath(filename, true);
 
 		ConfMan.loadConfigFile((const char *)filename);
 		ConfMan.set((char *)option, (char *)string, (char *)section); 
