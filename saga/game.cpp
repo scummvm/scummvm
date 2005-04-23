@@ -753,7 +753,8 @@ DetectedGameList GAME_ProbeGame(const FSList &fslist) {
 int detectGame(const FSList &fslist, bool mode) {
 	int game_count = ARRAYSIZE(gameDescriptions);
 	int game_n = -1;
-	Common::StringMap filesMD5;
+	typedef Common::Map<Common::String, Common::String> StringMap;
+	StringMap filesMD5;
 
 	typedef Common::Map<Common::String, bool> StringSet;
 	StringSet filesList;
@@ -861,7 +862,7 @@ int detectGame(const FSList &fslist, bool mode) {
 		printf("MD5s of your ITE version are unknown. Please, report following data to\n");
 		printf("ScummVM team along with your ITE version:\n");
 
-		for (Common::StringMap::const_iterator file = filesMD5.begin(); file != filesMD5.end(); ++file)
+		for (StringMap::const_iterator file = filesMD5.begin(); file != filesMD5.end(); ++file)
 			printf("%s: %s\n", file->_key.c_str(), file->_value.c_str());
 
 	}

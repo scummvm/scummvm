@@ -277,10 +277,6 @@ protected:
 	}
 };
 
-class String;
-
-typedef Map<String, String> StringMap;
-
 }	// End of namespace Common
 
 #endif
