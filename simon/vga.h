@@ -24,11 +24,15 @@
 
 namespace Simon {
 
+#if !defined(__GNUC__)
+	#pragma START_PACK_STRUCTS
+#endif
+
 struct VgaFile1Header {
 	uint16 x_1, x_2;
 	uint16 hdr2_start;
 	uint16 x_3, x_4;
-};
+} GCC_PACK;
 
 struct VgaFile1Header2 {
 	uint16 x_1;
@@ -40,20 +44,25 @@ struct VgaFile1Header2 {
 	uint16 x_4;
 	uint16 id_table;
 	uint16 x_5;
-};
+} GCC_PACK;
 
 struct VgaFile1Struct0x8 {
 	uint16 id;
 	uint16 x_1;
 	uint16 x_2;
 	uint16 script_offs;
-};
+} GCC_PACK;
 
 struct VgaFile1Struct0x6 {
 	uint16 id;
 	uint16 x_2;
 	uint16 script_offs;
-};
+} GCC_PACK;
+
+
+#if !defined(__GNUC__)
+	#pragma END_PACK_STRUCTS
+#endif
 
 struct VC10_state {
 	int image;
