@@ -49,10 +49,6 @@
 
 extern int gDebugLevel;
 
-// For convenience, we alias kTransientDomain here
-static const Common::String &kTransientDomain = Common::ConfigManager::kTransientDomain;
-
-
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
 #ifdef __PALM_OS__
 static const char USAGE_STRING[] = "NoUsageString"; // save more data segment space
@@ -199,16 +195,6 @@ GameDetector::GameDetector() {
 #endif
 #endif
 
-	// The user can override the savepath with the SCUMMVM_SAVEPATH 
-	// environment variable.
-#if !defined(MACOS_CARBON) && !defined(_WIN32_WCE) && !defined(__PALM_OS__)
-	const char *dir = getenv("SCUMMVM_SAVEPATH");
-	if (dir && *dir) {
-		// TODO: Verify whether the path is valid
-		ConfMan.set("savepath", dir, kTransientDomain);
-	}
-#endif
-
 	_dumpScripts = false;
 	_force1xOverlay = false;
 
@@ -295,7 +281,7 @@ GameSettings GameDetector::findGame(const String &gameName, const Plugin **plugi
 	DO_OPTION_OPT(shortCmd, longCmd) \
 	if (option == NULL) goto ShowHelpAndExit; \
 	char *endptr = 0; \
-	int intValue = (int)strtol(option, &endptr, 10); \
+	int intValue; intValue = (int)strtol(option, &endptr, 10); \
 	if (endptr == NULL || *endptr != 0) goto ShowHelpAndExit;
 
 // Use this for boolean options; this distinguishes between "-x" and "-X",
@@ -334,6 +320,30 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 	char *current_option = NULL;
 	char shortCmdLower;
 	bool isLongCmd, boolValue;
+	
+	// We store all command line settings in a string map, instead of
+	// immediately putting it into the config manager. We do that to
+	// make a potential future change to the config manager easier: In
+	// particular, right now there is only one transient config domain
+	// domain, in the future there might be two (one for the app, one
+	// for the active game). Since we only know after all params have
+	// been parsed whether a game is going to be started or whether we
+	// run the launcher, we need to delay putting things into the config
+	// manager until after parsing is complete.
+	Common::StringMap settings;
+
+
+	// The user can override the savepath with the SCUMMVM_SAVEPATH 
+	// environment variable. This is weaker than a --savepath on the
+	// command line, but overrides the default savepath, hence it is
+	// handled here, just before the command line gets parsed.
+#if !defined(MACOS_CARBON) && !defined(_WIN32_WCE) && !defined(__PALM_OS__)
+	const char *dir = getenv("SCUMMVM_SAVEPATH");
+	if (dir && *dir) {
+		// TODO: Verify whether the path is valid
+		settings["savepath"] = dir;
+	}
+#endif
 
 	// Iterate over all command line arguments, backwards.
 	for (i = argc - 1; i >= 1; i--) {
@@ -364,7 +374,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			END_OPTION
 
 			DO_OPTION_INT('b', "boot-param")
-				ConfMan.set("boot_param", intValue, kTransientDomain);
+				settings["boot_param"] = option;
 			END_OPTION
 			
 			DO_OPTION_OPT('d', "debuglevel")
@@ -379,15 +389,15 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				//  Available driver: ..."
 				if (MidiDriver::parseMusicDriver(option) < 0)
 					goto ShowHelpAndExit;
-				ConfMan.set("music_driver", option, kTransientDomain);
+				settings["music_driver"] = option;
 			END_OPTION
 
 			DO_LONG_OPTION_INT("output-rate")
-				ConfMan.set("output_rate", intValue, kTransientDomain);
+				settings["output_rate"] = option;
 			END_OPTION
 
 			DO_OPTION_BOOL('f', "fullscreen")
-				ConfMan.set("fullscreen", boolValue, kTransientDomain);
+				settings["fullscreen"] = boolValue ? "true" : "false";
 			END_OPTION
 
 			DO_OPTION('g', "gfx-mode")
@@ -408,7 +418,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				//  Available graphic modes: ..."
 				if (!isValid)
 					goto ShowHelpAndExit;
-				ConfMan.set("gfx_mode", option, kTransientDomain);
+				settings["gfx_mode"] = option;
 			END_OPTION
 
 			DO_OPTION_CMD('h', "help")
@@ -417,30 +427,30 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			END_OPTION
 
 			DO_OPTION_INT('m', "music-volume")
-				ConfMan.set("music_volume", intValue, kTransientDomain);
+				settings["music_volume"] = option;
 			END_OPTION
 
 			DO_OPTION_BOOL('n', "subtitles")
-				ConfMan.set("subtitles", boolValue, kTransientDomain);
+				settings["subtitles"] =  boolValue ? "true" : "false";
 			END_OPTION
 
 			DO_OPTION('p', "path")
 				// TODO: Verify whether the path is valid
-				ConfMan.set("path", option, kTransientDomain);
+				settings["path"] = option;
 			END_OPTION
 
 			DO_OPTION('q', "language")
 				if (Common::parseLanguage(option) == Common::UNK_LANG)
 					goto ShowHelpAndExit;
-				ConfMan.set("language", option, kTransientDomain);
+				settings["language"] = option;
 			END_OPTION
 
 			DO_OPTION_INT('s', "sfx-volume")
-				ConfMan.set("sfx_volume", intValue, kTransientDomain);
+				settings["sfx_volume"] = option;
 			END_OPTION
 
 			DO_OPTION_INT('r', "speech-volume")
-				ConfMan.set("speech_volume", intValue, kTransientDomain);
+				settings["speech_volume"] = option;
 			END_OPTION
 
 			DO_OPTION_CMD('t', "list-targets")
@@ -459,7 +469,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			END_OPTION
 
 			DO_OPTION_OPT('x', "save-slot")
-				ConfMan.set("save_slot", (option != NULL) ? (int)strtol(option, 0, 10) : 0, kTransientDomain);
+				settings["save_slot"] = (option != NULL) ? option : "0";
 			END_OPTION
 
 			DO_OPTION_CMD('z', "list-games")
@@ -468,11 +478,11 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			END_OPTION
 
 			DO_LONG_OPTION_INT("cdrom")
-				ConfMan.set("cdrom", intValue, kTransientDomain);
+				settings["cdrom"] = option;
 			END_OPTION
 
 			DO_LONG_OPTION_OPT("joystick")
-				ConfMan.set("joystick_num", (option != NULL) ? (int)strtol(option, 0, 10) : 0, kTransientDomain);
+				settings["joystick_num"] = (option != NULL) ? option : "0";
 			END_OPTION
 
 			DO_LONG_OPTION("platform")
@@ -480,27 +490,28 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				if (platform == Common::kPlatformUnknown)
 					goto ShowHelpAndExit;
 
-				ConfMan.set("platform", option, kTransientDomain);
+				settings["platform"] = option;
 			END_OPTION
 
 			DO_LONG_OPTION("soundfont")
-				ConfMan.set("soundfont", option, kTransientDomain);
+				// TODO: Verify whether the path is valid
+				settings["soundfont"] = option;
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("multi-midi")
-				ConfMan.set("multi_midi", boolValue, kTransientDomain);
+				settings["multi_midi"] = boolValue ? "true" : "false";
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("native-mt32")
-				ConfMan.set("native_mt32", boolValue, kTransientDomain);
+				settings["native_mt32"] = boolValue ? "true" : "false";
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("enable-gs")
-				ConfMan.set("enable_gs", boolValue, kTransientDomain);
+				settings["enable_gs"] = boolValue ? "true" : "false";
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("aspect-ratio")
-				ConfMan.set("aspect_ratio", boolValue, kTransientDomain);
+				settings["aspect_ratio"] = boolValue ? "true" : "false";
 			END_OPTION
 
 			DO_LONG_OPTION("render-mode")
@@ -508,7 +519,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				if (renderMode == Common::kRenderDefault)
 					goto ShowHelpAndExit;
 
-				ConfMan.set("render_mode", option, kTransientDomain);
+				settings["render_mode"] = option;
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("force-1x-overlay")
@@ -517,7 +528,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 
 			DO_LONG_OPTION("savepath")
 				// TODO: Verify whether the path is valid
-				ConfMan.set("savepath", option, kTransientDomain);
+				settings["savepath"] = option;
 			END_OPTION
 
 #ifndef DISABLE_SCUMM
@@ -525,25 +536,28 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				// Use the special value '0' for the base in (int)strtol. 
 				// Doing that makes it possible to enter hex values
 				// as "0x1234", but also decimal values ("123").
-				ConfMan.set("tempo", (int)strtol(option, 0, 0), kTransientDomain);
+				int value = (int)strtol(option, 0, 0);
+				char buf[20];
+				snprintf(buf, sizeof(buf), "%d", value);
+				settings["tempo"] = buf;
 			END_OPTION
 
 			DO_LONG_OPTION_INT("talkspeed")
-				ConfMan.set("talkspeed", intValue, kTransientDomain);
+				settings["talkspeed"] = option;
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("copy-protection")
-				ConfMan.set("copy_protection", boolValue, kTransientDomain);
+				settings["copy_protection"] = boolValue ? "true" : "false";
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("demo-mode")
-				ConfMan.set("demo_mode", boolValue, kTransientDomain);
+				settings["demo_mode"] = boolValue ? "true" : "false";
 			END_OPTION
 #endif
 
 #if !defined(DISABLE_SKY) || !defined(DISABLE_QUEEN)
 			DO_LONG_OPTION_BOOL("alt-intro")
-				ConfMan.set("alt_intro", boolValue, kTransientDomain);
+				settings["alt_intro"] = boolValue ? "true" : "false";
 			END_OPTION
 #endif
 
@@ -557,6 +571,11 @@ ShowHelpAndExit:
 		printf(USAGE_STRING);
 		exit(1);
 	}
+
+	// Finally, store the command line settings into the config manager.
+	for (Common::StringMap::const_iterator x = settings.begin(); x != settings.end(); ++x)
+		ConfMan.set(x->_key, x->_value, Common::ConfigManager::kTransientDomain);
+
 }
 
 void GameDetector::setTarget(const String &name) {
@@ -605,7 +624,7 @@ bool GameDetector::detectMain() {
 #endif
 					&& gameDataPath.lastChar() != '\\') {
 		gameDataPath += '/';
-		ConfMan.set("path", gameDataPath, kTransientDomain);
+		ConfMan.set("path", gameDataPath, Common::ConfigManager::kTransientDomain);
 	}
 
 	return true;
