@@ -518,7 +518,7 @@ void ScummEngine_v72he::readArrayFromIndexFile() {
 	}
 }
 
-void ScummEngine_v72he::convertFilePath(byte *dst) {
+int ScummEngine_v72he::convertFilePath(byte *dst, bool setFilePath) {
 	// Switch all \ to / for portablity
 	int len = resStrLen(dst) + 1;
 	for (int i = 0; i < len; i++) {
@@ -537,21 +537,24 @@ void ScummEngine_v72he::convertFilePath(byte *dst) {
 		}
 	}
 
-	File f;
-	char filePath[256], newFilePath[256];
+	if (setFilePath) {
+		File f;
+		char filePath[256], newFilePath[256];
 
-	sprintf(filePath, "%s%s", _gameDataPath.c_str(), dst + r);
-	if (f.exists(filePath)) {
-		sprintf(newFilePath, "%s%s", _gameDataPath.c_str(), dst + r);
-	} else {
-		sprintf(newFilePath, "%s%s", _saveFileMan->getSavePath(), dst + r);
+		sprintf(filePath, "%s%s", _gameDataPath.c_str(), dst + r);
+		if (f.exists(filePath)) {
+			sprintf(newFilePath, "%s%s", _gameDataPath.c_str(), dst + r);
+		} else {
+			sprintf(newFilePath, "%s%s", _saveFileMan->getSavePath(), dst + r);
+		}
+
+		len = resStrLen((const byte *)newFilePath);
+		memcpy(dst, newFilePath, len);
+		dst[len] = 0;
+		debug(0, "convertFilePath: newFilePath is %s", newFilePath);
 	}
 
-	len = resStrLen((const byte *)newFilePath);
-	memcpy(dst, newFilePath, len);
-	dst[len] = 0;
-
-	debug(0, "convertFilePath: newFilePath is %s", newFilePath);
+	return r;
 }	
 
 void ScummEngine_v72he::copyScriptString(byte *dst, int dstSize) {
@@ -1722,7 +1725,7 @@ void ScummEngine_v72he::o72_openFile() {
 		strcpy((char *)filename, buf1);
 	}
 
-	convertFilePath(filename);
+	int r = convertFilePath(filename);
 	debug(0,"Final filename to %s", filename);
 
 	slot = -1;
@@ -1736,10 +1739,12 @@ void ScummEngine_v72he::o72_openFile() {
 	if (slot != -1) {
 		switch(mode) {
 		case 1:
-			_hFileTable[slot].open((char*)filename, File::kFileReadMode);
+			_hFileTable[slot].open((char*)filename + r, File::kFileReadMode, _saveFileMan->getSavePath());
+			if (_hFileTable[slot].isOpen() == false)
+				_hFileTable[slot].open((char*)filename + r, File::kFileReadMode, _gameDataPath.c_str());
 			break;
 		case 2:
-			_hFileTable[slot].open((char*)filename, File::kFileWriteMode);
+			_hFileTable[slot].open((char*)filename + r, File::kFileWriteMode, _saveFileMan->getSavePath());
 			break;
 		default:
 			error("o72_openFile(): wrong open file mode %d", mode);
