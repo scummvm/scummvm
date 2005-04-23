@@ -34,18 +34,11 @@ static FILE *fopenNoCase(const char *filename, const char *directory, const char
 	assert(directory);
 	strcpy(buf, directory);
 
-#ifdef WIN32
-	// Fix for Win98 issue related with game directory pointing to root drive ex. "c:\"
-	if ((buf[0] != 0) && (buf[1] == ':') && (buf[2] == '\\') && (buf[3] == 0)) {
-		buf[2] = 0;
-	}
-#endif
-
 #if !defined(__GP32__) && !defined(__PALM_OS__)
 	// Add a trailing slash, if necessary.
 	if (buf[0] != 0) {
 		const int dirLen = strlen(buf);
-		if (buf[dirLen-1] != ':' && buf[dirLen-1] != '/')
+		if (buf[dirLen-1] != ':' && buf[dirLen-1] != '/' && buf[dirLen-1] != '\\')
 			strcat(buf, "/");
 	}
 #endif
