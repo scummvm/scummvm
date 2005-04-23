@@ -20,31 +20,34 @@
  *
  */
 
-#ifndef COMMON_CONFIG_H
-#define COMMON_CONFIG_H
+#ifndef COMMON_CONFIG_MANAGER_H
+#define COMMON_CONFIG_MANAGER_H
 
 #include "common/array.h"
+//#include "common/config-file.h"
 #include "common/map.h"
 #include "common/singleton.h"
 #include "common/str.h"
 
 namespace Common {
 
+struct IgnoreCaseComparator {
+  int operator()(const String& x, const String& y) const { return scumm_stricmp(x.c_str(), y.c_str()); }
+};
+
+typedef Map<String, String, IgnoreCaseComparator> StringMap;
+
 /**
  * The (singleton) configuration manager, used to query & set configuration
  * values using string keys.
  *
- * @todo Implement the callback based notification system (outline below)
+ * @todo Implement the callback based notification system (outlined below)
  *       which sends out notifications to interested parties whenever the value
  *       of some specific (or any) configuration key changes.
  */
 class ConfigManager : public Singleton<ConfigManager> {
-	struct IgnoreCaseComparator {
-	  int operator()(const String& x, const String& y) const { return scumm_stricmp(x.c_str(), y.c_str()); }
-	};
 	
 public:
-	typedef Map<String, String, IgnoreCaseComparator> StringMap;
 	
 	class Domain : public StringMap {
 	private:
