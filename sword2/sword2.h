@@ -55,7 +55,6 @@ class ResourceManager;
 class Sound;
 class Screen;
 class Mouse;
-class Graphics;
 class Logic;
 class FontRenderer;
 class Gui;
