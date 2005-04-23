@@ -25,7 +25,6 @@
 
 #include "base/engine.h"
 #include "common/file.h"
-#include "common/map.h"
 #include "common/rect.h"
 #include "common/str.h"
 
@@ -59,8 +58,6 @@ struct Box;
 struct BoxCoords;
 struct FindObjectInRoom;
 struct ScummGameSettings;
-
-typedef Common::Map<Common::String, int> ObjectIDMap;
 
 // Use g_scumm from error() ONLY
 extern ScummEngine *g_scumm;

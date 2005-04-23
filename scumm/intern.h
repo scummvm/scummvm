@@ -23,6 +23,8 @@
 #ifndef INTERN_H
 #define INTERN_H
 
+#include "common/map.h"
+
 #include "scumm/scumm.h"
 #include "scumm/wiz_he.h"
 
@@ -1261,6 +1263,8 @@ protected:
 	};
 	
 	const OpcodeEntryV8 *_opcodesV8;
+
+	typedef Common::Map<Common::String, int> ObjectIDMap;
 
 	ObjectIDMap _objectIDMap;
 
