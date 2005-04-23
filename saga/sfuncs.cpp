@@ -82,7 +82,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfSetActorState),
 		OPCODE(sfScriptMoveTo),
 		OPCODE(sfSceneEq),
-		OPCODE(SF_dropObject),
+		OPCODE(sfDropObject),
 		OPCODE(sfFinishBgdAnim),
 		OPCODE(sfSwapActors),
 		OPCODE(sfSimulSpeech),
@@ -735,28 +735,28 @@ void Script::sfSceneEq(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #32 (0x20)
-void Script::SF_dropObject(SCRIPTFUNC_PARAMS) {
-	uint16 obj_param = thread->pop();
-	uint16 sprite_param = thread->pop();
-	int16 x_param = thread->pop();
-	int16 y_param = thread->pop();
+void Script::sfDropObject(SCRIPTFUNC_PARAMS) {
+	uint16 objectId;
+	uint16 spriteId;
+	int16 x;
+	int16 y;
 	ObjectData *obj;
 
-	int index = obj_param & 0x1FFF;
+	objectId = thread->pop();
+	spriteId = thread->pop();
+	x = thread->pop();
+	y = thread->pop();
 
-	if (!_vm->_actor->validObjId(_vm->_actor->objIndexToId(index)))
-		return;
+	obj = _vm->_actor->getObj(objectId);
 
-	obj = _vm->_actor->getObj(_vm->_actor->objIndexToId(index));
-
-	if (obj->sceneNumber == -1) {
-		_vm->_interface->removeFromInventory(index);
+	if (obj->sceneNumber == ITE_SCENE_INV) {
+		_vm->_interface->removeFromInventory(objectId);
 	}
 
 	obj->sceneNumber = _vm->_scene->currentSceneNumber();
-	obj->spriteListResourceId = 9 + sprite_param;
-	obj->location.x = x_param;
-	obj->location.y = y_param;
+	obj->spriteListResourceId = 9 + spriteId;
+	obj->location.x = x;
+	obj->location.y = y;
 }
 
 // Script function #33 (0x21)

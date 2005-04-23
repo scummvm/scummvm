@@ -494,7 +494,7 @@ private:
 	void sfSetActorState(SCRIPTFUNC_PARAMS);
 	void sfScriptMoveTo(SCRIPTFUNC_PARAMS);
 	void sfSceneEq(SCRIPTFUNC_PARAMS);
-	void SF_dropObject(SCRIPTFUNC_PARAMS);
+	void sfDropObject(SCRIPTFUNC_PARAMS);
 	void sfFinishBgdAnim(SCRIPTFUNC_PARAMS);
 	void sfSwapActors(SCRIPTFUNC_PARAMS);
 	void sfSimulSpeech(SCRIPTFUNC_PARAMS);

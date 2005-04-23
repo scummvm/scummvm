@@ -634,9 +634,9 @@ void Interface::updateInventory(int pos) {
 	}	
 }
 
-void Interface::addToInventory(int sprite, int pos) {
+void Interface::addToInventory(int objectId, int pos) {
 	if (pos != -1) { 
-		_inventory[pos] = sprite;
+		_inventory[pos] = objectId;
 		_inventoryCount = MAX(_inventoryCount, pos + 1);
 		return;
 	}
@@ -649,7 +649,7 @@ void Interface::addToInventory(int sprite, int pos) {
 		_inventory[i] = _inventory[i - 1];
 	}
 
-	_inventory[0] = sprite;
+	_inventory[0] = objectId;
 	_inventoryCount++;
 
 	_inventoryPos = 0;
@@ -658,15 +658,15 @@ void Interface::addToInventory(int sprite, int pos) {
 	draw();	
 }
 
-void Interface::removeFromInventory(int sprite) {
-	int j = inventoryItemPosition(sprite);
+void Interface::removeFromInventory(int objectId) {
+	int j = inventoryItemPosition(objectId);
 	if (j == -1) {
 		return;
 	}
 
 	int i;
 
-	for (i = j; i < _inventoryCount; i++) {
+	for (i = j; i < _inventoryCount - 1; i++) {
 		_inventory[i] = _inventory[i + 1];
 	}
 
@@ -684,9 +684,9 @@ void Interface::clearInventory() {
 	updateInventory(0);
 }
 
-int Interface::inventoryItemPosition(int sprite) {
+int Interface::inventoryItemPosition(int objectId) {
 	for (int i = 0; i < _inventoryCount; i++)
-		if (_inventory[i] == sprite)
+		if (_inventory[i] == objectId)
 			return i;
 
 	return -1;

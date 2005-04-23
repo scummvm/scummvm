@@ -165,10 +165,10 @@ public:
 	
 	void inventoryChangePos(int chg);
 	void inventorySetPos(int key);
-	void addToInventory(int sprite, int pos = -1);
-	void removeFromInventory(int sprite);
+	void addToInventory(int objectId, int pos = -1);
+	void removeFromInventory(int objectId);
 	void clearInventory();
-	int inventoryItemPosition(int sprite);
+	int inventoryItemPosition(int objectId);
 	void drawInventory();
 	void updateInventory(int pos);
 	int getInventoryContentByPanelButton(PanelButton * panelButton) {
