@@ -71,7 +71,7 @@ public:
 		String comment;
 
 		bool hasKey(const String &key) const;
-		KeyValue* getKey(const String &key) const;
+		const KeyValue* getKey(const String &key) const;
 		void setKey(const String &key, const String &value);
 		void removeKey(const String &key);
 	};

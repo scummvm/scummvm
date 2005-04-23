@@ -276,14 +276,7 @@ void ConfigFile::setKey(const String &key, const String &section, const String &
 
 		_sections.push_back(newSection);
 	} else {
-		KeyValue *kv = s->getKey(key);
-		if (!kv) {
-			KeyValue newKV;
-			newKV.key = key;
-			newKV.value = value;
-			s->keys.push_back(newKV);
-		} else
-			kv->value = value;
+		s->setKey(key, value);
 	}
 }
 
@@ -303,6 +296,42 @@ const ConfigFile::Section *ConfigFile::getSection(const String &section) const {
 		}
 	}
 	return 0;
+}
+
+bool ConfigFile::Section::hasKey(const String &key) const {
+	return getKey(key) != 0;
+}
+
+const ConfigFile::KeyValue* ConfigFile::Section::getKey(const String &key) const {
+	for (List<KeyValue>::const_iterator i = keys.begin(); i != keys.end(); ++i) {
+		if (scumm_stricmp(key.c_str(), i->key.c_str())) {
+			return &(*i);
+		}
+	}
+	return 0;
+}
+
+void ConfigFile::Section::setKey(const String &key, const String &value) {
+	for (List<KeyValue>::iterator i = keys.begin(); i != keys.end(); ++i) {
+		if (scumm_stricmp(key.c_str(), i->key.c_str())) {
+			i->value = value;
+			return;
+		}
+	}
+
+	KeyValue newKV;
+	newKV.key = key;
+	newKV.value = value;
+	keys.push_back(newKV);
+}
+
+void ConfigFile::Section::removeKey(const String &key) {
+	for (List<KeyValue>::iterator i = keys.begin(); i != keys.end(); ++i) {
+		if (scumm_stricmp(key.c_str(), i->key.c_str())) {
+			keys.erase(i);
+			return;
+		}
+	}
 }
 
 }	// End of namespace Common
