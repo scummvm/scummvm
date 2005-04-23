@@ -494,6 +494,10 @@ void ScummEngine_v80he::o80_writeConfigFile() {
 
 	// we pretend that we don't have .ini file
 	type = fetchScriptByte();
+	
+	// FIXME: Consider using ConfigFile here instead of abusing the ConfigManager.
+	// If there are problems with this, feel free to talk to Fingolfin on how
+	// ConfigFile could be improved to suit your needs...
 
 	switch (type) {
 	case 43: // HE 100
