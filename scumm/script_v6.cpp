@@ -3053,7 +3053,7 @@ void ScummEngine_v6::o6_getPixel() {
 	// this opcode check ground area in minigame "Asteroid Lander" in the dig
 	int x, y;
 
-	if (_heversion == 60) {
+	if (_heversion == 61) {
 		x = pop();
 		y = pop();
 	} else {
