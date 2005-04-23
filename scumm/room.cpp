@@ -68,14 +68,14 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		}
 	}
 
-	if (!(_features & GF_SMALL_HEADER) && VAR_NEW_ROOM != 0xFF)  // Disable for SH games. Overwrites
-		VAR(VAR_NEW_ROOM) = room; // gamevars, eg Zak cashcards
+	if (VAR_NEW_ROOM != 0xFF)
+		VAR(VAR_NEW_ROOM) = room;
 
 	runExitScript();
 
 	killScriptsAndResources();
 	clearEnqueue();
-	if (_version >= 4 && _heversion <= 60)
+	if (_version >= 4 && _heversion <= 61)
 		stopCycle(0);
 	_sound->processSoundQues();
 
