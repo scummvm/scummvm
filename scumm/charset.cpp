@@ -1382,60 +1382,53 @@ void CharsetRendererClassic::printChar(int chr) {
 		_textScreenID = vs->number;
 	}
 	
-	Graphics::Surface dstSurface;
-	Graphics::Surface backSurface;
-	if (_ignoreCharsetMask || !vs->hasTwoBuffers) {
-		dstSurface = *vs;
-		dstPtr = vs->getPixels(_left, drawTop);
-	} else {
-		dstSurface = _textSurface;
-		dstPtr = (byte *)_textSurface.pixels + (_top - _vm->_screenTop) * _textSurface.pitch + _left;
-	}
-
-	if (_blitAlso && vs->hasTwoBuffers) {
-		backSurface = dstSurface;
-		back = dstPtr;
-		dstSurface = *vs;
-		dstPtr = vs->getBackPixels(_left, drawTop);
-	}
-
-	if (!_ignoreCharsetMask && vs->hasTwoBuffers) {
-		drawTop = _top - _vm->_screenTop;
-	}
-
 	if ((_vm->_heversion >= 71 && type >= 8) || (_vm->_heversion >= 90 && type == 0)) {
-		Common::Rect src, dst;
-
-		dst.left = _left;
-		dst.top = _top;
-		dst.right = dst.left + width;
-		dst.bottom = dst.top + height;
-
-		if (dst.left < 0) {
-			dstPtr -= _left;
-			dst.left = 0;
+		if (_ignoreCharsetMask || !vs->hasTwoBuffers) {
+			dstPtr = vs->getPixels(0, 0);
+		} else {
+			dstPtr = (byte *)_textSurface.pixels;
 		}
 
-		if (dst.top < 0) {
-			dstPtr -= _top * dstSurface.pitch;
-			dst.top = 0;
+		if (_blitAlso && vs->hasTwoBuffers) {
+			dstPtr = vs->getBackPixels(0, 0);
 		}
 
-		if ((dst.left >= dst.right) || (dst.top >= dst.bottom))
-			return;
+		Common::Rect rScreen(vs->w, vs->h);
+		if (type >= 8) {
+			byte imagePalette[256];
+			memset(imagePalette, 0, sizeof(imagePalette));
+			memcpy(imagePalette, _vm->_charsetColorMap, 16);
+			Wiz::copyWizImage(dstPtr, charPtr, vs->w, vs->h, _left, _top, origWidth, origHeight, &rScreen, imagePalette);
+		} else {
+			Wiz::copyWizImage(dstPtr, charPtr, vs->w, vs->h, _left, _top, origWidth, origHeight, &rScreen);
+		}
 
-		src = dst;
-		src.moveTo(0, 0);
-
-		byte imagePalette[256];
-		memset(imagePalette, 255, sizeof(imagePalette));
-		memcpy(imagePalette, _vm->_charsetColorMap, 16);
-		Wiz::decompressWizImage(dstPtr, vs->w, dst, charPtr, src, imagePalette);
-
-		if (_blitAlso && vs->hasTwoBuffers)
+		if (_blitAlso && vs->hasTwoBuffers) {
+			Common::Rect dst(_left, _top, _left + origWidth, _top + origHeight);
 			_vm->gdi.copyVirtScreenBuffers(dst);
-
+		}
 	} else {
+		Graphics::Surface dstSurface;
+		Graphics::Surface backSurface;
+		if (_ignoreCharsetMask || !vs->hasTwoBuffers) {
+			dstSurface = *vs;
+			dstPtr = vs->getPixels(_left, drawTop);
+		} else {
+			dstSurface = _textSurface;
+			dstPtr = (byte *)_textSurface.pixels + (_top - _vm->_screenTop) * _textSurface.pitch + _left;
+		}
+
+		if (_blitAlso && vs->hasTwoBuffers) {
+			backSurface = dstSurface;
+			back = dstPtr;
+			dstSurface = *vs;
+			dstPtr = vs->getBackPixels(_left, drawTop);
+		}
+
+		if (!_ignoreCharsetMask && vs->hasTwoBuffers) {
+			drawTop = _top - _vm->_screenTop;
+		}
+
 		if (is2byte) {
 			drawBits1(dstSurface, dstPtr, charPtr, drawTop, origWidth, origHeight);
 		} else {
