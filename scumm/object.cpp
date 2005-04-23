@@ -1093,7 +1093,10 @@ int ScummEngine_v8::getObjectIdFromOBIM(const byte *obim) {
 	// In V8, IMHD has no obj_id, but rather a name string. We map the name
 	// back to an object id using a table derived from the DOBJ resource.
 	const ImageHeader *imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), obim);
-	return _objectIDMap[imhd->v8.name];
+	ObjectNameId *found = (ObjectNameId *)bsearch(imhd->v8.name, _objectIDMap, _objectIDMapSize,
+					sizeof(ObjectNameId), (int (*)(const void*, const void*))strcmp);
+	assert(found);
+	return found->id;
 }
 
 int ScummEngine_v7::getObjectIdFromOBIM(const byte *obim) {

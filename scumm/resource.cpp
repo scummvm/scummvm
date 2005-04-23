@@ -1148,18 +1148,24 @@ void ScummEngine_v8::readGlobalObjects() {
 	int num = _fileHandle->readUint32LE();
 	assert(num == _numGlobalObjects);
 
-	char buffer[40];
+	_objectIDMap = new ObjectNameId[num];
+	_objectIDMapSize = num;
 	for (i = 0; i < num; i++) {
-		_fileHandle->read(buffer, 40);
-		if (buffer[0]) {
-			// Add to object name-to-id map
-			_objectIDMap[buffer] = i;
-		}
+		// Add to object name-to-id map
+		_fileHandle->read(_objectIDMap[i].name, 40);
+		_objectIDMap[i].id = i;
+
 		_objectStateTable[i] = _fileHandle->readByte();
 		_objectRoomTable[i] = _fileHandle->readByte();
 		_classData[i] = _fileHandle->readUint32LE();
 	}
 	memset(_objectOwnerTable, 0xFF, num);
+	
+	// Finally, sort the object name->ID map, so we can later use
+	// bsearch on it. For this we (ab)use strcmp, which works fine
+	// since the table entries start with a string.
+	qsort(_objectIDMap, _objectIDMapSize, sizeof(ObjectNameId),
+			(int (*)(const void*, const void*))strcmp);
 }
 
 void ScummEngine_v7::readGlobalObjects() {

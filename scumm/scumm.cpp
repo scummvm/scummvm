@@ -1287,6 +1287,16 @@ ScummEngine_v72he::ScummEngine_v72he(GameDetector *detector, OSystem *syst, cons
 	VAR_WIZ_TCOLOR = 0xFF;
 }
 
+ScummEngine_v8::ScummEngine_v8(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
+ : ScummEngine_v7(detector, syst, gs, md5sum) {
+	_objectIDMap = 0;
+}
+
+ScummEngine_v8::~ScummEngine_v8() {
+	delete [] _objectIDMap;
+}
+
+
 #pragma mark -
 #pragma mark --- Initialization ---
 #pragma mark -

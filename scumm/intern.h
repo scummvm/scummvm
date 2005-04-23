@@ -23,8 +23,6 @@
 #ifndef INTERN_H
 #define INTERN_H
 
-#include "common/map.h"
-
 #include "scumm/scumm.h"
 #include "scumm/wiz_he.h"
 
@@ -1264,12 +1262,16 @@ protected:
 	
 	const OpcodeEntryV8 *_opcodesV8;
 
-	typedef Common::Map<Common::String, int> ObjectIDMap;
-
-	ObjectIDMap _objectIDMap;
+	struct ObjectNameId {
+		char name[40];
+		int id;
+	};
+	int _objectIDMapSize;
+	ObjectNameId *_objectIDMap;
 
 public:
-	ScummEngine_v8(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v7(detector, syst, gs, md5sum) {}
+	ScummEngine_v8(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
+	~ScummEngine_v8();
 
 protected:
 	virtual void setupOpcodes();
