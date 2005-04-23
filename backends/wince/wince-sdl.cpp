@@ -1660,7 +1660,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 void OSystem_WINCE3::quit() {
 	fclose(stdout_file);
 	fclose(stderr_file);
-	if (!ConfMan.hasKey("debuglevel")) {
+	if (gDebugLevel <= 0) {
 		DeleteFile(TEXT("\\scummvm_stdout.txt"));
 		DeleteFile(TEXT("\\scummvm_stderr.txt"));
 	}

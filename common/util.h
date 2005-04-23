@@ -201,5 +201,7 @@ void CDECL debug(int level, const char *s, ...);
 void CDECL debug(const char *s, ...);
 void checkHeap();
 
+extern int gDebugLevel;
+
 
 #endif

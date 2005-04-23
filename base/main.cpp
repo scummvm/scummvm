@@ -360,7 +360,8 @@ extern "C" int main(int argc, char *argv[]) {
 	else
 		ConfMan.loadDefaultConfigFile();
 
-	gDebugLevel = ConfMan.getInt("debuglevel");
+	if (ConfMan.hasKey("debuglevel"))
+		gDebugLevel = ConfMan.getInt("debuglevel");
 
 	// Update the config file
 	ConfMan.set("versioninfo", gScummVMVersion, Common::ConfigManager::kApplicationDomain);

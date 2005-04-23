@@ -170,7 +170,6 @@ GameDetector::GameDetector() {
 #endif
 
 	// Miscellaneous
-	ConfMan.registerDefault("debuglevel", 0);
 	ConfMan.registerDefault("joystick_num", -1);
 	ConfMan.registerDefault("confirm_exit", false);
 #ifdef USE_ALSA
@@ -369,13 +368,8 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			END_OPTION
 			
 			DO_OPTION_OPT('d', "debuglevel")
-				if (option != NULL)
-					ConfMan.set("debuglevel", (int)strtol(option, 0, 10), kTransientDomain);
-				gDebugLevel = ConfMan.getInt("debuglevel");
-				if (gDebugLevel)
-					printf("Debuglevel (from command line): %d\n", gDebugLevel);
-				else
-					printf("Debuglevel (from command line): 0 - Game only\n");
+				gDebugLevel = option ? (int)strtol(option, 0, 10) : 1;
+				printf("Debuglevel (from command line): %d\n", gDebugLevel);
 			END_OPTION
 			
 			DO_OPTION('e', "music-driver")
@@ -568,7 +562,6 @@ ShowHelpAndExit:
 void GameDetector::setTarget(const String &name) {
 	_targetName = name;
 	ConfMan.setActiveDomain(name);
-	gDebugLevel = ConfMan.getInt("debuglevel");
 }
 
 bool GameDetector::detectGame() {

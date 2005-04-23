@@ -695,7 +695,7 @@ int SimonEngine::init(GameDetector &detector) {
 		warning ("MIDI Player init failed: \"%s\"", midi.getErrorName (ret));
 	midi.set_volume(ConfMan.getInt("music_volume"));
 
-	_debugMode = ConfMan.hasKey("debuglevel");
+	_debugMode = (gDebugLevel > 0);
 
 	if (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute") == 1)
 		midi.pause(_music_paused ^= 1);
@@ -4003,13 +4003,13 @@ int SimonEngine::go() {
 	_continous_vgascript = false;
 	_draw_images_debug=false;
 
-	if (ConfMan.getInt("debuglevel") == 2)
+	if (gDebugLevel == 2)
 		_continous_mainscript = true;
-	if (ConfMan.getInt("debuglevel") == 3)
+	if (gDebugLevel == 3)
 		_continous_vgascript = true;
-	if (ConfMan.getInt("debuglevel") == 4)
+	if (gDebugLevel == 4)
 		_start_mainscript = true;
-	if (ConfMan.getInt("debuglevel") == 5)
+	if (gDebugLevel == 5)
 		_start_vgascript = true;
 
 	if (_game & GF_TALKIE) {

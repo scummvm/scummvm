@@ -1157,8 +1157,6 @@ The following keywords are recognized:
                                  Queen
 
         boot_param      number   Pass this number to the boot script
-        debuglevel      number   Enable debug output. The higher number, the
-                                 more verbose output.
 
 Broken Sword II adds the following non-standard keywords:
 
