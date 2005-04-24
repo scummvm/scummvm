@@ -695,7 +695,7 @@ int SimonEngine::init(GameDetector &detector) {
 		warning ("MIDI Player init failed: \"%s\"", midi.getErrorName (ret));
 	midi.set_volume(ConfMan.getInt("music_volume"));
 
-	_debugMode = (gDebugLevel > 0);
+	_debugMode = (gDebugLevel >= 0);
 
 	if (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute") == 1)
 		midi.pause(_music_paused ^= 1);

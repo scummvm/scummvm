@@ -1058,7 +1058,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	g_scumm = this;
 
 	// Read settings from the detector & config manager
-	_debugMode = (gDebugLevel > 0);
+	_debugMode = (gDebugLevel >= 0);
 	_dumpScripts = detector->_dumpScripts;
 	_bootParam = ConfMan.getInt("boot_param");
 

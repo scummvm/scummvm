@@ -90,10 +90,10 @@ bool Debugger::Cmd_DebugLevel(int argc, const char **argv) {
 			DebugPrintf("Debugging is currently set at level %d\n", gDebugLevel);
 	} else { // set level
 		gDebugLevel = atoi(argv[1]);
-		if (gDebugLevel > 0 && gDebugLevel < 10) {
+		if (gDebugLevel >= 0 && gDebugLevel < 10) {
 			_vm->_debugMode = true;
 			DebugPrintf("Debug level set to level %d\n", gDebugLevel);
-		} else if (gDebugLevel == 0) {
+		} else if (gDebugLevel < 0) {
 			_vm->_debugMode = false;
 			DebugPrintf("Debugging is now disabled\n");
 		} else

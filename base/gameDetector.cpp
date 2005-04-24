@@ -47,8 +47,6 @@
 #endif
 #endif
 
-extern int gDebugLevel;
-
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
 #ifdef __PALM_OS__
 static const char USAGE_STRING[] = "NoUsageString"; // save more data segment space
@@ -378,7 +376,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			END_OPTION
 			
 			DO_OPTION_OPT('d', "debuglevel")
-				gDebugLevel = option ? (int)strtol(option, 0, 10) : 1;
+				gDebugLevel = option ? (int)strtol(option, 0, 10) : 0;
 				printf("Debuglevel (from command line): %d\n", gDebugLevel);
 			END_OPTION
 			
