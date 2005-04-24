@@ -207,10 +207,15 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], int32 lea
 
 	_snd->stopHandle(leadInHandle);
 
-	// Wait for the lead-out to stop, if there is any.
-	while (_vm->_mixer->isSoundHandleActive(_leadOutHandle)) {
-		_vm->_screen->updateDisplay();
-		_vm->_system->delayMillis(30);
+	// Wait for the lead-out to stop, if there is any. Though don't do it
+	// for the "shaman" cutscene as it's obviously meant to blend into the
+	// rest of the game, and the lead-out goes on for a long time.
+
+	if (scumm_stricmp(filename, "shaman") != 0) {
+		while (_vm->_mixer->isSoundHandleActive(_leadOutHandle)) {
+			_vm->_screen->updateDisplay();
+			_vm->_system->delayMillis(30);
+		}
 	}
 
 	if (leadInRes)
