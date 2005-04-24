@@ -1133,7 +1133,7 @@ ScummFile *Sound::openSfxFile() {
 	}
 
 	if (!file->isOpen()) {
-		if ((_vm->_heversion == 60 && _vm->_platform == Common::kPlatformMacintosh) || (_vm->_heversion >= 70)) {
+		if ((_vm->_heversion <= 61 && _vm->_platform == Common::kPlatformMacintosh) || (_vm->_heversion >= 70)) {
 			sprintf(buf, "%s.he2", _vm->getGameName());
 		} else {
 			sprintf(buf, "%s.tlk", _vm->getGameName());

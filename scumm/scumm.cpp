@@ -1751,7 +1751,7 @@ void ScummEngine::setupMusic(int midi) {
 		_musicEngine = new Player_V2(this, _midiDriver != MD_PCSPK);;
 	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && ((_version > 2) && (_version < 5))) {
 		_musicEngine = new Player_V2(this, _midiDriver != MD_PCSPK);
-	} else if (_version > 2 && _heversion <= 60) {
+	} else if (_version > 2 && _heversion <= 61) {
 		MidiDriver *nativeMidiDriver = MidiDriver::createMidi(_midiDriver);
 		if (nativeMidiDriver != NULL && _native_mt32)
 			nativeMidiDriver->property (MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
@@ -1769,7 +1769,7 @@ void ScummEngine::setupMusic(int midi) {
 				_imuse->property(IMuse::PROP_TEMPO_BASE, ConfMan.getInt("tempo"));
 			_imuse->property(IMuse::PROP_NATIVE_MT32, _native_mt32);
 			_imuse->property(IMuse::PROP_GS, _enable_gs);
-			if (_heversion == 60 || midi == MDT_TOWNS) {
+			if (_heversion >= 60 || midi == MDT_TOWNS) {
 				_imuse->property(IMuse::PROP_LIMIT_PLAYERS, 1);
 				_imuse->property(IMuse::PROP_RECYCLE_PLAYERS, 1);
 			}
@@ -2125,7 +2125,7 @@ load_game:
 			((ScummEngine_v90he *)this)->spritesProcessWiz(false);
 		}
 
-		if (_version >= 4 && _heversion <= 60)
+		if (_version >= 4 && _heversion <= 61)
 			cyclePalette();
 		palManipulate();
 		if (_doEffect) {
