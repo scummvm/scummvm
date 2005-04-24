@@ -1246,11 +1246,14 @@ bool Actor::getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber
 		frameNumber = 8;			
 		spriteList = &_vm->_sprite->_mainSprites;
 	} else {
-		frameNumber = commonObjectData->frameNumber;			
 		if (validActorId(commonObjectData->id)) {
 			spriteList = &((ActorData*)commonObjectData)->spriteList;	
+			frameNumber = commonObjectData->frameNumber;			
 		} else {
-			spriteList = &_vm->_sprite->_mainSprites;
+			if (validObjId(commonObjectData->id)) {
+				spriteList = &_vm->_sprite->_mainSprites;
+				frameNumber = commonObjectData->spriteListResourceId;			
+			}
 		}
 		
 	}
@@ -1806,8 +1809,6 @@ void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point 
 
 	for (iteratorPoint.y = 0; iteratorPoint.y < _yCellCount; iteratorPoint.y++) {
 		for (iteratorPoint.x = 0; iteratorPoint.x < _xCellCount; iteratorPoint.x++) {
-			// This is almost, but not quite, the same thing as canWalk().
-			// Is that difference significant or not?
 			if (_vm->_scene->validBGMaskPoint(iteratorPoint)) {
 				maskType = _vm->_scene->getBGMaskType(iteratorPoint);
 				setPathCell(iteratorPoint, _vm->_scene->getDoorState(maskType) ? kPathCellBarrier : kPathCellEmpty);

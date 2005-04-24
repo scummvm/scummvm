@@ -67,9 +67,9 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfFaceTowards),
 		OPCODE(sfSetFollower),
 		OPCODE(sfScriptGotoScene),
-		OPCODE(SF_setObjImage),
-		OPCODE(SF_setObjName),
-		OPCODE(SF_getObjImage),
+		OPCODE(sfSetObjImage),
+		OPCODE(sfSetObjName),
+		OPCODE(sfGetObjImage),
 		OPCODE(SF_getNumber),
 		OPCODE(sfScriptOpenDoor),
 		OPCODE(sfScriptCloseDoor),
@@ -521,52 +521,46 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #17 (0x11)
-void Script::SF_setObjImage(SCRIPTFUNC_PARAMS) {
-	error("SF_setObjImage Not implemented");
-/*	int16 obj_param = getSWord(thread->pop());
-	int16 sprite_param = getSWord(thread->pop());
+// Param1: object id
+// Param2: sprite index
+void Script::sfSetObjImage(SCRIPTFUNC_PARAMS) {
+	uint16 objectId;
+	uint16 spriteId;
+	ObjectData *obj;
 
+	objectId = thread->pop();
+	spriteId = thread->pop();
 
-	int index = obj_param & 0x1FFF;
-
-	if (index >= ARRAYSIZE(ObjectTable)) {
-		return FAILURE;
-	}
-
-	ObjectTable[index].spritelistRn = sprite_param + 9;
-	_vm->_interface->draw();
-*/
+	obj = _vm->_actor->getObj(objectId);
+	obj->spriteListResourceId = OBJ_SPRITE_BASE + spriteId;
+	_vm->_interface->refreshInventory();
 }
 
 // Script function #18 (0x12)
-void Script::SF_setObjName(SCRIPTFUNC_PARAMS) {
-	error("SF_setObjName Not implemented");
+// Param1: object id
+// Param2: name index
+void Script::sfSetObjName(SCRIPTFUNC_PARAMS) {
+	uint16 objectId;
+	uint16 nameIdx;
+	ObjectData *obj;
 
-/*	int obj_param = getSWord(thread->pop());
-	int name_param = getSWord(thread->pop());
+	objectId = thread->pop();
+	nameIdx = thread->pop();
 
-	int index = obj_param & 0x1FFF;
-
-	if (index >= ARRAYSIZE(ObjectTable)) {
-		return FAILURE;
-	}
-
-	ObjectTable[index].nameIndex = name_param;*/
+	obj = _vm->_actor->getObj(objectId);
+	obj->nameIndex = nameIdx;
 }
 
 // Script function #19 (0x13)
-void Script::SF_getObjImage(SCRIPTFUNC_PARAMS) {
-	error("SF_getObjImage Not implemented");
+// Param1: object id
+void Script::sfGetObjImage(SCRIPTFUNC_PARAMS) {
+	uint16 objectId;
+	ObjectData *obj;
 
-/*	int param = getSWord(thread->pop());
-	int index = param & 0x1FFF;
+	objectId = thread->pop();
 
-	if (index >= ARRAYSIZE(ObjectTable)) {
-		thread->retVal = 0;
-		return FAILURE;
-	}
-
-	thread->retVal = ObjectTable[index].spritelistRn;*/
+	obj = _vm->_actor->getObj(objectId);
+	thread->_returnValue = obj->spriteListResourceId - OBJ_SPRITE_BASE;
 }
 
 // Script function #20 (0x14)
@@ -702,7 +696,6 @@ void Script::sfSetActorState(SCRIPTFUNC_PARAMS) {
 	}
 	actor->currentAction = currentAction;
 	actor->actorFlags &= ~kActorBackwards;
-
 }
 
 // Script function #30 (0x1E) nonblocking
@@ -754,7 +747,7 @@ void Script::sfDropObject(SCRIPTFUNC_PARAMS) {
 	}
 
 	obj->sceneNumber = _vm->_scene->currentSceneNumber();
-	obj->spriteListResourceId = 9 + spriteId;
+	obj->spriteListResourceId = OBJ_SPRITE_BASE + spriteId;
 	obj->location.x = x;
 	obj->location.y = y;
 }

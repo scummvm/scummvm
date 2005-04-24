@@ -387,7 +387,6 @@ bool Scene::offscreenPath(Point &testPoint) {
 	Point first;
 	Point second;
 	Point third;
-	int maskType;
 
 	if (!_bgMask.loaded) {
 		return false;
@@ -404,57 +403,6 @@ bool Scene::offscreenPath(Point &testPoint) {
 	}
 	testPoint = first;
 
-	if (testPoint.y != first.y) {
-		second.x = third.x = testPoint.x;
-		second.y = third.y = first.y;
-		for (;; second.x--, third.x++ ) {
-			if (second.x > 1) {
-				maskType = getBGMaskType(second);
-				if (getDoorState(maskType) == 0) {
-					testPoint.x = second.x - 1;
-					break;
-				}
-			} else {
-				if (third.x >= _bgMask.w) {
-					return false;
-				}
-			}
-
-			if (third.x < _bgMask.w) {
-				maskType = getBGMaskType(third);
-				if (getDoorState(maskType) == 0) {
-					testPoint.x = third.x + 1;
-					break;
-				}
-			}
-		}
-	}
-
-	if (testPoint.x != first.x) {
-		second.y = third.y = testPoint.y;
-		second.x = third.x = first.x;
-		for (;; second.y--, third.y++ ) {
-			if (second.y > 1) {
-				maskType = getBGMaskType(second);
-				if (getDoorState(maskType) == 0) {
-					testPoint.y = second.y - 1;
-					break;
-				}
-			} else {
-				if (third.y >= _bgMask.h) {
-					return false;
-				}
-			}
-
-			if (third.y < _bgMask.h) {
-				maskType = getBGMaskType(third);
-				if (getDoorState(maskType) == 0) {
-					testPoint.y = third.y + 1;
-					break;
-				}
-			}
-		}
-	}
 	return true;
 }
 

@@ -223,9 +223,12 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 		savedInstructionOffset = thread->_instructionOffset;
 		operandChar = scriptS.readByte();
 
-#define CASEOP(opName)	case opName:									\
-							if (operandChar == opName) {				\
-								operandName = #opName;					\
+
+#define CASEOP(opName)	case opName:												\
+							if (operandChar == opName) {							\
+								operandName = #opName;								\
+								debug(8, operandName);								\
+								_vm->_console->DebugPrintf("%s\n", operandName);	\
 							}
 						
 //		debug(8, "Executing thread offset: %lu (%x) stack: %d", thread->_instructionOffset, operandChar, thread->pushedSize());
@@ -254,6 +257,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 		CASEOP(opStrlit)
 			iparam1 = scriptS.readSint16LE();
 			thread->push(iparam1);
+			debug(8, "0x%X", iparam1);
 			break;
 
 // DATA INSTRUCTIONS  
@@ -269,6 +273,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			iparam1 = scriptS.readSint16LE();
 			addr += iparam1;
 			thread->push(*((uint16*)addr));
+			debug(8, "0x%X", *((uint16*)addr));
 			break;
 		CASEOP(opPutFlag)
 			addr = thread->baseAddress(scriptS.readByte());
@@ -513,6 +518,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			iparam2 = thread->pop();
 			iparam1 = thread->pop();
 			thread->push((iparam1 == iparam2) ? 1 : 0);
+			debug(8, "0x%X 0x%X", iparam1, iparam2);
 			break;
 		CASEOP(opNe)
 			iparam2 = thread->pop();
@@ -688,9 +694,6 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 		default:
 			error("Script::runThread() Invalid opcode encountered 0x%X", operandChar);
 		}
-
-		debug(8, operandName);
-		_vm->_console->DebugPrintf("%s\n", operandName);
 
 		if (thread->_flags & (kTFlagFinished | kTFlagAborted)) {
 			error("Wrong flags %d in thread", thread->_flags);

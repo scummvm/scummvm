@@ -412,7 +412,7 @@ int Interface::draw() {
 		_vm->_sprite->draw(backBuffer, _scenePortraits, _rightPortrait, rightPortraitPoint, 256);
 	}
 
-	drawInventory();
+	drawInventory(backBuffer);
 	return SUCCESS;
 }
 
@@ -692,10 +692,9 @@ int Interface::inventoryItemPosition(int objectId) {
 	return -1;
 }
 
-void Interface::drawInventory() {
+void Interface::drawInventory(SURFACE *backBuffer) {
 	if (_panelMode != kPanelMain)
 		return;
-	SURFACE *backBuffer = _vm->_gfx->getBackBuffer();
 	int i;
 	Rect rect;
 	int ci;

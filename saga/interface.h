@@ -163,14 +163,21 @@ public:
 
 	bool processKeyCode(int keyCode);
 	
+private:
+	void drawInventory(SURFACE *backBuffer);
+	void updateInventory(int pos);
 	void inventoryChangePos(int chg);
 	void inventorySetPos(int key);
+
+public:
+	void refreshInventory() {
+		updateInventory(_inventoryCount);
+		draw();
+	}
 	void addToInventory(int objectId, int pos = -1);
 	void removeFromInventory(int objectId);
 	void clearInventory();
 	int inventoryItemPosition(int objectId);
-	void drawInventory();
-	void updateInventory(int pos);
 	int getInventoryContentByPanelButton(PanelButton * panelButton) {
 		int cell = _inventoryStart + panelButton->id;
 		if (cell >= _inventoryCount) {

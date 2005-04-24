@@ -479,9 +479,9 @@ private:
 	void sfSetFollower(SCRIPTFUNC_PARAMS);
 	void sfScriptGotoScene(SCRIPTFUNC_PARAMS);
 
-	void SF_setObjImage(SCRIPTFUNC_PARAMS);
-	void SF_setObjName(SCRIPTFUNC_PARAMS);
-	void SF_getObjImage(SCRIPTFUNC_PARAMS);
+	void sfSetObjImage(SCRIPTFUNC_PARAMS);
+	void sfSetObjName(SCRIPTFUNC_PARAMS);
+	void sfGetObjImage(SCRIPTFUNC_PARAMS);
 	void SF_getNumber(SCRIPTFUNC_PARAMS);
 	void sfScriptOpenDoor(SCRIPTFUNC_PARAMS);
 	void sfScriptCloseDoor(SCRIPTFUNC_PARAMS);
