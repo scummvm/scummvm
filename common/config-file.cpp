@@ -94,6 +94,11 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 			// of the 'comment' variable with that entity.
 			comment += buf;
 			comment += "\n";
+		} else if (buf[0] == '(') {
+			// Special case for map.ini included in mustard
+			// Includes comment within () on the first line
+			comment += buf;
+			comment += "\n";
 		} else if (buf[0] == '[') {
 			// It's a new section which begins here.
 			char *p = buf + 1;
