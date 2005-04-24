@@ -167,54 +167,22 @@ SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 SagaEngine::~SagaEngine() {
 	int i;
 
-	if (_sndRes != NULL) {
-		delete _sndRes;
-	}
-	if (_events != NULL) {
-		delete _events;
-	}
-	if (_font != NULL) {
-		delete _font;
-	}
-	if (_sprite != NULL) {
-		delete _sprite;
-	}
-	if (_anim != NULL) {
-		delete _anim;
-	}
-	if (_script != NULL) {
-		delete _script;
-	}
-	if (_interface != NULL) {
-		delete _interface;
-	}
-	if (_actor != NULL) {
-		delete _actor;
-	}
-	if (_palanim != NULL) {
-		delete _palanim;
-	}
-	if (_scene != NULL) {
-		delete _scene;
-	}
-	if (_isoMap != NULL) {
-		delete _isoMap;
-	}
-	if (_render != NULL) {
-		delete _render;
-	}
-	if (_music != NULL) {
-		delete _music;
-	}
-	if (_sound != NULL) {
-		delete _sound;
-	}
-	if (_gfx != NULL) {
-		delete _gfx;
-	}
-	if (_console != NULL) {
-		delete _console;
-	}
+	delete _sndRes;
+	delete _events;
+	delete _font;
+	delete _sprite;
+	delete _anim;
+	delete _script;
+	delete _interface;
+	delete _actor;
+	delete _palanim;
+	delete _scene;
+	delete _isoMap;
+	delete _render;
+	delete _music;
+	delete _sound;
+	delete _gfx;
+	delete _console;
 
 	if (_gameFileContexts != NULL) {
 		for (i = 0; i < _gameDescription->filesCount; i++) {
