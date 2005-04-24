@@ -150,6 +150,10 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 		}
 	}
 	
+	// Save last section
+	if (!section.name.isEmpty())
+		_sections.push_back(section);
+
 	return !stream.ioFailed();
 }
 
@@ -195,7 +199,7 @@ bool ConfigFile::saveToStream(WriteStream &stream) {
 void ConfigFile::removeSection(const String &section) {
 	assert(isValidName(section));
 	for (List<Section>::iterator i = _sections.begin(); i != _sections.end(); ++i) {
-		if (scumm_stricmp(section.c_str(), i->name.c_str())) {
+		if (!scumm_stricmp(section.c_str(), i->name.c_str())) {
 			_sections.erase(i);
 			return;
 		}
@@ -282,7 +286,7 @@ void ConfigFile::setKey(const String &key, const String &section, const String &
 
 ConfigFile::Section *ConfigFile::getSection(const String &section) {
 	for (List<Section>::iterator i = _sections.begin(); i != _sections.end(); ++i) {
-		if (scumm_stricmp(section.c_str(), i->name.c_str())) {
+		if (!scumm_stricmp(section.c_str(), i->name.c_str())) {
 			return &(*i);
 		}
 	}
@@ -291,7 +295,7 @@ ConfigFile::Section *ConfigFile::getSection(const String &section) {
 
 const ConfigFile::Section *ConfigFile::getSection(const String &section) const {
 	for (List<Section>::const_iterator i = _sections.begin(); i != _sections.end(); ++i) {
-		if (scumm_stricmp(section.c_str(), i->name.c_str())) {
+		if (!scumm_stricmp(section.c_str(), i->name.c_str())) {
 			return &(*i);
 		}
 	}
@@ -304,7 +308,7 @@ bool ConfigFile::Section::hasKey(const String &key) const {
 
 const ConfigFile::KeyValue* ConfigFile::Section::getKey(const String &key) const {
 	for (List<KeyValue>::const_iterator i = keys.begin(); i != keys.end(); ++i) {
-		if (scumm_stricmp(key.c_str(), i->key.c_str())) {
+		if (!scumm_stricmp(key.c_str(), i->key.c_str())) {
 			return &(*i);
 		}
 	}
@@ -313,7 +317,7 @@ const ConfigFile::KeyValue* ConfigFile::Section::getKey(const String &key) const
 
 void ConfigFile::Section::setKey(const String &key, const String &value) {
 	for (List<KeyValue>::iterator i = keys.begin(); i != keys.end(); ++i) {
-		if (scumm_stricmp(key.c_str(), i->key.c_str())) {
+		if (!scumm_stricmp(key.c_str(), i->key.c_str())) {
 			i->value = value;
 			return;
 		}
@@ -327,7 +331,7 @@ void ConfigFile::Section::setKey(const String &key, const String &value) {
 
 void ConfigFile::Section::removeKey(const String &key) {
 	for (List<KeyValue>::iterator i = keys.begin(); i != keys.end(); ++i) {
-		if (scumm_stricmp(key.c_str(), i->key.c_str())) {
+		if (!scumm_stricmp(key.c_str(), i->key.c_str())) {
 			keys.erase(i);
 			return;
 		}
