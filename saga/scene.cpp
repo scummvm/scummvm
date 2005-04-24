@@ -384,24 +384,22 @@ bool Scene::canWalk(const Point &testPoint) {
 }
 
 bool Scene::offscreenPath(Point &testPoint) {
-	Point first;
-	Point second;
-	Point third;
+	Point point;
 
 	if (!_bgMask.loaded) {
 		return false;
 	}
 
-	first.x = clamp( 0, testPoint.x, _bgMask.w - 1 );
-	first.y = clamp( 0, testPoint.y, _bgMask.h - 1 );
-	if (first == testPoint) {
+	point.x = clamp( 0, testPoint.x, _bgMask.w - 1 );
+	point.y = clamp( 0, testPoint.y, _bgMask.h - 1 );
+	if (point == testPoint) {
 		return false;
 	}
 
-	if (first.y >= _bgMask.h - 1) {
-		first.y = _bgMask.h - 2;
+	if (point.y >= _bgMask.h - 1) {
+		point.y = _bgMask.h - 2;
 	}
-	testPoint = first;
+	testPoint = point;
 
 	return true;
 }
