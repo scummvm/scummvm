@@ -2108,7 +2108,6 @@ void ScummEngine_v72he::o72_readINI() {
 	const char *entry;
 	int len, type;
 
-	// we pretend that we don't have .ini file
 	copyScriptString(option, sizeof(option));
 	type = fetchScriptByte();
 
