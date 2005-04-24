@@ -173,7 +173,7 @@ bool ConfigFile::saveToFile(const String &filename) {
 bool ConfigFile::saveToStream(WriteStream &stream) {
 	for (List<Section>::iterator i = _sections.begin(); i != _sections.end(); ++i) {
 		// Write out the section comment, if any
-		if (not i->comment.isEmpty()) {
+		if (! i->comment.isEmpty()) {
 			stream.writeString(i->comment);
 		}
 
@@ -186,7 +186,7 @@ bool ConfigFile::saveToStream(WriteStream &stream) {
 		// Write out the key/value pairs
 		for (List<KeyValue>::iterator kv = i->keys.begin(); kv != i->keys.end(); ++kv) {
 			// Write out the comment, if any
-			if (not kv->comment.isEmpty()) {
+			if (! kv->comment.isEmpty()) {
 				stream.writeString(kv->comment);
 			}
 			// Write out the key/value pair
