@@ -33,6 +33,27 @@ void Mouse::addMenuObject(MenuObject *obj) {
 	_totalTemp++;
 }
 
+void Mouse::addSubject(int32 id, int32 ref) {
+	if (Logic::_scriptVars[IN_SUBJECT] == 0) {
+		// This is the start of the new subject list. Set the default
+		// repsonse id to zero in case we're never passed one.
+		_defaultResponseId = 0;
+	}
+
+	if (id == -1) {
+		// Id -1 is used for setting the default response, i.e. the
+		// response when someone uses an object on a person and he
+		// doesn't know anything about it. See fnChoose().
+
+		_defaultResponseId = ref;
+	} else {
+		debug(5, "fnAddSubject res %d, uid %d", id, ref);
+		_subjectList[Logic::_scriptVars[IN_SUBJECT]].res = id;
+		_subjectList[Logic::_scriptVars[IN_SUBJECT]].ref = ref;
+		Logic::_scriptVars[IN_SUBJECT]++;
+	}
+}
+
 /**
  * Create and start the inventory (bottom) menu
  */

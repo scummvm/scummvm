@@ -85,6 +85,10 @@ Mouse::Mouse(Sword2Engine *vm) {
 	_totalMasters = 0;
 	memset(_masterMenuList, 0, sizeof(_masterMenuList));
 	memset(_mouseList, 0, sizeof(_mouseList));
+	memset(_subjectList, 0, sizeof(_subjectList));
+
+	_defaultResponseId = 0;
+	_choosing = false;
 
 	_iconCount = 0;
 
@@ -253,7 +257,7 @@ int Mouse::menuClick(int menu_items) {
 	return (_pos.x - RDMENU_ICONSTART) / (RDMENU_ICONWIDE + RDMENU_ICONSPACING);
 }
 
-void Mouse::systemMenuMouse(void) {
+void Mouse::systemMenuMouse() {
 	uint32 safe_looping_music_id;
 	MouseEvent *me;
 	int hit;
@@ -400,7 +404,7 @@ void Mouse::systemMenuMouse(void) {
 		_vm->_logic->fnStopMusic(NULL);
 }
 
-void Mouse::dragMouse(void) {
+void Mouse::dragMouse() {
 	byte buf1[NAME_LEN], buf2[NAME_LEN];
 	MouseEvent *me;
 	int hit;
@@ -602,7 +606,7 @@ void Mouse::menuMouse() {
 	}
 }
 
-void Mouse::normalMouse(void) {
+void Mouse::normalMouse() {
 	// The gane is playing and none of the menus are activated - but, we
 	// need to check if a menu is to start. Note, won't have luggage
 
@@ -819,6 +823,117 @@ void Mouse::normalMouse(void) {
 			debug(2, "Right-clicked on \"%s\"",
 				_vm->fetchObjectName(Logic::_scriptVars[CLICKED_ID], buf1));
 	}
+}
+
+uint32 Mouse::chooseMouse() {
+	// Unlike the other mouse "engines", this one is called directly by the
+	// fnChoose() opcode.
+
+	uint i;
+
+	Logic::_scriptVars[AUTO_SELECTED] = 0;
+
+	if (Logic::_scriptVars[OBJECT_HELD]) {
+		// The player used an object on a person. In this case it
+		// triggered a conversation menu. Act as if the user tried to
+		// talk to the person about that object. If the person doesn't
+		// know anything about it, use the default response.
+
+		uint32 response = _defaultResponseId;
+
+		for (i = 0; i < Logic::_scriptVars[IN_SUBJECT]; i++) {
+			if (_subjectList[i].res == Logic::_scriptVars[OBJECT_HELD]) {
+				response = _subjectList[i].ref;
+				break;
+			}
+		}
+
+		// The user won't be holding the object any more, and the
+		// conversation menu will be closed.
+
+		Logic::_scriptVars[OBJECT_HELD] = 0;
+		Logic::_scriptVars[IN_SUBJECT] = 0;
+		return response;
+	}
+
+	if (Logic::_scriptVars[CHOOSER_COUNT_FLAG] == 0 && Logic::_scriptVars[IN_SUBJECT] == 1 && _subjectList[0].res == EXIT_ICON) {
+		// This is the first time the chooser is coming up in this
+		// conversation, there is only one subject and that's the
+		// EXIT icon.
+		//
+		// In other words, the player doesn't have anything to talk
+		// about. Skip it.
+
+		// The conversation menu will be closed. We set AUTO_SELECTED
+		// because the speech script depends on it.
+
+		Logic::_scriptVars[AUTO_SELECTED] = 1;
+		Logic::_scriptVars[IN_SUBJECT] = 0;
+		return _subjectList[0].ref;
+	}
+
+	byte *icon;
+
+	if (!_choosing) {
+		// This is a new conversation menu.
+
+		if (!Logic::_scriptVars[IN_SUBJECT])
+			error("fnChoose with no subjects");
+
+		for (i = 0; i < Logic::_scriptVars[IN_SUBJECT]; i++) {
+			icon = _vm->_resman->openResource(_subjectList[i].res) + sizeof(StandardHeader) + RDMENU_ICONWIDE * RDMENU_ICONDEEP;
+			setMenuIcon(RDMENU_BOTTOM, i, icon);
+			_vm->_resman->closeResource(_subjectList[i].res);
+		}
+
+		for (; i < 15; i++)
+			setMenuIcon(RDMENU_BOTTOM, (uint8) i, NULL);
+
+		showMenu(RDMENU_BOTTOM);
+		setMouse(NORMAL_MOUSE_ID);
+		_choosing = true;
+		return (uint32) -1;
+	}
+
+	// The menu is there - we're just waiting for a click. We only care
+	// about left clicks.
+
+	MouseEvent *me = _vm->mouseEvent();
+	int mouseX, mouseY;
+
+	getPos(mouseX, mouseY);
+
+	if (!me || !(me->buttons & RD_LEFTBUTTONDOWN) || mouseY < 400)
+		return (uint32) -1;
+
+	// Check for click on a menu.
+
+	int hit = _vm->_mouse->menuClick(Logic::_scriptVars[IN_SUBJECT]);
+	if (hit < 0)
+		return (uint32) -1;
+
+	// Hilight the clicked icon by greying the others. This can look a bit
+	// odd when you click on the exit icon, but there are also cases when
+	// it looks strange if you don't do it.
+
+	for (i = 0; i < Logic::_scriptVars[IN_SUBJECT]; i++) {
+		if ((int) i != hit) {
+			icon = _vm->_resman->openResource(_subjectList[i].res) + sizeof(StandardHeader);
+			_vm->_mouse->setMenuIcon(RDMENU_BOTTOM, i, icon);
+			_vm->_resman->closeResource(_subjectList[i].res);
+		}
+	}
+
+	// For non-speech scripts that manually call the chooser
+	Logic::_scriptVars[RESULT] = _subjectList[hit].res;
+
+	// The conversation menu will be closed
+
+	_choosing = false;
+	Logic::_scriptVars[IN_SUBJECT] = 0;
+	setMouse(0);
+
+	return _subjectList[hit].ref;
 }
 
 void Mouse::mouseOnOff() {

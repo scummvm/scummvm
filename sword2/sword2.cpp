@@ -331,7 +331,7 @@ int Sword2Engine::go() {
 						pauseGame();
 					break;
 				case 'c':
-					if (!Logic::_scriptVars[DEMO] && !_logic->_choosing)
+					if (!Logic::_scriptVars[DEMO] && !_mouse->isChoosing())
 						_logic->fnPlayCredits(NULL);
 					break;
 #ifdef SWORD2_DEBUG
@@ -658,7 +658,7 @@ void Sword2Engine::unpauseGame() {
 	_gamePaused = false;
 
 	// If mouse is about or we're in a chooser menu
-	if (!_mouse->getMouseStatus() || _logic->_choosing)
+	if (!_mouse->getMouseStatus() || _mouse->isChoosing())
 		_mouse->setMouse(NORMAL_MOUSE_ID);
 }
 

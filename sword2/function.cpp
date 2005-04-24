@@ -146,26 +146,7 @@ int32 Logic::fnPreLoad(int32 *params) {
 int32 Logic::fnAddSubject(int32 *params) {
 	// params:	0 id
 	//		1 daves reference number
-
-	if (_scriptVars[IN_SUBJECT] == 0) {
-		// This is the start of the new subject list. Set the default
-		// repsonse id to zero in case we're never passed one.
-		_defaultResponseId = 0;
-	}
-
-	if (params[0] == -1) {
-		// Id -1 is used for setting the default response, i.e. the
-		// response when someone uses an object on a person and he
-		// doesn't know anything about it. See fnChoose() below.
-
-		_defaultResponseId = params[1];
-	} else {
-		debug(5, "fnAddSubject res %d, uid %d", params[0], params[1]);
-		_subjectList[_scriptVars[IN_SUBJECT]].res = params[0];
-		_subjectList[_scriptVars[IN_SUBJECT]].ref = params[1];
-		_scriptVars[IN_SUBJECT]++;
-	}
-
+	_vm->_mouse->addSubject(params[0], params[1]);
 	return IR_CONT;
 }
 
@@ -194,109 +175,12 @@ int32 Logic::fnChoose(int32 *params) {
 	// values, to be used with the CP_JUMP_ON_RETURNED opcode. As far as I
 	// can tell, this is the only function that uses that feature.
 
-	uint i;
+	uint32 response = _vm->_mouse->chooseMouse();
 
-	_scriptVars[AUTO_SELECTED] = 0;
-
-	if (_scriptVars[OBJECT_HELD]) {
-		// The player used an object on a person. In this case it
-		// triggered a conversation menu. Act as if the user tried to
-		// talk to the person about that object. If the person doesn't
-		// know anything about it, use the default response.
-
-		uint32 response = _defaultResponseId;
-
-		for (i = 0; i < _scriptVars[IN_SUBJECT]; i++) {
-			if (_subjectList[i].res == _scriptVars[OBJECT_HELD]) {
-				response = _subjectList[i].ref;
-				break;
-			}
-		}
-
-		// The user won't be holding the object any more, and the
-		// conversation menu will be closed.
-
-		_scriptVars[OBJECT_HELD] = 0;
-		_scriptVars[IN_SUBJECT] = 0;
-		return IR_CONT | (response << 3);
-	}
-
-	if (_scriptVars[CHOOSER_COUNT_FLAG] == 0 && _scriptVars[IN_SUBJECT] == 1 && _subjectList[0].res == EXIT_ICON) {
-		// This is the first time the chooser is coming up in this
-		// conversation, there is only one subject and that's the
-		// EXIT icon.
-		//
-		// In other words, the player doesn't have anything to talk
-		// about. Skip it.
-
-		// The conversation menu will be closed. We set AUTO_SELECTED
-		// because the speech script depends on it.
-
-		_scriptVars[AUTO_SELECTED] = 1;
-		_scriptVars[IN_SUBJECT] = 0;
-		return IR_CONT | (_subjectList[0].ref << 3);
-	}
-
-	byte *icon;
-
-	if (!_choosing) {
-		// This is a new conversation menu.
-
-		if (!_scriptVars[IN_SUBJECT])
-			error("fnChoose with no subjects");
-
-		for (i = 0; i < _scriptVars[IN_SUBJECT]; i++) {
-			icon = _vm->_resman->openResource(_subjectList[i].res) + sizeof(StandardHeader) + RDMENU_ICONWIDE * RDMENU_ICONDEEP;
-			_vm->_mouse->setMenuIcon(RDMENU_BOTTOM, i, icon);
-			_vm->_resman->closeResource(_subjectList[i].res);
-		}
-
-		for (; i < 15; i++)
-			_vm->_mouse->setMenuIcon(RDMENU_BOTTOM, (uint8) i, NULL);
-
-		_vm->_mouse->showMenu(RDMENU_BOTTOM);
-		_vm->_mouse->setMouse(NORMAL_MOUSE_ID);
-		_choosing = true;
-		return IR_REPEAT;
-	}
-
-	// The menu is there - we're just waiting for a click. We only care
-	// about left clicks.
-
-	MouseEvent *me = _vm->mouseEvent();
-	int mouseX, mouseY;
-
-	_vm->_mouse->getPos(mouseX, mouseY);
-
-	if (!me || !(me->buttons & RD_LEFTBUTTONDOWN) || mouseY < 400)
+	if (response == (uint32) -1)
 		return IR_REPEAT;
 
-	// Check for click on a menu.
-
-	int hit = _vm->_mouse->menuClick(_scriptVars[IN_SUBJECT]);
-	if (hit < 0)
-		return IR_REPEAT;
-
-	// Hilight the clicked icon by greying the others.
-
-	for (i = 0; i < _scriptVars[IN_SUBJECT]; i++) {
-		if ((int) i != hit) {
-			icon = _vm->_resman->openResource(_subjectList[i].res) + sizeof(StandardHeader);
-			_vm->_mouse->setMenuIcon(RDMENU_BOTTOM, i, icon);
-			_vm->_resman->closeResource(_subjectList[i].res);
-		}
-	}
-
-	// For non-speech scripts that manually call the chooser
-	_scriptVars[RESULT] = _subjectList[hit].res;
-
-	// The conversation menu will be closed
-
-	_choosing = false;
-	_scriptVars[IN_SUBJECT] = 0;
-	_vm->_mouse->setMouse(0);
-
-	return IR_CONT | (_subjectList[hit].ref << 3);
+	return IR_CONT | (response << 3);
 }
 
 /**
@@ -3255,7 +3139,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 
 	screenInfo->new_palette = 99;
 
-	if (!_vm->_mouse->getMouseStatus() || _choosing)
+	if (!_vm->_mouse->getMouseStatus() || _vm->_mouse->isChoosing())
 		_vm->_mouse->setMouse(NORMAL_MOUSE_ID);
 
 	if (_scriptVars[DEAD])

@@ -21,6 +21,8 @@
 #ifndef MOUSE_H
 #define MOUSE_H
 
+#define	MAX_SUBJECT_LIST 30	// is that enough?
+
 #define	TOTAL_mouse_list 50
 
 namespace Sword2 {
@@ -99,6 +101,13 @@ struct MouseUnit {
 	int32 pointer_text;
 };
 
+// Array of these for subject menu build up
+
+ struct SubjectUnit {
+	uint32 res;
+	uint32 ref;
+};
+
 class Mouse {
 private:
 	Sword2Engine *_vm;
@@ -113,6 +122,17 @@ private:
 
 	MenuObject _masterMenuList[TOTAL_engine_pockets];
 	uint32 _totalMasters;
+
+	SubjectUnit _subjectList[MAX_SUBJECT_LIST];
+
+	// ref number for default response when luggage icon is used on a
+	// person & it doesn't match any of the icons which would have been in
+	// the chooser
+
+	uint32 _defaultResponseId;
+
+	// could alternately use logic->looping of course
+	bool _choosing;
 
 	uint8 _menuStatus[2];
 	byte *_icons[2][RDMENU_MAXPOCKETS];
@@ -200,6 +220,8 @@ public:
 	void processMenu();
 
 	void addMenuObject(MenuObject *obj);
+	void addSubject(int32 id, int32 ref);
+
 	void buildMenu();
 	void buildSystemMenu();
 
@@ -230,6 +252,9 @@ public:
 	void menuMouse();
 	void dragMouse();
 	void systemMenuMouse();
+
+	bool isChoosing() { return _choosing; }
+	uint32 chooseMouse();
 
 	int menuClick(int menu_items);
 };

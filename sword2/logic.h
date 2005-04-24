@@ -23,8 +23,6 @@
 #ifndef _LOGIC
 #define _LOGIC
 
-#include "sword2/speech.h"
-
 namespace Sword2 {
 
 struct MovieTextObject;
@@ -98,15 +96,6 @@ private:
 	void createSequenceSpeech(MovieTextObject *sequenceText[]);
 	void clearSequenceSpeech(MovieTextObject *sequenceText[]);
 
-	// array of these for subject menu build up
-
-	struct SubjectUnit {
-		uint32 res;
-		uint32 ref;
-	};
-
-	SubjectUnit _subjectList[MAX_SUBJECT_LIST];
-
 	// when not playing a wav we calculate the speech time based upon
 	// length of ascii
 
@@ -119,12 +108,6 @@ private:
 
 	uint32 _leftClickDelay;		// click-delay for LEFT mouse button
 	uint32 _rightClickDelay;	// click-delay for RIGHT mouse button
-
-	// ref number for default response when luggage icon is used on a
-	// person & it doesn't match any of the icons which would have been in
-	// the chooser
-
-	uint32 _defaultResponseId;
 
 	// calculated by locateTalker() for use in speech-panning & text-sprite
 	// positioning
@@ -160,9 +143,6 @@ public:
 
 	// so speech text cleared when running a new start-script
 	uint32 _speechTextBlocNo;
-
-	// could alternately use logic->looping of course
-	bool _choosing;
 
 	int runScript(char *scriptData, char *objectData, uint32 *offset);
 
