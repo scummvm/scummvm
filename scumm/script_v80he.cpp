@@ -23,7 +23,9 @@
 
 #include "stdafx.h"
 
+#include "common/config-file.h"
 #include "common/config-manager.h"
+#include "common/str.h"
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
@@ -451,66 +453,56 @@ void ScummEngine_v80he::o80_localizeArrayToRoom() {
 void ScummEngine_v80he::o80_readConfigFile() {
 	byte option[128], section[128], filename[256];
 	ArrayHeader *ah;
-	const char *entry;
-	int len, type;
+	Common::String entry;
+	int len;
 
-	// we pretend that we don't have .ini file
 	copyScriptString(option, sizeof(option));
 	copyScriptString(section, sizeof(section));
 	copyScriptString(filename, sizeof(filename));
 	convertFilePath(filename, true);
-	type = fetchScriptByte();
 
-	ConfMan.loadConfigFile((const char *)filename);
+	Common::ConfigFile ConfFile;
+	ConfFile.loadFromFile((const char *)filename);
 
+	byte type = fetchScriptByte();
 	switch (type) {
 	case 43: // HE 100
 	case 6: // number
-		push(ConfMan.getInt((char *)option, (char *)section));
+		ConfFile.getKey((const char *)option, (const char *)section, entry);
+
+		push(atoi(entry.c_str()));
 		break;
 	case 77: // HE 100
 	case 7: // string
-		entry = (ConfMan.get((char *)option, (char *)section).c_str());
+		ConfFile.getKey((const char *)option, (const char *)section, entry);
 
 		writeVar(0, 0);
-		len = resStrLen((const byte *)entry);
+		len = resStrLen((const byte *)entry.c_str());
 		ah = defineArray(0, kStringArray, 0, 0, 0, len);
-		memcpy(ah->data, entry, len);
-
+		memcpy(ah->data, entry.c_str(), len);
 		push(readVar(0));
 		break;
 	default:
 		error("o80_readConfigFile: default type %d", type);
 	}
 
-	ConfMan.loadDefaultConfigFile();
-
-	debug(0, "o80_readConfigFile: Filename %s Section %s Option %s", filename, section, option);
+	debug(0, "o80_readConfigFile: Filename %s Section %s Option %s Value %s", filename, section, option, entry.c_str());
 }
 
 void ScummEngine_v80he::o80_writeConfigFile() {
 	byte filename[256], section[256], option[256], string[1024];
-	int type, value;
+	int value;
 
-	// we pretend that we don't have .ini file
-	type = fetchScriptByte();
-	
-	// FIXME: Consider using ConfigFile here instead of abusing the ConfigManager.
-	// If there are problems with this, feel free to talk to Fingolfin on how
-	// ConfigFile could be improved to suit your needs...
-
+	byte type = fetchScriptByte();
 	switch (type) {
 	case 43: // HE 100
 	case 6: // number
 		value = pop();
+		sprintf((char *)string, "%d", value);
 		copyScriptString(option, sizeof(option));
 		copyScriptString(section, sizeof(section));
 		copyScriptString(filename, sizeof(filename));
 		convertFilePath(filename, true);
-
-		ConfMan.loadConfigFile((const char *)filename);
-		ConfMan.set((char *)option, value, (char *)section); 
-		debug(0,"o80_writeConfigFile: Filename %s Section %s Option %s Value %d", filename, section, option, value);
 		break;
 	case 77: // HE 100
 	case 7: // string
@@ -519,17 +511,16 @@ void ScummEngine_v80he::o80_writeConfigFile() {
 		copyScriptString(section, sizeof(section));
 		copyScriptString(filename, sizeof(filename));
 		convertFilePath(filename, true);
-
-		ConfMan.loadConfigFile((const char *)filename);
-		ConfMan.set((char *)option, (char *)string, (char *)section); 
-		debug(0,"o80_writeConfigFile: Filename %s Section %s Option %s String %s", filename, section, option, string);
 		break;
 	default:
 		error("o80_writeConfigFile: default type %d", type);
 	}
 
-	ConfMan.flushToDisk();
-	ConfMan.loadDefaultConfigFile();
+	Common::ConfigFile ConfFile;
+	ConfFile.loadFromFile((const char *)filename);
+	ConfFile.setKey((char *)option, (char *)section, (char *)string); 
+	ConfFile.saveToFile((const char *)filename);
+	debug(0,"o80_writeConfigFile: Filename %s Section %s Option %s String %s", filename, section, option, string);
 }
 
 void ScummEngine_v80he::o80_cursorCommand() {
