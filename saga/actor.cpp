@@ -1806,12 +1806,14 @@ void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point 
 
 	for (iteratorPoint.y = 0; iteratorPoint.y < _yCellCount; iteratorPoint.y++) {
 		for (iteratorPoint.x = 0; iteratorPoint.x < _xCellCount; iteratorPoint.x++) {
+			// This is almost, but not quite, the same thing as canWalk().
+			// Is that difference significant or not?
 			if (_vm->_scene->validBGMaskPoint(iteratorPoint)) {
 				maskType = _vm->_scene->getBGMaskType(iteratorPoint);
+				setPathCell(iteratorPoint, _vm->_scene->getDoorState(maskType) ? kPathCellBarrier : kPathCellEmpty);
 			} else {
-				maskType = 1;
+				setPathCell(iteratorPoint, kPathCellBarrier);
 			}			
-			setPathCell(iteratorPoint, maskType ? kPathCellBarrier : kPathCellEmpty);			
 		}
 	}
 
