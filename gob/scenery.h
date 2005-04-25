@@ -47,14 +47,6 @@ typedef struct Scen_StaticLayer {
 	Scen_StaticPlane planes[1];
 } GCC_PACK Scen_StaticLayer;
 
-typedef struct Scen_Static {
-	int16 layersCount;
-	Scen_StaticLayer **layers;
-	Scen_PieceDesc **pieces;
-	void *unknown;
-	char *dataPtr;
-} GCC_PACK Scen_Static;
-
 // Animations
 
 typedef struct Scen_AnimFramePiece {
@@ -77,11 +69,19 @@ typedef struct Scen_AnimLayer {
 } GCC_PACK Scen_AnimLayer;
 #pragma END_PACK_STRUCTS
 
+typedef struct Scen_Static {
+	int16 layersCount;
+	Scen_StaticLayer **layers;
+	Scen_PieceDesc **pieces;
+	char *piecesFromExt;
+	char *dataPtr;
+} Scen_Static;
+
 struct Scen_Animation {
 	int16 layersCount;
 	Scen_AnimLayer **layers;
 	Scen_PieceDesc **pieces;
-	void *unknowm;
+	char *piecesFromExt;
 	char *dataPtr;
 };
 

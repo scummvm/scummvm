@@ -114,6 +114,7 @@ int16 scen_loadStatic(char search) {
 
 	ptr->layers = (Scen_StaticLayer **)malloc(sizeof(Scen_StaticLayer *) * ptr->layersCount);
 	ptr->pieces = (Scen_PieceDesc **)malloc(sizeof(Scen_PieceDesc *) * picsCount);
+	ptr->piecesFromExt = (char *)malloc(picsCount);
 
 	for (i = 0; i < ptr->layersCount; i++) {
 		offset = (int16)READ_LE_UINT16(&((int16 *)dataPtr)[i]);
@@ -136,10 +137,12 @@ int16 scen_loadStatic(char search) {
 			ptr->pieces[i] =
 			    (Scen_PieceDesc *) game_loadExtData(pictDescId, 0,
 			    0);
+			ptr->piecesFromExt[i] = 1;
 		} else {
 			ptr->pieces[i] =
 			    (Scen_PieceDesc *)
 			    game_loadTotResource(pictDescId);
+			ptr->piecesFromExt[i] = 0;
 		}
 
 		width = inter_load16();
@@ -188,7 +191,7 @@ void scen_freeStatic(int16 index) {
 		return;
 
 	for (i = 0; i < scen_staticPictCount[index]; i++) {
-		if (scen_staticFromExt[index] == 1)
+		if (scen_statics[index].piecesFromExt[i] == 1)
 			free(scen_statics[index].pieces[i]);
 
 		spr = scen_staticPictToSprite[index * 7 + i];
@@ -202,6 +205,7 @@ void scen_freeStatic(int16 index) {
 
 	free(scen_statics[index].layers);
 	free(scen_statics[index].pieces);
+	free(scen_statics[index].piecesFromExt);
 	if (scen_staticFromExt[index] == 1)
 		free(scen_statics[index].dataPtr);
 
@@ -430,6 +434,7 @@ int16 scen_loadAnim(char search) {
 	ptr->pieces =
 	    (Scen_PieceDesc **) malloc(sizeof(Scen_PieceDesc *) *
 	    picsCount);
+	ptr->piecesFromExt = (char *) malloc(picsCount);
 
 	for (i = 0; i < ptr->layersCount; i++) {
 		offset = (int16)READ_LE_UINT16(&((int16 *)dataPtr)[i]);
@@ -449,10 +454,12 @@ int16 scen_loadAnim(char search) {
 			ptr->pieces[i] =
 			    (Scen_PieceDesc *) game_loadExtData(pictDescId, 0,
 			    0);
+			ptr->piecesFromExt[i] = 1;
 		} else {
 			ptr->pieces[i] =
 			    (Scen_PieceDesc *)
 			    game_loadTotResource(pictDescId);
+			ptr->piecesFromExt[i] = 0;
 		}
 
 		width = inter_load16();
@@ -705,7 +712,7 @@ void scen_freeAnim(int16 animation) {
 		return;
 
 	for (i = 0; i < scen_animPictCount[animation]; i++) {
-		if (scen_animFromExt[animation] == 1)
+		if (scen_animations[animation].piecesFromExt[i] == 1)
 			free(scen_animations[animation].pieces[i]);
 
 		spr = scen_animPictToSprite[animation * 7 + i];
@@ -720,6 +727,7 @@ void scen_freeAnim(int16 animation) {
 
 	free(scen_animations[animation].layers);
 	free(scen_animations[animation].pieces);
+	free(scen_animations[animation].piecesFromExt);
 	if (scen_animFromExt[animation] == 1)
 		free(scen_animations[animation].dataPtr);
 
