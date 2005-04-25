@@ -174,7 +174,7 @@ void Sound::setupHEMusicFile() {
 		strcpy(buf, buf1);
 	}
 	if (musicFile.open(buf) == false) {
-		warning("getHEMusicDetails: Music file is not open");
+		warning("setupHEMusicFile: Can't open music file %s", buf);
 		return;
 	}
 	musicFile.seek(4, SEEK_SET);
@@ -214,7 +214,6 @@ void Sound::getHEMusicDetails(int id, int &musicOffs, int &musicSize) {
 	}
 
 	error("getHEMusicDetails: musicID %d not found", id);
-
 }
 
 void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
@@ -243,7 +242,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 			strcpy(buf, buf1);
 		}
 		if (musicFile.open(buf) == false) {
-			warning("playSound: Music file is not open");
+			warning("playSound: Can't open music file %s", buf);
 			return;
 		}
 
@@ -1062,7 +1061,8 @@ void Sound::setupSound() {
 	delete _sfxFile;
 	_sfxFile = openSfxFile();
 
-	if (_vm->_heversion >= 70) {
+	// No music file in lost/smaller
+	if (_vm->_heversion >= 70 && !(_vm->_features & GF_HE_CURSORLESS)) {
 		setupHEMusicFile();
 	}
 
