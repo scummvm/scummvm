@@ -1726,7 +1726,7 @@ void ScummEngine_v72he::o72_openFile() {
 	}
 
 	int r = convertFilePath(filename);
-	debug(0,"Final filename to %s", filename);
+	debug(0,"Final filename to %s", filename + r);
 
 	slot = -1;
 	for (i = 0; i < 17; i++) {
