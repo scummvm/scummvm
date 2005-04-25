@@ -132,7 +132,7 @@ int16 scen_loadStatic(char search) {
 
 	for (i = 0; i < picsCount; i++) {
 		pictDescId = inter_load16();
-		if (resId >= 30000) {
+		if (pictDescId >= 30000) {
 			ptr->pieces[i] =
 			    (Scen_PieceDesc *) game_loadExtData(pictDescId, 0,
 			    0);
