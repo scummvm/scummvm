@@ -236,35 +236,32 @@ void ScummEngine_v99he::setPaletteFromPtr(const byte *ptr, int numcolor) {
 }
 
 void ScummEngine_v99he::darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor) {
-	if (startColor <= endColor) {
-		uint8 *src, *dest;
-		int color, j;
+	uint8 *src, *dst;
+	int color, j;
 
-		for (j = startColor; j <= endColor; j++) {
-			src = _hePalettes + j * 3;
-			dest = src + 1024;
+	src = _hePalettes + startColor * 3;
+	dst = _hePalettes + 1024 + startColor * 3;
+	for (j = startColor; j <= endColor; j++) {
+		color = *src++;
+		color = color * redScale / 0xFF;
+		if (color > 255)
+			color = 255;
+		*dst++ = color;
 
-			color = *src++;
-			color = color * redScale / 0xFF;
-			if (color > 255)
-				color = 255;
-			*dest++ = color;
+		color = *src++;
+		color = color * greenScale / 0xFF;
+		if (color > 255)
+			color = 255;
+		*dst++ = color;
 
-			color = *src++;
-			color = color * greenScale / 0xFF;
-			if (color > 255)
-				color = 255;
-			*dest++ = color;
+		color = *src++;
+		color = color * blueScale / 0xFF;
+		if (color > 255)
+			color = 255;
+		*dst++ = color;
 
-			color = *src++;
-			color = color * blueScale / 0xFF;
-			if (color > 255)
-				color = 255;
-			*dest++ = color;
-
-			_hePalettes[1792 + j] = j;
-			setDirtyColors(j, endColor);
-		}
+		_hePalettes[1792 + j] = j;
+		setDirtyColors(j, endColor);
 	}
 }
 
