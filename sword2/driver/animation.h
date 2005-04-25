@@ -67,6 +67,7 @@ private:
 struct MovieInfo {
 	char name[9];
 	uint frames;
+	bool seamless;
 };
  
 class MoviePlayer {
@@ -78,6 +79,9 @@ private:
 	byte *_textSurface;
 
 	SoundHandle _leadOutHandle;
+
+	uint _leadOutFrame;
+	bool _seamless;
 
 	static struct MovieInfo _movies[];
 

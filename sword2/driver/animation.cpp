@@ -109,25 +109,25 @@ void AnimationState::drawYUV(int width, int height, byte *const *dat) {
 }
 
 MovieInfo MoviePlayer::_movies[] = {
-	{ "carib",    222 },
-	{ "escape",   187 },
-	{ "eye",      248 },
-	{ "finale",  1485 },
-	{ "guard",     75 },
-	{ "intro",   1800 },
-	{ "jungle",   186 },
-	{ "museum",   167 },
-	{ "pablo",     75 },
-	{ "pyramid",   60 },
-	{ "quaram",   184 },
-	{ "river",    656 },
-	{ "sailing",  138 },
-	{ "shaman",   788 },
-	{ "stone1",    34 },
-	{ "stone2",   282 },
-	{ "stone3",    65 },
-	{ "demo",      60 },
-	{ "enddemo",  110 }
+	{ "carib",    222, false },
+	{ "escape",   187, false },
+	{ "eye",      248, false },
+	{ "finale",  1485, false },
+	{ "guard",     75, false },
+	{ "intro",   1800, false },
+	{ "jungle",   186, false },
+	{ "museum",   167, false },
+	{ "pablo",     75, false },
+	{ "pyramid",   60, false },
+	{ "quaram",   184, false },
+	{ "river",    656, false },
+	{ "sailing",  138, false },
+	{ "shaman",   788, true  },
+	{ "stone1",    34, false },
+	{ "stone2",   282, false },
+	{ "stone3",    65, false },
+	{ "demo",      60, false },
+	{ "enddemo",  110, false }
 };
 
 MoviePlayer::MoviePlayer(Sword2Engine *vm)
@@ -173,6 +173,11 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], int32 lea
 	if (_vm->_quit)
 		return RD_OK;
 
+	if (scumm_stricmp(filename, "shaman") == 0)
+		_seamless = true;
+	else
+		_seamless = false;
+
 	if (leadInRes) {
 		byte *leadIn = _vm->_resman->openResource(leadInRes);
 		uint32 leadInLen = _vm->_resman->fetchLen(leadInRes) - sizeof(StandardHeader);
@@ -198,6 +203,22 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], int32 lea
 		leadOut += sizeof(StandardHeader);
 	}
 
+	_leadOutFrame = (uint) -1;
+
+	int i;
+
+	for (i = 0; i < ARRAYSIZE(_movies); i++) {
+		if (scumm_stricmp(filename, _movies[i].name) == 0) {
+			_seamless = _movies[i].seamless;
+			if (_movies[i].frames > 60)
+				_leadOutFrame = _movies[i].frames - 60;
+			break;
+		}
+	}
+
+	if (i == ARRAYSIZE(_movies))
+		warning("Unknown movie, '%s'", filename);
+
 #ifdef USE_MPEG2
 	playMPEG(filename, text, leadOut, leadOutLen);
 #else
@@ -208,10 +229,10 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], int32 lea
 	_snd->stopHandle(leadInHandle);
 
 	// Wait for the lead-out to stop, if there is any. Though don't do it
-	// for the "shaman" cutscene as it's obviously meant to blend into the
-	// rest of the game, and the lead-out goes on for a long time.
+	// for seamless movies, since they are meant to blend into the rest of
+	// the game.
 
-	if (scumm_stricmp(filename, "shaman") != 0) {
+	if (!_seamless) {
 		while (_vm->_mixer->isSoundHandleActive(_leadOutHandle)) {
 			_vm->_screen->updateDisplay();
 			_vm->_system->delayMillis(30);
@@ -257,22 +278,6 @@ void MoviePlayer::playMPEG(const char *filename, MovieTextObject *text[], byte *
 	flags |= SoundMixer::FLAG_LITTLE_ENDIAN;
 #endif
 
-	int i;
-	uint leadOutFrame = (uint) -1;
-
-	for (i = 0; i < ARRAYSIZE(_movies); i++) {
-		if (scumm_stricmp(filename, _movies[i].name) == 0) {
-			if (_movies[i].frames >= 60)
-				leadOutFrame = _movies[i].frames - 60;
-			else
-				leadOutFrame = 0;
-			break;
-		}
-	}
-
-	if (i == ARRAYSIZE(_movies))
-		warning("Unknown movie, '%s'", filename);
-
 	while (!skipCutscene && anim->decodeFrame()) {
 		// The frame has been drawn. Now draw the subtitles, if any,
 		// before updating the screen.
@@ -305,7 +310,7 @@ void MoviePlayer::playMPEG(const char *filename, MovieTextObject *text[], byte *
 		anim->updateScreen();
 		frameCounter++;
 
-		if (frameCounter == leadOutFrame && leadOut)
+		if (frameCounter == _leadOutFrame && leadOut)
 			_vm->_sound->playFx(&_leadOutHandle, leadOut, leadOutLen, SoundMixer::kMaxChannelVolume, 0, false, SoundMixer::kMusicSoundType);
 
 		OSystem::Event event;
@@ -335,11 +340,14 @@ void MoviePlayer::playMPEG(const char *filename, MovieTextObject *text[], byte *
 		_sys->delayMillis(1000 / 12);
 	}
 
-	// Most movies fade to black on their own, but not all of them. Since
-	// we may be hanging around in the cutscene player for a while longer,
-	// waiting for the lead-out sound to finish, paint the overlay black.
+	if (!_seamless) {
+		// Most movies fade to black on their own, but not all of them.
+		// Since we may be hanging around in the cutscene player for a
+		// while longer, waiting for the lead-out sound to finish,
+		// paint the overlay black.
 
-	anim->clearScreen();
+		anim->clearScreen();
+	}
 
 	// If the speech is still playing, redraw the subtitles. At least in
 	// the English version this is most noticeable in the "carib" cutscene.
@@ -364,9 +372,11 @@ void MoviePlayer::playMPEG(const char *filename, MovieTextObject *text[], byte *
 		_sys->delayMillis(100);
 	}
 
-	// Clear the screen again
-	anim->clearScreen();
-	anim->updateScreen();
+	if (!_seamless) {
+		// Clear the screen again
+		anim->clearScreen();
+		anim->updateScreen();
+	}
 
 	_vm->_screen->setPalette(0, 256, oldPal, RDPAL_INSTANT);
 
