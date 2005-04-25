@@ -1072,7 +1072,7 @@ int ScummEngine::getObjectImageCount(int object) {
 	int objnum;
 
 	objnum = getObjectIndex(object);
-	if (objnum == -1);
+	if (objnum == -1)
 		return 0;
 
 	ptr = getOBIMFromObject(_objs[objnum]);
