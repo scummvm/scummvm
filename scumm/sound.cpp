@@ -76,7 +76,8 @@ Sound::Sound(ScummEngine *parent)
 	_currentCDSound(0),
 	_currentMusic(0),
 	_soundsPaused(false),
-	_sfxMode(0) {
+	_sfxMode(0),
+	_heMusicTracks(0) {
 	
 	memset(_soundQue, 0, sizeof(_soundQue));
 	memset(_soundQue2, 0, sizeof(_soundQue2));
@@ -161,8 +162,8 @@ void Sound::setOverrideFreq(int freq) {
 	_overrideFreq = freq;
 }
 
-void Sound::getHEMusicDetails(int id, int &musicOffs, int &musicSize) {
-	int musicID, offs, tracks, total_size;
+void Sound::setupHEMusicFile() {
+	int i, total_size;
 	char buf[32], buf1[128];
 	File musicFile;
 
@@ -179,40 +180,41 @@ void Sound::getHEMusicDetails(int id, int &musicOffs, int &musicSize) {
 	musicFile.seek(4, SEEK_SET);
 	total_size = musicFile.readUint32BE();
 	musicFile.seek(16, SEEK_SET);
-	tracks = musicFile.readUint32LE();
+	_heMusicTracks = musicFile.readUint32LE();
+	debug(0, "Total music tracks %d", _heMusicTracks);
 
 	int musicStart = (_vm->_heversion >= 80) ? 56 : 20;
-
 	musicFile.seek(musicStart, SEEK_SET);
-	int musicStartID = musicFile.readUint32LE();
 
-	// Music is off by one in freddi2/puttzoo
-	offs = id - musicStartID - 1;
-	if (offs < 0 || offs > tracks)
-		offs = 0;
+	_heMusic = (HEMusic *)malloc((_heMusicTracks + 1) * sizeof(HEMusic));
+	for (i = 0; i < _heMusicTracks; i++) {
+		_heMusic[i].id = musicFile.readUint32LE();
+		_heMusic[i].offset = musicFile.readUint32LE();
+		_heMusic[i].size = musicFile.readUint32LE();
 
-	offs *= (_vm->_heversion >= 80) ? 21 : 25;
-	musicFile.seek(musicStart + offs, SEEK_SET);
-
-	// Adjust all other games.
-	musicID = musicFile.readUint32LE();
-	if (id == musicID + 1) {
-		offs += (_vm->_heversion >= 80) ? 21 : 25;
-		musicFile.seek(musicStart + offs, SEEK_SET);
-		musicID = musicFile.readUint32LE();
-	}
-
-	musicOffs = musicFile.readUint32LE();
-	musicSize = musicFile.readUint32LE();
-
-	if (id != musicID) {
-		debug(0, "getHEMusicDetails: Music track doesn't match (%d, %d)", id, musicID);
-	}
-	if (musicOffs > total_size || (musicSize + musicOffs > total_size) || musicSize < 0) {
-		error("getHEMusicDetails: Invalid music offset (%d) in music %d", id);
-	}
+		if (_vm->_heversion >= 80) {
+			musicFile.seek(+9, SEEK_CUR);
+		} else {
+			musicFile.seek(+13, SEEK_CUR);
+		}
+	}	
 
 	musicFile.close();
+}
+
+void Sound::getHEMusicDetails(int id, int &musicOffs, int &musicSize) {
+	int i;
+
+	for (i = 0; i < _heMusicTracks; i++) {
+		if (_heMusic[i].id == id) {
+			musicOffs = _heMusic[i].offset;
+			musicSize = _heMusic[i].size;
+			return;
+		}
+	}
+
+	error("getHEMusicDetails: musicID %d not found", id);
+
 }
 
 void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
@@ -1060,8 +1062,13 @@ void Sound::setupSound() {
 	delete _sfxFile;
 	_sfxFile = openSfxFile();
 
-	if (_vm->_gameId == GID_FT)
+	if (_vm->_heversion >= 70) {
+		setupHEMusicFile();
+	}
+
+	if (_vm->_gameId == GID_FT) {
 		_vm->VAR(_vm->VAR_VOICE_BUNDLE_LOADED) = _sfxFile->isOpen();
+	}
 }
 
 void Sound::pauseSounds(bool pause) {

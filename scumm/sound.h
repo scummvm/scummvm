@@ -83,6 +83,15 @@ protected:
 
 	int16 _currentCDSound;
 	int16 _currentMusic;
+
+	struct HEMusic{
+		int32 id;
+		int32 offset;
+		int32 size;
+	};
+	HEMusic *_heMusic;
+	int16 _heMusicTracks;
+
 public:
 	SoundHandle _talkChannelHandle;	// Handle of mixer channel actor is talking on
 	SoundHandle _heSoundChannels[8];
@@ -120,6 +129,7 @@ public:
 	void updateCD();
 	int getCurrentCDSound() const { return _currentCDSound; }
 
+	void setupHEMusicFile();
 	void getHEMusicDetails(int id, int &musicOffs, int &musicSize);
 
 	// Used by the save/load system:

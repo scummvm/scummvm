@@ -912,7 +912,7 @@ void ScummEngine_v72he::displayWizImage(WizImage *pwi) {
 }
 
 uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, int xmapNum, const Common::Rect *clipBox, int flags, int dstResNum, int paletteNum) {
-	debug(1, "drawWizImage(resNum %d, x1 %d, y1 %d, flags 0x%X, xmapNum %d dstResNum %d paletteNum %d)", resNum, x1, y1, flags, xmapNum, dstResNum, paletteNum);
+	debug(2, "drawWizImage(resNum %d, x1 %d, y1 %d, flags 0x%X, xmapNum %d dstResNum %d paletteNum %d)", resNum, x1, y1, flags, xmapNum, dstResNum, paletteNum);
 	uint8 *dst = NULL;
 	const uint8 *palPtr = NULL;
 	if (_heversion >= 99) {
@@ -932,7 +932,7 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 		uint32 comp   = READ_LE_UINT32(wizh + 0x0);
 		uint32 width  = READ_LE_UINT32(wizh + 0x4);
 		uint32 height = READ_LE_UINT32(wizh + 0x8);
-		debug(1, "wiz_header.comp = %d wiz_header.w = %d wiz_header.h = %d", comp, width, height);
+		debug(2, "wiz_header.comp = %d wiz_header.w = %d wiz_header.h = %d", comp, width, height);
 		
 		uint8 *wizd = findWrappedBlock(MKID('WIZD'), dataPtr, state, 0);
 		assert(wizd);
@@ -1620,7 +1620,7 @@ void ScummEngine_v90he::fillWizParallelogram(const WizParameters *params) {
 }
 
 void ScummEngine_v90he::processWizImage(const WizParameters *params) {
-	debug(0, "processWizImage: processMode %d", params->processMode);
+	debug(2, "processWizImage: processMode %d", params->processMode);
 	switch (params->processMode) {
 	case 0:
 		// Used in racedemo
