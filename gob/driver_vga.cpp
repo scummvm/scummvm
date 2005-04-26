@@ -73,7 +73,7 @@ void VGAVideoDriver::putPixel(int16 x, int16 y, byte color, SurfaceDesc *dest) {
 		dest->vidPtr[(y * dest->width) + x] = color;
 }
 
-void VGAVideoDriver::drawLetter(char item, int16 x, int16 y, FontDesc *fontDesc, byte color1, byte color2, byte transp, SurfaceDesc *dest) {
+void VGAVideoDriver::drawLetter(unsigned char item, int16 x, int16 y, FontDesc *fontDesc, byte color1, byte color2, byte transp, SurfaceDesc *dest) {
 	byte *src, *dst;
 	uint16 data;
 	int i, j;

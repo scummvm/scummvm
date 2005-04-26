@@ -65,7 +65,7 @@ public:
 	virtual void drawSprite(SurfaceDesc *source, SurfaceDesc *dest, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) = 0;
 	virtual void fillRect(SurfaceDesc *dest, int16 left, int16 top, int16 right, int16 bottom, byte color) = 0;
 	virtual void putPixel(int16 x, int16 y, byte color, SurfaceDesc *dest) = 0;		
-	virtual void drawLetter(char item, int16 x, int16 y, FontDesc *fontDesc, byte color1, byte color2, byte transp, SurfaceDesc *dest) = 0;
+	virtual void drawLetter(unsigned char item, int16 x, int16 y, FontDesc *fontDesc, byte color1, byte color2, byte transp, SurfaceDesc *dest) = 0;
 	virtual void drawLine(SurfaceDesc *dest, int16 x0, int16 y0, int16 x1, int16 y1, byte color) = 0;
 	virtual void drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, int16 y, byte transp, SurfaceDesc *dest) = 0;
 };
@@ -120,7 +120,7 @@ void vid_fillRect(SurfaceDesc * dest, int16 left, int16 top, int16 right, int16 
 void vid_drawLine(SurfaceDesc * dest, int16 x0, int16 y0, int16 x1, int16 y1,
     int16 color);
 void vid_putPixel(int16 x, int16 y, int16 color, SurfaceDesc * dest);
-void vid_drawLetter(char item, int16 x, int16 y, FontDesc * fontDesc, int16 color1,
+void vid_drawLetter(unsigned char item, int16 x, int16 y, FontDesc * fontDesc, int16 color1,
     int16 color2, int16 transp, SurfaceDesc * dest);
 void vid_clearSurf(SurfaceDesc * dest);
 void vid_drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, int16 y,
