@@ -97,7 +97,6 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	int i, j;
 	SaveGameHeader hdr;
 	int sb, sh;
-	byte *roomptr;
 
 	makeSavegameName(filename, slot, compat);
 	if (!(in = _saveFileMan->openForLoading(filename)))
@@ -212,18 +211,6 @@ bool ScummEngine::loadState(int slot, bool compat) {
 			VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
 	}
 
-	if (_heversion == 70) {
-		roomptr = getResourceAddress(rtRoom, _roomResource);
-		const byte *ptr = findResourceData(MKID('REMP'), roomptr);
-		if (ptr) {
-			for (i = 0; i < 256; i++)
-				_HEV7ActorPalette[i] = *ptr++;
-		} else {
-			for (i = 0; i < 256; i++)
-				_HEV7ActorPalette[i] = i;
-		}
-	}
-
 	if (hdr.ver < VER(30)) {
 		// For a long time, we used incorrect location, causing it to default to zero.
 		if (_version == 8)
@@ -303,9 +290,8 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	if (hdr.ver < VER(35) && _gameId == GID_MANIAC && _version == 1)
 		setupV1ActorTalkColor();
 
-	// Regenerate strip table (for V1/V2 games)
-	roomptr = getResourceAddress(rtRoom, _roomResource);
-	gdi.roomChanged(roomptr, _IM00_offs);
+	// Load the static room data
+	loadRoomSubBlocks();
 
 	if (!(_features & GF_NEW_CAMERA)) {
 		camera._last.x = camera._cur.x;
@@ -454,20 +440,20 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 
 	const SaveLoadEntry mainEntries[] = {
 		MKARRAY(ScummEngine, _gameMD5[0], sleUint8, 16, VER(39)),
-		MKLINE(ScummEngine, _roomWidth, sleUint16, VER(8)),
-		MKLINE(ScummEngine, _roomHeight, sleUint16, VER(8)),
-		MKLINE(ScummEngine, _ENCD_offs, sleUint32, VER(8)),
-		MKLINE(ScummEngine, _EXCD_offs, sleUint32, VER(8)),
-		MKLINE(ScummEngine, _IM00_offs, sleUint32, VER(8)),
-		MKLINE(ScummEngine, _CLUT_offs, sleUint32, VER(8)),
+		MK_OBSOLETE(ScummEngine, _roomWidth, sleUint16, VER(8), VER(50)),
+		MK_OBSOLETE(ScummEngine, _roomHeight, sleUint16, VER(8), VER(50)),
+		MK_OBSOLETE(ScummEngine, _ENCD_offs, sleUint32, VER(8), VER(50)),
+		MK_OBSOLETE(ScummEngine, _EXCD_offs, sleUint32, VER(8), VER(50)),
+		MK_OBSOLETE(ScummEngine, _IM00_offs, sleUint32, VER(8), VER(50)),
+		MK_OBSOLETE(ScummEngine, _CLUT_offs, sleUint32, VER(8), VER(50)),
 		MK_OBSOLETE(ScummEngine, _EPAL_offs, sleUint32, VER(8), VER(9)),
-		MKLINE(ScummEngine, _PALS_offs, sleUint32, VER(8)),
+		MK_OBSOLETE(ScummEngine, _PALS_offs, sleUint32, VER(8), VER(50)),
 		MKLINE(ScummEngine, _curPalIndex, sleByte, VER(8)),
 		MKLINE(ScummEngine, _currentRoom, sleByte, VER(8)),
 		MKLINE(ScummEngine, _roomResource, sleByte, VER(8)),
 		MKLINE(ScummEngine, _numObjectsInRoom, sleByte, VER(8)),
 		MKLINE(ScummEngine, _currentScript, sleByte, VER(8)),
-		MKARRAY(ScummEngine, _localScriptOffsets[0], sleUint32, _numLocalScripts, VER(8)),
+		MK_OBSOLETE_ARRAY(ScummEngine, _localScriptOffsets[0], sleUint32, _numLocalScripts, VER(8), VER(50)),
 
 
 		// vm.localvar grew from 25 to 40 script entries and then from
@@ -568,7 +554,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		MKARRAY_OLD(ScummEngine, gfxUsageBits[0], sleUint32, 410, VER(10), VER(13)),
 		MKARRAY(ScummEngine, gfxUsageBits[0], sleUint32, 3 * 410, VER(14)),
 
-		MKLINE(ScummEngine, gdi._transparentColor, sleByte, VER(8)),
+		MK_OBSOLETE(ScummEngine, gdi._transparentColor, sleByte, VER(8), VER(50)),
 		MKARRAY(ScummEngine, _currentPalette[0], sleByte, 768, VER(8)),
 
 		// Sam & Max specific palette replaced by _shadowPalette now.
