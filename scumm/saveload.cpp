@@ -1003,6 +1003,10 @@ void ScummEngine_v90he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 
 	s->saveLoadArrayOf(&_floodStateParams, 1, sizeof(_floodStateParams), floodStateEntries);
 	s->saveLoadEntries(this, HE90Entries);
+
+	if (_heversion >= 99) {
+		s->saveLoadArrayOf(_hePalettes, _numPalettes, sizeof(_hePalettes[0]), sleUint8);
+	}
 }
 
 void ScummEngine_v100he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
