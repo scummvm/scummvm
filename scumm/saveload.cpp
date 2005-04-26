@@ -186,6 +186,13 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// Update volume settings
 	setupVolumes();
 
+	// Init NES costume data
+	if (_platform == Common::kPlatformNES) {
+		if (hdr.ver < VER(47))
+			_NESCostumeSet = 0;
+		NES_loadCostumeSet(_NESCostumeSet);
+	}
+
 	// Normally, _vm->_screenTop should always be >= 0, but for some old save games
 	// it is not, hence we check & correct it here.
 	if (_screenTop < 0)
@@ -721,14 +728,22 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		}
 
 
+	// Starting V14, we extended the usage bits, to be able to cope with games
+	// that have more than 30 actors (up to 94 are supported now, in theory).
+	// Since the format of the usage bits was changed by this, we have to
+	// convert them when loading an older savegame.
 	if (s->isLoading() && savegameVersion < VER(14))
 		upgradeGfxUsageBits();
 
+	// When loading, move the mouse to the saved mouse position.
 	if (s->isLoading() && savegameVersion >= VER(20)) {
 		updateCursor();
 		_system->warpMouse(_mouse.x, _mouse.y);
 	}
 
+	//
+	// Load actors
+	//
 	if (s->isLoading()) {
 		// Not all actor data is saved; so when loading, we first reset
 		// all actors, to ensure completely reproducible behaviour (else,
@@ -737,6 +752,10 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 			_actors[i].initActor(-1);
 	}
 	s->saveLoadArrayOf(_actors, _numActors, sizeof(_actors[0]), actorEntries);
+	
+	//
+	// Load sound data
+	//
 	s->saveLoadEntries(_sound, soundEntries);
 
 	if (savegameVersion < VER(9))
@@ -755,12 +774,6 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 			vm.slot[i].cycle = 1;
 		}
 	}
-
-	if (_platform == Common::kPlatformNES)
-		if (savegameVersion < VER(47))
-			NES_loadCostumeSet(_NESCostumeSet = 0);
-		else
-			NES_loadCostumeSet(_NESCostumeSet);
 
 	if (_heversion >= 90) {
 		((ScummEngine_v90he *)this)->saveOrLoadSpriteData(&*s, savegameVersion);
@@ -900,7 +913,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 			info = AudioCD.getStatus();
 		s->saveLoadArrayOf(&info, 1, sizeof(info), audioCDEntries);
 		// If we are loading, and the music being loaded was supposed to loop
-		// forever, then resume playing it. This helps a lot of audio CD
+		// forever, then resume playing it. This helps a lot when the audio CD
 		// is used to provide ambient music (see bug #788195).
 		if (s->isLoading() && info.playing && info.numLoops < 0)
 			AudioCD.play(info.track, info.numLoops, info.start, info.duration);
