@@ -28,7 +28,6 @@
 #include "scumm/imuse_digi/dimuse_bndmgr.h"
 #include "scumm/imuse_digi/dimuse_sndmgr.h"
 #include "scumm/music.h"
-#include "scumm/saveload.h"
 #include "scumm/sound.h"
 
 #include "sound/mixer.h"
@@ -41,6 +40,7 @@ namespace Scumm {
 
 struct imuseDigTable;
 struct imuseComiTable;
+class Serializer;
 
 class IMuseDigital : public MusicEngine {
 private:
