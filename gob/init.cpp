@@ -174,14 +174,12 @@ numFromTot	= word ptr -0Ah
 memAvail	= dword	ptr -6
 memBlocks	= word ptr -2*/
 
-	language = 5;
 	disableVideoCfg = 0x11;
 	disableMouseCfg = 0x15;
 	//reqRAMParag = 570;
 	//requiredSpace = 10;
 	strcpy(batFileName, "go");
 	init_soundVideo(1000, 1);
-	language = 2;
 
 	handle2 = data_openData("intro.stk");
 	if (handle2 >= 0) {

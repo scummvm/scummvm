@@ -130,7 +130,25 @@ int GobEngine::init(GameDetector &detector) {
 	snd_soundPort = 1;
 	useMouse = 1;
 	soundFlags = 0;
-	language = 5;
+
+	switch (Common::parseLanguage(ConfMan.get("language"))) {
+	case Common::FR_FRA:
+		language = 0;
+		break;
+	case Common::DE_DEU:
+		language = 1;
+		break;
+	case Common::ES_ESP:
+		language = 3;
+		break;
+	case Common::IT_ITA:
+		language = 4;
+		break;
+	default:
+		// Default to English
+		language = 2;
+		break;
+	}
 
 	return 0;
 }
