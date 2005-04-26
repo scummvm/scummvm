@@ -98,8 +98,8 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o90_startScriptUnk),
 		/* 2C */
 		OPCODE(o90_jumpToScriptUnk),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o90_smackerOps),
+		OPCODE(o90_getSmackerData),
 		OPCODE(o90_floodState),
 		/* 30 */
 		OPCODE(o90_mod),
@@ -508,6 +508,69 @@ void ScummEngine_v90he::o90_jumpToScriptUnk() {
 	flags = fetchScriptByte();
 	stopObjectCode();
 	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args, cycle);
+}
+
+void ScummEngine_v90he::o90_smackerOps() {
+	byte smackerFilename[260];
+
+	int subOp = fetchScriptByte();
+	subOp -= 49;
+
+	switch (subOp) {
+	case 0:
+		copyScriptString(smackerFilename, sizeof(smackerFilename));
+		break;
+	case 5:
+		pop();
+		break;
+	case 8:
+		memset(smackerFilename, 0, sizeof(smackerFilename));
+		pop();
+		break;
+	case 14:
+		pop();
+		break;
+	case 116:
+		break;
+	case 206:
+		break;
+	default:
+		error("o90_smackerOps: unhandled case %d", subOp);
+	}
+
+	debug(0,"o90_smackerOps stub (%d)", subOp);
+}
+
+void ScummEngine_v90he::o90_getSmackerData() {
+	int subOp = fetchScriptByte();
+	subOp -= 32;
+
+	switch (subOp) {
+	case 0:
+		pop();
+		break;
+	case 1:
+		pop();
+		break;
+	case 4:
+		pop();
+		break;
+	case 20:
+		pop();
+		break;
+	case 31:
+		pop();
+		break;
+	case 107:
+		pop();
+		pop();
+		break;
+	default:
+		error("o90_getSmackerData: unhandled case %d", subOp);
+	}
+
+	push(0);
+	debug(0,"o90_getSmackerData stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_wizImageOps() {

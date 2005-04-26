@@ -1130,6 +1130,8 @@ protected:
 	void o90_getActorData();
 	void o90_startScriptUnk();
 	void o90_jumpToScriptUnk();
+	void o90_smackerOps();
+	void o90_getSmackerData();
 	void o90_wizImageOps();
 	void o90_getDistanceBetweenPoints();
 	void o90_getSpriteInfo();
