@@ -137,7 +137,10 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		return;
 	}
 
+	loadRoomSubBlocks();
 	initRoomSubBlocks();
+
+	initBGBuffers(_roomHeight);
 
 	loadRoomObjects();
 
@@ -207,7 +210,14 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	CHECK_HEAP;
 }
 
-void ScummEngine::initRoomSubBlocks() {
+/**
+ * Init some static room data after a room has been loaded.
+ * E.g. the room dimension, the offset to the graphics data, the room scripts,
+ * the offset to the room palette and other things which won't be changed 
+ * late on.
+ * So it is possible to call this after loading a savegame.
+ */
+void ScummEngine::loadRoomSubBlocks() {
 	int i;
 	const byte *ptr;
 	byte *roomptr, *searchptr, *roomResPtr = 0;
@@ -218,8 +228,6 @@ void ScummEngine::initRoomSubBlocks() {
 	_EPAL_offs = 0;
 	_CLUT_offs = 0;
 	_PALS_offs = 0;
-
-	memset(_extraBoxFlags, 0, sizeof(_extraBoxFlags));
 
 	// Determine the room and room script base address
 	roomResPtr = roomptr = getResourceAddress(rtRoom, _roomResource);
@@ -279,82 +287,6 @@ void ScummEngine::initRoomSubBlocks() {
 		_ENCD_offs = ptr - roomResPtr;
 	if (_dumpScripts && _ENCD_offs)
 		dumpResource("entry-", _roomResource, roomResPtr + _ENCD_offs - _resourceHeaderSize, -1);
-
-	//
-	// Load box data
-	//
-	res.nukeResource(rtMatrix, 1);
-	res.nukeResource(rtMatrix, 2);
-	if (_features & GF_SMALL_HEADER) {
-		ptr = findResourceData(MKID('BOXD'), roomptr);
-		if (ptr) {
-			byte numOfBoxes = *ptr;
-			int size;
-			if (_version == 3)
-				size = numOfBoxes * SIZEOF_BOX_V3 + 1;
-			else
-				size = numOfBoxes * SIZEOF_BOX + 1;
-
-			res.createResource(rtMatrix, 2, size);
-			memcpy(getResourceAddress(rtMatrix, 2), ptr, size);
-			ptr += size;
-
-			size = getResourceDataSize(ptr - size - _resourceHeaderSize) - size;
-			if (size > 0) {					// do this :)
-				res.createResource(rtMatrix, 1, size);
-				memcpy(getResourceAddress(rtMatrix, 1), ptr, size);
-			}
-
-		}
-	} else {
-		ptr = findResourceData(MKID('BOXD'), roomptr);
-		if (ptr) {
-			int size = getResourceDataSize(ptr);
-			res.createResource(rtMatrix, 2, size);
-			roomptr = getResourceAddress(rtRoom, _roomResource);
-			ptr = findResourceData(MKID('BOXD'), roomptr);
-			memcpy(getResourceAddress(rtMatrix, 2), ptr, size);
-		}
-
-		ptr = findResourceData(MKID('BOXM'), roomptr);
-		if (ptr) {
-			int size = getResourceDataSize(ptr);
-			res.createResource(rtMatrix, 1, size);
-			roomptr = getResourceAddress(rtRoom, _roomResource);
-			ptr = findResourceData(MKID('BOXM'), roomptr);
-			memcpy(getResourceAddress(rtMatrix, 1), ptr, size);
-		}
-	}
-
-	//
-	// Load scale data
-	//
-	for (i = 1; i < res.num[rtScaleTable]; i++)
-		res.nukeResource(rtScaleTable, i);
-
-	ptr = findResourceData(MKID('SCAL'), roomptr);
-	if (ptr) {
-		int s1, s2, y1, y2;
-		if (_version == 8) {
-			for (i = 1; i < res.num[rtScaleTable]; i++, ptr += 16) {
-				s1 = READ_LE_UINT32(ptr);
-				y1 = READ_LE_UINT32(ptr + 4);
-				s2 = READ_LE_UINT32(ptr + 8);
-				y2 = READ_LE_UINT32(ptr + 12);
-				setScaleSlot(i, 0, y1, s1, 0, y2, s2);
-			}
-		} else {
-			for (i = 1; i < res.num[rtScaleTable]; i++, ptr += 8) {
-				s1 = READ_LE_UINT16(ptr);
-				y1 = READ_LE_UINT16(ptr + 2);
-				s2 = READ_LE_UINT16(ptr + 4);
-				y2 = READ_LE_UINT16(ptr + 6);
-				if (s1 || y1 || s2 || y2) {
-					setScaleSlot(i, 0, y1, s1, 0, y2, s2);
-				}
-			}
-		}
-	}
 
 	//
 	// Setup local scripts
@@ -478,15 +410,6 @@ void ScummEngine::initRoomSubBlocks() {
 		}
 	}
 
-	// Color cycling
-	// HE 7.0 games load resources but don't use them.
-	if (_version >= 4 && _heversion <= 60) {
-		ptr = findResourceData(MKID('CYCL'), roomptr);
-		if (ptr) {
-			initCycl(ptr);
-		}
-	}
-
 	// Transparent color
 	if (_version == 8)
 		gdi._transparentColor = (byte)READ_LE_UINT32(&(rmhd->v8.transparency));
@@ -509,7 +432,111 @@ void ScummEngine::initRoomSubBlocks() {
 				_HEV7ActorPalette[i] = i;
 		}
 	}
-			
+}
+
+/**
+ * Init some dynamic room data after a room has been loaded.
+ * E.g. the initial box data is loaded, the initial palette is set etc.
+ * All of the things setup in here can be modified later on by scripts.
+ * So it is not appropriate to call it after loading a savegame.
+ */
+void ScummEngine::initRoomSubBlocks() {
+	int i;
+	const byte *ptr;
+	byte *roomptr;
+
+	// Determine the room and room script base address
+	roomptr = getResourceAddress(rtRoom, _roomResource);
+	if (!roomptr)
+		error("Room %d: data not found (" __FILE__  ":%d)", _roomResource, __LINE__);
+
+	//
+	// Load box data
+	//
+	memset(_extraBoxFlags, 0, sizeof(_extraBoxFlags));
+
+	res.nukeResource(rtMatrix, 1);
+	res.nukeResource(rtMatrix, 2);
+	if (_features & GF_SMALL_HEADER) {
+		ptr = findResourceData(MKID('BOXD'), roomptr);
+		if (ptr) {
+			byte numOfBoxes = *ptr;
+			int size;
+			if (_version == 3)
+				size = numOfBoxes * SIZEOF_BOX_V3 + 1;
+			else
+				size = numOfBoxes * SIZEOF_BOX + 1;
+
+			res.createResource(rtMatrix, 2, size);
+			memcpy(getResourceAddress(rtMatrix, 2), ptr, size);
+			ptr += size;
+
+			size = getResourceDataSize(ptr - size - _resourceHeaderSize) - size;
+			if (size > 0) {					// do this :)
+				res.createResource(rtMatrix, 1, size);
+				memcpy(getResourceAddress(rtMatrix, 1), ptr, size);
+			}
+
+		}
+	} else {
+		ptr = findResourceData(MKID('BOXD'), roomptr);
+		if (ptr) {
+			int size = getResourceDataSize(ptr);
+			res.createResource(rtMatrix, 2, size);
+			roomptr = getResourceAddress(rtRoom, _roomResource);
+			ptr = findResourceData(MKID('BOXD'), roomptr);
+			memcpy(getResourceAddress(rtMatrix, 2), ptr, size);
+		}
+
+		ptr = findResourceData(MKID('BOXM'), roomptr);
+		if (ptr) {
+			int size = getResourceDataSize(ptr);
+			res.createResource(rtMatrix, 1, size);
+			roomptr = getResourceAddress(rtRoom, _roomResource);
+			ptr = findResourceData(MKID('BOXM'), roomptr);
+			memcpy(getResourceAddress(rtMatrix, 1), ptr, size);
+		}
+	}
+
+	//
+	// Load scale data
+	//
+	for (i = 1; i < res.num[rtScaleTable]; i++)
+		res.nukeResource(rtScaleTable, i);
+
+	ptr = findResourceData(MKID('SCAL'), roomptr);
+	if (ptr) {
+		int s1, s2, y1, y2;
+		if (_version == 8) {
+			for (i = 1; i < res.num[rtScaleTable]; i++, ptr += 16) {
+				s1 = READ_LE_UINT32(ptr);
+				y1 = READ_LE_UINT32(ptr + 4);
+				s2 = READ_LE_UINT32(ptr + 8);
+				y2 = READ_LE_UINT32(ptr + 12);
+				setScaleSlot(i, 0, y1, s1, 0, y2, s2);
+			}
+		} else {
+			for (i = 1; i < res.num[rtScaleTable]; i++, ptr += 8) {
+				s1 = READ_LE_UINT16(ptr);
+				y1 = READ_LE_UINT16(ptr + 2);
+				s2 = READ_LE_UINT16(ptr + 4);
+				y2 = READ_LE_UINT16(ptr + 6);
+				if (s1 || y1 || s2 || y2) {
+					setScaleSlot(i, 0, y1, s1, 0, y2, s2);
+				}
+			}
+		}
+	}
+
+	// Color cycling
+	// HE 7.0 games load resources but don't use them.
+	if (_version >= 4 && _heversion <= 60) {
+		ptr = findResourceData(MKID('CYCL'), roomptr);
+		if (ptr) {
+			initCycl(ptr);
+		}
+	}
+
 	// Polygons in HE 80+ games
 	if (_heversion >= 80) {
 		ptr = findResourceData(MKID('POLD'), roomptr);
@@ -520,12 +547,10 @@ void ScummEngine::initRoomSubBlocks() {
 
 	if (_PALS_offs || _CLUT_offs)
 		setPalette(0);
-
-	initBGBuffers(_roomHeight);
 }
 
-void ScummEngine_v3old::initRoomSubBlocks() {
-	int i;
+
+void ScummEngine_v3old::loadRoomSubBlocks() {
 	const byte *ptr;
 	byte *roomptr, *searchptr = 0;
 	const RoomHeader *rmhd;
@@ -536,16 +561,10 @@ void ScummEngine_v3old::initRoomSubBlocks() {
 	_CLUT_offs = 0;
 	_PALS_offs = 0;
 
-	memset(_extraBoxFlags, 0, sizeof(_extraBoxFlags));
-
 	// Determine the room and room script base address
 	roomptr = getResourceAddress(rtRoom, _roomResource);
 	if (!roomptr)
 		error("Room %d: data not found (" __FILE__  ":%d)", _roomResource, __LINE__);
-
-	// Reset room color for V1 zak
-	if (_version == 1)
-		_roomPalette[0] = 0;
 
 	//
 	// Determine the room dimensions (width/height)
@@ -617,47 +636,6 @@ void ScummEngine_v3old::initRoomSubBlocks() {
 		dumpResource("entry-", _roomResource, roomptr + _ENCD_offs - _resourceHeaderSize, ENCD_len);
 
 	//
-	// Load box data
-	//
-	res.nukeResource(rtMatrix, 1);
-	res.nukeResource(rtMatrix, 2);
-
-	if (_version <= 2)
-		ptr = roomptr + *(roomptr + 0x15);
-	else
-		ptr = roomptr + READ_LE_UINT16(roomptr + 0x15);
-	if (ptr) {
-		byte numOfBoxes = *ptr;
-		int size;
-		if (_version <= 2)
-			size = numOfBoxes * SIZEOF_BOX_V2 + 1;
-		else
-			size = numOfBoxes * SIZEOF_BOX_V3 + 1;
-
-		res.createResource(rtMatrix, 2, size);
-		memcpy(getResourceAddress(rtMatrix, 2), ptr, size);
-		ptr += size;
-		if (_version <= 2) {
-			size = numOfBoxes * (numOfBoxes + 1);
-		} else {
-			// FIXME. This is an evil HACK!!!
-			size = (READ_LE_UINT16(roomptr + 0x0A) - READ_LE_UINT16(roomptr + 0x15)) - size;
-		}
-
-		if (size > 0) {					// do this :)
-			res.createResource(rtMatrix, 1, size);
-			memcpy(getResourceAddress(rtMatrix, 1), ptr, size);
-		}
-
-	}
-
-	//
-	// No scale data in old bundle games
-	//
-	for (i = 1; i < res.num[rtScaleTable]; i++)
-		res.nukeResource(rtScaleTable, i);
-
-	//
 	// Setup local scripts
 	//
 
@@ -708,8 +686,63 @@ void ScummEngine_v3old::initRoomSubBlocks() {
 
 	// Transparent color
 	gdi._transparentColor = 255;
+}
 
-	initBGBuffers(_roomHeight);
+void ScummEngine_v3old::initRoomSubBlocks() {
+	int i;
+	const byte *ptr;
+	byte *roomptr;
+
+	// Determine the room and room script base address
+	roomptr = getResourceAddress(rtRoom, _roomResource);
+	if (!roomptr)
+		error("Room %d: data not found (" __FILE__  ":%d)", _roomResource, __LINE__);
+
+	// Reset room color for V1 zak
+	if (_version == 1)
+		_roomPalette[0] = 0;
+
+	//
+	// Load box data
+	//
+	res.nukeResource(rtMatrix, 1);
+	res.nukeResource(rtMatrix, 2);
+
+	if (_version <= 2)
+		ptr = roomptr + *(roomptr + 0x15);
+	else
+		ptr = roomptr + READ_LE_UINT16(roomptr + 0x15);
+	if (ptr) {
+		byte numOfBoxes = *ptr;
+		int size;
+		if (_version <= 2)
+			size = numOfBoxes * SIZEOF_BOX_V2 + 1;
+		else
+			size = numOfBoxes * SIZEOF_BOX_V3 + 1;
+
+		res.createResource(rtMatrix, 2, size);
+		memcpy(getResourceAddress(rtMatrix, 2), ptr, size);
+		ptr += size;
+		if (_version <= 2) {
+			size = numOfBoxes * (numOfBoxes + 1);
+		} else {
+			// FIXME. This is an evil HACK!!!
+			size = (READ_LE_UINT16(roomptr + 0x0A) - READ_LE_UINT16(roomptr + 0x15)) - size;
+		}
+
+		if (size > 0) {					// do this :)
+			res.createResource(rtMatrix, 1, size);
+			memcpy(getResourceAddress(rtMatrix, 1), ptr, size);
+		}
+
+	}
+
+	//
+	// No scale data in old bundle games
+	//
+	for (i = 1; i < res.num[rtScaleTable]; i++)
+		res.nukeResource(rtScaleTable, i);
+
 }
 
 } // End of namespace Scumm

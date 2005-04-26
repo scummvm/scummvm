@@ -704,6 +704,7 @@ protected:
 	void convertADResource(int type, int index, byte *ptr, int size);
 	int readSoundResourceSmallHeader(int type, int index);
 	bool isResourceInUse(int type, int i) const;
+	virtual void loadRoomSubBlocks();
 	virtual void initRoomSubBlocks();
 	void clearRoomObjects();
 	virtual void loadRoomObjects();

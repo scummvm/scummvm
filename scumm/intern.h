@@ -229,6 +229,7 @@ public:
 protected:
 	virtual void readResTypeList(int id, uint32 tag, const char *name);
 	virtual void readIndexFile();
+	virtual void loadRoomSubBlocks();
 	virtual void initRoomSubBlocks();
 	virtual void loadRoomObjects();
 };
