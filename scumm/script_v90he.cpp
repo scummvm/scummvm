@@ -569,7 +569,7 @@ void ScummEngine_v90he::o90_getSmackerData() {
 		error("o90_getSmackerData: unhandled case %d", subOp);
 	}
 
-	push(0);
+	push(-1);
 	debug(0,"o90_getSmackerData stub (%d)", subOp);
 }
 
