@@ -29,21 +29,52 @@ class OutSaveFile;
 
 namespace Scumm {
 
-// Support for "old" savegames (made with 2501 CVS build)
-// Can be useful for other ports too :)
 
-#define VER(x) x
+/**
+ * The current savegame format version.
+ * Our save/load system uses an elaborate scheme to allow us to modify the 
+ * savegame while keeping full backward compatibility, in the sense that newer
+ * ScummVM versions always are able to load old savegames.
+ * In order to achieve that, we store a version in the savegame files, and whenever
+ * the savegame layout is modified, the version is incremented.
+ *
+ * This roughly works by marking each savegame entry with a range of versions
+ * for which it is valid; the save/load code iterates over all entries, but
+ * only saves/loads those which are valid for the version of the savegame
+ * which is being loaded/saved currently.
+ */
 #define CURRENT_VER 49
 
-// To work around a warning in GCC 3.2 (and 3.1 ?) regarding non-POD types,
-// we use a small trick: instead of 0 we use 42. Why? Well, it seems newer GCC
-// versions have a heuristic built in to detect "offset-of" patterns - which is exactly
-// what our OFFS macro does. Now, for non-POD types this is not really legal, because
-// member need not be at a fixed offset relative to the variable, even if they are in
-// current reality (many of our complex structs are non-POD; for an explanation of 
-// what POD means refer to http://www-cpd.fnal.gov/personal/wb/boost/ISOcxx/doc/POD.html)
+/**
+ * An auxillary macro, used to specify savegame versions. We use this instead
+ * of just writing the raw version, because this way they stand out more to
+ * the reading eye, making it a bit easier to navigate through the code.
+ */
+#define VER(x) x
 
+
+/**
+ * The OFFS macro essentially provides the functionality of offsetof(), that
+ * is, it determines the offset of a struct/class member within instances of 
+ * that class.
+ *
+ * This is a place where we cheat a bit and sacrifice some potential portability
+ * (although so far we haven't encountered any platform where this matters).
+ *
+ * To work around a warning in GCC 3.2 (and 3.1 ?) regarding non-POD types,
+ * we use a small trick: instead of 0 we use 42. Why? Well, it seems newer GCC
+ * versions have a heuristic built in to detect "offset-of" patterns - which is exactly
+ * what our OFFS macro does. Now, for non-POD types this is not really legal, because
+ * member need not be at a fixed offset relative to the variable, even if they are in
+ * current reality (many of our complex structs are non-POD; for an explanation of 
+ * what POD means refer to http://www-cpd.fnal.gov/personal/wb/boost/ISOcxx/doc/POD.html)
+ */
 #define OFFS(type,item) (((long)(&((type*)42)->type::item))-42)
+
+/**
+ * Similar to the OFFS macro, this macro computes the size (in bytes) of a
+ * member of a given struct/class type.
+ */
 #define SIZE(type,item) sizeof(((type*)42)->type::item)
 
 // Any item that is still in use automatically gets a maxVersion equal to CURRENT_VER
