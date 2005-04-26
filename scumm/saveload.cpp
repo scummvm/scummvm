@@ -183,6 +183,9 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	saveOrLoad(&ser, hdr.ver);
 	delete in;
 	
+	// Update volume settings
+	setupVolumes();
+
 	// Normally, _vm->_screenTop should always be >= 0, but for some old save games
 	// it is not, hence we check & correct it here.
 	if (_screenTop < 0)
@@ -913,9 +916,6 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 
 	// This is probably only needed for Loom.
 	saveOrLoadCursorImages(s);
-
-	if (s->isLoading())
-		setupVolumes();
 }
 
 void ScummEngine::saveLoadResource(Serializer *ser, int type, int idx) {
