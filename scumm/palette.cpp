@@ -706,7 +706,7 @@ static int HSL2RGBHelper(int n1, int n2, int hue) {
  * components of the palette colors. It's used in CMI when Guybrush
  * walks from the beach towards the swamp.
  */
-void ScummEngine::desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor) {
+void ScummEngine_v8::desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor) {
 
 	if (startColor <= endColor) {
 		const byte *cptr;
@@ -925,8 +925,8 @@ const byte *ScummEngine::getPalettePtr(int palindex, int room) {
 		cptr += _CLUT_offs;
 	} else {
 		cptr = findPalInPals(cptr + _PALS_offs, palindex);
+		assert(cptr);
 	}
-	assert(cptr);
 	return cptr;
 }
 

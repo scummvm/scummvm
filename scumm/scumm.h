@@ -973,7 +973,6 @@ protected:
 	void setupShadowPalette(int slot, int redScale, int greenScale, int blueScale, int startColor, int endColor);
 	void setupShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor, int start, int end);
 	virtual void darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor);
-	void desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor);
 
 	void setupCursor();
 
