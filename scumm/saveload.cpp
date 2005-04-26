@@ -958,15 +958,63 @@ void ScummEngine_v70he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		MKEND()
 	};
 
+	const SaveLoadEntry HE70Entries[] = {
+		MKLINE(ScummEngine_v70he, _heSndSoundId, sleInt32, VER(51)),
+		MKLINE(ScummEngine_v70he, _heSndOffset, sleInt32, VER(51)),
+		MKLINE(ScummEngine_v70he, _heSndChannel, sleInt32, VER(51)),
+		MKLINE(ScummEngine_v70he, _heSndFlags, sleInt32, VER(51)),
+		MKEND()
+	};
+
 	if (_heversion >= 71) {
 		s->saveLoadArrayOf(_wiz._polygons, ARRAYSIZE(_wiz._polygons), sizeof(_wiz._polygons[0]), polygonEntries);
 	}
+
+	s->saveLoadEntries(this, HE70Entries);
 }
 
 void ScummEngine_v90he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	ScummEngine_v70he::saveOrLoad(s, savegameVersion);
 
+	const SaveLoadEntry floodStateEntries[] = {
+		MKLINE(FloodStateParameters, box.left, sleInt32, VER(51)),
+		MKLINE(FloodStateParameters, box.top, sleInt32, VER(51)),
+		MKLINE(FloodStateParameters, box.right, sleInt32, VER(51)),
+		MKLINE(FloodStateParameters, box.bottom, sleInt32, VER(51)),
+		MKLINE(FloodStateParameters, field_10, sleInt32, VER(51)),
+		MKLINE(FloodStateParameters, field_14, sleInt32, VER(51)),
+		MKLINE(FloodStateParameters, field_18, sleInt32, VER(51)),
+		MKLINE(FloodStateParameters, field_1C, sleInt32, VER(51)),
+		MKEND()
+	};
+
+	const SaveLoadEntry HE90Entries[] = {
+		MKLINE(ScummEngine_v90he, _curMaxSpriteId, sleInt32, VER(51)),
+		MKLINE(ScummEngine_v90he, _curSpriteId, sleInt32, VER(51)),
+		MKLINE(ScummEngine_v90he, _curSpriteGroupId, sleInt32, VER(51)),
+		MKLINE(ScummEngine_v90he, _numSpritesToProcess, sleInt32, VER(51)),
+		MKLINE(ScummEngine_v90he, _heObject, sleInt32, VER(51)),
+		MKLINE(ScummEngine_v90he, _heObjectNum, sleInt32, VER(51)),
+		MKLINE(ScummEngine_v90he, _hePaletteNum, sleInt32, VER(51)),
+		MKEND()
+	};
+
 	saveOrLoadSpriteData(&*s, savegameVersion);
+
+	s->saveLoadArrayOf(&_floodStateParams, 1, sizeof(_floodStateParams), floodStateEntries);
+	s->saveLoadEntries(this, HE90Entries);
+}
+
+void ScummEngine_v100he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
+	ScummEngine_v90he::saveOrLoad(s, savegameVersion);
+
+	const SaveLoadEntry HE100Entries[] = {
+		MKLINE(ScummEngine_v100he, _heResId, sleInt32, VER(51)),
+		MKLINE(ScummEngine_v100he, _heResType, sleInt32, VER(51)),
+		MKEND()
+	};
+
+	s->saveLoadEntries(this, HE100Entries);
 }
 
 void ScummEngine::saveLoadResource(Serializer *ser, int type, int idx) {

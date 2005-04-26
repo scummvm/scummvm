@@ -693,8 +693,7 @@ protected:
 
 	byte *_heV7RoomOffsets;
 
-	int _heSndSoundFreq, _heSndOffset, _heSndChannel, _heSndSoundId, _heSndFlags, _heSBNGId;
-
+	int32 _heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags, _heSndSoundFreq;
 public:
 	ScummEngine_v70he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
 	~ScummEngine_v70he();
@@ -910,8 +909,10 @@ protected:
 	
 	const OpcodeEntryV80he *_opcodesV80he;
 
+	int32 _heSBNGId;
+
 public:
-	ScummEngine_v80he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v72he(detector, syst, gs, md5sum) {}
+	ScummEngine_v80he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
 
 protected:
 	virtual void setupOpcodes();
@@ -953,27 +954,28 @@ protected:
 		const char *desc;
 	};
 
+	const OpcodeEntryV90he *_opcodesV90he;
+
 	struct FloodStateParameters {
 		Common::Rect box;
-		int field_10;
-		int field_14;
-		int field_18;
-		int field_1C;
+		int32 field_10;
+		int32 field_14;
+		int32 field_18;
+		int32 field_1C;
 	};
 
-	int _heObject, _heObjectNum;
-	int _hePaletteNum;
-	
-	const OpcodeEntryV90he *_opcodesV90he;
 	FloodStateParameters _floodStateParams;
 
-	int _curMaxSpriteId;
-	int _curSpriteId;
-	int _curSpriteGroupId;
-	int _varNumSpriteGroups;
-	int _numSpritesToProcess;
-	int _varNumSprites;
-	int _varMaxSprites;
+	int32 _heObject, _heObjectNum;
+	int32 _hePaletteNum;
+
+	int32 _curMaxSpriteId;
+	int32 _curSpriteId;
+	int32 _curSpriteGroupId;
+	int32 _numSpritesToProcess;
+	int32 _varNumSpriteGroups;
+	int32 _varNumSprites;
+	int32 _varMaxSprites;
 	SpriteInfo *_spriteTable;
 	SpriteGroup *_spriteGroups;
 	SpriteInfo **_activeSpritesTable;
@@ -1192,7 +1194,7 @@ protected:
 		const char *desc;
 	};
 
-	int _heResId, _heResType;
+	int32 _heResId, _heResType;
 
 	const OpcodeEntryV100he *_opcodesV100he;
 
@@ -1204,6 +1206,8 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 	
+	virtual void saveOrLoad(Serializer *s, uint32 savegameVersion);
+
 	virtual void decodeParseString(int a, int b);
 
 	/* HE version 100 script opcodes */

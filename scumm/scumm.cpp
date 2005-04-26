@@ -1266,7 +1266,6 @@ ScummEngine_v70he::ScummEngine_v70he(GameDetector *detector, OSystem *syst, cons
 	_heSndChannel = 0;
 	_heSndFlags = 0;
 	_heSndSoundFreq = 0;
-	_heSBNGId = 0;
 
 	VAR_NUM_SOUND_CHANNELS = 0xFF;
 }
@@ -1294,6 +1293,11 @@ ScummEngine_v72he::ScummEngine_v72he(GameDetector *detector, OSystem *syst, cons
 	VAR_POLYGONS_ONLY = 0xFF;
 	VAR_WINDOWS_VERSION = 0xFF;
 	VAR_WIZ_TCOLOR = 0xFF;
+}
+
+ScummEngine_v80he::ScummEngine_v80he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
+ : ScummEngine_v72he(detector, syst, gs, md5sum) {
+	_heSBNGId = 0;
 }
 
 ScummEngine_v8::ScummEngine_v8(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
