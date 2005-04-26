@@ -884,9 +884,9 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 			}
 		s->saveByte(0xFF);
 	} else {
-		int r;
-		while ((r = s->loadByte()) != 0xFF) {
-			res.flags[r][s->loadUint16()] |= RF_LOCK;
+		while ((i = s->loadByte()) != 0xFF) {
+			j = s->loadUint16();
+			res.flags[i][j] |= RF_LOCK;
 		}
 	}
 
