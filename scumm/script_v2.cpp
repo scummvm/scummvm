@@ -1041,7 +1041,7 @@ void ScummEngine_v2::o2_drawSentence() {
 	}
 
 	_string[2].charset = 1;
-	_string[2].ypos = virtscr[2].topline;
+	_string[2].ypos = virtscr[kVerbVirtScreen].topline;
 	_string[2].xpos = 0;
 	if (_platform == Common::kPlatformNES) {
 		_string[2].xpos = 16;
@@ -1066,13 +1066,13 @@ void ScummEngine_v2::o2_drawSentence() {
 	}
 
 	if (_platform == Common::kPlatformNES) {	// TODO - get multiline sentences working
-		sentenceline.top = virtscr[2].topline;
-		sentenceline.bottom = virtscr[2].topline + 16;
+		sentenceline.top = virtscr[kVerbVirtScreen].topline;
+		sentenceline.bottom = virtscr[kVerbVirtScreen].topline + 16;
 		sentenceline.left = 16;
 		sentenceline.right = 255;
 	} else {
-		sentenceline.top = virtscr[2].topline;
-		sentenceline.bottom = virtscr[2].topline + 8;
+		sentenceline.top = virtscr[kVerbVirtScreen].topline;
+		sentenceline.bottom = virtscr[kVerbVirtScreen].topline + 8;
 		sentenceline.left = 0;
 		sentenceline.right = 319;
 	}
@@ -1546,8 +1546,8 @@ void ScummEngine_v2::setUserState(byte state) {
 
 	// Hide all verbs and inventory
 	Common::Rect rect;
-	rect.top = virtscr[2].topline;
-	rect.bottom = virtscr[2].topline + 8 * 88;
+	rect.top = virtscr[kVerbVirtScreen].topline;
+	rect.bottom = virtscr[kVerbVirtScreen].topline + 8 * 88;
 	if (_platform == Common::kPlatformNES) {
 		rect.left = 16;
 		rect.right = 255;

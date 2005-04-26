@@ -272,7 +272,7 @@ void ScummEngine_v2::redrawV2Inventory() {
 
 	// Clear on all invocations
 	inventoryBox.top = vs->topline + inventoryArea;
-	inventoryBox.bottom = vs->topline + virtscr[2].h;
+	inventoryBox.bottom = vs->topline + virtscr[kVerbVirtScreen].h;
 	inventoryBox.left = 0;
 	inventoryBox.right = vs->w;
 	restoreBG(inventoryBox);

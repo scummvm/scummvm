@@ -266,27 +266,27 @@ void ScummEngine::initScreens(int b, int h) {
 		// version display, etc.). I don't know about V7, maybe the same is the
 		// case there. If so, we could probably just remove it completely.
 		if (_version >= 7) {
-			initVirtScreen(kUnkVirtScreen, 0, (_screenHeight / 2) - 10, _screenWidth, 13, false, false);
+			initVirtScreen(kUnkVirtScreen, (_screenHeight / 2) - 10, _screenWidth, 13, false, false);
 		} else {
-			initVirtScreen(kUnkVirtScreen, 0, 80, _screenWidth, 13, false, false);
+			initVirtScreen(kUnkVirtScreen, 80, _screenWidth, 13, false, false);
 		}
 	}
 
 	if ((_platform == Common::kPlatformNES) && (h != _screenHeight)) {
 		adj = 16;
-		initVirtScreen(kUnkVirtScreen, 0, 0, _screenWidth, adj, false, false);
+		initVirtScreen(kUnkVirtScreen, 0, _screenWidth, adj, false, false);
 	}
 
-	initVirtScreen(kMainVirtScreen, 0, b + adj, _screenWidth, h - b, true, true);
-	initVirtScreen(kTextVirtScreen, 0, adj, _screenWidth, b, false, false);
-	initVirtScreen(kVerbVirtScreen, 0, h + adj, _screenWidth, _screenHeight - h - adj, false, false);
+	initVirtScreen(kMainVirtScreen, b + adj, _screenWidth, h - b, true, true);
+	initVirtScreen(kTextVirtScreen, adj, _screenWidth, b, false, false);
+	initVirtScreen(kVerbVirtScreen, h + adj, _screenWidth, _screenHeight - h - adj, false, false);
 	_screenB = b;
 	_screenH = h;
 	
 	gdi.init();
 }
 
-void ScummEngine::initVirtScreen(VirtScreenNumber slot, int number, int top, int width, int height, bool twobufs,
+void ScummEngine::initVirtScreen(VirtScreenNumber slot, int top, int width, int height, bool twobufs,
 													 bool scrollable) {
 	VirtScreen *vs = &virtscr[slot];
 	int size;
@@ -664,7 +664,7 @@ void ScummEngine::initBGBuffers(int height) {
 		// Resize main virtual screen in V7 games. This is necessary
 		// because in V7, rooms may be higher than one screen, so we have
 		// to accomodate for that.
-		initVirtScreen(kMainVirtScreen, 0, virtscr[0].topline, _screenWidth, height, 1, 1);
+		initVirtScreen(kMainVirtScreen, virtscr[0].topline, _screenWidth, height, 1, 1);
 	}
 
 	if (_heversion >= 70)
