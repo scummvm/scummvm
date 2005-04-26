@@ -376,11 +376,11 @@ void BaseAnimationState::buildLookup() {
 	int16 *Cb_g_tab = &_colorTab[2 * 256];
 	int16 *Cb_b_tab = &_colorTab[3 * 256];
 
-	_rgbToPix = (uint16 *)malloc(3 * 768 * sizeof(uint16));
+	_rgbToPix = (OverlayColor *)malloc(3 * 768 * sizeof(OverlayColor));
 
-	uint16 *r_2_pix_alloc = &_rgbToPix[0 * 768];
-	uint16 *g_2_pix_alloc = &_rgbToPix[1 * 768];
-	uint16 *b_2_pix_alloc = &_rgbToPix[2 * 768];
+	OverlayColor *r_2_pix_alloc = &_rgbToPix[0 * 768];
+	OverlayColor *g_2_pix_alloc = &_rgbToPix[1 * 768];
+	OverlayColor *b_2_pix_alloc = &_rgbToPix[2 * 768];
 
 	int16 CR, CB;
 	int i;

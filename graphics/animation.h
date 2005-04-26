@@ -109,7 +109,7 @@ protected:
 	OverlayColor *_overlay;
 	int _bitFormat;
 	int16 *_colorTab;
-	uint16 *_rgbToPix;
+	OverlayColor *_rgbToPix;
 #endif
 
 public:
