@@ -121,6 +121,13 @@ bool ScummEngine::loadState(int slot, bool compat) {
 		return false;
 	}
 
+	// We (deliberately) broke HE savegame compatibility at some point.
+	if (hdr.ver < VER(50) && _heversion >= 71) {
+		warning("Unsupported version of '%s'", filename);
+		delete in;
+		return false;
+	}
+
 	// Due to a bug in scummvm up to and including 0.3.0, save games could be saved
 	// in the V8/V9 format but were tagged with a V7 mark. Ouch. So we just pretend V7 == V8 here
 	if (hdr.ver == VER(7))
@@ -383,33 +390,18 @@ bool ScummEngine::getSavegameName(int slot, char *desc) {
 		return false;
 	}
 
+	// We (deliberately) broke HE savegame compatibility at some point.
+	if (hdr.ver < VER(50) && _heversion >= 71) {
+		strcpy(desc, "Unsupported version");
+		return false;
+	}
+
 	memcpy(desc, hdr.name, sizeof(hdr.name));
 	desc[sizeof(hdr.name) - 1] = 0;
 	return true;
 }
 
 void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
-	const SaveLoadEntry polygonEntries[] = {
-		MKLINE(WizPolygon, vert[0].x, sleInt16, VER(40)),
-		MKLINE(WizPolygon, vert[0].y, sleInt16, VER(40)),
-		MKLINE(WizPolygon, vert[1].x, sleInt16, VER(40)),
-		MKLINE(WizPolygon, vert[1].y, sleInt16, VER(40)),
-		MKLINE(WizPolygon, vert[2].x, sleInt16, VER(40)),
-		MKLINE(WizPolygon, vert[2].y, sleInt16, VER(40)),
-		MKLINE(WizPolygon, vert[3].x, sleInt16, VER(40)),
-		MKLINE(WizPolygon, vert[3].y, sleInt16, VER(40)),
-		MKLINE(WizPolygon, vert[4].x, sleInt16, VER(40)),
-		MKLINE(WizPolygon, vert[4].y, sleInt16, VER(40)),
-		MKLINE(WizPolygon, bound.left, sleInt16, VER(40)),
-		MKLINE(WizPolygon, bound.top, sleInt16, VER(40)),
-		MKLINE(WizPolygon, bound.right, sleInt16, VER(40)),
-		MKLINE(WizPolygon, bound.bottom, sleInt16, VER(40)),
-		MKLINE(WizPolygon, id, sleInt16, VER(40)),
-		MKLINE(WizPolygon, numVerts, sleInt16, VER(40)),
-		MKLINE(WizPolygon, flag, sleByte, VER(40)),
-		MKEND()
-	};
-
 	const SaveLoadEntry objectEntries[] = {
 		MKLINE(ObjectData, OBIMoffset, sleUint32, VER(8)),
 		MKLINE(ObjectData, OBCDoffset, sleUint32, VER(8)),
@@ -778,13 +770,6 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		}
 	}
 
-	if (_heversion >= 90) {
-		((ScummEngine_v90he *)this)->saveOrLoadSpriteData(&*s, savegameVersion);
-	}
-	if (_heversion >= 71) {
-		Wiz *wiz = &((ScummEngine_v70he *)this)->_wiz;
-		s->saveLoadArrayOf(wiz->_polygons, ARRAYSIZE(wiz->_polygons), sizeof(wiz->_polygons[0]), polygonEntries);
-	}
 	s->saveLoadArrayOf(_objs, _numLocalObjects, sizeof(_objs[0]), objectEntries);
 	if (s->isLoading() && savegameVersion < VER(13)) {
 		// Since roughly v13 of the save games, the objs storage has changed a bit
@@ -961,6 +946,41 @@ void ScummEngine_v7::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 
 	assert(_imuseDigital);
 	_imuseDigital->saveOrLoad(s);
+}
+
+void ScummEngine_v70he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
+	ScummEngine::saveOrLoad(s, savegameVersion);
+
+	const SaveLoadEntry polygonEntries[] = {
+		MKLINE(WizPolygon, vert[0].x, sleInt16, VER(40)),
+		MKLINE(WizPolygon, vert[0].y, sleInt16, VER(40)),
+		MKLINE(WizPolygon, vert[1].x, sleInt16, VER(40)),
+		MKLINE(WizPolygon, vert[1].y, sleInt16, VER(40)),
+		MKLINE(WizPolygon, vert[2].x, sleInt16, VER(40)),
+		MKLINE(WizPolygon, vert[2].y, sleInt16, VER(40)),
+		MKLINE(WizPolygon, vert[3].x, sleInt16, VER(40)),
+		MKLINE(WizPolygon, vert[3].y, sleInt16, VER(40)),
+		MKLINE(WizPolygon, vert[4].x, sleInt16, VER(40)),
+		MKLINE(WizPolygon, vert[4].y, sleInt16, VER(40)),
+		MKLINE(WizPolygon, bound.left, sleInt16, VER(40)),
+		MKLINE(WizPolygon, bound.top, sleInt16, VER(40)),
+		MKLINE(WizPolygon, bound.right, sleInt16, VER(40)),
+		MKLINE(WizPolygon, bound.bottom, sleInt16, VER(40)),
+		MKLINE(WizPolygon, id, sleInt16, VER(40)),
+		MKLINE(WizPolygon, numVerts, sleInt16, VER(40)),
+		MKLINE(WizPolygon, flag, sleByte, VER(40)),
+		MKEND()
+	};
+
+	if (_heversion >= 71) {
+		s->saveLoadArrayOf(_wiz._polygons, ARRAYSIZE(_wiz._polygons), sizeof(_wiz._polygons[0]), polygonEntries);
+	}
+}
+
+void ScummEngine_v90he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
+	ScummEngine_v70he::saveOrLoad(s, savegameVersion);
+
+	saveOrLoadSpriteData(&*s, savegameVersion);
 }
 
 void ScummEngine::saveLoadResource(Serializer *ser, int type, int idx) {

@@ -709,6 +709,8 @@ protected:
 	virtual void setupScummVars();
 	virtual void initScummVars();
 
+	virtual void saveOrLoad(Serializer *s, uint32 savegameVersion);
+
 	virtual void readRoomsOffsets();
 	virtual void readGlobalObjects();
 	virtual void readIndexBlock(uint32 blocktype, uint32 itemsize);
@@ -988,7 +990,9 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void initScummVars();
-	
+
+	virtual void saveOrLoad(Serializer *s, uint32 savegameVersion);
+
 	virtual void readMAXS(int blockSize);
 
 	void createWizEmptyImage(const WizParameters *params);
