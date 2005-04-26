@@ -696,6 +696,10 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	if (s->isLoading())
 		memcpy(md5Backup, _gameMD5, 16);
 
+
+	//
+	// Save/load main state (many members of class ScummEngine get saved here)
+	//
 	s->saveLoadEntries(this, mainEntries);
 
 	// MD5 Operations: Backup on load, compare, and reset.
@@ -730,11 +734,13 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 			_actors[i].initActor(-1);
 	}
 	s->saveLoadArrayOf(_actors, _numActors, sizeof(_actors[0]), actorEntries);
+
 	
 	//
 	// Save/load sound data
 	//
 	s->saveLoadEntries(_sound, soundEntries);
+
 
 	//
 	// Save/load script data
@@ -756,6 +762,10 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		}
 	}
 
+
+	//
+	// Save/load local objects
+	//
 	s->saveLoadArrayOf(_objs, _numLocalObjects, sizeof(_objs[0]), objectEntries);
 	if (s->isLoading() && savegameVersion < VER(13)) {
 		// Since roughly v13 of the save games, the objs storage has changed a bit
@@ -764,14 +774,19 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		}
 
 	}
+
+
+	//
+	// Save/load misc stuff
+	//
 	s->saveLoadArrayOf(_verbs, _numVerbs, sizeof(_verbs[0]), verbEntries);
 	s->saveLoadArrayOf(vm.nest, 16, sizeof(vm.nest[0]), nestedScriptEntries);
 	s->saveLoadArrayOf(_sentence, 6, sizeof(_sentence[0]), sentenceTabEntries);
 	s->saveLoadArrayOf(_string, 6, sizeof(_string[0]), stringTabEntries);
 	s->saveLoadArrayOf(_colorCycle, 16, sizeof(_colorCycle[0]), colorCycleEntries);
-
 	if (savegameVersion >= VER(13))
 		s->saveLoadArrayOf(_scaleSlots, 20, sizeof(_scaleSlots[0]), scaleSlotsEntries);
+
 
 	//
 	// Save/load resources
@@ -820,14 +835,19 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
  			}
 	}
 
+
 	//
-	// Save/load object data
+	// Save/load global object state
 	//
 	s->saveLoadArrayOf(_objectOwnerTable, _numGlobalObjects, sizeof(_objectOwnerTable[0]), sleByte);
 	s->saveLoadArrayOf(_objectStateTable, _numGlobalObjects, sizeof(_objectStateTable[0]), sleByte);
 	if (_objectRoomTable)
 		s->saveLoadArrayOf(_objectRoomTable, _numGlobalObjects, sizeof(_objectRoomTable[0]), sleByte);
 
+
+	//
+	// Save/load palette data
+	//
 	if (_shadowPaletteSize) {
 		s->saveLoadArrayOf(_shadowPalette, _shadowPaletteSize, 1, sleByte);
 		// _roomPalette didn't show up until V21 save games
@@ -847,6 +867,10 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		s->saveLoadArrayOf(_palManipIntermediatePal, 0x600, 1, sleByte);
 	}
 
+
+	//
+	// Save/load more global object state
+	//
 	s->saveLoadArrayOf(_classData, _numGlobalObjects, sizeof(_classData[0]), sleUint32);
 
 
@@ -872,6 +896,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 
 	s->saveLoadArrayOf(_bitVars, _numBitVariables >> 3, 1, sleByte);
 
+
 	//
 	// Save/load a list of the locked objects
 	//
@@ -891,6 +916,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		}
 	}
 
+
 	//
 	// Save/load the Audio CD status
 	//
@@ -905,6 +931,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		if (s->isLoading() && info.playing && info.numLoops < 0)
 			AudioCD.play(info.track, info.numLoops, info.start, info.duration);
 	}
+
 
 	//
 	// Save/load the iMuse status
