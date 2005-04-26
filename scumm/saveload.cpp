@@ -742,7 +742,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	}
 
 	//
-	// Load actors
+	// Save/load actors
 	//
 	if (s->isLoading()) {
 		// Not all actor data is saved; so when loading, we first reset
@@ -754,10 +754,13 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	s->saveLoadArrayOf(_actors, _numActors, sizeof(_actors[0]), actorEntries);
 	
 	//
-	// Load sound data
+	// Save/load sound data
 	//
 	s->saveLoadEntries(_sound, soundEntries);
 
+	//
+	// Save/load script data
+	//
 	if (savegameVersion < VER(9))
 		s->saveLoadArrayOf(vm.slot, 25, sizeof(vm.slot[0]), scriptSlotEntries);
 	else if (savegameVersion < VER(20))
@@ -799,7 +802,9 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	if (savegameVersion >= VER(13))
 		s->saveLoadArrayOf(_scaleSlots, 20, sizeof(_scaleSlots[0]), scaleSlotsEntries);
 
-	// Save all resource.
+	//
+	// Save/load resources
+	//
 	int type, idx;
 	if (savegameVersion >= VER(26)) {
 		// New, more robust resource save/load system. This stores the type
@@ -844,6 +849,9 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
  			}
 	}
 
+	//
+	// Save/load object data
+	//
 	s->saveLoadArrayOf(_objectOwnerTable, _numGlobalObjects, sizeof(_objectOwnerTable[0]), sleByte);
 	s->saveLoadArrayOf(_objectStateTable, _numGlobalObjects, sizeof(_objectStateTable[0]), sleByte);
 	if (_objectRoomTable)
@@ -870,6 +878,10 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 
 	s->saveLoadArrayOf(_classData, _numGlobalObjects, sizeof(_classData[0]), sleUint32);
 
+
+	//
+	// Save/load script variables
+	//
 	var120Backup = _scummVars[120];
 	var98Backup = _scummVars[98];
 
@@ -889,7 +901,9 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 
 	s->saveLoadArrayOf(_bitVars, _numBitVariables >> 3, 1, sleByte);
 
-	/* Save or load a list of the locked objects */
+	//
+	// Save/load a list of the locked objects
+	//
 	if (s->isSaving()) {
 		for (i = rtFirst; i <= rtLast; i++)
 			for (j = 1; j < res.num[i]; j++) {
@@ -906,7 +920,9 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		}
 	}
 
-	// Save/load Audio CD status
+	//
+	// Save/load the Audio CD status
+	//
 	if (savegameVersion >= VER(24)) {
 		AudioCDManager::Status info;
 		if (s->isSaving())
@@ -919,6 +935,9 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 			AudioCD.play(info.track, info.numLoops, info.start, info.duration);
 	}
 
+	//
+	// Save/load the iMuse status
+	//
 	if (_imuse && (_saveSound || !_saveTemporaryState)) {
 		_imuse->save_or_load(s, this);
 	}
