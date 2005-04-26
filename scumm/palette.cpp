@@ -211,7 +211,6 @@ void ScummEngine::setPaletteFromPtr(const byte *ptr, int numcolor) {
 
 	if (numcolor < 0) {
 		if (_features & GF_SMALL_HEADER) {
-			ptr += _resourceHeaderSize;
 			if (_features & GF_OLD256)
 				numcolor = READ_LE_UINT16(ptr);
 			else

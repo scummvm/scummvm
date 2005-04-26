@@ -384,23 +384,9 @@ void ScummEngine::loadRoomSubBlocks() {
 		_EPAL_offs = ptr - roomptr;
 
 	// Locate the standard room palette (for V3-V5 games).
-	// TODO: We used to use findResourceSmall instead of findResourceData;
-	// in the small header case. That means we have to do some ugly trickery
-	// in order to emulate the old behaviour. It would be very nice to get
-	// rid of that. That would require some changes to the palette code.
-	// In particular, it seems only setPaletteFromPtr would have to be
-	// adapted, which would be trivial, since it now adds _resourceHeaderSize
-	// to the palette pointer.
-	//
-	// Of course this would break savegame compatibility unless extra code
-	// were added to the save/load system to cope with this. 
 	ptr = findResourceData(MKID('CLUT'), roomptr);
-
-	if (ptr) {
-		if ((_features & GF_SMALL_HEADER) && ptr)
-			ptr -= _resourceHeaderSize;
+	if (ptr)
 		_CLUT_offs = ptr - roomptr;
-	}
 
 	// Locate the standard room palettes (for V6+ games).
 	if (_version >= 6) {
