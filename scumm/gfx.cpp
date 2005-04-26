@@ -1674,6 +1674,12 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 	VirtScreen *vs = &_vm->virtscr[0];
 	byte *backbuff_ptr, *bgbak_ptr;
 	int numLinesToProcess;
+	
+	if (bottom >= vs->h)
+		bottom = vs->h;
+
+	if (top >= bottom)
+		return;
 
 	assert(0 <= strip && strip < _numStrips);
 
