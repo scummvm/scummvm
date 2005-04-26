@@ -585,6 +585,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "puttdemo", "Putt-Putt's Demo", kGenMacNoParens },
 	{ "puttmoon", "Putt-Putt Moon", kGenMacNoParens },
 	{ "puttputt", "Putt-Putt Parade", kGenMacNoParens },
+	{ "puttrace", "Putt Race", kGenMac },
 	{ "PuttsFunShop", "Putt's FunShop", kGenMac },
 	{ "putttime", "PuttTTT", kGenPC },
 	{ "putttime", "PuttPuttTTT", kGenPC },

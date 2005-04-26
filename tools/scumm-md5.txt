@@ -377,7 +377,7 @@ Pajama Sam's Sock Works
 	-	Windows	ru	19263586f749a560c1adf8b3393a9593	socks	sev
 
 Putt-Putt Enters the Race
-	-	Windows	en	981e1e1891f2be7e25a01f50ae55a5af	puttrace
+	-	All	en	981e1e1891f2be7e25a01f50ae55a5af	puttrace	Kirben
 	Demo	All	en	0ac41e2e3d2174e5a042a6b565328dba	racedemo	sev
 	Demo	All	en	6af2419fe3db5c2fdb091ae4e5833770	racedemo	Kirben
 	Demo	All	nl	aaa587701cde7e74692c68c1024b85eb	racedemo	joostp
