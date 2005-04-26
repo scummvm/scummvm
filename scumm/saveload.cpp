@@ -909,13 +909,26 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	if (_imuse && (_saveSound || !_saveTemporaryState)) {
 		_imuse->save_or_load(s, this);
 	}
+}
 
-	if (_imuseDigital) {
-		_imuseDigital->saveOrLoad(s);
-	}
+void ScummEngine_v5::saveOrLoad(Serializer *s, uint32 savegameVersion) {
+	ScummEngine::saveOrLoad(s, savegameVersion);
+
+	const SaveLoadEntry cursorEntries[] = {
+		MKARRAY2(ScummEngine_v5, _cursorImages[0][0], sleUint16, 16, 4, (byte*)_cursorImages[1] - (byte*)_cursorImages[0], VER(44)),
+		MKARRAY(ScummEngine_v5, _cursorHotspots[0], sleByte, 8, VER(44)),
+		MKEND()
+	};
 
 	// This is probably only needed for Loom.
-	saveOrLoadCursorImages(s);
+	s->saveLoadEntries(this, cursorEntries);
+}
+
+void ScummEngine_v7::saveOrLoad(Serializer *s, uint32 savegameVersion) {
+	ScummEngine::saveOrLoad(s, savegameVersion);
+
+	assert(_imuseDigital);
+	_imuseDigital->saveOrLoad(s);
 }
 
 void ScummEngine::saveLoadResource(Serializer *ser, int type, int idx) {

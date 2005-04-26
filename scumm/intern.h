@@ -64,6 +64,8 @@ protected:
 	virtual void initScummVars();
 	virtual void decodeParseString();
 
+	virtual void saveOrLoad(Serializer *s, uint32 savegameVersion);
+
 	virtual void readMAXS(int blockSize);
 
 	int getWordVararg(int *ptr);
@@ -79,7 +81,6 @@ protected:
 	void setBuiltinCursor(int index);
 	void redefineBuiltinCursorFromChar(int index, int chr);
 	void redefineBuiltinCursorHotspot(int index, int x, int y);
-	void saveOrLoadCursorImages(Serializer *s);
 
 	/* Version 5 script opcodes */
 	void o5_actorFollowCamera();
@@ -1242,6 +1243,8 @@ public:
 protected:
 	virtual void setupScummVars();
 	virtual void initScummVars();
+
+	virtual void saveOrLoad(Serializer *s, uint32 savegameVersion);
 
 	virtual void readMAXS(int blockSize);
 	virtual void readGlobalObjects();
