@@ -399,44 +399,14 @@ void BaseAnimationState::buildLookup() {
 	}
 
 	// Set up entries 0-255 in rgb-to-pixel value tables.
-
-	if (gBitFormat == 565) {
-		for (i = 0; i < 256; i++) {
-			r_2_pix_alloc[i + 256] = i >> (8 - 5);
-			r_2_pix_alloc[i + 256] <<= 11;
-			g_2_pix_alloc[i + 256] = i >> (8 - 6);
-			g_2_pix_alloc[i + 256] <<= 5;
-			b_2_pix_alloc[i + 256] = i >> (8 - 5);
-			// b_2_pix_alloc[i + 256] <<= 0;
-		}
-	} else if (gBitFormat == 555) {
-		for (i = 0; i < 256; i++) {
-			r_2_pix_alloc[i + 256] = i >> (8 - 5);
-			r_2_pix_alloc[i + 256] <<= 10;
-			g_2_pix_alloc[i + 256] = i >> (8 - 5);
-			g_2_pix_alloc[i + 256] <<= 5;
-			b_2_pix_alloc[i + 256] = i >> (8 - 5);
-			// b_2_pix_alloc[i + 256] <<= 0;
-		}
-	} else if (gBitFormat == 4444) {
-		for (i = 0; i < 256; i++) {
-			r_2_pix_alloc[i + 256] = i >> (8 - 4);
-			r_2_pix_alloc[i + 256] <<= 8;
-			g_2_pix_alloc[i + 256] = i >> (8 - 4);
-			g_2_pix_alloc[i + 256] <<= 4;
-			b_2_pix_alloc[i + 256] = i >> (8 - 4);
-			// b_2_pix_alloc[i + 256] <<= 0;
-			r_2_pix_alloc[i + 256] |= 0xf000;
-			g_2_pix_alloc[i + 256] |= 0xf000;
-			b_2_pix_alloc[i + 256] |= 0xf000;
-		}
-	} else {
-		error("Unknown bit format %d", gBitFormat);
+	for (i = 0; i < 256; i++) {
+		r_2_pix_alloc[i + 256] = _sys->RGBToColor(i, 0, 0);
+		g_2_pix_alloc[i + 256] = _sys->RGBToColor(0, i, 0);
+		b_2_pix_alloc[i + 256] = _sys->RGBToColor(0, 0, i);
 	}
 
 	// Spread out the values we have to the rest of the array so that we do
 	// not need to check for overflow.
-
 	for (i = 0; i < 256; i++) {
 		r_2_pix_alloc[i] = r_2_pix_alloc[256];
 		r_2_pix_alloc[i + 512] = r_2_pix_alloc[511];
