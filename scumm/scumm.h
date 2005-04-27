@@ -113,11 +113,14 @@ enum GameFeatures {
 	/** HE games without cursor resources */
 	GF_HE_CURSORLESS       = 1 << 12,
 
+	/** HE games without cursor resources */
+	GF_HE_LOCALIZED       = 1 << 13,
+
 	/** Games with multiple versions */
-	GF_MULTIPLE_VERSIONS   = 1 << 13,
+	GF_MULTIPLE_VERSIONS   = 1 << 14,
 	
 	/** A demo, not a full blown game. */
-	GF_DEMO                = 1 << 14
+	GF_DEMO                = 1 << 15
 };
 
 /* SCUMM Debug Channels */

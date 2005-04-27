@@ -345,15 +345,15 @@ static const ScummGameSettings scumm_settings[] = {
 	{"sf2-demo", "Spyfox 2: Some Assembly Required (Demo)", GID_HEGAME, 6, 99, 61, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
 	{"spyfox2", "Spyfox 2: Some Assembly Required", GID_HEGAME, 6, 99, 61, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformUnknown, 0, 0},
 	{"mustard", "Spy Fox in Hold the Mustard", GID_HEGAME, 6, 99, 61, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformUnknown, 0, 0},
 	{"football", "Backyard Football", GID_HEGAME, 6, 99, 61, MDT_NONE, // FIXME: number of actors
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
 
 	// Humongous Entertainment Scumm Version ?
 	{"freddicove", "Freddi Fish 5: The Case of the Creature of Coral Cave", GID_FREDDICOVE, 6, 99, 61, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformUnknown, 0, 0},
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED | GF_MULTIPLE_VERSIONS, Common::kPlatformUnknown, 0, 0},
 	{"pj3-demo", "Pajama Sam 3: You Are What You Eat From Your Head to Your Feet (Demo)", GID_HEGAME, 6, 99, 61, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
 	{"pajama3", "Pajama Sam 3: You Are What You Eat From Your Head to Your Feet", GID_HEGAME, 6, 99, 61, MDT_NONE,
@@ -365,9 +365,9 @@ static const ScummGameSettings scumm_settings[] = {
 	{"putttime", "Putt-Putt Travels Through Time", GID_HEGAME, 6, 99, 31, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformUnknown, 0, 0},
 	{"spyozon", "Spyfox 3: Operation Ozone", GID_HEGAME, 6, 99, 61, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformUnknown, 0, 0},
 	{"sf3-demo", "Spyfox 3: Operation Ozone (Demo)", GID_HEGAME, 6, 99, 61, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformUnknown, 0, 0},
 
 	{"bb2demo", "Backyard Baseball 2001 (Demo)", GID_HEGAME, 6, 99, 61, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
@@ -378,9 +378,9 @@ static const ScummGameSettings scumm_settings[] = {
 
 	// Humongous Entertainment Scumm Version ?
 	{"ff5demo", "Freddi Fish 5: The Case of the Creature of Coral Cave (Demo)", GID_FREDDICOVE, 6, 100, 61, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformUnknown, 0, 0},
 	{"pjgames", "Pajama Sam: Games to Play On Any Day", GID_HEGAME, 6, 100, 62, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformUnknown, 0, 0},
 
 	// Uses smacker in external files
 	{"artdemo", "Blue's Art Time Activities (Demo)", GID_HEGAME, 6, 99, 61, MDT_NONE,
@@ -442,9 +442,9 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
 
 	{"4ce2d5b355964bbcb5e5ce73236ef868", "Freddi Fish 5: The Case of the Creature of Coral Cave (Updated Ru)", GID_HEGAME, 6, 100, 61, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0}, // FIXME: number of actors
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformUnknown, 0, 0}, // FIXME: number of actors
 	{"21abe302e1b1e2b66d6f5c12e241ebfd", "Freddi Fish 5: The Case of the Creature of Coral Cave (Unencrypted)", GID_HEGAME, 6, 99, 61, MDT_NONE,
-	 GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
+	 GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformUnknown, 0, 0},
 
 	{"4dbff3787aedcd96b0b325f2d92d7ad9", "Freddi Fish and Luther's Maze Madness (Updated)", GID_HEGAME, 6, 100, 60, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
