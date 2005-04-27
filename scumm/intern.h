@@ -836,7 +836,7 @@ protected:
 
 	/* HE version 72 script opcodes */
 	void o72_pushDWord();
-	void o72_addMessageToStack();
+	void o72_getScriptString();
 	void o72_isAnyOf();
 	void o72_resetCutscene();
 	void o72_findObjectWithClassOf();

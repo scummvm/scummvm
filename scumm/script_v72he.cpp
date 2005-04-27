@@ -49,7 +49,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o72_pushDWord),
 		OPCODE(o6_pushWordVar),
 		/* 04 */
-		OPCODE(o72_addMessageToStack),
+		OPCODE(o72_getScriptString),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_wordArrayRead),
@@ -610,9 +610,9 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 
 	// Get string
 	if (scriptString) {
-		addMessageToStack(_scriptPointer, string, sizeof(string));
-		len = resStrLen(_scriptPointer);
-		_scriptPointer += len + 1;
+		len = resStrLen(_scriptPointer) + 1;
+		memcpy(string, _scriptPointer, len);
+		_scriptPointer += len;
 	} else {
 		copyScriptString(string, sizeof(string));
 		len = resStrLen(string) + 1;
@@ -776,7 +776,7 @@ void ScummEngine_v72he::o72_pushDWord() {
 	push(a);
 }
 
-void ScummEngine_v72he::o72_addMessageToStack() {
+void ScummEngine_v72he::o72_getScriptString() {
 	byte chr;
 
 	while ((chr = fetchScriptByte()) != 0) {
@@ -1305,7 +1305,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		int slot = pop();
 
 		int len = resStrLen(string) + 1;
-		addMessageToStack(string, a->_heTalkQueue[slot].sentence, len);
+		memcpy(a->_heTalkQueue[slot].sentence, string, len);
 
 		a->_heTalkQueue[slot].posX = a->_talkPosX;
 		a->_heTalkQueue[slot].posY = a->_talkPosY;

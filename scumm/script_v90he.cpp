@@ -47,7 +47,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o72_pushDWord),
 		OPCODE(o6_pushWordVar),
 		/* 04 */
-		OPCODE(o72_addMessageToStack),
+		OPCODE(o72_getScriptString),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_wordArrayRead),

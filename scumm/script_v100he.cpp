@@ -159,7 +159,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		/* 5C */
 		OPCODE(o6_pushByte),
 		OPCODE(o72_pushDWord),
-		OPCODE(o72_addMessageToStack),
+		OPCODE(o72_getScriptString),
 		OPCODE(o6_pushWord),
 		/* 60 */
 		OPCODE(o6_pushWordVar),
@@ -487,7 +487,7 @@ void ScummEngine_v100he::o100_actorOps() {
 		int slot = pop();
 
 		int len = resStrLen(string) + 1;
-		addMessageToStack(string, a->_heTalkQueue[slot].sentence, len);
+		memcpy(a->_heTalkQueue[slot].sentence, string, len);
 
 		a->_heTalkQueue[slot].posX = a->_talkPosX;
 		a->_heTalkQueue[slot].posY = a->_talkPosY;
