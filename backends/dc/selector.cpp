@@ -468,9 +468,7 @@ bool selectGame(char *&ret, char *&dir_ret, Icon &icon)
     chdir(the_game.dir);
 #else
     chdir("/");
-    static char dirarg[258];
-    sprintf(dirarg, "-p%s", the_game.dir);
-    dir_ret = dirarg;
+    dir_ret = the_game.dir;
 #endif
     ret = the_game.filename_base;
     icon = the_game.icon;

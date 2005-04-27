@@ -31,6 +31,7 @@
 #include "dc.h"
 #include "icon.h"
 #include "DCLauncherDialog.h"
+#include <common/config-manager.h>
 
 
 Icon icon;
@@ -217,22 +218,17 @@ int main()
 
 int DCLauncherDialog::runModal()
 {
-  static char *argv[] = { "scummvm", NULL, NULL, NULL };
-  static int argc = 3;
+  char *base = NULL, *dir = NULL;
 
-  if(!selectGame(argv[2], argv[1], icon))
+  if(!selectGame(base, dir, icon))
     exit(0);
 
-  FIXME: This is an evil hack:
-  _detector.parseCommandLine(argc, argv);
-
-  But doing it properly isn't that hard, actually:
-  
   // Set the game path.
-  ConfMan.set("path", the_desired_path, kTransientDomain);
+  if(dir != NULL)
+    ConfMan.set("path", dir, Common::ConfigManager::kTransientDomain);
   
   // Set the target.
-  _detector.setTarget(target_name);
+  _detector.setTarget(base);
 
   return 0;
 }
