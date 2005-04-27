@@ -21,6 +21,8 @@
 #include "common/stdafx.h"
 #include "common/system.h"
 
+#include "graphics/primitives.h"
+
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/build_display.h"
@@ -225,48 +227,7 @@ static void plot(int x, int y, int colour, void *data) {
  */
 
 void Screen::drawLine(int x0, int y0, int x1, int y1, uint8 colour) {
-	drawLine(x0, y0, x1, y1, colour, &plot, this);
-}
-
-// TODO: Main line-drawing function. Move this somewhere where other engines
-//	 can benefit from it.
-
-void Screen::drawLine(int x0, int y0, int x1, int y1, int color, void (*plotProc)(int, int, int, void *), void *data) {
-	// Bresenham's line algorithm, as described by Wikipedia
-	bool steep = ABS(y1 - y0) > ABS(x1 - x0);
-
-	if (steep) {
-		SWAP(x0, y0);
-		SWAP(x1, y1);
-	}
-
-	int delta_x = ABS(x1 - x0);
-	int delta_y = ABS(y1 - y0);
-	int err = 0;
-	int delta_err = delta_y;
-	int x = x0;
-	int y = y0;
-
-	int x_step = (x0 < x1) ? 1 : -1;
-	int y_step = (y0 < y1) ? 1 : -1;
-
-	if (steep)
-		(*plotProc)(y, x, color, data);
-	else
-		(*plotProc)(x, y, color, data);
-
-	while (x != x1) {
-		x += x_step;
-		err += delta_err;
-		if (2 * err > delta_x) {
-			y += y_step;
-			err -= delta_x;
-		}
-		if (steep)
-			(*plotProc)(y, x, color, data);
-		else
-			(*plotProc)(x, y, color, data);
-	}
+	Graphics::drawLine(x0, y0, x1, y1, colour, &plot, this);
 }
 
 /**
