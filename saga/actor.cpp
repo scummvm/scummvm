@@ -229,10 +229,6 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 			actor->currentAction = ITE_ActorTable[i].currentAction;
 			actor->facingDirection = ITE_ActorTable[i].facingDirection;
 			actor->actionDirection = ITE_ActorTable[i].actionDirection;
-			actor->frameNumber = 0;
-			actor->targetObject = ID_NOTHING;
-			actor->actorFlags = 0;
-			actor->lastZone = NULL;
 
 			actor->location.x = ITE_ActorTable[i].x;
 			actor->location.y = ITE_ActorTable[i].y;
@@ -255,12 +251,10 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 			obj->spriteListResourceId = ITE_ObjectTable[i].spriteListResourceId;
 			obj->sceneNumber = ITE_ObjectTable[i].sceneIndex;
 			obj->interactBits = ITE_ObjectTable[i].interactBits;
-			obj->flags = 0;
 
 			obj->location.x = ITE_ObjectTable[i].x;
 			obj->location.y = ITE_ObjectTable[i].y;
 			obj->location.z = ITE_ObjectTable[i].z;
-			obj->disabled = false;
 		}
 	
 	} else {
@@ -1248,7 +1242,7 @@ bool Actor::getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber
 	} else {
 		if (validActorId(commonObjectData->id)) {
 			spriteList = &((ActorData*)commonObjectData)->spriteList;	
-			frameNumber = commonObjectData->frameNumber;			
+			frameNumber = ((ActorData*)commonObjectData)->frameNumber;			
 		} else {
 			if (validObjId(commonObjectData->id)) {
 				spriteList = &_vm->_sprite->_mainSprites;

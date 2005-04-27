@@ -42,10 +42,9 @@ namespace Saga {
 void SagaEngine::save() {
 	File out;
 
-	out.open("ite.sav", File::kFileWriteMode);
+	out.open("iteSCUMMVM.sav", File::kFileWriteMode);
+	//TODO: version number
 
-	out.writeSint16LE(_actor->_actorsCount);
-	out.writeSint16LE(_actor->_objsCount);
 	out.writeSint16LE(_script->_commonBufferSize);
 	out.writeSint16LE(_actor->getProtagState());
 
@@ -61,37 +60,12 @@ void SagaEngine::save() {
 
 	for (i = 0; i < _actor->_actorsCount; i++) {
 		ActorData *a = _actor->_actors[i];
-
-		out.writeSint32LE(a->sceneNumber);
-		out.writeSint16LE(a->location.x);
-		out.writeSint16LE(a->location.y);
-		out.writeSint16LE(a->location.z);
-		out.writeSint16LE(a->finalTarget.x);
-		out.writeSint16LE(a->finalTarget.y);
-		out.writeSint16LE(a->finalTarget.z);
-		out.writeByte(a->currentAction);
-		out.writeByte(a->facingDirection);
-		out.writeSint16LE(a->targetObject);
-		out.writeByte(a->flags & (kProtagonist | kFollower));
-		out.writeByte(a->frameNumber);
-		out.writeSint16LE(0);
+		a->saveState(out);
 	}
 	
 	for (i = 0; i < _actor->_objsCount; i++) {
 		ObjectData *o = _actor->_objs[i];
-
-		out.writeSint32LE(o->sceneNumber);
-		out.writeSint32LE(o->id);
-		out.writeSint16LE(o->location.x);
-		out.writeSint16LE(o->location.y);
-		out.writeSint16LE(o->location.z);
-		out.writeSint16LE(o->nameIndex);
-		if (o->sceneNumber == ITE_SCENE_INV) {
-			out.writeSint16LE(_interface->inventoryItemPosition(_actor->objIndexToId(i)));
-		} else {
-			out.writeSint16LE(0);
-		}
-		out.writeByte(0);
+		o->saveState(out);
 	}
 	
 	for (i = 0; i < _script->_commonBufferSize; i++)
@@ -105,17 +79,15 @@ void SagaEngine::save() {
 
 void SagaEngine::load() {
 	File in;
-	int actorsCount, objsCount, commonBufferSize;
+	int  commonBufferSize;
 	int scenenum, inset;
 	int mapx, mapy;
 
-	in.open("ite.sav");
+	in.open("iteSCUMMVM.sav");
 
 	if (!in.isOpen())
 		return;
 
-	actorsCount = in.readSint16LE();
-	objsCount = in.readSint16LE();
 	commonBufferSize = in.readSint16LE();
 	_actor->setProtagState(in.readSint16LE());
 
@@ -131,42 +103,16 @@ void SagaEngine::load() {
 
 	uint16 i;
 
-	for (i = 0; i < actorsCount; i++) {
+	for (i = 0; i < _actor->_actorsCount; i++) {
 		ActorData *a = _actor->_actors[i];
-
-		a->sceneNumber = in.readSint32LE();
-		a->location.x = in.readSint16LE();
-		a->location.y = in.readSint16LE();
-		a->location.z = in.readSint16LE();
-		a->finalTarget.x = in.readSint16LE();
-		a->finalTarget.y = in.readSint16LE();
-		a->finalTarget.z = in.readSint16LE();
-		a->currentAction = in.readByte();
-		a->facingDirection = in.readByte();
-		a->targetObject = in.readSint16LE();
-		a->flags = (a->flags & ~(kProtagonist | kFollower) | in.readByte());
-		a->frameNumber = in.readByte();
-		in.readSint16LE();
+		a->loadState(in);
 	}
 	
-	_interface->clearInventory();
+	_interface->clearInventory(); //TODO: interface load-save-state
 
-	for (i = 0; i < objsCount; i++) {
+	for (i = 0; i < _actor->_objsCount; i++) {
 		ObjectData *o = _actor->_objs[i];
-		int pos;
-
-		o->sceneNumber = in.readSint32LE();
-		o->id = in.readSint32LE();
-		o->location.x = in.readSint16LE();
-		o->location.y = in.readSint16LE();
-		o->location.z = in.readSint16LE();
-		o->nameIndex = in.readSint16LE();
-		
-		pos = in.readSint16LE();
-		if (o->sceneNumber == ITE_SCENE_INV) {
-			_interface->addToInventory(_actor->objIndexToId(i), pos);
-		}
-		in.readByte();
+		o->loadState(in);
 	}
 	
 	for (i = 0; i < commonBufferSize; i++)

@@ -1337,11 +1337,8 @@ void IsoMap::findTilePath(ActorData* actor, const Location &start, const Locatio
 		i = 64;
 	}*/
 	actor->walkStepsCount = i;
-	if (i) {	
-		if (actor->tileDirectionsAlloced < i) {
-			actor->tileDirectionsAlloced = i;
-			actor->tileDirections = (byte*)realloc(actor->tileDirections, actor->tileDirectionsAlloced * sizeof(*actor->tileDirections));
-		}
+	if (i) {
+		actor->setTileDirectionsSize(i, false);
 		memcpy(actor->tileDirections, res, i );
 	}
 }

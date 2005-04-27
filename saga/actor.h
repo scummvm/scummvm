@@ -26,6 +26,8 @@
 #ifndef SAGA_ACTOR_H__
 #define SAGA_ACTOR_H__
 
+#include "common/file.h"
+
 #include "saga/sprite.h"
 #include "saga/itedata.h"
 #include "saga/list.h"
@@ -131,28 +133,39 @@ struct ActorFrameSequence {
 };
 
 struct Location {
-	int x;					// logical coordinates
-	int y;					// 
-	int z;					// 
+	int32 x;					// logical coordinates
+	int32 y;					// 
+	int32 z;					// 
 	Location() {
 		x = y = z = 0;
 	}
+	void saveState(File& out) {
+		out.writeSint32LE(x);
+		out.writeSint32LE(y);
+		out.writeSint32LE(z);
+	}
+	void loadState(File& in) {
+		x = in.readSint32LE();
+		y = in.readSint32LE();
+		z = in.readSint32LE();
+	}
+
 	int distance(const Location &location) const {
 		return MAX(ABS(x - location.x), ABS(y - location.y));
 	}
-	int &u() {
+	int32 &u() {
 		return x;
 	}
-	int &v() {
+	int32 &v() {
 		return y;
 	}
-	int u() const {
+	int32 u() const {
 		return x;
 	}
-	int v() const {
+	int32 v() const {
 		return y;
 	}
-	int uv() const {
+	int32 uv() const {
 		return u() + v();
 	}
 	void delta(const Location &location, Location &result) const {
@@ -190,30 +203,43 @@ struct Location {
 
 class CommonObjectData {
 public:
+//constant
 	bool disabled;				// disabled in init section 
-	int index;					// index in local array
+	int32 index;					// index in local array
 	uint16 id;					// object id
-	uint16 flags;				// initial flags
-	int nameIndex;				// index in name string list
-	int sceneNumber;			// scene
-	int scriptEntrypointNumber;	// script entrypoint number
-
+	int32 scriptEntrypointNumber;	// script entrypoint number
 	int32 spriteListResourceId;	// sprite list resource id
+
+//variables
+	uint16 flags;				// initial flags
+	int32 nameIndex;			// index in name string list
+	int32 sceneNumber;			// scene
 
 	Location location;			// logical coordinates
 	Point screenPosition;		// screen coordinates
-	int screenDepth;			//
-	int screenScale;			//
+	int32 screenDepth;			//
+	int32 screenScale;			//
 
-	int frameNumber;			// current frame number
-
-	CommonObjectData() {
-		screenDepth = screenScale = 0;
-		flags = 0;
-		frameNumber = 0;
-		spriteListResourceId = 0;
+	void saveState(File& out) {
+		out.writeUint16LE(flags);
+		out.writeSint32LE(nameIndex);
+		out.writeSint32LE(sceneNumber);
+		location.saveState(out);
+		out.writeSint16LE(screenPosition.x);
+		out.writeSint16LE(screenPosition.y);
+		out.writeSint32LE(screenDepth);
+		out.writeSint32LE(screenScale);
 	}
-
+	void loadState(File& in) {
+		flags = in.readUint16LE();
+		nameIndex = in.readSint32LE();
+		sceneNumber = in.readSint32LE();
+		location.loadState(in);
+		screenPosition.x = in.readSint16LE();
+		screenPosition.y = in.readSint16LE();
+		screenDepth = in.readSint32LE();
+		screenScale = in.readSint32LE();
+	}
 };
 
 typedef CommonObjectData *CommonObjectDataPointer;
@@ -222,65 +248,150 @@ typedef SortedList<CommonObjectDataPointer> CommonObjectOrderList;
 
 class ObjectData: public CommonObjectData {	
 public:
+	//constant
 	uint16 interactBits;
+	ObjectData() {
+		memset(this, 0, sizeof(*this)); 
+	}
 };
 
 class ActorData: public CommonObjectData {
 public:
-
-	byte speechColor;			// Actor dialogue color
-	
-	uint16 actorFlags;			// dynamic flags
-	int currentAction;			// ActorActions type
-	int facingDirection;		// orientation
-	int actionDirection;
-	int actionCycle;
-	uint16 targetObject;
-	const HitZone *lastZone;
-	
-	int cycleFrameSequence;
-	uint8 cycleDelay;
-	uint8 cycleTimeCount;
-	uint8 cycleFlags;
-
+	//constant
 	SpriteList spriteList;		// sprite list data
 
 	ActorFrameSequence *frames;	// Actor's frames
 	int framesCount;			// Actor's frames count
 	int frameListResourceId;	// Actor's frame list resource id
+
+	byte speechColor;			// Actor dialogue color
 	
-	int tileDirectionsAlloced;
+	//variables
+	uint16 actorFlags;			// dynamic flags
+	int32 currentAction;			// ActorActions type
+	int32 facingDirection;		// orientation
+	int32 actionDirection;
+	int32 actionCycle;
+	uint16 targetObject;
+	const HitZone *lastZone;
+	
+	int32 cycleFrameSequence;
+	uint8 cycleDelay;
+	uint8 cycleTimeCount;
+	uint8 cycleFlags;
+
+	int32 frameNumber;			// current frame number
+	
+	int32 tileDirectionsAlloced;
 	byte *tileDirections;
 
-	int walkStepsAlloced;
+	int32 walkStepsAlloced;
 	Point *walkStepsPoints;
 
-	int walkStepsCount;
-	int walkStepIndex;
+	int32 walkStepsCount;
+	int32 walkStepIndex;
 
 	Location finalTarget;
 	Location partialTarget;
-	int walkFrameSequence;
-	
+	int32 walkFrameSequence;
+
+	void saveState(File& out) {
+		CommonObjectData::saveState(out);
+		out.writeUint16LE(actorFlags);
+		out.writeSint32LE(currentAction);
+		out.writeSint32LE(facingDirection);
+		out.writeSint32LE(actionDirection);
+		out.writeSint32LE(actionCycle);
+		out.writeUint16LE(targetObject);
+
+		//TODO: write lastZone 
+		out.writeSint32LE(cycleFrameSequence);
+		out.writeByte(cycleDelay);
+		out.writeByte(cycleTimeCount);
+		out.writeByte(cycleFlags);
+		out.writeSint32LE(frameNumber);
+
+		out.writeSint32LE(tileDirectionsAlloced);
+		for(int i = 0; i < tileDirectionsAlloced; i++) {
+			out.writeByte(tileDirections[i]);
+		}
+
+		out.writeSint32LE(walkStepsAlloced);
+		for(int i = 0; i < walkStepsAlloced; i++) {
+			out.writeSint16LE(walkStepsPoints[i].x);
+			out.writeSint16LE(walkStepsPoints[i].y);
+		}
+
+		out.writeSint32LE(walkStepsCount);
+		out.writeSint32LE(walkStepIndex);
+		finalTarget.saveState(out);
+		partialTarget.saveState(out);
+		out.writeSint32LE(walkFrameSequence);
+	}
+	void loadState(File& in) {
+		CommonObjectData::loadState(in);
+		actorFlags = in.readUint16LE();
+		currentAction = in.readSint32LE();
+		facingDirection = in.readSint32LE();
+		actionDirection = in.readSint32LE();
+		actionCycle = in.readSint32LE();
+		targetObject = in.readUint16LE();
+
+		//TODO: read lastZone 
+		lastZone = NULL;
+		cycleFrameSequence = in.readSint32LE();
+		cycleDelay = in.readByte();
+		cycleTimeCount = in.readByte();
+		cycleFlags = in.readByte();
+		frameNumber = in.readSint32LE();
+
+		
+		setTileDirectionsSize(in.readSint32LE(), true);
+		for(int i = 0; i < tileDirectionsAlloced; i++) {
+			tileDirections[i] = in.readByte();
+		}
+
+		setWalkStepsPointsSize(in.readSint32LE(), true);
+		for(int i = 0; i < walkStepsAlloced; i++) {
+			walkStepsPoints[i].x = in.readSint16LE();
+			walkStepsPoints[i].y = in.readSint16LE();
+		}
+
+		walkStepsCount = in.readSint32LE();
+		walkStepIndex = in.readSint32LE();
+		finalTarget.loadState(in);
+		partialTarget.loadState(in);
+		walkFrameSequence = in.readSint32LE();
+	}
+
+	void setTileDirectionsSize(int size, bool forceRealloc) {
+		if ((size <= tileDirectionsAlloced) && !forceRealloc) {
+			return;
+		}
+		tileDirectionsAlloced = size;
+		tileDirections = (byte*)realloc(tileDirections, tileDirectionsAlloced * sizeof(*tileDirections));
+	}
+
 	void cycleWrap(int cycleLimit) {
 		if (actionCycle >= cycleLimit)
 			actionCycle = 0;
 	}
 
-	void addWalkStepPoint(const Point &point) {
-		if (walkStepsCount + 1 > walkStepsAlloced) {
-			walkStepsAlloced += 100;
-			walkStepsPoints = (Point*)realloc(walkStepsPoints, walkStepsAlloced * sizeof(*walkStepsPoints));
+	void setWalkStepsPointsSize(int size, bool forceRealloc) {
+		if ((size <= walkStepsAlloced) && !forceRealloc) {
+			return;
 		}
+		walkStepsAlloced = size;
+		walkStepsPoints = (Point*)realloc(walkStepsPoints, walkStepsAlloced * sizeof(*walkStepsPoints));		
+	}
+
+	void addWalkStepPoint(const Point &point) {
+		setWalkStepsPointsSize(walkStepsCount + 1, false);
 		walkStepsPoints[walkStepsCount++] = point;
 	}
 
 	ActorData() {
-		memset(this, 0xFE, sizeof(*this)); 
-		walkStepsPoints = NULL;
-		tileDirectionsAlloced = walkStepsAlloced = walkStepsCount = walkStepIndex = 0;
-		tileDirections = NULL;
-		memset(&spriteList, 0, sizeof(spriteList));
+		memset(this, 0, sizeof(*this)); 
 	}
 	~ActorData() {
 		free(frames);
