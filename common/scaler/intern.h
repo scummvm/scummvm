@@ -153,7 +153,7 @@ static inline bool diffYUV(int yuv1, int yuv2) {
  * 16bit RGB to YUV conversion table. This table is setup by InitLUT().
  * Used by the hq scaler family.
  */
-extern "C" uint   RGBtoYUV[65536];
+extern "C" uint   *RGBtoYUV;
 
 /** Auxiliary macro to simplify creating those template function wrappers. */
 #define MAKE_WRAPPER(FUNC) \

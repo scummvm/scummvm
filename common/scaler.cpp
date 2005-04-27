@@ -41,7 +41,34 @@ extern "C" {
 
 #endif
 
-uint RGBtoYUV[65536];
+// FIXME/TODO: The following two tables suck up 512 KB.
+// They should at least be allocated on the heap, to reduce the size of the
+// binary. 
+//
+// Note: a memory lookup table is *not* necessarily faster than computing
+// these things on the fly, because of its size. Both tables together, plus 
+// the code, plus the input/output GFX data, won't fit in the cache on many
+// systems, so main memory has to be accessed, which is about the worst thing
+// that can happen to code which tries to be fast...
+//
+// So we should think about ways to get these smaller / removed. The LUT16to32
+// is only used by the HQX asm right now; maybe somebody can modify the code
+// there to work w/o it (and do some benchmarking, too?). To do that, just
+// do the conversion on the fly, or even do w/o it (as the C++ code manages to),
+// by making different versions of the code based on gBitFormat (or by writing
+// bit masks into registers which are computed based on gBitFormat).
+//
+// RGBtoYUV is also used by the C(++) version of the HQX code. Maybe we can
+// use the same technique which is employed by our MPEG code to reduce the
+// size of the lookup tables at the cost of some additional computations? That
+// might actually result in a speedup, too, if done right (and the code code
+// might actually be suitable for AltiVec/MMX/SSE speedup).
+// 
+// Of course, the above is largely a conjecture, and the actual speed
+// differences are likely to vary a lot between different architectures and
+// CPUs.
+uint RGBtoYUVstorage[65536];
+uint *RGBtoYUV = RGBtoYUVstorage;
 uint LUT16to32[65536];
 }
 
