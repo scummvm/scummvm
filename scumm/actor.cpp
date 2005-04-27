@@ -147,6 +147,10 @@ void Actor::initActor(int mode) {
 	_clipOverride = _vm->_actorClipOverride;
 
 	_auxBlock.visible = false;
+	_auxBlock.r.left = 0;
+	_auxBlock.r.top = 0;
+	_auxBlock.r.right = -1;
+	_auxBlock.r.bottom = -1;
 	_hePaletteNum = 0;
 
 	_vm->_classData[_number] = (_vm->_version >= 7) ? _vm->_classData[0] : 0;
@@ -502,6 +506,10 @@ void Actor::startAnimActor(int f) {
 			if (_vm->_version >= 3 && f == _initFrame) {
 				_cost.reset();
 				_auxBlock.visible = false;
+				_auxBlock.r.left = 0;
+				_auxBlock.r.top = 0;
+				_auxBlock.r.right = -1;
+				_auxBlock.r.bottom = -1;
 			}
 			_vm->_costumeLoader->costumeDecodeData(this, f, (uint) - 1);
 			_frame = f;
@@ -793,6 +801,10 @@ void Actor::hideActor() {
 	_needRedraw = false;
 	_needBgReset = true;
 	_auxBlock.visible = false;
+	_auxBlock.r.left = 0;
+	_auxBlock.r.top = 0;
+	_auxBlock.r.right = -1;
+	_auxBlock.r.bottom = -1;
 }
 
 void Actor::showActor() {
@@ -1397,14 +1409,19 @@ void Actor::setActorCostume(int c) {
 	_costumeNeedsInit = true;
 	
 	if (_vm->_features & GF_NEW_COSTUMES) {
-		_cost.reset();
-		_auxBlock.visible = false;
 		memset(_animVariable, 0, sizeof(_animVariable));
-		_costume = c;
 		
 		if (_vm->_heversion >= 71)
 			_vm->queueAuxBlock(this);
 		
+		_costume = c;
+		_cost.reset();
+		_auxBlock.visible = false;
+		_auxBlock.r.left = 0;
+		_auxBlock.r.top = 0;
+		_auxBlock.r.right = -1;
+		_auxBlock.r.bottom = -1;
+
 		if (_visible) {
 			if (_costume) {
 				_vm->ensureResourceLoaded(rtCostume, _costume);
@@ -1989,7 +2006,7 @@ void ScummEngine::postProcessAuxQueue() {
 						int y1 = (int16)READ_LE_UINT16(axur + 2) + dy;
 						int x2 = (int16)READ_LE_UINT16(axur + 4) + dx;
 						int y2 = (int16)READ_LE_UINT16(axur + 6) + dy;					
-						markRectAsDirty(kMainVirtScreen, x1, x2, y1, y2 + 1, a->_number);
+						markRectAsDirty(kMainVirtScreen, x1, x2, y1, y2 + 1);
 						axur += 8;
 					}
 				}

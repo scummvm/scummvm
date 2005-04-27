@@ -796,6 +796,13 @@ void ScummEngine_v70he::o70_kernelSetFunctions() {
 		_skipProcessActors = 0;
 		redrawAllActors();
 		break;
+	case 26:
+		a = derefActor(args[1], "o70_kernelSetFunctions: 26");
+		a->_auxBlock.r.left = 0;
+		a->_auxBlock.r.top = 0;
+		a->_auxBlock.r.right = -1;
+		a->_auxBlock.r.bottom = -1;
+		break;
 	case 30:
 		a = derefActor(args[1], "o70_kernelSetFunctions: 30");
 		a->_clipOverride.bottom = args[2];
