@@ -239,6 +239,10 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 	// Blit everything to the screen
 	_forceFull = true;
 
+	// Even if the old and new scale factors are the same, we may have a
+	// different scaler for the cursor now.
+	blitCursor();
+
 	if (_transactionMode != kTransactionCommit)
 		internUpdateScreen();
 	
