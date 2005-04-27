@@ -745,7 +745,7 @@ void ScummEngine_v80he::unknownE0Helper(int x, int y, int flags) {
 }
 
 void ScummEngine_v80he::o80_unknownE0() {
-	int id, unk1, unk2, x, x1, y1, type;
+	int id, unk1, unk2, x, x1, y1;
 
 	unk2 = pop();
 	id = pop();
@@ -758,16 +758,13 @@ void ScummEngine_v80he::o80_unknownE0() {
 
 	switch (subOp) {
 	case 55:
-		type = 2;
-		unknownE0(x1, y1, x, unk1, unk2, type, id);
+		unknownE0(x1, y1, x, unk1, unk2, 2, id);
 		break;
 	case 63:
-		type = 3;
-		unknownE0(x1, y1, x, unk1, unk2, type, id);
+		unknownE0(x1, y1, x, unk1, unk2, 3, id);
 		break;
 	case 66:
-		type = 1;
-		unknownE0(x1, y1, x, unk1, unk2, type, id);
+		unknownE0(x1, y1, x, unk1, unk2, 1, id);
 		break;
 	default:
 		error("o80_unknownE0: default case %d", subOp);

@@ -589,7 +589,7 @@ void ScummEngine_v100he::o100_arrayOps() {
 
 	debug(1,"o100_arrayOps: case %d", subOp);
 	switch (subOp) {
-	case 35:			// SO_ASSIGN_STRING
+	case 35:
 		decodeScriptString(string);
 		len = resStrLen(string) + 1;
 		ah = defineArray(array, kStringArray, 0, 0, 0, len);
@@ -737,8 +737,9 @@ void ScummEngine_v100he::o100_loadSBNG() {
 }
 
 void ScummEngine_v100he::o100_dim2dimArray() {
-	int a, b, data;
-	int type = fetchScriptByte();
+	int data, dim1end, dim2end;
+
+	byte type = fetchScriptByte();
 	switch (type) {
 	case 41:		// SO_BIT_ARRAY
 		data = kBitArray;
@@ -762,9 +763,9 @@ void ScummEngine_v100he::o100_dim2dimArray() {
 		error("o100_dim2dimArray: default case %d", type);
 	}
 
-	b = pop();
-	a = pop();
-	defineArray(fetchScriptWord(), data, 0, a, 0, b);
+	dim1end = pop();
+	dim2end = pop();
+	defineArray(fetchScriptWord(), data, 0, dim2end, 0, dim1end);
 }
 
 void ScummEngine_v100he::o100_dimArray() {
@@ -801,7 +802,7 @@ void ScummEngine_v100he::o100_dimArray() {
 }
 
 void ScummEngine_v100he::o100_unknownE0() {
-	int id, unk1, unk2, x, x1, y1, type;
+	int id, unk1, unk2, x, x1, y1;
 
 	unk2 = pop();
 	id = pop();
@@ -814,16 +815,13 @@ void ScummEngine_v100he::o100_unknownE0() {
 
 	switch (subOp) {
 	case 1:
-		type = 2;
-		unknownE0(x1, y1, x, unk1, unk2, type, id);
+		unknownE0(x1, y1, x, unk1, unk2, 2, id);
 		break;
 	case 20:
-		type = 1;
-		unknownE0(x1, y1, x, unk1, unk2, type, id);
+		unknownE0(x1, y1, x, unk1, unk2, 1, id);
 		break;
 	case 40:
-		type = 3;
-		unknownE0(x1, y1, x, unk1, unk2, type, id);
+		unknownE0(x1, y1, x, unk1, unk2, 3, id);
 		break;
 	default:
 		error("o100_unknownE0: default case %d", subOp);

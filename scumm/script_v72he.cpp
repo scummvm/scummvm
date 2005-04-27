@@ -1534,7 +1534,7 @@ void ScummEngine_v72he::o72_arrayOps() {
 			dim2start++;
 		}
 		break;
-	case 194:			// SO_ASSIGN_STRING
+	case 194:
 		decodeScriptString(string);
 		len = resStrLen(string) + 1;
 		ah = defineArray(array, kStringArray, 0, 0, 0, len);
@@ -1619,8 +1619,9 @@ void ScummEngine_v72he::o72_dimArray() {
 
 
 void ScummEngine_v72he::o72_dim2dimArray() {
-	int a, b, data;
-	int type = fetchScriptByte();
+	int data, dim1end, dim2end;
+
+	byte type = fetchScriptByte();
 	switch (type) {
 	case 2:		// SO_BIT_ARRAY
 		data = kBitArray;
@@ -1644,9 +1645,9 @@ void ScummEngine_v72he::o72_dim2dimArray() {
 		error("o72_dim2dimArray: default case %d", type);
 	}
 
-	b = pop();
-	a = pop();
-	defineArray(fetchScriptWord(), data, 0, a, 0, b);
+	dim1end = pop();
+	dim2end = pop();
+	defineArray(fetchScriptWord(), data, 0, dim2end, 0, dim1end);
 }
 
 void ScummEngine_v72he::o72_traceStatus() {
