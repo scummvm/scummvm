@@ -379,6 +379,8 @@ static const ScummGameSettings scumm_settings[] = {
 	// Humongous Entertainment Scumm Version ?
 	{"ff5demo", "Freddi Fish 5: The Case of the Creature of Coral Cave (Demo)", GID_FREDDICOVE, 6, 100, 61, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
+	{"pjgames", "Pajama Sam: Games to Play On Any Day", GID_HEGAME, 6, 100, 62, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
 
 	// Uses smacker in external files
 	{"artdemo", "Blue's Art Time Activities (Demo)", GID_HEGAME, 6, 99, 61, MDT_NONE,

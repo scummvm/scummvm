@@ -703,27 +703,37 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, SoundHandle *handl
 
 			_sfxFile->seek(offset, SEEK_SET);
 			if (_sfxFile->readUint32LE() == TO_LE_32(MKID('WSOU'))) {
-				debug(1, "IMA ADPCM compression not supported");
-				return;
+				// Skip the WSOU chunk
+				_sfxFile->seek(offset + 8, SEEK_SET);
+
+				// Try to load the WAVE data into an audio stream
+				AudioStream *stream = makeWAVStream(*_sfxFile);
+				if (!stream) {
+					warning("startTalkSound: IMA ADPCM compression not supported");
+					return;
+				}
+
+				int channel = _vm->VAR(_vm->VAR_SOUND_CHANNEL);
+				_vm->_mixer->playInputStream(SoundMixer::kSFXSoundType, &_heSoundChannels[channel], stream, 1);
 			} else {
 				// Skip the TALK (8) and HSHD (24) chunks
 				_sfxFile->seek(28, SEEK_CUR);
-			}
 
-			if (_sfxFile->readUint32LE() == TO_LE_32(MKID('SBNG'))) {
-				// Skip the SBNG, so we end up at the SDAT chunk
-				size = _sfxFile->readUint32BE() - 4;
-				_sfxFile->seek(size, SEEK_CUR);
-			}
-			size = _sfxFile->readUint32BE() - 8;
-			sound = (byte *)malloc(size);
-			_sfxFile->read(sound, size);
+				if (_sfxFile->readUint32LE() == TO_LE_32(MKID('SBNG'))) {
+					// Skip the SBNG, so we end up at the SDAT chunk
+					size = _sfxFile->readUint32BE() - 4;
+					_sfxFile->seek(size, SEEK_CUR);
+				}
+				size = _sfxFile->readUint32BE() - 8;
+				sound = (byte *)malloc(size);
+				_sfxFile->read(sound, size);
 
-			if (_vm->_heversion >= 70) {
-				int channel = _vm->VAR(_vm->VAR_SOUND_CHANNEL);
-				_vm->_mixer->playRaw(&_heSoundChannels[channel], sound, size, 11000, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE, 1);
-			} else {
-				_vm->_mixer->playRaw(handle, sound, size, 11000, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+				if (_vm->_heversion >= 70) {
+					int channel = _vm->VAR(_vm->VAR_SOUND_CHANNEL);
+					_vm->_mixer->playRaw(&_heSoundChannels[channel], sound, size, 11000, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE, 1);
+				} else {
+					_vm->_mixer->playRaw(handle, sound, size, 11000, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+				}
 			}
 			return;
 		}
