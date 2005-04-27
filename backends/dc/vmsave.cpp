@@ -238,6 +238,8 @@ public:
 
   bool isOpen() const { return true; }
 
+  bool eos() const { return !issave && pos >= size; }
+
   bool readSaveGame()
   { return ::readSaveGame(buffer, size, filename); }
 
