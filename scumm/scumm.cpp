@@ -2088,7 +2088,7 @@ load_game:
 	} else {
 		walkActors();
 		moveCamera();
-		fixObjectFlags();
+		updateObjectStates();
 		if (_version > 3)
 			CHARSET_1();
 

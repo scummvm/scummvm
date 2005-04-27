@@ -815,7 +815,7 @@ void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *
 	od->fl_object_index = 0;
 }
 
-void ScummEngine::fixObjectFlags() {
+void ScummEngine::updateObjectStates() {
 	int i;
 	ObjectData *od = &_objs[1];
 	for (i = 1; i < _numLocalObjects; i++, od++) {

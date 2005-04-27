@@ -744,7 +744,7 @@ protected:
 	int findFlObjectSlot();
 	int findLocalObjectSlot();
 	void addObjectToInventory(uint obj, uint room);
-	void fixObjectFlags();
+	void updateObjectStates();
 public:
 	bool getClass(int obj, int cls) const;		// Used in actor.cpp, hence public
 protected:
