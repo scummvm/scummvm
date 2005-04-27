@@ -104,6 +104,7 @@ void ResMan::loadCluDescript(const char *fileName) {
 			cluster->file = NULL;
 			cluster->noGrp = file.readUint32LE();
 			cluster->grp = new Grp[cluster->noGrp];
+			cluster->nextOpen = NULL;
 			memset(cluster->grp, 0, cluster->noGrp * sizeof(Grp));
 			cluster->refCount = 0;
 
@@ -316,6 +317,7 @@ File *ResMan::resFile(uint32 id) {
 			delete closeClu->file;
 			closeClu->file = NULL;
 			closeClu->nextOpen = NULL;
+			_openClus--;
 		}
 	}
 	return cluster->file;
