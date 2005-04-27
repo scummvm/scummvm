@@ -308,7 +308,6 @@ void AkosRenderer::setPalette(byte *new_palette) {
 		}
 	}
 
-
 	if (_vm->_heversion == 70) {
 		for (i = 0; i < size; i++)
 			palette[i] = _vm->_HEV7ActorPalette[palette[i]];
@@ -869,8 +868,22 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	v1.scaleXstep = _mirror ? 1 : -1;
 
 	if (_vm->_heversion >= 71) {
-		if (_clipOverride.right > _clipOverride.left && _clipOverride.bottom > _clipOverride.top)
-			rect.clip(_clipOverride);
+		if (_clipOverride.right > _clipOverride.left && _clipOverride.bottom > _clipOverride.top) {
+			if (rect.left < _clipOverride.left)
+				rect.left = _clipOverride.left;
+
+			if (rect.right > _clipOverride.right)
+				rect.right = _clipOverride.right;
+
+			if (rect.top < _clipOverride.top)
+				rect.top = _clipOverride.top;
+
+			if (rect.bottom > _clipOverride.bottom)
+				rect.bottom = _clipOverride.bottom;
+		}
+
+		if (rect.isValidRect() == false)
+			return 1;
 	}
 
 	if (_actorHitMode) {
@@ -1140,8 +1153,22 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	maxh = _out.h;
 
 	if (_vm->_heversion >= 71) {
-		if (_clipOverride.right > _clipOverride.left && _clipOverride.bottom > _clipOverride.top)
-			clip.clip(_clipOverride);
+		if (_clipOverride.right > _clipOverride.left && _clipOverride.bottom > _clipOverride.top) {
+			if (clip.left < _clipOverride.left)
+				clip.left = _clipOverride.left;
+
+			if (clip.right > _clipOverride.right)
+				clip.right = _clipOverride.right;
+
+			if (clip.top < _clipOverride.top)
+				clip.top = _clipOverride.top;
+
+			if (clip.bottom > _clipOverride.bottom)
+				clip.bottom = _clipOverride.bottom;
+		}
+
+		if (clip.isValidRect() == false)
+			return 0;
 	}
 
 	markRectAsDirty(clip);
@@ -1257,6 +1284,9 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 		src.bottom -= diff;
 		dst.bottom -= diff;
 	}	
+
+	if (dst.isValidRect() == false)
+		return 0;
 
 	markRectAsDirty(dst);
 
