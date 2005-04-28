@@ -428,9 +428,6 @@ class Actor {
 	friend class IsoMap;
 	friend class SagaEngine;
 public:
-	ActorData *_centerActor;
-	ActorData *_protagonist;
-	StringsTable _actorsStrings;
 
 	Actor(SagaEngine *vm);
 	~Actor();
@@ -496,6 +493,9 @@ public:
 		return _activeSpeech.stringsCount > 0;
 	}
 
+	void saveState(File& out);
+	void loadState(File& in);
+
 	void setProtagState(int state);
 	int getProtagState() { return _protagState; }
 	
@@ -537,22 +537,32 @@ private:
 	void removePathPoints();
 	bool validFollowerLocation(const Location &location);
 	
-	int _lastTickMsec;
-	SagaEngine *_vm;
-	RSCFILE_CONTEXT *_actorContext;
-	CommonObjectOrderList _drawOrderList;
 	
 protected:
+//constants
 	int _actorsCount;
 	ActorData **_actors;
 
 	int _objsCount;
 	ObjectData **_objs;
 
-private:
+	SagaEngine *_vm;
+	RSCFILE_CONTEXT *_actorContext;
+
+	StringsTable _actorsStrings;
+	int _lastTickMsec;
+	CommonObjectOrderList _drawOrderList;
+
+//variables
+public:
+	ActorData *_centerActor;
+	ActorData *_protagonist;
+
+protected:
 	SpeechData _activeSpeech;
 	int _protagState;
 
+private:
 //path stuff
 	struct PathNode {
 		Point point;

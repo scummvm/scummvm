@@ -2292,6 +2292,51 @@ void Actor::drawPathTest() {
 #endif
 }
 
+void Actor::saveState(File& out) {
+	uint16 i;
+	
+	out.writeSint32LE(_centerActor == NULL ? -1 : _centerActor->index);
+	out.writeSint32LE(_protagonist == NULL ? -1 : _protagonist->index);
+	out.writeSint16LE(getProtagState());
+
+	for (i = 0; i < _actorsCount; i++) {
+		ActorData *a = _actors[i];
+		a->saveState(out);
+	}
+
+	//TODO: save _activeSpeech
+
+	for (i = 0; i < _objsCount; i++) {
+		ObjectData *o = _objs[i];
+		o->saveState(out);
+	}
+}
+
+void Actor::loadState(File& in) {
+	int32 i;
+
+	i = in.readSint32LE();
+	_centerActor = (i < 0) ? NULL : _actors[i];
+
+	i = in.readSint32LE();
+	_protagonist = (i < 0) ? NULL : _actors[i];
+
+	setProtagState(in.readSint16LE());
+
+	//TODO: load _activeSpeech
+
+	for (i = 0; i < _actorsCount; i++) {
+		ActorData *a = _actors[i];
+		a->loadState(in);
+	}
+
+
+	for (i = 0; i < _objsCount; i++) {
+		ObjectData *o = _objs[i];
+		o->loadState(in);
+	}
+}
+
 // Console wrappers - must be safe to run
 
 void Actor::cmdActorWalkTo(int argc, const char **argv) {

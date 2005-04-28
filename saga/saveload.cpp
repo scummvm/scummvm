@@ -46,7 +46,6 @@ void SagaEngine::save() {
 	//TODO: version number
 
 	out.writeSint16LE(_script->_commonBufferSize);
-	out.writeSint16LE(_actor->getProtagState());
 
 	// Surrounding scene
 	out.writeSint32LE(_scene->getOutsetSceneNumber());
@@ -58,15 +57,7 @@ void SagaEngine::save() {
 
 	uint16 i;
 
-	for (i = 0; i < _actor->_actorsCount; i++) {
-		ActorData *a = _actor->_actors[i];
-		a->saveState(out);
-	}
-	
-	for (i = 0; i < _actor->_objsCount; i++) {
-		ObjectData *o = _actor->_objs[i];
-		o->saveState(out);
-	}
+	_actor->saveState(out);
 	
 	for (i = 0; i < _script->_commonBufferSize; i++)
 		out.writeByte(_script->_commonBuffer[i]);
@@ -89,7 +80,6 @@ void SagaEngine::load() {
 		return;
 
 	commonBufferSize = in.readSint16LE();
-	_actor->setProtagState(in.readSint16LE());
 
 	// Surrounding scene
 	scenenum = in.readSint32LE();
@@ -103,17 +93,10 @@ void SagaEngine::load() {
 
 	uint16 i;
 
-	for (i = 0; i < _actor->_actorsCount; i++) {
-		ActorData *a = _actor->_actors[i];
-		a->loadState(in);
-	}
 	
 	_interface->clearInventory(); //TODO: interface load-save-state
 
-	for (i = 0; i < _actor->_objsCount; i++) {
-		ObjectData *o = _actor->_objs[i];
-		o->loadState(in);
-	}
+	_actor->loadState(in);
 	
 	for (i = 0; i < commonBufferSize; i++)
 		_script->_commonBuffer[i] = in.readByte();
