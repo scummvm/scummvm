@@ -2197,77 +2197,28 @@ void gob_placeItem(int16 indexInPocket, int16 idInPocket) {
 		    - (scen_toRedrawLeft + scen_toRedrawRight) / 2;
 	}
 
-	if ((map_itemsMap[yPos][xPos] & 0xff00) != 0) {
-		map_itemsMap[yPos][xPos] =
-		    (map_itemsMap[yPos][xPos] & 0xff00) + idInPocket;
+	map_placeItem(xPos, yPos, idInPocket);
 
-		if (yPos > 0) {
+	if (yPos > 0) {
+		map_placeItem(xPos, yPos - 1, idInPocket);
+	}
 
-			map_itemsMap[yPos - 1][xPos] =
-			    (map_itemsMap[yPos - 1][xPos] & 0xff00) +
-			    idInPocket;
-		}
+	if (lookDir == 4) {
+		if (xPos < 25) {
+			map_placeItem(xPos + 1, yPos, idInPocket);
 
-		if (lookDir == 4) {
-			if (xPos < 25) {
-
-				map_itemsMap[yPos][xPos + 1] =
-				    (map_itemsMap[yPos][xPos + 1] & 0xff00) +
-				    idInPocket;
-
-				if (yPos > 0) {
-					map_itemsMap[yPos - 1][xPos + 1] =
-					    (map_itemsMap[yPos - 1][xPos +
-						1] & 0xff00) + idInPocket;
-				}
-			}
-		} else {
-			if (xPos > 0) {
-
-				map_itemsMap[yPos][xPos - 1] =
-				    (map_itemsMap[yPos][xPos - 1] & 0xff00) +
-				    idInPocket;
-
-				if (yPos > 0) {
-					map_itemsMap[yPos - 1][xPos - 1] =
-					    (map_itemsMap[yPos - 1][xPos -
-						1] & 0xff00) + idInPocket;
-				}
+			if (yPos > 0) {
+				map_placeItem(xPos + 1, yPos - 1, idInPocket);
 			}
 		}
 	} else {
+		if (xPos > 0) {
+			map_placeItem(xPos - 1, yPos, idInPocket);
 
-		map_itemsMap[yPos][xPos] += (idInPocket << 8);
-
-		if (yPos > 0) {
-
-			map_itemsMap[yPos - 1][xPos] += (idInPocket << 8);
-		}
-
-		if (lookDir == 4) {
-			if (xPos < 25) {
-
-				map_itemsMap[yPos][xPos + 1] +=
-				    (idInPocket << 8);
-
-				if (yPos > 0) {
-					map_itemsMap[yPos - 1][xPos + 1] +=
-					    (idInPocket << 8);
-				}
-			}
-		} else {
-			if (xPos > 0) {
-
-				map_itemsMap[yPos][xPos - 1] +=
-				    (idInPocket << 8);
-
-				if (yPos > 0) {
-					map_itemsMap[yPos - 1][xPos - 1] +=
-					    (idInPocket << 8);
-				}
+			if (yPos > 0) {
+				map_placeItem(xPos - 1, yPos - 1, idInPocket);
 			}
 		}
-
 	}
 
 	if (idInPocket >= 0 && idInPocket < 20) {

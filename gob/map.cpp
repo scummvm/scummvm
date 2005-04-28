@@ -48,6 +48,13 @@ char map_loadFromAvo;
 char map_sourceFile[15];
 static char *map_avoDataPtr;
 
+void map_placeItem(int16 x, int16 y, int16 id) {
+	if ((map_itemsMap[y][x] & 0xff00) != 0)
+		map_itemsMap[y][x] = (map_itemsMap[y][x] & 0xff00) | id;
+	else
+		map_itemsMap[y][x] = (map_itemsMap[y][x] & 0x00ff) | (id << 8);
+}
+
 int16 map_getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 	int16 dir;
 
