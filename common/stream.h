@@ -36,11 +36,6 @@ class String;
 class Stream {
 public:
 	/**
-	 * Returns true if the end of the stream has been reached.
-	 */
-	virtual bool eos() const = 0;
-
-	/**
 	 * Returns true if any I/O failure occured.
 	 * This flag is never cleared automatically. In order to clear it,
 	 * client code has to call clearIOFailed() explicitly.
@@ -128,6 +123,11 @@ public:
  */
 class ReadStream : virtual public Stream {
 public:
+	/**
+	 * Returns true if the end of the stream has been reached.
+	 */
+	virtual bool eos() const = 0;
+
 	/**
 	 * Read data from the stream. Subclasses must implement this
 	 * method; all other read methods are implemented using it.
