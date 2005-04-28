@@ -84,7 +84,7 @@ private:
 
 	bool generateIndex();
 	bool generateResource(int res);
-	uint16 extractResource(Common::MemoryWriteStream *out, Resource *res);
+	uint16 extractResource(Common::WriteStream *out, Resource *res);
 
 	uint32 resOffset(Resource *res);
 	uint16 resLength(Resource *res);

@@ -751,14 +751,14 @@ static ScummNESFile::Resource res_charset =
 static ScummNESFile::Resource res_preplist =
 	{ {0x3FB5A,0x3FB90,0x3FBA9,0x3FBAF}, {0x000E,0x000E,0x000E,0x0010}, NES_PREPLIST };
 
-uint16 write_byte(Common::MemoryWriteStream *out, byte val) {
+uint16 write_byte(Common::WriteStream *out, byte val) {
 	val ^= 0xFF;
 	if (out != 0)
 		out->writeByte(val);
 	return 1;
 }
 
-uint16 write_word(Common::MemoryWriteStream *out, uint16 val) {
+uint16 write_word(Common::WriteStream *out, uint16 val) {
 	val ^= 0xFFFF;
 	if (out != 0)
 		out->writeUint16LE(val);
@@ -783,7 +783,7 @@ uint16 ScummNESFile::resLength(Resource *res) {
 	return res->length[_ROMset];
 }
 
-uint16 ScummNESFile::extractResource(Common::MemoryWriteStream *output, Resource *res) {
+uint16 ScummNESFile::extractResource(Common::WriteStream *output, Resource *res) {
 	uint16 len, i, j;
 	byte val;
 	byte cnt;
