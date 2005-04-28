@@ -273,6 +273,10 @@ void ScummEngine::initScreens(int b, int h) {
 	}
 
 	if ((_platform == Common::kPlatformNES) && (h != _screenHeight)) {
+		// FIXME: Why is the kUnkVirtScreen used for the MM NES port? This seems very
+		// strange, and at the very least, a comment should be added here that 
+		// explains why this is done. Maybe it is some kind of hack to shift the
+		// other virtual screens downwards?
 		adj = 16;
 		initVirtScreen(kUnkVirtScreen, 0, _screenWidth, adj, false, false);
 	}
