@@ -918,7 +918,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_actorClipOverride.right = 640;
 
 	_skipDrawObject = 0;
-	_skipProcessActors = 0;
 	_auxBlocksNum = 0;
 	memset(_auxBlocks, 0, sizeof(_auxBlocks));
 	_auxEntriesNum = 0;
@@ -1268,6 +1267,8 @@ ScummEngine_v70he::ScummEngine_v70he(GameDetector *detector, OSystem *syst, cons
 	_heSndChannel = 0;
 	_heSndFlags = 0;
 	_heSndSoundFreq = 0;
+
+	_skipProcessActors = 0;
 
 	VAR_NUM_SOUND_CHANNELS = 0xFF;
 }
@@ -2120,25 +2121,10 @@ load_game:
 			drawFlashlight();
 			setActorRedrawFlags();
 		}
-		if (_heversion >= 71) {
-			preProcessAuxQueue();
-		}
-		if (_heversion >= 90) {
-			((ScummEngine_v90he *)this)->spritesMarkDirty(0);
-			((ScummEngine_v90he *)this)->spritesProcessWiz(true);
-		}
 
 		processActors();
 		
 		_fullRedraw = false;
-
-		if (_heversion >= 71) {
-			postProcessAuxQueue();
-		}
-		if (_heversion >= 90) {
-			((ScummEngine_v90he *)this)->spritesMarkDirty(1);
-			((ScummEngine_v90he *)this)->spritesProcessWiz(false);
-		}
 
 		if (_version >= 4 && _heversion <= 61)
 			cyclePalette();

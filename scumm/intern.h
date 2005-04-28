@@ -694,6 +694,9 @@ protected:
 	byte *_heV7RoomOffsets;
 
 	int32 _heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags, _heSndSoundFreq;
+
+	bool _skipProcessActors;
+
 public:
 	ScummEngine_v70he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
 	~ScummEngine_v70he();
@@ -715,6 +718,10 @@ protected:
 	virtual void readIndexBlock(uint32 blocktype, uint32 itemsize);
 
 	virtual void redrawBGAreas();
+
+	virtual void processActors();
+	void preProcessAuxQueue();
+	void postProcessAuxQueue();
 
 	int getStringCharWidth(byte chr);
 	virtual int setupStringArray(int size);

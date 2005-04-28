@@ -27,6 +27,7 @@
 #include "scumm/boxes.h"
 #include "scumm/charset.h"
 #include "scumm/costume.h"
+#include "scumm/intern.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/saveload.h"
@@ -976,9 +977,6 @@ static int compareDrawOrder(const void* a, const void* b)
 }
 
 void ScummEngine::processActors() {
-	if (_skipProcessActors)
-		return;
-
 	int numactors = 0;
 
 	// TODO : put this actors as a member array. It never has to grow or shrink
@@ -1017,6 +1015,30 @@ void ScummEngine::processActors() {
 	if (_features & GF_NEW_COSTUMES)
 		akos_processQueue();
 }
+
+void ScummEngine_v70he::processActors() {
+	// TODO: The HE 90 stuff should be moved to a new method, too,
+	// if possible (ScummEngine_v90he::processActors).
+	if (_heversion >= 71) {
+		preProcessAuxQueue();
+	}
+	if (_heversion >= 90) {
+		((ScummEngine_v90he *)this)->spritesMarkDirty(0);
+		((ScummEngine_v90he *)this)->spritesProcessWiz(true);
+	}
+
+	if (!_skipProcessActors)
+		ScummEngine::processActors();
+
+	if (_heversion >= 71) {
+		postProcessAuxQueue();
+	}
+	if (_heversion >= 90) {
+		((ScummEngine_v90he *)this)->spritesMarkDirty(1);
+		((ScummEngine_v90he *)this)->spritesProcessWiz(false);
+	}
+}
+
 
 // Used in Scumm v8, to allow the verb coin to be drawn over the inventory
 // chest. I'm assuming that draw order won't matter here.
@@ -1943,7 +1965,7 @@ bool Actor::isTalkConditionSet(int slot) const {
 	return (_heCondMask & (1 << (slot - 1))) != 0;
 }
 
-void ScummEngine::preProcessAuxQueue() {
+void ScummEngine_v70he::preProcessAuxQueue() {
 	if (!_skipProcessActors) {
 		for (int i = 0; i < _auxBlocksNum; ++i) {
 			AuxBlock *ab = &_auxBlocks[i];
@@ -1956,7 +1978,7 @@ void ScummEngine::preProcessAuxQueue() {
 	_auxBlocksNum = 0;
 }
 
-void ScummEngine::postProcessAuxQueue() {
+void ScummEngine_v70he::postProcessAuxQueue() {
 	if (!_skipProcessActors) {
 		for (int i = 0; i < _auxEntriesNum; ++i) {
 			AuxEntry *ae = &_auxEntries[i];

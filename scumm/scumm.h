@@ -825,7 +825,7 @@ protected:
 	void showActors();
 	void setupV1ActorTalkColor();
 	void resetActorBgs();
-	void processActors();
+	virtual void processActors();
 	void processUpperActors();
 	int getActorFromPos(int x, int y);
 	
@@ -836,8 +836,6 @@ public:
 	AuxEntry _auxEntries[16];
 	uint16 _auxEntriesNum;
 
-	void preProcessAuxQueue();
-	void postProcessAuxQueue();
 	void queueAuxBlock(Actor *a);
 	void queueAuxEntry(int actorNum, int subIndex);
 
@@ -1068,7 +1066,7 @@ public:
 	byte _HEV7ActorPalette[256];
 	byte _roomPalette[256];
 	byte *_shadowPalette;
-	bool _skipDrawObject, _skipProcessActors;
+	bool _skipDrawObject;
 	int _timers[4];
 	int _voiceMode;
 
