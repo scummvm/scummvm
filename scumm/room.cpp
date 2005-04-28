@@ -74,15 +74,11 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	runExitScript();
 
 	killScriptsAndResources();
-	clearEnqueue();
 	if (_version >= 4 && _heversion <= 61)
 		stopCycle(0);
 	_sound->processSoundQues();
-
-	if (_heversion >= 71)
-		((ScummEngine_v70he *)this)->_wiz.polygonClear();
-	if (_heversion >= 80)
-		((ScummEngine_v72he *)this)->_wiz.imageNumClear();
+	
+	clearDrawQueues();
 
 	// For HE80+ games
 	for (i = 0; i < _numRoomVariables; i++)
@@ -107,8 +103,6 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		if (_features & GF_SMALL_HEADER)
 			setDirtyColors(0, 255);
 	}
-
-	clearDrawObjectQueue();
 
 	VAR(VAR_ROOM) = room;
 	_fullRedraw = true;

@@ -444,6 +444,29 @@ void ScummEngine::drawDirtyScreenParts() {
 	}
 }
 
+void ScummEngine_v6::drawDirtyScreenParts() {
+	// For the Full Throttle credits to work properly, the blast
+	// texts have to be drawn before the blast objects. Unless
+	// someone can think of a better way to achieve this effect.
+
+	if (_version >= 7 && VAR(VAR_BLAST_ABOVE_TEXT) == 1) {
+		drawBlastTexts();
+		drawBlastObjects();
+	} else {
+		drawBlastObjects();
+		drawBlastTexts();
+	}
+	if (_version == 8)
+		processUpperActors();
+
+	// Call the original method.
+	ScummEngine::drawDirtyScreenParts();
+
+	// Remove all blasted objects/text again.
+	removeBlastTexts();
+	removeBlastObjects();
+}
+
 /**
  * Blit the dirty data from the given VirtScreen to the display. If the camera moved,
  * a full blit is done, otherwise only the visible dirty areas are updated.

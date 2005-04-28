@@ -863,10 +863,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_screenStartStrip = 0;
 	_screenEndStrip = 0;
 	_screenTop = 0;
-	_blastObjectQueuePos = 0;
-	memset(_blastObjectQueue, 0, sizeof(_blastObjectQueue));
-	_blastTextQueuePos = 0;
-	memset(_blastTextQueue, 0, sizeof(_blastTextQueue));
 	_drawObjectQueNr = 0;
 	memset(_drawObjectQue, 0, sizeof(_drawObjectQue));
 	_palManipStart = 0;
@@ -1236,6 +1232,13 @@ ScummEngine_v2::ScummEngine_v2(GameDetector *detector, OSystem *syst, const Scum
 
 ScummEngine_v6::ScummEngine_v6(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) 
  : ScummEngine(detector, syst, gs, md5sum) {
+	_blastObjectQueuePos = 0;
+	memset(_blastObjectQueue, 0, sizeof(_blastObjectQueue));
+	_blastTextQueuePos = 0;
+	memset(_blastTextQueue, 0, sizeof(_blastTextQueue));
+
+	_smushFrameRate = 0;
+
 	VAR_VIDEONAME = 0xFF;
 	VAR_RANDOM_NR = 0xFF;
 	VAR_STRING2DRAW = 0xFF;
@@ -1246,8 +1249,6 @@ ScummEngine_v6::ScummEngine_v6(GameDetector *detector, OSystem *syst, const Scum
 	VAR_TIMEDATE_HOUR = 0xFF;
 	VAR_TIMEDATE_MINUTE = 0xFF;
 	VAR_TIMEDATE_SECOND = 0xFF;
-
-	_smushFrameRate = 0;
 }
 
 ScummEngine_v70he::ScummEngine_v70he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
@@ -2137,32 +2138,11 @@ load_game:
 			clearClickedStatus();
 		}
 
+		// Handle mouse over effects (for verbs).
 		handleMouseOver(oldEgo != VAR(VAR_EGO));
 
-		//
-		// TODO: The whole blast object/text code is V6-8 specific. So it
-		// would be nice to move it to ScummEngine_v6. One way to make that
-		// possible would be to replace their invocation with two new virtual
-		// methods preDrawScreenHook() and postDrawScreenHook().
-		//
-
-		// For the Full Throttle credits to work properly, the blast
-		// texts have to be drawn before the blast objects. Unless
-		// someone can think of a better way to achieve this effect.
-
-		if (_version >= 7 && VAR(VAR_BLAST_ABOVE_TEXT) == 1) {
-			drawBlastTexts();
-			drawBlastObjects();
-		} else {
-			drawBlastObjects();
-			drawBlastTexts();
-		}
-
-		if (_version == 8)
-			processUpperActors();
+		// Render everything to the screen.
 		drawDirtyScreenParts();
-		removeBlastTexts();
-		removeBlastObjects();
 
 		if (_version <= 5)
 			playActorSounds();

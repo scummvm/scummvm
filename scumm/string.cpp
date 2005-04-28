@@ -755,7 +755,7 @@ void ScummEngine::initCharset(int charsetno) {
 		_charsetColorMap[i] = _charsetData[charsetno][i];
 }
 
-void ScummEngine::enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center) {
+void ScummEngine_v6::enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center) {
 	BlastText &bt = _blastTextQueue[_blastTextQueuePos++];
 	assert(_blastTextQueuePos <= ARRAYSIZE(_blastTextQueue));
 
@@ -767,7 +767,7 @@ void ScummEngine::enqueueText(const byte *text, int x, int y, byte color, byte c
 	bt.center = center;
 }
 
-void ScummEngine::drawBlastTexts() {
+void ScummEngine_v6::drawBlastTexts() {
 	byte *buf;
 	int c;
 	int i;
@@ -811,7 +811,7 @@ void ScummEngine::drawBlastTexts() {
 	_charset->_ignoreCharsetMask = false;
 }
 
-void ScummEngine::removeBlastTexts() {
+void ScummEngine_v6::removeBlastTexts() {
 	int i;
 
 	for (i = 0; i < _blastTextQueuePos; i++) {

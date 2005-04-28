@@ -855,6 +855,30 @@ void ScummEngine::clearDrawObjectQueue() {
 	_drawObjectQueNr = 0;
 }
 
+void ScummEngine::clearDrawQueues() {
+	clearDrawObjectQueue();
+}
+
+void ScummEngine_v6::clearDrawQueues() {
+	ScummEngine::clearDrawQueues();
+
+	_blastObjectQueuePos = 0;
+}
+
+void ScummEngine_v70he::clearDrawQueues() {
+	ScummEngine_v6::clearDrawQueues();
+
+	if (_heversion >= 71)
+		_wiz.polygonClear();
+}
+
+void ScummEngine_v80he::clearDrawQueues() {
+	ScummEngine_v70he::clearDrawQueues();
+
+	_wiz.imageNumClear();
+}
+
+
 void ScummEngine::clearOwnerOf(int obj) {
 	int i, j;
 	uint16 *a;
@@ -1444,7 +1468,7 @@ void ScummEngine::nukeFlObjects(int min, int max) {
 		}
 }
 
-void ScummEngine::enqueueObject(int objectNumber, int objectX, int objectY, int objectWidth,
+void ScummEngine_v6::enqueueObject(int objectNumber, int objectX, int objectY, int objectWidth,
 								int objectHeight, int scaleX, int scaleY, int image, int mode) {
 	BlastObject *eo;
 
@@ -1478,7 +1502,7 @@ void ScummEngine::enqueueObject(int objectNumber, int objectX, int objectY, int 
 	eo->mode = mode;
 }
 
-void ScummEngine::drawBlastObjects() {
+void ScummEngine_v6::drawBlastObjects() {
 	BlastObject *eo;
 	int i;
 
@@ -1488,7 +1512,7 @@ void ScummEngine::drawBlastObjects() {
 	}
 }
 
-void ScummEngine::drawBlastObject(BlastObject *eo) {
+void ScummEngine_v6::drawBlastObject(BlastObject *eo) {
 	VirtScreen *vs;
 	const byte *bomp, *ptr;
 	int objnum;
@@ -1552,7 +1576,7 @@ void ScummEngine::drawBlastObject(BlastObject *eo) {
 	markRectAsDirty(vs->number, bdd.x, bdd.x + bdd.srcwidth, bdd.y, bdd.y + bdd.srcheight);
 }
 
-void ScummEngine::removeBlastObjects() {
+void ScummEngine_v6::removeBlastObjects() {
 	BlastObject *eo;
 	int i;
 
@@ -1560,11 +1584,10 @@ void ScummEngine::removeBlastObjects() {
 	for (i = 0; i < _blastObjectQueuePos; i++, eo++) {
 		removeBlastObject(eo);
 	}
-
-	clearEnqueue();
+	_blastObjectQueuePos = 0;
 }
 
-void ScummEngine::removeBlastObject(BlastObject *eo) {
+void ScummEngine_v6::removeBlastObject(BlastObject *eo) {
 	VirtScreen *vs = &virtscr[0];
 
 	Common::Rect r;

@@ -173,15 +173,6 @@ struct ColorCycle {
 	byte end;
 };
 
-/** BlastObjects to draw */
-struct BlastObject {
-	uint16 number;
-	Common::Rect rect;
-	uint16 scaleX, scaleY;
-	uint16 image;
-	uint16 mode;
-};
-
 /** Bomp graphics data, used as parameter to ScummEngine::drawBomp. */
 struct BompDrawData {
 	Graphics::Surface dst;

@@ -414,6 +414,31 @@ protected:
 
 	int _smushFrameRate;
 
+	/** BlastObjects to draw */
+	struct BlastObject {
+		uint16 number;
+		Common::Rect rect;
+		uint16 scaleX, scaleY;
+		uint16 image;
+		uint16 mode;
+	};
+
+	int _blastObjectQueuePos; 
+	BlastObject _blastObjectQueue[128];
+
+	struct BlastText {
+		int16 xpos, ypos;
+		Common::Rect rect;
+		byte color;
+		byte charset;
+		bool center;
+		byte text[256];
+	};
+
+	int _blastTextQueuePos;
+	BlastText _blastTextQueue[50];
+
+
 public:
 	ScummEngine_v6(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
 
@@ -432,6 +457,7 @@ protected:
 	virtual void readMAXS(int blockSize);
 
 	virtual void palManipulateInit(int resID, int start, int end, int time);
+	virtual void drawDirtyScreenParts();
 
 	int getStackList(int *args, uint maxnum);
 	int popRoomAndObj(int *room);
@@ -451,6 +477,20 @@ protected:
 	void useIm01Cursor(const byte *im, int w, int h);
 	void useBompCursor(const byte *im, int w, int h);
 	void grabCursor(int x, int y, int w, int h);
+
+	void enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center);
+	void drawBlastTexts();
+	void removeBlastTexts();
+
+	void enqueueObject(int objectNumber, int objectX, int objectY, int objectWidth,
+	                   int objectHeight, int scaleX, int scaleY, int image, int mode);
+	void drawBlastObjects();
+	void drawBlastObject(BlastObject *eo);
+	void removeBlastObjects();
+	void removeBlastObject(BlastObject *eo);
+
+	virtual void clearDrawQueues();
+
 
 	/* Version 6 script opcodes */
 	void o6_setBlastObjectWindow();
@@ -730,6 +770,8 @@ protected:
 
 	virtual void setCursorFromImg(uint img, uint room, uint imgindex);
 
+	virtual void clearDrawQueues();
+
 	/* HE version 70 script opcodes */
 	void o70_startSound();
 	void o70_pickupObject();
@@ -928,6 +970,8 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void initScummVars();
+
+	virtual void clearDrawQueues();
 
 	void loadImgSpot(int resId, int state, int16 &x, int16 &y);
 	void loadWizCursor(int resId);

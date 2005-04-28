@@ -165,15 +165,6 @@ struct MemBlkHeader {
 struct VerbSlot;
 struct ObjectData;
 
-struct BlastText {
-	int16 xpos, ypos;
-	Common::Rect rect;
-	byte color;
-	byte charset;
-	bool center;
-	byte text[256];
-};
-
 struct V2MouseoverBox {
 	Common::Rect rect;
 	byte color;
@@ -780,6 +771,8 @@ protected:
 	void clearDrawObjectQueue();
 	void processDrawQue();
 
+	virtual void clearDrawQueues();
+
 	uint32 getOBCDOffs(int object) const;
 	byte *getOBCDFromObject(int obj);
 	const byte *getOBIMFromObject(const ObjectData &od);
@@ -990,7 +983,7 @@ protected:
 	// Screen rendering
 	byte *_compositeBuf;
 	byte *_herculesBuf;
-	void drawDirtyScreenParts();
+	virtual void drawDirtyScreenParts();
 	void updateDirtyScreen(VirtScreenNumber slot);
 	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
 	void ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height) const;
@@ -1021,24 +1014,6 @@ protected:
 	bool _shakeEnabled;
 	uint _shakeFrame;
 	void setShake(int mode);
-
-	int _blastObjectQueuePos; 
-	BlastObject _blastObjectQueue[128];
-
-	int _blastTextQueuePos;
-	BlastText _blastTextQueue[50];
-
-	void enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center);
-	void drawBlastTexts();
-	void removeBlastTexts();
-
-	void enqueueObject(int objectNumber, int objectX, int objectY, int objectWidth,
-	                   int objectHeight, int scaleX, int scaleY, int image, int mode);
-	void clearEnqueue() { _blastObjectQueuePos = 0; }
-	void drawBlastObjects();
-	void drawBlastObject(BlastObject *eo);
-	void removeBlastObjects();
-	void removeBlastObject(BlastObject *eo);
 
 	int _drawObjectQueNr;
 	byte _drawObjectQue[200];
