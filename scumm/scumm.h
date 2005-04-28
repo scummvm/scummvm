@@ -851,7 +851,7 @@ public:
 	int _NES_lastTalkingActor;
 	int _NES_talkColor;
 
-	void actorTalk(const byte *msg);
+	virtual void actorTalk(const byte *msg);
 	void stopTalk();
 	int getTalkingActor();		// Wrapper around VAR_TALK_ACTOR for V1 Maniac
 	void setTalkingActor(int variable);
@@ -1164,19 +1164,13 @@ protected:
 	int addNameToStack(byte *dst, int dstSize, int var);
 	int addStringToStack(byte *dst, int dstSize, int var);
 
-public:
-	Common::Language _language;
-protected:
-	bool _existLanguageFile;
-	char *_languageBuffer;
-	LangIndexNode *_languageIndex;
-	int _languageIndexSize;
-	char _lastStringTag[12+1];
+	virtual void loadLanguageBundle() {}
 
-	void loadLanguageBundle();
-	void playSpeech(const byte *ptr);
 public:
-	void translateText(const byte *text, byte *trans_buff);	// Used by class ScummDialog
+	Common::Language _language;	// Accessed by a hack in NutRenderer::loadFont
+
+	// Used by class ScummDialog:
+	virtual void translateText(const byte *text, byte *trans_buff);
 
 	// Somewhat hackish stuff for 2 byte support (Chinese/Japanese/Korean)
 	bool _useCJKMode;

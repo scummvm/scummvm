@@ -29,6 +29,7 @@
 #include "scumm/charset.h"
 #include "scumm/dialogs.h"
 #include "scumm/imuse_digi/dimuse.h"
+#include "scumm/intern.h"
 #include "scumm/verbs.h"
 #include "scumm/sound.h"
 #include "scumm/util.h"
@@ -827,7 +828,7 @@ int indexCompare(const void *p1, const void *p2) {
 }
 
 // Create an index of the language file.
-void ScummEngine::loadLanguageBundle() {
+void ScummEngine_v7::loadLanguageBundle() {
 	ScummFile file;
 	int32 size;
 
@@ -956,7 +957,7 @@ void ScummEngine::loadLanguageBundle() {
 	qsort(_languageIndex, _languageIndexSize, sizeof(LangIndexNode), indexCompare);
 }
 
-void ScummEngine::playSpeech(const byte *ptr) {
+void ScummEngine_v7::playSpeech(const byte *ptr) {
 	if ((_gameId == GID_DIG || _gameId == GID_CMI) && ptr[0]) {
 		char pointer[20];
 		strcpy(pointer, (const char *)ptr);
@@ -973,6 +974,11 @@ void ScummEngine::playSpeech(const byte *ptr) {
 }
 
 void ScummEngine::translateText(const byte *text, byte *trans_buff) {
+	// Default: just copy the string
+	memcpy(trans_buff, text, resStrLen(text) + 1);
+}
+
+void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
 	LangIndexNode target;
 	LangIndexNode *found = NULL;
 	int i;

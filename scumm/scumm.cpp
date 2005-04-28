@@ -904,9 +904,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_NES_lastTalkingActor = 0;
 	_NES_talkColor = 0;
 	_keepText = false;
-	_existLanguageFile = false;
-	_languageBuffer = NULL;
-	_languageIndex = NULL;
 	_costumeLoader = NULL;
 	_costumeRenderer = NULL;
 	_2byteFontPtr = 0;
@@ -1189,7 +1186,6 @@ ScummEngine::~ScummEngine() {
 	delete _fileHandle;
 
 	delete _sound;
-	free(_languageBuffer);
 
 	delete _costumeLoader;
 	delete _costumeRenderer;
@@ -1213,8 +1209,6 @@ ScummEngine::~ScummEngine() {
 	free(_newNames);
 	free(_classData);
 	free(_arraySlot);
-
-	free(_languageIndex);
 
 	free(_compositeBuf);
 	free(_herculesBuf);
@@ -1302,6 +1296,18 @@ ScummEngine_v72he::ScummEngine_v72he(GameDetector *detector, OSystem *syst, cons
 ScummEngine_v80he::ScummEngine_v80he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
  : ScummEngine_v72he(detector, syst, gs, md5sum) {
 	_heSBNGId = 0;
+}
+
+ScummEngine_v7::ScummEngine_v7(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
+ : ScummEngine_v6(detector, syst, gs, md5sum) {
+	_existLanguageFile = false;
+	_languageBuffer = NULL;
+	_languageIndex = NULL;
+}
+
+ScummEngine_v7::~ScummEngine_v7() {
+	free(_languageBuffer);
+	free(_languageIndex);
 }
 
 ScummEngine_v8::ScummEngine_v8(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])

@@ -1301,14 +1301,18 @@ int ScummEngine::getActorFromPos(int x, int y) {
 	return result;
 }
 
+void ScummEngine_v7::actorTalk(const byte *msg) {
+	ScummEngine::actorTalk(msg);
+
+	// Play associated speech, if any
+	playSpeech((byte *)_lastStringTag);
+}
+
 void ScummEngine::actorTalk(const byte *msg) {
 	Actor *a;
 
 	addMessageToStack(msg, _charsetBuffer, sizeof(_charsetBuffer));
 	
-	// Play associated speech, if any
-	playSpeech((byte *)_lastStringTag);
-
 	// FIXME: Workaround for bugs #770039 and #770049 
 	if (_gameId == GID_LOOM || _gameId == GID_LOOM256) {
 		if (!*_charsetBuffer)

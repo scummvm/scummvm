@@ -1254,7 +1254,14 @@ protected:
 
 class ScummEngine_v7 : public ScummEngine_v6 {
 public:
-	ScummEngine_v7(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v6(detector, syst, gs, md5sum) {}
+	ScummEngine_v7(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
+	~ScummEngine_v7();
+
+	bool _existLanguageFile;
+	char *_languageBuffer;
+	LangIndexNode *_languageIndex;
+	int _languageIndexSize;
+	char _lastStringTag[12+1];
 
 protected:
 	virtual void setupScummVars();
@@ -1272,6 +1279,11 @@ protected:
 	virtual void panCameraTo(int x, int y);
 
 	virtual int getObjectIdFromOBIM(const byte *obim);
+
+	virtual void actorTalk(const byte *msg);
+	virtual void translateText(const byte *text, byte *trans_buff);
+	virtual void loadLanguageBundle();
+	void playSpeech(const byte *ptr);
 };
 
 class ScummEngine_v8 : public ScummEngine_v7 {
