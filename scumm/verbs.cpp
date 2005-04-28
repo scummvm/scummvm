@@ -345,6 +345,28 @@ void ScummEngine::redrawVerbs() {
 	_verbMouseOver = verb;
 }
 
+void ScummEngine::handleMouseOver(bool updateInventory) {
+	if (_completeScreenRedraw) {
+		verbMouseOver(0);
+	} else {
+		if (_cursor.state > 0)
+			verbMouseOver(findVerbAtPos(_mouse.x, _mouse.y));
+	}
+}
+
+void ScummEngine_v2::handleMouseOver(bool updateInventory) {
+	ScummEngine::handleMouseOver(updateInventory);
+
+	if (updateInventory) {
+		// FIXME/TODO: Reset and redraw the sentence line
+		_inventoryOffset = 0;
+	}
+	if (_completeScreenRedraw || updateInventory) {
+		redrawV2Inventory();
+	}
+	checkV2MouseOver(_mouse);
+}
+
 void ScummEngine::checkExecVerbs() {
 	int i, over;
 	VerbSlot *vs;

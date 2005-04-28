@@ -292,6 +292,7 @@ protected:
 	void resetSentence();
 	void setUserState(byte state);
 
+	virtual void handleMouseOver(bool updateInventory);
 	void initV2MouseOver();
 	void initNESMouseOver();
 

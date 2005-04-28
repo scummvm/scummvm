@@ -2057,12 +2057,7 @@ load_game:
 			redrawVerbs();
 		}
 
-		verbMouseOver(0);
-
-		if (_version <= 2) {
-			((ScummEngine_v2 *)this)->redrawV2Inventory();
-			((ScummEngine_v2 *)this)->checkV2MouseOver(_mouse);
-		}
+		handleMouseOver(false);
 
 		_fullRedraw = true;
 	}
@@ -2135,18 +2130,14 @@ load_game:
 			clearClickedStatus();
 		}
 
-		if (_cursor.state > 0)
-			verbMouseOver(findVerbAtPos(_mouse.x, _mouse.y));
+		handleMouseOver(oldEgo != VAR(VAR_EGO));
 
-		if (_version <= 2) {
-			if (oldEgo != VAR(VAR_EGO)) {
-				// FIXME/TODO: Reset and redraw the sentence line
-				oldEgo = VAR(VAR_EGO);
-				_inventoryOffset = 0;
-				((ScummEngine_v2 *)this)->redrawV2Inventory();
-			}
-			((ScummEngine_v2 *)this)->checkV2MouseOver(_mouse);
-		}
+		//
+		// TODO: The whole blast object/text code is V6-8 specific. So it
+		// would be nice to move it to ScummEngine_v6. One way to make that
+		// possible would be to replace their invocation with two new virtual
+		// methods preDrawScreenHook() and postDrawScreenHook().
+		//
 
 		// For the Full Throttle credits to work properly, the blast
 		// texts have to be drawn before the blast objects. Unless

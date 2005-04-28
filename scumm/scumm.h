@@ -795,6 +795,8 @@ protected:
 	int8 _userPut;
 	uint16 _userState;
 
+	virtual void handleMouseOver(bool updateInventory);
+
 	void redrawVerbs();
 	void checkExecVerbs();
 	void verbMouseOver(int verb);
