@@ -418,7 +418,7 @@ Putt-Putt Saves the Zoo
 	Demo	Mac	en	3486ede0f904789267d4bcc5537a46d4	zoodemo	khalek
 
 Putt-Putt Travels Through Time
-	-	Windows	en	a525c1753c1db5011c00417da37887ef	PuttTime	Kirben
+	-	All	en	a525c1753c1db5011c00417da37887ef	PuttTime	Kirben
 	-	All?	en	2108d83dcf09f8adb4bc524669c8cf51	PuttTime
 	Demo	All	en	4e5867848ee61bc30d157e2c94eee9b4	timedemo	khalek, sev
 	Demo	All	en	0ab19be9e2a3f6938226638b2a3744fe	timedemo	khalek
