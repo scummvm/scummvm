@@ -294,7 +294,8 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		Common::MemoryReadStream stream(ptr, size);
 
 		if (!loadWAVFromStream(stream, size, rate, flags)) {
-			error("playSound: Not a valid WAV file");
+			warning("playSound: IMA ADPCM compression not supported");
+			return;
 		}
 
 		// Allocate a sound buffer, copy the data into it, and play
