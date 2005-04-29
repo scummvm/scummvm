@@ -51,7 +51,7 @@ public:
 
 	void shutdown();
 
-	
+	Common::RandomSource _rnd;
 };
 
 extern GobEngine *_vm;

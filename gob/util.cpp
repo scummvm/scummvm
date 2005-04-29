@@ -126,7 +126,7 @@ int16 util_checkKey(void) {
 }
 
 int16 util_getRandom(int16 max) {
-	return ((int32)rand() * max) / (RAND_MAX + 1);
+	return _vm->_rnd.getRandomNumber(max - 1);
 }
 
 void util_processInput() {

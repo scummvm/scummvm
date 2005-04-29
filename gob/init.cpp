@@ -68,7 +68,6 @@ void init_soundVideo(int32 smallHeap, int16 flag) {
 		    videoMode);
 
 	pFileHandler = 0;
-	srand(0);
 
 	//if ((flag & 4) == 0)
 	//	vid_findVideo();
