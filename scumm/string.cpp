@@ -606,8 +606,8 @@ int ScummEngine::addMessageToStack(const byte *msg, byte *dst, int dstSize) {
 			continue;
 		}
 		if ((_features & GF_HE_LOCALIZED) && chr == '[') {
-				while (src[num++] != ']');
-				continue;
+			while (src[num++] != ']');
+			continue;
 		}
 
 		if (chr == 0)
