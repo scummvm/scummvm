@@ -601,9 +601,13 @@ int ScummEngine::addMessageToStack(const byte *msg, byte *dst, int dstSize) {
 
 	while (1) {
 		chr = src[num++];
-		if ((_features & GF_HE_LOCALIZED) && chr == '[') {
-			while (src[num++] != ']');
+		if ((_gameId == GID_FREDDI2) && (src[num - 1] == '(' && src[num] == 'P' && src[num + 1] == 'U')) {
+			while (src[num++] != ')');
 			continue;
+		}
+		if ((_features & GF_HE_LOCALIZED) && chr == '[') {
+				while (src[num++] != ']');
+				continue;
 		}
 
 		if (chr == 0)

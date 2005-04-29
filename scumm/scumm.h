@@ -234,6 +234,7 @@ enum ScummGameId {
 	GID_HEGAME,      // Generic name for all HE games with default behaviour
 	GID_FBEAR,
 	GID_FUNPACK,
+	GID_FREDDI2,
 	GID_FREDDI4,
 	GID_FREDDICOVE
 };
