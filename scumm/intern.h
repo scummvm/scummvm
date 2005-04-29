@@ -758,12 +758,6 @@ protected:
 	virtual void readGlobalObjects();
 	virtual void readIndexBlock(uint32 blocktype, uint32 itemsize);
 
-	virtual void redrawBGAreas();
-
-	virtual void processActors();
-	void preProcessAuxQueue();
-	void postProcessAuxQueue();
-
 	int getStringCharWidth(byte chr);
 	virtual int setupStringArray(int size);
 	void appendSubstring(int dst, int src, int len2, int len);
@@ -798,7 +792,20 @@ protected:
 	byte VAR_NUM_SOUND_CHANNELS;
 };
 
-class ScummEngine_v72he : public ScummEngine_v70he {
+class ScummEngine_v71he : public ScummEngine_v70he {
+public:
+	ScummEngine_v71he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v70he(detector, syst, gs, md5sum) {}
+
+protected:
+	virtual void redrawBGAreas();
+
+	virtual void processActors();
+	void preProcessAuxQueue();
+	void postProcessAuxQueue();
+
+};
+
+class ScummEngine_v72he : public ScummEngine_v71he {
 protected:
 	typedef void (ScummEngine_v72he::*OpcodeProcV72he)();
 	struct OpcodeEntryV72he {
@@ -1048,6 +1055,8 @@ protected:
 	virtual void saveOrLoad(Serializer *s, uint32 savegameVersion);
 
 	virtual void readMAXS(int blockSize);
+
+	virtual void processActors();
 
 	void createWizEmptyImage(const WizParameters *params);
 	void fillWizRect(const WizParameters *params);

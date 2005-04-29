@@ -1276,7 +1276,7 @@ ScummEngine_v70he::~ScummEngine_v70he() {
 }
 
 ScummEngine_v72he::ScummEngine_v72he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
- : ScummEngine_v70he(detector, syst, gs, md5sum) {
+ : ScummEngine_v71he(detector, syst, gs, md5sum) {
 	VAR_NUM_ACTIVE_SOUND_CHANNELS = 0xFF;
 
 	VAR_NUM_ROOMS = 0xFF;
@@ -2762,9 +2762,9 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		case 99:
 			engine = new ScummEngine_v99he(detector, syst, game, md5sum);
 			break;
-		case 90:
 		case 98:
 		case 95:
+		case 90:
 			engine = new ScummEngine_v90he(detector, syst, game, md5sum);
 			break;
 		case 80:
@@ -2774,6 +2774,8 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 			engine = new ScummEngine_v72he(detector, syst, game, md5sum);
 			break;
 		case 71:
+			engine = new ScummEngine_v71he(detector, syst, game, md5sum);
+			break;
 		case 70:
 			engine = new ScummEngine_v70he(detector, syst, game, md5sum);
 			break;

@@ -1016,29 +1016,30 @@ void ScummEngine::processActors() {
 		akos_processQueue();
 }
 
-void ScummEngine_v70he::processActors() {
-	// TODO: The HE 90 stuff should be moved to a new method, too,
-	// if possible (ScummEngine_v90he::processActors).
-	if (_heversion >= 71) {
-		preProcessAuxQueue();
-	}
-	if (_heversion >= 90) {
-		((ScummEngine_v90he *)this)->spritesMarkDirty(0);
-		((ScummEngine_v90he *)this)->spritesProcessWiz(true);
-	}
+void ScummEngine_v71he::processActors() {
+	preProcessAuxQueue();
 
 	if (!_skipProcessActors)
 		ScummEngine::processActors();
 
-	if (_heversion >= 71) {
-		postProcessAuxQueue();
-	}
-	if (_heversion >= 90) {
-		((ScummEngine_v90he *)this)->spritesMarkDirty(1);
-		((ScummEngine_v90he *)this)->spritesProcessWiz(false);
-	}
+	postProcessAuxQueue();
 }
 
+
+void ScummEngine_v90he::processActors() {
+	preProcessAuxQueue();
+
+	spritesMarkDirty(0);
+	spritesProcessWiz(true);
+
+	if (!_skipProcessActors)
+		ScummEngine::processActors();
+
+	postProcessAuxQueue();
+
+	spritesMarkDirty(1);
+	spritesProcessWiz(false);
+}
 
 // Used in Scumm v8, to allow the verb coin to be drawn over the inventory
 // chest. I'm assuming that draw order won't matter here.
@@ -1969,7 +1970,7 @@ bool Actor::isTalkConditionSet(int slot) const {
 	return (_heCondMask & (1 << (slot - 1))) != 0;
 }
 
-void ScummEngine_v70he::preProcessAuxQueue() {
+void ScummEngine_v71he::preProcessAuxQueue() {
 	if (!_skipProcessActors) {
 		for (int i = 0; i < _auxBlocksNum; ++i) {
 			AuxBlock *ab = &_auxBlocks[i];
@@ -1982,7 +1983,7 @@ void ScummEngine_v70he::preProcessAuxQueue() {
 	_auxBlocksNum = 0;
 }
 
-void ScummEngine_v70he::postProcessAuxQueue() {
+void ScummEngine_v71he::postProcessAuxQueue() {
 	if (!_skipProcessActors) {
 		for (int i = 0; i < _auxEntriesNum; ++i) {
 			AuxEntry *ae = &_auxEntries[i];

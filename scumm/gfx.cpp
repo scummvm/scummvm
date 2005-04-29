@@ -798,12 +798,7 @@ void ScummEngine::redrawBGAreas() {
 	_bgNeedsRedraw = false;
 }
 
-void ScummEngine_v70he::redrawBGAreas() {
-	if (_heversion == 70) {
-		ScummEngine::redrawBGAreas();
-		return;
-	}
-
+void ScummEngine_v71he::redrawBGAreas() {
 	if (camera._cur.x != camera._last.x && _charset->_hasMask)
 		stopTalk();
 
