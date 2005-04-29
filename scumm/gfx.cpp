@@ -813,7 +813,7 @@ void ScummEngine_v71he::redrawBGAreas() {
 }
 
 void ScummEngine_v72he::redrawBGAreas() {
-	ScummEngine_v70he::redrawBGAreas();
+	ScummEngine_v71he::redrawBGAreas();
 	flushWizBuffer();
 }
 
