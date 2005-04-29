@@ -575,7 +575,7 @@ public:
 
 protected:
 	/* Script VM - should be in Script class */
-	uint32 _localScriptOffsets[256];
+	uint32 _localScriptOffsets[1024];
 	const byte *_scriptPointer, *_scriptOrgPointer;
 	byte _opcode, _currentScript;
 	uint16 _curExecScript;
