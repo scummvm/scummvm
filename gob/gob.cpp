@@ -88,7 +88,7 @@ REGISTER_PLUGIN(GOB, "Gob Engine")
 
 namespace Gob {
 #define MAX_TIME_DELTA 100
-	GobEngine *_vm = NULL;
+GobEngine *_vm = NULL;
 
 GobEngine::GobEngine(GameDetector *detector, OSystem * syst) : Engine(syst) {
 

@@ -50,10 +50,10 @@ typedef struct Snd_SoundDesc {
 	int16 flag;
 } Snd_SoundDesc;
 
-void snd_playSample(Snd_SoundDesc * soundDesc, int16 repCount, int16 frequency);
+void snd_playSample(Snd_SoundDesc *sndDesc, int16 repCount, int16 frequency);
 Snd_SoundDesc *snd_loadSoundData(const char *path);
-void snd_freeSoundData(Snd_SoundDesc * sndDesc);
-void snd_playComposition(Snd_SoundDesc ** samples, int16 *composit, int16 freqVal);
+void snd_freeSoundData(Snd_SoundDesc *sndDesc);
+void snd_playComposition(Snd_SoundDesc **samples, int16 *composit, int16 freqVal);
 void snd_waitEndPlay(void);
 
 }				// End of namespace Gob

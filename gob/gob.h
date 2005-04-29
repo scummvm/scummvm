@@ -54,5 +54,7 @@ public:
 	
 };
 
+extern GobEngine *_vm;
+ 
 } // End of namespace Gob
 #endif
