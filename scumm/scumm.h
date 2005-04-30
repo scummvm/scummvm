@@ -462,6 +462,7 @@ protected:
 
 	byte _numActors;
 	Actor *_actors;	// Has _numActors elements
+	Actor **_sortedActors;
 	
 	byte *_arraySlot;
 	uint16 *_inventory;

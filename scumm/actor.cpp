@@ -979,30 +979,25 @@ static int compareDrawOrder(const void* a, const void* b)
 void ScummEngine::processActors() {
 	int numactors = 0;
 
-	// TODO : put this actors as a member array. It never has to grow or shrink
-	// since _numActors is constant within a game.
-	Actor** actors = new Actor * [_numActors];
-	
 	// Make a list of all actors in this room
 	for (int i = 1; i < _numActors; i++) {
 		if (_version == 8 && _actors[i]._layer < 0)
 			continue;
 		if (_actors[i].isInCurrentRoom() && _actors[i]._costume)
-			actors[numactors++] = &_actors[i];
+			_sortedActors[numactors++] = &_actors[i];
 	}
 	if (!numactors) {
-		delete [] actors;
 		return;
 	}
 
 	// Sort actors by position before we draw them (to ensure that actors in
 	// front are drawn after those "behind" them).
-	qsort(actors, numactors, sizeof (Actor*), compareDrawOrder);
+	qsort(_sortedActors, numactors, sizeof (Actor*), compareDrawOrder);
 
-	Actor** end = actors + numactors;
+	Actor** end = _sortedActors + numactors;
 
 	// Finally draw the now sorted actors
-	for (Actor** ac = actors; ac != end; ++ac) {
+	for (Actor** ac = _sortedActors; ac != end; ++ac) {
 		Actor* a = *ac;
 		CHECK_HEAP
 		a->drawActorCostume();
@@ -1010,8 +1005,6 @@ void ScummEngine::processActors() {
 		a->animateCostume();
 	}
 	
-	delete [] actors;
-
 	if (_features & GF_NEW_COSTUMES)
 		akos_processQueue();
 }

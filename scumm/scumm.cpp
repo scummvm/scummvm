@@ -1175,6 +1175,7 @@ ScummEngine::~ScummEngine() {
 	_mixer->stopAll();
 
 	delete [] _actors;
+	delete [] _sortedActors;
 
 	delete _2byteFontPtr;
 	delete _charset;
@@ -1546,6 +1547,7 @@ void ScummEngine::scummInit() {
 	// Allocate and Initialize actors
 	Actor::initActorClass(this);
 	_actors = new Actor[_numActors];
+	_sortedActors = new Actor * [_numActors];
 	for (i = 0; i < _numActors; i++) {
 		_actors[i]._number = i;
 		_actors[i].initActor(1);
