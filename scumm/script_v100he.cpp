@@ -1122,7 +1122,6 @@ void ScummEngine_v100he::o100_resourceRoutines() {
 }
 
 void ScummEngine_v100he::o100_wizImageOps() {
-	byte filename[256];
 	int a, b;
 
 	byte subOp = fetchScriptByte();
@@ -1206,10 +1205,8 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		break;
 	case 54:
 		_wizParams.processFlags |= 0x100000;
-		//_wizParams.unk_180 = pop();
-		//_wizParams.unk_184 = pop();
-		pop();
-		pop();
+		_wizParams.field_180 = pop();
+		_wizParams.field_184 = pop();
 		break;
 	case 55:
 		_wizParams.img.flags = pop();
@@ -1226,8 +1223,8 @@ void ScummEngine_v100he::o100_wizImageOps() {
 	case 58:
 		_wizParams.processFlags |= 0x1000 | 0x100 | 0x2;
 		_wizParams.processMode = 7;
-		_wizParams.unk_164 = pop();
-		_wizParams.unk_160 = pop();
+		_wizParams.field_168 = pop();
+		_wizParams.field_164 = pop();
 		_wizParams.compType = pop();
 		break;
 	case 64:
@@ -1247,7 +1244,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 	case 68:
 		_wizParams.processFlags |= kWPFNewFlags | kWPFSetPos | 2;
 		_wizParams.img.flags |= kWIFIsPolygon;
-		_wizParams.unk_160 = _wizParams.img.y1 = _wizParams.img.x1 = pop();
+		_wizParams.field_164 = _wizParams.img.y1 = _wizParams.img.x1 = pop();
 		break;
 	case 70:
 		_wizParams.processFlags |= kWPFXmapNum;
@@ -1266,11 +1263,11 @@ void ScummEngine_v100he::o100_wizImageOps() {
 			processWizImage(&_wizParams);
 		break;
 	case 128:
-		pop();
-		pop();
-		pop();
-		pop();
-		copyScriptString(filename, sizeof(filename));
+		_wizParams.field_239D = pop();
+		_wizParams.field_2399 = pop();
+		_wizParams.field_23A5 = pop();
+		_wizParams.field_23A1 = pop();
+		copyScriptString(_wizParams.string2, sizeof(_wizParams.string2));
 		_wizParams.processMode = 15;
 		break;
 	case 129:
@@ -1278,23 +1275,23 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		break;
 	case 130:
 		_wizParams.processMode = 16;
-		pop();
-		pop();
-		copyScriptString(filename, sizeof(filename));
+		_wizParams.field_23AD = pop();
+		_wizParams.field_23A9 = pop();
+		copyScriptString(_wizParams.string1, sizeof(_wizParams.string1));
 		break;
 	case 131:
 		_wizParams.processMode = 13;
 		break;
 	case 133:
 		_wizParams.processMode = 17;
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
+		_wizParams.field_23CD = pop();
+		_wizParams.field_23C9 = pop();
+		_wizParams.field_23C5 = pop();
+		_wizParams.field_23C1 = pop();
+		_wizParams.field_23BD = pop();
+		_wizParams.field_23B9 = pop();
+		_wizParams.field_23B5 = pop();
+		_wizParams.field_23B1 = pop();
 		break;
 	case 134:
 		_wizParams.processFlags |= kWPFFillColor | kWPFClipBox2;

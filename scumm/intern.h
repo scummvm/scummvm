@@ -876,7 +876,7 @@ protected:
 	void drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int xmapNum, int angle, int zoom, const Common::Rect *r, int flags, int dstResNum, int paletteNum);
 	void captureWizImage(int resNum, const Common::Rect& r, bool frontBuffer, int compType);
 	void getWizImageDim(int resNum, int state,  int32 &w, int32 &h);
-	uint8 *drawWizImage(int resNum, int state, int x1, int y1, int xmapNum, const Common::Rect *clipBox, int flags, int dstResNum, int paletteNum);
+	uint8 *drawWizImage(int resNum, int state, int x1, int y1, int zorder, int xmapNum, int field_390, const Common::Rect *clipBox, int flags, int dstResNum, int paletteNum);
 	void drawWizPolygon(int resNum, int state, int id, int flags, int xmapNum, int dstResNum, int paletteNum);
 	void flushWizBuffer();
 
@@ -953,6 +953,7 @@ protected:
 	byte VAR_NUM_UNK;
 	byte VAR_POLYGONS_ONLY;
 	byte VAR_WINDOWS_VERSION;
+	byte VAR_U32_VERSION;
 	byte VAR_WIZ_TCOLOR;
 };
 

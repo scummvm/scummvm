@@ -279,6 +279,7 @@ void ScummEngine_v72he::setupScummVars() {
 	if (_heversion >= 95) {
 		VAR_NUM_SPRITE_GROUPS = 105;
 		VAR_NUM_SPRITES = 106;
+		VAR_U32_VERSION = 107;
 		VAR_WIZ_TCOLOR = 117;
 	}
 	if (_heversion >= 98) {
@@ -564,6 +565,7 @@ void ScummEngine_v90he::initScummVars() {
 	if (_heversion >= 95) {
 		VAR(VAR_NUM_SPRITE_GROUPS) = MAX(64, _numSprites / 4) - 1;
 		VAR(VAR_NUM_SPRITES) = _numSprites - 1;
+		VAR(VAR_U32_VERSION) = -1;
 		VAR(VAR_WIZ_TCOLOR) = 5;
 	}
 }

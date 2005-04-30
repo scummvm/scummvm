@@ -1273,7 +1273,7 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 			wiz.img.y1 = spi->ty - spr_wiz_y;
 		}
 
-		//wiz.field_23EA = spi->field_90;
+		wiz.field_23EA = spi->field_90;
 		spi->curImageState = wiz.img.state = resState;
 		spi->curResId = wiz.img.resNum = resId;
 		wiz.processFlags = kWPFNewState | kWPFSetPos;
@@ -1339,8 +1339,8 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 			wiz.img.flags |= kWIFRemapPalette;
 		if (spi->field_84) {
 			wiz.processFlags |= 0x200000;
-			//wiz.field_390 = spi->field_84;
-			//wiz.zorder = spi->zorderPriority;
+			wiz.img.field_390 = spi->field_84;
+			wiz.img.zorder = spi->zorderPriority;
 		}
 		if (spi->maskImgResNum) {
 			wiz.processFlags |= kWPFMaskImg;
