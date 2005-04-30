@@ -1273,6 +1273,8 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 			wiz.img.y1 = spi->ty - spr_wiz_y;
 		}
 
+		wiz.spriteId = spi->id;
+		wiz.groupNum = spi->groupNum;
 		wiz.field_23EA = spi->field_90;
 		spi->curImageState = wiz.img.state = resState;
 		spi->curResId = wiz.img.resNum = resId;
