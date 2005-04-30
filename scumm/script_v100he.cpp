@@ -1140,6 +1140,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.angle = pop();
 		break;
 	case 6:
+	case 132:
 		_wizParams.processFlags |= kWPFSetPos;
 		_wizParams.img.y1 = pop();
 		_wizParams.img.x1 = pop();
