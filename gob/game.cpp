@@ -678,11 +678,12 @@ int16 game_checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 					}
 				}
 			}
-
 		}
 
 		if (handleMouse != 0)
 			draw_animateCursor(-1);
+
+		snd_loopSounds();
 	}
 }
 

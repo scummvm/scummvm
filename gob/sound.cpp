@@ -24,7 +24,25 @@
 #include "gob/sound.h"
 namespace Gob {
 
-SoundHandle soundHandle;
+Snd_SoundDesc *snd_loopingSounds[5]; // Should be enough
+
+void snd_initSound(void) {
+	for (int i = 0; i < ARRAYSIZE(snd_loopingSounds); i++)
+		snd_loopingSounds[i] = NULL;
+}
+
+void snd_loopSounds(void) {
+	for (int i = 0; i < ARRAYSIZE(snd_loopingSounds); i++) {
+		Snd_SoundDesc *snd = snd_loopingSounds[i];
+		if (snd && !_vm->_mixer->isSoundHandleActive(snd->handle)) {
+			if (snd->repCount-- > 0) {
+				_vm->_mixer->playRaw(&snd->handle, snd->data, snd->size, snd->frequency, 0);
+			} else {
+				snd_loopingSounds[i] = NULL;
+			}
+		}
+	}
+}
 
 int16 snd_checkProAudio(void) {return 0;}
 int16 snd_checkAdlib(void) {return 0;}
@@ -44,14 +62,27 @@ void snd_setResetTimerFlag(char flag){return;}
 // a simple signed/unsigned issue.
 
 void snd_playSample(Snd_SoundDesc *sndDesc, int16 repCount, int16 frequency) {
-	if (repCount != 1)
-		warning("snd_playSample: repCount = %d - not implemented", repCount);
 	if (frequency < 0) {
 		warning("snd_playSample: frequency = %d - this is weird", frequency);
 		return;
 	}
 
-	_vm->_mixer->playRaw(&soundHandle, sndDesc->data, sndDesc->size, frequency, 0);
+	if (!_vm->_mixer->isSoundHandleActive(sndDesc->handle)) {
+		_vm->_mixer->playRaw(&sndDesc->handle, sndDesc->data, sndDesc->size, frequency, 0);
+	}
+
+	sndDesc->repCount = repCount - 1;
+	sndDesc->frequency = frequency;
+
+	if (repCount > 1) {
+		for (int i = 0; i < ARRAYSIZE(snd_loopingSounds); i++) {
+			if (!snd_loopingSounds[i]) {
+				snd_loopingSounds[i] = sndDesc;
+				return;
+			}
+		}
+		warning("Looping sounds list is full");
+	}
 }
 
 void snd_cleanupFuncCallback() {;}
@@ -78,6 +109,13 @@ Snd_SoundDesc *snd_loadSoundData(const char *path) {
 }
 
 void snd_freeSoundData(Snd_SoundDesc *sndDesc) {
+	_vm->_mixer->stopHandle(sndDesc->handle);
+
+	for (int i = 0; i < ARRAYSIZE(snd_loopingSounds); i++) {
+		if (snd_loopingSounds[i] == sndDesc)
+			snd_loopingSounds[i] = NULL;
+	}
+
 	free(sndDesc->data);
 	free(sndDesc);
 }

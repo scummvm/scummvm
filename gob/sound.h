@@ -24,6 +24,8 @@
 
 namespace Gob {
 
+void snd_initSound(void);
+void snd_loopSounds(void);
 int16 snd_checkProAudio(void);
 int16 snd_checkAdlib(void);
 int16 snd_checkBlaster(void);
@@ -42,8 +44,10 @@ extern CleanupFuncPtr snd_cleanupFunc;
 void snd_writeAdlib(int16 port, int16 data);
 
 typedef struct Snd_SoundDesc {
+	SoundHandle handle;
 	char *data;
 	int32 size;
+	int16 repCount;
 	int16 timerTicks;
 	int16 inClocks;
 	int16 frequency;
