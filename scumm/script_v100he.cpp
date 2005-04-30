@@ -1133,6 +1133,10 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.processFlags = 0;
 		_wizParams.remapNum = 0;
 		_wizParams.img.flags = 0;
+		_wizParams.field_184 = 0;
+		_wizParams.field_180 = 0;
+		_wizParams.spriteId = 0;
+		_wizParams.groupNum = 0;
 		break;
 	case 2:
 		_wizParams.processFlags |= kWPFRotate;
@@ -1213,6 +1217,8 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.img.state = pop();
 		_wizParams.img.y1 = pop();
 		_wizParams.img.x1 = pop();
+		_wizParams.spriteId = 0;
+		_wizParams.groupNum = 0;
 		_wizParams.img.resNum = pop();
 		displayWizImage(&_wizParams.img);
 		break;
