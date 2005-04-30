@@ -1631,6 +1631,9 @@ void ScummEngine_v90he::fillWizParallelogram(const WizParameters *params) {
 }
 
 void ScummEngine_v90he::processWizImage(const WizParameters *params) {
+	char buf[512];
+	unsigned int i;
+
 	debug(2, "processWizImage: processMode %d", params->processMode);
 	switch (params->processMode) {
 	case 0:
@@ -1645,7 +1648,15 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 	case 3:
 		if (params->processFlags & kWPFUseFile) {
 			File f;
-			if (f.open((const char *)params->filename, File::kFileReadMode)) {
+
+			// Convert Windows path separators to something more portable
+			strncpy(buf, (const char *)params->filename, 512);
+			for (i = 0; i < strlen(buf); i++) {
+				if (buf[i] == '\\')
+					buf[i] = '/';
+			}
+
+			if (f.open((const char *)buf, File::kFileReadMode)) {
 				uint32 id = f.readUint32LE();
 				if (id == TO_LE_32(MKID('AWIZ')) || id == TO_LE_32(MKID('MULT'))) {
 					uint32 size = f.readUint32BE();
@@ -1653,7 +1664,7 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 					byte *p = res.createResource(rtImage, params->img.resNum, size);
 					if (f.read(p, size) != size) {
 						res.nukeResource(rtImage, params->img.resNum);
-						warning("i/o error when reading '%s'", params->filename);
+						warning("i/o error when reading '%s'", buf);
 						VAR(VAR_GAME_LOADED) = -2;
 						VAR(119) = -2;
 					} else {
@@ -1668,7 +1679,7 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 			} else {
 				VAR(VAR_GAME_LOADED) = -3;
 				VAR(119) = -3;
-				warning("Unable to open for read '%s'", params->filename);
+				warning("Unable to open for read '%s'", buf);
 			}
 		}
 		break;
@@ -1684,8 +1695,15 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 				// TODO Write image to file
 				break;
 			case 0:
-				if (!f.open((const char *)params->filename, File::kFileWriteMode)) {
-					warning("Unable to open for write '%s'", params->filename);
+				// Convert Windows path separators to something more portable
+				strncpy(buf, (const char *)params->filename, 512);
+				for (i = 0; i < strlen(buf); i++) {
+					if (buf[i] == '\\')
+						buf[i] = '/';
+				}
+
+				if (!f.open((const char *)buf, File::kFileWriteMode)) {
+					warning("Unable to open for write '%s'", buf);
 					VAR(119) = -3;
 				} else {
 					byte *p = getResourceAddress(rtImage, params->img.resNum);
