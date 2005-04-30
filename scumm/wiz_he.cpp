@@ -1027,6 +1027,10 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 			// RAW 16 bits in 555 format
 			warning("drawWizImage: Unhandled wiz compression type %d", comp);
 			break;
+		case 5:
+			// Used in Moonbase Commander
+			warning("drawWizImage: Unhandled wiz compression type %d", comp);
+			break;
 		default:
 			error("drawWizImage: Unhandled wiz compression type %d", comp);
 		}
@@ -1798,6 +1802,11 @@ uint8 ScummEngine_v90he::getWizPixelColor(int resNum, int state, int x, int y, i
 		break;
 	case 1:
 		color = _wiz.getWizPixelColor(wizd, x, y, w, h, VAR(VAR_WIZ_TCOLOR));
+		break;
+	case 5:
+		// Used in Moonbase Commander
+		color = 1;
+		warning("getWizPixelColor: Unhandled wiz compression type %d", c);
 		break;
 	default:
 		error("getWizPixelColor: Unhandled wiz compression type %d", c);
