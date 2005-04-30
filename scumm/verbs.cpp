@@ -415,10 +415,10 @@ void ScummEngine::checkExecVerbs() {
 		byte code = _mouseAndKeyboardStat & MBS_LEFT_CLICK ? 1 : 2;
 		int inventoryArea = (_platform == Common::kPlatformNES) ? 48: 32;
 
-		if (_version <= 2 && zone->number == 2 && _mouse.y <= zone->topline + 8) {
+		if (_version <= 2 && zone->number == kVerbVirtScreen && _mouse.y <= zone->topline + 8) {
 			// Click into V2 sentence line
 			runInputScript(5, 0, 0);
-		} else if (_version <= 2 && zone->number == 2 && _mouse.y > zone->topline + inventoryArea) {
+		} else if (_version <= 2 && zone->number == kVerbVirtScreen && _mouse.y > zone->topline + inventoryArea) {
 			// Click into V2 inventory
 			((ScummEngine_v2 *)this)->checkV2Inventory(_mouse.x, _mouse.y);
 		} else {
@@ -428,7 +428,7 @@ void ScummEngine::checkExecVerbs() {
 				runInputScript(1, _verbs[over].verbid, code);
 			} else {
 				// Scene was clicked
-				runInputScript((zone->number == 0) ? 2 : 1, 0, code);
+				runInputScript((zone->number == kMainVirtScreen) ? 2 : 1, 0, code);
 			}
 		}
 	}

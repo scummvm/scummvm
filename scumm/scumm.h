@@ -729,6 +729,10 @@ protected:
 	byte *_objectOwnerTable, *_objectRoomTable, *_objectStateTable;
 	int _numObjectsInRoom;
 
+public:
+	uint32 *_classData;
+
+protected:
 	virtual void setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
 	void markObjectRectAsDirty(int obj);
 	void loadFlObject(uint object, uint room);
@@ -807,8 +811,6 @@ public:
 	/* Should be in Actor class */
 	Actor *derefActor(int id, const char *errmsg = 0) const;
 	Actor *derefActorSafe(int id, const char *errmsg) const;
-
-	uint32 *_classData;
 
 	int getAngleFromPos(int x, int y) const;
 

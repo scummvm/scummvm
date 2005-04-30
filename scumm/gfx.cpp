@@ -273,9 +273,9 @@ void ScummEngine::initScreens(int b, int h) {
 	}
 
 	if ((_platform == Common::kPlatformNES) && (h != _screenHeight)) {
-		// It is a hack to shift whole screen downwards to match original.
-		// Otherwise we will need to do lots of coordinate adjustments all over
-		// the code
+		// This is a hack to shift the whole screen downwards to match the original.
+		// Otherwise we would have to do lots of coordinate adjustments all over
+		// the code.
 		adj = 16;
 		initVirtScreen(kUnkVirtScreen, 0, _screenWidth, adj, false, false);
 	}
