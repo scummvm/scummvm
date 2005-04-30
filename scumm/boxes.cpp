@@ -81,7 +81,7 @@ struct Box {				/* Internal walkbox file format */
 
 
 static bool compareSlope(int X1, int Y1, int X2, int Y2, int X3, int Y3);
-static Common::Point closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y);
+static Common::Point closestPtOnLine(const Common::Point &start, const Common::Point &end, int x, int y);
 
 
 byte ScummEngine::getMaskFromBox(int box) {
@@ -442,7 +442,7 @@ bool ScummEngine::checkXYInBoxBounds(int b, int x, int y) {
 		box.ul.x == box.ll.x && box.ul.y == box.ll.y && box.ur.x == box.lr.x && box.ur.y == box.lr.y) {
 
 		Common::Point pt;
-		pt = closestPtOnLine(box.ul.x, box.ul.y, box.lr.x, box.lr.y, x, y);
+		pt = closestPtOnLine(box.ul, box.lr, x, y);
 		if (distanceFromPt(x, y, pt.x, pt.y) <= 4)
 			return true;
 	}
@@ -520,12 +520,12 @@ void ScummEngine::getBoxCoordinates(int boxnum, BoxCoords *box) {
 uint ScummEngine::distanceFromPt(int x, int y, int ptx, int pty) {
 	int diffx, diffy;
 
-	diffx = abs(ptx - x);
+	diffx = ABS(ptx - x);
 
 	if (diffx >= 0x1000)
 		return 0xFFFFFF;
 
-	diffy = abs(pty - y);
+	diffy = ABS(pty - y);
 
 	if (diffy >= 0x1000)
 		return 0xFFFFFF;
@@ -539,82 +539,75 @@ bool compareSlope(int X1, int Y1, int X2, int Y2, int X3, int Y3) {
 	return (Y2 - Y1) * (X3 - X1) <= (Y3 - Y1) * (X2 - X1);
 }
 
-Common::Point closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y) {
-	int lydiff, lxdiff;
-	int32 dist, a, b, c;
-	int x2, y2;
+/**
+ * Find the point on a line segment which is closest to a given point.
+ *
+ * @param start	the start of the line segment
+ * @param end	the end of the line segment
+ * @param x		the x coordinate of the point which we want to 'project' on the line segment
+ * @param y		the y coordinate of the point which we want to 'project' on the line segment
+ * @return the point on the line segmen closes to the given point
+ */
+Common::Point closestPtOnLine(const Common::Point &start, const Common::Point &end, int x, int y) {
 	Common::Point pt;
 
-	if (llx == ulx) {	// Vertical line?
-		x2 = ulx;
-		y2 = y;
-	} else if (lly == uly) {	// Horizontal line?
-		x2 = x;
-		y2 = uly;
+	const int lxdiff = end.x - start.x;
+	const int lydiff = end.y - start.y;
+
+	if (end.x == start.x) {	// Vertical line?
+		pt.x = start.x;
+		pt.y = y;
+	} else if (end.y == start.y) {	// Horizontal line?
+		pt.x = x;
+		pt.y = start.y;
 	} else {
-		lydiff = lly - uly;
-
-		lxdiff = llx - ulx;
-
-		if (abs(lxdiff) > abs(lydiff)) {
-			dist = lxdiff * lxdiff + lydiff * lydiff;
-
-			a = ulx * lydiff / lxdiff;
+		const int dist = lxdiff * lxdiff + lydiff * lydiff;
+		int a, b, c;
+		if (ABS(lxdiff) > ABS(lydiff)) {
+			a = start.x * lydiff / lxdiff;
 			b = x * lxdiff / lydiff;
 
-			c = (a + b - uly + y) * lydiff * lxdiff / dist;
+			c = (a + b - start.y + y) * lydiff * lxdiff / dist;
 
-			x2 = c;
-			y2 = c * lydiff / lxdiff - a + uly;
+			pt.x = c;
+			pt.y = c * lydiff / lxdiff - a + start.y;
 		} else {
-			dist = lydiff * lydiff + lxdiff * lxdiff;
-
-			a = uly * lxdiff / lydiff;
+			a = start.y * lxdiff / lydiff;
 			b = y * lydiff / lxdiff;
 
-			c = (a + b - ulx + x) * lydiff * lxdiff / dist;
+			c = (a + b - start.x + x) * lydiff * lxdiff / dist;
 
-			y2 = c;
-			x2 = c * lxdiff / lydiff - a + ulx;
+			pt.y = c;
+			pt.x = c * lxdiff / lydiff - a + start.x;
 		}
 	}
 
-	lxdiff = llx - ulx;
-	lydiff = lly - uly;
-
-	if (abs(lydiff) < abs(lxdiff)) {
+	if (ABS(lydiff) < ABS(lxdiff)) {
 		if (lxdiff > 0) {
-			if (x2 < ulx) {
-			type1:;
-				x2 = ulx;
-				y2 = uly;
-			} else if (x2 > llx) {
-			type2:;
-				x2 = llx;
-				y2 = lly;
-			}
+			if (pt.x < start.x)
+				pt = start;
+			else if (pt.x > end.x)
+				pt = end;
 		} else {
-			if (x2 > ulx)
-				goto type1;
-			if (x2 < llx)
-				goto type2;
+			if (pt.x > start.x)
+				pt = start;
+			else if (pt.x < end.x)
+				pt = end;
 		}
 	} else {
 		if (lydiff > 0) {
-			if (y2 < uly)
-				goto type1;
-			if (y2 > lly)
-				goto type2;
+			if (pt.y < start.y)
+				pt = start;
+			else if (pt.y > end.y)
+				pt = end;
 		} else {
-			if (y2 > uly)
-				goto type1;
-			if (y2 < lly)
-				goto type2;
+			if (pt.y > start.y)
+				pt = start;
+			else if (pt.y < end.y)
+				pt = end;
 		}
 	}
 
-	pt.x = x2;
-	pt.y = y2;
 	return pt;
 }
 
@@ -651,7 +644,7 @@ int ScummEngine::getClosestPtOnBox(int b, int x, int y, int16& outX, int16& outY
 
 	getBoxCoordinates(b, &box);
 	
-	pt = closestPtOnLine(box.ul.x, box.ul.y, box.ur.x, box.ur.y, x, y);
+	pt = closestPtOnLine(box.ul, box.ur, x, y);
 	dist = distanceFromPt(x, y, pt.x, pt.y);
 	if (dist < bestdist) {
 		bestdist = dist;
@@ -659,7 +652,7 @@ int ScummEngine::getClosestPtOnBox(int b, int x, int y, int16& outX, int16& outY
 		outY = pt.y;
 	}
 
-	pt = closestPtOnLine(box.ur.x, box.ur.y, box.lr.x, box.lr.y, x, y);
+	pt = closestPtOnLine(box.ur, box.lr, x, y);
 	dist = distanceFromPt(x, y, pt.x, pt.y);
 	if (dist < bestdist) {
 		bestdist = dist;
@@ -667,7 +660,7 @@ int ScummEngine::getClosestPtOnBox(int b, int x, int y, int16& outX, int16& outY
 		outY = pt.y;
 	}
 
-	pt = closestPtOnLine(box.lr.x, box.lr.y, box.ll.x, box.ll.y, x, y);
+	pt = closestPtOnLine(box.lr, box.ll, x, y);
 	dist = distanceFromPt(x, y, pt.x, pt.y);
 	if (dist < bestdist) {
 		bestdist = dist;
@@ -675,7 +668,7 @@ int ScummEngine::getClosestPtOnBox(int b, int x, int y, int16& outX, int16& outY
 		outY = pt.y;
 	}
 
-	pt = closestPtOnLine(box.ll.x, box.ll.y, box.ul.x, box.ul.y, x, y);
+	pt = closestPtOnLine(box.ll, box.ul, x, y);
 	dist = distanceFromPt(x, y, pt.x, pt.y);
 	if (dist < bestdist) {
 		bestdist = dist;
@@ -1156,11 +1149,11 @@ void Actor::findPathTowardsOld(byte box1, byte box2, byte finalBox, Common::Poin
 		}
 	}
 
-	p3 = pt = closestPtOnLine(gateA[1].x, gateA[1].y, gateB[1].x, gateB[1].y, _pos.x, _pos.y);
+	p3 = pt = closestPtOnLine(gateA[1], gateB[1], _pos.x, _pos.y);
 
 	if (compareSlope(_pos.x, _pos.y, p3.x, p3.y, gateA[0].x, gateA[0].y) ==
 			compareSlope(_pos.x, _pos.y, p3.x, p3.y, gateB[0].x, gateB[0].y)) {
-		closestPtOnLine(gateA[0].x, gateA[0].y, gateB[0].x, gateB[0].y, _pos.x, _pos.y);
+		closestPtOnLine(gateA[0], gateB[0], _pos.x, _pos.y);
 		p2 = pt;	// if point 2 between gates, ignore!
 	}
 }
@@ -1222,7 +1215,7 @@ void ScummEngine::getGates(int box1, int box2, Common::Point gateA[2], Common::P
 
 	// Finally, compute the actual "gate".
 
-	if (box[0] == box[1] && abs(minDist[0] - minDist[1]) < 4) {
+	if (box[0] == box[1] && ABS(minDist[0] - minDist[1]) < 4) {
 		line1 = closest[0];
 		line2 = closest[1];
 
@@ -1236,13 +1229,13 @@ void ScummEngine::getGates(int box1, int box2, Common::Point gateA[2], Common::P
 		line1 = closest[1];
 		line2 = closest[2];
 
-	} else if (box[0] == box[2] && abs(minDist[0] - minDist[2]) < 4) {
+	} else if (box[0] == box[2] && ABS(minDist[0] - minDist[2]) < 4) {
 		line1 = closest[0];
 		line2 = closest[2];
-	} else if (abs(minDist[0] - minDist[2]) < 4) {
+	} else if (ABS(minDist[0] - minDist[2]) < 4) {
 		line1 = closest[1];
 		line2 = closest[2];
-	} else if (abs(minDist[0] - minDist[1]) < 4) {
+	} else if (ABS(minDist[0] - minDist[1]) < 4) {
 		line1 = closest[0];
 		line2 = closest[1];
 	} else {
