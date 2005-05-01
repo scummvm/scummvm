@@ -114,13 +114,16 @@ enum GameFeatures {
 	GF_HE_CURSORLESS       = 1 << 12,
 
 	/** HE games for which localized versions exist */
-	GF_HE_LOCALIZED       = 1 << 13,
+	GF_HE_LOCALIZED        = 1 << 13,
+
+	/** HE games with 16 bit color */
+	GF_16BIT_COLOR         = 1 << 14,
 
 	/** Games with multiple versions */
-	GF_MULTIPLE_VERSIONS   = 1 << 14,
+	GF_MULTIPLE_VERSIONS   = 1 << 15,
 	
 	/** A demo, not a full blown game. */
-	GF_DEMO                = 1 << 15
+	GF_DEMO                = 1 << 16
 };
 
 /* SCUMM Debug Channels */

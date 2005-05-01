@@ -72,7 +72,6 @@ protected:
 	const byte *akpl, *akci, *aksq;
 	const AkosOffset *akof;
 	const byte *akcd;
-	
 	const byte *akct;
 
 	struct {

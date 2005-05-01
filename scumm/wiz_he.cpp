@@ -947,7 +947,7 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 			if (_heversion <= 80 || READ_BE_UINT32(rmap) != 0x01234567) {
 				uint8 *rgbs = findWrappedBlock(MKID('RGBS'), dataPtr, state, 0);
 				assert(rgbs);
-				remapPalette(rgbs, rmap + 4);
+				remapHEPalette(rgbs, rmap + 4);
 			}
 		}
 		if (flags & kWIFPrint) {
