@@ -184,10 +184,6 @@ bool BaseAnimationState::decodeFrame() {
 				 * frames if we run behind and delaying if we are too fast
 				 */
 
-				/* Avoid deadlock is sound was too far ahead */
-				if (_bgSoundStream && !_snd->isSoundHandleActive(_bgSound))
-					return false;
-
 				if (checkPaletteSwitch() || (_bgSoundStream == NULL) ||
 					((_snd->getSoundElapsedTime(_bgSound) * 12) / 1000 < _frameNum + 1) ||
 					_frameSkipped > 10) {
@@ -197,9 +193,14 @@ bool BaseAnimationState::decodeFrame() {
 					}
 					drawYUV(sequence_i->width, sequence_i->height, _mpegInfo->display_fbuf->buf);
 
-					if (_bgSoundStream) {
-						while ((_snd->getSoundElapsedTime(_bgSound) * 12) / 1000 < _frameNum)
+					if (_bgSoundStream && _snd->isSoundHandleActive(_bgSound)) {
+						while (_snd->isSoundHandleActive(_bgSound) && (_snd->getSoundElapsedTime(_bgSound) * 12) / 1000 < _frameNum) {
 							_sys->delayMillis(10);
+						}
+						// In case the background sound ends prematurely, update
+						// _ticks so that we can still fall back on the no-sound
+						// sync case for the subsequent frames.
+						_ticks = _sys->getMillis();
 					} else {
 						_ticks += 83;
 						while (_sys->getMillis() < _ticks)
