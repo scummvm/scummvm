@@ -1016,10 +1016,11 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 		case 1:
 			// TODO Adding masking for flags 0x80 and 0x100
 			if (flags & 0x80) {
+				// Used in maze
 				warning("drawWizImage: Unhandled flag 0x80");
-			}
-			if (flags & 0x100) {
-				error("drawWizImage: Unhandled flag 0x100");
+			} else if (flags & 0x100) {
+				// Used in readdemo
+				warning("drawWizImage: Unhandled flag 0x100");
 			}
 			_wiz.copyWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, palPtr);
 			break;

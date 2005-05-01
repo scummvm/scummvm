@@ -2537,6 +2537,9 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 		_skipProcessActors = 0;
 		redrawAllActors();
 		break;
+	case 27:
+		// Used in readdemo
+		break;
 	case 42:
 		_wiz._rectOverrideEnabled = true;
 		_wiz._rectOverride.left = args[1];

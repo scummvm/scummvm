@@ -231,6 +231,11 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 	if (_vm->_heversion >= 70 && soundID > _vm->_numSounds) {
 		debug(1, "playSound #%d", soundID);
 
+		if (soundID >= 10000) {
+			// Special codes, used in pjgames
+			return;
+		}
+
 		int music_offs;
 		char buf[32], buf1[128];
 		File musicFile;
