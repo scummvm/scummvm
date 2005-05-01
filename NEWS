@@ -13,6 +13,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Added FluidSynth MIDI driver.
    - Added GUI for the "soundfont" setting. (Currently only used by the
      CoreAudio and FluidSynth MIDI drivers.)
+   - The MPEG player could hang if the sound ended prematurely.
 
  SCUMM:
    - Added support for Mac Humongous Entertainment titles
