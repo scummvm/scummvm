@@ -811,8 +811,14 @@ void OSystem_SDL::addDirtyRect(int x, int y, int w, int h, bool mouseRect) {
 	if (_forceFull)
 		return;
 
+	if (_numDirtyRects == NUM_DIRTY_RECT) {
+		_forceFull = true;
+		return;
+	}
+
+	SDL_Rect *r = &_dirtyRectList[_numDirtyRects++];
+
 	if (mouseRect) {
-		SDL_Rect *r = &_dirtyRectList[_numDirtyRects++];
 		r->x = x;
 		r->y = y;
 		r->w = w;
@@ -830,50 +836,46 @@ void OSystem_SDL::addDirtyRect(int x, int y, int w, int h, bool mouseRect) {
 		height = _overlayHeight;
 	}
 
-	if (_numDirtyRects == NUM_DIRTY_RECT)
-		_forceFull = true;
-	else {
-		SDL_Rect *r = &_dirtyRectList[_numDirtyRects++];
-		// Extend the dirty region by 1 pixel for scalers
-		// that "smear" the screen, e.g. 2xSAI
-		if (_modeFlags & DF_UPDATE_EXPAND_1_PIXEL) {
-			x--;
-			y--;
-			w+=2;
-			h+=2;
-		}
-
-		// clip
-		if (x < 0) {
-			w += x; x = 0;
-		}
-
-		if (y < 0) {
-			h += y;
-			y=0;
-		}
-
-		if (w > width - x) {
-			w = width - x;
-		}
-
-		if (h > height - y) {
-			h = height - y;
-		}
-
-		if (_adjustAspectRatio) {
-			makeRectStretchable(x, y, w, h);
-			if (_scaleFactor == 3 && _overlayScale == 2 && _overlayVisible) {
-				if (y % 2)
-					y++;
-			}
-		}
-	
-		r->x = x;
-		r->y = y;
-		r->w = w;
-		r->h = h;
+	// Extend the dirty region by 1 pixel for scalers
+	// that "smear" the screen, e.g. 2xSAI
+	if (_modeFlags & DF_UPDATE_EXPAND_1_PIXEL) {
+		x--;
+		y--;
+		w+=2;
+		h+=2;
 	}
+
+	// clip
+	if (x < 0) {
+		w += x;
+		x = 0;
+	}
+
+	if (y < 0) {
+		h += y;
+		y=0;
+	}
+
+	if (w > width - x) {
+		w = width - x;
+	}
+
+	if (h > height - y) {
+		h = height - y;
+	}
+
+	if (_adjustAspectRatio) {
+		makeRectStretchable(x, y, w, h);
+		if (_scaleFactor == 3 && _overlayScale == 2 && _overlayVisible) {
+			if (y % 2)
+				y++;
+		}
+	}
+	
+	r->x = x;
+	r->y = y;
+	r->w = w;
+	r->h = h;
 }
 
 
