@@ -1280,8 +1280,6 @@ ScummEngine_v70he::~ScummEngine_v70he() {
 
 ScummEngine_v72he::ScummEngine_v72he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
  : ScummEngine_v71he(detector, syst, gs, md5sum) {
-	VAR_NUM_ACTIVE_SOUND_CHANNELS = 0xFF;
-
 	VAR_NUM_ROOMS = 0xFF;
 	VAR_NUM_SCRIPTS = 0xFF;
 	VAR_NUM_SOUNDS = 0xFF;

@@ -194,7 +194,6 @@ void ScummEngine_v70he::setupScummVars() {
 }
 
 void ScummEngine_v72he::setupScummVars() {
-	// TODO Not complete
 	VAR_KEYPRESS = 0;
 	VAR_DEBUGMODE = 1;
 	VAR_TIMER_NEXT = 2;
@@ -245,7 +244,6 @@ void ScummEngine_v72he::setupScummVars() {
 	VAR_SOUND_CHANNEL = 51;
 	VAR_MUSIC_CHANNEL = 52;
 
-	VAR_NUM_SOUND_CHANNELS = 56;
 	VAR_MEMORY_PERFORMANCE = 57;
 	VAR_VIDEO_PERFORMANCE = 58;
 	VAR_NEW_ROOM = 59;
@@ -268,10 +266,13 @@ void ScummEngine_v72he::setupScummVars() {
 	VAR_MOUSE_STATE = 75;
 	VAR_POLYGONS_ONLY = 76;
 
+	if (_heversion == 72) {
+		VAR_NUM_SOUND_CHANNELS = 56;
+	}
 	if (_heversion >= 80)
 		VAR_WINDOWS_VERSION = 79;
 		VAR_KEY_STATE = 86;
-		VAR_NUM_ACTIVE_SOUND_CHANNELS = 88;
+		VAR_NUM_SOUND_CHANNELS = 88;
 	if (_heversion >= 90) {
 		VAR_SCRIPT_CYCLE = 103;
 		VAR_NUM_SCRIPT_CYCLES = 104;
@@ -552,8 +553,6 @@ void ScummEngine_v80he::initScummVars() {
 
 	VAR(78) = 1;
 	VAR(VAR_WINDOWS_VERSION) = 40;
-
-	VAR(VAR_NUM_ACTIVE_SOUND_CHANNELS) = (_heversion >= 90) ? 8 : 4;
 }
 
 void ScummEngine_v90he::initScummVars() {

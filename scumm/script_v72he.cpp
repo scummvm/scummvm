@@ -2136,6 +2136,8 @@ void ScummEngine_v72he::o72_readINI() {
 	default:
 		error("o72_readINI: default type %d", type);
 	}
+
+	debug(0, "o72_readINI: Option %s", option);
 }
 
 void ScummEngine_v72he::o72_writeINI() {

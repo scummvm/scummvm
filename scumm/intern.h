@@ -939,8 +939,6 @@ protected:
 	void o72_setFilePath();
 	void o72_setWindowCaption();
 
-	byte VAR_NUM_ACTIVE_SOUND_CHANNELS;
-
 	byte VAR_NUM_ROOMS;
 	byte VAR_NUM_SCRIPTS;
 	byte VAR_NUM_SOUNDS;
