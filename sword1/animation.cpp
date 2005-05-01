@@ -134,7 +134,7 @@ void MoviePlayer::play(uint32 id) {
 	}
 	bool initOK = anim->init(_sequenceList[id], stream);
 
-    uint32 frameCount = 0;
+	uint32 frameCount = 0;
 	if (initOK) {
 		while (anim->decodeFrame()) {
 			processFrame(id, anim, frameCount);
