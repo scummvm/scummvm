@@ -1293,6 +1293,7 @@ public:
 	byte VAR_CLICK_AREA;
 
 	// HE specific variables
+	byte VAR_CURRENT_CHARSET;
 	byte VAR_SKIP_RESET_TALK_ACTOR;
 	byte VAR_MUSIC_CHANNEL;
 	byte VAR_SOUND_CHANNEL;

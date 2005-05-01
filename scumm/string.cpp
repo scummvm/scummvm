@@ -757,6 +757,10 @@ void ScummEngine::initCharset(int charsetno) {
 
 	for (i = 0; i < 16; i++)
 		_charsetColorMap[i] = _charsetData[charsetno][i];
+
+	if (_heversion >= 80) {
+		VAR(VAR_CURRENT_CHARSET) = charsetno;
+	}
 }
 
 void ScummEngine_v6::enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center) {
