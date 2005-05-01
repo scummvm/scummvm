@@ -213,10 +213,6 @@ void gob_playSound(Snd_SoundDesc *snd, int16 repCount, int16 freq) {
 }
 
 void gob_drawObjects(void) {
-	int16 tmp;
-	int16 sndItem;
-	int16 freq;
-	int16 repCount;
 	Util_ListNode *ptr;
 	Util_ListNode *ptr2;
 
@@ -368,61 +364,50 @@ void gob_drawObjects(void) {
 		if (objDesc->toRedraw == 0 || objDesc->type == 1)
 			continue;
 
-		tmp =
-		    objDesc->stateMach[objDesc->state][objDesc->stateColumn]->
-		    unk2;
+		Gob_State *state = objDesc->stateMach[objDesc->state][objDesc->stateColumn];
+		int16 sndFrame;
+		int16 sndItem;
+		int16 freq;
+		int16 repCount;
 
-		if ((tmp >> 8) != 0) {
-			if (objDesc->curFrame == (tmp >> 8)) {
-				sndItem =
-				    objDesc->stateMach[objDesc->
-				    state][objDesc->stateColumn]->sndItem >> 8;
-				if (sndItem != -1) {
-					freq =
-					    (objDesc->stateMach[objDesc->
-						state][objDesc->stateColumn]->
-					    freq >> 8) * 100;
-					repCount =
-					    (objDesc->stateMach[objDesc->
-						state][objDesc->stateColumn]->
-					    repCount >> 8);
+		if (state->sndFrame & 0xff00) {
+			// There are two frames which trigger a sound effect,
+			// so everything has to be encoded in one byte each.
+			// Note that the frequency is multiplied by 100, not -
+			// as I would have thought, 0x100.
+
+			sndFrame = (state->sndFrame >> 8) & 0xff;
+			sndItem = (state->sndItem >> 8) & 0xff;
+			freq = 100 * ((state->freq >> 8) & 0xff);
+			repCount = (state->repCount >> 8) & 0xff;
+
+			if (objDesc->curFrame == sndFrame) {
+				if (sndItem != 0xff) {
 					gob_playSound(gob_soundData[sndItem],
 					    repCount, freq);
 				}
 			}
 
-			if (objDesc->curFrame == (tmp & 0xff)) {
-				sndItem =
-				    objDesc->stateMach[objDesc->
-				    state][objDesc->stateColumn]->
-				    sndItem & 0xff;
-				if (sndItem != -1) {
-					freq =
-					    (objDesc->stateMach[objDesc->
-						state][objDesc->stateColumn]->
-					    freq & 0xff) * 100;
-					repCount =
-					    (objDesc->stateMach[objDesc->
-						state][objDesc->stateColumn]->
-					    repCount & 0xff);
+			sndFrame = state->sndFrame & 0xff;
+			sndItem = state->sndItem & 0xff;
+			freq = 100 * (state->freq & 0xff);
+			repCount = state->repCount & 0xff;
+
+			if (objDesc->curFrame == sndFrame) {
+				if (sndItem != 0xff) {
 					gob_playSound(gob_soundData[sndItem],
 					    repCount, freq);
 				}
 			}
 		} else {
-			if (objDesc->curFrame == tmp) {
-				sndItem =
-				    objDesc->stateMach[objDesc->
-				    state][objDesc->stateColumn]->sndItem;
+			// There is only one, so frequency etc. are used as is.
+			sndFrame = state->sndFrame;
+			sndItem = state->sndItem;
+			freq = state->freq;
+			repCount = state->repCount;
+
+			if (objDesc->curFrame == sndFrame) {
 				if (sndItem != -1) {
-					freq =
-					    objDesc->stateMach[objDesc->
-					    state][objDesc->stateColumn]->
-					    freq * 100;
-					repCount =
-					    objDesc->stateMach[objDesc->
-					    state][objDesc->stateColumn]->
-					    repCount;
 					gob_playSound(gob_soundData[sndItem],
 					    repCount, freq);
 				}

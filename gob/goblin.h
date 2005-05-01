@@ -40,7 +40,7 @@ typedef struct Gob_State {
 	int16 sndItem;	// +8h, high/low byte - sound sample index
 	int16 freq;		// +Ah, high/low byte * 100 - frequency
 	int16 repCount;	// +Ch high/low byte - repeat count
-	int16 unk2;		// +Eh
+	int16 sndFrame;		// +Eh
 } GCC_PACK Gob_State;
 
 typedef struct Gob_State *Gob_PState;

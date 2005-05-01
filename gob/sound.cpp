@@ -53,19 +53,8 @@ void snd_speakerOff(void) {return;}
 void snd_stopSound(int16 arg){return;}
 void snd_setResetTimerFlag(char flag){return;}
 
-// This is mostly to see if we are interpreting the sound effects correctly. If
-// we want to implement looping etc. we're probably going to need something a
-// bit more elaborate.
-//
-// Currently we ignore looping completely. We also ignore samples with negative
-// sample frequency. Something wacky is going on here, and I don't think it's
-// a simple signed/unsigned issue.
-
 void snd_playSample(Snd_SoundDesc *sndDesc, int16 repCount, int16 frequency) {
-	if (frequency < 0) {
-		warning("snd_playSample: frequency = %d - this is weird", frequency);
-		return;
-	}
+	assert(frequency > 0);
 
 	if (!_vm->_mixer->isSoundHandleActive(sndDesc->handle)) {
 		_vm->_mixer->playRaw(&sndDesc->handle, sndDesc->data, sndDesc->size, frequency, 0);
