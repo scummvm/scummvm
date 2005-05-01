@@ -2779,8 +2779,10 @@ void ScummEngine_v100he::decodeParseString(int m, int n) {
 		_string[m].loadDefault();
 		if (n) {
 			_actorToPrintStrFor = pop();
-			a = derefActorSafe(_actorToPrintStrFor, "decodeParseString");
-			_string[0].color = a->_talkColor;
+			if (_actorToPrintStrFor != 0xFF) {
+				a = derefActorSafe(_actorToPrintStrFor, "decodeParseString");
+				_string[0].color = a->_talkColor;
+			}
 		}
 		break;
 	case 92:

@@ -1570,10 +1570,12 @@ void ScummEngine_v72he::o72_talkActor() {
 	Actor *a;
 
 	_actorToPrintStrFor = pop();
-	a = derefActorSafe(_actorToPrintStrFor, "o72_talkActor");
 
 	_string[0].loadDefault();
-	_string[0].color = a->_talkColor;
+	if (_actorToPrintStrFor != 0xFF) {
+		a = derefActorSafe(_actorToPrintStrFor, "o72_talkActor");
+		_string[0].color = a->_talkColor;
+	}
 	actorTalk(_scriptPointer);
 
 	_scriptPointer += resStrLen(_scriptPointer) + 1;
@@ -2258,8 +2260,10 @@ void ScummEngine_v72he::decodeParseString(int m, int n) {
 		_string[m].loadDefault();
 		if (n) {
 			_actorToPrintStrFor = pop();
-			a = derefActorSafe(_actorToPrintStrFor, "decodeParseString");
-			_string[0].color = a->_talkColor;
+			if (_actorToPrintStrFor != 0xFF) {
+				a = derefActorSafe(_actorToPrintStrFor, "decodeParseString");
+				_string[0].color = a->_talkColor;
+			}
 		}
 		break;
 	case 0xFF:
