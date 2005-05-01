@@ -950,6 +950,7 @@ protected:
 	byte VAR_NUM_PALETTES;
 	byte VAR_NUM_UNK;
 	byte VAR_POLYGONS_ONLY;
+	byte VAR_PLATFORM;
 	byte VAR_WINDOWS_VERSION;
 	byte VAR_U32_VERSION;
 	byte VAR_WIZ_TCOLOR;

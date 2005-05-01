@@ -1291,6 +1291,7 @@ ScummEngine_v72he::ScummEngine_v72he(GameDetector *detector, OSystem *syst, cons
 	VAR_NUM_PALETTES = 0xFF;
 	VAR_NUM_UNK = 0xFF;
 	VAR_POLYGONS_ONLY = 0xFF;
+	VAR_PLATFORM = 0xFF;
 	VAR_WINDOWS_VERSION = 0xFF;
 	VAR_U32_VERSION = 0xFF;
 	VAR_WIZ_TCOLOR = 0xFF;

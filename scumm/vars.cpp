@@ -270,7 +270,8 @@ void ScummEngine_v72he::setupScummVars() {
 		VAR_NUM_SOUND_CHANNELS = 56;
 	}
 	if (_heversion >= 80)
-		VAR_WINDOWS_VERSION = 79;
+		VAR_PLATFORM = 78;  // 1 is PC, 2 is Macintosh
+ 		VAR_WINDOWS_VERSION = 79; // 31 is Windows 3.1, 40 is Windows 95+
 		VAR_KEY_STATE = 86;
 		VAR_NUM_SOUND_CHANNELS = 88;
 	if (_heversion >= 90) {
@@ -551,7 +552,7 @@ void ScummEngine_v72he::initScummVars() {
 void ScummEngine_v80he::initScummVars() {
 	ScummEngine_v72he::initScummVars();
 
-	VAR(78) = 1;
+	VAR(VAR_PLATFORM) = 1;
 	VAR(VAR_WINDOWS_VERSION) = 40;
 }
 
