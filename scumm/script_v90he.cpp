@@ -2479,22 +2479,29 @@ void ScummEngine_v90he::o90_getActorAnimProgress() {
 
 void ScummEngine_v90he::o90_kernelGetFunctions() {
 	int args[29];
-	int num;
+	int num, tmp;
+	Actor *a;
 
 	num = getStackList(args, ARRAYSIZE(args));
 
 	switch (args[0]) {
 	case 1001:
 		{
-		double a = args[1] * PI / 180.;
-		push((int)(sin(a) * 100000));
+		double b = args[1] * PI / 180.;
+		push((int)(sin(b) * 100000));
 		}
 		break;
 	case 1002:
 		{
-		double a = args[1] * PI / 180.;
-		push((int)(cos(a) * 100000));
+		double b = args[1] * PI / 180.;
+		push((int)(cos(b) * 100000));
 		}
+		break;
+	case 1969:
+		a = derefActor(args[1], "o90_kernelGetFunctions: 1969");
+		tmp = a->_heCondMask;
+		tmp &= 0x7FFF0000;
+		push(tmp);
 		break;
 	case 2001:
 		// Used in football
@@ -2508,7 +2515,7 @@ void ScummEngine_v90he::o90_kernelGetFunctions() {
 
 void ScummEngine_v90he::o90_kernelSetFunctions() {
 	int args[29];
-	int num;
+	int num, tmp;
 	Actor *a;
 
 	num = getStackList(args, ARRAYSIZE(args));
@@ -2554,6 +2561,13 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 		break;
 	case 1492:
 		spriteInfoSet_flagDoubleBuffered(args[1], args[2]);
+		break;
+	case 1969:
+		a = derefActor(args[1], "o90_kernelSetFunctions: 1969");
+		tmp = a->_heCondMask;
+		tmp ^= args[2];
+		tmp &= 0x7FFF0000;
+		a->_heCondMask ^= tmp;
 		break;
 	case 2001:
 		// Used in SoccerMLS/Soccer2004
