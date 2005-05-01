@@ -2780,7 +2780,7 @@ void ScummEngine_v100he::decodeParseString(int m, int n) {
 		if (n) {
 			_actorToPrintStrFor = pop();
 			if (_actorToPrintStrFor != 0xFF) {
-				a = derefActorSafe(_actorToPrintStrFor, "decodeParseString");
+				a = derefActor(_actorToPrintStrFor, "decodeParseString");
 				_string[0].color = a->_talkColor;
 			}
 		}

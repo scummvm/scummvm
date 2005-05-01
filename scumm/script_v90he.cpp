@@ -458,7 +458,7 @@ void ScummEngine_v90he::o90_getActorData() {
 	int val = pop();
 	int act = pop();
 
-	a = derefActorSafe(act, "o90_getActorData");
+	a = derefActor(act, "o90_getActorData");
 
 	switch (subOp) {
 	case 1:

@@ -638,7 +638,7 @@ void ScummEngine_v80he::unknownE0(int x1, int y1, int x, int unk1, int unk2, int
 	}
 
 	if (type == 2) {
-		Actor *a = derefActorSafe(id, "unknownE0");
+		Actor *a = derefActor(id, "unknownE0");
 		a->drawActorToBackBuf(x1, y1);
 	} else if (type == 3) {
 		WizImage wi;
@@ -701,7 +701,7 @@ void ScummEngine_v80he::unknownE0(int x1, int y1, int x, int unk1, int unk2, int
 			continue;
 
 		if (type == 2) {
-			Actor *a = derefActorSafe(id, "unknownE0");
+			Actor *a = derefActor(id, "unknownE0");
 			a->drawActorToBackBuf(x, y);
 		} else if (type == 3) {
 			WizImage wi;
