@@ -42,7 +42,7 @@
 #include "sword2/sound.h"
 
 #ifdef _WIN32_WCE
-extern bool isSmartphone(void);
+extern bool isSmartphone();
 #endif
 
 struct Sword2GameSettings {

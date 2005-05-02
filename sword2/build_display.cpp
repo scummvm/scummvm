@@ -32,6 +32,7 @@
 #include "sword2/maketext.h"
 #include "sword2/mouse.h"
 #include "sword2/resman.h"
+#include "sword2/sound.h"
 
 namespace Sword2 {
 
@@ -622,6 +623,426 @@ void Screen::registerFrame(ObjectMouse *ob_mouse, ObjectGraphic *ob_graph, Objec
 		// NO_SPRITE no registering!
 		break;
 	}
+}
+
+// FIXME:
+//
+// The original credits used a different font. I think it's stored in the
+// font.clu file, but I don't know how to interpret it.
+//
+// The original used the entire screen. This version cuts off the top and
+// bottom of the screen, because that's where the menus would usually be.
+//
+// The original had some sort of smoke effect at the bottom of the screen.
+
+enum {
+	LINE_LEFT,
+	LINE_CENTER,
+	LINE_RIGHT
+};
+
+struct CreditsLine {
+	char *str;
+	byte type;
+	int top;
+	int height;
+	byte *sprite;
+};
+
+#define CREDITS_FONT_HEIGHT 25
+#define CREDITS_LINE_SPACING 20
+
+void Screen::rollCredits() {
+	ScreenInfo *screenInfo = getScreenInfo();
+	uint32 loopingMusicId = _vm->_sound->getLoopingMusicId();
+
+	// Prepare for the credits by fading down, stoping the music, etc.
+
+	_vm->_mouse->setMouse(0);
+
+	_vm->_sound->muteFx(true);
+	_vm->_sound->muteSpeech(true);
+
+	waitForFade();
+	fadeDown();
+	waitForFade();
+
+	_vm->_mouse->closeMenuImmediately();
+
+	// There are three files which I believe are involved in showing the
+	// credits:
+	//
+	// credits.bmp  - The "Smacker" logo, stored as follows:
+	//
+	//     width     2 bytes, little endian
+	//     height    2 bytes, little endian
+	//     palette   3 * 256 bytes
+	//     data      width * height bytes
+	//
+	//     Note that the maximum colour component in the palette is 0x3F.
+	//     This is the same resolution as the _paletteMatch table. I doubt
+	//     that this is a coincidence, but let's use the image palette
+	//     directly anyway, just to be safe.
+	//
+	// credits.clu  - The credits text
+	//
+	//     This is simply a text file with CRLF line endings.
+	//     '^' is not shown, but used to mark the center of the line.
+	//     '@' is used as a placeholder for the "Smacker" logo. At least
+	//     when it appears alone.
+	//     Remaining lines are centered.
+	//
+	// fonts.clu    - The credits font?
+	//
+	//     FIXME: At this time I don't know how to interpret fonts.clu. For
+	//     now, let's just the standard speech font instead.
+
+	SpriteInfo spriteInfo;
+	File f;
+	int i;
+
+	// Read the "Smacker" logo
+
+	uint16 logoWidth = 0;
+	uint16 logoHeight = 0;
+	byte *logoData = NULL;
+	byte palette[256 * 4];
+
+	if (f.open("credits.bmp")) {
+		logoWidth = f.readUint16LE();
+		logoHeight = f.readUint16LE();
+
+		for (i = 0; i < 256; i++) {
+			palette[i * 4 + 0] = f.readByte() << 2;
+			palette[i * 4 + 1] = f.readByte() << 2;
+			palette[i * 4 + 2] = f.readByte() << 2;
+			palette[i * 4 + 3] = 0;
+		}
+
+		logoData = (byte *) malloc(logoWidth * logoHeight);
+
+		f.read(logoData, logoWidth * logoHeight);
+		f.close();
+	} else {
+		warning("Can't find credits.bmp");
+		memset(palette, 0, sizeof(palette));
+		palette[14 * 4 + 0] = 252;
+		palette[14 * 4 + 1] = 252;
+		palette[14 * 4 + 2] = 252;
+		palette[14 * 4 + 3] = 0;
+	}
+
+	setPalette(0, 256, palette, RDPAL_INSTANT);
+
+	// Read the credits text
+
+	// This should be plenty
+	CreditsLine creditsLines[350];
+
+	for (i = 0; i < ARRAYSIZE(creditsLines); i++) {
+		creditsLines[i].str = NULL;
+		creditsLines[i].sprite = NULL;
+	}
+
+	if (!f.open("credits.clu")) {
+		warning("Can't find credits.clu");
+		return;
+	}
+
+	int lineTop = 400;
+	int lineCount = 0;
+	int paragraphStart = 0;
+	bool hasCenterMark = false;
+
+	while (1) {
+		if (lineCount >= ARRAYSIZE(creditsLines)) {
+			warning("Too many credits lines");
+			break;
+		}
+
+		char buffer[80];
+		char *line = f.readLine(buffer, sizeof(buffer));
+
+		if (!line || *line == 0) {
+			if (!hasCenterMark) {
+				for (i = paragraphStart; i < lineCount; i++)
+					creditsLines[i].type = LINE_CENTER;
+			}
+			paragraphStart = lineCount;
+			hasCenterMark = false;
+			if (paragraphStart == lineCount)
+				lineTop += CREDITS_LINE_SPACING;
+
+			if (!line)
+				break;
+
+			continue;
+		}
+
+		char *center_mark = strchr(line, '^');
+
+		if (center_mark) {
+			// The current paragraph has at least one center mark.
+			hasCenterMark = true;
+
+			if (center_mark != line) {
+				// The center mark is somewhere inside the
+				// line. Split it into left and right side.
+				*center_mark = 0;
+
+				creditsLines[lineCount].top = lineTop;
+				creditsLines[lineCount].height = CREDITS_FONT_HEIGHT;
+				creditsLines[lineCount].type = LINE_LEFT;
+				creditsLines[lineCount].str = strdup(line);
+
+				lineCount++;
+
+				if (lineCount >= ARRAYSIZE(creditsLines)) {
+					warning("Too many credits lines");
+					break;
+				}
+
+				*center_mark = '^';
+			}
+
+			line = center_mark;
+		}
+
+		creditsLines[lineCount].top = lineTop;
+
+		if (*line == '^') {
+			creditsLines[lineCount].type = LINE_RIGHT;
+			line++;
+		} else
+			creditsLines[lineCount].type = LINE_LEFT;
+
+		if (strcmp(line, "@") == 0) {
+			creditsLines[lineCount].height = logoHeight;
+			lineTop += logoHeight;
+		} else {
+			creditsLines[lineCount].height = CREDITS_FONT_HEIGHT;
+			lineTop += CREDITS_LINE_SPACING;
+		}
+
+		creditsLines[lineCount].str = strdup(line);
+		lineCount++;
+	}
+
+	f.close();
+
+	// We could easily add some ScummVM stuff to the credits, if we wanted
+	// to. On the other hand, anyone with the attention span to actually
+	// read all the credits probably already knows. :-)
+
+	// Start the music and roll the credits
+
+	// The credits music (which can also be heard briefly in the "carib"
+	// cutscene) is played once.
+
+	_vm->_sound->streamCompMusic(309, false);
+
+	clearScene();
+	fadeUp(0);
+
+	spriteInfo.scale = 0;
+	spriteInfo.scaledWidth = 0;
+	spriteInfo.scaledHeight = 0;
+	spriteInfo.type = RDSPR_DISPLAYALIGN | RDSPR_NOCOMPRESSION | RDSPR_TRANS;
+	spriteInfo.blend = 0;
+
+	int startLine = 0;
+	int scrollPos = 0;
+
+	bool abortCredits = false;
+
+	int scrollSteps = lineTop + CREDITS_FONT_HEIGHT;
+	uint32 musicStart = _vm->getMillis();
+
+	// Ideally the music should last just a tiny bit longer than the
+	// credits. Note that musicTimeRemaining() will return 0 if the music
+	// is muted, so we need a sensible fallback for that case.
+
+	uint32 musicLength = MAX((int32) (1000 * (_vm->_sound->musicTimeRemaining() - 3)), 25 * (int32) scrollSteps);
+
+	while (scrollPos < scrollSteps && !_vm->_quit) {
+		bool foundStartLine = false;
+
+		clearScene();
+
+		for (i = startLine; i < lineCount; i++) {
+			// Free any sprites that have scrolled off the screen
+
+			if (creditsLines[i].top + creditsLines[i].height < scrollPos) {
+				if (creditsLines[i].sprite) {
+					free(creditsLines[i].sprite);
+					creditsLines[i].sprite = NULL;
+					debug(2, "Freeing sprite '%s'", creditsLines[i].str);
+				}
+				if (creditsLines[i].str) {
+					free(creditsLines[i].str);
+					creditsLines[i].str = NULL;
+				}
+			} else if (creditsLines[i].top < scrollPos + 400) {
+				if (!foundStartLine) {
+					startLine = i;
+					foundStartLine = true;
+				}
+
+				if (!creditsLines[i].sprite) {
+					debug(2, "Creating sprite '%s'", creditsLines[i].str);
+					creditsLines[i].sprite = _vm->_fontRenderer->makeTextSprite((byte *) creditsLines[i].str, 600, 14, _vm->_speechFontId, 0);
+				}
+
+				FrameHeader *frame = (FrameHeader *) creditsLines[i].sprite;
+
+				spriteInfo.y = creditsLines[i].top - scrollPos;
+				spriteInfo.w = frame->width;
+				spriteInfo.h = frame->height;
+				spriteInfo.data = creditsLines[i].sprite + sizeof(FrameHeader);
+
+				switch (creditsLines[i].type) {
+				case LINE_LEFT:
+					spriteInfo.x = RENDERWIDE / 2 - 5 - frame->width;
+					break;
+				case LINE_RIGHT:
+					spriteInfo.x = RENDERWIDE / 2 + 5;
+					break;
+				case LINE_CENTER:
+					if (strcmp(creditsLines[i].str, "@") == 0) {
+						spriteInfo.data = logoData;
+						spriteInfo.x = (RENDERWIDE - logoWidth) / 2;
+						spriteInfo.w = logoWidth;
+						spriteInfo.h = logoHeight;
+					} else
+						spriteInfo.x = (RENDERWIDE - frame->width) / 2;
+					break;
+				}
+
+				if (spriteInfo.data)
+					drawSprite(&spriteInfo);
+			} else
+				break;
+		}
+
+		updateDisplay();
+
+		KeyboardEvent *ke = _vm->keyboardEvent();
+
+		if (ke && ke->keycode == 27) {
+			if (!abortCredits) {
+				abortCredits = true;
+				fadeDown();
+			}
+		}
+
+		if (abortCredits && getFadeStatus() == RDFADE_BLACK)
+			break;
+
+		_vm->sleepUntil(musicStart + (musicLength * scrollPos) / scrollSteps);
+		scrollPos++;
+	}
+
+	// We're done. Clean up and try to put everything back where it was
+	// before the credits.
+
+	for (i = 0; i < lineCount; i++) {
+		if (creditsLines[i].str)
+			free(creditsLines[i].str);
+		if (creditsLines[i].sprite)
+			free(creditsLines[i].sprite);
+	}
+
+	if (logoData)
+		free(logoData);
+
+	if (!abortCredits) {
+		// The music should either have stopped or be about to stop, so
+		// wait for it to really happen.
+
+		while (_vm->_sound->musicTimeRemaining() && !_vm->_quit) {
+			updateDisplay(false);
+			_vm->_system->delayMillis(100);
+		}
+	}
+
+	if (_vm->_quit)
+		return;
+
+	_vm->_sound->muteFx(false);
+	_vm->_sound->muteSpeech(false);
+
+	if (loopingMusicId)
+		_vm->_sound->streamCompMusic(loopingMusicId, true);
+	else
+		_vm->_sound->stopMusic(false);
+
+	screenInfo->new_palette = 99;
+
+	if (!_vm->_mouse->getMouseStatus() || _vm->_mouse->isChoosing())
+		_vm->_mouse->setMouse(NORMAL_MOUSE_ID);
+
+	if (Logic::_scriptVars[DEAD])
+		_vm->_mouse->buildSystemMenu();
+}
+
+// This image used to be shown by CacheNewCluster() while copying a data file
+// from the CD to the hard disk. ScummVM doesn't do that, so the image is never
+// shown. It'd be nice if we could do something useful with it some day...
+
+void Screen::splashScreen() {
+	byte *bgfile = _vm->_resman->openResource(2950);
+
+	initialiseBackgroundLayer(NULL);
+	initialiseBackgroundLayer(NULL);
+	initialiseBackgroundLayer(_vm->fetchBackgroundLayer(bgfile));
+	initialiseBackgroundLayer(NULL);
+	initialiseBackgroundLayer(NULL);
+
+	setPalette(0, 256, _vm->fetchPalette(bgfile), RDPAL_FADE);
+	renderParallax(_vm->fetchBackgroundLayer(bgfile), 2);
+
+	closeBackgroundLayer();
+
+	byte *loadingBar = _vm->_resman->openResource(2951);
+	AnimHeader *animHead = _vm->fetchAnimHeader(loadingBar);
+	FrameHeader *frame = _vm->fetchFrameHeader(loadingBar, 0);
+	CdtEntry *cdt = _vm->fetchCdtEntry(loadingBar, 0);
+
+	SpriteInfo barSprite;
+
+	barSprite.x = cdt->x;
+	barSprite.y = cdt->y;
+	barSprite.w = frame->width;
+	barSprite.h = frame->height;
+	barSprite.scale = 0;
+	barSprite.scaledWidth = 0;
+	barSprite.scaledHeight = 0;
+	barSprite.type = RDSPR_RLE256FAST | RDSPR_TRANS;
+	barSprite.blend = 0;
+	barSprite.colourTable = 0;
+	barSprite.data = (byte *) (frame + 1);
+
+	drawSprite(&barSprite);
+
+	fadeUp();
+	waitForFade();
+
+	for (int i = 0; i < animHead->noAnimFrames; i++) {
+		frame = _vm->fetchFrameHeader(loadingBar, i);
+		barSprite.data = (byte *) (frame + 1);
+
+		barSprite.x = cdt->x;
+		barSprite.y = cdt->y;
+
+		drawSprite(&barSprite);
+		updateDisplay();
+		_vm->_system->delayMillis(30);
+	}
+
+	_vm->_resman->closeResource(2951);
+
+	fadeDown();
+	waitForFade();
 }
 
 } // End of namespace Sword2

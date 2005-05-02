@@ -176,9 +176,9 @@ private:
 
 	uint8 returnSlotNo(uint32 megaId);
 
-	int32 getRoute(void);
-	void extractRoute(void);
-	void loadWalkGrid(void);
+	int32 getRoute();
+	void extractRoute();
+	void loadWalkGrid();
 	void setUpWalkGrid(ObjectMega *ob_mega, int32 x, int32 y, int32 dir);
 	void loadWalkData(ObjectWalkdata *ob_walkdata);
 	bool scan(int32 level);
@@ -190,8 +190,8 @@ private:
 	bool check(int32 x1, int32 y1, int32 x2, int32 y2);
 	int32 checkTarget(int32 x, int32 y);
 
-	int32 smoothestPath(void);
-	void slidyPath(void);
+	int32 smoothestPath();
+	void slidyPath();
 
 	int32 smoothCheck(int32 best, int32 p, int32 dirS, int32 dirD);
 
@@ -200,7 +200,7 @@ private:
 	void slidyWalkAnimator(WalkData *walkAnim);
 
 #ifndef FORCE_SLIDY
-	int32 solidPath(void);
+	int32 solidPath();
 	int32 solidWalkAnimator(WalkData *walkAnim);
 #endif
 
@@ -228,15 +228,15 @@ public:
 
 	void earlySlowOut(ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata);
 
-	void allocateRouteMem(void);
-	WalkData *getRouteMem(void);
-	void freeRouteMem(void);
-	void freeAllRouteMem(void);
+	void allocateRouteMem();
+	WalkData *getRouteMem();
+	void freeRouteMem();
+	void freeAllRouteMem();
 	void addWalkGrid(int32 gridResource);
 	void removeWalkGrid(int32 gridResource);
-	void clearWalkGridList(void);
+	void clearWalkGridList();
 
-	void plotWalkGrid(void);
+	void plotWalkGrid();
 };
 
 } // End of namespace Sword2

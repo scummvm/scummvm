@@ -123,7 +123,7 @@ uint32 Sword2Engine::saveGame(uint16 slotNo, byte *desc) {
  * Calculate size of required savegame buffer
  */
 
-uint32 Sword2Engine::findBufferSize(void) {
+uint32 Sword2Engine::findBufferSize() {
 	// Size of savegame header + size of global variables
 	return sizeof(_saveGameHeader) + _resman->fetchLen(1);
 }
@@ -420,7 +420,7 @@ uint32 Sword2Engine::getSaveDescription(uint16 slotNo, byte *description) {
 	return SR_OK;
 }
 
-bool Sword2Engine::saveExists(void) {
+bool Sword2Engine::saveExists() {
 	for (int i = 0; i <= 99; i++)
 		if (saveExists(i))
 			return true;
@@ -446,7 +446,7 @@ bool Sword2Engine::saveExists(uint16 slotNo) {
  * Request the player object structures which need saving.
  */
 
-void Sword2Engine::getPlayerStructures(void) {
+void Sword2Engine::getPlayerStructures() {
 	StandardHeader *head = (StandardHeader *) _resman->openResource(CUR_PLAYER_ID);
 
 	assert(head->fileType == GAME_OBJECT);
@@ -466,7 +466,7 @@ void Sword2Engine::getPlayerStructures(void) {
  * Nico's anim tables.
  */
 
-void Sword2Engine::putPlayerStructures(void) {
+void Sword2Engine::putPlayerStructures() {
 	StandardHeader *head = (StandardHeader *) _resman->openResource(CUR_PLAYER_ID);
 
 	assert(head->fileType == GAME_OBJECT);

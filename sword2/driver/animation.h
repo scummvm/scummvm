@@ -54,7 +54,7 @@ public:
 #endif
 
 	void clearScreen();
-	void updateScreen(void);
+	void updateScreen();
 
 private:
 	void drawYUV(int width, int height, byte *const *dat);

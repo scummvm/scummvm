@@ -457,7 +457,7 @@ uint32 FontRenderer::buildNewBloc(byte *ascii, int16 x, int16 y, uint16 width, u
  * Called by buildDisplay()
  */
 
-void FontRenderer::printTextBlocs(void) {
+void FontRenderer::printTextBlocs() {
 	for (uint i = 0; i < MAX_text_blocs; i++) {
 		if (_blocList[i].text_mem) {
 			FrameHeader *frame = (FrameHeader *) _blocList[i].text_mem;
@@ -497,7 +497,7 @@ void FontRenderer::killTextBloc(uint32 bloc_number) {
 
 #define SAVE_LINE_NO	1
 
-void Sword2Engine::initialiseFontResourceFlags(void) {
+void Sword2Engine::initialiseFontResourceFlags() {
 	byte *textFile = _resman->openResource(TEXT_RES);
 
 	// If language is Polish or Finnish it requires alternate fonts.

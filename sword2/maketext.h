@@ -108,7 +108,7 @@ public:
 	byte *makeTextSprite(byte *sentence, uint16 maxWidth, uint8 pen, uint32 fontRes, uint8 border = BORDER_PEN);
 
 	void killTextBloc(uint32 bloc_number);
-	void printTextBlocs(void);
+	void printTextBlocs();
 
 	uint32 buildNewBloc(byte *ascii, int16 x, int16 y, uint16 width, uint8 pen, uint32 type, uint32 fontRes, uint8 justification);
 };

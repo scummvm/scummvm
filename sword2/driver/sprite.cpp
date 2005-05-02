@@ -635,7 +635,7 @@ int32 Screen::openLightMask(SpriteInfo *s) {
  * Closes the light masking sprite for a room.
  */
 
-int32 Screen::closeLightMask(void) {
+int32 Screen::closeLightMask() {
 	if (!_lightMask)
 		return RDERR_NOTOPEN;
 

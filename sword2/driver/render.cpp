@@ -294,7 +294,7 @@ void Screen::renderParallax(Parallax *p, int16 l) {
  * Initialises the timers before the render loop is entered.
  */
 
-void Screen::initialiseRenderCycle(void) {
+void Screen::initialiseRenderCycle() {
 	_initialTime = _vm->_system->getMillis();
 	_totalTime = _initialTime + MILLISECSPERCYCLE;
 }
@@ -304,7 +304,7 @@ void Screen::initialiseRenderCycle(void) {
  * render cycle.
  */
 
-void Screen::startRenderCycle(void) {
+void Screen::startRenderCycle() {
 	_scrollXOld = _scrollX;
 	_scrollYOld = _scrollY;
 
@@ -332,7 +332,7 @@ void Screen::startRenderCycle(void) {
  *         or false if it should continue
  */
 
-bool Screen::endRenderCycle(void) {
+bool Screen::endRenderCycle() {
 	static int32 renderTimeLog[4] = { 60, 60, 60, 60 };
 	static int32 renderCountIndex = 0;
 	int32 time;
@@ -398,7 +398,7 @@ bool Screen::endRenderCycle(void) {
  * Reset scrolling stuff. This function is called from initBackground()
  */
 
-void Screen::resetRenderEngine(void) {
+void Screen::resetRenderEngine() {
 	_parallaxScrollX = 0;
 	_parallaxScrollY = 0;
 	_scrollX = 0;
@@ -529,7 +529,7 @@ int32 Screen::initialiseBackgroundLayer(Parallax *p) {
  * Should be called once after leaving the room to free up memory.
  */
 
-void Screen::closeBackgroundLayer(void) {
+void Screen::closeBackgroundLayer() {
 	debug(2, "CloseBackgroundLayer");
 
 	for (int i = 0; i < MAXLAYERS; i++) {

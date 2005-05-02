@@ -618,7 +618,7 @@ int32 Sound::streamCompMusic(uint32 musicId, bool loop) {
  * @return the time left for the current music, in seconds.
  */
 
-int32 Sound::musicTimeRemaining(void) {
+int32 Sound::musicTimeRemaining() {
 	Common::StackLock lock(_mutex);
 
 	for (int i = 0; i < MAXMUS; i++) {
@@ -653,7 +653,7 @@ void Sound::muteSpeech(bool mute) {
  * Stops the speech dead in its tracks.
  */
 
-void Sound::pauseSpeech(void) {
+void Sound::pauseSpeech() {
 	_speechPaused = true;
 	_vm->_mixer->pauseHandle(_soundHandleSpeech, true);
 }
@@ -662,7 +662,7 @@ void Sound::pauseSpeech(void) {
  * Restarts the speech from where it was stopped.
  */
 
-void Sound::unpauseSpeech(void) {
+void Sound::unpauseSpeech() {
 	_speechPaused = false;
 	_vm->_mixer->pauseHandle(_soundHandleSpeech, false);
 }

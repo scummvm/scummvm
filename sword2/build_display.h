@@ -421,6 +421,9 @@ public:
 #ifdef BACKEND_8BIT
 	void plotYUV(byte *lut, int width, int height, byte *const *dat);
 #endif
+
+	void rollCredits();
+	void splashScreen();
 };
 
 } // End of namespace Sword2

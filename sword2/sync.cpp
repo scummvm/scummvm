@@ -45,7 +45,7 @@ void Logic::clearSyncs(uint32 id) {
  * animation is to be finished. Returns an index into _syncList[], or -1.
  */
 
-int Logic::getSync(void) {
+int Logic::getSync() {
 	for (int i = 0; i < MAX_syncs; i++) {
 		if (_syncList[i].id == _scriptVars[ID])
 			return i;

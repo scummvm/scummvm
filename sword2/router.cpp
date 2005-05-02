@@ -92,7 +92,7 @@ uint8 Router::returnSlotNo(uint32 megaId) {
 	}
 }
 
-void Router::allocateRouteMem(void) {
+void Router::allocateRouteMem() {
 	uint8 slotNo;
 
 	// Player character always always slot 0, while the other mega
@@ -124,20 +124,20 @@ void Router::allocateRouteMem(void) {
 	// megaObject->route_slot_id = slotNo + 1;
 }
 
-WalkData *Router::getRouteMem(void) {
+WalkData *Router::getRouteMem() {
 	uint8 slotNo = returnSlotNo(Logic::_scriptVars[ID]);
 	
 	return (WalkData *) _routeSlots[slotNo];
 }
 
-void Router::freeRouteMem(void) {
+void Router::freeRouteMem() {
 	uint8 slotNo = returnSlotNo(Logic::_scriptVars[ID]); 
 
 	free(_routeSlots[slotNo]);
 	_routeSlots[slotNo] = NULL;
 }
 
-void Router::freeAllRouteMem(void) {
+void Router::freeAllRouteMem() {
 	for (int i = 0; i < TOTAL_ROUTE_SLOTS; i++) {
 		free(_routeSlots[i]);
 		_routeSlots[i] = NULL;
@@ -256,7 +256,7 @@ int32 Router::routeFinder(ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, int3
 	return routeFlag;	// send back null route
 }
 
-int32 Router::getRoute(void) {
+int32 Router::getRoute() {
 	/*********************************************************************
 	 * GetRoute.C				extract a path from walk grid
 	 *							12 october 94
@@ -2357,7 +2357,7 @@ void Router::setUpWalkGrid(ObjectMega *ob_mega, int32 x, int32 y, int32 dir) {
 	_node[_nNodes].dist = 9999;
 }
 
-void Router::plotWalkGrid(void) {
+void Router::plotWalkGrid() {
 	int32 i;
 
 	// get walk grid file + extra grid into 'bars' & 'node' arrays
@@ -2380,7 +2380,7 @@ void Router::plotCross(int16 x, int16 y, uint8 colour) {
 	_vm->_screen->drawLine(x + 1, y - 1, x - 1, y + 1, colour);	
 }
 
-void Router::loadWalkGrid(void) {
+void Router::loadWalkGrid() {
 	WalkGridHeader floorHeader;
 	byte *fPolygrid;
 	uint32 theseBars;
@@ -2439,7 +2439,7 @@ void Router::loadWalkGrid(void) {
 	}
 }
 
-void Router::clearWalkGridList(void) {
+void Router::clearWalkGridList() {
 	memset(_walkGridList, 0, sizeof(_walkGridList));
 }
 
