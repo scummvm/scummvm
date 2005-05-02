@@ -425,6 +425,8 @@ void ScummEngine_v70he::appendSubstring(int dst, int src, int srcOffs, int len) 
 }
 
 void ScummEngine_v70he::o70_startSound() {
+	int var, value;
+
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
@@ -432,15 +434,17 @@ void ScummEngine_v70he::o70_startSound() {
 		_heSndFlags |= 4;
 		break;
 	case 23:
-		{
-		int value = pop();
-		int var = pop();
-		int snd = pop();
-		debug(1,"o70_startSound: case 29 (snd %d, var %d, value %d)", snd, var, value);
-		}
+		value = pop();
+		var = pop();
+		_heSndSoundId = pop();
+		debug(0,"o70_startSound: case 29 (snd %d, var %d, value %d)", _heSndSoundId, var, value);
 		break;
+	case 25:
+		value = pop();
+		_heSndSoundId = pop();
+		_sound->addSoundToQueue(_heSndSoundId, 0, 0, 8);
 	case 56:
-		_heSndFlags |= 2;
+		_heSndFlags |= 16;
 		break;
 	case 164:
 		_heSndFlags |= 2;
@@ -448,26 +452,21 @@ void ScummEngine_v70he::o70_startSound() {
 	case 224:
 		_heSndSoundFreq = pop();
 		break;
-
 	case 230:
 		_heSndChannel = pop();
 		break;
-
 	case 231:
 		_heSndOffset = pop();
 		break;
-
 	case 232:
 		_heSndSoundId = pop();
 		_heSndOffset = 0;
 		_heSndSoundFreq = 11025;
 		_heSndChannel = VAR(VAR_MUSIC_CHANNEL);
 		break;
-
 	case 245:
 		_heSndFlags |= 1;
 		break;
-
 	case 255:
 		debug(1, "o70_startSound (ID %d, Offset %d, Channel %d, Flags %d)", _heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags);
 		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags);

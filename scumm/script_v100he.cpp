@@ -1623,23 +1623,30 @@ void ScummEngine_v100he::o100_roomOps() {
 }
 
 void ScummEngine_v100he::o100_startSound() {
+	byte filename[260];	
+	int var, value;
+
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
 	case 6:
 		_heSndFlags |= 16;
-		pop();
+		_heSndOffset = pop();
+		break;
+	case 47:
+		copyScriptString(filename, sizeof(filename));
+		_heSndSoundId = pop();
+		if (_heSndSoundId)
+			debug(0, "Load sound %d from file %s\n", _heSndSoundId, filename);
 		break;
 	case 55:
 		_heSndFlags |= 8;
 		break;
 	case 83:
-		{
-		int value = pop();
-		int var = pop();
-		int snd = pop();
-		debug(1,"o70_startSound: case 29 (snd %d, var %d, value %d)", snd, var, value);
-		}
+		value = pop();
+		var = pop();
+		_heSndSoundId = pop();
+		debug(0,"o100_startSound: case 29 (snd %d, var %d, value %d)", _heSndSoundId, var, value);
 		break;
 	case 92:
 		debug(0, "o100_startSound (ID %d, Offset %d, Channel %d, Flags %d)", _heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags);
@@ -1658,8 +1665,8 @@ void ScummEngine_v100he::o100_startSound() {
 	case 131:
 		_heSndFlags |= 4;
 		break;
-	case 132:
-	case 134:
+	case 132: // Music
+	case 134: // Sound
 		_heSndSoundId = pop();
 		_heSndOffset = 0;
 		_heSndSoundFreq = 11025;
