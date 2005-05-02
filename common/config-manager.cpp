@@ -490,8 +490,7 @@ void ConfigManager::renameGameDomain(const String &oldName, const String &newNam
 
 bool ConfigManager::hasGameDomain(const String &domain) const {
 	assert(!domain.isEmpty());
-	assert(isValidDomainName(domain));
-	return _gameDomains.contains(domain);
+	return isValidDomainName(domain) && _gameDomains.contains(domain);
 }
 
 
