@@ -319,6 +319,53 @@ void Wiz::copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int src
 	}
 }
 
+void Wiz::copyRaw16BitWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor) {
+	// RAW 16 bits in 555 format
+
+	// HACK: Skip every second bit for now
+	Common::Rect r1, r2;
+	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
+		if (flags & kWIFFlipX) {
+			int l = r1.left;
+			int r = r1.right;
+			r1.left = srcw - r;
+			r1.right = srcw - l;
+		}
+		if (flags & kWIFFlipY) {
+			int t = r1.top;
+			int b = r1.bottom;
+			r1.top = srch - b;
+			r1.bottom = srch - t;
+		}
+		byte imagePal[256];
+		if (!palPtr) {
+			for (int i = 0; i < 256; i++) {
+				imagePal[i] = i;
+			}
+			palPtr = imagePal;
+		}
+
+		int h = r1.height();
+		int w = r1.width();
+		src += r1.left + r1.top * srcw * 2;
+		dst += r2.left + r2.top * dstw;
+
+		while (h--) {
+			const uint8 *p = src;
+			for (int i = 0; i < w; ++i) {
+				uint8 col = *p;
+				if (transColor == -1 || transColor != col) {
+					dst[i] = palPtr[col];
+				}
+				p += 2;
+			}
+			src += srcw * 2;
+			dst += dstw;
+		}
+
+	}
+}
+
 void Wiz::copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor) {
 	Common::Rect r1, r2;
 	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
@@ -1005,13 +1052,12 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 			palPtr = rmap + 4;
 		}
 
+		uint8 *trns = findWrappedBlock(MKID('TRNS'), dataPtr, state, 0);
+		int color = (trns == NULL) ? VAR(VAR_WIZ_TCOLOR) : -1;
+
 		switch (comp) {
 		case 0:
-			{
-			uint8 *trns = findWrappedBlock(MKID('TRNS'), dataPtr, state, 0);
-			int color = (trns == NULL) ? VAR(VAR_WIZ_TCOLOR) : -1;
 			_wiz.copyRawWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, color);
-			}
 			break;
 		case 1:
 			// TODO Adding masking for flags 0x80 and 0x100
@@ -1025,8 +1071,7 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 			_wiz.copyWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, palPtr);
 			break;
 		case 2:
-			// RAW 16 bits in 555 format
-			warning("drawWizImage: Unhandled wiz compression type %d", comp);
+			_wiz.copyRaw16BitWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, color);
 			break;
 		case 5:
 			// Used in Moonbase Commander
