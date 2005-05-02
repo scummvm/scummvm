@@ -1030,10 +1030,6 @@ void Screen::splashScreen() {
 	for (int i = 0; i < animHead->noAnimFrames; i++) {
 		frame = _vm->fetchFrameHeader(loadingBar, i);
 		barSprite.data = (byte *) (frame + 1);
-
-		barSprite.x = cdt->x;
-		barSprite.y = cdt->y;
-
 		drawSprite(&barSprite);
 		updateDisplay();
 		_vm->_system->delayMillis(30);

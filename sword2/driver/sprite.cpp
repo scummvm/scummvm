@@ -406,12 +406,15 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 	// Positioning and clipping.
 	// -----------------------------------------------------------------
 
+	int16 spriteX = s->x;
+	int16 spriteY = s->y;
+
 	if (!(s->type & RDSPR_DISPLAYALIGN)) {
-		s->x += _parallaxScrollX;
-		s->y += _parallaxScrollY;
+		spriteX += _parallaxScrollX;
+		spriteY += _parallaxScrollY;
 	}
 
-	s->y += 40;
+	spriteY += MENUDEEP;
 
 	// A scale factor 0 or 256 means don't scale. Why do they use two
 	// different values to mean the same thing? Normalize it here for
@@ -432,8 +435,8 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 		srcPitch = s->w;
 	}
 
-	rd.top = s->y;
-	rd.left = s->x;
+	rd.top = spriteY;
+	rd.left = spriteX;
 
 	if (!(s->type & RDSPR_DISPLAYALIGN)) {
 		rd.top -= _scrollY;
@@ -445,26 +448,26 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 
 	// Check if the sprite would end up completely outside the screen.
 
-	if (rd.left > 640 || rd.top > 440 || rd.right < 0 || rd.bottom < 40) {
+	if (rd.left > RENDERWIDE || rd.top > RENDERDEEP + MENUDEEP || rd.right < 0 || rd.bottom < MENUDEEP) {
 		if (freeSprite)
 			free(sprite);
 		return RD_OK;
 	}
 
-	if (rd.top < 40) {
-		rs.top = 40 - rd.top;
-		rd.top = 40;
+	if (rd.top < MENUDEEP) {
+		rs.top = MENUDEEP - rd.top;
+		rd.top = MENUDEEP;
 	}
-	if (rd.bottom > 440) {
-		rd.bottom = 440;
+	if (rd.bottom > RENDERDEEP + MENUDEEP) {
+		rd.bottom = RENDERDEEP + MENUDEEP;
 		rs.bottom = rs.top + (rd.bottom - rd.top);
 	}
 	if (rd.left < 0) {
 		rs.left = -rd.left;
 		rd.left = 0;
 	}
-	if (rd.right > 640) {
-		rd.right = 640;
+	if (rd.right > RENDERWIDE) {
+		rd.right = RENDERWIDE;
 		rs.right = rs.left + (rd.right - rd.left);
 	}
 
@@ -520,7 +523,7 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 		}
 
 		src = sprite + rs.top * srcPitch + rs.left;
-		lightMap = _lightMask + (rd.top + _scrollY - 40) * _locationWide + rd.left + _scrollX;
+		lightMap = _lightMask + (rd.top + _scrollY - MENUDEEP) * _locationWide + rd.left + _scrollX;
 
 		for (i = 0; i < rs.height(); i++) {
 			for (j = 0; j < rs.width(); j++) {
