@@ -1569,13 +1569,23 @@ void ScummEngine_v72he::o72_arrayOps() {
 void ScummEngine_v72he::o72_talkActor() {
 	Actor *a;
 
-	_actorToPrintStrFor = pop();
+	int act = pop();
 
 	_string[0].loadDefault();
-	if (_actorToPrintStrFor != 0xFF) {
-		a = derefActor(_actorToPrintStrFor, "o72_talkActor");
-		_string[0].color = a->_talkColor;
+
+	// A value of 225 can occur when examining the gold in the mine of pajama, after mining the gold.
+	// This is a script bug, the script should set the subtitle color, not actor number.
+	// This script bug was fixed in the updated version of pajama.
+	if (act == 225) {
+		_string[0].color = act;
+	} else {
+		_actorToPrintStrFor = act;
+		if (_actorToPrintStrFor != 0xFF) {
+			a = derefActor(_actorToPrintStrFor, "o72_talkActor");
+			_string[0].color = a->_talkColor;
+		}
 	}
+
 	actorTalk(_scriptPointer);
 
 	_scriptPointer += resStrLen(_scriptPointer) + 1;
