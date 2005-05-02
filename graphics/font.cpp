@@ -36,7 +36,7 @@ int NewFont::getCharWidth(byte chr) const {
 	return desc.width[chr - desc.firstchar];
 }
 
-void NewFont::drawChar(const Surface *dst, byte chr, int tx, int ty, uint32 color) const {
+void NewFont::drawChar(Surface *dst, byte chr, int tx, int ty, uint32 color) const {
 	assert(dst != 0);
 	byte *ptr = (byte *)dst->getBasePtr(tx, ty);
 
@@ -85,7 +85,7 @@ int Font::getStringWidth(const Common::String &str) const {
 	return space;
 }
 
-void Font::drawString(const Surface *dst, const Common::String &s, int x, int y, int w, uint32 color, TextAlignment align, int deltax, bool useEllipsis) const {
+void Font::drawString(Surface *dst, const Common::String &s, int x, int y, int w, uint32 color, TextAlignment align, int deltax, bool useEllipsis) const {
 	assert(dst != 0);
 	const int leftX = x, rightX = x + w;
 	uint i;

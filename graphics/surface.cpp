@@ -24,7 +24,7 @@
 
 namespace Graphics {
 
-void Surface::hLine(int x, int y, int x2, uint32 color) const {
+void Surface::hLine(int x, int y, int x2, uint32 color) {
 	// Clipping
 	if (y < 0 || y >= h)
 		return;
@@ -51,7 +51,7 @@ void Surface::hLine(int x, int y, int x2, uint32 color) const {
 	}
 }
 
-void Surface::vLine(int x, int y, int y2, uint32 color) const {
+void Surface::vLine(int x, int y, int y2, uint32 color) {
 	// Clipping
 	if (x < 0 || x >= w)
 		return;
@@ -81,7 +81,7 @@ void Surface::vLine(int x, int y, int y2, uint32 color) const {
 	}
 }
 
-void Surface::fillRect(const Common::Rect &rOld, uint32 color) const {
+void Surface::fillRect(const Common::Rect &rOld, uint32 color) {
 	Common::Rect r(rOld);
 	r.clip(w, h);
 	
@@ -111,7 +111,7 @@ void Surface::fillRect(const Common::Rect &rOld, uint32 color) const {
 	}
 }
 
-void Surface::frameRect(const Common::Rect &r, uint32 color) const {
+void Surface::frameRect(const Common::Rect &r, uint32 color) {
 	hLine(r.left, r.top, r.right-1, color);
 	hLine(r.left, r.bottom-1, r.right-1, color);
 	vLine(r.left, r.top, r.bottom-1, color);

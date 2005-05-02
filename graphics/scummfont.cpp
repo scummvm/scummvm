@@ -61,8 +61,7 @@ int ScummFont::getCharWidth(byte chr) const {
 	return guifont[chr+6];
 }
 
-//void ScummFont::drawChar(byte chr, int xx, int yy, OverlayColor color) {
-void ScummFont::drawChar(const Surface *dst, byte chr, int tx, int ty, uint32 color) const {
+void ScummFont::drawChar(Surface *dst, byte chr, int tx, int ty, uint32 color) const {
 	assert(dst != 0);
 	byte *ptr = (byte *)dst->getBasePtr(tx, ty);
 
