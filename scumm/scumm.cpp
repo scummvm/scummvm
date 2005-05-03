@@ -308,7 +308,7 @@ static const ScummGameSettings scumm_settings[] = {
 
 	// Humongous Entertainment Scumm Version 9.5 ?  Scummsys.95
 	{"pj2demo", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening (Demo)", GID_HEGAME, 6, 95, 61, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformUnknown, 0, 0},
 	{"pajama2", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening", GID_HEGAME, 6, 95, 61, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformUnknown, 0, 0},
 	{"chase", "Spy Fox in Cheese Chase Game", GID_HEGAME, 6, 95, 61, MDT_NONE,
@@ -473,6 +473,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"d7ab7cd6105546016e6a0d46fb36b964", "Pajama Sam: No Need To Hide When It's Dark Outside (Demo Updated)", GID_HEGAME, 6, 100, 61, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0}, // PJSamDemo
 
+	{"30ba1e825d4ad2b448143ae8df18482a", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening (Updated Demo)", GID_FREDDI4, 6, 98, 61, MDT_NONE, // FIXME: number of actors
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0}, // Pjs2demo
 	{"32709cbeeb3044b34129950860a83f14", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening (Updated)", GID_HEGAME, 6, 99, 61, MDT_NONE, // FIXME: number of actors
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0}, // PajamaTAL
 
@@ -513,6 +515,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"72ac6bc980d5101c2142189d746bd62f", "Spyfox 1: Dry Cereal (Updated Ru)", GID_HEGAME, 6, 99, 61, MDT_NONE, // FIXME: number of actors
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0}, // SPYFoxDC
 	{"9d4ab3e0e1d1ebc6ba8a6a4c470ed184", "Spyfox 1: Dry Cereal (Updated Demo)", GID_HEGAME, 6, 100, 61, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
+	{"4edbf9d03550f7ba01e7f34d69b678dd", "Spyfox 1: Dry Cereal (Updated Demo)", GID_FREDDI4, 6, 98, 61, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
 
 	{"90c755e1c9b9b8a4129d37b2259d0655", "Spy Fox in Cheese Chase Game (Updated)", GID_HEGAME, 6, 100, 61, MDT_NONE,
@@ -587,6 +591,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "pajama2", "Pajama Sam 2", kGenMac},
 	{ "pajama2", "PajamaTAL", kGenPC},
 	{ "pj2demo", "PJ2Demo", kGenMac },
+	{ "pj2demo", "Pjs2demo", kGenPC },
 	{ "pj3-demo", "Pajama Sam 3-Demo", kGenMac },
 	{ "pj3-demo", "pj3demo", kGenPC }, // FIXME: check this with joostp. Used by NL version?
 	{ "pjs-demo", "Pajama Sam Demo", kGenMac },
