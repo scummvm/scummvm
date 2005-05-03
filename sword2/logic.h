@@ -23,6 +23,8 @@
 #ifndef _LOGIC
 #define _LOGIC
 
+#include "sword2/memory.h"
+
 namespace Sword2 {
 
 struct MovieTextObject;
@@ -50,6 +52,10 @@ struct EventUnit {
 class Logic {
 private:
 	Sword2Engine *_vm;
+
+	inline byte *decodePtr(int32 n) {
+		return _vm->_memory->decodePtr(n);
+	}
 
 	uint32 _objectKillList[OBJECT_KILL_LIST_SIZE];
 
@@ -118,12 +124,6 @@ private:
 	void formText(int32 *params);
 	bool wantSpeechForLine(uint32 wavId);
 
-	int16 _standbyX;	// see fnSetStandbyCoords()
-	int16 _standbyY;
-	int16 _standbyDir;
-
-	int whatTarget(int startX, int startY, int destX, int destY);
-
 	// Set by fnPassMega()
 	ObjectMega _engineMega;
 
@@ -132,6 +132,8 @@ public:
 	~Logic();
 
 	EventUnit *getEventList() { return _eventList; }
+
+	ObjectMega *getEngineMega() { return &_engineMega; }
 
 	// Point to the global variable data
 	static uint32 *_scriptVars;

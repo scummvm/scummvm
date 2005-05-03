@@ -33,7 +33,6 @@
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
 #include "sword2/maketext.h"
-#include "sword2/memory.h"
 #include "sword2/resman.h"
 #include "sword2/sound.h"
 #include "sword2/driver/animation.h"
@@ -45,8 +44,8 @@ int32 Logic::animate(int32 *params, bool reverse) {
 	//		1 pointer to object's graphic structure
 	//		2 resource id of animation file
 
- 	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->decodePtr(params[0]);
- 	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->decodePtr(params[1]);
+ 	ObjectLogic *ob_logic = (ObjectLogic *) decodePtr(params[0]);
+ 	ObjectGraphic *ob_graphic = (ObjectGraphic *) decodePtr(params[1]);
 	byte *anim_file;
 	AnimHeader *anim_head;
  	int32 res = params[2];
@@ -166,11 +165,11 @@ int32 Logic::megaTableAnimate(int32 *params, bool reverse) {
 	// If this is the start of the anim, read the anim table to get the
 	// appropriate anim resource
 
- 	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->decodePtr(params[0]);
+ 	ObjectLogic *ob_logic = (ObjectLogic *) decodePtr(params[0]);
 
 	if (ob_logic->looping == 0) {
-	 	ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->decodePtr(params[2]);
-		uint32 *anim_table = (uint32 *) _vm->_memory->decodePtr(params[3]);
+	 	ObjectMega *ob_mega = (ObjectMega *) decodePtr(params[2]);
+		uint32 *anim_table = (uint32 *) decodePtr(params[3]);
 
 		// appropriate anim resource is in 'table[direction]'
 		pars[2] = anim_table[ob_mega->current_dir];
@@ -180,14 +179,14 @@ int32 Logic::megaTableAnimate(int32 *params, bool reverse) {
 }
 
 void Logic::setSpriteStatus(uint32 sprite, uint32 type) {
-	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->decodePtr(sprite);
+	ObjectGraphic *ob_graphic = (ObjectGraphic *) decodePtr(sprite);
 
 	// Remove the previous status, but don't affect the shading upper-word
 	ob_graphic->type = (ob_graphic->type & 0xffff0000) | type;
 }
 
 void Logic::setSpriteShading(uint32 sprite, uint32 type) {
-	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->decodePtr(sprite);
+	ObjectGraphic *ob_graphic = (ObjectGraphic *) decodePtr(sprite);
 
 	// Remove the previous shading, but don't affect the status lower-word.
 	// Note that drivers may still shade mega frames automatically, even

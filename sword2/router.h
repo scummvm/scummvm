@@ -104,6 +104,10 @@ class Router {
 private:
 	Sword2Engine *_vm;
 
+	int16 _standbyX;	// see fnSetStandbyCoords()
+	int16 _standbyY;
+	int16 _standbyDir;
+
 	// stores pointers to mem blocks containing routes created & used by
 	// megas (NULL if slot not in use)
 	WalkData *_routeSlots[TOTAL_ROUTE_SLOTS];
@@ -223,6 +227,24 @@ public:
 		memset(_numberOfSlowInFrames, 0, sizeof(_numberOfSlowInFrames));
 		memset(_leadingLeg, 0, sizeof(_leadingLeg));
 	}
+
+	void setStandbyCoords(int16 x, int16 y, uint8 dir);
+	int whatTarget(int startX, int startY, int destX, int destY);
+
+	// Walking
+	int doWalk(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, int16 target_x, int16 target_y, uint8 target_dir);
+	int walkToAnim(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, uint32 animRes);
+	int walkToTalkToMega(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, uint32 megaId, uint32 separation);
+
+	// Turning
+	int doFace(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, uint8 target_dir);
+	int faceXY(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, int16 target_x, int16 target_y);
+	int faceMega(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, uint32 megaId);
+
+	// Standing
+	void standAt(ObjectGraphic *ob_graph, ObjectMega *ob_mega, int32 x, int32 y, int32 dir);
+	void standAfterAnim(ObjectGraphic *ob_graph, ObjectMega *ob_mega, uint32 animRes);
+	void standAtAnim(ObjectGraphic *ob_graph, ObjectMega *ob_mega, uint32 animRes);
 
 	int32 routeFinder(ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, int32 x, int32 y, int32 dir);
 
