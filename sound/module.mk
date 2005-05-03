@@ -1,6 +1,7 @@
 MODULE := sound
 
 MODULE_OBJS := \
+	sound/adpcm.o \
 	sound/audiocd.o \
 	sound/audiostream.o \
 	sound/flac.o \

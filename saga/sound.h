@@ -71,6 +71,7 @@ public:
 
 	SagaEngine *_vm;
 	SoundMixer *_mixer;
+	Common::MemoryReadStream *_voxStream;
 
 	SoundHandle _effectHandle;
 	SoundHandle _voiceHandle;
