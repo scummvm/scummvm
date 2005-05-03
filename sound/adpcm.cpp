@@ -33,6 +33,7 @@ private:
 	bool _evenPos;
 	Common::SeekableReadStream *_stream;
 	typesADPCM _type;
+	uint32 _endpos;
 
 	struct adpcmStatus {
 		int16 last;
@@ -47,22 +48,23 @@ private:
 	int readIMABuffer(int16 *buffer, const int numSamples);
 
 public:
-	ADPCMInputStream(Common::SeekableReadStream *stream, typesADPCM type);
+	ADPCMInputStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type);
 	~ADPCMInputStream() {};
 
 	int readBuffer(int16 *buffer, const int numSamples);
 
-	bool endOfData() const { return _stream->eos(); }
+	bool endOfData() const { return (_stream->eos() || _stream->pos() >= _endpos); }
 	bool isStereo() const	{ return false; }
 	int getRate() const	{ return 22050; }
 };
 
 
-ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, typesADPCM type)
+ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type)
 	: _stream(stream), _evenPos(true), _type(type) {
 
 	_status.last = 0;
 	_status.stepIndex = 0;
+	_endpos = stream->pos() + size;
 }
 
 int ADPCMInputStream::readBuffer(int16 *buffer, const int numSamples) {
@@ -83,7 +85,7 @@ int ADPCMInputStream::readBuffer(int16 *buffer, const int numSamples) {
 int ADPCMInputStream::readOkiBuffer(int16 *buffer, const int numSamples) {
 	int samples;
 
-	for (samples = 0; samples < numSamples && !_stream->eos(); samples++) {
+	for (samples = 0; samples < numSamples && !_stream->eos() && _stream->pos() < _endpos; samples++) {
 		// * 16 effectively converts 12-bit input to 16-bit output
 		if (_evenPos) {
 			buffer[samples] = okiADPCMDecode((_stream->readByte() >> 4) & 0x0f) * 16;
@@ -100,7 +102,7 @@ int ADPCMInputStream::readOkiBuffer(int16 *buffer, const int numSamples) {
 int ADPCMInputStream::readIMABuffer(int16 *buffer, const int numSamples) {
 	int samples;
 
-	for (samples = 0; samples < numSamples && !_stream->eos(); samples++) {
+	for (samples = 0; samples < numSamples && !_stream->eos() && _stream->pos() < _endpos; samples++) {
 		if (_evenPos) {
 			buffer[samples] = imaADPCMDecode((_stream->readByte() >> 4) & 0x0f);
 			// Rewind back so we will reget byte later
@@ -161,8 +163,8 @@ int16 ADPCMInputStream::okiADPCMDecode(byte code) {
 	return samp;
 }
 
-AudioStream *makeADPCMStream(Common::SeekableReadStream &stream, typesADPCM type) {
-	AudioStream *audioStream = new ADPCMInputStream(&stream, type);
+AudioStream *makeADPCMStream(Common::SeekableReadStream &stream, uint32 size, typesADPCM type) {
+	AudioStream *audioStream = new ADPCMInputStream(&stream, size, type);
 
 	return audioStream;
 }
@@ -183,12 +185,10 @@ static const uint16 imaStepTable[89] = {
 	32767
 };
 
-
 int16 ADPCMInputStream::imaADPCMDecode(byte code) {
-	int diff, E, SS, samp;
+	int32 diff, E, SS, samp;
 
 	SS = imaStepTable[_status.stepIndex];
-
 	E = SS/8;
 	if (code & 0x01)
 		E += SS/4;
@@ -196,13 +196,14 @@ int16 ADPCMInputStream::imaADPCMDecode(byte code) {
 		E += SS/2;
 	if (code & 0x04)
 		E += SS;
+
 	diff = (code & 0x08) ? -E : E;
 	samp = _status.last + diff;
 
-	if(samp < -0x8000)
-		samp = -0x8000;
-	else if(samp > 0x7fff)
-		samp = 0x7fff;
+	if(samp < -32768)
+		samp = -32768;
+	else if(samp > 32767)
+		samp = 32767;
 
 	_status.last = samp;
 	_status.stepIndex += stepAdjust(code);

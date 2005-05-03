@@ -32,6 +32,6 @@ enum typesADPCM {
 	kADPCMIma
 };
 
-AudioStream *makeADPCMStream(Common::SeekableReadStream &stream, typesADPCM type);
+AudioStream *makeADPCMStream(Common::SeekableReadStream &stream, uint32 size, typesADPCM type);
 
 #endif

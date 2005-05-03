@@ -119,7 +119,7 @@ int Sound::playVoxVoice(SOUNDBUFFER *buf) {
 
 	_voxStream = new Common::MemoryReadStream(buf->s_buf, buf->s_buf_len);
 
-	audioStream = makeADPCMStream(*_voxStream, kADPCMOki);
+	audioStream = makeADPCMStream(*_voxStream, buf->s_buf_len, kADPCMOki);
 	_mixer->playInputStream(SoundMixer::kSFXSoundType, &_voiceHandle, audioStream);
 
 	return SUCCESS;

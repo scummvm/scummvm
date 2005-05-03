@@ -26,8 +26,9 @@
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 #include "sound/wave.h"
+#include "sound/adpcm.h"
 
-bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate, byte &flags) {
+bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate, byte &flags, uint16 *wavType) {
 	const uint32 initialPos = stream.pos();
 	byte buf[4+1];
 
@@ -62,7 +63,8 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 
 	// Next comes the "type" field of the fmt header. Some typical
 	// values for it:
-	// 1  -> uncompressed PCM 
+	// 1  -> uncompressed PCM
+	// 17 -> IMA ADPCM compressed WAVE
 	// See <http://www.sonicspot.com/guide/wavefiles.html> for a more complete
 	// list of common WAVE compression formats...
 	uint16 type = stream.readUint16LE();	// == 1 for PCM data
@@ -74,6 +76,9 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	uint16 bitsPerSample = stream.readUint16LE();	// 8, 16 ...
 	// 8 bit data is unsigned, 16 bit data signed
 
+
+	if (wavType != 0)
+		*wavType = type;
 #if 0	
 	printf("WAVE information:\n");
 	printf("  total size: %d\n", wavLength);
@@ -86,8 +91,8 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	printf("  bitsPerSample: %d\n", bitsPerSample);
 #endif
 
-	if (type != 1) {
-		warning("getWavInfo: only PCM data is supported (type %d)", type);
+	if (type != 1 && type != 17) {
+		warning("getWavInfo: only PCM or IMA ADPCM data is supported (type %d)", type);
 		return false;
 	}
 
@@ -106,6 +111,8 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	if (bitsPerSample == 8)		// 8 bit data is unsigned
 		flags |= SoundMixer::FLAG_UNSIGNED;
 	else if (bitsPerSample == 16)	// 16 bit data is signed little endian
+		flags |= (SoundMixer::FLAG_16BITS | SoundMixer::FLAG_LITTLE_ENDIAN);
+	else if (bitsPerSample == 4 && type == 17)	// IDA ADPCM compressed. We decompress it
 		flags |= (SoundMixer::FLAG_16BITS | SoundMixer::FLAG_LITTLE_ENDIAN);
 	else {
 		warning("getWavInfo: unsupported bitsPerSample %d", bitsPerSample);
@@ -148,10 +155,14 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 AudioStream *makeWAVStream(Common::SeekableReadStream &stream) {
 	int size, rate;
 	byte flags;
+	uint16 type;
 	
-	if (!loadWAVFromStream(stream, size, rate, flags))
+	if (!loadWAVFromStream(stream, size, rate, flags, &type))
 		return 0;
 	
+	if (type == 17) // IMA ADPCM
+		return makeADPCMStream(stream, size, kADPCMIma);
+
 	byte *data = (byte *)malloc(size);
 	assert(data);
 	stream.read(data, size);
