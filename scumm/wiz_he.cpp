@@ -1848,6 +1848,10 @@ int ScummEngine_v90he::isWizPixelNonTransparent(int resNum, int state, int x, in
 		case 1:
 			ret = _wiz.isWizPixelNonTransparent(wizd, x, y, w, h);
 			break;
+		case 2:
+			// Used baseball2003
+			warning("isWizPixelNonTransparent: Unhandled wiz compression type %d", c);
+			break;
 		default:
 			error("isWizPixelNonTransparent: Unhandled wiz compression type %d", c);
 			break;
