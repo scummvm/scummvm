@@ -320,17 +320,20 @@ void data_seekData(int16 handle, int32 pos, int16 from) {
 int32 data_getDataSize(const char *name) {
 	char buf[128];
 	int32 chunkSz;
-	struct stat statBuf;
+	File file;
 
 	strcpy(buf, name);
 	chunkSz = data_getChunkSize(buf);
 	if (chunkSz >= 0)
 		return chunkSz;
 
-	if (stat(buf, &statBuf) == -1)
-		error("data_getDataSize: Can't find data (%s)", name);
+	if (!file.open(buf))
+		error("data_getDataSize: Can't find data(%s)", name);
 
-	return statBuf.st_size;
+	chunkSz = file.size();
+	file.close();
+
+	return chunkSz;
 }
 
 char *data_getData(const char *path) {
@@ -359,7 +362,6 @@ char *data_getData(const char *path) {
 	data_readData(handle, ptr, size);
 	data_closeData(handle);
 	return data;
-
 }
 
 char *data_getSmallData(const char *path) {

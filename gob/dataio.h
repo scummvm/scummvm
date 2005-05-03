@@ -23,7 +23,6 @@
 #define GOB_DATAIO_H
 
 #include "common/file.h"
-#include <sys/stat.h>
 
 namespace Gob {
 
