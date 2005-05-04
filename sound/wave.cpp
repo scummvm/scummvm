@@ -65,7 +65,7 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	// values for it:
 	// 1  -> uncompressed PCM
 	// 17 -> IMA ADPCM compressed WAVE
-	// See <http://www.sonicspot.com/guide/wavefiles.html> for a more complete
+	// See <http://www.saettler.com/RIFFNEW/RIFFNEW.htm> for a more complete
 	// list of common WAVE compression formats...
 	uint16 type = stream.readUint16LE();	// == 1 for PCM data
 	uint16 numChannels = stream.readUint16LE();	// 1 for mono, 2 for stereo
@@ -112,7 +112,7 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 		flags |= SoundMixer::FLAG_UNSIGNED;
 	else if (bitsPerSample == 16)	// 16 bit data is signed little endian
 		flags |= (SoundMixer::FLAG_16BITS | SoundMixer::FLAG_LITTLE_ENDIAN);
-	else if (bitsPerSample == 4 && type == 17)	// IDA ADPCM compressed. We decompress it
+	else if (bitsPerSample == 4 && type == 17)	// IMA ADPCM compressed. We decompress it
 		flags |= (SoundMixer::FLAG_16BITS | SoundMixer::FLAG_LITTLE_ENDIAN);
 	else {
 		warning("getWavInfo: unsupported bitsPerSample %d", bitsPerSample);
