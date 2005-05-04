@@ -215,30 +215,24 @@ bool readSaveGame(char *&buffer, int &size, const char *filename)
 }
 
 
-class VMSave : public SaveFile {
+class InVMSave : public InSaveFile {
 private:
-  bool issave;
   char *buffer;
   int pos, size;
   char filename[16];
 
   uint32 read(void *buf, uint32 cnt);
-  uint32 write(const void *buf, uint32 cnt);
 
 public:
-  VMSave(const char *_filename, bool _saveOrLoad) 
-    : issave(_saveOrLoad), pos(0), buffer(NULL)
+  InVMSave(const char *_filename) 
+    : pos(0), buffer(NULL)
   {
     strncpy(filename, _filename, 16);
-    if(issave)
-      buffer = new char[size = MAX_SAVE_SIZE];
   }
 
-  ~VMSave();
+  ~InVMSave();
 
-  bool isOpen() const { return true; }
-
-  bool eos() const { return !issave && pos >= size; }
+  bool eos() const { return pos >= size; }
 
   bool readSaveGame()
   { return ::readSaveGame(buffer, size, filename); }
@@ -258,61 +252,73 @@ public:
   }
 };
 
+class OutVMSave : public OutSaveFile {
+private:
+  char *buffer;
+  int pos, size;
+  char filename[16];
+
+  uint32 write(const void *buf, uint32 cnt);
+
+public:
+  OutVMSave(const char *_filename) 
+    : pos(0)
+  {
+    strncpy(filename, _filename, 16);
+    buffer = new char[size = MAX_SAVE_SIZE];
+  }
+  
+  ~OutVMSave();
+};
+
 class VMSaveManager : public SaveFileManager {
 public:
   
   virtual OutSaveFile *openForSaving(const char *filename) {
-	return openSavefile(filename, true);
+	return new OutVMSave(filename);
   }
+
   virtual InSaveFile *openForLoading(const char *filename) {
-	return openSavefile(filename, false);
+	InVMSave *s = new InVMSave(filename);
+	if(s->readSaveGame()) {
+	  s->tryUncompress();
+	  return s;
+	} else {
+	  delete s;
+	  return NULL;
+	}
   }
   
-  SaveFile *openSavefile(const char *filename, bool saveOrLoad);
   virtual void listSavefiles(const char *prefix, bool *marks, int num);
 };
 
-SaveFile *VMSaveManager::openSavefile(const char *filename, bool saveOrLoad)
+InVMSave::~InVMSave()
 {
-  VMSave *s = new VMSave(filename, saveOrLoad);
-  if(saveOrLoad)
-    return s;
-  else if(s->readSaveGame()) {
-    s->tryUncompress();
-    return s;
-  } else {
-    delete s;
-    return NULL;
-  }
+  delete buffer;
 }
 
-VMSave::~VMSave()
+OutVMSave::~OutVMSave()
 {
   extern const char *gGameName;
   extern Icon icon;
 
-  if(issave) {
-    if(pos) {
-      // Try compression
-      char *compbuf = new char[pos];
-      unsigned long destlen = pos;
-      if(!compress((Bytef*)compbuf, &destlen, (Bytef*)buffer, pos)) {
-	delete buffer;
-	buffer = compbuf;
-	pos = destlen;
-      } else delete compbuf;
-    }
-    displaySaveResult(writeSaveGame(gGameName, buffer,
-				    pos, filename, icon));
+  if(pos) {
+    // Try compression
+    char *compbuf = new char[pos];
+    unsigned long destlen = pos;
+    if(!compress((Bytef*)compbuf, &destlen, (Bytef*)buffer, pos)) {
+      delete buffer;
+      buffer = compbuf;
+      pos = destlen;
+    } else delete compbuf;
   }
+  displaySaveResult(writeSaveGame(gGameName, buffer,
+				  pos, filename, icon));
   delete buffer;
 }
 
-uint32 VMSave::read(void *buf, uint32 cnt)
+uint32 InVMSave::read(void *buf, uint32 cnt)
 {
-  if (issave)
-    return 0; 
-
   int nbyt = cnt;
   if (pos + nbyt > size) {
     cnt = (size - pos);
@@ -324,11 +330,8 @@ uint32 VMSave::read(void *buf, uint32 cnt)
   return cnt;
 }
 
-uint32 VMSave::write(const void *buf, uint32 cnt)
+uint32 OutVMSave::write(const void *buf, uint32 cnt)
 {
-  if (!issave)
-    return 0;
-
   int nbyt = cnt;
   if (pos + nbyt > size) {
     cnt = (size - pos);
