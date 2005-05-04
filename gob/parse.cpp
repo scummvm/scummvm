@@ -157,7 +157,7 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 				*valPtr = inter_resVal;
 			}
 
-			if (stkPos > 0 && (operPtr[-1] == 1	|| operPtr[-1] == 11)) {
+			if (stkPos > 0 && (operPtr[-1] == 1 || operPtr[-1] == 11)) {
 				stkPos--;
 				operPtr--;
 				valPtr--;
