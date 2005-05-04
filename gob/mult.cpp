@@ -545,11 +545,8 @@ void mult_initAll(void) {
 }
 
 void mult_playSound(Snd_SoundDesc * soundDesc, int16 repCount, int16 freq,
-	    int16 negFreq) {
-	if (soundDesc->frequency == freq)
-		snd_playSample(soundDesc, repCount, -negFreq);
-	else
-		snd_playSample(soundDesc, repCount, freq);
+	    int16 channel) {
+	snd_playSample(soundDesc, repCount, freq);
 }
 
 char mult_drawStatics(char stop) {

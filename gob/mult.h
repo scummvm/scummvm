@@ -170,8 +170,6 @@ extern int16 mult_sndSlotsCount;
 extern int16 mult_sndKeysCount;
 extern Mult_SndKey *mult_sndKeys;
 
-void mult_playSound(Snd_SoundDesc * soundDesc, int16 repCount, int16 freq,
-    int16 negFreq);
 void mult_zeroMultData(void);
 void mult_loadMult(int16 resId);
 void mult_freeMultKeys(void);
@@ -186,7 +184,7 @@ void mult_interLoadMult(void);
 void mult_freeAll(void);
 void mult_initAll(void);
 void mult_playSound(Snd_SoundDesc * soundDesc, int16 repCount, int16 freq,
-    int16 negFreq);
+    int16 channel);
 void mult_playMult(int16 startFrame, int16 endFrame, char checkEscape,
     char handleMouse);
 void mult_zeroMultData(void);
