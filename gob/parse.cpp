@@ -27,6 +27,8 @@
 
 namespace Gob {
 
+
+
 int16 parse_parseExpr(char arg_0, byte *arg_2) {
 	int32 values[20];
 	byte operStack[20];
@@ -183,7 +185,7 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 						strcpy(inter_resStr, (char *)valPtr[-2]);
 						valPtr[-2] = (int32)inter_resStr;
 					}
-					strcat((char *)valPtr[-2], (char *)valPtr[0]);
+					strcat(inter_resStr, (char *)valPtr[0]);
 					stkPos -= 2;
 					operPtr -= 2;
 					valPtr -= 2;
@@ -304,7 +306,7 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 							strcpy(inter_resStr, (char *)values[brackStart]);
 							values[brackStart] = (int32)inter_resStr;
 						}
-						strcat((char *)values[brackStart], (char *)valPtr[-1]);
+						strcat(inter_resStr, (char *)valPtr[-1]);
 					}
 					stkPos -= 2;
 					operPtr -= 2;
@@ -380,7 +382,7 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 							strcpy(inter_resStr, (char *)valPtr[-3]);
 							valPtr[-3] = (int32)inter_resStr;
 						}
-						if (strcmp((char *)valPtr[-3], (char *)valPtr[-1]) < 0)
+						if (strcmp(inter_resStr, (char *)valPtr[-1]) < 0)
 							operPtr[-3] = 24;
 					}
 					stkPos -= 2;
@@ -399,7 +401,7 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 							strcpy(inter_resStr, (char *)valPtr[-3]);
 							valPtr[-3] = (int32)inter_resStr;
 						}
-						if (strcmp((char *)valPtr[-3], (char *)valPtr[-1]) <= 0)
+						if (strcmp(inter_resStr, (char *)valPtr[-1]) <= 0)
 							operPtr[-3] = 24;
 					}
 					stkPos -= 2;
@@ -418,7 +420,7 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 							strcpy(inter_resStr, (char *)valPtr[-3]);
 							valPtr[-3] = (int32)inter_resStr;
 						}
-						if (strcmp((char *)valPtr[-3], (char *)valPtr[-1]) > 0)
+						if (strcmp(inter_resStr, (char *)valPtr[-1]) > 0)
 							operPtr[-3] = 24;
 					}
 					stkPos -= 2;
@@ -437,7 +439,7 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 							strcpy(inter_resStr, (char *)valPtr[-3]);
 							valPtr[-3] = (int32)inter_resStr;
 						}
-						if (strcmp((char *)valPtr[-3], (char *)valPtr[-1]) >= 0)
+						if (strcmp(inter_resStr, (char *)valPtr[-1]) >= 0)
 							operPtr[-3] = 24;
 					}
 					stkPos -= 2;
@@ -456,7 +458,7 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 							strcpy(inter_resStr, (char *)valPtr[-3]);
 							valPtr[-3] = (int32)inter_resStr;
 						}
-						if (strcmp((char *)valPtr[-3], (char *)valPtr[-1]) == 0)
+						if (strcmp(inter_resStr, (char *)valPtr[-1]) == 0)
 							operPtr[-3] = 24;
 					}
 					stkPos -= 2;
@@ -475,7 +477,7 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 							strcpy(inter_resStr, (char *)valPtr[-3]);
 							valPtr[-3] = (int32)inter_resStr;
 						}
-						if (strcmp((char *)valPtr[-3], (char *)valPtr[-1]) != 0)
+						if (strcmp(inter_resStr, (char *)valPtr[-1]) != 0)
 							operPtr[-3] = 24;
 					}
 					stkPos -= 2;
@@ -578,7 +580,7 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 							strcpy(inter_resStr, (char *)valPtr[-3]);
 							valPtr[-3] = (int32)inter_resStr;
 						}
-						strcat((char *)valPtr[-3], (char *)valPtr[-1]);
+						strcat(inter_resStr, (char *)valPtr[-1]);
 					}
 					stkPos -= 2;
 					operPtr -= 2;
