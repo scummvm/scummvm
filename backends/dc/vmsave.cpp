@@ -149,7 +149,8 @@ static bool tryLoad(char *&buffer, int &size, const char *filename, int vm)
   if(vmsfs_read_file(&file, (unsigned char *)buffer, size))
     return true;
 
-  delete buffer;
+  delete[] buffer;
+  buffer = NULL;
   return false;
 }
 
@@ -230,7 +231,11 @@ public:
     strncpy(filename, _filename, 16);
   }
 
-  ~InVMSave();
+  ~InVMSave()
+  {
+    if(buffer != NULL)
+      delete[] buffer;
+  }
 
   bool eos() const { return pos >= size; }
 
@@ -244,10 +249,10 @@ public:
       char *expbuf = new char[MAX_SAVE_SIZE];
       unsigned long destlen = MAX_SAVE_SIZE;
       if(!uncompress((Bytef*)expbuf, &destlen, (Bytef*)buffer, size)) {
-	delete(buffer);
+	delete[] buffer;
 	buffer = expbuf;
 	size = destlen;
-      } else delete expbuf;
+      } else delete[] expbuf;
     }
   }
 };
@@ -292,11 +297,6 @@ public:
   virtual void listSavefiles(const char *prefix, bool *marks, int num);
 };
 
-InVMSave::~InVMSave()
-{
-  delete buffer;
-}
-
 OutVMSave::~OutVMSave()
 {
   extern const char *gGameName;
@@ -307,14 +307,14 @@ OutVMSave::~OutVMSave()
     char *compbuf = new char[pos];
     unsigned long destlen = pos;
     if(!compress((Bytef*)compbuf, &destlen, (Bytef*)buffer, pos)) {
-      delete buffer;
+      delete[] buffer;
       buffer = compbuf;
       pos = destlen;
-    } else delete compbuf;
+    } else delete[] compbuf;
   }
   displaySaveResult(writeSaveGame(gGameName, buffer,
 				  pos, filename, icon));
-  delete buffer;
+  delete[] buffer;
 }
 
 uint32 InVMSave::read(void *buf, uint32 cnt)
