@@ -220,16 +220,13 @@ class InVMSave : public InSaveFile {
 private:
   char *buffer;
   int pos, size;
-  char filename[16];
 
   uint32 read(void *buf, uint32 cnt);
 
 public:
-  InVMSave(const char *_filename) 
+  InVMSave() 
     : pos(0), buffer(NULL)
-  {
-    strncpy(filename, _filename, 16);
-  }
+  { }
 
   ~InVMSave()
   {
@@ -239,7 +236,7 @@ public:
 
   bool eos() const { return pos >= size; }
 
-  bool readSaveGame()
+  bool readSaveGame(const char *filename)
   { return ::readSaveGame(buffer, size, filename); }
 
   void tryUncompress()
@@ -284,8 +281,8 @@ public:
   }
 
   virtual InSaveFile *openForLoading(const char *filename) {
-	InVMSave *s = new InVMSave(filename);
-	if(s->readSaveGame()) {
+	InVMSave *s = new InVMSave();
+	if(s->readSaveGame(filename)) {
 	  s->tryUncompress();
 	  return s;
 	} else {
