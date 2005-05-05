@@ -961,6 +961,7 @@ void ScummEngine_v72he::displayWizImage(WizImage *pwi) {
 uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int xmapNum, int field_390, const Common::Rect *clipBox, int flags, int dstResNum, int paletteNum) {
 	debug(2, "drawWizImage(resNum %d, x1 %d y1 %d flags 0x%X zorder %d xmapNum %d field_390 %d dstResNum %d paletteNum %d)", resNum, x1, y1, flags, zorder, xmapNum, field_390, dstResNum, paletteNum);
 	uint8 *dst = NULL;
+
 	const uint8 *palPtr = NULL;
 	if (_heversion >= 99) {
 		if (paletteNum) {
@@ -969,131 +970,141 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 			palPtr = _hePalettes + 1792;
 		}
 	}
+
+	const uint8 *xmap = NULL;
+	if (xmapNum) {
+		byte *xmapPtr = getResourceAddress(rtImage, xmapNum);
+		xmap = findResourceData(MKID('XMAP'), xmapPtr);
+	}
+
 	uint8 *dataPtr = getResourceAddress(rtImage, resNum);
-	if (dataPtr) {
-		uint8 *rmap = NULL;
-		uint8 *xmap = findWrappedBlock(MKID('XMAP'), dataPtr, state, 0);
-		
-		uint8 *wizh = findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
-		assert(wizh);
-		uint32 comp   = READ_LE_UINT32(wizh + 0x0);
-		uint32 width  = READ_LE_UINT32(wizh + 0x4);
-		uint32 height = READ_LE_UINT32(wizh + 0x8);
-		debug(2, "wiz_header.comp = %d wiz_header.w = %d wiz_header.h = %d", comp, width, height);
-		
-		uint8 *wizd = findWrappedBlock(MKID('WIZD'), dataPtr, state, 0);
-		assert(wizd);
-		if (flags & kWIFHasPalette) {
-			uint8 *pal = findWrappedBlock(MKID('RGBS'), dataPtr, state, 0);
-			assert(pal);
-			setPaletteFromPtr(pal, 256);
-		}
-		if (flags & kWIFRemapPalette) {
-			rmap = findWrappedBlock(MKID('RMAP'), dataPtr, state, 0);
-			assert(rmap);
-			if (_heversion <= 80 || READ_BE_UINT32(rmap) != 0x01234567) {
-				uint8 *rgbs = findWrappedBlock(MKID('RGBS'), dataPtr, state, 0);
-				assert(rgbs);
-				remapHEPalette(rgbs, rmap + 4);
-			}
-		}
-		if (flags & kWIFPrint) {
-			warning("WizImage printing is unimplemented");
-			return NULL;
-		}
+	assert(dataPtr);
+	uint8 *wizh = findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
+	assert(wizh);
+	uint32 comp   = READ_LE_UINT32(wizh + 0x0);
+	uint32 width  = READ_LE_UINT32(wizh + 0x4);
+	uint32 height = READ_LE_UINT32(wizh + 0x8);
+	debug(2, "wiz_header.comp = %d wiz_header.w = %d wiz_header.h = %d", comp, width, height);
+	
+	uint8 *wizd = findWrappedBlock(MKID('WIZD'), dataPtr, state, 0);
+	assert(wizd);
 
-		int32 cw, ch;
-		if (flags & kWIFBlitToMemBuffer) {
-			dst = (uint8 *)malloc(width * height);
-			int color = 255; // FIXME: should be (VAR_WIZ_TCOLOR != 0xFF) ? VAR(VAR_WIZ_TCOLOR) : 5;
-			memset(dst, color, width * height);
-			cw = width;
-			ch = height;
+	if (flags & kWIFHasPalette) {
+		uint8 *pal = findWrappedBlock(MKID('RGBS'), dataPtr, state, 0);
+		assert(pal);
+		setPaletteFromPtr(pal, 256);
+	}
+
+	uint8 *rmap = NULL;
+	if (flags & kWIFRemapPalette) {
+		rmap = findWrappedBlock(MKID('RMAP'), dataPtr, state, 0);
+		assert(rmap);
+		if (_heversion <= 80 || READ_BE_UINT32(rmap) != 0x01234567) {
+			uint8 *rgbs = findWrappedBlock(MKID('RGBS'), dataPtr, state, 0);
+			assert(rgbs);
+			remapHEPalette(rgbs, rmap + 4);
+		}
+	}
+
+	if (flags & kWIFPrint) {
+		error("WizImage printing is unimplemented");
+	}
+
+	int32 cw, ch;
+	if (flags & kWIFBlitToMemBuffer) {
+		dst = (uint8 *)malloc(width * height);
+		int color = 255; // FIXME: should be (VAR_WIZ_TCOLOR != 0xFF) ? VAR(VAR_WIZ_TCOLOR) : 5;
+		memset(dst, color, width * height);
+		cw = width;
+		ch = height;
+	} else {
+		if (dstResNum) {
+			uint8 *dstPtr = getResourceAddress(rtImage, dstResNum);
+			assert(dstPtr);
+			dst = findWrappedBlock(MKID('WIZD'), dstPtr, 0, 0);
+			assert(dst);
+
+			getWizImageDim(dstResNum, 0, cw, ch);
 		} else {
-			if (dstResNum) {
-				uint8 *dstPtr = getResourceAddress(rtImage, dstResNum);
-				assert(dstPtr);
-				dst = findWrappedBlock(MKID('WIZD'), dstPtr, 0, 0);
-				assert(dst);
-
-				getWizImageDim(dstResNum, 0, cw, ch);
+			VirtScreen *pvs = &virtscr[kMainVirtScreen];
+			if (flags & kWIFMarkBufferDirty) {
+				dst = pvs->getPixels(0, pvs->topline);
 			} else {
-				VirtScreen *pvs = &virtscr[kMainVirtScreen];
-				if (flags & kWIFMarkBufferDirty) {
-					dst = pvs->getPixels(0, pvs->topline);
-				} else {
-					dst = pvs->getBackPixels(0, pvs->topline);
-				}
-				cw = pvs->w;
-				ch = pvs->h;
+				dst = pvs->getBackPixels(0, pvs->topline);
 			}
+			cw = pvs->w;
+			ch = pvs->h;
 		}
-		Common::Rect rScreen(cw, ch);
-		if (clipBox) {
-			Common::Rect clip(clipBox->left, clipBox->top, clipBox->right, clipBox->bottom);
-			if (rScreen.intersects(clip)) {
-				rScreen.clip(clip);
+	}
+
+	Common::Rect rScreen(cw, ch);
+	if (clipBox) {
+		Common::Rect clip(clipBox->left, clipBox->top, clipBox->right, clipBox->bottom);
+		if (rScreen.intersects(clip)) {
+			rScreen.clip(clip);
+		} else {
+			return 0;
+		}
+	} else if (_wiz._rectOverrideEnabled) {
+		if (rScreen.intersects(_wiz._rectOverride)) {
+			rScreen.clip(_wiz._rectOverride);
+		} else {
+			return 0;
+		}
+	}
+
+	// XXX handle 'XMAP' data
+	if (xmap) {
+		palPtr = xmap;
+	}
+	if (flags & kWIFRemapPalette) {
+		palPtr = rmap + 4;
+	}
+
+	int color;
+	uint8 *trns = findWrappedBlock(MKID('TRNS'), dataPtr, state, 0);
+
+	switch (comp) {
+	case 0:
+		color = (trns == NULL) ? VAR(VAR_WIZ_TCOLOR) : -1;
+		_wiz.copyRawWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, color);
+		break;
+	case 1:
+		// TODO Adding masking for flags 0x80 and 0x100
+		if (flags & 0x80) {
+			// Used in maze
+			warning("drawWizImage: Unhandled flag 0x80");
+		} else if (flags & 0x100) {
+			// Used in readdemo
+			warning("drawWizImage: Unhandled flag 0x100");
+		}
+		_wiz.copyWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, palPtr);
+		break;
+	case 2:
+		color = (trns == NULL) ? VAR(VAR_WIZ_TCOLOR) : -1;
+		_wiz.copyRaw16BitWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, color);
+		break;
+	case 5:
+		// Used in Moonbase Commander
+		warning("drawWizImage: Unhandled wiz compression type %d", comp);
+		break;
+	default:
+		error("drawWizImage: Unhandled wiz compression type %d", comp);
+	}
+
+	if (!(flags & kWIFBlitToMemBuffer) && dstResNum == 0) {
+		Common::Rect rImage(x1, y1, x1 + width, y1 + height);
+		if (rImage.intersects(rScreen)) {
+			rImage.clip(rScreen);
+			if (!(flags & kWIFBlitToFrontVideoBuffer) && (flags & (kWIFBlitToFrontVideoBuffer | kWIFMarkBufferDirty))) {
+				++rImage.bottom;
+				markRectAsDirty(kMainVirtScreen, rImage);
 			} else {
-				return 0;
-			}
-		} else if (_wiz._rectOverrideEnabled) {
-			if (rScreen.intersects(_wiz._rectOverride)) {
-				rScreen.clip(_wiz._rectOverride);
-			} else {
-				return 0;
-			}
-		}
-
-		// XXX handle 'XMAP' data
-		if (xmap) {
-			palPtr = xmap;
-		}
-		if (flags & kWIFRemapPalette) {
-			palPtr = rmap + 4;
-		}
-
-		uint8 *trns = findWrappedBlock(MKID('TRNS'), dataPtr, state, 0);
-		int color = (trns == NULL) ? VAR(VAR_WIZ_TCOLOR) : -1;
-
-		switch (comp) {
-		case 0:
-			_wiz.copyRawWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, color);
-			break;
-		case 1:
-			// TODO Adding masking for flags 0x80 and 0x100
-			if (flags & 0x80) {
-				// Used in maze
-				warning("drawWizImage: Unhandled flag 0x80");
-			} else if (flags & 0x100) {
-				// Used in readdemo
-				warning("drawWizImage: Unhandled flag 0x100");
-			}
-			_wiz.copyWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, palPtr);
-			break;
-		case 2:
-			_wiz.copyRaw16BitWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, color);
-			break;
-		case 5:
-			// Used in Moonbase Commander
-			warning("drawWizImage: Unhandled wiz compression type %d", comp);
-			break;
-		default:
-			error("drawWizImage: Unhandled wiz compression type %d", comp);
-		}
-
-		if (!(flags & kWIFBlitToMemBuffer) && dstResNum == 0) {
-			Common::Rect rImage(x1, y1, x1 + width, y1 + height);
-			if (rImage.intersects(rScreen)) {
-				rImage.clip(rScreen);
-				if (!(flags & kWIFBlitToFrontVideoBuffer) && (flags & (kWIFBlitToFrontVideoBuffer | kWIFMarkBufferDirty))) {
-					++rImage.bottom;
-					markRectAsDirty(kMainVirtScreen, rImage);
-				} else {
-					gdi.copyVirtScreenBuffers(rImage);
-				}
+				gdi.copyVirtScreenBuffers(rImage);
 			}
 		}
 	}
+
 	return dst;
 }
 
