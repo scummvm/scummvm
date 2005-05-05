@@ -62,7 +62,10 @@ int MidiDriver_CORE::open() {
 	ComponentDescription compdesc;
 	Component compid;
 
-	// Open the Music Device
+	// Open the Music Device.
+	// We use the AudioUnit v1 API, even though it is deprecated, because
+	// this way we stay compatible with older OS X versions.
+	// For v2, we'd use kAudioUnitType_MusicDevice and kAudioUnitSubType_DLSSynth
 	compdesc.componentType = kAudioUnitComponentType;
 	compdesc.componentSubType = kAudioUnitSubType_MusicDevice;
 	compdesc.componentManufacturer = kAudioUnitID_DLSSynth;
