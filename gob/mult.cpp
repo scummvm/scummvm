@@ -475,11 +475,8 @@ void mult_freeMult(void) {
 	if (anim_underAnimSurf != 0)
 		vid_freeSurfDesc(anim_underAnimSurf);
 
-	if (mult_objects != 0)
-		free(mult_objects);
-
-	if (mult_renderData != 0)
-		free(mult_renderData);
+	free(mult_objects);
+	free(mult_renderData);
 
 	mult_objects = 0;
 	mult_renderData = 0;
@@ -931,24 +928,19 @@ void mult_playMult(int16 startFrame, int16 endFrame, char checkEscape,
 
 	if (stopNoClear == 0) {
 		if (mult_animDataAllocated) {
-			if (mult_objects)
-				free(mult_objects);
+			free(mult_objects);
 			mult_objects = 0;
 
-			if (mult_renderData)
-				free(mult_renderData);
+			free(mult_renderData);
 			mult_renderData = 0;
 
-			if (mult_animArrayX)
-				free(mult_animArrayX);
+			free(mult_animArrayX);
 			mult_animArrayX = 0;
 
-			if (mult_animArrayY)
-				free(mult_animArrayY);
+			free(mult_animArrayY);
 			mult_animArrayY = 0;
 
-			if (mult_animArrayData)
-				free(mult_animArrayData);
+			free(mult_animArrayData);
 			mult_animArrayData = 0;
 
 			if (anim_underAnimSurf)
@@ -1178,24 +1170,19 @@ void mult_freeMultKeys(void) {
 	mult_multData = 0;
 
 	if (mult_animDataAllocated != 0) {
-		if (mult_objects)
-			free(mult_objects);
+		free(mult_objects);
 		mult_objects = 0;
 
-		if (mult_renderData)
-			free(mult_renderData);
+		free(mult_renderData);
 		mult_renderData = 0;
 
-		if (mult_animArrayX)
-			free(mult_animArrayX);
+		free(mult_animArrayX);
 		mult_animArrayX = 0;
 
-		if (mult_animArrayY)
-			free(mult_animArrayY);
+		free(mult_animArrayY);
 		mult_animArrayY = 0;
 
-		if (mult_animArrayData)
-			free(mult_animArrayData);
+		free(mult_animArrayData);
 		mult_animArrayData = 0;
 
 		if (anim_underAnimSurf)

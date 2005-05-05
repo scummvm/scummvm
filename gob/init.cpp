@@ -282,17 +282,10 @@ memBlocks	= word ptr -2*/
 		cd_stopPlaying();
 		cd_freeLICbuffer();
 
-		if (inter_variables != 0)
-			free(inter_variables);
-
-		if (game_totFileData != 0)
-			free(game_totFileData);
-
-		if (game_totTextData != 0)
-			free(game_totTextData);
-
-		if (game_totResourceTable != 0)
-			free(game_totResourceTable);
+		free(inter_variables);
+		free(game_totFileData);
+		free(game_totTextData);
+		free(game_totResourceTable);
 	}
 
 	for (i = 0; i < 4; i++) {

@@ -228,10 +228,8 @@ void pal_fade(PalDesc *palDesc, int16 fade, int16 allColors) {
 			util_clearPalette();
 	}
 
-	if (tmpPalBuffer != 0) {
-		free(tmpPalBuffer);
-		tmpPalBuffer = 0;
-	}
+	free(tmpPalBuffer);
+	tmpPalBuffer = 0;
 }
 
 }				// End of namespace Gob

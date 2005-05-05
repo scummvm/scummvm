@@ -1870,26 +1870,21 @@ void game_playTot(int16 skipPlay) {
 			draw_blitInvalidated();
 			free(game_totFileData);
 			game_totFileData = 0;
-			if (game_totTextData != 0 && needTextFree != 0)
-				free(game_totTextData);
 
+			if (needTextFree)
+				free(game_totTextData);
 			game_totTextData = 0;
 
-			if (game_totResourceTable != 0
-			    && needFreeResTable != 0)
+			if (needFreeResTable)
 				free(game_totResourceTable);
-
 			game_totResourceTable = 0;
 
-			if (game_imFileData != 0)
-				free(game_imFileData);
-
+			free(game_imFileData);
 			game_imFileData = 0;
 
-			if (game_extTable != 0)
-				free(game_extTable);
-
+			free(game_extTable);
 			game_extTable = 0;
+
 			if (game_extHandle >= 0)
 				data_closeData(game_extHandle);
 
