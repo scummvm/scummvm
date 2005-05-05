@@ -502,6 +502,7 @@ protected:
 	int _numNewNames, _numGlobalScripts;
 	int _numRoomVariables;
 	int _numPalettes, _numSprites, _numTalkies, _numUnk;
+	int _HEHeapSize;
 public:
 	int _numLocalScripts, _numImages, _numRooms, _numScripts, _numSounds;	// Used by HE games
 	int _numCostumes;	// FIXME - should be protected, used by Actor::remapActorPalette

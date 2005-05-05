@@ -1682,7 +1682,7 @@ void ScummEngine_v99he::readMAXS(int blockSize) {
 	_numImages = _fileHandle->readUint16LE();
 	_numSprites = _fileHandle->readUint16LE();
 	_numLocalScripts = _fileHandle->readUint16LE();
-	_fileHandle->readUint16LE(); // heap related
+	_HEHeapSize = _fileHandle->readUint16LE(); // heap related
 	_numPalettes = _fileHandle->readUint16LE();
 	_numUnk = _fileHandle->readUint16LE();
 	_numTalkies = _fileHandle->readUint16LE();
@@ -1713,7 +1713,7 @@ void ScummEngine_v90he::readMAXS(int blockSize) {
 	_numImages = _fileHandle->readUint16LE();
 	_numSprites = _fileHandle->readUint16LE();
 	_numLocalScripts = _fileHandle->readUint16LE();
-	_fileHandle->readUint16LE(); // heap releated
+	_HEHeapSize = _fileHandle->readUint16LE();
 	_numNewNames = 10;
 
 	_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);

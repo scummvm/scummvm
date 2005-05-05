@@ -1418,12 +1418,15 @@ int ScummEngine::init(GameDetector &detector) {
 	else
 		res._maxHeapThreshold = gVars->memory[kMemScummOldCostGames];
 #else
-	// Since the new costumes are very big, we increase the heap limit, to avoid having
-	// to constantly reload stuff from the data files.
-	if (_features & GF_NEW_COSTUMES)
+	if (_heversion >= 90 && _HEHeapSize) {
+		res._maxHeapThreshold = _HEHeapSize * 1024;
+	} else if (_features & GF_NEW_COSTUMES) {
+		// Since the new costumes are very big, we increase the heap limit, to avoid having
+		// to constantly reload stuff from the data files.
 		res._maxHeapThreshold = 2500000;
-	else
+	} else {
 		res._maxHeapThreshold = 550000;
+	}
 #endif
 	res._minHeapThreshold = 400000;
 
