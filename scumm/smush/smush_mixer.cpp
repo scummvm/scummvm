@@ -148,8 +148,10 @@ bool SmushMixer::stop() {
 			delete _channels[i].chan;
 			_channels[i].id = -1;
 			_channels[i].chan = NULL;
-			_channels[i].stream->finish();
-			_channels[i].stream = 0;
+			if (_channels[i].stream) {
+				_channels[i].stream->finish();
+				_channels[i].stream = 0;
+			}
 		}
 	}
 	return true;
