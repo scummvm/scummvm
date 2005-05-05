@@ -25,12 +25,15 @@
 #include <fileio.h>
 #include <assert.h>
 #include <string.h>
+#include <fileXio_rpc.h>
+
+#define DEFAULT_MODE (FIO_S_IRUSR | FIO_S_IWUSR | FIO_S_IRGRP | FIO_S_IWGRP | FIO_S_IROTH | FIO_S_IWOTH)
 
 extern void sioprintf(const char *zFormat, ...);
 
 AsyncFio::AsyncFio(void) {
 	_runningOp = NULL;
-	memset(_ioSlots, 0, MAX_HANDLES * sizeof(int));
+	memset((int *)_ioSlots, 0, MAX_HANDLES * sizeof(int));
 	ee_sema_t newSema;
 	newSema.init_count = 1;
 	newSema.max_count = 1;
@@ -45,9 +48,9 @@ int AsyncFio::open(const char *name, int ioMode) {
 	WaitSema(_ioSema);
 	checkSync();
 	int res;
-	fioOpen(name, ioMode);
-	int fioRes = fioSync(FIO_WAIT, &res);
-	if (fioRes != FIO_COMPLETE) {
+	fileXioOpen(name, ioMode, DEFAULT_MODE);
+	int fioRes = fileXioWaitAsync(FXIO_WAIT, &res);
+	if (fioRes != FXIO_COMPLETE) {
 		sioprintf("ERROR: fioOpen(%s, %X):\n", name, ioMode);
 		sioprintf("  fioSync returned %d, open res = %d\n", fioRes, res);
         SleepThread();		
@@ -59,13 +62,20 @@ int AsyncFio::open(const char *name, int ioMode) {
 void AsyncFio::close(int handle) {
 	WaitSema(_ioSema);
 	checkSync();
-	fioClose(handle);
+	fileXioClose(handle);
+	int res;
+	assert(fileXioWaitAsync(FXIO_WAIT, &res) == FXIO_COMPLETE);
+	if (res != 0) {
+		sioprintf("ERROR: fileXioClose failed, EC %d", res);
+		SleepThread();
+	}
+	_ioSlots[handle] = 0;
 	SignalSema(_ioSema);
 }
 
 void AsyncFio::checkSync(void) {
 	if (_runningOp) {
-		assert(fioSync(FIO_WAIT, _runningOp) == FIO_COMPLETE);
+		assert(fileXioWaitAsync(FXIO_WAIT, (int *)_runningOp) == FXIO_COMPLETE);
 		_runningOp = NULL;
 	}
 }
@@ -75,7 +85,7 @@ void AsyncFio::read(int fd, void *dest, unsigned int len) {
 	checkSync();
 	assert(fd < MAX_HANDLES);
 	_runningOp = _ioSlots + fd;
-    fioRead(fd, dest, len);
+	fileXioRead(fd, (unsigned char*)dest, len);
 	SignalSema(_ioSema);
 }
 
@@ -84,14 +94,26 @@ void AsyncFio::write(int fd, const void *src, unsigned int len) {
 	checkSync();
 	assert(fd < MAX_HANDLES);
 	_runningOp = _ioSlots + fd;
-	fioWrite(fd, (unsigned char*)src, len);
+	fileXioWrite(fd, (unsigned char*)src, len);
 	SignalSema(_ioSema);
 }
 
 int AsyncFio::seek(int fd, int offset, int whence) {
 	WaitSema(_ioSema);
 	checkSync();
-	int res = fioLseek(fd, offset, whence);
+	fileXioLseek(fd, offset, whence);
+	int res;
+	assert(fileXioWaitAsync(FXIO_WAIT, &res) == FXIO_COMPLETE);
+	SignalSema(_ioSema);
+	return res;
+}
+
+int AsyncFio::mkdir(const char *name) {
+	WaitSema(_ioSema);
+	checkSync();
+	fileXioMkdir(name, DEFAULT_MODE);
+	int res;
+	assert(fileXioWaitAsync(FXIO_WAIT, &res) == FXIO_COMPLETE);
 	SignalSema(_ioSema);
 	return res;
 }
@@ -100,15 +122,17 @@ int AsyncFio::sync(int fd) {
 	WaitSema(_ioSema);
 	if (_runningOp == _ioSlots + fd)
 		checkSync();
+	int res = _ioSlots[fd];
+	_ioSlots[fd] = 0;
 	SignalSema(_ioSema);
-	return _ioSlots[fd];
+	return res;
 }
 
 bool AsyncFio::poll(int fd) {
 	bool retVal = false;
-	if (PollSema(_ioSema) > 0) {
+	if (PollSema(_ioSema) >= 0) {
 		if (_runningOp == _ioSlots + fd) {
-			if (fioSync(FIO_NOWAIT, _runningOp) == FIO_COMPLETE) {
+			if (fileXioWaitAsync(FXIO_NOWAIT, (int *)_runningOp) == FXIO_COMPLETE) {
 				_runningOp = NULL;
 				retVal = true;
 			} else
@@ -124,7 +148,7 @@ bool AsyncFio::fioAvail(void) {
 	bool retVal = false;
 	if (PollSema(_ioSema) > 0) {
 		if (_runningOp) {
-			if (fioSync(FIO_NOWAIT, _runningOp) == FIO_COMPLETE) {
+			if (fileXioWaitAsync(FXIO_NOWAIT, (int *)_runningOp) == FXIO_COMPLETE) {
 				_runningOp = NULL;
 				retVal = true;
 			} else

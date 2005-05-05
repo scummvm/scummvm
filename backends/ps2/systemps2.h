@@ -93,7 +93,7 @@ private:
 	volatile OSystem::TimerProc _scummTimerProc;
 	volatile OSystem::SoundProc _scummSoundProc;
 	void *_scummSoundParam;
-	int16 *_soundBuf, *_soundBuf2;
+	int16 *_soundBufL, *_soundBufR;
 	int _soundSema;
 
 	void initTimer(void);
@@ -107,7 +107,6 @@ private:
 	uint16 _width, _height;
 
 	Gs2dScreen	*_screen;
-	//PadMouse	*_mouse;
 	Ps2Input	*_input;
 	uint16		_oldMouseX, _oldMouseY;
 

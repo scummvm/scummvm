@@ -26,99 +26,345 @@
 #include <fileio.h>
 #include <assert.h>
 #include <string.h>
-//#include <fileXio_rpc.h>
 #include <cdvd_rpc.h>
 #include "backends/ps2/asyncfio.h"
 #include "base/engine.h"
 #include "common/file.h"
 
-#define CACHE_BUF_SIZE (2048 * 16)
-#define MAX_CACHED_FILES 8
-
-//#define DEFAULT_MODE (FIO_S_IRUSR | FIO_S_IWUSR | FIO_S_IRGRP | FIO_S_IWGRP | FIO_S_IROTH | FIO_S_IWOTH)
+#define CACHE_SIZE (2048 * 32)
+#define MAX_READ_STEP (2048 * 16)
+#define MAX_CACHED_FILES 6
+#define CACHE_READ_THRESHOLD (16 * 2048)
+#define CACHE_FILL_MIN (2048 * 24)
 
 extern void sioprintf(const char *zFormat, ...);
 
 AsyncFio fio;
 
-AccessFio::AccessFio(void) {
-	_handle = -1;
+Ps2File::Ps2File(int64 cacheId) {
+	_cacheId = cacheId;
 }
 
-AccessFio::~AccessFio(void) {
-	if (_handle >= 0)
-		fio.close(_handle);
+Ps2File::~Ps2File(void) {
 }
 
-int32 AccessFio::sync(void) {
-	return fio.sync(_handle);
-}
-
-bool AccessFio::poll(void) {
-	return fio.poll(_handle);
-}
-
-bool AccessFio::fioAvail(void) {
-	return fio.fioAvail();
-}
-
-bool AccessFio::open(const char *name, int mode) {
-	_handle = fio.open(name, mode);
-	return (_handle >= 0);
-}
-
-void AccessFio::read(void *dest, uint32 size) {
-	fio.read(_handle, dest, size);
-}
-
-void AccessFio::write(const void *src, uint32 size) {
-	fio.write(_handle, src, size);
-}
-
-int AccessFio::seek(int32 offset, int whence) {
-	return fio.seek(_handle, offset, whence);
-}
-
-/*class AccessFioX : public AccessFio{
+class Ps2ReadFile : public Ps2File {
 public:
-	AccessFioX(void);
-	virtual ~AccessFioX(void);
-	virtual bool open(const char *name, int mode);
-	virtual int read(void *dest, uint32 size);
-	virtual int write(const void *src, uint32 size);
-	virtual int seek(int32 offset, int whence);
-	virtual void sync(int32 *res);
+	Ps2ReadFile(int64 cacheId);
+	virtual ~Ps2ReadFile(void);
+	virtual bool open(const char *name);
+	virtual uint32 read(void *dest, uint32 len);
+	virtual uint32 write(const void *src, uint32 len);
+	virtual uint32 tell(void);
+	virtual uint32 size(void);
+	virtual int seek(int32 offset, int origin);
+	virtual bool eof(void);
+private:
+	void cacheReadAhead(void);
+	void cacheReadSync(void);
+	int _fd, _sema;
+	uint8 *_cacheBuf;
+	bool _cacheOpRunning;
+	uint32 _filePos, _physFilePos, _cachePos;
+	uint32 _fileSize, _bytesInCache, _cacheOfs;
+
+	uint32 _readBytesBlock;
 };
 
-AccessFioX::AccessFioX(void) {
-	_handle = -1;
+Ps2ReadFile::Ps2ReadFile(int64 cacheId) : Ps2File(cacheId) {
+	_fd = -1;
+	_cacheBuf = (uint8*)memalign(64, CACHE_SIZE);
+
+	_cacheOpRunning = 0;
+	_filePos = _physFilePos = _cachePos = 0;
+	_fileSize = _bytesInCache = _cacheOfs = 0;
+	_cacheOpRunning = false;
+	_readBytesBlock = 0;
+
+	ee_sema_t newSema;
+	newSema.init_count = 1;
+	newSema.max_count = 1;
+	_sema = CreateSema(&newSema);
+	assert(_sema >= 0);
 }
 
-AccessFioX::~AccessFioX(void) {
-	if (_handle >= 0)
-		fileXioClose(_handle);
+Ps2ReadFile::~Ps2ReadFile(void) {
+	if (_cacheOpRunning)
+		cacheReadSync();
+	free(_cacheBuf);
+	if (_fd >= 0)
+		fio.close(_fd);
+	DeleteSema(_sema);
 }
 
-void AccessFioX::sync(int32 *res) {
-	assert(false);
+bool Ps2ReadFile::open(const char *name) {
+	assert(_fd < 0);
+	_fd = fio.open(name, O_RDONLY);
+	if (_fd >= 0) {
+		_fileSize = fio.seek(_fd, 0, SEEK_END);
+		fio.seek(_fd, 0, SEEK_SET);
+		return true;
+	} else
+		return false;
 }
 
-bool AccessFioX::open(const char *name, int mode) {
-	_handle = fileXioOpen(name, mode, DEFAULT_MODE);
-	return (_handle >= 0);
+uint32 Ps2ReadFile::tell(void) {
+	WaitSema(_sema);
+	uint32 res = _filePos;
+	SignalSema(_sema);
+	return res;
 }
 
-int AccessFioX::read(void *dest, uint32 size) {
-	return fileXioRead(_handle, (unsigned char*)dest, size);
+uint32 Ps2ReadFile::size(void) {
+	WaitSema(_sema);
+	uint32 res = _fileSize;
+	SignalSema(_sema);
+	return res;
 }
 
-int AccessFioX::write(const void *src, uint32 size) {
-	return fileXioWrite(_handle, (unsigned char*)src, size);
+bool Ps2ReadFile::eof(void) {
+	WaitSema(_sema);
+	bool res = (_filePos == _fileSize);
+	SignalSema(_sema);
+	return res;
 }
 
-int AccessFioX::seek(int32 offset, int whence) {
-	return fileXioLseek(_handle, offset, whence);
-}*/
+int Ps2ReadFile::seek(int32 offset, int origin) {
+	WaitSema(_sema);
+	int seekDest;
+	int res = -1;
+	switch (origin) {
+		case SEEK_SET:
+			seekDest = offset;
+			break;
+		case SEEK_CUR:
+			seekDest = _filePos + offset;
+			break;
+		case SEEK_END:
+			seekDest = _fileSize + offset;
+			break;
+		default:
+			seekDest = -1;
+			break;
+	}
+	if ((seekDest >= 0) && (seekDest <= _fileSize)) {
+		_filePos = seekDest;
+		res = 0;
+	}
+	SignalSema(_sema);
+	return res;
+}
+
+void Ps2ReadFile::cacheReadAhead(void) {
+	if (_cacheOpRunning) {
+		// there's already some cache read running
+		if (fio.poll(_fd)) // did it finish?
+			cacheReadSync(); // yes.
+	}
+	if ((!_cacheOpRunning) && (_readBytesBlock >= CACHE_READ_THRESHOLD) && fio.fioAvail()) {
+		// the engine seems to do sequential reads and there are no other I/Os going on. read ahead.
+		uint32 cachePosEnd = _cachePos + _bytesInCache;
+
+		if (_cachePos > _filePos)
+			return; // there was a seek in the meantime, don't cache.
+		if (cachePosEnd - _filePos >= CACHE_FILL_MIN)
+			return; // cache is full enough.
+		if (cachePosEnd == _fileSize)
+			return; // can't read beyond EOF.
+
+		assert(cachePosEnd < _fileSize);
+
+		if (_cachePos + _bytesInCache <= _filePos) {
+			_cacheOfs = _bytesInCache = 0;
+			_cachePos = cachePosEnd = _filePos;
+			assert(_filePos == _physFilePos);
+		} else {
+            uint32 cacheDiff = _filePos - _cachePos;
+			assert(_bytesInCache >= cacheDiff);
+			_bytesInCache -= cacheDiff;
+			_cachePos += cacheDiff;
+			_cacheOfs = (_cacheOfs + cacheDiff) % CACHE_SIZE;
+		}
+
+		if (_physFilePos != cachePosEnd) {
+			sioprintf("unexpected _physFilePos %d cache %d %d", _physFilePos, _cacheOfs, _bytesInCache);
+			_physFilePos = fio.seek(_fd, cachePosEnd, SEEK_SET);
+			if (_physFilePos != cachePosEnd) {
+				sioprintf("cache seek error: seek to %d instead of %d, fs = %d", _physFilePos, cachePosEnd, _fileSize);
+				return;
+			}
+		}		
+
+		uint32 cacheDest = (_cacheOfs + _bytesInCache) % CACHE_SIZE;
+		uint32 cacheRead = CACHE_SIZE - _bytesInCache;
+		if (cacheDest + cacheRead > CACHE_SIZE)
+			cacheRead = CACHE_SIZE - cacheDest;
+		if (cacheRead > MAX_READ_STEP)
+			cacheRead = MAX_READ_STEP;
+
+		assert(cacheRead);
+
+		_cacheOpRunning = true;
+		fio.read(_fd, _cacheBuf + cacheDest, cacheRead);
+	}
+}
+
+void Ps2ReadFile::cacheReadSync(void) {
+	if (_cacheOpRunning) {
+		int res = fio.sync(_fd);
+		assert(res >= 0);
+		_bytesInCache += res;
+		_physFilePos += res;
+		_cacheOpRunning = false;
+	}
+}
+
+uint32 Ps2ReadFile::read(void *dest, uint32 len) {
+	WaitSema(_sema);
+	uint8 *destBuf = (uint8*)dest;
+	if ((_filePos < _cachePos) || (_filePos + len > _cachePos + _bytesInCache))
+		cacheReadSync(); // we have to read from CD, sync cache.
+
+	while (len) {
+		if ((_filePos >= _cachePos) && (_filePos < _cachePos + _bytesInCache)) { // read from cache
+			uint32 staPos = (_cacheOfs + (_filePos - _cachePos)) % CACHE_SIZE;
+			uint32 cpyLen = _bytesInCache - (_filePos - _cachePos);
+			if (cpyLen > len)
+				cpyLen = len;
+			if (staPos + cpyLen > CACHE_SIZE)
+				cpyLen = CACHE_SIZE - staPos;
+
+			assert(cpyLen);
+			memcpy(destBuf, _cacheBuf + staPos, cpyLen);
+			_filePos += cpyLen;
+			destBuf += cpyLen;
+			_readBytesBlock += len;
+			len -= cpyLen;
+		} else { // cache miss
+			assert(!_cacheOpRunning);
+			if (_physFilePos != _filePos) {
+				if ((_filePos < _physFilePos) || (_filePos > _physFilePos + (CACHE_SIZE / 2)))
+					_readBytesBlock = 0; // reset cache hit count
+
+				if (fio.seek(_fd, _filePos, SEEK_SET) == _filePos)
+					_physFilePos = _filePos;	
+				else
+					break; // read beyond EOF
+			}
+			assert(_physFilePos == _filePos);
+			int doRead = (len > MAX_READ_STEP) ? MAX_READ_STEP : len;
+			if (doRead < 2048)
+				doRead = 2048;
+
+			fio.read(_fd, _cacheBuf, doRead);
+			_cachePos = _filePos;
+			_cacheOfs = 0;
+			_bytesInCache = fio.sync(_fd);
+			_physFilePos = _filePos + _bytesInCache;
+			if (!_bytesInCache)
+				break; // EOF
+		}
+	}
+	cacheReadAhead();
+	SignalSema(_sema);
+	return destBuf - (uint8*)dest;
+}
+
+uint32 Ps2ReadFile::write(const void *src, uint32 len) {
+	sioprintf("write request on Ps2ReadFile!");
+	SleepThread();
+	return 0;
+}
+
+class Ps2WriteFile : public Ps2File {
+public:
+	Ps2WriteFile(int64 cacheId);
+	virtual ~Ps2WriteFile(void);
+	virtual bool open(const char *name);
+	virtual uint32 read(void *dest, uint32 len);
+	virtual uint32 write(const void *src, uint32 len);
+	virtual uint32 tell(void);
+	virtual uint32 size(void);
+	virtual int seek(int32 offset, int origin);
+	virtual bool eof(void);
+private:
+	int _fd;
+	uint8 *_cacheBuf;
+	uint32 _filePos, _bytesInCache;
+};
+
+Ps2WriteFile::Ps2WriteFile(int64 cacheId) : Ps2File(cacheId) {
+	_fd = -1;
+	_cacheBuf = (uint8*)malloc(CACHE_SIZE);
+	_filePos = _bytesInCache = 0;
+}
+
+Ps2WriteFile::~Ps2WriteFile(void) {
+	if ((_fd >= 0) && (_bytesInCache)) {
+		fio.write(_fd, _cacheBuf, _bytesInCache);
+		int wrRes = fio.sync(_fd);
+		if (wrRes != _bytesInCache) // too late to return an error
+			printf("Cache flush on fclose(): Unable to write %d cached bytes to mc, only %d bytes written\n", _bytesInCache, wrRes);
+	}
+	if (_fd >= 0)
+		fio.close(_fd);
+	free(_cacheBuf);
+}
+
+bool Ps2WriteFile::open(const char *name) {
+	_fd = fio.open(name, O_WRONLY | O_CREAT | O_TRUNC);
+    return (_fd >= 0);
+}
+
+uint32 Ps2WriteFile::read(void *dest, uint32 len) {
+	printf("ERROR: Read request on Ps2WriteFile\n");
+	SleepThread();
+	return 0;
+}
+
+uint32 Ps2WriteFile::write(const void *src, uint32 len) {
+	uint32 size = len;
+	uint8 *srcBuf = (uint8*)src;
+	while (size) {
+		uint32 doCpy = (len > CACHE_SIZE - _bytesInCache) ? (CACHE_SIZE - _bytesInCache) : len;
+		if (doCpy) {
+			memcpy(_cacheBuf + _bytesInCache, srcBuf, doCpy);
+			_bytesInCache += doCpy;
+			srcBuf += doCpy;
+			size -= doCpy;
+		}
+
+		if (_bytesInCache == CACHE_SIZE) {
+			fio.write(_fd, _cacheBuf, _bytesInCache);
+			int wrRes = fio.sync(_fd);
+			if (wrRes != _bytesInCache) {
+				printf("Unable to flush %d cached bytes to memory card!\n", _bytesInCache);
+				return 0;
+			}
+			_filePos += _bytesInCache;
+			_bytesInCache = 0;
+		}
+	}
+	return len;
+}
+
+uint32 Ps2WriteFile::tell(void) {
+	return _bytesInCache + _filePos;
+}
+
+uint32 Ps2WriteFile::size(void) {
+	return tell();
+}
+
+int Ps2WriteFile::seek(int32 offset, int origin) {
+	printf("Seek(%d/%d) request on Ps2WriteFile\n", offset, origin);
+	SleepThread();
+	return 0;
+}
+
+bool Ps2WriteFile::eof(void) {
+	return true;
+}
 
 struct TocNode {
 	char name[64];
@@ -141,270 +387,6 @@ private:
 	uint8 _rootLen;
 };
 
-class Ps2File {
-public:
-	Ps2File(int64 cacheId);
-	~Ps2File(void);
-	bool open(const char *name, int ioMode);
-	bool isOpen(void);
-	uint32 read(void *dest, uint32 size);
-	uint32 write(const void *src, uint32 size);
-	uint32 tell(void);
-	uint32 size(void);
-	int seek(int32 offset, int origin);
-	bool eof(void);
-	AccessFio *giveHandle(void);
-	int64 _cacheId;
-	void setSeekReset(void);
-private:
-	void checkCache(void);
-	void syncCache(void);
-	bool _cacheOp;
-	bool _seekReset;
-
-	bool _forWriting;
-	AccessFio *_handle;
-	uint8 *_cacheBuf, *_cachePos;
-	uint32 _filePos;
-	uint32 _cacheBytesLeft;
-	uint32 _fSize;
-	uint32 _readBytesBlock;
-};
-
-Ps2File::Ps2File(int64 cacheId) {
-	_handle = NULL;
-	_cachePos = _cacheBuf = (uint8*)malloc(CACHE_BUF_SIZE);
-	_fSize = _filePos = _cacheBytesLeft = 0;
-	_forWriting = false;
-	_readBytesBlock = 0;
-	_cacheOp = false;
-	_cacheId = cacheId;
-	_seekReset = false;
-}
-
-Ps2File::~Ps2File(void) {
-	if (_handle != NULL) {
-		syncCache();
-		if (_forWriting && (_cachePos != _cacheBuf)) {
-			_handle->write(_cacheBuf, _cachePos - _cacheBuf);
-			int res = _handle->sync();
-			if (res != (_cachePos - _cacheBuf)) {
-				// Fixme: writing operation failed and we noticed
-				// too late to return an error to the engine. 
-				printf("ERROR: flushing the cache on fclose() failed!\n");
-			}
-		}
-		delete _handle;
-	}
-	free(_cacheBuf);
-}
-
-bool Ps2File::open(const char *name, int ioMode) {
-	//if (strncmp(name, "pfs0", 4) == 0)
-	//	_handle = new AccessFioX();
-	//else
-	_handle = new AccessFio();
-
-	if (_handle->open(name, ioMode)) {
-		if (ioMode == O_RDONLY) {
-			_fSize = _handle->seek(0, SEEK_END);
-			_handle->seek(0, SEEK_SET);
-		} else {
-			_cacheBytesLeft = CACHE_BUF_SIZE;
-			_forWriting = true;
-		}
-		return true;
-	} else {
-		delete _handle;
-		_handle = NULL;
-		return false;
-	}
-}
-
-void Ps2File::setSeekReset(void) {
-	_seekReset = true;
-}
-
-bool Ps2File::isOpen(void) {
-	return (_handle != NULL);
-}
-
-int Ps2File::seek(int32 offset, int origin) {
-	assert(!_forWriting);
-	syncCache();
-	uint32 seekDest;
-	switch (origin) {
-		case SEEK_SET:
-			seekDest = offset;
-			break;
-		case SEEK_CUR:
-			if (_seekReset)
-				seekDest = offset;
-			else
-				seekDest = _filePos + offset;
-			break;
-		case SEEK_END:
-			seekDest = _fSize + offset;
-			break;
-		default:
-			return -1;
-	}
-	_seekReset = false;
-	if (seekDest <= _fSize) {
-		if ((seekDest >= _filePos) && (seekDest < _filePos + _cacheBytesLeft)) {
-			uint32 cacheOffset = (seekDest - _filePos);
-			_cacheBytesLeft -= cacheOffset;
-            _cachePos += cacheOffset;
-		} else {
-			_handle->seek(seekDest, SEEK_SET);
-			_cacheBytesLeft = 0;
-		}
-		_filePos = seekDest;
-		_readBytesBlock = 0;
-		return 0;
-	} else
-		return -1;
-}
-
-bool Ps2File::eof(void) {
-	if ((!_forWriting) && (_filePos == _fSize))
-		return true;
-	else
-		return false;
-}
-
-void Ps2File::checkCache(void) {
-	if (!_forWriting) {
-		if (_readBytesBlock > 32768) {
-			if (_cacheBytesLeft <= (CACHE_BUF_SIZE / 4)) {
-				if (_cacheBytesLeft && (_cachePos != _cacheBuf)) {
-					memmove(_cacheBuf, _cachePos, _cacheBytesLeft);
-				}
-				_cachePos = _cacheBuf;
-				_handle->read(_cacheBuf + _cacheBytesLeft, CACHE_BUF_SIZE - _cacheBytesLeft);
-				_cacheOp = true;
-			}
-		}
-	}
-}
-
-void Ps2File::syncCache(void) {
-	if ((!_forWriting) && _cacheOp) {
-		int cacheRes = _handle->sync();
-		assert(cacheRes >= 0);
-		_cacheBytesLeft += cacheRes;
-		_cacheOp = false;
-	}
-}
-
-uint32 Ps2File::read(void *dest, uint32 size) {
-	assert(!_forWriting);
-	syncCache();
-	if (_seekReset)
-        seek(0, SEEK_SET);	
-	_readBytesBlock += size;
-
-	uint8 *destBuf = (uint8*)dest;
-	while (size) {
-		if (_cacheBytesLeft != 0) {
-			uint32 doCopy = (size >= _cacheBytesLeft) ? _cacheBytesLeft : size;
-			memcpy(destBuf, _cachePos, doCopy);
-			size -= doCopy;
-			_cacheBytesLeft -= doCopy;
-			_cachePos += doCopy;
-			destBuf += doCopy;
-			_filePos += doCopy;
-		}
-		if (size > 0) {
-			assert(_cacheBytesLeft == 0);
-			if (size >= CACHE_BUF_SIZE) {
-				int readRes;
-				do {
-					_handle->read(destBuf, size);
-					readRes = _handle->sync();
-					_filePos += readRes;
-					destBuf += readRes;
-					size -= readRes;
-				} while (size && readRes);
-				if (size)
-					printf("read operation failed, %d bytes left to read\n", size);
-				return destBuf - (uint8*)dest;
-			} else {
-				uint32 doRead = size;
-				if ((doRead < 2048) && (_cacheId >= 0))
-					doRead = 2048;
-				memset(_cacheBuf, 'A', 0x20);
-				_handle->read(_cacheBuf, doRead);
-				_cacheBytesLeft = _handle->sync();
-				_cachePos = _cacheBuf;
-				if (_cacheBytesLeft == 0) {
-					return destBuf - (uint8*)dest;
-				}
-			}
-		}
-	}
-	checkCache();
-	return destBuf - (uint8*)dest;
-}
-
-uint32 Ps2File::write(const void *src, uint32 size) {
-	assert(_forWriting && (!_seekReset));
-	const uint8 *srcBuf = (const uint8*)src;
-
-	while (size) {
-		uint32 doWrite = (size > _cacheBytesLeft) ? _cacheBytesLeft : size;
-		memcpy(_cachePos, srcBuf, doWrite);
-		_cachePos += doWrite;
-		_cacheBytesLeft -= doWrite;
-		size -= doWrite;
-		srcBuf += doWrite;
-		_filePos += doWrite;
-
-		if (_cacheBytesLeft == 0) {
-			_handle->write(_cacheBuf, CACHE_BUF_SIZE);
-			int res = _handle->sync();
-			if (res == CACHE_BUF_SIZE) {
-				_cachePos = _cacheBuf;
-				_cacheBytesLeft = CACHE_BUF_SIZE;
-			} else {
-				printf("cache write operation failed, only %d bytes written\n", res);
-				return 0;
-			}
-
-			if (size >= CACHE_BUF_SIZE) {
-				int writeRes;
-				do {
-					_handle->write(srcBuf, size);
-					writeRes = _handle->sync();
-					_filePos += writeRes;
-					srcBuf += writeRes;
-					size -= writeRes;
-				} while (size && writeRes);
-				if (size)
-					printf("write operation failed, %d bytes left to write\n", size);
-                return srcBuf - (uint8*)src;
-			}
-		}
-	}
-	return srcBuf - (uint8*)src;
-}
-
-uint32 Ps2File::tell(void) {
-	if (_seekReset)
-		seek(0, SEEK_SET);
-	return _filePos;
-}
-
-uint32 Ps2File::size(void) {
-	assert(!_forWriting);
-	return _fSize;
-}
-
-AccessFio *Ps2File::giveHandle(void) {
-	assert(_handle);
-	return _handle;
-}
-
 TocManager tocManager;
 
 struct FioHandleCache {
@@ -415,12 +397,8 @@ struct FioHandleCache {
 static FioHandleCache *cacheListStart = NULL;
 static FioHandleCache *cacheListEnd = NULL;
 static int cacheListLen = 0;
+static int openFileCount = 0;
 static int cacheListSema = -1;
-static bool wantHandleCaching = true;
-
-extern void ps2_disableHandleCaching(void) {
-	wantHandleCaching = false;
-}
 
 Ps2File *findInCache(int64 id);
 
@@ -435,42 +413,44 @@ FILE *ps2_fopen(const char *fname, const char *mode) {
 	if (!tocManager.haveEntries() && g_engine) // read the TOC the first time the engine opens a file
 		tocManager.readEntries(g_engine->getGameDataPath());
 
-	int fioMode = 0;
-	switch(*mode) {
-		case 'r':
-			fioMode = O_RDONLY;
-			break;
-		case 'w':
-			fioMode = O_WRONLY | O_CREAT | O_TRUNC;
-			break;
-		default:
-			printf("unsupported mode \"%s\" for file \"%s\"\n", mode, fname);
-			return NULL;
+	if (((mode[0] != 'r') && (mode[0] != 'w')) || ((mode[1] != '\0') && (mode[1] != 'b'))) {
+		printf("unsupported mode \"%s\" for file \"%s\"\n", mode, fname);
+		return NULL;
 	}
+
+	bool rdOnly = (mode[0] == 'r');
+
 	int64 cacheId = -1;
-	if ((fioMode == O_RDONLY) && tocManager.haveEntries())
+	if (rdOnly && tocManager.haveEntries())
 		cacheId = tocManager.fileExists(fname);
 
 	if (cacheId != 0) {
 		Ps2File *file = findInCache(cacheId);
-		if (file)
+		if (file) {
+			//sioprintf("open from cache: %s (%d) [%d]\n", fname, cacheId, file->_handle->_handle);
 			return (FILE*)file;
-
-		if ((mode[1] != 'b') && (mode[1] != '\0')) {
-			printf("unsupported mode \"%s\" for file \"%s\"\n", mode, fname);
-			return NULL;
 		}
-		file = new Ps2File(cacheId);
-		if (file->open(fname, fioMode))
+
+		if (rdOnly) {
+			// smush files need a quite different caching behaviour than normal data files
+			if (strstr(fname, ".san") || strstr(fname, ".SAN") || strstr(fname, ".San"))
+				file = new Ps2SmushFile(cacheId);
+			else
+				file = new Ps2ReadFile(cacheId);
+		} else
+			file = new Ps2WriteFile(cacheId);
+
+		if (file->open(fname)) {
+			openFileCount++;
 			return (FILE*)file;
-		else
+		} else
 			delete file;
 	}
 	return NULL;
 }
 
 void checkCacheListLen(void) {
-	while (cacheListLen > MAX_CACHED_FILES) {
+	while ((cacheListLen > MAX_CACHED_FILES) || ((openFileCount > 13) && cacheListLen)) {
 		assert(cacheListEnd && cacheListStart);
 		delete cacheListEnd->file;
 		cacheListEnd->prev->next = NULL;
@@ -478,21 +458,24 @@ void checkCacheListLen(void) {
 		cacheListEnd = cacheListEnd->prev;
 		delete temp;
 		cacheListLen--;
+		openFileCount--;
 	}
 }
 
 int ps2_fclose(FILE *stream) {
 	Ps2File *file = (Ps2File*)stream;
-	if ((file->_cacheId > 0) && wantHandleCaching) { // this is a file on the CD, could be smart to cache it
+	if (file->_cacheId > 0) { // this is a file on the CD, could be smart to cache it
 		FioHandleCache *newHandle = new FioHandleCache;
 		newHandle->file = file;
-		file->setSeekReset();
+		file->seek(0, SEEK_SET);
 
 		WaitSema(cacheListSema);
 		if (!cacheListEnd) {
+			assert(!cacheListStart);
 			newHandle->prev = newHandle->next = NULL;
 			cacheListEnd = cacheListStart = newHandle;
 		} else {
+			assert(cacheListStart);
 			newHandle->prev = NULL;
 			newHandle->next = cacheListStart;
 			cacheListStart->prev = newHandle;
@@ -501,13 +484,15 @@ int ps2_fclose(FILE *stream) {
 		cacheListLen++;
 		checkCacheListLen();
 		SignalSema(cacheListSema);
-	} else
+	} else {
+		openFileCount--;
 		delete file;
+	}
     return 0;
 }
 
 Ps2File *findInCache(int64 id) {
-	if ((id <= 0) || !wantHandleCaching)
+	if (id <= 0)
 		return NULL;
 	WaitSema(cacheListSema);
 	FioHandleCache *node = cacheListStart;
@@ -537,11 +522,11 @@ int ps2_fseek(FILE *stream, long offset, int origin) {
 	return ((Ps2File*)stream)->seek(offset, origin);
 }
 
-long ps2_ftell(FILE *stream) {
+uint32 ps2_ftell(FILE *stream) {
 	return ((Ps2File*)stream)->tell();
 }
 
-long ps2_fsize(FILE *stream) {
+uint32 ps2_fsize(FILE *stream) {
 	return ((Ps2File*)stream)->size();
 }
 

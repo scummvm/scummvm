@@ -28,7 +28,6 @@
 #include <loadfile.h>
 #include <malloc.h>
 #include <assert.h>
-#include <fileio.h>
 #include <iopcontrol.h>
 #include <iopheap.h>
 #include "scummsys.h"
@@ -37,7 +36,7 @@
 #include "backends/ps2/systemps2.h"
 #include "backends/ps2/Gs2dScreen.h"
 #include "backends/ps2/ps2input.h"
-#include "sjpcm.h"
+#include <sjpcm.h>
 #include <cdvd_rpc.h>
 #include "backends/ps2/savefile.h"
 #include "common/file.h"
@@ -45,13 +44,14 @@
 #include <libmc.h>
 #include "backends/ps2/cd.h"
 #include <sio.h>
+#include <fileXio_rpc.h>
 
 #define TIMER_STACK_SIZE (1024 * 32)
 #define SOUND_STACK_SIZE (1024 * 32)
 #define SMP_PER_BLOCK 800
 #define FROM_BCD(a) ((a >> 4) * 10 + (a & 0xF))
-
-#define CHECK_STACK_USAGE
+#define BUS_CLOCK (150 * 1000 * 1000) // 150 Mhz Bus clock
+#define CLK_DIVIS 5859	// the timer IRQ handler gets called (BUS_CLOCK / 256) / CLK_DIVIS times per second (~100 times)
 
 #ifdef USE_PS2LINK
 #define IRX_PREFIX "host:"
@@ -61,13 +61,14 @@
 #define IRX_SUFFIX ";1"
 #endif
 
-static volatile int32 g_TimerThreadSema = -1;
-static volatile int32 g_SoundThreadSema = -1;
+static int g_TimerThreadSema = -1, g_SoundThreadSema = -1;
+static int g_MainWaitSema = -1, g_TimerWaitSema = -1;
+static volatile int32 g_MainWakeUp = 0, g_TimerWakeUp = 0;
 static volatile uint64 msecCount = 0;
 
 extern void NORETURN CDECL error(const char *s, ...);
 
-static OSystem_PS2 *g_systemPs2 = NULL;
+OSystem_PS2 *g_systemPs2 = NULL;
 
 void readRtcTime(void);
 
@@ -94,12 +95,9 @@ extern "C" int scummvm_main(int argc, char *argv[]);
 
 extern "C" int main(int argc, char *argv[]) {
 	SifInitRpc(0);
-#ifdef USE_PS2LINK
-	fioInit();
-#else // reset the IOP if this is a CD build
+#ifndef USE_PS2LINK // reset the IOP if this is a CD build
 	cdvdInit(CDVD_EXIT);
 	cdvdExit();
-	fioExit();
 	SifExitIopHeap();
 	SifLoadFileExit();
 	SifExitRpc();
@@ -109,7 +107,6 @@ extern "C" int main(int argc, char *argv[]) {
 		;
 	sio_puts("IOP synced.");
 	SifInitRpc(0);
-	fioInit();
 	SifLoadFileInit();
     cdvdInit(CDVD_INIT_NOWAIT);
 #endif
@@ -141,11 +138,26 @@ extern "C" int main(int argc, char *argv[]) {
 }
 
 s32 timerInterruptHandler(s32 cause) {
-	msecCount += 10;
+	msecCount += (((uint64)256 * CLK_DIVIS) << 32) / (BUS_CLOCK / 1000);
 	T0_MODE = 0xDC2; // same value as in initialization.
 
 	iSignalSema(g_SoundThreadSema);
 	iSignalSema(g_TimerThreadSema);
+
+	if (g_MainWakeUp) {
+		g_MainWakeUp -= 10;
+		if (g_MainWakeUp <= 0) {
+			iSignalSema(g_MainWaitSema);
+			g_MainWakeUp = 0;
+		}
+	}
+	if (g_TimerWakeUp) {
+		g_TimerWakeUp -= 10;
+		if (g_TimerWakeUp <= 0) {
+			iSignalSema(g_TimerWaitSema);
+			g_TimerWakeUp = 0;
+		}
+	}
 	return 0;
 }
 
@@ -189,7 +201,7 @@ OSystem_PS2::OSystem_PS2(void) {
 	
 	sioprintf("Initializing LibCDVD.");
 	int res = CDVD_Init();
-	sioprintf("result = %d\n", res);
+	sioprintf("result = %d", res);
 
 	_timerTid = _soundTid = -1;
 	_mouseVisible = false;
@@ -197,14 +209,18 @@ OSystem_PS2::OSystem_PS2(void) {
 	sioprintf("reading RTC");
 	readRtcTime();
 
-	sioprintf("Setting non-blocking fio");
-	fioSetBlockMode(FIO_NOWAIT); // asynchronous file i/o
+	sioprintf("Initializing FXIO");
+	if (fileXioInit() < 0) {
+		sioprintf("Can't init fileXio\n");
+		SleepThread();
+	}
+	fileXioSetBlockMode(FXIO_NOWAIT);
 	
 	sioprintf("Starting SavefileManager");
-	_saveManager = new Ps2SaveFileManager(NULL, TO_MC, _screen);
+	_saveManager = new Ps2SaveFileManager(this, _screen);
 
-	_soundBuf = (int16*)malloc(SMP_PER_BLOCK * 2 * sizeof(int16));
-	_soundBuf2 = (int16*)malloc(SMP_PER_BLOCK * sizeof(int16));
+	_soundBufL = (int16*)malloc(SMP_PER_BLOCK * sizeof(int16));
+	_soundBufR = (int16*)malloc(SMP_PER_BLOCK * sizeof(int16));
 
 	sioprintf("Initializing ps2Input");
 	_input = new Ps2Input(this, _useMouse, _useKbd);
@@ -217,9 +233,6 @@ OSystem_PS2::~OSystem_PS2(void) {
 }
 
 void OSystem_PS2::initTimer(void) {
-	// this has to be set before the timer interrupt handler gets called
-	g_systemPs2 = this;
-
 	// first setup the two threads that get activated by the timer:
 	// the timerthread and the soundthread
 	ee_sema_t threadSema;
@@ -233,9 +246,7 @@ void OSystem_PS2::initTimer(void) {
 	ReferThreadStatus(GetThreadId(), &thisThread);
 
 	_timerStack = (uint8*)malloc(TIMER_STACK_SIZE);
-	memset(_timerStack, 0xE7, TIMER_STACK_SIZE);
 	_soundStack = (uint8*)malloc(SOUND_STACK_SIZE);
-	memset(_soundStack, 0xE7, SOUND_STACK_SIZE);
 
 	// give timer thread a higher priority than main thread
 	timerThread.initial_priority = thisThread.current_priority - 1;
@@ -260,12 +271,19 @@ void OSystem_PS2::initTimer(void) {
 	StartThread(_timerTid, this);
 	StartThread(_soundTid, this);
 
+	// these semaphores are used for OSystem::delay()
+	threadSema.init_count = 0;
+	threadSema.max_count = 1;
+	g_MainWaitSema = CreateSema(&threadSema);
+	g_TimerWaitSema = CreateSema(&threadSema);
+	assert((g_MainWaitSema >= 0) && (g_TimerWaitSema >= 0));
+
 	// threads done, start the interrupt handler
-	AddIntcHandler( INT_TIMER0, timerInterruptHandler, 0); // 0=first handler, 9 = cause = timer0
+	AddIntcHandler( INT_TIMER0, timerInterruptHandler, 0); // 0=first handler
 	EnableIntc(INT_TIMER0);
 	T0_HOLD = 0;
 	T0_COUNT = 0;
-	T0_COMP = 5859; // (busclock / 256) / 5859 = ~ 100.0064
+	T0_COMP = CLK_DIVIS; // (busclock / 256) / 5859 = ~ 100.0064
 	T0_MODE = TIMER_MODE( 2, 0, 0, 0, 1, 1, 1, 0, 1, 1);
 }
 
@@ -274,7 +292,6 @@ void OSystem_PS2::timerThread(void) {
 		WaitSema(g_TimerThreadSema);
 		if (_scummTimerProc)
 			_scummTimerProc(0);
-		_screen->timerTick();
 	}
 }
 
@@ -284,22 +301,59 @@ void OSystem_PS2::soundThread(void) {
 	soundSema.max_count = 1;
 	_soundSema = CreateSema(&soundSema);
 	assert(_soundSema >= 0);
+
+	int bufferedSamples = 0;
+	int cycles = 0;
 	while (1) {
 		WaitSema(g_SoundThreadSema);
+
+		if (!(cycles & 31))
+			bufferedSamples = SjPCM_Buffered();
+		else
+			bufferedSamples -= 480;
+		cycles++;
 		
 		WaitSema(_soundSema);
 		if (_scummSoundProc) {
-			while (SjPCM_Buffered() <= 4 * SMP_PER_BLOCK) {
-				// call sound mixer
-				_scummSoundProc(_scummSoundParam, (uint8*)_soundBuf, SMP_PER_BLOCK * 2 * sizeof(int16));
-				// split data into 2 buffers, L and R
-				_soundBuf2[0] = _soundBuf[1];
-				for (uint32 cnt = 1; cnt < SMP_PER_BLOCK; cnt++) {
-					_soundBuf[cnt]  = _soundBuf[cnt << 1];
-					_soundBuf2[cnt] = _soundBuf[(cnt << 1) | 1];
-				}
+			if (bufferedSamples <= 8 * SMP_PER_BLOCK) {
+				// we have to produce more samples, call sound mixer
+				// the scratchpad at 0x70000000 is used as temporary soundbuffer
+				_scummSoundProc(_scummSoundParam, (uint8*)0x70000000, SMP_PER_BLOCK * 2 * sizeof(int16));
+
+				// demux data into 2 buffers, L and R
+				 __asm__ (
+					"move  $t2, %1\n\t"			// dest buffer right
+					"move  $t3, %0\n\t"			// dest buffer left
+					"lui   $t8, 0x7000\n\t"		// muxed buffer, fixed at 0x70000000
+					"addiu $t9, $0, 100\n\t"	// number of loops
+					"mtsab $0, 2\n\t"			// set qword shift = 2 byte
+
+					"loop:\n\t"
+					"  lq $t4,  0($t8)\n\t"		// load 8 muxed samples
+					"  lq $t5, 16($t8)\n\t"		// load 8 more muxed samples
+
+					"  qfsrv $t6, $0, $t4\n\t"	// shift right for second
+					"  qfsrv $t7, $0, $t5\n\t"	// packing step (right channel)
+
+					"  ppach $t4, $t5, $t4\n\t"	// combine left channel data
+					"  ppach $t6, $t7, $t6\n\t"	// right channel data
+
+					"  sq $t4, 0($t3)\n\t"		// write back
+					"  sq $t6, 0($t2)\n\t"		//
+
+					"  addiu $t9, -1\n\t"		// decrement loop counter
+					"  addiu $t2, 16\n\t"		// increment pointers
+					"  addiu $t3, 16\n\t"
+					"  addiu $t8, 32\n\t"
+					"  bnez  $t9, loop\n\t"		// loop
+						:  // outputs
+				 		: "r"(_soundBufL), "r"(_soundBufR)  // inputs
+					//  : "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8", "$t9"  // destroyed
+						: "$10", "$11", "$12", "$13", "$14", "$15", "$24", "$25"  // destroyed
+				);
 				// and feed it into the SPU
-				SjPCM_Enqueue((short int*)_soundBuf, (short int*)_soundBuf2, SMP_PER_BLOCK, 1);
+				SjPCM_Enqueue((short int*)_soundBufL, (short int*)_soundBufR, SMP_PER_BLOCK, 0);
+				bufferedSamples += SMP_PER_BLOCK;
 			}
 		}
 		SignalSema(_soundSema);
@@ -321,25 +375,27 @@ bool OSystem_PS2::loadModules(void) {
 		sioprintf("Cannot load module: PADMAN (%d)\n", res);
 	else if ((res = SifLoadModule("rom0:LIBSD", 0, NULL)) < 0)
 		sioprintf("Cannot load module: LIBSD (%d)\n", res);
+#ifndef USE_PS2LINK
+	else if ((res = SifLoadModule(IRX_PREFIX "IOMANX.IRX" IRX_SUFFIX, 0, NULL)) < 0)
+		sioprintf("Cannot load module: IOMANX.IRX (%d)\n", res);
+#endif
+	else if ((res = SifLoadModule(IRX_PREFIX "FILEXIO.IRX" IRX_SUFFIX, 0, NULL)) < 0)
+		sioprintf("Cannot load module: FILEXIO.IRX (%d)\n", res);
 	else if ((res = SifLoadModule(IRX_PREFIX "CDVD.IRX" IRX_SUFFIX, 0, NULL)) < 0)
 		sioprintf("Cannot load module CDVD.IRX (%d)\n", res);
 	else if ((res = SifLoadModule(IRX_PREFIX "SJPCM.IRX" IRX_SUFFIX, 0, NULL)) < 0)
 		sioprintf("Cannot load module: SJPCM.IRX (%d)\n", res);
 	else {
-		sioprintf("modules loaded\n");
+		sioprintf("modules loaded");
 		if ((res = SifLoadModule(IRX_PREFIX "USBD.IRX" IRX_SUFFIX, 0, NULL)) < 0)
 			sioprintf("Cannot load module: USBD.IRX (%d)\n", res);
-#ifndef USE_PS2LINK
-		else if ((res = SifLoadModule(IRX_PREFIX "IOMANX.IRX" IRX_SUFFIX, 0, NULL)) < 0)
-			sioprintf("Cannot load module: IOMANX.IRX (%d)\n", res);
-#endif
 		else {
 			if ((res = SifLoadModule(IRX_PREFIX "PS2MOUSE.IRX" IRX_SUFFIX, 0, NULL)) < 0)
 				sioprintf("Cannot load module: PS2MOUSE.IRX (%d)\n", res);
 			else
 				_useMouse = true;
-			if ((res = SifLoadModule(IRX_PREFIX "PS2KBD.IRX" IRX_SUFFIX, 0, NULL)) < 0)
-				sioprintf("Cannot load module: PS2KBD.IRX (%d)\n", res);
+			if ((res = SifLoadModule(IRX_PREFIX "RPCKBD.IRX" IRX_SUFFIX, 0, NULL)) < 0)
+				sioprintf("Cannot load module: RPCKBD.IRX (%d)\n", res);
 			else
 				_useKbd = true;
 		}
@@ -377,9 +433,9 @@ void OSystem_PS2::copyRectToScreen(const byte *buf, int pitch, int x, int y, int
 		buf -= y * pitch;
 		y = 0;
 	}
-	if (w > x + _width)
+	if (x + w > _width)
 		w = _width - x;
-	if (h > y + _height)
+	if (y + h > _height)
 		h = _height - y;
 	if ((w > 0) && (h > 0))
 		_screen->copyScreenRect((const uint8*)buf, (uint16)pitch, (uint16)x, (uint16)y, (uint16)w, (uint16)h);
@@ -390,14 +446,25 @@ void OSystem_PS2::updateScreen(void) {
 }
 
 uint32 OSystem_PS2::getMillis(void) {
-	return (uint32)msecCount;
+	return (uint32)(msecCount >> 32);
 }
 
 void OSystem_PS2::delayMillis(uint msecs) {
-	uint64 endTime = msecCount + msecs;
+	if (msecs == 0)
+		return;
 
-	while (endTime > msecCount) {
-		// idle        
+	int tid = GetThreadId();
+	if (tid == _soundTid) {
+		sioprintf("ERROR: delayMillis() from sound thread!");
+		return;
+	}		
+
+	if (tid == _timerTid) {
+		g_TimerWakeUp = (int32)msecs;
+		WaitSema(g_TimerWaitSema);
+	} else {
+		g_MainWakeUp = (int32)msecs;
+		WaitSema(g_MainWaitSema);
 	}
 }
 
@@ -565,12 +632,12 @@ void OSystem_PS2::quit(void) {
 
 static uint32 g_timeSecs;
 static uint8  g_day, g_month, g_year;
-static uint64 g_lastTimeCheck;
+static uint32 g_lastTimeCheck;
 
 void readRtcTime(void) {
 	struct CdClock cdClock;
 	CDVD_ReadClock(&cdClock);
-	g_lastTimeCheck = msecCount;
+	g_lastTimeCheck = (uint32)(msecCount >> 32);
 
 	if (cdClock.stat)
 		printf("Unable to read RTC time.\n");
@@ -585,7 +652,7 @@ void readRtcTime(void) {
 		g_day, g_month, g_year + 2000);
 }
 
-time_t time(time_t *p) {
+extern time_t time(time_t *p) {
 	time_t blah;
 	memset(&blah, 0, sizeof(time_t));
 	return blah;
@@ -593,11 +660,11 @@ time_t time(time_t *p) {
 
 #define SECONDS_PER_DAY (24 * 60 * 60)
 
-struct tm *localtime(const time_t *p) {
-	uint32 currentSecs = g_timeSecs + (msecCount - g_lastTimeCheck) / 1000;
+extern struct tm *localtime(const time_t *p) {
+	uint32 currentSecs = g_timeSecs + ((msecCount >> 32) - g_lastTimeCheck) / 1000;
 	if (currentSecs >= SECONDS_PER_DAY) {
 		readRtcTime();
-		currentSecs = g_timeSecs + (msecCount - g_lastTimeCheck) / 1000;
+		currentSecs = g_timeSecs + ((msecCount >> 32) - g_lastTimeCheck) / 1000;
 	}
 
 	static struct tm retStruct;

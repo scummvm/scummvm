@@ -32,14 +32,16 @@ typedef signed int int32;
 typedef signed long int64;
 
 enum Interrupts {
+	INT_GS = 0,
 	INT_VBLANK_START = 2,
+	INT_VBLANK_END = 3,
 	INT_TIMER0 = 9
 };
 
 // dma 2 registers
 #define D2_CHCR (*(volatile uint32*)0x1000A000)
-#define D2_QWC  (*(volatile uint32*)0x1000A020) // D2_SIZE
-#define D2_TADR (*(volatile uint32*)0x1000A030) // D2_TAG
+#define D2_QWC  (*(volatile uint32*)0x1000A020)
+#define D2_TADR (*(volatile uint32*)0x1000A030)
 #define D2_MADR (*(volatile uint32*)0x1000A010)
 #define D2_ASR1 (*(volatile uint32*)0x1000A050)
 #define D2_ASR0 (*(volatile uint32*)0x1000A040)

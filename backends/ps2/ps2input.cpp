@@ -23,7 +23,7 @@
 #include <malloc.h>
 #include <assert.h>
 #include <libmouse.h>
-#include <libkbd.h>
+#include "backends/ps2/rpckbd.h"
 #include "backends/ps2/ps2input.h"
 #include "backends/ps2/ps2pad.h"
 #include "backends/ps2/systemps2.h"
@@ -54,7 +54,6 @@ Ps2Input::Ps2Input(OSystem_PS2 *system, bool mouseLoaded, bool kbdLoaded) {
 	if (_kbdLoaded) {
 		if (PS2KbdInit() >= 0) {
 			PS2KbdSetReadmode(PS2KBD_READMODE_RAW);
-			PS2KbdSetBlockingMode(PS2KBD_NONBLOCKING);
 			printf("PS2Kbd initialized\n");
 		} else {
 			printf("unable to initialize PS2Kbd!\n");

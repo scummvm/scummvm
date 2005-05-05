@@ -32,42 +32,40 @@ enum SaveMode {
 };
 
 class Gs2dScreen;
+class OSystem_PS2;
 
 class Ps2SaveFileManager : public SaveFileManager {
 public:
-	Ps2SaveFileManager(const char *path, SaveMode mode, Gs2dScreen *screen);
+	Ps2SaveFileManager(OSystem_PS2 *system, Gs2dScreen *screen);
 	virtual ~Ps2SaveFileManager();
 
-
-	virtual SaveFile *openForSaving(const char *filename) {
-		return openSavefile(filename, true);
-	}
-	virtual SaveFile *openForLoading(const char *filename) {
-		return openSavefile(filename, false);
-	}
-
-	virtual void listSavefiles(const char * /* prefix */, bool *marks, int num);
+	virtual InSaveFile *openForLoading(const char *filename);
+	virtual OutSaveFile *openForSaving(const char *filename);
+	virtual void listSavefiles(const char *prefix, bool *marks, int num);
 
 	/** Get the path to the save game directory. */
 	virtual const char *getSavePath() const;
-
-	void setSavePath(const char *path);
+private:
 	static bool setupIcon(const char *dest, const char *ico, const char *descr1, const char *descr2);
 
+	bool mcReadyForDir(const char *dir);
+
 	void checkMainDirectory(void);
-private:
+	void splitPath(const char *fileName, char *dir, char *name);
 	uint16 *decompressIconData(uint16 *size);
 
 	Gs2dScreen *_screen;
+	OSystem_PS2 *_system;
+
+	mcTable *_mcDirList;
+	int		_mcEntries;
+	char	_mcDirName[256];
+	bool	_mcNeedsUpdate, _mcPresent;
+	uint32	_mcCheckTime;
 
 	static const uint8 _rleIcoData[14018];
-	SaveMode _mode;
-	char _savePath[256];
-
 	static const iconIVECTOR _bgcolor[4];
 	static const iconFVECTOR _lightdir[3], _lightcol[3], _ambient;
-
-	SaveFile *openSavefile(const char *filename, bool saveOrLoad);
 };
 
 #endif // __PS2_SAVEFILE__

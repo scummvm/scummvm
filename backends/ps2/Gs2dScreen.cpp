@@ -25,10 +25,9 @@
 #include <string.h>
 #include <assert.h>
 #include <fileio.h>
-#include <math.h> // for sqrt()
+#include <math.h>
 #include "DmaPipe.h"
 #include "GsDefs.h"
-#include <sio.h>
 
 enum Buffers {
 	SCREEN = 0,
@@ -37,7 +36,7 @@ enum Buffers {
 };
 
 #define DEFAULT_PAL_X		175
-#define DEFAULT_PAL_Y		40
+#define DEFAULT_PAL_Y		60
 #define DEFAULT_NTSC_X		165
 #define DEFAULT_NTSC_Y		45
 #define ORG_X 256
@@ -47,37 +46,45 @@ enum Buffers {
 #define TEX_POW 10
 
 #define SCALE(x) ((x) << 4)
-#define COORD_XY(x, y) SCALE((x) + ORG_X), SCALE((y) + ORG_Y)
-#define COORD_UV(u, v) SCALE(u), SCALE(v)
-
-/*#define COORD_X1(x)		SCALE((x) + ORG_X + GS_RECT_OFFSET)
-#define COORD_Y1(y)		SCALE((y) + ORG_Y + GS_RECT_OFFSET)
-#define COORD_X2(x)		SCALE((x) + ORG_X - GS_RECT_OFFSET)
-#define COORD_Y2(y)		SCALE((y) + ORG_Y - GS_RECT_OFFSET)
-#define COORD_XY1(x, y) COORD_X1(x), COORD_Y1(y)
-#define COORD_XY2(x, y) COORD_X2(x), COORD_Y2(y)*/
 
 #define M_SIZE 128
 #define M_POW 7
 
 #define PI 3.1415926535897932384626433832795
 
-static volatile uint32 g_VblankCmd, g_DmacCmd;
+static volatile uint32 g_VblankCmd = 0, g_DmacCmd = 0;
+static int g_VblankSema, g_DmacSema, g_AnimSema;
+static bool g_RunAnim = false;
+static GsVertex kFullScreen[2];
+static TexVertex kMouseTex[2] = {
+	{ SCALE(1), SCALE(1) },
+	{ SCALE(M_SIZE), SCALE(M_SIZE) }
+};
 
-int32 vblankHandler(int32 cause) {
+void sioprintf(const char *zFormat, ...);
+
+int vblankStartHandler(int cause) {
 	// start of VBlank period
 	if (g_VblankCmd) {			  // is there a new image waiting?
 		GS_DISPFB1 = g_VblankCmd; // show it.
 		g_VblankCmd = 0;
+		iSignalSema(g_VblankSema);
 	}
 	return 0;
 }
 
-int32 dmacHandler(int32 channel) {
+int dmacHandler(int channel) {
 	if (g_DmacCmd && (channel == 2)) { // GS DMA transfer finished,
 		g_VblankCmd = g_DmacCmd;	   // we want to show the image
 		g_DmacCmd = 0;				   // when the next vblank occurs
+		iSignalSema(g_DmacSema);
 	}
+	return 0;
+}
+
+int vblankEndHandler(int cause) {
+	if (g_RunAnim)
+		iSignalSema(g_AnimSema);
 	return 0;
 }
 
@@ -85,14 +92,26 @@ void createAnimThread(Gs2dScreen *screen);
 
 Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 
-	g_DmacCmd = g_VblankCmd = 0;
-	AddIntcHandler(INT_VBLANK_START, vblankHandler, 0);
-	AddDmacHandler(2, dmacHandler, 0);	 // 2 = 2nd dma channel = EE <-> GS
+	ee_sema_t newSema;
+	newSema.init_count = 1;
+	newSema.max_count = 1;
+	g_VblankSema = CreateSema(&newSema);
+	g_DmacSema = CreateSema(&newSema);
+	_screenSema = CreateSema(&newSema);
+	newSema.init_count = 0;
+	newSema.max_count = 255;
+	g_AnimSema = CreateSema(&newSema);
+	assert((g_VblankSema >= 0) && (g_DmacSema >= 0) && (_screenSema >= 0) && (g_AnimSema >= 0));
+
+	AddIntcHandler(INT_VBLANK_START, vblankStartHandler, 0);
+	AddIntcHandler(INT_VBLANK_END, vblankEndHandler, 0);
+	AddDmacHandler(2, dmacHandler, 0);
 
 	_dmaPipe = new DmaPipe(0x2000);
 
 	EnableIntc(INT_VBLANK_START);
-    EnableDmac(2);
+	EnableIntc(INT_VBLANK_END);
+	EnableDmac(2);
 
 	_width = width;
 	_height = height;
@@ -103,8 +122,7 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 	_clut = (uint32*)memalign(64, 256 * 4);
 
 	memset(_screenBuf, 0, _width * _height);
-	for (uint32 cnt = 0; cnt < 256; cnt++)
-		_clut[cnt] = GS_RGBA(0, 0, 0, 0x80);
+	memset(_clut, 0, 256 * sizeof(uint32));
 	clearOverlay();
 
 	if (tvMode == TV_DONT_CARE) {
@@ -117,9 +135,20 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 
 	printf("Setting up %s mode\n", (_videoMode == TV_PAL) ? "PAL" : "NTSC");
 
-    // set screen size, 640x576 for pal, 640x448 for ntsc
+    // set screen size, 640x544 for pal, 640x448 for ntsc
 	_tvWidth = 640;
-	_tvHeight = ((_videoMode == TV_PAL) ? 576 : 448);
+	_tvHeight = ((_videoMode == TV_PAL) ? 544 : 448);
+	kFullScreen[0].z = kFullScreen[1].z = 0;
+	kFullScreen[0].x = ORIGIN_X;
+	kFullScreen[0].y = ORIGIN_Y;
+	kFullScreen[1].x = SCALE(_tvWidth) + ORIGIN_X;
+	kFullScreen[1].y = SCALE(_tvHeight) + ORIGIN_Y;
+	_blitCoords[0] = kFullScreen[0];
+	_blitCoords[1] = kFullScreen[1];
+	_texCoords[0].u = SCALE(1);
+	_texCoords[0].v = SCALE(1);
+	_texCoords[1].u = SCALE(_width);
+	_texCoords[1].v = SCALE(_height);
 	
 	uint32 tvFrameSize = _tvWidth * _tvHeight * 4;  // 32 bits per pixel
 
@@ -142,10 +171,11 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 	_shakePos = 0;
 
 	// setup hardware now.
-	GS_CSR = GS_SET_CSR(0, 0, 0, 0, 0, 1, 0);
+	GS_CSR = CSR_RESET; // Reset GS
 	asm ("sync.p");
+
 	GS_CSR = 0;
-	GsPutIMR(0xFF00);
+	GsPutIMR(0x7F00);
 
 	uint16 dispPosX, dispPosY;
 
@@ -171,25 +201,13 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 	_dmaPipe->setConfig(1, 0, 1);
 	_dmaPipe->setScissorRect(0, 0, _tvWidth - 1, _tvHeight - 1);
 	_dmaPipe->setDrawBuffer(_frameBufPtr[_curDrawBuf], _tvWidth, GS_PSMCT24, 0);
+	_dmaPipe->flush();
 
 	_clutChanged = _screenChanged = _overlayChanged = true;
+	
 	updateScreen();
 	
 	createAnimTextures();
-
-	ee_sema_t newSema;
-	newSema.init_count = 1;
-	newSema.max_count = 1;
-	_screenSema = CreateSema(&newSema);
-	
-	newSema.init_count = 0;
-	_timerSema = CreateSema(&newSema);
-
-	if ((_screenSema < 0) || (_timerSema < 0)) {
-		printf("Can't create semaphores.\n");
-		SleepThread();
-	}	
-
 	createAnimThread(this);
 }
 
@@ -214,6 +232,7 @@ void Gs2dScreen::createAnimTextures(void) {
 		_dmaPipe->waitForDma();
 	}
 	_dmaPipe->uploadTex(_clutPtrs[TEXT], 64, 0, 0, GS_PSMCT32, _binaryClut, 8, 2);
+	_dmaPipe->flush();
 	free(buf);
 }
 
@@ -221,33 +240,47 @@ void Gs2dScreen::newScreenSize(uint16 width, uint16 height) {
 	if ((width == _width) && (height == _height))
 		return;
 
-	printf("New screen size %d/%d\n", width, height);
+	WaitSema(g_DmacSema);
+	WaitSema(g_VblankSema);
+
 	_dmaPipe->flush();
 	_screenChanged = _overlayChanged = false;
 	_width = width;
 	_height = height;
 	_pitch = (width + 127) & ~127;
-	waitForImage(); // if there's a frame waiting to be shown, wait for vblank handler
 	
-	// now malloc new buffers
+	// malloc new buffers
 	free(_screenBuf);
 	free(_overlayBuf);
 	_screenBuf = (uint8*)memalign(64, _width * _height);
-	memset(_screenBuf, 0, _width * height);
 	_overlayBuf = (uint16*)memalign(64, _width * _height * 2);
+	memset(_screenBuf, 0, _width * height);
 	memset(_overlayBuf, 0, _width * height * 2);
-	_screenChanged = _overlayChanged = true;
+	memset(_clut, 0, 256 * sizeof(uint32));
 
+	// clear video ram
+	_dmaPipe->uploadTex(_clutPtrs[MOUSE], 64, 0, 0, GS_PSMCT32, _clut, 16, 16);
+	_dmaPipe->uploadTex(_clutPtrs[SCREEN], 64, 0, 0, GS_PSMCT32, _clut, 16, 16);
+	_dmaPipe->uploadTex(_texPtrs[SCREEN], _width, 0, 0, GS_PSMCT16, _overlayBuf, _width, _height);
+	_dmaPipe->flush();
+	_dmaPipe->waitForDma();
+
+	_clutChanged = _screenChanged = _overlayChanged = false;
+
+	_texCoords[1].u = SCALE(_width);
+	_texCoords[1].v = SCALE(_height);
 	_mouseScaleX = (_tvWidth << 8) / _width;
 	_mouseScaleY = (_tvHeight << 8) / _height;
 	setMouseXy(_width / 2, _height / 2);
-	printf("done\n");
+
+	SignalSema(g_VblankSema);
+	SignalSema(g_DmacSema);
 }
 
 void Gs2dScreen::copyScreenRect(const uint8 *buf, uint16 pitch, uint16 x, uint16 y, uint16 w, uint16 h) {
-	waitForDma();
-
 	assert((x + w <= _width) && (y + h <= _height));
+
+	WaitSema(g_DmacSema);
 	uint8 *dest = _screenBuf + y * _width + x;
 	for (uint16 cnt = 0; cnt < h; cnt++) {
 		memcpy(dest, buf, w);
@@ -255,25 +288,23 @@ void Gs2dScreen::copyScreenRect(const uint8 *buf, uint16 pitch, uint16 x, uint16
 		dest += _width;
 	}
 	_screenChanged = true;
+	SignalSema(g_DmacSema);
 }
 
 void Gs2dScreen::setPalette(const uint32 *pal, uint8 start, uint16 num) {
-	waitForDma();
-
 	assert(start + num <= 256);
+
+	WaitSema(g_DmacSema);
 	for (uint16 cnt = 0; cnt < num; cnt++) {
 		uint16 dest = start + cnt;
-		dest = (dest & 0x7) | ((dest & 0x8) << 1) | ((dest & 0x10) >> 1) | (dest & 0xE0); // rearrange like the GS expects it
+		dest = (dest & 0xE7) | ((dest & 0x8) << 1) | ((dest & 0x10) >> 1); // rearrange like the GS expects it
 		_clut[dest] = pal[cnt] & 0xFFFFFF;
 	}
 	_clutChanged = true;
+	SignalSema(g_DmacSema);
 }
 
 void Gs2dScreen::updateScreen(void) {
-	/* we can't draw more than 50 images on PAL and 60 on NTSC, wait until the other buffer is shown.
-	   especcially necessary for BS2 which does hundreds of updateScreen()s per second */
-	waitForImage();
-	
 	WaitSema(_screenSema);
 
 	if (_clutChanged) {
@@ -288,22 +319,7 @@ void Gs2dScreen::updateScreen(void) {
 		_dmaPipe->uploadTex(_clutPtrs[SCREEN], 64, 0, 0, GS_PSMCT32, _clut, 16, 16);
 	}
 
-	drawScreen();
-
-	g_DmacCmd = GS_SET_DISPFB(_frameBufPtr[_curDrawBuf], _tvWidth, GS_PSMCT24); // put it here for dmac/vblank handler
-	_dmaPipe->flush();
-	_curDrawBuf ^= 1;
-	_dmaPipe->setDrawBuffer(_frameBufPtr[_curDrawBuf], _tvWidth, GS_PSMCT24, 0);
-	SignalSema(_screenSema);
-}
-
-void Gs2dScreen::drawScreen(void) {
-	static GsVertex fullScreen[2] = {
-		{ COORD_XY(0, 0), SCALE(0) },
-		{ COORD_XY(_tvWidth, _tvHeight), SCALE(0) }
-	};
-
-	_dmaPipe->flatRect(fullScreen + 0, fullScreen + 1, GS_RGBA(0, 0, 0, 0)); // clear screen
+	_dmaPipe->flatRect(kFullScreen + 0, kFullScreen + 1, GS_RGBA(0, 0, 0, 0)); // clear screen
 
 	if (_showOverlay) {
 		if (_overlayChanged) {
@@ -311,27 +327,36 @@ void Gs2dScreen::drawScreen(void) {
 			_overlayChanged = false;
 		}
 		_dmaPipe->setTex(_texPtrs[SCREEN], _width, TEX_POW, TEX_POW, GS_PSMCT16, 0, 0, 0, 0);
-		_dmaPipe->textureRect(COORD_XY(0, 0), COORD_UV(1, 1), 
-			COORD_XY(_tvWidth, _tvHeight), COORD_UV(_width, _height), 0, GS_RGBA(0x80, 0x80, 0x80, 0x80));
+		_dmaPipe->textureRect(kFullScreen + 0, kFullScreen + 1, _texCoords + 0, _texCoords + 1);
 	} else {
 		if (_screenChanged) {
 			_dmaPipe->uploadTex(_texPtrs[SCREEN], _pitch, 0, 0, GS_PSMT8, _screenBuf, _width, _height);
 			_screenChanged = false;
 		}
 		_dmaPipe->setTex(_texPtrs[SCREEN], _pitch, TEX_POW, TEX_POW, GS_PSMT8, _clutPtrs[SCREEN], 0, 64, GS_PSMCT32);
-		_dmaPipe->textureRect(COORD_XY(0, -_shakePos), COORD_UV(1, 1), 
-			COORD_XY(_tvWidth, _tvHeight - _shakePos), COORD_UV(_width, _height), 0, GS_RGBA(0x80, 0x80, 0x80, 0x80));
+		_dmaPipe->textureRect(_blitCoords + 0, _blitCoords + 1, _texCoords + 0, _texCoords + 1);
 	}
 
 	if (_showMouse) {
+		GsVertex mouseCoords[2];
+		mouseCoords[0].x = (((_mouseX - _hotSpotX) * _mouseScaleX + 8) >> 4) + ORIGIN_X;
+		mouseCoords[0].y = (((_mouseY - _hotSpotY) * _mouseScaleY + 8) >> 4) + ORIGIN_Y;
+		mouseCoords[1].x = mouseCoords[0].x + (((M_SIZE * _mouseScaleX) + 8) >> 4);
+		mouseCoords[1].y = mouseCoords[0].y + (((M_SIZE * _mouseScaleY) + 8) >> 4);
+		mouseCoords[0].z = mouseCoords[1].z = 0;
+
 		_dmaPipe->setTex(_texPtrs[MOUSE], M_SIZE, M_POW, M_POW, GS_PSMT8H, _clutPtrs[MOUSE], 0, 64, GS_PSMCT32);
-		uint16 mpX1 = (((_mouseX - _hotSpotX) * _mouseScaleX + 128) >> 4) + ORIGIN_X;
-		uint16 mpY1 = (((_mouseY - _hotSpotY) * _mouseScaleY + 128) >> 4) + ORIGIN_Y;
-		uint16 mpX2 = mpX1 + ((M_SIZE * _mouseScaleX + 128) >> 4);
-		uint16 mpY2 = mpY1 + ((M_SIZE * _mouseScaleY + 128) >> 4);
-		_dmaPipe->textureRect(mpX1, mpY1, COORD_UV(0, 0), 
-			mpX2, mpY2, COORD_UV(M_SIZE - 1, M_SIZE - 1), 0, GS_RGBA(0x80, 0x80, 0x80, 0x80));
+		_dmaPipe->textureRect(mouseCoords + 0, mouseCoords + 1, kMouseTex + 0, kMouseTex + 1);
 	}
+
+	WaitSema(g_DmacSema);	// wait for dma transfer, if there's one running
+	WaitSema(g_VblankSema); // wait if there's already an image waiting for vblank
+
+	g_DmacCmd = GS_SET_DISPFB(_frameBufPtr[_curDrawBuf], _tvWidth, GS_PSMCT24); // put it here for dmac/vblank handler
+	_dmaPipe->flush();
+	_curDrawBuf ^= 1;
+	_dmaPipe->setDrawBuffer(_frameBufPtr[_curDrawBuf], _tvWidth, GS_PSMCT24, 0);
+	SignalSema(_screenSema);
 }
 
 void Gs2dScreen::showOverlay(void) {
@@ -346,11 +371,12 @@ void Gs2dScreen::hideOverlay(void) {
 
 void Gs2dScreen::setShakePos(int shake) {
 	_shakePos = (shake * _mouseScaleY) >> 8;
+	_blitCoords[0].y = SCALE(_shakePos) + ORIGIN_Y;
+	_blitCoords[1].y = SCALE(_tvHeight + _shakePos) + ORIGIN_Y;
 }
 
 void Gs2dScreen::copyOverlayRect(const uint16 *buf, uint16 pitch, uint16 x, uint16 y, uint16 w, uint16 h) {
-	waitForDma();
-
+	WaitSema(g_DmacSema);
 	_overlayChanged = true;
 	uint16 *dest = _overlayBuf + y * _width + x;
 	for (uint32 cnt = 0; cnt < h; cnt++) {
@@ -358,21 +384,22 @@ void Gs2dScreen::copyOverlayRect(const uint16 *buf, uint16 pitch, uint16 x, uint
 		dest += _width;
 		buf += pitch;
 	}
+	SignalSema(g_DmacSema);
 }
 
 void Gs2dScreen::clearOverlay(void) {
-	waitForDma();
-	
+	WaitSema(g_DmacSema);
 	_overlayChanged = true;
 	// first convert our clut to 16 bit RGBA for the overlay...
 	uint16 palette[256];
 	for (uint32 cnt = 0; cnt < 256; cnt++) {
-		uint32 rgba = _clut[(cnt & 0x7) | ((cnt & 0x8) << 1) | ((cnt & 0x10) >> 1) | (cnt & 0xE0)];
+		uint32 rgba = _clut[(cnt & 0xE7) | ((cnt & 0x8) << 1) | ((cnt & 0x10) >> 1)];
 		palette[cnt] = ((rgba >> 3) & 0x1F) | (((rgba >> 11) & 0x1F) << 5) | (((rgba >> 19) & 0x1F) << 10);
 	}
 	// now copy the current screen over
 	for (uint32 cnt = 0; cnt < _width * _height; cnt++)
 		_overlayBuf[cnt] = palette[_screenBuf[cnt]];
+	SignalSema(g_DmacSema);
 }
 
 void Gs2dScreen::grabOverlay(uint16 *buf, uint16 pitch) {
@@ -398,28 +425,10 @@ void Gs2dScreen::setMouseOverlay(const uint8 *buf, uint16 width, uint16 height, 
 	for (int cnt = 0; cnt < height; cnt++)
 		memcpy(bufCopy + cnt * M_SIZE, buf + cnt * width, width);
 
-	_dmaPipe->uploadTex( _texPtrs[MOUSE], M_SIZE, 0, 0,  GS_PSMT8H, bufCopy, M_SIZE, M_SIZE);
+	_dmaPipe->uploadTex( _texPtrs[MOUSE], M_SIZE, 0, 0, GS_PSMT8H, bufCopy, M_SIZE, M_SIZE);
 	_dmaPipe->flush();
 	_dmaPipe->waitForDma(); // make sure all data has been transferred when we free bufCopy
 	free(bufCopy);
-}
-
-void Gs2dScreen::waitForDma(void) {
-	// wait until dma transfer finished
-	while (g_DmacCmd)
-		;
-}
-
-void Gs2dScreen::waitForImage(void) {
-	/* if there's an image waiting to be shown on next vblank, wait for it.
-	   however, first we must wait for the dma transfer (if running) as it will
-	   result in a new image */
-	waitForDma();
-	while (g_VblankCmd)
-		;
-	/* both waitForImage and waitForDma should only get called by the main thread,
-	   so they may be implemented as busy waits, as both the timer- and sound-thread have
-	   a higher priority than this one. There's no thread we could switch to anyways... */
 }
 
 void Gs2dScreen::showMouse(bool show) {
@@ -435,92 +444,101 @@ uint8 Gs2dScreen::tvMode(void) {
 	return _videoMode;
 }
 
+void Gs2dScreen::wantAnim(bool runIt) {
+	g_RunAnim = runIt;
+}
+
 #define LINE_SPACE 20
 #define SCRL_TIME 8
 #define V 1000
 #define Z_TRANSL 65
 
-void Gs2dScreen::wantAnim(bool runIt) {
-	_runAnim = runIt;
-}
-
 void Gs2dScreen::animThread(void) {
 	// animate zeros and ones while game accesses memory card, etc.
-	_runAnim = false;
+	g_RunAnim = false;
 	float yPos   = 0.0;
 	uint8 texSta = 0;
 	float scrlSpeed = (_videoMode == TV_PAL) ? (_tvHeight / (SCRL_TIME * 50.0)) : (_tvHeight / (SCRL_TIME * 60.0));
 	uint8 texMax = (_tvHeight / LINE_SPACE) + (ORG_Y / LINE_SPACE);
 	TexVertex texNodes[4] = {
-		{ COORD_UV(  0,  0) }, { COORD_UV(  0, 14) },
-		{ COORD_UV(128,  0) }, { COORD_UV(128, 14) }
+		{ SCALE(1),   SCALE(1) }, { SCALE(1),   SCALE(14) },
+		{ SCALE(128), SCALE(1) }, { SCALE(128), SCALE(14) }
 	};
 	float angleStep = ((2 * PI) / _tvHeight);
 
 	while (1) {
-		WaitSema(_timerSema);
-		if (_runAnim && !g_DmacCmd && !g_VblankCmd) {
-			if (PollSema(_screenSema) > 0) {
-				drawScreen(); // draw the last screen the engine did again
+		do {
+			WaitSema(g_AnimSema);
+		} while (!g_RunAnim);
 
-				_dmaPipe->setAlphaBlend(SOURCE_COLOR, ZERO_COLOR, SOURCE_ALPHA, DEST_COLOR, 0);
-				yPos -= scrlSpeed;
-				if (yPos <= -LINE_SPACE) {
-					yPos += LINE_SPACE;
-					texSta++;
-				}
+		if (PollSema(_screenSema) > 0) { // make sure no thread is currently drawing
+			WaitSema(g_DmacSema);   // dma transfers have to be finished
+			WaitSema(g_VblankSema); // wait for image, if there is one...
 
-				float drawY = yPos;
+			// redraw the engine's last frame
+			_dmaPipe->flatRect(kFullScreen + 0, kFullScreen + 1, GS_RGBA(0, 0, 0, 0)); // clear screen
 
-				for (int i = 0; i < texMax; i++) {
-					uint8 texIdx = (texSta + i) & 0xF;
-
-					float x[4] = { -64.0, -64.0, 64.0, 64.0 };
-					float y[4];
-					y[0] = y[2] = drawY - _tvHeight / 2 - LINE_SPACE / 2;
-					y[1] = y[3] = y[0] + LINE_SPACE;
-					float z[4] = { 0.0, 0.0, 0.0, 0.0 };
-					GsVertex nodes[4];
-
-					float angle = PI / 2 + angleStep * drawY;
-					float rotSin = sinf(angle);
-					float rotCos = cosf(angle);
-					for (int coord = 0; coord < 4; coord++) {
-						z[coord] = rotCos * x[coord];
-						x[coord] = rotSin * x[coord];
-					
-						nodes[coord].z = 0;
-						nodes[coord].x = (uint16)(((V * x[coord]) / (z[coord] + V + Z_TRANSL)) * 16);
-						nodes[coord].y = (uint16)(((V * y[coord]) / (z[coord] + V + Z_TRANSL)) * 16);
-						nodes[coord].x += SCALE(_tvWidth - 80 + ORG_X);
-						nodes[coord].y += SCALE(_tvHeight / 2 + ORG_Y);
-					}
-
-					uint32 texPtr = _texPtrs[TEXT] + 128 * 16 * 4 * (texIdx >> 1);
-					if (texIdx & 1)
-						_dmaPipe->setTex(_texPtrs[TEXT], 128, 7, 4, GS_PSMT4HL, _clutPtrs[TEXT], 0, 64, GS_PSMCT32);
-					else
-						_dmaPipe->setTex(_texPtrs[TEXT], 128, 7, 4, GS_PSMT4HH, _clutPtrs[TEXT], 0, 64, GS_PSMCT32);
-					
-					_dmaPipe->textureRect(nodes + 0, nodes + 1, nodes + 2, nodes + 3,
-						texNodes + 0, texNodes + 1, texNodes + 2, texNodes + 3, GS_RGBA(0x80, 0x80, 0x80, 0x80));
-
-					drawY += LINE_SPACE;
-				}
-				g_DmacCmd = GS_SET_DISPFB(_frameBufPtr[_curDrawBuf], _tvWidth, GS_PSMCT24); // put it here for dmac/vblank handler
-				_dmaPipe->flush();
-				_curDrawBuf ^= 1;
-				_dmaPipe->setDrawBuffer(_frameBufPtr[_curDrawBuf], _tvWidth, GS_PSMCT24, 0);
-				_dmaPipe->setAlphaBlend(DEST_COLOR, ZERO_COLOR, SOURCE_ALPHA, SOURCE_COLOR, 0);
-				SignalSema(_screenSema);
+			if (_showOverlay) {
+				_dmaPipe->setTex(_texPtrs[SCREEN], _width, TEX_POW, TEX_POW, GS_PSMCT16, 0, 0, 0, 0);
+				_dmaPipe->textureRect(kFullScreen + 0, kFullScreen + 1, _texCoords + 0, _texCoords + 1);
+			} else {
+				_dmaPipe->setTex(_texPtrs[SCREEN], _pitch, TEX_POW, TEX_POW, GS_PSMT8, _clutPtrs[SCREEN], 0, 64, GS_PSMCT32);
+				_dmaPipe->textureRect(_blitCoords + 0, _blitCoords + 1, _texCoords + 0, _texCoords + 1);
 			}
+
+			_dmaPipe->setAlphaBlend(SOURCE_COLOR, ZERO_COLOR, SOURCE_ALPHA, DEST_COLOR, 0);
+			yPos -= scrlSpeed;
+			if (yPos <= -LINE_SPACE) {
+				yPos += LINE_SPACE;
+				texSta++;
+			}
+
+			float drawY = yPos;
+
+			for (int i = 0; i < texMax; i++) {
+				uint8 texIdx = (texSta + i) & 0xF;
+
+				float x[4] = { -64.0, -64.0, 64.0, 64.0 };
+				float y[4];
+				y[0] = y[2] = drawY - _tvHeight / 2 - LINE_SPACE / 2;
+				y[1] = y[3] = y[0] + LINE_SPACE;
+				float z[4];
+				GsVertex nodes[4];
+
+				float angle = PI / 2 + angleStep * drawY;
+				float rotSin = sinf(angle);
+				float rotCos = cosf(angle);
+				for (int coord = 0; coord < 4; coord++) {
+					z[coord] = rotCos * x[coord];
+					x[coord] = rotSin * x[coord];
+				
+					nodes[coord].z = 0;
+					nodes[coord].x = (uint16)(((V * x[coord]) / (z[coord] + V + Z_TRANSL)) * 16);
+					nodes[coord].y = (uint16)(((V * y[coord]) / (z[coord] + V + Z_TRANSL)) * 16);
+					nodes[coord].x += SCALE(_tvWidth - 80 + ORG_X);
+					nodes[coord].y += SCALE(_tvHeight / 2 + ORG_Y);
+				}
+
+				uint32 texPtr = _texPtrs[TEXT] + 128 * 16 * 4 * (texIdx >> 1);
+				if (texIdx & 1)
+					_dmaPipe->setTex(_texPtrs[TEXT], 128, 7, 4, GS_PSMT4HL, _clutPtrs[TEXT], 0, 64, GS_PSMCT32);
+				else
+					_dmaPipe->setTex(_texPtrs[TEXT], 128, 7, 4, GS_PSMT4HH, _clutPtrs[TEXT], 0, 64, GS_PSMCT32);
+				
+				_dmaPipe->textureRect(nodes + 0, nodes + 1, nodes + 2, nodes + 3,
+					texNodes + 0, texNodes + 1, texNodes + 2, texNodes + 3, GS_RGBA(0x80, 0x80, 0x80, 0x80));
+
+				drawY += LINE_SPACE;
+			}
+			g_DmacCmd = GS_SET_DISPFB(_frameBufPtr[_curDrawBuf], _tvWidth, GS_PSMCT24); // put it here for dmac/vblank handler
+			_dmaPipe->flush();
+			_curDrawBuf ^= 1;
+			_dmaPipe->setDrawBuffer(_frameBufPtr[_curDrawBuf], _tvWidth, GS_PSMCT24, 0);
+			_dmaPipe->setAlphaBlend(DEST_COLOR, ZERO_COLOR, SOURCE_ALPHA, SOURCE_COLOR, 0);
+
+			SignalSema(_screenSema);
 		}
 	}
-}
-
-void Gs2dScreen::timerTick(void) {
-	if (_runAnim)
-		SignalSema(_timerSema);
 }
 
 void runAnimThread(Gs2dScreen *param) {
@@ -533,11 +551,10 @@ void createAnimThread(Gs2dScreen *screen) {
 	ee_thread_t animThread, thisThread;
 	ReferThreadStatus(GetThreadId(), &thisThread);
 
-	animThread.initial_priority = thisThread.current_priority - 1;
+	animThread.initial_priority = thisThread.current_priority - 3;
 	animThread.stack = malloc(ANIM_STACK_SIZE);
 	animThread.stack_size = ANIM_STACK_SIZE;
 	animThread.func = (void *)runAnimThread;
-	//animThread.gp_reg = _gp;		for some reason _gp is always NULL
 	asm("move %0, $gp\n": "=r"(animThread.gp_reg));
 
 	int tid = CreateThread(&animThread);

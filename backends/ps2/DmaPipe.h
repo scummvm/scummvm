@@ -43,8 +43,8 @@ public:
 	void uploadTex(uint32 dest, uint16 bufWidth, uint16 destOfsX, uint16 destOfsY, uint8 pixelFmt, const void *src, uint16 width, uint16 height);
 	void setTex(uint32 tex, uint32 texBufWidth, uint8 texPowW, uint8 texPowH, uint8 texPixFmt, uint32 clut, uint8 csm, uint32 clutBufWidth, uint32 clutPixFmt);
 	void setDrawBuffer(uint64 base, uint64 width, uint8 pixelFmt, uint64 mask);
-	void textureRect(uint16 x1, uint16 y1, uint16 u1, uint16 v1, uint16 x2, uint16 y2, uint16 u2, uint16 v2, uint16 z, uint32 colour);
 	void textureRect(const GsVertex *p1, const GsVertex *p2, const GsVertex *p3, const GsVertex *p4, const TexVertex *t1, const TexVertex *t2, const TexVertex *t3, const TexVertex *t4, uint32 rgba);
+	void textureRect(const GsVertex *p1, const GsVertex *p2, const TexVertex *t1, const TexVertex *t2);
 	void flatRect(const GsVertex *p1, const GsVertex *p2, const GsVertex *p3, const GsVertex *p4, uint32 rgba);
 	void flatRect(const GsVertex *p1, const GsVertex *p2, uint32 rgba);
 
@@ -52,6 +52,7 @@ public:
 	void setConfig(uint8 prModeCont, uint8 dither, uint8 colClamp);
 	void setScissorRect(uint64 x1, uint64 y1, uint64 x2, uint64 y2);
 	void setAlphaBlend(AlphaBlendColor a, AlphaBlendColor b, AlphaBlendAlpha c, AlphaBlendColor d, uint8 fix);
+	void setFinishEvent(void);
 	void flush(void);
 	void waitForDma(void);
 private:

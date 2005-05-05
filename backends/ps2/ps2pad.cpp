@@ -111,17 +111,9 @@ void Ps2Pad::initPad(void) {
 	}
 }
 
-bool Ps2Pad::checkPadReady(int port, int slot, uint32 wait, uint32 *waitRes) {
-	int state;
-	for (uint32 cnt = 0; cnt < wait; cnt++) {
-		state = padGetState(port, slot);
-		if ((state == PAD_STATE_STABLE) || (state == PAD_STATE_FINDCTP1)) {
-			if (waitRes)
-				*waitRes = cnt;
-			return true;
-		}
-	}
-	return false;	
+bool Ps2Pad::checkPadReady(int port, int slot) {
+	int state = padGetState(port, slot);
+	return (state == PAD_STATE_STABLE) || (state == PAD_STATE_FINDCTP1);
 }
 
 bool Ps2Pad::padAlive(void) {
@@ -150,6 +142,5 @@ void Ps2Pad::readPad(uint16 *pbuttons, int16 *joyh, int16 *joyv) {
 		*pbuttons = 0;
 	}
 }
-
 
 

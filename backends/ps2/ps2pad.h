@@ -49,7 +49,7 @@ public:
 	void readPad(uint16 *pbuttons, int16 *joyh, int16 *joyv);
 private:
 	void initPad(void);
-	bool checkPadReady(int port, int slot, uint32 wait = 1, uint32 *waitRes = NULL);
+	bool checkPadReady(int port, int slot);
 
 	OSystem_PS2 *_system;
 	int _port, _slot;

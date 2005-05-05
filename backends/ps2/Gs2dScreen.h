@@ -23,9 +23,7 @@
 #define __GS2DSCREEN_H__
 
 #include "sysdefs.h"
-
-#define SUPPORT_STUPID_OVERLAYS
-
+#include "backends/ps2/DmaPipe.h"
 enum TVMode {
 	TV_DONT_CARE = 0,
 	TV_PAL,
@@ -37,7 +35,7 @@ enum GsInterlace {
 	GS_INTERLACED
 };
 
-class DmaPipe;
+//class DmaPipe;
 
 class Gs2dScreen {
 public:
@@ -62,17 +60,15 @@ public:
 	void setShakePos(int shake);
 
 	void animThread(void);
-	void timerTick(void);
 	void wantAnim(bool runIt);
 private:
 	void createAnimTextures(void);
-	void drawScreen(void);
-	static inline void waitForDma(void);
-	static inline void waitForImage(void);
 	
 	DmaPipe *_dmaPipe;
 	uint8 _videoMode;
 	uint16 _tvWidth, _tvHeight;
+	GsVertex _blitCoords[2];
+	TexVertex _texCoords[2];
 	
 	uint8  _curDrawBuf;
 	uint32 _frameBufPtr[2]; //
@@ -91,8 +87,7 @@ private:
 	uint8 *_screenBuf;
 	uint32 *_clut;
 
-	bool _runAnim;
-	int _timerSema, _screenSema;
+	int _screenSema;
 	static const uint32 _binaryClut[16];
 	static const uint8  _binaryData[4 * 14 * 2];
 	static const uint16 _binaryPattern[16];

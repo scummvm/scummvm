@@ -30,13 +30,14 @@ public:
 	void read(int fd, void *dest, unsigned int len);
 	void write(int fd, const void *src, unsigned int len);
 	int seek(int fd, int offset, int whence);
+	int mkdir(const char *name);
 	int sync(int fd);
 	bool poll(int fd);
 	bool fioAvail(void);
 private:
 	void checkSync(void);
 	int _ioSema;
-	int *_runningOp;
-	int _ioSlots[MAX_HANDLES];
+	volatile int * volatile _runningOp;
+	volatile int _ioSlots[MAX_HANDLES];
 };
 

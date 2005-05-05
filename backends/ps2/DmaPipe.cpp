@@ -128,15 +128,15 @@ void DmaPipe::setTex(uint32 tex, uint32 texBufWidth, uint8 texPowW, uint8 texPow
 	_pipes[_curPipe]->setReg( GPR_CLAMP_1, 0);
 }
 
-void DmaPipe::textureRect(uint16 x1, uint16 y1, uint16 u1, uint16 v1, uint16 x2, uint16 y2, uint16 u2, uint16 v2, uint16 z, uint32 colour) {
+void DmaPipe::textureRect(const GsVertex *p1, const GsVertex *p2, const TexVertex *t1, const TexVertex *t2) {
 	checkSpace(4);
 	_pipes[_curPipe]->setGifRegListTag( 6, 0xffffffffff535310);
 	_pipes[_curPipe]->setListReg( GS_SET_PRIM(PR_SPRITE, 0, 1, 0, 1, 0, 1, 0, 0),
-								  GS_SET_COLQ(colour));
-	_pipes[_curPipe]->setListReg( GS_SET_UV(u1, v1),
-								  GS_SET_XYZ(x1, y1, z));
-	_pipes[_curPipe]->setListReg( GS_SET_UV(u2, v2),
-								  GS_SET_XYZ(x2, y2, z));
+								  GS_SET_COLQ(GS_RGBA(0x80, 0x80, 0x80, 0x80)));
+	_pipes[_curPipe]->setListReg( GS_SET_UV(t1->u, t1->v),
+								  GS_SET_XYZ(p1->x, p1->y, p1->z));
+	_pipes[_curPipe]->setListReg( GS_SET_UV(t2->u, t2->v),
+								  GS_SET_XYZ(p2->x, p2->y, p2->z));
 }
 
 void DmaPipe::textureRect(const GsVertex *p1, const GsVertex *p2, const GsVertex *p3, const GsVertex *p4, const TexVertex *t1, const TexVertex *t2, const TexVertex *t3, const TexVertex *t4, uint32 rgba) {
@@ -154,18 +154,6 @@ void DmaPipe::textureRect(const GsVertex *p1, const GsVertex *p2, const GsVertex
 	_pipes[_curPipe]->setListReg( GS_SET_UV(t4->u, t4->v),
 								  GS_SET_XYZ(p4->x, p4->y, p4->z));
 }
-
-/*void DmaPipe::flatRect(uint16 x1, uint16 y1, uint16 x2, uint16 y2, uint16 x3, uint16 y3, uint16 x4, uint16 y4, uint16 z, uint32 rgba) {
-	checkSpace(4);
-	_pipes[_curPipe]->setGifRegListTag( 6, 0xffffffffff555510);
-	//_pipes[_curPipe]->setListReg( GS_SET_PRIM(PR_TRIANGLESTRIP, 0, 0, 0, 1, 0, 0, 0, 0),
-	_pipes[_curPipe]->setListReg( GS_SET_PRIM(PR_TRIANGLESTRIP, 0, 0, 0, 0, 0, 0, 0, 0),
-								  GS_SET_COLQ(rgba));
-	_pipes[_curPipe]->setListReg( GS_SET_XYZ(x2, y2, z),
-								  GS_SET_XYZ(x1, y1, z));
-	_pipes[_curPipe]->setListReg( GS_SET_XYZ(x3, y3, z),
-								  GS_SET_XYZ(x4, y4, z));
-}*/
 
 void DmaPipe::flatRect(const GsVertex *p1, const GsVertex *p2, const GsVertex *p3, const GsVertex *p4, uint32 rgba) {
 	checkSpace(4);
@@ -205,10 +193,7 @@ void DmaPipe::setConfig(uint8 prModeCont, uint8 dither, uint8 colClamp) {
 
 	// set some defaults
 	// alpha blending formula: (A-B) * C + D
-		// set: A = source pixel, b = 0, C = source alpha, D = destination pixel, fix = don't care
-	//_pipes[_curPipe]->setReg(GPR_ALPHA_1, GS_SET_ALPHA(SOURCE_COLOR, ZERO_COLOR, SOURCE_ALPHA, DEST_COLOR, 0));
-	// set: A = source pixel, b = dest pixel, C = source alpha, D = destination pixel, fix = don't care
-	//_pipes[_curPipe]->setReg( GPR_ALPHA_1, GS_SET_ALPHA(SOURCE_COLOR, DEST_COLOR, SOURCE_ALPHA, DEST_COLOR, 0x7F));
+		// set: A = dest pixel, b = 0, C = source alpha, D = source pixel, fix = don't care
 
 	_pipes[_curPipe]->setReg(GPR_ALPHA_1, GS_SET_ALPHA(DEST_COLOR, ZERO_COLOR, SOURCE_ALPHA, SOURCE_COLOR, 0));
 	_pipes[_curPipe]->setReg(   GPR_PRIM, 0);
@@ -231,6 +216,14 @@ void DmaPipe::setDrawBuffer(uint64 base, uint64 width, uint8 pixelFmt, uint64 ma
 	checkSpace(2);
 	_pipes[_curPipe]->setGifLoopTag(1);
 	_pipes[_curPipe]->setReg( GPR_FRAME_1, GS_SET_FRAME(base / 8192, width / 64, pixelFmt, mask));
+}
+
+void DmaPipe::setFinishEvent(void) {
+	checkSpace(3);
+	// make GS generate a FINISH interrupt when it's done.
+	_pipes[_curPipe]->setGifLoopTag(2);
+	_pipes[_curPipe]->setReg( GPR_FINISH, 1);
+	_pipes[_curPipe]->setReg( GPR_SIGNAL, 1);
 }
 
 void DmaPipe::checkSpace(uint32 needed) {

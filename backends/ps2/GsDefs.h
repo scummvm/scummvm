@@ -34,9 +34,14 @@
 #define GS_DISPLAY1			*((volatile uint64*)0x12000080)
 #define GS_BGCOLOUR			*((volatile uint64*)0x120000E0)
 
-#define GS_SET_CSR(signal, finish, hsint, vsint, flush, reset, field) \
-	((signal) | ((finish) << 1) | ((hsint) << 2) | ((vsint) << 3) | \
-	((flush) << 8) | ((reset) << 9) | ((field) << 13))
+enum GS_CSR_FIELDS {
+    CSR_SIGNAL = 1 << 0,
+	CSR_FINISH = 1 << 1,
+	CSR_HSYNC  = 1 << 2,
+	CSR_VSYNC  = 1 << 3,
+	CSR_FLUSH  = 1 << 8,
+	CSR_RESET  = 1 << 9
+};
 
 #define GS_SET_PMODE(readC1, readC2, alphaSel, alphaOut, alphaBlend, alphaFixed) \
 	((readC1) | ((readC2) << 1) | ((alphaSel) << 5) | ((alphaOut) << 6) | ((alphaBlend) << 7) | ((alphaFixed) << 8))
