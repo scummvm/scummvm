@@ -952,6 +952,7 @@ protected:
 	byte VAR_POLYGONS_ONLY;
 	byte VAR_PLATFORM;
 	byte VAR_WINDOWS_VERSION;
+	byte VAR_CURRENT_CHARSET;
 	byte VAR_U32_VERSION;
 	byte VAR_WIZ_TCOLOR;
 };
@@ -977,6 +978,8 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void initScummVars();
+
+	virtual void initCharset(int charset);
 
 	virtual void clearDrawQueues();
 

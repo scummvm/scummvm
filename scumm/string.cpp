@@ -741,6 +741,11 @@ int ScummEngine::addStringToStack(byte *dst, int dstSize, int var) {
 	return 0;
 }
 
+void ScummEngine_v80he::initCharset(int charsetno) {
+	ScummEngine::initCharset(charsetno);
+	VAR(VAR_CURRENT_CHARSET) = charsetno;
+}
+
 void ScummEngine::initCharset(int charsetno) {
 	int i;
 
@@ -758,9 +763,6 @@ void ScummEngine::initCharset(int charsetno) {
 	for (i = 0; i < 16; i++)
 		_charsetColorMap[i] = _charsetData[charsetno][i];
 
-	if (_heversion >= 80) {
-		VAR(VAR_CURRENT_CHARSET) = charsetno;
-	}
 }
 
 void ScummEngine_v6::enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center) {

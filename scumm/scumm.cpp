@@ -1054,7 +1054,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_MUSIC_BUNDLE_LOADED = 0xFF;
 	VAR_VOICE_BUNDLE_LOADED = 0xFF;
 
-	VAR_CURRENT_CHARSET = 0xFF;
 	VAR_SKIP_RESET_TALK_ACTOR = 0xFF;
 	VAR_MUSIC_CHANNEL = 0xFF;
 	VAR_SOUND_CHANNEL = 0xFF;
@@ -1299,6 +1298,7 @@ ScummEngine_v72he::ScummEngine_v72he(GameDetector *detector, OSystem *syst, cons
 	VAR_POLYGONS_ONLY = 0xFF;
 	VAR_PLATFORM = 0xFF;
 	VAR_WINDOWS_VERSION = 0xFF;
+	VAR_CURRENT_CHARSET = 0xFF;
 	VAR_U32_VERSION = 0xFF;
 	VAR_WIZ_TCOLOR = 0xFF;
 }
