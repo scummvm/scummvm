@@ -2658,8 +2658,10 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 			break;
 		g++;
 	}
-	if (!g->name)
+	if (!g->name) {
 		error("Invalid game '%s'\n", detector->_game.name);
+		return 0;
+	}
 
 	ScummGameSettings game = *g;
 
@@ -2687,13 +2689,19 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	}
 	strcpy(tempName, detectName);
 
-	File f;
-
+	bool found = false;
 	while (substLastIndex != -1) {
-		if (f.exists(detectName, ConfMan.get("path").c_str()))
+		if (File::exists(detectName, ConfMan.get("path").c_str())) {
+			found = true;
 			break;
+		}
 
 		substLastIndex = generateSubstResFileName_(tempName, detectName, sizeof(detectName), substLastIndex + 1);
+	}
+	
+	// Unable to locate game data
+	if (!found) {
+		return 0;
 	}
 
 	// Force game to have Mac platform if needed
