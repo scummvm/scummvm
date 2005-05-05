@@ -50,7 +50,7 @@ int32 encodePtr(char *ptr, int type) {
 	default:
 		error("encodePtr: Unknown pointer type");
 	}
-	assert((offset & 0xF000000) == 0);
+	assert((offset & 0xF0000000) == 0);
 	return (type << 28) | offset;
 }
 
