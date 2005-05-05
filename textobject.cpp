@@ -29,8 +29,9 @@ TextObjectDefaults textObjectDefaults;
 
 TextObject::TextObject() :
 		_created(false), _x(0), _y(0), _width(0), _height(0), _justify(0),
-		_font(NULL), _textBitmap(NULL), _bitmapWidth(0),
-		_bitmapHeight(0), _disabled(false), _textObjectHandle(NULL) {
+		_font(NULL), _textBitmap(NULL), _bitmapWidthPtr(NULL),
+		_bitmapHeightPtr(NULL), _disabled(false), _textObjectHandle(NULL),
+		_numberLines(1) {
 	memset(_textID, 0, sizeof(_textID));
 	_fgColor._vals[0] = 0;
 	_fgColor._vals[1] = 0;
@@ -56,19 +57,42 @@ TextObject::~TextObject() {
 void TextObject::setDefaults(TextObjectDefaults *defaults) {
 	_x = defaults->x;
 	_y = defaults->x;
-	_width = defaults->width;
-	_height = defaults->height;
 	_font = defaults->font;
 	_fgColor = defaults->fgColor;
 	_justify = defaults->justify;
 	_disabled = defaults->disabled;
 }
 
+int TextObject::getBitmapWidth() {
+	if (_bitmapWidthPtr == NULL)
+		return 0;
+
+	int width = 0;
+
+	for (int i = 0; i < _numberLines; i++) {
+		if (_bitmapWidthPtr[i] > width)
+			width = _bitmapWidthPtr[i];
+	}
+	return width;
+}
+
+int TextObject::getBitmapHeight() {
+	if (_bitmapHeightPtr == NULL)
+		return 0;
+
+	uint height = 0;
+
+	for (int i = 0; i < _numberLines; i++) {
+		height += _bitmapHeightPtr[i];
+	}
+	return height;
+}
+
 int TextObject::getTextCharPosition(int pos) {
 	int width = 0;
 	std::string msg = parseMsgText(_textID, NULL);
 	for (int i = 0; (msg[i] != '\0') && (i < pos); ++i) {
-		width += _font->getCharLogicalWidth(msg[i]) + _font->getCharStartingCol(msg[i]);
+		width += _font->getCharLogicalWidth(msg[i]);
 	}
 
 	return width;
@@ -79,10 +103,10 @@ void TextObject::createBitmap() {
 		destroyBitmap();
 
 	std::string msg = parseMsgText(_textID, NULL);
+	std::string message;
 	char *c = (char *)msg.c_str();
 
-	_bitmapWidth = 0;
-	_bitmapHeight = 0;
+	int lineWidth = 0;
 
 	// remove spaces (NULL_TEXT) from the end of the string,
 	// while this helps make the string unique it screws up
@@ -90,70 +114,123 @@ void TextObject::createBitmap() {
 	for(int i = (int) msg.length() - 1; c[i] == TEXT_NULL; i--)
 		msg.erase(msg.length() - 1, msg.length());
 
+	// format the output message to incorporate line wrapping
+	// (if necessary) for the text object
+	_numberLines = 1;
+	lineWidth = 0;
 	for (int i = 0; msg[i] != '\0'; ++i) {
-		_bitmapWidth += _font->getCharLogicalWidth(msg[i]) + _font->getCharStartingCol(msg[i]);
-
-		uint h = _font->getCharHeight(msg[i]) + _font->getCharStartingLine(msg[i]);
-		if (h > _bitmapHeight)
-			_bitmapHeight = h;
-	}
-
-	//printf("creating textobject: %s\nheight: %d\nwidth: %d\n", msg.c_str(), _bitmapHeight, _bitmapWidth);
-
-	_textBitmap = new uint8[_bitmapHeight * _bitmapWidth];
-	memset(_textBitmap, 0, _bitmapHeight * _bitmapWidth);
-
-	// Fill bitmap
-	int offset = 0;
-	for (uint line = 0; line < _bitmapHeight; ++line) {
-		for (int c = 0; msg[c] != '\0'; ++c) {
-			uint32 charWidth = _font->getCharWidth(msg[c]);
-			uint32 charLogicalWidth = _font->getCharLogicalWidth(msg[c]);
-			uint8 startingCol = _font->getCharStartingCol(msg[c]);
-			uint8 startingLine = _font->getCharStartingLine(msg[c]);
-
-			if (startingLine < line + 1 && _font->getCharHeight(msg[c]) + startingLine > line) {
-				memcpy(&_textBitmap[offset + startingCol],
-					_font->getCharData(msg[c]) + charWidth * (line - startingLine), charWidth);
-			}
-
-			offset += charLogicalWidth + startingCol;
+		lineWidth += _font->getCharLogicalWidth(msg[i]);
+		if ((_width != 0 && lineWidth > (_width - _x))
+				|| (_justify == CENTER && (_x - lineWidth/2 < 0 || _x + lineWidth/2 > 640))
+				|| (_justify == LJUSTIFY && (_x + lineWidth > 640))
+				|| (_justify == RJUSTIFY && (_x - lineWidth < 0))) {
+			lineWidth = 0;
+			for (; msg[i] != ' '; i--)
+				message.erase(message.length() - 1, message.length());
+			message += '\n';
+			_numberLines++;
+			continue; // don't add the space back
 		}
+		message += msg[i];
 	}
+	_textObjectHandle = (Driver::TextObjectHandle **) malloc(sizeof(long) * _numberLines);
+	_bitmapWidthPtr = (int *)malloc(sizeof(int) * _numberLines);
+	_bitmapHeightPtr = (int *)malloc(sizeof(int) * _numberLines);
 
-	_textObjectHandle = g_driver->createTextBitmap(_textBitmap, _bitmapWidth, _bitmapHeight, _fgColor);
+	for (int j = 0; j < _numberLines; j++) {
+		int nextLinePos = message.find_first_of('\n');
+		std::string currentLine = message.substr(0, nextLinePos);
 
-	delete[] _textBitmap;
+		_bitmapWidthPtr[j] = 0;
+		_bitmapHeightPtr[j] = 0;
+		for (int i = 0; currentLine[i] != '\0'; ++i) {
+			_bitmapWidthPtr[j] += _font->getCharLogicalWidth(currentLine[i]);
+			int h = _font->getCharHeight(currentLine[i]) + _font->getCharStartingLine(currentLine[i]);
+			if (h > _bitmapHeightPtr[j])
+				_bitmapHeightPtr[j] = h;
+		}
+		//printf("creating textobject: %s\nheight: %d\nwidth: %d\n", currentLine.c_str(), _bitmapHeight[j], _bitmapWidth[j]);
+
+		_textBitmap = new uint8[_bitmapHeightPtr[j] * _bitmapWidthPtr[j]];
+		memset(_textBitmap, 0, _bitmapHeightPtr[j] * _bitmapWidthPtr[j]);
+
+		// Fill bitmap
+		int offset = 0;
+		for (int line = 0; line < _bitmapHeightPtr[j]; ++line) {
+			for (int c = 0; currentLine[c] != '\0'; ++c) {
+				int32 charWidth = _font->getCharWidth(currentLine[c]);
+				int32 charLogicalWidth = _font->getCharLogicalWidth(currentLine[c]);
+				int8 startingCol = _font->getCharStartingCol(currentLine[c]);
+				int8 startingLine = _font->getCharStartingLine(currentLine[c]);
+
+				if (startingLine < line + 1 && _font->getCharHeight(currentLine[c]) + startingLine > line) {
+					memcpy(&_textBitmap[offset + startingCol],
+						_font->getCharData(currentLine[c]) + charWidth * (line - startingLine), charWidth);
+				}
+
+				offset += charLogicalWidth;
+			}
+		}
+		_textObjectHandle[j] = g_driver->createTextBitmap(_textBitmap, _bitmapWidthPtr[j], _bitmapHeightPtr[j], _fgColor);
+		delete[] _textBitmap;
+		message = message.substr(nextLinePos+1, message.length()-(nextLinePos+1));
+	}
 	_created = true;
 }
 
 void TextObject::destroyBitmap() {
 	_created = false;
 	if (_textObjectHandle) {
-		g_driver->destroyTextBitmap(_textObjectHandle);
-		delete _textObjectHandle;
+		for (int i = 0; i < _numberLines; i++) {
+			g_driver->destroyTextBitmap(_textObjectHandle[i]);
+			delete _textObjectHandle[i];
+		}
+		free(_textObjectHandle);
 		_textObjectHandle = NULL;
+	}
+	if (_bitmapWidthPtr) {
+		free(_bitmapWidthPtr);
+		_bitmapWidthPtr = NULL;
+	}
+	if (_bitmapHeightPtr) {
+		free(_bitmapHeightPtr);
+		_bitmapHeightPtr = NULL;
 	}
 }
 
 void TextObject::draw() {
+	int height = 0;
+
 	if (!_created)
 		return;
+	// render multi-line (wrapped) text
+	for (int i = 0; i < _numberLines; i++) {
+		int y;
 
-	if (_justify == LJUSTIFY || _justify == NONE)
-		g_driver->drawTextBitmap(_x, _y, _textObjectHandle);
-	else if (_justify == CENTER) {
-		int x = _x - (1 / 2.0) * _bitmapWidth;
-		if (x < 0)
-			x = 0;
+		if (_height != 0)
+			y = (int) (_y - _bitmapHeightPtr[i] / 2.0);
+		else
+			y = _y;
+		if (y < 0)
+			y = 0;
+		
+		if (_justify == LJUSTIFY || _justify == NONE)
+			g_driver->drawTextBitmap(_x, height + y, _textObjectHandle[i]);
+		else if (_justify == CENTER) {
+			int x = (int) (_x - (1 / 2.0) * _bitmapWidthPtr[i]);
+			if (x < 0)
+				x = 0;
 
-		g_driver->drawTextBitmap(x, _y, _textObjectHandle);
-	} else if (_justify == RJUSTIFY) {
-		int x = _x - _bitmapWidth;
-		if (x < 0)
-			x = 0;
+			g_driver->drawTextBitmap(x, height + y, _textObjectHandle[i]);
+		} else if (_justify == RJUSTIFY) {
+			int x = _x - getBitmapWidth();
+			if (x < 0)
+				x = 0;
 
-		g_driver->drawTextBitmap(x, _y, _textObjectHandle);
-	} else
-		warning("TextObject::draw: Unknown justification code (%d)!", _justify);
+			g_driver->drawTextBitmap(x, height + _y, _textObjectHandle[i]);
+		} else
+			warning("TextObject::draw: Unknown justification code (%d)!", _justify);
+
+		height += _bitmapHeightPtr[i];
+	}
 }

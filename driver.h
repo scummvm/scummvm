@@ -92,6 +92,7 @@ public:
 	virtual void destroyTextBitmap(TextObjectHandle *handle) = 0;
 
 	virtual void drawRectangle(PrimitiveObject *primitive) = 0;
+	virtual void drawLine(PrimitiveObject *primitive) = 0;
 
 	virtual void prepareSmushFrame(int width, int height, byte *bitmap) = 0;
 	virtual void drawSmushFrame(int offsetX, int offsetY) = 0;

@@ -320,6 +320,16 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 	_sayLineText->setDefaults(&sayLineDefaults);
 	_sayLineText->setText((char *)msg);
 	_sayLineText->setFGColor(&_talkColor);
+	// if the actor isn't visible render their text at the bottom
+	// of the screen
+	if (!visible() || !inSet(g_engine->currScene()->name())) {
+		_sayLineText->setX(640 / 2);
+		_sayLineText->setY(440);
+	} else {
+		// render at the top for active actors for now
+		_sayLineText->setX(640 / 2);
+		_sayLineText->setY(0);
+	}
 	_sayLineText->createBitmap();
 	g_engine->registerTextObject(_sayLineText);
 }

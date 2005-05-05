@@ -28,24 +28,24 @@ public:
 	Font(const char *filename, const char *data, int len);
 	~Font();
 
-	uint32 getCharWidth(char c) { return _charHeaders[_charIndex[c]].width; }
-	uint32 getCharHeight(char c) { return _charHeaders[_charIndex[c]].height; }
-	uint32 getCharLogicalWidth(char c) { return _charHeaders[_charIndex[c]].logicalWidth; }
-	uint32 getCharStartingCol(char c) { return _charHeaders[_charIndex[c]].startingCol; }
-	uint32 getCharStartingLine(char c) { return _charHeaders[_charIndex[c]].startingLine; }
+	int32 getCharWidth(char c) { return _charHeaders[_charIndex[c]].width; }
+	int32 getCharHeight(char c) { return _charHeaders[_charIndex[c]].height; }
+	int32 getCharLogicalWidth(char c) { return _charHeaders[_charIndex[c]].logicalWidth; }
+	int32 getCharStartingCol(char c) { return _charHeaders[_charIndex[c]].startingCol; }
+	int32 getCharStartingLine(char c) { return _charHeaders[_charIndex[c]].startingLine; }
 	const byte *getCharData(char c) { return _fontData + (_charHeaders[_charIndex[c]].offset); }
 
 	static const uint8 Font::emerFont[][13];
 private:
 
 	struct CharHeader {
-		uint32 offset;
-		uint32 unknown;
-		uint8  logicalWidth;
-		uint8  startingCol;
-		uint8  startingLine;
-		uint32 width;
-		uint32 height;
+		int32 offset;
+		int32 unknown;
+		int8  logicalWidth;
+		int8  startingCol;
+		int8  startingLine;
+		int32 width;
+		int32 height;
 	};
 
 	uint32 _numChars;

@@ -112,6 +112,14 @@ static inline Font *check_font(int num) {
 	return NULL;
 }
 
+static inline PrimitiveObject *check_primobject(int num) {
+	lua_Object param = lua_getparam(num);
+	if (lua_isuserdata(param) && lua_tag(param) == MKID('PRIM'))
+		return static_cast<PrimitiveObject *>(lua_getuserdata(param));
+	luaL_argerror(num, "primitive (rectangle) expected");
+	return NULL;
+} 
+
 static inline TextObject *check_textobject(int num) {
 	lua_Object param = lua_getparam(num);
 	if (lua_isuserdata(param) && lua_tag(param) == MKID('TEXT'))
@@ -287,6 +295,13 @@ static void LoadActor() {
 	lua_pushusertag(new Actor(name), MKID('ACTR'));
 }
 
+static void GetActorTimeScale() {
+	stubWarning("GetActorTimeScale");
+	// return 1 so the game doesn't halt when Manny attempts
+	// to pick up the fire extinguisher
+	lua_pushnumber(1);
+}
+
 static void SetSelectedActor() {
 	Actor *act = check_actor(1);
 	g_engine->setSelectedActor(act);
@@ -309,7 +324,7 @@ static void SetSayLineDefaults() {
 		if (lua_isnil(key)) 
 			break;
 
-		key_text = lua_getstring(key);		
+		key_text = lua_getstring(key);
 		if (strmatch(key_text, "font"))
 			sayLineDefaults.font = check_font(2);
 		else
@@ -1396,6 +1411,7 @@ static void BlastImage() {
 	PrimitiveObject *p = new PrimitiveObject();
 	p->createBitmap(bitmap, x, y, transparent);
 	g_engine->registerPrimitiveObject(p);
+	lua_pushusertag(p, MKID('PRIM'));
 }
 
 void getTextObjectParams(TextObject *textObject, lua_Object table_obj) {
@@ -1497,12 +1513,33 @@ static void menuHandler() {
 	else
 		return;
 
-	// get the item list
-	itemTable = getTableValue(menuTable, "menu");
-	if (!lua_istable(itemTable))
-		return;
-
+	// get the keycode
 	key = atoi(lua_getstring(keycode));
+
+	// get the item list for most menus
+	itemTable = getTableValue(menuTable, "menu");
+	if (!lua_istable(itemTable)) {
+		// 3D Acceleration Menu
+		itemTable = getTableValue(menuTable, "active_menu");
+		if (!lua_istable(itemTable)) {
+			// Control Help menu
+			lua_Object nextPage = getTableValue(menuTable, "next_page");
+			lua_Object prevPage = getTableValue(menuTable, "prev_page");
+
+			if (lua_isfunction(nextPage) && key == SDLK_RIGHT) {
+				lua_beginblock();
+				lua_pushobject(menuTable);
+				lua_callfunction(nextPage);
+				lua_endblock();
+			} else if (lua_isfunction(prevPage) && key == SDLK_LEFT) {
+				lua_beginblock();
+				lua_pushobject(menuTable);
+				lua_callfunction(prevPage);
+				lua_endblock();
+			}
+			return;
+		}
+	}
 
 	// get the current item
 	menuItem = atoi(lua_getstring(getTableValue(itemTable, "cur_item")));
@@ -1532,10 +1569,14 @@ static void menuHandler() {
 	/* if we're running the menu then we need to manually handle
 	 * a lot of the operations necessary to use the menu
 	 */
-	bool menuChanged = false, sliderChanged = false;
+	bool menuChanged = false;
 	switch (key) {
 		case SDLK_ESCAPE:
 		{
+			// only use ESC to exit the main menu 
+			if (lua_isnil(getTableFunction(menuTable, "return_to_game")))
+				return;
+
 			lua_Object close = getTableFunction(menuTable, "cancel");
 			lua_Object destroy = getTableFunction(menuTable, "destroy");
 
@@ -1636,7 +1677,14 @@ static void KillTextObject() {
  */
 static void ChangeTextObject() {
 	TextObject *modifyObject, *textObject = check_textobject(1);
-	lua_Object tableObj = lua_getparam(2);
+	lua_Object tableObj;
+
+	// when called in certain instances (such as don's computer)
+	// the second parameter is the string and the third is the table
+	if (lua_isstring(lua_getparam(2)))
+		tableObj = lua_getparam(3);
+	else
+		tableObj = lua_getparam(2);
 
 	modifyObject = TextObjectExists((char *)textObject->name());
 	if (!modifyObject) {
@@ -1681,7 +1729,7 @@ static void MakeTextObject() {
 	char *line = lua_getstring(lua_getparam(1));
 	std::string text = line;
 	lua_Object tableObj = lua_getparam(2);
-         
+
 	textObject = new TextObject();
 	textObject->setDefaults(&textObjectDefaults);
          
@@ -1781,7 +1829,80 @@ static void PauseMovie() {
 	g_smush->pause(lua_isnil(lua_getparam(1)) != 0);
 }
 
-static void BlastRect() {
+static void PurgePrimitiveQueue() {
+	g_engine->killPrimitiveObjects();
+}
+
+static void DrawPolygon() {
+	stubWarning("DrawPolygon");
+}
+
+static void DrawLine() {
+	int x1 = check_int(1);
+	int y1 = check_int(2);
+	int x2 = check_int(3);
+	int y2 = check_int(4);
+	lua_Object tableObj = lua_getparam(5);
+	Color color;
+	color._vals[0] = 255;
+	color._vals[1] = 255;
+	color._vals[2] = 255;
+
+	if (lua_istable(tableObj)){
+		lua_pushobject(tableObj);
+		lua_pushstring("color");
+		lua_Object colorObj = lua_gettable();
+		if (lua_isuserdata(colorObj) && lua_tag(colorObj) == MKID('COLR')) {
+			color = static_cast<Color *>(lua_getuserdata(colorObj));
+		}
+	}
+
+	PrimitiveObject *p = new PrimitiveObject();
+	p->createLine(x1, x2, y1, y2, color);
+	g_engine->registerPrimitiveObject(p);
+	lua_pushusertag(p, MKID('PRIM'));
+}
+
+static void ChangePrimitive() {
+	PrimitiveObject *psearch, *pmodify = NULL;
+	lua_Object tableObj = lua_getparam(2);
+	Color color;
+
+	color._vals[0] = 255;
+	color._vals[1] = 255;
+	color._vals[2] = 255;
+
+	if (lua_isnil(lua_getparam(1)) || !lua_istable(tableObj))
+		return;
+
+	psearch = check_primobject(1);
+	for (Engine::PrimitiveListType::const_iterator i = g_engine->primitivesBegin(); i != g_engine->primitivesEnd(); i++) {
+		PrimitiveObject *p = *i;
+		if (p->getX1() == psearch->getX1() && p->getX2() == psearch->getX2() && p->getY1() == psearch->getY1() && p->getY2() == psearch->getY2()) {
+			pmodify = p;
+			break;
+		}
+	}
+	if(!pmodify)
+		error("Primitive object not found.");
+
+	lua_pushobject(tableObj);
+	lua_pushstring("color");
+	lua_Object colorObj = lua_gettable();
+	if (lua_isuserdata(colorObj) && lua_tag(colorObj) == MKID('COLR')) {
+		color = static_cast<Color *>(lua_getuserdata(colorObj));
+		pmodify->setColor(color);
+	}
+	lua_pushobject(tableObj);
+	lua_pushstring("y");
+	lua_Object yObj = lua_gettable();
+	if (!lua_isnil(yObj)) {
+		pmodify->setY1(atoi(lua_getstring(yObj)));
+		pmodify->setY2(atoi(lua_getstring(yObj)));
+	}
+}
+
+static void DrawRectangle() {
 	int x1 = check_int(1);
 	int y1 = check_int(2);
 	int x2 = check_int(3);
@@ -1811,6 +1932,14 @@ static void BlastRect() {
 	PrimitiveObject *p = new PrimitiveObject();
 	p->createRectangle(x1, x2, y1, y2, color, filled);
 	g_engine->registerPrimitiveObject(p);
+	lua_pushusertag(p, MKID('PRIM'));
+}
+
+static void BlastRect() {
+	// BlastRect is specifically for the menu thread;
+	// however, we don't need to handle the menu in a 
+	// separate thread so this works fine
+	DrawRectangle();
 }
 
 static void DimScreen() {
@@ -2199,18 +2328,12 @@ STUB_FUNC(WalkActorVector)
 STUB_FUNC(GetActorRect)
 STUB_FUNC(GetActorNodeLocation)
 STUB_FUNC(SetActorTimeScale)
-STUB_FUNC(GetActorTimeScale)
 STUB_FUNC(SetActorScale)
 STUB_FUNC(SetActorColormap)
 STUB_FUNC(GetTranslationMode)
 STUB_FUNC(SetTranslationMode)
 STUB_FUNC(PrintLine)
-STUB_FUNC(PurgePrimitiveQueue)
 STUB_FUNC(KillPrimitive)
-STUB_FUNC(ChangePrimitive)
-STUB_FUNC(DrawRectangle)
-STUB_FUNC(DrawPolygon)
-STUB_FUNC(DrawLine)
 STUB_FUNC(WalkActorToAvoiding)
 STUB_FUNC(GetActorChores)
 STUB_FUNC(Exit)

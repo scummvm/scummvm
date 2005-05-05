@@ -57,8 +57,8 @@ public:
 	void setFont(Font *font) { _font = font; }
 	void setJustify(int justify) { _justify = justify; }
 	void setDisabled(bool disabled) { _disabled = disabled; }
-	int getBitmapWidth() { return _bitmapWidth; }
-	int getBitmapHeight() { return _bitmapHeight; }
+	int getBitmapWidth();
+	int getBitmapHeight();
 	int getTextCharPosition(int pos);
 
 	const char *name() const { return _textID; }
@@ -75,14 +75,14 @@ protected:
 	bool _created;
 	Color _fgColor;
 	int _x, _y;
-	uint _width, _height;
-	int _justify;
+	int _width, _height;
+	int _justify, _numberLines;
 	bool _disabled;
 	Font *_font;
 	char _textID[32];
 	uint8 *_textBitmap;
-	uint _bitmapWidth, _bitmapHeight;
-	Driver::TextObjectHandle *_textObjectHandle;
+	int *_bitmapWidthPtr, *_bitmapHeightPtr;
+	Driver::TextObjectHandle **_textObjectHandle;
 };
 
 #endif

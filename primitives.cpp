@@ -62,6 +62,15 @@ void PrimitiveObject::createBitmap(Bitmap *bitmap, int x, int y, bool transparen
 	g_driver->createBitmap(_bitmap);
 }
 
+void PrimitiveObject::createLine(int x1, int x2, int y1, int y2, Color color) {
+	_x1 = x1;
+	_y1 = y1;
+	_x2 = x2;
+	_y2 = y2;
+	_color = color;
+	_type = 3;
+}
+
 void PrimitiveObject::draw() {
 	assert(_type);
 
@@ -69,4 +78,6 @@ void PrimitiveObject::draw() {
 		g_driver->drawRectangle(this);
 	else if (_type == 2)
 		g_driver->drawBitmap(_bitmap);
+	else if (_type == 3)
+		g_driver->drawLine(this);
 }

@@ -34,11 +34,14 @@ public:
 
 	void createRectangle(int x1, int x2, int y1, int y2, Color color, bool filled);
 	void createBitmap(Bitmap *bitmap, int x, int y, bool transparent);
+	void createLine(int x1, int x2, int y1, int y2, Color color);
 	int getX1() { return _x1; }
 	int getX2() { return _x2; }
 	int getY1() { return _y1; }
 	int getY2() { return _y2; }
-	Color getColor() { return _color; }
+	void setY1(int coord) { _y1 = coord; }
+	void setY2(int coord) { _y2 = coord; }
+	void setColor(Color color) { _color = color; } 	Color getColor() { return _color; }
 	bool isFilled() { return _filled; }
 	void draw();
 	bool isBitmap() { return _type == 2; }

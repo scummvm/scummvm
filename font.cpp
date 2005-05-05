@@ -64,7 +64,7 @@ Font::Font(const char *filename, const char *data, int /*len*/) :
 		_charHeaders[i].width = READ_LE_UINT32(data + 8);
 		_charHeaders[i].height = READ_LE_UINT32(data + 12);
 		data += 16;
-		_charHeaders[i].logicalWidth = MAX((uint32) _charHeaders[i].logicalWidth, _charHeaders[i].width);
+		_charHeaders[i].logicalWidth = MAX((int32) _charHeaders[i].logicalWidth, _charHeaders[i].width);
 		//printf("%c. width: %d. logical width: %d. startCol: %d\n", i, _charHeaders[i].width, _charHeaders[i].logicalWidth, _charHeaders[i].startingCol);
 	}
 
