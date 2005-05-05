@@ -250,6 +250,17 @@ static bool launcherDialog(GameDetector &detector, OSystem &system) {
 }
 
 static int runGame(GameDetector &detector, OSystem &system) {
+	// Create the game engine
+	Engine *engine = detector.createEngine(&system);
+	if (!engine) {
+		// TODO: Show an error dialog or so?
+		//GUI::MessageDialog alert("ScummVM could not find any game in the specified directory!");
+		//alert.runModal();
+		warning("Failed to instantiate engine for target %s", detector._targetName.c_str());
+		return 0;
+	}
+
+
 	// Set the window caption to the game name
 	Common::String caption(ConfMan.get("description", detector._targetName));
 
@@ -261,10 +272,6 @@ static int runGame(GameDetector &detector, OSystem &system) {
 		system.setWindowCaption(caption.c_str());
 	}
 	
-	// Create the game engine
-	Engine *engine = detector.createEngine(&system);
-	assert(engine);
-
 	// Add extrapath (if any) to the directory search list
 	if (ConfMan.hasKey("extrapath"))
 		File::addDefaultDirectory(ConfMan.get("extrapath"));

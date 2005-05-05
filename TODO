@@ -229,6 +229,11 @@ Plugins
   be put into ScummVM.app/Contents/PlugIns/; this also means that the loader
   needs to search in the plugin dir of the active bundle. So use the 
   CF bundle API, inside a #ifdef MACOSX block.
+* When creating an engine instance, there is currently no way for the plugin
+  to indicate an error, except for returning a NULL value. It would be nice
+  if the engine could specify why creating the engine instance failed (e.g.
+  due to lack of memory, because a file couldn't be found, because the game
+  was not recognized, etc.).
 
 OSystem
 =======
