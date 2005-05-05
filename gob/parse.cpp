@@ -21,13 +21,57 @@
  */
 #include "gob/gob.h"
 #include "gob/global.h"
+#include "gob/game.h"
 #include "gob/parse.h"
 #include "gob/util.h"
 #include "gob/inter.h"
 
 namespace Gob {
 
+enum PointerType {
+	kExecPtr = 0,
+	kInterVar = 1,
+	kResStr = 2
+};
 
+int32 encodePtr(char *ptr, int type) {
+	int32 offset;
+
+	switch (type) {
+	case kExecPtr:
+		offset = ptr - game_totFileData;
+		break;
+	case kInterVar:
+		offset = ptr - inter_variables;
+		break;
+	case kResStr:
+		offset = ptr - inter_resStr;
+		break;
+	default:
+		error("encodePtr: Unknown pointer type");
+	}
+	assert((offset & 0xF000000) == 0);
+	return (type << 28) | offset;
+}
+
+char *decodePtr(int32 n) {
+	char *ptr;
+
+	switch (n >> 28) {
+	case kExecPtr:
+		ptr = game_totFileData;
+		break;
+	case kInterVar:
+		ptr = inter_variables;
+		break;
+	case kResStr:
+		ptr = inter_resStr;
+		break;
+	default:
+		error("decodePtr: Unknown pointer type");
+	}
+	return ptr + (n & 0x0FFFFFFF);
+}
 
 int16 parse_parseExpr(char arg_0, byte *arg_2) {
 	int32 values[20];
@@ -73,7 +117,7 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 
 			case 22:
 				*operPtr = 22;
-				*valPtr = (int32)inter_execPtr;
+				*valPtr = encodePtr(inter_execPtr, kExecPtr);
 				inter_execPtr += strlen(inter_execPtr) + 1;
 				break;
 
@@ -85,7 +129,7 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 			case 25:
 				*operPtr = 22;
 				temp = inter_load16() * 4;
-				*valPtr = (int32)(inter_variables + temp);
+				*valPtr = encodePtr(inter_variables + temp, kInterVar);
 				if (*inter_execPtr == 13) {
 					inter_execPtr++;
 					temp += parse_parseValExpr();
@@ -113,7 +157,7 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 					*valPtr = VAR(temp + offset);
 					break;
 				}
-				*valPtr = (int32)(inter_variables + temp * 4 + offset * inter_animDataSize * 4);
+				*valPtr = encodePtr(inter_variables + temp * 4 + offset * inter_animDataSize * 4, kInterVar);
 				if (*inter_execPtr == 13) {
 					inter_execPtr++;
 					temp2 = parse_parseValExpr();
@@ -181,11 +225,11 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 			switch (operPtr[-1]) {
 			case 2:
 				if (operPtr[-2] == 22) {
-					if ((char *)valPtr[-2] != inter_resStr) {
-						strcpy(inter_resStr, (char *)valPtr[-2]);
-						valPtr[-2] = (int32)inter_resStr;
+					if (decodePtr(valPtr[-2]) != inter_resStr) {
+						strcpy(inter_resStr, decodePtr(valPtr[-2]));
+						valPtr[-2] = encodePtr(inter_resStr, kResStr);
 					}
-					strcat(inter_resStr, (char *)valPtr[0]);
+					strcat(inter_resStr, decodePtr(valPtr[0]));
 					stkPos -= 2;
 					operPtr -= 2;
 					valPtr -= 2;
@@ -301,12 +345,11 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 					if (operStack[brackStart] == 20) {
 						values[brackStart] += valPtr[-1];
 					} else if (operStack[brackStart] == 22) {
-						if ((char *)values[brackStart]
-						    != inter_resStr) {
-							strcpy(inter_resStr, (char *)values[brackStart]);
-							values[brackStart] = (int32)inter_resStr;
+						if (decodePtr(values[brackStart]) != inter_resStr) {
+							strcpy(inter_resStr, decodePtr(values[brackStart]));
+							values[brackStart] = encodePtr(inter_resStr, kResStr);
 						}
-						strcat(inter_resStr, (char *)valPtr[-1]);
+						strcat(inter_resStr, decodePtr(valPtr[-1]));
 					}
 					stkPos -= 2;
 					operPtr -= 2;
@@ -378,11 +421,11 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 						if (valPtr[-3] < valPtr[-1])
 							operPtr[-3] = 24;
 					} else if (var_C == 22) {
-						if ((char *)valPtr[-3] != inter_resStr) {
-							strcpy(inter_resStr, (char *)valPtr[-3]);
-							valPtr[-3] = (int32)inter_resStr;
+						if (decodePtr(valPtr[-3]) != inter_resStr) {
+							strcpy(inter_resStr, decodePtr(valPtr[-3]));
+							valPtr[-3] = encodePtr(inter_resStr, kResStr);
 						}
-						if (strcmp(inter_resStr, (char *)valPtr[-1]) < 0)
+						if (strcmp(inter_resStr, decodePtr(valPtr[-1])) < 0)
 							operPtr[-3] = 24;
 					}
 					stkPos -= 2;
@@ -397,11 +440,11 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 						if (valPtr[-3] <= valPtr[-1])
 							operPtr[-3] = 24;
 					} else if (var_C == 22) {
-						if ((char *)valPtr[-3] != inter_resStr) {
-							strcpy(inter_resStr, (char *)valPtr[-3]);
-							valPtr[-3] = (int32)inter_resStr;
+						if (decodePtr(valPtr[-3]) != inter_resStr) {
+							strcpy(inter_resStr, decodePtr(valPtr[-3]));
+							valPtr[-3] = encodePtr(inter_resStr, kResStr);
 						}
-						if (strcmp(inter_resStr, (char *)valPtr[-1]) <= 0)
+						if (strcmp(inter_resStr, decodePtr(valPtr[-1])) <= 0)
 							operPtr[-3] = 24;
 					}
 					stkPos -= 2;
@@ -416,11 +459,11 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 						if (valPtr[-3] > valPtr[-1])
 							operPtr[-3] = 24;
 					} else if (var_C == 22) {
-						if ((char *)valPtr[-3] != inter_resStr) {
-							strcpy(inter_resStr, (char *)valPtr[-3]);
-							valPtr[-3] = (int32)inter_resStr;
+						if (decodePtr(valPtr[-3]) != inter_resStr) {
+							strcpy(inter_resStr, decodePtr(valPtr[-3]));
+							valPtr[-3] = encodePtr(inter_resStr, kResStr);
 						}
-						if (strcmp(inter_resStr, (char *)valPtr[-1]) > 0)
+						if (strcmp(inter_resStr, decodePtr(valPtr[-1])) > 0)
 							operPtr[-3] = 24;
 					}
 					stkPos -= 2;
@@ -435,11 +478,11 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 						if (valPtr[-3] >= valPtr[-1])
 							operPtr[-3] = 24;
 					} else if (var_C == 22) {
-						if ((char *)valPtr[-3] != inter_resStr) {
-							strcpy(inter_resStr, (char *)valPtr[-3]);
-							valPtr[-3] = (int32)inter_resStr;
+						if (decodePtr(valPtr[-3]) != inter_resStr) {
+							strcpy(inter_resStr, decodePtr(valPtr[-3]));
+							valPtr[-3] = encodePtr(inter_resStr, kResStr);
 						}
-						if (strcmp(inter_resStr, (char *)valPtr[-1]) >= 0)
+						if (strcmp(inter_resStr, decodePtr(valPtr[-1])) >= 0)
 							operPtr[-3] = 24;
 					}
 					stkPos -= 2;
@@ -454,11 +497,11 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 						if (valPtr[-3] == valPtr[-1])
 							operPtr[-3] = 24;
 					} else if (var_C == 22) {
-						if ((char *)valPtr[-3] != inter_resStr) {
-							strcpy(inter_resStr, (char *)valPtr[-3]);
-							valPtr[-3] = (int32)inter_resStr;
+						if (decodePtr(valPtr[-3]) != inter_resStr) {
+							strcpy(inter_resStr, decodePtr(valPtr[-3]));
+							valPtr[-3] = encodePtr(inter_resStr, kResStr);
 						}
-						if (strcmp(inter_resStr, (char *)valPtr[-1]) == 0)
+						if (strcmp(inter_resStr, decodePtr(valPtr[-1])) == 0)
 							operPtr[-3] = 24;
 					}
 					stkPos -= 2;
@@ -473,11 +516,11 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 						if (valPtr[-3] != valPtr[-1])
 							operPtr[-3] = 24;
 					} else if (var_C == 22) {
-						if ((char *)valPtr[-3] != inter_resStr) {
-							strcpy(inter_resStr, (char *)valPtr[-3]);
-							valPtr[-3] = (int32)inter_resStr;
+						if (decodePtr(valPtr[-3]) != inter_resStr) {
+							strcpy(inter_resStr, decodePtr(valPtr[-3]));
+							valPtr[-3] = encodePtr(inter_resStr, kResStr);
 						}
-						if (strcmp(inter_resStr, (char *)valPtr[-1]) != 0)
+						if (strcmp(inter_resStr, decodePtr(valPtr[-1])) != 0)
 							operPtr[-3] = 24;
 					}
 					stkPos -= 2;
@@ -544,9 +587,8 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 				break;
 
 			case 22:
-				if ((char *)values[0] != inter_resStr)
-					strcpy(inter_resStr,
-					    (char *)values[0]);
+				if (decodePtr(values[0]) != inter_resStr)
+					strcpy(inter_resStr, decodePtr(values[0]));
 				break;
 
 			case 11:
@@ -576,11 +618,11 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 					if (operPtr[-3] == 20) {
 						valPtr[-3] += valPtr[-1];
 					} else if (operPtr[-3] == 22) {
-						if ((char *)valPtr[-3] != inter_resStr) {
-							strcpy(inter_resStr, (char *)valPtr[-3]);
-							valPtr[-3] = (int32)inter_resStr;
+						if (decodePtr(valPtr[-3]) != inter_resStr) {
+							strcpy(inter_resStr, decodePtr(valPtr[-3]));
+							valPtr[-3] = encodePtr(inter_resStr, kResStr);
 						}
-						strcat(inter_resStr, (char *)valPtr[-1]);
+						strcat(inter_resStr, decodePtr(valPtr[-1]));
 					}
 					stkPos -= 2;
 					operPtr -= 2;
