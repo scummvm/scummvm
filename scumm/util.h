@@ -38,8 +38,8 @@ public:
 	virtual uint32 pos() = 0;
 	virtual uint32 size() = 0;
 	virtual void seek(int32 offs, int whence = SEEK_SET) = 0;
-	virtual uint32 read(void *ptr, uint32 size) = 0;
-	virtual uint32 write(const void *ptr, uint32 size) = 0;
+	virtual uint32 read(void *dataPtr, uint32 dataSize) = 0;
+	virtual uint32 write(const void *dataPtr, uint32 dataSize) = 0;
 };
 
 class ScummFile : public BaseScummFile {
@@ -61,8 +61,8 @@ public:
 	uint32 pos();
 	uint32 size();
 	void seek(int32 offs, int whence = SEEK_SET);
-	uint32 read(void *ptr, uint32 size);
-	uint32 write(const void *ptr, uint32 size);
+	uint32 read(void *dataPtr, uint32 dataSize);
+	uint32 write(const void *dataPtr, uint32 dataSize);
 };
 
 class ScummNESFile : public BaseScummFile {
@@ -104,8 +104,8 @@ public:
 	uint32 pos() { return _stream->pos(); }
 	uint32 size() { return _stream->size(); }
 	void seek(int32 offs, int whence = SEEK_SET) { _stream->seek(offs, whence); }
-	uint32 read(void *ptr, uint32 len) { return _stream->read(ptr, len); }
-	uint32 write(const void *ptr, uint32 size);
+	uint32 read(void *dataPtr, uint32 dataSize) { return _stream->read(dataPtr, dataSize); }
+	uint32 write(const void *dataPtr, uint32 dataSize);
 };
 
 

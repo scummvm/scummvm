@@ -60,11 +60,11 @@ public:
 	 * Write data into the stream. Subclasses must implement this
 	 * method; all other write methods are implemented using it.
 	 *
-	 * @param ptr	pointer to the data to be written
-	 * @param size	number of bytes to be written
+	 * @param dataPtr	pointer to the data to be written
+	 * @param dataSize	number of bytes to be written
 	 * @return the number of bytes which were actually written.
 	 */
-	virtual uint32 write(const void *ptr, uint32 size) = 0;
+	virtual uint32 write(const void *dataPtr, uint32 dataSize) = 0;
 
 
 	// The remaining methods all have default implementations; subclasses
@@ -132,11 +132,11 @@ public:
 	 * Read data from the stream. Subclasses must implement this
 	 * method; all other read methods are implemented using it.
 	 *
-	 * @param ptr	pointer to a buffer into which the data is read
-	 * @param size	number of bytes to be read
+	 * @param dataPtr	pointer to a buffer into which the data is read
+	 * @param dataSize	number of bytes to be read
 	 * @return the number of bytes which were actually read.
 	 */
-	virtual uint32 read(void *ptr, uint32 size) = 0;
+	virtual uint32 read(void *dataPtr, uint32 dataSize) = 0;
 
 
 	// The remaining methods all have default implementations; subclasses
@@ -215,7 +215,7 @@ public:
 	 * This method is a rough analog of the (f)gets function. 
 	 * 
 	 * @param buf	the buffer to store into
-	 * @param size	the size of the buffer
+	 * @param bufSize	the size of the buffer
 	 * @return a pointer to the read string, or NULL if an error occured
 	 * @note The line terminator (CR or CR/LF) is stripped and not inserted
 	 *       into the buffer.
@@ -245,11 +245,11 @@ public:
 	virtual bool ioFailed() const { return _realStream->ioFailed(); }
 	virtual void clearIOFailed() { _realStream->clearIOFailed(); }
 
-	uint32 read(void *ptr, uint32 size) {
+	uint32 read(void *dataPtr, uint32 dataSize) {
 		assert(_realStream);
-		uint32 len = _realStream->read(ptr, size);
+		uint32 len = _realStream->read(dataPtr, dataSize);
 		if (_encbyte) {
-			byte *p = (byte *)ptr;
+			byte *p = (byte *)dataPtr;
 			byte *end = p + len;
 			while (p < end)
 				*p++ ^= _encbyte;
@@ -275,23 +275,23 @@ public:
 
 	void setEnc(byte value) { _encbyte = value; }
 
-	uint32 read(void *ptr, uint32 len) {
+	uint32 read(void *dataPtr, uint32 dataSize) {
 		// Read at most as many bytes as are still available...
-		if (len > _bufSize - _pos)
-			len = _bufSize - _pos;
-		memcpy(ptr, _ptr, len);
+		if (dataSize > _bufSize - _pos)
+			dataSize = _bufSize - _pos;
+		memcpy(dataPtr, _ptr, dataSize);
 
 		if (_encbyte) {
-			byte *p = (byte *)ptr;
-			byte *end = p + len;
+			byte *p = (byte *)dataPtr;
+			byte *end = p + dataSize;
 			while (p < end)
 				*p++ ^= _encbyte;
 		}
 
-		_ptr += len;
-		_pos += len;
+		_ptr += dataSize;
+		_pos += dataSize;
 
-		return len;
+		return dataSize;
 	}
 
 	bool eos() const { return _pos == _bufSize; }
@@ -314,14 +314,14 @@ private:
 public:
 	MemoryWriteStream(byte *buf, uint32 len) : _ptr(buf), _ptrOrig(buf), _bufSize(len), _pos(0) {}
 
-	uint32 write(const void *ptr, uint32 len) {
+	uint32 write(const void *dataPtr, uint32 dataSize) {
 		// Write at most as many bytes as are still available...
-		if (len > _bufSize - _pos)
-			len = _bufSize - _pos;
-		memcpy(_ptr, ptr, len);
-		_ptr += len;
-		_pos += len;
-		return len;
+		if (dataSize > _bufSize - _pos)
+			dataSize = _bufSize - _pos;
+		memcpy(_ptr, dataPtr, dataSize);
+		_ptr += dataSize;
+		_pos += dataSize;
+		return dataSize;
 	}
 
 	bool eos() const { return _pos == _bufSize; }

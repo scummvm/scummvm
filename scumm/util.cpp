@@ -151,28 +151,28 @@ void ScummFile::seek(int32 offs, int whence) {
 	File::seek(offs, whence);
 }
 
-uint32 ScummFile::read(void *ptr, uint32 len) {
+uint32 ScummFile::read(void *dataPtr, uint32 dataSize) {
 	uint32 realLen;
 	
 	if (_subFileLen) {
 		// Limit the amount we read by the subfile boundaries.
 		const uint32 curPos = pos();
 		assert(_subFileLen >= curPos);
-		uint32 newPos = curPos + len;
+		uint32 newPos = curPos + dataSize;
 		if (newPos > _subFileLen) {
-			len = _subFileLen - curPos;
+			dataSize = _subFileLen - curPos;
 			_ioFailed = true;
 		}
 	}
 	
-	realLen = File::read(ptr, len);
+	realLen = File::read(dataPtr, dataSize);
 	
 	
 	// If an encryption byte was specified, XOR the data we just read by it.
 	// This simple kind of "encryption" was used by some of the older SCUMM
 	// games.
 	if (_encbyte) {
-		byte *p = (byte *)ptr;
+		byte *p = (byte *)dataPtr;
 		byte *end = p + realLen;
 		while (p < end)
 			*p++ ^= _encbyte;

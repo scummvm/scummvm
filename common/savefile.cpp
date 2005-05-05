@@ -79,11 +79,11 @@ public:
 
 	bool isOpen() const { return fh != 0; }
 
-	uint32 read(void *buf, uint32 cnt) {
-		return ::fread(buf, 1, cnt, fh);
+	uint32 read(void *dataPtr, uint32 dataSize) {
+		return ::fread(dataPtr, 1, dataSize, fh);
 	}
-	uint32 write(const void *buf, uint32 cnt) {
-		return ::fwrite(buf, 1, cnt, fh);
+	uint32 write(const void *dataPtr, uint32 dataSize) {
+		return ::fwrite(dataPtr, 1, dataSize, fh);
 	}
 };
 
@@ -109,13 +109,13 @@ public:
 
 	bool isOpen() const { return fh != 0; }
 
-	uint32 read(void *buf, uint32 cnt) {
-		int ret = ::gzread(fh, buf, cnt);
+	uint32 read(void *dataPtr, uint32 dataSize) {
+		int ret = ::gzread(fh, dataPtr, dataSize);
 		if (ret <= -1)
 			_ioError = true;
 		return ret;
 	}
-	uint32 write(const void *buf, uint32 cnt) {
+	uint32 write(const void *dataPtr, uint32 dataSize) {
 		// Due to a "bug" in the zlib headers (or maybe I should say,
 		// a bug in the C++ spec? Whatever <g>) we have to be a bit
 		// hackish here and remove the const qualifier.
@@ -123,7 +123,7 @@ public:
 		// which you might think is the same as "const void *" but it
 		// is not - rather it is equal to "void const *" which is the 
 		// same as "void *". Hrmpf
-		int ret = ::gzwrite(fh, const_cast<void *>(buf), cnt);
+		int ret = ::gzwrite(fh, const_cast<void *>(dataPtr), dataSize);
 		if (ret <= 0)
 			_ioError = true;
 		return ret;

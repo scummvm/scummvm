@@ -269,6 +269,7 @@ public:
 	/**
 	 * Set the volume for the given sound type.
 	 *
+	 * @param type the sound type
 	 * @param volume the new global volume, 0-kMaxMixerVolume
 	 */
 	void setVolumeForSoundType(SoundType type, int volume);
@@ -276,6 +277,7 @@ public:
 	/**
 	 * Query the global volume.
 	 *
+	 * @param type the sound type
 	 * @return the global music volume, 0-kMaxMixerVolume
 	 */
 	int getVolumeForSoundType(SoundType type) const;

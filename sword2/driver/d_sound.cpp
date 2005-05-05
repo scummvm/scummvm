@@ -525,7 +525,7 @@ void Sound::stopMusic(bool immediately) {
 /**
  * Streams music from a cluster file.
  * @param musicId the id of the music to stream
- * @param looping true if the music is to loop back to the start
+ * @param loop true if the music is to loop back to the start
  * @return RD_OK or an error code
  */
 int32 Sound::streamCompMusic(uint32 musicId, bool loop) {
@@ -803,25 +803,25 @@ void Sound::muteFx(bool mute) {
  * @param pan panning
  */
 
-int32 Sound::setFxIdVolumePan(int32 i, int vol, int pan) {
-	if (!_fxQueue[i].resource)
+int32 Sound::setFxIdVolumePan(int32 id, int vol, int pan) {
+	if (!_fxQueue[id].resource)
 		return RDERR_FXNOTOPEN;
 
 	if (vol > 16)
 		vol = 16;
 
-	_fxQueue[i].volume = (vol * SoundMixer::kMaxChannelVolume) / 16;
+	_fxQueue[id].volume = (vol * SoundMixer::kMaxChannelVolume) / 16;
 
 	if (pan != 255) {
 		if (isReverseStereo())
 			pan = -pan;
-		_fxQueue[i].pan = (pan * 127) / 16;
+		_fxQueue[id].pan = (pan * 127) / 16;
 	}
 
-	if (!_fxMuted && _vm->_mixer->isSoundHandleActive(_fxQueue[i].handle)) {
-		_vm->_mixer->setChannelVolume(_fxQueue[i].handle, _fxQueue[i].volume);
+	if (!_fxMuted && _vm->_mixer->isSoundHandleActive(_fxQueue[id].handle)) {
+		_vm->_mixer->setChannelVolume(_fxQueue[id].handle, _fxQueue[id].volume);
 		if (pan != -1)
-			_vm->_mixer->setChannelBalance(_fxQueue[i].handle, _fxQueue[i].pan);
+			_vm->_mixer->setChannelBalance(_fxQueue[id].handle, _fxQueue[id].pan);
 	}
 
 	return RD_OK;
