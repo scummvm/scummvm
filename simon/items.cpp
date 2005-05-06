@@ -527,27 +527,24 @@ int SimonEngine::runScript() {
 			break;
 
 		case 98:{									/* start vga */
-				if (!(_game & GF_SIMON2)) {
-					uint vga_sprite_id = getVarOrWord();
-					uint b = getVarOrByte();
-					uint x = getVarOrWord();
-					uint y = getVarOrWord();
-					uint base_color = getVarOrWord();
-					start_vga_code(b, vga_sprite_id / 100, vga_sprite_id, x, y, base_color);
+				uint vga_res, vgaSpriteId, paletteMode, x, y, base_color;
+				if (_game & GF_SIMON2) {
+					vga_res = getVarOrWord();
+					vgaSpriteId = getVarOrWord();
 				} else {
-					uint vga_res = getVarOrWord();
-					uint vga_sprite_id = getVarOrWord();
-					uint b = getVarOrByte();
-					uint x = getVarOrWord();
-					uint y = getVarOrWord();
-					uint base_color = getVarOrWord();
-					start_vga_code(b, vga_res, vga_sprite_id, x, y, base_color);
+					vgaSpriteId = getVarOrWord();
+					vga_res = vgaSpriteId / 100;
 				}
+				paletteMode = getVarOrByte();
+				x = getVarOrWord();
+				y = getVarOrWord();
+				base_color = getVarOrWord();
+				start_vga_code(paletteMode, vga_res, vgaSpriteId, x, y, base_color);
 			}
 			break;
 
 		case 99:{									/* kill sprite */
-				if (!(_game & GF_SIMON2)) {
+				if (_game & GF_SIMON1) {
 					o_kill_sprite_simon1(getVarOrWord());
 				} else {
 					uint a = getVarOrWord();
@@ -974,20 +971,20 @@ int SimonEngine::runScript() {
 			break;
 
 		case 179:{									/* conversation responses */
-				uint vga_sprite_id = getVarOrByte();				/* and room descriptions */
+				uint vgaSpriteId = getVarOrByte();				/* and room descriptions */
 				uint color = getVarOrByte();
 				uint string_id = getVarOrByte();
 				uint speech_id = 0;
 
 				const char *string_ptr = (const char *)getStringPtrByID(_stringIdArray3[string_id]);
-				TextLocation *tl = getTextLocation(vga_sprite_id);
+				TextLocation *tl = getTextLocation(vgaSpriteId);
 				if (_game & GF_TALKIE) 
 					speech_id = _speechIdArray4[string_id];
 
 				if (_speech && speech_id != 0)
-					talk_with_speech(speech_id, vga_sprite_id);
+					talk_with_speech(speech_id, vgaSpriteId);
 				if (string_ptr != NULL && _subtitles)
-					talk_with_text(vga_sprite_id, color, string_ptr, tl->x, tl->y, tl->width);
+					talk_with_text(vgaSpriteId, color, string_ptr, tl->x, tl->y, tl->width);
 			}
 			break;
 
@@ -1052,7 +1049,7 @@ int SimonEngine::runScript() {
 			break;
 
 		case 188:									/* string2 is */
-			if (!(_game & GF_SIMON2))
+			if (_game & GF_SIMON1)
 				goto invalid_opcode;
 			{
 				uint i = getVarOrByte();
@@ -1062,7 +1059,7 @@ int SimonEngine::runScript() {
 			break;
 
 		case 189:{									/* clear_op189_flag */
-				if (!(_game & GF_SIMON2))
+				if (_game & GF_SIMON1)
 					goto invalid_opcode;
 				_op189Flags = 0;
 			}
@@ -1070,7 +1067,7 @@ int SimonEngine::runScript() {
 
 		case 190:{
 				uint i;
-				if (!(_game & GF_SIMON2))
+				if (_game & GF_SIMON1)
 					goto invalid_opcode;
 				i = getVarOrByte();
 				if (!(_op189Flags & (1 << i)))
@@ -1214,7 +1211,7 @@ bool SimonEngine::o_unk_23(uint a) {
 }
 
 void SimonEngine::o_inventory_descriptions() {
-	uint vga_sprite_id = getVarOrByte();
+	uint vgaSpriteId = getVarOrByte();
 	uint color = getVarOrByte();
 	const char *string_ptr = NULL;
 	TextLocation *tl = NULL;
@@ -1223,7 +1220,7 @@ void SimonEngine::o_inventory_descriptions() {
 	Child2 *child = (Child2 *)findChildOfType(getNextItemPtr(), 2);
 	if (child != NULL && child->avail_props & 1) {
 		string_ptr = (const char *)getStringPtrByID(child->array[0]);
-		tl = getTextLocation(vga_sprite_id);
+		tl = getTextLocation(vgaSpriteId);
 	}
 
 	if ((_game & GF_SIMON2) && (_game & GF_TALKIE)) {
@@ -1275,16 +1272,16 @@ void SimonEngine::o_inventory_descriptions() {
 			}
 
 			if (_speech)
-				talk_with_speech(speech_id, vga_sprite_id);
+				talk_with_speech(speech_id, vgaSpriteId);
 		}
 
 	} else if (_game & GF_TALKIE) {
 		if (child != NULL && child->avail_props & 0x200) {
 			uint offs = getOffsetOfChild2Param(child, 0x200);
-			talk_with_speech(child->array[offs], vga_sprite_id);
+			talk_with_speech(child->array[offs], vgaSpriteId);
 		} else if (child != NULL && child->avail_props & 0x100) {
 			uint offs = getOffsetOfChild2Param(child, 0x100);
-			talk_with_speech(child->array[offs] + 3550, vga_sprite_id);
+			talk_with_speech(child->array[offs] + 3550, vgaSpriteId);
 		}
 	}
 
@@ -1294,7 +1291,7 @@ void SimonEngine::o_inventory_descriptions() {
 			string_ptr = buf;
 		}
 		if (string_ptr != NULL)
-			talk_with_text(vga_sprite_id, color, string_ptr, tl->x, tl->y, tl->width);
+			talk_with_text(vgaSpriteId, color, string_ptr, tl->x, tl->y, tl->width);
 	}
 }
 

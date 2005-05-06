@@ -79,7 +79,7 @@ struct VgaSprite {
 	uint16 image;
 	uint16 base_color;
 	uint16 x, y;									/* actually signed numbers */
-	uint16 unk4;
+	uint16 flags;
 	uint16 priority;
 	uint16 paletteMode, unk7;
 	VgaSprite() { memset(this, 0, sizeof(*this)); }
@@ -588,7 +588,7 @@ protected:
 	void ensureVgaResLoadedC(uint vga_res);
 	void ensureVgaResLoaded(uint vga_res);
 
-	void start_vga_code(uint b, uint vga_res, uint vga_sprite_id, uint x, uint y, uint base_color);
+	void start_vga_code(uint paletteMode, uint vga_res, uint vga_sprite_id, uint x, uint y, uint base_color);
 	void o_unk26_helper(uint a, uint b, uint c, uint d, uint e, uint f, uint g, uint h);
 	void talk_with_speech(uint speech_id, uint vga_sprite_id);
 	void talk_with_text(uint vga_sprite_id, uint color, const char *string_ptr, int16 x, int16 y, int16 width);

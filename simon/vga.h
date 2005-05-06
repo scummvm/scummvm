@@ -66,7 +66,7 @@ struct VgaFile1Struct0x6 {
 
 struct VC10_state {
 	int image;
-	uint16 e;
+	uint16 flags;
 	int x, y;
 
 	byte base_color;
