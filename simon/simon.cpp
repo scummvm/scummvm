@@ -345,7 +345,8 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 		VGA_MEM_SIZE = gVars->memory[kMemSimon2Games];
 #endif
 		TABLES_MEM_SIZE = 100000;
-		if ((_game & GF_SIMON2) && ConfMan.getBool("native_mt32"))
+		// Check whether to use MT-32 MIDI tracks in Simon the Sorcerer 2
+		if ((_game & GF_SIMON2) && (ConfMan.getBool("native_mt32") || (_midiDriver == MD_MT32)))
 			MUSIC_INDEX_BASE = (1128 + 612) / 4;
 		else
 			MUSIC_INDEX_BASE = 1128 / 4;
@@ -4152,60 +4153,68 @@ void SimonEngine::delay(uint amount) {
 }
 
 void SimonEngine::loadMusic (uint music) {
-	if (_game & GF_SIMON2) {        // Simon 2 music
+	char buf[4];
+
+	if (_game & GF_AMIGA) {
+		if (_game != GAME_SIMON1CD32) {
+			// TODO Add support for decruncher
+			debug(5,"loadMusic - Decrunch %dtune attempt", music);
+		}
+		// TODO Add Protracker support for simon1amiga/cd32
+		debug(5,"playMusic - Load %dtune attempt", music);
+	} else if (_game & GF_SIMON2) {        // Simon 2 music
 		midi.stop();
 		_game_file->seek(_game_offsets_ptr[MUSIC_INDEX_BASE + music - 1], SEEK_SET);
-		if (_game & GF_WIN && !(ConfMan.getBool("native_mt32") && (_midiDriver != MD_MT32))) {
-			midi.loadMultipleSMF (_game_file);
-		} else {
+		_game_file->read(buf, 4);
+		if (!memcmp(buf, "FORM", 4)) {
+			_game_file->seek(_game_offsets_ptr[MUSIC_INDEX_BASE + music - 1], SEEK_SET);
 			midi.loadXMIDI (_game_file);
+		} else {
+			_game_file->seek(_game_offsets_ptr[MUSIC_INDEX_BASE + music - 1], SEEK_SET);
+			midi.loadMultipleSMF (_game_file);
 		}
 
 		_last_music_played = music;
 		_next_music_to_play = -1;
-	} else { // Simon 1 music
-		if (_game & GF_AMIGA) {
-			if (_game != GAME_SIMON1CD32) {
-				// TODO Add support for decruncher
-				debug(5,"loadMusic - Decrunch %dtune attempt", music);
-			}
-			// TODO Add Protracker support for simon1amiga/cd32
-			debug(5,"playMusic - Load %dtune attempt", music);
-		} else {
-			midi.stop();
-			midi.setLoop (true); // Must do this BEFORE loading music. (GMF may have its own override.)
+	} else if (_game & GF_SIMON1) {        // Simon 1 music
+		midi.stop();
+		midi.setLoop (true); // Must do this BEFORE loading music. (GMF may have its own override.)
 
-			if (_game & GF_WIN) {	
-				// FIXME: The very last music resource, a cymbal crash for when the
-				// two demons crash into each other, should NOT be looped like the 
-				// other music tracks. In simon1dos/talkie the GMF resource includes 
-				// a loop override that acomplishes this, but there seems to be nothing 
-				// for this in the SMF resources.
-				if (music == 35)
-					midi.setLoop (false);
+		if (_game & GF_TALKIE) {	
+			// FIXME: The very last music resource, a cymbal crash for when the
+			// two demons crash into each other, should NOT be looped like the 
+			// other music tracks. In simon1dos/talkie the GMF resource includes 
+			// a loop override that acomplishes this, but there seems to be nothing 
+			// for this in the SMF resources.
+			if (music == 35)
+				midi.setLoop (false);
 
-				_game_file->seek(_game_offsets_ptr[MUSIC_INDEX_BASE + music], SEEK_SET);
-				midi.loadMultipleSMF (_game_file);
-			} else if (_game & GF_TALKIE) {	
+			_game_file->seek(_game_offsets_ptr[MUSIC_INDEX_BASE + music], SEEK_SET);
+			_game_file->read(buf, 4);
+			if (!memcmp(buf, "GMF\x1", 4)) {
 				_game_file->seek(_game_offsets_ptr[MUSIC_INDEX_BASE + music], SEEK_SET);
 				midi.loadSMF (_game_file, music);
 			} else {
-				char buf[15];
-				File f;
-				sprintf(buf, "MOD%d.MUS", music);
-				f.open(buf);
-				if (f.isOpen() == false) {
-					warning("Can't load music from '%s'", buf);
-					return;
-				}
-				if (_game & GF_DEMO)
-					midi.loadS1D (&f);
-				else
-					midi.loadSMF (&f, music);
+				_game_file->seek(_game_offsets_ptr[MUSIC_INDEX_BASE + music], SEEK_SET);
+				midi.loadMultipleSMF (_game_file);
 			}
 
-			midi.startTrack (0);
+		} else {
+			char filename[15];
+			File f;
+			sprintf(filename, "MOD%d.MUS", music);
+			f.open(filename);
+			if (f.isOpen() == false) {
+				warning("Can't load music from '%s'", filename);
+				return;
+			}
+			if (_game & GF_DEMO)
+				midi.loadS1D (&f);
+			else
+				midi.loadSMF (&f, music);
 		}
+
+		midi.startTrack (0);
 	}
 }
 

@@ -1024,7 +1024,7 @@ void SimonEngine::vc_12_delay() {
 
 	// Work around to allow inventory arrows to be
 	// shown in some versions of Simon the Sorcerer 1
-	if (!(_game & GF_SIMON2) && !(_game & GF_WIN) && vsp->id == 0x80)
+	if ((_game & GF_SIMON1) && vsp->id == 0x80)
 		num = 0;
 	else
 		num += VGA_DELAY_BASE;

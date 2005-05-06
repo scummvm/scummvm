@@ -244,6 +244,11 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer
 	_voice_file = false;
 	_ambient_playing = 0;
 
+	if (_game == GAME_SIMON1CD32) {
+		// Uses separate voice files
+		return;
+	}
+
 	File *file = new File();
 	const char *s;
 
@@ -274,7 +279,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer
 		}
 	}
 #endif
-	if (!_voice) {
+	if (!_voice && (_game & GF_SIMON2)) {
 		// for simon2 mac/amiga, only read index file
 		file->open("voices.idx");
 		if (file->isOpen() == true) {
@@ -287,27 +292,26 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer
 			for (int i = 1; i <= end / 6; i++) {
 				_filenums[i] = file->readUint16BE();
 				_offsets[i] = file->readUint32BE();
-			}
-			_voice_file = true;
-			delete file;
-		} else if (_game & GF_WIN) {
+		}
+		_voice_file = true;
+		delete file;
+	}
+	if (!_voice && gss->wav_filename && gss->wav_filename[0]) {
 			s = gss->wav_filename;
 			file->open(s);
 			if (file->isOpen() == false) {
-				warning("Can't open voice file %s", s);
+				debug(0, "Can't open voice file %s", s);
 				delete file;
 			} else	{
 				_voice_file = true;
 				_voice = new WavSound(_mixer, file);
 			}
-		} else if (_game == GAME_SIMON1CD32) {
-			// simon1cd32 uses separate voice files
-			return;
-		} else if (_game & GF_TALKIE) {
+	}
+	if (!_voice && gss->voc_filename && gss->voc_filename[0]) {
 			s = gss->voc_filename;
 			file->open(s);
 			if (file->isOpen() == false) {
-				warning("Can't open voice file %s", s);
+				debug(0, "Can't open voice file %s", s);
 				delete file;
 			} else {
 				_voice_file = true;
@@ -316,7 +320,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer
 		}
 	}
 
-	if (_game == GAME_SIMON1ACORN || _game == GAME_SIMON1TALKIE) {
+	if ((_game & GF_SIMON1) && (_game & GF_TALKIE)) {
 		file = new File();
 #ifdef USE_MAD
 		if (!_effects && gss->mp3_effects_filename && gss->mp3_effects_filename[0]) {
