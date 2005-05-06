@@ -81,7 +81,7 @@ struct VgaSprite {
 	uint16 x, y;									/* actually signed numbers */
 	uint16 unk4;
 	uint16 priority;
-	uint16 unk6, unk7;
+	uint16 paletteMode, unk7;
 	VgaSprite() { memset(this, 0, sizeof(*this)); }
 };
 
@@ -643,8 +643,6 @@ public:
 	void vc_25_halt_sprite();
 	void vc_26_set_window();
 	void vc_27_reset();
-	void vc_27_reset_simon1();
-	void vc_27_reset_simon2();
 	void vc_28_dummy_op();
 	void vc_29_stop_all_sounds();
 	void vc_30_set_base_delay();

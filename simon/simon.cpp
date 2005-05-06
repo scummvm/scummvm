@@ -2738,12 +2738,12 @@ void SimonEngine::timer_vga_sprites() {
 	vsp = _vga_sprites;
 
 	while (vsp->id != 0) {
-		vsp->unk6 &= 0x7FFF;
+		vsp->paletteMode &= 0x7FFF;
 
 		vpe = &_vga_buffer_pointers[vsp->unk7];
 		_cur_vga_file_1 = vpe->vgaFile1;
 		_cur_vga_file_2 = vpe->vgaFile2;
-		_video_palette_mode = vsp->unk6;
+		_video_palette_mode = vsp->paletteMode;
 		_vga_cur_sprite_id = vsp->id;
 
 		params[0] = READ_BE_UINT16(&vsp->image);
@@ -2816,12 +2816,12 @@ void SimonEngine::timer_vga_sprites_2() {
 
 	vsp = _vga_sprites;
 	while (vsp->id != 0) {
-		vsp->unk6 &= 0x7FFF;
+		vsp->paletteMode &= 0x7FFF;
 
 		vpe = &_vga_buffer_pointers[vsp->unk7];
 		_cur_vga_file_1 = vpe->vgaFile1;
 		_cur_vga_file_2 = vpe->vgaFile2;
-		_video_palette_mode = vsp->unk6;
+		_video_palette_mode = vsp->paletteMode;
 		_vga_cur_sprite_id = vsp->id;
 
 		if (vsp->image)
@@ -3365,7 +3365,7 @@ void SimonEngine::start_vga_code(uint b, uint vga_res, uint vga_sprite_id, uint 
 	while (vsp->id != 0)
 		vsp++;
 
-	vsp->unk6 = b;
+	vsp->paletteMode = b;
 	vsp->priority = 0;
 	vsp->unk4 = 0;
 

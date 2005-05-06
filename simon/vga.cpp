@@ -299,7 +299,7 @@ void SimonEngine::vc_3_new_sprite() {
 		vsp++;
 
 	vsp->base_color = base_color;
-	vsp->unk6 = a;
+	vsp->paletteMode = a;
 	vsp->priority = 0;
 	vsp->unk4 = 0;
 	vsp->image = 0;
@@ -1160,7 +1160,7 @@ void SimonEngine::vc_23_set_sprite_priority() {
 
 	memcpy(&bak, vsp, sizeof(bak));
 	bak.priority = pri;
-	bak.unk6 |= 0x8000;
+	bak.paletteMode |= 0x8000;
 
 	vus2 = vsp;
 
@@ -1219,7 +1219,7 @@ void SimonEngine::vc_26_set_window() {
 	as[3] = vc_read_next_word();
 }
 
-void SimonEngine::vc_27_reset_simon1() {
+void SimonEngine::vc_27_reset() {
 	VgaSprite bak, *vsp;
 	VgaSleepStruct *vfs;
 	VgaTimerEntry *vte, *vte2;
@@ -1230,7 +1230,7 @@ void SimonEngine::vc_27_reset_simon1() {
 
 	vsp = _vga_sprites;
 	while (vsp->id) {
-		if (vsp->id == 0x80) {
+		if ((_game & GF_SIMON1) && vsp->id == 0x80) {
 			memcpy(&bak, vsp, sizeof(VgaSprite));
 		}
 		vsp->id = 0;
@@ -1248,62 +1248,20 @@ void SimonEngine::vc_27_reset_simon1() {
 
 	vte = _vga_timer_list;
 	while (vte->delay) {
-		if (vte->sprite_id != 0x80) {
+		if ((_game & GF_SIMON1) && vsp->id == 0x80) {
+			vte++;
+		} else {
 			vte2 = vte;
 			while (vte2->delay) {
 				memcpy(vte2, vte2 + 1, sizeof(VgaTimerEntry));
 				vte2++;
 			}
-		} else {
-			vte++;
 		}
 	}
 
 	vc_write_var(0xFE, 0);
 
 	_lock_word &= ~8;
-}
-
-void SimonEngine::vc_27_reset_simon2() {
-	_lock_word |= 8;
-
-	{
-		VgaSprite *vsp = _vga_sprites;
-		while (vsp->id) {
-			vsp->id = 0;
-			vsp++;
-		}
-	}
-
-	{
-		VgaSleepStruct *vfs = _vga_sleep_structs;
-		while (vfs->ident) {
-			vfs->ident = 0;
-			vfs++;
-		}
-	}
-
-	{
-		VgaTimerEntry *vte = _vga_timer_list;
-		while (vte->delay) {
-			VgaTimerEntry *vte2 = vte;
-			while (vte2->delay) {
-				memcpy(vte2, vte2 + 1, sizeof(VgaTimerEntry));
-				vte2++;
-			}
-		}
-	}
-
-	vc_write_var(0xFE, 0);
-
-	_lock_word &= ~8;
-}
-
-void SimonEngine::vc_27_reset() {
-	if (!(_game & GF_SIMON2))
-		vc_27_reset_simon1();
-	else
-		vc_27_reset_simon2();
 }
 
 void SimonEngine::vc_28_dummy_op() {
@@ -1729,7 +1687,7 @@ void SimonEngine::vc_62_palette_thing() {
 			delay(5);
 		}
 
-		if (!(_game & GF_SIMON2)) {
+		if (_game & GF_SIMON1) {
 			uint16 params[5];						/* parameters to vc_10_draw */
 			VgaSprite *vsp;
 			VgaPointersEntry *vpe;
@@ -1745,7 +1703,7 @@ void SimonEngine::vc_62_palette_thing() {
 					vpe = &_vga_buffer_pointers[vsp->unk7];
 					_cur_vga_file_1 = vpe->vgaFile1;
 					_cur_vga_file_2 = vpe->vgaFile2;
-					_video_palette_mode = vsp->unk6;
+					_video_palette_mode = vsp->paletteMode;
 
 					params[0] = READ_BE_UINT16(&vsp->image);
 					params[1] = READ_BE_UINT16(&vsp->base_color);
@@ -1767,7 +1725,7 @@ void SimonEngine::vc_62_palette_thing() {
 
 		// Allow one section of Simon the Sorcerer 1 introduction to be displayed
 		// in lower half of screen
-		if (!(_game & GF_SIMON2) && (_subroutine == 2923 || _subroutine == 2926))
+		if ((_game & GF_SIMON1) && (_subroutine == 2923 || _subroutine == 2926))
 			dx_clear_surfaces(200);
 		else
 			dx_clear_surfaces(_video_palette_mode == 4 ? 134 : 200);
