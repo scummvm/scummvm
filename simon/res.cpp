@@ -120,7 +120,7 @@ void SimonEngine::loadGamePcFile(const char *filename) {
 	readGamePcText(&in);
 
 	for (i = 2; i < num_inited_objects; i++) {
-		readItemFromGamePc(&in, _itemarray_ptr[i]);
+		readItemFromGamePc(&in, _itemArrayPtr[i]);
 	}
 
 	readSubroutineBlock(&in);
@@ -137,16 +137,16 @@ void SimonEngine::loadGamePcFile(const char *filename) {
 
 	file_size = in.size();
 
-	_tbl_list = (byte *)malloc(file_size);
-	if (_tbl_list == NULL)
+	_tblList = (byte *)malloc(file_size);
+	if (_tblList == NULL)
 		error("Out of memory for strip table list");
-	in.read(_tbl_list, file_size);
+	in.read(_tblList, file_size);
 	in.close();
 
 	/* Remember the current state */
-	_subroutine_list_org = _subroutine_list;
-	_tablesheap_ptr_org = _tablesheap_ptr;
-	_tablesheap_curpos_org = _tablesheap_curpos;
+	_subroutineListOrg = _subroutineList;
+	_tablesHeapPtrOrg = _tablesHeapPtr;
+	_tablesHeapCurPosOrg = _tablesHeapCurPos;
 
 	/* Read list of TEXT resources */
 	if (_game == GAME_SIMON1ACORN)
@@ -157,10 +157,10 @@ void SimonEngine::loadGamePcFile(const char *filename) {
 		error("Can't open text resources file 'STRIPPED.TXT'");
 
 	file_size = in.size();
-	_stripped_txt_mem = (byte *)malloc(file_size);
-	if (_stripped_txt_mem == NULL)
+	_strippedTxtMem = (byte *)malloc(file_size);
+	if (_strippedTxtMem == NULL)
 		error("Out of memory for strip text list");
-	in.read(_stripped_txt_mem, file_size);
+	in.read(_strippedTxtMem, file_size);
 	in.close();
 }
 
@@ -168,14 +168,14 @@ void SimonEngine::readGamePcText(File *in) {
 	uint text_size;
 	byte *text_mem;
 
-	_text_size = text_size = in->readUint32BE();
+	_textSize = text_size = in->readUint32BE();
 	text_mem = (byte *)malloc(text_size);
 	if (text_mem == NULL)
 		error("Out of text memory");
 
 	in->read(text_mem, text_size);
 
-	setupStringTable(text_mem, _stringtab_num);
+	setupStringTable(text_mem, _stringTabNum);
 }
 
 void SimonEngine::readItemFromGamePc(File *in, Item *item) {

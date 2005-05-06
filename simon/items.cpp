@@ -39,14 +39,14 @@ int SimonEngine::runScript() {
 	bool flag, condition;
 
 	do {
-		if (_continous_mainscript)
-			dumpOpcode(_code_ptr);
+		if (_continousMainScript)
+			dumpOpcode(_codePtr);
 
 		opcode = getByte();
 		if (opcode == 0xFF)
 			return 0;
 
-		if (_run_script_return_1)
+		if (_runScriptReturn1)
 			return 1;
 
 		/* Invert condition? */
@@ -360,7 +360,7 @@ int SimonEngine::runScript() {
 				int h = getVarOrWord();
 				int number = getVarOrByte();
 				if (number < 20)
-					addNewHitArea(id, x, y, w, h, (number << 8) + 129, 0xD0, _dummy_item_2);
+					addNewHitArea(id, x, y, w, h, (number << 8) + 129, 0xD0, _dummyItem2);
 			}
 			break;
 
@@ -368,7 +368,7 @@ int SimonEngine::runScript() {
 				uint var = getVarOrByte();
 				uint string_id = getNextStringID();
 				if (var < 20)
-					_stringid_array_2[var] = string_id;
+					_stringIdArray2[var] = string_id;
 			}
 			break;
 
@@ -378,12 +378,12 @@ int SimonEngine::runScript() {
 				if (_game & GF_TALKIE) {
 					uint speech_id = getNextWord();
 					if (var < 20) {
-						_stringid_array_3[var] = string_id;
-						_speechid_array_4[var] = speech_id;
+						_stringIdArray3[var] = string_id;
+						_speechIdArray4[var] = speech_id;
 					}
 				} else {
 					if (var < 20) {
-						_stringid_array_3[var] = string_id;
+						_stringIdArray3[var] = string_id;
 					}
 				}
 			}
@@ -399,7 +399,7 @@ int SimonEngine::runScript() {
 			}
 
 		case 70:{									/* show string from array */
-				const char *str = (const char *)getStringPtrByID(_stringid_array_3[getVarOrByte()]);
+				const char *str = (const char *)getStringPtrByID(_stringIdArray3[getVarOrByte()]);
 
 				if (_game & GF_SIMON2) {
 					writeVariable(51, strlen(str) / 53 * 8 + 8);
@@ -423,12 +423,12 @@ int SimonEngine::runScript() {
 			break;
 
 		case 77:{									/* has item minus 1 */
-				condition = _subject_item != NULL;
+				condition = _subjectItem != NULL;
 			}
 			break;
 
 		case 78:{									/* has item minus 3 */
-				condition = _object_item != NULL;
+				condition = _objectItem != NULL;
 			}
 			break;
 
@@ -460,13 +460,13 @@ int SimonEngine::runScript() {
 			}
 			break;
 
-		case 88:{									/* or_lock_word */
-				_lock_word |= 0x10;
+		case 88:{									/* or_lockWord */
+				_lockWord |= 0x10;
 			}
 			break;
 
 		case 89:{									/* and lock word */
-				_lock_word &= ~0x10;
+				_lockWord &= ~0x10;
 			}
 			break;
 
@@ -474,10 +474,10 @@ int SimonEngine::runScript() {
 				Item *item = derefItem(getNextItemPtr()->parent);
 				switch (getVarOrByte()) {
 				case 0:
-					_object_item = item;
+					_objectItem = item;
 					break;
 				case 1:
-					_subject_item = item;
+					_subjectItem = item;
 					break;
 				default:
 					error("set minusitem to parent, invalid subcode");
@@ -489,10 +489,10 @@ int SimonEngine::runScript() {
 				Item *item = derefItem(getNextItemPtr()->sibling);
 				switch (getVarOrByte()) {
 				case 0:
-					_object_item = item;
+					_objectItem = item;
 					break;
 				case 1:
-					_subject_item = item;
+					_subjectItem = item;
 					break;
 				default:
 					error("set minusitem to sibling, invalid subcode");
@@ -504,10 +504,10 @@ int SimonEngine::runScript() {
 				Item *item = derefItem(getNextItemPtr()->child);
 				switch (getVarOrByte()) {
 				case 0:
-					_object_item = item;
+					_objectItem = item;
 					break;
 				case 1:
-					_subject_item = item;
+					_subjectItem = item;
 					break;
 				default:
 					error("set minusitem to child, invalid subcode");
@@ -675,11 +675,11 @@ int SimonEngine::runScript() {
 
 		case 119:{									/* wait vga */
 				uint var = getVarOrWord();
-				_scriptvar_2 = (var == 200);
+				_scriptVar2 = (var == 200);
 
-				if (var != 200 || !_skip_vga_wait)
+				if (var != 200 || !_skipVgaWait)
 					o_wait_for_vga(var);
-				_skip_vga_wait = false;
+				_skipVgaWait = false;
 			}
 			break;
 
@@ -690,7 +690,7 @@ int SimonEngine::runScript() {
 
 		case 121:{									/* set vga item */
 				uint slot = getVarOrByte();
-				_vc_item_array[slot] = getNextItemPtr();
+				_vcItemArray[slot] = getNextItemPtr();
 			}
 			break;
 
@@ -730,9 +730,9 @@ int SimonEngine::runScript() {
 				uint var = getVarOrByte();
 				getNextWord();
 				if (var == 1)
-					_script_cond_b = getNextWord();
+					_scriptCondB = getNextWord();
 				else
-					_script_cond_c = getNextWord();
+					_scriptCondC = getNextWord();
 			}
 			break;
 
@@ -752,7 +752,7 @@ int SimonEngine::runScript() {
 
 		case 134:{									/* dummy opcode? */
 				midi.stop();
-				_last_music_played = -1;
+				_lastMusicPlayed = -1;
 			}
 			break;
 
@@ -781,9 +781,9 @@ int SimonEngine::runScript() {
 
 		case 139:{									/* set parent special */
 				Item *item = getNextItemPtr();
-				_no_parent_notify = true;
+				_noParentNotify = true;
 				setItemParent(item, getNextItemPtr());
-				_no_parent_notify = false;
+				_noParentNotify = false;
 			}
 			break;
 
@@ -797,9 +797,9 @@ int SimonEngine::runScript() {
 				uint which = getVarOrByte();
 				Item *item = getNextItemPtr();
 				if (which == 1) {
-					_subject_item = item;
+					_subjectItem = item;
 				} else {
-					_object_item = item;
+					_objectItem = item;
 				}
 			}
 			break;
@@ -822,42 +822,42 @@ int SimonEngine::runScript() {
 		case 151:{									/* set array6 to item */
 				uint var = getVarOrByte();
 				Item *item = getNextItemPtr();
-				_item_array_6[var] = item;
+				_itemArray6[var] = item;
 			}
 			break;
 
 		case 152:{									/* set m1 or m3 to array6 */
-				Item *item = _item_array_6[getVarOrByte()];
+				Item *item = _itemArray6[getVarOrByte()];
 				uint var = getVarOrByte();
 				if (var == 1) {
-					_subject_item = item;
+					_subjectItem = item;
 				} else {
-					_object_item = item;
+					_objectItem = item;
 				}
 			}
 			break;
 
 		case 153:{									/* set bit */
 				uint bit = getVarOrByte();
-				_bit_array[bit >> 4] |= 1 << (bit & 15);
+				_bitArray[bit >> 4] |= 1 << (bit & 15);
 				break;
 			}
 
 		case 154:{									/* clear bit */
 				uint bit = getVarOrByte();
-				_bit_array[bit >> 4] &= ~(1 << (bit & 15));
+				_bitArray[bit >> 4] &= ~(1 << (bit & 15));
 				break;
 			}
 
 		case 155:{									/* is bit clear? */
 				uint bit = getVarOrByte();
-				condition = (_bit_array[bit >> 4] & (1 << (bit & 15))) == 0;
+				condition = (_bitArray[bit >> 4] & (1 << (bit & 15))) == 0;
 			}
 			break;
 
 		case 156:{									/* is bit set? */
 				uint bit = getVarOrByte();
-				condition = (_bit_array[bit >> 4] & (1 << (bit & 15))) != 0;
+				condition = (_bitArray[bit >> 4] & (1 << (bit & 15))) != 0;
 			}
 			break;
 
@@ -913,9 +913,9 @@ int SimonEngine::runScript() {
 			break;
 
 		case 164:{
-				_show_preposition = true;
+				_showPreposition = true;
 				o_setup_cond_c();
-				_show_preposition = false;
+				_showPreposition = false;
 			}
 			break;
 
@@ -927,25 +927,25 @@ int SimonEngine::runScript() {
 
 		case 166:{									/* set bit2 */
 				uint bit = getVarOrByte();
-				_bit_array[(bit >> 4) + 16] |= 1 << (bit & 15);
+				_bitArray[(bit >> 4) + 16] |= 1 << (bit & 15);
 			}
 			break;
 
 		case 167:{									/* clear bit2 */
 				uint bit = getVarOrByte();
-				_bit_array[(bit >> 4) + 16] &= ~(1 << (bit & 15));
+				_bitArray[(bit >> 4) + 16] &= ~(1 << (bit & 15));
 			}
 			break;
 
 		case 168:{									/* is bit2 clear */
 				uint bit = getVarOrByte();
-				condition = (_bit_array[(bit >> 4) + 16] & (1 << (bit & 15))) == 0;
+				condition = (_bitArray[(bit >> 4) + 16] & (1 << (bit & 15))) == 0;
 			}
 			break;
 
 		case 169:{									/* is bit2 set */
 				uint bit = getVarOrByte();
-				condition = (_bit_array[(bit >> 4) + 16] & (1 << (bit & 15))) != 0;
+				condition = (_bitArray[(bit >> 4) + 16] & (1 << (bit & 15))) != 0;
 			}
 			break;
 
@@ -979,10 +979,10 @@ int SimonEngine::runScript() {
 				uint string_id = getVarOrByte();
 				uint speech_id = 0;
 
-				const char *string_ptr = (const char *)getStringPtrByID(_stringid_array_3[string_id]);
+				const char *string_ptr = (const char *)getStringPtrByID(_stringIdArray3[string_id]);
 				TextLocation *tl = getTextLocation(vga_sprite_id);
 				if (_game & GF_TALKIE) 
-					speech_id = _speechid_array_4[string_id];
+					speech_id = _speechIdArray4[string_id];
 
 				if (_speech && speech_id != 0)
 					talk_with_speech(speech_id, vga_sprite_id);
@@ -1027,12 +1027,12 @@ int SimonEngine::runScript() {
 		case 185:{									/* midi sfx file number */
 				if (_game & GF_SIMON2)
 					goto invalid_opcode;
-					_sound_file_id = getVarOrWord();
+					_soundFileId = getVarOrWord();
 				if (_game == GAME_SIMON1CD32) {
 					char buf[10];
-					sprintf(buf, "%d%s", _sound_file_id, "Effects");
+					sprintf(buf, "%d%s", _soundFileId, "Effects");
 					_sound->readSfxFile(buf);
-					sprintf(buf, "%d%s", _sound_file_id, "simon");
+					sprintf(buf, "%d%s", _soundFileId, "simon");
 					_sound->readVoiceFile(buf);
 				}
 
@@ -1057,14 +1057,14 @@ int SimonEngine::runScript() {
 			{
 				uint i = getVarOrByte();
 				uint str = getNextStringID();
-				condition = (str < 20 && _stringid_array_2[i] == str);
+				condition = (str < 20 && _stringIdArray2[i] == str);
 			}
 			break;
 
 		case 189:{									/* clear_op189_flag */
 				if (!(_game & GF_SIMON2))
 					goto invalid_opcode;
-				_op_189_flags = 0;
+				_op189Flags = 0;
 			}
 			break;
 
@@ -1073,7 +1073,7 @@ int SimonEngine::runScript() {
 				if (!(_game & GF_SIMON2))
 					goto invalid_opcode;
 				i = getVarOrByte();
-				if (!(_op_189_flags & (1 << i)))
+				if (!(_op189Flags & (1 << i)))
 					o_190_helper(i);
 			}
 			break;
@@ -1093,12 +1093,12 @@ int SimonEngine::startSubroutine(Subroutine *sub) {
 	SubroutineLine *sl;
 	const byte *old_code_ptr;
 
-	if (_start_mainscript)
+	if (_startMainScript)
 		dumpSubroutine(sub);
 
-	old_code_ptr = _code_ptr;
+	old_code_ptr = _codePtr;
 
-	if (++_recursion_depth > 40)
+	if (++_recursionDepth > 40)
 		error("Recursion error");
 
 	sl = (SubroutineLine *)((byte *)sub + sub->first);
@@ -1106,14 +1106,14 @@ int SimonEngine::startSubroutine(Subroutine *sub) {
 	while ((byte *)sl != (byte *)sub) {
 		if (checkIfToRunSubroutineLine(sl, sub)) {
 			result = 0;
-			_code_ptr = (byte *)sl;
+			_codePtr = (byte *)sl;
 			if (sub->id)
-				_code_ptr += 2;
+				_codePtr += 2;
 			else
-				_code_ptr += 8;
+				_codePtr += 8;
 
-			if (_continous_mainscript)
-				fprintf(_dump_file, "; %d\n", sub->id);
+			if (_continousMainScript)
+				fprintf(_dumpFile, "; %d\n", sub->id);
 			result = runScript();
 			if (result != 0) {
 				/* result -10 means restart subroutine */
@@ -1128,9 +1128,9 @@ int SimonEngine::startSubroutine(Subroutine *sub) {
 		sl = (SubroutineLine *)((byte *)sub + sl->next);
 	}
 
-	_code_ptr = old_code_ptr;
+	_codePtr = old_code_ptr;
 
-	_recursion_depth--;
+	_recursionDepth--;
 	return result;
 }
 
@@ -1142,23 +1142,23 @@ bool SimonEngine::checkIfToRunSubroutineLine(SubroutineLine *sl, Subroutine *sub
 	if (sub->id)
 		return true;
 
-	if (sl->cond_a != -1 && sl->cond_a != _script_cond_a &&
-			(sl->cond_a != -2 || _script_cond_a != -1))
+	if (sl->cond_a != -1 && sl->cond_a != _scriptCondA &&
+			(sl->cond_a != -2 || _scriptCondA != -1))
 		return false;
 
-	if (sl->cond_b != -1 && sl->cond_b != _script_cond_b &&
-			(sl->cond_b != -2 || _script_cond_b != -1))
+	if (sl->cond_b != -1 && sl->cond_b != _scriptCondB &&
+			(sl->cond_b != -2 || _scriptCondB != -1))
 		return false;
 
-	if (sl->cond_c != -1 && sl->cond_c != _script_cond_c &&
-			(sl->cond_c != -2 || _script_cond_c != -1))
+	if (sl->cond_c != -1 && sl->cond_c != _scriptCondC &&
+			(sl->cond_c != -2 || _scriptCondC != -1))
 		return false;
 
 	return true;
 }
 
 void SimonEngine::o_83_helper() {
-		if (_exit_cutscene) {
+		if (_exitCutscene) {
 			if (vc_get_bit(9)) {
 				startSubroutine170();
 			}
@@ -1168,9 +1168,9 @@ void SimonEngine::o_83_helper() {
 }
 
 void SimonEngine::o_190_helper(uint i) {
-	_exit_cutscene = false;
-	while (!(_op_189_flags & (1 << i))) {
-		if (_exit_cutscene) {
+	_exitCutscene = false;
+	while (!(_op189Flags & (1 << i))) {
+		if (_exitCutscene) {
 			if (vc_get_bit(9)) {
 				startSubroutine170();
 				break;
@@ -1191,24 +1191,24 @@ bool SimonEngine::o_unk_23(uint a) {
 	if (a == 100)
 		return 1;
 
-	a += _script_unk_1;
+	a += _scriptUnk1;
 	if (a <= 0) {
-		_script_unk_1 = 0;
+		_scriptUnk1 = 0;
 		return 0;
 	}
 
 	if ((uint)_rnd.getRandomNumber(99) < a) {
-		if (_script_unk_1 <= 0)
-			_script_unk_1 -= 5;
+		if (_scriptUnk1 <= 0)
+			_scriptUnk1 -= 5;
 		else
-			_script_unk_1 = 0;
+			_scriptUnk1 = 0;
 		return 1;
 	}
 
-	if (_script_unk_1 >= 0)
-		_script_unk_1 += 5;
+	if (_scriptUnk1 >= 0)
+		_scriptUnk1 += 5;
 	else
-		_script_unk_1 = 0;
+		_scriptUnk1 = 0;
 
 	return 0;
 }
@@ -1303,27 +1303,27 @@ void SimonEngine::o_quit_if_user_presses_y() {
 		delay(1);
 #ifdef _WIN32_WCE
 		if (isSmartphone()) {
-			if (_key_pressed) {
-				if (_key_pressed == 13)
+			if (_keyPressed) {
+				if (_keyPressed == 13)
 					shutdown();
 				else
 					break;
 			}
 		}
 #endif
-		if (_key_pressed == 'f' && _language == 20) // Hebrew
+		if (_keyPressed == 'f' && _language == 20) // Hebrew
 			shutdown();
-		if (_key_pressed == 's' && _language == 5) // Spanish
+		if (_keyPressed == 's' && _language == 5) // Spanish
 			shutdown();
-		if (_key_pressed == 's' && _language == 3) // Italian
+		if (_keyPressed == 's' && _language == 3) // Italian
 			shutdown();
-		if (_key_pressed == 'o' && _language == 2) // French
+		if (_keyPressed == 'o' && _language == 2) // French
 			shutdown();
-		if (_key_pressed == 'j' && _language == 1) // German
+		if (_keyPressed == 'j' && _language == 1) // German
 			shutdown();
-		if (_key_pressed == 'y' && _language == 0) // English
+		if (_keyPressed == 'y' && _language == 0) // English
 			shutdown();
-		if (_key_pressed == 'n')
+		if (_keyPressed == 'n')
 			goto get_out;
 	}
 get_out:;
@@ -1332,63 +1332,63 @@ get_out:;
 void SimonEngine::o_unk_137(uint fcs_index) {
 	FillOrCopyStruct *fcs;
 
-	fcs = _fcs_ptr_array_3[fcs_index & 7];
+	fcs = _fcsPtrArray3[fcs_index & 7];
 	if (fcs->fcs_data == NULL)
 		return;
 	fcs_unk_proc_1(fcs_index, fcs->fcs_data->item_ptr, fcs->fcs_data->unk1, fcs->fcs_data->unk2);
 }
 
 void SimonEngine::o_unk_138() {
-	_vga_buf_start = _vga_buf_free_start;
-	_vga_file_buf_org = _vga_buf_free_start;
+	_vgaBufStart = _vgaBufFreeStart;
+	_vgaFileBufOrg = _vgaBufFreeStart;
 }
 
 void SimonEngine::o_unk_186() {
-	_vga_buf_free_start = _vga_file_buf_org_2;
-	_vga_buf_start = _vga_file_buf_org_2;
-	_vga_file_buf_org = _vga_file_buf_org_2;
+	_vgaBufFreeStart = _vgaFileBufOrg2;
+	_vgaBufStart = _vgaFileBufOrg2;
+	_vgaFileBufOrg = _vgaFileBufOrg2;
 }
 
 void SimonEngine::o_unk_175() {
-	_vga_buf_start = _vga_buf_free_start;
+	_vgaBufStart = _vgaBufFreeStart;
 }
 
 void SimonEngine::o_unk_176() {
-	_vga_buf_free_start = _vga_file_buf_org;
-	_vga_buf_start = _vga_file_buf_org;
+	_vgaBufFreeStart = _vgaFileBufOrg;
+	_vgaBufStart = _vgaFileBufOrg;
 }
 
 int SimonEngine::o_unk_132_helper(bool *b, char *buf) {
 	HitArea *ha;
 	*b = true;
 
-	if (!_saveload_flag) {
+	if (!_saveLoadFlag) {
 	strange_jump:;
-		_saveload_flag = false;
+		_saveLoadFlag = false;
 		savegame_dialog(buf);
 	}
 
 start_over:;
-	_key_pressed = 0;
+	_keyPressed = 0;
 
 	if (_game == GAME_SIMON1CD32)
 		goto start_over_3;
 
 start_over_2:;
-	_last_hitarea = _last_hitarea_3 = 0;
+	_lastHitArea = _lastHitArea3 = 0;
 
 	do {
-		if (_key_pressed != 0) {
-			if (_saveload_flag) {
+		if (_keyPressed != 0) {
+			if (_saveLoadFlag) {
 				*b = false;
-				return _key_pressed;
+				return _keyPressed;
 			}
 			goto start_over;
 		}
 		delay(100);
-	} while (_last_hitarea_3 == 0);
+	} while (_lastHitArea3 == 0);
 
-	ha = _last_hitarea;
+	ha = _lastHitArea;
 
 	if (ha == NULL || ha->id < 205)
 		goto start_over_2;
@@ -1397,22 +1397,22 @@ start_over_2:;
 		return ha->id;
 
 	if (ha->id == 206) {
-		if (_saveload_row_curpos == 1)
+		if (_saveLoadRowCurPos == 1)
 			goto start_over_2;
-		if (_saveload_row_curpos < 7)
-			_saveload_row_curpos = 1;
+		if (_saveLoadRowCurPos < 7)
+			_saveLoadRowCurPos = 1;
 		else
-			_saveload_row_curpos -= 6;
+			_saveLoadRowCurPos -= 6;
 
 		goto strange_jump;
 	}
 
 	if (ha->id == 207) {
-		if (!_savedialog_flag)
+		if (!_saveDialogFlag)
 			goto start_over_2;
-		_saveload_row_curpos += 6;
-		if (_saveload_row_curpos >= _num_savegame_rows)
-			_saveload_row_curpos = _num_savegame_rows;
+		_saveLoadRowCurPos += 6;
+		if (_saveLoadRowCurPos >= _numSaveGameRows)
+			_saveLoadRowCurPos = _numSaveGameRows;
 		goto strange_jump;
 	}
 
@@ -1427,37 +1427,37 @@ start_over_2:;
 //      Down Arrow to move down slots
 //      X to exit
 start_over_3:;
-	if (_saveload_flag) {
+	if (_saveLoadFlag) {
 		*b = false;
 		delay(1);
-		return _key_pressed;
+		return _keyPressed;
 	}
 
-	if (_key_pressed == 17) {
-		if (_saveload_row_curpos == 1)
+	if (_keyPressed == 17) {
+		if (_saveLoadRowCurPos == 1)
 			goto start_over_3;
-		if (_saveload_row_curpos < 7)
-			_saveload_row_curpos = 1;
+		if (_saveLoadRowCurPos < 7)
+			_saveLoadRowCurPos = 1;
 		else
-			_saveload_row_curpos -= 6;
+			_saveLoadRowCurPos -= 6;
 
 		goto strange_jump;
 	}
 
-	if (_key_pressed == 18) {
-		if (!_savedialog_flag)
+	if (_keyPressed == 18) {
+		if (!_saveDialogFlag)
 			goto start_over_3;
-		_saveload_row_curpos += 6;
-		if (_saveload_row_curpos >= _num_savegame_rows)
-			_saveload_row_curpos = _num_savegame_rows;
+		_saveLoadRowCurPos += 6;
+		if (_saveLoadRowCurPos >= _numSaveGameRows)
+			_saveLoadRowCurPos = _numSaveGameRows;
 		goto strange_jump;
 	}
 
-	if (_key_pressed == 120)
+	if (_keyPressed == 120)
 		return 205;
 
-	if (_key_pressed > 48 && _key_pressed < 55) {
-		return _key_pressed - 49;
+	if (_keyPressed > 48 && _keyPressed < 55) {
+		return _keyPressed - 49;
 	}
 
 
@@ -1509,13 +1509,13 @@ void SimonEngine::o_play_music_resource() {
 		int loop = getVarOrByte();
 
 		midi.setLoop (loop != 0);
-		if (_last_music_played != music)
-			_next_music_to_play = music;
+		if (_lastMusicPlayed != music)
+			_nextMusicToPlay = music;
 		else 
 			midi.startTrack (track);
 	} else {
-		if (music != _last_music_played) {
-			_last_music_played = music;
+		if (music != _lastMusicPlayed) {
+			_lastMusicPlayed = music;
 			loadMusic (music);
 			midi.startTrack (track);
 		}
@@ -1525,15 +1525,15 @@ void SimonEngine::o_play_music_resource() {
 void SimonEngine::o_unk_120(uint a) {
 	uint16 id = TO_BE_16(a);
 	if (_game & GF_SIMON2) {
-		_lock_word |= 0x8000;
-		_vc_ptr = (byte *)&id;
+		_lockWord |= 0x8000;
+		_vcPtr = (byte *)&id;
 		vc_15_wakeup_id();
-		_lock_word &= ~0x8000;
+		_lockWord &= ~0x8000;
 	} else {
-		_lock_word |= 0x4000;
-		_vc_ptr = (byte *)&id;
+		_lockWord |= 0x4000;
+		_vcPtr = (byte *)&id;
 		vc_15_wakeup_id();
-		_lock_word &= ~0x4000;
+		_lockWord &= ~0x4000;
 	}
 }
 
@@ -1545,22 +1545,22 @@ void SimonEngine::o_play_sound(uint sound_id) {
 }
 
 void SimonEngine::o_unk_160(uint a) {
-	fcs_setTextColor(_fcs_ptr_array_3[_fcs_unk_1], a);
+	fcs_setTextColor(_fcsPtrArray3[_fcsUnk1], a);
 }
 
 void SimonEngine::o_unk_103() {
 	lock();
-	fcs_unk1(_fcs_unk_1);
+	fcs_unk1(_fcsUnk1);
 	showMessageFormat("\x0C");
 	unlock();
 }
 
 void SimonEngine::o_kill_sprite_simon1(uint a) {
 	uint16 b = TO_BE_16(a);
-	_lock_word |= 0x4000;
-	_vc_ptr = (byte *)&b;
+	_lockWord |= 0x4000;
+	_vcPtr = (byte *)&b;
 	vc_60_kill_sprite();
-	_lock_word &= ~0x4000;
+	_lockWord &= ~0x4000;
 }
 
 void SimonEngine::o_kill_sprite_simon2(uint a, uint b) {
@@ -1569,24 +1569,24 @@ void SimonEngine::o_kill_sprite_simon2(uint a, uint b) {
 	items[0] = TO_BE_16(a);
 	items[1] = TO_BE_16(b);
 
-	_lock_word |= 0x8000;
-	_vc_ptr = (byte *)&items;
+	_lockWord |= 0x8000;
+	_vcPtr = (byte *)&items;
 	vc_60_kill_sprite();
-	_lock_word &= ~0x8000;
+	_lockWord &= ~0x8000;
 }
 
 /* OK */
 void SimonEngine::o_unk26_helper(uint a, uint b, uint c, uint d, uint e, uint f, uint g, uint h) {
 	a &= 7;
 
-	if (_fcs_ptr_array_3[a])
+	if (_fcsPtrArray3[a])
 		fcs_delete(a);
 
-	_fcs_ptr_array_3[a] = fcs_alloc(b, c, d, e, f, g, h);
+	_fcsPtrArray3[a] = fcs_alloc(b, c, d, e, f, g, h);
 
-	if (a == _fcs_unk_1) {
-		_fcs_ptr_1 = _fcs_ptr_array_3[a];
-		showmessage_helper_3(_fcs_ptr_1->textLength, _fcs_ptr_1->textMaxLength);
+	if (a == _fcsUnk1) {
+		_fcsPtr1 = _fcsPtrArray3[a];
+		showmessage_helper_3(_fcsPtr1->textLength, _fcsPtr1->textMaxLength);
 	}
 }
 

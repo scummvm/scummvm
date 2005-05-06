@@ -112,11 +112,11 @@ class SimonEngine : public Engine {
 protected:
 	void playSting(uint a);
 	
-	const byte *_vc_ptr;								/* video code ptr */
+	const byte *_vcPtr;								/* video code ptr */
 	uint16 _vc_get_out_of_code;
 
 
-	uint32 *_game_offsets_ptr;
+	uint32 *_gameOffsetsPtr;
 
 	uint VGA_DELAY_BASE;
 	uint TABLE_INDEX_BASE;
@@ -129,7 +129,7 @@ protected:
 	const GameSpecificSettings *gss;
 
 	byte _game;
-	byte _key_pressed;
+	byte _keyPressed;
 
 	typedef enum {
 		FORMAT_NONE,
@@ -138,234 +138,229 @@ protected:
 		FORMAT_VOC
 	} SoundFormat;
 
-	File *_game_file;
+	File *_gameFile;
 	
-	byte *_stripped_txt_mem;
-	uint _text_size;
-	uint _stringtab_num, _stringtab_pos, _stringtab_numalloc;
-	byte **_stringtab_ptr;
+	byte *_strippedTxtMem;
+	uint _textSize;
+	uint _stringTabNum, _stringTabPos, _stringtab_numalloc;
+	byte **_stringTabPtr;
 
-	Item **_itemarray_ptr;
-	uint _itemarray_size;
-	uint _itemarray_inited;
+	Item **_itemArrayPtr;
+	uint _itemArraySize;
+	uint _itemArrayInited;
 
-	byte *_itemheap_ptr;
-	uint _itemheap_curpos;
-	uint _itemheap_size;
+	byte *_itemHeapPtr;
+	uint _itemHeapCurPos;
+	uint _itemHeapSize;
 
-	byte *_icon_file_ptr;
+	byte *_iconFilePtr;
 
-	byte *_tbl_list;
+	byte *_tblList;
 
-	const byte *_code_ptr;
+	const byte *_codePtr;
 
 
-	byte **_local_stringtable;
-	uint _string_id_local_min, _string_id_local_max;
+	byte **_localStringtable;
+	uint _stringIdLocalMin, _stringIdLocalMax;
 
-	byte *_tablesheap_ptr, *_tablesheap_ptr_org, *_tablesheap_ptr_new;
-	uint _tablesheap_size, _tablesheap_curpos, _tablesheap_curpos_org;
-	uint _tablesheap_curpos_new;
+	byte *_tablesHeapPtr, *_tablesHeapPtrOrg, *_tablesheapPtrNew;
+	uint _tablesHeapSize, _tablesHeapCurPos, _tablesHeapCurPosOrg;
+	uint _tablesHeapCurPosNew;
 
-	Subroutine *_subroutine_list, *_subroutine_list_org;
+	Subroutine *_subroutineList, *_subroutineListOrg;
 	uint _subroutine;
 
-	uint _dx_surface_pitch;
+	uint _dxSurfacePitch;
 
-	uint _recursion_depth;
+	uint _recursionDepth;
 
-	uint32 _last_vga_tick;
+	uint32 _lastVgaTick;
 
-	uint16 _op_189_flags;
+	uint16 _op189Flags;
 
-	bool _scriptvar_2;
-	bool _run_script_return_1;
-	bool _skip_vga_wait;
-	bool _no_parent_notify;
-	bool _vga_res_328_loaded;
+	bool _scriptVar2;
+	bool _runScriptReturn1;
+	bool _skipVgaWait;
+	bool _noParentNotify;
+	bool _vgaRes328Loaded;
 	bool _hitarea_unk_3;
-	bool _mortal_flag;
-	volatile bool _sync_flag_1;
-	byte _video_var_8;
-	bool _use_palette_delay;
-	bool _sync_flag_2;
-	bool _in_callback;
-	bool _cepe_flag;
-	byte _copy_partial_mode;
+	bool _mortalFlag;
+	byte _videoVar8;
+	bool _usePaletteDelay;
+	bool _syncFlag2;
+	bool _inCallBack;
+	bool _cepeFlag;
+	byte _copyPartialMode;
 	uint _speed;
-	bool _fast_mode;
-	bool _dx_use_3_or_4_for_lock;
+	bool _fastMode;
+	bool _dxUse3Or4ForLock;
 
 	uint16 _debugMode;
 	uint16 _language;
 	bool _pause;
-	bool _start_mainscript;
-	bool _continous_mainscript;
-	bool _start_vgascript;
-	bool _continous_vgascript;
-	bool _draw_images_debug;
-	bool _dump_images;
+	bool _startMainScript;
+	bool _continousMainScript;
+	bool _startVgaScript;
+	bool _continousVgaScript;
+	bool _drawImagesDebug;
+	bool _dumpImages;
 	bool _speech;
 	bool _subtitles;
 	bool _fade;
-	byte _mouse_cursor;
-	bool _vga_var9;
-	int16 _script_unk_1;
-	bool _vga_var6;
-	int _x_scroll, _vga_var1, _vga_var2, _xscroll_step, _sprite_height;
-	const byte *_vga_var7;
-	byte _vga_var8;
+	byte _mouseCursor;
+	bool _vgaVar9;
+	int16 _scriptUnk1;
+	bool _vgaVar6;
+	int _xScroll, _vgaVar1, _vgaVar2, _xScrollStep, _spriteHeight;
+	const byte *_vgaVar7;
+	byte _vgaVar8;
 
-	int16 _script_cond_a, _script_cond_b, _script_cond_c;
+	int16 _scriptCondA, _scriptCondB, _scriptCondC;
 
-	uint16 _fcs_unk_1;
-	FillOrCopyStruct *_fcs_ptr_1;
+	uint16 _fcsUnk1;
+	FillOrCopyStruct *_fcsPtr1;
 
-	Item *_subject_item, *_object_item;
-	Item *_item_1;
+	Item *_subjectItem, *_objectItem;
+	Item *_item1;
 
-	Item *_hitarea_object_item;
-	HitArea *_last_hitarea;
-	HitArea *_last_hitarea_2_ptr;
-	HitArea *_last_hitarea_3;
-	byte _left_button_down;
-	Item *_hitarea_subject_item;
-	HitArea *_hitarea_ptr_5, *_hitarea_ptr_7;
-	uint _need_hitarea_recalc;
-	uint _verb_hitarea;
-	uint16 _hitarea_unk_4;
-	uint _lock_counter;
+	Item *_hitAreaObjectItem;
+	HitArea *_lastHitArea;
+	HitArea *_lastHitArea2Ptr;
+	HitArea *_lastHitArea3;
+	byte _leftButtonDown;
+	Item *_hitAreaSubjectItem;
+	HitArea *_hitAreaPtr5, *_hitAreaPtr7;
+	uint _needHitAreaRecalc;
+	uint _verbHitArea;
+	uint16 _hitAreaUnk4;
+	uint _lockCounter;
 
-	uint16 _video_palette_mode;
+	uint16 _videoPaletteMode;
 
-	uint _print_char_unk_1, _print_char_unk_2;
-	uint _num_letters_to_print;
+	uint _printCharUnk1, _printCharUnk2;
+	uint _numLettersToPrint;
 
-	uint _last_time;
+	uint _lastTime;
 
-	TimeEvent *_first_time_struct, *_pending_delete_time_event;
+	TimeEvent *_firstTimeStruct, *_pendingDeleteTimeEvent;
 
 	uint _base_time;
 
-	uint _mouse_x, _mouse_y;
-	uint _mouse_x_old, _mouse_y_old;
+	uint _mouseX, _mouseY;
+	uint _mouseXOld, _mouseYOld;
 
-	Item *_dummy_item_1;
-	Item *_dummy_item_2;
-	Item *_dummy_item_3;
+	Item *_dummyItem1;
+	Item *_dummyItem2;
+	Item *_dummyItem3;
 
-	volatile uint16 _lock_word;
-	uint16 _scroll_up_hit_area;
-	uint16 _scroll_down_hit_area;
+	volatile uint16 _lockWord;
+	uint16 _scrollUpHitArea;
+	uint16 _scrollDownHitArea;
 
-	uint16 _video_var_7;
-	volatile uint16 _palette_color_count;
+	uint16 _videoVar7;
+	volatile uint16 _paletteColorCount;
 
-	byte _video_var_4;
-	bool _video_var_5;
-	bool _video_var_3;
-	bool _unk_pal_flag;
-	bool _exit_cutscene;
-	bool _skip_speech;
-	byte _video_var_9;
+	byte _videoVar4;
+	bool _videoVar5;
+	bool _videoVar3;
+	bool _unkPalFlag;
+	bool _exitCutscene;
+	bool _skipSpeech;
+	byte _videoVar9;
 
-	uint _sound_file_id;
-	int16 _last_music_played;
-	int16 _next_music_to_play;
+	uint _soundFileId;
+	int16 _lastMusicPlayed;
+	int16 _nextMusicToPlay;
 
-	bool _show_preposition;
-	bool _showmessage_flag;
+	bool _showPreposition;
+	bool _showMessageFlag;
 
-	uint _video_num_pal_colors;
+	uint _videoNumPalColors;
 
-	uint _invoke_timer_callback;
+	uint _vgaSpriteChanged;
 
-	uint _vga_sprite_changed;
+	byte *_vgaBufFreeStart, *_vgaBufEnd, *_vgaBufStart;
+	byte *_vgaFileBufOrg, *_vgaFileBufOrg2;
 
-	byte *_vga_buf_free_start, *_vga_buf_end, *_vga_buf_start;
-	byte *_vga_file_buf_org, *_vga_file_buf_org_2;
+	byte *_curVgaFile1;
+	byte *_curVgaFile2;
 
-	byte *_cur_vga_file_1;
-	byte *_cur_vga_file_2;
+	uint16 _timer1, _timer5, _timer4;
 
-	uint16 _timer_1, _timer_5, _timer_4;
+	uint16 _vgaBaseDelay;
 
-	uint16 _vga_base_delay;
+	uint16 _vgaCurFile2;
+	uint16 _vgaWaitFor, _vgaCurFileId;
+	uint16 _vgaCurSpriteId;
 
-	uint16 _vga_cur_file_2;
-	uint16 _vga_wait_for, _vga_cur_file_id;
-	uint16 _vga_cur_sprite_id;
+	VgaTimerEntry *_nextVgaTimerToProcess;
 
-	VgaTimerEntry *_next_vga_timer_to_process;
+	Item *_vcItemArray[20];
+	Item *_itemArray6[20];
 
-	Item *_vc_item_array[20];
-	Item *_item_array_6[20];
+	uint16 _stringIdArray2[20];
+	uint16 _stringIdArray3[20];
+	uint16 _speechIdArray4[20];
 
-	uint16 _stringid_array_2[20];
-	uint16 _stringid_array_3[20];
-	uint16 _speechid_array_4[20];
-
-	uint16 _bit_array[32];
+	uint16 _bitArray[32];
 	int16 _variableArray[256];
 
-	FillOrCopyStruct *_fcs_ptr_array_3[8];
+	FillOrCopyStruct *_fcsPtrArray3[8];
 
-	byte _fcs_data_1[8];
-	bool _fcs_data_2[8];
+	byte _fcsData1[8];
+	bool _fcsData2[8];
 
-	TextLocation _textlocation_1, _textlocation_2, _textlocation_3, _textlocation_4;
+	TextLocation _textLocation1, _textLocation2, _textLocation3, _textLocation4;
 
-	int _free_string_slot;
+	int _freeStringSlot;
 
 	byte _stringReturnBuffer[2][180];
 
-	HitArea _hit_areas[90];
+	HitArea _hitAreas[90];
 
-	VgaPointersEntry _vga_buffer_pointers[180];
-	VgaSprite _vga_sprites[180];
-	VgaSleepStruct _vga_sleep_structs[30];
+	VgaPointersEntry _vgaBufferPointers[180];
+	VgaSprite _vgaSprites[180];
+	VgaSleepStruct _vgaSleepStructs[30];
 
-	const uint16 *_pathfind_array[20];
+	const uint16 *_pathFindArray[20];
 
-	uint8 _palette_backup[1024];
+	uint8 _paletteBackup[1024];
 	uint8 _palette[1024];
 
-	byte _video_buf_1[3000];
+	byte _videoBuf1[3000];
 
-	VgaTimerEntry _vga_timer_list[95];
+	VgaTimerEntry _vgaTimerList[95];
 
 	FillOrCopyStruct *_fcs_list;
 
-	byte _letters_to_print_buf[80];
+	byte _lettersToPrintBuf[80];
 
 	MidiPlayer midi;
 	int _midiDriver;
 
-	int _num_screen_updates;
-	int _vga_tick_counter;
+	int _numScreenUpdates;
+	int _vgaTickCounter;
 
 	Sound *_sound;
 
-	bool _effects_paused;
-	bool _ambient_paused;
-	bool _music_paused;
+	bool _effectsPaused;
+	bool _ambientPaused;
+	bool _musicPaused;
 
 	Debugger *_debugger;
 
-	int _timer_id;
+	FILE *_dumpFile;
 
-	FILE *_dump_file;
+	int _saveLoadRowCurPos;
+	int _numSaveGameRows;
+	bool _saveDialogFlag;
+	bool _saveOrLoad;
+	bool _saveLoadFlag;
 
-	int _saveload_row_curpos;
-	int _num_savegame_rows;
-	bool _savedialog_flag;
-	bool _save_or_load;
-	bool _saveload_flag;
-
-	byte _saveLoadFlag, _saveLoadSlot;
+	byte _saveLoadType, _saveLoadSlot;
 	char _saveLoadName[32];
 
-	int _sdl_mouse_x, _sdl_mouse_y;
+	int _sdlMouseX, _sdlMouseY;
 	
 	byte *_sdl_buf_3;
 	byte *_sdl_buf;
@@ -373,7 +368,7 @@ protected:
 
 	Common::RandomSource _rnd;
 
-	const byte *_vc_10_base_ptr_old;
+	const byte *_vc10BasePtrOld;
 	byte _hebrew_char_widths[32];
 
 public:

@@ -115,18 +115,18 @@ void SimonEngine::run_vga_script() {
 	for (;;) {
 		uint opcode;
 
-		if (_continous_vgascript) {
-			if (_vc_ptr != (const byte *)&_vc_get_out_of_code) {
-				fprintf(_dump_file, "%.5d %.5X: %5d %4d ", _vga_tick_counter, _vc_ptr - _cur_vga_file_1, _vga_cur_sprite_id, _vga_cur_file_id);
-				dump_video_script(_vc_ptr, true);
+		if (_continousVgaScript) {
+			if (_vcPtr != (const byte *)&_vc_get_out_of_code) {
+				fprintf(_dumpFile, "%.5d %.5X: %5d %4d ", _vgaTickCounter, _vcPtr - _curVgaFile1, _vgaCurSpriteId, _vgaCurFileId);
+				dump_video_script(_vcPtr, true);
 			}
 		}
 
 		if (!(_game & GF_SIMON2)) {
-			opcode = READ_BE_UINT16(_vc_ptr);
-			_vc_ptr += 2;
+			opcode = READ_BE_UINT16(_vcPtr);
+			_vcPtr += 2;
 		} else {
-			opcode = *_vc_ptr++;
+			opcode = *_vcPtr++;
 		}
 
 		if (opcode >= NUM_VIDEO_OP_CODES)
@@ -147,13 +147,13 @@ int SimonEngine::vc_read_var_or_word() {
 }
 
 uint SimonEngine::vc_read_next_word() {
-	uint a = READ_BE_UINT16(_vc_ptr);
-	_vc_ptr += 2;
+	uint a = READ_BE_UINT16(_vcPtr);
+	_vcPtr += 2;
 	return a;
 }
 
 uint SimonEngine::vc_read_next_byte() {
-	return *_vc_ptr++;
+	return *_vcPtr++;
 }
 
 void SimonEngine::vc_skip_next_instruction() {
@@ -183,40 +183,40 @@ void SimonEngine::vc_skip_next_instruction() {
 
 	if (_game & GF_SIMON2) {
 		uint opcode = vc_read_next_byte();
-		_vc_ptr += opcode_param_len_simon2[opcode];
+		_vcPtr += opcode_param_len_simon2[opcode];
 	} else {
 		uint opcode = vc_read_next_word();
-		_vc_ptr += opcode_param_len_simon1[opcode];
+		_vcPtr += opcode_param_len_simon1[opcode];
 	}
 
-	if (_continous_vgascript)
-		fprintf(_dump_file, "; skipped\n");
+	if (_continousVgaScript)
+		fprintf(_dumpFile, "; skipped\n");
 }
 
 void SimonEngine::o_read_vgares_23() {
 	// Simon1 Only
-	if (_vga_res_328_loaded == true) {
-		_vga_res_328_loaded = false;
-		_lock_word |= 0x4000;
+	if (_vgaRes328Loaded == true) {
+		_vgaRes328Loaded = false;
+		_lockWord |= 0x4000;
 		read_vga_from_datfile_1(23);
-		_lock_word &= ~0x4000;
+		_lockWord &= ~0x4000;
 	}
 }
 
 void SimonEngine::o_read_vgares_328() {
 	// Simon1 Only
-	if (_vga_res_328_loaded == false) {
-		_vga_res_328_loaded = true;
-		_lock_word |= 0x4000;
+	if (_vgaRes328Loaded == false) {
+		_vgaRes328Loaded = true;
+		_lockWord |= 0x4000;
 		read_vga_from_datfile_1(328);
-		_lock_word &= ~0x4000;
+		_lockWord &= ~0x4000;
 	}
 }
 
 // VGA Script commands
 void SimonEngine::vc_1_dummy_op() {
 	/* dummy opcode */
-	_vc_ptr += 6;
+	_vcPtr += 6;
 }
 
 void SimonEngine::vc_2_call() {
@@ -229,43 +229,43 @@ void SimonEngine::vc_2_call() {
 
 	num = vc_read_var_or_word();
 
-	old_file_1 = _cur_vga_file_1;
-	old_file_2 = _cur_vga_file_2;
+	old_file_1 = _curVgaFile1;
+	old_file_2 = _curVgaFile2;
 
 	for (;;) {
 		res = num / 100;
-		vpe = &_vga_buffer_pointers[res];
+		vpe = &_vgaBufferPointers[res];
 
-		_cur_vga_file_1 = vpe->vgaFile1;
-		_cur_vga_file_2 = vpe->vgaFile2;
+		_curVgaFile1 = vpe->vgaFile1;
+		_curVgaFile2 = vpe->vgaFile2;
 		if (vpe->vgaFile1 != NULL)
 			break;
-		if (_vga_cur_file_2 != res)
-			_video_var_7 = _vga_cur_file_2;
+		if (_vgaCurFile2 != res)
+			_videoVar7 = _vgaCurFile2;
 
 		ensureVgaResLoaded(res);
-		_video_var_7 = 0xFFFF;
+		_videoVar7 = 0xFFFF;
 	}
 
 
-	bb = _cur_vga_file_1;
+	bb = _curVgaFile1;
 	b = bb + READ_BE_UINT16(&((VgaFile1Header *) bb)->hdr2_start);
 	b = bb + READ_BE_UINT16(&((VgaFile1Header2 *) b)->unk2_offs);
 
 	while (READ_BE_UINT16(&((VgaFile1Struct0x8 *) b)->id) != num)
 		b += sizeof(VgaFile1Struct0x8);
 
-	vc_ptr_org = _vc_ptr;
+	vc_ptr_org = _vcPtr;
 
-	_vc_ptr = _cur_vga_file_1 + READ_BE_UINT16(&((VgaFile1Struct0x8 *) b)->script_offs);
+	_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((VgaFile1Struct0x8 *) b)->script_offs);
 
-	//dump_vga_script(_vc_ptr, res, num);
+	//dump_vga_script(_vcPtr, res, num);
 	run_vga_script();
 
-	_cur_vga_file_1 = old_file_1;
-	_cur_vga_file_2 = old_file_2;
+	_curVgaFile1 = old_file_1;
+	_curVgaFile2 = old_file_2;
 
-	_vc_ptr = vc_ptr_org;
+	_vcPtr = vc_ptr_org;
 }
 
 void SimonEngine::vc_3_new_sprite() {
@@ -294,7 +294,7 @@ void SimonEngine::vc_3_new_sprite() {
 	if (has_vga_sprite_with_id(vga_sprite_id, f))
 		return;
 
-	vsp = _vga_sprites;
+	vsp = _vgaSprites;
 	while (vsp->id)
 		vsp++;
 
@@ -308,21 +308,21 @@ void SimonEngine::vc_3_new_sprite() {
 	vsp->id = vga_sprite_id;
 	vsp->unk7 = res = f;
 
-	old_file_1 = _cur_vga_file_1;
+	old_file_1 = _curVgaFile1;
 	for (;;) {
-		vpe = &_vga_buffer_pointers[res];
-		_cur_vga_file_1 = vpe->vgaFile1;
+		vpe = &_vgaBufferPointers[res];
+		_curVgaFile1 = vpe->vgaFile1;
 
 		if (vpe->vgaFile1 != NULL)
 			break;
-		if (_vga_cur_file_2 != res)
-			_video_var_7 = _vga_cur_file_2;
+		if (_vgaCurFile2 != res)
+			_videoVar7 = _vgaCurFile2;
 
 		ensureVgaResLoaded(res);
-		_video_var_7 = 0xFFFF;
+		_videoVar7 = 0xFFFF;
 	}
 
-	pp = _cur_vga_file_1;
+	pp = _curVgaFile1;
 	p = pp + READ_BE_UINT16(&((VgaFile1Header *) pp)->hdr2_start);
 	p = pp + READ_BE_UINT16(&((VgaFile1Header2 *) p)->id_table);
 
@@ -334,7 +334,7 @@ void SimonEngine::vc_3_new_sprite() {
 		static bool dumped = false;
 		if (res == DUMP_FILE_NR && !dumped) {
 			dumped = true;
-			dump_vga_file(_cur_vga_file_1);
+			dump_vga_file(_curVgaFile1);
 		}
 	}
 #endif
@@ -344,21 +344,21 @@ void SimonEngine::vc_3_new_sprite() {
 		static bool dumped = false;
 		if (res == DUMP_BITMAPS_FILE_NR && !dumped) {
 			dumped = true;
-			dump_vga_bitmaps(_cur_vga_file_2, _cur_vga_file_1, res);
+			dump_vga_bitmaps(_curVgaFile2, _curVgaFile1, res);
 		}
 	}
 #endif
 
-	if (_start_vgascript)
-		dump_vga_script(_cur_vga_file_1 + READ_BE_UINT16(&((VgaFile1Struct0x6*)p)->script_offs), res, vga_sprite_id);
+	if (_startVgaScript)
+		dump_vga_script(_curVgaFile1 + READ_BE_UINT16(&((VgaFile1Struct0x6*)p)->script_offs), res, vga_sprite_id);
 
-	add_vga_timer(VGA_DELAY_BASE, _cur_vga_file_1 + READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->script_offs), vga_sprite_id, res);
-	_cur_vga_file_1 = old_file_1;
+	add_vga_timer(VGA_DELAY_BASE, _curVgaFile1 + READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->script_offs), vga_sprite_id, res);
+	_curVgaFile1 = old_file_1;
 }
 
 void SimonEngine::vc_4_dummy_op() {
 	/* dummy opcode */
-	_vc_ptr += 6;
+	_vcPtr += 6;
 }
 
 void SimonEngine::vc_5_skip_if_neq() {
@@ -446,7 +446,7 @@ byte *SimonEngine::vc_10_depack_swap(const byte *src, uint w, uint h) {
 	w <<= 3;
 
 	{
-		byte *dst_org = _video_buf_1 + w;
+		byte *dst_org = _videoBuf1 + w;
 		byte color;
 		int8 cur = -0x80;
 		uint w_cur = w;
@@ -496,7 +496,7 @@ byte *SimonEngine::vc_10_depack_swap(const byte *src, uint w, uint h) {
 		byte *dst_org, *src_org;
 		uint i;
 
-		src_org = dst_org = _video_buf_1 + w;
+		src_org = dst_org = _videoBuf1 + w;
 
 		do {
 			byte *dst = dst_org;
@@ -512,16 +512,16 @@ byte *SimonEngine::vc_10_depack_swap(const byte *src, uint w, uint h) {
 
 	}
 
-	return _video_buf_1;
+	return _videoBuf1;
 }
 
 byte *SimonEngine::vc_10_no_depack_swap(const byte *src, uint w, uint h) {
-	if (src == _vc_10_base_ptr_old)
-		return _video_buf_1;
+	if (src == _vc10BasePtrOld)
+		return _videoBuf1;
 
-	_vc_10_base_ptr_old = src;
+	_vc10BasePtrOld = src;
 	h *= 8;
-	byte *dst = _video_buf_1 + h - 1;
+	byte *dst = _videoBuf1 + h - 1;
 
 	uint h_cur = h;
 	do {
@@ -533,7 +533,7 @@ byte *SimonEngine::vc_10_no_depack_swap(const byte *src, uint w, uint h) {
 		dst += h * 2;
 	} while (--w != 0);
 
-	return _video_buf_1;
+	return _videoBuf1;
 }
 
 /* must not be const */
@@ -547,7 +547,7 @@ static uint16 _video_windows[128] = {
 
 /* simon2 specific */
 void SimonEngine::decodeStripA(byte *dst, const byte *src, int height) {
-	const uint pitch = _dx_surface_pitch;
+	const uint pitch = _dxSurfacePitch;
 	int8 reps = (int8)0x80;
 	byte color;
 	byte *dst_org = dst;
@@ -603,11 +603,11 @@ void SimonEngine::vc_10_draw() {
 	if (state.image == 0)
 		return;
 
-	state.base_color = (_vc_ptr[1] << 4);
-	_vc_ptr += 2;
+	state.base_color = (_vcPtr[1] << 4);
+	_vcPtr += 2;
 	state.x = (int16)vc_read_next_word();
 	if (_game & GF_SIMON2) {
-		state.x -= _x_scroll;
+		state.x -= _xScroll;
 	}
 	state.y = (int16)vc_read_next_word();
 
@@ -620,8 +620,8 @@ void SimonEngine::vc_10_draw() {
 	if (state.image < 0)
 		state.image = vc_read_var(-state.image);
 
-	p2 = _cur_vga_file_2 + state.image * 8;
-	state.depack_src = _cur_vga_file_2 + READ_BE_UINT32(p2);
+	p2 = _curVgaFile2 + state.image * 8;
+	state.depack_src = _curVgaFile2 + READ_BE_UINT32(p2);
 
 	width = READ_BE_UINT16(p2 + 6) >> 4;
 	height = p2[5];
@@ -630,8 +630,8 @@ void SimonEngine::vc_10_draw() {
 	if (height == 0 || width == 0)
 		return;
 
-	if (_dump_images)
-		dump_single_bitmap(_vga_cur_file_id, state.image, state.depack_src, width * 16, height,
+	if (_dumpImages)
+		dump_single_bitmap(_vgaCurFileId, state.image, state.depack_src, width * 16, height,
 											 state.base_color);
 
 	if (flags & 0x80 && !(state.e & 0x10)) {
@@ -648,18 +648,18 @@ void SimonEngine::vc_10_draw() {
 		byte *dst;
 		uint w;
 
-		_vga_var1 = width * 2 - 40;
-		_vga_var7 = state.depack_src;
-		_sprite_height = height;
+		_vgaVar1 = width * 2 - 40;
+		_vgaVar7 = state.depack_src;
+		_spriteHeight = height;
 		if (_variableArray[34] == -1)
 			state.x = _variableArray[251];
 
-		_x_scroll = state.x;
+		_xScroll = state.x;
 
-		vc_write_var(0xfb, _x_scroll);
+		vc_write_var(0xfb, _xScroll);
 
 		dst = dx_lock_attached();
-		src = state.depack_src + _x_scroll * 4;
+		src = state.depack_src + _xScroll * 4;
 
 		for (w = 0; w < 40; w++) {
 			decodeStripA(dst, src + READ_BE_UINT32(src), height);
@@ -678,7 +678,7 @@ void SimonEngine::vc_10_draw() {
 		state.depack_src = vc_10_no_depack_swap(state.depack_src, width, height);
 	}
 
-	vlut = &_video_windows[_video_palette_mode * 4];
+	vlut = &_video_windows[_videoPaletteMode * 4];
 
 	state.draw_width = width << 1;	/* cl */
 	state.draw_height = height;		/* ch */
@@ -727,10 +727,10 @@ void SimonEngine::vc_10_draw() {
 	state.draw_width <<= 2;
 
 	state.surf2_addr = dx_lock_2();
-	state.surf2_pitch = _dx_surface_pitch;
+	state.surf2_pitch = _dxSurfacePitch;
 
 	state.surf_addr = dx_lock_attached();
-	state.surf_pitch = _dx_surface_pitch;
+	state.surf_pitch = _dxSurfacePitch;
 
 	{
 		uint offs, offs2;
@@ -796,7 +796,7 @@ void SimonEngine::vc_10_draw() {
 		} while (++w != state.draw_width);
 
 		/* vc_10_helper_5 */
-	} else if (_lock_word & 0x20 && state.base_color == 0 || state.base_color == 0xC0) {
+	} else if (_lockWord & 0x20 && state.base_color == 0 || state.base_color == 0xC0) {
 		const byte *src;
 		byte *dst;
 		uint h, i;
@@ -907,7 +907,7 @@ void SimonEngine::vc_10_draw() {
 		}
 		/* vc_10_helper_4 */
 	} else {
-		if (_game & GF_SIMON2 && state.e & 0x4 && _bit_array[10] & 0x800) {
+		if (_game & GF_SIMON2 && state.e & 0x4 && _bitArray[10] & 0x800) {
 			state.surf_addr = state.surf2_addr;
 			state.surf_pitch = state.surf2_pitch;
 		}
@@ -1009,7 +1009,7 @@ void SimonEngine::vc_10_draw() {
 }
 
 void SimonEngine::vc_11_clear_pathfind_array() {
-	memset(&_pathfind_array, 0, sizeof(_pathfind_array));
+	memset(&_pathFindArray, 0, sizeof(_pathFindArray));
 }
 
 void SimonEngine::vc_12_delay() {
@@ -1019,7 +1019,7 @@ void SimonEngine::vc_12_delay() {
 	if (!(_game & GF_SIMON2)) {
 		num = vc_read_var_or_word();
 	} else {
-		num = vc_read_next_byte() * _vga_base_delay;
+		num = vc_read_next_byte() * _vgaBaseDelay;
 	}
 
 	// Work around to allow inventory arrows to be
@@ -1029,24 +1029,24 @@ void SimonEngine::vc_12_delay() {
 	else
 		num += VGA_DELAY_BASE;
 
-	add_vga_timer(num, _vc_ptr, _vga_cur_sprite_id, _vga_cur_file_id);
-	_vc_ptr = (byte *)&_vc_get_out_of_code;
+	add_vga_timer(num, _vcPtr, _vgaCurSpriteId, _vgaCurFileId);
+	_vcPtr = (byte *)&_vc_get_out_of_code;
 }
 
 void SimonEngine::vc_13_set_sprite_offset_x() {
 	VgaSprite *vsp = find_cur_sprite();
 	vsp->x += (int16)vc_read_next_word();
-	_vga_sprite_changed++;
+	_vgaSpriteChanged++;
 }
 
 void SimonEngine::vc_14_set_sprite_offset_y() {
 	VgaSprite *vsp = find_cur_sprite();
 	vsp->y += (int16)vc_read_next_word();
-	_vga_sprite_changed++;
+	_vgaSpriteChanged++;
 }
 
 void SimonEngine::vc_15_wakeup_id() {
-	VgaSleepStruct *vfs = _vga_sleep_structs, *vfs_tmp;
+	VgaSleepStruct *vfs = _vgaSleepStructs, *vfs_tmp;
 	uint16 id = vc_read_next_word();
 	while (vfs->ident != 0) {
 		if (vfs->ident == id) {
@@ -1062,34 +1062,34 @@ void SimonEngine::vc_15_wakeup_id() {
 	}
 
 	/* clear a wait event */
-	if (id == _vga_wait_for)
-		_vga_wait_for = 0;
+	if (id == _vgaWaitFor)
+		_vgaWaitFor = 0;
 }
 
 void SimonEngine::vc_16_sleep_on_id() {
-	VgaSleepStruct *vfs = _vga_sleep_structs;
+	VgaSleepStruct *vfs = _vgaSleepStructs;
 	while (vfs->ident)
 		vfs++;
 
 	vfs->ident = vc_read_next_word();
-	vfs->code_ptr = _vc_ptr;
-	vfs->sprite_id = _vga_cur_sprite_id;
-	vfs->cur_vga_file = _vga_cur_file_id;
+	vfs->code_ptr = _vcPtr;
+	vfs->sprite_id = _vgaCurSpriteId;
+	vfs->cur_vga_file = _vgaCurFileId;
 
-	_vc_ptr = (byte *)&_vc_get_out_of_code;
+	_vcPtr = (byte *)&_vc_get_out_of_code;
 }
 
 void SimonEngine::vc_17_set_pathfind_item() {
 	uint a = vc_read_next_word();
-	_pathfind_array[a - 1] = (const uint16 *)_vc_ptr;
-	while (READ_BE_UINT16(_vc_ptr) != 999)
-		_vc_ptr += 4;
-	_vc_ptr += 2;
+	_pathFindArray[a - 1] = (const uint16 *)_vcPtr;
+	while (READ_BE_UINT16(_vcPtr) != 999)
+		_vcPtr += 4;
+	_vcPtr += 2;
 }
 
 void SimonEngine::vc_18_jump_rel() {
 	int16 offs = vc_read_next_word();
-	_vc_ptr += offs;
+	_vcPtr += offs;
 }
 
 /* chain to script? */
@@ -1106,13 +1106,13 @@ void SimonEngine::vc_20_set_code_word() {
 	 * back the same word, this time as LE, into the script.
 	 */
 	uint16 a = vc_read_next_word();
-	WRITE_LE_UINT16(const_cast<byte *>(_vc_ptr), a);
-	_vc_ptr += 2;
+	WRITE_LE_UINT16(const_cast<byte *>(_vcPtr), a);
+	_vcPtr += 2;
 }
 
 void SimonEngine::vc_21_jump_if_code_word() {
 	int16 a = vc_read_next_word();
-	const byte *tmp = _vc_ptr + a;
+	const byte *tmp = _vcPtr + a;
 	if (_game & GF_SIMON2)
 		tmp += 3;
 	else
@@ -1122,7 +1122,7 @@ void SimonEngine::vc_21_jump_if_code_word() {
 	if (val != 0) {
 		// Decrement counter
 		WRITE_LE_UINT16(const_cast<byte *>(tmp), val - 1);
-		_vc_ptr = tmp + 2;
+		_vcPtr = tmp + 2;
 	}
 }
 
@@ -1134,7 +1134,7 @@ void SimonEngine::vc_22_set_sprite_palette() {
 
 	palptr = &_palette[(a << 6)];
 
-	src = _cur_vga_file_1 + 6 + b * 96;
+	src = _curVgaFile1 + 6 + b * 96;
 
 	do {
 		palptr[0] = src[0] << 2;
@@ -1146,8 +1146,8 @@ void SimonEngine::vc_22_set_sprite_palette() {
 		src += 3;
 	} while (--num);
 
-	_video_var_9 = 2;
-	_vga_sprite_changed++;
+	_videoVar9 = 2;
+	_vgaSpriteChanged++;
 }
 
 void SimonEngine::vc_23_set_sprite_priority() {
@@ -1164,10 +1164,10 @@ void SimonEngine::vc_23_set_sprite_priority() {
 
 	vus2 = vsp;
 
-	if (vsp != _vga_sprites && pri < vsp[-1].priority) {
+	if (vsp != _vgaSprites && pri < vsp[-1].priority) {
 		do {
 			vsp--;
-		} while (vsp != _vga_sprites && pri < vsp[-1].priority);
+		} while (vsp != _vgaSprites && pri < vsp[-1].priority);
 		do {
 			memcpy(vus2, vus2 - 1, sizeof(VgaSprite));
 		} while (--vus2 != vsp);
@@ -1183,7 +1183,7 @@ void SimonEngine::vc_23_set_sprite_priority() {
 	} else {
 		vsp->priority = pri;
 	}
-	_vga_sprite_changed++;
+	_vgaSpriteChanged++;
 }
 
 void SimonEngine::vc_24_set_sprite_xy() {
@@ -1198,7 +1198,7 @@ void SimonEngine::vc_24_set_sprite_xy() {
 		vsp->unk4 = vc_read_next_byte();
 	}
 
-	_vga_sprite_changed++;
+	_vgaSpriteChanged++;
 }
 
 void SimonEngine::vc_25_halt_sprite() {
@@ -1207,8 +1207,8 @@ void SimonEngine::vc_25_halt_sprite() {
 		memcpy(vsp, vsp + 1, sizeof(VgaSprite));
 		vsp++;
 	}
-	_vc_ptr = (byte *)&_vc_get_out_of_code;
-	_vga_sprite_changed++;
+	_vcPtr = (byte *)&_vc_get_out_of_code;
+	_vgaSpriteChanged++;
 }
 
 void SimonEngine::vc_26_set_window() {
@@ -1224,11 +1224,11 @@ void SimonEngine::vc_27_reset() {
 	VgaSleepStruct *vfs;
 	VgaTimerEntry *vte, *vte2;
 
-	_lock_word |= 8;
+	_lockWord |= 8;
 
 	memset(&bak, 0, sizeof(bak));
 
-	vsp = _vga_sprites;
+	vsp = _vgaSprites;
 	while (vsp->id) {
 		if ((_game & GF_SIMON1) && vsp->id == 0x80) {
 			memcpy(&bak, vsp, sizeof(VgaSprite));
@@ -1238,15 +1238,15 @@ void SimonEngine::vc_27_reset() {
 	}
 
 	if (bak.id != 0)
-		memcpy(_vga_sprites, &bak, sizeof(VgaSprite));
+		memcpy(_vgaSprites, &bak, sizeof(VgaSprite));
 
-	vfs = _vga_sleep_structs;
+	vfs = _vgaSleepStructs;
 	while (vfs->ident) {
 		vfs->ident = 0;
 		vfs++;
 	}
 
-	vte = _vga_timer_list;
+	vte = _vgaTimerList;
 	while (vte->delay) {
 		if ((_game & GF_SIMON1) && vsp->id == 0x80) {
 			vte++;
@@ -1261,12 +1261,12 @@ void SimonEngine::vc_27_reset() {
 
 	vc_write_var(0xFE, 0);
 
-	_lock_word &= ~8;
+	_lockWord &= ~8;
 }
 
 void SimonEngine::vc_28_dummy_op() {
 	/* unused */
-	_vc_ptr += 8;
+	_vcPtr += 8;
 }
 
 void SimonEngine::vc_29_stop_all_sounds() {
@@ -1274,11 +1274,11 @@ void SimonEngine::vc_29_stop_all_sounds() {
 }
 
 void SimonEngine::vc_30_set_base_delay() {
-	_vga_base_delay = vc_read_next_word();
+	_vgaBaseDelay = vc_read_next_word();
 }
 
 void SimonEngine::vc_31_set_palette_mode() {
-	_video_palette_mode = vc_read_next_word();
+	_videoPaletteMode = vc_read_next_word();
 }
 
 uint SimonEngine::vc_read_var(uint var) {
@@ -1296,32 +1296,32 @@ void SimonEngine::vc_32_copy_var() {
 }
 
 void SimonEngine::vc_33_force_unlock() {
-	if (_lock_counter != 0) {
-		_lock_counter = 1;
+	if (_lockCounter != 0) {
+		_lockCounter = 1;
 		unlock();
 	}
 }
 
 void SimonEngine::vc_34_force_lock() {
 	lock();
-	_lock_counter = 200;
-	_left_button_down = 0;
+	_lockCounter = 200;
+	_leftButtonDown = 0;
 }
 
 void SimonEngine::vc_35() {
 	/* unused */
-	_vc_ptr += 4;
-	_vga_sprite_changed++;
+	_vcPtr += 4;
+	_vgaSpriteChanged++;
 }
 
 void SimonEngine::vc_36_saveload_thing() {
-	_video_var_8 = false;
+	_videoVar8 = false;
 	uint vga_res = vc_read_next_word();
 	uint mode = vc_read_next_word();
 
 	if (!(_game & GF_SIMON2)) {
 		if (mode == 16) {
-			_copy_partial_mode = 2;
+			_copyPartialMode = 2;
 		} else {
 			set_video_mode_internal(mode, vga_res);
 		}
@@ -1333,7 +1333,7 @@ void SimonEngine::vc_36_saveload_thing() {
 void SimonEngine::vc_37_set_sprite_offset_y() {
 	VgaSprite *vsp = find_cur_sprite();
 	vsp->y += vc_read_var(vc_read_next_word());
-	_vga_sprite_changed++;
+	_vgaSpriteChanged++;
 }
 
 void SimonEngine::vc_38_skip_if_var_zero() {
@@ -1352,23 +1352,23 @@ void SimonEngine::vc_40_var_add() {
 	uint var = vc_read_next_word();
 	int16 value = vc_read_var(var) + vc_read_next_word();
 
-	if (_game & GF_SIMON2 && var == 0xF && !(_bit_array[5] & 1)) {
+	if (_game & GF_SIMON2 && var == 0xF && !(_bitArray[5] & 1)) {
 		int16 tmp;
 
-		if (_vga_var2 != 0) {
-			if (_vga_var2 >= 0)
+		if (_vgaVar2 != 0) {
+			if (_vgaVar2 >= 0)
 				goto no_scroll;
-			_vga_var2 = 0;
+			_vgaVar2 = 0;
 		} else {
-			if (_xscroll_step != 0)
+			if (_xScrollStep != 0)
 				goto no_scroll;
 		}
 
-		if (value - _x_scroll >= 30) {
-			_vga_var2 = 20;
-			tmp = _vga_var1 - _x_scroll;
+		if (value - _xScroll >= 30) {
+			_vgaVar2 = 20;
+			tmp = _vgaVar1 - _xScroll;
 			if (tmp < 20)
-				_vga_var2 = tmp;
+				_vgaVar2 = tmp;
 			add_vga_timer(6, NULL, 0, 0);	/* special timer */
 		}
 	}
@@ -1381,23 +1381,23 @@ void SimonEngine::vc_41_var_sub() {
 	uint var = vc_read_next_word();
 	int16 value = vc_read_var(var) - vc_read_next_word();
 
-	if (_game & GF_SIMON2 && var == 0xF && !(_bit_array[5] & 1)) {
+	if (_game & GF_SIMON2 && var == 0xF && !(_bitArray[5] & 1)) {
 		int16 tmp;
 
-		if (_vga_var2 != 0) {
-			if (_vga_var2 < 0)
+		if (_vgaVar2 != 0) {
+			if (_vgaVar2 < 0)
 				goto no_scroll;
-			_vga_var2 = 0;
+			_vgaVar2 = 0;
 		} else {
-			if (_xscroll_step != 0)
+			if (_xScrollStep != 0)
 				goto no_scroll;
 		}
 
-		if ((uint16)(value - _x_scroll) < 11) {
-			_vga_var2 = -20;
-			tmp = _vga_var1 - _x_scroll;
-			if (_x_scroll < 20)
-				_vga_var2 = -_x_scroll;
+		if ((uint16)(value - _xScroll) < 11) {
+			_vgaVar2 = -20;
+			tmp = _vgaVar1 - _xScroll;
+			if (_xScroll < 20)
+				_vgaVar2 = -_xScroll;
 			add_vga_timer(6, NULL, 0, 0);	/* special timer */
 		}
 	}
@@ -1410,8 +1410,8 @@ void SimonEngine::vc_42_delay_if_not_eq() {
 	uint val = vc_read_var(vc_read_next_word());
 	if (val != vc_read_next_word()) {
 
-		add_vga_timer(_vga_base_delay + 1, _vc_ptr - 4, _vga_cur_sprite_id, _vga_cur_file_id);
-		_vc_ptr = (byte *)&_vc_get_out_of_code;
+		add_vga_timer(_vgaBaseDelay + 1, _vcPtr - 4, _vgaCurSpriteId, _vgaCurFileId);
+		_vcPtr = (byte *)&_vc_get_out_of_code;
 	}
 }
 
@@ -1430,13 +1430,13 @@ void SimonEngine::vc_44_skip_if_bit_set() {
 void SimonEngine::vc_45_set_sprite_x() {
 	VgaSprite *vsp = find_cur_sprite();
 	vsp->x = vc_read_var(vc_read_next_word());
-	_vga_sprite_changed++;
+	_vgaSpriteChanged++;
 }
 
 void SimonEngine::vc_46_set_sprite_y() {
 	VgaSprite *vsp = find_cur_sprite();
 	vsp->y = vc_read_var(vc_read_next_word());
-	_vga_sprite_changed++;
+	_vgaSpriteChanged++;
 }
 
 void SimonEngine::vc_47_add_var_f() {
@@ -1448,7 +1448,7 @@ void SimonEngine::vc_48() {
 	uint a = (uint16)_variableArray[12];
 	uint b = (uint16)_variableArray[13];
 	int c = _variableArray[14];
-	const uint16 *p = _pathfind_array[a - 1];
+	const uint16 *p = _pathFindArray[a - 1];
 	int step;
 	int y1, y2;
 	int16 *vp;
@@ -1476,12 +1476,12 @@ void SimonEngine::vc_48() {
 }
 
 void SimonEngine::vc_set_bit_to(uint bit, bool value) {
-	uint16 *bits = &_bit_array[bit >> 4];
+	uint16 *bits = &_bitArray[bit >> 4];
 	*bits = (*bits & ~(1 << (bit & 15))) | (value << (bit & 15));
 }
 
 bool SimonEngine::vc_get_bit(uint bit) {
-	uint16 *bits = &_bit_array[bit >> 4];
+	uint16 *bits = &_bitArray[bit >> 4];
 	return (*bits & (1 << (bit & 15))) != 0;
 }
 
@@ -1516,17 +1516,17 @@ void SimonEngine::vc_52_play_sound() {
 
 void SimonEngine::vc_53_no_op() {
 	/* unused */
-	_vc_ptr += 4;
+	_vcPtr += 4;
 }
 
 void SimonEngine::vc_54_no_op() {
 	/* unused */
-	_vc_ptr += 6;
+	_vcPtr += 6;
 }
 
 void SimonEngine::vc_55_offset_hit_area() {
-	HitArea *ha = _hit_areas;
-	uint count = ARRAYSIZE(_hit_areas);
+	HitArea *ha = _hitAreas;
+	uint count = ARRAYSIZE(_hitAreas);
 	uint16 id = vc_read_next_word();
 	int16 x = vc_read_next_word();
 	int16 y = vc_read_next_word();
@@ -1542,15 +1542,15 @@ void SimonEngine::vc_55_offset_hit_area() {
 			break;
 	}
 
-	_need_hitarea_recalc++;
+	_needHitAreaRecalc++;
 }
 
 void SimonEngine::vc_56_delay() {
 	if (_game & GF_SIMON2) {
-		uint num = vc_read_var_or_word() * _vga_base_delay;
+		uint num = vc_read_var_or_word() * _vgaBaseDelay;
 
-		add_vga_timer(num + VGA_DELAY_BASE, _vc_ptr, _vga_cur_sprite_id, _vga_cur_file_id);
-		_vc_ptr = (byte *)&_vc_get_out_of_code;
+		add_vga_timer(num + VGA_DELAY_BASE, _vcPtr, _vgaCurSpriteId, _vgaCurFileId);
+		_vcPtr = (byte *)&_vc_get_out_of_code;
 	}
 }
 
@@ -1570,23 +1570,23 @@ void SimonEngine::vc_59() {
 }
 
 void SimonEngine::vc_58() {
-	uint sprite = _vga_cur_sprite_id;
-	uint file = _vga_cur_file_id;
+	uint sprite = _vgaCurSpriteId;
+	uint file = _vgaCurFileId;
 	const byte *vc_ptr_org;
 	uint16 tmp;
 
-	_vga_cur_file_id = vc_read_next_word();
-	_vga_cur_sprite_id = vc_read_next_word();
+	_vgaCurFileId = vc_read_next_word();
+	_vgaCurSpriteId = vc_read_next_word();
 
 	tmp = TO_BE_16(vc_read_next_word());
 
-	vc_ptr_org = _vc_ptr;
-	_vc_ptr = (byte *)&tmp;
+	vc_ptr_org = _vcPtr;
+	_vcPtr = (byte *)&tmp;
 	vc_23_set_sprite_priority();
 
-	_vc_ptr = vc_ptr_org;
-	_vga_cur_sprite_id = sprite;
-	_vga_cur_file_id = file;
+	_vcPtr = vc_ptr_org;
+	_vgaCurSpriteId = sprite;
+	_vgaCurFileId = file;
 }
 
 void SimonEngine::vc_57_no_op() {
@@ -1600,17 +1600,17 @@ void SimonEngine::vc_kill_sprite(uint file, uint sprite) {
 	VgaTimerEntry *vte;
 	const byte *vc_ptr_org;
 
-	old_sprite_id = _vga_cur_sprite_id;
-	old_cur_file_id = _vga_cur_file_id;
-	vc_ptr_org = _vc_ptr;
+	old_sprite_id = _vgaCurSpriteId;
+	old_cur_file_id = _vgaCurFileId;
+	vc_ptr_org = _vcPtr;
 
-	_vga_cur_file_id = file;
-	_vga_cur_sprite_id = sprite;
+	_vgaCurFileId = file;
+	_vgaCurSpriteId = sprite;
 
-	vfs = _vga_sleep_structs;
+	vfs = _vgaSleepStructs;
 	while (vfs->ident != 0) {
-		if (vfs->sprite_id == _vga_cur_sprite_id
-				&& (vfs->cur_vga_file == _vga_cur_file_id || !(_game & GF_SIMON2))
+		if (vfs->sprite_id == _vgaCurSpriteId
+				&& (vfs->cur_vga_file == _vgaCurFileId || !(_game & GF_SIMON2))
 			) {
 			while (vfs->ident != 0) {
 				memcpy(vfs, vfs + 1, sizeof(VgaSleepStruct));
@@ -1625,10 +1625,10 @@ void SimonEngine::vc_kill_sprite(uint file, uint sprite) {
 	if (vsp->id) {
 		vc_25_halt_sprite();
 
-		vte = _vga_timer_list;
+		vte = _vgaTimerList;
 		while (vte->delay != 0) {
-			if (vte->sprite_id == _vga_cur_sprite_id
-					&& (vte->cur_vga_file == _vga_cur_file_id || !(_game & GF_SIMON2))
+			if (vte->sprite_id == _vgaCurSpriteId
+					&& (vte->cur_vga_file == _vgaCurFileId || !(_game & GF_SIMON2))
 				) {
 				delete_vga_timer(vte);
 				break;
@@ -1637,9 +1637,9 @@ void SimonEngine::vc_kill_sprite(uint file, uint sprite) {
 		}
 	}
 
-	_vga_cur_file_id = old_cur_file_id;
-	_vga_cur_sprite_id = old_sprite_id;
-	_vc_ptr = vc_ptr_org;
+	_vgaCurFileId = old_cur_file_id;
+	_vgaCurSpriteId = old_sprite_id;
+	_vcPtr = vc_ptr_org;
 }
 
 void SimonEngine::vc_60_kill_sprite() {
@@ -1648,7 +1648,7 @@ void SimonEngine::vc_60_kill_sprite() {
 	if (_game & GF_SIMON2) {
 		file = vc_read_next_word();
 	} else {
-		file = _vga_cur_file_id;
+		file = _vgaCurFileId;
 	}
 	uint sprite = vc_read_next_word();
 	vc_kill_sprite(file, sprite);
@@ -1663,7 +1663,7 @@ void SimonEngine::vc_61_sprite_change() {
 	vsp->y += vc_read_next_word();
 	vsp->unk4 = 36;
 
-	_vga_sprite_changed++;
+	_vgaSpriteChanged++;
 }
 
 void SimonEngine::vc_62_palette_thing() {
@@ -1671,17 +1671,17 @@ void SimonEngine::vc_62_palette_thing() {
 
 	vc_29_stop_all_sounds();
 
-	if (!_video_var_3) {
-		_video_var_3 = true;
+	if (!_videoVar3) {
+		_videoVar3 = true;
 
-		_video_num_pal_colors = 256;
-		if (_video_palette_mode == 4)
-			_video_num_pal_colors = 208;
+		_videoNumPalColors = 256;
+		if (_videoPaletteMode == 4)
+			_videoNumPalColors = 208;
 
-		memcpy(_video_buf_1, _palette_backup, _video_num_pal_colors * sizeof(uint32));
+		memcpy(_videoBuf1, _paletteBackup, _videoNumPalColors * sizeof(uint32));
 		for (i = NUM_PALETTE_FADEOUT; i != 0; --i) {
-			palette_fadeout((uint32 *)_video_buf_1, _video_num_pal_colors);
-			_system->setPalette(_video_buf_1, 0, _video_num_pal_colors);
+			palette_fadeout((uint32 *)_videoBuf1, _videoNumPalColors);
+			_system->setPalette(_videoBuf1, 0, _videoNumPalColors);
 			if (_fade)
 				_system->updateScreen();
 			delay(5);
@@ -1691,36 +1691,36 @@ void SimonEngine::vc_62_palette_thing() {
 			uint16 params[5];						/* parameters to vc_10_draw */
 			VgaSprite *vsp;
 			VgaPointersEntry *vpe;
-			const byte *vc_ptr_org = _vc_ptr;
+			const byte *vc_ptr_org = _vcPtr;
 
-			vsp = _vga_sprites;
+			vsp = _vgaSprites;
 			while (vsp->id != 0) {
 				if (vsp->id == 0x80) {
-					byte *old_file_1 = _cur_vga_file_1;
-					byte *old_file_2 = _cur_vga_file_2;
-					uint palmode = _video_palette_mode;
+					byte *old_file_1 = _curVgaFile1;
+					byte *old_file_2 = _curVgaFile2;
+					uint palmode = _videoPaletteMode;
 	
-					vpe = &_vga_buffer_pointers[vsp->unk7];
-					_cur_vga_file_1 = vpe->vgaFile1;
-					_cur_vga_file_2 = vpe->vgaFile2;
-					_video_palette_mode = vsp->paletteMode;
+					vpe = &_vgaBufferPointers[vsp->unk7];
+					_curVgaFile1 = vpe->vgaFile1;
+					_curVgaFile2 = vpe->vgaFile2;
+					_videoPaletteMode = vsp->paletteMode;
 
 					params[0] = READ_BE_UINT16(&vsp->image);
 					params[1] = READ_BE_UINT16(&vsp->base_color);
 					params[2] = READ_BE_UINT16(&vsp->x);
 					params[3] = READ_BE_UINT16(&vsp->y);
 					params[4] = READ_BE_UINT16(&vsp->unk4);
-					_vc_ptr = (byte *)params;
+					_vcPtr = (byte *)params;
 					vc_10_draw();
 
-					_video_palette_mode = palmode;
-					_cur_vga_file_1 = old_file_1;
-					_cur_vga_file_2 = old_file_2;
+					_videoPaletteMode = palmode;
+					_curVgaFile1 = old_file_1;
+					_curVgaFile2 = old_file_2;
 					break;
 				}
 				vsp++;
 			}
-			_vc_ptr = vc_ptr_org;
+			_vcPtr = vc_ptr_org;
 		}
 
 		// Allow one section of Simon the Sorcerer 1 introduction to be displayed
@@ -1728,21 +1728,21 @@ void SimonEngine::vc_62_palette_thing() {
 		if ((_game & GF_SIMON1) && (_subroutine == 2923 || _subroutine == 2926))
 			dx_clear_surfaces(200);
 		else
-			dx_clear_surfaces(_video_palette_mode == 4 ? 134 : 200);
+			dx_clear_surfaces(_videoPaletteMode == 4 ? 134 : 200);
 	}
 	if (_game & GF_SIMON2) {
-		if (_next_music_to_play != -1)
-			loadMusic(_next_music_to_play);
+		if (_nextMusicToPlay != -1)
+			loadMusic(_nextMusicToPlay);
 	}
 
 }
 
 void SimonEngine::vc_63_palette_thing_2() {
-	_palette_color_count = 208;
-	if (_video_palette_mode != 4) {
-		_palette_color_count = 256;
+	_paletteColorCount = 208;
+	if (_videoPaletteMode != 4) {
+		_paletteColorCount = 256;
 	}
-	_video_var_3 = false;
+	_videoVar3 = false;
 }
 
 void SimonEngine::vc_64_skip_if_no_speech() {
@@ -1753,14 +1753,14 @@ void SimonEngine::vc_64_skip_if_no_speech() {
 
 void SimonEngine::vc_65_palette_thing_3() {
 	// Simon2
-	_palette_color_count = 624;
-	_video_num_pal_colors = 208;
-	if (_video_palette_mode != 4) {
-		_palette_color_count = 768;
-		_video_num_pal_colors = 256;
+	_paletteColorCount = 624;
+	_videoNumPalColors = 208;
+	if (_videoPaletteMode != 4) {
+		_paletteColorCount = 768;
+		_videoNumPalColors = 256;
 	}
-	_palette_color_count |= 0x8000;
-	_video_var_3 = false;
+	_paletteColorCount |= 0x8000;
+	_videoVar3 = false;
 }
 
 void SimonEngine::vc_66_skip_if_nz() {
@@ -1869,13 +1869,13 @@ void SimonEngine::vc_72_play_track_2() {
 void SimonEngine::vc_73_set_op189_flag() {
 	// Simon2
 	vc_read_next_byte();
-	_op_189_flags |= 1 << vc_read_next_byte();
+	_op189Flags |= 1 << vc_read_next_byte();
 }
 
 void SimonEngine::vc_74_clear_op189_flag() {
 	// Simon2
 	vc_read_next_byte();
-	_op_189_flags &= ~(1 << vc_read_next_byte());
+	_op189Flags &= ~(1 << vc_read_next_byte());
 }
 
 } // End of namespace Simon

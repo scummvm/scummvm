@@ -28,15 +28,15 @@ namespace Simon {
 void SimonEngine::print_char_helper_1(const byte *src, uint len) {
 	uint ind;
 
-	if (_fcs_ptr_1 == NULL)
+	if (_fcsPtr1 == NULL)
 		return;
 
 	while (len-- != 0) {
-		if (*src != 12 && _fcs_ptr_1->fcs_data != NULL &&
-				_fcs_data_1[ind = get_fcs_ptr_3_index(_fcs_ptr_1)] != 2) {
+		if (*src != 12 && _fcsPtr1->fcs_data != NULL &&
+				_fcsData1[ind = get_fcs_ptr_3_index(_fcsPtr1)] != 2) {
 
-			_fcs_data_1[ind] = 2;
-			_fcs_data_2[ind] = 1;
+			_fcsData1[ind] = 2;
+			_fcsData2[ind] = 1;
 		}
 
 		fcs_putchar(*src++);
@@ -46,23 +46,23 @@ void SimonEngine::print_char_helper_1(const byte *src, uint len) {
 void SimonEngine::print_char_helper_5(FillOrCopyStruct *fcs) {
 	uint index = get_fcs_ptr_3_index(fcs);
 	print_char_helper_6(index);
-	_fcs_data_1[index] = 0;
+	_fcsData1[index] = 0;
 }
 
 void SimonEngine::print_char_helper_6(uint i) {
 	FillOrCopyStruct *fcs;
 
-	if (_fcs_data_2[i]) {
+	if (_fcsData2[i]) {
 		lock();
-		fcs = _fcs_ptr_array_3[i];
+		fcs = _fcsPtrArray3[i];
 		fcs_unk_proc_1(i, fcs->fcs_data->item_ptr, fcs->fcs_data->unk1, fcs->fcs_data->unk2);
-		_fcs_data_2[i] = 0;
+		_fcsData2[i] = 0;
 		unlock();
 	}
 }
 
 void SimonEngine::render_string_amiga(uint vga_sprite_id, uint color, uint width, uint height, const char *txt) {
-	VgaPointersEntry *vpe = &_vga_buffer_pointers[2];
+	VgaPointersEntry *vpe = &_vgaBufferPointers[2];
 	byte *src, *dst, *dst_org, chr;
 	uint count;
 
@@ -153,7 +153,7 @@ void SimonEngine::render_string_amiga(uint vga_sprite_id, uint color, uint width
 }
 
 void SimonEngine::render_string(uint vga_sprite_id, uint color, uint width, uint height, const char *txt) {
-	VgaPointersEntry *vpe = &_vga_buffer_pointers[2];
+	VgaPointersEntry *vpe = &_vgaBufferPointers[2];
 	byte *src, *dst, *p, *dst_org, chr;
 	uint count;
 
@@ -226,15 +226,15 @@ void SimonEngine::showMessageFormat(const char *s, ...) {
 	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
-	if (!_fcs_data_1[_fcs_unk_1]) {
+	if (!_fcsData1[_fcsUnk1]) {
 		showmessage_helper_2();
-		if (!_showmessage_flag) {
-			_fcs_ptr_array_3[0] = _fcs_ptr_1;
-			showmessage_helper_3(_fcs_ptr_1->textLength,
-                                 _fcs_ptr_1->textMaxLength);
+		if (!_showMessageFlag) {
+			_fcsPtrArray3[0] = _fcsPtr1;
+			showmessage_helper_3(_fcsPtr1->textLength,
+                                 _fcsPtr1->textMaxLength);
 		}
-		_showmessage_flag = true;
-		_fcs_data_1[_fcs_unk_1] = 1;
+		_showMessageFlag = true;
+		_fcsData1[_fcsUnk1] = 1;
 	}
 
 	for (str = buf; *str; str++)
@@ -243,55 +243,55 @@ void SimonEngine::showMessageFormat(const char *s, ...) {
 
 void SimonEngine::showmessage_print_char(byte chr) {
 	if (chr == 12) {
-		_num_letters_to_print = 0;
-		_print_char_unk_1 = 0;
+		_numLettersToPrint = 0;
+		_printCharUnk1 = 0;
 		print_char_helper_1(&chr, 1);
-		print_char_helper_5(_fcs_ptr_1);
+		print_char_helper_5(_fcsPtr1);
 	} else if (chr == 0 || chr == ' ' || chr == 10) {
-		if (_print_char_unk_2 - _print_char_unk_1 >= _num_letters_to_print) {
-			_print_char_unk_1 += _num_letters_to_print;
-			print_char_helper_1(_letters_to_print_buf, _num_letters_to_print);
+		if (_printCharUnk2 - _printCharUnk1 >= _numLettersToPrint) {
+			_printCharUnk1 += _numLettersToPrint;
+			print_char_helper_1(_lettersToPrintBuf, _numLettersToPrint);
 
-			if (_print_char_unk_1 == _print_char_unk_2) {
-				_print_char_unk_1 = 0;
+			if (_printCharUnk1 == _printCharUnk2) {
+				_printCharUnk1 = 0;
 			} else {
 				if (chr)
 					print_char_helper_1(&chr, 1);
 				if (chr == 10)
-					_print_char_unk_1 = 0;
+					_printCharUnk1 = 0;
 				else if (chr != 0)
-					_print_char_unk_1++;
+					_printCharUnk1++;
 			}
 		} else {
 			const byte newline_character = 10;
-			_print_char_unk_1 = _num_letters_to_print;
+			_printCharUnk1 = _numLettersToPrint;
 			print_char_helper_1(&newline_character, 1);
-			print_char_helper_1(_letters_to_print_buf, _num_letters_to_print);
+			print_char_helper_1(_lettersToPrintBuf, _numLettersToPrint);
 			if (chr == ' ') {
 				print_char_helper_1(&chr, 1);
-				_print_char_unk_1++;
+				_printCharUnk1++;
 			} else {
 				print_char_helper_1(&chr, 1);
-				_print_char_unk_1 = 0;
+				_printCharUnk1 = 0;
 			}
 		}
-		_num_letters_to_print = 0;
+		_numLettersToPrint = 0;
 	} else {
-		_letters_to_print_buf[_num_letters_to_print++] = chr;
+		_lettersToPrintBuf[_numLettersToPrint++] = chr;
 	}
 }
 
 void SimonEngine::showmessage_helper_2() {
-	if (_fcs_ptr_1)
+	if (_fcsPtr1)
 		return;
 
-	_fcs_ptr_1 = fcs_alloc(8, 0x90, 0x18, 6, 1, 0, 0xF);
+	_fcsPtr1 = fcs_alloc(8, 0x90, 0x18, 6, 1, 0, 0xF);
 }
 
 void SimonEngine::showmessage_helper_3(uint a, uint b) {
-	_print_char_unk_1 = a;
-	_print_char_unk_2 = b;
-	_num_letters_to_print = 0;
+	_printCharUnk1 = a;
+	_printCharUnk2 = b;
+	_numLettersToPrint = 0;
 }
 
 void SimonEngine::video_putchar(FillOrCopyStruct *fcs, byte c, byte b) {
@@ -1091,10 +1091,10 @@ void SimonEngine::video_putchar_drawchar(FillOrCopyStruct *fcs, uint x, uint y, 
 	byte color, *dst;
 	uint h, i;
 
-	_lock_word |= 0x8000;
+	_lockWord |= 0x8000;
 
 	dst = dx_lock_2();
-	dst += y * _dx_surface_pitch + x * 8 + fcs->textColumnOffset;
+	dst += y * _dxSurfacePitch + x * 8 + fcs->textColumnOffset;
 
 	if (_language == 21) {
 		src = russian_video_font + (chr - 0x20) * 8;
@@ -1122,12 +1122,12 @@ void SimonEngine::video_putchar_drawchar(FillOrCopyStruct *fcs, uint x, uint y, 
 				dst[i] = color;
 			b <<= 1;
 		} while (++i != 6);
-		dst += _dx_surface_pitch;
+		dst += _dxSurfacePitch;
 	} while (--h);
 
 	dx_unlock_2();
 
-	_lock_word &= ~0x8000;
+	_lockWord &= ~0x8000;
 }
 
 } // End of namespace Simon

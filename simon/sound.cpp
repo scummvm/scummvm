@@ -234,8 +234,8 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer
 	_voice = 0;
 	_effects = 0;
 
-	_effects_paused = false;
-	_ambient_paused = false;
+	_effectsPaused = false;
+	_ambientPaused = false;
 
 	_filenums = 0;
 	_last_voice_file = 0;
@@ -455,7 +455,7 @@ void Sound::playEffects(uint sound) {
 	if (!_effects)
 		return;
 	
-	if (_effects_paused)
+	if (_effectsPaused)
 		return;
 
 	_effects->playSound(sound, &_effects_handle, (_game == GAME_SIMON1CD32) ? 0 : SoundMixer::FLAG_UNSIGNED);
@@ -470,7 +470,7 @@ void Sound::playAmbient(uint sound) {
 
 	_ambient_playing = sound;
 
-	if (_ambient_paused)
+	if (_ambientPaused)
 		return;
 
 	_mixer->stopHandle(_ambient_handle);
@@ -491,13 +491,13 @@ void Sound::stopAll() {
 }
 
 void Sound::effectsPause(bool b) {
-	_effects_paused = b;
+	_effectsPaused = b;
 }
 
 void Sound::ambientPause(bool b) {
-	_ambient_paused = b;
+	_ambientPaused = b;
 
-	if (_ambient_paused && _ambient_playing) {
+	if (_ambientPaused && _ambient_playing) {
 		_mixer->stopHandle(_ambient_handle);
 	} else if (_ambient_playing) {
 		uint tmp = _ambient_playing;

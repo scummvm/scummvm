@@ -43,11 +43,11 @@ void SimonEngine::loadIconFile() {
 
 	size = in.size();
 
-	_icon_file_ptr = (byte *)malloc(size);
-	if (_icon_file_ptr == NULL)
+	_iconFilePtr = (byte *)malloc(size);
+	if (_iconFilePtr == NULL)
 		error("Out of icon memory");
 
-	in.read(_icon_file_ptr, size);
+	in.read(_iconFilePtr, size);
 	in.close();
 }
 
@@ -158,40 +158,40 @@ void SimonEngine::draw_icon_c(FillOrCopyStruct *fcs, uint icon, uint x, uint y) 
 	byte *dst;
 	byte *src;
 
-	_lock_word |= 0x8000;
+	_lockWord |= 0x8000;
 	dst = dx_lock_2();
 
 	if (!(_game & GF_SIMON2)) {
 		// Simon 1
 		dst += (x + fcs->x) * 8;
-		dst += (y * 25 + fcs->y) * _dx_surface_pitch;
+		dst += (y * 25 + fcs->y) * _dxSurfacePitch;
 
 		if (_game & GF_AMIGA) {
-			src = _icon_file_ptr;
+			src = _iconFilePtr;
 			src += READ_BE_UINT32(&((uint32 *)src)[icon]);
-			decompress_icon_amiga (dst, src, 0xE0, _dx_surface_pitch);
+			decompress_icon_amiga (dst, src, 0xE0, _dxSurfacePitch);
 		} else {
-			src = _icon_file_ptr;
+			src = _iconFilePtr;
 			src += READ_LE_UINT16(&((uint16 *)src)[icon]);
-			decompress_icon(dst, src, 24, 12, 0xE0, _dx_surface_pitch);
+			decompress_icon(dst, src, 24, 12, 0xE0, _dxSurfacePitch);
 		}
 	} else {
 		// Simon 2
 		dst += 110;
 		dst += x;
-		dst += (y + fcs->y) * _dx_surface_pitch;
+		dst += (y + fcs->y) * _dxSurfacePitch;
 
-		src = _icon_file_ptr;
+		src = _iconFilePtr;
 		src += READ_LE_UINT16(&((uint16 *)src)[icon * 2 + 0]);
-		decompress_icon(dst, src, 20, 10, 0xE0, _dx_surface_pitch);
+		decompress_icon(dst, src, 20, 10, 0xE0, _dxSurfacePitch);
 
-		src = _icon_file_ptr;
+		src = _iconFilePtr;
 		src += READ_LE_UINT16(&((uint16 *)src)[icon * 2 + 1]);
-		decompress_icon(dst, src, 20, 10, 0xD0, _dx_surface_pitch);
+		decompress_icon(dst, src, 20, 10, 0xD0, _dxSurfacePitch);
 	}
 
 	dx_unlock_2();
-	_lock_word &= ~0x8000;
+	_lockWord &= ~0x8000;
 }
 
 uint SimonEngine::setup_icon_hit_area(FillOrCopyStruct *fcs, uint x, uint y, uint icon_number,
@@ -222,7 +222,7 @@ uint SimonEngine::setup_icon_hit_area(FillOrCopyStruct *fcs, uint x, uint y, uin
 		ha->unk3 = 0xD0;
 	}
 
-	return ha - _hit_areas;
+	return ha - _hitAreas;
 }
 
 } // End of namespace Simon

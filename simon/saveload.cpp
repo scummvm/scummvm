@@ -115,7 +115,7 @@ void SimonEngine::quick_load_or_save() {
 	char buf[50];
 
 	char *filename = gen_savename(_saveLoadSlot);
-	if (_saveLoadFlag == 2) {
+	if (_saveLoadType == 2) {
 		Subroutine *sub;
 		success = load_game(_saveLoadSlot);
 		if (!success) {
@@ -140,14 +140,14 @@ void SimonEngine::quick_load_or_save() {
 		GUI::MessageDialog dialog(buf, "OK");
 		dialog.runModal();
 
-	} else if (_saveLoadFlag == 1) {
+	} else if (_saveLoadType == 1) {
 		sprintf(buf, "Successfully saved game state in file:\n\n%s", filename);
 		GUI::TimedMessageDialog dialog(buf, 1500);
 		dialog.runModal();
 
 	}
 
-	_saveLoadFlag = 0;
+	_saveLoadType = 0;
 }
 
 void SimonEngine::savegame_dialog(char *buf) {
@@ -155,15 +155,15 @@ void SimonEngine::savegame_dialog(char *buf) {
 
 	o_unk_132_helper_3();
 
-	i = display_savegame_list(_saveload_row_curpos, _save_or_load, buf);
+	i = display_savegame_list(_saveLoadRowCurPos, _saveOrLoad, buf);
 
-	_savedialog_flag = true;
+	_saveDialogFlag = true;
 
 	if (i != 7) {
 		i++;
-		if (!_save_or_load)
+		if (!_saveOrLoad)
 			i++;
-		_savedialog_flag = false;
+		_saveDialogFlag = false;
 	}
 
 	if (!--i)
@@ -185,11 +185,11 @@ void SimonEngine::save_or_load_dialog(bool load) {
 	bool b;
 	char buf[108];
 
-	_save_or_load = load;
+	_saveOrLoad = load;
 
 	save_time = time(NULL);
 
-	_copy_partial_mode = 1;
+	_copyPartialMode = 1;
 
 	number_of_savegames = count_savegames();
 	if (!load)
@@ -198,13 +198,13 @@ void SimonEngine::save_or_load_dialog(bool load) {
 	if (number_of_savegames < 0)
 		number_of_savegames = 0;
 	number_of_savegames++;
-	_num_savegame_rows = number_of_savegames;
+	_numSaveGameRows = number_of_savegames;
 
-	_saveload_row_curpos = 1;
+	_saveLoadRowCurPos = 1;
 	if (!load)
-		_saveload_row_curpos = number_of_savegames;
+		_saveLoadRowCurPos = number_of_savegames;
 
-	_saveload_flag = false;
+	_saveLoadFlag = false;
 
 restart:;
 	do {
@@ -223,7 +223,7 @@ restart:;
 
 		// some code here
 
-		fcs = _fcs_ptr_array_3[5];
+		fcs = _fcsPtrArray3[5];
 
 		fcs->textRow = unk132_result;
 
@@ -272,7 +272,7 @@ restart:;
 		for (;;) {
 			video_putchar(fcs, 0x7f);
 
-			_saveload_flag = true;
+			_saveLoadFlag = true;
 
 			// do_2
 			do {
@@ -282,22 +282,22 @@ restart:;
 					if (i == 205)
 						goto get_out;
 					clear_hitarea_bit_0x40(0xd0 + unk132_result);
-					if (_saveload_flag) {
-						o_clear_character(_fcs_ptr_array_3[5], 8);
+					if (_saveLoadFlag) {
+						o_clear_character(_fcsPtrArray3[5], 8);
 						// move code
 					}
 					goto if_1;
 				}
 
 				// is_not_b
-				if (!_saveload_flag) {
+				if (!_saveLoadFlag) {
 					clear_hitarea_bit_0x40(0xd0 + unk132_result);
 					goto restart;
 				}
 			} while (i >= 0x80 || i == 0);
 
 			// after_do_2
-			o_clear_character(_fcs_ptr_array_3[5], 8);
+			o_clear_character(_fcsPtrArray3[5], 8);
 			if (i == 10 || i == 13)
 				break;
 			if (i == 8) {
@@ -316,35 +316,35 @@ restart:;
 
 					name[name_len] = 0;
 
-					o_clear_character(_fcs_ptr_array_3[5], x, m);
+					o_clear_character(_fcsPtrArray3[5], x, m);
 				}
 			} else if (i >= 32 && name_len != 17) {
 				name[name_len++] = i;
 
-				video_putchar(_fcs_ptr_array_3[5], i);
+				video_putchar(_fcsPtrArray3[5], i);
 			}
 		}
 
 		// do_save
-		if (!save_game(_saveload_row_curpos + unk132_result, buf + unk132_result * 18))
-			o_file_error(_fcs_ptr_array_3[5], true);
+		if (!save_game(_saveLoadRowCurPos + unk132_result, buf + unk132_result * 18))
+			o_file_error(_fcsPtrArray3[5], true);
 	} else {
-		if (!load_game(_saveload_row_curpos + i))
-			o_file_error(_fcs_ptr_array_3[5], false);
+		if (!load_game(_saveLoadRowCurPos + i))
+			o_file_error(_fcsPtrArray3[5], false);
 	}
 
 get_out:;
 	o_unk_132_helper_3();
 
 	_base_time = time(NULL) - save_time + _base_time;
-	_copy_partial_mode = 0;
+	_copyPartialMode = 0;
 
 	dx_copy_rgn_from_3_to_2(94, 208, 46, 80);
 
-	i = _timer_4;
+	i = _timer4;
 	do {
 		delay(10);
-	} while (i == _timer_4);
+	} while (i == _timer4);
 
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
@@ -385,13 +385,13 @@ void SimonEngine::o_file_error(FillOrCopyStruct *fcs, bool save_error) {
 	ha->layer = 0x3EF;
 
 loop:;
-	_last_hitarea = _last_hitarea_3 = 0;
+	_lastHitArea = _lastHitArea3 = 0;
 
 	do {
 		delay(1);
-	} while (_last_hitarea_3 == 0);
+	} while (_lastHitArea3 == 0);
 
-	ha = _last_hitarea;
+	ha = _lastHitArea;
 	if (ha == NULL || ha->id != 0x7FFF)
 		goto loop;
 
@@ -404,34 +404,34 @@ bool SimonEngine::save_game(uint slot, char *caption) {
 	uint item_index, num_item, i, j;
 	TimeEvent *te;
 
-	_lock_word |= 0x100;
+	_lockWord |= 0x100;
 
 	f = _saveFileMan->openForSaving(gen_savename(slot));
 	if (f == NULL) {
-		_lock_word &= ~0x100;
+		_lockWord &= ~0x100;
 		return false;
 	}
 
 	f->write(caption, 0x12);
 
-	f->writeUint32BE(_itemarray_inited - 1);
+	f->writeUint32BE(_itemArrayInited - 1);
 	f->writeUint32BE(0xFFFFFFFF);
 	f->writeUint32BE(0);
 	f->writeUint32BE(0);
 
 	i = 0;
-	for (te = _first_time_struct; te; te = te->next)
+	for (te = _firstTimeStruct; te; te = te->next)
 		i++;
 	f->writeUint32BE(i);
 
-	for (te = _first_time_struct; te; te = te->next) {
+	for (te = _firstTimeStruct; te; te = te->next) {
 		f->writeUint32BE(te->time + _base_time);
 		f->writeUint16BE(te->subroutine_id);
 	}
 
 	item_index = 1;
-	for (num_item = _itemarray_inited - 1; num_item; num_item--) {
-		Item *item = _itemarray_ptr[item_index++];
+	for (num_item = _itemArrayInited - 1; num_item; num_item--) {
+		Item *item = _itemArrayPtr[item_index++];
 
 		f->writeUint16BE(item->parent);
 		f->writeUint16BE(item->sibling);
@@ -470,16 +470,16 @@ bool SimonEngine::save_game(uint slot, char *caption) {
 
 	// write the items in array 6
 	for (i = 0; i != 10; i++) {
-		f->writeUint16BE(itemPtrToID(_item_array_6[i]));
+		f->writeUint16BE(itemPtrToID(_itemArray6[i]));
 	}
 
 	// Write the bits in array 1 & 2
 	for (i = 0; i != 32; i++)
-		f->writeUint16BE(_bit_array[i]);
+		f->writeUint16BE(_bitArray[i]);
 
 	delete f;
 
-	_lock_word &= ~0x100;
+	_lockWord &= ~0x100;
 
 	return true;
 }
@@ -500,11 +500,11 @@ bool SimonEngine::load_game(uint slot) {
 	InSaveFile *f;
 	uint num, item_index, i, j;
 
-	_lock_word |= 0x100;
+	_lockWord |= 0x100;
 
 	f = _saveFileMan->openForLoading(gen_savename(slot));
 	if (f == NULL) {
-		_lock_word &= ~0x100;
+		_lockWord &= ~0x100;
 		return false;
 	}
 
@@ -512,15 +512,15 @@ bool SimonEngine::load_game(uint slot) {
 
 	num = f->readUint32BE();
 
-	if (f->readUint32BE() != 0xFFFFFFFF || num != _itemarray_inited - 1) {
+	if (f->readUint32BE() != 0xFFFFFFFF || num != _itemArrayInited - 1) {
 		delete f;
-		_lock_word &= ~0x100;
+		_lockWord &= ~0x100;
 		return false;
 	}
 
 	f->readUint32BE();
 	f->readUint32BE();
-	_no_parent_notify = true;
+	_noParentNotify = true;
 
 
 	// add all timers
@@ -532,8 +532,8 @@ bool SimonEngine::load_game(uint slot) {
 	}
 
 	item_index = 1;
-	for (num = _itemarray_inited - 1; num; num--) {
-		Item *item = _itemarray_ptr[item_index++], *parent_item;
+	for (num = _itemArrayInited - 1; num; num--) {
+		Item *item = _itemArrayPtr[item_index++], *parent_item;
 
 		uint parent = f->readUint16BE();
 		uint sibling = f->readUint16BE();
@@ -583,12 +583,12 @@ bool SimonEngine::load_game(uint slot) {
 
 	// write the items in array 6
 	for (i = 0; i != 10; i++) {
-		_item_array_6[i] = derefItem(f->readUint16BE());
+		_itemArray6[i] = derefItem(f->readUint16BE());
 	}
 
 	// Write the bits in array 1 & 2
 	for (i = 0; i != 32; i++)
-		_bit_array[i] = f->readUint16BE();
+		_bitArray[i] = f->readUint16BE();
 	
 	if (f->ioFailed()) {
 		error("load failed");
@@ -596,9 +596,9 @@ bool SimonEngine::load_game(uint slot) {
 
 	delete f;
 
-	_no_parent_notify = false;
+	_noParentNotify = false;
 
-	_lock_word &= ~0x100;
+	_lockWord &= ~0x100;
 
 	return true;
 }

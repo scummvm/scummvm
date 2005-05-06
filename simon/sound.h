@@ -37,8 +37,8 @@ private:
 	BaseSound *_voice;
 	BaseSound *_effects;
 
-	bool _effects_paused;
-	bool _ambient_paused;
+	bool _effectsPaused;
+	bool _ambientPaused;
 
 	uint16 *_filenums;
 	uint32 *_offsets;
