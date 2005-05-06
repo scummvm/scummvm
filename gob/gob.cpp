@@ -23,6 +23,7 @@
 #include "base/gameDetector.h"
 #include "base/plugins.h"
 #include "backends/fs/fs.h"
+#include "common/md5.h"
 
 #include "gob/gob.h"
 
@@ -31,11 +32,16 @@
 #include "gob/sound.h"
 #include "gob/init.h"
 
+enum {
+	// We only compute MD5 of the first megabyte of our data files.
+	kMD5FileSizeLimit = 1024 * 1024
+};
+
 struct GobGameSettings {
 	const char *name;
 	const char *description;
 	uint32 features;
-	const char *detectname;
+	const char *md5sum;
 	GameSettings toGameSettings() const {
 		GameSettings dummy = { name, description, features };
 		return dummy;
@@ -43,7 +49,15 @@ struct GobGameSettings {
 };
 
 static const GobGameSettings gob_games[] = {
-	{"gob1", "Gobliiins", 0, "all.ask"},
+	{"gob1", "Gobliiins 1 (CD)", 0, "45f9c1162dd7040fd05fd013ccc176e2"},
+	{"gob1", "Gobliiins 1 (Demo)", 0, "4f5bf4b9e4c39ebb93579747fc678e97"},
+
+#if 0
+	// Not supported yet
+	{"gob2", "Gobliins 2 (CD)", 0, "410e632682ab11969bc3b3b588066d95"},
+	{"gob2", "Gobliins 2 (Demo)", 0, "be8b111191f965ac9b28fe530580d14e"},
+	{"gob3", "Goblins Quest 3 (Demo)", 0, "5024e7de8d6377fbbeabbaa92e0452bc"},
+#endif
 	{0, 0, 0, 0}
 };
 
@@ -62,19 +76,35 @@ GameList Engine_GOB_gameList() {
 DetectedGameList Engine_GOB_detectGames(const FSList &fslist) {
 	DetectedGameList detectedGames;
 	const GobGameSettings *g;
+	FSList::const_iterator file;
 
-	for (g = gob_games; g->name; ++g) {
-		// Iterate over all files in the given directory
-		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-			if (!file->isDirectory()) {
-				const char *gameName = file->displayName().c_str();
+	// Iterate over all files in the given directory
+	for (file = fslist.begin(); file != fslist.end(); file++) {
+		if (file->isDirectory())
+			continue;
 
-				if (0 == scumm_stricmp(g->detectname, gameName)) {
-					// Match found, add to list of candidates, then abort inner loop.
-					detectedGames.push_back(g->toGameSettings());
-					break;
-				}
+		// All the supported games have an intro.stk file.
+		if (scumm_stricmp(file->displayName().c_str(), "intro.stk") == 0)
+			break;
+	}
+
+	if (file == fslist.end())
+		return detectedGames;
+
+	uint8 md5sum[16];
+	char md5str[32 + 1];
+
+	if (md5_file(file->path().c_str(), md5sum, NULL, kMD5FileSizeLimit)) {
+		for (int i = 0; i < 16; i++) {
+			sprintf(md5str + i * 2, "%02x", (int)md5sum[i]);
+		}
+		for (g = gob_games; g->name; g++) {
+			if (strcmp(g->md5sum, (char *)md5str) == 0) {
+				detectedGames.push_back(g->toGameSettings());
 			}
+		}
+		if (detectedGames.isEmpty()) {
+			printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
 		}
 	}
 	return detectedGames;
