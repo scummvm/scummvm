@@ -72,8 +72,8 @@ public:
 	uint32 size() const;
 	const char *name() const { return _name.c_str(); }
 	void seek(int32 offs, int whence = SEEK_SET);
-	uint32 read(void *ptr, uint32 size);
-	uint32 write(const void *ptr, uint32 size);
+	uint32 read(void *dataPtr, uint32 dataSize);
+	uint32 write(const void *dataPtr, uint32 dataSize);
 };
 
 #endif
