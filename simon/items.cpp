@@ -539,7 +539,7 @@ int SimonEngine::runScript() {
 				x = getVarOrWord();
 				y = getVarOrWord();
 				base_color = getVarOrWord();
-				start_vga_code(paletteMode, vga_res, vgaSpriteId, x, y, base_color);
+				loadSprite(paletteMode, vga_res, vgaSpriteId, x, y, base_color);
 			}
 			break;
 
@@ -1524,12 +1524,12 @@ void SimonEngine::o_unk_120(uint a) {
 	if (_game & GF_SIMON2) {
 		_lockWord |= 0x8000;
 		_vcPtr = (byte *)&id;
-		vc_15_wakeup_id();
+		vc15_wakeup_id();
 		_lockWord &= ~0x8000;
 	} else {
 		_lockWord |= 0x4000;
 		_vcPtr = (byte *)&id;
-		vc_15_wakeup_id();
+		vc15_wakeup_id();
 		_lockWord &= ~0x4000;
 	}
 }
@@ -1556,7 +1556,7 @@ void SimonEngine::o_kill_sprite_simon1(uint a) {
 	uint16 b = TO_BE_16(a);
 	_lockWord |= 0x4000;
 	_vcPtr = (byte *)&b;
-	vc_60_kill_sprite();
+	vc60_killSprite();
 	_lockWord &= ~0x4000;
 }
 
@@ -1568,7 +1568,7 @@ void SimonEngine::o_kill_sprite_simon2(uint a, uint b) {
 
 	_lockWord |= 0x8000;
 	_vcPtr = (byte *)&items;
-	vc_60_kill_sprite();
+	vc60_killSprite();
 	_lockWord &= ~0x8000;
 }
 

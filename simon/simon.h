@@ -81,7 +81,7 @@ struct VgaSprite {
 	uint16 x, y;									/* actually signed numbers */
 	uint16 flags;
 	uint16 priority;
-	uint16 paletteMode, unk7;
+	uint16 paletteMode, fileId;
 	VgaSprite() { memset(this, 0, sizeof(*this)); }
 };
 
@@ -588,7 +588,7 @@ protected:
 	void ensureVgaResLoadedC(uint vga_res);
 	void ensureVgaResLoaded(uint vga_res);
 
-	void start_vga_code(uint paletteMode, uint vga_res, uint vga_sprite_id, uint x, uint y, uint base_color);
+	void loadSprite(uint paletteMode, uint vga_res, uint vga_sprite_id, uint x, uint y, uint base_color);
 	void o_unk26_helper(uint a, uint b, uint c, uint d, uint e, uint f, uint g, uint h);
 	void talk_with_speech(uint speech_id, uint vga_sprite_id);
 	void talk_with_text(uint vga_sprite_id, uint color, const char *string_ptr, int16 x, int16 y, int16 width);
@@ -611,82 +611,82 @@ protected:
 
 public:
 	// Simon1/Simon2 video script opcodes
-	void vc_1_dummy_op();
-	void vc_2_call();
-	void vc_3_new_sprite();
-	void vc_4_dummy_op();
-	void vc_5_skip_if_neq();
-	void vc_6_skip_ifn_sib_with_a();
-	void vc_7_skip_if_sib_with_a();
-	void vc_8_skip_if_parent_is();
-	void vc_9_skip_if_unk3_is();
-	void vc_10_draw();
-	void vc_11_clear_pathfind_array();
-	void vc_12_delay();
-	void vc_13_set_sprite_offset_x();
-	void vc_14_set_sprite_offset_y();
-	void vc_15_wakeup_id();
-	void vc_16_sleep_on_id();
-	void vc_17_set_pathfind_item();
-	void vc_18_jump_rel();
-	void vc_19_chain_to_script();
-	void vc_20_set_code_word();
-	void vc_21_jump_if_code_word();
-	void vc_22_set_sprite_palette();
-	void vc_23_set_sprite_priority();
-	void vc_24_set_sprite_xy();
-	void vc_25_halt_sprite();
-	void vc_26_set_window();
-	void vc_27_reset();
-	void vc_28_dummy_op();
-	void vc_29_stop_all_sounds();
-	void vc_30_set_base_delay();
-	void vc_31_set_palette_mode();
-	void vc_32_copy_var();
-	void vc_33_force_unlock();
-	void vc_34_force_lock();
-	void vc_35();
-	void vc_36_saveload_thing();
-	void vc_37_set_sprite_offset_y();
-	void vc_38_skip_if_var_zero();
-	void vc_39_set_var();
-	void vc_40_var_add();
-	void vc_41_var_sub();
-	void vc_42_delay_if_not_eq();
-	void vc_43_skip_if_bit_clear();
-	void vc_44_skip_if_bit_set();
-	void vc_45_set_sprite_x();
-	void vc_46_set_sprite_y();
-	void vc_47_add_var_f();
-	void vc_48();
-	void vc_49_set_bit();
-	void vc_50_clear_bit();
-	void vc_51_clear_hitarea_bit_0x40();
-	void vc_52_play_sound();
-	void vc_53_no_op();
-	void vc_54_no_op();
-	void vc_55_offset_hit_area();
-	void vc_56_delay();
-	void vc_57_no_op();
-	void vc_58();
-	void vc_59();
-	void vc_60_kill_sprite();
-	void vc_61_sprite_change();
-	void vc_62_palette_thing();
-	void vc_63_palette_thing_2();
+	void vc1_dummy_op();
+	void vc2_call();
+	void vc3_loadSprite();
+	void vc4_dummy_op();
+	void vc5_skip_if_neq();
+	void vc6_skip_ifn_sib_with_a();
+	void vc7_skip_if_sib_with_a();
+	void vc8_skip_if_parent_is();
+	void vc9_skip_if_unk3_is();
+	void vc10_draw();
+	void vc11_clearPathFinder();
+	void vc12_delay();
+	void vc13_addToSpriteX();
+	void vc14_addToSpriteY();
+	void vc15_wakeup_id();
+	void vc16_sleep_on_id();
+	void vc17_setPathfinderItem();
+	void vc18_jump();
+	void vc19_chain_to_script();
+	void vc20_set_code_word();
+	void vc21_jump_if_code_word();
+	void vc22_setSpritePalette();
+	void vc23_setSpritePriority();
+	void vc24_setSpriteXY();
+	void vc25_halt_sprite();
+	void vc26_setWindow();
+	void vc27_resetSprite();
+	void vc28_dummy_op();
+	void vc29_stopAllSounds();
+	void vc30_setBaseDelay();
+	void vc31_setPaletteMode();
+	void vc32_copyVar();
+	void vc33_forceUnlock();
+	void vc34_forceLock();
+	void vc35();
+	void vc36_saveLoadDialog();
+	void vc37_addToSpriteY();
+	void vc38_skipIfVarZero();
+	void vc39_setVar();
+	void vc40();
+	void vc41();
+	void vc42_delayIfNotEQ();
+	void vc43_skipIfBitClear();
+	void vc44_skipIfBitSet();
+	void vc45_setSpriteX();
+	void vc46_setSpriteY();
+	void vc47_addToVar();
+	void vc48_setPathFinder();
+	void vc49_setBit();
+	void vc50_clearBit();
+	void vc51_clear_hitarea_bit_0x40();
+	void vc52_playSound();
+	void vc53_no_op();
+	void vc54_no_op();
+	void vc55_offset_hit_area();
+	void vc56_delay();
+	void vc57_no_op();
+	void vc58();
+	void vc59();
+	void vc60_killSprite();
+	void vc61_changeSprite();
+	void vc62_fadeOut();
+	void vc63_palette_thing_2();
 
 	// Simon2 specific Video Script Opcodes
-	void vc_64_skip_if_no_speech();
-	void vc_65_palette_thing_3();
-	void vc_66_skip_if_nz();
-	void vc_67_skip_if_ge();
-	void vc_68_skip_if_le();
-	void vc_69_play_track();
-	void vc_70_queue_music();
-	void vc_71_check_music_queue();
-	void vc_72_play_track_2();
-	void vc_73_set_op189_flag();
-	void vc_74_clear_op189_flag();
+	void vc64_skipIfNoSpeech();
+	void vc65_palette_thing_3();
+	void vc66_skipIfNotEqual();
+	void vc67_skipIfGE();
+	void vc68_skipIfLE();
+	void vc69_playTrack();
+	void vc70_queueMusic();
+	void vc71_checkMusicQueue();
+	void vc72_play_track_2();
+	void vc73_setOp189Flag();
+	void vc74_clearOp189Flag();
 
 protected:
 	void delete_vga_timer(VgaTimerEntry * vte);
@@ -708,7 +708,7 @@ protected:
 
 	void expire_vga_timers();
 
-	bool has_vga_sprite_with_id(uint16 id, uint16 file);
+	bool isSpriteLoaded(uint16 id, uint16 fileId);
 
 	bool vc_get_bit(uint bit);
 
@@ -768,8 +768,8 @@ protected:
 	void quick_load_or_save();
 	void shutdown();
 
-	byte *vc_10_depack_swap(const byte *src, uint w, uint h);
-	byte *vc_10_no_depack_swap(const byte *src, uint w, uint h);
+	byte *vc10_depack_swap(const byte *src, uint w, uint h);
+	byte *vc10_no_depack_swap(const byte *src, uint w, uint h);
 
 	Item *getNextItemPtrStrange();
 

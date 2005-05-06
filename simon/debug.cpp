@@ -338,7 +338,7 @@ static void dump_bitmap(const char *filename, const byte *offs, int w, int h, in
 	state.y_skip = 0;
 
 	for (i = 0; i != w; i += 2) {
-		byte *c = vc_10_depack_column(&state);
+		byte *c = vc10_depack_column(&state);
 		for (j = 0; j != h; j++) {
 			byte pix = c[j];
 			b[j * w + i] = (pix >> 4) | base;

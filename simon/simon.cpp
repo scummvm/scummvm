@@ -1907,7 +1907,7 @@ void SimonEngine::setup_hit_areas(FillOrCopyStruct *fcs, uint fcs_index) {
 
 		// Simon1 specific
 		o_kill_sprite_simon1(0x80);
-		start_vga_code(0, 1, 0x80, 0, 0, 0xE);
+		loadSprite(0, 1, 0x80, 0, 0, 0xE);
 	} else {
 		ha->x = 227;
 		ha->y = 162;
@@ -2368,7 +2368,7 @@ void SimonEngine::vga_buf_unk_proc1(byte *end) {
 		return;
 
 	for (vsp = _vgaSprites; vsp->id; vsp++) {
-		vga_buf_unk_proc2(vsp->unk7, end);
+		vga_buf_unk_proc2(vsp->fileId, end);
 		if (_videoVar5 == true)
 			return;
 	}
@@ -2415,7 +2415,7 @@ void SimonEngine::o_clear_vgapointer_entry(uint a) {
 
 void SimonEngine::o_set_video_mode(uint mode, uint vga_res) {
 	if (mode == 4)
-		vc_29_stop_all_sounds();
+		vc29_stopAllSounds();
 
 	if (_lockWord & 0x10)
 		error("o_set_video_mode_ex: _lockWord & 0x10");
@@ -2661,11 +2661,11 @@ void SimonEngine::o_force_unlock() {
 void SimonEngine::o_force_lock() {
 	if (_game & GF_SIMON2) {
 		_lockWord |= 0x8000;
-		vc_34_force_lock();
+		vc34_forceLock();
 		_lockWord &= ~0x8000;
 	} else {
 		_lockWord |= 0x4000;
-		vc_34_force_lock();
+		vc34_forceLock();
 		_lockWord &= ~0x4000;
 	}
 }
@@ -2710,7 +2710,7 @@ void SimonEngine::skip_speech() {
 	if (!(_bitArray[1] & 0x1000)) {
 		_bitArray[0] |= 0x4000;
 		_variableArray[100] = 5;
-		start_vga_code(4, 1, 0x1e, 0, 0, 0);
+		loadSprite(4, 1, 0x1e, 0, 0, 0);
 		o_wait_for_vga(0x82);
 		o_kill_sprite_simon2(2, 1);
 	}
@@ -2720,7 +2720,7 @@ void SimonEngine::timer_vga_sprites() {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
 	const byte *vc_ptr_org = _vcPtr;
-	uint16 params[5];							// parameters to vc_10
+	uint16 params[5];							// parameters to vc10
 
 	if (_videoVar9 == 2)
 		_videoVar9 = 1;
@@ -2734,7 +2734,7 @@ void SimonEngine::timer_vga_sprites() {
 	while (vsp->id != 0) {
 		vsp->paletteMode &= 0x7FFF;
 
-		vpe = &_vgaBufferPointers[vsp->unk7];
+		vpe = &_vgaBufferPointers[vsp->fileId];
 		_curVgaFile1 = vpe->vgaFile1;
 		_curVgaFile2 = vpe->vgaFile2;
 		_videoPaletteMode = vsp->paletteMode;
@@ -2752,7 +2752,7 @@ void SimonEngine::timer_vga_sprites() {
 		}
 
 		_vcPtr = (const byte *)params;
-		vc_10_draw();
+		vc10_draw();
 
 		vsp++;
 	}
@@ -2803,7 +2803,7 @@ void SimonEngine::timer_vga_sprites_2() {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
 	const byte *vc_ptr_org = _vcPtr;
-	uint16 params[5];							// parameters to vc_10_draw
+	uint16 params[5];							// parameters to vc10_draw
 
 	if (_videoVar9 == 2)
 		_videoVar9 = 1;
@@ -2812,7 +2812,7 @@ void SimonEngine::timer_vga_sprites_2() {
 	while (vsp->id != 0) {
 		vsp->paletteMode &= 0x7FFF;
 
-		vpe = &_vgaBufferPointers[vsp->unk7];
+		vpe = &_vgaBufferPointers[vsp->fileId];
 		_curVgaFile1 = vpe->vgaFile1;
 		_curVgaFile2 = vpe->vgaFile2;
 		_videoPaletteMode = vsp->paletteMode;
@@ -2827,7 +2827,7 @@ void SimonEngine::timer_vga_sprites_2() {
 		params[3] = READ_BE_UINT16(&vsp->y);
 		params[4] = READ_BE_UINT16(&vsp->flags);
 		_vcPtr = (const byte *)params;
-		vc_10_draw();
+		vc10_draw();
 
 		vsp++;
 	}
@@ -2904,11 +2904,11 @@ void SimonEngine::fcs_setTextColor(FillOrCopyStruct *fcs, uint value) {
 void SimonEngine::o_vga_reset() {
 	if (_game & GF_SIMON2) {
 		_lockWord |= 0x8000;
-		vc_27_reset();
+		vc27_resetSprite();
 		_lockWord &= ~0x8000;
 	} else {
 		_lockWord |= 0x4000;
-		vc_27_reset();
+		vc27_resetSprite();
 		_lockWord &= ~0x4000;
 	}	
 }
@@ -3161,7 +3161,7 @@ VgaSprite *SimonEngine::find_cur_sprite() {
 	VgaSprite *vsp = _vgaSprites;
 	while (vsp->id) {
 		if (_game & GF_SIMON2) {
-			if (vsp->id == _vgaCurSpriteId && vsp->unk7 == _vgaCurFileId)
+			if (vsp->id == _vgaCurSpriteId && vsp->fileId == _vgaCurFileId)
 				break;
 		} else {
 			if (vsp->id == _vgaCurSpriteId)
@@ -3172,11 +3172,11 @@ VgaSprite *SimonEngine::find_cur_sprite() {
 	return vsp;
 }
 
-bool SimonEngine::has_vga_sprite_with_id(uint16 id, uint16 file) {
+bool SimonEngine::isSpriteLoaded(uint16 id, uint16 fileId) {
 	VgaSprite *vsp = _vgaSprites;
 	while (vsp->id) {
 		if (_game & GF_SIMON2) {
-			if (vsp->id == id && vsp->unk7 == file)
+			if (vsp->id == id && vsp->fileId == fileId)
 				return true;
 		} else {
 			if (vsp->id == id)
@@ -3341,7 +3341,7 @@ void SimonEngine::video_copy_if_flag_0x8_c(FillOrCopyStruct *fcs) {
 	fcs->mode = 0;
 }
 
-void SimonEngine::start_vga_code(uint paletteMode, uint vga_res, uint vgaSpriteId, uint x, uint y, uint base_color) {
+void SimonEngine::loadSprite(uint paletteMode, uint fileId, uint vgaSpriteId, uint x, uint y, uint base_color) {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
 	byte *p, *pp;
@@ -3349,7 +3349,7 @@ void SimonEngine::start_vga_code(uint paletteMode, uint vga_res, uint vgaSpriteI
 
 	_lockWord |= 0x40;
 
-	if (has_vga_sprite_with_id(vgaSpriteId, vga_res)) {
+	if (isSpriteLoaded(vgaSpriteId, fileId)) {
 		_lockWord &= ~0x40;
 		return;
 	}
@@ -3368,18 +3368,18 @@ void SimonEngine::start_vga_code(uint paletteMode, uint vga_res, uint vgaSpriteI
 	vsp->base_color = base_color;
 	vsp->id = vgaSpriteId;
 	if (_game & GF_SIMON1)
-		vsp->unk7 = vga_res = vgaSpriteId / 100;
+		vsp->fileId = fileId = vgaSpriteId / 100;
 	else
-		vsp->unk7 = vga_res;
+		vsp->fileId = fileId;
 
 
 	for (;;) {
-		vpe = &_vgaBufferPointers[vga_res];
-		_vgaCurFile2 = vga_res;
+		vpe = &_vgaBufferPointers[fileId];
+		_vgaCurFile2 = fileId;
 		_curVgaFile1 = vpe->vgaFile1;
 		if (vpe->vgaFile1 != NULL)
 			break;
-		ensureVgaResLoaded(vga_res);
+		ensureVgaResLoaded(fileId);
 	}
 
 	pp = _curVgaFile1;
@@ -3392,9 +3392,9 @@ void SimonEngine::start_vga_code(uint paletteMode, uint vga_res, uint vgaSpriteI
 		if (READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->id) == vgaSpriteId) {
 
 			if (_startVgaScript)
-				dump_vga_script(pp + READ_BE_UINT16(&((VgaFile1Struct0x6*)p)->script_offs), vga_res, vgaSpriteId);
+				dump_vga_script(pp + READ_BE_UINT16(&((VgaFile1Struct0x6*)p)->script_offs), fileId, vgaSpriteId);
 
-			add_vga_timer(VGA_DELAY_BASE, pp + READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->script_offs), vgaSpriteId, vga_res);
+			add_vga_timer(VGA_DELAY_BASE, pp + READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->script_offs), vgaSpriteId, fileId);
 			break;
 		}
 		p += sizeof(VgaFile1Struct0x6);
@@ -3415,19 +3415,19 @@ void SimonEngine::talk_with_speech(uint speech_id, uint vgaSpriteId) {
 			if (!(_bitArray[0] & 0x4000) && !(_bitArray[1] & 0x1000)) {
 				_bitArray[0] |= 0x4000;
 				_variableArray[100] = 0xF;
-				start_vga_code(4, 1, 0x82, 0, 0, 0);
+				loadSprite(4, 1, 0x82, 0, 0, 0);
 				o_wait_for_vga(0x82);
 			}
 			_skipVgaWait = true;
 		} else {
 			if (_subtitles && _scriptVar2) {
-				start_vga_code(4, 2, 204, 0, 0, 0);
+				loadSprite(4, 2, 204, 0, 0, 0);
 				o_wait_for_vga(204);
 				o_kill_sprite_simon1(204);
 			}
 			o_kill_sprite_simon1(vgaSpriteId + 201);
 			_sound->playVoice(speech_id);
-			start_vga_code(4, 2, vgaSpriteId + 201, 0, 0, 0);
+			loadSprite(4, 2, vgaSpriteId + 201, 0, 0, 0);
 		}
 	} else {
 		if (speech_id == 0xFFFF) {
@@ -3436,7 +3436,7 @@ void SimonEngine::talk_with_speech(uint speech_id, uint vgaSpriteId) {
 			if (!(_bitArray[0] & 0x4000) && !(_bitArray[1] & 0x1000)) {
 				_bitArray[0] |= 0x4000;
 				_variableArray[100] = 5;
-				start_vga_code(4, 1, 0x1e, 0, 0, 0);
+				loadSprite(4, 1, 0x1e, 0, 0, 0);
 				o_wait_for_vga(0x82);
 			}
 			_skipVgaWait = true;
@@ -3445,14 +3445,14 @@ void SimonEngine::talk_with_speech(uint speech_id, uint vgaSpriteId) {
 				_sound->playVoice(speech_id);
 				return;
 			} else if (_subtitles && _scriptVar2) {
-				start_vga_code(4, 2, 5, 0, 0, 0);
+				loadSprite(4, 2, 5, 0, 0, 0);
 				o_wait_for_vga(205);
 				o_kill_sprite_simon2(2,5);
 			}
 
 			o_kill_sprite_simon2(2, vgaSpriteId + 2);
 			_sound->playVoice(speech_id);
-			start_vga_code(4, 2, vgaSpriteId + 2, 0, 0, 0);
+			loadSprite(4, 2, vgaSpriteId + 2, 0, 0, 0);
 		}
 	}
 }
@@ -3537,9 +3537,9 @@ void SimonEngine::talk_with_text(uint vgaSpriteId, uint color, const char *strin
 		y = 2;
 
 	if (_game & GF_SIMON2)
-		start_vga_code(b, 2, vgaSpriteId, x, y, 12);
+		loadSprite(b, 2, vgaSpriteId, x, y, 12);
 	else
-		start_vga_code(b, 2, vgaSpriteId + 199, x, y, 12);
+		loadSprite(b, 2, vgaSpriteId + 199, x, y, 12);
 }
 
 // Thanks to Stuart Caie for providing the original
@@ -3783,7 +3783,7 @@ void SimonEngine::openGameFile() {
 
 	loadIconFile();
 
-	vc_34_force_lock();
+	vc34_forceLock();
 	
 	runSubroutine101();
 	startUp_helper_2();
