@@ -1609,7 +1609,7 @@ void SimonEngine::vc_kill_sprite(uint file, uint sprite) {
 
 	vfs = _vgaSleepStructs;
 	while (vfs->ident != 0) {
-		if ((_game & GF_SIMON1) || (vfs->sprite_id == _vgaCurSpriteId && vfs->cur_vga_file == _vgaCurFileId)) {
+		if (vfs->sprite_id == _vgaCurSpriteId && ((_game & GF_SIMON1) || vfs->cur_vga_file == _vgaCurFileId)) {
 			while (vfs->ident != 0) {
 				memcpy(vfs, vfs + 1, sizeof(VgaSleepStruct));
 				vfs++;
@@ -1625,7 +1625,7 @@ void SimonEngine::vc_kill_sprite(uint file, uint sprite) {
 
 		vte = _vgaTimerList;
 		while (vte->delay != 0) {
-			if ((_game & GF_SIMON1) || (vte->sprite_id == _vgaCurSpriteId && vte->cur_vga_file == _vgaCurFileId)) {
+			if (vte->sprite_id == _vgaCurSpriteId && ((_game & GF_SIMON1) || vte->cur_vga_file == _vgaCurFileId)) {
 				delete_vga_timer(vte);
 				break;
 			}
