@@ -192,7 +192,7 @@ static const ScummGameSettings scumm_settings[] = {
 	{"ftdemo", "Full Throttle (Mac Demo)", GID_FT, 7, 0, 30, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformMacintosh, 0, "Full Throttle Demo Data"},
 	{"ftpcdemo", "Full Throttle (PC Demo)", GID_FT, 7, 0, 30, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformUnknown, "ft", 0},
+	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformPC, "ft", "ft.000"},
 
 
 	{"dig", "The Dig", GID_DIG, 7, 0, 30, MDT_NONE,
@@ -200,7 +200,7 @@ static const ScummGameSettings scumm_settings[] = {
 	{"digMac", "The Dig (Mac)", GID_DIG, 7, 0, 30, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, Common::kPlatformMacintosh, "dig", "The Dig Data"},
 	{"digdemo", "The Dig (Demo)", GID_DIG, 7, 0, 30, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformUnknown, "dig", 0},
+	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformUnknown, "dig", "dig.la0"},
 	{"digdemoMac", "The Dig (Mac Demo)", GID_DIG, 7, 0, 30, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformMacintosh, "dig", "The Dig Demo Data"},
 
@@ -209,7 +209,7 @@ static const ScummGameSettings scumm_settings[] = {
 	{"comi", "The Curse of Monkey Island", GID_CMI, 8, 0, 80, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER, Common::kPlatformUnknown, 0, 0},
 	{"comidemo", "The Curse of Monkey Island (Demo)", GID_CMI, 8, 0, 80, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER | GF_DEMO, Common::kPlatformUnknown, "comi", 0},
+	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER | GF_DEMO, Common::kPlatformUnknown, "comi", "COMI.LA0"},
 #endif
 
 	// Humongous Entertainment Scumm Version 6
