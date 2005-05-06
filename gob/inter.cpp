@@ -1314,7 +1314,7 @@ void inter_funcBlock(int16 retFlag) {
 				break;
 
 			case 2:
-				snd_speakerOn(parse_parseValExpr());
+				snd_speakerOn(parse_parseValExpr(), -1);
 				break;
 
 			case 3:

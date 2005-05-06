@@ -30,7 +30,7 @@ int16 snd_checkProAudio(void);
 int16 snd_checkAdlib(void);
 int16 snd_checkBlaster(void);
 void snd_setBlasterPort(int16 port);
-void snd_speakerOn(int16 frequency);
+void snd_speakerOn(int16 frequency, int32 length);
 void snd_speakerOff(void);
 void snd_stopSound(int16 arg);
 void snd_setResetTimerFlag(char flag);

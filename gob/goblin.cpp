@@ -1562,9 +1562,7 @@ void gob_moveAdvance(Gob_Object *gobDesc, int16 nextAct, int16 framesCount) {
 	if (gobDesc->state >= 0 && gobDesc->state < 10 &&
 	    gobDesc->stateMach == gobDesc->realStateMach &&
 	    (gobDesc->curFrame == 3 || gobDesc->curFrame == 6)) {
-		snd_speakerOn(10 * util_getRandom(3) + 50);
-		util_delay(5);
-		snd_speakerOff();
+		snd_speakerOn(10 * util_getRandom(3) + 50, 5);
 	}
 
 	if (gob_currentGoblin == 0

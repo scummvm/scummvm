@@ -19,11 +19,73 @@
  * $Header$
  *
  */
+
+#include "sound/audiostream.h"
+
 #include "gob/gob.h"
 #include "gob/global.h"
 #include "gob/sound.h"
+
 namespace Gob {
 
+// TODO: This is a very primitive square wave generator. The only thing is
+//       has in common with the PC speaker is that it sounds terrible.
+
+class SquareWaveStream : public AudioStream {
+private:
+	uint _rate;
+	bool _beepForever;
+	uint32 _periodLength;
+	uint32 _periodSamples;
+	uint32 _remainingSamples;
+	int16 _sampleValue;
+
+public:
+	SquareWaveStream() {}
+	~SquareWaveStream() {}
+
+	void playNote(int freq, int32 ms);
+
+	int readBuffer(int16 *buffer, const int numSamples);
+
+	bool endOfData() const	{ return _remainingSamples == 0; }
+	bool isStereo() const	{ return false; }
+	int getRate() const	{ return _rate; }
+};
+
+void SquareWaveStream::playNote(int freq, int32 ms) {
+	_rate = _vm->_mixer->getOutputRate();
+	_periodLength = _rate / (2 * freq);
+	_periodSamples = 0;
+	_sampleValue = 6000;
+	if (ms == -1) {
+		_remainingSamples = 1;
+		_beepForever = true;
+	} else {
+		_remainingSamples = (_rate * ms) / 1000;
+		_beepForever = false;
+	}
+}
+
+int SquareWaveStream::readBuffer(int16 *buffer, const int numSamples) {
+	int samples = 0;
+
+	while (samples < numSamples && _remainingSamples > 0) {
+		*buffer++ = _sampleValue;
+		if (_periodSamples++ > _periodLength) {
+			_periodSamples = 0;
+			_sampleValue = -_sampleValue;
+		}
+		samples++;
+		if (!_beepForever)
+			_remainingSamples--;
+	}
+
+	return samples;
+}
+
+SquareWaveStream speakerStream;
+SoundHandle speakerHandle;
 Snd_SoundDesc *snd_loopingSounds[5]; // Should be enough
 
 void snd_initSound(void) {
@@ -48,8 +110,18 @@ int16 snd_checkProAudio(void) {return 0;}
 int16 snd_checkAdlib(void) {return 0;}
 int16 snd_checkBlaster(void) {return 0;}
 void snd_setBlasterPort(int16 port) {return;}
-void snd_speakerOn(int16 frequency) {return;}
-void snd_speakerOff(void) {return;}
+
+void snd_speakerOn(int16 frequency, int32 length) {
+	speakerStream.playNote(frequency, length);
+	if (!_vm->_mixer->isSoundHandleActive(speakerHandle)) {
+		_vm->_mixer->playInputStream(SoundMixer::kSFXSoundType, &speakerHandle, &speakerStream, -1, 255, 0, false);
+	}
+}
+
+void snd_speakerOff(void) {
+	_vm->_mixer->stopHandle(speakerHandle);
+}
+
 void snd_stopSound(int16 arg){return;}
 void snd_setResetTimerFlag(char flag){return;}
 

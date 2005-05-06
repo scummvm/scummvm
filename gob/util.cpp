@@ -192,9 +192,7 @@ void util_beep(int16 freq) {
 	if (soundFlags == 0)
 		return;
 
-	//sound(freq);
-	util_delay(50);
-	//nosound();
+	snd_speakerOn(freq, 50);
 }
 
 uint32 util_getTimeKey(void) {
