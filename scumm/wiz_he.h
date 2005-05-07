@@ -144,7 +144,7 @@ struct Wiz {
 	WizPolygon _polygons[NUM_POLYGONS];
 	
 	Wiz();
-	void imageNumClear();
+	void clearWizBuffer();
 	Common::Rect _rectOverride;
 	bool _rectOverrideEnabled;
 

@@ -269,7 +269,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		/* B4 */
 		OPCODE(o72_getNumFreeArrays),
 		OPCODE(o72_getArrayDimSize),
-		OPCODE(o72_checkGlobQueue),
+		OPCODE(o100_isResourceLoaded),
 		OPCODE(o100_getResourceSize),
 		/* B8 */
 		OPCODE(o100_getSpriteGroupInfo),
@@ -2196,6 +2196,36 @@ void ScummEngine_v100he::o100_writeFile() {
 		error("o100_writeFile: default case %d", subOp);
 	}
 	debug(1, "o100_writeFile: slot %d, subOp %d", slot, subOp);
+}
+
+void ScummEngine_v100he::o100_isResourceLoaded() {
+	// Reports percentage of resource loaded by queue
+	int type;
+
+	byte subOp = fetchScriptByte();
+	int idx = pop();
+
+	switch (subOp) {
+	case 25:
+		type = rtCostume;
+		break;
+	case 41:
+		type = rtImage;
+		break;
+	case 62:
+		type = rtRoom;
+		break;
+	case 66:
+		type = rtScript;
+		break;
+	case 72:
+		type = rtSound;
+		break;
+	default:
+		error("o100_isResourceLoaded: default case %d", subOp);
+	}
+
+	push (res.isResourceLoaded(type, idx) ? 100 : 0);
 }
 
 void ScummEngine_v100he::o100_getResourceSize() {

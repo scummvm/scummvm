@@ -875,7 +875,7 @@ void ScummEngine_v70he::clearDrawQueues() {
 void ScummEngine_v80he::clearDrawQueues() {
 	ScummEngine_v70he::clearDrawQueues();
 
-	_wiz.imageNumClear();
+	_wiz.clearWizBuffer();
 }
 
 

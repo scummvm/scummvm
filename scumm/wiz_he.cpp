@@ -36,7 +36,7 @@ Wiz::Wiz() {
 	_rectOverrideEnabled = false;
 }
 
-void Wiz::imageNumClear() {
+void Wiz::clearWizBuffer() {
 	_imagesNum = 0;
 }
 
@@ -948,13 +948,22 @@ void ScummEngine_v72he::getWizImageDim(int resNum, int state, int32 &w, int32 &h
 void ScummEngine_v72he::displayWizImage(WizImage *pwi) {
 	if (_fullRedraw) {
 		assert(_wiz._imagesNum < ARRAYSIZE(_wiz._images));
-		memcpy(&_wiz._images[_wiz._imagesNum], pwi, sizeof(WizImage));
+		WizImage *wi = &_wiz._images[_wiz._imagesNum];
+		wi->resNum = pwi->resNum;
+		wi->x1 = pwi->x1;
+		wi->y1 = pwi->y1;
+		wi->zorder = 0;
+		wi->state = pwi->state;
+		wi->flags = pwi->flags;
+		wi->xmapNum = 0;
+		wi->field_390 = 0;
+		wi->paletteNum = 0;
 		++_wiz._imagesNum;
 	} else if (pwi->flags & kWIFIsPolygon) {
-		drawWizPolygon(pwi->resNum, pwi->state, pwi->x1, pwi->flags, pwi->xmapNum, 0, 0);
+		drawWizPolygon(pwi->resNum, pwi->state, pwi->x1, pwi->flags, 0, 0, 0);
 	} else {
 		const Common::Rect *r = NULL;
-		drawWizImage(pwi->resNum, pwi->state, pwi->x1, pwi->y1, pwi->zorder, pwi->xmapNum, pwi->field_390, r, pwi->flags, 0, 0);
+		drawWizImage(pwi->resNum, pwi->state, pwi->x1, pwi->y1, 0, 0, 0, r, pwi->flags, 0, 0);
 	}
 }
 

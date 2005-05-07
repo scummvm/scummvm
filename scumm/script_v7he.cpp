@@ -512,6 +512,7 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 
 	subOp = fetchScriptByte();
 
+	debug(0, "o70_resourceRoutines: case %d", subOp);
 	switch (subOp) {
 	case 100:		// SO_LOAD_SCRIPT
 		resid = pop();
@@ -605,22 +606,27 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 	case 120:
 		// Queue load script
 		resid = pop();
+		ensureResourceLoaded(rtScript, resid);
 		break;
 	case 121:
 		// Queue load sound
 		resid = pop();
+		ensureResourceLoaded(rtSound, resid);
 		break;
 	case 122:
 		// Queue load costume
 		resid = pop();
+		ensureResourceLoaded(rtCostume, resid);
 		break;
 	case 123:
 		// Queue load room image
 		resid = pop();
+		ensureResourceLoaded(rtRoomImage, resid);
 		break;
 	case 203:
 		// Queue load image
 		resid = pop();
+		ensureResourceLoaded(rtImage, resid);
 		break;
 	case 159:
 		resid = pop();

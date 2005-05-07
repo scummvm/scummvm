@@ -932,7 +932,7 @@ protected:
 	void o72_getPixel();
 	void o72_pickVarRandom();
 	void o72_redimArray();
-	void o72_checkGlobQueue();
+	void o72_isResourceLoaded();
 	void o72_readINI();
 	void o72_writeINI();
 	void o72_getResourceSize();
@@ -1300,6 +1300,7 @@ protected:
 	void o100_cursorCommand();
 	void o100_wait();
 	void o100_writeFile();
+	void o100_isResourceLoaded();
 	void o100_getResourceSize();
 	void o100_getSpriteGroupInfo();
 	void o100_getPaletteData();
