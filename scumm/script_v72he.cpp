@@ -2190,8 +2190,12 @@ void ScummEngine_v72he::o72_writeINI() {
 		copyScriptString(string, sizeof(string));
 		copyScriptString(option, sizeof(option));
 
-		// Filter out confusing or useless settings
-		if (!strcmp((char *)option, "HETest") || !strcmp((char *)option, "SaveGamePath"))
+		// Filter out useless settings
+		if (!strcmp((char *)option, "HETest"))
+			return;
+
+		// Filter out confusing path settings
+		if (!strcmp((char *)option, "DownLoadPath") || !strcmp((char *)option, "GameResourcePath") || !strcmp((char *)option, "SaveGamePath"))
 			return;
 
 		ConfMan.set((char *)option, (char *)string); 
