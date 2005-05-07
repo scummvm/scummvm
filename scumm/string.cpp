@@ -55,7 +55,7 @@ void ScummEngine::printString(int m, const byte *msg) {
 
 
 void ScummEngine::unkMessage1(const byte *msg) {
-	byte buffer[100];
+	byte buffer[500];
 	addMessageToStack(msg, buffer, sizeof(buffer));
 
 //	if ((_gameId == GID_CMI) && _debugMode) {	// In CMI, unkMessage1 is used for printDebug output
@@ -84,7 +84,7 @@ void ScummEngine::unkMessage1(const byte *msg) {
 void ScummEngine::showMessageDialog(const byte *msg) {
 	// Original COMI used different code at this point.
 	// Seemed to use blastText for the messages
-	byte buf[100];
+	byte buf[500];
 
 	addMessageToStack(msg, buf, sizeof(buf));
 
