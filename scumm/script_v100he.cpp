@@ -1102,6 +1102,10 @@ void ScummEngine_v100he::o100_resourceRoutines() {
 		break;
 	case 136:
 		// Queue loading
+		if (_heResType == rtScript && _heResId >= _numGlobalScripts)
+			break;
+
+		ensureResourceLoaded(_heResType, _heResId);
 		break;
 	case 137:
 		if (_heResType == rtScript && _heResId >= _numGlobalScripts)

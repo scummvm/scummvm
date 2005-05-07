@@ -512,7 +512,6 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 
 	subOp = fetchScriptByte();
 
-	debug(0, "o70_resourceRoutines: case %d", subOp);
 	switch (subOp) {
 	case 100:		// SO_LOAD_SCRIPT
 		resid = pop();
@@ -606,6 +605,8 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 	case 120:
 		// Queue load script
 		resid = pop();
+		if (resid >= _numGlobalScripts)
+			break;
 		ensureResourceLoaded(rtScript, resid);
 		break;
 	case 121:
