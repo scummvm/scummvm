@@ -1818,6 +1818,18 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 	case 10:
 		fillWizParallelogram(params);
 		break;
+	case 13:
+		// Used in SamsFunShop
+		// Start font
+		break;
+	case 14:
+		// Used in SamsFunShop
+		// End font
+		break;
+	case 15:
+		// Used in SamsFunShop
+		// Create font
+		break;
 	default:
 		error("Unhandled processWizImage mode %d", params->processMode);
 	}

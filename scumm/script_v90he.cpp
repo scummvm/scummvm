@@ -733,10 +733,35 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.processFlags |= kWPFDstResNum;
 		_wizParams.dstResNum = pop();
 		break;
+	case 93: // HE99+
+		_wizParams.processFlags |= 0x100000;
+		_wizParams.field_180 = pop();
+		_wizParams.field_184 = pop();
+		break;
+	case 95: // HE99+
+		_wizParams.processMode = 13;
+		break;
+	case 96: // HE99+
+		_wizParams.field_239D = pop();
+		_wizParams.field_2399 = pop();
+		_wizParams.field_23A5 = pop();
+		_wizParams.field_23A1 = pop();
+		copyScriptString(_wizParams.string2, sizeof(_wizParams.string2));
+		_wizParams.processMode = 15;
+		break;
+	case 97: // HE99+
+		_wizParams.processMode = 16;
+		_wizParams.field_23AD = pop();
+		_wizParams.field_23A9 = pop();
+		copyScriptString(_wizParams.string1, sizeof(_wizParams.string1));
+		break;
 	case 108:
 		_wizParams.processFlags |= kWPFSetPos;
 		_wizParams.img.y1 = pop();
 		_wizParams.img.x1 = pop();
+		break;
+	case 150: // HE99+
+		_wizParams.processMode = 14;
 		break;
 	case 171: // HE99+
 		_wizParams.processMode = 8;
@@ -1625,6 +1650,7 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 }
 
 void ScummEngine_v90he::o90_getWizData() {
+	byte filename[4096];
 	int state, resId;
 	int32 w, h;
 	int16 x, y;
@@ -1694,6 +1720,13 @@ void ScummEngine_v90he::o90_getWizData() {
 		pop();
 		push(0);
 		break;		
+	case 111:
+		pop();
+		copyScriptString(filename, sizeof(filename));
+		pop();
+		push(0);
+		warning("o90_getWizData() case 111 unhandled");
+		break;
 	default:
 		error("o90_getWizData: Unknown case %d", subOp);
 	}

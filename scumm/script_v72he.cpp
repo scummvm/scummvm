@@ -1742,7 +1742,7 @@ void ScummEngine_v72he::o72_openFile() {
 	debug(0,"Final filename to %s", filename + r);
 
 	slot = -1;
-	for (i = 0; i < 17; i++) {
+	for (i = 1; i < 17; i++) {
 		if (_hFileTable[i].isOpen() == false) {
 			slot = i;
 			break;

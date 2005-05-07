@@ -2348,6 +2348,7 @@ void ScummEngine_v100he::o100_getSpriteGroupInfo() {
 }
 
 void ScummEngine_v100he::o100_getWizData() {
+	byte filename[4096];
 	int state, resId;
 	int32 w, h;
 	int16 x, y;
@@ -2407,6 +2408,7 @@ void ScummEngine_v100he::o100_getWizData() {
 		break;
 	case 111:
 		pop();
+		copyScriptString(filename, sizeof(filename));
 		pop();
 		push(0);
 		warning("o100_getWizData() case 111 unhandled");
