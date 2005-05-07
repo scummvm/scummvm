@@ -31,7 +31,7 @@ _build_sword2=yes
 _build_queen=yes
 _build_kyra=no
 _build_saga=yes
-_build_gob=no
+_build_gob=yes
 _need_memalign=no
 _build_plugins=no
 _nasm=auto
@@ -269,8 +269,8 @@ Optional Features:
   --disable-sword2         don't build the Broken Sword II engine
   --disable-queen          don't build the Flight of the Amazon Queen engine
   --disable-saga           don't build the SAGA engine
+  --disable-gob            don't build the Gobli*ns engine
   --enable-kyra            build the Legend of Kyrandia engine
-  --enable-gob             build the Gobli*ns engine
   --enable-plugins         build engines as loadable modules instead of
                            static linking them
   --disable-mt32emu        don't enable the integrated MT-32 emulator
