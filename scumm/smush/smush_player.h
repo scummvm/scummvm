@@ -73,6 +73,10 @@ private:
 
 	byte *_dst;
 	bool _updateNeeded;
+	bool _warpNeeded;
+	int _palDirtyMin, _palDirtyMax;
+	int _warpX, _warpY;
+	int _warpButtons;
 	bool _insanity;
 	bool _middleAudio;
 #ifdef _WIN32_WCE
@@ -88,6 +92,7 @@ public:
 	~SmushPlayer();
 
 	void play(const char *filename, int32 offset = 0, int32 startFrame = 0);
+	void warpMouse(int x, int y, int buttons);
 
 protected:
 	SmushFont *_sf[5];
@@ -98,6 +103,7 @@ protected:
 	void insanity(bool);
 	void setPalette(const byte *palette);
 	void setPaletteValue(int n, byte r, byte g, byte b);
+	void setDirtyColors(int min, int max);
 	void seekSan(const char *file, int32 pos, int32 contFrame);
 	const char *getString(int id);
 

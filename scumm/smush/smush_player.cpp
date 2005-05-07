@@ -696,7 +696,7 @@ void SmushPlayer::handleDeltaPalette(Chunk &b) {
 			_deltaPal[i] = b.getWord();
 		}
 		readPalette(_pal, b);
-		setPalette(_pal);
+		setDirtyColors(0, 255);
 	} else if (b.getSize() == 6) {
 
 		b.getWord();
@@ -706,7 +706,7 @@ void SmushPlayer::handleDeltaPalette(Chunk &b) {
 		for (int i = 0; i < 0x300; i++) {
 			_pal[i] = delta_color(_pal[i], _deltaPal[i]);
 		}
-		setPalette(_pal);
+		setDirtyColors(0, 255);
 	} else {
 		error("SmushPlayer::handleDeltaPalette() Wrong size for DeltaPalette");
 	}
@@ -717,7 +717,7 @@ void SmushPlayer::handleNewPalette(Chunk &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleNewPalette()");
 
 	readPalette(_pal, b);
-	setPalette(_pal);
+	setDirtyColors(0, 255);
 }
 
 void smush_decode_codec1(byte *dst, byte *src, int left, int top, int height, int width, int dstWidth);
@@ -970,7 +970,7 @@ void SmushPlayer::handleAnimHeader(Chunk &b) {
 	_nbframes = b.getWord();
 	b.getWord();
 	readPalette(_pal, b);
-	setPalette(_pal);
+	setDirtyColors(0, 255);
 }
 
 void SmushPlayer::setupAnim(const char *file) {
@@ -1055,25 +1055,29 @@ void SmushPlayer::parseNextFrame() {
 }
 
 void SmushPlayer::setPalette(const byte *palette) {
-	byte palette_colors[1024];
-	byte *p = palette_colors;
-
-	for (int i = 0; i != 256; ++i) {
-		*p++ = _pal[i * 3 + 0] = *palette++; // red
-		*p++ = _pal[i * 3 + 1] = *palette++; // green
-		*p++ = _pal[i * 3 + 2] = *palette++; // blue
-		*p++ = 0;
-	}
-
-	_vm->_system->setPalette(palette_colors, 0, 256);
+	memcpy(_pal, palette, 0x300);
+	setDirtyColors(0, 255);
 }
 
 void SmushPlayer::setPaletteValue(int n, byte r, byte g, byte b) {
 	_pal[n * 3 + 0] = r;
 	_pal[n * 3 + 1] = g;
 	_pal[n * 3 + 2] = b;
+	setDirtyColors(n, n);
+}
 
-	_vm->_system->setPalette(_pal, n, 1);
+void SmushPlayer::setDirtyColors(int min, int max) {
+	if (_palDirtyMin > min)
+		_palDirtyMin = min;
+	if (_palDirtyMax < max)
+		_palDirtyMax = max;
+}
+
+void SmushPlayer::warpMouse(int x, int y, int buttons) {
+	_warpNeeded = true;
+	_warpX = x;
+	_warpY = y;
+	_warpButtons = buttons;
 }
 
 void SmushPlayer::updateScreen() {
@@ -1129,7 +1133,6 @@ void SmushPlayer::updateScreen() {
 #endif
 
 	uint32 end_time, start_time = _vm->_system->getMillis();
-	_vm->_system->copyRectToScreen(_dst, _width, 0, 0, _width, _height);
 	_updateNeeded = true;
 	end_time = _vm->_system->getMillis();
 	debugC(DEBUG_SMUSH, "Smush stats: updateScreen( %03d )", end_time - start_time);
@@ -1215,6 +1218,9 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 	tryCmpFile(filename);
 
 	_updateNeeded = false;
+	_warpNeeded = false;
+	_palDirtyMin = 256;
+	_palDirtyMax = -1;
 	
 	// Hide mouse
 	bool oldMouseState = _vm->_system->showMouse(false);
@@ -1230,13 +1236,36 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 	}
 
 	for (;;) {
+		if (_warpNeeded) {
+			_vm->_system->warpMouse(_warpX, _warpY);
+			_warpNeeded = false;
+		}
 		_vm->parseEvents();
 		_vm->processKbd(true);
+		if (_palDirtyMax >= _palDirtyMin) {
+			byte palette_colors[1024];
+			byte *p = palette_colors;
+
+			for (int i = _palDirtyMin; i <= _palDirtyMax; i++) {
+				byte *data = _pal + i * 3;
+
+				*p++ = data[0];
+				*p++ = data[1];
+				*p++ = data[2];
+				*p++ = 0;
+			}
+
+			_vm->_system->setPalette(palette_colors, _palDirtyMin, _palDirtyMax - _palDirtyMin + 1);
+
+			_palDirtyMax = -1;
+			_palDirtyMin = 256;
+		}
 		if (_updateNeeded) {
 			
 			uint32 end_time, start_time;
 			
 			start_time = _vm->_system->getMillis();
+			_vm->_system->copyRectToScreen(_dst, _width, 0, 0, _width, _height);
 			_vm->_system->updateScreen();
 			_updateNeeded = false;
 #ifdef _WIN32_WCE
