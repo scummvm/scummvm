@@ -290,9 +290,7 @@ GraphicsWidget::~GraphicsWidget() {
 void GraphicsWidget::setGfx(const Graphics::Surface *gfx) {
 	_gfx.free();
 	
-	if (!gfx)
-		return;
-	if (!gfx->pixels)
+	if (!gfx || !gfx->pixels)
 		return;
 	
 	// TODO: add conversion to OverlayColor
@@ -306,17 +304,8 @@ void GraphicsWidget::drawWidget(bool hilite) {
 		// this widget might be used for other things than rendering savegame
 		// graphics/previews...
 		g_gui.drawString("No preview", _x, _y + _h / 2 - g_gui.getFontHeight() / 2, _w, g_gui._textcolor, Graphics::kTextAlignCenter);
-		return;
-	}
-	
-	uint drawWidth = _gfx.w, drawHeight = _gfx.h;
-	
-	if (_w < _gfx.w)
-		drawWidth = _w;
-	if (_h < _gfx.h)
-		drawHeight = _h;
-	
-	g_gui.drawSurface(_gfx, _x, _y);
+	} else
+		g_gui.drawSurface(_gfx, _x, _y);
 }
 
 } // End of namespace GUI
