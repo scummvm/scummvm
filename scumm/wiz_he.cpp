@@ -1834,6 +1834,10 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 		// Used in PuttsFunShop/SamsFunShop
 		// TODO: Create font
 		break;
+	case 17:
+		// Used in PuttsFunShop/SamsFunShop
+		// TODO: Ellipse
+		break;
 	default:
 		error("Unhandled processWizImage mode %d", params->processMode);
 	}

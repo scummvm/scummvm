@@ -653,6 +653,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.maskImgResNum = pop();
 		break;
 	case 19:
+	case 108:
 		_wizParams.processFlags |= kWPFSetPos;
 		_wizParams.img.y1 = pop();
 		_wizParams.img.x1 = pop();
@@ -756,10 +757,16 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.field_23A9 = pop();
 		copyScriptString(_wizParams.string1, sizeof(_wizParams.string1));
 		break;
-	case 108:
-		_wizParams.processFlags |= kWPFSetPos;
-		_wizParams.img.y1 = pop();
-		_wizParams.img.x1 = pop();
+	case 143: // HE99+
+		_wizParams.processMode = 17;
+		_wizParams.field_23CD = pop();
+		_wizParams.field_23C9 = pop();
+		_wizParams.field_23C5 = pop();
+		_wizParams.field_23C1 = pop();
+		_wizParams.field_23BD = pop();
+		_wizParams.field_23B9 = pop();
+		_wizParams.field_23B5 = pop();
+		_wizParams.field_23B1 = pop();
 		break;
 	case 150: // HE99+
 		_wizParams.processMode = 14;
