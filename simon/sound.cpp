@@ -241,6 +241,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer
 	_last_voice_file = 0;
 	_offsets = 0;
 
+	_effects_file = false;
 	_voice_file = false;
 	_ambient_playing = 0;
 
@@ -317,6 +318,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer
 		if (!_effects && gss->mp3_effects_filename && gss->mp3_effects_filename[0]) {
 			file->open(gss->mp3_effects_filename);
 			if (file->isOpen()) {
+				_effects_file = true;
 				_effects = new MP3Sound(_mixer, file);
 			}
 		}
@@ -325,6 +327,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer
 		if (!_effects && gss->vorbis_effects_filename && gss->vorbis_effects_filename[0]) {
 			file->open(gss->vorbis_effects_filename);
 			if (file->isOpen()) {
+				_effects_file = true;
 				_effects = new VorbisSound(_mixer, file);
 			}
 		}
@@ -333,6 +336,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer
 		if (!_effects && gss->flac_effects_filename && gss->flac_effects_filename[0]) {
 			file->open(gss->flac_effects_filename);
 			if (file->isOpen()) {
+				_effects_file = true;
 				_effects = new FlacSound(_mixer, file);
 			}
 		}
@@ -340,6 +344,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer
 		if (!_effects && gss->voc_effects_filename && gss->voc_effects_filename[0]) {
 			file->open(gss->voc_effects_filename);
 			if (file->isOpen()) {
+				_effects_file = true;
 				_effects = new VocSound(_mixer, file);
 			}
 		}
@@ -355,6 +360,9 @@ Sound::~Sound() {
 }
 
 void Sound::readSfxFile(const char *filename) {
+	if (_effects_file)
+		return;
+
 	stopAll();
 
 	File *file = new File();

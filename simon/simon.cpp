@@ -64,7 +64,7 @@ static const SimonGameSettings simon_settings[] = {
 	{"simon1amiga", "Simon the Sorcerer 1 (Amiga)", GAME_SIMON1AMIGA, "gameamiga"},
 	{"simon2dos", "Simon the Sorcerer 2 (DOS)", GAME_SIMON2DOS, "GAME32"},
 	{"simon1talkie", "Simon the Sorcerer 1 Talkie", GAME_SIMON1TALKIE, "GAMEPC"},
-	{"simon1win", "Simon the Sorcerer 1 Talkie (Windows)", GAME_SIMON1WIN, 0},
+	{"simon1win", "Simon the Sorcerer 1 Talkie (Windows)", GAME_SIMON1TALKIE, 0},
 	{"simon2talkie", "Simon the Sorcerer 2 Talkie", GAME_SIMON2TALKIE, "GSPTR30"},
 	{"simon2win", "Simon the Sorcerer 2 Talkie (Windows)", GAME_SIMON2WIN, 0},
 	{"simon2mac", "Simon the Sorcerer 2 Talkie (Amiga or Mac)", GAME_SIMON2WIN, 0},
@@ -1343,7 +1343,7 @@ void SimonEngine::loadTablesIntoMem(uint subr_id) {
 
 				if (_game & GF_SIMON2) {
 					_sound->loadSfxTable(_gameFile, _gameOffsetsPtr[atoi(filename + 6) - 1 + SOUND_INDEX_BASE]);
-				} else if (_game & GF_WIN) {
+				} else {
 					memcpy(filename, "SFXXXX", 6);
 					_sound->readSfxFile(filename);
 				}

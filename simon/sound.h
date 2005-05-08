@@ -49,6 +49,7 @@ public:
 	SoundHandle _effects_handle;
 	SoundHandle _ambient_handle;
 
+	bool _effects_file;
 	bool _voice_file;
 	uint _ambient_playing;
 
