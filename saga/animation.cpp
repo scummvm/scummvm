@@ -438,7 +438,7 @@ void Anim::readAnimHeader(MemoryReadStreamEndian &readS, ANIMATION_HEADER &ah) {
 	ah.start = readS.readUint16BE();
 
 	if (ah.start != 65535 && ah.start != 0)
-		error("Anim::readAnimHeader(): found different start: %d. Fix Anim::play()", ah.start);
+		warning("Anim::readAnimHeader(): found different start: %d. Fix Anim::play()", ah.start);
 	ah.start += readS.pos();
 }
 
