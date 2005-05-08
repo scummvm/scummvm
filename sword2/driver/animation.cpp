@@ -163,7 +163,8 @@ void MoviePlayer::drawTextObject(AnimationState *anim, MovieTextObject *obj) {
  * Plays an animated cutscene.
  * @param filename the file name of the cutscene file
  * @param text the subtitles and voiceovers for the cutscene
- * @param musicOut lead-out music
+ * @param leadInRes lead-in music resource id
+ * @param leadOutRes lead-out music resource id
  */
 
 int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], int32 leadInRes, int32 leadOutRes) {
