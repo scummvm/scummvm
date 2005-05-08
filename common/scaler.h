@@ -23,6 +23,7 @@
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"
+#include "graphics/surface.h"
 
 extern void InitScalers(uint32 BitFormat);
 
@@ -59,5 +60,21 @@ extern void makeRectStretchable(int &x, int &y, int &w, int &h);
 
 extern int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY);
 
+// creates a 160x100 thumbnail for 320x200 games
+// and 160x120 thumbnail for 320x240 and 640x480 games
+// only 565 mode
+enum {
+	kThumbnailWidth = 160,
+	kThumbnailHeight1 = 100,
+	kThumbnailHeight2 = 120
+};
+extern void createThumbnail(const uint8* src, uint32 srcPitch, uint8* dstPtr, uint32 dstPitch, int width, int height);
+
+/**
+ * creates a thumbnail from the current screen (without overlay)
+ * @param surf	a surface (will always have 16 bpp after this for now)
+ * @return		false if a error occured
+ */
+extern bool createThumbnailFromScreen(Graphics::Surface* surf);
 
 #endif

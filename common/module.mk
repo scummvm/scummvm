@@ -22,7 +22,8 @@ MODULE_OBJS += \
 	common/scaler/hq3x.o \
 	common/scaler/scale2x.o \
 	common/scaler/scale3x.o \
-	common/scaler/scalebit.o
+	common/scaler/scalebit.o \
+	common/scaler/thumbnail.o
 
 ifdef HAVE_NASM
 MODULE_OBJS += \
