@@ -604,7 +604,7 @@ void draw_animateCursor(int16 cursor) {
 				draw_cursorAnim++;
 				draw_cursorTimeKey = util_getTimeKey();
 			} else {
-/*				if(draw_noInvalidated && 
+/*				if (draw_noInvalidated && 
 					inter_mouseX == draw_cursorX &&	inter_mouseY == draw_cursorY)
 						return;*/
 			}
@@ -696,7 +696,7 @@ void draw_interPalLoad(void) {
 				draw_unusedPalette1[i] = *inter_execPtr;
 				continue;
 			}
-			//if(*inter_execPtr != 0)
+			//if (*inter_execPtr != 0)
 			//      var_B = 0;
 
 			ind1 = *inter_execPtr >> 4;

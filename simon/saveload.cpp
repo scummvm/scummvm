@@ -71,7 +71,7 @@ int SimonEngine::display_savegame_list(int curpos, bool load, char *dst) {
 	slot = curpos;
 
 	while (curpos + 6 > slot) {
-		if(!(in = _saveFileMan->openForLoading(gen_savename(slot))))
+		if (!(in = _saveFileMan->openForLoading(gen_savename(slot))))
 			break;
 
 		in->read(dst, 18);
@@ -95,7 +95,7 @@ int SimonEngine::display_savegame_list(int curpos, bool load, char *dst) {
 		}
 	} else {
 		if (curpos + 6 == slot) {
-			if((in = _saveFileMan->openForLoading(gen_savename(slot)))) {
+			if ((in = _saveFileMan->openForLoading(gen_savename(slot)))) {
 				slot++;
 				delete in;
 			}

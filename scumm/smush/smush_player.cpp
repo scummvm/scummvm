@@ -1145,7 +1145,7 @@ void SmushPlayer::insanity(bool flag) {
 void SmushPlayer::seekSan(const char *file, int32 pos, int32 contFrame) {
 	Common::StackLock lock(_mutex);
 
-	if(_smixer)
+	if (_smixer)
 		_smixer->stop();
 
 	if (file) {

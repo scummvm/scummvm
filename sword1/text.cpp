@@ -64,7 +64,7 @@ uint32 Text::lowTextManager(uint8 *ascii, int32 width, uint8 pen) {
 	uint32 textObjId = (TEXT_sect * ITM_PER_SEC) - 1;
 	do {
 		textObjId++;
-	} while(_objMan->fetchObject(textObjId)->o_status);
+	} while (_objMan->fetchObject(textObjId)->o_status);
 	// okay, found a free text object
 
 	_objMan->fetchObject(textObjId)->o_status = STAT_FORE;
@@ -128,7 +128,7 @@ uint16 Text::analyzeSentence(uint8 *text, uint16 maxWidth, LineInfo *line) {
 			text++;
 
 		wordWidth += OVERLAP; // no overlap on final letter of word!
-		if( firstWord )	{ // first word on first line, so no separating SPACE needed
+		if ( firstWord )	{ // first word on first line, so no separating SPACE needed
 			line[0].width = wordWidth;
 			line[0].length = wordLength;
 			firstWord = false;

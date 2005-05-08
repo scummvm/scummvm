@@ -235,7 +235,7 @@ int KyraEngine::go() {
 		_midiDriver->playTrack(3);
 	}
 	
-	while(true) {
+	while (true) {
 		OSystem::Event event;
 		//if (_debugger->isAttached())
 		//	_debugger->onFrame();

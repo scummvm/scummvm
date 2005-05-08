@@ -159,7 +159,7 @@ void SoundMixer::insertChannel(SoundHandle *handle, Channel *chan) {
 			break;
 		}
 	}
-	if(index == -1) {
+	if (index == -1) {
 		warning("SoundMixer::out of mixer slots");
 		delete chan;
 		return;

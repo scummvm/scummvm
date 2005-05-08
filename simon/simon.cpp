@@ -3560,17 +3560,17 @@ void SimonEngine::talk_with_text(uint vgaSpriteId, uint color, const char *strin
 	}                           \
 	(var) = bb & 1;             \
 	bb >>= 1;                   \
-}while(0)
+}while (0)
 
 #define SD_GETBITS(var, nbits) do { \
 	bc = (nbits);                   \
 	(var) = 0;                      \
-	while(bc--) {                   \
+	while (bc--) {                   \
 		(var) <<= 1;                \
 		SD_GETBIT(bit);             \
 		(var) |= bit;               \
 	}                               \
-}while(0)
+}while (0)
 
 #define SD_TYPE_LITERAL (0)
 #define SD_TYPE_MATCH   (1)

@@ -171,7 +171,7 @@ void md5_update( md5_context *ctx, const  uint8 *input, uint32 length )
 {
     uint32 left, fill;
 
-    if( ! length ) return;
+    if ( ! length ) return;
 
     left = ctx->total[0] & 0x3F;
     fill = 64 - left;
@@ -179,10 +179,10 @@ void md5_update( md5_context *ctx, const  uint8 *input, uint32 length )
     ctx->total[0] += length;
     ctx->total[0] &= 0xFFFFFFFF;
 
-    if( ctx->total[0] < length )
+    if ( ctx->total[0] < length )
         ctx->total[1]++;
 
-    if( left && length >= fill )
+    if ( left && length >= fill )
     {
         memcpy( (void *) (ctx->buffer + left),
                 (const void *) input, fill );
@@ -192,14 +192,14 @@ void md5_update( md5_context *ctx, const  uint8 *input, uint32 length )
         left = 0;
     }
 
-    while( length >= 64 )
+    while ( length >= 64 )
     {
         md5_process( ctx, input );
         length -= 64;
         input  += 64;
     }
 
-    if( length )
+    if ( length )
     {
         memcpy( (void *) (ctx->buffer + left),
                 (const void *) input, length );
@@ -249,28 +249,28 @@ bool md5_file( const char *name, uint8 digest[16], const char *directory, uint32
 	int readlen;
 
 	f.open(name, File::kFileReadMode, directory);
-	if( ! f.isOpen() )
+	if ( ! f.isOpen() )
 	{
 		warning( "md5_file couldn't open '%s'", name );
 		return false;
 	}
 
-	if( ! restricted || sizeof( buf ) <= length ) 
+	if ( ! restricted || sizeof( buf ) <= length ) 
 		readlen = sizeof( buf );
 	else 
 		readlen = length;
 
 	md5_starts( &ctx );
 
-	while( ( i = f.read( buf, readlen ) ) > 0 )
+	while ( ( i = f.read( buf, readlen ) ) > 0 )
 	{
 		md5_update( &ctx, buf, i );
 
 		length -= i;
-		if( restricted && length == 0 )
+		if ( restricted && length == 0 )
 			break;
 
-		if( restricted && sizeof( buf ) > length ) 
+		if ( restricted && sizeof( buf ) > length ) 
 			readlen = length;
 	}
 
@@ -317,11 +317,11 @@ int main( int argc, char *argv[] )
     md5_context ctx;
     unsigned char md5sum[16];
 
-    if( argc < 2 )
+    if ( argc < 2 )
     {
         printf( "\n MD5 Validation Tests:\n\n" );
 
-        for( i = 0; i < 7; i++ )
+        for ( i = 0; i < 7; i++ )
         {
             printf( " Test %d ", i + 1 );
 
@@ -329,12 +329,12 @@ int main( int argc, char *argv[] )
             md5_update( &ctx, (const uint8 *) msg[i], strlen( msg[i] ) );
             md5_finish( &ctx, md5sum );
 
-            for( j = 0; j < 16; j++ )
+            for ( j = 0; j < 16; j++ )
             {
                 sprintf( output + j * 2, "%02x", md5sum[j] );
             }
 
-            if( memcmp( output, val[i], 32 ) )
+            if ( memcmp( output, val[i], 32 ) )
             {
                 printf( "failed!\n" );
                 return( 1 );
@@ -347,10 +347,10 @@ int main( int argc, char *argv[] )
     }
     else
     {
-    	for( i = 1; i < argc; i++ )
+    	for ( i = 1; i < argc; i++ )
     	{
 			md5_file( argv[i], md5sum );
-			for( j = 0; j < 16; j++ )
+			for ( j = 0; j < 16; j++ )
 			{
 				printf( "%02x", md5sum[j] );
 			}

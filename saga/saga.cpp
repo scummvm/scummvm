@@ -296,7 +296,7 @@ int SagaEngine::go() {
 	_scene->startScene();
 	uint32 currentTicks;
 
-	while(!_quit) {
+	while (!_quit) {
 		if (_console->isAttached())
 			_console->onFrame();
 

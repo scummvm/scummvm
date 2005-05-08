@@ -158,7 +158,7 @@ void revmodel::mute() {
 void revmodel::processreplace(float *inputL, float *inputR, float *outputL, float *outputR, long numsamples, int skip) {
 	float outL, outR, input;
 
-	while(numsamples-- > 0) {
+	while (numsamples-- > 0) {
 		int i;
 
 		outL = outR = 0;

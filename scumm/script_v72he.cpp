@@ -2055,7 +2055,7 @@ void ScummEngine_v72he::copyArray(int array1, int a1_dim2start, int a1_dim2end, 
 			for (; a1_dim2start <= a1_dim2end; ++a1_dim2start, ++a2_dim2start) {
 				int a2dim1 = a2_dim1start;
 				int a1dim1 = a1_dim1start;
-				for(; a1dim1 <= a1_dim1end; ++a1dim1, ++a2dim1) {
+				for (; a1dim1 <= a1_dim1end; ++a1dim1, ++a2dim1) {
 					int val = readArray(array2, a2_dim2start, a2dim1);
 					writeArray(array1, a1_dim2start, a1dim1, val);
 				}

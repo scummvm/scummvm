@@ -328,7 +328,7 @@ void Text::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 	do {
 		textChar = getTextChar();
 		*dest++ = textChar;	
-	} while(textChar);
+	} while (textChar);
 }
 
 void Text::fnPointerText(uint32 pointedId, uint16 mouseX, uint16 mouseY) {

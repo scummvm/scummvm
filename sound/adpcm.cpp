@@ -148,16 +148,16 @@ int16 ADPCMInputStream::okiADPCMDecode(byte code) {
 	samp = _status.last + diff;
 
     // Clip the values to +/- 2^11 (supposed to be 12 bits)
-	if(samp > 2048)
+	if (samp > 2048)
 		samp = 2048;
-	if(samp < -2048)
+	if (samp < -2048)
 		samp = -2048;
 
 	_status.last = samp;
 	_status.stepIndex += stepAdjust(code);
-	if(_status.stepIndex < 0)
+	if (_status.stepIndex < 0)
 		_status.stepIndex = 0;
-	if(_status.stepIndex > 48)
+	if (_status.stepIndex > 48)
 		_status.stepIndex = 48;
 
 	return samp;
@@ -200,16 +200,16 @@ int16 ADPCMInputStream::imaADPCMDecode(byte code) {
 	diff = (code & 0x08) ? -E : E;
 	samp = _status.last + diff;
 
-	if(samp < -32768)
+	if (samp < -32768)
 		samp = -32768;
-	else if(samp > 32767)
+	else if (samp > 32767)
 		samp = 32767;
 
 	_status.last = samp;
 	_status.stepIndex += stepAdjust(code);
-	if(_status.stepIndex < 0)
+	if (_status.stepIndex < 0)
 		_status.stepIndex = 0;
-	if(_status.stepIndex > 88)
+	if (_status.stepIndex > 88)
 		_status.stepIndex = 88;
 
 	return samp;

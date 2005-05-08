@@ -432,7 +432,7 @@ void Sprite::scaleBuffer(const byte *src, int width, int height, int scale) {
 	for (int i = 0; i < height; i++) {
 		vskip += skip;
 
-		if(vskip < skip) { // We had an overflow
+		if (vskip < skip) { // We had an overflow
 			src += width;
 		} else {
 			hskip = 0x80;

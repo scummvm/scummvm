@@ -44,7 +44,7 @@ int SmushFont::getStringWidth(const char *str) {
 
 	int width = 0;
 	while (*str) {
-		if(*str & 0x80 && _vm->_useCJKMode) {
+		if (*str & 0x80 && _vm->_useCJKMode) {
 			width += _vm->_2byteWidth + 1;
 			str += 2;
 		} else

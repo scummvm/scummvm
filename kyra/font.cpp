@@ -55,7 +55,7 @@ Font::Font(uint8* buffer, uint32 size) {
 	_fontHeader._height = bufferstream.readByte();	
 	
 	// tests for the magic values
-	if(_fontHeader._magic1 != FontHeader_Magic1 || _fontHeader._magic2 != FontHeader_Magic2 ||
+	if (_fontHeader._magic1 != FontHeader_Magic1 || _fontHeader._magic2 != FontHeader_Magic2 ||
 		_fontHeader._magic3 != FontHeader_Magic3) {
 		error("magic vars in the fontheader are corrupt\n"
 			  "_magic1 = 0x%x, _magic2 = 0x%x, _magic3 = 0x%x",

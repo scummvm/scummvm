@@ -61,7 +61,7 @@ CPSImage::CPSImage(uint8* buffer, uint32 size) {
 	_cpsHeader._pal = bufferstream.readUint32LE();
 		
 	// lets check a bit
-	if(_cpsHeader._pal == 0x3000000) {
+	if (_cpsHeader._pal == 0x3000000) {
 		// if this was a compressed palette you should have strange graphics
 			
 		uint8* palbuffer = new uint8[768];
@@ -79,9 +79,9 @@ CPSImage::CPSImage(uint8* buffer, uint32 size) {
 	uint8* imagebuffer = &buffer[bufferstream.pos()];
 	assert(imagebuffer);
 		
-	if(_cpsHeader._format == 4) {
+	if (_cpsHeader._format == 4) {
 		Compression::decode80(imagebuffer, _image);
-	} else if(_cpsHeader._format == 3) {
+	} else if (_cpsHeader._format == 3) {
 		Compression::decode3(imagebuffer, _image, _cpsHeader._imagesize);
 	} else {
 		error("unknown CPS format %d", _cpsHeader._format);
@@ -89,7 +89,7 @@ CPSImage::CPSImage(uint8* buffer, uint32 size) {
 		
 	int16 width = getWidthFromCPSRes(_cpsHeader._imagesize);
 		
-	if(width == -1) {
+	if (width == -1) {
 		warning("unknown CPS width(imagesize: %d)", _cpsHeader._imagesize);
 		delete [] buffer;
 		return;

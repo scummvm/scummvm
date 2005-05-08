@@ -156,7 +156,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 			sprintf(_joeVoiceFilePrefix[i], "%2d%4xJ", _talkKey, _dialogueTree[level][i].head);
 		}
 
-		// Check to see if(all the dialogue options have been selected.
+		// Check to see if (all the dialogue options have been selected.
 		// if this is the case, and the last one left is the exit option,
 		// then automatically set S to that and exit.
 
@@ -495,7 +495,7 @@ int Talk::getSpeakCommand(const Person *person, const char *sentence, unsigned &
 			else
 				_vm->walk()->movePerson(person, x, y, _vm->graphics()->numFrames(), 0);
 			index += 11;
-			// if(JOEWALK==3) CUTQUIT=0;
+			// if (JOEWALK==3) CUTQUIT=0;
 			// XXX personWalking = true;
 		}
 		break;
@@ -1312,7 +1312,7 @@ int16 Talk::selectSentence() {
 					selectedSentence = zone;
 				}
 
-			} // while()
+			} // while ()
 		}
 	}
 

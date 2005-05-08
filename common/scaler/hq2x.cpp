@@ -49,7 +49,7 @@ static bool isAltiVecAvailable()  {
 	int hasVectorUnit = 0; 
 	size_t length = sizeof(hasVectorUnit); 
 	int error = sysctl(selectors, 2, &hasVectorUnit, &length, NULL, 0); 
-	if( 0 == error )
+	if ( 0 == error )
 		return hasVectorUnit != 0; 
 	return false; 
 }

@@ -190,7 +190,7 @@ int32 Router::routeFinder(int32 id, Object *megaObject, int32 x, int32 y, int32 
 			solidFlag = SolidWalkAnimator(megaObject->o_route);
 		}
 
-		if(!solidFlag)
+		if (!solidFlag)
 		{
 			SlidyPath();
 			SlidyWalkAnimator(megaObject->o_route);
@@ -247,7 +247,7 @@ int32 Router::GetRoute()
 			changed = Scan(level);
 			level =level + 1;
 		}
-		while(changed == 1);
+		while (changed == 1);
 
 		// Check to see if the route reached the target
 		if (node[nnodes].dist < 9999)
@@ -869,7 +869,7 @@ void Router::SlidyWalkAnimator(WalkData *walkAnim)
 				step += 1;
 				module += 1;
 			}
-			while( module < moduleEnd) ;
+			while ( module < moduleEnd) ;
 			stepX = modX[modularPath[p].dir];
 			stepY = modY[modularPath[p].dir];
 			errorX = modularPath[p].x -	moduleX;
@@ -923,7 +923,7 @@ void Router::SlidyWalkAnimator(WalkData *walkAnim)
 						frameCount += 1;
 						walkAnim[lastCount + frameCount - 1].x +=	errorX*frameCount/frames;
 					}
-					while(frameCount<frames);	
+					while (frameCount<frames);	
 				}
 				if (errorY != 0)
 				{
@@ -934,7 +934,7 @@ void Router::SlidyWalkAnimator(WalkData *walkAnim)
 						frameCount += 1;
 						walkAnim[lastCount + frameCount-1].y +=	errorY*frameCount/frames;
 					}
-					while(frameCount<frames);	
+					while (frameCount<frames);	
 				}
 				// Now is the time to put in the turn frames for the last turn
 				if (frames < framesPerStep)
@@ -954,7 +954,7 @@ void Router::SlidyWalkAnimator(WalkData *walkAnim)
 							walkAnim[frame].frame += 104;//turning left 
 							frame += 1;
 						}
-						while(frame < lastCount );
+						while (frame < lastCount );
 					}
 					if (((lastDir == 1) || (lastDir == -7)) || ((lastDir == 2) || (lastDir == -6)))
 					{	
@@ -965,7 +965,7 @@ void Router::SlidyWalkAnimator(WalkData *walkAnim)
 							walkAnim[frame].frame += 200; //was 60 now 116
 							frame += 1;
 						}
-						while(frame < lastCount );
+						while (frame < lastCount );
 					}
 					lastDir = currentDir;
 				}
@@ -1359,7 +1359,7 @@ int32 Router::SolidWalkAnimator(WalkData *walkAnim)
 
 	do
 	{
-		while(modularPath[p].num > 0)
+		while (modularPath[p].num > 0)
 		{
 			currentDir = modularPath[p].dir;
 			if (currentDir< NO_DIRECTIONS)
@@ -1388,7 +1388,7 @@ int32 Router::SolidWalkAnimator(WalkData *walkAnim)
 					module += 1;
 					step += 1;
 				}
-				while( module < moduleEnd) ;
+				while ( module < moduleEnd) ;
 				errorX = modularPath[p].x -	moduleX;
 				errorX = errorX * modX[modularPath[p].dir];
 				errorY = modularPath[p].y -	moduleY;
@@ -1432,7 +1432,7 @@ int32 Router::SolidWalkAnimator(WalkData *walkAnim)
 								walkAnim[frame].frame += 104;//turning left 
 								frame += 1;
 							}
-							while(frame < lastCount );
+							while (frame < lastCount );
 						}
 						if (((lastDir == 1) || (lastDir == -7)) || ((lastDir == 2) || (lastDir == -6)))
 						{	
@@ -1443,7 +1443,7 @@ int32 Router::SolidWalkAnimator(WalkData *walkAnim)
 								walkAnim[frame].frame += 200; //was 60 now 116
 								frame += 1;
 							}
-							while(frame < lastCount );
+							while (frame < lastCount );
 						}
 					}
 					// all turns checked
@@ -1474,7 +1474,7 @@ int32 Router::SolidWalkAnimator(WalkData *walkAnim)
 				walkAnim[frame].frame += 278;//stopping right 
 				frame += 1;
 			}
-			while(frame < lastCount );
+			while (frame < lastCount );
 			walkAnim[stepCount].frame = 308;
 			walkAnim[stepCount].step = 7;
 			walkAnim[stepCount].dir = currentDir;
@@ -1489,7 +1489,7 @@ int32 Router::SolidWalkAnimator(WalkData *walkAnim)
 				walkAnim[frame].frame += 279;//stopping right
 				frame += 1;
 			}
-			while(frame < lastCount );
+			while (frame < lastCount );
 			walkAnim[stepCount].frame = 315;
 			walkAnim[stepCount].step = 7;
 			walkAnim[stepCount].dir = currentDir;
@@ -1510,7 +1510,7 @@ int32 Router::SolidWalkAnimator(WalkData *walkAnim)
 				walkAnim[frame].frame += 244;//stopping left 
 				frame += 1;
 			}
-			while(frame < lastCount );
+			while (frame < lastCount );
 			walkAnim[stepCount].frame = 322;
 			walkAnim[stepCount].step = 7;
 			walkAnim[stepCount].dir = currentDir;
@@ -1525,7 +1525,7 @@ int32 Router::SolidWalkAnimator(WalkData *walkAnim)
 				walkAnim[frame].frame += 245;//stopping left 
 				frame += 1;
 			}
-			while(frame < lastCount );
+			while (frame < lastCount );
 			walkAnim[stepCount].frame = 329;
 			walkAnim[stepCount].step = 7;
 			walkAnim[stepCount].dir = currentDir;
@@ -1565,7 +1565,7 @@ int32 Router::SolidWalkAnimator(WalkData *walkAnim)
 #endif   
 		i += 1;
 	}
-	while(i<p-1);
+	while (i<p-1);
 	if (p != 0)
 	{
 		targetDir =	modularPath[p-1].dir;
@@ -1646,11 +1646,11 @@ int32 Router::Scan(int32 level)
 				}
 				k-=1;
 			}
-			while(k > 0);	
+			while (k > 0);	
 		}
 		i=i+1;
 	}
-	while(i < nnodes);	
+	while (i < nnodes);	
 	return changed;
 }
 
@@ -2046,7 +2046,7 @@ int32 Router::LineCheck(int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 		}
 		i = i + 1;
 	}
-	while((i < nbars) && linesCrossed);
+	while ((i < nbars) && linesCrossed);
 
 	return linesCrossed;
 }
@@ -2100,7 +2100,7 @@ int32 Router::HorizCheck(int32 x1 , int32 y , int32 x2)
 		}
 		i = i + 1;
 	}
-	while((i < nbars) && linesCrossed);
+	while ((i < nbars) && linesCrossed);
 
 	return linesCrossed;
 }
@@ -2153,7 +2153,7 @@ int32 Router::VertCheck(int32 x, int32 y1, int32 y2)
 		}
 		i = i + 1;
 	}
-	while((i < nbars) && linesCrossed);
+	while ((i < nbars) && linesCrossed);
 
 	return linesCrossed;
 }
@@ -2229,7 +2229,7 @@ int32 Router::CheckTarget(int32 x , int32 y)
 		}
 		i = i + 1;
 	}
-	while((i < nbars) && (onLine == 0));
+	while ((i < nbars) && (onLine == 0));
 
 	return onLine;
 }
@@ -2313,7 +2313,7 @@ int32 Router::LoadWalkResources(Object *megaObject, int32 x, int32 y, int32 dir)
 		fPolygrid += 2*sizeof(int16);
 		j ++;
 	}
-	while(j < nnodes);//array starts at 0*/
+	while (j < nnodes);//array starts at 0*/
 	for (cnt = 1; cnt < nnodes; cnt++) {
 		node[cnt].x = READ_LE_UINT16(fPolygrid); fPolygrid += 2;
 		node[cnt].y = READ_LE_UINT16(fPolygrid); fPolygrid += 2;
@@ -2338,7 +2338,7 @@ int32 Router::LoadWalkResources(Object *megaObject, int32 x, int32 y, int32 dir)
 
 		// copy any extra nodes from extraNode array
 		j = 0;
-		while(j < _numExtraNodes)//array starts at 0
+		while (j < _numExtraNodes)//array starts at 0
 		{
 			node[nnodes+j].x = _extraNodes[j].x ;
 			node[nnodes+j].y = _extraNodes[j].y ;

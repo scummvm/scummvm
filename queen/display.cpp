@@ -721,9 +721,9 @@ void Display::blit(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, const uin
 		}
 	} else if (!xflip) { // Masked bitmap unflipped
 		while (h--) {
-			for(int i = 0; i < w; ++i) {
+			for (int i = 0; i < w; ++i) {
 				uint8 b = *(srcBuf + i);
-				if(b != 0) {
+				if (b != 0) {
 					*(dstBuf + i) = b;
 				}
 			}
@@ -732,9 +732,9 @@ void Display::blit(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, const uin
 		}
 	} else { // Masked bitmap flipped
 		while (h--) {
-			for(int i = 0; i < w; ++i) {
+			for (int i = 0; i < w; ++i) {
 				uint8 b = *(srcBuf + i);
-				if(b != 0) {
+				if (b != 0) {
 					*(dstBuf - i) = b;
 				}
 			}

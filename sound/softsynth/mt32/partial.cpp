@@ -669,9 +669,9 @@ Bit32s Partial::getFiltEnvelope() {
 					tStat->envsize = synth->tables.envTime[(int)patchCache->filtEnv.envtime[tStat->envstat]];
 				} else {
 					Bit32u envTime = (int)patchCache->filtEnv.envtime[tStat->envstat];
-					if(tStat->envstat > 1) {
+					if (tStat->envstat > 1) {
 						int envDiff = abs(patchCache->filtEnv.envlevel[tStat->envstat] - patchCache->filtEnv.envlevel[tStat->envstat - 1]);
-						if(envTime > synth->tables.envDeltaMaxTime[envDiff]) {
+						if (envTime > synth->tables.envDeltaMaxTime[envDiff]) {
 							envTime = synth->tables.envDeltaMaxTime[envDiff];
 						}
 					}

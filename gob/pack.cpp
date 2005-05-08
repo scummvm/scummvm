@@ -47,7 +47,7 @@ int32 unpackData(char *sourceBuf, char *destBuf) {
 	 * Don't need this anymore :)
 	 */
 	/*
-	 * if(realSize < 65000)
+	 * if (realSize < 65000)
 	 * {
 	 * asm_unpackData(sourceBuf, destBuf, tmpBuf);
 	 * free(tmpBuf);

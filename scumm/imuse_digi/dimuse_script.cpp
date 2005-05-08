@@ -371,7 +371,7 @@ int32 IMuseDigital::getCurMusicLipSyncHeight(int syncId) {
 void IMuseDigital::stopAllSounds() {
 	debug(5, "IMuseDigital::stopAllSounds");
 
-	for(;;) {
+	for (;;) {
 		bool foundNotRemoved = false;
 		for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 			Track *track = _track[l];

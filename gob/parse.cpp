@@ -331,7 +331,7 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 
 					if (operation != arg_0)
 						break;
-				}	// if(operPtr[-2] == 9 && ...)
+				}	// if (operPtr[-2] == 9 && ...)
 
 				for (brackStart = stkPos - 2; brackStart > 0 &&
 				    operStack[brackStart] < 30 &&
@@ -535,7 +535,7 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 
 				if (var_1A != 0)
 					break;
-			}	// while(stkPos >= 2)
+			}	// while (stkPos >= 2)
 
 			if (operation == 30 || operation == 31) {
 				if (operPtr[-1] == 20) {
@@ -696,7 +696,7 @@ void parse_skipExpr(char arg_0) {
 				parse_skipExpr(10);
 			}
 			continue;
-		}		// if(operation >= 19 && operation <= 29)
+		}		// if (operation >= 19 && operation <= 29)
 
 		if (operation == 9) {
 			num++;
@@ -844,7 +844,7 @@ int16 parse_parseValExpr() {
 					valPtr[0] &= valPtr[2];
 					break;
 				}
-			}	// if(stkPos > 0 && cmdPtr[-1] > 4 && cmdPtr[-1] < 9)
+			}	// if (stkPos > 0 && cmdPtr[-1] > 4 && cmdPtr[-1] < 9)
 			continue;
 		}
 
@@ -1102,7 +1102,7 @@ void parse_printExpr(char arg_0) {
 				break;
 			}
 			continue;
-		}		// if(operation >= 19 && operation <= 29)
+		}		// if (operation >= 19 && operation <= 29)
 		switch (operation) {
 		case 9:
 			debug(5, "(");

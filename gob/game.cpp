@@ -1688,7 +1688,7 @@ void game_loadExtTable(void) {
 	game_extTable->itemsCount = FROM_LE_16(game_extTable->itemsCount);
 	data_readData(game_extHandle, (char *)&game_extTable->unknown, 1);
 
-	for(i = 0; i < count; i++) {
+	for (i = 0; i < count; i++) {
 		data_readData(game_extHandle, (char *)&game_extTable->items[i].offset, 4);
 		game_extTable->items[i].offset = FROM_LE_32(game_extTable->items[i].offset);
 		data_readData(game_extHandle, (char *)&game_extTable->items[i].size, 2);

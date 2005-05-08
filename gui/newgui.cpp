@@ -75,7 +75,7 @@ void NewGui::updateColors() {
 }
 
 void NewGui::updateScaleFactor() {
-	if(!_scaleEnable) {
+	if (!_scaleEnable) {
 		_scaleFactor = 1;
 	} else {
 		enum {
@@ -477,9 +477,9 @@ void NewGui::drawBitmap(uint32 *bitmap, int tx, int ty, OverlayColor color, int 
 		if (ty + y < 0 || ty + y >= _screen.h)
 			continue;
 		for (int x = 0; x < 8 * _scaleFactor; x++) {
-			if(!(x % 2) && _scaleFactor != 1 && x != 0)
+			if (!(x % 2) && _scaleFactor != 1 && x != 0)
 				mask >>= 4;
-			else if(_scaleFactor == 1)
+			else if (_scaleFactor == 1)
 				mask >>= 4;
 
 			if (tx + x < 0 || tx + x >= _screen.w)

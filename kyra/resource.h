@@ -122,7 +122,7 @@ public:
 	// only for testing :)
 	uint8 getColor(uint16 x, uint16 y) { return _image[y * _width + x]; }
 		
-	uint8& operator[](uint16 index) { if(index > _width * _height) return _image[0]; return _image[index]; }
+	uint8& operator[](uint16 index) { if (index > _width * _height) return _image[0]; return _image[index]; }
 
 protected:
 

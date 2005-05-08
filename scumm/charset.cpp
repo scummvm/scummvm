@@ -251,14 +251,14 @@ void CharsetRendererV3::setCurID(byte id) {
 }
 
 int CharsetRendererCommon::getFontHeight() {
-	if(_vm->_useCJKMode)
+	if (_vm->_useCJKMode)
 		return MAX(_vm->_2byteHeight + 1, (int)_fontPtr[1]);
 	else
 		return _fontPtr[1];
 }
 
 int CharsetRendererV3::getFontHeight() {
-	if(_vm->_useCJKMode)
+	if (_vm->_useCJKMode)
 		return MAX(_vm->_2byteHeight + 1, 8);
 	else
 		return 8;
@@ -289,7 +289,7 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 		if (_vm->_heversion >= 72 && chr == code) {
 			chr = text[pos++];
 			if (chr == 84) {  // Strings of speech offset/size
-				while(chr != code)
+				while (chr != code)
 					chr = text[pos++];
 				continue;
 			}
@@ -303,7 +303,7 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 			break;
 		if (chr == 254 || chr == 255) {
 			//process in LE
-			if(chr == 254 && checkKSCode(text[pos], chr) && _vm->_useCJKMode) {
+			if (chr == 254 && checkKSCode(text[pos], chr) && _vm->_useCJKMode) {
 				goto loc_avoid_ks_fe;
 			}
 			chr = text[pos++];
@@ -354,7 +354,7 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 		if (_vm->_heversion >= 72 && chr == code) {
 			chr = str[pos++];
 			if (chr == 84) {  // Strings of speech offset/size
-				while(chr != code)
+				while (chr != code)
 					chr = str[pos++];
 				continue;
 			}
@@ -370,7 +370,7 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 			continue;
 		if (chr == 254 || chr == 255) {
 			//process in LE
-			if(chr == 254 && checkKSCode(str[pos], chr) && _vm->_useCJKMode) {
+			if (chr == 254 && checkKSCode(str[pos], chr) && _vm->_useCJKMode) {
 				goto loc_avoid_ks_fe;
 			}
 			chr = str[pos++];

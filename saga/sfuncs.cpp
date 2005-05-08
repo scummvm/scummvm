@@ -186,7 +186,7 @@ void Script::sfTakeObject(SCRIPTFUNC_PARAMS) {
 	obj = _vm->_actor->getObj(objectId);
 	if (obj->sceneNumber != ITE_SCENE_INV) {
 		obj->sceneNumber = ITE_SCENE_INV;
-		//4debug for(int j=0;j<17;j++)
+		//4debug for (int j=0;j<17;j++)
 		_vm->_interface->addToInventory(objectId);
 	}
 }

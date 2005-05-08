@@ -245,7 +245,7 @@ void Logic::processLogic(Object *compact, uint32 id) {
 			error("Fatal error: compact %d's logic == %X!", id, compact->o_logic);
 			break;
 		}
-	} while(logicRet);
+	} while (logicRet);
 }
 
 int Logic::logicWaitTalk(Object *compact) {

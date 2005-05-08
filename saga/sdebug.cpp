@@ -101,7 +101,7 @@ int Script::SDebugPrintInstr(ScriptThread *thread) {
 			sprintf(tmp_buf, "%02X", param);
 			SD_ADDTXT(tmp_buf);
 /*
-			if((param >= 0) && (param < diag_list->n_dialogue)) {
+			if ((param >= 0) && (param < diag_list->n_dialogue)) {
 				debug(2, " ; \"%.*s\"", SCRIPT_STRINGLIMIT, diag_list->str[param]);
 			}
 			else {

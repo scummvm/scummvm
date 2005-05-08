@@ -605,7 +605,7 @@ void Screen::doSprites(uint8 layer) {
 		drawListNum++;
 
 		drawList = (uint16 *)_skyCompact->fetchCpt(idNum);
-		while(drawList[0]) {
+		while (drawList[0]) {
 			// new_draw_list:
 			while ((drawList[0] != 0) && (drawList[0] != 0xFFFF)) {
 				// back_loop:

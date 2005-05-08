@@ -381,7 +381,7 @@ void ListWidget::startEditMode() {
 }
 
 void ListWidget::endEditMode() {
-	if(!_editMode)
+	if (!_editMode)
 		return;
 	// send a message that editing finished with a return/enter key press
 	_editMode = false;

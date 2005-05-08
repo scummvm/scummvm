@@ -409,7 +409,7 @@ void SimonEngine::dump_vga_bitmaps(const byte *vga, byte *vga1, int res) {
 	
 	i = 538;
 
-	for(i = 1; ; i++) {
+	for (i = 1; ; i++) {
 		p2 = vga + i * 8;
 		offs = READ_BE_UINT32(p2);
 

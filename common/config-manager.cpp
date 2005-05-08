@@ -81,7 +81,7 @@ ConfigManager::ConfigManager() {
 void ConfigManager::loadDefaultConfigFile() {
 	char configFile[MAXPATHLEN];
 #if defined(UNIX)
-	if(getenv("HOME") != NULL)
+	if (getenv("HOME") != NULL)
 		sprintf(configFile,"%s/%s", getenv("HOME"), DEFAULT_CONFIG_FILE);
 	else
 		strcpy(configFile, DEFAULT_CONFIG_FILE);

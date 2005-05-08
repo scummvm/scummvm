@@ -212,7 +212,7 @@ PAKFile::PAKFile(/*const Common::String &path, */const Common::String& file) {
 		// saves the name
 		chunk->_name = reinterpret_cast<const char*>(_buffer + pos);
 		pos += strlen(chunk->_name) + 1;
-		if(!(*chunk->_name))
+		if (!(*chunk->_name))
 			break;
 
 		endoffset = READ_LE_UINT32(_buffer + pos);

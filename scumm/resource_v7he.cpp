@@ -1368,7 +1368,7 @@ bool MacResExtractor::init(File in) {
 		// Length check
 		int sumlen =  MBI_INFOHDR + data_size_pad + rsrc_size_pad;
 
-		if(sumlen == filelen)
+		if (sumlen == filelen)
 			_resOffset = MBI_INFOHDR + data_size_pad;
 	}
 
@@ -1581,7 +1581,7 @@ void MacResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int 
 	palette = (byte *)malloc(ctSize * 4);
 
 	// Read just high byte of 16-bit color
-	for(int c = 0; c < ctSize; c++) {
+	for (int c = 0; c < ctSize; c++) {
 		// We just use indices 0..ctSize, so ignore color ID
 		dis.readUint16BE(); // colorID[c]
 
@@ -1608,7 +1608,7 @@ void MacResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int 
 
 	// build a mask to make sure the pixels are properly shifted out
 	bitmask = 0;
-	for(int m = 0; m < bpp; m++) {
+	for (int m = 0; m < bpp; m++) {
 		bitmask <<= 1;
 		bitmask  |= 1;
 	}

@@ -923,7 +923,7 @@ void IsoMap::pushPoint(int16 u, int16 v, uint16 cost, uint16 direction) {
 		return;
 	}
 
-	while(1) {
+	while (1) {
 		mid = (upper + lower) / 2;
 		tilePoint = _searchArray.getQueue(mid);
 
@@ -1300,10 +1300,10 @@ void IsoMap::findTilePath(ActorData* actor, const Location &start, const Locatio
 			if (terrainMask & SAGA_IMPASSABLE) {
 				continue;
 			} else {
-				if(terrainMask & (1 << kTerrRough)) {
+				if (terrainMask & (1 << kTerrRough)) {
 					tdir = &hardDirTable[ dir ];
 				} else {
-					if(terrainMask & (1 << kTerrNone)) {
+					if (terrainMask & (1 << kTerrNone)) {
 						tdir = &normalDirTable[ dir ];
 					} else {
 						tdir = &easyDirTable[ dir ];

@@ -69,7 +69,7 @@ public:
 		fh = ::fopen(filename, (saveOrLoad? "wb" : "rb"));
 	}
 	~StdioSaveFile() {
-		if(fh)
+		if (fh)
 			::fclose(fh);
 	}
 
@@ -99,7 +99,7 @@ public:
 		fh = ::gzopen(filename, (saveOrLoad? "wb" : "rb"));
 	}
 	~GzipSaveFile() {
-		if(fh)
+		if (fh)
 			::gzclose(fh);
 	}
 

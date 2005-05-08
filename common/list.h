@@ -182,7 +182,7 @@ public:
 				static_cast<Node<T> *>(i._node)->_data = static_cast<Node<T> *>(j._node)->_data;
 			}
 
-			if(i == end())
+			if (i == end())
 				insert(i, j, list.end());
 			else
 				erase(i, end());

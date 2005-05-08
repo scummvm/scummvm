@@ -71,17 +71,17 @@ class ScummEngine;
 ////////////////////////////////////////
 
 inline int clamp(int val, int min, int max) {
-	if(val < min)
+	if (val < min)
 		return min;
-	if(val > max)
+	if (val > max)
 		return max;
 	return val;
 }
 
 inline int transpose_clamp(int a, int b, int c) {
-	if(b > a)
+	if (b > a)
 		a += (b - a + 11) / 12 * 12;
-	if(c < a)
+	if (c < a)
 		a -= (a - c + 11) / 12 * 12;
 	return a;
 }

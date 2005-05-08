@@ -130,7 +130,7 @@ public:
 
 	void remove(const T* val) {
 		for (iterator i = Common::List<T>::begin(); i != Common::List<T>::end(); ++i)
-			if(val == i.operator->()) {
+			if (val == i.operator->()) {
 				erase(i);
 				return;
 			}

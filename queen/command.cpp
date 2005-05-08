@@ -954,7 +954,7 @@ void Command::openOrCloseAssociatedObject(Verb action, int16 otherObj) {
 int16 Command::setConditions(uint16 command, bool lastCmd) {
 	debug(9, "Command::setConditions(%d, %d)", command, lastCmd);
 	// Test conditions, if FAIL write &&  exit, Return -1
-	// if(Joe speaks before he returns, -2 is returned
+	// if (Joe speaks before he returns, -2 is returned
 	// This way a -1 return will allow Joe to speak normal description
 
 	uint16 temp[21];

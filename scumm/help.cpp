@@ -60,7 +60,7 @@ int ScummHelp::numPages(byte gameId) {
 	}
 }
 
-#define ADD_BIND(k,d) do { key[i] = k; dsc[i] = d; i++; } while(0)
+#define ADD_BIND(k,d) do { key[i] = k; dsc[i] = d; i++; } while (0)
 #define ADD_TEXT(d) ADD_BIND("",d)
 #define ADD_LINE ADD_BIND("","")
 

@@ -255,7 +255,7 @@ void ScummEngine::CHARSET_1() {
 				i = 0;
 				memset(value, 0, 32);
 				c = *buffer++;
-				while(c != 44) {
+				while (c != 44) {
 					value[i] = c;
 					c = *buffer++;
 					i++;
@@ -266,7 +266,7 @@ void ScummEngine::CHARSET_1() {
 				i = 0;
 				memset(value, 0, 32);
 				c = *buffer++;
-				while(c != code) {
+				while (c != code) {
 					value[i] = c;
 					c = *buffer++;
 					i++;
@@ -286,7 +286,7 @@ void ScummEngine::CHARSET_1() {
 				i = 0;
 				memset(value, 0, 32);
 				c = *buffer++;
-				while(c != code) {
+				while (c != code) {
 					value[i] = c;
 					c = *buffer++;
 					i++;
@@ -307,7 +307,7 @@ void ScummEngine::CHARSET_1() {
 			}
 		} else if (c == 0xFE || c == 0xFF) {
 			// WORKAROUND to avoid korean code 0xfe treated as charset message code.
-			if(c == 0xFE && checkKSCode(*(buffer + 1), c) && _useCJKMode) {
+			if (c == 0xFE && checkKSCode(*(buffer + 1), c) && _useCJKMode) {
 				goto loc_avoid_ks_fe;
 			}
 			c = *buffer++;
@@ -387,7 +387,7 @@ loc_avoid_ks_fe:
 					c = 0x20; //not in S-JIS
 				} else {
 					c += *buffer++ * 256; //LE
-					if(_gameId == GID_CMI) { //HACK: This fixes korean text position in COMI (off by 6 pixel)
+					if (_gameId == GID_CMI) { //HACK: This fixes korean text position in COMI (off by 6 pixel)
 						cmi_pos_hack = true;
 						_charset->_top += 6;
 					}
@@ -407,7 +407,7 @@ loc_avoid_ks_fe:
 				} else
 					_charset->printChar(c);
 			}
-			if(cmi_pos_hack) {
+			if (cmi_pos_hack) {
 				cmi_pos_hack = false;
 				_charset->_top -= 6;
 			}
@@ -554,7 +554,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 					c = 0x20; //not in S-JIS
 				} else {
 					c += buf[i++] * 256;
-					if(_gameId == GID_CMI) {
+					if (_gameId == GID_CMI) {
 						cmi_pos_hack = true;
 						_charset->_top += 6;
 					}
@@ -563,7 +563,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 			_charset->printChar(c);
 			_charset->_blitAlso = false;
 
-			if(cmi_pos_hack) {
+			if (cmi_pos_hack) {
 				cmi_pos_hack = false;
 				_charset->_top -= 6;
 			}

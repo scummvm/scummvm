@@ -504,12 +504,12 @@ uint32 VMContext::contScript(void) {
 	uint32 scriptStateAtStart = _scriptState;
 		
 	// runs the script
-	while(true) {
+	while (true) {
 		if ((uint32)_instructionPos > _chunks[kData]._size) {
 			debug("_instructionPos( = %d) > _chunks[kData]._size( = %d)", _instructionPos, _chunks[kData]._size);
 			_error = true;
 			break;
-		} else if(_instructionPos >= _nextScriptPos) {
+		} else if (_instructionPos >= _nextScriptPos) {
 			_scriptState = kScriptStopped;
 			break;
 		}

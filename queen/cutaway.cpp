@@ -350,7 +350,7 @@ void Cutaway::changeRooms(CutawayObject &object) {
 				}
 
 			}
-		} // for()
+		} // for ()
 	}
 
 	// set coordinates for Joe if he is on screen
@@ -686,7 +686,7 @@ const byte *Cutaway::handleAnimation(const byte *ptr, CutawayObject &object) {
 			if (objAnim[i].song > 0)
 				_vm->sound()->playSong(objAnim[i].song);
 
-		} // for()
+		} // for ()
 	}
 
 	bool moving = true;
@@ -886,7 +886,7 @@ void Cutaway::run(char *nextFilename) {
 			_roomFade = false;
 		}
 
-	} // for()
+	} // for ()
 	
 	_vm->display()->clearTexts(0, 198);
 	// XXX lines 1887-1895 in cutaway.c
@@ -1086,7 +1086,7 @@ void Cutaway::stop() {
 					}
 				}
 			}
-		} // for()
+		} // for ()
 		
 		int16 specialMove = (int16)READ_BE_INT16(ptr); ptr += 2;
 		if (specialMove > 0)
@@ -1162,7 +1162,7 @@ void Cutaway::updateGameState() {
 			}
 
 		}
-	} // for()
+	} // for ()
 }
 
 void Cutaway::talk(char *nextFilename) {

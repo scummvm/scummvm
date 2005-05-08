@@ -546,7 +546,7 @@ bool ScummDebugger::Cmd_Debug(int argc, const char **argv) {
 
 	if ((argc == 1) && (_vm->_debugFlags > 0)) {
 		for (int i = 0; i < numChannels; i++) {
-			if(_vm->_debugFlags & debugChannels[i].flag)
+			if (_vm->_debugFlags & debugChannels[i].flag)
 				DebugPrintf("%s - %s\n", debugChannels[i].channel, 
 							 debugChannels[i].desc);
 		}
@@ -570,7 +570,7 @@ bool ScummDebugger::Cmd_Debug(int argc, const char **argv) {
 	// Identify flag
 	const char *realFlag = argv[1] + 1;
 	for (int i = 0; i < numChannels; i++) {
-		if((scumm_stricmp(debugChannels[i].channel, realFlag)) == 0) {
+		if ((scumm_stricmp(debugChannels[i].channel, realFlag)) == 0) {
 			if (setFlag) {
 				_vm->_debugFlags |= debugChannels[i].flag;
 				DebugPrintf("Enable ");

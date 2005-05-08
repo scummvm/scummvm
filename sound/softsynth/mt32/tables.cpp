@@ -161,11 +161,11 @@ void Tables::initEnvelopes(float samplerate) {
 		envTime[lf] = samples;
 
 		// Cap on envelope times depending on the level delta
-		if(elf == 0) {
+		if (elf == 0) {
 			envDeltaMaxTime[lf] = 63;
 		} else {
 			float cap = 11 * log(elf) + 64;
-			if(cap > 100.0f) {
+			if (cap > 100.0f) {
 				cap = 100.0f;
 			}
 			envDeltaMaxTime[lf] = (int)cap;
@@ -380,7 +380,7 @@ void Tables::initMT32ConstantTables(Synth *synth) {
 
 				// Distance of full volume reduction
 				amplog = (float)(12.0f / (float)lf) * 24.0f;
-				if(distval > amplog) {
+				if (distval > amplog) {
 					tvaBiasMult[lf][distval] = 0;
 				} else {
 					dval = (amplog - (float)distval) / amplog;
