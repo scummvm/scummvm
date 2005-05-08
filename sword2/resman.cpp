@@ -20,6 +20,7 @@
 
 #include "common/stdafx.h"
 #include "common/file.h"
+#include "common/system.h"
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/console.h"
@@ -565,6 +566,13 @@ void ResourceManager::addToCacheList(Resource *res) {
 File *ResourceManager::openCluFile(uint16 fileNum) {
 	File *file = new File;
 	while (!file->open(_resFiles[fileNum].fileName)) {
+		// HACK: We have to check for this, or it'll be impossible to
+		// quit while the game is asking for the user to insert a CD.
+		// But recovering from this situation gracefully is just too
+		// much trouble, so quit now.
+		if (_vm->_quit)
+			g_system->quit();
+
 		// If the file is supposed to be on hard disk, or we're
 		// playing a demo, then we're in trouble if the file
 		// can't be found!
