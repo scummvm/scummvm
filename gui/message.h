@@ -36,8 +36,6 @@ enum {
  * Simple message dialog ("alert box"): presents a text message in a dialog with up to two buttons.
  */
 class MessageDialog : public Dialog {
-	typedef Common::String String;
-	typedef Common::StringList StringList;
 public:
 	MessageDialog(const Common::String &message, const char *defaultButton = "OK", const char *altButton = 0);
 

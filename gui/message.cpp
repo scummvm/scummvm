@@ -33,13 +33,13 @@ enum {
 
 // TODO: The default button should be visibly distinct from the alternate button
 
-MessageDialog::MessageDialog(const String &message, const char *defaultButton, const char *altButton)
+MessageDialog::MessageDialog(const Common::String &message, const char *defaultButton, const char *altButton)
 	: Dialog(30, 20, 260, 124) {
 	// First, determine the size the dialog needs. For this we have to break
 	// down the string into lines, and taking the maximum of their widths.
 	// Using this, and accounting for the space the button(s) need, we can set
 	// the real size of the dialog
-	StringList lines;
+	Common::StringList lines;
 	const char *str = message.c_str();
 	const char *start = str;
 	int lineWidth, maxlineWidth = 0;
@@ -95,10 +95,10 @@ MessageDialog::MessageDialog(const String &message, const char *defaultButton, c
 		addButton(cancelButtonPos, _h - 24, altButton, kCancelCmd, '\27');	// Cancel dialog
 }
 
-int MessageDialog::addLine(StringList &lines, const char *line, int size) {
+int MessageDialog::addLine(Common::StringList &lines, const char *line, int size) {
 	int width = 0, maxWidth = 0;
 	const char *start = line, *pos = line, *end = start + size;
-	String tmp;
+	Common::String tmp;
 	NewGui *gui = &g_gui;
 
 	while (pos < end) {
@@ -115,7 +115,7 @@ int MessageDialog::addLine(StringList &lines, const char *line, int size) {
 				pos = newPos;
 
 			// Add the substring from intervall [start, i-1]
-			tmp = String(start, pos - start);
+			tmp = Common::String(start, pos - start);
 			lines.push_back(tmp);
 
 			// Determine the width of the string, and adjust maxWidth accordingly
@@ -135,7 +135,7 @@ int MessageDialog::addLine(StringList &lines, const char *line, int size) {
 		maxWidth = width;
 
 	if (start < pos) {
-		tmp = String(start, pos - start);
+		tmp = Common::String(start, pos - start);
 		lines.push_back(tmp);
 	}
 	return maxWidth;
