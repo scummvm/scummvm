@@ -1208,11 +1208,11 @@ void ScummEngine_v72he::drawWizComplexPolygon(int resNum, int state, int po_x, i
 	}
 
 	if (zoom != 256) {
-		warning("drawWizComplexPolygon() zoom not implemented");
+		debug(1, "drawWizComplexPolygon() zoom not implemented");
 
 		//drawWizPolygonTransform(resNum, state, pts, flags, VAR(VAR_WIZ_TCOLOR), r, dstPtr, paletteNum, xmapPtr);
 	} else {
-		warning("drawWizComplexPolygon() angle partially implemented");
+		debug(1, "drawWizComplexPolygon() angle partially implemented");
 
 		angle %= 360;
 		if (angle < 0) {
@@ -1700,7 +1700,7 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 	char buf[512];
 	unsigned int i;
 
-	debug(2, "processWizImage: processMode %d", params->processMode);
+	debug(1, "processWizImage: processMode %d", params->processMode);
 	switch (params->processMode) {
 	case 0:
 		// Used in racedemo
@@ -1806,8 +1806,8 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 		break;
 	// HE 99+
 	case 7:
-		// Used in soccer2004
-		// TODO
+		// Used in PuttsFunShop/SamsFunShop/soccer2004
+		// TODO: Capture polyfon
 		break;
 	case 8:
 		createWizEmptyImage(params);
@@ -1818,17 +1818,21 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 	case 10:
 		fillWizParallelogram(params);
 		break;
+	case 12:
+		// Used in PuttsFunShop/SamsFunShop
+		// TODO: Flood fill
+		break;
 	case 13:
-		// Used in SamsFunShop
-		// Start font
+		// Used in PuttsFunShop/SamsFunShop
+		// TODO: Start font
 		break;
 	case 14:
-		// Used in SamsFunShop
-		// End font
+		// Used in PuttsFunShop/SamsFunShop
+		// TODO: End font
 		break;
 	case 15:
-		// Used in SamsFunShop
-		// Create font
+		// Used in PuttsFunShop/SamsFunShop
+		// TODO: Create font
 		break;
 	default:
 		error("Unhandled processWizImage mode %d", params->processMode);
