@@ -107,6 +107,7 @@ public:
 	void processSoundQues();
 	void setOverrideFreq(int freq);
 	void playSound(int soundID, int heOffset, int heChannel, int heFlags);
+	void startHETalkSound(uint32 offset);
 	void startTalkSound(uint32 offset, uint32 b, int mode, SoundHandle *handle = NULL);
 	void stopTalkSound();
 	bool isMouthSyncOff(uint pos);

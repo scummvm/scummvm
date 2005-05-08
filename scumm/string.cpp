@@ -274,7 +274,7 @@ void ScummEngine::CHARSET_1() {
 				value[i] = 0;
 				talk_sound_b = atoi(value);
 
-				_sound->talkSound(talk_sound_a, talk_sound_b, 2);
+				_sound->startHETalkSound(talk_sound_a);
 				break;
 			case 104:
 				_haveMsg = 0;
@@ -295,7 +295,7 @@ void ScummEngine::CHARSET_1() {
 				talk_sound_a = atoi(value);
 				talk_sound_b = 0;
 
-				_sound->talkSound(talk_sound_a, talk_sound_b, 2);
+				_sound->startHETalkSound(talk_sound_a);
 				break;
 			case 119:
 				if (_haveMsg != 0xFE)
@@ -335,7 +335,11 @@ void ScummEngine::CHARSET_1() {
 				talk_sound_b = buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] << 24);
 				buffer += 14;
 	
-				_sound->talkSound(talk_sound_a, talk_sound_b, 2);
+				if (_heversion >= 60) {
+					_sound->startHETalkSound(talk_sound_a);
+				} else {
+					_sound->talkSound(talk_sound_a, talk_sound_b, 2);
+				}
 
 				// Set flag that speech variant exist of this msg.
 				// This is actually a hack added by ScummVM; the original did
@@ -393,6 +397,8 @@ loc_avoid_ks_fe:
 			} else {
 				if ((_imuseDigital && _sound->isSoundRunning(kTalkSoundID)) && (!ConfMan.getBool("subtitles") || VAR(VAR_VOICE_MODE) == 0)) {
 					// Special case for games using imuse digital.for sound
+				} else if (_heversion >= 60 && !ConfMan.getBool("subtitles") && _sound->isSoundRunning(1)) {
+					// Special case for HE games
 				} else if ((_gameId == GID_LOOM256) && !ConfMan.getBool("subtitles") && (_sound->pollCD())) {
 					// Special case for loomcd, since it only uses CD audio.for sound
 				} else if (!ConfMan.getBool("subtitles") && (_haveMsg == 0xFE || _mixer->isSoundHandleActive(_sound->_talkChannelHandle))) {

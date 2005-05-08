@@ -648,10 +648,24 @@ static int compareMP3OffsetTable(const void *a, const void *b) {
 	return ((const MP3OffsetTable *)a)->org_offset - ((const MP3OffsetTable *)b)->org_offset;
 }
 
+void Sound::startHETalkSound(uint32 offset) {
+	byte *ptr;
+	int32 size;
+
+	_vm->res.nukeResource(rtSound, 1);
+	_sfxFile->seek(offset + 4, SEEK_SET);
+	 size = _sfxFile->readUint32BE() - 8;
+	_vm->res.createResource(rtSound, 1, size);
+	ptr = _vm->getResourceAddress(rtSound, 1);
+	_sfxFile->read(ptr, size);
+
+	int channel = (_vm->VAR_SOUND_CHANNEL != 0xFF) ? _vm->VAR(_vm->VAR_SOUND_CHANNEL) : 0;
+	addSoundToQueue2(1, 0, channel, 0);
+}
+
 void Sound::startTalkSound(uint32 offset, uint32 b, int mode, SoundHandle *handle) {
 	int num = 0, i;
 	int size = 0;
-	byte *sound;
 	int id = -1;
 
 	if (_vm->_gameId == GID_CMI) {
@@ -701,46 +715,6 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, SoundHandle *handl
 
 		if (!_sfxFile->isOpen()) {
 			warning("startTalkSound: SFX file is not open");
-			return;
-		}
-
-		if (_vm->_heversion >= 60) {
-			_sfxMode |= mode;
-
-			_sfxFile->seek(offset, SEEK_SET);
-			if (_sfxFile->readUint32LE() == TO_LE_32(MKID('WSOU'))) {
-				// Skip the WSOU chunk
-				_sfxFile->seek(offset + 8, SEEK_SET);
-
-				// Try to load the WAVE data into an audio stream
-				AudioStream *stream = makeWAVStream(*_sfxFile);
-				if (!stream) {
-					warning("startTalkSound: IMA ADPCM compression not supported");
-					return;
-				}
-
-				int channel = _vm->VAR(_vm->VAR_SOUND_CHANNEL);
-				_vm->_mixer->playInputStream(SoundMixer::kSFXSoundType, &_heSoundChannels[channel], stream, 1);
-			} else {
-				// Skip the TALK (8) and HSHD (24) chunks
-				_sfxFile->seek(28, SEEK_CUR);
-
-				if (_sfxFile->readUint32LE() == TO_LE_32(MKID('SBNG'))) {
-					// Skip the SBNG, so we end up at the SDAT chunk
-					size = _sfxFile->readUint32BE() - 4;
-					_sfxFile->seek(size, SEEK_CUR);
-				}
-				size = _sfxFile->readUint32BE() - 8;
-				sound = (byte *)malloc(size);
-				_sfxFile->read(sound, size);
-
-				if (_vm->_heversion >= 70) {
-					int channel = _vm->VAR(_vm->VAR_SOUND_CHANNEL);
-					_vm->_mixer->playRaw(&_heSoundChannels[channel], sound, size, 11000, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE, 1);
-				} else {
-					_vm->_mixer->playRaw(handle, sound, size, 11000, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
-				}
-			}
 			return;
 		}
 
@@ -836,7 +810,7 @@ void Sound::stopTalkSound() {
 	if (_sfxMode & 2) {
 		if (_vm->_imuseDigital) {
 			_vm->_imuseDigital->stopSound(kTalkSoundID);
-		} else if (_vm->_heversion >= 70) {
+		} else if (_vm->_heversion >= 60) {
 			_vm->_mixer->stopID(1);
 		} else {
 			_vm->_mixer->stopHandle(_talkChannelHandle);
