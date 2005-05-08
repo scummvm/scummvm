@@ -1343,7 +1343,7 @@ void SimonEngine::loadTablesIntoMem(uint subr_id) {
 
 				if (_game & GF_SIMON2) {
 					_sound->loadSfxTable(_gameFile, _gameOffsetsPtr[atoi(filename + 6) - 1 + SOUND_INDEX_BASE]);
-				} else {
+				} else if (_game & GF_TALKIE) {
 					memcpy(filename, "SFXXXX", 6);
 					_sound->readSfxFile(filename);
 				}

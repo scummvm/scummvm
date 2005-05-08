@@ -245,13 +245,11 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer
 	_voice_file = false;
 	_ambient_playing = 0;
 
-	if (_game == GAME_SIMON1CD32) {
-		// Uses separate voice files
+	// simon1cd32 uses separate speech files
+	if (!(_game & GF_TALKIE) || (_game == GAME_SIMON1CD32))
 		return;
-	}
 
 	File *file = new File();
-	const char *s;
 
 #ifdef USE_FLAC
 	if (!_voice && gss->flac_filename && gss->flac_filename[0]) {
