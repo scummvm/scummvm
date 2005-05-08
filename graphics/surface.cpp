@@ -20,9 +20,31 @@
 
 #include "common/stdafx.h"
 #include "common/util.h"
+#include "graphics/primitives.h"
 #include "graphics/surface.h"
 
 namespace Graphics {
+
+static void plotPoint1(int x, int y, int color, void *data) {
+	Surface *s = (Surface *)data;
+	byte *ptr = (byte *)s->getBasePtr(x, y);
+	*ptr = (byte)color;
+}
+
+static void plotPoint2(int x, int y, int color, void *data) {
+	Surface *s = (Surface *)data;
+	uint16 *ptr = (uint16 *)s->getBasePtr(x, y);
+	*ptr = (uint16)color;
+}
+
+void Surface::drawLine(int x0, int y0, int x1, int y1, uint32 color) {
+	if (bytesPerPixel == 1)
+		Graphics::drawLine(x0, y0, x1, y1, color, &plotPoint1, this);
+	else if (bytesPerPixel == 2)
+		Graphics::drawLine(x0, y0, x1, y1, color, &plotPoint2, this);
+	else
+		error("Surface::drawLine: bytesPerPixel must be 1 or 2");
+}
 
 void Surface::hLine(int x, int y, int x2, uint32 color) {
 	// Clipping

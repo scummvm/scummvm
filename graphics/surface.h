@@ -46,7 +46,8 @@ struct Surface {
 	inline void *getBasePtr(int x, int y) {
 		return static_cast<void *>(static_cast<byte *>(pixels) + y * pitch + x * bytesPerPixel);
 	}
-	
+
+	void drawLine(int x0, int y0, int x1, int y1, uint32 color);
 	void hLine(int x, int y, int x2, uint32 color);
 	void vLine(int x, int y, int y2, uint32 color);
 	void fillRect(const Common::Rect &r, uint32 color);
