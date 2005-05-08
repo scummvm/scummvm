@@ -297,12 +297,14 @@ Freddi Fish 2: The Case of the Haunted Schoolhouse
 
 Freddi Fish 3: The Case of the Stolen Conch Shell
 	-	All	All	8368f552b1e3eba559f8d559bcc4cadb	freddi3	Kirben, sev
+	-	Windows	nl	0cccfa5223099a60e76cfcca57a1a141	freddi3	adutchguy
 	-	Windows	ru	898ce8eb1234a955ef75e87141902bb3	freddi3	sev
 	-	Windows	ru	75bff95816b84672b877d22a911ab811	freddi3	sev
 	Demo	All	en	cb1559e8405d17a5a278a6b5ad9338d1	f3-mdemo	khalek, sev
 
 Freddie Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	-	All	All	4f580a021eee026f3b4589e17d130d78	freddi4	Kirben, sev
+	-	Windows	nl	14d48c95b43ddeb983254cf6c43851f1	freddi4	adutchguy
 	-	Windows	ru	78bd5f036ea35a878b74e4f47941f784	freddi4	sev
 	-	Windows	ru	07b810e37be7489263f7bc7627d4765d	freddi4	sev
 	Demo	All	en	7c2e76087027eeee9c8f8985f93a1cc5	f4-demo	khalek
@@ -455,6 +457,7 @@ Spy Fox 1: Dry Cereal
 
 Spy Fox 2: Some Assembly Required
 	-	All	en	f79e60c17cca601e411f1f75e8ee9b5a	spyfox2	Kirben
+	-	Windows	nl	71fe97c3108678cf604f14abe342341b	spyfox2	adutchguy
 	-	All	ru	cea91e3dd47f2518ea418e41611aa77f	spyfox2	sev
 	Demo	All	en	7222f260253f325c21fcfa68b5bfab67	sf2-demo	Kirben
 	Demo	All	nl	1c792d28376d45e145cb916bca0400a2	sf2-demo	joostp
