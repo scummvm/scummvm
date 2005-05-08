@@ -88,7 +88,7 @@ public:
 	}
 
 	void skip(uint32 offset) {
-		::fseek(fh, offset, SEEK_SET);
+		::fseek(fh, offset, SEEK_CUR);
 	}
 };
 
@@ -135,7 +135,7 @@ public:
 	}
 
 	void skip(uint32 offset) {
-		::gzseek(fh, offset, SEEK_SET);
+		::gzseek(fh, offset, SEEK_CUR);
 	}
 };
 #endif
