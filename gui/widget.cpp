@@ -24,7 +24,6 @@
 #include "gui/dialog.h"
 #include "gui/newgui.h"
 
-
 namespace GUI {
 
 Widget::Widget(GuiObject *boss, int x, int y, int w, int h)
@@ -274,6 +273,50 @@ int SliderWidget::valueToPos(int value) {
 
 int SliderWidget::posToValue(int pos) {
 	return (pos) * (_valueMax - _valueMin) / (_w - _labelWidth - 4) + _valueMin;
+}
+
+#pragma mark -
+
+GraphicsWidget::GraphicsWidget(GuiObject *boss, int x, int y, int w, int h)
+	: Widget(boss, x, y, w, h), _gfx() {
+	_flags = WIDGET_ENABLED | WIDGET_CLEARBG; 
+	_type = kGraphicsWidget;
+}
+
+GraphicsWidget::~GraphicsWidget() {
+	_gfx.free();
+}
+
+void GraphicsWidget::setGfx(const Graphics::Surface *gfx) {
+	_gfx.free();
+	
+	if (!gfx)
+		return;
+	if (!gfx->pixels)
+		return;
+	
+	// TODO: add conversion to OverlayColor
+	_gfx.create(gfx->w, gfx->h, gfx->bytesPerPixel);
+	memcpy(_gfx.pixels, gfx->pixels, gfx->h * gfx->pitch);
+}
+
+void GraphicsWidget::drawWidget(bool hilite) {
+	if (sizeof(OverlayColor) != _gfx.bytesPerPixel || !_gfx.pixels) {
+		// FIXME: It doesn't really make sense to render this text here, since
+		// this widget might be used for other things than rendering savegame
+		// graphics/previews...
+		g_gui.drawString("No preview", _x, _y + _h / 2 - g_gui.getFontHeight() / 2, _w, g_gui._textcolor, Graphics::kTextAlignCenter);
+		return;
+	}
+	
+	uint drawWidth = _gfx.w, drawHeight = _gfx.h;
+	
+	if (_w < _gfx.w)
+		drawWidth = _w;
+	if (_h < _gfx.h)
+		drawHeight = _h;
+	
+	g_gui.drawSurface(_gfx, _x, _y);
 }
 
 } // End of namespace GUI

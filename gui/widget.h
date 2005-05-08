@@ -24,6 +24,7 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "graphics/font.h"
+#include "graphics/surface.h"
 #include "gui/object.h"
 
 namespace GUI {
@@ -52,7 +53,8 @@ enum {
 	kListWidget			= 'LIST',
 	kScrollBarWidget	= 'SCRB',
 	kPopUpWidget		= 'POPU',
-	kTabWidget			= 'TABW'
+	kTabWidget			= 'TABW',
+	kGraphicsWidget		= 'GFXW'
 };
 
 enum {
@@ -208,6 +210,19 @@ protected:
 
 	int valueToPos(int value);
 	int posToValue(int pos);
+};
+
+/* GraphicsWidget */
+class GraphicsWidget : public Widget {
+public:
+	GraphicsWidget(GuiObject *boss, int x, int y, int w, int h);
+	~GraphicsWidget();
+	
+	void setGfx(const Graphics::Surface *gfx);
+protected:
+	void drawWidget(bool hilite);
+	
+	Graphics::Surface _gfx;
 };
 
 } // End of namespace GUI
