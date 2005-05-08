@@ -2149,10 +2149,13 @@ void ScummEngine_v72he::o72_readINI() {
 	switch (type) {
 	case 43: // HE 100
 	case 6: // number
-		if (!strcmp((char *)option, "NoPrinting"))
+		if (!strcmp((char *)option, "NoPrinting")) {
 			push(1);
-		else
+		} else if (!strcmp((char *)option, "TextOn")) {
+			push(ConfMan.getBool("subtitles"));
+		} else {
 			push(ConfMan.getInt((char *)option));
+		}
 		break;
 	case 77: // HE 100
 	case 7: // string
@@ -2193,6 +2196,9 @@ void ScummEngine_v72he::o72_writeINI() {
 		// Filter out useless settings
 		if (!strcmp((char *)option, "HETest"))
 			return;
+
+		// Filter out confusing subtitle setting
+		if (!strcmp((char *)option, "TextOn"))
 
 		// Filter out confusing path settings
 		if (!strcmp((char *)option, "DownLoadPath") || !strcmp((char *)option, "GameResourcePath") || !strcmp((char *)option, "SaveGamePath"))
