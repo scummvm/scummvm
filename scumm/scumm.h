@@ -353,6 +353,7 @@ class ScummEngine : public Engine {
 	friend class Insane;
 	friend class CharsetRenderer;
 	friend class ResourceManager;
+	friend class LogicHE;
 	
 	void errorString(const char *buf_input, char *buf_output);
 public:

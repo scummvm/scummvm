@@ -18,6 +18,7 @@ MODULE_OBJS := \
 	scumm/input.o \
 	scumm/instrument.o \
 	scumm/help.o \
+	scumm/logic_he.o \
 	scumm/midiparser_ro.o \
 	scumm/midiparser_eup.o \
 	scumm/nut_renderer.o \

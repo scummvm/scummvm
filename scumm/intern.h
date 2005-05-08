@@ -1008,6 +1008,8 @@ protected:
 struct SpriteInfo;
 struct SpriteGroup;
 
+class LogicHE;
+
 class ScummEngine_v90he : public ScummEngine_v80he {
 protected:
 	typedef void (ScummEngine_v90he::*OpcodeProcV90he)();
@@ -1045,7 +1047,11 @@ protected:
 public:
 	ScummEngine_v90he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v80he(detector, syst, gs, md5sum) {}
 
+	~ScummEngine_v90he();
+
 	virtual void scummInit();
+
+	LogicHE *_logicHE;
 
 protected:
 	virtual void allocateArrays();

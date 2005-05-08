@@ -43,6 +43,7 @@
 #include "scumm/imuse.h"
 #include "scumm/insane/insane.h"
 #include "scumm/intern.h"
+#include "scumm/logic_he.h"
 #include "scumm/player_nes.h"
 #include "scumm/player_v1.h"
 #include "scumm/player_v2.h"
@@ -1310,6 +1311,13 @@ ScummEngine_v80he::ScummEngine_v80he(GameDetector *detector, OSystem *syst, cons
 	_heSBNGId = 0;
 }
 
+ScummEngine_v90he::~ScummEngine_v90he() {
+	if (_heversion >= 98) {
+		delete _logicHE;
+	}
+}
+
+
 ScummEngine_v7::ScummEngine_v7(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
  : ScummEngine_v6(detector, syst, gs, md5sum) {
 	_existLanguageFile = false;
@@ -1737,6 +1745,10 @@ void ScummEngine_v90he::scummInit() {
 
 	if (_features & GF_HE_CURSORLESS)
 		setDefaultCursor();
+
+	if (_heversion >= 98) {
+		_logicHE = new LogicHE(this);
+	}
 }
 
 void ScummEngine_v99he::scummInit() {
@@ -1852,6 +1864,10 @@ int ScummEngine::go() {
 		args[0] = _bootParam;	
 
 		_saveLoadFlag = 0;
+		if (_heversion >= 98) {
+			((ScummEngine_v90he *)this)->_logicHE->initOnce();
+			((ScummEngine_v90he *)this)->_logicHE->beforeBootScript();
+		}
 		if (_gameId == GID_MANIAC && _demoMode)
 			runScript(9, 0, 0, args);
 		else
@@ -1911,6 +1927,10 @@ int ScummEngine::scummLoop(int delta) {
 	// Randomize the PRNG by calling it at regular intervals. This ensures
 	// that it will be in a different state each time you run the program.
 	_rnd.getRandomNumber(2);
+
+	if (_heversion >= 98) {
+		((ScummEngine_v90he *)this)->_logicHE->startOfFrame();
+	}
 
 	if (_version > 2) {
 		VAR(VAR_TMR_1) += delta;
@@ -2182,8 +2202,12 @@ load_game:
 	/* show or hide mouse */
 	_system->showMouse(_cursor.state > 0);
 
-	if (_heversion >= 90)
+	if (_heversion >= 90) {
 		((ScummEngine_v90he *)this)->spritesUpdateImages();
+	}
+	if (_heversion >= 98) {
+		((ScummEngine_v90he *)this)->_logicHE->endOfFrame();
+	}
 
 	if (VAR_TIMER != 0xFF)
 		VAR(VAR_TIMER) = 0;

@@ -24,6 +24,7 @@
 #include "stdafx.h"
 #include "common/config-manager.h"
 #include "scumm/scumm.h"
+#include "scumm/logic_he.h"
 #include "scumm/intern.h"
 #include "sound/mididrv.h"
 
@@ -566,8 +567,11 @@ void ScummEngine_v90he::initScummVars() {
 	if (_heversion >= 95) {
 		VAR(VAR_NUM_SPRITE_GROUPS) = MAX(64, _numSprites / 4) - 1;
 		VAR(VAR_NUM_SPRITES) = _numSprites - 1;
-		VAR(VAR_U32_VERSION) = -1;
 		VAR(VAR_WIZ_TCOLOR) = 5;
+	}
+
+	if (_heversion >= 98) {
+		VAR(VAR_U32_VERSION) = _logicHE->versionID();
 	}
 }
 
