@@ -292,31 +292,22 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer
 			for (int i = 1; i <= end / 6; i++) {
 				_filenums[i] = file->readUint16BE();
 				_offsets[i] = file->readUint32BE();
+			}
+			_voice_file = true;
 		}
-		_voice_file = true;
-		delete file;
 	}
 	if (!_voice && gss->wav_filename && gss->wav_filename[0]) {
-			s = gss->wav_filename;
-			file->open(s);
-			if (file->isOpen() == false) {
-				debug(0, "Can't open voice file %s", s);
-				delete file;
-			} else	{
-				_voice_file = true;
-				_voice = new WavSound(_mixer, file);
-			}
+		file->open(gss->wav_filename);
+		if (file->isOpen()) {
+			_voice_file = true;
+			_voice = new WavSound(_mixer, file);
+		}
 	}
 	if (!_voice && gss->voc_filename && gss->voc_filename[0]) {
-			s = gss->voc_filename;
-			file->open(s);
-			if (file->isOpen() == false) {
-				debug(0, "Can't open voice file %s", s);
-				delete file;
-			} else {
-				_voice_file = true;
-				_voice = new VocSound(_mixer, file);
-			}
+		file->open(gss->voc_filename);
+		if (file->isOpen()) {
+			_voice_file = true;
+			_voice = new VocSound(_mixer, file);
 		}
 	}
 
@@ -350,7 +341,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer
 			s = gss->voc_effects_filename;
 			file->open(s);
 			if (file->isOpen() == false) {
-				warning("Can't open effects file %s", s);
+				debug(0, "Can't open effects file %s", s);
 			} else {
 				_effects = new VocSound(_mixer, file);
 			}
