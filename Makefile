@@ -44,20 +44,20 @@ config.mak: $(srcdir)/configure
 	@exit 1
 
 install: all
-	$(INSTALL) -d "$(BINDIR)"
-	$(INSTALL) -c -s -m 755 "$(srcdir)/scummvm$(EXEEXT)" "$(BINDIR)/scummvm$(EXEEXT)"
-	$(INSTALL) -d "$(MANDIR)/man6/"
-	$(INSTALL) -c -m 644 "$(srcdir)/scummvm.6" "$(MANDIR)/man6/scummvm.6"
-	$(INSTALL) -d "$(PREFIX)/share/pixmaps/"
-	$(INSTALL) -c -m 644 "$(srcdir)/scummvm.xpm" "$(PREFIX)/share/pixmaps/scummvm.xpm"
-	$(INSTALL) -d "$(PREFIX)/share/doc/scummvm/"
-	$(INSTALL) -c -m 644 "$(srcdir)/AUTHORS" "$(srcdir)/COPYING" "$(srcdir)/NEWS" "$(srcdir)/README" "$(PREFIX)/share/doc/scummvm/"
+	$(INSTALL) -d "$(DESTDIR)$(BINDIR)"
+	$(INSTALL) -c -s -m 755 "$(srcdir)/scummvm$(EXEEXT)" "$(DESTDIR)$(BINDIR)/scummvm$(EXEEXT)"
+	$(INSTALL) -d "$(DESTDIR)$(MANDIR)/man6/"
+	$(INSTALL) -c -m 644 "$(srcdir)/scummvm.6" "$(DESTDIR)$(MANDIR)/man6/scummvm.6"
+	$(INSTALL) -d "$(DESTDIR)$(PREFIX)/share/pixmaps/"
+	$(INSTALL) -c -m 644 "$(srcdir)/scummvm.xpm" "$(DESTDIR)$(PREFIX)/share/pixmaps/scummvm.xpm"
+	$(INSTALL) -d "$(DESTDIR)$(PREFIX)/share/doc/scummvm/"
+	$(INSTALL) -c -m 644 "$(srcdir)/AUTHORS" "$(srcdir)/COPYING" "$(srcdir)/NEWS" "$(srcdir)/README" "$(DESTDIR)$(PREFIX)/share/doc/scummvm/"
 
 uninstall:
-	rm -f "$(BINDIR)/scummvm$(EXEEXT)"
-	rm -f "$(MANDIR)/man6/scummvm.6"
-	rm -f "$(PREFIX)/share/pixmaps/scummvm.xpm"
-	rm -rf "$(PREFIX)/share/doc/scummvm/"
+	rm -f "$(DESTDIR)$(BINDIR)/scummvm$(EXEEXT)"
+	rm -f "$(DESTDIR)$(MANDIR)/man6/scummvm.6"
+	rm -f "$(DESTDIR)$(PREFIX)/share/pixmaps/scummvm.xpm"
+	rm -rf "$(DESTDIR)$(PREFIX)/share/doc/scummvm/"
 
 scummvmico.o: scummvm.ico
 	windres scummvm.rc scummvmico.o
