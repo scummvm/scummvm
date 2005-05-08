@@ -316,6 +316,7 @@ Freddi Fish 5: The Case of the Creature of Coral Cave
 	-	All	en	590e6546aacd0d374b7f3a4f53013ab1	freddicove	cyx
 	-	Windows	ru	21abe302e1b1e2b66d6f5c12e241ebfd	freddicove	sev
 	-	Windows	ru	4ce2d5b355964bbcb5e5ce73236ef868	freddicove	sev
+	Demo	Windows	en	45082a5c9f42ba14dacfe1fdeeba819d	ff5demo	sev
 	Demo	Windows	nl	6b257bb2827dd894b8109a50a1a18b5a	FF5Demo	Kirben
 
 Freddi Fish and Luther's Water Worries

@@ -163,6 +163,18 @@ bf65bf5fbfd26a63f7bd32437a960667 footdemo.he2
 9e53fbcf1061636d3d192c786c4e3b7b footdemo.he4
 07656b959c7febb6359c8de5fd6b6f76 FOOTDEMO.U32
 
+(puttsfunshop cd)
+sev
+Mac Sputm 9
+5bd335265a61caa3d78956ad9f88ba23 FootBall Demo (0)
+bf65bf5fbfd26a63f7bd32437a960667 FootBall Demo (2)
+9e53fbcf1061636d3d192c786c4e3b7b FootBall Demo (4)
+bb6ec9a3a2a016b239367c2b26d9ee3b FootBall Demo (a)
+fc64925fad094364d802353128522dca FootBall Demo (r).bin
+cd70bf11bb65058338f64f6013fb5165 Football Demo (i).bin
+d7a768b15dd0fa128dd84c87a7a70bb3 Football Demo (u).bin
+51edb2aab563f73b0a4c397f190d8e09 Football Demo.bin
+
 (football2002 cd) // uses Bink as external files. 138 files
 c:\SRC_RELEASE\SPUTM\Src\SrcPWin\*.cpp
 7894dd82c874b535dc8acadef0950be4 Football2002.exe
@@ -619,6 +631,15 @@ d0a925e6d57938021ce5b1260731ec7d  FFHSDemo.(a)
 d0a925e6d57938021ce5b1260731ec7d  ffhsdemo.he1
 7480dfa29b4df0002d23c72bb4932dde  ffhsdemo.he2
 a97bf54bcae67fabb8d6e4a1e506efef  ffhsdemo.he4
+
+(pj4 cd)
+sev
+c:\SRC_RELEASE\SPUTM\Src\SrcPWin\*.cpp
+f1b5cd6bceb50f8296d7a8db6efb69ec FFCoveDemo.(a)
+45082a5c9f42ba14dacfe1fdeeba819d FFCoveDemo.HE0
+0c8f5b94bee7ddcbe5d41abce1daf9e3 ffCoveDemo.he2
+af9375aa14e4d967801938ee355e1486 ffCoveDemo.he4
+912c159f4a0232ceaff2b6759b18fd2f ffCoveDemo.w32
 
 (russian water)
 sev
@@ -1378,7 +1399,7 @@ eb03a8bd9e7654d5d06635d934f2059b SPYFoxOzu.(a)
 64531d4b40f2b932c8434b5c2c0f3547 SPYFoxOzu.he4
 194af4195ddb1f3a6017fbd6b27a92aa spyfoxozu.exe
 
-(freddi5 cd)
+(freddi5 cd/pj4 cd)
 sev
 d:\dev\SPUTM\Src\SrcPWin\*.cpp
 0b3dac19ac1107f3fcfa9b38c47b2dfb SF3-DEMO.(A)
