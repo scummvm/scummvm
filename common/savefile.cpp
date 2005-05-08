@@ -31,6 +31,7 @@
 #include <zlib.h>
 #endif
 
+
 const char *SaveFileManager::getSavePath() const {
 
 #if defined(__PALM_OS__)
@@ -85,6 +86,10 @@ public:
 	uint32 write(const void *dataPtr, uint32 dataSize) {
 		return ::fwrite(dataPtr, 1, dataSize, fh);
 	}
+
+	void skip(uint32 offset) {
+		::fseek(fh, offset, SEEK_SET);
+	}
 };
 
 
@@ -127,6 +132,10 @@ public:
 		if (ret <= 0)
 			_ioError = true;
 		return ret;
+	}
+
+	void skip(uint32 offset) {
+		::gzseek(fh, offset, SEEK_SET);
 	}
 };
 #endif

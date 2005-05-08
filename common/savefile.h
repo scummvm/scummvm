@@ -31,23 +31,21 @@
  * A class which allows game engines to load game state data.
  * That typically means "save games", but also includes things like the
  * IQ points in Indy3.
- *
- * @todo Add error checking abilities.
- * @todo Change base class to SeekableReadStream; or alternatively,
- *       add a simple 'skip()' method which would allow skipping
- *       a number of bytes in the savefile.
  */
 class InSaveFile : public Common::ReadStream {
 public:
 	virtual ~InSaveFile() {}
+	
+	/**
+	 * Skip over the specified (positive) amount of bytes in the input stream.
+	 */
+	virtual void skip(uint32 offset) = 0;
 };
 
 /**
  * A class which allows game engines to save game state data.
  * That typically means "save games", but also includes things like the
  * IQ points in Indy3.
- *
- * @todo Add error checking abilities.
  */
 class OutSaveFile : public Common::WriteStream {
 public:
