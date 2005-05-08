@@ -337,12 +337,9 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer
 			}
 		}
 #endif
-		if (!_effects) {
-			s = gss->voc_effects_filename;
-			file->open(s);
-			if (file->isOpen() == false) {
-				debug(0, "Can't open effects file %s", s);
-			} else {
+		if (!_effects && gss->voc_effects_filename && gss->voc_effects_filename[0]) {
+			file->open(gss->voc_effects_filename);
+			if (file->isOpen()) {
 				_effects = new VocSound(_mixer, file);
 			}
 		}
