@@ -46,6 +46,25 @@ void Surface::drawLine(int x0, int y0, int x1, int y1, uint32 color) {
 		error("Surface::drawLine: bytesPerPixel must be 1 or 2");
 }
 
+void Surface::create(uint16 width, uint16 height, uint8 bytesPP) {
+	free();
+	
+	w = width;
+	h = height;
+	bytesPerPixel = bytesPP;
+	pitch = w * bytesPP;
+	
+	pixels = calloc(width * height, bytesPP);
+	assert(pixels);
+}
+ 
+void Surface::free() {
+ 	::free(pixels);
+ 	pixels = 0;
+ 	w = h = pitch = 0;
+ 	bytesPerPixel = 0;
+}
+
 void Surface::hLine(int x, int y, int x2, uint32 color) {
 	// Clipping
 	if (y < 0 || y >= h)

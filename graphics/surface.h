@@ -47,6 +47,17 @@ struct Surface {
 		return static_cast<void *>(static_cast<byte *>(pixels) + y * pitch + x * bytesPerPixel);
 	}
 
+	/**
+	 * Allocate pixels memory for this surface and for the specified dimension.
+	 */
+	void create(uint16 width, uint16 height, uint8 bytesPP);
+	
+	/**
+	 * Release the memory used by the pixels memory of this surface. This is the
+	 * counterpart to create().
+	 */
+	void free();
+
 	void drawLine(int x0, int y0, int x1, int y1, uint32 color);
 	void hLine(int x, int y, int x2, uint32 color);
 	void vLine(int x, int y, int y2, uint32 color);
