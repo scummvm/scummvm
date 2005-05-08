@@ -173,11 +173,6 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], int32 lea
 	if (_vm->_quit)
 		return RD_OK;
 
-	if (scumm_stricmp(filename, "shaman") == 0)
-		_seamless = true;
-	else
-		_seamless = false;
-
 	if (leadInRes) {
 		byte *leadIn = _vm->_resman->openResource(leadInRes);
 		uint32 leadInLen = _vm->_resman->fetchLen(leadInRes) - sizeof(StandardHeader);
