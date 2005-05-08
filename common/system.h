@@ -28,6 +28,10 @@
 #include "common/rect.h"
 #include "common/singleton.h"
 
+namespace Graphics {
+class Surface;
+} // end of namespace Graphics
+
 class SaveFileManager;
 
 /**
@@ -361,6 +365,16 @@ public:
 	 *       API are probably going to remove it.
 	 */
 	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
+	
+	/**
+	 * Grabs a specified part of the currently active palette.
+	 * The format is the same as for setPalette.
+	 *
+	 * @param buf	the buffer
+	 * @param start	the first platte entry
+	 * @param num	nummber of the entries
+	 */
+	virtual void grabPalette(byte *colors, uint start, uint num) = 0;
 
 	/**
 	 * Blit a bitmap to the virtual screen.
@@ -371,6 +385,16 @@ public:
 	 * @see updateScreen
 	 */
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) = 0;
+
+	/**
+	 * Copies the current screen contents to a new surface, with the original
+	 * bit depth. This will allocate memory for the pixel data.
+	 * WARNING: surf->free() must be called by the user to avoid leaking.
+	 *
+	 * @param surf	the surfce to store the data in it
+	 * @return true if all went well, false if an error occured
+	 */
+	virtual bool grabRawScreen(Graphics::Surface *surf) { return false; }
 	
 	/**
 	 * Clear the screen to black.

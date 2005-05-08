@@ -80,10 +80,16 @@ public:
 
 	// Set colors of the palette
 	void setPalette(const byte *colors, uint start, uint num);
+	
+	// Get colors of the palette
+	void grabPalette(byte *colors, uint start, uint num);
 
 	// Draw a bitmap to screen.
 	// The screen will not be updated to reflect the new bitmap
 	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h);
+
+	// Copies the screen to a buffer
+	bool grabRawScreen(Graphics::Surface *surf);
 
 	// Clear the screen
 	void clearScreen();

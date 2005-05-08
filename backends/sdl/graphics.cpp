@@ -25,6 +25,7 @@
 #include "common/util.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
+#include "graphics/surface.h"
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", "Normal (no scaling)", GFX_NORMAL},
@@ -821,6 +822,25 @@ void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int
 	SDL_UnlockSurface(_screen);
 }
 
+bool OSystem_SDL::grabRawScreen(Graphics::Surface *surf) {
+	assert(_screen);
+	assert(surf);
+	
+	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
+	
+	surf->create(_screenWidth, _screenHeight, _screen->format->BytesPerPixel);
+	
+	// Try to lock the screen surface
+	if (SDL_LockSurface(_screen) == -1)
+		error("SDL_LockSurface failed: %s", SDL_GetError());
+	
+	memcpy(surf->pixels, _screen->pixels, _screenWidth * _screenHeight * _screen->format->BytesPerPixel);
+	
+	// Unlock the screen surface
+	SDL_UnlockSurface(_screen);
+	
+	return true;
+}
 
 void OSystem_SDL::addDirtyRect(int x, int y, int w, int h, bool mouseRect) {
 	if (_forceFull)
@@ -1005,6 +1025,18 @@ void OSystem_SDL::setPalette(const byte *colors, uint start, uint num) {
 	// Some games blink cursors with palette
 	if (!_overlayVisible && (!_cursorHasOwnPalette || _cursorPaletteDisabled))
 		blitCursor();
+}
+
+void OSystem_SDL::grabPalette(byte *colors, uint start, uint num) {
+	assert(colors);	
+	const SDL_Color *base = _currentPalette + start;
+	
+	for (uint i = 0; i < num; ++i) {
+		colors[i * 4] = base[i].r;
+		colors[i * 4 + 1] = base[i].g;
+		colors[i * 4 + 2] = base[i].b;
+		colors[i * 4 + 3] = 0xFF;
+	}
 }
 
 void OSystem_SDL::setCursorPalette(const byte *colors, uint start, uint num) {
