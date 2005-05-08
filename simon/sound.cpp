@@ -238,12 +238,12 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer
 	_ambientPaused = false;
 
 	_filenums = 0;
-	_last_voice_file = 0;
+	_lastVoiceFile = 0;
 	_offsets = 0;
 
-	_effects_file = false;
-	_voice_file = false;
-	_ambient_playing = 0;
+	_hasEffectsFile = false;
+	_hasVoiceFile = false;
+	_ambientPlaying = 0;
 
 	// simon1cd32 uses separate speech files
 	if (!(_game & GF_TALKIE) || (_game == GAME_SIMON1CD32))
@@ -255,7 +255,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer
 	if (!_voice && gss->flac_filename && gss->flac_filename[0]) {
 		file->open(gss->flac_filename);
 		if (file->isOpen()) {
-			_voice_file = true;
+			_hasVoiceFile = true;
 			_voice = new FlacSound(_mixer, file);
 		}
 	}
@@ -264,7 +264,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer
 	if (!_voice && gss->mp3_filename && gss->mp3_filename[0]) {
 		file->open(gss->mp3_filename);
 		if (file->isOpen()) {
-			_voice_file = true;
+			_hasVoiceFile = true;
 			_voice = new MP3Sound(_mixer, file);
 		}
 	}
@@ -273,7 +273,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer
 	if (!_voice && gss->vorbis_filename && gss->vorbis_filename[0]) {
 		file->open(gss->vorbis_filename);
 		if (file->isOpen()) {
-			_voice_file = true;
+			_hasVoiceFile = true;
 			_voice = new VorbisSound(_mixer, file);
 		}
 	}
@@ -292,20 +292,20 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer
 				_filenums[i] = file->readUint16BE();
 				_offsets[i] = file->readUint32BE();
 			}
-			_voice_file = true;
+			_hasVoiceFile = true;
 		}
 	}
 	if (!_voice && gss->wav_filename && gss->wav_filename[0]) {
 		file->open(gss->wav_filename);
 		if (file->isOpen()) {
-			_voice_file = true;
+			_hasVoiceFile = true;
 			_voice = new WavSound(_mixer, file);
 		}
 	}
 	if (!_voice && gss->voc_filename && gss->voc_filename[0]) {
 		file->open(gss->voc_filename);
 		if (file->isOpen()) {
-			_voice_file = true;
+			_hasVoiceFile = true;
 			_voice = new VocSound(_mixer, file);
 		}
 	}
@@ -316,7 +316,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer
 		if (!_effects && gss->mp3_effects_filename && gss->mp3_effects_filename[0]) {
 			file->open(gss->mp3_effects_filename);
 			if (file->isOpen()) {
-				_effects_file = true;
+				_hasEffectsFile = true;
 				_effects = new MP3Sound(_mixer, file);
 			}
 		}
@@ -325,7 +325,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer
 		if (!_effects && gss->vorbis_effects_filename && gss->vorbis_effects_filename[0]) {
 			file->open(gss->vorbis_effects_filename);
 			if (file->isOpen()) {
-				_effects_file = true;
+				_hasEffectsFile = true;
 				_effects = new VorbisSound(_mixer, file);
 			}
 		}
@@ -334,7 +334,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer
 		if (!_effects && gss->flac_effects_filename && gss->flac_effects_filename[0]) {
 			file->open(gss->flac_effects_filename);
 			if (file->isOpen()) {
-				_effects_file = true;
+				_hasEffectsFile = true;
 				_effects = new FlacSound(_mixer, file);
 			}
 		}
@@ -342,7 +342,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer
 		if (!_effects && gss->voc_effects_filename && gss->voc_effects_filename[0]) {
 			file->open(gss->voc_effects_filename);
 			if (file->isOpen()) {
-				_effects_file = true;
+				_hasEffectsFile = true;
 				_effects = new VocSound(_mixer, file);
 			}
 		}
@@ -358,7 +358,7 @@ Sound::~Sound() {
 }
 
 void Sound::readSfxFile(const char *filename) {
-	if (_effects_file)
+	if (_hasEffectsFile)
 		return;
 
 	stopAll();
@@ -421,11 +421,11 @@ void Sound::readVoiceFile(const char *filename) {
 
 void Sound::playVoice(uint sound) {
 	if (_filenums) {
-		if (_last_voice_file != _filenums[sound]) {
+		if (_lastVoiceFile != _filenums[sound]) {
 			stopAll();
 
 			char filename[16];
-			_last_voice_file = _filenums[sound];
+			_lastVoiceFile = _filenums[sound];
 			sprintf(filename, "voices%d.dat", _filenums[sound]);
 			File *file = new File();
 			file->open(filename);
@@ -441,8 +441,8 @@ void Sound::playVoice(uint sound) {
 	if (!_voice)
 		return;
 
-	_mixer->stopHandle(_voice_handle);
-	_voice->playSound(sound, &_voice_handle, (_game == GAME_SIMON1CD32) ? 0 : SoundMixer::FLAG_UNSIGNED);
+	_mixer->stopHandle(_voiceHandle);
+	_voice->playSound(sound, &_voiceHandle, (_game == GAME_SIMON1CD32) ? 0 : SoundMixer::FLAG_UNSIGNED);
 }
 
 void Sound::playEffects(uint sound) {
@@ -452,36 +452,40 @@ void Sound::playEffects(uint sound) {
 	if (_effectsPaused)
 		return;
 
-	_effects->playSound(sound, &_effects_handle, (_game == GAME_SIMON1CD32) ? 0 : SoundMixer::FLAG_UNSIGNED);
+	_effects->playSound(sound, &_effectsHandle, (_game == GAME_SIMON1CD32) ? 0 : SoundMixer::FLAG_UNSIGNED);
 }
 
 void Sound::playAmbient(uint sound) {
 	if (!_effects)
 		return;
 
-	if (sound == _ambient_playing)
+	if (sound == _ambientPlaying)
 		return;
 
-	_ambient_playing = sound;
+	_ambientPlaying = sound;
 
 	if (_ambientPaused)
 		return;
 
-	_mixer->stopHandle(_ambient_handle);
-	_effects->playSound(sound, &_ambient_handle, SoundMixer::FLAG_LOOP|SoundMixer::FLAG_UNSIGNED);
+	_mixer->stopHandle(_ambientHandle);
+	_effects->playSound(sound, &_ambientHandle, SoundMixer::FLAG_LOOP|SoundMixer::FLAG_UNSIGNED);
 }
 
-bool Sound::hasVoice() {
-	return _voice_file;
+bool Sound::hasVoice() const {
+	return _hasVoiceFile;
+}
+
+bool Sound::isVoiceActive() const {
+	return _mixer->isSoundHandleActive(_voiceHandle) ;
 }
 
 void Sound::stopVoice() {
-	_mixer->stopHandle(_voice_handle);
+	_mixer->stopHandle(_voiceHandle);
 }
 
 void Sound::stopAll() {
 	_mixer->stopAll();
-	_ambient_playing = 0;
+	_ambientPlaying = 0;
 }
 
 void Sound::effectsPause(bool b) {
@@ -491,11 +495,11 @@ void Sound::effectsPause(bool b) {
 void Sound::ambientPause(bool b) {
 	_ambientPaused = b;
 
-	if (_ambientPaused && _ambient_playing) {
-		_mixer->stopHandle(_ambient_handle);
-	} else if (_ambient_playing) {
-		uint tmp = _ambient_playing;
-		_ambient_playing = 0;
+	if (_ambientPaused && _ambientPlaying) {
+		_mixer->stopHandle(_ambientHandle);
+	} else if (_ambientPlaying) {
+		uint tmp = _ambientPlaying;
+		_ambientPlaying = 0;
 		playAmbient(tmp);
 	}
 }

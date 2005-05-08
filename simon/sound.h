@@ -42,17 +42,17 @@ private:
 
 	uint16 *_filenums;
 	uint32 *_offsets;
-	uint16 _last_voice_file;
+	uint16 _lastVoiceFile;
+
+	SoundHandle _voiceHandle;
+	SoundHandle _effectsHandle;
+	SoundHandle _ambientHandle;
+
+	bool _hasEffectsFile;
+	bool _hasVoiceFile;
+	uint _ambientPlaying;
 
 public:
-	SoundHandle _voice_handle;
-	SoundHandle _effects_handle;
-	SoundHandle _ambient_handle;
-
-	bool _effects_file;
-	bool _voice_file;
-	uint _ambient_playing;
-
 	Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer);
 	~Sound();
 	
@@ -64,7 +64,8 @@ public:
 	void playEffects(uint sound);
 	void playAmbient(uint sound);
 
-	bool hasVoice();
+	bool hasVoice() const;
+	bool isVoiceActive() const;
 	void stopVoice();
 	void stopAll();
 	void effectsPause(bool b);
