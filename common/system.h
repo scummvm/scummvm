@@ -28,10 +28,6 @@
 #include "common/rect.h"
 #include "common/singleton.h"
 
-namespace Graphics {
-class Surface;
-} // end of namespace Graphics
-
 class SaveFileManager;
 
 /**
@@ -365,16 +361,6 @@ public:
 	 *       API are probably going to remove it.
 	 */
 	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
-	
-	/**
-	 * Grabs a specified part of the palette
-	 * format is like it is described in setPalette
-	 *
-	 * @param buf	the buffer
-	 * @param start	the first platte entry
-	 * @param num	nummber of the entries
-	 */
-	virtual void grabPalette(byte *colors, uint start, uint num) = 0;
 
 	/**
 	 * Blit a bitmap to the virtual screen.
@@ -385,28 +371,6 @@ public:
 	 * @see updateScreen
 	 */
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) = 0;
-
-	/**
-	 * Copies the screen to a surface
-	 * if bitsPerPixel = 15 a RGB555 format is used
-	 * if bitsPerPixel = 16 a RGB565 format is used
-	 * WARNING: surf->free() musst be called by the user
-	 * 
-	 * @param surf		the surfce to store the data in it
-	 * @param bitsPerPixel	must be higher than 15 and lower than 16
-	 */
-	virtual void grabScreen(Graphics::Surface *surf, int bitsPerPixel);
-	
-	/**
-	 * Copies the screen to a surface (with original bit depth)
-	 * It should return a 1 byte per pixel surface in all cases
-	 * because currently all games supported by ScummVM are
-	 * using 1 byte per pixel.
-	 * WARNING: surf->free() musst be called by the user
-	 *
-	 * @param surf	the surfce to store the data in it
-	 */
-	virtual void grabRawScreen(Graphics::Surface *surf) = 0;
 	
 	/**
 	 * Clear the screen to black.
