@@ -86,6 +86,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 
 	for (i = 0; i < _sceneMax; i++) {
 		_sceneLUT[i] = readS.readUint16();
+		debug(8, "sceneNumber %i has resourceId %i", i, _sceneLUT[i]);
 	}
 
 	free(scene_lut_p);
@@ -108,8 +109,8 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	_sceneNumber = 0;
 	_sceneResourceId = 0;
 	_inGame = false;
-	_loadDesc = false;
-	memset(&_desc, 0, sizeof(_desc));
+	_loadDescription = false;
+	memset(&_sceneDescription, 0, sizeof(_sceneDescription));
 	_resListEntries = 0;
 	_resList = NULL;
 	_animEntries = 0;
@@ -130,37 +131,17 @@ Scene::~Scene() {
 	}
 }
 
-int Scene::queueScene(SCENE_QUEUE *scene_queue) {
-	assert(_initialized);
-	assert(scene_queue != NULL);
-
-	_sceneQueue.push_back(*scene_queue);
-	return SUCCESS;
-}
-
-int Scene::clearSceneQueue() {
-	assert(_initialized);
-
-	_sceneQueue.clear();
-
-	return SUCCESS;
-}
-
-int Scene::startScene() {
+void Scene::startScene() {
 	SceneQueueList::iterator queueIterator;
-	SCENE_QUEUE *scene_qdat;
+	LoadSceneParams *sceneQueue;
 	EVENT event;
 
-	assert(_initialized);
-
 	if (_sceneLoaded) {
-		warning("Scene::start(): Error: Can't start game...scene already loaded");
-		return FAILURE;
+		error("Scene::start(): Error: Can't start game...scene already loaded");
 	}
 
 	if (_inGame) {
-		warning("Scene::start(): Error: Can't start game...game already started");
-		return FAILURE;
+		error("Scene::start(): Error: Can't start game...game already started");
 	}
 
 	// Hide cursor during intro
@@ -177,38 +158,31 @@ int Scene::startScene() {
 		IHNMStartProc();
 		break;
 	default:
-		warning("Scene::start(): Error: Can't start game... gametype not supported");
+		error("Scene::start(): Error: Can't start game... gametype not supported");
 		break;
 	}
 
 	// Load the head in scene queue
 	queueIterator = _sceneQueue.begin();
 	if (queueIterator == _sceneQueue.end()) {
-		return SUCCESS;
+		return; 
 	}
 
-	scene_qdat = queueIterator.operator->();
-	assert(scene_qdat != NULL);
+	sceneQueue = queueIterator.operator->();
 
-	loadScene(scene_qdat->scene_n, scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->sceneDescription, scene_qdat->fadeType, 0);
-
-	return SUCCESS;
+	loadScene(sceneQueue);
 }
 
-int Scene::nextScene() {
+void Scene::nextScene() {
 	SceneQueueList::iterator queueIterator;
-	SCENE_QUEUE *scene_qdat;
-
-	assert(_initialized);
+	LoadSceneParams *sceneQueue;
 
 	if (!_sceneLoaded) {
-		warning("Scene::next(): Error: Can't advance scene...no scene loaded");
-		return FAILURE;
+		error("Scene::next(): Error: Can't advance scene...no scene loaded");
 	}
 
 	if (_inGame) {
-		warning("Scene::next(): Error: Can't advance scene...game already started");
-		return FAILURE;
+		error("Scene::next(): Error: Can't advance scene...game already started");
 	}
 
 	endScene();
@@ -216,100 +190,82 @@ int Scene::nextScene() {
 	// Delete the current head  in scene queue
 	queueIterator = _sceneQueue.begin();
 	if (queueIterator == _sceneQueue.end()) {
-		return SUCCESS;
+		return;
 	}
 	
 	queueIterator = _sceneQueue.erase(queueIterator);
 
 	if (queueIterator == _sceneQueue.end()) {
-		return SUCCESS;
+		return;
 	}
 
 	// Load the head  in scene queue
-	scene_qdat = queueIterator.operator->();
-	assert(scene_qdat != NULL);
+	sceneQueue = queueIterator.operator->();
 
-	loadScene(scene_qdat->scene_n, scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->sceneDescription, scene_qdat->fadeType, 0);
-
-	return SUCCESS;
+	loadScene(sceneQueue);
 }
 
-int Scene::skipScene() {
+void Scene::skipScene() {
 	SceneQueueList::iterator queueIterator;
 
-	SCENE_QUEUE *scene_qdat = NULL;
-	SCENE_QUEUE *skip_qdat = NULL;
+	LoadSceneParams *sceneQueue = NULL;
+	LoadSceneParams *skipQueue = NULL;
 
 	assert(_initialized);
 
 	if (!_sceneLoaded) {
-		warning("Scene::skip(): Error: Can't skip scene...no scene loaded");
-		return FAILURE;
+		error("Scene::skip(): Error: Can't skip scene...no scene loaded");
 	}
 
 	if (_inGame) {
-		warning("Scene::skip(): Error: Can't skip scene...game already started");
-		return FAILURE;
+		error("Scene::skip(): Error: Can't skip scene...game already started");
 	}
 
 	// Walk down scene queue and try to find a skip target
 	queueIterator = _sceneQueue.begin();
 	if (queueIterator == _sceneQueue.end()) {
-		warning("Scene::skip(): Error: Can't skip scene...no scenes in queue");
-		return FAILURE;
+		error("Scene::skip(): Error: Can't skip scene...no scenes in queue");
 	}
 
 	++queueIterator;
 	while (queueIterator != _sceneQueue.end()) {
-		scene_qdat = queueIterator.operator->();
-		assert(scene_qdat != NULL);
+		sceneQueue = queueIterator.operator->();
+		assert(sceneQueue != NULL);
 
-		if (scene_qdat->scene_skiptarget) {
-			skip_qdat = scene_qdat;
+		if (sceneQueue->sceneSkipTarget) {
+			skipQueue = sceneQueue;
 			break;
 		}
 		++queueIterator;
 	}
 
 	// If skip target found, remove preceding scenes and load
-	if (skip_qdat != NULL) {
+	if (skipQueue != NULL) {
 		_sceneQueue.erase(_sceneQueue.begin(), queueIterator);
 
 		endScene();
-		loadScene(skip_qdat->scene_n, skip_qdat->load_flag, skip_qdat->scene_proc, skip_qdat->sceneDescription, skip_qdat->fadeType, 0);
+		loadScene(skipQueue);
 	}
-	// Search for a scene to skip to
-
-	return SUCCESS;
 }
 
-int Scene::changeScene(int sceneNumber, int actorsEntrance, int fadeIn) {
-	assert(_initialized);
+void Scene::changeScene(uint16 sceneNumber, int actorsEntrance, SceneTransitionType transitionType) {
+	LoadSceneParams sceneParams;
 
-	if (!_sceneLoaded) {
-		warning("Scene::changeScene(): Error: Can't change scene. No scene currently loaded. Game in invalid state");
-		return FAILURE;
-	}
-
-	if ((sceneNumber < 0) || (sceneNumber > _sceneMax)) {
-		warning("Scene::changeScene(): Error: Can't change scene. Invalid scene number");
-		return FAILURE;
-	}
-
-	if (_sceneLUT[sceneNumber] == 0) {
-		warning("Scene::changeScene(): Error: Can't change scene; invalid scene descriptor resource number (0)");
-		return FAILURE;
-	}
+	sceneParams.actorsEntrance = actorsEntrance;
+	sceneParams.loadFlag = kLoadBySceneNumber;
+	sceneParams.sceneDescriptor = sceneNumber;
+	sceneParams.transitionType = transitionType;
+	sceneParams.sceneProc = NULL;
+	sceneParams.sceneSkipTarget = false;
 
 	endScene();
-	loadScene(sceneNumber, BY_SCENE, NULL, NULL, fadeIn, actorsEntrance);
+	loadScene(&sceneParams);
 
-	return SUCCESS;
 }
 
 void Scene::getSlopes(int &beginSlope, int &endSlope) {
-	beginSlope = _vm->getSceneHeight() - _desc.beginSlope; 
-	endSlope = _vm->getSceneHeight() - _desc.endSlope;
+	beginSlope = _vm->getSceneHeight() - _sceneDescription.beginSlope; 
+	endSlope = _vm->getSceneHeight() - _sceneDescription.endSlope;
 }
 
 int Scene::getBGInfo(SCENE_BGINFO *bginfo) {
@@ -434,78 +390,50 @@ void Scene::initDoorsState() {
 	memcpy(_sceneDoors, initSceneDoors, sizeof (_sceneDoors) );
 }
 
-int Scene::getInfo(SCENE_INFO *si) {
-	assert(_initialized);
-	assert(si != NULL);
-
-	si->text_list = _textList;
-
-	return SUCCESS;
-}
-
-int Scene::getSceneLUT(int scene_num) { 
-	assert((scene_num > 0) && (scene_num < _sceneMax));
-
-	return _sceneLUT[scene_num];
-}
-
-int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SceneDescription *scene_desc_param, int fadeType, int actorsEntrance) {
-	SCENE_INFO scene_info;
-	uint32 resourceId = 0;
+void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	int result;
 	int i;
 	EVENT event;
 	EVENT *q_event;
 	static PALENTRY current_pal[PAL_ENTRIES];
 
-	assert(_initialized);
-
 	if (_sceneLoaded) {
-		warning("Scene::loadScene(): Error, a scene is already loaded");
-		return FAILURE;
+		error("Scene::loadScene(): Error, a scene is already loaded");
 	}
 
-	_loadDesc = true;
-	_sceneNumber = -1;
+	_loadDescription = true;
 
-	switch (load_flag) {
-	case BY_RESOURCE:
-		resourceId = scene_num;
+	switch (loadSceneParams->loadFlag) {
+	case kLoadByResourceId:
+		_sceneNumber = 0;		// original assign zero for loaded by resource id
+		_sceneResourceId = loadSceneParams->sceneDescriptor;
 		break;
-	case BY_SCENE:
-		assert((scene_num > 0) && (scene_num < _sceneMax));
-		resourceId = _sceneLUT[scene_num];
-		_sceneNumber = scene_num;
+	case kLoadBySceneNumber:
+		_sceneNumber = loadSceneParams->sceneDescriptor;
+		_sceneResourceId = getSceneResourceId(_sceneNumber);
 		break;
-	case BY_DESC:
-		assert(scene_desc_param != NULL);
-		assert(scene_desc_param->resList != NULL);
-		_loadDesc = false;
-		_desc = *scene_desc_param;
-		_resList = scene_desc_param->resList;
-		_resListEntries = scene_desc_param->resListCnt;
-		break;
-	default:
-		warning("Scene::loadScene(): Error: Invalid scene load flag");
-		return FAILURE;
+	case kLoadByDescription:
+		_sceneNumber = -1;
+		_sceneResourceId = -1;
+		assert(loadSceneParams->sceneDescription != NULL);
+		assert(loadSceneParams->sceneDescription->resList != NULL);
+		_loadDescription = false;
+		_sceneDescription = *loadSceneParams->sceneDescription;
+		_resList = loadSceneParams->sceneDescription->resList;
+		_resListEntries = loadSceneParams->sceneDescription->resListCnt;
 		break;
 	}
 
 	// Load scene descriptor and resource list resources
-	if (_loadDesc) {
+	if (_loadDescription) {
+		debug(0, "Loading scene resource %u:", _sceneResourceId);
 
-		_sceneResourceId = resourceId;
-		assert(_sceneResourceId != 0);
-		debug(0, "Loading scene resource %u:", resourceId);
-
-		if (loadSceneDescriptor(resourceId) != SUCCESS) {
-			warning("Scene::loadScene(): Error reading scene descriptor");
-			return FAILURE;
+		if (loadSceneDescriptor(_sceneResourceId) != SUCCESS) {
+			error("Scene::loadScene(): Error reading scene descriptor");
 		}
 
-		if (loadSceneResourceList(_desc.resListRN) != SUCCESS) {
-			warning("Scene::loadScene(): Error reading scene resource list");
-			return FAILURE;
+		if (loadSceneResourceList(_sceneDescription.resListRN) != SUCCESS) {
+			error("Scene::loadScene(): Error reading scene resource list");
 		}
 	} else {
 		debug(0, "Loading memory scene resource.");
@@ -516,18 +444,16 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SceneD
 		result = RSC_LoadResource(_sceneContext, _resList[i].res_number,
 								&_resList[i].res_data, &_resList[i].res_data_len);
 		if (result != SUCCESS) {
-			warning("Scene::loadScene(): Error: Allocation failure loading scene resource list");
-			return FAILURE;
+			error("Scene::loadScene(): Error: Allocation failure loading scene resource list");
 		}
 	}
 
 	// Process resources from scene resource list
 	if (processSceneResources() != SUCCESS) {
-		warning("Scene::loadScene(): Error loading scene resources");
-		return FAILURE;
+		error("Scene::loadScene(): Error loading scene resources");
 	}
 
-	if (_desc.flags & kSceneFlagISO) {
+	if (_sceneDescription.flags & kSceneFlagISO) {
 		_outsetSceneNumber = _sceneNumber;
 	} else {
 		if (!(_bg.w < _vm->getDisplayWidth() || _bg.h < _vm->getSceneHeight()))
@@ -537,7 +463,8 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SceneD
 	_sceneLoaded = true;
 	
 	q_event = NULL;
-	if (fadeType == SCENE_FADE || fadeType == SCENE_FADE_NO_INTERFACE) {
+	if (loadSceneParams->transitionType == kTransitionFade || 
+		loadSceneParams->transitionType == kTransitionFadeNoInterface) {
 
 		_vm->_interface->rememberMode();
 		_vm->_interface->setMode(kPanelFade, true);
@@ -552,7 +479,7 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SceneD
 		event.data = current_pal;
 		q_event = _vm->_events->queue(&event);
 
-		if (fadeType != SCENE_FADE_NO_INTERFACE) {
+		if (loadSceneParams->transitionType != kTransitionFadeNoInterface) {
 			// Activate user interface
 			event.type = IMMEDIATE_EVENT;
 			event.code = INTERFACE_EVENT;
@@ -581,22 +508,23 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SceneD
 	}
 
 	// Start the scene pre script, but stay with black palette
-	if (_desc.startScriptEntrypointNumber > 0) {
+	if (_sceneDescription.startScriptEntrypointNumber > 0) {
 		event.type = ONESHOT_EVENT;
 		event.code = SCRIPT_EVENT;
 		event.op = EVENT_EXEC_BLOCKING;
 		event.time = 0;
-		event.param = _desc.scriptModuleNumber;
-		event.param2 = _desc.startScriptEntrypointNumber;
+		event.param = _sceneDescription.scriptModuleNumber;
+		event.param2 = _sceneDescription.startScriptEntrypointNumber;
 		event.param3 = 0;		// Action
 		event.param4 = _sceneNumber;	// Object
-		event.param5 = actorsEntrance;	// With Object
+		event.param5 = loadSceneParams->actorsEntrance;	// With Object
 		event.param6 = 0;		// Actor
 
 		q_event = _vm->_events->chain(q_event, &event);
 	}
 
-	if (fadeType == SCENE_FADE || fadeType == SCENE_FADE_NO_INTERFACE) {
+	if (loadSceneParams->transitionType == kTransitionFade || 
+		loadSceneParams->transitionType == kTransitionFadeNoInterface) {
 		// Fade in from black to the scene background palette
 		event.type = IMMEDIATE_EVENT;
 		event.code = PAL_EVENT;
@@ -608,9 +536,8 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SceneD
 		q_event = _vm->_events->chain(q_event, &event);
 	}
 
-	getInfo(&scene_info);
 
-	if (scene_proc == NULL) {
+	if (loadSceneParams->sceneProc == NULL) {
 		if (!_inGame) {
 			_inGame = true;
 			_vm->_interface->setMode(kPanelInventory);
@@ -619,10 +546,10 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SceneD
 		_vm->_sound->stopVoice();
 		_vm->_sound->stopSound();
 
-		if (_desc.musicRN >= 0) {
+		if (_sceneDescription.musicRN >= 0) {
 			event.type = ONESHOT_EVENT;
 			event.code = MUSIC_EVENT;
-			event.param = _desc.musicRN;
+			event.param = _sceneDescription.musicRN;
 			event.param2 = MUSIC_DEFAULT;
 			event.op = EVENT_PLAY;
 			event.time = 0;
@@ -669,16 +596,16 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SceneD
 		_vm->_events->chain(q_event, &event);
 
 		// Start the scene main script
-		if (_desc.sceneScriptEntrypointNumber > 0) {
+		if (_sceneDescription.sceneScriptEntrypointNumber > 0) {
 			event.type = ONESHOT_EVENT;
 			event.code = SCRIPT_EVENT;
 			event.op = EVENT_EXEC_NONBLOCKING;
 			event.time = 0;
-			event.param = _desc.scriptModuleNumber;
-			event.param2 = _desc.sceneScriptEntrypointNumber;
+			event.param = _sceneDescription.scriptModuleNumber;
+			event.param2 = _sceneDescription.sceneScriptEntrypointNumber;
 			event.param3 = kVerbEnter;		// Action
 			event.param4 = _sceneNumber;	// Object
-			event.param5 = actorsEntrance;		// With Object
+			event.param5 = loadSceneParams->actorsEntrance;		// With Object
 			event.param6 = 0;		// Actor
 
 			_vm->_events->queue(&event);
@@ -687,20 +614,19 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SceneD
 		debug(0, "Scene started");
 
 	} else {
-		scene_proc(SCENE_BEGIN, &scene_info, this);
+		loadSceneParams->sceneProc(SCENE_BEGIN, this);
 	}
 
 
 
-	// We probably don't want "followers" to go into scene -1. At the very
+	// We probably don't want "followers" to go into scene -1 , 0. At the very
 	// least we don't want garbage to be drawn that early in the ITE intro.
-	if (_sceneNumber != -1)
-		_vm->_actor->updateActorsScene(actorsEntrance);
+	if (_sceneNumber > 0)
+		_vm->_actor->updateActorsScene(loadSceneParams->actorsEntrance);
 
-	if (_desc.flags & kSceneFlagShowCursor)
+	if (_sceneDescription.flags & kSceneFlagShowCursor)
 		_vm->_interface->activate();
 
-	return SUCCESS;
 }
 
 int Scene::loadSceneDescriptor(uint32 res_number) {
@@ -716,14 +642,14 @@ int Scene::loadSceneDescriptor(uint32 res_number) {
 
 	MemoryReadStreamEndian readS(scene_desc_data, scene_desc_len, IS_BIG_ENDIAN);
 
-	_desc.flags = readS.readSint16();
-	_desc.resListRN = readS.readSint16();
-	_desc.endSlope = readS.readSint16();
-	_desc.beginSlope = readS.readSint16();
-	_desc.scriptModuleNumber = readS.readUint16();
-	_desc.sceneScriptEntrypointNumber = readS.readUint16();
-	_desc.startScriptEntrypointNumber = readS.readUint16();
-	_desc.musicRN = readS.readSint16();
+	_sceneDescription.flags = readS.readSint16();
+	_sceneDescription.resListRN = readS.readSint16();
+	_sceneDescription.endSlope = readS.readSint16();
+	_sceneDescription.beginSlope = readS.readSint16();
+	_sceneDescription.scriptModuleNumber = readS.readUint16();
+	_sceneDescription.sceneScriptEntrypointNumber = readS.readUint16();
+	_sceneDescription.startScriptEntrypointNumber = readS.readUint16();
+	_sceneDescription.musicRN = readS.readSint16();
 
 	RSC_FreeResource(scene_desc_data);
 
@@ -828,7 +754,7 @@ int Scene::processSceneResources() {
 			_actionMap->load(res_data, res_data_len);
 			break;
 		case SAGA_ISO_IMAGES:
-			if (!(_desc.flags & kSceneFlagISO)) {
+			if (!(_sceneDescription.flags & kSceneFlagISO)) {
 				error("Scene::ProcessSceneResources(): not Iso mode");
 			}
 
@@ -837,7 +763,7 @@ int Scene::processSceneResources() {
 			_vm->_isoMap->loadImages(res_data, res_data_len);
 			break;
 		case SAGA_ISO_MAP:
-			if (!(_desc.flags & kSceneFlagISO)) {
+			if (!(_sceneDescription.flags & kSceneFlagISO)) {
 				error("Scene::ProcessSceneResources(): not Iso mode");
 			}
 
@@ -846,7 +772,7 @@ int Scene::processSceneResources() {
 			_vm->_isoMap->loadMap(res_data, res_data_len);
 			break;
 		case SAGA_ISO_PLATFORMS:
-			if (!(_desc.flags & kSceneFlagISO)) {
+			if (!(_sceneDescription.flags & kSceneFlagISO)) {
 				error("Scene::ProcessSceneResources(): not Iso mode");
 			}
 
@@ -855,7 +781,7 @@ int Scene::processSceneResources() {
 			_vm->_isoMap->loadPlatforms(res_data, res_data_len);
 			break;
 		case SAGA_ISO_METATILES:
-			if (!(_desc.flags & kSceneFlagISO)) {
+			if (!(_sceneDescription.flags & kSceneFlagISO)) {
 				error("Scene::ProcessSceneResources(): not Iso mode");
 			}
 
@@ -891,7 +817,7 @@ int Scene::processSceneResources() {
 			}
 			break;
 		case SAGA_ISO_MULTI:
-			if (!(_desc.flags & kSceneFlagISO)) {
+			if (!(_sceneDescription.flags & kSceneFlagISO)) {
 				error("Scene::ProcessSceneResources(): not Iso mode");
 			}
 
@@ -926,7 +852,7 @@ int Scene::draw(SURFACE *dst_s) {
 
 	_vm->_render->getBufferInfo(&buf_info);
 
-	if (_desc.flags & kSceneFlagISO) {
+	if (_sceneDescription.flags & kSceneFlagISO) {
 		_vm->_isoMap->adjustScroll(false);
 		_vm->_isoMap->draw(dst_s);
 	} else {
@@ -937,22 +863,16 @@ int Scene::draw(SURFACE *dst_s) {
 	return SUCCESS;
 }
 
-int Scene::endScene() {
-	SCENE_INFO scene_info;
-
-	assert(_initialized);
+void Scene::endScene() {
 
 	if (!_sceneLoaded) {
-		warning("Scene::endScene(): No scene to end");
-		return -1;
+		error("Scene::endScene(): No scene to end");
 	}
 
 	debug(0, "Ending scene...");
 
 	if (_sceneProc != NULL) {
-		getInfo(&scene_info);
-
-		_sceneProc(SCENE_END, &scene_info, this);
+		_sceneProc(SCENE_END, this);
 	}
 
 	//
@@ -978,7 +898,7 @@ int Scene::endScene() {
 	}
 
 	// Free scene resource list
-	if (_loadDesc) {
+	if (_loadDescription) {
 
 		free(_resList);
 	}
@@ -1003,7 +923,6 @@ int Scene::endScene() {
 
 	_sceneLoaded = false;
 
-	return SUCCESS;
 }
 
 void Scene::cmdSceneChange(int argc, const char **argv) {
@@ -1018,11 +937,7 @@ void Scene::cmdSceneChange(int argc, const char **argv) {
 
 	clearSceneQueue();
 
-	if (changeScene(scene_num, 0) == SUCCESS) {
-		_vm->_console->DebugPrintf("Scene changed.\n");
-	} else {
-		_vm->_console->DebugPrintf("Couldn't change scene!\n");
-	}
+	changeScene(scene_num, 0, kTransitionNoFade);
 }
 
 void Scene::cmdSceneInfo() {
@@ -1031,14 +946,14 @@ void Scene::cmdSceneInfo() {
 	_vm->_console->DebugPrintf(fmt, "Scene number:", _sceneNumber);
 	_vm->_console->DebugPrintf(fmt, "Descriptor ResourceId:", _sceneResourceId);
 	_vm->_console->DebugPrintf("-------------------------\n");
-	_vm->_console->DebugPrintf(fmt, "Flags:", _desc.flags);
-	_vm->_console->DebugPrintf(fmt, "Resource list R#:", _desc.resListRN);
-	_vm->_console->DebugPrintf(fmt, "End slope:", _desc.endSlope);
-	_vm->_console->DebugPrintf(fmt, "Begin slope:", _desc.beginSlope);
-	_vm->_console->DebugPrintf(fmt, "scriptModuleNumber:", _desc.scriptModuleNumber);
-	_vm->_console->DebugPrintf(fmt, "sceneScriptEntrypointNumber:", _desc.sceneScriptEntrypointNumber);
-	_vm->_console->DebugPrintf(fmt, "startScriptEntrypointNumber:", _desc.startScriptEntrypointNumber);
-	_vm->_console->DebugPrintf(fmt, "Music R#", _desc.musicRN);
+	_vm->_console->DebugPrintf(fmt, "Flags:", _sceneDescription.flags);
+	_vm->_console->DebugPrintf(fmt, "Resource list R#:", _sceneDescription.resListRN);
+	_vm->_console->DebugPrintf(fmt, "End slope:", _sceneDescription.endSlope);
+	_vm->_console->DebugPrintf(fmt, "Begin slope:", _sceneDescription.beginSlope);
+	_vm->_console->DebugPrintf(fmt, "scriptModuleNumber:", _sceneDescription.scriptModuleNumber);
+	_vm->_console->DebugPrintf(fmt, "sceneScriptEntrypointNumber:", _sceneDescription.sceneScriptEntrypointNumber);
+	_vm->_console->DebugPrintf(fmt, "startScriptEntrypointNumber:", _sceneDescription.startScriptEntrypointNumber);
+	_vm->_console->DebugPrintf(fmt, "Music R#", _sceneDescription.musicRN);
 }
 
 

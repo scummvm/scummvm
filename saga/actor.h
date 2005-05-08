@@ -60,6 +60,8 @@ class HitZone;
 #define ACTOR_SPEECH_STRING_MAX 16	// speech const
 #define ACTOR_SPEECH_ACTORS_MAX 8
 
+#define ACTOR_NO_ENTRANCE -1
+
 #define PATH_NODE_EMPTY -1
 
 enum ActorActions {
@@ -464,7 +466,7 @@ public:
 	}
 
 	int direct(int msec);
-	int drawActors();
+	void drawActors();
 	void updateActorsScene(int actorsEntrance);			// calls from scene loading to update Actors info
 
 	void drawPathTest();

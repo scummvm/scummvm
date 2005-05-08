@@ -45,14 +45,11 @@ int Script::SDebugPrintInstr(ScriptThread *thread) {
 //	int op_offset;
 	int n_switch;
 	int i;
-	SCENE_INFO si;
-
-	_vm->_scene->getInfo(&si);
 
 	disp_buf[0] = 0;
 
 	if (_dbg_txtentry != NULL) {
-		_vm->textDeleteEntry(si.text_list, _dbg_txtentry);
+		_vm->textDeleteEntry(_vm->_scene->_textList, _dbg_txtentry);
 		_dbg_txtentry = NULL;
 	}
 
@@ -469,7 +466,7 @@ int Script::SDebugPrintInstr(ScriptThread *thread) {
 		break;
 	}
 
-	_dbg_txtentry = _vm->textAddEntry(si.text_list, &tl_e);
+	_dbg_txtentry = _vm->textAddEntry(_vm->_scene->_textList, &tl_e);
 	_vm->textSetDisplay(_dbg_txtentry, 1);
 
 	return SUCCESS;

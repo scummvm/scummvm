@@ -80,18 +80,18 @@ SceneDescription IHNM_IntroMovie4Desc = {
 	ARRAYSIZE(IHNM_IntroMovie4RL)
 };
 
-SCENE_QUEUE IHNM_IntroList[] = {
-	{0, &IHNM_IntroMovie1Desc, BY_DESC, Scene::SC_IHNMIntroMovieProc1, 0, SCENE_NOFADE},
-	{0, &IHNM_IntroMovie2Desc, BY_DESC, Scene::SC_IHNMIntroMovieProc2, 0, SCENE_NOFADE},
-	{0, &IHNM_IntroMovie3Desc, BY_DESC, Scene::SC_IHNMIntroMovieProc3, 0, SCENE_NOFADE},
-	{0, &IHNM_IntroMovie4Desc, BY_DESC, Scene::SC_IHNMHateProc, 0, SCENE_NOFADE}
+LoadSceneParams IHNM_IntroList[] = {
+	{0, kLoadByDescription, &IHNM_IntroMovie1Desc, Scene::SC_IHNMIntroMovieProc1, false, kTransitionNoFade, 0},
+	{0, kLoadByDescription, &IHNM_IntroMovie2Desc, Scene::SC_IHNMIntroMovieProc2, false, kTransitionNoFade, 0},
+	{0, kLoadByDescription, &IHNM_IntroMovie3Desc, Scene::SC_IHNMIntroMovieProc3, false, kTransitionNoFade, 0},
+	{0, kLoadByDescription, &IHNM_IntroMovie4Desc, Scene::SC_IHNMHateProc, false, kTransitionNoFade, 0}
 };
 
 int Scene::IHNMStartProc() {
 	size_t n_introscenes;
 	size_t i;
 
-	SCENE_QUEUE first_scene;
+	LoadSceneParams firstScene;
 
 	n_introscenes = ARRAYSIZE(IHNM_IntroList);
 
@@ -106,22 +106,23 @@ int Scene::IHNMStartProc() {
 	// IHNM yet. Also, the end titles music to plays over the scene, which
 	// is wrong. (But hey, it's a nice piece of music!)
 
-	first_scene.load_flag = BY_SCENE;
-	first_scene.scene_n = _vm->getStartSceneNumber();
-	first_scene.scene_skiptarget = 1;
-	first_scene.scene_proc = NULL;
-	first_scene.fadeType = SCENE_FADE;
+	firstScene.loadFlag = kLoadBySceneNumber;
+	firstScene.sceneDescriptor = _vm->getStartSceneNumber();
+	firstScene.sceneSkipTarget = true;
+	firstScene.sceneProc = NULL;
+	firstScene.transitionType = kTransitionFade;
+	firstScene.actorsEntrance = 0;
 
-	_vm->_scene->queueScene(&first_scene);
+	_vm->_scene->queueScene(&firstScene);
 
 	return SUCCESS;
 }
 
-int Scene::SC_IHNMIntroMovieProc1(int param, SCENE_INFO *scene_info, void *refCon) {
-	return ((Scene *)refCon)->IHNMIntroMovieProc1(param, scene_info);
+int Scene::SC_IHNMIntroMovieProc1(int param, void *refCon) {
+	return ((Scene *)refCon)->IHNMIntroMovieProc1(param);
 }
 
-int Scene::IHNMIntroMovieProc1(int param, SCENE_INFO *scene_info) {
+int Scene::IHNMIntroMovieProc1(int param) {
 	EVENT event;
 	EVENT *q_event;
 
@@ -155,11 +156,11 @@ int Scene::IHNMIntroMovieProc1(int param, SCENE_INFO *scene_info) {
 	return 0;
 }
 
-int Scene::SC_IHNMIntroMovieProc2(int param, SCENE_INFO *scene_info, void *refCon) {
-	return ((Scene *)refCon)->IHNMIntroMovieProc2(param, scene_info);
+int Scene::SC_IHNMIntroMovieProc2(int param, void *refCon) {
+	return ((Scene *)refCon)->IHNMIntroMovieProc2(param);
 }
 
-int Scene::IHNMIntroMovieProc2(int param, SCENE_INFO *scene_info) {
+int Scene::IHNMIntroMovieProc2(int param) {
 	EVENT event;
 	EVENT *q_event;
 	PALENTRY *pal;
@@ -241,11 +242,11 @@ int Scene::IHNMIntroMovieProc2(int param, SCENE_INFO *scene_info) {
 	return 0;
 }
 
-int Scene::SC_IHNMIntroMovieProc3(int param, SCENE_INFO *scene_info, void *refCon) {
-	return ((Scene *)refCon)->IHNMIntroMovieProc3(param, scene_info);
+int Scene::SC_IHNMIntroMovieProc3(int param, void *refCon) {
+	return ((Scene *)refCon)->IHNMIntroMovieProc3(param);
 }
 
-int Scene::IHNMIntroMovieProc3(int param, SCENE_INFO *scene_info) {
+int Scene::IHNMIntroMovieProc3(int param) {
 	EVENT event;
 	EVENT *q_event;
 	PALENTRY *pal;
@@ -327,11 +328,11 @@ int Scene::IHNMIntroMovieProc3(int param, SCENE_INFO *scene_info) {
 	return 0;
 }
 
-int Scene::SC_IHNMHateProc(int param, SCENE_INFO *scene_info, void *refCon) {
-	return ((Scene *)refCon)->IHNMHateProc(param, scene_info);
+int Scene::SC_IHNMHateProc(int param, void *refCon) {
+	return ((Scene *)refCon)->IHNMHateProc(param);
 }
 
-int Scene::IHNMHateProc(int param, SCENE_INFO *scene_info) {
+int Scene::IHNMHateProc(int param) {
 	EVENT event;
 	EVENT *q_event;
 

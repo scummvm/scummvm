@@ -39,26 +39,24 @@
 
 namespace Saga {
 
-void SagaEngine::save() {
+void SagaEngine::save(const char *fileName) {
 	File out;
 
-	out.open("iteSCUMMVM.sav", File::kFileWriteMode);
+	out.open(fileName, File::kFileWriteMode);
 	//TODO: version number
-
-	out.writeSint16LE(_script->_commonBufferSize);
 
 	// Surrounding scene
 	out.writeSint32LE(_scene->getOutsetSceneNumber());
-	out.writeSint32LE(0);
 
 	// Inset scene
 	out.writeSint32LE(_scene->currentSceneNumber());
-	out.writeSint32LE(0);
 
 	uint16 i;
 
 	_actor->saveState(out);
 	
+	out.writeSint16LE(_script->_commonBufferSize);
+
 	for (i = 0; i < _script->_commonBufferSize; i++)
 		out.writeByte(_script->_commonBuffer[i]);
 
@@ -68,36 +66,33 @@ void SagaEngine::save() {
 	out.close();
 }
 
-void SagaEngine::load() {
+void SagaEngine::load(const char *fileName) {
 	File in;
 	int  commonBufferSize;
-	int scenenum, inset;
+	int sceneNumber, insetSceneNumber;
 	int mapx, mapy;
+	uint16 i;
 
-	in.open("iteSCUMMVM.sav");
+	in.open(fileName);
 
 	if (!in.isOpen())
 		return;
 
-	commonBufferSize = in.readSint16LE();
 
 	// Surrounding scene
-	scenenum = in.readSint32LE();
-	in.readSint32LE();
+	sceneNumber = in.readSint32LE();
 
 	// Inset scene
-	inset = in.readSint32LE();
-	in.readSint32LE();
+	insetSceneNumber = in.readSint32LE();
 
-	debug(0, "scene: %d out: %d", scenenum, inset);
-
-	uint16 i;
+	debug(0, "scene: #%d inset scene: #%d", sceneNumber, insetSceneNumber);
 
 	
-	_interface->clearInventory(); //TODO: interface load-save-state
+	_interface->clearInventory();
 
 	_actor->loadState(in);
 	
+	commonBufferSize = in.readSint16LE();
 	for (i = 0; i < commonBufferSize; i++)
 		_script->_commonBuffer[i] = in.readByte();
 
@@ -108,20 +103,18 @@ void SagaEngine::load() {
 
 	_isoMap->setMapPosition(mapx, mapy);
 
+	_scene->clearSceneQueue();
+	_scene->changeScene(sceneNumber, ACTOR_NO_ENTRANCE, kTransitionNoFade);
+
+	if (insetSceneNumber != sceneNumber) {
+		_render->drawScene();
+		_scene->clearSceneQueue();
+		_scene->changeScene(insetSceneNumber, ACTOR_NO_ENTRANCE, kTransitionNoFade);
+	}
+
 	// FIXME: When save/load screen will be implemented we should
 	// call these after that screen left by user
 	_interface->draw();
-
-	// FIXME: hmmm... now we always require actorsEntrance to be defined
-	// so no way to restore at arbitrary position
-	_scene->clearSceneQueue();
-	_scene->changeScene(scenenum, 0);
-
-	if (inset != scenenum) {
-		_render->drawScene();
-		_scene->clearSceneQueue();
-		_scene->changeScene(inset, 0);
-	}
 }
 
 } // End of namespace Saga

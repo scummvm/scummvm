@@ -53,18 +53,8 @@ struct SCENE_BGINFO {
 	size_t bg_buflen;
 };
 
-struct SCENE_INFO {
-	SCENE_BGINFO bg_info;
-	TEXTLIST *text_list;
-};
+typedef int (SceneProc) (int, void *);
 
-typedef int (SCENE_PROC) (int, SCENE_INFO *, void *);
-
-enum SCENE_LOAD_FLAGS {
-	BY_RESOURCE = 0,
-	BY_SCENE,
-	BY_DESC
-};
 
 enum SCENE_PROC_PARAMS {
 	SCENE_BEGIN = 0,
@@ -166,21 +156,28 @@ struct SCENE_ANIMINFO {
 typedef SortedList<SCENE_ANIMINFO> SceneAnimInfoList;
 
 enum SceneTransitionType {
-	SCENE_NOFADE = 0,
-	SCENE_FADE = 1,
-	SCENE_FADE_NO_INTERFACE = 2
+	kTransitionNoFade,
+	kTransitionFade,
+	kTransitionFadeNoInterface
 };
 
-struct SCENE_QUEUE {
-	uint32 scene_n;
+enum SceneLoadFlags {
+	kLoadByResourceId,
+	kLoadBySceneNumber,
+	kLoadByDescription
+};
+
+struct LoadSceneParams {
+	uint32 sceneDescriptor;
+	SceneLoadFlags loadFlag;
 	SceneDescription* sceneDescription;
-	int load_flag;
-	SCENE_PROC *scene_proc;
-	int scene_skiptarget;
-	int fadeType;
+	SceneProc *sceneProc;
+	bool sceneSkipTarget;
+	SceneTransitionType transitionType;
+	int actorsEntrance;
 };
 
-typedef Common::List<SCENE_QUEUE> SceneQueueList;
+typedef Common::List<LoadSceneParams> SceneQueueList;
 
 ///// IHNM-specific stuff
 #define IHNM_PALFADE_TIME    1000
@@ -227,14 +224,17 @@ class Scene {
 
 	void cmdSceneChange(int argc, const char **argv);
 
-	int startScene();
-	int nextScene();
-	int skipScene();
-	int endScene();
-	int queueScene(SCENE_QUEUE *scene_queue);
+	void startScene();
+	void nextScene();
+	void skipScene();
+	void endScene();
+	void queueScene(LoadSceneParams *sceneQueue) {
+		_sceneQueue.push_back(*sceneQueue);
+	}
+
 	int draw(SURFACE *);
-	int getFlags() const { return _desc.flags; }
-	int getScriptModuleNumber() const { return _desc.scriptModuleNumber; }
+	int getFlags() const { return _sceneDescription.flags; }
+	int getScriptModuleNumber() const { return _sceneDescription.scriptModuleNumber; }
 	bool isInDemo() { return !_inGame; }
 	
 	void getBGMaskInfo(int &width, int &height, byte *&buffer, size_t &bufferLength);
@@ -250,22 +250,28 @@ class Scene {
 
 	int getBGInfo(SCENE_BGINFO *bginfo);
 	int getBGPal(PALENTRY **pal);
-	int getInfo(SCENE_INFO *si);
 	void getSlopes(int &beginSlope, int &endSlope);
 
-	int clearSceneQueue(void);
-	int changeScene(int sceneNumber, int actorsEntrance, int fadeIn = SCENE_NOFADE);
+	void clearSceneQueue(void) {
+		_sceneQueue.clear();
+	}
+	void changeScene(uint16 sceneNumber, int actorsEntrance, SceneTransitionType transitionType);
 
 	bool initialized() { return _initialized; }
 
 
-	int getSceneLUT(int num);
+	int getSceneResourceId(int sceneNumber) {
+		if ((sceneNumber < 0) || (sceneNumber >= _sceneMax)) {
+			error("getSceneResourceId: wrong sceneNumber");
+		}
+		return _sceneLUT[sceneNumber];
+	}
 	int currentSceneNumber() const { return _sceneNumber; }
 	int getOutsetSceneNumber() const { return _outsetSceneNumber; }
 	int currentSceneResourceId() const { return _sceneResourceId; }
 
  private:
-	int loadScene(int scene, int load_flag, SCENE_PROC scene_proc, SceneDescription *, int fadeIn, int actorsEntrance);
+	void loadScene(LoadSceneParams *loadSceneParams);
 	int loadSceneDescriptor(uint32 res_number);
 	int loadSceneResourceList(uint32 res_number);
 	void loadSceneEntryList(const byte* resourcePointer, size_t resourceLength);
@@ -286,14 +292,13 @@ class Scene {
 	int _outsetSceneNumber;
 	int _sceneResourceId;
 	bool _inGame;
-	bool _loadDesc;
-	SceneDescription _desc;
+	bool _loadDescription;
+	SceneDescription _sceneDescription;
 	int _resListEntries;
 	SCENE_RESLIST *_resList;
 	int _animEntries;
 	SceneAnimInfoList _animList;
-	SCENE_PROC *_sceneProc;
-	TEXTLIST *_textList;
+	SceneProc *_sceneProc;
 	SCENE_IMAGE _bg;
 	SCENE_IMAGE _bgMask;
 	
@@ -305,46 +310,47 @@ class Scene {
 	ObjectMap *_objectMap;
 	SceneEntryList _entryList;
 	StringsTable _sceneStrings;
+	TEXTLIST *_textList;
 
  private:
 	int IHNMStartProc();
 	int ITEStartProc();
 
  public:
-	static int SC_IHNMIntroMovieProc1(int param, SCENE_INFO *scene_info, void *refCon);
-	static int SC_IHNMIntroMovieProc2(int param, SCENE_INFO *scene_info, void *refCon);
-	static int SC_IHNMIntroMovieProc3(int param, SCENE_INFO *scene_info, void *refCon);
-	static int SC_IHNMHateProc(int param, SCENE_INFO *scene_info, void *refCon);
+	static int SC_IHNMIntroMovieProc1(int param, void *refCon);
+	static int SC_IHNMIntroMovieProc2(int param, void *refCon);
+	static int SC_IHNMIntroMovieProc3(int param, void *refCon);
+	static int SC_IHNMHateProc(int param, void *refCon);
 
  private:
-	int IHNMIntroMovieProc1(int param, SCENE_INFO *scene_info);
-	int IHNMIntroMovieProc2(int param, SCENE_INFO *scene_info);
-	int IHNMIntroMovieProc3(int param, SCENE_INFO *scene_info);
-	int IHNMHateProc(int param, SCENE_INFO *scene_info);
+	int IHNMIntroMovieProc1(int param);
+	int IHNMIntroMovieProc2(int param);
+	int IHNMIntroMovieProc3(int param);
+	int IHNMHateProc(int param);
 
  public:
-	static int SC_ITEIntroAnimProc(int param, SCENE_INFO *scene_info, void *refCon);
-	static int SC_ITEIntroCave1Proc(int param, SCENE_INFO *scene_info, void *refCon);
-	static int SC_ITEIntroCave2Proc(int param, SCENE_INFO *scene_info, void *refCon);
-	static int SC_ITEIntroCave3Proc(int param, SCENE_INFO *scene_info, void *refCon);
-	static int SC_ITEIntroCave4Proc(int param, SCENE_INFO *scene_info, void *refCon);
-	static int SC_ITEIntroValleyProc(int param, SCENE_INFO *scene_info, void *refCon);
-	static int SC_ITEIntroTreeHouseProc(int param, SCENE_INFO *scene_info, void *refCon);
-	static int SC_ITEIntroFairePathProc(int param, SCENE_INFO *scene_info, void *refCon);
-	static int SC_ITEIntroFaireTentProc(int param, SCENE_INFO *scene_info, void *refCon);
+	static int SC_ITEIntroAnimProc(int param, void *refCon);
+	static int SC_ITEIntroCave1Proc(int param, void *refCon);
+	static int SC_ITEIntroCave2Proc(int param, void *refCon);
+	static int SC_ITEIntroCave3Proc(int param, void *refCon);
+	static int SC_ITEIntroCave4Proc(int param, void *refCon);
+	static int SC_ITEIntroValleyProc(int param, void *refCon);
+	static int SC_ITEIntroTreeHouseProc(int param, void *refCon);
+	static int SC_ITEIntroFairePathProc(int param, void *refCon);
+	static int SC_ITEIntroFaireTentProc(int param, void *refCon);
 
  private:
-	EVENT *ITEQueueDialogue(EVENT *q_event, SCENE_INFO *scene_info, int n_dialogues, const INTRO_DIALOGUE dialogue[]);
-	EVENT *ITEQueueCredits(SCENE_INFO *scene_info, int delta_time, int duration, int n_credits, const INTRO_CREDIT credits[]);
-	int ITEIntroAnimProc(int param, SCENE_INFO *scene_info);
-	int ITEIntroCave1Proc(int param, SCENE_INFO *scene_info);
-	int ITEIntroCave2Proc(int param, SCENE_INFO *scene_info);
-	int ITEIntroCave3Proc(int param, SCENE_INFO *scene_info);
-	int ITEIntroCave4Proc(int param, SCENE_INFO *scene_info);
-	int ITEIntroValleyProc(int param, SCENE_INFO *scene_info);
-	int ITEIntroTreeHouseProc(int param, SCENE_INFO *scene_info);
-	int ITEIntroFairePathProc(int param, SCENE_INFO *scene_info);
-	int ITEIntroFaireTentProc(int param, SCENE_INFO *scene_info);
+	EVENT *ITEQueueDialogue(EVENT *q_event, int n_dialogues, const INTRO_DIALOGUE dialogue[]);
+	EVENT *ITEQueueCredits(int delta_time, int duration, int n_credits, const INTRO_CREDIT credits[]);
+	int ITEIntroAnimProc(int param);
+	int ITEIntroCave1Proc(int param);
+	int ITEIntroCave2Proc(int param);
+	int ITEIntroCave3Proc(int param);
+	int ITEIntroCave4Proc(int param);
+	int ITEIntroValleyProc(int param);
+	int ITEIntroTreeHouseProc(int param);
+	int ITEIntroFairePathProc(int param);
+	int ITEIntroFaireTentProc(int param);
 
 };
 

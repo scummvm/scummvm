@@ -512,7 +512,7 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 		}
 	}
 
-	_vm->_scene->changeScene(sceneNumber, entrance, (sceneNumber == RID_ITE_ENDCREDIT_SCENE_1) ? SCENE_FADE : SCENE_NOFADE);
+	_vm->_scene->changeScene(sceneNumber, entrance, (sceneNumber == RID_ITE_ENDCREDIT_SCENE_1) ? kTransitionFade : kTransitionNoFade);
 
 	//TODO: placard stuff
 	_pendingVerb = kVerbNone;
@@ -718,10 +718,11 @@ void Script::sfScriptMoveTo(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #31 (0x21)
+// Param1: sceneNumber
 void Script::sfSceneEq(SCRIPTFUNC_PARAMS) {
-	int16 param = thread->pop();
+	int16 sceneNumber = thread->pop();
 
-	if (_vm->_scene->getSceneLUT(param) == _vm->_scene->currentSceneNumber())
+	if (_vm->_scene->getSceneResourceId(sceneNumber) == _vm->_scene->currentSceneResourceId())
 		thread->_returnValue = 1;
 	else 
 		thread->_returnValue = 0;
@@ -1199,9 +1200,6 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	// but it's close enough for now at least.
 
 	TEXTLIST_ENTRY text_entry;
-	SCENE_INFO scene_info;
-
-	_vm->_scene->getInfo(&scene_info);
 
 	text_entry.color = kITEColorBrightWhite;
 	text_entry.effect_color = kITEColorBlack;
@@ -1211,7 +1209,7 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	text_entry.flags = FONT_OUTLINE | FONT_CENTERED;
 	text_entry.string = thread->_strings->getString(stringId);
 
-	placardTextEntry = _vm->textAddEntry(scene_info.text_list, &text_entry);
+	placardTextEntry = _vm->textAddEntry(_vm->_scene->_textList, &text_entry);
 
 	event.type = ONESHOT_EVENT;
 	event.code = TEXT_EVENT;

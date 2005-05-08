@@ -40,46 +40,47 @@
 
 namespace Saga {
 
-SCENE_QUEUE ITE_IntroList[] = {
-	{RID_ITE_INTRO_ANIM_SCENE, NULL, BY_RESOURCE, Scene::SC_ITEIntroAnimProc, 0, SCENE_NOFADE},
-	{RID_ITE_CAVE_SCENE_1, NULL, BY_RESOURCE, Scene::SC_ITEIntroCave1Proc, 0, SCENE_FADE_NO_INTERFACE},
-	{RID_ITE_CAVE_SCENE_2, NULL, BY_RESOURCE, Scene::SC_ITEIntroCave2Proc, 0, SCENE_NOFADE},
-	{RID_ITE_CAVE_SCENE_3, NULL, BY_RESOURCE, Scene::SC_ITEIntroCave3Proc, 0, SCENE_NOFADE},
-	{RID_ITE_CAVE_SCENE_4, NULL, BY_RESOURCE, Scene::SC_ITEIntroCave4Proc, 0, SCENE_NOFADE},
-	{RID_ITE_VALLEY_SCENE, NULL, BY_RESOURCE, Scene::SC_ITEIntroValleyProc, 0, SCENE_FADE_NO_INTERFACE},
-	{RID_ITE_TREEHOUSE_SCENE, NULL, BY_RESOURCE, Scene::SC_ITEIntroTreeHouseProc, 0, SCENE_NOFADE},
-	{RID_ITE_FAIREPATH_SCENE, NULL, BY_RESOURCE, Scene::SC_ITEIntroFairePathProc, 0, SCENE_NOFADE},
-	{RID_ITE_FAIRETENT_SCENE, NULL, BY_RESOURCE, Scene::SC_ITEIntroFaireTentProc, 0, SCENE_NOFADE}
+LoadSceneParams ITE_IntroList[] = {
+	{RID_ITE_INTRO_ANIM_SCENE, kLoadByResourceId, NULL, Scene::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0},
+	{RID_ITE_CAVE_SCENE_1, kLoadByResourceId, NULL, Scene::SC_ITEIntroCave1Proc, false, kTransitionFadeNoInterface, 0},
+	{RID_ITE_CAVE_SCENE_2, kLoadByResourceId, NULL, Scene::SC_ITEIntroCave2Proc, false, kTransitionNoFade, 0},
+	{RID_ITE_CAVE_SCENE_3, kLoadByResourceId, NULL, Scene::SC_ITEIntroCave3Proc, false, kTransitionNoFade, 0},
+	{RID_ITE_CAVE_SCENE_4, kLoadByResourceId, NULL, Scene::SC_ITEIntroCave4Proc, false, kTransitionNoFade, 0},
+	{RID_ITE_VALLEY_SCENE, kLoadByResourceId, NULL, Scene::SC_ITEIntroValleyProc, false, kTransitionFadeNoInterface, 0},
+	{RID_ITE_TREEHOUSE_SCENE, kLoadByResourceId, NULL, Scene::SC_ITEIntroTreeHouseProc, false, kTransitionNoFade, 0},
+	{RID_ITE_FAIREPATH_SCENE, kLoadByResourceId, NULL, Scene::SC_ITEIntroFairePathProc, false, kTransitionNoFade, 0},
+	{RID_ITE_FAIRETENT_SCENE, kLoadByResourceId, NULL, Scene::SC_ITEIntroFaireTentProc, false, kTransitionNoFade, 0}
 };
 
 int Scene::ITEStartProc() {
 	size_t n_introscenes;
 	size_t i;
 
-	SCENE_QUEUE first_scene;
-	SCENE_QUEUE tempScene;
+	LoadSceneParams firstScene;
+	LoadSceneParams tempScene;
 
 	n_introscenes = ARRAYSIZE(ITE_IntroList);
 
 	for (i = 0; i < n_introscenes; i++) {
 		tempScene = ITE_IntroList[i];
-		tempScene.scene_n = RSC_ConvertID(tempScene.scene_n);
+		tempScene.sceneDescriptor = RSC_ConvertID(tempScene.sceneDescriptor);
 		_vm->_scene->queueScene(&tempScene);
 	}
 
 
-	first_scene.load_flag = BY_SCENE;
-	first_scene.scene_n = _vm->getStartSceneNumber();
-	first_scene.scene_skiptarget = 1;
-	first_scene.scene_proc = NULL;
-	first_scene.fadeType = SCENE_FADE;
+	firstScene.loadFlag = kLoadBySceneNumber;
+	firstScene.sceneDescriptor = _vm->getStartSceneNumber();
+	firstScene.sceneSkipTarget = true;
+	firstScene.sceneProc = NULL;
+	firstScene.transitionType = kTransitionFade;
+	firstScene.actorsEntrance = 0;
 
-	_vm->_scene->queueScene(&first_scene);
+	_vm->_scene->queueScene(&firstScene);
 
 	return SUCCESS;
 }
 
-EVENT *Scene::ITEQueueDialogue(EVENT *q_event, SCENE_INFO *scene_info, int n_dialogues, const INTRO_DIALOGUE dialogue[]) {
+EVENT *Scene::ITEQueueDialogue(EVENT *q_event, int n_dialogues, const INTRO_DIALOGUE dialogue[]) {
 	TEXTLIST_ENTRY text_entry;
 	TEXTLIST_ENTRY *entry_p;
 	EVENT event;
@@ -96,7 +97,7 @@ EVENT *Scene::ITEQueueDialogue(EVENT *q_event, SCENE_INFO *scene_info, int n_dia
 
 	for (i = 0; i < n_dialogues; i++) {
 		text_entry.string = dialogue[i].i_str;
-		entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
+		entry_p = _vm->textAddEntry(_textList, &text_entry);
 
 		// Display text
 		event.type = ONESHOT_EVENT;
@@ -154,7 +155,7 @@ enum {
 // Queue a page of credits text. The original interpreter did word-wrapping
 // automatically. We currently don't.
 
-EVENT *Scene::ITEQueueCredits(SCENE_INFO *scene_info, int delta_time, int duration, int n_credits, const INTRO_CREDIT credits[]) {
+EVENT *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const INTRO_CREDIT credits[]) {
 	int game;
 
 	// The assumption here is that all WyrmKeep versions have the same
@@ -240,7 +241,7 @@ EVENT *Scene::ITEQueueCredits(SCENE_INFO *scene_info, int delta_time, int durati
 		text_entry.font_id = font;
 		text_entry.text_y = y;
 
-		entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
+		entry_p = _vm->textAddEntry(_textList, &text_entry);
 
 		// Display text
 		event.type = ONESHOT_EVENT;
@@ -266,12 +267,12 @@ EVENT *Scene::ITEQueueCredits(SCENE_INFO *scene_info, int delta_time, int durati
 	return q_event;
 }
 
-int Scene::SC_ITEIntroAnimProc(int param, SCENE_INFO *scene_info, void *refCon) {
-	return ((Scene *)refCon)->ITEIntroAnimProc(param, scene_info);
+int Scene::SC_ITEIntroAnimProc(int param, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroAnimProc(param);
 }
 
 // Handles the introductory Dreamer's Guild / NWC logo animation scene.
-int Scene::ITEIntroAnimProc(int param, SCENE_INFO *scene_info) {
+int Scene::ITEIntroAnimProc(int param) {
 	EVENT event;
 	EVENT *q_event;
 
@@ -347,12 +348,12 @@ int Scene::ITEIntroAnimProc(int param, SCENE_INFO *scene_info) {
 	return 0;
 }
 
-int Scene::SC_ITEIntroCave1Proc(int param, SCENE_INFO *scene_info, void *refCon) {
-	return ((Scene *)refCon)->ITEIntroCave1Proc(param, scene_info);
+int Scene::SC_ITEIntroCave1Proc(int param, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroCave1Proc(param);
 }
 
 // Handles first introductory cave painting scene
-int Scene::ITEIntroCave1Proc(int param, SCENE_INFO *scene_info) {
+int Scene::ITEIntroCave1Proc(int param) {
 	EVENT event;
 	EVENT *q_event;
 	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
@@ -414,7 +415,7 @@ int Scene::ITEIntroCave1Proc(int param, SCENE_INFO *scene_info) {
 		q_event = _vm->_events->queue(&event);
 
 		// Queue narrator dialogue list
-		q_event = ITEQueueDialogue(q_event, scene_info, n_dialogues, dialogue[lang]);
+		q_event = ITEQueueDialogue(q_event, n_dialogues, dialogue[lang]);
 
 		// End scene after last dialogue over
 		event.type = ONESHOT_EVENT;
@@ -435,12 +436,12 @@ int Scene::ITEIntroCave1Proc(int param, SCENE_INFO *scene_info) {
 	return 0;
 }
 
-int Scene::SC_ITEIntroCave2Proc(int param, SCENE_INFO *scene_info, void *refCon) {
-	return ((Scene *)refCon)->ITEIntroCave2Proc(param, scene_info);
+int Scene::SC_ITEIntroCave2Proc(int param, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroCave2Proc(param);
 }
 
 // Handles second introductory cave painting scene
-int Scene::ITEIntroCave2Proc(int param, SCENE_INFO *scene_info) {
+int Scene::ITEIntroCave2Proc(int param) {
 	EVENT event;
 	EVENT *q_event;
 	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
@@ -499,7 +500,7 @@ int Scene::ITEIntroCave2Proc(int param, SCENE_INFO *scene_info) {
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue narrator dialogue list
-		q_event = ITEQueueDialogue(q_event, scene_info, n_dialogues, dialogue[lang]);
+		q_event = ITEQueueDialogue(q_event, n_dialogues, dialogue[lang]);
 
 		// End scene after last dialogue over
 		event.type = ONESHOT_EVENT;
@@ -519,12 +520,12 @@ int Scene::ITEIntroCave2Proc(int param, SCENE_INFO *scene_info) {
 	return 0;
 }
 
-int Scene::SC_ITEIntroCave3Proc(int param, SCENE_INFO *scene_info, void *refCon) {
-	return ((Scene *)refCon)->ITEIntroCave3Proc(param, scene_info);
+int Scene::SC_ITEIntroCave3Proc(int param, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroCave3Proc(param);
 }
 
 // Handles third introductory cave painting scene
-int Scene::ITEIntroCave3Proc(int param, SCENE_INFO *scene_info) {
+int Scene::ITEIntroCave3Proc(int param) {
 	EVENT event;
 	EVENT *q_event;
 	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
@@ -583,7 +584,7 @@ int Scene::ITEIntroCave3Proc(int param, SCENE_INFO *scene_info) {
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue narrator dialogue list
-		q_event = ITEQueueDialogue(q_event, scene_info, n_dialogues, dialogue[lang]);
+		q_event = ITEQueueDialogue(q_event, n_dialogues, dialogue[lang]);
 
 		// End scene after last dialogue over
 		event.type = ONESHOT_EVENT;
@@ -603,12 +604,12 @@ int Scene::ITEIntroCave3Proc(int param, SCENE_INFO *scene_info) {
 	return 0;
 }
 
-int Scene::SC_ITEIntroCave4Proc(int param, SCENE_INFO *scene_info, void *refCon) {
-	return ((Scene *)refCon)->ITEIntroCave4Proc(param, scene_info);
+int Scene::SC_ITEIntroCave4Proc(int param, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroCave4Proc(param);
 }
 
 // Handles fourth introductory cave painting scene
-int Scene::ITEIntroCave4Proc(int param, SCENE_INFO *scene_info) {
+int Scene::ITEIntroCave4Proc(int param) {
 	EVENT event;
 	EVENT *q_event;
 	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
@@ -676,7 +677,7 @@ int Scene::ITEIntroCave4Proc(int param, SCENE_INFO *scene_info) {
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue narrator dialogue list
-		q_event = ITEQueueDialogue(q_event, scene_info, n_dialogues, dialogue[lang]);
+		q_event = ITEQueueDialogue(q_event, n_dialogues, dialogue[lang]);
 
 		// End scene after last dialogue over
 		event.type = ONESHOT_EVENT;
@@ -696,12 +697,12 @@ int Scene::ITEIntroCave4Proc(int param, SCENE_INFO *scene_info) {
 	return 0;
 }
 
-int Scene::SC_ITEIntroValleyProc(int param, SCENE_INFO *scene_info, void *refCon) {
-	return ((Scene *)refCon)->ITEIntroValleyProc(param, scene_info);
+int Scene::SC_ITEIntroValleyProc(int param, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroValleyProc(param);
 }
 
 // Handles intro title scene (valley overlook)
-int Scene::ITEIntroValleyProc(int param, SCENE_INFO *scene_info) {
+int Scene::ITEIntroValleyProc(int param) {
 	EVENT event;
 	EVENT *q_event;
 
@@ -782,7 +783,7 @@ int Scene::ITEIntroValleyProc(int param, SCENE_INFO *scene_info) {
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue game credits list
-		q_event = ITEQueueCredits(scene_info, 9000, CREDIT_DURATION1, n_credits, credits);
+		q_event = ITEQueueCredits(9000, CREDIT_DURATION1, n_credits, credits);
 
 		// End scene after credit display
 		event.type = ONESHOT_EVENT;
@@ -802,12 +803,12 @@ int Scene::ITEIntroValleyProc(int param, SCENE_INFO *scene_info) {
 	return 0;
 }
 
-int Scene::SC_ITEIntroTreeHouseProc(int param, SCENE_INFO *scene_info, void *refCon) {
-	return ((Scene *)refCon)->ITEIntroTreeHouseProc(param, scene_info);
+int Scene::SC_ITEIntroTreeHouseProc(int param, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroTreeHouseProc(param);
 }
 
 // Handles second intro credit screen (treehouse view)
-int Scene::ITEIntroTreeHouseProc(int param, SCENE_INFO *scene_info) {
+int Scene::ITEIntroTreeHouseProc(int param) {
 	EVENT event;
 	EVENT *q_event;
 
@@ -866,8 +867,8 @@ int Scene::ITEIntroTreeHouseProc(int param, SCENE_INFO *scene_info) {
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue game credits list
-		q_event = ITEQueueCredits(scene_info, DISSOLVE_DURATION + 2000, CREDIT_DURATION1, n_credits1, credits1);
-		q_event = ITEQueueCredits(scene_info, DISSOLVE_DURATION + 7000, CREDIT_DURATION1, n_credits2, credits2);
+		q_event = ITEQueueCredits(DISSOLVE_DURATION + 2000, CREDIT_DURATION1, n_credits1, credits1);
+		q_event = ITEQueueCredits(DISSOLVE_DURATION + 7000, CREDIT_DURATION1, n_credits2, credits2);
 
 		// End scene after credit display
 		event.type = ONESHOT_EVENT;
@@ -887,12 +888,12 @@ int Scene::ITEIntroTreeHouseProc(int param, SCENE_INFO *scene_info) {
 	return 0;
 }
 
-int Scene::SC_ITEIntroFairePathProc(int param, SCENE_INFO *scene_info, void *refCon) {
-	return ((Scene *)refCon)->ITEIntroFairePathProc(param, scene_info);
+int Scene::SC_ITEIntroFairePathProc(int param, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroFairePathProc(param);
 }
 
 // Handles third intro credit screen (path to puzzle tent)
-int Scene::ITEIntroFairePathProc(int param, SCENE_INFO *scene_info) {
+int Scene::ITEIntroFairePathProc(int param) {
 	EVENT event;
 	EVENT *q_event;
 
@@ -944,8 +945,8 @@ int Scene::ITEIntroFairePathProc(int param, SCENE_INFO *scene_info) {
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue game credits list
-		q_event = ITEQueueCredits(scene_info, DISSOLVE_DURATION + 2000, CREDIT_DURATION1, n_credits1, credits1);
-		q_event = ITEQueueCredits(scene_info, DISSOLVE_DURATION + 7000, CREDIT_DURATION1, n_credits2, credits2);
+		q_event = ITEQueueCredits(DISSOLVE_DURATION + 2000, CREDIT_DURATION1, n_credits1, credits1);
+		q_event = ITEQueueCredits(DISSOLVE_DURATION + 7000, CREDIT_DURATION1, n_credits2, credits2);
 
 		// End scene after credit display
 		event.type = ONESHOT_EVENT;
@@ -965,12 +966,12 @@ int Scene::ITEIntroFairePathProc(int param, SCENE_INFO *scene_info) {
 	return 0;
 }
 
-int Scene::SC_ITEIntroFaireTentProc(int param, SCENE_INFO *scene_info, void *refCon) {
-	return ((Scene *)refCon)->ITEIntroFaireTentProc(param, scene_info);
+int Scene::SC_ITEIntroFaireTentProc(int param, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroFaireTentProc(param);
 }
 
 // Handles fourth intro credit screen (treehouse view)
-int Scene::ITEIntroFaireTentProc(int param, SCENE_INFO *scene_info) {
+int Scene::ITEIntroFaireTentProc(int param) {
 	EVENT event;
 	EVENT *q_event;
 	EVENT *q_event_start;

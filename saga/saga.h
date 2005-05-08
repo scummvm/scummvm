@@ -433,8 +433,14 @@ public:
 	virtual ~SagaEngine();
 	void shutDown() { _quit = true; }
 
-	void save();
-	void load();
+	void save() { //TODO: remove
+		save("iteSCUMMVM.sav");
+	}
+	void load() { //TODO: remove
+		load("iteSCUMMVM.sav");
+	}
+	void save(const char *fileName);
+	void load(const char *fileName);
 
 	int _soundEnabled;
 	int _musicEnabled;

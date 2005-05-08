@@ -277,9 +277,7 @@ int Events::handleOneShot(EVENT *event) {
 			break;
 		case EVENT_REMOVE:
 			{
-			 SCENE_INFO scene_info;
-				_vm->_scene->getInfo(&scene_info);
-				_vm->textDeleteEntry(scene_info.text_list, (TEXTLIST_ENTRY *)event->data);
+				_vm->textDeleteEntry(_vm->_scene->_textList, (TEXTLIST_ENTRY *)event->data);
 			}
 			break;
 		default:

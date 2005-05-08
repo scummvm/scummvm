@@ -96,7 +96,6 @@ bool Render::initialized() {
 
 int Render::drawScene() {
 	SURFACE *backbuf_surface;
-	SCENE_INFO scene_info;
 	SCENE_BGINFO bg_info;
 	Point bg_pt;
 	char txt_buf[20];
@@ -140,9 +139,7 @@ int Render::drawScene() {
 	}
 
 	// Draw queued text strings
-	_vm->_scene->getInfo(&scene_info);
-
-	_vm->textDrawList(scene_info.text_list, backbuf_surface);
+	_vm->textDrawList(_vm->_scene->_textList, backbuf_surface);
 
 	// Handle user input
 	_vm->processInput();

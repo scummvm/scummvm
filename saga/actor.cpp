@@ -374,7 +374,7 @@ void Actor::takeExit(uint16 actorId, const HitZone *hitZone) {
 	actor = getActor(actorId);
 	actor->lastZone = NULL;
 	
-	_vm->_scene->changeScene(hitZone->getSceneNumber(), hitZone->getActorsEntrance());
+	_vm->_scene->changeScene(hitZone->getSceneNumber(), hitZone->getActorsEntrance(), kTransitionNoFade);
 	_vm->_script->setNoPendingVerb();
 }
 
@@ -562,6 +562,10 @@ void Actor::updateActorsScene(int actorsEntrance) {
 		return;
 	}
 
+	if (_vm->_scene->currentSceneNumber() == 0) {
+		error("Actor::updateActorsScene _vm->_scene->currentSceneNumber() == 0");
+	}
+
 	_activeSpeech.stringsCount = 0;
 	_protagonist = NULL;
 
@@ -597,8 +601,6 @@ void Actor::updateActorsScene(int actorsEntrance) {
 			_protagonist->location.z = sceneEntry->location.z * ACTOR_LMULT;
 		}
 		_protagonist->facingDirection = _protagonist->actionDirection = sceneEntry->facing;
-	} else {
-		warning("actorsEntrance < 0");
 	}
 
 	_protagonist->currentAction = kActionWait;
@@ -1261,7 +1263,11 @@ bool Actor::getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber
 	return true;
 }
 
-int Actor::drawActors() {
+void Actor::drawActors() {
+	if (_vm->_scene->currentSceneNumber() <= 0) {
+		return;
+	}
+
 	CommonObjectOrderList::iterator drawOrderIterator;
 	CommonObjectDataPointer drawObject;
 	int frameNumber;
@@ -1321,8 +1327,6 @@ int Actor::drawActors() {
 		}
 
 	}
-
-	return SUCCESS;
 }
 
 bool Actor::followProtagonist(ActorData *actor) {
@@ -2295,16 +2299,12 @@ void Actor::drawPathTest() {
 void Actor::saveState(File& out) {
 	uint16 i;
 	
-	out.writeSint32LE(_centerActor == NULL ? -1 : _centerActor->index);
-	out.writeSint32LE(_protagonist == NULL ? -1 : _protagonist->index);
 	out.writeSint16LE(getProtagState());
 
 	for (i = 0; i < _actorsCount; i++) {
 		ActorData *a = _actors[i];
 		a->saveState(out);
 	}
-
-	//TODO: save _activeSpeech
 
 	for (i = 0; i < _objsCount; i++) {
 		ObjectData *o = _objs[i];
@@ -2315,15 +2315,7 @@ void Actor::saveState(File& out) {
 void Actor::loadState(File& in) {
 	int32 i;
 
-	i = in.readSint32LE();
-	_centerActor = (i < 0) ? NULL : _actors[i];
-
-	i = in.readSint32LE();
-	_protagonist = (i < 0) ? NULL : _actors[i];
-
 	setProtagState(in.readSint16LE());
-
-	//TODO: load _activeSpeech
 
 	for (i = 0; i < _actorsCount; i++) {
 		ActorData *a = _actors[i];
