@@ -1772,7 +1772,7 @@ void Insane::actor12Reaction(int32 buttons) {
 					smlayer_startSfx(74);
 				break;
 			case INV_HAND:
-				if(calcBenDamage(1, 0))
+				if (calcBenDamage(1, 0))
 					smlayer_startSfx(73);
 				break;
 			}

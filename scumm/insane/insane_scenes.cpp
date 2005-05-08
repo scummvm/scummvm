@@ -827,17 +827,17 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 	int32 tmpSnd;
 	bool needMore = false;
 
-	if(!_keyboardDisable) {
+	if (!_keyboardDisable) {
 		switch (_currSceneId) {
 		case 12:
 			postCase11(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
 			break;
 		case 1:
 			postCase0(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
-			if(!smlayer_isSoundRunning(88))
+			if (!smlayer_isSoundRunning(88))
 				smlayer_startSfx(88);
 			smlayer_soundSetPan(88, ((_actor[0].x+160)>>2)+64);
-			if(_tiresRustle) {
+			if (_tiresRustle) {
 				if (!smlayer_isSoundRunning(87))
 					smlayer_startSfx(87);
 			} else {
@@ -850,12 +850,12 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 			smlayer_stopSound(95);
 			smlayer_stopSound(87);
 			smlayer_stopSound(88);
-			if(!smlayer_isSoundRunning(88))
+			if (!smlayer_isSoundRunning(88))
 				smlayer_startSfx(88);
 			break;
 		case 17:
 			postCase16(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
-			if(!smlayer_isSoundRunning(88))
+			if (!smlayer_isSoundRunning(88))
 				smlayer_startSfx(88);
 			break;
 		case 2:
@@ -864,18 +864,18 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 		case 3:
 			postCase2(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
 			needMore = true;
-			if(!smlayer_isSoundRunning(89)) {
+			if (!smlayer_isSoundRunning(89)) {
 				smlayer_startSfx(89);
 				smlayer_soundSetPriority(89, 100);
 			}
 			tmpSnd = _enemy[_currEnemy].sound;
-			if(!smlayer_isSoundRunning(tmpSnd)) {
+			if (!smlayer_isSoundRunning(tmpSnd)) {
 				smlayer_startSfx(tmpSnd);
 				smlayer_soundSetPriority(tmpSnd, 100);
 			}
 			smlayer_soundSetPan(89, ((_actor[0].x+160)>>2)+64);
 			smlayer_soundSetPan(tmpSnd, ((_actor[1].x+160)>>2)+64);
-			if(!_tiresRustle) {
+			if (!_tiresRustle) {
 				smlayer_stopSound(87);
 			} else {
 				if (!smlayer_isSoundRunning(87))
@@ -885,12 +885,12 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 		case 21:
 			postCase20(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
 			needMore = true;
-			if(!smlayer_isSoundRunning(89)) {
+			if (!smlayer_isSoundRunning(89)) {
 				smlayer_startSfx(89);
 				smlayer_soundSetPriority(89, 100);
 			}
 			tmpSnd = _enemy[_currEnemy].sound;
-			if(!smlayer_isSoundRunning(tmpSnd)) {
+			if (!smlayer_isSoundRunning(tmpSnd)) {
 				smlayer_startSfx(tmpSnd);
 				smlayer_soundSetPriority(tmpSnd, 100);
 			}
@@ -900,13 +900,13 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 		case 4:
 		case 5:
 			postCase3(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
-			if(!smlayer_isSoundRunning(88))
+			if (!smlayer_isSoundRunning(88))
 				smlayer_startSfx(88);
 			smlayer_soundSetPan(88, ((_actor[0].x+160)>>2)+64);
 			break;
 		case 6:
 			postCase5(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
-			if(!smlayer_isSoundRunning(88))
+			if (!smlayer_isSoundRunning(88))
 				smlayer_startSfx(88);
 			smlayer_soundSetPan(88, ((_actor[0].x+160)>>2)+64);
 			break;
@@ -932,12 +932,12 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 		case 13:
 			postCase12(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
 			needMore = true;
-			if(!smlayer_isSoundRunning(89)) {
+			if (!smlayer_isSoundRunning(89)) {
 				smlayer_startSfx(89);
 				smlayer_soundSetPriority(89, 100);
 			}
 			tmpSnd = _enemy[_currEnemy].sound;
-			if(!smlayer_isSoundRunning(tmpSnd)) {
+			if (!smlayer_isSoundRunning(tmpSnd)) {
 				smlayer_startSfx(tmpSnd);
 				smlayer_soundSetPriority(tmpSnd, 100);
 			}
@@ -945,7 +945,7 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 			smlayer_soundSetPan(tmpSnd, ((_actor[1].x+160)>>2)+64);
 			break;
 		case 24:
-			if(!smlayer_isSoundRunning(90)) {
+			if (!smlayer_isSoundRunning(90)) {
 				smlayer_startSfx(90);
 				smlayer_soundSetPriority(90, 100);
 			}

@@ -716,7 +716,7 @@ void Insane::actor02Reaction(int32 buttons) {
 						smlayer_startSfx(74);
 					break;
 				default:
-					if(calcEnemyDamage(1, 0) == 1)
+					if (calcEnemyDamage(1, 0) == 1)
 						smlayer_startSfx(73);
 					break;
 				}

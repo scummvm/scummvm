@@ -767,7 +767,7 @@ void Insane::switchSceneIfNeeded(void) {
 		_needSceneSwitch = false;
 		loadSceneData(_temp2SceneId, 0, 1);
 
-		if(loadSceneData(_temp2SceneId, 0, 2)) {
+		if (loadSceneData(_temp2SceneId, 0, 2)) {
 			setSceneCostumes(_temp2SceneId);
 			_sceneData2Loaded = 0;
 			_sceneData1Loaded = 0;
