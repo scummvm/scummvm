@@ -1807,7 +1807,7 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 	// HE 99+
 	case 7:
 		// Used in PuttsFunShop/SamsFunShop/soccer2004
-		// TODO: Capture polyfon
+		// TODO: Capture polygon
 		break;
 	case 8:
 		createWizEmptyImage(params);

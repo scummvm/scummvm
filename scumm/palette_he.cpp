@@ -80,8 +80,8 @@ uint8 *ScummEngine_v90he::getHEPaletteIndex(int palSlot) {
 
 int ScummEngine_v90he::getHEPaletteSimilarColor(int palSlot, int red, int green, int start, int end) {
 	checkRange(_numPalettes, 1, palSlot, "Invalid palette %d");
-	assert(start >= 1 && start <= 255);
-	assert(end >= 1 && end <= 255);
+	checkRange(255, 0, start, "Invalid palette slot %d");
+	checkRange(255, 0, end, "Invalid palette slot %d");
 
 	uint8 *pal = _hePalettes + palSlot * 1024 + start * 3;
 
@@ -106,14 +106,14 @@ int ScummEngine_v90he::getHEPaletteSimilarColor(int palSlot, int red, int green,
 
 int ScummEngine_v90he::getHEPaletteColorComponent(int palSlot, int color, int component) {
 	checkRange(_numPalettes, 1, palSlot, "Invalid palette %d");
-	checkRange(255, 1, color, "Invalid palette slot %d");
+	checkRange(255, 0, color, "Invalid palette slot %d");
 
 	return _hePalettes[palSlot * 1024 + color * 3 + component % 3];
 }
 
 int ScummEngine_v90he::getHEPaletteColor(int palSlot, int color) {
 	checkRange(_numPalettes, 1, palSlot, "Invalid palette %d");
-	checkRange(255, 1, color, "Invalid palette slot %d");
+	checkRange(255, 0, color, "Invalid palette slot %d");
 
 	return _hePalettes[palSlot * 1024 + 768 + color];
 }
