@@ -1049,8 +1049,9 @@ void IsoMap::testPossibleDirections(int16 u, int16 v, uint16 terraComp[8], int s
 		if (_vm->_actor->_protagonist->location.z > 0) {		\
 			terraComp[index] = SAGA_IMPASSABLE;					\
 		}														\
-	}	
+	}
 
+#define TEST_TILE_END	}
 	
 	TEST_TILE_PROLOG(0, 0)
 		if (skipCenter) {
@@ -1070,7 +1071,7 @@ void IsoMap::testPossibleDirections(int16 u, int16 v, uint16 terraComp[8], int s
 		FILL_MASK(5, 0x0066)
 		FILL_MASK(6, 0x00cc)
 		FILL_MASK(7, 0x0cc0)
-	}
+	TEST_TILE_END
 
 	TEST_TILE_PROLOG(1, 1)
 		FILL_MASK(0, 0x0673)
