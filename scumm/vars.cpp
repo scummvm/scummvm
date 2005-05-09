@@ -167,7 +167,11 @@ void ScummEngine_v6::setupScummVars() {
 	VAR_ROOM_WIDTH = 41;
 	VAR_ROOM_HEIGHT = 54;
 
-	VAR_SUBTITLES = 60;
+	if (_heversion >= 60 && _heversion <= 61) {	
+		VAR_NOSUBTITLES = 60;
+	} else {
+		VAR_SUBTITLES = 60;
+	}
 
 	VAR_LEFTBTN_HOLD = 74;
 	VAR_RIGHTBTN_HOLD = 75;
