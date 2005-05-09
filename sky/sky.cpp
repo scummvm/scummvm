@@ -132,6 +132,20 @@ SkyEngine::~SkyEngine() {
 
 void SkyEngine::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
+
+#ifdef _WIN32_WCE
+	if (isSmartphone())
+		return;
+#endif
+
+	// Unless an error -originated- within the debugger, spawn the
+	// debugger. Otherwise exit out normally.
+	if (_debugger && !_debugger->isAttached()) {
+		// (Print it again in case debugger segfaults)
+		printf("%s\n", buf2);
+		_debugger->attach(buf2);
+		_debugger->onFrame();
+	}
 }
 
 void SkyEngine::initVirgin() {
