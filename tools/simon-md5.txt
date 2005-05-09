@@ -1,8 +1,6 @@
 Simon the Sorcerer 1
-	-	DOS	en	465eed710cc242b2de7dc77edd467c4c	simon1dos
 	-	DOS	en	48ce4ffda968cc7a38870c354571f92c	simon1dos	Kirben
 	-	DOS	fr	b6cfe7449a32418ed523bde22f5125ed	simon1dos	ketchup_addict
-	-	DOS	fr	bed9134804d96f72afa152b8ec5628c3	simon1dos
 	-	DOS	it	c8f5b860a20dcc63915d94cf2bdcfa49	simon1dos
 	-	DOS	ru	3b22f3cc4ce9faa3f7830ab18235b04d	simon1dos	Kirben
 	-	Windows	en	d22302abf44219f95d50f2faa807dd1a	simon1talkie	Kirben
@@ -18,7 +16,6 @@ Simon the Sorcerer 1
 	Demo	DOS	en	486f026593f894f5b6b346ef3984a7a0	simon1demo	Kirben
 
 Simon the Sorcerer 2
-	-	DOS	en	27c8e7feada80c75b70b9c2f6088d519	simon2dos
 	-	Windows	de	9e858b3bb189c134c3a5f34c3385a8d3	simon2talkie	DhWz
 	-	Windows	en	bd85a8b5135592ada9cbeae49160f1d3	simon2talkie	Kirben
 	-	DOS	de	3bdf85dc57c1abff8f05416b4571198f	simon2talkie	SimSaw

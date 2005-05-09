@@ -258,6 +258,12 @@ static const GameSpecificSettings simon2dos_settings = {
 };
 #endif
 
+static const char* bad_versions[3] = {
+	"27c8e7feada80c75b70b9c2f6088d519", // simon2dos (English)
+	"465eed710cc242b2de7dc77edd467c4c", // simon1dos (English)
+	"bed9134804d96f72afa152b8ec5628c3", // simon1dos (French)
+};
+
 SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	: Engine(syst), midi(syst) {
 
@@ -302,11 +308,6 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 		}
 		ConfMan.flushToDisk();
 	} else {
-#if 1
-		// HACK HACK HACK
-		// This is not how, and where, MD5 computation should be done in the
-		// real world. Rather this is meant as a proof-of-concept hack. 
-		// It's quick, it's dirty, and it'll go again eventually :-)
 		char buf[100];
 		uint8 md5sum[16];
 		File f;
@@ -322,6 +323,11 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
 			}
 
+			for (int j = 0; j < 3; j++) {
+				if (!strcmp(md5str, bad_versions[j]))
+					error("Cracked version aren't supported");
+			}
+
 			printf("%s  %s\n", md5str, buf);
 			const MD5Table *elem;
 			elem = (const MD5Table *)bsearch(md5str, md5table, ARRAYSIZE(md5table)-1, sizeof(MD5Table), compareMD5Table);
@@ -331,7 +337,6 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 			else
 				printf("Unknown MD5! Please report the details (language, platform, etc.) of this game to the ScummVM team\n");
 		}
-#endif
 	}
 
 	VGA_DELAY_BASE = 1;
