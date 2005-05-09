@@ -1190,7 +1190,7 @@ protected:
 public:
 	void saveOrLoadSpriteData(Serializer *s, uint32 savegameVersion);
 	void spritesBlitToScreen();
-	void spritesMarkDirty(bool unkFlag);
+	void spritesMarkDirty(bool checkZOrder);
 	void spritesSortActiveSprites();
 	void spritesProcessWiz(bool arg);
 	void spritesUpdateImages();

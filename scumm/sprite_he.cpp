@@ -1125,17 +1125,24 @@ void ScummEngine_v90he::spritesBlitToScreen() {
 	}
 }
 
-void ScummEngine_v90he::spritesMarkDirty(bool unkFlag) {
+void ScummEngine_v90he::spritesMarkDirty(bool checkZOrder) {
 	VirtScreen *vs = &virtscr[kMainVirtScreen];
 	for (int i = 0; i < _numSpritesToProcess; ++i) {
 		SpriteInfo *spi = _activeSpritesTable[i];
 		if (!(spi->flags & (kSFNeedRedraw | kSF30))) {
-			if ((!unkFlag || spi->zorderPriority >= 0) && (spi->flags & kSFMarkDirty)) {
-				int lp, rp;
-				lp = MAX(0, spi->bbox.left / 8);
-				lp = MIN(79, spi->bbox.left / 8);
-				rp = MAX(0, (spi->bbox.right + 7) / 8);
-				rp = MIN(79, (spi->bbox.right + 7) / 8);
+			if ((!checkZOrder || spi->zorderPriority >= 0) && (spi->flags & kSFMarkDirty)) {
+				int lp = spi->bbox.left / 8;
+				if (lp < 0) {
+					lp = 0;
+				} else if (lp > 79) {
+					lp = 79;
+				}
+				int rp = spi->bbox.right + 7 / 8;
+				if (rp < 0) {
+					rp = 0;
+				} else {
+					rp = 79;
+				}
 				for (; lp <= rp; ++lp) {
 					if (vs->tdirty[lp] < vs->h && spi->bbox.bottom >= vs->tdirty[lp] && spi->bbox.top <= vs->bdirty[lp]) {
 						spi->flags |= kSFNeedRedraw;
