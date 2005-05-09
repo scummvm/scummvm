@@ -2213,7 +2213,7 @@ void ScummEngine_v100he::o100_isResourceLoaded() {
 	case 25:
 		type = rtCostume;
 		break;
-	case 41:
+	case 40:
 		type = rtImage;
 		break;
 	case 62:
