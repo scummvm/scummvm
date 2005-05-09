@@ -164,7 +164,7 @@ void Tables::initEnvelopes(float samplerate) {
 		if (elf == 0) {
 			envDeltaMaxTime[lf] = 63;
 		} else {
-			float cap = 11 * log(elf) + 64;
+			float cap = 11 * (float)log(elf) + 64;
 			if (cap > 100.0f) {
 				cap = 100.0f;
 			}
