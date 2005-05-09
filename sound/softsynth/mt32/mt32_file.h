@@ -58,7 +58,7 @@ public:
 	bool readLine(char *in, size_t size);
 	bool readBit8u(Bit8u *in);
 	size_t write(const void *out, size_t size);
-	bool writeBit8u(unsigned char out);
+	bool writeBit8u(Bit8u out);
 	bool isEOF();
 };
 

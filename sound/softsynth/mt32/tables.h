@@ -74,7 +74,7 @@ class Tables {
 	void initMT32ConstantTables(Synth *synth);
 	static Bit16s clampWF(Synth *synth, const char *n, float ampVal, double input);
 	static File *initWave(Synth *synth, NoteLookup *noteLookup, float ampsize, float div2, File *file);
-	bool initNotes(Synth *synth, PCMWaveEntry pcmWaves[128], float rate, float tuning);
+	bool initNotes(Synth *synth, PCMWaveEntry *pcmWaves, float rate, float tuning);
 	void initEnvelopes(float sampleRate);
 	void initFiltCoeff(float samplerate);
 public:
@@ -106,8 +106,8 @@ public:
 	KeyLookup keyLookups[97];
 
 	Tables();
-	bool init(Synth *synth, PCMWaveEntry pcmWaves[128], float sampleRate, float masterTune);
-	File *initNote(Synth *synth, NoteLookup *noteLookup, float note, float rate, float tuning, PCMWaveEntry pcmWaves[128], File *file);
+	bool init(Synth *synth, PCMWaveEntry *pcmWaves, float sampleRate, float masterTune);
+	File *initNote(Synth *synth, NoteLookup *noteLookup, float note, float rate, float tuning, PCMWaveEntry *pcmWaves, File *file);
 	void freeNotes();
 };
 
