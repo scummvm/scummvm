@@ -27,7 +27,7 @@ Zak McKracken and the Alien Mindbenders
 	V2 (w/o copy protection)	DOS	de	cdd760228cf1010c2903f37e788ea31c	zak	Max Horn
 	V2 (from 5\"25 floppies)	DOS	de	d06fbe28818fef7bfc45c2cdf0c0849d	zak	Nicolas Sauz&egrave;de, Andrea Petrucci
 	V2	DOS	fr	52a4bae0746a11d7b1e8554e91a6645c	zak	Andrea Petrucci
-	V2	DOS	fr	c4787c3e8b5e2dfda90850ee800af00f 	zal	Qvist
+	V2	DOS	fr	c4787c3e8b5e2dfda90850ee800af00f 	zak	Qvist
 	V2	DOS	it	75ba23fff4fd63fa446c02864f2a5a4b	zak	Antti Leimi, Andrea Petrucci
 	V2 (alt?)	DOS	it	1900e501a52fbf55bde6e4196f6d2aa6	zak	Andrea Petrucci
 	V2	Amiga	en	e94c7cc3686fce406d3c91b5eae5a72d	zak	dhweg
