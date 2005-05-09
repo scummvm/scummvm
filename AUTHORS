@@ -50,6 +50,7 @@ Contributors:
                                audio
        Daniel Schepler       - Final MI1 CD music support, initial Ogg Vorbis
                                support
+       Johannes Schickel     - Thumbnails for ScummEngine
        Andre Souza           - SDL-based OpenGL renderer
        Tim ???               - Initial MI1 CD music support
 
