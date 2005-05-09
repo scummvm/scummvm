@@ -28,6 +28,7 @@ namespace Scumm {
 class LogicHE {
 private:
 	float *_userData;
+	double *_userDataD;
 	ScummEngine *_vm;
 
 public:

@@ -32,11 +32,14 @@ namespace Scumm {
  */
 
 LogicHE::LogicHE(ScummEngine *vm) : _vm(vm) {
-	_userData = (float *)calloc(0x930, 1);
+	// Originally it used 0x930 and stored both floats and doubles inside
+	_userData = (float *)calloc(550, sizeof(float));
+	_userDataD = (double *)calloc(30, sizeof(double));
 }
 
 LogicHE::~LogicHE() {
 	free(_userData);
+	free(_userDataD);
 }
 
 void LogicHE::beforeBootScript() {
@@ -181,17 +184,61 @@ int32 LogicHE::op_1100(int32 *args) {
 }
 
 int32 LogicHE::op_1101(int32 *args) {
-	int32 retval = 1;
+	int32 retval;
+	float temp;
 
-	// TODO
+    temp = args[0] / _userData[532];
+
+	if (_userData[519] == temp) {
+		retval = (int32)temp;
+	} else {
+		_userData[519] = temp;
+		op_sub3(temp);
+		retval = 1;
+	}
+	
+	temp = args[1] / _userData[532];
+
+	if (_userData[520] != temp) {
+		_userData[520] = temp;
+		op_sub1(temp);
+		retval = 1;
+	}
+
+	temp = args[2] / _userData[532];
+
+	if (_userData[521] != temp) {
+		_userData[521] = temp;
+		op_sub2(temp);
+		retval = 1;
+	}
 
 	return retval;
 }
 
 int32 LogicHE::op_1102(int32 *args) {
-	int32 retval = 1;
+	int32 retval;
+	float temp;
 
-	// TODO
+	temp = args[0] / _userData[532];
+	if (_userData[516] != temp) {
+		_userData[516] = temp;
+		retval = 1;
+	} else {
+		retval = (int32)_userData[532];
+	}
+
+	temp = args[1] / _userData[532];
+	if (_userData[517] != temp) {
+		_userData[517] = temp;
+		retval = 1;
+	}
+
+	temp = args[2] / _userData[532];
+	if (_userData[518] != temp) {
+		_userData[518] = temp;
+		retval = 1;
+	}
 
 	return retval;
 }
@@ -214,7 +261,22 @@ int32 LogicHE::op_1110() {
 }
 
 int32 LogicHE::op_1120(int32 *args) {
-	// TODO
+	double a0, a1, a2;
+	float res1, res2;
+
+	a0 = args[0] / _userData[532] - _userData[516];
+	a1 = args[1] / _userData[532] - _userData[517];
+	a2 = args[2] / _userData[532] - _userData[518];
+
+	res1 = (atan((a1 * _userDataD[15] + a2 * _userDataD[12] + a0 * _userDataD[9]) /
+				(a1 * _userDataD[17] + a2 * _userDataD[14] + a0 * _userDataD[11])) 
+			* RAD2DEG) / _userData[526];
+	res2 = (atan((a1 * _userDataD[16] + a2 * _userDataD[13] + a0 * _userDataD[10]) /
+				 (a1 * _userDataD[17] + a2 * _userDataD[14] + a0 * _userDataD[11])) 
+			* RAD2DEG - _userData[528]) / _userData[527];
+	
+	_vm->writeVar(108, (int32)res1);
+	_vm->writeVar(109, (int32)res2);
 
 	return 1;
 }
@@ -231,18 +293,56 @@ int32 LogicHE::op_1130(int32 *args) {
 }
 
 int32 LogicHE::op_1140(int32 *args) {
-	// TODO
+	double arg2 = -args[2] * args[2];
+	double arg3 = -args[3] * args[3];
+	double sq = sqrt(arg2 + arg3);
+	float res;
+
+	arg2 = arg2 / sq;
+	arg3 = arg3 / sq;
+
+	res = (args[0] - 2 * (arg2 * args[0] + arg3 * args[1]) * arg2) * 0.86956525;
+
+	_vm->writeVar(108, (int32)res);
+	
+	res = args[1] - 2 * (arg2 * args[0] + arg3 * args[1]) * arg3;
+	
+	if (-args[3] * args[3] >= 0)
+		res *= 0.83333331;
+
+	_vm->writeVar(109, (int32)res);
 
 	return 1;
 }
 
 void LogicHE::op_sub1(float arg) {
+	_userDataD[10] = _userDataD[12] = _userDataD[14] = _userDataD[16] = 0;
+	_userDataD[13] = 1.875;
+
+	_userData[9] = cos(arg * DEG2RAD);
+	_userData[15] = sin(arg * DEG2RAD);
+	_userData[11] = -_userData[15];
+	_userData[17] = _userData[9];
 }
 
 void LogicHE::op_sub2(float arg) {
+	_userDataD[20] = _userDataD[21] = _userDataD[24] = _userDataD[25] = 0;
+	_userDataD[26] = 1.875;
+
+	_userData[19] = sin(arg * DEG2RAD);
+	_userData[20] = cos(arg * DEG2RAD);
+	_userData[21] = -_userData[19];
+	_userData[22] = _userData[21];
 }
 
 void LogicHE::op_sub3(float arg) {
+	_userDataD[1] = _userDataD[2] = _userDataD[3] = _userDataD[6] = 0;
+	_userDataD[0] = 1.875;
+
+	_userData[4] = cos(arg * DEG2RAD);
+	_userData[5] = sin(arg * DEG2RAD);
+	_userData[7] = -_userData[5];
+	_userData[8] = _userData[4];
 }
 
 } // End of namespace Scumm
