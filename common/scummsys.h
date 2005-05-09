@@ -323,6 +323,32 @@
 	#define fsize(a)			ps2_fsize(a)
 
 	extern void ps2_disableHandleCaching(void);
+
+#elif defined (__amigaos4__)
+	#include <exec/types.h>
+
+	#define	scumm_stricmp strcasecmp
+	#define	scumm_strnicmp strncasecmp
+
+	#define	CHECK_HEAP
+
+	#define	SCUMM_BIG_ENDIAN
+
+	// You need to set this manually if necessary
+	#define	SCUMM_NEED_ALIGNMENT
+
+	#define	FORCEINLINE	inline
+	#define	CDECL
+
+	#ifndef	HAVE_CONFIG_H
+	typedef	unsigned char byte;
+	typedef	unsigned int uint;
+	#endif
+
+	#define	START_PACK_STRUCTS
+	#define	END_PACK_STRUCTS
+	#define	GCC_PACK __attribute__((packed))
+	#define	NORETURN __attribute__((__noreturn__))
 #else
 	#error No system type defined
 #endif

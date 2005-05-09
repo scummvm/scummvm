@@ -33,7 +33,7 @@
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
-#if (!( defined(__PALM_OS__) || defined(__DC__) || defined(__GP32__)) && !defined(_MSC_VER))
+#if (!( defined(__PALM_OS__) || defined(__DC__) || defined(__GP32__) || defined(__amigaos4__) ) && !defined(_MSC_VER))
 #include <sys/param.h>
 #include <unistd.h>
 #endif

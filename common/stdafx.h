@@ -111,10 +111,12 @@
 #endif
 #if !defined(macintosh)
 #include <sys/types.h>
-#if !defined(__PLAYSTATION2__)
+#if !defined(__PLAYSTATION2__) && !defined(__amigaos4__)
 #include <sys/uio.h>
 #endif
+#if !defined(__amigaos4__)
 #include <sys/param.h>
+#endif
 #endif
 #if !defined (__BEOS__)
 #include <unistd.h>

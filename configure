@@ -434,6 +434,10 @@ arm-riscos-aof)
 	_host_os=riscos
 	_host_cpu=arm
 	;;
+ppc-amigaos)
+	_host_os=amigaos
+	_host_cpu=ppc
+	;;
 *)
 	guessed_host=`$_srcdir/config.guess`
 	_host_cpu=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
@@ -612,6 +616,16 @@ if test -n "$_host"; then
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
+			;;
+		ppc-amigaos)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			_def_endianness='#define SCUMM_BIG_ENDIAN'
+			_def_align='#define	SCUMM_NEED_ALIGNMENT'
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='long'
+			CXXFLAGS="$CFLAGS -newlib -mstrict-align -mcpu=750 -mtune=7400"
+			LDFLAGS="$LDFLAGS -newlib"
 			;;
 		*)
 			echo "Cross-compiling to unknown target, please add your target to configure."

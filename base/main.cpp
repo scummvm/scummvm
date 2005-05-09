@@ -122,6 +122,11 @@ const char *gScummVMFeatures = ""
 #endif
 	;
 
+#if defined(__amigaos4__)
+// Set the stack cookie, 640 KB should be enough for everyone
+const char* stackCookie = "$STACK: 655360\0";
+#endif
+
 #if defined(WIN32) && defined(NO_CONSOLE)
 #include <cstdio>
 #define STDOUT_FILE	TEXT("stdout.txt")

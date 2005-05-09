@@ -156,7 +156,7 @@ static void join_paths(const char *filename, const char *directory,
 	const int dirLen = strlen(buf);
 
 	if (dirLen > 0) {
-#ifdef __MORPHOS__
+#if defined(__MORPHOS__) || defined(__amigaos4__)
 		if (buf[dirLen-1] != ':' && buf[dirLen-1] != '/')
 #endif
 

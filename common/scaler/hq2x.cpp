@@ -42,6 +42,20 @@ void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 #else
 
 #ifdef HAS_ALTIVEC
+
+#ifdef __amigaos4__
+#include <proto/exec.h>
+#include <altivec.h>
+static bool isAltiVecAvailable() {
+	uint32 vecUnit;
+	IExec->GetCPUInfo(GCIT_VectorUnit, &vecUnit, TAG_DONE);
+	if (vecUnit == VECTORTYPE_NONE)
+		return false;
+	else
+		return true;
+}
+#else
+
 #include <sys/sysctl.h> 
 
 static bool isAltiVecAvailable()  {
@@ -53,6 +67,7 @@ static bool isAltiVecAvailable()  {
 		return hasVectorUnit != 0; 
 	return false; 
 }
+#endif
 #endif
 
 #define PIXEL00_0	*(q) = w5;

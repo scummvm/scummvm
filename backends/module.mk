@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	backends/fs/posix/posix-fs.o \
 	backends/fs/morphos/abox-fs.o \
 	backends/fs/windows/windows-fs.o \
+	backends/fs/amigaos4/amigaos4-fs.o \
 	backends/midi/alsa.o \
 	backends/midi/coreaudio.o \
 	backends/midi/morphos.o \
@@ -19,6 +20,7 @@ MODULE_DIRS += \
 	backends/fs/posix \
 	backends/fs/morphos \
 	backends/fs/windows \
+	backends/fs/amigaos4 \
 	backends/midi
 
 # Include common rules 

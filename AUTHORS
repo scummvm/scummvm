@@ -20,6 +20,7 @@ The ScummVM team:
        Jamieson Christian    - iMUSE, MIDI, all things musical
        Jerome Fisher         - MT-32 emulator
        Jochen Hoenicke       - Speaker & PCjr sound support, Adlib work
+       Hans-Jorg Frieden     - Port: AmigaOS 4
 
 Retired Team Members:
        Ralph Brorsen         - Help with GUI implementation
@@ -53,6 +54,7 @@ Contributors:
        Johannes Schickel     - Thumbnails for ScummEngine
        Andre Souza           - SDL-based OpenGL renderer
        Tim ???               - Initial MI1 CD music support
+       Juha Niemimaki        - AmigaOS 4 port maintaining
 
        And to all the contributors, users, and beta testers we've missed.
        Thanks!

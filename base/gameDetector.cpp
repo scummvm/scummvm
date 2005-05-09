@@ -617,7 +617,7 @@ bool GameDetector::detectMain() {
 		warning("No path was provided. Assuming the data files are in the current directory");
 		gameDataPath = "./";
 	} else if (gameDataPath.lastChar() != '/'
-#ifdef __MORPHOS__
+#if defined(__MORPHOS__) || defined(__amigaos4__)
 					&& gameDataPath.lastChar() != ':'
 #endif
 					&& gameDataPath.lastChar() != '\\') {

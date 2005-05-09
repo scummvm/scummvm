@@ -1247,7 +1247,15 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
           etc. via Fink and into /sw. If you have installed SDL
           in another way, you'll have to edit the Makefile).
 
-
+    AmigaOS 4 (Cross-compiling with Cygwin):
+        * Make sure that you have SDL installed, you may also need 
+          libogg, libvorbis, libvorbisfile, zlib, libmad.
+        * Type ./configure --host=ppc-amigaos
+        * If you got an error about sdl-config, use --with-sdl-prefix
+          parameter to set the path.
+        * Check 'config.mak' file and if everything seems to fine:
+        * Run 'make'.
+        * Cross-compiling with Linux may be as easy.
 
 ------------------------------------------------------------------------
 Good Luck and Happy Adventuring!

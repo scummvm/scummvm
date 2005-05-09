@@ -61,6 +61,7 @@ sub html_entities_to_ascii {
 	# &eacute;  -> e
 	# &oslash;  -> o
 	# &ouml;    -> o / oe
+	# &auml;    -> a
 	# &amp;     -> &
 	# &#322;    -> l
 	$text =~ s/&aacute;/a/g;
@@ -68,6 +69,8 @@ sub html_entities_to_ascii {
 	$text =~ s/&oslash;/o/g;
 	$text =~ s/&#322;/l/g;
 
+	$text =~ s/&auml;/a/g;
+	$text =~ s/&uuml;/u/g;
 	# HACK: Torbj*o*rn but G*oe*ffringmann and R*oe*ver
 	$text =~ s/&ouml;r/or/g;
 	$text =~ s/&ouml;/oe/g;
@@ -85,7 +88,10 @@ sub html_entities_to_rtf {
 	$text =~ s/&eacute;/\\'8e/g;
 	$text =~ s/&oslash;/\\'bf/g;
 	$text =~ s/&#322;/\\uc0\\u322 /g;
+
+	$text =~ s/&auml;/\\'8a/g;
 	$text =~ s/&ouml;/\\'9a/g;
+	$text =~ s/&uuml;/\\'9f/g;
 
 	$text =~ s/&amp;/&/g;
 	
@@ -99,8 +105,11 @@ sub html_entities_to_tex {
 	$text =~ s/&aacute;/\\'a/g;
 	$text =~ s/&eacute;/\\'e/g;
 	$text =~ s/&oslash;/{\\o}/g;
-	$text =~ s/&#322;/l/g;		# TODO
+	$text =~ s/&#322;/{\\l}/g;
+
+	$text =~ s/&auml;/\\"a/g;
 	$text =~ s/&ouml;/\\"o/g;
+	$text =~ s/&uuml;/\\"u/g;
 
 	$text =~ s/&amp;/\\&/g;
 	
@@ -329,6 +338,7 @@ begin_credits("Credits");
 	add_person("Jamieson Christian", "jamieson630", "iMUSE, MIDI, all things musical");
 	add_person("Jerome Fisher", "KingGuppy", "MT-32 emulator");
 	add_person("Jochen Hoenicke", "hoenicke", "Speaker &amp; PCjr sound support, Adlib work");
+	add_person("Hans-J&ouml;rg Frieden", "", "Port: AmigaOS 4");
   end_section();
 
 
@@ -363,6 +373,7 @@ begin_credits("Credits");
 	add_person("Johannes Schickel", "LordHoto", "Thumbnails for ScummEngine");
 	add_person("Andr&eacute; Souza", "", "SDL-based OpenGL renderer");
 	add_person("Tim ???", "realmz", "Initial MI1 CD music support");
+	add_person("Juha Niemim&auml;ki", "", "AmigaOS 4 port maintaining");
   end_section();
 
 
