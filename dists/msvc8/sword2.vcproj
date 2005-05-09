@@ -359,10 +359,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\speech.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\sword2\startup.cpp"
 			>
 		</File>

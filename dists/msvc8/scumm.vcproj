@@ -436,6 +436,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\scumm\logic_he.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\scumm\logic_he.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\scumm\midiparser_eup.cpp"
 			>
 		</File>
@@ -468,11 +476,23 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\scumm\palette_he.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\scumm\player_mod.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\scumm\player_mod.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\scumm\player_nes.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\scumm\player_nes.h"
 			>
 		</File>
 		<File
@@ -533,6 +553,10 @@
 		</File>
 		<File
 			RelativePath="..\..\scumm\resource_v7he.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\scumm\room.cpp"
 			>
 		</File>
 		<File
@@ -621,6 +645,10 @@
 		</File>
 		<File
 			RelativePath="..\..\scumm\string.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\scumm\thumbnail.cpp"
 			>
 		</File>
 		<File

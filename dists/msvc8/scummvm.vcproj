@@ -233,6 +233,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\config-file.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\config-file.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\config-manager.cpp"
 				>
 			</File>
@@ -455,11 +463,23 @@
 					RelativePath="..\..\common\scaler\scalebit.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\common\scaler\thumbnail.cpp"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
 			Name="sound"
 			>
+			<File
+				RelativePath="..\..\sound\adpcm.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\sound\adpcm.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\sound\audiocd.cpp"
 				>
@@ -599,6 +619,10 @@
 				</File>
 				<File
 					RelativePath="..\..\sound\softsynth\emumidi.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\softsynth\fluidsynth.cpp"
 					>
 				</File>
 				<File
@@ -993,6 +1017,14 @@
 			</File>
 			<File
 				RelativePath="..\..\graphics\newfont_big.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\primitives.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\primitives.h"
 				>
 			</File>
 			<File

@@ -319,6 +319,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\saga\saveload.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\saga\scene.cpp"
 			>
 		</File>

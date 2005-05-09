@@ -167,19 +167,19 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\gob\cdrom.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\gob\cdrom.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\gob\dataio.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\gob\dataio.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\gob\debug.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\gob\debug.h"
 			>
 		</File>
 		<File
@@ -284,14 +284,6 @@
 		</File>
 		<File
 			RelativePath="..\..\gob\parse.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\gob\resource.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\gob\resource.h"
 			>
 		</File>
 		<File
