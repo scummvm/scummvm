@@ -54,7 +54,7 @@ public:
 
 private:
 	static char *toAscii(TCHAR *x);
-	static TCHAR* toUnicode(const char *x);
+	static const TCHAR* toUnicode(const char *x);
 	static void addFile (FSList &list, ListMode mode, const char *base, WIN32_FIND_DATA* find_data);
 };
 
@@ -70,9 +70,9 @@ char* WindowsFilesystemNode::toAscii(TCHAR *x) {
 #endif
 }
 
-TCHAR* WindowsFilesystemNode::toUnicode(const char *x) {
+const TCHAR* WindowsFilesystemNode::toUnicode(const char *x) {
 #ifndef UNICODE
-	return (TCHAR *)x;
+	return (const TCHAR *)x;
 #else
 	static TCHAR unicodeString[MAX_PATH];
 	MultiByteToWideChar(CP_ACP, 0, x, strlen(x) + 1, unicodeString, sizeof(unicodeString) / sizeof(TCHAR));
