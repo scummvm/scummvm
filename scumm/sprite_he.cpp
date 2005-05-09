@@ -1137,7 +1137,7 @@ void ScummEngine_v90he::spritesMarkDirty(bool checkZOrder) {
 				} else if (lp > 79) {
 					lp = 79;
 				}
-				int rp = spi->bbox.right + 7 / 8;
+				int rp = (spi->bbox.right + 7) / 8;
 				if (rp < 0) {
 					rp = 0;
 				} else {
