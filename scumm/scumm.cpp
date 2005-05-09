@@ -563,6 +563,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "dog", "Dog on a Stick", kGenMac},
 	{ "f3-mdemo", "F3-Mdemo", kGenMac },
 	{ "f3-mdemo", "F3-mdemo", kGenMac },
+	{ "f3-mdemo", "FF3-DEMO", kGenPC },
 	{ "f4-demo", "Freddi 4 Demo", kGenMac },
 	{ "f4-demo", "ff4demo", kGenPC }, // FIXME: check this with joostp. Used by NL version?
 	{ "farmdemo", "Farm Demo", kGenMac},
@@ -612,6 +613,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "puttputt", "Putt-Putt Parade", kGenMacNoParens },
 	{ "puttrace", "Putt Race", kGenMac },
 	{ "PuttsFunShop", "Putt's FunShop", kGenMac },
+	{ "putttime", "PuttTijd", kGenPC },
 	{ "putttime", "PuttTTT", kGenMac },
 	{ "putttime", "PuttTTT", kGenPC },
 	{ "putttime", "PuttPuttTTT", kGenPC },
@@ -634,6 +636,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "spyozon", "SpyOzon", kGenMac },
 	{ "spyozon", "SPYFoxOZU", kGenPC },
 	{ "thinkerk", "ThinkerK", kGenMac },
+	{ "timedemo", "TIJDDEMO", kGenPC },
 	{ "timedemo", "TimeDemo", kGenMac },
 	{ "water", "Water Worries", kGenMac },
 	{ "zoodemo", "Puttzoo Demo", kGenMac },

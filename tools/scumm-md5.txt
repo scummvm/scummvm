@@ -302,6 +302,7 @@ Freddi Fish 3: The Case of the Stolen Conch Shell
 	-	Windows	ru	898ce8eb1234a955ef75e87141902bb3	freddi3	sev
 	-	Windows	ru	75bff95816b84672b877d22a911ab811	freddi3	sev
 	Demo	All	en	cb1559e8405d17a5a278a6b5ad9338d1	f3-mdemo	khalek, sev
+	Demo	Windows	nl	754feb59d3bf86b8a00840df74fd7b26	f3-mdemo	adutchguy
 
 Freddie Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	-	All	All	4f580a021eee026f3b4589e17d130d78	freddi4	Kirben, sev
@@ -312,6 +313,7 @@ Freddie Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	Demo	Windows	en	c25755b08a8d0d47695e05f1e2111bfc	f4-demo	sev
 	Demo	All	en	ebd324dcf06a4c49e1ba5c231eee1060	f4-demo	sev
 	Demo	Windows	nl	16effd200aa6b8abe9c569c3e578814d	f4-demo	joostp
+	Demo	Windows	nl	499c958affc394f2a3868f1eb568c3ee	f4-demo	adutchguy
 
 Freddi Fish 5: The Case of the Creature of Coral Cave
 	-	All	en	590e6546aacd0d374b7f3a4f53013ab1	freddicove	cyx
@@ -339,6 +341,7 @@ Let's Explore the Farm with Buzzy
 	-	Mac	en	fbbbb38a81fc9d6a61d509278390a290	farm	khalek
 	Demo	Windows	en	8d479e36f35e80257dfc102cf4b8a912	farmdemo	khalek, sev
 	Demo	Windows	en	bf8b52fdd9a69c67f34e8e9fec72661c	farmdemo	khalek, sev
+	Demo	Windows	nl	0557df19f046a84c2fdc63507c6616cb	farmdemo	adutchguy
 
 Let's Explore the Airport with Buzzy
 	-	Windows	en	07433205acdca3bc553d0e731588b35f	airport	Kirben
@@ -356,6 +359,7 @@ Pajama Sam 1: No Need to Hide When It's Dark Outside
 	-	Windows	nl	4fa6870d9bc8c313b65d54b1da5a1891	pajama	joostp
 	Demo	All	en	f237bf8a5ef9af78b2a6a4f3901da341	pjs-demo	khalek, sev
 	Demo	All	en	d7ab7cd6105546016e6a0d46fb36b964	pjs-demo	khalek
+	Demo	Windows	nl	0305e850382b812fec6e5998ef88a966	pjs-demo	adutchguy
 
 Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 	-	All	en	d4e79c3d8645b8266cd78c325bc35154	pajama2	Kirben
@@ -426,8 +430,10 @@ Putt-Putt Saves the Zoo
 Putt-Putt Travels Through Time
 	-	All	en	a525c1753c1db5011c00417da37887ef	PuttTime	Kirben
 	-	All?	en	2108d83dcf09f8adb4bc524669c8cf51	PuttTime
+	-	Windows	nl	fcb78ebecab2757264c590890c319cc5	PuttTime	adutchguy
 	Demo	All	en	4e5867848ee61bc30d157e2c94eee9b4	timedemo	khalek, sev
 	Demo	All	en	0ab19be9e2a3f6938226638b2a3744fe	timedemo	khalek
+	Demo	Windows	nl	6b19d0e25cbf720d05822379b8b90ed9	timedemo	adutchguy
 
 Putt-Putt and Pep's Balloon-O-Rama
 	-	All	en	08cc5c3eedaf72ebe12734eee94f7fa2	balloon	Kirben
