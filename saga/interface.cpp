@@ -307,7 +307,10 @@ void Interface::setStatusText(const char *text, int statusColor) {
 int Interface::loadScenePortraits(int resourceId) {
 	_scenePortraits.freeMem();
 
-	return _vm->_sprite->loadList(resourceId, _scenePortraits);
+warning("loadScenePortraits(%d)", resourceId);
+int res = _vm->_sprite->loadList(resourceId, _scenePortraits);
+warning("_scenePortraits.spriteCount = %d", _scenePortraits.spriteCount);
+return res;
 }
 
 int Interface::setLeftPortrait(int portrait) {
@@ -408,6 +411,14 @@ int Interface::draw() {
 	if (!_inMainMode && _vm->getDisplayInfo().rightPortraitXOffset >= 0) {
 		rightPortraitPoint.x = _mainPanel.x + _vm->getDisplayInfo().rightPortraitXOffset;
 		rightPortraitPoint.y = _mainPanel.y + _vm->getDisplayInfo().rightPortraitYOffset;
+
+		// This looks like hack - particularly since it's only done for
+		// the right-side portrait - and perhaps it is! But as far as I
+		// can tell this is what the original engine does. And it keeps
+		// ITE from crashing when entering the Elk King's court.
+
+		if (_rightPortrait >= _scenePortraits.spriteCount)
+			_rightPortrait = 0;
 
 		_vm->_sprite->draw(backBuffer, _scenePortraits, _rightPortrait, rightPortraitPoint, 256);
 	}
