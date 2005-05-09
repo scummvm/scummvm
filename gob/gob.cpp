@@ -50,6 +50,12 @@ struct GobGameSettings {
 
 static const GobGameSettings gob_games[] = {
 	{"gob1", "Gobliiins 1 (CD)", 0, "45f9c1162dd7040fd05fd013ccc176e2"},
+
+	// I'm a bit uncertain what to call these two. The DOS version should
+	// not use copy protection, since it didn't include the color table.
+	{"gob1", "Gobliiins 1 (DOS)", 0, "82aea70ef26f41fa963dfae270993e49"},
+	{"gob1", "Gobliiins 1 (Windows)", 0, "8a5e850c49d7cacdba5f5eb1fcc77b89"},
+
 	{"gob1", "Gobliiins 1 (Demo)", 0, "4f5bf4b9e4c39ebb93579747fc678e97"},
 
 #if 0
