@@ -22,6 +22,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Added dialogs which are shown when you modify the talkspeed or music
      volume using hotkeys.
    - Added support for NES version of Maniac Mansion
+   - Added thumbnail support for savegames.
    - Broke compatibility with HE savegame (HE v71 and upwards only)
 
  Sword2:
