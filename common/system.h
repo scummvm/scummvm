@@ -355,7 +355,7 @@ public:
 	 * (transparency) value. Then the second color starts, and so on. So memory
 	 * looks like this: R1-G1-B1-A1-R2-G2-B2-A2-R3-...
 	 *
-	 * @param colors	the new colors, in interleaved RGB format
+	 * @param colors	the new palette data, in interleaved RGB format
 	 * @param start		the first palette entry to be updated
 	 * @param num		the number of palette entries to be updated
 	 *
@@ -370,9 +370,9 @@ public:
 	 * Grabs a specified part of the currently active palette.
 	 * The format is the same as for setPalette.
 	 *
-	 * @param buf	the buffer
-	 * @param start	the first platte entry
-	 * @param num	nummber of the entries
+	 * @param colors	the palette data, in interleaved RGB format
+	 * @param start		the first platte entry to be read
+	 * @param num		the number of palette entries to be read
 	 */
 	virtual void grabPalette(byte *colors, uint start, uint num) = 0;
 
