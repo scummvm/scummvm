@@ -39,7 +39,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib sdl.lib zlibstat.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib sword1_debug/sword1.lib sword2_debug/sword2.lib kyra_debug/kyra.lib queen_debug/queen.lib saga_debug/saga.lib scumm_debug/scumm.lib simon_debug/simon.lib sky_debug/sky.lib"
+				AdditionalDependencies="winmm.lib sdl.lib zlibstat.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib sword1_debug/sword1.lib sword2_debug/sword2.lib kyra_debug/kyra.lib gob_debug/gob.lib queen_debug/queen.lib saga_debug/saga.lib scumm_debug/scumm.lib simon_debug/simon.lib sky_debug/sky.lib"
 				OutputFile="$(OutDir)/scummvm.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="libcmtd.lib"
@@ -93,7 +93,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib sdl.lib zlibstat.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib saga_release/saga.lib sword1_release/sword1.lib sword2_release/sword2.lib kyra_release/kyra.lib queen_release/queen.lib scumm_release/scumm.lib simon_release/simon.lib sky_release/sky.lib"
+				AdditionalDependencies="winmm.lib sdl.lib zlibstat.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib saga_release/saga.lib sword1_release/sword1.lib sword2_release/sword2.lib kyra_release/kyra.lib gob_release/gob.lib queen_release/queen.lib scumm_release/scumm.lib simon_release/simon.lib sky_release/sky.lib"
 				OutputFile="$(OutDir)/scummvm.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -144,12 +144,21 @@
 			<File
 				RelativePath="..\..\base\plugins.h">
 			</File>
+			<File
+				RelativePath="..\..\base\version.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="common"
 			Filter="">
 			<File
 				RelativePath="..\..\common\array.h">
+			</File>
+			<File
+				RelativePath="..\..\common\config-file.cpp">
+			</File>
+			<File
+				RelativePath="..\..\common\config-file.h">
 			</File>
 			<File
 				RelativePath="..\..\common\config-manager.cpp">
@@ -180,6 +189,12 @@
 			</File>
 			<File
 				RelativePath="..\..\common\md5.h">
+			</File>
+			<File
+				RelativePath="..\..\common\mutex.cpp">
+			</File>
+			<File
+				RelativePath="..\..\common\mutex.h">
 			</File>
 			<File
 				RelativePath="..\..\common\rect.h">
@@ -318,11 +333,20 @@
 				<File
 					RelativePath="..\..\common\scaler\scalebit.h">
 				</File>
+				<File
+					RelativePath="..\..\common\scaler\thumbnail.cpp">
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
 			Name="sound"
 			Filter="">
+			<File
+				RelativePath="..\..\sound\adpcm.cpp">
+			</File>
+			<File
+				RelativePath="..\..\sound\adpcm.h">
+			</File>
 			<File
 				RelativePath="..\..\sound\audiocd.cpp">
 			</File>
@@ -334,6 +358,12 @@
 			</File>
 			<File
 				RelativePath="..\..\sound\audiostream.h">
+			</File>
+			<File
+				RelativePath="..\..\sound\flac.cpp">
+			</File>
+			<File
+				RelativePath="..\..\sound\flac.h">
 			</File>
 			<File
 				RelativePath="..\..\sound\fmopl.cpp">
@@ -395,6 +425,89 @@
 			<File
 				RelativePath="..\..\sound\vorbis.h">
 			</File>
+			<File
+				RelativePath="..\..\sound\wave.cpp">
+			</File>
+			<File
+				RelativePath="..\..\sound\wave.h">
+			</File>
+			<Filter
+				Name="softsynth"
+				Filter="">
+				<File
+					RelativePath="..\..\sound\softsynth\adlib.cpp">
+				</File>
+				<File
+					RelativePath="..\..\sound\softsynth\emumidi.h">
+				</File>
+				<File
+					RelativePath="..\..\sound\softsynth\fluidsynth.cpp">
+				</File>
+				<File
+					RelativePath="..\..\sound\softsynth\mt32.cpp">
+				</File>
+				<File
+					RelativePath="..\..\sound\softsynth\ym2612.cpp">
+				</File>
+				<Filter
+					Name="mt32"
+					Filter="">
+					<File
+						RelativePath="..\..\sound\softsynth\mt32\freeverb.cpp">
+					</File>
+					<File
+						RelativePath="..\..\sound\softsynth\mt32\freeverb.h">
+					</File>
+					<File
+						RelativePath="..\..\sound\softsynth\mt32\i386.cpp">
+					</File>
+					<File
+						RelativePath="..\..\sound\softsynth\mt32\i386.h">
+					</File>
+					<File
+						RelativePath="..\..\sound\softsynth\mt32\mt32_file.cpp">
+					</File>
+					<File
+						RelativePath="..\..\sound\softsynth\mt32\mt32_file.h">
+					</File>
+					<File
+						RelativePath="..\..\sound\softsynth\mt32\mt32emu.h">
+					</File>
+					<File
+						RelativePath="..\..\sound\softsynth\mt32\part.cpp">
+					</File>
+					<File
+						RelativePath="..\..\sound\softsynth\mt32\part.h">
+					</File>
+					<File
+						RelativePath="..\..\sound\softsynth\mt32\partial.cpp">
+					</File>
+					<File
+						RelativePath="..\..\sound\softsynth\mt32\partial.h">
+					</File>
+					<File
+						RelativePath="..\..\sound\softsynth\mt32\partialManager.cpp">
+					</File>
+					<File
+						RelativePath="..\..\sound\softsynth\mt32\partialManager.h">
+					</File>
+					<File
+						RelativePath="..\..\sound\softsynth\mt32\structures.h">
+					</File>
+					<File
+						RelativePath="..\..\sound\softsynth\mt32\synth.cpp">
+					</File>
+					<File
+						RelativePath="..\..\sound\softsynth\mt32\synth.h">
+					</File>
+					<File
+						RelativePath="..\..\sound\softsynth\mt32\tables.cpp">
+					</File>
+					<File
+						RelativePath="..\..\sound\softsynth\mt32\tables.h">
+					</File>
+				</Filter>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="txt"
@@ -461,77 +574,11 @@
 				Name="midi"
 				Filter="">
 				<File
-					RelativePath="..\..\backends\midi\adlib.cpp">
-				</File>
-				<File
-					RelativePath="..\..\backends\midi\mt32.cpp">
-				</File>
-				<File
 					RelativePath="..\..\backends\midi\null.cpp">
 				</File>
 				<File
 					RelativePath="..\..\backends\midi\windows.cpp">
 				</File>
-				<File
-					RelativePath="..\..\backends\midi\ym2612.cpp">
-				</File>
-				<Filter
-					Name="mt32">
-					<File
-						RelativePath="..\..\backends\midi\mt32\freeverb.cpp">
-					</File>
-					<File
-						RelativePath="..\..\backends\midi\mt32\freeverb.h">
-					</File>
-					<File
-						RelativePath="..\..\backends\midi\mt32\i386.cpp">
-					</File>
-					<File
-						RelativePath="..\..\backends\midi\mt32\i386.h">
-					</File>
-					<File
-						RelativePath="..\..\backends\midi\mt32\mt32_file.cpp">
-					</File>
-					<File
-						RelativePath="..\..\backends\midi\mt32\mt32_file.h">
-					</File>
-					<File
-						RelativePath="..\..\backends\midi\mt32\mt32emu.h">
-					</File>
-					<File
-						RelativePath="..\..\backends\midi\mt32\part.cpp">
-					</File>
-					<File
-						RelativePath="..\..\backends\midi\mt32\part.h">
-					</File>
-					<File
-						RelativePath="..\..\backends\midi\mt32\partial.cpp">
-					</File>
-					<File
-						RelativePath="..\..\backends\midi\mt32\partial.h">
-					</File>
-					<File
-						RelativePath="..\..\backends\midi\mt32\partialManager.cpp">
-					</File>
-					<File
-						RelativePath="..\..\backends\midi\mt32\partialManager.h">
-					</File>
-					<File
-						RelativePath="..\..\backends\midi\mt32\structures.h">
-					</File>
-					<File
-						RelativePath="..\..\backends\midi\mt32\synth.cpp">
-					</File>
-					<File
-						RelativePath="..\..\backends\midi\mt32\synth.h">
-					</File>
-					<File
-						RelativePath="..\..\backends\midi\mt32\tables.cpp">
-					</File>
-					<File
-						RelativePath="..\..\backends\midi\mt32\tables.h">
-					</File>
-				</Filter>
 			</Filter>
 		</Filter>
 		<Filter
@@ -589,16 +636,22 @@
 				RelativePath="..\..\gui\console.cpp">
 			</File>
 			<File
-				RelativePath="..\..\gui\consolefont.cpp">
+				RelativePath="..\..\gui\console.h">
 			</File>
 			<File
-				RelativePath="..\..\gui\console.h">
+				RelativePath="..\..\gui\credits.h">
 			</File>
 			<File
 				RelativePath="..\..\gui\dialog.cpp">
 			</File>
 			<File
 				RelativePath="..\..\gui\dialog.h">
+			</File>
+			<File
+				RelativePath="..\..\gui\editable.cpp">
+			</File>
+			<File
+				RelativePath="..\..\gui\editable.h">
 			</File>
 			<File
 				RelativePath="..\..\gui\launcher.cpp">
@@ -628,9 +681,6 @@
 				RelativePath="..\..\gui\options.h">
 			</File>
 			<File
-				RelativePath="..\..\gui\walkthrough.h">
-			</File>
-			<File
 				RelativePath="..\..\gui\widget.cpp">
 			</File>
 			<File
@@ -647,16 +697,37 @@
 				RelativePath="..\..\graphics\animation.h">
 			</File>
 			<File
+				RelativePath="..\..\graphics\consolefont.cpp">
+			</File>
+			<File
 				RelativePath="..\..\graphics\font.cpp">
 			</File>
 			<File
 				RelativePath="..\..\graphics\font.h">
 			</File>
 			<File
+				RelativePath="..\..\graphics\fontman.cpp">
+			</File>
+			<File
+				RelativePath="..\..\graphics\fontman.h">
+			</File>
+			<File
 				RelativePath="..\..\graphics\newfont.cpp">
 			</File>
 			<File
+				RelativePath="..\..\graphics\newfont_big.cpp">
+			</File>
+			<File
+				RelativePath="..\..\graphics\primitives.cpp">
+			</File>
+			<File
+				RelativePath="..\..\graphics\primitives.h">
+			</File>
+			<File
 				RelativePath="..\..\graphics\scummfont.cpp">
+			</File>
+			<File
+				RelativePath="..\..\graphics\surface.cpp">
 			</File>
 			<File
 				RelativePath="..\..\graphics\surface.h">

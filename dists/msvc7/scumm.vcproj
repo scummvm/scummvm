@@ -310,6 +310,12 @@
 			RelativePath="..\..\scumm\intern.h">
 		</File>
 		<File
+			RelativePath="..\..\scumm\logic_he.cpp">
+		</File>
+		<File
+			RelativePath="..\..\scumm\logic_he.h">
+		</File>
+		<File
 			RelativePath="..\..\scumm\midiparser_eup.cpp">
 		</File>
 		<File
@@ -334,10 +340,19 @@
 			RelativePath="..\..\scumm\palette.cpp">
 		</File>
 		<File
+			RelativePath="..\..\scumm\palette_he.cpp">
+		</File>
+		<File
 			RelativePath="..\..\scumm\player_mod.cpp">
 		</File>
 		<File
 			RelativePath="..\..\scumm\player_mod.h">
+		</File>
+		<File
+			RelativePath="..\..\scumm\player_nes.cpp">
+		</File>
+		<File
+			RelativePath="..\..\scumm\player_nes.h">
 		</File>
 		<File
 			RelativePath="..\..\scumm\player_v1.cpp">
@@ -385,6 +400,9 @@
 			RelativePath="..\..\scumm\resource_v7he.h">
 		</File>
 		<File
+			RelativePath="..\..\scumm\room.cpp">
+		</File>
+		<File
 			RelativePath="..\..\scumm\saveload.cpp">
 		</File>
 		<File
@@ -395,6 +413,9 @@
 		</File>
 		<File
 			RelativePath="..\..\scumm\script.h">
+		</File>
+		<File
+			RelativePath="..\..\scumm\script_v100he.cpp">
 		</File>
 		<File
 			RelativePath="..\..\scumm\script_v2.cpp">
@@ -409,10 +430,10 @@
 			RelativePath="..\..\scumm\script_v6he.cpp">
 		</File>
 		<File
-			RelativePath="..\..\scumm\script_v7he.cpp">
+			RelativePath="..\..\scumm\script_v72he.cpp">
 		</File>
 		<File
-			RelativePath="..\..\scumm\script_v72he.cpp">
+			RelativePath="..\..\scumm\script_v7he.cpp">
 		</File>
 		<File
 			RelativePath="..\..\scumm\script_v8.cpp">
@@ -422,9 +443,6 @@
 		</File>
 		<File
 			RelativePath="..\..\scumm\script_v90he.cpp">
-		</File>
-		<File
-			RelativePath="..\..\scumm\script_v100he.cpp">
 		</File>
 		<File
 			RelativePath="..\..\scumm\scumm-md5.h">
@@ -442,13 +460,28 @@
 			RelativePath="..\..\scumm\sound.h">
 		</File>
 		<File
+			RelativePath="..\..\scumm\sprite_he.cpp">
+		</File>
+		<File
+			RelativePath="..\..\scumm\sprite_he.h">
+		</File>
+		<File
 			RelativePath="..\..\scumm\string.cpp">
+		</File>
+		<File
+			RelativePath="..\..\scumm\thumbnail.cpp">
 		</File>
 		<File
 			RelativePath="..\..\scumm\usage_bits.cpp">
 		</File>
 		<File
 			RelativePath="..\..\scumm\usage_bits.h">
+		</File>
+		<File
+			RelativePath="..\..\scumm\util.cpp">
+		</File>
+		<File
+			RelativePath="..\..\scumm\util.h">
 		</File>
 		<File
 			RelativePath="..\..\scumm\vars.cpp">
@@ -458,6 +491,12 @@
 		</File>
 		<File
 			RelativePath="..\..\scumm\verbs.h">
+		</File>
+		<File
+			RelativePath="..\..\scumm\wiz_he.cpp">
+		</File>
+		<File
+			RelativePath="..\..\scumm\wiz_he.h">
 		</File>
 	</Files>
 	<Globals>

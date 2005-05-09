@@ -113,22 +113,10 @@
 				RelativePath="..\..\sword2\driver\d_draw.cpp">
 			</File>
 			<File
-				RelativePath="..\..\sword2\driver\d_draw.h">
-			</File>
-			<File
 				RelativePath="..\..\sword2\driver\d_sound.cpp">
 			</File>
 			<File
-				RelativePath="..\..\sword2\driver\d_sound.h">
-			</File>
-			<File
-				RelativePath="..\..\sword2\driver\driver96.h">
-			</File>
-			<File
 				RelativePath="..\..\sword2\driver\menu.cpp">
-			</File>
-			<File
-				RelativePath="..\..\sword2\driver\menu.h">
 			</File>
 			<File
 				RelativePath="..\..\sword2\driver\palette.cpp">
@@ -138,9 +126,6 @@
 			</File>
 			<File
 				RelativePath="..\..\sword2\driver\render.cpp">
-			</File>
-			<File
-				RelativePath="..\..\sword2\driver\render.h">
 			</File>
 			<File
 				RelativePath="..\..\sword2\driver\sprite.cpp">
@@ -264,13 +249,7 @@
 			RelativePath="..\..\sword2\speech.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword2\speech.h">
-		</File>
-		<File
 			RelativePath="..\..\sword2\startup.cpp">
-		</File>
-		<File
-			RelativePath="..\..\sword2\startup.h">
 		</File>
 		<File
 			RelativePath="..\..\sword2\sword2.cpp">

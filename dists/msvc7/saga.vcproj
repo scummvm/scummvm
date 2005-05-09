@@ -98,22 +98,10 @@
 	</Configurations>
 	<Files>
 		<File
-			RelativePath="..\..\saga\actionmap.cpp">
-		</File>
-		<File
-			RelativePath="..\..\saga\actionmap.h">
-		</File>
-		<File
 			RelativePath="..\..\saga\actor.cpp">
 		</File>
 		<File
 			RelativePath="..\..\saga\actor.h">
-		</File>
-		<File
-			RelativePath="..\..\saga\actordata.cpp">
-		</File>
-		<File
-			RelativePath="..\..\saga\actordata.h">
 		</File>
 		<File
 			RelativePath="..\..\saga\animation.cpp">
@@ -128,25 +116,10 @@
 			RelativePath="..\..\saga\console.h">
 		</File>
 		<File
-			RelativePath="..\..\saga\cvar.cpp">
-		</File>
-		<File
-			RelativePath="..\..\saga\cvar.h">
-		</File>
-		<File
-			RelativePath="..\..\saga\cvar_mod.h">
-		</File>
-		<File
 			RelativePath="..\..\saga\events.cpp">
 		</File>
 		<File
 			RelativePath="..\..\saga\events.h">
-		</File>
-		<File
-			RelativePath="..\..\saga\expr.cpp">
-		</File>
-		<File
-			RelativePath="..\..\saga\expr.h">
 		</File>
 		<File
 			RelativePath="..\..\saga\font.cpp">
@@ -161,12 +134,6 @@
 			RelativePath="..\..\saga\game.cpp">
 		</File>
 		<File
-			RelativePath="..\..\saga\game.h">
-		</File>
-		<File
-			RelativePath="..\..\saga\game_mod.h">
-		</File>
-		<File
 			RelativePath="..\..\saga\gfx.cpp">
 		</File>
 		<File
@@ -177,9 +144,6 @@
 		</File>
 		<File
 			RelativePath="..\..\saga\image.cpp">
-		</File>
-		<File
-			RelativePath="..\..\saga\image.h">
 		</File>
 		<File
 			RelativePath="..\..\saga\input.cpp">
@@ -200,16 +164,19 @@
 			RelativePath="..\..\saga\ite_introproc.cpp">
 		</File>
 		<File
+			RelativePath="..\..\saga\itedata.cpp">
+		</File>
+		<File
+			RelativePath="..\..\saga\itedata.h">
+		</File>
+		<File
+			RelativePath="..\..\saga\list.h">
+		</File>
+		<File
 			RelativePath="..\..\saga\music.cpp">
 		</File>
 		<File
 			RelativePath="..\..\saga\music.h">
-		</File>
-		<File
-			RelativePath="..\..\saga\objectdata.cpp">
-		</File>
-		<File
-			RelativePath="..\..\saga\objectdata.h">
 		</File>
 		<File
 			RelativePath="..\..\saga\objectmap.cpp">
@@ -222,9 +189,6 @@
 		</File>
 		<File
 			RelativePath="..\..\saga\palanim.h">
-		</File>
-		<File
-			RelativePath="..\..\saga\reinherit.h">
 		</File>
 		<File
 			RelativePath="..\..\saga\render.cpp">
@@ -251,6 +215,9 @@
 			RelativePath="..\..\saga\saga.h">
 		</File>
 		<File
+			RelativePath="..\..\saga\saveload.cpp">
+		</File>
+		<File
 			RelativePath="..\..\saga\scene.cpp">
 		</File>
 		<File
@@ -261,12 +228,6 @@
 		</File>
 		<File
 			RelativePath="..\..\saga\script.h">
-		</File>
-		<File
-			RelativePath="..\..\saga\sdata.cpp">
-		</File>
-		<File
-			RelativePath="..\..\saga\sdata.h">
 		</File>
 		<File
 			RelativePath="..\..\saga\sdebug.cpp">
@@ -296,6 +257,9 @@
 			RelativePath="..\..\saga\sthread.cpp">
 		</File>
 		<File
+			RelativePath="..\..\saga\stream.h">
+		</File>
+		<File
 			RelativePath="..\..\saga\text.cpp">
 		</File>
 		<File
@@ -303,12 +267,6 @@
 		</File>
 		<File
 			RelativePath="..\..\saga\transitions.cpp">
-		</File>
-		<File
-			RelativePath="..\..\saga\ys_dl_list.cpp">
-		</File>
-		<File
-			RelativePath="..\..\saga\yslib.h">
 		</File>
 	</Files>
 	<Globals>

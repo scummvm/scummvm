@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.00"
-	Name="sword1"
-	ProjectGUID="{C8AAE83E-198B-4ECA-A877-166827953979}"
+	Name="gob"
+	ProjectGUID="{AA83E230-EC4A-44DF-896C-4472F20CE168}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="sword1_Debug"
-			IntermediateDirectory="sword1_Debug"
+			OutputDirectory="gob_Debug"
+			IntermediateDirectory="gob_Debug"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
@@ -21,7 +21,7 @@
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702"
 				Optimization="0"
 				AdditionalIncludeDirectories="../../;../../common"
-				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2"
+				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
 				MinimalRebuild="TRUE"
 				ExceptionHandling="TRUE"
 				BasicRuntimeChecks="3"
@@ -38,7 +38,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/sword1.lib"/>
+				OutputFile="$(OutDir)/gob.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -54,8 +54,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="sword1_Release"
-			IntermediateDirectory="sword1_Release"
+			OutputDirectory="gob_Release"
+			IntermediateDirectory="gob_Release"
 			ConfigurationType="4"
 			CharacterSet="2"
 			WholeProgramOptimization="FALSE">
@@ -66,7 +66,7 @@
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
 				AdditionalIncludeDirectories="../../;../../common"
-				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2"
+				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
 				StringPooling="TRUE"
 				ExceptionHandling="TRUE"
 				RuntimeLibrary="0"
@@ -81,7 +81,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/sword1.lib"/>
+				OutputFile="$(OutDir)/gob.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -98,121 +98,130 @@
 	</Configurations>
 	<Files>
 		<File
-			RelativePath="..\..\sword1\animation.cpp">
+			RelativePath="..\..\gob\anim.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword1\animation.h">
+			RelativePath="..\..\gob\anim.h">
 		</File>
 		<File
-			RelativePath="..\..\sword1\collision.h">
+			RelativePath="..\..\gob\cdrom.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword1\control.cpp">
+			RelativePath="..\..\gob\cdrom.h">
 		</File>
 		<File
-			RelativePath="..\..\sword1\control.h">
+			RelativePath="..\..\gob\dataio.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword1\credits.cpp">
+			RelativePath="..\..\gob\dataio.h">
 		</File>
 		<File
-			RelativePath="..\..\sword1\credits.h">
+			RelativePath="..\..\gob\draw.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword1\debug.cpp">
+			RelativePath="..\..\gob\draw.h">
 		</File>
 		<File
-			RelativePath="..\..\sword1\debug.h">
+			RelativePath="..\..\gob\driver_vga.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword1\eventman.cpp">
+			RelativePath="..\..\gob\driver_vga.h">
 		</File>
 		<File
-			RelativePath="..\..\sword1\eventman.h">
+			RelativePath="..\..\gob\game.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword1\logic.cpp">
+			RelativePath="..\..\gob\game.h">
 		</File>
 		<File
-			RelativePath="..\..\sword1\logic.h">
+			RelativePath="..\..\gob\global.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword1\memman.cpp">
+			RelativePath="..\..\gob\global.h">
 		</File>
 		<File
-			RelativePath="..\..\sword1\memman.h">
+			RelativePath="..\..\gob\gob.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword1\menu.cpp">
+			RelativePath="..\..\gob\gob.h">
 		</File>
 		<File
-			RelativePath="..\..\sword1\menu.h">
+			RelativePath="..\..\gob\goblin.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword1\mouse.cpp">
+			RelativePath="..\..\gob\goblin.h">
 		</File>
 		<File
-			RelativePath="..\..\sword1\mouse.h">
+			RelativePath="..\..\gob\init.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword1\music.cpp">
+			RelativePath="..\..\gob\init.h">
 		</File>
 		<File
-			RelativePath="..\..\sword1\music.h">
+			RelativePath="..\..\gob\inter.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword1\object.h">
+			RelativePath="..\..\gob\inter.h">
 		</File>
 		<File
-			RelativePath="..\..\sword1\objectman.cpp">
+			RelativePath="..\..\gob\map.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword1\objectman.h">
+			RelativePath="..\..\gob\map.h">
 		</File>
 		<File
-			RelativePath="..\..\sword1\resman.cpp">
+			RelativePath="..\..\gob\mult.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword1\resman.h">
+			RelativePath="..\..\gob\mult.h">
 		</File>
 		<File
-			RelativePath="..\..\sword1\router.cpp">
+			RelativePath="..\..\gob\pack.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword1\router.h">
+			RelativePath="..\..\gob\pack.h">
 		</File>
 		<File
-			RelativePath="..\..\sword1\screen.cpp">
+			RelativePath="..\..\gob\palanim.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword1\screen.h">
+			RelativePath="..\..\gob\palanim.h">
 		</File>
 		<File
-			RelativePath="..\..\sword1\sound.cpp">
+			RelativePath="..\..\gob\parse.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword1\sound.h">
+			RelativePath="..\..\gob\parse.h">
 		</File>
 		<File
-			RelativePath="..\..\sword1\staticres.cpp">
+			RelativePath="..\..\gob\scenery.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword1\sword1.cpp">
+			RelativePath="..\..\gob\scenery.h">
 		</File>
 		<File
-			RelativePath="..\..\sword1\sword1.h">
+			RelativePath="..\..\gob\sound.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword1\sworddefs.h">
+			RelativePath="..\..\gob\sound.h">
 		</File>
 		<File
-			RelativePath="..\..\sword1\swordres.h">
+			RelativePath="..\..\gob\timer.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword1\text.cpp">
+			RelativePath="..\..\gob\timer.h">
 		</File>
 		<File
-			RelativePath="..\..\sword1\text.h">
+			RelativePath="..\..\gob\util.cpp">
+		</File>
+		<File
+			RelativePath="..\..\gob\util.h">
+		</File>
+		<File
+			RelativePath="..\..\gob\video.cpp">
+		</File>
+		<File
+			RelativePath="..\..\gob\video.h">
 		</File>
 	</Files>
 	<Globals>
