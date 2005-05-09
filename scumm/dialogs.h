@@ -54,7 +54,18 @@ protected:
 	const String queryResString(int stringno);
 };
 
-class SaveLoadChooser;
+// to have a base for all different Save/Load Choosers
+// currently only for SaveLoadChooser (320x200)
+// and for SaveLoadChooserEx (640x400/640x480)
+class BaseSaveLoadChooser
+{
+public:
+	virtual ~BaseSaveLoadChooser() {};
+	
+	virtual const Common::String &getResultString() const = 0;
+	virtual void setList(const Common::StringList& list) = 0;
+	virtual int runModal() = 0;
+};
 
 class MainMenuDialog : public ScummDialog {
 public:
@@ -68,8 +79,8 @@ protected:
 #ifndef DISABLE_HELP
 	GUI::Dialog		*_helpDialog;
 #endif
-	SaveLoadChooser	*_saveDialog;
-	SaveLoadChooser	*_loadDialog;
+	BaseSaveLoadChooser	*_saveDialog;
+	BaseSaveLoadChooser	*_loadDialog;
 
 	void save();
 	void load();

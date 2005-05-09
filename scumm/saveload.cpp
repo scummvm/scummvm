@@ -83,6 +83,7 @@ bool ScummEngine::saveState(int slot, bool compat) {
 	hdr.ver = TO_LE_32(CURRENT_VER);
 
 	out->write(&hdr, sizeof(hdr));
+	saveThumbnail(out);
 
 	Serializer ser(0, out, CURRENT_VER);
 	saveOrLoad(&ser, CURRENT_VER);
@@ -125,6 +126,18 @@ bool ScummEngine::loadState(int slot, bool compat) {
 		warning("Unsupported version of '%s'", filename);
 		delete in;
 		return false;
+	}
+	
+	// Sine version 52 a thumbnail is saved directly after the header
+	if (hdr.ver >= VER(52)) {
+		uint32 type = in->readUint32BE();
+		if (type != MKID('THMB')) {
+			warning("Can not load thumbnail");
+			delete in;
+			return false;
+		}
+		uint32 size = in->readUint32BE();
+		in->skip(size - 8);
 	}
 
 	// Due to a bug in scummvm up to and including 0.3.0, save games could be saved
@@ -385,6 +398,36 @@ bool ScummEngine::getSavegameName(int slot, char *desc) {
 	memcpy(desc, hdr.name, sizeof(hdr.name));
 	desc[sizeof(hdr.name) - 1] = 0;
 	return true;
+}
+
+Graphics::Surface *ScummEngine::loadThumbnailFromSlot(int slot) {
+	char filename[256];
+	InSaveFile *in;
+	SaveGameHeader hdr;
+	int len;
+	
+	makeSavegameName(filename, slot, false);
+	if (!(in = _saveFileMan->openForLoading(filename))) {
+		return 0;
+	}
+	len = in->read(&hdr, sizeof(hdr));
+
+	if (len != sizeof(hdr) || hdr.type != MKID('SCVM')) {
+		delete in;
+		return 0;
+	}
+
+	if (hdr.ver > CURRENT_VER)
+		hdr.ver = TO_LE_32(hdr.ver);
+	if (hdr.ver < VER(52)) {
+		delete in;
+		return 0;
+	}
+
+	Graphics::Surface *thumb = loadThumbnail(in);
+
+	delete in;
+	return thumb;
 }
 
 void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {

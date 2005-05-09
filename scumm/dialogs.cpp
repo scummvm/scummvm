@@ -22,6 +22,7 @@
 
 #include "common/config-manager.h"
 #include "common/system.h"
+#include "common/scaler.h"
 
 #include "gui/chooser.h"
 #include "gui/newgui.h"
@@ -147,7 +148,6 @@ static ResString string_map_table_v5[] = {
 
 #pragma mark -
 
-
 const Common::String ScummDialog::queryResString(int stringno) {
 	byte buf[256];
 	byte *result;
@@ -199,7 +199,7 @@ enum {
 	kQuitCmd = 'QUIT'
 };
 
-class SaveLoadChooser : public GUI::ChooserDialog {
+class SaveLoadChooser : public GUI::ChooserDialog, public BaseSaveLoadChooser {
 	typedef Common::String String;
 	typedef Common::StringList StringList;
 protected:
@@ -210,6 +210,8 @@ public:
 	
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	const String &getResultString() const;
+	void setList(const StringList& list) { GUI::ChooserDialog::setList(list); }
+	int runModal() { return GUI::ChooserDialog::runModal(); }
 };
 
 SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode)
@@ -249,6 +251,115 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 		GUI_ChooserDialog::handleCommand(sender, cmd, data);
 	}
 }
+
+#pragma mark -
+
+enum {
+	kChooseCmd = 'Chos'
+};
+
+// only for use with >= 640x400 resolutions
+class SaveLoadChooserEx : public GUI::Dialog, public BaseSaveLoadChooser {
+	typedef Common::String String;
+	typedef Common::StringList StringList;
+protected:
+	bool _saveMode;
+	GUI::ListWidget		*_list;
+	GUI::ButtonWidget	*_chooseButton;
+	GUI::GraphicsWidget	*_gfxWidget;
+	ScummEngine			*_scumm;
+
+public:
+	SaveLoadChooserEx(const String &title, const String &buttonLabel, bool saveMode, ScummEngine *engine);
+	
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	const String &getResultString() const;	
+	void setList(const StringList& list);
+	int runModal();
+
+	bool wantsScaling() const { return false; }
+};
+
+SaveLoadChooserEx::SaveLoadChooserEx(const String &title, const String &buttonLabel, bool saveMode, ScummEngine *engine)
+	: Dialog(8, 8, engine->_system->getOverlayWidth() - 2 * 8, engine->_system->getOverlayHeight() - 16), _saveMode(saveMode), _list(0), _chooseButton(0), _gfxWidget(0), _scumm(engine) {
+	
+	new StaticTextWidget(this, 10, 6, _w - 2 * 10, kLineHeight, title, kTextAlignCenter);
+	
+	// Add choice list
+	_list = new GUI::ListWidget(this, 10, 18, _w - 2 * 10 - 180, _h - 14 - 24 - 10);
+	_list->setEditable(saveMode);
+	_list->setNumberingMode(saveMode ? GUI::kListNumberingOne : GUI::kListNumberingZero);
+	
+	// Add the thumbnail display
+	_gfxWidget = new GUI::GraphicsWidget(this,
+			_w - (kThumbnailWidth + 22),
+			18,
+			kThumbnailWidth + 8,
+			((_scumm->_system->getHeight() % 200 && _scumm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1) + 8);
+	_gfxWidget->setFlags(GUI::WIDGET_BORDER);
+	
+	// Buttons
+	addButton(_w - 2 * (kButtonWidth + 10), _h - 24, "Cancel", kCloseCmd, 0);
+	_chooseButton = addButton(_w-(kButtonWidth + 10), _h - 24, buttonLabel, kChooseCmd, 0);
+	_chooseButton->setEnabled(false);
+}
+
+const Common::String &SaveLoadChooserEx::getResultString() const {
+	return _list->getSelectedString();
+}
+
+void SaveLoadChooserEx::setList(const StringList& list) {
+	_list->setList(list);
+}
+
+int SaveLoadChooserEx::runModal() {
+	_gfxWidget->setGfx(0);
+	int ret = GUI::Dialog::runModal();
+	return ret;
+}
+
+void SaveLoadChooserEx::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	int selItem = _list->getSelected();
+	switch (cmd) {
+	case GUI::kListItemActivatedCmd:
+	case GUI::kListItemDoubleClickedCmd:
+		if (selItem >= 0) {
+			if (_saveMode || !getResultString().isEmpty()) {
+				_list->endEditMode();
+				setResult(selItem);
+				close();
+			}
+		}
+		break;
+	case kChooseCmd:
+		_list->endEditMode();
+		setResult(selItem);
+		close();
+		break;
+	case GUI::kListSelectionChangedCmd: {
+		const Graphics::Surface *thumb;
+		thumb = _scumm->loadThumbnailFromSlot(_saveMode ? selItem + 1 : selItem);
+		_gfxWidget->setGfx(thumb);
+		delete thumb;
+		_gfxWidget->draw();
+
+		if (_saveMode) {
+			_list->startEditMode();
+		}
+		// Disable button if nothing is selected, or (in load mode) if an empty
+		// list item is selected. We allow choosing an empty item in save mode
+		// because we then just assign a default name.
+		_chooseButton->setEnabled(selItem >= 0 && (_saveMode || !getResultString().isEmpty()));
+		_chooseButton->draw();
+	} break;
+	case kCloseCmd:
+		setResult(-1);
+	default:
+		GUI::Dialog::handleCommand(sender, cmd, data);
+	}
+}
+
+#pragma mark -
 
 Common::StringList generateSavegameList(ScummEngine *scumm, bool saveMode) {
 	// Get savegame names
@@ -308,8 +419,13 @@ MainMenuDialog::MainMenuDialog(ScummEngine *scumm)
 #ifndef DISABLE_HELP
 	_helpDialog = new HelpDialog(scumm);
 #endif
-	_saveDialog = new SaveLoadChooser("Save game:", "Save", true);
-	_loadDialog = new SaveLoadChooser("Load game:", "Load", false);
+	if (scumm->_system->getOverlayWidth() <= 320) {
+		_saveDialog = new SaveLoadChooser("Save game:", "Save", true);
+		_loadDialog = new SaveLoadChooser("Load game:", "Load", false);
+	} else {
+		_saveDialog = new SaveLoadChooserEx("Save game:", "Save", true, scumm);
+		_loadDialog = new SaveLoadChooserEx("Load game:", "Load", false, scumm);
+	}
 }
 
 MainMenuDialog::~MainMenuDialog() {

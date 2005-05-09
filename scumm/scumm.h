@@ -27,6 +27,7 @@
 #include "common/file.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "graphics/surface.h"
 
 #include "scumm/gfx.h"
 #include "scumm/script.h"
@@ -36,7 +37,8 @@ namespace GUI {
 }
 using GUI::Dialog;
 class GameDetector;
-
+class InSaveFile;
+class OutSaveFile;
 
 namespace Scumm {
 
@@ -578,6 +580,14 @@ public:
 	
 	void requestSave(int slot, const char *name, bool temporary = false);
 	void requestLoad(int slot);
+
+// thumbnail stuff
+public:
+	Graphics::Surface *loadThumbnailFromSlot(int slot);
+
+protected:
+	Graphics::Surface *loadThumbnail(InSaveFile *file);
+	void saveThumbnail(OutSaveFile *file);
 
 protected:
 	/* Script VM - should be in Script class */

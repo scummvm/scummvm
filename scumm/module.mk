@@ -79,7 +79,8 @@ MODULE_OBJS := \
 	scumm/smush/smush_player.o \
 	scumm/smush/saud_channel.o \
 	scumm/smush/smush_mixer.o \
-	scumm/smush/smush_font.o
+	scumm/smush/smush_font.o \
+	scumm/thumbnail.o
 
 MODULE_DIRS += \
 	scumm \
