@@ -26,10 +26,10 @@
 
 namespace Saga {
 
-/*! @brief dissolve one image with another
-
-    @param flags if set to 1, do zero masking
-*/
+/**
+ * Dissolve one image with another.
+ * If flags if set to 1, do zero masking.
+ */
 int SagaEngine::transitionDissolve(byte *dst_img, int dst_w, int dst_h, int dst_p, const byte *src_img,
 						int src_w, int src_h, int src_p, int flags, int x, int y, 
 						double percent) {
