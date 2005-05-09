@@ -2547,7 +2547,7 @@ void ScummEngine_v90he::o90_kernelGetFunctions() {
 	case 2001:
 		// Used in football
 		debug(0, "o90_kernelGetFunctions: U32 code %d (args %d) %d", args[1], num - 2, args[2]);
-		push(_logicHE->dispatch(args[1], num - 2, &args[2]));
+		push(_logicHE->dispatch(args[1], num - 2, (int32 *)&args[2]));
 		break;
 	default:
 		error("o90_kernelGetFunctions: default case %d", args[0]);
@@ -2613,7 +2613,7 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 	case 2001:
 		// Used in SoccerMLS/Soccer2004
 		debug(0, "o90_kernelSetFunctions: U32 code %d (args %d) %d", args[1], num - 2, args[2]);
-		_logicHE->dispatch(args[1], num - 2, &args[2]);
+		_logicHE->dispatch(args[1], num - 2, (int32 *)&args[2]);
 		break;
 	default:
 		error("o90_kernelSetFunctions: default case %d (param count %d)", args[0], num);

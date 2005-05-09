@@ -121,7 +121,7 @@ int32 LogicHE::dispatch(int op, int numArgs, int32 *args) {
 int32 LogicHE::op_1003(int32 *args) {
 	int value = args[2] ? args[2] : 1;
 
-	_vm->writeVar(108, (int32)(atan(args[0] / args[1]) * RAD2DEG * value));
+	_vm->writeVar(108, (int32)(atan((float)(args[0] / args[1])) * RAD2DEG * value));
 
 	return 1;
 }
@@ -129,7 +129,7 @@ int32 LogicHE::op_1003(int32 *args) {
 int32 LogicHE::op_1004(int32 *args) {
 	int value = args[1] ? args[1] : 1;
 
-	_vm->writeVar(108, (int32)(sqrt(args[0]) * value));
+	_vm->writeVar(108, (int32)(sqrt((float)args[0]) * value));
 
 	return 1;
 }
@@ -308,7 +308,7 @@ int32 LogicHE::op_1140(int32 *args) {
 	res = args[1] - 2 * (arg2 * args[0] + arg3 * args[1]) * arg3;
 	
 	if (-args[3] * args[3] >= 0)
-		res *= 0.83333331;
+		res *= 0.83333331f;
 
 	_vm->writeVar(109, (int32)res);
 

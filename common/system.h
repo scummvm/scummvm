@@ -29,7 +29,7 @@
 #include "common/singleton.h"
 
 namespace Graphics {
-class Surface;
+struct Surface;
 } // end of namespace Graphics
 
 class SaveFileManager;
