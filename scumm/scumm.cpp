@@ -1017,6 +1017,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 
 	VAR_ROOM_WIDTH = 0xFF;
 	VAR_ROOM_HEIGHT = 0xFF;
+	VAR_SUBTITLES = 0xFF;
 	VAR_V6_EMSSPACE = 0xFF;
 
 	VAR_CAMERA_POS_Y = 0xFF;

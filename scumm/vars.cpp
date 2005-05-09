@@ -88,7 +88,6 @@ void ScummEngine::setupScummVars() {
 	}
 
 	if (_gameId == GID_LOOM256 || _version >= 5) {
-		VAR_NOSUBTITLES = 60;
 		VAR_SOUNDPARAM = 64;
 		VAR_SOUNDPARAM2 = 65;
 		VAR_SOUNDPARAM3 = 66;
@@ -149,16 +148,26 @@ void ScummEngine_v5::setupScummVars() {
 
 	VAR_CURRENT_LIGHTS = 9;
 
-	if (_version >= 4)
+	if (_version >= 4) {
 		VAR_V5_TALK_STRING_Y = 54;
+	}
+	if (_gameId == GID_LOOM256 || _version >= 5) {
+		VAR_NOSUBTITLES = 60;
+	}
 }
 
 void ScummEngine_v6::setupScummVars() {
 	// Many vars are the same as in V5 & V6 games, so just call the inherited method first
 	ScummEngine::setupScummVars();
 
+	if (_heversion == 0) {
+		VAR_V6_SOUNDMODE = 9;
+	}
+
 	VAR_ROOM_WIDTH = 41;
 	VAR_ROOM_HEIGHT = 54;
+
+	VAR_SUBTITLES = 60;
 
 	VAR_LEFTBTN_HOLD = 74;
 	VAR_RIGHTBTN_HOLD = 75;
@@ -171,10 +180,6 @@ void ScummEngine_v6::setupScummVars() {
 	VAR_V6_EMSSPACE = 76;
 	VAR_RANDOM_NR = 118;
 	
-	if (_heversion < 70) {
-		VAR_V6_SOUNDMODE = 9;
-	}
-
 	VAR_TIMEDATE_YEAR = 119;
 	VAR_TIMEDATE_MONTH = 129;
 	VAR_TIMEDATE_DAY = 128;
@@ -183,7 +188,6 @@ void ScummEngine_v6::setupScummVars() {
 
 	// Sam & Max specific
 	VAR_CHARSET_MASK = 123;
-
 }
 
 void ScummEngine_v70he::setupScummVars() {
@@ -238,7 +242,7 @@ void ScummEngine_v72he::setupScummVars() {
 	VAR_CUTSCENEEXIT_KEY = 44;
 	VAR_TALKSTOP_KEY = 45;
 	VAR_HAVE_MSG = 46;
-	VAR_NOSUBTITLES = 47;
+	VAR_SUBTITLES = 47;
 	VAR_CHARINC = 48;
 	VAR_TALK_ACTOR = 49;
 	VAR_LAST_SOUND = 50;

@@ -1259,6 +1259,7 @@ public:
 	// V6+
 	byte VAR_ROOM_WIDTH;
 	byte VAR_ROOM_HEIGHT;
+	byte VAR_SUBTITLES;
 	byte VAR_V6_EMSSPACE;
 
 	// V7/V8 (=GF_NEW_CAMERA) specific variables

@@ -505,12 +505,11 @@ int ScummEngine::readVar(uint var) {
 			}
 		}
 
-		if (var == VAR_NOSUBTITLES) {
-			if (_gameId == GID_LOOM256 || _heversion >= 60) 
-				return !ConfMan.getBool("subtitles");	
-			else if (_gameId == GID_SAMNMAX)
-				// Used as VAR_SUBTITLES in Sam & Max during Conroy Bumpus song
-				return ConfMan.getBool("subtitles");
+		if (VAR_SUBTITLES != 0xFF && var == VAR_SUBTITLES) {
+			return ConfMan.getBool("subtitles");
+		} 
+		if (VAR_SUBTITLES != 0xFF && var == VAR_NOSUBTITLES) {
+			return !ConfMan.getBool("subtitles");	
 		}
 		
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
@@ -574,20 +573,24 @@ void ScummEngine::writeVar(uint var, int value) {
 	if (!(var & 0xF000)) {
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(w)");
 
+		if (VAR_SUBTITLES != 0xFF && var == VAR_SUBTITLES) {
+			// Ignore default setting in HE60/61 games
+			if (_heversion <= 61 && vm.slot[_currentScript].number == 1)
+				return;
+			assert(value == 0 || value == 1);
+			ConfMan.set("subtitles", value);
+		}
+		if (VAR_NOSUBTITLES != 0xFF && var == VAR_NOSUBTITLES) {
+			assert(value == 0 || value == 1);
+			ConfMan.set("subtitles", !value);
+		}
+
 		if (var == VAR_CHARINC && ConfMan.hasKey("talkspeed")) {
 			uint talkspeed = ConfMan.getInt("talkspeed");
 			if (talkspeed <= 9)
 				VAR(VAR_CHARINC) = talkspeed;
-		} else
+		} else {
 			_scummVars[var] = value;
-
-		// stay in sync with loom cd subtitle var
-		if ((_gameId == GID_LOOM256 || _heversion >= 60) && var == VAR_NOSUBTITLES) {
-			assert(value == 0 || value == 1);
-			if (_heversion <= 61 && vm.slot[_currentScript].number == 1)
-				value = !ConfMan.getBool("subtitles");
-			else
-				ConfMan.set("subtitles", (value == 0));
 		}
 
 		if ((_varwatch == (int)var) || (_varwatch == 0)) {
