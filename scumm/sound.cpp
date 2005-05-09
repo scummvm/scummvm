@@ -607,7 +607,7 @@ void Sound::processSfxQueues() {
 
 		if (_vm->_imuseDigital) {
 			finished = !isSoundRunning(kTalkSoundID);
-		} else if (_vm->_heversion >= 70) {
+		} else if (_vm->_heversion >= 60) {
 			finished = !isSoundRunning(1);
 		} else {
 			finished = !_vm->_mixer->isSoundHandleActive(_talkChannelHandle);
@@ -651,6 +651,7 @@ void Sound::startHETalkSound(uint32 offset) {
 	byte *ptr;
 	int32 size;
 
+	_sfxMode |= 2;
 	_vm->res.nukeResource(rtSound, 1);
 	_sfxFile->seek(offset + 4, SEEK_SET);
 	 size = _sfxFile->readUint32BE() - 8;
