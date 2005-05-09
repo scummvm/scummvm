@@ -756,7 +756,7 @@ void Display::fill(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, uint16 w,
 void Display::readPCX(uint8 *dst, uint16 dstPitch, const uint8 *src, uint16 w, uint16 h) {
 	while (h--) {
 		uint8 *p = dst;
-		while (p < dst + w ) {
+		while (p < dst + w) {
 			uint8 col = *src++;
 			if ((col & 0xC0) == 0xC0) {
 				uint8 len = col & 0x3F;
@@ -939,14 +939,17 @@ void Display::drawText(uint16 x, uint16 y, uint8 color, const char *text, bool o
 }
 
 void Display::drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint8 col) {
-	uint8 *p = _screenBuf;
 	int i;
 	for (i = y1; i <= y2; ++i) {
-		*(p + i * SCREEN_W + x1) = *(p + i * SCREEN_W + x2) = col;
+		_screenBuf[i * SCREEN_W + x1] = _screenBuf[i * SCREEN_W + x2] = col;
 	}
+	setDirtyBlock(x1, y1, 1, y2 - y1);
+	setDirtyBlock(x2, y1, 1, y2 - y1);
 	for (i = x1; i <= x2; ++i) {
-		*(p + y1 * SCREEN_W + i) = *(p + y2 * SCREEN_W + i) = col;
+		_screenBuf[y1 * SCREEN_W + i] = _screenBuf[y2 * SCREEN_W + i] = col;
 	}
+	setDirtyBlock(x1, y1, x2 - x1, 1);
+	setDirtyBlock(x1, y2, x2 - x1, 1);
 }
 
 void Display::shake(bool reset) {
@@ -1010,13 +1013,9 @@ void Display::blankScreenEffect2() {
 			c = *(p + SCREEN_W + 1);
 			break;
 		}
-		uint8 *buf = p;
-		int j = 2;
-		while (j--) {
-			memset(p, c, 2);
-			p += SCREEN_W;
-		}
-		_system->copyRectToScreen(buf, SCREEN_W, x, y, 2, 2);
+		memset(p, c, 2);
+		memset(p + SCREEN_W, c, 2);
+		_system->copyRectToScreen(p, SCREEN_W, x, y, 2, 2);
 		_system->updateScreen();
 		_vm->input()->delay(10);
 	}
@@ -1037,14 +1036,10 @@ void Display::blankScreenEffect3() {
 			uint8 p2 = *(p + SCREEN_W);
 			uint8 p3 = *(p + SCREEN_W + 1);
 			uint8 c = (p0 + p1 + p2 + p3) / 4;
-			uint8 *buf = p;
-			int j = 2;
-			while (j--) {
-				memset(p, c, 2);
-				p += SCREEN_W;
-			}
+			memset(p, c, 2);
+			memset(p + SCREEN_W, c, 2);
 			++i;
-			_system->copyRectToScreen(buf, SCREEN_W, x, y, 2, 2);
+			_system->copyRectToScreen(p, SCREEN_W, x, y, 2, 2);
 		}
 		_system->updateScreen();
 		_vm->input()->delay(10);

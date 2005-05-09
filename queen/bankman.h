@@ -47,9 +47,6 @@ public:
 	//! close a bank
 	void close(uint32 bankslot);
 	
-	//! reset this BankManager
-	void flush();
-
 	//! get a reference to unpacked frame
 	BobFrame *fetchFrame(uint32 index);
 	

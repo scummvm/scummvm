@@ -919,8 +919,8 @@ void Logic::inventoryRefresh() {
 	for (int i = 0; i < 4; ++i) {
 		uint16 itemNum = _inventoryItem[i];
 		if (itemNum != 0) {
-			// 1st object in inventory uses frame 8, 
-			// whereas 2nd, 3rd and 4th uses frame 9
+			// 1st object in inventory uses frame 9, 
+			// whereas 2nd, 3rd and 4th uses frame 8
 			uint16 dstFrame = (itemNum != 0) ? 8 : 9;
 			// unpack frame for object and draw it
 			_vm->bankMan()->unpack(_itemData[itemNum].frame, dstFrame, 14);
@@ -1213,7 +1213,7 @@ void Logic::handlePinnacleRoom() {
 	joe->frameNum = _vm->input()->mousePosX() / 36 + 45;
 
 	// bobs have been unpacked from animating objects, we don't need them
-	// to animate anymore ; so turn animating off
+	// to animate anymore ; so turn animation off
 	joe->animating = piton->animating = false;
 
 	_vm->update();
@@ -1297,7 +1297,7 @@ void Logic::update() {
 	if (_credits)
 		_credits->update();
 
-	if (_vm->debugger()->_drawAreas) {
+	if (_vm->debugger()->flags() & Debugger::DF_DRAW_AREAS) {
 		_vm->grid()->drawZones();
 	}
 }

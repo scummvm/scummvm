@@ -151,8 +151,6 @@ void Cutaway::load(const char *filename) {
 }
 
 void Cutaway::loadStrings(uint16 offset) {
-	int i,j;
-
 	int bankNameCount = READ_BE_UINT16(_fileData + offset);
 	offset += 2;
 
@@ -163,7 +161,7 @@ void Cutaway::loadStrings(uint16 offset) {
 		 the original source code.
 	 */
 
-	for (i = 0, j = 0; i < bankNameCount; i++) {
+	for (int i = 0, j = 0; i < bankNameCount; i++) {
 		Talk::getString(_fileData, offset, _bankNames[j], MAX_FILENAME_LENGTH);
 		if (_bankNames[j][0]) {
 			debug(6, "Bank name %i = '%s'", j, _bankNames[j]);

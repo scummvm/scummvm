@@ -33,7 +33,11 @@ public:
 
 	Debugger(QueenEngine *vm);
 
-	bool _drawAreas;
+	int flags() const { return _flags; }
+	
+	enum {
+		DF_DRAW_AREAS = 1 << 0
+	};
 
 protected:
 
@@ -55,6 +59,7 @@ protected:
 private:
 
 	QueenEngine *_vm;
+	int _flags;
 };
 
 } // End of namespace Queen

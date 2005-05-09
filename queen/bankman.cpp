@@ -28,7 +28,9 @@ namespace Queen {
 
 BankManager::BankManager(Resource *res) 
 	: _res(res) {
-	flush();
+	memset(_frames, 0, sizeof(_frames));
+	memset(_banks, 0, sizeof(_banks));
+	memset(_loadedBanks, 0, sizeof(_loadedBanks));
 }
 
 BankManager::~BankManager() {
@@ -110,12 +112,6 @@ void BankManager::close(uint32 bankslot) {
 	delete[] _banks[bankslot].data;
 	memset(&_banks[bankslot], 0, sizeof(PackedBank));
 	_loadedBanks[bankslot][0] = '\0';
-}
-
-void BankManager::flush() {
-	memset(_frames, 0, sizeof(_frames));
-	memset(_banks, 0, sizeof(_banks));
-	memset(_loadedBanks, 0, sizeof(_loadedBanks));
 }
 
 BobFrame *BankManager::fetchFrame(uint32 index) {

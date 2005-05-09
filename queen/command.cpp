@@ -161,7 +161,7 @@ void Command::executeCurrentAction() {
 		_cmdText.addObject(_vm->logic()->objectName(od->name));
 	}
 
-	// make sure that command is always highlighted when actioned!
+	// always highlight the current command when actioned
 	_cmdText.display(INK_CMD_SELECT);
 
 	_state.selNoun = _state.noun;
@@ -172,7 +172,7 @@ void Command::executeCurrentAction() {
 		return;
 	}
 
-	// get the commands associated with object/item
+	// get the commands associated with this object/item
 	uint16 comMax = 0;
 	uint16 matchingCmds[MAX_MATCHING_CMDS];
 	CmdListData *cmdList = &_cmdList[1];
@@ -253,10 +253,6 @@ void Command::updatePlayer() {
 			_state.verb = _vm->input()->keyVerb();
 			if (isVerbInv(_state.verb)) {
 				_state.noun = _state.selNoun = 0;
-				// Clear old noun and old verb in case we're pointing at an
-				// object (noun) or item (verb) and we want to use an item
-				// on it. This was the command will be redisplayed with the
-				// object/item that the cursor is currently on.
 				_state.oldNoun = 0;
 				_state.oldVerb = VERB_NONE;
 				grabSelectedItem();
@@ -361,7 +357,7 @@ int16 Command::executeCommand(uint16 comId, int16 condResult) {
 		setAreas(comId);
 	}
 
-	// Don't grab if action is TALK or WALK
+	// don't try to grab if action is TALK or WALK
 	if (_state.selAction != VERB_TALK_TO && _state.selAction != VERB_WALK_TO) {
 		int i;
 		for  (i = 0; i < 2; ++i) {
@@ -953,15 +949,11 @@ void Command::openOrCloseAssociatedObject(Verb action, int16 otherObj) {
 
 int16 Command::setConditions(uint16 command, bool lastCmd) {
 	debug(9, "Command::setConditions(%d, %d)", command, lastCmd);
-	// Test conditions, if FAIL write &&  exit, Return -1
-	// if (Joe speaks before he returns, -2 is returned
-	// This way a -1 return will allow Joe to speak normal description
-
-	uint16 temp[21];
-	memset(temp, 0, sizeof(temp));
-	uint16 tempInd = 0;
-
+	
 	int16 ret = 0;
+	uint16 cmdState[21];
+	memset(cmdState, 0, sizeof(cmdState));
+	uint16 cmdStateCount = 0;
 	uint16 i;
 	CmdGameState *cmdGs = &_cmdGameState[1];
 	for (i = 1; i <= _numCmdGameState; ++i, ++cmdGs) {
@@ -974,8 +966,8 @@ int16 Command::setConditions(uint16 command, bool lastCmd) {
 					break;
 				}
 			} else {
-				temp[tempInd] = i;
-				++tempInd;
+				cmdState[cmdStateCount] = i;
+				++cmdStateCount;
 			}
 		}
 	}
@@ -991,13 +983,14 @@ int16 Command::setConditions(uint16 command, bool lastCmd) {
 			}
 			ret = -2;
 		} else {
+			// return -1 so Joe will be able to speak a normal description
 			ret = -1;
 		}
 	} else {
 		ret = 0;
 		// all tests were okay, now set gamestates
-		for (i = 0; i < tempInd; ++i) {
-			cmdGs = &_cmdGameState[temp[i]];
+		for (i = 0; i < cmdStateCount; ++i) {
+			cmdGs = &_cmdGameState[cmdState[i]];
 			_vm->logic()->gameState(ABS(cmdGs->gameStateSlot), cmdGs->gameStateValue);
 			// set return value for Joe to say something
 			ret = cmdGs->speakValue;
@@ -1010,8 +1003,7 @@ void Command::setAreas(uint16 command) {
 	debug(9, "Command::setAreas(%d)", command);
 
 	CmdArea *cmdArea = &_cmdArea[1];
-	uint16 i;
-	for (i = 1; i <= _numCmdArea; ++i, ++cmdArea) {
+	for (uint16 i = 1; i <= _numCmdArea; ++i, ++cmdArea) {
 		if (cmdArea->id == command) {
 			uint16 areaNum = ABS(cmdArea->area);
 			Area *area = _vm->grid()->area(cmdArea->room, areaNum);
@@ -1030,8 +1022,7 @@ void Command::setObjects(uint16 command) {
 	debug(9, "Command::setObjects(%d)", command);
 
 	CmdObject *cmdObj = &_cmdObject[1];
-	uint16 i;
-	for (i = 1; i <= _numCmdObject; ++i, ++cmdObj) {
+	for (uint16 i = 1; i <= _numCmdObject; ++i, ++cmdObj) {
 		if (cmdObj->id == command) {
 
 			// found an object
@@ -1101,10 +1092,9 @@ void Command::setObjects(uint16 command) {
 void Command::setItems(uint16 command) {
 	debug(9, "Command::setItems(%d)", command);
 
-	CmdInventory *cmdInv = &_cmdInventory[1];
 	ItemData *items = _vm->logic()->itemData(0);
-	uint16 i;
-	for (i = 1; i <= _numCmdInventory; ++i, ++cmdInv) {
+	CmdInventory *cmdInv = &_cmdInventory[1];
+	for (uint16 i = 1; i <= _numCmdInventory; ++i, ++cmdInv) {
 		if (cmdInv->id == command) {
 			uint16 dstItem = ABS(cmdInv->dstItem);
 			// found an item

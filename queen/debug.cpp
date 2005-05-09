@@ -36,7 +36,7 @@
 namespace Queen {
 
 Debugger::Debugger(QueenEngine *vm) 
-	: _drawAreas(false), _vm(vm) {
+	: _vm(vm), _flags(0) {
 		
 	DCmd_Register("exit", &Debugger::Cmd_Exit);
 	DCmd_Register("help", &Debugger::Cmd_Help);
@@ -96,8 +96,8 @@ bool Debugger::Cmd_Asm(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Areas(int argc, const char **argv) {
-	_drawAreas = !_drawAreas;
-	DebugPrintf("Room areas display %s\n", _drawAreas ? "on" : "off");
+	_flags ^= DF_DRAW_AREAS;
+	DebugPrintf("Room areas display %s\n", (_flags & DF_DRAW_AREAS) != 0 ? "on" : "off");
 	return true;
 }
 

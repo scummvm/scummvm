@@ -109,6 +109,7 @@ void Input::delay(uint amount) {
 					_inKey = event.kbd.keycode;
 				}
 				break;
+			
 			case OSystem::EVENT_MOUSEMOVE:
 				_mouse_x = event.mouse.x;
 				_mouse_y = event.mouse.y;

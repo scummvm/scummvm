@@ -159,6 +159,7 @@ public:
 	//! play the specified cutaway
 	void playCutaway(const char *cutFile, char *next = NULL);
 
+	//! initialize the inventory
 	void inventorySetup();
 	
 	//! get the inventory item for the specified inventory slot
@@ -181,7 +182,7 @@ public:
 	//! handle a particular event when Joe walks on this area
 	void handleSpecialArea(Direction facing, uint16 areaNum, uint16 walkDataNum);
 
-	//! handle the pinnacle room (in jungle)
+	//! handle the pinnacle room (== room chooser in the jungle)
 	void handlePinnacleRoom();
 
 	void update();
@@ -189,6 +190,7 @@ public:
 	void saveState(byte *&ptr);
 	void loadState(uint32 ver, byte *&ptr);
 
+	//! called after a save state has been loaded
 	void setupRestoredGame();
 
 	//! ugly hack from original code
