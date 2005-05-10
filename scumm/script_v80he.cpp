@@ -646,8 +646,6 @@ void ScummEngine_v80he::drawLine(int x1, int y1, int x, int y, int step, int typ
 	y = y1;
 	x = x1;
 
-	const int tmpA = absDY;
-	int tmbB = 0;
 
 	if (type == 2) {
 		Actor *a = derefActor(id, "drawLine");
@@ -665,24 +663,27 @@ void ScummEngine_v80he::drawLine(int x1, int y1, int x, int y, int step, int typ
 	}
 
 	int var_C = 0;
-	int ebx = 0;
+	int tmpX = 0;
+	int tmpY = 0;
 	for (int i = 0; i <= maxDist; i++) {
-		ebx += absDX;
-		tmbB += tmpA;
+		tmpX += absDX;
+		tmpY += absDY;
 
 		int eax = 0;
 
-		if (ebx > maxDist) {
+		if (tmpX > maxDist) {
 			eax = 1;
+			tmpX -= maxDist;
+
 			if (dx >= 0) {
 				x++;
 			} else {
 				x--;
 			}
 		}
-		if (tmbB > maxDist) {
+		if (tmpY > maxDist) {
 			eax = dy;
-			tmbB -= maxDist;
+			tmpY -= maxDist;
 
 			if (dy >= 0) {
 				y++;
