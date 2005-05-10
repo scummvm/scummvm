@@ -718,6 +718,7 @@ void ScummEngine_v80he::drawLine(int x1, int y1, int x, int unk1, int unk2, int 
 }
 
 void ScummEngine_v80he::drawPixel(int x, int y, int flags) {
+	byte *src, *dst;
 	VirtScreen *vs;
 
 	if (x < 0 || x > 639)
@@ -731,16 +732,21 @@ void ScummEngine_v80he::drawPixel(int x, int y, int flags) {
 
 	markRectAsDirty(vs->number, x, y, x, y + 1);
 
-	// TODO flags
 	if (flags & 0x4000) {
-
-
+		src = vs->getPixels(x, y);
+		dst = vs->getBackPixels(x, y);
+		*dst = *src;
 	} else if (flags & 0x2000) {
-
-
-	} else if (flags & 0x8000) {
-
-
+		src = vs->getBackPixels(x, y);
+		dst = vs->getPixels(x, y);
+		*dst = *src;
+	} else {
+		dst = vs->getPixels(x, y);
+		*dst = flags;
+		if (flags & 0x8000) {
+			dst = vs->getBackPixels(x, y);
+			*dst = flags;
+		}
 	}
 }
 
