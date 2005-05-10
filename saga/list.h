@@ -29,7 +29,7 @@ namespace Saga {
 template <class T>
 class SortedList : public Common::List<T> {
 public:
-	typedef int ( CompareFunction ) (const T& , const T&);
+	typedef int (*CompareFunction) (const T& a, const T& b);
 
 	typedef typename Common::List<T>::iterator        iterator;
 	typedef typename Common::List<T>::const_iterator  const_iterator;
@@ -62,15 +62,15 @@ public:
 		return insert(pos, init);
 	}
 
-	iterator pushFront(const T& element, CompareFunction* compareFunction) {
+	iterator pushFront(const T& element, CompareFunction compareFunction) {
 		return insert(Common::List<T>::begin(), element, compareFunction);
 	}
 
-	iterator pushBack(const T& element, CompareFunction* compareFunction) {
+	iterator pushBack(const T& element, CompareFunction compareFunction) {
 		return insert(Common::List<T>::end(), element, compareFunction);
 	}
 
-	iterator insert(iterator pos, const T& element, CompareFunction* compareFunction) {
+	iterator insert(iterator pos, const T& element, CompareFunction compareFunction) {
 		int res;
 
 		for (iterator i = Common::List<T>::begin(); i != Common::List<T>::end(); ++i) {
@@ -82,7 +82,7 @@ public:
 		return pushBack(element);
 	}
 
-	iterator reorderUp(iterator pos, CompareFunction* compareFunction) {
+	iterator reorderUp(iterator pos, CompareFunction compareFunction) {
 		iterator i(pos);		
 		int res;
 
@@ -101,7 +101,7 @@ public:
 		return pos;
 	}
 
-	iterator reorderDown(iterator pos, CompareFunction* compareFunction) {
+	iterator reorderDown(iterator pos, CompareFunction compareFunction) {
 		iterator i(pos);		
 		int res;
 		

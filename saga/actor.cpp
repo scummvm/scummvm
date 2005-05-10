@@ -1203,7 +1203,7 @@ void Actor::createDrawOrderList() {
 	int i;
 	ActorData *actor;
 	ObjectData *obj;
-	CommonObjectOrderList::CompareFunction *compareFunction;
+	CommonObjectOrderList::CompareFunction compareFunction;
 
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 		compareFunction = &tileCommonObjectCompare;
