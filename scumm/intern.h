@@ -919,7 +919,7 @@ protected:
 	void o72_dimArray();
 	void o72_dim2dimArray();
 	void o72_traceStatus();
-	void o72_unknownCF();
+	void o72_debugInput();
 	void o72_drawWizImage();
 	void o72_kernelGetFunctions();
 	void o72_jumpToScript();
@@ -1232,7 +1232,7 @@ protected:
 	void o90_getObjectData();
 	void o90_getPaletteData();
 	void o90_paletteOps();
-	void o90_unknownA5();
+	void o90_fontUnk();
 	void o90_getActorAnimProgress();
 	void o90_kernelGetFunctions();
 	void o90_kernelSetFunctions();

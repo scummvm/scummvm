@@ -249,7 +249,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_getVerbEntrypoint),
 		/* A4 */
 		OPCODE(o72_arrayOps),
-		OPCODE(o90_unknownA5),
+		OPCODE(o90_fontUnk),
 		OPCODE(o80_drawBox),
 		OPCODE(o6_pop),
 		/* A8 */
@@ -301,7 +301,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_pickOneOfDefault),
 		OPCODE(o6_stampObject),
 		OPCODE(o72_drawWizImage),
-		OPCODE(o72_unknownCF),
+		OPCODE(o72_debugInput),
 		/* D0 */
 		OPCODE(o6_getDateTime),
 		OPCODE(o6_stopTalking),
@@ -2482,7 +2482,7 @@ void ScummEngine_v90he::o90_paletteOps() {
 
 
 
-void ScummEngine_v90he::o90_unknownA5() {
+void ScummEngine_v90he::o90_fontUnk() {
 	// Font related
 	byte string[80];
 	int a;
@@ -2507,10 +2507,10 @@ void ScummEngine_v90he::o90_unknownA5() {
 		push(1);
 		break;
 	default:
-		error("o90_unknownA5: Unknown case %d", subOp);
+		error("o90_fontUnk: Unknown case %d", subOp);
 	}
 
-	debug(1,"o90_unknownA5 stub (%d)", subOp);
+	debug(1,"o90_fontUnk stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_getActorAnimProgress() {

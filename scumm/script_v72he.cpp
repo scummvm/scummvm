@@ -302,7 +302,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_pickOneOfDefault),
 		OPCODE(o6_stampObject),
 		OPCODE(o72_drawWizImage),
-		OPCODE(o72_unknownCF),
+		OPCODE(o72_debugInput),
 		/* D0 */
 		OPCODE(o6_getDateTime),
 		OPCODE(o6_stopTalking),
@@ -1696,7 +1696,7 @@ void ScummEngine_v72he::o72_drawWizImage() {
 	displayWizImage(&wi);
 }
 
-void ScummEngine_v72he::o72_unknownCF() {
+void ScummEngine_v72he::o72_debugInput() {
 	byte string[255];
 
 	copyScriptString(string, sizeof(string));
@@ -1706,7 +1706,7 @@ void ScummEngine_v72he::o72_unknownCF() {
 	ArrayHeader *ah = defineArray(0, kStringArray, 0, 0, 0, len);
 	memcpy(ah->data, string, len);
 	push(readVar(0));
-	debug(1,"o72_unknownCF: String %s", string);
+	debug(1,"o72_debugInput: String %s", string);
 }
 
 void ScummEngine_v72he::o72_jumpToScript() {
