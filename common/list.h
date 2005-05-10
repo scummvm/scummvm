@@ -33,7 +33,7 @@ namespace Common {
 template <class T>
 class List {
 protected:
-#if defined (_WIN32_WCE) || (_MSC_VER)
+#if defined (_WIN32_WCE) || defined (_MSC_VER)
 //FIXME evc4 and msvc7 doesn't like it as protected member
 public:
 #endif
