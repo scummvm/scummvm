@@ -1211,7 +1211,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteInfoSet_angle(spriteId, args[0]);
 		break;
 	case 23:
-		if (_gameId == GID_FREDDI4 || _heversion >= 99) {
+		if (_features & GF_HE_985 || _heversion >= 99) {
 			_curMaxSpriteId = pop();
 			_curSpriteId = pop();
 			

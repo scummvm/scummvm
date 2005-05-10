@@ -26,23 +26,34 @@
 namespace Scumm {
 
 class LogicHE {
-private:
+public:
 	float *_userData;
 	double *_userDataD;
 	ScummEngine *_vm;
 
-public:
 	LogicHE(ScummEngine *vm);
-	~LogicHE();
+	virtual ~LogicHE();
 
-	void beforeBootScript(void);
-	void initOnce();
-	void startOfFrame();
-	void endOfFrame();
+	void writeScummVar(int var, int32 value) { _vm->writeVar(var, value); }
+
+	void beforeBootScript(void) {};
+	void initOnce() {};
+	void startOfFrame() {};
+	void endOfFrame() {};
+	virtual int versionID();
+	virtual int32 dispatch(int op, int numArgs, int32 *args);
+};
+
+class LogicHErace : public LogicHE {
+public:
+	LogicHErace(ScummEngine *vm) : LogicHE(vm) {}
+
 	int versionID();
 	int32 dispatch(int op, int numArgs, int32 *args);
 
 private:
+	int checkShape(int arg_0, int arg_4, int arg_8, int arg_C, int arg_10, int arg_14, int arg_18, int arg_1C, int arg_20, int arg_24);
+
 	int32 op_1003(int32 *args);
 	int32 op_1004(int32 *args);
 	int32 op_1100(int32 *args);
@@ -57,6 +68,19 @@ private:
 	void op_sub1(float arg);
 	void op_sub2(float arg);
 	void op_sub3(float arg);
+};
+
+class LogicHEfunshop : public LogicHE {
+public:
+	LogicHEfunshop(ScummEngine *vm) : LogicHE(vm) {}
+
+	int versionID();
+	int32 dispatch(int op, int numArgs, int32 *args);
+
+private:
+	void op_1004(int32 *args);
+	void op_1005(int32 *args);
+	int checkShape(int arg_0, int arg_4, int arg_8, int arg_C, int arg_10, int arg_14, int arg_18, int arg_1C, int arg_20, int arg_24);
 };
 
 } // End of namespace Scumm

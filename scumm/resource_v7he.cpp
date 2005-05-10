@@ -1717,7 +1717,7 @@ void ScummEngine_v90he::readMAXS(int blockSize) {
 	_numNewNames = 10;
 
 	_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
-	if (_gameId == GID_FREDDI4)
+	if (_features & GF_HE_985)
 		_numGlobalScripts = 2048;
 	else
 		_numGlobalScripts = 200;

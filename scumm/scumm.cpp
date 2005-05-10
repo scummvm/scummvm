@@ -320,9 +320,9 @@ static const ScummGameSettings scumm_settings[] = {
 	// and INIB chunk in the .he0
 	{"lost", "Pajama Sam's Lost & Found", GID_HEGAME, 6, 98, 61, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows, 0, 0},
-	{"racedemo", "Putt-Putt Enters the Race (Demo)", GID_HEGAME, 6, 98, 61, MDT_NONE,
+	{"racedemo", "Putt-Putt Enters the Race (Demo)", GID_PUTTRACE, 6, 98, 61, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows, 0, 0},
-	{"puttrace", "Putt-Putt Enters the Race", GID_HEGAME, 6, 98, 61, MDT_NONE,
+	{"puttrace", "Putt-Putt Enters the Race", GID_PUTTRACE, 6, 98, 61, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
 	{"BluesABCTimeDemo", "Blue's ABC Time (Demo)", GID_HEGAME, 6, 98, 61, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
@@ -330,10 +330,10 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
 
 	// Global scripts increased to 2048
-	{"freddi4", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch", GID_FREDDI4, 6, 98, 57, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows, 0, 0},
-	{"f4-demo", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Demo)", GID_FREDDI4, 6, 98, 57, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows, 0, 0},
+	{"freddi4", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch", GID_HEGAME, 6, 98, 57, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985 | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows, 0, 0},
+	{"f4-demo", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Demo)", GID_HEGAME, 6, 98, 57, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985 | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows, 0, 0},
 
 	// Engine moved to c++ 
 	// Humongous Entertainment Scumm Version 9.9 ?  Scummsys.99
@@ -359,11 +359,11 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
 	{"pajama3", "Pajama Sam 3: You Are What You Eat From Your Head to Your Feet", GID_HEGAME, 6, 99, 61, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformWindows, 0, 0},
-	{"FreddisFunShop", "Freddi Fish's One-Stop Fun Shop", GID_HEGAME, 6, 99, 61, MDT_NONE,
+	{"FreddisFunShop", "Freddi Fish's One-Stop Fun Shop", GID_FUNSHOP, 6, 99, 61, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformWindows, 0, 0},
-	{"SamsFunShop", "Pajama Sam's One-Stop Fun Shop", GID_HEGAME, 6, 99, 61, MDT_NONE,
+	{"SamsFunShop", "Pajama Sam's One-Stop Fun Shop", GID_FUNSHOP, 6, 99, 61, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformWindows, 0, 0},
-	{"PuttsFunShop", "Putt-Putt's One-Stop Fun Shop", GID_HEGAME, 6, 99, 61, MDT_NONE,
+	{"PuttsFunShop", "Putt-Putt's One-Stop Fun Shop", GID_FUNSHOP, 6, 99, 61, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformWindows, 0, 0},
 	{"putttime", "Putt-Putt Travels Through Time", GID_HEGAME, 6, 99, 31, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows, 0, 0},
@@ -439,9 +439,9 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"75bff95816b84672b877d22a911ab811", "Freddi Fish 3: The Case of the Stolen Conch Shell (Updated Ru)", GID_HEGAME, 6, 98, 30, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0}, // FIXME: number of actors
 
-	{"07b810e37be7489263f7bc7627d4765d", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Unencrypted Ru)", GID_FREDDI4, 6, 98, 57, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformUnknown, 0, 0},
-	{"78bd5f036ea35a878b74e4f47941f784", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Updated Ru)", GID_FREDDI4, 6, 99, 57, MDT_NONE,
+	{"07b810e37be7489263f7bc7627d4765d", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Unencrypted Ru)", GID_HEGAME, 6, 98, 57, MDT_NONE,
+	 GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformUnknown, 0, 0},
+	{"78bd5f036ea35a878b74e4f47941f784", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Updated Ru)", GID_HEGAME, 6, 99, 57, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0}, // FIXME: number of actors
 	{"499c958affc394f2a3868f1eb568c3ee", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Updated Demo)", GID_HEGAME, 6, 99, 57, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
@@ -482,18 +482,18 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"d7ab7cd6105546016e6a0d46fb36b964", "Pajama Sam: No Need To Hide When It's Dark Outside (Demo Updated)", GID_HEGAME, 6, 100, 61, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0}, // PJSamDemo
 
-	{"30ba1e825d4ad2b448143ae8df18482a", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening (Updated Demo)", GID_FREDDI4, 6, 98, 61, MDT_NONE, // FIXME: number of actors
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0}, // Pjs2demo
+	{"30ba1e825d4ad2b448143ae8df18482a", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening (Updated Demo)", GID_HEGAME, 6, 98, 61, MDT_NONE, // FIXME: number of actors
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformUnknown, 0, 0}, // Pjs2demo
 	{"32709cbeeb3044b34129950860a83f14", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening (Updated)", GID_HEGAME, 6, 99, 61, MDT_NONE, // FIXME: number of actors
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0}, // PajamaTAL
 
 	{"a561d2e2413cc1c71d5a1bf87bf493ea", "Pajama Sam's Lost & Found (Updated)", GID_HEGAME, 6, 100, 61, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS, Common::kPlatformUnknown, 0, 0},
 
-	{"6af2419fe3db5c2fdb091ae4e5833770", "Putt-Putt Enters the Race (Updated Demo)", GID_FREDDI4, 6, 98, 61, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0}, // 500demo
-	{"aaa587701cde7e74692c68c1024b85eb", "Putt-Putt Enters the Race (Updated Demo)", GID_FREDDI4, 6, 98, 61, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
+	{"6af2419fe3db5c2fdb091ae4e5833770", "Putt-Putt Enters the Race (Updated Demo)", GID_PUTTRACE, 6, 98, 61, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformUnknown, 0, 0}, // 500demo
+	{"aaa587701cde7e74692c68c1024b85eb", "Putt-Putt Enters the Race (Updated Demo)", GID_PUTTRACE, 6, 98, 61, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformUnknown, 0, 0},
 
 	{"9c92eeaf517a31b7221ec2546ab669fd", "Putt-Putt Goes To The Moon (Windows)", GID_HEGAME, 6, 70, 13, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
@@ -507,8 +507,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"37ff1b308999c4cca7319edfcc1280a0", "Putt-Putt Joins The Parade (Windows Demo)", GID_HEGAME, 6, 70, 13, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
 
-	{"92e7727e67f5cd979d8a1070e4eb8cb3", "Putt-Putt Saves the Zoo (Updated)", GID_FREDDI4, 6, 98, 30, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
+	{"92e7727e67f5cd979d8a1070e4eb8cb3", "Putt-Putt Saves the Zoo (Updated)", GID_HEGAME, 6, 98, 30, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformUnknown, 0, 0},
 
 	{"a525c1753c1db5011c00417da37887ef", "Putt-Putt Travels Through Time (Updated)", GID_HEGAME, 6, 100, 31, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
@@ -525,14 +525,14 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 
 	{"3de99ef0523f8ca7958faa3afccd035a", "Spyfox 1: Dry Cereal (Updated)", GID_HEGAME, 6, 100, 61, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
-	{"9bda5fee51d2fda5253d02c642016bf4", "Spyfox 1: Dry Cereal (Updated)", GID_FREDDI4, 6, 98, 61, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
+	{"9bda5fee51d2fda5253d02c642016bf4", "Spyfox 1: Dry Cereal (Updated)", GID_HEGAME, 6, 98, 61, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformUnknown, 0, 0},
 	{"72ac6bc980d5101c2142189d746bd62f", "Spyfox 1: Dry Cereal (Updated Ru)", GID_HEGAME, 6, 99, 61, MDT_NONE, // FIXME: number of actors
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0}, // SPYFoxDC
 	{"9d4ab3e0e1d1ebc6ba8a6a4c470ed184", "Spyfox 1: Dry Cereal (Updated Demo)", GID_HEGAME, 6, 100, 61, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
-	{"4edbf9d03550f7ba01e7f34d69b678dd", "Spyfox 1: Dry Cereal (Updated Demo)", GID_FREDDI4, 6, 98, 61, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
+	{"4edbf9d03550f7ba01e7f34d69b678dd", "Spyfox 1: Dry Cereal (Updated Demo)", GID_HEGAME, 6, 98, 61, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformUnknown, 0, 0},
 
 	{"90c755e1c9b9b8a4129d37b2259d0655", "Spy Fox in Cheese Chase Game (Updated)", GID_HEGAME, 6, 100, 61, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
@@ -1767,7 +1767,19 @@ void ScummEngine_v90he::scummInit() {
 		setDefaultCursor();
 
 	if (_heversion >= 98) {
-		_logicHE = new LogicHE(this);
+		switch (_gameId) {
+		case GID_PUTTRACE:
+			_logicHE = new LogicHErace(this);
+			break;
+
+		case GID_FUNSHOP:
+			_logicHE = new LogicHEfunshop(this);
+			break;
+
+		default:
+			_logicHE = new LogicHE(this);
+			break;
+		}
 	}
 }
 

@@ -26,11 +26,6 @@
 
 namespace Scumm {
 
-/***********************
- * Putt-Putt Joins the Race
- *
- */
-
 LogicHE::LogicHE(ScummEngine *vm) : _vm(vm) {
 	// Originally it used 0x930 and stored both floats and doubles inside
 	_userData = (float *)calloc(550, sizeof(float));
@@ -42,27 +37,41 @@ LogicHE::~LogicHE() {
 	free(_userDataD);
 }
 
-void LogicHE::beforeBootScript() {
-	// void implementation
-}
-
-void LogicHE::initOnce() {
-	// void implementation
-}
-
-void LogicHE::startOfFrame() {
-	// void implementation
-}
-
-void LogicHE::endOfFrame() {
-	// void implementation
-}
-
 int LogicHE::versionID() {
 	return 1;
 }
 
 int32 LogicHE::dispatch(int op, int numArgs, int32 *args) {
+	char tmp[32], str[256];
+
+	if (numArgs > 0)
+		snprintf(tmp, 32, "%d", args[0]);
+	else
+		*tmp = 0;
+
+	snprintf(str, 256, "LogicHE::dispatch(%d, %d, [%s", op, numArgs, tmp);
+
+	for (int i = 1; i < numArgs; i++) {
+		snprintf(tmp, 32, ", %d", args[i]);
+		strncat(str, tmp, 256);
+	}
+	strncat(str, "])", 256);
+
+	debug(0, str);
+
+	return 1;
+}
+
+/***********************
+ * Putt-Putt Joins the Race
+ *
+ */
+
+int LogicHErace::versionID() {
+	return 1;
+}
+
+int32 LogicHErace::dispatch(int op, int numArgs, int32 *args) {
 	int32 res;
 
 	switch (op) {
@@ -118,23 +127,23 @@ int32 LogicHE::dispatch(int op, int numArgs, int32 *args) {
 #define RAD2DEG 5.729577951308239e1
 #define DEG2RAD 1.745329251994328e-2
 
-int32 LogicHE::op_1003(int32 *args) {
+int32 LogicHErace::op_1003(int32 *args) {
 	int value = args[2] ? args[2] : 1;
 
-	_vm->writeVar(108, (int32)(atan((float)(args[0] / args[1])) * RAD2DEG * value));
+	writeScummVar(108, (int32)(atan((float)(args[0] / args[1])) * RAD2DEG * value));
 
 	return 1;
 }
 
-int32 LogicHE::op_1004(int32 *args) {
+int32 LogicHErace::op_1004(int32 *args) {
 	int value = args[1] ? args[1] : 1;
 
-	_vm->writeVar(108, (int32)(sqrt((float)args[0]) * value));
+	writeScummVar(108, (int32)(sqrt((float)args[0]) * value));
 
 	return 1;
 }
 
-int32 LogicHE::op_1100(int32 *args) {
+int32 LogicHErace::op_1100(int32 *args) {
 	_userData[516] = (float)args[0] / args[10];
 	_userData[517] = (float)args[1] / args[10];
 	_userData[518] = (float)args[2] / args[10];
@@ -156,26 +165,26 @@ int32 LogicHE::op_1100(int32 *args) {
 	_userData[526] = (float)args[6] / args[8] / args[10];
 	_userData[527] = (float)args[7] / args[9] / args[10];
 
-	_vm->writeVar(108, (int32)((float)args[6] / args[8] * args[10]));
+	writeScummVar(108, (int32)((float)args[6] / args[8] * args[10]));
 
-	_vm->writeVar(109, (int32)((float)args[7] / args[9] * args[10]));
+	writeScummVar(109, (int32)((float)args[7] / args[9] * args[10]));
 
 	_userData[528] = (float)(_userData[519] - _userData[523] * 0.5);
 	_userData[529] = (float)(_userData[519] + _userData[523] * 0.5);
 
-	_vm->writeVar(110, (int32)(_userData[528] * args[10]));
-	_vm->writeVar(111, (int32)(_userData[529] * args[10]));
+	writeScummVar(110, (int32)(_userData[528] * args[10]));
+	writeScummVar(111, (int32)(_userData[529] * args[10]));
 
 	_userData[530] = (float)(_userData[517] / tan(_userData[529] * DEG2RAD));
 	_userData[531] = (float)(_userData[517] / tan(_userData[528] * DEG2RAD));
 
-	_vm->writeVar(112, (int32)(_userData[530] * args[10]));
-	_vm->writeVar(113, (int32)(_userData[531] * args[10]));
+	writeScummVar(112, (int32)(_userData[530] * args[10]));
+	writeScummVar(113, (int32)(_userData[531] * args[10]));
 
 	return 1;
 }
 
-int32 LogicHE::op_1101(int32 *args) {
+int32 LogicHErace::op_1101(int32 *args) {
 	int32 retval;
 	float temp;
 
@@ -208,7 +217,7 @@ int32 LogicHE::op_1101(int32 *args) {
 	return retval;
 }
 
-int32 LogicHE::op_1102(int32 *args) {
+int32 LogicHErace::op_1102(int32 *args) {
 	int32 retval;
 	float temp;
 
@@ -235,24 +244,24 @@ int32 LogicHE::op_1102(int32 *args) {
 	return retval;
 }
 
-int32 LogicHE::op_1103(int32 *args) {
+int32 LogicHErace::op_1103(int32 *args) {
 	double angle = args[0] / args[1] * DEG2RAD;
 	
-	_vm->writeVar(108, (int32)(sin(angle) * args[2]));
-	_vm->writeVar(109, (int32)(cos(angle) * args[2]));
+	writeScummVar(108, (int32)(sin(angle) * args[2]));
+	writeScummVar(109, (int32)(cos(angle) * args[2]));
 
 	return 1;
 }
 
-int32 LogicHE::op_1110() {
-	_vm->writeVar(108, (int32)(_userData[526] * _userData[532] * _userData[532]));
-	_vm->writeVar(109, (int32)(_userData[527] * _userData[532] * _userData[532]));
-	_vm->writeVar(110, (int32)(_userData[532]));
+int32 LogicHErace::op_1110() {
+	writeScummVar(108, (int32)(_userData[526] * _userData[532] * _userData[532]));
+	writeScummVar(109, (int32)(_userData[527] * _userData[532] * _userData[532]));
+	writeScummVar(110, (int32)(_userData[532]));
 
 	return 1;
 }
 
-int32 LogicHE::op_1120(int32 *args) {
+int32 LogicHErace::op_1120(int32 *args) {
 	double a0, a1, a2, expr;
 	double res1, res2;
 
@@ -267,24 +276,24 @@ int32 LogicHE::op_1120(int32 *args) {
 	res2 = (atan((a2 * _userDataD[16] + a1 * _userDataD[13] + a0 * _userDataD[10]) / expr) * RAD2DEG
 			- _userData[528]) / _userData[527];
 	
-	_vm->writeVar(108, (int32)res1);
-	_vm->writeVar(109, (int32)res2);
+	writeScummVar(108, (int32)res1);
+	writeScummVar(109, (int32)res2);
 
 	return 1;
 }
 
-int32 LogicHE::op_1130(int32 *args) {
+int32 LogicHErace::op_1130(int32 *args) {
 	double cs = cos(args[0] / _userData[532] * DEG2RAD);
 	double sn = sin(args[0] / _userData[532] * DEG2RAD);
 
-	_vm->writeVar(108, (int32)(cs * args[1] + sn * args[2]));
+	writeScummVar(108, (int32)(cs * args[1] + sn * args[2]));
 
-	_vm->writeVar(109, (int32)(cs * args[2] - sn * args[1]));
+	writeScummVar(109, (int32)(cs * args[2] - sn * args[1]));
 
 	return 1;
 }
 
-int32 LogicHE::op_1140(int32 *args) {
+int32 LogicHErace::op_1140(int32 *args) {
 	double arg2 = -args[2] * args[2];
 	double arg3 = -args[3] * args[3];
 	double sq = sqrt(arg2 + arg3);
@@ -295,19 +304,19 @@ int32 LogicHE::op_1140(int32 *args) {
 
 	res = (args[0] - 2 * (arg2 * args[0] + arg3 * args[1]) * arg2) * 0.86956525;
 
-	_vm->writeVar(108, (int32)res);
+	writeScummVar(108, (int32)res);
 	
 	res = args[1] - 2 * (arg2 * args[0] + arg3 * args[1]) * arg3;
 	
 	if (-args[3] * args[3] >= 0)
 		res *= 0.83333331f;
 
-	_vm->writeVar(109, (int32)res);
+	writeScummVar(109, (int32)res);
 
 	return 1;
 }
 
-void LogicHE::op_sub1(float arg) {
+void LogicHErace::op_sub1(float arg) {
 	_userDataD[10] = _userDataD[12] = _userDataD[14] = _userDataD[16] = 0;
 	_userDataD[13] = 1;
 
@@ -317,7 +326,7 @@ void LogicHE::op_sub1(float arg) {
 	_userDataD[17] = _userDataD[9];
 }
 
-void LogicHE::op_sub2(float arg) {
+void LogicHErace::op_sub2(float arg) {
 	_userDataD[20] = _userDataD[21] = _userDataD[24] = _userDataD[25] = 0;
 	_userDataD[26] = 1;
 
@@ -327,7 +336,7 @@ void LogicHE::op_sub2(float arg) {
 	_userDataD[22] = _userDataD[18];
 }
 
-void LogicHE::op_sub3(float arg) {
+void LogicHErace::op_sub3(float arg) {
 	_userDataD[1] = _userDataD[2] = _userDataD[3] = _userDataD[6] = 0;
 	_userDataD[0] = 1;
 
@@ -335,6 +344,45 @@ void LogicHE::op_sub3(float arg) {
 	_userDataD[5] = sin(arg * DEG2RAD);
 	_userDataD[7] = -_userDataD[5];
 	_userDataD[8] = _userDataD[4];
+}
+
+/***********************
+ * Freddi Fish's One-Stop Fun Shop
+ * Pajama Sam's One-Stop Fun Shop
+ * Putt-Putt's One-Stop Fun Shop
+ *
+ */
+
+int LogicHEfunshop::versionID() {
+	return 1;
+}
+
+int32 LogicHEfunshop::dispatch(int op, int numArgs, int32 *args) {
+	switch (op) {
+	case 1004:
+		op_1004(args);
+		break;
+
+	case 1005:
+		op_1005(args);
+		break;
+
+	default:
+		break;
+
+	}
+
+	return 0;
+}
+
+void LogicHEfunshop::op_1004(int32 *args) {
+}
+
+void LogicHEfunshop::op_1005(int32 *args) {
+}
+
+int LogicHEfunshop::checkShape(int arg_0, int arg_4, int arg_8, int arg_C, int arg_10, int arg_14, int arg_18, int arg_1C, int arg_20, int arg_24) {
+	return 1;
 }
 
 } // End of namespace Scumm

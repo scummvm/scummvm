@@ -118,14 +118,20 @@ enum GameFeatures {
 	/** HE games for which localized versions exist */
 	GF_HE_LOCALIZED        = 1 << 13,
 
+	/** 
+	 *  HE Games with more global scripts and different sprite handling
+	 *  i.e. read it as HE version 9.85. Used for HE98 only.
+	 */
+	GF_HE_985			   = 1 << 14,
+
 	/** HE games with 16 bit color */
-	GF_16BIT_COLOR         = 1 << 14,
+	GF_16BIT_COLOR         = 1 << 15,
 
 	/** Games with multiple versions */
-	GF_MULTIPLE_VERSIONS   = 1 << 15,
+	GF_MULTIPLE_VERSIONS   = 1 << 16,
 	
 	/** A demo, not a full blown game. */
-	GF_DEMO                = 1 << 16
+	GF_DEMO                = 1 << 17
 };
 
 /* SCUMM Debug Channels */
@@ -240,8 +246,9 @@ enum ScummGameId {
 	GID_FBEAR,
 	GID_FUNPACK,
 	GID_FREDDI2,
-	GID_FREDDI4,
-	GID_FREDDICOVE
+	GID_FREDDICOVE,
+	GID_PUTTRACE,
+	GID_FUNSHOP		// Used for all three funshops
 };
 
 struct SentenceTab {
