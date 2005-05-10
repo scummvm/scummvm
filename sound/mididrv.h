@@ -27,7 +27,9 @@
 #include "common/timer.h"
 
 class MidiChannel;
-class SoundMixer;
+namespace Audio {
+	class Mixer;
+}
 namespace Common { class String; }
 
 /** MIDI Driver Types */
@@ -190,19 +192,19 @@ public:
 
 // Factory functions, for faster compile
 extern MidiDriver *MidiDriver_NULL_create();
-extern MidiDriver *MidiDriver_ADLIB_create(SoundMixer *mixer);
+extern MidiDriver *MidiDriver_ADLIB_create(Audio::Mixer *mixer);
 extern MidiDriver *MidiDriver_WIN_create();
 extern MidiDriver *MidiDriver_SEQ_create();
 extern MidiDriver *MidiDriver_QT_create();
 extern MidiDriver *MidiDriver_CORE_create();
 extern MidiDriver *MidiDriver_ETUDE_create();
 extern MidiDriver *MidiDriver_ALSA_create();
-extern MidiDriver *MidiDriver_YM2612_create(SoundMixer *mixer);
+extern MidiDriver *MidiDriver_YM2612_create(Audio::Mixer *mixer);
 #ifdef USE_FLUIDSYNTH
-extern MidiDriver *MidiDriver_FluidSynth_create(SoundMixer *mixer);
+extern MidiDriver *MidiDriver_FluidSynth_create(Audio::Mixer *mixer);
 #endif
 #ifdef USE_MT32EMU
-extern MidiDriver *MidiDriver_MT32_create(SoundMixer *mixer);
+extern MidiDriver *MidiDriver_MT32_create(Audio::Mixer *mixer);
 #endif
 extern MidiDriver *MidiDriver_YamahaPa1_create();
 extern MidiDriver *MidiDriver_Zodiac_create();

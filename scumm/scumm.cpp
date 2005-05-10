@@ -1879,9 +1879,9 @@ void ScummEngine::setupVolumes() {
 		_musicEngine->setMusicVolume(soundVolumeMusic);
 	}
 
-	_mixer->setVolumeForSoundType(SoundMixer::kSFXSoundType, soundVolumeSfx);
-	_mixer->setVolumeForSoundType(SoundMixer::kMusicSoundType, soundVolumeMusic);
-	_mixer->setVolumeForSoundType(SoundMixer::kSpeechSoundType, soundVolumeSpeech);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSfx);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
 }
 
 

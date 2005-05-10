@@ -32,7 +32,7 @@
 
 namespace Sword1 {
 
-AnimationState::AnimationState(Screen *scr, SoundMixer *snd, OSystem *sys)
+AnimationState::AnimationState(Screen *scr, Audio::Mixer *snd, OSystem *sys)
 	: BaseAnimationState(snd, sys, 640, 400), _scr(scr) {
 }
 
@@ -80,7 +80,7 @@ AudioStream *AnimationState::createAudioStream(const char *name, void *arg) {
 		return AudioStream::openStreamFile(name);
 }
 
-MoviePlayer::MoviePlayer(Screen *scr, SoundMixer *snd, OSystem *sys)
+MoviePlayer::MoviePlayer(Screen *scr, Audio::Mixer *snd, OSystem *sys)
 	: _scr(scr), _snd(snd), _sys(sys) {
 		for (uint8 cnt = 0; cnt < INTRO_LOGO_OVLS; cnt++)
 			_logoOvls[cnt] = NULL;

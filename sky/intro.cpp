@@ -618,7 +618,7 @@ uint16 Intro::_floppyIntroSeq[] = {
 	SEQEND
 };
 
-Intro::Intro(Disk *disk, Screen *screen, MusicBase *music, Sound *sound, Text *text, SoundMixer *mixer, OSystem *system) {
+Intro::Intro(Disk *disk, Screen *screen, MusicBase *music, Sound *sound, Text *text, Audio::Mixer *mixer, OSystem *system) {
 
 	_skyDisk = disk;
 	_skyScreen = screen;
@@ -739,7 +739,7 @@ bool Intro::nextPart(uint16 *&data) {
 		// directly, but this will have to do for now.
 		memset(vData, 127, sizeof(struct dataFileHeader));
 		_mixer->playRaw(&_voice, vData, _skyDisk->_lastLoadedFileSize, 11025,
-				SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED, SOUND_VOICE);
+				Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED, SOUND_VOICE);
 		return true;
 	case WAITVOICE:
 		while (_mixer->isSoundHandleActive(_voice))
@@ -756,12 +756,12 @@ bool Intro::nextPart(uint16 *&data) {
 	case LOOPBG:
 		_mixer->stopID(SOUND_BG);
 		_mixer->playRaw(&_bgSfx, _bgBuf + 256, _bgSize - 768, 11025,
-				SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_LOOP, SOUND_BG);
+				Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_LOOP, SOUND_BG);
 		return true;
 	case PLAYBG:
 		_mixer->stopID(SOUND_BG);
 		_mixer->playRaw(&_bgSfx, _bgBuf + 256, _bgSize - 768, 11025,
-				SoundMixer::FLAG_UNSIGNED, SOUND_BG);
+				Audio::Mixer::FLAG_UNSIGNED, SOUND_BG);
 		return true;
 	case STOPBG:
 		_mixer->stopID(SOUND_BG);

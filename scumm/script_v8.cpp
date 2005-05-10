@@ -1384,13 +1384,13 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 		}
 		break;
 	case 0xDD:		// getGroupSfxVol
-		push(_mixer->getVolumeForSoundType(SoundMixer::kSFXSoundType) / 2);
+		push(_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 2);
 		break;
 	case 0xDE:		// getGroupVoiceVol
-		push(_mixer->getVolumeForSoundType(SoundMixer::kSpeechSoundType) / 2);
+		push(_mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) / 2);
 		break;
 	case 0xDF:		// getGroupMusicVol
-		push(_mixer->getVolumeForSoundType(SoundMixer::kMusicSoundType) / 2);
+		push(_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 2);
 		break;
 	case 0xE0:		// readRegistryValue
 		{

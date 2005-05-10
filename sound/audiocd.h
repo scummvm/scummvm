@@ -30,7 +30,7 @@
 class DigitalTrackInfo {
 public:
 	virtual bool error() = 0;
-	virtual void play(SoundMixer *mixer, SoundHandle *handle, int startFrame, int duration) = 0;
+	virtual void play(Audio::Mixer *mixer, SoundHandle *handle, int startFrame, int duration) = 0;
 	virtual ~DigitalTrackInfo() { }
 };
 

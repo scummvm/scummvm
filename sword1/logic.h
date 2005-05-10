@@ -47,7 +47,7 @@ typedef int (Logic::*BSMcodeTable)(Object *, int32, int32, int32, int32, int32, 
 
 class Logic {
 public:
-	Logic(ObjectMan *pObjMan, ResMan *resMan, Screen *pScreen, Mouse *pMouse, Sound *pSound, Music *pMusic, Menu *pMenu, OSystem *system, SoundMixer *mixer);
+	Logic(ObjectMan *pObjMan, ResMan *resMan, Screen *pScreen, Mouse *pMouse, Sound *pSound, Music *pMusic, Menu *pMenu, OSystem *system, Audio::Mixer *mixer);
 	~Logic(void);
 	void initialize(void);
 	void newScreen(uint32 screen);
@@ -62,7 +62,7 @@ public:
 private:
 	ObjectMan *_objMan;
 	OSystem *_system;
-	SoundMixer *_mixer;
+	Audio::Mixer *_mixer;
 	ResMan *_resMan;
 	Screen *_screen;
 	Sound *_sound;

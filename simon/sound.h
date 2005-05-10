@@ -32,7 +32,7 @@ class Sound {
 private:
 	byte _game;
 
-	SoundMixer *_mixer;
+	Audio::Mixer *_mixer;
 
 	BaseSound *_voice;
 	BaseSound *_effects;
@@ -53,7 +53,7 @@ private:
 	uint _ambientPlaying;
 
 public:
-	Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer);
+	Sound(const byte game, const GameSpecificSettings *gss, Audio::Mixer *mixer);
 	~Sound();
 	
 	void readSfxFile(const char *filename);

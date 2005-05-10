@@ -1017,7 +1017,7 @@ SfxQueue Sound::_sfxQueue[MAX_QUEUED_FX] = {
 	{ 0, 0, 0, 0}
 };
 
-Sound::Sound(SoundMixer *mixer, Disk *pDisk, uint8 pVolume) {
+Sound::Sound(Audio::Mixer *mixer, Disk *pDisk, uint8 pVolume) {
 	_skyDisk = pDisk;
 	_soundData = NULL;
 	_mixer = mixer;
@@ -1034,7 +1034,7 @@ Sound::~Sound(void) {
 void Sound::playSound(uint32 id, byte *sound, uint32 size, SoundHandle *handle) {
 
 	byte flags = 0;
-	flags |= SoundMixer::FLAG_UNSIGNED|SoundMixer::FLAG_AUTOFREE;
+	flags |= Audio::Mixer::FLAG_UNSIGNED|Audio::Mixer::FLAG_AUTOFREE;
 	size -= sizeof(struct dataFileHeader);
 	byte *buffer = (byte *)malloc(size); 
 	memcpy(buffer, sound+sizeof(struct dataFileHeader), size);	
@@ -1105,13 +1105,13 @@ void Sound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 	uint16 dataSize = (_sfxInfo[(sound << 3) | 2] << 8) | _sfxInfo[(sound << 3) | 3];
 	uint16 dataLoop = (_sfxInfo[(sound << 3) | 6] << 8) | _sfxInfo[(sound << 3) | 7];
 
-	byte flags = SoundMixer::FLAG_UNSIGNED;
+	byte flags = Audio::Mixer::FLAG_UNSIGNED;
 
 	uint32 loopSta = 0, loopEnd = 0;
 	if (dataLoop) {
 		loopSta = dataSize - dataLoop;
 		loopEnd = dataSize;
-		flags |= SoundMixer::FLAG_LOOP;
+		flags |= Audio::Mixer::FLAG_LOOP;
 	}
 	
 	if (channel == 0)
@@ -1242,7 +1242,7 @@ bool Sound::startSpeech(uint16 textNum) {
 		rate = 11025;
 
 	_mixer->stopID(SOUND_SPEECH);
-	_mixer->playRaw(&_ingameSpeech, playBuffer, speechSize, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE, SOUND_SPEECH);
+	_mixer->playRaw(&_ingameSpeech, playBuffer, speechSize, rate, Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE, SOUND_SPEECH);
 	return true;
 }
 

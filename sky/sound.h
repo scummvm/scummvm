@@ -49,7 +49,7 @@ protected:
 
 public:
 
-	SoundMixer *_mixer;
+	Audio::Mixer *_mixer;
 	SoundHandle _voiceHandle;
 	SoundHandle _effectHandle;
 	SoundHandle _bgSoundHandle;
@@ -62,7 +62,7 @@ protected:
 	void playSound(uint32 id, byte *sound, uint32 size, SoundHandle *handle);
 
 public:
-	Sound(SoundMixer *mixer, Disk *pDisk, uint8 pVolume);
+	Sound(Audio::Mixer *mixer, Disk *pDisk, uint8 pVolume);
 	~Sound(void);
 
 	void loadSection(uint8 pSection);

@@ -114,7 +114,7 @@ void snd_setBlasterPort(int16 port) {return;}
 void snd_speakerOn(int16 frequency, int32 length) {
 	speakerStream.playNote(frequency, length);
 	if (!_vm->_mixer->isSoundHandleActive(speakerHandle)) {
-		_vm->_mixer->playInputStream(SoundMixer::kSFXSoundType, &speakerHandle, &speakerStream, -1, 255, 0, false);
+		_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &speakerHandle, &speakerStream, -1, 255, 0, false);
 	}
 }
 

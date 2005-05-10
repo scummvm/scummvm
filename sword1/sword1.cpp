@@ -166,8 +166,8 @@ int SwordEngine::init(GameDetector &detector) {
 	_resMan = new ResMan("swordres.rif");
 	debug(5, "Starting object manager");
 	_objectMan = new ObjectMan(_resMan);
-	_mixer->setVolumeForSoundType(SoundMixer::kSFXSoundType, SoundMixer::kMaxMixerVolume);
-	_mixer->setVolumeForSoundType(SoundMixer::kMusicSoundType, SoundMixer::kMaxMixerVolume);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, Audio::Mixer::kMaxMixerVolume);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume);
 	_mouse = new Mouse(_system, _resMan, _objectMan);
 	_screen = new Screen(_system, _resMan, _objectMan);
 	_music = new Music(_mixer);

@@ -907,11 +907,11 @@ OptionsDialog::OptionsDialog(Sword2Engine *vm) : Dialog(vm) {
 	_fxSwitch->linkSurfaceImages(_musicSwitch, 516, 250);
 	_fxSwitch->reverseStates();
 
-	int volStep = SoundMixer::kMaxMixerVolume / 10;
+	int volStep = Audio::Mixer::kMaxMixerVolume / 10;
 
-	_musicSlider = new Slider(this, _panel, SoundMixer::kMaxMixerVolume, 309, 161, 170, 27, volStep);
-	_speechSlider = new Slider(this, _panel, SoundMixer::kMaxMixerVolume, 309, 208, 170, 27, volStep, _musicSlider);
-	_fxSlider = new Slider(this, _panel, SoundMixer::kMaxMixerVolume, 309, 254, 170, 27, volStep, _musicSlider);
+	_musicSlider = new Slider(this, _panel, Audio::Mixer::kMaxMixerVolume, 309, 161, 170, 27, volStep);
+	_speechSlider = new Slider(this, _panel, Audio::Mixer::kMaxMixerVolume, 309, 208, 170, 27, volStep, _musicSlider);
+	_fxSlider = new Slider(this, _panel, Audio::Mixer::kMaxMixerVolume, 309, 254, 170, 27, volStep, _musicSlider);
 	_gfxSlider = new Slider(this, _panel, 3, 309, 341, 170, 27, 1, _musicSlider);
 
 	_gfxPreview = new Widget(this, 4);
@@ -945,9 +945,9 @@ OptionsDialog::OptionsDialog(Sword2Engine *vm) : Dialog(vm) {
 	_speechSwitch->setValue(!_vm->_sound->isSpeechMute());
 	_fxSwitch->setValue(!_vm->_sound->isFxMute());
 
-	_musicSlider->setValue(_mixer->getVolumeForSoundType(SoundMixer::kMusicSoundType));
-	_speechSlider->setValue(_mixer->getVolumeForSoundType(SoundMixer::kSpeechSoundType));
-	_fxSlider->setValue(_mixer->getVolumeForSoundType(SoundMixer::kSFXSoundType));
+	_musicSlider->setValue(_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType));
+	_speechSlider->setValue(_mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType));
+	_fxSlider->setValue(_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType));
 
 	_gfxSlider->setValue(_vm->_screen->getRenderLevel());
 	_gfxPreview->setState(_vm->_screen->getRenderLevel());
@@ -997,7 +997,7 @@ void OptionsDialog::onAction(Widget *widget, int result) {
 	if (widget == _musicSwitch) {
 		_vm->_sound->muteMusic(result != 0);
 	} else if (widget == _musicSlider) {
-		_vm->_mixer->setVolumeForSoundType(SoundMixer::kMusicSoundType, result);
+		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, result);
 		_vm->_sound->muteMusic(result == 0);
 		_musicSwitch->setValue(result != 0);
 	} else if (widget == _speechSlider) {
@@ -1015,9 +1015,9 @@ void OptionsDialog::onAction(Widget *widget, int result) {
 		_vm->_sound->muteSpeech(!_speechSwitch->getValue());
 		_vm->_sound->muteFx(!_fxSwitch->getValue());
 		_vm->_sound->setReverseStereo(_reverseStereoSwitch->getValue());
-		_mixer->setVolumeForSoundType(SoundMixer::kMusicSoundType, _musicSlider->getValue());
-		_mixer->setVolumeForSoundType(SoundMixer::kSpeechSoundType, _speechSlider->getValue());
-		_mixer->setVolumeForSoundType(SoundMixer::kSFXSoundType, _fxSlider->getValue());
+		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _musicSlider->getValue());
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, _speechSlider->getValue());
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, _fxSlider->getValue());
 		_vm->_screen->setRenderLevel(_gfxSlider->getValue());
 
 		_vm->writeSettings();

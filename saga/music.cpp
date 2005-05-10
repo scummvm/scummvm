@@ -279,10 +279,10 @@ void MusicPlayer::stopMusic() {
 	}
 }
 
-Music::Music(SoundMixer *mixer, MidiDriver *driver, int enabled) : _mixer(mixer), _enabled(enabled), _adlib(false) {
+Music::Music(Audio::Mixer *mixer, MidiDriver *driver, int enabled) : _mixer(mixer), _enabled(enabled), _adlib(false) {
 	_player = new MusicPlayer(driver);
 	_musicInitialized = 1;
-	_mixer->setVolumeForSoundType(SoundMixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
 	if (_vm->getGameType() == GType_ITE) {
 		Common::File file;
@@ -434,7 +434,7 @@ int Music::play(uint32 music_rn, uint16 flags) {
 
 	if (audioStream) {
 		debug(0, "Playing digitized music");
-		_mixer->playInputStream(SoundMixer::kMusicSoundType, &_musicHandle, audioStream);
+		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, audioStream);
 		return SUCCESS;
 	}
 

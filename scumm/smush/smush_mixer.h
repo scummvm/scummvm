@@ -35,7 +35,7 @@ class SmushMixer {
 	};
 private:
 
-	SoundMixer *_mixer;
+	Audio::Mixer *_mixer;
 	struct channels {
 		int id;
 		SmushChannel *chan;
@@ -49,7 +49,7 @@ private:
 
 public:
 
-	SmushMixer(SoundMixer *);
+	SmushMixer(Audio::Mixer *);
 	virtual ~SmushMixer();
 	SmushChannel *findChannel(int32 track);
 	void addChannel(SmushChannel *c);

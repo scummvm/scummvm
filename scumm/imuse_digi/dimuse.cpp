@@ -171,19 +171,19 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 			track->iteration = freq * channels;
 			track->mixerFlags = 0;
 			if (channels == 2)
-				track->mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
+				track->mixerFlags = Audio::Mixer::FLAG_STEREO | Audio::Mixer::FLAG_REVERSE_STEREO;
 
 			if ((bits == 12) || (bits == 16)) {
-				track->mixerFlags |= SoundMixer::FLAG_16BITS;
+				track->mixerFlags |= Audio::Mixer::FLAG_16BITS;
 				track->iteration *= 2;
 			} else if (bits == 8) {
-				track->mixerFlags |= SoundMixer::FLAG_UNSIGNED;
+				track->mixerFlags |= Audio::Mixer::FLAG_UNSIGNED;
 			} else
 				error("IMuseDigital::saveOrLoad(): Can't handle %d bit samples", bits);
 
 #ifdef SCUMM_LITTLE_ENDIAN
 			if (track->compressed)
-				track->mixerFlags |= SoundMixer::FLAG_LITTLE_ENDIAN;
+				track->mixerFlags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
 #endif
 
 			int32 streamBufferSize = track->iteration;
@@ -192,14 +192,14 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 
 			const int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
 			const int vol = track->vol / 1000;
-			SoundMixer::SoundType type = SoundMixer::kPlainSoundType;
+			Audio::Mixer::SoundType type = Audio::Mixer::kPlainSoundType;
 
 			if (track->volGroupId == 1)
-				type = SoundMixer::kSpeechSoundType;
+				type = Audio::Mixer::kSpeechSoundType;
 			if (track->volGroupId == 2)
-				type = SoundMixer::kSFXSoundType;
+				type = Audio::Mixer::kSFXSoundType;
 			if (track->volGroupId == 3)
-				type = SoundMixer::kMusicSoundType;
+				type = Audio::Mixer::kMusicSoundType;
 
 			_vm->_mixer->playInputStream(type, &track->handle, track->stream, -1, vol, pan, false);
 		}
@@ -246,14 +246,14 @@ void IMuseDigital::callback() {
 
 			const int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
 			const int vol = track->vol / 1000;
-			SoundMixer::SoundType type = SoundMixer::kPlainSoundType;
+			Audio::Mixer::SoundType type = Audio::Mixer::kPlainSoundType;
 
 			if (track->volGroupId == 1)
-				type = SoundMixer::kSpeechSoundType;
+				type = Audio::Mixer::kSpeechSoundType;
 			if (track->volGroupId == 2)
-				type = SoundMixer::kSFXSoundType;
+				type = Audio::Mixer::kSFXSoundType;
 			if (track->volGroupId == 3)
-				type = SoundMixer::kMusicSoundType;
+				type = Audio::Mixer::kMusicSoundType;
 
 			if (track->stream) {
 				byte *data = NULL;

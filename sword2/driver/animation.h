@@ -73,7 +73,7 @@ struct MovieInfo {
 class MoviePlayer {
 private:
 	Sword2Engine *_vm;
-	SoundMixer *_snd;
+	Audio::Mixer *_snd;
 	OSystem *_sys;
 
 	byte *_textSurface;

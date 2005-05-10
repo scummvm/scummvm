@@ -26,13 +26,15 @@
 #include "sound/audiostream.h"
 #include "sound/fmopl.h"
 
-class SoundMixer;
+namespace Audio {
+	class Mixer;
+}
 
 namespace Sky {
 
 class AdlibMusic : public AudioStream, public MusicBase {
 public:
-	AdlibMusic(SoundMixer *pMixer, Disk *pDisk);
+	AdlibMusic(Audio::Mixer *pMixer, Disk *pDisk);
 	~AdlibMusic(void);
 	virtual void setVolume(uint8 volume);
 
@@ -47,7 +49,7 @@ public:
 
 private:
 	FM_OPL *_opl;
-	SoundMixer *_mixer;
+	Audio::Mixer *_mixer;
 	uint8 *_initSequence;
 	uint32 _sampleRate, _nextMusicPoll;
 	virtual void setupPointers(void);

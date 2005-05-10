@@ -81,7 +81,7 @@ Sound::Sound(Sword2Engine *vm) {
 	_mixBuffer = NULL;
 	_mixBufferLen = 0;
 
-	_vm->_mixer->setupPremix(this, SoundMixer::kMusicSoundType);
+	_vm->_mixer->setupPremix(this, Audio::Mixer::kMusicSoundType);
 }
 
 Sound::~Sound() {
@@ -220,7 +220,7 @@ void Sound::queueFx(int32 res, int32 type, int32 delay, int32 volume, int32 pan)
 				delay *= 12;
 			}
 
-			volume = (volume * SoundMixer::kMaxChannelVolume) / 16;
+			volume = (volume * Audio::Mixer::kMaxChannelVolume) / 16;
 			pan = (pan * 127) / 16;
 
 			if (isReverseStereo())
@@ -247,10 +247,10 @@ void Sound::queueFx(int32 res, int32 type, int32 delay, int32 volume, int32 pan)
 }
 
 int32 Sound::playFx(FxQueueEntry *fx) {
-	return playFx(&fx->handle, fx->data, fx->len, fx->volume, fx->pan, (fx->type == FX_LOOP), SoundMixer::kSFXSoundType);
+	return playFx(&fx->handle, fx->data, fx->len, fx->volume, fx->pan, (fx->type == FX_LOOP), Audio::Mixer::kSFXSoundType);
 }
 
-int32 Sound::playFx(SoundHandle *handle, byte *data, uint32 len, uint8 vol, int8 pan, bool loop, SoundMixer::SoundType soundType) {
+int32 Sound::playFx(SoundHandle *handle, byte *data, uint32 len, uint8 vol, int8 pan, bool loop, Audio::Mixer::SoundType soundType) {
 	if (_fxMuted)
 		return RD_OK;
 
@@ -267,10 +267,10 @@ int32 Sound::playFx(SoundHandle *handle, byte *data, uint32 len, uint8 vol, int8
 	}
 
 	if (isReverseStereo())
-		flags |= SoundMixer::FLAG_REVERSE_STEREO;
+		flags |= Audio::Mixer::FLAG_REVERSE_STEREO;
 
 	if (loop)
-		flags |= SoundMixer::FLAG_LOOP;
+		flags |= Audio::Mixer::FLAG_LOOP;
 
 	_vm->_mixer->playRaw(handle, data + stream.pos(), size, rate, flags, -1, vol, pan, 0, 0, soundType);
 	return RD_OK;

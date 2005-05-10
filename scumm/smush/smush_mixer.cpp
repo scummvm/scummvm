@@ -33,7 +33,7 @@
 
 namespace Scumm {
 
-SmushMixer::SmushMixer(SoundMixer *m) :
+SmushMixer::SmushMixer(Audio::Mixer *m) :
 	_mixer(m),
 	_soundFrequency(22050) {
 	for (int32 i = 0; i < NUM_CHANNELS; i++) {
@@ -109,27 +109,27 @@ bool SmushMixer::handleFrame() {
 
 				_channels[i].chan->getParameters(rate, stereo, is_16bit, vol, pan);
 				int32 size = _channels[i].chan->availableSoundData();
-				byte flags = stereo ? SoundMixer::FLAG_STEREO : 0;
+				byte flags = stereo ? Audio::Mixer::FLAG_STEREO : 0;
 
 				if (is_16bit) {
 					data = malloc(size * (stereo ? 2 : 1) * 4);
 					_channels[i].chan->getSoundData((int16 *)data, size);
 					size *= stereo ? 4 : 2;
 
-					flags |= SoundMixer::FLAG_16BITS;
+					flags |= Audio::Mixer::FLAG_16BITS;
 
 				} else {
 					data = malloc(size * (stereo ? 2 : 1) * 2);
 					_channels[i].chan->getSoundData((int8 *)data, size);
 					size *= stereo ? 2 : 1;
 
-					flags |= SoundMixer::FLAG_UNSIGNED;
+					flags |= Audio::Mixer::FLAG_UNSIGNED;
 				}
 
 				if (_mixer->isReady()) {
 					if (!_channels[i].stream) {
 						_channels[i].stream = makeAppendableAudioStream(rate, flags, 500000);
-						_mixer->playInputStream(SoundMixer::kSFXSoundType, &_channels[i].handle, _channels[i].stream);
+						_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_channels[i].handle, _channels[i].stream);
 					}
 					_mixer->setChannelVolume(_channels[i].handle, vol);
 					_mixer->setChannelBalance(_channels[i].handle, pan);

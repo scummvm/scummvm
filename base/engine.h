@@ -26,7 +26,9 @@
 
 class GameDetector;
 class OSystem;
-class SoundMixer;
+namespace Audio {
+	class Mixer;
+}
 namespace Common {
 	class SaveFileManager;
 	class Timer;
@@ -35,7 +37,7 @@ namespace Common {
 class Engine {
 public:
 	OSystem *_system;
-	SoundMixer *_mixer;
+	Audio::Mixer *_mixer;
 	Common::Timer * _timer;
 
 protected:

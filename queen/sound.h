@@ -51,10 +51,10 @@ class QueenEngine;
 
 class Sound {
 public:
-	Sound(SoundMixer *mixer, QueenEngine *vm);
+	Sound(Audio::Mixer *mixer, QueenEngine *vm);
 	virtual ~Sound(); 
 	virtual void sfxPlay(const char *name, bool isSpeech) = 0;
-	static Sound *giveSound(SoundMixer *mixer, QueenEngine *vm, uint8 compression);
+	static Sound *giveSound(Audio::Mixer *mixer, QueenEngine *vm, uint8 compression);
 	void playSfx(uint16 sfx, bool isSpeech);
 	void playSfx(const char *base, bool isSpeech);
 	void playSong(int16 songNum);
@@ -103,7 +103,7 @@ public:
 protected:
 	void waitFinished(bool isSpeech);
 
-	SoundMixer *_mixer;
+	Audio::Mixer *_mixer;
 	QueenEngine *_vm;
 
 	bool _sfxToggle;
@@ -118,13 +118,13 @@ protected:
 
 class SilentSound : public Sound {
 public:
-	SilentSound(SoundMixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
+	SilentSound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
 	void sfxPlay(const char *name, bool isSpeech) { }
 };
 
 class SBSound : public Sound {
 public:
-	SBSound(SoundMixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
+	SBSound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
 	void sfxPlay(const char *name, bool isSpeech);
 protected:
 	void playSound(byte *sound, uint32 size, bool isSpeech);
@@ -133,7 +133,7 @@ protected:
 #ifdef USE_MAD
 class MP3Sound : public Sound {
 public:
-	MP3Sound(SoundMixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
+	MP3Sound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
 	void sfxPlay(const char *name, bool isSpeech);
 };
 #endif
@@ -141,7 +141,7 @@ public:
 #ifdef USE_VORBIS
 class OGGSound : public Sound {
 public:
-	OGGSound(SoundMixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
+	OGGSound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
 	void sfxPlay(const char *name, bool isSpeech);
 };
 #endif
@@ -149,7 +149,7 @@ public:
 #ifdef USE_FLAC
 class FLACSound : public Sound {
 public:
-	FLACSound(SoundMixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
+	FLACSound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
 	void sfxPlay(const char *name, bool isSpeech);
 };
 #endif // #ifdef USE_FLAC

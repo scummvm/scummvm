@@ -253,7 +253,7 @@ public:
 
 	void queueFx(int32 res, int32 type, int32 delay, int32 volume, int32 pan);
 	int32 playFx(FxQueueEntry *fx);
-	int32 playFx(SoundHandle *handle, byte *data, uint32 len, uint8 vol, int8 pan, bool loop, SoundMixer::SoundType soundType);
+	int32 playFx(SoundHandle *handle, byte *data, uint32 len, uint8 vol, int8 pan, bool loop, Audio::Mixer::SoundType soundType);
 	int32 stopFx(int32 i);
 	int32 setFxIdVolumePan(int32 id, int vol, int pan = 255);
 

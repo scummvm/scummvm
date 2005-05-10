@@ -56,7 +56,7 @@ protected:
 public:
 	bool _initialising;
 
-	MidiDriver_MT32(SoundMixer *mixer);
+	MidiDriver_MT32(Audio::Mixer *mixer);
 	virtual ~MidiDriver_MT32();
 
 	int open();
@@ -208,7 +208,7 @@ static int MT32_Report(void *userData, MT32Emu::ReportType type, const void *rep
 //
 ////////////////////////////////////////
 
-MidiDriver_MT32::MidiDriver_MT32(SoundMixer *mixer) : MidiDriver_Emulated(mixer) {
+MidiDriver_MT32::MidiDriver_MT32(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer) {
 	_channelMask = 0xFFFF; // Permit all 16 channels by default
 	uint i;
 	for (i = 0; i < ARRAYSIZE(_midiChannels); ++i) {
@@ -221,7 +221,7 @@ MidiDriver_MT32::MidiDriver_MT32(SoundMixer *mixer) : MidiDriver_Emulated(mixer)
 	_baseFreq = 10000;
 	// Unfortunately bugs in the emulator cause inaccurate tuning
 	// at rates other than 32KHz, thus we produce data at 32KHz and
-	// rely on SoundMixer to convert.
+	// rely on Mixer to convert.
 	_outputRate = 32000; //_mixer->getOutputRate();
 	_initialising = false;
 }
@@ -267,7 +267,7 @@ int MidiDriver_MT32::open() {
 	_initialising = false;
 	g_system->clearScreen();
 	g_system->updateScreen();
-	_mixer->playInputStream(SoundMixer::kSFXSoundType, &_handle, this, -1, 255, 0, false, true);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_handle, this, -1, 255, 0, false, true);
 	return 0;
 }
 
@@ -388,7 +388,7 @@ protected:
 	void sysEx(byte *msg, uint16 length);
 
 public:
-	MidiDriver_ThreadedMT32(SoundMixer *mixer);
+	MidiDriver_ThreadedMT32(Audio::Mixer *mixer);
 
 	void onTimer();
 	void close();
@@ -396,7 +396,7 @@ public:
 };
 
 
-MidiDriver_ThreadedMT32::MidiDriver_ThreadedMT32(SoundMixer *mixer) : MidiDriver_MT32(mixer) {
+MidiDriver_ThreadedMT32::MidiDriver_ThreadedMT32(Audio::Mixer *mixer) : MidiDriver_MT32(mixer) {
 	_events = NULL;
 	_timer_proc = NULL;
 }
@@ -468,7 +468,7 @@ void MidiDriver_ThreadedMT32::onTimer() {
 //
 ////////////////////////////////////////
 
-MidiDriver *MidiDriver_MT32_create(SoundMixer *mixer) {
+MidiDriver *MidiDriver_MT32_create(Audio::Mixer *mixer) {
 	// HACK: It will stay here until engine plugin loader overhaul
 	if (ConfMan.hasKey("extrapath"))                                        
 		Common::File::addDefaultDirectory(ConfMan.get("extrapath"));

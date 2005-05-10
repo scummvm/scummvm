@@ -74,7 +74,7 @@ protected:
 	const int _movieWidth;
 	const int _movieHeight;
 	
-	SoundMixer *_snd;
+	Audio::Mixer *_snd;
 	OSystem *_sys;
 
 	uint _frameNum;
@@ -117,7 +117,7 @@ protected:
 #endif
 
 public:
-	BaseAnimationState(SoundMixer *snd, OSystem *sys, int width, int height);
+	BaseAnimationState(Audio::Mixer *snd, OSystem *sys, int width, int height);
 	virtual ~BaseAnimationState();
 
 	bool init(const char *name, void *audioArg = NULL);

@@ -27,7 +27,7 @@
 #include "scumm/music.h"
 #include "scumm/player_mod.h"
 
-class SoundMixer;
+class Mixer;
 
 namespace Scumm {
 

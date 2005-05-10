@@ -33,9 +33,9 @@
 namespace Sword1 {
 
 #define SOUND_SPEECH_ID 1
-#define SPEECH_FLAGS (SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LITTLE_ENDIAN)
+#define SPEECH_FLAGS (Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_LITTLE_ENDIAN)
 
-Sound::Sound(const char *searchPath, SoundMixer *mixer, ResMan *pResMan) {
+Sound::Sound(const char *searchPath, Audio::Mixer *mixer, ResMan *pResMan) {
 	strcpy(_filePath, searchPath);
 	_mixer = mixer;
 	_resMan = pResMan;
@@ -161,11 +161,11 @@ void Sound::playSample(QueueElement *elem) {
 					uint32 size = READ_LE_UINT32(sampleData + 0x28);
 					uint8 flags;
 					if (READ_LE_UINT16(sampleData + 0x22) == 16)
-						flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_LITTLE_ENDIAN;
+						flags = Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_LITTLE_ENDIAN;
 					else
-						flags = SoundMixer::FLAG_UNSIGNED;
+						flags = Audio::Mixer::FLAG_UNSIGNED;
 					if (READ_LE_UINT16(sampleData + 0x16) == 2)
-						flags |= SoundMixer::FLAG_STEREO;
+						flags |= Audio::Mixer::FLAG_STEREO;
 					_mixer->playRaw(&elem->handle, sampleData + 0x2C, size, 11025, flags, elem->id, volume, pan);
 			}
 		} else
@@ -195,7 +195,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 #ifdef USE_MAD
 		else if (_cowMode == CowMp3) {
 			_cowFile.seek(index);
-			_mixer->playInputStream(SoundMixer::kSFXSoundType, &_speechHandle, makeMP3Stream(&_cowFile, sampleSize), SOUND_SPEECH_ID, speechVol, speechPan);
+			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_speechHandle, makeMP3Stream(&_cowFile, sampleSize), SOUND_SPEECH_ID, speechVol, speechPan);
 			// with compressed audio, we can't calculate the wave volume.
 			// so default to talking.
 			for (int cnt = 0; cnt < 480; cnt++)
@@ -206,7 +206,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 #ifdef USE_VORBIS
 		else if (_cowMode == CowVorbis) {
 			_cowFile.seek(index);
-			_mixer->playInputStream(SoundMixer::kSFXSoundType, &_speechHandle, makeVorbisStream(&_cowFile, sampleSize), SOUND_SPEECH_ID, speechVol, speechPan);
+			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_speechHandle, makeVorbisStream(&_cowFile, sampleSize), SOUND_SPEECH_ID, speechVol, speechPan);
 			for (int cnt = 0; cnt < 480; cnt++)
 				_waveVolume[cnt] = true;	
 			_waveVolPos = 0;

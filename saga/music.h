@@ -106,7 +106,7 @@ protected:
 class Music {
 public:
 
-	Music(SoundMixer *mixer, MidiDriver *driver, int enabled);
+	Music(Audio::Mixer *mixer, MidiDriver *driver, int enabled);
 	~Music(void);
 	void setNativeMT32(bool b)	{ _player->setNativeMT32(b); }
 	bool hasNativeMT32()		{ return _player->hasNativeMT32(); }
@@ -122,7 +122,7 @@ public:
 
 private:
 
-	SoundMixer *_mixer;
+	Audio::Mixer *_mixer;
 
 	MusicPlayer *_player;
 	SoundHandle _musicHandle;

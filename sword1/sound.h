@@ -28,7 +28,9 @@
 #include "sound/mixer.h"
 #include "common/util.h"
 
-class SoundMixer;
+namespace Audio {
+	class Mixer;
+}
 
 namespace Sword1 {
 
@@ -67,7 +69,7 @@ enum CowMode {
 
 class Sound {
 public:
-	Sound(const char *searchPath, SoundMixer *mixer, ResMan *pResMan);
+	Sound(const char *searchPath, Audio::Mixer *mixer, ResMan *pResMan);
 	~Sound(void);
 	void setSpeechVol(uint8 volL, uint8 volR) { _speechVolL = volL; _speechVolR = volR; };
 	void setSfxVol(uint8 volL, uint8 volR) { _sfxVolL = volL; _sfxVolR = volR; };
@@ -106,7 +108,7 @@ private:
 	
 	QueueElement _fxQueue[MAX_FXQ_LENGTH];
 	uint8		 _endOfQueue;
-	SoundMixer *_mixer;
+	Audio::Mixer *_mixer;
 	ResMan *_resMan;
 	char _filePath[100];
 	static const char _musicList[270];

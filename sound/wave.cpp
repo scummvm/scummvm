@@ -109,18 +109,18 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 
 	flags = 0;
 	if (bitsPerSample == 8)		// 8 bit data is unsigned
-		flags |= SoundMixer::FLAG_UNSIGNED;
+		flags |= Audio::Mixer::FLAG_UNSIGNED;
 	else if (bitsPerSample == 16)	// 16 bit data is signed little endian
-		flags |= (SoundMixer::FLAG_16BITS | SoundMixer::FLAG_LITTLE_ENDIAN);
+		flags |= (Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_LITTLE_ENDIAN);
 	else if (bitsPerSample == 4 && type == 17)	// IMA ADPCM compressed. We decompress it
-		flags |= (SoundMixer::FLAG_16BITS | SoundMixer::FLAG_LITTLE_ENDIAN);
+		flags |= (Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_LITTLE_ENDIAN);
 	else {
 		warning("getWavInfo: unsupported bitsPerSample %d", bitsPerSample);
 		return false;
 	}
 	
 	if (numChannels == 2)
-		flags |= SoundMixer::FLAG_STEREO;
+		flags |= Audio::Mixer::FLAG_STEREO;
 	else if (numChannels != 1) {
 		warning("getWavInfo: unsupported number of channels %d", numChannels);
 		return false;
@@ -166,7 +166,7 @@ AudioStream *makeWAVStream(Common::SeekableReadStream &stream) {
 	byte *data = (byte *)malloc(size);
 	assert(data);
 	stream.read(data, size);
-	flags |= SoundMixer::FLAG_AUTOFREE;
+	flags |= Audio::Mixer::FLAG_AUTOFREE;
 
 	return makeLinearInputStream(rate, flags, data, size, 0, 0);
 }

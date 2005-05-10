@@ -168,7 +168,7 @@ protected:
 	void generateSamples(int16 *buf, int len);
 
 public:
-	MidiDriver_YM2612(SoundMixer *mixer);
+	MidiDriver_YM2612(Audio::Mixer *mixer);
 	virtual ~MidiDriver_YM2612();
 
 	int open();
@@ -710,7 +710,7 @@ void MidiChannel_YM2612::rate(uint16 r) {
 //
 ////////////////////////////////////////
 
-MidiDriver_YM2612::MidiDriver_YM2612(SoundMixer *mixer)
+MidiDriver_YM2612::MidiDriver_YM2612(Audio::Mixer *mixer)
 	: MidiDriver_Emulated(mixer) {
 	_next_voice = 0;
 
@@ -903,6 +903,6 @@ void MidiDriver_YM2612::createLookupTables() {
 //
 ////////////////////////////////////////
 
-MidiDriver *MidiDriver_YM2612_create(SoundMixer *mixer) {
+MidiDriver *MidiDriver_YM2612_create(Audio::Mixer *mixer) {
 	return new MidiDriver_YM2612(mixer);
 }

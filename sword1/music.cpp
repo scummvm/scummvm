@@ -48,12 +48,12 @@ WaveAudioStream::WaveAudioStream(Common::File *source, uint32 pSize) {
 	_sampleBuf = (uint8*)malloc(SMP_BUFSIZE);
 	_sourceFile->incRef();
 	if (_sourceFile->isOpen() && loadWAVFromStream(*_sourceFile, size, rate, flags)) {
-		_isStereo = (flags & SoundMixer::FLAG_STEREO) != 0;
+		_isStereo = (flags & Audio::Mixer::FLAG_STEREO) != 0;
 		_rate = rate;
 		if (pSize && (int)pSize < size)
 			size = pSize;
 		assert((uint32)size <= (source->size() - source->pos()));
-		_bitsPerSample = ((flags & SoundMixer::FLAG_16BITS) != 0) ? 16 : 8;
+		_bitsPerSample = ((flags & Audio::Mixer::FLAG_16BITS) != 0) ? 16 : 8;
 		_samplesLeft = (size * 8) / _bitsPerSample;
 		if ((_bitsPerSample != 16) && (_bitsPerSample != 8))
 			error("WaveAudioStream: unknown wave type");
@@ -251,7 +251,7 @@ void MusicHandle::stop() {
 	_looping = false;
 }
 
-Music::Music(SoundMixer *pMixer) {
+Music::Music(Audio::Mixer *pMixer) {
 	_mixer = pMixer;
 	_sampleRate = pMixer->getOutputRate();
 	_converter[0] = NULL;

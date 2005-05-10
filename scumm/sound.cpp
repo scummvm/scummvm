@@ -223,7 +223,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 	char *sound;
 	int size = -1;
 	int rate;
-	byte flags = SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
+	byte flags = Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE;
 
 	if (heChannel == -1) {
 		heChannel = 1;
@@ -337,7 +337,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 
 		if (heFlags & 1) {
 			// TODO
-			// flags |= SoundMixer::FLAG_LOOP;
+			// flags |= Audio::Mixer::FLAG_LOOP;
 		}
 
 		// Allocate a sound buffer, copy the data into it, and play
@@ -353,7 +353,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 
 		size = READ_BE_UINT32(ptr+4) - 8;
 		rate = 22050;
-		flags = SoundMixer::FLAG_AUTOFREE;
+		flags = Audio::Mixer::FLAG_AUTOFREE;
 
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
@@ -482,7 +482,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 				size -= waveSize;
 
 				if (loopEnd > 0)
-					flags |= SoundMixer::FLAG_LOOP;
+					flags |= Audio::Mixer::FLAG_LOOP;
 
 				_vm->_mixer->playRaw(NULL, sound, waveSize, rate, flags, soundID, 255, 0, loopStart, loopEnd);
 			}
@@ -546,7 +546,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		sound = (char *)malloc(size);
 		int vol = ptr[24] * 4;
 		memcpy(sound, ptr + READ_BE_UINT16(ptr + 8), size);
-		_vm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, soundID, vol, 0);
+		_vm->_mixer->playRaw(NULL, sound, size, rate, Audio::Mixer::FLAG_AUTOFREE, soundID, vol, 0);
 	}
 	else {
 		
@@ -806,7 +806,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, SoundHandle *handl
 			//_vm->_imuseDigital->stopSound(kTalkSoundID);
 			_vm->_imuseDigital->startVoice(kTalkSoundID, input);
 		} else {
-			_vm->_mixer->playInputStream(SoundMixer::kSFXSoundType, handle, input, id);
+			_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, input, id);
 		}
 	}
 }
@@ -1189,7 +1189,7 @@ ScummFile *Sound::openSfxFile() {
 }
 
 bool Sound::isSfxFinished() const {
-	return !_vm->_mixer->hasActiveChannelOfType(SoundMixer::kSFXSoundType);
+	return !_vm->_mixer->hasActiveChannelOfType(Audio::Mixer::kSFXSoundType);
 }
 
 // We use a real timer in an attempt to get better sync with CD tracks. This is
@@ -2436,10 +2436,10 @@ void AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::append(const byt
 			return new AppendableMemoryStream<STEREO, false, UNSIGNED, false>(rate, len)
 
 AppendableAudioStream *makeAppendableAudioStream(int rate, byte _flags, uint32 len) {
-	const bool isStereo = (_flags & SoundMixer::FLAG_STEREO) != 0;
-	const bool is16Bit = (_flags & SoundMixer::FLAG_16BITS) != 0;
-	const bool isUnsigned = (_flags & SoundMixer::FLAG_UNSIGNED) != 0;
-	const bool isLE       = (_flags & SoundMixer::FLAG_LITTLE_ENDIAN) != 0;
+	const bool isStereo = (_flags & Audio::Mixer::FLAG_STEREO) != 0;
+	const bool is16Bit = (_flags & Audio::Mixer::FLAG_16BITS) != 0;
+	const bool isUnsigned = (_flags & Audio::Mixer::FLAG_UNSIGNED) != 0;
+	const bool isLE       = (_flags & Audio::Mixer::FLAG_LITTLE_ENDIAN) != 0;
 	
 	if (isStereo) {
 		if (isUnsigned) {

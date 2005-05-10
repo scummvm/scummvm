@@ -28,7 +28,9 @@
 #include "scumm/music.h"
 #include "sound/audiostream.h"
 
-class SoundMixer;
+namespace Audio {
+	class Mixer;
+}
 
 namespace Scumm {
 
@@ -96,7 +98,7 @@ public:
 
 protected:
 	bool _isV3Game;
-	SoundMixer *_mixer;
+	Audio::Mixer *_mixer;
 	ScummEngine *_vm;
 
 	bool _pcjr;

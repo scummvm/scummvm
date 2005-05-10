@@ -633,6 +633,6 @@ Engine *GameDetector::createEngine(OSystem *sys) {
 	return _plugin->createInstance(this, sys);
 }
 
-SoundMixer *GameDetector::createMixer() {
-	return new SoundMixer();
+Audio::Mixer *GameDetector::createMixer() {
+	return new Audio::Mixer();
 }

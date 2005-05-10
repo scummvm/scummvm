@@ -66,7 +66,7 @@ enum {
 };
 
 
-CreditsPlayer::CreditsPlayer(OSystem *pSystem, SoundMixer *pMixer) {
+CreditsPlayer::CreditsPlayer(OSystem *pSystem, Audio::Mixer *pMixer) {
 	_system = pSystem;
 	_mixer = pMixer;
 	_smlFont = _bigFont = NULL;
@@ -113,7 +113,7 @@ void CreditsPlayer::play(void) {
 
 	// everything's initialized, time to render and show the credits.
 	SoundHandle bgSound;
-	_mixer->playInputStream(SoundMixer::kMusicSoundType, &bgSound, bgSoundStream, 0);
+	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &bgSound, bgSoundStream, 0);
 
 	int relDelay = 0;
 	uint16 scrollY = 0;

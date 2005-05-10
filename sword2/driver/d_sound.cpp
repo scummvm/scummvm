@@ -643,7 +643,7 @@ void Sound::muteSpeech(bool mute) {
 	_speechMuted = mute;
 
 	if (_vm->_mixer->isSoundHandleActive(_soundHandleSpeech)) {
-		uint volume = mute ? 0 : SoundMixer::kMaxChannelVolume;
+		uint volume = mute ? 0 : Audio::Mixer::kMaxChannelVolume;
 
 		_vm->_mixer->setChannelVolume(_soundHandleSpeech, volume);
 	}
@@ -764,14 +764,14 @@ int32 Sound::playCompSpeech(uint32 speechId, uint8 vol, int8 pan) {
 
 	// Modify the volume according to the master volume
 
-	byte volume = _speechMuted ? 0 : vol * SoundMixer::kMaxChannelVolume / 16;
+	byte volume = _speechMuted ? 0 : vol * Audio::Mixer::kMaxChannelVolume / 16;
 	int8 p = (pan * 127) / 16;
 
 	if (isReverseStereo())
 		p = -p;
 
 	// Start the speech playing
-	_vm->_mixer->playInputStream(SoundMixer::kSpeechSoundType, &_soundHandleSpeech, input, -1, volume, p);
+	_vm->_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_soundHandleSpeech, input, -1, volume, p);
 	return RD_OK;
 }
 
@@ -810,7 +810,7 @@ int32 Sound::setFxIdVolumePan(int32 id, int vol, int pan) {
 	if (vol > 16)
 		vol = 16;
 
-	_fxQueue[id].volume = (vol * SoundMixer::kMaxChannelVolume) / 16;
+	_fxQueue[id].volume = (vol * Audio::Mixer::kMaxChannelVolume) / 16;
 
 	if (pan != 255) {
 		if (isReverseStereo())

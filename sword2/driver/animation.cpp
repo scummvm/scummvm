@@ -183,7 +183,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], int32 lea
 
 		leadIn += sizeof(StandardHeader);
 
-		_vm->_sound->playFx(&leadInHandle, leadIn, leadInLen, SoundMixer::kMaxChannelVolume, 0, false, SoundMixer::kMusicSoundType);
+		_vm->_sound->playFx(&leadInHandle, leadIn, leadInLen, Audio::Mixer::kMaxChannelVolume, 0, false, Audio::Mixer::kMusicSoundType);
 	}
 
 	byte *leadOut = NULL;
@@ -248,7 +248,7 @@ void MoviePlayer::playMPEG(const char *filename, MovieTextObject *text[], byte *
 	uint frameCounter = 0, textCounter = 0;
 	SoundHandle handle;
 	bool skipCutscene = false, textVisible = false;
-	uint32 flags = SoundMixer::FLAG_16BITS;
+	uint32 flags = Audio::Mixer::FLAG_16BITS;
 	bool startNextText = false;
 
 	byte oldPal[256 * 4];
@@ -271,7 +271,7 @@ void MoviePlayer::playMPEG(const char *filename, MovieTextObject *text[], byte *
 	_vm->_screen->updateDisplay();
 
 #ifndef SCUMM_BIG_ENDIAN
-	flags |= SoundMixer::FLAG_LITTLE_ENDIAN;
+	flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
 #endif
 
 	while (!skipCutscene && anim->decodeFrame()) {
@@ -307,7 +307,7 @@ void MoviePlayer::playMPEG(const char *filename, MovieTextObject *text[], byte *
 		frameCounter++;
 
 		if (frameCounter == _leadOutFrame && leadOut)
-			_vm->_sound->playFx(&_leadOutHandle, leadOut, leadOutLen, SoundMixer::kMaxChannelVolume, 0, false, SoundMixer::kMusicSoundType);
+			_vm->_sound->playFx(&_leadOutHandle, leadOut, leadOutLen, Audio::Mixer::kMaxChannelVolume, 0, false, Audio::Mixer::kMusicSoundType);
 
 		OSystem::Event event;
 		while (_sys->pollEvent(event)) {
@@ -456,10 +456,10 @@ void MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte 
 
 	bool skipCutscene = false;
 
-	uint32 flags = SoundMixer::FLAG_16BITS;
+	uint32 flags = Audio::Mixer::FLAG_16BITS;
 
 #ifndef SCUMM_BIG_ENDIAN
-	flags |= SoundMixer::FLAG_LITTLE_ENDIAN;
+	flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
 #endif
 
 	while (1) {
@@ -527,7 +527,7 @@ void MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte 
 	// subtitles.
 
 	if (!skipCutscene && leadOut)
-		_vm->_sound->playFx(&_leadOutHandle, leadOut, leadOutLen, SoundMixer::kMaxChannelVolume, 0, false, SoundMixer::kMusicSoundType);
+		_vm->_sound->playFx(&_leadOutHandle, leadOut, leadOutLen, Audio::Mixer::kMaxChannelVolume, 0, false, Audio::Mixer::kMusicSoundType);
 
 	_vm->_screen->setPalette(0, 256, oldPal, RDPAL_INSTANT);
 }

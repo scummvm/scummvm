@@ -28,7 +28,9 @@
 #include "sound/audiostream.h"
 #include "sound/rate.h"
 
-class SoundMixer;
+namespace Audio {
+	class Mixer;
+}
 
 namespace Sword1 {
 
@@ -84,7 +86,7 @@ public:
 
 class Music : public AudioStream {
 public:
-	Music(SoundMixer *pMixer);
+	Music(Audio::Mixer *pMixer);
 	~Music();
 	void startMusic(int32 tuneId, int32 loopFlag);
 	void fadeDown();
@@ -104,7 +106,7 @@ private:
 	st_volume_t _volumeL, _volumeR;
 	MusicHandle _handles[2];
 	RateConverter *_converter[2];
-	SoundMixer *_mixer;
+	Audio::Mixer *_mixer;
 	uint32 _sampleRate;
 	Common::Mutex _mutex;
 

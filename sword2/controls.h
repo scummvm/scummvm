@@ -86,7 +86,7 @@ private:
 	Button *_okButton;
 	Button *_cancelButton;
 	
-	SoundMixer *_mixer;
+	Audio::Mixer *_mixer;
 
 public:
 	OptionsDialog(Sword2Engine *vm);

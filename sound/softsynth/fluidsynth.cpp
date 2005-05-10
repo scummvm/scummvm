@@ -49,7 +49,7 @@ protected:
 	void generateSamples(int16 *buf, int len);
 
 public:
-	MidiDriver_FluidSynth(SoundMixer *mixer);
+	MidiDriver_FluidSynth(Mixer *mixer);
 
 	int open();
 	void close();
@@ -65,7 +65,7 @@ public:
 
 // MidiDriver method implementations
 
-MidiDriver_FluidSynth::MidiDriver_FluidSynth(SoundMixer *mixer)
+MidiDriver_FluidSynth::MidiDriver_FluidSynth(Mixer *mixer)
 	: MidiDriver_Emulated(mixer) {
 
 	for (int i = 0; i < ARRAYSIZE(_midiChannels); i++) {
@@ -138,7 +138,7 @@ int MidiDriver_FluidSynth::open() {
 	MidiDriver_Emulated::open();
 
 	// The MT-32 emulator uses kSFXSoundType here. I don't know why.
-	_mixer->playInputStream(SoundMixer::kMusicSoundType, &_handle, this, -1, 255, 0, false, true);
+	_mixer->playInputStream(Mixer::kMusicSoundType, &_handle, this, -1, 255, 0, false, true);
 	return 0;
 }
 
@@ -206,7 +206,7 @@ MidiChannel *MidiDriver_FluidSynth::getPercussionChannel() {
 	return &_midiChannels[9];
 }
 
-MidiDriver *MidiDriver_FluidSynth_create(SoundMixer *mixer) {
+MidiDriver *MidiDriver_FluidSynth_create(Mixer *mixer) {
 	return new MidiDriver_FluidSynth(mixer);
 }
 

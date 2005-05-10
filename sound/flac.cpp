@@ -750,7 +750,7 @@ public:
 	FlacTrackInfo(File *file);
 	~FlacTrackInfo();
 	bool error() { return _file == NULL; }
-	void play(SoundMixer *mixer, SoundHandle *handle, int startFrame, int duration);
+	void play(Audio::Mixer *mixer, SoundHandle *handle, int startFrame, int duration);
 };
 
 FlacTrackInfo::FlacTrackInfo(File *file) : _file(NULL), _firstStream(NULL)
@@ -764,7 +764,7 @@ FlacTrackInfo::FlacTrackInfo(File *file) : _file(NULL), _firstStream(NULL)
 		delete tempStream;
 }
 
-void FlacTrackInfo::play(SoundMixer *mixer, SoundHandle *handle, int startFrame, int duration) {
+void FlacTrackInfo::play(Audio::Mixer *mixer, SoundHandle *handle, int startFrame, int duration) {
 	if (error()) {
 		debug(1, "FlacTrackInfo::play:  invalid state, method should not been called");
 	}
@@ -787,7 +787,7 @@ void FlacTrackInfo::play(SoundMixer *mixer, SoundHandle *handle, int startFrame,
 			flac->setLastSample(0);
 
 		if (flac->seekAbsolute(static_cast<FLAC__uint64>(startFrame) * (info.sample_rate / 75))) {
-			mixer->playInputStream(SoundMixer::kMusicSoundType, handle, flac);
+			mixer->playInputStream(Audio::Mixer::kMusicSoundType, handle, flac);
 			return;
 		}
 		// startSample is beyond the existing Samples

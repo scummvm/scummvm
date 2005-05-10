@@ -448,8 +448,8 @@ void ScummEngine::processKbd(bool smushMode) {
 		vol = runDialog(dlg);
 
 		vol *= 16;
-		if (vol > SoundMixer::kMaxMixerVolume)
-			vol = SoundMixer::kMaxMixerVolume;
+		if (vol > Audio::Mixer::kMaxMixerVolume)
+			vol = Audio::Mixer::kMaxMixerVolume;
 
 		ConfMan.set("music_volume", vol);
 		setupVolumes();

@@ -543,7 +543,7 @@ class MidiDriver_ADLIB : public MidiDriver_Emulated {
 	friend class AdlibPercussionChannel;
 
 public:
-	MidiDriver_ADLIB(SoundMixer *mixer);
+	MidiDriver_ADLIB(Audio::Mixer *mixer);
 
 	int open();
 	void close();
@@ -798,7 +798,7 @@ void AdlibPercussionChannel::noteOn(byte note, byte velocity) {
 
 // MidiDriver method implementations
 
-MidiDriver_ADLIB::MidiDriver_ADLIB(SoundMixer *mixer) 
+MidiDriver_ADLIB::MidiDriver_ADLIB(Audio::Mixer *mixer) 
 	: MidiDriver_Emulated(mixer) {
 	uint i;
 
@@ -962,7 +962,7 @@ MidiChannel *MidiDriver_ADLIB::allocateChannel() {
 	return NULL;
 }
 
-MidiDriver *MidiDriver_ADLIB_create(SoundMixer *mixer) {
+MidiDriver *MidiDriver_ADLIB_create(Audio::Mixer *mixer) {
 	return new MidiDriver_ADLIB(mixer);
 }
 

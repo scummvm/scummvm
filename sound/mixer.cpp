@@ -34,6 +34,8 @@
 #include "sound/vorbis.h"
 
 
+namespace Audio {
+
 #pragma mark -
 #pragma mark --- Channel classes ---
 #pragma mark -
@@ -44,10 +46,10 @@
  */
 class Channel {
 public:
-	const SoundMixer::SoundType	_type;
+	const Mixer::SoundType	_type;
 	SoundHandle _handle;
 private:
-	SoundMixer *_mixer;
+	Mixer *_mixer;
 	bool _autofreeStream;
 	bool _permanent;
 	byte _volume;
@@ -64,8 +66,8 @@ protected:
 
 public:
 
-	Channel(SoundMixer *mixer, SoundMixer::SoundType type, int id = -1);
-	Channel(SoundMixer *mixer, SoundMixer::SoundType type, AudioStream *input, bool autofreeStream, bool reverseStereo = false, int id = -1, bool permanent = false);
+	Channel(Mixer *mixer, Mixer::SoundType type, int id = -1);
+	Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *input, bool autofreeStream, bool reverseStereo = false, int id = -1, bool permanent = false);
 	virtual ~Channel();
 
 	void mix(int16 *data, uint len);
@@ -96,11 +98,11 @@ public:
 
 
 #pragma mark -
-#pragma mark --- SoundMixer ---
+#pragma mark --- Mixer ---
 #pragma mark -
 
 
-SoundMixer::SoundMixer() {
+Mixer::Mixer() {
 	_syst = &OSystem::instance();
 
 	_handleSeed = 0;
@@ -125,7 +127,7 @@ SoundMixer::SoundMixer() {
 	debug(1, "Output sample rate: %d Hz", _outputRate);
 }
 
-SoundMixer::~SoundMixer() {
+Mixer::~Mixer() {
 	_syst->clearSoundCallback();
 	stopAll(true);
 
@@ -133,11 +135,11 @@ SoundMixer::~SoundMixer() {
 	_premixChannel = 0;
 }
 
-bool SoundMixer::isPaused() {
+bool Mixer::isPaused() {
 	return _paused;
 }
 
-void SoundMixer::setupPremix(AudioStream *stream, SoundType type) {
+void Mixer::setupPremix(AudioStream *stream, SoundType type) {
 	Common::StackLock lock(_mutex);
 
 	delete _premixChannel;
@@ -150,7 +152,7 @@ void SoundMixer::setupPremix(AudioStream *stream, SoundType type) {
 	_premixChannel = new Channel(this, type, stream, false);
 }
 
-void SoundMixer::insertChannel(SoundHandle *handle, Channel *chan) {
+void Mixer::insertChannel(SoundHandle *handle, Channel *chan) {
 
 	int index = -1;
 	for (int i = 0; i != NUM_CHANNELS; i++) {
@@ -160,7 +162,7 @@ void SoundMixer::insertChannel(SoundHandle *handle, Channel *chan) {
 		}
 	}
 	if (index == -1) {
-		warning("SoundMixer::out of mixer slots");
+		warning("Mixer::out of mixer slots");
 		delete chan;
 		return;
 	}
@@ -173,7 +175,7 @@ void SoundMixer::insertChannel(SoundHandle *handle, Channel *chan) {
 	}
 }
 
-void SoundMixer::playRaw(SoundHandle *handle, void *sound, uint32 size, uint rate, byte flags,
+void Mixer::playRaw(SoundHandle *handle, void *sound, uint32 size, uint rate, byte flags,
 			int id, byte volume, int8 balance, uint32 loopStart, uint32 loopEnd, SoundType type) {
 	Common::StackLock lock(_mutex);
 
@@ -181,7 +183,7 @@ void SoundMixer::playRaw(SoundHandle *handle, void *sound, uint32 size, uint rat
 	if (id != -1) {
 		for (int i = 0; i != NUM_CHANNELS; i++)
 			if (_channels[i] != 0 && _channels[i]->getId() == id) {
-				if ((flags & SoundMixer::FLAG_AUTOFREE) != 0)
+				if ((flags & Mixer::FLAG_AUTOFREE) != 0)
 					free(sound);
 				return;
 			}
@@ -189,7 +191,7 @@ void SoundMixer::playRaw(SoundHandle *handle, void *sound, uint32 size, uint rat
 
 	// Create the input stream
 	AudioStream *input;
-	if (flags & SoundMixer::FLAG_LOOP) {
+	if (flags & Mixer::FLAG_LOOP) {
 		if (loopEnd == 0) {
 			input = makeLinearInputStream(rate, flags, (byte *)sound, size, 0, size);
 		} else {
@@ -201,13 +203,13 @@ void SoundMixer::playRaw(SoundHandle *handle, void *sound, uint32 size, uint rat
 	}
 
 	// Create the channel
-	Channel *chan = new Channel(this, type, input, true, (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0, id);
+	Channel *chan = new Channel(this, type, input, true, (flags & Mixer::FLAG_REVERSE_STEREO) != 0, id);
 	chan->setVolume(volume);
 	chan->setBalance(balance);
 	insertChannel(handle, chan);
 }
 
-void SoundMixer::playInputStream(SoundType type, SoundHandle *handle, AudioStream *input,
+void Mixer::playInputStream(SoundType type, SoundHandle *handle, AudioStream *input,
 			int id, byte volume, int8 balance, bool autofreeStream, bool permanent) {
 	Common::StackLock lock(_mutex);
 
@@ -233,7 +235,7 @@ void SoundMixer::playInputStream(SoundType type, SoundHandle *handle, AudioStrea
 	insertChannel(handle, chan);
 }
 
-void SoundMixer::mix(int16 *buf, uint len) {
+void Mixer::mix(int16 *buf, uint len) {
 	Common::StackLock lock(_mutex);
 
 	//  zero the buf
@@ -255,15 +257,15 @@ void SoundMixer::mix(int16 *buf, uint len) {
 	}
 }
 
-void SoundMixer::mixCallback(void *s, byte *samples, int len) {
+void Mixer::mixCallback(void *s, byte *samples, int len) {
 	assert(s);
 	assert(samples);
 	// Len is the number of bytes in the buffer; we divide it by
 	// four to get the number of samples (stereo 16 bit).
-	((SoundMixer *)s)->mix((int16 *)samples, len >> 2);
+	((Mixer *)s)->mix((int16 *)samples, len >> 2);
 }
 
-void SoundMixer::stopAll(bool force) {
+void Mixer::stopAll(bool force) {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i] != 0) {
@@ -274,7 +276,7 @@ void SoundMixer::stopAll(bool force) {
 		}
 }
 
-void SoundMixer::stopID(int id) {
+void Mixer::stopID(int id) {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++) {
 		if (_channels[i] != 0 && _channels[i]->getId() == id) {
@@ -284,7 +286,7 @@ void SoundMixer::stopID(int id) {
 	}
 }
 
-void SoundMixer::stopHandle(SoundHandle handle) {
+void Mixer::stopHandle(SoundHandle handle) {
 	Common::StackLock lock(_mutex);
 
 	// Simply ignore stop requests for handles of sounds that already terminated
@@ -296,7 +298,7 @@ void SoundMixer::stopHandle(SoundHandle handle) {
 	_channels[index] = 0;
 }
 
-void SoundMixer::setChannelVolume(SoundHandle handle, byte volume) {
+void Mixer::setChannelVolume(SoundHandle handle, byte volume) {
 	Common::StackLock lock(_mutex);
 
 	const int index = handle._val % NUM_CHANNELS;
@@ -306,7 +308,7 @@ void SoundMixer::setChannelVolume(SoundHandle handle, byte volume) {
 	_channels[index]->setVolume(volume);
 }
 
-void SoundMixer::setChannelBalance(SoundHandle handle, int8 balance) {
+void Mixer::setChannelBalance(SoundHandle handle, int8 balance) {
 	Common::StackLock lock(_mutex);
 
 	const int index = handle._val % NUM_CHANNELS;
@@ -316,7 +318,7 @@ void SoundMixer::setChannelBalance(SoundHandle handle, int8 balance) {
 	_channels[index]->setBalance(balance);
 }
 
-uint32 SoundMixer::getSoundElapsedTimeOfSoundID(int id) {
+uint32 Mixer::getSoundElapsedTimeOfSoundID(int id) {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i] && _channels[i]->getId() == id)
@@ -324,7 +326,7 @@ uint32 SoundMixer::getSoundElapsedTimeOfSoundID(int id) {
 	return 0;
 }
 
-uint32 SoundMixer::getSoundElapsedTime(SoundHandle handle) {
+uint32 Mixer::getSoundElapsedTime(SoundHandle handle) {
 	Common::StackLock lock(_mutex);
 
 	const int index = handle._val % NUM_CHANNELS;
@@ -334,11 +336,11 @@ uint32 SoundMixer::getSoundElapsedTime(SoundHandle handle) {
 	return _channels[index]->getElapsedTime();
 }
 
-void SoundMixer::pauseAll(bool paused) {
+void Mixer::pauseAll(bool paused) {
 	_paused = paused;
 }
 
-void SoundMixer::pauseID(int id, bool paused) {
+void Mixer::pauseID(int id, bool paused) {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++) {
 		if (_channels[i] != 0 && _channels[i]->getId() == id) {
@@ -348,7 +350,7 @@ void SoundMixer::pauseID(int id, bool paused) {
 	}
 }
 
-void SoundMixer::pauseHandle(SoundHandle handle, bool paused) {
+void Mixer::pauseHandle(SoundHandle handle, bool paused) {
 	Common::StackLock lock(_mutex);
 
 	// Simply ignore pause/unpause requests for handles of sound that alreayd terminated
@@ -359,7 +361,7 @@ void SoundMixer::pauseHandle(SoundHandle handle, bool paused) {
 	_channels[index]->pause(paused);
 }
 
-bool SoundMixer::isSoundIDActive(int id) {
+bool Mixer::isSoundIDActive(int id) {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i] && _channels[i]->getId() == id)
@@ -367,7 +369,7 @@ bool SoundMixer::isSoundIDActive(int id) {
 	return false;
 }
 
-int SoundMixer::getSoundID(SoundHandle handle) {
+int Mixer::getSoundID(SoundHandle handle) {
 	Common::StackLock lock(_mutex);
 	const int index = handle._val % NUM_CHANNELS;
 	if (_channels[index] && _channels[index]->_handle._val == handle._val)
@@ -375,13 +377,13 @@ int SoundMixer::getSoundID(SoundHandle handle) {
 	return 0;
 }
 
-bool SoundMixer::isSoundHandleActive(SoundHandle handle) {
+bool Mixer::isSoundHandleActive(SoundHandle handle) {
 	Common::StackLock lock(_mutex);
 	const int index = handle._val % NUM_CHANNELS;
 	return _channels[index] && _channels[index]->_handle._val == handle._val;
 }
 
-bool SoundMixer::hasActiveChannelOfType(SoundType type) {
+bool Mixer::hasActiveChannelOfType(SoundType type) {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i] && _channels[i]->_type == type)
@@ -389,7 +391,7 @@ bool SoundMixer::hasActiveChannelOfType(SoundType type) {
 	return false;
 }
 
-void SoundMixer::setVolumeForSoundType(SoundType type, int volume) {
+void Mixer::setVolumeForSoundType(SoundType type, int volume) {
 	assert(0 <= type && type < ARRAYSIZE(_volumeForSoundType));
 
 	// Check range
@@ -404,7 +406,7 @@ void SoundMixer::setVolumeForSoundType(SoundType type, int volume) {
 	_volumeForSoundType[type] = volume;
 }
 
-int SoundMixer::getVolumeForSoundType(SoundType type) const {
+int Mixer::getVolumeForSoundType(SoundType type) const {
 	assert(0 <= type && type < ARRAYSIZE(_volumeForSoundType));
 	
 	return _volumeForSoundType[type];
@@ -416,17 +418,17 @@ int SoundMixer::getVolumeForSoundType(SoundType type) const {
 #pragma mark -
 
 
-Channel::Channel(SoundMixer *mixer, SoundMixer::SoundType type, int id)
+Channel::Channel(Mixer *mixer, Mixer::SoundType type, int id)
 	: _type(type), _mixer(mixer), _autofreeStream(true),
-	  _volume(SoundMixer::kMaxChannelVolume), _balance(0), _paused(false), _id(id), _samplesConsumed(0),
+	  _volume(Mixer::kMaxChannelVolume), _balance(0), _paused(false), _id(id), _samplesConsumed(0),
 	  _samplesDecoded(0), _mixerTimeStamp(0), _converter(0), _input(0) {
 	assert(mixer);
 }
 
-Channel::Channel(SoundMixer *mixer, SoundMixer::SoundType type, AudioStream *input,
+Channel::Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *input,
 				bool autofreeStream, bool reverseStereo, int id, bool permanent)
 	: _type(type), _mixer(mixer), _autofreeStream(autofreeStream),
-	  _volume(SoundMixer::kMaxChannelVolume), _balance(0), _paused(false), _id(id), _samplesConsumed(0),
+	  _volume(Mixer::kMaxChannelVolume), _balance(0), _paused(false), _id(id), _samplesConsumed(0),
 	  _samplesDecoded(0), _mixerTimeStamp(0), _converter(0), _input(input), _permanent(permanent) {
 	assert(mixer);
 	assert(input);
@@ -465,14 +467,14 @@ void Channel::mix(int16 *data, uint len) {
 		st_volume_t vol_l, vol_r;
 
 		if (_balance == 0) {
-			vol_l = vol / SoundMixer::kMaxChannelVolume;
-			vol_r = vol / SoundMixer::kMaxChannelVolume;
+			vol_l = vol / Mixer::kMaxChannelVolume;
+			vol_r = vol / Mixer::kMaxChannelVolume;
 		} else if (_balance < 0) {
-			vol_l = vol / SoundMixer::kMaxChannelVolume;
-			vol_r = ((127 + _balance) * vol) / (SoundMixer::kMaxChannelVolume * 127);
+			vol_l = vol / Mixer::kMaxChannelVolume;
+			vol_r = ((127 + _balance) * vol) / (Mixer::kMaxChannelVolume * 127);
 		} else {
-			vol_l = ((127 - _balance) * vol) / (SoundMixer::kMaxChannelVolume * 127);
-			vol_r = vol / SoundMixer::kMaxChannelVolume;
+			vol_l = ((127 - _balance) * vol) / (Mixer::kMaxChannelVolume * 127);
+			vol_r = vol / Mixer::kMaxChannelVolume;
 		}
 
 		_samplesConsumed = _samplesDecoded;
@@ -507,3 +509,6 @@ uint32 Channel::getElapsedTime() {
 	// FIXME: This won't work very well if the sound is paused.
 	return 1000 * seconds + milliseconds + delta;
 }
+
+
+} // End of namespace Audio

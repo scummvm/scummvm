@@ -23,7 +23,10 @@
 #define BS1CREDITS_H
 
 #include "common/util.h"
-class SoundMixer;
+
+namespace Audio {
+	class Mixer;
+}
 class OSystem;
 
 namespace Sword1 {
@@ -44,7 +47,7 @@ private:
 
 class CreditsPlayer {
 public:
-	CreditsPlayer(OSystem *pSystem, SoundMixer *pMixer);
+	CreditsPlayer(OSystem *pSystem, Audio::Mixer *pMixer);
 	void play(void);
 private:
 	void generateFonts(ArcFile *arcFile);
@@ -58,7 +61,7 @@ private:
 	uint8 _numChars;
 
 	OSystem *_system;
-	SoundMixer *_mixer;
+	Audio::Mixer *_mixer;
 
 	uint8 *_smlFont, *_bigFont;
 };

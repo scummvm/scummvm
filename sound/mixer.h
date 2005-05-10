@@ -29,19 +29,23 @@
 
 
 class AudioStream;
-class Channel;
+namespace Audio {
+	class Channel;
+	class Mixer;
+}
 class OSystem;
 
 class SoundHandle {
-	friend class Channel;
-	friend class SoundMixer;
+	friend class Audio::Channel;
+	friend class Audio::Mixer;
 	uint32 _val;
 public:
 	inline SoundHandle() : _val(0xFFFFFFFF) {}
 };
 
+namespace Audio {
 
-class SoundMixer {
+class Mixer {
 public:
 	enum {
 		/** unsigned samples (default: signed) */
@@ -101,8 +105,8 @@ private:
 	bool _mixerReady;
 
 public:
-	SoundMixer();
-	~SoundMixer();
+	Mixer();
+	~Mixer();
 
 
 
@@ -303,5 +307,8 @@ private:
 	 */
 	static void mixCallback(void *s, byte *samples, int len);
 };
+
+
+} // End of namespace Audio
 
 #endif

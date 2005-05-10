@@ -48,7 +48,7 @@ struct SOUNDBUFFER {
 class Sound {
 public:
 
-	Sound(SagaEngine *vm, SoundMixer *mixer, int enabled);
+	Sound(SagaEngine *vm, Audio::Mixer *mixer, int enabled);
 	~Sound();
 
 	int playSound(SOUNDBUFFER *buf, int volume, bool loop);
@@ -70,7 +70,7 @@ public:
 	int _enabled;
 
 	SagaEngine *_vm;
-	SoundMixer *_mixer;
+	Audio::Mixer *_mixer;
 	Common::MemoryReadStream *_voxStream;
 
 	SoundHandle _effectHandle;

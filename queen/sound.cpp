@@ -36,14 +36,14 @@
 
 namespace Queen {
 
-Sound::Sound(SoundMixer *mixer, QueenEngine *vm) : 
+Sound::Sound(Audio::Mixer *mixer, QueenEngine *vm) : 
 	_mixer(mixer), _vm(vm), _sfxToggle(true), _speechToggle(true), _musicToggle(true), _lastOverride(0) {
 }
 
 Sound::~Sound() {
 }
 
-Sound *Sound::giveSound(SoundMixer *mixer, QueenEngine *vm, uint8 compression) {
+Sound *Sound::giveSound(Audio::Mixer *mixer, QueenEngine *vm, uint8 compression) {
 	if (!mixer->isReady())
 		return new SilentSound(mixer, vm);
 	
@@ -187,7 +187,7 @@ void Sound::loadState(uint32 ver, byte *&ptr) {
 }
 
 void SBSound::playSound(byte *sound, uint32 size, bool isSpeech) {
-	byte flags = SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
+	byte flags = Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE;
 	_mixer->playRaw(isSpeech ? &_speechHandle : &_sfxHandle, sound, size, 11025, flags);
 }
 
@@ -201,7 +201,7 @@ void SBSound::sfxPlay(const char *name, bool isSpeech) {
 void MP3Sound::sfxPlay(const char *name, bool isSpeech) {
 	uint32 size;
 	Common::File *f = _vm->resource()->giveCompressedSound(name, &size);
-	_mixer->playInputStream(SoundMixer::kSFXSoundType, isSpeech ? &_speechHandle : &_sfxHandle, makeMP3Stream(f, size));
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, isSpeech ? &_speechHandle : &_sfxHandle, makeMP3Stream(f, size));
 }
 #endif
 
@@ -209,7 +209,7 @@ void MP3Sound::sfxPlay(const char *name, bool isSpeech) {
 void OGGSound::sfxPlay(const char *name, bool isSpeech) {
 	uint32 size;
 	Common::File *f = _vm->resource()->giveCompressedSound(name, &size);		
-	_mixer->playInputStream(SoundMixer::kSFXSoundType, isSpeech ? &_speechHandle : &_sfxHandle, makeVorbisStream(f, size));
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, isSpeech ? &_speechHandle : &_sfxHandle, makeVorbisStream(f, size));
 }
 #endif
 
@@ -217,7 +217,7 @@ void OGGSound::sfxPlay(const char *name, bool isSpeech) {
 void FLACSound::sfxPlay(const char *name, bool isSpeech) {
 	uint32 size;
 	Common::File *f = _vm->resource()->giveCompressedSound(name, &size);		
-	_mixer->playInputStream(SoundMixer::kSFXSoundType, isSpeech ? &_speechHandle : &_sfxHandle, makeFlacStream(f, size));
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, isSpeech ? &_speechHandle : &_sfxHandle, makeFlacStream(f, size));
 }
 #endif
 

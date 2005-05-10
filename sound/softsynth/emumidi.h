@@ -28,7 +28,7 @@
 class MidiDriver_Emulated : public AudioStream, public MidiDriver {
 protected:
 	bool _isOpen;
-	SoundMixer *_mixer;
+	Audio::Mixer *_mixer;
 
 private:
 	Common::Timer::TimerProc _timerProc;
@@ -44,7 +44,7 @@ protected:
 	int _baseFreq;
 
 public:
-	MidiDriver_Emulated(SoundMixer *mixer) : _mixer(mixer) {
+	MidiDriver_Emulated(Audio::Mixer *mixer) : _mixer(mixer) {
 		_isOpen = false;
 	
 		_timerProc = 0;

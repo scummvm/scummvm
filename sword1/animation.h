@@ -61,7 +61,7 @@ private:
 	Screen *_scr;
 
 public:
-	AnimationState(Screen *scr, SoundMixer *snd, OSystem *sys);
+	AnimationState(Screen *scr, Audio::Mixer *snd, OSystem *sys);
 	~AnimationState();
 	void updateScreen();
 	OverlayColor *giveRgbBuffer(void);
@@ -80,7 +80,7 @@ protected:
 
 class MoviePlayer {
 public:
-	MoviePlayer(Screen *scr, SoundMixer *snd, OSystem *sys);
+	MoviePlayer(Screen *scr, Audio::Mixer *snd, OSystem *sys);
 	~MoviePlayer(void);
 	void play(uint32 id);
 private:
@@ -88,7 +88,7 @@ private:
 	void processFrame(uint32 animId, AnimationState *anim, uint32 frameNo);
 	bool initOverlays(uint32 id);
 	Screen *_scr;
-	SoundMixer *_snd;
+	Audio::Mixer *_snd;
 	OSystem *_sys;
 
 	static const char *_sequenceList[20];

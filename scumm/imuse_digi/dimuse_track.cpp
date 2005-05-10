@@ -140,19 +140,19 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 
 		track->iteration = freq * channels;
 		if (channels == 2)
-			track->mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
+			track->mixerFlags = Audio::Mixer::FLAG_STEREO | Audio::Mixer::FLAG_REVERSE_STEREO;
 
 		if ((bits == 12) || (bits == 16)) {
-			track->mixerFlags |= SoundMixer::FLAG_16BITS;
+			track->mixerFlags |= Audio::Mixer::FLAG_16BITS;
 			track->iteration *= 2;
 		} else if (bits == 8) {
-			track->mixerFlags |= SoundMixer::FLAG_UNSIGNED;
+			track->mixerFlags |= Audio::Mixer::FLAG_UNSIGNED;
 		} else
 			error("IMuseDigital::startSound(): Can't handle %d bit samples", bits);
 
 #ifdef SCUMM_LITTLE_ENDIAN
 		if (track->compressed)
-			track->mixerFlags |= SoundMixer::FLAG_LITTLE_ENDIAN;
+			track->mixerFlags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
 #endif
 	}
 
@@ -163,14 +163,14 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	} else {
 		const int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
 		const int vol = track->vol / 1000;
-		SoundMixer::SoundType type = SoundMixer::kPlainSoundType;
+		Audio::Mixer::SoundType type = Audio::Mixer::kPlainSoundType;
 
 		if (track->volGroupId == 1)
-			type = SoundMixer::kSpeechSoundType;
+			type = Audio::Mixer::kSpeechSoundType;
 		if (track->volGroupId == 2)
-			type = SoundMixer::kSFXSoundType;
+			type = Audio::Mixer::kSFXSoundType;
 		if (track->volGroupId == 3)
-			type = SoundMixer::kMusicSoundType;
+			type = Audio::Mixer::kMusicSoundType;
 
 		// setup 1 second stream wrapped buffer
 		int32 streamBufferSize = track->iteration;
@@ -340,14 +340,14 @@ IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDel
 	fadeTrack->volFadeStep = (fadeTrack->volFadeDest - fadeTrack->vol) * 60 * (1000 / _callbackFps) / (1000 * fadeDelay);
 	fadeTrack->volFadeUsed = true;
 
-	SoundMixer::SoundType type = SoundMixer::kPlainSoundType;
+	Audio::Mixer::SoundType type = Audio::Mixer::kPlainSoundType;
 
 	if (fadeTrack->volGroupId == 1)
-		type = SoundMixer::kSpeechSoundType;
+		type = Audio::Mixer::kSpeechSoundType;
 	if (fadeTrack->volGroupId == 2)
-		type = SoundMixer::kSFXSoundType;
+		type = Audio::Mixer::kSFXSoundType;
 	if (fadeTrack->volGroupId == 3)
-		type = SoundMixer::kMusicSoundType;
+		type = Audio::Mixer::kMusicSoundType;
 
 	// setup 1 second stream wrapped buffer
 	int32 streamBufferSize = fadeTrack->iteration;

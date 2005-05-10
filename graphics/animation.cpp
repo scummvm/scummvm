@@ -30,7 +30,7 @@
 
 namespace Graphics {
 
-BaseAnimationState::BaseAnimationState(SoundMixer *snd, OSystem *sys, int width, int height) 
+BaseAnimationState::BaseAnimationState(Audio::Mixer *snd, OSystem *sys, int width, int height) 
 	: _movieWidth(width), _movieHeight(height), _snd(snd), _sys(sys) {
 #ifndef BACKEND_8BIT
 	_colorTab = NULL;
@@ -143,7 +143,7 @@ bool BaseAnimationState::init(const char *name, void *audioArg) {
 	_bgSoundStream = createAudioStream(name, audioArg);
 
 	if (_bgSoundStream != NULL) {
-		_snd->playInputStream(SoundMixer::kSFXSoundType, &_bgSound, _bgSoundStream, -1, 255, 0, false);
+		_snd->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream, -1, 255, 0, false);
 	} else {
 		warning("Cutscene: Could not open Audio Track for %s", name);
 	}

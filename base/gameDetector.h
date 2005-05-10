@@ -29,7 +29,9 @@ class Engine;
 class GameDetector;
 class OSystem;
 class Plugin;
-class SoundMixer;
+namespace Audio {
+	class Mixer;
+}
 
 /** Global (shared) game feature flags. */
 enum {
@@ -66,7 +68,7 @@ public:
 public:
 	Engine *createEngine(OSystem *system);
 
-	static SoundMixer *createMixer();
+	static Audio::Mixer *createMixer();
 
 	static GameSettings findGame(const String &gameName, const Plugin **plugin = NULL);
 

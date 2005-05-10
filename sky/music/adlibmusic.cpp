@@ -26,7 +26,7 @@
 
 namespace Sky {
 
-AdlibMusic::AdlibMusic(SoundMixer *pMixer, Disk *pDisk)
+AdlibMusic::AdlibMusic(Audio::Mixer *pMixer, Disk *pDisk)
 	: MusicBase(pDisk) {
 	
 	_driverFileBase = 60202;

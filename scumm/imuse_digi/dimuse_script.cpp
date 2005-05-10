@@ -170,7 +170,7 @@ void IMuseDigital::flushTracks() {
 	 				track->stream->finish();
 	 			}
 				if (track->stream->endOfStream()
-						|| _vm->_mixer->isPaused() // hack for paused SoundMixer
+						|| _vm->_mixer->isPaused() // hack for paused Mixer
 						|| _vm->_insaneRunning) { // INSANE hack for sync timer mode
 					_vm->_mixer->stopHandle(track->handle);
 					delete track->stream;

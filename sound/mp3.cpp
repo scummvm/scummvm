@@ -288,7 +288,7 @@ public:
 	MP3TrackInfo(File *file);
 	~MP3TrackInfo();
 	bool error() { return _error_flag; }
-	void play(SoundMixer *mixer, SoundHandle *handle, int startFrame, int duration);
+	void play(Audio::Mixer *mixer, SoundHandle *handle, int startFrame, int duration);
 };
 
 
@@ -363,7 +363,7 @@ error:
 	delete file;
 }
 
-void MP3TrackInfo::play(SoundMixer *mixer, SoundHandle *handle, int startFrame, int duration) {
+void MP3TrackInfo::play(Audio::Mixer *mixer, SoundHandle *handle, int startFrame, int duration) {
 	unsigned int offset;
 	mad_timer_t durationTime;
 
@@ -383,7 +383,7 @@ void MP3TrackInfo::play(SoundMixer *mixer, SoundHandle *handle, int startFrame, 
 
 	// Play it
 	AudioStream *input = new MP3InputStream(_file, durationTime);
-	mixer->playInputStream(SoundMixer::kMusicSoundType, handle, input);
+	mixer->playInputStream(Audio::Mixer::kMusicSoundType, handle, input);
 }
 
 MP3TrackInfo::~MP3TrackInfo() {

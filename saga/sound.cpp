@@ -30,7 +30,7 @@
 
 namespace Saga {
 
-Sound::Sound(SagaEngine *vm, SoundMixer *mixer, int enabled) : 
+Sound::Sound(SagaEngine *vm, Audio::Mixer *mixer, int enabled) : 
 	_vm(vm), _mixer(mixer), _enabled(enabled), _voxStream(0) {
 
 	_soundInitialized = 1;
@@ -53,20 +53,20 @@ int Sound::playSoundBuffer(SoundHandle *handle, SOUNDBUFFER *buf, int volume, bo
 		return FAILURE;
 	}
 
-	flags = SoundMixer::FLAG_AUTOFREE;
+	flags = Audio::Mixer::FLAG_AUTOFREE;
 
 	if (loop)
-		flags |= SoundMixer::FLAG_LOOP;
+		flags |= Audio::Mixer::FLAG_LOOP;
 
 	if (buf->s_samplebits == 16) {
-		flags |= SoundMixer::FLAG_16BITS;
+		flags |= Audio::Mixer::FLAG_16BITS;
 		if (!(_vm->getFeatures() & GF_BIG_ENDIAN_DATA))
-			flags |= SoundMixer::FLAG_LITTLE_ENDIAN;
+			flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
 	}
 	if (buf->s_stereo)
-		flags |= SoundMixer::FLAG_STEREO;
+		flags |= Audio::Mixer::FLAG_STEREO;
 	if (!buf->s_signed)
-		flags |= SoundMixer::FLAG_UNSIGNED;
+		flags |= Audio::Mixer::FLAG_UNSIGNED;
 
 	_mixer->playRaw(handle, buf->s_buf, buf->s_buf_len, buf->s_freq, flags, -1, volume);
 
@@ -120,7 +120,7 @@ int Sound::playVoxVoice(SOUNDBUFFER *buf) {
 	_voxStream = new Common::MemoryReadStream(buf->s_buf, buf->s_buf_len);
 
 	audioStream = makeADPCMStream(*_voxStream, buf->s_buf_len, kADPCMOki);
-	_mixer->playInputStream(SoundMixer::kSFXSoundType, &_voiceHandle, audioStream);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_voiceHandle, audioStream);
 
 	return SUCCESS;
 }

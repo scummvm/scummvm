@@ -27,7 +27,9 @@
 #include "scumm/music.h"
 #include "sound/audiostream.h"
 
-class SoundMixer;
+namespace Audio {
+	class Mixer;
+}
 
 namespace Scumm {
 
@@ -69,7 +71,7 @@ private:
 	void do_mix(int16 *buf, uint len);
 
 	ScummEngine *_vm;
-	SoundMixer *_mixer;
+	Audio::Mixer *_mixer;
 	int _sample_rate;
 	int _samples_per_frame;
 	int _current_sample;

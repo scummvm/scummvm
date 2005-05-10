@@ -188,9 +188,9 @@ void Sword2Engine::registerDefaultSettings() {
 }
 
 void Sword2Engine::readSettings() {
-	_mixer->setVolumeForSoundType(SoundMixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-	_mixer->setVolumeForSoundType(SoundMixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
-	_mixer->setVolumeForSoundType(SoundMixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	setSubtitles(ConfMan.getBool("subtitles"));
 	_sound->muteMusic(ConfMan.getBool("music_mute"));
 	_sound->muteSpeech(ConfMan.getBool("speech_mute"));
@@ -201,9 +201,9 @@ void Sword2Engine::readSettings() {
 }
 
 void Sword2Engine::writeSettings() {
-	ConfMan.set("music_volume", _mixer->getVolumeForSoundType(SoundMixer::kMusicSoundType));
-	ConfMan.set("speech_volume", _mixer->getVolumeForSoundType(SoundMixer::kSpeechSoundType));
-	ConfMan.set("sfx_volume", _mixer->getVolumeForSoundType(SoundMixer::kSFXSoundType));
+	ConfMan.set("music_volume", _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType));
+	ConfMan.set("speech_volume", _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType));
+	ConfMan.set("sfx_volume", _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType));
 	ConfMan.set("music_mute", _sound->isMusicMute());
 	ConfMan.set("speech_mute", _sound->isSpeechMute());
 	ConfMan.set("sfx_mute", _sound->isFxMute());

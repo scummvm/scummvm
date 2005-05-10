@@ -168,10 +168,10 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 			}
 
 			// output left channel
-			clampedAdd(*obuf++, (out[0] * (int)vol_l) / SoundMixer::kMaxMixerVolume);
+			clampedAdd(*obuf++, (out[0] * (int)vol_l) / Audio::Mixer::kMaxMixerVolume);
 
 			// output right channel
-			clampedAdd(*obuf++, (out[1] * (int)vol_r) / SoundMixer::kMaxMixerVolume);
+			clampedAdd(*obuf++, (out[1] * (int)vol_r) / Audio::Mixer::kMaxMixerVolume);
 
 			// Increment output position
 			unsigned long tmp = opos_frac + opos_inc_frac;
@@ -238,10 +238,10 @@ public:
 			}
 
 			// output left channel
-			clampedAdd(*obuf++, (tmp0 * (int)vol_l) / SoundMixer::kMaxMixerVolume);
+			clampedAdd(*obuf++, (tmp0 * (int)vol_l) / Audio::Mixer::kMaxMixerVolume);
 	
 			// output right channel
-			clampedAdd(*obuf++, (tmp1 * (int)vol_r) / SoundMixer::kMaxMixerVolume);
+			clampedAdd(*obuf++, (tmp1 * (int)vol_r) / Audio::Mixer::kMaxMixerVolume);
 		}
 		return (ST_SUCCESS);
 	}

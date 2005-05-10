@@ -40,35 +40,35 @@ class BaseSound {
 protected:
 	File *_file;
 	uint32 *_offsets;
-	SoundMixer *_mixer;
+	Audio::Mixer *_mixer;
 	bool _freeOffsets;
 
 public:
-	BaseSound(SoundMixer *mixer, File *file, uint32 base = 0, bool bigendian = false);
-	BaseSound(SoundMixer *mixer, File *file, uint32 *offsets, bool bigendian = false);
+	BaseSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigendian = false);
+	BaseSound(Audio::Mixer *mixer, File *file, uint32 *offsets, bool bigendian = false);
 	virtual ~BaseSound();
 	virtual void playSound(uint sound, SoundHandle *handle, byte flags) = 0;
 };
 
 class WavSound : public BaseSound {
 public:
-	WavSound(SoundMixer *mixer, File *file, uint32 base = 0, bool bigendian = false) : BaseSound(mixer, file, base, bigendian) {};
-	WavSound(SoundMixer *mixer, File *file, uint32 *offsets) : BaseSound(mixer, file, offsets) {};
+	WavSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigendian = false) : BaseSound(mixer, file, base, bigendian) {};
+	WavSound(Audio::Mixer *mixer, File *file, uint32 *offsets) : BaseSound(mixer, file, offsets) {};
 	void playSound(uint sound, SoundHandle *handle, byte flags);
 };
 
 class VocSound : public BaseSound {
 public:
-	VocSound(SoundMixer *mixer, File *file, uint32 base = 0, bool bigendian = false) : BaseSound(mixer, file, base, bigendian) {};
+	VocSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigendian = false) : BaseSound(mixer, file, base, bigendian) {};
 	void playSound(uint sound, SoundHandle *handle, byte flags);
 };
 class RawSound : public BaseSound {
 public:
-	RawSound(SoundMixer *mixer, File *file, uint32 base = 0, bool bigendian = false) : BaseSound(mixer, file, base, bigendian) {};
+	RawSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigendian = false) : BaseSound(mixer, file, base, bigendian) {};
 	void playSound(uint sound, SoundHandle *handle, byte flags);
 };
 
-BaseSound::BaseSound(SoundMixer *mixer, File *file, uint32 base, bool bigendian) {
+BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 base, bool bigendian) {
 	_mixer = mixer;
 	_file = file;
 
@@ -106,7 +106,7 @@ BaseSound::BaseSound(SoundMixer *mixer, File *file, uint32 base, bool bigendian)
 	_offsets[res] = _file->pos();
 }
 
-BaseSound::BaseSound(SoundMixer *mixer, File *file, uint32 *offsets, bool bigendian) {
+BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 *offsets, bool bigendian) {
 	_mixer = mixer;
 	_file = file;
 	_offsets = offsets;
@@ -131,7 +131,7 @@ void WavSound::playSound(uint sound, SoundHandle *handle, byte flags) {
 		error("playWav(%d): can't read WAVE header", sound);
 	}
 
-	_mixer->playInputStream(SoundMixer::kSFXSoundType, handle, stream);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, stream);
 }
 
 void VocSound::playSound(uint sound, SoundHandle *handle, byte flags) {
@@ -143,7 +143,7 @@ void VocSound::playSound(uint sound, SoundHandle *handle, byte flags) {
 	int size, samples_per_sec;
 	byte *buffer = loadVOCFromStream(*_file, size, samples_per_sec);
 
-	_mixer->playRaw(handle, buffer, size, samples_per_sec, flags | SoundMixer::FLAG_AUTOFREE);
+	_mixer->playRaw(handle, buffer, size, samples_per_sec, flags | Audio::Mixer::FLAG_AUTOFREE);
 }
 
 void RawSound::playSound(uint sound, SoundHandle *handle, byte flags) {
@@ -156,13 +156,13 @@ void RawSound::playSound(uint sound, SoundHandle *handle, byte flags) {
 	byte *buffer = (byte *)malloc(size);
 	_file->read(buffer, size);
 
-	_mixer->playRaw(handle, buffer, size, 22050, flags | SoundMixer::FLAG_AUTOFREE);
+	_mixer->playRaw(handle, buffer, size, 22050, flags | Audio::Mixer::FLAG_AUTOFREE);
 }
 
 #ifdef USE_MAD
 class MP3Sound : public BaseSound {
 public:
-	MP3Sound(SoundMixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {};
+	MP3Sound(Audio::Mixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {};
 	void playSound(uint sound, SoundHandle *handle, byte flags);
 };
 
@@ -179,14 +179,14 @@ void MP3Sound::playSound(uint sound, SoundHandle *handle, byte flags)
 
 	uint32 size = _offsets[sound + i] - _offsets[sound];
 
-	_mixer->playInputStream(SoundMixer::kSFXSoundType, handle, makeMP3Stream(_file, size));
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, makeMP3Stream(_file, size));
 }
 #endif
 
 #ifdef USE_VORBIS
 class VorbisSound : public BaseSound {
 public:
-	VorbisSound(SoundMixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {};
+	VorbisSound(Audio::Mixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {};
 	void playSound(uint sound, SoundHandle *handle, byte flags);
 };
 
@@ -203,14 +203,14 @@ void VorbisSound::playSound(uint sound, SoundHandle *handle, byte flags)
 
 	uint32 size = _offsets[sound + i] - _offsets[sound];
 
-	_mixer->playInputStream(SoundMixer::kSFXSoundType, handle, makeVorbisStream(_file, size));
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, makeVorbisStream(_file, size));
 }
 #endif
 
 #ifdef USE_FLAC
 class FlacSound : public BaseSound {
 public:
-	FlacSound(SoundMixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {};
+	FlacSound(Audio::Mixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {};
 	void playSound(uint sound, SoundHandle *handle, byte flags);
 };
 
@@ -227,11 +227,11 @@ void FlacSound::playSound(uint sound, SoundHandle *handle, byte flags)
 
 	uint32 size = _offsets[sound + i] - _offsets[sound];
 
-	_mixer->playInputStream(SoundMixer::kSFXSoundType, handle, makeFlacStream(_file, size));
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, makeFlacStream(_file, size));
 }
 #endif
 
-Sound::Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer)
+Sound::Sound(const byte game, const GameSpecificSettings *gss, Audio::Mixer *mixer)
 	: _game(game), _mixer(mixer) {
 	_voice = 0;
 	_effects = 0;
@@ -444,7 +444,7 @@ void Sound::playVoice(uint sound) {
 		return;
 
 	_mixer->stopHandle(_voiceHandle);
-	_voice->playSound(sound, &_voiceHandle, (_game == GAME_SIMON1CD32) ? 0 : SoundMixer::FLAG_UNSIGNED);
+	_voice->playSound(sound, &_voiceHandle, (_game == GAME_SIMON1CD32) ? 0 : Audio::Mixer::FLAG_UNSIGNED);
 }
 
 void Sound::playEffects(uint sound) {
@@ -454,7 +454,7 @@ void Sound::playEffects(uint sound) {
 	if (_effectsPaused)
 		return;
 
-	_effects->playSound(sound, &_effectsHandle, (_game == GAME_SIMON1CD32) ? 0 : SoundMixer::FLAG_UNSIGNED);
+	_effects->playSound(sound, &_effectsHandle, (_game == GAME_SIMON1CD32) ? 0 : Audio::Mixer::FLAG_UNSIGNED);
 }
 
 void Sound::playAmbient(uint sound) {
@@ -470,7 +470,7 @@ void Sound::playAmbient(uint sound) {
 		return;
 
 	_mixer->stopHandle(_ambientHandle);
-	_effects->playSound(sound, &_ambientHandle, SoundMixer::FLAG_LOOP|SoundMixer::FLAG_UNSIGNED);
+	_effects->playSound(sound, &_ambientHandle, Audio::Mixer::FLAG_LOOP|Audio::Mixer::FLAG_UNSIGNED);
 }
 
 bool Sound::hasVoice() const {

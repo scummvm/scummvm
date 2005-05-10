@@ -36,7 +36,7 @@ class Text;
 
 class Intro {
 public:
-	Intro(Disk *disk, Screen *screen, MusicBase *music, Sound *sound, Text *text, SoundMixer *mixer, OSystem *system);
+	Intro(Disk *disk, Screen *screen, MusicBase *music, Sound *sound, Text *text, Audio::Mixer *mixer, OSystem *system);
 	~Intro(void);
 	bool doIntro(bool floppyIntro);
 	bool _quitProg;
@@ -51,7 +51,7 @@ private:
 	Sound *_skySound;
 	Text *_skyText;
 	OSystem *_system;
-	SoundMixer *_mixer;
+	Audio::Mixer *_mixer;
 
 	uint8 *_textBuf, *_saveBuf;
 	uint8 *_bgBuf;

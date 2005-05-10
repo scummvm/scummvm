@@ -207,7 +207,7 @@ int SndRes::loadWavSound(byte *snd_res, size_t snd_res_len, SOUNDBUFFER *snd_buf
 		return FAILURE;
 	}
 
-	snd_buf_i->s_stereo = ((flags & SoundMixer::FLAG_STEREO) != 0);
+	snd_buf_i->s_stereo = ((flags & Audio::Mixer::FLAG_STEREO) != 0);
 	snd_buf_i->s_freq = rate;
 	snd_buf_i->s_samplebits = 16;
 	snd_buf_i->s_signed = 1;
