@@ -674,7 +674,7 @@ void ScummEngine_v80he::drawLine(int x1, int y1, int x, int y, int step, int typ
 
 		if (ebx > maxDist) {
 			eax = 1;
-			if (dx >= maxDist) {
+			if (dx >= 0) {
 				x++;
 			} else {
 				x--;
@@ -694,8 +694,7 @@ void ScummEngine_v80he::drawLine(int x1, int y1, int x, int y, int step, int typ
 		if (eax == 0)
 			continue;
 
-		var_C++;
-		if (((var_C - 1) % step) != 0 && maxDist != i)
+		if ((var_C++ % step) != 0 && maxDist != i)
 			continue;
 
 		if (type == 2) {
