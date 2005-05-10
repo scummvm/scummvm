@@ -32,6 +32,10 @@
 #define FLAC__NO_DLL // that MS-magic gave me headaches - just link the library you like
 #include <FLAC/seekable_stream_decoder.h>
 
+
+using Common::File;
+
+
 #pragma mark -
 #pragma mark --- Flac stream ---
 #pragma mark -

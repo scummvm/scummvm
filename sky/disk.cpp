@@ -41,8 +41,8 @@ static const char *dinnerFilename = "sky.dnr";
 Disk::Disk(const Common::String &gameDataPath) {
 	_prefRoot = NULL;
 
-	_dataDiskHandle = new File();
-	_dnrHandle = new File();
+	_dataDiskHandle = new Common::File();
+	_dnrHandle = new Common::File();
 
 	uint32 entriesRead;
 
@@ -404,14 +404,14 @@ void Disk::fnFlushBuffers(void) {
 
 void Disk::dumpFile(uint16 fileNr) {
 	char buf[128];
-	File out;
+	Common::File out;
 	byte* filePtr;
 
 	filePtr = loadFile(fileNr);
 	sprintf(buf, "dumps/file-%d.dmp", fileNr);
 
 	if (!out.exists(buf, "")) {
-		if (out.open(buf, File::kFileWriteMode, ""))
+		if (out.open(buf, Common::File::kFileWriteMode, ""))
 			out.write(filePtr, _lastLoadedFileSize);
 	}
 	free(filePtr);

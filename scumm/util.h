@@ -27,7 +27,7 @@
 
 namespace Scumm {
 
-class BaseScummFile : public File {
+class BaseScummFile : public Common::File {
 public:
 	virtual void setEnc(byte value) = 0;
 	

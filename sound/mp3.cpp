@@ -32,6 +32,9 @@
 #include <mad.h>
 
 
+using Common::File;
+
+
 #pragma mark -
 #pragma mark --- MP3 (MAD) stream ---
 #pragma mark -

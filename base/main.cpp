@@ -279,10 +279,10 @@ static int runGame(GameDetector &detector, OSystem &system) {
 	
 	// Add extrapath (if any) to the directory search list
 	if (ConfMan.hasKey("extrapath"))
-		File::addDefaultDirectory(ConfMan.get("extrapath"));
+		Common::File::addDefaultDirectory(ConfMan.get("extrapath"));
 
 	if (ConfMan.hasKey("extrapath", Common::ConfigManager::kApplicationDomain))
-		File::addDefaultDirectory(ConfMan.get("extrapath", Common::ConfigManager::kApplicationDomain));
+		Common::File::addDefaultDirectory(ConfMan.get("extrapath", Common::ConfigManager::kApplicationDomain));
 
 	int result;
 

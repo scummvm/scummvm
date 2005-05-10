@@ -63,6 +63,10 @@ typedef sequence_t mpeg2_sequence_t;
 
 #define BUFFER_SIZE 4096
 
+namespace Common {
+	class File;
+}
+
 namespace Graphics {
 
 class BaseAnimationState {
@@ -82,7 +86,7 @@ protected:
 	const mpeg2_info_t *_mpegInfo;
 #endif
 
-	File *_mpegFile;
+	Common::File *_mpegFile;
 
 	SoundHandle _bgSound;
 	AudioStream *_bgSoundStream;

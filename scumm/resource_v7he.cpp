@@ -142,7 +142,7 @@ int Win32ResExtractor::extractResource(const char *resType, char *resName, byte 
 		
 	/* initiate stuff */
 	fi.memory = NULL;
-	fi.file = new File;
+	fi.file = new Common::File;
 
 	if (!_fileName[0]) { // We are running for the first time
 		snprintf(_fileName, 256, "%s.he3", _vm->getGameName());
@@ -1279,7 +1279,7 @@ void MacResExtractor::setCursor(int id) {
 	int cursorsize;
 	int w = 0, h = 0, hotspot_x = 0, hotspot_y = 0;
 	int keycolor;
-	File f;
+	Common::File f;
 
 	if (!_fileName[0]) // We are running for the first time
 		if (_vm->_substResFileNameIndex > 0) {
@@ -1314,7 +1314,7 @@ void MacResExtractor::setCursor(int id) {
 }
 
 int MacResExtractor::extractResource(int id, byte **buf) {
-	File in;
+	Common::File in;
 	int size;
 
 	in.open(_fileName);
@@ -1345,7 +1345,7 @@ int MacResExtractor::extractResource(int id, byte **buf) {
 #define MBI_RFLEN 87
 #define MAXNAMELEN 63
 
-bool MacResExtractor::init(File in) {
+bool MacResExtractor::init(Common::File in) {
 	byte infoHeader[MBI_INFOHDR];
 	int32 data_size, rsrc_size;
 	int32 data_size_pad, rsrc_size_pad;
@@ -1397,7 +1397,7 @@ bool MacResExtractor::init(File in) {
 	return true;
 }
 
-byte *MacResExtractor::getResource(File in, const char *typeID, int16 resID, int *size) {
+byte *MacResExtractor::getResource(Common::File in, const char *typeID, int16 resID, int *size) {
 	int	i;
 	int typeNum = -1;
 	int resNum = -1;
@@ -1434,7 +1434,7 @@ byte *MacResExtractor::getResource(File in, const char *typeID, int16 resID, int
 	return buf;
 }
 
-void MacResExtractor::readMap(File in) {
+void MacResExtractor::readMap(Common::File in) {
 	int	i, j, len;
 	
 	in.seek(_mapOffset + 22);

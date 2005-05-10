@@ -42,7 +42,7 @@ namespace Saga {
 
 class RAWInputStream : public AudioStream {
 private:
-	File *_file;
+	Common::File *_file;
 	uint32 _file_pos;
 	uint32 _start_pos;
 	uint32 _end_pos;
@@ -56,7 +56,7 @@ private:
 	inline bool eosIntern() const;
 
 public:
-	RAWInputStream(File *file, int size, bool looping);
+	RAWInputStream(Common::File *file, int size, bool looping);
 	~RAWInputStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -66,7 +66,7 @@ public:
 	int getRate() const	{ return 11025; }
 };
 
-RAWInputStream::RAWInputStream(File *file, int size, bool looping)
+RAWInputStream::RAWInputStream(Common::File *file, int size, bool looping)
 	: _file(file), _finished(false), _looping(looping),
 	  _bufferEnd(_buf + BUFFER_SIZE) {
 
@@ -147,7 +147,7 @@ void RAWInputStream::refill() {
 }
 
 AudioStream *makeRAWStream(const char *filename, uint32 pos, int size, bool looping) {
-	File *file = new File();
+	Common::File *file = new Common::File();
 
 	if (!file->open(filename)) {
 		delete file;
@@ -285,7 +285,7 @@ Music::Music(SoundMixer *mixer, MidiDriver *driver, int enabled) : _mixer(mixer)
 	_mixer->setVolumeForSoundType(SoundMixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
 	if (_vm->getGameType() == GType_ITE) {
-		File file;
+		Common::File file;
 		byte footerBuf[ARRAYSIZE(_digiTableITECD) * 8];
 
 		// The lookup table is stored at the end of music.rsc. I don't
@@ -400,7 +400,7 @@ int Music::play(uint32 music_rn, uint16 flags) {
 
 	AudioStream *audioStream = NULL;
 	MidiParser *parser;
-	File midiFile;
+	Common::File midiFile;
 
 	if (_vm->getGameType() == GType_ITE) {
 		if (music_rn >= 9 && music_rn <= 34) {

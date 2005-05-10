@@ -761,7 +761,7 @@ int detectGame(const FSList &fslist, bool mode) {
 
 	uint16 file_count;
 	uint16 file_n;
-	File test_file;
+	Common::File test_file;
 	bool file_missing;
 
 	Common::String tstr, tstr1;
@@ -790,7 +790,7 @@ int detectGame(const FSList &fslist, bool mode) {
 				tstr.toLowercase();
 				
 				if (filesList.contains(tstr) || filesList.contains(tstr1)) {
-					if (md5_file(file->path().c_str(), md5sum, NULL, FILE_MD5_BYTES)) {
+					if (Common::md5_file(file->path().c_str(), md5sum, NULL, FILE_MD5_BYTES)) {
 						for (int j = 0; j < 16; j++) {
 							sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
 						}
@@ -801,12 +801,12 @@ int detectGame(const FSList &fslist, bool mode) {
 			}
 		}
 	} else {
-		File testFile;
+		Common::File testFile;
 
 		for (StringSet::const_iterator file = filesList.begin(); file != filesList.end(); ++file) {
 			if (testFile.open(file->_key.c_str())) {
 				testFile.close();
-				if (md5_file(file->_key.c_str(), md5sum, NULL, FILE_MD5_BYTES)) {
+				if (Common::md5_file(file->_key.c_str(), md5sum, NULL, FILE_MD5_BYTES)) {
 					for (int j = 0; j < 16; j++) {
 						sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
 					}

@@ -29,11 +29,13 @@
 
 class AudioStream;
 class DigitalTrackInfo;
-class File;
+namespace Common {
+	class File;
+}
 
 DigitalTrackInfo *getMP3Track(int track);
 
-AudioStream *makeMP3Stream(File *file, uint32 size);
+AudioStream *makeMP3Stream(Common::File *file, uint32 size);
 
 #endif
 

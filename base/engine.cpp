@@ -42,13 +42,13 @@ Engine::Engine(OSystem *syst)
 	_timer = g_timer;
 
 	// Add default file directory
-	File::addDefaultDirectory(_gameDataPath);
+	Common::File::addDefaultDirectory(_gameDataPath);
 
 	_saveFileMan = _system->getSavefileManager();
 }
 
 Engine::~Engine() {
-	File::resetDefaultDirectories();
+	Common::File::resetDefaultDirectories();
 
 	delete _mixer;
 	delete _saveFileMan;

@@ -25,7 +25,9 @@
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 
-class File;
+namespace Common {
+	class File;
+}
 
 namespace Scumm {
 

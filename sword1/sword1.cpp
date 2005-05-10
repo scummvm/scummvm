@@ -131,14 +131,14 @@ SwordEngine::SwordEngine(GameDetector *detector, OSystem *syst)
 		warning("Sound initialization failed");
 
 	// Add default file directories
-	File::addDefaultDirectory(_gameDataPath + "CLUSTERS/");
-	File::addDefaultDirectory(_gameDataPath + "MUSIC/");
-	File::addDefaultDirectory(_gameDataPath + "SPEECH/");
-	File::addDefaultDirectory(_gameDataPath + "VIDEO/");
-	File::addDefaultDirectory(_gameDataPath + "clusters/");
-	File::addDefaultDirectory(_gameDataPath + "music/");
-	File::addDefaultDirectory(_gameDataPath + "speech/");
-	File::addDefaultDirectory(_gameDataPath + "video/");
+	Common::File::addDefaultDirectory(_gameDataPath + "CLUSTERS/");
+	Common::File::addDefaultDirectory(_gameDataPath + "MUSIC/");
+	Common::File::addDefaultDirectory(_gameDataPath + "SPEECH/");
+	Common::File::addDefaultDirectory(_gameDataPath + "VIDEO/");
+	Common::File::addDefaultDirectory(_gameDataPath + "clusters/");
+	Common::File::addDefaultDirectory(_gameDataPath + "music/");
+	Common::File::addDefaultDirectory(_gameDataPath + "speech/");
+	Common::File::addDefaultDirectory(_gameDataPath + "video/");
 }
 
 SwordEngine::~SwordEngine() {
@@ -334,7 +334,7 @@ void SwordEngine::showFileErrorMsg(uint8 type, bool *fileExists) {
 }
 
 void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or what...
-	File test;
+	Common::File test;
 	bool fileExists[30];
 	bool isFullVersion = false; // default to demo version
 	bool missingTypes[8] = { false, false, false, false, false, false, false, false };

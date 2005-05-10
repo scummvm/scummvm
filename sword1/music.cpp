@@ -36,11 +36,11 @@
 
 namespace Sword1 {
 
-WaveAudioStream *makeWaveStream(File *source, uint32 size) {
+WaveAudioStream *makeWaveStream(Common::File *source, uint32 size) {
 	return new WaveAudioStream(source, size);
 }
 
-WaveAudioStream::WaveAudioStream(File *source, uint32 pSize) {
+WaveAudioStream::WaveAudioStream(Common::File *source, uint32 pSize) {
 	int rate, size;
 	byte flags;
 

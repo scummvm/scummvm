@@ -186,7 +186,7 @@ void Control::askForCd(void) {
 	_system->setPalette(palOut, 0, 256);
 	free(palOut);
 
-	File test;
+	Common::File test;
 	char fName[10];
 	uint8 textA[50];
 	sprintf(fName, "cd%d.id", SwordEngine::_systemVars.currentCD);

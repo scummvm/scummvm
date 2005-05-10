@@ -109,12 +109,12 @@ namespace Sword2 {
 
 Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst) : Engine(syst) {
 	// Add default file directories
-	File::addDefaultDirectory(_gameDataPath + "CLUSTERS/");
-	File::addDefaultDirectory(_gameDataPath + "SWORD2/");
-	File::addDefaultDirectory(_gameDataPath + "VIDEO/");
-	File::addDefaultDirectory(_gameDataPath + "clusters/");
-	File::addDefaultDirectory(_gameDataPath + "sword2/");
-	File::addDefaultDirectory(_gameDataPath + "video/");
+	Common::File::addDefaultDirectory(_gameDataPath + "CLUSTERS/");
+	Common::File::addDefaultDirectory(_gameDataPath + "SWORD2/");
+	Common::File::addDefaultDirectory(_gameDataPath + "VIDEO/");
+	Common::File::addDefaultDirectory(_gameDataPath + "clusters/");
+	Common::File::addDefaultDirectory(_gameDataPath + "sword2/");
+	Common::File::addDefaultDirectory(_gameDataPath + "video/");
 
 	_features = detector->_game.features;
 	_targetName = detector->_targetName;

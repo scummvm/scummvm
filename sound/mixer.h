@@ -30,7 +30,6 @@
 
 class AudioStream;
 class Channel;
-class File;
 class OSystem;
 
 class SoundHandle {

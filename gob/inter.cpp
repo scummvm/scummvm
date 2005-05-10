@@ -489,7 +489,7 @@ void inter_writeData(void) {
 	offset = parse_parseValExpr();
 
 	WRITE_VAR(1, 1);
-	handle = data_openData(inter_resStr, File::kFileWriteMode);
+	handle = data_openData(inter_resStr, Common::File::kFileWriteMode);
 
 	if (handle < 0)
 		return;

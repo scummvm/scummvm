@@ -22,8 +22,9 @@
 #include "common/file.h"
 #include "common/util.h"
 
+namespace Common {
 
-Common::StringList File::_defaultDirectories;
+StringList File::_defaultDirectories;
 
 
 static FILE *fopenNoCase(const char *filename, const char *directory, const char *mode) {
@@ -99,7 +100,7 @@ static FILE *fopenNoCase(const char *filename, const char *directory, const char
 	return file;
 }
 
-void File::addDefaultDirectory(const Common::String &directory) {
+void File::addDefaultDirectory(const String &directory) {
 	_defaultDirectories.push_back(directory);
 }
 
@@ -153,7 +154,7 @@ bool File::open(const char *filename, AccessMode mode, const char *directory) {
 	if (mode == kFileWriteMode || directory) {
 		_handle = fopenNoCase(filename, directory ? directory : "", modeStr);
 	} else {
-		Common::StringList::const_iterator x;
+		StringList::const_iterator x;
 		// Try all default directories
 		for (x = _defaultDirectories.begin(); _handle == NULL && x != _defaultDirectories.end(); ++x) {
 			_handle = fopenNoCase(filename, x->c_str(), modeStr);
@@ -282,3 +283,5 @@ uint32 File::write(const void *ptr, uint32 len) {
 
 	return len;
 }
+
+}	// End of namespace Common

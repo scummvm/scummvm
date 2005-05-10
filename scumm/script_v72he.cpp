@@ -538,7 +538,7 @@ int ScummEngine_v72he::convertFilePath(byte *dst, bool setFilePath) {
 	}
 
 	if (setFilePath) {
-		File f;
+		Common::File f;
 		char filePath[256], newFilePath[256];
 
 		sprintf(filePath, "%s%s", _gameDataPath.c_str(), dst + r);
@@ -1752,12 +1752,12 @@ void ScummEngine_v72he::o72_openFile() {
 	if (slot != -1) {
 		switch(mode) {
 		case 1:
-			_hFileTable[slot].open((char*)filename + r, File::kFileReadMode, _saveFileMan->getSavePath());
+			_hFileTable[slot].open((char*)filename + r, Common::File::kFileReadMode, _saveFileMan->getSavePath());
 			if (_hFileTable[slot].isOpen() == false)
-				_hFileTable[slot].open((char*)filename + r, File::kFileReadMode, _gameDataPath.c_str());
+				_hFileTable[slot].open((char*)filename + r, Common::File::kFileReadMode, _gameDataPath.c_str());
 			break;
 		case 2:
-			_hFileTable[slot].open((char*)filename + r, File::kFileWriteMode, _saveFileMan->getSavePath());
+			_hFileTable[slot].open((char*)filename + r, Common::File::kFileWriteMode, _saveFileMan->getSavePath());
 			break;
 		default:
 			error("o72_openFile(): wrong open file mode %d", mode);

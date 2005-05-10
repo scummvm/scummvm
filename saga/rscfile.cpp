@@ -50,7 +50,7 @@ RSCFILE_CONTEXT *RSC_CreateContext() {
 	empty_context.rc_file_loaded = 0;
 	empty_context.rc_res_table = NULL;
 	empty_context.rc_res_ct = 0;
-	empty_context.rc_file = new File();
+	empty_context.rc_file = new Common::File();
 	RSCFILE_CONTEXT *new_context;
 
 	new_context = (RSCFILE_CONTEXT *)malloc(sizeof(*new_context));
@@ -257,7 +257,7 @@ int RSC_LoadResource(RSCFILE_CONTEXT *rsc, uint32 res_num, byte **res_p, size_t 
 		substnum = -1;
 
 	if (substnum != -1) {
-		File in;
+		Common::File in;
 
 		if (in.open(substitutes[substnum].fname)) {
 			res_size = in.size();

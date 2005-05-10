@@ -289,7 +289,7 @@ bool ScummDebugger::Cmd_Script(int argc, const char** argv) {
 }
 
 bool ScummDebugger::Cmd_ImportRes(int argc, const char** argv) {
-	File file;
+	Common::File file;
 	uint32 size;
 	int resnum;
 
@@ -302,7 +302,7 @@ bool ScummDebugger::Cmd_ImportRes(int argc, const char** argv) {
 	// FIXME add bounds check
 
 	if (!strncmp(argv[1], "scr", 3)) {
-		file.open(argv[2], File::kFileReadMode);
+		file.open(argv[2], Common::File::kFileReadMode);
 		if (file.isOpen() == false) {
 			DebugPrintf("Could not open file %s\n", argv[2]);
 			return true;

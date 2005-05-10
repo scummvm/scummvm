@@ -40,7 +40,7 @@ struct Grp {
 
 struct Clu {
 	uint32 refCount;
-	File *file;
+	Common::File *file;
 	char label[MAX_LABEL_SIZE];
 	uint32 noGrp;
 	Grp *grp;
@@ -70,7 +70,7 @@ private:
 	uint32	   resLength(uint32 id);
 	MemHandle *resHandle(uint32 id);
 	uint32     resOffset(uint32 id);
-	File      *resFile(uint32 id);
+	Common::File      *resFile(uint32 id);
 
 	void openCptResourceBigEndian(uint32 id);
 	void openScriptResourceBigEndian(uint32 id);

@@ -74,13 +74,11 @@ public:
 	int getRate() const { return _outputRate; }
 };
 
-typedef File SFile;
-
 class MT32File: public MT32Emu::File {
-	SFile file;
+	Common::File file;
 public:
 	bool open(const char *filename, OpenMode mode) {
-		SFile::AccessMode accessMode = mode == OpenMode_read ? SFile::kFileReadMode : SFile::kFileWriteMode;
+		Common::File::AccessMode accessMode = mode == OpenMode_read ? Common::File::kFileReadMode : Common::File::kFileWriteMode;
 		return file.open(filename, accessMode);
 	}
 	void close() {
@@ -473,7 +471,7 @@ void MidiDriver_ThreadedMT32::onTimer() {
 MidiDriver *MidiDriver_MT32_create(SoundMixer *mixer) {
 	// HACK: It will stay here until engine plugin loader overhaul
 	if (ConfMan.hasKey("extrapath"))                                        
-		File::addDefaultDirectory(ConfMan.get("extrapath"));
+		Common::File::addDefaultDirectory(ConfMan.get("extrapath"));
 	return new MidiDriver_MT32(mixer);
 }
 

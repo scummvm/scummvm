@@ -30,6 +30,8 @@
 #include "common/md5.h"
 #include "common/util.h"
 
+namespace Common {
+
 #define GET_UINT32(n,b,i)	(n) = READ_LE_UINT32(b + i)
 #define PUT_UINT32(n,b,i)	WRITE_LE_UINT32(b + i, n)
 
@@ -277,6 +279,8 @@ bool md5_file( const char *name, uint8 digest[16], const char *directory, uint32
 	md5_finish( &ctx, digest );
 	return true;
 }
+
+} // End of namespace Common
 
 #ifdef TEST
 

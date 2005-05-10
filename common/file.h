@@ -27,7 +27,9 @@
 #include "common/str.h"
 #include "common/stream.h"
 
-class File : public Common::SeekableReadStream, public Common::WriteStream {
+namespace Common {
+
+class File : public SeekableReadStream, public WriteStream {
 protected:
 	/** POSIX file handle to the actual file; 0 if no file is open. */
 	FILE *_handle;
@@ -39,10 +41,10 @@ protected:
 	int32 _refcount;
 
 	/** The name of this file, for debugging. */
-	Common::String _name;
+	String _name;
 
 
-	static Common::StringList _defaultDirectories;
+	static StringList _defaultDirectories;
 
 public:
 	enum AccessMode {
@@ -50,7 +52,7 @@ public:
 		kFileWriteMode = 2
 	};
 	
-	static void addDefaultDirectory(const Common::String &directory);
+	static void addDefaultDirectory(const String &directory);
 	static void resetDefaultDirectories();
 	
 	File();
@@ -75,5 +77,7 @@ public:
 	uint32 read(void *dataPtr, uint32 dataSize);
 	uint32 write(const void *dataPtr, uint32 dataSize);
 };
+
+} // End of namespace Common
 
 #endif

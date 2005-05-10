@@ -57,7 +57,7 @@ public:
 	~Sound();
 	
 	void readSfxFile(const char *filename);
-	void loadSfxTable(File *gameFile, uint32 base);
+	void loadSfxTable(Common::File *gameFile, uint32 base);
 	void readVoiceFile(const char *filename);
 
 	void playVoice(uint sound);

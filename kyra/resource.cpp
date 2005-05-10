@@ -90,7 +90,7 @@ Resourcemanager::~Resourcemanager() {
 	
 uint8* Resourcemanager::fileData(const char* file, uint32* size) {
 	uint8* buffer = 0;
-	File file_;
+	Common::File file_;
 		
 	// test to open it in the main dir
 	if (file_.open(file)) {
@@ -183,11 +183,11 @@ VMContext* Resourcemanager::loadScript(const char* file) {
 // Pak file manager
 #define PAKFile_Iterate Common::List<PakChunk*>::iterator start=_files.begin();start != _files.end(); ++start
 PAKFile::PAKFile(/*const Common::String &path, */const Common::String& file) {
-	File pakfile;
+	Common::File pakfile;
 	_buffer = 0;
 	_open = false;
 		
-	if (!pakfile.open(file.c_str())){ /*, File::kFileReadMode, path.c_str())) {*/
+	if (!pakfile.open(file.c_str())){ /*, Common::File::kFileReadMode, path.c_str())) {*/
 		printf("pakfile couldn't open %s\n", file.c_str());
 		return;
 	}

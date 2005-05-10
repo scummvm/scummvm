@@ -156,7 +156,7 @@ class Win32ResExtractor {
 #endif	
 
 	struct WinLibrary {
-		File *file;
+		Common::File *file;
 		byte *memory;
 		byte *first_resource;
 		bool is_PE_binary;
@@ -490,9 +490,9 @@ public:
 
 private:
 	int extractResource(int id, byte **buf);
-	bool init(File in);
-	void readMap(File in);
-	byte *getResource(File in, const char *typeID, int16 resID, int *size);
+	bool init(Common::File in);
+	void readMap(Common::File in);
+	byte *getResource(Common::File in, const char *typeID, int16 resID, int *size);
 	void convertIcons(byte *data, int datasize, byte **cursor, int *w, int *h,
 					 int *hotspot_x, int *hotspot_y, int *keycolor);
 

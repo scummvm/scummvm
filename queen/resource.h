@@ -68,7 +68,7 @@ public:
 	bool fileExists(const char *filename) const { return resourceEntry(filename) != NULL; }
 
 	//! returns a reference to a sound file
-	File *giveCompressedSound(const char *filename, uint32 *size);
+	Common::File *giveCompressedSound(const char *filename, uint32 *size);
 
 	bool isDemo() const { return !strcmp(_versionString, "PE100"); }
 	bool isInterview() const { return !strcmp(_versionString, "PEint"); }
@@ -114,7 +114,7 @@ public:
 
 protected:
 
-	File *_resourceFile;
+	Common::File *_resourceFile;
 	
 	//! compression type for audio files
 	uint8 _compression;
@@ -146,7 +146,7 @@ protected:
 	void readTableCompResource();
 	
 	//! read the resource table from the specified file
-	void readTableEntries(File *file);
+	void readTableEntries(Common::File *file);
 	
 	//! detect game version based on queen.1 datafile size
 	const GameVersion *detectGameVersion(uint32 size) const;

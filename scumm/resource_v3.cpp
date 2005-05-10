@@ -104,7 +104,7 @@ void ScummEngine_v3::loadCharset(int no) {
 	checkRange(2, 0, no, "Loading illegal charset %d");
 	closeRoom();
 
-	File file;
+	Common::File file;
 	char buf[20];
 
 	sprintf(buf, "%02d.LFL", 99 - no);

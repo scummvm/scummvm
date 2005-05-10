@@ -21,7 +21,9 @@
 #ifndef	RESMAN_H
 #define	RESMAN_H
 
-class File;
+namespace Common {
+	class File;
+}
 
 #define MAX_MEM_CACHE (8 * 1024 * 1024) // we keep up to 8 megs of resource data files in memory
 #define	MAX_res_files 20
@@ -54,8 +56,8 @@ struct ResourceFile {
 
 class ResourceManager {
 private:
-	File *openCluFile(uint16 fileNum);
-	void readCluIndex(uint16 fileNum, File *file = NULL);
+	Common::File *openCluFile(uint16 fileNum);
+	void readCluIndex(uint16 fileNum, Common::File *file = NULL);
 	void removeFromCacheList(Resource *res);
 	void addToCacheList(Resource *res);
 	void checkMemUsage();

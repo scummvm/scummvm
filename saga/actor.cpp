@@ -2296,7 +2296,7 @@ void Actor::drawPathTest() {
 #endif
 }
 
-void Actor::saveState(File& out) {
+void Actor::saveState(Common::File& out) {
 	uint16 i;
 	
 	out.writeSint16LE(getProtagState());
@@ -2312,7 +2312,7 @@ void Actor::saveState(File& out) {
 	}
 }
 
-void Actor::loadState(File& in) {
+void Actor::loadState(Common::File& in) {
 	int32 i;
 
 	setProtagState(in.readSint16LE());

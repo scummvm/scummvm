@@ -603,7 +603,7 @@ void ScummEngine::initScummVars() {
 			   &&  (_platform == Common::kPlatformPC)) {
 				if (_gameId == GID_LOOM) {
 					char buf[50];
-					File f;
+					Common::File f;
 					for (int i = 82; i < 86; i++) {
 						sprintf(buf, "%d.LFL", i);
 						f.open(buf);
@@ -612,7 +612,7 @@ void ScummEngine::initScummVars() {
 						f.close();
 					}
 				} else if (_gameId == GID_MONKEY_EGA) {
-						File f;
+						Common::File f;
 						f.open("DISK09.LEC");
 						if (f.isOpen() == false)
 							error("Native MIDI support requires Roland patch from LucasArts");

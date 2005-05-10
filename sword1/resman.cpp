@@ -79,7 +79,7 @@ ResMan::~ResMan(void) {
 }
 
 void ResMan::loadCluDescript(const char *fileName) {
-	File file;
+	Common::File file;
 	file.open(fileName);
 
 	if (!file.isOpen()) {
@@ -205,8 +205,8 @@ void *ResMan::openFetchRes(uint32 id) {
 void ResMan::dumpRes(uint32 id) {
 	char outn[30];
 	sprintf(outn, "DUMP%08X.BIN", id);
-	File outf;
-	if (outf.open(outn, File::kFileWriteMode)) {
+	Common::File outf;
+	if (outf.open(outn, Common::File::kFileWriteMode)) {
 		resOpen(id);
 		MemHandle *memHandle = resHandle(id);
 		outf.write(memHandle->data, memHandle->size);
@@ -253,7 +253,7 @@ void ResMan::resOpen(uint32 id) {  // load resource ID into memory
 	if (memHandle->cond == MEM_FREED) { // memory has been freed
 		uint32 size = resLength(id);
 		_memMan->alloc(memHandle, size);
-		File *clusFile = resFile(id);
+		Common::File *clusFile = resFile(id);
 		assert(clusFile);
 		clusFile->seek( resOffset(id) );
 		clusFile->read( memHandle->data, size);
@@ -288,7 +288,7 @@ FrameHeader *ResMan::fetchFrame(void *resourceData, uint32 frameNo) {
 	return (FrameHeader*)frameFile;
 }
 
-File *ResMan::resFile(uint32 id) {
+Common::File *ResMan::resFile(uint32 id) {
 	Clu *cluster = _prj.clu + ((id >> 24) - 1);
 	if (cluster->file == NULL) {
 		_openClus++;
@@ -298,7 +298,7 @@ File *ResMan::resFile(uint32 id) {
 			_openCluEnd->nextOpen = cluster;
 			_openCluEnd = cluster;
 		}
-		cluster->file = new File();
+		cluster->file = new Common::File();
 		char fileName[15];
 		sprintf(fileName, "%s.CLU", _prj.clu[(id >> 24)-1].label);
 		cluster->file->open(fileName);

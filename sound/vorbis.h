@@ -29,11 +29,13 @@
 
 class AudioStream;
 class DigitalTrackInfo;
-class File;
+namespace Common {
+	class File;
+}
 
 DigitalTrackInfo *getVorbisTrack(int track);
 
-AudioStream *makeVorbisStream(File *file, uint32 size);
+AudioStream *makeVorbisStream(Common::File *file, uint32 size);
 
 #endif
 

@@ -40,7 +40,7 @@
 
 namespace Sword2 {
 
-static AudioStream *makeCLUStream(File *fp, int size);
+static AudioStream *makeCLUStream(Common::File *fp, int size);
 
 static AudioStream *getAudioStream(SoundFileHandle *fh, const char *base, int cd, uint32 id, uint32 *numSamples) {
 	if (!fh->file->isOpen()) {
@@ -64,7 +64,7 @@ static AudioStream *getAudioStream(SoundFileHandle *fh, const char *base, int cd
 		char filename[20];
 
 		for (int i = 0; i < ARRAYSIZE(file_types); i++) {
-			File f;
+			Common::File f;
 
 			sprintf(filename, "%s%d.%s", base, cd, file_types[i].ext);
 			if (f.open(filename)) {
@@ -156,7 +156,7 @@ static AudioStream *getAudioStream(SoundFileHandle *fh, const char *base, int cd
 #define GetCompressedSign(n)       (((n) >> 3) & 1)
 #define GetCompressedAmplitude(n)  ((n) & 7)
 
-CLUInputStream::CLUInputStream(File *file, int size)
+CLUInputStream::CLUInputStream(Common::File *file, int size)
 	: _file(file), _firstTime(true), _bufferEnd(_outbuf + BUFFER_SIZE) {
 
 	_file->incRef();
@@ -226,7 +226,7 @@ void CLUInputStream::refill() {
 	_bufferEnd = out;
 }
 
-AudioStream *makeCLUStream(File *file, int size) {
+AudioStream *makeCLUStream(Common::File *file, int size) {
 	return new CLUInputStream(file, size);
 }
 

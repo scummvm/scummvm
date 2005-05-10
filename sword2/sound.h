@@ -80,7 +80,7 @@ enum {
 
 class CLUInputStream : public AudioStream {
 private:
-	File *_file;
+	Common::File *_file;
 	bool _firstTime;
 	uint32 _file_pos;
 	uint32 _end_pos;
@@ -98,7 +98,7 @@ private:
 	}
 
 public:
-	CLUInputStream(File *file, int size);
+	CLUInputStream(Common::File *file, int size);
 	~CLUInputStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -109,7 +109,7 @@ public:
 };
 
 struct SoundFileHandle {
-	File *file;
+	Common::File *file;
 	uint32 *idxTab;
 	uint32 idxLen;
 	uint32 fileSize;
@@ -120,7 +120,7 @@ struct SoundFileHandle {
 class MusicInputStream : public AudioStream {
 private:
 	int _cd;
-	//File *_file;
+	//Common::File *_file;
 	SoundFileHandle *_fh;
 	uint32 _musicId;
 	AudioStream *_decoder;
@@ -201,7 +201,7 @@ private:
 	SoundHandle _soundHandleSpeech;
 
 	MusicInputStream *_music[MAXMUS];
-	//File _musicFile[MAXMUS];
+	//Common::File _musicFile[MAXMUS];
 	SoundFileHandle _musicFile[MAXMUS];
 	SoundFileHandle _speechFile[MAXMUS];
 

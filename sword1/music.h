@@ -43,14 +43,14 @@ enum MusicMode {
 
 class WaveAudioStream : public AudioStream {
 public:
-	WaveAudioStream(File *source, uint32 pSize);
+	WaveAudioStream(Common::File *source, uint32 pSize);
 	virtual ~WaveAudioStream();
 	virtual int readBuffer(int16 *buffer, const int numSamples);
 	virtual bool isStereo(void) const { return _isStereo; };
 	virtual bool endOfData(void) const;
 	virtual int getRate(void) const { return _rate; };
 private:
-	File	*_sourceFile;
+	Common::File	*_sourceFile;
 	uint8	*_sampleBuf;
 	uint32	 _rate;
 	bool	 _isStereo;
@@ -60,7 +60,7 @@ private:
 
 class MusicHandle : public AudioStream {
 private:
-	File _file;
+	Common::File _file;
 	bool _looping;
 	int32 _fading;
 	int32 _fadeSamples;

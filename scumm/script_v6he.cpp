@@ -1007,12 +1007,12 @@ void ScummEngine_v60he::o60_openFile() {
 	if (slot != -1) {
 		switch(mode) {
 		case 1:
-			_hFileTable[slot].open((char*)filename + r, File::kFileReadMode, _saveFileMan->getSavePath());
+			_hFileTable[slot].open((char*)filename + r, Common::File::kFileReadMode, _saveFileMan->getSavePath());
 			if (_hFileTable[slot].isOpen() == false)
-				_hFileTable[slot].open((char*)filename + r, File::kFileReadMode);
+				_hFileTable[slot].open((char*)filename + r, Common::File::kFileReadMode);
 			break;
 		case 2:
-			_hFileTable[slot].open((char*)filename + r, File::kFileWriteMode, _saveFileMan->getSavePath());
+			_hFileTable[slot].open((char*)filename + r, Common::File::kFileWriteMode, _saveFileMan->getSavePath());
 			break;
 		default:
 			error("o60_openFile(): wrong open file mode %d", mode);

@@ -26,7 +26,9 @@
 #include "sky/struc.h"
 #include "sky/skydefs.h"
 
-class File;
+namespace Common {
+	class File;
+}
 
 enum CptIds {
 	CPT_JOEY = 1,
@@ -79,7 +81,7 @@ private:
 	char    ***_cptNames;
 	uint16	**_cptSizes;
 	uint16  **_cptTypes;
-	File	*_cptFile;
+	Common::File	*_cptFile;
 	uint32	_resetDataPos;
 };
 

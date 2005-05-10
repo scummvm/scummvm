@@ -406,7 +406,7 @@ void ScummEngine_v80he::o80_getFileSize() {
 
 	copyScriptString(filename, sizeof(filename));
 
-	File f;
+	Common::File f;
 	if (f.open((char *)filename) == false) {
 		push(-1);
 		return;

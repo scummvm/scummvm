@@ -71,7 +71,7 @@ int BundleDirCache::matchFile(const char *filename) {
 	}
 
 	if (!found) {
-		File file;
+		Common::File file;
 
 		if (file.open(filename) == false) {
 			warning("BundleDirCache::matchFile() Can't open bundle file: %s", filename);
@@ -135,7 +135,7 @@ BundleMgr::~BundleMgr() {
 	close();
 }
 
-File *BundleMgr::getFile(const char *filename, int32 &offset, int32 &size) {
+Common::File *BundleMgr::getFile(const char *filename, int32 &offset, int32 &size) {
 	for (int i = 0; i < _numFiles; i++) {
 		if (!scumm_stricmp(filename, _bundleTable[i].filename)) {
 			_file.seek(_bundleTable[i].offset, SEEK_SET);

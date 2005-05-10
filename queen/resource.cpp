@@ -54,7 +54,7 @@ static int compareResourceEntry(const void *a, const void *b) {
 
 Resource::Resource()
 	: _resourceEntries(0), _resourceTable(NULL) {
-	_resourceFile = new File();
+	_resourceFile = new Common::File();
 	if (!findCompressedVersion() && !findNormalVersion())
 		error("Could not open resource file '%s'", "queen.1");
 	checkJASVersion();
@@ -190,7 +190,7 @@ Language Resource::getLanguage() const {
 }
 
 bool Resource::readTableFile(const GameVersion *gameVersion) {
-	File tableFile;
+	Common::File tableFile;
 	tableFile.open(_tableFilename);
 	if (tableFile.isOpen() && tableFile.readUint32BE() == 'QTBL') {
 		if (tableFile.readUint32BE() != CURRENT_TBL_VERSION)
@@ -214,7 +214,7 @@ void Resource::readTableCompResource() {
 	readTableEntries(_resourceFile);
 }
 
-void Resource::readTableEntries(File *file) {
+void Resource::readTableEntries(Common::File *file) {
 	_resourceEntries = file->readUint16BE();
 	_resourceTable = new ResourceEntry[_resourceEntries];
 	for (uint16 i = 0; i < _resourceEntries; ++i) {
@@ -237,7 +237,7 @@ const GameVersion *Resource::detectGameVersion(uint32 size) const {
 	return NULL;
 }
 
-File *Resource::giveCompressedSound(const char *filename, uint32 *size) {
+Common::File *Resource::giveCompressedSound(const char *filename, uint32 *size) {
 	assert(strstr(filename, ".SB"));
 	ResourceEntry *re = resourceEntry(filename);
 	assert(re != NULL);

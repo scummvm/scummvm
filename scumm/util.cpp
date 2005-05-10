@@ -23,6 +23,8 @@
 #include "common/util.h"
 #include "common/md5.h"
 
+using Common::File;
+
 namespace Scumm {
 
 #pragma mark -
@@ -1197,7 +1199,7 @@ bool ScummNESFile::open(const char *filename, AccessMode mode) {
 	uint8 md5sum[16];
 
 	if (_ROMset == kROMsetNum) {
-		if (md5_file(filename, md5sum)) {
+		if (Common::md5_file(filename, md5sum)) {
 			char md5str[32+1];
 			for (int j = 0; j < 16; j++) {
 				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);

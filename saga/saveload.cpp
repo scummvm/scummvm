@@ -40,9 +40,9 @@
 namespace Saga {
 
 void SagaEngine::save(const char *fileName) {
-	File out;
+	Common::File out;
 
-	out.open(fileName, File::kFileWriteMode);
+	out.open(fileName, Common::File::kFileWriteMode);
 	//TODO: version number
 
 	// Surrounding scene
@@ -67,7 +67,7 @@ void SagaEngine::save(const char *fileName) {
 }
 
 void SagaEngine::load(const char *fileName) {
-	File in;
+	Common::File in;
 	int  commonBufferSize;
 	int sceneNumber, insetSceneNumber;
 	int mapx, mapy;

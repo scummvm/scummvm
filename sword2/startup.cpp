@@ -40,7 +40,7 @@ bool Sword2Engine::initStartMenu() {
 	// We query each in turn and setup an array of start structures.
 	// If the file doesn't exist then we say so and return a 0.
 
-	File fp;
+	Common::File fp;
 
 	// ok, load in the master screen manager file
 

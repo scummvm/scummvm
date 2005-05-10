@@ -165,7 +165,7 @@ void Sound::setOverrideFreq(int freq) {
 void Sound::setupHEMusicFile() {
 	int i, total_size;
 	char buf[32], buf1[128];
-	File musicFile;
+	Common::File musicFile;
 
 	sprintf(buf, "%s.he4", _vm->getGameName());
 
@@ -238,7 +238,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 
 		int music_offs;
 		char buf[32], buf1[128];
-		File musicFile;
+		Common::File musicFile;
 
 		sprintf(buf, "%s.he4", _vm->getGameName());
 
@@ -1397,7 +1397,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		// Used in 3DO version of puttputt joins the parade and probably others
 		// Specifies a separate file to be used for music from what I gather.
 		int tmpsize;
-		File dmuFile;
+		Common::File dmuFile;
 		char buffer[128];
 		debugC(DEBUG_SOUND, "Found base tag FMUS in sound %d, size %d", idx, total_size);
 		debugC(DEBUG_SOUND, "It was at position %d", _fileHandle->pos());

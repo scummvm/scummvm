@@ -53,14 +53,14 @@ Sound::Sound(Sword2Engine *vm) {
 	for (i = 0; i < MAXMUS; i++) {
 		_music[i] = NULL;
 
-		_musicFile[i].file = new File;
+		_musicFile[i].file = new Common::File;
 		_musicFile[i].idxTab = NULL;
 		_musicFile[i].idxLen = 0;
 		_musicFile[i].fileSize = 0;
 		_musicFile[i].fileType = 0;
 		_musicFile[i].inUse = false;
 
-		_speechFile[i].file = new File;
+		_speechFile[i].file = new Common::File;
 		_speechFile[i].idxTab = NULL;
 		_speechFile[i].idxLen = 0;
 		_speechFile[i].fileSize = 0;

@@ -698,7 +698,7 @@ void Screen::rollCredits() {
 	//     now, let's just the standard speech font instead.
 
 	SpriteInfo spriteInfo;
-	File f;
+	Common::File f;
 	int i;
 
 	// Read the "Smacker" logo

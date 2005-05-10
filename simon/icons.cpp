@@ -29,7 +29,7 @@
 namespace Simon {
 
 void SimonEngine::loadIconFile() {
-	File in;
+	Common::File in;
 	if (_game & GF_ACORN)
 		in.open("ICONDATA");
 	else if (_game & GF_AMIGA)

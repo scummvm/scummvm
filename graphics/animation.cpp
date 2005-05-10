@@ -71,7 +71,7 @@ bool BaseAnimationState::init(const char *name, void *audioArg) {
 	// Load lookup palettes
 	sprintf(tempFile, "%s.pal", name);
 
-	File f;
+	Common::File f;
 
 	if (!f.open(tempFile)) {
 		warning("Cutscene: %s palette missing", tempFile);
@@ -120,7 +120,7 @@ bool BaseAnimationState::init(const char *name, void *audioArg) {
 #endif
 
 	// Open MPEG2 stream
-	_mpegFile = new File();
+	_mpegFile = new Common::File();
 	sprintf(tempFile, "%s.mp2", name);
 	if (!_mpegFile->open(tempFile)) {
 		warning("Cutscene: Could not open %s", tempFile);

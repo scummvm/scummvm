@@ -36,7 +36,7 @@ namespace Simon {
 //#define DUMP_FILE_NR 8
 //#define DUMP_BITMAPS_FILE_NR 8
 
-uint fileReadItemID(File *in);
+uint fileReadItemID(Common::File *in);
 
 #define CHECK_BOUNDS(x, y) assert((uint)(x) < ARRAYSIZE(y))
 #define NUM_PALETTE_FADEOUT 32
@@ -138,7 +138,7 @@ protected:
 		FORMAT_VOC
 	} SoundFormat;
 
-	File *_gameFile;
+	Common::File *_gameFile;
 	
 	byte *_strippedTxtMem;
 	uint _textSize;
@@ -376,15 +376,15 @@ public:
 	virtual ~SimonEngine();
 
 protected:
-	int allocGamePcVars(File *in);
+	int allocGamePcVars(Common::File *in);
 	void loginPlayerHelper(Item *item, int a, int b);
 	void loginPlayer();
 	void allocateStringTable(int num);
 	void setupStringTable(byte *mem, int num);
 	void setupLocalStringTable(byte *mem, int num);
-	void readGamePcText(File *in);
-	void readItemChildren(File *in, Item *item, uint tmp);
-	void readItemFromGamePc(File *in, Item *item);
+	void readGamePcText(Common::File *in);
+	void readItemChildren(Common::File *in, Item *item, uint tmp);
+	void readItemFromGamePc(Common::File *in, Item *item);
 	void loadGamePcFile(const char *filename);
 
 	byte *allocateItem(uint size);
@@ -398,11 +398,11 @@ protected:
 	void allocTablesHeap();
 
 	Subroutine *createSubroutine(uint a);
-	void readSubroutine(File *in, Subroutine *sub);
+	void readSubroutine(Common::File *in, Subroutine *sub);
 	SubroutineLine *createSubroutineLine(Subroutine *sub, int a);
-	void readSubroutineLine(File *in, SubroutineLine *new_table, Subroutine *sub);
-	byte *readSingleOpcode(File *in, byte *ptr);
-	void readSubroutineBlock(File *in);
+	void readSubroutineLine(Common::File *in, SubroutineLine *new_table, Subroutine *sub);
+	byte *readSingleOpcode(Common::File *in, byte *ptr);
+	void readSubroutineBlock(Common::File *in);
 
 	Subroutine *getSubroutineByID(uint subroutine_id);
 
@@ -524,14 +524,14 @@ protected:
 
 
 	uint loadTextFile(const char *filename, byte *dst);
-	File *openTablesFile(const char *filename);
-	void closeTablesFile(File *in);
+	Common::File *openTablesFile(const char *filename);
+	void closeTablesFile(Common::File *in);
 
 	uint loadTextFile_simon1(const char *filename, byte *dst);
-	File *openTablesFile_simon1(const char *filename);
+	Common::File *openTablesFile_simon1(const char *filename);
 
 	uint loadTextFile_gme(const char *filename, byte *dst);
-	File *openTablesFile_gme(const char *filename);
+	Common::File *openTablesFile_gme(const char *filename);
 
 	void invokeTimeEvent(TimeEvent *te);
 	bool kickoffTimeEvents();

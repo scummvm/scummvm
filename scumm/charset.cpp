@@ -28,14 +28,14 @@
 namespace Scumm {
 
 void ScummEngine::loadCJKFont() {
-	File fp;
+	Common::File fp;
 	_useCJKMode = false;
 	if (_language == Common::JA_JPN && _version <= 5) { // FM-TOWNS v3 / v5 Kanji
 		int numChar = 256 * 32;
 		_2byteWidth = 16;
 		_2byteHeight = 16;
 		// use FM-TOWNS font rom, since game files don't have kanji font resources
-		if (fp.open("fmt_fnt.rom", File::kFileReadMode)) {
+		if (fp.open("fmt_fnt.rom", Common::File::kFileReadMode)) {
 			_useCJKMode = true;
 			debug(2, "Loading FM-TOWNS Kanji rom");
 			_2byteFontPtr = new byte[((_2byteWidth + 7) / 8) * _2byteHeight * numChar];

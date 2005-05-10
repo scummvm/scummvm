@@ -96,7 +96,7 @@ private:
 	void calcWaveVolume(int16 *data, uint32 length);
 	bool _waveVolume[WAVE_VOL_TAB_LENGTH];
 	uint16 _waveVolPos;
-	File		 _cowFile;
+	Common::File _cowFile;
 	uint32		 *_cowHeader;
 	uint32		 _cowHeaderSize;
 	uint8		 _currentCowFile;

@@ -97,7 +97,7 @@ DetectedGameList Engine_GOB_detectGames(const FSList &fslist) {
 	uint8 md5sum[16];
 	char md5str[32 + 1];
 
-	if (md5_file(file->path().c_str(), md5sum, NULL, kMD5FileSizeLimit)) {
+	if (Common::md5_file(file->path().c_str(), md5sum, NULL, kMD5FileSizeLimit)) {
 		for (int i = 0; i < 16; i++) {
 			sprintf(md5str + i * 2, "%02x", (int)md5sum[i]);
 		}

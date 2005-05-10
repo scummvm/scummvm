@@ -116,7 +116,7 @@ extern char useJoystick;
 #define MAX_FILES	30
 
 extern int16 filesCount;
-extern File filesHandles[MAX_FILES];
+extern Common::File filesHandles[MAX_FILES];
 
 /* Data files */
 extern struct ChunkDesc *dataFiles[MAX_DATA_FILES];

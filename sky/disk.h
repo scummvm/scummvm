@@ -27,7 +27,9 @@
 #include "common/str.h"
 #include "sky/rnc_deco.h"
 
-class File;
+namespace Common {
+	class File;
+}
 
 namespace Sky {
 
@@ -73,8 +75,8 @@ protected:
 
 	uint32 _dinnerTableEntries;
 	uint8 *_dinnerTableArea;
-	File *_dataDiskHandle;
-	File *_dnrHandle;
+	Common::File *_dataDiskHandle;
+	Common::File *_dnrHandle;
 	RncDecoder _rncDecoder;
 	
 	uint16 _buildList[MAX_FILES_IN_LIST];

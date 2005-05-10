@@ -675,7 +675,7 @@ protected:
 
 	const OpcodeEntryv60he *_opcodesv60he;
 
-	File _hFileTable[17];
+	Common::File _hFileTable[17];
 	
 public:
 	ScummEngine_v60he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v6(detector, syst, gs, md5sum) {}

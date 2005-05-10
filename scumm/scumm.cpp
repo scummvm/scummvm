@@ -72,6 +72,8 @@ extern bool isSmartphone(void);
 
 static int generateSubstResFileName_(const char *filename, char *buf, int bufsize, int index);
 
+using Common::File;
+
 namespace Scumm {
 
 // Use g_scumm from error() ONLY
@@ -2628,7 +2630,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 		uint8 md5sum[16];
 		const char *name = iter->_key.c_str();
 
-		if (md5_file(name, md5sum, 0, kMD5FileSizeLimit)) {
+		if (Common::md5_file(name, md5sum, 0, kMD5FileSizeLimit)) {
 			char md5str[32+1];
 			for (int j = 0; j < 16; j++) {
 				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
@@ -2772,7 +2774,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 			game.platform = Common::kPlatformMacintosh;
 	}
 
-	if (md5_file(detectName, md5sum, ConfMan.get("path").c_str(), kMD5FileSizeLimit)) {
+	if (Common::md5_file(detectName, md5sum, ConfMan.get("path").c_str(), kMD5FileSizeLimit)) {
 		for (int j = 0; j < 16; j++) {
 			sprintf(gameMD5 + j*2, "%02x", (int)md5sum[j]);
 		}

@@ -30,7 +30,7 @@ int16 file_write(int16 handle, char *buf, int16 size) {
 	return filesHandles[handle].write(buf, size);
 }
 
-int16 file_open(const char *path, File::AccessMode mode) {
+int16 file_open(const char *path, Common::File::AccessMode mode) {
 	int16 i;
 
 	for (i = 0; i < MAX_FILES; i++) {
@@ -48,7 +48,7 @@ int16 file_open(const char *path, File::AccessMode mode) {
 	return -1;
 }
 
-File *file_getHandle(int16 handle) {
+Common::File *file_getHandle(int16 handle) {
 	return &filesHandles[handle];
 }
 
@@ -284,10 +284,10 @@ void data_closeData(int16 handle) {
 		file_getHandle(handle)->close();
 }
 
-int16 data_openData(const char *path, File::AccessMode mode) {
+int16 data_openData(const char *path, Common::File::AccessMode mode) {
 	int16 handle;
 
-	if (mode != File::kFileReadMode)
+	if (mode != Common::File::kFileReadMode)
 		return file_open(path, mode);
 
 	handle = data_getChunk(path);
@@ -320,7 +320,7 @@ void data_seekData(int16 handle, int32 pos, int16 from) {
 int32 data_getDataSize(const char *name) {
 	char buf[128];
 	int32 chunkSz;
-	File file;
+	Common::File file;
 
 	strcpy(buf, name);
 	chunkSz = data_getChunkSize(buf);

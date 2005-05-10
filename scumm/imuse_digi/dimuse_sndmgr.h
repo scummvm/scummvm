@@ -96,7 +96,7 @@ private:
 	bool checkForProperHandle(soundStruct *soundHandle);
 	soundStruct *allocSlot();
 	void prepareSound(byte *ptr, soundStruct *sound);
-	void prepareSoundFromRMAP(File *file, soundStruct *sound, int32 offset, int32 size);
+	void prepareSoundFromRMAP(Common::File *file, soundStruct *sound, int32 offset, int32 size);
 
 	ScummEngine *_vm;
 	byte _disk;

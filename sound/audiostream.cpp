@@ -36,7 +36,7 @@ struct StreamFileFormat {
 	 * Pointer to a function which tries to open a file of type StreamFormat.
 	 * Return NULL in case of an error (invalid/nonexisting file). 
 	 */
-	AudioStream* (*openStreamFile)(File *file, uint32 size);
+	AudioStream* (*openStreamFile)(Common::File *file, uint32 size);
 };
 
 static const StreamFileFormat STREAM_FILEFORMATS[] = {	
@@ -66,7 +66,7 @@ AudioStream* AudioStream::openStreamFile(const char *filename)
 	char *ext = &buffer[len+1];
 
 	AudioStream* stream = NULL;
-	File *fileHandle = new File();
+	Common::File *fileHandle = new Common::File();
 
 	for (int i = 0; i < ARRAYSIZE(STREAM_FILEFORMATS)-1 && stream == NULL; ++i) {
 		strcpy(ext, STREAM_FILEFORMATS[i].fileExtension);

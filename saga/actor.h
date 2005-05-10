@@ -141,12 +141,12 @@ struct Location {
 	Location() {
 		x = y = z = 0;
 	}
-	void saveState(File& out) {
+	void saveState(Common::File& out) {
 		out.writeSint32LE(x);
 		out.writeSint32LE(y);
 		out.writeSint32LE(z);
 	}
-	void loadState(File& in) {
+	void loadState(Common::File& in) {
 		x = in.readSint32LE();
 		y = in.readSint32LE();
 		z = in.readSint32LE();
@@ -222,7 +222,7 @@ public:
 	int32 screenDepth;			//
 	int32 screenScale;			//
 
-	void saveState(File& out) {
+	void saveState(Common::File& out) {
 		out.writeUint16LE(flags);
 		out.writeSint32LE(nameIndex);
 		out.writeSint32LE(sceneNumber);
@@ -232,7 +232,7 @@ public:
 		out.writeSint32LE(screenDepth);
 		out.writeSint32LE(screenScale);
 	}
-	void loadState(File& in) {
+	void loadState(Common::File& in) {
 		flags = in.readUint16LE();
 		nameIndex = in.readSint32LE();
 		sceneNumber = in.readSint32LE();
@@ -297,7 +297,7 @@ public:
 	Location partialTarget;
 	int32 walkFrameSequence;
 
-	void saveState(File& out) {
+	void saveState(Common::File& out) {
 		CommonObjectData::saveState(out);
 		out.writeUint16LE(actorFlags);
 		out.writeSint32LE(currentAction);
@@ -330,7 +330,7 @@ public:
 		partialTarget.saveState(out);
 		out.writeSint32LE(walkFrameSequence);
 	}
-	void loadState(File& in) {
+	void loadState(Common::File& in) {
 		CommonObjectData::loadState(in);
 		actorFlags = in.readUint16LE();
 		currentAction = in.readSint32LE();
@@ -495,8 +495,8 @@ public:
 		return _activeSpeech.stringsCount > 0;
 	}
 
-	void saveState(File& out);
-	void loadState(File& in);
+	void saveState(Common::File& out);
+	void loadState(Common::File& in);
 
 	void setProtagState(int state);
 	int getProtagState() { return _protagState; }

@@ -92,7 +92,7 @@ char useJoystick = 1;
 
 /* Files */
 int16 filesCount = 0;
-File filesHandles[MAX_FILES];
+Common::File filesHandles[MAX_FILES];
 
 /* Data files */
 struct ChunkDesc *dataFiles[MAX_DATA_FILES];

@@ -1713,7 +1713,7 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 		break;
 	case 3:
 		if (params->processFlags & kWPFUseFile) {
-			File f;
+			Common::File f;
 
 			// Convert Windows path separators to something more portable
 			strncpy(buf, (const char *)params->filename, 512);
@@ -1722,7 +1722,7 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 					buf[i] = '/';
 			}
 
-			if (f.open((const char *)buf, File::kFileReadMode)) {
+			if (f.open((const char *)buf, Common::File::kFileReadMode)) {
 				uint32 id = f.readUint32LE();
 				if (id == TO_LE_32(MKID('AWIZ')) || id == TO_LE_32(MKID('MULT'))) {
 					uint32 size = f.readUint32BE();
@@ -1751,7 +1751,7 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 		break;
 	case 4:
 		if (params->processFlags & kWPFUseFile) {
-			File f;
+			Common::File f;
 
 			switch(params->fileWriteMode) {
 			case 2:
@@ -1768,7 +1768,7 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 						buf[i] = '/';
 				}
 
-				if (!f.open((const char *)buf, File::kFileWriteMode)) {
+				if (!f.open((const char *)buf, Common::File::kFileWriteMode)) {
 					warning("Unable to open for write '%s'", buf);
 					VAR(119) = -3;
 				} else {

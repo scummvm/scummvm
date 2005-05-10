@@ -142,16 +142,16 @@ SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 
 	// The Linux version of Inherit the Earth puts all data files in an
 	// 'itedata' sub-directory, except for voices.rsc
-	File::addDefaultDirectory(_gameDataPath + "itedata/");
+	Common::File::addDefaultDirectory(_gameDataPath + "itedata/");
 
 	// The Windows version of Inherit the Earth puts various data files in
 	// other subdirectories.
-	File::addDefaultDirectory(_gameDataPath + "graphics/");
-	File::addDefaultDirectory(_gameDataPath + "music/");
-	File::addDefaultDirectory(_gameDataPath + "sound/");
+	Common::File::addDefaultDirectory(_gameDataPath + "graphics/");
+	Common::File::addDefaultDirectory(_gameDataPath + "music/");
+	Common::File::addDefaultDirectory(_gameDataPath + "sound/");
 
 	// Mac CD Wyrmkeep
-	File::addDefaultDirectory(_gameDataPath + "patch/");
+	Common::File::addDefaultDirectory(_gameDataPath + "patch/");
 
 	// Setup mixer
 	if (!_mixer->isReady()) {
@@ -202,15 +202,15 @@ int SagaEngine::init(GameDetector &detector) {
 
 	// Add some default directories
 	// Win32 demo & full game
-	File::addDefaultDirectory("graphics");
-	File::addDefaultDirectory("music");
-	File::addDefaultDirectory("sound");
+	Common::File::addDefaultDirectory("graphics");
+	Common::File::addDefaultDirectory("music");
+	Common::File::addDefaultDirectory("sound");
 
 	// Linux demo
-	File::addDefaultDirectory("itedata");
+	Common::File::addDefaultDirectory("itedata");
 
 	// Mac demos & full game
-	File::addDefaultDirectory("patch");
+	Common::File::addDefaultDirectory("patch");
 
 	// Process command line
 

@@ -84,7 +84,7 @@ void ImuseDigiSndMgr::countElements(byte *ptr, int &numRegions, int &numJumps, i
 	} while (tag != MKID_BE('DATA'));
 }
 
-void ImuseDigiSndMgr::prepareSoundFromRMAP(File *file, soundStruct *sound, int32 offset, int32 size) {
+void ImuseDigiSndMgr::prepareSoundFromRMAP(Common::File *file, soundStruct *sound, int32 offset, int32 size) {
 	int l;
 
 	file->seek(offset, SEEK_SET);
@@ -368,7 +368,7 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 			char fileName[24];
 			int32 offset = 0, size = 0;
 			sprintf(fileName, "%s.map", soundName);
-			File *rmapFile = sound->bundle->getFile(fileName, offset, size);
+			Common::File *rmapFile = sound->bundle->getFile(fileName, offset, size);
 			if (!rmapFile) {
 				closeSound(sound);
 				return NULL;
@@ -577,7 +577,7 @@ int32 ImuseDigiSndMgr::getDataFromRegion(soundStruct *soundHandle, int region, b
 		sprintf(fileName, "%s_reg%03d", soundHandle->name, region);
 		if (scumm_stricmp(fileName, soundHandle->lastFileName) != 0) {
 			int32 offs = 0, len = 0;
-			File *cmpFile;
+			Common::File *cmpFile;
 			bool oggMode = false;
 			sprintf(fileName, "%s_reg%03d.mp3", soundHandle->name, region);
 			cmpFile = soundHandle->bundle->getFile(fileName, offs, len);

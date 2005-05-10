@@ -26,7 +26,9 @@
 #include "sound/midiparser.h"
 #include "common/mutex.h"
 
-class File;
+namespace Common {
+	class File;
+}
 
 namespace Simon {
 
@@ -83,10 +85,10 @@ public:
 	MidiPlayer (OSystem *system);
 	virtual ~MidiPlayer();
 
-	void loadSMF (File *in, int song, bool sfx = false);
-	void loadMultipleSMF (File *in, bool sfx = false);
-	void loadXMIDI (File *in, bool sfx = false);
-	void loadS1D (File *in, bool sfx = false);
+	void loadSMF (Common::File *in, int song, bool sfx = false);
+	void loadMultipleSMF (Common::File *in, bool sfx = false);
+	void loadXMIDI (Common::File *in, bool sfx = false);
+	void loadS1D (Common::File *in, bool sfx = false);
 
 	void mapMT32toGM (bool map);
 	void setLoop (bool loop);

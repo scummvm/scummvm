@@ -355,7 +355,7 @@ byte *Talk::loadDialogFile(const char *filename) {
 	for (int i = 0; i < ARRAYSIZE(dogFiles); ++i) {
 		if (!scumm_stricmp(filename, dogFiles[i].filename) &&
 			_vm->resource()->getLanguage() == dogFiles[i].lang) {
-			File fdog;
+			Common::File fdog;
 			fdog.open(filename);
 			if (fdog.isOpen()) {
 				debug(6, "Loading dog file '%s' from game data path", filename);

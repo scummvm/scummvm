@@ -303,7 +303,7 @@ ArcFile::~ArcFile(void) {
 }
 
 bool ArcFile::open(const char *name) {
-	File arc;
+	Common::File arc;
 	if (!arc.open(name))
 		return false;
 	_bufPos = _buf = (uint8*)malloc(arc.size());

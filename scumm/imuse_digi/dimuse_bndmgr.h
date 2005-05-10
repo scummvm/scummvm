@@ -67,7 +67,7 @@ private:
 	int _numFiles;
 	int _numCompItems;
 	int _curSample;
-	File _file;
+	Common::File _file;
 	bool _compTableLoaded;
 	int _fileBundleId;
 	byte _compOutput[0x2000];
@@ -84,7 +84,7 @@ public:
 
 	bool open(const char *filename, bool &compressed);
 	void close();
-	File *getFile(const char *filename, int32 &offset, int32 &size);
+	Common::File *getFile(const char *filename, int32 &offset, int32 &size);
 	int32 decompressSampleByName(const char *name, int32 offset, int32 size, byte **comp_final, bool header_outside);
 	int32 decompressSampleByIndex(int32 index, int32 offset, int32 size, byte **comp_final, int header_size, bool header_outside);
 	int32 decompressSampleByCurIndex(int32 offset, int32 size, byte **comp_final, int header_size, bool header_outside);

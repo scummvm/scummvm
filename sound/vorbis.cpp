@@ -32,8 +32,10 @@
 #include <vorbis/vorbisfile.h>
 
 
-static AudioStream *makeVorbisStream(OggVorbis_File *file, int duration);
+using Common::File;
 
+
+static AudioStream *makeVorbisStream(OggVorbis_File *file, int duration);
 
 #pragma mark -
 #pragma mark --- Ogg Vorbis Audio CD emulation ---

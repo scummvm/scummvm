@@ -118,7 +118,7 @@ static const uint32 turnTableOffsets[] = {
 #define TURNTABLE_SIZE (sizeof(turnTableOffsets)/sizeof(uint32))
 
 SkyCompact::SkyCompact(void) {
-	_cptFile = new File();
+	_cptFile = new Common::File();
 	if (!_cptFile->open("sky.cpt")) {
 		GUI::MessageDialog dialog("Unable to find \"sky.cpt\" file!\n"
 								  "Please download it from www.scummvm.org", "OK", NULL);

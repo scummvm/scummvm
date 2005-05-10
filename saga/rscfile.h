@@ -44,7 +44,7 @@ struct RSCFILE_RESOURCE {
 
 struct RSCFILE_CONTEXT {
 	const char *rc_file_fspec;
-	File *rc_file;
+	Common::File *rc_file;
 	int rc_file_loaded;
 	RSCFILE_RESOURCE *rc_res_table;
 	size_t rc_res_ct;

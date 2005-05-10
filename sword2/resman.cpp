@@ -68,7 +68,7 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 	// within the clusters at this point it makes no difference. We only
 	// wish to know what resource files there are and what is in each
 
-	File file;
+	Common::File file;
 	uint32 size;
 	byte *temp;
 
@@ -418,7 +418,7 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 		// care which CD it's on. But if we can't find it, keep asking
 		// for the CD until we do.
 
-		File *file = openCluFile(cluFileNum);
+		Common::File *file = openCluFile(cluFileNum);
 
 		if (_resFiles[cluFileNum].entryTab == NULL) {
 			// we didn't read from this file before, get its index table
@@ -443,7 +443,7 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 			StandardHeader *header = (StandardHeader *) _resList[res].ptr;
 			char buf[256];
 			const char *tag;
-			File out;
+			Common::File out;
 
 			switch (header->fileType) {
 			case ANIMATION_FILE:
@@ -497,7 +497,7 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 #endif
 
 			if (!out.exists(buf, "")) {
-				if (out.open(buf, File::kFileWriteMode, ""))
+				if (out.open(buf, Common::File::kFileWriteMode, ""))
 					out.write(_resList[res].ptr, len);
 			}
 		}
@@ -563,8 +563,8 @@ void ResourceManager::addToCacheList(Resource *res) {
 		_cacheEnd = res;
 }
 
-File *ResourceManager::openCluFile(uint16 fileNum) {
-	File *file = new File;
+Common::File *ResourceManager::openCluFile(uint16 fileNum) {
+	Common::File *file = new Common::File;
 	while (!file->open(_resFiles[fileNum].fileName)) {
 		// HACK: We have to check for this, or it'll be impossible to
 		// quit while the game is asking for the user to insert a CD.
@@ -585,7 +585,7 @@ File *ResourceManager::openCluFile(uint16 fileNum) {
 	return file;
 }
 
-void ResourceManager::readCluIndex(uint16 fileNum, File *file) {
+void ResourceManager::readCluIndex(uint16 fileNum, Common::File *file) {
 	if (_resFiles[fileNum].entryTab == NULL) {
 		// we didn't read from this file before, get its index table
 		if (file == NULL)

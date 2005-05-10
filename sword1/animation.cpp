@@ -108,7 +108,7 @@ void MoviePlayer::play(uint32 id) {
 			// these sequences are language specific
 			char sndName[20];
 			sprintf(sndName, "%s.snd", _sequenceList[id]);
-			File *oggSource = new File();
+			Common::File *oggSource = new Common::File();
 			if (oggSource->open(sndName)) {
 				SplittedAudioStream *sStream = new SplittedAudioStream();
 				uint32 numSegs = oggSource->readUint32LE(); // number of audio segments, either 1 or 2.

@@ -36,8 +36,8 @@ struct ChunkDesc {
 	byte packed;
 };
 
-int16 file_open(const char *path, File::AccessMode mode = File::kFileReadMode);
-File *file_getHandle(int16 handle);
+int16 file_open(const char *path, Common::File::AccessMode mode = Common::File::kFileReadMode);
+Common::File *file_getHandle(int16 handle);
 int16 data_getChunk(const char *chunkName);
 char data_freeChunk(int16 handle);
 int32 data_readChunk(int16 handle, char *buf, int16 size);
@@ -47,7 +47,7 @@ void data_openDataFile(const char *src);
 void data_closeDataFile(void);
 char *data_getUnpackedData(const char *name);
 void data_closeData(int16 handle);
-int16 data_openData(const char *path, File::AccessMode mode = File::kFileReadMode);
+int16 data_openData(const char *path, Common::File::AccessMode mode = Common::File::kFileReadMode);
 int32 data_readData(int16 handle, char *buf, int16 size);
 void data_seekData(int16 handle, int32 pos, int16 from);
 int32 data_getDataSize(const char *name);

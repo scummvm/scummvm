@@ -30,6 +30,8 @@
 #include "sound/vorbis.h"
 #include "sound/wave.h"
 
+using Common::File;
+
 namespace Simon {
 
 #define SOUND_BIG_ENDIAN true

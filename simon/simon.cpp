@@ -46,6 +46,8 @@
 #include "globals.h"
 #endif
 
+using Common::File;
+
 struct SimonGameSettings {
 	const char *name;
 	const char *description;
@@ -128,7 +130,7 @@ DetectedGameList Engine_SIMON_detectGames(const FSList &fslist) {
 	for (StringSet::const_iterator iter = fileSet.begin(); iter != fileSet.end(); ++iter) {
 		uint8 md5sum[16];
 		const char *name = iter->_key.c_str();
-		if (md5_file(name, md5sum)) {
+		if (Common::md5_file(name, md5sum)) {
 			char md5str[32+1];
 			for (int j = 0; j < 16; j++) {
 				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
@@ -317,7 +319,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 		if (f.isOpen() == false)
 			strcat(buf, ".");
 		
-		if (md5_file(buf, md5sum)) {
+		if (Common::md5_file(buf, md5sum)) {
 			char md5str[32+1];
 			for (int j = 0; j < 16; j++) {
 				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);

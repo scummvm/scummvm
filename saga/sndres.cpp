@@ -83,7 +83,7 @@ int SndRes::playVoice(uint32 voice_rn) {
 		// separate file (p2_a.voc or P2_A.iaf), to correct voice 4 in
 		// the intro. Use that, if available.
 
-		File f;
+		Common::File f;
 		uint32 size;
 		bool voc = false;
 
@@ -235,7 +235,7 @@ int SndRes::getVoiceLength(uint32 voice_rn) {
 
 	assert(_init);
 
-	File f;
+	Common::File f;
 
 	// The Wyrmkeep release of Inherit the Earth provides a separate file
 	// (p2_a.voc or P2_A.iaf), to correct voice 4 in the intro. Use that,

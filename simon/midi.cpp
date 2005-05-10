@@ -335,7 +335,7 @@ static int simon1_gmf_size[] = {
 	17256, 5103, 8794, 4884, 16
 };
 
-void MidiPlayer::loadSMF (File *in, int song, bool sfx) {
+void MidiPlayer::loadSMF (Common::File *in, int song, bool sfx) {
 	Common::StackLock lock(_mutex);
 
 	MusicInfo *p = sfx ? &_sfx : &_music;
@@ -409,7 +409,7 @@ void MidiPlayer::loadSMF (File *in, int song, bool sfx) {
 	p->parser = parser; // That plugs the power cord into the wall
 }
 
-void MidiPlayer::loadMultipleSMF (File *in, bool sfx) {
+void MidiPlayer::loadMultipleSMF (Common::File *in, bool sfx) {
 	// This is a special case for Simon 2 Windows.
 	// Instead of having multiple sequences as
 	// separate tracks in a Type 2 file, simon2win
@@ -465,7 +465,7 @@ void MidiPlayer::loadMultipleSMF (File *in, bool sfx) {
 	}
 }
 
-void MidiPlayer::loadXMIDI(File *in, bool sfx) {
+void MidiPlayer::loadXMIDI(Common::File *in, bool sfx) {
 	Common::StackLock lock(_mutex);
 	MusicInfo *p = sfx ? &_sfx : &_music;
 	clearConstructs(*p);
@@ -512,7 +512,7 @@ void MidiPlayer::loadXMIDI(File *in, bool sfx) {
 	p->parser = parser; // That plugs the power cord into the wall
 }
 
-void MidiPlayer::loadS1D (File *in, bool sfx) {
+void MidiPlayer::loadS1D (Common::File *in, bool sfx) {
 	Common::StackLock lock(_mutex);
 	MusicInfo *p = sfx ? &_sfx : &_music;
 	clearConstructs(*p);
