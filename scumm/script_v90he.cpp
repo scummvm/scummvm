@@ -323,7 +323,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o72_deleteFile),
 		OPCODE(o72_rename),
 		/* E0 */
-		OPCODE(o80_unknownE0),
+		OPCODE(o80_drawLine),
 		OPCODE(o72_getPixel),
 		OPCODE(o60_localizeArrayToScript),
 		OPCODE(o80_pickVarRandom),

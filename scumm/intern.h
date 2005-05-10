@@ -985,8 +985,8 @@ protected:
 
 	void loadImgSpot(int resId, int state, int16 &x, int16 &y);
 	void loadWizCursor(int resId);
-	void unknownE0(int x1, int y1, int x, int unk1, int unk2, int type, int id);
-	void unknownE0Helper(int x, int y, int flags);
+	void drawLine(int x1, int y1, int x, int unk1, int unk2, int type, int id);
+	void drawPixel(int x, int y, int flags);
 	
 	/* HE version 80 script opcodes */
 	void o80_loadSBNG();
@@ -1000,7 +1000,7 @@ protected:
 	void o80_setState();
 	void o80_drawBox();
 	void o80_drawWizPolygon();
-	void o80_unknownE0();
+	void o80_drawLine();
 	void o80_pickVarRandom();
 	void o80_getResourceSize();
 };
@@ -1286,7 +1286,7 @@ protected:
 	void o100_dim2dimArray();
 	void o100_redim2dimArray();
 	void o100_dimArray();
-	void o100_unknownE0();
+	void o100_drawLine();
 	void o100_drawObject();
 	void o100_setSpriteGroupInfo();
 	void o100_resourceRoutines();

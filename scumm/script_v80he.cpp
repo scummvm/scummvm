@@ -324,7 +324,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o72_deleteFile),
 		OPCODE(o72_rename),
 		/* E0 */
-		OPCODE(o80_unknownE0),
+		OPCODE(o80_drawLine),
 		OPCODE(o72_getPixel),
 		OPCODE(o60_localizeArrayToScript),
 		OPCODE(o80_pickVarRandom),
@@ -613,8 +613,8 @@ void ScummEngine_v80he::o80_drawWizPolygon() {
 	displayWizImage(&wi);	
 }
 
-void ScummEngine_v80he::unknownE0(int x1, int y1, int x, int unk1, int unk2, int type, int id) {
-	debug(0,"unknownE0: x1 %d y1 %d x %d unk1 %d, unk2 %d type %d id %d", x1, y1, x, unk1, unk2, type, id);	
+void ScummEngine_v80he::drawLine(int x1, int y1, int x, int unk1, int unk2, int type, int id) {
+	debug(0,"drawLine: x1 %d y1 %d x %d unk1 %d, unk2 %d type %d id %d", x1, y1, x, unk1, unk2, type, id);	
 
 	int eax, ebx, ecx, edx, esi;
 	int var_4, var_8, var_C, y;
@@ -638,7 +638,7 @@ void ScummEngine_v80he::unknownE0(int x1, int y1, int x, int unk1, int unk2, int
 	}
 
 	if (type == 2) {
-		Actor *a = derefActor(id, "unknownE0");
+		Actor *a = derefActor(id, "drawLine");
 		a->drawActorToBackBuf(x1, y1);
 	} else if (type == 3) {
 		WizImage wi;
@@ -649,7 +649,7 @@ void ScummEngine_v80he::unknownE0(int x1, int y1, int x, int unk1, int unk2, int
 		wi.state = 0;
 		displayWizImage(&wi);
 	} else {
-		unknownE0Helper(x1, y1, id);
+		drawPixel(x1, y1, id);
 	}
 
 	x1 = 0;
@@ -701,7 +701,7 @@ void ScummEngine_v80he::unknownE0(int x1, int y1, int x, int unk1, int unk2, int
 			continue;
 
 		if (type == 2) {
-			Actor *a = derefActor(id, "unknownE0");
+			Actor *a = derefActor(id, "drawLine");
 			a->drawActorToBackBuf(x, y);
 		} else if (type == 3) {
 			WizImage wi;
@@ -712,12 +712,12 @@ void ScummEngine_v80he::unknownE0(int x1, int y1, int x, int unk1, int unk2, int
 			wi.state = 0;
 			displayWizImage(&wi);
 		} else {
-			unknownE0Helper(x, y, id);
+			drawPixel(x, y, id);
 		}
 	}		
 }
 
-void ScummEngine_v80he::unknownE0Helper(int x, int y, int flags) {
+void ScummEngine_v80he::drawPixel(int x, int y, int flags) {
 	VirtScreen *vs;
 
 	if (x < 0 || x > 639)
@@ -744,7 +744,7 @@ void ScummEngine_v80he::unknownE0Helper(int x, int y, int flags) {
 	}
 }
 
-void ScummEngine_v80he::o80_unknownE0() {
+void ScummEngine_v80he::o80_drawLine() {
 	int id, unk1, unk2, x, x1, y1;
 
 	unk2 = pop();
@@ -758,16 +758,16 @@ void ScummEngine_v80he::o80_unknownE0() {
 
 	switch (subOp) {
 	case 55:
-		unknownE0(x1, y1, x, unk1, unk2, 2, id);
+		drawLine(x1, y1, x, unk1, unk2, 2, id);
 		break;
 	case 63:
-		unknownE0(x1, y1, x, unk1, unk2, 3, id);
+		drawLine(x1, y1, x, unk1, unk2, 3, id);
 		break;
 	case 66:
-		unknownE0(x1, y1, x, unk1, unk2, 1, id);
+		drawLine(x1, y1, x, unk1, unk2, 1, id);
 		break;
 	default:
-		error("o80_unknownE0: default case %d", subOp);
+		error("o80_drawLine: default case %d", subOp);
 	}
 
 }

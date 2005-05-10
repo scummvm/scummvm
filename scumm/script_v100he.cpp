@@ -89,7 +89,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		/* 24 */
 		OPCODE(o72_drawWizImage),
 		OPCODE(o80_drawWizPolygon),
-		OPCODE(o100_unknownE0),
+		OPCODE(o100_drawLine),
 		OPCODE(o100_drawObject),
 		/* 28 */
 		OPCODE(o6_dup),
@@ -801,7 +801,7 @@ void ScummEngine_v100he::o100_dimArray() {
 	defineArray(fetchScriptWord(), data, 0, 0, 0, pop());
 }
 
-void ScummEngine_v100he::o100_unknownE0() {
+void ScummEngine_v100he::o100_drawLine() {
 	int id, unk1, unk2, x, x1, y1;
 
 	unk2 = pop();
@@ -815,16 +815,16 @@ void ScummEngine_v100he::o100_unknownE0() {
 
 	switch (subOp) {
 	case 1:
-		unknownE0(x1, y1, x, unk1, unk2, 2, id);
+		drawLine(x1, y1, x, unk1, unk2, 2, id);
 		break;
 	case 20:
-		unknownE0(x1, y1, x, unk1, unk2, 1, id);
+		drawLine(x1, y1, x, unk1, unk2, 1, id);
 		break;
 	case 40:
-		unknownE0(x1, y1, x, unk1, unk2, 3, id);
+		drawLine(x1, y1, x, unk1, unk2, 3, id);
 		break;
 	default:
-		error("o100_unknownE0: default case %d", subOp);
+		error("o100_drawLine: default case %d", subOp);
 	}
 }
 
