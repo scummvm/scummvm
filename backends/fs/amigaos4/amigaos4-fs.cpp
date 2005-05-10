@@ -36,7 +36,7 @@
 #include "util.h"
 
 #include "base/engine.h"
-#include "../fs.h"
+#include "backends/fs/fs.h"
 
 #define ENTER() /* debug(6, "Enter\n") */
 #define LEAVE() /* debug(6, "Leave\n") */
