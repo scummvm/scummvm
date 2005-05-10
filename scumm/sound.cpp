@@ -651,6 +651,11 @@ void Sound::startHETalkSound(uint32 offset) {
 	byte *ptr;
 	int32 size;
 
+	if (!_sfxFile->isOpen()) {
+		warning("startHETalkSound: Speech file is not open");
+		return;
+	}
+
 	_sfxMode |= 2;
 	_vm->res.nukeResource(rtSound, 1);
 	_sfxFile->seek(offset + 4, SEEK_SET);
