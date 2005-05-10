@@ -332,6 +332,9 @@ Freddi Fish and Luther's Maze Madness
 	-	All	en	4dbff3787aedcd96b0b325f2d92d7ad9	maze	Kirben
 	-	All	en	4f04b321a95d4315ce6d65f8e1dd0368	maze	Kirben
 
+Freddi Fish's One-Stop Fun Shop
+	-	All	en	16542a7342a918bfe4ba512007d36c47	FreddisFunShop	Kirben
+
 Humongous Interactive Catalog
 	-	Windows	en	11e6e244078ff09b0f3832e35420e0a7	catalog	khalek, sev
 	-	Windows	en	037385a953789190298494d92b89b3d0	catalog2	khalek, sev
