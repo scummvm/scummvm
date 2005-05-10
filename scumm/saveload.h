@@ -24,8 +24,10 @@
 
 #include "common/scummsys.h"
 
-class InSaveFile;
-class OutSaveFile;
+namespace Common {
+	class InSaveFile;
+	class OutSaveFile;
+}
 
 namespace Scumm {
 
@@ -126,7 +128,7 @@ typedef void *SerializerLoadReference(void *me, byte type, int ref);
 
 class Serializer {
 public:
-	Serializer(InSaveFile *in, OutSaveFile *out, uint32 savegameVersion)
+	Serializer(Common::InSaveFile *in, Common::OutSaveFile *out, uint32 savegameVersion)
 		: _loadStream(in), _saveStream(out), _save_ref(0), _load_ref(0), _ref_me(0),
 		  _savegameVersion(savegameVersion)
 	{ }
@@ -155,8 +157,8 @@ public:
 	void loadBytes(void *b, int len);
 	
 protected:
-	InSaveFile *_loadStream;
-	OutSaveFile *_saveStream;
+	Common::InSaveFile *_loadStream;
+	Common::OutSaveFile *_saveStream;
 	uint32 _savegameVersion;
 
 	void saveArrayOf(void *b, int len, int datasize, byte filetype);

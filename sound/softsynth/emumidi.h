@@ -31,7 +31,7 @@ protected:
 	SoundMixer *_mixer;
 
 private:
-	Timer::TimerProc _timerProc;
+	Common::Timer::TimerProc _timerProc;
 	void *_timerParam;
 
 	int _nextTick;
@@ -69,7 +69,7 @@ public:
 		return 0;
 	}
 
-	void setTimerCallback(void *timer_param, Timer::TimerProc timer_proc) {
+	void setTimerCallback(void *timer_param, Common::Timer::TimerProc timer_proc) {
 		_timerProc = timer_proc;
 		_timerParam = timer_param;
 	}

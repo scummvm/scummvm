@@ -28,7 +28,7 @@
 
 // SaveFile class
 
-class PalmSaveFile : public SaveFile {
+class PalmSaveFile : public Common::SaveFile {
 public:
 	PalmSaveFile(const char *filename, bool saveOrLoad);
 	~PalmSaveFile();
@@ -126,27 +126,27 @@ uint32 PalmSaveFile::write(const void *buf, uint32 size) {
 
 class PalmSaveFileManager : public SaveFileManager {
 public:
-	virtual OutSaveFile *openForSaving(const char *filename) {
+	virtual Common::OutSaveFile *openForSaving(const char *filename) {
 		return openSavefile(filename, true);
 	}
-	virtual InSaveFile *openForLoading(const char *filename) {
+	virtual Common::InSaveFile *openForLoading(const char *filename) {
 		return openSavefile(filename, false);
 	}
 
-	SaveFile *openSavefile(const char *filename, bool saveOrLoad);
+	Common::SaveFile *openSavefile(const char *filename, bool saveOrLoad);
 	void listSavefiles(const char *prefix, bool *marks, int num);
 
 protected:
-	SaveFile *makeSaveFile(const char *filename, bool saveOrLoad);
+	Common::SaveFile *makeSaveFile(const char *filename, bool saveOrLoad);
 };
 
-SaveFile *PalmSaveFileManager::openSavefile(const char *filename, bool saveOrLoad) {
+Common::SaveFile *PalmSaveFileManager::openSavefile(const char *filename, bool saveOrLoad) {
 	char buf[256];
 
 	strncpy(buf, getSavePath(), sizeof(buf));
 	strncat(buf, filename, sizeof(buf));
 
-	SaveFile *sf = makeSaveFile(buf, saveOrLoad);
+	Common::SaveFile *sf = makeSaveFile(buf, saveOrLoad);
 	if (!sf->isOpen()) {
 		delete sf;
 		sf = NULL;
@@ -194,11 +194,11 @@ void PalmSaveFileManager::listSavefiles(const char *prefix, bool *marks, int num
 	VFSFileClose(fileRef);
 }
 
-SaveFile *PalmSaveFileManager::makeSaveFile(const char *filename, bool saveOrLoad) {
+Common::SaveFile *PalmSaveFileManager::makeSaveFile(const char *filename, bool saveOrLoad) {
 	return new PalmSaveFile(filename, saveOrLoad);
 }
 
 // OSystem
-SaveFileManager *OSystem_PALMOS::getSavefileManager() {
+Common::SaveFileManager *OSystem_PALMOS::getSavefileManager() {
 	return new PalmSaveFileManager();
 }

@@ -32,6 +32,8 @@
 #endif
 
 
+namespace Common {
+
 const char *SaveFileManager::getSavePath() const {
 
 #if defined(__PALM_OS__)
@@ -195,3 +197,6 @@ SaveFile *DefaultSaveFileManager::makeSaveFile(const char *filename, bool saveOr
 	}
 	return sf;
 }
+
+
+} // End of namespace Common

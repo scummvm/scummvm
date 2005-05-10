@@ -26,19 +26,21 @@
 
 class GameDetector;
 class OSystem;
-class SaveFileManager;
 class SoundMixer;
-class Timer;
+namespace Common {
+	class SaveFileManager;
+	class Timer;
+}
 
 class Engine {
 public:
 	OSystem *_system;
 	SoundMixer *_mixer;
-	Timer * _timer;
+	Common::Timer * _timer;
 
 protected:
 	const Common::String _gameDataPath;
-	SaveFileManager *_saveFileMan;
+	Common::SaveFileManager *_saveFileMan;
 
 public:
 	Engine(OSystem *syst);

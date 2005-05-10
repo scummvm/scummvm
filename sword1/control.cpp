@@ -157,7 +157,7 @@ void ControlButton::setSelected(uint8 selected) {
 	draw();
 }
 
-Control::Control(SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, Mouse *pMouse, Sound *pSound, Music *pMusic) {
+Control::Control(Common::SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, Mouse *pMouse, Sound *pSound, Music *pMusic) {
 	_saveFileMan = saveFileMan;
 	_resMan = pResMan;
 	_objMan = pObjMan;
@@ -669,7 +669,7 @@ bool Control::restoreFromFile(void) {
 }
 
 void Control::readSavegameDescriptions(void) {
-	InSaveFile *inf;
+	Common::InSaveFile *inf;
 	inf = _saveFileMan->openForLoading("SAVEGAME.INF");
 	_saveScrollPos = _saveFiles = 0;
 	_selectedSavegame = 255;
@@ -712,7 +712,7 @@ int Control::displayMessage(const char *altButton, const char *message, ...) {
 }
 
 void Control::writeSavegameDescriptions(void) {
-	OutSaveFile *outf;
+	Common::OutSaveFile *outf;
 	outf = _saveFileMan->openForSaving("SAVEGAME.INF");
 	
 	if (!outf) {
@@ -737,7 +737,7 @@ void Control::writeSavegameDescriptions(void) {
 
 bool Control::savegamesExist(void) {
 	bool retVal = false;
-	InSaveFile *inf;
+	Common::InSaveFile *inf;
 	inf = _saveFileMan->openForLoading("SAVEGAME.INF");
 	if (inf)
 		retVal = true;
@@ -894,7 +894,7 @@ void Control::saveGameToFile(uint8 slot) {
 	uint16 cnt;
 	sprintf(fName, "SAVEGAME.%03d", slot);
 	uint16 liveBuf[TOTAL_SECTIONS];
-	OutSaveFile *outf;
+	Common::OutSaveFile *outf;
 	outf = _saveFileMan->openForSaving(fName);
 	if (!outf) {
 		// Display an error message, and do nothing
@@ -927,7 +927,7 @@ bool Control::restoreGameFromFile(uint8 slot) {
 	char fName[15];
 	uint16 cnt;
 	sprintf(fName, "SAVEGAME.%03d", slot);
-	InSaveFile *inf;
+	Common::InSaveFile *inf;
 	inf = _saveFileMan->openForLoading(fName);
 	if (!inf) {
 		// Display an error message, and do nothing

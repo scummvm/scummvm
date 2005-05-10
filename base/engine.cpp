@@ -39,7 +39,7 @@ Engine::Engine(OSystem *syst)
 	g_engine = this;
 	_mixer = GameDetector::createMixer();
 
-	_timer = g_timer;
+	_timer = Common::g_timer;
 
 	// Add default file directory
 	Common::File::addDefaultDirectory(_gameDataPath);

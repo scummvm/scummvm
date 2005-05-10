@@ -180,7 +180,7 @@ public:
 	void ColorToRGB(byte color, uint8 &r, uint8 &g, uint8 &b);
 
 	// Savefile management
-	SaveFileManager *getSavefileManager();
+	Common::SaveFileManager *getSavefileManager();
 
 	static OSystem *create();
 

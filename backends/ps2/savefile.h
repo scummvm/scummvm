@@ -34,13 +34,13 @@ enum SaveMode {
 class Gs2dScreen;
 class OSystem_PS2;
 
-class Ps2SaveFileManager : public SaveFileManager {
+class Ps2SaveFileManager : public Common::SaveFileManager {
 public:
 	Ps2SaveFileManager(OSystem_PS2 *system, Gs2dScreen *screen);
 	virtual ~Ps2SaveFileManager();
 
-	virtual InSaveFile *openForLoading(const char *filename);
-	virtual OutSaveFile *openForSaving(const char *filename);
+	virtual Common::InSaveFile *openForLoading(const char *filename);
+	virtual Common::OutSaveFile *openForSaving(const char *filename);
 	virtual void listSavefiles(const char *prefix, bool *marks, int num);
 
 	/** Get the path to the save game directory. */

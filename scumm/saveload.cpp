@@ -68,7 +68,7 @@ void ScummEngine::requestLoad(int slot) {
 
 bool ScummEngine::saveState(int slot, bool compat) {
 	char filename[256];
-	OutSaveFile *out;
+	Common::OutSaveFile *out;
 	SaveGameHeader hdr;
 
 	makeSavegameName(filename, slot, compat);
@@ -94,7 +94,7 @@ bool ScummEngine::saveState(int slot, bool compat) {
 
 bool ScummEngine::loadState(int slot, bool compat) {
 	char filename[256];
-	InSaveFile *in;
+	Common::InSaveFile *in;
 	int i, j;
 	SaveGameHeader hdr;
 	int sb, sh;
@@ -365,7 +365,7 @@ void ScummEngine::listSavegames(bool *marks, int num) {
 
 bool ScummEngine::getSavegameName(int slot, char *desc) {
 	char filename[256];
-	InSaveFile *in;
+	Common::InSaveFile *in;
 	SaveGameHeader hdr;
 	int len;
 
@@ -402,7 +402,7 @@ bool ScummEngine::getSavegameName(int slot, char *desc) {
 
 Graphics::Surface *ScummEngine::loadThumbnailFromSlot(int slot) {
 	char filename[256];
-	InSaveFile *in;
+	Common::InSaveFile *in;
 	SaveGameHeader hdr;
 	int len;
 	

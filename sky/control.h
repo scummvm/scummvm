@@ -26,7 +26,9 @@
 #include "common/scummsys.h"
 
 class OSystem;
-class SaveFileManager;
+namespace Common {
+	class SaveFileManager;
+}
 
 namespace Sky {
 
@@ -175,7 +177,7 @@ private:
 
 class Control {
 public:
-	Control(SaveFileManager *saveFileMan, Screen *screen, Disk *disk, Mouse *mouse, Text *text, MusicBase *music, Logic *logic, Sound *sound, SkyCompact *skyCompact, OSystem *system);
+	Control(Common::SaveFileManager *saveFileMan, Screen *screen, Disk *disk, Mouse *mouse, Text *text, MusicBase *music, Logic *logic, Sound *sound, SkyCompact *skyCompact, OSystem *system);
 	void doControlPanel(void);
 	void doLoadSavePanel(void);
 	void restartGame(void);
@@ -226,7 +228,7 @@ private:
 	void importOldCompact(Compact* destCpt, uint8 **srcPos, uint16 numElems, uint16 type, char *name);
 	uint16 parseSaveData(uint8 *srcBuf);
 
-	SaveFileManager *_saveFileMan;
+	Common::SaveFileManager *_saveFileMan;
 	SkyCompact *_skyCompact;
 	Screen *_skyScreen;
 	Disk *_skyDisk;

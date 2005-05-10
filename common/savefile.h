@@ -27,6 +27,8 @@
 #include "common/stream.h"
 
 
+namespace Common {
+
 /**
  * A class which allows game engines to load game state data.
  * That typically means "save games", but also includes things like the
@@ -93,5 +95,7 @@ public:
 protected:
 	SaveFile *makeSaveFile(const char *filename, bool saveOrLoad);
 };
+
+} // End of namespace Common
 
 #endif

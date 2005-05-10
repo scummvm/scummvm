@@ -26,6 +26,8 @@
 #include "common/util.h"
 #include "common/system.h"
 
+namespace Common {
+
 Timer *g_timer = NULL;
 
 Timer::Timer(OSystem *system) :
@@ -55,7 +57,7 @@ Timer::~Timer() {
 	_system->setTimerCallback(0, 0);
 
 	{
-		Common::StackLock lock(_mutex);
+		StackLock lock(_mutex);
 		for (int i = 0; i < MAX_TIMERS; i++) {
 			_timerSlots[i].procedure = NULL;
 			_timerSlots[i].interval = 0;
@@ -71,7 +73,7 @@ int Timer::timer_handler(int t) {
 }
 
 int Timer::handler(int t) {
-	Common::StackLock lock(_mutex);
+	StackLock lock(_mutex);
 	uint32 interval, l;
 
 	_lastTime = _thisTime;
@@ -96,7 +98,7 @@ int Timer::handler(int t) {
 
 bool Timer::installTimerProc(TimerProc procedure, int32 interval, void *refCon) {
 	assert(interval > 0);
-	Common::StackLock lock(_mutex);
+	StackLock lock(_mutex);
 
 	for (int l = 0; l < MAX_TIMERS; l++) {
 		if (!_timerSlots[l].procedure) {
@@ -113,7 +115,7 @@ bool Timer::installTimerProc(TimerProc procedure, int32 interval, void *refCon) 
 }
 
 void Timer::removeTimerProc(TimerProc procedure) {
-	Common::StackLock lock(_mutex);
+	StackLock lock(_mutex);
 
 	for (int l = 0; l < MAX_TIMERS; l++) {
 		if (_timerSlots[l].procedure == procedure) {
@@ -124,5 +126,7 @@ void Timer::removeTimerProc(TimerProc procedure) {
 		}
 	}
 }
+
+} // End of namespace Common
 
 #endif

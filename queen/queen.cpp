@@ -252,7 +252,7 @@ void QueenEngine::saveGameState(uint16 slot, const char *desc) {
 	debug(3, "Saving game to slot %d", slot);
 	char name[20];
 	makeGameStateName(slot, name);
-	OutSaveFile *file = _saveFileMan->openForSaving(name);
+	Common::OutSaveFile *file = _saveFileMan->openForSaving(name);
 	if (file) {
 		// save data
 		byte *saveData = new byte[30000];
@@ -287,7 +287,7 @@ void QueenEngine::saveGameState(uint16 slot, const char *desc) {
 void QueenEngine::loadGameState(uint16 slot) {
 	debug(3, "Loading game from slot %d", slot);
 	GameStateHeader header;
-	InSaveFile *file = readGameStateHeader(slot, &header);
+	Common::InSaveFile *file = readGameStateHeader(slot, &header);
 	if (file && header.dataSize != 0) {
 		byte *saveData = new byte[header.dataSize];
 		byte *p = saveData;
@@ -308,10 +308,10 @@ void QueenEngine::loadGameState(uint16 slot) {
 	}
 }
 
-InSaveFile *QueenEngine::readGameStateHeader(uint16 slot, GameStateHeader *gsh) {
+Common::InSaveFile *QueenEngine::readGameStateHeader(uint16 slot, GameStateHeader *gsh) {
 	char name[20];
 	makeGameStateName(slot, name);
-	InSaveFile *file = _saveFileMan->openForLoading(name);
+	Common::InSaveFile *file = _saveFileMan->openForLoading(name);
 	if (file && file->readUint32BE() == 'SCVM') {
 		gsh->version = file->readUint32BE();
 		gsh->flags = file->readUint32BE();
@@ -340,7 +340,7 @@ void QueenEngine::findGameStateDescriptions(char descriptions[100][32]) {
 	for (int i = 0; i < SAVESTATE_MAX; ++i) {
 		if (marks[i]) {
 			GameStateHeader header;
-			InSaveFile *f = readGameStateHeader(i, &header);
+			Common::InSaveFile *f = readGameStateHeader(i, &header);
 			strcpy(descriptions[i], header.description);
 			delete f;
 		}

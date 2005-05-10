@@ -216,7 +216,7 @@ bool readSaveGame(char *&buffer, int &size, const char *filename)
 }
 
 
-class InVMSave : public InSaveFile {
+class InVMSave : public Common::InSaveFile {
 private:
   char *buffer;
   int pos, size;
@@ -254,7 +254,7 @@ public:
   }
 };
 
-class OutVMSave : public OutSaveFile {
+class OutVMSave : public Common::OutSaveFile {
 private:
   char *buffer;
   int pos, size;
@@ -273,14 +273,14 @@ public:
   ~OutVMSave();
 };
 
-class VMSaveManager : public SaveFileManager {
+class VMSaveManager : public Common::SaveFileManager {
 public:
   
-  virtual OutSaveFile *openForSaving(const char *filename) {
+  virtual Common::OutSaveFile *openForSaving(const char *filename) {
 	return new OutVMSave(filename);
   }
 
-  virtual InSaveFile *openForLoading(const char *filename) {
+  virtual Common::InSaveFile *openForLoading(const char *filename) {
 	InVMSave *s = new InVMSave();
 	if(s->readSaveGame(filename)) {
 	  s->tryUncompress();
@@ -349,7 +349,7 @@ void VMSaveManager::listSavefiles(const char *prefix, bool *marks, int num)
     tryList(prefix, marks, num, i);
 }
 
-SaveFileManager *OSystem_Dreamcast::getSavefileManager()
+Common::SaveFileManager *OSystem_Dreamcast::getSavefileManager()
 {
   return new VMSaveManager();
 }

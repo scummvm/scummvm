@@ -194,7 +194,7 @@ void ControlStatus::drawToScreen(void) {
 	_statusText->drawToScreen(WITH_MASK);
 }
 
-Control::Control(SaveFileManager *saveFileMan, Screen *screen, Disk *disk, Mouse *mouse, Text *text, MusicBase *music, Logic *logic, Sound *sound, SkyCompact *skyCompact, OSystem *system) {
+Control::Control(Common::SaveFileManager *saveFileMan, Screen *screen, Disk *disk, Mouse *mouse, Text *text, MusicBase *music, Logic *logic, Sound *sound, SkyCompact *skyCompact, OSystem *system) {
 	_saveFileMan = saveFileMan;
 
 	_skyScreen = screen;
@@ -784,7 +784,7 @@ uint16 Control::shiftUp(uint8 speed) {
 bool Control::autoSaveExists(void) {
 
 	bool test = false;
-	InSaveFile *f;
+	Common::InSaveFile *f;
 	char fName[20];
 	if (SkyEngine::isCDVersion())
 		strcpy(fName, "SKY-VM-CD.ASD");
@@ -1012,7 +1012,7 @@ void Control::loadDescriptions(uint8 *destBuf) {
 
 	memset(destBuf, 0, MAX_SAVE_GAMES * MAX_TEXT_LEN);
 
-	InSaveFile *inf;
+	Common::InSaveFile *inf;
 	inf = _saveFileMan->openForLoading("SKY-VM.SAV");
 	if (inf != NULL) {
 		uint8 *tmpBuf = (uint8 *)malloc(MAX_SAVE_GAMES * MAX_TEXT_LEN);
@@ -1084,7 +1084,7 @@ void Control::saveDescriptions(uint8 *srcBuf) {
 		tmpPos++;
 		srcPos += MAX_TEXT_LEN;
 	}
-	OutSaveFile *outf;
+	Common::OutSaveFile *outf;
 
 	outf = _saveFileMan->openForSaving("SKY-VM.SAV");
 	if (outf != NULL) {
@@ -1100,7 +1100,7 @@ void Control::doAutoSave(void) {
 		strcpy(fName, "SKY-VM-CD.ASD");
 	else
 		sprintf(fName, "SKY-VM%03d.ASD", SkyEngine::_systemVars.gameVersion);
-	OutSaveFile *outf;
+	Common::OutSaveFile *outf;
 
 	outf = _saveFileMan->openForSaving(fName);
 	if (outf == NULL) {
@@ -1121,7 +1121,7 @@ uint16 Control::saveGameToFile(void) {
 	char fName[20];
 	sprintf(fName,"SKY-VM.%03d", _selectedGame);
 
-	OutSaveFile *outf;
+	Common::OutSaveFile *outf;
 	outf = _saveFileMan->openForSaving(fName);
 	if (outf == NULL) {
 		return NO_DISK_SPACE;
@@ -1396,7 +1396,7 @@ uint16 Control::restoreGameFromFile(bool autoSave) {
 	} else
 		sprintf(fName,"SKY-VM.%03d", _selectedGame);
 
-	InSaveFile *inf;
+	Common::InSaveFile *inf;
 	inf = _saveFileMan->openForLoading(fName);
 	if (inf == NULL) {
 		return RESTORE_FAILED;

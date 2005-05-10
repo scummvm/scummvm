@@ -161,7 +161,7 @@ class OSystem_Dreamcast : public OSystem {
   void setWindowCaption(const char *caption);
 
   // Savefile handling
-  SaveFileManager *getSavefileManager();
+  Common::SaveFileManager *getSavefileManager();
 
 
   // Extra SoftKbd support

@@ -33,13 +33,15 @@
 
 class OSystem;
 
+namespace Common {
+
 class Timer {
 public:
 	typedef void (*TimerProc)(void *refCon);
 
 private:
 	OSystem *_system;
-	Common::Mutex _mutex;
+	Mutex _mutex;
 	void *_timerHandler;
 	int32 _thisTime;
 	int32 _lastTime;
@@ -80,6 +82,8 @@ protected:
 };
 
 extern Timer *g_timer;
+
+} // End of namespace Common
 
 #endif
 

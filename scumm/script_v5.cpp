@@ -1948,7 +1948,7 @@ void ScummEngine_v5::o5_roomOps() {
 
 	case 13:	// SO_SAVE_STRING
 		{
-			OutSaveFile *file;
+			Common::OutSaveFile *file;
 			char filename[256], *s;
 
 			a = getVarOrDirectByte(PARAM_1);
@@ -1967,7 +1967,7 @@ void ScummEngine_v5::o5_roomOps() {
 		}
 	case 14:	// SO_LOAD_STRING
 		{
-			InSaveFile *file;
+			Common::InSaveFile *file;
 			char filename[256], *s;
 
 			a = getVarOrDirectByte(PARAM_1);

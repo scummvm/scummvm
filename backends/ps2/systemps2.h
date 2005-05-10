@@ -85,7 +85,7 @@ public:
 
 	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);
 
-	virtual SaveFileManager *getSavefileManager();
+	virtual Common::SaveFileManager *getSavefileManager();
 
 	void timerThread(void);
 	void soundThread(void);

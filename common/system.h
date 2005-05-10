@@ -29,10 +29,12 @@
 #include "common/singleton.h"
 
 namespace Graphics {
-struct Surface;
-} // end of namespace Graphics
+	struct Surface;
+}
 
-class SaveFileManager;
+namespace Common {
+	class SaveFileManager;
+}
 
 /**
  * Interface for ScummVM backends. If you want to port ScummVM to a system
@@ -897,7 +899,7 @@ public:
 	virtual void displayMessageOnOSD(const char *msg);
 
 	/** Savefile management. */
-	virtual SaveFileManager *getSavefileManager();
+	virtual Common::SaveFileManager *getSavefileManager();
 
 	//@}
 };

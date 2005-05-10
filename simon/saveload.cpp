@@ -41,7 +41,7 @@ void SimonEngine::o_load_game() {
 }
 
 int SimonEngine::count_savegames() {
-	InSaveFile *f;
+	Common::InSaveFile *f;
 	uint i = 1;
 	bool marks[256];
 
@@ -62,7 +62,7 @@ int SimonEngine::count_savegames() {
 
 int SimonEngine::display_savegame_list(int curpos, bool load, char *dst) {
 	int slot, last_slot;
-	InSaveFile *in;
+	Common::InSaveFile *in;
 
 	showMessageFormat("\xC");
 
@@ -400,7 +400,7 @@ loop:;
 }
 
 bool SimonEngine::save_game(uint slot, char *caption) {
-	OutSaveFile *f;
+	Common::OutSaveFile *f;
 	uint item_index, num_item, i, j;
 	TimeEvent *te;
 
@@ -497,7 +497,7 @@ char *SimonEngine::gen_savename(int slot) {
 
 bool SimonEngine::load_game(uint slot) {
 	char ident[18];
-	InSaveFile *f;
+	Common::InSaveFile *f;
 	uint num, item_index, i, j;
 
 	_lockWord |= 0x100;

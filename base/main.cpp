@@ -405,7 +405,7 @@ extern "C" int main(int argc, char *argv[]) {
 	system.initBackend();
 
 	// Create the timer services
-	g_timer = new Timer(&system);
+	Common::g_timer = new Common::Timer(&system);
 
 	// Set initial window caption
 	system.setWindowCaption(gScummVMFullVersion);
@@ -446,7 +446,7 @@ extern "C" int main(int argc, char *argv[]) {
 	}
 
 	// ...and quit (the return 0 should never be reached)
-	delete g_timer;
+	delete Common::g_timer;
 	system.quit();
 	
 	error("If you are seeing this, your OSystem backend is not working properly");

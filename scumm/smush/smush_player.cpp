@@ -283,7 +283,7 @@ void SmushPlayer::init() {
 	_vm->gdi._numStrips = _vm->virtscr[0].w / 8;
 	
 	_smixer = new SmushMixer(_vm->_mixer);
-	g_timer->installTimerProc(&timerCallback, _speed, this);
+	Common::g_timer->installTimerProc(&timerCallback, _speed, this);
 
 	_initDone = true;
 }

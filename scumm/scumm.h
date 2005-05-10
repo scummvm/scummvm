@@ -37,8 +37,10 @@ namespace GUI {
 }
 using GUI::Dialog;
 class GameDetector;
-class InSaveFile;
-class OutSaveFile;
+namespace Common {
+	class InSaveFile;
+	class OutSaveFile;
+}
 
 namespace Scumm {
 
@@ -593,8 +595,8 @@ public:
 	Graphics::Surface *loadThumbnailFromSlot(int slot);
 
 protected:
-	Graphics::Surface *loadThumbnail(InSaveFile *file);
-	void saveThumbnail(OutSaveFile *file);
+	Graphics::Surface *loadThumbnail(Common::InSaveFile *file);
+	void saveThumbnail(Common::OutSaveFile *file);
 
 protected:
 	/* Script VM - should be in Script class */

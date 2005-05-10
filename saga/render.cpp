@@ -51,7 +51,7 @@ Render::Render(SagaEngine *vm, OSystem *system) {
 
 
 	// Initialize FPS timer callback
-	g_timer->installTimerProc(&fpsTimerCallback, 1000000, this);
+	Common::g_timer->installTimerProc(&fpsTimerCallback, 1000000, this);
 
 	// Create background buffer 
 	_bg_buf_w = _vm->getDisplayWidth();

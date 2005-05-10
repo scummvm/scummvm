@@ -54,7 +54,7 @@ inline void colorToRGB(uint16 color, uint8 &r, uint8 &g, uint8 &b) {
 	b = ((color&0x1F) << 3);
 }
 
-Graphics::Surface *ScummEngine::loadThumbnail(InSaveFile *file) {
+Graphics::Surface *ScummEngine::loadThumbnail(Common::InSaveFile *file) {
 	ThumbnailHeader header;
 	header.type = file->readUint32BE();
 	if (header.type != MKID('THMB'))
@@ -97,7 +97,7 @@ Graphics::Surface *ScummEngine::loadThumbnail(InSaveFile *file) {
 	return thumb;
 }
 
-void ScummEngine::saveThumbnail(OutSaveFile *file) {
+void ScummEngine::saveThumbnail(Common::OutSaveFile *file) {
 	Graphics::Surface thumb;
  
 	if (!createThumbnailFromScreen(&thumb))
