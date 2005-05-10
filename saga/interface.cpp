@@ -307,10 +307,7 @@ void Interface::setStatusText(const char *text, int statusColor) {
 int Interface::loadScenePortraits(int resourceId) {
 	_scenePortraits.freeMem();
 
-warning("loadScenePortraits(%d)", resourceId);
-int res = _vm->_sprite->loadList(resourceId, _scenePortraits);
-warning("_scenePortraits.spriteCount = %d", _scenePortraits.spriteCount);
-return res;
+	return _vm->_sprite->loadList(resourceId, _scenePortraits);
 }
 
 int Interface::setLeftPortrait(int portrait) {
