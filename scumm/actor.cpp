@@ -1015,6 +1015,8 @@ void ScummEngine_v71he::processActors() {
 	if (!_skipProcessActors)
 		ScummEngine::processActors();
 
+	_fullRedraw = false;
+
 	postProcessAuxQueue();
 }
 
@@ -1027,6 +1029,8 @@ void ScummEngine_v90he::processActors() {
 
 	if (!_skipProcessActors)
 		ScummEngine::processActors();
+
+	_fullRedraw = false;
 
 	postProcessAuxQueue();
 
