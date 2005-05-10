@@ -613,118 +613,104 @@ void ScummEngine_v80he::o80_drawWizPolygon() {
 	displayWizImage(&wi);	
 }
 
-void ScummEngine_v80he::drawLine(int x1, int y1, int x, int y, int unk2, int type, int id) {
-	debug(0,"drawLine: x1 %d y1 %d x %d y %d, unk2 %d type %d id %d", x1, y1, x, y, unk2, type, id);	
+/**
+ * Draw a 'line' between two points.
+ *
+ * @param x1	the starting x coordinate
+ * @param y1	the starting y coordinate
+ * @param x		the ending x coordinate
+ * @param y		the ending y coordinate
+ * @param step	the step size used to render the line, only ever 'step'th point is drawn
+ * @param type	the line type -- points are rendered by drawing actors (type == 2),
+ *              wiz images (type == 3), or pixels (any other type)
+ * @param id	the (optional) id of an actor or wizimage
+ */
+void ScummEngine_v80he::drawLine(int x1, int y1, int x, int y, int step, int type, int id) {
+	debug(0,"drawLine: x1 %d y1 %d x %d y %d, step %d type %d id %d", x1, y1, x, y, step, type, id);	
 
-	int eax, ebx, ecx, edp, esi, edx;
-	int var_C;
-
-	ebx = 0;
-	var_C = 0;
-
-	if (unk2 < 0) {
-		unk2 = -unk2;
+	if (step < 0) {
+		step = -step;
 	}
-	if (unk2 == 0) {
-		unk2 = 1;
+	if (step == 0) {
+		step = 1;
 	}
-
-	eax = x;
-	ecx = x1;
-	int edi = y1;
 
 	const int dx = x - x1;
 	const int dy = y - y1;
 
-	edp = ABS(dx);
-	eax = ABS(dy);
+	const int absDX = ABS(dx);
+	const int absDY = ABS(dy);
 
-	if (eax > edp) {
-		esi = eax;
-	} else {
-		esi = edp;
-	}
+	const int maxDist = MAX(absDX, absDY);
 
-	y1 = eax;
+	y = y1;
 	x = x1;
-	x1 = 0;
+
+	const int tmpA = absDY;
+	int tmbB = 0;
 
 	if (type == 2) {
 		Actor *a = derefActor(id, "drawLine");
-		a->drawActorToBackBuf(ecx, edi);
+		a->drawActorToBackBuf(x, y);
 	} else if (type == 3) {
 		WizImage wi;
 		wi.flags = 0;
-		wi.y1 = edi;
-		wi.x1 = ecx;
+		wi.y1 = y;
+		wi.x1 = x;
 		wi.resNum = id;
 		wi.state = 0;
 		displayWizImage(&wi);
 	} else {
-		drawPixel(ecx, edi, id);
+		drawPixel(x, y, id);
 	}
 
-	for (int i = 0; i <= esi; i++) {
-		ecx = x1;
-		eax = y1;	
-		ebx += edp;
-		ecx += eax;
+	int var_C = 0;
+	int ebx = 0;
+	for (int i = 0; i <= maxDist; i++) {
+		ebx += absDX;
+		tmbB += tmpA;
 
-		eax ^= eax;
-		x1 = ecx;
+		int eax = 0;
 
-		if (ebx > esi) {
-			edx = dx;
-			edx -= esi;
-
+		if (ebx > maxDist) {
 			eax = 1;
-			int tmp = edx;
-			edx = x;
-			if (tmp >= 0) {
-				edx++;
+			if (dx >= maxDist) {
+				x++;
 			} else {
-				edx--;
+				x--;
 			}
-
-			x = edx;
 		}
-		if (ecx > esi) {
+		if (tmbB > maxDist) {
 			eax = dy;
-			ecx -= esi;
+			tmbB -= maxDist;
 
-			x1 = ecx;
-			if (eax >= 0) {
-				edi++;
+			if (dy >= 0) {
+				y++;
 			} else {
-				edi--;
+				y--;
 			}
 		}
 
 		if (eax == 0)
 			continue;
 
-		ecx = var_C;
-		eax = ecx;
-		edx = eax % unk2;
-		ecx++;
-		var_C = ecx;
-
-		if (edx != 0 && esi != i)
+		var_C++;
+		if (((var_C - 1) % step) != 0 && maxDist != i)
 			continue;
 
 		if (type == 2) {
 			Actor *a = derefActor(id, "drawLine");
-			a->drawActorToBackBuf(x, edi);
+			a->drawActorToBackBuf(x, y);
 		} else if (type == 3) {
 			WizImage wi;
 			wi.flags = 0;
-			wi.y1 = edi;
+			wi.y1 = y;
 			wi.x1 = x;
 			wi.resNum = id;
 			wi.state = 0;
 			displayWizImage(&wi);
 		} else {
-			drawPixel(x, edi, id);
+			drawPixel(x, y, id);
 		}
 	}		
 }
@@ -763,9 +749,9 @@ void ScummEngine_v80he::drawPixel(int x, int y, int flags) {
 }
 
 void ScummEngine_v80he::o80_drawLine() {
-	int id, unk2, x, y, x1, y1;
+	int id, step, x, y, x1, y1;
 
-	unk2 = pop();
+	step = pop();
 	id = pop();
 	y = pop();
 	x = pop();
@@ -776,13 +762,13 @@ void ScummEngine_v80he::o80_drawLine() {
 
 	switch (subOp) {
 	case 55:
-		drawLine(x1, y1, x, y, unk2, 2, id);
+		drawLine(x1, y1, x, y, step, 2, id);
 		break;
 	case 63:
-		drawLine(x1, y1, x, y, unk2, 3, id);
+		drawLine(x1, y1, x, y, step, 3, id);
 		break;
 	case 66:
-		drawLine(x1, y1, x, y, unk2, 1, id);
+		drawLine(x1, y1, x, y, step, 1, id);
 		break;
 	default:
 		error("o80_drawLine: default case %d", subOp);
