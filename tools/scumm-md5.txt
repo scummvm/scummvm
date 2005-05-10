@@ -279,6 +279,7 @@ Fatty Bears Fun Pack
 
 Freddi Fish 1: The Case of the Missing Kelp Seeds
 	-	All	en	df047cc4792150f601290357566d36a6	freddi	khalek
+	-	Windows	nl	c0039ad982999c92d0de81910d640fa0	freddi	adutchguy
 	-	Windows	ru	d4cccb5af88f3e77f370896e9ba8c5f9	freddi	sev
 	-	Windows	ru	746e88c172a5b7a1ae89ac0ee3ee681a	freddi	sev
 	-	Windows	se	507bb360688dc4180fdf0d7597352a69	freddi	Sven Arvidsson
@@ -392,7 +393,7 @@ Pajama Sam's Sock Works
 Putt-Putt Enters the Race
 	-	All	en	981e1e1891f2be7e25a01f50ae55a5af	puttrace	Kirben
 	Demo	All	en	0ac41e2e3d2174e5a042a6b565328dba	racedemo	sev
-	Demo	All	en	6af2419fe3db5c2fdb091ae4e5833770	racedemo	Kirben
+	Demo	All	nl	6af2419fe3db5c2fdb091ae4e5833770	racedemo	Kirben
 	Demo	All	nl	aaa587701cde7e74692c68c1024b85eb	racedemo	joostp
 
 Putt-Putt Goes To The Moon

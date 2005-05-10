@@ -1093,7 +1093,7 @@ void ScummEngine_v7::readMAXS(int blockSize) {
 }
 
 void ScummEngine_v6::readMAXS(int blockSize) {
-	debug(9, "readMAXS: MAXS has blocksize %d", blockSize);
+	debug(0, "readMAXS: MAXS has blocksize %d", blockSize);
 
 	_numVariables = _fileHandle->readUint16LE();
 	_fileHandle->readUint16LE();
