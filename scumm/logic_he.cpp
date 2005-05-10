@@ -135,50 +135,42 @@ int32 LogicHE::op_1004(int32 *args) {
 }
 
 int32 LogicHE::op_1100(int32 *args) {
-	_userData[516] = args[0] / args[10];
-	_userData[517] = args[1] / args[10];
-	_userData[518] = args[2] / args[10];
-	_userData[519] = args[3] / args[10];
+	_userData[516] = (float)args[0] / args[10];
+	_userData[517] = (float)args[1] / args[10];
+	_userData[518] = (float)args[2] / args[10];
+	_userData[519] = (float)args[3] / args[10];
 	_userData[520] = (float)args[4] / args[10];
-	args[4] = args[10];
 
 	op_sub1(_userData[520]);
 
-	_userData[521] = (float)args[5] / args[4];
+	_userData[521] = (float)args[5] / args[10];
 	
 	op_sub2(_userData[521]);
 
-	_userData[532] = args[10];
+	_userData[532] = (float)args[10];
 
-	args[1] = args[8];
-	args[10] = args[9];
+	_userData[524] = (float)args[8];
+	_userData[525] = (float)args[9];
+	_userData[522] = (float)args[6] / args[10];
+	_userData[523] = (float)args[7] / args[10];
+	_userData[526] = (float)args[6] / args[8] / args[10];
+	_userData[527] = (float)args[7] / args[9] / args[10];
 
-	_userData[524] = args[1];
-	_userData[525] = args[10];
-	_userData[522] = args[6] / args[4];
-	_userData[523] = args[7] / args[4];
-	_userData[526] = args[6] / args[1] / args[4];
-	_userData[527] = args[7] / args[10] / args[4];
+	_vm->writeVar(108, (int32)((float)args[6] / args[8] * args[10]));
 
-	args[0] = args[7] / args[10];
+	_vm->writeVar(109, (int32)((float)args[7] / args[9] * args[10]));
 
-	_vm->writeVar(108, (int32)(args[6] / args[1] * args[4]));
+	_userData[528] = (float)(_userData[519] - _userData[523] * 0.5);
+	_userData[529] = (float)(_userData[519] + _userData[523] * 0.5);
 
-	_vm->writeVar(109, (int32)(args[0] * args[4]));
+	_vm->writeVar(110, (int32)(_userData[528] * args[10]));
+	_vm->writeVar(111, (int32)(_userData[529] * args[10]));
 
-	_userData[528] = _userData[519] - _userData[523] * 0.5;
-	_userData[529] = _userData[519] + _userData[523] * 0.5;
+	_userData[530] = (float)(_userData[517] / tan(_userData[529] * DEG2RAD));
+	_userData[531] = (float)(_userData[517] / tan(_userData[528] * DEG2RAD));
 
-	_vm->writeVar(110, (int32)(_userData[528] * args[4]));
-
-	_vm->writeVar(111, (int32)(_userData[529] * args[4]));
-
-	_userData[530] = _userData[517] * tan(_userData[529] * DEG2RAD);
-	_userData[531] = _userData[517] * tan(_userData[528] * DEG2RAD);
-
-	_vm->writeVar(112, (int32)(_userData[517] * tan(_userData[529] * DEG2RAD) * args[4]));
-
-	_vm->writeVar(113, (int32)(_userData[531] * args[4]));
+	_vm->writeVar(112, (int32)(_userData[530] * args[10]));
+	_vm->writeVar(113, (int32)(_userData[531] * args[10]));
 
 	return 1;
 }
@@ -261,19 +253,19 @@ int32 LogicHE::op_1110() {
 }
 
 int32 LogicHE::op_1120(int32 *args) {
-	double a0, a1, a2;
-	float res1, res2;
+	double a0, a1, a2, expr;
+	double res1, res2;
 
 	a0 = args[0] / _userData[532] - _userData[516];
 	a1 = args[1] / _userData[532] - _userData[517];
 	a2 = args[2] / _userData[532] - _userData[518];
 
-	res1 = (atan((a1 * _userDataD[15] + a2 * _userDataD[12] + a0 * _userDataD[9]) /
-				(a1 * _userDataD[17] + a2 * _userDataD[14] + a0 * _userDataD[11])) 
-			* RAD2DEG) / _userData[526];
-	res2 = (atan((a1 * _userDataD[16] + a2 * _userDataD[13] + a0 * _userDataD[10]) /
-				 (a1 * _userDataD[17] + a2 * _userDataD[14] + a0 * _userDataD[11])) 
-			* RAD2DEG - _userData[528]) / _userData[527];
+	expr = a2 * _userDataD[17] + a1 * _userDataD[14] + a0 * _userDataD[11];
+
+	res1 = (atan((a2 * _userDataD[15] + a1 * _userDataD[12] + a0 * _userDataD[9]) / expr) * RAD2DEG) 
+			/ _userData[526];
+	res2 = (atan((a2 * _userDataD[16] + a1 * _userDataD[13] + a0 * _userDataD[10]) / expr) * RAD2DEG
+			- _userData[528]) / _userData[527];
 	
 	_vm->writeVar(108, (int32)res1);
 	_vm->writeVar(109, (int32)res2);
@@ -282,8 +274,8 @@ int32 LogicHE::op_1120(int32 *args) {
 }
 
 int32 LogicHE::op_1130(int32 *args) {
-	float cs = cos(args[0] / _userData[532] * DEG2RAD);
-	float sn = sin(args[0] / _userData[532] * DEG2RAD);
+	double cs = cos(args[0] / _userData[532] * DEG2RAD);
+	double sn = sin(args[0] / _userData[532] * DEG2RAD);
 
 	_vm->writeVar(108, (int32)(cs * args[1] + sn * args[2]));
 
@@ -296,7 +288,7 @@ int32 LogicHE::op_1140(int32 *args) {
 	double arg2 = -args[2] * args[2];
 	double arg3 = -args[3] * args[3];
 	double sq = sqrt(arg2 + arg3);
-	float res;
+	double res;
 
 	arg2 = arg2 / sq;
 	arg3 = arg3 / sq;
@@ -317,32 +309,32 @@ int32 LogicHE::op_1140(int32 *args) {
 
 void LogicHE::op_sub1(float arg) {
 	_userDataD[10] = _userDataD[12] = _userDataD[14] = _userDataD[16] = 0;
-	_userDataD[13] = 1.875;
+	_userDataD[13] = 1;
 
-	_userData[9] = cos(arg * DEG2RAD);
-	_userData[15] = sin(arg * DEG2RAD);
-	_userData[11] = -_userData[15];
-	_userData[17] = _userData[9];
+	_userDataD[9] = cos(arg * DEG2RAD);
+	_userDataD[15] = sin(arg * DEG2RAD);
+	_userDataD[11] = -_userDataD[15];
+	_userDataD[17] = _userDataD[9];
 }
 
 void LogicHE::op_sub2(float arg) {
 	_userDataD[20] = _userDataD[21] = _userDataD[24] = _userDataD[25] = 0;
-	_userDataD[26] = 1.875;
+	_userDataD[26] = 1;
 
-	_userData[19] = sin(arg * DEG2RAD);
-	_userData[20] = cos(arg * DEG2RAD);
-	_userData[21] = -_userData[19];
-	_userData[22] = _userData[21];
+	_userDataD[19] = sin(arg * DEG2RAD);
+	_userDataD[18] = cos(arg * DEG2RAD);
+	_userDataD[21] = -_userDataD[19];
+	_userDataD[22] = _userDataD[18];
 }
 
 void LogicHE::op_sub3(float arg) {
 	_userDataD[1] = _userDataD[2] = _userDataD[3] = _userDataD[6] = 0;
-	_userDataD[0] = 1.875;
+	_userDataD[0] = 1;
 
-	_userData[4] = cos(arg * DEG2RAD);
-	_userData[5] = sin(arg * DEG2RAD);
-	_userData[7] = -_userData[5];
-	_userData[8] = _userData[4];
+	_userDataD[4] = cos(arg * DEG2RAD);
+	_userDataD[5] = sin(arg * DEG2RAD);
+	_userDataD[7] = -_userDataD[5];
+	_userDataD[8] = _userDataD[4];
 }
 
 } // End of namespace Scumm

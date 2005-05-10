@@ -2612,7 +2612,7 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 		break;
 	case 2001:
 		// Used in SoccerMLS/Soccer2004
-		debug(0, "o90_kernelSetFunctions: U32 code %d (args %d) %d", args[1], num - 2, args[2]);
+		debug(1, "o90_kernelSetFunctions: U32 code %d (args %d) %d", args[1], num - 2, args[2]);
 		_logicHE->dispatch(args[1], num - 2, (int32 *)&args[2]);
 		break;
 	default:
