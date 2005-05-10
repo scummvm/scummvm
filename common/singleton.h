@@ -45,7 +45,7 @@ private:
 	 * and you specialise makeInstance to return an instance of a subclass.
 	 */
 	//template <class T>
-#if defined (_WIN32_WCE) || (_MSC_VER)
+#if defined (_WIN32_WCE) || defined (_MSC_VER)
 //FIXME evc4 and msvc7 doesn't like it as private member
 public:
 #endif
