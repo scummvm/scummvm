@@ -577,7 +577,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "f3-mdemo", "F3-mdemo", kGenMac },
 	{ "f3-mdemo", "FF3-DEMO", kGenPC },
 	{ "f4-demo", "Freddi 4 Demo", kGenMac },
-	{ "f4-demo", "ff4demo", kGenPC }, // FIXME: check this with joostp. Used by NL version?
+	{ "f4-demo", "ff4demo", kGenPC },
 	{ "farmdemo", "Farm Demo", kGenMac},
 	{ "fbear", "Fatty Bear", kGenMacNoParens },
 	{ "fbdemo", "Fatty Bear Demo", kGenMacNoParens },
@@ -615,7 +615,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "pj2demo", "PJ2Demo", kGenMac },
 	{ "pj2demo", "Pjs2demo", kGenPC },
 	{ "pj3-demo", "Pajama Sam 3-Demo", kGenMac },
-	{ "pj3-demo", "pj3demo", kGenPC }, // FIXME: check this with joostp. Used by NL version?
+	{ "pj3-demo", "pj3demo", kGenPC },
 	{ "pjs-demo", "Pajama Sam Demo", kGenMac },
 	{ "pjs-demo", "PjSamDemo", kGenPC },
 	{ "pjs-demo", "PjSamDemo", kGenMac },
@@ -636,7 +636,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "samnmax", "ramnmax", kGenPC }, // Used in some releases of Russian Sam'n'Max
 	{ "SamsFunShop", "Sam's FunShop", kGenMac },
 	{ "sf2-demo", "Spy Fox 2 - Demo", kGenMac },
-	{ "sf2-demo", "sf2demo", kGenPC }, // FIXME: check this with joostp. Used by NL version?
+	{ "sf2-demo", "sf2demo", kGenPC },
 	{ "sf3-demo", "Spy Ozone Demo", kGenMac },
 	{ "soccer", "Soccer", kGenMac },
 	{ "socks", "SockWorks", kGenMac },
