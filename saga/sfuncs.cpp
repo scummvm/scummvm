@@ -770,31 +770,24 @@ void Script::sfSwapActors(SCRIPTFUNC_PARAMS) {
 	int16 actorId2;
 	ActorData *actor1;
 	ActorData *actor2;
-	Location location;
 
 	actorId1 = thread->pop();
 	actorId2 = thread->pop();
 
 	actor1 = _vm->_actor->getActor(actorId1);
 	actor2 = _vm->_actor->getActor(actorId2);
-	location = actor1->location;
-	actor1->location = actor2->location;
-	actor2->location = location;
-	
+
+	SWAP(actor1->location, actor2->location);
 
 	if (actor1->flags & kProtagonist) {
 		actor1->flags &= ~kProtagonist;
 		actor2->flags |= kProtagonist;
 		_vm->_actor->_protagonist = _vm->_actor->_centerActor = actor2;
-	} else {
-		if (actor2->flags & kProtagonist) {
+	} else if (actor2->flags & kProtagonist) {
 		actor2->flags &= ~kProtagonist;
 		actor1->flags |= kProtagonist;
 		_vm->_actor->_protagonist = _vm->_actor->_centerActor = actor1;
-		}
 	}
-
-
 }
 
 // Script function #35 (0x23)
