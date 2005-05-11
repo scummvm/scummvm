@@ -120,6 +120,11 @@ const char *gScummVMFeatures = ""
 #ifdef USE_MPEG2
 	"MPEG2 "
 #endif
+
+#ifdef USE_FLUIDSYNTH
+	"FluidSynth "
+#endif
+
 	;
 
 #if defined(__amigaos4__)
