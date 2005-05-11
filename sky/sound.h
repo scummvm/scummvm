@@ -50,16 +50,16 @@ protected:
 public:
 
 	Audio::Mixer *_mixer;
-	SoundHandle _voiceHandle;
-	SoundHandle _effectHandle;
-	SoundHandle _bgSoundHandle;
-	SoundHandle _ingameSound0, _ingameSound1, _ingameSpeech;
+	Audio::SoundHandle _voiceHandle;
+	Audio::SoundHandle _effectHandle;
+	Audio::SoundHandle _bgSoundHandle;
+	Audio::SoundHandle _ingameSound0, _ingameSound1, _ingameSpeech;
 
 	uint16 _saveSounds[2];
 
 protected:
 
-	void playSound(uint32 id, byte *sound, uint32 size, SoundHandle *handle);
+	void playSound(uint32 id, byte *sound, uint32 size, Audio::SoundHandle *handle);
 
 public:
 	Sound(Audio::Mixer *mixer, Disk *pDisk, uint8 pVolume);

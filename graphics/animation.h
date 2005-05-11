@@ -88,7 +88,7 @@ protected:
 
 	Common::File *_mpegFile;
 
-	SoundHandle _bgSound;
+	Audio::SoundHandle _bgSound;
 	AudioStream *_bgSoundStream;
 
 #ifdef BACKEND_8BIT

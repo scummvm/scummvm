@@ -103,9 +103,9 @@ public:
 	int getRate() const { return _sampleRate; }
 
 private:
-	st_volume_t _volumeL, _volumeR;
+	Audio::st_volume_t _volumeL, _volumeR;
 	MusicHandle _handles[2];
-	RateConverter *_converter[2];
+	Audio::RateConverter *_converter[2];
 	Audio::Mixer *_mixer;
 	uint32 _sampleRate;
 	Common::Mutex _mutex;

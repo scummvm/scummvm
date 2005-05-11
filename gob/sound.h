@@ -44,7 +44,7 @@ extern CleanupFuncPtr snd_cleanupFunc;
 void snd_writeAdlib(int16 port, int16 data);
 
 typedef struct Snd_SoundDesc {
-	SoundHandle handle;
+	Audio::SoundHandle handle;
 	char *data;
 	int32 size;
 	int16 repCount;

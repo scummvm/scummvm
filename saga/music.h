@@ -125,7 +125,7 @@ private:
 	Audio::Mixer *_mixer;
 
 	MusicPlayer *_player;
-	SoundHandle _musicHandle;
+	Audio::SoundHandle _musicHandle;
 	uint32 _trackNumber;
 
 	static const MUSIC_MIDITABLE _midiTableITECD[26];

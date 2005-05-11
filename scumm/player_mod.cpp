@@ -92,7 +92,7 @@ void Player_MOD::startChannel(int id, void *data, int size, int rate, uint8 vol,
 	_channels[i].pan = pan;
 	_channels[i].freq = rate;
 	_channels[i].input = makeLinearInputStream(rate, Audio::Mixer::FLAG_AUTOFREE | (loopStart != loopEnd ? Audio::Mixer::FLAG_LOOP : 0), (const byte*)data, size, loopStart, loopEnd - loopStart);
-	_channels[i].converter = makeRateConverter(rate, _mixer->getOutputRate(), false, false);
+	_channels[i].converter = Audio::makeRateConverter(rate, _mixer->getOutputRate(), false, false);
 }
 
 void Player_MOD::stopChannel(int id) {
@@ -139,7 +139,7 @@ void Player_MOD::setChannelFreq(int id, int freq) {
 		if (_channels[i].id == id) {
 			_channels[i].freq = freq;
 			delete _channels[i].converter;
-			_channels[i].converter = makeRateConverter(freq, _mixer->getOutputRate(), false, false);
+			_channels[i].converter = Audio::makeRateConverter(freq, _mixer->getOutputRate(), false, false);
 			break;
 		}
 	}
@@ -169,8 +169,8 @@ void Player_MOD::do_mix(int16 *data, uint len) {
 		}
 		for (i = 0; i < MOD_MAXCHANS; i++)
 			if (_channels[i].id) {
-				st_volume_t vol_l = (127 - _channels[i].pan) * _channels[i].vol / 127;
-				st_volume_t vol_r = (127 + _channels[i].pan) * _channels[i].vol / 127;
+				Audio::st_volume_t vol_l = (127 - _channels[i].pan) * _channels[i].vol / 127;
+				Audio::st_volume_t vol_r = (127 + _channels[i].pan) * _channels[i].vol / 127;
 				_channels[i].converter->flow(*_channels[i].input, &data[dpos*2], dlen, vol_l, vol_r);
 			}
 		dpos += dlen;

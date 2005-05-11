@@ -44,9 +44,9 @@ private:
 	uint32 *_offsets;
 	uint16 _lastVoiceFile;
 
-	SoundHandle _voiceHandle;
-	SoundHandle _effectsHandle;
-	SoundHandle _ambientHandle;
+	Audio::SoundHandle _voiceHandle;
+	Audio::SoundHandle _effectsHandle;
+	Audio::SoundHandle _ambientHandle;
 
 	bool _hasEffectsFile;
 	bool _hasVoiceFile;

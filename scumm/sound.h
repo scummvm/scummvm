@@ -95,8 +95,8 @@ protected:
 	int16 _heMusicTracks;
 
 public:
-	SoundHandle _talkChannelHandle;	// Handle of mixer channel actor is talking on
-	SoundHandle _heSoundChannels[8];
+	Audio::SoundHandle _talkChannelHandle;	// Handle of mixer channel actor is talking on
+	Audio::SoundHandle _heSoundChannels[8];
 
 	bool _soundsPaused;
 	byte _sfxMode;
@@ -110,7 +110,7 @@ public:
 	void setOverrideFreq(int freq);
 	void playSound(int soundID, int heOffset, int heChannel, int heFlags);
 	void startHETalkSound(uint32 offset);
-	void startTalkSound(uint32 offset, uint32 b, int mode, SoundHandle *handle = NULL);
+	void startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle *handle = NULL);
 	void stopTalkSound();
 	bool isMouthSyncOff(uint pos);
 	int getSoundElapsedTime(int sound) const;

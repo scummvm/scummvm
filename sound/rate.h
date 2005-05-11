@@ -25,8 +25,10 @@
 #include "common/scummsys.h"
 #include "base/engine.h"
 
-//#include "sound/audiostream.h"
 class AudioStream;
+
+
+namespace Audio {
 
 typedef int16 st_sample_t;
 typedef uint16 st_volume_t;
@@ -75,5 +77,7 @@ public:
 };
 
 RateConverter *makeRateConverter(st_rate_t inrate, st_rate_t outrate, bool stereo, bool reverseStereo = false);
+
+} // End of namespace Audio
 
 #endif

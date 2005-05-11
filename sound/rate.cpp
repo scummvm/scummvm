@@ -33,6 +33,8 @@
 #include "sound/mixer.h"
 #include "common/util.h"
 
+namespace Audio {
+
 /**
  * The precision of the fractional computations used by the rate converter.
  * Normally you should never have to modify this value.
@@ -277,3 +279,5 @@ RateConverter *makeRateConverter(st_rate_t inrate, st_rate_t outrate, bool stere
 			return new CopyRateConverter<false, false>();
 	}
 }
+
+} // End of namespace Audio

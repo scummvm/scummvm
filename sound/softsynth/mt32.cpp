@@ -43,7 +43,7 @@ class MidiChannel_MT32 : public MidiChannel_MPU401 {
 
 class MidiDriver_MT32 : public MidiDriver_Emulated {
 private:
-	SoundHandle _handle;
+	Audio::SoundHandle _handle;
 	MidiChannel_MT32 _midiChannels[16];
 	uint16 _channelMask;
 	MT32Emu::Synth *_synth;

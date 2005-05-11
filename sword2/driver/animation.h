@@ -78,7 +78,7 @@ private:
 
 	byte *_textSurface;
 
-	SoundHandle _leadOutHandle;
+	Audio::SoundHandle _leadOutHandle;
 
 	uint _leadOutFrame;
 	bool _seamless;

@@ -64,7 +64,7 @@ public:
 
  private:
 
-	int playSoundBuffer(SoundHandle *handle, SOUNDBUFFER *buf, int volume, bool loop);
+	int playSoundBuffer(Audio::SoundHandle *handle, SOUNDBUFFER *buf, int volume, bool loop);
 
 	int _soundInitialized;
 	int _enabled;
@@ -73,8 +73,8 @@ public:
 	Audio::Mixer *_mixer;
 	Common::MemoryReadStream *_voxStream;
 
-	SoundHandle _effectHandle;
-	SoundHandle _voiceHandle;
+	Audio::SoundHandle _effectHandle;
+	Audio::SoundHandle _voiceHandle;
 
 };
 

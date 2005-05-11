@@ -112,8 +112,8 @@ protected:
 	bool _speechSfxExists;
 	
 	int16 _lastOverride;
-	SoundHandle _sfxHandle;
-	SoundHandle _speechHandle;
+	Audio::SoundHandle _sfxHandle;
+	Audio::SoundHandle _speechHandle;
 };
 
 class SilentSound : public Sound {

@@ -46,7 +46,7 @@ Sound::~Sound() {
 	_soundInitialized = 0;
 }
 
-int Sound::playSoundBuffer(SoundHandle *handle, SOUNDBUFFER *buf, int volume, bool loop) {
+int Sound::playSoundBuffer(Audio::SoundHandle *handle, SOUNDBUFFER *buf, int volume, bool loop) {
 	byte flags;
 
 	if (!_soundInitialized) {

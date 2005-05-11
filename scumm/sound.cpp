@@ -668,7 +668,7 @@ void Sound::startHETalkSound(uint32 offset) {
 	addSoundToQueue2(1, 0, channel, 0);
 }
 
-void Sound::startTalkSound(uint32 offset, uint32 b, int mode, SoundHandle *handle) {
+void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle *handle) {
 	int num = 0, i;
 	int size = 0;
 	int id = -1;

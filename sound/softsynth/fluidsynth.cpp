@@ -38,7 +38,7 @@ private:
 	fluid_synth_t *_synth;
 	int _soundFont;
 	int _outputRate;
-	SoundHandle _handle;
+	Audio::SoundHandle _handle;
 
 protected:
 	// Because GCC complains about casting from const to non-const...

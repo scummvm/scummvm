@@ -168,7 +168,7 @@ void MoviePlayer::drawTextObject(AnimationState *anim, MovieTextObject *obj) {
  */
 
 int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], int32 leadInRes, int32 leadOutRes) {
-	SoundHandle leadInHandle;
+	Audio::SoundHandle leadInHandle;
 
 	// This happens if the user quits during the "eye" smacker
 	if (_vm->_quit)
@@ -246,7 +246,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], int32 lea
 
 void MoviePlayer::playMPEG(const char *filename, MovieTextObject *text[], byte *leadOut, uint32 leadOutLen) {
 	uint frameCounter = 0, textCounter = 0;
-	SoundHandle handle;
+	Audio::SoundHandle handle;
 	bool skipCutscene = false, textVisible = false;
 	uint32 flags = Audio::Mixer::FLAG_16BITS;
 	bool startNextText = false;
@@ -452,7 +452,7 @@ void MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte 
 	tmpPal[255 * 4 + 2] = 255;
 	_vm->_screen->setPalette(0, 256, tmpPal, RDPAL_INSTANT);
 
-	SoundHandle handle;
+	Audio::SoundHandle handle;
 
 	bool skipCutscene = false;
 

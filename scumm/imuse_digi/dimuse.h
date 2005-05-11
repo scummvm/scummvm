@@ -77,7 +77,7 @@ private:
 		int32 mixerFlags;
 
 		ImuseDigiSndMgr::soundStruct *soundHandle;
-		SoundHandle handle;
+		Audio::SoundHandle handle;
 		AppendableAudioStream *stream;
 		AudioStream *stream2;
 

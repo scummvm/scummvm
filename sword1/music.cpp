@@ -275,8 +275,8 @@ void Music::mixer(int16 *buf, uint32 len) {
 }
 
 void Music::setVolume(uint8 volL, uint8 volR) {
-	_volumeL = (st_volume_t)volL;
-	_volumeR = (st_volume_t)volR;
+	_volumeL = (Audio::st_volume_t)volL;
+	_volumeR = (Audio::st_volume_t)volR;
 }
 
 void Music::giveVolume(uint8 *volL, uint8 *volR) {
@@ -327,7 +327,7 @@ void Music::startMusic(int32 tuneId, int32 loopFlag) {
 		   As the corresponding _converter is NULL, the handle will be ignored by the playing thread */
 		if (_handles[newStream].play(_tuneList[tuneId], loopFlag != 0)) {
 			_mutex.lock();
-			_converter[newStream] = makeRateConverter(_handles[newStream].getRate(), _mixer->getOutputRate(), _handles[newStream].isStereo(), false);
+			_converter[newStream] = Audio::makeRateConverter(_handles[newStream].getRate(), _mixer->getOutputRate(), _handles[newStream].isStereo(), false);
 			_mutex.unlock();
 		}
 	} else {

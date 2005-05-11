@@ -750,7 +750,7 @@ public:
 	FlacTrackInfo(File *file);
 	~FlacTrackInfo();
 	bool error() { return _file == NULL; }
-	void play(Audio::Mixer *mixer, SoundHandle *handle, int startFrame, int duration);
+	void play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration);
 };
 
 FlacTrackInfo::FlacTrackInfo(File *file) : _file(NULL), _firstStream(NULL)
@@ -764,7 +764,7 @@ FlacTrackInfo::FlacTrackInfo(File *file) : _file(NULL), _firstStream(NULL)
 		delete tempStream;
 }
 
-void FlacTrackInfo::play(Audio::Mixer *mixer, SoundHandle *handle, int startFrame, int duration) {
+void FlacTrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration) {
 	if (error()) {
 		debug(1, "FlacTrackInfo::play:  invalid state, method should not been called");
 	}

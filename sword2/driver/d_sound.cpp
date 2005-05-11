@@ -441,7 +441,7 @@ int Sound::readBuffer(int16 *buffer, const int numSamples) {
 
 		if (!_musicMuted) {
 			for (int j = 0; j < len; j++) {
-				clampedAdd(buffer[j], _mixBuffer[j]);
+				Audio::clampedAdd(buffer[j], _mixBuffer[j]);
 			}
 		}
 	}

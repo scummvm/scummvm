@@ -85,7 +85,7 @@ int SquareWaveStream::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 SquareWaveStream speakerStream;
-SoundHandle speakerHandle;
+Audio::SoundHandle speakerHandle;
 Snd_SoundDesc *snd_loopingSounds[5]; // Should be enough
 
 void snd_initSound(void) {

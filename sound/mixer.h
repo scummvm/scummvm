@@ -29,11 +29,13 @@
 
 
 class AudioStream;
-namespace Audio {
-	class Channel;
-	class Mixer;
-}
 class OSystem;
+
+
+namespace Audio {
+
+class Channel;
+class Mixer;
 
 class SoundHandle {
 	friend class Audio::Channel;
@@ -42,8 +44,6 @@ class SoundHandle {
 public:
 	inline SoundHandle() : _val(0xFFFFFFFF) {}
 };
-
-namespace Audio {
 
 class Mixer {
 public:

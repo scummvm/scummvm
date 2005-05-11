@@ -52,7 +52,7 @@ public:
 	~VorbisTrackInfo();
 	bool openTrack();
 	bool error() { return _error_flag; }
-	void play(Audio::Mixer *mixer, SoundHandle *handle, int startFrame, int duration);
+	void play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration);
 };
 
 
@@ -168,7 +168,7 @@ VorbisTrackInfo::~VorbisTrackInfo() {
 #define VORBIS_TREMOR
 #endif
 
-void VorbisTrackInfo::play(Audio::Mixer *mixer, SoundHandle *handle, int startFrame, int duration) {
+void VorbisTrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration) {
 
 	bool err = openTrack();
 	assert(!err);

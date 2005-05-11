@@ -250,7 +250,7 @@ int32 Sound::playFx(FxQueueEntry *fx) {
 	return playFx(&fx->handle, fx->data, fx->len, fx->volume, fx->pan, (fx->type == FX_LOOP), Audio::Mixer::kSFXSoundType);
 }
 
-int32 Sound::playFx(SoundHandle *handle, byte *data, uint32 len, uint8 vol, int8 pan, bool loop, Audio::Mixer::SoundType soundType) {
+int32 Sound::playFx(Audio::SoundHandle *handle, byte *data, uint32 len, uint8 vol, int8 pan, bool loop, Audio::Mixer::SoundType soundType) {
 	if (_fxMuted)
 		return RD_OK;
 
