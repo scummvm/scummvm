@@ -223,7 +223,7 @@ void Gdi::init() {
 	}
 }
 
-void Gdi::roomChanged(byte *roomptr, uint32 IM00_offs) {
+void Gdi::roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor) {
 	if (_vm->_version == 1) {
 		if (_vm->_platform == Common::kPlatformNES) {
 			decodeNESGfx(roomptr);
@@ -241,6 +241,8 @@ void Gdi::roomChanged(byte *roomptr, uint32 IM00_offs) {
 	} else if (_vm->_version == 2) {
 		_roomStrips = generateStripTable(roomptr + IM00_offs, _vm->_roomWidth, _vm->_roomHeight, _roomStrips);
 	}
+	
+	_transparentColor = transparentColor;
 }
 
 

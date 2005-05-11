@@ -262,7 +262,6 @@ void ScummEngine::loadRoomSubBlocks() {
 	} else {
 		_IM00_offs = findResource(MKID('IM00'), findResource(MKID('RMIM'), roomptr)) - roomptr;
 	}
-	gdi.roomChanged(roomptr, _IM00_offs);
 
 	//
 	// Look for an exit script
@@ -391,14 +390,15 @@ void ScummEngine::loadRoomSubBlocks() {
 	}
 
 	// Transparent color
+	byte trans;
 	if (_version == 8)
-		gdi._transparentColor = (byte)READ_LE_UINT32(&(rmhd->v8.transparency));
+		trans = (byte)READ_LE_UINT32(&(rmhd->v8.transparency));
 	else {
 		ptr = findResourceData(MKID('TRNS'), roomptr);
 		if (ptr)
-			gdi._transparentColor = ptr[0];
+			trans = ptr[0];
 		else
-			gdi._transparentColor = 255;
+			trans = 255;
 	}
 
 	// Actor Palette in HE 70 games
@@ -412,6 +412,8 @@ void ScummEngine::loadRoomSubBlocks() {
 				_HEV7ActorPalette[i] = i;
 		}
 	}
+	
+	gdi.roomChanged(roomptr, _IM00_offs, trans);
 }
 
 /**
@@ -579,7 +581,6 @@ void ScummEngine_v3old::loadRoomSubBlocks() {
 	} else {
 		_IM00_offs = READ_LE_UINT16(roomptr + 0x0A);
 	}
-	gdi.roomChanged(roomptr, _IM00_offs);
 
 	//
 	// Look for an exit script
@@ -664,8 +665,7 @@ void ScummEngine_v3old::loadRoomSubBlocks() {
 		}
 	}
 
-	// Transparent color
-	gdi._transparentColor = 255;
+	gdi.roomChanged(roomptr, _IM00_offs, 255);
 }
 
 void ScummEngine_v3old::initRoomSubBlocks() {

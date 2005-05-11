@@ -196,7 +196,6 @@ class Gdi {
 	ScummEngine *_vm;
 
 public:
-	byte _transparentColor;
 	int _numZBuffer;
 	int _imgBufOffs[8];
 	int32 _numStrips;
@@ -206,6 +205,7 @@ public:
 
 protected:
 	byte *_roomPalette;
+	byte _transparentColor;
 	byte _decomp_shr, _decomp_mask;
 	uint32 _vertStripNextInc;
 
@@ -270,7 +270,7 @@ protected:
 
 public:
 	void init();
-	void roomChanged(byte *roomptr, uint32 IM00_offs);
+	void roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor);
 
 	void drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
 	                int stripnr, int numstrip, byte flag);
