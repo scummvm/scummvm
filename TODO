@@ -107,6 +107,22 @@ General
     ./scummvm --auto-detect
   Of course, if we do it, it has to be done so that the launcher is still
   reachable :-)
+* Some source files should be moved. But that's a pain with CVS, so let's
+  wait until we switch to something better, like Subversion. In particular:
+  - common/scaler* stuff should either be moved to graphics/, or maybe
+    to backends/ (while it is portable code, it's something to be used by
+    the backends only)
+  - consider moving the MIDI stuff from sound/ to sound/midi/ 
+  - move fmopl code to softsynth dir
+  - move fonts to graphics/fonts/ dir
+  - move all the game engines into a new dir engines/
+  - maybe system.h / system.cpp should go to backends/, too ?
+* The following things should be put into namespaces:
+  - AudioStream and subclasses into Audio
+  - MIDI related classes either to Audio, or a new "MIDI" namespace
+  - backend specific stuff into ??? (maybe new namespace "Backends" ?)
+    not sure about this one.
+
 
 Build System
 ============
@@ -256,7 +272,7 @@ SCUMM
 =====
 * Make it possible to restart games properly
 * Add method of setting initial debug channels from command-line
-* Possible implement a new resource manager, which then also could be shared
+* Possibly implement a new resource manager, which then also could be shared
   by ScummEX. [Jamieson has some ideas about this].
 * Figure out how to extract resources from Apple II and Commodore 64 versions
   See also <http://www.mts.net/~kbagnall/commodore/scumm/> for some notes on
