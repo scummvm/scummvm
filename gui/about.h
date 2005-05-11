@@ -25,6 +25,10 @@
 #include "common/str.h"
 #include "graphics/surface.h"
 
+namespace Graphics {
+	class Font;
+}
+
 namespace GUI {
 
 class AboutDialog : public Dialog {
@@ -37,6 +41,7 @@ protected:
 	byte		_modifiers;
 	bool		_willClose;
 	Graphics::Surface	_canvas;
+	const Graphics::Font	*_font;
 
 public:
 	AboutDialog();
@@ -49,6 +54,9 @@ public:
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	void handleKeyDown(uint16 ascii, int keycode, int modifiers);
 	void handleKeyUp(uint16 ascii, int keycode, int modifiers);
+
+	// disable scaling
+	bool wantsScaling() const { return false; }
 };
 
 } // End of namespace GUI

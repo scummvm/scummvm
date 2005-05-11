@@ -88,7 +88,15 @@ AboutDialog::AboutDialog()
 	
 	int i;
 	
-	_lineHeight = g_gui.getFontHeight() + 3;
+	_w = g_system->getOverlayWidth() - 2 * 10;
+	_h = g_system->getOverlayHeight() - 20 - 16;
+	
+	if (_w < 450)
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	else
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	
+	_lineHeight = _font->getFontHeight() + 3;
 
 	for (i = 0; i < 1; i++)
 		_lines.push_back("");
@@ -199,7 +207,7 @@ void AboutDialog::drawDialog() {
 			while (*str && *str == ' ')
 				str++;
 	
-		g_gui.drawString(str, _x + kXOff, y, _w - 2 * kXOff, color, align);
+		_font->drawString(&g_gui.getScreen(), str, _x + kXOff, y, _w - 2 * kXOff, color, align);
 		y += _lineHeight;
 	}
 
