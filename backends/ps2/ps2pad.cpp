@@ -103,7 +103,7 @@ void Ps2Pad::initPad(void) {
 			if (_system->getMillis() - _padInitTime > 5000) {
 				// still no pad, give up.
 				if (padPortClose(_port, _slot) != 1)
-					printf("WARNING: can't close port: %d/%d\n");
+					printf("WARNING: can't close port: %d/%d\n", _port, _slot);
 				printf("looking for pad, gave up and closed port\n");
 				_padStatus = STAT_NONE;
 			}

@@ -49,12 +49,7 @@ int AsyncFio::open(const char *name, int ioMode) {
 	checkSync();
 	int res;
 	fileXioOpen(name, ioMode, DEFAULT_MODE);
-	int fioRes = fileXioWaitAsync(FXIO_WAIT, &res);
-	if (fioRes != FXIO_COMPLETE) {
-		sioprintf("ERROR: fioOpen(%s, %X):\n", name, ioMode);
-		sioprintf("  fioSync returned %d, open res = %d\n", fioRes, res);
-        SleepThread();		
-	}
+	fileXioWaitAsync(FXIO_WAIT, &res);
 	SignalSema(_ioSema);
 	return res;
 }
@@ -64,7 +59,7 @@ void AsyncFio::close(int handle) {
 	checkSync();
 	fileXioClose(handle);
 	int res;
-	assert(fileXioWaitAsync(FXIO_WAIT, &res) == FXIO_COMPLETE);
+	fileXioWaitAsync(FXIO_WAIT, &res);
 	if (res != 0) {
 		sioprintf("ERROR: fileXioClose failed, EC %d", res);
 		SleepThread();
@@ -75,7 +70,7 @@ void AsyncFio::close(int handle) {
 
 void AsyncFio::checkSync(void) {
 	if (_runningOp) {
-		assert(fileXioWaitAsync(FXIO_WAIT, (int *)_runningOp) == FXIO_COMPLETE);
+		fileXioWaitAsync(FXIO_WAIT, (int *)_runningOp);
 		_runningOp = NULL;
 	}
 }
@@ -99,23 +94,53 @@ void AsyncFio::write(int fd, const void *src, unsigned int len) {
 }
 
 int AsyncFio::seek(int fd, int offset, int whence) {
+	int res;
 	WaitSema(_ioSema);
 	checkSync();
 	fileXioLseek(fd, offset, whence);
-	int res;
-	assert(fileXioWaitAsync(FXIO_WAIT, &res) == FXIO_COMPLETE);
+	fileXioWaitAsync(FXIO_WAIT, &res);
 	SignalSema(_ioSema);
 	return res;
 }
 
 int AsyncFio::mkdir(const char *name) {
+	int res;
 	WaitSema(_ioSema);
 	checkSync();
 	fileXioMkdir(name, DEFAULT_MODE);
-	int res;
-	assert(fileXioWaitAsync(FXIO_WAIT, &res) == FXIO_COMPLETE);
+	fileXioWaitAsync(FXIO_WAIT, &res);
 	SignalSema(_ioSema);
 	return res;
+}
+
+int AsyncFio::dopen(const char *name) {
+	int res;
+	WaitSema(_ioSema);
+	checkSync();
+	fileXioDopen(name);	
+	fileXioWaitAsync(FXIO_WAIT, &res);
+	SignalSema(_ioSema);
+	return res;
+}
+
+int AsyncFio::dread(int fd, iox_dirent_t *dest) {
+	int res;
+	WaitSema(_ioSema);
+	checkSync();
+	fileXioDread(fd, dest);
+	fileXioWaitAsync(FXIO_WAIT, &res);
+	SignalSema(_ioSema);
+	return res;
+}
+
+void AsyncFio::dclose(int fd) {
+	int res;
+	WaitSema(_ioSema);
+	checkSync();
+	fileXioDclose(fd);
+	fileXioWaitAsync(FXIO_WAIT, &res);
+	assert(res == 0);
+	SignalSema(_ioSema);
 }
 
 int AsyncFio::sync(int fd) {

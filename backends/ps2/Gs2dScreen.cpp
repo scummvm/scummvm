@@ -137,7 +137,7 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 
     // set screen size, 640x544 for pal, 640x448 for ntsc
 	_tvWidth = 640;
-	_tvHeight = ((_videoMode == TV_PAL) ? 544 : 448);
+	_tvHeight = ((_videoMode == TV_PAL) ? 544 : 448); // PAL => 512?
 	kFullScreen[0].z = kFullScreen[1].z = 0;
 	kFullScreen[0].x = ORIGIN_X;
 	kFullScreen[0].y = ORIGIN_Y;
@@ -302,6 +302,15 @@ void Gs2dScreen::setPalette(const uint32 *pal, uint8 start, uint16 num) {
 	}
 	_clutChanged = true;
 	SignalSema(g_DmacSema);
+}
+
+void Gs2dScreen::grabPalette(uint32 *pal, uint8 start, uint16 num) {
+	assert(start + num <= 256);
+	for (uint16 cnt = 0; cnt < num; cnt++) {
+		uint16 src = start + cnt;
+		src = (src & 0xE7) | ((src & 0x8) << 1) | ((src & 0x10) >> 1);
+		pal[cnt] = _clut[src];
+	}
 }
 
 void Gs2dScreen::updateScreen(void) {

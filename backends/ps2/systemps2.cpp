@@ -30,6 +30,7 @@
 #include <assert.h>
 #include <iopcontrol.h>
 #include <iopheap.h>
+#include <osd_config.h>
 #include "scummsys.h"
 #include "../intern.h"
 #include "base/engine.h"
@@ -45,6 +46,8 @@
 #include "backends/ps2/cd.h"
 #include <sio.h>
 #include <fileXio_rpc.h>
+#include "graphics/surface.h"
+#include "graphics/font.h"
 
 #define TIMER_STACK_SIZE (1024 * 32)
 #define SOUND_STACK_SIZE (1024 * 32)
@@ -66,13 +69,15 @@ static int g_MainWaitSema = -1, g_TimerWaitSema = -1;
 static volatile int32 g_MainWakeUp = 0, g_TimerWakeUp = 0;
 static volatile uint64 msecCount = 0;
 
-extern void NORETURN CDECL error(const char *s, ...);
-
 OSystem_PS2 *g_systemPs2 = NULL;
 
 void readRtcTime(void);
 
 int gBitFormat = 555;
+
+namespace Graphics {
+	extern const NewFont g_sysfont;
+};
 
 void sioprintf(const char *zFormat, ...) {
 	va_list ap;
@@ -186,34 +191,26 @@ OSystem_PS2::OSystem_PS2(void) {
 
 	_screen->wantAnim(true);
 
-	if (!loadModules()) {
-		sioprintf("ERROR: Can't load modules");
-		printf("ERROR: Can't load modules\n");
-		_screen->wantAnim(false);
-		SleepThread();
-		// Todo: handle this correctly...
-	}
-	sioprintf("Modules: UsbMouse %sloaded, UsbKbd %sloaded, Hdd %sloaded.", _useMouse ? "" : "not ", _useKbd ? "" : "not ", _useHdd ? "" : "not ");
+	char errorStr[256];
+	if (!loadModules(errorStr))
+		fatalError(errorStr);
 
 	sioprintf("Initializing SjPCM");
 	if (SjPCM_Init(0) < 0)
-		sioprintf("SjPCM Bind failed");
+		fatalError("SjPCM Bind failed");
 	
-	sioprintf("Initializing LibCDVD.");
-	int res = CDVD_Init();
-	sioprintf("result = %d", res);
+	if (CDVD_Init() != 0)
+		fatalError("CDVD_Init failed");
 
-	_timerTid = _soundTid = -1;
 	_mouseVisible = false;
 
 	sioprintf("reading RTC");
 	readRtcTime();
 
 	sioprintf("Initializing FXIO");
-	if (fileXioInit() < 0) {
-		sioprintf("Can't init fileXio\n");
-		SleepThread();
-	}
+	if (fileXioInit() < 0)
+		fatalError("Can't init fileXio");
+
 	fileXioSetBlockMode(FXIO_NOWAIT);
 	
 	sioprintf("Starting SavefileManager");
@@ -225,7 +222,6 @@ OSystem_PS2::OSystem_PS2(void) {
 	sioprintf("Initializing ps2Input");
 	_input = new Ps2Input(this, _useMouse, _useKbd);
 
-	sio_puts("OSystem_PS2 constructor done\n");
 	_screen->wantAnim(false);
 }
 
@@ -360,48 +356,47 @@ void OSystem_PS2::soundThread(void) {
 	}
 }
 
-bool OSystem_PS2::loadModules(void) {
+char *irxModules[] = {
+	"rom0:SIO2MAN",
+	"rom0:MCMAN",
+	"rom0:MCSERV",
+	"rom0:PADMAN",
+	"rom0:LIBSD",
+#ifndef USE_PS2LINK
+	IRX_PREFIX "IOMANX.IRX" IRX_SUFFIX,
+#endif
+	IRX_PREFIX "FILEXIO.IRX" IRX_SUFFIX,
+	IRX_PREFIX "CDVD.IRX" IRX_SUFFIX,
+	IRX_PREFIX "SJPCM.IRX" IRX_SUFFIX
+};
+
+bool OSystem_PS2::loadModules(char *errorStr) {
 
 	_useHdd = _useMouse = _useKbd = false;
 
 	int res;
-	if ((res = SifLoadModule("rom0:SIO2MAN", 0, NULL)) < 0)
-		sioprintf("Cannot load module: SIO2MAN (%d)\n", res);
-	else if ((res = SifLoadModule("rom0:MCMAN", 0, NULL)) < 0)
-		sioprintf("Cannot load module: MCMAN (%d)\n", res);
-	else if ((res = SifLoadModule("rom0:MCSERV", 0, NULL)) < 0)
-		sioprintf("Cannot load module: MCSERV (%d)\n", res);
-	else if ((res = SifLoadModule("rom0:PADMAN", 0, NULL)) < 0)
-		sioprintf("Cannot load module: PADMAN (%d)\n", res);
-	else if ((res = SifLoadModule("rom0:LIBSD", 0, NULL)) < 0)
-		sioprintf("Cannot load module: LIBSD (%d)\n", res);
-#ifndef USE_PS2LINK
-	else if ((res = SifLoadModule(IRX_PREFIX "IOMANX.IRX" IRX_SUFFIX, 0, NULL)) < 0)
-		sioprintf("Cannot load module: IOMANX.IRX (%d)\n", res);
-#endif
-	else if ((res = SifLoadModule(IRX_PREFIX "FILEXIO.IRX" IRX_SUFFIX, 0, NULL)) < 0)
-		sioprintf("Cannot load module: FILEXIO.IRX (%d)\n", res);
-	else if ((res = SifLoadModule(IRX_PREFIX "CDVD.IRX" IRX_SUFFIX, 0, NULL)) < 0)
-		sioprintf("Cannot load module CDVD.IRX (%d)\n", res);
-	else if ((res = SifLoadModule(IRX_PREFIX "SJPCM.IRX" IRX_SUFFIX, 0, NULL)) < 0)
-		sioprintf("Cannot load module: SJPCM.IRX (%d)\n", res);
-	else {
-		sioprintf("modules loaded");
-		if ((res = SifLoadModule(IRX_PREFIX "USBD.IRX" IRX_SUFFIX, 0, NULL)) < 0)
-			sioprintf("Cannot load module: USBD.IRX (%d)\n", res);
-		else {
-			if ((res = SifLoadModule(IRX_PREFIX "PS2MOUSE.IRX" IRX_SUFFIX, 0, NULL)) < 0)
-				sioprintf("Cannot load module: PS2MOUSE.IRX (%d)\n", res);
-			else
-				_useMouse = true;
-			if ((res = SifLoadModule(IRX_PREFIX "RPCKBD.IRX" IRX_SUFFIX, 0, NULL)) < 0)
-				sioprintf("Cannot load module: RPCKBD.IRX (%d)\n", res);
-			else
-				_useKbd = true;
+	for (int i = 0; i < ARRAYSIZE(irxModules); i++) {
+		if ((res = SifLoadModule(irxModules[i], 0, NULL)) < 0) {
+			sprintf(errorStr, "Can't load module %s (%d)", irxModules[i], res);
+			return false;
 		}
-		return true;		
 	}
-	return false;
+	printf("Modules loaded\n");
+	// now try to load optional IRXs
+	if ((res = SifLoadModule(IRX_PREFIX "USBD.IRX" IRX_SUFFIX, 0, NULL)) < 0)
+		sioprintf("Cannot load module: USBD.IRX (%d)\n", res);
+	else {
+		if ((res = SifLoadModule(IRX_PREFIX "PS2MOUSE.IRX" IRX_SUFFIX, 0, NULL)) < 0)
+			sioprintf("Cannot load module: PS2MOUSE.IRX (%d)\n", res);
+		else
+			_useMouse = true;
+		if ((res = SifLoadModule(IRX_PREFIX "RPCKBD.IRX" IRX_SUFFIX, 0, NULL)) < 0)
+			sioprintf("Cannot load module: RPCKBD.IRX (%d)\n", res);
+		else
+			_useKbd = true;
+	}
+	sioprintf("Modules: UsbMouse %sloaded, UsbKbd %sloaded, Hdd %sloaded.", _useMouse ? "" : "not ", _useKbd ? "" : "not ", _useHdd ? "" : "not ");
+	return true;
 }
 
 void OSystem_PS2::initSize(uint width, uint height, int overscale) {
@@ -420,6 +415,10 @@ void OSystem_PS2::initSize(uint width, uint height, int overscale) {
 
 void OSystem_PS2::setPalette(const byte *colors, uint start, uint num) {
 	_screen->setPalette((const uint32*)colors, (uint8)start, (uint16)num);
+}
+
+void OSystem_PS2::grabPalette(byte *colors, uint start, uint num) {
+	_screen->grabPalette((uint32*)colors, (uint8)start, (uint16)num);
 }
 
 void OSystem_PS2::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
@@ -497,7 +496,7 @@ void OSystem_PS2::clearSoundCallback(void) {
 	SignalSema(_soundSema);
 }
 
-SaveFileManager *OSystem_PS2::getSavefileManager(void) {
+Common::SaveFileManager *OSystem_PS2::getSavefileManager(void) {
 	return _saveManager;
 }
 
@@ -630,25 +629,98 @@ void OSystem_PS2::quit(void) {
 	SleepThread();
 }
 
+void OSystem_PS2::fatalError(char *errorStr) {
+	sioprintf("ERROR: %s", errorStr);
+	printf("ERROR: %s\n", errorStr);
+	Graphics::Surface surf;
+	surf.create(300, 200, 1);
+	Common::String str(errorStr);
+	Graphics::g_sysfont.drawString(&surf, str, 0, 0, 300, 0xFF);
+
+	uint32 palette[256];
+	palette[0] = 0x00400000;
+	for (int i = 1; i < 256; i++)
+		palette[i] = 0xFFFFFFFF;
+
+	_screen->setPalette(palette, 0, 256);
+	_screen->hideOverlay();
+	_screen->wantAnim(false);
+
+	_screen->copyScreenRect((uint8*)surf.getBasePtr(0, 0), surf.pitch, 10, 10, 300, 100);
+	_screen->updateScreen();
+	SleepThread();
+}
+
 static uint32 g_timeSecs;
-static uint8  g_day, g_month, g_year;
+static int	  g_day, g_month, g_year;
 static uint32 g_lastTimeCheck;
+
+void buildNewDate(int dayDiff) {
+	static int daysPerMonth[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+	if (((g_year % 4) == 0) && (((g_year % 100) != 0) || ((g_year % 1000) == 0)))
+		daysPerMonth[1] = 29;
+	else
+		daysPerMonth[1] = 28;
+
+	if (dayDiff == -1) {
+		g_day--;
+		if (g_day == 0) {
+			g_month--;
+			if (g_month == 0) {
+				g_year--;
+				g_month = 12;
+			}
+			g_day = daysPerMonth[g_month - 1];
+		}
+	} else if (dayDiff == 1) {
+		g_day++;
+		if (g_day > daysPerMonth[g_month - 1]) {
+			g_day = 1;
+			g_month++;
+			if (g_month > 12) {
+				g_month = 1;
+				g_year++;
+			}
+		}
+	}
+}
+
+#define SECONDS_PER_DAY (24 * 60 * 60)
 
 void readRtcTime(void) {
 	struct CdClock cdClock;
 	CDVD_ReadClock(&cdClock);
 	g_lastTimeCheck = (uint32)(msecCount >> 32);
 
-	if (cdClock.stat)
-		printf("Unable to read RTC time.\n");
+	if (cdClock.stat) {
+		printf("Unable to read RTC time, EC: %d\n", cdClock.stat);
+		g_day = g_month = 1;
+		g_year = 0;
+		g_timeSecs = 0;
+	} else {
+		int gmtOfs = configGetTimezone();
+		if (configIsDaylightSavingEnabled())
+			gmtOfs += 60;
 
-	g_timeSecs = ((FROM_BCD(cdClock.hour) * 60) + FROM_BCD(cdClock.minute)) * 60 + FROM_BCD(cdClock.second);
-	g_day = FROM_BCD(cdClock.day);
-	g_month = FROM_BCD(cdClock.month);
-	g_year = FROM_BCD(cdClock.year);
-	// todo: add something here to convert from JST to the right time zone
-	sioprintf("Got RTC time: %d:%02d:%02d  %d.%d.%4d\n",
-		FROM_BCD(cdClock.hour), FROM_BCD(cdClock.minute), FROM_BCD(cdClock.second),
+		g_timeSecs = (FROM_BCD(cdClock.hour) * 60 + FROM_BCD(cdClock.minute)) * 60 + FROM_BCD(cdClock.second);
+
+		g_timeSecs -= 9 * 60 * 60; // minus 9 hours, JST -> GMT conversion
+		g_timeSecs += gmtOfs * 60; // GMT -> timezone the user selected
+
+		g_day = FROM_BCD(cdClock.day);
+		g_month = FROM_BCD(cdClock.month);
+		g_year = FROM_BCD(cdClock.year);
+
+		if (g_timeSecs < 0) {
+			buildNewDate(-1);
+			g_timeSecs += SECONDS_PER_DAY;
+		} else if (g_timeSecs >= SECONDS_PER_DAY) {
+			buildNewDate(+1);
+			g_timeSecs -= SECONDS_PER_DAY;
+		}
+	}
+
+	sioprintf("Time: %d:%02d:%02d - %d.%d.%4d", g_timeSecs / (60 * 60), (g_timeSecs / 60) % 60, g_timeSecs % 60, 
 		g_day, g_month, g_year + 2000);
 }
 
@@ -658,12 +730,11 @@ extern time_t time(time_t *p) {
 	return blah;
 }
 
-#define SECONDS_PER_DAY (24 * 60 * 60)
-
 extern struct tm *localtime(const time_t *p) {
 	uint32 currentSecs = g_timeSecs + ((msecCount >> 32) - g_lastTimeCheck) / 1000;
 	if (currentSecs >= SECONDS_PER_DAY) {
-		readRtcTime();
+		buildNewDate(+1);
+		g_timeSecs -= SECONDS_PER_DAY;
 		currentSecs = g_timeSecs + ((msecCount >> 32) - g_lastTimeCheck) / 1000;
 	}
 

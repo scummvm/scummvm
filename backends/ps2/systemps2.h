@@ -38,6 +38,7 @@ public:
 	virtual int16 getHeight(void);
 	virtual int16 getWidth(void);
 	virtual void setPalette(const byte *colors, uint start, uint num);
+	virtual void grabPalette(byte *colors, uint start, uint num);
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 	
 	virtual void updateScreen();
@@ -97,8 +98,9 @@ private:
 	int _soundSema;
 
 	void initTimer(void);
+	void fatalError(char *str);
 
-	bool loadModules(void);
+	bool loadModules(char *errorStr);
 	bool _mouseVisible;
 	bool _useHdd, _useMouse, _useKbd;
 

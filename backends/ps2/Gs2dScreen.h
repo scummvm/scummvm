@@ -24,6 +24,7 @@
 
 #include "sysdefs.h"
 #include "backends/ps2/DmaPipe.h"
+
 enum TVMode {
 	TV_DONT_CARE = 0,
 	TV_PAL,
@@ -35,8 +36,6 @@ enum GsInterlace {
 	GS_INTERLACED
 };
 
-//class DmaPipe;
-
 class Gs2dScreen {
 public:
 	Gs2dScreen(uint16 width, uint16 height, TVMode tvMode);
@@ -46,6 +45,7 @@ public:
 
 	void copyScreenRect(const uint8 *buf, uint16 pitch, uint16 x, uint16 y, uint16 w, uint16 h);
 	void setPalette(const uint32 *pal, uint8 start, uint16 num);
+	void grabPalette(uint32 *pal, uint8 start, uint16 num);
 	void updateScreen(void);
 	//- overlay routines
 	void copyOverlayRect(const uint16 *buf, uint16 pitch, uint16 x, uint16 y, uint16 w, uint16 h);

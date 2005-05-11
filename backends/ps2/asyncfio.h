@@ -20,6 +20,7 @@
  */
 
 #define MAX_HANDLES 32
+#include <sys/stat.h>
 
 class AsyncFio {
 public:
@@ -31,6 +32,9 @@ public:
 	void write(int fd, const void *src, unsigned int len);
 	int seek(int fd, int offset, int whence);
 	int mkdir(const char *name);
+	int dopen(const char *name);
+	int dread(int fd, iox_dirent_t *dest);
+	void dclose(int fd);
 	int sync(int fd);
 	bool poll(int fd);
 	bool fioAvail(void);

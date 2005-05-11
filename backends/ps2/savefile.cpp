@@ -34,7 +34,7 @@
 
 extern AsyncFio fio;
 
-class UclOutSaveFile : public Common::WriteStream {
+class UclOutSaveFile : public Common::OutSaveFile {
 public:
 	UclOutSaveFile(const char *filename, Gs2dScreen *screen);
 	virtual ~UclOutSaveFile(void);
@@ -50,14 +50,15 @@ private:
 	bool _ioFailed;
 };
 
-class UclInSaveFile : public Common::ReadStream {
+class UclInSaveFile : public Common::InSaveFile {
 public:
 	UclInSaveFile(const char *filename, Gs2dScreen *screen);
 	virtual ~UclInSaveFile(void);
 	virtual bool eos(void) const;
 	virtual uint32 read(void *ptr, uint32 size);
 	virtual bool ioFailed(void);
-	virtual void clearIOFailed(void);	
+	virtual void clearIOFailed(void);
+	virtual void skip(uint32 offset);
 private:
 	Gs2dScreen *_screen;
 	uint8 *_buf;
@@ -165,7 +166,7 @@ bool Ps2SaveFileManager::mcReadyForDir(const char *dir) {
 		return true;
 }
 
-InSaveFile *Ps2SaveFileManager::openForLoading(const char *filename) {
+Common::InSaveFile *Ps2SaveFileManager::openForLoading(const char *filename) {
 	_screen->wantAnim(true);
 
 	char dir[256], name[256];
@@ -181,7 +182,7 @@ InSaveFile *Ps2SaveFileManager::openForLoading(const char *filename) {
 			UclInSaveFile *file = new UclInSaveFile(fullName, _screen);
 			if (file) {
 				if (!file->ioFailed()) {
-					return (InSaveFile*)file;
+					return file;
 				} else
 					delete file;
 			}
@@ -192,7 +193,7 @@ InSaveFile *Ps2SaveFileManager::openForLoading(const char *filename) {
 	return NULL;
 }
 
-OutSaveFile *Ps2SaveFileManager::openForSaving(const char *filename) {
+Common::OutSaveFile *Ps2SaveFileManager::openForSaving(const char *filename) {
 	_screen->wantAnim(true);
 	char dir[256], name[256];
 	splitPath(filename, dir, name);
@@ -219,7 +220,7 @@ OutSaveFile *Ps2SaveFileManager::openForSaving(const char *filename) {
 		if (!file->ioFailed()) {
 			// we're creating a file, mc will have to be updated next time
 			_mcNeedsUpdate = true;
-			return (OutSaveFile*)file;
+			return file;
 		} else
 			delete file;
 	}
@@ -393,6 +394,13 @@ uint32 UclInSaveFile::read(void *ptr, uint32 size) {
 	return size;
 }
 
+void UclInSaveFile::skip(uint32 offset) {
+	if (_bufPos + offset <= _bufSize)
+		_bufPos += offset;
+	else
+		_bufPos = _bufSize;
+}
+
 UclOutSaveFile::UclOutSaveFile(const char *filename, Gs2dScreen *screen) {
 	_screen = screen;
 	_bufPos = 0;
@@ -455,7 +463,6 @@ int UclOutSaveFile::flush(void) {
 	printf("UclOutSaveFile::flush failed!\n");
 	return -1;
 }
-
 
 uint32 UclOutSaveFile::write(const void *ptr, uint32 size) {
 	assert(_bufPos <= _bufSize);
