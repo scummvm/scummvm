@@ -50,6 +50,8 @@
 using GUI::CommandSender;
 using GUI::StaticTextWidget;
 using GUI::kButtonWidth;
+using GUI::kBigButtonWidth;
+using GUI::kBigButtonHeight;
 using GUI::kCloseCmd;
 using GUI::kTextAlignCenter;
 using GUI::kTextAlignLeft;
@@ -287,7 +289,7 @@ SaveLoadChooserEx::SaveLoadChooserEx(const String &title, const String &buttonLa
 	new StaticTextWidget(this, 10, 6, _w - 2 * 10, kLineHeight, title, kTextAlignCenter);
 	
 	// Add choice list
-	_list = new GUI::ListWidget(this, 10, 18, _w - 2 * 10 - 180, _h - 14 - 24 - 10);
+	_list = new GUI::ListWidget(this, 10, 18, _w - 2 * 10 - 180, _h - 14 - kBigButtonHeight - 18);
 	_list->setEditable(saveMode);
 	_list->setNumberingMode(saveMode ? GUI::kListNumberingOne : GUI::kListNumberingZero);
 	
@@ -300,8 +302,8 @@ SaveLoadChooserEx::SaveLoadChooserEx(const String &title, const String &buttonLa
 	_gfxWidget->setFlags(GUI::WIDGET_BORDER);
 	
 	// Buttons
-	addButton(_w - 2 * (kButtonWidth + 10), _h - 24, "Cancel", kCloseCmd, 0);
-	_chooseButton = addButton(_w-(kButtonWidth + 10), _h - 24, buttonLabel, kChooseCmd, 0);
+	addButton(_w - 2 * (kBigButtonWidth + 10), _h - kBigButtonHeight - 8, "Cancel", kCloseCmd, 0, GUI::kBigWidgetSize);
+	_chooseButton = addButton(_w - (kBigButtonWidth + 10), _h - kBigButtonHeight - 8, buttonLabel, kChooseCmd, 0, GUI::kBigWidgetSize);
 	_chooseButton->setEnabled(false);
 }
 
