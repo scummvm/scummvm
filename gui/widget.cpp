@@ -20,6 +20,7 @@
 
 #include "stdafx.h"
 #include "common/util.h"
+#include "graphics/fontman.h"
 #include "gui/widget.h"
 #include "gui/dialog.h"
 #include "gui/newgui.h"
@@ -106,11 +107,23 @@ Widget *Widget::findWidgetInChain(Widget *w, int x, int y) {
 
 #pragma mark -
 
-StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, TextAlignment align)
-	: Widget(boss, x, y, w, h), _align(align) {
+StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, TextAlignment align, WidgetSize ws)
+	: Widget(boss, x, y, w, h), _align(align), _ws(ws) {
 	_flags = WIDGET_ENABLED;
 	_type = kStaticTextWidget;
 	_label = text;
+	
+	switch (_ws) {
+	case kNormalWidgetSize:
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+		break;
+	case kBigWidgetSize:
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		break;
+	case kDefaultWidgetSize:
+		_font = &g_gui.getFont();
+		break;
+	}
 }
 
 void StaticTextWidget::setValue(int value) {
@@ -137,13 +150,13 @@ void StaticTextWidget::setAlign(TextAlignment align) {
 
 void StaticTextWidget::drawWidget(bool hilite) {
 	NewGui *gui = &g_gui;
-	gui->drawString(_label, _x, _y, _w, isEnabled() ? gui->_textcolor : gui->_color, _align);
+	_font->drawString(&gui->getScreen(), _label, _x, _y, _w, isEnabled() ? gui->_textcolor : gui->_color, _align);
 }
 
 #pragma mark -
 
-ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey)
-	: StaticTextWidget(boss, x, y, w, h, label, kTextAlignCenter), CommandSender(boss),
+ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey, WidgetSize ws)
+	: StaticTextWidget(boss, x, y, w, h, label, kTextAlignCenter, ws), CommandSender(boss),
 	  _cmd(cmd), _hotkey(hotkey) {
 	_flags = WIDGET_ENABLED | WIDGET_BORDER | WIDGET_CLEARBG;
 	_type = kButtonWidget;
@@ -156,7 +169,7 @@ void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 
 void ButtonWidget::drawWidget(bool hilite) {
 	NewGui *gui = &g_gui;
-	gui->drawString(_label, _x, _y + (_h - kLineHeight)/2 + 1, _w,
+	_font->drawString(&gui->getScreen(), _label, _x, _y + (_h - (_font->getFontHeight() + 2))/2 + 1, _w,
 					!isEnabled() ? gui->_color :
 					hilite ? gui->_textcolorhi : gui->_textcolor, _align);
 }
@@ -175,8 +188,8 @@ static uint32 checked_img[8] = {
 	0x00000000,
 };
 
-CheckboxWidget::CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey)
-	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey), _state(false) {
+CheckboxWidget::CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey, WidgetSize ws)
+	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey, ws), _state(false) {
 	_flags = WIDGET_ENABLED;
 	_type = kCheckboxWidget;
 }
@@ -208,13 +221,13 @@ void CheckboxWidget::drawWidget(bool hilite) {
 		gui->drawBitmap(checked_img, _x + 4, _y + 3, isEnabled() ? gui->_textcolor : gui->_color);
 
 	// Finally draw the label
-	gui->drawString(_label, _x + 20, _y + 3, _w, isEnabled() ? gui->_textcolor : gui->_color);
+	_font->drawString(&g_gui.getScreen(), _label, _x + 20, _y + 3, _w, isEnabled() ? gui->_textcolor : gui->_color);
 }
 
 #pragma mark -
 
-SliderWidget::SliderWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint labelWidth, uint32 cmd, uint8 hotkey)
-	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey),
+SliderWidget::SliderWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint labelWidth, uint32 cmd, uint8 hotkey, WidgetSize ws)
+	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey, ws),
 	  _value(0), _oldValue(0), _valueMin(0), _valueMax(100), _isDragging(false),
 	  _labelWidth(labelWidth) {
 	_flags = WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG;
@@ -256,7 +269,7 @@ void SliderWidget::drawWidget(bool hilite) {
 
 	// Draw the label, if any
 	if (_labelWidth > 0)
-		gui->drawString(_label, _x, _y + 2, _labelWidth, isEnabled() ? gui->_textcolor : gui->_color, kTextAlignRight);
+		_font->drawString(&g_gui.getScreen(), _label, _x, _y + 2, _labelWidth, isEnabled() ? gui->_textcolor : gui->_color, kTextAlignRight);
 
 	// Draw the box
 	gui->box(_x + _labelWidth, _y, _w - _labelWidth, _h, gui->_color, gui->_shadowcolor);

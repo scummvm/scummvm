@@ -27,6 +27,10 @@
 #include "graphics/surface.h"
 #include "gui/object.h"
 
+namespace Graphics {
+	class Font;
+}
+
 namespace GUI {
 
 class Dialog;
@@ -61,9 +65,18 @@ enum {
 	kCaretBlinkTime = 300
 };
 
+enum WidgetSize {
+	kDefaultWidgetSize,
+	kNormalWidgetSize,
+	kBigWidgetSize
+};
+
 enum {
 	kButtonWidth = 72,
-	kButtonHeight = 16
+	kButtonHeight = 16,
+	
+	kBigButtonWidth = 108,
+	kBigButtonHeight = 24
 };
 
 
@@ -87,6 +100,9 @@ public:
 
 	virtual int16	getAbsX() const	{ return _x + _boss->getChildX(); }
 	virtual int16	getAbsY() const	{ return _y + _boss->getChildY(); }
+	
+//	virtual void setPos(int x, int y);
+//	virtual void setSize(int w, int h);
 
 	virtual void handleMouseDown(int x, int y, int button, int clickCount) {}
 	virtual void handleMouseUp(int x, int y, int button, int clickCount) {}
@@ -131,10 +147,12 @@ protected:
 	typedef Common::String String;
 	typedef Graphics::TextAlignment TextAlignment;
 
-	String			_label;
-	TextAlignment	_align;
+	String					_label;
+	TextAlignment			_align;
+	const WidgetSize		_ws;
+	const Graphics::Font	*_font;
 public:
-	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, TextAlignment align);
+	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, TextAlignment align, WidgetSize ws = kDefaultWidgetSize);
 	void setValue(int value);
 	void setLabel(const String &label);
 	const String &getLabel() const		{ return _label; }
@@ -152,7 +170,7 @@ protected:
 	uint32	_cmd;
 	uint8	_hotkey;
 public:
-	ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
+	ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0, WidgetSize ws = kDefaultWidgetSize);
 
 	void setCmd(uint32 cmd)				{ _cmd = cmd; }
 	uint32 getCmd() const				{ return _cmd; }
@@ -170,7 +188,7 @@ class CheckboxWidget : public ButtonWidget {
 protected:
 	bool	_state;
 public:
-	CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
+	CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0, WidgetSize ws = kDefaultWidgetSize);
 
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	virtual void handleMouseEntered(int button)	{}
@@ -192,7 +210,7 @@ protected:
 	bool	_isDragging;
 	uint	_labelWidth;
 public:
-	SliderWidget(GuiObject *boss, int x, int y, int w, int h, const String &label = String::emptyString, uint labelWidth = 0, uint32 cmd = 0, uint8 hotkey = 0);
+	SliderWidget(GuiObject *boss, int x, int y, int w, int h, const String &label = String::emptyString, uint labelWidth = 0, uint32 cmd = 0, uint8 hotkey = 0, WidgetSize ws = kDefaultWidgetSize);
 	void setValue(int value)	{ _value = value; }
 	int getValue() const		{ return _value; }
 

@@ -127,6 +127,9 @@ public:
 
 	// Font
 	const Graphics::Font &getFont() const;
+	
+	// Screen surface
+	Graphics::Surface &getScreen() { return _screen; }
 
 	// Drawing primitives
 	void box(int x, int y, int width, int height, OverlayColor colorA, OverlayColor colorB);
