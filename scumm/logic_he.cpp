@@ -26,7 +26,7 @@
 
 namespace Scumm {
 
-LogicHE::LogicHE(ScummEngine *vm) : _vm(vm) {
+LogicHE::LogicHE(ScummEngine_v90he *vm) : _vm(vm) {
 	// Originally it used 0x930 and stored both floats and doubles inside
 	_userData = (float *)calloc(550, sizeof(float));
 	_userDataD = (double *)calloc(30, sizeof(double));
@@ -41,8 +41,14 @@ int LogicHE::versionID() {
 	return 1;
 }
 
-void LogicHE::processKeyStroke(int keyPressed) {
-	// TODO
+int LogicHE::getFromArray(int arg0, int idx2, int idx1) {
+	_vm->VAR(_vm->VAR_U32_ARRAY_UNK) = arg0;
+	return _vm->readArray(116, idx2, idx1);
+}
+
+void LogicHE::putInArray(int arg0, int idx2, int idx1, int val) {
+	_vm->VAR(_vm->VAR_U32_ARRAY_UNK) = arg0;
+	_vm->writeArray(116, idx2, idx1, val);
 }
 
 int32 LogicHE::dispatch(int op, int numArgs, int32 *args) {
@@ -380,9 +386,42 @@ int32 LogicHEfunshop::dispatch(int op, int numArgs, int32 *args) {
 }
 
 void LogicHEfunshop::op_1004(int32 *args) {
+	error("STUB: LogicHE::dispatch(1004, 2, %d, %d). Please tell when it happened", args[0], args[1]);
 }
 
 void LogicHEfunshop::op_1005(int32 *args) {
+	double data[8];
+	double args1, args2;
+	double temp;
+
+	for (int i = 520; i <= 526; i += 2) {
+		data[i - 520] = getFromArray(args[0], 0, i - 1);
+		data[i - 520 + 1] = getFromArray(args[0], 0, i);
+	}
+
+	args1 = args[1] * 0.01 + 1;
+	args2 = args[2] * 0.01 + 1;
+
+	for (int i = 0; i < 4; i++) {
+		data[2 * i] *= args1;
+		data[2 * i + 1] *= args2;
+	}
+	
+	for (int i = 520; i <= 526; i += 2) {
+		if (floor(data[i - 520]) + 0.5 > data[i - 520]) {
+			temp = ceil(data[i - 520]);
+		} else {
+			temp = floor(data[i - 520]);
+		}
+		putInArray(args[0], 0, i - 1, (int32)temp);
+
+		if (floor(data[i - 520 + 1]) + 0.5 > data[i - 520 + 1]) {
+			temp = ceil(data[i - 520 + 1]);
+		} else {
+			temp = floor(data[i - 520 + 1]);
+		}
+		putInArray(args[0], 0, i, (int32)temp);
+	}
 }
 
 int LogicHEfunshop::checkShape(int arg_0, int arg_4, int arg_8, int arg_C, int arg_10, int arg_14, int arg_18, int arg_1C, int arg_20, int arg_24) {

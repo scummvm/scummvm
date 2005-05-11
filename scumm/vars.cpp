@@ -292,6 +292,7 @@ void ScummEngine_v72he::setupScummVars() {
 		VAR_NUM_SPRITE_GROUPS = 105;
 		VAR_NUM_SPRITES = 106;
 		VAR_U32_VERSION = 107;
+		VAR_U32_ARRAY_UNK = 116;
 		VAR_WIZ_TCOLOR = 117;
 	}
 	if (_heversion >= 98) {
@@ -580,6 +581,7 @@ void ScummEngine_v90he::initScummVars() {
 
 	if (_heversion >= 98) {
 		VAR(VAR_U32_VERSION) = _logicHE->versionID();
+		VAR(VAR_U32_ARRAY_UNK) = 0;
 	}
 }
 

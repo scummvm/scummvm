@@ -954,6 +954,7 @@ protected:
 	byte VAR_WINDOWS_VERSION;
 	byte VAR_CURRENT_CHARSET;
 	byte VAR_U32_VERSION;
+	byte VAR_U32_ARRAY_UNK;
 	byte VAR_WIZ_TCOLOR;
 };
 
@@ -1008,9 +1009,9 @@ protected:
 struct SpriteInfo;
 struct SpriteGroup;
 
-class LogicHE;
-
 class ScummEngine_v90he : public ScummEngine_v80he {
+	friend class LogicHE;
+
 protected:
 	typedef void (ScummEngine_v90he::*OpcodeProcV90he)();
 	struct OpcodeEntryV90he {

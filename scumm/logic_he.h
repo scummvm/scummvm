@@ -29,18 +29,20 @@ class LogicHE {
 public:
 	float *_userData;
 	double *_userDataD;
-	ScummEngine *_vm;
+	ScummEngine_v90he *_vm;
 
-	LogicHE(ScummEngine *vm);
+	LogicHE(ScummEngine_v90he *vm);
 	virtual ~LogicHE();
 
 	void writeScummVar(int var, int32 value) { _vm->writeVar(var, value); }
+	int getFromArray(int arg0, int idx2, int idx1);
+	void putInArray(int arg0, int idx2, int idx1, int val);
 
 	void beforeBootScript(void) {};
 	void initOnce() {};
 	void startOfFrame() {};
 	void endOfFrame() {};
-	void processKeyStroke(int keyPressed);
+	void processKeyStroke(int keyPressed) {};
 
 	virtual int versionID();
 	virtual int32 dispatch(int op, int numArgs, int32 *args);
@@ -48,7 +50,7 @@ public:
 
 class LogicHErace : public LogicHE {
 public:
-	LogicHErace(ScummEngine *vm) : LogicHE(vm) {}
+	LogicHErace(ScummEngine_v90he *vm) : LogicHE(vm) {}
 
 	int versionID();
 	int32 dispatch(int op, int numArgs, int32 *args);
@@ -74,7 +76,7 @@ private:
 
 class LogicHEfunshop : public LogicHE {
 public:
-	LogicHEfunshop(ScummEngine *vm) : LogicHE(vm) {}
+	LogicHEfunshop(ScummEngine_v90he *vm) : LogicHE(vm) {}
 
 	int versionID();
 	int32 dispatch(int op, int numArgs, int32 *args);
