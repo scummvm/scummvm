@@ -1214,21 +1214,23 @@ void Actor::createDrawOrderList() {
 	_drawOrderList.clear();
 	for (i = 0; i < _actorsCount; i++) {
 		actor = _actors[i];
-		if (actor->disabled) continue;
-		if (actor->sceneNumber != _vm->_scene->currentSceneNumber()) continue;
+		if (actor->disabled)
+			continue;
 
-		_drawOrderList.pushBack(actor, compareFunction);
-
-		calcScreenPosition(actor);
+		if (i == 0 || actor->flags & (kFollower | kProtagonist) || actor->sceneNumber == _vm->_scene->currentSceneNumber()) {
+			_drawOrderList.pushBack(actor, compareFunction);
+			calcScreenPosition(actor);
+		}
 	}
 
 	for (i = 0; i < _objsCount; i++) {
 		obj = _objs[i];
-		if (obj->disabled) continue;
-		if (obj->sceneNumber != _vm->_scene->currentSceneNumber()) continue;
+		if (obj->disabled)
+			continue;
+		if (obj->sceneNumber != _vm->_scene->currentSceneNumber())
+			 continue;
 
 		_drawOrderList.pushBack(obj, compareFunction);
-
 		calcScreenPosition(obj);
 	}
 }
