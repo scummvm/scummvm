@@ -122,7 +122,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	}
 
 	// We (deliberately) broke HE savegame compatibility at some point.
-	if (hdr.ver < VER(50) && _heversion >= 71) {
+	if (hdr.ver < VER(50) && _heversion >= 70) {
 		warning("Unsupported version of '%s'", filename);
 		delete in;
 		return false;

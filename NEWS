@@ -27,7 +27,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
      volume using hotkeys.
    - Added support for NES version of Maniac Mansion
    - Added thumbnail support for savegames.
-   - Broke compatibility with HE savegame (HE v71 and upwards only)
+   - Broke compatibility with HE savegame (HE v70 and upwards only)
 
  Sword2:
    - Made the resource manager expire resources more intelligently.
