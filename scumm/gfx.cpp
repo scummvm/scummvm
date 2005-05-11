@@ -1412,25 +1412,27 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	//if (_vm->_NESStartStrip > 0)
 	//	stripnr -= _vm->_NESStartStrip;
 
-	while (numstrip > 0 && sx < _numStrips && x * 8 < MAX(_vm->_roomWidth, (int) vs->w)) {
+	for (int k = 0; 
+		k < numstrip && sx + k < _numStrips && (x + k) * 8 < MAX(_vm->_roomWidth, (int) vs->w);
+		++k, ++stripnr) {
 		CHECK_HEAP;
 
-		if (y < vs->tdirty[sx])
-			vs->tdirty[sx] = y;
+		if (y < vs->tdirty[sx + k])
+			vs->tdirty[sx + k] = y;
 
-		if (bottom > vs->bdirty[sx])
-			vs->bdirty[sx] = bottom;
+		if (bottom > vs->bdirty[sx + k])
+			vs->bdirty[sx + k] = bottom;
 
 		// In the case of a double buffered virtual screen, we draw to
 		// the backbuffer, otherwise to the primary surface memory.
 		if (vs->hasTwoBuffers)
-			dstPtr = vs->backBuf + y * vs->pitch + x * 8;
+			dstPtr = vs->backBuf + y * vs->pitch + (x + k) * 8;
 		else
-			dstPtr = (byte *)vs->pixels + y * vs->pitch + x * 8;
+			dstPtr = (byte *)vs->pixels + y * vs->pitch + (x + k) * 8;
 
 		if (_vm->_version == 1) {
 			if (_vm->_platform == Common::kPlatformNES) {
-				mask_ptr = getMaskBuffer(x, y, 0);
+				mask_ptr = getMaskBuffer(x + k, y, 0);
 				drawStripNES(dstPtr, mask_ptr, vs->pitch, stripnr, y, height);
 			}
 			else if (_objectMode)
@@ -1467,7 +1469,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 		CHECK_HEAP;
 		if (vs->hasTwoBuffers) {
-			byte *frontBuf = (byte *)vs->pixels + y * vs->pitch + x * 8;
+			byte *frontBuf = (byte *)vs->pixels + y * vs->pitch + (x + k) * 8;
 			if (lightsOn)
 				copy8Col(frontBuf, vs->pitch, dstPtr, height);
 			else
@@ -1480,7 +1482,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			useOrDecompress = true;
 
 		if (_vm->_version == 1) {
-			mask_ptr = getMaskBuffer(x, y, 1);
+			mask_ptr = getMaskBuffer(x + k, y, 1);
 			if (_vm->_platform == Common::kPlatformNES) {
 				drawStripNESMask(mask_ptr, stripnr, height);
 			} else {
@@ -1510,7 +1512,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			else
 				z_plane_ptr = zplane_list[1] + READ_LE_UINT16(zplane_list[1] + stripnr * 2 + 8);
 			for (i = 0; i < numzbuf; i++) {
-				mask_ptr = getMaskBuffer(x, y, i);
+				mask_ptr = getMaskBuffer(x + k, y, i);
 				if (useOrDecompress && (flag & dbAllowMaskOr))
 					decompressMaskImgOr(mask_ptr, z_plane_ptr, height);
 				else
@@ -1534,7 +1536,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 				else
 					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 8);
 
-				mask_ptr = getMaskBuffer(x, y, i);
+				mask_ptr = getMaskBuffer(x + k, y, i);
 
 				if (offs) {
 					z_plane_ptr = zplane_list[i] + offs;
@@ -1553,11 +1555,6 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 				}
 			}
 		}
-		
-		numstrip--;
-		x++;
-		sx++;
-		stripnr++;
 	}
 }
 
