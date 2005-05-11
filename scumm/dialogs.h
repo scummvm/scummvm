@@ -22,7 +22,6 @@
 #define SCUMM_DIALOGS_H
 
 #include "common/str.h"
-#include "gui/about.h"
 #include "gui/dialog.h"
 #include "gui/options.h"
 #include "gui/widget.h"

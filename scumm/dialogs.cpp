@@ -24,6 +24,7 @@
 #include "common/system.h"
 #include "common/scaler.h"
 
+#include "gui/about.h"
 #include "gui/chooser.h"
 #include "gui/newgui.h"
 #include "gui/ListWidget.h"
