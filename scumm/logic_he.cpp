@@ -41,6 +41,10 @@ int LogicHE::versionID() {
 	return 1;
 }
 
+void LogicHE::processKeyStroke(int keyPressed) {
+	// TODO
+}
+
 int32 LogicHE::dispatch(int op, int numArgs, int32 *args) {
 	char tmp[32], str[256];
 

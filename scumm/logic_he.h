@@ -40,6 +40,8 @@ public:
 	void initOnce() {};
 	void startOfFrame() {};
 	void endOfFrame() {};
+	void processKeyStroke(int keyPressed);
+
 	virtual int versionID();
 	virtual int32 dispatch(int op, int numArgs, int32 *args);
 };

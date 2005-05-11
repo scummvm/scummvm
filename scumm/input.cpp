@@ -32,6 +32,7 @@
 #include "scumm/dialogs.h"
 #include "scumm/imuse.h"
 #include "scumm/insane/insane.h"
+#include "scumm/logic_he.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 
@@ -210,6 +211,9 @@ void ScummEngine::parseEvents() {
 
 void ScummEngine::clearClickedStatus() {
 	_keyPressed = 0;
+	if (_heversion >= 98) {
+		((ScummEngine_v90he *)this)->_logicHE->processKeyStroke(_keyPressed);
+	}
 	_mouseAndKeyboardStat = 0;
 	_leftBtnPressed &= ~msClicked;
 	_rightBtnPressed &= ~msClicked;
@@ -217,6 +221,10 @@ void ScummEngine::clearClickedStatus() {
 
 void ScummEngine::processKbd(bool smushMode) {
 	int saveloadkey;
+
+	if (_heversion >= 98) {
+		((ScummEngine_v90he *)this)->_logicHE->processKeyStroke(_keyPressed);
+	}
 
 	_lastKeyHit = _keyPressed;
 	_keyPressed = 0;
