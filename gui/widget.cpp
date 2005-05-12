@@ -150,7 +150,7 @@ void StaticTextWidget::setAlign(TextAlignment align) {
 
 void StaticTextWidget::drawWidget(bool hilite) {
 	NewGui *gui = &g_gui;
-	_font->drawString(&gui->getScreen(), _label, _x, _y, _w, isEnabled() ? gui->_textcolor : gui->_color, _align);
+	gui->drawString(_font, _label, _x, _y, _w, isEnabled() ? gui->_textcolor : gui->_color, _align);
 }
 
 #pragma mark -
@@ -169,7 +169,11 @@ void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 
 void ButtonWidget::drawWidget(bool hilite) {
 	NewGui *gui = &g_gui;
-	_font->drawString(&gui->getScreen(), _label, _x, _y + (_h - (_font->getFontHeight() + 2))/2 + 1, _w,
+	// HACK: Subtracting 1 from _y isn't very nice when we don't know
+	// anything about the size of the font. But we can't use the size of
+	// the font either, because we don't know how the coordinates will be
+	// scaled.
+	gui->drawString(_font, _label, _x, _y - 1, _w,
 					!isEnabled() ? gui->_color :
 					hilite ? gui->_textcolorhi : gui->_textcolor, _align);
 }
@@ -221,7 +225,7 @@ void CheckboxWidget::drawWidget(bool hilite) {
 		gui->drawBitmap(checked_img, _x + 4, _y + 3, isEnabled() ? gui->_textcolor : gui->_color);
 
 	// Finally draw the label
-	_font->drawString(&g_gui.getScreen(), _label, _x + 20, _y + 3, _w, isEnabled() ? gui->_textcolor : gui->_color);
+	gui->drawString(_font, _label, _x + 20, _y + 3, _w, isEnabled() ? gui->_textcolor : gui->_color);
 }
 
 #pragma mark -
@@ -269,7 +273,7 @@ void SliderWidget::drawWidget(bool hilite) {
 
 	// Draw the label, if any
 	if (_labelWidth > 0)
-		_font->drawString(&g_gui.getScreen(), _label, _x, _y + 2, _labelWidth, isEnabled() ? gui->_textcolor : gui->_color, kTextAlignRight);
+		gui->drawString(_font, _label, _x, _y + 2, _labelWidth, isEnabled() ? gui->_textcolor : gui->_color, kTextAlignRight);
 
 	// Draw the box
 	gui->box(_x + _labelWidth, _y, _w - _labelWidth, _h, gui->_color, gui->_shadowcolor);

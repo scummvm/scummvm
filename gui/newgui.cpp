@@ -464,6 +464,10 @@ void NewGui::drawString(const String &s, int x, int y, int w, OverlayColor color
 	getFont().drawString(&_screen, s, x * _scaleFactor, y * _scaleFactor, w * _scaleFactor, color, align, deltax, useEllipsis);
 }
 
+void NewGui::drawString(const Graphics::Font *font, const String &s, int x, int y, int w, OverlayColor color, TextAlignment valign) {
+	font->drawString(&_screen, s, x * _scaleFactor, y * _scaleFactor, w * _scaleFactor, color, valign);
+}
+
 //
 // Draw an 8x8 bitmap at location (x,y)
 //
