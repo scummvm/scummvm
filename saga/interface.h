@@ -26,6 +26,8 @@
 #ifndef SAGA_INTERFACE_H__
 #define SAGA_INTERFACE_H__
 
+#include "common/file.h"
+
 #include "saga/sprite.h"
 #include "saga/script.h"
 
