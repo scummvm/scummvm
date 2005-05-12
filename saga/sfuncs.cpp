@@ -914,11 +914,6 @@ void Script::sfSetFrame(SCRIPTFUNC_PARAMS) {
 
 	frameRange = _vm->_actor->getActorFrameRange(actorId, frameType);
 
-	if (frameRange->frameCount <= frameOffset) {
-		frameRange = _vm->_actor->getActorFrameRange(actorId, frameType);
-
-		error("Wrong frameOffset 0x%X", frameOffset);
-	}
 	actor->frameNumber = frameRange->frameIndex + frameOffset;
 
 	if (actor->currentAction != kActionFall) {
