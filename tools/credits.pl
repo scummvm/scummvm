@@ -387,6 +387,7 @@ begin_credits("Credits");
 	add_person("", "Canadacow", "For the original MT-32 emulator");
 	add_person("Kevin Carnes", "", "For Scumm16, the basis of ScummVM's older gfx codecs");
 	add_person("", "Jezar", "For his freeverb filter implementation");
+	add_person("Ivan Dubrov", "", "For contributing the initial version of the Gobliiins engine");
 	add_person("Jim Leiterman", "", "Various info on his FM-TOWNS/Marty SCUMM ports");
 	add_person("Jimmi Th&oslash;gersen", "", "For ScummRev, and much obscure code/documentation");
 	add_person("", "Tristan", "For additional work on the original MT-32 emulator");
