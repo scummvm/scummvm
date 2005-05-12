@@ -250,7 +250,8 @@ enum ScummGameId {
 	GID_FREDDI2,
 	GID_FREDDICOVE,
 	GID_PUTTRACE,
-	GID_FUNSHOP		// Used for all three funshops
+	GID_FUNSHOP,	// Used for all three funshops
+	GID_FOOTBALL
 };
 
 struct SentenceTab {

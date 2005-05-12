@@ -351,7 +351,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformWindows, 0, 0},
 	{"mustard", "Spy Fox in Hold the Mustard", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformWindows, 0, 0},
-	{"football", "Backyard Football", GID_HEGAME, 6, 99, MDT_NONE,
+	{"football", "Backyard Football", GID_FOOTBALL, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
 
 	// Humongous Entertainment Scumm Version ?
@@ -376,7 +376,7 @@ static const ScummGameSettings scumm_settings[] = {
 
 	{"bb2demo", "Backyard Baseball 2001 (Demo)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_16BIT_COLOR, Common::kPlatformWindows, 0, 0},
-	{"footdemo", "Backyard Football 2002 (Demo)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"footdemo", "Backyard Football (Demo)", GID_FOOTBALL, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows, 0, 0},
 	{"SoccerMLS", "Backyard Soccer MLS Edition", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
@@ -1792,6 +1792,10 @@ void ScummEngine_v90he::scummInit() {
 
 		case GID_FUNSHOP:
 			_logicHE = new LogicHEfunshop(this);
+			break;
+
+		case GID_FOOTBALL:
+			_logicHE = new LogicHEfootball(this);
 			break;
 
 		default:

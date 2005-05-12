@@ -52,6 +52,7 @@ void LogicHE::putInArray(int arg0, int idx2, int idx1, int val) {
 }
 
 int32 LogicHE::dispatch(int op, int numArgs, int32 *args) {
+#if 1
 	char tmp[32], str[256];
 
 	if (numArgs > 0)
@@ -68,6 +69,14 @@ int32 LogicHE::dispatch(int op, int numArgs, int32 *args) {
 	strncat(str, "])", 256);
 
 	debug(0, str);
+#else
+	// Used for parallel trace utility
+	for (int i = 0; i < numArgs; i++)
+		debug(0, "args[%d] = %d;", i, args[i]);
+
+	debug(0, "dispatch(%d, %d, args);", op, numArgs);
+
+#endif
 
 	return 1;
 }
@@ -415,7 +424,7 @@ void LogicHEfunshop::op_1005(int32 *args) {
 		}
 		putInArray(args[0], 0, i - 1, (int32)temp);
 
-		if (floor(data[i - 520 + 1]) + 0.5 > data[i - 520 + 1]) {
+		if (floor(data[i - 520 + 1]) + 0.5 <= data[i - 520 + 1]) {
 			temp = ceil(data[i - 520 + 1]);
 		} else {
 			temp = floor(data[i - 520 + 1]);
@@ -427,5 +436,88 @@ void LogicHEfunshop::op_1005(int32 *args) {
 int LogicHEfunshop::checkShape(int arg_0, int arg_4, int arg_8, int arg_C, int arg_10, int arg_14, int arg_18, int arg_1C, int arg_20, int arg_24) {
 	return 1;
 }
+
+/***********************
+ * Backyard Football
+ * Backyard Football Demo
+ *
+ */
+
+int LogicHEfootball::versionID() {
+	return 1;
+}
+
+int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
+	int res = 0;
+
+	switch (op) {
+	case 1006:
+		res = op_1006(args);
+		break;
+
+	case 1010:
+		res = op_1010(args);
+		break;
+
+	case 1022:
+		res = op_1022(args);
+		break;
+
+	default:
+		LogicHE::dispatch(op, numArgs, args);
+		break;
+
+	}
+
+	return res;
+}
+
+int LogicHEfootball::op_1006(int32 *args) {
+	double res;
+
+	res = (1.0 - args[1] * 2.9411764e-4 * 5.3050399e-2) * args[0] * 1.2360656e-1 + 
+		args[1] * 1.1764706e-2 + 46;
+	writeScummVar(108, (int32)res);
+
+	res = 640.0 - args[2] * 1.2360656e-1 - args[1] * 1.1588235e-1 - 26;
+	writeScummVar(109, (int32)res);
+
+	return 1;
+}
+
+int LogicHEfootball::op_1010(int32 *args) {
+	double a1 = (640.0 - (double)args[1] - 26.0) * 8.6294413;
+	double res;
+
+	res = ((double)args[0] - 46 - a1 * 1.1764706e-2) / 
+		((1.0 - a1 * 2.9411764e-4 * 5.3050399e-2) * 1.2360656e-1);
+	writeScummVar(108, (int32)res);
+
+	writeScummVar(109, (int32)a1);
+
+	return 1;
+}
+
+int LogicHEfootball::op_1022(int32 *args) {
+	double res;
+	double var10 = args[4] - args[1]; // 25
+	double var8 = args[5] - args[2]; // 0
+	double var6 = args[3] - args[0]; // -2578
+
+	res = sqrt(var8 * var8 + var6 * var6 + var10 * var10); // 2.5781212
+
+	if (res >= (double)args[6]) {
+		var8 = (double)args[6] * var8 / res;
+		var10 = (double)args[6] * var10 / res;
+		res = (double)args[6] * var6 / res;
+	}
+
+	writeScummVar(108, (int32)res);
+	writeScummVar(109, (int32)var10);
+	writeScummVar(110, (int32)var8);
+	
+	return 1;
+}
+
 
 } // End of namespace Scumm

@@ -87,4 +87,17 @@ private:
 	int checkShape(int arg_0, int arg_4, int arg_8, int arg_C, int arg_10, int arg_14, int arg_18, int arg_1C, int arg_20, int arg_24);
 };
 
+class LogicHEfootball : public LogicHE {
+public:
+	LogicHEfootball(ScummEngine_v90he *vm) : LogicHE(vm) {}
+
+	int versionID();
+	int32 dispatch(int op, int numArgs, int32 *args);
+
+private:
+	int op_1006(int32 *args);
+	int op_1010(int32 *args);
+	int op_1022(int32 *args);
+};
+
 } // End of namespace Scumm
