@@ -81,19 +81,19 @@ int32 Logic::fnSetSession(int32 *params) {
 
 int32 Logic::fnBackSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	setSpriteStatus(params[0], BACK_SPRITE);
+	_router->setSpriteStatus((ObjectGraphic *) decodePtr(params[0]), BACK_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnSortSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	setSpriteStatus(params[0], SORT_SPRITE);
+	_router->setSpriteStatus((ObjectGraphic *) decodePtr(params[0]), SORT_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnForeSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	setSpriteStatus(params[0], FORE_SPRITE);
+	_router->setSpriteStatus((ObjectGraphic *) decodePtr(params[0]), FORE_SPRITE);
 	return IR_CONT;
 }
 
@@ -106,9 +106,7 @@ int32 Logic::fnRegisterMouse(int32 *params) {
 	// params:	0 pointer to ObjectMouse or 0 for no write to mouse
 	//		  list
 
-	ObjectMouse *ob_mouse = (ObjectMouse *) decodePtr(params[0]);
-
-	_vm->_mouse->registerMouse(ob_mouse, NULL);
+	_vm->_mouse->registerMouse((ObjectMouse *) decodePtr(params[0]), NULL);
 	return IR_CONT;
 }
 
@@ -117,8 +115,11 @@ int32 Logic::fnAnim(int32 *params) {
 	//		1 pointer to object's graphic structure
 	//		2 resource id of animation file
 
-	// 0 means normal forward anim
-	return animate(params, false);
+	// Normal forward animation
+	return _router->doAnimate(
+		(ObjectLogic *) decodePtr(params[0]),
+		(ObjectGraphic *) decodePtr(params[1]),
+		params[2], false);
 }
 
 int32 Logic::fnRandom(int32 *params) {
@@ -324,8 +325,13 @@ int32 Logic::fnMegaTableAnim(int32 *params) {
 	//		2 pointer to object's mega structure
 	//		3 pointer to animation table
 
-	// 0 means normal forward anim
-	return megaTableAnimate(params, false);
+	// Normal forward anim
+	return _router->megaTableAnimate(
+		(ObjectLogic *) decodePtr(params[0]),
+		(ObjectGraphic *) decodePtr(params[1]),
+		(ObjectMega *) decodePtr(params[2]),
+		(uint32 *) decodePtr(params[3]),
+		false);
 }
 
 int32 Logic::fnAddMenuObject(int32 *params) {
@@ -428,7 +434,7 @@ int32 Logic::fnRegisterFrame(int32 *params) {
 
 int32 Logic::fnNoSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	setSpriteStatus(params[0], NO_SPRITE);
+	_router->setSpriteStatus((ObjectGraphic *) decodePtr(params[0]), NO_SPRITE);
 	return IR_CONT;
 }
 
@@ -1663,8 +1669,13 @@ int32 Logic::fnReverseMegaTableAnim(int32 *params) {
 	//		2 pointer to object's mega structure
 	//		3 pointer to animation table
 
-	// 1 means reverse anim
-	return megaTableAnimate(params, true);
+	// Reverse anim
+	return _router->megaTableAnimate(
+		(ObjectLogic *) decodePtr(params[0]),
+		(ObjectGraphic *) decodePtr(params[1]),
+		(ObjectMega *) decodePtr(params[2]),
+		(uint32 *) decodePtr(params[3]),
+		true);
 }
 
 int32 Logic::fnReverseAnim(int32 *params) {
@@ -1672,8 +1683,11 @@ int32 Logic::fnReverseAnim(int32 *params) {
 	//		1 pointer to object's graphic structure
 	//		2 resource id of animation file
 
-	// 1 means reverse anim
-	return animate(params, true);
+	// Reverse anim
+	return _router->doAnimate(
+		(ObjectLogic *) decodePtr(params[0]),
+		(ObjectGraphic *) decodePtr(params[1]),
+		params[2], true);
 }
 
 /**
@@ -1731,25 +1745,25 @@ int32 Logic::fnSetStandbyCoords(int32 *params) {
 
 int32 Logic::fnBackPar0Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	setSpriteStatus(params[0], BGP0_SPRITE);
+	_router->setSpriteStatus((ObjectGraphic *) decodePtr(params[0]), BGP0_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnBackPar1Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	setSpriteStatus(params[0], BGP1_SPRITE);
+	_router->setSpriteStatus((ObjectGraphic *) decodePtr(params[0]), BGP1_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnForePar0Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	setSpriteStatus(params[0], FGP0_SPRITE);
+	_router->setSpriteStatus((ObjectGraphic *) decodePtr(params[0]), FGP0_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnForePar1Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	setSpriteStatus(params[0], FGP1_SPRITE);
+	_router->setSpriteStatus((ObjectGraphic *) decodePtr(params[0]), FGP1_SPRITE);
 	return IR_CONT;
 }
 
@@ -2187,13 +2201,13 @@ int32 Logic::fnPlaySequence(int32 *params) {
 
 int32 Logic::fnShadedSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	setSpriteShading(params[0], SHADED_SPRITE);
+	_router->setSpriteShading((ObjectGraphic *) decodePtr(params[0]), SHADED_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnUnshadedSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	setSpriteShading(params[0], UNSHADED_SPRITE);
+	_router->setSpriteShading((ObjectGraphic *) decodePtr(params[0]), UNSHADED_SPRITE);
 	return IR_CONT;
 }
 

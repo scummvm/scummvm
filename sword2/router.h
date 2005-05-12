@@ -231,6 +231,14 @@ public:
 	void setStandbyCoords(int16 x, int16 y, uint8 dir);
 	int whatTarget(int startX, int startY, int destX, int destY);
 
+	// Sprites
+	void setSpriteStatus(ObjectGraphic *ob_graph, uint32 type);
+	void setSpriteShading(ObjectGraphic *ob_graph, uint32 type);
+
+	// Animation
+	int doAnimate(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, int32 animRes, bool reverse);
+	int megaTableAnimate(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *ob_mega, uint32 *animTable, bool reverse);
+
 	// Walking
 	int doWalk(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, int16 target_x, int16 target_y, uint8 target_dir);
 	int walkToAnim(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, uint32 animRes);

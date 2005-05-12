@@ -34,21 +34,15 @@
 #include "sword2/logic.h"
 #include "sword2/maketext.h"
 #include "sword2/resman.h"
+#include "sword2/router.h"
 #include "sword2/sound.h"
 #include "sword2/driver/animation.h"
 
 namespace Sword2 {
 
-int32 Logic::animate(int32 *params, bool reverse) {
-	// params:	0 pointer to object's logic structure
-	//		1 pointer to object's graphic structure
-	//		2 resource id of animation file
-
- 	ObjectLogic *ob_logic = (ObjectLogic *) decodePtr(params[0]);
- 	ObjectGraphic *ob_graphic = (ObjectGraphic *) decodePtr(params[1]);
+int Router::doAnimate(ObjectLogic *ob_logic, ObjectGraphic *ob_graphic, int32 animRes, bool reverse) {
 	byte *anim_file;
 	AnimHeader *anim_head;
- 	int32 res = params[2];
 
 	if (ob_logic->looping == 0) {
 		StandardHeader *head;
@@ -61,40 +55,38 @@ int32 Logic::animate(int32 *params, bool reverse) {
 		// 'testing_routines' object in George's Player Character
 		// section of linc
 
-		if (_scriptVars[SYSTEM_TESTING_ANIMS]) {
-			// if the resource number is within range & it's not
-			// a null resource
-
-			if (_vm->_resman->checkValid(res)) {
-				// Open the resource. Can close it immediately.
-				// We've got a pointer to the header.
-				head = (StandardHeader *) _vm->_resman->openResource(res);
-				_vm->_resman->closeResource(res);
-
-				// if it's not an animation file
-				if (head->fileType != ANIMATION_FILE) {
-					// switch off the sprite
-					// don't animate - just continue
-					// script next cycle
-					fnNoSprite(params + 1);
-					return IR_STOP;
-				}
-			} else {
+		if (Logic::_scriptVars[SYSTEM_TESTING_ANIMS]) {
+			if (!_vm->_resman->checkValid(animRes)) {
 				// Not a valid resource number. Switch off
 				// the sprite. Don't animate - just continue
 				// script next cycle.
-				fnNoSprite(params + 1);
+				setSpriteStatus(ob_graphic, NO_SPRITE);
 				return IR_STOP;
 			}
 
+			head = (StandardHeader *) _vm->_resman->openResource(animRes);
+
+			// if it's not an animation file
+			if (head->fileType != ANIMATION_FILE) {
+				_vm->_resman->closeResource(animRes);
+
+				// switch off the sprite
+				// don't animate - just continue
+				// script next cycle
+				setSpriteStatus(ob_graphic, NO_SPRITE);
+				return IR_STOP;
+			}
+
+			_vm->_resman->closeResource(animRes);
+
 			// switch on the sprite
-			fnSortSprite(params + 1);
+			setSpriteStatus(ob_graphic, SORT_SPRITE);
 		}
 
-		assert(res);
+		assert(animRes);
 
 		// open anim file
-		anim_file = _vm->_resman->openResource(res);
+		anim_file = _vm->_resman->openResource(animRes);
 
 		head = (StandardHeader *) anim_file;
 		assert(head->fileType == ANIMATION_FILE);
@@ -102,17 +94,17 @@ int32 Logic::animate(int32 *params, bool reverse) {
 		// point to anim header
 		anim_head = _vm->fetchAnimHeader(anim_file);
 
-		// now running an anim, looping back to this 'FN' call again
+		// now running an anim, looping back to this call again
 		ob_logic->looping = 1;
-		ob_graphic->anim_resource = res;
+		ob_graphic->anim_resource = animRes;
 
 		if (reverse)
 			ob_graphic->anim_pc = anim_head->noAnimFrames - 1;
 		else
 			ob_graphic->anim_pc = 0;
- 	} else if (getSync() != -1) {
+	} else if (_vm->_logic->getSync() != -1) {
 		// We've received a sync - return to script immediately
-		debug(5, "**sync stopped %d**", _scriptVars[ID]);
+		debug(5, "**sync stopped %d**", Logic::_scriptVars[ID]);
 
 		// If sync received, anim finishes right now (remaining on
 		// last frame). Quit animation, but continue script.
@@ -138,7 +130,7 @@ int32 Logic::animate(int32 *params, bool reverse) {
 		if (ob_graphic->anim_pc == 0)
 			ob_logic->looping = 0;
 	} else {
-		if (ob_graphic->anim_pc == (int32) (anim_head->noAnimFrames - 1))
+		if (ob_graphic->anim_pc == anim_head->noAnimFrames - 1)
 			ob_logic->looping = 0;
 	}
 
@@ -149,49 +141,30 @@ int32 Logic::animate(int32 *params, bool reverse) {
 	return ob_logic->looping ? IR_REPEAT : IR_STOP;
 }
 
-int32 Logic::megaTableAnimate(int32 *params, bool reverse) {
-	// params:	0 pointer to object's logic structure
-	//		1 pointer to object's graphic structure
-	//		2 pointer to object's mega structure
-	//		3 pointer to animation table
-
-	int32 pars[3];
-
-	// Set up the parameters for animate().
-
-	pars[0] = params[0];
-	pars[1] = params[1];
+int Router::megaTableAnimate(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *ob_mega, uint32 *animTable, bool reverse) {
+	int32 animRes = 0;
 
 	// If this is the start of the anim, read the anim table to get the
 	// appropriate anim resource
 
- 	ObjectLogic *ob_logic = (ObjectLogic *) decodePtr(params[0]);
-
 	if (ob_logic->looping == 0) {
-	 	ObjectMega *ob_mega = (ObjectMega *) decodePtr(params[2]);
-		uint32 *anim_table = (uint32 *) decodePtr(params[3]);
-
-		// appropriate anim resource is in 'table[direction]'
-		pars[2] = anim_table[ob_mega->current_dir];
+		// Appropriate anim resource is in 'table[direction]'
+		animRes = animTable[ob_mega->current_dir];
 	}
 
-	return animate(pars, reverse);
+	return doAnimate(ob_logic, ob_graph, animRes, reverse);
 }
 
-void Logic::setSpriteStatus(uint32 sprite, uint32 type) {
-	ObjectGraphic *ob_graphic = (ObjectGraphic *) decodePtr(sprite);
-
+void Router::setSpriteStatus(ObjectGraphic *ob_graph, uint32 type) {
 	// Remove the previous status, but don't affect the shading upper-word
-	ob_graphic->type = (ob_graphic->type & 0xffff0000) | type;
+	ob_graph->type = (ob_graph->type & 0xffff0000) | type;
 }
 
-void Logic::setSpriteShading(uint32 sprite, uint32 type) {
-	ObjectGraphic *ob_graphic = (ObjectGraphic *) decodePtr(sprite);
-
+void Router::setSpriteShading(ObjectGraphic *ob_graph, uint32 type) {
 	// Remove the previous shading, but don't affect the status lower-word.
-	// Note that drivers may still shade mega frames automatically, even
-	// when not sent 'RDSPR_SHADOW'.
-	ob_graphic->type = (ob_graphic->type & 0x0000ffff) | type;
+	// Note that mega frames may still be shaded automatically, even when
+	// not sent 'RDSPR_SHADOW'.
+	ob_graph->type = (ob_graph->type & 0x0000ffff) | type;
 }
 
 void Logic::createSequenceSpeech(MovieTextObject *sequenceText[]) {

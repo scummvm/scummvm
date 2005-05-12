@@ -77,12 +77,6 @@ private:
 	uint32 _smackerLeadIn;
 	uint32 _smackerLeadOut;
 
-	int32 animate(int32 *params, bool reverse);
-	int32 megaTableAnimate(int32 *params, bool reverse);
-
-	void setSpriteStatus(uint32 sprite, uint32 type);
-	void setSpriteShading(uint32 sprite, uint32 type);
-
 	// keeps count of number of text lines to disaply during the sequence
 	uint32 _sequenceTextLines;
 
