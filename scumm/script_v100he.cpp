@@ -1101,11 +1101,10 @@ void ScummEngine_v100he::o100_resourceRoutines() {
 		// Heap related
 		break;
 	case 136:
-		// Queue loading
 		if (_heResType == rtScript && _heResId >= _numGlobalScripts)
 			break;
 
-		ensureResourceLoaded(_heResType, _heResId);
+		//queueLoadResource(_heResType, _heResId);
 		break;
 	case 137:
 		if (_heResType == rtScript && _heResId >= _numGlobalScripts)
@@ -2229,7 +2228,7 @@ void ScummEngine_v100he::o100_isResourceLoaded() {
 		error("o100_isResourceLoaded: default case %d", subOp);
 	}
 
-	push (res.isResourceLoaded(type, idx) ? 100 : 0);
+	push(100);
 }
 
 void ScummEngine_v100he::o100_getResourceSize() {

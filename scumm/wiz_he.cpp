@@ -982,8 +982,7 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 
 	const uint8 *xmap = NULL;
 	if (xmapNum) {
-		byte *xmapPtr = getResourceAddress(rtImage, xmapNum);
-		xmap = findResourceData(MKID('XMAP'), xmapPtr);
+		// TODO: Handle 'XMAP' data for shadows
 	}
 
 	uint8 *dataPtr = getResourceAddress(rtImage, resNum);
@@ -1062,7 +1061,6 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 		}
 	}
 
-	// XXX handle 'XMAP' data
 	if (xmap) {
 		palPtr = xmap;
 	}

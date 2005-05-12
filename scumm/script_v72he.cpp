@@ -2135,7 +2135,7 @@ void ScummEngine_v72he::o72_isResourceLoaded() {
 		error("o72_isResourceLoaded: default case %d", subOp);
 	}
 
-	push (res.isResourceLoaded(type, idx) ? 100 : 0);
+	push(100);
 }
 
 void ScummEngine_v72he::o72_readINI() {

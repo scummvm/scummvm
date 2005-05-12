@@ -603,31 +603,26 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 			break;
 		}
 	case 120:
-		// Queue load script
 		resid = pop();
 		if (resid >= _numGlobalScripts)
 			break;
-		ensureResourceLoaded(rtScript, resid);
+		//queueLoadResource(rtScript, resid);
 		break;
 	case 121:
-		// Queue load sound
 		resid = pop();
-		ensureResourceLoaded(rtSound, resid);
+		//queueLoadResource(rtSound, resid);
 		break;
 	case 122:
-		// Queue load costume
 		resid = pop();
-		ensureResourceLoaded(rtCostume, resid);
+		//queueLoadResource(rtCostume, resid);
 		break;
 	case 123:
-		// Queue load room image
 		resid = pop();
-		ensureResourceLoaded(rtRoomImage, resid);
+		//queueLoadResource(rtRoomImage, resid);
 		break;
 	case 203:
-		// Queue load image
 		resid = pop();
-		ensureResourceLoaded(rtImage, resid);
+		//queueLoadResource(rtImage, resid);
 		break;
 	case 159:
 		resid = pop();
