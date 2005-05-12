@@ -250,7 +250,7 @@ int Router::walkToTalkToMega(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, Obj
 	// If this is the start of the walk, calculate the route.
 
 	if (!ob_logic->looping)	{
-		StandardHeader *head = (StandardHeader *) _vm->_resman->openResource(megaId);
+		StandardHeader *head = (StandardHeader *)_vm->_resman->openResource(megaId);
 
 		assert(head->fileType == GAME_OBJECT);
 
@@ -258,7 +258,7 @@ int Router::walkToTalkToMega(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, Obj
 		// call, and will set _engineMega to the ObjectMega of mega we
 		// want to route to.
 
-		char *raw_script_ad = (char *) head;
+		char *raw_script_ad = (char *)head;
 		uint32 null_pc = 3;
 
 		_vm->_logic->runScript(raw_script_ad, raw_script_ad, &null_pc);
@@ -344,7 +344,7 @@ int Router::faceMega(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega 
 	// If this is the start of the walk, decide where to walk to.
 
 	if (!ob_logic->looping) {
-		StandardHeader *head = (StandardHeader *) _vm->_resman->openResource(megaId);
+		StandardHeader *head = (StandardHeader *)_vm->_resman->openResource(megaId);
 
 		assert(head->fileType == GAME_OBJECT);
 
@@ -352,7 +352,7 @@ int Router::faceMega(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega 
 		// call, and will set _engineMega to the ObjectMega of mega we
 		// want to turn to face.
 
-		char *raw_script_ad = (char *) head;
+		char *raw_script_ad = (char *)head;
 		uint32 null_pc = 3;
 
 		_vm->_logic->runScript(raw_script_ad, raw_script_ad, &null_pc);

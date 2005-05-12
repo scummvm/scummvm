@@ -423,9 +423,9 @@ int Sound::readBuffer(int16 *buffer, const int numSamples) {
 
 	if (!_mixBuffer || numSamples > _mixBufferLen) {
 		if (_mixBuffer)
-			_mixBuffer = (int16 *) realloc(_mixBuffer, 2 * numSamples);
+			_mixBuffer = (int16 *)realloc(_mixBuffer, 2 * numSamples);
 		else
-			_mixBuffer = (int16 *) malloc(2 * numSamples);
+			_mixBuffer = (int16 *)malloc(2 * numSamples);
 
 		_mixBufferLen = numSamples;
 	}
@@ -724,14 +724,14 @@ uint32 Sound::preFetchCompSpeech(uint32 speechId, uint16 **buf) {
 
 	uint32 bufferSize = 2 * numSamples;
 
-	*buf = (uint16 *) malloc(bufferSize);
+	*buf = (uint16 *)malloc(bufferSize);
 	if (!*buf) {
 		delete input;
 		fh->file->close();
 		return 0;
 	}
 
-	uint32 readSamples = input->readBuffer((int16 *) *buf, numSamples);
+	uint32 readSamples = input->readBuffer((int16 *)*buf, numSamples);
 
 	fh->file->close();
 	delete input;

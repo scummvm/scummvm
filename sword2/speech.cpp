@@ -87,7 +87,7 @@ void Logic::locateTalker(int32 *params) {
 
 	if (cdt_entry->frameType & FRAME_OFFSET) {
 		// The frame has offsets, i.e. it's a scalable mega frame
-		ObjectMega *ob_mega = (ObjectMega *) decodePtr(params[S_OB_MEGA]);
+		ObjectMega *ob_mega = (ObjectMega *)decodePtr(params[S_OB_MEGA]);
 
 		// Calculate scale at which to print the sprite, based on feet
 		// y-coord and scaling constants (NB. 'scale' is actually
@@ -158,7 +158,7 @@ void Logic::formText(int32 *params) {
 		return;
 	}
 
-	ObjectSpeech *ob_speech = (ObjectSpeech *) decodePtr(params[S_OB_SPEECH]);
+	ObjectSpeech *ob_speech = (ObjectSpeech *)decodePtr(params[S_OB_SPEECH]);
 
 	// Establish the max width allowed for this text sprite.
 	uint32 textWidth = ob_speech->width ? ob_speech->width : 400;
@@ -181,7 +181,7 @@ void Logic::formText(int32 *params) {
 	_vm->_resman->closeResource(text_res);
 
 	// Set speech duration, in case not using a wav.
-	_speechTime = strlen((char *) text) + 30;
+	_speechTime = strlen((char *)text) + 30;
 }
 
 /**

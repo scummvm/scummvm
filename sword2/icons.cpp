@@ -73,7 +73,7 @@ void Mouse::buildMenu() {
 	// register all carried menu objects.
 
 	uint32 null_pc = 0;
-	char *menuScript = (char *) _vm->_resman->openResource(MENU_MASTER_OBJECT);
+	char *menuScript = (char *)_vm->_resman->openResource(MENU_MASTER_OBJECT);
 	_vm->_logic->runScript(menuScript, menuScript, &null_pc);
 	_vm->_resman->closeResource(MENU_MASTER_OBJECT);
 

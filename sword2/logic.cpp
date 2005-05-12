@@ -63,10 +63,10 @@ int Logic::processSession() {
 		uint32 ret, script;
 		char *raw_script_ad;
 
-		StandardHeader *head = (StandardHeader *) _vm->_resman->openResource(run_list);
+		StandardHeader *head = (StandardHeader *)_vm->_resman->openResource(run_list);
 		assert(head->fileType == RUN_LIST);
 
-		uint32 *game_object_list = (uint32 *) (head + 1);
+		uint32 *game_object_list = (uint32 *)(head + 1);
 
 		// read the next id
 		uint id = game_object_list[_pc++];
@@ -79,10 +79,10 @@ int Logic::processSession() {
 			return 0;
 		}
 
-		head = (StandardHeader *) _vm->_resman->openResource(_scriptVars[ID]);
+		head = (StandardHeader *)_vm->_resman->openResource(_scriptVars[ID]);
 		assert(head->fileType == GAME_OBJECT);
 
-		_curObjectHub = (ObjectHub *) (head + 1);
+		_curObjectHub = (ObjectHub *)(head + 1);
 
 		debug(5, "Level %d id(%d) pc(%d)",
 			LEVEL,
@@ -109,18 +109,18 @@ int Logic::processSession() {
 				// This is the script data. Script and data
 				// object are the same.
 
-				raw_script_ad = (char *) head;
+				raw_script_ad = (char *)head;
 
 				ret = runScript(raw_script_ad, raw_script_ad, &_curObjectHub->script_pc[LEVEL]);
 			} else {
 				// We're running the script of another game
 				// object - get our data object address.
 
-				StandardHeader *far_head = (StandardHeader *) _vm->_resman->openResource(script / SIZE);
+				StandardHeader *far_head = (StandardHeader *)_vm->_resman->openResource(script / SIZE);
 				assert(far_head->fileType == GAME_OBJECT || far_head->fileType == SCREEN_MANAGER);
 
-				raw_script_ad = (char *) far_head;
-				char *raw_data_ad = (char *) head;
+				raw_script_ad = (char *)far_head;
+				char *raw_data_ad = (char *)head;
 
 				ret = runScript(raw_script_ad, raw_data_ad, &_curObjectHub->script_pc[LEVEL]);
 

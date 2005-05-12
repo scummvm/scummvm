@@ -205,7 +205,7 @@ void Sound::queueFx(int32 res, int32 type, int32 delay, int32 volume, int32 pan)
 	for (int i = 0; i < FXQ_LENGTH; i++) {
 		if (!_fxQueue[i].resource) {
 			byte *data = _vm->_resman->openResource(res);
-			StandardHeader *header = (StandardHeader *) data;
+			StandardHeader *header = (StandardHeader *)data;
 
 			assert(header->fileType == WAV_FILE);
 

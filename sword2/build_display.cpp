@@ -52,11 +52,11 @@ Screen::Screen(Sword2Engine *vm, int16 width, int16 height) {
 	if ((width % CELLWIDE) || (height % CELLDEEP))
 		error("Bad cell size");
 
-	_dirtyGrid = (byte *) calloc(_gridWide, _gridDeep);
+	_dirtyGrid = (byte *)calloc(_gridWide, _gridDeep);
 	if (!_dirtyGrid)
 		error("Could not initialise dirty grid");
 
-	_buffer = (byte *) malloc(width * height);
+	_buffer = (byte *)malloc(width * height);
 	if (!_buffer)
 		error("Could not initialise display");
 
@@ -116,7 +116,7 @@ void Screen::buildDisplay() {
 	startRenderCycle();
 
 	byte *file = _vm->_resman->openResource(_thisScreen.background_layer_id);
-	MultiScreenHeader *screenLayerTable = (MultiScreenHeader *) (file + sizeof(StandardHeader));
+	MultiScreenHeader *screenLayerTable = (MultiScreenHeader *)(file + sizeof(StandardHeader));
 
 	// Render at least one frame, but if the screen is scrolling, and if
 	// there is time left, we will render extra frames to smooth out the
@@ -199,7 +199,7 @@ void Screen::displayMsg(byte *text, int time) {
 	clearScene();
 
 	byte *text_spr = _vm->_fontRenderer->makeTextSprite(text, 640, 187, _vm->_speechFontId);
-	FrameHeader *frame = (FrameHeader *) text_spr;
+	FrameHeader *frame = (FrameHeader *)text_spr;
 
 	SpriteInfo spriteInfo;
 
@@ -404,7 +404,7 @@ void Screen::processImage(BuildUnit *build_unit) {
 			spriteType |= RDSPR_RLE16;
 			// points to just after last cdt_entry, ie.
 			// start of colour table
-			colTablePtr = (byte *) (anim_head + 1) + anim_head->noAnimFrames * sizeof(CdtEntry);
+			colTablePtr = (byte *)(anim_head + 1) + anim_head->noAnimFrames * sizeof(CdtEntry);
 			break;
 		}
 	}
@@ -426,7 +426,7 @@ void Screen::processImage(BuildUnit *build_unit) {
 	spriteInfo.type = spriteType;
 	spriteInfo.blend = anim_head->blend;
 	// points to just after frame header, ie. start of sprite data
-	spriteInfo.data = (byte *) (frame_head + 1);
+	spriteInfo.data = (byte *)(frame_head + 1);
 	spriteInfo.colourTable	= colTablePtr;
 
 	// check for largest layer for debug info
@@ -719,7 +719,7 @@ void Screen::rollCredits() {
 			palette[i * 4 + 3] = 0;
 		}
 
-		logoData = (byte *) malloc(logoWidth * logoHeight);
+		logoData = (byte *)malloc(logoWidth * logoHeight);
 
 		f.read(logoData, logoWidth * logoHeight);
 		f.close();
@@ -890,10 +890,10 @@ void Screen::rollCredits() {
 
 				if (!creditsLines[i].sprite) {
 					debug(2, "Creating sprite '%s'", creditsLines[i].str);
-					creditsLines[i].sprite = _vm->_fontRenderer->makeTextSprite((byte *) creditsLines[i].str, 600, 14, _vm->_speechFontId, 0);
+					creditsLines[i].sprite = _vm->_fontRenderer->makeTextSprite((byte *)creditsLines[i].str, 600, 14, _vm->_speechFontId, 0);
 				}
 
-				FrameHeader *frame = (FrameHeader *) creditsLines[i].sprite;
+				FrameHeader *frame = (FrameHeader *)creditsLines[i].sprite;
 
 				spriteInfo.y = creditsLines[i].top - scrollPos;
 				spriteInfo.w = frame->width;
@@ -1020,7 +1020,7 @@ void Screen::splashScreen() {
 	barSprite.type = RDSPR_RLE256FAST | RDSPR_TRANS;
 	barSprite.blend = 0;
 	barSprite.colourTable = 0;
-	barSprite.data = (byte *) (frame + 1);
+	barSprite.data = (byte *)(frame + 1);
 
 	drawSprite(&barSprite);
 
@@ -1029,7 +1029,7 @@ void Screen::splashScreen() {
 
 	for (int i = 0; i < animHead->noAnimFrames; i++) {
 		frame = _vm->fetchFrameHeader(loadingBar, i);
-		barSprite.data = (byte *) (frame + 1);
+		barSprite.data = (byte *)(frame + 1);
 		drawSprite(&barSprite);
 		updateDisplay();
 		_vm->_system->delayMillis(30);

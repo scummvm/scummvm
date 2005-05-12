@@ -81,7 +81,7 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 	size = file.size();
 
 	// Get some space for the incoming resource file - soon to be trashed
-	temp = (byte *) malloc(size);
+	temp = (byte *)malloc(size);
 
 	if (file.read(temp, size) != size) {
 		file.close();
@@ -134,7 +134,7 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 	_totalResFiles = size / 4;
 
 	// Table seems ok so malloc some space
-	_resConvTable = (uint16 *) malloc(size);
+	_resConvTable = (uint16 *)malloc(size);
 
 	for (i = 0; i < size / 2; i++)
 		_resConvTable[i] = file.readUint16LE();
@@ -163,7 +163,7 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 
 	for (i = 0; i < _totalClusters; i++) {
 		for (j = 0; j < _totalClusters; j++) {
-			if (scumm_stricmp((char *) cdInf[j].clusterName, _resFiles[i].fileName) == 0)
+			if (scumm_stricmp((char *)cdInf[j].clusterName, _resFiles[i].fileName) == 0)
 				break;
 		}
 
@@ -179,7 +179,7 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 	for (i = 0; i < _totalClusters; i++)
 		debug(2, "filename of cluster %d: -%s", i, _resFiles[i].fileName);
 
-	_resList = (Resource *) malloc(_totalResFiles * sizeof(Resource));
+	_resList = (Resource *)malloc(_totalResFiles * sizeof(Resource));
 
 	for (i = 0; i < _totalResFiles; i++) {
 		_resList[i].ptr = NULL;
@@ -208,7 +208,7 @@ ResourceManager::~ResourceManager() {
 
 void convertEndian(byte *file, uint32 len) {
 	int i;
-	StandardHeader *hdr = (StandardHeader *) file;
+	StandardHeader *hdr = (StandardHeader *)file;
 	
 	file += sizeof(StandardHeader);
 
@@ -217,7 +217,7 @@ void convertEndian(byte *file, uint32 len) {
 
 	switch (hdr->fileType) {
 	case ANIMATION_FILE: {
-		AnimHeader *animHead = (AnimHeader *) file;
+		AnimHeader *animHead = (AnimHeader *)file;
 
 		SWAP16(animHead->noAnimFrames);
 		SWAP16(animHead->feetStartX);
@@ -226,13 +226,13 @@ void convertEndian(byte *file, uint32 len) {
 		SWAP16(animHead->feetEndY);
 		SWAP16(animHead->blend);
 
-		CdtEntry *cdtEntry = (CdtEntry *) (file + sizeof(AnimHeader));
+		CdtEntry *cdtEntry = (CdtEntry *)(file + sizeof(AnimHeader));
 		for (i = 0; i < animHead->noAnimFrames; i++, cdtEntry++) {
 			SWAP16(cdtEntry->x);
 			SWAP16(cdtEntry->y);
 			SWAP32(cdtEntry->frameOffset);
 
-			FrameHeader *frameHeader = (FrameHeader *) (file + cdtEntry->frameOffset);
+			FrameHeader *frameHeader = (FrameHeader *)(file + cdtEntry->frameOffset);
 			// Quick trick to prevent us from incorrectly applying the endian
 			// fixes multiple times. This assumes that frames are less than 1 MB
 			// and have height/width less than 4096.
@@ -247,7 +247,7 @@ void convertEndian(byte *file, uint32 len) {
 		break;
 	}
 	case SCREEN_FILE: {
-		MultiScreenHeader *mscreenHeader = (MultiScreenHeader *) file;
+		MultiScreenHeader *mscreenHeader = (MultiScreenHeader *)file;
 
 		SWAP32(mscreenHeader->palette);
 		SWAP32(mscreenHeader->bg_parallax[0]);
@@ -260,14 +260,14 @@ void convertEndian(byte *file, uint32 len) {
 		SWAP32(mscreenHeader->maskOffset);
 
 		// screenHeader
-		ScreenHeader *screenHeader = (ScreenHeader *) (file + mscreenHeader->screen);
+		ScreenHeader *screenHeader = (ScreenHeader *)(file + mscreenHeader->screen);
 
 		SWAP16(screenHeader->width);
 		SWAP16(screenHeader->height);
 		SWAP16(screenHeader->noLayers);
 
 		// layerHeader
-		LayerHeader *layerHeader = (LayerHeader *) (file + mscreenHeader->layers);
+		LayerHeader *layerHeader = (LayerHeader *)(file + mscreenHeader->layers);
 		for (i = 0; i < screenHeader->noLayers; i++, layerHeader++) {
 			SWAP16(layerHeader->x);
 			SWAP16(layerHeader->y);
@@ -282,14 +282,14 @@ void convertEndian(byte *file, uint32 len) {
 		int offset;
 		offset = mscreenHeader->bg_parallax[0];
 		if (offset > 0) {
-			parallax = (Parallax *) (file + offset);
+			parallax = (Parallax *)(file + offset);
 			SWAP16(parallax->w);
 			SWAP16(parallax->h);
 		}
 
 		offset = mscreenHeader->bg_parallax[1];
 		if (offset > 0) {
-			parallax = (Parallax *) (file + offset);
+			parallax = (Parallax *)(file + offset);
 			SWAP16(parallax->w);
 			SWAP16(parallax->h);
 		}
@@ -297,7 +297,7 @@ void convertEndian(byte *file, uint32 len) {
 		// backgroundLayer
 		offset = mscreenHeader->screen + sizeof(ScreenHeader);
 		if (offset > 0) {
-			parallax = (Parallax *) (file + offset);
+			parallax = (Parallax *)(file + offset);
 			SWAP16(parallax->w);
 			SWAP16(parallax->h);
 		}
@@ -305,21 +305,21 @@ void convertEndian(byte *file, uint32 len) {
 		// foregroundParallaxLayer
 		offset = mscreenHeader->fg_parallax[0];
 		if (offset > 0) {
-			parallax = (Parallax *) (file + offset);
+			parallax = (Parallax *)(file + offset);
 			SWAP16(parallax->w);
 			SWAP16(parallax->h);
 		}
 
 		offset = mscreenHeader->fg_parallax[1];
 		if (offset > 0) {
-			parallax = (Parallax *) (file + offset);
+			parallax = (Parallax *)(file + offset);
 			SWAP16(parallax->w);
 			SWAP16(parallax->h);
 		}
 		break;
 	}
 	case GAME_OBJECT: {
-		ObjectHub *objectHub = (ObjectHub *) file;
+		ObjectHub *objectHub = (ObjectHub *)file;
 
 		objectHub->type = (int) SWAP_BYTES_32(objectHub->type);
 		SWAP32(objectHub->logic_level);
@@ -332,12 +332,12 @@ void convertEndian(byte *file, uint32 len) {
 		break;
 	}
 	case WALK_GRID_FILE: {
-		WalkGridHeader *walkGridHeader = (WalkGridHeader *) file;
+		WalkGridHeader *walkGridHeader = (WalkGridHeader *)file;
 
 		SWAP32(walkGridHeader->numBars);
 		SWAP32(walkGridHeader->numNodes);
 
-		BarData *barData = (BarData *) (file + sizeof(WalkGridHeader));
+		BarData *barData = (BarData *)(file + sizeof(WalkGridHeader));
 		for (i = 0; i < walkGridHeader->numBars; i++) {
 			SWAP16(barData->x1);
 			SWAP16(barData->y1);
@@ -353,7 +353,7 @@ void convertEndian(byte *file, uint32 len) {
 			barData++;
 		}
 
-		uint16 *node = (uint16 *) (file + sizeof(WalkGridHeader) + walkGridHeader->numBars * sizeof(BarData));
+		uint16 *node = (uint16 *)(file + sizeof(WalkGridHeader) + walkGridHeader->numBars * sizeof(BarData));
 		for (i = 0; i < walkGridHeader->numNodes * 2; i++) {
 			SWAP16(*node);
 			node++;
@@ -366,7 +366,7 @@ void convertEndian(byte *file, uint32 len) {
 	case PARALLAX_FILE_null:
 		break;
 	case RUN_LIST: {
-		uint32 *list = (uint32 *) file;
+		uint32 *list = (uint32 *)file;
 		while (*list) {
 			SWAP32(*list);
 			list++;
@@ -374,7 +374,7 @@ void convertEndian(byte *file, uint32 len) {
 		break;
 	}
 	case TEXT_FILE: {
-		TextHeader *textHeader = (TextHeader *) file;
+		TextHeader *textHeader = (TextHeader *)file;
 		SWAP32(textHeader->noOfLines);
 		break;
 	}
@@ -440,7 +440,7 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 		file->read(_resList[res].ptr, len);
 
 		if (dump) {
-			StandardHeader *header = (StandardHeader *) _resList[res].ptr;
+			StandardHeader *header = (StandardHeader *)_resList[res].ptr;
 			char buf[256];
 			const char *tag;
 			Common::File out;
@@ -725,7 +725,7 @@ void ResourceManager::killAll(bool wantInfo) {
 			continue;
 
 		if (_resList[i].ptr) {
-			StandardHeader *header = (StandardHeader *) _resList[i].ptr;
+			StandardHeader *header = (StandardHeader *)_resList[i].ptr;
 
 			if (wantInfo)
 				Debug_Printf("Nuked %5d: %s\n", i, header->name);
@@ -757,7 +757,7 @@ void ResourceManager::killAllObjects(bool wantInfo) {
 			continue;
 
 		if (_resList[i].ptr) {
-			StandardHeader *header = (StandardHeader *) _resList[i].ptr;
+			StandardHeader *header = (StandardHeader *)_resList[i].ptr;
 
 			if (header->fileType == GAME_OBJECT) {
 				if (wantInfo)

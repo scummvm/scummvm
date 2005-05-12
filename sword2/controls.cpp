@@ -145,8 +145,8 @@ FontRendererGui::FontRendererGui(Sword2Engine *vm, int fontId)
 	sprite.type = RDSPR_NOCOMPRESSION | RDSPR_TRANS;
 
 	for (int i = 0; i < SIZE_OF_CHAR_SET; i++) {
-		head = (FrameHeader *) _vm->fetchFrameHeader(font, i);
-		sprite.data = (byte *) (head + 1);
+		head = (FrameHeader *)_vm->fetchFrameHeader(font, i);
+		sprite.data = (byte *)(head + 1);
 		sprite.w = head->width;
 		sprite.h = head->height;
 		_vm->_screen->createSurface(&sprite, &_glyph[i]._data);
@@ -399,8 +399,8 @@ int Dialog::runModal() {
 
 Widget::Widget(Dialog *parent, int states)
 	: _vm(parent->_vm), _parent(parent), _numStates(states), _state(0) {
-	_sprites = (SpriteInfo *) calloc(states, sizeof(SpriteInfo));
-	_surfaces = (WidgetSurface *) calloc(states, sizeof(WidgetSurface));
+	_sprites = (SpriteInfo *)calloc(states, sizeof(SpriteInfo));
+	_surfaces = (WidgetSurface *)calloc(states, sizeof(WidgetSurface));
 
 	_hitRect.left = _hitRect.right = _hitRect.top = _hitRect.bottom = -1;
 }
@@ -447,7 +447,7 @@ void Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc) 
 		spriteType |= RDSPR_RLE256;
 		// Points to just after last cdt_entry, i.e. start of colour
 		// table
-		colTablePtr = (byte *) (anim_head + 1) +
+		colTablePtr = (byte *)(anim_head + 1) +
 			anim_head->noAnimFrames * sizeof(CdtEntry);
 		break;
 	}
@@ -461,7 +461,7 @@ void Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc) 
 	_sprites[state].blend = anim_head->blend;
 
 	// Points to just after frame header, ie. start of sprite data
-	_sprites[state].data = (byte *) (frame_head + 1);
+	_sprites[state].data = (byte *)(frame_head + 1);
 
 	_vm->_screen->createSurface(&_sprites[state], &_surfaces[state]._surface);
 	_surfaces[state]._original = true;
@@ -1074,9 +1074,9 @@ public:
 	void setText(FontRendererGui *fr, int slot, byte *text) {
 		_fr = fr;
 		if (text)
-			sprintf((char *) _text, "%d.  %s", slot, text);
+			sprintf((char *)_text, "%d.  %s", slot, text);
 		else
-			sprintf((char *) _text, "%d.  ", slot);
+			sprintf((char *)_text, "%d.  ", slot);
 	}
 
 	byte *getText() {
@@ -1285,7 +1285,7 @@ void SaveRestoreDialog::onAction(Widget *widget, int result) {
 	} else if (widget == _cancelButton) {
 		setResult(0);
 	} else {
-		Slot *slot = (Slot *) widget;
+		Slot *slot = (Slot *)widget;
 		int textWidth;
 		byte tmp;
 		int i;
@@ -1322,8 +1322,8 @@ void SaveRestoreDialog::onAction(Widget *widget, int result) {
 			else
 				_firstPos = 4;
 
-			strcpy((char *) _editBuffer, (char *) slot->getText());
-			_editPos = strlen((char *) _editBuffer);
+			strcpy((char *)_editBuffer, (char *)slot->getText());
+			_editPos = strlen((char *)_editBuffer);
 			_cursorTick = 0;
 			_editBuffer[_editPos] = '_';
 			_editBuffer[_editPos + 1] = 0;
@@ -1400,7 +1400,7 @@ int SaveRestoreDialog::runModal() {
 	if (result) {
 		switch (_mode) {
 		case kSaveDialog:
-			if (_vm->saveGame(_selectedSlot, (byte *) &_editBuffer[_firstPos]) != SR_OK)
+			if (_vm->saveGame(_selectedSlot, (byte *)&_editBuffer[_firstPos]) != SR_OK)
 				result = 0;
 			break;
 		case kRestoreDialog:

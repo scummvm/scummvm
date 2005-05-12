@@ -180,8 +180,8 @@ bool Debugger::Cmd_Help(int argc, const char **argv) {
 }
 
 static int compare_blocks(const void *p1, const void *p2) {
-	const MemBlock *m1 = *(const MemBlock * const *) p1;
-	const MemBlock *m2 = *(const MemBlock * const *) p2;
+	const MemBlock *m1 = *(const MemBlock * const *)p1;
+	const MemBlock *m2 = *(const MemBlock * const *)p2;
 
 	if (m1->size < m2->size)
 		return 1;
@@ -194,7 +194,7 @@ bool Debugger::Cmd_Mem(int argc, const char **argv) {
 	int16 numBlocks = _vm->_memory->getNumBlocks();
 	MemBlock *memBlocks = _vm->_memory->getMemBlocks();
 
-	MemBlock **blocks = (MemBlock **) malloc(numBlocks * sizeof(MemBlock));
+	MemBlock **blocks = (MemBlock **)malloc(numBlocks * sizeof(MemBlock));
 
 	int i, j;
 
@@ -209,7 +209,7 @@ bool Debugger::Cmd_Mem(int argc, const char **argv) {
 	DebugPrintf("---------------------------------------------------------------------------\n");
 
 	for (i = 0; i < numBlocks; i++) {
-		StandardHeader *head = (StandardHeader *) blocks[i]->ptr;
+		StandardHeader *head = (StandardHeader *)blocks[i]->ptr;
 		const char *type;
 
 		switch (head->fileType) {
@@ -320,7 +320,7 @@ bool Debugger::Cmd_ResList(int argc, const char **argv) {
 
 	for (uint i = 0; i < numResFiles; i++) {
 		if (resList[i].ptr && resList[i].refCount >= minCount) {
-			StandardHeader *head = (StandardHeader *) resList[i].ptr;
+			StandardHeader *head = (StandardHeader *)resList[i].ptr;
 			DebugPrintf("%-4d: %-35s refCount: %-3d\n", i, head->name, resList[i].refCount);
 		}
 	}
@@ -445,7 +445,7 @@ bool Debugger::Cmd_ResLook(int argc, const char **argv) {
 	}
 
 	// Open up the resource and take a look inside!
-	StandardHeader *file_header = (StandardHeader *) _vm->_resman->openResource(res);
+	StandardHeader *file_header = (StandardHeader *)_vm->_resman->openResource(res);
 
 	switch (file_header->fileType) {
 	case ANIMATION_FILE:
@@ -512,12 +512,12 @@ bool Debugger::Cmd_RunList(int argc, const char **argv) {
 	uint32 runList = _vm->_logic->getRunList();
 
 	if (runList) {
-		game_object_list = (uint32 *) (_vm->_resman->openResource(runList) + sizeof(StandardHeader));
+		game_object_list = (uint32 *)(_vm->_resman->openResource(runList) + sizeof(StandardHeader));
 
 		DebugPrintf("Runlist number %d\n", runList);
 
 		for (int i = 0; game_object_list[i]; i++) {
-			file_header = (StandardHeader *) _vm->_resman->openResource(game_object_list[i]);
+			file_header = (StandardHeader *)_vm->_resman->openResource(game_object_list[i]);
 			DebugPrintf("%d %s\n", game_object_list[i], file_header->name);
 			_vm->_resman->closeResource(game_object_list[i]);
 		}

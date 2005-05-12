@@ -64,7 +64,7 @@ int Router::doAnimate(ObjectLogic *ob_logic, ObjectGraphic *ob_graphic, int32 an
 				return IR_STOP;
 			}
 
-			head = (StandardHeader *) _vm->_resman->openResource(animRes);
+			head = (StandardHeader *)_vm->_resman->openResource(animRes);
 
 			// if it's not an animation file
 			if (head->fileType != ANIMATION_FILE) {
@@ -88,7 +88,7 @@ int Router::doAnimate(ObjectLogic *ob_logic, ObjectGraphic *ob_graphic, int32 an
 		// open anim file
 		anim_file = _vm->_resman->openResource(animRes);
 
-		head = (StandardHeader *) anim_file;
+		head = (StandardHeader *)anim_file;
 		assert(head->fileType == ANIMATION_FILE);
 
 		// point to anim header
@@ -251,7 +251,7 @@ void Logic::createSequenceSpeech(MovieTextObject *sequenceText[]) {
 			// now fill out the SpriteInfo structure in the
 			// MovieTextObjectStructure
 
-			frame = (FrameHeader *) _sequenceTextList[line].text_mem;
+			frame = (FrameHeader *)_sequenceTextList[line].text_mem;
 
 			sequenceText[line]->textSprite = new SpriteInfo;
 

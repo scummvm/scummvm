@@ -52,7 +52,7 @@ int32 Logic::fnRegisterStartPoint(int32 *params) {
 	// 		1 pointer to ascii message
 
 	int32 key = params[0];
-	char *name = (char *) decodePtr(params[1]);
+	char *name = (char *)decodePtr(params[1]);
 
 	_vm->registerStartPoint(key, name);
 	return IR_CONT;
@@ -81,19 +81,19 @@ int32 Logic::fnSetSession(int32 *params) {
 
 int32 Logic::fnBackSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	_router->setSpriteStatus((ObjectGraphic *) decodePtr(params[0]), BACK_SPRITE);
+	_router->setSpriteStatus((ObjectGraphic *)decodePtr(params[0]), BACK_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnSortSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	_router->setSpriteStatus((ObjectGraphic *) decodePtr(params[0]), SORT_SPRITE);
+	_router->setSpriteStatus((ObjectGraphic *)decodePtr(params[0]), SORT_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnForeSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	_router->setSpriteStatus((ObjectGraphic *) decodePtr(params[0]), FORE_SPRITE);
+	_router->setSpriteStatus((ObjectGraphic *)decodePtr(params[0]), FORE_SPRITE);
 	return IR_CONT;
 }
 
@@ -106,7 +106,7 @@ int32 Logic::fnRegisterMouse(int32 *params) {
 	// params:	0 pointer to ObjectMouse or 0 for no write to mouse
 	//		  list
 
-	_vm->_mouse->registerMouse((ObjectMouse *) decodePtr(params[0]), NULL);
+	_vm->_mouse->registerMouse((ObjectMouse *)decodePtr(params[0]), NULL);
 	return IR_CONT;
 }
 
@@ -117,8 +117,8 @@ int32 Logic::fnAnim(int32 *params) {
 
 	// Normal forward animation
 	return _router->doAnimate(
-		(ObjectLogic *) decodePtr(params[0]),
-		(ObjectGraphic *) decodePtr(params[1]),
+		(ObjectLogic *)decodePtr(params[0]),
+		(ObjectGraphic *)decodePtr(params[1]),
 		params[2], false);
 }
 
@@ -198,10 +198,10 @@ int32 Logic::fnWalk(int32 *params) {
 	//		6 target direction (8 means end walk on ANY direction)
 
 	return _router->doWalk(
-		(ObjectLogic *) decodePtr(params[0]),
-		(ObjectGraphic *) decodePtr(params[1]),
-		(ObjectMega *) decodePtr(params[2]),
-		(ObjectWalkdata *) decodePtr(params[3]),
+		(ObjectLogic *)decodePtr(params[0]),
+		(ObjectGraphic *)decodePtr(params[1]),
+		(ObjectMega *)decodePtr(params[2]),
+		(ObjectWalkdata *)decodePtr(params[3]),
 		params[4], params[5], params[6]);
 }
 
@@ -217,10 +217,10 @@ int32 Logic::fnWalkToAnim(int32 *params) {
 	//		4 anim resource id
 
 	return _router->walkToAnim(
-		(ObjectLogic *) decodePtr(params[0]),
-		(ObjectGraphic *) decodePtr(params[1]),
-		(ObjectMega *) decodePtr(params[2]),
-		(ObjectWalkdata *) decodePtr(params[3]),
+		(ObjectLogic *)decodePtr(params[0]),
+		(ObjectGraphic *)decodePtr(params[1]),
+		(ObjectMega *)decodePtr(params[2]),
+		(ObjectWalkdata *)decodePtr(params[3]),
 		params[4]);
 }
 
@@ -236,10 +236,10 @@ int32 Logic::fnTurn(int32 *params) {
 	//		4 target direction
 
 	return _router->doFace(
-		(ObjectLogic *) decodePtr(params[0]),
-		(ObjectGraphic *) decodePtr(params[1]),
-		(ObjectMega *) decodePtr(params[2]),
-		(ObjectWalkdata *) decodePtr(params[3]),
+		(ObjectLogic *)decodePtr(params[0]),
+		(ObjectGraphic *)decodePtr(params[1]),
+		(ObjectMega *)decodePtr(params[2]),
+		(ObjectWalkdata *)decodePtr(params[3]),
 		params[4]);
 }
 
@@ -257,8 +257,8 @@ int32 Logic::fnStandAt(int32 *params) {
 	//		4 target direction
 
 	_router->standAt(
-		(ObjectGraphic *) decodePtr(params[0]),
-		(ObjectMega *) decodePtr(params[1]),
+		(ObjectGraphic *)decodePtr(params[0]),
+		(ObjectMega *)decodePtr(params[1]),
 		params[2], params[3], params[4]);
 	return IR_CONT;
 }
@@ -272,10 +272,10 @@ int32 Logic::fnStand(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 	//		1 pointer to object's mega structure
 	//		2 target direction
-	ObjectMega *ob_mega = (ObjectMega *) decodePtr(params[1]);
+	ObjectMega *ob_mega = (ObjectMega *)decodePtr(params[1]);
 
 	_router->standAt(
-		(ObjectGraphic *) decodePtr(params[0]),
+		(ObjectGraphic *)decodePtr(params[0]),
 		ob_mega, ob_mega->feet_x, ob_mega->feet_y, params[2]);
 	return IR_CONT;
 }
@@ -290,8 +290,8 @@ int32 Logic::fnStandAfterAnim(int32 *params) {
 	//		2 anim resource id
 
 	_router->standAfterAnim(
-		(ObjectGraphic *) decodePtr(params[0]),
-		(ObjectMega *) decodePtr(params[1]),
+		(ObjectGraphic *)decodePtr(params[0]),
+		(ObjectMega *)decodePtr(params[1]),
 		params[2]);
 	return IR_CONT;
 }
@@ -303,7 +303,7 @@ int32 Logic::fnPause(int32 *params) {
 	// NB. Pause-value of 0 causes script to continue, 1 causes a 1-cycle
 	// quit, 2 gives 2 cycles, etc.
 
-	ObjectLogic *ob_logic = (ObjectLogic *) decodePtr(params[0]);
+	ObjectLogic *ob_logic = (ObjectLogic *)decodePtr(params[0]);
 
 	if (ob_logic->looping == 0) {
 		ob_logic->looping = 1;
@@ -327,17 +327,17 @@ int32 Logic::fnMegaTableAnim(int32 *params) {
 
 	// Normal forward anim
 	return _router->megaTableAnimate(
-		(ObjectLogic *) decodePtr(params[0]),
-		(ObjectGraphic *) decodePtr(params[1]),
-		(ObjectMega *) decodePtr(params[2]),
-		(uint32 *) decodePtr(params[3]),
+		(ObjectLogic *)decodePtr(params[0]),
+		(ObjectGraphic *)decodePtr(params[1]),
+		(ObjectMega *)decodePtr(params[2]),
+		(uint32 *)decodePtr(params[3]),
 		false);
 }
 
 int32 Logic::fnAddMenuObject(int32 *params) {
 	// params:	0 pointer to a MenuObject structure to copy down
 
-	_vm->_mouse->addMenuObject((MenuObject *) decodePtr(params[0]));
+	_vm->_mouse->addMenuObject((MenuObject *)decodePtr(params[0]));
 	return IR_CONT;
 }
 
@@ -379,14 +379,14 @@ int32 Logic::fnSetFrame(int32 *params) {
 	// open the resource (& check it's valid)
 	byte *anim_file = _vm->_resman->openResource(res);
 
-	StandardHeader *head = (StandardHeader *) anim_file;
+	StandardHeader *head = (StandardHeader *)anim_file;
 	assert(head->fileType == ANIMATION_FILE);
 
 	// set up pointer to the animation header
 	AnimHeader *anim_head = _vm->fetchAnimHeader(anim_file);
 
 	// set up anim resource in graphic object
-	ObjectGraphic *ob_graphic = (ObjectGraphic *) decodePtr(params[0]);
+	ObjectGraphic *ob_graphic = (ObjectGraphic *)decodePtr(params[0]);
 
 	ob_graphic->anim_resource = res;
 	ob_graphic->anim_pc = params[2] ? anim_head->noAnimFrames - 1 : 0;
@@ -401,7 +401,7 @@ int32 Logic::fnRandomPause(int32 *params) {
 	//		1 minimum number of game-cycles to pause
 	//		2 maximum number of game-cycles to pause
 
-	ObjectLogic *ob_logic = (ObjectLogic *) decodePtr(params[0]);
+	ObjectLogic *ob_logic = (ObjectLogic *)decodePtr(params[0]);
 	int32 pars[2];
 
 	if (ob_logic->looping == 0) {
@@ -424,9 +424,9 @@ int32 Logic::fnRegisterFrame(int32 *params) {
 	//		1 pointer to graphic structure
 	//		2 pointer to mega structure or NULL if not a mega
 
-	ObjectMouse *ob_mouse = (ObjectMouse *) decodePtr(params[0]);
-	ObjectGraphic *ob_graph = (ObjectGraphic *) decodePtr(params[1]);
-	ObjectMega *ob_mega = (ObjectMega *) decodePtr(params[2]);
+	ObjectMouse *ob_mouse = (ObjectMouse *)decodePtr(params[0]);
+	ObjectGraphic *ob_graph = (ObjectGraphic *)decodePtr(params[1]);
+	ObjectMega *ob_mega = (ObjectMega *)decodePtr(params[2]);
 
 	_vm->_screen->registerFrame(ob_mouse, ob_graph, ob_mega);
 	return IR_CONT;
@@ -434,7 +434,7 @@ int32 Logic::fnRegisterFrame(int32 *params) {
 
 int32 Logic::fnNoSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	_router->setSpriteStatus((ObjectGraphic *) decodePtr(params[0]), NO_SPRITE);
+	_router->setSpriteStatus((ObjectGraphic *)decodePtr(params[0]), NO_SPRITE);
 	return IR_CONT;
 }
 
@@ -463,7 +463,7 @@ int32 Logic::fnUpdatePlayerStats(int32 *params) {
 
 	// params:	0 pointer to mega structure
 
-	ObjectMega *ob_mega = (ObjectMega *) decodePtr(params[0]);
+	ObjectMega *ob_mega = (ObjectMega *)decodePtr(params[0]);
 	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 
 	screenInfo->player_feet_x = ob_mega->feet_x;
@@ -496,7 +496,7 @@ int32 Logic::fnPassGraph(int32 *params) {
 int32 Logic::fnInitFloorMouse(int32 *params) {
 	// params:	0 pointer to object's mouse structure
 
- 	ObjectMouse *ob_mouse = (ObjectMouse *) decodePtr(params[0]);
+ 	ObjectMouse *ob_mouse = (ObjectMouse *)decodePtr(params[0]);
 	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 
 	// floor is always lowest priority
@@ -537,10 +537,10 @@ int32 Logic::fnFaceXY(int32 *params) {
 	//		5 target y-coord
 
 	return _router->faceXY(
-		(ObjectLogic *) decodePtr(params[0]),
-		(ObjectGraphic *) decodePtr(params[1]),
-		(ObjectMega *) decodePtr(params[2]),
-		(ObjectWalkdata *) decodePtr(params[3]),
+		(ObjectLogic *)decodePtr(params[0]),
+		(ObjectGraphic *)decodePtr(params[1]),
+		(ObjectMega *)decodePtr(params[2]),
+		(ObjectWalkdata *)decodePtr(params[3]),
 		params[4], params[5]);
 }
 
@@ -582,13 +582,13 @@ int32 Logic::fnAddHuman(int32 *params) {
 int32 Logic::fnWeWait(int32 *params) {
 	// params:	0 target
 
-	StandardHeader *head = (StandardHeader *) _vm->_resman->openResource(params[0]);
+	StandardHeader *head = (StandardHeader *)_vm->_resman->openResource(params[0]);
 	assert(head->fileType == GAME_OBJECT);
 
 	// Run the target's get-speech-state script
 
 	int32 target = params[0];
-	char *raw_script_ad = (char *) head;
+	char *raw_script_ad = (char *)head;
 	uint32 null_pc = 5;
 
 	runScript(raw_script_ad, raw_script_ad, &null_pc);
@@ -622,20 +622,20 @@ int32 Logic::fnTheyDoWeWait(int32 *params) {
 	//		6 ins4
 	//		7 ins5
 
-	StandardHeader *head = (StandardHeader *) _vm->_resman->openResource(params[1]);
+	StandardHeader *head = (StandardHeader *)_vm->_resman->openResource(params[1]);
 	assert(head->fileType == GAME_OBJECT);
 
 	// Run the target's get-speech-state script
 
 	int32 target = params[1];
-	char *raw_script_ad = (char *) head;
+	char *raw_script_ad = (char *)head;
 	uint32 null_pc = 5;
 
 	runScript(raw_script_ad, raw_script_ad, &null_pc);
 
 	_vm->_resman->closeResource(target);
 
-	ObjectLogic *ob_logic = (ObjectLogic *) decodePtr(params[0]);
+	ObjectLogic *ob_logic = (ObjectLogic *)decodePtr(params[0]);
 
 	if (_scriptVars[RESULT] == 1 && !_scriptVars[INS_COMMAND] && ob_logic->looping == 0) {
 		// The target is waiting, i.e. not busy, and there is no other
@@ -694,13 +694,13 @@ int32 Logic::fnTheyDo(int32 *params) {
 	//		5 ins4
 	//		6 ins5
 
-	StandardHeader *head = (StandardHeader *) _vm->_resman->openResource(params[0]);
+	StandardHeader *head = (StandardHeader *)_vm->_resman->openResource(params[0]);
 	assert (head->fileType == GAME_OBJECT);
 
 	// Run the target's get-speech-state script
 
 	int32 target = params[0];
-	char *raw_script_ad = (char *) head;
+	char *raw_script_ad = (char *)head;
 	uint32 null_pc = 5;
 
 	runScript(raw_script_ad, raw_script_ad, &null_pc);
@@ -745,10 +745,10 @@ int32 Logic::fnWalkToTalkToMega(int32 *params) {
 	//		5 separation
 
 	return _router->walkToTalkToMega(
-		(ObjectLogic *) decodePtr(params[0]),
-		(ObjectGraphic *) decodePtr(params[1]),
-		(ObjectMega *) decodePtr(params[2]),
-		(ObjectWalkdata *) decodePtr(params[3]),
+		(ObjectLogic *)decodePtr(params[0]),
+		(ObjectGraphic *)decodePtr(params[1]),
+		(ObjectMega *)decodePtr(params[2]),
+		(ObjectWalkdata *)decodePtr(params[3]),
 		params[4], params[5]);
 }
 
@@ -801,8 +801,8 @@ int32 Logic::fnISpeak(int32 *params) {
 
 	// Set up the pointers which we know we'll always need
 
-	ObjectLogic *ob_logic = (ObjectLogic *) decodePtr(params[S_OB_LOGIC]);
-	ObjectGraphic *ob_graphic = (ObjectGraphic *) decodePtr(params[S_OB_GRAPHIC]);
+	ObjectLogic *ob_logic = (ObjectLogic *)decodePtr(params[S_OB_LOGIC]);
+	ObjectGraphic *ob_graphic = (ObjectGraphic *)decodePtr(params[S_OB_GRAPHIC]);
 
 	// FIRST TIME ONLY: create the text, load the wav, set up the anim,
 	// etc.
@@ -858,7 +858,7 @@ int32 Logic::fnISpeak(int32 *params) {
 				return IR_CONT;
 			}
 
-			StandardHeader *head = (StandardHeader *) _vm->_resman->openResource(text_res);
+			StandardHeader *head = (StandardHeader *)_vm->_resman->openResource(text_res);
 
 			if (head->fileType != TEXT_FILE) {
 				// Invalid - not a text resource
@@ -867,7 +867,7 @@ int32 Logic::fnISpeak(int32 *params) {
 				return IR_CONT;
 			}
 
-			if (!_vm->checkTextLine((byte *) head, local_text)) {
+			if (!_vm->checkTextLine((byte *)head, local_text)) {
 				// Line number out of range
 				_vm->_resman->closeResource(text_res);
 				_scriptVars[RESULT] = 2;
@@ -919,8 +919,8 @@ int32 Logic::fnISpeak(int32 *params) {
 			// Use this direction table to derive the anim
 			// NB. ASSUMES WE HAVE A MEGA OBJECT!!
 
-			ObjectMega *ob_mega = (ObjectMega *) decodePtr(params[S_OB_MEGA]);
-			int32 *anim_table = (int32 *) decodePtr(params[S_DIR_TABLE]);
+			ObjectMega *ob_mega = (ObjectMega *)decodePtr(params[S_OB_MEGA]);
+			int32 *anim_table = (int32 *)decodePtr(params[S_DIR_TABLE]);
 
 			_animId = anim_table[ob_mega->current_dir];
 		} else {
@@ -1194,7 +1194,7 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 	//		3 pointer to ob_mega
 	//		4 pointer to ob_walkdata
 
-	ObjectSpeech *ob_speech = (ObjectSpeech *) decodePtr(params[1]);
+	ObjectSpeech *ob_speech = (ObjectSpeech *)decodePtr(params[1]);
 
 	while (1) {
 		int32 pars[9];
@@ -1423,7 +1423,7 @@ int32 Logic::fnSetScaling(int32 *params) {
 	// Where s is system scale, which itself is (256 * actual_scale) ie.
 	// s == 128 is half size
 
- 	ObjectMega *ob_mega = (ObjectMega *) decodePtr(params[0]);
+ 	ObjectMega *ob_mega = (ObjectMega *)decodePtr(params[0]);
 
 	ob_mega->scale_a = params[1];
 	ob_mega->scale_b = params[2];
@@ -1480,10 +1480,10 @@ int32 Logic::fnTimedWait(int32 *params) {
 	//		1 target
 	//		2 number of cycles before give up
 
-	StandardHeader *head = (StandardHeader *) _vm->_resman->openResource(params[1]);
+	StandardHeader *head = (StandardHeader *)_vm->_resman->openResource(params[1]);
 	assert(head->fileType == GAME_OBJECT);
 
-	ObjectLogic *ob_logic = (ObjectLogic *) decodePtr(params[0]);
+	ObjectLogic *ob_logic = (ObjectLogic *)decodePtr(params[0]);
 
 	if (!ob_logic->looping) {
 		// This is the first time, so set up the time-out.
@@ -1493,7 +1493,7 @@ int32 Logic::fnTimedWait(int32 *params) {
 	// Run the target's get-speech-state script
 
 	int32 target = params[1];
-	char *raw_script_ad = (char *) head;
+	char *raw_script_ad = (char *)head;
 	uint32 null_pc = 5;
 
 	runScript(raw_script_ad, raw_script_ad, &null_pc);
@@ -1605,7 +1605,7 @@ int32 Logic::fnSetValue(int32 *params) {
 	// params:	0 pointer to object's mega structure
 	//		1 value to set it to
 
-	ObjectMega *ob_mega = (ObjectMega *) decodePtr(params[0]);
+	ObjectMega *ob_mega = (ObjectMega *)decodePtr(params[0]);
 
 	ob_mega->megaset_res = params[1];
 	return IR_CONT;
@@ -1671,10 +1671,10 @@ int32 Logic::fnReverseMegaTableAnim(int32 *params) {
 
 	// Reverse anim
 	return _router->megaTableAnimate(
-		(ObjectLogic *) decodePtr(params[0]),
-		(ObjectGraphic *) decodePtr(params[1]),
-		(ObjectMega *) decodePtr(params[2]),
-		(uint32 *) decodePtr(params[3]),
+		(ObjectLogic *)decodePtr(params[0]),
+		(ObjectGraphic *)decodePtr(params[1]),
+		(ObjectMega *)decodePtr(params[2]),
+		(uint32 *)decodePtr(params[3]),
 		true);
 }
 
@@ -1685,8 +1685,8 @@ int32 Logic::fnReverseAnim(int32 *params) {
 
 	// Reverse anim
 	return _router->doAnimate(
-		(ObjectLogic *) decodePtr(params[0]),
-		(ObjectGraphic *) decodePtr(params[1]),
+		(ObjectLogic *)decodePtr(params[0]),
+		(ObjectGraphic *)decodePtr(params[1]),
 		params[2], true);
 }
 
@@ -1745,25 +1745,25 @@ int32 Logic::fnSetStandbyCoords(int32 *params) {
 
 int32 Logic::fnBackPar0Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	_router->setSpriteStatus((ObjectGraphic *) decodePtr(params[0]), BGP0_SPRITE);
+	_router->setSpriteStatus((ObjectGraphic *)decodePtr(params[0]), BGP0_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnBackPar1Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	_router->setSpriteStatus((ObjectGraphic *) decodePtr(params[0]), BGP1_SPRITE);
+	_router->setSpriteStatus((ObjectGraphic *)decodePtr(params[0]), BGP1_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnForePar0Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	_router->setSpriteStatus((ObjectGraphic *) decodePtr(params[0]), FGP0_SPRITE);
+	_router->setSpriteStatus((ObjectGraphic *)decodePtr(params[0]), FGP0_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnForePar1Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	_router->setSpriteStatus((ObjectGraphic *) decodePtr(params[0]), FGP1_SPRITE);
+	_router->setSpriteStatus((ObjectGraphic *)decodePtr(params[0]), FGP1_SPRITE);
 	return IR_CONT;
 }
 
@@ -1816,8 +1816,8 @@ int32 Logic::fnStandAtAnim(int32 *params) {
 	//		2 anim resource id
 
 	_router->standAtAnim(
-		(ObjectGraphic *) decodePtr(params[0]),
-		(ObjectMega *) decodePtr(params[1]),
+		(ObjectGraphic *)decodePtr(params[0]),
+		(ObjectMega *)decodePtr(params[1]),
 		params[2]);
 	return IR_CONT;
 }
@@ -1827,7 +1827,7 @@ int32 Logic::fnStandAtAnim(int32 *params) {
 int32 Logic::fnSetScrollLeftMouse(int32 *params) {
 	// params:	0 pointer to object's mouse structure
 
- 	ObjectMouse *ob_mouse = (ObjectMouse *) decodePtr(params[0]);
+ 	ObjectMouse *ob_mouse = (ObjectMouse *)decodePtr(params[0]);
 	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 
 	// Highest priority
@@ -1852,7 +1852,7 @@ int32 Logic::fnSetScrollLeftMouse(int32 *params) {
 int32 Logic::fnSetScrollRightMouse(int32 *params) {
 	// params:	0 pointer to object's mouse structure
 
-	ObjectMouse *ob_mouse = (ObjectMouse *) decodePtr(params[0]);
+	ObjectMouse *ob_mouse = (ObjectMouse *)decodePtr(params[0]);
 	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 
 	// Highest priority
@@ -1984,7 +1984,7 @@ int32 Logic::fnGetPlayerSaveData(int32 *params) {
  	// Any walk-data must be cleared - the player will be set to stand if
 	// he was walking when saved.
 
-	ObjectMega *ob_mega = (ObjectMega *) mega_ptr;
+	ObjectMega *ob_mega = (ObjectMega *)mega_ptr;
 
 	if (ob_mega->currently_walking) {
 		ob_mega->currently_walking = 0;
@@ -1998,7 +1998,7 @@ int32 Logic::fnGetPlayerSaveData(int32 *params) {
 		fnStand(pars);
 
 		// Reset looping flag (which would have been 1 during fnWalk)
-		ObjectLogic *ob_logic = (ObjectLogic *) logic_ptr;
+		ObjectLogic *ob_logic = (ObjectLogic *)logic_ptr;
 
 		ob_logic->looping = 0;
 	}
@@ -2095,7 +2095,7 @@ int32 Logic::fnPauseForEvent(int32 *params) {
 	// params:	0 pointer to object's logic structure
 	//		1 number of game-cycles to pause
 
-	ObjectLogic *ob_logic = (ObjectLogic *) decodePtr(params[0]);
+	ObjectLogic *ob_logic = (ObjectLogic *)decodePtr(params[0]);
 
 	if (checkEventWaiting()) {
 		ob_logic->looping = 0;
@@ -2121,10 +2121,10 @@ int32 Logic::fnFaceMega(int32 *params) {
 	//		4 id of target mega to face
 
 	return _router->faceMega(
-		(ObjectLogic *) decodePtr(params[0]),
-		(ObjectGraphic *) decodePtr(params[1]),
-		(ObjectMega *) decodePtr(params[2]),
-		(ObjectWalkdata *) decodePtr(params[3]),
+		(ObjectLogic *)decodePtr(params[0]),
+		(ObjectGraphic *)decodePtr(params[1]),
+		(ObjectMega *)decodePtr(params[2]),
+		(ObjectWalkdata *)decodePtr(params[3]),
 		params[4]);
 }
 
@@ -2140,11 +2140,11 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	// of computer games" - but at the very least we want to show the
 	// cutscene subtitles, so I removed them.
 
-	debug(5, "fnPlaySequence(\"%s\");", (const char *) decodePtr(params[0]));
+	debug(5, "fnPlaySequence(\"%s\");", (const char *)decodePtr(params[0]));
 
 	// add the appropriate file extension & play it
 
-	strcpy(filename, (const char *) decodePtr(params[0]));
+	strcpy(filename, (const char *)decodePtr(params[0]));
 
 	// Write to walkthrough file (zebug0.txt)
  	debug(5, "PLAYING SEQUENCE \"%s\"", filename);
@@ -2201,13 +2201,13 @@ int32 Logic::fnPlaySequence(int32 *params) {
 
 int32 Logic::fnShadedSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	_router->setSpriteShading((ObjectGraphic *) decodePtr(params[0]), SHADED_SPRITE);
+	_router->setSpriteShading((ObjectGraphic *)decodePtr(params[0]), SHADED_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnUnshadedSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	_router->setSpriteShading((ObjectGraphic *) decodePtr(params[0]), UNSHADED_SPRITE);
+	_router->setSpriteShading((ObjectGraphic *)decodePtr(params[0]), UNSHADED_SPRITE);
 	return IR_CONT;
 }
 
@@ -2279,7 +2279,7 @@ int32 Logic::fnResetGlobals(int32 *params) {
 
 	debug(5, "globals size: %d", size);
 
-	globals = (uint32 *) ((byte *) _vm->_resman->openResource(1) + sizeof(StandardHeader));
+	globals = (uint32 *)((byte *)_vm->_resman->openResource(1) + sizeof(StandardHeader));
 
 	// blank each global variable
 	memset(globals, 0, size);

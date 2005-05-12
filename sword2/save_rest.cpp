@@ -93,7 +93,7 @@ static void convertHeaderEndian(Sword2Engine::SaveGameHeader &header) {
 
 uint32 Sword2Engine::saveGame(uint16 slotNo, byte *desc) {
 	uint32 bufferSize = findBufferSize();
-	byte *saveBufferMem = (byte *) malloc(bufferSize);
+	byte *saveBufferMem = (byte *)malloc(bufferSize);
 
 	fillSaveBuffer(saveBufferMem, bufferSize, desc);
 
@@ -132,7 +132,7 @@ void Sword2Engine::fillSaveBuffer(byte *buffer, uint32 size, byte *desc) {
 	// Set up the _saveGameHeader. Checksum gets filled in last of all.
 	ScreenInfo *screenInfo = _screen->getScreenInfo();
 
-	strcpy(_saveGameHeader.description, (char *) desc);
+	strcpy(_saveGameHeader.description, (char *)desc);
 	_saveGameHeader.varLength = _resman->fetchLen(1);
 	_saveGameHeader.screenId = screenInfo->background_layer_id;
 	_saveGameHeader.runListId = _logic->getRunList();
@@ -160,7 +160,7 @@ void Sword2Engine::fillSaveBuffer(byte *buffer, uint32 size, byte *desc) {
 	memcpy(buffer + sizeof(_saveGameHeader), varsRes, FROM_LE_32(_saveGameHeader.varLength));
 
 #ifdef SCUMM_BIG_ENDIAN
-	uint32 *globalVars = (uint32 *) (buffer + sizeof(_saveGameHeader) + sizeof(StandardHeader));
+	uint32 *globalVars = (uint32 *)(buffer + sizeof(_saveGameHeader) + sizeof(StandardHeader));
 	const uint numVars = (FROM_LE_32(_saveGameHeader.varLength) - sizeof(StandardHeader)) / 4;
 
 	for (uint i = 0; i < numVars; i++)
@@ -205,7 +205,7 @@ uint32 Sword2Engine::saveData(uint16 slotNo, byte *buffer, uint32 bufferSize) {
 
 uint32 Sword2Engine::restoreGame(uint16 slotNo) {
 	uint32 bufferSize = findBufferSize();
-	byte *saveBufferMem = (byte *) malloc(bufferSize);
+	byte *saveBufferMem = (byte *)malloc(bufferSize);
 
 	uint32 errorCode = restoreData(slotNo, saveBufferMem, bufferSize);
 
@@ -332,7 +332,7 @@ uint32 Sword2Engine::restoreFromBuffer(byte *buffer, uint32 size) {
 	memcpy(varsRes, buffer + sizeof(_saveGameHeader), _saveGameHeader.varLength);
 
 #ifdef SCUMM_BIG_ENDIAN
-	uint32 *globalVars = (uint32 *) (varsRes + sizeof(StandardHeader));
+	uint32 *globalVars = (uint32 *)(varsRes + sizeof(StandardHeader));
 	const uint numVars = (_saveGameHeader.varLength - sizeof(StandardHeader)) / 4;
 
 	for (uint i = 0; i < numVars; i++)
@@ -416,7 +416,7 @@ uint32 Sword2Engine::getSaveDescription(uint16 slotNo, byte *description) {
 	in->read(&dummy, sizeof(dummy));
 	delete in;
 
-	strcpy((char *) description, dummy.description);
+	strcpy((char *)description, dummy.description);
 	return SR_OK;
 }
 
@@ -447,11 +447,11 @@ bool Sword2Engine::saveExists(uint16 slotNo) {
  */
 
 void Sword2Engine::getPlayerStructures() {
-	StandardHeader *head = (StandardHeader *) _resman->openResource(CUR_PLAYER_ID);
+	StandardHeader *head = (StandardHeader *)_resman->openResource(CUR_PLAYER_ID);
 
 	assert(head->fileType == GAME_OBJECT);
 
-	char *raw_script_ad = (char *) head;
+	char *raw_script_ad = (char *)head;
 
 	// Script no. 7 - 'george_savedata_request' calls fnPassPlayerSaveData
 	uint32 null_pc = 7;
@@ -467,11 +467,11 @@ void Sword2Engine::getPlayerStructures() {
  */
 
 void Sword2Engine::putPlayerStructures() {
-	StandardHeader *head = (StandardHeader *) _resman->openResource(CUR_PLAYER_ID);
+	StandardHeader *head = (StandardHeader *)_resman->openResource(CUR_PLAYER_ID);
 
 	assert(head->fileType == GAME_OBJECT);
 
-	char *raw_script_ad = (char *) head;
+	char *raw_script_ad = (char *)head;
 
 	// Script no. 8 - 'george_savedata_return' calls fnGetPlayerSaveData
 

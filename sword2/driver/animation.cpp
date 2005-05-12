@@ -177,7 +177,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], int32 lea
 	if (leadInRes) {
 		byte *leadIn = _vm->_resman->openResource(leadInRes);
 		uint32 leadInLen = _vm->_resman->fetchLen(leadInRes) - sizeof(StandardHeader);
-		StandardHeader *header = (StandardHeader *) leadIn;
+		StandardHeader *header = (StandardHeader *)leadIn;
 
 		assert(header->fileType == WAV_FILE);
 
@@ -192,7 +192,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], int32 lea
 	if (leadOutRes) {
 		leadOut = _vm->_resman->openResource(leadOutRes);
 		leadOutLen = _vm->_resman->fetchLen(leadOutRes) - sizeof(StandardHeader);
-		StandardHeader *header = (StandardHeader *) leadOut;
+		StandardHeader *header = (StandardHeader *)leadOut;
 
 		assert(header->fileType == WAV_FILE);
 
@@ -420,7 +420,7 @@ void MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte 
 		data = _vm->_fontRenderer->makeTextSprite(msg, RENDERWIDE, 255, _vm->_speechFontId);
 	}
 
-	FrameHeader *frame = (FrameHeader *) data;
+	FrameHeader *frame = (FrameHeader *)data;
 	SpriteInfo msgSprite;
 	byte *msgSurface;
 

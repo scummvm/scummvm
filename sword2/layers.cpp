@@ -129,7 +129,7 @@ void Screen::initBackground(int32 res, int32 new_palette) {
 
 	// shading mask
 
-	MultiScreenHeader *screenLayerTable = (MultiScreenHeader *) (file + sizeof(StandardHeader));
+	MultiScreenHeader *screenLayerTable = (MultiScreenHeader *)(file + sizeof(StandardHeader));
 
 	if (screenLayerTable->maskOffset) {
 	 	SpriteInfo spriteInfo;

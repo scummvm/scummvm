@@ -221,7 +221,7 @@ void Sword2Engine::writeSettings() {
  */
 
 void Sword2Engine::setupPersistentResources() {
-	Logic::_scriptVars = (uint32 *) (_resman->openResource(1) + sizeof(StandardHeader));
+	Logic::_scriptVars = (uint32 *)(_resman->openResource(1) + sizeof(StandardHeader));
 	_resman->openResource(CUR_PLAYER_ID);
 }
     
@@ -592,8 +592,8 @@ void Sword2Engine::startGame() {
 
 	uint32 null_pc = 1;
 
-	char *raw_data_ad = (char *) _resman->openResource(CUR_PLAYER_ID);
-	char *raw_script = (char *) _resman->openResource(screen_manager_id);
+	char *raw_data_ad = (char *)_resman->openResource(CUR_PLAYER_ID);
+	char *raw_script = (char *)_resman->openResource(screen_manager_id);
 
 	_logic->runScript(raw_script, raw_data_ad, &null_pc);
 

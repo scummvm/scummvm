@@ -66,9 +66,9 @@ MemoryManager::MemoryManager(Sword2Engine *vm) : _vm(vm) {
 	// encoding or decoding pointers any faster, and these are by far the
 	// most common operations.
 
-	_idStack = (int16 *) malloc(MAX_MEMORY_BLOCKS * sizeof(int16));
-	_memBlocks = (MemBlock *) malloc(MAX_MEMORY_BLOCKS * sizeof(MemBlock));
-	_memBlockIndex = (MemBlock **) malloc(MAX_MEMORY_BLOCKS * sizeof(MemBlock *));
+	_idStack = (int16 *)malloc(MAX_MEMORY_BLOCKS * sizeof(int16));
+	_memBlocks = (MemBlock *)malloc(MAX_MEMORY_BLOCKS * sizeof(MemBlock));
+	_memBlockIndex = (MemBlock **)malloc(MAX_MEMORY_BLOCKS * sizeof(MemBlock *));
 
 	_totAlloc = 0;
 	_numBlocks = 0;
@@ -192,7 +192,7 @@ byte *MemoryManager::memAlloc(uint32 size, int16 uid) {
 	int16 id = _idStack[--_idStackPtr];
 
 	// Allocate the new memory block
-	byte *ptr = (byte *) malloc(size);
+	byte *ptr = (byte *)malloc(size);
 
 	assert(ptr);
 

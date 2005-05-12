@@ -214,7 +214,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 	int32 stack[STACK_SIZE];
 	int32 stackPtr = 0;
 
-	StandardHeader *header = (StandardHeader *) scriptData;
+	StandardHeader *header = (StandardHeader *)scriptData;
 	scriptData += sizeof(StandardHeader) + sizeof(ObjectHub);
 
 	// The script data format:
@@ -230,13 +230,13 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 
 	// Get the start of variables and start of code
 
-	uint32 *localVars = (uint32 *) (scriptData + sizeof(int32));
+	uint32 *localVars = (uint32 *)(scriptData + sizeof(int32));
 	char *code = scriptData + READ_LE_UINT32(scriptData) + sizeof(int32);
 	uint32 noScripts = READ_LE_UINT32(code);
 
 	code += sizeof(int32);
 
-	const uint32 *offsetTable = (const uint32 *) code;
+	const uint32 *offsetTable = (const uint32 *)code;
 
 	if (*offset < noScripts) {
 		ip = FROM_LE_32(offsetTable[*offset]);
@@ -271,7 +271,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 	// So if his click hander (action script number 2) finishes, and
 	// variable 913 is 1, we set it back to 0 manually.
 
-	bool checkPyramidBug = scriptNumber == 2 && strcmp((char *) header->name, "titipoco_81") == 0;
+	bool checkPyramidBug = scriptNumber == 2 && strcmp((char *)header->name, "titipoco_81") == 0;
 
 	code += noScripts * sizeof(int32);
 
@@ -382,7 +382,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 
 			Read16ip(parameter);
 			parameter /= 4;
-			ptr = (byte *) &localVars[parameter];
+			ptr = (byte *)&localVars[parameter];
 			push_ptr(ptr);
 			debug(9, "CP_PUSH_LOCAL_ADDR: &localVars[%d] => %p", parameter, ptr);
 			break;
@@ -392,7 +392,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			Read8ip(parameter);
 
 			// ip now points to the string
-			ptr = (byte *) (code + ip);
+			ptr = (byte *)(code + ip);
 			push_ptr(ptr);
 			debug(9, "CP_PUSH_STRING: \"%s\"", ptr);
 			ip += (parameter + 1);
@@ -400,7 +400,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 		case CP_PUSH_DEREFERENCED_STRUCTURE:
 			// Push the address of a dereferenced structure
 			Read32ip(parameter);
-			ptr = (byte *) (objectData + sizeof(int32) + sizeof(StandardHeader) + sizeof(ObjectHub) + parameter);
+			ptr = (byte *)(objectData + sizeof(int32) + sizeof(StandardHeader) + sizeof(ObjectHub) + parameter);
 			push_ptr(ptr);
 			debug(9, "CP_PUSH_DEREFERENCED_STRUCTURE: %d => %p", parameter, ptr);
 			break;

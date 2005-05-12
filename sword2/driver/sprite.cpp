@@ -247,7 +247,7 @@ int32 Screen::decompressRLE16(byte *dst, byte *src, int32 decompSize, byte *colT
  */
 
 int32 Screen::createSurface(SpriteInfo *s, byte **sprite) {
-	*sprite = (byte *) malloc(s->w * s->h);
+	*sprite = (byte *)malloc(s->w * s->h);
 	if (!*sprite)
 		return RDERR_OUTOFMEMORY;
 
@@ -371,7 +371,7 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 	if (s->type & RDSPR_NOCOMPRESSION)
 		sprite = s->data;
 	else {
-		sprite = (byte *) malloc(s->w * s->h);
+		sprite = (byte *)malloc(s->w * s->h);
 		freeSprite = true;
 		if (!sprite)
 			return RDERR_OUTOFMEMORY;
@@ -389,7 +389,7 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 	}
 
 	if (s->type & RDSPR_FLIP) {
-		newSprite = (byte *) malloc(s->w * s->h);
+		newSprite = (byte *)malloc(s->w * s->h);
 		if (newSprite == NULL) {
 			if (freeSprite)
 				free(sprite);
@@ -482,7 +482,7 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 			return RDERR_NOTIMPLEMENTED;
 		}
 
-		newSprite = (byte *) malloc(s->scaledWidth * s->scaledHeight);
+		newSprite = (byte *)malloc(s->scaledWidth * s->scaledHeight);
 		if (newSprite == NULL) {
 			if (freeSprite)
 				free(sprite);
@@ -516,7 +516,7 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 		// RDSPR_NOCOMPRESSION case.
 
 		if (!freeSprite) {
-			newSprite = (byte *) malloc(s->w * s->h);
+			newSprite = (byte *)malloc(s->w * s->h);
 			memcpy(newSprite, sprite, s->w * s->h);
 			sprite = newSprite;
 			freeSprite = true;
@@ -624,7 +624,7 @@ int32 Screen::openLightMask(SpriteInfo *s) {
 	if (_lightMask)
 		return RDERR_NOTCLOSED;
 
-	_lightMask = (byte *) malloc(s->w * s->h);
+	_lightMask = (byte *)malloc(s->w * s->h);
 	if (!_lightMask)
 		return RDERR_OUTOFMEMORY;
 

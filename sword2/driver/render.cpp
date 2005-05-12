@@ -213,7 +213,7 @@ void Screen::plotPoint(int x, int y, uint8 colour) {
 }
 
 static void plot(int x, int y, int colour, void *data) {
-	Screen *screen = (Screen *) data;
+	Screen *screen = (Screen *)data;
 	screen->plotPoint(x, y, (uint8) colour);
 }
 
@@ -427,13 +427,13 @@ int32 Screen::initialiseBackgroundLayer(Parallax *p) {
 	_xBlocks[_layer] = (p->w + BLOCKWIDTH - 1) / BLOCKWIDTH;
 	_yBlocks[_layer] = (p->h + BLOCKHEIGHT - 1) / BLOCKHEIGHT;
 
-	_blockSurfaces[_layer] = (BlockSurface **) calloc(_xBlocks[_layer] * _yBlocks[_layer], sizeof(BlockSurface *));
+	_blockSurfaces[_layer] = (BlockSurface **)calloc(_xBlocks[_layer] * _yBlocks[_layer], sizeof(BlockSurface *));
 	if (!_blockSurfaces[_layer])
 		return RDERR_OUTOFMEMORY;
 
 	// Decode the parallax layer into a large chunk of memory
 
-	byte *memchunk = (byte *) calloc(_xBlocks[_layer] * _yBlocks[_layer], BLOCKWIDTH * BLOCKHEIGHT);
+	byte *memchunk = (byte *)calloc(_xBlocks[_layer] * _yBlocks[_layer], BLOCKWIDTH * BLOCKHEIGHT);
 	if (!memchunk)
 		return RDERR_OUTOFMEMORY;
 
@@ -441,7 +441,7 @@ int32 Screen::initialiseBackgroundLayer(Parallax *p) {
 		if (!p->offset[i])
 			continue;
 
-		byte *pLine = (byte *) p + FROM_LE_32(p->offset[i]);
+		byte *pLine = (byte *)p + FROM_LE_32(p->offset[i]);
 		uint16 packets = READ_LE_UINT16(pLine);
 		uint16 offset = READ_LE_UINT16(pLine + 2);
 
@@ -503,7 +503,7 @@ int32 Screen::initialiseBackgroundLayer(Parallax *p) {
 		//  Only assign a surface to the block if it contains data.
 
 		if (block_has_data) {
-			_blockSurfaces[_layer][i] = (BlockSurface *) malloc(sizeof(BlockSurface));
+			_blockSurfaces[_layer][i] = (BlockSurface *)malloc(sizeof(BlockSurface));
 
 			//  Copy the data into the surfaces.
 			dst = _blockSurfaces[_layer][i]->data;

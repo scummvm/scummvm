@@ -278,7 +278,7 @@ int32 Mouse::setMenuIcon(uint8 menu, uint8 pocket, byte *icon) {
 	// Only put the icon in the pocket if it is not NULL
 	if (icon != NULL) {
 		_iconCount++;
-		_icons[menu][pocket] = (byte *) malloc(RDMENU_ICONWIDE * RDMENU_ICONDEEP);
+		_icons[menu][pocket] = (byte *)malloc(RDMENU_ICONWIDE * RDMENU_ICONDEEP);
 		if (_icons[menu][pocket] == NULL)
 			return RDERR_OUTOFMEMORY;
 		memcpy(_icons[menu][pocket], icon, RDMENU_ICONWIDE * RDMENU_ICONDEEP);

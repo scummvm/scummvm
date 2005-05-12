@@ -88,7 +88,7 @@ void Screen::setFullPalette(int32 palRes) {
 	if (palRes) {
 		byte *pal = _vm->_resman->openResource(palRes);
 
-		StandardHeader *head = (StandardHeader *) pal;
+		StandardHeader *head = (StandardHeader *)pal;
 		assert(head->fileType == PALETTE_FILE);
 
 		pal += sizeof(StandardHeader);

@@ -109,7 +109,7 @@ void Router::allocateRouteMem() {
 	if (_routeSlots[slotNo])
 		freeRouteMem();
 
-	_routeSlots[slotNo] = (WalkData *) malloc(sizeof(WalkData) * O_WALKANIM_SIZE);
+	_routeSlots[slotNo] = (WalkData *)malloc(sizeof(WalkData) * O_WALKANIM_SIZE);
 
 	// 12000 bytes were used for this in Sword1 mega compacts, based on
 	// 20 bytes per 'WalkData' frame
@@ -127,7 +127,7 @@ void Router::allocateRouteMem() {
 WalkData *Router::getRouteMem() {
 	uint8 slotNo = returnSlotNo(Logic::_scriptVars[ID]);
 	
-	return (WalkData *) _routeSlots[slotNo];
+	return (WalkData *)_routeSlots[slotNo];
 }
 
 void Router::freeRouteMem() {
@@ -2397,7 +2397,7 @@ void Router::loadWalkGrid() {
 			// open walk grid file
 			fPolygrid = _vm->_resman->openResource(_walkGridList[i]);
  			fPolygrid += sizeof(StandardHeader);
- 			memcpy((byte *) &floorHeader, fPolygrid, sizeof(WalkGridHeader));
+ 			memcpy((byte *)&floorHeader, fPolygrid, sizeof(WalkGridHeader));
  			fPolygrid += sizeof(WalkGridHeader);
 
 			// how many bars & nodes are we getting from this
@@ -2414,7 +2414,7 @@ void Router::loadWalkGrid() {
 
 			// lines
 
- 			memcpy((byte *) &_bars[_nBars], fPolygrid, theseBars * sizeof(BarData));
+ 			memcpy((byte *)&_bars[_nBars], fPolygrid, theseBars * sizeof(BarData));
 
 			// move pointer to start of node data
 			fPolygrid += theseBars * sizeof(BarData);
@@ -2423,7 +2423,7 @@ void Router::loadWalkGrid() {
 
 			// leave node 0 for start node
 			for (uint j = 0; j < theseNodes; j++) {
-				memcpy((byte *) &_node[_nNodes + j].x, fPolygrid, 2 * sizeof(int16));
+				memcpy((byte *)&_node[_nNodes + j].x, fPolygrid, 2 * sizeof(int16));
 				fPolygrid += 2 * sizeof(int16);
 			}
 

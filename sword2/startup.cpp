@@ -117,7 +117,7 @@ bool Sword2Engine::initStartMenu() {
 		// start list
 
 		if (_resman->checkValid(_startRes)) {
-			char *raw_script = (char *) _resman->openResource(_startRes);
+			char *raw_script = (char *)_resman->openResource(_startRes);
 			uint32 null_pc = 0;
 
 			_logic->runScript(raw_script, raw_script, &null_pc);
@@ -167,8 +167,8 @@ void Sword2Engine::runStart(int start) {
 	}
 
 	// Open George
-	char *raw_data_ad = (char *) _resman->openResource(CUR_PLAYER_ID);
-	char *raw_script = (char *) _resman->openResource(_startList[start].start_res_id);
+	char *raw_data_ad = (char *)_resman->openResource(CUR_PLAYER_ID);
+	char *raw_script = (char *)_resman->openResource(_startList[start].start_res_id);
 
 	// Denotes script to run
 	uint32 null_pc = _startList[start].key & 0xffff;

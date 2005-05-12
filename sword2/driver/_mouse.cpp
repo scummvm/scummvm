@@ -122,7 +122,7 @@ void Mouse::drawMouse() {
 	memset(mouseData, 0, mouse_width * mouse_height);
 
 	if (_luggageAnim)
-		decompressMouse(mouseData, (byte *) _luggageAnim + READ_LE_UINT32(_luggageOffset), _luggageAnim->mousew,
+		decompressMouse(mouseData, (byte *)_luggageAnim + READ_LE_UINT32(_luggageOffset), _luggageAnim->mousew,
 				_luggageAnim->mouseh, mouse_width, deltaX, deltaY);
 
 	if (_mouseAnim)
@@ -144,7 +144,7 @@ int32 Mouse::animateMouse() {
 	if (++_mouseFrame == _mouseAnim->noAnimFrames)
 		_mouseFrame = MOUSEFLASHFRAME;
 
-	_mouseSprite = (byte *) _mouseAnim + READ_LE_UINT32(_mouseOffsets + _mouseFrame);
+	_mouseSprite = (byte *)_mouseAnim + READ_LE_UINT32(_mouseOffsets + _mouseFrame);
 
 	if (_mouseFrame != prevMouseFrame)
 		drawMouse();
@@ -172,12 +172,12 @@ int32 Mouse::setMouseAnim(byte *ma, int32 size, int32 mouseFlash) {
 		else
 			_mouseFrame = MOUSEFLASHFRAME;
 
-		_mouseAnim = (MouseAnim *) malloc(size);
+		_mouseAnim = (MouseAnim *)malloc(size);
 		if (!_mouseAnim)
 			return RDERR_OUTOFMEMORY;
 
-		memcpy((byte *) _mouseAnim, ma, size);
-		_mouseOffsets = (int32 *) ((byte *) _mouseAnim + sizeof(MouseAnim));
+		memcpy((byte *)_mouseAnim, ma, size);
+		_mouseOffsets = (int32 *)((byte *)_mouseAnim + sizeof(MouseAnim));
 
 		animateMouse();
 		drawMouse();
@@ -207,12 +207,12 @@ int32 Mouse::setLuggageAnim(byte *ma, int32 size) {
 	}
 
 	if (ma)	{
-		_luggageAnim = (MouseAnim *) malloc(size);
+		_luggageAnim = (MouseAnim *)malloc(size);
 		if (!_luggageAnim)
 			return RDERR_OUTOFMEMORY;
 
-		memcpy((byte *) _luggageAnim, ma, size);
-		_luggageOffset = (int32 *) ((byte *) _luggageAnim + sizeof(MouseAnim));
+		memcpy((byte *)_luggageAnim, ma, size);
+		_luggageOffset = (int32 *)((byte *)_luggageAnim + sizeof(MouseAnim));
 
 		animateMouse();
 		drawMouse();

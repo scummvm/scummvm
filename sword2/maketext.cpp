@@ -93,17 +93,17 @@ byte *FontRenderer::makeTextSprite(byte *sentence, uint16 maxWidth, uint8 pen, u
 
 	// Allocate memory for array of lineInfo structures
 
-	byte *line = (byte *) malloc(MAX_LINES * sizeof(LineInfo));
+	byte *line = (byte *)malloc(MAX_LINES * sizeof(LineInfo));
 
 	// Get details of sentence breakdown into array of LineInfo structures
 	// and get the number of lines involved
 
-	uint16 noOfLines = analyseSentence(sentence, maxWidth, fontRes, (LineInfo *) line);
+	uint16 noOfLines = analyseSentence(sentence, maxWidth, fontRes, (LineInfo *)line);
 
 	// Construct the sprite based on the info gathered - returns floating
 	// mem block
 
-	byte *textSprite = buildTextSprite(sentence, fontRes, pen, (LineInfo *) line, noOfLines);
+	byte *textSprite = buildTextSprite(sentence, fontRes, pen, (LineInfo *)line, noOfLines);
 
 	free(line);
 	return textSprite;
@@ -213,12 +213,12 @@ byte *FontRenderer::buildTextSprite(byte *sentence, uint32 fontRes, uint8 pen, L
 	// Allocate memory for the text sprite
 
 	uint32 sizeOfSprite = spriteWidth * spriteHeight;
-	byte *textSprite = (byte *) malloc(sizeof(FrameHeader) + sizeOfSprite);
+	byte *textSprite = (byte *)malloc(sizeof(FrameHeader) + sizeOfSprite);
 
 	// At this stage, textSprite points to an unmovable memory block. Set
 	// up the frame header.
 
-	FrameHeader *frameHeadPtr = (FrameHeader *) textSprite;
+	FrameHeader *frameHeadPtr = (FrameHeader *)textSprite;
 
 	frameHeadPtr->compSize = 0;
 	frameHeadPtr->width = spriteWidth;
@@ -324,7 +324,7 @@ FrameHeader* FontRenderer::findChar(byte ch, byte *charSet) {
  */
 
 void FontRenderer::copyChar(FrameHeader *charPtr, byte *spritePtr, uint16 spriteWidth, uint8 pen) {
-	byte *source = (byte *) charPtr + sizeof(FrameHeader);
+	byte *source = (byte *)charPtr + sizeof(FrameHeader);
 	byte *rowPtr = spritePtr;
 
 	for (uint i = 0; i < charPtr->height; i++) {
@@ -387,7 +387,7 @@ uint32 FontRenderer::buildNewBloc(byte *ascii, int16 x, int16 y, uint16 width, u
 	// without margin checking - used for debug text
 
 	if (justification != NO_JUSTIFICATION) {
-		FrameHeader *frame_head = (FrameHeader *) _blocList[i].text_mem;
+		FrameHeader *frame_head = (FrameHeader *)_blocList[i].text_mem;
 
 		switch (justification) {
 		case POSITION_AT_CENTRE_OF_BASE:
@@ -460,7 +460,7 @@ uint32 FontRenderer::buildNewBloc(byte *ascii, int16 x, int16 y, uint16 width, u
 void FontRenderer::printTextBlocs() {
 	for (uint i = 0; i < MAX_text_blocs; i++) {
 		if (_blocList[i].text_mem) {
-			FrameHeader *frame = (FrameHeader *) _blocList[i].text_mem;
+			FrameHeader *frame = (FrameHeader *)_blocList[i].text_mem;
 			SpriteInfo spriteInfo;
 
 			spriteInfo.x = _blocList[i].x;
@@ -507,7 +507,7 @@ void Sword2Engine::initialiseFontResourceFlags() {
 	// "zapisz"     Polish for "save"
 
 	// Get the text line (& skip the 2 chars containing the wavId)
-	char *textLine = (char *) fetchTextLine(textFile, SAVE_LINE_NO) + 2;
+	char *textLine = (char *)fetchTextLine(textFile, SAVE_LINE_NO) + 2;
 
 	if (strcmp(textLine, "tallenna") == 0)
 		initialiseFontResourceFlags(FINNISH_TEXT);
@@ -529,9 +529,9 @@ void Sword2Engine::initialiseFontResourceFlags() {
 	// But we get it from the text resource instead.
 
 	if (Logic::_scriptVars[DEMO])
-		textLine = (char *) fetchTextLine(textFile, 451) + 2;
+		textLine = (char *)fetchTextLine(textFile, 451) + 2;
 	else
-		textLine = (char *) fetchTextLine(textFile, 54) + 2;
+		textLine = (char *)fetchTextLine(textFile, 54) + 2;
 
 	_system->setWindowCaption(textLine);
 	_resman->closeResource(TEXT_RES);
