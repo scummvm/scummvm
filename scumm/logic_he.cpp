@@ -500,11 +500,11 @@ int LogicHEfootball::op_1010(int32 *args) {
 
 int LogicHEfootball::op_1022(int32 *args) {
 	double res;
-	double var10 = args[4] - args[1]; // 25
-	double var8 = args[5] - args[2]; // 0
-	double var6 = args[3] - args[0]; // -2578
+	double var10 = args[4] - args[1];
+	double var8 = args[5] - args[2];
+	double var6 = args[3] - args[0];
 
-	res = sqrt(var8 * var8 + var6 * var6 + var10 * var10); // 2.5781212
+	res = sqrt(var8 * var8 + var6 * var6 + var10 * var10);
 
 	if (res >= (double)args[6]) {
 		var8 = (double)args[6] * var8 / res;
