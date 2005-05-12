@@ -642,12 +642,7 @@ void Interface::updateInventory(int pos) {
 	}	
 }
 
-void Interface::addToInventory(int objectId, int pos) {
-	if (pos != -1) { 
-		_inventory[pos] = objectId;
-		_inventoryCount = MAX(_inventoryCount, pos + 1);
-		return;
-	}
+void Interface::addToInventory(int objectId) {
 
 	if (_inventoryCount >= _inventorySize) {
 		return;
@@ -1032,6 +1027,24 @@ void Interface::handleConverseClick(const Point& mousePoint) {
 		converseChangePos(_conversePanel.currentButton->id);
 	}	
 
+}
+
+void Interface::saveState(Common::File& out) {
+	out.writeUint16LE(_inventoryCount);
+
+	for (int i = 0; i < _inventoryCount; i++) {
+		out.writeUint16LE(_inventory[i]);
+	}
+}
+
+void Interface::loadState(Common::File& in) {
+	_inventoryCount = in.readUint16LE();
+
+	for (int i = 0; i < _inventoryCount; i++) {
+		_inventory[i] = in.readUint16LE();
+	}
+	
+	updateInventory(0);
 }
 
 

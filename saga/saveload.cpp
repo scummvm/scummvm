@@ -53,6 +53,8 @@ void SagaEngine::save(const char *fileName) {
 
 	uint16 i;
 
+	_interface->saveState(out);
+
 	_actor->saveState(out);
 	
 	out.writeSint16LE(_script->_commonBufferSize);
@@ -88,7 +90,7 @@ void SagaEngine::load(const char *fileName) {
 	debug(0, "scene: #%d inset scene: #%d", sceneNumber, insetSceneNumber);
 
 	
-	_interface->clearInventory();
+	_interface->loadState(in);
 
 	_actor->loadState(in);
 	

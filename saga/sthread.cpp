@@ -187,10 +187,10 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 	uint16 savedInstructionOffset;
 
 	byte *addr;
-	uint16 param1;
-	uint16 param2;
+	uint16 jmpOffset1;
 	int16 iparam1;
 	int16 iparam2;
+	int16 iparam3;
 
 	byte argumentsCount;
 	uint16 functionNumber;
@@ -263,10 +263,10 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 // DATA INSTRUCTIONS  
 		CASEOP(opGetFlag)
 			addr = thread->baseAddress(scriptS.readByte());
-			param1 = scriptS.readUint16LE();
-			addr += (param1 >> 3);
-			param1 = (1 << (param1 & 7));
-			thread->push((*addr) & param1 ? 1 : 0);
+			iparam1 = scriptS.readSint16LE();
+			addr += (iparam1 >> 3);
+			iparam1 = (1 << (iparam1 & 7));
+			thread->push((*addr) & iparam1 ? 1 : 0);
 			break;
 		CASEOP(opGetInt)
 			addr = thread->baseAddress(scriptS.readByte());
@@ -277,13 +277,13 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			break;
 		CASEOP(opPutFlag)
 			addr = thread->baseAddress(scriptS.readByte());
-			param1 = scriptS.readUint16LE();
-			addr += (param1 >> 3);
-			param1 = (1 << (param1 & 7));
+			iparam1 = scriptS.readSint16LE();
+			addr += (iparam1 >> 3);
+			iparam1 = (1 << (iparam1 & 7));
 			if (thread->stackTop()) {
-				*addr |= param1;
+				*addr |= iparam1;
 			} else {
-				*addr &= ~param1;
+				*addr &= ~iparam1;
 			}
 			break;
 		CASEOP(opPutInt)
@@ -294,13 +294,13 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			break;
 		CASEOP(opPutFlagV)
 			addr = thread->baseAddress(scriptS.readByte());
-			param1 = scriptS.readUint16LE();
-			addr += (param1 >> 3);
-			param1 = (1 << (param1 & 7));
+			iparam1 = scriptS.readSint16LE();
+			addr += (iparam1 >> 3);
+			iparam1 = (1 << (iparam1 & 7));
 			if (thread->pop()) {
-				*addr |= param1;
+				*addr |= iparam1;
 			} else {
-				*addr &= ~param1;
+				*addr &= ~iparam1;
 			}
 			break;
 		CASEOP(opPutIntV)
@@ -313,20 +313,20 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 // FUNCTION CALL INSTRUCTIONS    
 		CASEOP(opCall)
 			argumentsCount = scriptS.readByte();
-			param1 = scriptS.readByte();
-			if (param1 != kAddressModule) {
-				error("Script::runThread param1 != kAddressModule");
+			iparam1 = scriptS.readByte();
+			if (iparam1 != kAddressModule) {
+				error("Script::runThread iparam1 != kAddressModule");
 			}
-			addr = thread->baseAddress(param1);
+			addr = thread->baseAddress(iparam1);
 			iparam1 = scriptS.readSint16LE();
 			addr += iparam1;
 			thread->push(argumentsCount);
 
-			param2 = scriptS.pos();
+			jmpOffset1 = scriptS.pos();
 			// NOTE: The original pushes the program
 			// counter as a pointer here. But I don't think
 			// we will have to do that.
-			thread->push(param2);
+			thread->push(jmpOffset1);
 			// NOTE2: program counter is 32bit - so we should "emulate" it size - because kAddressStack relies on it
 			thread->push(0);
 			thread->_instructionOffset = iparam1;
@@ -385,40 +385,40 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 
 // BRANCH INSTRUCTIONS    
 		CASEOP(opJmp)
-			param1 = scriptS.readUint16LE();
-			thread->_instructionOffset = param1;
+			jmpOffset1 = scriptS.readUint16LE();
+			thread->_instructionOffset = jmpOffset1;
 			break;
 		CASEOP(opJmpTrueV)
-			param1 = scriptS.readUint16LE();
+			jmpOffset1 = scriptS.readUint16LE();
 			if (thread->pop()) {
-				thread->_instructionOffset = param1;
+				thread->_instructionOffset = jmpOffset1;
 			}
 			break;
 		CASEOP(opJmpFalseV)
-			param1 = scriptS.readUint16LE();
+			jmpOffset1 = scriptS.readUint16LE();
 			if (!thread->pop()) {
-				thread->_instructionOffset = param1;
+				thread->_instructionOffset = jmpOffset1;
 			}
 			break;
 		CASEOP(opJmpTrue)
-			param1 = scriptS.readUint16LE();
+			jmpOffset1 = scriptS.readUint16LE();
 			if (thread->stackTop()) {
-				thread->_instructionOffset = param1;
+				thread->_instructionOffset = jmpOffset1;
 			}
 			break;
 		CASEOP(opJmpFalse)
-			param1 = scriptS.readUint16LE();
+			jmpOffset1 = scriptS.readUint16LE();
 			if (!thread->stackTop()) {
-				thread->_instructionOffset = param1;
+				thread->_instructionOffset = jmpOffset1;
 			}
 			break;
 		CASEOP(opJmpSwitch)
 			iparam1 = scriptS.readSint16LE();
-			param1 = thread->pop();
+			iparam2 = thread->pop();
 			while (iparam1--) {
-				param2 = scriptS.readUint16LE();
+				iparam3 = scriptS.readUint16LE();
 				thread->_instructionOffset = scriptS.readUint16LE();
-				if (param2 == param1) {
+				if (iparam3 == iparam2) {
 					break;
 				}
 			}
@@ -669,26 +669,26 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 				byte flags;
 				replyNum = scriptS.readByte();
 				flags = scriptS.readByte();
-				param1 = 0;
+				iparam1 = 0;
 
 				if (flags & kReplyOnce) {
-					param1 = scriptS.readUint16LE();
-					addr = thread->_staticBase + (param1 >> 3);
-					if (*addr & (1 << (param1 & 7))) {
+					iparam1 = scriptS.readSint16LE();
+					addr = thread->_staticBase + (iparam1 >> 3);
+					if (*addr & (1 << (iparam1 & 7))) {
 						break;
 					}
 				}
 
 				str = thread->_strings->getString(thread->pop());
-				if (_vm->_interface->converseAddText(str, replyNum, flags, param1))
-					warning("Error adding ConverseText (%s, %d, %d, %d)", str, replyNum, flags, param1);
+				if (_vm->_interface->converseAddText(str, replyNum, flags, iparam1))
+					warning("Error adding ConverseText (%s, %d, %d, %d)", str, replyNum, flags, iparam1);
 			}
 			break;
 		CASEOP(opAnimate)
 			scriptS.readUint16LE();
 			scriptS.readUint16LE();
-			param1 = scriptS.readByte();
-			thread->_instructionOffset += param1;
+			jmpOffset1 = scriptS.readByte();
+			thread->_instructionOffset += jmpOffset1;
 			break;
 
 		default:

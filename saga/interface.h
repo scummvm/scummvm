@@ -174,7 +174,7 @@ public:
 		updateInventory(_inventoryCount);
 		draw();
 	}
-	void addToInventory(int objectId, int pos = -1);
+	void addToInventory(int objectId);
 	void removeFromInventory(int objectId);
 	void clearInventory();
 	int inventoryItemPosition(int objectId);
@@ -189,6 +189,8 @@ public:
 	PanelButton *inventoryHitTest(const Point& mousePoint) {
 		return _mainPanel.hitTest(mousePoint, kPanelButtonInventory);
 	}
+	void saveState(Common::File& out);
+	void loadState(Common::File& in);
 private:
 	PanelButton *verbHitTest(const Point& mousePoint);
 	void handleCommandUpdate(const Point& mousePoint);
