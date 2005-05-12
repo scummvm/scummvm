@@ -2206,7 +2206,7 @@ void ScummEngine_v100he::o100_isResourceLoaded() {
 	int type;
 
 	byte subOp = fetchScriptByte();
-	int idx = pop();
+	/* int idx = */ pop();
 
 	switch (subOp) {
 	case 25:

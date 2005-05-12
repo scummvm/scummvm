@@ -2113,7 +2113,7 @@ void ScummEngine_v72he::o72_isResourceLoaded() {
 	int type;
 
 	byte subOp = fetchScriptByte();
-	int idx = pop();
+	/* int idx = */ pop();
 
 	switch (subOp) {
 	case 18:
