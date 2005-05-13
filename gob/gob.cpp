@@ -49,18 +49,22 @@ struct GobGameSettings {
 };
 
 static const GobGameSettings gob_games[] = {
-	{"gob1", "Gobliiins 1 (CD)", 0, "45f9c1162dd7040fd05fd013ccc176e2"},
-	{"gob1", "Gobliiins 1 (DOS)", 0, "82aea70ef26f41fa963dfae270993e49"},
-	{"gob1", "Gobliiins 1 (Windows)", 0, "8a5e850c49d7cacdba5f5eb1fcc77b89"},
-	{"gob1", "Gobliiins 1 (Demo)", 0, "4f5bf4b9e4c39ebb93579747fc678e97"},
-
+	// Supplied by Torbjorn Andersson
+	{"gob1", "Gobliiins 1 (CD)", GF_GOB1, "45f9c1162dd7040fd05fd013ccc176e2"},
+	{"gob1", "Gobliiins 1 (Interactive Demo)", GF_GOB1, "4f5bf4b9e4c39ebb93579747fc678e97"},
 #if 0
-	// Not supported yet
-	{"gob2", "Gobliins 2 (CD)", 0, "410e632682ab11969bc3b3b588066d95"},
-	{"gob2", "Gobliins 2 (Demo)", 0, "be8b111191f965ac9b28fe530580d14e"},
-	{"gob3", "Goblins Quest 3 (Demo)", 0, "5024e7de8d6377fbbeabbaa92e0452bc"},
-	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble", 0, "c27402cee260d2ff1c4cecb2006a630a"},
+	{"gob2", "Gobliins 2 (CD)", GF_GOB2, "410e632682ab11969bc3b3b588066d95"},
+	{"gob2", "Gobliins 2 (Demo)", GF_GOB2, "be8b111191f965ac9b28fe530580d14e"},
+	{"gob3", "Goblins Quest 3 (Demo)", GF_GOB3, "5024e7de8d6377fbbeabbaa92e0452bc"},
+	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble", GF_WOODRUFF, "c27402cee260d2ff1c4cecb2006a630a"},
 #endif
+
+	// Supplied by Theruler76 in bug report #1201233
+	{"gob1", "Gobliiins 1 (CD)", GF_GOB1, "a5e232fcd02733c7dffff107d22d36eb"},
+
+	// Supplied by Florian Zeitz on scummvm-devel
+	{"gob1", "Gobliiins 1 (DOS)", GF_GOB1, "82aea70ef26f41fa963dfae270993e49"},
+	{"gob1", "Gobliiins 1 (Windows)", GF_GOB1, "8a5e850c49d7cacdba5f5eb1fcc77b89"},
 	{0, 0, 0, 0}
 };
 

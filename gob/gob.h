@@ -36,6 +36,15 @@
 #define	WRITE_VAR_OFFSET(offs, val)	(VAR_OFFSET(offs) = (val))
 #define WRITE_VAR(var, val)		WRITE_VAR_OFFSET((var) << 2, (val))
 
+// TODO: Should be in the Gob namespace, I guess
+
+enum {
+	GF_GOB1 = 1 << 0,
+	GF_GOB2 = 1 << 1,
+	GF_GOB3 = 1 << 2,
+	GF_WOODRUFF = 1 << 3
+};
+
 namespace Gob {
 
 class GobEngine : public Engine {
