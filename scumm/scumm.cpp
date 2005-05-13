@@ -1479,7 +1479,7 @@ int ScummEngine::init(GameDetector &detector) {
 		_numActors = 25;
 	else if (_heversion >= 80)
 		_numActors = 62;
-	else if (_heversion >= 70)
+	else if (_heversion >= 72)
 		_numActors = 30;
 	else 
 		_numActors = 13;
