@@ -1760,7 +1760,10 @@ int ScummEngine_v72he::getSoundResourceSize(int id) {
 	int offs, size;
 
 	if (id > _numSounds) {
-		_sound->getHEMusicDetails(id, offs, size);
+		if (!_sound->getHEMusicDetails(id, offs, size)) {
+			debug(0, "getSoundResourceSize: musicID %d not found", id);
+			return 0;
+		}
 	} else {
 		ptr = getResourceAddress(rtSound, id);
 		if (!ptr)

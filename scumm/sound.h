@@ -133,7 +133,7 @@ public:
 	int getCurrentCDSound() const { return _currentCDSound; }
 
 	void setupHEMusicFile();
-	void getHEMusicDetails(int id, int &musicOffs, int &musicSize);
+	bool getHEMusicDetails(int id, int &musicOffs, int &musicSize);
 
 	// Used by the save/load system:
 	const SaveLoadEntry *getSaveLoadEntries();

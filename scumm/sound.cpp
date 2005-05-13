@@ -202,18 +202,18 @@ void Sound::setupHEMusicFile() {
 	musicFile.close();
 }
 
-void Sound::getHEMusicDetails(int id, int &musicOffs, int &musicSize) {
+bool Sound::getHEMusicDetails(int id, int &musicOffs, int &musicSize) {
 	int i;
 
 	for (i = 0; i < _heMusicTracks; i++) {
 		if (_heMusic[i].id == id) {
 			musicOffs = _heMusic[i].offset;
 			musicSize = _heMusic[i].size;
-			return;
+			return 1;
 		}
 	}
 
-	error("getHEMusicDetails: musicID %d not found", id);
+	return 0;
 }
 
 void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
@@ -250,8 +250,11 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 			warning("playSound: Can't open music file %s", buf);
 			return;
 		}
+		if (!getHEMusicDetails(soundID, music_offs, size)) {
+			debug(0, "playSound: musicID %d not found", soundID);
+			return;
+		}
 
-		getHEMusicDetails(soundID, music_offs, size);
 		musicFile.seek(music_offs, SEEK_SET);
 		ptr = (byte *)malloc(size);
 		musicFile.read(ptr, size);
