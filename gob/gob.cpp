@@ -49,28 +49,70 @@ struct GobGameSettings {
 };
 
 static const GobGameSettings gob_games[] = {
-	// Supplied by Torbjorn Andersson
-	{"gob1", "Gobliiins 1 (CD)", GF_GOB1, "45f9c1162dd7040fd05fd013ccc176e2"},
-	{"gob1", "Gobliiins 1 (Interactive Demo)", GF_GOB1, "4f5bf4b9e4c39ebb93579747fc678e97"},
-#if 0
-	{"gob2", "Gobliins 2 (CD)", GF_GOB2, "410e632682ab11969bc3b3b588066d95"},
-	{"gob2", "Gobliins 2 (Demo)", GF_GOB2, "be8b111191f965ac9b28fe530580d14e"},
-	{"gob3", "Goblins Quest 3 (Demo)", GF_GOB3, "5024e7de8d6377fbbeabbaa92e0452bc"},
-	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble", GF_WOODRUFF, "c27402cee260d2ff1c4cecb2006a630a"},
-#endif
+	// Supplied by Florian Zeitz on scummvm-devel
+	{"gob1", "Gobliiins (DOS EGA)", GF_GOB1, "82aea70ef26f41fa963dfae270993e49"},
+	{"gob1", "Gobliiins (DOS EGA)", GF_GOB1, "1f499458837008058b8ba6ae07057214"},
+	{"gob1", "Gobliiins (Windows)", GF_GOB1, "8a5e850c49d7cacdba5f5eb1fcc77b89"},
 
 	// Supplied by Theruler76 in bug report #1201233
-	{"gob1", "Gobliiins 1 (CD)", GF_GOB1, "a5e232fcd02733c7dffff107d22d36eb"},
+	{"gob1", "Gobliiins (DOS VGA)", GF_GOB1, "a5e232fcd02733c7dffff107d22d36eb"},
 
-	// Supplied by Florian Zeitz on scummvm-devel
-	{"gob1", "Gobliiins 1 (DOS)", GF_GOB1, "82aea70ef26f41fa963dfae270993e49"},
-	{"gob1", "Gobliiins 1 (Windows)", GF_GOB1, "8a5e850c49d7cacdba5f5eb1fcc77b89"},
+	// CD 1.000 version. Multilingual
+	{"gob1", "Gobliiins (CD)", GF_GOB1, "037db48ebce94bdfe42e2c9510da9211"},
+	// CD 1.02 version. Multilingual
+	{"gob1", "Gobliiins (CD)", GF_GOB1, "45f9c1162dd7040fd05fd013ccc176e2"},
+
+	{"gob1", "Gobliiins (Amiga)", GF_GOB1, "d9f8736b7dc0ea891cd06592a72e8a72"},
+	{"gob1", "Gobliiins (Amiga)", GF_GOB1, "69f9ae85252271e7dfa62883e581e5e9"},
+	{"gob1", "Gobliiins (Amiga)", GF_GOB1, "26de406cb09228d902274446a6a2eceb"},
+
+	{"gob1", "Gobliiins (Interactive Demo)", GF_GOB1, "4f5bf4b9e4c39ebb93579747fc678e97"},
+
+#if 0
+	{"gob2", "Gobliins 2 (DOS)", GF_GOB2, "abb5f762f9979d4253002de20f6e7b56"},
+	{"gob2", "Gobliins 2 (DOS)", GF_GOB2, "9b6de65d811c08eebf50391b84fcba92"},
+	{"gob2", "Gobliins 2 (DOS)", GF_GOB2, "54d59c200e3823ad0af11a605a6fd06a"},
+	{"gob2", "Gobliins 2 (DOS Ru)", GF_GOB2, "b6d47494bf88398ae59c1b5656cafce4"},
+	// CD 1.000.
+	{"gob2", "Gobliins 2 (CD)", GF_GOB2, "02bf538fd8003b8da23a3546299c3df4"},
+	// CD 1.01
+	{"gob2", "Gobliins 2 (CD)", GF_GOB2, "410e632682ab11969bc3b3b588066d95"},
+	{"gob2", "Gobliins 2 (Demo)", GF_GOB2, "be8b111191f965ac9b28fe530580d14e"},
+
+	{"gob3", "Goblins Quest 3", GF_GOB3, "36d9b4032b39a794c8640e500e98893a"},
+	{"gob3", "Goblins Quest 3", GF_GOB3, "d129f639f6ca8d6b5f0f4e15edb91058"},
+	{"gob3", "Goblins Quest 3", GF_GOB3, "8d17b0abc514b1512fdedc6072acd48b"},
+	// CD 1.000
+	{"gob3", "Goblins Quest 3 (CD)", GF_GOB3, "8d17b0abc514b1512fdedc6072acd48b"},
+
+	{"gob3", "Goblins Quest 3 (Interactive Demo)", GF_GOB3, "4986b44cec309589508d7904f924c217"},
+	{"gob3", "Goblins Quest 3 (Demo)", GF_GOB3, "5024e7de8d6377fbbeabbaa92e0452bc"},
+	{"gob3", "Goblins Quest 3 (Interactive Demo)", GF_GOB3, "59ab69dab5fddbbf698c77a84297a5a2"},
+
+	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble", GF_WOODRUFF, "c27402cee260d2ff1c4cecb2006a630a"},
+#endif
 	{0, 0, 0, 0}
 };
 
+// Keep list of different supported games
+static const struct GobGameList {
+	const char *name;
+	const char *description;
+	uint32 features;
+	GameSettings toGameSettings() const {
+		GameSettings dummy = { name, description, features };
+		return dummy;
+	}
+} gob_list[] = {
+	{"gob1", "Gobliiins", GF_GOB1},
+	{"gob2", "Gobliins 2", GF_GOB2},
+	{0, 0, 0}
+};
+
+
 GameList Engine_GOB_gameList() {
 	GameList games;
-	const GobGameSettings *g = gob_games;
+	const GobGameList *g = gob_list;
 
 	while (g->name) {
 		games.push_back(g->toGameSettings());
@@ -112,6 +154,12 @@ DetectedGameList Engine_GOB_detectGames(const FSList &fslist) {
 		}
 		if (detectedGames.isEmpty()) {
 			printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
+
+			const GobGameList *g1 = gob_list;
+			while (g1->name) {
+				detectedGames.push_back(g1->toGameSettings());
+				g1++;
+			}
 		}
 	}
 	return detectedGames;
@@ -138,6 +186,42 @@ GobEngine::GobEngine(GameDetector *detector, OSystem * syst) : Engine(syst) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
 	_vm = this;
+
+	// Detect game features based on MD5
+	uint8 md5sum[16];
+	char md5str[32 + 1];
+
+	if (Common::md5_file("intro.stk", md5sum, ConfMan.get("path").c_str(), kMD5FileSizeLimit)) {
+		for (int j = 0; j < 16; j++) {
+			sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
+		}
+	} else {
+		error("GobEngine::GobEngine(): Cannot find intro.stk");
+	}
+
+	const GobGameSettings *g;
+	bool found = false;
+
+	// TODO
+	// Fallback. Maybe we will be able to determine game type from game
+	// data contents
+	_features = GF_GOB1;
+
+	for (g = gob_games; g->name; g++) {
+		if (strcmp(g->md5sum, (char *)md5str) == 0) {
+			_features = g->features;
+
+			if (g->description)
+				g_system->setWindowCaption(g->description);
+
+			found = true;
+			break;
+		}
+	}
+
+	if (!found) {
+		printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
+	}
 }
 
 GobEngine::~GobEngine() {
