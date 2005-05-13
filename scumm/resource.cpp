@@ -23,6 +23,7 @@
 #include "stdafx.h"
 #include "common/str.h"
 
+#include "scumm/charset.h"
 #include "scumm/dialogs.h"
 #include "scumm/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
@@ -890,6 +891,8 @@ bool ScummEngine::isResourceInUse(int type, int i) const {
 		return isCostumeInUse(i);
 	case rtSound:
 		return _sound->isSoundInUse(i);
+	case rtCharset:
+		return _charset->getCurID() == i;
 	default:
 		return false;
 	}
