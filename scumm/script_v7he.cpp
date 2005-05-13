@@ -527,6 +527,7 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 		break;
 	case 103:		// SO_LOAD_ROOM
 		resid = pop();
+		ensureResourceLoaded(rtRoomImage, resid);
 		ensureResourceLoaded(rtRoom, resid);
 		break;
 	case 104:		// SO_NUKE_SCRIPT
@@ -544,6 +545,7 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 	case 107:		// SO_NUKE_ROOM
 		resid = pop();
 		res.setResourceCounter(rtRoom, resid, 0x7F);
+		res.setResourceCounter(rtRoomImage, resid, 0x7F);
 		break;
 	case 108:		// SO_LOCK_SCRIPT
 		resid = pop();
@@ -564,6 +566,7 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 		if (resid > 0x7F)
 			resid = _resourceMapper[resid & 0x7F];
 		res.lock(rtRoom, resid);
+		res.lock(rtRoomImage, resid);
 		break;
 	case 112:		// SO_UNLOCK_SCRIPT
 		resid = pop();
@@ -584,6 +587,7 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 		if (resid > 0x7F)
 			resid = _resourceMapper[resid & 0x7F];
 		res.unlock(rtRoom, resid);
+		res.unlock(rtRoomImage, resid);
 		break;
 	case 116:
 		break;
