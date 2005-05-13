@@ -128,7 +128,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 		return false;
 	}
 	
-	// Sine version 52 a thumbnail is saved directly after the header
+	// Since version 52 a thumbnail is saved directly after the header
 	if (hdr.ver >= VER(52)) {
 		uint32 type = in->readUint32BE();
 		if (type != MKID('THMB')) {
