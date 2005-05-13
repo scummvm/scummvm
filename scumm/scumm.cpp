@@ -1474,7 +1474,7 @@ int ScummEngine::init(GameDetector &detector) {
 	else if (_version == 7)
 		_numActors = 30;
 	else if (_gameId == GID_SAMNMAX)
-		_numActors = 20;
+		_numActors = 30;
 	else if (_gameId == GID_MANIAC)
 		_numActors = 25;
 	else if (_heversion >= 80)
