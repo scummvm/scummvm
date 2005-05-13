@@ -702,22 +702,23 @@ void readRtcTime(void) {
 		if (configIsDaylightSavingEnabled())
 			gmtOfs += 60;
 
-		g_timeSecs = (FROM_BCD(cdClock.hour) * 60 + FROM_BCD(cdClock.minute)) * 60 + FROM_BCD(cdClock.second);
-
-		g_timeSecs -= 9 * 60 * 60; // minus 9 hours, JST -> GMT conversion
-		g_timeSecs += gmtOfs * 60; // GMT -> timezone the user selected
+		int timeSecs = (FROM_BCD(cdClock.hour) * 60 + FROM_BCD(cdClock.minute)) * 60 + FROM_BCD(cdClock.second);
+		timeSecs -= 9 * 60 * 60; // minus 9 hours, JST -> GMT conversion
+		timeSecs += gmtOfs * 60; // GMT -> timezone the user selected
 
 		g_day = FROM_BCD(cdClock.day);
 		g_month = FROM_BCD(cdClock.month);
 		g_year = FROM_BCD(cdClock.year);
 
-		if (g_timeSecs < 0) {
+		if (timeSecs < 0) {
 			buildNewDate(-1);
-			g_timeSecs += SECONDS_PER_DAY;
-		} else if (g_timeSecs >= SECONDS_PER_DAY) {
+			timeSecs += SECONDS_PER_DAY;
+		} else if (timeSecs >= SECONDS_PER_DAY) {
 			buildNewDate(+1);
-			g_timeSecs -= SECONDS_PER_DAY;
+			timeSecs -= SECONDS_PER_DAY;
 		}
+
+		g_timeSecs = (uint32)timeSecs;
 	}
 
 	sioprintf("Time: %d:%02d:%02d - %d.%d.%4d", g_timeSecs / (60 * 60), (g_timeSecs / 60) % 60, g_timeSecs % 60, 
