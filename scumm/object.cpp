@@ -871,8 +871,7 @@ void ScummEngine_v6::clearDrawQueues() {
 void ScummEngine_v70he::clearDrawQueues() {
 	ScummEngine_v6::clearDrawQueues();
 
-	if (_heversion >= 71)
-		_wiz.polygonClear();
+	_wiz.polygonClear();
 }
 
 void ScummEngine_v80he::clearDrawQueues() {
