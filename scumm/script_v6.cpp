@@ -28,22 +28,19 @@
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/imuse.h"
+#include "scumm/imuse_digi/dimuse.h"
+#include "scumm/insane/insane.h"
 #include "scumm/intern.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
+#include "scumm/smush/smush_player.h"
 #include "scumm/sound.h"
 #include "scumm/util.h"
 #include "scumm/verbs.h"
 
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
-
-#ifndef DISABLE_SCUMM_7_8
-#include "scumm/imuse_digi/dimuse.h"
-#include "scumm/insane/insane.h"
-#include "scumm/smush/smush_player.h"
-#endif
 
 namespace Scumm {
 

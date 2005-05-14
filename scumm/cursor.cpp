@@ -22,16 +22,13 @@
 #include "stdafx.h"
 #include "common/system.h"
 #include "common/util.h"
+#include "scumm/bomp.h"
 #include "scumm/charset.h"
 #include "scumm/intern.h"
 #include "scumm/object.h"
+#include "scumm/resource_v7he.h"
 #include "scumm/saveload.h"
 #include "scumm/scumm.h"
-#include "scumm/bomp.h"
-
-#ifndef DISABLE_HE
-#include "scumm/resource_v7he.h"
-#endif
 
 namespace Scumm {
 

@@ -23,7 +23,7 @@
  *
  */
 
-#ifndef RESOURCE_V7HE_H
+#if !defined(RESOURCE_V7HE_H) && !defined(DISABLE_HE)
 #define RESOURCE_V7HE_H
 
 namespace Scumm {

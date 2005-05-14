@@ -30,17 +30,11 @@
 
 #include "scumm/debugger.h"
 #include "scumm/dialogs.h"
+#include "scumm/insane/insane.h"
 #include "scumm/imuse.h"
+#include "scumm/logic_he.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
-
-#ifndef DISABLE_SCUMM_7_8
-#include "scumm/insane/insane.h"
-#endif
-
-#ifndef DISABLE_HE
-#include "scumm/logic_he.h"
-#endif
 
 
 #ifdef _WIN32_WCE

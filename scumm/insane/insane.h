@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef INSANE_H
+#if !defined(INSANE_H) && !defined(DISABLE_SCUMM_7_8)
 #define INSANE_H
 
 #include "base/engine.h"

@@ -18,7 +18,7 @@
  * $Header$
  */
 
-#ifndef IMUSE_DIGI_H
+#if !defined(IMUSE_DIGI_H) && !defined(DISABLE_SCUMM_7_8)
 #define IMUSE_DIGI_H
 
 #include "common/scummsys.h"

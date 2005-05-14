@@ -34,31 +34,25 @@
 #include "gui/message.h"
 #include "gui/newgui.h"
 
+#include "scumm/akos.h"
 #include "scumm/charset.h"
 #include "scumm/costume.h"
 #include "scumm/debugger.h"
 #include "scumm/dialogs.h"
 #include "scumm/imuse.h"
+#include "scumm/imuse_digi/dimuse.h"
+#include "scumm/insane/insane.h"
 #include "scumm/intern.h"
+#include "scumm/logic_he.h"
 #include "scumm/player_nes.h"
 #include "scumm/player_v1.h"
 #include "scumm/player_v2.h"
 #include "scumm/player_v2a.h"
 #include "scumm/player_v3a.h"
+#include "scumm/resource_v7he.h"
 #include "scumm/sound.h"
 #include "scumm/scumm.h"
 #include "scumm/util.h"
-
-#ifndef DISABLE_HE
-#include "scumm/logic_he.h"
-#include "scumm/resource_v7he.h"
-#endif
-
-#ifndef DISABLE_SCUMM_7_8
-#include "scumm/akos.h"
-#include "scumm/imuse_digi/dimuse.h"
-#include "scumm/insane/insane.h"
-#endif
 
 #ifdef __PALM_OS__
 #include "extras/palm-scumm-md5.h"

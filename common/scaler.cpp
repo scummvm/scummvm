@@ -103,10 +103,8 @@ void InitScalers(uint32 BitFormat) {
 	InitLUT(BitFormat);
 }
 
-#ifdef DISABLE_HQ_SCALERS
-void InitLUT(uint32 BitFormat) {}
-#else
 void InitLUT(uint32 BitFormat) {
+#ifndef DISABLE_HQ_SCALERS
 	int r, g, b;
 	int Y, u, v;
 	int gInc, gShift;
@@ -133,8 +131,8 @@ void InitLUT(uint32 BitFormat) {
 			}
 		}
 	}
-}
 #endif
+}
 
 /**
  * Trivial 'scaler' - in fact it doesn't do any scaling but just copies the

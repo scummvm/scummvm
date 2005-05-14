@@ -23,14 +23,11 @@
 #include "stdafx.h"
 #include "scumm/actor.h"
 #include "scumm/imuse.h"
+#include "scumm/imuse_digi/dimuse.h"
 #include "scumm/scumm.h"
 #include "scumm/saveload.h"
 #include "scumm/sound.h"
 #include "scumm/util.h"
-
-#ifndef DISABLE_SCUMM_7_8
-#include "scumm/imuse_digi/dimuse.h"
-#endif
 
 #include "common/config-manager.h"
 #include "common/timer.h"

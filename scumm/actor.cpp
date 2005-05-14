@@ -23,6 +23,7 @@
 #include "stdafx.h"
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
+#include "scumm/akos.h"
 #include "scumm/boxes.h"
 #include "scumm/charset.h"
 #include "scumm/costume.h"
@@ -34,10 +35,6 @@
 #include "scumm/usage_bits.h"
 #include "scumm/util.h"
 #include "scumm/wiz_he.h"
-
-#ifndef DISABLE_SCUMM_7_8
-#include "scumm/akos.h"
-#endif
 
 namespace Scumm {
 

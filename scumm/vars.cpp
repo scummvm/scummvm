@@ -25,11 +25,8 @@
 #include "common/config-manager.h"
 #include "scumm/scumm.h"
 #include "scumm/intern.h"
-#include "sound/mididrv.h"
-
-#ifndef DISABLE_HE
 #include "scumm/logic_he.h"
-#endif
+#include "sound/mididrv.h"
 
 namespace Scumm {
 

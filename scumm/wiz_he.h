@@ -20,7 +20,7 @@
  *
  */
  
-#ifndef WIZ_HE_H
+#if !defined(WIZ_HE_H) && !defined(DISABLE_HE)
 #define WIZ_HE_H
 
 #include "common/rect.h"

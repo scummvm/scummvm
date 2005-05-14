@@ -256,6 +256,7 @@ void ScummEngine::askForDisk(const char *filename, int disknum) {
 	char buf[128];
 
 	if (_version == 8) {
+#ifndef DISABLE_SCUMM_7_8
 		char result;
 
 		_imuseDigital->stopAllSounds();
@@ -270,6 +271,7 @@ void ScummEngine::askForDisk(const char *filename, int disknum) {
 		if (!result) {
 			error("Cannot find file: '%s'", filename);
 		}
+#endif
 	} else { 
 		sprintf(buf, "Cannot find file: '%s'", filename);
 		InfoDialog dialog(this, (char*)buf);

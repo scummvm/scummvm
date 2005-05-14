@@ -20,7 +20,7 @@
  *
  */
 
-#ifndef AKOS_H
+#if !defined(AKOS_H) && !defined(DISABLE_SCUMM_7_8)
 #define AKOS_H
 
 #include "scumm/base-costume.h"
