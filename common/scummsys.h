@@ -47,8 +47,6 @@
 	#if defined(CHECK_HEAP)
 	#undef CHECK_HEAP
 	#define CHECK_HEAP checkHeap();
-	#else
-	#define CHECK_HEAP
 	#endif
 
 	#define SCUMM_LITTLE_ENDIAN
@@ -67,7 +65,6 @@
 	
 	#define START_PACK_STRUCTS pack(push, 1)
 	#define END_PACK_STRUCTS	 pack(pop)
-	#define GCC_PACK
 
 #if defined(_WIN32_WCE) && _WIN32_WCE < 300
 
@@ -79,12 +76,8 @@
 
 	#define scumm_stricmp stricmp
 	#define scumm_strnicmp strnicmp
-	#define CHECK_HEAP
 	#define SCUMM_LITTLE_ENDIAN
 
-	#define FORCEINLINE inline
-	#define NORETURN __attribute__((__noreturn__))
-	#define GCC_PACK __attribute__((packed))
 	#define _HEAPOK 0
 
 	typedef unsigned char byte;
@@ -103,8 +96,6 @@
 
 	#define scumm_stricmp strcasecmp
 	#define scumm_strnicmp strncasecmp
-
-	#define CHECK_HEAP
 
 	#ifndef CONFIG_H
 		#ifdef X11_BACKEND
@@ -129,9 +120,6 @@
 	// You need to set this manually if necessary
 //	#define SCUMM_NEED_ALIGNMENT
 
-	#define FORCEINLINE inline
-	#define CDECL 
-
 	#ifndef HAVE_CONFIG_H
 	typedef unsigned char byte;
 	typedef unsigned char uint8;
@@ -149,15 +137,9 @@
 	#endif
 
 	#if defined(__GNUC__)
-	#define START_PACK_STRUCTS
-	#define END_PACK_STRUCTS
-	#define GCC_PACK __attribute__((packed))
-	#define NORETURN __attribute__((__noreturn__)) 
 	#else
 	#define START_PACK_STRUCTS pack (1)
 	#define END_PACK_STRUCTS	 pack ()
-	#define GCC_PACK
-	#define NORETURN
 	#endif
 
 #elif defined(__PALMOS_TRAPS__)	// PALMOS
@@ -170,13 +152,8 @@
 	#define scumm_stricmp stricmp
 	#define scumm_strnicmp strnicmp
 	
-	#define CHECK_HEAP
 	#define SCUMM_BIG_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
-	#define NONSTANDARD_SAVE
-
-	#define FORCEINLINE inline
-	#define CDECL 
 
 	typedef unsigned char byte;
 	typedef unsigned char uint8;
@@ -189,22 +166,15 @@
 	
 	#define START_PACK_STRUCTS pack (1)
 	#define END_PACK_STRUCTS   pack ()
-	#define GCC_PACK
-	#define NORETURN
-	#define NEED_STRDUP
 
 	#define NEWGUI_256
 
 #elif defined(__MORPHOS__)
 	#define scumm_stricmp stricmp
 	#define scumm_strnicmp strnicmp
-	#define CHECK_HEAP
 
 	#define SCUMM_BIG_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
-
-	#define FORCEINLINE inline
-	#define CDECL
 
 	typedef unsigned char byte;
 	typedef unsigned char uint8;
@@ -216,15 +186,9 @@
 	typedef signed long int32;
 
 	#if defined(__GNUC__)
-		#define START_PACK_STRUCTS
-		#define END_PACK_STRUCTS
-		#define GCC_PACK __attribute__((packed))
-		#define NORETURN __attribute__((__noreturn__))
 	#else
 		#define START_PACK_STRUCTS pack (1)
 		#define END_PACK_STRUCTS	 pack ()
-		#define GCC_PACK
-		#define NORETURN
 	#endif
 	#define main morphos_main
 
@@ -232,14 +196,8 @@
 
 	#define scumm_stricmp strcasecmp
 	#define scumm_strnicmp strncasecmp
-	#define CHECK_HEAP
 	#define SCUMM_LITTLE_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
-
-	#define FORCEINLINE inline
-	#define NORETURN __attribute__((__noreturn__))
-	#define GCC_PACK __attribute__((packed))
-	#define CDECL
 
 	typedef unsigned char byte;
 	typedef unsigned char uint8;
@@ -254,17 +212,12 @@
 	#define END_PACK_STRUCTS	 pack(pop)
 
 #elif defined __GP32__ //ph0x
-	#define CDECL 
 	#define SCUMM_NEED_ALIGNMENT
 	#define SCUMM_LITTLE_ENDIAN 
 
 	#define scumm_stricmp stricmp
 	#define scumm_strnicmp strnicmp
-	#define CHECK_HEAP
 
-	#define FORCEINLINE inline
-	#define NORETURN __attribute__((__noreturn__))
-	#define GCC_PACK __attribute__((packed))
 	#define _HEAPOK 0
 
 	typedef unsigned char byte;
@@ -279,17 +232,11 @@
 	#define START_PACK_STRUCTS pack (push, 1)
 	#define END_PACK_STRUCTS	 pack(pop)
 #elif defined __PLAYSTATION2__
-	#define CDECL 
 	#define SCUMM_NEED_ALIGNMENT
 	#define SCUMM_LITTLE_ENDIAN 
 
 	#define scumm_stricmp strcasecmp
 	#define scumm_strnicmp strncasecmp
-	#define CHECK_HEAP
-
-	#define FORCEINLINE inline
-	#define NORETURN __attribute__((__noreturn__))
-	#define GCC_PACK __attribute__((packed))
 
 	typedef unsigned char byte;
 	typedef unsigned char uint8;
@@ -330,28 +277,75 @@
 	#define	scumm_stricmp strcasecmp
 	#define	scumm_strnicmp strncasecmp
 
-	#define	CHECK_HEAP
-
 	#define	SCUMM_BIG_ENDIAN
 
 	// You need to set this manually if necessary
 	#define	SCUMM_NEED_ALIGNMENT
 
-	#define	FORCEINLINE	inline
-	#define	CDECL
-
 	#ifndef	HAVE_CONFIG_H
 	typedef	unsigned char byte;
 	typedef	unsigned int uint;
 	#endif
-
-	#define	START_PACK_STRUCTS
-	#define	END_PACK_STRUCTS
-	#define	GCC_PACK __attribute__((packed))
-	#define	NORETURN __attribute__((__noreturn__))
 #else
 	#error No system type defined
 #endif
+
+
+//
+// GCC specific stuff
+//
+#if defined(__GNUC__)
+	#define GCC_PACK __attribute__((packed))
+	#define NORETURN __attribute__((__noreturn__)) 
+#else
+	#define GCC_PACK
+#endif
+
+
+//
+// Fallbacks / default values for various special macros
+//
+#ifndef START_PACK_STRUCTS
+#define	START_PACK_STRUCTS
+#define	END_PACK_STRUCTS
+#endif
+
+#ifndef FORCEINLINE
+#define FORCEINLINE inline
+#endif
+
+#ifndef CHECK_HEAP
+#define CHECK_HEAP
+#endif
+
+#ifndef CDECL
+#define	CDECL
+#endif
+
+#ifndef NORETURN
+#define	NORETURN
+#endif
+
+#ifndef STRINGBUFLEN
+#define STRINGBUFLEN 1024
+#endif
+
+
+//
+// Overlay color type (FIXME: shouldn't be declared here)
+//
+#if defined(NEWGUI_256)
+	// 256 color only on PalmOS
+	typedef byte OverlayColor;
+#else
+	// 15/16 bit color mode everywhere else...
+	typedef int16 OverlayColor;
+#endif
+
+
+//
+// Endian conversion functions, macros etc., follow from here!
+//
 
 FORCEINLINE uint32 SWAP_BYTES_32(uint32 a) {
 	return ((a >> 24) & 0x000000FF) |
@@ -500,16 +494,4 @@ FORCEINLINE uint32 READ_BE_UINT24(const void *ptr) {
 	return (b[0] << 16) + (b[1] << 8) + (b[2]);
 }
 	
-#if defined(NEWGUI_256)
-	// 256 color only on PalmOS
-	typedef byte OverlayColor;
-#else
-	// 15/16 bit color mode everywhere else...
-	typedef int16 OverlayColor;
-#endif
-
-#ifndef STRINGBUFLEN
-#define STRINGBUFLEN 1024
-#endif
-
 #endif
