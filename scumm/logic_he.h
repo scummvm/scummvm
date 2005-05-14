@@ -95,9 +95,12 @@ public:
 	int32 dispatch(int op, int numArgs, int32 *args);
 
 private:
+	int op_1004(int32 *args);
 	int op_1006(int32 *args);
+	int op_1007(int32 *args);
 	int op_1010(int32 *args);
 	int op_1022(int32 *args);
+	int op_1024(int32 *args);
 };
 
 } // End of namespace Scumm

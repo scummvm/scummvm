@@ -455,6 +455,10 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 		res = op_1006(args);
 		break;
 
+	case 1007:
+		res = op_1007(args);
+		break;
+
 	case 1010:
 		res = op_1010(args);
 		break;
@@ -463,13 +467,68 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 		res = op_1022(args);
 		break;
 
+	case 1024:
+		res = op_1024(args);
+		break;
+
+		// TODO: find these in game and implement
+		//case 1004:
+		//case 1023:
+		//case 8221967:
+
+
+	case 1492: case 1493: case 1494: case 1495: case 1496:
+	case 1497: case 1498: case 1499: case 1500: case 1501:
+	case 1502: case 1503: case 1504: case 1505: case 1506:
+	case 1507: case 1508: case 1509: case 1510: case 1511:
+	case 1512: case 1513: case 1514: case 1555:
+		// DirectPlay-related
+		// 1513: initialize
+		// 1555: set fake lag
+		break;
+
+	case 2200: case 2201: case 2202: case 2203: case 2204:
+	case 2205: case 2206: case 2207: case 2208: case 2209:
+	case 2210: case 2211: case 2212: case 2213: case 2214:
+	case 2215: case 2216: case 2217: case 2218: case 2219:
+	case 2220: case 2221: case 2222: case 2223: case 2224:
+	case 2225: case 2226: case 2227: case 2228:
+		// Boneyards-related
+
+	case 3000: case 3001: case 3002: case 3003: case 3004:
+		// Internet-related
+		// 3000: check for updates
+		// 3001: check network status
+		// 3002: autoupdate
+		// 3003: close connection
+		break;
+
 	default:
 		LogicHE::dispatch(op, numArgs, args);
+		warning("Tell me how to reproduce it");
+		assert(0);
 		break;
 
 	}
 
 	return res;
+}
+
+int LogicHEfootball::op_1004(int32 *args) {
+	double res, a2, a4, a5;
+
+	a5 = ((double)args[4] - (double)args[1]) / ((double)args[5] - (double)args[2]);
+	a4 = ((double)args[3] - (double)args[0]) / ((double)args[5] - (double)args[2]);
+	a2 = (double)args[2] - (double)args[0] * a4 - args[1] * a5;
+
+	res = (double)args[6] * a4 + (double)args[7] * a5 + a2;
+	writeScummVar(108, (int32)res);
+
+	writeScummVar(109, (int32)a2);
+	writeScummVar(110, (int32)a5);
+	writeScummVar(111, (int32)a4);
+
+	return 1;
 }
 
 int LogicHEfootball::op_1006(int32 *args) {
@@ -480,6 +539,27 @@ int LogicHEfootball::op_1006(int32 *args) {
 	writeScummVar(108, (int32)res);
 
 	res = 640.0 - args[2] * 1.2360656e-1 - args[1] * 1.1588235e-1 - 26;
+	writeScummVar(109, (int32)res);
+
+	return 1;
+}
+
+int LogicHEfootball::op_1007(int32 *args) {
+	double res, temp;
+
+	temp = (double)args[1] * 0.32;
+
+	if (temp > 304.0)
+		res = -args[2] * 0.142;
+	else
+		res = args[2] * 0.142;
+
+	res += temp;
+
+	writeScummVar(108, (int32)res);
+
+	res = (1000.0 - args[2]) * 0.48;
+
 	writeScummVar(109, (int32)res);
 
 	return 1;
@@ -516,6 +596,15 @@ int LogicHEfootball::op_1022(int32 *args) {
 	writeScummVar(109, (int32)var10);
 	writeScummVar(110, (int32)var8);
 	
+	return 1;
+}
+
+int LogicHEfootball::op_1024(int32 *args) {
+	writeScummVar(108, 0);
+	writeScummVar(109, 0);
+	writeScummVar(110, 0);
+	writeScummVar(111, 0);
+
 	return 1;
 }
 
