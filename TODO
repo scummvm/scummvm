@@ -257,6 +257,7 @@ OSystem
   to common/system.cpp, or replace it with something better.
   No hasty changes here, please, make sure you understand how it is used right
   now before messing with it ;-)
+* Document key codes to be used for special keys, like F1-F15 etc.
 
 
 #######################################################################
