@@ -18,17 +18,22 @@ MODULE_OBJS += \
 	common/scaler.o \
 	common/scaler/2xsai.o \
 	common/scaler/aspect.o \
-	common/scaler/hq2x.o \
-	common/scaler/hq3x.o \
 	common/scaler/scale2x.o \
 	common/scaler/scale3x.o \
 	common/scaler/scalebit.o \
 	common/scaler/thumbnail.o
 
+ifndef DISABLE_HQ_SCALERS
+MODULE_OBJS += \
+	common/scaler/hq2x.o \
+	common/scaler/hq3x.o
+
 ifdef HAVE_NASM
 MODULE_OBJS += \
 	common/scaler/hq2x_i386.o \
 	common/scaler/hq3x_i386.o
+endif
+
 endif
 
 endif

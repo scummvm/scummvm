@@ -23,7 +23,6 @@
 #include "stdafx.h"
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
-#include "scumm/akos.h"
 #include "scumm/boxes.h"
 #include "scumm/charset.h"
 #include "scumm/costume.h"
@@ -35,6 +34,10 @@
 #include "scumm/usage_bits.h"
 #include "scumm/util.h"
 #include "scumm/wiz_he.h"
+
+#ifndef DISABLE_SCUMM_7_8
+#include "scumm/akos.h"
+#endif
 
 namespace Scumm {
 
@@ -1005,8 +1008,10 @@ void ScummEngine::processActors() {
 		a->animateCostume();
 	}
 	
+#ifndef DISABLE_SCUMM_7_8
 	if (_features & GF_NEW_COSTUMES)
 		akos_processQueue();
+#endif
 }
 
 #ifndef DISABLE_HE
@@ -1166,6 +1171,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	}
 }
 
+#ifndef DISABLE_SCUMM_7_8
 bool Actor::actorHitTest(int x, int y) {
 	AkosRenderer *ar = (AkosRenderer *)_vm->_costumeRenderer;
 
@@ -1180,6 +1186,7 @@ bool Actor::actorHitTest(int x, int y) {
 	
 	return ar->_actorHitResult;
 }
+#endif
 
 void Actor::animateCostume() {
 	if (_costume == 0)
@@ -1196,6 +1203,7 @@ void Actor::animateCostume() {
 	}
 }
 
+#ifndef DISABLE_SCUMM_7_8
 void Actor::animateLimb(int limb, int f) {
 	// This methods is very similiar to animateCostume(). 
 	// However, instead of animating *all* the limbs, it only animates
@@ -1230,6 +1238,7 @@ void Actor::animateLimb(int limb, int f) {
 //		_needBgReset = true;
 	}
 }
+#endif
 
 void ScummEngine::redrawAllActors() {
 	int j;
@@ -1300,12 +1309,14 @@ int ScummEngine::getActorFromPos(int x, int y) {
 	return result;
 }
 
+#ifndef DISABLE_SCUMM_7_8
 void ScummEngine_v7::actorTalk(const byte *msg) {
 	ScummEngine::actorTalk(msg);
 
 	// Play associated speech, if any
 	playSpeech((byte *)_lastStringTag);
 }
+#endif
 
 void ScummEngine::actorTalk(const byte *msg) {
 	Actor *a;
@@ -1434,6 +1445,7 @@ void Actor::setActorCostume(int c) {
 	_costumeNeedsInit = true;
 	
 	if (_vm->_features & GF_NEW_COSTUMES) {
+#ifndef DISABLE_SCUMM_7_8
 		memset(_animVariable, 0, sizeof(_animVariable));
 		
 		if (_vm->_heversion >= 71)
@@ -1453,6 +1465,7 @@ void Actor::setActorCostume(int c) {
 			}
 			startAnimActor(_initFrame);
 		}
+#endif
 	} else {
 		if (_visible) {
 			hideActor();

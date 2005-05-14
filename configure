@@ -24,6 +24,7 @@ _fluidsynth=auto
 _mt32emu=yes
 # default option behaviour yes/no
 _build_scumm=yes
+_build_scumm_7_8=yes
 _build_he=yes
 _build_simon=yes
 _build_sky=yes
@@ -36,6 +37,7 @@ _build_kyra=no
 _need_memalign=no
 _build_plugins=no
 _nasm=auto
+_build_hq_scalers=yes
 # more defaults
 _backend=sdl
 _ranlib=ranlib
@@ -264,6 +266,7 @@ Special configuration feature:
 Optional Features:
   --disable-debug          disable building with debugging symbols
   --disable-scumm          don't build the SCUMM engine
+  --disable-scumm-7-8      exclude v7 and v8 game in SCUMM engine (ft, dig, comi and demos)
   --disable-he             exclude HE70+ games in SCUMM engine
   --disable-simon          don't build the simon engine
   --disable-sky            don't build the Beneath a Steel Sky engine
@@ -276,6 +279,7 @@ Optional Features:
   --enable-plugins         build engines as loadable modules instead of
                            static linking them
   --disable-mt32emu        don't enable the integrated MT-32 emulator
+  --disable-hq-scalers     exclude HQ2x and HQ3x scalers
 
 Optional Libraries:
   --with-alsa-prefix=DIR   Prefix where alsa is installed (optional)
@@ -323,6 +327,7 @@ DEBFLAGS="-g"
 for ac_option in $@; do
     case "$ac_option" in
       --disable-scumm)          _build_scumm=no ;;
+      --disable-scumm-7-8)      _build_scumm_7_8=no ;;
       --disable-he)             _build_he=no ;;
       --disable-simon)          _build_simon=no ;;
       --disable-sky)            _build_sky=no ;;
@@ -332,6 +337,7 @@ for ac_option in $@; do
       --disable-saga)           _build_saga=no ;;
       --disable-gob)            _build_gob=no ;;
       --enable-kyra)            _build_kyra=yes ;;
+      --disable-hq-scalers)     _build_hq_scalers=no ;;
       --enable-alsa)            _alsa=yes       ;;
       --disable-alsa)           _alsa=no        ;;
       --enable-vorbis)          _vorbis=yes     ;;
@@ -425,6 +431,13 @@ Try \`$0 --help' for more information." >&2
         ;;
     esac;
 done;
+
+if test "$_build_he" = yes ; then
+	if test "$_build_scumm_7_8" != yes ; then
+	    echo "error: you cannot enable HE games with SCUMM v7 & v8 disabled"
+	    exit 1
+	fi
+fi
 
 CXXFLAGS="$CXXFLAGS $DEBFLAGS"
 
@@ -559,6 +572,12 @@ else
 	_mak_scumm='# DISABLE_SCUMM = 1'
 fi
 
+if test "$_build_scumm_7_8" = no ; then
+	_mak_scumm_7_8='DISABLE_SCUMM_7_8 = 1'
+else
+	_mak_scumm_7_8='# DISABLE_SCUMM_7_8 = 1'
+fi
+
 if test "$_build_he" = no ; then
 	_mak_he='DISABLE_HE = 1'
 else
@@ -611,6 +630,12 @@ if test "$_build_gob" = no ; then
 	_mak_gob='DISABLE_GOB = 1'
 else
 	_mak_gob='# DISABLE_GOB = 1'
+fi
+
+if test "$_build_hq_scalers" = no ; then
+	_mak_hq_scalers='DISABLE_HQ_SCALERS = 1'
+else
+	_mak_hq_scalers='# DISABLE_HQ_SCALERS = 1'
 fi
 
 if test -n "$_host"; then
@@ -1072,10 +1097,14 @@ test -z "$_mandir" && _mandir="$_prefix/man"
 echo
 echo "Engines:"
 if test "$_build_scumm" = yes ; then
-	echo "    SCUMM"
-	if test "$_build_he" = yes ; then
-		echo "    SCUMM (HE70+ games)"
+	echo_n "    SCUMM"
+	if test "$_build_scumm_7_8" = yes ; then
+		echo_n " [v7 & v8 games]"
 	fi
+	if test "$_build_he" = yes ; then
+		echo_n " [HE70+ games]"
+	fi
+	echo
 fi
 if test "$_build_simon" = yes ; then
 	echo "    Simon the Sorcerer"
@@ -1118,11 +1147,18 @@ echo_n "Backend... "
 echo_n "$_backend"
 
 if test "$_nasm" = yes ; then
-	echo ", assembly routines"
+	echo_n ", assembly routines"
+fi
+
+if test "$_build_hq_scalers" = yes ; then
+	echo_n ", HQ scalers"
+fi
+
+if test "$_mt32emu" = yes ; then
+	echo ", MT-32 emu"
 else
 	echo
 fi
-
 #
 # Backend related stuff
 #
@@ -1230,6 +1266,7 @@ $_mak_plugins
 $_make_def_HAVE_GCC3
 $_make_def_HAVE_NASM
 $_mak_scumm
+$_mak_scumm_7_8
 $_mak_he
 $_mak_simon
 $_mak_sky
@@ -1240,6 +1277,8 @@ $_mak_kyra
 $_mak_saga
 $_mak_gob
 $_mak_mt32emu
+
+$_mak_hq_scalers
 
 INCLUDES += $INCLUDES
 OBJS += $OBJS

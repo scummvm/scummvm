@@ -23,11 +23,14 @@
 #include "stdafx.h"
 #include "scumm/actor.h"
 #include "scumm/imuse.h"
-#include "scumm/imuse_digi/dimuse.h"
 #include "scumm/scumm.h"
 #include "scumm/saveload.h"
 #include "scumm/sound.h"
 #include "scumm/util.h"
+
+#ifndef DISABLE_SCUMM_7_8
+#include "scumm/imuse_digi/dimuse.h"
+#endif
 
 #include "common/config-manager.h"
 #include "common/timer.h"
@@ -806,8 +809,10 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 		}
 	
 		if (_vm->_imuseDigital) {
+#ifndef DISABLE_SCUMM_7_8
 			//_vm->_imuseDigital->stopSound(kTalkSoundID);
 			_vm->_imuseDigital->startVoice(kTalkSoundID, input);
+#endif
 		} else {
 			_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, input, id);
 		}
@@ -817,7 +822,9 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 void Sound::stopTalkSound() {
 	if (_sfxMode & 2) {
 		if (_vm->_imuseDigital) {
+#ifndef DISABLE_SCUMM_7_8
 			_vm->_imuseDigital->stopSound(kTalkSoundID);
+#endif
 		} else if (_vm->_heversion >= 60) {
 			_vm->_mixer->stopID(1);
 		} else {
@@ -855,8 +862,10 @@ int Sound::getSoundElapsedTime(int sound) const {
 }
 
 int Sound::isSoundRunning(int sound) const {
+#ifndef DISABLE_SCUMM_7_8
 	if (_vm->_imuseDigital)
 		return (_vm->_imuseDigital->getSoundStatus(sound) != 0);
+#endif
 
 	if (sound == _currentCDSound)
 		return pollCD();
@@ -906,8 +915,10 @@ int Sound::isSoundRunning(int sound) const {
  */
 bool Sound::isSoundInUse(int sound) const {
 
+#ifndef DISABLE_SCUMM_7_8
 	if (_vm->_imuseDigital)
 		return (_vm->_imuseDigital->getSoundStatus(sound) != 0);
+#endif
 
 	if (sound == _currentCDSound)
 		return pollCD() != 0;
@@ -1015,11 +1026,13 @@ void Sound::stopAllSounds() {
 void Sound::soundKludge(int *list, int num) {
 	int i;
 
+#ifndef DISABLE_SCUMM_7_8
 	if (_vm->_imuseDigital) {
 		_vm->_imuseDigital->parseScriptCmds(list[0], list[1], list[2], list[3], list[4],
 												list[5], list[6], list[7]);
 		return;
 	}
+#endif
 
 	if (list[0] == -1) {
 		processSoundQues();
@@ -1081,9 +1094,11 @@ void Sound::pauseSounds(bool pause) {
 
 	_soundsPaused = pause;
 
+#ifndef DISABLE_SCUMM_7_8
 	if (_vm->_imuseDigital) {
 		_vm->_imuseDigital->pause(pause);
 	}
+#endif
 
 	_vm->_mixer->pauseAll(pause);
 

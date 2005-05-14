@@ -24,9 +24,12 @@
 #include "stdafx.h"
 #include "common/config-manager.h"
 #include "scumm/scumm.h"
-#include "scumm/logic_he.h"
 #include "scumm/intern.h"
 #include "sound/mididrv.h"
+
+#ifndef DISABLE_HE
+#include "scumm/logic_he.h"
+#endif
 
 namespace Scumm {
 
@@ -194,6 +197,7 @@ void ScummEngine_v6::setupScummVars() {
 	VAR_CHARSET_MASK = 123;
 }
 
+#ifndef DISABLE_HE
 void ScummEngine_v70he::setupScummVars() {
 	ScummEngine_v6::setupScummVars();
 
@@ -303,7 +307,9 @@ void ScummEngine_v72he::setupScummVars() {
 		VAR_NUM_UNK = 131;
 	}
 }
+#endif
 
+#ifndef DISABLE_SCUMM_7_8
 void ScummEngine_v7::setupScummVars() {
 	VAR_MOUSE_X = 1;
 	VAR_MOUSE_Y = 2;
@@ -500,6 +506,7 @@ void ScummEngine_v8::setupScummVars() {
 	VAR_BLAST_ABOVE_TEXT = 133;
 	VAR_SYNC = 134;
 }
+#endif
 
 void ScummEngine_v2::initScummVars() {
 
@@ -525,6 +532,7 @@ void ScummEngine_v5::initScummVars() {
 		_scummVars[74] = 1225;
 }
 
+#ifndef DISABLE_SCUMM_7_8
 void ScummEngine_v7::initScummVars() {
 	ScummEngine::initScummVars();
 
@@ -539,7 +547,9 @@ void ScummEngine_v7::initScummVars() {
 	VAR(VAR_DEFAULT_TALK_DELAY) = 60;
 	VAR(VAR_VOICE_MODE) = ConfMan.getBool("subtitles");
 }
+#endif
 
+#ifndef DISABLE_HE
 void ScummEngine_v70he::initScummVars() {
 	ScummEngine::initScummVars();
 
@@ -591,6 +601,7 @@ void ScummEngine_v99he::initScummVars() {
 	VAR(VAR_NUM_PALETTES) = _numPalettes;
 	VAR(VAR_NUM_UNK) = _numUnk;
 }
+#endif
 
 void ScummEngine::initScummVars() {
 

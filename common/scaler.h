@@ -45,8 +45,11 @@ DECLARE_SCALER(Normal3x);
 DECLARE_SCALER(Normal1o5x);
 DECLARE_SCALER(TV2x);
 DECLARE_SCALER(DotMatrix);
+
+#ifndef DISABLE_HQ_SCALERS
 DECLARE_SCALER(HQ2x);
 DECLARE_SCALER(HQ3x);
+#endif
 
 FORCEINLINE int real2Aspect(int y) {
 	return y + (y + 1) / 5;

@@ -28,6 +28,8 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Added support for NES version of Maniac Mansion
    - Added thumbnail support for savegames.
    - Broke compatibility with HE savegame (HE v71 and upwards only)
+   - Added possibility to disable building of HE and SCUMM v7 & v8 games
+     support.
 
  Sword2:
    - Made the resource manager expire resources more intelligently.

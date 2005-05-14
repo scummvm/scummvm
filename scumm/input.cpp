@@ -31,10 +31,17 @@
 #include "scumm/debugger.h"
 #include "scumm/dialogs.h"
 #include "scumm/imuse.h"
-#include "scumm/insane/insane.h"
-#include "scumm/logic_he.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
+
+#ifndef DISABLE_SCUMM_7_8
+#include "scumm/insane/insane.h"
+#endif
+
+#ifndef DISABLE_HE
+#include "scumm/logic_he.h"
+#endif
+
 
 #ifdef _WIN32_WCE
 #define		KEY_ALL_SKIP	3457
@@ -211,9 +218,12 @@ void ScummEngine::parseEvents() {
 
 void ScummEngine::clearClickedStatus() {
 	_keyPressed = 0;
+
+#ifndef DISABLE_HE
 	if (_heversion >= 98) {
 		((ScummEngine_v90he *)this)->_logicHE->processKeyStroke(_keyPressed);
 	}
+#endif
 	_mouseAndKeyboardStat = 0;
 	_leftBtnPressed &= ~msClicked;
 	_rightBtnPressed &= ~msClicked;
@@ -222,9 +232,11 @@ void ScummEngine::clearClickedStatus() {
 void ScummEngine::processKbd(bool smushMode) {
 	int saveloadkey;
 
+#ifndef DISABLE_HE
 	if (_heversion >= 98) {
 		((ScummEngine_v90he *)this)->_logicHE->processKeyStroke(_keyPressed);
 	}
+#endif
 
 	_lastKeyHit = _keyPressed;
 	_keyPressed = 0;
@@ -413,6 +425,7 @@ void ScummEngine::processKbd(bool smushMode) {
 
 	if (_lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY) ||
 		((VAR(VAR_CUTSCENEEXIT_KEY) == 4 || VAR(VAR_CUTSCENEEXIT_KEY) == 64) && _lastKeyHit == 27)) {
+#ifndef DISABLE_SCUMM_7_8
 		// Skip cutscene (or active SMUSH video). For the V2 games, which
 		// normally use F4 for this, we add in a hack that makes escape work,
 		// too (just for convenience).
@@ -422,6 +435,7 @@ void ScummEngine::processKbd(bool smushMode) {
 			else
 				_smushVideoShouldFinish = true;
 		}
+#endif
 		if (!smushMode || _smushVideoShouldFinish)
 			abortCutscene();
 		if (_version <= 2) {

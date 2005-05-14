@@ -1115,6 +1115,7 @@ int ScummEngine::getObjectImageCount(int object) {
 	}
 }
 
+#ifndef DISABLE_SCUMM_7_8
 int ScummEngine_v8::getObjectIdFromOBIM(const byte *obim) {
 	// In V8, IMHD has no obj_id, but rather a name string. We map the name
 	// back to an object id using a table derived from the DOBJ resource.
@@ -1129,6 +1130,7 @@ int ScummEngine_v7::getObjectIdFromOBIM(const byte *obim) {
 	const ImageHeader *imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), obim);
 	return READ_LE_UINT16(&imhd->v7.obj_id);
 }
+#endif
 
 int ScummEngine::getObjectIdFromOBIM(const byte *obim) {
 	if (_features & GF_SMALL_HEADER)

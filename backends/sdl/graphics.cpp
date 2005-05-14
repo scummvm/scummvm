@@ -36,8 +36,10 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"supereagle", "SuperEagle", GFX_SUPEREAGLE},
 	{"advmame2x", "AdvMAME2x", GFX_ADVMAME2X},
 	{"advmame3x", "AdvMAME3x", GFX_ADVMAME3X},
+#ifndef DISABLE_HQ_SCALERS
 	{"hq2x", "HQ2x", GFX_HQ2X},
 	{"hq3x", "HQ3x", GFX_HQ3X},
+#endif
 	{"tv2x", "TV2x", GFX_TV2X},
 	{"dotmatrix", "DotMatrix", GFX_DOTMATRIX},
 	{0, 0, 0}
@@ -161,6 +163,7 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 		newScaleFactor = 3;
 		newScalerProc = AdvMame3x;
 		break;
+#ifndef DISABLE_HQ_SCALERS
 	case GFX_HQ2X:
 		newScaleFactor = 2;
 		newScalerProc = HQ2x;
@@ -169,6 +172,7 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 		newScaleFactor = 3;
 		newScalerProc = HQ3x;
 		break;
+#endif
 	case GFX_TV2X:
 		newScaleFactor = 2;
 		newScalerProc = TV2x;

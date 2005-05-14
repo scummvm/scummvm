@@ -22,14 +22,16 @@
 #include "stdafx.h"
 #include "common/system.h"
 #include "common/util.h"
-#include "scumm/bomp.h"
 #include "scumm/charset.h"
 #include "scumm/intern.h"
 #include "scumm/object.h"
-#include "scumm/resource_v7he.h"
 #include "scumm/saveload.h"
 #include "scumm/scumm.h"
+#include "scumm/bomp.h"
 
+#ifndef DISABLE_HE
+#include "scumm/resource_v7he.h"
+#endif
 
 namespace Scumm {
 
@@ -163,7 +165,6 @@ void ScummEngine_v70he::setCursorFromImg(uint img, uint room, uint imgindex) {
 	else
 		_win32ResExtractor->setCursor(img);
 }
-#endif
 
 void ScummEngine_v90he::setDefaultCursor() {
 	const uint16 *src;
@@ -196,6 +197,7 @@ void ScummEngine_v90he::setDefaultCursor() {
 
 	updateCursor();
 }
+#endif
 
 void ScummEngine_v6::setCursorFromImg(uint img, uint room, uint imgindex) {
 	int w, h;

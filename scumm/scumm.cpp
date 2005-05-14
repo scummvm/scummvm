@@ -34,23 +34,32 @@
 #include "gui/message.h"
 #include "gui/newgui.h"
 
-#include "scumm/akos.h"
 #include "scumm/charset.h"
 #include "scumm/costume.h"
 #include "scumm/debugger.h"
 #include "scumm/dialogs.h"
-#include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse.h"
-#include "scumm/insane/insane.h"
 #include "scumm/intern.h"
-#include "scumm/logic_he.h"
 #include "scumm/player_nes.h"
 #include "scumm/player_v1.h"
 #include "scumm/player_v2.h"
 #include "scumm/player_v2a.h"
 #include "scumm/player_v3a.h"
-#include "scumm/resource_v7he.h"
+#include "scumm/sound.h"
 #include "scumm/scumm.h"
+#include "scumm/util.h"
+
+#ifndef DISABLE_HE
+#include "scumm/logic_he.h"
+#include "scumm/resource_v7he.h"
+#endif
+
+#ifndef DISABLE_SCUMM_7_8
+#include "scumm/akos.h"
+#include "scumm/imuse_digi/dimuse.h"
+#include "scumm/insane/insane.h"
+#endif
+
 #ifdef __PALM_OS__
 #include "extras/palm-scumm-md5.h"
 #else
@@ -187,6 +196,7 @@ static const ScummGameSettings scumm_settings[] = {
 
 //	{"test", "Test demo game", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE, GF_NEW_OPCODES, Common::kPlatformUnknown, 0, 0},
 
+#ifndef DISABLE_SCUMM_7_8
 	/* Scumm Version 7 */
 	{"ft", "Full Throttle", GID_FT, 7, 0, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, Common::kPlatformPC, 0, 0},
@@ -215,11 +225,14 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER | GF_DEMO, Common::kPlatformWindows, "comi", "COMI.LA0"},
 #endif
 
+#endif
+
 	// Humongous Entertainment Scumm Version 6
-	{"puttputt", "Putt-Putt Joins The Parade", GID_HEGAME, 6, 61, MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformPC, 0, 0},
 	{"puttdemo", "Putt-Putt Joins The Parade (Demo)", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_NATIVE,
 	  GF_USE_KEY | GF_MULTIPLE_VERSIONS, Common::kPlatformPC, 0, 0},
+#ifndef DISABLE_SCUMM_7_8
+	{"puttputt", "Putt-Putt Joins The Parade", GID_HEGAME, 6, 61, MDT_ADLIB | MDT_NATIVE,
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformPC, 0, 0},
 	{"moondemo", "Putt-Putt Goes To The Moon (Demo)", GID_HEGAME, 6, 61, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformPC, 0, 0},
 	{"puttmoon", "Putt-Putt Goes To The Moon", GID_HEGAME, 6, 61, MDT_ADLIB | MDT_NATIVE,
@@ -232,6 +245,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformPC, 0, 0},
 	{"fbdemo", "Fatty Bear's Birthday Surprise (DOS Demo)", GID_FBEAR, 6, 61, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformPC, 0, 0},
+#endif
 
 #ifndef DISABLE_HE
 	{"activity", "Putt-Putt & Fatty Bear's Activity Pack", GID_HEGAME, 6, 70, MDT_NONE,
@@ -1342,6 +1356,7 @@ ScummEngine_v90he::~ScummEngine_v90he() {
 }
 #endif
 
+#ifndef DISABLE_SCUMM_7_8
 ScummEngine_v7::ScummEngine_v7(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
  : ScummEngine_v6(detector, syst, gs, md5sum) {
 	_existLanguageFile = false;
@@ -1362,7 +1377,7 @@ ScummEngine_v8::ScummEngine_v8(GameDetector *detector, OSystem *syst, const Scum
 ScummEngine_v8::~ScummEngine_v8() {
 	delete [] _objectIDMap;
 }
-
+#endif
 
 #pragma mark -
 #pragma mark --- Initialization ---
@@ -1425,8 +1440,10 @@ int ScummEngine::init(GameDetector &detector) {
 
 	// Create the costume renderer
 	if (_features & GF_NEW_COSTUMES) {
+#ifndef DISABLE_SCUMM_7_8
 		_costumeRenderer = new AkosRenderer(this);
 		_costumeLoader = new AkosCostumeLoader(this);
+#endif
 	} else if (_platform == Common::kPlatformNES) {
 		_costumeRenderer = new NESCostumeRenderer(this);
 		_costumeLoader = new NESCostumeLoader(this);
@@ -1435,10 +1452,12 @@ int ScummEngine::init(GameDetector &detector) {
 		_costumeLoader = new ClassicCostumeLoader(this);
 	}
 
+#ifndef DISABLE_SCUMM_7_8
 	// Create FT INSANE object
 	if (_gameId == GID_FT)
 		_insane = new Insane((ScummEngine_v6 *)this);
 	else
+#endif
 		_insane = 0;
 
 	// Load game from specified slot, if any
@@ -1755,6 +1774,7 @@ void ScummEngine_v6::scummInit() {
 	}
 }
 
+#ifndef DISABLE_SCUMM_7_8
 void ScummEngine_v60he::scummInit() {
 	ScummEngine::scummInit();
 
@@ -1764,6 +1784,7 @@ void ScummEngine_v60he::scummInit() {
 	if (_gameId == GID_FUNPACK)
 		setCursorHotspot(16, 16);
 }
+#endif
 
 #ifndef DISABLE_HE
 void ScummEngine_v72he::scummInit() {
@@ -1844,7 +1865,9 @@ void ScummEngine::setupMusic(int midi) {
 
 	// Init iMuse
 	if (_features & GF_DIGI_IMUSE) {
+#ifndef DISABLE_SCUMM_7_8
 		_musicEngine = _imuseDigital = new IMuseDigital(this, 10);
+#endif
 	} else if (_platform == Common::kPlatformNES) {
 		_musicEngine = new Player_NES(this);
 	} else if ((_platform == Common::kPlatformAmiga) && (_version == 2)) {
@@ -2247,11 +2270,13 @@ load_game:
 
 	_sound->processSoundQues();
 
+#ifndef DISABLE_SCUMM_7_8
 	if (_imuseDigital) {
 		_imuseDigital->flushTracks();
 		if ( ((_gameId == GID_DIG) && (!(_features & GF_DEMO))) || (_gameId == GID_CMI) )
 			_imuseDigital->refreshScripts();
 	}
+#endif
 
 	camera._last = camera._cur;
 
@@ -2891,13 +2916,16 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 			engine = new ScummEngine_v70he(detector, syst, game, md5sum);
 			break;
 #endif
+#ifndef DISABLE_SCUMM_7_8
 		case 61:
 			engine = new ScummEngine_v60he(detector, syst, game, md5sum);
 			break;
+#endif
 		default:
 			engine = new ScummEngine_v6(detector, syst, game, md5sum);
 		}
 		break;
+#ifndef DISABLE_SCUMM_7_8
 	case 7:
 		engine = new ScummEngine_v7(detector, syst, game, md5sum);
 		break;
@@ -2905,6 +2933,8 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	case 8:
 		engine = new ScummEngine_v8(detector, syst, game, md5sum);
 		break;
+#endif
+
 #endif
 	default:
 		error("Engine_SCUMM_create(): Unknown version of game engine");

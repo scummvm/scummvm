@@ -1,4 +1,3 @@
-
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001-2005 The ScummVM project
@@ -29,19 +28,22 @@
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/imuse.h"
-#include "scumm/imuse_digi/dimuse.h"
 #include "scumm/intern.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
+#include "scumm/util.h"
 #include "scumm/verbs.h"
-#include "scumm/smush/smush_player.h"
 
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
+#ifndef DISABLE_SCUMM_7_8
+#include "scumm/imuse_digi/dimuse.h"
 #include "scumm/insane/insane.h"
+#include "scumm/smush/smush_player.h"
+#endif
 
 namespace Scumm {
 
@@ -1088,10 +1090,12 @@ void ScummEngine_v6::o6_startSound() {
 	// sound. See also o6_soundOps()
 	if (_heversion >= 61)
 		offset = pop();
-		
+
+#ifndef DISABLE_SCUMM_7_8
 	if (_features & GF_DIGI_IMUSE)
 		_imuseDigital->startSfx(pop(), 64);
 	else 
+#endif
 		_sound->addSoundToQueue(pop(), offset);
 }
 
@@ -2490,6 +2494,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 		case 4:
 			grabCursor(args[1], args[2], args[3], args[4]);
 			break;
+#ifndef DISABLE_SCUMM_7_8
 		case 6: {
 				uint32 speed;
 				if (_smushFrameRate == 0) 
@@ -2522,6 +2527,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 				}
 			}
 			break;
+#endif
 		case 12:
 			setCursorFromImg(args[1], (uint) - 1, args[2]);
 			break;

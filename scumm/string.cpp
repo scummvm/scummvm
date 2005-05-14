@@ -747,10 +747,12 @@ int ScummEngine::addStringToStack(byte *dst, int dstSize, int var) {
 	return 0;
 }
 
+#ifndef DISABLE_HE
 void ScummEngine_v80he::initCharset(int charsetno) {
 	ScummEngine::initCharset(charsetno);
 	VAR(VAR_CURRENT_CHARSET) = charsetno;
 }
+#endif
 
 void ScummEngine::initCharset(int charsetno) {
 	int i;
@@ -836,6 +838,7 @@ void ScummEngine_v6::removeBlastTexts() {
 	_blastTextQueuePos = 0;
 }
 
+#ifndef DISABLE_SCUMM_7_8
 int indexCompare(const void *p1, const void *p2) {
 	const LangIndexNode *i1 = (const LangIndexNode *) p1;
 	const LangIndexNode *i2 = (const LangIndexNode *) p2;
@@ -989,11 +992,6 @@ void ScummEngine_v7::playSpeech(const byte *ptr) {
 	}
 }
 
-void ScummEngine::translateText(const byte *text, byte *trans_buff) {
-	// Default: just copy the string
-	memcpy(trans_buff, text, resStrLen(text) + 1);
-}
-
 void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
 	LangIndexNode target;
 	LangIndexNode *found = NULL;
@@ -1081,6 +1079,13 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
 		// Default: just copy the string
 		memcpy(trans_buff, text, resStrLen(text) + 1);
 	}
+}
+
+#endif
+
+void ScummEngine::translateText(const byte *text, byte *trans_buff) {
+	// Default: just copy the string
+	memcpy(trans_buff, text, resStrLen(text) + 1);
 }
 
 } // End of namespace Scumm

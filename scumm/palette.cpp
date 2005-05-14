@@ -686,6 +686,7 @@ void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int
 	}
 }
 
+#ifndef DISABLE_SCUMM_7_8
 static int HSL2RGBHelper(int n1, int n2, int hue) {
 	if (hue > 360)
 		hue = hue - 360;
@@ -778,6 +779,7 @@ void ScummEngine_v8::desaturatePalette(int hueScale, int satScale, int lightScal
 		setDirtyColors(startColor, endColor);
 	}
 }
+#endif
 
 
 int ScummEngine::remapPaletteColor(int r, int g, int b, int threshold) {

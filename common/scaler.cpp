@@ -27,6 +27,7 @@
 
 int gBitFormat = 565;
 
+#ifndef DISABLE_HQ_SCALERS
 // RGB-to-YUV lookup table
 extern "C" {
 
@@ -71,6 +72,7 @@ uint RGBtoYUVstorage[65536];
 uint *RGBtoYUV = RGBtoYUVstorage;
 uint LUT16to32[65536];
 }
+#endif
 
 static const uint16 dotmatrix_565[16] = {
 	0x01E0, 0x0007, 0x3800, 0x0000,
@@ -101,6 +103,9 @@ void InitScalers(uint32 BitFormat) {
 	InitLUT(BitFormat);
 }
 
+#ifdef DISABLE_HQ_SCALERS
+void InitLUT(uint32 BitFormat) {}
+#else
 void InitLUT(uint32 BitFormat) {
 	int r, g, b;
 	int Y, u, v;
@@ -129,6 +134,7 @@ void InitLUT(uint32 BitFormat) {
 		}
 	}
 }
+#endif
 
 /**
  * Trivial 'scaler' - in fact it doesn't do any scaling but just copies the

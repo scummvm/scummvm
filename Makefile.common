@@ -37,10 +37,15 @@ ifdef DISABLE_SCUMM
 DEFINES += -DDISABLE_SCUMM
 else
 MODULES += scumm
+
+ifdef DISABLE_SCUMM_7_8
+DEFINES += -DDISABLE_SCUMM_7_8
 endif
 
 ifdef DISABLE_HE
 DEFINES += -DDISABLE_HE
+endif
+
 endif
 
 ifdef DISABLE_SIMON
@@ -101,6 +106,10 @@ MODULES += \
 
 ifdef USE_MT32EMU
 MODULES += sound/softsynth/mt32
+endif
+
+ifdef DISABLE_HQ_SCALERS
+DEFINES += -DDISABLE_HQ_SCALERS
 endif
 
 ######################################################################

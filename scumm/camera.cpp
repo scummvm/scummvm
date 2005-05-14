@@ -58,37 +58,6 @@ void ScummEngine::setCameraAt(int pos_x, int pos_y) {
 		stopTalk();
 }
 
-void ScummEngine_v7::setCameraAt(int pos_x, int pos_y) {
-	Common::Point old;
-
-	old = camera._cur;
-
-	camera._cur.x = pos_x;
-	camera._cur.y = pos_y;
-
-	clampCameraPos(&camera._cur);
-
-	camera._dest = camera._cur;
-	VAR(VAR_CAMERA_DEST_X) = camera._dest.x;
-	VAR(VAR_CAMERA_DEST_Y) = camera._dest.y;
-
-	assert(camera._cur.x >= (_screenWidth / 2) && camera._cur.y >= (_screenHeight / 2));
-
-	if (camera._cur.x != old.x || camera._cur.y != old.y) {
-		if (VAR(VAR_SCROLL_SCRIPT)) {
-			VAR(VAR_CAMERA_POS_X) = camera._cur.x;
-			VAR(VAR_CAMERA_POS_Y) = camera._cur.y;
-			runScript(VAR(VAR_SCROLL_SCRIPT), 0, 0, 0);
-		}
-
-		// Even though cameraMoved() is called automatically, we may
-		// need to know at once that the camera has moved, or text may
-		// be printed at the wrong coordinates. See bugs #795938 and
-		// #929242
-		cameraMoved();
-	}
-}
-
 void ScummEngine::setCameraFollows(Actor *a) {
 
 	int t, i;
@@ -114,30 +83,6 @@ void ScummEngine::setCameraFollows(Actor *a) {
 	}
 	runInventoryScript(0);
 }
-
-void ScummEngine_v7::setCameraFollows(Actor *a) {
-
-	byte oldfollow = camera._follows;
-	int ax, ay;
-
-	camera._follows = a->_number;
-	VAR(VAR_CAMERA_FOLLOWED_ACTOR) = a->_number;
-
-	if (!a->isInCurrentRoom()) {
-		startScene(a->getRoom(), 0, 0);
-	}
-
-	ax = abs(a->_pos.x - camera._cur.x);
-	ay = abs(a->_pos.y - camera._cur.y);
-
-	if (ax > VAR(VAR_CAMERA_THRESHOLD_X) || ay > VAR(VAR_CAMERA_THRESHOLD_Y) || ax > (_screenWidth / 2) || ay > (_screenHeight / 2)) {
-		setCameraAt(a->_pos.x, a->_pos.y);
-	}
-
-	if (a->_number != oldfollow)
-		runInventoryScript(0);
-}
-
 
 void ScummEngine::clampCameraPos(Common::Point *pt) {
 	if (pt->x < VAR(VAR_CAMERA_MIN_X))
@@ -228,6 +173,105 @@ void ScummEngine::moveCamera() {
 	}
 }
 
+void ScummEngine::cameraMoved() {
+	int screenLeft;
+	if (_features & GF_NEW_CAMERA) {
+		assert(camera._cur.x >= (_screenWidth / 2) && camera._cur.y >= (_screenHeight / 2));
+	} else {
+		if (camera._cur.x < (_screenWidth / 2)) {
+			camera._cur.x = (_screenWidth / 2);
+		} else if (camera._cur.x > _roomWidth - (_screenWidth / 2)) {
+			camera._cur.x = _roomWidth - (_screenWidth / 2);
+		}
+	}
+
+	_screenStartStrip = camera._cur.x / 8 - gdi._numStrips / 2;
+	_screenEndStrip = _screenStartStrip + gdi._numStrips - 1;
+
+	_screenTop = camera._cur.y - (_screenHeight / 2);
+	if (_features & GF_NEW_CAMERA) {
+		screenLeft = camera._cur.x - (_screenWidth / 2);
+	} else {
+		screenLeft = _screenStartStrip * 8;
+	}
+
+	virtscr[0].xstart = screenLeft;
+}
+
+void ScummEngine::panCameraTo(int x, int y) {
+	camera._dest.x = x;
+	camera._mode = kPanningCameraMode;
+	camera._movingToActor = false;
+}
+
+void ScummEngine::actorFollowCamera(int act) {
+	if (!(_features & GF_NEW_CAMERA)) {
+		int old;
+
+		old = camera._follows;
+		setCameraFollows(derefActor(act, "actorFollowCamera"));
+		if (camera._follows != old)
+			runInventoryScript(0);
+
+		camera._movingToActor = false;
+	}
+}
+
+#ifndef DISABLE_SCUMM_7_8
+void ScummEngine_v7::setCameraAt(int pos_x, int pos_y) {
+	Common::Point old;
+
+	old = camera._cur;
+
+	camera._cur.x = pos_x;
+	camera._cur.y = pos_y;
+
+	clampCameraPos(&camera._cur);
+
+	camera._dest = camera._cur;
+	VAR(VAR_CAMERA_DEST_X) = camera._dest.x;
+	VAR(VAR_CAMERA_DEST_Y) = camera._dest.y;
+
+	assert(camera._cur.x >= (_screenWidth / 2) && camera._cur.y >= (_screenHeight / 2));
+
+	if (camera._cur.x != old.x || camera._cur.y != old.y) {
+		if (VAR(VAR_SCROLL_SCRIPT)) {
+			VAR(VAR_CAMERA_POS_X) = camera._cur.x;
+			VAR(VAR_CAMERA_POS_Y) = camera._cur.y;
+			runScript(VAR(VAR_SCROLL_SCRIPT), 0, 0, 0);
+		}
+
+		// Even though cameraMoved() is called automatically, we may
+		// need to know at once that the camera has moved, or text may
+		// be printed at the wrong coordinates. See bugs #795938 and
+		// #929242
+		cameraMoved();
+	}
+}
+
+void ScummEngine_v7::setCameraFollows(Actor *a) {
+
+	byte oldfollow = camera._follows;
+	int ax, ay;
+
+	camera._follows = a->_number;
+	VAR(VAR_CAMERA_FOLLOWED_ACTOR) = a->_number;
+
+	if (!a->isInCurrentRoom()) {
+		startScene(a->getRoom(), 0, 0);
+	}
+
+	ax = abs(a->_pos.x - camera._cur.x);
+	ay = abs(a->_pos.y - camera._cur.y);
+
+	if (ax > VAR(VAR_CAMERA_THRESHOLD_X) || ay > VAR(VAR_CAMERA_THRESHOLD_Y) || ax > (_screenWidth / 2) || ay > (_screenHeight / 2)) {
+		setCameraAt(a->_pos.x, a->_pos.y);
+	}
+
+	if (a->_number != oldfollow)
+		runInventoryScript(0);
+}
+
 void ScummEngine_v7::moveCamera() {
 	Common::Point old = camera._cur;
 	Actor *a = NULL;
@@ -312,55 +356,11 @@ void ScummEngine_v7::moveCamera() {
 	}
 }
 
-
-void ScummEngine::cameraMoved() {
-	int screenLeft;
-	if (_features & GF_NEW_CAMERA) {
-		assert(camera._cur.x >= (_screenWidth / 2) && camera._cur.y >= (_screenHeight / 2));
-	} else {
-		if (camera._cur.x < (_screenWidth / 2)) {
-			camera._cur.x = (_screenWidth / 2);
-		} else if (camera._cur.x > _roomWidth - (_screenWidth / 2)) {
-			camera._cur.x = _roomWidth - (_screenWidth / 2);
-		}
-	}
-
-	_screenStartStrip = camera._cur.x / 8 - gdi._numStrips / 2;
-	_screenEndStrip = _screenStartStrip + gdi._numStrips - 1;
-
-	_screenTop = camera._cur.y - (_screenHeight / 2);
-	if (_features & GF_NEW_CAMERA) {
-		screenLeft = camera._cur.x - (_screenWidth / 2);
-	} else {
-		screenLeft = _screenStartStrip * 8;
-	}
-
-	virtscr[0].xstart = screenLeft;
-}
-
-void ScummEngine::panCameraTo(int x, int y) {
-	camera._dest.x = x;
-	camera._mode = kPanningCameraMode;
-	camera._movingToActor = false;
-}
-
 void ScummEngine_v7::panCameraTo(int x, int y) {
 	VAR(VAR_CAMERA_FOLLOWED_ACTOR) = camera._follows = 0;
 	VAR(VAR_CAMERA_DEST_X) = camera._dest.x = x;
 	VAR(VAR_CAMERA_DEST_Y) = camera._dest.y = y;
 }
-
-void ScummEngine::actorFollowCamera(int act) {
-	if (!(_features & GF_NEW_CAMERA)) {
-		int old;
-
-		old = camera._follows;
-		setCameraFollows(derefActor(act, "actorFollowCamera"));
-		if (camera._follows != old)
-			runInventoryScript(0);
-
-		camera._movingToActor = false;
-	}
-}
+#endif
 
 } // End of namespace Scumm

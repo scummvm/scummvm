@@ -342,6 +342,7 @@ void ScummEngine::readIndexFile() {
 	closeRoom();
 }
 
+#ifndef DISABLE_SCUMM_7_8
 void ScummEngine_v7::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	int num;
 	char *ptr;
@@ -358,6 +359,7 @@ void ScummEngine_v7::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 		ScummEngine::readIndexBlock(blocktype, itemsize);
 	}
 }
+#endif
 
 #ifndef DISABLE_HE
 void ScummEngine_v70he::readIndexBlock(uint32 blocktype, uint32 itemsize) {
@@ -1034,6 +1036,7 @@ void ScummEngine_v5::readMAXS(int blockSize) {
 		_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
 }
 
+#ifndef DISABLE_SCUMM_7_8
 void ScummEngine_v8::readMAXS(int blockSize) {
 	debug(9, "readMAXS: MAXS has blocksize %d", blockSize);
 
@@ -1096,6 +1099,7 @@ void ScummEngine_v7::readMAXS(int blockSize) {
 	_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
 	_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
 }
+#endif
 
 void ScummEngine_v6::readMAXS(int blockSize) {
 	debug(0, "readMAXS: MAXS has blocksize %d", blockSize);
@@ -1148,6 +1152,7 @@ void ScummEngine::readGlobalObjects() {
 #endif
 }
 
+#ifndef DISABLE_SCUMM_7_8
 void ScummEngine_v8::readGlobalObjects() {
 	int i;
 	int num = _fileHandle->readUint32LE();
@@ -1189,6 +1194,7 @@ void ScummEngine_v7::readGlobalObjects() {
 		_classData[i] = FROM_LE_32(_classData[i]);
 #endif
 }
+#endif
 
 void ScummEngine::allocateArrays() {
 	// Note: Buffers are now allocated in scummMain to allow for

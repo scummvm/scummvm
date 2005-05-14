@@ -665,6 +665,7 @@ protected:
 	byte VAR_TIMEDATE_SECOND;
 };
 
+#ifndef DISABLE_SCUMM_7_8
 class ScummEngine_v60he : public ScummEngine_v6 {
 protected:
 	typedef void (ScummEngine_v60he::*OpcodeProcv60he)();
@@ -715,7 +716,9 @@ protected:
 	void o60_redimArray();
 	void o60_readFilePos();
 };
+#endif
 
+#ifndef DISABLE_HE
 class ScummEngine_v70he : public ScummEngine_v60he {
 	friend class Win32ResExtractor;
 	friend class MacResExtractor;
@@ -1315,7 +1318,9 @@ protected:
 	void o100_getSpriteInfo();
 	void o100_getWizData();
 };
+#endif
 
+#ifndef DISABLE_SCUMM_7_8
 class ScummEngine_v7 : public ScummEngine_v6 {
 public:
 	ScummEngine_v7(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
@@ -1428,6 +1433,8 @@ protected:
 	void o8_getStringWidth();
 
 };
+
+#endif
 
 } // End of namespace Scumm
 

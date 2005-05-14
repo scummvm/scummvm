@@ -434,7 +434,6 @@ void LogicHEfunshop::op_1005(int32 *args) {
 }
 
 int LogicHEfunshop::checkShape(int arg_0, int arg_4, int arg_8, int arg_C, int arg_10, int arg_14, int arg_18, int arg_1C, int arg_20, int arg_24) {
-	// XXX: Check arg_20/24 types
 	return 1;
 }
 
