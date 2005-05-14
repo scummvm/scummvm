@@ -1414,9 +1414,17 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	//if (_vm->_NESStartStrip > 0)
 	//	stripnr -= _vm->_NESStartStrip;
 
-	for (int k = 0; 
-		k < numstrip && sx + k < _numStrips && (x + k) * 8 < MAX(_vm->_roomWidth, (int) vs->w);
-		++k, ++stripnr) {
+	// Compute the number of strips we have to iterate over.
+	// TODO/FIXME: The computation of its initial value looks very fishy.
+	// It was added as a kind of hack to fix some corner cases, but it compares
+	// the room width to the virtual screen width; but the former should always
+	// be bigger than the latter (except for MM NES, maybe)... strange
+	int limit = MAX(_vm->_roomWidth, (int) vs->w) / 8 - x;
+	if (limit > numstrip)
+		limit = numstrip;
+	if (limit > _numStrips - sx)
+		limit = _numStrips - sx;
+	for (int k = 0; k < limit; ++k, ++stripnr) {
 		CHECK_HEAP;
 
 		if (y < vs->tdirty[sx + k])
