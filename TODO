@@ -184,7 +184,15 @@ Files
   - convert said string representation back to FSNode
   Of course that can be added w/o a FileManager class, too - but it might be
   nice to have all of these integrated.
-* Add error handling API to SaveFile
+* Get rid of the incRef/decRef API of class File. Instead, add a clone() method
+  which generates a new (independant) File object for the same file (only would
+  work for files in read mode, obviously). Convert the audio code to use this
+  instead of the ref counting.
+  Reason: Using a shared file object can lead to race conditions if multiple
+  threads try to use it at the same time; on some systems (Symbian) it is 
+  apparently not even possible to do it; iahd t can also cause problems even in
+  non-threaded code, when we seek in one block of code, and then try to access it
+  from another block, w/o reseeking first.
 
 GUI
 ===
