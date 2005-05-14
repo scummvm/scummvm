@@ -646,13 +646,13 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 				dst += sprintf((char *)dst, "%x", args[val++]);
 				break;
 			default:
-				error("decodeScriptString: Unknown type %d", chr);
+				*dst = '%';
+				num--;
+				break;
 			}
-
-
-			continue;	
+		} else {
+			*dst++ = chr;
 		}
-		*dst++ = chr;
 	}
 	*dst = 0;
 }
