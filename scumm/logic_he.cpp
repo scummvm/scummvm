@@ -451,6 +451,10 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 	int res = 0;
 
 	switch (op) {
+	case 1004:
+		res = op_1004(args);
+		break;
+
 	case 1006:
 		res = op_1006(args);
 		break;
@@ -467,15 +471,17 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 		res = op_1022(args);
 		break;
 
+	case 1023:
+		res = op_1023(args);
+		break;
+
 	case 1024:
 		res = op_1024(args);
 		break;
 
-		// TODO: find these in game and implement
-		//case 1004:
-		//case 1023:
-		//case 8221967:
-
+	case 8221967:
+		error("LogicHEfootball::dispatch(): Magic football case triggered");
+		break;
 
 	case 1492: case 1493: case 1494: case 1495: case 1496:
 	case 1497: case 1498: case 1499: case 1500: case 1501:
@@ -494,6 +500,7 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 	case 2220: case 2221: case 2222: case 2223: case 2224:
 	case 2225: case 2226: case 2227: case 2228:
 		// Boneyards-related
+		break;
 
 	case 3000: case 3001: case 3002: case 3003: case 3004:
 		// Internet-related
@@ -599,6 +606,51 @@ int LogicHEfootball::op_1022(int32 *args) {
 	return 1;
 }
 
+int LogicHEfootball::op_1023(int32 *args) {
+	double var10, var18, var20, var28, var30, var30_;
+	double argf[7];
+
+	for (int i = 0; i < 7; i++)
+		argf[i] = args[i];
+
+	var10 = (argf[3] - argf[1]) / (argf[2] - argf[0]);
+	var28 = var10 * var10 + 1;
+	var20 = argf[0] * var10;
+	var18 = (argf[5] + argf[1] + var20) * argf[4] * var10 * 2 + 
+		argf[6] * argf[6] * var28 + argf[4] * argf[4] - 
+		argf[0] * argf[0] * var10 * var10 - 
+		argf[5] * argf[0] * var10 * 2 - 
+		argf[5] * argf[1] * 2 - 
+		argf[1] * argf[1] - argf[5] * argf[5];
+	
+	if (var18 >= 0) {
+		var18 = sqrt(var18);
+
+		var30_ = argf[4] + argf[5] * var10 + argf[1] * var10 + argf[0] * var10 * var10;
+		var30 = (var30_ - var18) / var28;
+		var18 = (var30_ + var18) / var28;
+		
+		if ((argf[0] - var30 < 0) && (argf[0] - var18 < 0)) {
+			var30_ = var30;
+			var30 = var18;
+			var18 = var30_;
+		}
+		var28 = var18 * var10 - var20 - argf[1];
+		var20 = var30 * var10 - var20 - argf[1];
+	} else {
+		var18 = 0;
+		var20 = 0;
+		var28 = 0;
+		var30 = 0;
+	}
+
+	writeScummVar(108, (int32)var18);
+	writeScummVar(109, (int32)var28);
+	writeScummVar(110, (int32)var30);
+	writeScummVar(111, (int32)var20);
+	
+	return 1;
+}
 int LogicHEfootball::op_1024(int32 *args) {
 	writeScummVar(108, 0);
 	writeScummVar(109, 0);

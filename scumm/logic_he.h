@@ -100,6 +100,7 @@ private:
 	int op_1007(int32 *args);
 	int op_1010(int32 *args);
 	int op_1022(int32 *args);
+	int op_1023(int32 *args);
 	int op_1024(int32 *args);
 };
 
