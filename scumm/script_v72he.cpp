@@ -646,7 +646,7 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 				dst += sprintf((char *)dst, "%x", args[val++]);
 				break;
 			default:
-				*dst = '%';
+				*dst++ = '%';
 				num--;
 				break;
 			}
