@@ -512,21 +512,4 @@ FORCEINLINE uint32 READ_BE_UINT24(const void *ptr) {
 #define STRINGBUFLEN 1024
 #endif
 
-/*
-#if !defined(__PALM_OS__)
-	// Initialized operator new
-	void * operator new(size_t size);
-	void operator delete(void *ptr);
-	
-	// Temporary hack until we fully remove the new/delete operators:
-	// Since 'new' now returns a memory block inited to 0xE7E7E7E7 we might
-	// get some invocations of free() with that param. We check for those here.
-	// That allows us to set a debugger breakpoint to catch it.
-	#ifndef _WIN32_WCE
-	#define free(x)	free_check(x)
-	void free_check(void *ptr);
-	#endif
-#endif
-*/
-
 #endif
