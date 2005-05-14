@@ -383,36 +383,66 @@ Common::StringList generateSavegameList(ScummEngine *scumm, bool saveMode) {
 	return l;
 }
 
-enum {
-	kRowHeight = 18,
-	kBigButtonWidth = 90,
-	kMainMenuWidth 	= (kBigButtonWidth + 2 * 8),
-	kMainMenuHeight 	= 7 * kRowHeight + 3 * 5 + 7 + 5
-};
-
 #define addBigButton(label, cmd, hotkey) \
-	new GUI::ButtonWidget(this, x, y, kBigButtonWidth, 16, label, cmd, hotkey); y += kRowHeight
+	new GUI::ButtonWidget(this, hOffset, y, buttonWidth, buttonHeight, label, cmd, hotkey, ws); \
+	y += (buttonHeight + vAddOff)
 
 MainMenuDialog::MainMenuDialog(ScummEngine *scumm)
-	: ScummDialog(scumm, (320 - kMainMenuWidth) / 2, (200 - kMainMenuHeight)/2, kMainMenuWidth, kMainMenuHeight) {
-	int y = 7;
+	: ScummDialog(scumm, 0, 0, 0, 0) {
 
-	const int x = (_w - kBigButtonWidth) / 2;
+	const int sw = g_system->getOverlayWidth();
+	const int sh = g_system->getOverlayHeight();
+	
+	int hOffset;
+	int vSpace;
+	int vAddOff;
+
+	GUI::WidgetSize ws;
+	int buttonWidth;
+	int buttonHeight;
+
+	if (sw >= 400 && sh >= 300) {
+		buttonWidth = 160;
+		buttonHeight = 28;
+		ws = GUI::kBigWidgetSize;
+		hOffset = 12;
+		vSpace = 7;
+		vAddOff = 3;
+	} else {
+		buttonWidth = 90;
+		buttonHeight = 16;
+		ws = GUI::kNormalWidgetSize;
+		hOffset = 8;
+		vSpace = 5;
+		vAddOff = 2;
+	}
+
+	int y = vSpace + vAddOff;
+	
+
 	addBigButton("Resume", kPlayCmd, 'P');
-	y += 5;
+	y += vSpace;
 
 	addBigButton("Load", kLoadCmd, 'L');
 	addBigButton("Save", kSaveCmd, 'S');
-	y += 5;
+	y += vSpace;
 
 	addBigButton("Options", kOptionsCmd, 'O');
 #ifndef DISABLE_HELP
 	addBigButton("Help", kHelpCmd, 'H');
 #endif
 	addBigButton("About", kAboutCmd, 'A');
-	y += 5;
+	y += vSpace;
 
 	addBigButton("Quit", kQuitCmd, 'Q');
+
+
+	_w = buttonWidth + 2 * hOffset;
+	_h = y + vSpace;
+
+	_x = (sw - _w) / 2;
+	_y = (sh - _h) / 2;
+
 
 	//
 	// Create the sub dialog(s)
