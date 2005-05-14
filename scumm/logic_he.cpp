@@ -480,7 +480,7 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 		res = op_1024(args);
 		break;
 
-	case 8221967:
+	case 8221968:
 		// Someone had a fun and used his birthday as opcode number
 		res = getFromArray(args[0], args[1], args[2]);
 		break;
