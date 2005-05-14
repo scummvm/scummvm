@@ -434,6 +434,7 @@ void LogicHEfunshop::op_1005(int32 *args) {
 }
 
 int LogicHEfunshop::checkShape(int arg_0, int arg_4, int arg_8, int arg_C, int arg_10, int arg_14, int arg_18, int arg_1C, int arg_20, int arg_24) {
+	// XXX: Check arg_20/24 types
 	return 1;
 }
 
@@ -480,7 +481,8 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 		break;
 
 	case 8221967:
-		error("LogicHEfootball::dispatch(): Magic football case triggered");
+		// Someone had a fun and used his birthday as opcode number
+		res = getFromArray(args[0], args[1], args[2]);
 		break;
 
 	case 1492: case 1493: case 1494: case 1495: case 1496:
