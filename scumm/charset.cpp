@@ -1383,6 +1383,7 @@ void CharsetRendererClassic::printChar(int chr) {
 	}
 	
 	if ((_vm->_heversion >= 71 && type >= 8) || (_vm->_heversion >= 90 && type == 0)) {
+#ifndef DISABLE_HE
 		if (_ignoreCharsetMask || !vs->hasTwoBuffers) {
 			dstPtr = vs->getPixels(0, 0);
 		} else {
@@ -1407,6 +1408,7 @@ void CharsetRendererClassic::printChar(int chr) {
 			Common::Rect dst(_left, _top, _left + origWidth, _top + origHeight);
 			_vm->gdi.copyVirtScreenBuffers(dst);
 		}
+#endif
 	} else {
 		Graphics::Surface dstSurface;
 		Graphics::Surface backSurface;

@@ -519,6 +519,7 @@ void ScummEngine::initRoomSubBlocks() {
 		}
 	}
 
+#ifndef DISABLE_HE
 	// Polygons in HE 80+ games
 	if (_heversion >= 80) {
 		ptr = findResourceData(MKID('POLD'), roomptr);
@@ -526,6 +527,7 @@ void ScummEngine::initRoomSubBlocks() {
 			((ScummEngine_v70he *)this)->_wiz.polygonLoad(ptr);
 		}
 	}
+#endif
 
 	if (_PALS_offs || _CLUT_offs)
 		setPalette(0);

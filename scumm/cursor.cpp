@@ -156,12 +156,14 @@ void ScummEngine::setCursorFromBuffer(byte *ptr, int width, int height, int pitc
 	updateCursor();
 }
 
+#ifndef DISABLE_HE
 void ScummEngine_v70he::setCursorFromImg(uint img, uint room, uint imgindex) {
 	if (_platform == Common::kPlatformMacintosh && _heversion == 72) 
 		_macResExtractor->setCursor(img);
 	else
 		_win32ResExtractor->setCursor(img);
 }
+#endif
 
 void ScummEngine_v90he::setDefaultCursor() {
 	const uint16 *src;

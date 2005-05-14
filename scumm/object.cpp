@@ -340,10 +340,12 @@ int ScummEngine::findObject(int x, int y) {
 			a = _objs[b].parentstate;
 			b = _objs[b].parent;
 			if (b == 0) {
+#ifndef DISABLE_HE
 				if (_heversion >= 70) {
 					if (((ScummEngine_v70he *)this)->_wiz.polygonHit(_objs[i].obj_nr, x, y))
 						return _objs[i].obj_nr;
 				}
+#endif
 				if (_objs[i].x_pos <= x && _objs[i].width + _objs[i].x_pos > x &&
 				    _objs[i].y_pos <= y && _objs[i].height + _objs[i].y_pos > y)
 					return _objs[i].obj_nr;
@@ -865,6 +867,7 @@ void ScummEngine_v6::clearDrawQueues() {
 	_blastObjectQueuePos = 0;
 }
 
+#ifndef DISABLE_HE
 void ScummEngine_v70he::clearDrawQueues() {
 	ScummEngine_v6::clearDrawQueues();
 
@@ -877,7 +880,7 @@ void ScummEngine_v80he::clearDrawQueues() {
 
 	_wiz.clearWizBuffer();
 }
-
+#endif
 
 void ScummEngine::clearOwnerOf(int obj) {
 	int i, j;

@@ -1247,6 +1247,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 }
 
 byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
+#ifndef DISABLE_HE
 	Common::Rect src, dst;
 
 	if (!_mirror) {
@@ -1302,6 +1303,7 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 
 	byte *dstPtr = (byte *)_out.pixels + dst.left + dst.top * _out.pitch;
 	Wiz::decompressWizImage(dstPtr, _out.pitch, dst, _srcptr, src, palPtr);
+#endif
 	return 0;
 }
 

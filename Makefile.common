@@ -39,6 +39,10 @@ else
 MODULES += scumm
 endif
 
+ifdef DISABLE_HE
+DEFINES += -DDISABLE_HE
+endif
+
 ifdef DISABLE_SIMON
 DEFINES += -DDISABLE_SIMON
 else

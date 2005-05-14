@@ -18,13 +18,11 @@ MODULE_OBJS := \
 	scumm/input.o \
 	scumm/instrument.o \
 	scumm/help.o \
-	scumm/logic_he.o \
 	scumm/midiparser_ro.o \
 	scumm/midiparser_eup.o \
 	scumm/nut_renderer.o \
 	scumm/object.o \
 	scumm/palette.o \
-	scumm/palette_he.o \
 	scumm/player_mod.o \
 	scumm/player_v1.o \
 	scumm/player_nes.o \
@@ -35,7 +33,6 @@ MODULE_OBJS := \
 	scumm/resource_v2.o \
 	scumm/resource_v3.o \
 	scumm/resource_v4.o \
-	scumm/resource_v7he.o \
 	scumm/room.o \
 	scumm/saveload.o \
 	scumm/script.o \
@@ -43,21 +40,14 @@ MODULE_OBJS := \
 	scumm/script_v5.o \
 	scumm/script_v6.o \
 	scumm/script_v6he.o \
-	scumm/script_v7he.o \
-	scumm/script_v72he.o \
-	scumm/script_v80he.o \
-	scumm/script_v90he.o \
-	scumm/script_v100he.o \
 	scumm/script_v8.o \
 	scumm/scumm.o \
 	scumm/sound.o \
-	scumm/sprite_he.o \
 	scumm/string.o \
 	scumm/usage_bits.o \
 	scumm/util.o \
 	scumm/vars.o \
 	scumm/verbs.o \
-	scumm/wiz_he.o \
 	scumm/imuse_digi/dimuse.o \
 	scumm/imuse_digi/dimuse_bndmgr.o \
 	scumm/imuse_digi/dimuse_codecs.o \
@@ -81,6 +71,20 @@ MODULE_OBJS := \
 	scumm/smush/smush_mixer.o \
 	scumm/smush/smush_font.o \
 	scumm/thumbnail.o
+
+ifndef DISABLE_HE
+MODULE_OBJS += \
+	scumm/logic_he.o \
+	scumm/palette_he.o \
+	scumm/resource_v7he.o \
+	scumm/script_v7he.o \
+	scumm/script_v72he.o \
+	scumm/script_v80he.o \
+	scumm/script_v90he.o \
+	scumm/script_v100he.o \
+	scumm/sprite_he.o \
+	scumm/wiz_he.o
+endif
 
 MODULE_DIRS += \
 	scumm \

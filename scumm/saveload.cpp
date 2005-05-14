@@ -1004,6 +1004,7 @@ void ScummEngine_v7::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	_imuseDigital->saveOrLoad(s);
 }
 
+#ifndef DISABLE_HE
 void ScummEngine_v70he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	ScummEngine::saveOrLoad(s, savegameVersion);
 
@@ -1090,6 +1091,7 @@ void ScummEngine_v100he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 
 	s->saveLoadEntries(this, HE100Entries);
 }
+#endif
 
 void ScummEngine::saveLoadResource(Serializer *ser, int type, int idx) {
 	byte *ptr;

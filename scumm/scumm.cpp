@@ -233,7 +233,7 @@ static const ScummGameSettings scumm_settings[] = {
 	{"fbdemo", "Fatty Bear's Birthday Surprise (DOS Demo)", GID_FBEAR, 6, 61, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformPC, 0, 0},
 
-#ifndef __PALM_OS__
+#ifndef DISABLE_HE
 	{"activity", "Putt-Putt & Fatty Bear's Activity Pack", GID_HEGAME, 6, 70, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
 
@@ -1285,6 +1285,7 @@ ScummEngine_v6::ScummEngine_v6(GameDetector *detector, OSystem *syst, const Scum
 	VAR_TIMEDATE_SECOND = 0xFF;
 }
 
+#ifndef DISABLE_HE
 ScummEngine_v70he::ScummEngine_v70he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
  : ScummEngine_v60he(detector, syst, gs, md5sum) {
 	 _win32ResExtractor = new Win32ResExtractor(this);
@@ -1339,7 +1340,7 @@ ScummEngine_v90he::~ScummEngine_v90he() {
 		delete _logicHE;
 	}
 }
-
+#endif
 
 ScummEngine_v7::ScummEngine_v7(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
  : ScummEngine_v6(detector, syst, gs, md5sum) {
@@ -1764,6 +1765,7 @@ void ScummEngine_v60he::scummInit() {
 		setCursorHotspot(16, 16);
 }
 
+#ifndef DISABLE_HE
 void ScummEngine_v72he::scummInit() {
 	ScummEngine_v60he::scummInit();
 
@@ -1816,6 +1818,7 @@ void ScummEngine_v99he::scummInit() {
 	memcpy(ah->data, _gameName.c_str(), len);
 
 }
+#endif
 
 void ScummEngine::setupMusic(int midi) {
 	_midiDriver = MidiDriver::detectMusicDriver(midi);
@@ -1918,10 +1921,12 @@ int ScummEngine::go() {
 		args[0] = _bootParam;	
 
 		_saveLoadFlag = 0;
+#ifndef DISABLE_HE
 		if (_heversion >= 98) {
 			((ScummEngine_v90he *)this)->_logicHE->initOnce();
 			((ScummEngine_v90he *)this)->_logicHE->beforeBootScript();
 		}
+#endif
 		if (_gameId == GID_MANIAC && _demoMode)
 			runScript(9, 0, 0, args);
 		else
@@ -1982,10 +1987,11 @@ int ScummEngine::scummLoop(int delta) {
 	// that it will be in a different state each time you run the program.
 	_rnd.getRandomNumber(2);
 
+#ifndef DISABLE_HE
 	if (_heversion >= 98) {
 		((ScummEngine_v90he *)this)->_logicHE->startOfFrame();
 	}
-
+#endif
 	if (_version > 2) {
 		VAR(VAR_TMR_1) += delta;
 		VAR(VAR_TMR_2) += delta;
@@ -2199,10 +2205,12 @@ load_game:
 		if (_version >= 7)
 			redrawVerbs();
 
+#ifndef DISABLE_HE
 		if (_heversion >= 90) {
 			((ScummEngine_v90he *)this)->spritesBlitToScreen();
 			((ScummEngine_v90he *)this)->spritesSortActiveSprites();
 		}
+#endif
 	
 		setActorRedrawFlags();
 		resetActorBgs();
@@ -2256,12 +2264,14 @@ load_game:
 	/* show or hide mouse */
 	_system->showMouse(_cursor.state > 0);
 
+#ifndef DISABLE_HE
 	if (_heversion >= 90) {
 		((ScummEngine_v90he *)this)->spritesUpdateImages();
 	}
 	if (_heversion >= 98) {
 		((ScummEngine_v90he *)this)->_logicHE->endOfFrame();
 	}
+#endif
 
 	if (VAR_TIMER != 0xFF)
 		VAR(VAR_TIMER) = 0;
@@ -2856,7 +2866,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		break;
 	case 6:
 		switch (game.heversion) {
-#ifndef __PALM_OS__
+#ifndef DISABLE_HE
 		case 100:
 			engine = new ScummEngine_v100he(detector, syst, game, md5sum);
 			break;

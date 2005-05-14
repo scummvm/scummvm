@@ -1009,6 +1009,7 @@ void ScummEngine::processActors() {
 		akos_processQueue();
 }
 
+#ifndef DISABLE_HE
 void ScummEngine_v71he::processActors() {
 	preProcessAuxQueue();
 
@@ -1019,7 +1020,6 @@ void ScummEngine_v71he::processActors() {
 
 	postProcessAuxQueue();
 }
-
 
 void ScummEngine_v90he::processActors() {
 	preProcessAuxQueue();
@@ -1037,6 +1037,7 @@ void ScummEngine_v90he::processActors() {
 	spritesMarkDirty(true);
 	spritesProcessWiz(false);
 }
+#endif
 
 // Used in Scumm v8, to allow the verb coin to be drawn over the inventory
 // chest. I'm assuming that draw order won't matter here.
@@ -1968,6 +1969,7 @@ bool Actor::isTalkConditionSet(int slot) const {
 	return (_heCondMask & (1 << (slot - 1))) != 0;
 }
 
+#ifndef DISABLE_HE
 void ScummEngine_v71he::preProcessAuxQueue() {
 	if (!_skipProcessActors) {
 		for (int i = 0; i < _auxBlocksNum; ++i) {
@@ -2048,6 +2050,7 @@ void ScummEngine_v71he::postProcessAuxQueue() {
 	}
 	_auxEntriesNum = 0;
 }
+#endif
 
 void ScummEngine::queueAuxBlock(Actor *a) {
 	if (!a->_auxBlock.visible)

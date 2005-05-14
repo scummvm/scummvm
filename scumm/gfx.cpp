@@ -799,6 +799,7 @@ void ScummEngine::redrawBGAreas() {
 	_bgNeedsRedraw = false;
 }
 
+#ifndef DISABLE_HE
 void ScummEngine_v71he::redrawBGAreas() {
 	if (camera._cur.x != camera._last.x && _charset->_hasMask)
 		stopTalk();
@@ -817,6 +818,7 @@ void ScummEngine_v72he::redrawBGAreas() {
 	ScummEngine_v71he::redrawBGAreas();
 	flushWizBuffer();
 }
+#endif
 
 void ScummEngine::redrawBGStrip(int start, int num) {
 	byte *room;
@@ -1622,6 +1624,7 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 }
 
 void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y, int w, int h) {
+#ifndef DISABLE_HE
 	const byte *bmap_ptr = _vm->findResourceData(MKID('BMAP'), ptr);
 	assert(bmap_ptr);
 
@@ -1646,6 +1649,7 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 		
 		copyVirtScreenBuffers(rect1);
 	}
+#endif
 }
 
 void Gdi::copyVirtScreenBuffers(Common::Rect rect, int dirtybit) {

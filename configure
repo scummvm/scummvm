@@ -24,6 +24,7 @@ _fluidsynth=auto
 _mt32emu=yes
 # default option behaviour yes/no
 _build_scumm=yes
+_build_he=yes
 _build_simon=yes
 _build_sky=yes
 _build_sword1=yes
@@ -263,6 +264,7 @@ Special configuration feature:
 Optional Features:
   --disable-debug          disable building with debugging symbols
   --disable-scumm          don't build the SCUMM engine
+  --disable-he             exclude HE70+ games in SCUMM engine
   --disable-simon          don't build the simon engine
   --disable-sky            don't build the Beneath a Steel Sky engine
   --disable-sword1         don't build the Broken Sword I engine
@@ -321,6 +323,7 @@ DEBFLAGS="-g"
 for ac_option in $@; do
     case "$ac_option" in
       --disable-scumm)          _build_scumm=no ;;
+      --disable-he)             _build_he=no ;;
       --disable-simon)          _build_simon=no ;;
       --disable-sky)            _build_sky=no ;;
       --disable-sword1)         _build_sword1=no ;;
@@ -554,6 +557,12 @@ if test "$_build_scumm" = no ; then
 	_mak_scumm='DISABLE_SCUMM = 1'
 else
 	_mak_scumm='# DISABLE_SCUMM = 1'
+fi
+
+if test "$_build_he" = no ; then
+	_mak_he='DISABLE_HE = 1'
+else
+	_mak_he='# DISABLE_HE = 1'
 fi
 
 if test "$_build_simon" = no ; then
@@ -1064,6 +1073,9 @@ echo
 echo "Engines:"
 if test "$_build_scumm" = yes ; then
 	echo "    SCUMM"
+	if test "$_build_he" = yes ; then
+		echo "    SCUMM (HE70+ games)"
+	fi
 fi
 if test "$_build_simon" = yes ; then
 	echo "    Simon the Sorcerer"
@@ -1218,6 +1230,7 @@ $_mak_plugins
 $_make_def_HAVE_GCC3
 $_make_def_HAVE_NASM
 $_mak_scumm
+$_mak_he
 $_mak_simon
 $_mak_sky
 $_mak_sword1

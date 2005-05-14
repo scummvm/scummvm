@@ -359,6 +359,7 @@ void ScummEngine_v7::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	}
 }
 
+#ifndef DISABLE_HE
 void ScummEngine_v70he::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	int i;
 	switch (blocktype) {
@@ -379,6 +380,7 @@ void ScummEngine_v70he::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 		ScummEngine::readIndexBlock(blocktype, itemsize);
 	}
 }
+#endif
 
 void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	int i;
