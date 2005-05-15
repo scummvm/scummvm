@@ -37,14 +37,6 @@ enum TextAlignment {
  * Instances of this class represent a distinct font, with a built-in renderer.
  * @todo Maybe move the high-level methods (drawString etc.) to a separate
  *       FontRenderer class? That way, we could have different variants... ?
- * @todo Add more parameters to drawString, or additional similar methods,
- *       featuring abilities like
- *       - rendering with wrap-around instead of inserting an ellipsis or
- *         cutting them; needs a 'height' parameter
- *       - rendering multi-line strings (essentially, invoke the regular
- *         drawString for each line, and advance one line)
- *       - combinations of the two above: honor line feeds, and also wrap
- *         overlong lines
  */
 class Font {
 public:
@@ -55,7 +47,26 @@ public:
 	virtual void drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const = 0;
 
 	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlignment align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
+	
+	/**
+	 * Compute and return the width the string str has when rendered using this font.
+	 */
 	int getStringWidth(const Common::String &str) const;
+	
+	/**
+	 * Take a text (which may contain newlines characters) and word wrap it so thata
+	 * no text line is wider than maxWidth pixels. If necessary, additional line breaks
+	 * are generated, preferably between words (i.e. were whitespaces are).
+	 * The resulting lines are appended to the string list lines.
+	 * It returns the maximal width of any of the new lines (i.e. a value which is less 
+	 * or equal to maxWidth).
+	 *
+	 * @param str	the string to word wrap
+	 * @param maxWidth	the maximum width a line may have
+	 * @param lines	the string list to which the text lines from str are appended
+	 * @return the maximal width of any of the lines added to lines
+	 */
+	int wordWrapText(const Common::String &str, int maxWidth, Common::StringList &lines) const;
 };
 
 

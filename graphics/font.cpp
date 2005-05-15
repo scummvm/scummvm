@@ -156,4 +156,92 @@ void Font::drawString(Surface *dst, const Common::String &s, int x, int y, int w
 }
 
 
+struct WordWrapper {
+	Common::StringList &lines;
+	int actualMaxLineWidth;
+	
+	WordWrapper(Common::StringList &l) : lines(l), actualMaxLineWidth(0) {
+	}
+	
+	void add(Common::String &line, int &w) {
+		if (actualMaxLineWidth < w)
+			actualMaxLineWidth = w;
+
+		lines.push_back(line);
+		
+		line.clear();
+		w = 0;
+	}
+};
+
+int Font::wordWrapText(const Common::String &str, int maxWidth, Common::StringList &lines) const {
+	WordWrapper wrapper(lines);
+	Common::String line;
+	Common::String tmpStr;
+	int lineWidth = 0;
+	int tmpWidth = 0;
+	
+	// The rough idea behind this algorithm is as follows:
+	// We accumulate characters into the string tmpStr. Whenever a full word
+	// has been gathered together this way, we 'commit' it to the line buffer
+	// 'line', i.e. we add tmpStr to the end of line, then clear it. Before
+	// we do that, we check whether it would cause 'line' to exceed maxWidth;
+	// in that case, we first add line to lines, then reset it.
+	//
+	// If a newline character is read, then we also add line to lines and clear it.
+	//
+	// Special care has to be taken to account for 'words' that exceed the width
+	// of a line. If we encounter such a word, we have to wrap it over multiple
+	// lines.
+	
+	for (Common::String::const_iterator x = str.begin(); x != str.end(); ++x) {
+		const char c = *x;
+		const int w = getCharWidth(c);
+
+		// If this char is a whitespace, then it represents a potential
+		// 'wrap point' where wrapping could take place. Everything that
+		// came before it can now safely be added to the line, as we know
+		// that it will not have to be wrapped.
+		if (isspace(c)) {
+			line += tmpStr;
+			lineWidth += tmpWidth;
+
+			tmpStr.clear();
+			tmpWidth = 0;
+		}
+
+		// If we encounter a line break (\n), the line is complete.
+		if (c == '\n') {
+			wrapper.add(line, lineWidth);
+			continue;
+		}
+		
+		// If the max line width would be exceeded by adding this char,
+		// insert a line break.
+		if (lineWidth + tmpWidth + w > maxWidth) {
+			// Commit what we have so far, *if* we have anything.
+			// If line is empty, then we are looking at a word
+			// which exceeds the maximum line width.
+			if (lineWidth > 0) {
+				wrapper.add(line, lineWidth);
+			} else {
+				wrapper.add(tmpStr, tmpWidth);
+			}
+		}
+
+		
+		tmpWidth += w;
+		tmpStr += c;
+	}
+	
+	// If some text is left over, add it as the final line
+	line += tmpStr;
+	lineWidth += tmpWidth;
+	if (lineWidth > 0) {
+		wrapper.add(line, lineWidth);
+	}
+	return wrapper.actualMaxLineWidth;
+}
+
+
 } // End of namespace Graphics
