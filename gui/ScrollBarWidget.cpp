@@ -28,30 +28,6 @@ namespace GUI {
 
 #define UP_DOWN_BOX_HEIGHT	(_w+1)
 
-// Up arrow
-static uint32 up_arrow[8] = {
-	0x00000000,
-	0x00000000,
-	0x00001000,
-	0x00001000,
-	0x00011100,
-	0x00011100,
-	0x00110110,
-	0x00100010,
-};
-
-// Down arrow
-static uint32 down_arrow[8] = {
-	0x00000000,
-	0x00000000,
-	0x00100010,
-	0x00110110,
-	0x00011100,
-	0x00011100,
-	0x00001000,
-	0x00001000,
-};
-
 ScrollBarWidget::ScrollBarWidget(GuiObject *boss, int x, int y, int w, int h)
 	: Widget (boss, x, y, w, h), CommandSender(boss) {
 	_flags = WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG | WIDGET_WANT_TICKLE;
@@ -205,33 +181,59 @@ void ScrollBarWidget::recalc() {
 
 void ScrollBarWidget::drawWidget(bool hilite) {
 	NewGui *gui = &g_gui;
-	int bottomY = _y + _h;
+	int bottomY = _y + _h - UP_DOWN_BOX_HEIGHT;
 	bool isSinglePage = (_numEntries <= _entriesPerPage);
+	OverlayColor color;
+	Graphics::Surface &surf = g_gui.getScreen();
+	const int B = (_w + 1) / 4;
+	Common::Point p0, p1, p2;
 
 	gui->frameRect(_x, _y, _w, _h, gui->_shadowcolor);
 
 	if (_draggingPart != kNoPart)
 		_part = _draggingPart;
 
+	//
 	// Up arrow
+	//
+	color = isSinglePage ? gui->_color :
+					(hilite && _part == kUpArrowPart) ? gui->_textcolorhi : gui->_textcolor;
 	gui->frameRect(_x, _y, _w, UP_DOWN_BOX_HEIGHT, gui->_color);
-	gui->drawBitmap(up_arrow, _x + 1 + (_w - 8) / 2, _y + (_w - 8) / 2,
-					isSinglePage ? gui->_color :
-					(hilite && _part == kUpArrowPart) ? gui->_textcolorhi : gui->_textcolor);
+	p0 = Common::Point(_x + _w / 2, _y + B);
+	p1 = Common::Point(_x + B, _y + _w - B);
+	p2 = Common::Point(_x + _w - B - 1, _y + _w - B);
+	// Evil HACK to draw filled triangle
+//	for (; p1.x <= p2.x; ++p1.x)
+//		surf.drawLine(p0.x, p0.y, p1.x, p1.y, color);
+	surf.drawLine(p0.x, p0.y, p1.x, p1.y, color);
+	surf.drawLine(p0.x, p0.y, p2.x, p2.y, color);
+//	surf.drawLine(p1.x, p1.y, p2.x, p2.y, color);
 
+	//
 	// Down arrow
-	gui->frameRect(_x, bottomY - UP_DOWN_BOX_HEIGHT, _w, UP_DOWN_BOX_HEIGHT, gui->_color);
-	gui->drawBitmap(down_arrow, _x + 1 + (_w - 8) / 2, bottomY - UP_DOWN_BOX_HEIGHT + (_w - 8) / 2,
-					isSinglePage ? gui->_color :
-					(hilite && _part == kDownArrowPart) ? gui->_textcolorhi : gui->_textcolor);
+	//
+	color = isSinglePage ? gui->_color :
+					(hilite && _part == kDownArrowPart) ? gui->_textcolorhi : gui->_textcolor;
+	gui->frameRect(_x, bottomY, _w, UP_DOWN_BOX_HEIGHT, gui->_color);
+	p0 = Common::Point(_x + _w / 2, bottomY + _w - B);
+	p1 = Common::Point(_x + B, bottomY + B);
+	p2 = Common::Point(_x + _w - B - 1, bottomY + B);
+	// Evil HACK to draw filled triangle
+//	for (; p1.x <= p2.x; ++p1.x)
+//		surf.drawLine(p0.x, p0.y, p1.x, p1.y, color);
+	surf.drawLine(p0.x, p0.y, p1.x, p1.y, color);
+	surf.drawLine(p0.x, p0.y, p2.x, p2.y, color);
+//	surf.drawLine(p1.x, p1.y, p2.x, p2.y, color);
 
+	//
 	// Slider
+	//
 	if (!isSinglePage) {
 		gui->fillRect(_x, _y + _sliderPos, _w, _sliderHeight,
 					(hilite && _part == kSliderPart) ? gui->_textcolorhi : gui->_textcolor);
 		gui->frameRect(_x, _y + _sliderPos, _w, _sliderHeight, gui->_color);
 		int y = _y + _sliderPos + _sliderHeight / 2;
-		OverlayColor color = (hilite && _part == kSliderPart) ? gui->_color : gui->_shadowcolor;
+		color = (hilite && _part == kSliderPart) ? gui->_color : gui->_shadowcolor;
 		gui->hLine(_x + 2, y - 2, _x + _w - 3, color);
 		gui->hLine(_x + 2, y, _x + _w - 3, color);
 		gui->hLine(_x + 2, y + 2, _x + _w-3, color);

@@ -56,12 +56,13 @@ protected:
 	int				_selectedItem;
 	ScrollBarWidget	*_scrollBar;
 	int				_currentKeyDown;
+	int				_lineHeight;
 	
 	String			_quickSelectStr;
 	uint32			_quickSelectTime;
 
 public:
-	ListWidget(GuiObject *boss, int x, int y, int w, int h);
+	ListWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws = kDefaultWidgetSize);
 	virtual ~ListWidget();
 	
 	void setList(const StringList& list);

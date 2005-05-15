@@ -27,16 +27,21 @@
 
 namespace GUI {
 
-ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h)
-	: EditableWidget(boss, x, y, w - kDefaultScrollBarWidth, h), CommandSender(boss) {
+ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws)
+	: EditableWidget(boss, x, y, w, h), CommandSender(boss) {
+	
+	// TODO: When in kBigWidgetSize mode, use another font
+	_w = w - (ws == kBigWidgetSize ? kBigScrollBarWidth : kNormalScrollBarWidth);
+	_lineHeight = kLineHeight;
+	
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE;
 	_type = kListWidget;
 	_editMode = false;
 	_numberingMode = kListNumberingOne;
-	_entriesPerPage = (_h - 2) / kLineHeight;
+	_entriesPerPage = (_h - 2) / _lineHeight;
 	_currentPos = 0;
 	_selectedItem = -1;
-	_scrollBar = new ScrollBarWidget(boss, _x + _w, _y, kDefaultScrollBarWidth, _h);
+	_scrollBar = new ScrollBarWidget(boss, _x + _w, _y, (ws == kBigWidgetSize ? kBigScrollBarWidth : kNormalScrollBarWidth), _h);
 	_scrollBar->setTarget(this);
 	_currentKeyDown = 0;
 	
@@ -144,7 +149,7 @@ void ListWidget::handleMouseWheel(int x, int y, int direction) {
 
 
 int ListWidget::findItem(int x, int y) const {
-	return (y - 1) / kLineHeight + _currentPos;
+	return (y - 1) / _lineHeight + _currentPos;
 }
 
 static int matchingCharsIgnoringCase(const char *x, const char *y, bool &stop) {
@@ -301,14 +306,14 @@ void ListWidget::drawWidget(bool hilite) {
 	// Draw the list items
 	for (i = 0, pos = _currentPos; i < _entriesPerPage && pos < len; i++, pos++) {
 		const OverlayColor textColor = (_selectedItem == pos && _hasFocus) ? gui->_bgcolor : gui->_textcolor;
-		const int y = _y + 2 + kLineHeight * i;
+		const int y = _y + 2 + _lineHeight * i;
 
 		// Draw the selected item inverted, on a highlighted background.
 		if (_selectedItem == pos) {
 			if (_hasFocus)
-				gui->fillRect(_x + 1, _y + 1 + kLineHeight * i, _w - 1, kLineHeight, gui->_textcolorhi);
+				gui->fillRect(_x + 1, _y + 1 + _lineHeight * i, _w - 1, _lineHeight, gui->_textcolorhi);
 			else
-				gui->frameRect(_x + 1, _y + 1 + kLineHeight * i, _w - 1, kLineHeight, gui->_textcolorhi);
+				gui->frameRect(_x + 1, _y + 1 + _lineHeight * i, _w - 1, _lineHeight, gui->_textcolorhi);
 		}
 
 		// If in numbering mode, we first print a number prefix
@@ -339,8 +344,8 @@ void ListWidget::drawWidget(bool hilite) {
 }
 
 Common::Rect ListWidget::getEditRect() const {
-	Common::Rect r(2, 1, _w - 2 , kLineHeight);
-	const int offset = (_selectedItem - _currentPos) * kLineHeight;
+	Common::Rect r(2, 1, _w - 2 , _lineHeight);
+	const int offset = (_selectedItem - _currentPos) * _lineHeight;
 	r.top += offset;
 	r.bottom += offset;
 

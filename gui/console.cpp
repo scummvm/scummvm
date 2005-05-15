@@ -57,15 +57,20 @@ ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
 	: Dialog(0, 0, 1, 1),
 	_widthPercent(widthPercent), _heightPercent(heightPercent) {
 
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
+
 	// Calculate the real width/height (rounded to char/line multiples)
-	_w = (uint16)(_widthPercent * g_system->getOverlayWidth());
-	_h = (uint16)((_heightPercent * g_system->getOverlayHeight() - 2) / kConsoleLineHeight);
+	_w = (uint16)(_widthPercent * screenW);
+	_h = (uint16)((_heightPercent * screenH - 2) / kConsoleLineHeight);
 	_h = _h * kConsoleLineHeight + 2;
 
 	// Add scrollbar
-	int scrollBarWidth = kDefaultScrollBarWidth;
-	if (g_system->getOverlayWidth() >= 640)
-		scrollBarWidth = 14;
+	int scrollBarWidth;
+	if (screenW >= 400 && screenH >= 300)
+		scrollBarWidth = kBigScrollBarWidth;
+	else
+		scrollBarWidth = kNormalScrollBarWidth;
 	_scrollBar = new ScrollBarWidget(this, _w - scrollBarWidth - 1, 0, scrollBarWidth, _h);
 	_scrollBar->setTarget(this);
 

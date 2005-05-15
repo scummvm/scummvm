@@ -26,7 +26,8 @@
 namespace GUI {
 
 enum {
-	kDefaultScrollBarWidth		= 9
+	kNormalScrollBarWidth	= 9,
+	kBigScrollBarWidth		= 15
 };
 
 
