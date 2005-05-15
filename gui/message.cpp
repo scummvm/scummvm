@@ -20,6 +20,7 @@
 
 #include "stdafx.h"
 #include "common/str.h"
+#include "common/system.h"
 #include "gui/message.h"
 #include "gui/newgui.h"
 #include "gui/widget.h"
@@ -35,57 +36,62 @@ enum {
 
 MessageDialog::MessageDialog(const Common::String &message, const char *defaultButton, const char *altButton)
 	: Dialog(30, 20, 260, 124) {
+	
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
+
+	GUI::WidgetSize ws;
+	int lineHeight;
+	const Graphics::Font *font;
+	if (screenW >= 400 && screenH >= 300) {
+		ws = GUI::kBigWidgetSize;
+		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		lineHeight = font->getFontHeight() + 2;
+	} else {
+		ws = GUI::kNormalWidgetSize;
+		font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+		lineHeight = font->getFontHeight() + 2;
+	}
+	
 	// First, determine the size the dialog needs. For this we have to break
 	// down the string into lines, and taking the maximum of their widths.
 	// Using this, and accounting for the space the button(s) need, we can set
 	// the real size of the dialog
 	Common::StringList lines;
-	const char *str = message.c_str();
-	const char *start = str;
-	int lineWidth, maxlineWidth = 0;
 	int lineCount, okButtonPos, cancelButtonPos;
-
-	while (*str) {
-		if (*str == '\n') {
-			lineWidth = addLine(lines, start, str - start);
-			if (maxlineWidth < lineWidth)
-				maxlineWidth = lineWidth;
-			start = str + 1;
-		}
-		++str;
-	}
-
-	// Add the last line
-	lineWidth = addLine(lines, start, str - start);
-	if (maxlineWidth < lineWidth)
-		maxlineWidth = lineWidth;
+	int maxlineWidth = font->wordWrapText(message, screenW - 2 * 20, lines);
 
 	// Calculate the desired dialog size (maxing out at 300*180 for now)
 	_w = maxlineWidth + 20;
 	lineCount = lines.size();
-	_h = lineCount * kLineHeight + 16;
+
+	_h = 16;
 	if (defaultButton || altButton)
 		_h += 24;
 
-	if (_h > 180) {
-		lineCount = (180 - 34) / kLineHeight;
-		_h = lineCount * kLineHeight + 34;
+	// Limit the number of lines so that the dialog still fits on the screen.
+	if (lineCount > (screenH - 20 - _h) / lineHeight) {
+		lineCount = (screenH - 20 - _h) / lineHeight;
 	}
-	_x = (320 - _w) / 2;
-	_y = (200 - _h) / 2;
+	_h += lineCount * lineHeight;
 
+	// Center the dialog
+	_x = (screenW - _w) / 2;
+	_y = (screenH - _h) / 2;
+
+	// Each line is represented by one static text item.
 	for (int i = 0; i < lineCount; i++) {
-		new StaticTextWidget(this, 10, 10 + i * kLineHeight, maxlineWidth, kLineHeight,
-								lines[i], kTextAlignCenter);
+		new StaticTextWidget(this, 10, 10 + i * lineHeight, maxlineWidth, lineHeight,
+								lines[i], kTextAlignCenter, ws);
 	}
 
-	// FIXME - allow for multiple buttons, and return in runModal() which one
+	// FIXME - allow for more than two buttons, and return in runModal() which one
 	// was selected.
 	if (defaultButton && altButton) { 
 		okButtonPos = (_w - (kButtonWidth * 2)) / 2;
 		cancelButtonPos = ((_w - (kButtonWidth * 2)) / 2) + kButtonWidth + 10;
 	} else {
-		okButtonPos = cancelButtonPos = (_w-kButtonWidth) / 2;
+		okButtonPos = cancelButtonPos = (_w - kButtonWidth) / 2;
 	}
 
 	if (defaultButton)
@@ -93,52 +99,6 @@ MessageDialog::MessageDialog(const Common::String &message, const char *defaultB
 
 	if (altButton)
 		addButton(cancelButtonPos, _h - 24, altButton, kCancelCmd, '\27');	// Cancel dialog
-}
-
-int MessageDialog::addLine(Common::StringList &lines, const char *line, int size) {
-	int width = 0, maxWidth = 0;
-	const char *start = line, *pos = line, *end = start + size;
-	Common::String tmp;
-	NewGui *gui = &g_gui;
-
-	while (pos < end) {
-		int w = gui->getCharWidth(*pos);
-
-		// Check if we exceed the maximum line width, if so, split the line.
-		// If possible we split at whitespaces.
-		if (width + w > 280) {
-			// Scan backward till we find a space or we get back to the start
-			const char *newPos = pos;
-			while (newPos > start && !isspace(*newPos))
-				newPos--;
-			if (newPos > start)
-				pos = newPos;
-
-			// Add the substring from intervall [start, i-1]
-			tmp = Common::String(start, pos - start);
-			lines.push_back(tmp);
-
-			// Determine the width of the string, and adjust maxWidth accordingly
-			width = gui->getStringWidth(tmp);
-			if (maxWidth < width)
-				maxWidth = width;
-
-			start = pos;
-			width = 0;
-		} else {
-			width += w;
-			pos++;
-		}
-	}
-
-	if (maxWidth < width)
-		maxWidth = width;
-
-	if (start < pos) {
-		tmp = Common::String(start, pos - start);
-		lines.push_back(tmp);
-	}
-	return maxWidth;
 }
 
 void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

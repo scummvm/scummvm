@@ -390,8 +390,8 @@ Common::StringList generateSavegameList(ScummEngine *scumm, bool saveMode) {
 MainMenuDialog::MainMenuDialog(ScummEngine *scumm)
 	: ScummDialog(scumm, 0, 0, 0, 0) {
 
-	const int sw = g_system->getOverlayWidth();
-	const int sh = g_system->getOverlayHeight();
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
 	
 	int hOffset;
 	int vSpace;
@@ -401,7 +401,7 @@ MainMenuDialog::MainMenuDialog(ScummEngine *scumm)
 	int buttonWidth;
 	int buttonHeight;
 
-	if (sw >= 400 && sh >= 300) {
+	if (screenW >= 400 && screenH >= 300) {
 		buttonWidth = 160;
 		buttonHeight = 28;
 		ws = GUI::kBigWidgetSize;
@@ -440,8 +440,8 @@ MainMenuDialog::MainMenuDialog(ScummEngine *scumm)
 	_w = buttonWidth + 2 * hOffset;
 	_h = y + vSpace;
 
-	_x = (sw - _w) / 2;
-	_y = (sh - _h) / 2;
+	_x = (screenW - _w) / 2;
+	_y = (screenH - _h) / 2;
 
 
 	//

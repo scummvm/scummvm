@@ -91,10 +91,10 @@ AboutDialog::AboutDialog()
 	_w = g_system->getOverlayWidth() - 2 * 10;
 	_h = g_system->getOverlayHeight() - 20 - 16;
 	
-	if (_w < 450)
-		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-	else
+	if (_w >= 400 && _h >= 300)
 		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	else
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 	
 	_lineHeight = _font->getFontHeight() + 3;
 

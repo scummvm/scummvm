@@ -41,8 +41,8 @@ public:
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
-protected:
-	int addLine(Common::StringList &lines, const char *line, int size);
+	// disable scaling
+	bool wantsScaling() const { return false; }
 };
 
 /**
