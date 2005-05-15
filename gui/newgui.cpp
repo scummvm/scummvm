@@ -49,7 +49,7 @@ enum {
 };
 
 
-#define USE_AUTO_SCALING	true
+#define USE_AUTO_SCALING	false
 
 // Constructor
 NewGui::NewGui() : _scaleEnable(USE_AUTO_SCALING), _needRedraw(false),
