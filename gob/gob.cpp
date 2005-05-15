@@ -89,6 +89,7 @@ static const GobGameSettings gob_games[] = {
 	{"gob3", "Goblins Quest 3 (Demo)", GF_GOB3, "5024e7de8d6377fbbeabbaa92e0452bc"},
 	{"gob3", "Goblins Quest 3 (Interactive Demo)", GF_GOB3, "59ab69dab5fddbbf698c77a84297a5a2"},
 
+	// CD 1.0
 	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble", GF_WOODRUFF, "c27402cee260d2ff1c4cecb2006a630a"},
 #endif
 	{0, 0, 0, 0}
