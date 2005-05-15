@@ -110,9 +110,19 @@ AboutDialog::AboutDialog()
 	date += ')';
 	_lines.push_back(date);
 
-	Common::String features("\\C\\c2""Supports: ");
+	Common::String features("Supports: ");
 	features += gScummVMFeatures;
-	_lines.push_back(features);
+
+	// If the features string is too wide, split it up
+	const int maxWidth = _w - 2*kXOff;
+	if (_font->getStringWidth(features) > maxWidth) {
+		Common::StringList wrappedLines;
+		_font->wordWrapText(features, maxWidth, wrappedLines);
+		
+		for (i = 0; i < (int)wrappedLines.size(); ++i)
+			_lines.push_back("\\C\\c2" + wrappedLines[i]);
+	} else
+		_lines.push_back("\\C\\c2" + features);
 
 	_lines.push_back("");
 	
@@ -207,7 +217,7 @@ void AboutDialog::drawDialog() {
 			while (*str && *str == ' ')
 				str++;
 	
-		_font->drawString(&g_gui.getScreen(), str, _x + kXOff, y, _w - 2 * kXOff, color, align);
+		_font->drawString(&g_gui.getScreen(), str, _x + kXOff, y, _w - 2 * kXOff, color, align, 0, false);
 		y += _lineHeight;
 	}
 
