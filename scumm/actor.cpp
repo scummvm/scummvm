@@ -630,8 +630,10 @@ void Actor::putActor(int dstX, int dstY, byte newRoom) {
 			}
 			adjustActorPos();
 		} else {
+#ifndef DISABLE_HE
 			if (_vm->_heversion >= 71)
 				((ScummEngine_v71he *)_vm)->queueAuxBlock(this);
+#endif
 			hideActor();
 		}
 	} else {
@@ -1430,8 +1432,10 @@ void Actor::setActorCostume(int c) {
 	if (_vm->_features & GF_NEW_COSTUMES) {
 		memset(_animVariable, 0, sizeof(_animVariable));
 		
+#ifndef DISABLE_HE
 		if (_vm->_heversion >= 71)
 			((ScummEngine_v71he *)_vm)->queueAuxBlock(this);
+#endif
 		
 		_costume = c;
 		_cost.reset();
@@ -2040,7 +2044,6 @@ void ScummEngine_v71he::postProcessAuxQueue() {
 	}
 	_auxEntriesNum = 0;
 }
-#endif
 
 void ScummEngine_v71he::queueAuxBlock(Actor *a) {
 	if (!a->_auxBlock.visible)
@@ -2058,6 +2061,7 @@ void ScummEngine_v71he::queueAuxEntry(int actorNum, int subIndex) {
 	ae->subIndex = subIndex;
 	++_auxEntriesNum;
 }
+#endif
 
 
 const SaveLoadEntry *Actor::getSaveLoadEntries() {
