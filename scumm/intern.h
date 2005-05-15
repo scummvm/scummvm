@@ -665,7 +665,6 @@ protected:
 	byte VAR_TIMEDATE_SECOND;
 };
 
-#ifndef DISABLE_SCUMM_7_8
 class ScummEngine_v60he : public ScummEngine_v6 {
 protected:
 	typedef void (ScummEngine_v60he::*OpcodeProcv60he)();
@@ -716,7 +715,6 @@ protected:
 	void o60_redimArray();
 	void o60_readFilePos();
 };
-#endif
 
 #ifndef DISABLE_HE
 class ScummEngine_v70he : public ScummEngine_v60he {
@@ -1335,6 +1333,8 @@ public:
 protected:
 	virtual void setupScummVars();
 	virtual void initScummVars();
+
+	virtual void akos_processQueue();
 
 	virtual void saveOrLoad(Serializer *s, uint32 savegameVersion);
 

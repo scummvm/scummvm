@@ -432,13 +432,6 @@ Try \`$0 --help' for more information." >&2
     esac;
 done;
 
-if test "$_build_he" = yes ; then
-	if test "$_build_scumm_7_8" != yes ; then
-	    echo "error: you cannot enable HE games with SCUMM v7 & v8 disabled"
-	    exit 1
-	fi
-fi
-
 CXXFLAGS="$CXXFLAGS $DEBFLAGS"
 
 case $_host in

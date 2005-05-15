@@ -2,6 +2,7 @@ MODULE := scumm
 
 MODULE_OBJS := \
 	scumm/actor.o \
+	scumm/akos.o \
 	scumm/base-costume.o \
 	scumm/bomp.o \
 	scumm/boxes.o \
@@ -38,6 +39,7 @@ MODULE_OBJS := \
 	scumm/script_v2.o \
 	scumm/script_v5.o \
 	scumm/script_v6.o \
+	scumm/script_v6he.o \
 	scumm/scumm.o \
 	scumm/sound.o \
 	scumm/string.o \
@@ -49,8 +51,6 @@ MODULE_OBJS := \
 
 ifndef DISABLE_SCUMM_7_8
 MODULE_OBJS += \
-	scumm/akos.o \
-	scumm/script_v6he.o \
 	scumm/script_v8.o \
 	scumm/imuse_digi/dimuse.o \
 	scumm/imuse_digi/dimuse_bndmgr.o \

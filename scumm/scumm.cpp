@@ -224,7 +224,6 @@ static const ScummGameSettings scumm_settings[] = {
 	// Humongous Entertainment Scumm Version 6
 	{"puttdemo", "Putt-Putt Joins The Parade (Demo)", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_NATIVE,
 	  GF_USE_KEY | GF_MULTIPLE_VERSIONS, Common::kPlatformPC, 0, 0},
-#ifndef DISABLE_SCUMM_7_8
 	{"puttputt", "Putt-Putt Joins The Parade", GID_HEGAME, 6, 61, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformPC, 0, 0},
 	{"moondemo", "Putt-Putt Goes To The Moon (Demo)", GID_HEGAME, 6, 61, MDT_ADLIB | MDT_NATIVE,
@@ -239,7 +238,6 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformPC, 0, 0},
 	{"fbdemo", "Fatty Bear's Birthday Surprise (DOS Demo)", GID_FBEAR, 6, 61, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformPC, 0, 0},
-#endif
 
 #ifndef DISABLE_HE
 	{"activity", "Putt-Putt & Fatty Bear's Activity Pack", GID_HEGAME, 6, 70, MDT_NONE,
@@ -1434,10 +1432,8 @@ int ScummEngine::init(GameDetector &detector) {
 
 	// Create the costume renderer
 	if (_features & GF_NEW_COSTUMES) {
-#ifndef DISABLE_SCUMM_7_8
 		_costumeRenderer = new AkosRenderer(this);
 		_costumeLoader = new AkosCostumeLoader(this);
-#endif
 	} else if (_platform == Common::kPlatformNES) {
 		_costumeRenderer = new NESCostumeRenderer(this);
 		_costumeLoader = new NESCostumeLoader(this);
@@ -1768,7 +1764,6 @@ void ScummEngine_v6::scummInit() {
 	}
 }
 
-#ifndef DISABLE_SCUMM_7_8
 void ScummEngine_v60he::scummInit() {
 	ScummEngine::scummInit();
 
@@ -1778,7 +1773,6 @@ void ScummEngine_v60he::scummInit() {
 	if (_gameId == GID_FUNPACK)
 		setCursorHotspot(16, 16);
 }
-#endif
 
 #ifndef DISABLE_HE
 void ScummEngine_v72he::scummInit() {
@@ -2910,11 +2904,9 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 			engine = new ScummEngine_v70he(detector, syst, game, md5sum);
 			break;
 #endif
-#ifndef DISABLE_SCUMM_7_8
 		case 61:
 			engine = new ScummEngine_v60he(detector, syst, game, md5sum);
 			break;
-#endif
 		default:
 			engine = new ScummEngine_v6(detector, syst, game, md5sum);
 		}

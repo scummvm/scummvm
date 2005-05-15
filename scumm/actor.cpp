@@ -1005,10 +1005,8 @@ void ScummEngine::processActors() {
 		a->animateCostume();
 	}
 	
-#ifndef DISABLE_SCUMM_7_8
 	if (_features & GF_NEW_COSTUMES)
 		akos_processQueue();
-#endif
 }
 
 #ifndef DISABLE_HE
@@ -1442,7 +1440,6 @@ void Actor::setActorCostume(int c) {
 	_costumeNeedsInit = true;
 	
 	if (_vm->_features & GF_NEW_COSTUMES) {
-#ifndef DISABLE_SCUMM_7_8
 		memset(_animVariable, 0, sizeof(_animVariable));
 		
 		if (_vm->_heversion >= 71)
@@ -1462,7 +1459,6 @@ void Actor::setActorCostume(int c) {
 			}
 			startAnimActor(_initFrame);
 		}
-#endif
 	} else {
 		if (_visible) {
 			hideActor();
