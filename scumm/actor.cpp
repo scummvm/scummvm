@@ -147,11 +147,7 @@ void Actor::initActor(int mode) {
 
 	_clipOverride = _vm->_actorClipOverride;
 
-	_auxBlock.visible = false;
-	_auxBlock.r.left = 0;
-	_auxBlock.r.top = 0;
-	_auxBlock.r.right = -1;
-	_auxBlock.r.bottom = -1;
+	_auxBlock.reset();
 	_hePaletteNum = 0;
 
 	_vm->_classData[_number] = (_vm->_version >= 7) ? _vm->_classData[0] : 0;
@@ -506,11 +502,7 @@ void Actor::startAnimActor(int f) {
 			// Causes Zak to lose his body in several scenes, see bug #771508
 			if (_vm->_version >= 3 && f == _initFrame) {
 				_cost.reset();
-				_auxBlock.visible = false;
-				_auxBlock.r.left = 0;
-				_auxBlock.r.top = 0;
-				_auxBlock.r.right = -1;
-				_auxBlock.r.bottom = -1;
+				_auxBlock.reset();
 			}
 			_vm->_costumeLoader->costumeDecodeData(this, f, (uint) - 1);
 			_frame = f;
@@ -639,7 +631,7 @@ void Actor::putActor(int dstX, int dstY, byte newRoom) {
 			adjustActorPos();
 		} else {
 			if (_vm->_heversion >= 71)
-				_vm->queueAuxBlock(this);
+				((ScummEngine_v71he *)_vm)->queueAuxBlock(this);
 			hideActor();
 		}
 	} else {
@@ -801,11 +793,7 @@ void Actor::hideActor() {
 	_cost.soundCounter = 0;
 	_needRedraw = false;
 	_needBgReset = true;
-	_auxBlock.visible = false;
-	_auxBlock.r.left = 0;
-	_auxBlock.r.top = 0;
-	_auxBlock.r.right = -1;
-	_auxBlock.r.bottom = -1;
+	_auxBlock.reset();
 }
 
 void Actor::showActor() {
@@ -1443,15 +1431,11 @@ void Actor::setActorCostume(int c) {
 		memset(_animVariable, 0, sizeof(_animVariable));
 		
 		if (_vm->_heversion >= 71)
-			_vm->queueAuxBlock(this);
+			((ScummEngine_v71he *)_vm)->queueAuxBlock(this);
 		
 		_costume = c;
 		_cost.reset();
-		_auxBlock.visible = false;
-		_auxBlock.r.left = 0;
-		_auxBlock.r.top = 0;
-		_auxBlock.r.right = -1;
-		_auxBlock.r.bottom = -1;
+		_auxBlock.reset();
 
 		if (_visible) {
 			if (_costume) {
@@ -2058,7 +2042,7 @@ void ScummEngine_v71he::postProcessAuxQueue() {
 }
 #endif
 
-void ScummEngine::queueAuxBlock(Actor *a) {
+void ScummEngine_v71he::queueAuxBlock(Actor *a) {
 	if (!a->_auxBlock.visible)
 		return;
 
@@ -2067,7 +2051,7 @@ void ScummEngine::queueAuxBlock(Actor *a) {
 	++_auxBlocksNum;
 }
 
-void ScummEngine::queueAuxEntry(int actorNum, int subIndex) {
+void ScummEngine_v71he::queueAuxEntry(int actorNum, int subIndex) {
 	assert(_auxEntriesNum < ARRAYSIZE(_auxEntries));
 	AuxEntry *ae = &_auxEntries[_auxEntriesNum];
 	ae->actorNum = actorNum;

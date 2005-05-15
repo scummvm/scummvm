@@ -1728,7 +1728,8 @@ void ScummEngine::akos_processQueue() {
 			a->_offsY = param_2;
 			break;
 		case 7:
-			queueAuxEntry(a->_number, param_1);
+			assert(_heversion >= 71);
+			((ScummEngine_v71he *)this)->queueAuxEntry(a->_number, param_1);
 			break;
 		case 8:
 			_actorToPrintStrFor = a->_number;

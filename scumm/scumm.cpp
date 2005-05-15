@@ -950,10 +950,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_actorClipOverride.right = 640;
 
 	_skipDrawObject = 0;
-	_auxBlocksNum = 0;
-	memset(_auxBlocks, 0, sizeof(_auxBlocks));
-	_auxEntriesNum = 0;
-	memset(_auxEntries, 0, sizeof(_auxEntries));
 	memset(_timers, 0, sizeof(_timers));
 
 	memset(_akosQueue, 0, sizeof(_akosQueue));
@@ -1314,6 +1310,14 @@ ScummEngine_v70he::~ScummEngine_v70he() {
 	free(_heV7DiskOffsets);
 	free(_heV7RoomIntOffsets);
 	free(_heV7RoomOffsets);
+}
+
+ScummEngine_v71he::ScummEngine_v71he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
+ : ScummEngine_v70he(detector, syst, gs, md5sum) {
+	_auxBlocksNum = 0;
+	memset(_auxBlocks, 0, sizeof(_auxBlocks));
+	_auxEntriesNum = 0;
+	memset(_auxEntries, 0, sizeof(_auxEntries));
 }
 
 ScummEngine_v72he::ScummEngine_v72he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])

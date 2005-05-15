@@ -795,7 +795,7 @@ protected:
 
 class ScummEngine_v71he : public ScummEngine_v70he {
 public:
-	ScummEngine_v71he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v70he(detector, syst, gs, md5sum) {}
+	ScummEngine_v71he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
 
 protected:
 	virtual void redrawBGAreas();
@@ -804,6 +804,15 @@ protected:
 	void preProcessAuxQueue();
 	void postProcessAuxQueue();
 
+public:
+	/* Actor AuxQueue stuff (HE) */	
+	AuxBlock _auxBlocks[16];
+	uint16 _auxBlocksNum;
+	AuxEntry _auxEntries[16];
+	uint16 _auxEntriesNum;
+
+	void queueAuxBlock(Actor *a);
+	void queueAuxEntry(int actorNum, int subIndex);
 };
 
 class ScummEngine_v72he : public ScummEngine_v71he {

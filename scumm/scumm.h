@@ -310,6 +310,12 @@ struct LangIndexNode {
 struct AuxBlock {
 	bool visible;
 	Common::Rect r;
+	
+	void reset() {
+		visible = false;
+		r.left = r.top = 0;
+		r.right = r.bottom = -1;
+	}
 };
 	
 struct AuxEntry {
@@ -851,16 +857,6 @@ protected:
 	virtual void processActors();
 	void processUpperActors();
 	int getActorFromPos(int x, int y);
-	
-public:
-	/* Actor AuxQueue stuff (HE) */	
-	AuxBlock _auxBlocks[16];
-	uint16 _auxBlocksNum;
-	AuxEntry _auxEntries[16];
-	uint16 _auxEntriesNum;
-
-	void queueAuxBlock(Actor *a);
-	void queueAuxEntry(int actorNum, int subIndex);
 
 public:
 	/* Actor talking stuff */
