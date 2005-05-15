@@ -169,11 +169,8 @@ void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 
 void ButtonWidget::drawWidget(bool hilite) {
 	NewGui *gui = &g_gui;
-	// HACK: Subtracting 1 from _y isn't very nice when we don't know
-	// anything about the size of the font. But we can't use the size of
-	// the font either, because we don't know how the coordinates will be
-	// scaled.
-	gui->drawString(_font, _label, _x, _y - 1, _w,
+	const int off = (_h - _font->getFontHeight()) / 2;
+	gui->drawString(_font, _label, _x, _y + off, _w,
 					!isEnabled() ? gui->_color :
 					hilite ? gui->_textcolorhi : gui->_textcolor, _align);
 }
