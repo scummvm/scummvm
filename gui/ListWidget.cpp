@@ -31,8 +31,14 @@ ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize w
 	: EditableWidget(boss, x, y, w, h), CommandSender(boss) {
 	
 	// TODO: When in kBigWidgetSize mode, use another font
-	_w = w - (ws == kBigWidgetSize ? kBigScrollBarWidth : kNormalScrollBarWidth);
-	_lineHeight = kLineHeight;
+	if (ws == kBigWidgetSize) {
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		_w = w - kBigScrollBarWidth;
+	} else {
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+		_w = w - kNormalScrollBarWidth;
+	}
+	_lineHeight = _font->getFontHeight() + 2;
 	
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE;
 	_type = kListWidget;
@@ -297,6 +303,7 @@ void ListWidget::drawWidget(bool hilite) {
 	int i, pos, len = _list.size();
 	Common::String buffer;
 	int offset, deltax;
+	Graphics::Surface *surf = &g_gui.getScreen();
 
 	// Draw a thin frame around the list.
 	gui->hLine(_x, _y, _x + _w - 1, gui->_color);
@@ -321,8 +328,8 @@ void ListWidget::drawWidget(bool hilite) {
 			char temp[10];
 			sprintf(temp, "%2d. ", (pos + _numberingMode));
 			buffer = temp;
-			gui->drawString(buffer, _x + 2, y, _w - 4, textColor);
-			offset = gui->getStringWidth(buffer);
+			_font->drawString(surf, buffer, _x + 2, y, _w - 4, textColor);
+			offset = _font->getStringWidth(buffer);
 		} else {
 			offset = 0;
 		}
@@ -334,11 +341,11 @@ void ListWidget::drawWidget(bool hilite) {
 			adjustOffset();
 			deltax = -_editScrollOffset;
 	
-			gui->drawString(buffer, _x + r.left, y, r.width(), textColor, kTextAlignLeft, deltax, false);
+			_font->drawString(surf, buffer, _x + r.left, y, r.width(), textColor, kTextAlignLeft, deltax, false);
 		} else {
 			buffer = _list[pos];
 			deltax = 0;
-			gui->drawString(buffer, _x + r.left, y, r.width(), textColor);
+			_font->drawString(surf, buffer, _x + r.left, y, r.width(), textColor);
 		}
 	}
 }
@@ -352,7 +359,7 @@ Common::Rect ListWidget::getEditRect() const {
 	if (_numberingMode != kListNumberingOff) {
 		char temp[10];
 		sprintf(temp, "%2d. ", (_selectedItem + _numberingMode));
-		r.left += g_gui.getStringWidth(temp);
+		r.left += _font->getStringWidth(temp);
 	}
 	
 	return r;
