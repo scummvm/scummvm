@@ -196,7 +196,15 @@ Files
 
 GUI
 ===
-* Remove hard coded 320x200 assumptions, use game screen size
+* Remove hard coded 320x200 assumptions, use game screen size. In particular,
+  all the dialogs should be rewritten to allow for that. This includes:
+  - BrowserDialog
+  - OptionsDialog
+  - GlobalOptionsDialog
+  - LauncherDialog
+  - EditGameDialog
+  - Scumm::ConfigDialog
+  - ...
 * EditableWidget: Make it possible to specify a min/max length for the text
 * EditableWidget: Let setEditString filter the string it gets
 * EditableWidget: Right now, custom filtering requires the user to subclass;
