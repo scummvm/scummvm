@@ -87,6 +87,26 @@ public:
 	void toLowercase();
 	void toUppercase();
 
+public:
+	typedef char *        iterator;
+	typedef const char *  const_iterator;
+
+	iterator		begin() {
+		return _str;
+	}
+
+	iterator		end() {
+		return begin() + size();
+	}
+
+	const_iterator	begin() const {
+		return _str;
+	}
+
+	const_iterator	end() const {
+		return begin() + size();
+	}
+
 protected:
 	void ensureCapacity(int new_len, bool keep_old);
 	void decRefCount();
