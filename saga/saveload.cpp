@@ -37,13 +37,33 @@
 #include "saga/scene.h"
 #include "saga/render.h"
 
+#define CURRENT_SAGA_VER 1
+
 namespace Saga {
 
-void SagaEngine::save(const char *fileName) {
+struct SaveGameHeader {
+	uint32 type;
+	uint32 size;
+	uint32 version;
+	char name[32];
+};
+//TODO: 
+// - get savegame list
+// - make/create save filename string
+// - delete savegame
+
+void SagaEngine::save(const char *fileName, const char *saveName) {
 	Common::File out;
+	SaveGameHeader header;
 
 	out.open(fileName, Common::File::kFileWriteMode);
-	//TODO: version number
+
+	header.type = MKID('SAGA');
+	header.size = 0;
+	header.version = CURRENT_SAGA_VER;
+	strcpy(header.name, saveName);
+
+	out.write(&header, sizeof(header));
 
 	// Surrounding scene
 	out.writeSint32LE(_scene->getOutsetSceneNumber());
@@ -74,13 +94,19 @@ void SagaEngine::load(const char *fileName) {
 	int sceneNumber, insetSceneNumber;
 	int mapx, mapy;
 	uint16 i;
+	SaveGameHeader header;
 
 	in.open(fileName);
 
 	if (!in.isOpen())
 		return;
 
+	in.read(&header, sizeof(header));
 
+	if (header.type != MKID('SAGA')) {
+		error("SagaEngine::load wrong format");
+	}
+			
 	// Surrounding scene
 	sceneNumber = in.readSint32LE();
 

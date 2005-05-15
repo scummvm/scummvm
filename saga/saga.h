@@ -434,12 +434,12 @@ public:
 	void shutDown() { _quit = true; }
 
 	void save() { //TODO: remove
-		save("iteSCUMMVM.sav");
+		save("iteSCUMMVM.sav", "default");
 	}
 	void load() { //TODO: remove
 		load("iteSCUMMVM.sav");
 	}
-	void save(const char *fileName);
+	void save(const char *fileName, const char *saveName);
 	void load(const char *fileName);
 
 	int _soundEnabled;
