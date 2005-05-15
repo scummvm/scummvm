@@ -378,7 +378,7 @@ void NutRenderer::draw2byte(const Graphics::Surface &s, int c, int x, int y, byt
 				bits = *src++;
 			if (x + tx < 0 || x + tx >= s.w || y + ty < 0)
 				continue;
-			if (bits & revBitMask[tx & 7]) {
+			if (bits & revBitMask(tx % 8)) {
 				dst[tx] = color;
 			}
 		}

@@ -27,6 +27,8 @@
 
 namespace Scumm {
 
+#define revBitMask(x)	(0x80 >> (x))
+
 class BaseScummFile : public Common::File {
 public:
 	virtual void setEnc(byte value) = 0;
@@ -108,9 +110,6 @@ public:
 	uint32 write(const void *dataPtr, uint32 dataSize);
 };
 
-
-// This is a constant lookup table of reverse bit masks
-extern const byte revBitMask[8];
 
 /* Direction conversion functions (between old dir and new dir format) */
 int newDirToOldDir(int dir);

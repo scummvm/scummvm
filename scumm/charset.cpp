@@ -1557,7 +1557,7 @@ void CharsetRendererCommon::drawBits1(const Graphics::Surface &s, byte *dst, con
 		for (x = 0; x < width; x++) {
 			if ((x % 8) == 0)
 				bits = *src++;
-			if ((bits & revBitMask[x % 8]) && y + drawTop >= 0) {
+			if ((bits & revBitMask(x % 8)) && y + drawTop >= 0) {
 				if (_dropShadow) {
 					*(dst + 1) = _shadowColor;
 					*(dst + s.pitch) = _shadowColor;

@@ -138,7 +138,7 @@ int SmushFont::draw2byte(byte *buffer, int dst_width, int x, int y, int idx) {
 		for (int i = 0; i < w; i++) {
 			if ((i % 8) == 0)
 				bits = *src++;
-			if (bits & revBitMask[i % 8]) {
+			if (bits & revBitMask(i % 8)) {
 				dst[i + 1] = 0;
 				dst[dst_width + i] = 0;
 				dst[dst_width + i + 1] = 0;

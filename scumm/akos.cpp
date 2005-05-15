@@ -522,7 +522,7 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 	height = _height;
 
 	scaleytab = &v1.scaletable[v1.scaleYindex];
-	maskbit = revBitMask[v1.x & 7];
+	maskbit = revBitMask(v1.x & 7);
 	mask = _vm->getMaskBuffer(v1.x - (_vm->virtscr[0].xstart & 7), v1.y, _zbuf);
 
 	if (len)
@@ -577,7 +577,7 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 					v1.x += v1.scaleXstep;
 					if (v1.x < 0 || v1.x >= _out.w)
 						return;
-					maskbit = revBitMask[v1.x & 7];
+					maskbit = revBitMask(v1.x & 7);
 					v1.destptr += v1.scaleXstep;
 					skip_column = false;
 				} else
@@ -1061,7 +1061,7 @@ void AkosRenderer::akos16Decompress(byte *dest, int32 pitch, const byte *src, in
 	byte *tmp_buf = akos16.buffer;
 	int maskpitch;
 	byte *maskptr;
-	const byte maskbit = revBitMask[maskLeft & 7];
+	const byte maskbit = revBitMask(maskLeft & 7);
 
 	if (dir < 0) {
 		dest -= (t_width - 1);

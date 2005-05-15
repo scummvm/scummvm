@@ -96,7 +96,6 @@ typedef struct {
 
 typedef struct {
 	void *v1; // struct v1 *
-	const byte *revBitMask;	
 	
 	const byte *_srcptr;
 	int _height;

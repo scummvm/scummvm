@@ -14,7 +14,6 @@ UInt32 CostumeRenderer_proc3(void *userData68KP) {
 	
 	SETPTRV	(V1CodecType *	, v1, v1comp				)
 
-	SETPTR	(const byte *	,revBitMask					)
 	SETPTR	(const byte *	,_srcptr					)
 	SET32	(int			,_height					)
 	SET8	(byte			,_scaleIndexX				)
@@ -60,7 +59,7 @@ UInt32 CostumeRenderer_proc3(void *userData68KP) {
 	height = _height;
 
 	scaleytab = &v1.scaletable[_scaleIndexY];
-	maskbit = revBitMask[v1.x & 7];
+	maskbit = revBitMask(v1.x & 7);
 	mask = v1.mask_ptr + v1.x / 8;
 
 	if (len)
@@ -108,7 +107,7 @@ UInt32 CostumeRenderer_proc3(void *userData68KP) {
 					if (v1.x < 0 || v1.x >= _out_w)
 						//return _scaleIndexX;
 						goto end_jump;
-					maskbit = revBitMask[v1.x & 7];
+					maskbit = revBitMask(v1.x & 7);
 					v1.destptr += v1.scaleXstep;
 				}
 				_scaleIndexX += v1.scaleXstep;

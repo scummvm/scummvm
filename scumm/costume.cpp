@@ -34,8 +34,6 @@
 
 namespace Scumm {
 
-const byte revBitMask[8] = { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 };
-
 #ifdef __PALM_OS__
 const byte *smallCostumeScaleTable;
 #else
@@ -330,7 +328,7 @@ static const int v1MMActorPalatte2[25] = {
 };
 
 #define MASK_AT(xoff) \
-	(mask && (mask[((v1.x + xoff) / 8)] & revBitMask[(v1.x + xoff) & 7]))
+	(mask && (mask[((v1.x + xoff) / 8)] & revBitMask((v1.x + xoff) & 7)))
 #define LINE(c,p) \
 	pcolor = (color >> c) & 3; \
 	if (pcolor) { \
@@ -420,7 +418,6 @@ void ClassicCostumeRenderer::proc3(Codec1 &v1) {
 	ARM_START(CostumeProc3Type)
 		ARM_INIT(SCUMM_PROC3)
 		ARM_ADDP(v1)
-		ARM_ADDM(revBitMask)
 		ARM_ADDM(_srcptr)
 		ARM_ADDM(_height)
 		ARM_ADDM(_scaleIndexX)
@@ -454,7 +451,7 @@ void ClassicCostumeRenderer::proc3(Codec1 &v1) {
 	height = _height;
 
 	scaleytab = &v1.scaletable[_scaleIndexY];
-	maskbit = revBitMask[v1.x & 7];
+	maskbit = revBitMask(v1.x & 7);
 	mask = v1.mask_ptr + v1.x / 8;
 
 	if (len)
@@ -499,7 +496,7 @@ void ClassicCostumeRenderer::proc3(Codec1 &v1) {
 					v1.x += v1.scaleXstep;
 					if (v1.x < 0 || v1.x >= _out.w)
 						return;
-					maskbit = revBitMask[v1.x & 7];
+					maskbit = revBitMask(v1.x & 7);
 					v1.destptr += v1.scaleXstep;
 				}
 				_scaleIndexX += v1.scaleXstep;
@@ -525,7 +522,7 @@ void ClassicCostumeRenderer::proc3_ami(Codec1 &v1) {
 	height = _height;
 	width = _width;
 	src = _srcptr;
-	maskbit = revBitMask[v1.x & 7];
+	maskbit = revBitMask(v1.x & 7);
 	y = v1.y;
 	oldXpos = v1.x;
 	oldScaleIndexX = _scaleIndexX;
@@ -547,7 +544,7 @@ void ClassicCostumeRenderer::proc3_ami(Codec1 &v1) {
 				if (_scaleX == 255 || v1.scaletable[_scaleIndexX] < _scaleX) {
 					v1.x += v1.scaleXstep;
 					dst += v1.scaleXstep;
-					maskbit = revBitMask[v1.x & 7];
+					maskbit = revBitMask(v1.x & 7);
 				}
 				_scaleIndexX += v1.scaleXstep;
 				mask = v1.mask_ptr + v1.x / 8;
@@ -707,7 +704,7 @@ byte NESCostumeRenderer::drawLimb(const Actor *a, int limb) {
 					continue;
 				int my = _actorY + y + ty;
 				int mx = _actorX + x + tx;
-				if (!doMask || !(bgTransBuf[my * _numStrips + mx / 8] & (0x80 >> (mx & 7))))
+				if (!doMask || !(bgTransBuf[my * _numStrips + mx / 8] & revBitMask(mx & 7)))
 					*((byte *)_out.pixels + my * _out.pitch + mx) = palette[c];
 			}
 		}

@@ -236,7 +236,7 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 	src = bd.dataptr;
 	dst = (byte *)bd.dst.pixels + bd.y * bd.dst.pitch + (bd.x + clip.left);
 
-	const byte maskbit = revBitMask[(bd.x + clip.left) & 7];
+	const byte maskbit = revBitMask((bd.x + clip.left) & 7);
 
 	// Mask against any additionally imposed mask
 	if (bd.maskPtr) {
@@ -377,7 +377,7 @@ int32 setupBompScale(byte *scaling, int32 size, byte scale) {
 		*tmp_scaling++ = a;
 	}
 	if ((size & 7) != 0) {
-		*(tmp_scaling - 1) |= revBitMask[size & 7];
+		*(tmp_scaling - 1) |= revBitMask(size & 7);
 	}
 
 	count = (size + 7) / 8;
