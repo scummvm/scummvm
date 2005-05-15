@@ -685,8 +685,7 @@ void Script::whichObject(const Point& mousePoint) {
 	_leftButtonVerb = _currentVerb;
 	newRightButtonVerb = kVerbNone;
 
-	if (_vm->_actor->_protagonist->currentAction == kActionWalkDir) {
-	} else {
+	if (_vm->_actor->_protagonist->currentAction != kActionWalkDir) {
 		if (_vm->getSceneHeight() >= mousePoint.y) {
 			newObjectId = _vm->_actor->hitTest(mousePoint, true);
 
@@ -755,7 +754,7 @@ void Script::whichObject(const Point& mousePoint) {
 						newRightButtonVerb = kVerbNone;
 					}
 
-					if ((_currentVerb == kVerbTalkTo) || ((_currentVerb == kVerbGive) && !_firstObjectSet)) {
+					if ((_currentVerb == kVerbTalkTo) || ((_currentVerb == kVerbGive) && _firstObjectSet)) {
 						objectId = ID_NOTHING;
 						newObjectId = ID_NOTHING;
 					}
@@ -766,7 +765,7 @@ void Script::whichObject(const Point& mousePoint) {
 				}
 			}
 		} else {
-			if ((_currentVerb == kVerbTalkTo) || ((_currentVerb == kVerbGive) && !_firstObjectSet)) {
+			if ((_currentVerb == kVerbTalkTo) || ((_currentVerb == kVerbGive) && _firstObjectSet)) {
 				// no way
 			} else {
 				panelButton = _vm->_interface->inventoryHitTest(mousePoint);

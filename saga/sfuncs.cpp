@@ -195,10 +195,15 @@ void Script::sfTakeObject(SCRIPTFUNC_PARAMS) {
 // Check if an object is carried.
 void Script::sfIsCarried(SCRIPTFUNC_PARAMS) {
 	uint16 objectId = thread->pop();
-	ObjectData *obj;
-	obj = _vm->_actor->getObj(objectId);
-
-	thread->_returnValue = (obj->sceneNumber == ITE_SCENE_INV) ? 1 : 0;
+	CommonObjectData *object;
+	if (_vm->_actor->validObjId(objectId)) {
+		object = _vm->_actor->getObj(objectId);
+		thread->_returnValue = (object->sceneNumber == ITE_SCENE_INV) ? 1 : 0;
+	} else {
+		thread->_returnValue = 0;
+	}
+	
+	
 }
 
 // Script function #4 (0x04) nonblocking

@@ -1136,7 +1136,7 @@ int Actor::direct(int msec) {
 	// FIXME: HACK. This should be turned into cycle event.
 	_lastTickMsec += msec;
 
-	if (_lastTickMsec > 1000 / 15) { // fixme
+	if (_lastTickMsec > 1000 / 15) { // fixme  choose 50 for speed up
 		_lastTickMsec = 0;
 		//process actions
 		handleActions(msec, false);
@@ -1238,7 +1238,7 @@ void Actor::createDrawOrderList() {
 bool Actor::getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber, SpriteList *&spriteList) {
 	if (_vm->_scene->currentSceneResourceId() == RID_ITE_OVERMAP_SCENE) {
 		if (!(commonObjectData->flags & kProtagonist)){
-			warning("not protagonist");
+//			warning("not protagonist");
 			return false;
 		}
 		frameNumber = 8;			

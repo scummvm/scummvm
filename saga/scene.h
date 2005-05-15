@@ -262,7 +262,7 @@ class Scene {
 
 	int getSceneResourceId(int sceneNumber) {
 		if ((sceneNumber < 0) || (sceneNumber >= _sceneMax)) {
-			error("getSceneResourceId: wrong sceneNumber");
+ 			error("getSceneResourceId: wrong sceneNumber");
 		}
 		return _sceneLUT[sceneNumber];
 	}

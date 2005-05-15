@@ -569,21 +569,19 @@ void Interface::handleCommandUpdate(const Point& mousePoint) {
 
 	panelButton = _mainPanel.hitTest(mousePoint, kPanelAllButtons);
 	
-	if (panelButton != NULL) {
-		if (panelButton->type == kPanelButtonArrow) {
-			if (panelButton->state == 1) {
-				//TODO: insert timeout catchup
-				inventoryChangePos(panelButton->id);
-			}
-			draw();
-		}
+	bool changed = false;
 
-		if (panelButton->type == kPanelButtonInventory) {
-			_vm->_script->whichObject(mousePoint);
-		}		
+	if ((panelButton != NULL) && (panelButton->type == kPanelButtonArrow)) {
+		if (panelButton->state == 1) {
+			//TODO: insert timeout catchup
+			inventoryChangePos(panelButton->id);
+		}
+		changed = true;
+	} else {
+		_vm->_script->whichObject(mousePoint);						
 	}
 
-	bool changed = (panelButton != _mainPanel.currentButton);
+	changed = changed || (panelButton != _mainPanel.currentButton);
 	_mainPanel.currentButton = panelButton;
 	if (changed) {
 		draw();
