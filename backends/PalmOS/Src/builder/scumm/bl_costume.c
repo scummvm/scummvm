@@ -2,8 +2,8 @@
 #include "b_globals.h"
 
 
-static void addCostume_cost_scaleTable() {
-	byte cost_scaleTable[256] = {
+static void addCostume_smallCostumeScaleTable() {
+	byte smallCostumeScaleTable[256] = {
 	0xFF, 0xFD, 0x7D, 0xBD, 0x3D, 0xDD, 0x5D, 0x9D,
 	0x1D, 0xED, 0x6D, 0xAD, 0x2D, 0xCD, 0x4D, 0x8D,
 	0x0D, 0xF5, 0x75, 0xB5, 0x35, 0xD5, 0x55, 0x95,
@@ -37,9 +37,9 @@ static void addCostume_cost_scaleTable() {
 	0x0E, 0x8E, 0x4E, 0xCE, 0x2E, 0xAE, 0x6E, 0xEE,
 	0x1E, 0x9E, 0x5E, 0xDE, 0x3E, 0xBE, 0x7E, 0xFE
 };
-	writeRecord(cost_scaleTable, sizeof(cost_scaleTable), GBVARS_COSTSCALETABLE_INDEX , GBVARS_SCUMM);
+	writeRecord(smallCostumeScaleTable, sizeof(smallCostumeScaleTable), GBVARS_COSTSCALETABLE_INDEX , GBVARS_SCUMM);
 }
 
 void addCostume() {
-	addCostume_cost_scaleTable();
+	addCostume_smallCostumeScaleTable();
 }

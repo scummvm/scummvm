@@ -27,12 +27,6 @@
 
 namespace Scumm {
 
-#ifdef __PALM_OS__
-extern const byte *defaultScaleTable;
-#else
-extern const byte defaultScaleTable[768];
-#endif
-
 struct CostumeData;
 struct AkosHeader;
 struct AkosOffset;

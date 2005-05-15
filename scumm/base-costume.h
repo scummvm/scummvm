@@ -42,6 +42,18 @@ struct CostumeInfo {
 #pragma END_PACK_STRUCTS
 #endif
 
+
+
+#ifdef __PALM_OS__
+extern const byte *smallCostumeScaleTable;
+extern const byte *bigCostumeScaleTable;
+#else
+extern const byte smallCostumeScaleTable[256];
+extern const byte bigCostumeScaleTable[768];
+#endif
+
+
+
 class Actor;
 class ScummEngine;
 struct VirtScreen;

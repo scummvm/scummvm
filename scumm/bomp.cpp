@@ -360,7 +360,7 @@ int32 setupBompScale(byte *scaling, int32 size, byte scale) {
 
 	count = (256 - size / 2);
 	assert(0 <= count && count < 768);
-	tmp_ptr = defaultScaleTable + count;
+	tmp_ptr = bigCostumeScaleTable + count;
 	
 	count = (size + 7) / 8;
 	while (count--) {

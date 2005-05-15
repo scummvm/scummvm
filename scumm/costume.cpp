@@ -37,9 +37,9 @@ namespace Scumm {
 const byte revBitMask[8] = { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 };
 
 #ifdef __PALM_OS__
-const byte *cost_scaleTable;
+const byte *smallCostumeScaleTable;
 #else
-const byte cost_scaleTable[256] = {
+const byte smallCostumeScaleTable[256] = {
 	0xFF, 0xFD, 0x7D, 0xBD, 0x3D, 0xDD, 0x5D, 0x9D,
 	0x1D, 0xED, 0x6D, 0xAD, 0x2D, 0xCD, 0x4D, 0x8D,
 	0x0D, 0xF5, 0x75, 0xB5, 0x35, 0xD5, 0x55, 0x95,
@@ -100,7 +100,7 @@ byte ClassicCostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 
 	CHECK_HEAP
 
-	v1.scaletable = cost_scaleTable;
+	v1.scaletable = smallCostumeScaleTable;
 
 	if (_loaded._numColors == 32) {
 		v1.mask = 7;
@@ -1016,7 +1016,7 @@ byte NESCostumeLoader::increaseAnim(Actor *a, int slot) {
 #include "scumm_globals.h"
 
 _GINIT(Costume)
-_GSETPTR(Scumm::cost_scaleTable, GBVARS_COSTSCALETABLE_INDEX, byte, GBVARS_SCUMM)
+_GSETPTR(Scumm::smallCostumeScaleTable, GBVARS_COSTSCALETABLE_INDEX, byte, GBVARS_SCUMM)
 _GEND
 
 _GRELEASE(Costume)
