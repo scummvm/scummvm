@@ -49,8 +49,10 @@ enum {
 };
 
 
+#define USE_AUTO_SCALING	true
+
 // Constructor
-NewGui::NewGui() : _scaleEnable(true), _needRedraw(false),
+NewGui::NewGui() : _scaleEnable(USE_AUTO_SCALING), _needRedraw(false),
 	_stateIsSaved(false), _font(0), _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
 
 	_system = &OSystem::instance();
@@ -106,7 +108,7 @@ void NewGui::runLoop() {
 	// EVENT_SCREEN_CHANGED is received. However, not yet all backends support
 	// that event, so we also do it "manually" whenever a run loop is entered.
 	updateColors();
-	_scaleEnable = activeDialog->wantsScaling();
+	_scaleEnable = USE_AUTO_SCALING && activeDialog->wantsScaling();
 	updateScaleFactor();
 
 	if (!_stateIsSaved) {
@@ -125,7 +127,7 @@ void NewGui::runLoop() {
 			for (int i = 0; i < _dialogStack.size(); i++) {
 				// For each dialog we draw we have to ensure the correct
 				// scaling mode is active.
-				_scaleEnable = _dialogStack[i]->wantsScaling();
+				_scaleEnable = USE_AUTO_SCALING && _dialogStack[i]->wantsScaling();
 				updateScaleFactor();
 				_dialogStack[i]->drawDialog();
 			}
