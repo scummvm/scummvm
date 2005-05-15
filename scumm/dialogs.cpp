@@ -289,7 +289,7 @@ SaveLoadChooserEx::SaveLoadChooserEx(const String &title, const String &buttonLa
 	new StaticTextWidget(this, 10, 6, _w - 2 * 10, kLineHeight, title, kTextAlignCenter);
 	
 	// Add choice list
-	_list = new GUI::ListWidget(this, 10, 18, _w - 2 * 10 - 180, _h - 14 - kBigButtonHeight - 18);
+	_list = new GUI::ListWidget(this, 10, 18, _w - 2 * 10 - 180, _h - 14 - kBigButtonHeight - 18, GUI::kBigWidgetSize);
 	_list->setEditable(saveMode);
 	_list->setNumberingMode(saveMode ? GUI::kListNumberingOne : GUI::kListNumberingZero);
 	
