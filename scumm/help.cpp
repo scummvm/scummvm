@@ -89,7 +89,6 @@ void ScummHelp::updateStrings(byte gameId, byte version, int page,
 		ADD_BIND("-, +", "Text speed slower / faster");
 		ADD_BIND("Enter", "Simulate left mouse button");
 		ADD_BIND("Tab", "Simulate right mouse button");
-		ADD_BIND("Arrow Keys", "Simulate mouse movement");
 		break;
 	case 2:
 		title = "Special keyboard commands:";
