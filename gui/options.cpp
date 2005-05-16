@@ -291,6 +291,8 @@ void OptionsDialog::setAudioSettingsState(bool enabled) {
 void OptionsDialog::setMIDISettingsState(bool enabled) {
 	_enableMIDISettings = enabled;
 
+	_soundFontButton->setEnabled(enabled);
+	_soundFont->setEnabled(enabled);
 	_multiMidiCheckbox->setEnabled(enabled);
 	_mt32Checkbox->setEnabled(enabled);
 	_enableGSCheckbox->setEnabled(enabled);
@@ -383,7 +385,7 @@ int OptionsDialog::addMIDIControls(GuiObject *boss, int yoffset) {
 	const int w = _w - 20;
 
 	// SoundFont
-	new ButtonWidget(boss, x, yoffset, kButtonWidth + 14, 16, "SoundFont: ", kChooseSoundFontCmd, 0);
+	_soundFontButton = new ButtonWidget(boss, x, yoffset, kButtonWidth + 14, 16, "SoundFont: ", kChooseSoundFontCmd, 0);
 	_soundFont = new StaticTextWidget(boss, x + kButtonWidth + 20, yoffset + 3, _w - (x + kButtonWidth + 20) - 10, kLineHeight, "None", kTextAlignLeft);
 	yoffset += 18;
 

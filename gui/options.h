@@ -52,7 +52,8 @@ public:
 protected:
 	/** Config domain this dialog is used to edit. */
 	String _domain;
-	
+
+	ButtonWidget *_soundFontButton;
 	StaticTextWidget *_soundFont;
 
 	int addGraphicControls(GuiObject *boss, int yoffset);

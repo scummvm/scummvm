@@ -65,6 +65,8 @@ enum {
 	kCmdGlobalMIDIOverride = 'OMID',
 	kCmdGlobalVolumeOverride = 'OVOL',
 
+	kCmdChooseSoundFontCmd = 'chsf',
+
 	kCmdExtraBrowser = 'PEXT',
 	kCmdGameBrowser = 'PGME',
 	kCmdSaveBrowser = 'PSAV'
@@ -374,6 +376,18 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		setVolumeSettingsState(data != 0);
 		draw();
 		break;
+
+	case kCmdChooseSoundFontCmd: {
+		BrowserDialog browser("Select SoundFont", false);
+
+		if (browser.runModal() > 0) {
+			// User made this choice...
+			FilesystemNode file(browser.getResult());
+			_soundFont->setLabel(file.path());
+			draw();
+		}
+		break;
+	}
 
 	// Change path for the game
 	case kCmdGameBrowser: {
