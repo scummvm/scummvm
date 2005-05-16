@@ -137,6 +137,12 @@ protected:
 EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	: OptionsDialog(domain, 10, 40, 320 - 2 * 10, 140) {
 
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
+	
+	_w = screenW - 2 * 10;
+	_h = screenH - 2 * 40;	// TODO/FIXME
+	
 	const int x = 5;
 	const int w = _w - 15;
 	const int labelWidth = 65;

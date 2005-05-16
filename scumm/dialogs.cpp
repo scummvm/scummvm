@@ -543,13 +543,20 @@ enum {
 	kKeysCmd = 'KEYS'
 };
 
-#ifndef _WIN32_WCE
 ConfigDialog::ConfigDialog(ScummEngine *scumm)
 	: GUI::OptionsDialog("", 40, 30, 240, 124), _vm(scumm) {
-#else
-ConfigDialog::ConfigDialog(ScummEngine *scumm)
-	: GUI::OptionsDialog("", 40, 30, 240, 124 + 4), _vm(scumm) {
+
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
+
+	_w = screenW - 2 * 40;
+	_h = screenH - 2 * 30 - 16;
+
+#ifdef _WIN32_WCE
+	_h += 4;
 #endif
+	
+
 	//
 	// Add the buttons
 	//

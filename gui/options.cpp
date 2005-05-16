@@ -435,6 +435,12 @@ int OptionsDialog::addVolumeControls(GuiObject *boss, int yoffset) {
 GlobalOptionsDialog::GlobalOptionsDialog()
 	: OptionsDialog(Common::ConfigManager::kApplicationDomain, 10, 20, 320 - 2 * 10, 200 - 1 * 20) {
 
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
+	
+	_w = screenW - 2 * 10;
+	_h = screenH - 1 * 20;
+
 	const int vBorder = 4;
 	int yoffset;
 
