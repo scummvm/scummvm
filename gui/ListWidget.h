@@ -57,7 +57,6 @@ protected:
 	ScrollBarWidget	*_scrollBar;
 	int				_currentKeyDown;
 	int				_lineHeight;
-	const Graphics::Font	*_font;
 	
 	String			_quickSelectStr;
 	uint32			_quickSelectTime;

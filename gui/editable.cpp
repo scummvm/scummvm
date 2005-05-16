@@ -34,6 +34,8 @@ EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h)
 	_caretInverse = false;
 
 	_editScrollOffset = 0;
+
+	_font = &(g_gui.getFont());	// Most widgets will probably set this to something else.
 }
 
 EditableWidget::~EditableWidget() {
@@ -45,7 +47,7 @@ void EditableWidget::setEditString(const String &str) {
 	_editString = str;
 	_caretPos = _editString.size();
 
-	_editScrollOffset = (g_gui.getStringWidth(_editString) - (getEditRect().width()));
+	_editScrollOffset = (_font->getStringWidth(_editString) - (getEditRect().width()));
 	if (_editScrollOffset < 0)
 		_editScrollOffset = 0;
 }
@@ -130,7 +132,7 @@ bool EditableWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 int EditableWidget::getCaretOffset() const {
 	int caretpos = 0;
 	for (int i = 0; i < _caretPos; i++)
-		caretpos += g_gui.getCharWidth(_editString[i]);
+		caretpos += _font->getCharWidth(_editString[i]);
 
 	caretpos -= _editScrollOffset;
 
@@ -142,20 +144,22 @@ void EditableWidget::drawCaret(bool erase) {
 	if (!isVisible() || !_boss->isVisible())
 		return;
 
+	Common::Rect editRect = getEditRect();
+
 	int16 color = (erase ^ _caretInverse) ? g_gui._bgcolor : g_gui._textcolorhi;
-	int x = getEditRect().left;
-	int y = getEditRect().top;
+	int x = editRect.left;
+	int y = editRect.top;
 
 	x += getCaretOffset();
 
-	if (y < 0 || y + kLineHeight >= _h)
+	if (y < 0 || y + editRect.height() >= _h)
 		return;
 	
 	x += getAbsX();
 	y += getAbsY();
 
-	g_gui.vLine(x, y, y + kLineHeight, color);
-	g_gui.addDirtyRect(x, y, 2, kLineHeight);
+	g_gui.vLine(x, y, y + editRect.height(), color);
+	g_gui.addDirtyRect(x, y, 2, editRect.height());
 
 	_caretVisible = !erase;
 }
@@ -182,7 +186,7 @@ bool EditableWidget::adjustOffset() {
 		_editScrollOffset -= (editWidth - caretpos);
 		return true;
 	} else if (_editScrollOffset > 0) {
-		const int strWidth = g_gui.getStringWidth(_editString);
+		const int strWidth = _font->getStringWidth(_editString);
 		if (strWidth - _editScrollOffset < editWidth) {
 			// scroll right
 			_editScrollOffset = (strWidth - editWidth);
