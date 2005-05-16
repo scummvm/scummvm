@@ -727,12 +727,28 @@ InfoDialog::InfoDialog(ScummEngine *scumm, const String& message)
 }
 
 void InfoDialog::setInfoText(const String& message) {
-	int width = g_gui.getStringWidth(message) + 16;
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
+	const Graphics::Font *font;
+	GUI::WidgetSize ws;
 
-	_x = (320 - width) / 2;
+	if (screenW >= 400 && screenH >= 300) {
+		ws = GUI::kBigWidgetSize;
+		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	} else {
+		ws = GUI::kNormalWidgetSize;
+		font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	}
+
+	int width = font->getStringWidth(message) + 16;
+	int height = font->getFontHeight() + 8;
+
 	_w = width;
+	_h = height;
+	_x = (screenW - width) / 2;
+	_y = (screenH - height) / 2;
 
-	new StaticTextWidget(this, 4, 4, _w - 8, _h, message, kTextAlignCenter);
+	new StaticTextWidget(this, 4, 4, _w - 8, _h, message, kTextAlignCenter, ws);
 }
 
 #pragma mark -
