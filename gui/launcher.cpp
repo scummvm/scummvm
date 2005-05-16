@@ -29,6 +29,7 @@
 
 #include "common/config-manager.h"
 #include "common/util.h"
+#include "common/system.h"
 
 #include "gui/about.h"
 #include "gui/browser.h"
@@ -433,34 +434,78 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 #pragma mark -
 
+#define BEGIN_BUTTONS(numButtons, hSpace, top) \
+	{ \
+		const int space = hSpace; \
+		const int width = (_w - 2 * hBorder - space * (numButtons - 1)) / numButtons; \
+		int x = hBorder; \
+		const int y = top;
+
+#define ADD(name, cmd, hotkey) \
+	new ButtonWidget(this, x, y, width, buttonHeight, name, cmd, hotkey, ws); x += space + width
+
+#define END_BUTTONS \
+	}
 
 LauncherDialog::LauncherDialog(GameDetector &detector)
 	: Dialog(0, 0, 320, 200), _detector(detector) {
-	// Show game name
-	new StaticTextWidget(this, 10, 8, 300, kLineHeight, gScummVMFullVersion, kTextAlignCenter);
 
-	// Add three buttons at the bottom
-	const int border = 10;
-	const int space = 8;
-	const int buttons = 4;
-	const int width = (_w - 2 * border - space * (buttons - 1)) / buttons;
-	int x = border;
-	new ButtonWidget(this, x, _h - 24, width, 16, "Quit", kQuitCmd, 'Q'); x += space + width;
-	new ButtonWidget(this, x, _h - 24, width, 16, "About", kAboutCmd, 'B'); x += space + width;
-	new ButtonWidget(this, x, _h - 24, width, 16, "Options", kOptionsCmd, 'O'); x += space + width;
-	_startButton =
-	new ButtonWidget(this, x, _h - 24, width, 16, "Start", kStartCmd, 'S'); x += space + width;
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
+	
+	const int hBorder = 10;
+	
+	_w = screenW;
+	_h = screenH;
+
+	GUI::WidgetSize ws;
+	int lineHeight;
+	int buttonHeight;
+	const Graphics::Font *font;
+	int top;
+
+	if (screenW >= 400 && screenH >= 300) {
+		ws = GUI::kBigWidgetSize;
+		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		lineHeight = font->getFontHeight() + 2;
+	} else {
+		ws = GUI::kNormalWidgetSize;
+		font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+		lineHeight = font->getFontHeight() + 2;
+	}
+	buttonHeight = lineHeight * 4 / 3;
+
+	// Show ScummVM version
+	new StaticTextWidget(this, hBorder, 8, _w - 2*hBorder, lineHeight, gScummVMFullVersion, kTextAlignCenter, ws);
+
+	// Add some buttons at the bottom
+	// TODO: Rearrange them a bit? In particular, we could put a slightly smaller space
+	// between About and Options, and in exchange remove those a bit from Quit and Start.
+	top = _h - 8 - buttonHeight;
+	BEGIN_BUTTONS(4, 8, top)
+		ADD("Quit", kQuitCmd, 'Q');
+		ADD("About", kAboutCmd, 'B');
+		ADD("Options", kOptionsCmd, 'O');
+		_startButton =
+		ADD("Start", kStartCmd, 'S');
+	END_BUTTONS
+
+	// Above the lowest button rows: two more buttons (directly below the list box)
+	top -= 2 * buttonHeight;
+	BEGIN_BUTTONS(3, 10, top)
+		ADD("Add Game...", kAddGameCmd, 'A');
+		_editButton =
+		ADD("Edit Game...", kEditGameCmd, 'E');
+		_removeButton =
+		ADD("Remove Game", kRemoveGameCmd, 'R');
+	END_BUTTONS
+
 
 	// Add list with game titles
-	_list = new ListWidget(this, 10, 28, 300, 112);
+	_list = new ListWidget(this, hBorder, lineHeight + 16, _w - 2 * hBorder, top - lineHeight - 20, ws);
 	_list->setEditable(false);
 	_list->setNumberingMode(kListNumberingOff);
 
-	// Two more buttons directly below the list box
-	const int kBigButtonWidth = 90;
-	new ButtonWidget(this, 10, 144, kBigButtonWidth, 16, "Add Game...", kAddGameCmd, 'A');
-	_editButton = new ButtonWidget(this, (320-kBigButtonWidth) / 2, 144, kBigButtonWidth, 16, "Edit Game...", kEditGameCmd, 'E');
-	_removeButton = new ButtonWidget(this, 320-kBigButtonWidth - 10, 144, kBigButtonWidth, 16, "Remove Game", kRemoveGameCmd, 'R');
 
 	// Populate the list
 	updateListing();
@@ -469,7 +514,7 @@ LauncherDialog::LauncherDialog(GameDetector &detector)
 	String last = ConfMan.get(String("lastselectedgame"), ConfigManager::kApplicationDomain);
 	selectGame(last);
 	
-	// En-/Disable the buttons depending on the list selection
+	// En-/disable the buttons depending on the list selection
 	updateButtons();
 
 	// Create file browser dialog
