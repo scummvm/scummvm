@@ -117,6 +117,8 @@ void ScummEngine::setBoxFlags(int box, int val) {
 	} else {
 		Box *ptr = getBoxBaseAddr(box);
 		assert(ptr);
+		if (!ptr)
+			return;
 		if (_version == 8)
 			ptr->v8.flags = TO_LE_32(val);
 		else if (_version <= 2)
@@ -366,6 +368,11 @@ byte ScummEngine::getNumBoxes() {
 Box *ScummEngine::getBoxBaseAddr(int box) {
 	byte *ptr = getResourceAddress(rtMatrix, 2);
 	if (!ptr || box == 255)
+		return NULL;
+
+	// The NES version of Maniac Mansion attempts to set flags for boxes 2-4
+	// when there are only three boxes (0-2) when walking out to the garage.
+	if ((_gameId == GID_MANIAC) && (_platform == Common::kPlatformNES) && (box >= ptr[0]))
 		return NULL;
 
 	// FIXME: In "pass to adventure", the loom demo, when bobbin enters

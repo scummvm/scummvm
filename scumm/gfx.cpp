@@ -2124,7 +2124,6 @@ void Gdi::drawStripNESMask(byte *dst, int stripnr, int height) const {
 		return;
 	}
 	for (int y = 0; y < height; y++) {
-		// the ? 0xFF : 0x00 here might be backwards - '1' bits indicate that sprites can get hidden
 		byte c = (((_objectMode ? _NES.masktableObj : _NES.masktable)[y][x >> 3] >> (x & 7)) & 1) ? 0xFF : 0x00;
 		for (int i = 0; i < 8; i++) {
 			*dst = c;
