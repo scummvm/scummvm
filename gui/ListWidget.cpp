@@ -302,7 +302,7 @@ void ListWidget::drawWidget(bool hilite) {
 	NewGui *gui = &g_gui;
 	int i, pos, len = _list.size();
 	Common::String buffer;
-	int offset, deltax;
+	int deltax;
 	Graphics::Surface *surf = &g_gui.getScreen();
 
 	// Draw a thin frame around the list.
@@ -329,9 +329,6 @@ void ListWidget::drawWidget(bool hilite) {
 			sprintf(temp, "%2d. ", (pos + _numberingMode));
 			buffer = temp;
 			_font->drawString(surf, buffer, _x + 2, y, _w - 4, textColor);
-			offset = _font->getStringWidth(buffer);
-		} else {
-			offset = 0;
 		}
 
 		Common::Rect r(getEditRect());
@@ -358,7 +355,8 @@ Common::Rect ListWidget::getEditRect() const {
 
 	if (_numberingMode != kListNumberingOff) {
 		char temp[10];
-		sprintf(temp, "%2d. ", (_selectedItem + _numberingMode));
+		// FIXME: Assumes that all digits have the same width.
+		sprintf(temp, "%2d. ", (_list.size() - 1 + _numberingMode));
 		r.left += _font->getStringWidth(temp);
 	}
 	
