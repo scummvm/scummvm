@@ -131,29 +131,55 @@ int BrowserDialog::runModal() {
  */
 
 BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
-	: Dialog(20, 10, 320 -2 * 20, 200 - 2 * 10)
-	{
+	: Dialog(0, 0, 320, 200) {
+
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
+
+	GUI::WidgetSize ws;
+	int lineHeight;
+	int buttonHeight;
+	int buttonWidth;
+	const Graphics::Font *font;
+
+	_w = (screenW * 7) / 8;
+	_h = (screenH * 9) / 10;
+	_x = (screenW - _w) / 2;
+	_y = (screenH - _h) / 2;
+
+	if (screenW >= 400 && screenH >= 300) {
+		ws = GUI::kBigWidgetSize;
+		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		buttonWidth = kBigButtonWidth;
+		buttonHeight = kBigButtonHeight;
+	} else {
+		ws = GUI::kNormalWidgetSize;
+		font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+		buttonWidth = kButtonWidth;
+		buttonHeight = kButtonHeight;
+	}
+
+	lineHeight = font->getFontHeight() + 2;
 
 	_isDirBrowser = dirBrowser;
 	_fileList = NULL;
 	_currentPath = NULL;
 
 	// Headline - TODO: should be customizable during creation time
-	new StaticTextWidget(this, 10, 8, _w - 2 * 10, kLineHeight, title, kTextAlignCenter);
+	new StaticTextWidget(this, 10, lineHeight, _w - 2 * 10, lineHeight, title, kTextAlignCenter, ws);
 
 	// Current path - TODO: handle long paths ?
-	_currentPath = new StaticTextWidget(this, 10, 20, _w - 2 * 10, kLineHeight,
-								"DUMMY", kTextAlignLeft);
+	_currentPath = new StaticTextWidget(this, 10, 2 * lineHeight, _w - 2 * 10, kLineHeight, "DUMMY", kTextAlignLeft, ws);
 
 	// Add file list
-	_fileList = new ListWidget(this, 10, 34, _w - 2 * 10, _h - 34 - 24 - 10);
+	_fileList = new ListWidget(this, 10, 3 * lineHeight, _w - 2 * 10, _h - 3 * lineHeight - buttonHeight - 14, ws);
 	_fileList->setNumberingMode(kListNumberingOff);
 	_fileList->setEditable(false);
 
 	// Buttons
-	addButton(10, _h - 24, "Go up", kGoUpCmd, 0);
-	addButton(_w - 2 * (kButtonWidth + 10), _h - 24, "Cancel", kCloseCmd, 0);
-	addButton(_w - (kButtonWidth+10), _h - 24, "Choose", kChooseCmd, 0);
+	addButton(10, _h - buttonHeight - 8, "Go up", kGoUpCmd, 0, ws);
+	addButton(_w - 2 * (buttonWidth + 10), _h - buttonHeight - 8, "Cancel", kCloseCmd, 0, ws);
+	addButton(_w - (buttonWidth + 10), _h - buttonHeight - 8, "Choose", kChooseCmd, 0, ws);
 }
 
 void BrowserDialog::open() {
