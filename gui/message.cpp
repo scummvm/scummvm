@@ -42,15 +42,20 @@ MessageDialog::MessageDialog(const Common::String &message, const char *defaultB
 
 	GUI::WidgetSize ws;
 	int lineHeight;
+	int buttonWidth, buttonHeight;
 	const Graphics::Font *font;
 	if (screenW >= 400 && screenH >= 300) {
 		ws = GUI::kBigWidgetSize;
 		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 		lineHeight = font->getFontHeight() + 2;
+		buttonWidth = kBigButtonWidth;
+		buttonHeight = kBigButtonHeight;
 	} else {
 		ws = GUI::kNormalWidgetSize;
 		font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 		lineHeight = font->getFontHeight() + 2;
+		buttonWidth = kButtonWidth;
+		buttonHeight = kButtonHeight;
 	}
 	
 	// First, determine the size the dialog needs. For this we have to break
@@ -67,7 +72,7 @@ MessageDialog::MessageDialog(const Common::String &message, const char *defaultB
 
 	_h = 16;
 	if (defaultButton || altButton)
-		_h += 24;
+		_h += buttonHeight + 8;
 
 	// Limit the number of lines so that the dialog still fits on the screen.
 	if (lineCount > (screenH - 20 - _h) / lineHeight) {
@@ -88,17 +93,17 @@ MessageDialog::MessageDialog(const Common::String &message, const char *defaultB
 	// FIXME - allow for more than two buttons, and return in runModal() which one
 	// was selected.
 	if (defaultButton && altButton) { 
-		okButtonPos = (_w - (kButtonWidth * 2)) / 2;
-		cancelButtonPos = ((_w - (kButtonWidth * 2)) / 2) + kButtonWidth + 10;
+		okButtonPos = (_w - (buttonWidth * 2)) / 2;
+		cancelButtonPos = ((_w - (buttonWidth * 2)) / 2) + buttonWidth + 10;
 	} else {
-		okButtonPos = cancelButtonPos = (_w - kButtonWidth) / 2;
+		okButtonPos = cancelButtonPos = (_w - buttonWidth) / 2;
 	}
 
 	if (defaultButton)
-		addButton(okButtonPos, _h - 24, defaultButton, kOkCmd, '\n');	// Confirm dialog
+		addButton(okButtonPos, _h - buttonHeight - 8, defaultButton, kOkCmd, '\n', ws);	// Confirm dialog
 
 	if (altButton)
-		addButton(cancelButtonPos, _h - 24, altButton, kCancelCmd, '\27');	// Cancel dialog
+		addButton(cancelButtonPos, _h - buttonHeight - 8, altButton, kCancelCmd, '\27', ws);	// Cancel dialog
 }
 
 void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
