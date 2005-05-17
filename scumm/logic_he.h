@@ -49,6 +49,8 @@ public:
 
 	virtual int versionID();
 	virtual int32 dispatch(int op, int numArgs, int32 *args);
+
+	double fpatan(double st0, double st1);
 };
 
 class LogicHErace : public LogicHE {
@@ -59,8 +61,6 @@ public:
 	int32 dispatch(int op, int numArgs, int32 *args);
 
 private:
-	int checkShape(int arg_0, int arg_4, int arg_8, int arg_C, int arg_10, int arg_14, int arg_18, int arg_1C, int arg_20, int arg_24);
-
 	int32 op_1003(int32 *args);
 	int32 op_1004(int32 *args);
 	int32 op_1100(int32 *args);
@@ -87,7 +87,7 @@ public:
 private:
 	void op_1004(int32 *args);
 	void op_1005(int32 *args);
-	int checkShape(int arg_0, int arg_4, int arg_8, int arg_C, int arg_10, int arg_14, int arg_18, int arg_1C, int arg_20, int arg_24);
+	int checkShape(int32 data0, int32 data1, int32 data4, int32 data5, int32 data2, int32 data3, int32 data6, int32 data7, int32 *x, int32 *y);
 };
 
 class LogicHEfootball : public LogicHE {

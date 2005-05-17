@@ -37,6 +37,18 @@ LogicHE::~LogicHE() {
 	free(_userDataD);
 }
 
+double LogicHE::fpatan(double st0, double st1) {
+	// TODO: Still incomplete
+
+	if (st0 == 0)
+		return 0;
+
+	if (st1 == 0 && st0 < 0)
+		return 3.14159265358;
+
+	return atan(st1 / st0);
+}
+
 int LogicHE::versionID() {
 	return 1;
 }
@@ -149,7 +161,7 @@ int32 LogicHErace::dispatch(int op, int numArgs, int32 *args) {
 int32 LogicHErace::op_1003(int32 *args) {
 	int value = args[2] ? args[2] : 1;
 
-	writeScummVar(108, (int32)(atan((float)(args[0] / args[1])) * RAD2DEG * value));
+	writeScummVar(108, (int32)(fpatan(args[1], args[0]) * RAD2DEG * value));
 
 	return 1;
 }
@@ -290,9 +302,9 @@ int32 LogicHErace::op_1120(int32 *args) {
 
 	expr = a2 * _userDataD[17] + a1 * _userDataD[14] + a0 * _userDataD[11];
 
-	res1 = (atan((a2 * _userDataD[15] + a1 * _userDataD[12] + a0 * _userDataD[9]) / expr) * RAD2DEG) 
+	res1 = (fpatan(expr, a2 * _userDataD[15] + a1 * _userDataD[12] + a0 * _userDataD[9]) * RAD2DEG) 
 			/ _userData[526];
-	res2 = (atan((a2 * _userDataD[16] + a1 * _userDataD[13] + a0 * _userDataD[10]) / expr) * RAD2DEG
+	res2 = (fpatan(expr, a2 * _userDataD[16] + a1 * _userDataD[13] + a0 * _userDataD[10]) * RAD2DEG
 			- _userData[528]) / _userData[527];
 	
 	writeScummVar(108, (int32)res1);
@@ -395,7 +407,69 @@ int32 LogicHEfunshop::dispatch(int op, int numArgs, int32 *args) {
 }
 
 void LogicHEfunshop::op_1004(int32 *args) {
-	error("STUB: LogicHE::dispatch(1004, 2, %d, %d). Please tell when it happened", args[0], args[1]);
+	double data[8], at, sq;
+	int32 x, y;
+
+	for (int i = 0; i <= 6; i += 2) {
+		data[i] = getFromArray(args[0], 0, 519 + i);
+		data[i + 1] = getFromArray(args[0], 0, 519 + i + 1);
+
+		printf("data[%d] = %lf\ndata[%d] = %lf\n", i, data[i], i + 1, data[i + 1]);
+	}
+	int s = checkShape((int32)data[0], (int32)data[1], (int32)data[4], (int32)data[5],
+		(int32)data[2], (int32)data[3], (int32)data[6], (int32)data[7], &x, &y);
+
+	if (s != 1) {
+		printf("LogicHEfunshop::op_1004: Your shape has defied the laws of physics\n");
+			return;
+	}
+
+	for (int i = 0; i <= 6; i += 2) {
+		data[i] -= (double)x;
+		data[i + 1] -= (double)y;
+	}
+
+	double a1 = (double)args[1] * 1.745328888888889e-2;
+
+	for (int i = 0; i <= 6; i += 2) {
+		at = fpatan(data[i], data[i + 1]);
+		sq = sqrt(fabs(data[i]) * fabs(data[i]) + fabs(data[i + 1]) * fabs(data[i + 1]));
+
+		if (at <= 0)
+			at += 6.283184;
+
+		data[i] = cos(at + a1) * sq;
+		data[i + 1] = sin(at + a1) * sq;
+	}
+	
+	int minx = 2;
+	int miny = 3;
+
+	for (int i = 0; i <= 6; i += 2) {
+		if (data[i] < data[minx])
+			minx = i;
+		if (data[i + 1] < data[miny])
+			miny = i + 1;
+	}
+
+	for (int i = 0; i <= 6; i += 2) {
+		data[i] -= data[minx];
+		data[i + 1] -= data[miny];
+
+		if (floor(data[i]) + 0.5 > data[i])
+			data[i] = floor(data[i]);
+		else
+			data[i] = ceil(data[i]);
+
+		putInArray(args[0], 0, 519 + i, (int32)data[i]);
+
+		if (floor(data[i + 1]) + 0.5 > data[i + 1])
+			data[i + 1] = floor(data[i + 1]);
+		else
+			data[i + 1] = ceil(data[i + 1]);
+
+		putInArray(args[0], 0, 519 + i + 1, (int32)data[i + 1]);
+	}
 }
 
 void LogicHEfunshop::op_1005(int32 *args) {
@@ -433,7 +507,70 @@ void LogicHEfunshop::op_1005(int32 *args) {
 	}
 }
 
-int LogicHEfunshop::checkShape(int arg_0, int arg_4, int arg_8, int arg_C, int arg_10, int arg_14, int arg_18, int arg_1C, int arg_20, int arg_24) {
+int LogicHEfunshop::checkShape(int32 data0, int32 data1, int32 data4, int32 data5, int32 data2, int32 data3, int32 data6, int32 data7, int32 *x, int32 *y) {
+	int32 diff5_1, diff0_4, diff7_3, diff2_6;
+	int32 diff1, diff2;
+	int32 delta, delta2;
+	int32 sum1, sum2;
+
+	diff0_4 = data0 - data4;
+	diff5_1 = data5 - data1;
+	diff1 = data1 * data4 - data0 * data5;
+	sum1 = diff0_4 * data3 + diff1 + diff5_1 * data2;
+	sum2 = diff0_4 * data7 + diff1 + diff5_1 * data6;
+
+	if (sum1 != 0 && sum2 != 0) {
+		sum2 ^= sum1;
+
+		if (sum2 >= 0)
+			return 0;
+	}
+
+	diff2_6 = data2 - data6;
+	diff7_3 = data7 - data3;
+	diff2 = data3 * data6 - data2 * data7;
+	sum1 = diff2_6 * data1 + diff2 + diff7_3 * data0;
+	sum2 = diff2_6 * data5 + diff2 + diff7_3 * data4;;
+
+	if (sum1 != 0 && sum2 != 0) {
+		sum2 ^= sum1;
+
+		if (sum2 >= 0)
+			return 0;
+	}
+
+	delta = diff2_6 * diff5_1 - diff0_4 * diff7_3;
+
+	if (delta == 0) {
+		return 2;
+	}
+
+	if (delta < 0) {
+		data7 = -((delta + 1) >> 1);
+	} else {
+		data7 = delta >> 1;
+	}
+
+	delta2 = diff2 * diff0_4 - diff1 * diff2_6;
+	
+	if (delta2 < 0) {
+		delta2 -= data7;
+	} else {
+		delta2 += data7;
+	}
+
+	*x = delta2 / delta;
+
+	delta2 = diff1 * diff7_3 - diff2 * diff5_1;
+
+	if (delta2 < 0) {
+		delta2 -= data7;
+	} else {
+		delta2 += data7;
+	}
+
+	*y = delta2 / delta;
+
 	return 1;
 }
 
