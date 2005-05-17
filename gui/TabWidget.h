@@ -38,9 +38,12 @@ protected:
 	int _activeTab;
 	TabList _tabs;
 	int _tabWidth;
+	int _tabHeight;
+	const WidgetSize _ws;
+	const Graphics::Font *_font;
 
 public:
-	TabWidget(GuiObject *boss, int x, int y, int w, int h);
+	TabWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws = kDefaultWidgetSize);
 	~TabWidget();
 
 	virtual int16	getChildY() const;

@@ -144,6 +144,14 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	
 	_w = screenW - 2 * 10;
 	_h = screenH - 2 * 40;	// TODO/FIXME
+
+	GUI::WidgetSize ws;
+
+	if (screenW >= 400 && screenH >= 300) {
+		ws = GUI::kBigWidgetSize;
+	} else {
+		ws = GUI::kNormalWidgetSize;
+	}
 	
 	const int x = 5;
 	const int w = _w - 15;
@@ -163,7 +171,7 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	}
 
 	// GUI:  Add tab widget
-	TabWidget *tab = new TabWidget(this, 0, vBorder, _w, _h - 24 - 2*vBorder);
+	TabWidget *tab = new TabWidget(this, 0, vBorder, _w, _h - 24 - 2 * vBorder, ws);
 
 	//
 	// 1) The game tab

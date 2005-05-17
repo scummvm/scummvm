@@ -28,20 +28,36 @@ namespace GUI {
 
 enum {
 	kTabHeight = 16,
+	kBigTabHeight = 21,
 
 	kTabLeftOffset = 4,
 	kTabSpacing = 2,
 	kTabPadding = 3
 };
 
-TabWidget::TabWidget(GuiObject *boss, int x, int y, int w, int h)
-	: Widget(boss, x, y, w, h) {
+TabWidget::TabWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws)
+	: Widget(boss, x, y, w, h), _ws(ws) {
 
 	_flags = WIDGET_ENABLED;
 	_type = kTabWidget;
 	_activeTab = -1;
 
 	_tabWidth = 40;
+
+	switch (_ws) {
+	case kNormalWidgetSize:
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+		_tabHeight = kTabHeight;
+		break;
+	case kBigWidgetSize:
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		_tabHeight = kBigTabHeight;
+		break;
+	case kDefaultWidgetSize:
+		_font = &g_gui.getFont();
+		_tabHeight = kTabHeight;
+		break;
+	}
 }
 
 TabWidget::~TabWidget() {
@@ -53,21 +69,21 @@ TabWidget::~TabWidget() {
 }
 
 int16 TabWidget::getChildY() const {
-	return getAbsY() + kTabHeight;
+	return getAbsY() + _tabHeight;
 }
 
 int TabWidget::addTab(const String &title) {
 	// Add a new tab page
 	Tab newTab;
-	 newTab.title = title;
-	 newTab.firstWidget = 0;
+	newTab.title = title;
+	newTab.firstWidget = 0;
 
 	_tabs.push_back(newTab);
 
 	int numTabs = _tabs.size();
 
 	// Determine the new tab width
-	int newWidth = g_gui.getStringWidth(title) + 2 * kTabPadding;
+	int newWidth = _font->getStringWidth(title) + 2 * kTabPadding;
 	if (_tabWidth < newWidth)
 		_tabWidth = newWidth;
 	int maxWidth = (_w - kTabLeftOffset) / numTabs - kTabLeftOffset;
@@ -96,7 +112,7 @@ void TabWidget::setActiveTab(int tabID) {
 
 
 void TabWidget::handleMouseDown(int x, int y, int button, int clickCount) {
-	assert(y < kTabHeight);
+	assert(y < _tabHeight);
 
 	// Determine which tab was clicked
 	int tabID = -1;
@@ -146,33 +162,33 @@ void TabWidget::drawWidget(bool hilite) {
 	const int right2 = _x + _w - 2;
 	
 	// Draw horizontal line
-	gui->hLine(left1, _y + kTabHeight - 2, right1, gui->_shadowcolor);
-	gui->hLine(left2, _y + kTabHeight - 2, right2, gui->_shadowcolor);
+	gui->hLine(left1, _y + _tabHeight - 2, right1, gui->_shadowcolor);
+	gui->hLine(left2, _y + _tabHeight - 2, right2, gui->_shadowcolor);
 
 	// Iterate over all tabs and draw them
 	int i, x = _x + kTabLeftOffset;
 	for (i = 0; i < (int)_tabs.size(); ++i) {
 		OverlayColor color = (i == _activeTab) ? gui->_color : gui->_shadowcolor;
 		int yOffset = (i == _activeTab) ? 0 : 2; 
-		box(x, _y + yOffset, _tabWidth, kTabHeight - yOffset, color, color, (i == _activeTab));
-		gui->drawString(_tabs[i].title, x + kTabPadding, _y + yOffset / 2 + (kTabHeight - kLineHeight - 1), _tabWidth - 2 * kTabPadding, gui->_textcolor, kTextAlignCenter);
+		box(x, _y + yOffset, _tabWidth, _tabHeight - yOffset, color, color, (i == _activeTab));
+		gui->drawString(_font, _tabs[i].title, x + kTabPadding, _y + yOffset / 2 + (_tabHeight - _font->getFontHeight() - 3), _tabWidth - 2 * kTabPadding, gui->_textcolor, kTextAlignCenter);
 		x += _tabWidth + kTabSpacing;
 	}
 
 	// Draw more horizontal lines
-	gui->hLine(left1, _y + kTabHeight - 1, right1, gui->_color);
-	gui->hLine(left2, _y + kTabHeight - 1, right2, gui->_color);
+	gui->hLine(left1, _y + _tabHeight - 1, right1, gui->_color);
+	gui->hLine(left2, _y + _tabHeight - 1, right2, gui->_color);
 	gui->hLine(_x+1, _y + _h - 2, _x + _w - 2, gui->_shadowcolor);
 	gui->hLine(_x+1, _y + _h - 1, _x + _w - 2, gui->_color);
 }
 
 Widget *TabWidget::findWidget(int x, int y) {
-	if (y < kTabHeight) {
+	if (y < _tabHeight) {
 		// Click was in the tab area
 		return this;
 	} else {
 		// Iterate over all child widgets and find the one which was clicked
-		return Widget::findWidgetInChain(_firstWidget, x, y - kTabHeight);
+		return Widget::findWidgetInChain(_firstWidget, x, y - _tabHeight);
 	}
 }
 

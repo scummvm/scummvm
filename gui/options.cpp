@@ -435,19 +435,32 @@ int OptionsDialog::addVolumeControls(GuiObject *boss, int yoffset) {
 
 
 GlobalOptionsDialog::GlobalOptionsDialog()
-	: OptionsDialog(Common::ConfigManager::kApplicationDomain, 10, 20, 320 - 2 * 10, 200 - 1 * 20) {
+	: OptionsDialog(Common::ConfigManager::kApplicationDomain, 10, 40, 320 - 2 * 10, 140) {
 
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
-	
-	_w = screenW - 2 * 10;
-	_h = screenH - 1 * 20;
 
-	const int vBorder = 4;
+	GUI::WidgetSize ws;
+	
+	if (screenW >= 400 && screenH >= 300) {
+		ws = GUI::kBigWidgetSize;
+		_w = screenW - 2 * 10;
+		_h = screenH - 2 * 40;
+		_x = 10;
+		_y = 40;
+	} else {
+		ws = GUI::kNormalWidgetSize;
+		_w = screenW - 2 * 10;
+		_h = screenH - 1 * 20;
+		_x = 10;
+		_y = 20;
+	}
+
+	const int vBorder = 5;	// Tab border
 	int yoffset;
 
 	// The tab widget
-	TabWidget *tab = new TabWidget(this, 0, vBorder, _w, _h - 24 - 2 * vBorder);
+	TabWidget *tab = new TabWidget(this, 0, vBorder, _w, _h - 24 - 2 * vBorder, ws);
 
 	//
 	// 1) The graphics tab
