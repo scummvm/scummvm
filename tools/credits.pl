@@ -297,10 +297,8 @@ sub add_paragraph {
 	} elsif ($mode eq "CPP") {
 		my $line_start = '"\\\\L\\\\c0""';
 		my $line_end = '",';
-		$Text::Wrap::separator = $line_end . "\n" . $line_start;
-		print $line_start . wrap("", "", $text) . $line_end . "\n";
+		print $line_start . $text . $line_end . "\n";
 		print $line_start . $line_end . "\n";
-		$Text::Wrap::separator = "\n";
 	} elsif ($mode eq "XML") {
 		print "  <row><entry namest='start' nameend='job'>" . $text . "</entry></row>\n";
 		print "  <row><entry namest='start' nameend='job'> </entry></row>\n\n";

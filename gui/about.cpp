@@ -31,10 +31,7 @@ namespace GUI {
 
 enum {
 	kScrollStartDelay = 1500,
-	kScrollMillisPerPixel = 80,
-	
-	kXOff = 3,
-	kYOff = 2
+	kScrollMillisPerPixel = 80
 };
 
 // The following commands can be put at the start of a line (all subject to change):
@@ -45,6 +42,9 @@ enum {
 //                  2 light border (light gray)
 //                  3 dark border (dark gray)
 //                  4 background (black)
+// TODO: Maybe add a tab/indent feature; that is, make it possible to specify
+// an amount by which that line shall be indented (the indent of course would have
+// to be considered while performing any word wrapping, too).
 static const char *credits_intro[] = {
 "\\C""Copyright (C) 2002-2005 The ScummVM project",
 "\\C""http://www.scummvm.org",
@@ -57,25 +57,11 @@ static const char *credits_intro[] = {
 "\\C""Flight of the Amazon Queen (C) John Passfield",
 "\\C""and Steve Stamatiadis",
 "\\C""",
-"\\C""This program is free software; you can",
-"\\C""redistribute it and/or modify it under the",
-"\\C""terms of the GNU General Public License as",
-"\\C""published by the Free Software Foundation;",
-"\\C""either version 2 of the License, or (at your",
-"\\C""option) any later version.",
+"\\C""This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.",
 "\\C""",
-"\\C""This program is distributed in the hope that",
-"\\C""it will be useful, but WITHOUT ANY WARRANTY;",
-"\\C""without even the implied warranty of",
-"\\C""MERCHANTABILITY or FITNESS FOR A PARTICULAR",
-"\\C""PURPOSE.  See the GNU General Public License",
-"\\C""for more details.",
+"\\C""This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.",
 "\\C""",
-"\\C""You should have received a copy of the GNU",
-"\\C""General Public License along with this",
-"\\C""program; if not, write to the Free Software",
-"\\C""Foundation, Inc., 59 Temple Place - Suite 330,",
-"\\C""Boston, MA  02111-1307, USA.",
+"\\C""You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.",
 "\\C"""
 };
 
@@ -90,17 +76,37 @@ AboutDialog::AboutDialog()
 	
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
-
-	_w = screenW - 2 * 10;
-	_h = screenH - 20 - 16;
 	
-	if (_w >= 400 && _h >= 300) {
+	int outerBorder;
+
+	if (screenW >= 400 && screenH >= 300) {
 		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		xOff = 8;
+		yOff = 5;
+		outerBorder = 80;
 	} else {
 		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+		xOff = 3;
+		yOff = 2;
+		outerBorder = 10;
 	}
+
+	_w = screenW - 2 * outerBorder;
+	_h = screenH - 2 * outerBorder;
 	
 	_lineHeight = _font->getFontHeight() + 3;
+
+	// Heuristic to compute 'optimal' dialog width
+	int maxW = _w - 2*xOff;
+	_w = 0;
+	for (i = 0; i < ARRAYSIZE(credits); i++) {
+		int tmp = _font->getStringWidth(credits[i]+5);
+		if ( _w < tmp && tmp <= maxW) {
+			_w = tmp;
+		}
+	}
+	_w += 2*xOff;
+
 
 	for (i = 0; i < 1; i++)
 		_lines.push_back("");
@@ -114,42 +120,56 @@ AboutDialog::AboutDialog()
 	date += ')';
 	_lines.push_back(date);
 
-	Common::String features("Supports: ");
+	Common::String features("\\C\\c2""Supports: ");
 	features += gScummVMFeatures;
-
-	// If the features string is too wide, split it up
-	const int maxWidth = _w - 2*kXOff;
-	if (_font->getStringWidth(features) > maxWidth) {
-		Common::StringList wrappedLines;
-		_font->wordWrapText(features, maxWidth, wrappedLines);
-		
-		for (i = 0; i < (int)wrappedLines.size(); ++i)
-			_lines.push_back("\\C\\c2" + wrappedLines[i]);
-	} else
-		_lines.push_back("\\C\\c2" + features);
+	addLine(features.c_str());
 
 	_lines.push_back("");
 	
 	for (i = 0; i < ARRAYSIZE(credits_intro); i++)
-		_lines.push_back(credits_intro[i]);
+		addLine(credits_intro[i]);
 	
 	for (i = 0; i < ARRAYSIZE(credits); i++)
-		_lines.push_back(credits[i]);
-
-	// Compute 'optimal' dialog width
-	int maxW = _w;
-	_w = 0;
-	for (i = 0; i < (int)_lines.size(); ++i) {
-		_w = MAX(_w, _font->getStringWidth(_lines[i]));
-	}
-	if (_w > maxW)
-		_w = maxW;
-
+		addLine(credits[i]);
 
 	// Center the dialog
 	_x = (screenW - _w) / 2;
 	_y = (screenH - _h) / 2;
 }
+
+void AboutDialog::addLine(const char *str) {
+	// Extract formatting instructions
+	Common::String format;
+	while (*str == '\\') {
+		format += *str++;
+		switch (*str) {
+		case 'C':
+		case 'L':
+		case 'R':
+			format += *str++;
+			break;
+		case 'c':
+			format += *str++;
+			format += *str++;
+			break;
+		default:
+			error("Unknown scroller opcode '%c'\n", *str);
+			break;
+		}
+	}
+	
+	if (*str == 0) {
+		_lines.push_back(format);
+	} else {
+		Common::StringList wrappedLines;
+		_font->wordWrapText(str, _w - 2*xOff, wrappedLines);
+		
+		for (Common::StringList::const_iterator i = wrappedLines.begin(); i != wrappedLines.end(); ++i) {
+			_lines.push_back(format + *i);
+		}
+	}
+}
+
 
 void AboutDialog::open() {
 	_scrollTime = getMillis() + kScrollStartDelay;
@@ -185,7 +205,7 @@ void AboutDialog::drawDialog() {
 	//       in the right way. Should be even faster...
 	const int firstLine = _scrollPos / _lineHeight;
 	const int lastLine = MIN((_scrollPos + _h) / _lineHeight + 1, (uint32)_lines.size());
-	int y = _y + kYOff - (_scrollPos % _lineHeight);
+	int y = _y + yOff - (_scrollPos % _lineHeight);
 
 	for (int line = firstLine; line < lastLine; line++) {
 		const char *str = _lines[line].c_str();
@@ -220,12 +240,12 @@ void AboutDialog::drawDialog() {
 					color = g_gui._bgcolor;
 					break;
 				default:
-					warning("Unknown color type '%c'", str[2]);
+					error("Unknown color type '%c'", str[2]);
 				}
 				str++;
 				break;
 			default:
-				warning("Unknown scroller opcode '%c'\n", str[1]);
+				error("Unknown scroller opcode '%c'\n", str[1]);
 				break;
 			}
 			str += 2;
@@ -235,7 +255,7 @@ void AboutDialog::drawDialog() {
 			while (*str && *str == ' ')
 				str++;
 	
-		_font->drawString(&g_gui.getScreen(), str, _x + kXOff, y, _w - 2 * kXOff, color, align, 0, false);
+		_font->drawString(&g_gui.getScreen(), str, _x + xOff, y, _w - 2 * xOff, color, align, 0, false);
 		y += _lineHeight;
 	}
 

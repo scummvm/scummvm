@@ -42,6 +42,10 @@ protected:
 	bool		_willClose;
 	Graphics::Surface	_canvas;
 	const Graphics::Font	*_font;
+	
+	int xOff, yOff;
+	
+	void addLine(const char *str);
 
 public:
 	AboutDialog();
