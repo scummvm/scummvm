@@ -35,7 +35,7 @@ EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h)
 
 	_editScrollOffset = 0;
 
-	_font = &(g_gui.getFont());	// Most widgets will probably set this to something else.
+	_font = &g_gui.getFont();	// Most widgets will probably set this to something else.
 }
 
 EditableWidget::~EditableWidget() {
@@ -148,18 +148,18 @@ void EditableWidget::drawCaret(bool erase) {
 
 	int16 color = (erase ^ _caretInverse) ? g_gui._bgcolor : g_gui._textcolorhi;
 	int x = editRect.left;
-	int y = editRect.top;
+	int y = editRect.top + 1;
 
 	x += getCaretOffset();
 
-	if (y < 0 || y + editRect.height() >= _h)
+	if (y < 0 || y + editRect.height() - 2 >= _h)
 		return;
 	
 	x += getAbsX();
 	y += getAbsY();
 
-	g_gui.vLine(x, y, y + editRect.height(), color);
-	g_gui.addDirtyRect(x, y, 2, editRect.height());
+	g_gui.vLine(x, y, y + editRect.height() - 2, color);
+	g_gui.addDirtyRect(x, y, 2, editRect.height() - 2);
 
 	_caretVisible = !erase;
 }
