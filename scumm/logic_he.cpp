@@ -37,18 +37,6 @@ LogicHE::~LogicHE() {
 	free(_userDataD);
 }
 
-double LogicHE::fpatan(double st0, double st1) {
-	// TODO: Still incomplete
-
-	if (st0 == 0)
-		return 0;
-
-	if (st1 == 0 && st0 < 0)
-		return 3.14159265358;
-
-	return atan(st1 / st0);
-}
-
 int LogicHE::versionID() {
 	return 1;
 }
@@ -161,7 +149,7 @@ int32 LogicHErace::dispatch(int op, int numArgs, int32 *args) {
 int32 LogicHErace::op_1003(int32 *args) {
 	int value = args[2] ? args[2] : 1;
 
-	writeScummVar(108, (int32)(fpatan(args[1], args[0]) * RAD2DEG * value));
+	writeScummVar(108, (int32)(atan2(args[0], args[1]) * RAD2DEG * value));
 
 	return 1;
 }
@@ -302,9 +290,9 @@ int32 LogicHErace::op_1120(int32 *args) {
 
 	expr = a2 * _userDataD[17] + a1 * _userDataD[14] + a0 * _userDataD[11];
 
-	res1 = (fpatan(expr, a2 * _userDataD[15] + a1 * _userDataD[12] + a0 * _userDataD[9]) * RAD2DEG) 
+	res1 = (atan2(a2 * _userDataD[15] + a1 * _userDataD[12] + a0 * _userDataD[9], expr) * RAD2DEG) 
 			/ _userData[526];
-	res2 = (fpatan(expr, a2 * _userDataD[16] + a1 * _userDataD[13] + a0 * _userDataD[10]) * RAD2DEG
+	res2 = (atan2(a2 * _userDataD[16] + a1 * _userDataD[13] + a0 * _userDataD[10], expr) * RAD2DEG
 			- _userData[528]) / _userData[527];
 	
 	writeScummVar(108, (int32)res1);
@@ -432,11 +420,11 @@ void LogicHEfunshop::op_1004(int32 *args) {
 	double a1 = (double)args[1] * 1.745328888888889e-2;
 
 	for (int i = 0; i <= 6; i += 2) {
-		at = fpatan(data[i], data[i + 1]);
+		at = atan2(data[i + 1], data[i]);
 		sq = sqrt(fabs(data[i]) * fabs(data[i]) + fabs(data[i + 1]) * fabs(data[i + 1]));
 
 		if (at <= 0)
-			at += 6.283184;
+			at += 2 * PI;
 
 		data[i] = cos(at + a1) * sq;
 		data[i + 1] = sin(at + a1) * sq;

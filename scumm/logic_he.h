@@ -49,8 +49,6 @@ public:
 
 	virtual int versionID();
 	virtual int32 dispatch(int op, int numArgs, int32 *args);
-
-	double fpatan(double st0, double st1);
 };
 
 class LogicHErace : public LogicHE {
