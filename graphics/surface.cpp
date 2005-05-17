@@ -27,14 +27,18 @@ namespace Graphics {
 
 static void plotPoint1(int x, int y, int color, void *data) {
 	Surface *s = (Surface *)data;
-	byte *ptr = (byte *)s->getBasePtr(x, y);
-	*ptr = (byte)color;
+	if (x >= 0 && x < s->w && y >= 0 && y < s->h) {
+		byte *ptr = (byte *)s->getBasePtr(x, y);
+		*ptr = (byte)color;
+	}
 }
 
 static void plotPoint2(int x, int y, int color, void *data) {
 	Surface *s = (Surface *)data;
-	uint16 *ptr = (uint16 *)s->getBasePtr(x, y);
-	*ptr = (uint16)color;
+	if (x >= 0 && x < s->w && y >= 0 && y < s->h) {
+		uint16 *ptr = (uint16 *)s->getBasePtr(x, y);
+		*ptr = (uint16)color;
+	}
 }
 
 void Surface::drawLine(int x0, int y0, int x1, int y1, uint32 color) {
