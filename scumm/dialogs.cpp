@@ -50,6 +50,7 @@
 using GUI::CommandSender;
 using GUI::StaticTextWidget;
 using GUI::kButtonWidth;
+using GUI::kButtonHeight;
 using GUI::kBigButtonWidth;
 using GUI::kBigButtonHeight;
 using GUI::kCloseCmd;
@@ -649,19 +650,52 @@ enum {
 HelpDialog::HelpDialog(ScummEngine *scumm)
 	: ScummDialog(scumm, 5, 5, 310, 190) {
 
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
+	const Graphics::Font *font;
+
+	GUI::WidgetSize ws;
+	int buttonHeight;
+	int buttonWidth;
+	int lineHeight;
+
+	if (screenW >= 400 && screenH >= 300) {
+		ws = GUI::kBigWidgetSize;
+		buttonHeight = kBigButtonHeight;
+		buttonWidth = kBigButtonWidth;
+		_w = 370;
+		_x = (screenW - _w) / 2;
+		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		lineHeight = font->getFontHeight();
+	} else {
+		ws = GUI::kNormalWidgetSize;
+		buttonHeight = kButtonHeight;
+		buttonWidth = kButtonWidth;
+		_x = 5;
+		_w = screenW - 2 * 5;
+		font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+		lineHeight = font->getFontHeight();
+	}
+
+	_h = 5 + (2 + HELP_NUM_LINES) * lineHeight + buttonHeight + 7;
+	_y = (screenH - _h) / 2;
+
+	_title = new StaticTextWidget(this, 10, 5, _w, lineHeight, "", kTextAlignCenter, ws);
+
+	for (int i = 0; i < HELP_NUM_LINES; i++) {
+		_key[i] = new StaticTextWidget(this, 10, 5 + lineHeight * (i + 2), 80, lineHeight, "", kTextAlignLeft, ws);
+		_dsc[i] = new StaticTextWidget(this, 90, 5 + lineHeight * (i + 2), _w - 10 - 90, lineHeight, "", kTextAlignLeft, ws);
+	}
+
 	_page = 1;
 	_numPages = ScummHelp::numPages(scumm->_gameId);
 
-	_prevButton = addButton(10, 170, "Previous", kPrevCmd, 'P');
-	_nextButton = addButton(90, 170, "Next", kNextCmd, 'N');
-	addButton(210, 170, "Close", kCloseCmd, 'C');
-	_prevButton->clearFlags(WIDGET_ENABLED);
+	int y = 5 + lineHeight * (HELP_NUM_LINES + 2) + 2;
 
-	_title = new StaticTextWidget(this, 10, 5, 290, 16, "", kTextAlignCenter);
-	for (int i = 0; i < HELP_NUM_LINES; i++) {
-		_key[i] = new StaticTextWidget(this, 10, 18 + (10 * i), 80, 16, "", kTextAlignLeft);
-		_dsc[i] = new StaticTextWidget(this, 90, 18 + (10 * i), 210, 16, "", kTextAlignLeft);
-	}
+	_prevButton = addButton(10, y, "Previous", kPrevCmd, 'P', ws);
+	_nextButton = addButton(10 + buttonWidth + 8, y, "Next", kNextCmd, 'N', ws);
+	addButton(_w - 8 - buttonWidth, y, "Close", kCloseCmd, 'C', ws);
+	_prevButton->clearFlags(WIDGET_ENABLED);
 
 	displayKeyBindings();
 }

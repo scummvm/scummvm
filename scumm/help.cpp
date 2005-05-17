@@ -103,10 +103,12 @@ void ScummHelp::updateStrings(byte gameId, byte version, int page,
 		ADD_BIND("Ctrl Alt a", "Toggle aspect-ratio correction");
 		ADD_LINE;
 		ADD_LINE;
+		// FIXME: This should use word-wrapping, and should not assume
+		//        that the font is mono-spaced.
 		ADD_TEXT("* Note that using ctrl-f and");
-		ADD_TEXT("   ctrl-g are not recommended");
-		ADD_TEXT("   since they may cause crashes");
-		ADD_TEXT("   or incorrect game behaviour.");
+		ADD_TEXT("  ctrl-g are not recommended");
+		ADD_TEXT("  since they may cause crashes");
+		ADD_TEXT("  or incorrect game behaviour.");
 		break;
 	case 3:
 		if (gameId == GID_LOOM || gameId == GID_LOOM256)
