@@ -197,6 +197,7 @@ int Font::wordWrapText(const Common::String &str, int maxWidth, Common::StringLi
 	for (Common::String::const_iterator x = str.begin(); x != str.end(); ++x) {
 		const char c = *x;
 		const int w = getCharWidth(c);
+		const bool wouldExceedWidth = (lineWidth + tmpWidth + w > maxWidth);
 
 		// If this char is a whitespace, then it represents a potential
 		// 'wrap point' where wrapping could take place. Everything that
@@ -208,22 +209,28 @@ int Font::wordWrapText(const Common::String &str, int maxWidth, Common::StringLi
 
 			tmpStr.clear();
 			tmpWidth = 0;
-		}
 
-		// If we encounter a line break (\n), the line is complete.
-		if (c == '\n') {
-			wrapper.add(line, lineWidth);
-			continue;
+			// If we encounter a line break (\n), or if the new space would
+			// cause the line to overflow: start a new line
+			if (c == '\n' || wouldExceedWidth) {
+				wrapper.add(line, lineWidth);
+				continue;
+			}
 		}
 		
 		// If the max line width would be exceeded by adding this char,
 		// insert a line break.
-		if (lineWidth + tmpWidth + w > maxWidth) {
+		if (wouldExceedWidth) {
 			// Commit what we have so far, *if* we have anything.
 			// If line is empty, then we are looking at a word
 			// which exceeds the maximum line width.
 			if (lineWidth > 0) {
 				wrapper.add(line, lineWidth);
+				// Trim left side
+				while (tmpStr.size() && isspace(tmpStr[0])) {
+					tmpWidth -= getCharWidth(tmpStr[0]);
+					tmpStr.deleteChar(0);
+				}
 			} else {
 				wrapper.add(tmpStr, tmpWidth);
 			}
