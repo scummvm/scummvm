@@ -88,13 +88,17 @@ AboutDialog::AboutDialog()
 	
 	int i;
 	
-	_w = g_system->getOverlayWidth() - 2 * 10;
-	_h = g_system->getOverlayHeight() - 20 - 16;
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
+
+	_w = screenW - 2 * 10;
+	_h = screenH - 20 - 16;
 	
-	if (_w >= 400 && _h >= 300)
+	if (_w >= 400 && _h >= 300) {
 		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-	else
+	} else {
 		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	}
 	
 	_lineHeight = _font->getFontHeight() + 3;
 
@@ -131,6 +135,20 @@ AboutDialog::AboutDialog()
 	
 	for (i = 0; i < ARRAYSIZE(credits); i++)
 		_lines.push_back(credits[i]);
+
+	// Compute 'optimal' dialog width
+	int maxW = _w;
+	_w = 0;
+	for (i = 0; i < (int)_lines.size(); ++i) {
+		_w = MAX(_w, _font->getStringWidth(_lines[i]));
+	}
+	if (_w > maxW)
+		_w = maxW;
+
+
+	// Center the dialog
+	_x = (screenW - _w) / 2;
+	_y = (screenH - _h) / 2;
 }
 
 void AboutDialog::open() {
