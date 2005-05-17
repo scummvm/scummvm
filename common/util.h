@@ -131,7 +131,8 @@ enum Platform {
 	kPlatformMacintosh = 3,
 	kPlatformFMTowns = 4,
 	kPlatformWindows = 5,
-	kPlatformNES = 6
+	kPlatformNES = 6,
+	kPlatformC64 = 7
 /*
 	kPlatformSEGA,
 	kPlatformPCEngine

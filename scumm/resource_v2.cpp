@@ -35,30 +35,45 @@ void ScummEngine_v2::readClassicIndexFile() {
 	int i;
 
 	if (_gameId == GID_MANIAC) {
-		if (_platform == Common::kPlatformNES)
+		if (_platform == Common::kPlatformC64) {
+			_numGlobalObjects = 256;
+			_numRooms = 55;
+			_numCostumes = 25;
+			_numScripts = 160;
+			_numSounds = 70;
+		} if (_platform == Common::kPlatformNES) {
 			_numGlobalObjects = 775;
-		else
-			_numGlobalObjects = 800;
-		_numRooms = 55;
+			_numRooms = 55;
 
-		if (_platform == Common::kPlatformNES)
 			// costumes 25-36 are special. see v1MMNEScostTables[] in costume.cpp
 			// costumes 37-76 are room graphics resources
 			// costume 77 is a character set translation table
 			// costume 78 is a preposition list
 			// costume 79 is unused but allocated, so the total is a nice even number :)
 			_numCostumes = 80;
-		else
+			_numScripts = 200;
+			_numSounds = 100;
+		} else {
+			_numGlobalObjects = 800;
+			_numRooms = 55;
 			_numCostumes = 35;
-
-		_numScripts = 200;
-		_numSounds = 100;
+			_numScripts = 200;
+			_numSounds = 100;
+		}
 	} else if (_gameId == GID_ZAK) {
-		_numGlobalObjects = 775;
-		_numRooms = 61;
-		_numCostumes = 37;
-		_numScripts = 155;
-		_numSounds = 120;
+		if (_platform == Common::kPlatformC64) {
+			_numGlobalObjects = 775;
+			_numRooms = 59;
+			_numCostumes = 38;
+			_numScripts = 155;
+			_numSounds = 127;
+		} else {
+			_numGlobalObjects = 775;
+			_numRooms = 61;
+			_numCostumes = 37;
+			_numScripts = 155;
+			_numSounds = 120;
+		}
 	}
 
 	_fileHandle->seek(0, SEEK_SET);
@@ -172,6 +187,11 @@ void ScummEngine_v2::readIndexFile() {
 			if (!(_platform == Common::kPlatformNES))
 				error("Use maniac target");
 			printf("NES V1 game detected\n");
+			_version = 1;
+			readClassicIndexFile();
+			break;
+		case 0x132:
+			printf("C64 V1 game detected\n");
 			_version = 1;
 			readClassicIndexFile();
 			break;
