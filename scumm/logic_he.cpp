@@ -143,8 +143,8 @@ int32 LogicHErace::dispatch(int op, int numArgs, int32 *args) {
 	return res;
 }
 
-#define RAD2DEG 5.729577951308239e1
-#define DEG2RAD 1.745329251994328e-2
+#define RAD2DEG (180 / PI)
+#define DEG2RAD (PI / 180)
 
 int32 LogicHErace::op_1003(int32 *args) {
 	int value = args[2] ? args[2] : 1;
@@ -401,15 +401,13 @@ void LogicHEfunshop::op_1004(int32 *args) {
 	for (int i = 0; i <= 6; i += 2) {
 		data[i] = getFromArray(args[0], 0, 519 + i);
 		data[i + 1] = getFromArray(args[0], 0, 519 + i + 1);
-
-		printf("data[%d] = %lf\ndata[%d] = %lf\n", i, data[i], i + 1, data[i + 1]);
 	}
 	int s = checkShape((int32)data[0], (int32)data[1], (int32)data[4], (int32)data[5],
 		(int32)data[2], (int32)data[3], (int32)data[6], (int32)data[7], &x, &y);
 
 	if (s != 1) {
-		printf("LogicHEfunshop::op_1004: Your shape has defied the laws of physics\n");
-			return;
+		error("LogicHEfunshop::op_1004: Your shape has defied the laws of physics\n");
+		return;
 	}
 
 	for (int i = 0; i <= 6; i += 2) {
@@ -417,7 +415,7 @@ void LogicHEfunshop::op_1004(int32 *args) {
 		data[i + 1] -= (double)y;
 	}
 
-	double a1 = (double)args[1] * 1.745328888888889e-2;
+	double a1 = (double)args[1] * PI / 180;
 
 	for (int i = 0; i <= 6; i += 2) {
 		at = atan2(data[i + 1], data[i]);
