@@ -1864,6 +1864,9 @@ void ScummEngine::setupMusic(int midi) {
 #ifndef DISABLE_SCUMM_7_8
 		_musicEngine = _imuseDigital = new IMuseDigital(this, 10);
 #endif
+	} else if (_platform == Common::kPlatformC64) {
+		// TODO
+		_musicEngine = NULL;
 	} else if (_platform == Common::kPlatformNES) {
 		_musicEngine = new Player_NES(this);
 	} else if ((_platform == Common::kPlatformAmiga) && (_version == 2)) {
