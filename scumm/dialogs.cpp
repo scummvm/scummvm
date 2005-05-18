@@ -551,41 +551,63 @@ ConfigDialog::ConfigDialog(ScummEngine *scumm)
 	const int screenH = g_system->getOverlayHeight();
 
 	_w = screenW - 2 * 40;
-	_h = screenH - 2 * 30 - 16;
 
-#ifdef _WIN32_WCE
-	_h += 4;
-#endif
-	
+	GUI::WidgetSize ws;
+	int buttonWidth;
+	int buttonHeight;
 
-	//
-	// Add the buttons
-	//
-#ifdef _WIN32_WCE
-	addButton(_w - kButtonWidth - 8, _h - 24 - 4, "OK", GUI::OptionsDialog::kOKCmd, 'O');
-	addButton(_w - 2 * kButtonWidth - 12, _h - 24 - 4, "Cancel", kCloseCmd, 'C');
-	addButton(_w - 3 * kButtonWidth - 16, _h - 24 - 4, "Keys", kKeysCmd, 'K');
-#else
-	addButton(_w - kButtonWidth-8, _h - 24, "OK", GUI::OptionsDialog::kOKCmd, 'O');
-	addButton(_w - 2 * kButtonWidth-12, _h - 24, "Cancel", kCloseCmd, 'C');
-#endif
+	if (screenW >= 400 && screenH >= 300) {
+		ws = GUI::kBigWidgetSize;
+		buttonWidth = kBigButtonWidth;
+		buttonHeight = kBigButtonHeight;
+	} else {
+		ws = GUI::kNormalWidgetSize;
+		buttonWidth = kButtonWidth;
+		buttonHeight = kButtonHeight;
+	}
+
+	int yoffset = 8;
 
 	//
 	// Sound controllers
 	//
-	int yoffset = 8;
-	yoffset = addVolumeControls(this, yoffset);
+
+	yoffset = addVolumeControls(this, yoffset) + 4;
 
 	//
 	// Some misc options
 	//
-	subtitlesCheckbox = new GUI::CheckboxWidget(this, 15, 78, 200, 16, "Show subtitles", 0, 'S');
-	speechCheckbox = new GUI::CheckboxWidget(this, 130, 78, 200, 16, "Enable speech", 0, 'E');
 
+	_subtitlesCheckbox = addCheckbox(15, yoffset, "Show subtitles", 0, 'S', ws);
+	yoffset += _subtitlesCheckbox->getHeight();
+
+	_speechCheckbox = addCheckbox(15, yoffset, "Enable speech", 0, 'E', ws);
+	yoffset += _speechCheckbox->getHeight() + 4;
+
+	//
+	// Add the buttons
+	//
+
+	_w = 8 + 3 * (buttonWidth + 4); // FIXME/TODO
+
+	addButton(_w - (buttonWidth + 4) - 4, yoffset, "OK", GUI::OptionsDialog::kOKCmd, 'O', ws);
+	addButton(_w - 2 * (buttonWidth + 4) - 4, yoffset, "Cancel", kCloseCmd, 'C', ws);
+#ifdef _WIN32_WCE
+	addButton(_w - 3 * (buttonWidth + 4) - 4, yoffset, "Keys", kKeysCmd, 'K', ws);
+#endif
+
+	yoffset += buttonHeight;
+
+	_h = yoffset + 8;
+
+	_x = (screenW - _w) / 2;
+	_y = (screenH - _h) / 2;
+
+#ifdef _WIN32_WCE
 	//
 	// Create the sub dialog(s)
 	//
-#ifdef _WIN32_WCE
+
 	_keysDialog = new CEKeysDialog();
 #endif
 }
@@ -600,16 +622,15 @@ void ConfigDialog::open() {
 	GUI_OptionsDialog::open();
 
 	// update checkboxes, too
-	subtitlesCheckbox->setState(ConfMan.getBool("subtitles"));
-	speechCheckbox->setState(!ConfMan.getBool("speech_mute"));
+	_subtitlesCheckbox->setState(ConfMan.getBool("subtitles"));
+	_speechCheckbox->setState(!ConfMan.getBool("speech_mute"));
 }
 
 void ConfigDialog::close() {
-	
 	if (getResult()) {
 		// Subtitles
-		ConfMan.set("subtitles", subtitlesCheckbox->getState(), _domain);
-		ConfMan.set("speech_mute", !speechCheckbox->getState(), _domain);
+		ConfMan.set("subtitles", _subtitlesCheckbox->getState(), _domain);
+		ConfMan.set("speech_mute", !_speechCheckbox->getState(), _domain);
 		// Sync with current setting
 		if (ConfMan.getBool("speech_mute"))
 			_vm->_voiceMode = 2;
@@ -624,7 +645,6 @@ void ConfigDialog::close() {
 	
 	_vm->setupVolumes();
 }
-
 
 void ConfigDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
