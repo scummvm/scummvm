@@ -185,7 +185,7 @@ void ScrollBarWidget::drawWidget(bool hilite) {
 	bool isSinglePage = (_numEntries <= _entriesPerPage);
 	OverlayColor color;
 	Graphics::Surface &surf = g_gui.getScreen();
-	const int B = (_w + 1) / 4;
+	const int B = 3;
 	Common::Point p0, p1, p2;
 
 	gui->frameRect(_x, _y, _w, _h, gui->_shadowcolor);
@@ -193,21 +193,26 @@ void ScrollBarWidget::drawWidget(bool hilite) {
 	if (_draggingPart != kNoPart)
 		_part = _draggingPart;
 
+	const int arrowSize = (_w / 2 - B + 1);
+
 	//
 	// Up arrow
 	//
 	color = isSinglePage ? gui->_color :
 					(hilite && _part == kUpArrowPart) ? gui->_textcolorhi : gui->_textcolor;
 	gui->frameRect(_x, _y, _w, UP_DOWN_BOX_HEIGHT, gui->_color);
-	p0 = Common::Point(_x + _w / 2, _y + B);
-	p1 = Common::Point(_x + B, _y + _w - B);
-	p2 = Common::Point(_x + _w - B - 1, _y + _w - B);
-	// Evil HACK to draw filled triangle
-//	for (; p1.x <= p2.x; ++p1.x)
-//		surf.drawLine(p0.x, p0.y, p1.x, p1.y, color);
+	p0 = Common::Point(_x + _w / 2, _y + (UP_DOWN_BOX_HEIGHT - arrowSize - 1) / 2);
+	p1 = Common::Point(p0.x - arrowSize, p0.y + arrowSize);
+	p2 = Common::Point(p0.x + arrowSize, p0.y + arrowSize);
+#if 0
 	surf.drawLine(p0.x, p0.y, p1.x, p1.y, color);
 	surf.drawLine(p0.x, p0.y, p2.x, p2.y, color);
 //	surf.drawLine(p1.x, p1.y, p2.x, p2.y, color);
+#else
+	// Evil HACK to draw filled triangle
+	for (; p1.x <= p2.x; ++p1.x)
+		surf.drawLine(p0.x, p0.y, p1.x, p1.y, color);
+#endif
 
 	//
 	// Down arrow
@@ -215,15 +220,19 @@ void ScrollBarWidget::drawWidget(bool hilite) {
 	color = isSinglePage ? gui->_color :
 					(hilite && _part == kDownArrowPart) ? gui->_textcolorhi : gui->_textcolor;
 	gui->frameRect(_x, bottomY, _w, UP_DOWN_BOX_HEIGHT, gui->_color);
-	p0 = Common::Point(_x + _w / 2, bottomY + _w - B);
-	p1 = Common::Point(_x + B, bottomY + B);
-	p2 = Common::Point(_x + _w - B - 1, bottomY + B);
-	// Evil HACK to draw filled triangle
-//	for (; p1.x <= p2.x; ++p1.x)
-//		surf.drawLine(p0.x, p0.y, p1.x, p1.y, color);
+	p0 = Common::Point(_x + _w / 2, bottomY + (UP_DOWN_BOX_HEIGHT + arrowSize + 1) / 2);
+	p1 = Common::Point(p0.x - arrowSize, p0.y - arrowSize);
+	p2 = Common::Point(p0.x + arrowSize, p0.y - arrowSize);
+
+#if 0
 	surf.drawLine(p0.x, p0.y, p1.x, p1.y, color);
 	surf.drawLine(p0.x, p0.y, p2.x, p2.y, color);
 //	surf.drawLine(p1.x, p1.y, p2.x, p2.y, color);
+#else
+	// Evil HACK to draw filled triangle
+	for (; p1.x <= p2.x; ++p1.x)
+		surf.drawLine(p0.x, p0.y, p1.x, p1.y, color);
+#endif
 
 	//
 	// Slider
