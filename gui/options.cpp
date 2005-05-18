@@ -405,26 +405,51 @@ int OptionsDialog::addMIDIControls(GuiObject *boss, int yoffset, WidgetSize ws) 
 }
 
 int OptionsDialog::addVolumeControls(GuiObject *boss, int yoffset, WidgetSize ws) {
+	const char *slider_labels[] = {
+		"Music volume:",
+		"SFX volume:",
+		"Speech volume:"
+	};
+
+	const Graphics::Font *font;
+
+	if (ws == kBigWidgetSize) {
+		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	} else {
+		font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	}
+
+	int textwidth = 0;
+
+	for (int i = 0; i < ARRAYSIZE(slider_labels); i++) {
+		int width = font->getStringWidth(slider_labels[i]);
+
+		if (width > textwidth)
+			textwidth = width;
+	}
+
+	int xoffset = textwidth + 10;
+
 	// Volume controllers
-	new StaticTextWidget(boss, 5, yoffset + 2, 100, kLineHeight, "Music volume: ", kTextAlignRight, ws);
-	_musicVolumeSlider = addSlider(boss, 105, yoffset, kMusicVolumeChanged, ws);
-	_musicVolumeLabel = new StaticTextWidget(boss, 105 + _musicVolumeSlider->getWidth() + 10, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft, ws);
+	new StaticTextWidget(boss, 5, yoffset + 2, textwidth, kLineHeight, slider_labels[0], kTextAlignRight, ws);
+	_musicVolumeSlider = addSlider(boss, xoffset, yoffset, kMusicVolumeChanged, ws);
+	_musicVolumeLabel = new StaticTextWidget(boss, xoffset + _musicVolumeSlider->getWidth() + 10, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft, ws);
 	_musicVolumeSlider->setMinValue(0);
 	_musicVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
 	_musicVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += _musicVolumeSlider->getHeight() + 4;
 
-	new StaticTextWidget(boss, 5, yoffset + 2, 100, kLineHeight, "SFX volume: ", kTextAlignRight, ws);
-	_sfxVolumeSlider = addSlider(boss, 105, yoffset, kSfxVolumeChanged, ws);
-	_sfxVolumeLabel = new StaticTextWidget(boss, 105 + _musicVolumeSlider->getWidth() + 10, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft, ws);
+	new StaticTextWidget(boss, 5, yoffset + 2, textwidth, kLineHeight, slider_labels[1], kTextAlignRight, ws);
+	_sfxVolumeSlider = addSlider(boss, xoffset, yoffset, kSfxVolumeChanged, ws);
+	_sfxVolumeLabel = new StaticTextWidget(boss, xoffset + _musicVolumeSlider->getWidth() + 10, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft, ws);
 	_sfxVolumeSlider->setMinValue(0);
 	_sfxVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
 	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += _sfxVolumeSlider->getHeight() + 4;
 
-	new StaticTextWidget(boss, 5, yoffset + 2, 100, kLineHeight, "Speech volume: ", kTextAlignRight, ws);
-	_speechVolumeSlider = addSlider(boss, 105, yoffset, kSpeechVolumeChanged, ws);
-	_speechVolumeLabel = new StaticTextWidget(boss, 105 + _musicVolumeSlider->getWidth() + 10, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft, ws);
+	new StaticTextWidget(boss, 5, yoffset + 2, textwidth, kLineHeight, slider_labels[2], kTextAlignRight, ws);
+	_speechVolumeSlider = addSlider(boss, xoffset, yoffset, kSpeechVolumeChanged, ws);
+	_speechVolumeLabel = new StaticTextWidget(boss, xoffset + _musicVolumeSlider->getWidth() + 10, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft, ws);
 	_speechVolumeSlider->setMinValue(0);
 	_speechVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
 	_speechVolumeLabel->setFlags(WIDGET_CLEARBG);
