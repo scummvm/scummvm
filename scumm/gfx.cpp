@@ -1971,6 +1971,7 @@ void Gdi::decodeNESGfx(const byte *room) {
 		}
 		_NES.nametable[i][width+2] = _NES.nametable[i][width+3] = 0;
 	}
+	memcpy(_NES.nametableObj,_NES.nametable, 16 * 64);
 
 	const byte *adata = room + READ_LE_UINT16(room + 0x0C);
 	for (n = 0; n < 64;) {
@@ -1982,6 +1983,7 @@ void Gdi::decodeNESGfx(const byte *room) {
 		if (!(data & 0x80))
 			adata++;
 	}
+	memcpy(_NES.attributesObj, _NES.attributes, 64);
 
 	const byte *mdata = room + READ_LE_UINT16(room + 0x0E);
 	int mask = *mdata++;
@@ -2003,6 +2005,7 @@ void Gdi::decodeNESGfx(const byte *room) {
 				mdata++;
 		}
 	}
+	memcpy(_NES.masktableObj, _NES.masktable, 16 * 8);
 }
 
 void Gdi::decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int height) {
@@ -2011,7 +2014,6 @@ void Gdi::decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int he
 	_NES.objX = xpos;
 
 	// decode tile update data
-	memcpy(_NES.nametableObj,_NES.nametable,16*64);
 	ypos /= 8;
 	height /= 8;
 	for (y = ypos; y < ypos + height; y++) {
@@ -2027,7 +2029,6 @@ void Gdi::decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int he
 
 	int ax, ay;
 	// decode attribute update data
-	memcpy(_NES.attributesObj, _NES.attributes,64);
 	y = height / 2;
 	ay = ypos;
 	while (y) {
@@ -2062,7 +2063,6 @@ void Gdi::decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int he
 	// decode mask update data
 	if (!_NES.hasmask)
 		return;
-	memcpy(_NES.masktableObj, _NES.masktable,16*8);
 	int mx, mwidth;
 	int lmask, rmask;
 	mx = *ptr++;
