@@ -177,20 +177,8 @@ void ButtonWidget::drawWidget(bool hilite) {
 
 #pragma mark -
 
-/* 8x8 checkbox bitmap */
-static uint32 checked_img[8] = {
-	0x00000000,
-	0x01000010,
-	0x00100100,
-	0x00011000,
-	0x00011000,
-	0x00100100,
-	0x01000010,
-	0x00000000,
-};
-
 CheckboxWidget::CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey, WidgetSize ws)
-	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey, ws), _state(false) {
+	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey, ws), _state(false), _ws(ws) {
 	_flags = WIDGET_ENABLED;
 	_type = kCheckboxWidget;
 }
@@ -212,17 +200,38 @@ void CheckboxWidget::setState(bool state) {
 
 void CheckboxWidget::drawWidget(bool hilite) {
 	NewGui *gui = &g_gui;
+	int fontHeight = _font->getFontHeight();
 
 	// Draw the box
-	gui->box(_x, _y, 14, 14, gui->_color, gui->_shadowcolor);
-	gui->fillRect(_x + 2, _y + 2, 10, 10, gui->_bgcolor);
+	gui->box(_x, _y, fontHeight + 4, fontHeight + 4, gui->_color, gui->_shadowcolor);
+	gui->fillRect(_x + 2, _y + 2, fontHeight, fontHeight, gui->_bgcolor);
 
 	// If checked, draw cross inside the box
-	if (_state)
-		gui->drawBitmap(checked_img, _x + 4, _y + 3, isEnabled() ? gui->_textcolor : gui->_color);
+	if (_state) {
+		Graphics::Surface &surf = gui->getScreen();
+		Common::Point p0, p1, p2, p3;
+		OverlayColor color = isEnabled() ? gui->_textcolor : gui->_color;
+
+		p0 = Common::Point(_x + 4, _y + 4);
+		p1 = Common::Point(_x + fontHeight - 1, _y + 4);
+		p2 = Common::Point(_x + 4, _y + fontHeight - 1);
+		p3 = Common::Point(_x + fontHeight - 1, _y + fontHeight - 1);
+
+		if (_ws == kBigWidgetSize) {
+			surf.drawLine(p0.x + 1, p0.y, p3.x, p3.y - 1, color);
+			surf.drawLine(p0.x, p0.y + 1, p3.x - 1, p3.y, color);
+			surf.drawLine(p0.x + 1, p0.y + 1, p3.x - 1, p3.y - 1, color);
+			surf.drawLine(p2.x + 1, p2.y - 1, p1.x - 1, p1.y + 1, color);
+			surf.drawLine(p2.x + 1, p2.y, p1.x, p1.y + 1, color);
+			surf.drawLine(p2.x, p2.y - 1, p1.x - 1, p1.y, color);
+		} else {
+			surf.drawLine(p0.x, p0.y, p3.x, p3.y, color);
+			surf.drawLine(p2.x, p2.y, p1.x, p1.y, color);
+		}
+	}
 
 	// Finally draw the label
-	gui->drawString(_font, _label, _x + 20, _y + 3, _w, isEnabled() ? gui->_textcolor : gui->_color);
+	gui->drawString(_font, _label, _x + fontHeight + 10, _y + 3, _w, isEnabled() ? gui->_textcolor : gui->_color);
 }
 
 #pragma mark -
