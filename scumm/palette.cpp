@@ -48,6 +48,8 @@ void ScummEngine::setupC64Palette() {
 	setPalColor(13, 0x66, 0xff, 0x66);
 	setPalColor(14, 0x77, 0x77, 0xff);
 	setPalColor(15, 0xc0, 0xc0, 0xc0);
+
+	setPalColor(16, 255,  85, 255);
 }
 
 void ScummEngine::setupNESPalette() {
@@ -201,6 +203,7 @@ void ScummEngine::setupV1ManiacPalette() {
 	setPalColor(13,  85, 255,  85);
 	setPalColor(14,  85,  85, 255);
 	setPalColor(15,  85,  85,  85);
+
 	setPalColor(16, 255,  85, 255);
 }
 
@@ -221,6 +224,7 @@ void ScummEngine::setupV1ZakPalette() {
 	setPalColor(13,  85, 255,  85);
 	setPalColor(14,  85,  85, 255);
 	setPalColor(15, 170, 170, 170);
+
 	setPalColor(16, 255,  85, 255);
 }
 
