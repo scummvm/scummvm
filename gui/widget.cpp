@@ -236,17 +236,17 @@ void CheckboxWidget::drawWidget(bool hilite) {
 
 #pragma mark -
 
-SliderWidget::SliderWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint labelWidth, uint32 cmd, uint8 hotkey, WidgetSize ws)
-	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey, ws),
-	  _value(0), _oldValue(0), _valueMin(0), _valueMax(100), _isDragging(false),
-	  _labelWidth(labelWidth) {
+SliderWidget::SliderWidget(GuiObject *boss, int x, int y, int w, int h, uint32 cmd)
+	: Widget(boss, x, y, w, h), CommandSender(boss),
+	  _cmd(cmd), _value(0), _oldValue(0), _valueMin(0), _valueMax(100), _isDragging(false)
+	  {
 	_flags = WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG;
 	_type = kSliderWidget;
 }
 
 void SliderWidget::handleMouseMoved(int x, int y, int button) {
-	if (isEnabled() && _isDragging && x >= (int)_labelWidth) {
-		int newValue = posToValue(x - _labelWidth);
+	if (isEnabled() && _isDragging && x >= 0) {
+		int newValue = posToValue(x);
 		if (newValue < _valueMin)
 			newValue = _valueMin;
 		else if (newValue > _valueMax)
@@ -277,25 +277,21 @@ void SliderWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 void SliderWidget::drawWidget(bool hilite) {
 	NewGui *gui = &g_gui;
 
-	// Draw the label, if any
-	if (_labelWidth > 0)
-		gui->drawString(_font, _label, _x, _y + 2, _labelWidth, isEnabled() ? gui->_textcolor : gui->_color, kTextAlignRight);
-
 	// Draw the box
-	gui->box(_x + _labelWidth, _y, _w - _labelWidth, _h, gui->_color, gui->_shadowcolor);
+	gui->box(_x, _y, _w, _h, gui->_color, gui->_shadowcolor);
 
 	// Draw the 'bar'
-	gui->fillRect(_x + _labelWidth + 2, _y + 2, valueToPos(_value), _h - 4,
+	gui->fillRect(_x + 2, _y + 2, valueToPos(_value), _h - 4,
 				!isEnabled() ? gui->_color :
 				hilite ? gui->_textcolorhi : gui->_textcolor);
 }
 
 int SliderWidget::valueToPos(int value) {
-	return ((_w - _labelWidth - 4) * (value - _valueMin) / (_valueMax - _valueMin));
+	return ((_w - 4) * (value - _valueMin) / (_valueMax - _valueMin));
 }
 
 int SliderWidget::posToValue(int pos) {
-	return (pos) * (_valueMax - _valueMin) / (_w - _labelWidth - 4) + _valueMin;
+	return (pos) * (_valueMax - _valueMin) / (_w - 4) + _valueMin;
 }
 
 #pragma mark -

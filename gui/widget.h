@@ -204,14 +204,19 @@ protected:
 };
 
 /* SliderWidget */
-class SliderWidget : public ButtonWidget {
+class SliderWidget : public Widget, public CommandSender {
 protected:
+	uint32	_cmd;
 	int		_value, _oldValue;
 	int		_valueMin, _valueMax;
 	bool	_isDragging;
 	uint	_labelWidth;
 public:
-	SliderWidget(GuiObject *boss, int x, int y, int w, int h, const String &label = String::emptyString, uint labelWidth = 0, uint32 cmd = 0, uint8 hotkey = 0, WidgetSize ws = kDefaultWidgetSize);
+	SliderWidget(GuiObject *boss, int x, int y, int w, int h, uint32 cmd = 0);
+
+	void setCmd(uint32 cmd)		{ _cmd = cmd; }
+	uint32 getCmd() const		{ return _cmd; }
+
 	void setValue(int value)	{ _value = value; }
 	int getValue() const		{ return _value; }
 
@@ -223,6 +228,8 @@ public:
 	void handleMouseMoved(int x, int y, int button);
 	void handleMouseDown(int x, int y, int button, int clickCount);
 	void handleMouseUp(int x, int y, int button, int clickCount);
+	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
+	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); draw(); }
 
 protected:
 	void drawWidget(bool hilite);
