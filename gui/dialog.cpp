@@ -299,6 +299,10 @@ ButtonWidget *Dialog::addButton(int x, int y, const Common::String &label, uint3
 }
 
 CheckboxWidget *Dialog::addCheckbox(int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws) {
+	return addCheckbox(this, x, y, label, cmd, hotkey, ws);
+}
+
+CheckboxWidget *Dialog::addCheckbox(GuiObject *boss, int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws) {
 	const Graphics::Font *font;
 	int w, h;
 
@@ -312,7 +316,7 @@ CheckboxWidget *Dialog::addCheckbox(int x, int y, const Common::String &label, u
 
 	w = font->getFontHeight() + 10 + font->getStringWidth(label);
 
-	return new CheckboxWidget(this, x, y, w, h, label, cmd, hotkey, ws);
+	return new CheckboxWidget(boss, x, y, w, h, label, cmd, hotkey, ws);
 }
 
 uint32 GuiObject::getMillis() {

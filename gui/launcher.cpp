@@ -239,8 +239,8 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	tab->addTab("Gfx");
 	yoffset = vBorder;
 
-	_globalGraphicsOverride = new CheckboxWidget(tab, x, yoffset, w, 16, "Override global graphic settings", kCmdGlobalGraphicsOverride);
-	yoffset += 16;
+	_globalGraphicsOverride = addCheckbox(tab, x, yoffset, "Override global graphic settings", kCmdGlobalGraphicsOverride, 0);
+	yoffset += _globalGraphicsOverride->getHeight();
 
 	yoffset = addGraphicControls(tab, yoffset);
 
@@ -250,8 +250,8 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	tab->addTab("Audio");
 	yoffset = vBorder;
 
-	_globalAudioOverride = new CheckboxWidget(tab, x, yoffset, w, 16, "Override global audio settings", kCmdGlobalAudioOverride);
-	yoffset += 16;
+	_globalAudioOverride = addCheckbox(tab, x, yoffset, "Override global audio settings", kCmdGlobalAudioOverride, 0);
+	yoffset += _globalAudioOverride->getHeight();
 
 	yoffset = addAudioControls(tab, yoffset);
 
@@ -261,8 +261,8 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	tab->addTab("MIDI");
 	yoffset = vBorder;
 
-	_globalMIDIOverride = new CheckboxWidget(tab, x, yoffset, w, 16, "Override global MIDI settings", kCmdGlobalMIDIOverride);
-	yoffset += 16;
+	_globalMIDIOverride = addCheckbox(tab, x, yoffset, "Override global MIDI settings", kCmdGlobalMIDIOverride, 0);
+	yoffset += _globalMIDIOverride->getHeight();
 
 	yoffset = addMIDIControls(tab, yoffset);
 
@@ -272,8 +272,8 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	tab->addTab("Volume");
 	yoffset = vBorder;
 
-	_globalVolumeOverride = new CheckboxWidget(tab, x, yoffset, w, 16, "Override global volume settings", kCmdGlobalVolumeOverride);
-	yoffset += 16;
+	_globalVolumeOverride = addCheckbox(tab, x, yoffset, "Override global volume settings", kCmdGlobalVolumeOverride, 0);
+	yoffset += _globalVolumeOverride->getHeight();
 
 	yoffset = addVolumeControls(tab, yoffset);
 

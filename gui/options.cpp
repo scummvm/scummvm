@@ -336,12 +336,12 @@ int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset) {
 	}
 
 	// Fullscreen checkbox
-	_fullscreenCheckbox = new CheckboxWidget(boss, x, yoffset, w, 16, "Fullscreen mode");
-	yoffset += 16;
+	_fullscreenCheckbox = addCheckbox(boss, x, yoffset, "Fullscreen mode", 0, 0);
+	yoffset += _fullscreenCheckbox->getHeight();
 
 	// Aspect ratio checkbox
-	_aspectCheckbox = new CheckboxWidget(boss, x, yoffset, w, 16, "Aspect ratio correction");
-	yoffset += 16;
+	_aspectCheckbox = addCheckbox(boss, x, yoffset, "Aspect ratio correction", 0, 0);
+	yoffset += _aspectCheckbox->getHeight();
 
 #ifdef _WIN32_WCE
 	_fullscreenCheckbox->setState(TRUE);
@@ -370,8 +370,8 @@ int OptionsDialog::addAudioControls(GuiObject *boss, int yoffset) {
 	}
 
 	// Subtitles on/off
-	_subCheckbox = new CheckboxWidget(boss, x, yoffset, w, 16, "Display subtitles");
-	yoffset += 16;
+	_subCheckbox = addCheckbox(boss, x, yoffset, "Display subtitles", 0, 0);
+	yoffset += _subCheckbox->getHeight();
 
 	yoffset += 18;
 		
@@ -382,7 +382,6 @@ int OptionsDialog::addAudioControls(GuiObject *boss, int yoffset) {
 
 int OptionsDialog::addMIDIControls(GuiObject *boss, int yoffset) {
 	const int x = 10;
-	const int w = _w - 20;
 
 	// SoundFont
 	_soundFontButton = new ButtonWidget(boss, x, yoffset, kButtonWidth + 14, 16, "SoundFont: ", kChooseSoundFontCmd, 0);
@@ -390,16 +389,16 @@ int OptionsDialog::addMIDIControls(GuiObject *boss, int yoffset) {
 	yoffset += 18;
 
 	// Multi midi setting
-	_multiMidiCheckbox = new CheckboxWidget(boss, x, yoffset, w, 16, "Mixed Adlib/MIDI mode");
-	yoffset += 16;
+	_multiMidiCheckbox = addCheckbox(boss, x, yoffset, "Mixed Adlib/MIDI mode", 0, 0);
+	yoffset += _multiMidiCheckbox->getHeight();
 	
 	// Native mt32 setting
-	_mt32Checkbox = new CheckboxWidget(boss, x, yoffset, w, 16, "True Roland MT-32 (disable GM emulation)");
-	yoffset += 16;
+	_mt32Checkbox = addCheckbox(boss, x, yoffset, "True Roland MT-32 (disable GM emulation)", 0, 0);
+	yoffset += _mt32Checkbox->getHeight();
 
 	// GS Extensions setting
-	_enableGSCheckbox = new CheckboxWidget(boss, x, yoffset, w, 16, "Enable Roland GS Mode");
-	yoffset += 16;
+	_enableGSCheckbox = addCheckbox(boss, x, yoffset, "Enable Roland GS Mode", 0, 0);
+	yoffset += _enableGSCheckbox->getHeight();
 	
 	_enableMIDISettings = true;
 
