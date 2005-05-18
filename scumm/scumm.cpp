@@ -2878,8 +2878,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	switch (game.version) {
 	case 1:
 	case 2:
-		// Limit to C64 MM?
-		if (game.platform == Common::kPlatformC64)
+		if (game.id == GID_MANIAC && game.platform == Common::kPlatformC64)
 			engine = new ScummEngine_c64(detector, syst, game, md5sum);
 		else
 			engine = new ScummEngine_v2(detector, syst, game, md5sum);

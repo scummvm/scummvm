@@ -377,7 +377,7 @@ protected:
 };
 
 /**
- * Engine for Commodore 64 versions of version 1 SCUMM games.
+ * Engine for Commodore 64 version of Maniac Mansion
  */
 class ScummEngine_c64 : public ScummEngine_v2 {
 protected:
