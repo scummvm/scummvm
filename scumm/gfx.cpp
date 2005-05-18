@@ -2116,8 +2116,6 @@ void Gdi::drawStripNES(byte *dst, byte *mask, int dstPitch, int stripnr, int top
 }
 
 void Gdi::drawStripNESMask(byte *dst, int stripnr, int top, int height) const {
-	if (!_NES.hasmask)
-		return;
 	top /= 8;
 	height /= 8;
 	int x = stripnr;	// masks, unlike room graphics, should NOT be adjusted
@@ -2129,7 +2127,12 @@ void Gdi::drawStripNESMask(byte *dst, int stripnr, int top, int height) const {
 		return;
 	}
 	for (int y = top; y < top + height; y++) {
-		byte c = (((_objectMode ? _NES.masktableObj : _NES.masktable)[y][x >> 3] >> (x & 7)) & 1) ? 0xFF : 0x00;
+		byte c;
+		if (_NES.hasmask)
+			c = (((_objectMode ? _NES.masktableObj : _NES.masktable)[y][x >> 3] >> (x & 7)) & 1) ? 0xFF : 0x00;
+		else
+			c = 0;
+
 		for (int i = 0; i < 8; i++) {
 			*dst &= c;
 			dst += _numStrips;
