@@ -87,7 +87,9 @@ protected:
 	
 	Widget *findWidget(int x, int y); // Find the widget at pos x,y if any
 
+	ButtonWidget *addButton(GuiObject *boss, int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws = kDefaultWidgetSize);
 	ButtonWidget *addButton(int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws = kDefaultWidgetSize);
+
 	CheckboxWidget *addCheckbox(GuiObject *boss, int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws = kDefaultWidgetSize);
 	CheckboxWidget *addCheckbox(int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws = kDefaultWidgetSize);
 

@@ -289,13 +289,17 @@ Widget *Dialog::findWidget(int x, int y) {
 }
 
 ButtonWidget *Dialog::addButton(int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws) {
+	return addButton(this, x, y, label, cmd, hotkey, ws);
+}
+
+ButtonWidget *Dialog::addButton(GuiObject *boss, int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws) {
 	int w = kButtonWidth;
 	int h = kButtonHeight;
 	if (ws == kBigWidgetSize) {
 		w = kBigButtonWidth;
 		h = kBigButtonHeight;
 	}
-	return new ButtonWidget(this, x, y, w, h, label, cmd, hotkey, ws);
+	return new ButtonWidget(boss, x, y, w, h, label, cmd, hotkey, ws);
 }
 
 CheckboxWidget *Dialog::addCheckbox(int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws) {

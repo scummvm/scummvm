@@ -56,10 +56,10 @@ protected:
 	ButtonWidget *_soundFontButton;
 	StaticTextWidget *_soundFont;
 
-	int addGraphicControls(GuiObject *boss, int yoffset);
-	int addAudioControls(GuiObject *boss, int yoffset);
-	int addMIDIControls(GuiObject *boss, int yoffset);
-	int addVolumeControls(GuiObject *boss, int yoffset);
+	int addGraphicControls(GuiObject *boss, int yoffset, WidgetSize ws);
+	int addAudioControls(GuiObject *boss, int yoffset, WidgetSize ws);
+	int addMIDIControls(GuiObject *boss, int yoffset, WidgetSize ws);
+	int addVolumeControls(GuiObject *boss, int yoffset, WidgetSize ws);
 
 	void setGraphicSettingsState(bool enabled);
 	void setAudioSettingsState(bool enabled);

@@ -572,7 +572,7 @@ ConfigDialog::ConfigDialog(ScummEngine *scumm)
 	// Sound controllers
 	//
 
-	yoffset = addVolumeControls(this, yoffset) + 4;
+	yoffset = addVolumeControls(this, yoffset, ws) + 4;
 
 	//
 	// Some misc options

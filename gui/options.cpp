@@ -84,7 +84,6 @@ OptionsDialog::OptionsDialog(const String &domain, int x, int y, int w, int h)
 	_musicVolumeSlider(0), _musicVolumeLabel(0),
 	_sfxVolumeSlider(0), _sfxVolumeLabel(0),
 	_speechVolumeSlider(0), _speechVolumeLabel(0) {
-
 }
 
 void OptionsDialog::open() {
@@ -309,7 +308,7 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	_speechVolumeLabel->setEnabled(enabled);
 }
 
-int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset) {
+int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset, WidgetSize ws) {
 	const int x = 10;
 	const int w = _w - 2 * 10;
 	const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
@@ -336,11 +335,11 @@ int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset) {
 	}
 
 	// Fullscreen checkbox
-	_fullscreenCheckbox = addCheckbox(boss, x, yoffset, "Fullscreen mode", 0, 0);
+	_fullscreenCheckbox = addCheckbox(boss, x, yoffset, "Fullscreen mode", 0, 0, ws);
 	yoffset += _fullscreenCheckbox->getHeight();
 
 	// Aspect ratio checkbox
-	_aspectCheckbox = addCheckbox(boss, x, yoffset, "Aspect ratio correction", 0, 0);
+	_aspectCheckbox = addCheckbox(boss, x, yoffset, "Aspect ratio correction", 0, 0, ws);
 	yoffset += _aspectCheckbox->getHeight();
 
 #ifdef _WIN32_WCE
@@ -354,7 +353,7 @@ int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset) {
 	return yoffset;
 }
 
-int OptionsDialog::addAudioControls(GuiObject *boss, int yoffset) {
+int OptionsDialog::addAudioControls(GuiObject *boss, int yoffset, WidgetSize ws) {
 	const int x = 10;
 	const int w = _w - 20;
 
@@ -370,7 +369,7 @@ int OptionsDialog::addAudioControls(GuiObject *boss, int yoffset) {
 	}
 
 	// Subtitles on/off
-	_subCheckbox = addCheckbox(boss, x, yoffset, "Display subtitles", 0, 0);
+	_subCheckbox = addCheckbox(boss, x, yoffset, "Display subtitles", 0, 0, ws);
 	yoffset += _subCheckbox->getHeight();
 
 	yoffset += 18;
@@ -380,7 +379,7 @@ int OptionsDialog::addAudioControls(GuiObject *boss, int yoffset) {
 	return yoffset;
 }
 
-int OptionsDialog::addMIDIControls(GuiObject *boss, int yoffset) {
+int OptionsDialog::addMIDIControls(GuiObject *boss, int yoffset, WidgetSize ws) {
 	const int x = 10;
 
 	// SoundFont
@@ -389,15 +388,15 @@ int OptionsDialog::addMIDIControls(GuiObject *boss, int yoffset) {
 	yoffset += 18;
 
 	// Multi midi setting
-	_multiMidiCheckbox = addCheckbox(boss, x, yoffset, "Mixed Adlib/MIDI mode", 0, 0);
+	_multiMidiCheckbox = addCheckbox(boss, x, yoffset, "Mixed Adlib/MIDI mode", 0, 0, ws);
 	yoffset += _multiMidiCheckbox->getHeight();
 	
 	// Native mt32 setting
-	_mt32Checkbox = addCheckbox(boss, x, yoffset, "True Roland MT-32 (disable GM emulation)", 0, 0);
+	_mt32Checkbox = addCheckbox(boss, x, yoffset, "True Roland MT-32 (disable GM emulation)", 0, 0, ws);
 	yoffset += _mt32Checkbox->getHeight();
 
 	// GS Extensions setting
-	_enableGSCheckbox = addCheckbox(boss, x, yoffset, "Enable Roland GS Mode", 0, 0);
+	_enableGSCheckbox = addCheckbox(boss, x, yoffset, "Enable Roland GS Mode", 0, 0, ws);
 	yoffset += _enableGSCheckbox->getHeight();
 	
 	_enableMIDISettings = true;
@@ -405,25 +404,25 @@ int OptionsDialog::addMIDIControls(GuiObject *boss, int yoffset) {
 	return yoffset;
 }
 
-int OptionsDialog::addVolumeControls(GuiObject *boss, int yoffset) {
+int OptionsDialog::addVolumeControls(GuiObject *boss, int yoffset, WidgetSize ws) {
 	// Volume controllers
-	new StaticTextWidget(boss, 5, yoffset + 2, 100, kLineHeight, "Music volume: ", kTextAlignRight);
+	new StaticTextWidget(boss, 5, yoffset + 2, 100, kLineHeight, "Music volume: ", kTextAlignRight, ws);
 	_musicVolumeSlider = new SliderWidget(boss, 105, yoffset, 85, 12, kMusicVolumeChanged);
-	_musicVolumeLabel = new StaticTextWidget(boss, 200, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft);
+	_musicVolumeLabel = new StaticTextWidget(boss, 200, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft, ws);
 	_musicVolumeSlider->setMinValue(0); _musicVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
 	_musicVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += 16;
 
-	new StaticTextWidget(boss, 5, yoffset + 2, 100, kLineHeight, "SFX volume: ", kTextAlignRight);
+	new StaticTextWidget(boss, 5, yoffset + 2, 100, kLineHeight, "SFX volume: ", kTextAlignRight, ws);
 	_sfxVolumeSlider = new SliderWidget(boss, 105, yoffset, 85, 12, kSfxVolumeChanged);
-	_sfxVolumeLabel = new StaticTextWidget(boss, 200, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft);
+	_sfxVolumeLabel = new StaticTextWidget(boss, 200, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft, ws);
 	_sfxVolumeSlider->setMinValue(0); _sfxVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
 	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += 16;
 
-	new StaticTextWidget(boss, 5, yoffset + 2, 100, kLineHeight, "Speech volume: ", kTextAlignRight);
+	new StaticTextWidget(boss, 5, yoffset + 2, 100, kLineHeight, "Speech volume: ", kTextAlignRight, ws);
 	_speechVolumeSlider = new SliderWidget(boss, 105, yoffset, 85, 12, kSpeechVolumeChanged);
-	_speechVolumeLabel = new StaticTextWidget(boss, 200, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft);
+	_speechVolumeLabel = new StaticTextWidget(boss, 200, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft, ws);
 	_speechVolumeSlider->setMinValue(0); _speechVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
 	_speechVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += 16;
@@ -469,15 +468,15 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	//
 	tab->addTab("Graphics");
 	yoffset = vBorder;
-	yoffset = addGraphicControls(tab, yoffset);
+	yoffset = addGraphicControls(tab, yoffset, ws);
 
 	//
 	// 2) The audio tab
 	//
 	tab->addTab("Audio");
 	yoffset = vBorder;
-	yoffset = addAudioControls(tab, yoffset);
-	yoffset = addVolumeControls(tab, yoffset);
+	yoffset = addAudioControls(tab, yoffset, ws);
+	yoffset = addVolumeControls(tab, yoffset, ws);
 	// TODO: cd drive setting
 	
 	//
@@ -485,7 +484,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	//
 	tab->addTab("MIDI");
 	yoffset = vBorder;
-	yoffset = addMIDIControls(tab, yoffset);
+	yoffset = addMIDIControls(tab, yoffset, ws);
 
 	//
 	// 4) The miscellaneous tab

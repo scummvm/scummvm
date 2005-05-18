@@ -146,11 +146,17 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	_h = screenH - 2 * 40;	// TODO/FIXME
 
 	GUI::WidgetSize ws;
+	int buttonHeight;
+	int buttonWidth;
 
 	if (screenW >= 400 && screenH >= 300) {
 		ws = GUI::kBigWidgetSize;
+		buttonHeight = kBigButtonHeight;
+		buttonWidth = kBigButtonWidth;
 	} else {
 		ws = GUI::kNormalWidgetSize;
+		buttonHeight = kButtonHeight;
+		buttonWidth = kButtonWidth;
 	}
 	
 	const int x = 5;
@@ -171,7 +177,7 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	}
 
 	// GUI:  Add tab widget
-	TabWidget *tab = new TabWidget(this, 0, vBorder, _w, _h - 24 - 2 * vBorder, ws);
+	TabWidget *tab = new TabWidget(this, 0, vBorder, _w, _h - buttonHeight - 8 - 2 * vBorder, ws);
 
 	//
 	// 1) The game tab
@@ -180,12 +186,12 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	yoffset = vBorder;
 
 	// GUI:  Label & edit widget for the game ID
-	new StaticTextWidget(tab, x, yoffset + 2, labelWidth, kLineHeight, "ID: ", kTextAlignRight);
+	new StaticTextWidget(tab, x, yoffset + 2, labelWidth, kLineHeight, "ID: ", kTextAlignRight, ws);
 	_domainWidget = new DomainEditTextWidget(tab, x + labelWidth, yoffset, _w - labelWidth - 10, kLineHeight, _domain);
 	yoffset += 16;
 
 	// GUI:  Label & edit widget for the description
-	new StaticTextWidget(tab, x, yoffset + 2, labelWidth, kLineHeight, "Name: ", kTextAlignRight);
+	new StaticTextWidget(tab, x, yoffset + 2, labelWidth, kLineHeight, "Name: ", kTextAlignRight, ws);
 	_descriptionWidget = new EditTextWidget(tab, x + labelWidth, yoffset, _w - labelWidth - 10, kLineHeight, description);
 	yoffset += 16;
 
@@ -212,26 +218,27 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	// 2) The 'Path' tab
 	tab->addTab("Paths");
 	yoffset = vBorder;
+
 	// GUI:  Button + Label for the game path
- 	new ButtonWidget(tab, x, yoffset, kButtonWidth + 14, 16, "Game Path:", kCmdGameBrowser, 0);
-	_gamePathWidget = new StaticTextWidget(tab, x + kButtonWidth + 20, yoffset + 3, _w - (x + kButtonWidth + 20) - 10, kLineHeight, gamePath, kTextAlignLeft);
-	yoffset += 18;
+	addButton(tab, x, yoffset, "Game Path:", kCmdGameBrowser, 0, ws);
+	_gamePathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, kLineHeight, gamePath, kTextAlignLeft, ws);
+	yoffset += buttonHeight + 2;
 
 	// GUI:  Button + Label for the additional path
- 	new ButtonWidget(tab, x, yoffset, kButtonWidth + 14, 16, "Extra Path:", kCmdExtraBrowser, 0);
-	_extraPathWidget = new StaticTextWidget(tab, x + kButtonWidth + 20, yoffset + 3, _w - (x + kButtonWidth + 20) - 10, kLineHeight, extraPath, kTextAlignLeft);
+	addButton(tab, x, yoffset, "Extra Path:", kCmdExtraBrowser, 0, ws);
+	_extraPathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, kLineHeight, extraPath, kTextAlignLeft, ws);
 	if (extraPath.isEmpty() || !ConfMan.hasKey("extrapath", _domain)) {
 		_extraPathWidget->setLabel("None");
 	}
-	yoffset += 18;
+	yoffset += buttonHeight + 2;
 
 	// GUI:  Button + Label for the save path
- 	new ButtonWidget(tab, x, yoffset, kButtonWidth + 14, 16, "Save Path:", kCmdSaveBrowser, 0);
-	_savePathWidget = new StaticTextWidget(tab, x + kButtonWidth + 20, yoffset + 3, _w - (x + kButtonWidth + 20) - 10, kLineHeight, savePath, kTextAlignLeft);
+	addButton(tab, x, yoffset, "Save Path:", kCmdSaveBrowser, 0, ws);
+	_savePathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, kLineHeight, savePath, kTextAlignLeft, ws);
 	if (savePath.isEmpty() || !ConfMan.hasKey("savepath", _domain)) {
 		_savePathWidget->setLabel("Default");
 	}
-	yoffset += 18;
+	yoffset += buttonHeight + 2;
 
 	//
 	// 3) The graphics tab
@@ -239,10 +246,10 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	tab->addTab("Gfx");
 	yoffset = vBorder;
 
-	_globalGraphicsOverride = addCheckbox(tab, x, yoffset, "Override global graphic settings", kCmdGlobalGraphicsOverride, 0);
+	_globalGraphicsOverride = addCheckbox(tab, x, yoffset, "Override global graphic settings", kCmdGlobalGraphicsOverride, 0, ws);
 	yoffset += _globalGraphicsOverride->getHeight();
 
-	yoffset = addGraphicControls(tab, yoffset);
+	yoffset = addGraphicControls(tab, yoffset, ws);
 
 	//
 	// 4) The audio tab
@@ -250,10 +257,10 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	tab->addTab("Audio");
 	yoffset = vBorder;
 
-	_globalAudioOverride = addCheckbox(tab, x, yoffset, "Override global audio settings", kCmdGlobalAudioOverride, 0);
+	_globalAudioOverride = addCheckbox(tab, x, yoffset, "Override global audio settings", kCmdGlobalAudioOverride, 0, ws);
 	yoffset += _globalAudioOverride->getHeight();
 
-	yoffset = addAudioControls(tab, yoffset);
+	yoffset = addAudioControls(tab, yoffset, ws);
 
 	//
 	// 5) The MIDI tab
@@ -261,10 +268,10 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	tab->addTab("MIDI");
 	yoffset = vBorder;
 
-	_globalMIDIOverride = addCheckbox(tab, x, yoffset, "Override global MIDI settings", kCmdGlobalMIDIOverride, 0);
+	_globalMIDIOverride = addCheckbox(tab, x, yoffset, "Override global MIDI settings", kCmdGlobalMIDIOverride, 0, ws);
 	yoffset += _globalMIDIOverride->getHeight();
 
-	yoffset = addMIDIControls(tab, yoffset);
+	yoffset = addMIDIControls(tab, yoffset, ws);
 
 	//
 	// 6) The volume tab
@@ -272,18 +279,18 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	tab->addTab("Volume");
 	yoffset = vBorder;
 
-	_globalVolumeOverride = addCheckbox(tab, x, yoffset, "Override global volume settings", kCmdGlobalVolumeOverride, 0);
+	_globalVolumeOverride = addCheckbox(tab, x, yoffset, "Override global volume settings", kCmdGlobalVolumeOverride, 0, ws);
 	yoffset += _globalVolumeOverride->getHeight();
 
-	yoffset = addVolumeControls(tab, yoffset);
+	yoffset = addVolumeControls(tab, yoffset, ws);
 
 
 	// Activate the first tab
 	tab->setActiveTab(0);
 
 	// Add OK & Cancel buttons
-	addButton(_w - 2 * (kButtonWidth + 10), _h - 24, "Cancel", kCloseCmd, 0);
-	addButton(_w - (kButtonWidth + 10), _h - 24, "OK", kOKCmd, 0);
+	addButton(_w - 2 * (buttonWidth + 10), _h - buttonHeight - 8, "Cancel", kCloseCmd, 0, ws);
+	addButton(_w - (buttonWidth + 10), _h - buttonHeight - 8, "OK", kOKCmd, 0, ws);
 }
 
 void EditGameDialog::open() {
