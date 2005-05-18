@@ -988,7 +988,11 @@ void ScummEngine::runInputScript(int a, int cmd, int mode) {
 	int args[24];
 	int verbScript;
 
-	if (_version <= 2) {
+	if (_gameId == GID_MANIAC && _platform == Common::kPlatformC64) {
+		verbScript = 3;
+		//_scummVars[9] = cmd;
+
+	} else if (_version <= 2) {
 		verbScript = 4;
 		_scummVars[VAR_CLICK_AREA] = a;
 		switch (a) {

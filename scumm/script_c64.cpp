@@ -182,7 +182,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_getObjectOwner),
 		/* 74 */
 		OPCODE(o5_getDist),
-		OPCODE(o2_findObject),
+		OPCODE(o5_printEgo),
 		OPCODE(o2_walkActorToObject),
 		OPCODE(o2_clearState01),
 		/* 78 */
