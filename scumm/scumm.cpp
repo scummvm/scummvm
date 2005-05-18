@@ -1266,6 +1266,10 @@ ScummEngine_v2::ScummEngine_v2(GameDetector *detector, OSystem *syst, const Scum
  : ScummEngine_v3old(detector, syst, gs, md5sum) {
 }
 
+ScummEngine_c64::ScummEngine_c64(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) 
+ : ScummEngine_v2(detector, syst, gs, md5sum) {
+}
+
 ScummEngine_v6::ScummEngine_v6(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) 
  : ScummEngine(detector, syst, gs, md5sum) {
 	_blastObjectQueuePos = 0;
@@ -2874,7 +2878,11 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	switch (game.version) {
 	case 1:
 	case 2:
-		engine = new ScummEngine_v2(detector, syst, game, md5sum);
+		// Limit to C64 MM?
+		if (game.platform == Common::kPlatformC64)
+			engine = new ScummEngine_c64(detector, syst, game, md5sum);
+		else
+			engine = new ScummEngine_v2(detector, syst, game, md5sum);
 		break;
 	case 3:
 		if (game.features & GF_OLD_BUNDLE)

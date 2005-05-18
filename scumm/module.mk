@@ -36,6 +36,7 @@ MODULE_OBJS := \
 	scumm/room.o \
 	scumm/saveload.o \
 	scumm/script.o \
+	scumm/script_c64.o \
 	scumm/script_v2.o \
 	scumm/script_v5.o \
 	scumm/script_v6.o \

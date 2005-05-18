@@ -376,6 +376,30 @@ protected:
 	byte VAR_BACKUP_VERB;
 };
 
+/**
+ * Engine for version 2 SCUMM games.
+ */
+class ScummEngine_c64 : public ScummEngine_v2 {
+protected:
+	typedef void (ScummEngine_c64::*OpcodeProcC64)();
+	struct OpcodeEntryC64 {
+		OpcodeProcC64 proc;
+		const char *desc;
+	};
+
+	const OpcodeEntryC64 *_opcodesC64;
+
+public:
+	ScummEngine_c64(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
+
+protected:
+	virtual void setupOpcodes();
+	virtual void executeOpcode(byte i);
+	virtual const char *getOpcodeDesc(byte i);
+
+	/* Version 2 script opcodes */
+};
+
 class ScummEngine_v6 : public ScummEngine {
 	friend class Insane;
 
