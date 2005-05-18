@@ -1580,6 +1580,8 @@ void ScummEngine_v2::o2_switchCostumeSet() {
 	// groups of costumes it has
 	if (_platform == Common::kPlatformNES)
 		NES_loadCostumeSet(fetchScriptByte());
+	else if (_platform == Common::kPlatformC64)
+		fetchScriptByte();
 	else
 		o2_dummy();
 }

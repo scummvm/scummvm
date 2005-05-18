@@ -967,6 +967,7 @@ protected:
 	void actorFollowCamera(int act);
 
 	const byte *getPalettePtr(int palindex, int room);
+	void setupC64Palette();
 	void setupNESPalette();
 	void setupAmigaPalette();
 	void setupHercPalette();
