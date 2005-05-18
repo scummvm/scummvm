@@ -298,6 +298,22 @@ ButtonWidget *Dialog::addButton(int x, int y, const Common::String &label, uint3
 	return new ButtonWidget(this, x, y, w, h, label, cmd, hotkey, ws);
 }
 
+CheckboxWidget *Dialog::addCheckbox(int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws) {
+	const Graphics::Font *font;
+	int w, h;
+
+	if (ws == kBigWidgetSize) {
+		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		h = kBigButtonHeight;
+	} else {
+		font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+		h = kButtonHeight;
+	}
+
+	w = font->getFontHeight() + 10 + font->getStringWidth(label);
+
+	return new CheckboxWidget(this, x, y, w, h, label, cmd, hotkey, ws);
+}
 
 uint32 GuiObject::getMillis() {
 	return g_system->getMillis();

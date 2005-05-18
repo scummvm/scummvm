@@ -88,6 +88,7 @@ protected:
 	Widget *findWidget(int x, int y); // Find the widget at pos x,y if any
 
 	ButtonWidget *addButton(int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws = kDefaultWidgetSize);
+	CheckboxWidget *addCheckbox(int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws = kDefaultWidgetSize);
 
 	void setResult(int result) { _result = result; }
 	int getResult() const { return _result; }
