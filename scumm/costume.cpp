@@ -656,8 +656,7 @@ byte NESCostumeRenderer::drawLimb(const Actor *a, int limb) {
 
 	bool flipped = (newDirToOldDir(a->getFacing()) == 1);
 	int left = 239, right = 0, top = 239, bottom = 0;
-	byte *bgTransBuf = _vm->getMaskBuffer(0, 0, 0);
-	byte *gfxMaskBuf = _vm->getMaskBuffer(0, 0, 1);
+	byte *maskBuf = _vm->getMaskBuffer(0, 0, 1);
 
 	for (int spr = 0; spr < numSprites; spr++) {
 		byte mask, tile, sprpal;
@@ -685,8 +684,6 @@ byte NESCostumeRenderer::drawLimb(const Actor *a, int limb) {
 		if ((_actorY + y < 0) || (_actorY + y + 8 >= _out.h))
 			continue;
 
-		bool doMask = (_zbuf && gfxMaskBuf[(_actorY + y) * _numStrips + (_actorX + x + 4) / 8 - 2]);
-				
 		for (int ty = 0; ty < 8; ty++) {
 			byte c1 = _vm->_NESPatTable[0][tile * 16 + ty];
 			byte c2 = _vm->_NESPatTable[0][tile * 16 + ty + 8];
@@ -704,7 +701,7 @@ byte NESCostumeRenderer::drawLimb(const Actor *a, int limb) {
 					continue;
 				int my = _actorY + y + ty;
 				int mx = _actorX + x + tx;
-				if (!doMask || !(bgTransBuf[my * _numStrips + mx / 8] & revBitMask(mx & 7)))
+				if (!(_zbuf && (maskBuf[my * _numStrips + mx / 8] & revBitMask(mx & 7))))
 					*((byte *)_out.pixels + my * _out.pitch + mx) = palette[c];
 			}
 		}

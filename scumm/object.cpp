@@ -484,11 +484,6 @@ void ScummEngine::drawObject(int obj, int arg) {
 	if (numstrip != 0) {
 		byte flags = od.flags | Gdi::dbObjectMode;
 
-		if (_version == 1) {
-			if (_platform == Common::kPlatformNES) {
-				gdi.decodeNESObject(ptr, xpos, ypos, width, height);
-			}
-		}
 		// Sam & Max needs this to fix object-layering problems with
 		// the inventory and conversation icons.
 		if ((_version >= 7 || _gameId == GID_SAMNMAX) && getClass(od.obj_nr, kObjectClassIgnoreBoxes))
