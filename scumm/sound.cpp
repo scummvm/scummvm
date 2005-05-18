@@ -217,7 +217,7 @@ bool Sound::getHEMusicDetails(int id, int &musicOffs, int &musicSize) {
 }
 
 void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
-	debug(5,"playSound: soundID %d heOffset %d heChannel %d heFlags %d\n", soundID, heOffset, heChannel, heFlags);
+	debug(5,"playSound: soundID %d heOffset %d heChannel %d heFlags %d", soundID, heOffset, heChannel, heFlags);
 	byte *mallocedPtr = NULL;
 	byte *ptr;
 	char *sound;
