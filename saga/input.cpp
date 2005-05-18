@@ -71,6 +71,7 @@ int SagaEngine::processInput() {
 				break;
 			case 282: // F1
 				_render->toggleFlag(RF_SHOW_FPS);
+				_vm->_actor->_handleActionDiv = (_vm->_actor->_handleActionDiv == 15) ? 50 : 15;
 				break;
 			case 283: // F2
 				_render->toggleFlag(RF_PALETTE_TEST);

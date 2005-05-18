@@ -84,6 +84,7 @@ Render::Render(SagaEngine *vm, OSystem *system) {
 }
 
 Render::~Render(void) {
+	Common::g_timer->removeTimerProc(&fpsTimerCallback);
 	free(_bg_buf);
 	free(_tmp_buf);
 

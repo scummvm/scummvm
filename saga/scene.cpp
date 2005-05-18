@@ -125,7 +125,6 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 
 Scene::~Scene() {
 	if (_initialized) {
-		endScene();
 		delete _actionMap;
 		free(_sceneLUT);
 	}

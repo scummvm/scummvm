@@ -166,6 +166,9 @@ SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 
 SagaEngine::~SagaEngine() {
 	int i;
+	if (_scene->isSceneLoaded()) {
+		_scene->endScene();
+	}
 
 	delete _sndRes;
 	delete _events;

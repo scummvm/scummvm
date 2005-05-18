@@ -535,8 +535,8 @@ private:
 	void sfPlaySound(SCRIPTFUNC_PARAMS);
 	void SF_playLoopedSound(SCRIPTFUNC_PARAMS);
 	void sfGetDeltaFrame(SCRIPTFUNC_PARAMS);
-	void SF_showProtect(SCRIPTFUNC_PARAMS);
-	void SF_protectResult(SCRIPTFUNC_PARAMS);
+	void sfShowProtect(SCRIPTFUNC_PARAMS);
+	void sfProtectResult(SCRIPTFUNC_PARAMS);
 	void sfRand(SCRIPTFUNC_PARAMS);
 	void SF_fadeMusic(SCRIPTFUNC_PARAMS);
 	void SF_playVoice(SCRIPTFUNC_PARAMS);

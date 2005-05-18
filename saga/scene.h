@@ -257,7 +257,8 @@ class Scene {
 	}
 	void changeScene(uint16 sceneNumber, int actorsEntrance, SceneTransitionType transitionType);
 
-	bool initialized() { return _initialized; }
+	bool initialized() const { return _initialized; }
+	bool isSceneLoaded() const { return _sceneLoaded; }
 
 
 	int getSceneResourceId(int sceneNumber) {
@@ -277,7 +278,7 @@ class Scene {
 	void loadSceneEntryList(const byte* resourcePointer, size_t resourceLength);
 	int processSceneResources();
 
- private:
+ 
 	SagaEngine *_vm;
 	bool _initialized;
 

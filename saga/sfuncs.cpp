@@ -123,8 +123,8 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfPlaySound),
 		OPCODE(SF_playLoopedSound),
 		OPCODE(sfGetDeltaFrame),
-		OPCODE(SF_showProtect),
-		OPCODE(SF_protectResult),
+		OPCODE(sfShowProtect),
+		OPCODE(sfProtectResult),
 		OPCODE(sfRand),
 		OPCODE(SF_fadeMusic),
 		OPCODE(SF_playVoice),
@@ -574,7 +574,7 @@ void Script::SF_getNumber(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	debug(0, "STUB: SF_getNumber(), %d args", nArgs);
+	error(0, "STUB: SF_getNumber(), %d args", nArgs);
 }
 
 // Script function #21 (0x15)
@@ -1049,7 +1049,6 @@ void Script::sfPlaceActor(SCRIPTFUNC_PARAMS) {
 // has not been interrupted.
 void Script::sfCheckUserInterrupt(SCRIPTFUNC_PARAMS) {
 	thread->_returnValue = (_skipSpeeches == true);
-
 }
 
 // Script function #45 (0x2D)
@@ -1123,7 +1122,7 @@ void Script::SF_simulSpeech2(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	debug(0, "STUB: SF_simulSpeech2(), %d args", nArgs);
+	error(0, "STUB: SF_simulSpeech2(), %d args", nArgs);
 }
 
 static TEXTLIST_ENTRY *placardTextEntry;
@@ -1322,7 +1321,7 @@ void Script::SF_throwActor(SCRIPTFUNC_PARAMS) {
 	param5 = thread->pop();
 	param6 = thread->pop();
 
-	debug(0, "STUB: SF_throwActor(%d, %d, %d, %d, %d, %d)", param1, param2, param3, param4, param5, param6);
+	error(0, "STUB: SF_throwActor(%d, %d, %d, %d, %d, %d)", param1, param2, param3, param4, param5, param6);
 }
 
 // Script function #53 (0x35)
@@ -1352,7 +1351,7 @@ void Script::SF_changeActorScene(SCRIPTFUNC_PARAMS) {
 	int param1 = thread->pop();
 	int param2 = thread->pop();
 
-	debug(0, "STUB: SF_changeActorScene(%d, %d)", param1, param2);
+	error(0, "STUB: SF_changeActorScene(%d, %d)", param1, param2);
 }
 
 // Script function #56 (0x38)
@@ -1362,7 +1361,7 @@ void Script::SF_climb(SCRIPTFUNC_PARAMS) {
 	int param3 = thread->pop();
 	int param4 = thread->pop();
 
-	debug(0, "STUB: SF_climb(%d, %d, %d, %d)", param1, param2, param3, param4);
+	error(0, "STUB: SF_climb(%d, %d, %d, %d)", param1, param2, param3, param4);
 }
 
 // Script function #57 (0x39)
@@ -1386,7 +1385,7 @@ void Script::SF_setActorZ(SCRIPTFUNC_PARAMS) {
 	int param1 = thread->pop();
 	int param2 = thread->pop();
 
-	debug(0, "STUB: SF_setActorZ(%d, %d)", param1, param2);
+	error(0, "STUB: SF_setActorZ(%d, %d)", param1, param2);
 }
 
 // Script function #59 (0x3B)
@@ -1394,21 +1393,21 @@ void Script::SF_text(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	debug(0, "STUB: SF_text(), %d args", nArgs);
+	error(0, "STUB: SF_text(), %d args", nArgs);
 }
 
 // Script function #60 (0x3C)
 void Script::SF_getActorX(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 
-	debug(0, "STUB: SF_getActorX(%d)", param);
+	error(0, "STUB: SF_getActorX(%d)", param);
 }
 
 // Script function #61 (0x3D)
 void Script::SF_getActorY(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 
-	debug(0, "STUB: SF_getActorY(%d)", param);
+	error(0, "STUB: SF_getActorY(%d)", param);
 }
 
 // Script function #62 (0x3E)
@@ -1416,7 +1415,7 @@ void Script::SF_eraseDelta(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	debug(0, "STUB: SF_eraseDelta(), %d args", nArgs);
+	error(0, "STUB: SF_eraseDelta(), %d args", nArgs);
 }
 
 // Script function #63 (0x3F)
@@ -1591,19 +1590,20 @@ void Script::sfGetDeltaFrame(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #73 (0x49)
-void Script::SF_showProtect(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
+void Script::sfShowProtect(SCRIPTFUNC_PARAMS) {
+	thread->wait(kWaitTypeRequest);
 
-	debug(0, "STUB: SF_showProtect(), %d args", nArgs);
+	//TODO:protection dialog
+	thread->_flags &= ~kTFlagWaiting;
 }
 
 // Script function #74 (0x4A)
-void Script::SF_protectResult(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
-
-	debug(0, "STUB: SF_protectResult(), %d args", nArgs);
+void Script::sfProtectResult(SCRIPTFUNC_PARAMS) {
+	int protectHash;
+	//cheating
+	protectHash = thread->pop();
+	thread->push(protectHash);
+	thread->_returnValue = protectHash;	
 }
 
 // Script function #75 (0x4b)

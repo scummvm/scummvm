@@ -159,7 +159,8 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	ActorData *actor;
 	ObjectData *obj;
 	debug(9, "Actor::Actor()");
-	
+	_handleActionDiv = 15;
+
 	_actors = NULL;
 	_actorsCount = 0;
 
@@ -1136,7 +1137,7 @@ int Actor::direct(int msec) {
 	// FIXME: HACK. This should be turned into cycle event.
 	_lastTickMsec += msec;
 
-	if (_lastTickMsec > 1000 / 15) { // fixme  choose 50 for speed up
+	if (_lastTickMsec > 1000 / _handleActionDiv) {
 		_lastTickMsec = 0;
 		//process actions
 		handleActions(msec, false);

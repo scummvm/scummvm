@@ -206,16 +206,16 @@ struct Location {
 class CommonObjectData {
 public:
 //constant
-	bool disabled;				// disabled in init section 
+	bool disabled;					// disabled in init section 
 	int32 index;					// index in local array
-	uint16 id;					// object id
+	uint16 id;						// object id
 	int32 scriptEntrypointNumber;	// script entrypoint number
-	int32 spriteListResourceId;	// sprite list resource id
 
 //variables
 	uint16 flags;				// initial flags
 	int32 nameIndex;			// index in name string list
 	int32 sceneNumber;			// scene
+	int32 spriteListResourceId;	// sprite list resource id
 
 	Location location;			// logical coordinates
 	Point screenPosition;		// screen coordinates
@@ -226,6 +226,7 @@ public:
 		out.writeUint16LE(flags);
 		out.writeSint32LE(nameIndex);
 		out.writeSint32LE(sceneNumber);
+		out.writeSint32LE(spriteListResourceId);
 		location.saveState(out);
 		out.writeSint16LE(screenPosition.x);
 		out.writeSint16LE(screenPosition.y);
@@ -236,6 +237,7 @@ public:
 		flags = in.readUint16LE();
 		nameIndex = in.readSint32LE();
 		sceneNumber = in.readSint32LE();
+		spriteListResourceId = in.readSint32LE();
 		location.loadState(in);
 		screenPosition.x = in.readSint16LE();
 		screenPosition.y = in.readSint16LE();
@@ -559,7 +561,7 @@ protected:
 public:
 	ActorData *_centerActor;
 	ActorData *_protagonist;
-
+	int _handleActionDiv;
 protected:
 	SpeechData _activeSpeech;
 	int _protagState;
