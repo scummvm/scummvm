@@ -37,29 +37,14 @@
 
 namespace Scumm {
 
-/*
- * Static variables
- */
-const char *res_types[] = {
-	/* 0x01: */
-	"cursor", "bitmap", "icon", "menu", "dialog", "string",
-	"fontdir", "font", "accelerator", "rcdata", "messagelist",
-	"group_cursor", NULL, "group_icon", NULL,
-	/* the following are not defined in winbase.h, but found in wrc. */
-	/* 0x10: */ 
-	"version", "dlginclude", NULL, "plugplay", "vxd",
-	"anicursor", "aniicon"
-};
-#define RES_TYPE_COUNT (sizeof(res_types)/sizeof(char *))
-
-Win32ResExtractor::Win32ResExtractor(ScummEngine_v70he *scumm) {
+ResExtractor::ResExtractor(ScummEngine_v70he *scumm) {
 	_vm = scumm;
 
 	_fileName[0] = 0;
 	memset(_cursorCache, 0, sizeof(_cursorCache));
 }
 
-Win32ResExtractor::~Win32ResExtractor() {
+ResExtractor::~ResExtractor() {
 	for (int i = 0; i < MAX_CACHED_CURSORS; ++i) {
 		CachedCursor *cc = &_cursorCache[i];
 		if (cc->valid) {
@@ -70,7 +55,7 @@ Win32ResExtractor::~Win32ResExtractor() {
 	}
 }
 
-Win32ResExtractor::CachedCursor *Win32ResExtractor::findCachedCursor(int id) {
+ResExtractor::CachedCursor *ResExtractor::findCachedCursor(int id) {
 	for (int i = 0; i < MAX_CACHED_CURSORS; ++i) {
 		CachedCursor *cc = &_cursorCache[i];
 		if (cc->valid && cc->id == id) {
@@ -80,7 +65,7 @@ Win32ResExtractor::CachedCursor *Win32ResExtractor::findCachedCursor(int id) {
 	return NULL;
 }
 
-Win32ResExtractor::CachedCursor *Win32ResExtractor::getCachedCursorSlot() {
+ResExtractor::CachedCursor *ResExtractor::getCachedCursorSlot() {
 	uint32 min_last_used = 0;
 	CachedCursor *r = NULL;
 	for (int i = 0; i < MAX_CACHED_CURSORS; ++i) {
@@ -101,8 +86,7 @@ Win32ResExtractor::CachedCursor *Win32ResExtractor::getCachedCursorSlot() {
 	return r;
 }
 
-void Win32ResExtractor::setCursor(int id) {
-	char buf[20];
+void ResExtractor::setCursor(int id) {
 	byte *cursorRes = 0;
 	int cursorsize;
 	int keycolor = 0;
@@ -110,11 +94,10 @@ void Win32ResExtractor::setCursor(int id) {
 	if (cc != NULL) {
 		debug(7, "Found cursor %d in cache slot %d", id, cc - _cursorCache);
 	} else {
-		snprintf(buf, sizeof(buf), "%d", id);
 		cc = getCachedCursorSlot();
 		assert(cc && !cc->valid);
-		cursorsize = extractResource("group_cursor", buf, &cursorRes);
-		convertIcons(cursorRes, cursorsize, &cc->bitmap, &cc->w, &cc->h, &cc->hotspot_x, &cc->hotspot_y, &keycolor);
+		cursorsize = extractResource(id, &cursorRes);
+		convertIcons(cursorRes, cursorsize, &cc->bitmap, &cc->w, &cc->h, &cc->hotspot_x, &cc->hotspot_y, &keycolor, &cc->palette, &cc->palSize);
 		debug(7, "Adding cursor %d to cache slot %d", id, cc - _cursorCache);
 		free(cursorRes);
 		cc->valid = true;
@@ -122,11 +105,41 @@ void Win32ResExtractor::setCursor(int id) {
 		cc->last_used = g_system->getMillis();
 	}
 
+	if (_vm->_system->hasFeature(OSystem::kFeatureCursorHasPalette) && cc->palette)
+			_vm->_system->setCursorPalette(cc->palette, 0, cc->palSize);
+
 	_vm->setCursorHotspot(cc->hotspot_x, cc->hotspot_y);
 	_vm->setCursorFromBuffer(cc->bitmap, cc->w, cc->h, cc->w);
 }
 
-int Win32ResExtractor::extractResource(const char *resType, char *resName, byte **data) {
+
+/*
+ * Static variables
+ */
+const char *res_types[] = {
+	/* 0x01: */
+	"cursor", "bitmap", "icon", "menu", "dialog", "string",
+	"fontdir", "font", "accelerator", "rcdata", "messagelist",
+	"group_cursor", NULL, "group_icon", NULL,
+	/* the following are not defined in winbase.h, but found in wrc. */
+	/* 0x10: */ 
+	"version", "dlginclude", NULL, "plugplay", "vxd",
+	"anicursor", "aniicon"
+};
+#define RES_TYPE_COUNT (sizeof(res_types)/sizeof(char *))
+
+Win32ResExtractor::Win32ResExtractor(ScummEngine_v70he *scumm) : ResExtractor(scumm) {
+}
+
+int Win32ResExtractor::extractResource(int resId, byte **data) {
+	char buf[20];
+
+	snprintf(buf, sizeof(buf), "%d", resId);
+
+	return extractResource_("group_cursor", buf, data);
+}
+
+int Win32ResExtractor::extractResource_(const char *resType, char *resName, byte **data) {
 	char *arg_language = NULL;
 	const char *arg_type = resType;
 	char *arg_name = resName;
@@ -922,7 +935,7 @@ Win32ResExtractor::WinResource *Win32ResExtractor::find_resource(WinLibrary *fi,
 
 
 int Win32ResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int *w, int *h,
-							int *hotspot_x, int *hotspot_y, int *keycolor) {
+			int *hotspot_x, int *hotspot_y, int *keycolor, byte **pal, int *palSize) {
 	Win32CursorIconFileDir dir;
 	Win32CursorIconFileDirEntry *entries = NULL;
 	uint32 offset;
@@ -1267,19 +1280,13 @@ void Win32ResExtractor::fix_win32_image_data_directory(Win32ImageDataDirectory *
 }
 
 
-MacResExtractor::MacResExtractor(ScummEngine_v70he *scumm) {
-	_vm = scumm;
-
-	_fileName[0] = 0;
+MacResExtractor::MacResExtractor(ScummEngine_v70he *scumm) : ResExtractor(scumm) {
 	_resOffset = -1;
 }
 
-void MacResExtractor::setCursor(int id) {
-	byte *cursorRes = 0, *cursor = 0;
-	int cursorsize;
-	int w = 0, h = 0, hotspot_x = 0, hotspot_y = 0;
-	int keycolor;
-	Common::File f;
+int MacResExtractor::extractResource(int id, byte **buf) {
+	Common::File in;
+	int size;
 
 	if (!_fileName[0]) // We are running for the first time
 		if (_vm->_substResFileNameIndex > 0) {
@@ -1289,33 +1296,20 @@ void MacResExtractor::setCursor(int id) {
 			_vm->generateSubstResFileName(buf1, _fileName, sizeof(buf1));
 
 			// Some programs write it as .bin. Try that too
-			if (!f.exists(_fileName)) {
+			if (!in.exists(_fileName)) {
 				strcpy(buf1, _fileName);
 				snprintf(_fileName, 128, "%s.bin", buf1);
 
-				if (!f.exists(_fileName)) {
+				if (!in.exists(_fileName)) {
 					// And finally check if we have dumped resource fork
 					snprintf(_fileName, 128, "%s.rsrc", buf1);
-					if (!f.exists(_fileName)) {
+					if (!in.exists(_fileName)) {
 						error("Cannot open file any of files '%s', '%s.bin', '%s.rsrc", 
 							  buf1, buf1, buf1);
 					}
 				}
 			}
 		}
-
-	cursorsize = extractResource(id, &cursorRes);
-	convertIcons(cursorRes, cursorsize, &cursor, &w, &h, &hotspot_x, &hotspot_y, &keycolor);
-
-	_vm->setCursorHotspot(hotspot_x, hotspot_y);
-	_vm->setCursorFromBuffer(cursor, w, h, w);
-	free(cursorRes);
-	free(cursor);
-}
-
-int MacResExtractor::extractResource(int id, byte **buf) {
-	Common::File in;
-	int size;
 
 	in.open(_fileName);
 	if (!in.isOpen()) {
@@ -1326,12 +1320,16 @@ int MacResExtractor::extractResource(int id, byte **buf) {
 	if (_resOffset == -1) {
 		if (!init(in))
 			error("Resource fork is missing in file '%s'", _fileName);
+		in.close();
+		in.open(_fileName);
 	}
 
 	*buf = getResource(in, "crsr", 1000 + id, &size);
 
+	in.close();
+
 	if (*buf == NULL)
-		error("There is no cursor ID #%d", id);
+		error("There is no cursor ID #%d", 1000 + id);
 
 	return size;
 }
@@ -1450,6 +1448,7 @@ void MacResExtractor::readMap(Common::File in) {
 
 	for (i = 0; i < _resMap.numTypes; i++) {
 		in.read(_resTypes[i].id, 4);
+		_resTypes[i].id[4] = 0;
 		_resTypes[i].items = in.readUint16BE();
 		_resTypes[i].offset = in.readUint16BE();
 		_resTypes[i].items++;
@@ -1487,8 +1486,8 @@ void MacResExtractor::readMap(Common::File in) {
 	}
 }
 
-void MacResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int *w, int *h,
-							int *hotspot_x, int *hotspot_y, int *keycolor) {
+int MacResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int *w, int *h,
+			  int *hotspot_x, int *hotspot_y, int *keycolor, byte **palette, int *palSize) {
 	Common::MemoryReadStream dis(data, datasize);
 	int i, b;
 	byte imageByte;
@@ -1496,7 +1495,6 @@ void MacResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int 
 	int numBytes;
 	int pixelsPerByte, bpp;
 	int ctSize;
-	byte *palette;
 	byte bitmask;
 	int iconRowBytes, iconBounds[4];
 	int ignored;
@@ -1532,7 +1530,7 @@ void MacResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int 
 
 	// Use b/w cursor on backends which don't support cursor palettes
 	if (!_vm->_system->hasFeature(OSystem::kFeatureCursorHasPalette))
-		return;
+		return 1;
 
 	dis.readUint32BE(); // reserved
 	dis.readUint32BE(); // cursorID
@@ -1545,7 +1543,7 @@ void MacResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int 
 	iconRowBytes = dis.readByte();
 
 	if (!iconRowBytes)
-		return;
+		return 1;
 
 	iconBounds[0] = dis.readUint16BE();
 	iconBounds[1] = dis.readUint16BE();
@@ -1578,26 +1576,26 @@ void MacResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int 
 	dis.readUint16BE(); // ctFlag
 	ctSize = dis.readUint16BE() + 1;
 
-	palette = (byte *)malloc(ctSize * 4);
+	*palette = (byte *)malloc(ctSize * 4);
 
 	// Read just high byte of 16-bit color
 	for (int c = 0; c < ctSize; c++) {
 		// We just use indices 0..ctSize, so ignore color ID
 		dis.readUint16BE(); // colorID[c]
 
-		palette[c * 4 + 0] = dis.readByte();
+		palette[0][c * 4 + 0] = dis.readByte();
 		ignored = dis.readByte();
 
-		palette[c * 4 + 1] = dis.readByte();
+		palette[0][c * 4 + 1] = dis.readByte();
 		ignored = dis.readByte();
 
-		palette[c * 4 + 2] = dis.readByte();
+		palette[0][c * 4 + 2] = dis.readByte();
 		ignored = dis.readByte();
 
-		palette[c * 4 + 3] = 0;
+		palette[0][c * 4 + 3] = 0;
 	}
 
-	_vm->_system->setCursorPalette(palette, 0, ctSize);
+	*palSize = ctSize;
 
 	numBytes =
          (iconBounds[2] - iconBounds[0]) *
@@ -1623,9 +1621,10 @@ void MacResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int 
 		}
 
 	free(iconData);
-	free(palette);
 
 	assert(datasize - dis.pos() == 0);
+
+	return 1;
 }
 
 

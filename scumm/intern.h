@@ -757,8 +757,7 @@ protected:
 
 #ifndef DISABLE_HE
 class ScummEngine_v70he : public ScummEngine_v60he {
-	friend class Win32ResExtractor;
-	friend class MacResExtractor;
+	friend class ResExtractor;
 
 protected:
 	typedef void (ScummEngine_v70he::*OpcodeProcv70he)();
@@ -769,8 +768,7 @@ protected:
 	
 	const OpcodeEntryv70he *_opcodesv70he;
 
-	Win32ResExtractor *_win32ResExtractor;
-	MacResExtractor *_macResExtractor;
+	ResExtractor *_resExtractor;
 
 	byte *_heV7RoomOffsets;
 

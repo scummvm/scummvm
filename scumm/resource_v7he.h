@@ -114,14 +114,17 @@ namespace Scumm {
 	if (!check_offset(fi->memory, fi->total_size, fi->file->name(), x, s)) \
 		return (r);
 
-class Win32ResExtractor {
- public:
-	Win32ResExtractor(ScummEngine_v70he *scumm);
-	~Win32ResExtractor();
-	int extractResource(const char *resType, char *resName, byte **data);
+class ResExtractor {
+public:
+	ResExtractor(ScummEngine_v70he *scumm);
+	virtual ~ResExtractor();
+
 	void setCursor(int id);
-	int convertIcons(byte *data, int datasize, byte **cursor, int *w, int *h,
-					 int *hotspot_x, int *hotspot_y, int *keycolor);
+
+	virtual int extractResource(int id, byte **buf) { return 0; };
+	virtual int convertIcons(byte *data, int datasize, byte **cursor, int *w, int *h,
+							 int *hotspot_x, int *hotspot_y, int *keycolor, 
+							 byte **palette, int *palSize) { return 0; };
 
 	enum {
 		MAX_CACHED_CURSORS = 10
@@ -134,19 +137,34 @@ class Win32ResExtractor {
 		int w, h;
 		int hotspot_x, hotspot_y;
 		uint32 last_used;
+		byte *palette;
+		int palSize;
 	};
 
- private:
-	Win32ResExtractor::CachedCursor *findCachedCursor(int id);
-	Win32ResExtractor::CachedCursor *getCachedCursorSlot();
+	ScummEngine_v70he *_vm;
+
+	ResExtractor::CachedCursor *findCachedCursor(int id);
+	ResExtractor::CachedCursor *getCachedCursorSlot();
 
 	bool _arg_raw;
-	ScummEngine_v70he *_vm;
 	char _fileName[256];
 	CachedCursor _cursorCache[MAX_CACHED_CURSORS];
 
 	typedef Common::MemoryReadStream MemoryReadStream;
 
+};
+
+class Win32ResExtractor : public ResExtractor {
+ public:
+	Win32ResExtractor(ScummEngine_v70he *scumm);
+	~Win32ResExtractor() {};
+	int extractResource(int id, byte **data);
+	void setCursor(int id);
+	int convertIcons(byte *data, int datasize, byte **cursor, int *w, int *h,
+			 int *hotspot_x, int *hotspot_y, int *keycolor, byte **palette, int *palSize);
+
+ private:
+	int extractResource_(const char *resType, char *resName, byte **data);
 /*
  * Structures 
  */
@@ -481,7 +499,7 @@ class Win32ResExtractor {
 	void fix_win32_image_data_directory(Win32ImageDataDirectory *obj);
 };
 
-class MacResExtractor {
+class MacResExtractor : public ResExtractor {
 
 public:
 	MacResExtractor(ScummEngine_v70he *scumm);
@@ -493,8 +511,8 @@ private:
 	bool init(Common::File in);
 	void readMap(Common::File in);
 	byte *getResource(Common::File in, const char *typeID, int16 resID, int *size);
-	void convertIcons(byte *data, int datasize, byte **cursor, int *w, int *h,
-					 int *hotspot_x, int *hotspot_y, int *keycolor);
+	int convertIcons(byte *data, int datasize, byte **cursor, int *w, int *h,
+			 int *hotspot_x, int *hotspot_y, int *keycolor, byte **palette, int *palSize);
 
 	struct ResMap {
 		int16 resAttr;
@@ -520,8 +538,6 @@ private:
 	typedef Resource *ResPtr;
 
 private:
-	ScummEngine_v70he *_vm;
-	char _fileName[256];
 	int _resOffset;
 	int32 _dataOffset;
 	int32 _dataLength;

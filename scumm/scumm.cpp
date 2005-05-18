@@ -1294,8 +1294,10 @@ ScummEngine_v6::ScummEngine_v6(GameDetector *detector, OSystem *syst, const Scum
 #ifndef DISABLE_HE
 ScummEngine_v70he::ScummEngine_v70he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
  : ScummEngine_v60he(detector, syst, gs, md5sum) {
-	 _win32ResExtractor = new Win32ResExtractor(this);
-	 _macResExtractor = new MacResExtractor(this);
+	if (_platform == Common::kPlatformMacintosh && _heversion == 72) 
+		_resExtractor = new MacResExtractor(this);
+	else
+		_resExtractor = new Win32ResExtractor(this);
 
 	_heV7RoomOffsets = NULL;
 
