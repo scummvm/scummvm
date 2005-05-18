@@ -179,7 +179,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_lights),
 		OPCODE(o5_getActorCostume),
 		OPCODE(o5_loadRoom),
-		OPCODE(o2_roomOps),
+		OPCODE(o_getObjectOwner),
 		/* 74 */
 		OPCODE(o5_getDist),
 		OPCODE(o2_findObject),
@@ -339,7 +339,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_lights),
 		OPCODE(o5_getActorCostume),
 		OPCODE(o5_loadRoom),
-		OPCODE(o2_roomOps),
+		OPCODE(o_getObjectOwner),
 		/* F4 */
 		OPCODE(o5_getDist),
 		OPCODE(o2_findObject),
@@ -468,6 +468,11 @@ void ScummEngine_c64::o_lights() {
 		VAR(VAR_CURRENT_LIGHTS) = 0;
 
 	_fullRedraw = 1;
+}
+
+void ScummEngine_c64::o_getObjectOwner() {
+	getResultPos();
+	setResult(getOwner(getVarOrDirectByte(PARAM_1)));
 }
 
 void ScummEngine_c64::o_subtract() {

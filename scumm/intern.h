@@ -410,6 +410,7 @@ protected:
 	void o_unknown53();
 	void o_cursorCommand();
 	void o_lights();
+	void o_getObjectOwner();
 
 	void o_subtract();
 };
