@@ -572,7 +572,7 @@ void Actor::updateActorsScene(int actorsEntrance) {
 
 	for (i = 0; i < _actorsCount; i++) {
 		actor = _actors[i];		
-		if (actor->flags & (kProtagonist | kFollower)) {
+		if ((actor->flags & (kProtagonist | kFollower)) || (i == 0)) {
 
 			if (actor->flags & kProtagonist) {
 				actor->finalTarget = actor->location;
