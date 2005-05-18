@@ -41,7 +41,7 @@ void ScummEngine_v2::readClassicIndexFile() {
 			_numCostumes = 25;
 			_numScripts = 160;
 			_numSounds = 70;
-		} if (_platform == Common::kPlatformNES) {
+		} else if (_platform == Common::kPlatformNES) {
 			_numGlobalObjects = 775;
 			_numRooms = 55;
 
