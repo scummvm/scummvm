@@ -415,11 +415,11 @@ void LogicHEfunshop::op_1004(int32 *args) {
 		data[i + 1] -= (double)y;
 	}
 
-	double a1 = (double)args[1] * PI / 180;
+	double a1 = (double)args[1] * DEG2RAD;
 
 	for (int i = 0; i <= 6; i += 2) {
 		at = atan2(data[i + 1], data[i]);
-		sq = sqrt(fabs(data[i]) * fabs(data[i]) + fabs(data[i + 1]) * fabs(data[i + 1]));
+		sq = hypot(data[i + 1], data[i]);
 
 		if (at <= 0)
 			at += 2 * PI;
@@ -442,26 +442,14 @@ void LogicHEfunshop::op_1004(int32 *args) {
 		data[i] -= data[minx];
 		data[i + 1] -= data[miny];
 
-		if (floor(data[i]) + 0.5 > data[i])
-			data[i] = floor(data[i]);
-		else
-			data[i] = ceil(data[i]);
-
-		putInArray(args[0], 0, 519 + i, (int32)data[i]);
-
-		if (floor(data[i + 1]) + 0.5 > data[i + 1])
-			data[i + 1] = floor(data[i + 1]);
-		else
-			data[i + 1] = ceil(data[i + 1]);
-
-		putInArray(args[0], 0, 519 + i + 1, (int32)data[i + 1]);
+		putInArray(args[0], 0, 519 + i, (int32)round(data[i]));
+		putInArray(args[0], 0, 519 + i + 1, (int32)round(data[i + 1]));
 	}
 }
 
 void LogicHEfunshop::op_1005(int32 *args) {
 	double data[8];
 	double args1, args2;
-	double temp;
 
 	for (int i = 520; i <= 526; i += 2) {
 		data[i - 520] = getFromArray(args[0], 0, i - 1);
@@ -477,19 +465,8 @@ void LogicHEfunshop::op_1005(int32 *args) {
 	}
 	
 	for (int i = 520; i <= 526; i += 2) {
-		if (floor(data[i - 520]) + 0.5 > data[i - 520]) {
-			temp = ceil(data[i - 520]);
-		} else {
-			temp = floor(data[i - 520]);
-		}
-		putInArray(args[0], 0, i - 1, (int32)temp);
-
-		if (floor(data[i - 520 + 1]) + 0.5 <= data[i - 520 + 1]) {
-			temp = ceil(data[i - 520 + 1]);
-		} else {
-			temp = floor(data[i - 520 + 1]);
-		}
-		putInArray(args[0], 0, i, (int32)temp);
+		putInArray(args[0], 0, i - 1, (int32)round(data[i - 520]));
+		putInArray(args[0], 0, i, (int32)round(data[i - 520 + 1]));
 	}
 }
 
