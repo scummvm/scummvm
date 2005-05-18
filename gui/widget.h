@@ -187,7 +187,6 @@ protected:
 class CheckboxWidget : public ButtonWidget {
 protected:
 	bool	_state;
-	const	WidgetSize _ws;
 public:
 	CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0, WidgetSize ws = kDefaultWidgetSize);
 

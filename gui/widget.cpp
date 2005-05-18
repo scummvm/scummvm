@@ -178,7 +178,7 @@ void ButtonWidget::drawWidget(bool hilite) {
 #pragma mark -
 
 CheckboxWidget::CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey, WidgetSize ws)
-	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey, ws), _state(false), _ws(ws) {
+	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey, ws), _state(false) {
 	_flags = WIDGET_ENABLED;
 	_type = kCheckboxWidget;
 }
