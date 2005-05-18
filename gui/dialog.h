@@ -93,6 +93,9 @@ protected:
 	CheckboxWidget *addCheckbox(GuiObject *boss, int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws = kDefaultWidgetSize);
 	CheckboxWidget *addCheckbox(int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws = kDefaultWidgetSize);
 
+	SliderWidget *addSlider(GuiObject *boss, int x, int y, uint32 cmd, WidgetSize ws = kDefaultWidgetSize);
+	SliderWidget *addSlider(int x, int y, uint32 cmd, WidgetSize ws = kDefaultWidgetSize);
+
 	void setResult(int result) { _result = result; }
 	int getResult() const { return _result; }
 };

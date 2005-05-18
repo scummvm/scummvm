@@ -323,6 +323,24 @@ CheckboxWidget *Dialog::addCheckbox(GuiObject *boss, int x, int y, const Common:
 	return new CheckboxWidget(boss, x, y, w, h, label, cmd, hotkey, ws);
 }
 
+SliderWidget *Dialog::addSlider(int x, int y, uint32 cmd, WidgetSize ws) {
+	return addSlider(this, x, y, cmd, ws);
+}
+
+SliderWidget *Dialog::addSlider(GuiObject *boss, int x, int y, uint32 cmd, WidgetSize ws) {
+	int w, h;
+
+	if (ws == kBigWidgetSize) {
+		w = kBigSliderWidth;
+		h = kBigSliderHeight;
+	} else {
+		w = kSliderWidth;
+		h = kSliderHeight;
+	}
+
+	return new SliderWidget(boss, x, y, w, h, cmd);
+}
+
 uint32 GuiObject::getMillis() {
 	return g_system->getMillis();
 }

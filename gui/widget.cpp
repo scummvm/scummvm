@@ -238,8 +238,7 @@ void CheckboxWidget::drawWidget(bool hilite) {
 
 SliderWidget::SliderWidget(GuiObject *boss, int x, int y, int w, int h, uint32 cmd)
 	: Widget(boss, x, y, w, h), CommandSender(boss),
-	  _cmd(cmd), _value(0), _oldValue(0), _valueMin(0), _valueMax(100), _isDragging(false)
-	  {
+	  _cmd(cmd), _value(0), _oldValue(0), _valueMin(0), _valueMax(100), _isDragging(false) {
 	_flags = WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG;
 	_type = kSliderWidget;
 }
