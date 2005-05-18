@@ -51,12 +51,12 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_assignVarWordIndirect),
 		OPCODE(o2_setObjPreposition),
 		/* 0C */
-		OPCODE(o2_resourceRoutines),
+		OPCODE(o_loadSound),
 		OPCODE(o5_walkActorToActor),
 		OPCODE(o2_putActorAtObject),
 		OPCODE(o2_ifNotState08),
 		/* 10 */
-		OPCODE(o5_getObjectOwner),
+		OPCODE(o5_breakHere),
 		OPCODE(o2_animateActor),
 		OPCODE(o2_panCameraTo),
 		OPCODE(o2_actorOps),
@@ -68,7 +68,7 @@ void ScummEngine_c64::setupOpcodes() {
 		/* 18 */
 		OPCODE(o5_jumpRelative),
 		OPCODE(o2_doSentence),
-		OPCODE(o5_move),
+		OPCODE(o_move),
 		OPCODE(o2_setBitVar),
 		/* 1C */
 		OPCODE(o5_startSound),
@@ -82,13 +82,13 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_getActorY),
 		/* 24 */
 		OPCODE(o2_loadRoomWithEgo),
-		OPCODE(o2_drawObject),
+		OPCODE(o5_loadRoom),
 		OPCODE(o5_setVarRange),
 		OPCODE(o2_setState04),
 		/* 28 */
 		OPCODE(o5_equalZero),
 		OPCODE(o2_setOwnerOf),
-		OPCODE(o2_addIndirect),
+		OPCODE(o2_delay),
 		OPCODE(o5_delayVariable),
 		/* 2C */
 		OPCODE(o2_assignVarByte),
@@ -126,12 +126,12 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o5_increment),
 		OPCODE(o2_clearState08),
 		/* 48 */
-		OPCODE(o5_isEqual),
+		OPCODE(o_isEqual),
 		OPCODE(o5_faceActor),
 		OPCODE(o2_chainScript),
 		OPCODE(o2_setObjPreposition),
 		/* 4C */
-		OPCODE(o2_waitForSentence),
+		OPCODE(o_loadScript),
 		OPCODE(o5_walkActorToActor),
 		OPCODE(o2_putActorAtObject),
 		OPCODE(o2_ifState08),
@@ -139,7 +139,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_pickupObject),
 		OPCODE(o2_animateActor),
 		OPCODE(o5_actorFollowCamera),
-		OPCODE(o2_actorOps),
+		OPCODE(o_unknown53),
 		/* 54 */
 		OPCODE(o5_setObjectName),
 		OPCODE(o2_actorFromPos),
@@ -156,7 +156,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifNotState02),
 		/* 60 */
-		OPCODE(o2_cursorCommand),
+		OPCODE(o_cursorCommand),
 		OPCODE(o2_putActor),
 		OPCODE(o2_stopScript),
 		OPCODE(o5_getActorFacing),
@@ -174,9 +174,9 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_getObjPreposition),
 		OPCODE(o5_putActorInRoom),
 		OPCODE(o2_dummy),
-		OPCODE(o2_ifState04),
+		OPCODE(o2_ifState08),
 		/* 70 */
-		OPCODE(o2_lights),
+		OPCODE(o_lights),
 		OPCODE(o5_getActorCostume),
 		OPCODE(o5_loadRoom),
 		OPCODE(o2_roomOps),
@@ -334,7 +334,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_getObjPreposition),
 		OPCODE(o5_putActorInRoom),
 		OPCODE(o2_dummy),
-		OPCODE(o2_ifState04),
+		OPCODE(o2_ifNotState08),
 		/* F0 */
 		OPCODE(o2_lights),
 		OPCODE(o5_getActorCostume),
@@ -373,6 +373,108 @@ void ScummEngine_c64::executeOpcode(byte i) {
 
 const char *ScummEngine_c64::getOpcodeDesc(byte i) {
 	return _opcodesC64[i].desc;
+}
+
+void ScummEngine_c64::setStateCommon(byte type) {
+	int obj = fetchScriptByte();
+	putState(obj, getState(obj) | type);
+}
+
+void ScummEngine_c64::clearStateCommon(byte type) {
+	int obj = fetchScriptByte();
+	putState(obj, getState(obj) & ~type);
+}
+
+void ScummEngine_c64::ifStateCommon(byte type) {
+	int obj = fetchScriptByte();
+
+	if ((getState(obj) & type) == 0)
+		o5_jumpRelative();
+	else
+		ignoreScriptWord();
+}
+
+void ScummEngine_c64::ifNotStateCommon(byte type) {
+	int obj = fetchScriptByte();
+
+	if ((getState(obj) & type) != 0)
+		o5_jumpRelative();
+	else
+		ignoreScriptWord();
+}
+
+void ScummEngine_c64::o_loadSound() {
+	int resid = fetchScriptByte();
+	ensureResourceLoaded(rtSound, resid);
+}
+
+void ScummEngine_c64::o_move() {
+	getResultPos();
+	setResult(getVarOrDirectByte(PARAM_1));
+}
+
+void ScummEngine_c64::o_isEqual() {
+	int16 a, b;
+	int var;
+
+	var = fetchScriptByte();
+	a = readVar(var);
+	b = getVarOrDirectByte(PARAM_1);
+
+	if (b == a)
+		ignoreScriptWord();
+	else
+		o5_jumpRelative();
+}
+
+void ScummEngine_c64::o_loadScript() {
+	int resid = fetchScriptByte();
+	ensureResourceLoaded(rtScript, resid);
+}
+
+void ScummEngine_c64::o_unknown53() {
+	debug(0, "o_unknown53 (%d)", fetchScriptByte());
+}
+
+void ScummEngine_c64::o_cursorCommand() {
+	// TODO
+
+	byte state = fetchScriptByte();
+	debug(0, "o_cursorCommand (%d)", state);
+
+	if (state == 1) {
+		_userPut = 1;
+		_cursor.state = 1;
+	} else {
+		_userPut = 0;
+		_cursor.state = 0;
+	}
+}
+
+void ScummEngine_c64::o_lights() {
+	int a;
+
+	a = getVarOrDirectByte(PARAM_1);
+	// Convert older light mode values into
+	// equivalent values.of later games
+	// 0 Darkness
+	// 1 Flashlight
+	// 2 Lighted area
+	if (a == 2)
+		VAR(VAR_CURRENT_LIGHTS) = 11; 
+	else if (a == 1)
+		VAR(VAR_CURRENT_LIGHTS) = 4;
+	else 
+		VAR(VAR_CURRENT_LIGHTS) = 0;
+
+	_fullRedraw = 1;
+}
+
+void ScummEngine_c64::o_subtract() {
+	int a;
+	getResultPos();
+	a = getVarOrDirectByte(PARAM_1);
+	_scummVars[_resultVarNumber] -= a;
 }
 
 #undef PARAM_1

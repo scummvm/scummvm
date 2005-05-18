@@ -397,7 +397,21 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 
+	virtual void ifStateCommon(byte type);
+	virtual void ifNotStateCommon(byte type);
+	virtual void setStateCommon(byte type);
+	virtual void clearStateCommon(byte type);
+
 	/* Version 2 script opcodes */
+	void o_loadSound();
+	void o_move();
+	void o_isEqual();
+	void o_loadScript();
+	void o_unknown53();
+	void o_cursorCommand();
+	void o_lights();
+
+	void o_subtract();
 };
 
 class ScummEngine_v6 : public ScummEngine {

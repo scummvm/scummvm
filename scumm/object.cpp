@@ -704,7 +704,11 @@ void ScummEngine_v4::setupRoomObject(ObjectData *od, const byte *room, const byt
 	if (_features & GF_OLD_BUNDLE)
 		ptr -= 2;
 
-	od->obj_nr = READ_LE_UINT16(ptr + 6);
+	if (_gameId == GID_MANIAC && _platform == Common::kPlatformC64) {
+		od->obj_nr = *(ptr + 7);
+	} else {
+		od->obj_nr = READ_LE_UINT16(ptr + 6);
+	}
 
 	od->x_pos = *(ptr + 9) * 8;
 	od->y_pos = ((*(ptr + 10)) & 0x7F) * 8;

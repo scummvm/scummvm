@@ -183,9 +183,11 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 
 	_egoPositioned = false;
 	runEntryScript();
-	if (_version <= 2)
+	if (_gameId == GID_MANIAC && _platform == Common::kPlatformC64) {
+		runScript(18, 0, 0, 0);
+	} else if (_version <= 2) {
 		runScript(5, 0, 0, 0);
-	else if (_version >= 5 && _version <= 6) {
+	} else if (_version >= 5 && _version <= 6) {
 		if (a && !_egoPositioned) {
 			int x, y;
 			getObjectXYPos(objectNr, x, y);
