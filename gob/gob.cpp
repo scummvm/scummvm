@@ -93,7 +93,7 @@ static const GobGameSettings gob_games[] = {
 	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble", GF_WOODRUFF, "c27402cee260d2ff1c4cecb2006a630a"},
 
 	// CD 1.00, German release (INTRO.STRK seems to be multilingual, though?)
-	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble", GF_WOODRUFF, "17581e3219d18898c35d616d1b823943"},
+	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble", GF_WOODRUFF, "751ba028d215e0db1e0254853de6a7e4"},
 #endif
 	{0, 0, 0, 0}
 };
