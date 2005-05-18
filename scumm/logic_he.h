@@ -49,6 +49,8 @@ public:
 
 	virtual int versionID();
 	virtual int32 dispatch(int op, int numArgs, int32 *args);
+
+	double round(double arg);
 };
 
 class LogicHErace : public LogicHE {

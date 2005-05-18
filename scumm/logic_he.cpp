@@ -37,6 +37,13 @@ LogicHE::~LogicHE() {
 	free(_userDataD);
 }
 
+double LogicHE::round(double arg) {
+	if (floor(arg) + 0.5 > arg)
+		return floor(arg);
+	else
+		return ceil(arg);
+}
+
 int LogicHE::versionID() {
 	return 1;
 }
