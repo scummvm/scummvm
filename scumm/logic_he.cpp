@@ -37,11 +37,8 @@ LogicHE::~LogicHE() {
 	free(_userDataD);
 }
 
-double LogicHE::round(double arg) {
-	if (floor(arg) + 0.5 > arg)
-		return floor(arg);
-	else
-		return ceil(arg);
+static int32 scumm_round(double arg) {
+	return (int32)(arg + 0.5);
 }
 
 int LogicHE::versionID() {
@@ -449,8 +446,8 @@ void LogicHEfunshop::op_1004(int32 *args) {
 		data[i] -= data[minx];
 		data[i + 1] -= data[miny];
 
-		putInArray(args[0], 0, 519 + i, (int32)round(data[i]));
-		putInArray(args[0], 0, 519 + i + 1, (int32)round(data[i + 1]));
+		putInArray(args[0], 0, 519 + i, scumm_round(data[i]));
+		putInArray(args[0], 0, 519 + i + 1, scumm_round(data[i + 1]));
 	}
 }
 
@@ -472,8 +469,8 @@ void LogicHEfunshop::op_1005(int32 *args) {
 	}
 	
 	for (int i = 520; i <= 526; i += 2) {
-		putInArray(args[0], 0, i - 1, (int32)round(data[i - 520]));
-		putInArray(args[0], 0, i, (int32)round(data[i - 520 + 1]));
+		putInArray(args[0], 0, i - 1, scumm_round(data[i - 520]));
+		putInArray(args[0], 0, i, scumm_round(data[i - 520 + 1]));
 	}
 }
 
