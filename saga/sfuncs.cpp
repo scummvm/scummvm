@@ -504,7 +504,8 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 	sceneNumber = thread->pop();
 	entrance = thread->pop();
 	if (sceneNumber < 0) {
-		//TODO: quit from game at all
+		_vm->shutDown();
+		return;
 	}
 
 	// This is used for latter demos where all places on world map except

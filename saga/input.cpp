@@ -127,7 +127,7 @@ int SagaEngine::processInput() {
 			_mousePos = event.mouse;
 			break;
 		case OSystem::EVENT_QUIT:
-			_system->quit();
+			_vm->shutDown();
 			break;
 		default:
 			break;
