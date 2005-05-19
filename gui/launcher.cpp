@@ -147,22 +147,24 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	GUI::WidgetSize ws;
 	int buttonHeight;
 	int buttonWidth;
+	int labelWidth;
 
 	if (screenW >= 400 && screenH >= 300) {
 		ws = GUI::kBigWidgetSize;
 		_h = screenH - 2 * 40;	// TODO/FIXME
 		buttonHeight = kBigButtonHeight;
 		buttonWidth = kBigButtonWidth;
+		labelWidth = 90;
 	} else {
 		ws = GUI::kNormalWidgetSize;
 		_h = screenH - 2 * 30;	// TODO/FIXME
 		buttonHeight = kButtonHeight;
 		buttonWidth = kButtonWidth;
+		labelWidth = 60;
 	}
 	
 	const int x = 5;
 	const int w = _w - 15;
-	const int labelWidth = 65;
 	const int vBorder = 5;	// Tab border
 	int yoffset;
 
@@ -197,8 +199,8 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	yoffset += 16;
 
 	// Language popup
-	_langPopUp = new PopUpWidget(tab, x, yoffset, w, kLineHeight, "Language: ", labelWidth);
-	yoffset += 16;
+	_langPopUp = addPopUp(tab, x, yoffset, w, "Language: ", labelWidth, ws);
+	yoffset += _langPopUp->getHeight() + 4;
 	_langPopUp->appendEntry("<default>");
 	_langPopUp->appendEntry("");
 	const Common::LanguageDescription *l = Common::g_languages;
@@ -207,8 +209,8 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	}
 
 	// Platform popup
-	_platformPopUp = new PopUpWidget(tab, x, yoffset, w, kLineHeight, "Platform: ", labelWidth);
-	yoffset += 16;
+	_platformPopUp = addPopUp(tab, x, yoffset, w, "Platform: ", labelWidth, ws);
+	yoffset += _platformPopUp->getHeight() + 4;
 	_platformPopUp->appendEntry("<default>");
 	_platformPopUp->appendEntry("");
 	const Common::PlatformDescription *p = Common::g_platforms;

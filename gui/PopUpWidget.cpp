@@ -19,26 +19,13 @@
  */
 
 #include "stdafx.h"
+#include "common/system.h"
 #include "gui/dialog.h"
 #include "gui/newgui.h"
 #include "gui/PopUpWidget.h"
 #include "base/engine.h"
 
 namespace GUI {
-
-#define UP_DOWN_BOX_HEIGHT	10
-
-// Little up/down arrow
-static uint32 up_down_arrows[8] = {
-	0x00000000,
-	0x00001000,
-	0x00011100,
-	0x00111110,
-	0x00000000,
-	0x00111110,
-	0x00011100,
-	0x00001000,
-};
 
 //
 // PopUpDialog
@@ -47,12 +34,14 @@ static uint32 up_down_arrows[8] = {
 class PopUpDialog : public Dialog {
 protected:
 	PopUpWidget	*_popUpBoss;
+	const Graphics::Font	*_font;
+	int		_lineHeight;
 	int			_clickX, _clickY;
 	byte		*_buffer;
 	int			_selection;
 	uint32		_openTime;
 public:
-	PopUpDialog(PopUpWidget *boss, int clickX, int clickY);
+	PopUpDialog(PopUpWidget *boss, int clickX, int clickY, WidgetSize ws = kDefaultWidgetSize);
 	
 	void drawDialog();
 
@@ -72,28 +61,44 @@ protected:
 	void moveDown();
 };
 
-PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
+PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY, WidgetSize ws)
 	: Dialog(0, 0, 16, 16),
 	_popUpBoss(boss) {
+	switch (ws) {
+	case kNormalWidgetSize:
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+		break;
+	case kBigWidgetSize:
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		break;
+	case kDefaultWidgetSize:
+		_font = &g_gui.getFont();
+		break;
+	}
+
+	_lineHeight = _font->getFontHeight() + 2;
+
 	// Copy the selection index
 	_selection = _popUpBoss->_selectedItem;
 
 	// Calculate real popup dimensions
 	_x = _popUpBoss->getAbsX() + _popUpBoss->_labelWidth;
-	_y = _popUpBoss->getAbsY() - _popUpBoss->_selectedItem * kLineHeight;
-	_h = _popUpBoss->_entries.size() * kLineHeight + 2;
-	_w = _popUpBoss->_w - 10 - _popUpBoss->_labelWidth;
+	_y = _popUpBoss->getAbsY() - _popUpBoss->_selectedItem * _lineHeight;
+	_h = _popUpBoss->_entries.size() * _lineHeight + 2;
+	_w = _popUpBoss->_w - _lineHeight + 2 - _popUpBoss->_labelWidth;
 	
 	// Perform clipping / switch to scrolling mode if we don't fit on the screen
-	// FIXME - hard coded screen height 200. We really need an API in OSystem to query the
-	// screen height, and also OSystem should send out notification messages when the screen
+	// FIXME - OSystem should send out notification messages when the screen
 	// resolution changes... we could generalize CommandReceiver and CommandSender.
-	if (_h >= 200)
-		_h = 199;
+
+	const int screenH = g_system->getOverlayHeight();
+
+	if (_h >= screenH)
+		_h = screenH - 1;
 	if (_y < 0)
 		_y = 0;
-	else if (_y + _h >= 200)
-		_y = 199 - _h;
+	else if (_y + _h >= screenH)
+		_y = screenH - 1 - _h;
 
 	// TODO - implement scrolling if we had to move the menu, or if there are too many entries
 
@@ -187,7 +192,7 @@ void PopUpDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 
 int PopUpDialog::findItem(int x, int y) const {
 	if (x >= 0 && x < _w && y >= 0 && y < _h) {
-		return (y - 2) / kLineHeight;
+		return (y - 2) / _lineHeight;
 	}
 	return -1;
 }
@@ -247,19 +252,19 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 	// Draw one entry of the popup menu, including selection
 	assert(entry >= 0);
 	int x = _x + 1;
-	int y = _y + 1 + kLineHeight * entry;
+	int y = _y + 1 + _lineHeight * entry;
 	int w = _w - 2;
 	Common::String &name = _popUpBoss->_entries[entry].name;
 
-	g_gui.fillRect(x, y, w, kLineHeight, hilite ? g_gui._textcolorhi : g_gui._bgcolor);
+	g_gui.fillRect(x, y, w, _lineHeight, hilite ? g_gui._textcolorhi : g_gui._bgcolor);
 	if (name.size() == 0) {
 		// Draw a separator
-		g_gui.hLine(x - 1, y + kLineHeight / 2, x + w, g_gui._shadowcolor);
-		g_gui.hLine(x, y + 1 + kLineHeight / 2, x + w, g_gui._color);
+		g_gui.hLine(x - 1, y + _lineHeight / 2, x + w, g_gui._shadowcolor);
+		g_gui.hLine(x, y + 1 + _lineHeight / 2, x + w, g_gui._color);
 	} else {
-		g_gui.drawString(name, x + 1, y + 2, w - 2, hilite ? g_gui._bgcolor : g_gui._textcolor);
+		g_gui.drawString(_font, name, x + 1, y + 2, w - 2, hilite ? g_gui._bgcolor : g_gui._textcolor);
 	}
-	g_gui.addDirtyRect(x, y, w, kLineHeight);
+	g_gui.addDirtyRect(x, y, w, _lineHeight);
 }
 
 
@@ -269,21 +274,35 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 // PopUpWidget
 //
 
-PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint labelWidth)
-	: Widget(boss, x, y - 1, w, h + 2), CommandSender(boss), _label(label), _labelWidth(labelWidth) {
+PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint labelWidth, WidgetSize ws)
+	: Widget(boss, x, y - 1, w, h + 2), CommandSender(boss), _ws(ws), _label(label), _labelWidth(labelWidth) {
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS;
 	_type = kPopUpWidget;
 
 	_selectedItem = -1;
 
+	switch (_ws) {
+	case kNormalWidgetSize:
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+		break;
+	case kBigWidgetSize:
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		break;
+	case kDefaultWidgetSize:
+		_font = &g_gui.getFont();
+		break;
+	}
+
+	_lineHeight = _font->getFontHeight() + 2;
+
 	if (!_label.isEmpty() && _labelWidth == 0)
-		_labelWidth = g_gui.getStringWidth(_label);
+		_labelWidth = _font->getStringWidth(_label);
 }
 
 void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 
 	if (isEnabled()) {
-		PopUpDialog popupDialog(this, x + getAbsX(), y + getAbsY());
+		PopUpDialog popupDialog(this, x + getAbsX(), y + getAbsY(), _ws);
 		int newSel = popupDialog.runModal();
 		if (newSel != -1 && _selectedItem != newSel) {
 			_selectedItem = newSel;
@@ -332,7 +351,7 @@ void PopUpWidget::drawWidget(bool hilite) {
 
 	// Draw the label, if any
 	if (_labelWidth > 0)
-		gui->drawString(_label, _x, _y + 3, _labelWidth, isEnabled() ? gui->_textcolor : gui->_color, kTextAlignRight);
+		gui->drawString(_font, _label, _x, _y + 3, _labelWidth, isEnabled() ? gui->_textcolor : gui->_color, kTextAlignRight);
 
 	// Draw a thin frame around us.
 	gui->hLine(x, _y, x + w - 1, gui->_color);
@@ -340,13 +359,26 @@ void PopUpWidget::drawWidget(bool hilite) {
 	gui->vLine(x, _y, _y+_h-1, gui->_color);
 	gui->vLine(x + w - 1, _y, _y +_h - 1, gui->_shadowcolor);
 
-	// Draw an arrow pointing down at the right end to signal this is a dropdown/popup
-	gui->drawBitmap(up_down_arrows, x+w - 10, _y+2, !isEnabled() ? gui->_color : hilite ? gui->_textcolorhi : gui->_textcolor);
+	// Draw a set of arrows at the right end to signal this is a dropdown/popup
+	Common::Point p0, p1;
+
+	p0 = Common::Point(x + w + 1 - _h / 2, _y + 4);
+	p1 = Common::Point(x + w + 1 - _h / 2, _y + _h - 4);
+
+	Graphics::Surface &surf = g_gui.getScreen();
+	OverlayColor color = !isEnabled() ? gui->_color : hilite ? gui->_textcolorhi : gui->_textcolor;
+
+	// Evil HACK to draw filled triangles
+	// FIXME: The "big" version is pretty ugly.
+	for (; p1.y - p0.y > 1; p0.y++, p0.x--, p1.y--, p1.x++) {
+		surf.drawLine(p0.x, p0.y, p1.x, p0.y, color);
+		surf.drawLine(p0.x, p1.y, p1.x, p1.y, color);
+	}
 
 	// Draw the selected entry, if any
 	if (_selectedItem >= 0) {
-		TextAlignment align = (gui->getStringWidth(_entries[_selectedItem].name) > w-6) ? kTextAlignRight : kTextAlignLeft;
-		gui->drawString(_entries[_selectedItem].name, x+2, _y+3, w-6, !isEnabled() ? gui->_color : gui->_textcolor, align);
+		TextAlignment align = (_font->getStringWidth(_entries[_selectedItem].name) > w-6) ? kTextAlignRight : kTextAlignLeft;
+		gui->drawString(_font, _entries[_selectedItem].name, x+2, _y+3, w-6, !isEnabled() ? gui->_color : gui->_textcolor, align);
 	}
 }
 

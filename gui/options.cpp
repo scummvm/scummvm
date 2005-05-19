@@ -313,9 +313,17 @@ int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset, WidgetSize w
 	const int w = _w - 2 * 10;
 	const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
 
+	int labelWidth;
+
+	if (ws == kBigWidgetSize) {
+		labelWidth = 150;
+	} else {
+		labelWidth = 100;
+	}
+
 	// The GFX mode popup
-	_gfxPopUp = new PopUpWidget(boss, x-5, yoffset, w+5, kLineHeight, "Graphics mode: ", 100);
-	yoffset += 16;
+	_gfxPopUp = addPopUp(boss, x-5, yoffset, w+5, "Graphics mode: ", labelWidth, ws);
+	yoffset += _gfxPopUp->getHeight() + 4;
 
 	_gfxPopUp->appendEntry("<default>");
 	_gfxPopUp->appendEntry("");
@@ -325,8 +333,8 @@ int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset, WidgetSize w
 	}
 
 	// RenderMode popup
-	_renderModePopUp = new PopUpWidget(boss, x-5, yoffset, w+5, kLineHeight, "Render mode: ", 100);
-	yoffset += 16;
+	_renderModePopUp = addPopUp(boss, x-5, yoffset, w+5, "Render mode: ", labelWidth, ws);
+	yoffset += _renderModePopUp->getHeight() + 4;
 	_renderModePopUp->appendEntry("<default>", Common::kRenderDefault);
 	_renderModePopUp->appendEntry("");
 	const Common::RenderModeDescription *rm = Common::g_renderModes;
@@ -357,9 +365,17 @@ int OptionsDialog::addAudioControls(GuiObject *boss, int yoffset, WidgetSize ws)
 	const int x = 10;
 	const int w = _w - 20;
 
+	int labelWidth;
+
+	if (ws == kBigWidgetSize) {
+		labelWidth = 150;
+	} else {
+		labelWidth = 100;
+	}
+
 	// The MIDI mode popup & a label
-	_midiPopUp = new PopUpWidget(boss, x-5, yoffset, w+5, kLineHeight, "Music driver: ", 100);
-	yoffset += 18;
+	_midiPopUp = addPopUp(boss, x-5, yoffset, w+5, "Music driver: ", labelWidth, ws);
+	yoffset += _midiPopUp->getHeight() + 4;
 	
 	// Populate it
 	const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();

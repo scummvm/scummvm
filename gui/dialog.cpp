@@ -24,6 +24,7 @@
 #include "gui/newgui.h"
 #include "gui/dialog.h"
 #include "gui/widget.h"
+#include "gui/PopUpWidget.h"
 
 #include "common/system.h"
 
@@ -339,6 +340,22 @@ SliderWidget *Dialog::addSlider(GuiObject *boss, int x, int y, uint32 cmd, Widge
 	}
 
 	return new SliderWidget(boss, x, y, w, h, cmd);
+}
+
+PopUpWidget *Dialog::addPopUp(int x, int y, int w, const Common::String &label, uint labelWidth, WidgetSize ws) {
+	return addPopUp(this, x, y, w, label, labelWidth, ws);
+}
+
+PopUpWidget *Dialog::addPopUp(GuiObject *boss, int x, int y, int w, const Common::String &label, uint labelWidth, WidgetSize ws) {
+	const Graphics::Font *font;
+
+	if (ws == kBigWidgetSize) {
+		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	} else {
+		font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	}
+
+	return new PopUpWidget(boss, x, y, w, font->getFontHeight() + 2, label, labelWidth, ws);
 }
 
 uint32 GuiObject::getMillis() {

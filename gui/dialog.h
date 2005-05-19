@@ -30,7 +30,7 @@
 namespace GUI {
 
 class NewGui;
-class ButtonWidget;
+class PopUpWidget;
 
 // Some "common" commands sent to handleCommand()
 enum {
@@ -95,6 +95,9 @@ protected:
 
 	SliderWidget *addSlider(GuiObject *boss, int x, int y, uint32 cmd, WidgetSize ws = kDefaultWidgetSize);
 	SliderWidget *addSlider(int x, int y, uint32 cmd, WidgetSize ws = kDefaultWidgetSize);
+
+	PopUpWidget *addPopUp(GuiObject *boss, int x, int y, int w, const Common::String &label, uint labelWidth = 0, WidgetSize ws = kDefaultWidgetSize);
+	PopUpWidget *addPopUp(int x, int y, int w, const Common::String &label, uint labelWidth = 0, WidgetSize ws = kDefaultWidgetSize);
 
 	void setResult(int result) { _result = result; }
 	int getResult() const { return _result; }
