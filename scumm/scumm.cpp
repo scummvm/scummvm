@@ -2564,12 +2564,13 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 					const char *name = file->displayName().c_str();
 
 					if (0 == scumm_stricmp(detectName, name)) {
+						byte buf[6];
+
 						if (g->version <= 4) {
 							// We take a look at the file now, to narrow
 							// down the list of possible candidates a bit further.
 							// E.g. it's trivial to distinguish V1 from V3 games.
 							File tmp;
-							byte buf[6];
 							if (!tmp.open(file->path().c_str()))
 								break;
 							tmp.read(buf, 6);
@@ -2675,6 +2676,23 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 								_numScripts 199
 								_numSounds 199
 								*/
+							} else if (buf[0] == 0xa0 && buf[1] == 0x07 && buf[2] == 0xa5 &&
+									   buf[3] == 0xbc) {
+								// MM NES .prg
+								if (g->id != GID_MANIAC)
+									break;
+							} else if (buf[0] == 0xbc && buf[1] == 0xb9) {
+								// MM NES 00.LFL
+								if (g->id != GID_MANIAC)
+									break;
+							} else if (buf[0] == 0x31 && buf[1] == 0x0a) {
+								// C64 MM & Zak disk1
+								if (g->version != 2)
+									break;
+							} else if (buf[0] == 0xcd && buf[1] == 0xfe) {
+								// C64 MM & Zak 00.LFL
+								if (g->version != 2)
+									break;
 							} else {
 								// This is not a V1-V4 game
 								break;
@@ -2689,6 +2707,17 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 																 Common::UNK_LANG, 
 																 Common::kPlatformMacintosh));
 							fileSet[file->path()] = true;
+						} else if (substLastIndex == 0 && g->id == GID_MANIAC && 
+								   (buf[0] == 0xbc || buf[0] == 0xa0)) {
+							detectedGames.push_back(DetectedGame(g->toGameSettings(), 
+																 Common::UNK_LANG, 
+																 Common::kPlatformNES));
+						} else if ((g->id == GID_MANIAC || g->id == GID_ZAK) && 
+								   ((buf[0] == 0x31 && buf[1] == 0x0a) ||
+									(buf[0] == 0xcd && buf[1] == 0xfe))) {
+							detectedGames.push_back(DetectedGame(g->toGameSettings(), 
+																 Common::UNK_LANG, 
+																 Common::kPlatformC64));
 						} else {
 							detectedGames.push_back(g->toGameSettings());
 							fileSet[file->path()] = false;
