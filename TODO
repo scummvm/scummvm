@@ -44,9 +44,6 @@ README / Manual
   in the "docs" CVS module. You can either reuse content from the README,
   or replace it with new, better written stuff. Contact Fingolfin or our
   mailing list, scummvm-devel, if you are interested in helping out.
-* Would be nice to have a HTML version of the README on the web page (and I
-  don't just mean a big <pre> section; rather I mean "real" HTML with links
-  and lists and tables etc.)
 * It would be greate to have a "Developer's Guide to ScummVM" which explains
   the ScummVM framework, and also the engines, i.e.
   - stuff in common/, like the config manager etc.
