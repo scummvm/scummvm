@@ -1557,7 +1557,10 @@ void ScummEngine::scummInit() {
 	debug(9, "scummInit");
 
 	if ((_gameId == GID_MANIAC) && (_version == 1) && !(_platform == Common::kPlatformNES)) {
-		initScreens(16, 152);
+		if (_platform == Common::kPlatformC64)
+			initScreens(8, 144);
+		else
+			initScreens(16, 152);
 	} else if (_version >= 7 || _heversion >= 71) {
 		initScreens(0, _screenHeight);
 	} else {
