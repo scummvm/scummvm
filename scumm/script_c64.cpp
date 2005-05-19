@@ -41,25 +41,25 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o5_startMusic),
 		OPCODE(o5_getActorRoom),
 		/* 04 */
-		OPCODE(o2_isGreaterEqual),
+		OPCODE(o_isGreaterEqual),
 		OPCODE(o2_drawObject),
-		OPCODE(o2_getActorElevation),
-		OPCODE(o2_setState08),
+		OPCODE(o_getDist),
+		OPCODE(o5_getActorRoom),
 		/* 08 */
-		OPCODE(o5_isNotEqual),
+		OPCODE(o_isNotEqual),
 		OPCODE(o5_faceActor),
 		OPCODE(o2_assignVarWordIndirect),
 		OPCODE(o2_setObjPreposition),
 		/* 0C */
 		OPCODE(o_loadSound),
 		OPCODE(o5_walkActorToActor),
-		OPCODE(o2_putActorAtObject),
+		OPCODE(o_putActorAtObject),
 		OPCODE(o2_ifNotState08),
 		/* 10 */
 		OPCODE(o5_breakHere),
 		OPCODE(o2_animateActor),
 		OPCODE(o2_panCameraTo),
-		OPCODE(o2_actorOps),
+		OPCODE(o_unknown13),
 		/* 14 */
 		OPCODE(o5_print),
 		OPCODE(o2_actorFromPos),
@@ -84,7 +84,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_loadRoomWithEgo),
 		OPCODE(o5_loadRoom),
 		OPCODE(o5_setVarRange),
-		OPCODE(o2_setState04),
+		OPCODE(o2_getActorY),
 		/* 28 */
 		OPCODE(o5_equalZero),
 		OPCODE(o2_setOwnerOf),
@@ -96,19 +96,19 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_delay),
 		OPCODE(o2_ifNotState04),
 		/* 30 */
-		OPCODE(o2_setBoxFlags),
+		OPCODE(o_loadActor),
 		OPCODE(o2_getBitVar),
 		OPCODE(o2_setCameraAt),
-		OPCODE(o2_roomOps),
+		OPCODE(o_freezeScript),
 		/* 34 */
-		OPCODE(o5_getDist),
+		OPCODE(o_getDist),
 		OPCODE(o2_findObject),
-		OPCODE(o2_walkActorToObject),
+		OPCODE(o_walkActorToObject),
 		OPCODE(o2_setState01),
 		/* 38 */
-		OPCODE(o2_isLessEqual),
+		OPCODE(o_isLessEqual),
 		OPCODE(o2_doSentence),
-		OPCODE(o2_subtract),
+		OPCODE(o_subtract),
 		OPCODE(o2_waitForActor),
 		/* 3C */
 		OPCODE(o5_stopSound),
@@ -121,19 +121,19 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_startScript),
 		OPCODE(o2_getActorX),
 		/* 44 */
-		OPCODE(o2_isLess),
+		OPCODE(o_isLess),
 		OPCODE(o2_drawObject),
 		OPCODE(o5_increment),
-		OPCODE(o2_clearState08),
+		OPCODE(o2_getActorX),
 		/* 48 */
 		OPCODE(o_isEqual),
 		OPCODE(o5_faceActor),
-		OPCODE(o2_chainScript),
+		OPCODE(o_loadRoom),
 		OPCODE(o2_setObjPreposition),
 		/* 4C */
 		OPCODE(o_loadScript),
-		OPCODE(o5_walkActorToActor),
-		OPCODE(o2_putActorAtObject),
+		OPCODE(o_unknown4D),
+		OPCODE(o_putActorAtObject),
 		OPCODE(o2_ifState08),
 		/* 50 */
 		OPCODE(o2_pickupObject),
@@ -148,7 +148,7 @@ void ScummEngine_c64::setupOpcodes() {
 		/* 58 */
 		OPCODE(o2_beginOverride),
 		OPCODE(o2_doSentence),
-		OPCODE(o2_add),
+		OPCODE(o_add),
 		OPCODE(o2_setBitVar),
 		/* 5C */
 		OPCODE(o2_dummy),
@@ -181,12 +181,12 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o5_loadRoom),
 		OPCODE(o_getObjectOwner),
 		/* 74 */
-		OPCODE(o5_getDist),
+		OPCODE(o_getDist),
 		OPCODE(o5_printEgo),
-		OPCODE(o2_walkActorToObject),
+		OPCODE(o_walkActorToObject),
 		OPCODE(o2_clearState01),
 		/* 78 */
-		OPCODE(o2_isGreater),
+		OPCODE(o_isGreater),
 		OPCODE(o2_doSentence),
 		OPCODE(o2_verbOps),
 		OPCODE(o2_getActorWalkBox),
@@ -201,25 +201,25 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o5_startMusic),
 		OPCODE(o5_getActorRoom),
 		/* 84 */
-		OPCODE(o2_isGreaterEqual),
+		OPCODE(o_isGreaterEqual),
 		OPCODE(o2_drawObject),
 		OPCODE(o2_getActorElevation),
-		OPCODE(o2_setState08),
+		OPCODE(o5_getActorRoom),
 		/* 88 */
-		OPCODE(o5_isNotEqual),
+		OPCODE(o_isNotEqual),
 		OPCODE(o5_faceActor),
 		OPCODE(o2_assignVarWordIndirect),
 		OPCODE(o2_setObjPreposition),
 		/* 8C */
 		OPCODE(o2_resourceRoutines),
 		OPCODE(o5_walkActorToActor),
-		OPCODE(o2_putActorAtObject),
+		OPCODE(o_putActorAtObject),
 		OPCODE(o2_ifNotState08),
 		/* 90 */
 		OPCODE(o5_getObjectOwner),
 		OPCODE(o2_animateActor),
 		OPCODE(o2_panCameraTo),
-		OPCODE(o2_actorOps),
+		OPCODE(o_unknown93),
 		/* 94 */
 		OPCODE(o5_print),
 		OPCODE(o2_actorFromPos),
@@ -228,7 +228,7 @@ void ScummEngine_c64::setupOpcodes() {
 		/* 98 */
 		OPCODE(o2_restart),
 		OPCODE(o2_doSentence),
-		OPCODE(o5_move),
+		OPCODE(o_move),
 		OPCODE(o2_setBitVar),
 		/* 9C */
 		OPCODE(o5_startSound),
@@ -244,7 +244,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_loadRoomWithEgo),
 		OPCODE(o2_drawObject),
 		OPCODE(o5_setVarRange),
-		OPCODE(o2_setState04),
+		OPCODE(o2_getActorY),
 		/* A8 */
 		OPCODE(o5_notEqualZero),
 		OPCODE(o2_setOwnerOf),
@@ -256,19 +256,19 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_waitForMessage),
 		OPCODE(o2_ifNotState04),
 		/* B0 */
-		OPCODE(o2_setBoxFlags),
+		OPCODE(o_loadActor),
 		OPCODE(o2_getBitVar),
 		OPCODE(o2_setCameraAt),
-		OPCODE(o2_roomOps),
+		OPCODE(o_unfreezeScript),
 		/* B4 */
-		OPCODE(o5_getDist),
+		OPCODE(o_getDist),
 		OPCODE(o2_findObject),
-		OPCODE(o2_walkActorToObject),
+		OPCODE(o_walkActorToObject),
 		OPCODE(o2_setState01),
 		/* B8 */
-		OPCODE(o2_isLessEqual),
+		OPCODE(o_isLessEqual),
 		OPCODE(o2_doSentence),
-		OPCODE(o2_subtract),
+		OPCODE(o_subtract),
 		OPCODE(o2_waitForActor),
 		/* BC */
 		OPCODE(o5_stopSound),
@@ -281,19 +281,19 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_startScript),
 		OPCODE(o2_getActorX),
 		/* C4 */
-		OPCODE(o2_isLess),
+		OPCODE(o_isLess),
 		OPCODE(o2_drawObject),
 		OPCODE(o5_decrement),
-		OPCODE(o2_clearState08),
+		OPCODE(o2_getActorX),
 		/* C8 */
-		OPCODE(o5_isEqual),
+		OPCODE(o_isEqual),
 		OPCODE(o5_faceActor),
-		OPCODE(o2_chainScript),
+		OPCODE(o_loadRoom),
 		OPCODE(o2_setObjPreposition),
 		/* CC */
-		OPCODE(o5_pseudoRoom),
+		OPCODE(o_loadScript),
 		OPCODE(o5_walkActorToActor),
-		OPCODE(o2_putActorAtObject),
+		OPCODE(o_putActorAtObject),
 		OPCODE(o2_ifState08),
 		/* D0 */
 		OPCODE(o2_pickupObject),
@@ -308,7 +308,7 @@ void ScummEngine_c64::setupOpcodes() {
 		/* D8 */
 		OPCODE(o5_printEgo),
 		OPCODE(o2_doSentence),
-		OPCODE(o2_add),
+		OPCODE(o_add),
 		OPCODE(o2_setBitVar),
 		/* DC */
 		OPCODE(o2_dummy),
@@ -336,17 +336,17 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_dummy),
 		OPCODE(o2_ifNotState08),
 		/* F0 */
-		OPCODE(o2_lights),
+		OPCODE(o_lights),
 		OPCODE(o5_getActorCostume),
 		OPCODE(o5_loadRoom),
 		OPCODE(o_getObjectOwner),
 		/* F4 */
-		OPCODE(o5_getDist),
+		OPCODE(o_getDist),
 		OPCODE(o2_findObject),
-		OPCODE(o2_walkActorToObject),
+		OPCODE(o_walkActorToObject),
 		OPCODE(o2_clearState01),
 		/* F8 */
-		OPCODE(o2_isGreater),
+		OPCODE(o_isGreater),
 		OPCODE(o2_doSentence),
 		OPCODE(o2_verbOps),
 		OPCODE(o2_getActorWalkBox),
@@ -354,7 +354,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o5_isSoundRunning),
 		OPCODE(o2_setActorElevation),
 		OPCODE(o2_walkActorTo),
-		OPCODE(o2_ifState01)
+		OPCODE(o2_ifState02)
 	};
 
 	_opcodesC64 = opcodes;
@@ -413,6 +413,14 @@ void ScummEngine_c64::o_move() {
 	setResult(getVarOrDirectByte(PARAM_1));
 }
 
+void ScummEngine_c64::o_unknown13() {
+	debug(0, "o_unknown13 (Actor %d)", fetchScriptByte());
+}
+
+void ScummEngine_c64::o_loadActor() {
+	debug(0, "o_loadActor (%d)", getVarOrDirectByte(PARAM_1));
+}
+
 void ScummEngine_c64::o_isEqual() {
 	int16 a, b;
 	int var;
@@ -421,14 +429,70 @@ void ScummEngine_c64::o_isEqual() {
 	a = readVar(var);
 	b = getVarOrDirectByte(PARAM_1);
 
+	printf("o_isEqual: a %d b %d\n", a , b);
+
 	if (b == a)
 		ignoreScriptWord();
 	else
 		o5_jumpRelative();
 }
 
+void ScummEngine_c64::o_isNotEqual() {
+	int16 a = getVar();
+	int16 b = getVarOrDirectByte(PARAM_1);
+	if (b != a)
+		ignoreScriptWord();
+	else
+		o5_jumpRelative();
+}
+
+void ScummEngine_c64::o_isGreater() {
+	uint16 a = getVar();
+	uint16 b = getVarOrDirectByte(PARAM_1);
+	if (b > a)
+		ignoreScriptWord();
+	else
+		o5_jumpRelative();
+}
+
+void ScummEngine_c64::o_isGreaterEqual() {
+	uint16 a = getVar();
+	uint16 b = getVarOrDirectByte(PARAM_1);
+	if (b >= a)
+		ignoreScriptWord();
+	else
+		o5_jumpRelative();
+}
+
+void ScummEngine_c64::o_isLess() {
+	uint16 a = getVar();
+	uint16 b = getVarOrDirectByte(PARAM_1);
+	if (b < a)
+		ignoreScriptWord();
+	else
+		o5_jumpRelative();
+}
+
+void ScummEngine_c64::o_isLessEqual() {
+	uint16 a = getVar();
+	uint16 b = getVarOrDirectByte(PARAM_1);
+	if (b <= a)
+		ignoreScriptWord();
+	else
+		o5_jumpRelative();
+}
+
+void ScummEngine_c64::o_loadRoom() {
+	int resid = getVarOrDirectByte(PARAM_1);
+	ensureResourceLoaded(rtRoom, resid);
+}
+
+void ScummEngine_c64::o_unknown4D() {
+	debug(0, "o_unknown4D (Actor %d)", fetchScriptByte());
+}
+
 void ScummEngine_c64::o_loadScript() {
-	int resid = fetchScriptByte();
+	int resid = getVarOrDirectByte(PARAM_1);
 	ensureResourceLoaded(rtScript, resid);
 }
 
@@ -442,7 +506,7 @@ void ScummEngine_c64::o_cursorCommand() {
 	byte state = fetchScriptByte();
 	debug(0, "o_cursorCommand (%d)", state);
 
-	if (state == 1) {
+	if (state >= 1) {
 		_userPut = 1;
 		_cursor.state = 1;
 	} else {
@@ -475,11 +539,74 @@ void ScummEngine_c64::o_getObjectOwner() {
 	setResult(getOwner(getVarOrDirectByte(PARAM_1)));
 }
 
+void ScummEngine_c64::o_add() {
+	int a;
+	getResultPos();
+	a = getVarOrDirectByte(PARAM_1);
+	setResult(readVar(_resultVarNumber) + a);
+}
+
 void ScummEngine_c64::o_subtract() {
 	int a;
 	getResultPos();
 	a = getVarOrDirectByte(PARAM_1);
 	_scummVars[_resultVarNumber] -= a;
+}
+
+void ScummEngine_c64::o_unknown93() {
+	debug(0, "o_unknown93 (Actor %d)", fetchScriptByte());
+}
+
+void ScummEngine_c64::o_freezeScript() {
+	int scr = fetchScriptByte();
+	vm.slot[scr].status &= 0x80;
+	vm.slot[scr].freezeCount = 1;
+}
+
+void ScummEngine_c64::o_unfreezeScript() {
+	int scr = fetchScriptByte();
+	vm.slot[scr].status &= 0x7F;
+	vm.slot[scr].freezeCount = 0;
+}
+
+void ScummEngine_c64::o_getDist() {
+	int o1, o2;
+	int r;
+	getResultPos();
+	o1 = getVarOrDirectByte(PARAM_1);
+	o2 = getVarOrDirectByte(PARAM_2);
+	r = getObjActToObjActDist(o1, o2);
+	setResult(r);
+}
+
+void ScummEngine_c64::o_putActorAtObject() {
+	int obj, x, y;
+	Actor *a;
+
+	a = derefActor(getVarOrDirectByte(PARAM_1), "o_putActorAtObject");
+
+	obj = fetchScriptByte();
+	if (whereIsObject(obj) != WIO_NOT_FOUND)
+		getObjectXYPos(obj, x, y);
+	else {
+		x = 240;
+		y = 120;
+	}
+
+	a->putActor(x, y, a->_room);
+}
+
+void ScummEngine_c64::o_walkActorToObject() {
+	int obj;
+	Actor *a;
+
+	a = derefActor(getVarOrDirectByte(PARAM_1), "o_walkActorToObject");
+	obj = fetchScriptByte();
+	if (whereIsObject(obj) != WIO_NOT_FOUND) {
+		int x, y, dir;
+		getObjectXYPos(obj, x, y, dir);
+		a->startWalkActor(x, y, dir);
+	}
 }
 
 #undef PARAM_1

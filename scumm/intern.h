@@ -403,16 +403,31 @@ protected:
 	virtual void clearStateCommon(byte type);
 
 	/* Version 2 script opcodes */
+	void o_unknown13();
+	void o_loadActor();
 	void o_loadSound();
 	void o_move();
 	void o_isEqual();
+	void o_loadRoom();
+	void o_unknown4D();
 	void o_loadScript();
 	void o_unknown53();
 	void o_cursorCommand();
 	void o_lights();
 	void o_getObjectOwner();
-
+	void o_add();
 	void o_subtract();
+	void o_isNotEqual();
+	void o_isGreater();
+	void o_isGreaterEqual();
+	void o_isLess();
+	void o_isLessEqual();
+	void o_unknown93();
+	void o_freezeScript();
+	void o_unfreezeScript();
+	void o_getDist();
+	void o_putActorAtObject();
+	void o_walkActorToObject();
 };
 
 class ScummEngine_v6 : public ScummEngine {
