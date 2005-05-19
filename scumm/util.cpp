@@ -778,9 +778,11 @@ uint16 ScummNESFile::fileReadUint16LE() {
 	uint16 b = fileReadByte();
 	return a | (b << 8);
 }
+
 uint32 ScummNESFile::resOffset(Resource *res) {
 	return res->offset[_ROMset];
 }
+
 uint16 ScummNESFile::resLength(Resource *res) {
 	return res->length[_ROMset];
 }
@@ -1270,6 +1272,277 @@ bool ScummNESFile::openSubFile(const char *filename) {
 	} else {
 		return generateResource(res);
 	}
+}
+
+#pragma mark -
+#pragma mark --- ScummC64File ---
+#pragma mark -
+
+static const int maniacResourcesPerFile[55] = {
+	 0, 11,  1,  3,  9, 12,  1, 13, 10,  6,
+	 4,  1,  7,  1,  1,  2,  7,  8, 19,  9,
+	 6,  9,  2,  6,  8,  4, 16,  8,  3,  3,
+	12, 12,  2,  8,  1,  1,  2,  1,  9,  1,
+	 3,  7,  3,  3, 13,  5,  4,  3,  1,  1,
+	 3, 10,  1,  0,  0
+};
+
+static const int zakResourcesPerFile[59] = {
+	 0, 29, 12, 14, 13,  4,  4, 10,  7,  4,
+	14, 19,  5,  4,  7,  6, 11,  9,  4,  4,
+	 1,  3,  3,  5,  1,  9,  4, 10, 13,  6,
+	 7, 10,  2,  6,  1, 11,  2,  5,  7,  1,
+	 7,  1,  4,  2,  8,  6,  6,  6,  4, 13,
+	 3,  1,  2,  1,  2,  1, 10,  1,  1
+};
+
+
+ScummC64File::ScummC64File(char *disk1, char *disk2, bool maniac) : _stream(0), _buf(0), _maniac(maniac) {
+	_disk1 = disk1;
+	_disk2 = disk2;
+
+	_openedDisk = 0;
+
+	if (maniac) {
+		_numGlobalObjects = 256;
+		_numRooms = 55;
+		_numCostumes = 25;
+		_numScripts = 160;
+		_numSounds = 70;
+		_resourcesPerFile = maniacResourcesPerFile;
+	} else {
+		_numGlobalObjects = 775;
+		_numRooms = 59;
+		_numCostumes = 38;
+		_numScripts = 155;
+		_numSounds = 127;
+		_resourcesPerFile = zakResourcesPerFile;
+	}
+}
+
+uint32 ScummC64File::write(const void *, uint32) {
+	error("ScummC64File does not support writing!");
+	return 0;
+}
+
+void ScummC64File::setEnc(byte enc) {
+	_stream->setEnc(enc);
+}
+
+byte ScummC64File::fileReadByte() {
+	byte b = 0;
+	File::read(&b, 1);
+	return b;
+}
+
+uint16 ScummC64File::fileReadUint16LE() {
+	uint16 a = fileReadByte();
+	uint16 b = fileReadByte();
+	return a | (b << 8);
+}
+
+bool ScummC64File::openDisk(char num) {
+	if (num == '1')
+		num = 1;
+	if (num == '2')
+		num = 2;
+
+	if (_openedDisk != num || !File::isOpen()) {
+		if (File::isOpen())
+			File::close();
+
+		if (num == 1)
+			File::open(_disk1.c_str());
+		else if (num == 2)
+			File::open(_disk2.c_str());
+		else {
+			error("ScummC64File::open(): wrong disk (%c)", num);
+			return false;
+		}
+
+		_openedDisk = num;
+
+		if (!File::isOpen()) {
+			error("ScummC64File::open(): cannot open disk (%d)", num);
+			return false;
+		}
+	}
+	return true;
+}
+
+bool ScummC64File::open(const char *filename, AccessMode mode) {
+	uint16 signature;
+
+	// check signature
+	openDisk(1);
+	File::seek(0);
+
+	signature = fileReadUint16LE();
+	if (signature != 0x0A31) {
+		error("ScummC64File::open(): signature not found in disk 1!");
+		return false;
+	}
+
+	extractIndex(0); // Fill in resource arrays
+
+	openDisk(2);
+	File::seek(0);
+
+	signature = fileReadUint16LE();
+	if (signature != 0x0132)
+		error("Error: signature not found in disk 2!\n");
+
+	return true;
+}
+
+
+uint16 ScummC64File::extractIndex(Common::WriteStream *out) {
+	int i;
+	uint16 reslen = 0;
+
+	openDisk(1);
+	File::seek(0);
+
+	// skip signature
+	fileReadUint16LE();
+
+	// write expected signature
+	reslen += write_word(out, 0x0132);
+
+	// copy object flags
+	for (i = 0; i < _numGlobalObjects; i++)
+		reslen += write_byte(out, fileReadByte());
+
+	// copy room offsets
+	for (i = 0; i < _numRooms; i++) {
+		_roomDisks[i] = fileReadByte();
+		reslen += write_byte(out, _roomDisks[i]);
+	}
+	for (i = 0; i < _numRooms; i++) {
+		_roomSectors[i] = fileReadByte();
+		reslen += write_byte(out, _roomSectors[i]);
+		_roomTracks[i] = fileReadByte();
+		reslen += write_byte(out, _roomTracks[i]);
+	}
+	for (i = 0; i < _numCostumes; i++)
+		reslen += write_byte(out, fileReadByte());
+	for (i = 0; i < _numCostumes; i++)
+		reslen += write_word(out, fileReadUint16LE());
+
+	for (i = 0; i < _numScripts; i++)
+		reslen += write_byte(out, fileReadByte());
+	for (i = 0; i < _numScripts; i++)
+		reslen += write_word(out, fileReadUint16LE());
+
+	for (i = 0; i < _numSounds; i++)
+		reslen += write_byte(out, fileReadByte());
+	for (i = 0; i < _numSounds; i++)
+		reslen += write_word(out, fileReadUint16LE());
+
+	return reslen;
+}
+
+bool ScummC64File::generateIndex() {
+	int bufsize;
+
+	bufsize = extractIndex(0);
+
+	free(_buf);
+	_buf = (byte *)calloc(1, bufsize);
+
+	Common::MemoryWriteStream out(_buf, bufsize);
+
+	extractIndex(&out);
+
+	if (_stream)
+		delete _stream;
+
+	_stream = new Common::MemoryReadStream(_buf, bufsize);
+
+	return true;
+}
+
+uint16 ScummC64File::extractResource(Common::WriteStream *out, int res) {
+	const int SectorOffset[36] = {
+		0,
+		0, 21, 42, 63, 84, 105, 126, 147, 168, 189, 210, 231, 252, 273, 294, 315, 336,
+		357, 376, 395, 414, 433, 452, 471,
+		490, 508, 526, 544, 562, 580,
+		598, 615, 632, 649, 666
+	};
+	int i;
+	uint16 reslen = 0;
+		
+	openDisk(_roomDisks[res]);
+
+	File::seek((SectorOffset[_roomTracks[res]] + _roomSectors[res]) * 256);
+
+	for (i = 0; i < _resourcesPerFile[res]; i++) {
+		uint16 len = fileReadUint16LE();
+		reslen += write_word(out, len);
+
+		for (len -= 2; len > 0; len--)
+			reslen += write_byte(out, fileReadByte());
+	}
+
+	return reslen;
+}
+
+bool ScummC64File::generateResource(int res) {
+	int bufsize;
+
+	if (res >= _numRooms)
+		return false;
+
+	bufsize = extractResource(0, res);
+
+	free(_buf);
+	_buf = (byte *)calloc(1, bufsize);
+
+	Common::MemoryWriteStream out(_buf, bufsize);
+
+	extractResource(&out, res);
+
+	if (_stream)
+		delete _stream;
+
+	_stream = new Common::MemoryReadStream(_buf, bufsize);
+
+	return true;
+}
+
+void ScummC64File::close() {
+	if (_stream)
+		delete _stream;
+	_stream = 0;
+
+	free(_buf);
+	_buf = 0;
+
+	File::close();
+}
+
+bool ScummC64File::openSubFile(const char *filename) {
+	assert(isOpen());
+
+	const char *ext = strrchr(filename, '.');
+	char resNum[3];
+	int res;
+	
+	// We always have file name in form of XX.lfl
+	resNum[0] = ext[-2];
+	resNum[1] = ext[-1];
+	resNum[2] = 0;
+
+	res = atoi(resNum);
+
+	if (res == 0) {
+		return generateIndex();
+	} else {
+		return generateResource(res);
+	}
+
+	return true;
 }
 
 } // End of namespace Scumm

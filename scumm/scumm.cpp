@@ -474,13 +474,13 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0},
 
 	{"d8d07efcb88f396bee0b402b10c3b1c9", "Maniac Mansion (NES E)", GID_MANIAC, 1, 0, MDT_NONE,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformNES, 0, "Maniac Mansion (E).prg"},
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformNES, 0, 0},
 	{"81bbfa181184cb494e7a81dcfa94fbd9", "Maniac Mansion (NES F)", GID_MANIAC, 1, 0, MDT_NONE,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformNES, 0, "Maniac Mansion (F).prg"},
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformNES, 0, 0},
 	{"22d07d6c386c9c25aca5dac2a0c0d94b", "Maniac Mansion (NES SW)", GID_MANIAC, 1, 0, MDT_NONE,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformNES, 0, "Maniac Mansion (SW).prg"},
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformNES, 0, 0},
 	{"3905799e081b80a61d4460b7b733c206", "Maniac Mansion (NES U)", GID_MANIAC, 1, 0, MDT_NONE,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformNES, 0, "Maniac Mansion (U).prg"},
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformNES, 0, 0},
 	{"7f45ddd6dbfbf8f80c0c0efea4c295bc", "Maniac Mansion (v1)", GID_MANIAC, 1, 0, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformUnknown, 0, 0},
 
@@ -570,6 +570,10 @@ struct SubstResFileNames {
 
 static SubstResFileNames substResFileNameTable[] = {
 	{ "Intentionally/left/blank", "", kGenMacNoParens},
+	{ "00.LFL", "zak1.d64", kGenAsIs },
+	{ "01.LFL", "zak2.d64", kGenAsIs },
+	{ "00.LFL", "maniac1.d64", kGenAsIs },
+	{ "01.LFL", "maniac2.d64", kGenAsIs },
 	{ "00.LFL", "Maniac Mansion (E).prg", kGenAsIs },
 	{ "00.LFL", "Maniac Mansion (F).prg", kGenAsIs },
 	{ "00.LFL", "Maniac Mansion (SW).prg", kGenAsIs },
@@ -670,13 +674,14 @@ static int compareMD5Table(const void *a, const void *b) {
 	return strcmp(key, elem->md5);
 }
 
-ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
+ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
 	: Engine(syst),
 	  _gameId(gs.id),
 	  _version(gs.version),
 	  _heversion(gs.heversion),
 	  _features(gs.features),
 	  _platform(gs.platform),
+	  _substResFileNameIndex(substResFileNameIndex),
 	  gdi(this),
 	  res(this),
 	  _pauseDialog(0), _mainMenuDialog(0), _versionDialog(0),
@@ -746,9 +751,20 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 
 	// We read data directly from NES ROM instead of extracting it with
 	// external tool
-	if ((_platform == Common::kPlatformNES) && (_substResFileNameIndex || gs.detectFilename))
+	if ((_platform == Common::kPlatformNES) && _substResFileNameIndex) {
+		char tmpBuf[128];
+		generateSubstResFileName("00.LFL", tmpBuf, sizeof(tmpBuf));
 		_fileHandle = new ScummNESFile();
-	else
+		_containerFile = tmpBuf;
+	} else if ((_platform == Common::kPlatformC64) && _substResFileNameIndex) {
+		char tmpBuf1[128], tmpBuf2[128];
+		generateSubstResFileName("00.LFL", tmpBuf1, sizeof(tmpBuf1));
+		generateSubstResFileName("01.LFL", tmpBuf2, sizeof(tmpBuf2));
+
+		_fileHandle = new ScummC64File(tmpBuf1, tmpBuf2, _gameId == GID_MANIAC);
+
+		_containerFile = tmpBuf1;
+	} else
 		_fileHandle = new ScummFile();
 
 	// The mac versions of Sam&Max, DOTT, FT and The Dig used a special meta
@@ -1248,30 +1264,30 @@ ScummEngine::~ScummEngine() {
 	delete _debugger;
 }
 
-ScummEngine_v4::ScummEngine_v4(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) 
- : ScummEngine_v5(detector, syst, gs, md5sum) {
+ScummEngine_v4::ScummEngine_v4(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex) 
+	: ScummEngine_v5(detector, syst, gs, md5sum, substResFileNameIndex) {
 	_resourceHeaderSize = 6;
 }
 
-ScummEngine_v3::ScummEngine_v3(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) 
- : ScummEngine_v4(detector, syst, gs, md5sum) {
+ScummEngine_v3::ScummEngine_v3(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
+	: ScummEngine_v4(detector, syst, gs, md5sum, substResFileNameIndex) {
 }
 
-ScummEngine_v3old::ScummEngine_v3old(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) 
- : ScummEngine_v3(detector, syst, gs, md5sum) {
+ScummEngine_v3old::ScummEngine_v3old(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
+	: ScummEngine_v3(detector, syst, gs, md5sum, substResFileNameIndex) {
 	_resourceHeaderSize = 4;
 }
 
-ScummEngine_v2::ScummEngine_v2(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) 
- : ScummEngine_v3old(detector, syst, gs, md5sum) {
+ScummEngine_v2::ScummEngine_v2(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex) 
+	: ScummEngine_v3old(detector, syst, gs, md5sum, substResFileNameIndex) {
 }
 
-ScummEngine_c64::ScummEngine_c64(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) 
- : ScummEngine_v2(detector, syst, gs, md5sum) {
+ScummEngine_c64::ScummEngine_c64(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex) 
+	: ScummEngine_v2(detector, syst, gs, md5sum, substResFileNameIndex) {
 }
 
-ScummEngine_v6::ScummEngine_v6(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) 
- : ScummEngine(detector, syst, gs, md5sum) {
+ScummEngine_v6::ScummEngine_v6(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
+	: ScummEngine(detector, syst, gs, md5sum, substResFileNameIndex) {
 	_blastObjectQueuePos = 0;
 	memset(_blastObjectQueue, 0, sizeof(_blastObjectQueue));
 	_blastTextQueuePos = 0;
@@ -1292,8 +1308,8 @@ ScummEngine_v6::ScummEngine_v6(GameDetector *detector, OSystem *syst, const Scum
 }
 
 #ifndef DISABLE_HE
-ScummEngine_v70he::ScummEngine_v70he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
- : ScummEngine_v60he(detector, syst, gs, md5sum) {
+ScummEngine_v70he::ScummEngine_v70he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
+	: ScummEngine_v60he(detector, syst, gs, md5sum, substResFileNameIndex) {
 	if (_platform == Common::kPlatformMacintosh && _heversion == 72) 
 		_resExtractor = new MacResExtractor(this);
 	else
@@ -1318,16 +1334,16 @@ ScummEngine_v70he::~ScummEngine_v70he() {
 	free(_heV7RoomOffsets);
 }
 
-ScummEngine_v71he::ScummEngine_v71he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
- : ScummEngine_v70he(detector, syst, gs, md5sum) {
+ScummEngine_v71he::ScummEngine_v71he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
+	: ScummEngine_v70he(detector, syst, gs, md5sum, substResFileNameIndex) {
 	_auxBlocksNum = 0;
 	memset(_auxBlocks, 0, sizeof(_auxBlocks));
 	_auxEntriesNum = 0;
 	memset(_auxEntries, 0, sizeof(_auxEntries));
 }
 
-ScummEngine_v72he::ScummEngine_v72he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
- : ScummEngine_v71he(detector, syst, gs, md5sum) {
+ScummEngine_v72he::ScummEngine_v72he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
+	: ScummEngine_v71he(detector, syst, gs, md5sum, substResFileNameIndex) {
 	VAR_NUM_ROOMS = 0xFF;
 	VAR_NUM_SCRIPTS = 0xFF;
 	VAR_NUM_SOUNDS = 0xFF;
@@ -1346,8 +1362,8 @@ ScummEngine_v72he::ScummEngine_v72he(GameDetector *detector, OSystem *syst, cons
 	VAR_WIZ_TCOLOR = 0xFF;
 }
 
-ScummEngine_v80he::ScummEngine_v80he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
- : ScummEngine_v72he(detector, syst, gs, md5sum) {
+ScummEngine_v80he::ScummEngine_v80he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
+	: ScummEngine_v72he(detector, syst, gs, md5sum, substResFileNameIndex) {
 	_heSBNGId = 0;
 }
 
@@ -1359,8 +1375,8 @@ ScummEngine_v90he::~ScummEngine_v90he() {
 #endif
 
 #ifndef DISABLE_SCUMM_7_8
-ScummEngine_v7::ScummEngine_v7(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
- : ScummEngine_v6(detector, syst, gs, md5sum) {
+ScummEngine_v7::ScummEngine_v7(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
+	: ScummEngine_v6(detector, syst, gs, md5sum, substResFileNameIndex) {
 	_existLanguageFile = false;
 	_languageBuffer = NULL;
 	_languageIndex = NULL;
@@ -1371,8 +1387,8 @@ ScummEngine_v7::~ScummEngine_v7() {
 	free(_languageIndex);
 }
 
-ScummEngine_v8::ScummEngine_v8(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
- : ScummEngine_v7(detector, syst, gs, md5sum) {
+ScummEngine_v8::ScummEngine_v8(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
+	: ScummEngine_v7(detector, syst, gs, md5sum, substResFileNameIndex) {
 	_objectIDMap = 0;
 }
 
@@ -2884,63 +2900,63 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	case 1:
 	case 2:
 		if (game.id == GID_MANIAC && game.platform == Common::kPlatformC64)
-			engine = new ScummEngine_c64(detector, syst, game, md5sum);
+			engine = new ScummEngine_c64(detector, syst, game, md5sum, substLastIndex);
 		else
-			engine = new ScummEngine_v2(detector, syst, game, md5sum);
+			engine = new ScummEngine_v2(detector, syst, game, md5sum, substLastIndex);
 		break;
 	case 3:
 		if (game.features & GF_OLD_BUNDLE)
-			engine = new ScummEngine_v3old(detector, syst, game, md5sum);
+			engine = new ScummEngine_v3old(detector, syst, game, md5sum, substLastIndex);
 		else
-			engine = new ScummEngine_v3(detector, syst, game, md5sum);
+			engine = new ScummEngine_v3(detector, syst, game, md5sum, substLastIndex);
 		break;
 	case 4:
-		engine = new ScummEngine_v4(detector, syst, game, md5sum);
+		engine = new ScummEngine_v4(detector, syst, game, md5sum, substLastIndex);
 		break;
 	case 5:
-		engine = new ScummEngine_v5(detector, syst, game, md5sum);
+		engine = new ScummEngine_v5(detector, syst, game, md5sum, substLastIndex);
 		break;
 	case 6:
 		switch (game.heversion) {
 #ifndef DISABLE_HE
 		case 100:
-			engine = new ScummEngine_v100he(detector, syst, game, md5sum);
+			engine = new ScummEngine_v100he(detector, syst, game, md5sum, substLastIndex);
 			break;
 		case 99:
-			engine = new ScummEngine_v99he(detector, syst, game, md5sum);
+			engine = new ScummEngine_v99he(detector, syst, game, md5sum, substLastIndex);
 			break;
 		case 98:
 		case 95:
 		case 90:
-			engine = new ScummEngine_v90he(detector, syst, game, md5sum);
+			engine = new ScummEngine_v90he(detector, syst, game, md5sum, substLastIndex);
 			break;
 		case 80:
-			engine = new ScummEngine_v80he(detector, syst, game, md5sum);
+			engine = new ScummEngine_v80he(detector, syst, game, md5sum, substLastIndex);
 			break;
 		case 72:
-			engine = new ScummEngine_v72he(detector, syst, game, md5sum);
+			engine = new ScummEngine_v72he(detector, syst, game, md5sum, substLastIndex);
 			break;
 		case 71:
-			engine = new ScummEngine_v71he(detector, syst, game, md5sum);
+			engine = new ScummEngine_v71he(detector, syst, game, md5sum, substLastIndex);
 			break;
 		case 70:
-			engine = new ScummEngine_v70he(detector, syst, game, md5sum);
+			engine = new ScummEngine_v70he(detector, syst, game, md5sum, substLastIndex);
 			break;
 #endif
 		case 61:
-			engine = new ScummEngine_v60he(detector, syst, game, md5sum);
+			engine = new ScummEngine_v60he(detector, syst, game, md5sum, substLastIndex);
 			break;
 		default:
-			engine = new ScummEngine_v6(detector, syst, game, md5sum);
+			engine = new ScummEngine_v6(detector, syst, game, md5sum, substLastIndex);
 		}
 		break;
 #ifndef DISABLE_SCUMM_7_8
 	case 7:
-		engine = new ScummEngine_v7(detector, syst, game, md5sum);
+		engine = new ScummEngine_v7(detector, syst, game, md5sum, substLastIndex);
 		break;
 #ifndef __PALM_OS__
 	case 8:
-		engine = new ScummEngine_v8(detector, syst, game, md5sum);
+		engine = new ScummEngine_v8(detector, syst, game, md5sum, substLastIndex);
 		break;
 #endif
 
@@ -2948,10 +2964,6 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	default:
 		error("Engine_SCUMM_create(): Unknown version of game engine");
 	}
-
-	// FIXME: dirty HACK. Should we introduce another parameter to constructor
-	// instead?
-	((ScummEngine *)engine)->_substResFileNameIndex = substLastIndex;
 
 	return engine;
 }

@@ -111,6 +111,52 @@ public:
 };
 
 
+class ScummC64File : public BaseScummFile {
+private:
+	Common::MemoryReadStream *_stream;
+	byte _roomDisks[59], _roomTracks[59], _roomSectors[59];
+
+	byte *_buf;
+
+	bool _maniac;
+	Common::String _disk1, _disk2;
+	int _openedDisk;
+
+	int _numGlobalObjects;
+	int _numRooms;
+	int _numCostumes;
+	int _numScripts;
+	int _numSounds;
+	const int *_resourcesPerFile;
+
+	bool openDisk(char num);
+
+	bool generateIndex();
+	bool generateResource(int res);
+
+	uint16 extractIndex(Common::WriteStream *out);
+	uint16 extractResource(Common::WriteStream *out, int res);
+
+	byte fileReadByte();
+	uint16 fileReadUint16LE();
+
+public:
+	ScummC64File(char *disk1, char *disk2, bool maniac);
+	void setEnc(byte value);
+	
+	bool open(const char *filename, AccessMode mode = kFileReadMode);
+	bool openSubFile(const char *filename);
+
+	void close();
+	bool eof() { return _stream->eos(); }
+	uint32 pos() { return _stream->pos(); }
+	uint32 size() { return _stream->size(); }
+	void seek(int32 offs, int whence = SEEK_SET) { _stream->seek(offs, whence); }
+	uint32 read(void *dataPtr, uint32 dataSize) { return _stream->read(dataPtr, dataSize); }
+	uint32 write(const void *dataPtr, uint32 dataSize);
+};
+
+
 /* Direction conversion functions (between old dir and new dir format) */
 int newDirToOldDir(int dir);
 int oldDirToNewDir(int dir);
