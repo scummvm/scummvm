@@ -143,7 +143,6 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	const int screenH = g_system->getOverlayHeight();
 	
 	_w = screenW - 2 * 10;
-	_h = screenH - 2 * 40;	// TODO/FIXME
 
 	GUI::WidgetSize ws;
 	int buttonHeight;
@@ -151,10 +150,12 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 
 	if (screenW >= 400 && screenH >= 300) {
 		ws = GUI::kBigWidgetSize;
+		_h = screenH - 2 * 40;	// TODO/FIXME
 		buttonHeight = kBigButtonHeight;
 		buttonWidth = kBigButtonWidth;
 	} else {
 		ws = GUI::kNormalWidgetSize;
+		_h = screenH - 2 * 30;	// TODO/FIXME
 		buttonHeight = kButtonHeight;
 		buttonWidth = kButtonWidth;
 	}
@@ -222,7 +223,7 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	// GUI:  Button + Label for the game path
 	addButton(tab, x, yoffset, "Game Path:", kCmdGameBrowser, 0, ws);
 	_gamePathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, kLineHeight, gamePath, kTextAlignLeft, ws);
-	yoffset += buttonHeight + 2;
+	yoffset += buttonHeight + 4;
 
 	// GUI:  Button + Label for the additional path
 	addButton(tab, x, yoffset, "Extra Path:", kCmdExtraBrowser, 0, ws);
@@ -230,7 +231,7 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	if (extraPath.isEmpty() || !ConfMan.hasKey("extrapath", _domain)) {
 		_extraPathWidget->setLabel("None");
 	}
-	yoffset += buttonHeight + 2;
+	yoffset += buttonHeight + 4;
 
 	// GUI:  Button + Label for the save path
 	addButton(tab, x, yoffset, "Save Path:", kCmdSaveBrowser, 0, ws);
@@ -238,7 +239,7 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	if (savePath.isEmpty() || !ConfMan.hasKey("savepath", _domain)) {
 		_savePathWidget->setLabel("Default");
 	}
-	yoffset += buttonHeight + 2;
+	yoffset += buttonHeight + 4;
 
 	//
 	// 3) The graphics tab

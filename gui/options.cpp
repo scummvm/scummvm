@@ -381,23 +381,35 @@ int OptionsDialog::addAudioControls(GuiObject *boss, int yoffset, WidgetSize ws)
 
 int OptionsDialog::addMIDIControls(GuiObject *boss, int yoffset, WidgetSize ws) {
 	const int x = 10;
+	int spacing;
+	int buttonWidth, buttonHeight;
+
+	if (ws == kBigWidgetSize) {
+		buttonWidth = kBigButtonWidth;
+		buttonHeight = kBigButtonHeight;
+		spacing = 2;
+	} else {
+		buttonWidth = kButtonWidth;
+		buttonHeight = kButtonHeight;
+		spacing = 1;
+	}
 
 	// SoundFont
-	_soundFontButton = new ButtonWidget(boss, x, yoffset, kButtonWidth + 14, 16, "SoundFont: ", kChooseSoundFontCmd, 0);
-	_soundFont = new StaticTextWidget(boss, x + kButtonWidth + 20, yoffset + 3, _w - (x + kButtonWidth + 20) - 10, kLineHeight, "None", kTextAlignLeft);
-	yoffset += 18;
+	_soundFontButton = addButton(boss, x, yoffset, "SoundFont: ", kChooseSoundFontCmd, 0, ws);
+	_soundFont = new StaticTextWidget(boss, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, kLineHeight, "None", kTextAlignLeft, ws);
+	yoffset += buttonHeight + 2 * spacing;
 
 	// Multi midi setting
 	_multiMidiCheckbox = addCheckbox(boss, x, yoffset, "Mixed Adlib/MIDI mode", 0, 0, ws);
-	yoffset += _multiMidiCheckbox->getHeight();
+	yoffset += _multiMidiCheckbox->getHeight() + spacing;
 	
 	// Native mt32 setting
 	_mt32Checkbox = addCheckbox(boss, x, yoffset, "True Roland MT-32 (disable GM emulation)", 0, 0, ws);
-	yoffset += _mt32Checkbox->getHeight();
+	yoffset += _mt32Checkbox->getHeight() + spacing;
 
 	// GS Extensions setting
 	_enableGSCheckbox = addCheckbox(boss, x, yoffset, "Enable Roland GS Mode", 0, 0, ws);
-	yoffset += _enableGSCheckbox->getHeight();
+	yoffset += _enableGSCheckbox->getHeight() + spacing;
 	
 	_enableMIDISettings = true;
 
@@ -428,10 +440,10 @@ int OptionsDialog::addVolumeControls(GuiObject *boss, int yoffset, WidgetSize ws
 			textwidth = width;
 	}
 
-	int xoffset = textwidth + 10;
+	int xoffset = textwidth + 15;
 
 	// Volume controllers
-	new StaticTextWidget(boss, 5, yoffset + 2, textwidth, kLineHeight, slider_labels[0], kTextAlignRight, ws);
+	new StaticTextWidget(boss, 10, yoffset + 2, textwidth, kLineHeight, slider_labels[0], kTextAlignRight, ws);
 	_musicVolumeSlider = addSlider(boss, xoffset, yoffset, kMusicVolumeChanged, ws);
 	_musicVolumeLabel = new StaticTextWidget(boss, xoffset + _musicVolumeSlider->getWidth() + 10, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft, ws);
 	_musicVolumeSlider->setMinValue(0);
@@ -439,7 +451,7 @@ int OptionsDialog::addVolumeControls(GuiObject *boss, int yoffset, WidgetSize ws
 	_musicVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += _musicVolumeSlider->getHeight() + 4;
 
-	new StaticTextWidget(boss, 5, yoffset + 2, textwidth, kLineHeight, slider_labels[1], kTextAlignRight, ws);
+	new StaticTextWidget(boss, 10, yoffset + 2, textwidth, kLineHeight, slider_labels[1], kTextAlignRight, ws);
 	_sfxVolumeSlider = addSlider(boss, xoffset, yoffset, kSfxVolumeChanged, ws);
 	_sfxVolumeLabel = new StaticTextWidget(boss, xoffset + _musicVolumeSlider->getWidth() + 10, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft, ws);
 	_sfxVolumeSlider->setMinValue(0);
@@ -447,7 +459,7 @@ int OptionsDialog::addVolumeControls(GuiObject *boss, int yoffset, WidgetSize ws
 	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += _sfxVolumeSlider->getHeight() + 4;
 
-	new StaticTextWidget(boss, 5, yoffset + 2, textwidth, kLineHeight, slider_labels[2], kTextAlignRight, ws);
+	new StaticTextWidget(boss, 10, yoffset + 2, textwidth, kLineHeight, slider_labels[2], kTextAlignRight, ws);
 	_speechVolumeSlider = addSlider(boss, xoffset, yoffset, kSpeechVolumeChanged, ws);
 	_speechVolumeLabel = new StaticTextWidget(boss, xoffset + _musicVolumeSlider->getWidth() + 10, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft, ws);
 	_speechVolumeSlider->setMinValue(0);
@@ -470,15 +482,20 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	const int screenH = g_system->getOverlayHeight();
 
 	GUI::WidgetSize ws;
+	int buttonWidth, buttonHeight;
 	
 	if (screenW >= 400 && screenH >= 300) {
 		ws = GUI::kBigWidgetSize;
+		buttonWidth = kBigButtonWidth;
+		buttonHeight = kBigButtonHeight;
 		_w = screenW - 2 * 10;
 		_h = screenH - 2 * 40;
 		_x = 10;
 		_y = 40;
 	} else {
 		ws = GUI::kNormalWidgetSize;
+		buttonWidth = kButtonWidth;
+		buttonHeight = kButtonHeight;
 		_w = screenW - 2 * 10;
 		_h = screenH - 1 * 20;
 		_x = 10;
@@ -489,7 +506,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	int yoffset;
 
 	// The tab widget
-	TabWidget *tab = new TabWidget(this, 0, vBorder, _w, _h - 24 - 2 * vBorder, ws);
+	TabWidget *tab = new TabWidget(this, 0, vBorder, _w, _h - buttonHeight - 8 - 2 * vBorder, ws);
 
 	//
 	// 1) The graphics tab
@@ -522,19 +539,18 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 
 #if !( defined(__DC__) || defined(__GP32__) )
 	// Save game path
-	new ButtonWidget(tab, 5, yoffset, kButtonWidth + 14, 16, "Save Path: ", kChooseSaveDirCmd, 0);
-	_savePath = new StaticTextWidget(tab, 5 + kButtonWidth + 20, yoffset + 3, _w - (5 + kButtonWidth + 20) - 10, kLineHeight, "/foo/bar", kTextAlignLeft);
+	addButton(tab, 5, yoffset, "Save Path: ", kChooseSaveDirCmd, 0, ws);
+	_savePath = new StaticTextWidget(tab, 5 + buttonWidth + 20, yoffset + 3, _w - (5 + buttonWidth + 20) - 10, kLineHeight, "/foo/bar", kTextAlignLeft, ws);
+	yoffset += buttonHeight + 4;
 
-	yoffset += 18;
-
- 	new ButtonWidget(tab, 5, yoffset, kButtonWidth + 14, 16, "Extra Path:", kChooseExtraDirCmd, 0);
-	_extraPath = new StaticTextWidget(tab, 5 + kButtonWidth + 20, yoffset + 3, _w - (5 + kButtonWidth + 20) - 10, kLineHeight, "None", kTextAlignLeft);
-	yoffset += 18;
+	addButton(tab, 5, yoffset, "Extra Path:", kChooseExtraDirCmd, 0, ws);
+	_extraPath = new StaticTextWidget(tab, 5 + buttonWidth + 20, yoffset + 3, _w - (5 + buttonWidth + 20) - 10, kLineHeight, "None", kTextAlignLeft, ws);
+	yoffset += buttonHeight + 4;
 #endif
 
 #ifdef _WIN32_WCE
-	new ButtonWidget(tab, 5, yoffset, kButtonWidth + 14, 16, "Keys", kChooseKeyMappingCmd, 0);
-	yoffset += 18;
+	addButton(tab, 5, yoffset, "Keys", kChooseKeyMappingCmd, 0, ws);
+	yoffset += buttonHeight + 4;
 #endif
 
 	// TODO: joystick setting
@@ -544,8 +560,8 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	tab->setActiveTab(0);
 
 	// Add OK & Cancel buttons
-	addButton(_w - 2 * (kButtonWidth + 10), _h - 24, "Cancel", kCloseCmd, 0);
-	addButton(_w - (kButtonWidth + 10), _h - 24, "OK", kOKCmd, 0);
+	addButton(_w - 2 * (buttonWidth + 10), _h - buttonHeight - 8, "Cancel", kCloseCmd, 0, ws);
+	addButton(_w - (buttonWidth + 10), _h - buttonHeight - 8, "OK", kOKCmd, 0, ws);
 
 	// Create file browser dialogs
 	_dirBrowser = new BrowserDialog("Select directory for savegames", true);
