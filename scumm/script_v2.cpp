@@ -421,10 +421,12 @@ void ScummEngine_v2::decodeParseString() {
 	_string[textSlot].center = false;
 	_string[textSlot].overhead = false;
 
-	if (_gameId == GID_MANIAC) {
-		// Demos don't set subtitle color before display first subtitle.
-		if (_demoMode && _actorToPrintStrFor == 0xFF)
+	if (_gameId == GID_MANIAC && _actorToPrintStrFor == 0xFF) {
+		if (_platform == Common::kPlatformC64) {
+			_string[textSlot].color = 14;
+		} else if (_demoMode) {
 			_string[textSlot].color = (_version == 2) ? 15 : 1;
+		}
 	}
 
 	actorTalk(buffer);
