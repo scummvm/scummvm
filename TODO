@@ -204,7 +204,6 @@ GUI
   - ...
   Also, some widgets need to be updated (adding a 'big' variant):
   - EditTextWidget
-  - PopUpWidget
   - ...
 * EditableWidget: Make it possible to specify a min/max length for the text
 * EditableWidget: Let setEditString filter the string it gets
@@ -217,6 +216,8 @@ GUI
   most other bitmap fonts have it on the right, though). To this end, we maybe
   should backup the background before drawing the caret, and restore it when
   erasing the caret.
+* PopUpDialog: Must be able to handle longer lists (by adding scrolling?). The
+  language popup currently doesn't fit in the small version of the GUI.
 * Add a new "options" dialog which is used by all frontends: for this, we'd
   agree on a hotkey used in all engines to invoke that dialog; it would sport
   settings for the volume, graphics, paths, etc.; it would co-exist with the
