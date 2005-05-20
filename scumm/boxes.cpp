@@ -116,7 +116,6 @@ void ScummEngine::setBoxFlags(int box, int val) {
 		_extraBoxFlags[box] = val;
 	} else {
 		Box *ptr = getBoxBaseAddr(box);
-		assert(ptr);
 		if (!ptr)
 			return;
 		if (_version == 8)
