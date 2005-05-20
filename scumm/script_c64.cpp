@@ -57,7 +57,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_ifNotState08),
 		/* 10 */
 		OPCODE(o5_breakHere),
-		OPCODE(o2_animateActor),
+		OPCODE(o_animateActor),
 		OPCODE(o2_panCameraTo),
 		OPCODE(o_unknown13),
 		/* 14 */
@@ -137,7 +137,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_ifState08),
 		/* 50 */
 		OPCODE(o2_pickupObject),
-		OPCODE(o2_animateActor),
+		OPCODE(o_animateActor),
 		OPCODE(o5_actorFollowCamera),
 		OPCODE(o_unknown53),
 		/* 54 */
@@ -217,7 +217,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_ifNotState08),
 		/* 90 */
 		OPCODE(o_pickupObject),
-		OPCODE(o2_animateActor),
+		OPCODE(o_animateActor),
 		OPCODE(o2_panCameraTo),
 		OPCODE(o_unknown93),
 		/* 94 */
@@ -297,7 +297,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_ifState08),
 		/* D0 */
 		OPCODE(o2_pickupObject),
-		OPCODE(o2_animateActor),
+		OPCODE(o_animateActor),
 		OPCODE(o5_actorFollowCamera),
 		OPCODE(o2_actorOps),
 		/* D4 */
@@ -641,6 +641,16 @@ void ScummEngine_c64::o_pickupObject() {
 	clearDrawObjectQueue();
 
 	runInventoryScript(1);
+}
+
+void ScummEngine_c64::o_animateActor() {
+	int act = getVarOrDirectByte(PARAM_1);
+	int anim = getVarOrDirectByte(PARAM_2);
+	int unk = fetchScriptByte();
+	debug(0,"o_animateActor: unk %d", unk);
+
+	Actor *a = derefActor(act, "o_animateActor");
+	a->animateActor(anim);
 }
 
 void ScummEngine_c64::o_putActorAtObject() {

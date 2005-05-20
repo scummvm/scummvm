@@ -408,6 +408,7 @@ protected:
 	void o_getDist();
 	void o_isNotEqual();
 	void o_loadSound();
+	void o_animateActor();
 	void o_putActorAtObject();
 	void o_unknown13();
 	void o_clearState08();
