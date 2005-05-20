@@ -19,6 +19,7 @@
  */
 
 #include "stdafx.h"
+#include "common/system.h"
 #include "gui/chooser.h"
 #include "gui/newgui.h"
 #include "gui/ListWidget.h"
@@ -31,16 +32,53 @@ enum {
 
 ChooserDialog::ChooserDialog(const String &title, const String &buttonLabel, int height)
 	: Dialog(8, (200 - height) / 2, 320 - 2 * 8, height) {
+
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
+	const Graphics::Font *font;
+
+	GUI::WidgetSize ws;
+	int buttonWidth, buttonHeight;
+
+	if (screenW >= 400 && screenH >= 300) {
+		ws = GUI::kBigWidgetSize;
+		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		buttonHeight = kBigButtonHeight;
+		buttonWidth = kBigButtonWidth;
+	} else {
+		ws = GUI::kNormalWidgetSize;
+		font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+		buttonHeight = kButtonHeight;
+		buttonWidth = kButtonWidth;
+	}
+
+	int lineHeight = font->getFontHeight() + 2;
+
+	// FIXME: This is an ugly hack. The 'height' parameter assumes a 200
+	// pixel tall screen, so try to scale that to something sensible.
+
+	_h = (screenH * height) / 200;
+	_w = screenW - 2 * 8;
+
+	_x = (screenW - _w) / 2;
+	_y = (screenH - _h) / 2;
+
+	int yoffset = 6;
+
 	// Headline
-	new StaticTextWidget(this, 10, 6, _w - 2 * 10, kLineHeight, title, kTextAlignCenter);
+	new StaticTextWidget(this, 10, 6, _w - 2 * 10, lineHeight, title, kTextAlignCenter, ws);
+
+	yoffset += lineHeight + 2;
 
 	// Add choice list
-	_list = new ListWidget(this, 10, 18, _w - 2 * 10, _h - 14 - 24 - 10);
+	// HACK: Subtracting -12 from the height makes the list look good when
+	// it's used to list savegames in the 320x200 version of the GUI.
+	_list = new ListWidget(this, 10, yoffset, _w - 2 * 10, _h - yoffset - buttonHeight - 12, ws);
 	_list->setNumberingMode(kListNumberingOff);
 	
 	// Buttons
-	addButton(this, _w - 2 * (kButtonWidth + 10), _h - 24, "Cancel", kCloseCmd, 0);
-	_chooseButton = addButton(this, _w-(kButtonWidth + 10), _h - 24, buttonLabel, kChooseCmd, 0);
+	addButton(this, _w - 2 * (buttonWidth + 10), _h - buttonHeight - 8, "Cancel", kCloseCmd, 0, ws);
+	_chooseButton = addButton(this, _w - (buttonWidth + 10), _h - buttonHeight - 8, buttonLabel, kChooseCmd, 0, ws);
 	_chooseButton->setEnabled(false);
 }
 
