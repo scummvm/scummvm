@@ -1677,18 +1677,14 @@ void CharsetRendererNut::printChar(int chr) {
 		_str.bottom = shadow.bottom;
 }
 
-CharsetRendererNES::CharsetRendererNES(ScummEngine *vm, Common::Language language)
-	: CharsetRendererCommon(vm) {
-	_trTable = NULL;	// can't init it here, since resources aren't yet loaded!
-}
-
 void CharsetRendererNES::printChar(int chr) {
 	int width, height, origWidth, origHeight;
 	VirtScreen *vs;
 	byte *charPtr, *dst;
 
-	if (!_trTable)		// have to init it here instead
-		_trTable = _vm->getResourceAddress(rtCostume, 77) + 2;
+	// Init it here each time since it is cheap and fixes bug with
+	// charset after game load
+	_trTable = _vm->getResourceAddress(rtCostume, 77) + 2;
 
 	// HACK: how to set it properly?
 	if (_top == 0)

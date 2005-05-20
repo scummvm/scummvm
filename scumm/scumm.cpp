@@ -1446,7 +1446,7 @@ int ScummEngine::init(GameDetector &detector) {
 
 	// Create the charset renderer
 	if (_platform == Common::kPlatformNES)
-		_charset = new CharsetRendererNES(this, _language);
+		_charset = new CharsetRendererNES(this);
 	else if (_version <= 2)
 		_charset = new CharsetRendererV2(this, _language);
 	else if (_version == 3)

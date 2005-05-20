@@ -144,7 +144,7 @@ protected:
 	void drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height);
 
 public:
-	CharsetRendererNES(ScummEngine *vm, Common::Language language);
+	CharsetRendererNES(ScummEngine *vm) : CharsetRendererCommon(vm) {}
 	
 	void setCurID(byte id) {}
 	void printChar(int chr);
