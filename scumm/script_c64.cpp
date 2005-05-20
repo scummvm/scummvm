@@ -56,7 +56,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_putActorAtObject),
 		OPCODE(o2_ifNotState08),
 		/* 10 */
-		OPCODE(o_unfreezeScripts),
+		OPCODE(o5_breakHere),
 		OPCODE(o2_animateActor),
 		OPCODE(o2_panCameraTo),
 		OPCODE(o_unknown13),
@@ -438,10 +438,6 @@ void ScummEngine_c64::o_stopScript() {
 void ScummEngine_c64::o_loadSound() {
 	int resid = fetchScriptByte();
 	ensureResourceLoaded(rtSound, resid);
-}
-
-void ScummEngine_c64::o_unfreezeScripts() {
-	unfreezeScripts();
 }
 
 void ScummEngine_c64::o_move() {
