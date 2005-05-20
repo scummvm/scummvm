@@ -88,16 +88,9 @@ protected:
 	Widget *findWidget(int x, int y); // Find the widget at pos x,y if any
 
 	ButtonWidget *addButton(GuiObject *boss, int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws = kDefaultWidgetSize);
-	ButtonWidget *addButton(int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws = kDefaultWidgetSize);
-
 	CheckboxWidget *addCheckbox(GuiObject *boss, int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws = kDefaultWidgetSize);
-	CheckboxWidget *addCheckbox(int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws = kDefaultWidgetSize);
-
 	SliderWidget *addSlider(GuiObject *boss, int x, int y, uint32 cmd, WidgetSize ws = kDefaultWidgetSize);
-	SliderWidget *addSlider(int x, int y, uint32 cmd, WidgetSize ws = kDefaultWidgetSize);
-
 	PopUpWidget *addPopUp(GuiObject *boss, int x, int y, int w, const Common::String &label, uint labelWidth = 0, WidgetSize ws = kDefaultWidgetSize);
-	PopUpWidget *addPopUp(int x, int y, int w, const Common::String &label, uint labelWidth = 0, WidgetSize ws = kDefaultWidgetSize);
 
 	void setResult(int result) { _result = result; }
 	int getResult() const { return _result; }

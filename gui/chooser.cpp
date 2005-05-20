@@ -39,8 +39,8 @@ ChooserDialog::ChooserDialog(const String &title, const String &buttonLabel, int
 	_list->setNumberingMode(kListNumberingOff);
 	
 	// Buttons
-	addButton(_w - 2 * (kButtonWidth + 10), _h - 24, "Cancel", kCloseCmd, 0);
-	_chooseButton = addButton(_w-(kButtonWidth + 10), _h - 24, buttonLabel, kChooseCmd, 0);
+	addButton(this, _w - 2 * (kButtonWidth + 10), _h - 24, "Cancel", kCloseCmd, 0);
+	_chooseButton = addButton(this, _w-(kButtonWidth + 10), _h - 24, buttonLabel, kChooseCmd, 0);
 	_chooseButton->setEnabled(false);
 }
 

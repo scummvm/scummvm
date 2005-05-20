@@ -79,8 +79,8 @@ enum {
  */
 class DomainEditTextWidget : public EditTextWidget {
 public:
-	DomainEditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text)
-		: EditTextWidget(boss, x, y, w, h, text) {
+	DomainEditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, WidgetSize ws = kNormalWidgetSize)
+		: EditTextWidget(boss, x, y, w, h, text, ws) {
 	}
 	
 protected:
@@ -188,15 +188,25 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	tab->addTab("Game");
 	yoffset = vBorder;
 
+	const Graphics::Font *font;
+
+	if (ws == GUI::kBigWidgetSize) {
+		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	} else {
+		font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	}
+
+	int lineHeight = font->getFontHeight() + 2;
+
 	// GUI:  Label & edit widget for the game ID
-	new StaticTextWidget(tab, x, yoffset + 2, labelWidth, kLineHeight, "ID: ", kTextAlignRight, ws);
-	_domainWidget = new DomainEditTextWidget(tab, x + labelWidth, yoffset, _w - labelWidth - 10, kLineHeight, _domain);
-	yoffset += 16;
+	new StaticTextWidget(tab, x, yoffset + 2, labelWidth, lineHeight, "ID: ", kTextAlignRight, ws);
+	_domainWidget = new DomainEditTextWidget(tab, x + labelWidth, yoffset, _w - labelWidth - 10 - x, lineHeight, _domain, ws);
+	yoffset += _domainWidget->getHeight() + 3;
 
 	// GUI:  Label & edit widget for the description
-	new StaticTextWidget(tab, x, yoffset + 2, labelWidth, kLineHeight, "Name: ", kTextAlignRight, ws);
-	_descriptionWidget = new EditTextWidget(tab, x + labelWidth, yoffset, _w - labelWidth - 10, kLineHeight, description);
-	yoffset += 16;
+	new StaticTextWidget(tab, x, yoffset + 2, labelWidth, lineHeight, "Name: ", kTextAlignRight, ws);
+	_descriptionWidget = new EditTextWidget(tab, x + labelWidth, yoffset, _w - labelWidth - 10 - x, lineHeight, description, ws);
+	yoffset += _descriptionWidget->getHeight() + 3;
 
 	// Language popup
 	_langPopUp = addPopUp(tab, x, yoffset, w, "Language: ", labelWidth, ws);
@@ -224,12 +234,12 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 
 	// GUI:  Button + Label for the game path
 	addButton(tab, x, yoffset, "Game Path:", kCmdGameBrowser, 0, ws);
-	_gamePathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, kLineHeight, gamePath, kTextAlignLeft, ws);
+	_gamePathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, lineHeight, gamePath, kTextAlignLeft, ws);
 	yoffset += buttonHeight + 4;
 
 	// GUI:  Button + Label for the additional path
 	addButton(tab, x, yoffset, "Extra Path:", kCmdExtraBrowser, 0, ws);
-	_extraPathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, kLineHeight, extraPath, kTextAlignLeft, ws);
+	_extraPathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, lineHeight, extraPath, kTextAlignLeft, ws);
 	if (extraPath.isEmpty() || !ConfMan.hasKey("extrapath", _domain)) {
 		_extraPathWidget->setLabel("None");
 	}
@@ -237,7 +247,7 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 
 	// GUI:  Button + Label for the save path
 	addButton(tab, x, yoffset, "Save Path:", kCmdSaveBrowser, 0, ws);
-	_savePathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, kLineHeight, savePath, kTextAlignLeft, ws);
+	_savePathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, lineHeight, savePath, kTextAlignLeft, ws);
 	if (savePath.isEmpty() || !ConfMan.hasKey("savepath", _domain)) {
 		_savePathWidget->setLabel("Default");
 	}
@@ -292,8 +302,8 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	tab->setActiveTab(0);
 
 	// Add OK & Cancel buttons
-	addButton(_w - 2 * (buttonWidth + 10), _h - buttonHeight - 8, "Cancel", kCloseCmd, 0, ws);
-	addButton(_w - (buttonWidth + 10), _h - buttonHeight - 8, "OK", kOKCmd, 0, ws);
+	addButton(this, _w - 2 * (buttonWidth + 10), _h - buttonHeight - 8, "Cancel", kCloseCmd, 0, ws);
+	addButton(this, _w - (buttonWidth + 10), _h - buttonHeight - 8, "OK", kOKCmd, 0, ws);
 }
 
 void EditGameDialog::open() {
@@ -506,12 +516,13 @@ LauncherDialog::LauncherDialog(GameDetector &detector)
 		ws = GUI::kBigWidgetSize;
 		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 		lineHeight = font->getFontHeight() + 2;
+		buttonHeight = kBigButtonHeight;
 	} else {
 		ws = GUI::kNormalWidgetSize;
 		font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 		lineHeight = font->getFontHeight() + 2;
+		buttonHeight = kButtonHeight;
 	}
-	buttonHeight = lineHeight * 4 / 3;
 
 	// Show ScummVM version
 	new StaticTextWidget(this, hBorder, 8, _w - 2*hBorder, lineHeight, gScummVMFullVersion, kTextAlignCenter, ws);

@@ -47,7 +47,7 @@ protected:
 	int			_editScrollOffset;
 
 public:
-	EditableWidget(GuiObject *boss, int x, int y, int w, int h);
+	EditableWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws = kNormalWidgetSize);
 	virtual ~EditableWidget();
 
 	virtual void setEditString(const String &str);

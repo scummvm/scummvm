@@ -100,10 +100,10 @@ MessageDialog::MessageDialog(const Common::String &message, const char *defaultB
 	}
 
 	if (defaultButton)
-		addButton(okButtonPos, _h - buttonHeight - 8, defaultButton, kOkCmd, '\n', ws);	// Confirm dialog
+		addButton(this, okButtonPos, _h - buttonHeight - 8, defaultButton, kOkCmd, '\n', ws);	// Confirm dialog
 
 	if (altButton)
-		addButton(cancelButtonPos, _h - buttonHeight - 8, altButton, kCancelCmd, '\27', ws);	// Cancel dialog
+		addButton(this, cancelButtonPos, _h - buttonHeight - 8, altButton, kCancelCmd, '\27', ws);	// Cancel dialog
 }
 
 void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

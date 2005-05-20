@@ -154,7 +154,7 @@ public:
 
 	void drawChar(byte c, int x, int y, OverlayColor color, const Graphics::Font *font = 0);
 	void drawString(const String &str, int x, int y, int w, OverlayColor color, Graphics::TextAlignment align = Graphics::kTextAlignLeft, int deltax = 0, bool useEllipsis = true);
-	void drawString(const Graphics::Font *font, const String &str, int x, int y, int w, OverlayColor color, Graphics::TextAlignment valign = Graphics::kTextAlignLeft);
+	void drawString(const Graphics::Font *font, const String &str, int x, int y, int w, OverlayColor color, Graphics::TextAlignment align = Graphics::kTextAlignLeft, int deltax = 0, bool useEllipsis = true);
 
 	int getStringWidth(const String &str) const;
 	int getCharWidth(byte c) const;

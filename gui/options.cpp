@@ -576,8 +576,8 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	tab->setActiveTab(0);
 
 	// Add OK & Cancel buttons
-	addButton(_w - 2 * (buttonWidth + 10), _h - buttonHeight - 8, "Cancel", kCloseCmd, 0, ws);
-	addButton(_w - (buttonWidth + 10), _h - buttonHeight - 8, "OK", kOKCmd, 0, ws);
+	addButton(this, _w - 2 * (buttonWidth + 10), _h - buttonHeight - 8, "Cancel", kCloseCmd, 0, ws);
+	addButton(this, _w - (buttonWidth + 10), _h - buttonHeight - 8, "OK", kOKCmd, 0, ws);
 
 	// Create file browser dialogs
 	_dirBrowser = new BrowserDialog("Select directory for savegames", true);

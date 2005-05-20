@@ -28,14 +28,11 @@
 namespace GUI {
 
 ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws)
-	: EditableWidget(boss, x, y, w, h), CommandSender(boss) {
+	: EditableWidget(boss, x, y, w, h, ws), CommandSender(boss) {
 	
-	// TODO: When in kBigWidgetSize mode, use another font
 	if (ws == kBigWidgetSize) {
-		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 		_w = w - kBigScrollBarWidth;
 	} else {
-		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 		_w = w - kNormalScrollBarWidth;
 	}
 	_lineHeight = _font->getFontHeight() + 2;

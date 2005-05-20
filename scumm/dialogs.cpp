@@ -303,8 +303,8 @@ SaveLoadChooserEx::SaveLoadChooserEx(const String &title, const String &buttonLa
 	_gfxWidget->setFlags(GUI::WIDGET_BORDER);
 	
 	// Buttons
-	addButton(_w - 2 * (kBigButtonWidth + 10), _h - kBigButtonHeight - 8, "Cancel", kCloseCmd, 0, GUI::kBigWidgetSize);
-	_chooseButton = addButton(_w - (kBigButtonWidth + 10), _h - kBigButtonHeight - 8, buttonLabel, kChooseCmd, 0, GUI::kBigWidgetSize);
+	addButton(this, _w - 2 * (kBigButtonWidth + 10), _h - kBigButtonHeight - 8, "Cancel", kCloseCmd, 0, GUI::kBigWidgetSize);
+	_chooseButton = addButton(this, _w - (kBigButtonWidth + 10), _h - kBigButtonHeight - 8, buttonLabel, kChooseCmd, 0, GUI::kBigWidgetSize);
 	_chooseButton->setEnabled(false);
 }
 
@@ -578,10 +578,10 @@ ConfigDialog::ConfigDialog(ScummEngine *scumm)
 	// Some misc options
 	//
 
-	_subtitlesCheckbox = addCheckbox(15, yoffset, "Show subtitles", 0, 'S', ws);
+	_subtitlesCheckbox = addCheckbox(this, 15, yoffset, "Show subtitles", 0, 'S', ws);
 	yoffset += _subtitlesCheckbox->getHeight();
 
-	_speechCheckbox = addCheckbox(15, yoffset, "Enable speech", 0, 'E', ws);
+	_speechCheckbox = addCheckbox(this, 15, yoffset, "Enable speech", 0, 'E', ws);
 	yoffset += _speechCheckbox->getHeight() + 4;
 
 	//
@@ -590,10 +590,10 @@ ConfigDialog::ConfigDialog(ScummEngine *scumm)
 
 	_w = 8 + 3 * (buttonWidth + 4); // FIXME/TODO
 
-	addButton(_w - (buttonWidth + 4) - 4, yoffset, "OK", GUI::OptionsDialog::kOKCmd, 'O', ws);
-	addButton(_w - 2 * (buttonWidth + 4) - 4, yoffset, "Cancel", kCloseCmd, 'C', ws);
+	addButton(this, _w - (buttonWidth + 4) - 4, yoffset, "OK", GUI::OptionsDialog::kOKCmd, 'O', ws);
+	addButton(this, _w - 2 * (buttonWidth + 4) - 4, yoffset, "Cancel", kCloseCmd, 'C', ws);
 #ifdef _WIN32_WCE
-	addButton(_w - 3 * (buttonWidth + 4) - 4, yoffset, "Keys", kKeysCmd, 'K', ws);
+	addButton(this, _w - 3 * (buttonWidth + 4) - 4, yoffset, "Keys", kKeysCmd, 'K', ws);
 #endif
 
 	yoffset += buttonHeight;
@@ -712,9 +712,9 @@ HelpDialog::HelpDialog(ScummEngine *scumm)
 
 	int y = 5 + lineHeight * (HELP_NUM_LINES + 2) + 2;
 
-	_prevButton = addButton(10, y, "Previous", kPrevCmd, 'P', ws);
-	_nextButton = addButton(10 + buttonWidth + 8, y, "Next", kNextCmd, 'N', ws);
-	addButton(_w - 8 - buttonWidth, y, "Close", kCloseCmd, 'C', ws);
+	_prevButton = addButton(this, 10, y, "Previous", kPrevCmd, 'P', ws);
+	_nextButton = addButton(this, 10 + buttonWidth + 8, y, "Next", kNextCmd, 'N', ws);
+	addButton(this, _w - 8 - buttonWidth, y, "Close", kCloseCmd, 'C', ws);
 	_prevButton->clearFlags(WIDGET_ENABLED);
 
 	displayKeyBindings();

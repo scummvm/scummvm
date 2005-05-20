@@ -177,9 +177,9 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 	_fileList->setEditable(false);
 
 	// Buttons
-	addButton(10, _h - buttonHeight - 8, "Go up", kGoUpCmd, 0, ws);
-	addButton(_w - 2 * (buttonWidth + 10), _h - buttonHeight - 8, "Cancel", kCloseCmd, 0, ws);
-	addButton(_w - (buttonWidth + 10), _h - buttonHeight - 8, "Choose", kChooseCmd, 0, ws);
+	addButton(this, 10, _h - buttonHeight - 8, "Go up", kGoUpCmd, 0, ws);
+	addButton(this, _w - 2 * (buttonWidth + 10), _h - buttonHeight - 8, "Cancel", kCloseCmd, 0, ws);
+	addButton(this, _w - (buttonWidth + 10), _h - buttonHeight - 8, "Choose", kChooseCmd, 0, ws);
 }
 
 void BrowserDialog::open() {

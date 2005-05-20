@@ -25,7 +25,7 @@
 
 namespace GUI {
 
-EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h)
+EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws)
  : Widget(boss, x, y, w, h) {
 	_caretVisible = false;
 	_caretTime = 0;
@@ -35,7 +35,17 @@ EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h)
 
 	_editScrollOffset = 0;
 
-	_font = &g_gui.getFont();	// Most widgets will probably set this to something else.
+	switch (ws) {
+	case kNormalWidgetSize:
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+		break;
+	case kBigWidgetSize:
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		break;
+	default:
+		_font = &g_gui.getFont();
+		break;
+	}
 }
 
 EditableWidget::~EditableWidget() {

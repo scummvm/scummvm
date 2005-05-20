@@ -289,10 +289,6 @@ Widget *Dialog::findWidget(int x, int y) {
 	return Widget::findWidgetInChain(_firstWidget, x, y);
 }
 
-ButtonWidget *Dialog::addButton(int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws) {
-	return addButton(this, x, y, label, cmd, hotkey, ws);
-}
-
 ButtonWidget *Dialog::addButton(GuiObject *boss, int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws) {
 	int w = kButtonWidth;
 	int h = kButtonHeight;
@@ -301,10 +297,6 @@ ButtonWidget *Dialog::addButton(GuiObject *boss, int x, int y, const Common::Str
 		h = kBigButtonHeight;
 	}
 	return new ButtonWidget(boss, x, y, w, h, label, cmd, hotkey, ws);
-}
-
-CheckboxWidget *Dialog::addCheckbox(int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws) {
-	return addCheckbox(this, x, y, label, cmd, hotkey, ws);
 }
 
 CheckboxWidget *Dialog::addCheckbox(GuiObject *boss, int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws) {
@@ -324,10 +316,6 @@ CheckboxWidget *Dialog::addCheckbox(GuiObject *boss, int x, int y, const Common:
 	return new CheckboxWidget(boss, x, y, w, h, label, cmd, hotkey, ws);
 }
 
-SliderWidget *Dialog::addSlider(int x, int y, uint32 cmd, WidgetSize ws) {
-	return addSlider(this, x, y, cmd, ws);
-}
-
 SliderWidget *Dialog::addSlider(GuiObject *boss, int x, int y, uint32 cmd, WidgetSize ws) {
 	int w, h;
 
@@ -340,10 +328,6 @@ SliderWidget *Dialog::addSlider(GuiObject *boss, int x, int y, uint32 cmd, Widge
 	}
 
 	return new SliderWidget(boss, x, y, w, h, cmd);
-}
-
-PopUpWidget *Dialog::addPopUp(int x, int y, int w, const Common::String &label, uint labelWidth, WidgetSize ws) {
-	return addPopUp(this, x, y, w, label, labelWidth, ws);
 }
 
 PopUpWidget *Dialog::addPopUp(GuiObject *boss, int x, int y, int w, const Common::String &label, uint labelWidth, WidgetSize ws) {

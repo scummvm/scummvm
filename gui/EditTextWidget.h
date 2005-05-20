@@ -34,7 +34,7 @@ protected:
 	String		_backupString;
 
 public:
-	EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text);
+	EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, WidgetSize ws = kNormalWidgetSize);
 
 	void setEditString(const String &str);
 
