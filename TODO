@@ -195,7 +195,6 @@ GUI
 ===
 * Remove hard coded 320x200 assumptions, use game screen size. In particular,
   all the dialogs should be rewritten to allow for that. This includes:
-  - ChooserDialog
   - EditGameDialog
   - OptionsDialog
   - GlobalOptionsDialog
