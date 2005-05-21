@@ -153,7 +153,7 @@ int32 LogicHErace::dispatch(int op, int numArgs, int32 *args) {
 int32 LogicHErace::op_1003(int32 *args) {
 	int value = args[2] ? args[2] : 1;
 
-	writeScummVar(108, (int32)(atan2(args[0], args[1]) * RAD2DEG * value));
+	writeScummVar(108, (int32)(atan2((double)args[0], (double)args[1]) * RAD2DEG * value));
 
 	return 1;
 }
