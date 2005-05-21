@@ -153,7 +153,7 @@ bool BundleMgr::open(const char *filename, bool &compressed) {
 		return true;
 
 	if (_file.open(filename) == false) {
-		warning("BundleMgr::openFile() Can't open bundle file: %s", filename);
+		error("BundleMgr::openFile() Can't open bundle file: %s", filename);
 		return false;
 	}
 
