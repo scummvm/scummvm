@@ -173,33 +173,31 @@ void Sound::setupHEMusicFile() {
 		_vm->generateSubstResFileName(buf, buf1, sizeof(buf1));
 		strcpy(buf, buf1);
 	}
-	if (musicFile.open(buf) == false) {
-		warning("setupHEMusicFile: Can't open music file %s", buf);
-		return;
+	if (musicFile.open(buf) == true) {
+		musicFile.seek(4, SEEK_SET);
+		total_size = musicFile.readUint32BE();
+		musicFile.seek(16, SEEK_SET);
+		_heMusicTracks = musicFile.readUint32LE();
+		debug(0, "Total music tracks %d", _heMusicTracks);
+
+		int musicStart = (_vm->_heversion >= 80) ? 56 : 20;
+		musicFile.seek(musicStart, SEEK_SET);
+
+		_heMusic = (HEMusic *)malloc((_heMusicTracks + 1) * sizeof(HEMusic));
+		for (i = 0; i < _heMusicTracks; i++) {
+			_heMusic[i].id = musicFile.readUint32LE();
+			_heMusic[i].offset = musicFile.readUint32LE();
+			_heMusic[i].size = musicFile.readUint32LE();
+
+			if (_vm->_heversion >= 80) {
+				musicFile.seek(+9, SEEK_CUR);
+			} else {
+				musicFile.seek(+13, SEEK_CUR);
+			}
+		}	
+
+		musicFile.close();
 	}
-	musicFile.seek(4, SEEK_SET);
-	total_size = musicFile.readUint32BE();
-	musicFile.seek(16, SEEK_SET);
-	_heMusicTracks = musicFile.readUint32LE();
-	debug(0, "Total music tracks %d", _heMusicTracks);
-
-	int musicStart = (_vm->_heversion >= 80) ? 56 : 20;
-	musicFile.seek(musicStart, SEEK_SET);
-
-	_heMusic = (HEMusic *)malloc((_heMusicTracks + 1) * sizeof(HEMusic));
-	for (i = 0; i < _heMusicTracks; i++) {
-		_heMusic[i].id = musicFile.readUint32LE();
-		_heMusic[i].offset = musicFile.readUint32LE();
-		_heMusic[i].size = musicFile.readUint32LE();
-
-		if (_vm->_heversion >= 80) {
-			musicFile.seek(+9, SEEK_CUR);
-		} else {
-			musicFile.seek(+13, SEEK_CUR);
-		}
-	}	
-
-	musicFile.close();
 }
 
 bool Sound::getHEMusicDetails(int id, int &musicOffs, int &musicSize) {
@@ -247,7 +245,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 			strcpy(buf, buf1);
 		}
 		if (musicFile.open(buf) == false) {
-			warning("playSound: Can't open music file %s", buf);
+			error("playSound: Can't open music file %s", buf);
 			return;
 		}
 		if (!getHEMusicDetails(soundID, music_offs, size)) {
@@ -327,6 +325,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		assert(READ_UINT32(ptr) == MKID('SDAT'));
 		size = READ_BE_UINT32(ptr+4) - 8;
 		if (heOffset < 0 || heOffset > size) {
+			// Occurs when making fireworks in puttmoon
 			warning("playSound: Invalid sound offset (%d) in sound %d", heOffset, soundID);
 			heOffset = 0;
 		} 
@@ -471,7 +470,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 				ptr += 0x20;
 				size -= 0x20;
 				if (size < waveSize) {
-					warning("Wrong wave size in sound #%i: %i", soundID, waveSize);
+					error("Wrong wave size in sound #%i: %i", soundID, waveSize);
 					waveSize = size;
 				}
 				sound = (char *)malloc(waveSize);
@@ -516,7 +515,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 			_currentCDSound = soundID;
 			break;
 		default: // Unsupported sound type
-			warning("Unsupported sound sub-type %d", type);
+			error("Unsupported sound sub-type %d", type);
 			break;
 		}
 	}
@@ -704,7 +703,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 		else if (offset == 79)
 			strcpy(roomname, "newton");
 		else {
-			warning("startTalkSound: dig demo: unknown room number: %d", offset);
+			error("startTalkSound: dig demo: unknown room number: %d", offset);
 			return;
 		}
 
@@ -716,13 +715,13 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 			_vm->openFile(*_sfxFile, filename);
 		}
 		if (!_sfxFile->isOpen()) {
-			warning("startTalkSound: dig demo: voc file not found");
+			error("startTalkSound: dig demo: voc file not found");
 			return;
 		}
 	} else {
 
 		if (!_sfxFile->isOpen()) {
-			warning("startTalkSound: SFX file is not open");
+			error("startTalkSound: SFX file is not open");
 			return;
 		}
 
@@ -747,11 +746,11 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 													sizeof(MP3OffsetTable), compareMP3OffsetTable);
 
 			if (result == NULL) {
-				warning("startTalkSound: did not find sound at offset %d !", offset);
+				error("startTalkSound: did not find sound at offset %d !", offset);
 				return;
 			}
 			if (2 * num != result->num_tags) {
-				warning("startTalkSound: number of tags do not match (%d - %d) !", b,
+				error("startTalkSound: number of tags do not match (%d - %d) !", b,
 								result->num_tags);
 				num = result->num_tags;
 			}
@@ -801,7 +800,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 		}
 		
 		if (!input) {
-			warning("startSfxSound failed to load sound");
+			error("startSfxSound failed to load sound");
 			return;
 		}
 	
@@ -1069,8 +1068,7 @@ void Sound::setupSound() {
 	delete _sfxFile;
 	_sfxFile = openSfxFile();
 
-	// No music file in lost/smaller
-	if (_vm->_heversion >= 70 && !(_vm->_features & GF_HE_CURSORLESS)) {
+	if (_vm->_heversion >= 70) {
 		setupHEMusicFile();
 	}
 
@@ -1432,7 +1430,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		
 		debugC(DEBUG_SOUND, "FMUS file %s", buffer);
 		if (dmuFile.open(buffer) == false) {
-			warning("Can't open music file %s*", buffer);
+			error("Can't open music file %s*", buffer);
 			res.roomoffs[type][idx] = 0xFFFFFFFF;
 			return 0;
 		}

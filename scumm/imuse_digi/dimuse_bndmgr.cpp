@@ -74,7 +74,7 @@ int BundleDirCache::matchFile(const char *filename) {
 		Common::File file;
 
 		if (file.open(filename) == false) {
-			warning("BundleDirCache::matchFile() Can't open bundle file: %s", filename);
+			error("BundleDirCache::matchFile() Can't open bundle file: %s", filename);
 			return false;
 		}
 
@@ -196,7 +196,7 @@ bool BundleMgr::loadCompTable(int32 index) {
 	_file.seek(8, SEEK_CUR);
 
 	if (tag != MKID_BE('COMP')) {
-		warning("BundleMgr::loadCompTable() Compressed sound %d invalid (%s)", index, tag2str(tag));
+		error("BundleMgr::loadCompTable() Compressed sound %d invalid (%s)", index, tag2str(tag));
 		return false;
 	}
 
@@ -227,7 +227,7 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 	assert(0 <= index && index < _numFiles);
 
 	if (_file.isOpen() == false) {
-		warning("BundleMgr::decompressSampleByIndex() File is not open!");
+		error("BundleMgr::decompressSampleByIndex() File is not open!");
 		return 0;
 	}
 
@@ -303,7 +303,7 @@ int32 BundleMgr::decompressSampleByName(const char *name, int32 offset, int32 si
 	int32 final_size = 0, i;
 
 	if (!_file.isOpen()) {
-		warning("BundleMgr::decompressSampleByName() File is not open!");
+		error("BundleMgr::decompressSampleByName() File is not open!");
 		return 0;
 	}
 
