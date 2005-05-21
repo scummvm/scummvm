@@ -1388,7 +1388,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	
 	const byte *tmsk_ptr = NULL;
 	if (_vm->_heversion >= 72) {
-		tmsk_ptr = _vm->findResourceData(MKID('TMSK'), ptr);
+		tmsk_ptr = _vm->findResource(MKID('TMSK'), ptr);
 	}
 
 	bottom = y + height;
@@ -1557,7 +1557,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 					z_plane_ptr = zplane_list[i] + offs;
 
 					if (tmsk_ptr) {
-						const byte *tmsk = tmsk_ptr + stripnr * 2 + 8;
+						const byte *tmsk = tmsk_ptr + READ_LE_UINT16(tmsk_ptr + 8);
 						decompressTMSK(mask_ptr, tmsk, z_plane_ptr, height);
 					} else if (useOrDecompress && (flag & dbAllowMaskOr)) {
 						decompressMaskImgOr(mask_ptr, z_plane_ptr, height);
