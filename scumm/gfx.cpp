@@ -1871,58 +1871,47 @@ void Gdi::decompressMaskImg(byte *dst, const byte *src, int height) const {
 }
 
 void Gdi::decompressTMSK(byte *dst, const byte *tmsk, const byte *src, int height) const {
-	int edx;
-	int var_10 = 0;
-	int var_14 = 0;
-	int tmp1 = 0;
-	int tmp2 = 0;
+	byte srcbits = 0;
+	byte srcFlag = 0;
+	byte maskFlag = 0;
 
-	int esi = 0;
-	int edi = 0;
-	int ebx = 0;
+	byte srcCount = 0;
+	byte maskCount = 0;
+	byte maskbits = 0;
 
 	while (height) {
-		if (esi == 0) {
-			esi = *src++;
-			edx = esi & 0x80;
-			tmp1 = edx;
-			if (edx) {
-				esi &= 0x7F;
-				var_10 = *src++;
+		if (srcCount == 0) {
+			srcCount = *src++;
+			srcFlag = srcCount & 0x80;
+			if (srcFlag) {
+				srcCount &= 0x7F;
+				srcbits = *src++;
 			}
 		}
 
 
-		if (tmp1 == 0) {
-			var_10 = *src++;
+		if (srcFlag == 0) {
+			srcbits = *src++;
 		}
 
-		esi--;
-		if (edi == 0) {
-			edi = *tmsk++;
-			edx = edi & 0x80;
-			tmp2 = edx;
-			if (edx) {
-				edi &= 0x7F;
-				ebx = *tmsk++;
+		srcCount--;
+
+		if (maskCount == 0) {
+			maskCount = *tmsk++;
+			maskFlag = maskCount & 0x80;
+			if (maskFlag) {
+				maskCount &= 0x7F;
+				maskbits = *tmsk++;
 			}
 		}
 
-		if (tmp2 == 0) {
-			ebx = *tmsk++;
+		if (maskFlag == 0) {
+			maskbits = *tmsk++;
 		}
 
-		edi--;
+		maskCount--;
 
-		edx = ebx;
-		edx = !edx;
-		edx &= *dst;
-
-		var_14 = var_10;
-		var_14 &= ebx;
-
-		edx |= var_14;
-		*dst = edx;
+		*dst = (*dst & ~maskbits) | (srcbits & maskbits);
 
 		dst += 80;
 		height--;
