@@ -875,7 +875,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	memset(_resourceMapper, 0, sizeof(_resourceMapper));
 	_lastLoadedRoom = 0;
 	_roomResource = 0;
-	_substResFileNameIndex = 0;
 	OF_OWNER_ROOM = 0;
 	_verbMouseOver = 0;
 	_inventoryOffset = 0;
