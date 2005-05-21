@@ -269,7 +269,7 @@ void ScummEngine::setPaletteFromPtr(const byte *ptr, int numcolor) {
 		}
 	}
 
-	if (_heversion >= 90) {
+	if (_heversion >= 90 || _version == 8) {
 		memcpy(_darkenPalette, _currentPalette, 768);
 	}
 
@@ -674,7 +674,7 @@ void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int
 		const byte *palptr;
 		int color, idx, j;
 
-		if (_heversion >= 90) {
+		if (_heversion >= 90 || _version == 8) {
 			palptr = _darkenPalette;
 		} else {
 			palptr = getPalettePtr(_curPalIndex, _roomResource);
@@ -737,7 +737,7 @@ void ScummEngine_v8::desaturatePalette(int hueScale, int satScale, int lightScal
 		byte *cur;
 		int j;
 
-		cptr = getPalettePtr(_curPalIndex, _roomResource) + startColor * 3;
+		cptr = _darkenPalette + startColor * 3;
 		cur = _currentPalette + startColor * 3;
 
 		for (j = startColor; j <= endColor; j++) {
@@ -809,7 +809,9 @@ int ScummEngine::remapPaletteColor(int r, int g, int b, int threshold) {
 	int i;
 	int ar, ag, ab;
 	uint sum, bestsum, bestitem = 0;
-	byte *pal = _currentPalette;
+
+	int startColor = (_version == 8) ? 24 : 1;
+	byte *pal = _currentPalette + startColor * 3;
 
 	if (r > 255)
 		r = 255;
@@ -824,7 +826,7 @@ int ScummEngine::remapPaletteColor(int r, int g, int b, int threshold) {
 	g &= ~3;
 	b &= ~3;
 
-	for (i = 0; i < 256; i++, pal += 3) {
+	for (i = startColor; i < 256; i++, pal += 3) {
 		ar = pal[0] & ~3;
 		ag = pal[1] & ~3;
 		ab = pal[2] & ~3;
@@ -901,6 +903,11 @@ void ScummEngine::setPalColor(int idx, int r, int g, int b) {
 	_currentPalette[idx * 3 + 0] = r;
 	_currentPalette[idx * 3 + 1] = g;
 	_currentPalette[idx * 3 + 2] = b;
+	if (_version == 8) {
+		_darkenPalette[idx * 3 + 0] = r;
+		_darkenPalette[idx * 3 + 1] = g;
+		_darkenPalette[idx * 3 + 2] = b;
+	}
 	setDirtyColors(idx, idx);
 }
 

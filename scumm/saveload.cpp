@@ -605,6 +605,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 
 		MK_OBSOLETE(ScummEngine, gdi._transparentColor, sleByte, VER(8), VER(50)),
 		MKARRAY(ScummEngine, _currentPalette[0], sleByte, 768, VER(8)),
+		MKARRAY(ScummEngine, _darkenPalette[0], sleByte, 768, VER(53)),
 
 		// Sam & Max specific palette replaced by _shadowPalette now.
 		MK_OBSOLETE_ARRAY(ScummEngine, _proc_special_palette[0], sleByte, 256, VER(8), VER(33)),
@@ -914,6 +915,11 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 			_palManipIntermediatePal = (byte *)calloc(0x600, 1);
 		s->saveLoadArrayOf(_palManipPalette, 0x300, 1, sleByte);
 		s->saveLoadArrayOf(_palManipIntermediatePal, 0x600, 1, sleByte);
+	}
+	
+	// darkenPalette was not saved before V53
+	if (s->isLoading() && savegameVersion < VER(53)) {
+		memcpy(_darkenPalette, _currentPalette, 768);
 	}
 
 
