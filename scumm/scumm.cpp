@@ -175,8 +175,9 @@ static const ScummGameSettings scumm_settings[] = {
 
 	{"samnmax", "Sam & Max", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, Common::kPlatformPC, 0, 0},
+	// This target is obsolete now. Kept here only for compatibility
 	{"samnmax-alt", "Sam & Max (alt)", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY, Common::kPlatformPC, "samnmax", "samnmax.sm0"},
+	 GF_USE_KEY, Common::kPlatformPC, "samnmax", "samnmax.000"},
 	{"samnmaxMac", "Sam & Max (Mac)", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, Common::kPlatformMacintosh, "samnmax", "Sam & Max Data"},
 	{"samdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
@@ -646,6 +647,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "racedemo", "500demo", kGenPC},
 	{ "racedemo", "RaceDemo", kGenMac },
 	{ "samnmax", "ramnmax", kGenPC }, // Used in some releases of Russian Sam'n'Max
+	{ "samnmax.000", "samnmax.sm0", kGenAsIs }, // Fixes MD5 detection
 	{ "SamsFunShop", "Sam's FunShop", kGenMac },
 	{ "sf2-demo", "Spy Fox 2 - Demo", kGenMac },
 	{ "sf2-demo", "sf2demo", kGenPC },
