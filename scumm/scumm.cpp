@@ -1462,7 +1462,7 @@ int ScummEngine::init(GameDetector &detector) {
 	if (_features & GF_NEW_COSTUMES) {
 		_costumeRenderer = new AkosRenderer(this);
 		_costumeLoader = new AkosCostumeLoader(this);
-	} else if (_platform == Common::kPlatformC64) {
+	} else if (_platform == Common::kPlatformC64 && _gameId == GID_MANIAC) {
 		_costumeRenderer = new C64CostumeRenderer(this);
 		_costumeLoader = new C64CostumeLoader(this);
 	} else if (_platform == Common::kPlatformNES) {
