@@ -276,7 +276,7 @@ void ScummEngine_v72he::setupScummVars() {
 	VAR_MOUSE_STATE = 75;
 	VAR_POLYGONS_ONLY = 76;
 
-	if (_heversion == 72) {
+	if (_heversion <= 73) {
 		VAR_NUM_SOUND_CHANNELS = 56;
 	}
 	if (_heversion >= 80)

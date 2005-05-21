@@ -1160,7 +1160,7 @@ ScummFile *Sound::openSfxFile() {
 			_vm->generateSubstResFileName(buf, buf1, sizeof(buf1));
 			strcpy(buf, buf1);
 		}
-		if (file->open(buf) && _vm->_heversion <= 72) 
+		if (file->open(buf) && _vm->_heversion <= 73) 
 			file->setEnc(0x69);
 		_soundMode = kVOCMode;
 	}
