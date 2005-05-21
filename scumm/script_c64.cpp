@@ -404,14 +404,14 @@ void ScummEngine_c64::ifNotStateCommon(byte type) {
 }
 
 void ScummEngine_c64::o_setState08() {
-	int obj = getVarOrDirectWord(PARAM_1);
+	int obj = fetchScriptByte();
 	putState(obj, getState(obj) | 0x08);
 	markObjectRectAsDirty(obj);
 	clearDrawObjectQueue();
 }
 
 void ScummEngine_c64::o_clearState08() {
-	int obj = getVarOrDirectWord(PARAM_1);
+	int obj = fetchScriptByte();
 	putState(obj, getState(obj) & ~0x08);
 	markObjectRectAsDirty(obj);
 	clearDrawObjectQueue();
