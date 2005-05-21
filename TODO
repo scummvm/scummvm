@@ -230,6 +230,12 @@ GUI
 * AboutDialog: Add a "fade" effect for the top/bottom text lines
 * AboutDialog: Maybe prerender all of the text into another surface, and then
   simply compose that over the screen surface in the right way.
+* Add some more fonts/font variants? Maybe a tool like ttf2bdf could be used
+  to convert on (free!) TTF font to both a small and a big font for the GUI,
+  maybe including bold/italic variants
+* Consider implementing using another font format which
+  - takes up less space in the binary (ascii vs. binary encoding)
+  - allows for multi-color/anti-aliased fonts
 
 Launcher
 ========
