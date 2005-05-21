@@ -1072,7 +1072,6 @@ protected:
 	void o80_drawWizPolygon();
 	void o80_drawLine();
 	void o80_pickVarRandom();
-	void o80_getResourceSize();
 };
 
 struct SpriteInfo;

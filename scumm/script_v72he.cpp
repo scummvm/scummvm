@@ -2215,8 +2215,41 @@ void ScummEngine_v72he::o72_writeINI() {
 }
 
 void ScummEngine_v72he::o72_getResourceSize() {
+	const byte *ptr;
+	int size, type;
+
 	int resid = pop();
-	push(getSoundResourceSize(resid));
+	if (_heversion == 72) {
+		push(getSoundResourceSize(resid));
+		return;
+	}
+
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
+	case 13:
+		push (getSoundResourceSize(resid));
+		return;
+	case 14:
+		type = rtRoomImage;
+		break;
+	case 15:
+		type = rtImage;
+		break;
+	case 16:
+		type = rtCostume;
+		break;
+	case 17:
+		type = rtScript;
+		break;
+	default:
+		error("o80_getResourceSize: default type %d", subOp);
+	}
+
+	ptr = getResourceAddress(type, resid);
+	assert(ptr);
+	size = READ_BE_UINT32(ptr + 4) - 8;
+	push(size);
 }
 
 void ScummEngine_v72he::o72_setFilePath() {

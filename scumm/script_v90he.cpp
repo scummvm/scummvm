@@ -353,7 +353,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o70_getCharIndexInString),
 		OPCODE(o6_invalid),
 		/* F8 */
-		OPCODE(o80_getResourceSize),
+		OPCODE(o72_getResourceSize),
 		OPCODE(o72_setFilePath),
 		OPCODE(o72_setWindowCaption),
 		OPCODE(o70_polygonOps),

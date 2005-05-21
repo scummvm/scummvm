@@ -253,17 +253,17 @@ static const ScummGameSettings scumm_settings[] = {
 	// Humongous Entertainment Scumm Version 7.2
 	{"catalog2", "Humongous Interactive Catalog 2", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
-	{"freddemo", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
+	{"freddemo", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo)", GID_HEGAME, 6, 73, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows, 0, 0},
 	{"farmdemo", "Let's Explore the Farm with Buzzy (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows, 0, 0},
-	{"farm", "Let's Explore the Farm with Buzzy", GID_HEGAME, 6, 72, MDT_NONE,
+	{"farm", "Let's Explore the Farm with Buzzy", GID_HEGAME, 6, 73, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
 	{"airdemo", "Let's Explore the Airport with Buzzy (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows, 0, 0},
 	{"airport", "Let's Explore the Airport with Buzzy", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
-	{"jungle", "Let's Explore the Jungle with Buzzy", GID_HEGAME, 6, 72, MDT_NONE,
+	{"jungle", "Let's Explore the Jungle with Buzzy", GID_HEGAME, 6, 73, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
 
 	{"puttzoo", "Putt-Putt Saves the Zoo", GID_HEGAME, 6, 72, MDT_NONE,
@@ -2966,6 +2966,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		case 80:
 			engine = new ScummEngine_v80he(detector, syst, game, md5sum, substLastIndex);
 			break;
+		case 73:
 		case 72:
 			engine = new ScummEngine_v72he(detector, syst, game, md5sum, substLastIndex);
 			break;

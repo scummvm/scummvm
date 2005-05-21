@@ -354,7 +354,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o70_getCharIndexInString),
 		OPCODE(o6_invalid),
 		/* F8 */
-		OPCODE(o80_getResourceSize),
+		OPCODE(o72_getResourceSize),
 		OPCODE(o72_setFilePath),
 		OPCODE(o72_setWindowCaption),
 		OPCODE(o70_polygonOps),
@@ -822,39 +822,6 @@ void ScummEngine_v80he::o80_pickVarRandom() {
 
 	writeArray(value, 0, 0, num + 1);
 	push(readArray(value, 0, num));
-}
-
-void ScummEngine_v80he::o80_getResourceSize() {
-	const byte *ptr;
-	int size, type;
-
-	int resid = pop();
-	byte subOp = fetchScriptByte();
-
-	switch (subOp) {
-	case 13:
-		push (getSoundResourceSize(resid));
-		return;
-	case 14:
-		type = rtRoomImage;
-		break;
-	case 15:
-		type = rtImage;
-		break;
-	case 16:
-		type = rtCostume;
-		break;
-	case 17:
-		type = rtScript;
-		break;
-	default:
-		error("o80_getResourceSize: default type %d", subOp);
-	}
-
-	ptr = getResourceAddress(type, resid);
-	assert(ptr);
-	size = READ_BE_UINT32(ptr + 4) - 8;
-	push(size);
 }
 
 } // End of namespace Scumm
