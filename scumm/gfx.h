@@ -256,6 +256,7 @@ protected:
 	/* Mask decompressors */
 	void drawStripC64Mask(byte *dst, int stripnr, int width, int height) const;
 	void drawStripNESMask(byte *dst, int stripnr, int top, int height) const;
+	void decompressTMSK(byte *dst, const byte *tmsk, const byte *src, int height) const;
 	void decompressMaskImgOr(byte *dst, const byte *src, int height) const;
 	void decompressMaskImg(byte *dst, const byte *src, int height) const;
 

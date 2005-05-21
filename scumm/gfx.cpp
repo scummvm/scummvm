@@ -1386,6 +1386,11 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 	numzbuf = getZPlanes(ptr, zplane_list, false);
 	
+	const byte *tmsk_ptr = NULL;
+	if (_vm->_heversion >= 72) {
+		tmsk_ptr = _vm->findResourceData(MKID('TMSK'), ptr);
+	}
+
 	bottom = y + height;
 	if (bottom > vs->h) {
 		warning("Gdi::drawBitmap, strip drawn to %d below window bottom %d", bottom, vs->h);
@@ -1551,7 +1556,10 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 				if (offs) {
 					z_plane_ptr = zplane_list[i] + offs;
 
-					if (useOrDecompress && (flag & dbAllowMaskOr)) {
+					if (tmsk_ptr) {
+						const byte *tmsk = tmsk_ptr + stripnr * 2 + 8;
+						decompressTMSK(mask_ptr, tmsk, z_plane_ptr, height);
+					} else if (useOrDecompress && (flag & dbAllowMaskOr)) {
 						decompressMaskImgOr(mask_ptr, z_plane_ptr, height);
 					} else {
 						decompressMaskImg(mask_ptr, z_plane_ptr, height);
@@ -1859,6 +1867,65 @@ void Gdi::decompressMaskImg(byte *dst, const byte *src, int height) const {
 				--height;
 			} while (--b && height);
 		}
+	}
+}
+
+void Gdi::decompressTMSK(byte *dst, const byte *tmsk, const byte *src, int height) const {
+	int edx;
+	int var_10 = 0;
+	int var_14 = 0;
+	int tmp1 = 0;
+	int tmp2 = 0;
+
+	int esi = 0;
+	int edi = 0;
+	int ebx = 0;
+
+	while (height) {
+		if (esi == 0) {
+			esi = *src++;
+			edx = esi & 0x80;
+			tmp1 = edx;
+			if (edx) {
+				esi &= 0x7F;
+				var_10 = *src++;
+			}
+		}
+
+
+		if (tmp1 == 0) {
+			var_10 = *src++;
+		}
+
+		esi--;
+		if (edi == 0) {
+			edi = *tmsk++;
+			edx = edi & 0x80;
+			tmp2 = edx;
+			if (edx) {
+				edi &= 0x7F;
+				ebx = *tmsk++;
+			}
+		}
+
+		if (tmp2 == 0) {
+			ebx = *tmsk++;
+		}
+
+		edi--;
+
+		edx = ebx;
+		edx = !edx;
+		edx &= *dst;
+
+		var_14 = var_10;
+		var_14 &= ebx;
+
+		edx |= var_14;
+		*dst = edx;
+
+		dst += 80;
+		height--;
 	}
 }
 
