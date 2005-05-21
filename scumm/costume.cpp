@@ -1003,6 +1003,30 @@ byte NESCostumeLoader::increaseAnim(Actor *a, int slot) {
 	return (a->_cost.curpos[slot] != oldframe);
 }
 
+byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
+	return 0;
+}
+
+void C64CostumeRenderer::setCostume(int costume) {
+	_loaded.loadCostume(costume);
+}
+
+void C64CostumeLoader::loadCostume(int id) {
+	_id = id;
+	_baseptr = _vm->getResourceAddress(rtCostume, id);
+}
+
+void C64CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
+}
+
+byte C64CostumeLoader::increaseAnims(Actor *a) {
+	return 0;
+}
+
+byte C64CostumeLoader::increaseAnim(Actor *a, int slot) {
+	return 0;
+}
+
 
 } // End of namespace Scumm
 
