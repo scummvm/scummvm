@@ -486,7 +486,7 @@ public:
 //	speech 
 	void actorSpeech(uint16 actorId, const char **strings, int stringsCount, uint16 sampleResourceId, int speechFlags);
 	void nonActorSpeech(const char **strings, int stringsCount, int speechFlags);
-	void simulSpeech(const char *string, uint16 *actorIds, int actorIdsCount, int speechFlags);
+	void simulSpeech(const char *string, uint16 *actorIds, int actorIdsCount, int speechFlags, int sampleResourceId);
 	void setSpeechColor(int speechColor, int outlineColor) {
 		_activeSpeech.speechColor[0] = speechColor;
 		_activeSpeech.outlineColor[0] = outlineColor;

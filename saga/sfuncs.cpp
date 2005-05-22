@@ -97,7 +97,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfCheckUserInterrupt),
 		OPCODE(sfScriptWalkRelative),
 		OPCODE(sfScriptMoveRelative),
-		OPCODE(SF_simulSpeech2),
+		OPCODE(sfSimulSpeech2),
 		OPCODE(sfPlacard),
 		OPCODE(sfPlacardOff),
 		OPCODE(sfSetProtagState),
@@ -808,6 +808,7 @@ void Script::sfSimulSpeech(SCRIPTFUNC_PARAMS) {
 	int i;
 	uint16 actorsIds[ACTOR_SPEECH_ACTORS_MAX];
 	const char *string;
+	int16 sampleResourceId = -1;
 
 	stringId = thread->pop();
 	actorsCount = thread->pop();
@@ -820,7 +821,14 @@ void Script::sfSimulSpeech(SCRIPTFUNC_PARAMS) {
 	
 	string = thread->_strings->getString(stringId);
 
-	_vm->_actor->simulSpeech(string, actorsIds, actorsCount, 0);
+	if (thread->_voiceLUT->voices) {
+		sampleResourceId = thread->_voiceLUT->voices[stringId];
+		if (sampleResourceId <= 0 || sampleResourceId > 4000)
+			sampleResourceId = -1;
+	}
+
+	_vm->_actor->simulSpeech(string, actorsIds, actorsCount, 0, sampleResourceId);
+	thread->wait(kWaitTypeSpeech);
 }
 
 // Script function #36 (0x24) ?
@@ -1118,11 +1126,35 @@ void Script::sfScriptMoveRelative(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #47 (0x2F)
-void Script::SF_simulSpeech2(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
+void Script::sfSimulSpeech2(SCRIPTFUNC_PARAMS) {
+	int16 stringId;
+	int16 actorsCount;
+	int16 speechFlags;
+	int i;
+	uint16 actorsIds[ACTOR_SPEECH_ACTORS_MAX];
+	const char *string;
+	int16 sampleResourceId = -1;
 
-	error(0, "STUB: SF_simulSpeech2(), %d args", nArgs);
+	stringId = thread->pop();
+	actorsCount = thread->pop();
+	speechFlags = thread->pop();
+
+	if (actorsCount > ACTOR_SPEECH_ACTORS_MAX)
+		error("sfSimulSpeech2 actorsCount=0x%X exceed ACTOR_SPEECH_ACTORS_MAX", actorsCount);
+
+	for (i = 0; i < actorsCount; i++)
+		actorsIds[i] = thread->pop();
+	
+	string = thread->_strings->getString(stringId);
+
+	if (thread->_voiceLUT->voices) {
+		sampleResourceId = thread->_voiceLUT->voices[stringId];
+		if (sampleResourceId <= 0 || sampleResourceId > 4000)
+			sampleResourceId = -1;
+	}
+
+	_vm->_actor->simulSpeech(string, actorsIds, actorsCount, speechFlags, sampleResourceId);
+	thread->wait(kWaitTypeSpeech);
 }
 
 static TEXTLIST_ENTRY *placardTextEntry;

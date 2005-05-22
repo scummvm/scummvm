@@ -1749,7 +1749,7 @@ void Actor::nonActorSpeech(const char **strings, int stringsCount, int speechFla
 	_activeSpeech.slowModeCharIndex = 0;
 }
 
-void Actor::simulSpeech(const char *string, uint16 *actorIds, int actorIdsCount, int speechFlags) {
+void Actor::simulSpeech(const char *string, uint16 *actorIds, int actorIdsCount, int speechFlags, int sampleResourceId) {
 	int i;
 	
 	if (_vm->getGameType() == GType_IHNM) {
@@ -1769,7 +1769,7 @@ void Actor::simulSpeech(const char *string, uint16 *actorIds, int actorIdsCount,
 	_activeSpeech.strings[0] = string;
 	_activeSpeech.stringsCount = 1;
 	_activeSpeech.speechFlags = speechFlags;
-	_activeSpeech.sampleResourceId = -1;
+	_activeSpeech.sampleResourceId = sampleResourceId;
 	_activeSpeech.playing = false;
 	_activeSpeech.slowModeCharIndex = 0;
 	

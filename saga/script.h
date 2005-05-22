@@ -509,7 +509,7 @@ private:
 	void sfCheckUserInterrupt(SCRIPTFUNC_PARAMS);
 	void sfScriptWalkRelative(SCRIPTFUNC_PARAMS);
 	void sfScriptMoveRelative(SCRIPTFUNC_PARAMS);
-	void SF_simulSpeech2(SCRIPTFUNC_PARAMS);
+	void sfSimulSpeech2(SCRIPTFUNC_PARAMS);
 	void sfPlacard(SCRIPTFUNC_PARAMS);
 	void sfPlacardOff(SCRIPTFUNC_PARAMS);
 	void sfSetProtagState(SCRIPTFUNC_PARAMS);
