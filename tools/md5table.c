@@ -102,6 +102,7 @@ static const StringMap langMap[] = {
 	{ "ru",		"RU_RUS" },
 	{ "cz",		"CZ_CZE" },
 	{ "nl",		"NL_NLD" },
+	{ "nb",		"NB_NOR" },
 
 	{ "All",	"UNK_LANG" },
 	{ "All?",	"UNK_LANG" },
