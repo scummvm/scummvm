@@ -1457,7 +1457,7 @@ void ScummEngine_v72he::o72_arrayOps() {
 	switch (subOp) {
 	case 7:			// SO_ASSIGN_STRING
 		copyScriptString(string, sizeof(string));
-		len = resStrLen(string) + 1;
+		len = resStrLen(string);
 		ah = defineArray(array, kStringArray, 0, 0, 0, len);
 		memcpy(ah->data, string, len);
 		break;
@@ -1536,7 +1536,7 @@ void ScummEngine_v72he::o72_arrayOps() {
 		break;
 	case 194:
 		decodeScriptString(string);
-		len = resStrLen(string) + 1;
+		len = resStrLen(string);
 		ah = defineArray(array, kStringArray, 0, 0, 0, len);
 		memcpy(ah->data, string, len);
 		break;
