@@ -250,7 +250,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		/* A4 */
 		OPCODE(o72_arrayOps),
 		OPCODE(o90_fontUnk),
-		OPCODE(o80_drawBox),
+		OPCODE(o6_drawBox),
 		OPCODE(o6_pop),
 		/* A8 */
 		OPCODE(o6_getActorWidth),

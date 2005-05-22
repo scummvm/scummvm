@@ -1049,18 +1049,27 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 	markRectAsDirty(vs->number, x, x2, y, y2);
 
 	backbuff = vs->getPixels(x, y);
+	bgbuff = vs->getBackPixels(x, y);
 
 	if (color == -1) {
 		if (vs->number != kMainVirtScreen)
 			error("can only copy bg to main window");
-		bgbuff = vs->getBackPixels(x, y);
 		blit(backbuff, vs->pitch, bgbuff, vs->pitch, width, height);
 		if (_charset->_hasMask) {
 			byte *mask = (byte *)_charset->_textSurface.pixels + _charset->_textSurface.pitch * (y - _screenTop) + x;
 			fill(mask, _charset->_textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width, height);
 		}
 	} else {
-		fill(backbuff, vs->pitch, color, width, height);
+		// Flags are used for different methods in HE70+ games
+		if ((color & 0x2000) || (color & 0x4000)) {
+			error("drawBox: unsupported flag 0x%x", color);
+		} else if (color & 0x8000) {
+			color &= 0x7FFF;
+			fill(backbuff, vs->pitch, color, width, height);
+			fill(bgbuff, vs->pitch, color, width, height);
+		} else {
+			fill(backbuff, vs->pitch, color, width, height);
+		}
 	}
 }
 

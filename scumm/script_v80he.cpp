@@ -251,7 +251,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		/* A4 */
 		OPCODE(o72_arrayOps),
 		OPCODE(o6_invalid),
-		OPCODE(o80_drawBox),
+		OPCODE(o6_drawBox),
 		OPCODE(o6_pop),
 		/* A8 */
 		OPCODE(o6_getActorWidth),
@@ -588,20 +588,6 @@ void ScummEngine_v80he::o80_setState() {
 	state &= 0x7FFF;
 	putState(obj, state);
 	removeObjectFromDrawQue(obj);
-}
-
-void ScummEngine_v80he::o80_drawBox() {
-	int x, y, x2, y2, color;
-	color = pop();
-	y2 = pop();
-	x2 = pop();
-	y = pop();
-	x = pop();
-
-	if (color & 0x8000)
-		color &= 0x7FFF;
-
-	drawBox(x, y, x2, y2, color);
 }
 
 void ScummEngine_v80he::o80_drawWizPolygon() {

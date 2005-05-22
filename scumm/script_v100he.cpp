@@ -85,7 +85,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_div),
 		OPCODE(o6_animateActor),
 		OPCODE(o6_doSentence),
-		OPCODE(o80_drawBox),
+		OPCODE(o6_drawBox),
 		/* 24 */
 		OPCODE(o72_drawWizImage),
 		OPCODE(o80_drawWizPolygon),
