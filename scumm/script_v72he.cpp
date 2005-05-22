@@ -1443,17 +1443,17 @@ void ScummEngine_v72he::o72_findObject() {
 }
 
 void ScummEngine_v72he::o72_arrayOps() {
+	ArrayHeader *ah;
+	byte string[1024];
+	int dim1end, dim1start, dim2end, dim2start;
+	int id, len, b, c, list[128];
+	int offs, tmp, tmp2;
+	uint tmp3;
+
 	byte subOp = fetchScriptByte();
 	int array = fetchScriptWord();
-	int offs, tmp, tmp2, tmp3;
-	int dim1end, dim1start, dim2end, dim2start;
-	int id, len, b, c;
-	ArrayHeader *ah;
-	int list[128];
-	byte string[1024];
+	debug(1,"o72_arrayOps: array %d case %d", array, subOp);
 
-
-	debug(1,"o72_arrayOps: case %d", subOp);
 	switch (subOp) {
 	case 7:			// SO_ASSIGN_STRING
 		copyScriptString(string, sizeof(string));
@@ -1496,7 +1496,7 @@ void ScummEngine_v72he::o72_arrayOps() {
 			int a1_dim2end = pop();
 			int a1_dim2start = pop();
 			if (a1_dim1end - a1_dim1start != a2_dim1end - a2_dim1start || a2_dim2end - a2_dim2start != a1_dim2end - a1_dim2start) {
-				warning("Source and dest ranges size are mismatched");
+				error("Source and dest ranges size are mismatched");
 			}
 			copyArray(array, a1_dim2start, a1_dim2end, a1_dim1start, a1_dim1end, array2, a2_dim2start, a2_dim2end, a2_dim1start, a2_dim1end);
 		}
@@ -1513,12 +1513,9 @@ void ScummEngine_v72he::o72_arrayOps() {
 			defineArray(array, kDwordArray, dim2start, dim2end, dim1start, dim1end);
 		}
 
-		len = c - b;
-		len |= dim2end;
-		len = len - dim2end + 1;
 		offs = (b >= c) ? 1 : -1;
 		tmp2 = c;
-		tmp3 = len;
+		tmp3 = c - b + 1;;
 		while (dim2start <= dim2end) {
 			tmp = dim1start;
 			while (tmp <= dim1end) {
