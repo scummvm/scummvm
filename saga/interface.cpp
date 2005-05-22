@@ -812,12 +812,16 @@ void Interface::setVerbState(int verb, int state) {
 	draw();
 }
 
+void Interface::drawButtonBox(SURFACE *ds, const Rect& rect, bool down) {
+}
+
 void Interface::drawOptionPanelButtonText(SURFACE *ds, PanelButton *panelButton) {
 	const char *text;
 	int textWidth;
 	int textHeight;
 	Point point;
 	int textColor;
+	Rect rect;
 //TODO: draw box!
 
 	text = _vm->getTextString(panelButton->id);
@@ -833,6 +837,9 @@ void Interface::drawOptionPanelButtonText(SURFACE *ds, PanelButton *panelButton)
 	} else {
 		textColor = _vm->getDisplayInfo().verbTextColor; //TODO: create Option button colors constant
 	}
+
+	_optionPanel.calcPanelButtonRect(panelButton, rect);
+	drawButtonBox(ds, rect, panelButton->state > 0);
 
 	_vm->_font->draw(MEDIUM_FONT_ID, ds, text, 0, point.x , point.y, textColor, _vm->getDisplayInfo().verbTextShadowColor, FONT_SHADOW);	 //TODO: create Option button colors constant
 }

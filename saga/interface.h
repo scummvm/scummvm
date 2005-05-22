@@ -227,7 +227,9 @@ private:
 	void unlockMode() { _panelMode = _lockedMode; }
 
 	void setOption(PanelButton *panelButton);
+
 	void drawOptionPanelButtonText(SURFACE *ds, PanelButton *panelButton);
+	void drawButtonBox(SURFACE *ds, const Rect& rect, bool down);
 	void drawPanelButtonArrow(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton);
 	void drawVerbPanelText(SURFACE *ds, PanelButton *panelButton, int textColor, int textShadowColor);
 	void drawVerbPanel(SURFACE *backBuffer, PanelButton* panelButton);
