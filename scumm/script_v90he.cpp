@@ -1859,7 +1859,7 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 			if (dist >= 2) {
 				dist = (int)sqrt((double)(dist + 1));
 			}
-			push((dist > args1[2]) ? 1 : 0);
+			push((dist <= args1[2]) ? 1 : 0);
 		}
 		break;
 	case 3:
