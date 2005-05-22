@@ -156,7 +156,7 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGro
 			if (spi->field_80) {
 				int16 x1, x2, y1, y2;
 
-				resState = spi->curImageState / getWizImageStates(spi->field_80);
+				resState = spi->curImageState % getWizImageStates(spi->field_80);
 
 				x = x_pos - spi->pos.x;
 				y = y_pos - spi->pos.y;
