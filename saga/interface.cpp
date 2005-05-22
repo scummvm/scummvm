@@ -813,6 +813,59 @@ void Interface::setVerbState(int verb, int state) {
 }
 
 void Interface::drawButtonBox(SURFACE *ds, const Rect& rect, bool down) {
+	byte cornerColor = 0x8b;
+	byte frameColor = 0x0f;
+	byte fillColor = 0x96;
+	byte odl = 0x8a, our = 0x94, idl = 0x97, iur = 0x95;
+	int x = rect.left;
+	int y = rect.top;
+	int w = rect.width();
+	int h = rect.height();
+	int xe = rect.right - 1;
+	int ye = rect.bottom - 1;
+
+	((byte *)ds->getBasePtr(x, y))[0] = cornerColor;
+	((byte *)ds->getBasePtr(x, ye))[0] = cornerColor;
+	((byte *)ds->getBasePtr(xe, y))[0] = cornerColor;
+	((byte *)ds->getBasePtr(xe, ye))[0] = cornerColor;
+	ds->hLine(x + 1, y, x + 1 + w - 2, frameColor);
+	ds->hLine(x + 1, ye, x + 1 + w - 2, frameColor);
+	ds->vLine(x, y + 1, y + 1 + h - 2, frameColor);
+	ds->vLine(xe, y + 1, y + 1 + h - 2, frameColor);
+
+	if (down) {
+		SWAP(odl, our);
+		SWAP(idl, iur);
+	}
+	x++;
+	y++;
+	xe--;
+	ye--;
+	w -= 2;
+	h -= 2;
+	ds->vLine(x, y, y + h - 1, odl);
+	ds->hLine(x, ye, x + w - 1, odl);
+	ds->vLine(xe, y, y + h - 1, our);
+	ds->hLine(x + 1, y, x + 1 + w - 2, our);
+
+	x++;
+	y++;
+	xe--;
+	ye--;
+	w -= 2;
+	h -= 2;
+	((byte *)ds->getBasePtr(x, y))[0] = fillColor;
+	((byte *)ds->getBasePtr(xe, ye))[0] = fillColor;
+	ds->vLine(x, y + 1, y + 1 + h - 2, idl);
+	ds->hLine(x + 1, ye, x + 1 + w - 2, idl);
+	ds->vLine(xe, y, y + h - 1, iur);
+	ds->hLine(x + 1, y, x + 1 + w - 2, iur);
+
+	x++; y++;
+	w -= 2; h -= 2;
+
+	Common::Rect fill(x, y, x + w, y + h);
+	ds->fillRect(fill, fillColor);
 }
 
 void Interface::drawOptionPanelButtonText(SURFACE *ds, PanelButton *panelButton) {
