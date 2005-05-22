@@ -201,7 +201,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 			error("Actor::Actor(): Couldn't load actor module resource context.");
 		}
 	
-		result = RSC_LoadResource(_actorContext, RID_ITE_ACTOR_NAMES, &stringsPointer, &stringsLength); // fixme: IHNM
+		result = RSC_LoadResource(_actorContext, _vm->getResourceDescription()->actorsStringsResourceId, &stringsPointer, &stringsLength);
 		if ((result != SUCCESS) || (stringsLength == 0)) {
 			error("Error loading strings list resource");
 		}

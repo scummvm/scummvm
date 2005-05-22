@@ -139,7 +139,7 @@ Script::Script(SagaEngine *vm) : _vm(vm){
 
 	RSC_FreeResource(resourcePointer);
 	
-	result = RSC_LoadResource(resourceContext, RID_ITE_MAIN_STRINGS, &stringsPointer, &stringsLength); // fixme: IHNM
+	result = RSC_LoadResource(resourceContext, _vm->getResourceDescription()->mainStringsResourceId, &stringsPointer, &stringsLength); // fixme: IHNM
 	if ((result != SUCCESS) || (stringsLength == 0)) {
 		error("Error loading strings list resource");
 	}

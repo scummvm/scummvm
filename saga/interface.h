@@ -65,7 +65,7 @@ enum PanelModes {
 	kPanelProtect,
 	kPanelPlacard,
 	kPanelMap,
-	kPanelInventory,
+//	kPanelInventory,
 	kPanelFade
 };
 
@@ -148,18 +148,29 @@ public:
 
 	int activate();
 	int deactivate();
+	void setSaveReminderState(int state) {
+		_saveReminderState = state;
+		draw();
+	}
 	bool isActive() { return _active; }
-	int setMode(int mode, bool force = false);
+	void setMode(int mode, bool force = false);
 	int getMode(void) const { return _panelMode; }
 	void rememberMode();
 	void restoreMode();
 	bool isInMainMode() { return _inMainMode; }
 	void setStatusText(const char *text, int statusColor = -1);
 	int loadScenePortraits(int resourceId);
-	int setLeftPortrait(int portrait);
-	int setRightPortrait(int portrait);
-	int draw();
-	int update(const Point& mousePoint, int updateFlag);
+	void setLeftPortrait(int portrait) {
+		_leftPortrait = portrait;
+		draw();
+	}
+	void setRightPortrait(int portrait) {
+		_rightPortrait = portrait;
+		draw();
+	}
+	void draw();
+	void drawOption();
+	void update(const Point& mousePoint, int updateFlag);
 	void drawStatusBar();
 	void setVerbState(int verb, int state);
 
@@ -191,23 +202,34 @@ public:
 	PanelButton *inventoryHitTest(const Point& mousePoint) {
 		return _mainPanel.hitTest(mousePoint, kPanelButtonInventory);
 	}
+	PanelButton *verbHitTest(const Point& mousePoint){
+		return _mainPanel.hitTest(mousePoint, kPanelButtonVerb);
+	}
 	void saveState(Common::File& out);
 	void loadState(Common::File& in);
 private:
-	PanelButton *verbHitTest(const Point& mousePoint);
-	void handleCommandUpdate(const Point& mousePoint);
-	void handleCommandClick(const Point& mousePoint);
+	void handleMainUpdate(const Point& mousePoint);					// main panel update
+	void handleMainClick(const Point& mousePoint);					// main panel click
+
 	PanelButton *converseHitTest(const Point& mousePoint) {
 		return _conversePanel.hitTest(mousePoint, kPanelAllButtons);
 	}
-	void handleConverseUpdate(const Point& mousePoint);
-	void handleConverseClick(const Point& mousePoint);
-	
+	void handleConverseUpdate(const Point& mousePoint);				// converse panel update
+	void handleConverseClick(const Point& mousePoint);				// converse panel click
+
+	PanelButton *optionHitTest(const Point& mousePoint) {
+		return _optionPanel.hitTest(mousePoint, kPanelAllButtons);
+	}
+	void handleOptionUpdate(const Point& mousePoint);				// option panel update
+	void handleOptionClick(const Point& mousePoint);				// option panel click
+
 	void lockMode() { _lockedMode = _panelMode; }
 	void unlockMode() { _panelMode = _lockedMode; }
 
-	void drawPanelButtonText(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton, int textColor, int textShadowColor);
+	void setOption(PanelButton *panelButton);
+	void drawOptionPanelButtonText(SURFACE *ds, PanelButton *panelButton);
 	void drawPanelButtonArrow(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton);
+	void drawVerbPanelText(SURFACE *ds, PanelButton *panelButton, int textColor, int textShadowColor);
 	void drawVerbPanel(SURFACE *backBuffer, PanelButton* panelButton);
 
 public:
@@ -241,7 +263,9 @@ private:
 	SpriteList _defPortraits;
 	SpriteList _scenePortraits;
 	PanelButton *_verbTypeToPanelButton[kVerbTypesMax];
+	InterfacePanel _optionPanel;
 
+	int _saveReminderState;
 	bool _active;
 	int _panelMode;
 	int _savedMode;

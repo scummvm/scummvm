@@ -220,7 +220,7 @@ void Script::sfMainMode(SCRIPTFUNC_PARAMS) {
 	_vm->_actor->_centerActor = _vm->_actor->_protagonist;
 	showVerb();		
 	_vm->_interface->activate();
-	_vm->_interface->setMode(kPanelInventory);
+	_vm->_interface->setMode(kPanelMain);
 	setPointerVerb();
 }
 

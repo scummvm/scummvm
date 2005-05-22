@@ -73,6 +73,12 @@ static PanelButton ITE_ConversePanelButtons[] = {
 	{kPanelButtonArrow,			257,41,	9,6,	1,'d',0,	1,5,3}, 
 };
 
+static PanelButton ITE_OptionPanelButtons[] = {
+	{kPanelButtonOption,	113,18, 45,17,	13,'r',0,	0,0,0}, //read speed
+
+	{kPanelButtonOption,	13,98, 135,17,	17,'c',0,	0,0,0}, //continue
+};
+
 static GameDisplayInfo ITE_DisplayInfo = {
 	320, 200,		// logical width&height
 	
@@ -86,6 +92,9 @@ static GameDisplayInfo ITE_DisplayInfo = {
 	2,				// status text y offset
 	186,			// status text color
 	15,				// status BG color
+	308,138,		// save reminder pos
+	12,12,			// save reminder w & h
+	6,7,			// save reminder sprite numbers
 
 	147,			// verb text color
 	15,				// verb text shadow color
@@ -105,14 +114,24 @@ static GameDisplayInfo ITE_DisplayInfo = {
 
 	0, 149,			// converse panel offsets
 	ARRAYSIZE(ITE_ConversePanelButtons),
-	ITE_ConversePanelButtons
+	ITE_ConversePanelButtons,
+	
+	8, 8,			// option panel offsets
+	ARRAYSIZE(ITE_OptionPanelButtons),
+	ITE_OptionPanelButtons
 };
 
 static GameResourceDescription ITE_Resources = {
 	RID_ITE_SCENE_LUT,  // Scene lookup table RN
 	RID_ITE_SCRIPT_LUT, // Script lookup table RN
-	RID_ITE_COMMAND_PANEL,
-	RID_ITE_DIALOGUE_PANEL
+	RID_ITE_MAIN_PANEL,
+	RID_ITE_CONVERSE_PANEL,
+	RID_ITE_OPTION_PANEL,
+	RID_ITE_MAIN_SPRITES,
+	RID_ITE_MAIN_PANEL_SPRITES,
+	RID_ITE_DEFAULT_PORTRAITS,
+	RID_ITE_MAIN_STRINGS,
+	RID_ITE_ACTOR_NAMES
 };
 
 // Inherit the Earth - DOS Demo version
@@ -225,6 +244,10 @@ static PanelButton IHNM_ConversePanelButtons[] = {
 	{kPanelButtonConverseText, 0,0, 0,0, 0,'-',0, 0,0,0}, //TODO
 };
 
+static PanelButton IHNM_OptionPanelButtons[] = {
+	{kPanelButtonArrow, 0,0, 0,0, 0,'-',0, 0,0,0}, //TODO
+};
+
 static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	640, 480,	// logical width&height
 	
@@ -238,6 +261,9 @@ static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	8,			// status text y offset
 	186,		// status text color
 	11,			// status BG color
+	0,0,		// save reminder pos
+	0,0,		// save reminder w&h
+	0,0,		// save reminder sprite numbers
 
 	147,		// verb text color
 	15,			// verb text shadow color
@@ -257,14 +283,24 @@ static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 
 	0, 0,		// converse panel offsets
 	ARRAYSIZE(IHNM_ConversePanelButtons),
-	IHNM_ConversePanelButtons
+	IHNM_ConversePanelButtons,
+	
+	0, 0,		// option panel offsets
+	ARRAYSIZE(IHNM_OptionPanelButtons),
+	IHNM_OptionPanelButtons
 };
 
 static GameResourceDescription IHNM_Resources = {
 	RID_IHNM_SCENE_LUT,  // Scene lookup table RN
 	RID_IHNM_SCRIPT_LUT, // Script lookup table RN
-	RID_IHNM_COMMAND_PANEL,
-	RID_IHNM_DIALOGUE_PANEL
+	RID_IHNM_MAIN_PANEL,
+	RID_IHNM_CONVERSE_PANEL,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 // I Have No Mouth and I Must Scream - Demo version

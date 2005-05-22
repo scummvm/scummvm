@@ -52,7 +52,7 @@ Sprite::Sprite(SagaEngine *vm) : _vm(vm), _initialized(false) {
 		return;
 	}
 
-	loadList(RID_ITE_MAIN_SPRITES, _mainSprites); //fixme: IHNM may have no such list
+	loadList(_vm->getResourceDescription()->mainSpritesResourceId, _mainSprites);
 
 	_initialized = true;
 }

@@ -232,7 +232,7 @@ class Scene {
 		_sceneQueue.push_back(*sceneQueue);
 	}
 
-	int draw(SURFACE *);
+	void draw();
 	int getFlags() const { return _sceneDescription.flags; }
 	int getScriptModuleNumber() const { return _sceneDescription.scriptModuleNumber; }
 	bool isInDemo() { return !_inGame; }

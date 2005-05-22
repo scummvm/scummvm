@@ -107,11 +107,23 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 		&_conversePanel.imageLength, &_conversePanel.imageWidth, &_conversePanel.imageHeight);
 	RSC_FreeResource(resource);
 
-	if (_vm->_sprite->loadList(RID_ITE_COMMAND_BUTTONSPRITES, _mainPanel.sprites) != SUCCESS) { //TODO: move constant to ResourceDescription
+	_optionPanel.buttons = _vm->getDisplayInfo().optionPanelButtons;
+	_optionPanel.buttonsCount = _vm->getDisplayInfo().optionPanelButtonsCount;
+
+	result = RSC_LoadResource(_interfaceContext, _vm->getResourceDescription()->optionPanelResourceId, &resource, &resourceLength);
+	if ((result != SUCCESS) || (resourceLength == 0)) {
+		error("Interface::Interface unable to load optionPanel resource");
+	}
+	_vm->decodeBGImage(resource, resourceLength, &_optionPanel.image,
+		&_optionPanel.imageLength, &_optionPanel.imageWidth, &_optionPanel.imageHeight);
+	RSC_FreeResource(resource);
+
+
+	if (_vm->_sprite->loadList(_vm->getResourceDescription()->mainPanelSpritesResourceId, _mainPanel.sprites) != SUCCESS) {
 		error("Interface::Interface(): Unable to load sprite list");
 	}
 		
-	if (_vm->_sprite->loadList(RID_ITE_DEFAULT_PORTRAITS, _defPortraits) != SUCCESS) { //TODO: move constant to ResourceDescription
+	if (_vm->_sprite->loadList(_vm->getResourceDescription()->defaultPortraitsResourceId, _defPortraits) != SUCCESS) {
 		error("Interface::Interface(): Unable to load sprite list");
 	}
 
@@ -132,6 +144,10 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	_leftPortrait = 0;
 	_rightPortrait = 0;
 
+	_optionPanel.x = _vm->getDisplayInfo().optionPanelXOffset;
+	_optionPanel.y = _vm->getDisplayInfo().optionPanelYOffset;
+	_optionPanel.currentButton = NULL;
+
 	_active = false;
 	_panelMode = _lockedMode = kPanelNull;
 	_savedMode = -1;
@@ -145,6 +161,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	_inventoryEnd = 0;
 	_inventoryBox = 0;
 	_inventorySize = ITE_INVENTORY_SIZE;
+	_saveReminderState = 0;
 
 	_inventory = (uint16 *)calloc(_inventorySize, sizeof(uint16));
 	if (_inventory == NULL) {
@@ -170,8 +187,9 @@ int Interface::activate() {
 		_vm->_actor->_protagonist->targetObject = ID_NOTHING;
 		_vm->_gfx->showCursor(true);
 		unlockMode();
-		if (_panelMode == kPanelMain)
-			;// show save reminder
+		if (_panelMode == kPanelMain){
+			_saveReminderState = 1;
+		}
 		draw();
 	}
 
@@ -204,27 +222,27 @@ void Interface::restoreMode() {
 	draw();
 }
 
-int Interface::setMode(int mode, bool force) {
+void Interface::setMode(int mode, bool force) {
 	// TODO: Is this where we should hide/show the mouse cursor?
-	int newMode = mode;
 
-	if (mode == kPanelConverse) {
-		_inMainMode = false;
+	if (mode == kPanelMain) {
+		_inMainMode = true;
+		_saveReminderState = 1; //TODO: blinking timeout
 	} else {
-		if (mode == kPanelInventory) {
-			_inMainMode = true;
-			newMode = kPanelMain;
-		}
+		if (mode == kPanelConverse) {
+			_inMainMode = false;
+		}		
+		_saveReminderState = 0;
 	}
 
 	// This lets us to prevents actors to pop up during initial
 	// scene fade in.
 	if (_savedMode != -1 && !force) {
-		_savedMode = newMode;
-		debug(0, "Saved mode: %d. my mode is %d", newMode, _panelMode);
+		_savedMode = mode;
+		debug(0, "Saved mode: %d. my mode is %d", mode, _panelMode);
 	}
 	else
-		_panelMode = newMode;
+		_panelMode = mode;
 	
 	if (_panelMode == kPanelMain) {
 		_mainPanel.currentButton = NULL;
@@ -232,12 +250,14 @@ int Interface::setMode(int mode, bool force) {
 		if (_panelMode == kPanelConverse) {
 			_conversePanel.currentButton = NULL;
 			converseDisplayText();
-		}
+		} else {
+			if (_panelMode == kPanelOption) {
+				_optionPanel.currentButton = NULL;
+			}
+		}		
 	}
 
 	draw();
-
-	return SUCCESS;
 }
 
 bool Interface::processKeyCode(int keyCode) {
@@ -252,6 +272,16 @@ bool Interface::processKeyCode(int keyCode) {
 				_vm->_actor->abortAllSpeeches();
 			}
 			return true;
+		}
+		break;
+	case kPanelOption:
+		//TODO: check input dialog keys
+		for (i = 0; i < _optionPanel.buttonsCount; i++) {
+			panelButton = &_optionPanel.buttons[i];
+			if (panelButton->keyChar == keyCode) {
+				setOption(panelButton);				
+				return true;
+			}
 		}
 		break;
 	case kPanelMain:
@@ -271,7 +301,7 @@ bool Interface::processKeyCode(int keyCode) {
 	case kPanelConverse:
 		switch (keyCode) {
 		case 'x':
-			setMode(kPanelInventory);
+			setMode(kPanelMain);
 			// FIXME: puzzle
 			break;
 
@@ -310,20 +340,6 @@ int Interface::loadScenePortraits(int resourceId) {
 	return _vm->_sprite->loadList(resourceId, _scenePortraits);
 }
 
-int Interface::setLeftPortrait(int portrait) {
-	_leftPortrait = portrait;
-	draw();
-
-	return SUCCESS;
-}
-
-int Interface::setRightPortrait(int portrait) {
-	_rightPortrait = portrait;
-	draw();
-
-	return SUCCESS;
-}
-
 void Interface::drawVerbPanel(SURFACE *backBuffer, PanelButton* panelButton) {
 	PanelButton * rightButtonVerbPanelButton;
 	PanelButton * currentVerbPanelButton;
@@ -354,10 +370,10 @@ void Interface::drawVerbPanel(SURFACE *backBuffer, PanelButton* panelButton) {
 
 	_vm->_sprite->draw(backBuffer, _mainPanel.sprites, spriteNumber, point, 256);
 
-	drawPanelButtonText(backBuffer, &_mainPanel, panelButton, textColor, _vm->getDisplayInfo().verbTextShadowColor);
+	drawVerbPanelText(backBuffer, panelButton, textColor, _vm->getDisplayInfo().verbTextShadowColor);
 }
 
-int Interface::draw() {
+void Interface::draw() {
 	SURFACE *backBuffer;
 	int i;
 
@@ -368,7 +384,7 @@ int Interface::draw() {
 	backBuffer = _vm->_gfx->getBackBuffer();
 
 	if (_vm->_scene->isInDemo() || _panelMode == kPanelFade)
-		return SUCCESS;
+		return;
 
 
 	drawStatusBar();
@@ -405,7 +421,7 @@ int Interface::draw() {
 		}
 		
 
-	if (!_inMainMode && _vm->getDisplayInfo().rightPortraitXOffset >= 0) {
+	if (!_inMainMode && _vm->getDisplayInfo().rightPortraitXOffset >= 0) { //FIXME: should we change !_inMainMode to _panelMode == kPanelConverse ?
 		rightPortraitPoint.x = _mainPanel.x + _vm->getDisplayInfo().rightPortraitXOffset;
 		rightPortraitPoint.y = _mainPanel.y + _vm->getDisplayInfo().rightPortraitYOffset;
 
@@ -421,27 +437,67 @@ int Interface::draw() {
 	}
 
 	drawInventory(backBuffer);
-	return SUCCESS;
 }
 
-int Interface::update(const Point& mousePoint, int updateFlag) {
+void Interface::drawOption() {
+	SURFACE *backBuffer;
+	int i;
+	Point origin;
+
+	backBuffer = _vm->_gfx->getBackBuffer();
+	origin.x = _vm->getDisplayInfo().optionPanelXOffset;
+	origin.y = _vm->getDisplayInfo().optionPanelYOffset;
+
+	bufToSurface(backBuffer, _optionPanel.image, _optionPanel.imageWidth, _optionPanel.imageHeight, NULL, &origin);
+
+	for (i = 0; i < _optionPanel.buttonsCount; i++) {		
+		drawOptionPanelButtonText(backBuffer, &_optionPanel.buttons[i]);
+	}
+}
+
+void Interface::handleOptionUpdate(const Point& mousePoint) {
+	_optionPanel.currentButton = optionHitTest(mousePoint);	
+}
+
+
+void Interface::handleOptionClick(const Point& mousePoint) {
+	_optionPanel.currentButton = optionHitTest(mousePoint);
+
+	if (_optionPanel.currentButton == NULL) {
+		return;
+	}
+
+	setOption(_optionPanel.currentButton); //TODO: do it on mouse up
+}
+
+
+void Interface::setOption(PanelButton *panelButton) {
+	switch (panelButton->keyChar) {
+		case 'c':
+				setMode(kPanelMain);
+				break;
+	}
+}
+
+void Interface::update(const Point& mousePoint, int updateFlag) {
 	
-	if (_vm->_scene->isInDemo() || _panelMode == kPanelFade)
-		return SUCCESS;
+	if (_vm->_scene->isInDemo() || _panelMode == kPanelFade) {
+		return;
+	}
 
 	if (_panelMode == kPanelMain) {
 		if (updateFlag & UPDATE_MOUSEMOVE) {
 			bool lastWasPlayfield = _lastMousePoint.y < _vm->getSceneHeight();
 			if (mousePoint.y < _vm->getSceneHeight()) {
 				if (!lastWasPlayfield) {
-					handleCommandUpdate(mousePoint);
+					handleMainUpdate(mousePoint);
 				}
 				_vm->_script->whichObject(mousePoint);
 			} else {
 				if (lastWasPlayfield) {
 					_vm->_script->setNonPlayfieldVerb();
 				}
-				handleCommandUpdate(mousePoint);
+				handleMainUpdate(mousePoint);
 			}
 
 		} else {
@@ -450,7 +506,7 @@ int Interface::update(const Point& mousePoint, int updateFlag) {
 				if (mousePoint.y < _vm->getSceneHeight()) {
 					_vm->_script->playfieldClick(mousePoint, (updateFlag & UPDATE_LEFTBUTTONCLICK) != 0);										
 				} else {
-					handleCommandClick(mousePoint);
+					handleMainClick(mousePoint);
 				}
 			}
 		}
@@ -468,8 +524,20 @@ int Interface::update(const Point& mousePoint, int updateFlag) {
 		}
 	}
 
+	if (_panelMode == kPanelOption) {
+		if (updateFlag & UPDATE_MOUSEMOVE) {
+
+			handleOptionUpdate(mousePoint);
+
+		} else {
+			if (updateFlag & UPDATE_MOUSECLICK) {
+				handleOptionClick(mousePoint);
+			}
+		}
+	}
+
+
 	_lastMousePoint = mousePoint;
-	return SUCCESS;
 }
 
 void Interface::drawStatusBar() {
@@ -507,9 +575,20 @@ void Interface::drawStatusBar() {
 	_vm->_font->draw(SMALL_FONT_ID, backBuffer, _statusText, 0, _vm->getDisplayInfo().statusXOffset + (_vm->getDisplayInfo().statusWidth / 2) - (string_w / 2),
 			_vm->getDisplayInfo().statusYOffset + _vm->getDisplayInfo().statusTextY, color, 0, 0);
 
+	if (_saveReminderState > 0) {
+		rect.left = _vm->getDisplayInfo().saveReminderXOffset;
+		rect.top = _vm->getDisplayInfo().saveReminderYOffset;
+	
+		rect.right = rect.left + _vm->getDisplayInfo().saveReminderWidth;
+		rect.bottom = rect.top + _vm->getDisplayInfo().saveReminderHeight;
+		_vm->_sprite->draw(backBuffer, _vm->_sprite->_mainSprites, 
+			_saveReminderState == 1 ? _vm->getDisplayInfo().saveReminderFirstSpriteNumber : _vm->getDisplayInfo().saveReminderSecondSpriteNumber,
+			rect, 256);
+
+	}
 }
 
-void Interface::handleCommandClick(const Point& mousePoint) {
+void Interface::handleMainClick(const Point& mousePoint) {
 
 	PanelButton *panelButton;
 
@@ -536,10 +615,22 @@ void Interface::handleCommandClick(const Point& mousePoint) {
 				_vm->_script->doVerb();
 			}
 		}		
+	} else {
+		if (_saveReminderState > 0) {
+			Rect rect;
+			rect.left = _vm->getDisplayInfo().saveReminderXOffset;
+			rect.top = _vm->getDisplayInfo().saveReminderYOffset;
+
+			rect.right = rect.left + _vm->getDisplayInfo().saveReminderWidth;
+			rect.bottom = rect.top + _vm->getDisplayInfo().saveReminderHeight;
+			if (rect.contains(mousePoint)) {
+				setMode(kPanelOption);
+			}
+		}
 	}
 }
 
-void Interface::handleCommandUpdate(const Point& mousePoint) {
+void Interface::handleMainUpdate(const Point& mousePoint) {
 	PanelButton *panelButton;
 
 	panelButton = verbHitTest(mousePoint);
@@ -587,22 +678,6 @@ void Interface::handleCommandUpdate(const Point& mousePoint) {
 		draw();
 	}		
 
-}
-
-PanelButton *Interface::verbHitTest(const Point& mousePoint) {
-	PanelButton *panelButton;
-	Rect rect;
-	int i;
-	for (i = 0; i < kVerbTypesMax; i++) {
-		panelButton = _verbTypeToPanelButton[i];
-		if (panelButton != NULL) {
-			_mainPanel.calcPanelButtonRect(panelButton, rect);
-			if (rect.contains(mousePoint))
-				return panelButton;
-		}
-	}
-
-	return NULL;
 }
 
 //inventory stuff
@@ -737,6 +812,31 @@ void Interface::setVerbState(int verb, int state) {
 	draw();
 }
 
+void Interface::drawOptionPanelButtonText(SURFACE *ds, PanelButton *panelButton) {
+	const char *text;
+	int textWidth;
+	int textHeight;
+	Point point;
+	int textColor;
+//TODO: draw box!
+
+	text = _vm->getTextString(panelButton->id);
+
+	textWidth = _vm->_font->getStringWidth(MEDIUM_FONT_ID, text, 0, 0);
+	textHeight = _vm->_font->getHeight(MEDIUM_FONT_ID);
+
+	point.x = _optionPanel.x + panelButton->xOffset + (panelButton->width / 2) - (textWidth / 2);
+	point.y = _optionPanel.y + panelButton->yOffset + (panelButton->height / 2) - (textHeight / 2);
+
+	if (panelButton == _optionPanel.currentButton) {
+		textColor = _vm->getDisplayInfo().verbTextActiveColor; //TODO: create Option button colors constant
+	} else {
+		textColor = _vm->getDisplayInfo().verbTextColor; //TODO: create Option button colors constant
+	}
+
+	_vm->_font->draw(MEDIUM_FONT_ID, ds, text, 0, point.x , point.y, textColor, _vm->getDisplayInfo().verbTextShadowColor, FONT_SHADOW);	 //TODO: create Option button colors constant
+}
+
 void Interface::drawPanelButtonArrow(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton) {
 	Point point;
 	int spriteNumber;
@@ -757,7 +857,7 @@ void Interface::drawPanelButtonArrow(SURFACE *ds, InterfacePanel *panel, PanelBu
 	_vm->_sprite->draw(ds, _vm->_sprite->_mainSprites, spriteNumber, point, 256);
 }
 
-void Interface::drawPanelButtonText(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton, int textColor, int textShadowColor) {
+void Interface::drawVerbPanelText(SURFACE *ds, PanelButton *panelButton, int textColor, int textShadowColor) {
 	const char *text;
 	int textWidth;
 	Point point;
@@ -769,12 +869,11 @@ void Interface::drawPanelButtonText(SURFACE *ds, InterfacePanel *panel, PanelBut
 		error("textId == -1");
 
 	text = _vm->getTextString(textId);
-
 	
 	textWidth = _vm->_font->getStringWidth(SMALL_FONT_ID, text, 0, 0);
 
-	point.x = panel->x + panelButton->xOffset + (panelButton->width / 2) - (textWidth / 2);
-	point.y = panel->y + panelButton->yOffset + 1;
+	point.x = _mainPanel.x + panelButton->xOffset + (panelButton->width / 2) - (textWidth / 2);
+	point.y = _mainPanel.y + panelButton->yOffset + 1;
 
 	_vm->_font->draw(SMALL_FONT_ID, ds, text, 0, point.x , point.y, textColor, textShadowColor, (textShadowColor != 0) ? FONT_SHADOW : 0);
 }

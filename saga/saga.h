@@ -144,7 +144,9 @@ enum PanelButtonType {
 	kPanelButtonArrow = 2,
 	kPanelButtonConverseText = 4,
 	kPanelButtonInventory = 8,
-	kPanelAllButtons = 15
+	kPanelButtonOption = 0x10,
+	kPanelButtonReserved2 = 0x20,
+	kPanelAllButtons = 0xFFFFF
 };
 
 enum TextStringIds {
@@ -295,10 +297,16 @@ struct GameFontDescription {
 };
 
 struct GameResourceDescription {
-	uint32 scene_lut_rn;
+	uint32 sceneLUTResourceId;
 	uint32 moduleLUTResourceId;
 	uint32 mainPanelResourceId;
 	uint32 conversePanelResourceId;
+	uint32 optionPanelResourceId;
+	uint32 mainSpritesResourceId;
+	uint32 mainPanelSpritesResourceId;
+	uint32 defaultPortraitsResourceId;
+	uint32 mainStringsResourceId;
+	uint32 actorsStringsResourceId;
 };
 
 struct GameFileDescription {
@@ -334,6 +342,13 @@ struct GameDisplayInfo {
 	int statusTextY;
 	int statusTextColor;
 	int statusBGColor;
+	
+	int saveReminderXOffset;
+	int saveReminderYOffset;
+	int saveReminderWidth;
+	int saveReminderHeight;
+	int saveReminderFirstSpriteNumber;
+	int saveReminderSecondSpriteNumber;
 
 	int verbTextColor;
 	int verbTextShadowColor;
@@ -361,6 +376,11 @@ struct GameDisplayInfo {
 	int conversePanelYOffset;
 	int conversePanelButtonsCount;
 	PanelButton *conversePanelButtons;
+
+	int optionPanelXOffset;
+	int optionPanelYOffset;
+	int optionPanelButtonsCount;
+	PanelButton *optionPanelButtons;
 };
 
 

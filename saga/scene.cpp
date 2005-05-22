@@ -65,8 +65,8 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 
 
 	// Load scene lookup table
-	debug(0, "Loading scene LUT from resource %u.", RSC_ConvertID(_vm->getResourceDescription()->scene_lut_rn));
-	result = RSC_LoadResource(_sceneContext, RSC_ConvertID(_vm->getResourceDescription()->scene_lut_rn), &scene_lut_p, &scene_lut_len);
+	debug(0, "Loading scene LUT from resource %u.", RSC_ConvertID(_vm->getResourceDescription()->sceneLUTResourceId));
+	result = RSC_LoadResource(_sceneContext, RSC_ConvertID(_vm->getResourceDescription()->sceneLUTResourceId), &scene_lut_p, &scene_lut_len);
 	if (result != SUCCESS) {
 		warning("Scene::Scene(): Error: couldn't load scene LUT");
 		return;
@@ -539,7 +539,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	if (loadSceneParams->sceneProc == NULL) {
 		if (!_inGame) {
 			_inGame = true;
-			_vm->_interface->setMode(kPanelInventory);
+			_vm->_interface->setMode(kPanelMain);
 		}
 
 		_vm->_sound->stopVoice();
@@ -843,23 +843,24 @@ int Scene::processSceneResources() {
 	return SUCCESS;
 }
 
-int Scene::draw(SURFACE *dst_s) {
+void Scene::draw() {
+	SURFACE *backBuffer;
 	BUFFER_INFO buf_info;
 	Point bgPoint(0, 0);
 
 	assert(_initialized);
 
+	backBuffer = _vm->_gfx->getBackBuffer();
+
 	_vm->_render->getBufferInfo(&buf_info);
 
 	if (_sceneDescription.flags & kSceneFlagISO) {
 		_vm->_isoMap->adjustScroll(false);
-		_vm->_isoMap->draw(dst_s);
+		_vm->_isoMap->draw(backBuffer);
 	} else {
-		bufToSurface(dst_s, buf_info.bg_buf, _vm->getDisplayWidth(),
+		bufToSurface(backBuffer, buf_info.bg_buf, _vm->getDisplayWidth(),
 						MAX(_vm->getSceneHeight(), _bg.h), NULL, &bgPoint);
 	}
-
-	return SUCCESS;
 }
 
 void Scene::endScene() {

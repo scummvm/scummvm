@@ -97,8 +97,6 @@ bool Render::initialized() {
 
 int Render::drawScene() {
 	SURFACE *backbuf_surface;
-	SCENE_BGINFO bg_info;
-	Point bg_pt;
 	char txt_buf[20];
 	int fps_width;
 	Point mouse_pt;
@@ -114,17 +112,11 @@ int Render::drawScene() {
 	// Get mouse coordinates
 	mouse_pt = _vm->mousePos();
 
-	_vm->_scene->getBGInfo(&bg_info);
-	bg_pt.x = 0;
-	bg_pt.y = 0;
-
 	if (!(_flags & RF_PLACARD)) {
 		// Display scene background
-		_vm->_scene->draw(backbuf_surface);
+		_vm->_scene->draw();
 
 		if (_vm->_interface->getMode() != kPanelFade) {
-			// Display scene maps, if applicable
-
 			// Draw queued actors
 			_vm->_actor->drawActors();
 			if (getFlags() & RF_OBJECTMAP_TEST) {
@@ -137,6 +129,10 @@ int Render::drawScene() {
 				_vm->_actor->drawPathTest();
 			}
 		}
+	}
+
+	if (_vm->_interface->getMode() == kPanelOption) {
+		_vm->_interface->drawOption();
 	}
 
 	// Draw queued text strings
