@@ -74,9 +74,15 @@ static PanelButton ITE_ConversePanelButtons[] = {
 };
 
 static PanelButton ITE_OptionPanelButtons[] = {
+	{kPanelButtonSlider,	284,19, 13,75,	0,'-',0,	0,0,0}, //slider-scroller
 	{kPanelButtonOption,	113,18, 45,17,	13,'r',0,	0,0,0}, //read speed
-
+	{kPanelButtonOption,	113,37, 45,17,	16,'m',0,	0,0,0}, //music
+	{kPanelButtonOption,	113,56, 45,17,	16,'n',0,	0,0,0}, //sound-noise
+	{kPanelButtonOption,	13,79, 135,17,	12,'q',0,	0,0,0}, //quit
 	{kPanelButtonOption,	13,98, 135,17,	17,'c',0,	0,0,0}, //continue
+	{kPanelButtonOption,	164,98, 57,17,	18,'l',0,	0,0,0}, //load
+	{kPanelButtonOption,	241,98, 57,17,	19,'s',0,	0,0,0},	//save
+	{kPanelButtonOption,	166,20, 112,74,	0,'-',0,	0,0,0},	//slider
 };
 
 static GameDisplayInfo ITE_DisplayInfo = {

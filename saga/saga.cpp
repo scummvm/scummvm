@@ -115,7 +115,8 @@ namespace Saga {
 SagaEngine *_vm = NULL;
 
 SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
-	: Engine(syst) {
+	: Engine(syst),
+	_targetName(detector->_targetName) {
 
 	_leftMouseButtonPressed = _rightMouseButtonPressed = false;
 

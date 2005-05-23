@@ -27,6 +27,7 @@
 #define SAGA_INTERFACE_H__
 
 #include "common/file.h"
+#include "common/savefile.h"
 
 #include "saga/sprite.h"
 #include "saga/script.h"
@@ -205,8 +206,8 @@ public:
 	PanelButton *verbHitTest(const Point& mousePoint){
 		return _mainPanel.hitTest(mousePoint, kPanelButtonVerb);
 	}
-	void saveState(Common::File& out);
-	void loadState(Common::File& in);
+	void saveState(Common::OutSaveFile *out);
+	void loadState(Common::InSaveFile *in);
 private:
 	void handleMainUpdate(const Point& mousePoint);					// main panel update
 	void handleMainClick(const Point& mousePoint);					// main panel click

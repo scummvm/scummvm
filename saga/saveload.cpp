@@ -45,89 +45,134 @@ struct SaveGameHeader {
 	uint32 type;
 	uint32 size;
 	uint32 version;
-	char name[32];
+	char name[SAVE_TITLE_SIZE];
 };
+
+static char emptySlot[] = "[New Save Game]";
+
 //TODO: 
-// - get savegame list
-// - make/create save filename string
 // - delete savegame
 
+char* SagaEngine::calcSaveFileName(uint slotNumber) {
+	static char name[MAX_FILE_NAME];
+	sprintf(name, "%s.s%02d", _targetName.c_str(), slotNumber);
+	return name;
+}
+
+char *SagaEngine::getSaveFileName(uint idx) {
+	if (idx >= MAX_SAVES) {
+		error("getSaveFileName wrong idx");
+	}
+	return _saveFileNames[idx];
+}
+
+
+void SagaEngine::fillSaveList() {
+	int i;
+	bool marks[MAX_SAVES];
+	Common::InSaveFile *in;
+	SaveGameHeader header;
+	char *name;
+	
+	name = calcSaveFileName(MAX_SAVES);
+	name[strlen(name) - 2] = 0;
+	_saveFileMan->listSavefiles(name, marks, MAX_SAVES);
+
+	for (i = 0; i < MAX_SAVES; i++) {
+		_saveFileNames[i][0] = 0;
+	}	
+	
+	_saveFileNamesCount = 0;
+	i = 0;
+	while (i < MAX_SAVES) {
+		if (marks[i]) {
+			name = calcSaveFileName(i);
+			if (!(in = _saveFileMan->openForLoading(name))) {
+				break;
+			}
+			in->read(&header, sizeof(header));
+
+			if (header.type != MKID('SAGA')) {
+				error("SagaEngine::load wrong format");
+			}
+			strcpy(_saveFileNames[_saveFileNamesCount], header.name);
+			delete in;
+			_saveFileNamesCount++;
+		}
+		i++;
+	}
+}
+
+
 void SagaEngine::save(const char *fileName, const char *saveName) {
-	Common::File out;
+	Common::OutSaveFile *out;
 	SaveGameHeader header;
 
-	out.open(fileName, Common::File::kFileWriteMode);
+	if (!(out = _saveFileMan->openForSaving(fileName))) {
+		return;
+	}
 
 	header.type = MKID('SAGA');
 	header.size = 0;
 	header.version = CURRENT_SAGA_VER;
 	strcpy(header.name, saveName);
 
-	out.write(&header, sizeof(header));
+	out->write(&header, sizeof(header));
 
 	// Surrounding scene
-	out.writeSint32LE(_scene->getOutsetSceneNumber());
+	out->writeSint32LE(_scene->getOutsetSceneNumber());
 
 	// Inset scene
-	out.writeSint32LE(_scene->currentSceneNumber());
-
-	uint16 i;
+	out->writeSint32LE(_scene->currentSceneNumber());
 
 	_interface->saveState(out);
 
 	_actor->saveState(out);
 	
-	out.writeSint16LE(_script->_commonBufferSize);
+	out->writeSint16LE(_script->_commonBufferSize);
 
-	for (i = 0; i < _script->_commonBufferSize; i++)
-		out.writeByte(_script->_commonBuffer[i]);
+	out->write(_script->_commonBuffer, _script->_commonBufferSize);
 
-	out.writeSint16LE(_isoMap->getMapPosition().x);
-	out.writeSint16LE(_isoMap->getMapPosition().y);
+	out->writeSint16LE(_isoMap->getMapPosition().x);
+	out->writeSint16LE(_isoMap->getMapPosition().y);
 
-	out.close();
+	delete out;
 }
 
 void SagaEngine::load(const char *fileName) {
-	Common::File in;
+	Common::InSaveFile *in;
 	int  commonBufferSize;
 	int sceneNumber, insetSceneNumber;
 	int mapx, mapy;
-	uint16 i;
 	SaveGameHeader header;
 
-	in.open(fileName);
-
-	if (!in.isOpen())
+	if (!(in = _saveFileMan->openForLoading(fileName))) {
 		return;
+	}
 
-	in.read(&header, sizeof(header));
+	in->read(&header, sizeof(header));
 
 	if (header.type != MKID('SAGA')) {
 		error("SagaEngine::load wrong format");
 	}
 			
 	// Surrounding scene
-	sceneNumber = in.readSint32LE();
+	sceneNumber = in->readSint32LE();
 
 	// Inset scene
-	insetSceneNumber = in.readSint32LE();
+	insetSceneNumber = in->readSint32LE();
 
-	debug(0, "scene: #%d inset scene: #%d", sceneNumber, insetSceneNumber);
-
-	
 	_interface->loadState(in);
 
 	_actor->loadState(in);
 	
-	commonBufferSize = in.readSint16LE();
-	for (i = 0; i < commonBufferSize; i++)
-		_script->_commonBuffer[i] = in.readByte();
+	commonBufferSize = in->readSint16LE();
+	in->read(_script->_commonBuffer, commonBufferSize);
 
-	mapx = in.readSint16LE();
-	mapy = in.readSint16LE();
+	mapx = in->readSint16LE();
+	mapy = in->readSint16LE();
 
-	in.close();
+	delete in;
 
 	_isoMap->setMapPosition(mapx, mapy);
 

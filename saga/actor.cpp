@@ -2305,10 +2305,10 @@ void Actor::drawPathTest() {
 #endif
 }
 
-void Actor::saveState(Common::File& out) {
+void Actor::saveState(Common::OutSaveFile *out) {
 	uint16 i;
 	
-	out.writeSint16LE(getProtagState());
+	out->writeSint16LE(getProtagState());
 
 	for (i = 0; i < _actorsCount; i++) {
 		ActorData *a = _actors[i];
@@ -2321,10 +2321,10 @@ void Actor::saveState(Common::File& out) {
 	}
 }
 
-void Actor::loadState(Common::File& in) {
+void Actor::loadState(Common::InSaveFile *in) {
 	int32 i;
 
-	setProtagState(in.readSint16LE());
+	setProtagState(in->readSint16LE());
 
 	for (i = 0; i < _actorsCount; i++) {
 		ActorData *a = _actors[i];

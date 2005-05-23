@@ -254,6 +254,7 @@ void Interface::setMode(int mode, bool force) {
 		} else {
 			if (_panelMode == kPanelOption) {
 				_optionPanel.currentButton = NULL;
+				_vm->fillSaveList();
 			}
 		}		
 	}
@@ -279,9 +280,11 @@ bool Interface::processKeyCode(int keyCode) {
 		//TODO: check input dialog keys
 		for (i = 0; i < _optionPanel.buttonsCount; i++) {
 			panelButton = &_optionPanel.buttons[i];
-			if (panelButton->keyChar == keyCode) {
-				setOption(panelButton);				
-				return true;
+			if(panelButton->type == kPanelButtonOption) {
+				if (panelButton->keyChar == keyCode) {
+					setOption(panelButton);				
+					return true;
+				}
 			}
 		}
 		break;
@@ -445,6 +448,7 @@ void Interface::drawOption() {
 	SURFACE *backBuffer;
 	int i;
 	Point origin;
+	PanelButton *panelButton;
 
 	backBuffer = _vm->_gfx->getBackBuffer();
 	origin.x = _vm->getDisplayInfo().optionPanelXOffset;
@@ -453,23 +457,44 @@ void Interface::drawOption() {
 	bufToSurface(backBuffer, _optionPanel.image, _optionPanel.imageWidth, _optionPanel.imageHeight, NULL, &origin);
 
 	for (i = 0; i < _optionPanel.buttonsCount; i++) {		
-		drawOptionPanelButtonText(backBuffer, &_optionPanel.buttons[i]);
+		panelButton = &_optionPanel.buttons[i];
+		if(panelButton->type == kPanelButtonOption) {
+			drawOptionPanelButtonText(backBuffer, panelButton);
+		}		
 	}
 }
 
 void Interface::handleOptionUpdate(const Point& mousePoint) {
+	int i;
 	_optionPanel.currentButton = optionHitTest(mousePoint);	
+	bool released = (_optionPanel.currentButton != NULL) && (_optionPanel.currentButton->state > 0) && (!_vm->mouseButtonPressed());
+	if (!_vm->mouseButtonPressed()) {
+		for (i = 0; i < _optionPanel.buttonsCount; i++) {
+			_optionPanel.buttons[i].state = 0;
+		}
+	}
+
+	if (released) {
+		setOption(_optionPanel.currentButton); 
+	}
+
 }
 
 
 void Interface::handleOptionClick(const Point& mousePoint) {
+	int i;
 	_optionPanel.currentButton = optionHitTest(mousePoint);
+
+	for (i = 0; i < _optionPanel.buttonsCount; i++) {
+		_optionPanel.buttons[i].state = 0;
+	}
 
 	if (_optionPanel.currentButton == NULL) {
 		return;
 	}
 
-	setOption(_optionPanel.currentButton); //TODO: do it on mouse up
+	_optionPanel.currentButton->state = 1;
+
 }
 
 
@@ -478,6 +503,9 @@ void Interface::setOption(PanelButton *panelButton) {
 		case 'c':
 				setMode(kPanelMain);
 				break;
+		case 'q':
+			_vm->shutDown();
+			break;
 	}
 }
 
@@ -1189,19 +1217,19 @@ void Interface::handleConverseClick(const Point& mousePoint) {
 
 }
 
-void Interface::saveState(Common::File& out) {
-	out.writeUint16LE(_inventoryCount);
+void Interface::saveState(Common::OutSaveFile *out) {
+	out->writeUint16LE(_inventoryCount);
 
 	for (int i = 0; i < _inventoryCount; i++) {
-		out.writeUint16LE(_inventory[i]);
+		out->writeUint16LE(_inventory[i]);
 	}
 }
 
-void Interface::loadState(Common::File& in) {
-	_inventoryCount = in.readUint16LE();
+void Interface::loadState(Common::InSaveFile *in) {
+	_inventoryCount = in->readUint16LE();
 
 	for (int i = 0; i < _inventoryCount; i++) {
-		_inventory[i] = in.readUint16LE();
+		_inventory[i] = in->readUint16LE();
 	}
 	
 	updateInventory(0);

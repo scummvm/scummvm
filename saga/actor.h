@@ -27,6 +27,7 @@
 #define SAGA_ACTOR_H__
 
 #include "common/file.h"
+#include "common/savefile.h"
 
 #include "saga/sprite.h"
 #include "saga/itedata.h"
@@ -141,15 +142,15 @@ struct Location {
 	Location() {
 		x = y = z = 0;
 	}
-	void saveState(Common::File& out) {
-		out.writeSint32LE(x);
-		out.writeSint32LE(y);
-		out.writeSint32LE(z);
+	void saveState(Common::OutSaveFile *out) {
+		out->writeSint32LE(x);
+		out->writeSint32LE(y);
+		out->writeSint32LE(z);
 	}
-	void loadState(Common::File& in) {
-		x = in.readSint32LE();
-		y = in.readSint32LE();
-		z = in.readSint32LE();
+	void loadState(Common::InSaveFile *in) {
+		x = in->readSint32LE();
+		y = in->readSint32LE();
+		z = in->readSint32LE();
 	}
 
 	int distance(const Location &location) const {
@@ -222,27 +223,27 @@ public:
 	int32 screenDepth;			//
 	int32 screenScale;			//
 
-	void saveState(Common::File& out) {
-		out.writeUint16LE(flags);
-		out.writeSint32LE(nameIndex);
-		out.writeSint32LE(sceneNumber);
-		out.writeSint32LE(spriteListResourceId);
+	void saveState(Common::OutSaveFile *out) {
+		out->writeUint16LE(flags);
+		out->writeSint32LE(nameIndex);
+		out->writeSint32LE(sceneNumber);
+		out->writeSint32LE(spriteListResourceId);
 		location.saveState(out);
-		out.writeSint16LE(screenPosition.x);
-		out.writeSint16LE(screenPosition.y);
-		out.writeSint32LE(screenDepth);
-		out.writeSint32LE(screenScale);
+		out->writeSint16LE(screenPosition.x);
+		out->writeSint16LE(screenPosition.y);
+		out->writeSint32LE(screenDepth);
+		out->writeSint32LE(screenScale);
 	}
-	void loadState(Common::File& in) {
-		flags = in.readUint16LE();
-		nameIndex = in.readSint32LE();
-		sceneNumber = in.readSint32LE();
-		spriteListResourceId = in.readSint32LE();
+	void loadState(Common::InSaveFile *in) {
+		flags = in->readUint16LE();
+		nameIndex = in->readSint32LE();
+		sceneNumber = in->readSint32LE();
+		spriteListResourceId = in->readSint32LE();
 		location.loadState(in);
-		screenPosition.x = in.readSint16LE();
-		screenPosition.y = in.readSint16LE();
-		screenDepth = in.readSint32LE();
-		screenScale = in.readSint32LE();
+		screenPosition.x = in->readSint16LE();
+		screenPosition.y = in->readSint16LE();
+		screenDepth = in->readSint32LE();
+		screenScale = in->readSint32LE();
 	}
 };
 
@@ -299,73 +300,72 @@ public:
 	Location partialTarget;
 	int32 walkFrameSequence;
 
-	void saveState(Common::File& out) {
+	void saveState(Common::OutSaveFile *out) {
 		CommonObjectData::saveState(out);
-		out.writeUint16LE(actorFlags);
-		out.writeSint32LE(currentAction);
-		out.writeSint32LE(facingDirection);
-		out.writeSint32LE(actionDirection);
-		out.writeSint32LE(actionCycle);
-		out.writeUint16LE(targetObject);
+		out->writeUint16LE(actorFlags);
+		out->writeSint32LE(currentAction);
+		out->writeSint32LE(facingDirection);
+		out->writeSint32LE(actionDirection);
+		out->writeSint32LE(actionCycle);
+		out->writeUint16LE(targetObject);
 
-		//TODO: write lastZone 
-		out.writeSint32LE(cycleFrameSequence);
-		out.writeByte(cycleDelay);
-		out.writeByte(cycleTimeCount);
-		out.writeByte(cycleFlags);
-		out.writeSint32LE(frameNumber);
+		out->writeSint32LE(cycleFrameSequence);
+		out->writeByte(cycleDelay);
+		out->writeByte(cycleTimeCount);
+		out->writeByte(cycleFlags);
+		out->writeSint32LE(frameNumber);
 
-		out.writeSint32LE(tileDirectionsAlloced);
+		out->writeSint32LE(tileDirectionsAlloced);
 		for (int i = 0; i < tileDirectionsAlloced; i++) {
-			out.writeByte(tileDirections[i]);
+			out->writeByte(tileDirections[i]);
 		}
 
-		out.writeSint32LE(walkStepsAlloced);
+		out->writeSint32LE(walkStepsAlloced);
 		for (int i = 0; i < walkStepsAlloced; i++) {
-			out.writeSint16LE(walkStepsPoints[i].x);
-			out.writeSint16LE(walkStepsPoints[i].y);
+			out->writeSint16LE(walkStepsPoints[i].x);
+			out->writeSint16LE(walkStepsPoints[i].y);
 		}
 
-		out.writeSint32LE(walkStepsCount);
-		out.writeSint32LE(walkStepIndex);
+		out->writeSint32LE(walkStepsCount);
+		out->writeSint32LE(walkStepIndex);
 		finalTarget.saveState(out);
 		partialTarget.saveState(out);
-		out.writeSint32LE(walkFrameSequence);
+		out->writeSint32LE(walkFrameSequence);
 	}
-	void loadState(Common::File& in) {
-		CommonObjectData::loadState(in);
-		actorFlags = in.readUint16LE();
-		currentAction = in.readSint32LE();
-		facingDirection = in.readSint32LE();
-		actionDirection = in.readSint32LE();
-		actionCycle = in.readSint32LE();
-		targetObject = in.readUint16LE();
 
-		//TODO: read lastZone 
+	void loadState(Common::InSaveFile *in) {
+		CommonObjectData::loadState(in);
+		actorFlags = in->readUint16LE();
+		currentAction = in->readSint32LE();
+		facingDirection = in->readSint32LE();
+		actionDirection = in->readSint32LE();
+		actionCycle = in->readSint32LE();
+		targetObject = in->readUint16LE();
+
 		lastZone = NULL;
-		cycleFrameSequence = in.readSint32LE();
-		cycleDelay = in.readByte();
-		cycleTimeCount = in.readByte();
-		cycleFlags = in.readByte();
-		frameNumber = in.readSint32LE();
+		cycleFrameSequence = in->readSint32LE();
+		cycleDelay = in->readByte();
+		cycleTimeCount = in->readByte();
+		cycleFlags = in->readByte();
+		frameNumber = in->readSint32LE();
 
 		
-		setTileDirectionsSize(in.readSint32LE(), true);
+		setTileDirectionsSize(in->readSint32LE(), true);
 		for (int i = 0; i < tileDirectionsAlloced; i++) {
-			tileDirections[i] = in.readByte();
+			tileDirections[i] = in->readByte();
 		}
 
-		setWalkStepsPointsSize(in.readSint32LE(), true);
+		setWalkStepsPointsSize(in->readSint32LE(), true);
 		for (int i = 0; i < walkStepsAlloced; i++) {
-			walkStepsPoints[i].x = in.readSint16LE();
-			walkStepsPoints[i].y = in.readSint16LE();
+			walkStepsPoints[i].x = in->readSint16LE();
+			walkStepsPoints[i].y = in->readSint16LE();
 		}
 
-		walkStepsCount = in.readSint32LE();
-		walkStepIndex = in.readSint32LE();
+		walkStepsCount = in->readSint32LE();
+		walkStepIndex = in->readSint32LE();
 		finalTarget.loadState(in);
 		partialTarget.loadState(in);
-		walkFrameSequence = in.readSint32LE();
+		walkFrameSequence = in->readSint32LE();
 	}
 
 	void setTileDirectionsSize(int size, bool forceRealloc) {
@@ -499,8 +499,8 @@ public:
 		return _activeSpeech.stringsCount > 0;
 	}
 
-	void saveState(Common::File& out);
-	void loadState(Common::File& in);
+	void saveState(Common::OutSaveFile *out);
+	void loadState(Common::InSaveFile *in);
 
 	void setProtagState(int state);
 	int getProtagState() { return _protagState; }

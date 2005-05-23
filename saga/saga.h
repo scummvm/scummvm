@@ -63,7 +63,12 @@ class Puzzle;
 #define SAGA_IMAGE_DATA_OFFSET 776
 #define SAGA_IMAGE_HEADER_LEN  8
 
-#define MAXPATH 512
+#define MAXPATH 512 //TODO: remove
+
+#define SAVE_TITLE_SIZE 28
+#define MAX_SAVES 96
+#define MAX_FILE_NAME 256
+
 
 #define IS_BIG_ENDIAN ((_vm->getFeatures() & GF_BIG_ENDIAN_DATA) != 0)
 
@@ -146,7 +151,7 @@ enum PanelButtonType {
 	kPanelButtonConverseText = 4,
 	kPanelButtonInventory = 8,
 	kPanelButtonOption = 0x10,
-	kPanelButtonReserved2 = 0x20,
+	kPanelButtonSlider = 0x20,
 	kPanelAllButtons = 0xFFFFF
 };
 
@@ -448,7 +453,6 @@ class SagaEngine : public Engine {
 protected:
 	int go();
 	int init(GameDetector &detector);
-
 public:
 	SagaEngine(GameDetector * detector, OSystem * syst);
 	virtual ~SagaEngine();
@@ -462,6 +466,9 @@ public:
 	}
 	void save(const char *fileName, const char *saveName);
 	void load(const char *fileName);
+	void fillSaveList();
+	char *calcSaveFileName(uint slotNumber);
+	char *getSaveFileName(uint idx);
 
 	int _soundEnabled;
 	int _musicEnabled;
@@ -536,6 +543,9 @@ public:
 	}
 
  private:
+	Common::String _targetName;
+	uint _saveFileNamesCount;
+	char _saveFileNames[MAX_SAVES][SAVE_TITLE_SIZE];
 	Point _mousePos;
 	bool _leftMouseButtonPressed;
 	bool _rightMouseButtonPressed;
