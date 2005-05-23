@@ -84,6 +84,8 @@ static const GobGameSettings gob_games[] = {
 	{"gob3", "Goblins Quest 3", GF_GOB3, "8d17b0abc514b1512fdedc6072acd48b"},
 	// CD 1.000
 	{"gob3", "Goblins Quest 3 (CD)", GF_GOB3, "8d17b0abc514b1512fdedc6072acd48b"},
+	// CD 1.02. Spanish "Computer Gaming World"* distribution in Spain
+	{"gob3", "Goblins Quest 3 (CD)", GF_GOB3, "7d7ab9a987be7208b9b685846fbd3e82"},
 
 	{"gob3", "Goblins Quest 3 (Interactive Demo)", GF_GOB3, "4986b44cec309589508d7904f924c217"},
 	{"gob3", "Goblins Quest 3 (Demo)", GF_GOB3, "5024e7de8d6377fbbeabbaa92e0452bc"},
