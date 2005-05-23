@@ -532,12 +532,12 @@ void ScummEngine_v80he::o80_cursorCommand() {
 	case 0x13:
 	case 0x14:
 		a = pop();
-		loadWizCursor(a);
+		_wiz->loadWizCursor(a);
 		break;
 	case 0x3C:
 		pop();
 		a = pop();
-		loadWizCursor(a);
+		_wiz->loadWizCursor(a);
 		break;
 	case 0x90:		// SO_CURSOR_ON Turn cursor on
 		_cursor.state = 1;
@@ -596,7 +596,7 @@ void ScummEngine_v80he::o80_drawWizPolygon() {
 	wi.resNum = pop();
 	wi.state = 0;
 	wi.flags = kWIFIsPolygon;
-	displayWizImage(&wi);	
+	_wiz->displayWizImage(&wi);	
 }
 
 /**
@@ -643,7 +643,7 @@ void ScummEngine_v80he::drawLine(int x1, int y1, int x, int y, int step, int typ
 		wi.x1 = x;
 		wi.resNum = id;
 		wi.state = 0;
-		displayWizImage(&wi);
+		_wiz->displayWizImage(&wi);
 	} else {
 		drawPixel(x, y, id);
 	}
@@ -694,7 +694,7 @@ void ScummEngine_v80he::drawLine(int x1, int y1, int x, int y, int step, int typ
 			wi.x1 = x;
 			wi.resNum = id;
 			wi.state = 0;
-			displayWizImage(&wi);
+			_wiz->displayWizImage(&wi);
 		} else {
 			drawPixel(x, y, id);
 		}

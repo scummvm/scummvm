@@ -1331,6 +1331,7 @@ ScummEngine_v70he::ScummEngine_v70he(GameDetector *detector, OSystem *syst, cons
 	_skipProcessActors = 0;
 
 	VAR_NUM_SOUND_CHANNELS = 0xFF;
+	VAR_WIZ_TCOLOR = 0xFF;
 }
 
 ScummEngine_v70he::~ScummEngine_v70he() {
@@ -1364,7 +1365,6 @@ ScummEngine_v72he::ScummEngine_v72he(GameDetector *detector, OSystem *syst, cons
 	VAR_WINDOWS_VERSION = 0xFF;
 	VAR_CURRENT_CHARSET = 0xFF;
 	VAR_U32_VERSION = 0xFF;
-	VAR_WIZ_TCOLOR = 0xFF;
 }
 
 ScummEngine_v80he::ScummEngine_v80he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)

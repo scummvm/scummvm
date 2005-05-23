@@ -1221,7 +1221,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.spriteId = 0;
 		_wizParams.groupNum = 0;
 		_wizParams.img.resNum = pop();
-		displayWizImage(&_wizParams.img);
+		_wiz->displayWizImage(&_wizParams.img);
 		break;
 	case 57:
 		_wizParams.processFlags |= kWPFPaletteNum;
@@ -1267,7 +1267,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		break;
 	case 92:
 		if (_wizParams.img.resNum)
-			processWizImage(&_wizParams);
+			_wiz->processWizImage(&_wizParams);
 		break;
 	case 128:
 		_wizParams.field_239D = pop();
@@ -2093,12 +2093,12 @@ void ScummEngine_v100he::o100_cursorCommand() {
 	case 0x80:
 	case 0x81:
 		a = pop();
-		loadWizCursor(a);
+		_wiz->loadWizCursor(a);
 		break;
 	case 0x82:
 		pop();
 		a = pop();
-		loadWizCursor(a);
+		_wiz->loadWizCursor(a);
 		break;
 	case 0x86:		// SO_CURSOR_ON Turn cursor on
 		_cursor.state = 1;
@@ -2359,23 +2359,23 @@ void ScummEngine_v100he::o100_getWizData() {
 		x = pop();
 		state = pop();
 		resId = pop();
-		push(getWizPixelColor(resId, state, x, y, 0));
+		push(_wiz->getWizPixelColor(resId, state, x, y, 0));
 		break;		
 	case 6:
 		resId = pop();
-		push(getWizImageStates(resId));
+		push(_wiz->getWizImageStates(resId));
 		break;
 	case 13:
 		y = pop();
 		x = pop();
 		state = pop();
 		resId = pop();
-		push(isWizPixelNonTransparent(resId, state, x, y, 0));
+		push(_wiz->isWizPixelNonTransparent(resId, state, x, y, 0));
 		break;
 	case 19:
 		state = pop();
 		resId = pop();
-		getWizImageDim(resId, state, w, h);
+		_wiz->getWizImageDim(resId, state, w, h);
 		push(h);
 		break;
 	case 34:
@@ -2388,19 +2388,19 @@ void ScummEngine_v100he::o100_getWizData() {
 	case 64:
 		state = pop();
 		resId = pop();
-		getWizImageDim(resId, state, w, h);
+		_wiz->getWizImageDim(resId, state, w, h);
 		push(w);
 		break;
 	case 65:
 		state = pop();
 		resId = pop();
-		loadImgSpot(resId, state, x, y);
+		_wiz->loadImgSpot(resId, state, x, y);
 		push(x);
 		break;	
 	case 66:
 		state = pop();
 		resId = pop();
-		loadImgSpot(resId, state, x, y);
+		_wiz->loadImgSpot(resId, state, x, y);
 		push(y);
 		break;
 	case 111:
@@ -2418,7 +2418,7 @@ void ScummEngine_v100he::o100_getWizData() {
 		state = pop();
 		resId = pop();
 		if (x == -1 && y == -1 && w == -1 && h == -1) {
-			getWizImageDim(resId, state, w, h);
+			_wiz->getWizImageDim(resId, state, w, h);
 			x = 0;
 			y = 0;
 		}		

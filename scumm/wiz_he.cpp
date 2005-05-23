@@ -854,10 +854,10 @@ static int wizPackType0(uint8 *dst, const uint8 *src, int srcPitch, const Common
 	return size;
 }
 
-void ScummEngine_v72he::captureWizImage(int resNum, const Common::Rect& r, bool backBuffer, int compType) {
+void Wiz::captureWizImage(int resNum, const Common::Rect& r, bool backBuffer, int compType) {
 	debug(1, "ScummEngine_v72he::captureWizImage(%d, %d, [%d,%d,%d,%d])", resNum, compType, r.left, r.top, r.right, r.bottom);
 	uint8 *src = NULL;
-	VirtScreen *pvs = &virtscr[kMainVirtScreen];
+	VirtScreen *pvs = &_vm->virtscr[kMainVirtScreen];
 	if (backBuffer) {
 		src = pvs->getBackPixels(0, 0);
 	} else {
@@ -867,15 +867,15 @@ void ScummEngine_v72he::captureWizImage(int resNum, const Common::Rect& r, bool 
 	if (rCapt.intersects(r)) {
 		rCapt.clip(r);
 		const uint8 *palPtr;
-		if (_heversion >= 99) {
-			palPtr = _hePalettes + 1024;
+		if (_vm->_heversion >= 99) {
+			palPtr = _vm->_hePalettes + 1024;
 		} else {
-			palPtr = _currentPalette;
+			palPtr = _vm->_currentPalette;
 		}
 
 		int w = rCapt.width();
 		int h = rCapt.height();
-		int tColor = (VAR_WIZ_TCOLOR != 0xFF) ? VAR(VAR_WIZ_TCOLOR) : 5;
+		int tColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : 5;
 
 		// compute compressed size
 		int dataSize = 0;
@@ -896,7 +896,7 @@ void ScummEngine_v72he::captureWizImage(int resNum, const Common::Rect& r, bool 
 		dataSize = (dataSize + 1) & ~1;
 		int wizSize = headerSize + dataSize;
 		// write header
-		uint8 *wizImg = res.createResource(rtImage, resNum, dataSize + headerSize);
+		uint8 *wizImg = _vm->res.createResource(rtImage, resNum, dataSize + headerSize);
 		WRITE_BE_UINT32(wizImg + 0x00, 'AWIZ');
 		WRITE_BE_UINT32(wizImg + 0x04, wizSize);
 		WRITE_BE_UINT32(wizImg + 0x08, 'WIZH');
@@ -936,19 +936,19 @@ void ScummEngine_v72he::captureWizImage(int resNum, const Common::Rect& r, bool 
 	}
 }
 
-void ScummEngine_v72he::getWizImageDim(int resNum, int state, int32 &w, int32 &h) {
-	uint8 *dataPtr = getResourceAddress(rtImage, resNum);
+void Wiz::getWizImageDim(int resNum, int state, int32 &w, int32 &h) {
+	uint8 *dataPtr = _vm->getResourceAddress(rtImage, resNum);
 	assert(dataPtr);
-	uint8 *wizh = findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
+	uint8 *wizh = _vm->findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
 	assert(wizh);
 	w = READ_LE_UINT32(wizh + 0x4);
 	h = READ_LE_UINT32(wizh + 0x8);
 }
 
-void ScummEngine_v72he::displayWizImage(WizImage *pwi) {
-	if (_fullRedraw) {
-		assert(_wiz->_imagesNum < ARRAYSIZE(_wiz->_images));
-		WizImage *wi = &_wiz->_images[_wiz->_imagesNum];
+void Wiz::displayWizImage(WizImage *pwi) {
+	if (_vm->_fullRedraw) {
+		assert(_imagesNum < ARRAYSIZE(_images));
+		WizImage *wi = &_images[_imagesNum];
 		wi->resNum = pwi->resNum;
 		wi->x1 = pwi->x1;
 		wi->y1 = pwi->y1;
@@ -958,7 +958,7 @@ void ScummEngine_v72he::displayWizImage(WizImage *pwi) {
 		wi->xmapNum = 0;
 		wi->field_390 = 0;
 		wi->paletteNum = 0;
-		++_wiz->_imagesNum;
+		++_imagesNum;
 	} else if (pwi->flags & kWIFIsPolygon) {
 		drawWizPolygon(pwi->resNum, pwi->state, pwi->x1, pwi->flags, 0, 0, 0);
 	} else {
@@ -967,16 +967,16 @@ void ScummEngine_v72he::displayWizImage(WizImage *pwi) {
 	}
 }
 
-uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int xmapNum, int field_390, const Common::Rect *clipBox, int flags, int dstResNum, int paletteNum) {
+uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int xmapNum, int field_390, const Common::Rect *clipBox, int flags, int dstResNum, int paletteNum) {
 	debug(2, "drawWizImage(resNum %d, x1 %d y1 %d flags 0x%X zorder %d xmapNum %d field_390 %d dstResNum %d paletteNum %d)", resNum, x1, y1, flags, zorder, xmapNum, field_390, dstResNum, paletteNum);
 	uint8 *dst = NULL;
 
 	const uint8 *palPtr = NULL;
-	if (_heversion >= 99) {
+	if (_vm->_heversion >= 99) {
 		if (paletteNum) {
-			palPtr = _hePalettes + paletteNum * 1024 + 768;
+			palPtr = _vm->_hePalettes + paletteNum * 1024 + 768;
 		} else {
-			palPtr = _hePalettes + 1792;
+			palPtr = _vm->_hePalettes + 1792;
 		}
 	}
 
@@ -985,32 +985,32 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 		// TODO: Handle 'XMAP' data for shadows
 	}
 
-	uint8 *dataPtr = getResourceAddress(rtImage, resNum);
+	uint8 *dataPtr = _vm->getResourceAddress(rtImage, resNum);
 	assert(dataPtr);
-	uint8 *wizh = findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
+	uint8 *wizh = _vm->findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
 	assert(wizh);
 	uint32 comp   = READ_LE_UINT32(wizh + 0x0);
 	uint32 width  = READ_LE_UINT32(wizh + 0x4);
 	uint32 height = READ_LE_UINT32(wizh + 0x8);
 	debug(2, "wiz_header.comp = %d wiz_header.w = %d wiz_header.h = %d", comp, width, height);
 	
-	uint8 *wizd = findWrappedBlock(MKID('WIZD'), dataPtr, state, 0);
+	uint8 *wizd = _vm->findWrappedBlock(MKID('WIZD'), dataPtr, state, 0);
 	assert(wizd);
 
 	if (flags & kWIFHasPalette) {
-		uint8 *pal = findWrappedBlock(MKID('RGBS'), dataPtr, state, 0);
+		uint8 *pal = _vm->findWrappedBlock(MKID('RGBS'), dataPtr, state, 0);
 		assert(pal);
-		setPaletteFromPtr(pal, 256);
+		_vm->setPaletteFromPtr(pal, 256);
 	}
 
 	uint8 *rmap = NULL;
 	if (flags & kWIFRemapPalette) {
-		rmap = findWrappedBlock(MKID('RMAP'), dataPtr, state, 0);
+		rmap = _vm->findWrappedBlock(MKID('RMAP'), dataPtr, state, 0);
 		assert(rmap);
-		if (_heversion <= 80 || READ_BE_UINT32(rmap) != 0x01234567) {
-			uint8 *rgbs = findWrappedBlock(MKID('RGBS'), dataPtr, state, 0);
+		if (_vm->_heversion <= 80 || READ_BE_UINT32(rmap) != 0x01234567) {
+			uint8 *rgbs = _vm->findWrappedBlock(MKID('RGBS'), dataPtr, state, 0);
 			assert(rgbs);
-			remapHEPalette(rgbs, rmap + 4);
+			_vm->remapHEPalette(rgbs, rmap + 4);
 		}
 	}
 
@@ -1027,14 +1027,14 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 		ch = height;
 	} else {
 		if (dstResNum) {
-			uint8 *dstPtr = getResourceAddress(rtImage, dstResNum);
+			uint8 *dstPtr = _vm->getResourceAddress(rtImage, dstResNum);
 			assert(dstPtr);
-			dst = findWrappedBlock(MKID('WIZD'), dstPtr, 0, 0);
+			dst = _vm->findWrappedBlock(MKID('WIZD'), dstPtr, 0, 0);
 			assert(dst);
 
 			getWizImageDim(dstResNum, 0, cw, ch);
 		} else {
-			VirtScreen *pvs = &virtscr[kMainVirtScreen];
+			VirtScreen *pvs = &_vm->virtscr[kMainVirtScreen];
 			if (flags & kWIFMarkBufferDirty) {
 				dst = pvs->getPixels(0, pvs->topline);
 			} else {
@@ -1053,9 +1053,9 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 		} else {
 			return 0;
 		}
-	} else if (_wiz->_rectOverrideEnabled) {
-		if (rScreen.intersects(_wiz->_rectOverride)) {
-			rScreen.clip(_wiz->_rectOverride);
+	} else if (_rectOverrideEnabled) {
+		if (rScreen.intersects(_rectOverride)) {
+			rScreen.clip(_rectOverride);
 		} else {
 			return 0;
 		}
@@ -1069,12 +1069,12 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 	}
 
 	int color;
-	uint8 *trns = findWrappedBlock(MKID('TRNS'), dataPtr, state, 0);
+	uint8 *trns = _vm->findWrappedBlock(MKID('TRNS'), dataPtr, state, 0);
 
 	switch (comp) {
 	case 0:
-		color = (trns == NULL) ? VAR(VAR_WIZ_TCOLOR) : -1;
-		_wiz->copyRawWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, color);
+		color = (trns == NULL) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : -1;
+		copyRawWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, color);
 		break;
 	case 1:
 		// TODO Adding masking for flags 0x80 and 0x100
@@ -1085,11 +1085,11 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 			// Used in readdemo
 			warning("drawWizImage: Unhandled flag 0x100");
 		}
-		_wiz->copyWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, palPtr);
+		copyWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, palPtr);
 		break;
 	case 2:
-		color = (trns == NULL) ? VAR(VAR_WIZ_TCOLOR) : -1;
-		_wiz->copyRaw16BitWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, color);
+		color = (trns == NULL) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : -1;
+		copyRaw16BitWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, color);
 		break;
 	case 5:
 		// Used in Moonbase Commander
@@ -1105,9 +1105,9 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 			rImage.clip(rScreen);
 			if (!(flags & kWIFBlitToFrontVideoBuffer) && (flags & (kWIFBlitToFrontVideoBuffer | kWIFMarkBufferDirty))) {
 				++rImage.bottom;
-				markRectAsDirty(kMainVirtScreen, rImage);
+				_vm->markRectAsDirty(kMainVirtScreen, rImage);
 			} else {
-				gdi.copyVirtScreenBuffers(rImage);
+				_vm->gdi.copyVirtScreenBuffers(rImage);
 			}
 		}
 	}
@@ -1181,7 +1181,7 @@ struct PolygonDrawData {
 	}
 };
 
-void ScummEngine_v72he::drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int xmapNum, int angle, int zoom, const Common::Rect *r, int flags, int dstResNum, int paletteNum) {
+void Wiz::drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int xmapNum, int angle, int zoom, const Common::Rect *r, int flags, int dstResNum, int paletteNum) {
 	Common::Point pts[4];
 	int32 w, h;
 	getWizImageDim(resNum, state, w, h);
@@ -1198,7 +1198,7 @@ void ScummEngine_v72he::drawWizComplexPolygon(int resNum, int state, int po_x, i
 		}
 	}
 	if (angle)
-		_wiz->polygonRotatePoints(pts, 4, angle);
+		polygonRotatePoints(pts, 4, angle);
 
 	for (int i = 0; i < 4; ++i) {
 		pts[i].x += po_x;
@@ -1218,7 +1218,7 @@ void ScummEngine_v72he::drawWizComplexPolygon(int resNum, int state, int po_x, i
 		}
 
 		Common::Rect bounds;
-		_wiz->polygonCalcBoundBox(pts, 4, bounds);
+		polygonCalcBoundBox(pts, 4, bounds);
 		int x1 = bounds.left;
 		int y1 = bounds.top;
 
@@ -1244,13 +1244,13 @@ void ScummEngine_v72he::drawWizComplexPolygon(int resNum, int state, int po_x, i
 	}
 }
 
-void ScummEngine_v72he::drawWizPolygon(int resNum, int state, int id, int flags, int xmapNum, int dstResNum, int paletteNum) {
+void Wiz::drawWizPolygon(int resNum, int state, int id, int flags, int xmapNum, int dstResNum, int paletteNum) {
 	debug(1, "drawWizPolygon(resNum %d, id %d, flags 0x%X, xmapNum %d paletteNum %d)", resNum, id, flags, xmapNum, paletteNum);
 	int i;
 	WizPolygon *wp = NULL;
-	for (i = 0; i < ARRAYSIZE(_wiz->_polygons); ++i) {
-		if (_wiz->_polygons[i].id == id) {
-			wp = &_wiz->_polygons[i];
+	for (i = 0; i < ARRAYSIZE(_polygons); ++i) {
+		if (_polygons[i].id == id) {
+			wp = &_polygons[i];
 			break;
 		}
 	}
@@ -1265,12 +1265,12 @@ void ScummEngine_v72he::drawWizPolygon(int resNum, int state, int id, int flags,
 	if (srcWizBuf) {
 		uint8 *dst;
 		int32 wizW, wizH;
-		VirtScreen *pvs = &virtscr[kMainVirtScreen];
+		VirtScreen *pvs = &_vm->virtscr[kMainVirtScreen];
 
 		if (dstResNum) {
-			uint8 *dstPtr = getResourceAddress(rtImage, dstResNum);
+			uint8 *dstPtr = _vm->getResourceAddress(rtImage, dstResNum);
 			assert(dstPtr);
-			dst = findWrappedBlock(MKID('WIZD'), dstPtr, 0, 0);
+			dst = _vm->findWrappedBlock(MKID('WIZD'), dstPtr, 0, 0);
 			assert(dst);
 
 			getWizImageDim(dstResNum, 0, wizW, wizH);
@@ -1342,18 +1342,18 @@ void ScummEngine_v72he::drawWizPolygon(int resNum, int state, int id, int flags,
 		}
 
 		if (flags & kWIFMarkBufferDirty) {
-			markRectAsDirty(kMainVirtScreen, wp->bound);
+			_vm->markRectAsDirty(kMainVirtScreen, wp->bound);
 		} else {
-			gdi.copyVirtScreenBuffers(wp->bound);
+			_vm->gdi.copyVirtScreenBuffers(wp->bound);
 		}
 
 		free(srcWizBuf);
 	}
 }
 
-void ScummEngine_v72he::flushWizBuffer() {
-	for (int i = 0; i < _wiz->_imagesNum; ++i) {
-		WizImage *pwi = &_wiz->_images[i];
+void Wiz::flushWizBuffer() {
+	for (int i = 0; i < _imagesNum; ++i) {
+		WizImage *pwi = &_images[i];
 		if (pwi->flags & kWIFIsPolygon) {
 			drawWizPolygon(pwi->resNum, pwi->state, pwi->x1, pwi->flags, pwi->xmapNum, 0, pwi->paletteNum);
 		} else {
@@ -1361,13 +1361,13 @@ void ScummEngine_v72he::flushWizBuffer() {
 			drawWizImage(pwi->resNum, pwi->state, pwi->x1, pwi->y1, pwi->zorder, pwi->xmapNum, pwi->field_390, r, pwi->flags, 0, pwi->paletteNum);
 		}
 	}
-	_wiz->_imagesNum = 0;
+	_imagesNum = 0;
 }
 
-void ScummEngine_v80he::loadImgSpot(int resId, int state, int16 &x, int16 &y) {
-	uint8 *dataPtr = getResourceAddress(rtImage, resId);
+void Wiz::loadImgSpot(int resId, int state, int16 &x, int16 &y) {
+	uint8 *dataPtr = _vm->getResourceAddress(rtImage, resId);
 	assert(dataPtr);
-	uint8 *spotPtr = findWrappedBlock(MKID('SPOT'), dataPtr, state, 0);
+	uint8 *spotPtr = _vm->findWrappedBlock(MKID('SPOT'), dataPtr, state, 0);
 	if (spotPtr) {
 		x = (int16)READ_LE_UINT32(spotPtr + 0);
 		y = (int16)READ_LE_UINT32(spotPtr + 4);
@@ -1377,7 +1377,7 @@ void ScummEngine_v80he::loadImgSpot(int resId, int state, int16 &x, int16 &y) {
 	}
 }
 
-void ScummEngine_v80he::loadWizCursor(int resId) {
+void Wiz::loadWizCursor(int resId) {
 	int16 x, y;
 	loadImgSpot(resId, 0, x, y);
 	if (x < 0) {
@@ -1395,12 +1395,12 @@ void ScummEngine_v80he::loadWizCursor(int resId) {
 	uint8 *cursor = drawWizImage(resId, 0, 0, 0, 0, 0, 0, r, kWIFBlitToMemBuffer, 0, 0);
 	int32 cw, ch;	
 	getWizImageDim(resId, 0, cw, ch);
-	setCursorFromBuffer(cursor, cw, ch, cw);
-	setCursorHotspot(x, y);
+	_vm->setCursorFromBuffer(cursor, cw, ch, cw);
+	_vm->setCursorHotspot(x, y);
 	free(cursor);
 }
 
-void ScummEngine_v72he::displayWizComplexImage(const WizParameters *params) {
+void Wiz::displayWizComplexImage(const WizParameters *params) {
 	int maskImgResNum = 0;
 	if (params->processFlags & kWPFMaskImg) {
 		maskImgResNum = params->maskImgResNum;
@@ -1453,9 +1453,9 @@ void ScummEngine_v72he::displayWizComplexImage(const WizParameters *params) {
 		int st = (params->processFlags & kWPFNewState) ? params->img.state : 0;
 		int num = params->remapNum;
 		const uint8 *index = params->remapIndex;
-		uint8 *iwiz = getResourceAddress(rtImage, params->img.resNum);
+		uint8 *iwiz = _vm->getResourceAddress(rtImage, params->img.resNum);
 		assert(iwiz);
-		uint8 *rmap = findWrappedBlock(MKID('RMAP'), iwiz, st, 0) ;
+		uint8 *rmap = _vm->findWrappedBlock(MKID('RMAP'), iwiz, st, 0) ;
 		assert(rmap);
 		WRITE_BE_UINT32(rmap, 0x01234567);
 		while (num--) {
@@ -1465,12 +1465,12 @@ void ScummEngine_v72he::displayWizComplexImage(const WizParameters *params) {
 		flags |= kWIFRemapPalette;
 	}
 
-	if (_fullRedraw && dstResNum == 0) {
+	if (_vm->_fullRedraw && dstResNum == 0) {
 		if (maskImgResNum != 0 || (params->processFlags & (kWPFZoom | kWPFRotate)))
 			error("Can't do this command in the enter script.");
 
-		assert(_wiz->_imagesNum < ARRAYSIZE(_wiz->_images));
-		WizImage *pwi = &_wiz->_images[_wiz->_imagesNum];
+		assert(_imagesNum < ARRAYSIZE(_images));
+		WizImage *pwi = &_images[_imagesNum];
 		pwi->resNum = params->img.resNum;
 		pwi->x1 = po_x;
 		pwi->y1 = po_y;
@@ -1480,7 +1480,7 @@ void ScummEngine_v72he::displayWizComplexImage(const WizParameters *params) {
 		pwi->xmapNum = xmapNum;
 		pwi->field_390 = field_390;
 		pwi->paletteNum = paletteNum;
-		++_wiz->_imagesNum;
+		++_imagesNum;
 	} else {
 		if (maskImgResNum != 0) {
 			// TODO
@@ -1496,7 +1496,7 @@ void ScummEngine_v72he::displayWizComplexImage(const WizParameters *params) {
 	}
 }
 
-void ScummEngine_v90he::createWizEmptyImage(const WizParameters *params) {
+void Wiz::createWizEmptyImage(const WizParameters *params) {
 	debug(1, "ScummEngine_v90he::createWizEmptyImage(%d, %d, %d)", params->img.resNum, params->resDefImgW, params->resDefImgH);
 	int img_w = 640;
 	if (params->processFlags & kWPFUseDefImgWidth) {
@@ -1526,16 +1526,16 @@ void ScummEngine_v90he::createWizEmptyImage(const WizParameters *params) {
 	res_size += 8 + img_w * img_h;
 	
 	const uint8 *palPtr;
-	if (_heversion >= 99) {
-		palPtr = _hePalettes + 1024;
+	if (_vm->_heversion >= 99) {
+		palPtr = _vm->_hePalettes + 1024;
 	} else {
-		palPtr = _currentPalette;
+		palPtr = _vm->_currentPalette;
 	}
-	uint8 *res_data = res.createResource(rtImage, params->img.resNum, res_size);
+	uint8 *res_data = _vm->res.createResource(rtImage, params->img.resNum, res_size);
 	if (!res_data) {
-		VAR(119) = -1;
+		_vm->VAR(119) = -1;
 	} else {
-		VAR(119) = 0;
+		_vm->VAR(119) = 0;
 		WRITE_BE_UINT32(res_data, 'AWIZ'); res_data += 4;
 		WRITE_BE_UINT32(res_data, res_size); res_data += 4;
 		WRITE_BE_UINT32(res_data, 'WIZH'); res_data += 4;
@@ -1567,14 +1567,14 @@ void ScummEngine_v90he::createWizEmptyImage(const WizParameters *params) {
 	}
 }
 
-void ScummEngine_v90he::fillWizRect(const WizParameters *params) {
+void Wiz::fillWizRect(const WizParameters *params) {
 	int state = 0;
 	if (params->processFlags & kWPFNewState) {
 		state = params->img.state;
 	}
-	uint8 *dataPtr = getResourceAddress(rtImage, params->img.resNum);
+	uint8 *dataPtr = _vm->getResourceAddress(rtImage, params->img.resNum);
 	if (dataPtr) {	
-		uint8 *wizh = findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
+		uint8 *wizh = _vm->findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
 		assert(wizh);
 		int c = READ_LE_UINT32(wizh + 0x0);
 		int w = READ_LE_UINT32(wizh + 0x4);
@@ -1590,11 +1590,11 @@ void ScummEngine_v90he::fillWizRect(const WizParameters *params) {
 		if (params->processFlags & kWPFClipBox2) {
 			r1.clip(params->box2);
 		}
-		uint8 color = VAR(93);
+		uint8 color = _vm->VAR(93);
 		if (params->processFlags & kWPFFillColor) {
 			color = params->fillColor;
 		}
-		uint8 *wizd = findWrappedBlock(MKID('WIZD'), dataPtr, state, 0);
+		uint8 *wizd = _vm->findWrappedBlock(MKID('WIZD'), dataPtr, state, 0);
 		assert(wizd);
 		int dx = r1.width();
 		int dy = r1.height();
@@ -1606,15 +1606,15 @@ void ScummEngine_v90he::fillWizRect(const WizParameters *params) {
 	}
 }
 
-void ScummEngine_v90he::fillWizParallelogram(const WizParameters *params) {	
+void Wiz::fillWizParallelogram(const WizParameters *params) {	
 	if (params->processFlags & kWPFClipBox2) {
 		int state = 0;
 		if (params->processFlags & kWPFNewState) {
 			state = params->img.state;
 		}
-		uint8 *dataPtr = getResourceAddress(rtImage, params->img.resNum);
+		uint8 *dataPtr = _vm->getResourceAddress(rtImage, params->img.resNum);
 		if (dataPtr) {
-			uint8 *wizh = findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
+			uint8 *wizh = _vm->findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
 			assert(wizh);
 			int c = READ_LE_UINT32(wizh + 0x0);
 			int w = READ_LE_UINT32(wizh + 0x4);
@@ -1627,11 +1627,11 @@ void ScummEngine_v90he::fillWizParallelogram(const WizParameters *params) {
 				}
 				r1.clip(params->box);
 			}
-			uint8 color = VAR(93);
+			uint8 color = _vm->VAR(93);
 			if (params->processFlags & kWPFFillColor) {
 				color = params->fillColor;
 			}
-			uint8 *wizd = findWrappedBlock(MKID('WIZD'), dataPtr, state, 0);
+			uint8 *wizd = _vm->findWrappedBlock(MKID('WIZD'), dataPtr, state, 0);
 			assert(wizd);
 			int x1 = params->box2.left;
 			int y1 = params->box2.top;
@@ -1694,7 +1694,7 @@ void ScummEngine_v90he::fillWizParallelogram(const WizParameters *params) {
 	}
 }
 
-void ScummEngine_v90he::processWizImage(const WizParameters *params) {
+void Wiz::processWizImage(const WizParameters *params) {
 	char buf[512];
 	unsigned int i;
 
@@ -1725,24 +1725,24 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 				if (id == TO_LE_32(MKID('AWIZ')) || id == TO_LE_32(MKID('MULT'))) {
 					uint32 size = f.readUint32BE();
 					f.seek(0, SEEK_SET);
-					byte *p = res.createResource(rtImage, params->img.resNum, size);
+					byte *p = _vm->res.createResource(rtImage, params->img.resNum, size);
 					if (f.read(p, size) != size) {
-						res.nukeResource(rtImage, params->img.resNum);
+						_vm->res.nukeResource(rtImage, params->img.resNum);
 						warning("i/o error when reading '%s'", buf);
-						VAR(VAR_GAME_LOADED) = -2;
-						VAR(119) = -2;
+						_vm->VAR(_vm->VAR_GAME_LOADED) = -2;
+						_vm->VAR(119) = -2;
 					} else {
-						VAR(VAR_GAME_LOADED) = 0;
-						VAR(119) = 0;
+						_vm->VAR(_vm->VAR_GAME_LOADED) = 0;
+						_vm->VAR(119) = 0;
 					}
 				} else {
-					VAR(VAR_GAME_LOADED) = -1;
-					VAR(119) = -1;
+					_vm->VAR(_vm->VAR_GAME_LOADED) = -1;
+					_vm->VAR(119) = -1;
 				}
 				f.close();
 			} else {
-				VAR(VAR_GAME_LOADED) = -3;
-				VAR(119) = -3;
+				_vm->VAR(_vm->VAR_GAME_LOADED) = -3;
+				_vm->VAR(119) = -3;
 				warning("Unable to open for read '%s'", buf);
 			}
 		}
@@ -1753,7 +1753,7 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 
 			switch(params->fileWriteMode) {
 			case 2:
-				VAR(119) = -1;
+				_vm->VAR(119) = -1;
 				break;
 			case 1:
 				// TODO Write image to file
@@ -1768,15 +1768,15 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 
 				if (!f.open((const char *)buf, Common::File::kFileWriteMode)) {
 					warning("Unable to open for write '%s'", buf);
-					VAR(119) = -3;
+					_vm->VAR(119) = -3;
 				} else {
-					byte *p = getResourceAddress(rtImage, params->img.resNum);
+					byte *p = _vm->getResourceAddress(rtImage, params->img.resNum);
 					uint32 size = READ_BE_UINT32(p + 4);
 					if (f.write(p, size) != size) {
 						warning("i/o error when writing '%s'", params->filename);
-						VAR(119) = -2;
+						_vm->VAR(119) = -2;
 					} else {
-						VAR(119) = 0;
+						_vm->VAR(119) = 0;
 					}
 					f.close();
 				}
@@ -1791,9 +1791,9 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 			int state = (params->processFlags & kWPFNewState) ? params->img.state : 0;
 			int num = params->remapNum;
 			const uint8 *index = params->remapIndex;
-			uint8 *iwiz = getResourceAddress(rtImage, params->img.resNum);
+			uint8 *iwiz = _vm->getResourceAddress(rtImage, params->img.resNum);
 			assert(iwiz);
-			uint8 *rmap = findWrappedBlock(MKID('RMAP'), iwiz, state, 0) ;
+			uint8 *rmap = _vm->findWrappedBlock(MKID('RMAP'), iwiz, state, 0) ;
 			assert(rmap);
 			WRITE_BE_UINT32(rmap, 0x01234567);
 			while (num--) {
@@ -1841,36 +1841,36 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 	}
 }
 
-int ScummEngine_v90he::getWizImageStates(int resNum) {
-	const uint8 *dataPtr = getResourceAddress(rtImage, resNum);
+int Wiz::getWizImageStates(int resNum) {
+	const uint8 *dataPtr = _vm->getResourceAddress(rtImage, resNum);
 	assert(dataPtr);
 	if (READ_UINT32(dataPtr) == MKID('MULT')) {
 		const byte *offs, *wrap;
 
-		wrap = findResource(MKID('WRAP'), dataPtr);
+		wrap = _vm->findResource(MKID('WRAP'), dataPtr);
 		if (wrap == NULL)
 			return 1;
 
-		offs = findResourceData(MKID('OFFS'), wrap);
+		offs = _vm->findResourceData(MKID('OFFS'), wrap);
 		if (offs == NULL)
 			return 1;
 
-		return getResourceDataSize(offs) / 4;
+		return _vm->getResourceDataSize(offs) / 4;
 	} else {
 		return 1;
 	}
 }
 
-int ScummEngine_v90he::isWizPixelNonTransparent(int resNum, int state, int x, int y, int flags) {
+int Wiz::isWizPixelNonTransparent(int resNum, int state, int x, int y, int flags) {
 	int ret = 0;
-	uint8 *data = getResourceAddress(rtImage, resNum);
+	uint8 *data = _vm->getResourceAddress(rtImage, resNum);
 	assert(data);
-	uint8 *wizh = findWrappedBlock(MKID('WIZH'), data, state, 0);
+	uint8 *wizh = _vm->findWrappedBlock(MKID('WIZH'), data, state, 0);
 	assert(wizh);
 	int c = READ_LE_UINT32(wizh + 0x0);
 	int w = READ_LE_UINT32(wizh + 0x4);
 	int h = READ_LE_UINT32(wizh + 0x8);
-	uint8 *wizd = findWrappedBlock(MKID('WIZD'), data, state, 0);
+	uint8 *wizd = _vm->findWrappedBlock(MKID('WIZD'), data, state, 0);
 	assert(wizd);
 	if (x >= 0 && x < w && y >= 0 && y < h) {
 		if (flags & kWIFFlipX) {
@@ -1881,10 +1881,10 @@ int ScummEngine_v90he::isWizPixelNonTransparent(int resNum, int state, int x, in
 		}
 		switch (c) {
 		case 0:
-			ret = _wiz->getRawWizPixelColor(wizd, x, y, w, h, VAR(VAR_WIZ_TCOLOR)) != VAR(VAR_WIZ_TCOLOR) ? 1 : 0;
+			ret = getRawWizPixelColor(wizd, x, y, w, h, _vm->VAR(_vm->VAR_WIZ_TCOLOR)) != _vm->VAR(_vm->VAR_WIZ_TCOLOR) ? 1 : 0;
 			break;
 		case 1:
-			ret = _wiz->isWizPixelNonTransparent(wizd, x, y, w, h);
+			ret = isWizPixelNonTransparent(wizd, x, y, w, h);
 			break;
 		case 2:
 			// Used baseball2003
@@ -1903,23 +1903,23 @@ int ScummEngine_v90he::isWizPixelNonTransparent(int resNum, int state, int x, in
 	return ret;
 }
 
-uint8 ScummEngine_v90he::getWizPixelColor(int resNum, int state, int x, int y, int flags) {
+uint8 Wiz::getWizPixelColor(int resNum, int state, int x, int y, int flags) {
 	uint8 color;
-	uint8 *data = getResourceAddress(rtImage, resNum);
+	uint8 *data = _vm->getResourceAddress(rtImage, resNum);
 	assert(data);
-	uint8 *wizh = findWrappedBlock(MKID('WIZH'), data, state, 0);
+	uint8 *wizh = _vm->findWrappedBlock(MKID('WIZH'), data, state, 0);
 	assert(wizh);
 	int c = READ_LE_UINT32(wizh + 0x0);
 	int w = READ_LE_UINT32(wizh + 0x4);
 	int h = READ_LE_UINT32(wizh + 0x8);
-	uint8 *wizd = findWrappedBlock(MKID('WIZD'), data, state, 0);
+	uint8 *wizd = _vm->findWrappedBlock(MKID('WIZD'), data, state, 0);
 	assert(wizd);
 	switch (c) {
 	case 0:
-		color = _wiz->getRawWizPixelColor(wizd, x, y, w, h, VAR(VAR_WIZ_TCOLOR));
+		color = getRawWizPixelColor(wizd, x, y, w, h, _vm->VAR(_vm->VAR_WIZ_TCOLOR));
 		break;
 	case 1:
-		color = _wiz->getWizPixelColor(wizd, x, y, w, h, VAR(VAR_WIZ_TCOLOR));
+		color = getWizPixelColor(wizd, x, y, w, h, _vm->VAR(_vm->VAR_WIZ_TCOLOR));
 		break;
 	case 4:
 	case 5:

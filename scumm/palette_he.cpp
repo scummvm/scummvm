@@ -30,7 +30,7 @@
 
 namespace Scumm {
 
-void ScummEngine_v72he::remapHEPalette(const uint8 *src, uint8 *dst) {
+void ScummEngine_v70he::remapHEPalette(const uint8 *src, uint8 *dst) {
 	int r, g, b, sum, bestitem, bestsum;
 	int ar, ag, ab;
 	uint8 *palPtr;

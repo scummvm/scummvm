@@ -162,6 +162,28 @@ public:
 	bool polygonContains(const WizPolygon &pol, int x, int y);
 	void polygonRotatePoints(Common::Point *pts, int num, int alpha);
 
+	void createWizEmptyImage(const WizParameters *params);
+	void fillWizRect(const WizParameters *params);
+	void fillWizParallelogram(const WizParameters *params);
+
+	void getWizImageDim(int resNum, int state,  int32 &w, int32 &h);
+	int getWizImageStates(int resnum);	
+	int isWizPixelNonTransparent(int resnum, int state, int x, int y, int flags);
+	uint8 getWizPixelColor(int resnum, int state, int x, int y, int flags);
+
+	void flushWizBuffer();
+
+	void loadImgSpot(int resId, int state, int16 &x, int16 &y);
+	void loadWizCursor(int resId);
+
+	void displayWizComplexImage(const WizParameters *params);
+	void displayWizImage(WizImage *pwi);
+	void captureWizImage(int resNum, const Common::Rect& r, bool frontBuffer, int compType);
+	uint8 *drawWizImage(int resNum, int state, int x1, int y1, int zorder, int xmapNum, int field_390, const Common::Rect *clipBox, int flags, int dstResNum, int paletteNum);
+	void drawWizPolygon(int resNum, int state, int id, int flags, int xmapNum, int dstResNum, int paletteNum);
+	void drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int xmapNum, int angle, int zoom, const Common::Rect *r, int flags, int dstResNum, int paletteNum);
+	void processWizImage(const WizParameters *params);
+
 	static void copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch);	
 	static void copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, const uint8 *palPtr = NULL);
 	static void copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor);

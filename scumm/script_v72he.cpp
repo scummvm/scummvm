@@ -657,7 +657,7 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 	*dst = 0;
 }
 
-byte *ScummEngine_v72he::heFindResourceData(uint32 tag, byte *ptr) {
+byte *ScummEngine_v70he::heFindResourceData(uint32 tag, byte *ptr) {
 	ptr = heFindResource(tag, ptr);
 
 	if (ptr == NULL)
@@ -665,7 +665,7 @@ byte *ScummEngine_v72he::heFindResourceData(uint32 tag, byte *ptr) {
 	return ptr + _resourceHeaderSize;
 }
 
-byte *ScummEngine_v72he::heFindResource(uint32 tag, byte *searchin) {
+byte *ScummEngine_v70he::heFindResource(uint32 tag, byte *searchin) {
 	uint32 curpos, totalsize, size;
 
 	debugC(DEBUG_RESOURCE, "heFindResource(%s, %lx)", tag2str(tag), searchin);
@@ -694,7 +694,7 @@ byte *ScummEngine_v72he::heFindResource(uint32 tag, byte *searchin) {
 	return NULL;
 }
 
-byte *ScummEngine_v72he::findWrappedBlock(uint32 tag, byte *ptr, int state, bool errorFlag) {
+byte *ScummEngine_v70he::findWrappedBlock(uint32 tag, byte *ptr, int state, bool errorFlag) {
 	if (READ_UINT32(ptr) == MKID('MULT')) {
 		byte *offs, *wrap;
 		uint32 size;
@@ -859,7 +859,7 @@ void ScummEngine_v72he::o72_captureWizImage() {
 	grab.right = pop() + 1;
 	grab.top = pop();
 	grab.left = pop();
-	captureWizImage(pop(), grab, false, true);	
+	_wiz->captureWizImage(pop(), grab, false, true);	
 }
 
 void ScummEngine_v72he::o72_getTimer() {
@@ -963,7 +963,7 @@ void ScummEngine_v72he::o72_printWizImage() {
 	wi.x1 = wi.y1 = 0;
 	wi.state = 0;
 	wi.flags = kWIFPrint;
-	displayWizImage(&wi);
+	_wiz->displayWizImage(&wi);
 }
 
 void ScummEngine_v72he::o72_getArrayDimSize() {
@@ -1690,7 +1690,7 @@ void ScummEngine_v72he::o72_drawWizImage() {
 	wi.x1 = pop();
 	wi.resNum = pop();
 	wi.state = 0;
-	displayWizImage(&wi);
+	_wiz->displayWizImage(&wi);
 }
 
 void ScummEngine_v72he::o72_debugInput() {

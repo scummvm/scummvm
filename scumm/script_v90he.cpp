@@ -639,7 +639,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.img.y1 = pop();
 		_wizParams.img.x1 = pop();
 		_wizParams.img.resNum = pop();
-		displayWizImage(&_wizParams.img);
+		_wiz->displayWizImage(&_wizParams.img);
 		break;
 	case 11:
 		_wizParams.img.resNum = pop();
@@ -781,7 +781,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		break;
 	case 209:
 		if (_wizParams.img.resNum)
-			processWizImage(&_wizParams);
+			_wiz->processWizImage(&_wizParams);
 		break;
 	default:
 		error("o90_wizImageOps: unhandled case %d", subOp);
@@ -1670,44 +1670,44 @@ void ScummEngine_v90he::o90_getWizData() {
 	case 0:
 		state = pop();
 		resId = pop();
-		loadImgSpot(resId, state, x, y);
+		_wiz->loadImgSpot(resId, state, x, y);
 		push(x);
 		break;
 	case 1:
 		state = pop();
 		resId = pop();
-		loadImgSpot(resId, state, x, y);
+		_wiz->loadImgSpot(resId, state, x, y);
 		push(y);
 		break;
 	case 2:
 		state = pop();
 		resId = pop();
-		getWizImageDim(resId, state, w, h);
+		_wiz->getWizImageDim(resId, state, w, h);
 		push(w);
 		break;
 	case 3:
 		state = pop();
 		resId = pop();
-		getWizImageDim(resId, state, w, h);
+		_wiz->getWizImageDim(resId, state, w, h);
 		push(h);
 		break;
 	case 6:
 		resId = pop();
-		push(getWizImageStates(resId));
+		push(_wiz->getWizImageStates(resId));
 		break;
 	case 15:
 		y = pop();
 		x = pop();
 		state = pop();
 		resId = pop();
-		push(isWizPixelNonTransparent(resId, state, x, y, 0));
+		push(_wiz->isWizPixelNonTransparent(resId, state, x, y, 0));
 		break;
 	case 36:
 		y = pop();
 		x = pop();
 		state = pop();
 		resId = pop();
-		push(getWizPixelColor(resId, state, x, y, 0));
+		push(_wiz->getWizPixelColor(resId, state, x, y, 0));
 		break;
 	case 100:
 		h = pop();
@@ -1717,7 +1717,7 @@ void ScummEngine_v90he::o90_getWizData() {
 		state = pop();
 		resId = pop();
 		if (x == -1 && y == -1 && w == -1 && h == -1) {
-			getWizImageDim(resId, state, w, h);
+			_wiz->getWizImageDim(resId, state, w, h);
 			x = 0;
 			y = 0;
 		}		

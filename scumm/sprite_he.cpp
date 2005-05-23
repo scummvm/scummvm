@@ -46,7 +46,7 @@ void ScummEngine_v90he::getSpriteBounds(int spriteId, bool checkGroup, Common::R
 
 	SpriteInfo *spi = &_spriteTable[spriteId];
 
-	loadImgSpot(spi->resId, spi->resState, spr_wiz_x, spr_wiz_y);
+	_wiz->loadImgSpot(spi->resId, spi->resState, spr_wiz_x, spr_wiz_y);
 	if (checkGroup && spi->groupNum) {
 		SpriteGroup *spg = &_spriteGroups[spi->groupNum];
 
@@ -65,7 +65,7 @@ void ScummEngine_v90he::getSpriteBounds(int spriteId, bool checkGroup, Common::R
 	if (spi->resId) {
 		angle = spi->angle;
 		zoom = spi->zoom;
-		getWizImageDim(spi->resId, spi->resState, w, h);
+		_wiz->getWizImageDim(spi->resId, spi->resState, w, h);
 		if (!(spi->flags & (kSFZoomed | kSFRotated))) {
 			bound.left = x1;
 			bound.top = y1;
@@ -156,13 +156,13 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGro
 			if (spi->field_80) {
 				int16 x1, x2, y1, y2;
 
-				resState = spi->curImageState % getWizImageStates(spi->field_80);
+				resState = spi->curImageState % _wiz->getWizImageStates(spi->field_80);
 
 				x = x_pos - spi->pos.x;
 				y = y_pos - spi->pos.y;
 
-				loadImgSpot(spi->curResId, resState, x1, y1);
-				loadImgSpot(spi->field_80, resState, x2, y2);
+				_wiz->loadImgSpot(spi->curResId, resState, x1, y1);
+				_wiz->loadImgSpot(spi->field_80, resState, x2, y2);
 
 				x += (x2 - x1);
 				y += (y2 - y1);
@@ -198,12 +198,12 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGro
 					_wiz->polygonRotatePoints(pts, 1, angle);
 				}
 
-				getWizImageDim(resId, resState, w, h);
+				_wiz->getWizImageDim(resId, resState, w, h);
 				x += w / 2;
 				y += h / 2;
 			}
 
-			if (isWizPixelNonTransparent(resId, resState, x, y, spi->curImgFlags))
+			if (_wiz->isWizPixelNonTransparent(resId, resState, x, y, spi->curImgFlags))
 				return spi->id;
 		}
 	}
@@ -394,7 +394,7 @@ void ScummEngine_v90he::getSpriteImageDim(int spriteId, int32 &w, int32 &h) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
 	if (_spriteTable[spriteId].resId) {
-		getWizImageDim(_spriteTable[spriteId].resId, _spriteTable[spriteId].resState, w, h);
+		_wiz->getWizImageDim(_spriteTable[spriteId].resId, _spriteTable[spriteId].resState, w, h);
 	} else {
 		w = 0;
 		h = 0;
@@ -812,7 +812,7 @@ void ScummEngine_v90he::spriteAddImageToList(int spriteId, int imageNum, int *sp
 	_spriteTable[spriteId].resState = 0;
 
 	if (_spriteTable[spriteId].resId) {
-		_spriteTable[spriteId].res_wiz_states = getWizImageStates(_spriteTable[spriteId].resId);
+		_spriteTable[spriteId].res_wiz_states = _wiz->getWizImageStates(_spriteTable[spriteId].resId);
 		_spriteTable[spriteId].flags |= kSFActive | kSFDelayed | kSFMarkDirty | kSFBlitDirectly;
 
 		if (_spriteTable[spriteId].resId != origResId || _spriteTable[spriteId].res_wiz_states != origResWizStates)
@@ -1263,7 +1263,7 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 		spi->flags &= ~kSFNeedRedraw;
 		resId = spi->resId;
 		resState = spi->resState;
-		loadImgSpot(spi->resId, spi->resState, spr_wiz_x, spr_wiz_y);
+		_wiz->loadImgSpot(spi->resId, spi->resState, spr_wiz_x, spr_wiz_y);
 
 		if (spi->groupNum) {
 			SpriteGroup *spg = &_spriteGroups[spi->groupNum];
@@ -1294,7 +1294,7 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 		if (resId) {
 			angle = spi->angle;
 			zoom = spi->zoom;
-			getWizImageDim(resId, resState, w, h);
+			_wiz->getWizImageDim(resId, resState, w, h);
 			if (!(spi->flags & (kSFZoomed | kSFRotated))) {
 				bboxPtr->left = wiz.img.x1;
 				bboxPtr->top = wiz.img.y1;
@@ -1389,7 +1389,7 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 			wiz.processFlags |= kWPFDstResNum;
 			wiz.dstResNum = _spriteGroups[spi->groupNum].dstResNum;
 		}
-		displayWizComplexImage(&wiz);
+		_wiz->displayWizComplexImage(&wiz);
 	}
 }
 

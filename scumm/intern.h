@@ -780,6 +780,7 @@ protected:
 #ifndef DISABLE_HE
 class ScummEngine_v70he : public ScummEngine_v60he {
 	friend class ResExtractor;
+	friend class Wiz;
 
 protected:
 	typedef void (ScummEngine_v70he::*OpcodeProcv70he)();
@@ -804,6 +805,10 @@ public:
 
 	Wiz *_wiz;
 
+	byte *heFindResourceData(uint32 tag, byte *ptr);
+	byte *heFindResource(uint32 tag, byte *ptr);
+	byte *findWrappedBlock(uint32 tag, byte *ptr, int state, bool flagError);
+
 protected:
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);
@@ -825,6 +830,8 @@ protected:
 	virtual void setCursorFromImg(uint img, uint room, uint imgindex);
 
 	virtual void clearDrawQueues();
+
+	void remapHEPalette(const uint8 *src, uint8 *dst);
 
 	/* HE version 70 script opcodes */
 	void o70_startSound();
@@ -850,6 +857,7 @@ protected:
 	void o70_polygonHit();
 
 	byte VAR_NUM_SOUND_CHANNELS;
+	byte VAR_WIZ_TCOLOR;
 };
 
 class ScummEngine_v71he : public ScummEngine_v70he {
@@ -938,25 +946,11 @@ protected:
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int resID);
 
-	void remapHEPalette(const uint8 *src, uint8 *dst);
-
-	void displayWizImage(WizImage *pwi);
-	void displayWizComplexImage(const WizParameters *params);
-	void drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int xmapNum, int angle, int zoom, const Common::Rect *r, int flags, int dstResNum, int paletteNum);
-	void captureWizImage(int resNum, const Common::Rect& r, bool frontBuffer, int compType);
-	void getWizImageDim(int resNum, int state,  int32 &w, int32 &h);
-	uint8 *drawWizImage(int resNum, int state, int x1, int y1, int zorder, int xmapNum, int field_390, const Common::Rect *clipBox, int flags, int dstResNum, int paletteNum);
-	void drawWizPolygon(int resNum, int state, int id, int flags, int xmapNum, int dstResNum, int paletteNum);
-	void flushWizBuffer();
-
 	virtual void decodeParseString(int a, int b);
 	void decodeScriptString(byte *dst, bool scriptString = false);
 	void copyScriptString(byte *dst, int dstSize);
 	int convertFilePath(byte *dst, bool setFilePath = 0);
 
-	byte *heFindResourceData(uint32 tag, byte *ptr);
-	byte *heFindResource(uint32 tag, byte *ptr);
-	byte *findWrappedBlock(uint32 tag, byte *ptr, int state, bool flagError);
 	int findObject(int x, int y, int num, int *args);
 	int getSoundResourceSize(int id);
 
@@ -1024,7 +1018,6 @@ protected:
 	byte VAR_CURRENT_CHARSET;
 	byte VAR_U32_VERSION;
 	byte VAR_U32_ARRAY_UNK;
-	byte VAR_WIZ_TCOLOR;
 };
 
 class ScummEngine_v80he : public ScummEngine_v72he {
@@ -1053,8 +1046,6 @@ protected:
 
 	virtual void clearDrawQueues();
 
-	void loadImgSpot(int resId, int state, int16 &x, int16 &y);
-	void loadWizCursor(int resId);
 	void drawLine(int x1, int y1, int x, int unk1, int unk2, int type, int id);
 	void drawPixel(int x, int y, int flags);
 	
@@ -1135,15 +1126,7 @@ protected:
 
 	virtual void processActors();
 
-	void createWizEmptyImage(const WizParameters *params);
-	void fillWizRect(const WizParameters *params);
-	void fillWizParallelogram(const WizParameters *params);
-	void processWizImage(const WizParameters *params);
-	int getWizImageStates(int resnum);	
-	int isWizPixelNonTransparent(int resnum, int state, int x, int y, int flags);
-	uint8 getWizPixelColor(int resnum, int state, int x, int y, int flags);
 	int computeWizHistogram(int resnum, int state, int x, int y, int w, int h);
-
 	void getArrayDim(int array, int *dim2start, int *dim2end, int *dim1start, int *dim1end);
 	void sortArray(int array, int dim2start, int dim2end, int dim1start, int dim1end, int sortOrder);
 	
