@@ -1052,7 +1052,7 @@ void ScummEngine_v70he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	};
 
 	if (_heversion >= 71) {
-		s->saveLoadArrayOf(_wiz._polygons, ARRAYSIZE(_wiz._polygons), sizeof(_wiz._polygons[0]), polygonEntries);
+		s->saveLoadArrayOf(_wiz->_polygons, ARRAYSIZE(_wiz->_polygons), sizeof(_wiz->_polygons[0]), polygonEntries);
 	}
 
 	s->saveLoadEntries(this, HE70Entries);

@@ -85,14 +85,14 @@ void ScummEngine_v90he::getSpriteBounds(int spriteId, bool checkGroup, Common::R
 				}
 			}
 			if ((spi->flags & kSFRotated) && angle)
-				_wiz.polygonRotatePoints(pts, 4, angle);
+				_wiz->polygonRotatePoints(pts, 4, angle);
 
 			for (int j = 0; j < 4; ++j) {
 				pts[j].x += x1;
 				pts[j].y += y1;
 			}
 
-			_wiz.polygonCalcBoundBox(pts, 4, bound);
+			_wiz->polygonCalcBoundBox(pts, 4, bound);
 		}
 	} else {
 		bound.left = 1234;
@@ -195,7 +195,7 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGro
 				if (spi->flags & kSFRotated && angle) {
 					angle = (360 - angle) % 360;
 					Common::Point pts[1];
-					_wiz.polygonRotatePoints(pts, 1, angle);
+					_wiz->polygonRotatePoints(pts, 1, angle);
 				}
 
 				getWizImageDim(resId, resState, w, h);
@@ -1314,14 +1314,14 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 					}
 				}
 				if ((spi->flags & kSFRotated) && angle)
-					_wiz.polygonRotatePoints(pts, 4, angle);
+					_wiz->polygonRotatePoints(pts, 4, angle);
 
 				for (int j = 0; j < 4; ++j) {
 					pts[j].x += wiz.img.x1;
 					pts[j].y += wiz.img.y1;
 				}
 
-				_wiz.polygonCalcBoundBox(pts, 4, spi->bbox);
+				_wiz->polygonCalcBoundBox(pts, 4, spi->bbox);
 			}
 		} else {
 			bboxPtr->left = 1234;

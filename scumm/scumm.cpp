@@ -1318,6 +1318,8 @@ ScummEngine_v70he::ScummEngine_v70he(GameDetector *detector, OSystem *syst, cons
 	else
 		_resExtractor = new Win32ResExtractor(this);
 
+	_wiz = new Wiz(this);
+
 	_heV7RoomOffsets = NULL;
 
 	_heSndSoundId = 0;

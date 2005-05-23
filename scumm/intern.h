@@ -802,7 +802,7 @@ public:
 	ScummEngine_v70he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex);
 	~ScummEngine_v70he();
 
-	Wiz _wiz;
+	Wiz *_wiz;
 
 protected:
 	virtual void setupOpcodes();

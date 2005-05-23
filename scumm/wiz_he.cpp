@@ -29,7 +29,7 @@
 
 namespace Scumm {
 
-Wiz::Wiz() {
+Wiz::Wiz(ScummEngine_v70he *vm) : _vm(vm) {
 	_imagesNum = 0;
 	memset(&_images, 0, sizeof(_images));
 	memset(&_polygons, 0, sizeof(_polygons));
@@ -947,8 +947,8 @@ void ScummEngine_v72he::getWizImageDim(int resNum, int state, int32 &w, int32 &h
 
 void ScummEngine_v72he::displayWizImage(WizImage *pwi) {
 	if (_fullRedraw) {
-		assert(_wiz._imagesNum < ARRAYSIZE(_wiz._images));
-		WizImage *wi = &_wiz._images[_wiz._imagesNum];
+		assert(_wiz->_imagesNum < ARRAYSIZE(_wiz->_images));
+		WizImage *wi = &_wiz->_images[_wiz->_imagesNum];
 		wi->resNum = pwi->resNum;
 		wi->x1 = pwi->x1;
 		wi->y1 = pwi->y1;
@@ -958,7 +958,7 @@ void ScummEngine_v72he::displayWizImage(WizImage *pwi) {
 		wi->xmapNum = 0;
 		wi->field_390 = 0;
 		wi->paletteNum = 0;
-		++_wiz._imagesNum;
+		++_wiz->_imagesNum;
 	} else if (pwi->flags & kWIFIsPolygon) {
 		drawWizPolygon(pwi->resNum, pwi->state, pwi->x1, pwi->flags, 0, 0, 0);
 	} else {
@@ -1053,9 +1053,9 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 		} else {
 			return 0;
 		}
-	} else if (_wiz._rectOverrideEnabled) {
-		if (rScreen.intersects(_wiz._rectOverride)) {
-			rScreen.clip(_wiz._rectOverride);
+	} else if (_wiz->_rectOverrideEnabled) {
+		if (rScreen.intersects(_wiz->_rectOverride)) {
+			rScreen.clip(_wiz->_rectOverride);
 		} else {
 			return 0;
 		}
@@ -1074,7 +1074,7 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 	switch (comp) {
 	case 0:
 		color = (trns == NULL) ? VAR(VAR_WIZ_TCOLOR) : -1;
-		_wiz.copyRawWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, color);
+		_wiz->copyRawWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, color);
 		break;
 	case 1:
 		// TODO Adding masking for flags 0x80 and 0x100
@@ -1085,11 +1085,11 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 			// Used in readdemo
 			warning("drawWizImage: Unhandled flag 0x100");
 		}
-		_wiz.copyWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, palPtr);
+		_wiz->copyWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, palPtr);
 		break;
 	case 2:
 		color = (trns == NULL) ? VAR(VAR_WIZ_TCOLOR) : -1;
-		_wiz.copyRaw16BitWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, color);
+		_wiz->copyRaw16BitWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, color);
 		break;
 	case 5:
 		// Used in Moonbase Commander
@@ -1198,7 +1198,7 @@ void ScummEngine_v72he::drawWizComplexPolygon(int resNum, int state, int po_x, i
 		}
 	}
 	if (angle)
-		_wiz.polygonRotatePoints(pts, 4, angle);
+		_wiz->polygonRotatePoints(pts, 4, angle);
 
 	for (int i = 0; i < 4; ++i) {
 		pts[i].x += po_x;
@@ -1218,7 +1218,7 @@ void ScummEngine_v72he::drawWizComplexPolygon(int resNum, int state, int po_x, i
 		}
 
 		Common::Rect bounds;
-		_wiz.polygonCalcBoundBox(pts, 4, bounds);
+		_wiz->polygonCalcBoundBox(pts, 4, bounds);
 		int x1 = bounds.left;
 		int y1 = bounds.top;
 
@@ -1248,9 +1248,9 @@ void ScummEngine_v72he::drawWizPolygon(int resNum, int state, int id, int flags,
 	debug(1, "drawWizPolygon(resNum %d, id %d, flags 0x%X, xmapNum %d paletteNum %d)", resNum, id, flags, xmapNum, paletteNum);
 	int i;
 	WizPolygon *wp = NULL;
-	for (i = 0; i < ARRAYSIZE(_wiz._polygons); ++i) {
-		if (_wiz._polygons[i].id == id) {
-			wp = &_wiz._polygons[i];
+	for (i = 0; i < ARRAYSIZE(_wiz->_polygons); ++i) {
+		if (_wiz->_polygons[i].id == id) {
+			wp = &_wiz->_polygons[i];
 			break;
 		}
 	}
@@ -1352,8 +1352,8 @@ void ScummEngine_v72he::drawWizPolygon(int resNum, int state, int id, int flags,
 }
 
 void ScummEngine_v72he::flushWizBuffer() {
-	for (int i = 0; i < _wiz._imagesNum; ++i) {
-		WizImage *pwi = &_wiz._images[i];
+	for (int i = 0; i < _wiz->_imagesNum; ++i) {
+		WizImage *pwi = &_wiz->_images[i];
 		if (pwi->flags & kWIFIsPolygon) {
 			drawWizPolygon(pwi->resNum, pwi->state, pwi->x1, pwi->flags, pwi->xmapNum, 0, pwi->paletteNum);
 		} else {
@@ -1361,7 +1361,7 @@ void ScummEngine_v72he::flushWizBuffer() {
 			drawWizImage(pwi->resNum, pwi->state, pwi->x1, pwi->y1, pwi->zorder, pwi->xmapNum, pwi->field_390, r, pwi->flags, 0, pwi->paletteNum);
 		}
 	}
-	_wiz._imagesNum = 0;
+	_wiz->_imagesNum = 0;
 }
 
 void ScummEngine_v80he::loadImgSpot(int resId, int state, int16 &x, int16 &y) {
@@ -1469,8 +1469,8 @@ void ScummEngine_v72he::displayWizComplexImage(const WizParameters *params) {
 		if (maskImgResNum != 0 || (params->processFlags & (kWPFZoom | kWPFRotate)))
 			error("Can't do this command in the enter script.");
 
-		assert(_wiz._imagesNum < ARRAYSIZE(_wiz._images));
-		WizImage *pwi = &_wiz._images[_wiz._imagesNum];
+		assert(_wiz->_imagesNum < ARRAYSIZE(_wiz->_images));
+		WizImage *pwi = &_wiz->_images[_wiz->_imagesNum];
 		pwi->resNum = params->img.resNum;
 		pwi->x1 = po_x;
 		pwi->y1 = po_y;
@@ -1480,7 +1480,7 @@ void ScummEngine_v72he::displayWizComplexImage(const WizParameters *params) {
 		pwi->xmapNum = xmapNum;
 		pwi->field_390 = field_390;
 		pwi->paletteNum = paletteNum;
-		++_wiz._imagesNum;
+		++_wiz->_imagesNum;
 	} else {
 		if (maskImgResNum != 0) {
 			// TODO
@@ -1881,13 +1881,18 @@ int ScummEngine_v90he::isWizPixelNonTransparent(int resNum, int state, int x, in
 		}
 		switch (c) {
 		case 0:
-			ret = _wiz.getRawWizPixelColor(wizd, x, y, w, h, VAR(VAR_WIZ_TCOLOR)) != VAR(VAR_WIZ_TCOLOR) ? 1 : 0;
+			ret = _wiz->getRawWizPixelColor(wizd, x, y, w, h, VAR(VAR_WIZ_TCOLOR)) != VAR(VAR_WIZ_TCOLOR) ? 1 : 0;
 			break;
 		case 1:
-			ret = _wiz.isWizPixelNonTransparent(wizd, x, y, w, h);
+			ret = _wiz->isWizPixelNonTransparent(wizd, x, y, w, h);
 			break;
 		case 2:
 			// Used baseball2003
+			warning("isWizPixelNonTransparent: Unhandled wiz compression type %d", c);
+			break;
+		case 4:
+		case 5:
+			// Used in Moonbase Commander
 			warning("isWizPixelNonTransparent: Unhandled wiz compression type %d", c);
 			break;
 		default:
@@ -1911,11 +1916,12 @@ uint8 ScummEngine_v90he::getWizPixelColor(int resNum, int state, int x, int y, i
 	assert(wizd);
 	switch (c) {
 	case 0:
-		color = _wiz.getRawWizPixelColor(wizd, x, y, w, h, VAR(VAR_WIZ_TCOLOR));
+		color = _wiz->getRawWizPixelColor(wizd, x, y, w, h, VAR(VAR_WIZ_TCOLOR));
 		break;
 	case 1:
-		color = _wiz.getWizPixelColor(wizd, x, y, w, h, VAR(VAR_WIZ_TCOLOR));
+		color = _wiz->getWizPixelColor(wizd, x, y, w, h, VAR(VAR_WIZ_TCOLOR));
 		break;
+	case 4:
 	case 5:
 		// Used in Moonbase Commander
 		color = 1;
@@ -1949,10 +1955,10 @@ int ScummEngine_v90he::computeWizHistogram(int resNum, int state, int x, int y, 
 			memset(histogram, 0, sizeof(histogram));
 			switch (c) {
 			case 0:
-				_wiz.computeRawWizHistogram(histogram, wizd, w, &rCap);
+				_wiz->computeRawWizHistogram(histogram, wizd, w, &rCap);
 				break;
 			case 1:
-				_wiz.computeWizHistogram(histogram, wizd, &rCap);
+				_wiz->computeWizHistogram(histogram, wizd, &rCap);
 				break;
 			default:
 				error("computeWizHistogram: Unhandled wiz compression type %d", c);

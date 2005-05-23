@@ -1899,7 +1899,7 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 					wp.vert[i].x = args1[i * 2 + 0];
 					wp.vert[i].y = args1[i * 2 + 1];
 				}
-				push(_wiz.polygonContains(wp, args2[0], args2[1]) ? 1 : 0);
+				push(_wiz->polygonContains(wp, args2[0], args2[1]) ? 1 : 0);
 			}
 		}
 		break;
@@ -2591,14 +2591,14 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 		// Used in readdemo
 		break;
 	case 42:
-		_wiz._rectOverrideEnabled = true;
-		_wiz._rectOverride.left = args[1];
-		_wiz._rectOverride.top = args[2];
-		_wiz._rectOverride.right = args[3];
-		_wiz._rectOverride.bottom = args[4];
+		_wiz->_rectOverrideEnabled = true;
+		_wiz->_rectOverride.left = args[1];
+		_wiz->_rectOverride.top = args[2];
+		_wiz->_rectOverride.right = args[3];
+		_wiz->_rectOverride.bottom = args[4];
 		break;
 	case 43:
-		_wiz._rectOverrideEnabled = false;
+		_wiz->_rectOverrideEnabled = false;
 		break;
 	case 714:
 		break;

@@ -813,14 +813,14 @@ void ScummEngine_v70he::o70_kernelSetFunctions() {
 		a->_clipOverride.bottom = args[2];
 		break;
 	case 42:
-		_wiz._rectOverrideEnabled = true;
-		_wiz._rectOverride.left = args[1];
-		_wiz._rectOverride.top = args[2];
-		_wiz._rectOverride.right = args[3];
-		_wiz._rectOverride.bottom = args[4];
+		_wiz->_rectOverrideEnabled = true;
+		_wiz->_rectOverride.left = args[1];
+		_wiz->_rectOverride.top = args[2];
+		_wiz->_rectOverride.right = args[3];
+		_wiz->_rectOverride.bottom = args[4];
 		break;
 	case 43:
-		_wiz._rectOverrideEnabled = false;
+		_wiz->_rectOverrideEnabled = false;
 		break;
 	default:
 		error("o70_kernelSetFunctions: default case %d (param count %d)", args[0], num);
@@ -1067,13 +1067,13 @@ void ScummEngine_v70he::o70_polygonOps() {
 		vert1x = pop();
 		flag = (subOp == 69 || subOp == 248);
 		id = pop();
-		_wiz.polygonStore(id, flag, vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y);
+		_wiz->polygonStore(id, flag, vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y);
 		break;
 	case 28: // HE 100
 	case 247:
 		toId = pop();
 		fromId = pop();
-		_wiz.polygonErase(fromId, toId);
+		_wiz->polygonErase(fromId, toId);
 		break;
 	default:
 		error("o70_polygonOps: default case %d", subOp);
@@ -1083,7 +1083,7 @@ void ScummEngine_v70he::o70_polygonOps() {
 void ScummEngine_v70he::o70_polygonHit() {
 	int y = pop();
 	int x = pop();
-	push(_wiz.polygonHit(0, x, y));
+	push(_wiz->polygonHit(0, x, y));
 }
 
 } // End of namespace Scumm

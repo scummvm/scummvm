@@ -133,7 +133,10 @@ enum WizProcessFlags {
 	kWPFMaskImg = 0x80000
 };
 
-struct Wiz {
+class ScummEngine_v70he;
+
+class Wiz {
+public:
 	enum {
 		NUM_POLYGONS = 200,
 		NUM_IMAGES   = 255
@@ -143,7 +146,8 @@ struct Wiz {
 	uint16 _imagesNum;
 	WizPolygon _polygons[NUM_POLYGONS];
 	
-	Wiz();
+	Wiz(ScummEngine_v70he *vm);
+
 	void clearWizBuffer();
 	Common::Rect _rectOverride;
 	bool _rectOverrideEnabled;
@@ -168,6 +172,9 @@ struct Wiz {
 	uint8 getRawWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint8 color);
 	void computeWizHistogram(uint32 *histogram, const uint8 *data, const Common::Rect *srcRect);
 	void computeRawWizHistogram(uint32 *histogram, const uint8 *data, int srcPitch, const Common::Rect *srcRect);
+
+private:
+	ScummEngine_v70he *_vm;
 };
 
 } // End of namespace Scumm

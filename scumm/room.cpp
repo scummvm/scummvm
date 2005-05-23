@@ -526,7 +526,7 @@ void ScummEngine::initRoomSubBlocks() {
 	if (_heversion >= 80) {
 		ptr = findResourceData(MKID('POLD'), roomptr);
 		if (ptr) {
-			((ScummEngine_v70he *)this)->_wiz.polygonLoad(ptr);
+			((ScummEngine_v70he *)this)->_wiz->polygonLoad(ptr);
 		}
 	}
 #endif
