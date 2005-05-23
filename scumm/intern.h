@@ -24,6 +24,7 @@
 #define INTERN_H
 
 #include "scumm/scumm.h"
+#include "scumm/sprite_he.h"
 #include "scumm/wiz_he.h"
 
 namespace Scumm {
@@ -1064,11 +1065,9 @@ protected:
 	void o80_pickVarRandom();
 };
 
-struct SpriteInfo;
-struct SpriteGroup;
-
 class ScummEngine_v90he : public ScummEngine_v80he {
 	friend class LogicHE;
+	friend class Sprite;
 
 protected:
 	typedef void (ScummEngine_v90he::*OpcodeProcV90he)();
@@ -1095,22 +1094,15 @@ protected:
 	int32 _curMaxSpriteId;
 	int32 _curSpriteId;
 	int32 _curSpriteGroupId;
-	int32 _numSpritesToProcess;
-	int32 _varNumSpriteGroups;
-	int32 _varNumSprites;
-	int32 _varMaxSprites;
-	SpriteInfo *_spriteTable;
-	SpriteGroup *_spriteGroups;
-	SpriteInfo **_activeSpritesTable;
 
 public:
-	ScummEngine_v90he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex) : ScummEngine_v80he(detector, syst, gs, md5sum, substResFileNameIndex) {}
-
+	ScummEngine_v90he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex);
 	~ScummEngine_v90he();
 
 	virtual void scummInit();
 
 	LogicHE *_logicHE;
+	Sprite *_sprite;
 
 protected:
 	virtual void allocateArrays();
@@ -1129,7 +1121,11 @@ protected:
 	int computeWizHistogram(int resnum, int state, int x, int y, int w, int h);
 	void getArrayDim(int array, int *dim2start, int *dim2end, int *dim1start, int *dim1end);
 	void sortArray(int array, int dim2start, int dim2end, int dim1start, int dim1end, int sortOrder);
-	
+
+public:	
+	int getGroupallocateGroupSpritesList(int spriteGroupId);
+
+protected:
 	uint8 *getHEPaletteIndex(int palSlot);
 	int getHEPaletteColor(int palSlot, int color);
 	int getHEPaletteSimilarColor(int palSlot, int red, int green, int start, int end);
@@ -1143,108 +1139,8 @@ protected:
 	void copyHEPalette(int dstPalSlot, int srcPalSlot);
 	void copyHEPaletteColor(int palSlot, uint8 dstColor, uint8 srcColor);
 
-	void getSpriteBounds(int spriteId, bool checkGroup, Common::Rect &bound);
-	int findSpriteWithClassOf(int x, int y, int spriteGroupId, int d, int num, int *args);
-	int spriteInfoGet_classFlags(int spriteId, int num, int *args);
-	int spriteInfoGet_flagDoubleBuffered(int spriteId);
-	int spriteInfoGet_flagYFlipped(int spriteId);
-	int spriteInfoGet_flagXFlipped(int spriteId);
-	int spriteInfoGet_flagActive(int spriteId);
-	int spriteInfoGet_flagNeedPaletteRemap(int spriteId);
-	int spriteInfoGet_flagDelayed(int spriteId);
-	int spriteInfoGet_flagMarkDirty(int spriteId);	
-	int spriteInfoGet_flagHasImage(int spriteId);
-	int spriteInfoGet_resId(int spriteId);
-	int spriteInfoGet_resState(int spriteId);
-	int spriteInfoGet_groupNum(int spriteId);
-	int spriteInfoGet_paletteNum(int spriteId);
-	int spriteInfoGet_zorderPriority(int spriteId);
-	int spriteInfoGet_grp_tx(int spriteId);
-	int spriteInfoGet_grp_ty(int spriteId);
-	int spriteInfoGet_field_44(int spriteId);
-	int spriteInfoGet_xmapNum(int spriteId);
-	int spriteInfoGet_wizSize(int spriteId);
-	int spriteInfoGet_zoom(int spriteId);
-	int spriteInfoGet_delayAmount(int spriteId);
-	int spriteInfoGet_maskImgResNum(int spriteId);
-	int spriteInfoGet_field_80(int spriteId);
-	int spriteInfoGet_field_8C_90(int spriteId, int type);
-	void getSpriteImageDim(int spriteId, int32 &w, int32 &h);
-	void spriteInfoGet_tx_ty(int spriteId, int32 &tx, int32 &ty);
-	void spriteInfoGet_dx_dy(int spriteId, int32 &dx, int32 &dy);
-
-	int spriteGroupGet_allocateGroupSpritesList(int spriteGroupId);
-	int spriteGroupGet_zorderPriority(int spriteGroupId);
-	int spriteGroupGet_dstResNum(int spriteGroupId);
-	int spriteGroupGet_scale_x_ratio_mul(int spriteGroupId);
-	int spriteGroupGet_scale_x_ratio_div(int spriteGroupId);
-	int spriteGroupGet_scale_y_ratio_mul(int spriteGroupId);
-	int spriteGroupGet_scale_y_ratio_div(int spriteGroupId);
-	void spriteGroupGet_tx_ty(int spriteGroupId, int32 &tx, int32 &ty);
-
-	void spriteInfoSet_paletteNum(int spriteId, int value);
-	void spriteInfoSet_maskImgResNum(int spriteId, int value);
-	void spriteInfoSet_field_80(int spriteId, int value);
-	void spriteInfoSet_resetSprite(int spriteId);
-	void spriteInfoSet_resState(int spriteId, int value);
-	void spriteInfoSet_tx_ty(int spriteId, int value1, int value2);
-	void spriteInfoSet_groupNum(int spriteId, int value);
-	void spriteInfoSet_dx_dy(int spriteId, int value1, int value2);
-	void spriteInfoSet_xmapNum(int spriteId, int value);
-	void spriteInfoSet_field_44(int spriteId, int value1, int value2);
-	void spriteInfoSet_zorderPriority(int spriteId, int value);
-	void spriteInfoSet_Inc_tx_ty(int spriteId, int value1, int value2);
-	void spriteInfoSet_zoom(int spriteId, int value);
-	void spriteInfoSet_angle(int spriteId, int value);
-	void spriteInfoSet_flagDoubleBuffered(int spriteId, int value);
-	void spriteInfoSet_flagYFlipped(int spriteId, int value);
-	void spriteInfoSet_flagXFlipped(int spriteId, int value);
-	void spriteInfoSet_flagActive(int spriteId, int value);
-	void spriteInfoSet_flagNeedPaletteRemap(int spriteId, int value);
-	void spriteInfoSet_flagDelayed(int spriteId, int value);
-	void spriteInfoSet_flagMarkDirty(int spriteId, int value);
-	void spriteInfoSet_flagHasImage(int spriteId, int value);
-	void spriteInfoSet_delay(int spriteId, int value);
-	void spriteInfoSet_setClassFlag(int spriteId, int classId, int toggle);
-	void spriteInfoSet_resetClassFlags(int spriteId);
-	void spriteInfoSet_field_84(int spriteId, int value);
-	void spriteInfoSet_field_8C_90(int spriteId, int type, int value);
-
-	void redrawSpriteGroup(int spriteGroupId);
-	void spriteGroupSet_case0_0(int spriteGroupId, int value1, int value2);
-	void spriteGroupSet_case0_1(int spriteGroupId, int value);
-	void spriteGroupSet_case0_2(int spriteGroupId, int value);
-	void spriteGroupSet_case0_3(int spriteGroupId, int value);
-	void spriteGroupSet_case0_4(int spriteGroupId);
-	void spriteGroupSet_case0_5(int spriteGroupId, int value);
-	void spriteGroupSet_case0_6(int spriteGroupId, int value);
-	void spriteGroupSet_case0_7(int spriteGroupId, int value);
-	void spriteGroupSet_bbox(int spriteGroupId, int x1, int y1, int x2, int y2);
-	void spriteGroupSet_zorderPriority(int spriteGroupId, int value);
-	void spriteGroupSet_tx_ty(int spriteGroupId, int value1, int value2);
-	void spriteGroupSet_inc_tx_ty(int spriteGroupId, int value1, int value2);
-	void spriteGroupSet_dstResNum(int spriteGroupId, int value);
-	void spriteGroupSet_scaling(int spriteGroupId);
-	void spriteGroupSet_scale_x_ratio_mul(int spriteGroupId, int value);
-	void spriteGroupSet_scale_x_ratio_div(int spriteGroupId, int value);
-	void spriteGroupSet_scale_y_ratio_mul(int spriteGroupId, int value);
-	void spriteGroupSet_scale_y_ratio_div(int spriteGroupId, int value);
-	void spriteGroupSet_flagClipBoxAnd(int spriteGroupId);
-
-	void spritesAllocTables(int numSprites, int numGroups, int numMaxSprites);
-	void spritesResetGroup(int spriteGroupId);
-	void spritesResetTables(bool refreshScreen);
-	void spriteAddImageToList(int spriteId, int imageNum, int *spriteIdptr);
 
 	void setDefaultCursor();
-
-public:
-	void saveOrLoadSpriteData(Serializer *s, uint32 savegameVersion);
-	void spritesBlitToScreen();
-	void spritesMarkDirty(bool checkZOrder);
-	void spritesSortActiveSprites();
-	void spritesProcessWiz(bool arg);
-	void spritesUpdateImages();
 
 protected:
 	/* HE version 90 script opcodes */

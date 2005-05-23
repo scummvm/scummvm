@@ -1022,8 +1022,8 @@ void ScummEngine_v71he::processActors() {
 void ScummEngine_v90he::processActors() {
 	preProcessAuxQueue();
 
-	spritesMarkDirty(false);
-	spritesProcessWiz(true);
+	_sprite->spritesMarkDirty(false);
+	_sprite->spritesProcessWiz(true);
 
 	if (!_skipProcessActors)
 		ScummEngine::processActors();
@@ -1032,8 +1032,8 @@ void ScummEngine_v90he::processActors() {
 
 	postProcessAuxQueue();
 
-	spritesMarkDirty(true);
-	spritesProcessWiz(false);
+	_sprite->spritesMarkDirty(true);
+	_sprite->spritesProcessWiz(false);
 }
 #endif
 

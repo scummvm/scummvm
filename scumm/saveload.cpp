@@ -1077,14 +1077,14 @@ void ScummEngine_v90he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		MKLINE(ScummEngine_v90he, _curMaxSpriteId, sleInt32, VER(51)),
 		MKLINE(ScummEngine_v90he, _curSpriteId, sleInt32, VER(51)),
 		MKLINE(ScummEngine_v90he, _curSpriteGroupId, sleInt32, VER(51)),
-		MKLINE(ScummEngine_v90he, _numSpritesToProcess, sleInt32, VER(51)),
+		MKLINE(ScummEngine_v90he, _sprite->_numSpritesToProcess, sleInt32, VER(51)),
 		MKLINE(ScummEngine_v90he, _heObject, sleInt32, VER(51)),
 		MKLINE(ScummEngine_v90he, _heObjectNum, sleInt32, VER(51)),
 		MKLINE(ScummEngine_v90he, _hePaletteNum, sleInt32, VER(51)),
 		MKEND()
 	};
 
-	saveOrLoadSpriteData(&*s, savegameVersion);
+	_sprite->saveOrLoadSpriteData(&*s, savegameVersion);
 
 	s->saveLoadArrayOf(&_floodStateParams, 1, sizeof(_floodStateParams), floodStateEntries);
 	s->saveLoadEntries(this, HE90Entries);

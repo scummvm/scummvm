@@ -1372,6 +1372,12 @@ ScummEngine_v80he::ScummEngine_v80he(GameDetector *detector, OSystem *syst, cons
 	_heSBNGId = 0;
 }
 
+ScummEngine_v90he::ScummEngine_v90he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
+	: ScummEngine_v80he(detector, syst, gs, md5sum, substResFileNameIndex) {
+
+	_sprite = new Sprite(this);
+}
+
 ScummEngine_v90he::~ScummEngine_v90he() {
 	if (_heversion >= 98) {
 		delete _logicHE;
@@ -1830,7 +1836,7 @@ void ScummEngine_v90he::scummInit() {
 	_heObjectNum = 0;
 	_hePaletteNum = 0;
 
-	spritesResetTables(0);
+	_sprite->spritesResetTables(0);
 	memset(&_wizParams, 0, sizeof(_wizParams));
 
 	if (_features & GF_HE_CURSORLESS)
@@ -2262,8 +2268,8 @@ load_game:
 
 #ifndef DISABLE_HE
 		if (_heversion >= 90) {
-			((ScummEngine_v90he *)this)->spritesBlitToScreen();
-			((ScummEngine_v90he *)this)->spritesSortActiveSprites();
+			((ScummEngine_v90he *)this)->_sprite->spritesBlitToScreen();
+			((ScummEngine_v90he *)this)->_sprite->spritesSortActiveSprites();
 		}
 #endif
 	
@@ -2323,7 +2329,7 @@ load_game:
 
 #ifndef DISABLE_HE
 	if (_heversion >= 90) {
-		((ScummEngine_v90he *)this)->spritesUpdateImages();
+		((ScummEngine_v90he *)this)->_sprite->spritesUpdateImages();
 	}
 	if (_heversion >= 98) {
 		((ScummEngine_v90he *)this)->_logicHE->endOfFrame();

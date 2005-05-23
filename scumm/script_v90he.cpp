@@ -846,7 +846,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 	case 0:
 		spriteId = pop();
 		if (spriteId) {
-			spriteInfoGet_tx_ty(spriteId, a, b);
+			_sprite->getSpritetx_ty(spriteId, a, b);
 			push(a);
 		} else {
 			push(0);
@@ -855,7 +855,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 	case 1:
 		spriteId = pop();
 		if (spriteId) {
-			spriteInfoGet_tx_ty(spriteId, a, b);
+			_sprite->getSpritetx_ty(spriteId, a, b);
 			push(b);
 		} else {
 			push(0);
@@ -864,7 +864,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 	case 2:
 		spriteId = pop();
 		if (spriteId) {
-			getSpriteImageDim(spriteId, a, b);
+			_sprite->getSpriteImageDim(spriteId, a, b);
 			push(a);
 		} else {
 			push(0);
@@ -873,7 +873,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 	case 3:
 		spriteId = pop();
 		if (spriteId) {
-			getSpriteImageDim(spriteId, a, b);
+			_sprite->getSpriteImageDim(spriteId, a, b);
 			push(b);
 		} else {
 			push(0);
@@ -882,7 +882,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 	case 4:
 		spriteId = pop();
 		if (spriteId) {
-			spriteInfoGet_dx_dy(spriteId, a, b);
+			_sprite->getSpritedx_dy(spriteId, a, b);
 			push(a);
 		} else {
 			push(0);
@@ -891,7 +891,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 	case 5:
 		spriteId = pop();
 		if (spriteId) {
-			spriteInfoGet_dx_dy(spriteId, a, b);
+			_sprite->getSpritedx_dy(spriteId, a, b);
 			push(b);
 		} else {
 			push(0);
@@ -900,28 +900,28 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 	case 6:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_wizSize(spriteId));
+			push(_sprite->getSpritewizSize(spriteId));
 		else
 			push(0);
 		break;
 	case 7:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_groupNum(spriteId));
+			push(_sprite->getSpriteGroupNum(spriteId));
 		else
 			push(0);
 		break;
 	case 8:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_grp_tx(spriteId));
+			push(_sprite->getSpritegrp_tx(spriteId));
 		else
 			push(0);
 		break;
 	case 9:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_grp_ty(spriteId));
+			push(_sprite->getSpritegrp_ty(spriteId));
 		else
 			push(0);
 		break;
@@ -931,19 +931,19 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		if (spriteId) {
 			switch(flags) {
 			case 0:
-				push(spriteInfoGet_flagXFlipped(spriteId));
+				push(_sprite->getSpriteFlagXFlipped(spriteId));
 				break;
 			case 1:
-				push(spriteInfoGet_flagYFlipped(spriteId));
+				push(_sprite->getSpriteFlagYFlipped(spriteId));
 				break;
 			case 2:
-				push(spriteInfoGet_flagActive(spriteId));
+				push(_sprite->getSpriteFlagActive(spriteId));
 				break;
 			case 3:
-				push(spriteInfoGet_flagDoubleBuffered(spriteId));
+				push(_sprite->getSpriteFlagDoubleBuffered(spriteId));
 				break;
 			case 4:
-				push(spriteInfoGet_flagNeedPaletteRemap(spriteId));
+				push(_sprite->getSpriteFlagNeedPaletteRemap(spriteId));
 				break;
 			default:
 				push(0);
@@ -955,7 +955,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 	case 13:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_zorderPriority(spriteId));
+			push(_sprite->getSpriteZorderPriority(spriteId));
 		else
 			push(0);
 		break;
@@ -966,87 +966,87 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 			d = pop();
 			e = pop();
 			f = pop();
-			push(findSpriteWithClassOf(f, e, d, c, flags, args));
+			push(_sprite->findSpriteWithClassOf(f, e, d, c, flags, args));
 		} else if (_heversion == 98) {
 			c = pop();
 			d = pop();
 			e = pop();
 			f = pop();
-			push(findSpriteWithClassOf(f, e, d, c, 0, 0));
+			push(_sprite->findSpriteWithClassOf(f, e, d, c, 0, 0));
 		} else {
 			d = pop();
 			e = pop();
 			f = pop();
-			push(findSpriteWithClassOf(f, e, d, 0, 0, 0));
+			push(_sprite->findSpriteWithClassOf(f, e, d, 0, 0, 0));
 		}
 		break;
 	case 22:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_resState(spriteId));
+			push(_sprite->getSpriteResState(spriteId));
 		else
 			push(0);
 		break;
 	case 32:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_maskImgResNum(spriteId));
+			push(_sprite->getSpritemaskImgResNum(spriteId));
 		else
 			push(0);
 		break;
 	case 33:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_resId(spriteId));
+			push(_sprite->getSpriteResId(spriteId));
 		else
 			push(0);
 		break;
 	case 38:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_flagHasImage(spriteId));
+			push(_sprite->getSpriteFlagHasImage(spriteId));
 		else
 			push(1);
 		break;
 	case 52:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_flagDelayed(spriteId));
+			push(_sprite->getSpriteFlagDelayed(spriteId));
 		else
 			push(0);
 		break;
 	case 56:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_paletteNum(spriteId));
+			push(_sprite->getSpritePaletteNum(spriteId));
 		else
 			push(0);
 		break;
 	case 62:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_zoom(spriteId));
+			push(_sprite->getSpritezoom(spriteId));
 		else
 			push(0);
 		break;
 	case 67:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_delayAmount(spriteId));
+			push(_sprite->getSpritedelayAmount(spriteId));
 		else
 			push(1);
 		break;
 	case 68:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_xmapNum(spriteId));
+			push(_sprite->getSpriteXmapNum(spriteId));
 		else
 			push(0);
 		break;
 	case 94:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_flagMarkDirty(spriteId));
+			push(_sprite->getSpriteFlagMarkDirty(spriteId));
 		else
 			push(0);
 		break;
@@ -1054,7 +1054,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		flags = getStackList(args, ARRAYSIZE(args));
 		spriteId = pop();
 		if (spriteId) {
-			push(spriteInfoGet_classFlags(spriteId, flags, args));
+			push(_sprite->getSpriteclassFlags(spriteId, flags, args));
 		} else {
 			push(0);
 		}
@@ -1063,14 +1063,14 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		flags = pop();
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_field_8C_90(spriteId, flags));
+			push(_sprite->getSpriteField_8C_90(spriteId, flags));
 		else
 			push(0);
 		break;
 	case 110:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_field_80(spriteId));
+			push(_sprite->getSpriteField_80(spriteId));
 		else
 			push(0);
 		break;
@@ -1078,7 +1078,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		pop();
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_field_44(spriteId));
+			push(_sprite->getSpriteField_44(spriteId));
 		else
 			push(0);
 		break;
@@ -1107,8 +1107,8 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++) {
-			spriteInfoGet_dx_dy(spriteId, tmp[0], tmp[1]);
-			spriteInfoSet_dx_dy(spriteId, args[0], tmp[1]);
+			_sprite->getSpritedx_dy(spriteId, tmp[0], tmp[1]);
+			_sprite->setSpritedx_dy(spriteId, args[0], tmp[1]);
 		}
 		break;
 	case 1:
@@ -1120,8 +1120,8 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++) {
-			spriteInfoGet_dx_dy(spriteId, tmp[0], tmp[1]);
-			spriteInfoSet_dx_dy(spriteId, tmp[0], args[0]);
+			_sprite->getSpritedx_dy(spriteId, tmp[0], tmp[1]);
+			_sprite->setSpritedx_dy(spriteId, tmp[0], args[0]);
 		}
 		break;
 	case 3:
@@ -1133,7 +1133,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_groupNum(spriteId, args[0]);
+			_sprite->setSpriteGroupNum(spriteId, args[0]);
 		break;
 	case 8:
 		args[1] = pop();
@@ -1147,19 +1147,19 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			switch(args[1]) {
 			case 0:
-				spriteInfoSet_flagXFlipped(spriteId, args[0]);
+				_sprite->setSpriteFlagXFlipped(spriteId, args[0]);
 				break;
 			case 1:
-				spriteInfoSet_flagYFlipped(spriteId, args[0]);
+				_sprite->setSpriteFlagYFlipped(spriteId, args[0]);
 				break;
 			case 2:
-				spriteInfoSet_flagActive(spriteId, args[0]);
+				_sprite->setSpriteFlagActive(spriteId, args[0]);
 				break;
 			case 3:
-				spriteInfoSet_flagDoubleBuffered(spriteId, args[0]);
+				_sprite->setSpriteFlagDoubleBuffered(spriteId, args[0]);
 				break;
 			case 4:
-				spriteInfoSet_flagNeedPaletteRemap(spriteId, args[0]);
+				_sprite->setSpriteFlagNeedPaletteRemap(spriteId, args[0]);
 				break;
 			default:
 				break;
@@ -1174,7 +1174,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_zorderPriority(spriteId, args[0]);
+			_sprite->setSpriteZorderPriority(spriteId, args[0]);
 		break;
 	case 10:
 		args[1] = pop();
@@ -1186,7 +1186,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_Inc_tx_ty(spriteId, args[0], args[1]);
+			_sprite->setSpriteInc_tx_ty(spriteId, args[0], args[1]);
 		break;
 	case 18:
 		args[0] = pop();
@@ -1197,7 +1197,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_resState(spriteId, args[0]);
+			_sprite->setSpriteResState(spriteId, args[0]);
 		break;
 	case 19:
 		args[0] = pop();
@@ -1208,7 +1208,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_angle(spriteId, args[0]);
+			_sprite->setSpriteAngle(spriteId, args[0]);
 		break;
 	case 23:
 		if (_features & GF_HE_985 || _heversion >= 99) {
@@ -1231,7 +1231,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_maskImgResNum(spriteId, args[0]);
+			_sprite->setSpriteMaskImgResNum(spriteId, args[0]);
 		break;
 	case 29:
 		args[0] = pop();
@@ -1242,7 +1242,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteAddImageToList(spriteId, 1, &args[0]);
+			_sprite->spriteAddImageToList(spriteId, 1, &args[0]);
 		break;
 	case 31:
 		args[1] = pop();
@@ -1254,7 +1254,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_tx_ty(spriteId, args[0], args[1]);
+			_sprite->setSpritetx_ty(spriteId, args[0], args[1]);
 		break;
 	case 34:
 		args[0] = pop();
@@ -1265,7 +1265,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_flagHasImage(spriteId, args[0]);
+			_sprite->setSpriteFlagHasImage(spriteId, args[0]);
 		break;
 	case 43:
 		args[1] = pop();
@@ -1277,7 +1277,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_dx_dy(spriteId, args[0], args[1]);
+			_sprite->setSpritedx_dy(spriteId, args[0], args[1]);
 		break;
 	case 48:
 		args[0] = pop();
@@ -1288,7 +1288,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_flagDelayed(spriteId, args[0]);
+			_sprite->setSpriteFlagDelayed(spriteId, args[0]);
 		break;
 	case 52: // HE 98+
 		args[0] = pop();
@@ -1299,7 +1299,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_paletteNum(spriteId, args[0]);
+			_sprite->setSpritePaletteNum(spriteId, args[0]);
 		break;
 	case 58: // HE 99+
 		args[0] = pop();
@@ -1310,7 +1310,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_zoom(spriteId, args[0]);
+			_sprite->setSpriteZoom(spriteId, args[0]);
 		break;
 	case 63: // HE 98+
 		args[0] = pop();
@@ -1321,7 +1321,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_delay(spriteId, args[0]);
+			_sprite->setSpriteDelay(spriteId, args[0]);
 		break;
 	case 64:
 		args[0] = pop();
@@ -1332,7 +1332,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_xmapNum(spriteId, args[0]);
+			_sprite->setSpriteXmapNum(spriteId, args[0]);
 		break;
 	case 90:
 		args[0] = pop();
@@ -1343,7 +1343,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_flagMarkDirty(spriteId, args[0]);
+			_sprite->setSpriteFlagMarkDirty(spriteId, args[0]);
 		break;
 	case 91:
 		n = getStackList(args, ARRAYSIZE(args));
@@ -1353,15 +1353,15 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 				int code = *p;
 				if (code == 0) {
 					for (int i = _curSpriteId; i <= _curMaxSpriteId; ++i) {
-						spriteInfoSet_resetClassFlags(i);					
+						_sprite->setSpriteResetClassFlags(i);					
 					}
 				} else if (code & 0x80) {
 					for (int i = _curSpriteId; i <= _curMaxSpriteId; ++i) {
-						spriteInfoSet_setClassFlag(i, code & 0x7F, 1);
+						_sprite->setSpriteSetClassFlag(i, code & 0x7F, 1);
 					}
 				} else {
 					for (int i = _curSpriteId; i <= _curMaxSpriteId; ++i) {
-						spriteInfoSet_setClassFlag(i, code & 0x7F, 0);
+						_sprite->setSpriteSetClassFlag(i, code & 0x7F, 0);
 					}
 				}
 				--p;
@@ -1378,7 +1378,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_field_8C_90(spriteId, args[0], args[1]);
+			_sprite->setSpriteField8C_90(spriteId, args[0], args[1]);
 		break;
 	case 106: // HE 99+
 		args[0] = pop();
@@ -1389,10 +1389,10 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_field_80(spriteId, args[0]);
+			_sprite->setSpriteField80(spriteId, args[0]);
 		break;
 	case 124:
-		spritesResetTables(true);
+		_sprite->spritesResetTables(true);
 		break;
 	case 164:
 		args[1] = pop();
@@ -1404,7 +1404,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_field_44(spriteId, args[0], args[1]);
+			_sprite->setSpriteField44(spriteId, args[0], args[1]);
 		break;
 	case 183:
 		if (_curSpriteId > _curMaxSpriteId)
@@ -1414,7 +1414,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_resetSprite(spriteId);
+			_sprite->setSpriteResetSprite(spriteId);
 		break;
 	default:
 		error("o90_setSpriteInfo: Unknown case %d", subOp);
@@ -1432,14 +1432,14 @@ void ScummEngine_v90he::o90_getSpriteGroupInfo() {
 	case 8: // HE 99+
 		spriteGroupId = pop();
 		if (spriteGroupId)
-			push(spriteGroupGet_allocateGroupSpritesList(spriteGroupId));
+			push(getGroupallocateGroupSpritesList(spriteGroupId));
 		else
 			push(0);
 		break;
 	case 30:
 		spriteGroupId = pop();
 		if (spriteGroupId) {
-			spriteGroupGet_tx_ty(spriteGroupId, tx, ty);
+			_sprite->getGrouptx_ty(spriteGroupId, tx, ty);
 			push(tx);
 		} else {
 			push(0);
@@ -1448,7 +1448,7 @@ void ScummEngine_v90he::o90_getSpriteGroupInfo() {
 	case 31:
 		spriteGroupId = pop();
 		if (spriteGroupId) {
-			spriteGroupGet_tx_ty(spriteGroupId, tx, ty);
+			_sprite->getGrouptx_ty(spriteGroupId, tx, ty);
 			push(ty);
 		} else {
 			push(0);
@@ -1460,16 +1460,16 @@ void ScummEngine_v90he::o90_getSpriteGroupInfo() {
 		if (spriteGroupId) {
 			switch(type) {
 			case 0:
-				push(spriteGroupGet_scale_x_ratio_mul(spriteGroupId));
+				push(_sprite->getGroupScale_x_ratio_mul(spriteGroupId));
 				break;
 			case 1:
-				push(spriteGroupGet_scale_x_ratio_div(spriteGroupId));
+				push(_sprite->getGroupScale_x_ratio_div(spriteGroupId));
 				break;
 			case 2:
-				push(spriteGroupGet_scale_y_ratio_mul(spriteGroupId));
+				push(_sprite->getGroupScale_y_ratio_mul(spriteGroupId));
 				break;
 			case 3:
-				push(spriteGroupGet_scale_y_ratio_div(spriteGroupId));
+				push(_sprite->getGroupScale_y_ratio_div(spriteGroupId));
 				break;
 			default:
 				push(0);
@@ -1481,14 +1481,14 @@ void ScummEngine_v90he::o90_getSpriteGroupInfo() {
 	case 43:
 		spriteGroupId = pop();
 		if (spriteGroupId)
-			push(spriteGroupGet_zorderPriority(spriteGroupId));
+			push(_sprite->getGroupzorderPriority(spriteGroupId));
 		else
 			push(0);
 		break;
 	case 63: // HE 99+
 		spriteGroupId = pop();
 		if (spriteGroupId)
-			push(spriteGroupGet_dstResNum(spriteGroupId));
+			push(_sprite->getGroupdstResNum(spriteGroupId));
 		else
 			push(0);
 		break;
@@ -1520,55 +1520,55 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 			if (!_curSpriteGroupId)
 				break;
 
-			spriteGroupSet_case0_0(_curSpriteGroupId, value1, value2);
+			_sprite->setGroupCase0_0(_curSpriteGroupId, value1, value2);
 			break;
 		case 1:
 			value1 = pop();
 			if (!_curSpriteGroupId)
 				break;
 
-			spriteGroupSet_case0_1(_curSpriteGroupId, value1);
+			_sprite->setGroupCase0_1(_curSpriteGroupId, value1);
 			break;
 		case 2:
 			value1 = pop();
 			if (!_curSpriteGroupId)
 				break;
 
-			spriteGroupSet_case0_2(_curSpriteGroupId, value1);
+			_sprite->setGroupCase0_2(_curSpriteGroupId, value1);
 			break;
 		case 3:
 			value1 = pop();
 			if (!_curSpriteGroupId)
 				break;
 
-			spriteGroupSet_case0_3(_curSpriteGroupId, value1);
+			_sprite->setGroupCase0_3(_curSpriteGroupId, value1);
 			break;
 		case 4:
 			if (!_curSpriteGroupId)
 				break;
 
-			spriteGroupSet_case0_4(_curSpriteGroupId);
+			_sprite->setGroupCase0_4(_curSpriteGroupId);
 			break;
 		case 5:
 			value1 = pop();
 			if (!_curSpriteGroupId)
 				break;
 
-			spriteGroupSet_case0_5(_curSpriteGroupId, value1);
+			_sprite->setGroupCase0_5(_curSpriteGroupId, value1);
 			break;
 		case 6:
 			value1 = pop();
 			if (!_curSpriteGroupId)
 				break;
 
-			spriteGroupSet_case0_6(_curSpriteGroupId, value1);
+			_sprite->setGroupCase0_6(_curSpriteGroupId, value1);
 			break;
 		case 7:
 			value1 = pop();
 			if (!_curSpriteGroupId)
 				break;
 
-			spriteGroupSet_case0_7(_curSpriteGroupId, value1);
+			_sprite->setGroupCase0_7(_curSpriteGroupId, value1);
 			break;
 		default:
 			error("o90_setSpriteGroupInfo subOp 0: Unknown case %d", subOp);
@@ -1582,16 +1582,16 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 
 		switch (type) {
 		case 0:
-			spriteGroupSet_scale_x_ratio_mul(_curSpriteGroupId, value1);
+			_sprite->setGroupScale_x_ratio_mul(_curSpriteGroupId, value1);
 			break;
 		case 1:
-			spriteGroupSet_scale_x_ratio_div(_curSpriteGroupId, value1);
+			_sprite->setGroupScale_x_ratio_div(_curSpriteGroupId, value1);
 			break;
 		case 2:
-			spriteGroupSet_scale_y_ratio_mul(_curSpriteGroupId, value1);
+			_sprite->setGroupScale_y_ratio_mul(_curSpriteGroupId, value1);
 			break;
 		case 3:
-			spriteGroupSet_scale_y_ratio_div(_curSpriteGroupId, value1);
+			_sprite->setGroupScale_y_ratio_div(_curSpriteGroupId, value1);
 			break;
 		default:
 			error("o90_setSpriteGroupInfo subOp 5: Unknown case %d", subOp);
@@ -1602,7 +1602,7 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 		if (!_curSpriteGroupId)
 			break;
 
-		spriteGroupSet_zorderPriority(_curSpriteGroupId, value1);
+		_sprite->setGroupzorderPriority(_curSpriteGroupId, value1);
 		break;
 	case 7:
 		value2 = pop();
@@ -1610,7 +1610,7 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 		if (!_curSpriteGroupId)
 			break;
 
-		spriteGroupSet_inc_tx_ty(_curSpriteGroupId, value1, value2);
+		_sprite->setGroupinc_tx_ty(_curSpriteGroupId, value1, value2);
 		break;
 	case 20:
 		_curSpriteGroupId = pop();
@@ -1620,7 +1620,7 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 		if (!_curSpriteGroupId)
 			break;
 
-		spriteGroupSet_dstResNum(_curSpriteGroupId, value1);
+		_sprite->setGroupdstResNum(_curSpriteGroupId, value1);
 		break;
 	case 28:
 		value2 = pop();
@@ -1628,7 +1628,7 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 		if (!_curSpriteGroupId)
 			break;
 
-		spriteGroupSet_tx_ty(_curSpriteGroupId, value1, value2);
+		_sprite->setGrouptx_ty(_curSpriteGroupId, value1, value2);
 		break;
 	case 30:
 		value4 = pop();
@@ -1638,19 +1638,19 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 		if (!_curSpriteGroupId)
 			break;
 
-		spriteGroupSet_bbox(_curSpriteGroupId, value1, value2, value3, value4);
+		_sprite->setGroupbbox(_curSpriteGroupId, value1, value2, value3, value4);
 		break;
 	case 56:
 		if (!_curSpriteGroupId)
 			break;
 
-		spriteGroupSet_flagClipBoxAnd(_curSpriteGroupId);
+		_sprite->setGroupflagClipBoxAnd(_curSpriteGroupId);
 		break;
 	case 180:
 		if (!_curSpriteGroupId)
 			break;
 
-		spritesResetGroup(_curSpriteGroupId);
+		_sprite->spritesResetGroup(_curSpriteGroupId);
 		break;
 	default:
 		error("o90_setSpriteGroupInfo: Unknown case %d", subOp);
@@ -1907,8 +1907,8 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 	case 6:
 		{
 			Common::Rect r1, r2;
-			getSpriteBounds(args2[0], false, r2);
-			getSpriteBounds(args1[0], false, r1);
+			_sprite->getSpriteBounds(args2[0], false, r2);
+			_sprite->getSpriteBounds(args1[0], false, r1);
 			if (r2.isValidRect() == false) {
 				push(0);
 				break;
@@ -1932,7 +1932,7 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 	case 7:
 		{
 			Common::Rect r2;
-			getSpriteBounds(args2[0], false, r2);
+			_sprite->getSpriteBounds(args2[0], false, r2);
 			Common::Rect r1(args1[0], args1[1], args1[2], args1[3]);
 			if (r2.isValidRect() == false) {
 				push(0);
@@ -1952,8 +1952,8 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 	case 10:	// TODO: redraw image
 		{
 			Common::Rect r1, r2;
-			getSpriteBounds(args2[0], true, r2);
-			getSpriteBounds(args1[0], true, r1);
+			_sprite->getSpriteBounds(args2[0], true, r2);
+			_sprite->getSpriteBounds(args1[0], true, r1);
 			if (r2.isValidRect() == false) {
 				push(0);
 				break;
@@ -1977,7 +1977,7 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 	case 9:
 		{
 			Common::Rect r2;
-			getSpriteBounds(args2[0], true, r2);
+			_sprite->getSpriteBounds(args2[0], true, r2);
 			Common::Rect r1(args1[0], args1[1], args1[2], args1[3]);
 			if (r2.isValidRect() == false) {
 				push(0);
@@ -2603,7 +2603,7 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 	case 714:
 		break;
 	case 1492:
-		spriteInfoSet_flagDoubleBuffered(args[1], args[2]);
+		_sprite->setSpriteFlagDoubleBuffered(args[1], args[2]);
 		break;
 	case 1969:
 		a = derefActor(args[1], "o90_kernelSetFunctions: 1969");
