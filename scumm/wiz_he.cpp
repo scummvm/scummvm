@@ -1029,6 +1029,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 		if (dstResNum) {
 			uint8 *dstPtr = _vm->getResourceAddress(rtImage, dstResNum);
 			assert(dstPtr);
+			_vm->res.lock(rtImage, dstResNum);
 			dst = _vm->findWrappedBlock(MKID('WIZD'), dstPtr, 0, 0);
 			assert(dst);
 
@@ -1270,6 +1271,7 @@ void Wiz::drawWizPolygon(int resNum, int state, int id, int flags, int xmapNum, 
 		if (dstResNum) {
 			uint8 *dstPtr = _vm->getResourceAddress(rtImage, dstResNum);
 			assert(dstPtr);
+			_vm->res.lock(rtImage, dstResNum);
 			dst = _vm->findWrappedBlock(MKID('WIZD'), dstPtr, 0, 0);
 			assert(dst);
 
@@ -1732,6 +1734,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 						_vm->VAR(_vm->VAR_GAME_LOADED) = -2;
 						_vm->VAR(119) = -2;
 					} else {
+						_vm->res.lock(rtImage, params->img.resNum);
 						_vm->VAR(_vm->VAR_GAME_LOADED) = 0;
 						_vm->VAR(119) = 0;
 					}
