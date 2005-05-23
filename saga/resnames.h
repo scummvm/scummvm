@@ -45,6 +45,8 @@ namespace Saga {
 
 // SCENES
 #define ITE_SCENE_INV -1
+#define ITE_SCENE_PUZZLE 26
+#define ITE_SCENE_LODGE 21
 
 #define ITE_DEFAULT_SCENE 32
 #define IHNM_DEFAULT_SCENE 152

@@ -120,7 +120,7 @@ struct SceneEntryList {
 
 	const SceneEntry * getEntry(int index) {
 		if ((index < 0) || (index >= entryListCount)) {
-			error("SceneEntryList::getEntry wrong index");
+			error("SceneEntryList::getEntry wrong index (%d)", index);
 		}
 		return &entryList[index];
 	}

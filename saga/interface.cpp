@@ -30,6 +30,7 @@
 #include "saga/font.h"
 #include "saga/objectmap.h"
 #include "saga/itedata.h"
+#include "saga/puzzle.h"
 #include "saga/rscfile_mod.h"
 #include "saga/scene.h"
 #include "saga/script.h"
@@ -302,7 +303,8 @@ bool Interface::processKeyCode(int keyCode) {
 		switch (keyCode) {
 		case 'x':
 			setMode(kPanelMain);
-			// FIXME: puzzle
+			if (_vm->_puzzle->isActive())
+				_vm->_puzzle->exitPuzzle();
 			break;
 
 		case 'u':
@@ -1124,7 +1126,8 @@ void Interface::converseSetPos(int key) {
 
 	_vm->_script->finishDialog(ct->replyId, ct->replyFlags, ct->replyBit);
 
-	// FIXME: TODO: Puzzle
+	if (_vm->_puzzle->isActive())
+		_vm->_puzzle->handleReply(ct->replyId);
 
 	_conversePos = -1;
 }

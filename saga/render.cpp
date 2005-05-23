@@ -24,16 +24,15 @@
 // Main rendering loop
 #include "saga/saga.h"
 
-#include "saga/gfx.h"
 #include "saga/actor.h"
 #include "saga/font.h"
+#include "saga/gfx.h"
 #include "saga/interface.h"
+#include "saga/objectmap.h"
+#include "saga/puzzle.h"
+#include "saga/render.h"
 #include "saga/scene.h"
 #include "saga/text.h"
-
-#include "saga/objectmap.h"
-
-#include "saga/render.h"
 
 #include "common/timer.h"
 #include "common/system.h"
@@ -119,6 +118,12 @@ int Render::drawScene() {
 		if (_vm->_interface->getMode() != kPanelFade) {
 			// Draw queued actors
 			_vm->_actor->drawActors();
+
+			if (_vm->_puzzle->isActive()) {
+				_vm->_puzzle->movePiece(mouse_pt);
+				_vm->_actor->drawSpeech();
+			}
+
 			if (getFlags() & RF_OBJECTMAP_TEST) {
 				if (_vm->_scene->_objectMap)
 					_vm->_scene->_objectMap->draw(backbuf_surface, mouse_pt, kITEColorBrightWhite, kITEColorBlack);

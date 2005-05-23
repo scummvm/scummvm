@@ -34,6 +34,7 @@
 #include "saga/interface.h"
 #include "saga/music.h"
 #include "saga/itedata.h"
+#include "saga/puzzle.h"
 #include "saga/render.h"
 #include "saga/sound.h"
 #include "saga/sndres.h"
@@ -118,7 +119,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(SF_tossRif),
 		OPCODE(SF_showControls),
 		OPCODE(SF_showMap),
-		OPCODE(SF_puzzleWon),
+		OPCODE(sfPuzzleWon),
 		OPCODE(sfEnableEscape),
 		OPCODE(sfPlaySound),
 		OPCODE(SF_playLoopedSound),
@@ -1501,11 +1502,8 @@ void Script::SF_showMap(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #68 (0x44)
-void Script::SF_puzzleWon(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
-
-	debug(0, "STUB: SF_puzzleWon(), %d args", nArgs);
+void Script::sfPuzzleWon(SCRIPTFUNC_PARAMS) {
+	thread->_returnValue = _vm->_puzzle->isSolved();
 }
 
 // Script function #69 (0x45)

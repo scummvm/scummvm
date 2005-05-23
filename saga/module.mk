@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	saga/ite_introproc.o \
 	saga/itedata.o \
 	saga/objectmap.o \
+	saga/puzzle.o \
 	saga/palanim.o \
 	saga/render.o \
 	saga/rscfile.o \

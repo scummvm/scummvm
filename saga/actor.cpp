@@ -1298,13 +1298,19 @@ void Actor::drawActors() {
 		}
 	}
 
-// draw speeches
+	drawSpeech();
+}
+
+void Actor::drawSpeech(void) {
 	if (isSpeaking() && _activeSpeech.playing && !_vm->_script->_skipSpeeches) {
 		int i;
 		int textDrawFlags;
 		char oneChar[2];
 		oneChar[1] = 0;
 		const char *outputString;
+		SURFACE *back_buf;
+
+		back_buf = _vm->_gfx->getBackBuffer();
 
 		if (_activeSpeech.speechFlags & kSpeakSlow) {
 			outputString = oneChar;

@@ -55,6 +55,7 @@ class Interface;
 class Console;
 class Events;
 class PalAnim;
+class Puzzle;
 
 #define MIN_IMG_RLECODE    3
 #define MODEX_SCANLINE_LIMIT 200
@@ -482,6 +483,7 @@ public:
 	Console *_console;
 	Events *_events;
 	PalAnim *_palanim;
+	Puzzle *_puzzle;
 
 
 	/** Random number generator */

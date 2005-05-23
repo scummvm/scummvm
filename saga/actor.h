@@ -471,6 +471,8 @@ public:
 	void drawActors();
 	void updateActorsScene(int actorsEntrance);			// calls from scene loading to update Actors info
 
+	void drawSpeech();
+
 	void drawPathTest();
 
 	uint16 hitTest(const Point &testPoint, bool skipProtagonist);

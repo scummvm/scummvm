@@ -44,6 +44,7 @@
 #include "saga/font.h"
 #include "saga/interface.h"
 #include "saga/isomap.h"
+#include "saga/puzzle.h"
 #include "saga/script.h"
 #include "saga/scene.h"
 #include "saga/sndres.h"
@@ -138,6 +139,7 @@ SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 	_render = NULL;
 	_music = NULL;
 	_sound = NULL;
+	_puzzle = NULL;
 
 
 	// The Linux version of Inherit the Earth puts all data files in an
@@ -170,6 +172,7 @@ SagaEngine::~SagaEngine() {
 		_scene->endScene();
 	}
 
+	delete _puzzle;
 	delete _sndRes;
 	delete _events;
 	delete _font;
@@ -234,6 +237,7 @@ int SagaEngine::init(GameDetector &detector) {
 	_palanim = new PalAnim(this);
 	_scene = new Scene(this);
 	_isoMap = new IsoMap(this);
+	_puzzle = new Puzzle(this);
 
 	if (!_scene->initialized()) {
 		warning("Couldn't initialize scene module");
@@ -245,7 +249,7 @@ int SagaEngine::init(GameDetector &detector) {
 	_previousTicks = _system->getMillis();
 
 	// Initialize graphics
-	_gfx = new Gfx(_system, _vm->getDisplayWidth(), _vm->getDisplayHeight(), detector);
+	_gfx = new Gfx(_system, getDisplayWidth(), getDisplayHeight(), detector);
 
 	// Graphics driver should be initialized before console
 	_console = new Console(this);
@@ -319,10 +323,14 @@ int SagaEngine::go() {
 				msec = MAX_TIME_DELTA;
 			}
 
-			if (!_vm->_scene->isInDemo() && getGameType() == GType_ITE)
-				if (_vm->_interface->getMode() == kPanelMain ||
-						 _vm->_interface->getMode() == kPanelConverse ||
-						 _vm->_interface->getMode() == kPanelNull)
+			// Since Puzzle is actorless, we do it here
+			if (_puzzle->isActive())
+				_actor->handleSpeech(msec);
+
+			if (!_scene->isInDemo() && getGameType() == GType_ITE)
+				if (_interface->getMode() == kPanelMain ||
+						 _interface->getMode() == kPanelConverse ||
+						 _interface->getMode() == kPanelNull)
 					_actor->direct(msec);
 
 			_events->handleEvents(msec);
@@ -383,8 +391,8 @@ const char *SagaEngine::getObjectName(uint16 objectId) {
 		return _actor->_actorsStrings.getString(actor->nameIndex);
 		break;
 	case kGameObjectHitZone:
-		hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(objectId));
-		return _vm->_scene->_sceneStrings.getString(hitZone->getNameIndex());
+		hitZone = _scene->_objectMap->getHitZone(objectIdToIndex(objectId));
+		return _scene->_sceneStrings.getString(hitZone->getNameIndex());
 	}
 	warning("SagaEngine::getObjectName name not found for 0x%X", objectId);
 	return NULL;
@@ -392,7 +400,7 @@ const char *SagaEngine::getObjectName(uint16 objectId) {
 
 const char *SagaEngine::getTextString(int textStringId) {
 	const char *string;
-	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
+	int lang = getFeatures() & GF_LANG_DE ? 1 : 0;
 
 	string = interfaceTextStrings[lang][textStringId];
 	if (!string)

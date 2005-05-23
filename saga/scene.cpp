@@ -32,6 +32,7 @@
 #include "saga/isomap.h"
 #include "saga/objectmap.h"
 #include "saga/palanim.h"
+#include "saga/puzzle.h"
 #include "saga/render.h"
 #include "saga/rscfile_mod.h"
 #include "saga/script.h"
@@ -620,8 +621,11 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 	// We probably don't want "followers" to go into scene -1 , 0. At the very
 	// least we don't want garbage to be drawn that early in the ITE intro.
-	if (_sceneNumber > 0)
+	if (_sceneNumber > 0 && _sceneNumber != ITE_SCENE_PUZZLE)
 		_vm->_actor->updateActorsScene(loadSceneParams->actorsEntrance);
+
+	if (_sceneNumber == ITE_SCENE_PUZZLE)
+		_vm->_puzzle->execute();
 
 	if (_sceneDescription.flags & kSceneFlagShowCursor)
 		_vm->_interface->activate();
