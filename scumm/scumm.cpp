@@ -1836,7 +1836,7 @@ void ScummEngine_v90he::scummInit() {
 	_heObjectNum = 0;
 	_hePaletteNum = 0;
 
-	_sprite->spritesResetTables(0);
+	_sprite->resetTables(0);
 	memset(&_wizParams, 0, sizeof(_wizParams));
 
 	if (_features & GF_HE_CURSORLESS)
@@ -2268,8 +2268,8 @@ load_game:
 
 #ifndef DISABLE_HE
 		if (_heversion >= 90) {
-			((ScummEngine_v90he *)this)->_sprite->spritesBlitToScreen();
-			((ScummEngine_v90he *)this)->_sprite->spritesSortActiveSprites();
+			((ScummEngine_v90he *)this)->_sprite->resetBackground();
+			((ScummEngine_v90he *)this)->_sprite->sortActiveSprites();
 		}
 #endif
 	
@@ -2329,7 +2329,7 @@ load_game:
 
 #ifndef DISABLE_HE
 	if (_heversion >= 90) {
-		((ScummEngine_v90he *)this)->_sprite->spritesUpdateImages();
+		((ScummEngine_v90he *)this)->_sprite->updateImages();
 	}
 	if (_heversion >= 98) {
 		((ScummEngine_v90he *)this)->_logicHE->endOfFrame();

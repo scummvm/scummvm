@@ -38,7 +38,7 @@ Sprite::Sprite(ScummEngine_v90he *vm) : _vm(vm) {
 
 void ScummEngine_v90he::allocateArrays() {
 	ScummEngine::allocateArrays();
-	_sprite->spritesAllocTables(_numSprites, MAX(64, _numSprites / 4), 64);
+	_sprite->allocTables(_numSprites, MAX(64, _numSprites / 4), 64);
 }
 
 void Sprite::getSpriteBounds(int spriteId, bool checkGroup, Common::Rect &bound) {
@@ -778,7 +778,7 @@ void Sprite::setSpriteResetSprite(int spriteId) {
 	_spriteTable[spriteId].zoom = 0;
 
 	int tmp = 0;
-	spriteAddImageToList(spriteId, 1, &tmp);
+	addImageToList(spriteId, 1, &tmp);
 
 	_spriteTable[spriteId].xmapNum = 0;
 	_spriteTable[spriteId].tx = 0;
@@ -802,7 +802,7 @@ void Sprite::setSpriteResetSprite(int spriteId) {
 	_spriteTable[spriteId].field_90 = 0;
 }
 
-void Sprite::spriteAddImageToList(int spriteId, int imageNum, int *spriteIdptr) {
+void Sprite::addImageToList(int spriteId, int imageNum, int *spriteIdptr) {
 	int origResId, origResWizStates;
 
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
@@ -1042,7 +1042,7 @@ void Sprite::setGroupflagClipBoxAnd(int spriteGroupId) {
 	redrawSpriteGroup(spriteGroupId);
 }
 
-void Sprite::spritesAllocTables(int numSprites, int numGroups, int numMaxSprites) {
+void Sprite::allocTables(int numSprites, int numGroups, int numMaxSprites) {
 	_varNumSpriteGroups = numGroups;
 	_numSpritesToProcess = 0;
 	_varNumSprites = numSprites;
@@ -1052,7 +1052,7 @@ void Sprite::spritesAllocTables(int numSprites, int numGroups, int numMaxSprites
 	_activeSpritesTable = (SpriteInfo **)malloc((_varNumSprites + 1) * sizeof(SpriteInfo *));
 }
 
-void Sprite::spritesResetGroup(int spriteGroupId) {
+void Sprite::resetGroup(int spriteGroupId) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 	SpriteGroup *spg = &_spriteGroups[spriteGroupId];
 
@@ -1070,11 +1070,11 @@ void Sprite::spritesResetGroup(int spriteGroupId) {
 	spg->scale_y_ratio_div = 1;
 }
 
-void Sprite::spritesResetTables(bool refreshScreen) {
+void Sprite::resetTables(bool refreshScreen) {
 	memset(_spriteTable, 0, (_varNumSprites + 1) * sizeof(SpriteInfo));
 	memset(_spriteGroups, 0, (_varNumSpriteGroups + 1) * sizeof(SpriteGroup));
 	for (int curGrp = 1; curGrp < _varNumSpriteGroups; ++curGrp)
-		spritesResetGroup(curGrp);
+		resetGroup(curGrp);
 
 	if (refreshScreen) {
 		_vm->gdi.copyVirtScreenBuffers(Common::Rect(_vm->_screenWidth, _vm->_screenHeight));
@@ -1082,7 +1082,7 @@ void Sprite::spritesResetTables(bool refreshScreen) {
 	_numSpritesToProcess = 0;
 }
 
-void Sprite::spritesBlitToScreen() {
+void Sprite::resetBackground() {
 	int xmin, xmax, ymin, ymax;
 	xmin = ymin = 1234;
 	xmax = ymax = -1234; 
@@ -1128,7 +1128,7 @@ void Sprite::spritesBlitToScreen() {
 	}
 }
 
-void Sprite::spritesMarkDirty(bool checkZOrder) {
+void Sprite::setRedrawFlags(bool checkZOrder) {
 	VirtScreen *vs = &_vm->virtscr[kMainVirtScreen];
 	for (int i = 0; i < _numSpritesToProcess; ++i) {
 		SpriteInfo *spi = _activeSpritesTable[i];
@@ -1157,7 +1157,7 @@ void Sprite::spritesMarkDirty(bool checkZOrder) {
 	}
 }
 
-void Sprite::spritesUpdateImages() {
+void Sprite::updateImages() {
 	for (int i = 0; i < _numSpritesToProcess; ++i) {
 		SpriteInfo *spi = _activeSpritesTable[i];
 		if (spi->dx || spi->dy) {
@@ -1202,7 +1202,7 @@ static int compareSprTable(const void *a, const void *b) {
 	return 0;
 }
 
-void Sprite::spritesSortActiveSprites() {
+void Sprite::sortActiveSprites() {
 	int groupZorder;
 
 	_numSpritesToProcess = 0;
@@ -1238,7 +1238,7 @@ void Sprite::spritesSortActiveSprites() {
 	qsort(_activeSpritesTable, _numSpritesToProcess, sizeof(SpriteInfo *), compareSprTable);
 }
 
-void Sprite::spritesProcessWiz(bool arg) {
+void Sprite::processImages(bool arg) {
 	int spr_flags;
 	int16 spr_wiz_x, spr_wiz_y;
 	int resId, resState;

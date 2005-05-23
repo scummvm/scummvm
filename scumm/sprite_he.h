@@ -113,11 +113,11 @@ public:
 	int32 _varMaxSprites;
 
 	void saveOrLoadSpriteData(Serializer *s, uint32 savegameVersion);
-	void spritesBlitToScreen();
-	void spritesMarkDirty(bool checkZOrder);
-	void spritesSortActiveSprites();
-	void spritesProcessWiz(bool arg);
-	void spritesUpdateImages();
+	void resetBackground();
+	void setRedrawFlags(bool checkZOrder);
+	void sortActiveSprites();
+	void processImages(bool arg);
+	void updateImages();
 
 	void getSpriteBounds(int spriteId, bool checkGroup, Common::Rect &bound);
 	int findSpriteWithClassOf(int x, int y, int spriteGroupId, int d, int num, int *args);
@@ -206,10 +206,10 @@ public:
 	void setGroupScale_y_ratio_div(int spriteGroupId, int value);
 	void setGroupflagClipBoxAnd(int spriteGroupId);
 
-	void spritesAllocTables(int numSprites, int numGroups, int numMaxSprites);
-	void spritesResetGroup(int spriteGroupId);
-	void spritesResetTables(bool refreshScreen);
-	void spriteAddImageToList(int spriteId, int imageNum, int *spriteIdptr);
+	void allocTables(int numSprites, int numGroups, int numMaxSprites);
+	void resetGroup(int spriteGroupId);
+	void resetTables(bool refreshScreen);
+	void addImageToList(int spriteId, int imageNum, int *spriteIdptr);
 private:
 	ScummEngine_v90he *_vm;
 };

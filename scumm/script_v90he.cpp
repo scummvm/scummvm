@@ -1242,7 +1242,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			_sprite->spriteAddImageToList(spriteId, 1, &args[0]);
+			_sprite->addImageToList(spriteId, 1, &args[0]);
 		break;
 	case 31:
 		args[1] = pop();
@@ -1392,7 +1392,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			_sprite->setSpriteField80(spriteId, args[0]);
 		break;
 	case 124:
-		_sprite->spritesResetTables(true);
+		_sprite->resetTables(true);
 		break;
 	case 164:
 		args[1] = pop();
@@ -1650,7 +1650,7 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 		if (!_curSpriteGroupId)
 			break;
 
-		_sprite->spritesResetGroup(_curSpriteGroupId);
+		_sprite->resetGroup(_curSpriteGroupId);
 		break;
 	default:
 		error("o90_setSpriteGroupInfo: Unknown case %d", subOp);

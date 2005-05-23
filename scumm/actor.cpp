@@ -1022,8 +1022,8 @@ void ScummEngine_v71he::processActors() {
 void ScummEngine_v90he::processActors() {
 	preProcessAuxQueue();
 
-	_sprite->spritesMarkDirty(false);
-	_sprite->spritesProcessWiz(true);
+	_sprite->setRedrawFlags(false);
+	_sprite->processImages(true);
 
 	if (!_skipProcessActors)
 		ScummEngine::processActors();
@@ -1032,8 +1032,8 @@ void ScummEngine_v90he::processActors() {
 
 	postProcessAuxQueue();
 
-	_sprite->spritesMarkDirty(true);
-	_sprite->spritesProcessWiz(false);
+	_sprite->setRedrawFlags(true);
+	_sprite->processImages(false);
 }
 #endif
 

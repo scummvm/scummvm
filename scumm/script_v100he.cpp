@@ -981,7 +981,7 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 		if (!_curSpriteGroupId)
 			break;
 
-		_sprite->spritesResetGroup(_curSpriteGroupId);
+		_sprite->resetGroup(_curSpriteGroupId);
 		break;
 	case 54:
 		// dummy case
@@ -1816,7 +1816,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			_sprite->spriteAddImageToList(spriteId, 1, &args[0]);
+			_sprite->addImageToList(spriteId, 1, &args[0]);
 		break;
 	case 48:
 		args[0] = pop();
@@ -1919,7 +1919,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			}
 		break;
 	case 61:
-		_sprite->spritesResetTables(true);
+		_sprite->resetTables(true);
 		break;
 	case 65:
 		args[0] = pop();
