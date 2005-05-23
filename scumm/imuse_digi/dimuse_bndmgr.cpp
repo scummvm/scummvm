@@ -71,9 +71,9 @@ int BundleDirCache::matchFile(const char *filename) {
 	}
 
 	if (!found) {
-		Common::File file;
+		ScummFile file;
 
-		if (file.open(filename) == false) {
+		if (g_scumm->openFile(file, filename) == false) {
 			error("BundleDirCache::matchFile() Can't open bundle file: %s", filename);
 			return false;
 		}
@@ -152,8 +152,8 @@ bool BundleMgr::open(const char *filename, bool &compressed) {
 	if (_file.isOpen())
 		return true;
 
-	if (_file.open(filename) == false) {
-		error("BundleMgr::openFile() Can't open bundle file: %s", filename);
+	if (g_scumm->openFile(_file, filename) == false) {
+		error("BundleMgr::open() Can't open bundle file: %s", filename);
 		return false;
 	}
 

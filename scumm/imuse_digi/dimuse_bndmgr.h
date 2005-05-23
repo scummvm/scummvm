@@ -23,6 +23,7 @@
 
 #include "common/scummsys.h"
 #include "common/file.h"
+#include "scumm/util.h"
 
 namespace Scumm {
 
@@ -67,7 +68,7 @@ private:
 	int _numFiles;
 	int _numCompItems;
 	int _curSample;
-	Common::File _file;
+	ScummFile _file;
 	bool _compTableLoaded;
 	int _fileBundleId;
 	byte _compOutput[0x2000];
