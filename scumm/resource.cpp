@@ -889,6 +889,8 @@ bool ScummEngine::isResourceInUse(int type, int i) const {
 	switch (type) {
 	case rtRoom:
 		return _roomResource == (byte)i;
+	case rtRoomImage:
+		return _roomResource == (byte)i;
 	case rtRoomScripts:
 		return _roomResource == (byte)i;
 	case rtScript:
