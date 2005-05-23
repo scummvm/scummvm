@@ -48,8 +48,6 @@ struct SaveGameHeader {
 	char name[SAVE_TITLE_SIZE];
 };
 
-static char emptySlot[] = "[New Save Game]";
-
 //TODO: 
 // - delete savegame
 
