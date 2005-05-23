@@ -16,15 +16,15 @@ The ScummVM team:
        Chris Apers           - Port: PalmOS
        Nicolas Bacca         - Port: PocketPC/WinCE
        Marcus Comstedt       - Port: Dreamcast
-       Ruediger Hanke        - Port: MorphOS
-       Jamieson Christian    - iMUSE, MIDI, all things musical
+       Hans-Jorg Frieden     - Port: AmigaOS 4
        Jerome Fisher         - MT-32 emulator
        Jochen Hoenicke       - Speaker & PCjr sound support, Adlib work
-       Hans-Jorg Frieden     - Port: AmigaOS 4
 
 Retired Team Members:
        Ralph Brorsen         - Help with GUI implementation
+       Jamieson Christian    - iMUSE, MIDI, all things musical
        Vincent Hamm          - Co-Founder
+       Ruediger Hanke        - Port: MorphOS
        Felix Jakschitsch     - Zak256 reverse engineering
        Mutwin Kraus          - Original MacOS porter
        Peter Moraliyski      - Port: GP32
@@ -41,6 +41,7 @@ Contributors:
        Robert Kelsen         - Packaging for SlackWare
        Claudio Matsuoka      - Daily Linux builds
        Mikesch Nepomuk       - MI1 VGA floppy patches
+       Juha Niemimaki        - AmigaOS 4 port maintaining
        Nicolas Noble         - Config file and ALSA support
        Willem Jan Palenstijn - Packaging for Fedora/RedHat
        Stefan Parviainen     - Packaging for BeOS
@@ -54,7 +55,6 @@ Contributors:
        Johannes Schickel     - Thumbnails for ScummEngine
        Andre Souza           - SDL-based OpenGL renderer
        Tim ???               - Initial MI1 CD music support
-       Juha Niemimaki        - AmigaOS 4 port maintaining
 
        And to all the contributors, users, and beta testers we've missed.
        Thanks!

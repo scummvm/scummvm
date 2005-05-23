@@ -312,6 +312,8 @@ sub add_paragraph {
 
 #
 # Now follows the actual credits data! The format should be clear, I hope.
+# Note that people are sorted by their last name in most cases; in the
+# 'Team' section, they are first grouped by category (Engine; porter; misc).
 #
 
 begin_credits("Credits");
@@ -332,17 +334,17 @@ begin_credits("Credits");
 	add_person("Chris Apers", "chrilith ", "Port: PalmOS");
 	add_person("Nicolas Bacca", "arisme", "Port: PocketPC/WinCE");
 	add_person("Marcus Comstedt", "", "Port: Dreamcast");
-	add_person("Ruediger Hanke", "", "Port: MorphOS");
-	add_person("Jamieson Christian", "jamieson630", "iMUSE, MIDI, all things musical");
+	add_person("Hans-J&ouml;rg Frieden", "", "Port: AmigaOS 4");
 	add_person("Jerome Fisher", "KingGuppy", "MT-32 emulator");
 	add_person("Jochen Hoenicke", "hoenicke", "Speaker &amp; PCjr sound support, Adlib work");
-	add_person("Hans-J&ouml;rg Frieden", "", "Port: AmigaOS 4");
   end_section();
 
 
   begin_section("Retired Team Members");
 	add_person("Ralph Brorsen", "painelf", "Help with GUI implementation");
+	add_person("Jamieson Christian", "jamieson630", "iMUSE, MIDI, all things musical");
 	add_person('Vincent Hamm', 'yazoo', "Co-Founder");
+	add_person("Ruediger Hanke", "", "Port: MorphOS");
 	add_person("Felix Jakschitsch", "yot", "Zak256 reverse engineering");
 	add_person("Mutwin Kraus", "mutle", "Original MacOS porter");
 	add_person("Peter Moraliyski", "ph0x", "Port: GP32");
@@ -361,6 +363,7 @@ begin_credits("Credits");
 	add_person("Robert Kelsen", "", "Packaging for SlackWare");
 	add_person("Claudio Matsuoka", "", 'Daily Linux builds');
 	add_person("Mikesch Nepomuk", "", "MI1 VGA floppy patches");
+	add_person("Juha Niemim&auml;ki", "", "AmigaOS 4 port maintaining");
 	add_person("Nicolas Noble", "pixels", "Config file and ALSA support");
 	add_person("Willem Jan Palenstijn", "wjp", "Packaging for Fedora/RedHat");
 	add_person("Stefan Parviainen", "", "Packaging for BeOS");
@@ -371,7 +374,6 @@ begin_credits("Credits");
 	add_person("Johannes Schickel", "LordHoto", "Thumbnails for ScummEngine");
 	add_person("Andr&eacute; Souza", "", "SDL-based OpenGL renderer");
 	add_person("Tim ???", "realmz", "Initial MI1 CD music support");
-	add_person("Juha Niemim&auml;ki", "", "AmigaOS 4 port maintaining");
   end_section();
 
 
