@@ -1449,6 +1449,7 @@ int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm) {
 		MKLINE(IMuseInternal, _queue_cleared, sleByte, VER(8)),
 		MKLINE(IMuseInternal, _master_volume, sleByte, VER(8)),
 		MKLINE(IMuseInternal, _trigger_count, sleUint16, VER(8)),
+		MKLINE(IMuseInternal, _snm_trigger_index, sleUint16, VER(54)),
 		MKARRAY(IMuseInternal, _channel_volume[0], sleUint16, 8, VER(8)),
 		MKARRAY(IMuseInternal, _volchan_table[0], sleUint16, 8, VER(8)),
 		MKEND()
@@ -1470,6 +1471,14 @@ int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm) {
 		MK_OBSOLETE(VolumeFader, direction, sleInt8, VER(8), VER(16)),
 		MK_OBSOLETE(VolumeFader, speed_lo, sleInt8, VER(8), VER(16)),
 		MK_OBSOLETE(VolumeFader, speed_lo_counter, sleUint16, VER(8), VER(16)),
+		MKEND()
+	};
+
+	const SaveLoadEntry snmTriggerEntries[] = {
+		MKLINE(ImTrigger, sound, sleInt16, VER(54)),
+		MKLINE(ImTrigger, id, sleByte, VER(54)),
+		MKLINE(ImTrigger, expire, sleUint16, VER(54)),
+		MKARRAY(ImTrigger, command[0], sleUint16, 8, VER(54)),
 		MKEND()
 	};
 
@@ -1503,7 +1512,8 @@ int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm) {
 	ser->_load_ref = loadReference;
 
 	ser->saveLoadEntries(this, mainEntries);
-	ser->saveLoadArrayOf (_cmd_queue, ARRAYSIZE(_cmd_queue), sizeof(_cmd_queue[0]), cmdQueueEntries);
+	ser->saveLoadArrayOf(_cmd_queue, ARRAYSIZE(_cmd_queue), sizeof(_cmd_queue[0]), cmdQueueEntries);
+	ser->saveLoadArrayOf(_snm_triggers, ARRAYSIZE(_snm_triggers), sizeof(_snm_triggers[0]), snmTriggerEntries); 
 
 	// The players
 	for (i = 0; i < ARRAYSIZE(_players); ++i)
