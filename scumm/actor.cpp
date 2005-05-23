@@ -935,45 +935,6 @@ Actor *ScummEngine::derefActorSafe(int id, const char *errmsg) const {
 	return &_actors[id];
 }
 
-static int compareDrawOrder(const void* a, const void* b)
-{
-	const Actor* actor1 = *(const Actor *const*)a;
-	const Actor* actor2 = *(const Actor *const*)b;
-	int diff;
-
-	// The actor in the higher layer is ordered lower
-	diff = actor1->_layer - actor2->_layer;
-	if (diff < 0)
-		return +1;
-	if (diff > 0)
-		return -1;
-
-	// The actor with higher y value is ordered higher
-	diff = actor1->_pos.y - actor2->_pos.y;
-	if (diff < 0)
-		return -1;
-	if (diff > 0)
-		return +1;
-
-	// FIXME: This hack works around bug #775097. It's probably wrong, though :-/
-	// Would be interesting if somebody could check the disassembly (see also the
-	// comment on the above mentioned tracker item).
-	if (g_scumm->_gameId == GID_TENTACLE) {
-		diff = actor1->_forceClip - actor2->_forceClip;
-		if (diff < 0)
-			return -1;
-		if (diff > 0)
-			return +1;
-	}
-
-	// The qsort() function is not guaranteed to be stable (i.e. it may
-	// re-order "equal" elements in an array it sorts). Hence we use the
-	// actor number as tie-breaker. This is needed for the Sam & Max intro,
-	// and possibly other cases as well. See bug #758167.
-
-	return actor1->_number - actor2->_number;
-}
-
 void ScummEngine::processActors() {
 	int numactors = 0;
 
@@ -981,26 +942,47 @@ void ScummEngine::processActors() {
 	for (int i = 1; i < _numActors; i++) {
 		if (_version == 8 && _actors[i]._layer < 0)
 			continue;
-		if (_actors[i].isInCurrentRoom() && _actors[i]._costume)
+		if (_actors[i].isInCurrentRoom()) {
 			_sortedActors[numactors++] = &_actors[i];
+		}
 	}
 	if (!numactors) {
 		return;
 	}
 
-	// Sort actors by position before we draw them (to ensure that actors in
+	// Sort actors by position before drawing them (to ensure that actors in
 	// front are drawn after those "behind" them).
-	qsort(_sortedActors, numactors, sizeof (Actor*), compareDrawOrder);
-
-	Actor** end = _sortedActors + numactors;
+	// Note: This algorithm works exactly the way the original engine did.
+	// Please resist any urge to 'optimize' this. Many of the games rely on the
+	// quirks of this particular sorting algorithm, and since we are dealing
+	// with far less than 100 objects being sorted here, any 'optimization'
+	// wouldn't yield a useful gain anyway.
+	// In particular, changing this loop caused a number of bugs in the past,
+	// including bugs #758167, #775097, and #1093867.
+	for (int j = 0; j < numactors; ++j) {
+		for (int i = 0; i < numactors; ++i) {
+			int sc_actor1 = _sortedActors[j]->_pos.y - _sortedActors[j]->_layer * 2000;
+			int sc_actor2 = _sortedActors[i]->_pos.y - _sortedActors[i]->_layer * 2000;
+			if (sc_actor1 < sc_actor2) {
+				SWAP(_sortedActors[i], _sortedActors[j]);
+			}
+		}
+	}
 
 	// Finally draw the now sorted actors
+	Actor** end = _sortedActors + numactors;
 	for (Actor** ac = _sortedActors; ac != end; ++ac) {
 		Actor* a = *ac;
-		CHECK_HEAP
-		a->drawActorCostume();
-		CHECK_HEAP
-		a->animateCostume();
+		// Draw and animate the actors, except those w/o a costume.
+		// Note: We could 'optimize' this a little bit by only putting actors
+		// with a costume into the _sortedActors array in the first place.
+		// However, that would mess up the sorting, and would hence cause
+		// regressions. See also the other big comment further up in this
+		// method for some details.
+		if (a->_costume) {
+			a->drawActorCostume();
+			a->animateCostume();
+		}
 	}
 	
 	if (_features & GF_NEW_COSTUMES)
