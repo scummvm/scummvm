@@ -1783,13 +1783,6 @@ void Actor::walkActorOld() {
 			return;
 
 		setBox(_walkdata.destbox);
-
-		// FIXME: Ender added this recursion counter as a hack around
-		//        a infinite loop in Maniac V1 - see bug #862245
-		if (loopCtr > 100) {
-			_moving |= MF_LAST_LEG;
-			return;
-		}
 	} while (1);
 
 	_moving |= MF_LAST_LEG;
