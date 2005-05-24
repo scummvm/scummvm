@@ -659,9 +659,6 @@ void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale
 }
 
 void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor) {
-	if (_roomResource == 0) // FIXME - HACK to get COMI demo working
-		return;
-
 	int max;
 	if (_version >= 5 && _version <= 6 && _heversion <= 60) {
 		max = 252;
