@@ -212,6 +212,9 @@ Full Throttle
 	-	All?	ru	55e4cc866ff9046824e1c638ba2b8c7f	ft	sev
 	-	All?	it	55518cd73cf9c6d23ea29c51ee06bdfe	ft	delfino
 	-	All?	fr	4bedb49943df95a9c900a5a82ccbe9de	ft	cyx
+	
+	-	Mac	en	fe381e45117878b1e942cb876b050fd6	ft	fingolfin
+	-	Mac	de	04401d747f1a2c1c4b388daff71ed378	ft	fingolfin
 
 	Demo	DOS	en	32a433dea56b86a55b59e4ff7d755711	ftpcdemo
 	Demo	Mac	en	9d7b67be003fea60be4dcbd193611936	ftdemo
@@ -220,6 +223,9 @@ The Dig
 	-	All	All	d8323015ecb8b10bf53474f6e6b0ae33	dig
 	-	All	ru	d62047a6729349ab36f7ee065bf26509	dig	sev
 	Demo	All	en	362c1d281fb9899254cda66ad246c66a	digdemo
+	
+	-	Mac	en	35a2d3040fa512f8232d9e443319d84d	dig	fingolfin
+	Demo	Mac	en	cd9c05e755d7bf8e9b9590ad1ebe273e	digdemo	fingolfin
 
 Curse of Monkey Island
 	-	All	All	fe60d6b5ff51b0553ac59963123b5777	comi
