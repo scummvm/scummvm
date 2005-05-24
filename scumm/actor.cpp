@@ -1688,7 +1688,7 @@ void Actor::walkActorV12() {
 
 void Actor::walkActorOld() {
 	Common::Point p2, p3;	// Gate locations
-	int new_dir, next_box, loopCtr = 0;
+	int new_dir, next_box;
 
 	if (!_moving)
 		return;
@@ -1726,8 +1726,6 @@ void Actor::walkActorOld() {
 
 	_moving &= ~MF_NEW_LEG;
 	do {
-		loopCtr++;
-
 		if (_walkbox == kInvalidBox) {
 			setBox(_walkdata.destbox);
 			_walkdata.curbox = _walkdata.destbox;
