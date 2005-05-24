@@ -336,7 +336,12 @@ void ScummEngine::redrawVerbs() {
 	if (_cursor.state > 0)
 		verb = findVerbAtPos(_mouse.x, _mouse.y);
 
-	for (i = _numVerbs-1; i >= 0; i--) {
+	// Iterate over all verbs.
+	// Note: This is the correct order (at least for MI EGA, MI2, Full Throttle).
+	// Do not change it! If you discover, based on disasm, that some game uses
+	// another (e.g. the reverse) order here, you have to use an if/else construct
+	// to add it as a special case!
+	for (i = 0; i < _numVerbs; i++) {
 		if (i == verb && _verbs[verb].hicolor)
 			drawVerb(i, 1);
 		else
