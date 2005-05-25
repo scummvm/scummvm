@@ -469,8 +469,6 @@ void ClassicCostumeRenderer::proc3(Codec1 &v1) {
 				masked = (y < 0 || y >= _out.h) || (v1.mask_ptr && (mask[0] & maskbit));
 				
 				if (color && !masked) {
-					// FIXME: Fully implement _shadow_mode.in Sam & Max
-					// For now, it's enough for transparency.
 					if (_shadow_mode & 0x20) {
 						pcolor = _shadow_table[*dst];
 					} else {
