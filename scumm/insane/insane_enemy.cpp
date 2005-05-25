@@ -436,7 +436,7 @@ int32 Insane::enemy2handler(int32 actor1, int32 actor2, int32 probability) {
 			_enHdlVar[EN_ROTT3][2] = _vm->_rnd.getRandomNumber(probability * 2 - 1);
 		}
 
-		dist = abs(act1x - act2x);
+		dist = ABS(act1x - act2x);
 
 		if (_enHdlVar[EN_ROTT3][3] > _enHdlVar[EN_ROTT3][4]) {
 			if (_enHdlVar[EN_ROTT3][0] == 1) {

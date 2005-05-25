@@ -2425,8 +2425,8 @@ void ScummEngine_v6::o6_dim2dimArray() {
 }
 
 void ScummEngine_v6::o6_abs() {
-	int a = pop();	// palmos: prevent multi pop if we use an abs function defined as : #define abs(a) ((a) < 0 ? -(a) : (a))
-	push(abs(a));
+	int a = pop();
+	push(ABS(a));
 }
 
 void ScummEngine_v6::o6_distObjectObject() {

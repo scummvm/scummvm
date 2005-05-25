@@ -176,7 +176,7 @@ int ScummEngine::getAngleFromPos(int x, int y) const {
 		double temp = atan2((double)x, (double)-y);
 		return normalizeAngle((int)(temp * 180 / 3.1415926535));
 	} else {
-		if (abs(y) * 2 < abs(x)) {
+		if (ABS(y) * 2 < ABS(x)) {
 			if (x > 0)
 				return 90;
 			return 270;
@@ -210,7 +210,7 @@ int Actor::calcMovementFactor(const Common::Point& next) {
 		deltaYFactor = 0;
 	}
 
-	if ((uint) abs((int)(deltaXFactor >> 16)) > _speedx) {
+	if ((uint) ABS((int)(deltaXFactor >> 16)) > _speedx) {
 		deltaXFactor = _speedx << 16;
 		if (diffX < 0)
 			deltaXFactor = -deltaXFactor;
@@ -349,7 +349,7 @@ int Actor::updateActorDirection(bool is_walking) {
 
 		// Turn left or right, depending on which is shorter.
 		int diff = to - from;
-		if (abs(diff) > (num >> 1))
+		if (ABS(diff) > (num >> 1))
 			diff = -diff;
 
 		if (diff > 0) {
@@ -391,10 +391,10 @@ int Actor::actorWalkStep() {
 		setBox(_walkdata.curbox);
 	}
 
-	distX = abs(_walkdata.next.x - _walkdata.cur.x);
-	distY = abs(_walkdata.next.y - _walkdata.cur.y);
+	distX = ABS(_walkdata.next.x - _walkdata.cur.x);
+	distY = ABS(_walkdata.next.y - _walkdata.cur.y);
 
-	if (abs(_actorPos.x - _walkdata.cur.x) >= distX && abs(_actorPos.y - _walkdata.cur.y) >= distY) {
+	if (ABS(_actorPos.x - _walkdata.cur.x) >= distX && ABS(_actorPos.y - _walkdata.cur.y) >= distY) {
 		_moving &= ~MF_IN_LEG;
 		return 0;
 	}
@@ -407,11 +407,11 @@ int Actor::actorWalkStep() {
 	_walkdata.yfrac = (uint16)tmpY;
 	_actorPos.y = (tmpY >> 16);
 
-	if (abs(_actorPos.x - _walkdata.cur.x) > distX) {
+	if (ABS(_actorPos.x - _walkdata.cur.x) > distX) {
 		_actorPos.x = _walkdata.next.x;
 	}
 
-	if (abs(_actorPos.y - _walkdata.cur.y) > distY) {
+	if (ABS(_actorPos.y - _walkdata.cur.y) > distY) {
 		_actorPos.y = _walkdata.next.y;
 	}
 

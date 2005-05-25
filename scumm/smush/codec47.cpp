@@ -215,8 +215,8 @@ void Codec47Decoder::makeTablesInterpolation(int param) {
 			
 			memset(tableSmallBig, 0, param * param * 4);
 
-			variable2 = abs(value_table47_2_2 - value_table47_2_1);
-			tmp = abs(value_table47_1_2 - value_table47_1_1);
+			variable2 = ABS(value_table47_2_2 - value_table47_2_1);
+			tmp = ABS(value_table47_1_2 - value_table47_1_1);
 			if (variable2 <= tmp) {
 				variable2 = tmp;
 			}
