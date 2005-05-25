@@ -1292,6 +1292,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 	uint32 pos, total_size, size, tag, basetag, max_total_size;
 	int pri, best_pri;
 	uint32 best_size = 0, best_offs = 0;
+	byte *ptr;
 
 	debugC(DEBUG_RESOURCE, "readSoundResource(%d)", idx);
 
@@ -1304,13 +1305,16 @@ int ScummEngine::readSoundResource(int type, int idx) {
 
 	debugC(DEBUG_RESOURCE, "  basetag: %s, total_size=%d", tag2str(TO_BE_32(basetag)), total_size);
 
-	if (basetag == MKID('MIDI') || basetag == MKID('iMUS')) {
+	switch (basetag) {
+	case MKID('MIDI'):
+	case MKID('iMUS'):
 		if (_midiDriver != MD_PCSPK && _midiDriver != MD_PCJR) {
 			_fileHandle->seek(-8, SEEK_CUR);
 			_fileHandle->read(res.createResource(type, idx, total_size + 8), total_size + 8);
 			return 1;
 		}
-	} else if (basetag == MKID('SOU ')) {
+		break;
+	case MKID('SOU '):
 		best_pri = -1;
 		while (pos < total_size) {
 			tag = fileReadDword();
@@ -1342,7 +1346,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 			case MKID('GMD '):
 				pri = 4;
 				break;
-			case MKID('MAC '):
+			case MKID('MAC '):	// Occurs in Mac MI2, FOA
 				pri = 2;
 				break;
 			case MKID('SPK '):
@@ -1369,44 +1373,33 @@ int ScummEngine::readSoundResource(int type, int idx) {
 
 		if (best_pri != -1) {
 			_fileHandle->seek(best_offs - 8, SEEK_SET);
-			_fileHandle->read(res.createResource(type, idx, best_size), best_size);
+			ptr = res.createResource(type, idx, best_size);
+			_fileHandle->read(ptr, best_size);
 			return 1;
 		}
-	} else if (basetag == MKID('Mac0')) {
+		break;
+	case MKID('Mac0'):
 		_fileHandle->seek(-12, SEEK_CUR);
 		total_size = _fileHandle->readUint32BE() - 8;
-		byte *ptr = (byte *)calloc(total_size, 1);
+		ptr = (byte *)calloc(total_size, 1);
 		_fileHandle->read(ptr, total_size);
 //		dumpResource("sound-", idx, ptr);
 		convertMac0Resource(type, idx, ptr, total_size);
 		free(ptr);
 		return 1;
-	} else if (basetag == MKID('Mac1')) {
+
+	case MKID('Mac1'):
+	case MKID('RIFF'):
+	case MKID('HSHD'):
+	case MKID('TALK'):
+	case MKID('DIGI'):
+	case MKID('Crea'):
 		_fileHandle->seek(-12, SEEK_CUR);
 		total_size = _fileHandle->readUint32BE();
 		_fileHandle->read(res.createResource(type, idx, total_size), total_size - 8);
 		return 1;
-	} else if (basetag == MKID('RIFF')) {
-		_fileHandle->seek(-12, SEEK_CUR);
-		total_size = _fileHandle->readUint32BE();
-		_fileHandle->read(res.createResource(type, idx, total_size), total_size - 8);
-		return 1;
-	} else if (basetag == MKID('HSHD')) {
-		_fileHandle->seek(-12, SEEK_CUR);
-		total_size = _fileHandle->readUint32BE();
-		_fileHandle->read(res.createResource(type, idx, total_size), total_size - 8);
-		return 1;
-	} else if (basetag == MKID('TALK')) {
-		_fileHandle->seek(-12, SEEK_CUR);
-		total_size = _fileHandle->readUint32BE();
-		_fileHandle->read(res.createResource(type, idx, total_size), total_size - 8);
-		return 1;
-	} else if (basetag == MKID('DIGI')) {
-		_fileHandle->seek(-12, SEEK_CUR);
-		total_size = _fileHandle->readUint32BE();
-		_fileHandle->read(res.createResource(type, idx, total_size), total_size - 8);
-		return 1;
-	} else if (basetag == MKID('FMUS')) {
+
+	case MKID('FMUS'): {
 		// Used in 3DO version of puttputt joins the parade and probably others
 		// Specifies a separate file to be used for music from what I gather.
 		int tmpsize;
@@ -1440,19 +1433,17 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		dmuFile.seek(-8, SEEK_CUR);
 		dmuFile.read(res.createResource(type, idx, total_size), total_size);
 		dmuFile.close();
+		}
 		return 1;
-	} else if (basetag == MKID('Crea')) {
-		_fileHandle->seek(-12, SEEK_CUR);
-		total_size = _fileHandle->readUint32BE();
-		_fileHandle->read(res.createResource(type, idx, total_size), total_size - 8);
-		return 1;
-	} else if (FROM_LE_32(basetag) == max_total_size) {
-		_fileHandle->seek(-12, SEEK_CUR);
-		total_size = _fileHandle->readUint32BE();
-		_fileHandle->seek(-8, SEEK_CUR);
-		_fileHandle->read(res.createResource(type, idx, total_size), total_size);
-		return 1;
-	} else {
+
+	default:
+		if (FROM_LE_32(basetag) == max_total_size) {
+			_fileHandle->seek(-12, SEEK_CUR);
+			total_size = _fileHandle->readUint32BE();
+			_fileHandle->seek(-8, SEEK_CUR);
+			_fileHandle->read(res.createResource(type, idx, total_size), total_size);
+			return 1;
+		}
 		warning("Unrecognized base tag 0x%08x in sound %d", basetag, idx);
 	}
 	res.roomoffs[type][idx] = 0xFFFFFFFF;

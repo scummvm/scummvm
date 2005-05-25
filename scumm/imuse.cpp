@@ -128,6 +128,8 @@ bool IMuseInternal::isMT32(int sound) {
 
 	case MKID('AMI '):
 	case MKID('ROL '):
+		return true;
+
 	case MKID('MAC '):
 		return true;
 
@@ -163,9 +165,11 @@ bool IMuseInternal::isMIDI(int sound) {
 	case MKID('ASFX'): // Special AD class for old Adlib sound effects
 	case MKID('SPK '):
 		return false;
-		return false;
+
 	case MKID('AMI '):
 	case MKID('ROL '):
+		return true;
+
 	case MKID('MAC '):
 		return true;
 

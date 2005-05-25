@@ -414,7 +414,7 @@ void Player::sysEx(byte *p, uint16 len) {
 				part->set_onoff(p[2] & 0x01);
 				part->set_pri (p[4]);
 				part->volume((p[5] & 0x0F) << 4 |(p[6] & 0x0F));
-				part->_percussion = _isMIDI ?((p[9] & 0x08) > 0) : false;
+				part->_percussion = _isMIDI ? ((p[9] & 0x08) > 0) : false;
 				if (part->_percussion) {
 					if (part->_mc) {
 						part->off();
@@ -469,7 +469,7 @@ void Player::sysEx(byte *p, uint16 len) {
 				part->set_instrument((byte *) buf);
 			} else {
 				// SPK tracks have len == 49 here, and are not supported
-				part->programChange(254); // Must be invalid, but not 255(which is reserved)
+				part->programChange(254); // Must be invalid, but not 255 (which is reserved)
 			}
 		}
 		break;

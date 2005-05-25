@@ -134,7 +134,11 @@ public:
 	void saveOrLoad (Serializer *s);
 	void send (MidiChannel *mc);
 	void copy_to (Instrument *dest) { dest->program (_program, _mt32); }
-	bool is_valid() { return (_program < 128) && ((_native_mt32 == _mt32) || _native_mt32 ? (MidiDriver::_gmToMt32[_program] < 128) : (MidiDriver::_mt32ToGm[_program] < 128)); }
+	bool is_valid() {
+		return (_program < 128) &&
+			((_native_mt32 == _mt32) || _native_mt32
+				? (MidiDriver::_gmToMt32[_program] < 128)
+				: (MidiDriver::_mt32ToGm[_program] < 128)); }
 };
 
 class Instrument_Adlib : public InstrumentInternal {
