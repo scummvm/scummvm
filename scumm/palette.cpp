@@ -579,30 +579,18 @@ void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale
 	byte *table = _shadowPalette + start;
 	int i;
 
-	// This is a correction of the patch supplied for BUG #588501.
-	// It has been tested in all four known rooms where unkRoomFunc3 is used:
+	// This is an implementation based on the original games code.
+	//
+	// The four known rooms where setupShadowPalette is used in atlantis are:
 	//
 	// 1) FOA Room 53: subway departing Knossos for Atlantis.
 	// 2) FOA Room 48: subway crashing into the Atlantis entrance area
 	// 3) FOA Room 82: boat/sub shadows while diving near Thera
 	// 4) FOA Room 23: the big machine room inside Atlantis
 	//
-	// The implementation behaves well in all tests.
-	// Pixel comparisons show that the resulting palette entries being
-	// derived from the shadow palette generated here occassionally differ
-	// slightly from the ones derived in the LEC executable.
-	// Not sure yet why, but the differences are VERY minor.
-	//
 	// There seems to be no explanation for why this function is called
 	// from within Room 23 (the big machine), as it has no shadow effects
 	// and thus doesn't result in any visual differences.
-
-	int max;
-	if (_version >= 5 && _version <= 6) {
-		max = 252;
-	} else {
-		max = 255;
-	}
 
 	if (_gameId == GID_SAMNMAX) {
 		for (i = 0; i < 256; i++)
