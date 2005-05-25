@@ -32,6 +32,7 @@
 #include "scumm/instrument.h"
 #include "scumm/saveload.h"
 #include "scumm/scumm.h"
+#include "scumm/util.h"
 
 #include "sound/mididrv.h"
 
@@ -95,7 +96,7 @@ byte *IMuseInternal::findStartOfSound(int sound) {
 	ptr += 4;
 
 	// Okay, we're looking for one of those things: either
-	// an 'MThd' tag(for SMF), or a 'FORM' tag(for XMIDI).
+	// an 'MThd' tag (for SMF), or a 'FORM' tag (for XMIDI).
 	size = 48; // Arbitrary; we should find our tag within the first 48 bytes of the resource
 	pos = 0;
 	while (pos < size) {
@@ -122,16 +123,15 @@ bool IMuseInternal::isMT32(int sound) {
 	switch (tag) {
 	case MKID('ADL '):
 	case MKID('ASFX'): // Special AD class for old Adlib sound effects
+	case MKID('SPK '):
 		return false;
+
 	case MKID('AMI '):
-		return true;
 	case MKID('ROL '):
-		return true;
-	case MKID('GMD '):
-		return false;
 	case MKID('MAC '):
 		return true;
-	case MKID('SPK '):
+
+	case MKID('GMD '):
 		return false;
 	}
 
@@ -142,10 +142,12 @@ bool IMuseInternal::isMT32(int sound) {
 	if (ptr[8] == 'S' && ptr[9] == 'O')
 		return false;
 
+	warning("Unknown music type: '%s'", tag2str(tag));
+
 	return false;
 }
 
-bool IMuseInternal::isGM(int sound) {
+bool IMuseInternal::isMIDI(int sound) {
 	byte *ptr = NULL;
 	uint32 tag;
 
@@ -159,19 +161,17 @@ bool IMuseInternal::isGM(int sound) {
 	switch (tag) {
 	case MKID('ADL '):
 	case MKID('ASFX'): // Special AD class for old Adlib sound effects
-		return false;
-	case MKID('AMI '):
-		return true; // Yeah... for our purposes, this is GM
-	case MKID('ROL '):
-		return true; // Yeah... for our purposes, this is GM
-	case MKID('GMD '):
-		return true;
-	case MKID('MIDI'):
-		return true;
-	case MKID('MAC '):
-		return true; // I guess this one too, since it qualifies under isMT32()
 	case MKID('SPK '):
 		return false;
+		return false;
+	case MKID('AMI '):
+	case MKID('ROL '):
+	case MKID('MAC '):
+		return true;
+
+	case MKID('GMD '):
+	case MKID('MIDI'):
+		return true;
 	}
 
 	// Old style 'RO' has equivalent properties to 'ROL'
@@ -182,13 +182,15 @@ bool IMuseInternal::isGM(int sound) {
 	if (ptr[8] == 'S' && ptr[9] == 'O')
 		return true;
 
+	warning("Unknown music type: '%s'", tag2str(tag));
+
 	return false;
 }
 
 MidiDriver *IMuseInternal::getBestMidiDriver(int sound) {
 	MidiDriver *driver = NULL;
 
-	if (isGM(sound)) {
+	if (isMIDI(sound)) {
 		if (_midi_native) {
 			driver = _midi_native;
 		} else {
@@ -1736,7 +1738,7 @@ void Part::init() {
 void Part::setup(Player *player) {
 	_player = player;
 
-	_percussion = (player->isGM() && _chan == 9); // true;
+	_percussion = (player->isMIDI() && _chan == 9); // true;
 	_on = true;
 	_pri_eff = player->getPriority();
 	_pri = 0;

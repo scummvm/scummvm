@@ -79,7 +79,7 @@ Player::Player() :
 	_loop_from_tick(0),
 	_speed(128),
 	_isMT32(false),
-	_isGM(false),
+	_isMIDI(false),
 	_se(0),
 	_vol_chan(0){
 }
@@ -104,7 +104,7 @@ bool Player::startSound(int sound, MidiDriver *midi, bool passThrough) {
 	}
 
 	_isMT32 = _se->isMT32(sound);
-	_isGM = _se->isGM(sound);
+	_isMIDI = _se->isMIDI(sound);
 
 	_parts = NULL;
 	_active = true;
@@ -313,7 +313,7 @@ void Player::send(uint32 b) {
 	case 0xC: // Program Change
 		part = getPart(chan);
 		if (part) {
-			if (_isGM) {
+			if (_isMIDI) {
 				if (param1 < 128)
 					part->programChange(param1);
 			} else {
@@ -414,7 +414,7 @@ void Player::sysEx(byte *p, uint16 len) {
 				part->set_onoff(p[2] & 0x01);
 				part->set_pri (p[4]);
 				part->volume((p[5] & 0x0F) << 4 |(p[6] & 0x0F));
-				part->_percussion = _isGM ?((p[9] & 0x08) > 0) : false;
+				part->_percussion = _isMIDI ?((p[9] & 0x08) > 0) : false;
 				if (part->_percussion) {
 					if (part->_mc) {
 						part->off();
@@ -426,7 +426,7 @@ void Player::sysEx(byte *p, uint16 len) {
 					// 0 is a valid program number. MI2 tests show that in such
 					// cases, a regular program change message always seems to follow
 					// anyway.
-					if (_isGM)
+					if (_isMIDI)
 						part->_instrument.program((p[15] & 0x0F) << 4 |(p[16] & 0x0F), _isMT32);
 					part->sendAll();
 				}
@@ -1144,7 +1144,7 @@ void Player::fixAfterLoad() {
 		if (_parser)
 			_parser->jumpToTick(_music_tick); // start_seq_sound already switched tracks
 		_isMT32 = _se->isMT32(_id);
-		_isGM = _se->isGM(_id);
+		_isMIDI = _se->isMIDI(_id);
 	}
 }
 

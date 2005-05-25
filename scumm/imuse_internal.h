@@ -184,7 +184,7 @@ protected:
 	ParameterFader _parameterFaders[4];
 
 	bool _isMT32;
-	bool _isGM;
+	bool _isMIDI;
 
 protected:
 	// Player part
@@ -239,7 +239,7 @@ public:
 	byte getVolume() const { return _volume; }
 	bool isActive() const { return _active; }
 	bool isFadingOut() const;
-	bool isGM() const { return _isGM; }
+	bool isMIDI() const { return _isMIDI; }
 	bool isMT32() const { return _isMT32; }
 	bool jump(uint track, uint beat, uint tick);
 	void onTimer();
@@ -389,7 +389,7 @@ protected:
 protected:
 	byte *findStartOfSound(int sound);
 	bool isMT32(int sound);
-	bool isGM(int sound);
+	bool isMIDI(int sound);
 	int get_queue_sound_status(int sound) const;
 	void handle_marker(uint id, byte data);
 	int get_channel_volume(uint a);
