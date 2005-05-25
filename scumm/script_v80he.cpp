@@ -609,7 +609,7 @@ void ScummEngine_v80he::o80_drawWizPolygon() {
  * @param step	the step size used to render the line, only ever 'step'th point is drawn
  * @param type	the line type -- points are rendered by drawing actors (type == 2),
  *              wiz images (type == 3), or pixels (any other type)
- * @param id	the (optional) id of an actor or wizimage
+ * @param id	the id of an actor, wizimage or color (low bit) & flag (high bit)
  */
 void ScummEngine_v80he::drawLine(int x1, int y1, int x, int y, int step, int type, int id) {
 	debug(0,"drawLine: x1 %d y1 %d x %d y %d, step %d type %d id %d", x1, y1, x, y, step, type, id);	
