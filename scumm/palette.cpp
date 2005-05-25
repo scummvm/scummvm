@@ -591,7 +591,7 @@ void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale
 	// There seems to be no explanation for why this function is called
 	// from within Room 23 (the big machine), as it has no shadow effects
 	// and thus doesn't result in any visual differences.
-
+	
 	if (_gameId == GID_SAMNMAX) {
 		for (i = 0; i < 256; i++)
 			_shadowPalette[i] = i;
@@ -611,8 +611,8 @@ void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale
 			int ar = compareptr[0] >> 2;
 			int ag = compareptr[1] >> 2;
 			int ab = compareptr[2] >> 2;
-		
-		uint sum = ABS(ar - r) + ABS(ag - g) + ABS(ab - b);
+
+			uint sum = ABS(ar - r) + ABS(ag - g) + ABS(ab - b);
 
 			if (sum < bestsum) {
 				bestsum = sum;
@@ -621,7 +621,6 @@ void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale
 		}
 		*table++ = bestitem;
 	}
-
 }
 
 void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor) {
