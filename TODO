@@ -113,7 +113,8 @@ General
   - move fmopl code to softsynth dir
   - move fonts to graphics/fonts/ dir
   - move all the game engines into a new dir engines/
-  - maybe system.h / system.cpp should go to backends/, too ?
+  - maybe common/system.h / system.cpp should go to backends/, too ?
+  - move the iMuse source files in scumm/ to a new dir scumm/imuse/
 * The following things should be put into namespaces:
   - AudioStream and subclasses into Audio
   - MIDI related classes either to Audio, or a new "MIDI" namespace
