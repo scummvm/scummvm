@@ -572,7 +572,6 @@ static inline uint colorWeight(int red, int green, int blue) {
 	return 3 * red * red + 6 * green * green + 2 * blue * blue;
 }
 
-
 void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor, int start, int end) {
 	const byte *basepal = getPalettePtr(_curPalIndex, _roomResource);
 	const byte *compareptr;
@@ -611,43 +610,21 @@ void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale
 	}
 
 	for (i = start; i < end; i++) {
-		int r = (int) (*pal++ * redScale) >> 8;
-		int g = (int) (*pal++ * greenScale) >> 8;
-		int b = (int) (*pal++ * blueScale) >> 8;
+		int r = (int) ((pal[0] >> 2) * redScale) >> 8;
+		int g = (int) ((pal[1] >> 2) * greenScale) >> 8;
+		int b = (int) ((pal[2] >> 2) * blueScale) >> 8;
+		pal += 3;
 
-		// The following functionality is similar to remapPaletteColor, except
-		// 1) we have to work off the original CLUT rather than the current palette, and
-		// 2) the target shadow palette entries must be bounded to the upper and lower
-		//    bounds provided by the opcode. (This becomes significant in Room 48, but
-		//    is not an issue in all other known case studies.)
-		int j;
-		int ar, ag, ab;
-		uint sum, bestsum, bestitem = 0;
-
-		if (r > max)
-			r = max;
-		if (g > max)
-			g = max;
-		if (b > max)
-			b = max;
-
-		bestsum = 0x7FFFFFFF;
-
-		r &= ~3;
-		g &= ~3;
-		b &= ~3;
+		uint8 bestitem = 0;
+		uint bestsum = 32000;
 
 		compareptr = basepal + startColor * 3;
-		for (j = startColor; j <= endColor; j++, compareptr += 3) {
-			ar = compareptr[0] & ~3;
-			ag = compareptr[1] & ~3;
-			ab = compareptr[2] & ~3;
-			if (ar == r && ag == g && ab == b) {
-				bestitem = j;
-				break;
-			}
-
-			sum = colorWeight(ar - r, ag - g, ab - b);
+		for (int j = startColor; j <= endColor; j++, compareptr += 3) {
+			int ar = compareptr[0] >> 2;
+			int ag = compareptr[1] >> 2;
+			int ab = compareptr[2] >> 2;
+		
+		uint sum = ABS(ar - r) + ABS(ag - g) + ABS(ab - b);
 
 			if (sum < bestsum) {
 				bestsum = sum;
@@ -656,6 +633,7 @@ void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale
 		}
 		*table++ = bestitem;
 	}
+
 }
 
 void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor) {
