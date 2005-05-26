@@ -436,6 +436,9 @@ char vid_spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 	int16 bufPos;
 	int16 strLen;
 
+	if (!destDesc)
+		return 1;
+
 	if ((destDesc->vidMode & 0x7f) != 0x13)
 		error("vid_spriteUncompressor: Video mode 0x%x is not supported!",
 		    destDesc->vidMode & 0x7f);
