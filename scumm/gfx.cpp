@@ -1060,11 +1060,14 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 			fill(mask, _charset->_textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width, height);
 		}
 	} else {
-		// Flags are used for different methods in HE70+ games
-		if ((color & 0x2000) || (color & 0x4000)) {
-			error("drawBox: unsupported flag 0x%x", color);
-		} else if (color & 0x8000) {
-			color &= 0x7FFF;
+		// Flags are used for different methods in HE71+ games
+		// TODO: Add correct drawing method
+		if ((color & 0x2000) || (color & 0x4000000)) {
+			blit(backbuff, vs->pitch, bgbuff, vs->pitch, width, height);
+		} else if ((color & 0x4000) || (color & 0x2000000)) {
+			blit(bgbuff, vs->pitch, backbuff, vs->pitch, width, height);
+		} else if ((color & 0x8000) || (color & 0x1000000)) {
+			color &= (_heversion == 100) ? 0xFFFFFF : 0x7FFF;
 			fill(backbuff, vs->pitch, color, width, height);
 			fill(bgbuff, vs->pitch, color, width, height);
 		} else {
