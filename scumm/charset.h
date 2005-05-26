@@ -114,11 +114,13 @@ public:
 class CharsetRendererCommon : public CharsetRenderer {
 protected:
 	byte *_fontPtr;
+	int _numChars;
+	int _fontHeight;
 
 	void drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height);
 
 public:
-	CharsetRendererCommon(ScummEngine *vm) : CharsetRenderer(vm) {}
+	CharsetRendererCommon(ScummEngine *vm) : CharsetRenderer(vm), _numChars(0), _fontHeight(0) {}
 
 	void setCurID(byte id);
 	
@@ -157,7 +159,6 @@ public:
 
 class CharsetRendererV3 : public CharsetRendererCommon {
 protected:
-	int _numChars;
 	byte *_widthTable;
 
 public:

@@ -233,6 +233,10 @@ void CharsetRendererCommon::setCurID(byte id) {
 		_fontPtr += 17;
 	else
 		_fontPtr += 29;
+
+	//_bitDepth = _fontPtr[0];
+	_fontHeight = _fontPtr[1];
+	_numChars = READ_LE_UINT16(_fontPtr + 2);
 }
 
 void CharsetRendererV3::setCurID(byte id) {
@@ -244,7 +248,10 @@ void CharsetRendererV3::setCurID(byte id) {
 	if (_fontPtr == 0)
 		error("CharsetRendererCommon::setCurID: charset %d not found!", id);
 
+	//_bitDepth = 1;
 	_numChars = _fontPtr[4];
+	_fontHeight = _fontPtr[5];
+
 	_fontPtr += 6;
 	_widthTable = _fontPtr;
 	_fontPtr += _numChars;
@@ -252,16 +259,16 @@ void CharsetRendererV3::setCurID(byte id) {
 
 int CharsetRendererCommon::getFontHeight() {
 	if (_vm->_useCJKMode)
-		return MAX(_vm->_2byteHeight + 1, (int)_fontPtr[1]);
+		return MAX(_vm->_2byteHeight + 1, _fontHeight);
 	else
-		return _fontPtr[1];
+		return _fontHeight;
 }
 
 int CharsetRendererV3::getFontHeight() {
 	if (_vm->_useCJKMode)
-		return MAX(_vm->_2byteHeight + 1, 8);
+		return MAX(_vm->_2byteHeight + 1, _fontHeight);
 	else
-		return 8;
+		return _fontHeight;
 }
 
 // do spacing for variable width old-style font
@@ -1097,6 +1104,8 @@ static byte spanishCharsetDataV2[] = {
 
 CharsetRendererV2::CharsetRendererV2(ScummEngine *vm, Common::Language language)
 	: CharsetRendererV3(vm) {
+
+	_fontHeight = 8;
 
 	switch (language) {
 	case Common::DE_DEU:
