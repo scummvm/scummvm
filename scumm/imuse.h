@@ -68,8 +68,8 @@ public:
 	int getSoundStatus(int sound) const;
 	bool get_sound_active(int sound) const;
 	int getMusicTimer() const;
-	int32 doCommand (int a, int b, int c, int d, int e, int f, int g, int h);
-	int32 doCommand (int numargs, int args[]);
+	int32 doCommand(int a, int b, int c, int d, int e, int f, int g, int h);
+	int32 doCommand(int numargs, int args[]);
 	int clear_queue();
 	void setBase(byte **base);
 	uint32 property(int prop, uint32 value);

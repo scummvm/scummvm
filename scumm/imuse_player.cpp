@@ -130,7 +130,7 @@ bool Player::startSound(int sound, MidiDriver *midi, bool passThrough) {
 	}
 
 #ifdef IMUSE_DEBUG
-	debug (0, "Starting music %d", sound);
+	debug(0, "Starting music %d", sound);
 #endif
 	return true;
 }
@@ -155,7 +155,7 @@ void Player::clear() {
 		return;
 
 #ifdef IMUSE_DEBUG
-	debug (0, "Stopping music %d", _id);
+	debug(0, "Stopping music %d", _id);
 #endif
 
 	if (_parser) {
@@ -192,10 +192,10 @@ int Player::start_seq_sound(int sound, bool reset_vars) {
 	if (_parser)
 		delete _parser;
 
-	if (!memcmp (ptr, "RO", 2)) {
+	if (!memcmp(ptr, "RO", 2)) {
 		// Old style 'RO' resource
 		_parser = MidiParser_createRO();
-	} else if (!memcmp (ptr, "SO", 2)) {
+	} else if (!memcmp(ptr, "SO", 2)) {
 		// Euphony (FM-TOWNS) resource
 		_parser = MidiParser_createEUP();
 	} else if (!memcmp(ptr, "FORM", 4)) {
@@ -234,7 +234,7 @@ void Player::setSpeed(byte speed) {
 
 void Player::send(uint32 b) {
 	if (_passThrough) {
-		_midi->send (b);
+		_midi->send(b);
 		return;
 	}
 
@@ -351,7 +351,7 @@ void Player::sysEx(byte *p, uint16 len) {
 	Part *part;
 
 	if (_passThrough) {
-		_midi->sysEx (p, len);
+		_midi->sysEx(p, len);
 		return;
 	}
 
@@ -369,9 +369,9 @@ void Player::sysEx(byte *p, uint16 len) {
 			}
 		} else if (a == YM2612_SYSEX_ID) {
 			// FM-TOWNS custom instrument definition
-			_midi->sysEx_customInstrument (p[0], 'EUP ', p + 1);
+			_midi->sysEx_customInstrument(p[0], 'EUP ', p + 1);
 		} else {
-			warning("Unknown SysEx manufacturer 0x%02X", (int) a);
+			warning("Unknown SysEx manufacturer 0x%02X", (int)a);
 		}
 		return;
 	}
@@ -412,7 +412,7 @@ void Player::sysEx(byte *p, uint16 len) {
 			part = getPart(p[0] & 0x0F);
 			if (part) {
 				part->set_onoff(p[2] & 0x01);
-				part->set_pri (p[4]);
+				part->set_pri(p[4]);
 				part->volume((p[5] & 0x0F) << 4 |(p[6] & 0x0F));
 				part->_percussion = _isMIDI ? ((p[9] & 0x08) > 0) : false;
 				if (part->_percussion) {
@@ -438,11 +438,11 @@ void Player::sysEx(byte *p, uint16 len) {
 			// ID and marker ID match what was set by ImSetTrigger,
 			// something magical is supposed to happen....
 			for (a = 0; a < 16; ++a) {
-				if (_se->_snm_triggers [a].sound == _id &&
-				    _se->_snm_triggers [a].id == *p)
+				if (_se->_snm_triggers[a].sound == _id &&
+				    _se->_snm_triggers[a].id == *p)
 				{
-					_se->_snm_triggers [a].sound = _se->_snm_triggers [a].id = 0;
-					_se->doCommand (8, _se->_snm_triggers[a].command);
+					_se->_snm_triggers[a].sound = _se->_snm_triggers[a].id = 0;
+					_se->doCommand(8, _se->_snm_triggers[a].command);
 					break;
 				}
 			}
@@ -466,7 +466,7 @@ void Player::sysEx(byte *p, uint16 len) {
 		if (part) {
 			if (len == 63) {
 				decode_sysex_bytes(p, buf, len - 3);
-				part->set_instrument((byte *) buf);
+				part->set_instrument((byte *)buf);
 			} else {
 				// SPK tracks have len == 49 here, and are not supported
 				part->programChange(254); // Must be invalid, but not 255 (which is reserved)
@@ -553,13 +553,13 @@ void Player::sysEx(byte *p, uint16 len) {
 		break;
 
 	default:
-		warning("Unknown SysEx command %d", (int) code);
+		warning("Unknown SysEx command %d", (int)code);
 	}
 }
 
 void Player::decode_sysex_bytes(const byte *src, byte *dst, int len) {
 	while (len >= 0) {
-		*dst++ = ((src[0] << 4)&0xFF) |(src[1] & 0xF);
+		*dst++ = ((src[0] << 4)&0xFF) | (src[1] & 0xF);
 		src += 2;
 		len -= 2;
 	}
@@ -835,7 +835,7 @@ int Player::scan(uint totrack, uint tobeat, uint totick) {
 	// the current track so that our state when starting the
 	// new track is fully up to date.
 	if (totrack != _track_index)
-		_parser->jumpToTick ((uint32) -1, true);
+		_parser->jumpToTick((uint32)-1, true);
 	_parser->setTrack(totrack);
 	if (!_parser->jumpToTick((tobeat - 1) * TICKS_PER_BEAT + totick, true)) {
 		_scanning = false;
@@ -867,11 +867,11 @@ void Player::play_active_notes() {
 	Part *part;
 
 	for (i = 0; i < 16; ++i) {
-		part = getPart (i);
+		part = getPart(i);
 		mask = 1 << i;
 		for (j = 0; j < 128; ++j) {
 			if (_active_notes[j] & mask)
-				part->noteOn (j, 80);
+				part->noteOn(j, 80);
 		}
 	}
 }
@@ -1064,7 +1064,7 @@ int Player::addParameterFader(int param, int target, int time) {
 		if (!time)
 			best->total_time = 1;
 		else
-			best->total_time = (uint32) time * 10000;
+			best->total_time = (uint32)time * 10000;
 		best->current_time = 0;
 	} else {
 		warning("IMuse Player %d: Out of parameter faders", _id);
@@ -1087,7 +1087,7 @@ void Player::transitionParameters() {
 		ptr->current_time += advance;
 		if (ptr->current_time > ptr->total_time)
 			ptr->current_time = ptr->total_time;
-		value = (int32) ptr->start +(int32)(ptr->end - ptr->start) *(int32) ptr->current_time /(int32) ptr->total_time;
+		value = (int32)ptr->start + (int32)(ptr->end - ptr->start) * (int32)ptr->current_time / (int32)ptr->total_time;
 
 		switch (ptr->param) {
 		case ParameterFader::pfVolume:
@@ -1096,18 +1096,18 @@ void Player::transitionParameters() {
 				clear();
 				return;
 			}
-			setVolume((byte) value);
+			setVolume((byte)value);
 			break;
 
 		case ParameterFader::pfTranspose:
 			// FIXME: Is this really transpose?
-			setTranspose (0, value / 100);
-			setDetune (value % 100);
+			setTranspose(0, value / 100);
+			setDetune(value % 100);
 			break;
 
 		case ParameterFader::pfSpeed: // impSpeed:
 			// Speed.
-			setSpeed((byte) value);
+			setSpeed((byte)value);
 			break;
 
 		default:
