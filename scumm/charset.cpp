@@ -1604,6 +1604,11 @@ void CharsetRendererNut::setCurID(byte id) {
 	assert(_current);
 }
 
+int CharsetRendererNut::getCharHeight(byte chr) {
+	assert(_current);
+	return _current->getCharHeight(chr);
+}
+
 int CharsetRendererNut::getCharWidth(byte chr) {
 	assert(_current);
 	return _current->getCharWidth(chr);

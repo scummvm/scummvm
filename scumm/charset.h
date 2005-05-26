@@ -105,6 +105,7 @@ public:
 	int getCurID() { return _curId; }
 	
 	virtual int getFontHeight() = 0;
+	virtual int getCharHeight(byte chr) { return getFontHeight(); }
 	virtual int getCharWidth(byte chr) = 0;
 	
 	virtual void setColor(byte color) { _color = color; translateColor(); }
@@ -192,6 +193,7 @@ public:
 	void setCurID(byte id);
 	
 	int getFontHeight();
+	int getCharHeight(byte chr);
 	int getCharWidth(byte chr);
 };
 
