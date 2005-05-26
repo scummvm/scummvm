@@ -376,7 +376,7 @@ void IMuseInternal::handle_marker(uint id, byte data) {
 		p = _cmd_queue[pos].array;
 		if (p[0] == TRIGGER_ID && p[1] == id && p[2] == data)
 			break;
-		pos = (pos + 1) & (ARRAYSIZE(_cmd_queue) - 1);
+		pos = (pos + 1) % ARRAYSIZE(_cmd_queue);
 	}
 
 	if (pos == _queue_pos)
@@ -388,7 +388,7 @@ void IMuseInternal::handle_marker(uint id, byte data) {
 	_trigger_count--;
 	_queue_cleared = false;
 	do {
-		pos = (pos + 1) & (ARRAYSIZE(_cmd_queue) - 1);
+		pos = (pos + 1) % ARRAYSIZE(_cmd_queue);
 		if (_queue_pos == pos)
 			break;
 		p = _cmd_queue[pos].array;
@@ -460,7 +460,7 @@ int IMuseInternal::get_queue_sound_status(int sound) const {
 		a = _cmd_queue[i].array;
 		if (a[0] == COMMAND_ID && a[1] == 8 && a[2] == (uint16)sound)
 			return 2;
-		i = (i + 1) & (ARRAYSIZE(_cmd_queue) - 1);
+		i = (i + 1) % ARRAYSIZE(_cmd_queue);
 	}
 
 	for (i = 0; i < ARRAYSIZE (_deferredCommands); ++i) {
@@ -550,13 +550,13 @@ int IMuseInternal::enqueue_command(int a, int b, int c, int d, int e, int f, int
 	p[6] = f;
 	p[7] = g;
 
-	i = (i + 1) & (ARRAYSIZE(_cmd_queue) - 1);
+	i = (i + 1) % ARRAYSIZE(_cmd_queue);
 
 	if (_queue_end != i) {
 		_queue_pos = i;
 		return 0;
 	} else {
-		_queue_pos = (i - 1) & (ARRAYSIZE(_cmd_queue) - 1);
+		_queue_pos = (i - 1) % ARRAYSIZE(_cmd_queue);
 		return -1;
 	}
 }
@@ -644,9 +644,9 @@ int IMuseInternal::enqueue_trigger(int sound, int marker) {
 	p[1] = sound;
 	p[2] = marker;
 
-	pos = (pos + 1) & (ARRAYSIZE(_cmd_queue) - 1);
+	pos = (pos + 1) % ARRAYSIZE(_cmd_queue);
 	if (_queue_end == pos) {
-		_queue_pos = (pos - 1) & (ARRAYSIZE(_cmd_queue) - 1);
+		_queue_pos = (pos - 1) % ARRAYSIZE(_cmd_queue);
 		return -1;
 	}
 
