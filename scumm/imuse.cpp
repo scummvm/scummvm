@@ -211,16 +211,21 @@ bool IMuseInternal::startSound(int sound) {
 	Player *player;
 	void *ptr;
 
-	// Do not start a sound if it is already set to
-	// start on an ImTrigger event. This fixes carnival
-	// music problems where a sound has been set to trigger
-	// at the right time, but then is started up immediately
-	// anyway, only to be restarted later when the trigger
-	// occurs.
+	// Do not start a sound if it is already set to start on an ImTrigger
+	// event. This fixes carnival music problems where a sound has been set
+	// to trigger at the right time, but then is started up immediately
+	// anyway, only to be restarted later when the trigger occurs.
+	//
+	// However, we have to make sure the sound with the trigger is actually
+	// playing, otherwise the music may stop when Sam and Max are thrown
+	// out of Bumpusville, because entering the mansion sets up a trigger
+	// for a sound that isn't necessarily playing. This is somewhat related
+	// to bug #780918.
+
 	int i;
 	ImTrigger *trigger = _snm_triggers;
 	for (i = ARRAYSIZE(_snm_triggers); i; --i, ++trigger) {
-		if (trigger->sound && trigger->id && trigger->command[0] == 8 && trigger->command[1] == sound)
+		if (trigger->sound && trigger->id && trigger->command[0] == 8 && trigger->command[1] == sound && getSoundStatus(trigger->sound))
 			return false;
 	}
 
