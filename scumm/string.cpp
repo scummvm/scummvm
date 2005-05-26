@@ -643,7 +643,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 					dst += convertVerbMessage(dst, end - dst, val);
 					break;
 				case 6:
-					dst += addNameToStack(dst, end - dst, val);
+					dst += convertNameMessage(dst, end - dst, val);
 					break;
 				case 7:
 					dst += convertStringMessage(dst, end - dst, val);
@@ -706,7 +706,7 @@ int ScummEngine::convertVerbMessage(byte *dst, int dstSize, int var) {
 	return 0;
 }
 
-int ScummEngine::addNameToStack(byte *dst, int dstSize, int var) {
+int ScummEngine::convertNameMessage(byte *dst, int dstSize, int var) {
 	int num;
 
 	num = readVar(var);
