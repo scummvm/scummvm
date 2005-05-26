@@ -1158,11 +1158,11 @@ protected:
 	void unkMessage1(const byte *msg);
 	void showMessageDialog(const byte *msg);
 
-	int addMessageToStack(const byte *msg, byte *dst, int dstSize);
-	int addIntToStack(byte *dst, int dstSize, int var);
-	int addVerbToStack(byte *dst, int dstSize, int var);
-	int addNameToStack(byte *dst, int dstSize, int var);
-	int addStringToStack(byte *dst, int dstSize, int var);
+	int convertMessageToString(const byte *msg, byte *dst, int dstSize);
+	int convertIntMessage(byte *dst, int dstSize, int var);
+	int convertVerbMessage(byte *dst, int dstSize, int var);
+	int convertNameMessage(byte *dst, int dstSize, int var);
+	int convertStringMessage(byte *dst, int dstSize, int var);
 
 	virtual void loadLanguageBundle() {}
 

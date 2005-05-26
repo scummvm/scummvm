@@ -906,7 +906,7 @@ void ScummEngine_v70he::o70_readINI() {
 	const char *entry;
 	int len, type;
 
-	addMessageToStack(_scriptPointer, option, sizeof(option));
+	convertMessageToString(_scriptPointer, option, sizeof(option));
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
 
@@ -941,7 +941,7 @@ void ScummEngine_v70he::o70_writeINI() {
 	type = pop();
 	value = pop();
 
-	addMessageToStack(_scriptPointer, option, sizeof(option));
+	convertMessageToString(_scriptPointer, option, sizeof(option));
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
 
@@ -950,7 +950,7 @@ void ScummEngine_v70he::o70_writeINI() {
 		ConfMan.set((char *)option, value); 
 		break;
 	case 2: // string
-		addMessageToStack(_scriptPointer, string, sizeof(string));
+		convertMessageToString(_scriptPointer, string, sizeof(string));
 		len = resStrLen(_scriptPointer);
 		_scriptPointer += len + 1;
 		ConfMan.set((char *)option, (char *)string); 
@@ -1030,7 +1030,7 @@ void ScummEngine_v70he::o70_setFilePath() {
 	int len;
 	byte filename[100];
 
-	addMessageToStack(_scriptPointer, filename, sizeof(filename));
+	convertMessageToString(_scriptPointer, filename, sizeof(filename));
 
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;

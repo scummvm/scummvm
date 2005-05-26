@@ -1296,7 +1296,7 @@ void ScummEngine_v7::actorTalk(const byte *msg) {
 void ScummEngine::actorTalk(const byte *msg) {
 	Actor *a;
 
-	addMessageToStack(msg, _charsetBuffer, sizeof(_charsetBuffer));
+	convertMessageToString(msg, _charsetBuffer, sizeof(_charsetBuffer));
 	
 	// FIXME: Workaround for bugs #770039 and #770049 
 	if (_gameId == GID_LOOM || _gameId == GID_LOOM256) {

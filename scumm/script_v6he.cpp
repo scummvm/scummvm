@@ -729,7 +729,7 @@ void ScummEngine_v60he::o60_actorOps() {
 		int slot = pop();
 
 		int len = resStrLen(string) + 1;
-		addMessageToStack(string, a->_heTalkQueue[slot].sentence, len);
+		convertMessageToString(string, a->_heTalkQueue[slot].sentence, len);
 
 		a->_heTalkQueue[slot].posX = a->_talkPosX;
 		a->_heTalkQueue[slot].posY = a->_talkPosY;
@@ -985,7 +985,7 @@ void ScummEngine_v60he::o60_openFile() {
 	int mode, len, slot, l, r;
 	byte filename[100];
 
-	addMessageToStack(_scriptPointer, filename, sizeof(filename));
+	convertMessageToString(_scriptPointer, filename, sizeof(filename));
 
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
@@ -1035,7 +1035,7 @@ void ScummEngine_v60he::o60_deleteFile() {
 	int len, r;
 	byte filename[100];
 
-	addMessageToStack(_scriptPointer, filename, sizeof(filename));
+	convertMessageToString(_scriptPointer, filename, sizeof(filename));
 
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
@@ -1052,7 +1052,7 @@ void ScummEngine_v60he::o60_rename() {
 	int len, r1, r2;
 	byte filename[100],filename2[100];
 
-	addMessageToStack(_scriptPointer, filename, sizeof(filename));
+	convertMessageToString(_scriptPointer, filename, sizeof(filename));
 
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
@@ -1062,7 +1062,7 @@ void ScummEngine_v60he::o60_rename() {
 			break;
 	}
 
-	addMessageToStack(_scriptPointer, filename2, sizeof(filename2));
+	convertMessageToString(_scriptPointer, filename2, sizeof(filename2));
 
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;

@@ -56,7 +56,7 @@ void ScummEngine::printString(int m, const byte *msg) {
 
 void ScummEngine::unkMessage1(const byte *msg) {
 	byte buffer[500];
-	addMessageToStack(msg, buffer, sizeof(buffer));
+	convertMessageToString(msg, buffer, sizeof(buffer));
 
 //	if ((_gameId == GID_CMI) && _debugMode) {	// In CMI, unkMessage1 is used for printDebug output
 	if ((buffer[0] != 0xFF) && _debugMode) {
@@ -86,7 +86,7 @@ void ScummEngine::showMessageDialog(const byte *msg) {
 	// Seemed to use blastText for the messages
 	byte buf[500];
 
-	addMessageToStack(msg, buf, sizeof(buf));
+	convertMessageToString(msg, buf, sizeof(buf));
 
 	if (_string[3].color == 0)
 		_string[3].color = 4;
@@ -444,7 +444,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 
 	bool cmi_pos_hack = false;
 
-	addMessageToStack(msg, buf, sizeof(buf));
+	convertMessageToString(msg, buf, sizeof(buf));
 
 	_charset->_top = _string[a].ypos + _screenTop;
 	_charset->_startLeft = _charset->_left = _string[a].xpos;
@@ -580,7 +580,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	_string[a].xpos = _charset->_str.right + 8;	// Indy3: Fixes Grail Diary text positioning
 }
 
-int ScummEngine::addMessageToStack(const byte *msg, byte *dst, int dstSize) {
+int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize) {
 	uint num = 0;
 	uint32 val;
 	byte chr;
@@ -592,7 +592,7 @@ int ScummEngine::addMessageToStack(const byte *msg, byte *dst, int dstSize) {
 	end = dst + dstSize;
 
 	if (msg == NULL) {
-		warning("Bad message in addMessageToStack, ignoring");
+		warning("Bad message in convertMessageToString, ignoring");
 		return 0;
 	}
 
@@ -637,16 +637,16 @@ int ScummEngine::addMessageToStack(const byte *msg, byte *dst, int dstSize) {
 				val = (_version == 8) ? READ_LE_UINT32(src + num) : READ_LE_UINT16(src + num);
 				switch (chr) {
 				case 4:
-					dst += addIntToStack(dst, end - dst, val);
+					dst += convertIntMessage(dst, end - dst, val);
 					break;
 				case 5:
-					dst += addVerbToStack(dst, end - dst, val);
+					dst += convertVerbMessage(dst, end - dst, val);
 					break;
 				case 6:
 					dst += addNameToStack(dst, end - dst, val);
 					break;
 				case 7:
-					dst += addStringToStack(dst, end - dst, val);
+					dst += convertStringMessage(dst, end - dst, val);
 					break;
 				case 9:
 				case 10:
@@ -664,7 +664,7 @@ int ScummEngine::addMessageToStack(const byte *msg, byte *dst, int dstSize) {
 					}
 					break;
 				default:
-					warning("addMessageToStack(): string escape sequence %d unknown", chr);
+					warning("convertMessageToString(): string escape sequence %d unknown", chr);
 					break;
 				}
 				num += (_version == 8) ? 4 : 2;
@@ -677,21 +677,21 @@ int ScummEngine::addMessageToStack(const byte *msg, byte *dst, int dstSize) {
 	
 		// Check for a buffer overflow
 		if (dst >= end)
-			error("addMessageToStack: buffer overflow!");
+			error("convertMessageToString: buffer overflow!");
 	}
 	*dst = 0;
 
 	return dstSize - (end - dst);
 }
 
-int ScummEngine::addIntToStack(byte *dst, int dstSize, int var) {
+int ScummEngine::convertIntMessage(byte *dst, int dstSize, int var) {
 	int num;
 
 	num = readVar(var);
 	return snprintf((char *)dst, dstSize, "%d", num);
 }
 
-int ScummEngine::addVerbToStack(byte *dst, int dstSize, int var) {
+int ScummEngine::convertVerbMessage(byte *dst, int dstSize, int var) {
 	int num, k;
 
 	num = readVar(var);
@@ -699,7 +699,7 @@ int ScummEngine::addVerbToStack(byte *dst, int dstSize, int var) {
 		for (k = 1; k < _numVerbs; k++) {
 			if (num == _verbs[k].verbid && !_verbs[k].type && !_verbs[k].saveid) {
 				const byte *ptr = getResourceAddress(rtVerb, k);
-				return addMessageToStack(ptr, dst, dstSize);
+				return convertMessageToString(ptr, dst, dstSize);
 			}
 		}
 	}
@@ -713,13 +713,13 @@ int ScummEngine::addNameToStack(byte *dst, int dstSize, int var) {
 	if (num) {
 		const byte *ptr = getObjOrActorName(num);
 		if (ptr) {
-			return addMessageToStack(ptr, dst, dstSize);
+			return convertMessageToString(ptr, dst, dstSize);
 		}
 	}
 	return 0;
 }
 
-int ScummEngine::addStringToStack(byte *dst, int dstSize, int var) {
+int ScummEngine::convertStringMessage(byte *dst, int dstSize, int var) {
 	const byte *ptr;
 
 	if (_version <= 2) {
@@ -741,7 +741,7 @@ int ScummEngine::addStringToStack(byte *dst, int dstSize, int var) {
 	if (var) {
 		ptr = getStringAddress(var);
 		if (ptr) {
-			return addMessageToStack(ptr, dst, dstSize);
+			return convertMessageToString(ptr, dst, dstSize);
 		}
 	}
 	return 0;
@@ -777,7 +777,7 @@ void ScummEngine_v6::enqueueText(const byte *text, int x, int y, byte color, byt
 	BlastText &bt = _blastTextQueue[_blastTextQueuePos++];
 	assert(_blastTextQueuePos <= ARRAYSIZE(_blastTextQueue));
 
-	addMessageToStack(text, bt.text, sizeof(bt.text));
+	convertMessageToString(text, bt.text, sizeof(bt.text));
 	bt.xpos = x;
 	bt.ypos = y;
 	bt.color = color;
