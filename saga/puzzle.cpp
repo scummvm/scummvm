@@ -217,7 +217,7 @@ void Puzzle::exitPuzzle(void) {
 }
 
 void Puzzle::initPieces(void) {
-	ActorData *puzzle = _vm->_actor->getActor(RID_ITE_ACTOR_PUZZLE);
+	//	ActorData *puzzle = _vm->_actor->getActor(RID_ITE_ACTOR_PUZZLE);
 }
 
 void Puzzle::movePiece(Point mousePt) {
