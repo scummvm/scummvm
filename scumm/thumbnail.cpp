@@ -56,8 +56,11 @@ inline void colorToRGB(uint16 color, uint8 &r, uint8 &g, uint8 &b) {
 
 Graphics::Surface *ScummEngine::loadThumbnail(Common::InSaveFile *file) {
 	ThumbnailHeader header;
-	header.type = file->readUint32BE();
-	if (header.type != MKID('THMB'))
+	file->read(&header.type, 4);
+	// We also accept the bad 'BMHT' header here, for the sake of compatibility
+	// with some older savegames which were written incorrectly due to a bug in
+	// ScummVM which wrote the thumb header type incorrectly on LE systems.
+	if (header.type != MKID('THMB') && header.type != MKID('BMHT'))
 		return 0;
 
 	header.size = file->readUint32BE();
@@ -111,7 +114,7 @@ void ScummEngine::saveThumbnail(Common::OutSaveFile *file) {
 	header.height = thumb.h;
 	header.bpp = thumb.bytesPerPixel;
 
-	file->writeUint32BE(header.type);
+	file->write(&header.type, 4);
 	file->writeUint32BE(header.size);
 	file->writeByte(header.version);
 	file->writeUint16BE(header.width);

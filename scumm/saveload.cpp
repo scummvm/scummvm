@@ -130,8 +130,12 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	
 	// Since version 52 a thumbnail is saved directly after the header
 	if (hdr.ver >= VER(52)) {
-		uint32 type = in->readUint32BE();
-		if (type != MKID('THMB')) {
+		uint32 type;
+		in->read(&type, 4);
+
+		// Check for the THMB header. Also, work around a bug which caused
+		// the chunk type (incorrectly) to be written in LE on LE machines.
+		if (! (type == MKID('THMB') || (hdr.ver < VER(55) && type == MKID('BMHT')))){
 			warning("Can not load thumbnail");
 			delete in;
 			return false;
