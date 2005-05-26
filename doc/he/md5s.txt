@@ -1140,6 +1140,15 @@ a30dd1cd2b58b2c5c6eb1aa970f5a3c2 PuttTime.w32
 802147789449535e375c7c4f2e666b96 PuttTime.he2
 15d5f719ebc6bcd4fe674587a8fa8596 PuttTime.he4
 
+(russian putttime cd)
+sev
+d:\dev\SPUTM\Src\SAVELOAD.cpp
+5247f60e3913296860a74eef4bdfad2a PuttPuttTTT.he2
+a4816cbb60fa01f16295ab46868e7c41 PuttPuttTTT.he4
+4a7452aabc69cdaf897ccc099ff0bafa puttputtTTT.(a)
+defb8cb9ec4b0f91acfb6b61c6129ad9 puttputtTTT.he0
+947ce44f2336f8467ceadb184dbaa3e9 puttputtTTT.w32
+
 (pj2 cd/puttrace cd/soccer cd)
 sev
 D:\Scummsys.90\sputm.90\*.c

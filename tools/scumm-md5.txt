@@ -442,6 +442,7 @@ Putt-Putt Travels Through Time
 	-	All	en	a525c1753c1db5011c00417da37887ef	PuttTime	Kirben
 	-	All?	en	2108d83dcf09f8adb4bc524669c8cf51	PuttTime
 	-	Windows	nl	fcb78ebecab2757264c590890c319cc5	PuttTime	adutchguy
+	-	Windows	ru	defb8cb9ec4b0f91acfb6b61c6129ad9	PuttTime	sev
 	Demo	All	en	4e5867848ee61bc30d157e2c94eee9b4	timedemo	khalek, sev
 	Demo	All	en	0ab19be9e2a3f6938226638b2a3744fe	timedemo	khalek
 	Demo	Windows	nl	6b19d0e25cbf720d05822379b8b90ed9	timedemo	adutchguy
