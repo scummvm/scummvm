@@ -130,10 +130,11 @@ bool IMuseInternal::isMT32(int sound) {
 	case MKID('ROL '):
 		return true;
 
-	case MKID('MAC '):
+	case MKID('MAC '):	// Occurs in the Mac version of FOA and MI2
 		return true;
 
 	case MKID('GMD '):
+	case MKID('MIDI'):	// Occurs in Sam & Max
 		return false;
 	}
 
@@ -170,11 +171,11 @@ bool IMuseInternal::isMIDI(int sound) {
 	case MKID('ROL '):
 		return true;
 
-	case MKID('MAC '):
+	case MKID('MAC '):	// Occurs in the Mac version of FOA and MI2
 		return true;
 
 	case MKID('GMD '):
-	case MKID('MIDI'):
+	case MKID('MIDI'):	// Occurs in Sam & Max
 		return true;
 	}
 
