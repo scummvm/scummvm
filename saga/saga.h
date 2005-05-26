@@ -107,7 +107,8 @@ enum ScriptTimings {
 	kScriptTimeTicksPerSecond = (728L/10L),
 	kRepeatSpeed = 40,   // 25 frames/sec
 	kNormalFadeDuration = 320, // 64 steps, 5 msec each
-	kQuickFadeDuration = 64  // 64 steps, 1 msec each
+	kQuickFadeDuration = 64,  // 64 steps, 1 msec each
+	kPuzzleHintTime = 30000  // 30 secs
 };
 
 enum Directions {

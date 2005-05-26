@@ -69,6 +69,13 @@ namespace Saga {
 #define RID_IHNM_MAIN_PANEL  9
 #define RID_IHNM_CONVERSE_PANEL 10
 
+// Puzzle portraits
+#define RID_ITE_SAKKA_APPRAISING	6
+#define RID_ITE_SAKKA_DENIAL		7
+#define RID_ITE_SAKKA_EXCITED		8
+#define RID_ITE_JFERRET_SERIOUS		9
+#define RID_ITE_JFERRET_GOOFY		10
+#define RID_ITE_JFERRET_ALOOF		11
 
 // ITE Scene resource numbers
 #define RID_ITE_OVERMAP_SCENE 226
@@ -104,6 +111,8 @@ namespace Saga {
 #define RID_ITE_INTRO_IMG_4 1565
 
 #define RID_ITE_ENDCREDIT_SCENE_1 1802
+
+#define RID_ITE_ACTOR_PUZZLE 176
 
 // ITE_VOICES
 #define RID_CAVE_VOICE_0 0

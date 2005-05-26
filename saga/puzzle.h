@@ -24,12 +24,33 @@
 
 namespace Saga {
 
+#define PUZZLE_PIECES 15
+
 class Puzzle {
 private:
+	enum kRQStates {
+		kRQNoHint = 0,
+		kRQHintRequested = 1,
+		kRQHintRequestedStage2 = 2,
+		kRQSakkaDenies = 3,
+		kRQSkipEverything = 4
+	};
+
 	SagaEngine *_vm;
 
 	bool _solved;
 	bool _active;
+
+	kRQStates _hintRqState;
+	int _hintGiver;
+	int _hintOffer;
+	int _hintCount;
+	int _helpCount;
+
+	int _puzzlePiece;
+	int _piecePriority[PUZZLE_PIECES];
+
+	int _lang;
 
 public:
 	Puzzle(SagaEngine *vm);
@@ -47,7 +68,26 @@ public:
 private:
 	static void hintTimerCallback(void *refCon);
 
-	void hintTimer(void);
+	void solicitHint(void);
+
+	void initPieces(void);
+
+	void giveHint(void);
+	void clearHint(void);
+
+public:
+	struct PieceInfo {
+		int16 curX;
+		int16 curY;
+		byte offX;
+		byte offY;
+		int16 trgX;
+		int16 trgY;
+		uint8 flag;
+		uint8 count;
+		Point point[6];
+	};
+
 };
 
 } // End of namespace Saga
