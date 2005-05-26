@@ -2909,10 +2909,6 @@ void ScummEngine_v6::o6_pickOneOfDefault() {
 void ScummEngine_v6::o6_stampObject() {
 	int object, x, y, state;
 
-	// dummy opcode in tentacle
-	if (_gameId == GID_TENTACLE)
-		return;
-
 	state = pop();
 	y = pop();
 	x = pop();
