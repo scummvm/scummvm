@@ -830,7 +830,7 @@ protected:
 	void checkExecVerbs();
 	void verbMouseOver(int verb);
 	int findVerbAtPos(int x, int y) const;
-	void drawVerb(int verb, int mode);
+	virtual void drawVerb(int verb, int mode);
 	void runInputScript(int a, int cmd, int mode);
 	void restoreVerbBG(int verb);
 	void drawVerbBitmap(int verb, int x, int y);

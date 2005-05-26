@@ -1475,7 +1475,7 @@ void ScummEngine_v8::o8_getObjectImageHeight() {
 
 void ScummEngine_v8::o8_getStringWidth() {
 	int charset = pop();
-	int oldID = _charset->getCurID(); 
+	int oldID = _charset->getCurID();
 	int width;
 	const byte *msg = _scriptPointer;
 	byte transBuf[512];

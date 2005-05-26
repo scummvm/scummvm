@@ -486,6 +486,61 @@ int ScummEngine::findVerbAtPos(int x, int y) const {
 	return 0;
 }
 
+void ScummEngine_v7::drawVerb(int verb, int mode) {
+	VerbSlot *vs;
+
+	if (!verb)
+		return;
+
+	vs = &_verbs[verb];
+
+	if (!vs->saveid && vs->curmode && vs->verbid) {
+		if (vs->type == kImageVerbType) {
+			drawVerbBitmap(verb, vs->curRect.left, vs->curRect.top);
+			return;
+		}
+
+		uint8 color = vs->color;
+		if (vs->curmode == 2)
+			color = vs->dimcolor;
+		else if (mode && vs->hicolor)
+			color = vs->hicolor;
+
+		const byte *msg = getResourceAddress(rtVerb, verb);
+		if (!msg)
+			return;
+
+		// Convert the message, and skip a few remaining 0xFF codes (they
+		// occur in FT; subtype 10, which is used for the speech associated
+		// with the string).
+		byte buf[384];
+		convertMessageToString(msg, buf, sizeof(buf));
+		msg = buf;
+		while (*msg == 0xFF)
+			msg += 4;
+
+		enqueueText(msg, vs->curRect.left, vs->curRect.top, color, vs->charset_nr, vs->center);
+		
+		// Set the specified charset id
+		_charset->setCurID(vs->charset_nr);
+
+		// Compute the text rect
+		vs->curRect.right = 0;
+		vs->curRect.bottom = 0;
+		while (*msg) {
+			const int charWidth = _charset->getCharWidth(*msg);
+			const int charHeight = _charset->getCharHeight(*msg);
+			vs->curRect.right += charWidth;
+			if (vs->curRect.bottom < charHeight)
+				vs->curRect.bottom = charHeight;
+			msg++;
+		}
+		vs->curRect.right += vs->curRect.left;
+		vs->curRect.bottom += vs->curRect.top;
+		vs->oldRect = vs->curRect;
+	}
+}
+
 void ScummEngine::drawVerb(int verb, int mode) {
 	VerbSlot *vs;
 	bool tmp;
@@ -527,7 +582,6 @@ void ScummEngine::drawVerb(int verb, int mode) {
 			return;
 
 		tmp = _charset->_center;
-		_charset->_center = 0;
 		drawString(4, msg);
 		_charset->_center = tmp;
 
@@ -546,9 +600,7 @@ void ScummEngine::restoreVerbBG(int verb) {
 
 	vs = &_verbs[verb];
 
-	if (_gameId == GID_FT) {
-		restoreBG(vs->curRect, vs->bkcolor);
-	} else if (vs->oldRect.left != -1) {
+	if (vs->oldRect.left != -1) {
 		restoreBG(vs->oldRect, vs->bkcolor);
 		vs->oldRect.left = -1;
 	}

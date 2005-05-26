@@ -1298,6 +1298,8 @@ protected:
 	virtual void translateText(const byte *text, byte *trans_buff);
 	virtual void loadLanguageBundle();
 	void playSpeech(const byte *ptr);
+
+	virtual void drawVerb(int verb, int mode);
 };
 
 class ScummEngine_v8 : public ScummEngine_v7 {
