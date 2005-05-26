@@ -897,7 +897,10 @@ int32 IMuseInternal::ImSetTrigger(int sound, int id, int a, int b, int c, int d,
 	for (i = ARRAYSIZE(_snm_triggers); i; --i, ++trig) {
 		if (!trig->id)
 			break;
-		if (trig->id == id && trig->sound == sound)
+		// We used to only compare 'id' and 'sound' here, but at least
+		// at the Dino Bungie Memorial that causes the music to stop
+		// after getting the T-Rex tooth. See bug #888161.
+		if (trig->id == id && trig->sound == sound && trig->command[0] == a)
 			break;
 
 		uint16 diff;
@@ -1215,7 +1218,7 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 	midi->sysEx(buffer, 6);
 	debug(2, "GM SysEx: GM System On");
 	g_system->delayMillis(200);
-     		
+
 	if (_enable_gs) {
 		
 		// All GS devices recognize the GS Reset command,
@@ -1279,7 +1282,7 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 			midi->send((  0    << 16) | (38  << 8) | (0xB0 | i));
 			midi->send((  127  << 16) | (100 << 8) | (0xB0 | i));
 			midi->send((  127  << 16) | (101 << 8) | (0xB0 | i));
-            } 
+		} 
 		debug(2, "GM Controller 6 Change: Channels 1-16 Pitch Bend Sensitivity is 12 semitones");
 
 		// Set channels 1-16 Mod. LFO1 Pitch Depth to 4
