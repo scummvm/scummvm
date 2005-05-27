@@ -255,6 +255,32 @@ bool IMuseInternal::startSound(int sound) {
 	if (!player)
 		return false;
 
+	// HACK: This is to work around a problem at the Dino Bungie Memorial.
+	// There are three pieces of music involved here:
+	//
+	// 80 - Main theme (looping)
+	// 81 - Music when entering Rex's and Wally's room (not looping)
+	// 82 - Music when listening to Rex or Wally
+	//
+	// When entering, tune 81 starts, tune 80 is faded down (not out) and
+	// a trigger is set in tune 81 to fade tune 80 back up.
+	//
+	// When listening to Rex or Wally, tune 82 is started, tune 81 is faded
+	// out and tune 80 is faded down even further.
+	//
+	// However, when tune 81 is faded out its trigger will cause tune 80 to
+	// fade back up, resulting in two tunes being played simultaneously at
+	// full blast. It's no use trying to keep tune 81 playing at volume 0.
+	// It doesn't loop, so eventually it will terminate on its own.
+	//
+	// I don't know how the original interpreter handled this - or even if
+	// it handled it at all - but it looks like sloppy scripting to me. Our
+	// workaround is to clear the trigger if the player listens to Rex or
+	// Wally before tune 81 has finished on its own.
+
+	if (g_scumm->_gameId == GID_SAMNMAX && sound == 82 && getSoundStatus(81, false))
+		ImClearTrigger(81, 1);
+
 	player->clear();
 	return player->startSound(sound, driver, _direct_passthrough);
 }
