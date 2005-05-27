@@ -133,7 +133,7 @@ public:
 	static const char *getErrorName(int error_code);
 
 	// HIGH-LEVEL SEMANTIC METHODS
-	virtual void setPitchBendRange (byte channel, uint range)
+	virtual void setPitchBendRange(byte channel, uint range)
 	{
 		send((  0   << 16) | (101 << 8) | (0xB0 | channel));
 		send((  0   << 16) | (100 << 8) | (0xB0 | channel));
@@ -143,15 +143,15 @@ public:
 		send(( 127  << 16) | (100 << 8) | (0xB0 | channel));
 	}
 
-	virtual void sysEx (byte *msg, uint16 length) { }
-	virtual void sysEx_customInstrument (byte channel, uint32 type, byte *instr) { }
-	virtual void metaEvent (byte type, byte*data, uint16 length) { }
+	virtual void sysEx(byte *msg, uint16 length) { }
+	virtual void sysEx_customInstrument(byte channel, uint32 type, byte *instr) { }
+	virtual void metaEvent(byte type, byte*data, uint16 length) { }
 
 	// Timing functions - MidiDriver now operates timers
-	virtual void setTimerCallback (void *timer_param, Common::Timer::TimerProc timer_proc) = 0;
+	virtual void setTimerCallback(void *timer_param, Common::Timer::TimerProc timer_proc) = 0;
 	
 	/** The time in microseconds between invocations of the timer callback. */
-	virtual uint32 getBaseTempo (void) = 0;
+	virtual uint32 getBaseTempo(void) = 0;
 
 	// Channel allocation functions
 	virtual MidiChannel *allocateChannel() = 0;
@@ -164,29 +164,29 @@ public:
 	virtual byte getNumber() = 0;
 	virtual void release() = 0;
 
-	virtual void send (uint32 b) = 0; // 4-bit channel portion is ignored
+	virtual void send(uint32 b) = 0; // 4-bit channel portion is ignored
 
 	// Regular messages
-	virtual void noteOff (byte note) = 0;
-	virtual void noteOn (byte note, byte velocity) = 0;
-	virtual void programChange (byte program) = 0;
-	virtual void pitchBend (int16 bend) = 0; // -0x2000 to +0x1FFF
+	virtual void noteOff(byte note) = 0;
+	virtual void noteOn(byte note, byte velocity) = 0;
+	virtual void programChange(byte program) = 0;
+	virtual void pitchBend(int16 bend) = 0; // -0x2000 to +0x1FFF
 
 	// Control Change messages
-	virtual void controlChange (byte control, byte value) = 0;
-	virtual void modulationWheel (byte value) { controlChange (1, value); }
-	virtual void volume (byte value) { controlChange (7, value); }
-	virtual void panPosition (byte value) { controlChange (10, value); }
-	virtual void pitchBendFactor (byte value) = 0;
-	virtual void detune (byte value) { controlChange (17, value); }
-	virtual void priority (byte value) { }
-	virtual void sustain (bool value) { controlChange (64, value ? 1 : 0); }
-	virtual void effectLevel (byte value) { controlChange (91, value); }
-	virtual void chorusLevel (byte value) { controlChange (93, value); }
+	virtual void controlChange(byte control, byte value) = 0;
+	virtual void modulationWheel(byte value) { controlChange (1, value); }
+	virtual void volume(byte value) { controlChange (7, value); }
+	virtual void panPosition(byte value) { controlChange (10, value); }
+	virtual void pitchBendFactor(byte value) = 0;
+	virtual void detune(byte value) { controlChange (17, value); }
+	virtual void priority(byte value) { }
+	virtual void sustain(bool value) { controlChange (64, value ? 1 : 0); }
+	virtual void effectLevel(byte value) { controlChange (91, value); }
+	virtual void chorusLevel(byte value) { controlChange (93, value); }
 	virtual void allNotesOff() { controlChange (123, 0); }
 
 	// SysEx messages
-	virtual void sysEx_customInstrument (uint32 type, byte *instr) = 0;
+	virtual void sysEx_customInstrument(uint32 type, byte *instr) = 0;
 };
 
 

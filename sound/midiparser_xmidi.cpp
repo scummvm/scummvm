@@ -179,14 +179,14 @@ bool MidiParser_XMIDI::loadMusic(byte *data, uint32 size) {
 
 				// Must be at least 2 bytes long
 				if (chunk_len < 2) {
-					warning("Invalid chunk length %d for 'INFO' block!", (int) chunk_len);
+					warning("Invalid chunk length %d for 'INFO' block!", (int)chunk_len);
 					return false;
 				}
 
-				_num_tracks = (byte) read2low(pos);
+				_num_tracks = (byte)read2low(pos);
 
 				if (chunk_len > 2) {
-					warning("Chunk length %d is greater than 2", (int) chunk_len);
+					warning("Chunk length %d is greater than 2", (int)chunk_len);
 					pos += chunk_len - 2;
 				}
 				break;
@@ -224,7 +224,7 @@ bool MidiParser_XMIDI::loadMusic(byte *data, uint32 size) {
 		// Ok it's an XMIDI.
 		// We're going to identify and store the location for each track.
 		if (_num_tracks > ARRAYSIZE(_tracks)) {
-			warning("Can only handle %d tracks but was handed %d", (int) ARRAYSIZE(_tracks), (int) _num_tracks);
+			warning("Can only handle %d tracks but was handed %d", (int)ARRAYSIZE(_tracks), (int)_num_tracks);
 			return false;
 		}
 

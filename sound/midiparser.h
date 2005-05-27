@@ -58,13 +58,13 @@ struct Tracker {
 	Tracker() { clear(); }
 
 	//! Copy constructor for each duplication of Tracker information.
-	Tracker (const Tracker &copy) :
-	_play_pos (copy._play_pos),
-	_play_time (copy._play_time),
-	_play_tick (copy._play_tick),
-	_last_event_time (copy._last_event_time),
-	_last_event_tick (copy._last_event_tick),
-	_running_status (copy._running_status)
+	Tracker(const Tracker &copy) :
+	_play_pos(copy._play_pos),
+	_play_time(copy._play_time),
+	_play_tick(copy._play_tick),
+	_last_event_time(copy._last_event_time),
+	_last_event_tick(copy._last_event_tick),
+	_running_status(copy._running_status)
 	{ }
 
 	//! Clears all data; used by the constructor for initialization.
@@ -290,13 +290,13 @@ protected:
 	bool   _abort_parse;    //!< If a jump or other operation interrupts parsing, flag to abort.
 
 protected:
-	static uint32 readVLQ (byte * &data);
+	static uint32 readVLQ(byte * &data);
 	virtual void resetTracking();
 	virtual void allNotesOff();
-	virtual void parseNextEvent (EventInfo &info) = 0;
+	virtual void parseNextEvent(EventInfo &info) = 0;
 
-	void activeNote (byte channel, byte note, bool active);
-	void hangingNote (byte channel, byte note, uint32 ticks_left, bool recycle = true);
+	void activeNote(byte channel, byte note, bool active);
+	void hangingNote(byte channel, byte note, uint32 ticks_left, bool recycle = true);
 	void hangAllActiveNotes();
 
 	//! Platform independent BE uint32 read-and-advance.
@@ -304,8 +304,8 @@ protected:
 	 *  from a memory pointer, at the same time advancing
 	 *  the pointer.
 	 */
-	uint32 read4high (byte * &data) {
-		uint32 val = READ_BE_UINT32 (data);
+	uint32 read4high(byte * &data) {
+		uint32 val = READ_BE_UINT32(data);
 		data += 4;
 		return val;
 	}
@@ -315,8 +315,8 @@ protected:
 	 *  from a memory pointer, at the same time advancing
 	 *  the pointer.
 	 */
-	uint16 read2low  (byte * &data) {
-		uint16 val = READ_LE_UINT16 (data);
+	uint16 read2low(byte * &data) {
+		uint16 val = READ_LE_UINT16(data);
 		data += 2;
 		return val;
 	}
@@ -348,24 +348,24 @@ public:
 	MidiParser();
 	virtual ~MidiParser() { allNotesOff(); }
 
-	virtual bool loadMusic (byte *data, uint32 size) = 0;
+	virtual bool loadMusic(byte *data, uint32 size) = 0;
 	virtual void unloadMusic();
-	virtual void property (int prop, int value);
+	virtual void property(int prop, int value);
 
-	void setMidiDriver (MidiDriver *driver) { _driver = driver; }
-	void setTimerRate (uint32 rate) { _timer_rate = rate; }
-	void setTempo (uint32 tempo);
+	void setMidiDriver(MidiDriver *driver) { _driver = driver; }
+	void setTimerRate(uint32 rate) { _timer_rate = rate; }
+	void setTempo(uint32 tempo);
 	void onTimer();
 
-	bool setTrack (int track);
-	bool jumpToTick (uint32 tick, bool fireEvents = false);
+	bool setTrack(int track);
+	bool jumpToTick(uint32 tick, bool fireEvents = false);
 
 	uint32 getPPQN() { return _ppqn; }
 	virtual uint32 getTick() { return _position._play_tick; }
 
 	static MidiParser *createParser_SMF();
 	static MidiParser *createParser_XMIDI();
-	static void timerCallback (void *data) { ((MidiParser *) data)->onTimer(); }
+	static void timerCallback(void *data) { ((MidiParser *) data)->onTimer(); }
 };
 
 #endif

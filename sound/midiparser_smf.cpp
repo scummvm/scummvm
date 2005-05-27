@@ -35,14 +35,14 @@ protected:
 
 protected:
 	void compressToType0();
-	void parseNextEvent (EventInfo &info);
+	void parseNextEvent(EventInfo &info);
 
 public:
 	MidiParser_SMF() : _buffer(0), _malformedPitchBends(false) {}
 	~MidiParser_SMF();
 
-	bool loadMusic (byte *data, uint32 size);
-	void property (int property, int value);
+	bool loadMusic(byte *data, uint32 size);
+	void property(int property, int value);
 };
 
 
@@ -51,21 +51,21 @@ static const byte special_lengths[16] = { 0, 2, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 
 MidiParser_SMF::~MidiParser_SMF() {
 	if (_buffer)
-		free (_buffer);
+		free(_buffer);
 }
 
-void MidiParser_SMF::property (int prop, int value) {
+void MidiParser_SMF::property(int prop, int value) {
 	switch (prop) {
 	case mpMalformedPitchBends:
 		_malformedPitchBends = (value > 0);
 	default:
-		MidiParser::property (prop, value);
+		MidiParser::property(prop, value);
 	}
 }
 
-void MidiParser_SMF::parseNextEvent (EventInfo &info) {
+void MidiParser_SMF::parseNextEvent(EventInfo &info) {
 	info.start = _position._play_pos;
-	info.delta = readVLQ (_position._play_pos);
+	info.delta = readVLQ(_position._play_pos);
 
 	// Process the next info. If mpMalformedPitchBends
 	// was set, we must skip over any pitch bend events
@@ -113,14 +113,14 @@ void MidiParser_SMF::parseNextEvent (EventInfo &info) {
 			break;
 
 		case 0x0: // SysEx
-			info.length = readVLQ (_position._play_pos);
+			info.length = readVLQ(_position._play_pos);
 			info.ext.data = _position._play_pos;
 			_position._play_pos += info.length;
 			break;
 
 		case 0xF: // META event
 			info.ext.type = *(_position._play_pos++);
-			info.length = readVLQ (_position._play_pos);
+			info.length = readVLQ(_position._play_pos);
 			info.ext.data = _position._play_pos;
 			_position._play_pos += info.length;
 			break;
@@ -128,7 +128,7 @@ void MidiParser_SMF::parseNextEvent (EventInfo &info) {
 	}
 }
 
-bool MidiParser_SMF::loadMusic (byte *data, uint32 size) {
+bool MidiParser_SMF::loadMusic(byte *data, uint32 size) {
 	uint32 len;
 	byte midi_type;
 	uint32 total_size;
@@ -138,17 +138,17 @@ bool MidiParser_SMF::loadMusic (byte *data, uint32 size) {
 	byte *pos = data;
 	isGMF = false;
 
-	if (!memcmp (pos, "RIFF", 4)) {
+	if (!memcmp(pos, "RIFF", 4)) {
 		// Skip the outer RIFF header.
 		pos += 8;
 	}
 
-	if (!memcmp (pos, "MThd", 4)) {
+	if (!memcmp(pos, "MThd", 4)) {
 		// SMF with MTHd information.
 		pos += 4;
-		len = read4high (pos);
+		len = read4high(pos);
 		if (len != 6) {
-			warning("MThd length 6 expected but found %d", (int) len);
+			warning("MThd length 6 expected but found %d", (int)len);
 			return false;
 		}
 
@@ -158,12 +158,12 @@ bool MidiParser_SMF::loadMusic (byte *data, uint32 size) {
 		_num_tracks = pos[2] << 8 | pos[3];
 		midi_type = pos[1];
 		if (midi_type > 2 /*|| (midi_type < 2 && _num_tracks > 1)*/) {
-			warning("No support for a Type %d MIDI with %d tracks", (int) midi_type, (int) _num_tracks);
+			warning("No support for a Type %d MIDI with %d tracks", (int)midi_type, (int)_num_tracks);
 			return false;
 		}
 		_ppqn = pos[4] << 8 | pos[5];
 		pos += len;
-	} else if (!memcmp (pos, "GMF\x1", 4)) {
+	} else if (!memcmp(pos, "GMF\x1", 4)) {
 		// Older GMD/MUS file with no header info.
 		// Assume 1 track, 192 PPQN, and no MTrk headers.
 		isGMF = true;
@@ -178,14 +178,14 @@ bool MidiParser_SMF::loadMusic (byte *data, uint32 size) {
 
 	// Now we identify and store the location for each track.
 	if (_num_tracks > ARRAYSIZE(_tracks)) {
-		warning("Can only handle %d tracks but was handed %d", (int) ARRAYSIZE(_tracks), (int) _num_tracks);
+		warning("Can only handle %d tracks but was handed %d", (int)ARRAYSIZE(_tracks), (int)_num_tracks);
 		return false;
 	}
 
 	total_size = 0;
 	int tracks_read = 0;
 	while (tracks_read < _num_tracks) {
-		if (memcmp (pos, "MTrk", 4) && !isGMF) {
+		if (memcmp(pos, "MTrk", 4) && !isGMF) {
 			warning("Position: %p ('%c')", pos, *pos);
 			warning("Hit invalid block '%c%c%c%c' while scanning for track locations", pos[0], pos[1], pos[2], pos[3]);
 			return false;
@@ -195,7 +195,7 @@ bool MidiParser_SMF::loadMusic (byte *data, uint32 size) {
 		_tracks[tracks_read] = pos + (isGMF ? 0 : 8);
 		if (!isGMF) {
 			pos += 4;
-			len = read4high (pos);
+			len = read4high(pos);
 			total_size += len;
 			pos += len;
 		} else {
@@ -212,7 +212,7 @@ bool MidiParser_SMF::loadMusic (byte *data, uint32 size) {
 	// If this is a Type 1 MIDI, we need to now compress
 	// our tracks down into a single Type 0 track.
 	if (_buffer) {
-		free (_buffer);
+		free(_buffer);
 		_buffer = 0;
 	}
 
@@ -220,7 +220,7 @@ bool MidiParser_SMF::loadMusic (byte *data, uint32 size) {
 		// FIXME: Doubled the buffer size to prevent crashes with the
 		// Inherit the Earth MIDIs. Jamieson630 said something about a
 		// better fix, but this will have to do in the meantime.
-		_buffer = (byte *) malloc (size * 2);
+		_buffer = (byte *)malloc(size * 2);
 		compressToType0();
 		_num_tracks = 1;
 		_tracks[0] = _buffer;
@@ -230,8 +230,8 @@ bool MidiParser_SMF::loadMusic (byte *data, uint32 size) {
 	// will persist beyond this call, i.e. we do NOT
 	// copy the data to our own buffer. Take warning....
 	resetTracking();
-	setTempo (500000);
-	setTrack (0);
+	setTempo(500000);
+	setTrack(0);
 	return true;
 }
 
@@ -247,7 +247,7 @@ void MidiParser_SMF::compressToType0() {
 	for (i = 0; i < _num_tracks; ++i) {
 		running_status[i] = 0;
 		track_pos[i] = _tracks[i];
-		track_timer[i] = readVLQ (track_pos[i]);
+		track_timer[i] = readVLQ(track_pos[i]);
 		running_status[i] = 0;
 	}
 
@@ -258,7 +258,7 @@ void MidiParser_SMF::compressToType0() {
 	byte event;
 	uint32 copy_bytes;
 	bool write;
-	byte active_tracks = (byte) _num_tracks;
+	byte active_tracks = (byte)_num_tracks;
 
 	while (active_tracks) {
 		write = true;
@@ -293,14 +293,14 @@ void MidiParser_SMF::compressToType0() {
 		} while (_malformedPitchBends && (event & 0xF0) == 0xE0 && pos++);
 		running_status[best_i] = event;
 
-		if (command_lengths [(event >> 4) - 8] > 0) {
-			copy_bytes = command_lengths [(event >> 4) - 8];
-		} else if (special_lengths [(event & 0x0F)] > 0) {
-			copy_bytes = special_lengths [(event & 0x0F)];
+		if (command_lengths[(event >> 4) - 8] > 0) {
+			copy_bytes = command_lengths[(event >> 4) - 8];
+		} else if (special_lengths[(event & 0x0F)] > 0) {
+			copy_bytes = special_lengths[(event & 0x0F)];
 		} else if (event == 0xF0) {
 			// SysEx
 			pos2 = pos;
-			length = readVLQ (pos);
+			length = readVLQ(pos);
 			copy_bytes = 1 + (pos - pos2) + length;
 		} else if (event == 0xFF) {
 			// META
@@ -310,13 +310,13 @@ void MidiParser_SMF::compressToType0() {
 				write = false;
 			} else {
 				pos2 = pos;
-				length = readVLQ (pos);
+				length = readVLQ(pos);
 				copy_bytes = 2 + (pos - pos2) + length;
 			}
 			if (event == 0x2F)
 				--active_tracks;
 		} else {
-			warning("Bad MIDI command %02X", (int) event);
+			warning("Bad MIDI command %02X", (int)event);
 			track_pos[best_i] = 0;
 		}
 
@@ -334,24 +334,24 @@ void MidiParser_SMF::compressToType0() {
 
 				// Write VLQ delta
 				while (delta & 0x80) {
-					*output++ = (byte) (delta & 0xFF);
+					*output++ = (byte)(delta & 0xFF);
 					delta >>= 8;
 				}
-				*output++ = (byte) (delta & 0xFF);
+				*output++ = (byte)(delta & 0xFF);
 
 				// Write MIDI data
 				if (!implicitEvent)
 					++track_pos[best_i];
 				--copy_bytes;
 				*output++ = running_status[best_i];
-				memcpy (output, track_pos[best_i], copy_bytes);
+				memcpy(output, track_pos[best_i], copy_bytes);
 				output += copy_bytes;
 			}
 
 			// Fetch new VLQ delta for winning track
 			track_pos[best_i] += copy_bytes;
 			if (active_tracks)
-				track_timer[best_i] += readVLQ (track_pos[best_i]);
+				track_timer[best_i] += readVLQ(track_pos[best_i]);
 		}
 	}
 
