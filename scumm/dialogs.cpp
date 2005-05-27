@@ -839,24 +839,38 @@ ValueDisplayDialog::ValueDisplayDialog(const Common::String& label, int minVal, 
 	: GUI::Dialog(0, 80, 0, 16), _label(label), _min(minVal), _max(maxVal), _value(val), _incKey(incKey), _decKey(decKey) {
 	assert(_min <= _value && _value <= _max);
 
-	int width = g_gui.getStringWidth(label) + 16 + kPercentBarWidth;
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
 
-	_x = (320 - width) / 2;
+	if (screenW >= 400 && screenH >= 300) {
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		_percentBarWidth = kBigPercentBarWidth;
+	} else {
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+		_percentBarWidth = kPercentBarWidth;
+	}
+
+	int width = _font->getStringWidth(label) + 16 + _percentBarWidth;
+	int height = _font->getFontHeight() + 4 * 2;
+
+	_x = (screenW - width) / 2;
+	_y = (screenH - height) / 2;
 	_w = width;
+	_h = height;
 }
 
 void ValueDisplayDialog::drawDialog() {
 	g_gui.blendRect(_x, _y, _w, _h, g_gui._bgcolor);
 	g_gui.box(_x, _y, _w, _h, g_gui._color, g_gui._shadowcolor);
 	
-	const int labelWidth = _w - 8 - kPercentBarWidth;
+	const int labelWidth = _w - 8 - _percentBarWidth;
 
 	// Draw the label
-	g_gui.drawString(_label, _x + 4, _y + 4, labelWidth, g_gui._textcolor);
+	g_gui.drawString(_font, _label, _x + 4, _y + 4, labelWidth, g_gui._textcolor);
 	
 	// Draw the percentage bar
-	g_gui.fillRect(_x + 4 + labelWidth, _y + 4, kPercentBarWidth * (_value - _min) / (_max - _min), 8, g_gui._textcolorhi);
-	g_gui.frameRect(_x + 4 + labelWidth, _y + 4, kPercentBarWidth, 8, g_gui._textcolor);
+	g_gui.fillRect(_x + 4 + labelWidth, _y + 4, _percentBarWidth * (_value - _min) / (_max - _min), _h - 8, g_gui._textcolorhi);
+	g_gui.frameRect(_x + 4 + labelWidth, _y + 4, _percentBarWidth, _h - 8, g_gui._textcolor);
 
 	// Flag the draw area as dirty
 	g_gui.addDirtyRect(_x, _y, _w, _h);

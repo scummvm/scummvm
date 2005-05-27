@@ -198,11 +198,14 @@ public:
 protected:
 	enum {
 		kPercentBarWidth = 50,
+		kBigPercentBarWidth = 75,
 		kDisplayDelay = 1500
 	};
 	Common::String _label;
+	const Graphics::Font *_font;
 	const int _min, _max;
 	const uint16 _incKey, _decKey;
+	int _percentBarWidth;
 	int _value;
 	uint32 _timer;
 };
