@@ -437,7 +437,7 @@ void Player::sysEx(byte *p, uint16 len) {
 			// When a SysEx marker is encountered whose sound
 			// ID and marker ID match what was set by ImSetTrigger,
 			// something magical is supposed to happen....
-			for (a = 0; a < 16; ++a) {
+			for (a = 0; a < ARRAYSIZE(_se->_snm_triggers); ++a) {
 				if (_se->_snm_triggers[a].sound == _id &&
 				    _se->_snm_triggers[a].id == *p)
 				{

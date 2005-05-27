@@ -712,7 +712,7 @@ int32 IMuseInternal::doCommand(int numargs, int a[]) {
 #ifdef IMUSE_DEBUG
 	{
 		char string[128];
-		sprintf (string, "doCommand - %d (%d/%d)", a[0], (int)param, (int)cmd);
+		sprintf(string, "doCommand - %d (%d/%d)", a[0], (int)param, (int)cmd);
 		for (i = 1; i < numargs; ++i)
 			sprintf(string + strlen(string), ", %d", a[i]);
 		debug(0, string);
@@ -798,7 +798,7 @@ int32 IMuseInternal::doCommand(int numargs, int a[]) {
 				// associated with a particular player ID and
 				// trigger ID.
 				a[0] = 0;
-				for (i = 0; i < 16; ++i) {
+				for (i = 0; i < ARRAYSIZE(_snm_triggers); ++i) {
 					if (_snm_triggers[i].sound == a[1] && _snm_triggers[i].id &&
 					   (a[3] == -1 || _snm_triggers[i].id == a[3]))
 					{
@@ -1744,7 +1744,7 @@ void Part::noteOn(byte note, byte velocity) {
 		mc = _player->getMidiDriver()->getPercussionChannel();
 		if (!mc)
 			return;
-  		static byte prev_vol_eff = 128;
+		static byte prev_vol_eff = 128;
 		if (_vol_eff != prev_vol_eff){
 			mc->volume(_vol_eff);
 			prev_vol_eff = _vol_eff;
