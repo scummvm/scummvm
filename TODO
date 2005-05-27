@@ -195,22 +195,21 @@ Files
 GUI
 ===
 * Remove hard coded 320x200 assumptions, use game screen size. In particular,
-  all the dialogs should be rewritten to allow for that. This includes:
-  - EditGameDialog
-  - OptionsDialog
-  - GlobalOptionsDialog
-  - ...
+  all the dialogs should be rewritten to allow for that. At this point, most
+  (all?) dialogs are able to scale themselves, but the way they do so is
+  sometimes a bit hackish, the layout could be improved, and there are glitches
+  with the small version of the GUI.
 * EditableWidget: Make it possible to specify a min/max length for the text
 * EditableWidget: Let setEditString filter the string it gets
 * EditableWidget: Right now, custom filtering requires the user to subclass;
   it would be nice if there was simply a "validator hook" or so.
   Maybe take some inspiration from Java's Swing in this matter.
-* Improve EditTextWidget::drawCaret and ListWidget::drawCaret support for alternate
-  fonts (the current code overdraws chars partly, and relies on the fact that
-  our default built-in font has a separation pixel column on the *left* side;
-  most other bitmap fonts have it on the right, though). To this end, we maybe
-  should backup the background before drawing the caret, and restore it when
-  erasing the caret.
+* Improve EditTextWidget::drawCaret and ListWidget::drawCaret support for
+  alternate fonts (the current code overdraws chars partly, and relies on the
+  fact that our default built-in font has a separation pixel column on the
+  *left* side; most other bitmap fonts have it on the right, though). To this
+  end, we maybe should backup the background before drawing the caret, and
+  restore it when erasing the caret.
 * PopUpDialog: Must be able to handle longer lists (by adding scrolling?). The
   language popup currently doesn't fit in the small version of the GUI.
 * Add a new "options" dialog which is used by all frontends: for this, we'd
@@ -223,10 +222,11 @@ GUI
   Problem: It's not fully clear to me how to "best" deal with global vs. local
   settings here...
 * Maybe add the ScummVM logo (+typeface?) to the about dialog
-* There is currently no way to unset the SoundFont from the GUI, if any was set. 
-  Maybe add a 'clear' button for it? The same holds for other path settings.
-* ScrollBarWidget: Add auto-repeat: if user clicks & holds on one of the arrows,
-  then after a brief delay, it should start to contiously scroll.
+* There is currently no way to unset the SoundFont from the GUI, if any was
+  set. Maybe add a 'clear' button for it? The same holds for other path
+  settings.
+* ScrollBarWidget: Add auto-repeat: if user clicks & holds on one of the
+  arrows, then after a brief delay, it should start to contiously scroll.
 * AboutDialog: Add a "fade" effect for the top/bottom text lines
 * AboutDialog: Maybe prerender all of the text into another surface, and then
   simply compose that over the screen surface in the right way.
