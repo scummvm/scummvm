@@ -1162,9 +1162,7 @@ void ScummEngine_v8::o8_verbOps() {
 		vs->center = 1;
 		break;
 	case 0xA6:		// SO_VERB_CHARSET Choose charset for verb
-		// FIXME - TODO
 		vs->charset_nr = pop();
-		warning("SO_VERB_CHARSET %d: not yet implemented", vs->charset_nr);
 		break;
 	case 0xA7:		// SO_VERB_LINE_SPACING Choose linespacing for verb
 		// FIXME - TODO
