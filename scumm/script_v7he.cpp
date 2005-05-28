@@ -259,7 +259,7 @@ void ScummEngine_v70he::setupOpcodes() {
 		/* AC */
 		OPCODE(o6_invalid),
 		OPCODE(o6_isAnyOf),
-		OPCODE(o70_quitPauseRestart),
+		OPCODE(o70_systemOps),
 		OPCODE(o6_isActorInBox),
 		/* B0 */
 		OPCODE(o6_delay),
@@ -666,41 +666,51 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 	}
 }
 
-void ScummEngine_v70he::o70_quitPauseRestart() {
+void ScummEngine_v70he::o70_systemOps() {
+	byte *src, string[256];
+	int id, len;
+
 	byte subOp = fetchScriptByte();
-	int par1;
 
 	switch (subOp) {
-	case 22: // HE80+
-		clearDrawObjectQueue();
-		break;
-	case 26: // HE80+
-		// Clear screen
-		// Update palette
-		break;
-	case 158:		// SO_RESTART
+	case 158:
 		restart();
 		break;
 	case 160:
-		// FIXME: check
+		// Confirm shutdown
+		shutDown();
+		break;
+	case 244:
 		shutDown();
 		break;
 	case 250:
-		par1 = pop();
-		warning("stub: o70_quitPauseRestart subOpcode %d", subOp);
-		break;
-	case 253:
-		par1 = pop();
-		warning("stub: o70_quitPauseRestart subOpcode %d", subOp);
-	case 244:		// SO_QUIT
-		shutDown();
+		id = pop();
+		src = getStringAddress(id);
+		len = resStrLen(src) + 1;
+		memcpy(string, src, len);
+		debug(0, "Start executable (%s)", string);
 		break;
 	case 251:
+		convertMessageToString(_scriptPointer, string, sizeof(string));
+		len = resStrLen(_scriptPointer);
+		_scriptPointer += len + 1;
+		debug(0, "Start executable (%s)", string);
+		break;
 	case 252:
-		warning("stub: o70_quitPauseRestart subOpcode %d", subOp);
+		convertMessageToString(_scriptPointer, string, sizeof(string));
+		len = resStrLen(_scriptPointer);
+		_scriptPointer += len + 1;
+		debug(0, "Start game (%s)", string);
+		break;
+	case 253:
+		id = pop();
+		src = getStringAddress(id);
+		len = resStrLen(src) + 1;
+		memcpy(string, src, len);
+		debug(0, "Start game (%s)", string);
 		break;
 	default:
-		warning("o70_quitPauseRestart invalid case %d", subOp);
+		error("o70_systemOps invalid case %d", subOp);
 	}
 }
 

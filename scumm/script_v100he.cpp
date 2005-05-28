@@ -212,7 +212,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_wordArrayIndexedWrite),
 		OPCODE(o6_sub),
 		/* 88 */
-		OPCODE(o100_quitPauseRestart),
+		OPCODE(o100_systemOps),
 		OPCODE(o6_invalid),
 		OPCODE(o72_setTimer),
 		OPCODE(o100_cursorCommand),
@@ -2052,7 +2052,7 @@ void ScummEngine_v100he::o100_startScript() {
 	runScript(script, (flags == 128 || flags == 129), (flags == 130 || flags == 129), args);
 }
 
-void ScummEngine_v100he::o100_quitPauseRestart() {
+void ScummEngine_v100he::o100_systemOps() {
 	byte subOp = fetchScriptByte();
 	subOp -= 61;
 
@@ -2072,7 +2072,7 @@ void ScummEngine_v100he::o100_quitPauseRestart() {
 		// Update palette
 		break;
 	default:
-		error("o100_quitPauseRestart invalid case %d", subOp);
+		error("o100_systemOps invalid case %d", subOp);
 	}
 }
 

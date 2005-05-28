@@ -285,7 +285,7 @@ void ScummEngine_v60he::setupOpcodes() {
 		/* AC */
 		OPCODE(o6_invalid),
 		OPCODE(o6_isAnyOf),
-		OPCODE(o6_quitPauseRestart),
+		OPCODE(o6_systemOps),
 		OPCODE(o6_isActorInBox),
 		/* B0 */
 		OPCODE(o6_delay),

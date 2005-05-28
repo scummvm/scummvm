@@ -261,7 +261,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* AC */
 		OPCODE(o6_invalid),
 		OPCODE(o6_isAnyOf),
-		OPCODE(o70_quitPauseRestart),
+		OPCODE(o72_systemOps),
 		OPCODE(o6_isActorInBox),
 		/* B0 */
 		OPCODE(o6_delay),
@@ -1560,6 +1560,42 @@ void ScummEngine_v72he::o72_arrayOps() {
 		break;
 	default:
 		error("o72_arrayOps: default case %d (array %d)", subOp, array);
+	}
+}
+
+void ScummEngine_v72he::o72_systemOps() {
+	byte string[1024];
+
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
+	case 22: // HE80+
+		clearDrawObjectQueue();
+		break;
+	case 26: // HE80+
+		gdi.copyVirtScreenBuffers(Common::Rect(_screenWidth, _screenHeight));
+		updatePalette();
+		break;
+	case 158:
+		restart();
+		break;
+	case 160:
+		// Confirm shutdown
+		shutDown();
+		break;
+	case 244:
+		shutDown();
+		break;
+	case 251:
+		copyScriptString(string, sizeof(string));
+		debug(0, "Start executable (%s)", string);
+		break;
+	case 252:
+		copyScriptString(string, sizeof(string));
+		debug(0, "Start game (%s)", string);
+		break;
+	default:
+		error("o72_systemOps invalid case %d", subOp);
 	}
 }
 

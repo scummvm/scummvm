@@ -265,7 +265,7 @@ void ScummEngine_v8::setupOpcodes() {
 		OPCODE(o6_startMusic),
 		OPCODE(o6_stopSound),
 		OPCODE(o6_soundKludge),
-		OPCODE(o8_system),
+		OPCODE(o8_systemOps),
 		/* B4 */
 		OPCODE(o6_saveRestoreVerbs),
 		OPCODE(o6_setObjectName),
@@ -1177,7 +1177,7 @@ void ScummEngine_v8::o8_verbOps() {
 	}
 }
 
-void ScummEngine_v8::o8_system() {
+void ScummEngine_v8::o8_systemOps() {
 	byte subOp = fetchScriptByte();
 	switch (subOp) {
 	case 0x28:		// SO_SYSTEM_RESTART Restart game
@@ -1187,7 +1187,7 @@ void ScummEngine_v8::o8_system() {
 		shutDown();
 		break;
 	default:
-		error("o8_system: invalid case 0x%x", subOp);
+		error("o8_systemOps: invalid case 0x%x", subOp);
 	}
 }
 

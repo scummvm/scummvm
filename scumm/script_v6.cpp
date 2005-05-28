@@ -266,7 +266,7 @@ void ScummEngine_v6::setupOpcodes() {
 		/* AC */
 		OPCODE(o6_soundKludge),
 		OPCODE(o6_isAnyOf),
-		OPCODE(o6_quitPauseRestart),
+		OPCODE(o6_systemOps),
 		OPCODE(o6_isActorInBox),
 		/* B0 */
 		OPCODE(o6_delay),
@@ -2266,7 +2266,7 @@ void ScummEngine_v6::o6_isAnyOf() {
 	push(0);
 }
 
-void ScummEngine_v6::o6_quitPauseRestart() {
+void ScummEngine_v6::o6_systemOps() {
 	byte subOp = fetchScriptByte();
 	switch (subOp) {
 	case 158:		// SO_RESTART
@@ -2279,7 +2279,7 @@ void ScummEngine_v6::o6_quitPauseRestart() {
 		shutDown();
 		break;
 	default:
-		error("o6_quitPauseRestart invalid case %d", subOp);
+		error("o6_systemOps invalid case %d", subOp);
 	}
 }
 

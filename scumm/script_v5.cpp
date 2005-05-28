@@ -229,7 +229,7 @@ void ScummEngine_v5::setupOpcodes() {
 		OPCODE(o5_getRandomNr),
 		OPCODE(o5_and),
 		/* 98 */
-		OPCODE(o5_quitPauseRestart),
+		OPCODE(o5_systemOps),
 		OPCODE(o5_doSentence),
 		OPCODE(o5_move),
 		OPCODE(o5_multiply),
@@ -1673,7 +1673,7 @@ void ScummEngine_v5::o5_putActorInRoom() {
 		a->putActor(0, 0, 0);
 }
 
-void ScummEngine_v5::o5_quitPauseRestart() {
+void ScummEngine_v5::o5_systemOps() {
 	byte subOp = fetchScriptByte();
 	switch (subOp) {
 	case 1:		// SO_RESTART
@@ -1686,7 +1686,7 @@ void ScummEngine_v5::o5_quitPauseRestart() {
 		shutDown();
 		break;
 	default:
-		error("o5_quitPauseRestart: unknown subopcode %d", subOp);
+		error("o5_systemOps: unknown subopcode %d", subOp);
 	}
 }
 

@@ -261,7 +261,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		/* AC */
 		OPCODE(o80_drawWizPolygon),
 		OPCODE(o6_isAnyOf),
-		OPCODE(o70_quitPauseRestart),
+		OPCODE(o72_systemOps),
 		OPCODE(o6_isActorInBox),
 		/* B0 */
 		OPCODE(o6_delay),

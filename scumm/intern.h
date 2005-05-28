@@ -161,7 +161,7 @@ protected:
 	void o5_putActor();
 	void o5_putActorAtObject();
 	void o5_putActorInRoom();
-	void o5_quitPauseRestart();
+	void o5_systemOps();
 	void o5_resourceRoutines();
 	void o5_roomOps();
 	void o5_saveLoadGame();
@@ -671,7 +671,7 @@ protected:
 	void o6_getActorAnimCounter1();
 	void o6_soundKludge();
 	void o6_isAnyOf();
-	void o6_quitPauseRestart();
+	void o6_systemOps();
 	void o6_isActorInBox();
 	void o6_delay();
 	void o6_delaySeconds();
@@ -839,7 +839,7 @@ protected:
 	void o70_pickupObject();
 	void o70_getActorRoom();
 	void o70_resourceRoutines();
-	void o70_quitPauseRestart();
+	void o70_systemOps();
 	void o70_kernelSetFunctions();
 	void o70_seekFilePos();
 	void o70_copyString();
@@ -978,6 +978,7 @@ protected:
 	void o72_verbOps();
 	void o72_findObject();
 	void o72_arrayOps();
+	void o72_systemOps();
 	void o72_talkActor();
 	void o72_talkEgo();
 	void o72_dimArray();
@@ -1249,7 +1250,7 @@ protected:
 	void o100_startSound();
 	void o100_setSpriteInfo();
 	void o100_startScript();
-	void o100_quitPauseRestart();
+	void o100_systemOps();
 	void o100_cursorCommand();
 	void o100_wait();
 	void o100_writeFile();
@@ -1363,7 +1364,7 @@ protected:
 	void o8_cameraOps();
 	void o8_verbOps();
 	
-	void o8_system();
+	void o8_systemOps();
 	void o8_startVideo();
 	void o8_kernelSetFunctions();
 	void o8_kernelGetFunctions();
