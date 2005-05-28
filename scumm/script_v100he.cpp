@@ -2053,23 +2053,36 @@ void ScummEngine_v100he::o100_startScript() {
 }
 
 void ScummEngine_v100he::o100_systemOps() {
+	byte string[1024];
+
 	byte subOp = fetchScriptByte();
 	subOp -= 61;
 
 	switch (subOp) {
-	case 0:		// SO_RESTART
+	case 0:
 		restart();
 		break;
 	case 67:
 		clearDrawObjectQueue();
 		break;
 	case 71:
+		// Confirm shutdown
+		shutDown();
+		break;
 	case 72:
 		shutDown();
 		break;
+	case 73:
+		copyScriptString(string, sizeof(string));
+		debug(0, "Start game (%s)", string);
+		break;
+	case 74:
+		copyScriptString(string, sizeof(string));
+		debug(0, "Start executable (%s)", string);
+		break;
 	case 75:
-		// Clear screen
-		// Update palette
+		gdi.copyVirtScreenBuffers(Common::Rect(_screenWidth, _screenHeight));
+		updatePalette();
 		break;
 	default:
 		error("o100_systemOps invalid case %d", subOp);
