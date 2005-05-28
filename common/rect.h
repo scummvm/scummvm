@@ -73,12 +73,12 @@ struct Rect {
 	int16 width() const { return right - left; }
 	int16 height() const { return bottom - top; }
 	
-	void setWidth(int16 width) {
-		right = left + width;
+	void setWidth(int16 aWidth) {
+		right = left + aWidth;
 	}
 
-	void setHeight(int16 height) {
-		bottom = top + height;
+	void setHeight(int16 aHeight) {
+		bottom = top + aHeight;
 	}
 
 	/*!	@brief check if given position is inside this rectangle
