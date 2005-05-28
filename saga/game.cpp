@@ -74,15 +74,32 @@ static PanelButton ITE_ConversePanelButtons[] = {
 };
 
 static PanelButton ITE_OptionPanelButtons[] = {
-	{kPanelButtonSlider,	284,19, 13,75,	0,'-',0,	0,0,0}, //slider-scroller
-	{kPanelButtonOption,	113,18, 45,17,	13,'r',0,	0,0,0}, //read speed
-	{kPanelButtonOption,	113,37, 45,17,	16,'m',0,	0,0,0}, //music
-	{kPanelButtonOption,	113,56, 45,17,	16,'n',0,	0,0,0}, //sound-noise
-	{kPanelButtonOption,	13,79, 135,17,	12,'q',0,	0,0,0}, //quit
-	{kPanelButtonOption,	13,98, 135,17,	17,'c',0,	0,0,0}, //continue
-	{kPanelButtonOption,	164,98, 57,17,	18,'l',0,	0,0,0}, //load
-	{kPanelButtonOption,	241,98, 57,17,	19,'s',0,	0,0,0},	//save
-	{kPanelButtonOption,	166,20, 112,74,	0,'-',0,	0,0,0},	//slider
+	{kPanelButtonOptionSlider,	284,19, 13,75,	0,'-',0,	0,0,0}, //slider-scroller
+	{kPanelButtonOption,	113,18, 45,17,	kTextReadingSpeed,'r',0,	0,0,0}, //read speed
+	{kPanelButtonOption,	113,37, 45,17,	kTextMusic,'m',0,	0,0,0}, //music
+	{kPanelButtonOption,	113,56, 45,17,	kTextSound,'n',0,	0,0,0}, //sound-noise
+	{kPanelButtonOption,	13,79, 135,17,	kTextQuitGame,'q',0,	0,0,0}, //quit
+	{kPanelButtonOption,	13,98, 135,17,	kTextContinuePlaying,'c',0,	0,0,0}, //continue
+	{kPanelButtonOption,	164,98, 57,17,	kTextLoad,'l',0,	0,0,0}, //load
+	{kPanelButtonOption,	241,98, 57,17,	kTextSave,'s',0,	0,0,0},	//save
+	{kPanelButtonOptionSaveFiles,	166,20, 112,74,	0,'-',0,	0,0,0},	//savefiles
+
+	{kPanelButtonOptionText,114,4, 0,0,	kTextGameOptions,'-',0,	0,0,0},	// text: game options
+	{kPanelButtonOptionText,10,22, 0,0,	kTextReadingSpeed,'-',0, 0,0,0},	// text: read speed
+	{kPanelButtonOptionText,73,41, 0,0,	kTextMusic,'-',0, 0,0,0},	// text: music
+	{kPanelButtonOptionText,69,60, 0,0,	kTextSound,'-',0, 0,0,0},	// text: noise
+};
+
+static PanelButton ITE_QuitPanelButtons[] = {
+	{kPanelButtonArrow, 0,0, 0,0, 0,'-',0, 0,0,0}, //TODO
+};
+
+static PanelButton ITE_LoadPanelButtons[] = {
+	{kPanelButtonArrow, 0,0, 0,0, 0,'-',0, 0,0,0}, //TODO
+};
+
+static PanelButton ITE_SavePanelButtons[] = {
+	{kPanelButtonArrow, 0,0, 0,0, 0,'-',0, 0,0,0}, //TODO
 };
 
 static GameDisplayInfo ITE_DisplayInfo = {
@@ -117,14 +134,27 @@ static GameDisplayInfo ITE_DisplayInfo = {
 	ITE_MainPanelButtons,
 
 	4, 5,			// converse Up & Down button indexies
-
 	0, 149,			// converse panel offsets
 	ARRAYSIZE(ITE_ConversePanelButtons),
 	ITE_ConversePanelButtons,
 	
+	8, 0,			// save file index
+	8,				// optionSaveFileVisible
 	8, 8,			// option panel offsets
 	ARRAYSIZE(ITE_OptionPanelButtons),
-	ITE_OptionPanelButtons
+	ITE_OptionPanelButtons,
+
+	0, 0,			// quit panel offsets
+	ARRAYSIZE(ITE_QuitPanelButtons),
+	ITE_QuitPanelButtons,
+
+	0, 0,			// load panel offsets
+	ARRAYSIZE(ITE_LoadPanelButtons),
+	ITE_LoadPanelButtons,
+
+	0, 0,			// save panel offsets
+	ARRAYSIZE(ITE_SavePanelButtons),
+	ITE_SavePanelButtons
 };
 
 static GameResourceDescription ITE_Resources = {
@@ -254,6 +284,19 @@ static PanelButton IHNM_OptionPanelButtons[] = {
 	{kPanelButtonArrow, 0,0, 0,0, 0,'-',0, 0,0,0}, //TODO
 };
 
+static PanelButton IHNM_QuitPanelButtons[] = {
+	{kPanelButtonArrow, 0,0, 0,0, 0,'-',0, 0,0,0}, //TODO
+};
+
+static PanelButton IHNM_LoadPanelButtons[] = {
+	{kPanelButtonArrow, 0,0, 0,0, 0,'-',0, 0,0,0}, //TODO
+};
+
+static PanelButton IHNM_SavePanelButtons[] = {
+	{kPanelButtonArrow, 0,0, 0,0, 0,'-',0, 0,0,0}, //TODO
+};
+
+
 static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	640, 480,	// logical width&height
 	
@@ -291,9 +334,23 @@ static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	ARRAYSIZE(IHNM_ConversePanelButtons),
 	IHNM_ConversePanelButtons,
 	
+	-1, -1,		// save file index
+	0,			// optionSaveFileVisible
 	0, 0,		// option panel offsets
 	ARRAYSIZE(IHNM_OptionPanelButtons),
-	IHNM_OptionPanelButtons
+	IHNM_OptionPanelButtons,
+
+	0, 0,			// quit panel offsets
+	ARRAYSIZE(IHNM_QuitPanelButtons),
+	IHNM_QuitPanelButtons,
+
+	0, 0,			// load panel offsets
+	ARRAYSIZE(IHNM_LoadPanelButtons),
+	IHNM_LoadPanelButtons,
+
+	0, 0,			// save panel offsets
+	ARRAYSIZE(IHNM_SavePanelButtons),
+	IHNM_SavePanelButtons
 };
 
 static GameResourceDescription IHNM_Resources = {

@@ -48,6 +48,8 @@ struct SaveGameHeader {
 	char name[SAVE_TITLE_SIZE];
 };
 
+static char emptySlot[] = "[New Save Game]";
+
 //TODO: 
 // - delete savegame
 
@@ -61,7 +63,11 @@ char *SagaEngine::getSaveFileName(uint idx) {
 	if (idx >= MAX_SAVES) {
 		error("getSaveFileName wrong idx");
 	}
-	return _saveFileNames[idx];
+	if (saveListFull()) {
+		return _saveFileNames[idx];
+	} else {
+		return (idx == 0) ? emptySlot : _saveFileNames[idx - 1];
+	}	
 }
 
 
@@ -76,11 +82,16 @@ void SagaEngine::fillSaveList() {
 	name[strlen(name) - 2] = 0;
 	_saveFileMan->listSavefiles(name, marks, MAX_SAVES);
 
+	_saveFileNamesMaxCount = 0;
 	for (i = 0; i < MAX_SAVES; i++) {
+		if (marks[i]) {
+			_saveFileNamesMaxCount++;
+		}
 		_saveFileNames[i][0] = 0;
 	}	
 	
 	_saveFileNamesCount = 0;
+	
 	i = 0;
 	while (i < MAX_SAVES) {
 		if (marks[i]) {
@@ -99,6 +110,13 @@ void SagaEngine::fillSaveList() {
 		}
 		i++;
 	}
+
+	for (i = 0; i < MAX_SAVES; i++) {
+		sprintf(_saveFileNames[i], "test%i",i);
+	}	
+
+	_saveFileNamesCount = 14;
+
 }
 
 

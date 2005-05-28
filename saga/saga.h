@@ -151,8 +151,13 @@ enum PanelButtonType {
 	kPanelButtonArrow = 2,
 	kPanelButtonConverseText = 4,
 	kPanelButtonInventory = 8,
+	
 	kPanelButtonOption = 0x10,
-	kPanelButtonSlider = 0x20,
+	kPanelButtonOptionSlider = 0x20,
+	kPanelButtonOptionSaveFiles = 0x40,
+	kPanelButtonOptionText = 0x80,
+
+	kPanelButtonReserved = 0x100,
 	kPanelAllButtons = 0xFFFFF
 };
 
@@ -328,7 +333,7 @@ struct PanelButton {
 	int width;
 	int height;
 	int id;
-	int keyChar;
+	uint16 ascii;
 	int state;
 	int upSpriteNumber;
 	int downSpriteNumber;
@@ -384,10 +389,29 @@ struct GameDisplayInfo {
 	int conversePanelButtonsCount;
 	PanelButton *conversePanelButtons;
 
+	int optionSaveFilePanelIndex;
+	int optionSaveFileSliderIndex;
+	uint optionSaveFileVisible;
+
 	int optionPanelXOffset;
 	int optionPanelYOffset;
 	int optionPanelButtonsCount;
 	PanelButton *optionPanelButtons;
+
+	int quitPanelXOffset;
+	int quitPanelYOffset;
+	int quitPanelButtonsCount;
+	PanelButton *quitPanelButtons;
+
+	int loadPanelXOffset;
+	int loadPanelYOffset;
+	int loadPanelButtonsCount;
+	PanelButton *loadPanelButtons;
+
+	int savePanelXOffset;
+	int savePanelYOffset;
+	int savePanelButtonsCount;
+	PanelButton *savePanelButtons;
 };
 
 
@@ -470,6 +494,12 @@ public:
 	void fillSaveList();
 	char *calcSaveFileName(uint slotNumber);
 	char *getSaveFileName(uint idx);
+	bool saveListFull() const {
+		return _saveFileNamesMaxCount == _saveFileNamesCount;
+	}
+	uint getSaveFileNameCount() const {
+		return saveListFull() ? _saveFileNamesCount : _saveFileNamesCount + 1;
+	}
 
 	int _soundEnabled;
 	int _musicEnabled;
@@ -545,6 +575,7 @@ public:
 
  private:
 	Common::String _targetName;
+	uint _saveFileNamesMaxCount;
 	uint _saveFileNamesCount;
 	char _saveFileNames[MAX_SAVES][SAVE_TITLE_SIZE];
 	Point _mousePos;

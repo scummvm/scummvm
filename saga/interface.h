@@ -134,10 +134,16 @@ enum ITEColors {
 	kITEColorLightGrey = 0x04,
 	kITEColorGrey = 0x0a,
 	kITEColorDarkGrey = 0x0b,
+	kITEColorDarkGrey0C = 0x0C,
 	kITEColorGreen = 0xba,
 	kITEColorBlack = 0x0f,
 	kITEColorRed = 0x65,
-	kITEColorBlue = 0x93
+	kITEColorDarkBlue8a = 0x8a,
+	kITEColorBlue89 = 0x89,
+	kITEColorLightBlue92 = 0x92,
+	kITEColorBlue = 0x93,
+	kITEColorLightBlue94 = 0x94,
+	kITEColorLightBlue96 = 0x96
 };
 
 
@@ -175,7 +181,7 @@ public:
 	void drawStatusBar();
 	void setVerbState(int verb, int state);
 
-	bool processKeyCode(int keyCode);
+	bool processAscii(uint16 ascii);
 	
 private:
 	void drawInventory(SURFACE *backBuffer);
@@ -219,7 +225,7 @@ private:
 	void handleConverseClick(const Point& mousePoint);				// converse panel click
 
 	PanelButton *optionHitTest(const Point& mousePoint) {
-		return _optionPanel.hitTest(mousePoint, kPanelAllButtons);
+		return _optionPanel.hitTest(mousePoint, kPanelButtonOptionSaveFiles | kPanelButtonOption | kPanelButtonOptionSlider);
 	}
 	void handleOptionUpdate(const Point& mousePoint);				// option panel update
 	void handleOptionClick(const Point& mousePoint);				// option panel click
@@ -230,11 +236,11 @@ private:
 	void setOption(PanelButton *panelButton);
 
 	void drawOptionPanelButtonText(SURFACE *ds, PanelButton *panelButton);
-	void drawButtonBox(SURFACE *ds, const Rect& rect, bool down);
+	void drawButtonBox(SURFACE *ds, const Rect &rect, bool slider, bool down);
 	void drawPanelButtonArrow(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton);
 	void drawVerbPanelText(SURFACE *ds, PanelButton *panelButton, int textColor, int textShadowColor);
 	void drawVerbPanel(SURFACE *backBuffer, PanelButton* panelButton);
-
+	void calcOptionSaveSlider();
 public:
 	void converseInit(void);
 	void converseClear(void);
@@ -267,6 +273,8 @@ private:
 	SpriteList _scenePortraits;
 	PanelButton *_verbTypeToPanelButton[kVerbTypesMax];
 	InterfacePanel _optionPanel;
+	PanelButton * _optionSaveFileSlider;
+	PanelButton * _optionSaveFilePanel;
 
 	int _saveReminderState;
 	bool _active;
@@ -296,6 +304,14 @@ private:
 	int _converseStartPos;
 	int _converseEndPos;
 	int _conversePos;
+
+	uint _optionSaveFileTop;
+	uint _optionSaveFileTitleNumber;
+	int16 _optionSaveFileMouseOff;
+	Rect _optionSaveRectTop;
+	Rect _optionSaveRectSlider;
+	Rect _optionSaveRectBottom;
+
 };
 
 } // End of namespace Saga

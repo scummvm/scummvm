@@ -351,7 +351,7 @@ void Puzzle::giveHint(void) {
 	if (_hintCount < 3) {
 		_vm->_actor->nonActorSpeech(&hintStr[_lang][_hintCount], 1, 0 );
 	} else {
-		int piece;
+		int piece = 0;
 
 		for (i = PUZZLE_PIECES - 1; i >= 0; i--) {
 			piece = _piecePriority[i];

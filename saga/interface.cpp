@@ -148,6 +148,8 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	_optionPanel.x = _vm->getDisplayInfo().optionPanelXOffset;
 	_optionPanel.y = _vm->getDisplayInfo().optionPanelYOffset;
 	_optionPanel.currentButton = NULL;
+	_optionSaveFileSlider = _optionPanel.getButton(_vm->getDisplayInfo().optionSaveFileSliderIndex);
+	_optionSaveFilePanel = _optionPanel.getButton(_vm->getDisplayInfo().optionSaveFilePanelIndex);
 
 	_active = false;
 	_panelMode = _lockedMode = kPanelNull;
@@ -163,6 +165,8 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	_inventoryBox = 0;
 	_inventorySize = ITE_INVENTORY_SIZE;
 	_saveReminderState = 0;
+
+	_optionSaveFileTop = 0;
 
 	_inventory = (uint16 *)calloc(_inventorySize, sizeof(uint16));
 	if (_inventory == NULL) {
@@ -225,7 +229,7 @@ void Interface::restoreMode() {
 
 void Interface::setMode(int mode, bool force) {
 	// TODO: Is this where we should hide/show the mouse cursor?
-
+	debug(0, "Interface::setMode %i", mode);
 	if (mode == kPanelMain) {
 		_inMainMode = true;
 		_saveReminderState = 1; //TODO: blinking timeout
@@ -255,6 +259,8 @@ void Interface::setMode(int mode, bool force) {
 			if (_panelMode == kPanelOption) {
 				_optionPanel.currentButton = NULL;
 				_vm->fillSaveList();
+				calcOptionSaveSlider();
+				_optionSaveFileTitleNumber = 0;
 			}
 		}		
 	}
@@ -262,12 +268,12 @@ void Interface::setMode(int mode, bool force) {
 	draw();
 }
 
-bool Interface::processKeyCode(int keyCode) {
+bool Interface::processAscii(uint16 ascii) {
 	int i;
 	PanelButton *panelButton;
 	switch (_panelMode) {
 	case kPanelNull:
-		if (keyCode == 27) {// Esc
+		if (ascii == 27) {// Esc
 			if (_vm->_scene->isInDemo()) {
 				_vm->_scene->skipScene();
 			} else {
@@ -278,10 +284,13 @@ bool Interface::processKeyCode(int keyCode) {
 		break;
 	case kPanelOption:
 		//TODO: check input dialog keys
+		if (ascii == 27) {// Esc
+			ascii = 'c'; //continue
+		}
 		for (i = 0; i < _optionPanel.buttonsCount; i++) {
 			panelButton = &_optionPanel.buttons[i];
 			if(panelButton->type == kPanelButtonOption) {
-				if (panelButton->keyChar == keyCode) {
+				if (panelButton->ascii == ascii) {
 					setOption(panelButton);				
 					return true;
 				}
@@ -291,7 +300,7 @@ bool Interface::processKeyCode(int keyCode) {
 	case kPanelMain:
 		for (i = 0; i < _mainPanel.buttonsCount; i++) {
 			panelButton = &_mainPanel.buttons[i];
-			if (panelButton->keyChar == keyCode) {
+			if (panelButton->ascii == ascii) {
 				if (panelButton->type == kPanelButtonVerb) {
 					_vm->_script->setVerb(panelButton->id);
 				}			
@@ -301,9 +310,16 @@ bool Interface::processKeyCode(int keyCode) {
 				return true;
 			}
 		}
+		if (ascii == 15) // ctrl-o
+		{
+			if (_saveReminderState > 0) {
+				setMode(kPanelOption);
+				return true;
+			}
+		}
 		break;
 	case kPanelConverse:
-		switch (keyCode) {
+		switch (ascii) {
 		case 'x':
 			setMode(kPanelMain);
 			if (_vm->_puzzle->isActive())
@@ -322,7 +338,7 @@ bool Interface::processKeyCode(int keyCode) {
 		case '2':
 		case '3':
 		case '4':
-			converseSetPos(keyCode);
+			converseSetPos(ascii);
 			break;
 
 		}
@@ -444,10 +460,52 @@ void Interface::draw() {
 	drawInventory(backBuffer);
 }
 
+void Interface::calcOptionSaveSlider() {
+	int totalFiles = _vm->getSaveFileNameCount();
+	int visibleFiles = _vm->getDisplayInfo().optionSaveFileVisible; 
+	int height = _optionSaveFileSlider->height;
+	int sliderHeight;
+	int pos;
+
+	if (totalFiles < visibleFiles) {
+		totalFiles = visibleFiles;
+	}
+
+	sliderHeight = visibleFiles * height / totalFiles;
+	if (sliderHeight < 7) {
+		sliderHeight = 7;
+	}
+
+	if (totalFiles - visibleFiles <= 0) {
+		pos = 0;
+	} else {
+		pos = _optionSaveFileTop * (height - sliderHeight) / (totalFiles - visibleFiles);
+	}
+	_optionPanel.calcPanelButtonRect(_optionSaveFileSlider, _optionSaveRectTop);
+	_optionSaveRectBottom = _optionSaveRectSlider = _optionSaveRectTop;
+
+	_optionSaveRectTop.bottom = _optionSaveRectTop.top + pos;
+	_optionSaveRectTop.top++;
+	_optionSaveRectTop.right--;
+
+	_optionSaveRectSlider.top = _optionSaveRectTop.bottom;
+	_optionSaveRectSlider.bottom = _optionSaveRectSlider.top + sliderHeight;
+
+	_optionSaveRectBottom.top = _optionSaveRectSlider.bottom;
+	_optionSaveRectBottom.right--;
+}
+
 void Interface::drawOption() {
+	const char *text;
 	SURFACE *backBuffer;
 	int i;
+	int fontHeight;
+	uint j, idx;
+	int fgColor;
+	int bgColor;
 	Point origin;
+	Rect rect;
+	Rect rect2;
 	PanelButton *panelButton;
 
 	backBuffer = _vm->_gfx->getBackBuffer();
@@ -461,20 +519,82 @@ void Interface::drawOption() {
 		if(panelButton->type == kPanelButtonOption) {
 			drawOptionPanelButtonText(backBuffer, panelButton);
 		}		
+		if (panelButton->type == kPanelButtonOptionText) {
+			text = _vm->getTextString(panelButton->id);
+			_optionPanel.calcPanelButtonRect(panelButton, rect);
+			_vm->_font->draw(MEDIUM_FONT_ID, backBuffer, text, 0, rect.left , rect.top,
+				_vm->getDisplayInfo().verbTextColor, _vm->getDisplayInfo().verbTextShadowColor, FONT_SHADOW);	 //TODO: create Option button colors constant	
+		}		
+	}	
+
+	if(_optionSaveRectTop.height() > 0) {
+		drawRect(backBuffer, _optionSaveRectTop, kITEColorDarkGrey);
 	}
+	
+	drawButtonBox(backBuffer, _optionSaveRectSlider, true, _optionSaveFileSlider->state > 0);
+
+	if(_optionSaveRectBottom.height() > 0) {
+		drawRect(backBuffer, _optionSaveRectBottom, kITEColorDarkGrey);
+	}
+
+	_optionPanel.calcPanelButtonRect(_optionSaveFilePanel, rect);
+	rect2 = rect;
+	fontHeight = _vm->_font->getHeight(SMALL_FONT_ID);
+	for (j = 0; j < _vm->getDisplayInfo().optionSaveFileVisible; j++) {
+		bgColor = kITEColorDarkGrey0C;
+		fgColor = kITEColorBrightWhite;
+		
+		idx = j + _optionSaveFileTop;
+		if (idx == _optionSaveFileTitleNumber) {
+			SWAP(bgColor, fgColor);
+		}
+		if (idx < _vm->getSaveFileNameCount()) {
+			rect2.top = rect.top + j * (fontHeight + 1);
+			rect2.bottom = rect2.top + fontHeight;
+			backBuffer->fillRect(rect2, bgColor);
+			text = _vm->getSaveFileName(idx);
+			_vm->_font->draw(SMALL_FONT_ID, backBuffer, text, 0,
+				 rect.left + 1, rect2.top, fgColor, 0, 0);
+		}
+	}
+
 }
 
 void Interface::handleOptionUpdate(const Point& mousePoint) {
 	int i;
+	int16 mouseY;
+	Rect rect;
+	int totalFiles = _vm->getSaveFileNameCount();
+	int visibleFiles = _vm->getDisplayInfo().optionSaveFileVisible; 
+
+	if (_vm->mouseButtonPressed()) {
+		if (_optionSaveFileSlider->state > 0) {
+			_optionPanel.calcPanelButtonRect(_optionSaveFileSlider, rect);
+
+			mouseY = mousePoint.y - rect.top -_optionSaveFileMouseOff;
+
+			if (totalFiles - visibleFiles <= 0) {
+				_optionSaveFileTop = 0;
+			} else {
+				_optionSaveFileTop = mouseY * (totalFiles - visibleFiles) /
+					(_optionSaveFileSlider->height - _optionSaveRectSlider.height());
+			}
+
+			_optionSaveFileTop = clamp(0, _optionSaveFileTop, _vm->getSaveFileNameCount() - _vm->getDisplayInfo().optionSaveFileVisible);
+			calcOptionSaveSlider();
+		}
+	}
+
 	_optionPanel.currentButton = optionHitTest(mousePoint);	
-	bool released = (_optionPanel.currentButton != NULL) && (_optionPanel.currentButton->state > 0) && (!_vm->mouseButtonPressed());
+	bool releasedButton = (_optionPanel.currentButton != NULL) && (_optionPanel.currentButton->state > 0) && (!_vm->mouseButtonPressed());
+	
 	if (!_vm->mouseButtonPressed()) {
 		for (i = 0; i < _optionPanel.buttonsCount; i++) {
 			_optionPanel.buttons[i].state = 0;
 		}
 	}
 
-	if (released) {
+	if (releasedButton) {
 		setOption(_optionPanel.currentButton); 
 	}
 
@@ -483,6 +603,7 @@ void Interface::handleOptionUpdate(const Point& mousePoint) {
 
 void Interface::handleOptionClick(const Point& mousePoint) {
 	int i;
+	Rect rect;
 	_optionPanel.currentButton = optionHitTest(mousePoint);
 
 	for (i = 0; i < _optionPanel.buttonsCount; i++) {
@@ -492,18 +613,50 @@ void Interface::handleOptionClick(const Point& mousePoint) {
 	if (_optionPanel.currentButton == NULL) {
 		return;
 	}
+	
+	if (_optionPanel.currentButton == _optionSaveFileSlider) {		
+		if ((_optionSaveRectTop.height() > 0) && (mousePoint.y < _optionSaveRectTop.bottom)) {
+			_optionSaveFileTop -= _vm->getDisplayInfo().optionSaveFileVisible;
+		} else {
+			if ((_optionSaveRectBottom.height() > 0) && (mousePoint.y >= _optionSaveRectBottom.top)) {
+				_optionSaveFileTop += _vm->getDisplayInfo().optionSaveFileVisible;
+			} else {
+				if (_vm->getDisplayInfo().optionSaveFileVisible < _vm->getSaveFileNameCount()) {
+					_optionSaveFileMouseOff = mousePoint.y - _optionSaveRectSlider.top;
+					_optionPanel.currentButton->state = 1;
+				}
+			}
+		}
 
-	_optionPanel.currentButton->state = 1;
-
+		_optionSaveFileTop = clamp(0, _optionSaveFileTop, _vm->getSaveFileNameCount() - _vm->getDisplayInfo().optionSaveFileVisible);
+		calcOptionSaveSlider();
+	} else {
+		if (_optionPanel.currentButton == _optionSaveFilePanel) {
+			_optionPanel.calcPanelButtonRect(_optionSaveFilePanel, rect);
+			_optionSaveFileTitleNumber = (mousePoint.y - rect.top) / (_vm->_font->getHeight(SMALL_FONT_ID) + 1);
+			if (_optionSaveFileTitleNumber < 0) {
+				_optionSaveFileTitleNumber = 0;
+			}
+			if (_optionSaveFileTitleNumber >= _vm->getDisplayInfo().optionSaveFileVisible) {
+				_optionSaveFileTitleNumber = _vm->getDisplayInfo().optionSaveFileVisible - 1;
+			}
+			_optionSaveFileTitleNumber += _optionSaveFileTop;
+			if (_optionSaveFileTitleNumber >= _vm->getSaveFileNameCount()) {
+				_optionSaveFileTitleNumber = _vm->getSaveFileNameCount() - 1;
+			}
+		} else {
+			_optionPanel.currentButton->state = 1;
+		}
+	}
 }
 
 
 void Interface::setOption(PanelButton *panelButton) {
-	switch (panelButton->keyChar) {
-		case 'c':
+	switch (panelButton->id) {
+		case kTextContinuePlaying:
 				setMode(kPanelMain);
 				break;
-		case 'q':
+		case kTextQuitGame:
 			_vm->shutDown();
 			break;
 	}
@@ -511,7 +664,7 @@ void Interface::setOption(PanelButton *panelButton) {
 
 void Interface::update(const Point& mousePoint, int updateFlag) {
 	
-	if (_vm->_scene->isInDemo() || _panelMode == kPanelFade) {
+	if (_vm->_scene->isInDemo() || _panelMode == kPanelFade || !_active) {
 		return;
 	}
 
@@ -842,11 +995,37 @@ void Interface::setVerbState(int verb, int state) {
 	draw();
 }
 
-void Interface::drawButtonBox(SURFACE *ds, const Rect& rect, bool down) {
-	byte cornerColor = 0x8b;
-	byte frameColor = 0x0f;
-	byte fillColor = 0x96;
-	byte odl = 0x8a, our = 0x94, idl = 0x97, iur = 0x95;
+void Interface::drawButtonBox(SURFACE *ds, const Rect& rect, bool slider, bool down) {	
+	byte cornerColor;
+	byte frameColor;
+	byte fillColor;
+	byte solidColor;
+	byte odl, our, idl, iur;
+
+	if (slider) {
+		cornerColor = 0x8b;
+		frameColor = kITEColorBlack;
+		fillColor = kITEColorLightBlue96;
+		odl = kITEColorDarkBlue8a;
+		our = kITEColorLightBlue92;
+		idl = 0x89;
+		iur = 0x94;
+		solidColor = down ? kITEColorLightBlue94 : kITEColorLightBlue96;
+	} else {
+		cornerColor = 0x8b;
+		frameColor = kITEColorBlack;
+		solidColor = fillColor = kITEColorLightBlue96;
+		odl = kITEColorDarkBlue8a;
+		our = kITEColorLightBlue94;
+		idl = 0x97;
+		iur = 0x95;
+		if (down) {
+			SWAP(odl, our);
+			SWAP(idl, iur);
+		}
+
+	}
+
 	int x = rect.left;
 	int y = rect.top;
 	int w = rect.width();
@@ -863,10 +1042,6 @@ void Interface::drawButtonBox(SURFACE *ds, const Rect& rect, bool down) {
 	ds->vLine(x, y + 1, y + 1 + h - 2, frameColor);
 	ds->vLine(xe, y + 1, y + 1 + h - 2, frameColor);
 
-	if (down) {
-		SWAP(odl, our);
-		SWAP(idl, iur);
-	}
 	x++;
 	y++;
 	xe--;
@@ -895,19 +1070,31 @@ void Interface::drawButtonBox(SURFACE *ds, const Rect& rect, bool down) {
 	w -= 2; h -= 2;
 
 	Common::Rect fill(x, y, x + w, y + h);
-	ds->fillRect(fill, fillColor);
+	ds->fillRect(fill, solidColor);
 }
 
 void Interface::drawOptionPanelButtonText(SURFACE *ds, PanelButton *panelButton) {
 	const char *text;
+	int textId;
 	int textWidth;
 	int textHeight;
 	Point point;
 	int textColor;
 	Rect rect;
-//TODO: draw box!
 
-	text = _vm->getTextString(panelButton->id);
+	textId = panelButton->id;
+	switch(panelButton->id) {
+		case(kTextReadingSpeed):
+			textId = kTextFast;
+			break;			
+		case(kTextMusic):
+			textId = kTextOn;
+			break;			
+		case(kTextSound):
+			textId = kTextOn;
+			break;			
+	}
+	text = _vm->getTextString(textId);
 
 	textWidth = _vm->_font->getStringWidth(MEDIUM_FONT_ID, text, 0, 0);
 	textHeight = _vm->_font->getHeight(MEDIUM_FONT_ID);
@@ -922,7 +1109,7 @@ void Interface::drawOptionPanelButtonText(SURFACE *ds, PanelButton *panelButton)
 	}
 
 	_optionPanel.calcPanelButtonRect(panelButton, rect);
-	drawButtonBox(ds, rect, panelButton->state > 0);
+	drawButtonBox(ds, rect, false, panelButton->state > 0);
 
 	_vm->_font->draw(MEDIUM_FONT_ID, ds, text, 0, point.x , point.y, textColor, _vm->getDisplayInfo().verbTextShadowColor, FONT_SHADOW);	 //TODO: create Option button colors constant
 }
@@ -1207,7 +1394,7 @@ void Interface::handleConverseClick(const Point& mousePoint) {
 	}
 
 	if (_conversePanel.currentButton->type == kPanelButtonConverseText) {
-		converseSetPos(_conversePanel.currentButton->keyChar);
+		converseSetPos(_conversePanel.currentButton->ascii);
 	}
 
 	if (_conversePanel.currentButton->type == kPanelButtonArrow) {

@@ -104,7 +104,7 @@ int SagaEngine::processInput() {
 				_render->toggleFlag(RF_RENDERPAUSE);
 				break;
 			default:
-				_interface->processKeyCode(event.kbd.keycode);
+				_interface->processAscii(event.kbd.ascii);
 				break;
 			}
 			break;
