@@ -30,6 +30,8 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Broke compatibility with HE savegame (HE v71 and upwards only)
    - Added possibility to disable building of HE and SCUMM v7 & v8 games
      support.
+   - Fixed the last few known music glitches in Sam & Max. (There are still
+     some - probably - minor missing features though.)
 
  Sword2:
    - Made the resource manager expire resources more intelligently.
