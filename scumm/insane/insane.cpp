@@ -674,14 +674,21 @@ void Insane::readState(void) { // PATCH
 		_enemy[EN_VULTF2].isEmpty = readArray(339);
 		_enemy[EN_CAVEFISH].isEmpty = readArray(56);
 
+		// FIXME
 		// Some sanity checks. There were submitted savefiles where these values were wrong
-		if (_enemy[EN_VULTM2].isEmpty != readArray(7))
-			error("Wrong INSANE parameters for EN_VULTM2 (%d %d). Please, report this", 
+		// Still it is unknown what leads to this state. Most probably it is memory
+		// overwrite
+		if (_enemy[EN_VULTM2].isEmpty != readArray(7)) {
+			warning("Wrong INSANE parameters for EN_VULTM2 (%d %d)", 
 				  _enemy[EN_VULTM2].isEmpty, readArray(7));
+			_enemy[EN_VULTM2].isEmpty = readArray(7);
+		}
 
-		if (_enemy[EN_VULTF2].isEmpty != (_actor[0].inventory[INV_CHAINSAW] != 0))
-			error("Wrong INSANE parameters for EN_VULTF2 (%d %d). Please, report this", 
+		if (_enemy[EN_VULTF2].isEmpty != (_actor[0].inventory[INV_CHAINSAW] != 0)) {
+			warning("Wrong INSANE parameters for EN_VULTF2 (%d %d)", 
 				  _enemy[EN_VULTF2].isEmpty, _actor[0].inventory[INV_CHAINSAW]);
+			_enemy[EN_VULTF2].isEmpty = (_actor[0].inventory[INV_CHAINSAW] != 0);
+		}
 
 		// FIXME
 		// This used to be here but.
