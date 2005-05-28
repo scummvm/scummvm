@@ -1081,7 +1081,7 @@ void ScummEngine_v90he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		MKLINE(ScummEngine_v90he, _curMaxSpriteId, sleInt32, VER(51)),
 		MKLINE(ScummEngine_v90he, _curSpriteId, sleInt32, VER(51)),
 		MKLINE(ScummEngine_v90he, _curSpriteGroupId, sleInt32, VER(51)),
-		MKLINE(ScummEngine_v90he, _sprite->_numSpritesToProcess, sleInt32, VER(51)),
+		MKLINE(ScummEngine_v90he, _numSpritesToProcess, sleInt32, VER(51)),
 		MKLINE(ScummEngine_v90he, _heObject, sleInt32, VER(51)),
 		MKLINE(ScummEngine_v90he, _heObjectNum, sleInt32, VER(51)),
 		MKLINE(ScummEngine_v90he, _hePaletteNum, sleInt32, VER(51)),
@@ -1091,7 +1091,10 @@ void ScummEngine_v90he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	_sprite->saveOrLoadSpriteData(&*s, savegameVersion);
 
 	s->saveLoadArrayOf(&_floodStateParams, 1, sizeof(_floodStateParams), floodStateEntries);
+
+	_numSpritesToProcess = _sprite->_numSpritesToProcess;
 	s->saveLoadEntries(this, HE90Entries);
+	_sprite->_numSpritesToProcess = _numSpritesToProcess;
 
 	if (_heversion >= 99) {
 		s->saveLoadArrayOf(_hePalettes, _numPalettes, sizeof(_hePalettes[0]), sleUint8);

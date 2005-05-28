@@ -1095,6 +1095,7 @@ protected:
 	int32 _curMaxSpriteId;
 	int32 _curSpriteId;
 	int32 _curSpriteGroupId;
+	int32 _numSpritesToProcess;
 
 public:
 	ScummEngine_v90he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex);
