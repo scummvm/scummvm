@@ -252,6 +252,7 @@ SmushPlayer::SmushPlayer(ScummEngine_v6 *scumm, int speed) {
 	_speed = speed;
 	_insanity = false;
 	_middleAudio = false;
+	_skipPalette = false;
 	_IACTstream = NULL;
 #ifdef _WIN32_WCE
 	_inTimer = false;
@@ -716,6 +717,9 @@ void SmushPlayer::handleNewPalette(Chunk &b) {
 	checkBlock(b, TYPE_NPAL, 0x300);
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleNewPalette()");
 
+	if (_skipPalette)
+		return;
+
 	readPalette(_pal, b);
 	setDirtyColors(0, 255);
 }
@@ -969,6 +973,10 @@ void SmushPlayer::handleAnimHeader(Chunk &b) {
 	_version = b.getWord();
 	_nbframes = b.getWord();
 	b.getWord();
+
+	if (_skipPalette)
+		return;
+
 	readPalette(_pal, b);
 	setDirtyColors(0, 255);
 }
@@ -1166,6 +1174,9 @@ void SmushPlayer::seekSan(const char *file, int32 pos, int32 contFrame) {
 			_middleAudio = true;
 			pos -= 8;
 		}
+		_skipPalette = false;
+	} else {
+		_skipPalette = true;
 	}
 
 	_base->seek(pos, FileChunk::seek_start);
