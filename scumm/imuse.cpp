@@ -847,9 +847,34 @@ int32 IMuseInternal::doCommand(int numargs, int a[]) {
 				return player->getParam(a[2], a[3]);
 			}
 		case 1:
-			if (g_scumm->_gameId == GID_SAMNMAX)
-				player->jump(a[3] - 1, (a[4] - 1) * 4 + a[5], ((a[6] * player->getTicksPerBeat()) >> 2) + a[7]);
-			else
+			if (g_scumm->_gameId == GID_SAMNMAX) {
+				// FIXME: Could someone verify this?
+				//
+				// This jump instruction is known to be used in
+				// the following cases:
+				//
+				// 1) Going anywhere on the USA map
+				// 2) Winning the Wak-A-Rat game
+				// 3) Losing or quitting the Wak-A-Rat game
+				// 4) Conroy hitting Max with a golf club
+				//
+				// For all these cases the position parameters
+				// are always the same: 2, 1, 0, 0.
+				//
+				// 5) When leaving the bigfoot party. The
+				//    position parameters are: 3, 4, 300, 0
+				// 6) At Frog Rock, when the UFO appears. The
+				//    position parameters are: 10, 4, 400, 1
+				//
+				// The last two cases used to be buggy, so I
+				// have made a change to how the last two
+				// position parameters are handled. I still do
+				// not know if it's correct, but it sounds
+				// good to me at least.
+
+				debug(0, "doCommand(%d [%d/%d], %d, %d, %d, %d, %d, %d, %d)", a[0], param, cmd, a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
+				player->jump(a[3] - 1, (a[4] - 1) * 4 + a[5], a[6] + ((a[7] * player->getTicksPerBeat()) >> 2));
+			} else
 				player->setPriority(a[2]);
 			return 0;
 		case 2:
