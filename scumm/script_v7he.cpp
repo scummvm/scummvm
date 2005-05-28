@@ -624,10 +624,6 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 		resid = pop();
 		//queueLoadResource(rtRoomImage, resid);
 		break;
-	case 203:
-		resid = pop();
-		//queueLoadResource(rtImage, resid);
-		break;
 	case 159:
 		resid = pop();
 		res.unlock(rtImage, resid);
@@ -643,6 +639,10 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 	case 202:
 		resid = pop();
 		res.lock(rtImage, resid);
+		break;
+	case 203:
+		resid = pop();
+		//queueLoadResource(rtImage, resid);
 		break;
 	case 233:
 		resid = pop();
