@@ -1414,7 +1414,7 @@ void OSystem_SDL::toggleMouseGrab() {
 void OSystem_SDL::undrawMouse() {
 	// When we switch bigger overlay off mouse jumps. Argh!
 	// this intended to prevent undrawing offscreen mouse
-	if (!_overlayVisible)
+	if (!_overlayVisible) {
 		if (_adjustAspectRatio) {
 			if (_mouseBackup.x > _screenWidth || aspect2Real(_mouseBackup.y) > _screenHeight)
 				return;
@@ -1422,6 +1422,7 @@ void OSystem_SDL::undrawMouse() {
 			if (_mouseBackup.x > _screenWidth || _mouseBackup.y > _screenHeight)
 				return;
 		}
+	}
 
 	if (_mouseBackup.w) {
 		if (_adjustAspectRatio)
