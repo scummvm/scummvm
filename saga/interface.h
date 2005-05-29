@@ -210,8 +210,11 @@ public:
 	void setVerbState(int verb, int state);
 
 	bool processAscii(uint16 ascii);
-	
+	void processKeyUp(uint16 ascii);
+
 private:
+	static void textInputRepeatCallback(void *refCon);
+
 	void drawInventory(SURFACE *backBuffer);
 	void updateInventory(int pos);
 	void inventoryChangePos(int chg);
@@ -298,6 +301,9 @@ private:
 	void drawVerbPanel(SURFACE *backBuffer, PanelButton* panelButton);
 	void calcOptionSaveSlider();
 	void processTextInput(uint16 ascii);
+	void textInputStartRepeat(uint16 ascii);
+	void textInputRepeat(void);
+
 public:
 	void converseInit(void);
 	void converseClear(void);
@@ -378,6 +384,9 @@ private:
 	uint _textInputStringLength;
 	uint _textInputPos;
 	uint _textInputMaxWidth;
+
+	int _textInputRepeatPhase;
+	uint16 _textInputRepeatChar;
 };
 
 } // End of namespace Saga

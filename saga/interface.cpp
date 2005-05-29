@@ -38,6 +38,8 @@
 
 #include "saga/interface.h"
 
+#include "common/timer.h"
+
 namespace Saga {
 
 static int verbTypeToTextStringsIdLUT[kVerbTypesMax] = {
@@ -199,6 +201,8 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 		error("Interface::Interface(): not enough memory");
 	}
 
+	_textInputRepeatPhase = 0;
+
 	_initialized = true;
 }
 
@@ -305,6 +309,7 @@ void Interface::setMode(int mode, bool force) {
 			strcpy(_textInputString, "test1");
 			_textInputStringLength = strlen(_textInputString);
 			_textInputPos = _textInputStringLength + 1;
+			_textInputRepeatPhase = 0;
 			break;
 	}
 
@@ -430,6 +435,39 @@ bool Interface::processAscii(uint16 ascii) {
 		}
 	}
 	return false;
+}
+
+#define KEYBOARD_REPEAT_DELAY1 300000L
+#define KEYBOARD_REPEAT_DELAY2 50000L
+
+void Interface::textInputRepeatCallback(void *refCon) {
+	((Interface *)refCon)->textInputRepeat();
+}                                                                               
+
+void Interface::textInputStartRepeat(uint16 ascii) {
+	if (!_textInputRepeatPhase) {
+		_textInputRepeatPhase = 1;
+		Common::g_timer->installTimerProc(&textInputRepeatCallback, KEYBOARD_REPEAT_DELAY1, this);
+	}
+
+	_textInputRepeatChar = ascii;
+}
+
+void Interface::textInputRepeat() {
+	if (_textInputRepeatPhase == 1) {
+		_textInputRepeatPhase = 2;
+		Common::g_timer->removeTimerProc(&textInputRepeatCallback);
+		Common::g_timer->installTimerProc(&textInputRepeatCallback, KEYBOARD_REPEAT_DELAY2, this);
+	} else if (_textInputRepeatPhase == 2) {
+		processAscii(_textInputRepeatChar);
+	}
+}
+
+void Interface::processKeyUp(uint16 ascii) {
+	if (_textInputRepeatPhase) {
+		Common::g_timer->removeTimerProc(&textInputRepeatCallback);
+		_textInputRepeatPhase = 0;
+	}
 }
 
 void Interface::setStatusText(const char *text, int statusColor) {
@@ -786,62 +824,64 @@ void Interface::processTextInput(uint16 ascii) {
 	memset(tempString, 0, SAVE_TITLE_SIZE);
 	ch[1] = 0;
 
-	switch (ascii) {
-				case(8): // backspace
-					if (_textInputPos <= 1) {
-						break;
-					}
-					_textInputPos--;
-				case(127): // del
-					if (_textInputPos <= _textInputStringLength) {
-						if (_textInputPos != 1) {
-							strncpy(tempString, _textInputString, _textInputPos - 1);							
-						}
-						if (_textInputPos != _textInputStringLength) {
-							strncat(tempString, &_textInputString[_textInputPos], _textInputStringLength - _textInputPos);
-						}
-						strcpy(_textInputString, tempString);
-						_textInputStringLength = strlen(_textInputString);
-					}
-					break;
-				case(276): // left
-					if (_textInputPos > 1) {
-						_textInputPos--;
-					}
-					break;
-				case(275): // right
-					if (_textInputPos <= _textInputStringLength) {
-						_textInputPos++;
-					}
-					break;
-				default:
-					if (((ascii >= 'a') && (ascii <='z')) || 
-						((ascii >= '0') && (ascii <='9')) ||
-						((ascii >= 'A') && (ascii <='Z'))) {
-							if (_textInputStringLength < SAVE_TITLE_SIZE - 1) {
-								ch[0] = ascii;
-								tempWidth = _vm->_font->getStringWidth(SMALL_FONT_ID, ch, 0, 0);
-								tempWidth += _vm->_font->getStringWidth(SMALL_FONT_ID, _textInputString, 0, 0);
-								if (tempWidth > _textInputMaxWidth) {
-									break;
-								}
-								if (_textInputPos != 1) {
-									strncpy(tempString, _textInputString, _textInputPos - 1);
-									strcat(tempString, ch);
-								}
-								if ((_textInputStringLength == 0) || (_textInputPos == 1)) {
-									strcpy(tempString, ch);
-								}
-								if ((_textInputStringLength != 0) && (_textInputPos != _textInputStringLength)) {
-									strncat(tempString, &_textInputString[_textInputPos - 1], _textInputStringLength - _textInputPos + 1);
-								}
+	textInputStartRepeat(ascii);
 
-								strcpy(_textInputString, tempString);
-								_textInputStringLength = strlen(_textInputString);
-								_textInputPos++;
-							}
-						}
-						break;
+	switch (ascii) {
+	case(8): // backspace
+		if (_textInputPos <= 1) {
+			break;
+		}
+		_textInputPos--;
+	case(127): // del
+		if (_textInputPos <= _textInputStringLength) {
+			if (_textInputPos != 1) {
+				strncpy(tempString, _textInputString, _textInputPos - 1);							
+			}
+			if (_textInputPos != _textInputStringLength) {
+				strncat(tempString, &_textInputString[_textInputPos], _textInputStringLength - _textInputPos);
+			}
+			strcpy(_textInputString, tempString);
+			_textInputStringLength = strlen(_textInputString);
+		}
+		break;
+	case(276): // left
+		if (_textInputPos > 1) {
+			_textInputPos--;
+		}
+		break;
+	case(275): // right
+		if (_textInputPos <= _textInputStringLength) {
+			_textInputPos++;
+		}
+		break;
+	default:
+		if (((ascii >= 'a') && (ascii <='z')) || 
+			((ascii >= '0') && (ascii <='9')) ||
+			((ascii >= 'A') && (ascii <='Z'))) {
+			if (_textInputStringLength < SAVE_TITLE_SIZE - 1) {
+				ch[0] = ascii;
+				tempWidth = _vm->_font->getStringWidth(SMALL_FONT_ID, ch, 0, 0);
+				tempWidth += _vm->_font->getStringWidth(SMALL_FONT_ID, _textInputString, 0, 0);
+				if (tempWidth > _textInputMaxWidth) {
+									break;
+				}
+				if (_textInputPos != 1) {
+					strncpy(tempString, _textInputString, _textInputPos - 1);
+					strcat(tempString, ch);
+				}
+				if ((_textInputStringLength == 0) || (_textInputPos == 1)) {
+					strcpy(tempString, ch);
+				}
+				if ((_textInputStringLength != 0) && (_textInputPos != _textInputStringLength)) {
+					strncat(tempString, &_textInputString[_textInputPos - 1], _textInputStringLength - _textInputPos + 1);
+				}
+				
+				strcpy(_textInputString, tempString);
+				_textInputStringLength = strlen(_textInputString);
+				_textInputPos++;
+			}
+		}
+		break;
 	}
 }
 
