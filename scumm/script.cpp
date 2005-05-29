@@ -829,6 +829,7 @@ void ScummEngine::runExitScript() {
 			}
 		}
 
+		initializeLocals(slot, 0);
 		runScriptNested(slot);
 	}
 	if (_version > 2 && VAR(VAR_EXIT_SCRIPT2))
@@ -848,6 +849,7 @@ void ScummEngine::runEntryScript() {
 		vm.slot[slot].recursive = false;
 		vm.slot[slot].freezeCount = 0;
 		vm.slot[slot].delayFrameCount = 0;
+		initializeLocals(slot, 0);
 		runScriptNested(slot);
 	}
 	if (_version > 2 && VAR(VAR_ENTRY_SCRIPT2))
