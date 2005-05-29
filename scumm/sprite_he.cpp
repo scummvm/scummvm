@@ -1334,6 +1334,7 @@ void Sprite::processImages(bool arg) {
 		}
 
 		wiz.img.flags = kWIFMarkBufferDirty;
+		wiz.img.zorder = 0;
 		if (spr_flags & kSFXFlipped)
 			wiz.img.flags |= kWIFFlipX;
 		if (spr_flags & kSFYFlipped)

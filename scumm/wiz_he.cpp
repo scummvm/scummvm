@@ -1438,10 +1438,6 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 	if (params->processFlags & kWPFXmapNum) {
 		xmapNum = params->xmapNum;
 	}
-	int zorder = 0;
-	if (params->img.zorder) {
-		zorder = params->img.zorder;
-	}
 	int field_390 = 0;
 	if (params->processFlags & 0x200000) {
 		field_390 = params->img.field_390;
@@ -1480,7 +1476,7 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 		pwi->resNum = params->img.resNum;
 		pwi->x1 = po_x;
 		pwi->y1 = po_y;
-		pwi->zorder = zorder;
+		pwi->zorder = params->img.zorder;
 		pwi->state = state;
 		pwi->flags = flags;
 		pwi->xmapNum = xmapNum;
@@ -1496,7 +1492,7 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 			if (flags & kWIFIsPolygon) {
 				drawWizPolygon(params->img.resNum, state, po_x, flags, xmapNum, dstResNum, paletteNum); // XXX , VAR(VAR_WIZ_TCOLOR));
 			} else {
-				drawWizImage(params->img.resNum, state, po_x, po_y, zorder, xmapNum, field_390, r, flags, dstResNum, paletteNum);
+				drawWizImage(params->img.resNum, state, po_x, po_y, params->img.zorder, xmapNum, field_390, r, flags, dstResNum, paletteNum);
 			}
 		}
 	}
