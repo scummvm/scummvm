@@ -563,7 +563,7 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 		break;
 	case 111:		// SO_LOCK_ROOM
 		resid = pop();
-		if (resid > 0x7F)
+		if (_heversion <= 71 && resid > 0x7F)
 			resid = _resourceMapper[resid & 0x7F];
 		res.lock(rtRoom, resid);
 		res.lock(rtRoomImage, resid);
@@ -584,7 +584,7 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 		break;
 	case 115:		// SO_UNLOCK_ROOM
 		resid = pop();
-		if (resid > 0x7F)
+		if (_heversion <= 71 && resid > 0x7F)
 			resid = _resourceMapper[resid & 0x7F];
 		res.unlock(rtRoom, resid);
 		res.unlock(rtRoomImage, resid);
