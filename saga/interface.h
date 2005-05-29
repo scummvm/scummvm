@@ -58,7 +58,7 @@ enum PanelModes {
 	kPanelNull,
 	kPanelMain,
 	kPanelOption,
-	kPanelTextBox,
+	kPanelSave, //ex- kPanelTextBox,
 	kPanelQuit,
 	kPanelError,
 	kPanelLoad,
@@ -83,13 +83,30 @@ struct InterfacePanel {
 	PanelButton *buttons;
 	SpriteList sprites;
 	
+	InterfacePanel() {
+		x = y = 0;
+		image = NULL;
+		imageLength = 0;
+		imageWidth = imageHeight = 0;
+		currentButton = NULL;
+		buttonsCount = 0;
+		buttons = NULL;
+	}
+
 	PanelButton *getButton(int index) {
 		if ((index >= 0) && (index < buttonsCount)) {
 			return &buttons[index];
 		}
 		return NULL;
 	}
-
+	
+	void getRect(Rect &rect) {
+		rect.left = x;
+		rect.right = rect.left + imageWidth;
+		rect.top = y;
+		rect.bottom = rect.top + imageHeight;
+	}
+ 
 	void calcPanelButtonRect(const PanelButton* panelButton, Rect &rect) {
 		rect.left = x + panelButton->xOffset;
 		rect.right = rect.left + panelButton->width;
@@ -114,6 +131,14 @@ struct InterfacePanel {
 		}
 		return NULL;
 	}
+
+	void zeroAllButtonState() {
+		int i;
+		for (i = 0; i < buttonsCount; i++) {
+			buttons[i].state = 0;
+		}
+	}
+
 
 };
 
@@ -177,6 +202,9 @@ public:
 	}
 	void draw();
 	void drawOption();
+	void drawQuit();
+	void drawLoad();
+	void drawSave();
 	void update(const Point& mousePoint, int updateFlag);
 	void drawStatusBar();
 	void setVerbState(int verb, int state);
@@ -230,17 +258,46 @@ private:
 	void handleOptionUpdate(const Point& mousePoint);				// option panel update
 	void handleOptionClick(const Point& mousePoint);				// option panel click
 
+	PanelButton *quitHitTest(const Point& mousePoint) {
+		return _quitPanel.hitTest(mousePoint, kPanelAllButtons);
+	}
+	void handleQuitUpdate(const Point& mousePoint);					// quit panel update
+	void handleQuitClick(const Point& mousePoint);					// quit panel click
+
+	PanelButton *loadHitTest(const Point& mousePoint) {
+		return _loadPanel.hitTest(mousePoint, kPanelAllButtons);
+	}
+	void handleLoadUpdate(const Point& mousePoint);					// load panel update
+	void handleLoadClick(const Point& mousePoint);					// load panel click
+
+	PanelButton *saveHitTest(const Point& mousePoint) {
+		return _savePanel.hitTest(mousePoint, kPanelAllButtons);
+	}
+	void handleSaveUpdate(const Point& mousePoint);					// save panel update
+	void handleSaveClick(const Point& mousePoint);					// save panel click
+
 	void lockMode() { _lockedMode = _panelMode; }
 	void unlockMode() { _panelMode = _lockedMode; }
 
 	void setOption(PanelButton *panelButton);
+	void setQuit(PanelButton *panelButton);
+	void setLoad(PanelButton *panelButton);
+	void setSave(PanelButton *panelButton);
 
-	void drawOptionPanelButtonText(SURFACE *ds, PanelButton *panelButton);
-	void drawButtonBox(SURFACE *ds, const Rect &rect, bool slider, bool down);
+	void drawTextInput(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton);
+	void drawPanelText(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton);
+	void drawPanelButtonText(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton);
+	enum ButtonKind {
+		kButton,
+		kSlider,
+		kEdit
+	};
+	void drawButtonBox(SURFACE *ds, const Rect &rect, ButtonKind kind, bool down);
 	void drawPanelButtonArrow(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton);
 	void drawVerbPanelText(SURFACE *ds, PanelButton *panelButton, int textColor, int textShadowColor);
 	void drawVerbPanel(SURFACE *backBuffer, PanelButton* panelButton);
 	void calcOptionSaveSlider();
+	void processTextInput(uint16 ascii);
 public:
 	void converseInit(void);
 	void converseClear(void);
@@ -275,6 +332,10 @@ private:
 	InterfacePanel _optionPanel;
 	PanelButton * _optionSaveFileSlider;
 	PanelButton * _optionSaveFilePanel;
+	InterfacePanel _quitPanel;
+	InterfacePanel _loadPanel;
+	InterfacePanel _savePanel;
+	PanelButton * _saveEdit;
 
 	int _saveReminderState;
 	bool _active;
@@ -311,7 +372,12 @@ private:
 	Rect _optionSaveRectTop;
 	Rect _optionSaveRectSlider;
 	Rect _optionSaveRectBottom;
-
+	
+	bool _textInput;
+	char _textInputString[SAVE_TITLE_SIZE];
+	uint _textInputStringLength;
+	uint _textInputPos;
+	uint _textInputMaxWidth;
 };
 
 } // End of namespace Saga

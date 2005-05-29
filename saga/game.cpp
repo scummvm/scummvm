@@ -84,29 +84,41 @@ static PanelButton ITE_OptionPanelButtons[] = {
 	{kPanelButtonOption,	241,98, 57,17,	kTextSave,'s',0,	0,0,0},	//save
 	{kPanelButtonOptionSaveFiles,	166,20, 112,74,	0,'-',0,	0,0,0},	//savefiles
 
-	{kPanelButtonOptionText,114,4, 0,0,	kTextGameOptions,'-',0,	0,0,0},	// text: game options
+	{kPanelButtonOptionText,114-8,4, 0,0,	kTextGameOptions,'-',0,	0,0,0},	// text: game options
 	{kPanelButtonOptionText,10,22, 0,0,	kTextReadingSpeed,'-',0, 0,0,0},	// text: read speed
 	{kPanelButtonOptionText,73,41, 0,0,	kTextMusic,'-',0, 0,0,0},	// text: music
 	{kPanelButtonOptionText,69,60, 0,0,	kTextSound,'-',0, 0,0,0},	// text: noise
 };
 
 static PanelButton ITE_QuitPanelButtons[] = {
-	{kPanelButtonArrow, 0,0, 0,0, 0,'-',0, 0,0,0}, //TODO
+	{kPanelButtonQuit, 11,17, 60,16, kTextQuit,'q',0, 0,0,0},
+	{kPanelButtonQuit, 121,17, 60,16, kTextCancel,'c',0, 0,0,0},
+	{kPanelButtonQuitText, -1,5, 0,0, kTextQuitTheGameQuestion,'-',0, 0,0,0},
 };
 
 static PanelButton ITE_LoadPanelButtons[] = {
-	{kPanelButtonArrow, 0,0, 0,0, 0,'-',0, 0,0,0}, //TODO
+	{kPanelButtonLoad, 101,19, 60,16, kTextOK,'o',0, 0,0,0},
+	{kPanelButtonLoadText, -1,5, 0,0, kTextLoadSuccessful,'-',0, 0,0,0},
 };
 
 static PanelButton ITE_SavePanelButtons[] = {
-	{kPanelButtonArrow, 0,0, 0,0, 0,'-',0, 0,0,0}, //TODO
+	{kPanelButtonSave, 11,37, 60,16, kTextSave,'s',0, 0,0,0},
+	{kPanelButtonSave, 101,37, 60,16, kTextCancel,'c',0, 0,0,0},
+	{kPanelButtonSaveEdit, 26,17, 119,17, 0,'-',0, 0,0,0},
+	{kPanelButtonSaveText, -1,5, 0,0, kTextEnterSaveGameName,'-',0, 0,0,0},
 };
+
+/*
+static PanelButton ITE_ProtectionPanelButtons[] = {
+	{kPanelButtonArrow, 0,0, 0,0, 0,'-',0, 0,0,0}, //TODO
+};*/
 
 static GameDisplayInfo ITE_DisplayInfo = {
 	320, 200,		// logical width&height
 	
 	35,				// scene path y offset
 	137,			// scene height
+	137,			// clipped scene height
 	
 	0,				// status x offset
 	137,			// status y offset
@@ -115,7 +127,7 @@ static GameDisplayInfo ITE_DisplayInfo = {
 	2,				// status text y offset
 	186,			// status text color
 	15,				// status BG color
-	308,138,		// save reminder pos
+	308,137,		// save reminder pos
 	12,12,			// save reminder w & h
 	6,7,			// save reminder sprite numbers
 
@@ -144,15 +156,19 @@ static GameDisplayInfo ITE_DisplayInfo = {
 	ARRAYSIZE(ITE_OptionPanelButtons),
 	ITE_OptionPanelButtons,
 
-	0, 0,			// quit panel offsets
+	64,54,			// quit panel offsets
+	192,38,			// quit panel width & height
 	ARRAYSIZE(ITE_QuitPanelButtons),
 	ITE_QuitPanelButtons,
 
-	0, 0,			// load panel offsets
+	74, 53,			// load panel offsets
+	172, 40,		// load panel width & height
 	ARRAYSIZE(ITE_LoadPanelButtons),
 	ITE_LoadPanelButtons,
 
-	0, 0,			// save panel offsets
+	2,				// save edit index
+	74, 44,			// save panel offsets
+	172, 58,		// save panel width & height
 	ARRAYSIZE(ITE_SavePanelButtons),
 	ITE_SavePanelButtons
 };
@@ -302,6 +318,7 @@ static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	
 	0,			// scene path y offset
 	304,		// scene height
+	304,		// clipped scene height
 
 	0,			// status x offset
 	304,		// status y offset
@@ -340,15 +357,19 @@ static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	ARRAYSIZE(IHNM_OptionPanelButtons),
 	IHNM_OptionPanelButtons,
 
-	0, 0,			// quit panel offsets
+	0,0,			// quit panel offsets
+	0,0,			// quit panel width & height
 	ARRAYSIZE(IHNM_QuitPanelButtons),
 	IHNM_QuitPanelButtons,
 
 	0, 0,			// load panel offsets
+	0, 0,			// load panel width & height
 	ARRAYSIZE(IHNM_LoadPanelButtons),
 	IHNM_LoadPanelButtons,
 
+	-1,				// save edit index
 	0, 0,			// save panel offsets
+	0, 0,			// save panel width & height
 	ARRAYSIZE(IHNM_SavePanelButtons),
 	IHNM_SavePanelButtons
 };
@@ -1003,6 +1024,15 @@ int SagaEngine::loadGame(int gameNumber) {
 
 		debug(0, "Opened resource file: %s", gameFileName);
 		_gameFileContexts[i] = loadContext;
+	}
+	
+
+	if (_vm->getGameId() == GID_ITE_DISK_G) {
+		//DOS ITE version clips scene height by 1
+		_gameDisplayInfo.clippedSceneHeight--;
+		_gameDisplayInfo.statusYOffset--;
+		_gameDisplayInfo.mainPanelYOffset--;
+		_gameDisplayInfo.conversePanelYOffset--;
 	}
 
 	return SUCCESS;

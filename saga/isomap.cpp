@@ -379,7 +379,7 @@ int16 IsoMap::findMulti(int16 tileIndex, int16 absU, int16 absV, int16 absH) {
 
 int IsoMap::draw(SURFACE *ds) {
 	
-	Rect isoRect(_vm->getDisplayWidth(), _vm->getDisplayInfo().sceneHeight);
+	Rect isoRect(_vm->getDisplayWidth(), _vm->getClippedSceneHeight());
 	drawRect(ds, isoRect, 0);
 	_tileClip = isoRect;
 	drawTiles(ds, NULL);
@@ -399,7 +399,7 @@ void IsoMap::drawSprite(SURFACE *ds, SpriteList &spriteList, int spriteNumber, c
 	int yAlign;
 	const byte *spriteBuffer;
 	Point spritePointer;
-	Rect clip(_vm->getDisplayWidth(),_vm->getSceneHeight());
+	Rect clip(_vm->getDisplayWidth(),_vm->getClippedSceneHeight());
 
 	_vm->_sprite->getScaledSpriteBuffer(spriteList,spriteNumber,scale, width, height, xAlign, yAlign, spriteBuffer);
 
@@ -460,7 +460,7 @@ void IsoMap::drawTiles(SURFACE *ds,  const Location *location) {
 	metaTileY.y = (view1.y * 16 - fineScroll.y) - (u0 + v0) * 64;
 
 	workAreaWidth = _vm->getDisplayWidth() + 128;
-	workAreaHeight = _vm->getDisplayInfo().sceneHeight + 128 + 80;
+	workAreaHeight = _vm->getSceneHeight() + 128 + 80;
 
 	for (u1 = u0, v1 = v0; metaTileY.y < workAreaHeight; u1--, v1-- ) {
 		metaTileX = metaTileY;

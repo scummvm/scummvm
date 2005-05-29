@@ -157,7 +157,16 @@ enum PanelButtonType {
 	kPanelButtonOptionSaveFiles = 0x40,
 	kPanelButtonOptionText = 0x80,
 
-	kPanelButtonReserved = 0x100,
+	kPanelButtonQuit = 0x100,
+	kPanelButtonQuitText = 0x200,
+
+	kPanelButtonLoad = 0x400,
+	kPanelButtonLoadText = 0x800,
+
+	kPanelButtonSave = 0x1000,
+	kPanelButtonSaveText = 0x2000,
+	kPanelButtonSaveEdit = 0x4000,
+
 	kPanelAllButtons = 0xFFFFF
 };
 
@@ -200,7 +209,10 @@ enum TextStringIds {
 	kText70Percent,
 	kText80Percent,
 	kText90Percent,
-	kTextMax
+	kTextMax,
+	kTextQuitTheGameQuestion,
+	kTextLoadSuccessful,
+	kTextEnterSaveGameName
 };
 
 struct IMAGE_HEADER {
@@ -346,6 +358,7 @@ struct GameDisplayInfo {
 	
 	int pathStartY;
 	int sceneHeight;
+	int clippedSceneHeight;
 
 	int statusXOffset;
 	int statusYOffset;
@@ -400,16 +413,23 @@ struct GameDisplayInfo {
 
 	int quitPanelXOffset;
 	int quitPanelYOffset;
+	int quitPanelWidth;
+	int quitPanelHeight;
 	int quitPanelButtonsCount;
 	PanelButton *quitPanelButtons;
 
 	int loadPanelXOffset;
 	int loadPanelYOffset;
+	int loadPanelWidth;
+	int loadPanelHeight;
 	int loadPanelButtonsCount;
 	PanelButton *loadPanelButtons;
 
+	int saveEditIndex;
 	int savePanelXOffset;
 	int savePanelYOffset;
+	int savePanelWidth;
+	int savePanelHeight;
 	int savePanelButtonsCount;
 	PanelButton *savePanelButtons;
 };
@@ -612,7 +632,8 @@ public:
 
 	int getDisplayWidth() const { return _gameDisplayInfo.logicalWidth; }
 	int getDisplayHeight() const { return _gameDisplayInfo.logicalHeight;}
-	int getSceneHeight() const { return _gameDisplayInfo.sceneHeight; }
+	int getSceneHeight() const { return _gameDisplayInfo.sceneHeight; }	
+	int getClippedSceneHeight() const { return _gameDisplayInfo.clippedSceneHeight; }
 	const GameDisplayInfo & getDisplayInfo() { return _gameDisplayInfo; }
 	
 	const char *getTextString(int textStringId);

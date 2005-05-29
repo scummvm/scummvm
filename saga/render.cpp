@@ -136,8 +136,21 @@ int Render::drawScene() {
 		}
 	}
 
-	if (_vm->_interface->getMode() == kPanelOption) {
+	if ((_vm->_interface->getMode() == kPanelOption) || 
+		(_vm->_interface->getMode() == kPanelQuit) ||
+		(_vm->_interface->getMode() == kPanelLoad) ||
+		(_vm->_interface->getMode() == kPanelSave)) {
 		_vm->_interface->drawOption();
+
+		if (_vm->_interface->getMode() == kPanelQuit) {
+			_vm->_interface->drawQuit();
+		}
+		if (_vm->_interface->getMode() == kPanelLoad) {
+			_vm->_interface->drawLoad();
+		}
+		if (_vm->_interface->getMode() == kPanelSave) {
+			_vm->_interface->drawSave();
+		}
 	}
 
 	// Draw queued text strings

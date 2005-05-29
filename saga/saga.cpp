@@ -62,7 +62,7 @@ static const GameSettings saga_games[] = {
 	{0, 0, 0}
 };
 
-static const char *interfaceTextStrings[][39] = {
+static const char *interfaceTextStrings[][42] = {
 	{
 		"Walk to", "Look At", "Pick Up", "Talk to", "Open",
 		"Close", "Use", "Give", "Options", "Test",
@@ -71,7 +71,8 @@ static const char *interfaceTextStrings[][39] = {
 		"Game Options", "Reading Speed", "Music", "Sound", "Cancel",
 		"Quit", "OK", "Mid", "Click",
 		"10%", "20%", "30%", "40%", "50%",
-		"60%", "70%", "80%", "90%", "Max"
+		"60%", "70%", "80%", "90%", "Max", "Quit the Game?", "Load Successful!",
+		"Enter Save Game Name"
 	},
 	// German
 	{
@@ -82,7 +83,8 @@ static const char *interfaceTextStrings[][39] = {
 		"Spieleoptionen", "Lesegeschw.", "Musik", "Sound", "Abbr.",
 		"Beenden", NULL, "M", "Klick",
 		NULL, NULL, NULL, NULL, NULL,
-		NULL, NULL, NULL, NULL, NULL
+		NULL, NULL, NULL, NULL, NULL, "Quit the Game?", "Load Successful!",
+		"Enter Save Game Name"
 	}
 };
 
