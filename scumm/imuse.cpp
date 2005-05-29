@@ -726,7 +726,7 @@ int32 IMuseInternal::doCommand(int numargs, int a[]) {
 				return -1;
 			else {
 				warning("IMuse doCommand(6) - setImuseMasterVolume (%d)", a[1]);
-				return setImuseMasterVolume((a[1] << 1) |(a[1] ? 0 : 1)); // Convert from 0-127 to 0-255
+				return setImuseMasterVolume((a[1] << 1) | (a[1] ? 0 : 1)); // Convert from 0-127 to 0-255
 			}
 		case 7:
 			warning("IMuse doCommand(7) - getMasterVolume (%d)", a[1]);

@@ -1120,7 +1120,7 @@ void Player::transitionParameters() {
 }
 
 uint Player::getBeatIndex() {
-	return (_parser ?(_parser->getTick() / TICKS_PER_BEAT + 1) : 0);
+	return (_parser ? (_parser->getTick() / TICKS_PER_BEAT + 1) : 0);
 }
 
 void Player::removePart(Part *part) {
