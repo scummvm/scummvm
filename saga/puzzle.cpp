@@ -223,9 +223,9 @@ void Puzzle::initPieces(void) {
 void Puzzle::movePiece(Point mousePt) {
 }
 
-void Puzzle::hintTimerCallback(void *refCon) {                                   
-        ((Puzzle *)refCon)->solicitHint();                                         
-}                                                                               
+void Puzzle::hintTimerCallback(void *refCon) {
+	((Puzzle *)refCon)->solicitHint();
+}
 
 void Puzzle::solicitHint(void) {
 	int i;
@@ -254,10 +254,10 @@ void Puzzle::solicitHint(void) {
 		//	Roll to see if Sakka scolds
 		if (_vm->_rnd.getRandomNumber(1)) {
 			_hintRqState = kRQSakkaDenies;
-			Common::g_timer->installTimerProc(&hintTimerCallback, 200, this);
+			Common::g_timer->installTimerProc(&hintTimerCallback, 200000, this);
 		} else {
 			_hintRqState = kRQHintRequested;
-			Common::g_timer->installTimerProc(&hintTimerCallback, 400, this);
+			Common::g_timer->installTimerProc(&hintTimerCallback, 400000, this);
 		}
 
 		break;
@@ -269,7 +269,7 @@ void Puzzle::solicitHint(void) {
 		_vm->_interface->setRightPortrait(RID_ITE_SAKKA_APPRAISING);
 
 		_hintRqState = kRQHintRequestedStage2;
-		Common::g_timer->installTimerProc(&hintTimerCallback, 400, this);
+		Common::g_timer->installTimerProc(&hintTimerCallback, 400000, this);
 
 		_vm->_interface->converseClear();
 		_vm->_interface->converseAddText(optionsStr[_lang][kROAccept], 1, 0, 0 );
