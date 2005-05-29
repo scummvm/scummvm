@@ -2212,7 +2212,6 @@ load_game:
 	}
 
 	if (_completeScreenRedraw) {
-		_completeScreenRedraw = false;
 		_charset->clearCharsetMask();
 		_charset->_hasMask = false;
 
@@ -2240,6 +2239,7 @@ load_game:
 
 		handleMouseOver(false);
 
+		_completeScreenRedraw = false;
 		_fullRedraw = true;
 	}
 
