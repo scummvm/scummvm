@@ -862,8 +862,9 @@ void Scene::draw() {
 		_vm->_isoMap->adjustScroll(false);
 		_vm->_isoMap->draw(backBuffer);
 	} else {
+		
 		bufToSurface(backBuffer, buf_info.bg_buf, _vm->getDisplayWidth(),
-						MAX(_vm->getSceneHeight(), _bg.h), NULL, &bgPoint);
+			_inGame ? _vm->getClippedSceneHeight() : buf_info.bg_buf_h, NULL, &bgPoint);
 	}
 }
 
