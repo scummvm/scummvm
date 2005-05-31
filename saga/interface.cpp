@@ -1128,6 +1128,10 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 			if (updateFlag & UPDATE_MOUSECLICK) {
 				handleConverseClick(mousePoint);
 			}
+
+			if (_vm->_puzzle->isActive()) {
+				_vm->_puzzle->handleClick(mousePoint);
+			}
 		}
 	}
 

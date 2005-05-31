@@ -116,12 +116,12 @@ int Render::drawScene() {
 		_vm->_scene->draw();
 
 		if (_vm->_interface->getMode() != kPanelFade) {
-			// Draw queued actors
-			_vm->_actor->drawActors();
-
 			if (_vm->_puzzle->isActive()) {
 				_vm->_puzzle->movePiece(mouse_pt);
 				_vm->_actor->drawSpeech();
+			} else {
+				// Draw queued actors
+				_vm->_actor->drawActors();
 			}
 
 			if (getFlags() & RF_OBJECTMAP_TEST) {

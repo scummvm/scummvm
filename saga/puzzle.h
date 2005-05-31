@@ -40,6 +40,8 @@ private:
 
 	bool _solved;
 	bool _active;
+	bool _newPuzzle;
+	bool _sliding;
 
 	kRQStates _hintRqState;
 	int _hintGiver;
@@ -62,20 +64,30 @@ public:
 	bool isActive(void) { return _active; }
 
 	void handleReply(int reply);
+	void handleClick(Point mousePt);
 
 	void movePiece(Point mousePt);
 
 private:
+	void initPieceInfo(int i, int16 curX, int16 curY, byte offX, byte offY, int16 trgX, 
+					   int16 trgY, uint8 flag, uint8 count, Point point0, Point point1,
+					   Point point2, Point point3, Point point4, Point point5);
+
 	static void hintTimerCallback(void *refCon);
 
 	void solicitHint(void);
 
 	void initPieces(void);
+	void showPieces(void);
+	void slidePiece(int x1, int y1, int x2, int y2);
+	void dropPiece(Point mousePt);
+	void alterPiecePriority(void);
+	void drawCurrentPiece(void);
 
 	void giveHint(void);
 	void clearHint(void);
 
-public:
+private:
 	struct PieceInfo {
 		int16 curX;
 		int16 curY;
@@ -88,6 +100,8 @@ public:
 		Point point[6];
 	};
 
+	PieceInfo _pieceInfo[PUZZLE_PIECES];
+	int _slidePointX, _slidePointY;
 };
 
 } // End of namespace Saga

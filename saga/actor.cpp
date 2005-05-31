@@ -514,8 +514,10 @@ ObjectData *Actor::getObj(uint16 objId) {
 ActorData *Actor::getActor(uint16 actorId) {
 	ActorData *actor;
 
-	if (!validActorId(actorId))
-		error("Actor::getActor Wrong actorId 0x%X", actorId);
+	if (!validActorId(actorId)) {
+		warning("Actor::getActor Wrong actorId 0x%X", actorId);
+		assert(0);
+	}
 
 	if (actorId == ID_PROTAG) {
 		if (_protagonist == NULL) {

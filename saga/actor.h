@@ -135,6 +135,8 @@ struct ActorFrameSequence {
 	ActorFrameRange directions[ACTOR_DIRECTIONS_COUNT];
 };
 
+int pathLine(Point *pointList, const Point &point1, const Point &point2);
+
 struct Location {
 	int32 x;					// logical coordinates
 	int32 y;					// 
