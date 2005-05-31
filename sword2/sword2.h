@@ -78,6 +78,7 @@ struct MouseEvent {
 
 struct KeyboardEvent {
 	bool pending;
+	uint32 repeat;
 	uint16 ascii;
 	int keycode;
 	int modifiers;

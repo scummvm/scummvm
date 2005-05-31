@@ -132,6 +132,7 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst) : Engine(syst)
 	_debugger = NULL;
 
 	_keyboardEvent.pending = false;
+	_keyboardEvent.repeat = 0;
 	_mouseEvent.pending = false;
 
 	_wantSfxDebug = false;
@@ -475,16 +476,22 @@ uint32 Sword2Engine::setEventFilter(uint32 filter) {
 
 void Sword2Engine::parseEvents() {
 	OSystem::Event event;
+
+	uint32 now = _system->getMillis();
 	
 	while (_system->pollEvent(event)) {
 		switch (event.type) {
 		case OSystem::EVENT_KEYDOWN:
 			if (!(_eventFilter & RD_KEYDOWN)) {
 				_keyboardEvent.pending = true;
+				_keyboardEvent.repeat = now + 400;
 				_keyboardEvent.ascii = event.kbd.ascii;
 				_keyboardEvent.keycode = event.kbd.keycode;
 				_keyboardEvent.modifiers = event.kbd.flags;
 			}
+			break;
+		case OSystem::EVENT_KEYUP:
+			_keyboardEvent.repeat = 0;
 			break;
 		case OSystem::EVENT_MOUSEMOVE:
 			if (!(_eventFilter & RD_KEYDOWN)) {
@@ -533,6 +540,12 @@ void Sword2Engine::parseEvents() {
 		default:
 			break;
 		}
+	}
+
+	// Handle keyboard auto-repeat
+	if (!_keyboardEvent.pending && _keyboardEvent.repeat && now >= _keyboardEvent.repeat) {
+		_keyboardEvent.pending = true;
+		_keyboardEvent.repeat = now + 100;
 	}
 }
 
