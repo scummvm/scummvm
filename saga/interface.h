@@ -212,6 +212,8 @@ public:
 	bool processAscii(uint16 ascii);
 	void processKeyUp(uint16 ascii);
 
+	bool _textInput;
+
 private:
 	static void textInputRepeatCallback(void *refCon);
 
@@ -245,6 +247,7 @@ public:
 	}
 	void saveState(Common::OutSaveFile *out);
 	void loadState(Common::InSaveFile *in);
+
 private:
 	void handleMainUpdate(const Point& mousePoint);					// main panel update
 	void handleMainClick(const Point& mousePoint);					// main panel click
@@ -395,7 +398,6 @@ private:
 	Rect _optionSaveRectSlider;
 	Rect _optionSaveRectBottom;
 	
-	bool _textInput;
 	char _textInputString[SAVE_TITLE_SIZE];
 	uint _textInputStringLength;
 	uint _textInputPos;

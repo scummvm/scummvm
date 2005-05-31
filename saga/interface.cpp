@@ -858,7 +858,8 @@ void Interface::processTextInput(uint16 ascii) {
 	default:
 		if (((ascii >= 'a') && (ascii <='z')) || 
 			((ascii >= '0') && (ascii <='9')) ||
-			((ascii >= 'A') && (ascii <='Z'))) {
+			((ascii >= 'A') && (ascii <='Z')) ||
+			(ascii == ' ')) {
 			if (_textInputStringLength < SAVE_TITLE_SIZE - 1) {
 				ch[0] = ascii;
 				tempWidth = _vm->_font->getStringWidth(SMALL_FONT_ID, ch, 0, 0);

@@ -47,6 +47,11 @@ int SagaEngine::processInput() {
 				if (event.kbd.keycode == 'd')
 					_console->attach();
 			}
+			if (_interface->_textInput) {
+				_interface->processAscii(event.kbd.ascii);
+				return SUCCESS;
+			}
+
 			switch (event.kbd.keycode) {
 			case '#':
 			case '`':
