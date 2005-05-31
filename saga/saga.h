@@ -456,6 +456,11 @@ struct GameDescription {
 	}
 };
 
+struct SaveFileData {
+	char name[SAVE_TITLE_SIZE];
+	uint slotNumber;
+};
+
 
 inline int ticksToMSec(int tick) {
 	return tick * 1000 / kScriptTimeTicksPerSecond;
@@ -503,22 +508,20 @@ public:
 	virtual ~SagaEngine();
 	void shutDown() { _quit = true; }
 
-	void save() { //TODO: remove
-		save("iteSCUMMVM.sav", "default");
-	}
-	void load() { //TODO: remove
-		load("iteSCUMMVM.sav");
-	}
 	void save(const char *fileName, const char *saveName);
 	void load(const char *fileName);
 	void fillSaveList();
 	char *calcSaveFileName(uint slotNumber);
-	char *getSaveFileName(uint idx);
-	bool saveListFull() const {
-		return _saveFileNamesMaxCount == _saveFileNamesCount;
+	
+	SaveFileData *getSaveFile(uint idx);
+	uint getSaveSlotNumber(uint idx);
+	uint getNewSaveSlotNumber();
+	bool locateSaveFile(char *saveName, uint &titleNumber);
+	bool isSaveListFull() const {
+		return _saveFilesMaxCount == _saveFilesCount;
 	}
-	uint getSaveFileNameCount() const {
-		return saveListFull() ? _saveFileNamesCount : _saveFileNamesCount + 1;
+	uint getSaveFilesCount() const {
+		return isSaveListFull() ? _saveFilesCount : _saveFilesCount + 1;
 	}
 
 	int _soundEnabled;
@@ -595,9 +598,12 @@ public:
 
  private:
 	Common::String _targetName;
-	uint _saveFileNamesMaxCount;
-	uint _saveFileNamesCount;
-	char _saveFileNames[MAX_SAVES][SAVE_TITLE_SIZE];
+	
+	uint _saveFilesMaxCount;
+	uint _saveFilesCount;
+	SaveFileData _saveFiles[MAX_SAVES];
+	bool _saveMarks[MAX_SAVES];
+
 	Point _mousePos;
 	bool _leftMouseButtonPressed;
 	bool _rightMouseButtonPressed;

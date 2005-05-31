@@ -48,7 +48,9 @@ struct SaveGameHeader {
 	char name[SAVE_TITLE_SIZE];
 };
 
-static char emptySlot[] = "[New Save Game]";
+static SaveFileData emptySlot = {
+	 "[New Save Game]", 0
+};
 
 //TODO: 
 // - delete savegame
@@ -59,42 +61,72 @@ char* SagaEngine::calcSaveFileName(uint slotNumber) {
 	return name;
 }
 
-char *SagaEngine::getSaveFileName(uint idx) {
-	if (idx >= MAX_SAVES) {
+SaveFileData *SagaEngine::getSaveFile(uint idx) {
+	if (idx >= _saveFilesMaxCount) {
 		error("getSaveFileName wrong idx");
 	}
-	if (saveListFull()) {
-		return _saveFileNames[idx];
+	if (isSaveListFull()) {
+		return &_saveFiles[_saveFilesCount - idx - 1];
 	} else {
-		return (idx == 0) ? emptySlot : _saveFileNames[idx - 1];
+		return (idx == 0) ? &emptySlot : &_saveFiles[_saveFilesCount - idx];
 	}	
 }
 
+bool SagaEngine::locateSaveFile(char *saveName, uint &titleNumber) {
+	uint i;
+	for (i = 0; i < _saveFilesCount; i++) {
+		if (strcmp(saveName, _saveFiles[i].name) == 0) {
+			if (isSaveListFull()) {
+				titleNumber = _saveFilesCount - i - 1;
+			} else {
+				titleNumber = _saveFilesCount - i;
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
+uint SagaEngine::getNewSaveSlotNumber() {
+	uint i;
+	uint saveCount;
+	if (isSaveListFull()) {
+		error("getNewSaveSlotNumber save list is full");
+	}
+	i = 0;
+	saveCount = 0;
+	while (saveCount < _saveFilesCount) {
+		if (_saveMarks[i++]) {
+			saveCount++;
+		}
+	}
+	return i;
+}
 
 void SagaEngine::fillSaveList() {
 	int i;
-	bool marks[MAX_SAVES];
 	Common::InSaveFile *in;
 	SaveGameHeader header;
 	char *name;
 	
 	name = calcSaveFileName(MAX_SAVES);
 	name[strlen(name) - 2] = 0;
-	_saveFileMan->listSavefiles(name, marks, MAX_SAVES);
+	_saveFileMan->listSavefiles(name, _saveMarks, MAX_SAVES);
 
-	_saveFileNamesMaxCount = 0;
+	_saveFilesMaxCount = 0;
 	for (i = 0; i < MAX_SAVES; i++) {
-		if (marks[i]) {
-			_saveFileNamesMaxCount++;
+		if (_saveMarks[i]) {
+			_saveFilesMaxCount++;
 		}
-		_saveFileNames[i][0] = 0;
+		_saveFiles[i].name[0] = 0;
+		_saveFiles[i].slotNumber = (uint)-1;
 	}	
 	
-	_saveFileNamesCount = 0;
+	_saveFilesCount = 0;
 	
 	i = 0;
 	while (i < MAX_SAVES) {
-		if (marks[i]) {
+		if (_saveMarks[i]) {
 			name = calcSaveFileName(i);
 			if (!(in = _saveFileMan->openForLoading(name))) {
 				break;
@@ -104,19 +136,21 @@ void SagaEngine::fillSaveList() {
 			if (header.type != MKID('SAGA')) {
 				error("SagaEngine::load wrong format");
 			}
-			strcpy(_saveFileNames[_saveFileNamesCount], header.name);
+			strcpy(_saveFiles[_saveFilesCount].name, header.name);
+			_saveFiles[_saveFilesCount].slotNumber = i;
 			delete in;
-			_saveFileNamesCount++;
+			_saveFilesCount++;
 		}
 		i++;
 	}
-
-	for (i = 0; i < MAX_SAVES; i++) {
-		sprintf(_saveFileNames[i], "test%i",i);
-	}	
-
-	_saveFileNamesCount = 14;
-
+/* 4debug
+	for (i = 0; i < 14; i++) {
+		sprintf(_saveFiles[i].name,"test%i", i);
+		_saveFiles[i].slotNumber = i;
+	}
+	_saveFilesCount = 14;
+	_saveFilesMaxCount = 14;
+	*/
 }
 
 
@@ -200,10 +234,6 @@ void SagaEngine::load(const char *fileName) {
 		_scene->clearSceneQueue();
 		_scene->changeScene(insetSceneNumber, ACTOR_NO_ENTRANCE, kTransitionNoFade);
 	}
-
-	// FIXME: When save/load screen will be implemented we should
-	// call these after that screen left by user
-	_interface->draw();
 }
 
 } // End of namespace Saga

@@ -303,10 +303,8 @@ void Interface::setMode(int mode, bool force) {
 			break;
 		case(kPanelSave):
 			_savePanel.currentButton = NULL;
-			_textInputMaxWidth = _saveEdit->width - 9;
+			_textInputMaxWidth = _saveEdit->width - 10;
 			_textInput = true;
-			_textInputString[0] = 0;
-			strcpy(_textInputString, "test1");
 			_textInputStringLength = strlen(_textInputString);
 			_textInputPos = _textInputStringLength + 1;
 			_textInputRepeatPhase = 0;
@@ -585,7 +583,7 @@ void Interface::draw() {
 }
 
 void Interface::calcOptionSaveSlider() {
-	int totalFiles = _vm->getSaveFileNameCount();
+	int totalFiles = _vm->getSaveFilesCount();
 	int visibleFiles = _vm->getDisplayInfo().optionSaveFileVisible; 
 	int height = _optionSaveFileSlider->height;
 	int sliderHeight;
@@ -686,11 +684,11 @@ void Interface::drawOption() {
 		if (idx == _optionSaveFileTitleNumber) {
 			SWAP(bgColor, fgColor);
 		}
-		if (idx < _vm->getSaveFileNameCount()) {
+		if (idx < _vm->getSaveFilesCount()) {
 			rect2.top = rect.top + j * (fontHeight + 1);
 			rect2.bottom = rect2.top + fontHeight;
 			backBuffer->fillRect(rect2, bgColor);
-			text = _vm->getSaveFileName(idx);
+			text = _vm->getSaveFile(idx)->name;
 			_vm->_font->draw(SMALL_FONT_ID, backBuffer, text, 0,
 				 rect.left + 1, rect2.top, fgColor, 0, 0);
 		}
@@ -811,7 +809,7 @@ void Interface::handleLoadClick(const Point& mousePoint) {
 void Interface::setLoad(PanelButton *panelButton) {
 	_loadPanel.currentButton = NULL;
 	switch (panelButton->id) {
-		case kTextOK:
+		case kTextOK:			
 			setMode(kPanelMain);
 			break;
 	}
@@ -827,6 +825,9 @@ void Interface::processTextInput(uint16 ascii) {
 	textInputStartRepeat(ascii);
 
 	switch (ascii) {
+	case(27): // esc
+		_textInput = false;
+		break;
 	case(8): // backspace
 		if (_textInputPos <= 1) {
 			break;
@@ -947,6 +948,9 @@ void Interface::handleSaveUpdate(const Point& mousePoint) {
 	bool releasedButton;
 
 	_savePanel.currentButton = saveHitTest(mousePoint);	
+
+	validateSaveButtons();
+
 	releasedButton = (_savePanel.currentButton != NULL) && 
 		(_savePanel.currentButton->state > 0) && (!_vm->mouseButtonPressed());
 
@@ -961,8 +965,10 @@ void Interface::handleSaveUpdate(const Point& mousePoint) {
 
 void Interface::handleSaveClick(const Point& mousePoint) {
 	_savePanel.currentButton = saveHitTest(mousePoint);
+	
+	validateSaveButtons();
 
-	_savePanel.zeroAllButtonState();
+	_savePanel.zeroAllButtonState();	
 	
 	if (_savePanel.currentButton == NULL) {
 		_textInput = false;
@@ -976,18 +982,41 @@ void Interface::handleSaveClick(const Point& mousePoint) {
 }
 
 void Interface::setSave(PanelButton *panelButton) {
-/*	_savePanel.currentButton = NULL;
+	_savePanel.currentButton = NULL;
+	uint titleNumber;
+	char *fileName;
 	switch (panelButton->id) {
-		case kTextOK:
-			setMode(kPanelMain);
+		case kTextSave:
+			if (_textInputStringLength == 0 ) {
+				break;
+			}
+			if (!_vm->isSaveListFull() && (_optionSaveFileTitleNumber == 0)) {
+				if (_vm->locateSaveFile(_textInputString, titleNumber)) {
+					fileName = _vm->calcSaveFileName(_vm->getSaveFile(titleNumber)->slotNumber);
+					_vm->save(fileName, _textInputString);
+					_optionSaveFileTitleNumber = titleNumber;
+				} else {
+					fileName = _vm->calcSaveFileName(_vm->getNewSaveSlotNumber());
+					_vm->save(fileName, _textInputString);
+					_vm->fillSaveList();
+					calcOptionSaveSlider();
+				}
+			} else {
+				fileName = _vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
+				_vm->save(fileName, _textInputString);
+			}
+			setMode(kPanelOption);
 			break;
-	}*/
+		case kTextCancel:
+			setMode(kPanelOption);
+			break;
+	}
 }
 
 void Interface::handleOptionUpdate(const Point& mousePoint) {
 	int16 mouseY;
 	Rect rect;	
-	int totalFiles = _vm->getSaveFileNameCount();
+	int totalFiles = _vm->getSaveFilesCount();
 	int visibleFiles = _vm->getDisplayInfo().optionSaveFileVisible; 
 	bool releasedButton;
 	
@@ -1004,12 +1033,15 @@ void Interface::handleOptionUpdate(const Point& mousePoint) {
 					(_optionSaveFileSlider->height - _optionSaveRectSlider.height());
 			}
 
-			_optionSaveFileTop = clamp(0, _optionSaveFileTop, _vm->getSaveFileNameCount() - _vm->getDisplayInfo().optionSaveFileVisible);
+			_optionSaveFileTop = clamp(0, _optionSaveFileTop, _vm->getSaveFilesCount() - _vm->getDisplayInfo().optionSaveFileVisible);
 			calcOptionSaveSlider();
 		}
 	}
 
 	_optionPanel.currentButton = optionHitTest(mousePoint);	
+
+	validateOptionButtons();
+
 	releasedButton = (_optionPanel.currentButton != NULL) && (_optionPanel.currentButton->state > 0) && (!_vm->mouseButtonPressed());
 
 	if (!_vm->mouseButtonPressed()) {
@@ -1026,6 +1058,8 @@ void Interface::handleOptionClick(const Point& mousePoint) {
 	Rect rect;
 	_optionPanel.currentButton = optionHitTest(mousePoint);
 
+	validateOptionButtons();
+
 	_optionPanel.zeroAllButtonState();
 
 	if (_optionPanel.currentButton == NULL) {
@@ -1039,14 +1073,14 @@ void Interface::handleOptionClick(const Point& mousePoint) {
 			if ((_optionSaveRectBottom.height() > 0) && (mousePoint.y >= _optionSaveRectBottom.top)) {
 				_optionSaveFileTop += _vm->getDisplayInfo().optionSaveFileVisible;
 			} else {
-				if (_vm->getDisplayInfo().optionSaveFileVisible < _vm->getSaveFileNameCount()) {
+				if (_vm->getDisplayInfo().optionSaveFileVisible < _vm->getSaveFilesCount()) {
 					_optionSaveFileMouseOff = mousePoint.y - _optionSaveRectSlider.top;
 					_optionPanel.currentButton->state = 1;
 				}
 			}
 		}
 
-		_optionSaveFileTop = clamp(0, _optionSaveFileTop, _vm->getSaveFileNameCount() - _vm->getDisplayInfo().optionSaveFileVisible);
+		_optionSaveFileTop = clamp(0, _optionSaveFileTop, _vm->getSaveFilesCount() - _vm->getDisplayInfo().optionSaveFileVisible);
 		calcOptionSaveSlider();
 	} else {
 		if (_optionPanel.currentButton == _optionSaveFilePanel) {
@@ -1057,8 +1091,8 @@ void Interface::handleOptionClick(const Point& mousePoint) {
 				_optionSaveFileTitleNumber = _vm->getDisplayInfo().optionSaveFileVisible - 1;
 			}
 			_optionSaveFileTitleNumber += _optionSaveFileTop;
-			if (_optionSaveFileTitleNumber >= _vm->getSaveFileNameCount()) {
-				_optionSaveFileTitleNumber = _vm->getSaveFileNameCount() - 1;
+			if (_optionSaveFileTitleNumber >= _vm->getSaveFilesCount()) {
+				_optionSaveFileTitleNumber = _vm->getSaveFilesCount() - 1;
 			}
 		} else {
 			_optionPanel.currentButton->state = 1;
@@ -1068,21 +1102,32 @@ void Interface::handleOptionClick(const Point& mousePoint) {
 
 
 void Interface::setOption(PanelButton *panelButton) {
+	char * fileName;
 	_optionPanel.currentButton = NULL;
 	switch (panelButton->id) {
 		case kTextContinuePlaying:
-				setMode(kPanelMain);
-				break;
+			setMode(kPanelMain);
+			break;
 		case kTextQuitGame:
-				setMode(kPanelQuit);
-				break;
-		case kTextLoad:
-			//todo: load
-				setMode(kPanelLoad);
-				break;
+			setMode(kPanelQuit);
+			break;
+		case kTextLoad:			
+			if (_vm->getSaveFilesCount() > 0) {
+				if (_vm->isSaveListFull() || (_optionSaveFileTitleNumber > 0)) {
+					fileName = _vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
+					_vm->load(fileName);
+					setMode(kPanelLoad);
+				}
+			}
+			break;
 		case kTextSave:
-				setMode(kPanelSave);
-				break;
+			if (!_vm->isSaveListFull() && (_optionSaveFileTitleNumber == 0)) {
+				_textInputString[0] = 0;
+			} else {
+				strcpy(_textInputString, _vm->getSaveFile(_optionSaveFileTitleNumber)->name);
+			}
+			setMode(kPanelSave);
+			break;
 	}
 }
 

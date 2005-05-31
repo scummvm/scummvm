@@ -321,6 +321,22 @@ private:
 		}
 		return _verbTypeToPanelButton[verb];
 	}
+	
+	void validateOptionButtons() {
+		if (!_vm->isSaveListFull() && (_optionSaveFileTitleNumber == 0) && (_optionPanel.currentButton != NULL)) {
+			if (_optionPanel.currentButton->id == kTextLoad) {
+				_optionPanel.currentButton = NULL;
+			}
+		}
+	}
+	void validateSaveButtons() {
+		if ((_textInputStringLength == 0) && (_savePanel.currentButton != NULL)) {
+			if (_savePanel.currentButton->id == kTextSave) {
+				_savePanel.currentButton = NULL;
+			}
+		}
+	}
+
 private:
 	SagaEngine *_vm;
 
