@@ -630,6 +630,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "lost", "Lost and Found", kGenMac},
 	{ "maze", "Maze Madness", kGenMac},
 	{ "monkey", "monkey1", kGenPC},
+	{ "monkey", "monkeyk", kGenPC}, // FM-TOWNS Jap
 	{ "moondemo", "Putt-Putt Moon Demo", kGenMacNoParens },
 	{ "mustard", "Mustard", kGenMac},
 	{ "pajama", "Pajama Sam", kGenMac},
