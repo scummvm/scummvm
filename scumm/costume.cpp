@@ -1009,9 +1009,25 @@ void C64CostumeRenderer::setCostume(int costume) {
 	_loaded.loadCostume(costume);
 }
 
+static const byte actorColorsMMC64[] = {
+	0, 7, 2, 6, 9, 1, 3, 7, 7, 1, 1, 9, 1, 4, 5, 5,
+	4, 1, 0, 5, 4, 2, 2, 7, 7, 0, 6, 6, 6, 6, 6, 6
+};
+
 void C64CostumeLoader::loadCostume(int id) {
+	const byte *ptr = _vm->getResourceAddress(rtCostume, id);
 	_id = id;
-	_baseptr = _vm->getResourceAddress(rtCostume, id);
+	_baseptr = ptr + 9;
+
+	_format = 0x57;
+	_numColors = 0;
+	_numAnim = 0;
+	_mirror = 0;
+	_palette = &actorColorsMMC64[id];
+
+	_frameOffsets = _baseptr + READ_LE_UINT16(ptr + 5);
+	_dataOffsets = ptr;
+	_animCmds = _baseptr + READ_LE_UINT16(ptr + 7);
 }
 
 void C64CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {

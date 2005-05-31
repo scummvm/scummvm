@@ -67,14 +67,9 @@ protected:
 	byte increaseAnim(Actor *a, int slot);
 };
 
-class C64CostumeLoader : public BaseCostumeLoader {
+class C64CostumeLoader : public ClassicCostumeLoader {
 public:
-	int _id;
-	const byte *_baseptr;
-	const byte *_dataOffsets;
-	byte _numAnim;
-
-	C64CostumeLoader(ScummEngine *vm) : BaseCostumeLoader(vm) {}
+	C64CostumeLoader(ScummEngine *vm) : ClassicCostumeLoader(vm) {}
 	void loadCostume(int id);
 	void costumeDecodeData(Actor *a, int frame, uint usemask);
 	byte increaseAnims(Actor *a);
