@@ -486,6 +486,7 @@ int ScummEngine::findVerbAtPos(int x, int y) const {
 	return 0;
 }
 
+#ifndef DISABLE_SCUMM_7_8
 void ScummEngine_v7::drawVerb(int verb, int mode) {
 	VerbSlot *vs;
 
@@ -540,6 +541,7 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 		vs->oldRect = vs->curRect;
 	}
 }
+#endif
 
 void ScummEngine::drawVerb(int verb, int mode) {
 	VerbSlot *vs;
