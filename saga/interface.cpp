@@ -718,7 +718,6 @@ void Interface::drawQuit() {
 }
 
 void Interface::handleQuitUpdate(const Point& mousePoint) {
-	Rect rect;	
 	bool releasedButton;
 
 	_quitPanel.currentButton = quitHitTest(mousePoint);	
@@ -779,7 +778,6 @@ void Interface::drawLoad() {
 }
 
 void Interface::handleLoadUpdate(const Point& mousePoint) {
-	Rect rect;	
 	bool releasedButton;
 
 	_loadPanel.currentButton = loadHitTest(mousePoint);	
@@ -889,7 +887,6 @@ void Interface::processTextInput(uint16 ascii) {
 
 void Interface::drawTextInput(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton) {
 	Rect rect;
-	Point drawPoint;
 	char ch[2];
 	int fgColor;
 	uint i;
@@ -945,7 +942,6 @@ void Interface::drawSave() {
 }
 
 void Interface::handleSaveUpdate(const Point& mousePoint) {
-	Rect rect;	
 	bool releasedButton;
 
 	_savePanel.currentButton = saveHitTest(mousePoint);	
