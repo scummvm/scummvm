@@ -331,19 +331,20 @@ void ScummEngine_v5::redefineBuiltinCursorFromChar(int index, int chr) {
 	}
 
 	Graphics::Surface s;
-	byte buf[16*16];
-	memset(buf, 123, 16*16);
+	byte buf[16*17];
+	memset(buf, 123, 16*17);
 	s.pixels = buf;
 	s.w = _charset->getCharWidth(chr);
 	s.h = _charset->getFontHeight();
 	s.pitch = s.w;
-	assert(s.w <= 16 && s.h <= 16);
+	// s.h = 17 for FM-TOWNS Loom Japanese. Fixes bug #1166917
+	assert(s.w <= 16 && s.h <= 17);
 	s.bytesPerPixel = 1;
 	
 	_charset->drawChar(chr, s, 0, 0);
 
 	uint16 *ptr = _cursorImages[index];
-	memset(ptr, 0, 16 * sizeof(uint16));
+	memset(ptr, 0, 17 * sizeof(uint16));
 	for (int h = 0; h < s.h; h++) {
 		for (int w = 0; w < s.w; w++) {
 			if (buf[s.pitch * h + w] != 123)

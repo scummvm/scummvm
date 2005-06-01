@@ -50,7 +50,7 @@ protected:
 	
 	const OpcodeEntryV5 *_opcodesV5;
 	
-	uint16 _cursorImages[4][16];
+	uint16 _cursorImages[4][17];
 	byte _cursorHotspots[2 * 4];
 
 public:
