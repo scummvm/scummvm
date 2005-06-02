@@ -301,9 +301,19 @@ int SagaEngine::go() {
 
 	_previousTicks = _system->getMillis();
 
-	// Begin Main Engine Loop
+	if (ConfMan.hasKey("save_slot")) {
+		// First scene sets up palette
+		_scene->changeScene(getStartSceneNumber(), 0, kTransitionNoFade);
+		_events->handleEvents(0); // Process immediate events
 
-	_scene->startScene();
+		char *fileName;
+		fileName = calcSaveFileName(ConfMan.getInt("save_slot"));
+		load(fileName);
+		_interface->setMode(kPanelMain);
+	} else {
+		_scene->startScene();
+	}
+
 	uint32 currentTicks;
 
 	while (!_quit) {

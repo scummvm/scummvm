@@ -402,11 +402,11 @@ void Sprite::decodeRLEBuffer(const byte *inputBuffer, size_t inLength, size_t ou
 
 	MemoryReadStream readS(inputBuffer, inLength);
 
-	while (!readS.eos() && (outPointer < outPointerEnd)) {
+	while (!readS.eos() && (outPointer < outPointerEnd - 1)) {
 		bg_runcount = readS.readByte();
 		fg_runcount = readS.readByte();
 
-		for (c = 0; c < bg_runcount; c++) {
+		for (c = 0; c < bg_runcount && !readS.eos(); c++) {
 			*outPointer = (byte) 0;
 			if (outPointer < outPointerEnd)
 				outPointer++;
@@ -414,7 +414,7 @@ void Sprite::decodeRLEBuffer(const byte *inputBuffer, size_t inLength, size_t ou
 				return;
 		}
 
-		for (c = 0; c < fg_runcount; c++) {
+		for (c = 0; c < fg_runcount && !readS.eos(); c++) {
 			*outPointer = readS.readByte();
 			if (outPointer < outPointerEnd)
 				outPointer++;

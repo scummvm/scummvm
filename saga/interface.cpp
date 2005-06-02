@@ -202,6 +202,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	}
 
 	_textInputRepeatPhase = 0;
+	_textInput = false;
 
 	_initialized = true;
 }

@@ -869,10 +869,8 @@ void Scene::draw() {
 }
 
 void Scene::endScene() {
-
-	if (!_sceneLoaded) {
-		error("Scene::endScene(): No scene to end");
-	}
+	if (!_sceneLoaded)
+		return;
 
 	debug(0, "Ending scene...");
 

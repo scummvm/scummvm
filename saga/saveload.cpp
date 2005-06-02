@@ -136,7 +136,7 @@ void SagaEngine::fillSaveList() {
 	while (i < MAX_SAVES) {
 		if (_saveMarks[i]) {
 			name = calcSaveFileName(i);
-			if (in = _saveFileMan->openForLoading(name)) {
+			if ((in = _saveFileMan->openForLoading(name)) != NULL) {
 				in->read(&header, sizeof(header));
 
 				if (header.type != MKID('SAGA')) {
