@@ -88,19 +88,27 @@ bool SagaEngine::locateSaveFile(char *saveName, uint &titleNumber) {
 }
 
 uint SagaEngine::getNewSaveSlotNumber() {
-	uint i;
-	uint saveCount;
+	uint i, j;
+	bool found;
 	if (isSaveListFull()) {
 		error("getNewSaveSlotNumber save list is full");
 	}
-	i = 0;
-	saveCount = 0;
-	while (saveCount < _saveFilesCount) {
-		if (_saveMarks[i++]) {
-			saveCount++;
+	for (i = 0; i < MAX_SAVES; i++) {
+		if (_saveMarks[i]) {
+			found = false;
+			for (j = 0; j < _saveFilesCount; j++) {
+				if (_saveFiles[j].slotNumber == i) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				return i;
+			}
 		}
 	}
-	return i;
+
+	error("getNewSaveSlotNumber save list is full");
 }
 
 void SagaEngine::fillSaveList() {
@@ -128,18 +136,17 @@ void SagaEngine::fillSaveList() {
 	while (i < MAX_SAVES) {
 		if (_saveMarks[i]) {
 			name = calcSaveFileName(i);
-			if (!(in = _saveFileMan->openForLoading(name))) {
-				break;
-			}
-			in->read(&header, sizeof(header));
+			if (in = _saveFileMan->openForLoading(name)) {
+				in->read(&header, sizeof(header));
 
-			if (header.type != MKID('SAGA')) {
-				error("SagaEngine::load wrong format");
+				if (header.type != MKID('SAGA')) {
+					error("SagaEngine::load wrong format");
+				}
+				strcpy(_saveFiles[_saveFilesCount].name, header.name);
+				_saveFiles[_saveFilesCount].slotNumber = i;
+				delete in;
+				_saveFilesCount++;
 			}
-			strcpy(_saveFiles[_saveFilesCount].name, header.name);
-			_saveFiles[_saveFilesCount].slotNumber = i;
-			delete in;
-			_saveFilesCount++;
 		}
 		i++;
 	}
