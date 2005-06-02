@@ -946,6 +946,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_palManipPalette = NULL;
 	_palManipIntermediatePal = NULL;
 	memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
+	_hePalettes = NULL;
 	_shadowPalette = NULL;
 	_shadowPaletteSize = 0;
 	memset(_currentPalette, 0, sizeof(_currentPalette));
@@ -1513,24 +1514,6 @@ int ScummEngine::init(GameDetector &detector) {
 		requestLoad(ConfMan.getInt("save_slot"));
 	}
 
-#ifdef __PALM_OS__
-	if (_features & GF_NEW_COSTUMES)
-		res._maxHeapThreshold = gVars->memory[kMemScummNewCostGames];
-	else
-		res._maxHeapThreshold = gVars->memory[kMemScummOldCostGames];
-#else
-	if (_heversion >= 90 && _HEHeapSize) {
-		res._maxHeapThreshold = _HEHeapSize * 1024;
-	} else if (_features & GF_NEW_COSTUMES) {
-		// Since the new costumes are very big, we increase the heap limit, to avoid having
-		// to constantly reload stuff from the data files.
-		res._maxHeapThreshold = 2500000;
-	} else {
-		res._maxHeapThreshold = 550000;
-	}
-#endif
-	res._minHeapThreshold = 400000;
-
 	allocResTypeData(rtBuffer, MKID('NONE'), 10, "buffer", 0);
 
 	setupScummVars();
@@ -1569,6 +1552,24 @@ int ScummEngine::init(GameDetector &detector) {
 	}
 
 	readIndexFile();
+
+#ifdef __PALM_OS__
+	if (_features & GF_NEW_COSTUMES)
+		res._maxHeapThreshold = gVars->memory[kMemScummNewCostGames];
+	else
+		res._maxHeapThreshold = gVars->memory[kMemScummOldCostGames];
+#else
+	if (_heversion >= 90 && _HEHeapSize) {
+		res._maxHeapThreshold = _HEHeapSize * 1024;
+	} else if (_features & GF_NEW_COSTUMES) {
+		// Since the new costumes are very big, we increase the heap limit, to avoid having
+		// to constantly reload stuff from the data files.
+		res._maxHeapThreshold = 2500000;
+	} else {
+		res._maxHeapThreshold = 550000;
+	}
+#endif
+	res._minHeapThreshold = 400000;
 
 	scummInit();
 	initScummVars();
@@ -1885,6 +1886,7 @@ void ScummEngine_v99he::scummInit() {
 	ScummEngine_v90he::scummInit();
 
 	_hePalettes = (uint8 *)malloc((_numPalettes + 1) * 1024);
+	memset(_hePalettes, 0, (_numPalettes + 1) * 1024);
 
 	// Array 129 is set to base name
 	int len = resStrLen((const byte *)_gameName.c_str()) + 1;
