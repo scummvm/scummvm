@@ -40,9 +40,6 @@ public:
 	MessageDialog(const Common::String &message, const char *defaultButton = "OK", const char *altButton = 0);
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-
-	// disable scaling
-	bool wantsScaling() const { return false; }
 };
 
 /**

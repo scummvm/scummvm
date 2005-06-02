@@ -58,9 +58,6 @@ public:
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	void handleKeyDown(uint16 ascii, int keycode, int modifiers);
 	void handleKeyUp(uint16 ascii, int keycode, int modifiers);
-
-	// disable scaling
-	bool wantsScaling() const { return false; }
 };
 
 } // End of namespace GUI

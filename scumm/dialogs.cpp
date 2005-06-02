@@ -280,8 +280,6 @@ public:
 	const String &getResultString() const;	
 	void setList(const StringList& list);
 	int runModal();
-
-	bool wantsScaling() const { return false; }
 };
 
 SaveLoadChooserEx::SaveLoadChooserEx(const String &title, const String &buttonLabel, bool saveMode, ScummEngine *engine)

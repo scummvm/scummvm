@@ -58,16 +58,6 @@ public:
 
 	void	releaseFocus();
 
-	/**
-	 * We can optionally scale dialogs by a factor of two. This is the
-	 * default behaviour if the GUI is displayed on a 640x400 or bigger
-	 * screen. However, some dialogs can cope with multiple screen sizes,
-	 * and thus do not want automatic scaling.
-	 *
-	 * @return true if the dialog adjusts itself to the screen size
-	 */
-	virtual bool	wantsScaling() const;
-
 protected:
 	virtual void open();
 	virtual void close();

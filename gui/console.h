@@ -113,9 +113,6 @@ public:
 		_completionCallbackRefCon = refCon;
 	}
 
-	// disable scaling
-	bool wantsScaling() const { return false; }
-
 protected:
 	inline char &buffer(int idx) {
 		return _buffer[idx % kBufferSize];

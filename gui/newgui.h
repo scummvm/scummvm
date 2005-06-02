@@ -72,9 +72,6 @@ protected:
 	Graphics::Surface	_screen;
 	int			_screenPitch;
 
-	int			_scaleFactor;
-	bool			_scaleEnable;
-
 	bool		_needRedraw;
 	DialogStack	_dialogStack;
 
@@ -127,7 +124,7 @@ public:
 
 	// Font
 	const Graphics::Font &getFont() const;
-	
+
 	// Screen surface
 	Graphics::Surface &getScreen() { return _screen; }
 
@@ -159,8 +156,6 @@ public:
 	int getStringWidth(const String &str) const;
 	int getCharWidth(byte c) const;
 	int getFontHeight() const;
-
-	void drawBitmap(uint32 *bitmap, int x, int y, OverlayColor color, int h = 8);
 
 	void addDirtyRect(int x, int y, int w, int h);
 };

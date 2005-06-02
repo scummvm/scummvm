@@ -72,9 +72,6 @@ public:
 	~MainMenuDialog();
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 
-	// disable scaling
-	bool wantsScaling() const { return false; }
-
 protected:
 	GUI::Dialog		*_aboutDialog;
 	GUI::Dialog		*_optionsDialog;

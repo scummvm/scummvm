@@ -49,10 +49,8 @@ enum {
 };
 
 
-#define USE_AUTO_SCALING	false
-
 // Constructor
-NewGui::NewGui() : _scaleEnable(USE_AUTO_SCALING), _needRedraw(false),
+NewGui::NewGui() : _needRedraw(false),
 	_stateIsSaved(false), _font(0), _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
 
 	_system = &OSystem::instance();
@@ -77,23 +75,18 @@ void NewGui::updateColors() {
 }
 
 void NewGui::updateScaleFactor() {
-	if (!_scaleEnable) {
-		_scaleFactor = 1;
-	} else {
-		enum {
-			kDefaultGUIWidth = 320,
-			kDefaultGUIHeight = 200
-		};
-	
-		// NES has 256 pixels width which makes MIN() return 0 here.
-		_scaleFactor = MAX(MIN(_system->getOverlayWidth() / kDefaultGUIWidth, _system->getOverlayHeight() / kDefaultGUIHeight), 1);
-	}
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
 
-	// Pick the font depending on the scale factor.
-	if (_scaleFactor == 1)
-		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-	else
+	// TODO: Perhaps we should also set the widget size here. That'd allow
+	// us to remove much of the screen size checking from the individual
+	// widgets.
+
+	if (screenW >= 400 && screenH >= 300) {
 		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	} else {
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	}
 }
 
 void NewGui::runLoop() {
@@ -108,7 +101,6 @@ void NewGui::runLoop() {
 	// EVENT_SCREEN_CHANGED is received. However, not yet all backends support
 	// that event, so we also do it "manually" whenever a run loop is entered.
 	updateColors();
-	_scaleEnable = USE_AUTO_SCALING && activeDialog->wantsScaling();
 	updateScaleFactor();
 
 	if (!_stateIsSaved) {
@@ -127,7 +119,6 @@ void NewGui::runLoop() {
 			for (int i = 0; i < _dialogStack.size(); i++) {
 				// For each dialog we draw we have to ensure the correct
 				// scaling mode is active.
-				_scaleEnable = USE_AUTO_SCALING && _dialogStack[i]->wantsScaling();
 				updateScaleFactor();
 				_dialogStack[i]->drawDialog();
 			}
@@ -141,9 +132,7 @@ void NewGui::runLoop() {
 		uint32 time = _system->getMillis();
 
 		while (_system->pollEvent(event)) {
-			Common::Point mouse(event.mouse.x - (activeDialog->_x * _scaleFactor), event.mouse.y - (activeDialog->_y * _scaleFactor));
-			mouse.x /= _scaleFactor;
-			mouse.y /= _scaleFactor;
+			Common::Point mouse(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y);
 			
 			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
@@ -302,15 +291,15 @@ void NewGui::box(int x, int y, int width, int height, OverlayColor colorA, Overl
 }
 
 void NewGui::hLine(int x, int y, int x2, OverlayColor color) {
-	_screen.hLine(x * _scaleFactor, y * _scaleFactor, x2 * _scaleFactor, color);
+	_screen.hLine(x, y, x2, color);
 }
 
 void NewGui::vLine(int x, int y, int y2, OverlayColor color) {
-	_screen.vLine(x * _scaleFactor, y * _scaleFactor, y2 * _scaleFactor, color);
+	_screen.vLine(x, y, y2, color);
 }
 
 void NewGui::copyToSurface(Graphics::Surface *s, int x, int y, int w, int h) {
-	Common::Rect rect(x * _scaleFactor, y * _scaleFactor, (x + w) * _scaleFactor, (y + h) * _scaleFactor);
+	Common::Rect rect(x, y, x + w, y + h);
 	rect.clip(_screen.w, _screen.h);
 
 	if (!rect.isValidRect())
@@ -336,7 +325,7 @@ void NewGui::copyToSurface(Graphics::Surface *s, int x, int y, int w, int h) {
 }
 
 void NewGui::drawSurface(const Graphics::Surface &s, int x, int y) {
-	Common::Rect rect(x * _scaleFactor, y * _scaleFactor, x * _scaleFactor + s.w, y * _scaleFactor + s.h);
+	Common::Rect rect(x, y, x + s.w, y + s.h);
 	rect.clip(_screen.w, _screen.h);
 
 	if (!rect.isValidRect())
@@ -361,7 +350,7 @@ void NewGui::blendRect(int x, int y, int w, int h, OverlayColor color, int level
 #ifdef NEWGUI_256
 	fillRect(x, y, w, h, color);
 #else
-	Common::Rect rect(x * _scaleFactor, y * _scaleFactor, (x + w) * _scaleFactor, (y + h) * _scaleFactor);
+	Common::Rect rect(x, y, x + w, y + h);
 	rect.clip(_screen.w, _screen.h);
 
 	if (!rect.isValidRect())
@@ -423,15 +412,15 @@ void NewGui::blendRect(int x, int y, int w, int h, OverlayColor color, int level
 }
 
 void NewGui::fillRect(int x, int y, int w, int h, OverlayColor color) {
-	_screen.fillRect(Common::Rect(x * _scaleFactor, y * _scaleFactor, (x+w) * _scaleFactor, (y+h) * _scaleFactor), color);
+	_screen.fillRect(Common::Rect(x, y, x + w, y + h), color);
 }
 
 void NewGui::frameRect(int x, int y, int w, int h, OverlayColor color) {
-	_screen.frameRect(Common::Rect(x * _scaleFactor, y * _scaleFactor, (x+w) * _scaleFactor, (y+h) * _scaleFactor), color);
+	_screen.frameRect(Common::Rect(x, y, x + w, y + h), color);
 }
 
 void NewGui::addDirtyRect(int x, int y, int w, int h) {
-	Common::Rect rect(x * _scaleFactor, y * _scaleFactor, (x + w) * _scaleFactor, (y + h) * _scaleFactor);
+	Common::Rect rect(x, y, x + w, y + h);
 	rect.clip(_screen.w, _screen.h);
 
 	if (!rect.isValidRect())
@@ -447,53 +436,27 @@ void NewGui::addDirtyRect(int x, int y, int w, int h) {
 void NewGui::drawChar(byte chr, int xx, int yy, OverlayColor color, const Graphics::Font *font) {
 	if (font == 0)
 		font = &getFont();
-	font->drawChar(&_screen, chr, xx * _scaleFactor, yy * _scaleFactor, color);
+	font->drawChar(&_screen, chr, xx, yy, color);
 }
 
 int NewGui::getStringWidth(const String &str) const {
-	return getFont().getStringWidth(str) / _scaleFactor;
+	return getFont().getStringWidth(str);
 }
 
 int NewGui::getCharWidth(byte c) const {
-	return getFont().getCharWidth(c) / _scaleFactor;
+	return getFont().getCharWidth(c);
 }
 
 int NewGui::getFontHeight() const {
-	return getFont().getFontHeight() / _scaleFactor;
+	return getFont().getFontHeight();
 }
 
 void NewGui::drawString(const String &s, int x, int y, int w, OverlayColor color, TextAlignment align, int deltax, bool useEllipsis) {
-	getFont().drawString(&_screen, s, x * _scaleFactor, y * _scaleFactor, w * _scaleFactor, color, align, deltax, useEllipsis);
+	getFont().drawString(&_screen, s, x, y, w, color, align, deltax, useEllipsis);
 }
 
 void NewGui::drawString(const Graphics::Font *font, const String &s, int x, int y, int w, OverlayColor color, TextAlignment align, int deltax, bool useEllipsis) {
-	font->drawString(&_screen, s, x * _scaleFactor, y * _scaleFactor, w * _scaleFactor, color, align, deltax, useEllipsis);
-}
-
-//
-// Draw an 8x8 bitmap at location (x,y)
-//
-void NewGui::drawBitmap(uint32 *bitmap, int tx, int ty, OverlayColor color, int h) {
-	tx *= _scaleFactor; ty *= _scaleFactor;
-	h *= _scaleFactor;
-	OverlayColor *ptr = getBasePtr(tx, ty);
-
-	for (int y = 0; y < h; y++, ptr += _screenPitch) {
-		uint32 mask = 0xF0000000;
-		if (ty + y < 0 || ty + y >= _screen.h)
-			continue;
-		for (int x = 0; x < 8 * _scaleFactor; x++) {
-			if (!(x % 2) && _scaleFactor != 1 && x != 0)
-				mask >>= 4;
-			else if (_scaleFactor == 1)
-				mask >>= 4;
-
-			if (tx + x < 0 || tx + x >= _screen.w)
-				continue;
-			if (bitmap[y / _scaleFactor] & mask)
-					ptr[x] = color;
-		}
-	}
+	font->drawString(&_screen, s, x, y, w, color, align, deltax, useEllipsis);
 }
 
 //
