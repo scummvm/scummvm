@@ -137,10 +137,8 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 	const int screenH = g_system->getOverlayHeight();
 
 	GUI::WidgetSize ws;
-	int lineHeight;
 	int buttonHeight;
 	int buttonWidth;
-	const Graphics::Font *font;
 
 	_w = (screenW * 7) / 8;
 	_h = (screenH * 9) / 10;
@@ -149,30 +147,26 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 
 	if (screenW >= 400 && screenH >= 300) {
 		ws = GUI::kBigWidgetSize;
-		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 		buttonWidth = kBigButtonWidth;
 		buttonHeight = kBigButtonHeight;
 	} else {
 		ws = GUI::kNormalWidgetSize;
-		font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 		buttonWidth = kButtonWidth;
 		buttonHeight = kButtonHeight;
 	}
-
-	lineHeight = font->getFontHeight() + 2;
 
 	_isDirBrowser = dirBrowser;
 	_fileList = NULL;
 	_currentPath = NULL;
 
 	// Headline - TODO: should be customizable during creation time
-	new StaticTextWidget(this, 10, lineHeight, _w - 2 * 10, lineHeight, title, kTextAlignCenter, ws);
+	new StaticTextWidget(this, 10, kLineHeight, _w - 2 * 10, kLineHeight, title, kTextAlignCenter, ws);
 
 	// Current path - TODO: handle long paths ?
-	_currentPath = new StaticTextWidget(this, 10, 2 * lineHeight, _w - 2 * 10, kLineHeight, "DUMMY", kTextAlignLeft, ws);
+	_currentPath = new StaticTextWidget(this, 10, 2 * kLineHeight, _w - 2 * 10, kLineHeight, "DUMMY", kTextAlignLeft, ws);
 
 	// Add file list
-	_fileList = new ListWidget(this, 10, 3 * lineHeight, _w - 2 * 10, _h - 3 * lineHeight - buttonHeight - 14, ws);
+	_fileList = new ListWidget(this, 10, 3 * kLineHeight, _w - 2 * 10, _h - 3 * kLineHeight - buttonHeight - 14, ws);
 	_fileList->setNumberingMode(kListNumberingOff);
 	_fileList->setEditable(false);
 
