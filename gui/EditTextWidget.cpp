@@ -50,7 +50,7 @@ void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	uint i;
 
 	for (i = 0; i < _editString.size(); ++i) {
-		width += _font->getCharWidth(_editString[i]);
+		width += g_gui.getCharWidth(_editString[i]);
 		if (width >= x)
 			break;
 	}
@@ -68,7 +68,7 @@ void EditTextWidget::drawWidget(bool hilite) {
 
 	// Draw the text
 	adjustOffset();
-	g_gui.drawString(_font, _editString, _x + 2, _y + 2, getEditRect().width(), g_gui._textcolor, kTextAlignLeft, -_editScrollOffset, false);
+	g_gui.drawString(_editString, _x + 2, _y + 2, getEditRect().width(), g_gui._textcolor, kTextAlignLeft, -_editScrollOffset, false);
 }
 
 Common::Rect EditTextWidget::getEditRect() const {

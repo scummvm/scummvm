@@ -35,7 +35,6 @@ class EditableWidget : public Widget {
 public:
 	typedef Common::String String;
 protected:
-	const Graphics::Font	*_font;
 	String		_editString;
 
 	bool		_caretVisible;

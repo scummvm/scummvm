@@ -34,18 +34,6 @@ EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h, Widg
 	_caretInverse = false;
 
 	_editScrollOffset = 0;
-
-	switch (ws) {
-	case kNormalWidgetSize:
-		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-		break;
-	case kBigWidgetSize:
-		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-		break;
-	default:
-		_font = &g_gui.getFont();
-		break;
-	}
 }
 
 EditableWidget::~EditableWidget() {
@@ -57,7 +45,7 @@ void EditableWidget::setEditString(const String &str) {
 	_editString = str;
 	_caretPos = _editString.size();
 
-	_editScrollOffset = (_font->getStringWidth(_editString) - (getEditRect().width()));
+	_editScrollOffset = (g_gui.getStringWidth(_editString) - (getEditRect().width()));
 	if (_editScrollOffset < 0)
 		_editScrollOffset = 0;
 }
@@ -142,7 +130,7 @@ bool EditableWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 int EditableWidget::getCaretOffset() const {
 	int caretpos = 0;
 	for (int i = 0; i < _caretPos; i++)
-		caretpos += _font->getCharWidth(_editString[i]);
+		caretpos += g_gui.getCharWidth(_editString[i]);
 
 	caretpos -= _editScrollOffset;
 
@@ -196,7 +184,7 @@ bool EditableWidget::adjustOffset() {
 		_editScrollOffset -= (editWidth - caretpos);
 		return true;
 	} else if (_editScrollOffset > 0) {
-		const int strWidth = _font->getStringWidth(_editString);
+		const int strWidth = g_gui.getStringWidth(_editString);
 		if (strWidth - _editScrollOffset < editWidth) {
 			// scroll right
 			_editScrollOffset = (strWidth - editWidth);

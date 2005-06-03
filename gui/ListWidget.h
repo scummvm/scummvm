@@ -56,7 +56,6 @@ protected:
 	int				_selectedItem;
 	ScrollBarWidget	*_scrollBar;
 	int				_currentKeyDown;
-	int				_lineHeight;
 	
 	String			_quickSelectStr;
 	uint32			_quickSelectTime;

@@ -35,13 +35,12 @@ ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize w
 	} else {
 		_w = w - kNormalScrollBarWidth;
 	}
-	_lineHeight = _font->getFontHeight() + 2;
 	
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE;
 	_type = kListWidget;
 	_editMode = false;
 	_numberingMode = kListNumberingOne;
-	_entriesPerPage = (_h - 2) / _lineHeight;
+	_entriesPerPage = (_h - 2) / kLineHeight;
 	_currentPos = 0;
 	_selectedItem = -1;
 	_scrollBar = new ScrollBarWidget(boss, _x + _w, _y, (ws == kBigWidgetSize ? kBigScrollBarWidth : kNormalScrollBarWidth), _h);
@@ -152,7 +151,7 @@ void ListWidget::handleMouseWheel(int x, int y, int direction) {
 
 
 int ListWidget::findItem(int x, int y) const {
-	return (y - 1) / _lineHeight + _currentPos;
+	return (y - 1) / kLineHeight + _currentPos;
 }
 
 static int matchingCharsIgnoringCase(const char *x, const char *y, bool &stop) {
@@ -300,7 +299,6 @@ void ListWidget::drawWidget(bool hilite) {
 	int i, pos, len = _list.size();
 	Common::String buffer;
 	int deltax;
-	Graphics::Surface *surf = &g_gui.getScreen();
 
 	// Draw a thin frame around the list.
 	gui->hLine(_x, _y, _x + _w - 1, gui->_color);
@@ -310,14 +308,14 @@ void ListWidget::drawWidget(bool hilite) {
 	// Draw the list items
 	for (i = 0, pos = _currentPos; i < _entriesPerPage && pos < len; i++, pos++) {
 		const OverlayColor textColor = (_selectedItem == pos && _hasFocus) ? gui->_bgcolor : gui->_textcolor;
-		const int y = _y + 2 + _lineHeight * i;
+		const int y = _y + 2 + kLineHeight * i;
 
 		// Draw the selected item inverted, on a highlighted background.
 		if (_selectedItem == pos) {
 			if (_hasFocus)
-				gui->fillRect(_x + 1, _y + 1 + _lineHeight * i, _w - 1, _lineHeight, gui->_textcolorhi);
+				gui->fillRect(_x + 1, _y + 1 + kLineHeight * i, _w - 1, kLineHeight, gui->_textcolorhi);
 			else
-				gui->frameRect(_x + 1, _y + 1 + _lineHeight * i, _w - 1, _lineHeight, gui->_textcolorhi);
+				gui->frameRect(_x + 1, _y + 1 + kLineHeight * i, _w - 1, kLineHeight, gui->_textcolorhi);
 		}
 
 		// If in numbering mode, we first print a number prefix
@@ -325,7 +323,7 @@ void ListWidget::drawWidget(bool hilite) {
 			char temp[10];
 			sprintf(temp, "%2d. ", (pos + _numberingMode));
 			buffer = temp;
-			_font->drawString(surf, buffer, _x + 2, y, _w - 4, textColor);
+			gui->drawString(buffer, _x + 2, y, _w - 4, textColor);
 		}
 
 		Common::Rect r(getEditRect());
@@ -335,18 +333,18 @@ void ListWidget::drawWidget(bool hilite) {
 			adjustOffset();
 			deltax = -_editScrollOffset;
 	
-			_font->drawString(surf, buffer, _x + r.left, y, r.width(), textColor, kTextAlignLeft, deltax, false);
+			gui->drawString(buffer, _x + r.left, y, r.width(), textColor, kTextAlignLeft, deltax, false);
 		} else {
 			buffer = _list[pos];
 			deltax = 0;
-			_font->drawString(surf, buffer, _x + r.left, y, r.width(), textColor);
+			gui->drawString(buffer, _x + r.left, y, r.width(), textColor);
 		}
 	}
 }
 
 Common::Rect ListWidget::getEditRect() const {
-	Common::Rect r(2, 1, _w - 2 , _lineHeight);
-	const int offset = (_selectedItem - _currentPos) * _lineHeight;
+	Common::Rect r(2, 1, _w - 2 , kLineHeight);
+	const int offset = (_selectedItem - _currentPos) * kLineHeight;
 	r.top += offset;
 	r.bottom += offset;
 
@@ -354,7 +352,7 @@ Common::Rect ListWidget::getEditRect() const {
 		char temp[10];
 		// FIXME: Assumes that all digits have the same width.
 		sprintf(temp, "%2d. ", (_list.size() - 1 + _numberingMode));
-		r.left += _font->getStringWidth(temp);
+		r.left += g_gui.getStringWidth(temp);
 	}
 	
 	return r;
