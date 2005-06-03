@@ -188,24 +188,14 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	tab->addTab("Game");
 	yoffset = vBorder;
 
-	const Graphics::Font *font;
-
-	if (ws == GUI::kBigWidgetSize) {
-		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-	} else {
-		font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-	}
-
-	int lineHeight = font->getFontHeight() + 2;
-
 	// GUI:  Label & edit widget for the game ID
-	new StaticTextWidget(tab, x, yoffset + 2, labelWidth, lineHeight, "ID: ", kTextAlignRight, ws);
-	_domainWidget = new DomainEditTextWidget(tab, x + labelWidth, yoffset, _w - labelWidth - 10 - x, lineHeight, _domain, ws);
+	new StaticTextWidget(tab, x, yoffset + 2, labelWidth, kLineHeight, "ID: ", kTextAlignRight, ws);
+	_domainWidget = new DomainEditTextWidget(tab, x + labelWidth, yoffset, _w - labelWidth - 10 - x, kLineHeight, _domain, ws);
 	yoffset += _domainWidget->getHeight() + 3;
 
 	// GUI:  Label & edit widget for the description
-	new StaticTextWidget(tab, x, yoffset + 2, labelWidth, lineHeight, "Name: ", kTextAlignRight, ws);
-	_descriptionWidget = new EditTextWidget(tab, x + labelWidth, yoffset, _w - labelWidth - 10 - x, lineHeight, description, ws);
+	new StaticTextWidget(tab, x, yoffset + 2, labelWidth, kLineHeight, "Name: ", kTextAlignRight, ws);
+	_descriptionWidget = new EditTextWidget(tab, x + labelWidth, yoffset, _w - labelWidth - 10 - x, kLineHeight, description, ws);
 	yoffset += _descriptionWidget->getHeight() + 3;
 
 	// Language popup
@@ -234,12 +224,12 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 
 	// GUI:  Button + Label for the game path
 	addButton(tab, x, yoffset, "Game Path:", kCmdGameBrowser, 0, ws);
-	_gamePathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, lineHeight, gamePath, kTextAlignLeft, ws);
+	_gamePathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, kLineHeight, gamePath, kTextAlignLeft, ws);
 	yoffset += buttonHeight + 4;
 
 	// GUI:  Button + Label for the additional path
 	addButton(tab, x, yoffset, "Extra Path:", kCmdExtraBrowser, 0, ws);
-	_extraPathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, lineHeight, extraPath, kTextAlignLeft, ws);
+	_extraPathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, kLineHeight, extraPath, kTextAlignLeft, ws);
 	if (extraPath.isEmpty() || !ConfMan.hasKey("extrapath", _domain)) {
 		_extraPathWidget->setLabel("None");
 	}
@@ -247,7 +237,7 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 
 	// GUI:  Button + Label for the save path
 	addButton(tab, x, yoffset, "Save Path:", kCmdSaveBrowser, 0, ws);
-	_savePathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, lineHeight, savePath, kTextAlignLeft, ws);
+	_savePathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, kLineHeight, savePath, kTextAlignLeft, ws);
 	if (savePath.isEmpty() || !ConfMan.hasKey("savepath", _domain)) {
 		_savePathWidget->setLabel("Default");
 	}
@@ -507,25 +497,19 @@ LauncherDialog::LauncherDialog(GameDetector &detector)
 	_h = screenH;
 
 	GUI::WidgetSize ws;
-	int lineHeight;
 	int buttonHeight;
-	const Graphics::Font *font;
 	int top;
 
 	if (screenW >= 400 && screenH >= 300) {
 		ws = GUI::kBigWidgetSize;
-		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-		lineHeight = font->getFontHeight() + 2;
 		buttonHeight = kBigButtonHeight;
 	} else {
 		ws = GUI::kNormalWidgetSize;
-		font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-		lineHeight = font->getFontHeight() + 2;
 		buttonHeight = kButtonHeight;
 	}
 
 	// Show ScummVM version
-	new StaticTextWidget(this, hBorder, 8, _w - 2*hBorder, lineHeight, gScummVMFullVersion, kTextAlignCenter, ws);
+	new StaticTextWidget(this, hBorder, 8, _w - 2*hBorder, kLineHeight, gScummVMFullVersion, kTextAlignCenter, ws);
 
 	// Add some buttons at the bottom
 	// TODO: Rearrange them a bit? In particular, we could put a slightly smaller space
@@ -551,7 +535,7 @@ LauncherDialog::LauncherDialog(GameDetector &detector)
 
 
 	// Add list with game titles
-	_list = new ListWidget(this, hBorder, lineHeight + 16, _w - 2 * hBorder, top - lineHeight - 20, ws);
+	_list = new ListWidget(this, hBorder, kLineHeight + 16, _w - 2 * hBorder, top - kLineHeight - 20, ws);
 	_list->setEditable(false);
 	_list->setNumberingMode(kListNumberingOff);
 

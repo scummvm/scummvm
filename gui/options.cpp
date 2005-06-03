@@ -439,18 +439,10 @@ int OptionsDialog::addVolumeControls(GuiObject *boss, int yoffset, WidgetSize ws
 		"Speech volume:"
 	};
 
-	const Graphics::Font *font;
-
-	if (ws == kBigWidgetSize) {
-		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-	} else {
-		font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-	}
-
 	int textwidth = 0;
 
 	for (int i = 0; i < ARRAYSIZE(slider_labels); i++) {
-		int width = font->getStringWidth(slider_labels[i]);
+		int width = g_gui.getStringWidth(slider_labels[i]);
 
 		if (width > textwidth)
 			textwidth = width;

@@ -296,18 +296,15 @@ ButtonWidget *Dialog::addButton(GuiObject *boss, int x, int y, const Common::Str
 }
 
 CheckboxWidget *Dialog::addCheckbox(GuiObject *boss, int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws) {
-	const Graphics::Font *font;
 	int w, h;
 
 	if (ws == kBigWidgetSize) {
-		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 		h = kBigButtonHeight;
 	} else {
-		font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 		h = kButtonHeight;
 	}
 
-	w = font->getFontHeight() + 10 + font->getStringWidth(label);
+	w = g_gui.getFontHeight() + 10 + g_gui.getStringWidth(label);
 
 	return new CheckboxWidget(boss, x, y, w, h, label, cmd, hotkey, ws);
 }
@@ -327,15 +324,7 @@ SliderWidget *Dialog::addSlider(GuiObject *boss, int x, int y, uint32 cmd, Widge
 }
 
 PopUpWidget *Dialog::addPopUp(GuiObject *boss, int x, int y, int w, const Common::String &label, uint labelWidth, WidgetSize ws) {
-	const Graphics::Font *font;
-
-	if (ws == kBigWidgetSize) {
-		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-	} else {
-		font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-	}
-
-	return new PopUpWidget(boss, x, y, w, font->getFontHeight() + 2, label, labelWidth, ws);
+	return new PopUpWidget(boss, x, y, w, kLineHeight, label, labelWidth, ws);
 }
 
 uint32 GuiObject::getMillis() {

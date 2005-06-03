@@ -41,19 +41,14 @@ MessageDialog::MessageDialog(const Common::String &message, const char *defaultB
 	const int screenH = g_system->getOverlayHeight();
 
 	GUI::WidgetSize ws;
-	int lineHeight;
 	int buttonWidth, buttonHeight;
-	const Graphics::Font *font;
+
 	if (screenW >= 400 && screenH >= 300) {
 		ws = GUI::kBigWidgetSize;
-		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-		lineHeight = font->getFontHeight() + 2;
 		buttonWidth = kBigButtonWidth;
 		buttonHeight = kBigButtonHeight;
 	} else {
 		ws = GUI::kNormalWidgetSize;
-		font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-		lineHeight = font->getFontHeight() + 2;
 		buttonWidth = kButtonWidth;
 		buttonHeight = kButtonHeight;
 	}
@@ -64,7 +59,7 @@ MessageDialog::MessageDialog(const Common::String &message, const char *defaultB
 	// the real size of the dialog
 	Common::StringList lines;
 	int lineCount, okButtonPos, cancelButtonPos;
-	int maxlineWidth = font->wordWrapText(message, screenW - 2 * 20, lines);
+	int maxlineWidth = g_gui.getFont().wordWrapText(message, screenW - 2 * 20, lines);
 
 	// Calculate the desired dialog size (maxing out at 300*180 for now)
 	_w = maxlineWidth + 20;
@@ -75,10 +70,10 @@ MessageDialog::MessageDialog(const Common::String &message, const char *defaultB
 		_h += buttonHeight + 8;
 
 	// Limit the number of lines so that the dialog still fits on the screen.
-	if (lineCount > (screenH - 20 - _h) / lineHeight) {
-		lineCount = (screenH - 20 - _h) / lineHeight;
+	if (lineCount > (screenH - 20 - _h) / kLineHeight) {
+		lineCount = (screenH - 20 - _h) / kLineHeight;
 	}
-	_h += lineCount * lineHeight;
+	_h += lineCount * kLineHeight;
 
 	// Center the dialog
 	_x = (screenW - _w) / 2;
@@ -86,7 +81,7 @@ MessageDialog::MessageDialog(const Common::String &message, const char *defaultB
 
 	// Each line is represented by one static text item.
 	for (int i = 0; i < lineCount; i++) {
-		new StaticTextWidget(this, 10, 10 + i * lineHeight, maxlineWidth, lineHeight,
+		new StaticTextWidget(this, 10, 10 + i * kLineHeight, maxlineWidth, kLineHeight,
 								lines[i], kTextAlignCenter, ws);
 	}
 
