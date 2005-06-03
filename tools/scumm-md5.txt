@@ -225,6 +225,7 @@ The Dig
 	Demo	All	en	362c1d281fb9899254cda66ad246c66a	digdemo
 	
 	-	Mac	en	35a2d3040fa512f8232d9e443319d84d	dig	fingolfin
+	-	Mac	fr	21a6592322f92550f144f68a8a4e685e	dig	kaminari
 	Demo	Mac	en	cd9c05e755d7bf8e9b9590ad1ebe273e	digdemo	fingolfin
 
 Curse of Monkey Island
