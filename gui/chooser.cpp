@@ -35,24 +35,19 @@ ChooserDialog::ChooserDialog(const String &title, const String &buttonLabel, int
 
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
-	const Graphics::Font *font;
 
 	GUI::WidgetSize ws;
 	int buttonWidth, buttonHeight;
 
 	if (screenW >= 400 && screenH >= 300) {
 		ws = GUI::kBigWidgetSize;
-		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 		buttonHeight = kBigButtonHeight;
 		buttonWidth = kBigButtonWidth;
 	} else {
 		ws = GUI::kNormalWidgetSize;
-		font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 		buttonHeight = kButtonHeight;
 		buttonWidth = kButtonWidth;
 	}
-
-	int lineHeight = font->getFontHeight() + 2;
 
 	// FIXME: This is an ugly hack. The 'height' parameter assumes a 200
 	// pixel tall screen, so try to scale that to something sensible.
@@ -66,9 +61,9 @@ ChooserDialog::ChooserDialog(const String &title, const String &buttonLabel, int
 	int yoffset = 6;
 
 	// Headline
-	new StaticTextWidget(this, 10, 6, _w - 2 * 10, lineHeight, title, kTextAlignCenter, ws);
+	new StaticTextWidget(this, 10, 6, _w - 2 * 10, kLineHeight, title, kTextAlignCenter, ws);
 
-	yoffset += lineHeight + 2;
+	yoffset += kLineHeight + 2;
 
 	// Add choice list
 	// HACK: Subtracting -12 from the height makes the list look good when
