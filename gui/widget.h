@@ -154,7 +154,6 @@ protected:
 	String					_label;
 	TextAlignment			_align;
 	const WidgetSize		_ws;
-	const Graphics::Font	*_font;
 public:
 	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, TextAlignment align, WidgetSize ws = kDefaultWidgetSize);
 	void setValue(int value);

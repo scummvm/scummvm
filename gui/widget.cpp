@@ -112,18 +112,6 @@ StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, 
 	_flags = WIDGET_ENABLED;
 	_type = kStaticTextWidget;
 	_label = text;
-	
-	switch (_ws) {
-	case kNormalWidgetSize:
-		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-		break;
-	case kBigWidgetSize:
-		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-		break;
-	case kDefaultWidgetSize:
-		_font = &g_gui.getFont();
-		break;
-	}
 }
 
 void StaticTextWidget::setValue(int value) {
@@ -150,7 +138,7 @@ void StaticTextWidget::setAlign(TextAlignment align) {
 
 void StaticTextWidget::drawWidget(bool hilite) {
 	NewGui *gui = &g_gui;
-	gui->drawString(_font, _label, _x, _y, _w, isEnabled() ? gui->_textcolor : gui->_color, _align);
+	gui->drawString(_label, _x, _y, _w, isEnabled() ? gui->_textcolor : gui->_color, _align);
 }
 
 #pragma mark -
@@ -169,8 +157,8 @@ void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 
 void ButtonWidget::drawWidget(bool hilite) {
 	NewGui *gui = &g_gui;
-	const int off = (_h - _font->getFontHeight()) / 2;
-	gui->drawString(_font, _label, _x, _y + off, _w,
+	const int off = (_h - g_gui.getFontHeight()) / 2;
+	gui->drawString(_label, _x, _y + off, _w,
 					!isEnabled() ? gui->_color :
 					hilite ? gui->_textcolorhi : gui->_textcolor, _align);
 }
@@ -200,7 +188,7 @@ void CheckboxWidget::setState(bool state) {
 
 void CheckboxWidget::drawWidget(bool hilite) {
 	NewGui *gui = &g_gui;
-	int fontHeight = _font->getFontHeight();
+	int fontHeight = gui->getFontHeight();
 
 	// Draw the box
 	gui->box(_x, _y, fontHeight + 4, fontHeight + 4, gui->_color, gui->_shadowcolor);
@@ -231,7 +219,7 @@ void CheckboxWidget::drawWidget(bool hilite) {
 	}
 
 	// Finally draw the label
-	gui->drawString(_font, _label, _x + fontHeight + 10, _y + 3, _w, isEnabled() ? gui->_textcolor : gui->_color);
+	gui->drawString(_label, _x + fontHeight + 10, _y + 3, _w, isEnabled() ? gui->_textcolor : gui->_color);
 }
 
 #pragma mark -
