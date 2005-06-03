@@ -40,7 +40,6 @@ protected:
 	int _tabWidth;
 	int _tabHeight;
 	const WidgetSize _ws;
-	const Graphics::Font *_font;
 
 public:
 	TabWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws = kDefaultWidgetSize);

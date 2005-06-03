@@ -44,19 +44,10 @@ TabWidget::TabWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws)
 
 	_tabWidth = 40;
 
-	switch (_ws) {
-	case kNormalWidgetSize:
-		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-		_tabHeight = kTabHeight;
-		break;
-	case kBigWidgetSize:
-		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	if (_ws == kBigWidgetSize) {
 		_tabHeight = kBigTabHeight;
-		break;
-	case kDefaultWidgetSize:
-		_font = &g_gui.getFont();
+	} else {
 		_tabHeight = kTabHeight;
-		break;
 	}
 }
 
@@ -83,7 +74,7 @@ int TabWidget::addTab(const String &title) {
 	int numTabs = _tabs.size();
 
 	// Determine the new tab width
-	int newWidth = _font->getStringWidth(title) + 2 * kTabPadding;
+	int newWidth = g_gui.getStringWidth(title) + 2 * kTabPadding;
 	if (_tabWidth < newWidth)
 		_tabWidth = newWidth;
 	int maxWidth = (_w - kTabLeftOffset) / numTabs - kTabLeftOffset;
@@ -171,7 +162,7 @@ void TabWidget::drawWidget(bool hilite) {
 		OverlayColor color = (i == _activeTab) ? gui->_color : gui->_shadowcolor;
 		int yOffset = (i == _activeTab) ? 0 : 2; 
 		box(x, _y + yOffset, _tabWidth, _tabHeight - yOffset, color, color, (i == _activeTab));
-		gui->drawString(_font, _tabs[i].title, x + kTabPadding, _y + yOffset / 2 + (_tabHeight - _font->getFontHeight() - 3), _tabWidth - 2 * kTabPadding, gui->_textcolor, kTextAlignCenter);
+		gui->drawString(_tabs[i].title, x + kTabPadding, _y + yOffset / 2 + (_tabHeight - gui->getFontHeight() - 3), _tabWidth - 2 * kTabPadding, gui->_textcolor, kTextAlignCenter);
 		x += _tabWidth + kTabSpacing;
 	}
 
