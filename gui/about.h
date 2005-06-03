@@ -25,10 +25,6 @@
 #include "common/str.h"
 #include "graphics/surface.h"
 
-namespace Graphics {
-	class Font;
-}
-
 namespace GUI {
 
 class AboutDialog : public Dialog {
@@ -41,7 +37,6 @@ protected:
 	byte		_modifiers;
 	bool		_willClose;
 	Graphics::Surface	_canvas;
-	const Graphics::Font	*_font;
 	
 	int xOff, yOff;
 	

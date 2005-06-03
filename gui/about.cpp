@@ -80,12 +80,10 @@ AboutDialog::AboutDialog()
 	int outerBorder;
 
 	if (screenW >= 400 && screenH >= 300) {
-		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 		xOff = 8;
 		yOff = 5;
 		outerBorder = 80;
 	} else {
-		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 		xOff = 3;
 		yOff = 2;
 		outerBorder = 10;
@@ -94,13 +92,13 @@ AboutDialog::AboutDialog()
 	_w = screenW - 2 * outerBorder;
 	_h = screenH - 2 * outerBorder;
 	
-	_lineHeight = _font->getFontHeight() + 3;
+	_lineHeight = g_gui.getFontHeight() + 3;
 
 	// Heuristic to compute 'optimal' dialog width
 	int maxW = _w - 2*xOff;
 	_w = 0;
 	for (i = 0; i < ARRAYSIZE(credits); i++) {
-		int tmp = _font->getStringWidth(credits[i]+5);
+		int tmp = g_gui.getStringWidth(credits[i] + 5);
 		if ( _w < tmp && tmp <= maxW) {
 			_w = tmp;
 		}
@@ -162,7 +160,7 @@ void AboutDialog::addLine(const char *str) {
 		_lines.push_back(format);
 	} else {
 		Common::StringList wrappedLines;
-		_font->wordWrapText(str, _w - 2*xOff, wrappedLines);
+		g_gui.getFont().wordWrapText(str, _w - 2*xOff, wrappedLines);
 		
 		for (Common::StringList::const_iterator i = wrappedLines.begin(); i != wrappedLines.end(); ++i) {
 			_lines.push_back(format + *i);
@@ -255,7 +253,7 @@ void AboutDialog::drawDialog() {
 			while (*str && *str == ' ')
 				str++;
 	
-		_font->drawString(&g_gui.getScreen(), str, _x + xOff, y, _w - 2 * xOff, color, align, 0, false);
+		g_gui.drawString(str, _x + xOff, y, _w - 2 * xOff, color, align, 0, false);
 		y += _lineHeight;
 	}
 
