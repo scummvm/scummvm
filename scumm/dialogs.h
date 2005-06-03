@@ -199,7 +199,6 @@ protected:
 		kDisplayDelay = 1500
 	};
 	Common::String _label;
-	const Graphics::Font *_font;
 	const int _min, _max;
 	const uint16 _incKey, _decKey;
 	int _percentBarWidth;

@@ -670,12 +670,10 @@ HelpDialog::HelpDialog(ScummEngine *scumm)
 
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
-	const Graphics::Font *font;
 
 	GUI::WidgetSize ws;
 	int buttonHeight;
 	int buttonWidth;
-	int lineHeight;
 
 	if (screenW >= 400 && screenH >= 300) {
 		ws = GUI::kBigWidgetSize;
@@ -683,17 +681,15 @@ HelpDialog::HelpDialog(ScummEngine *scumm)
 		buttonWidth = kBigButtonWidth;
 		_w = 370;
 		_x = (screenW - _w) / 2;
-		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-		lineHeight = font->getFontHeight();
 	} else {
 		ws = GUI::kNormalWidgetSize;
 		buttonHeight = kButtonHeight;
 		buttonWidth = kButtonWidth;
 		_x = 5;
 		_w = screenW - 2 * 5;
-		font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-		lineHeight = font->getFontHeight();
 	}
+
+	int lineHeight = g_gui.getFontHeight();
 
 	_h = 5 + (2 + HELP_NUM_LINES) * lineHeight + buttonHeight + 7;
 	_y = (screenH - _h) / 2;
@@ -781,19 +777,16 @@ InfoDialog::InfoDialog(ScummEngine *scumm, const String& message)
 void InfoDialog::setInfoText(const String& message) {
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
-	const Graphics::Font *font;
 	GUI::WidgetSize ws;
 
 	if (screenW >= 400 && screenH >= 300) {
 		ws = GUI::kBigWidgetSize;
-		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 	} else {
 		ws = GUI::kNormalWidgetSize;
-		font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 	}
 
-	int width = font->getStringWidth(message) + 16;
-	int height = font->getFontHeight() + 8;
+	int width = g_gui.getStringWidth(message) + 16;
+	int height = g_gui.getFontHeight() + 8;
 
 	_w = width;
 	_h = height;
@@ -841,15 +834,13 @@ ValueDisplayDialog::ValueDisplayDialog(const Common::String& label, int minVal, 
 	const int screenH = g_system->getOverlayHeight();
 
 	if (screenW >= 400 && screenH >= 300) {
-		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 		_percentBarWidth = kBigPercentBarWidth;
 	} else {
-		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 		_percentBarWidth = kPercentBarWidth;
 	}
 
-	int width = _font->getStringWidth(label) + 16 + _percentBarWidth;
-	int height = _font->getFontHeight() + 4 * 2;
+	int width = g_gui.getStringWidth(label) + 16 + _percentBarWidth;
+	int height = g_gui.getFontHeight() + 4 * 2;
 
 	_x = (screenW - width) / 2;
 	_y = (screenH - height) / 2;
@@ -864,7 +855,7 @@ void ValueDisplayDialog::drawDialog() {
 	const int labelWidth = _w - 8 - _percentBarWidth;
 
 	// Draw the label
-	g_gui.drawString(_font, _label, _x + 4, _y + 4, labelWidth, g_gui._textcolor);
+	g_gui.drawString(_label, _x + 4, _y + 4, labelWidth, g_gui._textcolor);
 	
 	// Draw the percentage bar
 	g_gui.fillRect(_x + 4 + labelWidth, _y + 4, _percentBarWidth * (_value - _min) / (_max - _min), _h - 8, g_gui._textcolorhi);
