@@ -49,9 +49,7 @@ class PopUpWidget : public Widget, public CommandSender {
 	typedef Common::Array<Entry> EntryList;
 protected:
 	const WidgetSize		_ws;
-	const Graphics::Font	*_font;
 	EntryList		_entries;
-	int				_lineHeight;
 	int				_selectedItem;
 
 	String			_label;

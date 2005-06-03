@@ -34,8 +34,6 @@ namespace GUI {
 class PopUpDialog : public Dialog {
 protected:
 	PopUpWidget	*_popUpBoss;
-	const Graphics::Font	*_font;
-	int		_lineHeight;
 	int			_clickX, _clickY;
 	byte		*_buffer;
 	int			_selection;
@@ -64,28 +62,15 @@ protected:
 PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY, WidgetSize ws)
 	: Dialog(0, 0, 16, 16),
 	_popUpBoss(boss) {
-	switch (ws) {
-	case kNormalWidgetSize:
-		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-		break;
-	case kBigWidgetSize:
-		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-		break;
-	case kDefaultWidgetSize:
-		_font = &g_gui.getFont();
-		break;
-	}
-
-	_lineHeight = _font->getFontHeight() + 2;
 
 	// Copy the selection index
 	_selection = _popUpBoss->_selectedItem;
 
 	// Calculate real popup dimensions
 	_x = _popUpBoss->getAbsX() + _popUpBoss->_labelWidth;
-	_y = _popUpBoss->getAbsY() - _popUpBoss->_selectedItem * _lineHeight;
-	_h = _popUpBoss->_entries.size() * _lineHeight + 2;
-	_w = _popUpBoss->_w - _lineHeight + 2 - _popUpBoss->_labelWidth;
+	_y = _popUpBoss->getAbsY() - _popUpBoss->_selectedItem * kLineHeight;
+	_h = _popUpBoss->_entries.size() * kLineHeight + 2;
+	_w = _popUpBoss->_w - kLineHeight + 2 - _popUpBoss->_labelWidth;
 	
 	// Perform clipping / switch to scrolling mode if we don't fit on the screen
 	// FIXME - OSystem should send out notification messages when the screen
@@ -192,7 +177,7 @@ void PopUpDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 
 int PopUpDialog::findItem(int x, int y) const {
 	if (x >= 0 && x < _w && y >= 0 && y < _h) {
-		return (y - 2) / _lineHeight;
+		return (y - 2) / kLineHeight;
 	}
 	return -1;
 }
@@ -252,19 +237,19 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 	// Draw one entry of the popup menu, including selection
 	assert(entry >= 0);
 	int x = _x + 1;
-	int y = _y + 1 + _lineHeight * entry;
+	int y = _y + 1 + kLineHeight * entry;
 	int w = _w - 2;
 	Common::String &name = _popUpBoss->_entries[entry].name;
 
-	g_gui.fillRect(x, y, w, _lineHeight, hilite ? g_gui._textcolorhi : g_gui._bgcolor);
+	g_gui.fillRect(x, y, w, kLineHeight, hilite ? g_gui._textcolorhi : g_gui._bgcolor);
 	if (name.size() == 0) {
 		// Draw a separator
-		g_gui.hLine(x - 1, y + _lineHeight / 2, x + w, g_gui._shadowcolor);
-		g_gui.hLine(x, y + 1 + _lineHeight / 2, x + w, g_gui._color);
+		g_gui.hLine(x - 1, y + kLineHeight / 2, x + w, g_gui._shadowcolor);
+		g_gui.hLine(x, y + 1 + kLineHeight / 2, x + w, g_gui._color);
 	} else {
-		g_gui.drawString(_font, name, x + 1, y + 2, w - 2, hilite ? g_gui._bgcolor : g_gui._textcolor);
+		g_gui.drawString(name, x + 1, y + 2, w - 2, hilite ? g_gui._bgcolor : g_gui._textcolor);
 	}
-	g_gui.addDirtyRect(x, y, w, _lineHeight);
+	g_gui.addDirtyRect(x, y, w, kLineHeight);
 }
 
 
@@ -281,22 +266,8 @@ PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const Stri
 
 	_selectedItem = -1;
 
-	switch (_ws) {
-	case kNormalWidgetSize:
-		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-		break;
-	case kBigWidgetSize:
-		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-		break;
-	case kDefaultWidgetSize:
-		_font = &g_gui.getFont();
-		break;
-	}
-
-	_lineHeight = _font->getFontHeight() + 2;
-
 	if (!_label.isEmpty() && _labelWidth == 0)
-		_labelWidth = _font->getStringWidth(_label);
+		_labelWidth = g_gui.getStringWidth(_label);
 }
 
 void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
@@ -351,7 +322,7 @@ void PopUpWidget::drawWidget(bool hilite) {
 
 	// Draw the label, if any
 	if (_labelWidth > 0)
-		gui->drawString(_font, _label, _x, _y + 3, _labelWidth, isEnabled() ? gui->_textcolor : gui->_color, kTextAlignRight);
+		gui->drawString(_label, _x, _y + 3, _labelWidth, isEnabled() ? gui->_textcolor : gui->_color, kTextAlignRight);
 
 	// Draw a thin frame around us.
 	gui->hLine(x, _y, x + w - 1, gui->_color);
@@ -377,8 +348,8 @@ void PopUpWidget::drawWidget(bool hilite) {
 
 	// Draw the selected entry, if any
 	if (_selectedItem >= 0) {
-		TextAlignment align = (_font->getStringWidth(_entries[_selectedItem].name) > w-6) ? kTextAlignRight : kTextAlignLeft;
-		gui->drawString(_font, _entries[_selectedItem].name, x+2, _y+3, w-6, !isEnabled() ? gui->_color : gui->_textcolor, align);
+		TextAlignment align = (g_gui.getStringWidth(_entries[_selectedItem].name) > w-6) ? kTextAlignRight : kTextAlignLeft;
+		gui->drawString(_entries[_selectedItem].name, x+2, _y+3, w-6, !isEnabled() ? gui->_color : gui->_textcolor, align);
 	}
 }
 
