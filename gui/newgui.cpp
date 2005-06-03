@@ -455,10 +455,6 @@ void NewGui::drawString(const String &s, int x, int y, int w, OverlayColor color
 	getFont().drawString(&_screen, s, x, y, w, color, align, deltax, useEllipsis);
 }
 
-void NewGui::drawString(const Graphics::Font *font, const String &s, int x, int y, int w, OverlayColor color, TextAlignment align, int deltax, bool useEllipsis) {
-	font->drawString(&_screen, s, x, y, w, color, align, deltax, useEllipsis);
-}
-
 //
 // Draw the mouse cursor (animated). This is mostly ripped from the cursor code in gfx.cpp
 // We could plug in a different cursor here if we like to.
