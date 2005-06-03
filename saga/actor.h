@@ -488,7 +488,7 @@ public:
 	void realLocation(Location &location, uint16 objectId, uint16 walkFlags);
 
 //	speech 
-	void actorSpeech(uint16 actorId, const char **strings, int stringsCount, uint16 sampleResourceId, int speechFlags);
+	void actorSpeech(uint16 actorId, const char **strings, int stringsCount, int sampleResourceId, int speechFlags);
 	void nonActorSpeech(const char **strings, int stringsCount, int speechFlags);
 	void simulSpeech(const char *string, uint16 *actorIds, int actorIdsCount, int speechFlags, int sampleResourceId);
 	void setSpeechColor(int speechColor, int outlineColor) {

@@ -569,7 +569,9 @@ void Actor::updateActorsScene(int actorsEntrance) {
 		error("Actor::updateActorsScene _vm->_scene->currentSceneNumber() == 0");
 	}
 
+	_vm->_sound->stopVoice();
 	_activeSpeech.stringsCount = 0;
+	_activeSpeech.playing = false;
 	_protagonist = NULL;
 
 	for (i = 0; i < _actorsCount; i++) {
@@ -1711,7 +1713,7 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 	return true;
 }
 
-void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, uint16 sampleResourceId, int speechFlags) {
+void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, int sampleResourceId, int speechFlags) {
 	ActorData *actor;
 	int i;
 
