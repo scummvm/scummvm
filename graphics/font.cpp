@@ -29,8 +29,6 @@ int NewFont::getCharWidth(byte chr) const {
 		return desc.maxwidth;
 	// If this character is not included in the font, use the default char.
 	if (chr < desc.firstchar || desc.firstchar + desc.size < chr) {
-		if (chr == ' ')
-			return desc.maxwidth / 2;
 		chr = desc.defaultchar;
 	}
 	return desc.width[chr - desc.firstchar];
@@ -45,8 +43,6 @@ void NewFont::drawChar(Surface *dst, byte chr, int tx, int ty, uint32 color) con
 
 	// If this character is not included in the font, use the default char.
 	if (chr < desc.firstchar || chr >= desc.firstchar + desc.size) {
-		if (chr == ' ')
-			return;
 		chr = desc.defaultchar;
 	}
 
