@@ -67,7 +67,12 @@ enum PanelModes {
 	kPanelPlacard,
 	kPanelMap,
 //	kPanelInventory,
-	kPanelFade
+};
+
+enum FadeModes {
+	kNoFade = 0,
+	kFadeIn,
+	kFadeOut
 };
 
 struct InterfacePanel {
@@ -142,8 +147,6 @@ struct InterfacePanel {
 
 };
 
-
-
 struct Converse {
 	char *text;
 	int stringNum;
@@ -185,8 +188,15 @@ public:
 		draw();
 	}
 	bool isActive() { return _active; }
-	void setMode(int mode, bool force = false);
+	void setMode(int mode);
 	int getMode(void) const { return _panelMode; }
+	void setFadeMode(int fadeMode) {
+		_fadeMode = fadeMode;
+		draw();
+	}
+	int getFadeMode() const {
+		return _fadeMode;
+	}
 	void rememberMode();
 	void restoreMode();
 	bool isInMainMode() { return _inMainMode; }
@@ -364,6 +374,7 @@ private:
 
 	int _saveReminderState;
 	bool _active;
+	int _fadeMode;
 	int _panelMode;
 	int _savedMode;
 	int _lockedMode;

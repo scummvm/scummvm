@@ -178,9 +178,10 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	_saveEdit = _savePanel.getButton(_vm->getDisplayInfo().saveEditIndex);
 	_savePanel.currentButton = NULL;
 
-	_active = false;
+	_active = true;
 	_panelMode = _lockedMode = kPanelNull;
 	_savedMode = -1;
+	_fadeMode = kNoFade;
 	_inMainMode = false;
 	*_statusText = 0;
 	_statusOnceColor = -1;
@@ -258,7 +259,7 @@ void Interface::restoreMode() {
 	draw();
 }
 
-void Interface::setMode(int mode, bool force) {
+void Interface::setMode(int mode) {
 	// TODO: Is this where we should hide/show the mouse cursor?
 	debug(0, "Interface::setMode %i", mode);
 	if (mode == kPanelMain) {
@@ -271,14 +272,7 @@ void Interface::setMode(int mode, bool force) {
 		_saveReminderState = 0;
 	}
 
-	// This lets us to prevents actors to pop up during initial
-	// scene fade in.
-	if (_savedMode != -1 && !force) {
-		_savedMode = mode;
-		debug(0, "Saved mode: %d. my mode is %d", mode, _panelMode);
-	}
-	else
-		_panelMode = mode;
+	_panelMode = mode;
 	
 	switch(_panelMode) {
 		case(kPanelMain):
@@ -527,7 +521,7 @@ void Interface::draw() {
 
 	backBuffer = _vm->_gfx->getBackBuffer();
 
-	if (_vm->_scene->isInDemo() || _panelMode == kPanelFade)
+	if (_vm->_scene->isInDemo() || _fadeMode == kFadeOut)
 		return;
 
 
@@ -1131,7 +1125,7 @@ void Interface::setOption(PanelButton *panelButton) {
 
 void Interface::update(const Point& mousePoint, int updateFlag) {
 	
-	if (_vm->_scene->isInDemo() || _panelMode == kPanelFade || !_active) {
+	if (_vm->_scene->isInDemo() || _fadeMode == kFadeOut || !_active) {
 		return;
 	}
 

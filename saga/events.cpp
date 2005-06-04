@@ -405,8 +405,8 @@ int Events::handleOneShot(EVENT *event) {
 			_vm->_interface->setStatusText("");
 			_vm->_interface->drawStatusBar();
 			break;
-		case EVENT_RESTORE_MODE:
-			_vm->_interface->restoreMode();
+		case EVENT_SET_FADE_MODE:
+			_vm->_interface->setFadeMode(event->param);
 			break;
 		default:
 			break;

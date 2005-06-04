@@ -115,7 +115,7 @@ int Render::drawScene() {
 		// Display scene background
 		_vm->_scene->draw();
 
-		if (_vm->_interface->getMode() != kPanelFade) {
+		if (_vm->_interface->getFadeMode() != kFadeOut) {
 			if (_vm->_puzzle->isActive()) {
 				_vm->_puzzle->movePiece(mouse_pt);
 				_vm->_actor->drawSpeech();

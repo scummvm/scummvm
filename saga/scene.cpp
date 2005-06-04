@@ -466,8 +466,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	if (loadSceneParams->transitionType == kTransitionFade || 
 		loadSceneParams->transitionType == kTransitionFadeNoInterface) {
 
-		_vm->_interface->rememberMode();
-		_vm->_interface->setMode(kPanelFade, true);
+		_vm->_interface->setFadeMode(kFadeOut);
 
 		// Fade to black out
 		_vm->_gfx->getCurrentPal(current_pal);
@@ -489,6 +488,15 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 			q_event = _vm->_events->chain(q_event, &event);
 		}
 
+		// set fade mode
+		event.type = IMMEDIATE_EVENT;
+		event.code = INTERFACE_EVENT;
+		event.op = EVENT_SET_FADE_MODE;
+		event.param = kNoFade;
+		event.time = 0;
+		event.duration = 0;
+		q_event = _vm->_events->chain(q_event, &event);
+
 		// Display scene background, but stay with black palette
 		event.type = IMMEDIATE_EVENT;
 		event.code = BG_EVENT;
@@ -498,13 +506,6 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		event.duration = 0;
 		q_event = _vm->_events->chain(q_event, &event);
 
-		// Restore interface mode
-		event.type = IMMEDIATE_EVENT;
-		event.code = INTERFACE_EVENT;
-		event.op = EVENT_RESTORE_MODE;
-		event.time = 0;
-		event.duration = 0;
-		q_event = _vm->_events->chain(q_event, &event);
 	}
 
 	// Start the scene pre script, but stay with black palette
@@ -525,6 +526,16 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 	if (loadSceneParams->transitionType == kTransitionFade || 
 		loadSceneParams->transitionType == kTransitionFadeNoInterface) {
+
+		// set fade mode
+		event.type = IMMEDIATE_EVENT;
+		event.code = INTERFACE_EVENT;
+		event.op = EVENT_SET_FADE_MODE;
+		event.param = kFadeIn;
+		event.time = 0;
+		event.duration = 0;
+		q_event = _vm->_events->chain(q_event, &event);
+
 		// Fade in from black to the scene background palette
 		event.type = IMMEDIATE_EVENT;
 		event.code = PAL_EVENT;
@@ -533,6 +544,15 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		event.duration = kNormalFadeDuration;
 		event.data = _bg.pal;
 
+		q_event = _vm->_events->chain(q_event, &event);
+
+		// set fade mode
+		event.type = IMMEDIATE_EVENT;
+		event.code = INTERFACE_EVENT;
+		event.op = EVENT_SET_FADE_MODE;
+		event.param = kNoFade;
+		event.time = 0;
+		event.duration = 0;
 		q_event = _vm->_events->chain(q_event, &event);
 	}
 
