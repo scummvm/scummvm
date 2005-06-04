@@ -631,7 +631,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		break;
 	case 8:
 		_wizParams.processFlags |= kWPFNewFlags;
-		_wizParams.img.flags = pop();
+		_wizParams.img.flags |= pop();
 		break;
 	case 10:
 		_wizParams.img.flags = pop();
