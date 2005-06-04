@@ -374,7 +374,7 @@ void Actor::takeExit(uint16 actorId, const HitZone *hitZone) {
 	ActorData *actor;
 	actor = getActor(actorId);
 	actor->lastZone = NULL;
-	
+
 	_vm->_scene->changeScene(hitZone->getSceneNumber(), hitZone->getActorsEntrance(), kTransitionNoFade);
 	_vm->_script->setNoPendingVerb();
 }

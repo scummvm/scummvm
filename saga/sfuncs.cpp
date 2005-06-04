@@ -509,6 +509,13 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 		return;
 	}
 
+	// It is possible to leave scene when converse panel is on,
+	// particulalrly it may happen at Moneychanger tent. This
+	// prevent this from happening.
+	if (_vm->_interface->getMode() == kPanelConverse) {
+		_vm->_interface->setMode(kPanelMain);
+	}
+
 	// This is used for latter demos where all places on world map except
 	// Tent Faire are substituted with LBM picture and short description
 	// TODO: implement
