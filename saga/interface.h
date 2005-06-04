@@ -65,8 +65,8 @@ enum PanelModes {
 	kPanelConverse,
 	kPanelProtect,
 	kPanelPlacard,
-	kPanelMap,
-//	kPanelInventory,
+	kPanelMap
+//	kPanelInventory
 };
 
 enum FadeModes {
