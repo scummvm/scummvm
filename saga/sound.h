@@ -64,7 +64,7 @@ public:
 
  private:
 
-	int playSoundBuffer(Audio::SoundHandle *handle, SOUNDBUFFER *buf, int volume, bool loop);
+	int playSoundBuffer(Audio::SoundHandle *handle, SOUNDBUFFER *buf, int volume, bool loop, bool forceBigEndian);
 
 	int _soundInitialized;
 	int _enabled;

@@ -261,6 +261,7 @@ enum GameIds {
 	GID_ITE_CD,       // data for Win rerelease is same as in old DOS
 	GID_ITE_MACCD,
 	GID_ITE_LINCD,
+	GID_ITE_MULTICD,  // Wyrmkeep combined Windows/Mac/Linux version
 	GID_ITE_WINDEMO1, // older Wyrmkeep windows demo
 	GID_ITE_MACDEMO1, // older Wyrmkeep mac demo
 	GID_ITE_LINDEMO,
@@ -301,12 +302,13 @@ enum GameSoundTypes {
 };
 
 enum GameFeatures {
-	GF_VOX_VOICES      = 1 << 0,
-	GF_BIG_ENDIAN_DATA = 1 << 1,
-	GF_MAC_RESOURCES   = 1 << 2,
-	GF_LANG_DE         = 1 << 3,
-	GF_WYRMKEEP        = 1 << 4,
-	GF_CD_FX           = 1 << 5
+	GF_VOX_VOICES        = 1 << 0,
+	GF_BIG_ENDIAN_VOICES = 1 << 1,
+	GF_BIG_ENDIAN_DATA   = 1 << 2,
+	GF_MAC_RESOURCES     = 1 << 3,
+	GF_LANG_DE           = 1 << 4,
+	GF_WYRMKEEP          = 1 << 5,
+	GF_CD_FX             = 1 << 6
 };
 
 struct GameSoundInfo {
@@ -619,6 +621,7 @@ public:
 public:
 	int initGame(void);
 	RSCFILE_CONTEXT *getFileContext(uint16 type, int param);
+	bool isBigEndianFile(const char *filename);
 public:
 	const GameResourceDescription *getResourceDescription() { return _gameDescription->resourceDescription; }
 	const GameSoundInfo *getSoundInfo() { return _gameDescription->soundInfo; }

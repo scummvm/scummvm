@@ -46,7 +46,7 @@ Sound::~Sound() {
 	_soundInitialized = 0;
 }
 
-int Sound::playSoundBuffer(Audio::SoundHandle *handle, SOUNDBUFFER *buf, int volume, bool loop) {
+int Sound::playSoundBuffer(Audio::SoundHandle *handle, SOUNDBUFFER *buf, int volume, bool loop, bool forceBigEndian) {
 	byte flags;
 
 	if (!_soundInitialized) {
@@ -60,7 +60,7 @@ int Sound::playSoundBuffer(Audio::SoundHandle *handle, SOUNDBUFFER *buf, int vol
 
 	if (buf->s_samplebits == 16) {
 		flags |= Audio::Mixer::FLAG_16BITS;
-		if (!(_vm->getFeatures() & GF_BIG_ENDIAN_DATA))
+		if (!(_vm->getFeatures() & GF_BIG_ENDIAN_DATA) && !forceBigEndian)
 			flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
 	}
 	if (buf->s_stereo)
@@ -74,7 +74,7 @@ int Sound::playSoundBuffer(Audio::SoundHandle *handle, SOUNDBUFFER *buf, int vol
 }
 
 int Sound::playSound(SOUNDBUFFER *buf, int volume, bool loop) {
-	return playSoundBuffer(&_effectHandle, buf, 2 * volume, loop);
+	return playSoundBuffer(&_effectHandle, buf, 2 * volume, loop, false);
 }
 
 int Sound::pauseSound() {
@@ -108,7 +108,7 @@ int Sound::stopSound() {
 }
 
 int Sound::playVoice(SOUNDBUFFER *buf) {
-	return playSoundBuffer(&_voiceHandle, buf, 255, false);
+	return playSoundBuffer(&_voiceHandle, buf, 255, false, (_vm->getFeatures() & GF_BIG_ENDIAN_VOICES) != 0);
 }
 
 int Sound::playVoxVoice(SOUNDBUFFER *buf) {

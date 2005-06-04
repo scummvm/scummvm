@@ -116,6 +116,8 @@ int RSC_LoadRSC(RSCFILE_CONTEXT *rsc) {
 	size_t tbl_len;
 	uint32 i;
 
+	bool isBigEndian = _vm->isBigEndianFile(rsc->rc_file_fspec);
+
 	RSCFILE_RESOURCE *rsc_restbl;
 
 	if (rsc->rc_file->size() < RSC_MIN_FILESIZE) {
@@ -129,7 +131,7 @@ int RSC_LoadRSC(RSCFILE_CONTEXT *rsc) {
 		return FAILURE;
 	}
 	
-	MemoryReadStreamEndian readS(tblinfo_buf, RSC_TABLEINFO_SIZE, IS_BIG_ENDIAN);
+	MemoryReadStreamEndian readS(tblinfo_buf, RSC_TABLEINFO_SIZE, isBigEndian);
 
 	res_tbl_offset = readS.readUint32();
 	res_tbl_ct = readS.readUint32();
@@ -161,7 +163,7 @@ int RSC_LoadRSC(RSCFILE_CONTEXT *rsc) {
 		return FAILURE;
 	}
 
-	MemoryReadStreamEndian readS1(tbl_buf, tbl_len, IS_BIG_ENDIAN);
+	MemoryReadStreamEndian readS1(tbl_buf, tbl_len, isBigEndian);
 
 	debug(9, "RSC %s", rsc->rc_file_fspec);
 	for (i = 0; i < res_tbl_ct; i++) {

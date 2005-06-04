@@ -216,7 +216,7 @@ static GameFileDescription ITEWINDEMO_GameFiles[] = {
 	{"voicesd.rsc", GAME_VOICEFILE}
 };
 
-// Inherit the Earth -  Wyrmkeep Linux Demo version
+// Inherit the Earth - Wyrmkeep Linux Demo version
 static GameFileDescription ITELINDEMO_GameFiles[] = {
 	{"ited.rsc", GAME_RESOURCEFILE},
 	{"scriptsd.rsc", GAME_SCRIPTFILE},
@@ -225,12 +225,26 @@ static GameFileDescription ITELINDEMO_GameFiles[] = {
 	{"musicd.rsc", GAME_MUSICFILE}
 };
 
-// Inherit the Earth -  Wyrmkeep Linux version
+// Inherit the Earth - Wyrmkeep Linux version
 static GameFileDescription ITELINCD_GameFiles[] = {
 	{"ite.rsc", GAME_RESOURCEFILE},
 	{"scripts.rsc", GAME_SCRIPTFILE},
 	{"sounds.rsc", GAME_SOUNDFILE},
 	{"voices.rsc", GAME_VOICEFILE},
+	{"music.rsc", GAME_MUSICFILE}
+};
+
+// Inherit the Earth - Wyrmkeep combined Windows/Mac/Linux version. This
+// version is different from the other Wyrmkeep re-releases in that it does
+// not have any substitute files. Presumably the ite.rsc file has been
+// modified to include the Wyrmkeep changes. The resource files are little-
+// endian, except for the voice file which is big-endian.
+
+static GameFileDescription ITEMULTICD_GameFiles[] = {
+	{"ite.rsc", GAME_RESOURCEFILE},
+	{"scripts.rsc", GAME_SCRIPTFILE},
+	{"sounds.rsc", GAME_SOUNDFILE},
+	{"Inherit the Earth Voices", GAME_VOICEFILE},
 	{"music.rsc", GAME_MUSICFILE}
 };
 
@@ -489,6 +503,12 @@ static GameMD5 gameMD5[] = {
 	{ GID_ITE_LINCD,    "41bb6b95d792dde5196bdb78740895a6", "voices.rsc", false },
 	{ GID_ITE_LINCD,    "d6454756517f042f01210458abe8edd4", "music.rsc", false },
 
+	{ GID_ITE_MULTICD,  "a6433e34b97b15e64fe8214651012db9", "ite.rsc", false },
+	{ GID_ITE_MULTICD,  "a891405405edefc69c9d6c420c868b84", "scripts.rsc", false },
+	{ GID_ITE_MULTICD,  "e2ccb61c325d6d1ead3be0e731fe29fe", "sounds.rsc", false },
+	{ GID_ITE_MULTICD,  "c14c4c995e7a0d3828e3812a494301b7", "Inherit the Earth Voices", false },
+	{ GID_ITE_MULTICD,  "d6454756517f042f01210458abe8edd4", "music.rsc", false },
+
 	{ GID_ITE_DISK_DE,  "869fc23c8f38f575979ec67152914fee", "ite.rsc", false },
 	{ GID_ITE_DISK_DE,  "516f7330f8410057b834424ea719d1ef", "scripts.rsc", false },
 	{ GID_ITE_DISK_DE,  "0c9113e630f97ef0996b8c3114badb08", "voices.rsc", false },
@@ -675,6 +695,23 @@ static GameDescription gameDescriptions[] = {
 		&ITECD_GameSound,
 		GF_VOX_VOICES | GF_WYRMKEEP | GF_CD_FX
 	},
+
+	// Inherit the earth - Wyrmkeep combined Windows/Mac/Linux CD
+	{
+		"ite",
+		GType_ITE,
+		GID_ITE_MULTICD,
+		"Inherit the Earth (Multi-OS CD Version)",
+		&ITE_DisplayInfo,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITEMULTICD_GameFiles),
+		ITEMULTICD_GameFiles,
+		ARRAYSIZE(ITECD_GameFonts),
+		ITECD_GameFonts,
+		&ITECD_GameSound,
+		GF_WYRMKEEP | GF_BIG_ENDIAN_VOICES | GF_CD_FX
+	},
 	
 	// Inherit the earth - Wyrmkeep Linux CD version
 	// should be before GID_ITE_CD_G
@@ -852,12 +889,31 @@ RSCFILE_CONTEXT *SagaEngine::getFileContext(uint16 type, int param) {
 	uint16 i;
 
 	for (i = 0; i < _gameDescription->filesCount; i++) {
-		if ( _gameDescription->filesDescriptions[i].fileType & type) {
+		if (_gameDescription->filesDescriptions[i].fileType & type) {
 			return _gameFileContexts[i];
 		}
 	}
 
 	return NULL;
+}
+
+bool SagaEngine::isBigEndianFile(const char *filename) {
+	bool isBigEndian = IS_BIG_ENDIAN;
+
+	if (isBigEndian)
+		return true;
+
+	if (!(_vm->getFeatures() & GF_BIG_ENDIAN_VOICES))
+		return isBigEndian;
+
+	for (int i = 0; i < _gameDescription->filesCount; i++) {
+		GameFileDescription *desc = &_gameDescription->filesDescriptions[i];
+		if (desc->fileType & GAME_VOICEFILE && scumm_stricmp(filename, desc->fileName) == 0) {
+			return true;
+		}
+	}
+
+	return isBigEndian;
 }
 
 DetectedGameList GAME_ProbeGame(const FSList &fslist) {
