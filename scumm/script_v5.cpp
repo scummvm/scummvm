@@ -1497,7 +1497,7 @@ void ScummEngine_v5::o5_loadRoomWithEgo() {
 
 	a = derefActor(VAR(VAR_EGO), "o5_loadRoomWithEgo");
 
-	a->putActor(0, 0, room);
+	a->putActor(a->_pos.x, a->_pos.y, room);
 	oldDir = a->getFacing();
 	_egoPositioned = false;
 
