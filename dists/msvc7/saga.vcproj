@@ -179,6 +179,12 @@
 			RelativePath="..\..\saga\music.h">
 		</File>
 		<File
+			RelativePath="..\..\saga\puzzle.cpp">
+		</File>
+		<File
+			RelativePath="..\..\saga\puzzle.h">
+		</File>
+		<File
 			RelativePath="..\..\saga\objectmap.cpp">
 		</File>
 		<File
