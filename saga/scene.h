@@ -206,6 +206,7 @@ struct INTRO_DIALOGUE {
 };
 
 struct INTRO_CREDIT {
+	Common::Language lang;
 	int game;
 	int type;
 	const char *string;

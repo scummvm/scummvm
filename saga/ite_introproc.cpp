@@ -40,6 +40,10 @@
 
 namespace Saga {
 
+using Common::UNK_LANG;
+using Common::EN_USA;
+using Common::DE_DEU;
+
 LoadSceneParams ITE_IntroList[] = {
 	{RID_ITE_INTRO_ANIM_SCENE, kLoadByResourceId, NULL, Scene::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0},
 	{RID_ITE_CAVE_SCENE_1, kLoadByResourceId, NULL, Scene::SC_ITEIntroCave1Proc, false, kTransitionFadeNoInterface, 0},
@@ -145,11 +149,8 @@ enum {
 	kITEPCCD         = (1 << 1),
 	kITEMac          = (1 << 2),
 	kITEWyrmKeep     = (1 << 3),
-	kITEDe           = (1 << 4),
 	kITEAny          = 0xffff,
-	kITENotWyrmKeep  = kITEAny & ~kITEWyrmKeep,
-	kITENotDe        = kITEAny & ~kITEDe,
-	kITENotDeNotWyrm = kITENotWyrmKeep & ~kITEDe
+	kITENotWyrmKeep  = kITEAny & ~kITEWyrmKeep
 };
 
 // Queue a page of credits text. The original interpreter did word-wrapping
@@ -157,13 +158,18 @@ enum {
 
 EVENT *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const INTRO_CREDIT credits[]) {
 	int game;
+	Common::Language lang;
 
 	// The assumption here is that all WyrmKeep versions have the same
 	// credits, regardless of which operating system they're for.
 
 	if (_vm->getFeatures() & GF_LANG_DE) {
-		game = kITEDe;
-	} else if (_vm->getFeatures() & GF_WYRMKEEP) {
+		lang = DE_DEU;
+	} else {
+		lang = EN_USA;
+	}
+
+	if (_vm->getFeatures() & GF_WYRMKEEP) {
 		game = kITEWyrmKeep;
 	} else if (_vm->getFeatures() & GF_MAC_RESOURCES) {
 		game = kITEMac;
@@ -182,6 +188,10 @@ EVENT *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const
 	int credits_height = 0;
 
 	for (i = 0; i < n_credits; i++) {
+		if (credits[i].lang != lang && credits[i].lang != UNK_LANG) {
+			continue;
+		}
+
 		if (!(credits[i].game & game)) {
 			continue;
 		}
@@ -219,6 +229,10 @@ EVENT *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const
 	text_entry.text_x = 160;
 
 	for (i = 0; i < n_credits; i++) {
+		if (credits[i].lang != lang && credits[i].lang != UNK_LANG) {
+			continue;
+		}
+
 		if (!(credits[i].game & game)) {
 			continue;
 		}
@@ -707,16 +721,16 @@ int Scene::ITEIntroValleyProc(int param) {
 	EVENT *q_event;
 
 	static const INTRO_CREDIT credits[] = {
-		{kITENotDe, kCHeader, "Producer"},
-		{kITEDe, kCHeader, "Produzent"},
-		{kITEAny, kCText, "Walter Hochbrueckner"},
-		{kITENotDe, kCHeader, "Executive Producer"},
-		{kITEDe, kCHeader, "Ausf\201hrender Produzent"},
-		{kITEAny, kCText, "Robert McNally"},
-		{kITEWyrmKeep, kCHeader, "2nd Executive Producer"},
-		{kITENotWyrmKeep, kCHeader, "Publisher"},
-		{kITENotDeNotWyrm, kCHeader, "Herausgeber"},
-		{kITEAny, kCText, "Jon Van Caneghem"}
+		{EN_USA, kITEAny, kCHeader, "Producer"},
+		{DE_DEU, kITEAny, kCHeader, "Produzent"},
+		{UNK_LANG, kITEAny, kCText, "Walter Hochbrueckner"},
+		{EN_USA, kITEAny, kCHeader, "Executive Producer"},
+		{DE_DEU, kITEAny, kCHeader, "Ausf\201hrender Produzent"},
+		{UNK_LANG, kITEAny, kCText, "Robert McNally"},
+		{UNK_LANG, kITEWyrmKeep, kCHeader, "2nd Executive Producer"},
+		{EN_USA, kITENotWyrmKeep, kCHeader, "Publisher"},
+		{DE_DEU, kITENotWyrmKeep, kCHeader, "Herausgeber"},
+		{UNK_LANG, kITEAny, kCText, "Jon Van Caneghem"}
 	};
 
 	int n_credits = ARRAYSIZE(credits);
@@ -813,33 +827,35 @@ int Scene::ITEIntroTreeHouseProc(int param) {
 	EVENT *q_event;
 
 	static const INTRO_CREDIT credits1[] = {
-		{kITENotDe, kCHeader, "Game Design"},
-		{kITEDe, kCHeader, "Spielentwurf"},
-		{kITEAny, kCText, "Talin, Joe Pearce, Robert McNally"},
-		{kITENotDe, kCText, "and Carolly Hauksdottir"},
-		{kITEDe, kCText, "und Carolly Hauksdottir"},
-		{kITENotDe, kCHeader, "Screenplay and Dialog"},
-		{kITEDe, kCHeader, "Geschichte und Dialoge"},
-		{kITENotDe, kCText, "Robert Leh, Len Wein, and Bill Rotsler"},
-		{kITEDe, kCText, "Robert Leh, Len Wein und Bill Rotsler"}
+		{EN_USA, kITEAny, kCHeader, "Game Design"},
+		{DE_DEU, kITEAny, kCHeader, "Spielentwurf"},
+		{UNK_LANG, kITEAny, kCText, "Talin, Joe Pearce, Robert McNally"},
+		{EN_USA, kITEAny, kCText, "and Carolly Hauksdottir"},
+		{DE_DEU, kITEAny, kCText, "und Carolly Hauksdottir"},
+		{EN_USA, kITEAny, kCHeader, "Screenplay and Dialog"},
+		{EN_USA, kITEAny, kCText, "Robert Leh, Len Wein, and Bill Rotsler"},
+		{DE_DEU, kITEAny, kCHeader, "Geschichte und Dialoge"},
+		{DE_DEU, kITEAny, kCText, "Robert Leh, Len Wein und Bill Rotsler"}
 	};
 
 	int n_credits1 = ARRAYSIZE(credits1);
 
 	static const INTRO_CREDIT credits2[] = {
-		{kITEWyrmKeep, kCHeader, "Art Direction"},
-		{kITEWyrmKeep, kCText, "Allison Hershey"},
-		{kITENotDe, kCHeader, "Art"},
-		{kITEDe, kCHeader, "Grafiken"},
-		{kITEAny, kCText, "Edward Lacabanne, Glenn Price, April Lee,"},
-		{kITEWyrmKeep, kCText, "Lisa Sample, Brian Dowrick, Reed Waller,"},
-		{kITEWyrmKeep, kCText, "Allison Hershey and Talin"},
-		{kITENotWyrmKeep, kCText, "Lisa Iennaco, Brian Dowrick, Reed"},
-		{kITENotDeNotWyrm, kCText, "Waller, Allison Hershey and Talin"},
-		{kITEDe, kCText, "Waller, Allison Hershey und Talin"},
-		{kITENotDeNotWyrm, kCHeader, "Art Direction"},
-		{kITEDe, kCHeader, "Grafische Leitung"},
-		{kITENotWyrmKeep, kCText, "Allison Hershey"}
+		{UNK_LANG, kITEWyrmKeep, kCHeader, "Art Direction"},
+		{UNK_LANG, kITEWyrmKeep, kCText, "Allison Hershey"},
+		{EN_USA, kITEAny, kCHeader, "Art"},
+		{DE_DEU, kITEAny, kCHeader, "Grafiken"},
+		{UNK_LANG, kITEWyrmKeep, kCText, "Ed Lacabanne, Glenn Price, April Lee,"},
+		{UNK_LANG, kITENotWyrmKeep, kCText, "Edward Lacabanne, Glenn Price, April Lee,"},
+		{UNK_LANG, kITEWyrmKeep, kCText, "Lisa Sample, Brian Dowrick, Reed Waller,"},
+		{EN_USA, kITEWyrmKeep, kCText, "Allison Hershey and Talin"},
+		{DE_DEU, kITEWyrmKeep, kCText, "Allison Hershey und Talin"},
+		{EN_USA, kITENotWyrmKeep, kCText, "Lisa Iennaco, Brian Dowrick, Reed"},
+		{EN_USA, kITENotWyrmKeep, kCText, "Waller, Allison Hershey and Talin"},
+		{DE_DEU, kITEAny, kCText, "Waller, Allison Hershey und Talin"},
+		{EN_USA, kITENotWyrmKeep, kCHeader, "Art Direction"},
+		{DE_DEU, kITENotWyrmKeep, kCHeader, "Grafische Leitung"},
+		{UNK_LANG, kITENotWyrmKeep, kCText, "Allison Hershey"}
 	};
 
 	int n_credits2 = ARRAYSIZE(credits2);
@@ -898,26 +914,26 @@ int Scene::ITEIntroFairePathProc(int param) {
 	EVENT *q_event;
 
 	static const INTRO_CREDIT credits1[] = {
-		{kITENotDe, kCHeader, "Programming"},
-		{kITEDe, kCHeader, "Programmiert von"},
-		{kITEAny, kCText, "Talin, Walter Hochbrueckner,"},
-		{kITENotDe, kCText, "Joe Burks and Robert Wiggins"},
-		{kITEDe, kCText, "Joe Burks und Robert Wiggins"},
-		{kITEPCCD | kITEWyrmKeep, kCHeader, "Additional Programming"},
-		{kITEPCCD | kITEWyrmKeep, kCText, "John Bolton"},
-		{kITEMac, kCHeader, "Macintosh Version"},
-		{kITEMac, kCText, "Michael McNally and Robert McNally"},
-		{kITENotDe, kCHeader, "Music and Sound"},
-		{kITEDe, kCHeader, "Musik und Sound"},
-		{kITEAny, kCText, "Matt Nathan"}
+		{EN_USA, kITEAny, kCHeader, "Programming"},
+		{DE_DEU, kITEAny, kCHeader, "Programmiert von"},
+		{UNK_LANG, kITEAny, kCText, "Talin, Walter Hochbrueckner,"},
+		{EN_USA, kITEAny, kCText, "Joe Burks and Robert Wiggins"},
+		{DE_DEU, kITEAny, kCText, "Joe Burks und Robert Wiggins"},
+		{EN_USA, kITEPCCD | kITEWyrmKeep, kCHeader, "Additional Programming"},
+		{EN_USA, kITEPCCD | kITEWyrmKeep, kCText, "John Bolton"},
+		{UNK_LANG, kITEMac, kCHeader, "Macintosh Version"},
+		{UNK_LANG, kITEMac, kCText, "Michael McNally and Robert McNally"},
+		{EN_USA, kITEAny, kCHeader, "Music and Sound"},
+		{DE_DEU, kITEAny, kCHeader, "Musik und Sound"},
+		{UNK_LANG, kITEAny, kCText, "Matt Nathan"}
 	};
 
 	int n_credits1 = ARRAYSIZE(credits1);
 
 	static const INTRO_CREDIT credits2[] = {
-		{kITENotDe, kCHeader, "Directed by"},
-		{kITEDe, kCHeader, "Regie"},
-		{kITEAny, kCText, "Talin"}
+		{EN_USA, kITEAny, kCHeader, "Directed by"},
+		{DE_DEU, kITEAny, kCHeader, "Regie"},
+		{UNK_LANG, kITEAny, kCText, "Talin"}
 	};
 
 	int n_credits2 = ARRAYSIZE(credits2);
