@@ -717,18 +717,27 @@ void Script::sfSetActorState(SCRIPTFUNC_PARAMS) {
 // Param2: actor pos x
 // Param3: actor pos y
 void Script::sfScriptMoveTo(SCRIPTFUNC_PARAMS) {
-	int16 actorId;
-	Location actorLocation;
+	int16 objectId;
+	Location location;
 	ActorData *actor;
+	ObjectData *obj;
 
-	actorId = thread->pop();
-	actorLocation.x = thread->pop();
-	actorLocation.y = thread->pop();
+	objectId = thread->pop();
+	location.x = thread->pop();
+	location.y = thread->pop();
 
-	actor = _vm->_actor->getActor(actorId);
+	if (_vm->_actor->validActorId(objectId)) {
+		actor = _vm->_actor->getActor(objectId);
 
-	actor->location.x = actorLocation.x;
-	actor->location.y = actorLocation.y;
+		actor->location.x = location.x;
+		actor->location.y = location.y;
+	} else {
+		if (_vm->_actor->validObjId(objectId)) {
+			obj = _vm->_actor->getObj(objectId);
+			obj->location.x = location.x;
+			obj->location.y = location.y;
+		}
+	}
 }
 
 // Script function #31 (0x21)
