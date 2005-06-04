@@ -886,6 +886,8 @@ void ScummEngine_v7::loadLanguageBundle() {
 	// tags and offsets. I did consider using a balanced tree
 	// instead, but the extra overhead in the node structure would
 	// easily have doubled the memory consumption of the index.
+	// And anyway, using qsort + bsearch gives us the exact same
+	// O(log(n)) access time anyway ;-).
 
 	_languageIndex = (LangIndexNode *)calloc(_languageIndexSize, sizeof(LangIndexNode));
 
@@ -958,7 +960,7 @@ void ScummEngine_v7::loadLanguageBundle() {
 			// After that follows a single space which we skip
 			assert(isspace(*ptr));
 			ptr++;
-	
+
 			// Then comes the translated string: we record an offset to that.
 			_languageIndex[i].offset = ptr - _languageBuffer;
 	
@@ -968,6 +970,19 @@ void ScummEngine_v7::loadLanguageBundle() {
 				break;
 			while (*ptr == '\n' || *ptr == '\r')
 				*ptr++ = 0;
+
+			// Convert '\n' code to a newline. See also bug #902415.
+			char *src, *dst;
+			src = dst = _languageBuffer + _languageIndex[i].offset;
+			while (*src) {
+				if (src[0] == '\\' && src[1] == 'n') {
+					*dst++ = '\n';
+					src += 2;
+				} else {
+					*dst++ = *src++;
+				}
+			}
+			*dst = 0;
 		}
 	}
 
