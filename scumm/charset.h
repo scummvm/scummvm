@@ -62,8 +62,6 @@ public:
 
 protected:
 	byte _color;
-	byte _shadowColor;
-	bool _dropShadow;
 
 public:
 	bool _center;
@@ -117,10 +115,19 @@ protected:
 	int _numChars;
 	int _fontHeight;
 
+	enum ShadowMode {
+		kNoShadowMode,
+		kFMTOWNSShadowMode,
+		kNormalShadowMode
+	};
+	byte _shadowColor;
+	ShadowMode _shadowMode;
+
+	void enableShadow(bool enable);
 	void drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height);
 
 public:
-	CharsetRendererCommon(ScummEngine *vm) : CharsetRenderer(vm), _numChars(0), _fontHeight(0) {}
+	CharsetRendererCommon(ScummEngine *vm);
 
 	void setCurID(byte id);
 	

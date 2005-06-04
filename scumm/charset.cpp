@@ -195,7 +195,6 @@ CharsetRenderer::CharsetRenderer(ScummEngine *vm) {
 
 	_color = 0;
 
-	_dropShadow = false;
 	_center = false;
 	_hasMask = false;
 	_textScreenID = kMainVirtScreen;
@@ -218,6 +217,12 @@ CharsetRenderer::CharsetRenderer(ScummEngine *vm) {
 
 CharsetRenderer::~CharsetRenderer() {
 	free(_textSurface.pixels);
+}
+
+CharsetRendererCommon::CharsetRendererCommon(ScummEngine *vm)
+	: CharsetRenderer(vm), _numChars(0), _fontHeight(0) {
+	_shadowMode = kNoShadowMode;
+	_shadowColor = 0;
 }
 
 void CharsetRendererCommon::setCurID(byte id) {
@@ -1171,20 +1176,38 @@ int CharsetRendererV3::getCharWidth(byte chr) {
 
 void CharsetRendererV3::setColor(byte color)
 {
+	bool useShadow = false;
 	_color = color;
-	_shadowColor = (_vm->_platform == Common::kPlatformFMTowns) ? 8 : 0;
+
 	// FM-TOWNS version of Loom uses old colour method as well
 	if ((_vm->_version >= 2) && (_vm->_features & GF_16COLOR || _vm->_gameId == GID_LOOM)) {
-		_dropShadow = ((_color & 0xF0) != 0);
+		useShadow = ((_color & 0xF0) != 0);
 		_color &= 0x0f;
 	} else if (_vm->_features & GF_OLD256) {
-		_dropShadow = ((_color & 0x80) != 0);
+		useShadow = ((_color & 0x80) != 0);
 		_color &= 0x7f;
 	} else
-		_dropShadow = false;
+		useShadow = false;
+
+	enableShadow(useShadow);
 
 	translateColor();
 }
+
+void CharsetRendererCommon::enableShadow(bool enable) {
+	if (enable) {
+		if (_vm->_platform == Common::kPlatformFMTowns) {
+			_shadowColor = 8;
+			_shadowMode = kFMTOWNSShadowMode;
+		} else {
+			_shadowColor = 0;
+			_shadowMode = kNormalShadowMode;
+		}
+	} else {
+		_shadowMode = kNoShadowMode;
+	}
+}
+
 
 void CharsetRendererV3::printChar(int chr) {
 	// Indy3 / Zak256 / Loom
@@ -1215,7 +1238,7 @@ void CharsetRendererV3::printChar(int chr) {
 	origWidth = width;
 	origHeight = height;
 
-	if (_dropShadow) {
+	if (_shadowMode != kNoShadowMode) {
 		width++;
 		height++;
 	}
@@ -1251,7 +1274,7 @@ void CharsetRendererV3::printChar(int chr) {
 
 	if (_str.right < _left) {
 		_str.right = _left;
-		if (_dropShadow)
+		if (_shadowMode != kNoShadowMode)
 			_str.right++;
 	}
 
@@ -1314,8 +1337,7 @@ void CharsetRendererClassic::printChar(int chr) {
 
 	int type = *_fontPtr;
 	if (is2byte) {
-		_dropShadow = true;
-		_shadowColor = (_vm->_platform == Common::kPlatformFMTowns) ? 8 : 0;
+		enableShadow(true);
 		charPtr = _vm->get2byteCharPtr(chr);
 		width = _vm->_2byteWidth;
 		height = _vm->_2byteHeight;
@@ -1343,7 +1365,7 @@ void CharsetRendererClassic::printChar(int chr) {
 	origWidth = width;
 	origHeight = height;
 	
-	if (_dropShadow) {
+	if (_shadowMode != kNoShadowMode) {
 		width++;
 		height++;
 	}
@@ -1486,7 +1508,7 @@ void CharsetRendererClassic::printChar(int chr) {
 
 	if (_str.right < _left) {
 		_str.right = _left;
-		if (_dropShadow)
+		if (_shadowMode != kNoShadowMode)
 			_str.right++;
 	}
 
@@ -1503,8 +1525,7 @@ void CharsetRendererClassic::drawChar(int chr, const Graphics::Surface &s, int x
 	int is2byte = (chr >= 0x80 && _vm->_useCJKMode) ? 1 : 0;
 
 	if (is2byte) {
-		_dropShadow = true;
-		_shadowColor = (_vm->_platform == Common::kPlatformFMTowns) ? 8 : 0;
+		enableShadow(true);
 		charPtr = _vm->get2byteCharPtr(chr);
 		width = _vm->_2byteWidth;
 		height = _vm->_2byteHeight;
@@ -1567,10 +1588,11 @@ void CharsetRendererCommon::drawBits1(const Graphics::Surface &s, byte *dst, con
 			if ((x % 8) == 0)
 				bits = *src++;
 			if ((bits & revBitMask(x % 8)) && y + drawTop >= 0) {
-				if (_dropShadow) {
+				if (_shadowMode != kNoShadowMode) {
 					*(dst + 1) = _shadowColor;
 					*(dst + s.pitch) = _shadowColor;
-					*(dst + s.pitch + 1) = _shadowColor;
+					if (_shadowMode != kFMTOWNSShadowMode)
+						*(dst + s.pitch + 1) = _shadowColor;
 				}					
 				*dst = _color;
 			}
@@ -1749,7 +1771,7 @@ void CharsetRendererNES::printChar(int chr) {
 
 	if (_str.right < _left) {
 		_str.right = _left;
-		if (_dropShadow)
+		if (_shadowMode != kNoShadowMode)
 			_str.right++;
 	}
 
