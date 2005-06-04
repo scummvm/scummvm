@@ -2598,8 +2598,8 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 		_wiz->_rectOverrideEnabled = true;
 		_wiz->_rectOverride.left = args[1];
 		_wiz->_rectOverride.top = args[2];
-		_wiz->_rectOverride.right = args[3];
-		_wiz->_rectOverride.bottom = args[4];
+		_wiz->_rectOverride.right = args[3] + 1;
+		_wiz->_rectOverride.bottom = args[4] + 1;
 		break;
 	case 43:
 		_wiz->_rectOverrideEnabled = false;
