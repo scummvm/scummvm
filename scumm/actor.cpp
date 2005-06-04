@@ -1227,7 +1227,9 @@ void ScummEngine::redrawAllActors() {
 void ScummEngine::setActorRedrawFlags() {
 	int i, j;
 
-	if (_fullRedraw) {
+	// Redraw all actors if a full redraw was requested.
+	// Also redraw all actors in COMI (see bug #1066329 for details).
+	if (_fullRedraw || _version == 8) {
 		for (j = 1; j < _numActors; j++) {
 			_actors[j]._needRedraw = true;
 		}
