@@ -5,11 +5,11 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
  New Games:
    - Added SAGA engine (for the games and "I Have No Mouth and I Must Scream"
      and "Inherit the Earth").
-   - Added Gob engine (for Goblins series)
+   - Added Gob engine (for Goblins series).
 
  New Ports:
-   - Added PlayStation 2 port
-   - Added AmigaOS 4 port
+   - Added PlayStation 2 port.
+   - Added AmigaOS 4 port.
 
  General:
    - Reworked cursor handling in SDL backend. Now cursors can have their own
@@ -18,16 +18,17 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Added GUI for the "soundfont" setting. (Currently only used by the
      CoreAudio and FluidSynth MIDI drivers.)
    - The MPEG player could hang if the sound ended prematurely.
+   - Improved autoscaling GUI, which takes full advantage of your screen.
 
  SCUMM:
-   - Added support for Mac Humongous Entertainment titles
-   - Added support for multiple filenames/versions using a single target
-   - Implemented CGA and Hercules render modes in early LEC titles
+   - Added support for Mac Humongous Entertainment titles.
+   - Added support for multiple filenames/versions using a single target.
+   - Implemented CGA and Hercules render modes in early LEC titles.
    - Added dialogs which are shown when you modify the talkspeed or music
      volume using hotkeys.
-   - Added support for NES version of Maniac Mansion
+   - Added support for NES version of Maniac Mansion.
    - Added thumbnail support for savegames.
-   - Broke compatibility with HE savegame (HE v71 and upwards only)
+   - Broke compatibility with HE savegame (HE v71 and upwards only).
    - Added possibility to disable building of HE and SCUMM v7 & v8 games
      support.
    - Fixed the last few known music glitches in Sam & Max. (There are still
