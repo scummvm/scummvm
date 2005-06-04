@@ -420,6 +420,12 @@ void ScummEngine::getScriptBaseAddress() {
 	default:
 		error("Bad type while getting base address");
 	}
+	
+	// The following fixes bug #1202487. Confirmed against disasm.
+	if (_version <= 2 && _scriptOrgPointer == NULL) {
+		ss->status = ssDead;
+		_currentScript = 0xFF;
+	}
 }
 
 
