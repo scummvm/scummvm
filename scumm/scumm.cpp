@@ -2326,7 +2326,7 @@ load_game:
 			playActorSounds();
 	}
 
-	_sound->processSoundQues();
+	_sound->processSound();
 
 #ifndef DISABLE_SCUMM_7_8
 	if (_imuseDigital) {

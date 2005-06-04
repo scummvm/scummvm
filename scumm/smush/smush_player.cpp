@@ -1057,7 +1057,7 @@ void SmushPlayer::parseNextFrame() {
 	delete sub;
 
 	if (_insanity)
-		_vm->_sound->processSoundQues();
+		_vm->_sound->processSound();
 
 	_vm->_imuseDigital->flushTracks();
 }

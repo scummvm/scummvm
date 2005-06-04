@@ -114,15 +114,24 @@ void Sound::addSoundToQueue2(int sound, int heOffset, int heChannel, int heFlags
 	_soundQue2Pos++;
 }
 
-void Sound::processSoundQues() {
+void Sound::processSound() {
+	if (_vm->_heversion >= 60) {
+		processSoundQueues();
+		processSfxQueues();
+	} else {
+		processSfxQueues();
+
+		if (_vm->_features & GF_DIGI_IMUSE)
+			return;
+
+		processSoundQueues();
+	}
+}
+
+void Sound::processSoundQueues() {
 	int i = 0, num;
 	int snd, heOffset, heChannel, heFlags;
 	int data[16];
-
-	processSfxQueues();
-
-	if (_vm->_features & GF_DIGI_IMUSE)
-		return;
 
 	while (_soundQue2Pos) {
 		_soundQue2Pos--;
@@ -1030,7 +1039,7 @@ void Sound::soundKludge(int *list, int num) {
 #endif
 
 	if (list[0] == -1) {
-		processSoundQues();
+		processSound();
 	} else {
 		_soundQue[_soundQuePos++] = num;
 		

@@ -76,7 +76,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	killScriptsAndResources();
 	if (_version >= 4 && _heversion <= 61)
 		stopCycle(0);
-	_sound->processSoundQues();
+	_sound->processSound();
 	
 	clearDrawQueues();
 

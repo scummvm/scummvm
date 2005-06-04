@@ -106,7 +106,8 @@ public:
 	~Sound();
 	void addSoundToQueue(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0);
 	void addSoundToQueue2(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0);
-	void processSoundQues();
+	void processSound();
+	void processSoundQueues();
 	void setOverrideFreq(int freq);
 	void playSound(int soundID, int heOffset, int heChannel, int heFlags);
 	void startHETalkSound(uint32 offset);
