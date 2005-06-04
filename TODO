@@ -230,12 +230,26 @@ GUI
 * AboutDialog: Add a "fade" effect for the top/bottom text lines
 * AboutDialog: Maybe prerender all of the text into another surface, and then
   simply compose that over the screen surface in the right way.
+
+
+Graphics
+========
 * Add some more fonts/font variants? Maybe a tool like ttf2bdf could be used
   to convert on (free!) TTF font to both a small and a big font for the GUI,
   maybe including bold/italic variants
-* Consider implementing using another font format which
-  - takes up less space in the binary (ascii vs. binary encoding)
+* Use 'complete' fonts. In particular, we should probably pick one encoding
+  (e.g. ISO Latin 1) and standardize on it. Oh yeah, a map from the SCUMM 
+  encoding to that encoding would be useful.
+  That way, we can at least all systems/languages which use that encoding.
+  Of course, kyrillic and asian users, amongst others, wouldn't be helped
+  by this, but there is nothing we can do for them anyway, short of
+  implementing an UTF8 based font rendering engine. (And no, there is no way
+  we are going to do such an absurd thing. Better to implement native GUIs
+  than to write our own OS :-).
+* Consider implementing a new internal font format which
+  - takes up less space in the executable (ascii vs. binary encoding)
   - allows for multi-color/anti-aliased fonts
+
 
 Launcher
 ========
