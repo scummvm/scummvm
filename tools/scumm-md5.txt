@@ -90,6 +90,7 @@ The Secret of Monkey Island
 	EGA (8 disk)	DOS	en	49210e124e4c2b30f1290a9ef6306301	monkeyega
 	EGA (8 disk)	DOS	de	fc6b6148e80d67939d9a18697c0f626a	monkeyega	ghoostkilla
 	EGA (4 disk)	DOS	fr	ce6a4cef315b20fef58a95bc40a2d8d3	monkeyega	Matthieu Milan
+	EGA (4 disk v1.0,9/7/90 II)	DOS	fr	aa7a07d94ae853f6460be4ce0a1bf530	monkeyega	Parazythum
 	EGA (8 disk)	DOS	fr	1dd3c11ea4439adfe681e4e405b624e1	monkeyega	Andrea Petrucci
 	EGA (4 disk)	DOS	it	477dbafbd66a53c98416dc01aef019ad	monkeyega	Andrea Petrucci
 	EGA (8 disk)	DOS	es	910e31cffb28226bd68c569668a0d6b4	monkeyega	Andrea Petrucci
