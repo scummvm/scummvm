@@ -1614,7 +1614,7 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 		if (!_curSpriteGroupId)
 			break;
 
-		_sprite->setGroupinc_tx_ty(_curSpriteGroupId, value1, value2);
+		_sprite->moveGroup(_curSpriteGroupId, value1, value2);
 		break;
 	case 20:
 		_curSpriteGroupId = pop();
@@ -1632,7 +1632,7 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 		if (!_curSpriteGroupId)
 			break;
 
-		_sprite->moveGroup(_curSpriteGroupId, value1, value2);
+		_sprite->setGroupPosition(_curSpriteGroupId, value1, value2);
 		break;
 	case 30:
 		value4 = pop();

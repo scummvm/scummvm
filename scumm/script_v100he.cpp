@@ -884,7 +884,7 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 		if (!_curSpriteGroupId)
 			break;
 
-		_sprite->moveGroup(_curSpriteGroupId, value1, value2);
+		_sprite->setGroupPosition(_curSpriteGroupId, value1, value2);
 		break;
 	case 18:
 		value4 = pop();
@@ -972,7 +972,7 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 		if (!_curSpriteGroupId)
 			break;
 
-		_sprite->setGroupinc_tx_ty(_curSpriteGroupId, value1, value2);
+		_sprite->moveGroup(_curSpriteGroupId, value1, value2);
 		break;
 	case 52:
 		copyScriptString(string, sizeof(string));

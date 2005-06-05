@@ -951,7 +951,7 @@ void Sprite::setGroupPriority(int spriteGroupId, int value) {
 	}
 }
 
-void Sprite::moveGroup(int spriteGroupId, int value1, int value2) {
+void Sprite::setGroupPosition(int spriteGroupId, int value1, int value2) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
 	if (_spriteGroups[spriteGroupId].tx != value1 || _spriteGroups[spriteGroupId].ty != value2) {
@@ -961,7 +961,7 @@ void Sprite::moveGroup(int spriteGroupId, int value1, int value2) {
 	}
 }
 
-void Sprite::setGroupinc_tx_ty(int spriteGroupId, int value1, int value2) {
+void Sprite::moveGroup(int spriteGroupId, int value1, int value2) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
 	if (value1 || value2) {

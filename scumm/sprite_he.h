@@ -196,8 +196,8 @@ public:
 	void setGroupMembersShadow(int spriteGroupId, int value);
 	void setGroupBounds(int spriteGroupId, int x1, int y1, int x2, int y2);
 	void setGroupPriority(int spriteGroupId, int value);
+	void setGroupPosition(int spriteGroupId, int value1, int value2);
 	void moveGroup(int spriteGroupId, int value1, int value2);
-	void setGroupinc_tx_ty(int spriteGroupId, int value1, int value2);
 	void setGroupImage(int spriteGroupId, int value);
 	void setGroupScaling(int spriteGroupId);
 	void setGroupScale_x_ratio_mul(int spriteGroupId, int value);
