@@ -103,11 +103,11 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfPlacardOff),
 		OPCODE(sfSetProtagState),
 		OPCODE(sfResumeBgdAnim),
-		OPCODE(SF_throwActor),
+		OPCODE(sfThrowActor),
 		OPCODE(sfWaitWalk),
 		OPCODE(sfScriptSceneID),
-		OPCODE(SF_changeActorScene),
-		OPCODE(SF_climb),
+		OPCODE(sfChangeActorScene),
+		OPCODE(sfScriptClimb),
 		OPCODE(sfSetDoorState),
 		OPCODE(SF_setActorZ),
 		OPCODE(SF_text),
@@ -889,7 +889,7 @@ void Script::sfScriptWalk(SCRIPTFUNC_PARAMS) {
 // Param4: cycle delay
 void Script::sfCycleFrames(SCRIPTFUNC_PARAMS) {
 	int16 actorId;
-	int flags;
+	int16 flags;
 	int cycleFrameSequence;
 	int cycleDelay;
 	ActorData *actor;
@@ -1360,17 +1360,39 @@ void Script::sfResumeBgdAnim(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #52 (0x34)
-void Script::SF_throwActor(SCRIPTFUNC_PARAMS) {
-	int param1, param2, param3, param4, param5, param6;
+// Param1: actor id
+// Param2: x
+// Param3: y
+// Param4: unknown
+// Param5: actionCycle
+// Param6: flags
+void Script::sfThrowActor(SCRIPTFUNC_PARAMS) {
+	int16 actorId;
+	ActorData *actor;
+	int16 flags;
+	int32 actionCycle;
+	Location location;
 
-	param1 = thread->pop();
-	param2 = thread->pop();
-	param3 = thread->pop();
-	param4 = thread->pop();
-	param5 = thread->pop();
-	param6 = thread->pop();
+	actorId = thread->pop();
+	location.x = thread->pop();
+	location.y = thread->pop();
+	thread->pop();		
+	actionCycle = thread->pop();
+	flags = thread->pop();
 
-	warning("STUB: SF_throwActor(%d, %d, %d, %d, %d, %d)", param1, param2, param3, param4, param5, param6);
+	actor = _vm->_actor->getActor(actorId);
+	location.z = actor->location.z;
+	actor->currentAction = kActionFall;
+	actor->actionCycle = actionCycle;
+	actor->fallAcceleration	= -20;
+	actor->fallVelocity = - (actor->fallAcceleration * actor->actionCycle) / 2;
+	actor->fallPosition	= actor->location.z << 4;
+
+	actor->finalTarget = location;
+	actor->actionCycle--;
+	if (!(flags & kWalkAsync)) {
+		thread->waitWalk(actor);
+	}
 }
 
 // Script function #53 (0x35)
@@ -1396,21 +1418,45 @@ void Script::sfScriptSceneID(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #55 (0x37)
-void Script::SF_changeActorScene(SCRIPTFUNC_PARAMS) {
-	int param1 = thread->pop();
-	int param2 = thread->pop();
+// Param1: actor id
+// Param2: scene number
+void Script::sfChangeActorScene(SCRIPTFUNC_PARAMS) {
+	int16 actorId;
+	int32 sceneNumber;
+	ActorData *actor;
 
-	error("STUB: SF_changeActorScene(%d, %d)", param1, param2);
+	actorId = thread->pop();
+	sceneNumber = thread->pop();
+	actor = _vm->_actor->getActor(actorId);
+	actor->sceneNumber = sceneNumber;
 }
 
 // Script function #56 (0x38)
-void Script::SF_climb(SCRIPTFUNC_PARAMS) {
-	int param1 = thread->pop();
-	int param2 = thread->pop();
-	int param3 = thread->pop();
-	int param4 = thread->pop();
+// Param1: actor id
+// Param2: z
+// Param3: frame seq
+// Param4: flags
+void Script::sfScriptClimb(SCRIPTFUNC_PARAMS) {
+	int16 actorId;
+	int16 z;
+	ActorData *actor;
+	uint16 flags;
+	int cycleFrameSequence;
 
-	error("STUB: SF_climb(%d, %d, %d, %d)", param1, param2, param3, param4);
+	actorId = thread->pop();
+	z = thread->pop();
+	cycleFrameSequence = thread->pop();
+	flags = thread->pop();
+
+	actor = _vm->_actor->getActor(actorId);
+	actor->finalTarget.z = z;
+	actor->flags &= ~kFollower;
+	actor->actionCycle = 1;
+	actor->cycleFrameSequence = cycleFrameSequence;
+	actor->currentAction = kActionClimb;
+	if (!(flags & kWalkAsync)) {
+		thread->waitWalk(actor);
+	}
 }
 
 // Script function #57 (0x39)

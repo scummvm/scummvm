@@ -37,16 +37,9 @@
 #include "saga/scene.h"
 #include "saga/render.h"
 
-#define CURRENT_SAGA_VER 1
+#define CURRENT_SAGA_VER 2
 
 namespace Saga {
-
-struct SaveGameHeader {
-	uint32 type;
-	uint32 size;
-	uint32 version;
-	char name[SAVE_TITLE_SIZE];
-};
 
 static SaveFileData emptySlot = {
 	 "[New Save Game]", 0
@@ -114,7 +107,6 @@ uint SagaEngine::getNewSaveSlotNumber() {
 void SagaEngine::fillSaveList() {
 	int i;
 	Common::InSaveFile *in;
-	SaveGameHeader header;
 	char *name;
 	
 	name = calcSaveFileName(MAX_SAVES);
@@ -137,12 +129,12 @@ void SagaEngine::fillSaveList() {
 		if (_saveMarks[i]) {
 			name = calcSaveFileName(i);
 			if ((in = _saveFileMan->openForLoading(name)) != NULL) {
-				in->read(&header, sizeof(header));
+				in->read(&_saveHeader, sizeof(_saveHeader));
 
-				if (header.type != MKID('SAGA')) {
+				if (_saveHeader.type != MKID('SAGA')) {
 					error("SagaEngine::load wrong format");
 				}
-				strcpy(_saveFiles[_saveFilesCount].name, header.name);
+				strcpy(_saveFiles[_saveFilesCount].name, _saveHeader.name);
 				_saveFiles[_saveFilesCount].slotNumber = i;
 				delete in;
 				_saveFilesCount++;
@@ -163,18 +155,17 @@ void SagaEngine::fillSaveList() {
 
 void SagaEngine::save(const char *fileName, const char *saveName) {
 	Common::OutSaveFile *out;
-	SaveGameHeader header;
 
 	if (!(out = _saveFileMan->openForSaving(fileName))) {
 		return;
 	}
 
-	header.type = MKID('SAGA');
-	header.size = 0;
-	header.version = CURRENT_SAGA_VER;
-	strcpy(header.name, saveName);
+	_saveHeader.type = MKID('SAGA');
+	_saveHeader.size = 0;
+	_saveHeader.version = CURRENT_SAGA_VER;
+	strcpy(_saveHeader.name, saveName);
 
-	out->write(&header, sizeof(header));
+	out->write(&_saveHeader, sizeof(_saveHeader));
 
 	// Surrounding scene
 	out->writeSint32LE(_scene->getOutsetSceneNumber());
@@ -201,15 +192,14 @@ void SagaEngine::load(const char *fileName) {
 	int  commonBufferSize;
 	int sceneNumber, insetSceneNumber;
 	int mapx, mapy;
-	SaveGameHeader header;
 
 	if (!(in = _saveFileMan->openForLoading(fileName))) {
 		return;
 	}
 
-	in->read(&header, sizeof(header));
+	in->read(&_saveHeader, sizeof(_saveHeader));
 
-	if (header.type != MKID('SAGA')) {
+	if (_saveHeader.type != MKID('SAGA')) {
 		error("SagaEngine::load wrong format");
 	}
 			

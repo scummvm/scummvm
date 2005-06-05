@@ -427,6 +427,7 @@ void Actor::realLocation(Location &location, uint16 objectId, uint16 walkFlags) 
 	int distance;
 	ActorData *actor;
 	ObjectData *obj;
+	debug (8, "Actor::realLocation objectId=%i", objectId);
 	if (walkFlags & kWalkUseAngle) {
 		if (_vm->_scene->getFlags() & kSceneFlagISO) {
 			angle = (location.x + 2) & 15;
@@ -460,7 +461,7 @@ void Actor::realLocation(Location &location, uint16 objectId, uint16 walkFlags) 
 void Actor::actorFaceTowardsPoint(uint16 actorId, const Location &toLocation) {
 	ActorData *actor;
 	Location delta;
-
+	debug (8, "Actor::actorFaceTowardsPoint actorId=%i", actorId);
 	actor = getActor(actorId);
 	
 	toLocation.delta(actor->location, delta);
@@ -802,6 +803,7 @@ void Actor::handleActions(int msec, bool setup) {
 	ActorFrameRange *frameRange;
 	int state;
 	int speed;
+	int32 framesLeft;
 	Location delta;
 	Location addDelta;
 	int hitZoneIndex;
@@ -1099,15 +1101,49 @@ void Actor::handleActions(int msec, bool setup) {
 			break;
 
 		case kActionFall:
-			debug(9,"kActionFall not implemented");
-
-			//todo: do it
+			if (actor->actionCycle > 0) {
+				framesLeft = actor->actionCycle--;
+				actor->finalTarget.delta(actor->location, delta);
+				delta.x /= framesLeft;
+				delta.y /= framesLeft;
+				actor->location.addXY(delta);
+				actor->fallVelocity += actor->fallAcceleration;
+				actor->fallPosition += actor->fallVelocity;
+				actor->location.z = actor->fallPosition >> 4;
+			} else {
+				actor->location = actor->finalTarget;
+				actor->currentAction = kActionFreeze;
+				_vm->_script->wakeUpActorThread(kWaitTypeWalk, actor);
+			}			
 			break;
 
 		case kActionClimb:
-			debug(9,"kActionClimb not implemented");
+			actor->cycleDelay++;
+			if (actor->cycleDelay & 3) {
+				break;
+			}
 
-			//todo: do it
+			if (actor->location.z >= actor->finalTarget.z + ACTOR_CLIMB_SPEED) {
+				actor->location.z -= ACTOR_CLIMB_SPEED;
+				actor->actionCycle--;
+			} else {
+				if (actor->location.z <= actor->finalTarget.z - ACTOR_CLIMB_SPEED) {
+					actor->location.z += ACTOR_CLIMB_SPEED;
+					actor->actionCycle++;
+				} else {
+					actor->location.z = actor->finalTarget.z;
+					actor->currentAction = kActionFreeze;
+					_vm->_script->wakeUpActorThread(kWaitTypeWalk, actor);
+				}			
+			}
+
+			frameRange = getActorFrameRange(actor->id, actor->cycleFrameSequence);
+
+			if (actor->actionCycle < 0) {
+				actor->actionCycle = frameRange->frameCount - 1;
+			}
+			actor->cycleWrap(frameRange->frameCount);
+			actor->frameNumber = frameRange->frameIndex + actor->actionCycle;
 			break;
 		}
 

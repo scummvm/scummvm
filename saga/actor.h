@@ -49,6 +49,8 @@ class HitZone;
 
 #define ACTOR_LMULT 4
 
+#define ACTOR_CLIMB_SPEED 8
+
 #define ACTOR_COLLISION_WIDTH       32
 #define ACTOR_COLLISION_HEIGHT       8
 
@@ -287,6 +289,10 @@ public:
 	uint8 cycleTimeCount;
 	uint8 cycleFlags;
 
+	int16 fallVelocity;
+	int16 fallAcceleration;
+	int16 fallPosition;
+
 	int32 frameNumber;			// current frame number
 	
 	int32 tileDirectionsAlloced;
@@ -315,6 +321,9 @@ public:
 		out->writeByte(cycleDelay);
 		out->writeByte(cycleTimeCount);
 		out->writeByte(cycleFlags);
+		out->writeSint16LE(fallVelocity);			
+		out->writeSint16LE(fallAcceleration);			
+		out->writeSint16LE(fallPosition);			
 		out->writeSint32LE(frameNumber);
 
 		out->writeSint32LE(tileDirectionsAlloced);
@@ -349,6 +358,13 @@ public:
 		cycleDelay = in->readByte();
 		cycleTimeCount = in->readByte();
 		cycleFlags = in->readByte();
+		if (_vm->getCurrentLoadVersion() > 1) {
+			fallVelocity = in->readSint16LE();			
+			fallAcceleration = in->readSint16LE();			
+			fallPosition = in->readSint16LE();			
+		} else {
+			fallVelocity = fallAcceleration = fallPosition = 0;
+		}
 		frameNumber = in->readSint32LE();
 
 		

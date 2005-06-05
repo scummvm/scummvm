@@ -514,11 +514,11 @@ private:
 	void sfPlacardOff(SCRIPTFUNC_PARAMS);
 	void sfSetProtagState(SCRIPTFUNC_PARAMS);
 	void sfResumeBgdAnim(SCRIPTFUNC_PARAMS);
-	void SF_throwActor(SCRIPTFUNC_PARAMS);
+	void sfThrowActor(SCRIPTFUNC_PARAMS);
 	void sfWaitWalk(SCRIPTFUNC_PARAMS);
 	void sfScriptSceneID(SCRIPTFUNC_PARAMS);
-	void SF_changeActorScene(SCRIPTFUNC_PARAMS);
-	void SF_climb(SCRIPTFUNC_PARAMS);
+	void sfChangeActorScene(SCRIPTFUNC_PARAMS);
+	void sfScriptClimb(SCRIPTFUNC_PARAMS);
 	void sfSetDoorState(SCRIPTFUNC_PARAMS);
 	void SF_setActorZ(SCRIPTFUNC_PARAMS);
 	void SF_text(SCRIPTFUNC_PARAMS);

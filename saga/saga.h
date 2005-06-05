@@ -463,6 +463,12 @@ struct SaveFileData {
 	uint slotNumber;
 };
 
+struct SaveGameHeader {
+	uint32 type;
+	uint32 size;
+	uint32 version;
+	char name[SAVE_TITLE_SIZE];
+};
 
 inline int ticksToMSec(int tick) {
 	return tick * 1000 / kScriptTimeTicksPerSecond;
@@ -512,6 +518,9 @@ public:
 
 	void save(const char *fileName, const char *saveName);
 	void load(const char *fileName);
+	uint32 getCurrentLoadVersion() {
+		return _saveHeader.version;
+	}
 	void fillSaveList();
 	char *calcSaveFileName(uint slotNumber);
 	
@@ -605,6 +614,7 @@ public:
 	uint _saveFilesCount;
 	SaveFileData _saveFiles[MAX_SAVES];
 	bool _saveMarks[MAX_SAVES];
+	SaveGameHeader _saveHeader;
 
 	Point _mousePos;
 	bool _leftMouseButtonPressed;
