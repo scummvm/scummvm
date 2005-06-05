@@ -5,6 +5,7 @@
 	Name="scumm"
 	ProjectGUID="{B6AFD548-63D2-40CD-A652-E87095AFCBAF}"
 	Keyword="Win32Proj"
+	SignManifests="true"
 	>
 	<Platforms>
 		<Platform
@@ -42,17 +43,16 @@
 				Optimization="0"
 				AdditionalIncludeDirectories="../../;../../common"
 				PreprocessorDefinitions="WIN32;_DEBUG;ZLIB_WINAPI;USE_ZLIB;USE_MAD;USE_VORBIS"
-				MinimalRebuild="TRUE"
-				ExceptionHandling="1"
+				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
-				BufferSecurityCheck="TRUE"
-				EnableFunctionLevelLinking="TRUE"
-				ForceConformanceInForLoopScope="TRUE"
+				BufferSecurityCheck="true"
+				EnableFunctionLevelLinking="true"
+				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
-				WarnAsError="TRUE"
-				SuppressStartupBanner="FALSE"
+				WarnAsError="true"
+				SuppressStartupBanner="false"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -78,7 +78,7 @@
 				Name="VCBscMakeTool"
 			/>
 			<Tool
-				Name="VCAppVerifierTool"
+				Name="VCFxCopTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -109,21 +109,23 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="2"
-				InlineFunctionExpansion="1"
-				OmitFramePointers="TRUE"
+				Optimization="3"
+				InlineFunctionExpansion="2"
+				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
+				OmitFramePointers="true"
 				AdditionalIncludeDirectories="../../;../../common"
 				PreprocessorDefinitions="WIN32;NDEBUG;ZLIB_WINAPI;USE_ZLIB;USE_MAD;USE_VORBIS"
-				StringPooling="TRUE"
+				StringPooling="true"
 				ExceptionHandling="1"
 				RuntimeLibrary="0"
-				BufferSecurityCheck="FALSE"
-				EnableFunctionLevelLinking="FALSE"
-				DisableLanguageExtensions="FALSE"
-				ForceConformanceInForLoopScope="TRUE"
+				BufferSecurityCheck="false"
+				EnableFunctionLevelLinking="false"
+				DisableLanguageExtensions="false"
+				ForceConformanceInForLoopScope="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
-				WarnAsError="TRUE"
+				WarnAsError="true"
 				DebugInformationFormat="0"
 			/>
 			<Tool
@@ -149,7 +151,7 @@
 				Name="VCBscMakeTool"
 			/>
 			<Tool
-				Name="VCAppVerifierTool"
+				Name="VCFxCopTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -573,6 +575,10 @@
 		</File>
 		<File
 			RelativePath="..\..\scumm\script.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\scumm\script_c64.cpp"
 			>
 		</File>
 		<File
