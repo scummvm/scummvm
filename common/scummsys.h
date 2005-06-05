@@ -53,6 +53,7 @@
 
 	#define FORCEINLINE __forceinline
 	#define NORETURN _declspec(noreturn)
+	#define PLUGIN_EXPORT __declspec(dllexport)
 
 	typedef unsigned char byte;
 	typedef unsigned char uint8;
@@ -91,6 +92,8 @@
 
 	#define START_PACK_STRUCTS pack (push, 1)
 	#define END_PACK_STRUCTS	 pack(pop)
+
+	#define PLUGIN_EXPORT __declspec(dllexport)
 
 #elif defined(UNIX)
 
@@ -320,6 +323,10 @@
 
 #ifndef CDECL
 #define	CDECL
+#endif
+
+#ifndef PLUGIN_EXPORT
+#define PLUGIN_EXPORT
 #endif
 
 #ifndef NORETURN

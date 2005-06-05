@@ -92,10 +92,10 @@ public:
 #else
 #define REGISTER_PLUGIN(ID,name) \
 	extern "C" { \
-		const char *PLUGIN_name() { return name; } \
-		GameList PLUGIN_getSupportedGames() { return Engine_##ID##_gameList(); } \
-		Engine *PLUGIN_createEngine(GameDetector *detector, OSystem *syst) { return Engine_##ID##_create(detector, syst); } \
-		DetectedGameList PLUGIN_detectGames(const FSList &fslist) { return Engine_##ID##_detectGames(fslist); } \
+		PLUGIN_EXPORT const char *PLUGIN_name() { return name; } \
+		PLUGIN_EXPORT GameList PLUGIN_getSupportedGames() { return Engine_##ID##_gameList(); } \
+		PLUGIN_EXPORT Engine *PLUGIN_createEngine(GameDetector *detector, OSystem *syst) { return Engine_##ID##_create(detector, syst); } \
+		PLUGIN_EXPORT DetectedGameList PLUGIN_detectGames(const FSList &fslist) { return Engine_##ID##_detectGames(fslist); } \
 	}
 #endif
 

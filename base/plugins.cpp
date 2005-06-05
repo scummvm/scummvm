@@ -47,7 +47,13 @@ typedef DetectedGameList (*DetectFunc)(const FSList &fslist);
 #define PLUGIN_PREFIX		""
 #define PLUGIN_SUFFIX		".plg"
 #else
+#ifdef _WIN32
+#define PLUGIN_DIRECTORY	""
+#define PLUGIN_PREFIX		""
+#define PLUGIN_SUFFIX		".dll"
+#else
 #error No support for loading plugins on non-unix systems at this point!
+#endif
 #endif
 #endif
 
@@ -138,24 +144,44 @@ public:
 };
 
 void *DynamicPlugin::findSymbol(const char *symbol) {
-#if defined(UNIX)||defined(__DC__)
+#if defined(UNIX) || defined(__DC__)
 	void *func = dlsym(_dlHandle, symbol);
 	if (!func)
 		warning("Failed loading symbol '%s' from plugin '%s' (%s)", symbol, _filename.c_str(), dlerror());
 	return func;
 #else
+#if defined(_WIN32)
+	void *func = GetProcAddress((HMODULE)_dlHandle, symbol);
+	if (!func)
+		warning("Failed loading symbol '%s' from plugin '%s'", symbol, _filename.c_str());
+	return func;
+#else
 #error TODO
+#endif
 #endif
 }
 
 bool DynamicPlugin::loadPlugin() {
 	assert(!_dlHandle);
+#if defined(UNIX) || defined(__DC__)
 	_dlHandle = dlopen(_filename.c_str(), RTLD_LAZY);
 
 	if (!_dlHandle) {
 		warning("Failed loading plugin '%s' (%s)", _filename.c_str(), dlerror());
 		return false;
 	}
+#else
+#if defined(_WIN32)
+	_dlHandle = LoadLibrary(_filename.c_str());
+
+	if (!_dlHandle) {
+		warning("Failed loading plugin '%s'", _filename.c_str());
+		return false;
+	}
+#else
+#error TODO
+#endif
+#endif
 
 	// Query the plugin's name
 	NameFunc nameFunc = (NameFunc)findSymbol("PLUGIN_name");
@@ -195,11 +221,23 @@ bool DynamicPlugin::loadPlugin() {
 }
 
 void DynamicPlugin::unloadPlugin() {
+#if defined(UNIX) || defined(__DC__)
 	if (_dlHandle) {
 		if (dlclose(_dlHandle) != 0)
 			warning("Failed unloading plugin '%s' (%s)", _filename.c_str(), dlerror());
 	}
 }
+#else
+#if defined(_WIN32)
+	if (_dlHandle) {
+		if (!FreeLibrary((HMODULE)_dlHandle))
+			warning("Failed unloading plugin '%s'", _filename.c_str());
+	}
+}
+#else
+#error TODO
+#endif
+#endif
 
 #endif	// DYNAMIC_MODULES
 
