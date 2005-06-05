@@ -313,7 +313,7 @@ void Script::sfScriptDoAction(SCRIPTFUNC_PARAMS) {
 	event.param2 = scriptEntryPointNumber;
 	event.param3 = action;		// Action
 	event.param4 = theObject;	// Object
-	event.param5 = theObject;	// With Object
+	event.param5 = withObject;	// With Object
 	event.param6 = objectId;
 
 	_vm->_events->queue(&event);
