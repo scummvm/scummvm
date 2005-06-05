@@ -250,20 +250,17 @@ Dialog::Dialog(Sword2Engine *vm)
 	: _numWidgets(0), _finish(false), _result(0), _vm(vm) {
 	_vm->_screen->setFullPalette(CONTROL_PANEL_PALETTE);
 	_vm->_screen->clearScene();
+	_vm->_screen->updateDisplay();
 
 	// Usually the mouse pointer will already be "normal", but not always.
 	_vm->_mouse->setMouse(NORMAL_MOUSE_ID);
-
-	// HACK: Since the dialogs don't do normal scene updates we need to
-	// trigger a full redraw manually.
-
-	_vm->_screen->setNeedFullRedraw();
-	_vm->_screen->updateDisplay();
 }
 
 Dialog::~Dialog() {
 	for (int i = 0; i < _numWidgets; i++)
 		delete _widgets[i];
+	_vm->_screen->clearScene();
+	_vm->_screen->updateDisplay();
 }
 
 void Dialog::registerWidget(Widget *widget) {
