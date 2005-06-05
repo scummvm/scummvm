@@ -1953,7 +1953,7 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 		}
 		break;
 	case 8:
-	case 10:	// TODO: redraw image
+	case 10:	// TODO: Draw sprites to buffer and compare.
 		{
 			Common::Rect r1, r2;
 			_sprite->getSpriteBounds(args2[0], true, r2);

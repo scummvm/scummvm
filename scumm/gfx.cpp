@@ -1061,7 +1061,6 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 		}
 	} else {
 		// Flags are used for different methods in HE71+ games
-		// TODO: Add correct drawing method
 		if ((color & 0x2000) || (color & 0x4000000)) {
 			blit(backbuff, vs->pitch, bgbuff, vs->pitch, width, height);
 		} else if ((color & 0x4000) || (color & 0x2000000)) {
