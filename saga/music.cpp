@@ -422,7 +422,7 @@ int Music::play(uint32 music_rn, uint16 flags) {
 				midiFile.open(_midiTableITECD[music_rn - 9].filename);
 
 				if (!midiFile.isOpen()) {
-					warning("Cannot open music file %s", _midiTableITECD[music_rn - 9].filename);
+					debug(2, "Cannot open music file %s", _midiTableITECD[music_rn - 9].filename);
 				}
 			}
 		}
@@ -433,7 +433,7 @@ int Music::play(uint32 music_rn, uint16 flags) {
 	}
 
 	if (audioStream) {
-		debug(0, "Playing digitized music");
+		debug(2, "Playing digitized music");
 		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, audioStream);
 		return SUCCESS;
 	}
@@ -441,7 +441,7 @@ int Music::play(uint32 music_rn, uint16 flags) {
 	// FIXME: Is resource_data ever freed?
 
 	if (midiFile.isOpen()) {
-		debug(0, "Using external MIDI file: %s", midiFile.name());
+		debug(2, "Using external MIDI file: %s", midiFile.name());
 		resource_size = midiFile.size();
 		resource_data = (byte *) malloc(resource_size);
 		midiFile.read(resource_data, resource_size);
@@ -507,7 +507,7 @@ int Music::play(uint32 music_rn, uint16 flags) {
 		parser = 0;
 	}
 
-	debug(0, "Music::play(%d, %d)", music_rn, flags);
+	debug(2, "Music::play(%d, %d)", music_rn, flags);
 
 	parser->setTrack(0);
 	parser->setMidiDriver(_player);
