@@ -1255,7 +1255,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		break;
 	case 70:
 		_wizParams.processFlags |= kWPFShadow;
-		_wizParams.shadow = pop();
+		_wizParams.img.shadow = pop();
 		break;
 	case 73:
 		_wizParams.processFlags |= kWPFNewState;

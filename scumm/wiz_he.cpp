@@ -1436,7 +1436,7 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 	}
 	int shadow = 0;
 	if (params->processFlags & kWPFShadow) {
-		shadow = params->shadow;
+		shadow = params->img.shadow;
 	}
 	int field_390 = 0;
 	if (params->processFlags & 0x200000) {

@@ -1345,7 +1345,7 @@ void Sprite::processImages(bool arg) {
 		if (spi->shadow) {
 			wiz.img.flags |= 0x200;
 			wiz.processFlags |= kWPFShadow;
-			wiz.shadow = spi->shadow;
+			wiz.img.shadow = spi->shadow;
 		}
 		if (spr_flags & kSFRemapPalette)
 			wiz.img.flags |= kWIFRemapPalette;

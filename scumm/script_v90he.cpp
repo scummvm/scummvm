@@ -694,7 +694,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		break;
 	case 52:
 		_wizParams.processFlags |= kWPFShadow;
-		_wizParams.shadow = pop();
+		_wizParams.img.shadow = pop();
 		break;
 	case 85: // HE99+
 		_wizParams.processFlags |= 0x1000 | 0x100 | 0x2;
