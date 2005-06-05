@@ -955,9 +955,9 @@ void Wiz::displayWizImage(WizImage *pwi) {
 		wi->zorder = 0;
 		wi->state = pwi->state;
 		wi->flags = pwi->flags;
-		wi->xmapNum = 0;
+		wi->shadow = 0;
 		wi->field_390 = 0;
-		wi->paletteNum = 0;
+		wi->palette = 0;
 		++_imagesNum;
 	} else if (pwi->flags & kWIFIsPolygon) {
 		drawWizPolygon(pwi->resNum, pwi->state, pwi->x1, pwi->flags, 0, 0, 0);
@@ -967,21 +967,21 @@ void Wiz::displayWizImage(WizImage *pwi) {
 	}
 }
 
-uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int xmapNum, int field_390, const Common::Rect *clipBox, int flags, int dstResNum, int paletteNum) {
-	debug(2, "drawWizImage(resNum %d, x1 %d y1 %d flags 0x%X zorder %d xmapNum %d field_390 %d dstResNum %d paletteNum %d)", resNum, x1, y1, flags, zorder, xmapNum, field_390, dstResNum, paletteNum);
+uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int shadow, int field_390, const Common::Rect *clipBox, int flags, int dstResNum, int palette) {
+	debug(2, "drawWizImage(resNum %d, x1 %d y1 %d flags 0x%X zorder %d shadow %d field_390 %d dstResNum %d palette %d)", resNum, x1, y1, flags, zorder, shadow, field_390, dstResNum, palette);
 	uint8 *dst = NULL;
 
 	const uint8 *palPtr = NULL;
 	if (_vm->_heversion >= 99) {
-		if (paletteNum) {
-			palPtr = _vm->_hePalettes + paletteNum * 1024 + 768;
+		if (palette) {
+			palPtr = _vm->_hePalettes + palette * 1024 + 768;
 		} else {
 			palPtr = _vm->_hePalettes + 1792;
 		}
 	}
 
 	const uint8 *xmap = NULL;
-	if (xmapNum) {
+	if (shadow) {
 		// TODO: Handle 'XMAP' data for shadows
 	}
 
@@ -1182,7 +1182,7 @@ struct PolygonDrawData {
 	}
 };
 
-void Wiz::drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int xmapNum, int angle, int zoom, const Common::Rect *r, int flags, int dstResNum, int paletteNum) {
+void Wiz::drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int shadow, int angle, int scale, const Common::Rect *r, int flags, int dstResNum, int palette) {
 	Common::Point pts[4];
 	int32 w, h;
 	getWizImageDim(resNum, state, w, h);
@@ -1192,10 +1192,10 @@ void Wiz::drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int x
 	pts[2].y = pts[3].y = h / 2 - 1;
 
 	// transform points
-	if (zoom != 256) {
+	if (scale != 256) {
 		for (int i = 0; i < 4; ++i) {
-			pts[i].x = pts[i].x * zoom / 256;
-			pts[i].y = pts[i].y * zoom / 256;
+			pts[i].x = pts[i].x * scale / 256;
+			pts[i].y = pts[i].y * scale / 256;
 		}
 	}
 	if (angle)
@@ -1206,10 +1206,10 @@ void Wiz::drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int x
 		pts[i].y += po_y;
 	}
 
-	if (zoom != 256) {
-		debug(1, "drawWizComplexPolygon() zoom not implemented");
+	if (scale != 256) {
+		debug(1, "drawWizComplexPolygon() scale not implemented");
 
-		//drawWizPolygonTransform(resNum, state, pts, flags, VAR(VAR_WIZ_TCOLOR), r, dstPtr, paletteNum, xmapPtr);
+		//drawWizPolygonTransform(resNum, state, pts, flags, VAR(VAR_WIZ_TCOLOR), r, dstPtr, palette, xmapPtr);
 	} else {
 		debug(1, "drawWizComplexPolygon() angle partially implemented");
 
@@ -1226,27 +1226,27 @@ void Wiz::drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int x
 		switch(angle) {
 		case 270:
 			flags |= kWIFFlipX | kWIFFlipY;
-			//drawWizComplexPolygonHelper(resNum, state, x1, y1, r, flags, dstResNum, paletteNum);
+			//drawWizComplexPolygonHelper(resNum, state, x1, y1, r, flags, dstResNum, palette);
 			break;
 		case 180:
 			flags |= kWIFFlipX | kWIFFlipY;
-			drawWizImage(resNum, state, x1, y1, 0, xmapNum, 0, r, flags, dstResNum, paletteNum);
+			drawWizImage(resNum, state, x1, y1, 0, shadow, 0, r, flags, dstResNum, palette);
 			break;
 		case 90:
-			//drawWizComplexPolygonHelper(resNum, state, x1, y1, r, flags, dstResNum, paletteNum);
+			//drawWizComplexPolygonHelper(resNum, state, x1, y1, r, flags, dstResNum, palette);
 			break;
 		case 0:
-			drawWizImage(resNum, state, x1, y1, 0, xmapNum, 0, r, flags, dstResNum, paletteNum);
+			drawWizImage(resNum, state, x1, y1, 0, shadow, 0, r, flags, dstResNum, palette);
 			break;
 		default:
-			//drawWizPolygonTransform(resNum, state, pts, flags, VAR(VAR_WIZ_TCOLOR), r, dstResNum, paletteNum, xmapPtr);
+			//drawWizPolygonTransform(resNum, state, pts, flags, VAR(VAR_WIZ_TCOLOR), r, dstResNum, palette, xmapPtr);
 			break;
 		}
 	}
 }
 
-void Wiz::drawWizPolygon(int resNum, int state, int id, int flags, int xmapNum, int dstResNum, int paletteNum) {
-	debug(1, "drawWizPolygon(resNum %d, id %d, flags 0x%X, xmapNum %d paletteNum %d)", resNum, id, flags, xmapNum, paletteNum);
+void Wiz::drawWizPolygon(int resNum, int state, int id, int flags, int shadow, int dstResNum, int palette) {
+	debug(1, "drawWizPolygon(resNum %d, id %d, flags 0x%X, shadow %d palette %d)", resNum, id, flags, shadow, palette);
 	int i;
 	WizPolygon *wp = NULL;
 	for (i = 0; i < ARRAYSIZE(_polygons); ++i) {
@@ -1262,7 +1262,7 @@ void Wiz::drawWizPolygon(int resNum, int state, int id, int flags, int xmapNum, 
 		error("Invalid point count %d for Polygon %d", wp->numVerts, id);
 	}
 	const Common::Rect *r = NULL;
-	uint8 *srcWizBuf = drawWizImage(resNum, state, 0, 0, 0, xmapNum, 0, r, kWIFBlitToMemBuffer, 0, paletteNum);
+	uint8 *srcWizBuf = drawWizImage(resNum, state, 0, 0, 0, shadow, 0, r, kWIFBlitToMemBuffer, 0, palette);
 	if (srcWizBuf) {
 		uint8 *dst;
 		int32 wizW, wizH;
@@ -1357,10 +1357,10 @@ void Wiz::flushWizBuffer() {
 	for (int i = 0; i < _imagesNum; ++i) {
 		WizImage *pwi = &_images[i];
 		if (pwi->flags & kWIFIsPolygon) {
-			drawWizPolygon(pwi->resNum, pwi->state, pwi->x1, pwi->flags, pwi->xmapNum, 0, pwi->paletteNum);
+			drawWizPolygon(pwi->resNum, pwi->state, pwi->x1, pwi->flags, pwi->shadow, 0, pwi->palette);
 		} else {
 			const Common::Rect *r = NULL;
-			drawWizImage(pwi->resNum, pwi->state, pwi->x1, pwi->y1, pwi->zorder, pwi->xmapNum, pwi->field_390, r, pwi->flags, 0, pwi->paletteNum);
+			drawWizImage(pwi->resNum, pwi->state, pwi->x1, pwi->y1, pwi->zorder, pwi->shadow, pwi->field_390, r, pwi->flags, 0, pwi->palette);
 		}
 	}
 	_imagesNum = 0;
@@ -1403,18 +1403,18 @@ void Wiz::loadWizCursor(int resId) {
 }
 
 void Wiz::displayWizComplexImage(const WizParameters *params) {
-	int maskImgResNum = 0;
+	int sourceImage = 0;
 	if (params->processFlags & kWPFMaskImg) {
-		maskImgResNum = params->maskImgResNum;
+		sourceImage = params->sourceImage;
 		warning("displayWizComplexImage() unhandled flag 0x80000");
 	}
-	int paletteNum = 0;
+	int palette = 0;
 	if (params->processFlags & kWPFPaletteNum) {
-		paletteNum = params->img.paletteNum;
+		palette = params->img.palette;
 	}
-	int zoom = 256;
-	if (params->processFlags & kWPFZoom) {
-		zoom = params->zoom;
+	int scale = 256;
+	if (params->processFlags & kWPFScaled) {
+		scale = params->scale;
 	}
 	int rotationAngle = 0;
 	if (params->processFlags & kWPFRotate) {
@@ -1434,9 +1434,9 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 		po_x = params->img.x1;
 		po_y = params->img.y1;
 	}
-	int xmapNum = 0;
-	if (params->processFlags & kWPFXmapNum) {
-		xmapNum = params->xmapNum;
+	int shadow = 0;
+	if (params->processFlags & kWPFShadow) {
+		shadow = params->shadow;
 	}
 	int field_390 = 0;
 	if (params->processFlags & 0x200000) {
@@ -1468,7 +1468,7 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 	}
 
 	if (_vm->_fullRedraw && dstResNum == 0) {
-		if (maskImgResNum != 0 || (params->processFlags & (kWPFZoom | kWPFRotate)))
+		if (sourceImage != 0 || (params->processFlags & (kWPFScaled | kWPFRotate)))
 			error("Can't do this command in the enter script.");
 
 		assert(_imagesNum < ARRAYSIZE(_images));
@@ -1479,20 +1479,20 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 		pwi->zorder = params->img.zorder;
 		pwi->state = state;
 		pwi->flags = flags;
-		pwi->xmapNum = xmapNum;
+		pwi->shadow = shadow;
 		pwi->field_390 = field_390;
-		pwi->paletteNum = paletteNum;
+		pwi->palette = palette;
 		++_imagesNum;
 	} else {
-		if (maskImgResNum != 0) {
+		if (sourceImage != 0) {
 			// TODO
-		} else if (params->processFlags & (kWPFZoom | kWPFRotate)) {
-			drawWizComplexPolygon(params->img.resNum, state, po_x, po_y, xmapNum, rotationAngle, zoom, r, flags, dstResNum, paletteNum);
+		} else if (params->processFlags & (kWPFScaled | kWPFRotate)) {
+			drawWizComplexPolygon(params->img.resNum, state, po_x, po_y, shadow, rotationAngle, scale, r, flags, dstResNum, palette);
 		} else {
 			if (flags & kWIFIsPolygon) {
-				drawWizPolygon(params->img.resNum, state, po_x, flags, xmapNum, dstResNum, paletteNum); // XXX , VAR(VAR_WIZ_TCOLOR));
+				drawWizPolygon(params->img.resNum, state, po_x, flags, shadow, dstResNum, palette); // XXX , VAR(VAR_WIZ_TCOLOR));
 			} else {
-				drawWizImage(params->img.resNum, state, po_x, po_y, params->img.zorder, xmapNum, field_390, r, flags, dstResNum, paletteNum);
+				drawWizImage(params->img.resNum, state, po_x, po_y, params->img.zorder, shadow, field_390, r, flags, dstResNum, palette);
 			}
 		}
 	}

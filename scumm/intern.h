@@ -1125,7 +1125,7 @@ protected:
 	void sortArray(int array, int dim2start, int dim2end, int dim1start, int dim1end, int sortOrder);
 
 public:	
-	int getGroupallocateGroupSpritesList(int spriteGroupId);
+	int getGroupSpriteArray(int spriteGroupId);
 
 protected:
 	uint8 *getHEPaletteIndex(int palSlot);

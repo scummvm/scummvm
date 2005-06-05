@@ -28,14 +28,14 @@ namespace Scumm {
 enum SpriteFlags {
 	kSFChanged           = 0x1,
 	kSFNeedRedraw        = 0x2,
-	kSFZoomed            = 0x10,
+	kSFScaled            = 0x10,
 	kSFRotated           = 0x20,
 	kSFDoubleBuffered    = 0x1000,
 	kSFYFlipped          = 0x2000,
 	kSFXFlipped          = 0x4000,
 	kSFActive            = 0x8000,
-	kSFNeedPaletteRemap  = 0x80000,
-	kSFDelayed           = 0x200000,
+	kSFRemapPalette      = 0x80000,
+	kSFAutoAnim          = 0x200000,
 	kSFMarkDirty         = 0x400000,
 	kSFBlitDirectly      = 0x2000000,
 	kSF30                = 0x20000000,
@@ -50,33 +50,33 @@ struct SpriteInfo {
 	int32 id;
 	int32 zorder;
 	int32 flags;
-	int32 resId;
-	int32 resState;
-	int32 groupNum;
-	int32 paletteNum;
-	int32 zorderPriority;
+	int32 image;
+	int32 imageState;
+	int32 group;
+	int32 palette;
+	int32 priority;
 	Common::Rect bbox;
 	int32 dx;
 	int32 dy;
 	Common::Point pos;
 	int32 tx;
 	int32 ty;
-	int32 field_44;
+	int32 userValue;
 	int32 curImageState;
-	int32 curResId;
+	int32 curImage;
 	int32 imglistNum;
-	int32 xmapNum;
-	int32 res_wiz_states;
+	int32 shadow;
+	int32 imageStateCount;
 	int32 angle;
-	int32 zoom;
-	int32 delayCount;
+	int32 scale;
+	int32 animProgress;
 	int32 curAngle;
-	int32 curZoom;
+	int32 curScale;
 	int32 curImgFlags;
 	int32 field_74;
-	int32 delayAmount;
-	int32 maskImgResNum;
-	int32 field_80;
+	int32 animSpeed;
+	int32 sourceImage;
+	int32 maskImage;
 	int32 field_84;
 	int32 classFlags;
 	int32 imgFlags;
@@ -85,11 +85,11 @@ struct SpriteInfo {
 
 struct SpriteGroup {
 	Common::Rect bbox;
-	int32 zorderPriority;
+	int32 priority;
 	int32 flags;
 	int32 tx;
 	int32 ty;
-	int32 dstResNum;
+	int32 image;
 	int32 scaling;
 	int32 scale_x_ratio_mul;
 	int32 scale_x_ratio_div;
@@ -121,95 +121,95 @@ public:
 
 	void getSpriteBounds(int spriteId, bool checkGroup, Common::Rect &bound);
 	int findSpriteWithClassOf(int x, int y, int spriteGroupId, int d, int num, int *args);
-	int getSpriteclassFlags(int spriteId, int num, int *args);
+	int getSpriteClass(int spriteId, int num, int *args);
 	int getSpriteFlagDoubleBuffered(int spriteId);
 	int getSpriteFlagYFlipped(int spriteId);
 	int getSpriteFlagXFlipped(int spriteId);
 	int getSpriteFlagActive(int spriteId);
-	int getSpriteFlagNeedPaletteRemap(int spriteId);
-	int getSpriteFlagDelayed(int spriteId);
-	int getSpriteFlagMarkDirty(int spriteId);	
-	int getSpriteFlagHasImage(int spriteId);
-	int getSpriteResId(int spriteId);
-	int getSpriteResState(int spriteId);
-	int getSpriteGroupNum(int spriteId);
-	int getSpritePaletteNum(int spriteId);
-	int getSpriteZorderPriority(int spriteId);
-	int getSpritegrp_tx(int spriteId);
-	int getSpritegrp_ty(int spriteId);
-	int getSpriteField_44(int spriteId);
-	int getSpriteXmapNum(int spriteId);
-	int getSpritewizSize(int spriteId);
-	int getSpritezoom(int spriteId);
-	int getSpritedelayAmount(int spriteId);
-	int getSpritemaskImgResNum(int spriteId);
-	int getSpriteField_80(int spriteId);
-	int getSpriteField_8C_90(int spriteId, int type);
+	int getSpriteFlagRemapPalette(int spriteId);
+	int getSpriteFlagAutoAnim(int spriteId);
+	int getSpriteFlagUpdateType(int spriteId);	
+	int getSpriteFlagEraseType(int spriteId);
+	int getSpriteImage(int spriteId);
+	int getSpriteImageState(int spriteId);
+	int getSpriteGroup(int spriteId);
+	int getSpritePalette(int spriteId);
+	int getSpritePriority(int spriteId);
+	int getSpriteDisplayX(int spriteId);
+	int getSpriteDisplayY(int spriteId);
+	int getSpriteUserValue(int spriteId);
+	int getSpriteShadow(int spriteId);
+	int getSpriteImageStateCount(int spriteId);
+	int getSpriteScale(int spriteId);
+	int getSpriteAnimSpeed(int spriteId);
+	int getSpriteSourceImage(int spriteId);
+	int getSpriteMaskImage(int spriteId);
+	int getSpriteGeneralProperty(int spriteId, int type);
 	void getSpriteImageDim(int spriteId, int32 &w, int32 &h);
-	void getSpritetx_ty(int spriteId, int32 &tx, int32 &ty);
-	void getSpritedx_dy(int spriteId, int32 &dx, int32 &dy);
+	void getSpritePosition(int spriteId, int32 &tx, int32 &ty);
+	void getSpriteDist(int spriteId, int32 &dx, int32 &dy);
 
-	int getGroupzorderPriority(int spriteGroupId);
-	int getGroupdstResNum(int spriteGroupId);
+	int getGroupPriority(int spriteGroupId);
+	int getGroupDstResNum(int spriteGroupId);
 	int getGroupScale_x_ratio_mul(int spriteGroupId);
 	int getGroupScale_x_ratio_div(int spriteGroupId);
 	int getGroupScale_y_ratio_mul(int spriteGroupId);
 	int getGroupScale_y_ratio_div(int spriteGroupId);
 	void getGrouptx_ty(int spriteGroupId, int32 &tx, int32 &ty);
 
-	void setSpritePaletteNum(int spriteId, int value);
-	void setSpriteMaskImgResNum(int spriteId, int value);
-	void setSpriteField80(int spriteId, int value);
-	void setSpriteResetSprite(int spriteId);
-	void setSpriteResState(int spriteId, int value);
-	void setSpritetx_ty(int spriteId, int value1, int value2);
-	void setSpriteGroupNum(int spriteId, int value);
-	void setSpritedx_dy(int spriteId, int value1, int value2);
-	void setSpriteXmapNum(int spriteId, int value);
-	void setSpriteField44(int spriteId, int value1, int value2);
-	void setSpriteZorderPriority(int spriteId, int value);
-	void setSpriteInc_tx_ty(int spriteId, int value1, int value2);
-	void setSpriteZoom(int spriteId, int value);
+	void setSpritePalette(int spriteId, int value);
+	void setSpriteSourceImage(int spriteId, int value);
+	void setSpriteMaskImage(int spriteId, int value);
+	void resetSprite(int spriteId);
+	void setSpriteImageState(int spriteId, int value);
+	void setSpritePosition(int spriteId, int value1, int value2);
+	void setSpriteGroup(int spriteId, int value);
+	void setSpriteDist(int spriteId, int value1, int value2);
+	void setSpriteShadow(int spriteId, int value);
+	void setSpriteUserValue(int spriteId, int value1, int value2);
+	void setSpritePriority(int spriteId, int value);
+	void moveSprite(int spriteId, int value1, int value2);
+	void setSpriteScale(int spriteId, int value);
 	void setSpriteAngle(int spriteId, int value);
 	void setSpriteFlagDoubleBuffered(int spriteId, int value);
 	void setSpriteFlagYFlipped(int spriteId, int value);
 	void setSpriteFlagXFlipped(int spriteId, int value);
 	void setSpriteFlagActive(int spriteId, int value);
-	void setSpriteFlagNeedPaletteRemap(int spriteId, int value);
-	void setSpriteFlagDelayed(int spriteId, int value);
-	void setSpriteFlagMarkDirty(int spriteId, int value);
-	void setSpriteFlagHasImage(int spriteId, int value);
-	void setSpriteDelay(int spriteId, int value);
-	void setSpriteSetClassFlag(int spriteId, int classId, int toggle);
-	void setSpriteResetClassFlags(int spriteId);
+	void setSpriteFlagRemapPalette(int spriteId, int value);
+	void setSpriteFlagAutoAnim(int spriteId, int value);
+	void setSpriteFlagUpdateType(int spriteId, int value);
+	void setSpriteFlagEraseType(int spriteId, int value);
+	void setSpriteAnimSpeed(int spriteId, int value);
+	void setSpriteSetClass(int spriteId, int classId, int toggle);
+	void setSpriteResetClass(int spriteId);
 	void setSpriteField84(int spriteId, int value);
-	void setSpriteField8C_90(int spriteId, int type, int value);
+	void setSpriteGeneralProperty(int spriteId, int type, int value);
 
 	void redrawSpriteGroup(int spriteGroupId);
-	void setGroupCase0_0(int spriteGroupId, int value1, int value2);
-	void setGroupCase0_1(int spriteGroupId, int value);
-	void setGroupCase0_2(int spriteGroupId, int value);
-	void setGroupCase0_3(int spriteGroupId, int value);
-	void setGroupCase0_4(int spriteGroupId);
-	void setGroupCase0_5(int spriteGroupId, int value);
-	void setGroupCase0_6(int spriteGroupId, int value);
-	void setGroupCase0_7(int spriteGroupId, int value);
-	void setGroupbbox(int spriteGroupId, int x1, int y1, int x2, int y2);
-	void setGroupzorderPriority(int spriteGroupId, int value);
-	void setGrouptx_ty(int spriteGroupId, int value1, int value2);
+	void moveGroupMembers(int spriteGroupId, int value1, int value2);
+	void setGroupMembersPriority(int spriteGroupId, int value);
+	void setGroupMembersGroup(int spriteGroupId, int value);
+	void setGroupMembersUpdateType(int spriteGroupId, int value);
+	void setGroupMembersResetSprite(int spriteGroupId);
+	void setGroupMembersAnimationSpeed(int spriteGroupId, int value);
+	void setGroupMembersAutoAnimFlag(int spriteGroupId, int value);
+	void setGroupMembersShadow(int spriteGroupId, int value);
+	void setGroupBounds(int spriteGroupId, int x1, int y1, int x2, int y2);
+	void setGroupPriority(int spriteGroupId, int value);
+	void moveGroup(int spriteGroupId, int value1, int value2);
 	void setGroupinc_tx_ty(int spriteGroupId, int value1, int value2);
-	void setGroupdstResNum(int spriteGroupId, int value);
-	void setGroupscaling(int spriteGroupId);
+	void setGroupImage(int spriteGroupId, int value);
+	void setGroupScaling(int spriteGroupId);
 	void setGroupScale_x_ratio_mul(int spriteGroupId, int value);
 	void setGroupScale_x_ratio_div(int spriteGroupId, int value);
 	void setGroupScale_y_ratio_mul(int spriteGroupId, int value);
 	void setGroupScale_y_ratio_div(int spriteGroupId, int value);
-	void setGroupflagClipBoxAnd(int spriteGroupId);
+	void resetGroupBounds(int spriteGroupId);
 
 	void allocTables(int numSprites, int numGroups, int numMaxSprites);
 	void resetGroup(int spriteGroupId);
 	void resetTables(bool refreshScreen);
-	void addImageToList(int spriteId, int imageNum, int *spriteIdptr);
+	void setSpriteImage(int spriteId, int imageNum);
 private:
 	ScummEngine_v90he *_vm;
 };

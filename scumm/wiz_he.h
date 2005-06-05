@@ -42,9 +42,9 @@ struct WizImage {
 	int zorder;
 	int state;
 	int flags;
-	int xmapNum;
+	int shadow;
 	int field_390;
-	int paletteNum;
+	int palette;
 };
 
 struct WizParameters {
@@ -64,13 +64,13 @@ struct WizParameters {
 	int compType;
 	int fileWriteMode;
 	int angle;
-	int zoom;
-	int xmapNum;
+	int scale;
+	int shadow;
 	int field_164;
 	int field_168;
 	int resDefImgW;
 	int resDefImgH;
-	int maskImgResNum;
+	int sourceImage;
 	int field_180;
 	int field_184;
 	uint8 remapColor[256];
@@ -97,7 +97,7 @@ struct WizParameters {
 	Common::Rect box2;
 	int field_23DE;
 	int spriteId;
-	int groupNum;
+	int spriteGroup;
 	int field_23EA;
 	WizImage img;
 };
@@ -116,8 +116,8 @@ enum WizImageFlags {
 
 enum WizProcessFlags {
 	kWPFSetPos = 0x1,
-	kWPFXmapNum = 0x4,
-	kWPFZoom = 0x8,
+	kWPFShadow = 0x4,
+	kWPFScaled = 0x8,
 	kWPFRotate = 0x10,
 	kWPFNewFlags = 0x20,
 	kWPFRemapPalette = 0x40,
@@ -179,9 +179,9 @@ public:
 	void displayWizComplexImage(const WizParameters *params);
 	void displayWizImage(WizImage *pwi);
 	void captureWizImage(int resNum, const Common::Rect& r, bool frontBuffer, int compType);
-	uint8 *drawWizImage(int resNum, int state, int x1, int y1, int zorder, int xmapNum, int field_390, const Common::Rect *clipBox, int flags, int dstResNum, int paletteNum);
-	void drawWizPolygon(int resNum, int state, int id, int flags, int xmapNum, int dstResNum, int paletteNum);
-	void drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int xmapNum, int angle, int zoom, const Common::Rect *r, int flags, int dstResNum, int paletteNum);
+	uint8 *drawWizImage(int resNum, int state, int x1, int y1, int zorder, int shadow, int field_390, const Common::Rect *clipBox, int flags, int dstResNum, int palette);
+	void drawWizPolygon(int resNum, int state, int id, int flags, int shadow, int dstResNum, int palette);
+	void drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int shadow, int angle, int zoom, const Common::Rect *r, int flags, int dstResNum, int palette);
 	void processWizImage(const WizParameters *params);
 
 	static void copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch);	
