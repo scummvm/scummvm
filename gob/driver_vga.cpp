@@ -20,6 +20,7 @@
  *
  */
 #include "gob/driver_vga.h"
+#include "graphics/primitives.h"
 
 #ifdef _MSC_VER
 #define STUB_FUNC	printf("STUB:")
@@ -101,8 +102,14 @@ void VGAVideoDriver::drawLetter(unsigned char item, int16 x, int16 y, FontDesc *
 	}
 }
 
+static void plotPixel(int x, int y, int color, void *data) {
+	SurfaceDesc *dest = (SurfaceDesc *)data;
+	if (x >= 0 && x < dest->width && y >= 0 && y < dest->height)
+		dest->vidPtr[(y * dest->width) + x] = color;
+}
+
 void VGAVideoDriver::drawLine(SurfaceDesc *dest, int16 x0, int16 y0, int16 x1, int16 y1, byte color) {
-	STUB_FUNC;
+	Graphics::drawLine(x0, y0, x1, y1, color, &plotPixel, dest);
 }
 
 void VGAVideoDriver::drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, int16 y, byte transp, SurfaceDesc *dest) {

@@ -359,7 +359,7 @@ void draw_spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_DRAWLINE:
-		vid_fillRect(draw_spritesArray[draw_destSurface],
+		vid_drawLine(draw_spritesArray[draw_destSurface],
 		    draw_destSpriteX, draw_destSpriteY,
 		    draw_spriteRight, draw_spriteBottom, draw_frontColor);
 
