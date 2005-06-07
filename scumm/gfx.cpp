@@ -2862,7 +2862,7 @@ void ScummEngine::fadeIn(int effect) {
 		dissolveEffect(1, 1);
 		break;
 	case 135:
-		unkScreenEffect5(1);
+		dissolveEffect(1, virtscr[0].h);
 		break;
 	default:
 		warning("Unknown screen effect, %d", effect);
@@ -2914,7 +2914,7 @@ void ScummEngine::fadeOut(int effect) {
 			dissolveEffect(1, 1);
 			break;
 		case 135:
-			unkScreenEffect5(1);
+			dissolveEffect(1, virtscr[0].h);
 			break;
 		default:
 			warning("fadeOut: default case %d", effect);
@@ -3223,17 +3223,6 @@ void ScummEngine::unkScreenEffect6() {
 		dissolveEffect(1, 1);
 	else
 		dissolveEffect(8, 4);
-}
-
-void ScummEngine::unkScreenEffect5(int a) {
-	// unkScreenEffect5(0), which is used by FOA during the opening
-	// cutscene when Indy opens the small statue, has been replaced by
-	// dissolveEffect(1, 1).
-	//
-	// I still don't know what unkScreenEffect5(1) is supposed to do.
-
-	// FIXME: not implemented
-	warning("stub unkScreenEffect(%d)", a);
 }
 
 } // End of namespace Scumm

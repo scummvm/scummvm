@@ -1024,7 +1024,6 @@ protected:
 	void fadeIn(int effect);
 	void fadeOut(int effect);
 
-	void unkScreenEffect5(int a);
 	void unkScreenEffect6();
 	void transitionEffect(int a);
 	void dissolveEffect(int width, int height);
