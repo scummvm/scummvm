@@ -24,7 +24,7 @@
 #include "common/scummsys.h"
 #include "common/mutex.h"
 
-#define MAX_TIMERS 2
+#define MAX_TIMERS 8
 
 
 #ifdef __MORPHOS__
