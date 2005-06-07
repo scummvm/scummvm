@@ -278,19 +278,22 @@ bool OSystem_SDL::setSoundCallback(SoundProc proc, void *param) {
 
 	memset(&desired, 0, sizeof(desired));
 
+	_samplesPerSec = 0;
+
 	if (ConfMan.hasKey("output_rate"))
 		_samplesPerSec = ConfMan.getInt("output_rate");
-	else
+
+	if (_samplesPerSec <= 0)
 		_samplesPerSec = SAMPLES_PER_SEC;
 
 	// Originally, we always used 2048 samples. This loop will produce the
 	// same result at 22050 Hz, and should hopefully produce something
 	// sensible for other frequencies. Note that it must be a power of two.
 
-	uint16 samples = 0x8000;
+	uint32 samples = 0x8000;
 
 	for (;;) {
-		if (samples / (_samplesPerSec / 1000) < 100)
+		if ((1000 * samples) / _samplesPerSec < 100)
 			break;
 		samples >>= 1;
 	}
@@ -298,10 +301,11 @@ bool OSystem_SDL::setSoundCallback(SoundProc proc, void *param) {
 	desired.freq = _samplesPerSec;
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 2;
-	desired.samples = samples;
+	desired.samples = (uint16)samples;
 	desired.callback = proc;
 	desired.userdata = param;
 	if (SDL_OpenAudio(&desired, &obtained) != 0) {
+		warning("Could not open audio device: %s", SDL_GetError());
 		return false;
 	}
 	// Note: This should be the obtained output rate, but it seems that at
