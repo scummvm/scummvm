@@ -161,9 +161,9 @@ static const ScummGameSettings scumm_settings[] = {
 	{"fate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, 0, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, Common::kPlatformPC, 0, 0},
 	{"indy4", "Indiana Jones and the Fate of Atlantis (FM-TOWNS)", GID_INDY4, 5, 0, MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY, Common::kPlatformPC, 0, 0},
+	 GF_USE_KEY, Common::kPlatformFMTowns, 0, 0},
 	{"indydemo", "Indiana Jones and the Fate of Atlantis (FM-TOWNS Demo)", GID_INDY4, 5, 0, MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY, Common::kPlatformPC, 0, 0},
+	 GF_USE_KEY, Common::kPlatformFMTowns, 0, 0},
 
 	/* Scumm Version 6 */
 	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,

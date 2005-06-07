@@ -1921,6 +1921,26 @@ void ScummEngine_v5::o5_roomOps() {
 	case 10:	// SO_ROOM_FADE
 		a = getVarOrDirectWord(PARAM_1);
 		if (a) {
+			if (_platform == Common::kPlatformFMTowns) {
+				switch (a) {
+				case 8: // compose kMainVirtScreen over a screen buffer
+				case 9: // call 0x110:0x20 _ax=0x601 _edx=2
+				case 10: // call 0x110:0x20 _ax=0x601 _edx=3
+				case 11: // clear screen 0x1C:0x45000 sizeof(640 * 320)
+				case 12: // call 0x110:0x20 _ax=0x601 _edx=0
+				case 13: // call 0x110:0x20 _ax=0x601 _edx=1
+				case 16: // enable clearing of a screen buffer in drawBitmap()
+				case 17: // disable clearing of a screen buffer in drawBitmap()
+				case 18: // clear a screen buffer
+				case 19: // enable palette operations (palManipulate(), cyclePalette() etc.)
+				case 20: // disable palette operations
+				case 21: // disable clearing of screen 0x1C:0x5000 sizeof(640 * 320) in initScreens()
+				case 22: // enable clearing of screen 0x1C:0x5000 sizeof(640 * 320) in initScreens()
+					warning("o5_roomOps: unhandled FM-TOWNS fadeEffect %d", a);
+					return;
+					break;
+				}
+			}
 			_switchRoomEffect = (byte)(a & 0xFF);
 			_switchRoomEffect2 = (byte)(a >> 8);
 		} else {
