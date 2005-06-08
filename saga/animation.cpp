@@ -333,11 +333,8 @@ int Anim::reset() {
 	uint16 i;
 
 	for (i = 0; i < MAX_ANIMATIONS; i++) {
-
 		freeId(i);
 	}
-
-	_anim_count = 0;
 
 	return SUCCESS;
 }
@@ -402,28 +399,21 @@ int16 Anim::getCurrentFrame(uint16 animId) {
 	return _anim_tbl[animId]->current_frame;
 }
 
-int Anim::freeId(uint16 anim_id) {
+void Anim::freeId(uint16 animId) {
 	ANIMATION *anim;
 
-	if (anim_id > _anim_count) {
-		return FAILURE;
-	}
-
-	anim = _anim_tbl[anim_id];
+	anim = _anim_tbl[animId];
 	if (anim == NULL) {
-		return FAILURE;
+		return;
 	}
 
 	if (_vm->getGameType() == GType_ITE) {
 		free(anim->frame_offsets);
-		anim->frame_offsets = NULL;
 	}
 
 	free(anim);
-	_anim_tbl[anim_id] = NULL;
+	_anim_tbl[animId] = NULL;
 	_anim_count--;
-
-	return SUCCESS;
 }
 
 void Anim::readAnimHeader(MemoryReadStreamEndian &readS, ANIMATION_HEADER &ah) {

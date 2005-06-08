@@ -108,7 +108,7 @@ public:
 	~Anim(void);
 
 	int load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_id_p);
-	int freeId(uint16 anim_id);
+	void freeId(uint16 animId);
 	int play(uint16 anim_id, int vector_time, bool playing = true);
 	int link(int16 anim_id1, int16 anim_id2);
 	int setFlag(uint16 anim_id, uint16 flag);
