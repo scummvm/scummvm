@@ -68,6 +68,7 @@ namespace Saga {
 
 #define RID_IHNM_MAIN_PANEL  9
 #define RID_IHNM_CONVERSE_PANEL 10
+#define RID_IHNM_MAIN_STRINGS 21
 
 // Puzzle portraits
 #define RID_ITE_SAKKA_APPRAISING	6

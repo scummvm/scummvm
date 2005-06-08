@@ -138,8 +138,21 @@ Script::Script(SagaEngine *vm) : _vm(vm){
 	}
 
 	RSC_FreeResource(resourcePointer);
-	
-	result = RSC_LoadResource(resourceContext, _vm->getResourceDescription()->mainStringsResourceId, &stringsPointer, &stringsLength); // fixme: IHNM
+
+	// TODO
+	//
+	// In ITE, the "main strings" resource contains both the verb strings
+	// and the object names.
+	//
+	// In IHNM, the "main strings" does not contain the verb strings.
+	// Instead, it looks as if the object names are divided over several
+	// different string lists. One per character, perhaps?
+	//
+	// Or maybe I'm looking at the wrong resource. I found the IHNM one by
+	// trial and error...
+
+	result = RSC_LoadResource(resourceContext, _vm->getResourceDescription()->mainStringsResourceId, &stringsPointer, &stringsLength);
+
 	if ((result != SUCCESS) || (stringsLength == 0)) {
 		error("Error loading strings list resource");
 	}
@@ -200,7 +213,7 @@ void Script::loadModule(int scriptModuleNumber) {
 	if ((result != SUCCESS) || (resourceLength == 0)) {
 		error("Script::loadModule() Error loading strings list resource");
 	}
-	
+
 	_vm->loadStrings(_modules[scriptModuleNumber].strings, resourcePointer, resourceLength);
 	RSC_FreeResource(resourcePointer);
 

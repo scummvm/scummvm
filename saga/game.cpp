@@ -397,7 +397,7 @@ static GameResourceDescription IHNM_Resources = {
 	0,
 	0,
 	0,
-	0,
+	RID_IHNM_MAIN_STRINGS,
 	0
 };
 
