@@ -125,11 +125,14 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	if (_vm->_sprite->loadList(_vm->getResourceDescription()->mainPanelSpritesResourceId, _mainPanel.sprites) != SUCCESS) {
 		error("Interface::Interface(): Unable to load sprite list");
 	}
-		
-	if (_vm->_sprite->loadList(_vm->getResourceDescription()->defaultPortraitsResourceId, _defPortraits) != SUCCESS) {
-		error("Interface::Interface(): Unable to load sprite list");
-	}
 
+	if (_vm->getGameType() == GType_ITE) {
+		if (_vm->_sprite->loadList(_vm->getResourceDescription()->defaultPortraitsResourceId, _defPortraits) != SUCCESS) {
+			error("Interface::Interface(): Unable to load sprite list");
+		}
+	} else {
+		// TODO
+	}
 
 	_mainPanel.x = _vm->getDisplayInfo().mainPanelXOffset;
 	_mainPanel.y = _vm->getDisplayInfo().mainPanelYOffset;
@@ -553,11 +556,10 @@ void Interface::draw() {
 
 	if (_panelMode == kPanelMain || _panelMode == kPanelConverse ||
 		_lockedMode == kPanelMain || _lockedMode == kPanelConverse) {
-			leftPortraitPoint.x = _mainPanel.x + _vm->getDisplayInfo().leftPortraitXOffset;
-			leftPortraitPoint.y = _mainPanel.y + _vm->getDisplayInfo().leftPortraitYOffset;
-			_vm->_sprite->draw(backBuffer, _defPortraits, _leftPortrait, leftPortraitPoint, 256);
-		}
-		
+		leftPortraitPoint.x = _mainPanel.x + _vm->getDisplayInfo().leftPortraitXOffset;
+		leftPortraitPoint.y = _mainPanel.y + _vm->getDisplayInfo().leftPortraitYOffset;
+		_vm->_sprite->draw(backBuffer, _defPortraits, _leftPortrait, leftPortraitPoint, 256);
+	}
 
 	if (!_inMainMode && _vm->getDisplayInfo().rightPortraitXOffset >= 0) { //FIXME: should we change !_inMainMode to _panelMode == kPanelConverse ?
 		rightPortraitPoint.x = _mainPanel.x + _vm->getDisplayInfo().rightPortraitXOffset;
