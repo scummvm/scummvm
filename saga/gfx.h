@@ -83,7 +83,6 @@ int drawRect(SURFACE *ds, Rect &dst_rect, int color);
 int drawFrame(SURFACE *ds, const Point *p1, const Point *p2, int color);
 int drawPolyLine(SURFACE *ds, const Point *pts, int pt_ct, int draw_color);
 int clipLine(SURFACE *ds, const Point *src_p1, const Point *src_p2, Point *dst_p1, Point *dst_p2);
-void drawLine(SURFACE * ds, const Point *p1, const Point *p2, int color);
 
 bool hitTestPoly(const Point *points, unsigned int npoints, const Point& test_point);
 

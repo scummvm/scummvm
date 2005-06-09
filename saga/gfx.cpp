@@ -387,22 +387,16 @@ int drawFrame(SURFACE *ds, const Point *p1, const Point *p2, int color) {
 }
 
 int drawPolyLine(SURFACE *ds, const Point *pts, int pt_ct, int draw_color) {
-	const Point *first_pt = pts;
-	int last_i = 1;
-	int i;
-
 	assert((ds != NULL) & (pts != NULL));
 
 	if (pt_ct < 3) {
 		return FAILURE;
 	}
 
-	for (i = 1; i < pt_ct; i++) {
-		drawLine(ds, &pts[i], &pts[i - 1], draw_color);
-		last_i = i;
-	}
+	for (int i = 1; i < pt_ct; i++)
+		ds->drawLine(pts[i].x, pts[i].y, pts[i - 1].x, pts[i - 1].y, draw_color);
 
-	drawLine(ds, &pts[last_i], first_pt, draw_color);
+	ds->drawLine(pts[pt_ct - 1].x, pts[pt_ct - 1].y, pts[0].x, pts[0].y, draw_color);
 
 	return SUCCESS;
 }
@@ -556,186 +550,6 @@ int clipLine(SURFACE *ds, const Point *src_p1, const Point *src_p2,
 	}
 
 	return 1;
-}
-
-// Utilizes Bresenham's run-length slice algorithm described in
-// "Michael Abrash's Graphics Programming Black Book", 
-// Coriolis Group Books, 1997
-//
-// Performs no clipping
-void drawLine(SURFACE *ds, const Point *p1, const Point *p2, int color) {
-	byte *write_p;
-	int clip_result;
-	int temp;
-	int error_up, error_down;
-	int error;
-	int x_vector;
-	int dx, dy;
-	int min_run;
-	int init_run;
-	int run;
-	int end_run;
-	Point clip_p1, clip_p2;
-	int left, top, right, bottom;
-	int i, k;
-
-	clip_result = clipLine(ds, p1, p2, &clip_p1, &clip_p2);
-	if (clip_result < 0) {
-		// Line not visible
-		return;
-	}
-
-	left = clip_p1.x;
-	top = clip_p1.y;
-	right = clip_p2.x;
-	bottom = clip_p2.y;
-
-	if ((left < ds->clip_rect.left) || (right < ds->clip_rect.left) || (left > ds->clip_rect.right) || (right > ds->clip_rect.right)) {
-		return;
-	}
-
-	if ((top < ds->clip_rect.top) || (bottom < ds->clip_rect.top) || (top > ds->clip_rect.bottom) || (bottom > ds->clip_rect.bottom)) {
-		return;
-	}
-
-	if (top > bottom) {
-		temp = top;
-		top = bottom;
-		bottom = temp;
-		temp = left;
-		left = right;
-		right = temp;
-	}
-
-	write_p = (byte *)ds->pixels + (top * ds->pitch) + left;
-	dx = right - left;
-
-	if (dx < 0) {
-		x_vector = -1;
-		dx = -dx;
-	} else {
-		x_vector = 1;
-	}
-
-	dy = bottom - top;
-
-	if (dx == 0) {
-		for (i = 0; i <= dy; i++) {
-			*write_p = (byte) color;
-			write_p += ds->pitch;
-		}
-		return;
-	}
-	if (dy == 0) {
-		for (i = 0; i <= dx; i++) {
-			*write_p = (byte) color;
-			write_p += x_vector;
-		}
-		return;
-	}
-	if (dx == dy) {
-		for (i = 0; i <= dx; i++) {
-			*write_p = (byte) color;
-			write_p += x_vector + ds->pitch;
-		}
-		return;
-	}
-
-	if (dx >= dy) {
-
-		min_run = dx / dy;
-		error_up = (dx % dy) * 2;
-		error_down = dy * 2;
-		error = (dx % dy) - (dy * 2);
-		init_run = (min_run / 2) + 1;
-		end_run = init_run;
-
-		if ((error_up == 0) && (min_run & 0x01) == 0) {
-			init_run--;
-		}
-
-		error += dy;
-
-		// Horiz. seg
-		for (k = 0; k < init_run; k++) {
-			*write_p = (byte) color;
-			write_p += x_vector;
-		}
-		write_p += ds->pitch;
-
-		for (i = 0; i < (dy - 1); i++) {
-			run = min_run;
-			if ((error += error_up) > 0) {
-
-				run++;
-				error -= error_down;
-			}
-
-			// Horiz. seg
-			for (k = 0; k < run; k++) {
-				*write_p = (byte) color;
-				write_p += x_vector;
-			}
-			write_p += ds->pitch;
-		}
-
-		// Horiz. seg
-		for (k = 0; k < end_run; k++) {
-			*write_p = (byte) color;
-			write_p += x_vector;
-		}
-		write_p += ds->pitch;
-		return;
-
-	} else {
-
-		min_run = dy / dx;
-		error_up = (dy % dx) * 2;
-		error_down = dx * 2;
-		error = (dy % dx) - (dx * 2);
-		init_run = (min_run / 2) + 1;
-		end_run = init_run;
-
-		if ((error_up == 0) && ((min_run & 0x01) == 0)) {
-			init_run--;
-		}
-
-		if ((min_run & 0x01) != 0) {
-			error += dx;
-		}
-
-		// Vertical seg
-		for (k = 0; k < init_run; k++) {
-			*write_p = (byte) color;
-			write_p += ds->pitch;
-		}
-		write_p += x_vector;
-
-		for (i = 0; i < (dx - 1); i++) {
-			run = min_run;
-			if ((error += error_up) > 0) {
-				run++;
-				error -= error_down;
-			}
-
-			// Vertical seg
-			for (k = 0; k < run; k++) {
-				*write_p = (byte) color;
-				write_p += ds->pitch;
-			}
-			write_p += x_vector;
-		}
-
-		// Vertical seg
-		for (k = 0; k < end_run; k++) {
-			*write_p = (byte) color;
-			write_p += ds->pitch;
-		}
-		write_p += x_vector;
-		return;
-	}
-
-	return;
 }
 
 SURFACE *Gfx::getBackBuffer() {
