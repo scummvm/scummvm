@@ -333,7 +333,7 @@ bool Interface::processAscii(uint16 ascii) {
 		}
 		for (i = 0; i < _optionPanel.buttonsCount; i++) {
 			panelButton = &_optionPanel.buttons[i];
-			if(panelButton->type == kPanelButtonOption) {
+			if (panelButton->type == kPanelButtonOption) {
 				if (panelButton->ascii == ascii) {
 					setOption(panelButton);				
 					return true;
@@ -350,7 +350,7 @@ bool Interface::processAscii(uint16 ascii) {
 			}
 			for (i = 0; i < _savePanel.buttonsCount; i++) {
 				panelButton = &_savePanel.buttons[i];
-				if(panelButton->type == kPanelButtonSave) {
+				if (panelButton->type == kPanelButtonSave) {
 					if (panelButton->ascii == ascii) {
 						setSave(panelButton);				
 						return true;
@@ -365,7 +365,7 @@ bool Interface::processAscii(uint16 ascii) {
 		}
 		for (i = 0; i < _quitPanel.buttonsCount; i++) {
 			panelButton = &_quitPanel.buttons[i];
-			if(panelButton->type == kPanelButtonQuit) {
+			if (panelButton->type == kPanelButtonQuit) {
 				if (panelButton->ascii == ascii) {
 					setQuit(panelButton);				
 					return true;
@@ -376,7 +376,7 @@ bool Interface::processAscii(uint16 ascii) {
 	case kPanelLoad:
 		for (i = 0; i < _loadPanel.buttonsCount; i++) {
 			panelButton = &_loadPanel.buttons[i];
-			if(panelButton->type == kPanelButtonLoad) {
+			if (panelButton->type == kPanelButtonLoad) {
 				if (panelButton->ascii == ascii) {
 					setLoad(panelButton);				
 					return true;
@@ -651,7 +651,7 @@ void Interface::drawOption() {
 
 	for (i = 0; i < _optionPanel.buttonsCount; i++) {		
 		panelButton = &_optionPanel.buttons[i];
-		if(panelButton->type == kPanelButtonOption) {
+		if (panelButton->type == kPanelButtonOption) {
 			drawPanelButtonText(backBuffer, &_optionPanel, panelButton);
 		}		
 		if (panelButton->type == kPanelButtonOptionText) {
@@ -659,13 +659,13 @@ void Interface::drawOption() {
 		}		
 	}	
 
-	if(_optionSaveRectTop.height() > 0) {
+	if (_optionSaveRectTop.height() > 0) {
 		drawRect(backBuffer, _optionSaveRectTop, kITEColorDarkGrey);
 	}
 	
 	drawButtonBox(backBuffer, _optionSaveRectSlider, kSlider, _optionSaveFileSlider->state > 0);
 
-	if(_optionSaveRectBottom.height() > 0) {
+	if (_optionSaveRectBottom.height() > 0) {
 		drawRect(backBuffer, _optionSaveRectBottom, kITEColorDarkGrey);
 	}
 
@@ -705,10 +705,10 @@ void Interface::drawQuit() {
 	drawButtonBox(backBuffer, rect, kButton, false);
 	for (i = 0; i < _quitPanel.buttonsCount; i++) {		
 		panelButton = &_quitPanel.buttons[i];
-		if(panelButton->type == kPanelButtonQuit) {
+		if (panelButton->type == kPanelButtonQuit) {
 			drawPanelButtonText(backBuffer, &_quitPanel, panelButton);
 		}		
-		if(panelButton->type == kPanelButtonQuitText) {
+		if (panelButton->type == kPanelButtonQuitText) {
 			drawPanelText(backBuffer, &_quitPanel, panelButton);
 		}		
 	}
@@ -765,10 +765,10 @@ void Interface::drawLoad() {
 	drawButtonBox(backBuffer, rect, kButton, false);
 	for (i = 0; i < _loadPanel.buttonsCount; i++) {		
 		panelButton = &_loadPanel.buttons[i];
-		if(panelButton->type == kPanelButtonLoad) {
+		if (panelButton->type == kPanelButtonLoad) {
 			drawPanelButtonText(backBuffer, &_loadPanel, panelButton);
 		}		
-		if(panelButton->type == kPanelButtonLoadText) {
+		if (panelButton->type == kPanelButtonLoadText) {
 			drawPanelText(backBuffer, &_loadPanel, panelButton);
 		}		
 	}
@@ -927,10 +927,10 @@ void Interface::drawSave() {
 	drawButtonBox(backBuffer, rect, kButton, false);
 	for (i = 0; i < _savePanel.buttonsCount; i++) {		
 		panelButton = &_savePanel.buttons[i];
-		if(panelButton->type == kPanelButtonSave) {
+		if (panelButton->type == kPanelButtonSave) {
 			drawPanelButtonText(backBuffer, &_savePanel, panelButton);
 		}		
-		if(panelButton->type == kPanelButtonSaveText) {
+		if (panelButton->type == kPanelButtonSaveText) {
 			drawPanelText(backBuffer, &_savePanel, panelButton);
 		}		
 	}
