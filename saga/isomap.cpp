@@ -399,9 +399,9 @@ void IsoMap::drawSprite(SURFACE *ds, SpriteList &spriteList, int spriteNumber, c
 	int yAlign;
 	const byte *spriteBuffer;
 	Point spritePointer;
-	Rect clip(_vm->getDisplayWidth(),_vm->getClippedSceneHeight());
+	Rect clip(_vm->getDisplayWidth(), _vm->getClippedSceneHeight());
 
-	_vm->_sprite->getScaledSpriteBuffer(spriteList,spriteNumber,scale, width, height, xAlign, yAlign, spriteBuffer);
+	_vm->_sprite->getScaledSpriteBuffer(spriteList, spriteNumber, scale, width, height, xAlign, yAlign, spriteBuffer);
 
 	spritePointer.x = screenPosition.x + xAlign;
 	spritePointer.y = screenPosition.y + yAlign;

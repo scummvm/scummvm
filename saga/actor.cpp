@@ -1291,7 +1291,7 @@ bool Actor::getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber
 		} else {
 			if (validObjId(commonObjectData->id)) {
 				spriteList = &_vm->_sprite->_mainSprites;
-				frameNumber = commonObjectData->spriteListResourceId;			
+				frameNumber = commonObjectData->spriteListResourceId;
 			}
 		}
 		
@@ -1321,7 +1321,6 @@ void Actor::drawActors() {
 	back_buf = _vm->_gfx->getBackBuffer();
 
 	createDrawOrderList();
-	
 
 	for (drawOrderIterator = _drawOrderList.begin(); drawOrderIterator != _drawOrderList.end(); ++drawOrderIterator) {
 		drawObject = drawOrderIterator.operator*();
