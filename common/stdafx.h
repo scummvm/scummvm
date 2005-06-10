@@ -88,6 +88,10 @@
 
 
 #include <windows.h>
+#if defined(ARRAYSIZE)
+// VS2005beta2 introduces new stuff in winnt.h
+#undef ARRAYSIZE
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
