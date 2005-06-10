@@ -224,18 +224,18 @@ ActorTableData ITE_ActorTable[ITE_ACTORCOUNT] = {
 
 ObjectTableData ITE_ObjectTable[ITE_OBJECTCOUNT] = {
 	{  8,  49, 1256,  760,  0,  9,  5, kObjNotFlat }, // Magic Hat
-	{  9,  52, 1080, 1864,  0, 10,  4, kObjUseWith }, // Berries
-	{ 10, 259,  744,  524,  0, 11, 42, kObjUseWith }, // Card Key
-	{ 11,   0,  480,  480,  0, 12,  6, 0           }, // Foot Print
+	{  9,  52, 1080, 1864,  0, 68,  4, kObjUseWith }, // Berries
+	{ 10, 259,  744,  524,  0, 79, 42, kObjUseWith }, // Card Key
+	{ 11,   0,  480,  480,  0, 69,  6, 0           }, // Foot Print
 	{ 12,   0,  480,  480,  0, 13, 38, kObjUseWith }, // Power Cell
 	{ 13,  28,  640,  412, 40, 14, 15, kObjUseWith }, // Digital Clock
 	{ 14,   0,  480,  480,  0, 15, 41, kObjUseWith }, // Oil Lamp
-	{ 15,  24,  868,  456, 35, 16, 13, kObjUseWith }, // Magnetic Key
+	{ 15,  24,  868,  456, 35, 46, 13, kObjUseWith }, // Magnetic Key
 	{ 16,   0,  480,  480,  0, 17,  7, kObjUseWith }, // Plaster
 	{ 17, 249,  320,  476, 45, 18, 44, 0           }, // Trophy
 	{ 18,   0,  480,  480,  0, 19, 20, 0           }, // Coins
 	{ 19,  19,  600,  480,  0, 20,  8, 0           }, // Lens Fragments
-	{ 20,   0, 1012,  568, 80, 21, 10, kObjUseWith }, // Key to jail cell
+	{ 20,   0, 1012,  568, 80, 44, 10, kObjUseWith }, // Key to jail cell
 	{ 21,   0,  480,  480,  0, 22,  9, 0           }, // Remade lens
 	{ 22,   0,  480,  480,  0, 23, 21, 0           }, // Tycho's Map
 	{ 23,   0,  480,  480,  0, 24, 23, 0           }, // Silver Medallion
@@ -249,10 +249,10 @@ ObjectTableData ITE_ObjectTable[ITE_OBJECTCOUNT] = {
 	{ 33,  31,  580,  392,  0, 45, 11, 0           }, // Twigs
 	{ 35,   0,  468,  480,  0, 36, 12, kObjUseWith }, // Empty Bowl (also bowl of honey)
 	{ 37,   0,  480,  480,  0, 38, 45, kObjUseWith }, // Needle and Thread
-	{ 38,  25,  332,  328,  0, 39, 19, 0           }, // Rock Crystal
+	{ 38,  25,  332,  328,  0, 48, 19, 0           }, // Rock Crystal
 	{ 39,   0,  480,  480,  0, 40,  0, kObjUseWith }, // Salve
 	{ 40, 269,  644,  416,  0, 41, 39, kObjNotFlat }, // Electrical Cable
-	{ 41,  12,  280,  516,  0, 42, 17, kObjUseWith }, // Piece of flint
+	{ 41,  12,  280,  516,  0, 43, 17, kObjUseWith }, // Piece of flint
 	{ 42,   5,  876,  332, 32, 65, 18, 0           }, // Rat Cloak
 	{ 43,  52,  556, 1612,  0, 49, 28, kObjUseWith | kObjNotFlat }, // Bucket
 	{ 48,  52,  732,  948,  0, 50, 27, kObjUseWith }, // Cup
