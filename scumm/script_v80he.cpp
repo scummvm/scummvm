@@ -716,18 +716,20 @@ void ScummEngine_v80he::drawPixel(int x, int y, int flags) {
 
 	markRectAsDirty(vs->number, x, y, x, y + 1);
 
-	if (flags & 0x4000) {
+	if ((flags & 0x4000) || (flags & 0x2000000)) {
 		src = vs->getPixels(x, y);
 		dst = vs->getBackPixels(x, y);
 		*dst = *src;
-	} else if (flags & 0x2000) {
+	} else if ((flags & 0x2000) || (flags & 4000000)) {
 		src = vs->getBackPixels(x, y);
 		dst = vs->getPixels(x, y);
 		*dst = *src;
+	} else if (flags & 0x8000000) {
+		error("drawPixel: unsupported flag 0x%x", flags);
 	} else {
 		dst = vs->getPixels(x, y);
 		*dst = flags;
-		if (flags & 0x8000) {
+		if ((flags & 0x8000) || (flags & 0x1000000)) {
 			dst = vs->getBackPixels(x, y);
 			*dst = flags;
 		}
