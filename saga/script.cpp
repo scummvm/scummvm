@@ -69,8 +69,7 @@ Script::Script(SagaEngine *vm) : _vm(vm){
 	_stickyVerb = kVerbWalkTo;
 	_leftButtonVerb = kVerbNone;
 	_rightButtonVerb = kVerbNone;
-	_pointerObject = 0;
-
+	_pointerObject = ID_NOTHING;
 	
 	_staticSize = 0;
 	_commonBufferSize = COMMON_BUFFER_SIZE;
@@ -418,6 +417,11 @@ void Script::setVerb(int verb) {
 	_currentObject[1] = ID_NOTHING;
 	_firstObjectSet = false;
 	_secondObjectNeeded = false;
+
+	// The pointer object will be updated again immediately. This way the
+	// new verb will be applied to it. It's not exactly how the original
+	// engine did it, but it appears to work.
+	_pointerObject = ID_NOTHING;
 
 	setLeftButtonVerb( verb );
 	showVerb();
