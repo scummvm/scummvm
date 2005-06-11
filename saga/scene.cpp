@@ -718,25 +718,24 @@ int Scene::loadSceneResourceList(uint32 reslist_rn) {
 }
 
 int Scene::processSceneResources() {
-	const byte *res_data;
-	size_t res_data_len;
+	byte *resourceData;
+	size_t resourceDataLength;
 	const byte *pal_p;
 	int i;
 
 	// Process the scene resource list
 	for (i = 0; i < _resListEntries; i++) {
-		res_data = _resList[i].res_data;
-		res_data_len = _resList[i].res_data_len;
+		resourceData = _resList[i].res_data;
+		resourceDataLength = _resList[i].res_data_len;
 		switch (_resList[i].res_type) {
 		case SAGA_BG_IMAGE: // Scene background resource
 			if (_bg.loaded) {
-				warning("Scene::processSceneResources(): Multiple background resources encountered");
-				return FAILURE;
+				error("Scene::processSceneResources(): Multiple background resources encountered");
 			}
 
 			debug(0, "Loading background resource.");
-			_bg.res_buf = _resList[i].res_data;
-			_bg.res_len = _resList[i].res_data_len;
+			_bg.res_buf = resourceData;
+			_bg.res_len = resourceDataLength;
 			_bg.loaded = 1;
 
 			if (_vm->decodeBGImage(_bg.res_buf,
@@ -754,11 +753,11 @@ int Scene::processSceneResources() {
 			break;
 		case SAGA_BG_MASK: // Scene background mask resource
 			if (_bgMask.loaded) {
-				warning("Scene::ProcessSceneResources(): Duplicate background mask resource encountered");
+				error("Scene::ProcessSceneResources(): Duplicate background mask resource encountered");
 			}
 			debug(0, "Loading BACKGROUND MASK resource.");
-			_bgMask.res_buf = _resList[i].res_data;
-			_bgMask.res_len = _resList[i].res_data_len;
+			_bgMask.res_buf = resourceData;
+			_bgMask.res_len = resourceDataLength;
 			_bgMask.loaded = 1;
 			_vm->decodeBGImage(_bgMask.res_buf, _bgMask.res_len, &_bgMask.buf,
 							&_bgMask.buf_len, &_bgMask.w, &_bgMask.h);
@@ -766,15 +765,15 @@ int Scene::processSceneResources() {
 			break;
 		case SAGA_STRINGS:
 			debug(0, "Loading scene strings resource...");
-			_vm->loadStrings(_sceneStrings, _resList[i].res_data, _resList[i].res_data_len);
+			_vm->loadStrings(_sceneStrings, resourceData, resourceDataLength);
 			break;
 		case SAGA_OBJECT_MAP:
 			debug(0, "Loading object map resource...");
-			_objectMap->load(res_data, res_data_len);			
+			_objectMap->load(resourceData, resourceDataLength);			
 			break;
 		case SAGA_ACTION_MAP:
 			debug(0, "Loading action map resource...");
-			_actionMap->load(res_data, res_data_len);
+			_actionMap->load(resourceData, resourceDataLength);
 			break;
 		case SAGA_ISO_IMAGES:
 			if (!(_sceneDescription.flags & kSceneFlagISO)) {
@@ -783,7 +782,7 @@ int Scene::processSceneResources() {
 
 			debug(0, "Loading isometric images resource.");
 
-			_vm->_isoMap->loadImages(res_data, res_data_len);
+			_vm->_isoMap->loadImages(resourceData, resourceDataLength);
 			break;
 		case SAGA_ISO_MAP:
 			if (!(_sceneDescription.flags & kSceneFlagISO)) {
@@ -792,7 +791,7 @@ int Scene::processSceneResources() {
 
 			debug(0, "Loading isometric map resource.");
 
-			_vm->_isoMap->loadMap(res_data, res_data_len);
+			_vm->_isoMap->loadMap(resourceData, resourceDataLength);
 			break;
 		case SAGA_ISO_PLATFORMS:
 			if (!(_sceneDescription.flags & kSceneFlagISO)) {
@@ -801,7 +800,7 @@ int Scene::processSceneResources() {
 
 			debug(0, "Loading isometric platforms resource.");
 
-			_vm->_isoMap->loadPlatforms(res_data, res_data_len);
+			_vm->_isoMap->loadPlatforms(resourceData, resourceDataLength);
 			break;
 		case SAGA_ISO_METATILES:
 			if (!(_sceneDescription.flags & kSceneFlagISO)) {
@@ -810,7 +809,7 @@ int Scene::processSceneResources() {
 
 			debug(0, "Loading isometric metatiles resource.");
 
-			_vm->_isoMap->loadMetaTiles(res_data, res_data_len);
+			_vm->_isoMap->loadMetaTiles(resourceData, resourceDataLength);
 			break;			
 		case SAGA_ANIM_1:
 		case SAGA_ANIM_2:
@@ -820,21 +819,17 @@ int Scene::processSceneResources() {
 		case SAGA_ANIM_6:
 		case SAGA_ANIM_7:
 			{
-				uint16 new_anim_id;
+				uint16 animId;
 
 				debug(0, "Loading animation resource...");
 
-				if (_vm->_anim->load(_resList[i].res_data,
-					_resList[i].res_data_len, &new_anim_id) != SUCCESS) {
-					warning("Scene::ProcessSceneResources(): Error loading animation resource");
-					return FAILURE;
-				}
+				animId = _vm->_anim->load(resourceData, resourceDataLength);
 
 				SCENE_ANIMINFO *new_animinfo;
 
 				new_animinfo = _animList.pushBack().operator->();
 
-				new_animinfo->anim_handle = new_anim_id;
+				new_animinfo->anim_handle = animId;
 				new_animinfo->anim_res_number =  _resList[i].res_number;
 				_animEntries++;
 			}
@@ -846,15 +841,15 @@ int Scene::processSceneResources() {
 
 			debug(0, "Loading isometric multi resource.");
 
-			_vm->_isoMap->loadMulti(res_data, res_data_len);
+			_vm->_isoMap->loadMulti(resourceData, resourceDataLength);
 			break;			
 		case SAGA_PAL_ANIM:
 			debug(0, "Loading palette animation resource.");
-			_vm->_palanim->loadPalAnim(_resList[i].res_data, _resList[i].res_data_len);
+			_vm->_palanim->loadPalAnim(resourceData, resourceDataLength);
 			break;
 		case SAGA_ENTRY:
 			debug(0, "Loading entry list resource...");
-			loadSceneEntryList(res_data, res_data_len);
+			loadSceneEntryList(resourceData, resourceDataLength);
 			break;
 		case SAGA_FACES:
 			_vm->_interface->loadScenePortraits(_resList[i].res_number);
@@ -889,6 +884,8 @@ void Scene::draw() {
 }
 
 void Scene::endScene() {
+	int i;
+
 	if (!_sceneLoaded)
 		return;
 
@@ -921,8 +918,11 @@ void Scene::endScene() {
 	}
 
 	// Free scene resource list
-	if (_loadDescription) {
+	for (i = 0; i < _resListEntries; i++) {
+		RSC_FreeResource(_resList[i].res_data);
+	}
 
+	if (_loadDescription) {
 		free(_resList);
 	}
 

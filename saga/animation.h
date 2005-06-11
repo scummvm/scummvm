@@ -48,58 +48,67 @@ namespace Saga {
 // All animation resources begin with an ANIMATION_HEADER
 // at 0x00, followed by a RLE code stream
 
-struct ANIMATION_HEADER {
-	uint16 magic;
-
-	uint16 screen_w;
-	uint16 screen_h;
-
-	byte unknown06;
-	byte unknown07;
-
-	byte maxframe;
-	byte loopframe;
-
-	uint16 start;
-};
-
 struct FRAME_HEADER {
-	int x_start;
-	int y_start;
+	int xStart;
+	int yStart;
 
-	int x_pos;
-	int y_pos;
+	int xPos;
+	int yPos;
 
 	int width;
 	int height;
 };
 
-// Animation info array member
-struct ANIMATION {
-
-	const byte *resdata;
-	size_t resdata_len;
-
-	uint16 maxframe;
-	size_t *frame_offsets;
-	int16 current_frame;
-	uint16 completed;
-	uint16 cycles;
-	int16 loopframe;
-	const byte *cur_frame_p;
-	size_t cur_frame_len;
-	int frame_time;
-
-	int state;
-	int16 link_id;
-	uint16 flags;
-};
-
-enum ANIM_FLAGS {
+enum AnimationState {
 	ANIM_PLAYING = 0x01,
 	ANIM_PAUSE = 0x02,
 	ANIM_STOPPING = 0x04,
 	ANIM_ENDSCENE = 0x80	// When animation ends, dispatch scene end event
+};
+
+// Animation info array member
+struct AnimationData {
+	byte *resourceData;
+	size_t resourceLength;
+
+	uint16 magic;
+
+	uint16 screenWidth;
+	uint16 screenHeight;
+
+	byte unknown06;
+	byte unknown07;
+
+	uint16 maxFrame;
+	uint16 loopFrame;
+
+	uint16 start;
+
+	uint16 currentFrame;
+	size_t *frameOffsets;
+
+	uint16 completed;
+	uint16 cycles;
+	
+	const byte *cur_frame_p;
+	size_t cur_frame_len;
+
+	int frameTime;
+
+	AnimationState state;
+	int16 linkId;
+	uint16 flags;
+
+	AnimationData(const byte *animResourceData, size_t animResourceLength) {
+		memset(this, 0, sizeof(*this)); 
+		resourceLength = animResourceLength;
+		resourceData = (byte*)malloc(animResourceLength);
+		memcpy(resourceData, animResourceData, animResourceLength);
+	}
+	~AnimationData() {
+		free(frameOffsets);
+		free(resourceData);
+	}
 };
 
 class Anim {
@@ -107,38 +116,56 @@ public:
 	Anim(SagaEngine *vm);
 	~Anim(void);
 
-	int load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_id_p);
+	uint16 load(const byte *animResourceData, size_t animResourceLength);
 	void freeId(uint16 animId);
-	int play(uint16 anim_id, int vector_time, bool playing = true);
-	int link(int16 anim_id1, int16 anim_id2);
-	int setFlag(uint16 anim_id, uint16 flag);
-	int clearFlag(uint16 anim_id, uint16 flag);
-	int setFrameTime(uint16 anim_id, int time);
-	int reset(void);
+	void play(uint16 animId, int vectorTime, bool playing = true);
+	void link(int16 animId1, int16 animId2);
+	void setFlag(uint16 animId, uint16 flag);
+	void clearFlag(uint16 animId, uint16 flag);
+	void setFrameTime(uint16 animId, int time);
+	void reset(void);
 	void animInfo(void);
-	void setCycles(uint animId, int cycles);
+	void setCycles(uint16 animId, int cycles);
 	void stop(uint16 animId);
 	void finish(uint16 animId);
 	void resume(uint16 animId, int cycles);
-	int16 getCurrentFrame(uint16 anim_id);
+	int16 getCurrentFrame(uint16 animId);
 
 private:
-	int ITE_DecodeFrame(const byte *anim_resource, size_t anim_resource_len, size_t frame_offset, byte *buf, size_t buf_len);
+	void ITE_DecodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_t bufLength);
 	int IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_p,
 					size_t thisf_len, const byte **nextf_p, size_t *nextf_len);
-	int getFrameOffset(const byte *anim_resource, size_t anim_resource_len, uint16 find_frame, size_t *frame_offset);
-	void readAnimHeader(MemoryReadStreamEndian &readS, ANIMATION_HEADER &ah);
+	void fillFrameOffsets(AnimationData *anim);
+
+	void validateAnimationId(uint16 animId) {
+		if (animId >= MAX_ANIMATIONS) {
+			error("validateAnimationId: animId out of range");
+		}
+		if (_animations[animId] == NULL) {
+			error("validateAnimationId: animId=%i unassigned", animId);
+		}
+	}
+
+	AnimationData* getAnimation(uint16 animId) {
+		validateAnimationId(animId);
+		return _animations[animId];
+	}
+
+	uint16 getAnimationCount() const {
+		uint16 i = 0;
+		for (; i < MAX_ANIMATIONS; i++) {
+			if (_animations[i] == NULL) {
+				break;
+			}
+		}
+		return i;
+	}
 
 	SagaEngine *_vm;
-	bool _initialized;
-
-	uint16 _anim_count;
-	uint16 _anim_limit;
-	ANIMATION *_anim_tbl[MAX_ANIMATIONS];
+	AnimationData *_animations[MAX_ANIMATIONS];
 
 };
 
 } // End of namespace Saga
 
 #endif				/* ANIMATION_H_ */
-/* end "r_animation.h" */
