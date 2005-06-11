@@ -1173,6 +1173,10 @@ void SmushPlayer::seekSan(const char *file, int32 pos, int32 contFrame) {
 
 			_middleAudio = true;
 			pos -= 8;
+		} else {
+			// We need this in Full Throttle when entering/leaving
+			// the old mine road.
+			tryCmpFile(file);
 		}
 		_skipPalette = false;
 	} else {
@@ -1185,6 +1189,10 @@ void SmushPlayer::seekSan(const char *file, int32 pos, int32 contFrame) {
 }
 
 void SmushPlayer::tryCmpFile(const char *filename) {
+	if (_compressedFile.isOpen()) {
+		_vm->_mixer->stopHandle(_compressedFileSoundHandle);
+		_compressedFile.close();
+	}
 	_compressedFileMode = false;
 	const char *i = strrchr(filename, '.');
 	if (i == NULL) {
