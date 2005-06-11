@@ -284,7 +284,7 @@ void SmushPlayer::init() {
 	_vm->gdi._numStrips = _vm->virtscr[0].w / 8;
 	
 	_smixer = new SmushMixer(_vm->_mixer);
-	Common::g_timer->installTimerProc(&timerCallback, _speed, this);
+	Common::g_timer->installTimerProc(&timerCallback, 1000000 / _speed, this);
 
 	_initDone = true;
 }
@@ -961,7 +961,7 @@ void SmushPlayer::handleFrame(Chunk &b) {
 #endif
 	_smixer->handleFrame();
 
-	debugC(DEBUG_SMUSH, "Smush stats: FRME( %03d ), Limit(%d)", end_time - start_time, _speed / 1000);
+	debugC(DEBUG_SMUSH, "Smush stats: FRME( %03d ), Limit(%d)", end_time - start_time, _speed);
 
 	_frame++;
 }

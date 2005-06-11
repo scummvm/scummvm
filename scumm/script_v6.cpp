@@ -2493,18 +2493,16 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			break;
 #ifndef DISABLE_SCUMM_7_8
 		case 6: {
-				uint32 speed;
 				if (_smushFrameRate == 0) 
 					_smushFrameRate = 14;
-				speed = 1000000 / _smushFrameRate;
 
 				// SMUSH movie playback
 				if (args[1] == 0) {
 					assert(getStringAddressVar(VAR_VIDEONAME));
 					if (strcmp((char *)getStringAddressVar(VAR_VIDEONAME), "sq3.san") == 0)
-						speed = 1000000 / 14;
+						_smushFrameRate = 14;
 
-					SmushPlayer *sp = new SmushPlayer(this, speed);
+					SmushPlayer *sp = new SmushPlayer(this, _smushFrameRate);
 
 					// Correct incorrect smush filename in Macintosh FT demo
 					if ((_gameId == GID_FT) && (_features & GF_DEMO) && (_platform == Common::kPlatformMacintosh) &&
@@ -2518,7 +2516,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 						? 232 : 233;
 
 					_insaneRunning = true;
-					_insane->setSmushParams(speed);
+					_insane->setSmushParams(_smushFrameRate);
 					_insane->runScene(insaneVarNum);
 					_insaneRunning = false;
 				}
