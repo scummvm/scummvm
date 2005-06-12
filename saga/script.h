@@ -520,11 +520,11 @@ private:
 	void sfChangeActorScene(SCRIPTFUNC_PARAMS);
 	void sfScriptClimb(SCRIPTFUNC_PARAMS);
 	void sfSetDoorState(SCRIPTFUNC_PARAMS);
-	void SF_setActorZ(SCRIPTFUNC_PARAMS);
+	void sfSetActorZ(SCRIPTFUNC_PARAMS);
 	void SF_text(SCRIPTFUNC_PARAMS);
-	void SF_getActorX(SCRIPTFUNC_PARAMS);
-	void SF_getActorY(SCRIPTFUNC_PARAMS);
-	void SF_eraseDelta(SCRIPTFUNC_PARAMS);
+	void sfGetActorX(SCRIPTFUNC_PARAMS);
+	void sfGetActorY(SCRIPTFUNC_PARAMS);
+	void sfEraseDelta(SCRIPTFUNC_PARAMS);
 	void sfPlayMusic(SCRIPTFUNC_PARAMS);
 	void SF_pickClimbOutPos(SCRIPTFUNC_PARAMS);
 	void SF_tossRif(SCRIPTFUNC_PARAMS);

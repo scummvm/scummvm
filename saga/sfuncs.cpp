@@ -109,11 +109,11 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfChangeActorScene),
 		OPCODE(sfScriptClimb),
 		OPCODE(sfSetDoorState),
-		OPCODE(SF_setActorZ),
+		OPCODE(sfSetActorZ),
 		OPCODE(SF_text),
-		OPCODE(SF_getActorX),
-		OPCODE(SF_getActorY),
-		OPCODE(SF_eraseDelta),
+		OPCODE(sfGetActorX),
+		OPCODE(sfGetActorY),
+		OPCODE(sfEraseDelta),
 		OPCODE(sfPlayMusic),
 		OPCODE(SF_pickClimbOutPos),
 		OPCODE(SF_tossRif),
@@ -1476,11 +1476,18 @@ void Script::sfSetDoorState(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #58 (0x3A)
-void Script::SF_setActorZ(SCRIPTFUNC_PARAMS) {
-	int param1 = thread->pop();
-	int param2 = thread->pop();
+// Param1: actor id
+// Param2: z
+void Script::sfSetActorZ(SCRIPTFUNC_PARAMS) {
+	int16 actorId;
+	int16 z;
+	ActorData *actor;
 
-	error("STUB: SF_setActorZ(%d, %d)", param1, param2);
+	actorId = thread->pop();
+	z = thread->pop();
+
+	actor = _vm->_actor->getActor(actorId);
+	actor->location.z = z;
 }
 
 // Script function #59 (0x3B)
@@ -1492,25 +1499,45 @@ void Script::SF_text(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #60 (0x3C)
-void Script::SF_getActorX(SCRIPTFUNC_PARAMS) {
-	int16 param = thread->pop();
+// Param1: actor id
+void Script::sfGetActorX(SCRIPTFUNC_PARAMS) {
+	int16 actorId;
+	ActorData *actor;
 
-	error("STUB: SF_getActorX(%d)", param);
+	actorId = thread->pop();
+	actor = _vm->_actor->getActor(actorId);
+
+	thread->_returnValue = actor->location.x >> 2; 
 }
 
 // Script function #61 (0x3D)
-void Script::SF_getActorY(SCRIPTFUNC_PARAMS) {
-	int16 param = thread->pop();
+// Param1: actor id
+void Script::sfGetActorY(SCRIPTFUNC_PARAMS) {
+	int16 actorId;
+	ActorData *actor;
 
-	error("STUB: SF_getActorY(%d)", param);
+	actorId = thread->pop();
+	actor = _vm->_actor->getActor(actorId);
+
+	thread->_returnValue = actor->location.y >> 2; 
 }
 
 // Script function #62 (0x3E)
-void Script::SF_eraseDelta(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
+void Script::sfEraseDelta(SCRIPTFUNC_PARAMS) {
+	BUFFER_INFO bufferInfo;
+	SCENE_BGINFO backGroundInfo;
+	Point backGroundPoint;
 
-	error("STUB: SF_eraseDelta(), %d args", nArgs);
+	_vm->_render->getBufferInfo(&bufferInfo);
+	_vm->_scene->getBGInfo(&backGroundInfo);
+	backGroundPoint.x = backGroundInfo.bg_x;
+	backGroundPoint.y = backGroundInfo.bg_y;
+
+	bufToBuffer(bufferInfo.bg_buf, bufferInfo.bg_buf_w, bufferInfo.bg_buf_h,
+				backGroundInfo.bg_buf, backGroundInfo.bg_w, backGroundInfo.bg_h, 
+				NULL, &backGroundPoint);
+
+
 }
 
 // Script function #63 (0x3F)
