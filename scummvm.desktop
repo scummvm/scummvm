@@ -1,7 +1,9 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=ScummVM
+Name[pl]=ScummVM
 Comment=Interpreter for several adventure games
+Comment[pl]=Interpreter graficznych gier przygodowych
 Exec=scummvm
 Icon=scummvm.xpm
 Terminal=false
