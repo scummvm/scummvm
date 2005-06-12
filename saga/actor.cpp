@@ -461,7 +461,7 @@ void Actor::realLocation(Location &location, uint16 objectId, uint16 walkFlags) 
 void Actor::actorFaceTowardsPoint(uint16 actorId, const Location &toLocation) {
 	ActorData *actor;
 	Location delta;
-	debug (8, "Actor::actorFaceTowardsPoint actorId=%i", actorId);
+	//debug (8, "Actor::actorFaceTowardsPoint actorId=%i", actorId);
 	actor = getActor(actorId);
 	
 	toLocation.delta(actor->location, delta);
@@ -576,7 +576,11 @@ void Actor::updateActorsScene(int actorsEntrance) {
 	_protagonist = NULL;
 
 	for (i = 0; i < _actorsCount; i++) {
-		actor = _actors[i];		
+		actor = _actors[i];
+		actor->inScene = false;
+		if (actor->disabled) {
+			continue;
+		}
 		if ((actor->flags & (kProtagonist | kFollower)) || (i == 0)) {
 
 			if (actor->flags & kProtagonist) {
@@ -591,6 +595,7 @@ void Actor::updateActorsScene(int actorsEntrance) {
 			actor->sceneNumber = _vm->_scene->currentSceneNumber();
 		}
 		if (actor->sceneNumber == _vm->_scene->currentSceneNumber()) {
+			actor->inScene = true;
 			actor->actionCycle = (_vm->_rnd.getRandomNumber(7) & 0x7) * 4; // 1/8th chance
 		}
 	}
@@ -813,10 +818,7 @@ void Actor::handleActions(int msec, bool setup) {
 
 	for (i = 0; i < _actorsCount; i++) {
 		actor = _actors[i];
-		if (actor->disabled)
-			continue;
-
-		if (actor->sceneNumber != _vm->_scene->currentSceneNumber())
+		if (!actor->inScene)
 			continue;
 		
 		//todo: dragon stuff
@@ -1255,13 +1257,11 @@ void Actor::createDrawOrderList() {
 	_drawOrderList.clear();
 	for (i = 0; i < _actorsCount; i++) {
 		actor = _actors[i];
-		if (actor->disabled)
+		if (!actor->inScene)
 			continue;
 
-		if (i == 0 || actor->flags & (kFollower | kProtagonist) || actor->sceneNumber == _vm->_scene->currentSceneNumber()) {
-			_drawOrderList.pushBack(actor, compareFunction);
-			calcScreenPosition(actor);
-		}
+		_drawOrderList.pushBack(actor, compareFunction);
+		calcScreenPosition(actor);
 	}
 
 	for (i = 0; i < _objsCount; i++) {
@@ -1649,8 +1649,7 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 
 				for (i = 0; (i < _actorsCount) && (_barrierCount < ACTOR_BARRIERS_MAX); i++) {
 					anotherActor = _actors[i];
-					if (anotherActor->disabled) continue;
-					if (anotherActor->sceneNumber != _vm->_scene->currentSceneNumber()) continue;
+					if (!anotherActor->inScene) continue;
 					if (anotherActor == actor ) continue;
 
 

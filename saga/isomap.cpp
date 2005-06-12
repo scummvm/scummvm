@@ -1151,8 +1151,7 @@ void IsoMap::placeOnTileMap(const Location &start, Location &result, int16 dista
 
 	for (i = 0; i < _vm->_actor->_actorsCount; i++) {
 		actor = _vm->_actor->_actors[i];
-		if (actor->disabled) continue;
-		if (actor->sceneNumber != _vm->_scene->currentSceneNumber()) continue;
+		if (!actor->inScene) continue;
 
 		u = (actor->location.u() >> 4) - uBase;
 		v = (actor->location.v() >> 4) - vBase;
@@ -1255,8 +1254,7 @@ void IsoMap::findTilePath(ActorData* actor, const Location &start, const Locatio
 		(_vm->_scene->currentSceneResourceId() != RID_ITE_OVERMAP_SCENE)) {
 			for (i = 0; i < _vm->_actor->_actorsCount; i++) {
 				other = _vm->_actor->_actors[i];
-				if (other->disabled) continue;
-				if (other->sceneNumber != _vm->_scene->currentSceneNumber()) continue;
+				if (!other->inScene) continue;
 				if (other==actor) continue;
 
 				u = (other->location.u() >> 4) - uBase;

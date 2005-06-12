@@ -274,7 +274,9 @@ public:
 	int frameListResourceId;	// Actor's frame list resource id
 
 	byte speechColor;			// Actor dialogue color
-	
+	//
+	bool inScene;
+
 	//variables
 	uint16 actorFlags;			// dynamic flags
 	int32 currentAction;			// ActorActions type
