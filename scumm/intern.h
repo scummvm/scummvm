@@ -1089,6 +1089,16 @@ protected:
 
 	FloodStateParameters _floodStateParams;
 
+	struct VideoParameters {
+		byte filename[260];
+		int32 status;
+		int32 unk1;
+		int32 unk2;
+		int32 unk3;
+	};
+
+	VideoParameters _videoParams;
+
 	int32 _heObject, _heObjectNum;
 	int32 _hePaletteNum;
 

@@ -512,28 +512,45 @@ void ScummEngine_v90he::o90_jumpToScriptUnk() {
 }
 
 void ScummEngine_v90he::o90_smackerOps() {
-	byte smackerFilename[260];
-
-	int subOp = fetchScriptByte();
-	subOp -= 49;
+	int status = fetchScriptByte();
+	int subOp = status - 49;
 
 	switch (subOp) {
 	case 0:
-		copyScriptString(smackerFilename, sizeof(smackerFilename));
+		copyScriptString(_videoParams.filename, sizeof(_videoParams.filename));
+		_videoParams.status = status;
 		break;
 	case 5:
-		pop();
+		_videoParams.unk1 |= pop();
 		break;
 	case 8:
-		memset(smackerFilename, 0, sizeof(smackerFilename));
-		pop();
+		memset(_videoParams.filename, 0, sizeof(_videoParams.filename));
+		_videoParams.unk2 = pop();
 		break;
 	case 14:
-		pop();
+		_videoParams.unk3 = pop();
+		if (_videoParams.unk1)
+			_videoParams.unk1 |= 2;
 		break;
 	case 116:
+		_videoParams.status = status;
 		break;
 	case 206:
+		if (_videoParams.status == 49) {
+			// Start video
+			if (_videoParams.unk1 == 0)
+				_videoParams.unk1 = 4;
+
+			if (_videoParams.unk1 == 2) {
+				// result = startVideo(_videoParams.filename, _videoParams.unk1, _videoParams.unk3);
+				// VAR(119) = result;
+			} else {
+				// result = startVideo(_videoParams.filename, _videoParams.unk1);
+				// VAR(119) = result;
+			}
+		} else if (_videoParams.status == 165) {
+			// Stop video
+		}
 		break;
 	default:
 		error("o90_smackerOps: unhandled case %d", subOp);
@@ -547,22 +564,22 @@ void ScummEngine_v90he::o90_getSmackerData() {
 	subOp -= 32;
 
 	switch (subOp) {
-	case 0:
+	case 0:		// Get width
 		pop();
 		break;
-	case 1:
+	case 1:		// Get height
 		pop();
 		break;
-	case 4:
+	case 4:		// Get frame count
 		pop();
 		break;
-	case 20:
+	case 20:	// Get current frame
 		pop();
 		break;
-	case 31:
+	case 31:	// Get image number
 		pop();
 		break;
-	case 107:
+	case 107:	// Get genreal property
 		pop();
 		pop();
 		break;
