@@ -1495,7 +1495,7 @@ void Script::SF_text(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	error("STUB: SF_text(), %d args", nArgs);
+	warning("STUB: SF_text(), %d args", nArgs);
 }
 
 // Script function #60 (0x3C)

@@ -194,6 +194,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 
 	byte argumentsCount;
 	uint16 functionNumber;
+	uint16 checkStackTopIndex;
 	ScriptFunctionType scriptFunction;
 
 	int debug_print = 0;
@@ -342,7 +343,11 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 
 			debug(8, "Calling 0x%X %s", functionNumber, _scriptFunctionsList[functionNumber].scriptFunctionName);
 			scriptFunction = _scriptFunctionsList[functionNumber].scriptFunction;
+			checkStackTopIndex = thread->_stackTopIndex + argumentsCount;
+
 			(this->*scriptFunction)(thread, argumentsCount);
+
+			thread->_stackTopIndex = checkStackTopIndex;
 
 			if (scriptFunction == &Saga::Script::sfScriptGotoScene) {			
 				return true; // cause abortAllThreads called and _this_ thread destroyed
