@@ -227,7 +227,7 @@ void ScummEngine_v8::setupOpcodes() {
 		OPCODE(o6_talkEgo),
 		OPCODE(o6_printLine),
 		/* 94 */
-		OPCODE(o6_printCursor),
+		OPCODE(o6_printText),
 		OPCODE(o6_printDebug),
 		OPCODE(o6_printSystem),
 		OPCODE(o8_blastText),

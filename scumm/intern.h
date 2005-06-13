@@ -678,7 +678,7 @@ protected:
 	void o6_delayMinutes();
 	void o6_stopSentence();
 	void o6_printLine();
-	void o6_printCursor();
+	void o6_printText();
 	void o6_printDebug();
 	void o6_printSystem();
 	void o6_printActor();

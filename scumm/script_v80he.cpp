@@ -270,7 +270,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o6_stopSentence),
 		/* B4 */
 		OPCODE(o6_printLine),
-		OPCODE(o6_printCursor),
+		OPCODE(o6_printText),
 		OPCODE(o6_printDebug),
 		OPCODE(o6_printSystem),
 		/* B8 */

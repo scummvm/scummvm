@@ -152,7 +152,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_printLine),
 		OPCODE(o6_printSystem),
 		/* 58 */
-		OPCODE(o6_printCursor),
+		OPCODE(o6_printText),
 		OPCODE(o100_jumpToScriptUnk),
 		OPCODE(o100_startScriptUnk),
 		OPCODE(o6_pseudoRoom),

@@ -45,7 +45,7 @@ void ScummEngine::printString(int m, const byte *msg) {
 		drawString(1, msg);
 		break;
 	case 2:
-		unkMessage1(msg);
+		debugMessage(msg);
 		break;
 	case 3:
 		showMessageDialog(msg);
@@ -54,11 +54,11 @@ void ScummEngine::printString(int m, const byte *msg) {
 }
 
 
-void ScummEngine::unkMessage1(const byte *msg) {
+void ScummEngine::debugMessage(const byte *msg) {
 	byte buffer[500];
 	convertMessageToString(msg, buffer, sizeof(buffer));
 
-//	if ((_gameId == GID_CMI) && _debugMode) {	// In CMI, unkMessage1 is used for printDebug output
+//	if ((_gameId == GID_CMI) && _debugMode) {	// In CMI, debugMessage is used for printDebug output
 	if ((buffer[0] != 0xFF) && _debugMode) {
 		debug(0, "DEBUG: %s", buffer);
 		return;
@@ -330,7 +330,7 @@ void ScummEngine::CHARSET_1() {
 					a->startAnimActor(frme);
 				break;
 			case 10:
-				// Note the similarity to the code in unkMessage1()
+				// Note the similarity to the code in debugMessage()
 				talk_sound_a = buffer[0] | (buffer[1] << 8) | (buffer[4] << 16) | (buffer[5] << 24);
 				talk_sound_b = buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] << 24);
 				buffer += 14;

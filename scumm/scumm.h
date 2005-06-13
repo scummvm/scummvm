@@ -1154,7 +1154,7 @@ protected:
 
 	void CHARSET_1();
 	void drawString(int a, const byte *msg);
-	void unkMessage1(const byte *msg);
+	void debugMessage(const byte *msg);
 	void showMessageDialog(const byte *msg);
 
 	int convertMessageToString(const byte *msg, byte *dst, int dstSize);
