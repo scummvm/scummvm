@@ -1461,6 +1461,10 @@ int ScummEngine::init(GameDetector &detector) {
 
 	_system->endGFXTransaction();
 
+	// On some systems it's not safe to run CD audio games from the CD.
+	if (_features & GF_AUDIOTRACKS)
+		checkCD();
+
 	int cd_num = ConfMan.getInt("cdrom");
 	if (cd_num >= 0 && (_features & GF_AUDIOTRACKS))
 		_system->openCD(cd_num);

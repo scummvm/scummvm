@@ -69,6 +69,9 @@ public:
 	virtual void errorString(const char *buf_input, char *buf_output) = 0;
 
 	void initCommonGFX(GameDetector &detector);
+
+	/** On some systems, check if the game appears to be run from CD. */
+	void checkCD();
 };
 
 extern Engine *g_engine;

@@ -30,6 +30,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "sound/mixer.h"
+#include "gui/message.h"
 
 /* FIXME - BIG HACK for MidiEmu */
 Engine *g_engine = 0;
@@ -82,6 +83,57 @@ void Engine::initCommonGFX(GameDetector &detector) {
 	// (De)activate fullscreen mode as determined by the config settings 
 	if (ConfMan.hasKey("fullscreen", detector._targetName))
 		_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
+}
+
+void Engine::checkCD() {
+#ifdef WIN32
+	// It is a known bug under Windows that games that play CD audio cause
+	// ScummVM to crash if the data files are read from the same CD. Check
+	// if this appears to be the case and issue a warning.
+
+	// If we can find a compressed audio track, then it should be ok even
+	// if it's running from CD.
+
+#ifdef USE_VORBIS
+	if (Common::File::exists("track1.ogg"))
+		return;
+#endif
+#ifdef USE_FLAC
+	if (Common::File::exists("track1.fla") || Common::File::exists("track1.flac"))
+		return;
+#endif
+#ifdef USE_MAD
+	if (Common::File::exists("track1.mp3"))
+		return;
+#endif
+
+	char buffer[MAXPATHLEN];
+	int i;
+
+	if (strlen(getGameDataPath()) == 0) {
+		// That's it! I give up!
+		if (getcwd(buffer, MAXPATHLEN) == NULL)
+			return;
+	} else
+		strncpy(buffer, getGameDataPath(), MAXPATHLEN);
+
+	for (i = 0; i < MAXPATHLEN - 1; i++) {
+		if (buffer[i] == '\\')
+			break;
+	}
+
+	buffer[i + 1] = 0;
+
+	if (GetDriveType(buffer) == DRIVE_CDROM) {
+		GUI::MessageDialog dialog(
+			"You appear to be playing this game directly\n"
+			"from the CD. This is known to cause problems,\n"
+			"and it's therefore recommended that you copy\n"
+			"the data files to your hard disk instead.\n"
+			"See the README file for details.", "OK");
+		dialog.runModal();
+	}
+#endif
 }
 
 const char *Engine::getGameDataPath() const {
