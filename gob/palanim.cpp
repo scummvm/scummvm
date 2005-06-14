@@ -29,9 +29,9 @@ namespace Gob {
 
 int16 pal_fadeValue = 1;
 
-char pal_toFadeRed[256];
-char pal_toFadeGreen[256];
-char pal_toFadeBlue[256];
+byte pal_toFadeRed[256];
+byte pal_toFadeGreen[256];
+byte pal_toFadeBlue[256];
 
 char pal_fadeColor(char from, char to) {
 	if ((int16)from - pal_fadeValue > (int16)to)
@@ -43,9 +43,9 @@ char pal_fadeColor(char from, char to) {
 }
 
 char pal_fadeStep(int16 oper) {
-	char newRed;
-	char newGreen;
-	char newBlue;
+	byte newRed;
+	byte newGreen;
+	byte newBlue;
 	char stop;
 	int16 i;
 
