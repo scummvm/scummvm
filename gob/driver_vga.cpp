@@ -22,7 +22,7 @@
 #include "gob/driver_vga.h"
 #include "graphics/primitives.h"
 
-#ifdef _MSC_VER
+#if defined  (_MSC_VER) || defined (__WINS__)
 #define STUB_FUNC	printf("STUB:")
 #else
 #define STUB_FUNC	printf("STUB: %s\n", __PRETTY_FUNCTION__)
