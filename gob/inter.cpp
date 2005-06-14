@@ -1025,7 +1025,7 @@ void inter_checkSwitchTable(char **ppExec) {
 	value = VAR_OFFSET(value);
 
 	do {
-		len = *inter_execPtr++;
+		len = *(int8*)inter_execPtr++; // must be a signed char typ and char is not default signed on all platforms. 
 
 		if (len == -5)
 			break;
