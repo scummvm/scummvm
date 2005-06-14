@@ -22,10 +22,10 @@
 #ifndef GOB_VIDEO_H
 #define GOB_VIDEO_H
 
-namespace Gob {
-
 #include "stdafx.h"
 #include "common/util.h"
+
+namespace Gob {
 	
 #define VID_SET_CURSOR(val) { _AH = 1; _CX = (val); geninterrupt(0x10); }
 #define VID_RESTORE_MODE { _AX = 3; geninterrupt(0x10); }
@@ -95,11 +95,19 @@ typedef char (*DrawPackedSpriteFunc) (byte *sprBuf, int16 width, int16 height,
 #define RETURN_PRIMARY		0x01
 #define DISABLE_SPR_ALLOC	0x20
 
+#if !defined(__GNUC__)
+	#pragma START_PACK_STRUCTS
+#endif
+
 typedef struct Color {
 	byte red;
 	byte green;
 	byte blue;
-} Color;
+} GCC_PACK Color;
+
+#if !defined(__GNUC__)
+	#pragma END_PACK_STRUCTS
+#endif
 
 typedef struct PalDesc {
 	Color *vgaPal;
