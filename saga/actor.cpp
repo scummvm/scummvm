@@ -603,6 +603,10 @@ void Actor::updateActorsScene(int actorsEntrance) {
 	assert(_protagonist);
 	
 	if ((actorsEntrance >= 0) && (_vm->_scene->_entryList.entryListCount > 0)) {
+		if (_vm->_scene->_entryList.entryListCount <= actorsEntrance) {
+			actorsEntrance = 0; //OCEAN bug
+		}
+
 		sceneEntry = _vm->_scene->_entryList.getEntry(actorsEntrance);
 		if (_vm->_scene->getFlags() & kSceneFlagISO) {
 			_protagonist->location = sceneEntry->location;
