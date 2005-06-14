@@ -383,12 +383,16 @@ static const ScummGameSettings scumm_settings[] = {
 
 	{"bb2demo", "Backyard Baseball 2001 (Demo)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_16BIT_COLOR, Common::kPlatformWindows, 0, 0},
+	{"baseball2001", "Backyard Baseball 2001", GID_HEGAME, 6, 99, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_16BIT_COLOR, Common::kPlatformWindows, 0, 0},
 	{"footdemo", "Backyard Football (Demo)", GID_FOOTBALL, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows, 0, 0},
 	{"SoccerMLS", "Backyard Soccer MLS Edition", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
 
 	// Humongous Entertainment Scumm Version ?
+	{"basketball", "Backyard Basketball", GID_HEGAME, 6, 100, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
 	{"ff5demo", "Freddi Fish 5: The Case of the Creature of Coral Cave (Demo)", GID_FREDDICOVE, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows, 0, 0},
 	{"pjgames", "Pajama Sam: Games to Play On Any Day", GID_HEGAME, 6, 100, MDT_NONE,
@@ -586,6 +590,9 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "airdemo", "Airport Demo", kGenMac},
 	{ "balloon", "Balloon-O-Rama", kGenMac},
 	{ "baseball", "BaseBall", kGenMac},
+	{ "baseball2001", "Baseball 2001", kGenMac},
+	{ "baseball2001", "baseball 2001", kGenPC},
+	{ "basketball", "Basketball", kGenMac},
 	{ "BluesABCTimeDemo", "BluesABCTimeDemo", kGenMac},
 	{ "chase", "Cheese Chase", kGenMac},
 	{ "circdemo", "Putt Circus Demo", kGenMac },

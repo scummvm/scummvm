@@ -1167,8 +1167,8 @@ protected:
 	void o90_getActorData();
 	void o90_startScriptUnk();
 	void o90_jumpToScriptUnk();
-	void o90_smackerOps();
-	void o90_getSmackerData();
+	void o90_videoOps();
+	void o90_getVideoData();
 	void o90_wizImageOps();
 	void o90_getDistanceBetweenPoints();
 	void o90_getSpriteInfo();
@@ -1263,6 +1263,7 @@ protected:
 	void o100_startScript();
 	void o100_systemOps();
 	void o100_cursorCommand();
+	void o100_videoOps();
 	void o100_wait();
 	void o100_writeFile();
 	void o100_isResourceLoaded();
@@ -1272,6 +1273,7 @@ protected:
 	void o100_readFile();
 	void o100_getSpriteInfo();
 	void o100_getWizData();
+	void o100_getVideoData();
 };
 #endif
 

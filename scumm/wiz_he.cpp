@@ -1069,12 +1069,14 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 		palPtr = rmap + 4;
 	}
 
-	int color;
-	uint8 *trns = _vm->findWrappedBlock(MKID('TRNS'), dataPtr, state, 0);
+	int color = -1;
+	if (_vm->VAR_WIZ_TCOLOR != 0xFF) {
+		uint8 *trns = _vm->findWrappedBlock(MKID('TRNS'), dataPtr, state, 0);
+		color = (trns == NULL) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : -1;
+	}
 
 	switch (comp) {
 	case 0:
-		color = (trns == NULL) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : -1;
 		copyRawWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, color);
 		break;
 	case 1:
@@ -1089,7 +1091,6 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 		copyWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, palPtr);
 		break;
 	case 2:
-		color = (trns == NULL) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : -1;
 		copyRaw16BitWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, color);
 		break;
 	case 5:

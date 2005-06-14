@@ -217,7 +217,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o72_setTimer),
 		OPCODE(o100_cursorCommand),
 		/* 8C */
-		OPCODE(o6_invalid),
+		OPCODE(o100_videoOps),
 		OPCODE(o100_wait),
 		OPCODE(o6_walkActorToObj),
 		OPCODE(o6_walkActorTo),
@@ -265,7 +265,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o72_findObjectWithClassOf),
 		OPCODE(o70_polygonHit),
 		OPCODE(o90_getLinesIntersectionPoint),
-		OPCODE(o6_invalid),
+		OPCODE(o90_fontUnk),
 		/* B4 */
 		OPCODE(o72_getNumFreeArrays),
 		OPCODE(o72_getArrayDimSize),
@@ -337,7 +337,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o72_getTimer),
 		OPCODE(o6_getVerbEntrypoint),
 		/* EC */
-		OPCODE(o6_invalid),
+		OPCODE(o100_getVideoData),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -2148,6 +2148,54 @@ void ScummEngine_v100he::o100_cursorCommand() {
 	VAR(VAR_USERPUT) = _userPut;
 }
 
+void ScummEngine_v100he::o100_videoOps() {
+	// Uses Bink video
+	int subOp = fetchScriptByte();
+
+	switch (subOp) {
+	case 0:
+		memset(_videoParams.filename, 0, sizeof(_videoParams.filename));
+		_videoParams.unk2 = pop();
+		break;
+	case 19:
+		_videoParams.status = 19;
+		break;
+	case 40:
+		_videoParams.unk3 = pop();
+		if (_videoParams.unk1)
+			_videoParams.unk1 |= 2;
+		break;
+	case 47:
+		copyScriptString(_videoParams.filename, sizeof(_videoParams.filename));
+		_videoParams.status = 47;
+		break;
+	case 67:
+		_videoParams.unk1 |= pop();
+		break;
+	case 92:
+		if (_videoParams.status == 47) {
+			// Start video
+			if (_videoParams.unk1 == 0)
+				_videoParams.unk1 = 4;
+
+			if (_videoParams.unk1 == 2) {
+				// result = startVideo(_videoParams.filename, _videoParams.unk1, _videoParams.unk3);
+				// VAR(119) = result;
+			} else {
+				// result = startVideo(_videoParams.filename, _videoParams.unk1);
+				// VAR(119) = result;
+			}
+		} else if (_videoParams.status == 19) {
+			// Stop video
+		}
+		break;
+	default:
+		error("o100_videoOps: unhandled case %d", subOp);
+	}
+
+	debug(0,"o100_videoOps stub (%d)", subOp);
+}
+
 void ScummEngine_v100he::o100_wait() {
 	int actnum;
 	int offs = -2;
@@ -2762,6 +2810,39 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 	default:
 		error("o100_getSpriteInfo: Unknown case %d", subOp);
 	}
+}
+
+void ScummEngine_v100he::o100_getVideoData() {
+	// Uses Bink video
+	int subOp = fetchScriptByte();
+	subOp -= 26;
+
+	switch (subOp) {
+	case 0:
+		pop();
+		break;
+	case 13:
+		pop();
+		break;
+	case 14:
+		pop();
+		break;
+	case 28:
+		pop();
+		pop();
+		break;
+	case 47:
+		pop();
+		break;
+	case 58:
+		pop();
+		break;
+	default:
+		error("o100_getVideoData: unhandled case %d", subOp);
+	}
+
+	push(-1);
+	debug(0,"o100_getVideoData stub (%d)", subOp);
 }
 
 void ScummEngine_v100he::decodeParseString(int m, int n) {

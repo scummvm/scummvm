@@ -99,8 +99,8 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o90_startScriptUnk),
 		/* 2C */
 		OPCODE(o90_jumpToScriptUnk),
-		OPCODE(o90_smackerOps),
-		OPCODE(o90_getSmackerData),
+		OPCODE(o90_videoOps),
+		OPCODE(o90_getVideoData),
 		OPCODE(o90_floodState),
 		/* 30 */
 		OPCODE(o90_mod),
@@ -511,7 +511,8 @@ void ScummEngine_v90he::o90_jumpToScriptUnk() {
 	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args, cycle);
 }
 
-void ScummEngine_v90he::o90_smackerOps() {
+void ScummEngine_v90he::o90_videoOps() {
+	// Uses Smacker video
 	int status = fetchScriptByte();
 	int subOp = status - 49;
 
@@ -553,13 +554,14 @@ void ScummEngine_v90he::o90_smackerOps() {
 		}
 		break;
 	default:
-		error("o90_smackerOps: unhandled case %d", subOp);
+		error("o90_videoOps: unhandled case %d", subOp);
 	}
 
-	debug(0,"o90_smackerOps stub (%d)", subOp);
+	debug(0,"o90_videoOps stub (%d)", subOp);
 }
 
-void ScummEngine_v90he::o90_getSmackerData() {
+void ScummEngine_v90he::o90_getVideoData() {
+	// Uses Smacker video
 	int subOp = fetchScriptByte();
 	subOp -= 32;
 
@@ -584,11 +586,11 @@ void ScummEngine_v90he::o90_getSmackerData() {
 		pop();
 		break;
 	default:
-		error("o90_getSmackerData: unhandled case %d", subOp);
+		error("o90_getVideoData: unhandled case %d", subOp);
 	}
 
 	push(-1);
-	debug(0,"o90_getSmackerData stub (%d)", subOp);
+	debug(0,"o90_getVideoData stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_wizImageOps() {
@@ -2515,6 +2517,7 @@ void ScummEngine_v90he::o90_fontUnk() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
+	case 60:	// HE100
 	case 42:
 		a = pop();
 		if (a == 2) {
@@ -2528,6 +2531,7 @@ void ScummEngine_v90he::o90_fontUnk() {
 			push(readVar(0));
 		}
 		break;
+	case 0:		// HE100
 	case 57:
 		push(1);
 		break;
