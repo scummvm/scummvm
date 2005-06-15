@@ -302,7 +302,7 @@ public:
 
 	int16 pop() {
 		if (_stackTopIndex >= _stackSize) {
-			error("ScriptThread::push() stack underflow");
+			error("ScriptThread::pop() stack underflow");
 		}
 		return (int16)_stackBuf[_stackTopIndex++];
 	}
