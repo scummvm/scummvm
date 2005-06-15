@@ -110,7 +110,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfScriptClimb),
 		OPCODE(sfSetDoorState),
 		OPCODE(sfSetActorZ),
-		OPCODE(SF_text),
+		OPCODE(sfScriptText),
 		OPCODE(sfGetActorX),
 		OPCODE(sfGetActorY),
 		OPCODE(sfEraseDelta),
@@ -526,7 +526,7 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 		}
 	}
 
-	_vm->_scene->changeScene(sceneNumber, entrance, (sceneNumber == RID_ITE_ENDCREDIT_SCENE_1) ? kTransitionFade : kTransitionNoFade);
+	_vm->_scene->changeScene(sceneNumber, entrance, (sceneNumber == ITE_SCENE_ENDCREDIT1) ? kTransitionFade : kTransitionNoFade);
 
 	//TODO: placard stuff
 	_pendingVerb = kVerbNone;
@@ -1491,11 +1491,21 @@ void Script::sfSetActorZ(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #59 (0x3B)
-void Script::SF_text(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
+// Param1: stringId
+// Param2: flags
+// Param3: color
+// Param4: x
+// Param5: y
+void Script::sfScriptText(SCRIPTFUNC_PARAMS) {
+	int16 stringId;
+	int16 flags;
+	Point point;
+	stringId = thread->pop();
+	flags = thread->pop();
+	point.x = thread->pop();
+	point.y = thread->pop();
+//TODO: do it!!!
 
-	warning("STUB: SF_text(), %d args", nArgs);
 }
 
 // Script function #60 (0x3C)
