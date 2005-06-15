@@ -347,11 +347,11 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 
 			(this->*scriptFunction)(thread, argumentsCount);
 
-			thread->_stackTopIndex = checkStackTopIndex;
-
 			if (scriptFunction == &Saga::Script::sfScriptGotoScene) {			
 				return true; // cause abortAllThreads called and _this_ thread destroyed
 			}
+
+			thread->_stackTopIndex = checkStackTopIndex;
 
 			if (operandChar == opCcall) {// CALL function
 				thread->push(thread->_returnValue);
