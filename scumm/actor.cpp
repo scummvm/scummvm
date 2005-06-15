@@ -950,21 +950,44 @@ void ScummEngine::processActors() {
 		return;
 	}
 
-	// Sort actors by position before drawing them (to ensure that actors in
-	// front are drawn after those "behind" them).
+	// Sort actors by position before drawing them (to ensure that actors
+	// in front are drawn after those "behind" them).
+	//
 	// Note: This algorithm works exactly the way the original engine did.
-	// Please resist any urge to 'optimize' this. Many of the games rely on the
-	// quirks of this particular sorting algorithm, and since we are dealing
-	// with far less than 100 objects being sorted here, any 'optimization'
-	// wouldn't yield a useful gain anyway.
-	// In particular, changing this loop caused a number of bugs in the past,
-	// including bugs #758167, #775097, and #1093867.
-	for (int j = 0; j < numactors; ++j) {
-		for (int i = 0; i < numactors; ++i) {
-			int sc_actor1 = _sortedActors[j]->_pos.y - _sortedActors[j]->_layer * 2000;
-			int sc_actor2 = _sortedActors[i]->_pos.y - _sortedActors[i]->_layer * 2000;
-			if (sc_actor1 < sc_actor2) {
-				SWAP(_sortedActors[i], _sortedActors[j]);
+	// Please resist any urge to 'optimize' this. Many of the games rely on
+	// the quirks of this particular sorting algorithm, and since we are
+	// dealing with far less than 100 objects being sorted here, any
+	// 'optimization' wouldn't yield a useful gain anyway.
+	//
+	// In particular, changing this loop caused a number of bugs in the
+	// past, including bugs #758167, #775097, and #1093867.
+	//
+	// Note that Sam & Max uses a stable sorting method. Older games don't
+	// and, according to cyx, neither do newer ones. At least not FT and
+	// COMI. See bug #1220168 for more details.
+
+	if (_gameId == GID_SAMNMAX) {
+		for (int j = 0; j < numactors; ++j) {
+			for (int i = 0; i < numactors; ++i) {
+				int sc_actor1 = _sortedActors[j]->_pos.y;
+				int sc_actor2 = _sortedActors[i]->_pos.y;
+				if (sc_actor1 == sc_actor2) {
+					sc_actor1 += _sortedActors[j]->_number;
+					sc_actor2 += _sortedActors[i]->_number;
+				}
+				if (sc_actor1 < sc_actor2) {
+					SWAP(_sortedActors[i], _sortedActors[j]);
+				}
+			}
+		}
+	} else {
+		for (int j = 0; j < numactors; ++j) {
+			for (int i = 0; i < numactors; ++i) {
+				int sc_actor1 = _sortedActors[j]->_pos.y - _sortedActors[j]->_layer * 2000;
+				int sc_actor2 = _sortedActors[i]->_pos.y - _sortedActors[i]->_layer * 2000;
+				if (sc_actor1 < sc_actor2) {
+					SWAP(_sortedActors[i], _sortedActors[j]);
+				}
 			}
 		}
 	}
@@ -974,11 +997,11 @@ void ScummEngine::processActors() {
 	for (Actor** ac = _sortedActors; ac != end; ++ac) {
 		Actor* a = *ac;
 		// Draw and animate the actors, except those w/o a costume.
-		// Note: We could 'optimize' this a little bit by only putting actors
-		// with a costume into the _sortedActors array in the first place.
-		// However, that would mess up the sorting, and would hence cause
-		// regressions. See also the other big comment further up in this
-		// method for some details.
+		// Note: We could 'optimize' this a little bit by only putting
+		// actors with a costume into the _sortedActors array in the
+		// first place. However, that would mess up the sorting, and
+		// would hence cause regressions. See also the other big
+		// comment further up in this method for some details.
 		if (a->_costume) {
 			a->drawActorCostume();
 			a->animateCostume();
