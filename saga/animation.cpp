@@ -206,14 +206,9 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 		if (anim->linkId != -1) {
 			// If this animation has a link, follow it
 			anim->currentFrame = 0;
+			anim->completed = 0;
 			anim->state = ANIM_PAUSE;
 
-/*			linkAnim = getAnimation(anim->linkId);
-
-			linkAnim->currentFrame = 0;
-			linkAnim->state = ANIM_PLAYING;
-
-			animId = anim->linkId;*/
 		} else {
 			// No link, stop playing
 			anim->currentFrame = anim->maxFrame;
@@ -237,6 +232,7 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 
 		debug(5, "Animation ended going to %d", anim->linkId);
 		linkAnim->currentFrame = 0;
+		linkAnim->completed = 0;
 		linkAnim->state = ANIM_PLAYING;
 		animId = anim->linkId;
 		frameTime = 0;
