@@ -242,7 +242,7 @@ void Puzzle::exitPuzzle(void) {
 }
 
 void Puzzle::initPieces(void) {
-	ActorData *puzzle = _vm->_actor->getActor(_vm->_actor->actorIndexToId(RID_ITE_ACTOR_PUZZLE));
+	ActorData *puzzle = _vm->_actor->getActor(_vm->_actor->actorIndexToId(ITE_ACTOR_PUZZLE));
 	SpriteInfo *spI;
 
 	for (int i = 0; i < PUZZLE_PIECES; i++) {
@@ -260,7 +260,7 @@ void Puzzle::initPieces(void) {
 }
 
 void Puzzle::showPieces(void) {
-	ActorData *puzzle = _vm->_actor->getActor(_vm->_actor->actorIndexToId(RID_ITE_ACTOR_PUZZLE));
+	ActorData *puzzle = _vm->_actor->getActor(_vm->_actor->actorIndexToId(ITE_ACTOR_PUZZLE));
 	SURFACE *backBuffer = _vm->_gfx->getBackBuffer();
 
 	for (int j = PUZZLE_PIECES - 1 ; j >= 0; j--) {
@@ -273,7 +273,7 @@ void Puzzle::showPieces(void) {
 }
 
 void Puzzle::drawCurrentPiece() {
-	ActorData *puzzle = _vm->_actor->getActor(_vm->_actor->actorIndexToId(RID_ITE_ACTOR_PUZZLE));
+	ActorData *puzzle = _vm->_actor->getActor(_vm->_actor->actorIndexToId(ITE_ACTOR_PUZZLE));
 	SURFACE *backBuffer = _vm->_gfx->getBackBuffer();
 
 	_vm->_sprite->draw(backBuffer, puzzle->spriteList, _puzzlePiece, 
@@ -402,7 +402,7 @@ void Puzzle::dropPiece(Point mousePt) {
 	// if the center is within the box quantize within
 	// else move it back to its original start point
 	if (mousePt.x >= boxx && mousePt.x < boxw && mousePt.y >= boxy && mousePt.y <= boxh) {
-		ActorData *puzzle = _vm->_actor->getActor(_vm->_actor->actorIndexToId(RID_ITE_ACTOR_PUZZLE));
+		ActorData *puzzle = _vm->_actor->getActor(_vm->_actor->actorIndexToId(ITE_ACTOR_PUZZLE));
 		SpriteInfo *spI;
 		int newx = mousePt.x - _pieceInfo[_puzzlePiece].offX;
 		int newy = mousePt.y - _pieceInfo[_puzzlePiece].offY;

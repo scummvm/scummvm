@@ -521,7 +521,7 @@ private:
 	void sfScriptClimb(SCRIPTFUNC_PARAMS);
 	void sfSetDoorState(SCRIPTFUNC_PARAMS);
 	void sfSetActorZ(SCRIPTFUNC_PARAMS);
-	void SF_text(SCRIPTFUNC_PARAMS);
+	void sfScriptText(SCRIPTFUNC_PARAMS);
 	void sfGetActorX(SCRIPTFUNC_PARAMS);
 	void sfGetActorY(SCRIPTFUNC_PARAMS);
 	void sfEraseDelta(SCRIPTFUNC_PARAMS);

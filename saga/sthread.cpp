@@ -341,7 +341,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 				error("Script::runThread() Invalid script function number (%d)", functionNumber);
 			}
 
-			debug(8, "Calling 0x%X %s", functionNumber, _scriptFunctionsList[functionNumber].scriptFunctionName);
+			debug(8, "Calling 0x%X %s argCount=%i", functionNumber, _scriptFunctionsList[functionNumber].scriptFunctionName, argumentsCount);
 			scriptFunction = _scriptFunctionsList[functionNumber].scriptFunction;
 			checkStackTopIndex = thread->_stackTopIndex + argumentsCount;
 

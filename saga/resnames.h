@@ -43,10 +43,15 @@ namespace Saga {
 //obj names
 #define ITE_OBJ_MAP 14
 
+//actor names
+#define ITE_ACTOR_PUZZLE 176
+
 // SCENES
 #define ITE_SCENE_INV -1
 #define ITE_SCENE_PUZZLE 26
 #define ITE_SCENE_LODGE 21
+#define ITE_SCENE_ENDCREDIT1 295
+
 
 #define ITE_DEFAULT_SCENE 32
 #define IHNM_DEFAULT_SCENE 152
@@ -113,10 +118,6 @@ namespace Saga {
 #define RID_ITE_INTRO_IMG_2 1557
 #define RID_ITE_INTRO_IMG_3 1561
 #define RID_ITE_INTRO_IMG_4 1565
-
-#define RID_ITE_ENDCREDIT_SCENE_1 1802
-
-#define RID_ITE_ACTOR_PUZZLE 176
 
 // ITE_VOICES
 #define RID_CAVE_VOICE_0 0

@@ -1178,7 +1178,11 @@ void Actor::handleActions(int msec, bool setup) {
 
 }
 
-int Actor::direct(int msec) {
+void Actor::direct(int msec) {
+
+	if (_vm->_scene->_entryList.entryListCount == 0) {
+		return;
+	}
 
 	// FIXME: HACK. This should be turned into cycle event.
 	_lastTickMsec += msec;
@@ -1191,7 +1195,6 @@ int Actor::direct(int msec) {
 
 //process speech
 	handleSpeech(msec);
-	return SUCCESS;
 }
 
 
@@ -1312,6 +1315,10 @@ bool Actor::getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber
 
 void Actor::drawActors() {
 	if (_vm->_scene->currentSceneNumber() <= 0) {
+		return;
+	}
+
+	if (_vm->_scene->_entryList.entryListCount == 0) {
 		return;
 	}
 

@@ -487,7 +487,7 @@ public:
 		return (objectType == kGameObjectObject) ? getObj(id)->flags : getActor(id)->flags;
 	}
 
-	int direct(int msec);
+	void direct(int msec);
 	void drawActors();
 	void updateActorsScene(int actorsEntrance);			// calls from scene loading to update Actors info
 
