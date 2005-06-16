@@ -1479,15 +1479,24 @@ void Script::sfSetDoorState(SCRIPTFUNC_PARAMS) {
 // Param1: actor id
 // Param2: z
 void Script::sfSetActorZ(SCRIPTFUNC_PARAMS) {
-	int16 actorId;
-	int16 z;
+	int16 objectId;
 	ActorData *actor;
+	ObjectData *obj;
+	int16 z;
 
-	actorId = thread->pop();
+	objectId = thread->pop();
 	z = thread->pop();
 
-	actor = _vm->_actor->getActor(actorId);
-	actor->location.z = z;
+
+	if (_vm->_actor->validActorId(objectId)) {
+		actor = _vm->_actor->getActor(objectId);
+		actor->location.z = z;
+	} else {
+		if (_vm->_actor->validObjId(objectId)) {
+			obj = _vm->_actor->getObj(objectId);
+			obj->location.z = z;
+		}
+	}
 }
 
 // Script function #59 (0x3B)
