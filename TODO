@@ -308,12 +308,11 @@ SCUMM
 * Add method of setting initial debug channels from command-line
 * Possibly implement a new resource manager, which then also could be shared
   by ScummEX. [Jamieson has some ideas about this].
-* Figure out how to extract resources from Apple II and Commodore 64 versions
-  See also <http://www.mts.net/~kbagnall/commodore/scumm/> for some notes on
-  the SCUMM C64 disk format.
+* Figure out how to extract resources from Apple II versions
 * Figure out how to extract resources from Turbografx/PC Engine version of Loom
 * Indiana Jones and the Last Crusade EGA: Add inventory support for Macintosh version
 * Loom EGA: Add support for music and sound effects in Macintosh version
+* Sam & Max: Add support for setBlastObjectWindow opcode for highway subgame
 * Add support for handling Kanji in FM-Towns games (foreground is rendered on a
   second plane at 640x480), text uses Shift_JIS encoding
   [implementation now that currently depends on font rom, not needing the rom
