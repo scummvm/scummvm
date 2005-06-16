@@ -463,6 +463,16 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	_sceneLoaded = true;
 	
 	q_event = NULL;
+
+	//fix placard bug 
+	//i guess we should remove RF_PLACARD flag - and use _interface->getMode()
+	event.type = ONESHOT_EVENT;
+	event.code = GRAPHICS_EVENT;
+	event.op = EVENT_CLEARFLAG;
+	event.param = RF_PLACARD; 
+
+	q_event = _vm->_events->chain(q_event, &event);
+
 	if (loadSceneParams->transitionType == kTransitionFade || 
 		loadSceneParams->transitionType == kTransitionFadeNoInterface) {
 

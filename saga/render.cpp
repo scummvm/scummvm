@@ -111,7 +111,7 @@ int Render::drawScene() {
 	// Get mouse coordinates
 	mouse_pt = _vm->mousePos();
 
-	if (!(_flags & RF_PLACARD)) {
+	if (/*_vm->_interface->getMode() != kPanelPlacard*/!(_flags & RF_PLACARD)) {
 		// Display scene background
 		_vm->_scene->draw();
 

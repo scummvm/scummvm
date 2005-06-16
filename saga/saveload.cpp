@@ -36,6 +36,7 @@
 #include "saga/interface.h"
 #include "saga/scene.h"
 #include "saga/render.h"
+#include "saga/events.h"
 
 #define CURRENT_SAGA_VER 2
 
@@ -225,6 +226,7 @@ void SagaEngine::load(const char *fileName) {
 
 	_scene->clearSceneQueue();
 	_scene->changeScene(sceneNumber, ACTOR_NO_ENTRANCE, kTransitionNoFade);
+	_events->handleEvents(0); //dissolve back grounds
 
 	if (insetSceneNumber != sceneNumber) {
 		_render->drawScene();
