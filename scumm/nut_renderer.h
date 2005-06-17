@@ -42,8 +42,6 @@ protected:
 		byte *src;
 	} _chars[256];
 
-	int32 decodeCodec44(byte *dst, const byte *src, uint32 length);
-
 	void drawChar(const Graphics::Surface &s, byte c, int x, int y, byte color);
 	void draw2byte(const Graphics::Surface &s, int c, int x, int y, byte color);
 
@@ -59,9 +57,6 @@ public:
 
 	int getCharWidth(byte c) const;
 	int getCharHeight(byte c) const;
-
-	int getCharOffsX(byte c) const;
-	int getCharOffsY(byte c) const;
 };
 
 } // End of namespace Scumm

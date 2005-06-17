@@ -724,7 +724,7 @@ void SmushPlayer::handleNewPalette(Chunk &b) {
 	setDirtyColors(0, 255);
 }
 
-void smush_decode_codec1(byte *dst, byte *src, int left, int top, int height, int width, int dstWidth);
+void smush_decode_codec1(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 
 #ifdef USE_ZLIB
 void SmushPlayer::handleZlibFrameObject(Chunk &b) {
@@ -781,7 +781,7 @@ void SmushPlayer::handleZlibFrameObject(Chunk &b) {
 	switch (codec) {
 	case 1:
 	case 3:
-		smush_decode_codec1(_dst, fobjBuffer + 14, left, top, height, width, _vm->_screenWidth);
+		smush_decode_codec1(_dst, fobjBuffer + 14, left, top, width, height, _vm->_screenWidth);
 		break;
 	case 37:
 		_codec37.decode(_dst, fobjBuffer + 14);
@@ -855,7 +855,7 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 	switch (codec) {
 	case 1:
 	case 3:
-		smush_decode_codec1(_dst, chunk_buffer, left, top, height, width, _vm->_screenWidth);
+		smush_decode_codec1(_dst, chunk_buffer, left, top, width, height, _vm->_screenWidth);
 		break;
 	case 37:
 		_codec37.decode(_dst, chunk_buffer);

@@ -44,74 +44,34 @@ NutRenderer::~NutRenderer() {
 	}
 }
 
-int32 NutRenderer::decodeCodec44(byte *dst, const byte *src, uint32 length) {
-	byte val;
-	uint16 size_line, num;
-	int16 decoded_length = 0;
+void smush_decode_codec1(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 
-	do {
-		size_line = READ_LE_UINT16(src);
-		src += 2;
-		length -= 2;
-
-		while (size_line != 0) {
-			num = *src++;
-			val = *src++;
-			memset(dst, val, num);
-			dst += num;
-			decoded_length += num;
-			length -= 2;
-			size_line -= 2;
-			if (size_line != 0) {
-				num = READ_LE_UINT16(src) + 1;
-				src += 2;
-				memcpy(dst, src, num);
-				dst += num;
-				decoded_length += num;
-				src += num;
-				length -= num + 2;
-				size_line -= num + 2;
+static void smush_decode_codec21(byte *dst, const byte *src, int width, int height, int pitch) {
+	while (height--) {
+		uint8 *dstPtrNext = dst + pitch;
+		const uint8 *srcPtrNext = src + 2 + READ_LE_UINT16(src); src += 2;
+		int len = width;
+		do {
+			int offs = READ_LE_UINT16(src); src += 2;
+			dst += offs;
+			len -= offs;
+			if (len <= 0) {
+				break;
 			}
-		}
-		dst--;
-		decoded_length--;
-
-	} while (length > 1);
-	return decoded_length;
-}
-
-static int32 codec1(byte *dst, byte *src, int height) {
-	byte val, code;
-	int32 length, decoded_length = 0;
-	int h = height, size_line;
-
-	for (h = 0; h < height; h++) {
-		size_line = READ_LE_UINT16(src);
-		src += 2;
-		while (size_line > 0) {
-			code = *src++;
-			size_line--;
-			length = (code >> 1) + 1;
-			if (code & 1) {
-				val = *src++;
-				size_line--;
-				if (val)
-					memset(dst, val, length);
-				dst += length;
-				decoded_length += length;
-			} else {
-				size_line -= length;
-				while (length--) {
-					val = *src++;
-					if (val)
-						*dst = val;
-					dst++;
-					decoded_length++;
-				}
+			int w = READ_LE_UINT16(src) + 1; src += 2;
+			len -= w;
+			if (len < 0) {
+				w += len;
 			}
-		}
+			// the original codec44 handles this part slightly differently (this is the only difference with codec21) :
+			//  src bytes equal to 255 are replaced by 0 in dst
+			//  src bytes equal to 1 are replaced by a color passed as an argument in the original function
+			//  other src bytes values are copied as-is
+			memcpy(dst, src, w); dst += w; src += w;
+		} while (len > 0);
+		dst = dstPtrNext;
+		src = srcPtrNext;
 	}
-	return decoded_length;
 }
 
 bool NutRenderer::loadFont(const char *filename) {
@@ -145,50 +105,40 @@ bool NutRenderer::loadFont(const char *filename) {
 
 	_numChars = READ_LE_UINT16(dataSrc + 10);
 	uint32 offset = 0;
-	int32 decoded_length;
-
 	for (int l = 0; l < _numChars; l++) {
 		offset += READ_BE_UINT32(dataSrc + offset + 4) + 8;
-		if (READ_BE_UINT32(dataSrc + offset) == 'FRME') {
-			offset += 8;
-
-			if (READ_BE_UINT32(dataSrc + offset) == 'FOBJ') {
-				int codec = READ_LE_UINT16(dataSrc + offset + 8);
-				_chars[l].xoffs = READ_LE_UINT16(dataSrc + offset + 10);
-				_chars[l].yoffs = READ_LE_UINT16(dataSrc + offset + 12);
-				_chars[l].width = READ_LE_UINT16(dataSrc + offset + 14);
-				_chars[l].height = READ_LE_UINT16(dataSrc + offset + 16);
-				_chars[l].src = new byte[(_chars[l].width + 2) * _chars[l].height + 1000];
-
-				// If characters have transparency, then bytes just get skipped and
-				// so there may appear some garbage. That's why we have to fill it
-				// with zeroes first.
-				memset(_chars[l].src, 0, (_chars[l].width + 2) * _chars[l].height + 1000);
-				if ((codec == 44) || (codec == 21)) 
-					decoded_length = decodeCodec44(_chars[l].src, dataSrc + offset + 22, READ_BE_UINT32(dataSrc + offset + 4) - 14);
-				else if (codec == 1) {
-					decoded_length = codec1(_chars[l].src, dataSrc + offset + 22, _chars[l].height);
-				} else
-					error("NutRenderer::loadFont: unknown codec: %d", codec);
-
-				// FIXME: This is used to work around wrong font file format in Russian 
-				// version of FT. Font files there contain wrong information about
-				// glyphs width. See patch #823031.
-				if (_vm->_language == Common::RU_RUS) {
-					// try to rely on length of returned data
-				  	if (l > 127)
-						_chars[l].width = decoded_length / _chars[l].height;
-					// but even this not always works
-					if (l == 134 && !strcmp(filename, "titlfnt.nut"))
-						_chars[l].width--;
-				}
-			} else {
-				warning("NutRenderer::loadFont(%s) there is no FOBJ chunk in FRME chunk %d (offset %x)", filename, l, offset);
-				break;
-			}
-		} else {
+		if (READ_BE_UINT32(dataSrc + offset) != 'FRME') {
 			warning("NutRenderer::loadFont(%s) there is no FRME chunk %d (offset %x)", filename, l, offset);
 			break;
+		}
+		offset += 8;
+		if (READ_BE_UINT32(dataSrc + offset) != 'FOBJ') {
+			warning("NutRenderer::loadFont(%s) there is no FOBJ chunk in FRME chunk %d (offset %x)", filename, l, offset);
+			break;
+		}
+		int codec = READ_LE_UINT16(dataSrc + offset + 8);
+		_chars[l].xoffs = READ_LE_UINT16(dataSrc + offset + 10);
+		_chars[l].yoffs = READ_LE_UINT16(dataSrc + offset + 12);
+		_chars[l].width = READ_LE_UINT16(dataSrc + offset + 14);
+		_chars[l].height = READ_LE_UINT16(dataSrc + offset + 16);
+		const int srcSize = _chars[l].width * _chars[l].height;
+		_chars[l].src = new byte[srcSize];
+		// If characters have transparency, then bytes just get skipped and
+		// so there may appear some garbage. That's why we have to fill it
+		// with zeroes first.
+		memset(_chars[l].src, 0, srcSize);
+		
+		const uint8 *fobjptr = dataSrc + offset + 22;
+		switch (codec) {
+		case 1:
+			smush_decode_codec1(_chars[l].src, fobjptr, 0, 0, _chars[l].width, _chars[l].height, _chars[l].width);
+			break;
+		case 21:
+		case 44:
+			smush_decode_codec21(_chars[l].src, fobjptr, _chars[l].width, _chars[l].height, _chars[l].width);
+			break;
+		default:
+			error("NutRenderer::loadFont: unknown codec: %d", codec);
 		}
 	}
 
@@ -225,38 +175,6 @@ int NutRenderer::getCharHeight(byte c) const {
 		error("invalid character in NutRenderer::getCharHeight : %d (%d)", c, _numChars);
 
 	return _chars[c].height;
-}
-
-int NutRenderer::getCharOffsX(byte c) const {
-	if (!_loaded) {
-		warning("NutRenderer::getCharOffsX() Font is not loaded");
-		return 0;
-	}
-
-	if (c >= 0x80 && _vm->_useCJKMode) {
-		return 0;
-	}
-
-	if (c >= _numChars)
-		error("invalid character in NutRenderer::getCharOffsX : %d (%d)", c, _numChars);
-
-	return _chars[c].xoffs;
-}
-
-int NutRenderer::getCharOffsY(byte c) const {
-	if (!_loaded) {
-		warning("NutRenderer::getCharOffsY() Font is not loaded");
-		return 0;
-	}
-
-	if (c >= 0x80 && _vm->_useCJKMode) {
-		return 0;
-	}
-
-	if (c >= _numChars)
-		error("invalid character in NutRenderer::getCharOffsY : %d (%d)", c, _numChars);
-
-	return _chars[c].yoffs;
 }
 
 void NutRenderer::drawShadowChar(const Graphics::Surface &s, int c, int x, int y, byte color, bool showShadow) {
