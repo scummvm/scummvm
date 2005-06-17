@@ -241,7 +241,7 @@ ObjectTableData ITE_ObjectTable[ITE_OBJECTCOUNT] = {
 	{ 23,   0,  480,  480,  0, 24, 23, 0           }, // Silver Medallion
 	{ 24,   0,  480,  480,  0, 25, 24, 0           }, // Mud in Fur
 	{ 25,   0,  480,  480,  0, 26, 25, 0           }, // Gold Ring
-	{ 27,  13, 1036,  572,  0, 47, 14, kObjUseWith }, // Screwdriver
+	{ 27,  13, 1036,  572,  40, 47, 14, kObjUseWith }, // Screwdriver
 	{ 28,   0,  480,  480,  0, 29, 26, 0           }, // Apple Token
 	{ 29,   0,  480,  480,  0, 30, 22, kObjUseWith }, // Letter from Elara
 	{ 30,   0,  164,  440,  0, 31, 16, kObjUseWith }, // Spoon
