@@ -796,32 +796,37 @@ void ScummEngine_v6::drawBlastTexts() {
 		buf = _blastTextQueue[i].text;
 
 		_charset->_top = _blastTextQueue[i].ypos + _screenTop;
-		_charset->_left = _blastTextQueue[i].xpos;
 		_charset->_right = _screenWidth - 1;
 		_charset->_center = _blastTextQueue[i].center;
 		_charset->setColor(_blastTextQueue[i].color);
 		_charset->_disableOffsX = _charset->_firstChar = true;
 		_charset->setCurID(_blastTextQueue[i].charset);
 
-		// Center text if necessary
-		if (_charset->_center) {
-			_charset->_left -= _charset->getStringWidth(0, buf) / 2;
-			if (_charset->_left < 0)
-				_charset->_left = 0;
-		}
-
 		do {
-			c = *buf++;
-			if (c != 0 && c != 0xFF) {
-				if (c & 0x80 && _useCJKMode) {
-					if (_language == Common::JA_JPN && !checkSJISCode(c)) {
-						c = 0x20; //not in S-JIS
-					} else {
-						c += *buf++ * 256;
-					}
-				}
-				_charset->printChar(c);
+			_charset->_left = _blastTextQueue[i].xpos;
+
+			// Center text if necessary
+			if (_charset->_center) {
+				_charset->_left -= _charset->getStringWidth(0, buf) / 2;
+				if (_charset->_left < 0)
+					_charset->_left = 0;
 			}
+	
+			do {
+				c = *buf++;
+				if (c != 0 && c != 0xFF && c != '\n') {
+					if (c & 0x80 && _useCJKMode) {
+						if (_language == Common::JA_JPN && !checkSJISCode(c)) {
+							c = 0x20; //not in S-JIS
+						} else {
+							c += *buf++ * 256;
+						}
+					}
+					_charset->printChar(c);
+				}
+			} while (c && c != '\n');
+
+			_charset->_top += _charset->getFontHeight();
 		} while (c);
 
 		_blastTextQueue[i].rect = _charset->_str;

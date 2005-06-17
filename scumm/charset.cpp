@@ -311,7 +311,7 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 				break;
 		} else if (chr == '@')
 			continue;
-		if (chr == 0xD)
+		if (chr == '\n' || chr == '\r')
 			break;
 		if (chr == 254 || chr == 255) {
 			//process in LE
