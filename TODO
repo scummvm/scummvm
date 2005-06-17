@@ -312,7 +312,6 @@ SCUMM
 * Figure out how to extract resources from Turbografx/PC Engine version of Loom
 * Indiana Jones and the Last Crusade EGA: Add inventory support for Macintosh version
 * Loom EGA: Add support for music and sound effects in Macintosh version
-* Sam & Max: Add support for setBlastObjectWindow opcode for highway subgame
 * Add support for handling Kanji in FM-Towns games (foreground is rendered on a
   second plane at 640x480), text uses Shift_JIS encoding
   [implementation now that currently depends on font rom, not needing the rom
@@ -320,9 +319,6 @@ SCUMM
 * Add support for TFMX music format in Amiga version of Monkey Island 1
   Check http://darkstar.tabu.uni-bonn.de/~neo/audio.html for music format
   details
-* Compare codec 44 algorithm (For nut fonts) against COMI disassembly. The 
-  current code isn't based on disassembly and doesn't always calculate decompressed 
-  data size correctly.
 * When SMUSH movies end, their music track sometimes should last a bit longer;
   currently, we stop the audio together with the animation, leading to cut off
   music.
