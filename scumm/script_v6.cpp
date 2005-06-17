@@ -2468,15 +2468,18 @@ void ScummEngine_v6::o6_drawBlastObject() {
 
 // Set BOMP processing window
 void ScummEngine_v6::o6_setBlastObjectWindow() {
-	// TODO - implement this
-	int a, b, c, d;
+	pop();
+	pop();
+	pop();
+	pop();
 
-	d = pop();
-	c = pop();
-	b = pop();
-	a = pop();
-
-	warning("o6_setBlastObjectWindow(%d, %d, %d, %d)", a, b, c, d);
+	// None of the scripts of The Dig and Full Throttle use this opcode.
+	// Sam & Max only uses it at the beginning of the highway subgame. In
+	// the original interpreter pop'ed arguments are just ignored and the
+	// clipping blastObject window is defined with (0, 0, 320, 200)...
+	// which matches the screen dimensions and thus, doesn't require
+	// another clipping operation.
+	// So, we just handle this as no-op opcode.
 }
 
 void ScummEngine_v6::o6_kernelSetFunctions() {
