@@ -1438,7 +1438,7 @@ int ScummEngine::getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, 
 		if (getObjectOrActorXY(b, x, y) == -1)
 			return -1;
 		if (b < _numActors)
-			i = derefActor(b, "unkObjProc1")->_scalex;
+			i = derefActor(b, "getDistanceBetween_is_obj_1")->_scalex;
 	} else {
 		x = b;
 		y = c;
@@ -1448,7 +1448,7 @@ int ScummEngine::getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, 
 		if (getObjectOrActorXY(e, x2, y2) == -1)
 			return -1;
 		if (e < _numActors)
-			j = derefActor(e, "unkObjProc1(2)")->_scalex;
+			j = derefActor(e, "getDistanceBetween_is_obj_2")->_scalex;
 	} else {
 		x2 = e;
 		y2 = f;
