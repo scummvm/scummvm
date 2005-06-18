@@ -1492,8 +1492,10 @@ int ScummEngine::init(GameDetector &detector) {
 		_charset = new CharsetRendererV2(this, _language);
 	else if (_version == 3)
 		_charset = new CharsetRendererV3(this);
+#ifndef DISABLE_SCUMM_7_8		
 	else if (_version == 8)
 		_charset = new CharsetRendererNut(this);
+#endif
 	else
 		_charset = new CharsetRendererClassic(this);
 

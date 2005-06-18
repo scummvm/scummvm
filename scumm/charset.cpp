@@ -1603,6 +1603,7 @@ void CharsetRendererCommon::drawBits1(const Graphics::Surface &s, byte *dst, con
 	}
 }
 
+#ifndef DISABLE_SCUMM_7_8
 CharsetRendererNut::CharsetRendererNut(ScummEngine *vm)
 	 : CharsetRenderer(vm) {
 	_current = 0;
@@ -1712,6 +1713,7 @@ void CharsetRendererNut::printChar(int chr) {
 	if (_str.bottom < shadow.bottom)
 		_str.bottom = shadow.bottom;
 }
+#endif
 
 void CharsetRendererNES::printChar(int chr) {
 	int width, height, origWidth, origHeight;

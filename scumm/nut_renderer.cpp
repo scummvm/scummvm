@@ -29,18 +29,14 @@ namespace Scumm {
 
 NutRenderer::NutRenderer(ScummEngine *vm) :
 	_vm(vm),
-	_initialized(false),
 	_loaded(false),
 	_numChars(0) {
-
-	for (int i = 0; i < 256; i++)
-		_chars[i].src = NULL;
+	memset(_chars, 0, sizeof(_chars));
 }
 
 NutRenderer::~NutRenderer() {
 	for (int i = 0; i < _numChars; i++) {
-		if (_chars[i].src)
-			delete []_chars[i].src;
+		delete []_chars[i].src;
 	}
 }
 
@@ -104,6 +100,7 @@ bool NutRenderer::loadFont(const char *filename) {
 	}
 
 	_numChars = READ_LE_UINT16(dataSrc + 10);
+	assert(_numChars <= ARRAYSIZE(_chars));
 	uint32 offset = 0;
 	for (int l = 0; l < _numChars; l++) {
 		offset += READ_BE_UINT32(dataSrc + offset + 4) + 8;
@@ -127,7 +124,7 @@ bool NutRenderer::loadFont(const char *filename) {
 		// so there may appear some garbage. That's why we have to fill it
 		// with zeroes first.
 		memset(_chars[l].src, 0, srcSize);
-		
+
 		const uint8 *fobjptr = dataSrc + offset + 22;
 		switch (codec) {
 		case 1:

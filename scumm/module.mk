@@ -20,7 +20,6 @@ MODULE_OBJS := \
 	scumm/help.o \
 	scumm/midiparser_ro.o \
 	scumm/midiparser_eup.o \
-	scumm/nut_renderer.o \
 	scumm/object.o \
 	scumm/palette.o \
 	scumm/player_mod.o \
@@ -52,6 +51,7 @@ MODULE_OBJS := \
 
 ifndef DISABLE_SCUMM_7_8
 MODULE_OBJS += \
+	scumm/nut_renderer.o \
 	scumm/script_v8.o \
 	scumm/imuse_digi/dimuse.o \
 	scumm/imuse_digi/dimuse_bndmgr.o \

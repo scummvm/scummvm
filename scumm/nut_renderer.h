@@ -18,7 +18,7 @@
  * $Header$
  */
 
-#ifndef NUT_RENDERER_H
+#if !defined(NUT_RENDERER_H) && !defined(DISABLE_SCUMM_7_8)
 #define NUT_RENDERER_H
 
 #include "common/file.h"
@@ -31,7 +31,6 @@ class ScummEngine;
 class NutRenderer {
 protected:
 	ScummEngine *_vm;
-	bool _initialized;
 	bool _loaded;
 	int _numChars;
 	struct {
@@ -48,7 +47,7 @@ protected:
 public:
 	NutRenderer(ScummEngine *vm);
 	virtual ~NutRenderer();
-	int getNumChars() { return _numChars; }
+	int getNumChars() const { return _numChars; }
 
 	bool loadFont(const char *filename);
 
