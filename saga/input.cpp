@@ -130,6 +130,12 @@ int SagaEngine::processInput() {
 			_mousePos = event.mouse;
 			_interface->update(_mousePos, UPDATE_RIGHTBUTTONCLICK);
 			break;
+		case OSystem::EVENT_WHEELUP:
+			_interface->update(_mousePos, UPDATE_WHEELUP);
+			break;
+		case OSystem::EVENT_WHEELDOWN:
+			_interface->update(_mousePos, UPDATE_WHEELDOWN);
+			break;
 		case OSystem::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;
 			break;

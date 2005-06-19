@@ -1213,6 +1213,12 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 			if (updateFlag & UPDATE_MOUSECLICK) {
 				handleConverseClick(mousePoint);
 			}
+			if (updateFlag & UPDATE_WHEELUP) {
+				converseChangePos(-1);
+			}
+			if (updateFlag & UPDATE_WHEELDOWN) {
+				converseChangePos(1);
+			}
 
 			if (_vm->_puzzle->isActive()) {
 				_vm->_puzzle->handleClick(mousePoint);
@@ -1228,6 +1234,16 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 		} else {
 			if (updateFlag & UPDATE_MOUSECLICK) {
 				handleOptionClick(mousePoint);
+			}
+			if (updateFlag & UPDATE_WHEELUP) {
+				if (_optionSaveFileTop)
+					_optionSaveFileTop--;
+				calcOptionSaveSlider();
+			}
+			if (updateFlag & UPDATE_WHEELDOWN) {
+				if (_optionSaveFileTop < _vm->getSaveFilesCount() - _vm->getDisplayInfo().optionSaveFileVisible)
+					_optionSaveFileTop++;
+				calcOptionSaveSlider();
 			}
 		}
 	}
