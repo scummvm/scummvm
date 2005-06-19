@@ -108,7 +108,8 @@ enum ThreadWaitTypes {
 	kWaitTypeWalk = 5,			// waiting to finish walking
 	kWaitTypeRequest = 6,		// a request is up
 	kWaitTypePause = 7,
-	kWaitTypePlacard = 8
+	kWaitTypePlacard = 8,
+	kWaitTypeStatusTextInput = 9
 };
 
 enum OpCodes {
@@ -336,7 +337,7 @@ public:
 typedef SortedList<ScriptThread> ScriptThreadList;
 
 
-#define SCRIPTFUNC_PARAMS ScriptThread *thread, int nArgs
+#define SCRIPTFUNC_PARAMS ScriptThread *thread, int nArgs, bool &disContinue
 
 class Script {
 public:
@@ -428,7 +429,7 @@ public:
 public:
 	ScriptThread *createThread(uint16 scriptModuleNumber, uint16 scriptEntryPointNumber);
 	int executeThread(ScriptThread *thread, int entrypointNumber);
-	int executeThreads(uint msec);
+	void executeThreads(uint msec);
 	int SThreadDebugStep();
 	void completeThread(void);
 	void abortAllThreads(void);
@@ -482,7 +483,7 @@ private:
 	void sfSetObjImage(SCRIPTFUNC_PARAMS);
 	void sfSetObjName(SCRIPTFUNC_PARAMS);
 	void sfGetObjImage(SCRIPTFUNC_PARAMS);
-	void SF_getNumber(SCRIPTFUNC_PARAMS);
+	void sfGetNumber(SCRIPTFUNC_PARAMS);
 	void sfScriptOpenDoor(SCRIPTFUNC_PARAMS);
 	void sfScriptCloseDoor(SCRIPTFUNC_PARAMS);
 	void sfSetBgdAnimSpeed(SCRIPTFUNC_PARAMS);

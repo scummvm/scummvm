@@ -423,6 +423,8 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		_resListEntries = loadSceneParams->sceneDescription->resListCnt;
 		break;
 	}
+	
+	debug(0, "Loading scene number %u:", _sceneNumber);
 
 	// Load scene descriptor and resource list resources
 	if (_loadDescription) {

@@ -1184,6 +1184,10 @@ void Actor::direct(int msec) {
 		return;
 	}
 
+	if (_vm->_interface->_statusTextInput) {
+		return;
+	}
+
 	// FIXME: HACK. This should be turned into cycle event.
 	_lastTickMsec += msec;
 

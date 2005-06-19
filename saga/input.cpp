@@ -47,7 +47,7 @@ int SagaEngine::processInput() {
 				if (event.kbd.keycode == 'd')
 					_console->attach();
 			}
-			if (_interface->_textInput) {
+			if (_interface->_textInput || _interface->_statusTextInput) {
 				_interface->processAscii(event.kbd.ascii);
 				return SUCCESS;
 			}

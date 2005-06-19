@@ -207,6 +207,8 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 
 	_textInputRepeatPhase = 0;
 	_textInput = false;
+	_statusTextInput = false;
+	_statusTextInputState = kStatusTextInputFirstRun;
 
 	_initialized = true;
 }
@@ -315,6 +317,10 @@ void Interface::setMode(int mode) {
 bool Interface::processAscii(uint16 ascii) {
 	int i;
 	PanelButton *panelButton;
+	if (_statusTextInput) {
+		processStatusTextInput(ascii);
+		return true;
+	}
 	switch (_panelMode) {
 	case kPanelNull:
 		if (ascii == 27) {// Esc
@@ -344,6 +350,7 @@ bool Interface::processAscii(uint16 ascii) {
 	case kPanelSave:
 		if (_textInput) {
 			processTextInput(ascii);
+			return true;
 		} else {
 			if (ascii == 27) {// Esc
 				ascii = 'c'; //cancel
@@ -810,6 +817,41 @@ void Interface::setLoad(PanelButton *panelButton) {
 	}
 }
 
+void Interface::processStatusTextInput(uint16 ascii) {
+
+	textInputStartRepeat(ascii);
+	switch (ascii) {
+	case(27): // esc
+		_statusTextInputState = kStatusTextInputAborted;
+		_statusTextInput = false;
+		_vm->_script->wakeUpThreads(kWaitTypeStatusTextInput);
+		break;
+	case(13): // return
+		_statusTextInputState = kStatusTextInputEntered;
+		_statusTextInput = false;
+		_vm->_script->wakeUpThreads(kWaitTypeStatusTextInput);
+		break;
+	case(8): // backspace
+		if (_statusTextInputPos == 0) {
+			break;
+		}
+		_statusTextInputPos--;
+		_statusTextInputString[_statusTextInputPos] = 0;
+	default:
+		if (_statusTextInputPos >= STATUS_TEXT_INPUT_MAX) {
+			break;
+		}
+		if (((ascii >= 'a') && (ascii <='z')) || 
+			((ascii >= '0') && (ascii <='9')) ||
+			((ascii >= 'A') && (ascii <='Z')) ||
+			(ascii == ' ')) {
+			_statusTextInputString[_statusTextInputPos++] = ascii;
+			_statusTextInputString[_statusTextInputPos] = 0;
+		}
+	}
+	setStatusText(_statusTextInputString);
+}
+
 void Interface::processTextInput(uint16 ascii) {
 	char ch[2];
 	char tempString[SAVE_TITLE_SIZE];
@@ -1128,6 +1170,10 @@ void Interface::setOption(PanelButton *panelButton) {
 void Interface::update(const Point& mousePoint, int updateFlag) {
 	
 	if (_vm->_scene->isInDemo() || _fadeMode == kFadeOut || !_active) {
+		return;
+	}
+
+	if (_statusTextInput) {
 		return;
 	}
 

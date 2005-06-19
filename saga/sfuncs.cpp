@@ -71,7 +71,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfSetObjImage),
 		OPCODE(sfSetObjName),
 		OPCODE(sfGetObjImage),
-		OPCODE(SF_getNumber),
+		OPCODE(sfGetNumber),
 		OPCODE(sfScriptOpenDoor),
 		OPCODE(sfScriptCloseDoor),
 		OPCODE(sfSetBgdAnimSpeed),
@@ -578,11 +578,20 @@ void Script::sfGetObjImage(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #20 (0x14)
-void Script::SF_getNumber(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
-
-	error("STUB: SF_getNumber(), %d args", nArgs);
+void Script::sfGetNumber(SCRIPTFUNC_PARAMS) {
+	if (_vm->_interface->_statusTextInputState == kStatusTextInputFirstRun) {
+		_vm->_interface->enterStatusString();
+		thread->wait(kWaitTypeStatusTextInput);
+		disContinue = true;
+	} else {
+		if (_vm->_interface->_statusTextInputState == kStatusTextInputAborted) {
+			thread->_returnValue = -1;
+		} else {
+			thread->_returnValue = atoi(_vm->_interface->_statusTextInputString);
+		}
+		
+		_vm->_interface->_statusTextInputState = kStatusTextInputFirstRun;
+	}
 }
 
 // Script function #21 (0x15)

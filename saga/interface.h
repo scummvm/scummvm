@@ -46,6 +46,7 @@ enum InterfaceUpdateFlags {
 #define VERB_STRLIMIT 32
 
 #define STATUS_TEXT_LEN 128
+#define STATUS_TEXT_INPUT_MAX 256
 
 // Converse-specific stuff
 #define CONVERSE_MAX_TEXTS      64
@@ -174,6 +175,11 @@ enum ITEColors {
 	kITEColorLightBlue96 = 0x96
 };
 
+enum StatusTextInputState {
+	kStatusTextInputFirstRun,
+	kStatusTextInputEntered,
+	kStatusTextInputAborted
+};
 
 class Interface {
 public:
@@ -223,7 +229,16 @@ public:
 	void processKeyUp(uint16 ascii);
 
 	bool _textInput;
-
+	
+	bool _statusTextInput;
+	StatusTextInputState _statusTextInputState;
+	char _statusTextInputString[STATUS_TEXT_INPUT_MAX];
+	void enterStatusString() {
+		_statusTextInput = true;
+		_statusTextInputPos = 0;
+		_statusTextInputString[0] = 0;
+		setStatusText(_statusTextInputString);
+	}
 private:
 	static void textInputRepeatCallback(void *refCon);
 
@@ -314,6 +329,7 @@ private:
 	void drawVerbPanel(SURFACE *backBuffer, PanelButton* panelButton);
 	void calcOptionSaveSlider();
 	void processTextInput(uint16 ascii);
+	void processStatusTextInput(uint16 ascii);
 	void textInputStartRepeat(uint16 ascii);
 	void textInputRepeat(void);
 
@@ -413,6 +429,8 @@ private:
 	uint _textInputStringLength;
 	uint _textInputPos;
 	uint _textInputMaxWidth;
+
+	uint _statusTextInputPos;
 
 	int _textInputRepeatPhase;
 	uint16 _textInputRepeatChar;

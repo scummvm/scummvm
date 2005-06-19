@@ -99,12 +99,13 @@ void Script::wakeUpThreadsDelayed(int waitType, int sleepTime) {
 	}
 }
 
-int Script::executeThreads(uint msec) {
+void Script::executeThreads(uint msec) {
 	ScriptThread *thread;
 	ScriptThreadList::iterator threadIterator;
 
-	if (!isInitialized()) {
-		return FAILURE;
+
+	if (_vm->_interface->_statusTextInput) {
+		return;
 	}
 
 	threadIterator = _threadList.begin();
@@ -151,7 +152,6 @@ int Script::executeThreads(uint msec) {
 		++threadIterator;
 	}
 
-	return SUCCESS;
 }
 
 void Script::abortAllThreads(void) {
@@ -192,6 +192,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 	int16 iparam2;
 	int16 iparam3;
 
+	bool disContinue;
 	byte argumentsCount;
 	uint16 functionNumber;
 	uint16 checkStackTopIndex;
@@ -344,9 +345,11 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			debug(8, "Calling 0x%X %s argCount=%i", functionNumber, _scriptFunctionsList[functionNumber].scriptFunctionName, argumentsCount);
 			scriptFunction = _scriptFunctionsList[functionNumber].scriptFunction;
 			checkStackTopIndex = thread->_stackTopIndex + argumentsCount;
-
-			(this->*scriptFunction)(thread, argumentsCount);
-
+			disContinue = false;
+			(this->*scriptFunction)(thread, argumentsCount, disContinue);
+			if (disContinue) {
+				return true;
+			}
 			if (scriptFunction == &Saga::Script::sfScriptGotoScene) {			
 				return true; // cause abortAllThreads called and _this_ thread destroyed
 			}
