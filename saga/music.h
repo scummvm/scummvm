@@ -120,6 +120,8 @@ public:
 	int resume(void);
 	int stop(void);
 
+	void setVolume(int volume, int time);
+
 private:
 
 	Audio::Mixer *_mixer;
@@ -136,8 +138,15 @@ private:
 	bool _hasDigiMusic;
 	bool _adlib;
 
+	int _targetVolume;
+	int _currentVolume;
+	int _currentVolumePercent;
+
 	RSCFILE_CONTEXT *_musicContext;
 	const char *_musicFname;
+
+	static void musicVolumeGaugeCallback(void *refCon);
+	void musicVolumeGauge(void);
 };
 
 } // End of namespace Saga

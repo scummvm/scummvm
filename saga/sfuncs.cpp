@@ -45,6 +45,8 @@
 #include "saga/scene.h"
 #include "saga/isomap.h"
 
+#include "common/config-manager.h"
+
 namespace Saga {
 
 #define OPCODE(x) {&Script::x, #x}
@@ -122,13 +124,13 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfPuzzleWon),
 		OPCODE(sfEnableEscape),
 		OPCODE(sfPlaySound),
-		OPCODE(SF_playLoopedSound),
+		OPCODE(sfPlayLoopedSound),
 		OPCODE(sfGetDeltaFrame),
 		OPCODE(sfShowProtect),
 		OPCODE(sfProtectResult),
 		OPCODE(sfRand),
-		OPCODE(SF_fadeMusic),
-		OPCODE(SF_playVoice),
+		OPCODE(sfFadeMusic),
+		OPCODE(sfPlayVoice),
 		OPCODE(SF_stub),
 		OPCODE(SF_stub),
 		OPCODE(SF_stub),
@@ -634,7 +636,7 @@ void Script::SF_cycleColors(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	debug(0, "STUB: SF_cycleColors(), %d args", nArgs);
+	error("STUB: SF_cycleColors(), %d args", nArgs);
 }
 
 // Script function #25 (0x19)
@@ -1573,10 +1575,12 @@ void Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
 	if (_vm->getGameType() == GType_ITE) {
 		int16 param = thread->pop() + 9;
 
-		if (param >= 9 && param <= 34)
+		if (param >= 9 && param <= 34) {
+			_vm->_music->setVolume(-1, 1);
 			_vm->_music->play(param);
-		else
+		} else {
 			_vm->_music->stop();
+		}
 	} else {
 		int16 param1 = thread->pop();
 		int16 param2 = thread->pop();
@@ -1591,7 +1595,7 @@ void Script::SF_pickClimbOutPos(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	debug(0, "STUB: SF_pickClimbOutPos(), %d args", nArgs);
+	error("STUB: SF_pickClimbOutPos(), %d args", nArgs);
 }
 
 // Script function #65 (0x41)
@@ -1599,7 +1603,7 @@ void Script::SF_tossRif(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	debug(0, "STUB: SF_tossRif(), %d args", nArgs);
+	error("STUB: SF_tossRif(), %d args", nArgs);
 }
 
 // Script function #66 (0x42)
@@ -1607,7 +1611,7 @@ void Script::SF_showControls(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	debug(0, "STUB: SF_showControls(), %d args", nArgs);
+	error("STUB: SF_showControls(), %d args", nArgs);
 }
 
 // Script function #67 (0x43)
@@ -1718,15 +1722,22 @@ void Script::sfPlaySound(SCRIPTFUNC_PARAMS) {
 	} else {
 		_vm->_sound->stopSound();
 	}
-
 }
 
 // Script function #71 (0x47)
-void Script::SF_playLoopedSound(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
+void Script::sfPlayLoopedSound(SCRIPTFUNC_PARAMS) {
+	int16 param = thread->pop();
+	int res;
 
-	debug(0, "STUB: SF_playLoopedSound(), %d args", nArgs);
+	if (param < ARRAYSIZE(sfxTable)) {
+		res = sfxTable[param].res;
+		if (_vm->getFeatures() & GF_CD_FX)
+			res -= 14;
+
+		_vm->_sndRes->playSound(res, sfxTable[param].vol, true);
+	} else {
+		_vm->_sound->stopSound();
+	}
 }
 
 // Script function #72 (0x48)
@@ -1775,16 +1786,20 @@ void Script::sfRand(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #76 (0x4c)
-void Script::SF_fadeMusic(SCRIPTFUNC_PARAMS) {
-	debug(0, "STUB: SF_fadeMusic()");
+void Script::sfFadeMusic(SCRIPTFUNC_PARAMS) {
+	_vm->_music->setVolume(0, 1000);
 }
 
 // Script function #77 (0x4d)
-void Script::SF_playVoice(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
+void Script::sfPlayVoice(SCRIPTFUNC_PARAMS) {
+	int16 param = thread->pop();
 
-	debug(0, "STUB: SF_playVoice(), %d args", nArgs);
+	warning("sfPlayVoice(%d)", param);
+	if (param > 0) {
+		_vm->_sndRes->playVoice(param + 3712);
+	} else {
+		_vm->_sound->stopSound();
+	}
 }
 
 void Script::finishDialog(int replyID, int flags, int bitOffset) {

@@ -534,13 +534,13 @@ private:
 	void sfPuzzleWon(SCRIPTFUNC_PARAMS);
 	void sfEnableEscape(SCRIPTFUNC_PARAMS);
 	void sfPlaySound(SCRIPTFUNC_PARAMS);
-	void SF_playLoopedSound(SCRIPTFUNC_PARAMS);
+	void sfPlayLoopedSound(SCRIPTFUNC_PARAMS);
 	void sfGetDeltaFrame(SCRIPTFUNC_PARAMS);
 	void sfShowProtect(SCRIPTFUNC_PARAMS);
 	void sfProtectResult(SCRIPTFUNC_PARAMS);
 	void sfRand(SCRIPTFUNC_PARAMS);
-	void SF_fadeMusic(SCRIPTFUNC_PARAMS);
-	void SF_playVoice(SCRIPTFUNC_PARAMS);
+	void sfFadeMusic(SCRIPTFUNC_PARAMS);
+	void sfPlayVoice(SCRIPTFUNC_PARAMS);
 	void SF_stub(SCRIPTFUNC_PARAMS);
 };
 

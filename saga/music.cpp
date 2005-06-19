@@ -282,7 +282,7 @@ void MusicPlayer::stopMusic() {
 Music::Music(Audio::Mixer *mixer, MidiDriver *driver, int enabled) : _mixer(mixer), _enabled(enabled), _adlib(false) {
 	_player = new MusicPlayer(driver);
 	_musicInitialized = 1;
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	_currentVolume = 0;
 
 	if (_vm->getGameType() == GType_ITE) {
 		Common::File file;
@@ -334,6 +334,50 @@ Music::Music(Audio::Mixer *mixer, MidiDriver *driver, int enabled) : _mixer(mixe
 
 Music::~Music() {
 	delete _player;
+}
+
+void Music::musicVolumeGaugeCallback(void *refCon) {
+	((Music *)refCon)->musicVolumeGauge();
+}                                                                               
+
+void Music::musicVolumeGauge() {
+	int volume;
+
+	_currentVolumePercent += 10;
+
+	if (_currentVolume - _targetVolume > 0) { // Volume decrease
+		volume = _targetVolume + (_currentVolume - _targetVolume) * (100 - _currentVolumePercent) / 100;
+	} else {
+		volume = _currentVolume + (_targetVolume - _currentVolume) * _currentVolumePercent / 100;
+	}
+
+	if (volume < 0)
+		volume = 1;
+
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
+	_player->setVolume(volume);
+
+	if (_currentVolumePercent == 100) {
+		Common::g_timer->removeTimerProc(&musicVolumeGaugeCallback);
+		_currentVolume = _targetVolume;
+	}
+}
+
+void Music::setVolume(int volume, int time) {
+	_targetVolume = volume * 2; // ScummVM has different volume scale
+	_currentVolumePercent = 0;
+
+	if (volume == -1) // Set Full volume
+		volume = ConfMan.getInt("music_volume");
+
+	if (time == 1) {
+		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
+		Common::g_timer->removeTimerProc(&musicVolumeGaugeCallback);
+		_currentVolume = volume;
+		return;
+	}
+
+	Common::g_timer->installTimerProc(&musicVolumeGaugeCallback, time * 100L, this);
 }
 
 bool Music::isPlaying() {

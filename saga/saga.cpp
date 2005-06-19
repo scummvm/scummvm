@@ -164,7 +164,6 @@ SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 	}
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
 	_vm = this;
 }
@@ -292,6 +291,8 @@ int SagaEngine::init(GameDetector &detector) {
 
 	_interface->converseInit();
 	_script->setVerb(kVerbWalkTo);
+
+	_music->setVolume(-1, 1);
 
 	return SUCCESS;
 }
