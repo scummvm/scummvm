@@ -368,7 +368,7 @@ arguments - see the next section.
   --joystick[=NUM]         Enable input with joystick (default: 0 = first
                            joystick)
   --platform=WORD          Specify version of game (allowed values: amiga,
-                           atari, fmtowns, mac, nes, pc, windows)
+                           atari, c64, fmtowns, mac, nes, pc, windows)
   --savepath=PATH          Path to where savegames are stored
   --soundfont=FILE         Select the SoundFont for MIDI playback (Only
                            supported by some MIDI drivers)

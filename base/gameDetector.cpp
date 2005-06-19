@@ -84,7 +84,7 @@ static const char USAGE_STRING[] =
 	"  --joystick[=NUM]         Enable input with joystick (default: 0 = first\n"
 	"                           joystick)\n"
 	"  --platform=WORD          Specify version of game (allowed values: amiga,\n"
-	"                           atari, fmtowns, nes, mac, pc, windows)\n"
+	"                           atari, c64, fmtowns, nes, mac, pc, windows)\n"
 	"  --savepath=PATH          Path to where savegames are stored\n"
 	"  --soundfont=FILE         Select the SoundFont for MIDI playback (only\n"
 	"                           supported by some MIDI drivers)\n"
