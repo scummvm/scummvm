@@ -583,10 +583,10 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "00.LFL", "Maniac Mansion (F).prg", kGenAsIs },
 	{ "00.LFL", "Maniac Mansion (SW).prg", kGenAsIs },
 	{ "00.LFL", "Maniac Mansion (U).prg", kGenAsIs },
-	{ "00.LFL", "maniac1.d64", kGenAsIs },
-	{ "00.LFL", "zak1.d64", kGenAsIs },
-	{ "01.LFL", "maniac2.d64", kGenAsIs },
-	{ "01.LFL", "zak2.d64", kGenAsIs },
+	{ "00.LFL", "maniac1.d64", kGenAsIs }, // Do not
+	{ "01.LFL", "maniac2.d64", kGenAsIs }, // swap
+	{ "00.LFL", "zak1.d64", kGenAsIs },    // these
+	{ "01.LFL", "zak2.d64", kGenAsIs },    // lines
 	{ "airdemo", "Airport Demo", kGenMac},
 	{ "balloon", "Balloon-O-Rama", kGenMac},
 	{ "baseball", "BaseBall", kGenMac},
@@ -1600,9 +1600,9 @@ int ScummEngine::init(GameDetector &detector) {
 		_imuse->setBase(res.address[rtSound]);
 	}
 
-	// Since MM NES substitutes whole file class we get monster.sou file
+	// Since MM NES and C64 targets substitute whole file class we get monster.sou file
 	// name badly generated, so avoid even attempts to open it
-	if (!(_platform == Common::kPlatformNES))
+	if (!((_platform == Common::kPlatformNES) || (_platform == Common::kPlatformC64)))
 		_sound->setupSound();
 
 	// Create debugger

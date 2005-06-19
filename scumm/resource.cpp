@@ -139,7 +139,7 @@ void ScummEngine::openRoom(const int room) {
 		}
 
 		// If we have substitute
-		if (_substResFileNameIndex > 0 && !(_platform == Common::kPlatformNES)) {
+		if (_substResFileNameIndex > 0 && !(_platform == Common::kPlatformNES || _platform == Common::kPlatformC64)) {
 			char tmpBuf[128];
 
 			generateSubstResFileName(buf, tmpBuf, sizeof(tmpBuf));
@@ -230,7 +230,7 @@ bool ScummEngine::openFile(BaseScummFile &file, const char *filename) {
 		file.close();
 		file.open(_containerFile.c_str());
 		assert(file.isOpen());
-		
+
 		result = file.openSubFile(filename);
 	}
 	
