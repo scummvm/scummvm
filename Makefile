@@ -27,7 +27,7 @@ CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas
 # Even more warnings...
 CXXFLAGS+= -pedantic -Wpointer-arith -Wcast-qual -Wconversion
 CXXFLAGS+= -Wshadow -Wimplicit -Wundef -Wnon-virtual-dtor
-CXXFLAGS+= -Wno-reorder -Wwrite-strings -fcheck-new -Wctor-dtor-privacy 
+CXXFLAGS+= -Wno-reorder -Wwrite-strings -fcheck-new
 
 #######################################################################
 # Misc stuff - you should never have to edit this                     #
