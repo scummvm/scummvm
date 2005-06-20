@@ -695,7 +695,7 @@ int32 Logic::fnTheyDo(int32 *params) {
 	//		6 ins5
 
 	StandardHeader *head = (StandardHeader *)_vm->_resman->openResource(params[0]);
-	assert (head->fileType == GAME_OBJECT);
+	assert(head->fileType == GAME_OBJECT);
 
 	// Run the target's get-speech-state script
 
