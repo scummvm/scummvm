@@ -44,20 +44,10 @@ Anim::~Anim(void) {
 	reset();
 }
 
-uint16 Anim::load(const byte *animResourceData, size_t animResourceLength) {
+void Anim::load(uint16 animId, const byte *animResourceData, size_t animResourceLength) {
 	AnimationData *anim;
-	uint16 animId = 0;
-	uint16 i;
 
-	// Find an unused animation slot
-	for (i = 0; i < MAX_ANIMATIONS; i++) {
-		if (_animations[i] == NULL) {
-			animId = i;
-			break;
-		}
-	}
-
-	if (animId == MAX_ANIMATIONS) {
+	if (animId >= MAX_ANIMATIONS) {
 		error("Anim::load could not find unused animation slot");
 	}
 
@@ -74,8 +64,6 @@ uint16 Anim::load(const byte *animResourceData, size_t animResourceLength) {
 	anim->loopFrame = headerReadS.readByte() - 1;
 	anim->start = headerReadS.readUint16BE();
 
-	if (anim->start != 65535 && anim->start != 0)
-		warning("Anim::load: found different start: %d. Fix Anim::play()", anim->start);
 	anim->start += headerReadS.pos();
 
 
@@ -100,9 +88,7 @@ uint16 Anim::load(const byte *animResourceData, size_t animResourceLength) {
 	anim->frameTime = DEFAULT_FRAME_TIME;
 	anim->flags = 0;
 	anim->linkId = -1;
-	anim->state = ANIM_PAUSE;
-
-	return animId;
+	anim->state = ANIM_PAUSE;	
 }
 
 void Anim::link(int16 animId1, int16 animId2) {
@@ -814,7 +800,7 @@ void Anim::animInfo() {
 
 	for (i = 0; i < MAX_ANIMATIONS; i++) {
 		if (_animations[i] == NULL) {
-			break;
+			continue;
 		}
 
 		_vm->_console->DebugPrintf("%02d: Frames: %u Flags: %u\n", i, _animations[i]->maxFrame, _animations[i]->flags);

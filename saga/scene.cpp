@@ -114,7 +114,6 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	memset(&_sceneDescription, 0, sizeof(_sceneDescription));
 	_resListEntries = 0;
 	_resList = NULL;
-	_animEntries = 0;
 	_sceneProc = NULL;
 	_objectMap = new ObjectMap(_vm);
 	_actionMap = new ObjectMap(_vm);
@@ -831,19 +830,11 @@ int Scene::processSceneResources() {
 		case SAGA_ANIM_6:
 		case SAGA_ANIM_7:
 			{
-				uint16 animId;
+				uint16 animId = _resList[i].res_type - SAGA_ANIM_1;
 
-				debug(0, "Loading animation resource...");
+				debug(0, "Loading animation resource animId=%i", animId);
 
-				animId = _vm->_anim->load(resourceData, resourceDataLength);
-
-				SCENE_ANIMINFO *new_animinfo;
-
-				new_animinfo = _animList.pushBack().operator->();
-
-				new_animinfo->anim_handle = animId;
-				new_animinfo->anim_res_number =  _resList[i].res_number;
-				_animEntries++;
+				_vm->_anim->load(animId, resourceData, resourceDataLength);
 			}
 			break;
 		case SAGA_ISO_MULTI:
@@ -948,10 +939,6 @@ void Scene::endScene() {
 	_entryList.freeMem();
 	_sceneStrings.freeMem();
 	_vm->_isoMap->freeMem();
-
-	_animList.clear();
-
-	_animEntries = 0;
 
 	_vm->_events->clearList();
 	_vm->textClearList(_textList);

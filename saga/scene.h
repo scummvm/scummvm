@@ -148,12 +148,6 @@ struct SCENE_IMAGE {
 	PALENTRY pal[256];
 };
 
-struct SCENE_ANIMINFO {
-	int anim_res_number;
-	int anim_handle;
-};
-
-typedef SortedList<SCENE_ANIMINFO> SceneAnimInfoList;
 
 enum SceneTransitionType {
 	kTransitionNoFade,
@@ -298,8 +292,6 @@ class Scene {
 	SceneDescription _sceneDescription;
 	int _resListEntries;
 	SCENE_RESLIST *_resList;
-	int _animEntries;
-	SceneAnimInfoList _animList;
 	SceneProc *_sceneProc;
 	SCENE_IMAGE _bg;
 	SCENE_IMAGE _bgMask;

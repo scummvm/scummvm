@@ -116,7 +116,7 @@ public:
 	Anim(SagaEngine *vm);
 	~Anim(void);
 
-	uint16 load(const byte *animResourceData, size_t animResourceLength);
+	void load(uint16 animId, const byte *animResourceData, size_t animResourceLength);
 	void freeId(uint16 animId);
 	void play(uint16 animId, int vectorTime, bool playing = true);
 	void link(int16 animId1, int16 animId2);
