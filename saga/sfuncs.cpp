@@ -119,7 +119,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfPlayMusic),
 		OPCODE(SF_pickClimbOutPos),
 		OPCODE(SF_tossRif),
-		OPCODE(SF_showControls),
+		OPCODE(sfShowControls),
 		OPCODE(SF_showMap),
 		OPCODE(sfPuzzleWon),
 		OPCODE(sfEnableEscape),
@@ -1607,11 +1607,9 @@ void Script::SF_tossRif(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #66 (0x42)
-void Script::SF_showControls(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
-
-	error("STUB: SF_showControls(), %d args", nArgs);
+void Script::sfShowControls(SCRIPTFUNC_PARAMS) {
+	// It has zero implementation in Win rerelase, and in DOS
+	// release it deals with video ports.
 }
 
 // Script function #67 (0x43)
