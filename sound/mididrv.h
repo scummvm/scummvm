@@ -160,6 +160,8 @@ public:
 
 class MidiChannel {
 public:
+	virtual ~MidiChannel() {}
+
 	virtual MidiDriver *device() = 0;
 	virtual byte getNumber() = 0;
 	virtual void release() = 0;
