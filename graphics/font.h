@@ -40,6 +40,9 @@ enum TextAlignment {
  */
 class Font {
 public:
+	Font() {}
+	virtual ~Font() {}
+
 	virtual int getFontHeight() const = 0;
 	virtual int getMaxCharWidth() const = 0;
 

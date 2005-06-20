@@ -35,6 +35,8 @@ class String;
  */
 class Stream {
 public:
+	virtual ~Stream() {}
+
 	/**
 	 * Returns true if any I/O failure occured.
 	 * This flag is never cleared automatically. In order to clear it,

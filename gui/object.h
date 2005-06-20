@@ -29,6 +29,7 @@ class CommandSender;
 class CommandReceiver {
 	friend class CommandSender;
 protected:
+	virtual ~CommandReceiver() {}
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {}
 };
 
@@ -39,6 +40,7 @@ protected:
 	CommandReceiver	*_target;
 public:
 	CommandSender(CommandReceiver *target) : _target(target) {}
+	virtual ~CommandSender() {}
 
 	void setTarget(CommandReceiver *target)	{ _target = target; }
 	CommandReceiver *getTarget() const		{ return _target; }
