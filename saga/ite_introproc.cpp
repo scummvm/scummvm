@@ -74,6 +74,7 @@ int Scene::ITEStartProc() {
 
 	firstScene.loadFlag = kLoadBySceneNumber;
 	firstScene.sceneDescriptor = _vm->getStartSceneNumber();
+	firstScene.sceneDescription = NULL;
 	firstScene.sceneSkipTarget = true;
 	firstScene.sceneProc = NULL;
 	firstScene.transitionType = kTransitionFade;
