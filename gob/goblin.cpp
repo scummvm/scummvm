@@ -172,34 +172,27 @@ void gob_initList(void) {
 void gob_sortByOrder(Util_List *list) {
 	Util_ListNode *ptr;
 	Util_ListNode *ptr2;
-	void *tmp;
 
 	ptr = list->pHead;
 	while (ptr->pNext != 0) {
 		for (ptr2 = ptr->pNext; ptr2 != 0; ptr2 = ptr2->pNext) {
-			if (((Gob_Object *) ptr->pData)->order <=
-			    ((Gob_Object *) ptr2->pData)->order) {
-				if (((Gob_Object *) ptr->pData)->order !=
-				    ((Gob_Object *) ptr2->pData)->order)
+			Gob_Object *objDesc = (Gob_Object *)ptr->pData;
+			Gob_Object *objDesc2 = (Gob_Object *)ptr2->pData;
+
+			if (objDesc->order <= objDesc2->order) {
+				if (objDesc->order != objDesc2->order)
 					continue;
 
-				if (((Gob_Object *) ptr->pData)->bottom <=
-				    ((Gob_Object *) ptr2->pData)->bottom) {
-					if (((Gob_Object *) ptr->pData)->
-					    bottom !=
-					    ((Gob_Object *) ptr2->pData)->
-					    bottom)
+				if (objDesc->bottom <= objDesc2->bottom) {
+					if (objDesc->bottom != objDesc2->bottom)
 						continue;
 
-					if ((Gob_Object *) ptr->pData !=
-					    gob_goblins[gob_currentGoblin])
+					if (objDesc != gob_goblins[gob_currentGoblin])
 						continue;
 				}
 			}
 
-			tmp = ptr->pData;
-			ptr->pData = ptr2->pData;
-			ptr2->pData = tmp;
+			SWAP(ptr->pData, ptr2->pData);
 		}
 		ptr = ptr->pNext;
 	}
