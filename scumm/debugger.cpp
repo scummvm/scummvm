@@ -106,6 +106,8 @@ ScummDebugger::ScummDebugger(ScummEngine *s)
 	DCmd_Register("imuse", &ScummDebugger::Cmd_IMuse);
 }
 
+ScummDebugger::~ScummDebugger() {} // we need this here for __SYMBIAN32__
+
 void ScummDebugger::preEnter() {
 	// Pause sound output
 	_old_soundsPaused = _vm->_sound->_soundsPaused;

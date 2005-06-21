@@ -30,6 +30,7 @@ class ScummEngine;
 class ScummDebugger : public Common::Debugger<ScummDebugger> {
 public:
 	ScummDebugger(ScummEngine *s);
+	virtual ~ScummDebugger(); // we need this here for __SYMBIAN32__
 	
 protected:
 	ScummEngine *_vm;
