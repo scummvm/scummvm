@@ -32,15 +32,16 @@ namespace Saga {
 
 static struct Substitutes {
 	uint32 id;
+	const char *resfile;
 	const char *fname;
 } substitutes[] = {
-	{ 1529, "wyrm.pak" },
-	{ 1530, "wyrm1.dlt" },
-	{ 1531, "wyrm2.dlt" },
-	{ 1532, "wyrm3.dlt" },
-	{ 1533, "wyrm4.dlt" },
-	{ 1796, "credit3n.dlt" },
-	{ 1797, "credit4n.dlt" }
+	{ 1529, "ite.rsc", "wyrm.pak" },
+	{ 1530, "ite.rsc", "wyrm1.dlt" },
+	{ 1531, "ite.rsc", "wyrm2.dlt" },
+	{ 1532, "ite.rsc", "wyrm3.dlt" },
+	{ 1533, "ite.rsc", "wyrm4.dlt" },
+	{ 1796, "ite.rsc", "credit3n.dlt" },
+	{ 1797, "ite.rsc", "credit4n.dlt" }
 };
 	
 
@@ -249,11 +250,12 @@ int RSC_LoadResource(RSCFILE_CONTEXT *rsc, uint32 res_num, byte **res_p, size_t 
 	}
 
 	debug(8, "LoadResource %d", res_num);
-	for (int i = 0; i < ARRAYSIZE(substitutes); i++)
-		if (substitutes[i].id == res_num) {
+	for (int i = 0; i < ARRAYSIZE(substitutes); i++) {
+		if (substitutes[i].id == res_num && strcmp(substitutes[i].resfile, rsc->rc_file_fspec) == 0) {
 			substnum = i;
 			break;
 		}
+	}
 
 	if (!(_vm->getFeatures() & GF_WYRMKEEP))
 		substnum = -1;
