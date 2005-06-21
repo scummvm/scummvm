@@ -56,6 +56,8 @@ OSystem *OSystem::makeInstance() {
 	return OSystem_PALMOS_create();
 #elif defined(__PLAYSTATION2__)
 	return OSystem_PS2_create();
+#elif defined(__SYMBIAN32__) // SumthinWicked / Sprawl
+	return OSystem_SymbianOS_create();
 #else
 	/* SDL is the default driver for now */
 	return OSystem_SDL_create();

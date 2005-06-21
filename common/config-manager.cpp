@@ -86,13 +86,15 @@ void ConfigManager::loadDefaultConfigFile() {
 	else
 		strcpy(configFile, DEFAULT_CONFIG_FILE);
 #else
-	#if defined (WIN32) && !defined(_WIN32_WCE)
+	#if defined (WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 		GetWindowsDirectory(configFile, MAXPATHLEN);
 		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
 	#elif defined(__PALM_OS__)
 		strcpy(configFile,"/PALM/Programs/ScummVM/" DEFAULT_CONFIG_FILE);
 	#elif defined(__PLAYSTATION2__)
 		strcpy(configFile, "mc0:ScummVM/" DEFAULT_CONFIG_FILE);
+	#elif defined (__SYMBIAN32__)
+		strcpy(configFile, SYMBIAN32_DOC_DIR DEFAULT_CONFIG_FILE);
 	#else
 		strcpy(configFile, DEFAULT_CONFIG_FILE);
 	#endif

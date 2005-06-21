@@ -65,6 +65,7 @@ int Debugger<T>::DebugPrintf(const char *format, ...) {
 	return count;
 }
 
+#ifndef __SYMBIAN32__ // gcc/UIQ doesn't like the debugger code for some reason? Actually get a cc1plus core dump here :)
 template <class T>
 void Debugger<T>::attach(const char *entry) {
 
@@ -105,6 +106,7 @@ void Debugger<T>::onFrame() {
 			detach();
 	}
 }
+#endif // of ifndef __SYMBIAN32__ // gcc/UIQ doesn't like the debugger code for some reason? Actually get a cc1plus core dump here :)
 
 // Main Debugger Loop
 template <class T>

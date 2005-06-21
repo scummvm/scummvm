@@ -110,7 +110,12 @@ public:
 		_header->_right = _header->_left = _header;
 	}
 	
-	virtual ~Map<Key, Value, Comparator>() {
+#ifndef __SYMBIAN32__
+	virtual ~Map<Key, Value, Comparator>()
+#else
+	~Map()
+#endif
+	{
 		clearNodes(_root);
 		delete _header;
 		_root = _header = 0;

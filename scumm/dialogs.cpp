@@ -214,8 +214,8 @@ public:
 	
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	const String &getResultString() const;
-	void setList(const StringList& list) { GUI::ChooserDialog::setList(list); }
-	int runModal() { return GUI::ChooserDialog::runModal(); }
+	void setList(const StringList& list) { GUI_ChooserDialog::setList(list); }
+	int runModal() { return GUI_ChooserDialog::runModal(); }
 };
 
 SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode)
@@ -316,7 +316,7 @@ void SaveLoadChooserEx::setList(const StringList& list) {
 
 int SaveLoadChooserEx::runModal() {
 	_gfxWidget->setGfx(0);
-	int ret = GUI::Dialog::runModal();
+	int ret = Dialog::runModal();
 	return ret;
 }
 
@@ -339,7 +339,7 @@ void SaveLoadChooserEx::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 		close();
 		break;
 	case GUI::kListSelectionChangedCmd: {
-		const Graphics::Surface *thumb;
+		Graphics::Surface *thumb;
 		thumb = _scumm->loadThumbnailFromSlot(_saveMode ? selItem + 1 : selItem);
 		_gfxWidget->setGfx(thumb);
 		delete thumb;
@@ -357,7 +357,7 @@ void SaveLoadChooserEx::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 	case kCloseCmd:
 		setResult(-1);
 	default:
-		GUI::Dialog::handleCommand(sender, cmd, data);
+		Dialog::handleCommand(sender, cmd, data);
 	}
 }
 

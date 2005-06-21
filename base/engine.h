@@ -20,7 +20,7 @@
 
 #ifndef ENGINE_H
 #define ENGINE_H
-
+#include "stdafx.h"
 #include "common/scummsys.h"
 #include "common/str.h"
 

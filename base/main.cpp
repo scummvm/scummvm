@@ -136,6 +136,9 @@ const char* stackCookie = "$STACK: 655360\0";
 #include <cstdio>
 #define STDOUT_FILE	TEXT("stdout.txt")
 #define STDERR_FILE	TEXT("stderr.txt")
+#elif defined(__SYMBIAN32__) // Symbian does not like any output to the console through any *print* function
+#define STDOUT_FILE		SYMBIAN32_DOC_DIR "scummvm.stdout.txt"
+#define STDERR_FILE		SYMBIAN32_DOC_DIR "scummvm.stderr.txt"
 #endif
 
 #if defined(QTOPIA)
@@ -143,7 +146,7 @@ const char* stackCookie = "$STACK: 655360\0";
 extern "C" int main(int argc, char *argv[]);
 #endif
 
-#if defined(MACOSX) || defined(QTOPIA)
+#if defined(MACOSX) || defined(QTOPIA) || defined(__SYMBIAN32__) 
 #include <SDL.h>
 #elif !defined(__MORPHOS__) && !defined(__DC__) && !defined(__GP32__)
 #undef main
@@ -315,7 +318,8 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 #else
 extern "C" int main(int argc, char *argv[]) {
 #endif
-	char *cfgFilename = NULL, *s=argv[1];
+	char *cfgFilename = NULL;
+	char *s=NULL;//argv[1]; SumthinWicked says: cannot assume that argv!=NULL here! eg. Symbian's CEBasicAppUI::SDLStartL() calls as main(0,NULL), if you want to change plz #ifdef __SYMBIAN32__
 	bool running = true;
 
 #if defined(UNIX)
@@ -324,7 +328,8 @@ extern "C" int main(int argc, char *argv[]) {
 #endif
 
 // Code copied from SDL_main
-#if defined(WIN32) && defined(NO_CONSOLE)
+#if (defined(WIN32) && defined(NO_CONSOLE)) || defined(__SYMBIAN32__)
+// Symbian does not like any output to the console through any *print* function
 
 	/* Flush the output in case anything is queued */
 	fclose(stdout);
@@ -353,7 +358,9 @@ extern "C" int main(int argc, char *argv[]) {
 		}
 #endif
 	}
+#ifndef __SYMBIAN32__ // fcn not supported on Symbian
 	setlinebuf(stdout);	/* Line buffered */
+#endif
 	setbuf(stderr, NULL);			/* No buffering */
 
 #endif //defined(WIN32) && defined(USE_CONSOLE)
@@ -490,7 +497,11 @@ void CDECL debug(int level, const char *s, ...) {
 		return;
 
 	va_start(va, s);
+#ifdef __SYMBIAN32__
+	vsprintf(buf, s, va);
+#else
 	vsnprintf(buf, STRINGBUFLEN, s, va);
+#endif
 	va_end(va);
 	
 	debugHelper(buf);
@@ -501,7 +512,11 @@ void CDECL debug(const char *s, ...) {
 	va_list va;
 
 	va_start(va, s);
+#ifdef __SYMBIAN32__
+	vsprintf(buf, s, va);
+#else
 	vsnprintf(buf, STRINGBUFLEN, s, va);
+#endif
 	va_end(va);
 
 	debugHelper(buf);

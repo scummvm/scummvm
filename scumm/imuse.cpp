@@ -1263,7 +1263,7 @@ void IMuseInternal::initMT32(MidiDriver *midi) {
 
 void IMuseInternal::initGM(MidiDriver *midi) {
 	byte buffer[11];
-
+	int i=0;
 	// General MIDI System On message
 	// Resets all GM devices to default settings
 	memcpy(&buffer[0], "\xF0\x7E\x7F\x09\x01\xF7", 6);
@@ -1321,13 +1321,13 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 
 		// Set Channels 1-16 Reverb to 64, which is the
 		// equivalent of MT-32 default Reverb Level 5
-		for (int i = 0; i < 16; ++i)
+		for (i = 0; i < 16; ++i)
 			midi->send((  64   << 16) | (91 << 8) | (0xB0 | i));
 		debug(2, "GM Controller 91 Change: Channels 1-16 Reverb Level is 64");
 
 		// Set Channels 1-16 Pitch Bend Sensitivity to
 		// 12 semitones; then lock the RPN by setting null.
-		for (int i = 0; i < 16; ++i) {
+		for (i = 0; i < 16; ++i) {
 			midi->send((  0    << 16) | (100 << 8) | (0xB0 | i));
 			midi->send((  0    << 16) | (101 << 8) | (0xB0 | i));
 			midi->send((  12   << 16) | (6   << 8) | (0xB0 | i));

@@ -38,9 +38,14 @@ public:
 	
 	int DebugPrintf(const char *format, ...);
 
+#ifndef __SYMBIAN32__ // gcc/UIQ doesn't like the debugger code for some reason? Actually get a cc1plus core dump here :)
 	virtual void onFrame();
 
 	virtual void attach(const char *entry = 0);
+#else
+	void onFrame() {}
+	void attach(const char *entry = 0) {}
+#endif
 	bool isAttached() const { return _isAttached; }
 
 protected:

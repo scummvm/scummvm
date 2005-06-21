@@ -337,6 +337,8 @@ begin_credits("Credits");
 	add_person("Hans-J&ouml;rg Frieden", "", "Port: AmigaOS 4");
 	add_person("Jerome Fisher", "KingGuppy", "MT-32 emulator");
 	add_person("Jochen Hoenicke", "hoenicke", "Speaker &amp; PCjr sound support, Adlib work");
+	add_person("Lars Persson", "AnotherGuest", "Port: EPOC/SymbianOS, ESDL");
+	add_person("Jurgen Braam", "SumthinWicked", "Port: EPOC/SymbianOS maintainer");
   end_section();
 
 
@@ -374,6 +376,7 @@ begin_credits("Credits");
 	add_person("Johannes Schickel", "LordHoto", "Thumbnails for ScummEngine");
 	add_person("Andr&eacute; Souza", "", "SDL-based OpenGL renderer");
 	add_person("Tim ???", "realmz", "Initial MI1 CD music support");
+	add_person("Andreas Karlsson", "Sprawl", "Port: EPOC/SymbianOS");
   end_section();
 
 

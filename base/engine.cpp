@@ -193,13 +193,17 @@ void CDECL warning(const char *s, ...) {
 	va_list va;
 
 	va_start(va, s);
+#ifdef __SYMBIAN32__
+	vsprintf(buf, s, va);
+#else
 	vsnprintf(buf, STRINGBUFLEN, s, va);
+#endif
 	va_end(va);
 
 #ifdef __GP32__ //ph0x FIXME: implement fprint?
 	printf("WARNING: %s\n", buf);
 #else
-#ifndef _WIN32_WCE
+#if !defined (_WIN32_WCE) && !defined (__SYMBIAN32__)
 	fprintf(stderr, "WARNING: %s!\n", buf);
 #endif
 #endif

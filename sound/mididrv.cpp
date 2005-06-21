@@ -33,7 +33,7 @@ static const struct MidiDriverDescription midiDrivers[] = {
 	{"auto", "Default", MD_AUTO},
 	{"null", "No music", MD_NULL},
 
-#if defined(WIN32) && !defined(_WIN32_WCE)
+#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 	{"windows", "Windows MIDI", MD_WINDOWS},
 #endif
 
@@ -126,7 +126,7 @@ int MidiDriver::detectMusicDriver(int midiFlags) {
 	if (musicDriver == MD_AUTO || musicDriver < 0) {
 		if (midiFlags & MDT_PREFER_NATIVE) {
 			if (musicDriver == MD_AUTO) {
-				#if defined(WIN32) && !defined(_WIN32_WCE)
+				#if defined(WIN32) && !defined(_WIN32_WCE) &&  !defined(__SYMBIAN32__)
 					musicDriver = MD_WINDOWS; // MD_WINDOWS is default MidiDriver on windows targets
 				#elif defined(MACOSX)
 					musicDriver = MD_COREAUDIO;
@@ -134,7 +134,7 @@ int MidiDriver::detectMusicDriver(int midiFlags) {
 					musicDriver = MD_YPA1;	// TODO : change this and use Zodiac driver when needed
 				#elif defined(__MORPHOS__)
 					musicDriver = MD_ETUDE;
-				#elif defined(_WIN32_WCE) || defined(UNIX) || defined(X11_BACKEND)
+				#elif defined(_WIN32_WCE) || defined(UNIX) || defined(X11_BACKEND) || defined (__SYMBIAN32__)
 					// Always use MIDI emulation via adlib driver on CE and UNIX device
 				
 					// TODO: We should, for the Unix targets, attempt to detect
@@ -195,7 +195,7 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 	case MD_ZODIAC:    return MidiDriver_Zodiac_create();
 #endif
 #endif
-#if defined(WIN32) && !defined(_WIN32_WCE)
+#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) 
 	case MD_WINDOWS:   return MidiDriver_WIN_create();
 #endif
 #if defined(__MORPHOS__)

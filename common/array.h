@@ -47,7 +47,12 @@ public:
 			_data[i] = array._data[i];
 	}
 
-	~Array<T>() {
+#ifdef __SYMBIAN32__
+	~Array()
+#else
+	~Array<T>()
+#endif
+	{
 		if (_data)
 			delete [] _data;
 	}

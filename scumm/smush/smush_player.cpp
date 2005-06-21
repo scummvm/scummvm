@@ -1198,8 +1198,8 @@ void SmushPlayer::tryCmpFile(const char *filename) {
 	if (i == NULL) {
 		error("invalid filename : %s", filename);
 	}
-	char fname[260];
 #ifdef USE_MAD
+	char fname[260];
 	memcpy(fname, filename, i - filename);
 	strcpy(fname + (i - filename), ".mp3");
 	_compressedFile.open(fname);

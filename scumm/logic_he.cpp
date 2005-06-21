@@ -401,8 +401,9 @@ int32 LogicHEfunshop::dispatch(int op, int numArgs, int32 *args) {
 void LogicHEfunshop::op_1004(int32 *args) {
 	double data[8], at, sq;
 	int32 x, y;
+	int i=0;
 
-	for (int i = 0; i <= 6; i += 2) {
+	for (i = 0; i <= 6; i += 2) {
 		data[i] = getFromArray(args[0], 0, 519 + i);
 		data[i + 1] = getFromArray(args[0], 0, 519 + i + 1);
 	}
@@ -414,14 +415,14 @@ void LogicHEfunshop::op_1004(int32 *args) {
 		return;
 	}
 
-	for (int i = 0; i <= 6; i += 2) {
+	for (i = 0; i <= 6; i += 2) {
 		data[i] -= (double)x;
 		data[i + 1] -= (double)y;
 	}
 
 	double a1 = (double)args[1] * DEG2RAD;
 
-	for (int i = 0; i <= 6; i += 2) {
+	for (i = 0; i <= 6; i += 2) {
 		at = atan2(data[i + 1], data[i]);
 		sq = hypot(data[i + 1], data[i]);
 
@@ -435,14 +436,14 @@ void LogicHEfunshop::op_1004(int32 *args) {
 	int minx = 2;
 	int miny = 3;
 
-	for (int i = 0; i <= 6; i += 2) {
+	for (i = 0; i <= 6; i += 2) {
 		if (data[i] < data[minx])
 			minx = i;
 		if (data[i + 1] < data[miny])
 			miny = i + 1;
 	}
 
-	for (int i = 0; i <= 6; i += 2) {
+	for (i = 0; i <= 6; i += 2) {
 		data[i] -= data[minx];
 		data[i + 1] -= data[miny];
 
@@ -454,8 +455,8 @@ void LogicHEfunshop::op_1004(int32 *args) {
 void LogicHEfunshop::op_1005(int32 *args) {
 	double data[8];
 	double args1, args2;
-
-	for (int i = 520; i <= 526; i += 2) {
+	int i=0;
+	for (i = 520; i <= 526; i += 2) {
 		data[i - 520] = getFromArray(args[0], 0, i - 1);
 		data[i - 520 + 1] = getFromArray(args[0], 0, i);
 	}
@@ -463,12 +464,12 @@ void LogicHEfunshop::op_1005(int32 *args) {
 	args1 = args[1] * 0.01 + 1;
 	args2 = args[2] * 0.01 + 1;
 
-	for (int i = 0; i < 4; i++) {
+	for (i = 0; i < 4; i++) {
 		data[2 * i] *= args1;
 		data[2 * i + 1] *= args2;
 	}
 	
-	for (int i = 520; i <= 526; i += 2) {
+	for (i = 520; i <= 526; i += 2) {
 		putInArray(args[0], 0, i - 1, scumm_round(data[i - 520]));
 		putInArray(args[0], 0, i, scumm_round(data[i - 520 + 1]));
 	}

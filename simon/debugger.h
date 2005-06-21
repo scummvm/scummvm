@@ -31,6 +31,7 @@ class SimonEngine;
 class Debugger : public Common::Debugger<Debugger> {
 public:
 	Debugger(SimonEngine *vm);
+	virtual ~Debugger() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
 
 protected:
 	SimonEngine *_vm;

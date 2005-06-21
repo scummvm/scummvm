@@ -1290,6 +1290,8 @@ Debugger::Debugger(Logic *logic, Mouse *mouse, Screen *screen, SkyCompact *skyCo
 	DCmd_Register("section", &Debugger::Cmd_Section);
 }
 
+Debugger::~Debugger() {} // we need this here for __SYMBIAN32__
+
 void Debugger::preEnter() {
 
 }

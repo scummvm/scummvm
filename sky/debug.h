@@ -36,6 +36,7 @@ class SkyCompact;
 class Debugger : public Common::Debugger<Debugger> {
 public:
 	Debugger(Logic *logic, Mouse *mouse, Screen *screen, SkyCompact *skyCompact);
+	virtual ~Debugger(); // we need this here for __SYMBIAN32__ archaic gcc/UIQ
 	bool showGrid()	{	return _showGrid; }
 	
 protected:

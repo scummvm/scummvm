@@ -268,7 +268,7 @@ static const char* bad_versions[3] = {
 
 SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	: Engine(syst), midi(syst) {
-
+	int j =0;
 	_vcPtr = 0;
 	_vc_get_out_of_code = 0;
 	_gameOffsetsPtr = 0;
@@ -321,11 +321,11 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 		
 		if (Common::md5_file(buf, md5sum)) {
 			char md5str[32+1];
-			for (int j = 0; j < 16; j++) {
+			for (j = 0; j < 16; j++) {
 				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
 			}
 
-			for (int j = 0; j < 3; j++) {
+			for (j = 0; j < 3; j++) {
 				if (!strcmp(md5str, bad_versions[j]))
 					error("Cracked versions aren't supported");
 			}
@@ -1697,6 +1697,7 @@ uint SimonEngine::get_fcs_ptr_3_index(FillOrCopyStruct *fcs) {
 			return i;
 
 	error("get_fcs_ptr_3_index: not found");
+	return 0;
 }
 
 void SimonEngine::lock() {
@@ -2280,6 +2281,7 @@ TextLocation *SimonEngine::getTextLocation(uint a) {
 	default:
 		error("text, invalid value %d", a);
 	}
+	return NULL;
 }
 
 void SimonEngine::o_print_str() {
@@ -3040,6 +3042,7 @@ uint SimonEngine::itemPtrToID(Item *id) {
 		if (_itemArrayPtr[i] == id)
 			return i;
 	error("itemPtrToID: not found");
+	return 0;
 }
 
 void SimonEngine::o_pathfind(int x, int y, uint var_1, uint var_2) {

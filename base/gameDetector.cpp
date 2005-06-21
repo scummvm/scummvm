@@ -48,7 +48,7 @@
 #endif
 
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
-#ifdef __PALM_OS__
+#if defined(__PALM_OS__) || defined(__SYMBIAN32__)
 static const char USAGE_STRING[] = "NoUsageString"; // save more data segment space
 #else
 static const char USAGE_STRING[] = 
@@ -194,7 +194,12 @@ GameDetector::GameDetector() {
 #endif
 
 	_dumpScripts = false;
+
+#if defined(__SYMBIAN32__)
+	_force1xOverlay = true;
+#else
 	_force1xOverlay = false;
+#endif
 
 	memset(&_game, 0, sizeof(_game));
 	_plugin = 0;
@@ -588,15 +593,15 @@ bool GameDetector::detectGame() {
 		realGame = ConfMan.get("gameid");
 	else
 		realGame = _targetName;
-	printf("Looking for %s\n", realGame.c_str());
 
+	debug(1, "Looking for %s\n", realGame.c_str());
 	_game = findGame(realGame, &_plugin);
 
 	if (_game.name) {
-		printf("Trying to start game '%s'\n", _game.description);
+		debug(1, "Trying to start game '%s'\n", _game.description);
 		return true;
 	} else {
-		printf("Failed game detection\n");
+		debug(1, "Failed game detection\n");
 		return false;
 	}
 }

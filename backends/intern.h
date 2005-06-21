@@ -37,12 +37,15 @@ extern OSystem *OSystem_MAC_create(int gfx_mode, bool full_screen);
 extern OSystem *OSystem_GP32_create();
 extern OSystem *OSystem_PALMOS_create();
 extern OSystem *OSystem_PS2_create();
+extern OSystem *OSystem_SymbianOS_create();
 
 
 #ifdef _WIN32_WCE
 #define SAMPLES_PER_SEC 22050
 #define SAMPLES_PER_SEC_OLD 11025
 #define SAMPLES_PER_SEC_NEW 22050
+#elif defined(__SYMBIAN32__)
+#define SAMPLES_PER_SEC 16000
 #elif defined(__PLAYSTATION2__)
 #define SAMPLES_PER_SEC 48000 // the SPU can't handle anything else
 #else

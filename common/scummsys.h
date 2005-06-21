@@ -38,6 +38,11 @@
 #define PI 3.14159265358979323846
 #endif
 
+// make sure we really are compiling for WIN32
+#ifndef WIN32
+#undef _MSC_VER
+#endif
+
 #if defined(_MSC_VER)
 
 	#define scumm_stricmp stricmp
@@ -289,6 +294,29 @@
 	typedef	unsigned char byte;
 	typedef	unsigned int uint;
 	#endif
+#elif defined __SYMBIAN32__ // AnotherGuest / Sprawl / SumthinWicked
+
+	#define scumm_stricmp strcasecmp
+	#define scumm_strnicmp strncasecmp
+
+	#define CDECL	
+	#define SCUMM_NEED_ALIGNMENT
+	#define SCUMM_LITTLE_ENDIAN	
+	#define CHECK_HEAP
+	
+	#define FORCEINLINE inline
+	#define _HEAPOK 0
+	typedef unsigned char byte;
+	typedef unsigned char uint8;
+	typedef unsigned short int  uint16;
+	typedef unsigned long int uint32;
+	typedef unsigned int uint;
+	typedef signed char int8;
+	typedef signed short int int16;
+	typedef signed long int int32;
+	
+	#define START_PACK_STRUCTS pack (push,1)
+	#define END_PACK_STRUCTS   pack(pop)
 #else
 	#error No system type defined
 #endif

@@ -542,6 +542,8 @@ int ConsoleDialog::vprintf(const char *format, va_list argptr) {
 
 #if defined(WIN32)
 	int count = _vsnprintf(buf, sizeof(buf), format, argptr);
+#elif defined(__SYMBIAN32__)
+	int count = vsprintf(buf, format, argptr);
 #else
 	int count = vsnprintf(buf, sizeof(buf), format, argptr);
 #endif

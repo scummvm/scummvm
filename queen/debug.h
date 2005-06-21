@@ -32,6 +32,7 @@ class Debugger : public Common::Debugger<Debugger> {
 public:
 
 	Debugger(QueenEngine *vm);
+	virtual ~Debugger(); // we need this here for __SYMBIAN32__ archaic gcc/UIQ
 
 	int flags() const { return _flags; }
 	

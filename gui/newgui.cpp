@@ -48,6 +48,11 @@ enum {
 	kKeyRepeatSustainDelay = 100
 };
 
+#if defined(__SYMBIAN32__) // Testing: could be removed? Just making sure that an CVS update doesn't break my code :P
+#define USE_AUTO_SCALING	false
+#else
+#define USE_AUTO_SCALING	false
+#endif
 
 // Constructor
 NewGui::NewGui() : _needRedraw(false),

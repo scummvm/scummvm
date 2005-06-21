@@ -121,7 +121,12 @@ public:
 		insert(begin(), list.begin(), list.end());
 	}
 
-	~List<T>() {
+#ifndef __SYMBIAN32__
+	~List<T>()
+#else
+	~List()
+#endif
+	{
 		clear();
 		delete _anchor;
 	}

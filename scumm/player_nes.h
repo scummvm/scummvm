@@ -35,6 +35,10 @@ namespace Scumm {
 
 class ScummEngine;
 
+static const int MAXVOLUME = 0x7F;
+static const int NUMSLOTS = 3;
+static const int NUMCHANS = 4;
+
 /**
  * Scumm NES sound/music driver.
  */
@@ -76,10 +80,6 @@ private:
 	int _samples_per_frame;
 	int _current_sample;
 	int _maxvol;
-
-	static const int MAXVOLUME = 0x7F;
-	static const int NUMSLOTS = 3;
-	static const int NUMCHANS = 4;
 
 	struct slot {
 		int framesleft;

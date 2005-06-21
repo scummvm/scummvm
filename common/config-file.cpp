@@ -250,7 +250,7 @@ void ConfigFile::removeKey(const String &key, const String &section) {
 
 	Section *s = getSection(section);
 	if (s)
-		return s->removeKey(key);
+		 s->removeKey(key);
 }
 
 bool ConfigFile::getKey(const String &key, const String &section, String &value) const {
