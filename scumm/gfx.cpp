@@ -622,7 +622,8 @@ void ScummEngine::ditherCGA(byte *dst, int dstPitch, int x, int y, int width, in
 
 		for (int x1 = 0; x1 < width; x1++) {
 			idx2 = (x + x1) % 2;
-			*ptr++ = cgaDither[idx1][idx2][*ptr & 0xF];
+			*ptr = cgaDither[idx1][idx2][*ptr & 0xF];
+			ptr++;
 		}
 	}
 }
