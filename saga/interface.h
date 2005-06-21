@@ -227,7 +227,7 @@ public:
 	void drawStatusBar();
 	void setVerbState(int verb, int state);
 
-	bool processAscii(uint16 ascii);
+	bool processAscii(uint16 ascii, bool synthetic = false);
 	void processKeyUp(uint16 ascii);
 
 	bool _textInput;

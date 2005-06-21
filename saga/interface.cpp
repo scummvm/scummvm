@@ -279,15 +279,15 @@ void Interface::setMode(int mode) {
 
 	_panelMode = mode;
 	
-	switch(_panelMode) {
-		case(kPanelMain):
+	switch (_panelMode) {
+		case kPanelMain:
 			_mainPanel.currentButton = NULL;
 			break;
-		case(kPanelConverse):
+		case kPanelConverse:
 			_conversePanel.currentButton = NULL;
 			converseDisplayText();
 			break;
-		case(kPanelOption):
+		case kPanelOption:
 			_optionPanel.currentButton = NULL;
 			_vm->fillSaveList();
 			calcOptionSaveSlider();
@@ -295,13 +295,13 @@ void Interface::setMode(int mode) {
 				_optionSaveFileTitleNumber = _vm->getDisplayInfo().optionSaveFileVisible - 1;
 			}
 			break;
-		case(kPanelLoad):
+		case kPanelLoad:
 			_loadPanel.currentButton = NULL;
 			break;
-		case(kPanelQuit):
+		case kPanelQuit:
 			_quitPanel.currentButton = NULL;
 			break;
-		case(kPanelSave):
+		case kPanelSave:
 			_savePanel.currentButton = NULL;
 			_textInputMaxWidth = _saveEdit->width - 10;
 			_textInput = true;
@@ -314,9 +314,11 @@ void Interface::setMode(int mode) {
 	draw();
 }
 
-bool Interface::processAscii(uint16 ascii) {
+bool Interface::processAscii(uint16 ascii, bool synthetic) {
 	int i;
 	PanelButton *panelButton;
+	if (!synthetic)
+		_textInputRepeatPhase = 0;
 	if (_statusTextInput) {
 		processStatusTextInput(ascii);
 		return true;
@@ -450,6 +452,7 @@ void Interface::textInputRepeatCallback(void *refCon) {
 void Interface::textInputStartRepeat(uint16 ascii) {
 	if (!_textInputRepeatPhase) {
 		_textInputRepeatPhase = 1;
+		Common::g_timer->removeTimerProc(&textInputRepeatCallback);
 		Common::g_timer->installTimerProc(&textInputRepeatCallback, KEYBOARD_REPEAT_DELAY1, this);
 	}
 
@@ -462,7 +465,7 @@ void Interface::textInputRepeat() {
 		Common::g_timer->removeTimerProc(&textInputRepeatCallback);
 		Common::g_timer->installTimerProc(&textInputRepeatCallback, KEYBOARD_REPEAT_DELAY2, this);
 	} else if (_textInputRepeatPhase == 2) {
-		processAscii(_textInputRepeatChar);
+		processAscii(_textInputRepeatChar, true);
 	}
 }
 
