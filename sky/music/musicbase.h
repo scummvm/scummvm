@@ -39,6 +39,7 @@ typedef struct {
 
 class ChannelBase {
 public:
+	virtual ~ChannelBase() {};
 	virtual void stopNote(void) = 0;
 	virtual uint8 process(uint16 aktTime) = 0;
 	virtual void updateVolume(uint16 pVolume) = 0;

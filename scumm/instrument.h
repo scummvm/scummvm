@@ -34,6 +34,7 @@ class Instrument;
 
 class InstrumentInternal {
 public:
+	virtual ~InstrumentInternal() {};
 	virtual void saveOrLoad (Serializer *s) = 0;
 	virtual void send (MidiChannel *mc) = 0;
 	virtual void copy_to (Instrument *dest) = 0;
