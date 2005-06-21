@@ -19,7 +19,7 @@
  */
 
 #include "stdafx.h"
-#if defined(_MSC_VER)
+#if defined(WIN32)
 #include <malloc.h>
 #endif
 #include "base/engine.h"
