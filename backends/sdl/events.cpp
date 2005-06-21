@@ -26,7 +26,11 @@
 // FIXME move joystick defines out and replace with confile file options
 // we should really allow users to map any key to a joystick button
 #define JOY_DEADZONE 3200
-#define JOY_ANALOG
+
+#ifndef __SYMBIAN32__ // Symbian wants dialog joystick i.e cursor for movement/selection
+	#define JOY_ANALOG
+#endif
+
 // #define JOY_INVERT_Y
 #define JOY_XAXIS 0
 #define JOY_YAXIS 1
@@ -451,8 +455,10 @@ bool OSystem_SDL::pollEvent(Event &event) {
 		case SDL_JOYBUTTONDOWN:
 			if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 				event.type = EVENT_LBUTTONDOWN;
+				fillMouseEvent(event, _km.x, _km.y);
 			} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
 				event.type = EVENT_RBUTTONDOWN;
+				fillMouseEvent(event, _km.x, _km.y);
 			} else {
 				event.type = EVENT_KEYDOWN;
 				switch (ev.jbutton.button) {
@@ -479,8 +485,10 @@ bool OSystem_SDL::pollEvent(Event &event) {
 		case SDL_JOYBUTTONUP:
 			if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 				event.type = EVENT_LBUTTONUP;
+				fillMouseEvent(event, _km.x, _km.y);
 			} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
 				event.type = EVENT_RBUTTONUP;
+				fillMouseEvent(event, _km.x, _km.y);
 			} else {
 				event.type = EVENT_KEYUP;
 				switch (ev.jbutton.button) {

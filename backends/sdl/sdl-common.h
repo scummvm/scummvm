@@ -31,7 +31,7 @@
 
 #include <SDL.h>
 
-#ifndef _WIN32_WCE
+#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 // Uncomment this to enable the 'on screen display' code.
 #define USE_OSD	1
 #endif

@@ -63,13 +63,13 @@ void OSystem_SDL::initBackend() {
 	SDL_EnableUNICODE(1); 
 
 	_cksumValid = false;
-#ifndef _WIN32_WCE
+#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 	_mode = GFX_DOUBLESIZE;
 	_scaleFactor = 2;
 	_scalerProc = Normal2x;
 	_fullscreen = ConfMan.getBool("fullscreen");
 	_adjustAspectRatio = ConfMan.getBool("aspect_ratio");
-#else
+#else // for small screen platforms
 	_mode = GFX_NORMAL;
 	_scaleFactor = 1;
 	_scalerProc = Normal1x;
@@ -79,10 +79,8 @@ void OSystem_SDL::initBackend() {
 	_scalerType = 0;
 	_modeFlags = 0;
 
-
-#ifndef MACOSX		// Don't set icon on OS X, as we use a nicer external icon there
-	// Setup the icon
-	setupIcon();
+#if !defined(MACOSX) && !defined(__SYMBIAN32__)		// Don't set icon on OS X, as we use a nicer external icon there
+	setupIcon();									// Don't for Symbian: it uses the EScummVM.aif file for the icon
 #endif
 
 	// enable joystick

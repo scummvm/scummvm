@@ -48,9 +48,15 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 // Table of relative scalers magnitudes
 // [definedScale - 1][_scaleFactor - 1]
 static ScalerProc *scalersMagn[3][3] = {
+#ifndef __SYMBIAN32__
 	{ Normal1x, AdvMame2x, AdvMame3x },
 	{ Normal1x, Normal1x, Normal1o5x },
 	{ Normal1x, Normal1x, Normal1x }
+#else // remove dependencies on other scalers
+	{ Normal1x, Normal1x, Normal1x },
+	{ Normal1x, Normal1x, Normal1x },
+	{ Normal1x, Normal1x, Normal1x }
+#endif
 };
 
 static int cursorStretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY);
@@ -134,6 +140,7 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 		newScaleFactor = 1;
 		newScalerProc = Normal1x;
 		break;
+#ifndef __SYMBIAN32__ // remove dependencies on other scalers
 	case GFX_DOUBLESIZE:
 		newScaleFactor = 2;
 		newScalerProc = Normal2x;
@@ -181,6 +188,7 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 		newScaleFactor = 2;
 		newScalerProc = DotMatrix;
 		break;
+#endif // __SYMBIAN32__
 
 	default:
 		warning("unknown gfx mode %d", mode);
@@ -189,6 +197,7 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 
 	_transactionDetails.normal1xScaler = (mode == GFX_NORMAL);
 
+#ifndef __SYMBIAN32__ // this code introduces a dependency on Normal2x()
 	// Do not let switch to lesser than overlay size resolutions
 	if (_screenWidth * newScaleFactor < _overlayWidth) {
 		if (_scaleFactor == 1) { // Force 2x mode
@@ -199,6 +208,7 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 		} else
 			return false;
 	}
+#endif
 
 	_mode = mode;
 	_scalerProc = newScalerProc;
@@ -503,7 +513,10 @@ void OSystem_SDL::internUpdateScreen() {
 	ScalerProc *scalerProc;
 	int scale1, scale2;
 
+#ifdef DEBUG // definitions not available for non-DEBUG here. (needed this to compile in SYMBIAN32 & linux?)
 	assert(_hwscreen != NULL);
+	assert(_hwscreen->map->sw_data != NULL);
+#endif
 
 	// If the shake position changed, fill the dirty area with blackness
 	if (_currentShakePos != _newShakePos) {
@@ -635,6 +648,7 @@ void OSystem_SDL::internUpdateScreen() {
 						dst_y -= dst_y % 3;
 					}
 
+					assert(scalerProc != NULL);
 					scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
 							   (byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h);
 				}
@@ -644,8 +658,10 @@ void OSystem_SDL::internUpdateScreen() {
 				r->w = r->w * scale1 / scale2;
 				r->h = dst_h * scale1 / scale2;
 
+#ifndef __SYMBIAN32__ // don't want to introduce dep on aspect.cpp
 				if (_adjustAspectRatio && orig_dst_y < height)
 					r->h = stretch200To240((uint8 *) _hwscreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1 / scale2);
+#endif
 			}
 			SDL_UnlockSurface(srcSurf);
 			SDL_UnlockSurface(_hwscreen);
@@ -903,6 +919,7 @@ void OSystem_SDL::addDirtyRect(int x, int y, int w, int h, bool mouseRect) {
 		h = height - y;
 	}
 
+#ifndef __SYMBIAN32__  // don't want to introduce dep on aspect.cpp
 	if (_adjustAspectRatio) {
 		makeRectStretchable(x, y, w, h);
 		if (_scaleFactor == 3 && _overlayScale == 2 && _overlayVisible) {
@@ -910,6 +927,7 @@ void OSystem_SDL::addDirtyRect(int x, int y, int w, int h, bool mouseRect) {
 				y++;
 		}
 	}
+#endif
 	
 	r->x = x;
 	r->y = y;
