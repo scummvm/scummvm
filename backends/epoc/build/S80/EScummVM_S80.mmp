@@ -1,0 +1,112 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2003-2005 Andreas 'Sprawl' Karlsson - Original EPOC port, ESDL
+ * Copyright (C) 2003-2005 Lars 'AnotherGuest' Persson - Original EPOC port, Audio System
+ * Copyright (C) 2005 Jurgen 'SumthinWicked' Braam - EPOC/CVS maintainer
+ * Copyright (C) 2005 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Header: 
+ */
+
+//
+// EPOC S80 MMP makefile project for ScummVM
+//
+
+// *** Definitions
+
+#if defined(WINS)
+	TARGET          EScummVM.dll
+#else
+	TARGET          EScummVM.exe
+#endif
+TARGETPATH      system\apps\EScummVMs80
+TARGETTYPE      EXEDLL
+				// /QIfist disables use of __ftol2 to avoid linker probs with MS libc: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vccore/html/vcrefQIfistSuppress_ftol.asp
+OPTION			MSVC  /QIfist /Ob1 /Oy /GF 
+//OPTION			GCC -O3 -funroll-loops -finline-functions -ffast-math -frerun-loop-opt -fconserve-space -fexpensive-optimizations -Wno-multichar -Wno-reorder
+sourcepath ..\
+EPOCSTACKSIZE	0x00008000
+
+EPOCHEAPSIZE	1024	5242880
+
+MACRO			S80
+MACRO			NONSTANDARD_PORT
+
+// these need too high a resolution
+MACRO			DISABLE_SWORD1
+MACRO			DISABLE_SWORD2
+// these are not ready to be released
+MACRO			DISABLE_SAGA
+MACRO			DISABLE_KYRA
+// these work, so don't disable them :)
+//MACRO			DISABLE_SIMON
+//MACRO			DISABLE_SKY
+//MACRO			DISABLE_QUEEN
+//MACRO			DISABLE_GOB
+
+// *** Static Libraries
+
+STATICLIBRARY scummvm_scumm.lib
+STATICLIBRARY scummvm_simon.lib
+STATICLIBRARY scummvm_sky.lib
+STATICLIBRARY scummvm_queen.lib
+STATICLIBRARY scummvm_gob.lib
+STATICLIBRARY scummvm_base.lib
+
+STATICLIBRARY libmad.lib
+STATICLIBRARY zlib.lib
+STATICLIBRARY esdl.lib
+#if !defined(WINS)
+STATICLIBRARY egcc.lib // for __fixunsdfsi
+#endif
+// *** Include paths
+
+USERINCLUDE	    ..\..\..\.. ..\..\..\..\common ..\..\..\..\gui
+USERINCLUDE		..\..\..\..\backends\fs ..\..\..\..\backends\epoc ..\..\..\..\backends\sdl ..\..\..\..\sound
+
+SYSTEMINCLUDE 	\epoc32\include\ESDL
+SYSTEMINCLUDE 	\epoc32\include\ZLIB // before \epoc32\include because symbian already has older version
+SYSTEMINCLUDE   \epoc32\include\libc 
+SYSTEMINCLUDE   \epoc32\include
+SYSTEMINCLUDE   ..\..\..\..\backends\epoc // for portdefs.h
+
+// *** SOURCE files
+
+SOURCEPATH ..\..\..\..
+
+//START_AUTO_OBJECTS_BASE_// Updated @ Tue May 31 18:35:38 2005
+SOURCE base\engine.cpp
+SOURCE base\gameDetector.cpp
+SOURCE base\main.cpp
+SOURCE base\plugins.cpp
+//STOP_AUTO_OBJECTS_BASE_//
+
+// backend EPOC/SDL/ESDL specific includes
+SOURCE backends\sdl\events.cpp
+SOURCE backends\sdl\graphics.cpp
+SOURCE backends\sdl\sdl.cpp
+SOURCE backends\fs\symbian\symbian-fs.cpp
+SOURCE backends\epoc\SymbianOS.cpp 
+SOURCE backends\epoc\ScummApp.cpp
+
+// *** Dynamic Libraries
+
+LIBRARY cone.lib  eikcore.lib 
+LIBRARY euser.lib apparc.lib fbscli.lib  
+LIBRARY estlib.lib apgrfx.lib
+LIBRARY gdi.lib hal.lib bitgdi.lib
+LIBRARY mediaclientaudiostream.lib efsrv.lib ws32.lib
+

@@ -1,0 +1,69 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2003-2005 Andreas 'Sprawl' Karlsson - Original EPOC port, ESDL
+ * Copyright (C) 2003-2005 Lars 'AnotherGuest' Persson - Original EPOC port, Audio System
+ * Copyright (C) 2005 Jurgen 'SumthinWicked' Braam - EPOC/CVS maintainer
+ * Copyright (C) 2005 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Header: 
+ */
+
+//
+// EPOC MMP makefile project for ScummVM
+//
+
+// *** Definitions
+
+TARGET          scummvm_gob.lib
+TARGETTYPE      lib
+OPTION			MSVC /QIfist /Ob1 /Oy /GF // /QIfist disables use of __ftol2 to avoid linker probs with MS libc: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vccore/html/vcrefQIfistSuppress_ftol.asp
+OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way too sensitive for that :( just turn off some common warnings
+
+MACRO			NONSTANDARD_PORT
+
+// *** SOURCE files
+
+SOURCEPATH ..\..\..
+
+//START_AUTO_OBJECTS_GOB_// Updated @ Mon Jun  6 23:07:22 2005
+SOURCE gob\anim.cpp
+SOURCE gob\cdrom.cpp
+SOURCE gob\dataio.cpp
+SOURCE gob\draw.cpp
+SOURCE gob\driver_vga.cpp
+SOURCE gob\game.cpp
+SOURCE gob\global.cpp
+SOURCE gob\goblin.cpp
+SOURCE gob\init.cpp
+SOURCE gob\inter.cpp
+SOURCE gob\map.cpp
+SOURCE gob\mult.cpp
+SOURCE gob\pack.cpp
+SOURCE gob\palanim.cpp
+SOURCE gob\parse.cpp
+SOURCE gob\scenery.cpp
+SOURCE gob\util.cpp
+SOURCE gob\video.cpp
+SOURCE gob\sound.cpp
+SOURCE gob\timer.cpp
+SOURCE gob\gob.cpp
+//STOP_AUTO_OBJECTS_GOB_//
+
+// *** Include paths
+
+USERINCLUDE     ..\..\..\gob
+USERINCLUDE     ..\..\.. ..\..\..\common ..\..\..\gui ..\..\..\sound ..\..\..\backends\epoc
+SYSTEMINCLUDE   \epoc32\include \epoc32\include\libc ..\..\..\backends\epoc

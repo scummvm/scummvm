@@ -1,0 +1,136 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2003-2005 Andreas 'Sprawl' Karlsson - Original EPOC port, ESDL
+ * Copyright (C) 2003-2005 Lars 'AnotherGuest' Persson - Original EPOC port, Audio System
+ * Copyright (C) 2005 Jurgen 'SumthinWicked' Braam - EPOC/CVS maintainer
+ * Copyright (C) 2005 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Header: 
+ */
+
+
+//
+// EPOC MMP makefile project for ScummVM
+//
+
+// *** Definitions
+
+TARGET          scummvm_base.lib
+TARGETTYPE      lib
+OPTION			MSVC /QIfist /Ob1 /Oy /GF // /QIfist disables use of __ftol2 to avoid linker probs with MS libc: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vccore/html/vcrefQIfistSuppress_ftol.asp
+OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way too sensitive for that :( just turn off some common warnings
+
+MACRO			NONSTANDARD_PORT
+MACRO			USE_MAD
+MACRO			USE_ZLIB
+
+// these need too high a resolution
+MACRO			DISABLE_SWORD1
+MACRO			DISABLE_SWORD2
+// these are not ready to be released
+MACRO			DISABLE_SAGA
+MACRO			DISABLE_KYRA
+// these work, so don't disable them :)
+//MACRO			DISABLE_SIMON
+//MACRO			DISABLE_SKY
+//MACRO			DISABLE_QUEEN
+//MACRO			DISABLE_GOB
+
+// *** Include paths
+
+USERINCLUDE	    ..\..\.. ..\..\..\common ..\..\..\gui ..\..\..\sound
+USERINCLUDE		..\..\..\backends\fs ..\..\..\backends\epoc ..\..\..\backends\sdl
+
+SYSTEMINCLUDE 	\epoc32\include\ESDL
+SYSTEMINCLUDE 	\epoc32\include\ZLIB // before \epoc32\include because symbian already has older version
+SYSTEMINCLUDE   \epoc32\include\libc 
+SYSTEMINCLUDE   \epoc32\include
+SYSTEMINCLUDE   ..\..\..\backends\epoc // for portdefs.h
+
+// *** SOURCE files
+
+SOURCEPATH ..\..\..
+
+//START_AUTO_OBJECTS_COMMON_// Updated @ Mon Jun  6 23:07:22 2005
+SOURCE common\config-file.cpp
+SOURCE common\config-manager.cpp
+SOURCE common\file.cpp
+SOURCE common\md5.cpp
+SOURCE common\mutex.cpp
+SOURCE common\str.cpp
+SOURCE common\stream.cpp
+SOURCE common\timer.cpp
+SOURCE common\util.cpp
+SOURCE common\savefile.cpp
+SOURCE common\system.cpp
+//STOP_AUTO_OBJECTS_COMMON_//
+
+//START_AUTO_OBJECTS_GRAPHICS_// Updated @ Mon Jun  6 23:07:22 2005
+SOURCE graphics\animation.cpp
+SOURCE graphics\consolefont.cpp
+SOURCE graphics\font.cpp
+SOURCE graphics\fontman.cpp
+SOURCE graphics\newfont.cpp
+SOURCE graphics\newfont_big.cpp
+SOURCE graphics\primitives.cpp
+SOURCE graphics\scummfont.cpp
+SOURCE graphics\surface.cpp
+//STOP_AUTO_OBJECTS_GRAPHICS_//
+
+//START_AUTO_OBJECTS_GUI_// Updated @ Mon Jun  6 23:07:22 2005
+SOURCE gui\about.cpp
+SOURCE gui\browser.cpp
+SOURCE gui\chooser.cpp
+SOURCE gui\console.cpp
+SOURCE gui\dialog.cpp
+SOURCE gui\editable.cpp
+SOURCE gui\EditTextWidget.cpp
+SOURCE gui\launcher.cpp
+SOURCE gui\ListWidget.cpp
+SOURCE gui\message.cpp
+SOURCE gui\newgui.cpp
+SOURCE gui\options.cpp
+SOURCE gui\PopUpWidget.cpp
+SOURCE gui\ScrollBarWidget.cpp
+SOURCE gui\TabWidget.cpp
+SOURCE gui\widget.cpp
+//STOP_AUTO_OBJECTS_GUI_//
+
+//START_AUTO_OBJECTS_SOUND_// Updated @ Mon Jun  6 23:07:22 2005
+SOURCE sound\adpcm.cpp
+SOURCE sound\audiocd.cpp
+SOURCE sound\audiostream.cpp
+SOURCE sound\flac.cpp
+SOURCE sound\fmopl.cpp
+SOURCE sound\mididrv.cpp
+SOURCE sound\midiparser.cpp
+SOURCE sound\midiparser_smf.cpp
+SOURCE sound\midiparser_xmidi.cpp
+SOURCE sound\mixer.cpp
+SOURCE sound\mp3.cpp
+SOURCE sound\mpu401.cpp
+SOURCE sound\rate.cpp
+SOURCE sound\voc.cpp
+SOURCE sound\vorbis.cpp
+SOURCE sound\wave.cpp
+SOURCE sound\softsynth\adlib.cpp
+SOURCE sound\softsynth\ym2612.cpp
+//STOP_AUTO_OBJECTS_SOUND_//
+
+// backend specific includes
+SOURCE backends\midi\null.cpp
+SOURCE backends\fs\fs.cpp
+// backend specific includes
