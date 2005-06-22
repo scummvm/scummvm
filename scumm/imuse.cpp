@@ -1263,7 +1263,8 @@ void IMuseInternal::initMT32(MidiDriver *midi) {
 
 void IMuseInternal::initGM(MidiDriver *midi) {
 	byte buffer[11];
-	int i=0;
+	int i;
+
 	// General MIDI System On message
 	// Resets all GM devices to default settings
 	memcpy(&buffer[0], "\xF0\x7E\x7F\x09\x01\xF7", 6);
@@ -1290,7 +1291,6 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 		g_system->delayMillis(200);
 		
 		if (_sc55) {
-
 			// This mode is for GS devices that support an MT-32-compatible
 			// Map, such as the Roland Sound Canvas line of modules. It
 			// will allow them to work with True MT-32 mode, but will
@@ -1298,7 +1298,7 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 			// instruments).
 
 			// Set Channels 1-16 to SC-55 Map, then CM-64/32L Variation
-			for (int i = 0; i < 16; ++i) {
+			for (i = 0; i < 16; ++i) {
 				midi->send((  127 << 16) | (0  << 8) | (0xB0 | i));
 				midi->send((  1   << 16) | (32 << 8) | (0xB0 | i));
 				midi->send((  0   << 16) | (0  << 8) | (0xC0 | i));
@@ -1400,9 +1400,7 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 		memcpy(&buffer[5], "\x40\x01\x34\x6A\x21\xF7", 6);
 		midi->sysEx(buffer, 11);
 		debug(2, "GS SysEx: Reverb Time is 106");
-
 	}
-
 }
 
 void IMuseInternal::init_queue() {
