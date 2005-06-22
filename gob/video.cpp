@@ -84,7 +84,7 @@ int32 vid_getRectSize(int16 width, int16 height, int16 flag, int16 mode) {
 }
 
 SurfaceDesc *vid_initSurfDesc(int16 vidMode, int16 width, int16 height, int16 flags) {
-	char flagsAnd2;
+	int8 flagsAnd2;
 	byte *vidMem;
 	int32 sprSize;
 	int16 someFlags = 1;

@@ -60,9 +60,9 @@ int16 draw_invalidatedLefts[30];
 int16 draw_invalidatedRights[30];
 int16 draw_invalidatedBottoms[30];
 
-char draw_noInvalidated = 0;
-char draw_applyPal = 0;
-char draw_paletteCleared = 0;
+int8 draw_noInvalidated = 0;
+int8 draw_applyPal = 0;
+int8 draw_paletteCleared = 0;
 
 SurfaceDesc *draw_backSurface = 0;
 SurfaceDesc *draw_frontSurface = 0;
@@ -85,9 +85,9 @@ int16 draw_transparentCursor = 0;
 SurfaceDesc *draw_cursorSprites = 0;
 SurfaceDesc *draw_cursorBack = 0;
 int16 draw_cursorAnim = 0;
-char draw_cursorAnimLow[40];
-char draw_cursorAnimHigh[40];
-char draw_cursorAnimDelays[40];
+int8 draw_cursorAnimLow[40];
+int8 draw_cursorAnimHigh[40];
+int8 draw_cursorAnimDelays[40];
 static uint32 draw_cursorTimeKey = 0;
 
 int16 draw_palLoadData1[] = { 0, 17, 34, 51 };

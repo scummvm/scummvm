@@ -28,19 +28,19 @@ namespace Gob {
 
 #pragma START_PACK_STRUCTS
 typedef struct Mult_AnimData {
-	char animation;
-	char layer;
-	char frame;
-	char animType;
-	char order;
-	char isPaused;
-	char isStatic;
-	char maxTick;
-	char unknown;
-	char newLayer;
-	char newAnimation;
+	int8 animation;
+	int8 layer;
+	int8 frame;
+	int8 animType;
+	int8 order;
+	int8 isPaused;
+	int8 isStatic;
+	int8 maxTick;
+	int8 unknown;
+	int8 newLayer;
+	int8 newAnimation;
 	byte intersected;
-	char newCycle;
+	int8 newCycle;
 } GCC_PACK Mult_AnimData;
 
 typedef struct Mult_Object {
@@ -82,14 +82,14 @@ typedef struct Mult_PalKey {
 	int16 rates[4];
 	int16 unknown0;
 	int16 unknown1;
-	char subst[16][4];
+	int8 subst[16][4];
 } GCC_PACK Mult_PalKey;
 
 typedef struct Mult_PalFadeKey {
 	int16 frame;
 	int16 fade;
 	int16 palIndex;
-	char flag;
+	int8 flag;
 } GCC_PACK Mult_PalFadeKey;
 
 typedef struct Mult_SndKey {

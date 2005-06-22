@@ -33,13 +33,13 @@ typedef struct Map_Point {
 
 #define szMap_ItemPos 3
 typedef struct Map_ItemPos {
-	char x;
-	char y;
-	char orient;		// ??
+	int8 x;
+	int8 y;
+	int8 orient;		// ??
 } GCC_PACK Map_ItemPos;
 #pragma END_PACK_STRUCTS
 
-extern char map_passMap[28][26];	// [y][x]
+extern int8 map_passMap[28][26];	// [y][x]
 extern int16 map_itemsMap[28][26];	// [y][x]
 extern Map_Point map_wayPoints[40];
 extern int16 map_nearestWayPoint;
@@ -49,7 +49,7 @@ extern int16 map_curGoblinX;
 extern int16 map_curGoblinY;
 extern int16 map_destX;
 extern int16 map_destY;
-extern char map_loadFromAvo;
+extern int8 map_loadFromAvo;
 
 extern Map_ItemPos map_itemPoses[40];
 extern char map_sourceFile[15];
@@ -64,7 +64,7 @@ int16 map_checkLongPath(int16 x0, int16 y0, int16 x1, int16 y1, int16 i0, int16 
 int16 map_optimizePoints(int16 xPos, int16 yPos);
 void map_loadItemToObject(void);
 void map_loadMapObjects(char *avjFile);
-void map_loadDataFromAvo(char *dest, int16 size);
+void map_loadDataFromAvo(int8 *dest, int16 size);
 void map_loadMapsInitGobs(void);
 
 }				// End of namespace Gob

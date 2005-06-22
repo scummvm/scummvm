@@ -32,10 +32,10 @@ namespace Gob {
 #define RENDERFLAG_USEDELTAS 	0x10
 
 typedef struct Draw_FontToSprite {
-	char sprite;
-	char base;
-	char width;
-	char height;
+	int8 sprite;
+	int8 base;
+	int8 width;
+	int8 height;
 } Draw_FontToSprite;
 
 extern int16 draw_fontIndex;
@@ -65,9 +65,9 @@ extern int16 draw_invalidatedLefts[30];
 extern int16 draw_invalidatedRights[30];
 extern int16 draw_invalidatedBottoms[30];
 
-extern char draw_noInvalidated;
-extern char draw_doFullFlip;
-extern char draw_paletteCleared;
+extern int8 draw_noInvalidated;
+extern int8 draw_doFullFlip;
+extern int8 draw_paletteCleared;
 
 extern int16 draw_cursorIndex;
 extern int16 draw_transparentCursor;
@@ -91,10 +91,10 @@ extern int16 draw_cursorYDeltaVar;
 extern SurfaceDesc *draw_cursorSprites;
 extern SurfaceDesc *draw_cursorBack;
 extern int16 draw_cursorAnim;
-extern char draw_cursorAnimLow[40];
-extern char draw_cursorAnimHigh[40];
-extern char draw_cursorAnimDelays[40];
-extern char draw_applyPal;
+extern int8 draw_cursorAnimLow[40];
+extern int8 draw_cursorAnimHigh[40];
+extern int8 draw_cursorAnimDelays[40];
+extern int8 draw_applyPal;
 
 void draw_invalidateRect(int16 left, int16 top, int16 right, int16 bottom);
 void draw_blitInvalidated(void);

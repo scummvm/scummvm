@@ -31,7 +31,7 @@
 
 namespace Gob {
 
-char map_passMap[28][26];	// [y][x]
+int8 map_passMap[28][26];	// [y][x]
 int16 map_itemsMap[28][26];	// [y][x]
 
 Map_Point map_wayPoints[40];
@@ -44,7 +44,7 @@ int16 map_destX;
 int16 map_destY;
 
 Map_ItemPos map_itemPoses[40];
-char map_loadFromAvo;
+int8 map_loadFromAvo;
 char map_sourceFile[15];
 static char *map_avoDataPtr;
 

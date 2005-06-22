@@ -33,12 +33,12 @@ typedef struct Scen_PieceDesc {
 } GCC_PACK Scen_PieceDesc;
 
 typedef struct Scen_StaticPlane {
-	char pictIndex;
-	char pieceIndex;
-	char drawOrder;
+	int8 pictIndex;
+	int8 pieceIndex;
+	int8 drawOrder;
 	int16 destX;
 	int16 destY;
-	char transp;
+	int8 transp;
 } GCC_PACK Scen_StaticPlane;
 
 typedef struct Scen_StaticLayer {
@@ -52,9 +52,9 @@ typedef struct Scen_StaticLayer {
 typedef struct Scen_AnimFramePiece {
 	byte pictIndex;
 	byte pieceIndex;
-	char destX;
-	char destY;
-	char notFinal;
+	int8 destX;
+	int8 destY;
+	int8 notFinal;
 } GCC_PACK Scen_AnimFramePiece;
 
 typedef struct Scen_AnimLayer {
@@ -63,7 +63,7 @@ typedef struct Scen_AnimLayer {
 	int16 posY;
 	int16 animDeltaX;
 	int16 animDeltaY;
-	char transp;
+	int8 transp;
 	int16 framesCount;
 	Scen_AnimFramePiece frames[1];
 } GCC_PACK Scen_AnimLayer;
@@ -73,7 +73,7 @@ typedef struct Scen_Static {
 	int16 layersCount;
 	Scen_StaticLayer **layers;
 	Scen_PieceDesc **pieces;
-	char *piecesFromExt;
+	int8 *piecesFromExt;
 	char *dataPtr;
 } Scen_Static;
 
@@ -81,7 +81,7 @@ struct Scen_Animation {
 	int16 layersCount;
 	Scen_AnimLayer **layers;
 	Scen_PieceDesc **pieces;
-	char *piecesFromExt;
+	int8 *piecesFromExt;
 	char *dataPtr;
 };
 

@@ -114,7 +114,7 @@ int16 scen_loadStatic(char search) {
 
 	ptr->layers = (Scen_StaticLayer **)malloc(sizeof(Scen_StaticLayer *) * ptr->layersCount);
 	ptr->pieces = (Scen_PieceDesc **)malloc(sizeof(Scen_PieceDesc *) * picsCount);
-	ptr->piecesFromExt = (char *)malloc(picsCount);
+	ptr->piecesFromExt = (int8 *)malloc(picsCount);
 
 	for (i = 0; i < ptr->layersCount; i++) {
 		offset = (int16)READ_LE_UINT16(&((int16 *)dataPtr)[i]);
@@ -434,7 +434,7 @@ int16 scen_loadAnim(char search) {
 	ptr->pieces =
 	    (Scen_PieceDesc **) malloc(sizeof(Scen_PieceDesc *) *
 	    picsCount);
-	ptr->piecesFromExt = (char *) malloc(picsCount);
+	ptr->piecesFromExt = (int8 *) malloc(picsCount);
 
 	for (i = 0; i < ptr->layersCount; i++) {
 		offset = (int16)READ_LE_UINT16(&((int16 *)dataPtr)[i]);

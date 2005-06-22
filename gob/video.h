@@ -39,8 +39,8 @@ namespace Gob {
 typedef struct SurfaceDesc_t {
 	int16 width;
 	int16 height;
-	char reserved1;
-	char flag;
+	int8 reserved1;
+	int8 flag;
 	int16 vidMode;
 	byte *vidPtr;
 	int16 reserved2;
@@ -48,12 +48,12 @@ typedef struct SurfaceDesc_t {
 
 typedef struct FontDesc_t {
 	char *dataPtr;
-	char itemWidth;
-	char itemHeight;
-	char startItem;
-	char endItem;
-	char itemSize;
-	char bitWidth;
+	int8 itemWidth;
+	int8 itemHeight;
+	int8 startItem;
+	int8 endItem;
+	int8 itemSize;
+	int8 bitWidth;
 	void *extraData;
 } FontDesc;
 
