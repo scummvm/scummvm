@@ -154,7 +154,7 @@ void Normal2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 							int width, int height) {
 	uint8 *r;
 
-	assert(((int)dstPtr & 3) == 0);
+	assert(((long)dstPtr & 3) == 0);
 	while (height--) {
 		r = dstPtr;
 		for (int i = 0; i < width; ++i, r += 4) {
@@ -179,7 +179,7 @@ void Normal3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 	const uint32 dstPitch2 = dstPitch * 2;
 	const uint32 dstPitch3 = dstPitch * 3;
 
-	assert(((int)dstPtr & 1) == 0);
+	assert(((long)dstPtr & 1) == 0);
 	while (height--) {
 		r = dstPtr;
 		for (int i = 0; i < width; ++i, r += 6) {
@@ -214,7 +214,7 @@ void Normal1o5xTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 	const uint32 dstPitch3 = dstPitch * 3;
 	const uint32 srcPitch2 = srcPitch * 2;
 
-	assert(((int)dstPtr & 1) == 0);
+	assert(((long)dstPtr & 1) == 0);
 	while (height > 0) {
 		r = dstPtr;
 		for (int i = 0; i < width; i += 2, r += 6) {
