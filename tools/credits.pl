@@ -333,12 +333,12 @@ begin_credits("Credits");
 	add_person("Eugene Sandulenko", "_sev", "Engine: SCUMM (FT INSANE), HE, SAGA");
 	add_person("Chris Apers", "chrilith ", "Port: PalmOS");
 	add_person("Nicolas Bacca", "arisme", "Port: PocketPC/WinCE");
+	add_person("Jurgen Braam", "SumthinWicked", "Port: EPOC/SymbianOS maintainer");
 	add_person("Marcus Comstedt", "", "Port: Dreamcast");
 	add_person("Hans-J&ouml;rg Frieden", "", "Port: AmigaOS 4");
+	add_person("Lars Persson", "AnotherGuest", "Port: EPOC/SymbianOS, ESDL");
 	add_person("Jerome Fisher", "KingGuppy", "MT-32 emulator");
 	add_person("Jochen Hoenicke", "hoenicke", "Speaker &amp; PCjr sound support, Adlib work");
-	add_person("Lars Persson", "AnotherGuest", "Port: EPOC/SymbianOS, ESDL");
-	add_person("Jurgen Braam", "SumthinWicked", "Port: EPOC/SymbianOS maintainer");
   end_section();
 
 
