@@ -811,7 +811,7 @@ protected:
 
 	uint32 getOBCDOffs(int object) const;
 	byte *getOBCDFromObject(int obj);
-	const byte *getOBIMFromObject(const ObjectData &od);
+	const byte *getOBIMFromObjectData(const ObjectData &od);
 	const byte *getObjectImage(const byte *ptr, int state);
 	virtual int getObjectIdFromOBIM(const byte *obim);
 

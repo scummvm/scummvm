@@ -235,7 +235,7 @@ void ScummEngine::getObjectXYPos(int object, int &x, int &y, int &dir) {
 		if (state < 0)
 			state = 0;
 
-		ptr = getOBIMFromObject(od);
+		ptr = getOBIMFromObjectData(od);
 		if (!ptr) {
 			// FIXME: We used to assert here, but it seems that in the nexus
 			// in The Dig, this can happen, at least with old savegames, and
@@ -455,7 +455,7 @@ void ScummEngine::drawObject(int obj, int arg) {
 	if (width == 0 || xpos > _screenEndStrip || xpos + width < _screenStartStrip)
 		return;
 
-	ptr = getOBIMFromObject(od);
+	ptr = getOBIMFromObjectData(od);
 
 	if (_features & GF_OLD_BUNDLE)
 		ptr += 0;
@@ -1046,7 +1046,7 @@ byte *ScummEngine::getOBCDFromObject(int obj) {
 	return 0;
 }
 
-const byte *ScummEngine::getOBIMFromObject(const ObjectData &od) {
+const byte *ScummEngine::getOBIMFromObjectData(const ObjectData &od) {
 	const byte *ptr;
 
 	if (od.fl_object_index) {
@@ -1100,7 +1100,7 @@ int ScummEngine::getObjectImageCount(int object) {
 	if (objnum == -1)
 		return 0;
 
-	ptr = getOBIMFromObject(_objs[objnum]);
+	ptr = getOBIMFromObjectData(_objs[objnum]);
 	imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), ptr);
 	if (!imhd)
 		return 0;
@@ -1182,17 +1182,18 @@ void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id,
 	int id2;
 	int obim_id;
 
-	if (findWhat & foCheckAlreadyLoaded && getObjectIndex(id) != -1) {
-		if (_features & GF_OLD_BUNDLE) {
-			// I am not sure if this is even needed for old games...
-			// but using READ_BE_UINT32 below to determine the resource size
-			// definitely won't work with OLD_BUNDLE games
-			error("findObjectInRoom foCheckAlreadyLoaded NYI for GF_OLD_BUNDLE (id = %d, room = %d)", id, room);
+	id2 = getObjectIndex(id);
+	if (findWhat & foCheckAlreadyLoaded && id2 != -1) {
+		assert(_version >= 6);
+		if (findWhat & foCodeHeader) {
+			fo->obcd = obcdptr = getOBCDFromObject(id);
+			assert(obcdptr);
+			fo->cdhd = (const CodeHeader *)findResourceData(MKID('CDHD'), obcdptr);
 		}
-		fo->obcd = obcdptr = getOBCDFromObject(id);
-		assert(obcdptr);
-		fo->obim = obimptr = obcdptr + READ_BE_UINT32(obcdptr + 4);
-		fo->cdhd = (const CodeHeader *)findResourceData(MKID('CDHD'), obcdptr);
+		if (findWhat & foImageHeader) {
+			fo->obim = obimptr = getOBIMFromObjectData(_objs[id2]);
+			assert(obimptr);
+		}
 		return;
 	}
 
@@ -1529,7 +1530,7 @@ void ScummEngine_v6::drawBlastObject(BlastObject *eo) {
 	if (objnum == -1)
 		error("drawBlastObject: getObjectIndex on BlastObject %d failed", eo->number);
 
-	ptr = getOBIMFromObject(_objs[objnum]);
+	ptr = getOBIMFromObjectData(_objs[objnum]);
 	if (!ptr)
 		error("BlastObject object %d image not found", eo->number);
 
