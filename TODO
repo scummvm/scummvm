@@ -420,9 +420,6 @@ General
 * Change backends to directly access the config manager
 * Add API to query backend for a list of available music engines
   Useful for Options dialog
-* EPOC32/Symbian port. Might be able to start based on existing P800 port,
-  however that code seems to be old and would need extensive work to be
-  usable in post-0.6.0 ScummVM. Note: NGage uses Symbian OS, too...
 * MS DOS port using Allegro <http://www.talula.demon.co.uk/allegro/> and
   DJGPP <http://www.delorie.com/djgpp/> ?
 * Intent <http://withintent.biz/> port (already done by David Given, merge?)
