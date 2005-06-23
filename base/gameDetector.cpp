@@ -594,14 +594,14 @@ bool GameDetector::detectGame() {
 	else
 		realGame = _targetName;
 
-	debug(1, "Looking for %s\n", realGame.c_str());
+	printf("Looking for %s\n", realGame.c_str());
 	_game = findGame(realGame, &_plugin);
 
 	if (_game.name) {
-		debug(1, "Trying to start game '%s'\n", _game.description);
+		printf("Trying to start game '%s'\n", _game.description);
 		return true;
 	} else {
-		debug(1, "Failed game detection\n");
+		printf("Failed game detection\n");
 		return false;
 	}
 }
