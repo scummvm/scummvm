@@ -27,7 +27,10 @@
 
 
 // Routines to convert 12 bit linear samples to the
-// Dialogic or Oki ADPCM coding format aka VOX
+// Dialogic or Oki ADPCM coding format aka VOX.
+// See also <http://www.comptek.ru/telephony/tnotes/tt1-13.html>
+//
+// In addition, also IMA ADPCM is supported.
 class ADPCMInputStream : public AudioStream {
 private:
 	bool _evenPos;
@@ -196,7 +199,6 @@ int16 ADPCMInputStream::imaADPCMDecode(byte code) {
 		E += SS/2;
 	if (code & 0x04)
 		E += SS;
-
 	diff = (code & 0x08) ? -E : E;
 	samp = _status.last + diff;
 
