@@ -18,9 +18,8 @@
  * $Header$
  */
 
-#include <ctype.h>
-
 #include "common/stdafx.h"
+
 #include "gui/newgui.h"
 #include "gui/dialog.h"
 #include "gui/widget.h"
