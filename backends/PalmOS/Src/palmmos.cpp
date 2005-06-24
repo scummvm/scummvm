@@ -19,9 +19,9 @@
  * $Header$
  *
  */
+
 #include "common/stdafx.h"
 #include "palm.h"
-
 
 bool OSystem_PALMOS::showMouse(bool visible) {
 	if (_mouseVisible == visible)
