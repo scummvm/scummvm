@@ -22,8 +22,6 @@
 
 #include "common/stdafx.h"
 
-#include "common/config-manager.h"
-
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/intern.h"

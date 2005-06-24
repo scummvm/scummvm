@@ -21,11 +21,10 @@
  */
  
 #include "common/stdafx.h"
-#include "common/scummsys.h"
 #include "common/system.h"
 #include "common/savefile.h"
 #include "common/scaler.h"
-#include "scumm.h"
+#include "scumm/scumm.h"
 
 namespace Scumm {
 
