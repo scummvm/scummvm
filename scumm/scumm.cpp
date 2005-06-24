@@ -2829,7 +2829,7 @@ static int generateSubstResFileName_(const char *filename, char *buf, int bufsiz
 		num = filename[strlen(filename) - 2];
 
 	const char *ext = strrchr(filename, '.');
-	int len = ext - filename;
+	size_t len = (ext > 0) ? ext - filename : strlen(filename);	
 
 	for (int i = index; i < ARRAYSIZE(substResFileNameTable); i++) {
 		if (!scumm_strnicmp(filename, substResFileNameTable[i].winName, len)) {
