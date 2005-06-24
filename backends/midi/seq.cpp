@@ -27,7 +27,7 @@
 
 #if defined(UNIX) && !defined(__BEOS__)
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "sound/mpu401.h"
 #include "common/util.h"
 

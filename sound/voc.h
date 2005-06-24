@@ -23,7 +23,7 @@
 #ifndef SOUND_VOC_H
 #define SOUND_VOC_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 
 class AudioStream;

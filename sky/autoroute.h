@@ -22,7 +22,7 @@
 #ifndef AUTOROUTE_H
 #define AUTOROUTE_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 
 namespace Sky {

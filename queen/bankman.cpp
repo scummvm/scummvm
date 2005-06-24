@@ -19,7 +19,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "queen/bankman.h"
 
 #include "queen/resource.h"

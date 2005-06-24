@@ -22,7 +22,7 @@
 #ifndef INTRO_H
 #define INTRO_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "sound/mixer.h"
 

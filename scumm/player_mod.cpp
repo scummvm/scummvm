@@ -20,7 +20,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "scumm/player_mod.h"
 #include "sound/mixer.h"
 #include "sound/rate.h"

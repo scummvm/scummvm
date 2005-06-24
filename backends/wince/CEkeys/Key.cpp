@@ -19,7 +19,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "Key.h"
 
 namespace CEKEYS {

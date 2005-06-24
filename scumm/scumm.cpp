@@ -20,7 +20,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 
 #include "backends/fs/fs.h"
 

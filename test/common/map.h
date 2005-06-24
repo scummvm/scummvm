@@ -1,6 +1,6 @@
 #include <cxxtest/TestSuite.h>
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/map.h"
 
 class MapTestSuite : public CxxTest::TestSuite 

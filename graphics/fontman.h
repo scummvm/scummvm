@@ -21,7 +21,7 @@
 #ifndef FONTMAN_H
 #define FONTMAN_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/singleton.h"
 #include "common/str.h"

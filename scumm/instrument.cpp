@@ -19,7 +19,7 @@
  * $Header$
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "scumm/scumm.h"
 #include "scumm/saveload.h"
 #include "scumm/instrument.h"

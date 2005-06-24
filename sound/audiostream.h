@@ -22,7 +22,7 @@
 #ifndef AUDIOSTREAM_H
 #define AUDIOSTREAM_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/util.h"
 #include "common/scummsys.h"
 

@@ -22,7 +22,7 @@
  */
 
 #if defined (__SYMBIAN32__) 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "../fs.h"
 
 //#include <sys/param.h>

@@ -19,7 +19,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "ToolbarHandler.h"
 
 namespace CEGUI {

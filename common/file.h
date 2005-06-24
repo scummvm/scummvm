@@ -22,7 +22,7 @@
 #ifndef COMMON_FILE_H
 #define COMMON_FILE_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/stream.h"

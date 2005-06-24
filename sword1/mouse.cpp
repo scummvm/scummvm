@@ -19,7 +19,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "sword1/mouse.h"
 #include "sword1/menu.h"
 #include "sword1/screen.h"
@@ -27,7 +27,7 @@
 #include "sword1/resman.h"
 #include "sword1/objectman.h"
 #include "sword1/sworddefs.h"
-#include "system.h"
+#include "common/system.h"
 #include "sword1/swordres.h"
 #include "sword1/menu.h"
 

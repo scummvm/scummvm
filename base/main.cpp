@@ -28,7 +28,7 @@
  * of almost all the classes, methods and variables, and how they interact.
  */
  
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "base/engine.h"
 #include "base/gameDetector.h"
 #include "base/plugins.h"

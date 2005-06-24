@@ -18,7 +18,7 @@
  * $Header$
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "base/engine.h"
 #include "base/version.h"
 #include "common/system.h"

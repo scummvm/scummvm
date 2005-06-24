@@ -20,7 +20,7 @@
 
 #ifdef MACOSX
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/config-manager.h"
 #include "common/util.h"
 #include "sound/mpu401.h"

@@ -22,7 +22,7 @@
 #ifndef MEMMAN_H
 #define MEMMAN_H
 
-#include "scummsys.h"
+#include "common/scummsys.h"
 
 namespace Sword1 {
 

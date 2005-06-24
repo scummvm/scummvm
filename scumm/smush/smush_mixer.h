@@ -22,7 +22,7 @@
 #ifndef SMUSH_MIXER_H
 #define SMUSH_MIXER_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "scumm/sound.h"
 
 namespace Scumm {

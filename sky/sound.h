@@ -22,7 +22,7 @@
 #ifndef SKYSOUND_H
 #define SKYSOUND_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "sound/mixer.h"
 

@@ -22,7 +22,7 @@
 #ifndef BSDEBUG_H
 #define BSDEBUG_H
 
-#include "scummsys.h"
+#include "common/scummsys.h"
 
 namespace Sword1 {
 

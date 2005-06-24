@@ -1,6 +1,6 @@
 #include <cxxtest/TestSuite.h>
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/str.h"
 
 class StringTestSuite : public CxxTest::TestSuite 

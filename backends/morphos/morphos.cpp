@@ -21,7 +21,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "engine.h"
 #include "common/util.h"
 #include "scumm/scumm.h"

@@ -19,7 +19,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 
 #include "simon/simon.h"
 #include "simon/intern.h"

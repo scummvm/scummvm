@@ -20,7 +20,7 @@
 
 #if defined(__PALMOS_TRAPS__)
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "../fs.h"
 #include <stdio.h>
 #include <stdlib.h>

@@ -30,7 +30,7 @@
 #include "backends/ps2/Gs2dScreen.h"
 #include "backends/ps2/asyncfio.h"
 #include "backends/ps2/systemps2.h"
-#include "scummsys.h"
+#include "common/scummsys.h"
 
 extern AsyncFio fio;
 

@@ -18,7 +18,7 @@
  * $Header$
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "graphics/font.h"
 
 namespace Graphics {

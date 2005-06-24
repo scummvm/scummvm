@@ -22,7 +22,7 @@
 #ifndef SKYMOUSE_H
 #define SKYMOUSE_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 
 class OSystem;

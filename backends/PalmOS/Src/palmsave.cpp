@@ -21,7 +21,7 @@
  */
 
 #include <ctype.h>
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "palm.h"
 
 #define	MAX_BLOCK	64000			// store in memory, before dump to file

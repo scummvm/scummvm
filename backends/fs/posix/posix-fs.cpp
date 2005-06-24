@@ -20,7 +20,7 @@
 
 #if defined(UNIX) || defined(__DC__)
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 
 #include "../fs.h"
 

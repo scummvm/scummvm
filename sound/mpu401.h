@@ -22,7 +22,7 @@
 #ifndef SOUND_MPU401_H
 #define SOUND_MPU401_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "mididrv.h"
 
 ////////////////////////////////////////

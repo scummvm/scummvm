@@ -21,7 +21,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "base/engine.h"
 #include "scumm/player_nes.h"
 #include "scumm/scumm.h"

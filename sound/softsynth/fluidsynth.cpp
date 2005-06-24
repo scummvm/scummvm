@@ -24,7 +24,7 @@
 
 #ifdef USE_FLUIDSYNTH
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/config-manager.h"
 #include "sound/mpu401.h"
 #include "sound/softsynth/emumidi.h"

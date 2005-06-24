@@ -19,7 +19,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/util.h"
 #include "scumm/bomp.h"
 #include "scumm/smush/codec37.h"

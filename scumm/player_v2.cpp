@@ -20,7 +20,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "base/engine.h"
 #include "scumm/player_v2.h"
 #include "scumm/scumm.h"

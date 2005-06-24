@@ -24,7 +24,7 @@
 
 #if defined (__GP32__)
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 
 #include "backends/gp32/gp32.h"
 #include "backends/fs/fs.h"

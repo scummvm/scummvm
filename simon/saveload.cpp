@@ -19,7 +19,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 
 #include "gui/about.h"
 #include "gui/message.h"

@@ -22,7 +22,7 @@
 #ifndef BSMOUSE_H
 #define BSMOUSE_H
 
-#include "scummsys.h"
+#include "common/scummsys.h"
 #include "sword1/sworddefs.h"
 #include "sword1/object.h"
 

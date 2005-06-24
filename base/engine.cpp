@@ -18,7 +18,7 @@
  * $Header$
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #if defined(WIN32)
 #include <malloc.h>
 #endif

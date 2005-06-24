@@ -22,7 +22,7 @@
 #ifndef SOUND_VORBIS_H
 #define SOUND_VORBIS_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 
 #ifdef USE_VORBIS

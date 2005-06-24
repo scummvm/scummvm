@@ -19,7 +19,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "sword1/text.h"
 #include "sword1/resman.h"
 #include "sword1/objectman.h"

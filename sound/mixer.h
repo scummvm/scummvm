@@ -23,7 +23,7 @@
 #ifndef SOUND_MIXER_H
 #define SOUND_MIXER_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/mutex.h"
 

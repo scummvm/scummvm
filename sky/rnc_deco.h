@@ -22,7 +22,7 @@
 #ifndef RNC_DECO_H
 #define RNC_DECO_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 
 #define RNC_SIGNATURE   0x524E4301 // "RNC\001"
 

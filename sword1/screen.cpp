@@ -19,9 +19,9 @@
  *
  */
 
-#include "stdafx.h"
-#include "scummsys.h"
-#include "system.h"
+#include "common/stdafx.h"
+#include "common/scummsys.h"
+#include "common/system.h"
 #include "common/util.h"
 #include "sword1/screen.h"
 #include "sword1/logic.h"

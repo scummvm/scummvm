@@ -27,7 +27,7 @@
 
 #include "sound/mpu401.h"
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/util.h"
 #include "common/config-manager.h"
 

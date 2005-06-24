@@ -22,7 +22,7 @@
 #ifndef SKYMAIN_H
 #define SKYMAIN_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "base/engine.h"
 
 class GameDetector;

@@ -18,7 +18,7 @@
  * $Header$
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 
 #ifdef USE_MT32EMU

@@ -20,7 +20,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "palm.h"
 #include "common/scaler.h"
 

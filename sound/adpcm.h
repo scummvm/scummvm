@@ -22,7 +22,7 @@
 #ifndef SOUND_ADPCM_H
 #define SOUND_ADPCM_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 
 class AudioStream;

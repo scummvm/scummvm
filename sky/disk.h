@@ -22,7 +22,7 @@
 #ifndef SKYDISK_H
 #define SKYDISK_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "sky/rnc_deco.h"

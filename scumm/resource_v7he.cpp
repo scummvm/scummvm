@@ -23,7 +23,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "scumm/scumm.h"
 #include "scumm/intern.h"
 #include "scumm/resource.h"

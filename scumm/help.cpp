@@ -19,7 +19,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "scumm/help.h"
 #include "scumm/scumm.h"
 #include "common/str.h"

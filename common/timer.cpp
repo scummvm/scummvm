@@ -20,7 +20,7 @@
 
 #ifndef __MORPHOS__
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/timer.h"
 #include "common/util.h"

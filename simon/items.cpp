@@ -22,7 +22,7 @@
 // Item script opcodes for Simon1/Simon2
 #include <ctype.h>
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "simon/simon.h"
 #include "simon/intern.h"
 

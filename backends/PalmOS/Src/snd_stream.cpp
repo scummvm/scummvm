@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "palm.h"
 
 Err sndCallback(void* UserDataP, SndStreamRef stream, void* bufferP, UInt32 *bufferSizeP) {

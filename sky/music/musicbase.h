@@ -22,7 +22,7 @@
 #ifndef MUSICBASE_H
 #define MUSICBASE_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/mutex.h"
 

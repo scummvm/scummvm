@@ -19,7 +19,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "CEActions.h"
 #include "CEActionsPocket.h"
 #include "CEActionsSmartphone.h"

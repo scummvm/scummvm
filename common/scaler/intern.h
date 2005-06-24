@@ -24,7 +24,7 @@
 #ifndef COMMON_SCALER_INTERN_H
 #define COMMON_SCALER_INTERN_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 
 template<int bitFormat>

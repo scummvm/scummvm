@@ -20,7 +20,7 @@
  */
 
 // Resource file routines for Simon1/Simon2
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/file.h"
 #include "simon/simon.h"
 #include "simon/intern.h"

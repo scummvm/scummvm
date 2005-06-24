@@ -18,7 +18,7 @@
  * $Header$
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "scumm/charset.h"
 #include "scumm/scumm.h"
 #include "scumm/nut_renderer.h"

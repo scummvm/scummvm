@@ -17,7 +17,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 
 #include "common/file.h"
 #include "common/util.h"

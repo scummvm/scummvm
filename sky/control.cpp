@@ -19,7 +19,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/system.h"

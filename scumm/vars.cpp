@@ -21,7 +21,7 @@
  */
 
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/config-manager.h"
 #include "scumm/scumm.h"
 #include "scumm/intern.h"

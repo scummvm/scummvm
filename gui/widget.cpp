@@ -18,7 +18,7 @@
  * $Header$
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/util.h"
 #include "graphics/fontman.h"
 #include "gui/widget.h"

@@ -33,7 +33,7 @@
 #include <proto/cdda.h>
 #include <proto/icon.h>
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "scumm/scumm.h"
 #include "base/gameDetector.h"
 #include "common/scaler.h"

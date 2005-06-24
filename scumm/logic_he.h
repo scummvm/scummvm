@@ -22,7 +22,7 @@
 #if !defined(LOGIC_HE_H) && !defined(DISABLE_HE)
 #define LOGIC_HE_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 
 #include "scumm/intern.h"
 

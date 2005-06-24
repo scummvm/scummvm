@@ -22,7 +22,7 @@
 #ifndef COMMON_STREAM_H
 #define COMMON_STREAM_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 
 

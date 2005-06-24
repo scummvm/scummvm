@@ -19,8 +19,8 @@
  *
  */
 
-#include "stdafx.h"
-#include "scummsys.h"
+#include "common/stdafx.h"
+#include "common/scummsys.h"
 #include "sword1/memman.h"
 #include "sword1/resman.h"
 #include "sword1/sworddefs.h"

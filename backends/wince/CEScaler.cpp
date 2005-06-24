@@ -19,7 +19,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "CEScaler.h"
 
 int redblueMasks[] = { 0x7C1F, 0xF81F };

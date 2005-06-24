@@ -22,7 +22,7 @@
 #ifndef BSOBJECT_H
 #define BSOBJECT_H
 
-#include "scummsys.h"
+#include "common/scummsys.h"
 
 namespace Sword1 {
 

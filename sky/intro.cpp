@@ -19,7 +19,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/util.h"
 #include "common/system.h"
 #include "sky/disk.h"

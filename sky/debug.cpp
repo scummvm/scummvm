@@ -19,7 +19,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/util.h"
 #include "sky/debug.h"
 #include "sky/grid.h"

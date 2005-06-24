@@ -22,7 +22,7 @@
 #ifndef INSTRUMENT_H
 #define INSTRUMENT_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 
 class MidiChannel;

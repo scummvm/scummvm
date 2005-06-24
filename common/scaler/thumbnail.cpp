@@ -20,12 +20,12 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 
-#include "scaler.h"
-#include "scaler/intern.h"
+#include "common/scaler.h"
+#include "common/scaler/intern.h"
 
 template<int bitFormat>
 uint16 quadBlockInterpolate(const uint8* src, uint32 srcPitch) {

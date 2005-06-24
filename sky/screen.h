@@ -22,7 +22,7 @@
 #ifndef SKYSCREEN_H
 #define SKYSCREEN_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "sky/skydefs.h"
 

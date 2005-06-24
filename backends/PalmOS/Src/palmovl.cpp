@@ -19,7 +19,7 @@
  * $Header$
  *
  */
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "palm.h"
 
 void OSystem_PALMOS::showOverlay() {

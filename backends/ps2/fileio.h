@@ -22,7 +22,7 @@
 #ifndef __PS2FILE_IO__
 #define __PS2FILE_IO__
 
-#include "scummsys.h"
+#include "common/scummsys.h"
 
 class Ps2File {
 public:

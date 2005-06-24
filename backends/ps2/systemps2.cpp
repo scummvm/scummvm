@@ -19,7 +19,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include <kernel.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,7 +31,7 @@
 #include <iopcontrol.h>
 #include <iopheap.h>
 #include <osd_config.h>
-#include "scummsys.h"
+#include "common/scummsys.h"
 #include "../intern.h"
 #include "base/engine.h"
 #include "backends/ps2/systemps2.h"

@@ -22,7 +22,7 @@
 #ifndef BSCONTROL_H
 #define BSCONTROL_H
 
-#include "scummsys.h"
+#include "common/scummsys.h"
 #include "sword1/sworddefs.h"
 
 class OSystem;

@@ -22,7 +22,7 @@
 #ifndef GOB_VIDEO_H
 #define GOB_VIDEO_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/util.h"
 
 namespace Gob {

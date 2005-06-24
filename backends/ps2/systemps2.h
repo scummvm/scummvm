@@ -22,8 +22,8 @@
 #ifndef SYSTEMPS2_H
 #define SYSTEMPS2_H
 
-#include "stdafx.h"
-#include "system.h"
+#include "common/stdafx.h"
+#include "common/system.h"
 
 class Gs2dScreen;
 class Ps2Input;

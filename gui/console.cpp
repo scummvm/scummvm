@@ -18,7 +18,7 @@
  * $Header$
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "gui/console.h"
 #include "gui/ScrollBarWidget.h"
 

@@ -18,7 +18,7 @@
  * $Header$
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "scumm/scumm.h"
 #include "scumm/imuse_digi/dimuse.h"

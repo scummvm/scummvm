@@ -18,7 +18,7 @@
  * $Header$
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/system.h"
 #include "gui/dialog.h"
 #include "gui/newgui.h"

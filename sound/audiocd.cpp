@@ -19,7 +19,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 
 #include "sound/audiocd.h"
 #include "sound/mp3.h"

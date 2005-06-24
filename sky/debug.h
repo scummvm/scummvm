@@ -22,7 +22,7 @@
 #ifndef SKY_DEBUG_H
 #define SKY_DEBUG_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/debugger.h"
 

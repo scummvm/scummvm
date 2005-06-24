@@ -22,7 +22,7 @@
 #ifndef BSMUSIC_H
 #define BSMUSIC_H
 
-#include "scummsys.h"
+#include "common/scummsys.h"
 #include "common/mutex.h"
 #include "common/file.h"
 #include "sound/audiostream.h"

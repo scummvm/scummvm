@@ -22,7 +22,7 @@
 #ifndef SOUND_MP3_H
 #define SOUND_MP3_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 
 #ifdef USE_MAD

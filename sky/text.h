@@ -22,7 +22,7 @@
 #ifndef SKYTEXT_H
 #define SKYTEXT_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 
 namespace Sky {

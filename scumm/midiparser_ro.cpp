@@ -19,7 +19,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "sound/midiparser.h"
 #include "sound/mididrv.h"
 #include "common/util.h"

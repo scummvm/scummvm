@@ -23,7 +23,7 @@
 
 //#ifdef WIN32_PLATFORM_WFSP
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "CEActionsSmartphone.h"
 #include "EventsBuffer.h"
 

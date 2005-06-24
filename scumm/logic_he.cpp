@@ -19,7 +19,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 
 #include "scumm/intern.h"
 #include "scumm/logic_he.h"

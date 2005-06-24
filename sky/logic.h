@@ -22,7 +22,7 @@
 #ifndef SKYLOGIC_H
 #define SKYLOGIC_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/util.h"
 
 namespace Sky {

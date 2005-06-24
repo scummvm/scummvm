@@ -22,7 +22,7 @@
 #ifndef SOUND_FLAC_H
 #define SOUND_FLAC_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 
 #ifdef USE_FLAC

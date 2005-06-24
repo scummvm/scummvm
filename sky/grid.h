@@ -22,7 +22,7 @@
 #ifndef SKYGRID_H
 #define SKYGRID_H
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "skydefs.h"
 

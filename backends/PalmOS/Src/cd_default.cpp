@@ -19,7 +19,7 @@
  * $Header$
  *
  */
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/system.h"
 #include "cd_default.h"
 
