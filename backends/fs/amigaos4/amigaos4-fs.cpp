@@ -31,7 +31,7 @@
 #include <strings.h>
 #endif
 
-#include <stdafx.h>
+#include <common/stdafx.h>
 
 #include "util.h"
 

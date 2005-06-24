@@ -20,7 +20,7 @@
  *
  */
 
-#include <stdafx.h>
+#include <common/stdafx.h>
 #include <ronin/ronin.h>
 #include <string.h>
 #include <stdarg.h>
