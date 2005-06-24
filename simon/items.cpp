@@ -20,7 +20,6 @@
  */
 
 // Item script opcodes for Simon1/Simon2
-#include <ctype.h>
 
 #include "common/stdafx.h"
 #include "simon/simon.h"
