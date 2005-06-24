@@ -28,7 +28,6 @@
 #include "scumm/resource.h"
 #include "scumm/util.h"
 
-
 namespace Scumm {
 
 void ScummEngine::setupC64Palette() {

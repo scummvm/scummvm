@@ -31,9 +31,7 @@
 #include "scumm/sound.h"
 #include "scumm/util.h"
 
-
 namespace Scumm {
-
 
 /**
  * Start a 'scene' by loading the specified room with the given main actor.

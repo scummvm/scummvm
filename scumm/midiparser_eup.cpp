@@ -24,7 +24,6 @@
 #include "sound/mididrv.h"
 #include "common/util.h"
 
-
 namespace Scumm {
 
 /**

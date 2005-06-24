@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "common/stdafx.h"
 
 #include "common/config-file.h"

@@ -29,7 +29,6 @@ namespace Scumm {
 
 extern const char *resTypeFromId(int id);
 
-
 void ScummEngine_v3old::readResTypeList(int id, uint32 tag, const char *name) {
 	int num;
 	int i;

@@ -24,7 +24,6 @@
 #include "scumm/bomp.h"
 #include "scumm/util.h"
 
-
 namespace Scumm {
 
 NutRenderer::NutRenderer(ScummEngine *vm) :

@@ -30,7 +30,6 @@
 
 #include "sound/midiparser.h"
 
-
 namespace Scumm {
 
 ////////////////////////////////////////

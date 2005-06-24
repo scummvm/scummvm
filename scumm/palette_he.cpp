@@ -27,7 +27,6 @@
 #include "scumm/resource.h"
 #include "scumm/util.h"
 
-
 namespace Scumm {
 
 void ScummEngine_v70he::remapHEPalette(const uint8 *src, uint8 *dst) {
