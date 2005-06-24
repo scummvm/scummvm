@@ -138,15 +138,14 @@ void releaseImcTables() {
 #endif
 
 void initializeImcTables() {
-	int32 destTablePos = 0;
-	int32 pos = 0;
+	int pos;
 	
 #ifdef __PALM_OS__
 	if (!_destImcTable) _destImcTable = (byte *)calloc(89, sizeof(byte));
 	if (!_destImcTable2) _destImcTable2 = (uint32 *)calloc(89 * 64, sizeof(uint32));
 #endif
 	
-	do {
+	for (pos = 0; pos <= 88; ++pos) {
 		byte put = 1;
 		int32 tableValue = ((imcTable[pos] * 4) / 7) / 2;
 		while (tableValue != 0) {
@@ -159,16 +158,11 @@ void initializeImcTables() {
 		if (put > 8) {
 			put = 8;
 		}
-		put--;
-		assert(pos < 89);
-		_destImcTable[pos] = put;
-	} while (++pos <= 88);
-	_destImcTable[89] = 0;
+		_destImcTable[pos] = put - 1;
+	}
 
 	for (int n = 0; n < 64; n++) {
-		pos = 0;
-		destTablePos = n;
-		do {
+		for (pos = 0; pos <= 88; ++pos) {
 			int32 count = 32;
 			int32 put = 0;
 			int32 tableValue = imcTable[pos];
@@ -179,10 +173,8 @@ void initializeImcTables() {
 				count /= 2;
 				tableValue /= 2;
 			} while (count != 0);
-			assert(destTablePos < 89 * 64);
-			_destImcTable2[destTablePos] = put;
-			destTablePos += 64;
-		} while (++pos <= 88);
+			_destImcTable2[n + pos * 64] = put;
+		}
 	}
 }
 #define NextBit                            \
