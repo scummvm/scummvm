@@ -20,10 +20,10 @@
  */
 
 #include "common/stdafx.h"
-#include "resource.h"
+#include "kyra/resource.h"
 
 #include "common/stream.h"
-#include "codecs.h"
+#include "kyra/codecs.h"
 
 namespace Kyra {
 

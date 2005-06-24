@@ -20,8 +20,8 @@
  */
 
 #include "common/stdafx.h"
-#include "resource.h"
-#include "codecs.h"
+#include "kyra/resource.h"
+#include "kyra/codecs.h"
 
 #include "common/stream.h"
 

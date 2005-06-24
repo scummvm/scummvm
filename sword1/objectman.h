@@ -24,7 +24,7 @@
 #ifndef OBJECTMAN_H
 #define OBJECTMAN_H
 
-#include "resman.h"
+#include "sword1/resman.h"
 #include "sword1/sworddefs.h"
 #include "sword1/object.h"
 

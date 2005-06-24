@@ -26,7 +26,7 @@
 #include "common/scummsys.h"
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
-#include "kyra.h"
+#include "kyra/kyra.h"
 
 namespace Kyra {
 	class MusicPlayer : public MidiDriver {

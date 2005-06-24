@@ -21,8 +21,8 @@
 
 #include "common/stdafx.h"
 
-#include "kyra.h"
-#include "script.h"
+#include "kyra/kyra.h"
+#include "kyra/script.h"
 
 namespace Kyra {
 // Command procs

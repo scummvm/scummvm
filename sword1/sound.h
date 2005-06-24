@@ -23,7 +23,7 @@
 #define BSSOUND_H
 
 #include "sword1/object.h"
-#include "sworddefs.h"
+#include "sword1/sworddefs.h"
 #include "common/file.h"
 #include "sound/mixer.h"
 #include "common/util.h"

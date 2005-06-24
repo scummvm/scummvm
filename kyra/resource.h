@@ -28,7 +28,7 @@
 #include "common/list.h"
 #include "common/map.h"
 
-#include "kyra.h"
+#include "kyra/kyra.h"
 
 namespace Kyra {
 

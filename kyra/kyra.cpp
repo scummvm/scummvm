@@ -31,11 +31,11 @@
 #include "common/config-manager.h"
 #include "sound/mididrv.h"
 
-#include "kyra.h"
-#include "resource.h"
-#include "script.h"
-#include "wsamovie.h"
-#include "sound.h"
+#include "kyra/kyra.h"
+#include "kyra/resource.h"
+#include "kyra/script.h"
+#include "kyra/wsamovie.h"
+#include "kyra/sound.h"
 
 struct KyraGameSettings {
 	const char *name;

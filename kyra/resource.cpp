@@ -20,11 +20,11 @@
  */
 
 #include "common/stdafx.h"
-#include "resource.h"
-#include "wsamovie.h"
+#include "kyra/resource.h"
+#include "kyra/wsamovie.h"
 
 #include "common/file.h"
-#include "script.h"
+#include "kyra/script.h"
 
 namespace Kyra {
 Resourcemanager::Resourcemanager(KyraEngine* engine) {

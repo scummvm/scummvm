@@ -20,8 +20,8 @@
  */
 
 #include "common/stdafx.h"
-#include "wsamovie.h"
-#include "codecs.h"
+#include "kyra/wsamovie.h"
+#include "kyra/codecs.h"
 
 #include "common/stream.h"
 

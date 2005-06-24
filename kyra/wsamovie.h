@@ -22,7 +22,7 @@
 #ifndef WSAMOVIES_H
 #define WSAMOVIES_H
 
-#include "resource.h"
+#include "kyra/resource.h"
 
 namespace Kyra {
 

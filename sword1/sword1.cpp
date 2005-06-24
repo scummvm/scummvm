@@ -20,7 +20,7 @@
  */
 
 #include "common/stdafx.h"
-#include "sword1.h"
+#include "sword1/sword1.h"
 
 #include "backends/fs/fs.h"
 

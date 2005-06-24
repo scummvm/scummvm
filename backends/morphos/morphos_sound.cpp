@@ -22,7 +22,7 @@
  */
 
 #include "common/stdafx.h"
-#include "engine.h"
+#include "base/engine.h"
 
 #include <dos/dos.h>
 #include <exec/memory.h>

@@ -20,7 +20,7 @@
  */
 
 #include "common/stdafx.h"
-#include "resource.h"
+#include "kyra/resource.h"
 #include "common/stream.h"
 #include "common/array.h"
 

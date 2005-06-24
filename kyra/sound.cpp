@@ -19,8 +19,8 @@
  *
  */
 
-#include "sound.h"
-#include "resource.h"
+#include "kyra/sound.h"
+#include "kyra/resource.h"
 
 namespace Kyra {
 	MusicPlayer::MusicPlayer(MidiDriver* driver, KyraEngine* engine) {

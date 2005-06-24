@@ -20,7 +20,7 @@
  */
 
 #include "common/stdafx.h"
-#include "codecs.h"
+#include "kyra/codecs.h"
 
 /*****************************************************************************
  * decode.c - Decoding routines for format80, format40, format20 

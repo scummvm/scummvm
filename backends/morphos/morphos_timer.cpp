@@ -19,7 +19,7 @@
  */
 
 #include "common/stdafx.h"
-#include "engine.h"
+#include "base/engine.h"
 
 #include <exec/memory.h>
 #include <exec/semaphores.h>

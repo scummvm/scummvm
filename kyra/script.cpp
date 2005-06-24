@@ -20,9 +20,9 @@
  */
 
 #include "common/stdafx.h"
-#include "kyra.h"
-#include "script.h"
-#include "resource.h"
+#include "kyra/kyra.h"
+#include "kyra/script.h"
+#include "kyra/resource.h"
 
 #include "common/stream.h"
 #include "common/util.h"
