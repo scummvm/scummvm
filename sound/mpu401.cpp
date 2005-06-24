@@ -19,7 +19,7 @@
  */
 
 #include "common/stdafx.h"
-#include "mpu401.h"
+#include "sound/mpu401.h"
 #include "common/timer.h"
 #include "common/util.h"	// for ARRAYSIZE
 

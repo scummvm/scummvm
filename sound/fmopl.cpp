@@ -30,7 +30,7 @@
 #include <stdarg.h>
 #include <math.h>
 
-#include "fmopl.h"
+#include "sound/fmopl.h"
 
 #include "common/util.h"
 

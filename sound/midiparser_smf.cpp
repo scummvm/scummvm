@@ -20,10 +20,9 @@
  */
 
 #include "common/stdafx.h"
-#include "midiparser.h"
-#include "mididrv.h"
+#include "sound/midiparser.h"
+#include "sound/mididrv.h"
 #include "common/util.h"
-
 
 /**
  * The Standard MIDI File version of MidiParser.
