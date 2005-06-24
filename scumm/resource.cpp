@@ -35,9 +35,6 @@
 #include "scumm/util.h"
 #include "scumm/verbs.h"
 
-#include "sound/mididrv.h" // Need MD_ enum values
-
-
 namespace Scumm {
 
 extern const char *resTypeFromId(int id);

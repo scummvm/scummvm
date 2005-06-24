@@ -26,9 +26,6 @@
 #include "scumm/resource.h"
 #include "scumm/util.h"
 
-#include "sound/mididrv.h"
-
-
 namespace Scumm {
 
 void ScummEngine_v2::readClassicIndexFile() {
