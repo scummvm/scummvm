@@ -25,7 +25,6 @@
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 
-
 namespace Common {
 
 class String;

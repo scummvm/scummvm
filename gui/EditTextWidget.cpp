@@ -23,7 +23,6 @@
 #include "gui/dialog.h"
 #include "gui/newgui.h"
 
-
 namespace GUI {
 
 EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, WidgetSize ws)

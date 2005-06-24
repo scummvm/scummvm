@@ -24,7 +24,6 @@
 #include "gui/dialog.h"
 #include "gui/newgui.h"
 
-
 namespace GUI {
 
 ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws)

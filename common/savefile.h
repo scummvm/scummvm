@@ -26,7 +26,6 @@
 #include "common/scummsys.h"
 #include "common/stream.h"
 
-
 namespace Common {
 
 /**

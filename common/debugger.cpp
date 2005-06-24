@@ -18,6 +18,7 @@
  * $Header$
  *
  */
+
 #include "common/stdafx.h"
 
 #include "common/debugger.h"

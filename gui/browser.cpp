@@ -34,7 +34,6 @@ enum {
 	kGoUpCmd = 'GoUp'
 };
 
-
 #ifdef MACOSX
 /* On Mac OS X, use the native file selector dialog. We could do the same for
  * other operating systems.

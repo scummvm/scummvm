@@ -22,7 +22,6 @@
 #include "gui/editable.h"
 #include "gui/newgui.h"
 
-
 namespace GUI {
 
 EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws)

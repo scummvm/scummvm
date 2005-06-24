@@ -31,7 +31,6 @@
 #include <zlib.h>
 #endif
 
-
 namespace Common {
 
 const char *SaveFileManager::getSavePath() const {

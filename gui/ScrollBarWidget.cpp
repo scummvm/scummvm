@@ -23,7 +23,6 @@
 #include "gui/dialog.h"
 #include "gui/newgui.h"
 
-
 namespace GUI {
 
 #define UP_DOWN_BOX_HEIGHT	(_w+1)
