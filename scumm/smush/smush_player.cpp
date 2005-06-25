@@ -1036,9 +1036,7 @@ void SmushPlayer::parseNextFrame() {
 			_smixer->stop();
 	
 		if (_seekFile.size() > 0) {
-			if (_base) {
-				delete _base;
-			}
+			delete _base;
 			_base = new FileChunk(_seekFile);
 	
 			if (_seekPos > 0) {
