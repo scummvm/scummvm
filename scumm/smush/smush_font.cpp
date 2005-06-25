@@ -80,8 +80,9 @@ int SmushFont::drawChar(byte *buffer, int dst_width, int x, int y, byte chr) {
 	if (_original) {
 		for (int j = 0; j < h; j++) {
 			for (int i = 0; i < w; i++) {
-				char value = *src++;
-				if (value) dst[i] = value;
+				int8 value = *src++;
+				if (value)
+					dst[i] = value;
 			}
 			dst += dst_width;
 		}
@@ -104,7 +105,7 @@ int SmushFont::drawChar(byte *buffer, int dst_width, int x, int y, byte chr) {
 		} else {
 			for (int j = 0; j < h; j++) {
 				for (int i = 0; i < w; i++) {
-					char value = *src++;
+					int8 value = *src++;
 					if (value == 1) {
 						dst[i] = color;
 					} else if (value) {
