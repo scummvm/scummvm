@@ -105,7 +105,7 @@ enum GameObjectTypes {
 
 enum ScriptTimings {
 	kScriptTimeTicksPerSecond = (728L/10L),
-	kRepeatSpeed = 40,   // 25 frames/sec
+	kRepeatSpeedTicks = (728L/10L)/3,   
 	kNormalFadeDuration = 320, // 64 steps, 5 msec each
 	kQuickFadeDuration = 64,  // 64 steps, 1 msec each
 	kPuzzleHintTime = 30000000L  // 30 secs. used in timer

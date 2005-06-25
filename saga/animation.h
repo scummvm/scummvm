@@ -79,12 +79,12 @@ struct AnimationData {
 	byte unknown06;
 	byte unknown07;
 
-	uint16 maxFrame;
-	uint16 loopFrame;
+	int16 maxFrame;
+	int16 loopFrame;
 
-	uint16 start;
+	int16 start;
 
-	uint16 currentFrame;
+	int16 currentFrame;
 	size_t *frameOffsets;
 
 	uint16 completed;

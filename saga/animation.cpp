@@ -133,7 +133,6 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 
 	anim = getAnimation(animId);
 
-
 	_vm->_render->getBufferInfo(&buf_info);
 	displayBuffer = buf_info.bg_buf;
 
@@ -171,7 +170,9 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 		}
 
 		anim->currentFrame++;
-		anim->completed++;
+		if (anim->completed != 65535) {
+			anim->completed++;
+		}
 
 		if (anim->currentFrame > anim->maxFrame) {
 			anim->currentFrame = anim->loopFrame;
@@ -182,7 +183,7 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 				anim->cur_frame_len = anim->resourceLength - SAGA_FRAME_HEADER_LEN;
 			}
 			
-			if (anim->flags & ANIM_STOPPING || anim->currentFrame == (uint16)-1) {
+			if (anim->flags & ANIM_STOPPING || anim->currentFrame == -1) {
 				anim->state = ANIM_PAUSE;
 			}
 		}
