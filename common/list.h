@@ -66,7 +66,7 @@ public:
 		}
 		// Postfix inc
 		Iterator<T2> operator++(int) {
-			Iterator<T2> tmp(*this);
+			Iterator<T2> tmp(_node);
 			if (_node)
 				_node = _node->_next;
 			return tmp;
@@ -79,7 +79,7 @@ public:
 		}
 		// Postfix dec
 		Iterator<T2> operator--(int) {
-			Iterator<T2> tmp(*this);
+			Iterator<T2> tmp(_node);
 			if (_node)
 				_node = _node->_prev;
 			return tmp;
