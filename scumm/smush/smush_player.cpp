@@ -238,6 +238,8 @@ SmushPlayer::SmushPlayer(ScummEngine_v6 *scumm, int speed) {
 	_base = NULL;
 	_frameBuffer = NULL;
 	_specialBuffer = NULL;
+	
+	_seekPos = -1;
 
 	_skipNext = false;
 	_subtitles = ConfMan.getBool("subtitles");
@@ -368,9 +370,7 @@ void SmushPlayer::handleSoundBuffer(int32 track_id, int32 index, int32 max_frame
 		_smixer->addChannel(c);
 	}
 
-	if ((_middleAudio) && (index != 0)) {
-		c->setParameters(max_frames, flags, vol, pan, index);
-	} else if (index == 0) {
+	if (_middleAudio || (index == 0)) {
 		c->setParameters(max_frames, flags, vol, pan, index);
 	} else {
 		c->checkParameters(index, max_frames, flags, vol, pan);
@@ -982,14 +982,8 @@ void SmushPlayer::handleAnimHeader(Chunk &b) {
 }
 
 void SmushPlayer::setupAnim(const char *file) {
-	Chunk *sub;
 	int i;
 	char file_font[11];
-
-	_base = new FileChunk(file);
-	sub = _base->subBlock();
-	checkBlock(*sub, TYPE_AHDR);
-	handleAnimHeader(*sub);
 
 	if (_insanity) {
 		if (!((_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC)))
@@ -1027,22 +1021,59 @@ void SmushPlayer::setupAnim(const char *file) {
 	} else {
 		error("SmushPlayer::setupAnim() Unknown font setup for game");
 	}	
-
-	delete sub;
 }
 
 void SmushPlayer::parseNextFrame() {
 	Common::StackLock lock(_mutex);
+	
+	Chunk *sub;
 
 	if (_vm->_smushPaused)
 		return;
+	
+	if (_seekPos >= 0) {
+		if (_smixer)
+			_smixer->stop();
+	
+		if (_seekFile.size() > 0) {
+			if (_base) {
+				delete _base;
+			}
+			_base = new FileChunk(_seekFile);
+	
+			if (_seekPos > 0) {
+				assert(_seekPos > 8);
+				// In this case we need to get palette and number of frames
+				sub = _base->subBlock();
+				checkBlock(*sub, TYPE_AHDR);
+				handleAnimHeader(*sub);
+				delete sub;
+	
+				_middleAudio = true;
+				_seekPos -= 8;
+			} else {
+				// We need this in Full Throttle when entering/leaving
+				// the old mine road.
+				tryCmpFile(_seekFile.c_str());
+			}
+			_skipPalette = false;
+		} else {
+			_skipPalette = true;
+		}
+	
+		_base->seek(_seekPos, FileChunk::seek_start);
+		_frame = _seekFrame;
+		
+		_seekPos = -1;
+	}
 
+	assert(_base);
 	if (_base->eof()) {
 		_vm->_smushVideoShouldFinish = true;
 		return;
 	}
 
-	Chunk *sub = _base->subBlock();
+	sub = _base->subBlock();
 
 	switch (sub->getType()) {
 	case TYPE_AHDR: // FT INSANE may seek file to the beginning
@@ -1153,39 +1184,9 @@ void SmushPlayer::insanity(bool flag) {
 void SmushPlayer::seekSan(const char *file, int32 pos, int32 contFrame) {
 	Common::StackLock lock(_mutex);
 
-	if (_smixer)
-		_smixer->stop();
-
-	if (file) {
-		if (_base) {
-			_base->seek(0, FileChunk::seek_end);
-			delete _base;
-		}
-
-		_base = new FileChunk(file);
-		if (pos) {
-			assert(pos != 8);
-			// In this case we need to get palette and number of frames
-			Chunk *sub = _base->subBlock();
-			checkBlock(*sub, TYPE_AHDR);
-			handleAnimHeader(*sub);
-			delete sub;
-
-			_middleAudio = true;
-			pos -= 8;
-		} else {
-			// We need this in Full Throttle when entering/leaving
-			// the old mine road.
-			tryCmpFile(file);
-		}
-		_skipPalette = false;
-	} else {
-		_skipPalette = true;
-	}
-
-	_base->seek(pos, FileChunk::seek_start);
-
-	_frame = contFrame;
+	_seekFile = file ? file : "";
+	_seekPos = pos;
+	_seekFrame = contFrame;
 }
 
 void SmushPlayer::tryCmpFile(const char *filename) {
@@ -1198,8 +1199,10 @@ void SmushPlayer::tryCmpFile(const char *filename) {
 	if (i == NULL) {
 		error("invalid filename : %s", filename);
 	}
-#ifdef USE_MAD
+#if defined(USE_MAD) || defined(USE_VORBIS)
 	char fname[260];
+#endif
+#ifdef USE_MAD
 	memcpy(fname, filename, i - filename);
 	strcpy(fname + (i - filename), ".mp3");
 	_compressedFile.open(fname);
@@ -1234,8 +1237,6 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 	}
 	f.close();
 
-	tryCmpFile(filename);
-
 	_updateNeeded = false;
 	_warpNeeded = false;
 	_palDirtyMin = 256;
@@ -1245,14 +1246,13 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 	bool oldMouseState = _vm->_system->showMouse(false);
 
 	// Load the video
+	_seekFile = filename;
+	_seekPos = offset;
+	_seekFrame = startFrame;
+	_base = 0;
+
 	setupAnim(filename);
 	init();
-
-	if (offset) {
-		_base->seek(offset - 8, FileChunk::seek_start);
-		_frame = startFrame;
-		_middleAudio = true;
-	}
 
 	for (;;) {
 		if (_warpNeeded) {
@@ -1280,7 +1280,6 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 			_palDirtyMin = 256;
 		}
 		if (_updateNeeded) {
-			
 			uint32 end_time, start_time;
 			
 			start_time = _vm->_system->getMillis();

@@ -51,6 +51,10 @@ private:
 	byte *_frameBuffer;
 	byte *_specialBuffer;
 
+	Common::String _seekFile;
+	int32 _seekPos;
+	int32 _seekFrame;
+
 	bool _skipNext;
 	bool _subtitles;
 	bool _skips[37];
