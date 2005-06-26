@@ -892,7 +892,6 @@ void SmushPlayer::handleFrame(Chunk &b) {
 
 	while (!b.eof()) {
 		Chunk *sub = b.subBlock();
-		if (sub->getSize() & 1) b.seek(1);
 		switch (sub->getType()) {
 		case TYPE_NPAL:
 			handleNewPalette(*sub);
@@ -942,6 +941,11 @@ void SmushPlayer::handleFrame(Chunk &b) {
 		default:
 			error("Unknown frame subChunk found : %s, %d", Chunk::ChunkString(sub->getType()), sub->getSize());
 		}
+
+		b.reseek();
+		if (sub->getSize() & 1)
+			b.seek(1);
+
 		delete sub;
 	}
 
@@ -1084,6 +1088,8 @@ void SmushPlayer::parseNextFrame() {
 		error("Unknown Chunk found at %x: %x, %d", _base->tell(), sub->getType(), sub->getSize());
 	}
 	delete sub;
+
+	_base->reseek();
 
 	if (_insanity)
 		_vm->_sound->processSound();

@@ -39,6 +39,7 @@ public:
 	virtual type getType() const = 0;
 	virtual uint32 getSize() const = 0;
 	virtual Chunk *subBlock() = 0;
+	virtual void reseek() = 0;
 	virtual bool eof() const = 0;
 	virtual uint32 tell() const = 0;
 	virtual bool seek(int32 delta, seek_type dir = seek_cur) = 0;
@@ -47,7 +48,7 @@ public:
 	virtual byte getByte() = 0;
 	virtual int16 getShort() = 0;
 	virtual uint16 getWord() = 0;
-	virtual uint32 getDword()= 0;
+	virtual uint32 getDword() = 0;
 };
 
 // Common functionality for concrete chunks (FileChunk, MemoryChunk)
@@ -69,14 +70,16 @@ public:
 
 class FileChunk : public BaseChunk {
 private:
-	Common::String _name;
-	ScummFile _data;
+	ScummFile *_data;
+	bool _deleteData;
 	uint32 _offset;
 
+	FileChunk(ScummFile *data, int offset);
 public:
 	FileChunk(const Common::String &name, int offset = 0);
 	virtual ~FileChunk();
 	Chunk *subBlock();
+	void reseek();
 	bool read(void *buffer, uint32 size);
 	int8 getChar();
 	byte getByte();
@@ -92,6 +95,7 @@ private:
 public:
 	MemoryChunk(byte *data);
 	Chunk *subBlock();
+	void reseek();
 	bool read(void *buffer, uint32 size);
 	int8 getChar();
 	byte getByte();
