@@ -66,6 +66,10 @@ public:
 	bool isStereo() const		{ return _isStereo; }
 	
 	int getRate() const			{ return _frame.header.samplerate; }
+#ifdef __SYMBIAN32__
+	// Used to store the last position stream was read for symbian
+	int _lastReadPosition;
+#endif
 };
 
 
@@ -84,7 +88,16 @@ MP3InputStream::MP3InputStream(File *file, mad_timer_t duration) {
 	mad_synth_init(&_synth);
 
 	_duration = duration;
+
+#if defined(__SYMBIAN32__)
+	// Symbian can't share filehandles between different threads.
+	// So create a new file  and seek that to the other filehandles position
+	_file= new (ELeave)File;
+	_file->open(file->name());
+	_file->seek(file->pos());
+#else
 	_file = file;
+#endif
 
 	_posInFrame = 0;
 	_bufferSize = 128 * 1024;	// Default buffer size is 128K
@@ -106,7 +119,16 @@ MP3InputStream::MP3InputStream(File *file, uint32 size) {
 	mad_synth_init(&_synth);
 
 	_duration = mad_timer_zero;
+
+#if defined(__SYMBIAN32__)
+	// Symbian can't share filehandles between different threads.
+	// So create a new file  and seek that to the other filehandles position
+	_file= new (ELeave)File;
+	_file->open(file->name());
+	_file->seek(file->pos());
+#else
 	_file = file;
+#endif
 
 	_posInFrame = 0;
 	_bufferSize = size ? size : (128 * 1024);	// Default buffer size is 128K
@@ -115,6 +137,9 @@ MP3InputStream::MP3InputStream(File *file, uint32 size) {
 
 	// If a size is specified, we do not perform any further read operations
 	if (size) {
+#ifdef __SYMBIAN32__
+		 delete _file;
+#endif
 		_file = 0;
 	} else {
 		_file->incRef();
@@ -130,6 +155,9 @@ MP3InputStream::~MP3InputStream() {
 
 	if (_file)
 		_file->decRef();
+#ifdef __SYMBIAN32__
+	delete _file;
+#endif
 }
 
 bool MP3InputStream::init() {
@@ -173,6 +201,16 @@ void MP3InputStream::refill(bool first) {
 
 	// Read the next frame (may have to retry several times, e.g.
 	// to skip over ID3 information).
+	// must reopen file at current position
+#ifdef __SYMBIAN32__
+	// For symbian we must check that an alternative file pointer is created, see if its open
+	// If not re-open file and seek to the last read position
+	if(_file && !_file->isOpen()){
+		_file->open(_file->name());
+		_file->seek(_lastReadPosition);
+	}
+#endif
+
 	while (mad_frame_decode(&_frame, &_stream)) {
 		if (_stream.error == MAD_ERROR_BUFLEN) {
 			int offset;
@@ -226,6 +264,14 @@ void MP3InputStream::refill(bool first) {
 	// Synthesise the frame into PCM samples and reset the buffer position
 	mad_synth_frame(&_synth, &_frame);
 	_posInFrame = 0;
+
+#ifdef __SYMBIAN32__
+	// For symbian we now store the last read position and then close the file
+	if(_file){
+		_lastReadPosition=_file->pos();
+		_file->close();
+		}
+#endif
 }
 
 inline bool MP3InputStream::eosIntern() const {
@@ -293,9 +339,23 @@ public:
 
 
 MP3TrackInfo::MP3TrackInfo(File *file) {
+#ifdef __SYMBIAN32__
+	// This data is taking a rather big room on symbians limited stack
+	// Create the buffers on the heap instead and let the stream and frame be references instead
+	struct mad_stream* streamptr = (struct mad_stream*)malloc(sizeof(struct mad_stream));
+	struct mad_frame* frameptr = (struct mad_frame*)malloc(sizeof(struct mad_frame));
+	unsigned char* bufferptr = (unsigned char*)malloc(8192);
+
+	struct mad_stream& stream = *streamptr;
+	struct mad_frame& frame = *frameptr;
+	unsigned char* buffer = bufferptr;
+	int sizeofbuffer = 8192;
+#else
 	struct mad_stream stream;
 	struct mad_frame frame;
 	unsigned char buffer[8192];
+	int sizeofbuffer = sizeof(buffer);
+#endif
 	unsigned int buflen = 0;
 	int count = 0;
 
@@ -304,10 +364,10 @@ MP3TrackInfo::MP3TrackInfo(File *file) {
 	mad_frame_init(&frame);
 
 	while (1) {
-		if (buflen < sizeof(buffer)) {
+		if (buflen < sizeofbuffer) {
 			int bytes;
 
-			bytes = file->read(buffer + buflen, sizeof(buffer) - buflen);
+			bytes = file->read(buffer + buflen, sizeofbuffer - buflen);
 			if (bytes <= 0) {
 				if (bytes == -1) {
 					warning("Invalid file format");
@@ -354,6 +414,12 @@ MP3TrackInfo::MP3TrackInfo(File *file) {
 	_size = file->size();
 	_file = file;
 	_error_flag = false;
+#ifdef __SYMBIAN32__
+	// Free the heap reservations
+	free(frameptr);
+	free(streamptr);
+	free(bufferptr);
+#endif
 	return;
 
 error:
@@ -361,6 +427,12 @@ error:
 	mad_stream_finish(&stream);
 	_error_flag = true;
 	delete file;
+#ifdef __SYMBIAN32__
+	// Free the heap reservations
+	free(frameptr);
+	free(streamptr);
+	free(bufferptr);
+#endif
 }
 
 void MP3TrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration) {
@@ -369,6 +441,11 @@ void MP3TrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int sta
 
 	// Calc offset. As all bitrates are in kilobit per seconds, the division by 200 is always exact
 	offset = (startFrame * (_mad_header.bitrate / (8 * 25))) / 3;
+#ifdef __SYMBIAN32__
+	// Reopen the file if it is not open yet
+	if(!_file->isOpen())
+		_file->open(_file->name());
+#endif
 	_file->seek(offset, SEEK_SET);
 
 	// Calc delay
