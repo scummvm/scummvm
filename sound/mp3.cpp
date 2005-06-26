@@ -349,12 +349,12 @@ MP3TrackInfo::MP3TrackInfo(File *file) {
 	struct mad_stream& stream = *streamptr;
 	struct mad_frame& frame = *frameptr;
 	unsigned char* buffer = bufferptr;
-	int sizeofbuffer = 8192;
+	uint sizeofbuffer = 8192;
 #else
 	struct mad_stream stream;
 	struct mad_frame frame;
 	unsigned char buffer[8192];
-	int sizeofbuffer = sizeof(buffer);
+	uint sizeofbuffer = sizeof(buffer);
 #endif
 	unsigned int buflen = 0;
 	int count = 0;
