@@ -142,6 +142,20 @@ void OSystem_Dreamcast::setPalette(const byte *colors, uint start, uint num)
   _screen_dirty = true;
 }
 
+void OSystem_Dreamcast::grabPalette(byte *colors, uint start, uint num)
+{
+  const unsigned short *src = palette + start;
+  if(num>0)
+    while( num-- ) {
+      unsigned short p = *src++;
+      colors[0] = ((p&0x7c00)>>7)|((p&0x7000)>>12);
+      colors[1] = ((p&0x03e0)>>2)|((p&0x0380)>>7);
+      colors[2] = ((p&0x001f)<<3)|((p&0x001c)>>2);
+      colors[3] = 0xff;
+      colors += 4;
+    }
+}
+
 void OSystem_Dreamcast::setScaling()
 {
   if(_screen_w > 400) {

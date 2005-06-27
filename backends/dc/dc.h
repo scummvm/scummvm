@@ -64,6 +64,7 @@ class OSystem_Dreamcast : public OSystem {
 
   // Set colors of the palette
   void setPalette(const byte *colors, uint start, uint num);
+  void grabPalette(byte *colors, uint start, uint num);
 
   // Set the size of the video bitmap.
   // Typically, 320x200
