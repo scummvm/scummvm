@@ -102,7 +102,7 @@ Graphics::Surface *ScummEngine::loadThumbnail(Common::InSaveFile *file) {
 void ScummEngine::saveThumbnail(Common::OutSaveFile *file) {
 	Graphics::Surface thumb;
  
-#ifndef DISABLE_HQ_SCALERS // fcn has dep on HQ_SCALERS: thumbnail gets created as empty
+#if !defined(DISABLE_SCALERS) && !defined(DISABLE_HQ_SCALERS) // fcn has dep on HQ_SCALERS: thumbnail gets created as empty
 	if (!createThumbnailFromScreen(&thumb))
 #endif
 		thumb.create(kThumbnailWidth, kThumbnailHeight2, sizeof(uint16));
