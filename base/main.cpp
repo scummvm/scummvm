@@ -363,7 +363,7 @@ extern "C" int main(int argc, char *argv[]) {
 #endif
 	setbuf(stderr, NULL);			/* No buffering */
 
-#endif //defined(WIN32) && defined(USE_CONSOLE)
+#endif // (defined(WIN32) && defined(NO_CONSOLE)) || defined(__SYMBIAN32__)
 
 
 	// Quick preparse of command-line, looking for alt configfile path
