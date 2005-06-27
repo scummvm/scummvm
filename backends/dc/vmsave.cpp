@@ -222,6 +222,7 @@ private:
   int pos, size;
 
   uint32 read(void *buf, uint32 cnt);
+  void skip(uint32 offset);
 
 public:
   InVMSave() 
@@ -325,6 +326,14 @@ uint32 InVMSave::read(void *buf, uint32 cnt)
     memcpy(buf, buffer + pos, nbyt);
   pos += nbyt;
   return cnt;
+}
+
+void InVMSave::skip(uint32 offset)
+{
+  int nbyt = offset;
+  if (pos + nbyt > size)
+    nbyt = (size - pos);
+  pos += nbyt;
 }
 
 uint32 OutVMSave::write(const void *buf, uint32 cnt)
