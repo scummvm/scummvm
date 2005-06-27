@@ -576,7 +576,7 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 				memcpy(dst, src, firstWord);
 				dst += firstWord;
 				src += firstWord;
-				assert((firstWord & 3) == 0);
+				assert((firstWord & 1) == 0);
 				outputSamplesLeft -= firstWord / 2;
 			} else {
 				// Read the seed values for the decoder.
@@ -590,7 +590,6 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 				}
 			}
 
-			outputSamplesLeft /= channels;
 			totalBitOffset = 0;
 			// The channels are encoded separately.
 			for (int chan = 0; chan < channels; chan++) {
@@ -604,7 +603,12 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 				// that by using a variables dest offset:
 				destPos = chan * 2;
 
-				for (i = 0; i < outputSamplesLeft; ++i) {
+				const int bound = (channels == 1)
+									? outputSamplesLeft 
+									: ((chan == 0)
+										? (outputSamplesLeft+1) / 2
+										: outputSamplesLeft / 2);
+				for (i = 0; i < bound; ++i) {
 					// Determine the size (in bits) of the next data packet
 					const int32 curTableEntryBitCount = _destImcTable[curTablePos];
 					assert(2 <= curTableEntryBitCount && curTableEntryBitCount <= 7);
