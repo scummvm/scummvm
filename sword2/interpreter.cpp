@@ -271,7 +271,40 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 	// So if his click hander (action script number 2) finishes, and
 	// variable 913 is 1, we set it back to 0 manually.
 
-	bool checkPyramidBug = scriptNumber == 2 && strcmp((char *)header->name, "titipoco_81") == 0;
+	bool checkPyramidBug = false;
+
+	// WORKAROUND for bug #1214168: The not-at-all dreaded mop bug.
+	//
+	// At the London Docks, global variable 1003 keeps track of Nico:
+	//
+	// 0: Hiding behind the first crate.
+	// 1: Hiding behind the second crate.
+	// 2: Standing in plain view on the deck.
+	// 3: Hiding on the roof.
+	//
+	// The bug happens when trying to pick up the mop while hiding on the
+	// roof. Nico climbs down, the mop is picked up, but the variable
+	// remains set to 3. Visually, everything looks ok. But as far as the
+	// scripts are concerned, she's still hiding up on the roof. This is
+	// not fatal, but leads to a number of glitches until the state is
+	// corrected. E.g. trying to climb back up the ladder will cause Nico
+	// to climb down again.
+	//
+	// Global variable 1017 keeps track of the mop. Setting it to 2 means
+	// that the mop has been picked up. We should be able to use that as
+	// the signal that Nico's state needs to be updated as well. There are
+	// a number of other possible workarounds, but this is the closest
+	// point I've found to where Nico's state should have been updated, had
+	// the script been correct.
+
+	bool checkMopBug = false;
+
+	if (scriptNumber == 2) {
+		if (strcmp((char *)header->name, "titipoco_81") == 0)
+			checkPyramidBug = true;
+		else if (strcmp((char *)header->name, "mop_73") == 0)
+			checkMopBug = true;
+	}
 
 	code += noScripts * sizeof(int32);
 
@@ -416,6 +449,14 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			// Pop a global variable
 			Read16ip(parameter);
 			value = pop();
+
+			// WORKAROUND: Mop bug. See explanation above.
+
+			if (checkMopBug && parameter == 1017 && _scriptVars[1003] != 2) {
+				warning("Working around Mop script bug: Setting Nico state");
+				_scriptVars[1003] = 2;
+			}
+
 			_scriptVars[parameter] = value;
 			debug(9, "CP_POP_GLOBAL_VAR32: scriptsVars[%d] = %d", parameter, value);
 			break;
