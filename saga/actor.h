@@ -63,7 +63,11 @@ class HitZone;
 #define ACTOR_SPEECH_STRING_MAX 16	// speech const
 #define ACTOR_SPEECH_ACTORS_MAX 8
 
+#define ACTOR_DRAGON_TURN_MOVES 4
+
 #define ACTOR_NO_ENTRANCE -1
+
+#define ACTOR_EXP_KNOCK_RIF 24
 
 #define PATH_NODE_EMPTY -1
 
@@ -120,6 +124,22 @@ enum PathCellType {
 	kPathCellEmpty = -1,
 	//kDirUp = 0 .... kDirUpLeft = 7 
 	kPathCellBarrier = 0x57
+};
+
+enum DragonMoveTypes {
+	kDragonMoveUpLeft			=	0,
+	kDragonMoveUpRight			=	1,
+	kDragonMoveDownLeft			=	2,
+	kDragonMoveDownRight		=	3,
+	kDragonMoveUpLeft_Left		=	4,
+	kDragonMoveUpLeft_Right		=	5,
+	kDragonMoveUpRight_Left		=	6,
+	kDragonMoveUpRight_Right	=	7,
+	kDragonMoveDownLeft_Left	=	8,
+	kDragonMoveDownLeft_Right	=	9,
+	kDragonMoveDownRight_Left	=	10,
+	kDragonMoveDownRight_Right	=	11,
+	kDragonMoveInvalid			=	12
 };
 
 struct PathDirectionData {
@@ -295,6 +315,10 @@ public:
 	int16 fallAcceleration;
 	int16 fallPosition;
 
+	uint8 dragonBaseFrame;
+	uint8 dragonStepCycle;
+	uint8 dragonMoveType;
+
 	int32 frameNumber;			// current frame number
 	
 	int32 tileDirectionsAlloced;
@@ -326,6 +350,9 @@ public:
 		out->writeSint16LE(fallVelocity);			
 		out->writeSint16LE(fallAcceleration);			
 		out->writeSint16LE(fallPosition);			
+		out->writeByte(dragonBaseFrame);			
+		out->writeByte(dragonStepCycle);			
+		out->writeByte(dragonMoveType);			
 		out->writeSint32LE(frameNumber);
 
 		out->writeSint32LE(tileDirectionsAlloced);
@@ -367,6 +394,14 @@ public:
 		} else {
 			fallVelocity = fallAcceleration = fallPosition = 0;
 		}
+		if (_vm->getCurrentLoadVersion() > 2) {
+			dragonBaseFrame = in->readByte();			
+			dragonStepCycle = in->readByte();			
+			dragonMoveType = in->readByte();			
+		} else {
+			dragonBaseFrame = dragonStepCycle = dragonMoveType = 0;
+		}
+
 		frameNumber = in->readSint32LE();
 
 		
@@ -562,6 +597,7 @@ private:
 	void nodeToPath();
 	void removePathPoints();
 	bool validFollowerLocation(const Location &location);
+	void moveDragon(ActorData *actor);
 	
 	
 protected:
@@ -587,6 +623,7 @@ public:
 protected:
 	SpeechData _activeSpeech;
 	int _protagState;
+	bool _dragonHunt;
 
 private:
 //path stuff

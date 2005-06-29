@@ -38,7 +38,7 @@
 #include "saga/render.h"
 #include "saga/events.h"
 
-#define CURRENT_SAGA_VER 2
+#define CURRENT_SAGA_VER 3
 
 namespace Saga {
 

@@ -53,6 +53,9 @@ namespace Saga {
 #define SAGA_SCROLL_LIMIT_Y1 8
 #define SAGA_SCROLL_LIMIT_Y2 32
 
+#define SAGA_DRAGON_SEARCH_CENTER     24
+#define SAGA_DRAGON_SEARCH_DIAMETER   (SAGA_DRAGON_SEARCH_CENTER * 2)
+
 #define SAGA_SEARCH_CENTER     15
 #define SAGA_SEARCH_DIAMETER   (SAGA_SEARCH_CENTER * 2)
 #define SAGA_SEARCH_QUEUE_SIZE 128
@@ -164,6 +167,7 @@ public:
 	}
 	void screenPointToTileCoords(const Point &position, Location &location);
 	void placeOnTileMap(const Location &start, Location &result, int16 distance, uint16 direction);
+	void findDragonTilePath(ActorData* actor, const Location &start, const Location &end, uint16 initialDirection);
 	void findTilePath(ActorData* actor, const Location &start, const Location &end);
 	bool nextTileTarget(ActorData* actor);
 	void setTileDoorState(int doorNumber, int doorState);
@@ -197,6 +201,8 @@ private:
 	}	
 	int16 findMulti(int16 tileIndex, int16 absU, int16 absV, int16 absH);
 	void pushPoint(int16 u, int16 v, uint16 cost, uint16 direction);
+	void pushDragonPoint(int16 u, int16 v, uint16 direction);
+	bool checkDragonPoint(int16 u, int16 v, uint16 direction);
 	void testPossibleDirections(int16 u, int16 v, uint16 terraComp[8], int skipCenter);
 	IsoTileData *getTile(int16 u, int16 v, int16 z);
 
@@ -223,6 +229,13 @@ private:
 // path finding stuff
 	uint16 _platformHeight;
 
+	struct DragonPathCell {
+		uint16 visited:1,direction:3;
+	};
+	struct DragonTilePoint {
+		int8 u, v;
+		uint16 direction:4;
+	};
 	struct PathCell {
 		uint16 visited:1,direction:3,cost:12;
 	};
@@ -234,6 +247,18 @@ public:
 	};
 
 private:
+	struct DragonSearchArray {
+		DragonPathCell cell[SAGA_DRAGON_SEARCH_DIAMETER][SAGA_DRAGON_SEARCH_DIAMETER];
+		DragonTilePoint queue[SAGA_SEARCH_QUEUE_SIZE];
+		DragonTilePoint *getQueue(uint16 i) {
+			assert(i < SAGA_SEARCH_QUEUE_SIZE);
+			return &queue[i];
+		}
+		DragonPathCell *getPathCell(uint16 u, uint16 v) {
+			assert((u < SAGA_DRAGON_SEARCH_DIAMETER) && (v < SAGA_DRAGON_SEARCH_DIAMETER));
+			return &cell[u][v];
+		}
+	};
 	struct SearchArray {
 		PathCell cell[SAGA_SEARCH_DIAMETER][SAGA_SEARCH_DIAMETER];
 		TilePoint queue[SAGA_SEARCH_QUEUE_SIZE];
@@ -248,7 +273,9 @@ private:
 	};
 	
 	int16 _queueCount;
+	int16 _readCount;
 	SearchArray _searchArray;
+	DragonSearchArray _dragonSearchArray;
 	byte _pathDirections[SAGA_MAX_PATH_DIRECTIONS];
 
 

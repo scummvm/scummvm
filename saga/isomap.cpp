@@ -897,7 +897,51 @@ void IsoMap::drawTile(SURFACE *ds, uint16 tileIndex, const Point &point, const L
 
 }
 
-//
+bool IsoMap::checkDragonPoint(int16 u, int16 v, uint16 direction) {
+	DragonPathCell *pathCell;
+	
+	if ((u < 1) || (u >= SAGA_DRAGON_SEARCH_DIAMETER - 1) || (v < 1) || (v >= SAGA_DRAGON_SEARCH_DIAMETER - 1)) {
+			return false;
+	}
+		
+	pathCell = _dragonSearchArray.getPathCell(u, v);
+
+	if (pathCell->visited) {
+		return false;
+	}
+
+	pathCell->visited = 1;
+	pathCell->direction = direction;
+	return true;
+}
+
+void IsoMap::pushDragonPoint(int16 u, int16 v, uint16 direction) {
+	DragonTilePoint *tilePoint;
+	DragonPathCell *pathCell;
+	
+	if ((u < 1) || (u >= SAGA_DRAGON_SEARCH_DIAMETER - 1) || (v < 1) || (v >= SAGA_DRAGON_SEARCH_DIAMETER - 1)) {
+			return;
+	}
+		
+	pathCell = _dragonSearchArray.getPathCell(u, v);
+
+	if (pathCell->visited) {
+		return;
+	}
+
+	tilePoint = _dragonSearchArray.getQueue(_queueCount);
+	_queueCount++;
+	if (_queueCount >= SAGA_SEARCH_QUEUE_SIZE) {
+		_queueCount = 0;
+	}
+
+	tilePoint->u = u;
+	tilePoint->v = v;
+	tilePoint->direction = direction;
+
+	pathCell->visited = 1;
+	pathCell->direction = direction;
+}
 
 void IsoMap::pushPoint(int16 u, int16 v, uint16 cost, uint16 direction) {
 	int16 upper;
@@ -1209,6 +1253,163 @@ void IsoMap::placeOnTileMap(const Location &start, Location &result, int16 dista
 
 	result.u() = ((uBase + bestU) << 4) + 8;
 	result.v() = ((vBase + bestV) << 4) + 8;
+}
+
+void IsoMap::findDragonTilePath(ActorData* actor,const Location &start, const Location &end, uint16 initialDirection) {
+	byte *res;
+	int i;
+	int16 u;
+	int16 v;
+	int16 u1;
+	int16 v1;
+	uint16 dir;
+
+	int16 bestDistance;
+	int16 bestU;
+	int16 bestV;
+
+	int16 uBase;
+	int16 vBase;
+	int16 uFinish;
+	int16 vFinish;
+	DragonPathCell *pcell;
+	IsoTileData *tile;
+	uint16 mask;
+	DragonTilePoint *tilePoint;
+
+	int16 dist;
+	bool first;
+
+	bestDistance = SAGA_DRAGON_SEARCH_DIAMETER;
+	bestU = SAGA_DRAGON_SEARCH_CENTER,
+	bestV = SAGA_DRAGON_SEARCH_CENTER;
+
+	uBase = (start.u() >> 4) - SAGA_DRAGON_SEARCH_CENTER;
+	vBase = (start.v() >> 4) - SAGA_DRAGON_SEARCH_CENTER;
+	uFinish = (end.u() >> 4) - uBase;
+	vFinish = (end.v() >> 4) - vBase;
+
+	_platformHeight = _vm->_actor->_protagonist->location.z / 8;
+
+	memset( &_dragonSearchArray, 0, sizeof(_dragonSearchArray));
+
+	for (u = 0; u < SAGA_DRAGON_SEARCH_CENTER; u++) {
+		for (v = 0; v < SAGA_DRAGON_SEARCH_CENTER; v++) {
+			
+			pcell = _dragonSearchArray.getPathCell(u, v);
+
+			u1 = uBase + u;
+			v1 = vBase + v;
+
+			if ((u1 > 127) || (u1 < 48) || (v1 > 127) || (v1 < 0)) {
+				pcell->visited = 1;
+				continue;
+			}
+
+			tile = getTile(u1, v1, _platformHeight );
+			if (tile != NULL) {
+				mask = tile->terrainMask;
+				if ( ((tile->terrainMask != 0) && (tile->GetFGDAttr() >= kTerrBlock)) ||
+					((tile->terrainMask != 0xFFFF) && (tile->GetBGDAttr() >= kTerrBlock)) ) {
+					pcell->visited = 1;
+				}
+			} else {
+				pcell->visited = 1;
+			}
+		}
+	}
+
+	first = true;
+	_queueCount = _readCount = 0;
+	pushDragonPoint( SAGA_DRAGON_SEARCH_CENTER, SAGA_DRAGON_SEARCH_CENTER, initialDirection);
+
+	while (_queueCount != _readCount) {
+
+		tilePoint = _dragonSearchArray.getQueue(_readCount++);
+		if (_readCount >= SAGA_SEARCH_QUEUE_SIZE) {
+			_readCount = 0;
+		}
+
+
+		dist = ABS(tilePoint->u - uFinish) + ABS(tilePoint->v - vFinish);
+		
+		if (dist < bestDistance) {
+
+			bestU = tilePoint->u;
+			bestV = tilePoint->v;
+			bestDistance = dist;
+			if (dist == 0) {
+				break;
+			}
+		}
+
+		switch (tilePoint->direction) {
+			case kDirUpRight:
+				if (checkDragonPoint( tilePoint->u + 1, tilePoint->v + 0, 1)) {
+					pushDragonPoint( tilePoint->u + 2, tilePoint->v + 0, 1);
+					pushDragonPoint( tilePoint->u + 1, tilePoint->v + 1, 7);
+					pushDragonPoint( tilePoint->u + 1, tilePoint->v - 1, 3);
+				}
+				break;
+			case kDirDownRight:
+				if (checkDragonPoint( tilePoint->u + 0, tilePoint->v - 1, 3)) {
+					pushDragonPoint( tilePoint->u + 0, tilePoint->v - 2, 3);
+					pushDragonPoint( tilePoint->u + 1, tilePoint->v - 1, 1);
+					pushDragonPoint( tilePoint->u - 1, tilePoint->v - 1, 5);
+				}
+				break;
+			case kDirDownLeft:
+				if (checkDragonPoint( tilePoint->u - 1, tilePoint->v + 0, 5)) {
+					pushDragonPoint( tilePoint->u - 2, tilePoint->v + 0, 5);
+					pushDragonPoint( tilePoint->u - 1, tilePoint->v - 1, 3);
+					pushDragonPoint( tilePoint->u - 1, tilePoint->v + 1, 7);
+				}
+				break;
+			case kDirUpLeft:
+				if (checkDragonPoint( tilePoint->u + 0, tilePoint->v + 1, 7)) {
+					pushDragonPoint( tilePoint->u + 0, tilePoint->v + 2, 7);
+					pushDragonPoint( tilePoint->u - 1, tilePoint->v + 1, 5);
+					pushDragonPoint( tilePoint->u + 1, tilePoint->v + 1, 1);
+				}
+				break;
+		}
+
+		if (first && (_queueCount == _readCount)) {
+			pushDragonPoint( tilePoint->u + 1, tilePoint->v + 0, 1);
+			pushDragonPoint( tilePoint->u + 0, tilePoint->v - 1, 3);
+			pushDragonPoint( tilePoint->u - 1, tilePoint->v + 0, 5);
+			pushDragonPoint( tilePoint->u + 0, tilePoint->v + 1, 7);
+		}
+		first = false;
+	}
+
+	res = &_pathDirections[SAGA_MAX_PATH_DIRECTIONS];
+	i = 0;
+	while ((bestU != SAGA_DRAGON_SEARCH_CENTER) || (bestV != SAGA_DRAGON_SEARCH_CENTER)) {
+		pcell = _dragonSearchArray.getPathCell(bestU, bestV);
+
+		*--res = pcell->direction;
+		i++;
+		if (i >= SAGA_MAX_PATH_DIRECTIONS) {
+			break;
+		}
+
+		dir = (pcell->direction + 4) & 0x07;
+
+		bestU += normalDirTable[dir].u;
+		bestV += normalDirTable[dir].v;
+	}
+
+/*	if (i > 64) {
+		i = 64;
+	}*/
+
+	actor->walkStepsCount = i;
+	if (i) {
+		actor->setTileDirectionsSize(i, false);
+		memcpy(actor->tileDirections, res, i );
+	}
+
 }
 
 void IsoMap::findTilePath(ActorData* actor, const Location &start, const Location &end) {

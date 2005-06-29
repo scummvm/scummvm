@@ -151,6 +151,26 @@ static const int tileDirectionLUT[8][2] = {
 	{ 0,  2}
 };
 
+struct DragonMove {
+        uint16 baseFrame;
+        int16 offset[4][2];
+};
+
+static const DragonMove dragonMoveTable[12] = {
+        {0,		{{ 0, 0 },	{ 0, 0 },	{ 0, 0 },	{ 0, 0 }}},
+        {0,		{{ 0, 0 },	{ 0, 0 },	{ 0, 0 },	{ 0, 0 }}},
+        {0,		{{ 0, 0 },	{ 0, 0 },	{ 0, 0 },	{ 0, 0 }}},
+        {0,		{{ 0, 0 },	{ 0, 0 },	{ 0, 0 },	{ 0, 0 }}},
+        {28,	{{ -0,  0 },{ -1,  6 },	{ -5, 11 },	{-10, 15 } }},
+        {56,	{{  0,  0 },{  1,  6 },	{  5, 11 },	{ 10, 15 } }},
+        {40,	{{  0,  0 },{  6,  1 },	{ 11,  5 },	{ 15, 10 } }},
+        {44,	{{  0,  0 },{  6, -1 },	{ 11, -5 },	{ 15,-10 } }},
+        {32,	{{ -0, -0 },{ -6, -1 },	{-11, -5 },	{-15,-10 } }},
+        {52,	{{ -0,  0 },{ -6,  1 },	{-11,  5 },	{-15, 10 } }},
+        {36,	{{  0, -0 },{  1, -6 },	{  5,-11 },	{ 10,-15 } }},
+        {48,	{{ -0, -0 },{ -1, -6 },	{ -5,-11 },	{-10,-15 } }},
+};
+
 Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	int i;
 	int result;
@@ -267,6 +287,8 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 
 		_protagonist = &dummyActor;
 	}
+
+	_dragonHunt = true;
 }
 
 Actor::~Actor() {
@@ -1381,7 +1403,11 @@ void Actor::drawSpeech(void) {
 		if (_activeSpeech.actorIds[0] != 0) {
 			
 			for (i = 0; i < _activeSpeech.actorsCount; i++){
-				_vm->textDraw(MEDIUM_FONT_ID, back_buf, outputString, _activeSpeech.speechCoords[i].x, _activeSpeech.speechCoords[i].y, _activeSpeech.speechColor[i], _activeSpeech.outlineColor[i], textDrawFlags);
+				_vm->textDraw(MEDIUM_FONT_ID, back_buf, outputString,
+					_activeSpeech.speechCoords[i].x, 
+					_activeSpeech.speechCoords[i].y, 
+					_activeSpeech.speechColor[i], 
+					_activeSpeech.outlineColor[i], textDrawFlags);
 			}
 
 		} else { // non actors speech
@@ -1848,6 +1874,253 @@ void Actor::abortAllSpeeches() {
 void Actor::abortSpeech() {
 	_vm->_sound->stopVoice();
 	_activeSpeech.playingTime = 0;
+}
+
+void Actor::moveDragon(ActorData *actor) {
+	int16 dir0, dir1, dir2, dir3;
+	int16 moveType;
+	EVENT event;
+	const DragonMove *dragonMove;
+
+	if ((actor->actionCycle < 0) ||
+		((actor->actionCycle == 0) && (actor->dragonMoveType >= ACTOR_DRAGON_TURN_MOVES))) {
+		
+		moveType = kDragonMoveInvalid;
+		if (actor->location.distance(_protagonist->location) < 24) {
+			if (_dragonHunt && (_protagonist->currentAction != kActionFall)) {
+				event.type = ONESHOT_EVENT;
+				event.code = SCRIPT_EVENT;
+				event.op = EVENT_EXEC_NONBLOCKING;
+				event.time = 0;
+				event.param = _vm->_scene->getScriptModuleNumber(); // module number
+				event.param2 = ACTOR_EXP_KNOCK_RIF;			// script entry point number
+				event.param3 = -1;		// Action
+				event.param4 = -1;		// Object
+				event.param5 = -1;		// With Object
+				event.param6 = -1;		// Actor
+
+				_vm->_events->queue(&event);
+				_dragonHunt = FALSE;
+			}
+		} else {
+			_dragonHunt = true;
+		}
+	
+		if (actor->walkStepIndex + 2 > actor->walkStepsCount) {
+
+			_vm->_isoMap->findDragonTilePath(actor, actor->location, _protagonist->location, actor->actionDirection);
+
+			if (actor->walkStepsCount == 0) {
+				_vm->_isoMap->findDragonTilePath(actor, actor->location, _protagonist->location, 0);
+			}
+
+			if (actor->walkStepsCount < 2) {
+				return;
+			}
+
+			actor->partialTarget = actor->location;
+			actor->finalTarget = _protagonist->location;
+			actor->walkStepIndex = 0;
+		}
+
+		dir0 = actor->actionDirection;
+		dir1 = actor->tileDirections[actor->walkStepIndex++];
+		dir2 = actor->tileDirections[actor->walkStepIndex];
+		dir3 = actor->tileDirections[actor->walkStepIndex + 1];
+
+		if (dir0 != dir1){
+			actor->actionDirection = dir0 = dir1;
+		}
+
+		actor->location = actor->partialTarget;
+
+		if ((dir1 != dir2) && (dir1 == dir3)) {
+			switch (dir1) {
+			case kDirUpLeft:
+				actor->partialTarget.v() += 16;
+				moveType = kDragonMoveUpLeft;
+				break;
+			case kDirDownLeft:
+				actor->partialTarget.u() -= 16;
+				moveType = kDragonMoveDownLeft;
+				break;
+			case kDirDownRight:
+				actor->partialTarget.v() -= 16;
+				moveType = kDragonMoveDownRight;
+				break;
+			case kDirUpRight:
+				actor->partialTarget.u() += 16;
+				moveType = kDragonMoveUpRight;
+				break;
+			}
+
+			switch (dir2) {
+			case kDirUpLeft:
+				actor->partialTarget.v() += 16;
+				break;
+			case kDirDownLeft:
+				actor->partialTarget.u() -= 16;
+				break;
+			case kDirDownRight:
+				actor->partialTarget.v() -= 16;
+				break;
+			case kDirUpRight:
+				actor->partialTarget.u() += 16;
+				break;
+			}
+
+			actor->walkStepIndex++;
+		} else {
+			switch (dir1) {
+			case kDirUpLeft:
+				actor->partialTarget.v() += 16;
+				switch (dir2) {
+				case kDirDownLeft:
+					moveType = kDragonMoveUpLeft_Left;
+					actor->partialTarget.u() -= 16;
+					break;
+				case kDirUpLeft:
+					moveType = kDragonMoveUpLeft;
+					break;
+				case kDirUpRight:
+					actor->partialTarget.u() += 16;
+					moveType = kDragonMoveUpLeft_Right;
+					break;
+				default:
+					actor->actionDirection = dir1;
+					actor->walkStepsCount = 0;
+					break;
+				}
+				break;
+			case kDirDownLeft:
+				actor->partialTarget.u() -= 16;
+				switch (dir2) {
+				case kDirDownRight:
+					moveType = kDragonMoveDownLeft_Left;
+					actor->partialTarget.v() -= 16;
+					break;
+				case kDirDownLeft:
+					moveType = kDragonMoveDownLeft;
+					break;
+				case kDirUpLeft:
+					moveType = kDragonMoveDownLeft_Right;
+					actor->partialTarget.v() += 16;
+					break;
+				default:
+					actor->actionDirection = dir1;
+					actor->walkStepsCount = 0;
+					break;
+				}
+				break;
+			case kDirDownRight:
+				actor->partialTarget.v() -= 16;
+				switch (dir2) {
+				case kDirUpRight:
+					moveType = kDragonMoveDownRight_Left;
+					actor->partialTarget.u() += 16;
+					break;
+				case kDirDownRight:
+					moveType = kDragonMoveDownRight;
+					break;
+				case kDirDownLeft:
+					moveType = kDragonMoveDownRight_Right;
+					actor->partialTarget.u() -= 16;
+					break;
+				default:
+					actor->actionDirection = dir1;
+					actor->walkStepsCount = 0;
+					break;
+				}
+				break;
+			case kDirUpRight:
+				actor->partialTarget.u() += 16;
+				switch (dir2) {
+				case kDirUpLeft:
+					moveType = kDragonMoveUpRight_Left;
+					actor->partialTarget.v() += 16;
+					break;
+				case kDirUpRight:
+					moveType = kDragonMoveUpRight;
+					break;
+				case kDirDownRight:
+					moveType = kDragonMoveUpRight_Right;
+					actor->partialTarget.v() -= 16;
+					break;
+				default:
+					actor->actionDirection = dir1;
+					actor->walkStepsCount = 0;
+					break;
+				}
+				break;
+
+			default:
+				actor->actionDirection = dir1;
+				actor->walkStepsCount = 0;
+				break;
+			}
+		}
+		
+		actor->dragonMoveType = moveType;
+
+		if (moveType >= ACTOR_DRAGON_TURN_MOVES) {
+			actor->dragonStepCycle = 0;
+			actor->actionCycle = 4;
+			actor->walkStepIndex++;
+		} else {
+			actor->actionCycle = 4;
+		}
+	}
+
+	actor->actionCycle--;
+
+	if ((actor->walkStepsCount < 1) || (actor->actionCycle < 0)) {
+		return;
+	}
+
+	if (actor->dragonMoveType < ACTOR_DRAGON_TURN_MOVES) {
+
+		actor->dragonStepCycle++;
+		if (actor->dragonStepCycle >= 7) {
+			actor->dragonStepCycle = 0;
+		}
+
+		actor->dragonBaseFrame = actor->dragonMoveType * 7;
+
+		if (actor->location.u() > actor->partialTarget.u() + 3) {
+			actor->location.u() -= 4;
+		} else {
+			if (actor->location.u() < actor->partialTarget.u() - 3) {
+				actor->location.u() += 4;
+			} else {
+				actor->location.u() = actor->partialTarget.u();
+			}
+		}
+
+
+		if (actor->location.v() > actor->partialTarget.v() + 3) {
+			actor->location.v() -= 4;
+		} else {
+			if (actor->location.v() < actor->partialTarget.v() - 3) {
+				actor->location.v() += 4;
+			} else {
+				actor->location.v() = actor->partialTarget.v();
+			}
+		}
+	} else {
+		dragonMove = &dragonMoveTable[actor->dragonMoveType];
+		actor->dragonBaseFrame = dragonMove->baseFrame;
+
+		
+		actor->location.u() = actor->partialTarget.u() - dragonMove->offset[actor->actionCycle][0];
+		actor->location.v() = actor->partialTarget.v() - dragonMove->offset[actor->actionCycle][1];
+
+		actor->dragonStepCycle++;
+		if (actor->dragonStepCycle >= 3) {
+			actor->dragonStepCycle = 3;
+		}
+	}
+
+	actor->frameNumber = actor->dragonBaseFrame + actor->dragonStepCycle;
 }
 
 void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point &toPoint) {
