@@ -83,7 +83,7 @@ public:
 	BundleMgr(BundleDirCache *_cache);
 	~BundleMgr();
 
-	bool open(const char *filename, bool &compressed);
+	bool open(const char *filename, bool &compressed, bool errorFlag=true);
 	void close();
 	Common::File *getFile(const char *filename, int32 &offset, int32 &size);
 	int32 decompressSampleByName(const char *name, int32 offset, int32 size, byte **comp_final, bool header_outside);

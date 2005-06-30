@@ -148,12 +148,16 @@ Common::File *BundleMgr::getFile(const char *filename, int32 &offset, int32 &siz
 	return NULL;
 }
 
-bool BundleMgr::open(const char *filename, bool &compressed) {
+bool BundleMgr::open(const char *filename, bool &compressed, bool errorFlag) {
 	if (_file.isOpen())
 		return true;
 
 	if (g_scumm->openFile(_file, filename) == false) {
-		error("BundleMgr::open() Can't open bundle file: %s", filename);
+		if (errorFlag) {
+			error("BundleMgr::open() Can't open bundle file: %s", filename);
+		} else {
+			warning("BundleMgr::open() Can't open bundle file: %s", filename);
+		}
 		return false;
 	}
 

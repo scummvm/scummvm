@@ -265,7 +265,7 @@ bool ImuseDigiSndMgr::openMusicBundle(soundStruct *sound, int disk) {
 	sound->bundle = new BundleMgr(_cacheBundleDir);
 	if (_vm->_gameId == GID_CMI) {
 		if (_vm->_features & GF_DEMO) {
-			result = sound->bundle->open("music.bun", sound->compressed);
+			result = sound->bundle->open("music.bun", sound->compressed, false);
 		} else {
 			char musicfile[20];
 			if (disk == -1)
