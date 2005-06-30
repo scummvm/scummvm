@@ -1900,7 +1900,7 @@ void Actor::moveDragon(ActorData *actor) {
 				event.param6 = -1;		// Actor
 
 				_vm->_events->queue(&event);
-				_dragonHunt = FALSE;
+				_dragonHunt = false;
 			}
 		} else {
 			_dragonHunt = true;
