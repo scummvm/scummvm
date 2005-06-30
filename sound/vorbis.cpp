@@ -21,7 +21,7 @@
 
 #include "sound/vorbis.h"
 
-#ifdef USE_VORBIS
+#if defined(USE_TREMOR) || defined(USE_VORBIS)
 
 #include "common/file.h"
 #include "common/util.h"
@@ -29,7 +29,11 @@
 #include "sound/audiostream.h"
 #include "sound/audiocd.h"
 
+#ifdef USE_TREMOR
+#include <tremor/ivorbisfile.h>
+#else
 #include <vorbis/vorbisfile.h>
+#endif
 
 
 using Common::File;

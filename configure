@@ -15,6 +15,7 @@ CXXFLAGS="$CXXFLAGS $CPPFLAGS"
 
 # default lib behaviour yes/no/auto
 _vorbis=auto
+_tremor=auto
 _flac=auto
 _mad=auto
 _alsa=auto
@@ -289,6 +290,9 @@ Optional Libraries:
   --with-vorbis-prefix=DIR Prefix where libvorbis is installed (optional)
   --disable-vorbis         disable Ogg Vorbis support [autodetect]
 
+  --with-tremor-prefix=DIR Prefix where tremor is installed (optional)
+  --disable-tremor          disable tremor support [autodetect]
+
   --with-mad-prefix=DIR    Prefix where libmad is installed (optional)
   --disable-mad            disable libmad (MP3) support [autodetect]
   
@@ -342,6 +346,8 @@ for ac_option in $@; do
       --disable-alsa)           _alsa=no        ;;
       --enable-vorbis)          _vorbis=yes     ;;
       --disable-vorbis)         _vorbis=no      ;;
+      --enable-tremor)          _tremor=yes     ;;
+      --disable-tremor)         _tremor=no      ;;
       --enable-flac)            _flac=yes       ;;
       --disable-flac)           _flac=no        ;;
       --enable-mad)             _mad=yes        ;;
@@ -379,6 +385,11 @@ for ac_option in $@; do
         _prefix=`echo $ac_option | cut -d '=' -f 2`
         VORBIS_CFLAGS="-I$_prefix/include"
         VORBIS_LIBS="-L$_prefix/lib"
+        ;;
+      --with-tremor-prefix=*)
+        _prefix=`echo $ac_option | cut -d '=' -f 2`
+        TREMOR_CFLAGS="-I$_prefix/include"
+        TREMOR_LIBS="-L$_prefix/lib"
         ;;
       --with-flac-prefix=*)
         _prefix=`echo $ac_option | cut -d '=' -f 2`
@@ -919,6 +930,31 @@ else
 fi
 echo "$_vorbis"
 
+#
+# Check for Tremor
+#
+echocheck "Tremor"
+if test "$_tremor" = auto ; then
+  _tremor=no
+  cat > $TMPC << EOF
+#include <tremor/ivorbiscodec.h>
+int main(void) { vorbis_packet_blocksize(0,0); return 0; }
+EOF
+cc_check $LDFLAGS $CXXFLAGS $TREMOR_CFLAGS $TREMOR_LIBS -lvorbisidec && \
+  _tremor=yes
+fi
+if test "$_tremor" = yes && test "$_vorbis" = no; then
+  _def_tremor='#define USE_TREMOR'
+  LIBS="$LIBS $TREMOR_LIBS -lvorbisidec"
+  INCLUDES="$INCLUDES $TREMOR_CFLAGS"
+else
+  if test "$_vorbis" = yes; then
+    _tremor="no (Ogg Vorbis/Tremor support is mutually exclusive)"
+  fi
+  _def_tremor='#undef USE_TREMOR'
+fi
+echo "$_tremor"
+
 echocheck "FLAC >= 1.0.1"
 if test "$_flac" = auto ; then
 	_flac=no
@@ -1208,6 +1244,7 @@ typedef signed $type_4_byte int32;
 
 /* Libs */
 $_def_vorbis
+$_def_tremor
 $_def_flac
 $_def_mad
 $_def_alsa
