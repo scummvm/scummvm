@@ -997,14 +997,13 @@ void IsoMap::pushPoint(int16 u, int16 v, uint16 cost, uint16 direction) {
 	pathCell->cost = cost;
 }
 
-IsoTileData *IsoMap::getTile(int16 u, int16 v, int16 z) {
+int16 IsoMap::getTileIndex(int16 u, int16 v, int16 z) {
 	int16 mtileU;
 	int16 mtileV;
 	int16 uc;
 	int16 vc;
 	int16 u0;
 	int16 v0;
-	int16 tileIndex;
 	int16 platformIndex;
 	int16 metaTileIndex;
 
@@ -1044,14 +1043,20 @@ IsoTileData *IsoMap::getTile(int16 u, int16 v, int16 z) {
 
 	platformIndex = _metaTileList[metaTileIndex].stack[z];
 	if (platformIndex < 0) {
-		return NULL;
+		return 0;
 	}
 
 	if (_tilePlatformsCount <= platformIndex) {
 		error("IsoMap::getTile wrong platformIndex");
 	}
 
-	tileIndex = _tilePlatformList[platformIndex].tiles[u0][v0];
+	return _tilePlatformList[platformIndex].tiles[u0][v0];
+}
+
+IsoTileData *IsoMap::getTile(int16 u, int16 v, int16 z) {
+	int16 tileIndex;
+
+	tileIndex = getTileIndex(u, v, z);
 
 	if (tileIndex == 0) {
 		return NULL;
@@ -1253,6 +1258,74 @@ void IsoMap::placeOnTileMap(const Location &start, Location &result, int16 dista
 
 	result.u() = ((uBase + bestU) << 4) + 8;
 	result.v() = ((vBase + bestV) << 4) + 8;
+}
+
+bool IsoMap::findNearestChasm(int16 &u0, int16 &v0, uint16 &direction) {
+	int16 u, v;
+	uint16 i;
+	u = u0;
+	v = v0;
+
+	for (i = 1; i < 5; i++) {
+		if (getTile( u - i, v, 6) == NULL) {
+			u0 = u - i - 1;
+			v0 = v;
+			direction = kDirDownLeft;
+			return true;
+		}
+
+		if (getTile( u, v - i, 6) == NULL) {
+			u0 = u;
+			v0 = v - i - 1;
+			direction = kDirDownRight;
+			return true;
+		}
+
+		if (getTile( u - i, v - i, 6) == NULL) {
+			u0 = u - i - 1;
+			v0 = v - i - 1;
+			direction = kDirDown;
+			return true;
+		}
+
+		if (getTile( u + i, v - i, 6) == NULL) {
+			u0 = u + i + 1;
+			v0 = v - i - 1;
+			direction = kDirDownRight;
+			return true;
+		}
+
+		if (getTile( u - i, v + i, 6) == NULL) {
+			u0 = u + i + 1;
+			v0 = v - i - 1;
+			direction = kDirLeft;
+			return true;
+		}
+	}
+
+	for (i = 1; i < 5; i++) {
+		if (getTile( u + i, v, 6) == NULL) {
+			u0 = u + i + 1;
+			v0 = v;
+			direction = kDirUpRight;
+			return true;
+		}
+
+		if (getTile( u, v + i, 6) == NULL) {
+			u0 = u;
+			v0 = v + i + 1;
+			direction = kDirUpLeft;
+			return true;
+		}
+
+		if (getTile( u + i, v + i, 6) == NULL) {
+			u0 = u + i + 1;
+			v0 = v + i + 1;
+			direction = kDirUp;
+			return true;
+		}
+	}
+	return false;
 }
 
 void IsoMap::findDragonTilePath(ActorData* actor,const Location &start, const Location &end, uint16 initialDirection) {

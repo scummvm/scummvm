@@ -117,8 +117,8 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfGetActorY),
 		OPCODE(sfEraseDelta),
 		OPCODE(sfPlayMusic),
-		OPCODE(SF_pickClimbOutPos),
-		OPCODE(SF_tossRif),
+		OPCODE(sfPickClimbOutPos),
+		OPCODE(sfTossRif),
 		OPCODE(sfShowControls),
 		OPCODE(SF_showMap),
 		OPCODE(sfPuzzleWon),
@@ -1593,19 +1593,47 @@ void Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #64 (0x40)
-void Script::SF_pickClimbOutPos(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
+void Script::sfPickClimbOutPos(SCRIPTFUNC_PARAMS) {
+	int16 u, v, t;
+	ActorData *protagonist = _vm->_actor->_protagonist;
+	while (true) {
 
-	error("STUB: SF_pickClimbOutPos(), %d args", nArgs);
+		u = (_vm->_rnd.getRandomNumber(63) & 63) + 40;
+		v = (_vm->_rnd.getRandomNumber(63) & 63) + 40;
+		t = _vm->_isoMap->getTileIndex(u, v, 6);
+		if (t == 65) {
+			protagonist->location.u() = (u << 4) + 4;
+			protagonist->location.v() = (v << 4) + 4;
+			protagonist->location.z = 48;
+			break;
+		}
+
+	}
 }
 
 // Script function #65 (0x41)
-void Script::SF_tossRif(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
+void Script::sfTossRif(SCRIPTFUNC_PARAMS) {
+	int16 uc , vc;
+	uint16 direction;
+	ActorData *protagonist = _vm->_actor->_protagonist;
 
-	error("STUB: SF_tossRif(), %d args", nArgs);
+	uc = protagonist->location.u() >> 4;
+	vc = protagonist->location.v() >> 4;
+	if (_vm->_isoMap->findNearestChasm(uc, vc, direction)) {
+		uc <<= 4;
+		vc <<= 4;
+		protagonist->facingDirection = direction;
+
+		protagonist->finalTarget.u() = uc;
+		protagonist->finalTarget.v() = vc;
+		protagonist->finalTarget.z = -40;
+		protagonist->currentAction = kActionFall;
+		protagonist->actionCycle = 24;
+		protagonist->fallAcceleration = - 20;
+		protagonist->fallVelocity = - (protagonist->fallAcceleration * 16) / 2 - (44 / 12);
+		protagonist->fallPosition = protagonist->location.z << 4;
+		protagonist->actionCycle--;
+	}
 }
 
 // Script function #66 (0x42)

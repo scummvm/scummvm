@@ -64,6 +64,7 @@ class HitZone;
 #define ACTOR_SPEECH_ACTORS_MAX 8
 
 #define ACTOR_DRAGON_TURN_MOVES 4
+#define ACTOR_DRAGON_INDEX 133
 
 #define ACTOR_NO_ENTRANCE -1
 

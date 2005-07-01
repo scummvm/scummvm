@@ -168,11 +168,13 @@ public:
 	void screenPointToTileCoords(const Point &position, Location &location);
 	void placeOnTileMap(const Location &start, Location &result, int16 distance, uint16 direction);
 	void findDragonTilePath(ActorData* actor, const Location &start, const Location &end, uint16 initialDirection);
+	bool findNearestChasm(int16 &u0, int16 &v0, uint16 &direction);
 	void findTilePath(ActorData* actor, const Location &start, const Location &end);
 	bool nextTileTarget(ActorData* actor);
 	void setTileDoorState(int doorNumber, int doorState);
 	Point getMapPosition() { return _mapPosition; }
 	void setMapPosition(int x, int y);
+	int16 getTileIndex(int16 u, int16 v, int16 z);
 
 private:
 	void drawTiles(SURFACE *ds, const Location *location);

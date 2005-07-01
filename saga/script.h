@@ -527,8 +527,8 @@ private:
 	void sfGetActorY(SCRIPTFUNC_PARAMS);
 	void sfEraseDelta(SCRIPTFUNC_PARAMS);
 	void sfPlayMusic(SCRIPTFUNC_PARAMS);
-	void SF_pickClimbOutPos(SCRIPTFUNC_PARAMS);
-	void SF_tossRif(SCRIPTFUNC_PARAMS);
+	void sfPickClimbOutPos(SCRIPTFUNC_PARAMS);
+	void sfTossRif(SCRIPTFUNC_PARAMS);
 	void sfShowControls(SCRIPTFUNC_PARAMS);
 	void SF_showMap(SCRIPTFUNC_PARAMS);
 	void sfPuzzleWon(SCRIPTFUNC_PARAMS);

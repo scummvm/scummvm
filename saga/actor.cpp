@@ -847,7 +847,10 @@ void Actor::handleActions(int msec, bool setup) {
 		if (!actor->inScene)
 			continue;
 		
-		//todo: dragon stuff
+		if ((_vm->getGameType() == GType_ITE) && (i == ACTOR_DRAGON_INDEX)) {
+			moveDragon(actor);
+			continue;
+		}
 
 /*		if (actor->index == 2)
 			debug(9, "Action: %d Flags: %x", actor->currentAction, actor->flags);*/
@@ -1619,7 +1622,9 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 
-		//todo: dragon stuff
+		if ((_vm->getGameType() == GType_ITE) && (actor->index == ACTOR_DRAGON_INDEX)) {
+			return false;
+		}
 
 		actor->finalTarget = toLocation;
 		actor->walkStepsCount = 0;
