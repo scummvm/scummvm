@@ -323,6 +323,13 @@ void ScummEngine::CHARSET_1() {
 					_haveMsg = 0xFF;
 				_keepText = false;
 				break;
+			case 8:
+				// Ignore this code here. Occurs e.g. in MI2 when you
+				// talk to the carpenter on scabb island. It works like
+				// code 1 (=newline) in verb texts, but is ignored in
+				// spoken text (i.e. here). Used for very long verb
+				// sentences.
+				break;
 			case 9:
 				frme = *buffer++;
 				frme |= *buffer++ << 8;
