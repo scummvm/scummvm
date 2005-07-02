@@ -79,7 +79,7 @@ MidiDriver_CORE::~MidiDriver_CORE() {
 }
 
 int MidiDriver_CORE::open() {
-	if (au_output != NULL)
+	if (au_output || mDest)
 		return MERR_ALREADY_OPEN;
 
 	OSStatus err = noErr;
