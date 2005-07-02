@@ -25,9 +25,8 @@
 #include "common/util.h"
 #include "sound/mpu401.h"
 
-#include <CoreServices/CoreServices.h> //for file stuff
 #include <AudioUnit/AudioUnit.h>
-#include <AudioToolbox/AudioToolbox.h> //for AUGraph
+#include <CoreMIDI/CoreMIDI.h>7
 
 
 // Activating the following switch disables reverb support in the CoreAudio
@@ -39,10 +38,10 @@
 
 // Enable the following switch to make ScummVM try to use native MIDI hardware
 // on your computer for MIDI output. This is currently quite hackish, in 
-// particular you have no way to specify which device is used (it'll always
-// use the first output device it can find), nor is there a switch to
+// particular you have no way to specify which device is used (it just always
+// uses the first output device it can find), nor is there a switch to
 // force it to use the soft synth instead of the MIDI HW.
-//#define ENABLE_HACKISH_NATIVE_MIDI_SUPPORT
+//#define ENABLE_HACKISH_NATIVE_MIDI_SUPPORT 1
 
 /* CoreAudio MIDI driver
  * Based on code by Benjamin W. Zale
@@ -85,9 +84,9 @@ int MidiDriver_CORE::open() {
 
 	OSStatus err = noErr;
 
-	int dests = MIDIGetNumberOfDestinations();
 	mOutPort = 0;
-#if ENABLE_HACKISH_NATIVE_MIDI_SUPPORT
+#ifdef ENABLE_HACKISH_NATIVE_MIDI_SUPPORT
+	int dests = MIDIGetNumberOfDestinations();
 	if (dests > 0 && mClient) {
 		mDest = MIDIGetDestination(0);
 		err = MIDIOutputPortCreate( mClient, 
