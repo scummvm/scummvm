@@ -148,6 +148,12 @@ Audio
 * Consider changing the mixer volume to use range 0-255, for sake of
   consistency (but at a slight loss of efficiency). Note that this requires
   changes in at least rate.cpp and mixer.cpp.
+* MIDI: Add API to OSystem which allows client code to query for "native"
+  MIDI drivers (like Windows, ALSA, Zodiac, CoreAudio). Then change the
+  MIDI interfacing code (GUI, command line, config file, etc.) and also
+  MidiDriver::createMidi() to use both that list and the list of
+  'emulated' MIDI devices (Adlib, MT-32, PC Speaker, etc.) in an appropriate
+  way.
 
 Config Manager
 ==============
