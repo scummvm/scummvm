@@ -19,11 +19,7 @@
  * IN THE SOFTWARE.
  */
 
-#ifdef __amigaos4__
-#include <strings.h>
-#else
-#include <memory.h>
-#endif
+#include <string.h>
 
 #include "mt32emu.h"
 
