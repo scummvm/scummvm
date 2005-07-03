@@ -987,8 +987,7 @@ void Actor::handleActions(int msec, bool setup) {
 					speed = 1;
 				}
 
-				if ((actor->actionDirection == kDirUp) || (actor->actionDirection == kDirDown)) {
-					// move by 2's in vertical dimension
+				if ((actor->actionDirection == kDirUp) || (actor->actionDirection == kDirDown)) {					
 					addDelta.y = clamp(-speed, delta.y, speed);
 					if (addDelta.y == delta.y) {
 						addDelta.x = delta.x;
@@ -1647,10 +1646,12 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 	} else {
 		
 		actor->location.toScreenPointXY(pointFrom);
+		pointFrom.x &= ~1;
 
 		extraStartNode = _vm->_scene->offscreenPath(pointFrom);
 
 		toLocation.toScreenPointXY(pointTo);
+		pointTo.x &= ~1;
 
 		extraEndNode = _vm->_scene->offscreenPath(pointTo);
 
@@ -1700,19 +1701,21 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 
 
 					anotherActorScreenPosition = anotherActor->screenPosition;
-					testBox.left = anotherActorScreenPosition.x - collision.x;
-					testBox.right = anotherActorScreenPosition.x + collision.x + 1;
+					testBox.left = (anotherActorScreenPosition.x - collision.x) & ~1;
+					testBox.right = (anotherActorScreenPosition.x + collision.x) & ~1 + 1;
 					testBox.top = anotherActorScreenPosition.y - collision.y;
 					testBox.bottom = anotherActorScreenPosition.y + collision.y + 1;
 					testBox2 = testBox;
-					testBox2.right += 1;
-					testBox2.left -= 1;
+					testBox2.right += 2;
+					testBox2.left -= 2;
+					testBox2.top -= 1;
+					testBox2.bottom += 1;
 
 					if (testBox2.contains(pointFrom)) {
 						if (pointFrom.x > anotherActorScreenPosition.x + 4) {
 							testBox.right = pointFrom.x - 1;
 						} else {
-							if (pointFrom.x < anotherActorScreenPosition.x - 4) {
+							if (pointFrom.x < anotherActorScreenPosition.x - 4) {	
 								testBox.left = pointFrom.x + 2;
 							} else {
 								if (pointFrom.y > anotherActorScreenPosition.y) {
@@ -1754,7 +1757,6 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 
 			pointBest = actor->walkStepsPoints[actor->walkStepsCount - 1];
 
-			pointFrom.x &= ~1;
 			delta.x = ABS(pointFrom.x - pointTo.x);
 			delta.y = ABS(pointFrom.y - pointTo.y);
 
