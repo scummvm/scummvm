@@ -29,8 +29,10 @@
 #include "saga/console.h"
 #include "saga/font.h"
 #include "saga/objectmap.h"
+#include "saga/isomap.h"
 #include "saga/itedata.h"
 #include "saga/puzzle.h"
+#include "saga/render.h"
 #include "saga/rscfile_mod.h"
 #include "saga/scene.h"
 #include "saga/script.h"
@@ -38,6 +40,7 @@
 
 #include "saga/interface.h"
 
+#include "common/system.h"
 #include "common/timer.h"
 
 namespace Saga {
@@ -265,8 +268,7 @@ void Interface::restoreMode() {
 }
 
 void Interface::setMode(int mode) {
-	// TODO: Is this where we should hide/show the mouse cursor?
-	debug(0, "Interface::setMode %i", mode);
+	debug(5, "Interface::setMode %i", mode);
 	if (mode == kPanelMain) {
 		_inMainMode = true;
 		_saveReminderState = 1; //TODO: blinking timeout
@@ -280,35 +282,38 @@ void Interface::setMode(int mode) {
 	_panelMode = mode;
 	
 	switch (_panelMode) {
-		case kPanelMain:
-			_mainPanel.currentButton = NULL;
-			break;
-		case kPanelConverse:
-			_conversePanel.currentButton = NULL;
-			converseDisplayText();
-			break;
-		case kPanelOption:
-			_optionPanel.currentButton = NULL;
-			_vm->fillSaveList();
-			calcOptionSaveSlider();
-			if (_optionSaveFileTitleNumber >= _vm->getDisplayInfo().optionSaveFileVisible) {
-				_optionSaveFileTitleNumber = _vm->getDisplayInfo().optionSaveFileVisible - 1;
-			}
-			break;
-		case kPanelLoad:
-			_loadPanel.currentButton = NULL;
-			break;
-		case kPanelQuit:
-			_quitPanel.currentButton = NULL;
-			break;
-		case kPanelSave:
-			_savePanel.currentButton = NULL;
-			_textInputMaxWidth = _saveEdit->width - 10;
-			_textInput = true;
-			_textInputStringLength = strlen(_textInputString);
-			_textInputPos = _textInputStringLength + 1;
-			_textInputRepeatPhase = 0;
-			break;
+	case kPanelMain:
+		_mainPanel.currentButton = NULL;
+		break;
+	case kPanelConverse:
+		_conversePanel.currentButton = NULL;
+		converseDisplayText();
+		break;
+	case kPanelOption:
+		_optionPanel.currentButton = NULL;
+		_vm->fillSaveList();
+		calcOptionSaveSlider();
+		if (_optionSaveFileTitleNumber >= _vm->getDisplayInfo().optionSaveFileVisible) {
+			_optionSaveFileTitleNumber = _vm->getDisplayInfo().optionSaveFileVisible - 1;
+		}
+		break;
+	case kPanelLoad:
+		_loadPanel.currentButton = NULL;
+		break;
+	case kPanelQuit:
+		_quitPanel.currentButton = NULL;
+		break;
+	case kPanelSave:
+		_savePanel.currentButton = NULL;
+		_textInputMaxWidth = _saveEdit->width - 10;
+		_textInput = true;
+		_textInputStringLength = strlen(_textInputString);
+		_textInputPos = _textInputStringLength + 1;
+		_textInputRepeatPhase = 0;
+		break;
+	case kPanelMap:
+		mapPanelShow();
+		break;
 	}
 
 	draw();
@@ -438,6 +443,9 @@ bool Interface::processAscii(uint16 ascii, bool synthetic) {
 			break;
 
 		}
+	case kPanelMap:
+		mapPanelClean();
+		break;
 	}
 	return false;
 }
@@ -1287,6 +1295,11 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 		}
 	}
 
+	if (_panelMode == kPanelMap) {
+		if (updateFlag & UPDATE_MOUSECLICK)
+			mapPanelClean();
+	}
+
 	_lastMousePoint = mousePoint;
 }
 
@@ -2006,5 +2019,106 @@ void Interface::loadState(Common::InSaveFile *in) {
 	updateInventory(0);
 }
 
+void Interface::mapPanelShow() {
+	byte *resource;
+	size_t resourceLength, imageLength;
+	SURFACE *backBuffer;
+	Point origin;
+	byte *image;
+	int imageWidth, imageHeight;
+	int result;
+	const byte *pal;
+	PALENTRY cPal[PAL_ENTRIES];
+
+	_vm->_gfx->showCursor(false);
+
+	backBuffer = _vm->_gfx->getBackBuffer();
+
+	origin.x = 0;
+	origin.y = 0;
+
+	result = RSC_LoadResource(_interfaceContext, RID_ITE_TYCHO_MAP, &resource, &resourceLength);
+	if ((result != SUCCESS) || (resourceLength == 0)) {
+		error("Interface::mapPanelShow(): unable to load Tycho map resource");
+	}
+
+	_vm->_gfx->getCurrentPal(_mapSavedPal);
+
+	for (int i = 0; i < 6 ; i++) {
+		_vm->_gfx->palToBlack(backBuffer, _mapSavedPal, 0.2 * i);
+		_vm->_render->drawScene();
+		_vm->_system->delayMillis(5);
+	}
+
+	_vm->_render->setFlag(RF_MAP);
+
+	_vm->decodeBGImage(resource, resourceLength, &image, &imageLength, &imageWidth, &imageHeight);
+	pal = _vm->getImagePal(resource, resourceLength);
+
+	for (int i = 0; i < PAL_ENTRIES; i++) {
+		cPal[i].red = *pal++;
+		cPal[i].green = *pal++;
+		cPal[i].blue = *pal++;
+	}
+
+	bufToSurface(backBuffer, image, imageWidth, imageHeight, NULL, &origin);
+
+	// Evil Evil
+	for (int i = 0; i < 6 ; i++) {
+		_vm->_gfx->blackToPal(backBuffer, cPal, 0.2 * i);
+		_vm->_render->drawScene();
+		_vm->_system->delayMillis(5);
+	}
+
+	RSC_FreeResource(resource);
+	free(image);
+
+	setSaveReminderState(false);
+
+	_mapPanelCrossHairState = true;
+}
+
+void Interface::mapPanelClean() {
+	SURFACE *backBuffer;
+	PALENTRY pal[PAL_ENTRIES];
+
+	backBuffer = _vm->_gfx->getBackBuffer();
+
+	_vm->_gfx->getCurrentPal(pal);
+
+	for (int i = 0; i < 6 ; i++) {
+		_vm->_gfx->palToBlack(backBuffer, pal, 0.2 * i);
+		_vm->_render->drawScene();
+		_vm->_system->delayMillis(5);
+	}
+
+	_vm->_render->clearFlag(RF_MAP);
+	setMode(kPanelMain);
+
+	_vm->_gfx->showCursor(true);
+	_vm->_render->drawScene();
+
+	for (int i = 0; i < 6 ; i++) {
+		_vm->_gfx->blackToPal(backBuffer, _mapSavedPal, 0.2 * i);
+		_vm->_render->drawScene();
+		_vm->_system->delayMillis(5);
+	}
+}
+
+void Interface::mapPanelDrawCrossHair() {
+	SURFACE *backBuffer;
+
+	backBuffer = _vm->_gfx->getBackBuffer();
+	_mapPanelCrossHairState = !_mapPanelCrossHairState;
+
+	Point mapPosition = _vm->_isoMap->getMapPosition();
+	Rect screen(_vm->getDisplayWidth(),  _vm->getSceneHeight());
+
+	if (screen.contains(mapPosition)) {
+		_vm->_sprite->draw(backBuffer, _vm->_sprite->_mainSprites,
+						   _mapPanelCrossHairState? RID_ITE_SPR_XHAIR1 : RID_ITE_SPR_XHAIR2,
+						   mapPosition, 256);
+	}
+}
 
 } // End of namespace Saga

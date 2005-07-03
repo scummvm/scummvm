@@ -530,7 +530,7 @@ private:
 	void sfPickClimbOutPos(SCRIPTFUNC_PARAMS);
 	void sfTossRif(SCRIPTFUNC_PARAMS);
 	void sfShowControls(SCRIPTFUNC_PARAMS);
-	void SF_showMap(SCRIPTFUNC_PARAMS);
+	void sfShowMap(SCRIPTFUNC_PARAMS);
 	void sfPuzzleWon(SCRIPTFUNC_PARAMS);
 	void sfEnableEscape(SCRIPTFUNC_PARAMS);
 	void sfPlaySound(SCRIPTFUNC_PARAMS);

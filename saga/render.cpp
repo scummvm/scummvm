@@ -111,7 +111,7 @@ int Render::drawScene() {
 	// Get mouse coordinates
 	mouse_pt = _vm->mousePos();
 
-	if (/*_vm->_interface->getMode() != kPanelPlacard*/!(_flags & RF_PLACARD)) {
+	if (/*_vm->_interface->getMode() != kPanelPlacard*/!(_flags & (RF_PLACARD | RF_MAP))) {
 		// Display scene background
 		_vm->_scene->draw();
 
@@ -135,6 +135,9 @@ int Render::drawScene() {
 			}
 		}
 	}
+
+	if (_flags & RF_MAP)
+		_vm->_interface->mapPanelDrawCrossHair();
 
 	if ((_vm->_interface->getMode() == kPanelOption) || 
 		(_vm->_interface->getMode() == kPanelQuit) ||

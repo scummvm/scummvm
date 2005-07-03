@@ -120,7 +120,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfPickClimbOutPos),
 		OPCODE(sfTossRif),
 		OPCODE(sfShowControls),
-		OPCODE(SF_showMap),
+		OPCODE(sfShowMap),
 		OPCODE(sfPuzzleWon),
 		OPCODE(sfEnableEscape),
 		OPCODE(sfPlaySound),
@@ -1643,11 +1643,8 @@ void Script::sfShowControls(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #67 (0x43)
-void Script::SF_showMap(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
-
-	debug(0, "STUB: SF_showMap(), %d args", nArgs);
+void Script::sfShowMap(SCRIPTFUNC_PARAMS) {
+	_vm->_interface->setMode(kPanelMap);
 }
 
 // Script function #68 (0x44)

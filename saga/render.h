@@ -32,14 +32,15 @@ namespace Saga {
 
 #define PAUSEGAME_MSG "PAWS GAME"
 enum RENDER_FLAGS {
-	RF_SHOW_FPS = 0x01,
-	RF_PALETTE_TEST = 0x02,
-	RF_TEXT_TEST = 0x04,
-	RF_OBJECTMAP_TEST = 0x08,
-	RF_RENDERPAUSE = 0x10,
-	RF_GAMEPAUSE = 0x20,
-	RF_PLACARD = 0x40,
-	RF_ACTOR_PATH_TEST = 0x80
+	RF_SHOW_FPS = (1 << 0),
+	RF_PALETTE_TEST = (1 << 1),
+	RF_TEXT_TEST = (1 << 2),
+	RF_OBJECTMAP_TEST = (1 << 3),
+	RF_RENDERPAUSE = (1 << 4),
+	RF_GAMEPAUSE = (1 << 5),
+	RF_PLACARD = (1 << 6),
+	RF_ACTOR_PATH_TEST = (1 << 7),
+	RF_MAP = (1 << 8)
 };
 
 struct BUFFER_INFO {
@@ -87,7 +88,7 @@ private:
 
 	unsigned int _fps;
 	unsigned int _framecount;
-	unsigned int _flags;
+	uint32 _flags;
 };
 
 } // End of namespace Saga

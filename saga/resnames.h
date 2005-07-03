@@ -71,6 +71,10 @@ namespace Saga {
 #define RID_ITE_ACTOR_NAMES 36 //actors names
 #define RID_ITE_DEFAULT_PORTRAITS 125
 
+#define RID_ITE_TYCHO_MAP 1686
+#define RID_ITE_SPR_XHAIR1 (73 + 9)
+#define RID_ITE_SPR_XHAIR2 (74 + 9)
+
 #define RID_IHNM_MAIN_PANEL  9
 #define RID_IHNM_CONVERSE_PANEL 10
 #define RID_IHNM_OPTION_PANEL 11       // TODO: verify this

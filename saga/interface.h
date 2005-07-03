@@ -275,6 +275,8 @@ public:
 	void saveState(Common::OutSaveFile *out);
 	void loadState(Common::InSaveFile *in);
 
+	void mapPanelDrawCrossHair();
+
 private:
 	void handleMainUpdate(const Point& mousePoint);					// main panel update
 	void handleMainClick(const Point& mousePoint);					// main panel click
@@ -308,6 +310,9 @@ private:
 	}
 	void handleSaveUpdate(const Point& mousePoint);					// save panel update
 	void handleSaveClick(const Point& mousePoint);					// save panel click
+
+	void mapPanelShow();
+	void mapPanelClean();
 
 	void lockMode() { _lockedMode = _panelMode; }
 	void unlockMode() { _panelMode = _lockedMode; }
@@ -436,6 +441,9 @@ private:
 
 	int _textInputRepeatPhase;
 	uint16 _textInputRepeatChar;
+
+	PALENTRY _mapSavedPal[PAL_ENTRIES];
+	bool _mapPanelCrossHairState;
 };
 
 } // End of namespace Saga
