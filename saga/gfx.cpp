@@ -419,137 +419,36 @@ int getClipInfo(CLIPINFO *clipinfo) {
 		d_y = 0;
 	}
 
-	s = *clipinfo->src_rect;
+	// Get the clip rect.
 
-	clip = *clipinfo->dst_rect;
+	clip.left = clipinfo->dst_rect->left;
+	clip.right = clipinfo->dst_rect->right;
+	clip.top = clipinfo->dst_rect->top;
+	clip.bottom = clipinfo->dst_rect->bottom;
 
-	// Clip source rectangle to destination surface
-	clipinfo->dst_draw_x = d_x;
-	clipinfo->dst_draw_y = d_y;
-	clipinfo->src_draw_x = s.left;
-	clipinfo->src_draw_y = s.top;
-	clipinfo->draw_w = s.right - s.left;
-	clipinfo->draw_h = s.bottom - s.top;
+	// Adjust the rect to draw to its screen coordinates
+
+	s.left = d_x + clipinfo->src_rect->left;
+	s.right = d_x + clipinfo->src_rect->right;
+	s.top = d_y + clipinfo->src_rect->top;
+	s.bottom = d_y + clipinfo->src_rect->bottom;
+
+	s.clip(clip);
+
+	if (s.width() <= 0 || s.height() <= 0) {
+		clipinfo->nodraw = 1;
+		return SUCCESS;
+	}
 
 	clipinfo->nodraw = 0;
-
-	// Clip to left edge
-	if (d_x < clip.left) {
-		if (d_x <= -(clipinfo->draw_w)) {
-			// dst rect completely off left edge
-			clipinfo->nodraw = 1;
-			return SUCCESS;
-		}
-
-		clipinfo->src_draw_x += (clip.left - d_x);
-		clipinfo->draw_w -= (clip.left - d_x);
-		clipinfo->dst_draw_x = clip.left;
-	}
-
-	// Clip to top edge
-	if (d_y < clip.top) {
-		if (d_y <= -(clipinfo->draw_h)) {
-			// dst rect completely off top edge
-			clipinfo->nodraw = 1;
-			return SUCCESS;
-		}
-
-		clipinfo->src_draw_y += (clip.top - d_y);
-		clipinfo->draw_h -= (clip.top - d_y);
-
-		clipinfo->dst_draw_y = clip.top;
-	}
-
-	// Clip to right edge
-	if (d_x >= clip.right) {
-		// dst rect completely off right edge
-		clipinfo->nodraw = 1;
-		return SUCCESS;
-	}
-
-	if ((d_x + clipinfo->draw_w) > clip.right) {
-		clipinfo->draw_w = clip.right - d_x;
-	}
-
-	// Clip to bottom edge
-	if (d_y >= clip.bottom) {
-		// dst rect completely off bottom edge
-		clipinfo->nodraw = 1;
-		return SUCCESS;
-	}
-
-	if ((d_y + clipinfo->draw_h) > clip.bottom) {
-		clipinfo->draw_h = clip.bottom - d_y;
-	}
+	clipinfo->src_draw_x = s.left - clipinfo->src_rect->left - d_x;
+	clipinfo->src_draw_y = s.top - clipinfo->src_rect->top - d_y;
+	clipinfo->dst_draw_x = s.left;
+	clipinfo->dst_draw_y = s.top;
+	clipinfo->draw_w = s.width();
+	clipinfo->draw_h = s.height();
 
 	return SUCCESS;
-}
-
-int clipLine(SURFACE *ds, const Point *src_p1, const Point *src_p2, 
-				 Point *dst_p1, Point *dst_p2) {
-	const Point *n_p1;
-	const Point *n_p2;
-
-	Common::Rect clip;
-	int left, top, right, bottom;
-	int dx, dy;
-
-	float m;
-	int y_icpt_l, y_icpt_r;
-
-	clip = ds->clip_rect;
-
-	// Normalize points by x
-		if (src_p1->x < src_p2->x) {
-		n_p1 = src_p1;
-		n_p2 = src_p2;
-	} else {
-		n_p1 = src_p2;
-		n_p2 = src_p1;
-	}
-
-	dst_p1->x = n_p1->x;
-	dst_p1->y = n_p1->y;
-	dst_p2->x = n_p2->x;
-	dst_p2->y = n_p2->y;
-
-	left = n_p1->x;
-	top = n_p1->y;
-	right = n_p2->x;
-	bottom = n_p2->y;
-
-	dx = right - left;
-	dy = bottom - top;
-
-	if (left < 0) {
-		if (right < 0) {
-			// Line completely off left edge
-			return -1;
-		}
-
-		// Clip to left edge
-		m = ((float)bottom - top) / (right - left);
-		y_icpt_l = (int)(top - (left * m) + 0.5f);
-
-		dst_p1->x = 0;
-		dst_p1->y = y_icpt_l;
-	}
-
-	if (bottom > clip.right) {
-		if (left > clip.right) {
-			// Line completely off right edge
-			return -1;
-		}
-
-		// Clip to right edge
-		m = ((float)top - bottom) / (right - left);
-		y_icpt_r = (int)(top - ((clip.right - left) * m) + 0.5f);
-
-		dst_p1->y = y_icpt_r;
-		dst_p2->x = clip.right;
-	}
-
-	return 1;
 }
 
 SURFACE *Gfx::getBackBuffer() {
