@@ -1018,7 +1018,7 @@ int16 IsoMap::getTileIndex(int16 u, int16 v, int16 z) {
 		metaTileIndex = 0;
 		switch ( _tileMap.edgeType) {
 		case kEdgeTypeBlack: 
-			return NULL;
+			return 0;
 		case kEdgeTypeFill0: 
 			break;
 		case kEdgeTypeFill1:
