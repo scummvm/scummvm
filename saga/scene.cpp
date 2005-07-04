@@ -772,6 +772,12 @@ int Scene::processSceneResources() {
 			_bgMask.loaded = 1;
 			_vm->decodeBGImage(_bgMask.res_buf, _bgMask.res_len, &_bgMask.buf,
 							&_bgMask.buf_len, &_bgMask.w, &_bgMask.h);
+
+			// At least in ITE the mask needs to be clipped.
+
+			_bgMask.w = MIN(_bgMask.w, _vm->getDisplayWidth());
+			_bgMask.h = MIN(_bgMask.h, _vm->getClippedSceneHeight());
+
 			debug(0, "BACKGROUND MASK width=%d height=%d length=%d", _bgMask.w, _bgMask.h, _bgMask.buf_len);
 			break;
 		case SAGA_STRINGS:
