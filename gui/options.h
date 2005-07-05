@@ -24,8 +24,8 @@
 #include "gui/dialog.h"
 #include "common/str.h"
 
-#ifdef _WIN32_WCE
-#include "backends/wince/CEKeysDialog.h"
+#ifdef SMALL_SCREEN_DEVICE
+#include "gui/KeysDialog.h"
 #endif
 
 namespace GUI {
@@ -120,8 +120,8 @@ public:
 protected:
 	BrowserDialog *_dirBrowser;
 	BrowserDialog *_fileBrowser;
-#ifdef _WIN32_WCE
-	CEKeysDialog *_keysDialog;
+#ifdef SMALL_SCREEN_DEVICE
+	KeysDialog *_keysDialog;
 #endif
 	StaticTextWidget *_savePath;
 	StaticTextWidget *_extraPath;

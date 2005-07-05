@@ -336,6 +336,7 @@ public:
 	int32 walkFrameSequence;
 
 	void saveState(Common::OutSaveFile *out) {
+		int i = 0;
 		CommonObjectData::saveState(out);
 		out->writeUint16LE(actorFlags);
 		out->writeSint32LE(currentAction);
@@ -357,12 +358,12 @@ public:
 		out->writeSint32LE(frameNumber);
 
 		out->writeSint32LE(tileDirectionsAlloced);
-		for (int i = 0; i < tileDirectionsAlloced; i++) {
+		for (i = 0; i < tileDirectionsAlloced; i++) {
 			out->writeByte(tileDirections[i]);
 		}
 
 		out->writeSint32LE(walkStepsAlloced);
-		for (int i = 0; i < walkStepsAlloced; i++) {
+		for (i = 0; i < walkStepsAlloced; i++) {
 			out->writeSint16LE(walkStepsPoints[i].x);
 			out->writeSint16LE(walkStepsPoints[i].y);
 		}
@@ -375,6 +376,7 @@ public:
 	}
 
 	void loadState(Common::InSaveFile *in) {
+		int i = 0;
 		CommonObjectData::loadState(in);
 		actorFlags = in->readUint16LE();
 		currentAction = in->readSint32LE();
@@ -407,12 +409,12 @@ public:
 
 		
 		setTileDirectionsSize(in->readSint32LE(), true);
-		for (int i = 0; i < tileDirectionsAlloced; i++) {
+		for (i = 0; i < tileDirectionsAlloced; i++) {
 			tileDirections[i] = in->readByte();
 		}
 
 		setWalkStepsPointsSize(in->readSint32LE(), true);
-		for (int i = 0; i < walkStepsAlloced; i++) {
+		for (i = 0; i < walkStepsAlloced; i++) {
 			walkStepsPoints[i].x = in->readSint16LE();
 			walkStepsPoints[i].y = in->readSint16LE();
 		}

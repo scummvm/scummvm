@@ -41,7 +41,7 @@ class CEActions {
 	public:
 		static CEActions* Instance();
 		static void init(GameDetector &detector);
-		virtual void initInstanceMain(OSystem_WINCE3 *mainSystem);
+		virtual void initInstanceMain(OSystem *mainSystem);
 		virtual void initInstanceGame();
 		bool initialized();
 

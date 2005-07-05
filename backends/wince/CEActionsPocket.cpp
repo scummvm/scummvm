@@ -51,7 +51,7 @@ void CEActionsPocket::init(GameDetector &detector) {
 }
 
 
-String CEActionsPocket::actionName(ActionType action) {
+String CEActionsPocket::actionName(GUI::ActionType action) {
 	return pocketActionNames[action];
 }
 
@@ -68,7 +68,7 @@ int CEActionsPocket::version() {
 }
 
 CEActionsPocket::CEActionsPocket(GameDetector &detector) :
-	CEActions(detector)
+GUI::Actions(detector)
 {
 	int i;
 
@@ -83,9 +83,10 @@ CEActionsPocket::CEActionsPocket(GameDetector &detector) :
 
 }
 
-void CEActionsPocket::initInstanceMain(OSystem_WINCE3 *mainSystem) {
+void CEActionsPocket::initInstanceMain(OSystem *mainSystem) {
 	// Nothing generic to do for Pocket PC
-	CEActions::initInstanceMain(mainSystem);
+	_CESystem = static_cast<OSystem_WINCE3*>(mainSystem);
+	GUI_Actions::initInstanceMain(mainSystem);
 }
 
 void CEActionsPocket::initInstanceGame() {
@@ -97,7 +98,7 @@ void CEActionsPocket::initInstanceGame() {
 	bool is_comi = (strncmp(_detector->_targetName.c_str(), "comi", 4) == 0);
 	bool is_gob = (strncmp(_detector->_targetName.c_str(), "gob", 3) == 0);
 
-	CEActions::initInstanceGame();
+	GUI_Actions::initInstanceGame();
 
 	// See if a right click mapping could be needed
 	if (is_sword1 || is_sword2 || is_sky || is_queen || is_comi || is_gob ||
@@ -164,11 +165,11 @@ void CEActionsPocket::initInstanceGame() {
 CEActionsPocket::~CEActionsPocket() {
 }
 
-bool CEActionsPocket::perform(ActionType action, bool pushed) {
+bool CEActionsPocket::perform(GUI::ActionType action, bool pushed) {
 	if (!pushed) {
 		switch(action) {
 			case POCKET_ACTION_RIGHTCLICK:
-				_mainSystem->add_right_click(false);
+				_CESystem->add_right_click(false);
 				return true;
 		case POCKET_ACTION_PAUSE:
 		case POCKET_ACTION_SAVE:
@@ -189,28 +190,28 @@ bool CEActionsPocket::perform(ActionType action, bool pushed) {
 			EventsBuffer::simulateKey(&_key_action[action], true);
 			return true;
 		case POCKET_ACTION_KEYBOARD:
-			_mainSystem->swap_panel();
+			_CESystem->swap_panel();
 			return true;
 		case POCKET_ACTION_HIDE:
-			_mainSystem->swap_panel_visibility();
+			_CESystem->swap_panel_visibility();
 			return true;
 		case POCKET_ACTION_SOUND:
-			_mainSystem->swap_sound_master();
+			_CESystem->swap_sound_master();
 			return true;
 		case POCKET_ACTION_RIGHTCLICK:
-			_mainSystem->add_right_click(true);
+			_CESystem->add_right_click(true);
 			return true;
 		case POCKET_ACTION_CURSOR:
-			_mainSystem->swap_mouse_visibility();
+			_CESystem->swap_mouse_visibility();
 			return true;
         case POCKET_ACTION_FREELOOK:
-             _mainSystem->swap_freeLook();
+             _CESystem->swap_freeLook();
              return true;
 		case POCKET_ACTION_ZOOM_UP:
-			_mainSystem->swap_zoom_up();
+			_CESystem->swap_zoom_up();
 			return true;
 		case POCKET_ACTION_ZOOM_DOWN:
-			_mainSystem->swap_zoom_down();
+			_CESystem->swap_zoom_down();
 			return true;
 		case POCKET_ACTION_QUIT:
 			GUI::MessageDialog alert("Do you want to quit ?", "Yes", "No");

@@ -31,9 +31,9 @@
 
 #include "base/gameDetector.h"
 #include "wince-sdl.h"
-#include "Key.h"
+#include "gui/Key.h"
 
-#include "CEActions.h"
+#include "gui/Actions.h"
 
 #define SMARTPHONE_ACTION_VERSION 4 
 
@@ -53,14 +53,14 @@ enum smartphoneActionType {
 };
 
 
-class CEActionsSmartphone : public CEActions {
+class CEActionsSmartphone : public GUI::Actions {
 	public:
 		// Actions
-		bool perform(ActionType action, bool pushed = true);
-		String actionName(ActionType action);
+		bool perform(GUI::ActionType action, bool pushed = true);
+		String actionName(GUI::ActionType action);
 		int size();
 		static void init(GameDetector &detector);
-		void initInstanceMain(OSystem_WINCE3 *mainSystem);
+		void initInstanceMain(OSystem *mainSystem);
 		void initInstanceGame();
 
 		// Action domain
@@ -71,6 +71,7 @@ class CEActionsSmartphone : public CEActions {
 	private:
 		CEActionsSmartphone(GameDetector &detector);
 		bool _right_click_needed;
+		OSystem_WINCE3 *_CESystem;
 	};	
 
 #endif

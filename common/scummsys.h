@@ -75,6 +75,7 @@
 #if defined(_WIN32_WCE) && _WIN32_WCE < 300
 
 	#define CDECL __cdecl
+	#define SMALL_SCREEN_DEVICE
 
 #endif
 
@@ -303,6 +304,7 @@
 	#define SCUMM_NEED_ALIGNMENT
 	#define SCUMM_LITTLE_ENDIAN	
 	#define CHECK_HEAP
+	#define SMALL_SCREEN_DEVICE
 	
 	#define FORCEINLINE inline
 	#define _HEAPOK 0

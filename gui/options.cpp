@@ -64,7 +64,7 @@ enum {
 	kChooseExtraDirCmd		= 'chex'
 };
 
-#ifdef _WIN32_WCE
+#ifdef SMALL_SCREEN_DEVICE
 enum {
 	kChooseKeyMappingCmd    = 'chma'
 };
@@ -122,7 +122,7 @@ void OptionsDialog::open() {
 			_renderModePopUp->setSelected(sel);
 		}
 
-#ifndef _WIN32_WCE
+#ifndef SMALL_SCREEN_DEVICE
 		// Fullscreen setting
 		_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
 	
@@ -274,7 +274,7 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 
 	_gfxPopUp->setEnabled(enabled);
 	_renderModePopUp->setEnabled(enabled);
-#ifndef _WIN32_WCE
+#ifndef SMALL_SCREEN_DEVICE
 	_fullscreenCheckbox->setEnabled(enabled);
 	_aspectCheckbox->setEnabled(enabled);
 #endif
@@ -350,7 +350,7 @@ int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset, WidgetSize w
 	_aspectCheckbox = addCheckbox(boss, x, yoffset, "Aspect ratio correction", 0, 0, ws);
 	yoffset += _aspectCheckbox->getHeight();
 
-#ifdef _WIN32_WCE
+#ifdef SMALL_SCREEN_DEVICE
 	_fullscreenCheckbox->setState(TRUE);
 	_fullscreenCheckbox->setEnabled(FALSE);
 	_aspectCheckbox->setEnabled(FALSE);	
@@ -556,7 +556,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	yoffset += buttonHeight + 4;
 #endif
 
-#ifdef _WIN32_WCE
+#ifdef SMALL_SCREEN_DEVICE
 	addButton(tab, 5, yoffset, "Keys", kChooseKeyMappingCmd, 0, ws);
 	yoffset += buttonHeight + 4;
 #endif
@@ -575,8 +575,8 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	_dirBrowser = new BrowserDialog("Select directory for savegames", true);
 	_fileBrowser = new BrowserDialog("Select SoundFont", false);
 
-#ifdef _WIN32_WCE
-	_keysDialog = new CEKeysDialog();
+#ifdef SMALL_SCREEN_DEVICE
+	_keysDialog = new KeysDialog();
 #endif
 }
 
@@ -584,7 +584,7 @@ GlobalOptionsDialog::~GlobalOptionsDialog() {
 	delete _dirBrowser;
 	delete _fileBrowser;
 
-#ifdef _WIN32_WCE
+#ifdef SMALL_SCREEN_DEVICE
 	delete _keysDialog;
 #endif
 }
@@ -664,7 +664,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			draw();
 		}
 		break;
-#ifdef _WIN32_WCE
+#ifdef SMALL_SCREEN_DEVICE
 	case kChooseKeyMappingCmd:
 		_keysDialog->runModal();
 		break;

@@ -29,9 +29,9 @@
 
 #include "base/gameDetector.h"
 #include "wince-sdl.h"
-#include "Key.h"
+#include "gui/Key.h"
 
-#include "CEActions.h"
+#include "gui/Actions.h"
 
 #define POCKET_ACTION_VERSION 4 
 
@@ -53,15 +53,15 @@ enum pocketActionType {
 	POCKET_ACTION_LAST
 };
 
-class CEActionsPocket : public CEActions {
+class CEActionsPocket : public GUI::Actions {
 	public:
 		// Actions
-		bool perform(ActionType action, bool pushed = true);
-		String actionName(ActionType action);
+		bool perform(GUI::ActionType action, bool pushed = true);
+		String actionName(GUI::ActionType action);
 		int size();
 
 		static void init(GameDetector &detector);
-		void initInstanceMain(OSystem_WINCE3 *mainSystem);
+		void initInstanceMain(OSystem *mainSystem);
 		void initInstanceGame();
 
 		// Action domain
@@ -79,6 +79,7 @@ class CEActionsPocket : public CEActions {
 		bool _right_click_needed;
 		bool _hide_toolbar_needed;
 		bool _zoom_needed;
+		OSystem_WINCE3 *_CESystem;
 	};	
 
 #endif

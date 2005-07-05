@@ -22,7 +22,10 @@
  */
 
 #include "SymbianOS.h"
-
+#include "SymbianActions.h"
+#include "Actions.h"
+#include "Key.h"
+#include "gui\message.h"
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", "Fullscreen", GFX_NORMAL},
 	{0, 0, 0}
@@ -37,11 +40,22 @@ OSystem *OSystem_SymbianOS_create() {
 
 extern Common::ConfigManager *g_config;
 
-OSystem_SDL_Symbian::OSystem_SDL_Symbian() :_channels(0),_stereo_mix_buffer(0){
+OSystem_SDL_Symbian::zoneDesc OSystem_SDL_Symbian::_zones[TOTAL_ZONES] = {
+        { 0, 0, 320, 145 },
+        { 0, 145, 150, 55 },
+        { 150, 145, 170, 55 }
+};
+OSystem_SDL_Symbian::OSystem_SDL_Symbian() :_channels(0),_stereo_mix_buffer(0)
+{
 	ConfMan.set("FM_high_quality", false);
 	ConfMan.set("FM_medium_quality", true);
 //	ConfMan.set("joystick_num",0); // S60 should have joystick_num set to 0 in the ini file
 	ConfMan.flushToDisk();
+	// Initialize global key mapping for Smartphones
+	GUI::Actions* actions = GUI::Actions::Instance();
+	actions->initInstanceMain(this);	
+	actions->loadMapping();
+	initZones();
 }
 
 OSystem_SDL_Symbian::~OSystem_SDL_Symbian() {
@@ -165,8 +179,7 @@ void OSystem_SDL_Symbian::symbianMix(byte *samples, int len){
 		int16* bitmixDst=(int16*)samples;
 		int16* bitmixSrc=(int16*)_stereo_mix_buffer;
 
-		for(int loop=len/2;loop>=0;loop--)
-		{
+		for(int loop=len/2;loop>=0;loop--){
 			*bitmixDst=(*bitmixSrc+*(bitmixSrc+1))>>1;
 			bitmixDst++;
 			bitmixSrc+=2;
@@ -175,6 +188,152 @@ void OSystem_SDL_Symbian::symbianMix(byte *samples, int len){
 	else
 		_sound_proc(_sound_proc_param,samples,len);
 
+}
+
+/**
+ * This is an implementation by the remapKey function
+ * @param SDL_Event to remap
+ * @param ScumVM event to modify if special result is requested
+ * @return true if Event has a valid return status
+ */
+bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev,Event &event)
+{
+	if(!GUI::Actions::Instance()->mappingActive() && ev.key.keysym.sym>SDLK_UNKNOWN)
+	for(TInt loop=0;loop<GUI::ACTION_LAST;loop++){
+		if(GUI::Actions::Instance()->getMapping(loop) ==ev.key.keysym.sym && 
+			GUI::Actions::Instance()->isEnabled(loop)){
+		// Create proper event instead
+		switch(loop)
+		{
+			case GUI::ACTION_UP:	
+				if(ev.type == SDL_KEYDOWN)
+				{
+				_km.y_vel =  -1;
+				_km.y_down_count = 1;
+				}
+				else
+				{
+					_km.y_vel = 0;
+					_km.y_down_count = 0;
+				}
+				event.type = EVENT_MOUSEMOVE;
+				fillMouseEvent(event, _km.x, _km.y);
+				return true;			
+			case GUI::ACTION_DOWN:
+				if(ev.type == SDL_KEYDOWN)
+				{
+				_km.y_vel =  1;
+				_km.y_down_count = 1;
+				}
+				else
+				{
+					_km.y_vel = 0;
+					_km.y_down_count = 0;
+				}
+				event.type = EVENT_MOUSEMOVE;
+				fillMouseEvent(event, _km.x, _km.y);
+				return true;	
+			case GUI::ACTION_LEFT:
+				if(ev.type == SDL_KEYDOWN)
+				{
+					_km.x_vel =  -1;
+					_km.x_down_count = 1;
+				}
+				else
+				{
+					_km.x_vel = 0;
+					_km.x_down_count = 0;
+				}
+				event.type = EVENT_MOUSEMOVE;
+				fillMouseEvent(event, _km.x, _km.y);
+				return true;
+			case GUI::ACTION_RIGHT:
+				if(ev.type == SDL_KEYDOWN)
+				{
+					_km.x_vel =  1;
+					_km.x_down_count = 1;
+				}
+				else
+				{
+					_km.x_vel = 0;
+					_km.x_down_count = 0;
+				}
+				event.type = EVENT_MOUSEMOVE;
+				fillMouseEvent(event, _km.x, _km.y);
+				return true;
+			case GUI::ACTION_LEFTCLICK:
+				event.type = ev.type == SDL_KEYDOWN?EVENT_LBUTTONDOWN:EVENT_LBUTTONUP;
+				fillMouseEvent(event, _km.x, _km.y);
+				return true;
+			case GUI::ACTION_RIGHTCLICK:
+				event.type = ev.type == SDL_KEYDOWN?EVENT_RBUTTONDOWN:EVENT_RBUTTONUP;
+				fillMouseEvent(event, _km.x, _km.y);
+				return true;
+			case GUI::ACTION_ZONE:
+				if(ev.type == SDL_KEYDOWN)
+				{
+					int i;				
+					
+					for (i=0; i<TOTAL_ZONES; i++)
+						if (_km.x >= _zones[i].x && _km.y >= _zones[i].y &&
+							_km.x <= _zones[i].x + _zones[i].width && _km.y <= _zones[i].y + _zones[i].height
+							) {
+							_mouseXZone[i] = _km.x;
+							_mouseYZone[i] = _km.y;
+							break;
+						}
+						_currentZone++;
+						if (_currentZone >= TOTAL_ZONES)
+							_currentZone = 0;
+						event.type = EVENT_MOUSEMOVE;
+						fillMouseEvent(event, _mouseXZone[_currentZone],_mouseYZone[_currentZone]);
+						SDL_WarpMouse(event.mouse.x,event.mouse.y);					
+				}
+				return true;
+			case GUI::ACTION_SAVE:
+			case GUI::ACTION_SKIP:
+			case GUI::ACTION_FT_CHEAT:
+			case GUI::ACTION_SKIP_TEXT:
+			case GUI::ACTION_PAUSE:
+				{
+					GUI::Key& key = GUI::Actions::Instance()->getKeyAction(loop);
+					ev.key.keysym.sym =(SDLKey) key.ascii();
+					ev.key.keysym.scancode= key.keycode();
+					ev.key.keysym.mod =(SDLMod) key.flags();
+					return false;
+				}			
+			case GUI::ACTION_QUIT:{
+			GUI::MessageDialog alert("Do you want to quit ?", "Yes", "No");
+			if (alert.runModal() == GUI::kMessageOK)
+				quit();
+			return true;
+			}
+		}
+	}
+	}
+	return false;
+}
+
+void OSystem_SDL_Symbian::setWindowCaption(const char *caption) {
+	OSystem_SDL::setWindowCaption(caption);
+	check_mappings();
+}
+
+void OSystem_SDL_Symbian::check_mappings() {
+	if (!GUI::Actions::Instance()->gameDetector()._targetName.size() || GUI::Actions::Instance()->initialized())
+		return;
+
+	GUI::Actions::Instance()->initInstanceGame();
+}
+
+void OSystem_SDL_Symbian::initZones() {
+        int i;
+
+		_currentZone = 0;
+        for (i=0; i<TOTAL_ZONES; i++) {
+                _mouseXZone[i] = (_zones[i].x + (_zones[i].width / 2));
+                _mouseYZone[i] = (_zones[i].y + (_zones[i].height / 2));
+        }
 }
 
 /*

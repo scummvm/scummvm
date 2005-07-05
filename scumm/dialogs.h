@@ -113,7 +113,7 @@ protected:
 class ConfigDialog : public GUI::OptionsDialog {
 protected:
 	ScummEngine *_vm;
-#ifdef _WIN32_WCE
+#ifdef SMALL_SCREEN_DEVICE
 	GUI::Dialog		*_keysDialog;
 #endif
 

@@ -41,6 +41,9 @@
 #include "simon/simon-md5.h"
 
 #include "sound/mididrv.h"
+#ifdef _WIN32_WCE
+extern bool isSmartphone(void);
+#endif
 
 #ifdef __PALM_OS__
 #include "globals.h"

@@ -100,8 +100,12 @@ SOURCE backends\sdl\graphics.cpp
 SOURCE backends\sdl\sdl.cpp
 SOURCE backends\fs\symbian\symbian-fs.cpp
 SOURCE backends\epoc\SymbianOS.cpp 
+SOURCE backends\epoc\SymbianActions.cpp 
 SOURCE backends\epoc\ScummApp.cpp
 
+SOURCE gui\Key.cpp
+SOURCE gui\KeysDialog.cpp
+SOURCE gui\Actions.cpp
 // *** Dynamic Libraries
 
 LIBRARY cone.lib  eikcore.lib 

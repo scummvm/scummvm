@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: 
+ * $Header$
  */
 
 //
@@ -36,11 +36,12 @@ OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way
 
 RESOURCE		EScummVM.rss
 EPOCSTACKSIZE	0x80008000 // this enables ECompXL app compression
-AIF			EScummVm.Aif ..\ ScummVmAif.rss c16 ScummL.bmp ScummLM.bmp ScummS.bmp ScummSM.bmp // still fails?
+AIF			EScummVm.Aif ..\ ScummVmAif.rss c16 ScummL.bmp ScummLM.bmp ScummS.bmp ScummSM.bmp // mine still fails: I think it's because I have JRE 1.5 instead of 1.3 :P
 UID             0x100039ce 0x101f9b57
 
 MACRO			UIQ
 MACRO			NONSTANDARD_PORT
+MACRO			EPOC_AS_APP
 
 // these need too high a resolution
 MACRO			DISABLE_SWORD1
@@ -98,7 +99,12 @@ SOURCE backends\sdl\graphics.cpp
 SOURCE backends\sdl\sdl.cpp
 SOURCE backends\fs\symbian\symbian-fs.cpp
 SOURCE backends\epoc\SymbianOS.cpp 
+SOURCE backends\epoc\SymbianActions.cpp 
 SOURCE backends\epoc\ScummApp.cpp
+
+SOURCE gui\Key.cpp
+SOURCE gui\KeysDialog.cpp
+SOURCE gui\Actions.cpp
 
 // *** Dynamic Libraries
 

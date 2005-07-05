@@ -95,6 +95,7 @@ void CScummVMUi::ConstructL() {
 	lsSession.StartApp(*cmdLine,iThreadId);
 	CleanupStack::PopAndDestroy();//close lsSession
 	CleanupStack::PopAndDestroy(cmdLine);
+	User::After(500000);// Let the application start
 
 	TApaTaskList taskList(iEikonEnv->WsSession());
 	TApaTask myTask=taskList.FindApp(TUid::Uid(0x101f9b57));

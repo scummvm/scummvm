@@ -19,41 +19,32 @@
  *
  */
 
-#include "common/stdafx.h"
-#include "Key.h"
+#ifndef KEYSDIALOG_H
+#define KEYSDIALOG_H
 
-namespace CEKEYS {
-	Key::Key() :
-	_ascii(0), _keycode(0), _flags(0) {
-	}
+#include "gui/newgui.h"
+#include "gui/dialog.h"
+#include "gui/ListWidget.h"
+#include "common/str.h"
 
-	Key::Key(int ascii, int keycode, int flags) :
-	_ascii(ascii), _keycode(keycode), _flags(flags) {
-	}
+namespace GUI {
 
-	int Key::ascii() {
-		return _ascii;
-	}
+class KeysDialog : public GUI::Dialog {
+public:
+	KeysDialog(const Common::String &title = "Choose an action to map");
 
-	int Key::keycode() {
-		return _keycode;
-	}
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleKeyUp(uint16 ascii, int keycode, int modifiers);
+	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
 
-	int Key::flags() {
-		return _flags;
-	}
+protected:
 
+	GUI::ListWidget		 *_actionsList;
+	GUI::StaticTextWidget *_actionTitle;
+	GUI::StaticTextWidget *_keyMapping;
+	int				 _actionSelected;
+};
 
-	void Key::setAscii(int ascii) {
-		_ascii = ascii;
-		_keycode = ascii; // default
-	}
+} // namespace GUI
 
-	void Key::setKeycode(int keycode) {
-		_keycode = keycode;
-	}
-
-	void Key::setFlags(int flags) {
-		_flags = flags;
-	}
-}
+#endif

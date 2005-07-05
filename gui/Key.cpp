@@ -19,30 +19,43 @@
  *
  */
 
-#ifndef CEKEYS_KEY
-#define CEKEYS_KEY
+#include "stdafx.h"
+#include "gui/Key.h"
 
-#include "common/stdafx.h"
-#include "common/scummsys.h"
-#include "common/system.h"
+namespace GUI {
 
-namespace CEKEYS {
-
-	class Key {
-	public:
-		Key(int ascii, int keycode = 0, int flags = 0);
-		Key();
-		void setAscii(int ascii);
-		void setKeycode(int keycode);
-		void setFlags(int flags);
-		int ascii();
-		int keycode();
-		int flags();
-	private:
-		int _ascii;
-		int _keycode;
-		int _flags;
-	};
+Key::Key() :
+_ascii(0), _keycode(0), _flags(0) {
 }
 
-#endif
+Key::Key(int ascii, int keycode, int flags) :
+_ascii(ascii), _keycode(keycode), _flags(flags) {
+}
+
+int Key::ascii() {
+	return _ascii;
+}
+
+int Key::keycode() {
+	return _keycode;
+}
+
+int Key::flags() {
+	return _flags;
+}
+
+
+void Key::setAscii(int ascii) {
+	_ascii = ascii;
+	_keycode = ascii; // default
+}
+
+void Key::setKeycode(int keycode) {
+	_keycode = keycode;
+}
+
+void Key::setFlags(int flags) {
+	_flags = flags;
+}
+
+} // namespace GUI

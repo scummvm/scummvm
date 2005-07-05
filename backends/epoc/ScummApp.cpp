@@ -29,7 +29,8 @@ extern "C" int _chkstk(int /*a*/) {
 	return 1;
 }
 #endif
-#if !defined (__AVKON_ELAF__) && !defined (S60)
+
+#ifdef EPOC_AS_APP
 // this function is called by Symbian to deliver the new CApaApplication object
 EXPORT_C CApaApplication* NewApplication() {
 	// Return pointer to newly created CQMApp

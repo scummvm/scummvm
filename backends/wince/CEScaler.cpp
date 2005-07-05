@@ -18,7 +18,7 @@
  * $Header$
  *
  */
-
+#include "common/scaler/intern.h"
 #include "common/stdafx.h"
 #include "CEScaler.h"
 

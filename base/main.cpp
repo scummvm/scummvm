@@ -156,6 +156,10 @@ extern "C" int main(int argc, char *argv[]);
 #include "allegro.h"
 #endif
 
+#ifdef __SYMBIAN32__
+#include "gui/Actions.h"
+#endif
+
 #if defined(UNIX)
 #include <signal.h>
 
@@ -398,14 +402,20 @@ extern "C" int main(int argc, char *argv[]) {
 	// Load the plugins
 	PluginManager::instance().loadPlugins();
 
-	// Ensure the system object exists (it may have already been created 
-	// at an earlier point, though!)
-	OSystem &system = OSystem::instance();
-
 	// Parse the command line information
 #ifndef _WIN32_WCE
 	GameDetector detector;
 #endif
+
+#ifdef __SYMBIAN32__
+	// init keymap support here: we wanna move this somewhere else?
+	GUI::Actions::init(detector);
+#endif
+
+	// Ensure the system object exists (it may have already been created 
+	// at an earlier point, though!)
+	OSystem &system = OSystem::instance();
+
 	detector.parseCommandLine(argc, argv);
 
 #ifdef __PALM_OS__

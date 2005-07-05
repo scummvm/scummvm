@@ -196,6 +196,8 @@ public:
 #endif
 
 protected:
+	virtual bool remapKey(SDL_Event &ev, Event &event);
+
 	bool _inited;
 
 #ifdef USE_OSD

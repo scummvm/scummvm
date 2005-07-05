@@ -34,11 +34,11 @@
 
 #include "resource.h"
 
-#include "CEActions.h"
+#include "gui/Actions.h"
 #include "CEActionsPocket.h"
 #include "CEActionsSmartphone.h"
 #include "ItemAction.h"
-#include "CEKeysDialog.h"
+#include "gui/KeysDialog.h"
 
 #include "gui/message.h"
 
@@ -142,7 +142,7 @@ int SDL_main(int argc, char **argv) {
 	/* Avoid print problems - this file will be put in RAM anyway */
 	stdout_file = fopen("\\scummvm_stdout.txt", "w");
 	stderr_file = fopen("\\scummvm_stderr.txt", "w");
-	CEActions::init(_gameDetector);
+	GUI::Actions::init(_gameDetector);
 
 	__try {
 		return scummvm_main(_gameDetector, argc, argv);
@@ -222,8 +222,8 @@ OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
 	}
 	create_toolbar();
 	// Initialize global key mapping for Smartphones
-	CEActions::Instance()->initInstanceMain(this);	
-	CEActions::Instance()->loadMapping();
+	GUI_Actions::Instance()->initInstanceMain(this);	
+	GUI_Actions::Instance()->loadMapping();
 
 	if (_isSmartphone) {
 		loadSmartphoneConfiguration();
@@ -641,15 +641,15 @@ bool OSystem_WINCE3::setSoundCallback(SoundProc proc, void *param) {
 void OSystem_WINCE3::check_mappings() {
 		CEActionsPocket *instance;
 
-		if (!_gameDetector._targetName.size() || CEActions::Instance()->initialized())
+		if (!_gameDetector._targetName.size() || GUI_Actions::Instance()->initialized())
 			return;
 
-		CEActions::Instance()->initInstanceGame();
-		instance = (CEActionsPocket*)CEActions::Instance();
+		GUI_Actions::Instance()->initInstanceGame();
+		instance = (CEActionsPocket*)GUI_Actions::Instance();
 
 		// Some games need to map the right click button, signal it here if it wasn't done
 		if (instance->needsRightClickMapping()) {
-			CEKeysDialog *keysDialog = new CEKeysDialog("Map right click action");	
+			GUI::KeysDialog *keysDialog = new GUI::KeysDialog("Map right click action");	
 			while (!instance->getMapping(POCKET_ACTION_RIGHTCLICK)) {
 				keysDialog->runModal();
 				if (!instance->getMapping(POCKET_ACTION_RIGHTCLICK)) {
@@ -662,7 +662,7 @@ void OSystem_WINCE3::check_mappings() {
 
 		// Map the "hide toolbar" action if needed
 		if (instance->needsHideToolbarMapping()) {
-			CEKeysDialog *keysDialog = new CEKeysDialog("Map hide toolbar action");
+			GUI::KeysDialog *keysDialog = new GUI::KeysDialog("Map hide toolbar action");
 			while (!instance->getMapping(POCKET_ACTION_HIDE)) {
 				keysDialog->runModal();
 				if (!instance->getMapping(POCKET_ACTION_HIDE)) {
@@ -675,17 +675,17 @@ void OSystem_WINCE3::check_mappings() {
 
 		// Map the "zoom" actions if needed
 		if (instance->needsZoomMapping()) {
-			CEKeysDialog *keysDialog = new CEKeysDialog("Map Zoom Up action (optional)");
+			GUI::KeysDialog *keysDialog = new GUI::KeysDialog("Map Zoom Up action (optional)");
 			keysDialog->runModal();
 			delete keysDialog;
-			keysDialog = new CEKeysDialog("Map Zoom Down action (optional)");
+			keysDialog = new GUI::KeysDialog("Map Zoom Down action (optional)");
 			keysDialog->runModal();
 			delete keysDialog;
 		}
 
 		// Extra warning for Zak Mc Kracken
 		if (strncmp(_gameDetector._targetName.c_str(), "zak", 3) == 0 &&  
-			!CEActions::Instance()->getMapping(POCKET_ACTION_HIDE)) {
+			!GUI_Actions::Instance()->getMapping(POCKET_ACTION_HIDE)) {
 			GUI::MessageDialog alert("Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory");
 			alert.runModal();
 		}
@@ -1389,7 +1389,7 @@ bool OSystem_WINCE3::saveScreenshot(const char *filename) {
 
 static int mapKeyCE(SDLKey key, SDLMod mod, Uint16 unicode)
 {
-	if (CEActions::Instance()->mappingActive())
+	if (GUI::Actions::Instance()->mappingActive())
 		return key;
 
 	if (key >= SDLK_F1 && key <= SDLK_F9) {
@@ -1540,7 +1540,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 					_keyRepeat = 0;
 				}
 
-				if (!CEActions::Instance()->mappingActive() && CEActions::Instance()->performMapped(ev.key.keysym.sym, true))
+				if (!GUI_Actions::Instance()->mappingActive() && GUI_Actions::Instance()->performMapped(ev.key.keysym.sym, true))
 					return true;
 			}
 
@@ -1548,7 +1548,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 			event.kbd.keycode = ev.key.keysym.sym;
 			event.kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 
-			if (CEActions::Instance()->mappingActive())
+			if (GUI_Actions::Instance()->mappingActive())
 				event.kbd.flags = 0xFF;
 			
 			return true;
@@ -1561,7 +1561,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 					_lastKeyPressed = 0;
 				}
 
-				if (!CEActions::Instance()->mappingActive() && CEActions::Instance()->performMapped(ev.key.keysym.sym, false))
+				if (!GUI_Actions::Instance()->mappingActive() && GUI_Actions::Instance()->performMapped(ev.key.keysym.sym, false))
 					return true;
 			}
 			
@@ -1569,7 +1569,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 			event.kbd.keycode = ev.key.keysym.sym;
 			event.kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 			
-			if (CEActions::Instance()->mappingActive())
+			if (GUI_Actions::Instance()->mappingActive())
 				event.kbd.flags = 0xFF;
 
 			return true;
@@ -1648,7 +1648,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 				if (currentTime > _keyRepeatTime + _keyRepeatTrigger) {
 					_keyRepeatTime = currentTime;
 					_keyRepeat++;
-					CEActions::Instance()->performMapped(_lastKeyPressed, true);
+					GUI_Actions::Instance()->performMapped(_lastKeyPressed, true);
 				}
 			}
 		}

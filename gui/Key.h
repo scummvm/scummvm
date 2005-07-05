@@ -1,45 +1,49 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2003-2005 Andreas 'Sprawl' Karlsson - Original EPOC port, ESDL
- * Copyright (C) 2003-2005 Lars 'AnotherGuest' Persson - Original EPOC port, Audio System
- * Copyright (C) 2005 Jurgen 'SumthinWicked' Braam - EPOC/CVS maintainer
- * Copyright (C) 2005 The ScummVM project
+ * Copyright (C) 2001-2005 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * $Header$
+ *
  */
 
-// ScummVM.RSS
+#ifndef KEY_H
+#define KEY_H
 
-NAME SCUM
+#include "common/stdafx.h"
+#include "common/scummsys.h"
+#include "common/system.h"
 
-// Include definitions of resource STRUCTS used by this
-// resource script 
-#include <eikon.rh>
-#include "..\..\Scummvm.hrh"
-// Include the standard Eikon resource ids 
-#include <eikon.rsg>
+namespace GUI {
 
+class Key {
+public:
+	Key(int ascii, int keycode = 0, int flags = 0);
+	Key();
+	void setAscii(int ascii);
+	void setKeycode(int keycode);
+	void setFlags(int flags);
+	int ascii();
+	int keycode();
+	int flags();
+private:
+	int _ascii;
+	int _keycode;
+	int _flags;
+};
 
-RESOURCE RSS_SIGNATURE
-	{
-	}
+} // namespace GUI
 
-RESOURCE TBUF16 { buf=""; }
-
-RESOURCE EIK_APP_INFO
-	{
-	}
-
+#endif

@@ -56,7 +56,7 @@
 
 extern bool toolbar_drawn;
 extern bool draw_keyboard;
-
+extern bool isSmartphone(void);
 #endif
 
 /*

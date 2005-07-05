@@ -19,70 +19,77 @@
  *
  */
 
-#include "common/stdafx.h"
-#include "CEActions.h"
-#include "CEActionsPocket.h"
-#include "CEActionsSmartphone.h"
-
+#include "stdafx.h"
+#include "gui/Actions.h"
 #include "gui/message.h"
-
 #include "scumm/scumm.h"
-
 #include "common/config-manager.h"
 
+#ifdef _WIN32_WCE
+	#include "backends/wince/CEActionsPocket.h"
+	#include "backends/wince/CEActionsSmartphone.h"
+#elif defined(__SYMBIAN32__)
+	#include "backends/epoc/SymbianActions.h"
+#endif
 
-CEActions* CEActions::Instance() {		
+namespace GUI {
+
+Actions* Actions::Instance() {		
 	return _instance;		
 }
 
-CEActions::CEActions(GameDetector &detector) :
+Actions::Actions(GameDetector &detector) :
 	_detector(&detector), _mapping_active(false), _initialized(false)
 {
 }
 
 
-CEActions::~CEActions() {
+Actions::~Actions() {
 }
 
-void CEActions::init(GameDetector &detector) {
+// call the correct object creator function according to the Factory Pattern
+void Actions::init(GameDetector &detector) {
+#ifdef _WIN32_WCE
+	// For WinCE: now use software + Factory pattern to create correct objects
 	if (!CEDevice::hasSmartphoneResolution())
 		CEActionsPocket::init(detector);
-//#ifdef WIN32_PLATFORM_WFSP
 	else
 		CEActionsSmartphone::init(detector);
-//#endif
+#elif defined(__SYMBIAN32__)
+	SymbianActions::init(detector);
+#endif
 }
 
-void CEActions::initInstanceMain(OSystem *mainSystem) {
+void Actions::initInstanceMain(OSystem *mainSystem) {
 	_mainSystem = mainSystem;
 }
 
-void CEActions::initInstanceGame() {
+void Actions::initInstanceGame() {
 	_instance->_initialized = true;
 }
 
 
-bool CEActions::initialized() {
+bool Actions::initialized() {
 	return _initialized;
 }
 
-bool CEActions::isActive(ActionType action) {
+bool Actions::isActive(ActionType action) {
 	return false;
 }
 
-bool CEActions::isEnabled(ActionType action) {
+bool Actions::isEnabled(ActionType action) {
 	return _action_enabled[action];
 }
 
-void CEActions::beginMapping(bool start) {
+void Actions::beginMapping(bool start) {
 	_mapping_active = start;
 }
 
-bool CEActions::mappingActive() {
+bool Actions::mappingActive() {
 	return _mapping_active;
 }
 
-bool CEActions::performMapped(unsigned int keyCode, bool pushed) {
+bool Actions::performMapped(unsigned int keyCode, bool pushed) {
 	int i;
 	
 	for (i=0; i<size(); i++) {
@@ -93,7 +100,7 @@ bool CEActions::performMapped(unsigned int keyCode, bool pushed) {
 	return false;
 }
 
-bool CEActions::loadMapping() {
+bool Actions::loadMapping() {
 	const char *tempo;
 	int current_version;
 	int i;
@@ -103,7 +110,7 @@ bool CEActions::loadMapping() {
 	tempo = ConfMan.get("action_mapping", domain()).c_str();
 	if (tempo && strlen(tempo)) {
 		for (i=0; i<size(); i++) {
-			char x[6];
+			char x[7];
 			int j;
 			memset(x, 0, sizeof(x));
 			memcpy(x, tempo + 5 * i, 4);
@@ -116,13 +123,13 @@ bool CEActions::loadMapping() {
 		return false;
 }
 
-bool CEActions::saveMapping() {
+bool Actions::saveMapping() {
 	char tempo[200];
 	int i;
 	tempo[0] = '\0';
 	ConfMan.set("action_mapping_version", version(), domain());
 	for (i=0; i<size(); i++) {
-		char x[4];
+		char x[10];
 		sprintf(x, "%.4x ", _action_mapping[i]);
 		strcat(tempo, x);
 	}
@@ -131,12 +138,12 @@ bool CEActions::saveMapping() {
 	return true;
 }
 
-unsigned int CEActions::getMapping(ActionType action) {
+unsigned int Actions::getMapping(ActionType action) {
 	return _action_mapping[action];
 }
 
 
-void CEActions::setMapping(ActionType action, unsigned int keyCode) {
+void Actions::setMapping(ActionType action, unsigned int keyCode) {
 	int i;
 
 	for (i=0; i<size(); i++) {
@@ -147,5 +154,16 @@ void CEActions::setMapping(ActionType action, unsigned int keyCode) {
 	_action_mapping[action] = keyCode;
 }
 
+Key& Actions::getKeyAction(ActionType action)
+{
+	return _key_action[action];
+}
 
-CEActions *CEActions::_instance = NULL;    
+// Game detector 
+GameDetector& Actions::gameDetector(){
+	return *_detector;
+}
+Actions *Actions::_instance = NULL;
+
+	
+} // namespace GUI

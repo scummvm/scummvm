@@ -27,7 +27,7 @@
 #include <eikapp.h>
 #include <e32base.h>
 #include <sdlapp.h>
-#if!defined (__AVKON_ELAF__) && !defined(S60)
+#ifdef EPOC_AS_APP
 #include "ECompXL.h"
 #endif
 
@@ -37,7 +37,7 @@ public:
 	~CScummApp();
 
 	TUid AppDllUid() const;
-#if!defined (__AVKON_ELAF__) && !defined(S60)
+#ifdef EPOC_AS_APP
 	TECompXL    iECompXL;        
 #endif
 };

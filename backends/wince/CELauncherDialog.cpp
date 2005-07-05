@@ -43,7 +43,7 @@ public:
 	: Dialog(10, 60, 300, 77) {
 		char tempo[100];
 	
-		addButton((_w - kButtonWidth) / 2, 45, "OK", kCloseCmd, '\r');	// Close dialog - FIXME
+		addButton(this,(_w - kButtonWidth) / 2, 45, "OK", kCloseCmd, '\r');	// Close dialog - FIXME
 
 		Common::String videoDriver("Using SDL driver ");
 		SDL_VideoDriverName(tempo, sizeof(tempo));
@@ -61,7 +61,7 @@ public:
 	CEConflictDialog::CEConflictDialog(const Common::String &name)
 	: Dialog(10, 60, 300, 77) {
 	
-		addButton((_w - kButtonWidth) / 2, 45, "OK", kCloseCmd, '\r');	// Close dialog - FIXME
+		addButton(this,(_w - kButtonWidth) / 2, 45, "OK", kCloseCmd, '\r');	// Close dialog - FIXME
 
 		Common::String conflict("Too many matches for directory ");
 		conflict += name;

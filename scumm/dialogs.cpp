@@ -43,8 +43,8 @@
 #include "scumm/help.h"
 #endif
 
-#ifdef _WIN32_WCE
-#include "backends/wince/CEKeysDialog.h"
+#ifdef SMALL_SCREEN_DEVICE
+#include "KeysDialog.h"
 #endif
 
 using GUI::CommandSender;
@@ -590,7 +590,7 @@ ConfigDialog::ConfigDialog(ScummEngine *scumm)
 
 	addButton(this, _w - (buttonWidth + 4) - 4, yoffset, "OK", GUI::OptionsDialog::kOKCmd, 'O', ws);
 	addButton(this, _w - 2 * (buttonWidth + 4) - 4, yoffset, "Cancel", kCloseCmd, 'C', ws);
-#ifdef _WIN32_WCE
+#ifdef SMALL_SCREEN_DEVICE
 	addButton(this, _w - 3 * (buttonWidth + 4) - 4, yoffset, "Keys", kKeysCmd, 'K', ws);
 #endif
 
@@ -601,17 +601,17 @@ ConfigDialog::ConfigDialog(ScummEngine *scumm)
 	_x = (screenW - _w) / 2;
 	_y = (screenH - _h) / 2;
 
-#ifdef _WIN32_WCE
+#ifdef SMALL_SCREEN_DEVICE
 	//
 	// Create the sub dialog(s)
 	//
 
-	_keysDialog = new CEKeysDialog();
+	_keysDialog = new GUI::KeysDialog();
 #endif
 }
 
 ConfigDialog::~ConfigDialog() {
-#ifdef _WIN32_WCE
+#ifdef SMALL_SCREEN_DEVICE
 	delete _keysDialog;
 #endif
 }
@@ -647,7 +647,7 @@ void ConfigDialog::close() {
 void ConfigDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kKeysCmd:
-#ifdef _WIN32_WCE
+#ifdef SMALL_SCREEN_DEVICE
 		_keysDialog->runModal();
 #endif
 		break;

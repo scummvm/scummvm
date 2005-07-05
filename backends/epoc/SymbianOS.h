@@ -26,6 +26,8 @@
 
 #include "sdl-common.h"
 
+#define TOTAL_ZONES 3
+
 class OSystem_SDL_Symbian : public OSystem_SDL {
 public:
 	OSystem_SDL_Symbian();
@@ -53,6 +55,23 @@ protected:
 	 */
 	void symbianMix(byte *samples, int len);
 
+	/**
+	 * This is an implementation by the remapKey function
+	 * @param SDL_Event to remap
+	 * @param ScumVM event to modify if special result is requested
+	 * @return true if Event has a valid return status
+	 */
+	bool remapKey(SDL_Event &ev,Event &event);
+
+	void setWindowCaption(const char *caption);
+
+	/**
+	 * Used to intialized special game mappings
+	 */
+	void check_mappings();
+
+	void initZones();
+
 	// Audio
 	int _channels;
 
@@ -60,6 +79,19 @@ protected:
 	void *_sound_proc_param;
 	byte* _stereo_mix_buffer;
 
+	// Used to handle joystick navi zones
+	int _mouseXZone[TOTAL_ZONES];
+	int _mouseYZone[TOTAL_ZONES];
+	int _currentZone;
+
+	typedef struct zoneDesc {
+		int x;
+		int y;
+		int width;
+		int height;
+	} zoneDesc;
+
+	static zoneDesc _zones[TOTAL_ZONES];
 };
 
 #endif

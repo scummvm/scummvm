@@ -189,7 +189,7 @@ bool OSystem_SDL::pollEvent(Event &event) {
 
 	while(SDL_PollEvent(&ev)) {
 		switch(ev.type) {
-		case SDL_KEYDOWN:
+		case SDL_KEYDOWN:{
 			b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
 
 			// Alt-Return and Alt-Enter toggle full screen mode				
@@ -331,78 +331,24 @@ bool OSystem_SDL::pollEvent(Event &event) {
 				}
 				break;
 			}
+			const bool event_complete= remapKey(ev,event);
+			
+			if(event_complete)
+				return true;
 
-#ifdef LINUPY
-			// On Yopy map the End button to quit
-			if ((ev.key.keysym.sym == 293)) {
-				event.type = EVENT_QUIT;
-				return true;
-			}
-			// Map menu key to f5 (scumm menu)
-			if (ev.key.keysym.sym == 306) {
-				event.type = EVENT_KEYDOWN;
-				event.kbd.keycode = SDLK_F5;
-				event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
-				return true;
-			}
-			// Map action key to action
-			if (ev.key.keysym.sym == 291) {
-				event.type = EVENT_KEYDOWN;
-				event.kbd.keycode = SDLK_TAB;
-				event.kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
-				return true;
-			}
-			// Map OK key to skip cinematic
-			if (ev.key.keysym.sym == 292) {
-				event.type = EVENT_KEYDOWN;
-				event.kbd.keycode = SDLK_ESCAPE;
-				event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
-				return true;
-			}
-#endif
-
-#ifdef QTOPIA
-			// quit on fn+backspace on zaurus
-			if (ev.key.keysym.sym == 127) {
-				event.type = EVENT_QUIT;
-				return true;
-			}
-
-			// map menu key (f11) to f5 (scumm menu)
-			if (ev.key.keysym.sym == SDLK_F11) {
-				event.type = EVENT_KEYDOWN;
-				event.kbd.keycode = SDLK_F5;
-				event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
-			}
-			// map center (space) to tab (default action )
-			// I wanted to map the calendar button but the calendar comes up
-			//
-			else if (ev.key.keysym.sym == SDLK_SPACE) {
-				event.type = EVENT_KEYDOWN;
-				event.kbd.keycode = SDLK_TAB;
-				event.kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
-			}
-			// since we stole space (pause) above we'll rebind it to the tab key on the keyboard
-			else if (ev.key.keysym.sym == SDLK_TAB) {
-				event.type = EVENT_KEYDOWN;
-				event.kbd.keycode = SDLK_SPACE;
-				event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
-			} else {
-			// let the events fall through if we didn't change them, this may not be the best way to
-			// set it up, but i'm not sure how sdl would like it if we let if fall through then redid it though.
-			// and yes i have an huge terminal size so i dont wrap soon enough.
-				event.type = EVENT_KEYDOWN;
-				event.kbd.keycode = ev.key.keysym.sym;
-				event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
-			}
-#else
 			event.type = EVENT_KEYDOWN;
 			event.kbd.keycode = ev.key.keysym.sym;
 			event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
-#endif
+
 			return true;
-	
+			}
 		case SDL_KEYUP:
+			{
+			const bool event_complete= remapKey(ev,event);
+			
+			if(event_complete)
+				return true;
+
 			event.type = EVENT_KEYUP;
 			event.kbd.keycode = ev.key.keysym.sym;
 			event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
@@ -415,7 +361,7 @@ bool OSystem_SDL::pollEvent(Event &event) {
 			}
 
 			return true;
-
+			}
 		case SDL_MOUSEMOTION:
 			event.type = EVENT_MOUSEMOVE;
 			fillMouseEvent(event, ev.motion.x, ev.motion.y);
@@ -571,4 +517,71 @@ bool OSystem_SDL::pollEvent(Event &event) {
 	return false;
 }
 
+bool OSystem_SDL::remapKey(SDL_Event &ev,Event &event){
+#ifdef LINUPY
+			// On Yopy map the End button to quit
+			if ((ev.key.keysym.sym == 293)) {
+				event.type = EVENT_QUIT;
+				return true;
+			}
+			// Map menu key to f5 (scumm menu)
+			if (ev.key.keysym.sym == 306) {
+				event.type = EVENT_KEYDOWN;
+				event.kbd.keycode = SDLK_F5;
+				event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
+				return true;
+			}
+			// Map action key to action
+			if (ev.key.keysym.sym == 291) {
+				event.type = EVENT_KEYDOWN;
+				event.kbd.keycode = SDLK_TAB;
+				event.kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
+				return true;
+			}
+			// Map OK key to skip cinematic
+			if (ev.key.keysym.sym == 292) {
+				event.type = EVENT_KEYDOWN;
+				event.kbd.keycode = SDLK_ESCAPE;
+				event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
+				return true;
+			}
+#endif
+
+#ifdef QTOPIA
+			// quit on fn+backspace on zaurus
+			if (ev.key.keysym.sym == 127) {
+				event.type = EVENT_QUIT;
+				return true;
+			}
+
+			// map menu key (f11) to f5 (scumm menu)
+			if (ev.key.keysym.sym == SDLK_F11) {
+				event.type = EVENT_KEYDOWN;
+				event.kbd.keycode = SDLK_F5;
+				event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
+			}
+			// map center (space) to tab (default action )
+			// I wanted to map the calendar button but the calendar comes up
+			//
+			else if (ev.key.keysym.sym == SDLK_SPACE) {
+				event.type = EVENT_KEYDOWN;
+				event.kbd.keycode = SDLK_TAB;
+				event.kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
+			}
+			// since we stole space (pause) above we'll rebind it to the tab key on the keyboard
+			else if (ev.key.keysym.sym == SDLK_TAB) {
+				event.type = EVENT_KEYDOWN;
+				event.kbd.keycode = SDLK_SPACE;
+				event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
+			} else {
+			// let the events fall through if we didn't change them, this may not be the best way to
+			// set it up, but i'm not sure how sdl would like it if we let if fall through then redid it though.
+			// and yes i have an huge terminal size so i dont wrap soon enough.
+				event.type = EVENT_KEYDOWN;
+				event.kbd.keycode = ev.key.keysym.sym;
+				event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
+			}
+#endif
+			return false;
+}
 

@@ -57,7 +57,7 @@ void CEActionsSmartphone::init(GameDetector &detector) {
 }
 
 
-String CEActionsSmartphone::actionName(ActionType action) {
+String CEActionsSmartphone::actionName(GUI::ActionType action) {
 	return smartphoneActionNames[action];
 }
 
@@ -74,7 +74,7 @@ int CEActionsSmartphone::version() {
 }
 
 CEActionsSmartphone::CEActionsSmartphone(GameDetector &detector) :
-	CEActions(detector)
+GUI::Actions(detector)
 {
 	int i;
 
@@ -85,9 +85,9 @@ CEActionsSmartphone::CEActionsSmartphone(GameDetector &detector) :
 
 }
 
-void CEActionsSmartphone::initInstanceMain(OSystem_WINCE3 *mainSystem) {
-	CEActions::initInstanceMain(mainSystem);
-	
+void CEActionsSmartphone::initInstanceMain(OSystem *mainSystem) {
+	_CESystem = static_cast<OSystem_WINCE3*>(mainSystem);
+	GUI_Actions::initInstanceMain(mainSystem);
 	// Mouse Up
 	_action_enabled[SMARTPHONE_ACTION_UP] = true;
 	// Mouse Down
@@ -108,7 +108,7 @@ void CEActionsSmartphone::initInstanceGame() {
 	bool is_queen = (_detector->_targetName == "queen");
 	bool is_gob = (strncmp(_detector->_targetName.c_str(), "gob", 3) == 0);
 	
-	CEActions::initInstanceGame();
+	GUI_Actions::initInstanceGame();
 
 	// See if a right click mapping could be needed
 	if (is_sky || _detector->_targetName == "samnmax" || is_gob)
@@ -149,14 +149,14 @@ void CEActionsSmartphone::initInstanceGame() {
 CEActionsSmartphone::~CEActionsSmartphone() {
 }
 
-bool CEActionsSmartphone::perform(ActionType action, bool pushed) {
+bool CEActionsSmartphone::perform(GUI::ActionType action, bool pushed) {
 	if (!pushed) {
 		switch (action) {
 			case SMARTPHONE_ACTION_RIGHTCLICK:
-				_mainSystem->add_right_click(false);
+				_CESystem->add_right_click(false);
 				return true;
 			case SMARTPHONE_ACTION_LEFTCLICK:
-				_mainSystem->add_left_click(false);
+				_CESystem->add_left_click(false);
 				return true;
 			case SMARTPHONE_ACTION_SAVE:
 			case SMARTPHONE_ACTION_SKIP:
@@ -174,25 +174,25 @@ bool CEActionsSmartphone::perform(ActionType action, bool pushed) {
 			EventsBuffer::simulateKey(&_key_action[action], true);
 			return true;
 		case SMARTPHONE_ACTION_RIGHTCLICK:
-			_mainSystem->add_right_click(true);
+			_CESystem->add_right_click(true);
 			return true;
 		case SMARTPHONE_ACTION_LEFTCLICK:
-			_mainSystem->add_left_click(true);
+			_CESystem->add_left_click(true);
 			return true;
 		case SMARTPHONE_ACTION_UP:
-			_mainSystem->move_cursor_up();
+			_CESystem->move_cursor_up();
 			return true;
 		case SMARTPHONE_ACTION_DOWN:
-			_mainSystem->move_cursor_down();
+			_CESystem->move_cursor_down();
 			return true;
 		case SMARTPHONE_ACTION_LEFT:
-			_mainSystem->move_cursor_left();
+			_CESystem->move_cursor_left();
 			return true;
 		case SMARTPHONE_ACTION_RIGHT:
-			_mainSystem->move_cursor_right();
+			_CESystem->move_cursor_right();
 			return true;
 		case SMARTPHONE_ACTION_ZONE:
-			_mainSystem->switch_zone();
+			_CESystem->switch_zone();
 			return true;
 	}
 
