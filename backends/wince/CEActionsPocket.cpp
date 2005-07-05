@@ -30,6 +30,10 @@
 
 #include "common/config-manager.h"
 
+#ifdef _WIN32_WCE
+#define		KEY_ALL_SKIP	3457
+#endif
+
 const String pocketActionNames[] = { 
 	"Pause", 
 	"Save", 
@@ -137,7 +141,7 @@ void CEActionsPocket::initInstanceGame() {
 	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob)
 		_key_action[POCKET_ACTION_SKIP].setAscii(VK_ESCAPE);
 	else
-		_key_action[POCKET_ACTION_SKIP].setAscii(Scumm::KEY_ALL_SKIP);
+		_key_action[POCKET_ACTION_SKIP].setAscii(KEY_ALL_SKIP);
 	// Hide
 	_action_enabled[POCKET_ACTION_HIDE] = true;
 	// Keyboard 

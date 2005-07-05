@@ -86,7 +86,7 @@ void Engine::initCommonGFX(GameDetector &detector) {
 }
 
 void Engine::checkCD() {
-#ifdef WIN32
+#if defined (WIN32) && !defined(_WIN32_WCE) 
 	// It is a known bug under Windows that games that play CD audio cause
 	// ScummVM to crash if the data files are read from the same CD. Check
 	// if this appears to be the case and issue a warning.

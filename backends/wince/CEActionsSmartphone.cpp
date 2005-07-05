@@ -33,6 +33,10 @@
 
 #include "common/config-manager.h"
 
+#ifdef _WIN32_WCE
+#define		KEY_ALL_SKIP	3457
+#endif
+
 const String smartphoneActionNames[] = { 
 	"Up", 
 	"Down", 
@@ -137,7 +141,7 @@ void CEActionsSmartphone::initInstanceGame() {
 	if (is_simon || is_sky || is_gob)
 		_key_action[SMARTPHONE_ACTION_SKIP].setAscii(VK_ESCAPE);
 	else
-		_key_action[SMARTPHONE_ACTION_SKIP].setAscii(Scumm::KEY_ALL_SKIP);
+		_key_action[SMARTPHONE_ACTION_SKIP].setAscii(KEY_ALL_SKIP);
 	// Zone
 	_action_enabled[SMARTPHONE_ACTION_ZONE] = true;
 	// FT Cheat
