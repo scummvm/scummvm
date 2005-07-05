@@ -29,7 +29,7 @@
 #include "Toolbar.h"
 #include "EventsBuffer.h"
 
-using CEKEYS::Key;
+using GUI::Key;
 using CEKEYS::EventsBuffer;
 
 namespace CEGUI {

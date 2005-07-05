@@ -24,10 +24,10 @@
 
 namespace CEGUI {
 
-	ItemAction::ItemAction(WORD reference, ActionType action) :
+	ItemAction::ItemAction(WORD reference, GUI::ActionType action) :
 	PanelItem(reference) {
 		_action = action;
-		if (!CEActions::Instance()->isEnabled(_action))
+		if (!GUI::Actions::Instance()->isEnabled(_action))
 			_visible = false;
 	}
  
@@ -38,7 +38,7 @@ namespace CEGUI {
 	bool ItemAction::action(int x, int y, bool pushed) {
 
 		if (checkInside(x, y) && _visible && pushed) {
-			CEActions::Instance()->perform(_action);
+			GUI::Actions::Instance()->perform(_action);
 			return true;
 		}
 		else

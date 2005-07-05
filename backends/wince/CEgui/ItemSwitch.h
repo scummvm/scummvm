@@ -29,7 +29,7 @@
 #include "Panel.h"
 #include "EventsBuffer.h"
 
-using CEKEYS::Key;
+using GUI::Key;
 
 namespace CEGUI {
 

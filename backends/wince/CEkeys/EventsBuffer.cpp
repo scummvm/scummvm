@@ -24,7 +24,7 @@
 
 namespace CEKEYS {	
 
-	bool EventsBuffer::simulateKey(Key *key, bool pushed) {
+	bool EventsBuffer::simulateKey(GUI::Key *key, bool pushed) {
 		SDL_Event ev = {0};
 
 		if (!key->keycode())

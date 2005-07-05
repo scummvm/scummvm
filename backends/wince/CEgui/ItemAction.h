@@ -26,17 +26,17 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 
-#include "CEActions.h"
-
+#include "gui/Actions.h"
+#include "CEgui/PanelItem.h"
 namespace CEGUI {
 
 	class ItemAction : public PanelItem {
 	public:
-		ItemAction(WORD reference, ActionType action);
+		ItemAction(WORD reference, GUI::ActionType action);
 		virtual ~ItemAction();
 		virtual bool action(int x, int y, bool pushed); 
 	private:
-		ActionType _action;
+		GUI::ActionType _action;
 	};
 }
 
