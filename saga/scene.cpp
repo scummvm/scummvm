@@ -66,7 +66,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 
 
 	// Load scene lookup table
-	debug(0, "Loading scene LUT from resource %u.", RSC_ConvertID(_vm->getResourceDescription()->sceneLUTResourceId));
+	debug(3, "Loading scene LUT from resource %u.", RSC_ConvertID(_vm->getResourceDescription()->sceneLUTResourceId));
 	result = RSC_LoadResource(_sceneContext, RSC_ConvertID(_vm->getResourceDescription()->sceneLUTResourceId), &scene_lut_p, &scene_lut_len);
 	if (result != SUCCESS) {
 		warning("Scene::Scene(): Error: couldn't load scene LUT");
@@ -94,9 +94,9 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 
 	_firstScene = _vm->getStartSceneNumber();
 
-	debug(0, "First scene set to %d.", _firstScene);
+	debug(3, "First scene set to %d.", _firstScene);
 
-	debug(0, "LUT has %d entries.", _sceneMax);
+	debug(3, "LUT has %d entries.", _sceneMax);
 
 	// Create scene module text list
 	_textList = _vm->textCreateList();
@@ -423,11 +423,11 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		break;
 	}
 	
-	debug(0, "Loading scene number %u:", _sceneNumber);
+	debug(3, "Loading scene number %u:", _sceneNumber);
 
 	// Load scene descriptor and resource list resources
 	if (_loadDescription) {
-		debug(0, "Loading scene resource %u:", _sceneResourceId);
+		debug(3, "Loading scene resource %u:", _sceneResourceId);
 
 		if (loadSceneDescriptor(_sceneResourceId) != SUCCESS) {
 			error("Scene::loadScene(): Error reading scene descriptor");
@@ -437,7 +437,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 			error("Scene::loadScene(): Error reading scene resource list");
 		}
 	} else {
-		debug(0, "Loading memory scene resource.");
+		debug(3, "Loading memory scene resource.");
 	}
 
 	// Load resources from scene resource list
@@ -642,7 +642,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 			_vm->_events->queue(&event);
 		}
 
-		debug(0, "Scene started");
+		debug(3, "Scene started");
 
 	} else {
 		loadSceneParams->sceneProc(SCENE_BEGIN, this);
@@ -707,7 +707,7 @@ int Scene::loadSceneResourceList(uint32 reslist_rn) {
 
 	// Allocate memory for scene resource list 
 	_resListEntries = resource_list_len / SAGA_RESLIST_ENTRY_LEN;
-	debug(0, "Scene resource list contains %d entries.", _resListEntries);
+	debug(3, "Scene resource list contains %d entries.", _resListEntries);
 	_resList = (SCENE_RESLIST *)calloc(_resListEntries, sizeof(*_resList));
 
 	if (_resList == NULL) {
@@ -716,7 +716,7 @@ int Scene::loadSceneResourceList(uint32 reslist_rn) {
 
 	// Load scene resource list from raw scene 
 	// resource table
-	debug(0, "Loading scene resource list...");
+	debug(3, "Loading scene resource list...");
 
 	for (i = 0; i < _resListEntries; i++) {
 		_resList[i].res_number = readS.readUint16();
@@ -744,7 +744,7 @@ int Scene::processSceneResources() {
 				error("Scene::processSceneResources(): Multiple background resources encountered");
 			}
 
-			debug(0, "Loading background resource.");
+			debug(3, "Loading background resource.");
 			_bg.res_buf = resourceData;
 			_bg.res_len = resourceDataLength;
 			_bg.loaded = 1;
@@ -766,7 +766,7 @@ int Scene::processSceneResources() {
 			if (_bgMask.loaded) {
 				error("Scene::ProcessSceneResources(): Duplicate background mask resource encountered");
 			}
-			debug(0, "Loading BACKGROUND MASK resource.");
+			debug(3, "Loading BACKGROUND MASK resource.");
 			_bgMask.res_buf = resourceData;
 			_bgMask.res_len = resourceDataLength;
 			_bgMask.loaded = 1;
@@ -778,18 +778,18 @@ int Scene::processSceneResources() {
 			_bgMask.w = MIN(_bgMask.w, _vm->getDisplayWidth());
 			_bgMask.h = MIN(_bgMask.h, _vm->getClippedSceneHeight());
 
-			debug(0, "BACKGROUND MASK width=%d height=%d length=%d", _bgMask.w, _bgMask.h, _bgMask.buf_len);
+			debug(4, "BACKGROUND MASK width=%d height=%d length=%d", _bgMask.w, _bgMask.h, _bgMask.buf_len);
 			break;
 		case SAGA_STRINGS:
-			debug(0, "Loading scene strings resource...");
+			debug(3, "Loading scene strings resource...");
 			_vm->loadStrings(_sceneStrings, resourceData, resourceDataLength);
 			break;
 		case SAGA_OBJECT_MAP:
-			debug(0, "Loading object map resource...");
+			debug(3, "Loading object map resource...");
 			_objectMap->load(resourceData, resourceDataLength);			
 			break;
 		case SAGA_ACTION_MAP:
-			debug(0, "Loading action map resource...");
+			debug(3, "Loading action map resource...");
 			_actionMap->load(resourceData, resourceDataLength);
 			break;
 		case SAGA_ISO_IMAGES:
@@ -797,7 +797,7 @@ int Scene::processSceneResources() {
 				error("Scene::ProcessSceneResources(): not Iso mode");
 			}
 
-			debug(0, "Loading isometric images resource.");
+			debug(3, "Loading isometric images resource.");
 
 			_vm->_isoMap->loadImages(resourceData, resourceDataLength);
 			break;
@@ -806,7 +806,7 @@ int Scene::processSceneResources() {
 				error("Scene::ProcessSceneResources(): not Iso mode");
 			}
 
-			debug(0, "Loading isometric map resource.");
+			debug(3, "Loading isometric map resource.");
 
 			_vm->_isoMap->loadMap(resourceData, resourceDataLength);
 			break;
@@ -815,7 +815,7 @@ int Scene::processSceneResources() {
 				error("Scene::ProcessSceneResources(): not Iso mode");
 			}
 
-			debug(0, "Loading isometric platforms resource.");
+			debug(3, "Loading isometric platforms resource.");
 
 			_vm->_isoMap->loadPlatforms(resourceData, resourceDataLength);
 			break;
@@ -824,7 +824,7 @@ int Scene::processSceneResources() {
 				error("Scene::ProcessSceneResources(): not Iso mode");
 			}
 
-			debug(0, "Loading isometric metatiles resource.");
+			debug(3, "Loading isometric metatiles resource.");
 
 			_vm->_isoMap->loadMetaTiles(resourceData, resourceDataLength);
 			break;			
@@ -838,7 +838,7 @@ int Scene::processSceneResources() {
 			{
 				uint16 animId = _resList[i].res_type - SAGA_ANIM_1;
 
-				debug(0, "Loading animation resource animId=%i", animId);
+				debug(3, "Loading animation resource animId=%i", animId);
 
 				_vm->_anim->load(animId, resourceData, resourceDataLength);
 			}
@@ -848,16 +848,16 @@ int Scene::processSceneResources() {
 				error("Scene::ProcessSceneResources(): not Iso mode");
 			}
 
-			debug(0, "Loading isometric multi resource.");
+			debug(3, "Loading isometric multi resource.");
 
 			_vm->_isoMap->loadMulti(resourceData, resourceDataLength);
 			break;			
 		case SAGA_PAL_ANIM:
-			debug(0, "Loading palette animation resource.");
+			debug(3, "Loading palette animation resource.");
 			_vm->_palanim->loadPalAnim(resourceData, resourceDataLength);
 			break;
 		case SAGA_ENTRY:
-			debug(0, "Loading entry list resource...");
+			debug(3, "Loading entry list resource...");
 			loadSceneEntryList(resourceData, resourceDataLength);
 			break;
 		case SAGA_FACES:
@@ -914,7 +914,7 @@ void Scene::endScene() {
 	if (!_sceneLoaded)
 		return;
 
-	debug(0, "Ending scene...");
+	debug(3, "Ending scene...");
 
 	if (_sceneProc != NULL) {
 		_sceneProc(SCENE_END, this);

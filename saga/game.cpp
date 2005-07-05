@@ -1078,7 +1078,7 @@ int SagaEngine::loadGame(int gameNumber) {
 			return FAILURE;
 		}
 
-		debug(0, "Opened resource file: %s", gameFileName);
+		debug(3, "Opened resource file: %s", gameFileName);
 		_gameFileContexts[i] = loadContext;
 	}
 	

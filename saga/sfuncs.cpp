@@ -690,7 +690,6 @@ void Script::sfEnableZone(SCRIPTFUNC_PARAMS) {
 	int16 flag = thread->pop();
 	HitZone *hitZone;
 
-	debug(0, "sfEnableZone(%d, %d)", objectId, flag);
 	if (objectTypeId(objectId) == kGameObjectHitZone) {
 		hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(objectId));
 	} else {

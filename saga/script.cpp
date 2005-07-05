@@ -76,7 +76,7 @@ Script::Script(SagaEngine *vm) : _vm(vm){
 	_commonBuffer = (byte*)malloc(_commonBufferSize);
 	memset(_commonBuffer, 0, _commonBufferSize);
 	
-	debug(0, "Initializing scripting subsystem");
+	debug(8, "Initializing scripting subsystem");
 	// Load script resource file context
 	_scriptContext = _vm->getFileContext(GAME_SCRIPTFILE, 0);
 	if (_scriptContext == NULL) {
@@ -88,7 +88,7 @@ Script::Script(SagaEngine *vm) : _vm(vm){
 		error("Script::Script() Couldn't get resource file context");
 	}
 
-	debug(0, "Loading module LUT from resource %u.", _vm->getResourceDescription()->moduleLUTResourceId);
+	debug(3, "Loading module LUT from resource %u.", _vm->getResourceDescription()->moduleLUTResourceId);
 	result = RSC_LoadResource(resourceContext, _vm->getResourceDescription()->moduleLUTResourceId, &resourcePointer, &resourceLength);
 	if (result != SUCCESS) {
 		error("Script::Script() Couldn't load module LUT resource");
@@ -106,7 +106,7 @@ Script::Script(SagaEngine *vm) : _vm(vm){
 	// Calculate number of entries
 	_modulesCount = resourceLength / _modulesLUTEntryLen;
 
-	debug(0, "LUT has %d entries.", _modulesCount);
+	debug(3, "LUT has %d entries.", _modulesCount);
 	
 	// Allocate space for logical LUT
 	_modules = (ModuleData *)malloc(_modulesCount * sizeof(*_modules));
@@ -171,7 +171,7 @@ Script::~Script() {
 		error("Script not initialized");
 	}
 
-	debug(0, "Shutting down scripting subsystem.");
+	debug(8, "Shutting down scripting subsystem.");
 	
 	_mainStrings.freeMem();
 
@@ -198,7 +198,7 @@ void Script::loadModule(int scriptModuleNumber) {
 	}
 
 	// Initialize script data structure
-	debug(0, "Loading script module #%d", scriptModuleNumber);
+	debug(3, "Loading script module #%d", scriptModuleNumber);
 
 	result = RSC_LoadResource(_scriptContext, _modules[scriptModuleNumber].scriptResourceId, &resourcePointer, &resourceLength);
 	if (result != SUCCESS) {
@@ -247,7 +247,7 @@ void Script::freeModules() {
 void Script::loadModuleBase(ModuleData &module, const byte *resourcePointer, size_t resourceLength) {
 	int i;
 
-	debug(0, "Loading module base...");
+	debug(3, "Loading module base...");
 
 	module.moduleBase = (byte*)malloc(resourceLength);
 	module.moduleBaseSize = resourceLength;

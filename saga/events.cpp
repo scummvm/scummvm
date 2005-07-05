@@ -44,12 +44,12 @@
 namespace Saga {
 
 Events::Events(SagaEngine *vm) : _vm(vm), _initialized(false) {
-	debug(0, "Initializing event subsystem...");
+	debug(8, "Initializing event subsystem...");
 	_initialized = true;
 }
 
 Events::~Events(void) {
-	debug(0, "Shutting down event subsystem...");
+	debug(8, "Shutting down event subsystem...");
 	freeList();
 }
 
@@ -409,7 +409,7 @@ int Events::handleOneShot(EVENT *event) {
 		switch (event->op) {
 		case EVENT_EXEC_BLOCKING:
 		case EVENT_EXEC_NONBLOCKING:
-			debug(0, "Exec module number %d script entry number %d", event->param, event->param2);
+			debug(6, "Exec module number %d script entry number %d", event->param, event->param2);
 		
 			sthread = _vm->_script->createThread(event->param, event->param2);
 			if (sthread == NULL) {

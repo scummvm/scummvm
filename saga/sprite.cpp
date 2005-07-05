@@ -37,7 +37,7 @@
 namespace Saga {
 
 Sprite::Sprite(SagaEngine *vm) : _vm(vm), _initialized(false) {
-	debug(0, "Initializing sprite subsystem...");
+	debug(8, "Initializing sprite subsystem...");
 
 	// Load sprite module resource context
 	_spriteContext = _vm->getFileContext(GAME_RESOURCEFILE, 0);
@@ -62,7 +62,7 @@ Sprite::~Sprite(void) {
 		return;
 	}
 
-	debug(0, "Shutting down sprite subsystem...");
+	debug(8, "Shutting down sprite subsystem...");
 	_mainSprites.freeMem();
 	free(_decodeBuf);
 }

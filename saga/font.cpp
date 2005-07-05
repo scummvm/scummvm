@@ -60,7 +60,7 @@ Font::Font(SagaEngine *vm) : _vm(vm), _initialized(false) {
 Font::~Font(void) {
 //	int i;
 
-	debug(0, "Font::~Font(): Freeing fonts.");
+	debug(8, "Font::~Font(): Freeing fonts.");
 /*
 	for (i = 0 ; i < FONT_COUNT ; i++) {
 		if (_fonts[i] != NULL) {

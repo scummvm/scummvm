@@ -59,10 +59,10 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm) {
 int SndRes::playSound(uint32 sound_rn, int volume, bool loop) {
 	SOUNDBUFFER snd_buffer;
 
-	debug(0, "SndRes::playSound(%ld)", sound_rn);
+	debug(4, "SndRes::playSound(%ld)", sound_rn);
 
 	if (load(_sfx_ctxt, sound_rn, &snd_buffer) != SUCCESS) {
-		debug(0, "Failed to load sound");
+		warning("Failed to load sound");
 		return FAILURE;
 	}
 
@@ -76,7 +76,7 @@ int SndRes::playVoice(uint32 voice_rn) {
 	int result = FAILURE;
 	bool voiceFile = false;
 
-	debug(0, "SndRes::playVoice(%ld)", voice_rn);
+	debug(4, "SndRes::playVoice(%ld)", voice_rn);
 
 	if (_vm->getGameType() == GType_ITE && voice_rn == 4) {
 		// The Wyrmkeep release of Inherit the Earth provides a

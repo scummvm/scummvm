@@ -570,7 +570,6 @@ bool Actor::validFollowerLocation(const Location &location) {
 }
 
 void Actor::setProtagState(int state) {
-	debug(0, "STUB: setProtagState(%d)", state); //TODO: do it
 	_protagState = state;
 }
 
@@ -793,7 +792,7 @@ void Actor::handleSpeech(int msec) {
 		if (_activeSpeech.slowModeCharIndex >= stringLength)
 			error("Wrong string index");
 
-		debug(0 , "Slow string!");
+		warning("Slow string encountered!");
 		_activeSpeech.playingTime = 10 * talkspeed;
 		// 10 - fix it
 

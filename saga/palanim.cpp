@@ -62,7 +62,7 @@ int PalAnim::loadPalAnim(const byte *resdata, size_t resdata_len) {
 
 	_entryCount = readS.readUint16();
 
-	debug(0, "PalAnim::loadPalAnim(): Loading %d PALANIM entries.", _entryCount);
+	debug(3, "PalAnim::loadPalAnim(): Loading %d PALANIM entries.", _entryCount);
 
 	test_p = calloc(_entryCount, sizeof(PALANIM_ENTRY));
 	if (test_p == NULL) {
@@ -196,7 +196,7 @@ int PalAnim::freePalAnim() {
 		free(_entries[i].pal_index);
 	}
 
-	debug(0, "PalAnim::freePalAnim(): Freeing entries.");
+	debug(3, "PalAnim::freePalAnim(): Freeing entries.");
 
 	free(_entries);
 

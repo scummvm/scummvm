@@ -304,8 +304,8 @@ int Scene::ITEIntroAnimProc(int param) {
 
 		q_event = _vm->_events->queue(&event);
 
-		debug(0, "Intro animation procedure started.");
-		debug(0, "Linking animation resources...");
+		debug(3, "Intro animation procedure started.");
+		debug(3, "Linking animation resources...");
 
 		_vm->_anim->setFrameTime(0, ITE_INTRO_FRAMETIME);
 
@@ -332,7 +332,7 @@ int Scene::ITEIntroAnimProc(int param) {
 
 		_vm->_anim->setFlag(lastAnim, ANIM_ENDSCENE);
 
-		debug(0, "Beginning animation playback.");
+		debug(3, "Beginning animation playback.");
 
 		// Begin the animation
 		event.type = ONESHOT_EVENT;

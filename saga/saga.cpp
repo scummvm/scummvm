@@ -274,7 +274,7 @@ int SagaEngine::init(GameDetector &detector) {
 	_music->setAdlib(adlib);
 
 	if (!_musicEnabled) {
-		debug(0, "Music disabled.");
+		debug(1, "Music disabled.");
 	}
 
 	
@@ -286,7 +286,7 @@ int SagaEngine::init(GameDetector &detector) {
 	// Initialize system specific sound
 	_sound = new Sound(this, _mixer, _soundEnabled);
 	if (!_soundEnabled) {
-		debug(0, "Sound disabled.");
+		debug(1, "Sound disabled.");
 	}
 
 	_interface->converseInit();

@@ -39,7 +39,7 @@ Gfx::Gfx(OSystem *system, int width, int height, GameDetector &detector) : _syst
 		_system->initSize(width, height);
 	_system->endGFXTransaction();
 
-	debug(0, "Init screen %dx%d", width, height);
+	debug(5, "Init screen %dx%d", width, height);
 	// Convert surface data to R surface data
 	back_buf.pixels = calloc(1, width * height);
 	back_buf.w = width;
