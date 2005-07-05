@@ -1257,11 +1257,11 @@ void Actor::calcScreenPosition(CommonObjectData *commonObjectData) {
 
 uint16 Actor::hitTest(const Point &testPoint, bool skipProtagonist) {
 	// We can only interact with objects or actors that are inside the
-	// scene area. While this is usually the upper part of the screen, it
-	// could also be an inset. Note that other kinds of hit areas may be
-	// outside the inset, and that those are still perfectly fine to
-	// interact with. For example, the door entrance at the glass makers
-	// in ITE's ferret village.
+	// scene area. While this is usually the entire upper part of the
+	// screen, it could also be an inset. Note that other kinds of hit
+	// areas may be outside the inset, and that those are still perfectly
+	// fine to interact with. For example, the door entrance at the glass
+	// makers's house in ITE's ferret village.
 
 	SCENE_BGINFO bg_info;
 	Common::Rect sceneRect;
