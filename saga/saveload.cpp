@@ -229,8 +229,9 @@ void SagaEngine::load(const char *fileName) {
 	_events->handleEvents(0); //dissolve back grounds
 
 	if (insetSceneNumber != sceneNumber) {
+		_render->setFlag(RF_DISABLE_ACTORS);
 		_render->drawScene();
-		_scene->clearSceneQueue();
+		_render->clearFlag(RF_DISABLE_ACTORS);
 		_scene->changeScene(insetSceneNumber, ACTOR_NO_ENTRANCE, kTransitionNoFade);
 	}
 }

@@ -90,10 +90,10 @@ public:
 
 	Gfx(OSystem *system, int width, int height, GameDetector &detector);
 	SURFACE *getBackBuffer();
-	int setPalette(SURFACE *surface, PALENTRY *pal);
+	int setPalette(PALENTRY *pal);
 	int getCurrentPal(PALENTRY *src_pal);
-	int palToBlack(SURFACE *surface, PALENTRY *src_pal, double percent);
-	int blackToPal(SURFACE *surface, PALENTRY *src_pal, double percent);
+	int palToBlack(PALENTRY *src_pal, double percent);
+	int blackToPal(PALENTRY *src_pal, double percent);
 	void updateCursor() { setCursor(); }
 	void showCursor(bool state);
 

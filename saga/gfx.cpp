@@ -455,7 +455,7 @@ SURFACE *Gfx::getBackBuffer() {
 	return &_back_buf;
 }
 
-int Gfx::setPalette(SURFACE *surface, PALENTRY *pal) {
+int Gfx::setPalette(PALENTRY *pal) {
 	int i;
 	byte *ppal;
 
@@ -484,7 +484,7 @@ int Gfx::getCurrentPal(PALENTRY *src_pal) {
 	return SUCCESS;
 }
 
-int Gfx::palToBlack(SURFACE *surface, PALENTRY *src_pal, double percent) {
+int Gfx::palToBlack(PALENTRY *src_pal, double percent) {
 	int i;
 	//int fade_max = 255;
 	int new_entry;
@@ -534,7 +534,7 @@ int Gfx::palToBlack(SURFACE *surface, PALENTRY *src_pal, double percent) {
 	return SUCCESS;
 }
 
-int Gfx::blackToPal(SURFACE *surface, PALENTRY *src_pal, double percent) {
+int Gfx::blackToPal(PALENTRY *src_pal, double percent) {
 	int new_entry;
 	double fpercent;
 	int color_delta;

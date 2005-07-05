@@ -1162,8 +1162,8 @@ void Interface::setOption(PanelButton *panelButton) {
 			if (_vm->getSaveFilesCount() > 0) {
 				if (_vm->isSaveListFull() || (_optionSaveFileTitleNumber > 0)) {
 					fileName = _vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
+					setMode(kPanelMain);
 					_vm->load(fileName);
-					setMode(kPanelLoad);
 				}
 			}
 			break;
@@ -2045,7 +2045,7 @@ void Interface::mapPanelShow() {
 	_vm->_gfx->getCurrentPal(_mapSavedPal);
 
 	for (int i = 0; i < 6 ; i++) {
-		_vm->_gfx->palToBlack(backBuffer, _mapSavedPal, 0.2 * i);
+		_vm->_gfx->palToBlack(_mapSavedPal, 0.2 * i);
 		_vm->_render->drawScene();
 		_vm->_system->delayMillis(5);
 	}
@@ -2065,7 +2065,7 @@ void Interface::mapPanelShow() {
 
 	// Evil Evil
 	for (int i = 0; i < 6 ; i++) {
-		_vm->_gfx->blackToPal(backBuffer, cPal, 0.2 * i);
+		_vm->_gfx->blackToPal(cPal, 0.2 * i);
 		_vm->_render->drawScene();
 		_vm->_system->delayMillis(5);
 	}
@@ -2079,15 +2079,12 @@ void Interface::mapPanelShow() {
 }
 
 void Interface::mapPanelClean() {
-	SURFACE *backBuffer;
 	PALENTRY pal[PAL_ENTRIES];
-
-	backBuffer = _vm->_gfx->getBackBuffer();
 
 	_vm->_gfx->getCurrentPal(pal);
 
 	for (int i = 0; i < 6 ; i++) {
-		_vm->_gfx->palToBlack(backBuffer, pal, 0.2 * i);
+		_vm->_gfx->palToBlack(pal, 0.2 * i);
 		_vm->_render->drawScene();
 		_vm->_system->delayMillis(5);
 	}
@@ -2099,7 +2096,7 @@ void Interface::mapPanelClean() {
 	_vm->_render->drawScene();
 
 	for (int i = 0; i < 6 ; i++) {
-		_vm->_gfx->blackToPal(backBuffer, _mapSavedPal, 0.2 * i);
+		_vm->_gfx->blackToPal(_mapSavedPal, 0.2 * i);
 		_vm->_render->drawScene();
 		_vm->_system->delayMillis(5);
 	}

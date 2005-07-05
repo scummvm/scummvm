@@ -121,7 +121,8 @@ int Render::drawScene() {
 				_vm->_actor->drawSpeech();
 			} else {
 				// Draw queued actors
-				_vm->_actor->drawActors();
+				if (!(_flags & RF_DISABLE_ACTORS))
+					_vm->_actor->drawActors();
 			}
 
 			if (getFlags() & RF_OBJECTMAP_TEST) {

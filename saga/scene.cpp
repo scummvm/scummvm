@@ -730,7 +730,7 @@ int Scene::loadSceneResourceList(uint32 reslist_rn) {
 
 int Scene::processSceneResources() {
 	byte *resourceData;
-	size_t resourceDataLength;
+	uint16 resourceDataLength;
 	const byte *pal_p;
 	int i;
 
@@ -862,6 +862,22 @@ int Scene::processSceneResources() {
 			break;
 		case SAGA_FACES:
 			_vm->_interface->loadScenePortraits(_resList[i].res_number);
+			break;
+		case SAGA_PALETTE:
+			{
+				PALENTRY pal[PAL_ENTRIES];
+				byte *palPtr = resourceData;
+
+				if (resourceDataLength < 3 * PAL_ENTRIES)
+					error("Too small scene palette: %d", resourceDataLength);
+
+				for (uint16 c = 0; c < PAL_ENTRIES; c++) {
+					pal[c].red = *palPtr++;
+					pal[c].green = *palPtr++;
+					pal[c].blue = *palPtr++;
+				}
+				_vm->_gfx->setPalette(pal);
+			}
 			break;
 		default:
 			warning("Scene::ProcessSceneResources(): Encountered unknown resource type: %d", _resList[i].res_type);

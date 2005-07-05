@@ -126,7 +126,6 @@ int Events::handleContinuous(EVENT *event) {
 
 	BUFFER_INFO buf_info;
 	SCENE_BGINFO bg_info;
-	SURFACE *back_buf;
 
 	event_pc = ((double)event->duration - event->time) / event->duration;
 
@@ -149,13 +148,11 @@ int Events::handleContinuous(EVENT *event) {
 	case PAL_EVENT:
 		switch (event->op) {
 		case EVENT_BLACKTOPAL:
-			back_buf = _vm->_gfx->getBackBuffer();
-			_vm->_gfx->blackToPal(back_buf, (PALENTRY *)event->data, event_pc);
+			_vm->_gfx->blackToPal((PALENTRY *)event->data, event_pc);
 			break;
 
 		case EVENT_PALTOBLACK:
-			back_buf = _vm->_gfx->getBackBuffer();
-			_vm->_gfx->palToBlack(back_buf, (PALENTRY *)event->data, event_pc);
+			_vm->_gfx->palToBlack((PALENTRY *)event->data, event_pc);
 			break;
 		default:
 			break;
@@ -203,8 +200,6 @@ int Events::handleImmediate(EVENT *event) {
 	double event_pc = 0.0; // Event completion percentage
 	bool event_done = false;
 
-	SURFACE *back_buf;
-
 	event_pc = ((double)event->duration - event->time) / event->duration;
 
 	if (event_pc >= 1.0) {
@@ -226,13 +221,11 @@ int Events::handleImmediate(EVENT *event) {
 	case PAL_EVENT:
 		switch (event->op) {
 		case EVENT_BLACKTOPAL:
-			back_buf = _vm->_gfx->getBackBuffer();
-			_vm->_gfx->blackToPal(back_buf, (PALENTRY *)event->data, event_pc);
+			_vm->_gfx->blackToPal((PALENTRY *)event->data, event_pc);
 			break;
 
 		case EVENT_PALTOBLACK:
-			back_buf = _vm->_gfx->getBackBuffer();
-			_vm->_gfx->palToBlack(back_buf, (PALENTRY *)event->data, event_pc);
+			_vm->_gfx->palToBlack((PALENTRY *)event->data, event_pc);
 			break;
 		default:
 			break;
@@ -341,7 +334,7 @@ int Events::handleOneShot(EVENT *event) {
 				if (event->param == SET_PALETTE) {
 					PALENTRY *pal_p;
 					_vm->_scene->getBGPal(&pal_p);
-					_vm->_gfx->setPalette(back_buf, pal_p);
+					_vm->_gfx->setPalette(pal_p);
 				}
 			}
 		}

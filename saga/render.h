@@ -40,7 +40,8 @@ enum RENDER_FLAGS {
 	RF_GAMEPAUSE = (1 << 5),
 	RF_PLACARD = (1 << 6),
 	RF_ACTOR_PATH_TEST = (1 << 7),
-	RF_MAP = (1 << 8)
+	RF_MAP = (1 << 8),
+	RF_DISABLE_ACTORS = (1 << 9)
 };
 
 struct BUFFER_INFO {

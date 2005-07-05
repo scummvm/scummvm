@@ -136,8 +136,6 @@ int PalAnim::cycleStart() {
 }
 
 int PalAnim::cycleStep(int vectortime) {
-	SURFACE *back_buf;
-
 	static PALENTRY pal[256];
 	uint16 pal_index;
 	uint16 col_index;
@@ -153,7 +151,6 @@ int PalAnim::cycleStep(int vectortime) {
 	}
 
 	_vm->_gfx->getCurrentPal(pal);
-	back_buf = _vm->_gfx->getBackBuffer();
 
 	for (i = 0; i < _entryCount; i++) {
 		cycle = _entries[i].cycle;
@@ -173,7 +170,7 @@ int PalAnim::cycleStep(int vectortime) {
 		}
 	}
 
-	_vm->_gfx->setPalette(back_buf, pal);
+	_vm->_gfx->setPalette(pal);
 
 	event.type = ONESHOT_EVENT;
 	event.code = PALANIM_EVENT;
