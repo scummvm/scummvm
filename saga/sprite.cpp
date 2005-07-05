@@ -338,10 +338,14 @@ int Sprite::drawOccluded(SURFACE *ds, SpriteList &spriteList, int spriteNumber, 
 	spriteSourceRect.right = width;
 	spriteSourceRect.bottom = height;
 
-	spriteDestRect.left = 0;
-	spriteDestRect.top = 0;
-	spriteDestRect.right = ds->clip_rect.right;
-	spriteDestRect.bottom = MIN(ds->clip_rect.bottom, (int16)maskHeight);
+	SCENE_BGINFO bg_info;
+
+	_vm->_scene->getBGInfo(&bg_info);
+
+	spriteDestRect.left = bg_info.bg_x;
+	spriteDestRect.top = bg_info.bg_y;
+	spriteDestRect.right = bg_info.bg_x + bg_info.bg_w;
+	spriteDestRect.bottom = bg_info.bg_y + bg_info.bg_h;
 	
 	ci.dst_rect = &spriteDestRect;
 	ci.src_rect = &spriteSourceRect;
@@ -352,7 +356,6 @@ int Sprite::drawOccluded(SURFACE *ds, SpriteList &spriteList, int spriteNumber, 
 	if (ci.nodraw) {
 		return SUCCESS;
 	}
-
 
 	// Finally, draw the occluded sprite
 	src_row_p = spriteBuffer + ci.src_draw_x + (ci.src_draw_y * width);

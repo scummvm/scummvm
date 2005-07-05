@@ -1256,11 +1256,33 @@ void Actor::calcScreenPosition(CommonObjectData *commonObjectData) {
 }
 
 uint16 Actor::hitTest(const Point &testPoint, bool skipProtagonist) {
+	// We can only interact with objects or actors that are inside the
+	// scene area. While this is usually the upper part of the screen, it
+	// could also be an inset. Note that other kinds of hit areas may be
+	// outside the inset, and that those are still perfectly fine to
+	// interact with. For example, the door entrance at the glass makers
+	// in ITE's ferret village.
+
+	SCENE_BGINFO bg_info;
+	Common::Rect sceneRect;
+
+	_vm->_scene->getBGInfo(&bg_info);
+
+	sceneRect.left = bg_info.bg_x;
+	sceneRect.top = bg_info.bg_y;
+	sceneRect.right = bg_info.bg_x + bg_info.bg_w;
+	sceneRect.bottom = bg_info.bg_y + bg_info.bg_h;
+
+	if (!sceneRect.contains(testPoint))
+		return ID_NOTHING;
+
 	CommonObjectOrderList::iterator drawOrderIterator;
 	CommonObjectDataPointer drawObject;
 	int frameNumber;
 	SpriteList *spriteList;
+
 	createDrawOrderList();
+
 	for (drawOrderIterator = _drawOrderList.begin(); drawOrderIterator != _drawOrderList.end(); ++drawOrderIterator) {
 		drawObject = drawOrderIterator.operator*();
 		if (skipProtagonist && (drawObject == _protagonist)) {
