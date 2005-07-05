@@ -23,16 +23,11 @@
 
 // Misc. graphics routines
 
-// Line drawing code utilizes Bresenham's run-length slice algorithm 
-// described in "Michael Abrash's Graphics Programming Black Book", 
-// Coriolis Group Books, 1997
-
 #include "saga/saga.h"
 #include "saga/gfx.h"
 #include "saga/interface.h"
 
 #include "common/system.h"
-
 
 namespace Saga {
 
