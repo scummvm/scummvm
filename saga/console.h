@@ -33,7 +33,7 @@ namespace Saga {
 class Console : public Common::Debugger<Console> {
 public:
 	Console(SagaEngine *vm);
-	~Console(void);
+	virtual ~Console(void);
 
 protected:
 	virtual void preEnter();
