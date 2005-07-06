@@ -226,16 +226,20 @@ void Command::executeCurrentAction() {
 		}
 	}
 
-	if (cond <= 0 && _state.selAction == VERB_LOOK_AT) {
-		lookAtSelectedObject();
-	} else {
-		// only play song if it's a PLAY AFTER type
-		if (com->song < 0) {
-			_vm->sound()->playSong(-com->song);
-		}
+	if (_state.selAction == VERB_USE_JOURNAL) {
 		clear(true);
+	} else {
+		if (cond <= 0 && _state.selAction == VERB_LOOK_AT) {
+			lookAtSelectedObject();
+		} else {
+			// only play song if it's a PLAY AFTER type
+			if (com->song < 0) {
+				_vm->sound()->playSong(-com->song);
+			}
+			clear(true);
+		}
+		cleanupCurrentAction();
 	}
-	cleanupCurrentAction();
 }
 
 void Command::updatePlayer() {	
@@ -433,6 +437,7 @@ int16 Command::executeCommand(uint16 comId, int16 condResult) {
 	switch (com->specialSection) {
 	case 1:
 		_vm->logic()->useJournal();
+		_state.selAction = VERB_USE_JOURNAL;
 		return condResult;
 	case 2:
 		_vm->logic()->joeUseDress(true);
