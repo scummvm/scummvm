@@ -1737,7 +1737,7 @@ void Script::sfPlaySound(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 	int res;
 
-	if (param < ARRAYSIZE(sfxTable)) {
+	if (param >= 0 && param < ARRAYSIZE(sfxTable)) {
 		res = sfxTable[param].res;
 		if (_vm->getFeatures() & GF_CD_FX)
 			res -= 14;
@@ -1753,7 +1753,7 @@ void Script::sfPlayLoopedSound(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 	int res;
 
-	if (param < ARRAYSIZE(sfxTable)) {
+	if (param >= 0 && param < ARRAYSIZE(sfxTable)) {
 		res = sfxTable[param].res;
 		if (_vm->getFeatures() & GF_CD_FX)
 			res -= 14;
