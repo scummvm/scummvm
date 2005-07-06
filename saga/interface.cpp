@@ -443,6 +443,7 @@ bool Interface::processAscii(uint16 ascii, bool synthetic) {
 			break;
 
 		}
+		break;
 	case kPanelMap:
 		mapPanelClean();
 		break;
