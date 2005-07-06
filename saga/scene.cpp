@@ -489,6 +489,9 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		event.data = current_pal;
 		q_event = _vm->_events->queue(&event);
 
+		//FIXME: do we really need two interface activation on load scene?
+		// i guess kTransitionFadeNoInterface should gone
+		/* 
 		if (loadSceneParams->transitionType != kTransitionFadeNoInterface) {
 			// Activate user interface
 			event.type = IMMEDIATE_EVENT;
@@ -497,7 +500,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 			event.time = 0;
 			event.duration = 0;
 			q_event = _vm->_events->chain(q_event, &event);
-		}
+		}*/
 
 		// set fade mode
 		event.type = IMMEDIATE_EVENT;
@@ -604,13 +607,15 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 		_vm->_events->queue(&event);
 
-		// Activate user interface
-		event.type = ONESHOT_EVENT;
-		event.code = INTERFACE_EVENT;
-		event.op = EVENT_ACTIVATE;
-		event.time = 0;
+		if (getFlags() & kSceneFlagShowCursor) {
+			// Activate user interface
+			event.type = ONESHOT_EVENT;
+			event.code = INTERFACE_EVENT;
+			event.op = EVENT_ACTIVATE;
+			event.time = 0;
 
-		_vm->_events->queue(&event);
+			_vm->_events->queue(&event);
+		}
 
 		// Begin palette cycle animation if present
 		event.type = ONESHOT_EVENT;
