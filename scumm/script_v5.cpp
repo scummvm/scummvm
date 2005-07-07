@@ -1434,7 +1434,15 @@ void ScummEngine_v5::o5_equalZero() {
 }
 
 void ScummEngine_v5::o5_jumpRelative() {
-	_scriptPointer += (int16)fetchScriptWord();
+	// Note that calling fetchScriptWord() will also modify _scriptPointer,
+	// so *don't* do this: _scriptPointer += (int16)fetchScriptWord();
+	//
+	// I'm not enough of a language lawyer to say for certain that this is
+	// undefined, but I do know that GCC 4.0 doesn't think it means what
+	// we want it to mean.
+
+	int16 offset = (int16)fetchScriptWord();
+	_scriptPointer += offset;
 }
 
 void ScummEngine_v5::o5_lights() {
