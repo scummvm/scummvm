@@ -29,6 +29,11 @@
 
 namespace Scumm {
 
+#ifndef DISABLE_HE
+class ResExtractor;
+class LogicHE;
+#endif
+
 class NutRenderer; // V8 Font Renderer
 struct ArrayHeader;
 
