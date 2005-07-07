@@ -820,8 +820,8 @@ void ScummEngine::runExitScript() {
 		vm.slot[slot].freezeResistant = false;
 		vm.slot[slot].recursive = false;
 		vm.slot[slot].freezeCount = 0;
-
 		vm.slot[slot].delayFrameCount = 0;
+		vm.slot[slot].cycle = 1;
 
 		// FIXME: the exit script of room 7 in indy3 only seems to have a size
 		// and tag not actual data not even a 00 (stop code). Maybe we should
@@ -855,6 +855,7 @@ void ScummEngine::runEntryScript() {
 		vm.slot[slot].recursive = false;
 		vm.slot[slot].freezeCount = 0;
 		vm.slot[slot].delayFrameCount = 0;
+		vm.slot[slot].cycle = 1;
 		initializeLocals(slot, 0);
 		runScriptNested(slot);
 	}
