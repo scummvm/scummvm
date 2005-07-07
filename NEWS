@@ -20,6 +20,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
      CoreAudio and FluidSynth MIDI drivers.)
    - The MPEG player could hang if the sound ended prematurely.
    - Improved autoscaling GUI, which takes full advantage of your screen.
+   - Fixes for GCC 4.
 
  SCUMM:
    - Added support for Mac Humongous Entertainment titles.
