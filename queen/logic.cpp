@@ -1232,7 +1232,7 @@ void Logic::handlePinnacleRoom() {
 		// update screen scrolling
 		_vm->display()->horizontalScroll(mx);
 
-		// update bobs position / frame
+		// update Bob's position / frame
 		joe->x = piton->x = 3 * mx / 4 + 200;
 		joe->frameNum = mx / 36 + 45;
 
