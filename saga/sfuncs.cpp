@@ -1050,7 +1050,7 @@ void Script::sfPlaceActor(SCRIPTFUNC_PARAMS) {
 	frameType =  thread->pop();
 	frameOffset =  thread->pop();
 
-	debug(1, "sfPlaceActor(%d, %d, %d, %d, %d, %d)", actorId, actorLocation.x, 
+	debug(1, "sfPlaceActor(id = %d, x=%d, y=%d, dir=%d, frameType=%d, frameOffset=%d)", actorId, actorLocation.x, 
 		  actorLocation.y, actorDirection, frameType, frameOffset);
 
 	if (_vm->getGameType() == GType_IHNM) {
@@ -1241,7 +1241,7 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	event.data = back_buf;
 	event.param = 138;
 	event.param2 = 0;
-	event.param3 = _vm->getSceneHeight();
+	event.param3 = _vm->getClippedSceneHeight();
 	event.param4 = 0;
 	event.param5 = _vm->getDisplayWidth();
 
@@ -1258,7 +1258,7 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	text_entry.color = kITEColorBrightWhite;
 	text_entry.effect_color = kITEColorBlack;
 	text_entry.text_x = _vm->getDisplayWidth() / 2;
-	text_entry.text_y = (_vm->getSceneHeight() - _vm->_font->getHeight(MEDIUM_FONT_ID)) / 2;
+	text_entry.text_y = (_vm->getClippedSceneHeight() - _vm->_font->getHeight(MEDIUM_FONT_ID)) / 2;
 	text_entry.font_id = MEDIUM_FONT_ID;
 	text_entry.flags = FONT_OUTLINE | FONT_CENTERED;
 	text_entry.string = thread->_strings->getString(stringId);
@@ -1556,19 +1556,17 @@ void Script::sfGetActorY(SCRIPTFUNC_PARAMS) {
 // Script function #62 (0x3E)
 void Script::sfEraseDelta(SCRIPTFUNC_PARAMS) {
 	BUFFER_INFO bufferInfo;
-	SCENE_BGINFO backGroundInfo;
+	BGInfo backGroundInfo;
 	Point backGroundPoint;
 
 	_vm->_render->getBufferInfo(&bufferInfo);
-	_vm->_scene->getBGInfo(&backGroundInfo);
-	backGroundPoint.x = backGroundInfo.bg_x;
-	backGroundPoint.y = backGroundInfo.bg_y;
+	_vm->_scene->getBGInfo(backGroundInfo);
+	backGroundPoint.x = backGroundInfo.bounds.left;
+	backGroundPoint.y = backGroundInfo.bounds.top;
 
 	bufToBuffer(bufferInfo.bg_buf, bufferInfo.bg_buf_w, bufferInfo.bg_buf_h,
-				backGroundInfo.bg_buf, backGroundInfo.bg_w, backGroundInfo.bg_h, 
+				backGroundInfo.buffer, backGroundInfo.bounds.width(), backGroundInfo.bounds.height(), 
 				NULL, &backGroundPoint);
-
-
 }
 
 // Script function #63 (0x3F)

@@ -31,7 +31,7 @@ namespace Saga {
  * If flags if set to 1, do zero masking.
  */
 int SagaEngine::transitionDissolve(byte *dst_img, int dst_w, int dst_h, int dst_p, const byte *src_img,
-						int src_w, int src_h, int src_p, int flags, int x, int y, 
+						int src_w, int src_h, int flags, int x, int y, 
 						double percent) {
 #define XOR_MASK 0xB400;
 	int pixelcount = dst_w * dst_h;

@@ -379,7 +379,7 @@ int16 IsoMap::findMulti(int16 tileIndex, int16 absU, int16 absV, int16 absH) {
 
 int IsoMap::draw(SURFACE *ds) {
 	
-	Rect isoRect(_vm->getDisplayWidth(), _vm->getClippedSceneHeight());
+	Rect isoRect(_vm->_scene->getSceneClip());
 	drawRect(ds, isoRect, 0);
 	_tileClip = isoRect;
 	drawTiles(ds, NULL);
@@ -399,7 +399,7 @@ void IsoMap::drawSprite(SURFACE *ds, SpriteList &spriteList, int spriteNumber, c
 	int yAlign;
 	const byte *spriteBuffer;
 	Point spritePointer;
-	Rect clip(_vm->getDisplayWidth(), _vm->getClippedSceneHeight());
+	Rect clip(_vm->_scene->getSceneClip());
 
 	_vm->_sprite->getScaledSpriteBuffer(spriteList, spriteNumber, scale, width, height, xAlign, yAlign, spriteBuffer);
 

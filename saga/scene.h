@@ -43,14 +43,10 @@ enum SceneFlags {
 	kSceneFlagShowCursor = 2
 };
 
-struct SCENE_BGINFO {
-	int bg_x;
-	int bg_y;
-	int bg_w;
-	int bg_h;
-	int bg_p;
-	byte *bg_buf;
-	size_t bg_buflen;
+struct BGInfo {
+	Rect bounds;
+	byte *buffer;
+	size_t bufferLength;
 };
 
 typedef int (SceneProc) (int, void *);
@@ -232,7 +228,8 @@ class Scene {
 	int getFlags() const { return _sceneDescription.flags; }
 	int getScriptModuleNumber() const { return _sceneDescription.scriptModuleNumber; }
 	bool isInDemo() { return !_inGame; }
-	
+	const Rect& getSceneClip() const { return _sceneClip; }
+
 	void getBGMaskInfo(int &width, int &height, byte *&buffer, size_t &bufferLength);
 	int isBGMaskPresent() { return _bgMask.loaded; }
 	int getBGMaskType(const Point &testPoint);
@@ -244,7 +241,7 @@ class Scene {
 	int getDoorState(int doorNumber);
 	void initDoorsState();
 
-	int getBGInfo(SCENE_BGINFO *bginfo);
+	void getBGInfo(BGInfo &bgInfo);
 	int getBGPal(PALENTRY **pal);
 	void getSlopes(int &beginSlope, int &endSlope);
 
@@ -296,7 +293,8 @@ class Scene {
 	SceneProc *_sceneProc;
 	SCENE_IMAGE _bg;
 	SCENE_IMAGE _bgMask;
-	
+	Common::Rect _sceneClip;
+
 	int _sceneDoors[SCENE_DOORS_MAX];
 
 

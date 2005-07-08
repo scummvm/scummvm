@@ -568,7 +568,7 @@ private:
 	void stepZoneAction(ActorData *actor, const HitZone *hitZone, bool exit, bool stopped);
 
 	void createDrawOrderList();
-	void calcScreenPosition(CommonObjectData *commonObjectData);
+	bool calcScreenPosition(CommonObjectData *commonObjectData);
 	bool getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber, SpriteList *&spriteList);
 
 	bool followProtagonist(ActorData *actor);

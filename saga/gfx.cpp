@@ -396,55 +396,6 @@ int drawPolyLine(SURFACE *ds, const Point *pts, int pt_ct, int draw_color) {
 	return SUCCESS;
 }
 
-int getClipInfo(CLIPINFO *clipinfo) {
-	Common::Rect s;
-	int d_x, d_y;
-
-	Common::Rect clip;
-
-	if (clipinfo == NULL) {
-		return FAILURE;
-	}
-
-	if (clipinfo->dst_pt != NULL) {
-		d_x = clipinfo->dst_pt->x;
-		d_y = clipinfo->dst_pt->y;
-	} else {
-		d_x = 0;
-		d_y = 0;
-	}
-
-	// Get the clip rect.
-
-	clip.left = clipinfo->dst_rect->left;
-	clip.right = clipinfo->dst_rect->right;
-	clip.top = clipinfo->dst_rect->top;
-	clip.bottom = clipinfo->dst_rect->bottom;
-
-	// Adjust the rect to draw to its screen coordinates
-
-	s.left = d_x + clipinfo->src_rect->left;
-	s.right = d_x + clipinfo->src_rect->right;
-	s.top = d_y + clipinfo->src_rect->top;
-	s.bottom = d_y + clipinfo->src_rect->bottom;
-
-	s.clip(clip);
-
-	if (s.width() <= 0 || s.height() <= 0) {
-		clipinfo->nodraw = 1;
-		return SUCCESS;
-	}
-
-	clipinfo->nodraw = 0;
-	clipinfo->src_draw_x = s.left - clipinfo->src_rect->left - d_x;
-	clipinfo->src_draw_y = s.top - clipinfo->src_rect->top - d_y;
-	clipinfo->dst_draw_x = s.left;
-	clipinfo->dst_draw_y = s.top;
-	clipinfo->draw_w = s.width();
-	clipinfo->draw_h = s.height();
-
-	return SUCCESS;
-}
 
 SURFACE *Gfx::getBackBuffer() {
 	return &_back_buf;

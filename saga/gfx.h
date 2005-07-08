@@ -33,20 +33,43 @@ namespace Saga {
 using Common::Point;
 using Common::Rect;
 
-struct CLIPINFO {
+struct ClipData {
 	// input members
-	const Rect *src_rect;
-	const Rect *dst_rect;
-	const Point *dst_pt;
+	Rect sourceRect;
+	Rect destRect;
+	Point destPoint;
 
 	// output members
-	int nodraw;
-	int src_draw_x;
-	int src_draw_y;
-	int dst_draw_x;
-	int dst_draw_y;
-	int draw_w;
-	int draw_h;
+	Point sourceDraw;
+	Point destDraw;
+	int width;
+	int height;
+
+	bool calcClip() {
+		Common::Rect s;
+
+		// Adjust the rect to draw to its screen coordinates
+		s = sourceRect;
+		s.left += destPoint.x;
+		s.right += destPoint.x;
+		s.top += destPoint.y;
+		s.bottom += destPoint.y;
+
+		s.clip(destRect);
+
+		if ((s.width() <= 0) || (s.height() <= 0)) {
+			return false;
+		}
+
+		sourceDraw.x = s.left - sourceRect.left - destPoint.x;
+		sourceDraw.y = s.top - sourceRect.top - destPoint.y;
+		destDraw.x = s.left;
+		destDraw.y = s.top;
+		width = s.width();
+		height = s.height();
+
+		return true;
+	}
 };
 
 struct PALENTRY {
@@ -78,7 +101,6 @@ int drawPalette(SURFACE *dst_s);
 int bufToSurface(SURFACE *ds, const byte *src, int src_w, int src_h, Rect *src_rect, Point *dst_pt);
 int bufToBuffer(byte * dst_buf, int dst_w, int dst_h, const byte *src,
 	int src_w, int src_h, Rect *src_rect, Point *dst_pt);
-int getClipInfo(CLIPINFO *clipinfo);
 int drawRect(SURFACE *ds, Rect &dst_rect, int color);
 int drawFrame(SURFACE *ds, const Point *p1, const Point *p2, int color);
 int drawPolyLine(SURFACE *ds, const Point *pts, int pt_ct, int draw_color);

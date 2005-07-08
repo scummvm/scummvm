@@ -267,32 +267,22 @@ void Scene::getSlopes(int &beginSlope, int &endSlope) {
 	endSlope = _vm->getSceneHeight() - _sceneDescription.endSlope;
 }
 
-int Scene::getBGInfo(SCENE_BGINFO *bginfo) {
-	int x, y;
-
-	assert(_initialized);
-
-	bginfo->bg_buf = _bg.buf;
-	bginfo->bg_buflen = _bg.buf_len;
-	bginfo->bg_w = _bg.w;
-	bginfo->bg_h = _bg.h;
-	bginfo->bg_p = _bg.p;
-
-	x = 0;
-	y = 0;
+void Scene::getBGInfo(BGInfo &bgInfo) {
+	bgInfo.buffer = _bg.buf;
+	bgInfo.bufferLength = _bg.buf_len;
+	bgInfo.bounds.left = 0;
+	bgInfo.bounds.top = 0;
 
 	if (_bg.w < _vm->getDisplayWidth()) {
-		x = (_vm->getDisplayWidth() - _bg.w) / 2;
+		bgInfo.bounds.left = (_vm->getDisplayWidth() - _bg.w) / 2;
 	}
 
 	if (_bg.h < _vm->getSceneHeight()) {
-		y = (_vm->getSceneHeight() - _bg.h) / 2;
+		bgInfo.bounds.top = (_vm->getClippedSceneHeight() - _bg.h) / 2;
 	}
 
-	bginfo->bg_x = x;
-	bginfo->bg_y = y;
-
-	return SUCCESS;
+	bgInfo.bounds.setWidth(_bg.w);
+	bgInfo.bounds.setHeight(_bg.h);
 }
 
 int Scene::getBGPal(PALENTRY **pal) {
@@ -456,7 +446,16 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 	if (_sceneDescription.flags & kSceneFlagISO) {
 		_outsetSceneNumber = _sceneNumber;
+
+		_sceneClip.left = 0;
+		_sceneClip.top = 0;
+		_sceneClip.right = _vm->getDisplayWidth();
+		_sceneClip.bottom = _vm->getClippedSceneHeight();
 	} else {
+		BGInfo backGroundInfo;
+		getBGInfo(backGroundInfo);
+		_sceneClip = backGroundInfo.bounds;
+
 		if (!(_bg.w < _vm->getDisplayWidth() || _bg.h < _vm->getSceneHeight()))
 			_outsetSceneNumber = _sceneNumber;
 	}

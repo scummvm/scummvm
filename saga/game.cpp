@@ -1060,6 +1060,8 @@ int SagaEngine::loadGame(int gameNumber) {
 	_gameNumber = gameNumber;
 	_gameDescription = &gameDescriptions[gameNumber];
 	_gameDisplayInfo = *_gameDescription->gameDisplayInfo;
+	_displayClip.right = _gameDisplayInfo.logicalWidth; 
+	_displayClip.bottom = _gameDisplayInfo.logicalHeight; 
 
 	gameFileCount = _gameDescription->filesCount;
 	

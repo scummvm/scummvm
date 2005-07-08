@@ -1225,8 +1225,9 @@ void Actor::direct(int msec) {
 }
 
 
-void Actor::calcScreenPosition(CommonObjectData *commonObjectData) {
+bool Actor::calcScreenPosition(CommonObjectData *commonObjectData) {
 	int beginSlope, endSlope, middle;
+	bool result;
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 		_vm->_isoMap->tileCoordsToScreenPoint(commonObjectData->location, commonObjectData->screenPosition);
 		commonObjectData->screenScale = 256;
@@ -1252,6 +1253,12 @@ void Actor::calcScreenPosition(CommonObjectData *commonObjectData) {
 		commonObjectData->location.toScreenPointXYZ(commonObjectData->screenPosition);
 	}
 
+	result = commonObjectData->screenPosition.x > -64 && 
+			commonObjectData->screenPosition.x < _vm->getDisplayWidth() + 64 &&
+			commonObjectData->screenPosition.y > -64 &&
+			commonObjectData->screenPosition.y < _vm->getSceneHeight() + 64;
+
+	return result;
 }
 
 uint16 Actor::hitTest(const Point &testPoint, bool skipProtagonist) {
@@ -1262,17 +1269,8 @@ uint16 Actor::hitTest(const Point &testPoint, bool skipProtagonist) {
 	// fine to interact with. For example, the door entrance at the glass
 	// makers's house in ITE's ferret village.
 
-	SCENE_BGINFO bg_info;
-	Common::Rect sceneRect;
 
-	_vm->_scene->getBGInfo(&bg_info);
-
-	sceneRect.left = bg_info.bg_x;
-	sceneRect.top = bg_info.bg_y;
-	sceneRect.right = bg_info.bg_x + bg_info.bg_w;
-	sceneRect.bottom = bg_info.bg_y + bg_info.bg_h;
-
-	if (!sceneRect.contains(testPoint))
+	if (!_vm->_scene->getSceneClip().contains(testPoint))
 		return ID_NOTHING;
 
 	CommonObjectOrderList::iterator drawOrderIterator;
@@ -1328,7 +1326,9 @@ void Actor::createDrawOrderList() {
 			 continue;
 
 		_drawOrderList.pushBack(obj, compareFunction);
-		calcScreenPosition(obj);
+		if (!calcScreenPosition(obj)) {
+			warning("calcScreenPosition return false actorIdx=%i", i);
+		}
 	}
 }
 
@@ -1393,7 +1393,7 @@ void Actor::drawActors() {
 		if (_vm->_scene->getFlags() & kSceneFlagISO) {
 			_vm->_isoMap->drawSprite(back_buf, *spriteList, frameNumber, drawObject->location, drawObject->screenPosition, drawObject->screenScale);
 		} else {
-			_vm->_sprite->drawOccluded(back_buf, *spriteList, frameNumber, drawObject->screenPosition, drawObject->screenScale, drawObject->screenDepth);
+			_vm->_sprite->drawOccluded(back_buf, _vm->_scene->getSceneClip(),*spriteList, frameNumber, drawObject->screenPosition, drawObject->screenScale, drawObject->screenDepth);
 		}
 	}
 

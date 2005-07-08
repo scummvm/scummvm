@@ -60,19 +60,31 @@ struct SpriteList {
 	}
 };
 
+
 class Sprite {
 public:
 	SpriteList _mainSprites;
 
+	
+
 	Sprite(SagaEngine *vm);
 	~Sprite(void);
+	
+	// draw scaled sprite using background scene mask
+	void drawOccluded(SURFACE *ds, const Rect &clipRect, SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, int depth);
+
+	// draw scaled sprite using background scene mask
+	void draw(SURFACE *ds, const Rect &clipRect, SpriteList &spriteList, int32 spriteNumber, const Point &screenCoord, int scale);
+
+	// main function
+	void drawClip(SURFACE *ds, const Rect &clipRect, const Point &spritePointer, int width, int height, const byte *spriteBuffer);
+
+	void draw(SURFACE *ds, const Rect &clipRect, SpriteList &spriteList, int32 spriteNumber, const Rect &screenRect, int scale);
+
 	int loadList(int resourceId, SpriteList &spriteList); // load or append spriteList
-	int draw(SURFACE *ds, SpriteList &spriteList, int32 spriteNumber, const Point &screenCoord, int scale, Rect *clipOverride = NULL);
-	int draw(SURFACE *ds, SpriteList &spriteList, int32 spriteNumber, const Rect &screenRect, int scale, Rect *clipOverride = NULL);
-	int drawOccluded(SURFACE *ds, SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, int depth);
 	bool hitTest(SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, const Point &testPoint);
 	void getScaledSpriteBuffer(SpriteList &spriteList, int spriteNumber, int scale, int &width, int &height, int &xAlign, int &yAlign, const byte *&buffer);
-	void drawClip(SURFACE *ds, Rect clip, const Point &spritePointer, int width, int height, const byte *spriteBuffer);
+
 private:
 	void decodeRLEBuffer(const byte *inputBuffer, size_t inLength, size_t outLength);
 	void scaleBuffer(const byte *src, int width, int height, int scale);

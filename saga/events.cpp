@@ -125,7 +125,7 @@ int Events::handleContinuous(EVENT *event) {
 	int event_done = 0;
 
 	BUFFER_INFO buf_info;
-	SCENE_BGINFO bg_info;
+	BGInfo bgInfo;
 
 	event_pc = ((double)event->duration - event->time) / event->duration;
 
@@ -162,10 +162,10 @@ int Events::handleContinuous(EVENT *event) {
 		switch (event->op) {
 		case EVENT_DISSOLVE:
 			_vm->_render->getBufferInfo(&buf_info);
-			_vm->_scene->getBGInfo(&bg_info);
+			_vm->_scene->getBGInfo(bgInfo);
 			_vm->transitionDissolve(buf_info.bg_buf, buf_info.bg_buf_w, 
-					buf_info.bg_buf_h, buf_info.bg_buf_w, bg_info.bg_buf, bg_info.bg_w, 
-					bg_info.bg_h, bg_info.bg_p, 0, 0, 0, event_pc);
+				buf_info.bg_buf_h, buf_info.bg_buf_w, bgInfo.buffer, bgInfo.bounds.width(), 
+					bgInfo.bounds.height(), 0, 0, 0, event_pc);
 			break;
 		case EVENT_DISSOLVE_BGMASK:
 			// we dissolve it centered.
@@ -177,7 +177,7 @@ int Events::handleContinuous(EVENT *event) {
 			_vm->_render->getBufferInfo(&buf_info);
 			_vm->_scene->getBGMaskInfo(w, h, mask_buf, len);
 			_vm->transitionDissolve(buf_info.bg_buf, buf_info.bg_buf_w, 
-					buf_info.bg_buf_h, buf_info.bg_buf_w, mask_buf, w, h, 0, 1, 
+					buf_info.bg_buf_h, buf_info.bg_buf_w, mask_buf, w, h, 1, 
 					(320 - w) / 2, (200 - h) / 2, event_pc);
 			break;
 		default:
@@ -254,7 +254,7 @@ int Events::handleOneShot(EVENT *event) {
 	ScriptThread *sthread;
 	Rect rect;
 
-	static SCENE_BGINFO bginfo;
+	static BGInfo bgInfo;
 
 	if (event->time > 0) {
 		return EVENT_CONTINUE;
@@ -301,29 +301,29 @@ int Events::handleOneShot(EVENT *event) {
 				back_buf = _vm->_gfx->getBackBuffer();
 
 				_vm->_render->getBufferInfo(&rbuf_info);
-				_vm->_scene->getBGInfo(&bginfo);
+				_vm->_scene->getBGInfo(bgInfo);
 
-				bg_pt.x = bginfo.bg_x;
-				bg_pt.y = bginfo.bg_y;
+				bg_pt.x = bgInfo.bounds.left;
+				bg_pt.y = bgInfo.bounds.top;
 
 				bufToBuffer(rbuf_info.bg_buf, rbuf_info.bg_buf_w, rbuf_info.bg_buf_h,
-								bginfo.bg_buf, bginfo.bg_w, bginfo.bg_h, NULL, &bg_pt);
+					bgInfo.buffer, bgInfo.bounds.width(), bgInfo.bounds.height(), NULL, &bg_pt);
 
 				// If it is inset scene then draw black border
-				if (bginfo.bg_w < _vm->getDisplayWidth() || bginfo.bg_h < _vm->getSceneHeight()) {
+				if (bgInfo.bounds.width() < _vm->getDisplayWidth() || bgInfo.bounds.height() < _vm->getSceneHeight()) {
 					SURFACE s;
 					s.pixels = rbuf_info.bg_buf;
 					s.w = s.pitch = rbuf_info.bg_buf_w;
 					s.h = rbuf_info.bg_buf_h;
 					s.bytesPerPixel = 1;
-					Common::Rect rect1(2, bginfo.bg_h + 4);
-					Common::Rect rect2(bginfo.bg_w + 4, 2);
-					Common::Rect rect3(2, bginfo.bg_h + 4);
-					Common::Rect rect4(bginfo.bg_w + 4, 2);
-					rect1.moveTo(bginfo.bg_x - 2, bginfo.bg_y - 2);
-					rect2.moveTo(bginfo.bg_x - 2, bginfo.bg_y - 2);
-					rect3.moveTo(bginfo.bg_x + bginfo.bg_w, bginfo.bg_y - 2);
-					rect4.moveTo(bginfo.bg_x - 2, bginfo.bg_y + bginfo.bg_h);
+					Common::Rect rect1(2, bgInfo.bounds.height() + 4);
+					Common::Rect rect2(bgInfo.bounds.width() + 4, 2);
+					Common::Rect rect3(2, bgInfo.bounds.height() + 4);
+					Common::Rect rect4(bgInfo.bounds.width() + 4, 2);
+					rect1.moveTo(bgInfo.bounds.left - 2, bgInfo.bounds.top - 2);
+					rect2.moveTo(bgInfo.bounds.left - 2, bgInfo.bounds.top - 2);
+					rect3.moveTo(bgInfo.bounds.right, bgInfo.bounds.top - 2);
+					rect4.moveTo(bgInfo.bounds.left - 2, bgInfo.bounds.bottom);
 
 					drawRect(&s, rect1, kITEColorBlack);
 					drawRect(&s, rect2, kITEColorBlack);

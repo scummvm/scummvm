@@ -587,7 +587,7 @@ public:
 	int textProcessList(TEXTLIST *textlist, long ms);
 
 	int transitionDissolve(byte *dst_img, int dst_w, int dst_h, int dst_p, 
-			const byte *src_img, int src_w, int src_h, int src_p, int flags, int x, int y, 
+			const byte *src_img, int src_w, int src_h, int flags, int x, int y, 
 			double percent);
 
 	int processInput(void);
@@ -627,6 +627,7 @@ public:
 	int _gameNumber;
 	GameDescription *_gameDescription;
 	GameDisplayInfo _gameDisplayInfo;
+	Common::Rect _displayClip;
 
 public:
 	int initGame(void);
@@ -649,6 +650,7 @@ public:
 	int getStartSceneNumber() const { return _gameDescription->startSceneNumber; }
 
 
+	const Common::Rect &getDisplayClip() const { return _displayClip;}
 	int getDisplayWidth() const { return _gameDisplayInfo.logicalWidth; }
 	int getDisplayHeight() const { return _gameDisplayInfo.logicalHeight;}
 	int getSceneHeight() const { return _gameDisplayInfo.sceneHeight; }	

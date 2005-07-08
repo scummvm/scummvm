@@ -165,6 +165,7 @@ SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 
+	_displayClip.left = _displayClip.top = 0;
 	_vm = this;
 }
 
@@ -302,6 +303,10 @@ int SagaEngine::go() {
 
 	_previousTicks = _system->getMillis();
 
+	if (ConfMan.hasKey("start_scene")) {		
+		_scene->changeScene(ConfMan.getInt("start_scene"), 0, kTransitionNoFade);
+	}
+	else
 	if (ConfMan.hasKey("save_slot")) {
 		// First scene sets up palette
 		_scene->changeScene(getStartSceneNumber(), 0, kTransitionNoFade);
