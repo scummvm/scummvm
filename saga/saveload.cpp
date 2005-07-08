@@ -234,6 +234,8 @@ void SagaEngine::load(const char *fileName) {
 		_render->clearFlag(RF_DISABLE_ACTORS);
 		_scene->changeScene(insetSceneNumber, ACTOR_NO_ENTRANCE, kTransitionNoFade);
 	}
+
+	_interface->draw();
 }
 
 } // End of namespace Saga
