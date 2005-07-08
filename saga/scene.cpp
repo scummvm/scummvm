@@ -77,15 +77,14 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 		return;
 	}
 	_sceneCount = scene_lut_len / 2;
-	_sceneMax = _sceneCount - 1;
-	_sceneLUT = (int *)malloc(_sceneMax * sizeof(*_sceneLUT));
+	_sceneLUT = (int *)malloc(_sceneCount * sizeof(*_sceneLUT));
 	if (_sceneLUT == NULL) {
 		memoryError("Scene::Scene()");
 	}
 
 	MemoryReadStreamEndian readS(scene_lut_p, scene_lut_len, IS_BIG_ENDIAN);
 
-	for (i = 0; i < _sceneMax; i++) {
+	for (i = 0; i < _sceneCount; i++) {
 		_sceneLUT[i] = readS.readUint16();
 		debug(8, "sceneNumber %i has resourceId %i", i, _sceneLUT[i]);
 	}
@@ -96,7 +95,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 
 	debug(3, "First scene set to %d.", _firstScene);
 
-	debug(3, "LUT has %d entries.", _sceneMax);
+	debug(3, "LUT has %d entries.", _sceneCount);
 
 	// Create scene module text list
 	_textList = _vm->textCreateList();
@@ -455,7 +454,9 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		BGInfo backGroundInfo;
 		getBGInfo(backGroundInfo);
 		_sceneClip = backGroundInfo.bounds;
-
+		if (_sceneClip.bottom == _vm->getSceneHeight()) {
+			_sceneClip.bottom = _vm->getClippedSceneHeight();
+		}
 		if (!(_bg.w < _vm->getDisplayWidth() || _bg.h < _vm->getSceneHeight()))
 			_outsetSceneNumber = _sceneNumber;
 	}
@@ -473,8 +474,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 	q_event = _vm->_events->chain(q_event, &event);
 
-	if (loadSceneParams->transitionType == kTransitionFade || 
-		loadSceneParams->transitionType == kTransitionFadeNoInterface) {
+	if (loadSceneParams->transitionType == kTransitionFade ) {
 
 		_vm->_interface->setFadeMode(kFadeOut);
 
@@ -487,19 +487,6 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		event.duration = kNormalFadeDuration;
 		event.data = current_pal;
 		q_event = _vm->_events->queue(&event);
-
-		//FIXME: do we really need two interface activation on load scene?
-		// i guess kTransitionFadeNoInterface should gone
-		/* 
-		if (loadSceneParams->transitionType != kTransitionFadeNoInterface) {
-			// Activate user interface
-			event.type = IMMEDIATE_EVENT;
-			event.code = INTERFACE_EVENT;
-			event.op = EVENT_ACTIVATE;
-			event.time = 0;
-			event.duration = 0;
-			q_event = _vm->_events->chain(q_event, &event);
-		}*/
 
 		// set fade mode
 		event.type = IMMEDIATE_EVENT;
@@ -537,8 +524,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		q_event = _vm->_events->chain(q_event, &event);
 	}
 
-	if (loadSceneParams->transitionType == kTransitionFade || 
-		loadSceneParams->transitionType == kTransitionFadeNoInterface) {
+	if (loadSceneParams->transitionType == kTransitionFade) {
 
 		// set fade mode
 		event.type = IMMEDIATE_EVENT;
@@ -907,8 +893,8 @@ void Scene::draw() {
 		_vm->_isoMap->draw(backBuffer);
 	} else {
 		
-		bufToSurface(backBuffer, buf_info.bg_buf, _vm->getDisplayWidth(),
-			_inGame ? _vm->getClippedSceneHeight() : buf_info.bg_buf_h, NULL, &bgPoint);
+		bufToSurface(backBuffer, buf_info.bg_buf, buf_info.bg_buf_w,
+			_sceneClip.bottom < buf_info.bg_buf_h ? _vm->getClippedSceneHeight() : buf_info.bg_buf_h, NULL, &bgPoint);
 	}
 }
 
@@ -978,7 +964,7 @@ void Scene::cmdSceneChange(int argc, const char **argv) {
 
 	scene_num = atoi(argv[1]);
 
-	if ((scene_num < 1) || (scene_num > _sceneMax)) {
+	if ((scene_num < 1) || (scene_num >= _sceneCount)) {
 		_vm->_console->DebugPrintf("Invalid scene number.\n");
 		return;
 	}

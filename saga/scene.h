@@ -148,8 +148,7 @@ struct SCENE_IMAGE {
 
 enum SceneTransitionType {
 	kTransitionNoFade,
-	kTransitionFade,
-	kTransitionFadeNoInterface
+	kTransitionFade
 };
 
 enum SceneLoadFlags {
@@ -255,8 +254,8 @@ class Scene {
 
 
 	int getSceneResourceId(int sceneNumber) {
-		if ((sceneNumber < 0) || (sceneNumber >= _sceneMax)) {
- 			error("getSceneResourceId: wrong sceneNumber");
+		if ((sceneNumber < 0) || (sceneNumber >= _sceneCount)) {
+ 			error("getSceneResourceId: wrong sceneNumber %i", sceneNumber);
 		}
 		return _sceneLUT[sceneNumber];
 	}
@@ -278,7 +277,6 @@ class Scene {
 	RSCFILE_CONTEXT *_sceneContext;
 	int *_sceneLUT;
 	int _sceneCount;
-	int _sceneMax;
 	SceneQueueList _sceneQueue;
 	int _firstScene;
 	bool _sceneLoaded;
