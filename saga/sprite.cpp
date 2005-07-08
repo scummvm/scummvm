@@ -217,16 +217,28 @@ void Sprite::drawClip(SURFACE *ds, Rect clip, const Point &spritePointer, int wi
 	}
 }
 
-int Sprite::draw(SURFACE *ds, SpriteList &spriteList, int32 spriteNumber, const Point &screenCoord, int scale) {
+int Sprite::draw(SURFACE *ds, SpriteList &spriteList, int32 spriteNumber, const Point &screenCoord, int scale, Rect *clipOverride) {
 	const byte *spriteBuffer;
 	int width;
 	int height;
 	int xAlign;
 	int yAlign;
 	Point spritePointer;
-	Rect clip(_vm->getDisplayWidth(),_vm->getDisplayHeight());
+	Rect clip;
 
 	assert(_initialized);
+
+	if (clipOverride) {
+		clip.left = clipOverride->left;
+		clip.right = clipOverride->right;
+		clip.top = clipOverride->top;
+		clip.bottom = clipOverride->bottom;
+	} else {
+		clip.left = 0;
+		clip.right = _vm->getDisplayWidth();
+		clip.top = 0;
+		clip.bottom = _vm->getDisplayHeight();
+	}
 
 	getScaledSpriteBuffer(spriteList, spriteNumber, scale, width, height, xAlign, yAlign, spriteBuffer);
 	
@@ -237,16 +249,28 @@ int Sprite::draw(SURFACE *ds, SpriteList &spriteList, int32 spriteNumber, const 
 	return SUCCESS;
 }
 
-int Sprite::draw(SURFACE *ds, SpriteList &spriteList, int32 spriteNumber, const Rect &screenRect, int scale) {
+int Sprite::draw(SURFACE *ds, SpriteList &spriteList, int32 spriteNumber, const Rect &screenRect, int scale, Rect *clipOverride) {
 	const byte *spriteBuffer;
 	int width;
 	int height;
 	int xAlign, spw;
 	int yAlign, sph;
 	Point spritePointer;
-	Rect clip(_vm->getDisplayWidth(),_vm->getDisplayHeight());
+	Rect clip;
 
 	assert(_initialized);
+
+	if (clipOverride) {
+		clip.left = clipOverride->left;
+		clip.right = clipOverride->right;
+		clip.top = clipOverride->top;
+		clip.bottom = clipOverride->bottom;
+	} else {
+		clip.left = 0;
+		clip.right = _vm->getDisplayWidth();
+		clip.top = 0;
+		clip.bottom = _vm->getDisplayHeight();
+	}
 
 	getScaledSpriteBuffer(spriteList, spriteNumber, scale, width, height, xAlign, yAlign, spriteBuffer);
 	spw = (screenRect.width() - width) / 2;
@@ -318,7 +342,6 @@ int Sprite::drawOccluded(SURFACE *ds, SpriteList &spriteList, int spriteNumber, 
 	size_t maskBufferLength;
 	byte *mask_row_p;
 	int mask_z;
-
 
 	assert(_initialized);
 

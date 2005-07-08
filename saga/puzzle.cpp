@@ -275,9 +275,14 @@ void Puzzle::showPieces(void) {
 void Puzzle::drawCurrentPiece() {
 	ActorData *puzzle = _vm->_actor->getActor(_vm->_actor->actorIndexToId(ITE_ACTOR_PUZZLE));
 	SURFACE *backBuffer = _vm->_gfx->getBackBuffer();
+	SCENE_BGINFO bg_info;
+
+	_vm->_scene->getBGInfo(&bg_info);
+
+	Rect clip(bg_info.bg_x, bg_info.bg_y, bg_info.bg_x + bg_info.bg_w, bg_info.bg_y + bg_info.bg_h);
 
 	_vm->_sprite->draw(backBuffer, puzzle->spriteList, _puzzlePiece, 
-			   Point(_pieceInfo[_puzzlePiece].curX, _pieceInfo[_puzzlePiece].curY), 256);
+			   Point(_pieceInfo[_puzzlePiece].curX, _pieceInfo[_puzzlePiece].curY), 256, &clip);
 }
 
 void Puzzle::movePiece(Point mousePt) {
