@@ -867,8 +867,9 @@ void IsoMap::drawTile(Surface *ds, uint16 tileIndex, const Point &point, const L
 					col++;
 				}
 				while ((col < _tileClip.right) && (count < fgRunCount)) {
-					assert((uint)ds->pixels <= (uint)(drawPointer + count));
-					assert(((uint)ds->pixels + (_vm->getDisplayWidth() * _vm->getDisplayHeight())) > (uint)(drawPointer + count));
+					assert((byte *)ds->pixels <= (byte *)(drawPointer + count));
+					assert((byte *)((byte *)ds->pixels + (_vm->getDisplayWidth() *
+								 _vm->getDisplayHeight())) > (byte *)(drawPointer + count));
 					drawPointer[count] = readPointer[count];
 					count++;
 					col++;

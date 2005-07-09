@@ -203,10 +203,11 @@ void Sprite::drawClip(Surface *ds, const Rect &clipRect, const Point &spritePoin
 	}
 	for (i = io; i < clipHeight; i++) {
 		for (j = jo; j < clipWidth; j++) {
-			assert((uint)ds->pixels <= (uint)(bufRowPointer + j + spritePointer.x));
-			assert(((uint)ds->pixels + (_vm->getDisplayWidth() * _vm->getDisplayHeight())) > (uint)(bufRowPointer + j + spritePointer.x));
-			assert((uint)spriteBuffer <= (uint)(srcRowPointer + j));
-			assert(((uint)spriteBuffer + (width * height)) > (uint)(srcRowPointer + j));
+			assert((byte *)ds->pixels <= (byte *)(bufRowPointer + j + spritePointer.x));
+			assert(((byte *)ds->pixels + (_vm->getDisplayWidth() *
+				 _vm->getDisplayHeight())) > (byte *)(bufRowPointer + j + spritePointer.x));
+			assert((const byte *)spriteBuffer <= (const byte *)(srcRowPointer + j));
+			assert(((const byte *)spriteBuffer + (width * height)) > (const byte *)(srcRowPointer + j));
 
 			if (*(srcRowPointer + j) != 0) {
 				*(bufRowPointer + j + spritePointer.x) = *(srcRowPointer + j);
