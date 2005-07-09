@@ -277,7 +277,7 @@ void Scene::getBGInfo(BGInfo &bgInfo) {
 	}
 
 	if (_bg.h < _vm->getSceneHeight()) {
-		bgInfo.bounds.top = (_vm->getClippedSceneHeight() - _bg.h) / 2;
+		bgInfo.bounds.top = (_vm->getSceneHeight() - _bg.h) / 2;
 	}
 
 	bgInfo.bounds.setWidth(_bg.w);
@@ -449,14 +449,11 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		_sceneClip.left = 0;
 		_sceneClip.top = 0;
 		_sceneClip.right = _vm->getDisplayWidth();
-		_sceneClip.bottom = _vm->getClippedSceneHeight();
+		_sceneClip.bottom = _vm->getSceneHeight();
 	} else {
 		BGInfo backGroundInfo;
 		getBGInfo(backGroundInfo);
 		_sceneClip = backGroundInfo.bounds;
-		if (_sceneClip.bottom == _vm->getSceneHeight()) {
-			_sceneClip.bottom = _vm->getClippedSceneHeight();
-		}
 		if (!(_bg.w < _vm->getDisplayWidth() || _bg.h < _vm->getSceneHeight()))
 			_outsetSceneNumber = _sceneNumber;
 	}
@@ -766,7 +763,7 @@ int Scene::processSceneResources() {
 			// At least in ITE the mask needs to be clipped.
 
 			_bgMask.w = MIN(_bgMask.w, _vm->getDisplayWidth());
-			_bgMask.h = MIN(_bgMask.h, _vm->getClippedSceneHeight());
+			_bgMask.h = MIN(_bgMask.h, _vm->getSceneHeight());
 
 			debug(4, "BACKGROUND MASK width=%d height=%d length=%d", _bgMask.w, _bgMask.h, _bgMask.buf_len);
 			break;
@@ -894,7 +891,7 @@ void Scene::draw() {
 	} else {
 		
 		bufToSurface(backBuffer, buf_info.bg_buf, buf_info.bg_buf_w,
-			_sceneClip.bottom < buf_info.bg_buf_h ? _vm->getClippedSceneHeight() : buf_info.bg_buf_h, NULL, &bgPoint);
+			_sceneClip.bottom < buf_info.bg_buf_h ? _vm->getSceneHeight() : buf_info.bg_buf_h, NULL, &bgPoint);
 	}
 }
 

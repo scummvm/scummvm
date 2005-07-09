@@ -84,7 +84,7 @@ static PanelButton ITE_OptionPanelButtons[] = {
 	{kPanelButtonOption,	241,98, 57,17,	kTextSave,'s',0,	0,0,0},	//save
 	{kPanelButtonOptionSaveFiles,	166,20, 112,74,	0,'-',0,	0,0,0},	//savefiles
 
-	{kPanelButtonOptionText,114-8,4, 0,0,	kTextGameOptions,'-',0,	0,0,0},	// text: game options
+	{kPanelButtonOptionText,106,4, 0,0,	kTextGameOptions,'-',0,	0,0,0},	// text: game options
 	{kPanelButtonOptionText,10,22, 0,0,	kTextReadingSpeed,'-',0, 0,0,0},	// text: read speed
 	{kPanelButtonOptionText,73,41, 0,0,	kTextMusic,'-',0, 0,0,0},	// text: music
 	{kPanelButtonOptionText,69,60, 0,0,	kTextSound,'-',0, 0,0,0},	// text: noise
@@ -118,7 +118,6 @@ static GameDisplayInfo ITE_DisplayInfo = {
 	
 	35,				// scene path y offset
 	137,			// scene height
-	137,			// clipped scene height
 	
 	0,				// status x offset
 	137,			// status y offset
@@ -141,12 +140,12 @@ static GameDisplayInfo ITE_DisplayInfo = {
 	8, 9,			// inventory Up & Down button indexies
 	2, 4,			// inventory rows, columns
 
-	0, 149,			// main panel offsets
+	0, 148,			// main panel offsets
 	ARRAYSIZE(ITE_MainPanelButtons),
 	ITE_MainPanelButtons,
 
 	4, 5,			// converse Up & Down button indexies
-	0, 149,			// converse panel offsets
+	0, 148,			// converse panel offsets
 	ARRAYSIZE(ITE_ConversePanelButtons),
 	ITE_ConversePanelButtons,
 	
@@ -332,7 +331,6 @@ static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	
 	0,			// scene path y offset
 	304,		// scene height
-	304,		// clipped scene height
 
 	0,			// status x offset
 	304,		// status y offset
@@ -1084,15 +1082,6 @@ int SagaEngine::loadGame(int gameNumber) {
 		_gameFileContexts[i] = loadContext;
 	}
 	
-
-	if (_vm->getGameId() == GID_ITE_DISK_G) {
-		//DOS ITE version clips scene height by 1
-		_gameDisplayInfo.clippedSceneHeight--;
-		_gameDisplayInfo.statusYOffset--;
-		_gameDisplayInfo.mainPanelYOffset--;
-		_gameDisplayInfo.conversePanelYOffset--;
-	}
-
 	return SUCCESS;
 }
 

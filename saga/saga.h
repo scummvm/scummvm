@@ -360,7 +360,6 @@ struct GameDisplayInfo {
 	
 	int pathStartY;
 	int sceneHeight;
-	int clippedSceneHeight;
 
 	int statusXOffset;
 	int statusYOffset;
@@ -654,7 +653,6 @@ public:
 	int getDisplayWidth() const { return _gameDisplayInfo.logicalWidth; }
 	int getDisplayHeight() const { return _gameDisplayInfo.logicalHeight;}
 	int getSceneHeight() const { return _gameDisplayInfo.sceneHeight; }	
-	int getClippedSceneHeight() const { return _gameDisplayInfo.clippedSceneHeight; }
 	const GameDisplayInfo & getDisplayInfo() { return _gameDisplayInfo; }
 	
 	const char *getTextString(int textStringId);

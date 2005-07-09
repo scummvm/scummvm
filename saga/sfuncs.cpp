@@ -1241,7 +1241,7 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	event.data = back_buf;
 	event.param = 138;
 	event.param2 = 0;
-	event.param3 = _vm->getClippedSceneHeight();
+	event.param3 = _vm->getSceneHeight();
 	event.param4 = 0;
 	event.param5 = _vm->getDisplayWidth();
 
@@ -1258,7 +1258,7 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	text_entry.color = kITEColorBrightWhite;
 	text_entry.effect_color = kITEColorBlack;
 	text_entry.text_x = _vm->getDisplayWidth() / 2;
-	text_entry.text_y = (_vm->getClippedSceneHeight() - _vm->_font->getHeight(MEDIUM_FONT_ID)) / 2;
+	text_entry.text_y = (_vm->getSceneHeight() - _vm->_font->getHeight(MEDIUM_FONT_ID)) / 2;
 	text_entry.font_id = MEDIUM_FONT_ID;
 	text_entry.flags = FONT_OUTLINE | FONT_CENTERED;
 	text_entry.string = thread->_strings->getString(stringId);
