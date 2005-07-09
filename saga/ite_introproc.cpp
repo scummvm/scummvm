@@ -292,8 +292,7 @@ int Scene::ITEIntroAnimProc(int param) {
 	EVENT *q_event;
 
 	switch (param) {
-	case SCENE_BEGIN:
-
+	case SCENE_BEGIN:{
 		// Background for intro scene is the first frame of the
 		// intro animation; display it and set the palette
 		event.type = ONESHOT_EVENT;
@@ -352,6 +351,7 @@ int Scene::ITEIntroAnimProc(int param) {
 		event.time = 0;
 
 		q_event = _vm->_events->chain(q_event, &event);
+		}
 		break;
 	case SCENE_END:
 		break;

@@ -279,8 +279,8 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 		}
 	
 	} else {
-		// TODO.
-		static ActorData dummyActor;
+		// TODO. This is causing problems for SYMBIAN os as it does n't like a static class here
+		ActorData dummyActor;
 
 		dummyActor.frames = NULL;
 		dummyActor.walkStepsPoints = NULL;

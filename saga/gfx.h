@@ -32,6 +32,7 @@ namespace Saga {
 
 using Common::Point;
 using Common::Rect;
+#pragma START_PACK_STRUCTS
 
 struct ClipData {
 	// input members
@@ -70,20 +71,20 @@ struct ClipData {
 
 		return true;
 	}
-};
+}GCC_PACK;
 
 struct PalEntry {
 	byte red;
 	byte green;
 	byte blue;
-};
+}GCC_PACK;
 
 struct Color {
 	int red;
 	int green;
 	int blue;
 	int alpha;
-};
+}GCC_PACK;
 
 struct Surface : Graphics::Surface {
 	
@@ -110,7 +111,7 @@ struct Surface : Graphics::Surface {
 		}		
 	}
 };
-
+#pragma END_PACK_STRUCTS
 
 #define PAL_ENTRIES 256
 

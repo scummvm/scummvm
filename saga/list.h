@@ -33,7 +33,8 @@ public:
 
 	typedef typename Common::List<T>::iterator        iterator;
 	typedef typename Common::List<T>::const_iterator  const_iterator;
-	
+	typedef typename Common::List<T> Common_List;
+
 public:
 
 	iterator pushFront(const T& element) {
@@ -41,20 +42,20 @@ public:
 	}
 
 	iterator pushBack(const T& element) {
-		return insert(Common::List<T>::end(), element);
+		return insert(Common_List::end(), element);
 	}
 
 	iterator insert(iterator pos, const T& element) {
-		Common::List<T>::insert(pos, element);
+		Common_List::insert(pos, element);
 		return --pos;
 	}
 
 	iterator pushFront() {
-		return insert(Common::List<T>::begin());
+		return insert(Common_List::begin());
 	}
 
 	iterator pushBack() {
-		return insert(Common::List<T>::end());
+		return insert(Common_List::end());
 	}
 
 	iterator insert(iterator pos) {
@@ -67,13 +68,13 @@ public:
 	}
 
 	iterator pushBack(const T& element, CompareFunction compareFunction) {
-		return insert(Common::List<T>::end(), element, compareFunction);
+		return insert(Common_List::end(), element, compareFunction);
 	}
 
 	iterator insert(iterator pos, const T& element, CompareFunction compareFunction) {
 		int res;
 
-		for (iterator i = Common::List<T>::begin(); i != Common::List<T>::end(); ++i) {
+		for (iterator i = Common_List::begin(); i != Common_List::end(); ++i) {
 			res = compareFunction(element, i.operator*());
 			if	(res < 0) {
 				return insert(i, element);
@@ -120,7 +121,7 @@ public:
 	}
 
 	iterator eraseAndPrev(iterator pos) {
-		assert(pos != Common::List<T>::end());
+		assert(pos != Common_List::end());
 		iterator res(pos);
 
 		--res;
@@ -129,7 +130,7 @@ public:
 	}
 
 	void remove(const T* val) {
-		for (iterator i = Common::List<T>::begin(); i != Common::List<T>::end(); ++i)
+		for (iterator i = Common_List::begin(); i != Common_List::end(); ++i)
 			if (val == i.operator->()) {
 				erase(i);
 				return;
