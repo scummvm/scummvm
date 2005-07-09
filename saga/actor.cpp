@@ -1313,9 +1313,10 @@ void Actor::createDrawOrderList() {
 		actor = _actors[i];
 		if (!actor->inScene)
 			continue;
-
-		_drawOrderList.pushBack(actor, compareFunction);
-		calcScreenPosition(actor);
+		
+		if (calcScreenPosition(actor)) {
+			_drawOrderList.pushBack(actor, compareFunction);
+		}
 	}
 
 	for (i = 0; i < _objsCount; i++) {
@@ -1325,9 +1326,9 @@ void Actor::createDrawOrderList() {
 		if (obj->sceneNumber != _vm->_scene->currentSceneNumber())
 			 continue;
 
-		_drawOrderList.pushBack(obj, compareFunction);
-		if (!calcScreenPosition(obj)) {
-			warning("calcScreenPosition return false actorIdx=%i", i);
+		
+		if (calcScreenPosition(obj)) {
+			_drawOrderList.pushBack(obj, compareFunction);
 		}
 	}
 }

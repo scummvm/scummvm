@@ -585,10 +585,6 @@ public:
 				  int effect_color, int flags);
 	int textProcessList(TEXTLIST *textlist, long ms);
 
-	int transitionDissolve(byte *dst_img, int dst_w, int dst_h,
-			const byte *src_img, int src_w, int src_h, int flags, int x, int y, 
-			double percent);
-
 	int processInput(void);
 	const Point &mousePos() const {
 		return _mousePos;

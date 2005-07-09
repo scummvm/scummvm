@@ -24,13 +24,11 @@ MODULE_OBJS := \
 	saga/saveload.o \
 	saga/scene.o \
 	saga/script.o \
-	saga/sdebug.o \
 	saga/sfuncs.o \
 	saga/sndres.o \
 	saga/sprite.o \
 	saga/sthread.o \
 	saga/text.o \
-	saga/transitions.o \
 	saga/input.o \
 	saga/music.o \
 	saga/sound.o

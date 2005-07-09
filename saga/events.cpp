@@ -126,6 +126,7 @@ int Events::handleContinuous(EVENT *event) {
 
 	Surface *backGroundSurface;
 	BGInfo bgInfo;
+	Rect rect;
 
 	event_pc = ((double)event->duration - event->time) / event->duration;
 
@@ -163,21 +164,26 @@ int Events::handleContinuous(EVENT *event) {
 		case EVENT_DISSOLVE:
 			backGroundSurface = _vm->_render->getBackGroundSurface();
 			_vm->_scene->getBGInfo(bgInfo);
-			_vm->transitionDissolve((byte*)backGroundSurface->pixels, backGroundSurface->w, 
-				backGroundSurface->h, bgInfo.buffer, bgInfo.bounds.width(), bgInfo.bounds.height(), 0, 0, 0, event_pc);
+			rect.left = rect.top = 0;
+			rect.right = bgInfo.bounds.width();
+			rect.bottom = bgInfo.bounds.height();
+			backGroundSurface->transitionDissolve(bgInfo.buffer, rect, 0, event_pc);
 			break;
 		case EVENT_DISSOLVE_BGMASK:
 			// we dissolve it centered.
 			// set flag of Dissolve to 1. It is a hack to simulate zero masking.
 			int w, h;
-			byte *mask_buf;
+			byte *maskBuffer;
 			size_t len;
 
 			backGroundSurface = _vm->_render->getBackGroundSurface();
-			_vm->_scene->getBGMaskInfo(w, h, mask_buf, len);
-			_vm->transitionDissolve((byte*)backGroundSurface->pixels, backGroundSurface->w, 
-					backGroundSurface->h, mask_buf, w, h, 1, 
-					(_vm->getDisplayWidth() - w) / 2, (_vm->getDisplayHeight() - h) / 2, event_pc);
+			_vm->_scene->getBGMaskInfo(w, h, maskBuffer, len);
+			rect.left = (_vm->getDisplayWidth() - w) / 2;
+			rect.top = (_vm->getDisplayHeight() - h) / 2;
+			rect.setWidth(w);
+			rect.setHeight(h);
+			
+			backGroundSurface->transitionDissolve( maskBuffer, rect, 1, event_pc);
 			break;
 		default:
 			break;

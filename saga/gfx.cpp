@@ -124,6 +124,44 @@ void Surface::drawPolyLine(const Point *points, int count, int color) {
 	}
 }
 
+/**
+* Dissolve one image with another.
+* If flags if set to 1, do zero masking.
+*/
+void Surface::transitionDissolve(const byte *sourceBuffer, const Common::Rect &sourceRect, int flags, double percent) {
+#define XOR_MASK 0xB400;
+	int pixelcount = w * h;
+	int seqlimit = (int)(65535 * percent);
+	int seq = 1;
+	int i, x1, y1;
+	byte color;
+
+	for (i = 0; i < seqlimit; i++) {
+		if (seq & 1) {
+			seq = (seq >> 1) ^ XOR_MASK;
+		} else {
+			seq = seq >> 1;
+		}
+
+		if (seq == 1) {
+			return;
+		}
+
+		if (seq >= pixelcount) {
+			continue;
+		} else {
+			x1 = seq % w;
+			y1 = seq / w;
+
+			if (sourceRect.contains(x1, y1)) {
+				color = sourceBuffer[(x1-sourceRect.left) + sourceRect.width()*(y1-sourceRect.top)];
+				if (flags == 0 || color)
+					((byte*)pixels)[seq] = color;
+			}
+		}
+	}
+}
+
 
 void Gfx::setPalette(PalEntry *pal) {
 	int i;

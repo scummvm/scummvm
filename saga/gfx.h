@@ -87,6 +87,7 @@ struct Color {
 
 struct Surface : Graphics::Surface {
 	
+	void transitionDissolve(const byte *sourceBuffer, const Common::Rect &sourceRect, int flags, double percent);
 	void drawPalette();
 	void drawPolyLine(const Point *points, int count, int color);
 	void blit(const Common::Rect &destRect, const byte *sourceBuffer);
