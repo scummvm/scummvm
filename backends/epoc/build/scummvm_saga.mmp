@@ -1,0 +1,79 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2003-2005 Andreas 'Sprawl' Karlsson - Original EPOC port, ESDL
+ * Copyright (C) 2003-2005 Lars 'AnotherGuest' Persson - Original EPOC port, Audio System
+ * Copyright (C) 2005 Jurgen 'SumthinWicked' Braam - EPOC/CVS maintainer
+ * Copyright (C) 2005 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Header: 
+ */
+
+//
+// EPOC MMP makefile project for ScummVM Saga
+//
+
+// *** Definitions
+
+TARGET          scummvm_saga.lib
+TARGETTYPE      lib
+OPTION			MSVC /QIfist /Ob1 /Oy /GF // /QIfist disables use of __ftol2 to avoid linker probs with MS libc: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vccore/html/vcrefQIfistSuppress_ftol.asp
+OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way too sensitive for that :( just turn off some common warnings
+
+MACRO			NONSTANDARD_PORT
+
+// *** SOURCE files
+
+SOURCEPATH ..\..\..
+
+//START_AUTO_OBJECTS_SAGA_// Updated @ Sun Jul 10 00:52:25 2005
+SOURCE saga\actor.cpp
+SOURCE saga\animation.cpp
+SOURCE saga\console.cpp
+SOURCE saga\events.cpp
+SOURCE saga\font.cpp
+SOURCE saga\font_map.cpp
+SOURCE saga\game.cpp
+SOURCE saga\gfx.cpp
+SOURCE saga\ihnm_introproc.cpp
+SOURCE saga\image.cpp
+SOURCE saga\interface.cpp
+SOURCE saga\isomap.cpp
+SOURCE saga\ite_introproc.cpp
+SOURCE saga\itedata.cpp
+SOURCE saga\objectmap.cpp
+SOURCE saga\puzzle.cpp
+SOURCE saga\palanim.cpp
+SOURCE saga\render.cpp
+SOURCE saga\rscfile.cpp
+SOURCE saga\saga.cpp
+SOURCE saga\saveload.cpp
+SOURCE saga\scene.cpp
+SOURCE saga\script.cpp
+SOURCE saga\sfuncs.cpp
+SOURCE saga\sndres.cpp
+SOURCE saga\sprite.cpp
+SOURCE saga\sthread.cpp
+SOURCE saga\text.cpp
+SOURCE saga\input.cpp
+SOURCE saga\music.cpp
+SOURCE saga\sound.cpp
+//STOP_AUTO_OBJECTS_SAGA_//
+
+// *** Include paths
+
+USERINCLUDE     ..\..\..\saga
+USERINCLUDE     ..\..\.. ..\..\..\common ..\..\..\gui ..\..\..\sound ..\..\..\backends\epoc
+SYSTEMINCLUDE   \epoc32\include \epoc32\include\libc ..\..\..\backends\epoc

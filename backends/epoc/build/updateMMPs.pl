@@ -27,7 +27,7 @@ ParseModule("_queen",	"queen",	\@std);
 ParseModule("_simon",	"simon",	\@std);
 ParseModule("_sky",		"sky",		\@std);
 ParseModule("_gob",		"gob",		\@std);
-
+ParseModule("_saga",		"saga",		\@std);
 print "
 =======================================================================================
 Done. Enjoy :P

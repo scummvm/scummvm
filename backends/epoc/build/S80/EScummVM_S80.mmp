@@ -49,7 +49,7 @@ MACRO			NONSTANDARD_PORT
 MACRO			DISABLE_SWORD1
 MACRO			DISABLE_SWORD2
 // these are not ready to be released
-MACRO			DISABLE_SAGA
+//MACRO			DISABLE_SAGA
 MACRO			DISABLE_KYRA
 // these work, so don't disable them :)
 //MACRO			DISABLE_SIMON
@@ -64,6 +64,7 @@ STATICLIBRARY scummvm_simon.lib
 STATICLIBRARY scummvm_sky.lib
 STATICLIBRARY scummvm_queen.lib
 STATICLIBRARY scummvm_gob.lib
+STATICLIBRARY scummvm_saga.lib
 STATICLIBRARY scummvm_base.lib
 
 STATICLIBRARY libmad.lib

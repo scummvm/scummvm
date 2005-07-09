@@ -8,5 +8,6 @@ PRJ_MMPFILES
 ..\scummvm_sky.mmp
 ..\scummvm_queen.mmp
 ..\scummvm_gob.mmp
+..\scummvm_saga.mmp
 .\EScummVM_S80.mmp
 .\EScummVM_S80_App.mmp

@@ -40,7 +40,7 @@ MACRO			USE_ZLIB
 MACRO			DISABLE_SWORD1
 MACRO			DISABLE_SWORD2
 // these are not ready to be released
-MACRO			DISABLE_SAGA
+//MACRO			DISABLE_SAGA
 MACRO			DISABLE_KYRA
 // these work, so don't disable them :)
 //MACRO			DISABLE_SIMON
@@ -63,7 +63,7 @@ SYSTEMINCLUDE   ..\..\..\backends\epoc // for portdefs.h
 
 SOURCEPATH ..\..\..
 
-//START_AUTO_OBJECTS_COMMON_// Updated @ Mon Jun  6 23:07:22 2005
+//START_AUTO_OBJECTS_COMMON_// Updated @ Sun Jul 10 00:52:25 2005
 SOURCE common\config-file.cpp
 SOURCE common\config-manager.cpp
 SOURCE common\file.cpp
@@ -77,7 +77,7 @@ SOURCE common\savefile.cpp
 SOURCE common\system.cpp
 //STOP_AUTO_OBJECTS_COMMON_//
 
-//START_AUTO_OBJECTS_GRAPHICS_// Updated @ Mon Jun  6 23:07:22 2005
+//START_AUTO_OBJECTS_GRAPHICS_// Updated @ Sun Jul 10 00:52:25 2005
 SOURCE graphics\animation.cpp
 SOURCE graphics\consolefont.cpp
 SOURCE graphics\font.cpp
@@ -89,7 +89,12 @@ SOURCE graphics\scummfont.cpp
 SOURCE graphics\surface.cpp
 //STOP_AUTO_OBJECTS_GRAPHICS_//
 
-//START_AUTO_OBJECTS_GUI_// Updated @ Mon Jun  6 23:07:22 2005
+// these next three will go into gui\modules.mk and will end up in START_AUTO_OBJECTS_GUI
+//SOURCE gui\Key.cpp
+//SOURCE gui\KeysDialog.cpp
+//SOURCE gui\Actions.cpp
+
+//START_AUTO_OBJECTS_GUI_// Updated @ Sun Jul 10 00:52:25 2005
 SOURCE gui\about.cpp
 SOURCE gui\browser.cpp
 SOURCE gui\chooser.cpp
@@ -108,7 +113,7 @@ SOURCE gui\TabWidget.cpp
 SOURCE gui\widget.cpp
 //STOP_AUTO_OBJECTS_GUI_//
 
-//START_AUTO_OBJECTS_SOUND_// Updated @ Mon Jun  6 23:07:22 2005
+//START_AUTO_OBJECTS_SOUND_// Updated @ Sun Jul 10 00:52:25 2005
 SOURCE sound\adpcm.cpp
 SOURCE sound\audiocd.cpp
 SOURCE sound\audiostream.cpp

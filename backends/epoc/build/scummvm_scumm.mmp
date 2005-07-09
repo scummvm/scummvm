@@ -41,7 +41,7 @@ MACRO			USE_ZLIB
 
 SOURCEPATH ..\..\..
 
-//START_AUTO_OBJECTS_SCUMM_// Updated @ Mon Jun  6 23:07:22 2005
+//START_AUTO_OBJECTS_SCUMM_// Updated @ Sun Jul 10 00:52:25 2005
 SOURCE scumm\actor.cpp
 SOURCE scumm\akos.cpp
 SOURCE scumm\base-costume.cpp
@@ -61,7 +61,6 @@ SOURCE scumm\instrument.cpp
 SOURCE scumm\help.cpp
 SOURCE scumm\midiparser_ro.cpp
 SOURCE scumm\midiparser_eup.cpp
-SOURCE scumm\nut_renderer.cpp
 SOURCE scumm\object.cpp
 SOURCE scumm\palette.cpp
 SOURCE scumm\player_mod.cpp
@@ -94,6 +93,7 @@ SOURCE scumm\thumbnail.cpp
 
 //START_AUTO_OBJECTS_SCUMM_DISABLE_SCUMM_7_8// Updated @ Mon Jun  6 23:03:34 2005
 SOURCE scumm\script_v8.cpp
+SOURCE scumm\nut_renderer.cpp
 SOURCE scumm\imuse_digi\dimuse.cpp
 SOURCE scumm\imuse_digi\dimuse_bndmgr.cpp
 SOURCE scumm\imuse_digi\dimuse_codecs.cpp
