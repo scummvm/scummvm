@@ -154,6 +154,7 @@ void Debugger::postEnter() {
 
 bool Debugger::Cmd_Exit(int argc, const char **argv) {
 	_detach_now = true;
+	_vm->clearInputEvents();
 	return false;
 }
 
@@ -584,15 +585,15 @@ bool Debugger::Cmd_Var(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Rect(int argc, const char **argv) {
-	uint32 filter = _vm->setEventFilter(0);
+	uint32 filter = _vm->setInputEventFilter(0);
 
 	_definingRectangles = !_definingRectangles;
 
 	if (_definingRectangles) {
-		_vm->setEventFilter(filter & ~(RD_LEFTBUTTONUP | RD_RIGHTBUTTONUP));
+		_vm->setInputEventFilter(filter & ~(RD_LEFTBUTTONUP | RD_RIGHTBUTTONUP));
 		DebugPrintf("Mouse rectangles enabled\n");
 	} else {
-		_vm->setEventFilter(filter | RD_LEFTBUTTONUP | RD_RIGHTBUTTONUP);
+		_vm->setInputEventFilter(filter | RD_LEFTBUTTONUP | RD_RIGHTBUTTONUP);
 		DebugPrintf("Mouse rectangles disabled\n");
 	}
 

@@ -57,7 +57,7 @@ void Screen::markAsDirty(int16 x0, int16 y0, int16 x1, int16 y1) {
  */
 
 void Screen::updateDisplay(bool redrawScene) {
-	_vm->parseEvents();
+	_vm->parseInputEvents();
 	fadeServer();
 
 	if (redrawScene) {

@@ -97,7 +97,7 @@ struct StartUp {
 
 class Sword2Engine : public Engine {
 private:
-	uint32 _eventFilter;
+	uint32 _inputEventFilter;
 
 	// The event "buffers"
 	MouseEvent _mouseEvent;
@@ -161,9 +161,10 @@ public:
 	uint32 _controlsFontId;
 	uint32 _redFontId;
 
-	uint32 setEventFilter(uint32 filter);
+	uint32 setInputEventFilter(uint32 filter);
 
-	void parseEvents();
+	void clearInputEvents();
+	void parseInputEvents();
 
 	bool checkForMouseEvents();
 	MouseEvent *mouseEvent();

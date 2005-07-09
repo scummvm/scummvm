@@ -21,6 +21,7 @@
 #include "common/stdafx.h"
 #include "common/util.h"
 #include "sword2/sword2.h"
+#include "sword2/defs.h"
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
 #include "sword2/memory.h"
@@ -256,54 +257,20 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 		debug(4, "Resume script %d with offset %d", scriptNumber, ip);
 	}
 
-	// WORKAROUND: The dreaded pyramid bug makes the torch untakeable when
-	// you speak to Titipoco. This is because one of the conditions for the
-	// torch to be takeable is that Titipoco isn't doing anything out of
-	// the ordinary. Global variable 913 has to be 0 to signify that he is
-	// in his "idle" state.
-	//
-	// Unfortunately, simply the act of speaking to him sets variable 913
-	// to 1 (probably to stop him from turning around every now and then).
-	// The script may then go on to set the variable to different values
-	// to trigger various behaviours in him, but if you have run out of
-	// these cases the script won't ever set it back to 0 again.
-	//
-	// So if his click hander (action script number 2) finishes, and
-	// variable 913 is 1, we set it back to 0 manually.
-
-	bool checkPyramidBug = false;
-
-	// WORKAROUND for bug #1214168: The not-at-all dreaded mop bug.
-	//
-	// At the London Docks, global variable 1003 keeps track of Nico:
-	//
-	// 0: Hiding behind the first crate.
-	// 1: Hiding behind the second crate.
-	// 2: Standing in plain view on the deck.
-	// 3: Hiding on the roof.
-	//
-	// The bug happens when trying to pick up the mop while hiding on the
-	// roof. Nico climbs down, the mop is picked up, but the variable
-	// remains set to 3. Visually, everything looks ok. But as far as the
-	// scripts are concerned, she's still hiding up on the roof. This is
-	// not fatal, but leads to a number of glitches until the state is
-	// corrected. E.g. trying to climb back up the ladder will cause Nico
-	// to climb down again.
-	//
-	// Global variable 1017 keeps track of the mop. Setting it to 2 means
-	// that the mop has been picked up. We should be able to use that as
-	// the signal that Nico's state needs to be updated as well. There are
-	// a number of other possible workarounds, but this is the closest
-	// point I've found to where Nico's state should have been updated, had
-	// the script been correct.
+	// There are a couple of known script bugs related to interacting with
+	// certain objects. We try to work around a few of them.
 
 	bool checkMopBug = false;
+	bool checkPyramidBug = false;
+	bool checkElevatorBug = false;
 
 	if (scriptNumber == 2) {
-		if (strcmp((char *)header->name, "titipoco_81") == 0)
-			checkPyramidBug = true;
-		else if (strcmp((char *)header->name, "mop_73") == 0)
+		if (strcmp((char *)header->name, "mop_73") == 0)
 			checkMopBug = true;
+		else if (strcmp((char *)header->name, "titipoco_81") == 0)
+			checkPyramidBug = true;
+		else if (strcmp((char *)header->name, "lift_82") == 0)
+			checkElevatorBug = true;
 	}
 
 	code += noScripts * sizeof(int32);
@@ -356,11 +323,40 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			// End the script
 			runningScript = false;
 
-			// WORKAROUND: Pyramid Bug. See explanation above.
+			// WORKAROUND: The dreaded pyramid bug makes the torch
+			// untakeable when you speak to Titipoco. This is
+			// because one of the conditions for the torch to be
+			// takeable is that Titipoco isn't doing anything out
+			// of the ordinary. Global variable 913 has to be 0 to
+			// signify that he is in his "idle" state.
+			//
+			// Unfortunately, simply the act of speaking to him
+			// sets variable 913 to 1 (probably to stop him from
+			// turning around every now and then). The script may
+			// then go on to set the variable to different values
+			// to trigger various behaviours in him, but if you
+			// have run out of these cases the script won't ever
+			// set it back to 0 again.
+			//
+			// So if his click hander finishes, and variable 913 is
+			// 1, we set it back to 0 manually.
 
 			if (checkPyramidBug && _scriptVars[913] == 1) {
-				warning("Working around Titipoco script bug (the \"Pyramid Bug\")");
+				warning("Working around pyramid bug: Resetting Titipoco's state");
 				_scriptVars[913] = 0;
+			}
+
+			// WORKAROUND: The not-so-known-but-should-be-dreaded
+			// elevator bug.
+			//
+			// The click handler for the top of the elevator only
+			// handles using the elevator, not examining it. When
+			// examining it, the mouse cursor is removed but never
+			// restored.
+
+			if (checkElevatorBug && Logic::_scriptVars[RIGHT_BUTTON]) {
+				warning("Working around elevator bug: Restoring mouse pointer");
+				fnAddHuman(NULL);
 			}
 
 			debug(9, "CP_END_SCRIPT");
@@ -450,10 +446,34 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			Read16ip(parameter);
 			value = pop();
 
-			// WORKAROUND: Mop bug. See explanation above.
+			// WORKAROUND for bug #1214168: The not-at-all dreaded
+			// mop bug.
+			//
+			// At the London Docks, global variable 1003 keeps
+			// track of Nico:
+			//
+			// 0: Hiding behind the first crate.
+			// 1: Hiding behind the second crate.
+			// 2: Standing in plain view on the deck.
+			// 3: Hiding on the roof.
+			//
+			// The bug happens when trying to pick up the mop while
+			// hiding on the roof. Nico climbs down, the mop is
+			// picked up, but the variable remains set to 3.
+			// Visually, everything looks ok. But as far as the
+			// scripts are concerned, she's still hiding up on the
+			// roof. This is not fatal, but leads to a number of
+			// glitches until the state is corrected. E.g. trying
+			// to climb back up the ladder will cause Nico to climb
+			// down again.
+			//
+			// Global variable 1017 keeps track of the mop. Setting
+			// it to 2 means that the mop has been picked up. We
+			// use that as the signal that Nico's state needs to be
+			// updated as well.
 
 			if (checkMopBug && parameter == 1017 && _scriptVars[1003] != 2) {
-				warning("Working around Mop script bug: Setting Nico state");
+				warning("Working around mop bug: Setting Nico's state");
 				_scriptVars[1003] = 2;
 			}
 

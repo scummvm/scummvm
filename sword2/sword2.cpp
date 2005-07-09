@@ -260,7 +260,7 @@ int Sword2Engine::init(GameDetector &detector) {
 
 	// During normal gameplay, we care neither about mouse button releases
 	// nor the scroll wheel.
-	setEventFilter(RD_LEFTBUTTONUP | RD_RIGHTBUTTONUP | RD_WHEELUP | RD_WHEELDOWN);
+	setInputEventFilter(RD_LEFTBUTTONUP | RD_RIGHTBUTTONUP | RD_WHEELUP | RD_WHEELDOWN);
 
 	setupPersistentResources();
 	initialiseFontResourceFlags();
@@ -463,18 +463,29 @@ KeyboardEvent *Sword2Engine::keyboardEvent() {
 	return &_keyboardEvent;
 }
 
-uint32 Sword2Engine::setEventFilter(uint32 filter) {
-	uint32 oldFilter = _eventFilter;
+uint32 Sword2Engine::setInputEventFilter(uint32 filter) {
+	uint32 oldFilter = _inputEventFilter;
 
-	_eventFilter = filter;
+	_inputEventFilter = filter;
 	return oldFilter;
+}
+
+/**
+ * Clear the input events. This is so that we won't get any keyboard repeat
+ * right after using the debugging console.
+ */
+
+void Sword2Engine::clearInputEvents() {
+	_keyboardEvent.pending = false;
+	_keyboardEvent.repeat = 0;
+	_mouseEvent.pending = false;
 }
 
 /**
  * OSystem Event Handler. Full of cross platform goodness and 99% fat free!
  */
 
-void Sword2Engine::parseEvents() {
+void Sword2Engine::parseInputEvents() {
 	OSystem::Event event;
 
 	uint32 now = _system->getMillis();
@@ -482,7 +493,7 @@ void Sword2Engine::parseEvents() {
 	while (_system->pollEvent(event)) {
 		switch (event.type) {
 		case OSystem::EVENT_KEYDOWN:
-			if (!(_eventFilter & RD_KEYDOWN)) {
+			if (!(_inputEventFilter & RD_KEYDOWN)) {
 				_keyboardEvent.pending = true;
 				_keyboardEvent.repeat = now + 400;
 				_keyboardEvent.ascii = event.kbd.ascii;
@@ -494,42 +505,42 @@ void Sword2Engine::parseEvents() {
 			_keyboardEvent.repeat = 0;
 			break;
 		case OSystem::EVENT_MOUSEMOVE:
-			if (!(_eventFilter & RD_KEYDOWN)) {
+			if (!(_inputEventFilter & RD_KEYDOWN)) {
 				_mouse->setPos(event.mouse.x, event.mouse.y - MENUDEEP);
 			}
 			break;
 		case OSystem::EVENT_LBUTTONDOWN:
-			if (!(_eventFilter & RD_LEFTBUTTONDOWN)) {
+			if (!(_inputEventFilter & RD_LEFTBUTTONDOWN)) {
 				_mouseEvent.pending = true;
 				_mouseEvent.buttons = RD_LEFTBUTTONDOWN;
 			}
 			break;
 		case OSystem::EVENT_RBUTTONDOWN:
-			if (!(_eventFilter & RD_RIGHTBUTTONDOWN)) {
+			if (!(_inputEventFilter & RD_RIGHTBUTTONDOWN)) {
 				_mouseEvent.pending = true;
 				_mouseEvent.buttons = RD_RIGHTBUTTONDOWN;
 			}
 			break;
 		case OSystem::EVENT_LBUTTONUP:
-			if (!(_eventFilter & RD_LEFTBUTTONUP)) {
+			if (!(_inputEventFilter & RD_LEFTBUTTONUP)) {
 				_mouseEvent.pending = true;
 				_mouseEvent.buttons = RD_LEFTBUTTONUP;
 			}
 			break;
 		case OSystem::EVENT_RBUTTONUP:
-			if (!(_eventFilter & RD_RIGHTBUTTONUP)) {
+			if (!(_inputEventFilter & RD_RIGHTBUTTONUP)) {
 				_mouseEvent.pending = true;
 				_mouseEvent.buttons = RD_RIGHTBUTTONUP;
 			}
 			break;
 		case OSystem::EVENT_WHEELUP:
-			if (!(_eventFilter & RD_WHEELUP)) {
+			if (!(_inputEventFilter & RD_WHEELUP)) {
 				_mouseEvent.pending = true;
 				_mouseEvent.buttons = RD_WHEELUP;
 			}
 			break;
 		case OSystem::EVENT_WHEELDOWN:
-			if (!(_eventFilter & RD_WHEELDOWN)) {
+			if (!(_inputEventFilter & RD_WHEELDOWN)) {
 				_mouseEvent.pending = true;
 				_mouseEvent.buttons = RD_WHEELDOWN;
 			}

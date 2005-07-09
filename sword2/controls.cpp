@@ -280,7 +280,7 @@ void Dialog::setResult(int result) {
 }
 
 int Dialog::runModal() {
-	uint32 oldFilter = _vm->setEventFilter(0);
+	uint32 oldFilter = _vm->setInputEventFilter(0);
 
 	int i;
 
@@ -386,7 +386,7 @@ int Dialog::runModal() {
 			setResult(0);
 	}
 
-	_vm->setEventFilter(oldFilter);
+	_vm->setInputEventFilter(oldFilter);
 	return _result;
 }
 

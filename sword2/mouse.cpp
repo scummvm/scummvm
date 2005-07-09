@@ -794,21 +794,7 @@ void Mouse::normalMouse() {
 		Logic::_scriptVars[EXIT_CLICK_ID] = 0;
 		Logic::_scriptVars[EXIT_FADING] = 0;
 
-		// WORKAROUND: Examining the lift while at the top of the
-		// pyramid causes the game to hang.
-		//
-		// Actually, what happens is that the elevator's click handler
-		// (action script 2) disables the mouse cursor. Then it checks
-		// if the user clicked the left button, in which case it
-		// triggers the "going down" animation.
-		//
-		// If the user didn't click the left button, the script will
-		// terminate. With the mouse cursor still disabled. Ouch!
-
-		if (_mouseTouching == 2773 && !Logic::_scriptVars[LEFT_BUTTON]) {
-			warning("Working around elevator script bug");
-		} else
-			_vm->_logic->setPlayerActionEvent(CUR_PLAYER_ID, _mouseTouching);
+		_vm->_logic->setPlayerActionEvent(CUR_PLAYER_ID, _mouseTouching);
 
 		byte buf1[NAME_LEN], buf2[NAME_LEN];
 
