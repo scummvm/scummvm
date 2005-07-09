@@ -35,6 +35,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
      support.
    - Fixed the last few known music glitches in Sam & Max. (There are still
      some - probably - minor missing features though.)
+   - Added support for Commodore64 version of Zak McKracken
 
  Sword2:
    - Made the resource manager expire resources more intelligently.
