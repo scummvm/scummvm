@@ -32,7 +32,7 @@
 
 namespace Saga {
 
-int SagaEngine::textDraw(int font_id, SURFACE *ds, const char *string, int text_x, int text_y, int color,
+int SagaEngine::textDraw(int font_id, Surface *ds, const char *string, int text_x, int text_y, int color,
 				int effect_color, int flags) {
 	int string_w;
 	int string_len;
@@ -172,7 +172,7 @@ void SagaEngine::textDestroyList(TEXTLIST *tlist) {
 	return;
 }
 
-int SagaEngine::textDrawList(TEXTLIST *textlist, SURFACE *ds) {
+int SagaEngine::textDrawList(TEXTLIST *textlist, Surface *ds) {
 	TEXTLIST_ENTRY *entry_p;
 
 	assert((textlist != NULL) && (ds != NULL));

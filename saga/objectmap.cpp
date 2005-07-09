@@ -132,7 +132,7 @@ bool HitZone::hitTest(const Point &testPoint) {
 	return false;
 }
 
-void HitZone::draw(SURFACE *ds, int color) {
+void HitZone::draw(Surface *ds, int color) {
 	int i, pointsCount, j;
 	Location location;
 	HitZone::ClickArea *clickArea;
@@ -155,11 +155,11 @@ void HitZone::draw(SURFACE *ds, int color) {
 
 		if (pointsCount == 2) {
 			// 2 points represent a box
-			drawFrame(ds, &points[0], &points[1], color);
+			ds->drawFrame(points[0], points[1], color);
 		} else {
 			if (pointsCount > 2) {
 				// Otherwise draw a polyline
-				drawPolyLine(ds, points, pointsCount, color);
+				ds->drawPolyLine(points, pointsCount, color);
 			}
 		}
 		if (_vm->_scene->getFlags() & kSceneFlagISO) {
@@ -214,7 +214,7 @@ void ObjectMap::freeMem() {
 
 
 
-void ObjectMap::draw(SURFACE *ds, const Point& testPoint, int color, int color2) {
+void ObjectMap::draw(Surface *ds, const Point& testPoint, int color, int color2) {
 	int i;
 	int hitZoneIndex;
 	char txtBuf[32];

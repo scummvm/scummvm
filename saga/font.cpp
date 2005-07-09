@@ -360,7 +360,7 @@ int Font::getStringWidth(int font_id, const char *test_str, size_t test_str_ct, 
 	return width;
 }
 
-int Font::draw(int font_id, SURFACE *ds, const char *draw_str, size_t draw_str_ct,
+int Font::draw(int font_id, Surface *ds, const char *draw_str, size_t draw_str_ct,
 			int text_x, int text_y, int color, int effect_color, int flags) {
 	FONT *font;
 
@@ -387,7 +387,7 @@ int Font::draw(int font_id, SURFACE *ds, const char *draw_str, size_t draw_str_c
 	return SUCCESS;
 }
 
-int Font::outFont(FONT_STYLE * draw_font, SURFACE * ds, const char *draw_str, size_t draw_str_ct,
+int Font::outFont(FONT_STYLE * draw_font, Surface *ds, const char *draw_str, size_t draw_str_ct,
 				  int text_x, int text_y, int color, int flags) {
 	const byte *draw_str_p;
 	byte *c_data_ptr;

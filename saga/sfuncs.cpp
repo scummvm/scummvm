@@ -1192,9 +1192,9 @@ static TEXTLIST_ENTRY *placardTextEntry;
 // Param1: string rid
 void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	int stringId;
-	SURFACE *back_buf = _vm->_gfx->getBackBuffer();
-	static PALENTRY cur_pal[PAL_ENTRIES];
-	PALENTRY *pal;
+	Surface *backBuffer = _vm->_gfx->getBackBuffer();
+	static PalEntry cur_pal[PAL_ENTRIES];
+	PalEntry *pal;
 	EVENT event;
 	EVENT *q_event;
 	
@@ -1238,7 +1238,7 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	event.type = ONESHOT_EVENT;
 	event.code = GRAPHICS_EVENT;
 	event.op = EVENT_FILL_RECT;
-	event.data = back_buf;
+	event.data = backBuffer;
 	event.param = 138;
 	event.param2 = 0;
 	event.param3 = _vm->getSceneHeight();
@@ -1294,8 +1294,8 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 
 // Script function #49 (0x31)
 void Script::sfPlacardOff(SCRIPTFUNC_PARAMS) {
-	static PALENTRY cur_pal[PAL_ENTRIES];
-	PALENTRY *pal;
+	static PalEntry cur_pal[PAL_ENTRIES];
+	PalEntry *pal;
 	EVENT event;
 	EVENT *q_event;
 
@@ -1555,18 +1555,13 @@ void Script::sfGetActorY(SCRIPTFUNC_PARAMS) {
 
 // Script function #62 (0x3E)
 void Script::sfEraseDelta(SCRIPTFUNC_PARAMS) {
-	BUFFER_INFO bufferInfo;
+	Surface *backGroundSurface;
 	BGInfo backGroundInfo;
-	Point backGroundPoint;
 
-	_vm->_render->getBufferInfo(&bufferInfo);
+	backGroundSurface = _vm->_render->getBackGroundSurface();
 	_vm->_scene->getBGInfo(backGroundInfo);
-	backGroundPoint.x = backGroundInfo.bounds.left;
-	backGroundPoint.y = backGroundInfo.bounds.top;
 
-	bufToBuffer(bufferInfo.bg_buf, bufferInfo.bg_buf_w, bufferInfo.bg_buf_h,
-				backGroundInfo.buffer, backGroundInfo.bounds.width(), backGroundInfo.bounds.height(), 
-				NULL, &backGroundPoint);
+	backGroundSurface->blit(backGroundInfo.bounds, backGroundInfo.buffer);
 }
 
 // Script function #63 (0x3F)

@@ -35,7 +35,7 @@ struct PALANIM_ENTRY {
 	uint16 color_count;
 	uint16 cycle;
 	byte *pal_index;
-	COLOR *colors;
+	Color *colors;
 };
 
 struct PALANIM_DATA {

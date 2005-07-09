@@ -124,7 +124,7 @@ int Events::handleContinuous(EVENT *event) {
 	double event_pc = 0.0; // Event completion percentage
 	int event_done = 0;
 
-	BUFFER_INFO buf_info;
+	Surface *backGroundSurface;
 	BGInfo bgInfo;
 
 	event_pc = ((double)event->duration - event->time) / event->duration;
@@ -148,11 +148,11 @@ int Events::handleContinuous(EVENT *event) {
 	case PAL_EVENT:
 		switch (event->op) {
 		case EVENT_BLACKTOPAL:
-			_vm->_gfx->blackToPal((PALENTRY *)event->data, event_pc);
+			_vm->_gfx->blackToPal((PalEntry *)event->data, event_pc);
 			break;
 
 		case EVENT_PALTOBLACK:
-			_vm->_gfx->palToBlack((PALENTRY *)event->data, event_pc);
+			_vm->_gfx->palToBlack((PalEntry *)event->data, event_pc);
 			break;
 		default:
 			break;
@@ -161,11 +161,10 @@ int Events::handleContinuous(EVENT *event) {
 	case TRANSITION_EVENT:
 		switch (event->op) {
 		case EVENT_DISSOLVE:
-			_vm->_render->getBufferInfo(&buf_info);
+			backGroundSurface = _vm->_render->getBackGroundSurface();
 			_vm->_scene->getBGInfo(bgInfo);
-			_vm->transitionDissolve(buf_info.bg_buf, buf_info.bg_buf_w, 
-				buf_info.bg_buf_h, buf_info.bg_buf_w, bgInfo.buffer, bgInfo.bounds.width(), 
-					bgInfo.bounds.height(), 0, 0, 0, event_pc);
+			_vm->transitionDissolve((byte*)backGroundSurface->pixels, backGroundSurface->w, 
+				backGroundSurface->h, bgInfo.buffer, bgInfo.bounds.width(), bgInfo.bounds.height(), 0, 0, 0, event_pc);
 			break;
 		case EVENT_DISSOLVE_BGMASK:
 			// we dissolve it centered.
@@ -174,10 +173,10 @@ int Events::handleContinuous(EVENT *event) {
 			byte *mask_buf;
 			size_t len;
 
-			_vm->_render->getBufferInfo(&buf_info);
+			backGroundSurface = _vm->_render->getBackGroundSurface();
 			_vm->_scene->getBGMaskInfo(w, h, mask_buf, len);
-			_vm->transitionDissolve(buf_info.bg_buf, buf_info.bg_buf_w, 
-					buf_info.bg_buf_h, buf_info.bg_buf_w, mask_buf, w, h, 1, 
+			_vm->transitionDissolve((byte*)backGroundSurface->pixels, backGroundSurface->w, 
+					backGroundSurface->h, mask_buf, w, h, 1, 
 					(_vm->getDisplayWidth() - w) / 2, (_vm->getDisplayHeight() - h) / 2, event_pc);
 			break;
 		default:
@@ -221,11 +220,11 @@ int Events::handleImmediate(EVENT *event) {
 	case PAL_EVENT:
 		switch (event->op) {
 		case EVENT_BLACKTOPAL:
-			_vm->_gfx->blackToPal((PALENTRY *)event->data, event_pc);
+			_vm->_gfx->blackToPal((PalEntry *)event->data, event_pc);
 			break;
 
 		case EVENT_PALTOBLACK:
-			_vm->_gfx->palToBlack((PALENTRY *)event->data, event_pc);
+			_vm->_gfx->palToBlack((PalEntry *)event->data, event_pc);
 			break;
 		default:
 			break;
@@ -250,11 +249,10 @@ int Events::handleImmediate(EVENT *event) {
 }
 
 int Events::handleOneShot(EVENT *event) {
-	SURFACE *back_buf;
+	Surface *backBuffer;
 	ScriptThread *sthread;
 	Rect rect;
 
-	static BGInfo bgInfo;
 
 	if (event->time > 0) {
 		return EVENT_CONTINUE;
@@ -293,29 +291,19 @@ int Events::handleOneShot(EVENT *event) {
 		break;
 	case BG_EVENT:
 		{
-			BUFFER_INFO rbuf_info;
-			Point bg_pt;
+			Surface *backGroundSurface;
+			BGInfo bgInfo;
 
 			if (!(_vm->_scene->getFlags() & kSceneFlagISO)) {
 
-				back_buf = _vm->_gfx->getBackBuffer();
-
-				_vm->_render->getBufferInfo(&rbuf_info);
+				backBuffer = _vm->_gfx->getBackBuffer();
+				backGroundSurface = _vm->_render->getBackGroundSurface();
 				_vm->_scene->getBGInfo(bgInfo);
 
-				bg_pt.x = bgInfo.bounds.left;
-				bg_pt.y = bgInfo.bounds.top;
-
-				bufToBuffer(rbuf_info.bg_buf, rbuf_info.bg_buf_w, rbuf_info.bg_buf_h,
-					bgInfo.buffer, bgInfo.bounds.width(), bgInfo.bounds.height(), NULL, &bg_pt);
+				backGroundSurface->blit(bgInfo.bounds, bgInfo.buffer);
 
 				// If it is inset scene then draw black border
 				if (bgInfo.bounds.width() < _vm->getDisplayWidth() || bgInfo.bounds.height() < _vm->getSceneHeight()) {
-					SURFACE s;
-					s.pixels = rbuf_info.bg_buf;
-					s.w = s.pitch = rbuf_info.bg_buf_w;
-					s.h = rbuf_info.bg_buf_h;
-					s.bytesPerPixel = 1;
 					Common::Rect rect1(2, bgInfo.bounds.height() + 4);
 					Common::Rect rect2(bgInfo.bounds.width() + 4, 2);
 					Common::Rect rect3(2, bgInfo.bounds.height() + 4);
@@ -325,14 +313,14 @@ int Events::handleOneShot(EVENT *event) {
 					rect3.moveTo(bgInfo.bounds.right, bgInfo.bounds.top - 2);
 					rect4.moveTo(bgInfo.bounds.left - 2, bgInfo.bounds.bottom);
 
-					drawRect(&s, rect1, kITEColorBlack);
-					drawRect(&s, rect2, kITEColorBlack);
-					drawRect(&s, rect3, kITEColorBlack);
-					drawRect(&s, rect4, kITEColorBlack);
+					backGroundSurface->drawRect(rect1, kITEColorBlack);
+					backGroundSurface->drawRect(rect2, kITEColorBlack);
+					backGroundSurface->drawRect(rect3, kITEColorBlack);
+					backGroundSurface->drawRect(rect4, kITEColorBlack);
 				}
 
 				if (event->param == SET_PALETTE) {
-					PALENTRY *pal_p;
+					PalEntry *pal_p;
 					_vm->_scene->getBGPal(&pal_p);
 					_vm->_gfx->setPalette(pal_p);
 				}
@@ -450,7 +438,7 @@ int Events::handleOneShot(EVENT *event) {
 			rect.bottom = event->param3;
 			rect.left = event->param4;
 			rect.right = event->param5;
-			drawRect((SURFACE *)event->data, rect, event->param);
+			((Surface *)event->data)->drawRect(rect, event->param);
 			break;
 		case EVENT_SETFLAG:
 			_vm->_render->setFlag(event->param);

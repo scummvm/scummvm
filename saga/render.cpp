@@ -46,37 +46,11 @@ Render::Render(SagaEngine *vm, OSystem *system) {
 	_system = system;
 	_initialized = false;
 
-	int tmp_w, tmp_h, tmp_bytepp;
-
-
 	// Initialize FPS timer callback
 	Common::g_timer->installTimerProc(&fpsTimerCallback, 1000000, this);
 
-	// Create background buffer 
-	_bg_buf_w = _vm->getDisplayWidth();
-	_bg_buf_h = _vm->getDisplayHeight();
-	_bg_buf = (byte *)calloc(_vm->getDisplayWidth(), _vm->getDisplayHeight());
+	_backGroundSurface.create(_vm->getDisplayWidth(), _vm->getDisplayHeight(), 1);
 
-	if (_bg_buf == NULL) {
-		memoryError("Render::Render");
-	}
-
-	// Allocate temp buffer for animation decoding, 
-	// graphics scalers (2xSaI), etc.
-	tmp_w = _vm->getDisplayWidth();
-	tmp_h = _vm->getDisplayHeight() + 4; // BG unbanking requres extra rows
-	tmp_bytepp = 1;
-
-	_tmp_buf = (byte *)calloc(1, tmp_w * tmp_h * tmp_bytepp);
-	if (_tmp_buf == NULL) {
-		free(_bg_buf);
-		return;
-	}
-
-	_tmp_buf_w = tmp_w;
-	_tmp_buf_h = tmp_h;
-
-	_backbuf_surface = _vm->_gfx->getBackBuffer();
 	_flags = 0;
 
 	_initialized = true;
@@ -84,8 +58,7 @@ Render::Render(SagaEngine *vm, OSystem *system) {
 
 Render::~Render(void) {
 	Common::g_timer->removeTimerProc(&fpsTimerCallback);
-	free(_bg_buf);
-	free(_tmp_buf);
+	_backGroundSurface.free();
 
 	_initialized = false;
 }
@@ -94,19 +67,17 @@ bool Render::initialized() {
 	return _initialized;
 }
 
-int Render::drawScene() {
-	SURFACE *backbuf_surface;
+void Render::drawScene() {
+	Surface *backBufferSurface;
 	char txt_buf[20];
 	int fps_width;
 	Point mouse_pt;
 
-	if (!_initialized) {
-		return FAILURE;
-	}
+	assert(_initialized);
 
-	_framecount++;
+	_frameCount++;
 
-	backbuf_surface = _backbuf_surface;
+	backBufferSurface = _vm->_gfx->getBackBuffer();
 
 	// Get mouse coordinates
 	mouse_pt = _vm->mousePos();
@@ -127,9 +98,9 @@ int Render::drawScene() {
 
 			if (getFlags() & RF_OBJECTMAP_TEST) {
 				if (_vm->_scene->_objectMap)
-					_vm->_scene->_objectMap->draw(backbuf_surface, mouse_pt, kITEColorBrightWhite, kITEColorBlack);
+					_vm->_scene->_objectMap->draw(backBufferSurface, mouse_pt, kITEColorBrightWhite, kITEColorBlack);
 				if (_vm->_scene->_actionMap)
-					_vm->_scene->_actionMap->draw(backbuf_surface, mouse_pt, kITEColorRed, kITEColorBlack);
+					_vm->_scene->_actionMap->draw(backBufferSurface, mouse_pt, kITEColorRed, kITEColorBlack);
 			}
 			if (getFlags() & RF_ACTOR_PATH_TEST) {
 				_vm->_actor->drawPathTest();
@@ -158,7 +129,7 @@ int Render::drawScene() {
 	}
 
 	// Draw queued text strings
-	_vm->textDrawList(_vm->_scene->_textList, backbuf_surface);
+	_vm->textDrawList(_vm->_scene->_textList, backBufferSurface);
 
 	// Handle user input
 	_vm->processInput();
@@ -167,7 +138,7 @@ int Render::drawScene() {
 	if (_flags & RF_SHOW_FPS) {
 		sprintf(txt_buf, "%d", _fps);
 		fps_width = _vm->_font->getStringWidth(SMALL_FONT_ID, txt_buf, 0, FONT_NORMAL);
-		_vm->_font->draw(SMALL_FONT_ID, backbuf_surface, txt_buf, 0, backbuf_surface->w - fps_width, 2,
+		_vm->_font->draw(SMALL_FONT_ID, backBufferSurface, txt_buf, 0, backBufferSurface->w - fps_width, 2,
 					kITEColorBrightWhite, kITEColorBlack, FONT_OUTLINE);
 	}
 
@@ -175,8 +146,8 @@ int Render::drawScene() {
 	if (_flags & RF_RENDERPAUSE) {
 		int msg_len = strlen(PAUSEGAME_MSG);
 		int msg_w = _vm->_font->getStringWidth(BIG_FONT_ID, PAUSEGAME_MSG, msg_len, FONT_OUTLINE);
-		_vm->_font->draw(BIG_FONT_ID, backbuf_surface, PAUSEGAME_MSG, msg_len,
-				(backbuf_surface->w - msg_w) / 2, 90, kITEColorBrightWhite, kITEColorBlack, FONT_OUTLINE);
+		_vm->_font->draw(BIG_FONT_ID, backBufferSurface, PAUSEGAME_MSG, msg_len,
+				(backBufferSurface->w - msg_w) / 2, 90, kITEColorBrightWhite, kITEColorBlack, FONT_OUTLINE);
 	}
 
 	// Update user interface
@@ -185,32 +156,19 @@ int Render::drawScene() {
 
 	// Display text formatting test, if applicable
 	if (_flags & RF_TEXT_TEST) {
-		_vm->textDraw(MEDIUM_FONT_ID, backbuf_surface, test_txt, mouse_pt.x, mouse_pt.y,
+		_vm->textDraw(MEDIUM_FONT_ID, backBufferSurface, test_txt, mouse_pt.x, mouse_pt.y,
 				kITEColorBrightWhite, kITEColorBlack, FONT_OUTLINE | FONT_CENTERED);
 	}
 
 	// Display palette test, if applicable
 	if (_flags & RF_PALETTE_TEST) {
-		drawPalette(backbuf_surface);
+		backBufferSurface->drawPalette();
 	}
 
-	_system->copyRectToScreen((byte *)backbuf_surface->pixels, backbuf_surface->w, 0, 0, 
-							  backbuf_surface->w, backbuf_surface->h);
+	_system->copyRectToScreen((byte *)backBufferSurface->pixels, backBufferSurface->w, 0, 0, 
+							  backBufferSurface->w, backBufferSurface->h);
 
 	_system->updateScreen();
-	return SUCCESS;
-}
-
-unsigned int Render::getFrameCount() {
-	return _framecount;
-}
-
-unsigned int Render::resetFrameCount() {
-	unsigned int framecount = _framecount;
-
-	_framecount = 0;
-
-	return framecount;
 }
 
 void Render::fpsTimerCallback(void *refCon) {
@@ -218,38 +176,8 @@ void Render::fpsTimerCallback(void *refCon) {
 }
 
 void Render::fpsTimer(void) {
-	_fps = _framecount;
-	_framecount = 0;
-}
-
-unsigned int Render::getFlags() {
-	return _flags;
-}
-
-void Render::setFlag(unsigned int flag) {
-	_flags |= flag;
-}
-
-void Render::clearFlag(unsigned int flag) {
-	_flags &= ~flag;
-}
-
-void Render::toggleFlag(unsigned int flag) {
-	_flags ^= flag;
-}
-
-int Render::getBufferInfo(BUFFER_INFO *bufinfo) {
-	assert(bufinfo != NULL);
-
-	bufinfo->bg_buf = _bg_buf;
-	bufinfo->bg_buf_w = _bg_buf_w;
-	bufinfo->bg_buf_h = _bg_buf_h;
-
-	bufinfo->tmp_buf = _tmp_buf;
-	bufinfo->tmp_buf_w = _tmp_buf_w;
-	bufinfo->tmp_buf_h = _tmp_buf_h;
-
-	return SUCCESS;
+	_fps = _frameCount;
+	_frameCount = 0;
 }
 
 } // End of namespace Saga

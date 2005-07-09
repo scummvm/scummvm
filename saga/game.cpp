@@ -122,7 +122,7 @@ static GameDisplayInfo ITE_DisplayInfo = {
 	0,				// status x offset
 	137,			// status y offset
 	320,			// status width
-	12,				// status height
+	11,				// status height
 	2,				// status text y offset
 	186,			// status text color
 	15,				// status BG color

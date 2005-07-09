@@ -101,7 +101,7 @@ class Font {
  public:
 	Font(SagaEngine *vm);
 	~Font(void);
-	int draw(int font_id, SURFACE *ds, const char *draw_str, size_t draw_str_len,
+	int draw(int font_id, Surface *ds, const char *draw_str, size_t draw_str_len,
 				  int text_x, int text_y, int color, int effect_color, int flags);
 	int getStringWidth(int font_id, const char *test_str, size_t test_str_ct, int flags);
 	int getHeight(int font_id);
@@ -110,7 +110,7 @@ class Font {
 
 	int loadFont(uint32 fontResourceId);
 	FONT_STYLE *createOutline(FONT_STYLE * src_font);
-	int outFont(FONT_STYLE *font, SURFACE * ds, const char *draw_str, size_t draw_str_ct,
+	int outFont(FONT_STYLE *font, Surface *ds, const char *draw_str, size_t draw_str_ct,
 				int text_x, int text_y, int color, int flags);
 	int getByteLen(int num_bits);
 

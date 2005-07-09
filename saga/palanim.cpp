@@ -95,13 +95,13 @@ int PalAnim::loadPalAnim(const byte *resdata, size_t resdata_len) {
 
 		debug(2, "PalAnim::loadPalAnim(): Entry %d: Loading %d SAGA_COLOR structures.", i, color_count);
 
-		test_p = calloc(1, sizeof(COLOR) * color_count);
+		test_p = calloc(1, sizeof(Color) * color_count);
 		if (test_p == NULL) {
 			warning("PalAnim::loadPalAnim(): Allocation failure");
 			return MEM;
 		}
 
-		_entries[i].colors = (COLOR *)test_p;
+		_entries[i].colors = (Color *)test_p;
 
 		for (p = 0; p < pal_count; p++) {
 			_entries[i].pal_index[p] = readS.readByte();
@@ -136,7 +136,7 @@ int PalAnim::cycleStart() {
 }
 
 int PalAnim::cycleStep(int vectortime) {
-	static PALENTRY pal[256];
+	static PalEntry pal[256];
 	uint16 pal_index;
 	uint16 col_index;
 

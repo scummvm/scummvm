@@ -40,10 +40,10 @@ struct ClipData {
 	Point destPoint;
 
 	// output members
-	Point sourceDraw;
-	Point destDraw;
-	int width;
-	int height;
+	Point drawSource;
+	Point drawDest;
+	int drawWidth;
+	int drawHeight;
 
 	bool calcClip() {
 		Common::Rect s;
@@ -61,33 +61,55 @@ struct ClipData {
 			return false;
 		}
 
-		sourceDraw.x = s.left - sourceRect.left - destPoint.x;
-		sourceDraw.y = s.top - sourceRect.top - destPoint.y;
-		destDraw.x = s.left;
-		destDraw.y = s.top;
-		width = s.width();
-		height = s.height();
+		drawSource.x = s.left - sourceRect.left - destPoint.x;
+		drawSource.y = s.top - sourceRect.top - destPoint.y;
+		drawDest.x = s.left;
+		drawDest.y = s.top;
+		drawWidth = s.width();
+		drawHeight = s.height();
 
 		return true;
 	}
 };
 
-struct PALENTRY {
+struct PalEntry {
 	byte red;
 	byte green;
 	byte blue;
 };
 
-struct COLOR {
+struct Color {
 	int red;
 	int green;
 	int blue;
 	int alpha;
 };
 
-struct SURFACE : Graphics::Surface {
-	Rect clip_rect;
+struct Surface : Graphics::Surface {
+	
+	void drawPalette();
+	void drawPolyLine(const Point *points, int count, int color);
+	void blit(const Common::Rect &destRect, const byte *sourceBuffer);
+
+	void getRect(Common::Rect &rect) {
+		rect.left = rect.top = 0;
+		rect.right = w;
+		rect.bottom = h;
+	}
+	void drawFrame(const Common::Point &p1, const Common::Point &p2, int color) {
+		Common::Rect rect(MIN(p1.x, p2.x), MIN(p1.y, p2.y), MAX(p1.x, p2.x) + 1, MAX(p1.y, p2.y) + 1);
+		frameRect(rect, color);
+	}
+	void drawRect(const Common::Rect &destRect, int color) {
+		Common::Rect rect(w , h);
+		rect.clip(destRect);
+
+		if (rect.isValidRect()) {
+			fillRect(rect, color);
+		}		
+	}
 };
+
 
 #define PAL_ENTRIES 256
 
@@ -97,33 +119,29 @@ struct SURFACE : Graphics::Surface {
 #define CURSOR_ORIGIN_X 4
 #define CURSOR_ORIGIN_Y 4
 
-int drawPalette(SURFACE *dst_s);
-int bufToSurface(SURFACE *ds, const byte *src, int src_w, int src_h, Rect *src_rect, Point *dst_pt);
-int bufToBuffer(byte * dst_buf, int dst_w, int dst_h, const byte *src,
-	int src_w, int src_h, Rect *src_rect, Point *dst_pt);
-int drawRect(SURFACE *ds, Rect &dst_rect, int color);
-int drawFrame(SURFACE *ds, const Point *p1, const Point *p2, int color);
-int drawPolyLine(SURFACE *ds, const Point *pts, int pt_ct, int draw_color);
-
 bool hitTestPoly(const Point *points, unsigned int npoints, const Point& test_point);
 
 class Gfx {
 public:
 
 	Gfx(OSystem *system, int width, int height, GameDetector &detector);
-	SURFACE *getBackBuffer();
-	int setPalette(PALENTRY *pal);
-	int getCurrentPal(PALENTRY *src_pal);
-	int palToBlack(PALENTRY *src_pal, double percent);
-	int blackToPal(PALENTRY *src_pal, double percent);
+	~Gfx();
+	Surface *getBackBuffer() {
+		return &_backBuffer;
+	}
+
+	void setPalette(PalEntry *pal);
+	void getCurrentPal(PalEntry *src_pal);
+	void palToBlack(PalEntry *src_pal, double percent);
+	void blackToPal(PalEntry *src_pal, double percent);
 	void updateCursor() { setCursor(); }
 	void showCursor(bool state);
 
 private:
 	void setCursor();
 	int _init;
-	SURFACE _back_buf;
-	byte _cur_pal[PAL_ENTRIES * 4];
+	Surface _backBuffer;
+	byte _currentPal[PAL_ENTRIES * 4];
 	OSystem *_system;
 };
 

@@ -110,9 +110,9 @@ struct InterfacePanel {
 	
 	void getRect(Rect &rect) {
 		rect.left = x;
-		rect.right = rect.left + imageWidth;
 		rect.top = y;
-		rect.bottom = rect.top + imageHeight;
+		rect.setWidth(imageWidth);
+		rect.setHeight(imageHeight);
 	}
  
 	void calcPanelButtonRect(const PanelButton* panelButton, Rect &rect) {
@@ -244,7 +244,7 @@ public:
 private:
 	static void textInputRepeatCallback(void *refCon);
 
-	void drawInventory(SURFACE *backBuffer);
+	void drawInventory(Surface *backBuffer);
 	void updateInventory(int pos);
 	void inventoryChangePos(int chg);
 	void inventorySetPos(int key);
@@ -322,18 +322,18 @@ private:
 	void setLoad(PanelButton *panelButton);
 	void setSave(PanelButton *panelButton);
 
-	void drawTextInput(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton);
-	void drawPanelText(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton);
-	void drawPanelButtonText(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton);
+	void drawTextInput(Surface *ds, InterfacePanel *panel, PanelButton *panelButton);
+	void drawPanelText(Surface *ds, InterfacePanel *panel, PanelButton *panelButton);
+	void drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelButton *panelButton);
 	enum ButtonKind {
 		kButton,
 		kSlider,
 		kEdit
 	};
-	void drawButtonBox(SURFACE *ds, const Rect &rect, ButtonKind kind, bool down);
-	void drawPanelButtonArrow(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton);
-	void drawVerbPanelText(SURFACE *ds, PanelButton *panelButton, int textColor, int textShadowColor);
-	void drawVerbPanel(SURFACE *backBuffer, PanelButton* panelButton);
+	void drawButtonBox(Surface *ds, const Rect &rect, ButtonKind kind, bool down);
+	void drawPanelButtonArrow(Surface *ds, InterfacePanel *panel, PanelButton *panelButton);
+	void drawVerbPanelText(Surface *ds, PanelButton *panelButton, int textColor, int textShadowColor);
+	void drawVerbPanel(Surface *backBuffer, PanelButton* panelButton);
 	void calcOptionSaveSlider();
 	void processTextInput(uint16 ascii);
 	void processStatusTextInput(uint16 ascii);
@@ -350,7 +350,7 @@ public:
 	void converseSetPos(int key);
 
 private:
-	void converseDisplayTextLines(SURFACE *ds);
+	void converseDisplayTextLines(Surface *ds);
 	PanelButton *getPanelButtonByVerbType(int verb) {
 		if ((verb < 0) || (verb >= kVerbTypesMax)) {
 			error("Interface::getPanelButtonByVerbType wrong verb");
@@ -442,7 +442,7 @@ private:
 	int _textInputRepeatPhase;
 	uint16 _textInputRepeatChar;
 
-	PALENTRY _mapSavedPal[PAL_ENTRIES];
+	PalEntry _mapSavedPal[PAL_ENTRIES];
 	bool _mapPanelCrossHairState;
 };
 

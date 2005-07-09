@@ -500,7 +500,7 @@ int Interface::loadScenePortraits(int resourceId) {
 	return _vm->_sprite->loadList(resourceId, _scenePortraits);
 }
 
-void Interface::drawVerbPanel(SURFACE *backBuffer, PanelButton* panelButton) {
+void Interface::drawVerbPanel(Surface *backBuffer, PanelButton* panelButton) {
 	PanelButton * rightButtonVerbPanelButton;
 	PanelButton * currentVerbPanelButton;
 	int textColor;
@@ -534,12 +534,12 @@ void Interface::drawVerbPanel(SURFACE *backBuffer, PanelButton* panelButton) {
 }
 
 void Interface::draw() {
-	SURFACE *backBuffer;
+	Surface *backBuffer;
 	int i;
 
 	Point leftPortraitPoint;
 	Point rightPortraitPoint;	
-	Point origin;
+	Rect rect;
 
 	backBuffer = _vm->_gfx->getBackBuffer();
 
@@ -551,10 +551,9 @@ void Interface::draw() {
 
 	if (_panelMode == kPanelMain) {
 
-		origin.x = _mainPanel.x;
-		origin.y = _mainPanel.y;
+		_mainPanel.getRect(rect);		
+		backBuffer->blit(rect, _mainPanel.image);
 
-		bufToSurface(backBuffer, _mainPanel.image, _mainPanel.imageWidth, _mainPanel.imageHeight, NULL, &origin);
 		for (i = 0; i < kVerbTypesMax; i++) {
 			if (_verbTypeToPanelButton[i] != NULL) {
 				drawVerbPanel(backBuffer, _verbTypeToPanelButton[i]);
@@ -563,11 +562,8 @@ void Interface::draw() {
 	} else {
 		if (_panelMode == kPanelConverse) {	
 
-			origin.x = _conversePanel.x;
-			origin.y = _conversePanel.y;
-
-			bufToSurface(backBuffer, _conversePanel.image, _conversePanel.imageWidth,
-				_conversePanel.imageHeight, NULL, &origin);
+			_conversePanel.getRect(rect);
+			backBuffer->blit(rect, _conversePanel.image);
 
 			converseDisplayTextLines(backBuffer);
 		}
@@ -633,7 +629,7 @@ void Interface::calcOptionSaveSlider() {
 	_optionSaveRectBottom.right--;
 }
 
-void Interface::drawPanelText(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton) {
+void Interface::drawPanelText(Surface *ds, InterfacePanel *panel, PanelButton *panelButton) {
 	const char *text;
 	int textWidth;
 	Rect rect;
@@ -651,22 +647,20 @@ void Interface::drawPanelText(SURFACE *ds, InterfacePanel *panel, PanelButton *p
 
 void Interface::drawOption() {
 	const char *text;
-	SURFACE *backBuffer;
+	Surface *backBuffer;
 	int i;
 	int fontHeight;
 	uint j, idx;
 	int fgColor;
 	int bgColor;
-	Point origin;
 	Rect rect;
 	Rect rect2;
 	PanelButton *panelButton;
 
 	backBuffer = _vm->_gfx->getBackBuffer();
-	origin.x = _vm->getDisplayInfo().optionPanelXOffset;
-	origin.y = _vm->getDisplayInfo().optionPanelYOffset;
 
-	bufToSurface(backBuffer, _optionPanel.image, _optionPanel.imageWidth, _optionPanel.imageHeight, NULL, &origin);
+	_optionPanel.getRect(rect);
+	backBuffer->blit(rect, _optionPanel.image);
 
 	for (i = 0; i < _optionPanel.buttonsCount; i++) {		
 		panelButton = &_optionPanel.buttons[i];
@@ -679,13 +673,13 @@ void Interface::drawOption() {
 	}	
 
 	if (_optionSaveRectTop.height() > 0) {
-		drawRect(backBuffer, _optionSaveRectTop, kITEColorDarkGrey);
+		backBuffer->drawRect(_optionSaveRectTop, kITEColorDarkGrey);
 	}
 	
 	drawButtonBox(backBuffer, _optionSaveRectSlider, kSlider, _optionSaveFileSlider->state > 0);
 
 	if (_optionSaveRectBottom.height() > 0) {
-		drawRect(backBuffer, _optionSaveRectBottom, kITEColorDarkGrey);
+		backBuffer->drawRect(_optionSaveRectBottom, kITEColorDarkGrey);
 	}
 
 	_optionPanel.calcPanelButtonRect(_optionSaveFilePanel, rect);
@@ -713,7 +707,7 @@ void Interface::drawOption() {
 }
 
 void Interface::drawQuit() {
-	SURFACE *backBuffer;
+	Surface *backBuffer;
 	Rect rect;
 	int i;
 	PanelButton *panelButton;
@@ -773,7 +767,7 @@ void Interface::setQuit(PanelButton *panelButton) {
 }
 
 void Interface::drawLoad() {
-	SURFACE *backBuffer;
+	Surface *backBuffer;
 	Rect rect;
 	int i;
 	PanelButton *panelButton;
@@ -936,7 +930,7 @@ void Interface::processTextInput(uint16 ascii) {
 	}
 }
 
-void Interface::drawTextInput(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton) {
+void Interface::drawTextInput(Surface *ds, InterfacePanel *panel, PanelButton *panelButton) {
 	Rect rect;
 	char ch[2];
 	int fgColor;
@@ -970,7 +964,7 @@ void Interface::drawTextInput(SURFACE *ds, InterfacePanel *panel, PanelButton *p
 }
 
 void Interface::drawSave() {
-	SURFACE *backBuffer;
+	Surface *backBuffer;
 	Rect rect;
 	int i;
 	PanelButton *panelButton;
@@ -1305,7 +1299,7 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 }
 
 void Interface::drawStatusBar() {
-	SURFACE *backBuffer;
+	Surface *backBuffer;
 	Rect rect;
 
 	int string_w;
@@ -1327,7 +1321,7 @@ void Interface::drawStatusBar() {
 	rect.right = rect.left + _vm->getDisplayWidth();
 	rect.bottom = rect.top + _vm->getDisplayInfo().statusHeight;
 
-	drawRect(backBuffer, rect, _vm->getDisplayInfo().statusBGColor);
+	backBuffer->drawRect(rect, _vm->getDisplayInfo().statusBGColor);
 
 	string_w = _vm->_font->getStringWidth(SMALL_FONT_ID, _statusText, 0, 0);
 
@@ -1532,7 +1526,7 @@ int Interface::inventoryItemPosition(int objectId) {
 	return -1;
 }
 
-void Interface::drawInventory(SURFACE *backBuffer) {
+void Interface::drawInventory(Surface *backBuffer) {
 	if (_panelMode != kPanelMain)
 		return;
 	int i;
@@ -1576,7 +1570,7 @@ void Interface::setVerbState(int verb, int state) {
 	draw();
 }
 
-void Interface::drawButtonBox(SURFACE *ds, const Rect& rect, ButtonKind kind, bool down) {	
+void Interface::drawButtonBox(Surface *ds, const Rect& rect, ButtonKind kind, bool down) {	
 	byte cornerColor;
 	byte frameColor;
 	byte fillColor;
@@ -1670,7 +1664,7 @@ void Interface::drawButtonBox(SURFACE *ds, const Rect& rect, ButtonKind kind, bo
 	ds->fillRect(fill, solidColor);
 }
 
-void Interface::drawPanelButtonText(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton) {
+void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelButton *panelButton) {
 	const char *text;
 	int textId;
 	int textWidth;
@@ -1712,7 +1706,7 @@ void Interface::drawPanelButtonText(SURFACE *ds, InterfacePanel *panel, PanelBut
 		textColor, _vm->getDisplayInfo().verbTextShadowColor, FONT_SHADOW);
 }
 
-void Interface::drawPanelButtonArrow(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton) {
+void Interface::drawPanelButtonArrow(Surface *ds, InterfacePanel *panel, PanelButton *panelButton) {
 	Point point;
 	int spriteNumber;
 
@@ -1732,7 +1726,7 @@ void Interface::drawPanelButtonArrow(SURFACE *ds, InterfacePanel *panel, PanelBu
 	_vm->_sprite->draw(ds, _vm->getDisplayClip(), _vm->_sprite->_mainSprites, spriteNumber, point, 256);
 }
 
-void Interface::drawVerbPanelText(SURFACE *ds, PanelButton *panelButton, int textColor, int textShadowColor) {
+void Interface::drawVerbPanelText(Surface *ds, PanelButton *panelButton, int textColor, int textShadowColor) {
 	const char *text;
 	int textWidth;
 	Point point;
@@ -1858,7 +1852,7 @@ void Interface::converseSetTextLines(int row) {
 	}
 }
 
-void Interface::converseDisplayTextLines(SURFACE *ds) {
+void Interface::converseDisplayTextLines(Surface *ds) {
 	int relPos;
 	byte foregnd;
 	byte backgnd;
@@ -1878,7 +1872,7 @@ void Interface::converseDisplayTextLines(SURFACE *ds) {
 	rect.moveTo(_conversePanel.x + _conversePanel.buttons[0].xOffset, 
 		_conversePanel.y + _conversePanel.buttons[0].yOffset);
 
-	drawRect(ds, rect, kITEColorDarkGrey); //fill bullet place
+	ds->drawRect(rect, kITEColorDarkGrey); //fill bullet place
 	
 	for (int i = 0; i < CONVERSE_TEXT_LINES; i++) {
 		relPos = _converseStartPos + i;
@@ -1897,7 +1891,7 @@ void Interface::converseDisplayTextLines(SURFACE *ds) {
 
 		_conversePanel.calcPanelButtonRect(&_conversePanel.buttons[i], rect);
 		rect.left += 8;
-		drawRect(ds, rect, backgnd);
+		ds->drawRect(rect, backgnd);
 
 		str = _converseText[relPos].text;
 
@@ -2023,20 +2017,19 @@ void Interface::loadState(Common::InSaveFile *in) {
 void Interface::mapPanelShow() {
 	byte *resource;
 	size_t resourceLength, imageLength;
-	SURFACE *backBuffer;
-	Point origin;
+	Surface *backBuffer;
+	Rect rect;
 	byte *image;
 	int imageWidth, imageHeight;
 	int result;
 	const byte *pal;
-	PALENTRY cPal[PAL_ENTRIES];
+	PalEntry cPal[PAL_ENTRIES];
 
 	_vm->_gfx->showCursor(false);
 
 	backBuffer = _vm->_gfx->getBackBuffer();
 
-	origin.x = 0;
-	origin.y = 0;
+	rect.left = rect.top = 0;
 
 	result = RSC_LoadResource(_interfaceContext, RID_ITE_TYCHO_MAP, &resource, &resourceLength);
 	if ((result != SUCCESS) || (resourceLength == 0)) {
@@ -2059,10 +2052,13 @@ void Interface::mapPanelShow() {
 	for (int i = 0; i < PAL_ENTRIES; i++) {
 		cPal[i].red = *pal++;
 		cPal[i].green = *pal++;
-		cPal[i].blue = *pal++;
+		cPal[i].blue = *pal++;	
 	}
 
-	bufToSurface(backBuffer, image, imageWidth, imageHeight, NULL, &origin);
+	rect.setWidth(imageWidth);
+	rect.setHeight(imageHeight);
+
+	backBuffer->blit(rect, image);
 
 	// Evil Evil
 	for (int i = 0; i < 6 ; i++) {
@@ -2080,7 +2076,7 @@ void Interface::mapPanelShow() {
 }
 
 void Interface::mapPanelClean() {
-	PALENTRY pal[PAL_ENTRIES];
+	PalEntry pal[PAL_ENTRIES];
 
 	_vm->_gfx->getCurrentPal(pal);
 
@@ -2104,7 +2100,7 @@ void Interface::mapPanelClean() {
 }
 
 void Interface::mapPanelDrawCrossHair() {
-	SURFACE *backBuffer;
+	Surface *backBuffer;
 
 	backBuffer = _vm->_gfx->getBackBuffer();
 	_mapPanelCrossHairState = !_mapPanelCrossHairState;

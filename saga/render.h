@@ -44,28 +44,32 @@ enum RENDER_FLAGS {
 	RF_DISABLE_ACTORS = (1 << 9)
 };
 
-struct BUFFER_INFO {
-	byte *bg_buf;
-	int bg_buf_w;
-	int bg_buf_h;
-	byte *tmp_buf;
-	int tmp_buf_w;
-	int tmp_buf_h;
-};
-
 class Render {
 public:
 	Render(SagaEngine *vm, OSystem *system);
 	~Render(void);
 	bool initialized();
-	int drawScene(void);
-	unsigned int getFlags(void);
-	void setFlag(unsigned int);
-	void clearFlag(unsigned int);
-	void toggleFlag(unsigned int);
-	unsigned int getFrameCount(void);
-	unsigned int resetFrameCount(void);
-	int getBufferInfo(BUFFER_INFO *);
+	void drawScene(void);
+
+	unsigned int getFlags() const {
+		return _flags;
+	}
+
+	void setFlag(unsigned int flag) {
+		_flags |= flag;
+	}
+
+	void clearFlag(unsigned int flag) {
+		_flags &= ~flag;
+	}
+
+	void toggleFlag(unsigned int flag) {
+		_flags ^= flag;
+	}
+
+	Surface *getBackGroundSurface() {
+		return &_backGroundSurface;
+	}
 
 private:
 	static void fpsTimerCallback(void *refCon);
@@ -76,19 +80,10 @@ private:
 	bool _initialized;
 
 	// Module data
-	SURFACE *_backbuf_surface;
-
-	byte *_bg_buf;
-	int _bg_buf_w;
-	int _bg_buf_h;
-	byte *_tmp_buf;
-	int _tmp_buf_w;
-	int _tmp_buf_h;
-
-	SpriteList *_test_sprite;
+	Surface _backGroundSurface;
 
 	unsigned int _fps;
-	unsigned int _framecount;
+	unsigned int _frameCount;
 	uint32 _flags;
 };
 

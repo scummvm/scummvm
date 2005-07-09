@@ -377,14 +377,11 @@ int16 IsoMap::findMulti(int16 tileIndex, int16 absU, int16 absV, int16 absH) {
 	return 1;
 }
 
-int IsoMap::draw(SURFACE *ds) {
+void IsoMap::draw(Surface *ds) {
 	
-	Rect isoRect(_vm->_scene->getSceneClip());
-	drawRect(ds, isoRect, 0);
-	_tileClip = isoRect;
+	_tileClip = _vm->_scene->getSceneClip();
+	ds->drawRect(_tileClip, 0);
 	drawTiles(ds, NULL);
-
-	return SUCCESS;
 }
 
 void IsoMap::setMapPosition(int x, int y) {
@@ -392,7 +389,7 @@ void IsoMap::setMapPosition(int x, int y) {
 	_mapPosition.y = y;
 }
 
-void IsoMap::drawSprite(SURFACE *ds, SpriteList &spriteList, int spriteNumber, const Location &location, const Point &screenPosition, int scale) {
+void IsoMap::drawSprite(Surface *ds, SpriteList &spriteList, int spriteNumber, const Location &location, const Point &screenPosition, int scale) {
 	int width;
 	int height;
 	int xAlign;
@@ -429,7 +426,7 @@ void IsoMap::drawSprite(SURFACE *ds, SpriteList &spriteList, int spriteNumber, c
 }
 
 
-void IsoMap::drawTiles(SURFACE *ds,  const Location *location) {
+void IsoMap::drawTiles(Surface *ds,  const Location *location) {
 	Point view1;
 	Point fineScroll;
 	Point tileScroll;
@@ -551,7 +548,7 @@ void IsoMap::drawTiles(SURFACE *ds,  const Location *location) {
 
 }
 
-void IsoMap::drawSpriteMetaTile(SURFACE *ds, uint16 metaTileIndex, const Point &point, Location &location, int16 absU, int16 absV) {
+void IsoMap::drawSpriteMetaTile(Surface *ds, uint16 metaTileIndex, const Point &point, Location &location, int16 absU, int16 absV) {
 	MetaTileData * metaTile;
 	uint16 high;
 	int16 platformIndex;
@@ -578,7 +575,7 @@ void IsoMap::drawSpriteMetaTile(SURFACE *ds, uint16 metaTileIndex, const Point &
 	}	
 }
 
-void IsoMap::drawMetaTile(SURFACE *ds, uint16 metaTileIndex, const Point &point, int16 absU, int16 absV) {
+void IsoMap::drawMetaTile(Surface *ds, uint16 metaTileIndex, const Point &point, int16 absU, int16 absV) {
 	MetaTileData * metaTile;
 	uint16 high;
 	int16 platformIndex;
@@ -605,7 +602,7 @@ void IsoMap::drawMetaTile(SURFACE *ds, uint16 metaTileIndex, const Point &point,
 	}	
 }
 
-void IsoMap::drawSpritePlatform(SURFACE *ds, uint16 platformIndex, const Point &point, const Location &location, int16 absU, int16 absV, int16 absH) {
+void IsoMap::drawSpritePlatform(Surface *ds, uint16 platformIndex, const Point &point, const Location &location, int16 absU, int16 absV, int16 absH) {
 	TilePlatformData *tilePlatform;
 	int16 u, v;
 	Point s;
@@ -660,7 +657,7 @@ void IsoMap::drawSpritePlatform(SURFACE *ds, uint16 platformIndex, const Point &
 	}
 }
 
-void IsoMap::drawPlatform(SURFACE *ds, uint16 platformIndex, const Point &point, int16 absU, int16 absV, int16 absH) {
+void IsoMap::drawPlatform(Surface *ds, uint16 platformIndex, const Point &point, int16 absU, int16 absV, int16 absH) {
 	TilePlatformData *tilePlatform;
 	int16 u, v;
 	Point s;
@@ -716,7 +713,7 @@ void IsoMap::drawPlatform(SURFACE *ds, uint16 platformIndex, const Point &point,
 #define THRESH8			8
 #define THRESH16		16
 
-void IsoMap::drawTile(SURFACE *ds, uint16 tileIndex, const Point &point, const Location *location) {
+void IsoMap::drawTile(Surface *ds, uint16 tileIndex, const Point &point, const Location *location) {
 	const byte *tilePointer;
 	const byte *readPointer;
 	byte *drawPointer;

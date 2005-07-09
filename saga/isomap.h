@@ -158,8 +158,8 @@ public:
 	void loadMetaTiles(const byte * resourcePointer, size_t resourceLength);
 	void loadMulti(const byte * resourcePointer, size_t resourceLength);
 	void freeMem();
-	int draw(SURFACE *ds);
-	void drawSprite(SURFACE *ds, SpriteList &spriteList, int spriteNumber, const Location &location, const Point &screenPosition, int scale);
+	void draw(Surface *ds);
+	void drawSprite(Surface *ds, SpriteList &spriteList, int spriteNumber, const Location &location, const Point &screenPosition, int scale);
 	void adjustScroll(bool jump);
 	void tileCoordsToScreenPoint(const Location &location, Point &position) {
 		position.x = location.u() - location.v() + (128 * SAGA_TILEMAP_W) - _viewScroll.x + 16;
@@ -177,12 +177,12 @@ public:
 	int16 getTileIndex(int16 u, int16 v, int16 z);
 
 private:
-	void drawTiles(SURFACE *ds, const Location *location);
-	void drawMetaTile(SURFACE *ds, uint16 metaTileIndex, const Point &point, int16 absU, int16 absV);
-	void drawSpriteMetaTile(SURFACE *ds, uint16 metaTileIndex, const Point &point, Location &location, int16 absU, int16 absV);
-	void drawPlatform(SURFACE *ds, uint16 platformIndex, const Point &point, int16 absU, int16 absV, int16 absH);	
-	void drawSpritePlatform(SURFACE *ds, uint16 platformIndex, const Point &point, const Location &location, int16 absU, int16 absV, int16 absH);	
-	void drawTile(SURFACE *ds, uint16 tileIndex, const Point &point, const Location *location);
+	void drawTiles(Surface *ds, const Location *location);
+	void drawMetaTile(Surface *ds, uint16 metaTileIndex, const Point &point, int16 absU, int16 absV);
+	void drawSpriteMetaTile(Surface *ds, uint16 metaTileIndex, const Point &point, Location &location, int16 absU, int16 absV);
+	void drawPlatform(Surface *ds, uint16 platformIndex, const Point &point, int16 absU, int16 absV, int16 absH);	
+	void drawSpritePlatform(Surface *ds, uint16 platformIndex, const Point &point, const Location &location, int16 absU, int16 absV, int16 absH);	
+	void drawTile(Surface *ds, uint16 tileIndex, const Point &point, const Location *location);
 	int16 smoothSlide(int16 value, int16 min, int16 max) {
 		if (value < min) {
 			if (value < min - 100 || value > min - 4) {

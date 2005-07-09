@@ -133,7 +133,7 @@ struct SceneEntryList {
 	}
 };
 
-struct SCENE_IMAGE {
+struct SceneImage {
 	int loaded;
 	int w;
 	int h;
@@ -142,7 +142,7 @@ struct SCENE_IMAGE {
 	size_t buf_len;
 	byte *res_buf;
 	size_t res_len;
-	PALENTRY pal[256];
+	PalEntry pal[256];
 };
 
 
@@ -241,7 +241,7 @@ class Scene {
 	void initDoorsState();
 
 	void getBGInfo(BGInfo &bgInfo);
-	int getBGPal(PALENTRY **pal);
+	int getBGPal(PalEntry **pal);
 	void getSlopes(int &beginSlope, int &endSlope);
 
 	void clearSceneQueue(void) {
@@ -289,8 +289,8 @@ class Scene {
 	int _resListEntries;
 	SCENE_RESLIST *_resList;
 	SceneProc *_sceneProc;
-	SCENE_IMAGE _bg;
-	SCENE_IMAGE _bgMask;
+	SceneImage _bg;
+	SceneImage _bgMask;
 	Common::Rect _sceneClip;
 
 	int _sceneDoors[SCENE_DOORS_MAX];

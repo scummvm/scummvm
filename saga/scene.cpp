@@ -284,7 +284,7 @@ void Scene::getBGInfo(BGInfo &bgInfo) {
 	bgInfo.bounds.setHeight(_bg.h);
 }
 
-int Scene::getBGPal(PALENTRY **pal) {
+int Scene::getBGPal(PalEntry **pal) {
 	assert(_initialized);
 	*pal = _bg.pal;
 
@@ -383,7 +383,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	int i;
 	EVENT event;
 	EVENT *q_event;
-	static PALENTRY current_pal[PAL_ENTRIES];
+	static PalEntry current_pal[PAL_ENTRIES];
 
 	if (_sceneLoaded) {
 		error("Scene::loadScene(): Error, a scene is already loaded");
@@ -852,7 +852,7 @@ int Scene::processSceneResources() {
 			break;
 		case SAGA_PALETTE:
 			{
-				PALENTRY pal[PAL_ENTRIES];
+				PalEntry pal[PAL_ENTRIES];
 				byte *palPtr = resourceData;
 
 				if (resourceDataLength < 3 * PAL_ENTRIES)
@@ -875,27 +875,30 @@ int Scene::processSceneResources() {
 }
 
 void Scene::draw() {
-	SURFACE *backBuffer;
-	BUFFER_INFO buf_info;
-	Point bgPoint(0, 0);
-
-	assert(_initialized);
+	Surface *backBuffer;
+	Surface *backGroundSurface;
+	Rect rect;
 
 	backBuffer = _vm->_gfx->getBackBuffer();
 
-	_vm->_render->getBufferInfo(&buf_info);
+	backGroundSurface = _vm->_render->getBackGroundSurface();
 
 	if (_sceneDescription.flags & kSceneFlagISO) {
 		_vm->_isoMap->adjustScroll(false);
 		_vm->_isoMap->draw(backBuffer);
 	} else {
-		
-		bufToSurface(backBuffer, buf_info.bg_buf, buf_info.bg_buf_w,
-			_sceneClip.bottom < buf_info.bg_buf_h ? _vm->getSceneHeight() : buf_info.bg_buf_h, NULL, &bgPoint);
+		backGroundSurface->getRect(rect);
+		if (_sceneClip.bottom < rect.bottom) {
+			rect.bottom = _vm->getSceneHeight();
+		}
+		backBuffer->blit(rect, (const byte *)backGroundSurface->pixels);
 	}
 }
 
 void Scene::endScene() {
+	Surface *backBuffer;
+	Surface *backGroundSurface;
+	Rect rect;
 	int i;
 
 	if (!_sceneLoaded)
@@ -912,11 +915,11 @@ void Scene::endScene() {
 	_vm->_script->_skipSpeeches = false;
 
 	// Copy current screen to render buffer so inset rooms will get proper background
-	SURFACE *back_buf = _vm->_gfx->getBackBuffer();
-	BUFFER_INFO rbuf_info;
+	backBuffer= _vm->_gfx->getBackBuffer();
+	backGroundSurface = _vm->_render->getBackGroundSurface();
+	backBuffer->getRect(rect);
 
-	_vm->_render->getBufferInfo(&rbuf_info);
-	bufToBuffer(rbuf_info.bg_buf, rbuf_info.bg_buf_w, rbuf_info.bg_buf_h, (byte *)back_buf->pixels, back_buf->w, back_buf->h, NULL, NULL);
+	backGroundSurface->blit(rect, (const byte *)backBuffer->pixels);
 	// Free scene background
 	if (_bg.loaded) {
 		free(_bg.buf);

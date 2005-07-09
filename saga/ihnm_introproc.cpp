@@ -164,9 +164,9 @@ int Scene::SC_IHNMIntroMovieProc2(int param, void *refCon) {
 int Scene::IHNMIntroMovieProc2(int param) {
 	EVENT event;
 	EVENT *q_event;
-	PALENTRY *pal;
+	PalEntry *pal;
 
-	static PALENTRY current_pal[PAL_ENTRIES];
+	static PalEntry current_pal[PAL_ENTRIES];
 
 	switch (param) {
 	case SCENE_BEGIN:
@@ -250,8 +250,8 @@ int Scene::SC_IHNMIntroMovieProc3(int param, void *refCon) {
 int Scene::IHNMIntroMovieProc3(int param) {
 	EVENT event;
 	EVENT *q_event;
-	PALENTRY *pal;
-	static PALENTRY current_pal[PAL_ENTRIES];
+	PalEntry *pal;
+	static PalEntry current_pal[PAL_ENTRIES];
 
 	switch (param) {
 	case SCENE_BEGIN:

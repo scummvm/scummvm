@@ -261,7 +261,7 @@ void Puzzle::initPieces(void) {
 
 void Puzzle::showPieces(void) {
 	ActorData *puzzle = _vm->_actor->getActor(_vm->_actor->actorIndexToId(ITE_ACTOR_PUZZLE));
-	SURFACE *backBuffer = _vm->_gfx->getBackBuffer();
+	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 
 	for (int j = PUZZLE_PIECES - 1 ; j >= 0; j--) {
 		int num = _piecePriority[j];
@@ -274,7 +274,7 @@ void Puzzle::showPieces(void) {
 
 void Puzzle::drawCurrentPiece() {
 	ActorData *puzzle = _vm->_actor->getActor(_vm->_actor->actorIndexToId(ITE_ACTOR_PUZZLE));
-	SURFACE *backBuffer = _vm->_gfx->getBackBuffer();
+	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 
 	_vm->_sprite->draw(backBuffer, _vm->_scene->getSceneClip(), puzzle->spriteList, _puzzlePiece, 
 			   Point(_pieceInfo[_puzzlePiece].curX, _pieceInfo[_puzzlePiece].curY), 256);

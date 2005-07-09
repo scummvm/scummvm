@@ -62,7 +62,7 @@ static int commonObjectCompare(const CommonObjectDataPointer& obj1, const Common
 static int tileCommonObjectCompare(const CommonObjectDataPointer& obj1, const CommonObjectDataPointer& obj2) {
 	int p1 = -obj1->location.u() - obj1->location.v() - obj1->location.z;
 	int p2 = -obj2->location.u() - obj2->location.v() - obj2->location.z;
-	//TODO:  for kObjNotFlat obj Height*3 of sprite should be adde to p1 and p2
+	//TODO:  for kObjNotFlat obj Height*3 of sprite should be added to p1 and p2
 	//if (validObjId(obj1->id)) {
 
 	if (p1 == p2) {
@@ -1376,9 +1376,9 @@ void Actor::drawActors() {
 	int frameNumber;
 	SpriteList *spriteList;
 
-	SURFACE *back_buf;
+	Surface *backBuffer;
 
-	back_buf = _vm->_gfx->getBackBuffer();
+	backBuffer = _vm->_gfx->getBackBuffer();
 
 	createDrawOrderList();
 
@@ -1391,9 +1391,9 @@ void Actor::drawActors() {
 		
 		
 		if (_vm->_scene->getFlags() & kSceneFlagISO) {
-			_vm->_isoMap->drawSprite(back_buf, *spriteList, frameNumber, drawObject->location, drawObject->screenPosition, drawObject->screenScale);
+			_vm->_isoMap->drawSprite(backBuffer, *spriteList, frameNumber, drawObject->location, drawObject->screenPosition, drawObject->screenScale);
 		} else {
-			_vm->_sprite->drawOccluded(back_buf, _vm->_scene->getSceneClip(),*spriteList, frameNumber, drawObject->screenPosition, drawObject->screenScale, drawObject->screenDepth);
+			_vm->_sprite->drawOccluded(backBuffer, _vm->_scene->getSceneClip(),*spriteList, frameNumber, drawObject->screenPosition, drawObject->screenScale, drawObject->screenDepth);
 		}
 	}
 
@@ -1407,9 +1407,9 @@ void Actor::drawSpeech(void) {
 		char oneChar[2];
 		oneChar[1] = 0;
 		const char *outputString;
-		SURFACE *back_buf;
+		Surface *backBuffer;
 
-		back_buf = _vm->_gfx->getBackBuffer();
+		backBuffer = _vm->_gfx->getBackBuffer();
 
 		if (_activeSpeech.speechFlags & kSpeakSlow) {
 			outputString = oneChar;
@@ -1426,7 +1426,7 @@ void Actor::drawSpeech(void) {
 		if (_activeSpeech.actorIds[0] != 0) {
 			
 			for (i = 0; i < _activeSpeech.actorsCount; i++){
-				_vm->textDraw(MEDIUM_FONT_ID, back_buf, outputString,
+				_vm->textDraw(MEDIUM_FONT_ID, backBuffer, outputString,
 					_activeSpeech.speechCoords[i].x, 
 					_activeSpeech.speechCoords[i].y, 
 					_activeSpeech.speechColor[i], 
@@ -2647,7 +2647,7 @@ void Actor::removePathPoints() {
 void Actor::drawPathTest() {
 #ifdef ACTOR_DEBUG
 	int i;
-	SURFACE *surface;
+	Surface *surface;
 	surface = _vm->_gfx->getBackBuffer();
 	if (_debugPoints == NULL) {
 		return;

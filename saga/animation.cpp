@@ -117,7 +117,7 @@ void Anim::setCycles(uint16 animId, int cycles) {
 
 void Anim::play(uint16 animId, int vectorTime, bool playing) {
 	EVENT event;
-	BUFFER_INFO buf_info;
+	Surface *backGroundSurface;
 
 	byte *displayBuffer;
 
@@ -133,8 +133,8 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 
 	anim = getAnimation(animId);
 
-	_vm->_render->getBufferInfo(&buf_info);
-	displayBuffer = buf_info.bg_buf;
+	backGroundSurface = _vm->_render->getBackGroundSurface();
+	displayBuffer = (byte*)backGroundSurface->pixels;
 
 
 	if (playing) {

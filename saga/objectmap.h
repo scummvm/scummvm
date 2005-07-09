@@ -76,7 +76,7 @@ public:
 		return objectIndexToId(kGameObjectStepZone, _index);
 	}
 	bool getSpecialPoint(Point &specialPoint) const;
-	void draw(SURFACE *ds, int color);	
+	void draw(Surface *ds, int color);	
 	bool hitTest(const Point &testPoint);
 
 private:
@@ -104,7 +104,7 @@ public:
 	void load(const byte *resourcePointer, size_t resourceLength);
 	void freeMem(void);
 
-	void draw(SURFACE *drawSurface, const Point& testPoint, int color, int color2);
+	void draw(Surface *drawSurface, const Point& testPoint, int color, int color2);
 	int hitTest(const Point& testPoint);
 	HitZone *getHitZone(int16 index) {
 		if ((index < 0) || (index >= _hitZoneListCount)) {

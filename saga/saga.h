@@ -577,15 +577,15 @@ public:
 	TEXTLIST *textCreateList();
 	void textDestroyList(TEXTLIST *textlist);
 	void textClearList(TEXTLIST *textlist);
-	int textDrawList(TEXTLIST *textlist, SURFACE *ds);
+	int textDrawList(TEXTLIST *textlist, Surface *ds);
 	TEXTLIST_ENTRY *textAddEntry(TEXTLIST *textlist, TEXTLIST_ENTRY *entry);
 	int textDeleteEntry(TEXTLIST *textlist, TEXTLIST_ENTRY *entry);
 	int textSetDisplay(TEXTLIST_ENTRY *entry, int val);
-	int textDraw(int font_id, SURFACE *ds, const char *string, int text_x, int text_y, int color,
+	int textDraw(int font_id, Surface *ds, const char *string, int text_x, int text_y, int color,
 				  int effect_color, int flags);
 	int textProcessList(TEXTLIST *textlist, long ms);
 
-	int transitionDissolve(byte *dst_img, int dst_w, int dst_h, int dst_p, 
+	int transitionDissolve(byte *dst_img, int dst_w, int dst_h,
 			const byte *src_img, int src_w, int src_h, int flags, int x, int y, 
 			double percent);
 
