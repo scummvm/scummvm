@@ -1430,25 +1430,17 @@ void OSystem_SDL::toggleMouseGrab() {
 }
 
 void OSystem_SDL::undrawMouse() {
+	const int x = _mouseBackup.x;
+	const int y = _adjustAspectRatio ? aspect2Real(_mouseBackup.y) : _mouseBackup.y;
+	
 	// When we switch bigger overlay off mouse jumps. Argh!
-	// this intended to prevent undrawing offscreen mouse
-	if (!_overlayVisible) {
-		if (_adjustAspectRatio) {
-			if (_mouseBackup.x > _screenWidth || aspect2Real(_mouseBackup.y) > _screenHeight)
-				return;
-		} else {
-			if (_mouseBackup.x > _screenWidth || _mouseBackup.y > _screenHeight)
-				return;
-		}
+	// This is intended to prevent undrawing offscreen mouse
+	if (!_overlayVisible && (x >= _screenWidth || y >= _screenHeight)) {
+		return;
 	}
-
-	if (_mouseBackup.w) {
-		if (_adjustAspectRatio)
-			addDirtyRect(_mouseBackup.x, aspect2Real(_mouseBackup.y), _mouseBackup.w,
-						 _mouseBackup.h);
-		else
-			addDirtyRect(_mouseBackup.x, _mouseBackup.y, _mouseBackup.w,
-						 _mouseBackup.h);
+	
+	if (_mouseBackup.w != 0 && _mouseBackup.h != 0) {
+		addDirtyRect(x, y, _mouseBackup.w, _mouseBackup.h);
 	}
 }
 
