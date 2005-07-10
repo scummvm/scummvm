@@ -228,7 +228,7 @@ void TextObject::draw() {
 				x = 0;
 
 			g_driver->drawTextBitmap(x, height + _y, _textObjectHandle[i]);
-		} else
+		} else if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 			warning("TextObject::draw: Unknown justification code (%d)!", _justify);
 
 		height += _bitmapHeightPtr[i];

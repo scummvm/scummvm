@@ -43,6 +43,7 @@ public:
 	~Material();
 
 //private:
+	CMap *_cmap;
 	int _numImages, _currImage;
 	int _width, _height;
 	void *_textures;

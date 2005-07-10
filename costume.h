@@ -35,8 +35,25 @@ public:
 
 	void playChore(int num) { _chores[num].play(); }
 	void playChoreLooping(int num) { _chores[num].playLooping(); }
+	void setChoreLastFrame(int num) { _chores[num].setLastFrame(); }
 	void setChoreLooping(int num, bool val) { _chores[num].setLooping(val); }
 	void stopChore(int num) { _chores[num].stop(); }
+	char *getColormap() { return _colormap; }
+	void setColormap(char *map) {
+		_colormap = map;
+		for(int i=0;i<_numComponents;i++) {
+			if (_components[i] == NULL)
+				continue;
+			// Needs to handle Main Models (pigeons) and normal Models
+			// (when Manny climbs the rope)
+			if (
+std::memcmp(_components[i]->tag(), "mmdl", 4) == 0
+			 || 
+std::memcmp(_components[i]->tag(), "mat ", 4) == 0
+)
+				_components[i]->setMapName(_colormap);
+		}
+	}
 	void stopChores();
 	int isChoring(int num, bool excludeLooping);
 	int isChoring(bool excludeLooping);
@@ -50,11 +67,13 @@ public:
 
 	class Component {
 	public:
-		Component(Component *parent, int parentID);
+		Component(Component *parent, int parentID, char *tag);
 
+		char *tag() { return _tag; }
 		virtual void setMatrix(Matrix4) { };
 		virtual void init() { }
 		virtual void setKey(int) { }
+		virtual void setMapName(char *) { }
 		virtual void update() { }
 		virtual void setupTexture() { }
 		virtual void draw() { }
@@ -62,9 +81,12 @@ public:
 		virtual ~Component() { }
 
 	protected:
+		char _tag[4];
 		int _parentID;
 		Component *_parent, *_child, *_sibling;
 		Matrix4 _matrix;
+		Costume *_cost;
+		void setCostume(Costume *cost) { _cost = cost; }
 		void setParent(Component *newParent);
 
 		friend class Costume;
@@ -72,9 +94,9 @@ public:
 
 private:
 	Component *loadComponent(char tag[4], Component *parent, int parentID, const char *name);
-
+	char *_colormap;
 	std::string _fname;
-
+	
 	int _numComponents;
 	Component **_components;
 
@@ -105,6 +127,7 @@ private:
 		void setLooping(bool val) { _looping = val; }
 		void stop();
 		void update();
+		void setLastFrame();
 
 	private:
 		Costume *_owner;

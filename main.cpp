@@ -37,6 +37,7 @@
 
 // Hacky global toggles for experimental/debug code
 bool ZBUFFER_GLOBAL, SHOWFPS_GLOBAL, TINYGL_GLOBAL;
+enDebugLevels debugLevel = DEBUG_NONE;
 
 #ifdef __MINGW32__
 int PASCAL WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
@@ -45,7 +46,6 @@ int PASCAL WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdL
 #endif
 
 static bool g_lua_initialized = false;
-
 Driver *g_driver = NULL;
 
 static bool parseBoolStr(const char *val) {
@@ -86,10 +86,10 @@ int main(int argc, char *argv[]) {
 	g_registry = new Registry();
 
 	// Parse command line
-	ZBUFFER_GLOBAL = parseBoolStr(g_registry->get("zbuffer"));
-	SHOWFPS_GLOBAL = parseBoolStr(g_registry->get("fps"));
-	TINYGL_GLOBAL = parseBoolStr(g_registry->get("soft"));
-	bool fullscreen = parseBoolStr(g_registry->get("fullscreen"));
+	ZBUFFER_GLOBAL = parseBoolStr(g_registry->get("zbuffer", "TRUE"));
+	SHOWFPS_GLOBAL = parseBoolStr(g_registry->get("fps", "FALSE"));
+	TINYGL_GLOBAL = parseBoolStr(g_registry->get("soft", "FALSE"));
+	bool fullscreen = parseBoolStr(g_registry->get("fullscreen", "FALSE"));
 	for (i = 1; i < argc; i++) {
 		if (strcmp(argv[i], "-zbuffer") == 0)
 			ZBUFFER_GLOBAL = true;
@@ -107,14 +107,48 @@ int main(int argc, char *argv[]) {
 			TINYGL_GLOBAL = true;
 		else if (strcmp(argv[i], "-nosoft") == 0)
 			TINYGL_GLOBAL = false;
-		else {
+		else if (strncmp(argv[i], "-debug=", 7) == 0) {
+			bool numeric = true;
+			char debugtxt[20];
+			unsigned int j;
+			int level;
+			
+			sscanf(argv[i], "%*[^=]%*1s%s", debugtxt);
+			for(j=0;j<strlen(debugtxt);j++) {
+				if(!isdigit(debugtxt[j]))
+					numeric = false;
+			}
+			if(numeric) {
+				sscanf(debugtxt, "%d", &level);
+				if(level < 0 || level > DEBUG_ALL)
+					goto needshelp;
+			} else {
+				level = -1;
+				for(j=0;j<=DEBUG_ALL;j++)
+				{
+					if(!strcasecmp(debugtxt, debug_levels[j])) {
+						level = j;
+						break;
+					}
+				}
+				if(level == -1)
+					goto needshelp;
+			}
+			debugLevel = (enDebugLevels) level;
+			printf("Debug level set to: %s\n", debug_levels[debugLevel]);
+		} else {
+			int j;
+needshelp:
 			printf("Residual CVS Version\n");
 			printf("--------------------\n");
 			printf("Recognised options:\n");
 			printf("\t-[no]zbuffer\t\tEnable/disable ZBuffers (Very slow on older cards)\n");
 			printf("\t-[no]fps\t\tEnable/disable fps display in upper right corner\n");
-			printf("\t-[no]fullscreen\tEnable/disable fullscreen mode at startup\n");
+			printf("\t-[no]fullscreen\t\tEnable/disable fullscreen mode at startup\n");
 			printf("\t-[no]soft\t\tEnable/disable software renderer\n");
+			printf("\t-debug=[level]\t\tSet debug to [level], valid levels:\n");
+			for(j=0;j<=DEBUG_ALL;j++)
+				printf("\t\t%-8s (%d): %s.\n", debug_levels[j], j, debug_descriptions[j]);
 			exit(-1);
 		}
 	}

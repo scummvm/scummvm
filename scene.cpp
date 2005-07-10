@@ -31,7 +31,7 @@
 #include <cmath>
 
 Scene::Scene(const char *name, const char *buf, int len) :
-		_name(name) {
+		_name(name), locked(false) {
 	TextSplitter ts(buf, len);
 	char tempBuf[256];
 
@@ -48,7 +48,7 @@ Scene::Scene(const char *name, const char *buf, int len) :
 	ts.scanString(" numsetups %d", 1, &_numSetups);
 	_setups = new Setup[_numSetups];
 	for (int i = 0; i < _numSetups; i++)
-	_setups[i].load(ts);
+		_setups[i].load(ts);
 	_currSetup = _setups;
 
 	_numSectors = -1;
@@ -111,6 +111,8 @@ void Scene::Setup::load(TextSplitter &ts) {
 
 	ts.scanString(" background %256s", 1, buf);
 	_bkgndBm = g_resourceloader->loadBitmap(buf);
+	if(debugLevel == DEBUG_BITMAPS || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
+		printf("Loading scene bitmap: %s\n", buf);
 
 	// ZBuffer is optional
 	if (!ts.checkString("zbuffer")) {
@@ -118,6 +120,8 @@ void Scene::Setup::load(TextSplitter &ts) {
 	} else {
 		ts.scanString(" zbuffer %256s", 1, buf);
 		_bkgndZBm = g_resourceloader->loadBitmap(buf);
+		if(debugLevel == DEBUG_BITMAPS || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
+			printf("Loading scene z-buffer bitmap: %s\n", buf);
 	}
 
 	ts.scanString(" position %f %f %f", 3, &_pos.x(), &_pos.y(), &_pos.z());
@@ -228,9 +232,17 @@ void Scene::findClosestSector(Vector3d p, Sector **sect, Vector3d *closestPt) {
 }
 
 ObjectState *Scene::findState(const char *filename) {
+	// Check the different state objects for the bitmap
 	for (StateList::iterator i = _states.begin(); i != _states.end(); i++) {
-		if (strcmp((*i)->bitmapFilename(), filename) == 0)
+		const char *file = (*i)->bitmapFilename();
+		
+		if (strcmp(file, filename) == 0)
 			return *i;
+		if (strcasecmp(file, filename) == 0) {
+			if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+				warning("State object request '%s' matches object '%s' but is the wrong case!", filename, file);
+			return *i;
+		}
 	}
 	return NULL;
 }

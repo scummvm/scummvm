@@ -129,6 +129,7 @@ void Smush::handleFrame() {
 
 	tag = _file.readUint32BE();
 	if (tag == MKID_BE('ANNO')) {
+printf("Announcement!\n");
 		size = _file.readUint32BE();
 		for (int l = 0; l < size; l++)
 			_file.readByte();
@@ -146,12 +147,14 @@ void Smush::handleFrame() {
 			pos += READ_BE_UINT32(frame + pos + 4) + 8;
 		} else if (READ_BE_UINT32(frame + pos) == MKID_BE('Wave')) {
 			int decompressed_size = READ_BE_UINT32(frame + pos + 8);
+
 			if (decompressed_size < 0)
 				handleWave(frame + pos + 8 + 4 + 8, READ_BE_UINT32(frame + pos + 8 + 8));
 			else
+
 				handleWave(frame + pos + 8 + 4, decompressed_size);
 			pos += READ_BE_UINT32(frame + pos + 4) + 8;
-		} else {
+		} else if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL) {
 			error("Smush::handleFrame() unknown tag");
 		}
 	} while (pos < size);
@@ -187,7 +190,7 @@ void Smush::handleFramesHeader() {
 			_freq = READ_LE_UINT32(f_header + pos + 8);
 			_channels = READ_LE_UINT32(f_header + pos + 12);
 			pos += 20;
-		} else {
+		} else if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL){
 			error("Smush::handleFramesHeader() unknown tag");
 		}
 	} while (pos < size);
@@ -262,7 +265,8 @@ bool zlibFile::open(const char *filename) {
 	_inBuf = (char *)calloc(1, 16385);
 
 	if (_handle) {
-		warning("zlibFile::open() File %s already opened", filename);
+		if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("zlibFile::open() File %s already opened", filename);
 		return false;
 	}
 
@@ -271,7 +275,8 @@ bool zlibFile::open(const char *filename) {
 
 	_handle = g_resourceloader->openNewStream(filename);
 	if (!_handle) {
-		warning("zlibFile::open() zlibFile %s not found", filename);
+		if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("zlibFile::open() zlibFile %s not found", filename);
 		return false;
 	}
 
@@ -281,7 +286,8 @@ bool zlibFile::open(const char *filename) {
 	fread(_inBuf, 1, sizeof(char), _handle); flags = _inBuf[0];		// Flags
 	fread(_inBuf, 6, sizeof(char), _handle);				// XFlags
 
-	if (((flags & 0x04) != 0) || ((flags & 0x10) != 0))		// Xtra & Comment
+	// Xtra & Comment
+	if (((((flags & 0x04) != 0) || ((flags & 0x10) != 0))) && (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL))
 		error("zlibFile::open() Unsupported header flag");
 
 	if ((flags & 0x08) != 0) {					// Orig. Name
@@ -298,7 +304,7 @@ bool zlibFile::open(const char *filename) {
 	_stream.zfree = NULL;
 	_stream.opaque = Z_NULL;
 
-	if (inflateInit2(&_stream, -15) != Z_OK)
+	if (inflateInit2(&_stream, -15) != Z_OK && (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL))
 		error("zlibFile::open() inflateInit2 failed");
 
 	_stream.next_in = NULL;
@@ -330,7 +336,8 @@ uint32 zlibFile::read(void *ptr, uint32 len) {
 	bool fileEOF = false;
 
 	if (_handle == NULL) {
-		error("zlibFile::read() File is not open!");
+		if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
+			error("zlibFile::read() File is not open!");
 		return 0;
 	}
 
@@ -353,17 +360,20 @@ uint32 zlibFile::read(void *ptr, uint32 len) {
 
 		result = inflate(&_stream, Z_NO_FLUSH);
 		if (result == Z_STREAM_END) {	// EOF
-			warning("zlibFile::read() Stream ended");
+			if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+				warning("zlibFile::read() Stream ended");
 			_fileDone = true;
 			break;
 		}
 		if (result == Z_DATA_ERROR) {
-			warning("zlibFile::read() Decompression error");
+			if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+				warning("zlibFile::read() Decompression error");
 			_fileDone = true;
 			break;
 		}
 		if (result != Z_OK || fileEOF) {
-			warning("zlibFile::read() Unknown decomp result: %d/%d\n", result, fileEOF);
+			if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+				warning("zlibFile::read() Unknown decomp result: %d/%d\n", result, fileEOF);
 			_fileDone = true;
 			break;
 		}

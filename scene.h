@@ -73,7 +73,12 @@ public:
 	int setup() const { return _currSetup - _setups; }
 
 	// Sector access functions
-	int getSectorCount() { return _numSectors; }
+	int getSectorCount() {
+		// TODO: Find where this is called before we're initialized
+		if (this == NULL)
+			return 0;
+		return _numSectors;
+	}
 	Sector *getSectorBase(int id) { 
 		if ((_numSectors >= 0) && (id < _numSectors))
 			return &_sectors[id];
@@ -113,6 +118,8 @@ public:
 		Color _color;
 		float _intensity, _umbraangle, _penumbraangle;
 	};
+
+	bool locked;
 
 private:
 

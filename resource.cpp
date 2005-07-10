@@ -40,7 +40,7 @@ static void makeLower(std::string& s) {
 ResourceLoader *g_resourceloader = NULL;
 
 ResourceLoader::ResourceLoader() {
-	const char *directory = g_registry->get("DataDir");
+	const char *directory = g_registry->get("DataDir", NULL);
 	std::string dir_str = (directory != NULL ? directory : ".");
 	dir_str += '/';
 	int lab_counter = 0;
@@ -148,7 +148,8 @@ Bitmap *ResourceLoader::loadBitmap(const char *filename) {
 
 	Block *b = getFileBlock(filename);
 	if (b == NULL) {	// Grim sometimes asks for non-existant bitmaps (eg, ha_overhead)
-		warning("Could not find bitmap %s\n", filename);
+		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("Could not find bitmap %s\n", filename);
 		return NULL;
 	}
 
@@ -233,7 +234,8 @@ LipSynch *ResourceLoader::loadLipSynch(const char *filename) {
 
 	Block *b = getFileBlock(filename);
 	if (b == NULL) {
-		warning("Could not find lipsynch file %s\n", filename);
+		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("Could not find lipsynch file %s\n", filename);
 		result = NULL;
 	} else {
 		result = new LipSynch(filename, b->data(), b->len());
@@ -249,7 +251,12 @@ Material *ResourceLoader::loadMaterial(const char *filename, const CMap &c) {
 	makeLower(fname);
 	CacheType::iterator i = _cache.find(fname);
 	if (i != _cache.end()) {
-		return dynamic_cast<Material *>(i->second);
+		Material *material = dynamic_cast<Material *>(i->second);
+		
+		// if the colormap has changed then we need to reload the material!
+		if (material->_cmap == &c)
+			return material;
+		_cache.erase(i, i);
 	}
 
 	Block *b = getFileBlock(filename);

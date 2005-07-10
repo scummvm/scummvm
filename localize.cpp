@@ -30,7 +30,7 @@ Localizer::Localizer() {
 	const char *namesToTry[] = { "/GRIM.TAB", "/Grim.tab", "/grim.tab" };
 
 	for (unsigned i = 0; i < sizeof(namesToTry) / sizeof(namesToTry[0]); i++) {
-		const char *datadir = g_registry->get("DataDir");
+		const char *datadir = g_registry->get("DataDir", NULL);
 		std::string fname = (datadir != NULL ? datadir : ".");
 		fname += namesToTry[i];
 		f = std::fopen(fname.c_str(), "rb");

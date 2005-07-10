@@ -34,7 +34,7 @@ public:
 	Model(const char *filename, const char *data, int len, const CMap &cmap);
 	void loadBinary(const char *data, const CMap &cmap);
 	void loadText(TextSplitter &ts, const CMap &cmap);
-
+	void reload(const CMap &cmap);
 	void draw() const;
 
 	~Model();
@@ -70,8 +70,9 @@ public:
 
 //private:
 	struct Face {
-		void loadBinary(const char *&data, ResPtr<Material> *materials);
+		int loadBinary(const char *&data, ResPtr<Material> *materials);
 		void draw(float *vertices, float *vertNormals, float *textureVerts) const;
+		void changeMaterial(ResPtr<Material> materials);
 		~Face();
 
 		Material *_material;
@@ -85,8 +86,10 @@ public:
 	struct Mesh {
 		void loadBinary(const char *&data, ResPtr<Material> *materials);
 		void loadText(TextSplitter &ts, ResPtr<Material> *materials);
+		void changeMaterials(ResPtr<Material> *materials);
 		void draw() const;
 		void update();
+		Mesh() : _numFaces(0) { }
 		~Mesh();
 
 		char _name[32];
@@ -94,6 +97,7 @@ public:
 		int _shadow, _geometryMode, _lightingMode, _textureMode;
 
 		int _numVertices;
+		int *_materialid;
 		float *_vertices;		// sets of 3
 		float *_verticesI;
 		float *_vertNormals;	// sets of 3
@@ -109,6 +113,8 @@ public:
 	struct Geoset {
 		void loadBinary(const char *&data, ResPtr<Material> *materials);
 		void loadText(TextSplitter &ts, ResPtr<Material> *materials);
+		void changeMaterials(ResPtr<Material> *materials);
+		Geoset() : _numMeshes(0) { }
 		~Geoset();
 
 		int _numMeshes;
@@ -116,6 +122,7 @@ public:
 	};
 
 	int _numMaterials;
+	char (*_materialNames)[32];
 	ResPtr<Material> *_materials;
 	Vector3d _insertOffset;
 	int _numGeosets;

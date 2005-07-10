@@ -104,7 +104,8 @@ bool Timer::installTimerProc(TimerProc procedure, int32 interval, void *refCon) 
 		}
 	}
 
-	warning("Couldn't find free timer slot!");
+	if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+		warning("Couldn't find free timer slot!");
 	return false;
 }
 

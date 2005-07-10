@@ -117,9 +117,14 @@ void DriverGL::finishActorDraw() {
 void DriverGL::set3DMode() {
 	glMatrixMode(GL_MODELVIEW);
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 }
 
 void DriverGL::drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts) {
+	// Support transparency in actor objects, such as the message tube
+	// in Manny's Office
+	glAlphaFunc(GL_GREATER, 0.5);
+	glEnable(GL_ALPHA_TEST);
 	glNormal3fv(face->_normal._coords);
 	glBegin(GL_POLYGON);
 	for (int i = 0; i < face->_numVertices; i++) {
@@ -131,6 +136,8 @@ void DriverGL::drawModelFace(const Model::Face *face, float *vertices, float *ve
 		glVertex3fv(vertices + 3 * face->_vertices[i]);
 	}
 	glEnd();
+	// Done with transparency-capable objects
+  glDisable( GL_ALPHA_TEST );
 }
 
 void DriverGL::drawHierachyNode(const Model::HierNode *node) {
@@ -428,7 +435,6 @@ void DriverGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 	//	if (num != 0) {
 	//		warning("Animation not handled yet in GL texture path !\n");
 	//	}
-
 	if (y + h == 480) {
 		glRasterPos2i(x, _screenHeight - 1);
 		glBitmap(0, 0, 0, 0, 0, -1, NULL);

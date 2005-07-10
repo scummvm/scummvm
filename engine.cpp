@@ -152,6 +152,8 @@ void Engine::mainLoop() {
 				lua_endblock();
 			}
 			if (event.type == SDL_KEYDOWN) {
+				if (event.key.keysym.sym == SDLK_z)
+					g_resourceloader->loadKeyframe("ma_card_hold.key");
 				if ((event.key.keysym.sym == SDLK_RETURN ||
 				     event.key.keysym.sym == SDLK_KP_ENTER) &&
 				    (event.key.keysym.mod & KMOD_ALT))
@@ -197,6 +199,20 @@ void Engine::mainLoop() {
 				_currScene->drawBackground();
 			}
 
+			// Draw underlying scene components
+			if (_currScene != NULL) {
+				_currScene->drawBitmaps(ObjectState::OBJSTATE_UNDERLAY);
+				// State objects are drawn on top of other things, such as the flag
+				// on Manny's message tube
+				_currScene->drawBitmaps(ObjectState::OBJSTATE_STATE);
+			}
+
+			// Play SMUSH Animations
+			// This should occur on top of all underlying scene objects,
+			// a good example is the tube switcher room where some state objects
+			// need to render underneath the animation or you can't see what's going on
+			// This should not occur on top of everything though or Manny gets covered
+			// up when he's next to Glottis's service room
 			if (g_smush->isPlaying()) {
 				_movieTime = g_smush->getMovieTime();
 				if (g_smush->isUpdateNeeded()) {
@@ -205,12 +221,6 @@ void Engine::mainLoop() {
 				}
 				if (g_smush->getFrame() > 0)
 					g_driver->drawSmushFrame(g_smush->getX(), g_smush->getY());
-			}
-
-			if (_currScene != NULL) {
-				_currScene->drawBitmaps(ObjectState::OBJSTATE_UNDERLAY);
-				_currScene->drawBitmaps(ObjectState::OBJSTATE_STATE);
-				_currScene->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
 			}
 
 			if (SHOWFPS_GLOBAL)
@@ -234,6 +244,14 @@ void Engine::mainLoop() {
 				if (_currScene != NULL)
 					a->undraw(a->inSet(_currScene->name()) && a->visible());
 			}
+
+			// Draw overlying scene components
+			if (_currScene != NULL) {
+				// The overlay objects should be drawn on top of everything else,
+				// including 3D objects such as Manny and the message tube
+				_currScene->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
+			}
+
 		}
 
 		// Draw Primitives
@@ -433,15 +451,57 @@ void Engine::savegameCallback() {
 	lua_endblock();
 }
 
+Scene *Engine::findScene(const char *name) {
+	// Find scene object
+	for (SceneListType::const_iterator i = scenesBegin(); i != scenesEnd(); i++) {
+		if(!strcmp((char *) (*i)->name(), (char *) name))
+			return *i;
+	}
+	return NULL;
+}
+
+void Engine::setSceneLock(const char *name, bool lockStatus) {
+	Scene *scene = findScene(name);
+	
+	if (scene == NULL) {
+		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("Scene object '%s' not found in list!", name);
+		return;
+	}
+	// Change the locking status
+	scene->locked = lockStatus;
+}
+
 void Engine::setScene(const char *name) {
+	Scene *scene = findScene(name);
+	
+	// If the scene already exists then use the existing data
+	if (scene != NULL) {
+		setScene(scene);
+		return;
+	}
 	Block *b = g_resourceloader->getFileBlock(name);
 	if (b == NULL)
 		warning("Could not find scene file %s\n", name);
-	delete _currScene;
+	if (_currScene != NULL && !_currScene->locked) {
+		removeScene(_currScene);
+		delete _currScene;
+	}
 	_currScene = new Scene(name, b->data(), b->len());
+	registerScene(_currScene);
 	_currScene->setSoundParameters(20, 127);
 	delete b;
 }
+
+void Engine::setScene(Scene *scene) {
+	if (_currScene != NULL && !_currScene->locked) {
+		removeScene(_currScene);
+		delete _currScene;
+	}
+	_currScene = scene;
+	_currScene->setSoundParameters(20, 127);
+}
+
 void Engine::setTextSpeed(int speed) {
 	if (speed < 1)
 		_textSpeed = 1;

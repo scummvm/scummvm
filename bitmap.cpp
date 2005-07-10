@@ -30,8 +30,10 @@ static void decompress_codec3(const char *compressed, char *result);
 Bitmap::Bitmap(const char *filename, const char *data, int len) :
 		Resource(filename) {
 
-	if (len < 8 || memcmp(data, "BM  F\0\0\0", 8) != 0)
-		error("Invalid magic loading bitmap\n");
+	if (len < 8 || memcmp(data, "BM  F\0\0\0", 8) != 0) {
+		if (debugLevel == DEBUG_BITMAPS || debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
+			error("Invalid magic loading bitmap\n");
+	}
 
 	strcpy(_filename, filename);
 
@@ -79,6 +81,8 @@ Bitmap::Bitmap(const char *filename, const char *data, int len) :
 
 Bitmap::Bitmap(const char *data, int width, int height, const char *filename) :
 		Resource(filename) {
+	if (debugLevel == DEBUG_BITMAPS || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
+		printf("New bitmap loaded: %s\n", filename);
 	strcpy(_filename, filename);
 	_currImage = 1;
 	_numImages = 1;

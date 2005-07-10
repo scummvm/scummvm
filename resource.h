@@ -104,13 +104,13 @@ public:
 	ResourceLoader();
 	ResourceLoader(const ResourceLoader &);
 	~ResourceLoader() { }
-
+	const Lab *findFile(const char *filename) const;
 private:
 
 	typedef std::list<Lab *> LabList;
 	LabList _labs;
 
-	const Lab *findFile(const char *filename) const;
+//	const Lab *findFile(const char *filename) const;
 
 	typedef std::map<std::string, Resource *> CacheType;
 	CacheType _cache;

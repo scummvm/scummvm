@@ -23,7 +23,7 @@
 
 class Registry {
 public:
-	const char *get(const char *key) const;
+	const char *get(const char *key, const char *defval) const;
 	void set(const char *key, const char *val);
 	void save();
 

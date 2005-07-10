@@ -58,7 +58,7 @@ void Sector::load0(TextSplitter &ts, char *name, int id) {
 		_type = 0x4000;
 	else if (strstr(buf, "chernobyl"))
 		_type = 0x8000;
-	else
+	else if (debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
 		error("Unknown sector type '%s' in room setup", buf);
 
 	ts.scanString(" default visibility %256s", 1, buf);

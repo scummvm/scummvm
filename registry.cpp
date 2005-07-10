@@ -48,10 +48,10 @@ Registry::Registry() : _dirty(false) {
 	}
 }
 
-const char *Registry::get(const char *key) const {
+const char *Registry::get(const char *key, const char *defval) const {
 	Group::const_iterator i = _settings.find(key);
 	if (i == _settings.end())
-		return NULL;
+		return defval;
 	else
 		return i->second.c_str();
 }

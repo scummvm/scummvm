@@ -111,12 +111,27 @@ public:
 	void enableControl(int num) { _controlsEnabled[num] = true; }
 	void disableControl(int num) { _controlsEnabled[num] = false; }
 
-	void registerActor(Actor *a) { _actors.push_back(a); }
-
+	Scene *findScene(const char *name);
+	void setSceneLock(const char *name, bool lockStatus);
 	void setScene(const char *name);
+	void setScene(Scene *scene);
 	Scene *currScene() { return _currScene; }
 	const char *sceneName() const { return _currScene->name(); }
 
+	// Scene registration
+	typedef std::list<Scene *> SceneListType;
+	SceneListType::const_iterator scenesBegin() const {
+		return _scenes.begin();
+	}
+	SceneListType::const_iterator scenesEnd() const {
+		return _scenes.end();
+	}
+	void registerScene(Scene *a) { _scenes.push_back(a); }
+	void removeScene(Scene *a) {
+		_scenes.remove(a);
+	}
+
+	// Actor registration
 	typedef std::list<Actor *> ActorListType;
 	ActorListType::const_iterator actorsBegin() const {
 		return _actors.begin();
@@ -124,7 +139,7 @@ public:
 	ActorListType::const_iterator actorsEnd() const {
 		return _actors.end();
 	}
-
+	void registerActor(Actor *a) { _actors.push_back(a); }
 	void setSelectedActor(Actor *a) { _selectedActor = a; }
 	Actor *selectedActor() { return _selectedActor; }
 
@@ -194,6 +209,7 @@ private:
 
 	bool _controlsEnabled[SDLK_EXTRA_LAST];
 
+	SceneListType _scenes;
 	ActorListType _actors;
 	Actor *_selectedActor;
 	TextListType _textObjects;

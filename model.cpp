@@ -27,7 +27,9 @@
 #include <cstring>
 #include <SDL.h>
 
-Model::Model(const char *filename, const char *data, int len, const CMap &cmap) : Resource(filename) {
+Model::Model(const char *filename, const char *data, int len, const CMap &cmap) :
+	Resource(filename), _numMaterials(0), _numGeosets(0) {
+
 	if (len >= 4 && std::memcmp(data, "LDOM", 4) == 0)
 		loadBinary(data, cmap);
 	else {
@@ -36,12 +38,22 @@ Model::Model(const char *filename, const char *data, int len, const CMap &cmap) 
 	}
 }
 
+void Model::reload(const CMap &cmap) {
+	// Load the new colormap
+	for (int i = 0; i < _numMaterials; i++)
+		_materials[i] = g_resourceloader->loadMaterial(_materialNames[i], cmap);
+	for (int i = 0; i < _numGeosets; i++)
+		_geosets[i].changeMaterials(_materials);
+}
+
 void Model::loadBinary(const char *data, const CMap &cmap) {
 	_numMaterials = READ_LE_UINT32(data + 4);
 	data += 8;
 	_materials = new ResPtr<Material>[_numMaterials];
+	_materialNames = new char[_numMaterials][32];
 	for (int i = 0; i < _numMaterials; i++) {
-		_materials[i] = g_resourceloader->loadMaterial(data, cmap);
+		strcpy(_materialNames[i], data);
+		_materials[i] = g_resourceloader->loadMaterial(_materialNames[i], cmap);
 		data += 32;
 	}
 	data += 32; // skip name
@@ -61,6 +73,7 @@ void Model::loadBinary(const char *data, const CMap &cmap) {
 
 Model::~Model() {
 	delete[] _materials;
+	delete[] _materialNames;
 	delete[] _geosets;
 	delete[] _rootHierNode;
 }
@@ -104,8 +117,9 @@ void Model::Mesh::loadBinary(const char *&data, ResPtr<Material> *materials) {
 	}
 	data += _numVertices * 4;
 	_faces = new Face[_numFaces];
+	_materialid = new int[_numFaces];
 	for (int i = 0; i < _numFaces; i++)
-		_faces[i].loadBinary(data, materials);
+		_materialid[i] = _faces[i].loadBinary(data, materials);
 	_vertNormals = new float[3 * _numVertices];
 	for (int i = 0; i < 3 * _numVertices; i++) {
 		_vertNormals[i] = get_float(data);
@@ -127,7 +141,11 @@ Model::Mesh::~Mesh() {
 void Model::Mesh::update() {
 }
 
-void Model::Face::loadBinary(const char *&data, ResPtr<Material> *materials) {
+void Model::Face::changeMaterial(ResPtr<Material> material) {
+	_material = material;
+}
+
+int Model::Face::loadBinary(const char *&data, ResPtr<Material> *materials) {
 	_type = READ_LE_UINT32(data + 4);
 	_geo = READ_LE_UINT32(data + 8);
 	_light = READ_LE_UINT32(data + 12);
@@ -157,8 +175,10 @@ void Model::Face::loadBinary(const char *&data, ResPtr<Material> *materials) {
 		_material = 0;
 	else {
 		_material = materials[READ_LE_UINT32(data)];
+		materialPtr = READ_LE_UINT32(data);
 		data += 4;
 	}
+	return materialPtr;
 }
 
 Model::Face::~Face() {
@@ -241,11 +261,12 @@ void Model::loadText(TextSplitter &ts, const CMap &cmap) {
 	ts.expectString("section: modelresource");
 	ts.scanString("materials %d", 1, &_numMaterials);
 	_materials = new ResPtr<Material>[_numMaterials];
+	_materialNames = new char[_numMaterials][32];
 	for (int i = 0; i < _numMaterials; i++) {
 		int num;
-		char name[32];
-		ts.scanString("%d: %32s", 2, &num, name);
-		_materials[num] = g_resourceloader->loadMaterial(name, cmap);
+		
+		ts.scanString("%d: %32s", 2, &num, _materialNames[num]);
+		_materials[num] = g_resourceloader->loadMaterial(_materialNames[num], cmap);
 	}
 
 	ts.expectString("section: geometrydef");
@@ -302,8 +323,13 @@ void Model::loadText(TextSplitter &ts, const CMap &cmap) {
 		_rootHierNode[num]._totalWeight = 1;
 	}
 
-	if (!ts.eof())
+	if (!ts.eof() && (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL))
 		warning("Unexpected junk at end of model text\n");
+}
+
+void Model::Geoset::changeMaterials(ResPtr<Material> *materials) {
+	for (int i = 0; i < _numMeshes; i++)
+		_meshes[i].changeMaterials(materials);
 }
 
 void Model::Geoset::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
@@ -316,6 +342,11 @@ void Model::Geoset::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
 	}
 }
 
+void Model::Mesh::changeMaterials(ResPtr<Material> *materials) {
+	for (int i = 0; i < _numFaces; i++)
+		_faces[i].changeMaterial(materials[_materialid[i]]);
+}
+
 void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
 	ts.scanString("name %32s", 1, _name);
 	ts.scanString("radius %f", 1, &_radius);
@@ -323,7 +354,8 @@ void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
 	// In data001/rope_scale.3do, the shadow line is missing
 	if (std::sscanf(ts.currentLine(), "shadow %d", &_shadow) < 1) {
 		_shadow = 0;
-		warning("Missing shadow directive in model\n");
+		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("Missing shadow directive in model\n");
 	} else
 		ts.nextLine();
 	ts.scanString("geometrymode %d", 1, &_geometryMode);
@@ -367,18 +399,19 @@ void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
 
 	ts.scanString("faces %d", 1, &_numFaces);
 	_faces = new Face[_numFaces];
+	_materialid = new int[_numFaces];
 	for (int i = 0; i < _numFaces; i++) {
-		int num, material, type, geo, light, tex, verts;
+		int num, type, geo, light, tex, verts;
 		float extralight;
 		int readlen;
 
 		if (ts.eof())
 			error("Expected face data, got EOF\n");
 
-		if (std::sscanf(ts.currentLine(), " %d: %d %i %d %d %d %f %d%n", &num, &material, &type, &geo, &light, &tex, &extralight, &verts, &readlen) < 8)
+		if (std::sscanf(ts.currentLine(), " %d: %d %i %d %d %d %f %d%n", &num, &_materialid[num], &type, &geo, &light, &tex, &extralight, &verts, &readlen) < 8)
 			error("Expected face data, got `%s'\n", ts.currentLine());
 
-		_faces[num]._material = materials[material];
+		_faces[num]._material = materials[_materialid[num]];
 		_faces[num]._type = type;
 		_faces[num]._geo = geo;
 		_faces[num]._light = light;

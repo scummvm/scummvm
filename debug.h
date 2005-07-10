@@ -20,6 +20,46 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
+enum enDebugLevels {
+	DEBUG_NONE,
+	DEBUG_NORMAL,
+	DEBUG_WARN,
+	DEBUG_ERROR,
+	DEBUG_FUNC,
+	DEBUG_BITMAPS,
+	DEBUG_MODEL,
+	DEBUG_STUB,
+	DEBUG_SMUSH,
+	DEBUG_CHORES,
+	DEBUG_ALL
+};
+extern enDebugLevels debugLevel;
+static const char *debug_levels[] = {
+	"NONE",
+	"NORMAL",
+	"WARN",
+	"ERROR",
+	"FUNC",
+	"BITMAP",
+	"MODEL",
+	"STUB",
+	"SMUSH",
+	"CHORE",
+	"ALL"
+};
+static const char *debug_descriptions[] = {
+	"No debug messages will be printed (default)",
+	"\"Normal\" debug messages will be printed",
+	"Warning debug messages will be printed",
+	"Error debug messages will be printed",
+	"Function (normal and stub) debug messages will be printed",
+	"Bitmap debug messages will be printed",
+	"Model debug messages will be printed",
+	"Stub (missing function) debug messages will be printed",
+	"SMUSH debug messages will be printed",
+	"Chore debug messages will be printed",
+	"All debug messages will be printed",
+};
 // Hacky toggles for experimental / debug code (defined/set in main.cpp)
 extern bool ZBUFFER_GLOBAL, SHOWFPS_GLOBAL;
 

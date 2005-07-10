@@ -26,6 +26,8 @@
 #include <string>
 #include <list>
 
+#define DEFAULT_COLORMAP "item.cmp"
+
 class Costume;
 class LipSynch;
 class TextObject;
@@ -71,6 +73,9 @@ public:
 	void turn(int dir);
 
 	void sayLine(const char *msg, const char *msgId);
+	// When we clean all text objects we don't want the actors to clean their
+	// objects again since they're already freed
+	void lineCleanup() { _sayLineText = NULL; }
 	void shutUp();
 	bool talking();
 
@@ -80,6 +85,9 @@ public:
 	void setTalkChore(int index, int choreNumber, Costume *cost);
 	void setMumbleChore(int choreNumber, Costume *cost);
 
+	void setColormap(const char *map) {
+		strcpy(_colormap, map);
+	}
 	void pushCostume(const char *name);
 	void setCostume(const char *name);
 	void popCostume();
@@ -125,6 +133,7 @@ private:
 	Vector3d _pos;
 	float _pitch, _yaw, _roll;
 	float _walkRate, _turnRate;
+	char _colormap[256];
 
 	bool _constrain;	// Constrain to walkboxes
 	float _reflectionAngle;	// Maximum angle to turn by at walls

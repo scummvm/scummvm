@@ -25,6 +25,7 @@
 
 KeyframeAnim::KeyframeAnim(const char *filename, const char *data, int len) :
 		Resource(filename) {
+
 	if (len >= 4 && std::memcmp(data, "FYEK", 4) == 0)
 		loadBinary(data, len);
 	else {
@@ -52,7 +53,20 @@ void KeyframeAnim::loadBinary(const char *data, int len) {
 	const char *dataEnd = data + len;
 	data += 180;
 	while (data < dataEnd) {
+		// ma_card_hold.key crashes at this part without checking
+		// to make sure nodeNum is valid, unfortunately I believe
+		// whatever data we're losing from this file is what prevents
+		// the game from continuing after Manny reads the message
+		// 
+		// TODO: Find out what really goes wrong when we read
+		// the data in ma_card_hold.key and fix it
 		int nodeNum = READ_LE_UINT32(data + 32);
+		if (nodeNum >= _numJoints) {
+			if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL) {
+				warning("A node number was greater than the maximum number of nodes (%d/%d)", nodeNum, _numJoints);
+			}
+			return;
+		}
 		_nodes[nodeNum] = new KeyframeNode;
 		_nodes[nodeNum]->loadBinary(data);
 	}

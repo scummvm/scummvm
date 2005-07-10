@@ -23,7 +23,7 @@
 #include "driver.h"
 
 Material::Material(const char *filename, const char *data, int len, const CMap &cmap) :
-		Resource(filename) {
+		Resource(filename), _cmap((CMap *) &cmap) {
 	if (len < 4 || memcmp(data, "MAT ", 4) != 0)
 		error("invalid magic loading texture\n");
 
@@ -33,7 +33,8 @@ Material::Material(const char *filename, const char *data, int len, const CMap &
 	_height = READ_LE_UINT32(data + 80 + _numImages * 40);
 
 	if ((_width == 0) || (_height == 0)) {
-		warning("skip load texture: bad texture size (%dx%d) for texture %s\n", _width, _height, filename);
+		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("skip load texture: bad texture size (%dx%d) for texture %s\n", _width, _height, filename);
 		return;
 	}
 

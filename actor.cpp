@@ -46,6 +46,7 @@ Actor::Actor(const char *name) :
 	_constrain = false;
 	_talkSoundName = "";
 
+	strcpy(_colormap, DEFAULT_COLORMAP);
 	for (int i = 0; i < 10; i++) {
 		_talkCostume[i] = NULL;
 		_talkChore[i] = -1;
@@ -358,6 +359,8 @@ void Actor::shutUp() {
 
 void Actor::pushCostume(const char *name) {
 	Costume *newCost = g_resourceloader->loadCostume(name, currentCostume());
+	
+	newCost->setColormap(_colormap);
 	_costumeStack.push_back(newCost);
 }
 

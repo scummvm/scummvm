@@ -28,6 +28,7 @@
 #include "smush.h"
 #include "textobject.h"
 #include "objectstate.h"
+#include "colormap.h"
 #include "font.h"
 
 #include "imuse/imuse.h"
@@ -41,7 +42,9 @@
 extern Imuse *g_imuse;
 
 #define strmatch(src, dst)     (strlen(src) == strlen(dst) && strcmp(src, dst) == 0)
+#define DEBUG_FUNCTION()       debugFunction("Function", __FUNCTION__)
 
+static void debugFunction(char *debugMessage, const char *funcName);
 static void stubWarning(char *funcName);
 
 static inline bool isObject(int num) {
@@ -171,11 +174,11 @@ static Costume *get_costume(Actor *a, int param, char *called_from) {
 	Costume *result;
 	if (lua_isnil(lua_getparam(param))) {
 		result = a->currentCostume();
-		if (result == NULL)
+		if (result == NULL && (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL))
 			warning("Actor %s has no costume [%s]\n", a->name(), called_from);
 	} else {
 		result = a->findCostume(luaL_check_string(param));
-		if (result == NULL)
+		if (result == NULL && (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL))
 			warning("Actor %s has no costume %s [%s]\n", a->name(), lua_getstring(lua_getparam(param)), called_from);
 	}
 	return result;
@@ -191,13 +194,34 @@ static void new_dofile() {
 // Debugging message functions
 
 static void PrintDebug() {
-	char *msg_str = luaL_check_string(1);
-	std::fputs(msg_str, stderr);
+	DEBUG_FUNCTION();
+	if (debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL) {
+		std::string msg = luaL_check_string(1);
+		
+		msg.insert(0, "Debug: ");
+		std::fputs(msg.c_str(), stderr);
+	}
+}
+
+static void PrintError() {
+	DEBUG_FUNCTION();
+	if (debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL) {
+		std::string msg = luaL_check_string(1);
+		
+		msg.insert(0, "Error: ");
+		// don't do 'error()' so we can stay alive if possible
+		std::fputs(msg.c_str(), stderr);
+	}
 }
 
 static void PrintWarning() {
-	char *msg = luaL_check_string(1);
-	warning(msg);
+	DEBUG_FUNCTION();
+	if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL) {
+		std::string msg = luaL_check_string(1);
+		
+		msg.insert(0, "Warning: ");
+		warning(msg.c_str());
+	}
 }
 
 static void FunctionName() {
@@ -206,6 +230,7 @@ static void FunctionName() {
 	char *filename;
 	int line;
 
+	DEBUG_FUNCTION();
 	if (!lua_isfunction(lua_getparam(1))) {
 		sprintf(buf, "function InvalidArgsToFunctionName");
 		lua_pushstring(buf);
@@ -244,6 +269,8 @@ static void FunctionName() {
 
 static void CheckForFile() {
 	char *filename = luaL_check_string(1);
+	
+	DEBUG_FUNCTION();
 	pushbool(g_resourceloader->fileExists(filename));
 }
 
@@ -259,12 +286,18 @@ static unsigned char clamp_color(int c) {
 }
 
 static void MakeColor() {
-	Color *c = new Color (clamp_color(check_int(1)), clamp_color(check_int(2)), clamp_color(check_int(3)));
+	Color *c;
+	
+	DEBUG_FUNCTION();
+	c = new Color (clamp_color(check_int(1)), clamp_color(check_int(2)), clamp_color(check_int(3)));
 	lua_pushusertag(c, MKID('COLR'));
 }
 
 static void GetColorComponents() {
-	Color *c = check_color(1);
+	Color *c;
+	
+	DEBUG_FUNCTION();
+	c = check_color(1);
 	lua_pushnumber(c->red());
 	lua_pushnumber(c->green());
 	lua_pushnumber(c->blue());
@@ -273,14 +306,22 @@ static void GetColorComponents() {
 // Registry functions
 
 static void ReadRegistryValue() {
-	char *key = luaL_check_string(1);
-	const char *val = g_registry->get(key);
+	char *key;
+	const char *val;
+	
+	DEBUG_FUNCTION();
+	key = luaL_check_string(1);
+	val = g_registry->get(key, NULL);
 	lua_pushstring(const_cast<char *>(val));
 }
 
 static void WriteRegistryValue() {
-	char *key = luaL_check_string(1);
-	char *val = luaL_check_string(2);
+	char *key;
+	char *val;
+	
+	DEBUG_FUNCTION();
+	key = luaL_check_string(1);
+	val = luaL_check_string(2);
 	g_registry->set(key, val);
 }
 
@@ -288,6 +329,8 @@ static void WriteRegistryValue() {
 
 static void LoadActor() {
 	const char *name;
+	
+	DEBUG_FUNCTION();
 	if (lua_isnil(lua_getparam(1)))
 		name = "<unnamed>";
 	else
@@ -296,22 +339,27 @@ static void LoadActor() {
 }
 
 static void GetActorTimeScale() {
-	stubWarning("GetActorTimeScale");
+	DEBUG_FUNCTION();
 	// return 1 so the game doesn't halt when Manny attempts
 	// to pick up the fire extinguisher
 	lua_pushnumber(1);
 }
 
 static void SetSelectedActor() {
-	Actor *act = check_actor(1);
+	Actor *act;
+	
+	DEBUG_FUNCTION();
+	act = check_actor(1);
 	g_engine->setSelectedActor(act);
 }
 
 static void SetSayLineDefaults() {
 	char *key_text = NULL;
-	lua_Object table_obj = lua_getparam(1);
+	lua_Object table_obj;
 	lua_Object key;
 
+	DEBUG_FUNCTION();
+	table_obj = lua_getparam(1);
 	for (;;) {
 		lua_pushobject(table_obj);
 		if (key_text)
@@ -333,22 +381,32 @@ static void SetSayLineDefaults() {
 }
 
 static void SetActorTalkColor() {
-	Actor *act = check_actor(1);
-	Color *c = check_color(2);
+	Actor *act;
+	Color *c;
+	
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	c = check_color(2);
 	act->setTalkColor(*c);
 }
 
 static void GetActorTalkColor() {
-	Actor *act = check_actor(1);
-	Color *c = new Color(act->talkColor());
+	Actor *act;
+	Color *c;
+
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	c = new Color(act->talkColor());
 	lua_pushusertag(c, MKID('COLR'));
 }
 
 static void SetActorRestChore() {
-	Actor *act = check_actor(1);
+	Actor *act;
 	int chore;
 	Costume *costume;
 
+	DEBUG_FUNCTION();
+	act = check_actor(1);
 	if (lua_isnil(lua_getparam(2))) {
 		chore = -1;
 		costume = NULL;
@@ -361,27 +419,39 @@ static void SetActorRestChore() {
 }
 
 static void SetActorWalkChore() {
-	Actor *act = check_actor(1);
-	int chore = check_int(2);
-	Costume *costume = get_costume(act, 3, "SetActorWalkChore");
+	Actor *act;
+	int chore;
+	Costume *costume;
 
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	chore = check_int(2);
+	costume = get_costume(act, 3, "SetActorWalkChore");
 	act->setWalkChore(chore, costume);
 }
 
 static void SetActorTurnChores() {
-	Actor *act = check_actor(1);
-	int left_chore = check_int(2);
-	int right_chore = check_int(3);
-	Costume *costume = get_costume(act, 4, "SetActorTurnChores");
+	Actor *act;
+	int left_chore;
+	int right_chore;
+	Costume *costume;
 
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	left_chore = check_int(2);
+	right_chore = check_int(3);
+	costume = get_costume(act, 4, "SetActorTurnChores");
 	act->setTurnChores(left_chore, right_chore, costume);
 }
 
 static void SetActorTalkChore() {
-	Actor *act = check_actor(1);
-	int index = check_int(2);
+	Actor *act;
+	int index;
 	int chore;
 
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	index = check_int(2);
 	if (lua_isnumber(lua_getparam(3)))
 		chore = check_int(3);
 	else
@@ -393,42 +463,64 @@ static void SetActorTalkChore() {
 }
 
 static void SetActorMumblechore() {
-	Actor *act = check_actor(1);
-	int chore = check_int(2);
-	Costume *costume = get_costume(act, 3, "SetActorMumblechore");
+	Actor *act;
+	int chore;
+	Costume *costume;
 
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	chore = check_int(2);
+	costume = get_costume(act, 3, "SetActorMumblechore");
 	act->setMumbleChore(chore, costume);
 }
 
 static void SetActorVisibility() {
-	Actor *act = check_actor(1);
-	bool val = getbool(2);
+	Actor *act;
+	bool val;
+	
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	val = getbool(2);
 	act->setVisibility(val);
 }
 
 static void PutActorAt() {
-	Actor *act = check_actor(1);
-	float x = luaL_check_number(2);
-	float y = luaL_check_number(3);
-	float z = luaL_check_number(4);
+	Actor *act;
 
-	act->setPos(Vector3d(x, y, z));
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	act->setPos(Vector3d(luaL_check_number(2), luaL_check_number(3), luaL_check_number(4)));
 }
 
 static void GetActorPos() {
-	Actor *act = check_actor(1);
-	Vector3d pos = act->pos();
+	Actor *act;
+	Vector3d pos;
+	
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	pos = act->pos();
 	lua_pushnumber(pos.x());
 	lua_pushnumber(pos.y());
 	lua_pushnumber(pos.z());
 }
 
 static void SetActorRot() {
-	Actor *act = check_actor(1);
-	float pitch = luaL_check_number(2);
-	float yaw = luaL_check_number(3);
-	float roll = luaL_check_number(4);
+	float pitch, yaw, roll;
+	lua_Object param3;
+	Actor *act;
 
+	DEBUG_FUNCTION();
+	param3 = lua_getparam(3);
+	act = check_actor(1);
+	pitch = luaL_check_number(2);
+	// param3 can be nil, the tube-switcher scene appears
+	// to call SetActorRot will nil for param3 intentionally
+	if (lua_isnil(param3))
+		yaw = 0;
+	else
+		yaw = luaL_check_number(3);
+	
+	roll = luaL_check_number(4);
 	if (getbool(5))
 		act->turnTo(pitch, yaw, roll);
 	else
@@ -436,97 +528,155 @@ static void SetActorRot() {
 }
 
 static void GetActorRot() {
-	Actor *act = check_actor(1);
+	Actor *act;
+
+	DEBUG_FUNCTION();
+	act = check_actor(1);
 	lua_pushnumber(act->pitch());
 	lua_pushnumber(act->yaw());
 	lua_pushnumber(act->roll());
 }
 
 static void IsActorTurning() {
-	Actor *act = check_actor(1);
+	Actor *act;
+	
+	DEBUG_FUNCTION();
+	act = check_actor(1);
 	pushbool(act->isTurning());
 }
 
 static void GetAngleBetweenActors() {
-	Actor *act1 = check_actor(1);
-	Actor *act2 = check_actor(2);
+	Actor *act1;
+	Actor *act2;
+	
+	DEBUG_FUNCTION();
+	act1 = check_actor(1);
+	act2 = check_actor(2);
 	lua_pushnumber(act1->angleTo(*act2));
 }
 
 static void GetActorYawToPoint() {
-	Actor *act = check_actor(1);
-	double x = luaL_check_number(2);
-	double y = luaL_check_number(3);
-	double z = luaL_check_number(4);
+	lua_Object param2;
+	float x, y, z;
+	Actor *act;
+	
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	param2 = lua_getparam(2);
+	// when this gets called by the tube-switcher guy it's sending
+	// only two things: an actor and a table with components x, y, z
+	if (lua_isnumber(param2)) {
+		x = luaL_check_number(2);
+		y = luaL_check_number(3);
+		z = luaL_check_number(4);
+	} else if (lua_istable(param2)) {
+		x = lua_getnumber(getTableValue(param2, "x"));
+		y = lua_getnumber(getTableValue(param2, "y"));
+		z = lua_getnumber(getTableValue(param2, "z"));
+	} else {
+		if (debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
+			error("Unhandled data type for GetActorYawToPoint!");
+		return;
+	}
 	lua_pushnumber(act->yawTo(Vector3d(x, y, z)));
 }
 
 static void PutActorInSet() {
-	Actor *act = check_actor(1);
 	const char *set = "";
+	Actor *act;
+	
+	DEBUG_FUNCTION();
+	act = check_actor(1);
 	if (!lua_isnil(lua_getparam(2)))
 		set = luaL_check_string(2);
 	act->putInSet(set);
 }
 
 static void SetActorWalkRate() {
-	Actor *act = check_actor(1);
-	float rate = luaL_check_number(2);
+	Actor *act;
+	float rate;
 
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	rate = luaL_check_number(2);
 	act->setWalkRate(rate);
 }
 
 static void GetActorWalkRate() {
-	Actor *act = check_actor(1);
+	Actor *act;
+
+	DEBUG_FUNCTION();
+	act = check_actor(1);
 	lua_pushnumber(act->walkRate());
 }
 
 static void SetActorTurnRate() {
-	Actor *act = check_actor(1);
-	float rate = luaL_check_number(2);
+	Actor *act;
+	float rate;
+	
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	rate = luaL_check_number(2);
 	act->setTurnRate(rate);
 }
 
 static void WalkActorForward() {
-	Actor *act = check_actor(1);
+	Actor *act;
+	
+	DEBUG_FUNCTION();
+	act = check_actor(1);
 	act->walkForward();
 }
 
 static void SetActorReflection() {
-	Actor *act = check_actor(1);
-	float angle = luaL_check_number(2);
+	Actor *act;
+	float angle;
+	
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	angle = luaL_check_number(2);
 	act->setReflection(angle);
 }
 
 static void GetActorPuckVector() {
-	Actor *act = check_actor(1);
-	Vector3d result = act->puckVector();
+	Actor *act;
+	Vector3d result;
+
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	result = act->puckVector();
 	lua_pushnumber(result.x());
 	lua_pushnumber(result.y());
 	lua_pushnumber(result.z());
 }
 
 static void WalkActorTo() {
-	Actor *act = check_actor(1);
-	float x = luaL_check_number(2);
-	float y = luaL_check_number(3);
-	float z = luaL_check_number(4);
+	Actor *act;
 
-	act->walkTo(Vector3d(x, y, z));
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	act->walkTo(Vector3d(luaL_check_number(2), luaL_check_number(3), luaL_check_number(4)));
 }
 
 static void IsActorMoving() {
-	Actor *act = check_actor(1);
+	Actor *act;
+
+	DEBUG_FUNCTION();
+	act = check_actor(1);
 	pushbool(act->isWalking());
 }
 
 static void Is3DHardwareEnabled() {
+	DEBUG_FUNCTION();
 	pushbool(g_driver->isHardwareAccelerated());
 }
 
 static void SetHardwareState() {
 	// changing only in config setup (software/hardware rendering)
-	bool accel = getbool(1);
+	bool accel;
+
+	DEBUG_FUNCTION();
+	accel = getbool(1);
 	if (accel)
 		g_registry->set("soft", "FALSE");
 	else
@@ -535,18 +685,25 @@ static void SetHardwareState() {
 }
 
 static void SetVideoDevices() {
-	int devId = check_int(1);
-	int modeId = check_int(2);
+	int devId;
+	int modeId;
+
+	DEBUG_FUNCTION();
+	devId = check_int(1);
+	modeId = check_int(2);
 	// ignore setting video devices
 }
 
 static void GetVideoDevices() {
+	DEBUG_FUNCTION();
 	lua_pushnumber(0.0);
 	lua_pushnumber(-1.0);
 }
 
 static void EnumerateVideoDevices() {
 	lua_Object result = lua_createtable();
+	
+	DEBUG_FUNCTION();
 	lua_pushobject(result);
 	lua_pushnumber(0.0); // id of device
 	lua_pushstring("SDL Video Device"); // name of device
@@ -555,8 +712,11 @@ static void EnumerateVideoDevices() {
 }
 
 static void Enumerate3DDevices() {
-	int num = check_int(1);
 	lua_Object result = lua_createtable();
+	int num;
+
+	DEBUG_FUNCTION();
+	num = check_int(1);
 	lua_pushobject(result);
 	lua_pushnumber(-1.0);
 	if (g_driver->isHardwareAccelerated()) {
@@ -569,24 +729,56 @@ static void Enumerate3DDevices() {
 }
 
 static void IsActorResting() {
-	Actor *act = check_actor(1);
+	Actor *act;
+
+	DEBUG_FUNCTION();
+	act = check_actor(1);
 	pushbool(!(act->isWalking() || act->isTurning()));
 }
 
+static void TurnActorTo() {
+stubWarning("TurnActorTo");
+}
+static void PointActorAt() {
+stubWarning("PointActorAt");
+}
+static void SetActorColormap() {
+	char *mapname;
+	CMap *_cmap;
+	Actor *act;
+	
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	mapname = luaL_check_string(2);
+	_cmap = g_resourceloader->loadColormap(mapname);
+	act->setColormap(mapname);
+}
+
 static void TurnActor() {
-	Actor *act = check_actor(1);
-	int dir = check_int(2);
+	Actor *act;
+	int dir;
+	
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	dir = check_int(2);
 	act->turn(dir);
 }
 
 static void PushActorCostume() {
-	Actor *act = check_actor(1);
-	const char *costumeName = luaL_check_string(2);
+	Actor *act;
+	const char *costumeName;
+
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	costumeName = luaL_check_string(2);
 	act->pushCostume(costumeName);
 }
 
 static void SetActorCostume() {
-	Actor *act = check_actor(1);
+	Actor *act;
+
+	DEBUG_FUNCTION();
+	act = check_actor(1);
 	if (lua_isnil(lua_getparam(2)))
 		act->clearCostumes();
 	else {
@@ -596,8 +788,12 @@ static void SetActorCostume() {
 }
 
 static void GetActorCostume() {
-	Actor *act = check_actor(1);
-	Costume *c = act->currentCostume();
+	Actor *act;
+	Costume *c;
+
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	c = act->currentCostume();
 	if (c == NULL)
 		lua_pushnil();
 	else
@@ -605,31 +801,75 @@ static void GetActorCostume() {
 }
 
 static void PopActorCostume() {
-	Actor *act = check_actor(1);
+	Actor *act;
+	
+	DEBUG_FUNCTION();
+	act = check_actor(1);
 	act->popCostume();
 }
 
 static void GetActorCostumeDepth() {
-	Actor *act = check_actor(1);
+	Actor *act;
+	
+	DEBUG_FUNCTION();
+	act = check_actor(1);
 	lua_pushnumber(act->costumeStackDepth());
 }
 
 static void PlayActorChore() {
-	Actor *act = check_actor(1);
-	int num = check_int(2);
-	Costume *cost = get_costume(act, 3, "playActorChore");
+	Actor *act;
+	int num;
+	Costume *cost;
 
-	if (!cost)
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	num = check_int(2);
+	cost = get_costume(act, 3, "playActorChore");
+	if (!cost) {
+		if (debugLevel == DEBUG_CHORES || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("Actor costume not found, unable to perform chore.");
 		return;
+	}
 
 	cost->playChore(num);
 }
 
-static void PlayActorChoreLooping() {
-	Actor *act = check_actor(1);
-	int num = check_int(2);
-	Costume *cost = get_costume(act, 3, "playActorChoreLooping");
+static void CompleteActorChore() {
+	Costume *cost;
+	Actor *act;
+	int num;
+	// CompleteActorChore appears to be an alias for PlayActorChore
+	// Except that we should jump to the last frame of the chore
+	//
+  // Example: When Manny puts the message tube back in his office
+  // the animation automatically puts the tube back into place
+  // and then calls this function to show the closed graphic
+	//
+	// Note: This does not appear to function entirely as it should
+	// TODO: Make this operation work better
+	
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	num = check_int(2);
+	cost = get_costume(act, 3, "completeActorChore");
+	if (!cost) {
+		if (debugLevel == DEBUG_CHORES || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("Actor costume not found, unable to perform chore.");
+		return;
+	}
 
+	cost->setChoreLastFrame(num);
+}
+
+static void PlayActorChoreLooping() {
+	Actor *act;
+	int num;
+	Costume *cost;
+
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	num = check_int(2);
+	cost = get_costume(act, 3, "playActorChoreLooping");
 	if (!cost)
 		return;
 
@@ -637,11 +877,16 @@ static void PlayActorChoreLooping() {
 }
 
 static void SetActorChoreLooping() {
-	Actor *act = check_actor(1);
-	int num = check_int(2);
-	bool val = getbool(3);
-	Costume *cost = get_costume(act, 4, "setActorChoreLooping");
+	Actor *act;
+	int num;
+	bool val;
+	Costume *cost;
 
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	num = check_int(2);
+	val = getbool(3);
+	cost = get_costume(act, 4, "setActorChoreLooping");
 	if (!cost)
 		return;
 
@@ -649,9 +894,12 @@ static void SetActorChoreLooping() {
 }
 
 static void StopActorChore() {
-	Actor *act = check_actor(1);
-	Costume *cost = get_costume(act, 3, "stopActorChore");
+	Actor *act;
+	Costume *cost;
 
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	cost = get_costume(act, 3, "stopActorChore");
 	if (!cost)
 		return;
 
@@ -662,11 +910,15 @@ static void StopActorChore() {
 }
 
 static void IsActorChoring() {
-	Actor *act = check_actor(1);
-	bool excludeLooping = getbool(3);
-	Costume *cost = get_costume(act, 4, "isActorChoring");
+	Actor *act;
+	bool excludeLooping;
+	Costume *cost;
 	int result;
 
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	excludeLooping = getbool(3);
+	cost = get_costume(act, 4, "isActorChoring");
 	if (!cost) {
 		lua_pushnil();
 		return;
@@ -684,12 +936,15 @@ static void IsActorChoring() {
 }
 
 static void ActorLookAt() {
-	Actor *act = check_actor(1);
-	lua_Object x = lua_getparam(2);
-	lua_Object y = lua_getparam(3);
-	lua_Object z = lua_getparam(4);
-	lua_Object rate = lua_getparam(5);
+	lua_Object x, y, z, rate;
+	Actor *act;
 
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	x = lua_getparam(2);
+	y = lua_getparam(3);
+	z = lua_getparam(4);
+	rate = lua_getparam(5);
 	if (lua_isnumber(rate))
 		act->setLookAtRate(luaL_check_number(5));
 
@@ -733,38 +988,54 @@ static void ActorLookAt() {
 
 		if (lua_isnumber(y))
 			act->setLookAtRate(luaL_check_number(3));
-	}
+	} else if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+		warning("ActorLookAt: Don't know what to look at!");
 
 	act->setLooking(true);
+	// Fixes random bug when changing scenes (?) after we've done a jump
+	// (this function is close to the failure point)
+	lua_pushnil();
 }
 
 static void SetActorLookRate() {
-	Actor *act = check_actor(1);
-	float rate = luaL_check_number(2);
+	Actor *act;
+	float rate;
 
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	rate = luaL_check_number(2);
 	act->setLookAtRate(rate);
 }
 
 static void GetActorLookRate() {
-	Actor *act = check_actor(1);
+	Actor *act;
 
+	DEBUG_FUNCTION();
+	act = check_actor(1);
 	lua_pushnumber(act->lookAtRate());
 }
 
 static void SetActorHead() {
-	Actor *act = check_actor(1);
-	int joint1 = check_int(2);
-	int joint2 = check_int(3);
-	int joint3 = check_int(4);
-	float maxRoll = luaL_check_number(5); // Yaz: recheck to see if it's really roll
-	float maxPitch = luaL_check_number(6);
-	float maxYaw = luaL_check_number(7);
+	float maxRoll, maxPitch, maxYaw;
+	int joint1, joint2, joint3;
+	Actor *act;
 
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	joint1 = check_int(2);
+	joint2 = check_int(3);
+	joint3 = check_int(4);
+	maxRoll = luaL_check_number(5); // Yaz: recheck to see if it's really roll
+	maxPitch = luaL_check_number(6);
+	maxYaw = luaL_check_number(7);
 	act->setHead(joint1, joint2, joint3, maxRoll, maxPitch, maxYaw);
 }
 
 static void PutActorAtInterest() {
-	Actor *act = check_actor(1);
+	Actor *act;
+	
+	DEBUG_FUNCTION();
+	act = check_actor(1);
 	if (!g_engine->currScene())
 		return;
 
@@ -772,10 +1043,14 @@ static void PutActorAtInterest() {
 }
 
 static void SetActorFollowBoxes() {
-	Actor *act = check_actor(1);
-	bool mode = !lua_isnil(lua_getparam(2));
+	Actor *act;
+	bool mode;
 
-	warning("SetActorFollowBoxes() not implemented");
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	mode = !lua_isnil(lua_getparam(2));
+	if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+		warning("SetActorFollowBoxes() not implemented");
 	// that is not walkbox walking, but temporary hack
 	// act->enableWalkbox(mode);
 	act->setConstrain(mode);
@@ -788,11 +1063,15 @@ static void SetActorConstrain() {
 	// that below should be enabled, but for now it's disabled realated to 
 	// above func SetActorFollowBoxes.
 //	act->setConstrain(constrain);
+	stubWarning("SetActorConstrain");
 }
 
 static void GetVisibleThings() {
 	lua_Object result = lua_createtable();
-	Actor *sel = g_engine->selectedActor();
+	Actor *sel;
+
+	DEBUG_FUNCTION();
+	sel = g_engine->selectedActor();
 	for (Engine::ActorListType::const_iterator i = g_engine->actorsBegin(); i != g_engine->actorsEnd(); i++) {
 		if (!(*i)->inSet(g_engine->sceneName()))
 			continue;
@@ -837,8 +1116,12 @@ std::string parseMsgText(const char *msg, char *msgId) {
 static void TextFileGetLine() {
 	char textBuf[512];
 	textBuf[0] = 0;
-	char *filename = luaL_check_string(1);
-	FILE *file = fopen(filename, "r");
+	char *filename;
+	FILE *file;
+	
+	DEBUG_FUNCTION();
+	filename = luaL_check_string(1);
+	file = fopen(filename, "r");
 	if (!file) {
 		lua_pushnil();
 		return;
@@ -854,8 +1137,12 @@ static void TextFileGetLine() {
 
 static void TextFileGetLineCount() {
 	char textBuf[512];
-	char *filename = luaL_check_string(1);
-	FILE *file = fopen(filename, "r");
+	char *filename;
+	FILE *file;
+	
+	DEBUG_FUNCTION();
+	filename = luaL_check_string(1);
+	file = fopen(filename, "r");
 	if (!file) {
 		lua_pushnil();
 		return;
@@ -887,23 +1174,24 @@ static void TextFileGetLineCount() {
 // Localization function
 
 static void LocalizeString() {
-	char msgId[32];
-	char buf[640];
-
-	char *str = luaL_check_string(1);
+	char msgId[32], buf[640], *str;
+	
+	DEBUG_FUNCTION();
+	str = luaL_check_string(1);
 	std::string msg = parseMsgText(str, msgId);
 	sprintf(buf, "/%s/%s", msgId, msg.c_str());
 	lua_pushstring(const_cast<char *>(buf));
 }
 
 static void SayLine() {
+	int pan = 64, param_number = 2;
 	char msgId[32], *str;
-	int pan = 64;
-
-	Actor *act = check_actor(1);
-
-	int param_number = 2;
-	lua_Object param2 = lua_getparam(param_number++);
+	lua_Object param2;
+	Actor *act;
+	
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	param2 = lua_getparam(param_number++);
 	if (!lua_isnil(param2)) {
 		do {
 			if (lua_isstring(param2)) {
@@ -925,7 +1213,7 @@ static void InputDialog() {
 	int c, i = 0;
 	char buf[512];
 
-	stubWarning("InputDialog");
+	DEBUG_FUNCTION();
 	fprintf(stderr, "%s %s: ", luaL_check_string(1), luaL_check_string(2));
 	while (i < 512 && (c = fgetc(stdin)) != EOF && c != '\n')
 		buf[i++] = c;
@@ -936,6 +1224,8 @@ static void InputDialog() {
 
 static void IsMessageGoing() {
 	Actor *act;
+	
+	DEBUG_FUNCTION();
 	if (lua_getparam(1) == LUA_NOOBJECT) {
 		pushbool(g_imuse->isVoicePlaying());
 	} else {
@@ -945,16 +1235,22 @@ static void IsMessageGoing() {
 }
 
 static void ShutUpActor() {
-	Actor *act = check_actor(1);
+	Actor *act;
+	
+	DEBUG_FUNCTION();
+	act = check_actor(1);
 	if (act)
 		act->shutUp();
 }
 
 // Sector functions
 static void GetActorSector(void) {
-	Actor *act = check_actor(1);
-	int sectorType = check_int(2);
+	Actor *act;
+	int sectorType;
 
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	sectorType = check_int(2);
 	Sector *result = g_engine->currScene()->findPointSector(act->pos(), sectorType);
 	if (result != NULL) {
 		lua_pushnumber(result->id());
@@ -968,10 +1264,14 @@ static void GetActorSector(void) {
 }
 
 static void IsActorInSector(void) {
-	Actor *act = check_actor(1);
-	const char *name = luaL_check_string(2);
-	int i, numSectors = g_engine->currScene()->getSectorCount();
+	int i, numSectors;
+	const char *name;
+	Actor *act;
 
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	name = luaL_check_string(2);
+	numSectors = g_engine->currScene()->getSectorCount();
 	for (i = 0; i < numSectors; i++) {
 		Sector *sector = g_engine->currScene()->getSectorBase(i);
 
@@ -988,12 +1288,15 @@ static void IsActorInSector(void) {
 }
 
 static void MakeSectorActive(void) {
-	lua_Object sectorName = lua_getparam(1);
-	bool visible = !lua_isnil(lua_getparam(2));
+	lua_Object sectorName;
+	bool visible;
 	int i = 0, numSectors;
 
+	DEBUG_FUNCTION();
+	sectorName = lua_getparam(1);
+	visible = !lua_isnil(lua_getparam(2));
 	// FIXME: This happens on initial load. Are we initting something in the wrong order?
-	if (!g_engine->currScene()) {
+	if (!g_engine->currScene() && (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)) {
 		warning("!!!! Trying to call MakeSectorActive without a scene!");
 		return;
 	}
@@ -1020,23 +1323,48 @@ static void MakeSectorActive(void) {
 				return;
 			}
 		}
-	} else {
+	} else if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL){
 		warning("MakeSectorActive Parameter is not a sector ID or Name");
 		return;
-	}
+	} else
+		return;
 }
 
 // Scene functions
+static void LockSet() {
+	const char *name;
+	
+	DEBUG_FUNCTION();
+	name = luaL_check_string(1);
+	// We should lock the set so it isn't destroyed
+	g_engine->setSceneLock(name, true);
+}
+
+static void UnLockSet() {
+	const char *name;
+	
+	DEBUG_FUNCTION();
+	name = luaL_check_string(1);
+	// We should unlock the set so it can be destroyed again
+	g_engine->setSceneLock(name, false);
+}
 
 static void MakeCurrentSet() {
-	const char *name = luaL_check_string(1);
+	const char *name;
+	
+	DEBUG_FUNCTION();
+	name = luaL_check_string(1);
+	if (debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
+		printf("Entered new scene '%s'.\n", name);
 	g_engine->setScene(name);
 }
 
 static void MakeCurrentSetup() {
-	int num = check_int(1);
-	int prevSetup = g_engine->currScene()->setup();
+	int num, prevSetup;
 
+	DEBUG_FUNCTION();
+	num = check_int(1);
+	prevSetup = g_engine->currScene()->setup();
 	g_engine->currScene()->setSetup(num);
 
 	lua_beginblock();
@@ -1058,23 +1386,30 @@ static void MakeCurrentSetup() {
 }
 
 static void GetCurrentSetup() {
-	const char *name = luaL_check_string(1);
+	const char *name;
+	
+	DEBUG_FUNCTION();
+	name = luaL_check_string(1);
 	if (std::strcmp(name, g_engine->sceneName()) == 0)
 		lua_pushnumber(g_engine->currScene()->setup());
 	else
 		lua_pushnil();
 }
 
+// FIXME: Function only spits back what it's given
 static void GetShrinkPos() {
-	// FIXME
-	double x = luaL_check_number(1);
-	double y = luaL_check_number(2);
-	double z = luaL_check_number(3);
-	double r = luaL_check_number(4);
+	double x, y, z, r;
+	
+	DEBUG_FUNCTION();
+	x = luaL_check_number(1);
+	y = luaL_check_number(2);
+	z = luaL_check_number(3);
+	r = luaL_check_number(4);
 	lua_pushnumber(x);
 	lua_pushnumber(y);
 	lua_pushnumber(z);
-	warning("Stub function GetShrinkPos(%g,%g,%g,%g) called", x, y, z, r);
+	if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+		warning("Stub function GetShrinkPos(%g,%g,%g,%g) called", x, y, z, r);
 }
 
 // Sound functions
@@ -1089,10 +1424,13 @@ enum ImuseParam {
 };
 
 static void ImStartSound() {
-	char *soundName = luaL_check_string(1);
-	int priority = check_int(2);
-	int group = check_int(3);
+	int priority, group;
+	char *soundName;
 
+	DEBUG_FUNCTION();
+	soundName = luaL_check_string(1);
+	priority = check_int(2);
+	group = check_int(3);
 	if (g_imuse->startSound(soundName, group, 0, 127, 0, priority)) {
 		lua_pushstring(soundName);
 	} else {
@@ -1101,56 +1439,75 @@ static void ImStartSound() {
 }
 
 static void ImStopSound() {
-	char *soundName = luaL_check_string(1);
+	char *soundName;
+	
+	DEBUG_FUNCTION();
+	soundName = luaL_check_string(1);
 	g_imuse->stopSound(soundName);
 }
 
 static void ImStopAllSounds() {
+	DEBUG_FUNCTION();
 	g_imuse->stopAllSounds();
 }
 
 static void ImPause() {
+	DEBUG_FUNCTION();
 	g_imuse->pause(true);
 }
 
 static void ImResume() {
+	DEBUG_FUNCTION();
 	g_imuse->pause(false);
 }
 
 static void ImSetVoiceEffect() {
-	char *effectName = luaL_check_string(1);
-	warning("ImSetVoiceEffect(%s) Voice effects are not yet supported", effectName);
+	char *effectName;
+	
+	DEBUG_FUNCTION();
+	effectName = luaL_check_string(1);
+	if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+		warning("ImSetVoiceEffect(%s) Voice effects are not yet supported", effectName);
 }
 
 static void ImSetMusicVol() {
+	DEBUG_FUNCTION();
 	g_imuse->setGroupMusicVolume(check_int(1));
 }
 
 static void ImGetMusicVol() {
+	DEBUG_FUNCTION();
 	lua_pushnumber(g_imuse->getGroupMusicVolume());
 }
 
 static void ImSetVoiceVol() {
+	DEBUG_FUNCTION();
 	g_imuse->setGroupVoiceVolume(check_int(1));
 }
 
 static void ImGetVoiceVol() {
+	DEBUG_FUNCTION();
 	lua_pushnumber(g_imuse->getGroupVoiceVolume());
 }
 
 static void ImSetSfxVol() {
+	DEBUG_FUNCTION();
 	g_imuse->setGroupSfxVolume(check_int(1));
 }
 
 static void ImGetSfxVol() {
+	DEBUG_FUNCTION();
 	lua_pushnumber(g_imuse->getGroupSfxVolume());
 }
 
 static void ImSetParam() {
-	char *soundName = luaL_check_string(1);
-	int param = check_int(2);
-	int value = check_int(3);
+	int param, value;
+	char *soundName;
 
+	DEBUG_FUNCTION();
+	soundName = luaL_check_string(1);
+	param = check_int(2);
+	value = check_int(3);
 	switch (param) {
 	case IM_SOUND_VOL:
 		g_imuse->setVolume(soundName, value);
@@ -1160,14 +1517,18 @@ static void ImSetParam() {
 		break;
 	default:
 		lua_pushnil();
-		warning("ImSetParam() Unimplemented %d, %d\n", param, value);
+		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("ImSetParam() Unimplemented %d, %d\n", param, value);
 	}
 }
 
 void ImGetParam() {
-	char *soundName = luaL_check_string(1);
-	int param = check_int(2);
+	char *soundName;
+	int param;
 
+	DEBUG_FUNCTION();
+	soundName = luaL_check_string(1);
+	param = check_int(2);
 	switch (param) {
 	case IM_SOUND_PLAY_COUNT:
 		lua_pushnumber(g_imuse->getCountPlayedTracks(soundName));
@@ -1177,16 +1538,20 @@ void ImGetParam() {
 		break;
 	default:
 		lua_pushnil();
-		warning("ImGetParam() Unimplemented %d\n", param);
+		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("ImGetParam() Unimplemented %d\n", param);
 	}
 }
 
 static void ImFadeParam() {
-	char *soundName = luaL_check_string(1);
-	int opcode = check_int(2);
-	int value = check_int(3);
-	int duration = check_int(4);
+	int opcode, value, duration;
+	char *soundName;
 
+	DEBUG_FUNCTION();
+	soundName = luaL_check_string(1);
+	opcode = check_int(2);
+	value = check_int(3);
+	duration = check_int(4);
 	switch (opcode) {
 	case IM_SOUND_PAN:
 		g_imuse->setFadePan(soundName, value, duration);
@@ -1198,28 +1563,36 @@ static void ImFadeParam() {
 }
 
 static void ImSetState() {
-	int state = check_int(1);
-	g_imuseState = state;
+	DEBUG_FUNCTION();
+	g_imuseState = check_int(1);
 }
 
 static void ImSetSequence() {
-	int state = check_int(1);
+	int state;
+	
+	DEBUG_FUNCTION();
+	state = check_int(1);
 	lua_pushnumber(g_imuse->setMusicSequence(state));
 }
 
 static void SaveIMuse() {
-	error("SaveIMuse() is not yet supported");
+	DEBUG_FUNCTION();
+	if(debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
+		error("SaveIMuse() is not yet supported");
 }
 
 static void RestoreIMuse() {
-	error("RestoreIMuse() is not yet supported");
+	DEBUG_FUNCTION();
+	if(debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
+		error("RestoreIMuse() is not yet supported");
 }
 
 static void SetSoundPosition() {
 	Vector3d pos;
 	int minVolume = 10;
 	int maxVolume = 127;
-
+	
+	DEBUG_FUNCTION();
 	if (g_engine->currScene()) {
 		g_engine->currScene()->getSoundParameters(&minVolume, &maxVolume);
 	}
@@ -1249,13 +1622,16 @@ static void SetSoundPosition() {
 
 static void IsSoundPlaying() {
 	// dummy
+	DEBUG_FUNCTION();
 }
 
 static void PlaySoundAt() {
 	// dummy
+	DEBUG_FUNCTION();
 }
 
 static void FileFindDispose() {
+	DEBUG_FUNCTION();
 	if (g_searchFile) {
 #ifdef _WIN32
 		FindClose(g_searchFile);
@@ -1271,7 +1647,8 @@ static void luaFileFindNext() {
 #ifndef _WIN32
 	dirent *de;
 #endif
-
+	
+	DEBUG_FUNCTION();
 	if (g_searchFile) {
 #ifdef _WIN32
 		if (g_firstFind) {
@@ -1310,10 +1687,12 @@ static void luaFileFindNext() {
 }
 
 static void luaFileFindFirst() {
-	char path[255];
-	char *extension = luaL_check_string(1);
-	lua_Object pathObj = lua_getparam(2);
+	char path[255], *extension;
+	lua_Object pathObj;
 
+	DEBUG_FUNCTION();
+	extension = luaL_check_string(1);
+	pathObj = lua_getparam(2);
 	FileFindDispose();
 
 	if (!lua_isnil(pathObj)) {
@@ -1354,24 +1733,34 @@ void setMovieTime(float movieTime) {
 }
 
 void PerSecond() {
-	float rate = luaL_check_number(1);
+	float rate;
+	
+	DEBUG_FUNCTION();
+	rate = luaL_check_number(1);
 	lua_pushnumber(g_engine->perSecond(rate));
 }
 
 void EnableControl() {
-	stubWarning("EnableControl");
-	int num = check_control(1);
+	int num;
+	
+	DEBUG_FUNCTION();
+	num = check_control(1);
 	g_engine->enableControl(num);
 }
 
 void DisableControl() {
-	stubWarning("DisableControl");
-	int num = check_control(1);
+	int num;
+	
+	DEBUG_FUNCTION();
+	num = check_control(1);
 	g_engine->disableControl(num);
 }
 
 void GetControlState() {
-	int num = check_control(1);
+	int num;
+	
+	DEBUG_FUNCTION();
+	num = check_control(1);
 	if (num >= SDLK_JOY1_B1 && num <= SDLK_MOUSE_B4)
 		lua_pushnil();
 	else if (num >= SDLK_AXIS_JOY1_X && num <= SDLK_AXIS_MOUSE_Z)
@@ -1383,14 +1772,19 @@ void GetControlState() {
 }
 
 static void GetImage() {
-	char *bitmapName = luaL_check_string(1);
+	char *bitmapName;
+	
+	DEBUG_FUNCTION();
+	bitmapName = luaL_check_string(1);
 	Bitmap *image = g_resourceloader->loadBitmap(bitmapName);
 	lua_pushusertag(image, MKID('VBUF'));
 }
 
 static void FreeImage() {
-	Bitmap *bitmap = check_bitmapobject(1);
+	Bitmap *bitmap;
 
+	DEBUG_FUNCTION();
+	bitmap = check_bitmapobject(1);
 	for (Engine::PrimitiveListType::const_iterator i = g_engine->primitivesBegin(); i != g_engine->primitivesEnd(); i++) {
 		PrimitiveObject *p = *i;
 		if (p->isBitmap() && p->getBitmapHandle() == bitmap) {
@@ -1403,12 +1797,16 @@ static void FreeImage() {
 }
 
 static void BlastImage() {
-	Bitmap *bitmap = check_bitmapobject(1);
-	int x = check_int(2);
-	int y = check_int(3);
-	bool transparent = getbool(4);
-
 	PrimitiveObject *p = new PrimitiveObject();
+	bool transparent;
+	Bitmap *bitmap;
+	int x, y;
+	
+	DEBUG_FUNCTION();
+	bitmap = check_bitmapobject(1);
+	x = check_int(2);
+	y = check_int(3);
+	transparent = getbool(4);
 	p->createBitmap(bitmap, x, y, transparent);
 	g_engine->registerPrimitiveObject(p);
 	lua_pushusertag(p, MKID('PRIM'));
@@ -1417,7 +1815,8 @@ static void BlastImage() {
 void getTextObjectParams(TextObject *textObject, lua_Object table_obj) {
 	char *key_text = NULL;
 	lua_Object key;
-
+	
+	DEBUG_FUNCTION();
 	for (;;) {
 		lua_pushobject(table_obj);
 		if (key_text)
@@ -1462,8 +1861,12 @@ void getTextObjectParams(TextObject *textObject, lua_Object table_obj) {
  * this is known to be used when changing between menus
  */
 static void CleanBuffer() {
+	DEBUG_FUNCTION();
 	g_engine->killPrimitiveObjects();
 	g_engine->killTextObjects();
+	// Cleanup references to deleted text objects
+	for (Engine::ActorListType::const_iterator i = g_engine->actorsBegin(); i != g_engine->actorsEnd(); i++)
+		(*i)->lineCleanup();
 }
  
 /* Check to see if the menu item at a specific index has
@@ -1498,14 +1901,15 @@ char *itemText(lua_Object itemTable, int menuItem) {
  * handling that has been observed
  */
 static void menuHandler() {
-	lua_Object menuTable = lua_getparam(1);
-	lua_Object keycode = lua_getparam(2);
-	lua_Object pushcode = lua_getparam(3);
-	lua_Object itemTable/*, item*/;
-	int sliderValue = 0;
+	lua_Object menuTable, keycode, pushcode, itemTable/*, item*/;
+	int menuItem = 1, menuItems = 1, sliderValue = 0;
 	int key, operation;
-	int menuItem = 1, menuItems = 1;
 
+	DEBUG_FUNCTION();
+	menuTable = lua_getparam(1);
+	keycode = lua_getparam(2);
+	pushcode = lua_getparam(3);
+	
 	if (!lua_isnumber(keycode) || !lua_istable(menuTable))
 		return;
 	if (lua_isnil(pushcode))
@@ -1631,6 +2035,7 @@ static void menuHandler() {
 /* Clean the requested menu
  */
 static void destroyMenu() {
+	DEBUG_FUNCTION();
 	CleanBuffer();
 	lua_Object system_table = lua_getglobal("system");
 	setTableValue(system_table, "menuHandler", (lua_Object) 0);
@@ -1642,7 +2047,8 @@ static void destroyMenu() {
  */
 TextObject *TextObjectExists(char *name) {
 	TextObject *modifyObject = NULL;
-
+	
+	DEBUG_FUNCTION();
 	for (Engine::TextListType::const_iterator i = g_engine->textsBegin(); i != g_engine->textsEnd(); i++) {
 		TextObject *textO = *i;
 		if (strlen(name) == strlen(textO->name()) && strcmp(textO->name(), name) == 0) {
@@ -1659,7 +2065,8 @@ TextObject *TextObjectExists(char *name) {
  */
 static void KillTextObject() {
 	TextObject *textObjectParm, *delText;
-
+	
+	DEBUG_FUNCTION();
 	if (lua_isnil(lua_getparam(1))) {
 		error("KillTextObject(NULL)");
 		return;
@@ -1676,9 +2083,11 @@ static void KillTextObject() {
  * in the table in the LUA parameter 2.
  */
 static void ChangeTextObject() {
-	TextObject *modifyObject, *textObject = check_textobject(1);
+	TextObject *modifyObject, *textObject;
 	lua_Object tableObj;
 
+	DEBUG_FUNCTION();
+	textObject = check_textobject(1);
 	// when called in certain instances (such as don's computer)
 	// the second parameter is the string and the third is the table
 	if (lua_isstring(lua_getparam(2)))
@@ -1688,13 +2097,14 @@ static void ChangeTextObject() {
 
 	modifyObject = TextObjectExists((char *)textObject->name());
 	if (!modifyObject) {
-		warning("ChangeTextObject(): Cannot find active text object");
+		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("ChangeTextObject(): Cannot find active text object");
 		return;
 	}
 
 	if (lua_istable(tableObj))
 		getTextObjectParams(modifyObject, tableObj);
-	else
+	else if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 		warning("Expecting table parameter!");
 
 	// to modify current bitmap it need recreate it
@@ -1710,11 +2120,15 @@ static void ChangeTextObject() {
  * we're not currently using the value
  */
 static void GetTextSpeed() {
+	DEBUG_FUNCTION();
 	lua_pushnumber(g_engine->getTextSpeed());
 }
 
 static void SetTextSpeed() {
-	int speed = check_int(1);
+	int speed;
+	
+	DEBUG_FUNCTION();
+	speed = check_int(1);
 	g_engine->setTextSpeed(speed);
 }
 
@@ -1725,12 +2139,14 @@ static void SetTextSpeed() {
  * (otherwise we'll get identically named menu objects)
  */
 static void MakeTextObject() {
-	TextObject *textObject;
-	char *line = lua_getstring(lua_getparam(1));
-	std::string text = line;
-	lua_Object tableObj = lua_getparam(2);
+	TextObject *textObject = new TextObject();
+	lua_Object tableObj;
+	char *line;
 
-	textObject = new TextObject();
+	DEBUG_FUNCTION();
+	line = lua_getstring(lua_getparam(1));
+	std::string text = line;
+	tableObj = lua_getparam(2);
 	textObject->setDefaults(&textObjectDefaults);
          
 	if (lua_istable(tableObj))
@@ -1751,26 +2167,38 @@ static void MakeTextObject() {
 }
 
 static void GetTextObjectDimensions() {
-	TextObject *textObjectParam = check_textobject(1);
+	TextObject *textObjectParam;
+	
+	DEBUG_FUNCTION();
+	textObjectParam = check_textobject(1);
 	lua_pushnumber(textObjectParam->getBitmapWidth());
 	lua_pushnumber(textObjectParam->getBitmapHeight());
 }
 
 static void ExpireText() {
+	DEBUG_FUNCTION();
 	for (Engine::TextListType::const_iterator i = g_engine->textsBegin(); i != g_engine->textsEnd(); i++) {
 		TextObject *textO = *i;
 		g_engine->killTextObject(textO);
 		delete textO;
 	}
+	// Cleanup references to deleted text objects
+	for (Engine::ActorListType::const_iterator i = g_engine->actorsBegin(); i != g_engine->actorsEnd(); i++)
+		(*i)->lineCleanup();
 }
 
 static void GetTextCharPosition() {
-	TextObject *textObjectParam = check_textobject(1);
-	int pos = (int)lua_getnumber(lua_getparam(2));
+	TextObject *textObjectParam;
+	int pos;
+	
+	DEBUG_FUNCTION();
+	textObjectParam = check_textobject(1);
+	pos = (int)lua_getnumber(lua_getparam(2));
 	lua_pushnumber((double)textObjectParam->getTextCharPosition(pos));
 }
 
 static void BlastText() {
+	DEBUG_FUNCTION();
 	// there is some diffrence to MakeTextObject
 	// it draw directly to gfx buffer from here, not from main loop
 	MakeTextObject();
@@ -1782,27 +2210,38 @@ static void SetOffscreenTextPos() {
 }
 
 static void SetSpeechMode() {
-	int mode = check_int(1);
+	int mode;
+	
+	DEBUG_FUNCTION();
+	mode = check_int(1);
 	if ((mode >= 1) && (mode <= 3))
  		g_engine->setSpeechMode(mode);
 }
 
 static void GetSpeechMode() {
-	int mode = g_engine->getSpeechMode();
+	int mode;
+	
+	DEBUG_FUNCTION();
+	mode = g_engine->getSpeechMode();
  	lua_pushnumber(mode);
 }
 
 static void StartFullscreenMovie() {
-	/*bool mode = */getbool(2);
+	/*bool mode = getbool(2);*/
+	DEBUG_FUNCTION();
+	// Clean out any text objects on the display before running the
+	// movie, otherwise things like Bruno's "Nice bathrobe." will stay
+	// on-screen the whole movie
+	CleanBuffer();
 	g_engine->setMode(ENGINE_MODE_SMUSH);
 	pushbool(g_smush->play(luaL_check_string(1), 0, 0));
 }
 
 static void StartMovie() {
-	/*bool mode = */getbool(2);
-	int x = 0;
-	int y = 0;
+	/*bool mode = getbool(2);*/
+	int x = 0, y = 0;
 
+	DEBUG_FUNCTION();
 	if (!lua_isnil(lua_getparam(3)))
 		x = check_int(3);
 
@@ -1814,22 +2253,27 @@ static void StartMovie() {
 }
 
 static void IsFullscreenMoviePlaying() {
+	DEBUG_FUNCTION();
 	pushbool(g_smush->isPlaying());
 }
 
 static void IsMoviePlaying() {
+	DEBUG_FUNCTION();
 	pushbool(g_smush->isPlaying());
 }
 
 static void StopMovie() {
+	DEBUG_FUNCTION();
 	g_smush->stop();
 }
 
 static void PauseMovie() {
+	DEBUG_FUNCTION();
 	g_smush->pause(lua_isnil(lua_getparam(1)) != 0);
 }
 
 static void PurgePrimitiveQueue() {
+	DEBUG_FUNCTION();
 	g_engine->killPrimitiveObjects();
 }
 
@@ -1838,12 +2282,16 @@ static void DrawPolygon() {
 }
 
 static void DrawLine() {
-	int x1 = check_int(1);
-	int y1 = check_int(2);
-	int x2 = check_int(3);
-	int y2 = check_int(4);
-	lua_Object tableObj = lua_getparam(5);
+	int x1, y1, x2, y2;
+	lua_Object tableObj;
 	Color color;
+	
+	DEBUG_FUNCTION();
+	x1 = check_int(1);
+	y1 = check_int(2);
+	x2 = check_int(3);
+	y2 = check_int(4);
+	tableObj = lua_getparam(5);
 	color._vals[0] = 255;
 	color._vals[1] = 255;
 	color._vals[2] = 255;
@@ -1865,9 +2313,11 @@ static void DrawLine() {
 
 static void ChangePrimitive() {
 	PrimitiveObject *psearch, *pmodify = NULL;
-	lua_Object tableObj = lua_getparam(2);
+	lua_Object tableObj;
 	Color color;
 
+	DEBUG_FUNCTION();
+	tableObj = lua_getparam(2);
 	color._vals[0] = 255;
 	color._vals[1] = 255;
 	color._vals[2] = 255;
@@ -1903,12 +2353,16 @@ static void ChangePrimitive() {
 }
 
 static void DrawRectangle() {
-	int x1 = check_int(1);
-	int y1 = check_int(2);
-	int x2 = check_int(3);
-	int y2 = check_int(4);
-	lua_Object tableObj = lua_getparam(5);
+	int x1, y1, x2, y2;
+	lua_Object tableObj;
 	Color color;
+	
+	DEBUG_FUNCTION();
+	x1 = check_int(1);
+	y1 = check_int(2);
+	x2 = check_int(3);
+	y2 = check_int(4);
+	tableObj = lua_getparam(5);
 	color._vals[0] = 255;
 	color._vals[1] = 255;
 	color._vals[2] = 255;
@@ -1936,6 +2390,7 @@ static void DrawRectangle() {
 }
 
 static void BlastRect() {
+	DEBUG_FUNCTION();
 	// BlastRect is specifically for the menu thread;
 	// however, we don't need to handle the menu in a 
 	// separate thread so this works fine
@@ -1943,10 +2398,13 @@ static void BlastRect() {
 }
 
 static void DimScreen() {
-	warning("DimScreen()");
+	DEBUG_FUNCTION();
+	if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+		warning("DimScreen()");
 }
 
 static void GetDiskFreeSpace() {
+	DEBUG_FUNCTION();
 	// amount of free space in MB, used for creating saves
 	lua_pushnumber(50);
 }
@@ -1958,15 +2416,18 @@ static void NewObjectState() {
 		OBJSTATE_OVERLAY = 2,
 		OBJSTATE_STATE = 3
 	};
-
 	ObjectState *state = NULL;
+	ObjectState::Position pos;
+	char *bitmap, *zbitmap;
+	bool visible;
+	int setupID;
 
-	int setupID = check_int(1);		// Setup ID
-	ObjectState::Position pos = check_objstate_pos(2); // When to draw
-	char *bitmap = luaL_check_string(3);	// Bitmap
-	char *zbitmap = NULL;			// Zbuffer Bitmap
-	bool visible = getbool(5);		// Starts visible?
-
+	DEBUG_FUNCTION();
+	setupID = check_int(1);					// Setup ID
+	pos = check_objstate_pos(2); 		// When to draw
+	bitmap = luaL_check_string(3);	// Bitmap
+	zbitmap = NULL;									// Zbuffer Bitmap
+	visible = getbool(5);						// Starts visible?
 	if (!lua_isnil(lua_getparam(4)))
 		zbitmap = luaL_check_string(4);
 
@@ -1976,13 +2437,18 @@ static void NewObjectState() {
 }
 
 static void FreeObjectState() {
-	ObjectState *state = check_object(1);
+	ObjectState *state;
+	
+	DEBUG_FUNCTION();
+	state = check_object(1);
 	g_engine->currScene()->deleteObjectState(state);
 }
 
 static void SendObjectToBack() {
-	stubWarning("VERIFY: SendObjectToBack");
-	lua_Object param = lua_getparam(1);
+	lua_Object param;
+	
+	DEBUG_FUNCTION();
+	param = lua_getparam(1);
 	if (lua_isuserdata(param) && lua_tag(param) == MKID('STAT')) {
 		ObjectState *state = static_cast<ObjectState *>(lua_getuserdata(param));
 		// moving object to top in list ?
@@ -1991,8 +2457,10 @@ static void SendObjectToBack() {
 }
 
 static void SendObjectToFront() {
-	stubWarning("VERIFY: SendObjectToFront");
-	lua_Object param = lua_getparam(1);
+	lua_Object param;
+	
+	DEBUG_FUNCTION();
+	param = lua_getparam(1);
 	if (lua_isuserdata(param) && lua_tag(param) == MKID('STAT')) {
 		ObjectState *state = static_cast<ObjectState *>(lua_getuserdata(param));
 		// moving object to last in list ?
@@ -2001,19 +2469,26 @@ static void SendObjectToFront() {
 }
 
 static void SetObjectType() {
-	ObjectState *state = check_object(1);
-	ObjectState::Position pos = check_objstate_pos(2);
+	ObjectState::Position pos;
+	ObjectState *state;
+	
+	DEBUG_FUNCTION();
+	state = check_object(1);
+	pos = check_objstate_pos(2);
 	state->setPos(pos);
 }
 
 static void GetCurrentScript() {
+	DEBUG_FUNCTION();
 	current_script();
 }
 
 static void ScreenShot() {
-	int width = check_int(1);
-	int height = check_int(2);
-			
+	int width, height;
+	
+	DEBUG_FUNCTION();
+	width = check_int(1);
+	height = check_int(2);
 	Bitmap *screenshot = g_driver->getScreenshot(width, height);
 	if (screenshot) {
 		lua_pushusertag(screenshot, MKID('VBUF'));
@@ -2023,12 +2498,13 @@ static void ScreenShot() {
 }
 
 static void SubmitSaveGameData() {
-	lua_Object table = lua_getparam(1);
-	lua_Object table2;
+	lua_Object table, table2;
 	int dataSize = 0;
 	int count = 0;
 	char *str;
-
+	
+	DEBUG_FUNCTION();
+	table = lua_getparam(1);
 	for (;;) {
 		lua_pushobject(table);
 		lua_pushnumber(count);
@@ -2061,9 +2537,13 @@ static void SubmitSaveGameData() {
 
 static void GetSaveGameData() {
 	lua_Object result;
+	char *filename;
 	int dataSize;
-	char *filename = luaL_check_string(1);
-	gzFile file = gzopen(filename, "rb");
+	gzFile file;
+	
+	DEBUG_FUNCTION();
+	filename = luaL_check_string(1);
+	file = gzopen(filename, "rb");
 	if (!file)
 		return;
 
@@ -2094,41 +2574,54 @@ static void GetSaveGameData() {
 }
 
 static void Load() {
-	lua_Object fileName = lua_getparam(1);
+	lua_Object fileName;
+	
+	DEBUG_FUNCTION();
+	fileName = lua_getparam(1);
 	if (lua_isnil(fileName)) {
 		g_engine->_savegameFileName = NULL;
 	} else if (lua_isstring(fileName)) {
 		g_engine->_savegameFileName = lua_getstring(fileName);
 	} else {
-		warning("Load() fileName is wrong");
+		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("Load() fileName is wrong");
 		return;
 	}
 	g_engine->_savegameLoadRequest = true;
 }
 
 static void Save() {
-	lua_Object fileName = lua_getparam(1);
+	lua_Object fileName;
+	
+	DEBUG_FUNCTION();
+	fileName = lua_getparam(1);
 	if (lua_isnil(fileName)) {
 		g_engine->_savegameFileName = NULL;
 	} else if (lua_isstring(fileName)) {
 		g_engine->_savegameFileName = lua_getstring(fileName);
 	} else {
-		warning("Save() fileName is wrong");
+		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("Save() fileName is wrong");
 		return;
 	}
 	g_engine->_savegameSaveRequest = true;
 }
 
 static int SaveCallback(int /*tag*/, int value, SaveRestoreFunc /*saveFunc*/) {
+	DEBUG_FUNCTION();
 	return value;
 }
 
 static int RestoreCallback(int /*tag*/, int value, SaveRestoreFunc /*saveFunc*/) {
+	DEBUG_FUNCTION();
 	return value;
 }
 
 static void LockFont() {
-	lua_Object param1 = lua_getparam(1);
+	lua_Object param1;
+	
+	DEBUG_FUNCTION();
+	param1 = lua_getparam(1);
 	if (lua_isstring(param1)) {
 		char *fontName = lua_getstring(param1);
 		Font *result = g_resourceloader->loadFont(fontName);
@@ -2139,15 +2632,20 @@ static void LockFont() {
 }
 
 static void EnableDebugKeys() {
+	DEBUG_FUNCTION();
 	// in residual all keys are handled/enabled
 }
 
 static void LightMgrSetChange() {
+	DEBUG_FUNCTION();
 	// that seems only used when some control panel is opened
 }
 
 static void SetAmbientLight() {
-	int mode = check_int(1);
+	int mode;
+	
+	DEBUG_FUNCTION();
+	mode = check_int(1);
 	if (mode == 0) {
 		if (g_engine->currScene() != NULL) {
 			g_engine->currScene()->setLightEnableState(true);
@@ -2162,10 +2660,12 @@ static void SetAmbientLight() {
 }
 
 static void RenderModeUser() {
-	stubWarning("RenderModeUser");
 	// it enable/disable updating display
-	lua_Object param1 = lua_getparam(1);
+	lua_Object param1;
 	bool mode;
+	
+	DEBUG_FUNCTION();
+	param1 = lua_getparam(1);
 	if (lua_isnumber(param1)) {
 		mode = check_int(1) != 0;
 	} else if (lua_isnil(param1)) {
@@ -2174,15 +2674,20 @@ static void RenderModeUser() {
 		error("RenderModeUser() Unknown type of param");
 	}
 	g_engine->setMenuMode(mode);
-	if (mode)
-		printf("RenderModeUser() Enable\n");
-	else
-		printf("RenderModeUser() Disable\n");
+	if (debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
+	{
+		if (mode)
+			printf("RenderModeUser() Enable\n");
+		else
+			printf("RenderModeUser() Disable\n");
+	}
 }
 
 static void Display() {
-	stubWarning("Display");
-	lua_Object system_table = lua_getglobal("system");
+	lua_Object system_table;
+	
+	DEBUG_FUNCTION();
+	system_table = lua_getglobal("system");
 	// Install Menu Destroy Handler
 	lua_pushobject(system_table);
 	lua_pushstring(const_cast<char *>("userPaintHandler"));
@@ -2198,9 +2703,12 @@ static void Display() {
 }
 
 static void EngineDisplay() {
-	// it enable/disable updating display
-	lua_Object param1 = lua_getparam(1);
+	lua_Object param1;
 	bool mode;
+	
+	// it enable/disable updating display
+	DEBUG_FUNCTION();
+	param1 = lua_getparam(1);
 	if (lua_isnumber(param1)) {
 		mode = check_int(1) != 0;
 	} else if (lua_isnil(param1)) {
@@ -2208,59 +2716,97 @@ static void EngineDisplay() {
 	} else {
 		error("EngineDisplay() Unknown type of param");
 	}
-	if (mode)
-		printf("EngineDisplay() Enable\n");
-	else
-		printf("EngineDisplay() Disable\n");
+	if (debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL) {
+		if (mode)
+			printf("EngineDisplay() Enable\n");
+		else
+			printf("EngineDisplay() Disable\n");
+	}
 }
 
 static void JustLoaded() {
-	error("OPCODE USAGE VERIFICATION: JustLoaded");
+	DEBUG_FUNCTION();
+	if(debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
+		error("OPCODE USAGE VERIFICATION: JustLoaded");
 }
 
 static void PlaySound() {
-	error("OPCODE USAGE VERIFICATION: PlaySound");
+	DEBUG_FUNCTION();
+	if(debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
+		error("OPCODE USAGE VERIFICATION: PlaySound");
 }
 
 static void SetEmergencyFont() {
-	error("OPCODE USAGE VERIFICATION: SetEmergencyFont");
+	DEBUG_FUNCTION();
+	if(debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
+		error("OPCODE USAGE VERIFICATION: SetEmergencyFont");
 }
 
-// Stub function for builtin functions not yet implemented
-
-static void stubWarning(char *funcName) {
-	fprintf(stderr, "WARNING: Stub function %s(", funcName);
+/* Generate debug information for all functions
+ *
+ * When the debug flag is set to debug everything or "Functions"
+ * then this will be called to print out the information on a
+ * function.  This is useful for finding problems in a LUA script
+ * that are due to a few function calls leading up to a failure.
+ *
+ * This function is also used by the "Stub" handler which will 
+ * generate warnings about missing functions when the debug flag 
+ * is set to "Stub", warnings, or everything.
+ */
+static void debugFunction(char *debugMessage, const char *funcName) {
+	bool stubFn = strcmp(debugMessage, "WARNING: Stub function") == 0;
+	FILE *output;
+	
+	if (!stubFn && debugLevel != DEBUG_FUNC
+	 && debugLevel != DEBUG_ALL)
+		return;
+	
+	if (stubFn)
+		output = stderr;
+	else
+		output = stdout;
+	fprintf(output, "%s %s(", debugMessage, funcName);
 	for (int i = 1; ; i++) {
 		if (lua_getparam(i) == LUA_NOOBJECT)
 			break;
 		if (lua_isnil(lua_getparam(i)))
-			fprintf(stderr, "nil");
+			fprintf(output, "nil");
 		else if (lua_istable(lua_getparam(i)))
-			fprintf(stderr, "{...}");
+			fprintf(output, "{...}");
 		else if (lua_isuserdata(lua_getparam(i))) {
 			if (lua_tag(lua_getparam(i)) == MKID('ACTR')) {
 				Actor *a = check_actor(i);
-				fprintf(stderr, "<actor \"%s\">", a->name());
+				fprintf(output, "<actor \"%s\">", a->name());
 			} else if (lua_tag(lua_getparam(i)) == MKID('COLR')) {
 				Color *c = check_color(i);
-				fprintf(stderr, "<color #%02x%02x%02x>", c->red(), c->green(), c->blue());
+				fprintf(output, "<color #%02x%02x%02x>", c->red(), c->green(), c->blue());
 			} else
-				fprintf(stderr, "<userdata %p>", lua_getuserdata(lua_getparam(i)));
+				fprintf(output, "<userdata %p>", lua_getuserdata(lua_getparam(i)));
 		} else if (lua_isfunction(lua_getparam(i)))
-			fprintf(stderr, "<function>");
+			fprintf(output, "<function>");
 		else if (lua_isnumber(lua_getparam(i)))
-			fprintf(stderr, "%g", lua_getnumber(lua_getparam(i)));
+			fprintf(output, "%g", lua_getnumber(lua_getparam(i)));
 		else if (lua_isstring(lua_getparam(i)))
-			fprintf(stderr, "\"%s\"", lua_getstring(lua_getparam(i)));
+			fprintf(output, "\"%s\"", lua_getstring(lua_getparam(i)));
 		else
-			fprintf(stderr, "<unknown>");
+			fprintf(output, "<unknown>");
 		if (lua_getparam(i+1) != LUA_NOOBJECT)
-			fprintf(stderr, ", ");
+			fprintf(output, ", ");
 	}
-	fprintf(stderr, ") called\n");
+	fprintf(output, ") called\n");
 #if 0
 	lua_call("print_stack");
 #endif
+}
+
+// Stub function for builtin functions not yet implemented
+static void stubWarning(char *funcName) {
+	// If the user doesn't want these debug messages then don't print them
+	if(debugLevel != DEBUG_WARN && debugLevel != DEBUG_STUB && debugLevel != DEBUG_FUNC
+	 && debugLevel != DEBUG_ALL)
+		return;
+	
+	debugFunction("WARNING: Stub function", funcName);
 }
 
 #define STUB_FUNC(name) static void name() { stubWarning(#name); }
@@ -2298,8 +2844,6 @@ STUB_FUNC(SetLightIntensity)
 STUB_FUNC(SetLightPosition)
 STUB_FUNC(TurnLightOn)
 STUB_FUNC(GetAngleBetweenVectors)
-STUB_FUNC(TurnActorTo)
-STUB_FUNC(PointActorAt)
 STUB_FUNC(GetCameraLookVector)
 STUB_FUNC(SetCameraRoll)
 STUB_FUNC(SetCameraInterest)
@@ -2312,10 +2856,7 @@ STUB_FUNC(PreRender)
 STUB_FUNC(GetSectorOppositeEdge)
 STUB_FUNC(PreviousSetup)
 STUB_FUNC(NextSetup)
-STUB_FUNC(UnLockSet)
-STUB_FUNC(LockSet)
 STUB_FUNC(WorldToScreen)
-STUB_FUNC(CompleteActorChore)
 STUB_FUNC(SetActorRoll)
 STUB_FUNC(SetActorPitch)
 STUB_FUNC(GetPointSector)
@@ -2329,7 +2870,6 @@ STUB_FUNC(GetActorRect)
 STUB_FUNC(GetActorNodeLocation)
 STUB_FUNC(SetActorTimeScale)
 STUB_FUNC(SetActorScale)
-STUB_FUNC(SetActorColormap)
 STUB_FUNC(GetTranslationMode)
 STUB_FUNC(SetTranslationMode)
 STUB_FUNC(PrintLine)
@@ -2337,7 +2877,6 @@ STUB_FUNC(KillPrimitive)
 STUB_FUNC(WalkActorToAvoiding)
 STUB_FUNC(GetActorChores)
 STUB_FUNC(Exit)
-STUB_FUNC(PrintError)
 STUB_FUNC(SetCameraPosition)
 STUB_FUNC(GetCameraFOV)
 STUB_FUNC(SetCameraFOV)
@@ -3037,7 +3576,7 @@ int bundle_dofile(const char *filename) {
 		delete b;
 		// Don't print warnings on Scripts\foo.lua,
 		// d:\grimFandango\Scripts\foo.lua
-		if (std::strstr(filename, "Scripts\\") == NULL)
+		if (std::strstr(filename, "Scripts\\") == NULL && (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL))
 			warning("Cannot find script %s\n", filename);
 
 		return 2;
@@ -3066,7 +3605,8 @@ lua_Object getTableFunction(lua_Object table, char *name) {
 	}
 
 	if (!lua_isfunction(handler)) {
-		warning("Invalid event handler %s", name);
+		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("Invalid event handler %s", name);
 		return LUA_NOOBJECT;
 	}
 
