@@ -79,13 +79,14 @@ struct PalEntry {
 	byte blue;
 } GCC_PACK;
 
+#pragma END_PACK_STRUCTS
+
 struct Color {
 	int red;
 	int green;
 	int blue;
 	int alpha;
-} GCC_PACK;
-#pragma END_PACK_STRUCTS
+};
 
 struct Surface : Graphics::Surface {
 	
