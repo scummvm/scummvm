@@ -55,10 +55,15 @@ void map_placeItem(int16 x, int16 y, int16 id) {
 		map_itemsMap[y][x] = (map_itemsMap[y][x] & 0x00ff) | (id << 8);
 }
 
-int16 map_getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
-	int16 dir;
+enum {
+	kLeft  = (1 << 0),
+	kUp    = (1 << 1),
+	kRight = (1 << 2),
+	kDown  = (1 << 3)
+};
 
-	dir = 0;
+int16 map_getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
+	int16 dir = 0;
 
 	if (x0 == x1 && y0 == y1)
 		return 0;
@@ -67,136 +72,137 @@ int16 map_getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 		return 0;
 
 	if (y1 > y0)
-		dir = 8;
+		dir |= kDown;
 	else if (y1 < y0)
-		dir = 2;
+		dir |= kUp;
 
 	if (x1 > x0)
-		dir += 4;
+		dir |= kRight;
 	else if (x1 < x0)
-		dir += 1;
+		dir |= kLeft;
 
-	if (map_passMap[y0][x0] == 3 && (dir == 3 || dir == 6 || dir == 2)) {
+	if (map_passMap[y0][x0] == 3 && (dir & kUp)) {
 		if (map_passMap[y0 - 1][x0] != 0)
-			return 0x4800;
+			return kDirN;
 	}
 
-	if (map_passMap[y0][x0] == 3 && (dir == 9 || dir == 12 || dir == 8)) {
+	if (map_passMap[y0][x0] == 3 && (dir & kDown)) {
 		if (map_passMap[y0 + 1][x0] != 0)
-			return 0x5000;
+			return kDirS;
 	}
 
-	if (map_passMap[y0][x0] == 6 && (dir == 3 || dir == 6 || dir == 2)) {
+	if (map_passMap[y0][x0] == 6 && (dir & kUp)) {
 		if (map_passMap[y0 - 1][x0] != 0)
-			return 0x4800;
+			return kDirN;
 	}
 
-	if (map_passMap[y0][x0] == 6 && (dir == 9 || dir == 12 || dir == 8)) {
+	if (map_passMap[y0][x0] == 6 && (dir & kDown)) {
 		if (map_passMap[y0 + 1][x0] != 0)
-			return 0x5000;
+			return kDirS;
 	}
 
-	if (dir == 1) {
+	if (dir == kLeft) {
 		if (x0 - 1 >= 0 && map_passMap[y0][x0 - 1] != 0)
-			return 0x4b00;
+			return kDirW;
 		return 0;
 	}
 
-	if (dir == 4) {
+	if (dir == kRight) {
 		if (x0 + 1 < 26 && map_passMap[y0][x0 + 1] != 0)
-			return 0x4d00;
+			return kDirE;
 		return 0;
 	}
 
-	if (dir == 2) {
+	if (dir == kUp) {
 		if (y0 - 1 >= 0 && map_passMap[y0 - 1][x0] != 0)
-			return 0x4800;
+			return kDirN;
 
 		if (y0 - 1 >= 0 && x0 - 1 >= 0
 		    && map_passMap[y0 - 1][x0 - 1] != 0)
-			return 0x4700;
+			return kDirNW;
 
 		if (y0 - 1 >= 0 && x0 + 1 < 26
 		    && map_passMap[y0 - 1][x0 + 1] != 0)
-			return 0x4900;
+			return kDirNE;
 
 		return 0;
 	}
 
-	if (dir == 8) {
+	if (dir == kDown) {
 		if (y0 + 1 < 28 && map_passMap[y0 + 1][x0] != 0)
-			return 0x5000;
+			return kDirS;
 
 		if (y0 + 1 < 28 && x0 - 1 >= 0
 		    && map_passMap[y0 + 1][x0 - 1] != 0)
-			return 0x4f00;
+			return kDirSW;
 
 		if (y0 + 1 < 28 && x0 + 1 < 26
 		    && map_passMap[y0 + 1][x0 + 1] != 0)
-			return 0x5100;
+			return kDirSE;
 
 		return 0;
 	}
 
-	if (dir == 6) {
+	if (dir == (kRight | kUp)) {
 		if (y0 - 1 >= 0 && x0 + 1 < 26
 		    && map_passMap[y0 - 1][x0 + 1] != 0)
-			return 0x4900;
+			return kDirNE;
 
 		if (y0 - 1 >= 0 && map_passMap[y0 - 1][x0] != 0)
-			return 0x4800;
+			return kDirN;
 
 		if (x0 + 1 < 26 && map_passMap[y0][x0 + 1] != 0)
-			return 0x4d00;
+			return kDirE;
 
 		return 0;
 	}
 
-	if (dir == 12) {
+	if (dir == (kRight | kDown)) {
 		if (x0 + 1 < 26 && y0 + 1 < 28
 		    && map_passMap[y0 + 1][x0 + 1] != 0)
-			return 0x5100;
+			return kDirSE;
 
 		if (y0 + 1 < 28 && map_passMap[y0 + 1][x0] != 0)
-			return 0x5000;
+			return kDirS;
 
 		if (x0 + 1 < 26 && map_passMap[y0][x0 + 1] != 0)
-			return 0x4d00;
+			return kDirE;
 
 		return 0;
 	}
 
-	if (dir == 3) {
+	if (dir == (kLeft | kUp)) {
 		if (x0 - 1 >= 0 && y0 - 1 >= 0
 		    && map_passMap[y0 - 1][x0 - 1] != 0)
-			return 0x4700;
+			return kDirNW;
 
 		if (y0 - 1 >= 0 && map_passMap[y0 - 1][x0] != 0)
-			return 0x4800;
+			return kDirN;
 
 		if (x0 - 1 >= 0 && map_passMap[y0][x0 - 1] != 0)
-			return 0x4b00;
+			return kDirW;
 
 		return 0;
 	}
 
-	if (dir == 9) {
+	if (dir == (kLeft | kDown)) {
 		if (x0 - 1 >= 0 && y0 + 1 < 28
 		    && map_passMap[y0 + 1][x0 - 1] != 0)
-			return 0x4f00;
+			return kDirSW;
 
 		if (y0 + 1 < 28 && map_passMap[y0 + 1][x0] != 0)
-			return 0x5000;
+			return kDirS;
 
 		if (x0 - 1 >= 0 && map_passMap[y0][x0 - 1] != 0)
-			return 0x4b00;
+			return kDirW;
 
 		return 0;
 	}
 	return -1;
 }
 
-void map_findNearestToGob(void) {
+int16 map_findNearestWayPoint(int16 x, int16 y) {
+	int16 nearestWayPoint = -1;
 	int16 length;
 	int16 i;
 	int16 tmp;
@@ -207,38 +213,31 @@ void map_findNearestToGob(void) {
 		if (map_wayPoints[i].x < 0 ||
 		    map_wayPoints[i].x > 25 ||
 		    map_wayPoints[i].y < 0 || map_wayPoints[i].y > 27)
-			return;
+			return -1;
 
-		tmp = ABS(map_curGoblinX - map_wayPoints[i].x) +
-		    ABS(map_curGoblinY - map_wayPoints[i].y);
+		tmp = ABS(x - map_wayPoints[i].x) + ABS(y - map_wayPoints[i].y);
 
 		if (tmp <= length) {
-			map_nearestWayPoint = i;
+			nearestWayPoint = i;
 			length = tmp;
 		}
 	}
+
+	return nearestWayPoint;
+}
+
+void map_findNearestToGob(void) {
+	int16 wayPoint = map_findNearestWayPoint(map_curGoblinX, map_curGoblinY);
+
+	if (wayPoint != -1)
+		map_nearestWayPoint = wayPoint;
 }
 
 void map_findNearestToDest(void) {
-	int16 length;
-	int16 tmp;
-	int16 i;
+	int16 wayPoint = map_findNearestWayPoint(map_destX, map_destY);
 
-	length = 30000;
-	for (i = 0; i < 40; i++) {
-		if (map_wayPoints[i].x < 0 ||
-		    map_wayPoints[i].x > 25 ||
-		    map_wayPoints[i].y < 0 || map_wayPoints[i].y > 27)
-			return;
-
-		tmp = ABS(map_destX - map_wayPoints[i].x) +
-		    ABS(map_destY - map_wayPoints[i].y);
-
-		if (tmp <= length) {
-			map_nearestDest = i;
-			length = tmp;
-		}
-	}
+	if (wayPoint != -1)
+		map_nearestDest = wayPoint;
 }
 
 int16 map_checkDirectPath(int16 x0, int16 y0, int16 x1, int16 y1) {
@@ -254,38 +253,38 @@ int16 map_checkDirectPath(int16 x0, int16 y0, int16 x1, int16 y1) {
 			return 3;
 
 		switch (dir) {
-		case 0x4700:
+		case kDirNW:
 			x0--;
 			y0--;
 			break;
 
-		case 0x4800:
+		case kDirN:
 			y0--;
 			break;
 
-		case 0x4900:
+		case kDirNE:
 			x0++;
 			y0--;
 			break;
 
-		case 0x4b00:
+		case kDirW:
 			x0--;
 			break;
 
-		case 0x4d00:
+		case kDirE:
 			x0++;
 			break;
 
-		case 0x4f00:
+		case kDirSW:
 			x0--;
 			y0++;
 			break;
 
-		case 0x5000:
+		case kDirS:
 			y0++;
 			break;
 
-		case 0x5100:
+		case kDirSE:
 			x0++;
 			y0++;
 			break;
@@ -338,38 +337,38 @@ int16 map_checkLongPath(int16 x0, int16 y0, int16 x1, int16 y1, int16 i0, int16 
 		case 0:
 			return 0;
 
-		case 0x4700:
+		case kDirNW:
 			x0--;
 			y0--;
 			break;
 
-		case 0x4800:
+		case kDirN:
 			y0--;
 			break;
 
-		case 0x4900:
+		case kDirNE:
 			x0++;
 			y0--;
 			break;
 
-		case 0x4b00:
+		case kDirW:
 			x0--;
 			break;
 
-		case 0x4d00:
+		case kDirE:
 			x0++;
 			break;
 
-		case 0x4f00:
+		case kDirSW:
 			x0--;
 			y0++;
 			break;
 
-		case 0x5000:
+		case kDirS:
 			y0++;
 			break;
 
-		case 0x5100:
+		case kDirSE:
 			x0++;
 			y0++;
 			break;

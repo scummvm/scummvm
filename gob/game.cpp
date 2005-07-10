@@ -815,7 +815,6 @@ int16 game_inputArea(int16 xPos, int16 yPos, int16 width, int16 height, int16 ba
 
 		switch (key) {
 		case 0x4d00:	// Right Arrow
-
 			if (pos < strlen(str) && pos < editSize - 1) {
 				pos++;
 				continue;

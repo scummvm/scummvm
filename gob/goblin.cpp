@@ -1304,11 +1304,11 @@ void gob_movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 		nextAct = 0x4dc8;
 
 	switch (nextAct) {
-	case 0x4b00:
+	case kDirW:
 		gobDesc->nextState = gob_rotateState(gobDesc->curLookDir, 0);
 		break;
 
-	case 0x4d00:
+	case kDirE:
 		gobDesc->nextState = gob_rotateState(gobDesc->curLookDir, 4);
 		break;
 
@@ -1320,8 +1320,7 @@ void gob_movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 		gobDesc->nextState = 23;
 		break;
 
-	case 0x4800:
-
+	case kDirN:
 		if (map_passMap[map_curGoblinY - 1][map_curGoblinX] == 6 &&
 		    gob_currentGoblin != 1) {
 			gob_pathExistence = 0;
@@ -1342,7 +1341,7 @@ void gob_movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 		gobDesc->nextState = gob_rotateState(gobDesc->curLookDir, 2);
 		break;
 
-	case 0x5000:
+	case kDirS:
 		if (map_passMap[map_curGoblinY + 1][map_curGoblinX] == 6 &&
 		    gob_currentGoblin != 1) {
 			gob_pathExistence = 0;
@@ -1363,7 +1362,7 @@ void gob_movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 		gobDesc->nextState = gob_rotateState(gobDesc->curLookDir, 6);
 		break;
 
-	case 0x5100:
+	case kDirSE:
 		if (map_passMap[map_curGoblinY + 1][map_curGoblinX + 1] == 6 &&
 		    gob_currentGoblin != 1) {
 			gob_pathExistence = 0;
@@ -1377,7 +1376,7 @@ void gob_movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 		gobDesc->nextState = gob_rotateState(gobDesc->curLookDir, 4);
 		break;
 
-	case 0x4f00:
+	case kDirSW:
 		if (map_passMap[map_curGoblinY + 1][map_curGoblinX - 1] == 6 &&
 		    gob_currentGoblin != 1) {
 			gob_pathExistence = 0;
@@ -1391,7 +1390,7 @@ void gob_movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 		gobDesc->nextState = gob_rotateState(gobDesc->curLookDir, 0);
 		break;
 
-	case 0x4700:
+	case kDirNW:
 		if (map_passMap[map_curGoblinY - 1][map_curGoblinX - 1] == 6 &&
 		    gob_currentGoblin != 1) {
 			gob_pathExistence = 0;
@@ -1405,7 +1404,7 @@ void gob_movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 		gobDesc->nextState = gob_rotateState(gobDesc->curLookDir, 0);
 		break;
 
-	case 0x4900:
+	case kDirNE:
 		if (map_passMap[map_curGoblinY - 1][map_curGoblinX + 1] == 6 &&
 		    gob_currentGoblin != 1) {
 			gob_pathExistence = 0;

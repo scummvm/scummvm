@@ -24,6 +24,19 @@
 
 namespace Gob {
 
+// The same numeric values are also used for the arrow keys.
+
+enum {
+	kDirNW = 0x4700,
+	kDirN  = 0x4800,
+	kDirNE = 0x4900,
+	kDirW  = 0x4b00,
+	kDirE  = 0x4d00,
+	kDirSW = 0x4f00,
+	kDirS  = 0x5000,
+	kDirSE = 0x5100
+};
+
 #pragma START_PACK_STRUCTS
 #define szMap_Point 4
 typedef struct Map_Point {
