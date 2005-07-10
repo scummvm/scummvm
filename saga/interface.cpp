@@ -2015,6 +2015,7 @@ void Interface::loadState(Common::InSaveFile *in) {
 }
 
 void Interface::mapPanelShow() {
+	int i;
 	byte *resource;
 	size_t resourceLength, imageLength;
 	Surface *backBuffer;
@@ -2038,7 +2039,7 @@ void Interface::mapPanelShow() {
 
 	_vm->_gfx->getCurrentPal(_mapSavedPal);
 
-	for (int i = 0; i < 6 ; i++) {
+	for (i = 0; i < 6 ; i++) {
 		_vm->_gfx->palToBlack(_mapSavedPal, 0.2 * i);
 		_vm->_render->drawScene();
 		_vm->_system->delayMillis(5);
@@ -2049,7 +2050,7 @@ void Interface::mapPanelShow() {
 	_vm->decodeBGImage(resource, resourceLength, &image, &imageLength, &imageWidth, &imageHeight);
 	pal = _vm->getImagePal(resource, resourceLength);
 
-	for (int i = 0; i < PAL_ENTRIES; i++) {
+	for (i = 0; i < PAL_ENTRIES; i++) {
 		cPal[i].red = *pal++;
 		cPal[i].green = *pal++;
 		cPal[i].blue = *pal++;	
@@ -2061,7 +2062,7 @@ void Interface::mapPanelShow() {
 	backBuffer->blit(rect, image);
 
 	// Evil Evil
-	for (int i = 0; i < 6 ; i++) {
+	for (i = 0; i < 6 ; i++) {
 		_vm->_gfx->blackToPal(cPal, 0.2 * i);
 		_vm->_render->drawScene();
 		_vm->_system->delayMillis(5);
@@ -2077,10 +2078,11 @@ void Interface::mapPanelShow() {
 
 void Interface::mapPanelClean() {
 	PalEntry pal[PAL_ENTRIES];
+	int i;
 
 	_vm->_gfx->getCurrentPal(pal);
 
-	for (int i = 0; i < 6 ; i++) {
+	for (i = 0; i < 6 ; i++) {
 		_vm->_gfx->palToBlack(pal, 0.2 * i);
 		_vm->_render->drawScene();
 		_vm->_system->delayMillis(5);
@@ -2092,7 +2094,7 @@ void Interface::mapPanelClean() {
 	_vm->_gfx->showCursor(true);
 	_vm->_render->drawScene();
 
-	for (int i = 0; i < 6 ; i++) {
+	for (i = 0; i < 6 ; i++) {
 		_vm->_gfx->blackToPal(_mapSavedPal, 0.2 * i);
 		_vm->_render->drawScene();
 		_vm->_system->delayMillis(5);
