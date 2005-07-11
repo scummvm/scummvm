@@ -1295,6 +1295,32 @@ void SimonEngine::o_inventory_descriptions() {
 }
 
 void SimonEngine::o_quit_if_user_presses_y() {
+	// If all else fails, use English as fallback.
+	byte keyYes = 'y';
+	byte keyNo = 'n';
+
+	switch (_language) {
+	case 21:  // Russian
+		break;
+	case 20:  // Hebrew
+		keyYes = 'f';
+		break;
+	case 5:   // Spanish
+		keyYes = 's';
+		break;
+	case 3:   // Italian
+		keyYes = 's';
+		break;
+	case 2:   // French
+		keyYes = 'o';
+		break;
+	case 1:   // German
+		keyYes = 'j';
+		break;
+	default:
+		break;
+	}
+
 	for (;;) {
 		delay(1);
 #ifdef _WIN32_WCE
@@ -1307,22 +1333,11 @@ void SimonEngine::o_quit_if_user_presses_y() {
 			}
 		}
 #endif
-		if (_keyPressed == 'f' && _language == 20) // Hebrew
+		if (_keyPressed == keyYes)
 			shutdown();
-		if (_keyPressed == 's' && _language == 5) // Spanish
-			shutdown();
-		if (_keyPressed == 's' && _language == 3) // Italian
-			shutdown();
-		if (_keyPressed == 'o' && _language == 2) // French
-			shutdown();
-		if (_keyPressed == 'j' && _language == 1) // German
-			shutdown();
-		if (_keyPressed == 'y' && _language == 0) // English
-			shutdown();
-		if (_keyPressed == 'n')
-			goto get_out;
+		else if (_keyPressed == keyNo)
+			break;
 	}
-get_out:;
 }
 
 void SimonEngine::o_unk_137(uint fcs_index) {
