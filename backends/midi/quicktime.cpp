@@ -67,19 +67,19 @@ private:
 };
 
 MidiDriver_QT::MidiDriver_QT() {
-	qtNoteAllocator = NULL;
+	qtNoteAllocator = 0;
 	for (int i = 0; i < 16; i++)
-		qtNoteChannel[i] = NULL;
+		qtNoteChannel[i] = 0;
 }
 
 int MidiDriver_QT::open() {
 	ComponentResult qtErr = noErr;
 
-	if (qtNoteAllocator != NULL)
+	if (qtNoteAllocator != 0)
 		return MERR_ALREADY_OPEN;
 
 	qtNoteAllocator = OpenDefaultComponent(kNoteAllocatorComponentType, 0);
-	if (qtNoteAllocator == NULL)
+	if (qtNoteAllocator == 0)
 		goto bail;
 
 	simpleNoteRequest.info.flags = 0;
@@ -92,7 +92,7 @@ int MidiDriver_QT::open() {
 
 	for (int i = 0; i < 16; i++) {
 		qtErr = NANewNoteChannel(qtNoteAllocator, &simpleNoteRequest, &(qtNoteChannel[i]));
-		if ((qtErr != noErr) || (qtNoteChannel[i] == NULL))
+		if ((qtErr != noErr) || (qtNoteChannel[i] == 0))
 			goto bail;
 
 		qtErr = NAResetNoteChannel(qtNoteAllocator, qtNoteChannel[i]);
@@ -234,14 +234,14 @@ void MidiDriver_QT::setPitchBendRange (byte channel, uint range) {
 void MidiDriver_QT::dispose()
 {
 	for (int i = 0; i < 16; i++) {
-		if (qtNoteChannel[i] != NULL)
+		if (qtNoteChannel[i] != 0)
 			NADisposeNoteChannel(qtNoteAllocator, qtNoteChannel[i]);
-		qtNoteChannel[i] = NULL;
+		qtNoteChannel[i] = 0;
 	}
 
-	if (qtNoteAllocator != NULL) {
+	if (qtNoteAllocator != 0) {
 		CloseComponent(qtNoteAllocator);
-		qtNoteAllocator = NULL;
+		qtNoteAllocator = 0;
 	}
 }
 

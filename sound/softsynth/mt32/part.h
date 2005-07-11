@@ -68,6 +68,7 @@ protected:
 
 public:
 	Part(Synth *synth, unsigned int usePartNum);
+	virtual ~Part() {}
 	virtual void playNote(unsigned int key, int vel);
 	void stopNote(unsigned int key);
 	void allNotesOff();
