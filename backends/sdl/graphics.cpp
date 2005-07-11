@@ -59,6 +59,17 @@ static ScalerProc *scalersMagn[3][3] = {
 #endif
 };
 
+static const int s_gfxModeSwitchTable[][4] = {
+		{ GFX_NORMAL, GFX_DOUBLESIZE, GFX_TRIPLESIZE, -1 },
+		{ GFX_NORMAL, GFX_ADVMAME2X, GFX_ADVMAME3X, -1 },
+		{ GFX_NORMAL, GFX_HQ2X, GFX_HQ3X, -1 },
+		{ GFX_NORMAL, GFX_2XSAI, -1, -1 },
+		{ GFX_NORMAL, GFX_SUPER2XSAI, -1, -1 },
+		{ GFX_NORMAL, GFX_SUPEREAGLE, -1, -1 },
+		{ GFX_NORMAL, GFX_TV2X, -1, -1 },
+		{ GFX_NORMAL, GFX_DOTMATRIX, -1, -1 }
+	};
+
 static int cursorStretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY);
 
 const OSystem::GraphicsMode *OSystem_SDL::getSupportedGraphicsModes() const {
@@ -1535,7 +1546,7 @@ void OSystem_SDL::drawMouse() {
 }
 
 #pragma mark -
-#pragma mark --- Mouse ---
+#pragma mark --- On Screen Display ---
 #pragma mark -
 
 #ifdef USE_OSD
@@ -1619,3 +1630,85 @@ void OSystem_SDL::displayMessageOnOSD(const char *msg) {
 	_forceFull = true;
 }
 #endif
+
+
+#pragma mark -
+#pragma mark --- Misc ---
+#pragma mark -
+
+void OSystem_SDL::handleScalerHotkeys(const SDL_KeyboardEvent &key) {
+	// Ctrl-Alt-a toggles aspect ratio correction
+	if (key.keysym.sym == 'a') {
+		setFeatureState(kFeatureAspectRatioCorrection, !_adjustAspectRatio);
+#ifdef USE_OSD
+		char buffer[128];
+		if (_adjustAspectRatio)
+			sprintf(buffer, "Enabled aspect ratio correction\n%d x %d -> %d x %d",
+				_screenWidth, _screenHeight,
+				_hwscreen->w, _hwscreen->h
+				);
+		else
+			sprintf(buffer, "Disabled aspect ratio correction\n%d x %d -> %d x %d",
+				_screenWidth, _screenHeight,
+				_hwscreen->w, _hwscreen->h
+				);
+		displayMessageOnOSD(buffer);
+#endif
+
+		return;
+	}
+
+	int newMode = -1;
+	int factor = _scaleFactor - 1;
+	
+	// Increase/decrease the scale factor
+	if (key.keysym.sym == SDLK_EQUALS || key.keysym.sym == SDLK_PLUS || key.keysym.sym == SDLK_MINUS ||
+		key.keysym.sym == SDLK_KP_PLUS || key.keysym.sym == SDLK_KP_MINUS) {
+		factor += (key.keysym.sym == SDLK_MINUS || key.keysym.sym == SDLK_KP_MINUS) ? -1 : +1;
+		if (0 <= factor && factor <= 3) {
+			newMode = s_gfxModeSwitchTable[_scalerType][factor];
+		}
+	}
+	
+	const bool isNormalNumber = (SDLK_1 <= key.keysym.sym && key.keysym.sym <= SDLK_9);
+	const bool isKeypadNumber = (SDLK_KP1 <= key.keysym.sym && key.keysym.sym <= SDLK_KP9);
+	if (isNormalNumber || isKeypadNumber) {
+		_scalerType = key.keysym.sym - (isNormalNumber ? SDLK_1 : SDLK_KP1);
+		if (_scalerType >= ARRAYSIZE(s_gfxModeSwitchTable))
+			return;
+		
+		while (s_gfxModeSwitchTable[_scalerType][factor] < 0) {
+			assert(factor > 0);
+			factor--;
+		}
+		newMode = s_gfxModeSwitchTable[_scalerType][factor];
+	}
+	
+	if (newMode >= 0) {
+		setGraphicsMode(newMode);
+#ifdef USE_OSD
+		if (_osdSurface) {
+			const char *newScalerName = 0;
+			const GraphicsMode *g = getSupportedGraphicsModes();
+			while (g->name) {
+				if (g->id == _mode) {
+					newScalerName = g->description;
+					break;
+				}
+				g++;
+			}
+			if (newScalerName) {
+				char buffer[128];
+				sprintf(buffer, "Active graphics filter: %s\n%d x %d -> %d x %d",
+					newScalerName,
+					_screenWidth, _screenHeight,
+					_hwscreen->w, _hwscreen->h
+					);
+				displayMessageOnOSD(buffer);
+			}
+		}
+#endif
+
+	}
+
+}

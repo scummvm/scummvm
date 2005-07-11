@@ -52,17 +52,6 @@ enum {
 	GFX_DOTMATRIX = 11
 };
 
-static const int s_gfxModeSwitchTable[][4] = {
-		{ GFX_NORMAL, GFX_DOUBLESIZE, GFX_TRIPLESIZE, -1 },
-		{ GFX_NORMAL, GFX_ADVMAME2X, GFX_ADVMAME3X, -1 },
-		{ GFX_NORMAL, GFX_HQ2X, GFX_HQ3X, -1 },
-		{ GFX_NORMAL, GFX_2XSAI, -1, -1 },
-		{ GFX_NORMAL, GFX_SUPER2XSAI, -1, -1 },
-		{ GFX_NORMAL, GFX_SUPEREAGLE, -1, -1 },
-		{ GFX_NORMAL, GFX_TV2X, -1, -1 },
-		{ GFX_NORMAL, GFX_DOTMATRIX, -1, -1 }
-	};
-
 
 class OSystem_SDL : public OSystem {
 public:
@@ -196,8 +185,6 @@ public:
 #endif
 
 protected:
-	virtual bool remapKey(SDL_Event &ev, Event &event);
-
 	bool _inited;
 
 #ifdef USE_OSD
@@ -380,6 +367,10 @@ protected:
 
 	void setupIcon();
 	void handleKbdMouse();
+
+	virtual bool remapKey(SDL_Event &ev, Event &event);
+
+	void handleScalerHotkeys(const SDL_KeyboardEvent &key);
 };
 
 #endif

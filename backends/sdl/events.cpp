@@ -255,85 +255,12 @@ bool OSystem_SDL::pollEvent(Event &event) {
 			// Ctrl-Alt-<key> will change the GFX mode
 			if ((b & (KBD_CTRL|KBD_ALT)) == (KBD_CTRL|KBD_ALT)) {
 				
-				// Ctrl-Alt-a toggles aspect ratio correction
-				if (ev.key.keysym.sym == 'a') {
-					setFeatureState(kFeatureAspectRatioCorrection, !_adjustAspectRatio);
-#ifdef USE_OSD
-					char buffer[128];
-					if (_adjustAspectRatio)
-						sprintf(buffer, "Enabled aspect ratio correction\n%d x %d -> %d x %d",
-							_screenWidth, _screenHeight,
-							_hwscreen->w, _hwscreen->h
-							);
-					else
-						sprintf(buffer, "Disabled aspect ratio correction\n%d x %d -> %d x %d",
-							_screenWidth, _screenHeight,
-							_hwscreen->w, _hwscreen->h
-							);
-					displayMessageOnOSD(buffer);
-#endif
-
-					break;
-				}
-
-
-				int newMode = -1;
-				int factor = _scaleFactor - 1;
-				
-				// Increase/decrease the scale factor
-				if (ev.key.keysym.sym == SDLK_EQUALS || ev.key.keysym.sym == SDLK_PLUS || ev.key.keysym.sym == SDLK_MINUS ||
-					ev.key.keysym.sym == SDLK_KP_PLUS || ev.key.keysym.sym == SDLK_KP_MINUS) {
-					factor += (ev.key.keysym.sym == SDLK_MINUS || ev.key.keysym.sym == SDLK_KP_MINUS) ? -1 : +1;
-					if (0 <= factor && factor <= 3) {
-						newMode = s_gfxModeSwitchTable[_scalerType][factor];
-					}
-				}
-				
-				const bool isNormalNumber = (SDLK_1 <= ev.key.keysym.sym && ev.key.keysym.sym <= SDLK_9);
-				const bool isKeypadNumber = (SDLK_KP1 <= ev.key.keysym.sym && ev.key.keysym.sym <= SDLK_KP9);
-				if (isNormalNumber || isKeypadNumber) {
-					_scalerType = ev.key.keysym.sym - (isNormalNumber ? SDLK_1 : SDLK_KP1);
-					if (_scalerType >= ARRAYSIZE(s_gfxModeSwitchTable))
-						break;
-					
-					while (s_gfxModeSwitchTable[_scalerType][factor] < 0) {
-						assert(factor > 0);
-						factor--;
-					}
-					newMode = s_gfxModeSwitchTable[_scalerType][factor];
-				}
-				
-				if (newMode >= 0) {
-					setGraphicsMode(newMode);
-#ifdef USE_OSD
-					if (_osdSurface) {
-						const char *newScalerName = 0;
-						const GraphicsMode *g = getSupportedGraphicsModes();
-						while (g->name) {
-							if (g->id == _mode) {
-								newScalerName = g->description;
-								break;
-							}
-							g++;
-						}
-						if (newScalerName) {
-							char buffer[128];
-							sprintf(buffer, "Active graphics filter: %s\n%d x %d -> %d x %d",
-								newScalerName,
-								_screenWidth, _screenHeight,
-								_hwscreen->w, _hwscreen->h
-								);
-							displayMessageOnOSD(buffer);
-						}
-					}
-#endif
-
-				}
+				handleScalerHotkeys(ev.key);
 				break;
 			}
-			const bool event_complete= remapKey(ev,event);
+			const bool event_complete = remapKey(ev,event);
 			
-			if(event_complete)
+			if (event_complete)
 				return true;
 
 			event.type = EVENT_KEYDOWN;
@@ -344,9 +271,9 @@ bool OSystem_SDL::pollEvent(Event &event) {
 			}
 		case SDL_KEYUP:
 			{
-			const bool event_complete= remapKey(ev,event);
+			const bool event_complete = remapKey(ev,event);
 			
-			if(event_complete)
+			if (event_complete)
 				return true;
 
 			event.type = EVENT_KEYUP;
@@ -517,71 +444,71 @@ bool OSystem_SDL::pollEvent(Event &event) {
 	return false;
 }
 
-bool OSystem_SDL::remapKey(SDL_Event &ev,Event &event){
+bool OSystem_SDL::remapKey(SDL_Event &ev,Event &event) {
 #ifdef LINUPY
-			// On Yopy map the End button to quit
-			if ((ev.key.keysym.sym == 293)) {
-				event.type = EVENT_QUIT;
-				return true;
-			}
-			// Map menu key to f5 (scumm menu)
-			if (ev.key.keysym.sym == 306) {
-				event.type = EVENT_KEYDOWN;
-				event.kbd.keycode = SDLK_F5;
-				event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
-				return true;
-			}
-			// Map action key to action
-			if (ev.key.keysym.sym == 291) {
-				event.type = EVENT_KEYDOWN;
-				event.kbd.keycode = SDLK_TAB;
-				event.kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
-				return true;
-			}
-			// Map OK key to skip cinematic
-			if (ev.key.keysym.sym == 292) {
-				event.type = EVENT_KEYDOWN;
-				event.kbd.keycode = SDLK_ESCAPE;
-				event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
-				return true;
-			}
+	// On Yopy map the End button to quit
+	if ((ev.key.keysym.sym == 293)) {
+		event.type = EVENT_QUIT;
+		return true;
+	}
+	// Map menu key to f5 (scumm menu)
+	if (ev.key.keysym.sym == 306) {
+		event.type = EVENT_KEYDOWN;
+		event.kbd.keycode = SDLK_F5;
+		event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
+		return true;
+	}
+	// Map action key to action
+	if (ev.key.keysym.sym == 291) {
+		event.type = EVENT_KEYDOWN;
+		event.kbd.keycode = SDLK_TAB;
+		event.kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
+		return true;
+	}
+	// Map OK key to skip cinematic
+	if (ev.key.keysym.sym == 292) {
+		event.type = EVENT_KEYDOWN;
+		event.kbd.keycode = SDLK_ESCAPE;
+		event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
+		return true;
+	}
 #endif
 
 #ifdef QTOPIA
-			// quit on fn+backspace on zaurus
-			if (ev.key.keysym.sym == 127) {
-				event.type = EVENT_QUIT;
-				return true;
-			}
+	// Quit on fn+backspace on zaurus
+	if (ev.key.keysym.sym == 127) {
+		event.type = EVENT_QUIT;
+		return true;
+	}
 
-			// map menu key (f11) to f5 (scumm menu)
-			if (ev.key.keysym.sym == SDLK_F11) {
-				event.type = EVENT_KEYDOWN;
-				event.kbd.keycode = SDLK_F5;
-				event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
-			}
-			// map center (space) to tab (default action )
-			// I wanted to map the calendar button but the calendar comes up
-			//
-			else if (ev.key.keysym.sym == SDLK_SPACE) {
-				event.type = EVENT_KEYDOWN;
-				event.kbd.keycode = SDLK_TAB;
-				event.kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
-			}
-			// since we stole space (pause) above we'll rebind it to the tab key on the keyboard
-			else if (ev.key.keysym.sym == SDLK_TAB) {
-				event.type = EVENT_KEYDOWN;
-				event.kbd.keycode = SDLK_SPACE;
-				event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
-			} else {
-			// let the events fall through if we didn't change them, this may not be the best way to
-			// set it up, but i'm not sure how sdl would like it if we let if fall through then redid it though.
-			// and yes i have an huge terminal size so i dont wrap soon enough.
-				event.type = EVENT_KEYDOWN;
-				event.kbd.keycode = ev.key.keysym.sym;
-				event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
-			}
+	// Map menu key (f11) to f5 (scumm menu)
+	if (ev.key.keysym.sym == SDLK_F11) {
+		event.type = EVENT_KEYDOWN;
+		event.kbd.keycode = SDLK_F5;
+		event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
+	}
+	// Nap center (space) to tab (default action )
+	// I wanted to map the calendar button but the calendar comes up
+	//
+	else if (ev.key.keysym.sym == SDLK_SPACE) {
+		event.type = EVENT_KEYDOWN;
+		event.kbd.keycode = SDLK_TAB;
+		event.kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
+	}
+	// Since we stole space (pause) above we'll rebind it to the tab key on the keyboard
+	else if (ev.key.keysym.sym == SDLK_TAB) {
+		event.type = EVENT_KEYDOWN;
+		event.kbd.keycode = SDLK_SPACE;
+		event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
+	} else {
+	// Let the events fall through if we didn't change them, this may not be the best way to
+	// set it up, but i'm not sure how sdl would like it if we let if fall through then redid it though.
+	// and yes i have an huge terminal size so i dont wrap soon enough.
+		event.type = EVENT_KEYDOWN;
+		event.kbd.keycode = ev.key.keysym.sym;
+		event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
+	}
 #endif
-			return false;
+	return false;
 }
 
