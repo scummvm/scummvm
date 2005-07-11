@@ -157,20 +157,6 @@ enum {
 	DEBUG_SMUSH	=	1 << 10		// Track SMUSH
 };
 
-
-// Debug channel lookup table for Debugger console
-static const dbgChannelDesc debugChannels[] = {
-	{"SCRIPTS", "Track script execution", DEBUG_SCRIPTS},
-	{"OPCODES", "Track opcode execution", DEBUG_OPCODES},
-	{"IMUSE", "Track iMUSE events", DEBUG_IMUSE},
-	{"RESOURCE", "Track resource loading/management", DEBUG_RESOURCE},
-	{"VARS", "Track variable changes", DEBUG_VARS},
-	{"ACTORS", "Actor-related debug", DEBUG_ACTORS},
-	{"SOUND", "Sound related debug", DEBUG_SOUND},
-	{"INSANE", "Track INSANE", DEBUG_INSANE},
-	{"SMUSH", "Track SMUSH", DEBUG_SMUSH}
-};
-
 struct MemBlkHeader {
 	uint32 size;
 };
