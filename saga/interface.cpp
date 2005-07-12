@@ -320,6 +320,11 @@ void Interface::setMode(int mode) {
 }
 
 bool Interface::processAscii(uint16 ascii, bool synthetic) {
+	// TODO: Checking for Esc and Enter below is a bit hackish, and
+	// and probably only works with the English version. Maybe we should
+	// add a flag to the button so it can indicate if it's the default or
+	// cancel button?
+
 	int i;
 	PanelButton *panelButton;
 	if (!synthetic)
@@ -330,7 +335,7 @@ bool Interface::processAscii(uint16 ascii, bool synthetic) {
 	}
 	switch (_panelMode) {
 	case kPanelNull:
-		if (ascii == 27) {// Esc
+		if (ascii == 27) { // Esc
 			if (_vm->_scene->isInDemo()) {
 				_vm->_scene->skipScene();
 			} else {
@@ -340,48 +345,54 @@ bool Interface::processAscii(uint16 ascii, bool synthetic) {
 		}
 		break;
 	case kPanelOption:
-		//TODO: check input dialog keys
-		if (ascii == 27) {// Esc
+		// TODO: check input dialog keys
+		if (ascii == 27 || ascii == 13) { // Esc or Enter
 			ascii = 'c'; //continue
 		}
+
 		for (i = 0; i < _optionPanel.buttonsCount; i++) {
 			panelButton = &_optionPanel.buttons[i];
 			if (panelButton->type == kPanelButtonOption) {
 				if (panelButton->ascii == ascii) {
-					setOption(panelButton);				
+					setOption(panelButton);
 					return true;
 				}
 			}
 		}
 		break;
 	case kPanelSave:
-		if (_textInput) {
-			processTextInput(ascii);
+		if (_textInput && processTextInput(ascii)) {
 			return true;
-		} else {
-			if (ascii == 27) {// Esc
-				ascii = 'c'; //cancel
-			}
-			for (i = 0; i < _savePanel.buttonsCount; i++) {
-				panelButton = &_savePanel.buttons[i];
-				if (panelButton->type == kPanelButtonSave) {
-					if (panelButton->ascii == ascii) {
-						setSave(panelButton);				
-						return true;
-					}
+		}
+
+		if (ascii == 27) { // Esc
+			ascii = 'c'; // cancel
+		} else if (ascii == 13) { // Enter
+			ascii = 's'; // save
+		}
+
+		for (i = 0; i < _savePanel.buttonsCount; i++) {
+			panelButton = &_savePanel.buttons[i];
+			if (panelButton->type == kPanelButtonSave) {
+				if (panelButton->ascii == ascii) {
+					setSave(panelButton);
+					return true;
 				}
 			}
 		}
 		break;
 	case kPanelQuit:
-		if (ascii == 27) {// Esc
-			ascii = 'c'; //cancel
+		if (ascii == 27) { // Esc
+			ascii = 'c'; // cancel
+		} else if (ascii == 13) { // Enter
+			ascii = 'q'; // quit
 		}
+
 		for (i = 0; i < _quitPanel.buttonsCount; i++) {
 			panelButton = &_quitPanel.buttons[i];
 			if (panelButton->type == kPanelButtonQuit) {
 				if (panelButton->ascii == ascii) {
-					setQuit(panelButton);				
+					setQuit(panelButton);
 					return true;
 				}
 			}
@@ -392,7 +403,7 @@ bool Interface::processAscii(uint16 ascii, bool synthetic) {
 			panelButton = &_loadPanel.buttons[i];
 			if (panelButton->type == kPanelButtonLoad) {
 				if (panelButton->ascii == ascii) {
-					setLoad(panelButton);				
+					setLoad(panelButton);
 					return true;
 				}
 			}
@@ -827,17 +838,17 @@ void Interface::processStatusTextInput(uint16 ascii) {
 
 	textInputStartRepeat(ascii);
 	switch (ascii) {
-	case(27): // esc
+	case 27: // esc
 		_statusTextInputState = kStatusTextInputAborted;
 		_statusTextInput = false;
 		_vm->_script->wakeUpThreads(kWaitTypeStatusTextInput);
 		break;
-	case(13): // return
+	case 13: // return
 		_statusTextInputState = kStatusTextInputEntered;
 		_statusTextInput = false;
 		_vm->_script->wakeUpThreads(kWaitTypeStatusTextInput);
 		break;
-	case(8): // backspace
+	case 8: // backspace
 		if (_statusTextInputPos == 0) {
 			break;
 		}
@@ -858,7 +869,7 @@ void Interface::processStatusTextInput(uint16 ascii) {
 	setStatusText(_statusTextInputString);
 }
 
-void Interface::processTextInput(uint16 ascii) {
+bool Interface::processTextInput(uint16 ascii) {
 	char ch[2];
 	char tempString[SAVE_TITLE_SIZE];
 	uint tempWidth;
@@ -868,15 +879,17 @@ void Interface::processTextInput(uint16 ascii) {
 	textInputStartRepeat(ascii);
 
 	switch (ascii) {
-	case(27): // esc
+	case 13:
+		return false;
+	case 27: // esc
 		_textInput = false;
 		break;
-	case(8): // backspace
+	case 8: // backspace
 		if (_textInputPos <= 1) {
 			break;
 		}
 		_textInputPos--;
-	case(127): // del
+	case 127: // del
 		if (_textInputPos <= _textInputStringLength) {
 			if (_textInputPos != 1) {
 				strncpy(tempString, _textInputString, _textInputPos - 1);							
@@ -888,12 +901,12 @@ void Interface::processTextInput(uint16 ascii) {
 			_textInputStringLength = strlen(_textInputString);
 		}
 		break;
-	case(276): // left
+	case 276: // left
 		if (_textInputPos > 1) {
 			_textInputPos--;
 		}
 		break;
-	case(275): // right
+	case 275: // right
 		if (_textInputPos <= _textInputStringLength) {
 			_textInputPos++;
 		}
@@ -928,6 +941,7 @@ void Interface::processTextInput(uint16 ascii) {
 		}
 		break;
 	}
+	return true;
 }
 
 void Interface::drawTextInput(Surface *ds, InterfacePanel *panel, PanelButton *panelButton) {
@@ -1578,7 +1592,7 @@ void Interface::drawButtonBox(Surface *ds, const Rect& rect, ButtonKind kind, bo
 	byte odl, our, idl, iur;
 
 	switch (kind ) {
-		case( kSlider):
+		case kSlider:
 			cornerColor = 0x8b;
 			frameColor = kITEColorBlack;
 			fillColor = kITEColorLightBlue96;
@@ -1588,7 +1602,7 @@ void Interface::drawButtonBox(Surface *ds, const Rect& rect, ButtonKind kind, bo
 			iur = 0x94;
 			solidColor = down ? kITEColorLightBlue94 : kITEColorLightBlue96;
 			break;
-		case( kEdit):
+		case kEdit:
 			cornerColor = kITEColorLightBlue96;
 			frameColor = kITEColorLightBlue96;
 			fillColor = kITEColorLightBlue96;
@@ -1675,13 +1689,13 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 
 	textId = panelButton->id;
 	switch(panelButton->id) {
-		case(kTextReadingSpeed):
+		case kTextReadingSpeed:
 			textId = kTextFast;
 			break;			
-		case(kTextMusic):
+		case kTextMusic:
 			textId = kTextOn;
 			break;			
-		case(kTextSound):
+		case kTextSound:
 			textId = kTextOn;
 			break;			
 	}

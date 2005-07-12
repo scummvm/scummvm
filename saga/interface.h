@@ -335,7 +335,7 @@ private:
 	void drawVerbPanelText(Surface *ds, PanelButton *panelButton, int textColor, int textShadowColor);
 	void drawVerbPanel(Surface *backBuffer, PanelButton* panelButton);
 	void calcOptionSaveSlider();
-	void processTextInput(uint16 ascii);
+	bool processTextInput(uint16 ascii);
 	void processStatusTextInput(uint16 ascii);
 	void textInputStartRepeat(uint16 ascii);
 	void textInputRepeat(void);
