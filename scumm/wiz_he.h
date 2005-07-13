@@ -163,7 +163,7 @@ public:
 
 	void createWizEmptyImage(const WizParameters *params);
 	void fillWizRect(const WizParameters *params);
-	void fillWizParallelogram(const WizParameters *params);
+	void fillWizLine(const WizParameters *params);
 
 	void getWizImageDim(int resNum, int state,  int32 &w, int32 &h);
 	int getWizImageStates(int resnum);	

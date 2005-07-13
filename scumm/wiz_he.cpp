@@ -1609,7 +1609,7 @@ void Wiz::fillWizRect(const WizParameters *params) {
 	}
 }
 
-void Wiz::fillWizParallelogram(const WizParameters *params) {	
+void Wiz::fillWizLine(const WizParameters *params) {	
 	if (params->processFlags & kWPFClipBox2) {
 		int state = 0;
 		if (params->processFlags & kWPFNewState) {
@@ -1818,23 +1818,31 @@ void Wiz::processWizImage(const WizParameters *params) {
 		fillWizRect(params);
 		break;
 	case 10:
-		fillWizParallelogram(params);
+		fillWizLine(params);
+		break;
+	case 11:
+		// TODO: Fill Pixel
+		error("fillWizPixel");
 		break;
 	case 12:
 		// Used in PuttsFunShop/SamsFunShop
-		// TODO: Flood fill
+		// TODO: Flood Fill
 		break;
 	case 13:
 		// Used in PuttsFunShop/SamsFunShop
-		// TODO: Start font
+		// TODO: Start Font
 		break;
 	case 14:
 		// Used in PuttsFunShop/SamsFunShop
-		// TODO: End font
+		// TODO: End Font
 		break;
 	case 15:
 		// Used in PuttsFunShop/SamsFunShop
-		// TODO: Create font
+		// TODO: Create Font
+		break;
+	case 16:
+		// TODO: Render Font String
+		error("Render Font String");
 		break;
 	case 17:
 		// Used in PuttsFunShop/SamsFunShop
