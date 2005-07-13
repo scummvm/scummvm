@@ -43,6 +43,7 @@ public:
 	typedef bool (*CompletionCallbackProc)(ConsoleDialog* console, const char *input, char*& completion, void *refCon);
 
 protected:
+	Graphics::Surface	_canvas;
 	char	_buffer[kBufferSize];
 	int		_linesInBuffer;
 
@@ -92,9 +93,11 @@ public:
 	ConsoleDialog(float widthPercent, float heightPercent);
 
 	void open();
+	void close();
 	void drawDialog();
 
 	void handleTickle();
+	void handleScreenChanged();
 	void handleMouseWheel(int x, int y, int direction);
 	void handleKeyDown(uint16 ascii, int keycode, int modifiers);
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);

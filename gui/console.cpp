@@ -117,10 +117,16 @@ void ConsoleDialog::slideUpAndClose() {
 }
 
 void ConsoleDialog::open() {
+	// This dialog will be redrawn a lot, so we store a copy of the blended
+	// background in a separate "canvas", just like in the About dialog.
+	_canvas.pixels = NULL;
+
+
 	// Initiate sliding the console down. We do a very simple trick to achieve
 	// this effect: we simply move the console dialog just above (outside) the
 	// visible screen area, then shift it down in handleTickle() over a
 	// certain period of time.
+
 	_y = -_h;
 	_slideTime = g_system->getMillis();
 	_slideMode = kDownSlideMode;
@@ -132,9 +138,19 @@ void ConsoleDialog::open() {
 	}
 }
 
+void ConsoleDialog::close() {
+	free(_canvas.pixels);
+	Dialog::close();
+}
+
 void ConsoleDialog::drawDialog() {
-	// Blend over the background
-	g_gui.blendRect(_x, _y, _w, _h, g_gui._bgcolor, 2);
+	if (!_canvas.pixels) {
+		// Blend over the background
+		g_gui.blendRect(0, 0, _w, _h, g_gui._bgcolor, 2);
+		g_gui.copyToSurface(&_canvas, 0, 0, _w, _h);
+	}
+
+	g_gui.drawSurface(_canvas, 0, 0);
 
 	// Draw a border
 	g_gui.hLine(_x, _y + _h - 1, _x + _w - 1, g_gui._color);
@@ -165,7 +181,16 @@ void ConsoleDialog::drawDialog() {
 	g_gui.addDirtyRect(_x, _y, _w, _h);
 }
 
+void ConsoleDialog::handleScreenChanged() {
+	free(_canvas.pixels);
+	_canvas.pixels = NULL;
+	draw();
+}
+
 void ConsoleDialog::handleTickle() {
+	if (!_canvas.pixels)
+		return;
+
 	uint32 time = g_system->getMillis();
 	if (_caretTime < time) {
 		_caretTime = time + kCaretBlinkTime;
