@@ -83,8 +83,8 @@ static const char *interfaceTextStrings[][42] = {
 		"Spieleoptionen", "Lesegeschw.", "Musik", "Sound", "Abbr.",
 		"Beenden", NULL, "M", "Klick",
 		NULL, NULL, NULL, NULL, NULL,
-		NULL, NULL, NULL, NULL, NULL, "Quit the Game?", "Load Successful!",
-		"Enter Save Game Name"
+		NULL, NULL, NULL, NULL, NULL, "Spiel beenden?", "Spielstand geladen!",
+		"Bitte Namen eingeben"
 	}
 };
 
