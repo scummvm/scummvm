@@ -32,7 +32,6 @@
 #include "saga/puzzle.h"
 #include "saga/render.h"
 #include "saga/scene.h"
-#include "saga/text.h"
 
 #include "common/timer.h"
 #include "common/system.h"
@@ -40,6 +39,7 @@
 namespace Saga {
 
 const char *test_txt = "The quick brown fox jumped over the lazy dog. She sells sea shells down by the sea shore.";
+const char *pauseString = "PAWS GAME";
 
 Render::Render(SagaEngine *vm, OSystem *system) {
 	_vm = vm;
@@ -69,9 +69,9 @@ bool Render::initialized() {
 
 void Render::drawScene() {
 	Surface *backBufferSurface;
-	char txt_buf[20];
-	int fps_width;
-	Point mouse_pt;
+	char txtBuffer[20];
+	Point mousePoint;
+	Point textPoint;
 
 	assert(_initialized);
 
@@ -80,7 +80,7 @@ void Render::drawScene() {
 	backBufferSurface = _vm->_gfx->getBackBuffer();
 
 	// Get mouse coordinates
-	mouse_pt = _vm->mousePos();
+	mousePoint = _vm->mousePos();
 
 	if (/*_vm->_interface->getMode() != kPanelPlacard*/!(_flags & (RF_PLACARD | RF_MAP))) {
 		// Display scene background
@@ -88,7 +88,7 @@ void Render::drawScene() {
 
 		if (_vm->_interface->getFadeMode() != kFadeOut) {
 			if (_vm->_puzzle->isActive()) {
-				_vm->_puzzle->movePiece(mouse_pt);
+				_vm->_puzzle->movePiece(mousePoint);
 				_vm->_actor->drawSpeech();
 			} else {
 				// Draw queued actors
@@ -98,9 +98,9 @@ void Render::drawScene() {
 
 			if (getFlags() & RF_OBJECTMAP_TEST) {
 				if (_vm->_scene->_objectMap)
-					_vm->_scene->_objectMap->draw(backBufferSurface, mouse_pt, kITEColorBrightWhite, kITEColorBlack);
+					_vm->_scene->_objectMap->draw(backBufferSurface, mousePoint, kITEColorBrightWhite, kITEColorBlack);
 				if (_vm->_scene->_actionMap)
-					_vm->_scene->_actionMap->draw(backBufferSurface, mouse_pt, kITEColorRed, kITEColorBlack);
+					_vm->_scene->_actionMap->draw(backBufferSurface, mousePoint, kITEColorRed, kITEColorBlack);
 			}
 			if (getFlags() & RF_ACTOR_PATH_TEST) {
 				_vm->_actor->drawPathTest();
@@ -129,35 +129,36 @@ void Render::drawScene() {
 	}
 
 	// Draw queued text strings
-	_vm->textDrawList(_vm->_scene->_textList, backBufferSurface);
+	_vm->_scene->drawTextList(backBufferSurface);
 
 	// Handle user input
 	_vm->processInput();
 
 	// Display rendering information
 	if (_flags & RF_SHOW_FPS) {
-		sprintf(txt_buf, "%d", _fps);
-		fps_width = _vm->_font->getStringWidth(SMALL_FONT_ID, txt_buf, 0, FONT_NORMAL);
-		_vm->_font->draw(SMALL_FONT_ID, backBufferSurface, txt_buf, 0, backBufferSurface->w - fps_width, 2,
-					kITEColorBrightWhite, kITEColorBlack, FONT_OUTLINE);
+		sprintf(txtBuffer, "%d", _fps);
+		textPoint.x = backBufferSurface->w - _vm->_font->getStringWidth(kSmallFont, txtBuffer, 0, kFontOutline); 
+		textPoint.y = 2;
+
+		_vm->_font->textDraw(kSmallFont, backBufferSurface, txtBuffer, textPoint, kITEColorBrightWhite, kITEColorBlack, kFontOutline);
 	}
 
 	// Display "paused game" message, if applicable
 	if (_flags & RF_RENDERPAUSE) {
-		int msg_len = strlen(PAUSEGAME_MSG);
-		int msg_w = _vm->_font->getStringWidth(BIG_FONT_ID, PAUSEGAME_MSG, msg_len, FONT_OUTLINE);
-		_vm->_font->draw(BIG_FONT_ID, backBufferSurface, PAUSEGAME_MSG, msg_len,
-				(backBufferSurface->w - msg_w) / 2, 90, kITEColorBrightWhite, kITEColorBlack, FONT_OUTLINE);
+		textPoint.x = (backBufferSurface->w - _vm->_font->getStringWidth(kBigFont, pauseString, 0, kFontOutline)) / 2; 
+		textPoint.y = 90;
+
+		_vm->_font->textDraw(kBigFont, backBufferSurface, pauseString, textPoint, kITEColorBrightWhite, kITEColorBlack, kFontOutline);
 	}
 
 	// Update user interface
-
-	_vm->_interface->update(mouse_pt, UPDATE_MOUSEMOVE);
+	_vm->_interface->update(mousePoint, UPDATE_MOUSEMOVE);
 
 	// Display text formatting test, if applicable
 	if (_flags & RF_TEXT_TEST) {
-		_vm->textDraw(MEDIUM_FONT_ID, backBufferSurface, test_txt, mouse_pt.x, mouse_pt.y,
-				kITEColorBrightWhite, kITEColorBlack, FONT_OUTLINE | FONT_CENTERED);
+		Rect rect(mousePoint.x, mousePoint.y, mousePoint.x + 100, mousePoint.y + 50);
+		_vm->_font->textDrawRect(kMediumFont, backBufferSurface, test_txt, rect,
+				kITEColorBrightWhite, kITEColorBlack, (FontEffectFlags)(kFontOutline | kFontCentered));
 	}
 
 	// Display palette test, if applicable

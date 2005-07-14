@@ -33,7 +33,6 @@
 #include "common/stream.h"
 #include "common/rect.h"
 
-#include "saga/text.h"
 #include "saga/gfx.h"
 #include "saga/list.h"
 
@@ -215,7 +214,7 @@ enum TextStringIds {
 	kTextEnterSaveGameName
 };
 
-struct IMAGE_HEADER {
+struct ImageHeader {
 	int width;
 	int height;
 };
@@ -309,6 +308,21 @@ enum GameFeatures {
 	GF_LANG_DE           = 1 << 4,
 	GF_WYRMKEEP          = 1 << 5,
 	GF_CD_FX             = 1 << 6
+};
+
+enum FontId {
+	kSmallFont,
+	kMediumFont,
+	kBigFont
+};
+
+enum FontEffectFlags {
+	kFontNormal   = 0,
+	kFontOutline  = 1 << 0,
+	kFontShadow   = 1 << 1,
+	kFontBold     = 1 << 2,
+	kFontCentered = 1 << 3,
+	kFontDontmap  = 1 << 4
 };
 
 struct GameSoundInfo {
@@ -574,17 +588,6 @@ public:
 
 	const char *getObjectName(uint16 objectId);
 public:
-	TEXTLIST *textCreateList();
-	void textDestroyList(TEXTLIST *textlist);
-	void textClearList(TEXTLIST *textlist);
-	int textDrawList(TEXTLIST *textlist, Surface *ds);
-	TEXTLIST_ENTRY *textAddEntry(TEXTLIST *textlist, TEXTLIST_ENTRY *entry);
-	int textDeleteEntry(TEXTLIST *textlist, TEXTLIST_ENTRY *entry);
-	int textSetDisplay(TEXTLIST_ENTRY *entry, int val);
-	int textDraw(int font_id, Surface *ds, const char *string, int text_x, int text_y, int color,
-				  int effect_color, int flags);
-	int textProcessList(TEXTLIST *textlist, long ms);
-
 	int processInput(void);
 	const Point &mousePos() const {
 		return _mousePos;

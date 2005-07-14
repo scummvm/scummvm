@@ -644,16 +644,20 @@ void Interface::drawPanelText(Surface *ds, InterfacePanel *panel, PanelButton *p
 	const char *text;
 	int textWidth;
 	Rect rect;
+	Point textPoint;
 
 	text = _vm->getTextString(panelButton->id);
 	panel->calcPanelButtonRect(panelButton, rect);
 	if (panelButton->xOffset < 0) {
-		textWidth = _vm->_font->getStringWidth(MEDIUM_FONT_ID, text, 0, 0);
+		textWidth = _vm->_font->getStringWidth(kMediumFont, text, 0, kFontNormal);
 		rect.left += 2 + (panel->imageWidth - 1 - textWidth) / 2;
 	}
 
-	_vm->_font->draw(MEDIUM_FONT_ID, ds, text, 0, rect.left , rect.top + 1,
-		_vm->getDisplayInfo().verbTextColor, _vm->getDisplayInfo().verbTextShadowColor, FONT_SHADOW);
+	textPoint.x = rect.left;
+	textPoint.y = rect.top + 1;
+	
+	_vm->_font->textDraw(kMediumFont, ds, text, textPoint,
+		_vm->getDisplayInfo().verbTextColor, _vm->getDisplayInfo().verbTextShadowColor, kFontShadow);
 }
 
 void Interface::drawOption() {
@@ -667,6 +671,7 @@ void Interface::drawOption() {
 	Rect rect;
 	Rect rect2;
 	PanelButton *panelButton;
+	Point textPoint;
 
 	backBuffer = _vm->_gfx->getBackBuffer();
 
@@ -696,7 +701,7 @@ void Interface::drawOption() {
 	_optionPanel.calcPanelButtonRect(_optionSaveFilePanel, rect);
 	rect.top++;
 	rect2 = rect;
-	fontHeight = _vm->_font->getHeight(SMALL_FONT_ID);
+	fontHeight = _vm->_font->getHeight(kSmallFont);
 	for (j = 0; j < _vm->getDisplayInfo().optionSaveFileVisible; j++) {
 		bgColor = kITEColorDarkGrey0C;
 		fgColor = kITEColorBrightWhite;
@@ -710,8 +715,9 @@ void Interface::drawOption() {
 			rect2.bottom = rect2.top + fontHeight;
 			backBuffer->fillRect(rect2, bgColor);
 			text = _vm->getSaveFile(idx)->name;
-			_vm->_font->draw(SMALL_FONT_ID, backBuffer, text, 0,
-				 rect.left + 1, rect2.top, fgColor, 0, 0);
+			textPoint.x = rect.left + 1;
+			textPoint.y = rect2.top;
+			_vm->_font->textDraw(kSmallFont, backBuffer, text, textPoint, fgColor, 0, kFontNormal);
 		}
 	}
 
@@ -918,8 +924,8 @@ bool Interface::processTextInput(uint16 ascii) {
 			(ascii == ' ')) {
 			if (_textInputStringLength < SAVE_TITLE_SIZE - 1) {
 				ch[0] = ascii;
-				tempWidth = _vm->_font->getStringWidth(SMALL_FONT_ID, ch, 0, 0);
-				tempWidth += _vm->_font->getStringWidth(SMALL_FONT_ID, _textInputString, 0, 0);
+				tempWidth = _vm->_font->getStringWidth(kSmallFont, ch, 0, kFontNormal);
+				tempWidth += _vm->_font->getStringWidth(kSmallFont, _textInputString, 0, kFontNormal);
 				if (tempWidth > _textInputMaxWidth) {
 									break;
 				}
@@ -945,6 +951,7 @@ bool Interface::processTextInput(uint16 ascii) {
 }
 
 void Interface::drawTextInput(Surface *ds, InterfacePanel *panel, PanelButton *panelButton) {
+	Point textPoint;
 	Rect rect;
 	char ch[2];
 	int fgColor;
@@ -955,24 +962,26 @@ void Interface::drawTextInput(Surface *ds, InterfacePanel *panel, PanelButton *p
 	drawButtonBox(ds, rect, kEdit, _textInput);
 	rect.left += 4; 
 	rect.top += 4;
-	rect.setHeight(_vm->_font->getHeight(SMALL_FONT_ID));
+	rect.setHeight(_vm->_font->getHeight(kSmallFont));
 
 	i = 0;	
 	while ((ch[0] = _textInputString[i++]) != 0) {
-		rect.setWidth(_vm->_font->getStringWidth(SMALL_FONT_ID, ch, 0, 0));
+		rect.setWidth(_vm->_font->getStringWidth(kSmallFont, ch, 0, kFontNormal));
 		if ((i == _textInputPos) && _textInput) {
 			fgColor = kITEColorBlack;	
 			ds->fillRect(rect, kITEColorWhite);
 		} else {
 			fgColor = kITEColorWhite;	
 		}
-		_vm->_font->draw(SMALL_FONT_ID, ds, ch, 0, rect.left, 
-			rect.top + 1, fgColor, 0, 0); 
+		textPoint.x = rect.left;
+		textPoint.y = rect.top + 1;
+
+		_vm->_font->textDraw(kSmallFont, ds, ch, textPoint, fgColor, 0, kFontNormal); 
 		rect.left += rect.width();
 	}
 	if (_textInput && (_textInputPos >= i)) {
 		ch[0] = ' ';
-		rect.setWidth(_vm->_font->getStringWidth(SMALL_FONT_ID, ch, 0, 0));
+		rect.setWidth(_vm->_font->getStringWidth(kSmallFont, ch, 0, kFontNormal));
 		ds->fillRect(rect, kITEColorWhite);
 	}
 }
@@ -1141,7 +1150,7 @@ void Interface::handleOptionClick(const Point& mousePoint) {
 	} else {
 		if (_optionPanel.currentButton == _optionSaveFilePanel) {
 			_optionPanel.calcPanelButtonRect(_optionSaveFilePanel, rect);
-			_optionSaveFileTitleNumber = (mousePoint.y - rect.top) / (_vm->_font->getHeight(SMALL_FONT_ID) + 1);
+			_optionSaveFileTitleNumber = (mousePoint.y - rect.top) / (_vm->_font->getHeight(kSmallFont) + 1);
 			
 			if (_optionSaveFileTitleNumber >= _vm->getDisplayInfo().optionSaveFileVisible) {
 				_optionSaveFileTitleNumber = _vm->getDisplayInfo().optionSaveFileVisible - 1;
@@ -1315,8 +1324,8 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 void Interface::drawStatusBar() {
 	Surface *backBuffer;
 	Rect rect;
-
-	int string_w;
+	Point textPoint;
+	int stringWidth;
 	int color;
 
 	backBuffer = _vm->_gfx->getBackBuffer();
@@ -1337,15 +1346,16 @@ void Interface::drawStatusBar() {
 
 	backBuffer->drawRect(rect, _vm->getDisplayInfo().statusBGColor);
 
-	string_w = _vm->_font->getStringWidth(SMALL_FONT_ID, _statusText, 0, 0);
+	stringWidth = _vm->_font->getStringWidth(kSmallFont, _statusText, 0, kFontNormal);
 
 	if (_statusOnceColor == -1)
 		color = _vm->getDisplayInfo().statusTextColor;
 	else
 		color = _statusOnceColor;
 
-	_vm->_font->draw(SMALL_FONT_ID, backBuffer, _statusText, 0, _vm->getDisplayInfo().statusXOffset + (_vm->getDisplayInfo().statusWidth - string_w) / 2,
-			_vm->getDisplayInfo().statusYOffset + _vm->getDisplayInfo().statusTextY, color, 0, 0);
+	textPoint.x = _vm->getDisplayInfo().statusXOffset + (_vm->getDisplayInfo().statusWidth - stringWidth) / 2;
+	textPoint.y = _vm->getDisplayInfo().statusYOffset + _vm->getDisplayInfo().statusTextY;
+	_vm->_font->textDraw(kSmallFont, backBuffer, _statusText, textPoint, color, 0, kFontNormal);
 
 	if (_saveReminderState > 0) {
 		rect.left = _vm->getDisplayInfo().saveReminderXOffset;
@@ -1701,8 +1711,8 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 	}
 	text = _vm->getTextString(textId);
 
-	textWidth = _vm->_font->getStringWidth(MEDIUM_FONT_ID, text, 0, 0);
-	textHeight = _vm->_font->getHeight(MEDIUM_FONT_ID);
+	textWidth = _vm->_font->getStringWidth(kMediumFont, text, 0, kFontNormal);
+	textHeight = _vm->_font->getHeight(kMediumFont);
 
 	point.x = panel->x + panelButton->xOffset + (panelButton->width / 2) - (textWidth / 2);
 	point.y = panel->y + panelButton->yOffset + (panelButton->height / 2) - (textHeight / 2);
@@ -1716,8 +1726,8 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 	panel->calcPanelButtonRect(panelButton, rect);
 	drawButtonBox(ds, rect, kButton, panelButton->state > 0);
 
-	_vm->_font->draw(MEDIUM_FONT_ID, ds, text, 0, point.x , point.y, 
-		textColor, _vm->getDisplayInfo().verbTextShadowColor, FONT_SHADOW);
+	_vm->_font->textDraw(kMediumFont, ds, text, point, 
+		textColor, _vm->getDisplayInfo().verbTextShadowColor, kFontShadow);
 }
 
 void Interface::drawPanelButtonArrow(Surface *ds, InterfacePanel *panel, PanelButton *panelButton) {
@@ -1753,12 +1763,12 @@ void Interface::drawVerbPanelText(Surface *ds, PanelButton *panelButton, int tex
 
 	text = _vm->getTextString(textId);
 	
-	textWidth = _vm->_font->getStringWidth(SMALL_FONT_ID, text, 0, 0);
+	textWidth = _vm->_font->getStringWidth(kSmallFont, text, 0, kFontNormal);
 
 	point.x = _mainPanel.x + panelButton->xOffset + 1 + (panelButton->width - 1 - textWidth) / 2;
 	point.y = _mainPanel.y + panelButton->yOffset + 1;
 
-	_vm->_font->draw(SMALL_FONT_ID, ds, text, 0, point.x , point.y, textColor, textShadowColor, (textShadowColor != 0) ? FONT_SHADOW : 0);
+	_vm->_font->textDraw(kSmallFont, ds, text, point, textColor, textShadowColor, (textShadowColor != 0) ? kFontShadow : kFontNormal);
 }
 	
 
@@ -1804,10 +1814,9 @@ bool Interface::converseAddText(const char *text, int replyId, byte replyFlags, 
 		for (i = len; i >= 0; i--) {
 			c = _converseWorkString[i];
 
-			if ((c == ' ' || c == '\0')
-				&& _vm->_font->getStringWidth(SMALL_FONT_ID, _converseWorkString, i, 0) 
-					<= CONVERSE_MAX_TEXT_WIDTH)
+			if ((c == ' ' || c == '\0') && (_vm->_font->getStringWidth(kSmallFont, _converseWorkString, i, kFontNormal) <= CONVERSE_MAX_TEXT_WIDTH)) {
 				break;
+			}				
 		}
 		if (i < 0) {
 			return true;
@@ -1877,6 +1886,7 @@ void Interface::converseDisplayTextLines(Surface *ds) {
 		(char)0xb7, 0 
 	};
 	Rect rect(8, CONVERSE_TEXT_LINES * CONVERSE_TEXT_HEIGHT);
+	Point textPoint;
 	
 	assert(_conversePanel.buttonsCount >= 6);
 
@@ -1910,11 +1920,14 @@ void Interface::converseDisplayTextLines(Surface *ds) {
 		str = _converseText[relPos].text;
 
 		if (_converseText[relPos].textNum == 0) { // first entry
-			_vm->_font->draw(SMALL_FONT_ID, ds, bullet, 1,
-				rect.left - 6, rect.top, bulletForegnd, bulletBackgnd, FONT_SHADOW | FONT_DONTMAP);
+			textPoint.x = rect.left - 6;
+			textPoint.y = rect.top;
+
+			_vm->_font->textDraw(kSmallFont, ds, bullet, textPoint, bulletForegnd, bulletBackgnd, (FontEffectFlags)(kFontShadow | kFontDontmap));
 		}
-		_vm->_font->draw(SMALL_FONT_ID, ds, str, strlen(str),
-			rect.left + 1, rect.top, foregnd, kITEColorBlack, FONT_SHADOW);
+		textPoint.x = rect.left + 1;
+		textPoint.y = rect.top;
+		_vm->_font->textDraw(kSmallFont, ds, str, textPoint, foregnd, kITEColorBlack, kFontShadow);
 	}
 
 	if (_converseStartPos != 0) {

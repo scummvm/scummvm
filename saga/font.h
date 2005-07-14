@@ -26,6 +26,7 @@
 #ifndef SAGA_FONT_H__
 #define SAGA_FONT_H__
 
+#include "saga/list.h"
 #include "saga/gfx.h"
 
 namespace Saga {
@@ -48,80 +49,98 @@ namespace Saga {
 
 #define SAGA_FONT_HEADER_LEN 6
 
-enum FONT_ID {
-	SMALL_FONT_ID,
-	MEDIUM_FONT_ID,
-	BIG_FONT_ID
+#define TEXT_CENTERLIMIT 50
+#define TEXT_MARGIN 10
+#define TEXT_LINESPACING 2
+
+struct TextListEntry {
+	int display;
+//	int id;
+	Common::Point point;
+	int color;
+	int effectColor;
+	FontEffectFlags flags;
+	FontId fontId;
+	const char *text;
+	TextListEntry() {
+		memset(this, 0, sizeof(*this)); 
+	}
 };
 
-enum FONT_EFFECT_FLAGS {
-	FONT_NORMAL   = 0,
-	FONT_OUTLINE  = 1 << 0,
-	FONT_SHADOW   = 1 << 1,
-	FONT_BOLD     = 1 << 2,
-	FONT_CENTERED = 1 << 3,
-	FONT_DONTMAP  = 1 << 4
+class TextList: public SortedList<TextListEntry> {
+public:
+
+	TextListEntry *addEntry(const TextListEntry &entry) {
+		return pushBack(entry).operator->();
+	}
 };
 
-struct FONT_HEADER {
-	int c_height;
-	int c_width;
-	int row_length;
+
+struct FontHeader {
+	int charHeight;
+	int charWidth;
+	int rowLength;
 };
 
-struct FONT_CHAR_ENTRY {
+struct FontCharEntry {
 	int index;
-	int byte_width;
+	int byteWidth;
 	int width;
 	int flag;
 	int tracking;
 };
 
-struct FONT_STYLE {
-	FONT_HEADER hdr;
-	FONT_CHAR_ENTRY fce[256];
-	byte *font_free_p;
-	byte *font_p;
+struct FontStyle {
+	FontHeader header;
+	FontCharEntry fontCharEntry[256];
+	byte *font;
 };
 
-struct FONT {
-	uint32 font_rn;
-	int font_id;
-
-	int normal_loaded;
-	FONT_STYLE *normal;
-	int outline_loaded;
-	FONT_STYLE *outline;
-
-	byte *res_data;
-	size_t res_len;
+struct FontData {
+	FontStyle normal;
+	FontStyle outline;
 };
 
 class Font {
  public:
 	Font(SagaEngine *vm);
 	~Font(void);
-	int draw(int font_id, Surface *ds, const char *draw_str, size_t draw_str_len,
-				  int text_x, int text_y, int color, int effect_color, int flags);
-	int getStringWidth(int font_id, const char *test_str, size_t test_str_ct, int flags);
-	int getHeight(int font_id);
+	int getStringWidth(FontId fontId, const char *text, size_t count, FontEffectFlags flags);
+	int getHeight(FontId fontId);
+	int getHeight(FontId fontId, const char *text, int width, FontEffectFlags flags);
 
+	void textDraw(FontId fontId, Surface *ds, const char *string, const Common::Point &point, int color, int effectColor, FontEffectFlags flags);
+	void textDrawRect(FontId fontId, Surface *ds, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags);
+	
+	void validate(FontId fontId) {
+		if ((fontId < 0) || (fontId >= _loadedFonts)) {
+			error("Font::validate: Invalid font id.");
+		}
+	}
  private:
 
-	int loadFont(uint32 fontResourceId);
-	FONT_STYLE *createOutline(FONT_STYLE * src_font);
-	int outFont(FONT_STYLE *font, Surface *ds, const char *draw_str, size_t draw_str_ct,
-				int text_x, int text_y, int color, int flags);
-	int getByteLen(int num_bits);
+	void loadFont(uint32 fontResourceId);
+	void createOutline(FontData *font);
+	void draw(FontId fontId, Surface *ds, const char *text, size_t count, const Common::Point &point, int color, int effectColor, FontEffectFlags flags);
+	void outFont(const FontStyle &drawFont, Surface *ds, const char *text, size_t count, const Common::Point &point, int color, FontEffectFlags flags);
+	int getByteLen(int numBits) const {
+		int byteLength = numBits / 8;
+
+		if (numBits % 8) {
+			byteLength++;
+		}
+
+		return byteLength;
+	}
+
 
 	static const int _charMap[256];
 	SagaEngine *_vm;
 
 	bool _initialized;
-	RSCFILE_CONTEXT *_fontContext;
 
-	int _nFonts;
-	FONT **_fonts;
+	int _loadedFonts;
+	FontData **_fonts;
 };
 
 } // End of namespace Saga

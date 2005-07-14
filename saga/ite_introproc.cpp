@@ -32,7 +32,6 @@
 #include "saga/font.h"
 #include "saga/rscfile_mod.h"
 #include "saga/sndres.h"
-#include "saga/text.h"
 #include "saga/palanim.h"
 #include "saga/music.h"
 
@@ -86,29 +85,29 @@ int Scene::ITEStartProc() {
 }
 
 EVENT *Scene::ITEQueueDialogue(EVENT *q_event, int n_dialogues, const INTRO_DIALOGUE dialogue[]) {
-	TEXTLIST_ENTRY text_entry;
-	TEXTLIST_ENTRY *entry_p;
+	TextListEntry textEntry;
+	TextListEntry *entry;
 	EVENT event;
 	int voice_len;
 	int i;
 
 	// Queue narrator dialogue list
-	text_entry.color = 255;
-	text_entry.effect_color = 0;
-	text_entry.text_x = 320 / 2;
-	text_entry.text_y = (_vm->getFeatures() & GF_LANG_DE) ? INTRO_DE_CAPTION_Y : INTRO_CAPTION_Y;
-	text_entry.font_id = MEDIUM_FONT_ID;
-	text_entry.flags = FONT_OUTLINE | FONT_CENTERED;
+	textEntry.color = 255;
+	textEntry.effectColor = 0;
+	textEntry.point.x = 320 / 2;
+	textEntry.point.y = (_vm->getFeatures() & GF_LANG_DE) ? INTRO_DE_CAPTION_Y : INTRO_CAPTION_Y;
+	textEntry.fontId = kMediumFont;
+	textEntry.flags = (FontEffectFlags)(kFontOutline | kFontCentered);
 
 	for (i = 0; i < n_dialogues; i++) {
-		text_entry.string = dialogue[i].i_str;
-		entry_p = _vm->textAddEntry(_textList, &text_entry);
+		textEntry.text = dialogue[i].i_str;
+		entry = _vm->_scene->_textList.addEntry(textEntry);
 
 		// Display text
 		event.type = ONESHOT_EVENT;
 		event.code = TEXT_EVENT;
 		event.op = EVENT_DISPLAY;
-		event.data = entry_p;
+		event.data = entry;
 		event.time = (i == 0) ? 0 : VOICE_PAD;
 
 		q_event = _vm->_events->chain(q_event, &event);
@@ -131,7 +130,7 @@ EVENT *Scene::ITEQueueDialogue(EVENT *q_event, int n_dialogues, const INTRO_DIAL
 		event.type = ONESHOT_EVENT;
 		event.code = TEXT_EVENT;
 		event.op = EVENT_REMOVE;
-		event.data = entry_p;
+		event.data = entry;
 		event.time = voice_len;
 
 		q_event = _vm->_events->chain(q_event, &event);
@@ -182,7 +181,7 @@ EVENT *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const
 
 	int line_spacing = 0;
 	int paragraph_spacing;
-	int font = 0;
+	FontId font = kSmallFont;
 	int i;
 
 	int n_paragraphs = 0;
@@ -199,12 +198,12 @@ EVENT *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const
 
 		switch (credits[i].type) {
 		case kCHeader:
-			font = SMALL_FONT_ID;
+			font = kSmallFont;
 			line_spacing = 4;
 			n_paragraphs++;
 			break;
 		case kCText:
-			font = MEDIUM_FONT_ID;
+			font = kMediumFont;
 			line_spacing = 2;
 			break;
 		default:
@@ -219,15 +218,15 @@ EVENT *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const
 
 	int y = paragraph_spacing;
 
-	TEXTLIST_ENTRY text_entry;
-	TEXTLIST_ENTRY *entry_p;
+	TextListEntry textEntry;
+	TextListEntry *entry;
 	EVENT event;
 	EVENT *q_event = NULL;
 
-	text_entry.color = 255;
-	text_entry.effect_color = 0;
-	text_entry.flags = FONT_OUTLINE | FONT_CENTERED;
-	text_entry.text_x = 160;
+	textEntry.color = 255;
+	textEntry.effectColor = 0;
+	textEntry.flags = (FontEffectFlags)(kFontOutline | kFontCentered);
+	textEntry.point.x = 160;
 
 	for (i = 0; i < n_credits; i++) {
 		if (credits[i].lang != lang && credits[i].lang != UNK_LANG) {
@@ -240,29 +239,29 @@ EVENT *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const
 
 		switch (credits[i].type) {
 		case kCHeader:
-			font = SMALL_FONT_ID;
+			font = kSmallFont;
 			line_spacing = 4;
 			y += paragraph_spacing;
 			break;
 		case kCText:
-			font = MEDIUM_FONT_ID;
+			font = kMediumFont;
 			line_spacing = 2;
 			break;
 		default:
 			break;
 		}
 
-		text_entry.string = credits[i].string;
-		text_entry.font_id = font;
-		text_entry.text_y = y;
+		textEntry.text = credits[i].string;
+		textEntry.fontId = font;
+		textEntry.point.y = y;
 
-		entry_p = _vm->textAddEntry(_textList, &text_entry);
+		entry = _vm->_scene->_textList.addEntry(textEntry);
 
 		// Display text
 		event.type = ONESHOT_EVENT;
 		event.code = TEXT_EVENT;
 		event.op = EVENT_DISPLAY;
-		event.data = entry_p;
+		event.data = entry;
 		event.time = delta_time;
 
 		q_event = _vm->_events->queue(&event);
@@ -271,7 +270,7 @@ EVENT *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const
 		event.type = ONESHOT_EVENT;
 		event.code = TEXT_EVENT;
 		event.op = EVENT_REMOVE;
-		event.data = entry_p;
+		event.data = entry;
 		event.time = duration;
 
 		q_event = _vm->_events->chain(q_event, &event);

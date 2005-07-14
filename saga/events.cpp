@@ -32,7 +32,6 @@
 #include "saga/console.h"
 #include "saga/scene.h"
 #include "saga/interface.h"
-#include "saga/text.h"
 #include "saga/palanim.h"
 #include "saga/render.h"
 #include "saga/sndres.h"
@@ -279,12 +278,10 @@ int Events::handleOneShot(EVENT *event) {
 	case TEXT_EVENT:
 		switch (event->op) {
 		case EVENT_DISPLAY:
-			_vm->textSetDisplay((TEXTLIST_ENTRY *)event->data, 1);
+			((TextListEntry *)event->data)->display = 1;
 			break;
 		case EVENT_REMOVE:
-			{
-				_vm->textDeleteEntry(_vm->_scene->_textList, (TEXTLIST_ENTRY *)event->data);
-			}
+			_vm->_scene->_textList.remove((TextListEntry *)event->data);
 			break;
 		default:
 			break;

@@ -1186,7 +1186,6 @@ void Script::sfSimulSpeech2(SCRIPTFUNC_PARAMS) {
 	thread->wait(kWaitTypeSpeech);
 }
 
-static TEXTLIST_ENTRY *placardTextEntry;
 
 // Script function #48 (0x30)
 // Param1: string rid
@@ -1253,22 +1252,22 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	// It doesn't end up in exactly the same spot as the original did it,
 	// but it's close enough for now at least.
 
-	TEXTLIST_ENTRY text_entry;
+	TextListEntry textEntry;
 
-	text_entry.color = kITEColorBrightWhite;
-	text_entry.effect_color = kITEColorBlack;
-	text_entry.text_x = _vm->getDisplayWidth() / 2;
-	text_entry.text_y = (_vm->getSceneHeight() - _vm->_font->getHeight(MEDIUM_FONT_ID)) / 2;
-	text_entry.font_id = MEDIUM_FONT_ID;
-	text_entry.flags = FONT_OUTLINE | FONT_CENTERED;
-	text_entry.string = thread->_strings->getString(stringId);
+	textEntry.color = kITEColorBrightWhite;
+	textEntry.effectColor = kITEColorBlack;
+	textEntry.point.x = _vm->getDisplayWidth() / 2;
+	textEntry.point.y = (_vm->getSceneHeight() - _vm->_font->getHeight(kMediumFont)) / 2;
+	textEntry.fontId = kMediumFont;
+	textEntry.flags = (FontEffectFlags)(kFontOutline | kFontCentered);
+	textEntry.text = thread->_strings->getString(stringId);
 
-	placardTextEntry = _vm->textAddEntry(_vm->_scene->_textList, &text_entry);
+	_placardTextEntry = _vm->_scene->_textList.addEntry(textEntry);
 
 	event.type = ONESHOT_EVENT;
 	event.code = TEXT_EVENT;
 	event.op = EVENT_DISPLAY;
-	event.data = placardTextEntry;
+	event.data = _placardTextEntry;
 
 	q_event = _vm->_events->chain(q_event, &event);
 
@@ -1324,7 +1323,7 @@ void Script::sfPlacardOff(SCRIPTFUNC_PARAMS) {
 	event.type = ONESHOT_EVENT;
 	event.code = TEXT_EVENT;
 	event.op = EVENT_REMOVE;
-	event.data = placardTextEntry;
+	event.data = _placardTextEntry;
 
 	q_event = _vm->_events->chain(q_event, &event);
 
@@ -1520,13 +1519,26 @@ void Script::sfSetActorZ(SCRIPTFUNC_PARAMS) {
 void Script::sfScriptText(SCRIPTFUNC_PARAMS) {
 	int16 stringId;
 	int16 flags;
+	Rect rect;
+	int color;
 	Point point;
+	int width;
+	const char*text;
 	stringId = thread->pop();
 	flags = thread->pop();
+	color = thread->pop();
 	point.x = thread->pop();
 	point.y = thread->pop();
-//TODO: do it!!!
 
+	text = thread->_strings->getString(stringId);
+	width = _vm->_font->getStringWidth(kMediumFont, text, 0, kFontOutline);
+	rect.top = point.y - 6;
+	rect.setHeight(12);	
+	rect.left = point.x - width / 2;
+	rect.setWidth(width);
+
+	_vm->_actor->setSpeechColor(color, kITEColorBlack);
+	_vm->_actor->nonActorSpeech(rect, &text, 1, flags);
 }
 
 // Script function #60 (0x3C)

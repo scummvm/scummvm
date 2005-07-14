@@ -102,6 +102,7 @@ private:
 
 	PieceInfo _pieceInfo[PUZZLE_PIECES];
 	int _slidePointX, _slidePointY;
+	Rect _hintBox;
 };
 
 } // End of namespace Saga

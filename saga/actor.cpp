@@ -30,7 +30,6 @@
 #include "saga/sndres.h"
 #include "saga/sprite.h"
 #include "saga/font.h"
-#include "saga/text.h"
 #include "saga/sound.h"
 #include "saga/scene.h"
 
@@ -733,6 +732,8 @@ void Actor::handleSpeech(int msec) {
 	int i;
 	int talkspeed;
 	ActorData *actor;
+	int width, height, height2;
+	Point posPoint;
 
 	if (_activeSpeech.playing) {
 		_activeSpeech.playingTime -= msec;
@@ -817,13 +818,39 @@ void Actor::handleSpeech(int msec) {
 			actor->currentAction = kActionSpeak;
 			actor->actionCycle = _vm->_rnd.getRandomNumber(63);
 		}
-		for (i = 0; i < _activeSpeech.actorsCount; i++) {
-			actor = getActor(_activeSpeech.actorIds[i]);
-			_activeSpeech.speechCoords[i] = actor->screenPosition;
-			_activeSpeech.speechCoords[i].y -= ACTOR_DIALOGUE_HEIGHT;
-			_activeSpeech.speechCoords[i].y = MAX(_activeSpeech.speechCoords[i].y, (int16)10);
-		}
 	}
+
+	if (_activeSpeech.actorsCount == 1) {
+		width = _activeSpeech.speechBox.width();
+		height = _vm->_font->getHeight(kMediumFont, _activeSpeech.strings[0], width - 2, _activeSpeech.getFontFlags(0)) + 1;
+
+		if (height > 40 && width < _vm->getDisplayWidth() - 100) {
+			width = _vm->getDisplayWidth() - 100;
+			height = _vm->_font->getHeight(kMediumFont, _activeSpeech.strings[0], width - 2, _activeSpeech.getFontFlags(0)) + 1;
+		}
+
+		_activeSpeech.speechBox.setWidth(width);
+		
+		if (_activeSpeech.actorIds[0] != 0) {
+			actor = getActor(_activeSpeech.actorIds[0]);
+			_activeSpeech.speechBox.setHeight(height);
+
+			if (_activeSpeech.speechBox.right > _vm->getDisplayWidth() - 10) {
+				_activeSpeech.drawRect.left = _vm->getDisplayWidth() - 10 - width;
+			} else {
+				_activeSpeech.drawRect.left = _activeSpeech.speechBox.left;
+			}
+
+			height2 =  actor->screenPosition.y - 50;
+			_activeSpeech.speechBox.top = _activeSpeech.drawRect.top = MAX(10, (height2 - height) / 2);
+		} else {
+			_activeSpeech.drawRect.left = _activeSpeech.speechBox.left;
+			_activeSpeech.drawRect.top = _activeSpeech.speechBox.top + (_activeSpeech.speechBox.height() - height) / 2;
+		}
+		_activeSpeech.drawRect.setWidth(width);
+		_activeSpeech.drawRect.setHeight(height);
+	}		
+
 	_activeSpeech.playing = true;			
 }
 
@@ -1404,7 +1431,9 @@ void Actor::drawActors() {
 void Actor::drawSpeech(void) {
 	if (isSpeaking() && _activeSpeech.playing && !_vm->_script->_skipSpeeches) {
 		int i;
-		int textDrawFlags;
+		Point textPoint;
+		ActorData *actor;
+		int width, height;
 		char oneChar[2];
 		oneChar[1] = 0;
 		const char *outputString;
@@ -1419,26 +1448,24 @@ void Actor::drawSpeech(void) {
 			outputString = _activeSpeech.strings[0];
 		}
 
-		textDrawFlags = FONT_CENTERED;
-		if (_activeSpeech.outlineColor != 0) {
-			textDrawFlags |= FONT_OUTLINE;
-		}
-
-		if (_activeSpeech.actorIds[0] != 0) {
+		if (_activeSpeech.actorsCount > 1) {
+			height = _vm->_font->getHeight(kMediumFont);
+			width = _vm->_font->getStringWidth(kMediumFont, _activeSpeech.strings[0], 0, kFontNormal);
 			
-			for (i = 0; i < _activeSpeech.actorsCount; i++){
-				_vm->textDraw(MEDIUM_FONT_ID, backBuffer, outputString,
-					_activeSpeech.speechCoords[i].x, 
-					_activeSpeech.speechCoords[i].y, 
-					_activeSpeech.speechColor[i], 
-					_activeSpeech.outlineColor[i], textDrawFlags);
+			for ( i = 0; i < _activeSpeech.actorsCount; i++) {
+				actor = getActor(_activeSpeech.actorIds[i]);
+				calcScreenPosition(actor);
+
+				textPoint.x = clamp( 10, actor->screenPosition.x - width / 2, _vm->getDisplayWidth() - 10 - width);
+				textPoint.y = clamp( 10, actor->screenPosition.y - 58, _vm->getSceneHeight() - 10 - height);
+
+				_vm->_font->textDraw(kMediumFont, backBuffer, _activeSpeech.strings[0], textPoint, 
+					_activeSpeech.speechColor[i], _activeSpeech.outlineColor[i], _activeSpeech.getFontFlags(i));
 			}
-
-		} else { // non actors speech
-			warning("non actors speech occures");
-			//todo: write it
+		} else {
+			_vm->_font->textDrawRect(kMediumFont, backBuffer, _activeSpeech.strings[0], _activeSpeech.drawRect, _activeSpeech.speechColor[0],
+				_activeSpeech.outlineColor[0], _activeSpeech.getFontFlags(0));
 		}
-
 	}
 }
 
@@ -1820,6 +1847,7 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, int sampleResourceId, int speechFlags) {
 	ActorData *actor;
 	int i;
+	int16 dist;
 
 	if (_vm->getGameType() == GType_IHNM) {
 		warning("Actors aren't implemented for IHNM yet");
@@ -1827,6 +1855,7 @@ void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, 
 	}
 
 	actor = getActor(actorId);
+	calcScreenPosition(actor);
 	for (i = 0; i < stringsCount; i++) {
 		_activeSpeech.strings[i] = strings[i];
 	}
@@ -1840,9 +1869,24 @@ void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, 
 	_activeSpeech.sampleResourceId = sampleResourceId;
 	_activeSpeech.playing = false;
 	_activeSpeech.slowModeCharIndex = 0;
+
+	dist = MIN(actor->screenPosition.x - 10, _vm->getDisplayWidth() - 10 - actor->screenPosition.x );
+	dist = clamp( 60, dist, 150 );
+
+	_activeSpeech.speechBox.left = actor->screenPosition.x - dist;
+	_activeSpeech.speechBox.right = actor->screenPosition.x + dist;
+
+	if (_activeSpeech.speechBox.left < 10) {
+		_activeSpeech.speechBox.right += 10 - _activeSpeech.speechBox.left; 
+		_activeSpeech.speechBox.left = 10; 
+	}
+	if (_activeSpeech.speechBox.right > _vm->getDisplayWidth() - 10) {
+		_activeSpeech.speechBox.left -= _activeSpeech.speechBox.right - _vm->getDisplayWidth() - 10;
+		_activeSpeech.speechBox.right = _vm->getDisplayWidth() - 10; 
+	}	
 }
 
-void Actor::nonActorSpeech(const char **strings, int stringsCount, int speechFlags) {
+void Actor::nonActorSpeech(const Common::Rect &box, const char **strings, int stringsCount, int speechFlags) {
 	int i;
 	
 	_vm->_script->wakeUpThreads(kWaitTypeSpeech);
@@ -1854,13 +1898,10 @@ void Actor::nonActorSpeech(const char **strings, int stringsCount, int speechFla
 	_activeSpeech.speechFlags = speechFlags;
 	_activeSpeech.actorsCount = 1;
 	_activeSpeech.actorIds[0] = 0;
-	//_activeSpeech.speechColor[0] = ;
-	//_activeSpeech.outlineColor[0] = ;
-	//_activeSpeech.speechCoords[0].x = ;
-	//_activeSpeech.speechCoords[0].y = ;
 	_activeSpeech.sampleResourceId = -1;
 	_activeSpeech.playing = false;
 	_activeSpeech.slowModeCharIndex = 0;
+	_activeSpeech.speechBox = box;
 }
 
 void Actor::simulSpeech(const char *string, uint16 *actorIds, int actorIdsCount, int speechFlags, int sampleResourceId) {

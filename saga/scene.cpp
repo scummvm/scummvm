@@ -36,7 +36,6 @@
 #include "saga/render.h"
 #include "saga/rscfile_mod.h"
 #include "saga/script.h"
-#include "saga/text.h"
 #include "saga/sound.h"
 #include "saga/music.h"
 
@@ -95,15 +94,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 
 	debug(3, "First scene set to %d.", _firstScene);
 
-	debug(3, "LUT has %d entries.", _sceneCount);
-
-	// Create scene module text list
-	_textList = _vm->textCreateList();
-
-	if (_textList == NULL) {
-		warning("Scene::Scene(): Error: Couldn't create scene text list");
-		return;
-	}
+	debug(3, "LUT has %d entries.", _sceneCount);		
 
 	_sceneLoaded = false;
 	_sceneNumber = 0;
@@ -128,6 +119,18 @@ Scene::~Scene() {
 		free(_sceneLUT);
 	}
 }
+
+void Scene::drawTextList(Surface *ds) {
+	TextListEntry *entry;
+
+	for (TextList::iterator textIterator = _textList.begin(); textIterator != _textList.end(); ++textIterator) {
+		entry = (TextListEntry *)textIterator.operator->();
+		if (entry->display != 0) {
+			_vm->_font->textDraw(entry->fontId, ds, entry->text, entry->point, entry->color, entry->effectColor, entry->flags);
+		}
+	}
+}
+
 
 void Scene::startScene() {
 	SceneQueueList::iterator queueIterator;
@@ -953,7 +956,7 @@ void Scene::endScene() {
 	_vm->_isoMap->freeMem();
 
 	_vm->_events->clearList();
-	_vm->textClearList(_textList);
+	_textList.clear();
 
 	_sceneLoaded = false;
 

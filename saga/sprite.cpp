@@ -28,7 +28,6 @@
 #include "saga/scene.h"
 #include "saga/rscfile_mod.h"
 
-#include "saga/text.h"
 #include "saga/font.h"
 
 #include "saga/sprite.h"

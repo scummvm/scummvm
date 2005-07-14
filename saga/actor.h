@@ -470,7 +470,8 @@ struct SpeechData {
 	int outlineColor[ACTOR_SPEECH_ACTORS_MAX];
 	int speechFlags;
 	const char *strings[ACTOR_SPEECH_STRING_MAX];
-	Point speechCoords[ACTOR_SPEECH_ACTORS_MAX];
+	Rect speechBox;
+	Rect drawRect;
 	int stringsCount;
 	int slowModeCharIndex;
 	uint16 actorIds[ACTOR_SPEECH_ACTORS_MAX];
@@ -481,6 +482,14 @@ struct SpeechData {
 
 	SpeechData() { 
 		memset(this, 0, sizeof(*this)); 
+	}
+
+	FontEffectFlags getFontFlags(int i) {
+		if (outlineColor[i] != 0) {
+			return kFontOutline;
+		} else {
+			return kFontNormal;
+		}
 	}
 };
 
@@ -545,7 +554,7 @@ public:
 
 //	speech 
 	void actorSpeech(uint16 actorId, const char **strings, int stringsCount, int sampleResourceId, int speechFlags);
-	void nonActorSpeech(const char **strings, int stringsCount, int speechFlags);
+	void nonActorSpeech(const Common::Rect &box, const char **strings, int stringsCount, int speechFlags);
 	void simulSpeech(const char *string, uint16 *actorIds, int actorIdsCount, int speechFlags, int sampleResourceId);
 	void setSpeechColor(int speechColor, int outlineColor) {
 		_activeSpeech.speechColor[0] = speechColor;

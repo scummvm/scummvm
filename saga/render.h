@@ -30,7 +30,6 @@
 
 namespace Saga {
 
-#define PAUSEGAME_MSG "PAWS GAME"
 enum RENDER_FLAGS {
 	RF_SHOW_FPS = (1 << 0),
 	RF_PALETTE_TEST = (1 << 1),

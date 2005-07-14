@@ -36,19 +36,11 @@ Font::Font(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	int i;
 
 	// Load font module resource context 
-	_fontContext = _vm->getFileContext(GAME_RESOURCEFILE, 0);
-	if (_fontContext == NULL) {
-		error("Font::Font(): Couldn't get resource context.");
-	}
 
 	assert(_vm->getFontsCount() > 0);
 
-	_nFonts = 0;
-
-	_fonts = (FONT **)malloc(_vm->getFontsCount() * sizeof(*_fonts));
-	if (_fonts == NULL) {
-		memoryError("Font::Font");
-	}
+	_fonts = (FontData **)calloc(_vm->getFontsCount(), sizeof(*_fonts));
+	_loadedFonts = 0;
 
 	for (i = 0; i < _vm->getFontsCount(); i++) {
 		loadFont(_vm->getFontDescription(i)->fontResourceId);
@@ -58,377 +50,303 @@ Font::Font(SagaEngine *vm) : _vm(vm), _initialized(false) {
 }
 
 Font::~Font(void) {
-//	int i;
-
 	debug(8, "Font::~Font(): Freeing fonts.");
-/*
-	for (i = 0 ; i < FONT_COUNT ; i++) {
-		if (_fonts[i] != NULL) {
-			if (_fonts[i]->normal_loaded) {
-				free(_fonts[i]->normal->font_free_p);
-				free(_fonts[i]->normal);
-			}
+	int i;
 
-			if (_fonts[i]->outline_loaded) {
-				free(_fonts[i]->outline->font_free_p);
-				free(_fonts[i]->outline);
-			}
+	for (i = 0 ; i < _loadedFonts ; i++) {
+		if (_fonts[i] != NULL) {
+			free(_fonts[i]->normal.font);
+			free(_fonts[i]->outline.font);
 		}
 
 		free(_fonts[i]);
 	}
-*/
 }
 
-int Font::loadFont(uint32 fontResourceId) {
-	FONT_HEADER fh;
-	FONT *font;
-	FONT_STYLE *normal_font;
-	byte *fontres_p;
-	size_t fontres_len;
-	int nbits;
+void Font::loadFont(uint32 fontResourceId) {
+	FontData *font;
+	byte *fontResourcePointer;
+	size_t fontResourceLength;
+	int numBits;
 	int c;
+	RSCFILE_CONTEXT *fontContext;
 
-	// Load font resource
-	if (RSC_LoadResource(_fontContext, fontResourceId, &fontres_p, &fontres_len) != SUCCESS) {
-		error("Font::loadFont(): Couldn't load font resource.");
-	}
-
-	if (fontres_len < FONT_DESCSIZE) {
-		warning("Font::loadFont(): Invalid font length (%d < %d)", fontres_len, FONT_DESCSIZE);
-		return FAILURE;
-	}
-
-	MemoryReadStreamEndian readS(fontres_p, fontres_len, IS_BIG_ENDIAN);
-
-	// Create new font structure
-	font = (FONT *)malloc(sizeof(*font));
-	if (font == NULL) {
-		memoryError("Font::loadFont");
-	}
-
-	// Read font header
-	fh.c_height = readS.readUint16();
-	fh.c_width = readS.readUint16();
-	fh.row_length = readS.readUint16();
 
 	debug(1, "Font::loadFont(): Reading fontResourceId %d...", fontResourceId);
 
-	debug(2, "Character width: %d", fh.c_width);
-	debug(2, "Character height: %d", fh.c_height);
-	debug(2, "Row padding: %d", fh.row_length);
-
-	// Create normal font style
-	normal_font = (FONT_STYLE *)malloc(sizeof(*normal_font));
-	if (normal_font == NULL) {
-		memoryError("Font::loadFont");
+	fontContext = _vm->getFileContext(GAME_RESOURCEFILE, 0);
+	if (fontContext == NULL) {
+		error("Font::Font(): Couldn't get resource context.");
 	}
 
-	normal_font->font_free_p = fontres_p;
-	normal_font->hdr.c_height = fh.c_height;
-	normal_font->hdr.c_width = fh.c_width;
-	normal_font->hdr.row_length = fh.row_length;
+	// Load font resource
+	if (RSC_LoadResource(fontContext, fontResourceId, &fontResourcePointer, &fontResourceLength) != SUCCESS) {
+		error("Font::loadFont(): Couldn't load font resource.");
+	}
+
+	if (fontResourceLength < FONT_DESCSIZE) {
+		error("Font::loadFont(): Invalid font length (%d < %d)", fontResourceLength, FONT_DESCSIZE);
+	}
+
+	MemoryReadStreamEndian readS(fontResourcePointer, fontResourceLength, IS_BIG_ENDIAN);
+
+	// Create new font structure
+	font = (FontData *)malloc(sizeof(*font));
+	
+	// Read font header
+	font->normal.header.charHeight = readS.readUint16();
+	font->normal.header.charWidth = readS.readUint16();
+	font->normal.header.rowLength = readS.readUint16();
+
+
+	debug(2, "Character width: %d", font->normal.header.charWidth);
+	debug(2, "Character height: %d", font->normal.header.charHeight);
+	debug(2, "Row padding: %d", font->normal.header.rowLength);
 
 	for (c = 0; c < FONT_CHARCOUNT; c++) {
-		normal_font->fce[c].index = readS.readUint16();
+		font->normal.fontCharEntry[c].index = readS.readUint16();
 	}
 
 	for (c = 0; c < FONT_CHARCOUNT; c++) {
-		nbits = normal_font->fce[c].width = readS.readByte();
-		normal_font->fce[c].byte_width = getByteLen(nbits);
+		numBits = font->normal.fontCharEntry[c].width = readS.readByte();
+		font->normal.fontCharEntry[c].byteWidth = getByteLen(numBits);
 	}
 
 	for (c = 0; c < FONT_CHARCOUNT; c++) {
-		normal_font->fce[c].flag = readS.readByte();
+		font->normal.fontCharEntry[c].flag = readS.readByte();
 	}
 
 	for (c = 0; c < FONT_CHARCOUNT; c++) {
-		normal_font->fce[c].tracking = readS.readByte();
+		font->normal.fontCharEntry[c].tracking = readS.readByte();
 	}
 
 	if (readS.pos() != FONT_DESCSIZE) {
-		warning("Invalid font resource size.");
-		return FAILURE;
+		error("Invalid font resource size.");
 	}
 
-	normal_font->font_p = fontres_p + FONT_DESCSIZE;
+	font->normal.font = (byte*)malloc(fontResourceLength - FONT_DESCSIZE);
+	memcpy(font->normal.font, fontResourcePointer + FONT_DESCSIZE, fontResourceLength - FONT_DESCSIZE);
 
-	font->normal = normal_font;
-	font->normal_loaded = 1;
+	RSC_FreeResource(fontResourcePointer);
+
 
 	// Create outline font style
-	font->outline = createOutline(normal_font);
-	font->outline_loaded = 1;
-
+	createOutline(font);
+	
 	// Set font data 
-	_fonts[_nFonts++] = font;
-
-	return SUCCESS;
+	_fonts[_loadedFonts++] = font;	
 }
 
-int Font::getHeight(int font_id) {
-	FONT *font;
 
-	if (!_initialized) {
-		return FAILURE;
-	}
-
-	if ((font_id < 0) || (font_id >= _nFonts) || (_fonts[font_id] == NULL)) {
-		error("Font::getHeight(): Invalid font id.");
-	}
-
-	font = _fonts[font_id];
-
-	return font->normal->hdr.c_height;
-}
-
-FONT_STYLE *Font::createOutline(FONT_STYLE *src_font) {
-	FONT_STYLE *new_font;
-	unsigned char *new_font_data;
-	size_t new_font_data_len;
-	int s_width = src_font->hdr.c_width;
-	int s_height = src_font->hdr.c_height;
-	int new_row_len = 0;
-	int row;
+void Font::createOutline(FontData *font) {
 	int i;
+	int row;
+	int newByteWidth;
+	int oldByteWidth;
+	int newRowLength = 0;
+	size_t indexOffset = 0;
 	int index;
-	size_t index_offset = 0;
-	int new_byte_width;
-	int old_byte_width;
-	int current_byte;
-	unsigned char *base_ptr;
-	unsigned char *src_ptr;
-	unsigned char *dest_ptr1;
-	unsigned char *dest_ptr2;
-	unsigned char *dest_ptr3;
-	unsigned char c_rep;
+	int currentByte;
+	unsigned char *basePointer;
+	unsigned char *srcPointer;
+	unsigned char *destPointer1;
+	unsigned char *destPointer2;
+	unsigned char *destPointer3;
+	unsigned char charRep;
 
-	// Create new font style structure
-	new_font = (FONT_STYLE *)malloc(sizeof(*new_font));
-
-	if (new_font == NULL) {
-		memoryError("Font::createOutline");
-	}
-
-	memset(new_font, 0, sizeof(*new_font));
 
 	// Populate new font style character data 
 	for (i = 0; i < FONT_CHARCOUNT; i++) {
-		new_byte_width = 0;
-		old_byte_width = 0;
-		index = src_font->fce[i].index;
+		newByteWidth = 0;
+		oldByteWidth = 0;
+		index = font->normal.fontCharEntry[i].index;
 		if ((index > 0) || (i == FONT_FIRSTCHAR)) {
-			index += index_offset;
+			index += indexOffset;
 		}
 
-		new_font->fce[i].index = index;
-		new_font->fce[i].tracking = src_font->fce[i].tracking;
-		new_font->fce[i].flag = src_font->fce[i].flag;
+		font->outline.fontCharEntry[i].index = index;
+		font->outline.fontCharEntry[i].tracking = font->normal.fontCharEntry[i].tracking;
+		font->outline.fontCharEntry[i].flag = font->normal.fontCharEntry[i].flag;
 
-		if (src_font->fce[i].width != 0) {
-			new_byte_width = getByteLen(src_font->fce[i].width + 2);
-			old_byte_width = getByteLen(src_font->fce[i].width);
+		if (font->normal.fontCharEntry[i].width != 0) {
+			newByteWidth = getByteLen(font->normal.fontCharEntry[i].width + 2);
+			oldByteWidth = getByteLen(font->normal.fontCharEntry[i].width);
 
-			if (new_byte_width > old_byte_width) {
-				index_offset++;
+			if (newByteWidth > oldByteWidth) {
+				indexOffset++;
 			}
 		}
 
-		new_font->fce[i].width = src_font->fce[i].width + 2;
-		new_font->fce[i].byte_width = new_byte_width;
-		new_row_len += new_byte_width;
+		font->outline.fontCharEntry[i].width = font->normal.fontCharEntry[i].width + 2;
+		font->outline.fontCharEntry[i].byteWidth = newByteWidth;
+		newRowLength += newByteWidth;
 	}
 
-	debug(2, "New row length: %d", new_row_len);
+	debug(2, "New row length: %d", newRowLength);
 
-	new_font->hdr.c_width = s_width + 2;
-	new_font->hdr.c_height = s_height + 2;
-	new_font->hdr.row_length = new_row_len;
+	font->outline.header = font->normal.header;
+	font->outline.header.charWidth += 2;
+	font->outline.header.charHeight += 2;
+	font->outline.header.rowLength = newRowLength;
 
 	// Allocate new font representation storage 
-	new_font_data_len = new_row_len * (s_height + 2);
-	new_font_data = (unsigned char *)malloc(new_font_data_len);
+	font->outline.font = (unsigned char *)calloc(newRowLength, font->outline.header.charHeight);
 
-	if (new_font_data == NULL) {
-		memoryError("Font::createOutline");
-	}
-
-	memset(new_font_data, 0, new_font_data_len);
-
-	new_font->font_free_p = new_font_data;
-	new_font->font_p = new_font_data;
-
+	
 	// Generate outline font representation
 	for (i = 0; i < FONT_CHARCOUNT; i++) {
-		for (row = 0; row < s_height; row++) {
-			for (current_byte = 0; current_byte < new_font->fce[i].byte_width; current_byte++) {
-				base_ptr = new_font->font_p + new_font->fce[i].index + current_byte;
-				dest_ptr1 = base_ptr + new_font->hdr.row_length * row;
-				dest_ptr2 = base_ptr + new_font->hdr.row_length * (row + 1);
-				dest_ptr3 = base_ptr + new_font->hdr.row_length * (row + 2);
-				if (current_byte > 0) {
+		for (row = 0; row < font->normal.header.charHeight; row++) {
+			for (currentByte = 0; currentByte < font->outline.fontCharEntry[i].byteWidth; currentByte++) {
+				basePointer = font->outline.font + font->outline.fontCharEntry[i].index + currentByte;
+				destPointer1 = basePointer + newRowLength * row;
+				destPointer2 = basePointer + newRowLength * (row + 1);
+				destPointer3 = basePointer + newRowLength * (row + 2);
+				if (currentByte > 0) {
 					// Get last two columns from previous byte
-					src_ptr = src_font->font_p + src_font->hdr.row_length * row + src_font->fce[i].index +
-								(current_byte - 1);
-					c_rep = *src_ptr;
-					*dest_ptr1 |= ((c_rep << 6) | (c_rep << 7));
-					*dest_ptr2 |= ((c_rep << 6) | (c_rep << 7));
-					*dest_ptr3 |= ((c_rep << 6) | (c_rep << 7));
+					srcPointer = font->normal.font + font->normal.header.rowLength * row + font->normal.fontCharEntry[i].index + (currentByte - 1);
+					charRep = *srcPointer;
+					*destPointer1 |= ((charRep << 6) | (charRep << 7));
+					*destPointer2 |= ((charRep << 6) | (charRep << 7));
+					*destPointer3 |= ((charRep << 6) | (charRep << 7));
 				}
 
-				if (current_byte < src_font->fce[i].byte_width) {
-					src_ptr = src_font->font_p + src_font->hdr.row_length * row + src_font->fce[i].index +
-								current_byte;
-					c_rep = *src_ptr;
-					*dest_ptr1 |= c_rep | (c_rep >> 1) | (c_rep >> 2);
-					*dest_ptr2 |= c_rep | (c_rep >> 1) | (c_rep >> 2);
-					*dest_ptr3 |= c_rep | (c_rep >> 1) | (c_rep >> 2);
+				if (currentByte < font->normal.fontCharEntry[i].byteWidth) {
+					srcPointer = font->normal.font + font->normal.header.rowLength * row + font->normal.fontCharEntry[i].index + currentByte;
+					charRep = *srcPointer;
+					*destPointer1 |= charRep | (charRep >> 1) | (charRep >> 2);
+					*destPointer2 |= charRep | (charRep >> 1) | (charRep >> 2);
+					*destPointer3 |= charRep | (charRep >> 1) | (charRep >> 2);
 				}
 			}
 		}
 
 		// "Hollow out" character to prevent overdraw
-		for (row = 0; row < s_height; row++) {
-			for (current_byte = 0; current_byte < new_font->fce[i].byte_width; current_byte++) {
-				dest_ptr2 = new_font->font_p +  new_font->hdr.row_length * (row + 1) + new_font->fce[i].index + current_byte;
-				if (current_byte > 0) {
+		for (row = 0; row < font->normal.header.charHeight; row++) {
+			for (currentByte = 0; currentByte < font->outline.fontCharEntry[i].byteWidth; currentByte++) {
+				destPointer2 = font->outline.font +  font->outline.header.rowLength * (row + 1) + font->outline.fontCharEntry[i].index + currentByte;
+				if (currentByte > 0) {
 					// Get last two columns from previous byte
-					src_ptr = src_font->font_p + src_font->hdr.row_length * row + src_font->fce[i].index +
-								(current_byte - 1);
-					*dest_ptr2 &= ((*src_ptr << 7) ^ 0xFFU);
+					srcPointer = font->normal.font + font->normal.header.rowLength * row + font->normal.fontCharEntry[i].index + (currentByte - 1);
+					*destPointer2 &= ((*srcPointer << 7) ^ 0xFFU);
 				}
 
-				if (current_byte < src_font->fce[i].byte_width) {
-					src_ptr = src_font->font_p + src_font->hdr.row_length * row + src_font->fce[i].index +
-								current_byte;
-					*dest_ptr2 &= ((*src_ptr >> 1) ^ 0xFFU);
+				if (currentByte < font->normal.fontCharEntry[i].byteWidth) {
+					srcPointer = font->normal.font + font->normal.header.rowLength * row + font->normal.fontCharEntry[i].index + currentByte;
+					*destPointer2 &= ((*srcPointer >> 1) ^ 0xFFU);
 				}
 			}
 		}
-	}
-
-	return new_font;
-}
-
-int Font::getByteLen(int num_bits) {
-	int byte_len;
-	byte_len = num_bits / 8;
-
-	if (num_bits % 8) {
-		byte_len++;
-	}
-
-	return byte_len;
+	}	
 }
 
 // Returns the horizontal length in pixels of the graphical representation
 // of at most 'test_str_ct' characters of the string 'test_str', taking
 // into account any formatting options specified by 'flags'.
 // If 'test_str_ct' is 0, all characters of 'test_str' are counted.
-int Font::getStringWidth(int font_id, const char *test_str, size_t test_str_ct, int flags) {
-	FONT *font;
+int Font::getStringWidth(FontId fontId, const char *text, size_t count, FontEffectFlags flags) {
+	FontData *font;
 	size_t ct;
 	int width = 0;
 	int ch;
-	const byte *txt_p;
+	const byte *txt;
 
-	if (!_initialized) {
-		return FAILURE;
-	}
+	validate(fontId);
 
-	if ((font_id < 0) || (font_id >= _nFonts) || (_fonts[font_id] == NULL)) {
-		error("Font::getStringWidth(): Invalid font id.");
-	}
+	font = _fonts[fontId];
 
-	font = _fonts[font_id];
-	assert(font != NULL);
+	txt = (const byte *) text;
 
-	txt_p = (const byte *) test_str;
-
-	for (ct = test_str_ct; *txt_p && (!test_str_ct || ct > 0); txt_p++, ct--) {
-		ch = *txt_p & 0xFFU;
+	for (ct = count; *txt && (!count || ct > 0); txt++, ct--) {
+		ch = *txt & 0xFFU;
 		// Translate character
 		ch = _charMap[ch];
 		assert(ch < FONT_CHARCOUNT);
-		width += font->normal->fce[ch].tracking;
+		width += font->normal.fontCharEntry[ch].tracking;
 	}
 
-	if ((flags & FONT_BOLD) || (flags & FONT_OUTLINE)) {
+	if ((flags & kFontBold) || (flags & kFontOutline)) {
 		width += 1;
 	}
 
 	return width;
 }
 
-int Font::draw(int font_id, Surface *ds, const char *draw_str, size_t draw_str_ct,
-			int text_x, int text_y, int color, int effect_color, int flags) {
-	FONT *font;
+int Font::getHeight(FontId fontId) {
+	FontData *font;
 
-	if (!_initialized) {
-		error("Font::draw(): Font Module not initialized.");
-	}
+	validate(fontId);
 
-	if ((font_id < 0) || (font_id >= _nFonts) || (_fonts[font_id] == NULL)) {
-		error("Font::draw(): Invalid font id.");
-	}
+	font = _fonts[fontId];
 
-	font = _fonts[font_id];
-
-	if (flags & FONT_OUTLINE) { 
-		outFont(font->outline, ds, draw_str, draw_str_ct, text_x - 1, text_y - 1, effect_color, flags);
-		outFont(font->normal, ds, draw_str, draw_str_ct, text_x, text_y, color, flags);
-	} else if (flags & FONT_SHADOW) {
-		outFont(font->normal, ds, draw_str, draw_str_ct, text_x - 1, text_y + 1, effect_color, flags);
-		outFont(font->normal, ds, draw_str, draw_str_ct, text_x, text_y, color, flags);
-	} else { // FONT_NORMAL
-		outFont(font->normal, ds, draw_str, draw_str_ct, text_x, text_y, color, flags);
-	}
-
-	return SUCCESS;
+	return font->normal.header.charHeight;
 }
 
-int Font::outFont(FONT_STYLE * draw_font, Surface *ds, const char *draw_str, size_t draw_str_ct,
-				  int text_x, int text_y, int color, int flags) {
-	const byte *draw_str_p;
-	byte *c_data_ptr;
-	int c_code;
-	int char_row;
+void Font::draw(FontId fontId, Surface *ds, const char *text, size_t count, const Common::Point &point,
+			   int color, int effectColor, FontEffectFlags flags) {
+	FontData *font;
+	Point offsetPoint(point);
 
-	byte *output_ptr;
-	byte *output_ptr_min;
-	byte *output_ptr_max;
+	validate(fontId);
+
+	font = _fonts[fontId];
+
+	if (flags & kFontOutline) { 
+		offsetPoint.x--;
+		offsetPoint.y--;
+		outFont(font->outline, ds, text, count, offsetPoint, effectColor, flags);
+		outFont(font->normal, ds, text, count, point, color, flags);
+	} else if (flags & kFontShadow) {
+		offsetPoint.x--;
+		offsetPoint.y++;
+		outFont(font->normal, ds, text, count, offsetPoint, effectColor, flags);
+		outFont(font->normal, ds, text, count, point, color, flags);
+	} else { // FONT_NORMAL
+		outFont(font->normal, ds, text, count, point, color, flags);
+	}
+}
+
+void Font::outFont(const FontStyle & drawFont, Surface *ds, const char *text, size_t count, const Common::Point &point, int color, FontEffectFlags flags) {
+	const byte *textPointer;
+	byte *c_dataPointer;
+	int c_code;
+	int charRow;
+	Point textPoint(point);
+
+	byte *outputPointer;
+	byte *outputPointer_min;
+	byte *outputPointer_max;
 
 	int row;
-	int row_limit;
+	int rowLimit;
 
 	int c_byte_len;
 	int c_byte;
 	int c_bit;
 	int ct;
 
-	if ((text_x > ds->w) || (text_y > ds->h)) {
+	if ((point.x > ds->w) || (point.y > ds->h)) {
 		// Output string can't be visible
-		return SUCCESS;
+		return;
 	}
 
-	draw_str_p = (const byte *) draw_str;
-	ct = draw_str_ct;
+	textPointer = (const byte *) text;
+	ct = count;
 
 	// Draw string one character at a time, maximum of 'draw_str'_ct 
 	// characters, or no limit if 'draw_str_ct' is 0
-	for (; *draw_str_p && (!draw_str_ct || ct); draw_str_p++, ct--) {
-		c_code = *draw_str_p & 0xFFU;
+	for (; *textPointer && (!count || ct); textPointer++, ct--) {
+		c_code = *textPointer & 0xFFU;
 
 		// Translate character
-		if (!(flags & FONT_DONTMAP))
+		if (!(flags & kFontDontmap))
 			c_code = _charMap[c_code];
 		assert(c_code < FONT_CHARCOUNT);
 
 		// Check if character is defined
-		if ((draw_font->fce[c_code].index == 0) && (c_code != FONT_FIRSTCHAR)) {
+		if ((drawFont.fontCharEntry[c_code].index == 0) && (c_code != FONT_FIRSTCHAR)) {
 #if FONT_SHOWUNDEFINED
 			if (c_code == FONT_CH_SPACE) {
-				text_x += draw_font->fce[c_code].tracking;
+				textPoint.x += drawFont.fontCharEntry[c_code].tracking;
 				continue;
 			}
 			c_code = FONT_CH_QMARK;
@@ -436,49 +354,269 @@ int Font::outFont(FONT_STYLE * draw_font, Surface *ds, const char *draw_str, siz
 			// Character code is not defined, but advance tracking
 			// ( Not defined if offset is 0, except for 33 ('!') which
 			//   is defined )
-			text_x += draw_font->fce[c_code].tracking;
+			textPoint.x += drawFont.fontCharEntry[c_code].tracking;
 			continue;
 #endif
 		}
 
 		// Get length of character in bytes
-		c_byte_len = ((draw_font->fce[c_code].width - 1) / 8) + 1;
-		row_limit = (ds->h < (text_y + draw_font->hdr.c_height)) ? ds->h : text_y + draw_font->hdr.c_height;
-		char_row = 0;
+		c_byte_len = ((drawFont.fontCharEntry[c_code].width - 1) / 8) + 1;
+		rowLimit = (ds->h < (textPoint.y + drawFont.header.charHeight)) ? ds->h : textPoint.y + drawFont.header.charHeight;
+		charRow = 0;
 
-		for (row = text_y; row < row_limit; row++, char_row++) {
+		for (row = textPoint.y; row < rowLimit; row++, charRow++) {
 			// Clip negative rows */
 			if (row < 0) {
 				continue;
 			}
 
-			output_ptr = (byte *)ds->pixels + (ds->pitch * row) + text_x;
-			output_ptr_min = (byte *)ds->pixels + (ds->pitch * row) + (text_x > 0 ? text_x : 0);
-			output_ptr_max = output_ptr + (ds->pitch - text_x);
+			outputPointer = (byte *)ds->pixels + (ds->pitch * row) + textPoint.x;
+			outputPointer_min = (byte *)ds->pixels + (ds->pitch * row) + (textPoint.x > 0 ? textPoint.x : 0);
+			outputPointer_max = outputPointer + (ds->pitch - textPoint.x);
 
 			// If character starts off the screen, jump to next character
-			if (output_ptr < output_ptr_min) {
+			if (outputPointer < outputPointer_min) {
 				break;
 			}
 
-			c_data_ptr = draw_font->font_p + char_row * draw_font->hdr.row_length + draw_font->fce[c_code].index;
+			c_dataPointer = drawFont.font + charRow * drawFont.header.rowLength + drawFont.fontCharEntry[c_code].index;
 
-			for (c_byte = 0; c_byte < c_byte_len; c_byte++, c_data_ptr++) {
+			for (c_byte = 0; c_byte < c_byte_len; c_byte++, c_dataPointer++) {
 				// Check each bit, draw pixel if bit is set
-				for (c_bit = 7; c_bit >= 0 && (output_ptr < output_ptr_max); c_bit--) {
-					if ((*c_data_ptr >> c_bit) & 0x01) {
-						*output_ptr = (byte) color;
+				for (c_bit = 7; c_bit >= 0 && (outputPointer < outputPointer_max); c_bit--) {
+					if ((*c_dataPointer >> c_bit) & 0x01) {
+						*outputPointer = (byte) color;
 					}
-					output_ptr++;
+					outputPointer++;
 				} // end per-bit processing
 			} // end per-byte processing
 		} // end per-row processing
 
 		// Advance tracking position
-		text_x += draw_font->fce[c_code].tracking;
+		textPoint.x += drawFont.fontCharEntry[c_code].tracking;
 	} // end per-character processing
+}
 
-	return SUCCESS;
+
+void Font::textDraw(FontId fontId, Surface *ds, const char *text, const Common::Point &point, int color, int effectColor, FontEffectFlags flags) {
+	int textWidth;
+	int textLength;
+	int fitWidth;
+	Common::Point textPoint(point);
+
+	textLength = strlen(text);
+
+	if (!(flags & kFontCentered)) {
+		// Text is not centered; No formatting required
+		draw(fontId, ds, text, textLength, point, color, effectColor, flags);
+		return;
+	}
+
+	// Text is centered... format output
+	// Enforce minimum and maximum center points for centered text
+	if (textPoint.x < TEXT_CENTERLIMIT) {
+		textPoint.x = TEXT_CENTERLIMIT;
+	}
+
+	if (textPoint.x > ds->w - TEXT_CENTERLIMIT) {
+		textPoint.x = ds->w - TEXT_CENTERLIMIT;
+	}
+
+	if (textPoint.x < (TEXT_MARGIN * 2)) {
+		// Text can't be centered if it's too close to the margin
+		return;
+	}
+
+	textWidth = getStringWidth(fontId, text, textLength, flags);
+
+	if (textPoint.x < (ds->w / 2)) {
+		// Fit to right side
+		fitWidth = (textPoint.x - TEXT_MARGIN) * 2;
+	} else {
+		// Fit to left side
+		fitWidth = ((ds->w - TEXT_MARGIN) - textPoint.x) * 2;
+	}
+
+	if (fitWidth >= textWidth) {
+		// Entire string fits, draw it
+		textPoint.x = textPoint.x - (textWidth / 2);
+		draw(fontId, ds, text, textLength, textPoint, color, effectColor, flags);
+		return;
+	}
+}
+
+int Font::getHeight(FontId fontId, const char *text, int width, FontEffectFlags flags) {
+	int textWidth;
+	int textLength;
+	int fitWidth;
+	const char *startPointer;
+	const char *searchPointer;
+	const char *measurePointer;
+	const char *foundPointer;
+	int len;
+	int w;
+	const char *endPointer;
+	int h;
+	int wc;
+	int w_total;
+	int len_total;
+	Common::Point textPoint;
+	Common::Point textPoint2;
+
+	textLength = strlen(text);
+
+	textWidth = getStringWidth(fontId, text, textLength, flags);
+	h = getHeight(fontId);
+	fitWidth = width;
+
+	textPoint.x = (fitWidth / 2);
+	textPoint.y = 0;
+
+	if (fitWidth >= textWidth) {		
+		return h;
+	}
+
+	// String won't fit on one line
+	w_total = 0;
+	len_total = 0;
+	wc = 0;
+
+	startPointer = text;
+	measurePointer = text;
+	searchPointer = text;
+	endPointer = text + textLength;
+
+	for (;;) {
+		foundPointer = strchr(searchPointer, ' ');
+		if (foundPointer == NULL) {
+			// Ran to the end of the buffer
+			len = endPointer - measurePointer;
+		} else {
+			len = foundPointer - measurePointer;
+		}
+
+		w = getStringWidth(fontId, measurePointer, len, flags);
+		measurePointer = foundPointer;
+
+		if ((w_total + w) > fitWidth) {
+			// This word won't fit
+			if (wc == 0) {
+				// The first word in the line didn't fit. abort
+				return textPoint.y;
+			}
+			// Wrap what we've got and restart
+			textPoint.y += h + TEXT_LINESPACING;
+			w_total = 0;
+			len_total = 0;
+			wc = 0;
+			measurePointer = searchPointer;
+			startPointer = searchPointer;
+		} else {
+			// Word will fit ok
+			w_total += w;
+			len_total += len;
+			wc++;
+			if (foundPointer == NULL) {
+				// Since word hit NULL but fit, we are done
+				return textPoint.y + h;
+			}
+			searchPointer = measurePointer + 1;
+		}
+	}
+}
+
+void Font::textDrawRect(FontId fontId, Surface *ds, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags) {
+	int textWidth;
+	int textLength;
+	int fitWidth;
+	const char *startPointer;
+	const char *searchPointer;
+	const char *measurePointer;
+	const char *foundPointer;
+	int len;
+	int w;
+	const char *endPointer;
+	int h;
+	int wc;
+	int w_total;
+	int len_total;
+	Common::Point textPoint;
+	Common::Point textPoint2;
+
+	textLength = strlen(text);
+
+	textWidth = getStringWidth(fontId, text, textLength, flags);
+	fitWidth = rect.width();
+
+	textPoint.x = rect.left + (fitWidth / 2);
+	textPoint.y = rect.top;
+
+	if (fitWidth >= textWidth) {
+	// Entire string fits, draw it
+		textPoint.x -= (textWidth / 2);
+		draw(fontId, ds, text, textLength, textPoint, color, effectColor, flags);
+		return;
+	}
+
+	// String won't fit on one line
+	h = getHeight(fontId);
+	w_total = 0;
+	len_total = 0;
+	wc = 0;
+
+	startPointer = text;
+	measurePointer = text;
+	searchPointer = text;
+	endPointer = text + textLength;
+
+	for (;;) {
+		foundPointer = strchr(searchPointer, ' ');
+		if (foundPointer == NULL) {
+			// Ran to the end of the buffer
+			len = endPointer - measurePointer;
+		} else {
+			len = foundPointer - measurePointer;
+		}
+
+		w = getStringWidth(fontId, measurePointer, len, flags);
+		measurePointer = foundPointer;
+
+		if ((w_total + w) > fitWidth) {
+			// This word won't fit
+			if (wc == 0) {
+				// The first word in the line didn't fit. abort
+				return;
+			}
+
+			// Wrap what we've got and restart
+			textPoint2.x = textPoint.x - (w_total / 2);
+			textPoint2.y = textPoint.y;
+			draw(fontId, ds, startPointer, len_total, textPoint2, color, effectColor, flags);
+			textPoint.y += h + TEXT_LINESPACING;
+			if (textPoint.y >= rect.bottom) {
+				return;
+			}
+			w_total = 0;
+			len_total = 0;
+			wc = 0;
+			measurePointer = searchPointer;
+			startPointer = searchPointer;
+		} else {
+			// Word will fit ok
+			w_total += w;
+			len_total += len;
+			wc++;
+			if (foundPointer == NULL) {
+				// Since word hit NULL but fit, we are done
+				textPoint2.x = textPoint.x - (w_total / 2);
+				textPoint2.y = textPoint.y;
+				draw(fontId, ds, startPointer, len_total, textPoint2, color,
+					effectColor, flags);
+				return;
+			}
+			searchPointer = measurePointer + 1;
+		}
+	}
 }
 
 } // End of namespace Saga

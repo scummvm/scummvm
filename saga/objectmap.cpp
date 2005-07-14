@@ -219,6 +219,7 @@ void ObjectMap::draw(Surface *ds, const Point& testPoint, int color, int color2)
 	int hitZoneIndex;
 	char txtBuf[32];
 	Point pickPoint;
+	Point textPoint;
 	Location pickLocation;
 	pickPoint = testPoint;
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
@@ -236,9 +237,9 @@ void ObjectMap::draw(Surface *ds, const Point& testPoint, int color, int color2)
 
 	if (hitZoneIndex != -1) {		
 		snprintf(txtBuf, sizeof(txtBuf), "hitZone %d", hitZoneIndex);
-		_vm->_font->draw(SMALL_FONT_ID, ds, txtBuf, 0, 2, 2,
-			kITEColorBrightWhite, kITEColorBlack, FONT_OUTLINE);
-
+		textPoint.x = 2;
+		textPoint.y = 2;
+		_vm->_font->textDraw(kSmallFont, ds, txtBuf, textPoint, kITEColorBrightWhite, kITEColorBlack, kFontOutline);
 	}
 }
 

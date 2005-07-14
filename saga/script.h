@@ -26,7 +26,7 @@
 #ifndef SAGA_SCRIPT_H
 #define SAGA_SCRIPT_H
 
-#include "saga/text.h"
+#include "saga/font.h"
 #include "saga/list.h"
 
 namespace Saga {
@@ -390,6 +390,7 @@ private:
 	uint16 _modulesLUTEntryLen;
 	ModuleData *_modules;
 	int _modulesCount;
+	TextListEntry *_placardTextEntry;
 
 protected:
 	friend class SagaEngine;
@@ -424,7 +425,6 @@ public:
 	int _dbg_singlestep;
 	int _dbg_dostep;
 	ScriptThread *_dbg_thread;
-	TEXTLIST_ENTRY *_dbg_txtentry;
 
 public:
 	ScriptThread *createThread(uint16 scriptModuleNumber, uint16 scriptEntryPointNumber);

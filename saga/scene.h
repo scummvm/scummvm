@@ -26,7 +26,7 @@
 #ifndef SAGA_SCENE_H
 #define SAGA_SCENE_H
 
-#include "saga/text.h"
+#include "saga/font.h"
 #include "saga/list.h"
 #include "saga/actor.h"
 
@@ -263,6 +263,7 @@ class Scene {
 	int getOutsetSceneNumber() const { return _outsetSceneNumber; }
 	int currentSceneResourceId() const { return _sceneResourceId; }
 
+	void drawTextList(Surface *ds);
  private:
 	void loadScene(LoadSceneParams *loadSceneParams);
 	int loadSceneDescriptor(uint32 res_number);
@@ -301,7 +302,7 @@ class Scene {
 	ObjectMap *_objectMap;
 	SceneEntryList _entryList;
 	StringsTable _sceneStrings;
-	TEXTLIST *_textList;
+	TextList _textList;
 
  private:
 	int IHNMStartProc();

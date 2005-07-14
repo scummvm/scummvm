@@ -28,7 +28,6 @@ MODULE_OBJS := \
 	saga/sndres.o \
 	saga/sprite.o \
 	saga/sthread.o \
-	saga/text.o \
 	saga/input.o \
 	saga/music.o \
 	saga/sound.o

@@ -48,7 +48,7 @@ static int granulate(int value, int granularity) {
 
 int SagaEngine::decodeBGImage(const byte *image_data, size_t image_size,
 					byte **output_buf, size_t *output_buf_len, int *w, int *h) {
-	IMAGE_HEADER hdr;
+	ImageHeader hdr;
 	int modex_height;
 	const byte *RLE_data_ptr;
 	size_t RLE_data_len;
