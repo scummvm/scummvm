@@ -121,7 +121,6 @@ void ConsoleDialog::open() {
 	// background in a separate "canvas", just like in the About dialog.
 	_canvas.pixels = NULL;
 
-
 	// Initiate sliding the console down. We do a very simple trick to achieve
 	// this effect: we simply move the console dialog just above (outside) the
 	// visible screen area, then shift it down in handleTickle() over a
@@ -145,9 +144,19 @@ void ConsoleDialog::close() {
 
 void ConsoleDialog::drawDialog() {
 	if (!_canvas.pixels) {
-		// Blend over the background
+		// Blend over the background. Don't count the time used for
+		// this when timing the slide action.
+
+		uint32 now = g_system->getMillis();
+		uint32 delta;
+
 		g_gui.blendRect(0, 0, _w, _h, g_gui._bgcolor, 2);
 		g_gui.copyToSurface(&_canvas, 0, 0, _w, _h);
+
+		delta = g_system->getMillis() - now;
+
+		if (_slideTime)
+			_slideTime += delta;
 	}
 
 	g_gui.drawSurface(_canvas, 0, 0);
