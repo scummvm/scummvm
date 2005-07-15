@@ -1338,6 +1338,13 @@ d:\dev\SPUTM\Src\*.cpp
 f8029f33e2bc3da6fe38f6bda58c1f31 SPYFoxDC.he4
 b185cdec4ea6bc218afe08325af787a4 spyfoxdc.w32
 
+(german spyfox)
+nachbarnebenan
+a28135a7ade38cc0208b04507c46efd1  spyfox.he0
+96da98152ccc2f0d9002c834f34d5cd0  spyfox.he1
+75bd69c4fc660695691844a68110a337  spyfox.he2
+f8029f33e2bc3da6fe38f6bda58c1f31  spyfox.he4
+
 (spyfox2 cd)
 sev
 D:\(vss)scummsys.99\SPUTM\Src\*.cpp

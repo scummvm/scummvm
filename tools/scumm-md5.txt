@@ -471,6 +471,7 @@ Putt-Putt's One-Stop Fun Shop
 Spy Fox 1: Dry Cereal
 	-	All	en	3de99ef0523f8ca7958faa3afccd035a	spyfox	Kirben
 	-	Windows	en	6bf70eee5de3d24d2403e0dd3d267e8a	spyfox	khalek
+	-	Windows	de	a28135a7ade38cc0208b04507c46efd1	spyfox	nachbarnebenan
 	-	Windows	nl	9bda5fee51d2fda5253d02c642016bf4	spyfox	joostp
 	-	Windows	ru	72ac6bc980d5101c2142189d746bd62f	spyfox	sev
 	Demo	All	en	53e94115b55dd51d4b8ff0871aa1df1e	spydemo	khalek, sev
