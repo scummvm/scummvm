@@ -484,12 +484,13 @@ void Puzzle::solicitHint(void) {
 		if (_hintOffer >= NUM_SOLICIT_REPLIES)
 			_hintOffer = 0;
 
-		_vm->_actor->nonActorSpeech(_hintBox, &solicitStr[_lang][i], 1, 0);
-
 		//	Determine which of the journeymen will offer then
 		//	hint, and then show that character's portrait.
 		_hintGiver = portraitList[i];
+		_hintSpeaker = _hintGiver - RID_ITE_JFERRET_SERIOUS;
 		_vm->_interface->setRightPortrait(_hintGiver);
+
+		_vm->_actor->nonActorSpeech(_hintBox, &solicitStr[_lang][i], 1, PUZZLE_SOLICIT_SOUNDS + i * 3 + _hintSpeaker, 0);
 
 		//	Add Rif's reply to the list.
 		clearHint();
@@ -507,7 +508,7 @@ void Puzzle::solicitHint(void) {
 
 	case kRQHintRequested:
 		i = _vm->_rnd.getRandomNumber(NUM_SAKKA - 1);
-		_vm->_actor->nonActorSpeech(_hintBox, &sakkaStr[_lang][i], 1, 0);
+		_vm->_actor->nonActorSpeech(_hintBox, &sakkaStr[_lang][i], 1, PUZZLE_SAKKA_SOUNDS + i, 0);
 
 		_vm->_interface->setRightPortrait(RID_ITE_SAKKA_APPRAISING);
 
@@ -524,7 +525,7 @@ void Puzzle::solicitHint(void) {
 	case kRQHintRequestedStage2:
 		if (_vm->_rnd.getRandomNumber(1)) {			//	Skip Reply part
 			i = _vm->_rnd.getRandomNumber(NUM_WHINES - 1);
-			_vm->_actor->nonActorSpeech(_hintBox, &whineStr[_lang][i], 1, 0);
+			_vm->_actor->nonActorSpeech(_hintBox, &whineStr[_lang][i], 1, PUZZLE_WHINE_SOUNDS + i * 3 + _hintSpeaker, 0);
 		}
 
 		_vm->_interface->setRightPortrait(_hintGiver);
@@ -592,7 +593,7 @@ void Puzzle::giveHint(void) {
 	_vm->_actor->setSpeechColor(1, kITEColorBlack);
 
 	if (_hintCount < 3) {
-		_vm->_actor->nonActorSpeech(_hintBox, &hintStr[_lang][_hintCount], 1, 0 );
+		_vm->_actor->nonActorSpeech(_hintBox, &hintStr[_lang][_hintCount], 1, PUZZLE_HINT_SOUNDS + _hintCount * 3 + _hintSpeaker, 0);
 	} else {
 		int piece = 0;
 
@@ -611,11 +612,11 @@ void Puzzle::giveHint(void) {
 			const char *hintPtr = hintBuf;
 			sprintf(hintBuf, optionsStr[_lang][kROHint], pieceNames[piece]);
 
-			_vm->_actor->nonActorSpeech(_hintBox, &hintPtr, 1, 0);
+			_vm->_actor->nonActorSpeech(_hintBox, &hintPtr, 1, PUZZLE_TOOL_SOUNDS + _hintSpeaker + piece, 0);
 		}
 		else {
 				//	If no pieces are in the wrong place
-			_vm->_actor->nonActorSpeech(_hintBox, &hintStr[_lang][3], 1, 0);
+			_vm->_actor->nonActorSpeech(_hintBox, &hintStr[_lang][3], 1, PUZZLE_HINT_SOUNDS + 3 * 3 + _hintSpeaker, 0);
 		}
 	}
 	_hintCount++;

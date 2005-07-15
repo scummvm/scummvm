@@ -1538,7 +1538,7 @@ void Script::sfScriptText(SCRIPTFUNC_PARAMS) {
 	rect.setWidth(width);
 
 	_vm->_actor->setSpeechColor(color, kITEColorBlack);
-	_vm->_actor->nonActorSpeech(rect, &text, 1, flags);
+	_vm->_actor->nonActorSpeech(rect, &text, 1, -1, flags);
 }
 
 // Script function #60 (0x3C)

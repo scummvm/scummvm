@@ -1886,7 +1886,7 @@ void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, 
 	}	
 }
 
-void Actor::nonActorSpeech(const Common::Rect &box, const char **strings, int stringsCount, int speechFlags) {
+void Actor::nonActorSpeech(const Common::Rect &box, const char **strings, int stringsCount, int sampleResourceId, int speechFlags) {
 	int i;
 	
 	_vm->_script->wakeUpThreads(kWaitTypeSpeech);
@@ -1898,7 +1898,7 @@ void Actor::nonActorSpeech(const Common::Rect &box, const char **strings, int st
 	_activeSpeech.speechFlags = speechFlags;
 	_activeSpeech.actorsCount = 1;
 	_activeSpeech.actorIds[0] = 0;
-	_activeSpeech.sampleResourceId = -1;
+	_activeSpeech.sampleResourceId = sampleResourceId;
 	_activeSpeech.playing = false;
 	_activeSpeech.slowModeCharIndex = 0;
 	_activeSpeech.speechBox = box;

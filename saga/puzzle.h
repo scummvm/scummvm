@@ -26,6 +26,13 @@ namespace Saga {
 
 #define PUZZLE_PIECES 15
 
+#define PUZZLE_SOUNDS         3622
+#define PUZZLE_TOOL_SOUNDS    (PUZZLE_SOUNDS + 0)
+#define PUZZLE_HINT_SOUNDS    (PUZZLE_SOUNDS + 45)
+#define PUZZLE_SOLICIT_SOUNDS (PUZZLE_SOUNDS + 57)
+#define PUZZLE_WHINE_SOUNDS   (PUZZLE_SOUNDS + 72)
+#define PUZZLE_SAKKA_SOUNDS   (PUZZLE_SOUNDS + 87)
+
 class Puzzle {
 private:
 	enum kRQStates {
@@ -45,6 +52,7 @@ private:
 
 	kRQStates _hintRqState;
 	int _hintGiver;
+	int _hintSpeaker;
 	int _hintOffer;
 	int _hintCount;
 	int _helpCount;
