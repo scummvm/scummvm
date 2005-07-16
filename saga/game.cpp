@@ -248,8 +248,8 @@ static GameFileDescription ITEMULTICD_GameFiles[] = {
 };
 
 static GameFontDescription ITEWINDEMO_GameFonts[] = {
-	{0},
-	{2}
+	{2},
+	{0}
 }; 
 
 // Inherit the Earth - Mac Wyrmkeep version
@@ -660,7 +660,7 @@ static GameDescription gameDescriptions[] = {
 		GF_VOX_VOICES | GF_WYRMKEEP | GF_CD_FX
 	},
 	
-	// Inherit the earth - Linux Demo version
+	// Inherit the earth - Win32 Demo version
 	{
 		"ite-demo",
 		GType_ITE,
@@ -671,13 +671,13 @@ static GameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFiles),
 		ITEWINDEMO_GameFiles,
-		ARRAYSIZE(ITECD_GameFonts),
-		ITECD_GameFonts,
+		ARRAYSIZE(ITEWINDEMO_GameFonts),
+		ITEWINDEMO_GameFonts,
 		&ITECD_GameSound,
 		GF_VOX_VOICES | GF_WYRMKEEP | GF_CD_FX
 	},
 	
-	// Inherit the earth - Win32 Demo version
+	// Inherit the earth - early Win32 Demo version
 	{
 		"ite-demo",
 		GType_ITE,
