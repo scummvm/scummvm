@@ -1147,6 +1147,9 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_debugMode = (gDebugLevel >= 0);
 	_dumpScripts = detector->_dumpScripts;
 	_bootParam = ConfMan.getInt("boot_param");
+	// Boot params often need debugging switched on to work
+	if (_bootParam)
+		_debugMode = true;
 
 	// Allow the user to override the game name with a custom string.
 	// This allows some game versions to work which use filenames
