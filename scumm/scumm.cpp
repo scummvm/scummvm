@@ -546,7 +546,7 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
 	{"9bda5fee51d2fda5253d02c642016bf4", "Spyfox 1: Dry Cereal (Updated)", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows, 0, 0},
-	{"a28135a7ade38cc0208b04507c46efd1", "Spyfox 1: Dry Cereal (Updated De)", GID_HEGAME, 6, 98, MDT_NONE,
+	{"a28135a7ade38cc0208b04507c46efd1", "Spyfox 1: Dry Cereal (Updated De)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows, 0, 0},
 	{"72ac6bc980d5101c2142189d746bd62f", "Spyfox 1: Dry Cereal (Updated Ru)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0}, // SPYFoxDC
