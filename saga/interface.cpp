@@ -1541,7 +1541,7 @@ int Interface::inventoryItemPosition(int objectId) {
 }
 
 void Interface::drawInventory(Surface *backBuffer) {
-	if (_panelMode != kPanelMain)
+	if (!isInMainMode())
 		return;
 	int i;
 	Rect rect;
