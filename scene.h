@@ -47,10 +47,12 @@ public:
 			_currSetup->_bkgndZBm->draw();
 
 		if (_currSetup->_bkgndBm == NULL) {
-			error("Null background for setup %s in %s", _currSetup->_name.c_str(), _name.c_str());
-			return;
-		} 
-		_currSetup->_bkgndBm->draw();
+			// This should fail softly, for some reason jumping to the signpost (sg) will load
+			// the scene in such a way that the background isn't immediately available
+			warning("Background hasn't loaded yet for setup %s in %s!", _currSetup->_name.c_str(), _name.c_str());
+		} else {
+			_currSetup->_bkgndBm->draw();
+		}
 	}
 	void drawBitmaps(ObjectState::Position stage);
 	void setupCamera() {

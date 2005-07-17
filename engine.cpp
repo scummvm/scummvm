@@ -92,6 +92,10 @@ Engine::Engine() :
 }
 
 void Engine::handleButton(int operation, int key) {
+	// If we're not supposed to handle the key then don't
+	if (!_controlsEnabled[key])
+		return;
+	
 	lua_beginblock();
 	lua_Object menu = getEventHandler("menuHandler");
 	if (menu != LUA_NOOBJECT && !lua_isnil(menu)) {
@@ -139,27 +143,75 @@ void Engine::mainLoop() {
 		// Process events
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
-			if (event.type == SDL_KEYDOWN && _controlsEnabled[event.key.keysym.sym])
-				handleButton(SDL_KEYDOWN, event.key.keysym.sym);
-			if (event.type == SDL_KEYUP && _controlsEnabled[event.key.keysym.sym]) {
-				handleButton(SDL_KEYUP, event.key.keysym.sym);
-			}
-			if (event.type == SDL_QUIT) {
-				lua_beginblock();
-				lua_Object handler = getEventHandler("exitHandler");
-				if (handler != LUA_NOOBJECT)
-					lua_callfunction(handler);
-				lua_endblock();
-			}
+			// Handle any button operations
+			if(event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
+				handleButton(event.type, event.key.keysym.sym);
+			// Check for "Hard" quit"
+			if (event.type == SDL_QUIT)
+				return;
 			if (event.type == SDL_KEYDOWN) {
-				if (event.key.keysym.sym == SDLK_z)
-					g_resourceloader->loadKeyframe("ma_card_hold.key");
+				if (event.key.keysym.sym == SDLK_z
+				 && (event.key.keysym.mod & KMOD_CTRL)) {
+						void *resource;
+						int c, i = 0;
+						char buf[512];
+						
+						// Tool for debugging the loading of a particular resource without
+						// having to actually make it all the way to it in the game
+						fprintf(stderr, "Enter resource to load (extension specifies type): ");
+						while (i < 512 && (c = fgetc(stdin)) != EOF && c != '\n')
+							buf[i++] = c;
+						buf[i] = '\0';
+						if (strncmp(buf, "exp:", 4) == 0)
+							// Export a resource in order to view it directly
+							resource = (void *) g_resourceloader->exportResource(&buf[4]);
+						else if (strstr(buf, ".key"))
+							resource = (void *) g_resourceloader->loadKeyframe(buf);
+						else if (strstr(buf, ".zbm") || strstr(buf, ".bm"))
+							resource = (void *) g_resourceloader->loadBitmap(buf);
+						else if (strstr(buf, ".cmp"))
+							resource = (void *) g_resourceloader->loadColormap(buf);
+						else if (strstr(buf, ".cos"))
+							resource = (void *) g_resourceloader->loadCostume(buf, NULL);
+						else if (strstr(buf, ".lip"))
+							resource = (void *) g_resourceloader->loadLipSynch(buf);
+						else if (strstr(buf, ".snm"))
+							resource = (void *) g_smush->play(buf, 0, 0);
+						else if (strstr(buf, ".wav") || strstr(buf, ".imu")) {
+							g_imuse->startSfx(buf);
+							resource = (void *) 1;
+						} else if (strstr(buf, ".mat")) {
+							CMap *cmap = g_resourceloader->loadColormap("item.cmp");
+							
+							warning("Default colormap applied to resources loaded in this fashion!");
+							resource = (void *) g_resourceloader->loadMaterial(buf, *cmap);
+						} else {
+							warning("Resource type not understood!");
+							break;
+						}
+						if (resource == NULL)
+							warning("Requested resouce (%s) not found!");
+				}
 				if ((event.key.keysym.sym == SDLK_RETURN ||
 				     event.key.keysym.sym == SDLK_KP_ENTER) &&
-				    (event.key.keysym.mod & KMOD_ALT))
+				    (event.key.keysym.mod & KMOD_ALT)) {
 						g_driver->toggleFullscreenMode();
-				if (event.key.keysym.sym == SDLK_q)
-					return;
+				}
+				if (event.key.keysym.sym == SDLK_q) {
+					lua_Object menu = getEventHandler("menuHandler");
+					
+					// Can't handle the exit menu on top of the normal one
+					// at this time, so exit flat-out if we're in a menu
+					if (lua_isnil(menu)) {
+						printf("NOTICE: The left/right arrow keys do not update the quit screen at this time, use Y/N keys instead!\n");
+						lua_beginblock();
+						lua_Object handler = getEventHandler("exitHandler");
+						if (handler != LUA_NOOBJECT)
+							lua_callfunction(handler);
+						lua_endblock();
+					} else
+						return;
+				}
 			}
 		}
 
@@ -169,6 +221,13 @@ void Engine::mainLoop() {
 		if (_savegameSaveRequest) {
 			savegameSave();
 		}
+
+		// It appears that the lua tasks should run before rendering,
+		// if you watch the game loading screen you'll see that it
+		// turns out better to run this beforehand
+		if (!_menuMode)
+			// Run asynchronous tasks
+			lua_runtasks();
 
 		if (_mode == ENGINE_MODE_SMUSH) {
 			if (g_smush->isPlaying()) {
@@ -186,9 +245,16 @@ void Engine::mainLoop() {
 		} else if (_mode == ENGINE_MODE_NORMAL) {
 			g_driver->clearScreen();
 
-			// Update actor costumes
+			// Update actor costumes & sets
 			for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
 				Actor *a = *i;
+				
+				// Activate the new set
+				// While this doesn't seem to affect anything this should be done here 
+				// instead of inside the lua_runtasks loop, otherwise certain functions
+				// may request a set that was just deactivated
+				a->putInSet();
+				// Update the actor's costumes
 				g_currentUpdatedActor = *i;
 				if (_currScene != NULL && a->inSet(_currScene->name()) && a->visible())
 					a->update();
@@ -201,6 +267,10 @@ void Engine::mainLoop() {
 
 			// Draw underlying scene components
 			if (_currScene != NULL) {
+				// Background objects are drawn underneath everything except the background
+				// There are a bunch of these, especially in the tube-switcher room
+				_currScene->drawBitmaps(ObjectState::OBJSTATE_BACKGROUND);
+				// Underlay objects are just above the background
 				_currScene->drawBitmaps(ObjectState::OBJSTATE_UNDERLAY);
 				// State objects are drawn on top of other things, such as the flag
 				// on Manny's message tube
@@ -300,10 +370,6 @@ void Engine::mainLoop() {
 				timeAccum = 0;
 			}
 		}
-
-		if (!_menuMode)
-			// Run asynchronous tasks
-			lua_runtasks();
 
 		if (g_imuseState != -1) {
 			g_imuse->setMusicState(g_imuseState);
@@ -474,6 +540,7 @@ void Engine::setSceneLock(const char *name, bool lockStatus) {
 
 void Engine::setScene(const char *name) {
 	Scene *scene = findScene(name);
+	Scene *lastScene = _currScene;
 	
 	// If the scene already exists then use the existing data
 	if (scene != NULL) {
@@ -483,23 +550,27 @@ void Engine::setScene(const char *name) {
 	Block *b = g_resourceloader->getFileBlock(name);
 	if (b == NULL)
 		warning("Could not find scene file %s\n", name);
-	if (_currScene != NULL && !_currScene->locked) {
-		removeScene(_currScene);
-		delete _currScene;
-	}
 	_currScene = new Scene(name, b->data(), b->len());
 	registerScene(_currScene);
 	_currScene->setSoundParameters(20, 127);
+	// should delete the old scene after creating the new one
+	if (lastScene != NULL && !lastScene->locked) {
+		removeScene(lastScene);
+		delete lastScene;
+	}
 	delete b;
 }
 
 void Engine::setScene(Scene *scene) {
-	if (_currScene != NULL && !_currScene->locked) {
-		removeScene(_currScene);
-		delete _currScene;
-	}
+	Scene *lastScene = _currScene;
+	
 	_currScene = scene;
 	_currScene->setSoundParameters(20, 127);
+	// should delete the old scene after setting the new one
+	if (lastScene != NULL && !lastScene->locked) {
+		removeScene(lastScene);
+		delete lastScene;
+	}
 }
 
 void Engine::setTextSpeed(int speed) {

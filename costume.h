@@ -19,6 +19,7 @@
 #define COSTUME_H
 
 #include "matrix4.h"
+#include "model.h"
 
 #include <string>
 
@@ -32,13 +33,13 @@ public:
 	~Costume();
 
 	const char *filename() const { return _fname.c_str(); }
-
-	void playChore(int num) { _chores[num].play(); }
-	void playChoreLooping(int num) { _chores[num].playLooping(); }
+	void playChore(int num);
+	void playChoreLooping(int num);
 	void setChoreLastFrame(int num) { _chores[num].setLastFrame(); }
 	void setChoreLooping(int num, bool val) { _chores[num].setLooping(val); }
 	void stopChore(int num) { _chores[num].stop(); }
 	char *getColormap() { return _colormap; }
+	Model::HierNode *getModelNodes();
 	void setColormap(char *map) {
 		_colormap = map;
 		for(int i=0;i<_numComponents;i++) {
@@ -81,7 +82,7 @@ std::memcmp(_components[i]->tag(), "mat ", 4) == 0
 		virtual ~Component() { }
 
 	protected:
-		char _tag[4];
+		char _tag[5];
 		int _parentID;
 		Component *_parent, *_child, *_sibling;
 		Matrix4 _matrix;

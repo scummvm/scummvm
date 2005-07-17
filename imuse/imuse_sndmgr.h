@@ -25,6 +25,7 @@
 
 #include "mixer/mixer.h"
 #include "mixer/audiostream.h"
+#include "imuse/limits.h"
 
 class McmpMgr;
 class Block;
@@ -32,11 +33,18 @@ class Block;
 class ImuseSndMgr {
 public:
 
-#define MAX_IMUSE_SOUNDS 16
+// MAX_IMUSE_SOUNDS should not be hardcoded, it should represent
+// the maximum number of different tracks, see limits.h
+#define MAX_IMUSE_SOUNDS MAX_IMUSE_TRACKS+MAX_IMUSE_FADETRACKS
 
-#define IMUSE_VOLGRP_VOICE 1
-#define IMUSE_VOLGRP_SFX 2
-#define IMUSE_VOLGRP_MUSIC 3
+// The numbering below fixes talking to Domino in his office
+// and it also allows Manny to get the info for Mercedes
+// Colomar, without this the game hangs at these points!
+#define IMUSE_VOLGRP_BGND   0
+#define IMUSE_VOLGRP_ACTION 1
+#define IMUSE_VOLGRP_SFX    2
+#define IMUSE_VOLGRP_MUSIC  3
+#define IMUSE_VOLGRP_VOICE  4
 
 private:
 	struct Region {

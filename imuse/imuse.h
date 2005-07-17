@@ -29,8 +29,7 @@
 #include "imuse/imuse_sndmgr.h"
 #include "imuse/imuse_mcmp_mgr.h"
 
-#define MAX_IMUSE_TRACKS 8
-#define MAX_IMUSE_FADETRACKS 8
+#include "imuse/limits.h"
 
 struct ImuseTable {
 	byte opcode;
@@ -134,6 +133,7 @@ public:
 	int getGroupSfxVolume() { return _volSfx; }
 	int getGroupMusicVolume() { return _volMusic; }
 
+	Track *findTrack(const char *soundName);
 	void setPriority(const char *soundName, int priority);
 	void setVolume(const char *soundName, int volume);
 	int getVolume(const char *soundName);
@@ -151,7 +151,7 @@ public:
 	void flushTracks();
 	bool isVoicePlaying();
 	char *getCurMusicSoundName();
-	bool getSoundStatus(const char *soundName) const;
+	bool getSoundStatus(const char *soundName);
 	int32 getPosIn60HzTicks(const char *soundName);
 };
 

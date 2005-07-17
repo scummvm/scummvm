@@ -29,6 +29,9 @@
 #include <cstring>
 #include <zlib.h>
 
+#define ANNO_HEADER "MakeAnim animation type 'Bl16' parameters: "
+#define BUFFER_SIZE 16385
+
 Smush *g_smush;
 static uint16 smushDestTable[5786];
 
@@ -49,6 +52,7 @@ Smush::Smush() {
 	_videoFinished = false;
 	_videoPause = true;
 	_updateNeeded = false;
+	_startPos = NULL;
 	_stream = NULL;
 	_movieTime = 0;
 	_frame = 0;
@@ -65,6 +69,7 @@ void Smush::init() {
 	_videoFinished = false;
 	_videoPause = false;
 	_updateNeeded = false;
+	_videoLooping = false;
 
 	assert(!_internalBuffer);
 	assert(!_externalBuffer);
@@ -88,6 +93,7 @@ void Smush::deinit() {
 		_externalBuffer = NULL;
 	}
 
+	_videoLooping = false;
 	_videoFinished = true;
 	_videoPause = true;
 	if (_stream) {
@@ -129,10 +135,34 @@ void Smush::handleFrame() {
 
 	tag = _file.readUint32BE();
 	if (tag == MKID_BE('ANNO')) {
-printf("Announcement!\n");
+		char *anno;
+		byte *data;
+		
 		size = _file.readUint32BE();
-		for (int l = 0; l < size; l++)
-			_file.readByte();
+		data = (byte *)malloc(size);
+		_file.read(data, size);
+		anno = (char *)data;
+		if (strncmp(anno, ANNO_HEADER, sizeof(ANNO_HEADER)-1) == 0) {
+			char *annoData = anno + sizeof(ANNO_HEADER);
+			int loop;
+			
+			// Examples:
+			//  Water streaming around boat from Manny's balcony
+			//  MakeAnim animation type 'Bl16' parameters: 10000;12000;100;1;0;0;0;0;25;0;
+			//  Water in front of the Blue Casket
+			//	MakeAnim animation type 'Bl16' parameters: 20000;25000;100;1;0;0;0;0;25;0;
+			if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
+				printf("Announcement data: %s\n", anno);
+			sscanf(annoData, "%*d;%*d;%*d;%d;%*d;%*d;%*d;%*d;%*d;%*d;%*d;", &loop);
+			_videoLooping = (bool) loop;
+			_startPos = _file.getPos();
+			if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
+				printf("_videoLooping: %d\n", _videoLooping);
+		} else {
+			if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
+				printf("Announcement header not understood: %s\n", anno);
+		}
+		free(anno);
 		tag = _file.readUint32BE();
 	}
 
@@ -164,12 +194,19 @@ printf("Announcement!\n");
 	_updateNeeded = true;
 
 	_frame++;
-	if (_frame == _nbframes) {
-		_videoFinished = true;
-		g_engine->setMode(ENGINE_MODE_NORMAL);
-	}
-	
 	_movieTime += _speed / 1000;
+	if (_frame == _nbframes) {
+		// If we're not supposed to loop (or looping fails) then end the video
+		if(!_videoLooping || !_file.setPos(_startPos)) {
+			_videoFinished = true;
+			g_engine->setMode(ENGINE_MODE_NORMAL);
+			return;
+		}
+		// If the position change succeeded then reset the frame number
+		// for some reason we need to set it to 1 instead of zero or we
+		// won't render a frame
+		_frame = 1;
+	}
 }
 
 void Smush::handleFramesHeader() {
@@ -260,9 +297,42 @@ zlibFile::~zlibFile() {
 	close();
 }
 
+struct SAVEPOS *zlibFile::getPos() { 
+	struct SAVEPOS *pos;
+	long position = std::ftell(_handle);
+	
+	if (position == -1 && debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL) {
+		warning("zlibFile::open() unable to find start position!");
+		return NULL;
+	}
+	pos = (struct SAVEPOS *) malloc(sizeof(struct SAVEPOS));
+	pos->filePos = position;
+	inflateCopy(&pos->streamBuf, &_stream);
+	pos->tmpBuf = (char *)calloc(1, BUFFER_SIZE);
+	memcpy(pos->tmpBuf, _inBuf, BUFFER_SIZE);
+	return pos;
+}
+
+bool zlibFile::setPos(struct SAVEPOS *pos) { 
+	int ret;
+	if (_handle == NULL || pos == NULL) {
+		warning("Unable to rewind SMUSH movie (invalid handle)!");
+		return false;
+	}
+	ret = std::fseek(_handle, pos->filePos, SEEK_SET);
+	if (ret == -1) {
+		warning("Unable to rewind SMUSH movie (seek failed)! %m");
+		return false;
+	}
+	memcpy(_inBuf, pos->tmpBuf, BUFFER_SIZE);
+	inflateCopy(&_stream, &pos->streamBuf);
+	_fileDone = false;
+	return true;
+}
+
 bool zlibFile::open(const char *filename) {
 	char flags = 0;
-	_inBuf = (char *)calloc(1, 16385);
+	_inBuf = (char *)calloc(1, BUFFER_SIZE);
 
 	if (_handle) {
 		if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
@@ -287,8 +357,12 @@ bool zlibFile::open(const char *filename) {
 	fread(_inBuf, 6, sizeof(char), _handle);				// XFlags
 
 	// Xtra & Comment
-	if (((((flags & 0x04) != 0) || ((flags & 0x10) != 0))) && (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL))
-		error("zlibFile::open() Unsupported header flag");
+	if (((flags & 0x04) != 0) || ((flags & 0x10) != 0)) {
+		if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL) {
+			error("zlibFile::open() Unsupported header flag");
+		}
+		return false;
+	}
 
 	if ((flags & 0x08) != 0) {					// Orig. Name
 		do {
@@ -299,7 +373,7 @@ bool zlibFile::open(const char *filename) {
 	if ((flags & 0x02) != 0) // CRC
 		fread(_inBuf, 2, sizeof(char), _handle);
 
-	memset(_inBuf, 0, 16384);			// Zero buffer (debug)
+	memset(_inBuf, 0, BUFFER_SIZE-1);			// Zero buffer (debug)
 	_stream.zalloc = NULL;
 	_stream.zfree = NULL;
 	_stream.opaque = Z_NULL;
@@ -310,7 +384,7 @@ bool zlibFile::open(const char *filename) {
 	_stream.next_in = NULL;
 	_stream.next_out = NULL;
 	_stream.avail_in = 0;
-	_stream.avail_out = 16384;
+	_stream.avail_out = BUFFER_SIZE-1;
 
 	return true;
 }
@@ -350,7 +424,7 @@ uint32 zlibFile::read(void *ptr, uint32 len) {
 	_fileDone = false;
 	while (_stream.avail_out != 0) {
 		if (_stream.avail_in == 0) {	// !eof
-	        	_stream.avail_in = fread(_inBuf, 1, 16384, _handle);
+			_stream.avail_in = fread(_inBuf, 1, BUFFER_SIZE-1, _handle);
 			if (_stream.avail_in == 0) {
 				fileEOF = true;
 				break;
@@ -360,8 +434,10 @@ uint32 zlibFile::read(void *ptr, uint32 len) {
 
 		result = inflate(&_stream, Z_NO_FLUSH);
 		if (result == Z_STREAM_END) {	// EOF
-			if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-				warning("zlibFile::read() Stream ended");
+			// "Stream end" is zlib's way of saying that it's done after the current call,
+			// so as long as no calls are made after we've received this message we're OK
+			if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
+				printf("zlibFile::read() Stream ended\n");
 			_fileDone = true;
 			break;
 		}

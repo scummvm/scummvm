@@ -285,6 +285,18 @@ Model *ResourceLoader::loadModel(const char *filename, const CMap &c) {
 	return result;
 }
 
+bool ResourceLoader::exportResource(const char *filename) {
+	FILE *myFile = fopen(filename, "w");
+	Block *b = getFileBlock(filename);
+	
+	if (b == NULL)
+		return false;
+	fwrite(b->data(), b->len(), 1, myFile);
+	fclose(myFile);
+	delete b;
+	return true;
+}
+
 void ResourceLoader::uncache(const char *filename) {
 	std::string fname = filename;
 	makeLower(fname);

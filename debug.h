@@ -30,6 +30,7 @@ enum enDebugLevels {
 	DEBUG_MODEL,
 	DEBUG_STUB,
 	DEBUG_SMUSH,
+	DEBUG_IMUSE,
 	DEBUG_CHORES,
 	DEBUG_ALL
 };
@@ -44,6 +45,7 @@ static const char *debug_levels[] = {
 	"MODEL",
 	"STUB",
 	"SMUSH",
+	"IMUSE",
 	"CHORE",
 	"ALL"
 };
@@ -56,7 +58,8 @@ static const char *debug_descriptions[] = {
 	"Bitmap debug messages will be printed",
 	"Model debug messages will be printed",
 	"Stub (missing function) debug messages will be printed",
-	"SMUSH debug messages will be printed",
+	"SMUSH (video) debug messages will be printed",
+	"IMUSE (audio) debug messages will be printed",
 	"Chore debug messages will be printed",
 	"All debug messages will be printed",
 };

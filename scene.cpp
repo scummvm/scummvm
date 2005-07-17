@@ -111,17 +111,25 @@ void Scene::Setup::load(TextSplitter &ts) {
 
 	ts.scanString(" background %256s", 1, buf);
 	_bkgndBm = g_resourceloader->loadBitmap(buf);
-	if(debugLevel == DEBUG_BITMAPS || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
-		printf("Loading scene bitmap: %s\n", buf);
+	if (_bkgndBm == NULL) {
+		if (debugLevel == DEBUG_BITMAPS || debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
+			printf("Unable to load scene bitmap: %s\n", buf);
+	} else {
+		if (debugLevel == DEBUG_BITMAPS || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
+			printf("Loaded scene bitmap: %s\n", buf);
+	}
 
 	// ZBuffer is optional
 	if (!ts.checkString("zbuffer")) {
 		_bkgndZBm = NULL;
 	} else {
 		ts.scanString(" zbuffer %256s", 1, buf);
-		_bkgndZBm = g_resourceloader->loadBitmap(buf);
-		if(debugLevel == DEBUG_BITMAPS || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
-			printf("Loading scene z-buffer bitmap: %s\n", buf);
+		// Don't even try to load if it's the "none" bitmap
+		if (strcmp(buf, "<none>.lbm") != 0) {
+			_bkgndZBm = g_resourceloader->loadBitmap(buf);
+			if (debugLevel == DEBUG_BITMAPS || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
+				printf("Loading scene z-buffer bitmap: %s\n", buf);
+		}
 	}
 
 	ts.scanString(" position %f %f %f", 3, &_pos.x(), &_pos.y(), &_pos.z());
@@ -186,6 +194,12 @@ void Scene::setupLights() {
 }
 
 void Scene::setSetup(int num) {
+	// Looks like num is zero-based so >= should work to find values
+	// that are out of the range of valid setups
+	if (num >= _numSetups || num < 0) {
+		error("Failed to change scene setup, value out of range!");
+		return;
+	}
 	_currSetup = _setups + num;
 }
 

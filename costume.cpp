@@ -565,7 +565,10 @@ public:
 	void setMapName(char *) { }
 	void setKey(int val);
 	void reset();
-	~SoundComponent() { }
+	~SoundComponent() {
+	// Stop the sound if it's in progress
+	reset();
+}
 
 private:
 	std::string _soundName;
@@ -584,14 +587,12 @@ SoundComponent::SoundComponent(Costume::Component *parent, int parentID, const c
 void SoundComponent::setKey(int val) {
 	switch (val) {
 	case 0: // "Play"
-		if (!g_imuse->getSoundStatus(_soundName.c_str())) {
-//			g_imuse->stopSound(_soundName.c_str());
-//		} else {
-			g_imuse->startSfx(_soundName.c_str());
-			if (g_engine->currScene() && g_currentUpdatedActor) {
-				Vector3d pos = g_currentUpdatedActor->pos();
-				g_engine->currScene()->setSoundPosition(_soundName.c_str(), pos);
-			}
+		// No longer a need to check the sound status, if it's already playing
+		// then it will just use the existing handle
+		g_imuse->startSfx(_soundName.c_str());
+		if (g_engine->currScene() && g_currentUpdatedActor) {
+			Vector3d pos = g_currentUpdatedActor->pos();
+			g_engine->currScene()->setSoundPosition(_soundName.c_str(), pos);
 		}
 		break;
 	case 1: // "Stop"
@@ -607,13 +608,15 @@ void SoundComponent::setKey(int val) {
 }
 
 void SoundComponent::reset() {
-	g_imuse->stopSound(_soundName.c_str());
+	// A lot of the sound components this gets called against aren't actually running
+	if(g_imuse->getSoundStatus(_soundName.c_str()))
+		g_imuse->stopSound(_soundName.c_str());
 }
 
 Costume::Costume(const char *filename, const char *data, int len, Costume *prevCost) :
 		_fname(filename), _colormap(DEFAULT_COLORMAP) {
 	TextSplitter ts(data, len);
-
+	
 	ts.expectString("costume v0.1");
 	ts.expectString("section tags");
 	int numTags;
@@ -685,8 +688,11 @@ Costume::Costume(const char *filename, const char *data, int len, Costume *prevC
 
 Costume::~Costume() {
 	stopChores();
-	for (int i = _numComponents - 1; i >= 0; i--)
-		delete _components[i];
+	for (int i = _numComponents - 1; i >= 0; i--) {
+		// The "Sprite" component can be NULL
+		if (_components[i] != NULL)
+			delete _components[i];
+	}
 	delete[] _chores;
 }
 
@@ -695,6 +701,7 @@ Costume::Component::Component(Component *parent, int parentID, char *tag) {
 	_cost = NULL;
 	setParent(parent);
 	memcpy(_tag, tag, 4);
+	_tag[5] = 0;
 }
 
 void Costume::Component::setParent(Component *newParent) {
@@ -831,6 +838,37 @@ Costume::Component *Costume::loadComponent (char tag[4], Costume::Component *par
 
 	error("Unknown tag '%.4s', name '%s'\n", tag, name);
 	return NULL;
+}
+
+Model::HierNode *Costume::getModelNodes()
+{
+		for(int i=0;i<_numComponents;i++) {
+			if (_components[i] == NULL)
+				continue;
+			// Needs to handle Main Models (pigeons) and normal Models
+			// (when Manny climbs the rope)
+			if (std::memcmp(_components[i]->tag(), "mmdl", 4) == 0)
+				return dynamic_cast<ModelComponent *>(_components[i])->hierarchy();
+		}
+		return NULL;
+}
+
+void Costume::playChoreLooping(int num) {
+	if (num < 0 || num >= _numChores) {
+		if (debugLevel == DEBUG_CHORES || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("Requested chore number %d is outside the range of chores (0-%d)!", num, _numChores);
+		return;
+	}
+	_chores[num].playLooping();
+}
+
+void Costume::playChore(int num) {
+	if (num < 0 || num >= _numChores) {
+		if (debugLevel == DEBUG_CHORES || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("Requested chore number %d is outside the range of chores (0-%d)!", num, _numChores);
+		return;
+	}
+	_chores[num].play();
 }
 
 void Costume::stopChores() {

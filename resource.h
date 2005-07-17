@@ -91,6 +91,7 @@ public:
 	std::FILE *openNewStream(const char *filename) const;
 	int fileLength(const char *filename) const;
 
+	bool exportResource(const char *filename);
 	Bitmap *loadBitmap(const char *fname);
 	CMap *loadColormap(const char *fname);
 	Costume *loadCostume(const char *fname, Costume *prevCost);

@@ -105,12 +105,14 @@ void Imuse::playMusic(const ImuseTable *table, int atribPos, bool sequence) {
 		} else {
 			char *soundName = getCurMusicSoundName();
 			int pan;
+			
 			if (table->pan == 0)
 				pan = 64;
 			else
 				pan = table->pan;
-			if ((table->opcode == 3) && (!sequence) && (strcmp(soundName, table->filename) == 0) &&
-					(table->atribPos != 0) && (table->atribPos == _stateMusicTable[_curMusicState].atribPos)) {
+			if (soundName != NULL && (table->opcode == 3) && (!sequence)
+			 && (strcmp(soundName, table->filename) == 0) && (table->atribPos != 0)
+			 && table->atribPos == _stateMusicTable[_curMusicState].atribPos) {
 				setFadeVolume(soundName, table->volume, table->fadeOut60TicksDelay);
 				setFadePan(soundName, pan, table->fadeOut60TicksDelay);
 				setHookId(soundName, hookId);

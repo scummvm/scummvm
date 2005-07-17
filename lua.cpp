@@ -139,9 +139,26 @@ static inline Bitmap *check_bitmapobject(int num) {
 	return NULL;
 }
 
-static inline int check_int(int num) {
-	double val = luaL_check_number(num);
+static inline double check_double(int num) {
+	double val;
+	
+	// Have found some instances, such as in Rubacava if you jump there,
+	// where doubles of "zero" are called as nil
+	if(lua_isnil(lua_getparam(num)))
+		return 0.0;
+	
+	return luaL_check_number(num);
+}
 
+static inline int check_int(int num) {
+	double val;
+	
+	// Have found some instances, such as in Rubacava and the tube-switcher
+	// room, where integers of "zero" are called as nil
+	if(lua_isnil(lua_getparam(num)))
+		return 0;
+	
+	val = luaL_check_number(num);
 	return int(round(val));
 }
 
@@ -200,6 +217,7 @@ static void PrintDebug() {
 		
 		msg.insert(0, "Debug: ");
 		std::fputs(msg.c_str(), stderr);
+		msg.append("\n");
 	}
 }
 
@@ -506,21 +524,13 @@ static void GetActorPos() {
 
 static void SetActorRot() {
 	float pitch, yaw, roll;
-	lua_Object param3;
 	Actor *act;
 
 	DEBUG_FUNCTION();
-	param3 = lua_getparam(3);
 	act = check_actor(1);
-	pitch = luaL_check_number(2);
-	// param3 can be nil, the tube-switcher scene appears
-	// to call SetActorRot will nil for param3 intentionally
-	if (lua_isnil(param3))
-		yaw = 0;
-	else
-		yaw = luaL_check_number(3);
-	
-	roll = luaL_check_number(4);
+	pitch = check_double(2);
+	yaw = check_double(3);
+	roll = check_double(4);
 	if (getbool(5))
 		act->turnTo(pitch, yaw, roll);
 	else
@@ -582,14 +592,18 @@ static void GetActorYawToPoint() {
 }
 
 static void PutActorInSet() {
-	const char *set = "";
 	Actor *act;
 	
 	DEBUG_FUNCTION();
 	act = check_actor(1);
-	if (!lua_isnil(lua_getparam(2)))
+	if (!lua_isnil(lua_getparam(2))) {
+		const char *set;
+		
 		set = luaL_check_string(2);
-	act->putInSet(set);
+		// Make sure the actor isn't already in the set
+		if (!act->inSet(set))
+			act->putInSet(set);
+	}
 }
 
 static void SetActorWalkRate() {
@@ -742,6 +756,64 @@ stubWarning("TurnActorTo");
 static void PointActorAt() {
 stubWarning("PointActorAt");
 }
+
+/* Get the location of one of the actor's nodes, this is
+ * used by Glottis to watch where Manny is located in 
+ * order to hand him the work order.  This function is
+ * also important for when Velasco hands Manny the logbook
+ * in Rubacava
+ */
+static void GetActorNodeLocation() {
+	Model::HierNode *allNodes;
+	Costume *c;
+	Actor *act;
+	int node;
+	
+	// Should this actually do anything?
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	node = check_int(2);
+	c = act->currentCostume();
+	if (c == NULL) {
+		lua_pushnil();
+		lua_pushnil();
+		lua_pushnil();
+		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("GetActorNodeLocation() when actor has no costume (which means no nodes)!");
+		return;
+	}
+	allNodes = c->getModelNodes();
+	if (allNodes == NULL) {
+		lua_pushnil();
+		lua_pushnil();
+		lua_pushnil();
+		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("GetActorNodeLocation() when actor has no nodes!");
+	}
+	lua_pushnumber(allNodes[node]._pos.x());
+	lua_pushnumber(allNodes[node]._pos.y());
+	lua_pushnumber(allNodes[node]._pos.z());
+}
+
+static void SetActorWalkDominate() {
+	lua_Object param2;
+	Actor *act;
+	
+	// Should this actually do anything?
+	DEBUG_FUNCTION();
+	act = check_actor(1);
+	if (act == NULL) {
+		lua_pushnil();
+		return;
+	}
+	param2 = lua_getparam(2);
+	if (lua_isnil(param2))
+		lua_pushnil();
+	else if (lua_isnumber(param2))
+		lua_pushnumber(lua_getnumber(param2));
+	else
+		warning("Unknown SetActorWalkDominate parameter!");
+}
 static void SetActorColormap() {
 	char *mapname;
 	CMap *_cmap;
@@ -794,10 +866,13 @@ static void GetActorCostume() {
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	c = act->currentCostume();
-	if (c == NULL)
+	if (c == NULL) {
 		lua_pushnil();
-	else
-		lua_pushstring(const_cast<char *>(c->filename()));
+		if (debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
+			printf("GetActorCostume() on '%s' when actor has no costume!", act->name());
+		return;
+	}
+	lua_pushstring(const_cast<char *>(c->filename()));
 }
 
 static void PopActorCostume() {
@@ -957,9 +1032,6 @@ static void ActorLookAt() {
 
 		if (lua_isnumber(y))
 			act->setLookAtRate(luaL_check_number(3));
-
-		act->setLooking(true);
-		return;
 	} else if ( lua_isnumber(x)) { // look at xyz
 		Vector3d vector;
 		float fX;
@@ -988,13 +1060,13 @@ static void ActorLookAt() {
 
 		if (lua_isnumber(y))
 			act->setLookAtRate(luaL_check_number(3));
-	} else if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-		warning("ActorLookAt: Don't know what to look at!");
+	} else {
+		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("ActorLookAt: Don't know what to look at!");
+	}
 
 	act->setLooking(true);
-	// Fixes random bug when changing scenes (?) after we've done a jump
-	// (this function is close to the failure point)
-	lua_pushnil();
+	lua_pushnumber(1);
 }
 
 static void SetActorLookRate() {
@@ -1274,16 +1346,15 @@ static void IsActorInSector(void) {
 	numSectors = g_engine->currScene()->getSectorCount();
 	for (i = 0; i < numSectors; i++) {
 		Sector *sector = g_engine->currScene()->getSectorBase(i);
-
 		if (sector->visible() && strmatch(sector->name(), name)) {
 			if (sector->isPointInSector(act->pos())) {
 				lua_pushnumber(sector->id());
 				lua_pushstring((char *)sector->name());
 				lua_pushnumber(sector->type());
+				return;
 			}
 		}
 	}
-
 	lua_pushnil();
 }
 
@@ -1431,9 +1502,13 @@ static void ImStartSound() {
 	soundName = luaL_check_string(1);
 	priority = check_int(2);
 	group = check_int(3);
+	
+	// Start the sound with the appropriate settings
 	if (g_imuse->startSound(soundName, group, 0, 127, 0, priority)) {
 		lua_pushstring(soundName);
 	} else {
+		if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
+			error("ImStartSound failed to start '%s'", soundName);
 		lua_pushnil();
 	}
 }
@@ -1859,6 +1934,7 @@ void getTextObjectParams(TextObject *textObject, lua_Object table_obj) {
 
 /* Clean the buffer of text objects and primitives
  * this is known to be used when changing between menus
+ * and when loading some cutscenes
  */
 static void CleanBuffer() {
 	DEBUG_FUNCTION();
@@ -1897,6 +1973,18 @@ char *itemText(lua_Object itemTable, int menuItem) {
 		return NULL;
 }
 
+/* This function sends the SDL signal to
+ * go ahead and exit the game
+ */
+static void Exit() {
+	SDL_Event event;
+	
+	DEBUG_FUNCTION();
+	event.type = SDL_QUIT;
+	if (SDL_PushEvent(&event) != 0)
+		error("Unable to push exit event!");
+}
+
 /* This function provides all of the menu
  * handling that has been observed
  */
@@ -1920,35 +2008,6 @@ static void menuHandler() {
 	// get the keycode
 	key = atoi(lua_getstring(keycode));
 
-	// get the item list for most menus
-	itemTable = getTableValue(menuTable, "menu");
-	if (!lua_istable(itemTable)) {
-		// 3D Acceleration Menu
-		itemTable = getTableValue(menuTable, "active_menu");
-		if (!lua_istable(itemTable)) {
-			// Control Help menu
-			lua_Object nextPage = getTableValue(menuTable, "next_page");
-			lua_Object prevPage = getTableValue(menuTable, "prev_page");
-
-			if (lua_isfunction(nextPage) && key == SDLK_RIGHT) {
-				lua_beginblock();
-				lua_pushobject(menuTable);
-				lua_callfunction(nextPage);
-				lua_endblock();
-			} else if (lua_isfunction(prevPage) && key == SDLK_LEFT) {
-				lua_beginblock();
-				lua_pushobject(menuTable);
-				lua_callfunction(prevPage);
-				lua_endblock();
-			}
-			return;
-		}
-	}
-
-	// get the current item
-	menuItem = atoi(lua_getstring(getTableValue(itemTable, "cur_item")));
-	menuItems = atoi(lua_getstring(getTableValue(itemTable, "num_items")));
-
 	// handle hotkeys
 	if (key >= SDLK_a && key <= SDLK_z) {
 		char keychar[2];
@@ -1965,11 +2024,71 @@ static void menuHandler() {
 		key = 0;
 		return; // stop processing (we don't need to handle normal keystrokes)
 	}
+	
+	// Handle the correct type of menu
+	if (!lua_isnil(getTableValue(menuTable, "menu"))) {
+		// Get the item list for most menus
+		itemTable = getTableValue(menuTable, "menu");
+	} else if (!lua_isnil(getTableValue(menuTable, "active_menu"))) {
+		// 3D Acceleration Menu
+		itemTable = getTableValue(menuTable, "active_menu");
+	} else if (!lua_isnil(getTableValue(menuTable, "num_choices"))) {
+		// Exit Menu
+		int current_choice = atoi(lua_getstring(getTableValue(menuTable, "current_choice")));
+		int num_choices = atoi(lua_getstring(getTableValue(menuTable, "num_choices")));
+		
+		if (key == SDLK_RIGHT)
+			current_choice++;
+		else if (key == SDLK_LEFT)
+			current_choice--;
+		
+		if (current_choice < 0)
+			current_choice = 0;
+		else if (current_choice >= num_choices)
+			current_choice = num_choices-1;
+		
+		setTableValue(menuTable, "current_choice", current_choice);
+		// TODO: Need to figure out how to update the screen under this
+		// type of menu operation!
+		return;
+	} else if (lua_isfunction(getTableValue(menuTable, "next_page"))
+	 || lua_isfunction(getTableValue(menuTable, "prev_page"))) {
+		// Control Help menu
+		lua_Object nextPage = getTableValue(menuTable, "next_page");
+		lua_Object prevPage = getTableValue(menuTable, "prev_page");
+		
+		if (lua_isfunction(nextPage) && key == SDLK_RIGHT) {
+			lua_beginblock();
+			lua_pushobject(menuTable);
+			lua_callfunction(nextPage);
+			lua_endblock();
+		} else if (lua_isfunction(prevPage) && key == SDLK_LEFT) {
+			lua_beginblock();
+			lua_pushobject(menuTable);
+			lua_callfunction(prevPage);
+			lua_endblock();
+		}
+		return;
+	} else {
+		warning("Unhandled type of menu!");
+		return;
+	}
+
+	// get the current item
+	menuItem = atoi(lua_getstring(getTableValue(itemTable, "cur_item")));
+	menuItems = atoi(lua_getstring(getTableValue(itemTable, "num_items")));
 
 	// hack the "&Return to Game" command so it actually works
 	if (key == SDLK_RETURN && strmatch(itemText(itemTable, menuItem), "/sytx247/"))
 		key = SDLK_ESCAPE;
 
+	// hack the "&Quit" command so it actually works
+	// (at this time it cannot open the exit menu on top of the normal one)
+	if (key == SDLK_RETURN && strmatch(itemText(itemTable, menuItem), "/sytx248/")) {
+		Exit();
+		return;
+	}
+	
 	/* if we're running the menu then we need to manually handle
 	 * a lot of the operations necessary to use the menu
 	 */
@@ -1982,16 +2101,11 @@ static void menuHandler() {
 				return;
 
 			lua_Object close = getTableFunction(menuTable, "cancel");
-			lua_Object destroy = getTableFunction(menuTable, "destroy");
 
 			lua_beginblock();
 			lua_pushobject(menuTable);
 			lua_pushnil();
 			lua_callfunction(close);
-			lua_endblock();
-			lua_beginblock();
-			lua_pushnumber(menuItem);
-			lua_callfunction(destroy);
 			lua_endblock();
 			break;
 		}
@@ -2031,16 +2145,7 @@ static void menuHandler() {
 		lua_endblock();
 	}
 }
-  
-/* Clean the requested menu
- */
-static void destroyMenu() {
-	DEBUG_FUNCTION();
-	CleanBuffer();
-	lua_Object system_table = lua_getglobal("system");
-	setTableValue(system_table, "menuHandler", (lua_Object) 0);
-}
-  
+
 /* Check for an existing object by a certain name
  * this function is used by several functions that look
  * for text objects to see if they need to be created/modified/destroyed.
@@ -2252,14 +2357,18 @@ static void StartMovie() {
 	pushbool(g_smush->play(luaL_check_string(1), x, y));
 }
 
+/* Fullscreen movie playing query and normal movie
+ * query should actually detect correctly and not
+ * just return true whenever ANY movie is playing
+ */
 static void IsFullscreenMoviePlaying() {
 	DEBUG_FUNCTION();
-	pushbool(g_smush->isPlaying());
+	pushbool(g_smush->isPlaying() && g_engine->getMode() == ENGINE_MODE_SMUSH);
 }
 
 static void IsMoviePlaying() {
 	DEBUG_FUNCTION();
-	pushbool(g_smush->isPlaying());
+	pushbool(g_smush->isPlaying() && g_engine->getMode() == ENGINE_MODE_NORMAL);
 }
 
 static void StopMovie() {
@@ -2411,11 +2520,6 @@ static void GetDiskFreeSpace() {
 
 // Objectstate functions
 static void NewObjectState() {
-	enum ObjectPosition {
-		OBJSTATE_UNDERLAY = 1,
-		OBJSTATE_OVERLAY = 2,
-		OBJSTATE_STATE = 3
-	};
 	ObjectState *state = NULL;
 	ObjectState::Position pos;
 	char *bitmap, *zbitmap;
@@ -2423,6 +2527,7 @@ static void NewObjectState() {
 	int setupID;
 
 	DEBUG_FUNCTION();
+	// Called with "nil" if you jump to zone "sp"
 	setupID = check_int(1);					// Setup ID
 	pos = check_objstate_pos(2); 		// When to draw
 	bitmap = luaL_check_string(3);	// Bitmap
@@ -2683,18 +2788,30 @@ static void RenderModeUser() {
 	}
 }
 
+/* For now this should just destroy any text
+ * objects that have been created and unlink
+ * the menu (this may be more appropriate under
+ * RenderModeUser, determine later)
+ */
+static void SetGamma() {
+	lua_Object system_table = lua_getglobal("system");
+	
+	// TODO: Make this un-dim the screen
+	stubWarning("SetGamma");
+	
+	CleanBuffer();
+	// Un-Install Menu Key Handler
+	lua_pushobject(system_table);
+	lua_pushstring(const_cast<char *>("menuHandler"));
+	lua_pushnil();
+	lua_settable();
+}
+
 static void Display() {
 	lua_Object system_table;
 	
 	DEBUG_FUNCTION();
 	system_table = lua_getglobal("system");
-	// Install Menu Destroy Handler
-	lua_pushobject(system_table);
-	lua_pushstring(const_cast<char *>("userPaintHandler"));
-	lua_pushobject(lua_gettable());
-	lua_pushstring(const_cast<char *>("destroy"));
-	lua_pushcfunction(destroyMenu);
-	lua_settable();
 	// Install Menu Key Handler
 	lua_pushobject(system_table);
 	lua_pushstring(const_cast<char *>("menuHandler"));
@@ -2838,7 +2955,6 @@ STUB_FUNC(ActivateActorShadow)
 STUB_FUNC(SetShadowColor)
 STUB_FUNC(DimRegion)
 STUB_FUNC(ForceRefresh)
-STUB_FUNC(SetGamma)
 STUB_FUNC(LightMgrStartup)
 STUB_FUNC(SetLightIntensity)
 STUB_FUNC(SetLightPosition)
@@ -2862,12 +2978,10 @@ STUB_FUNC(SetActorPitch)
 STUB_FUNC(GetPointSector)
 STUB_FUNC(IsPointInSector)
 STUB_FUNC(SetActorFrustrumCull)
-STUB_FUNC(SetActorWalkDominate)
 STUB_FUNC(GetCameraActor)
 STUB_FUNC(DriveActorTo)
 STUB_FUNC(WalkActorVector)
 STUB_FUNC(GetActorRect)
-STUB_FUNC(GetActorNodeLocation)
 STUB_FUNC(SetActorTimeScale)
 STUB_FUNC(SetActorScale)
 STUB_FUNC(GetTranslationMode)
@@ -2876,7 +2990,6 @@ STUB_FUNC(PrintLine)
 STUB_FUNC(KillPrimitive)
 STUB_FUNC(WalkActorToAvoiding)
 STUB_FUNC(GetActorChores)
-STUB_FUNC(Exit)
 STUB_FUNC(SetCameraPosition)
 STUB_FUNC(GetCameraFOV)
 STUB_FUNC(SetCameraFOV)

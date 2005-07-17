@@ -94,6 +94,7 @@ class Engine {
 public:
 
 	void setMode(int mode) { _mode = mode; }
+	int getMode() { return _mode; }
 	void setSpeechMode(int mode) { _speechMode = mode; }
 	int getSpeechMode() { return _speechMode; }
 
@@ -101,7 +102,14 @@ public:
 	unsigned frameStart() const { return _frameStart; }
 	unsigned frameTime() const { return _frameTime; }
 
-	float perSecond(float rate) const { return rate * _frameTime / 1000; }
+	float perSecond(float rate) const {
+		// The actor "Doug" at the Kitty races has no _turnRate set by default
+		// so we need to return some sort of time that's non-zero for a rate
+		// value of zero
+		if (rate == 0.0)
+			rate = 100.0;
+		return rate * _frameTime / 1000;
+	}
 
 	int getTextSpeed() { return _textSpeed; }
 	void setTextSpeed(int speed);

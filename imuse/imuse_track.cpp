@@ -28,50 +28,70 @@
 int Imuse::allocSlot(int priority) {
 	int l, lowest_priority = 127;
 	int trackId = -1;
-
+	
+	// allocSlot called by startSound so no locking is necessary
 	for (l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		if (!_track[l]->used) {
-			trackId = l;
-			break;
+			return l; // Found an unused track
 		}
 	}
 
-	if (trackId == -1) {
-		warning("Imuse::startSound(): All slots are full");
-		for (l = 0; l < MAX_IMUSE_TRACKS; l++) {
-			Track *track = _track[l];
-			if (track->used && !track->toBeRemoved && lowest_priority > track->priority) {
-				lowest_priority = track->priority;
-				trackId = l;
-			}
+	warning("Imuse::startSound(): All slots are full");
+	for (l = 0; l < MAX_IMUSE_TRACKS; l++) {
+		Track *track = _track[l];
+		if (track->used && !track->toBeRemoved && lowest_priority > track->priority) {
+			lowest_priority = track->priority;
+			trackId = l;
 		}
-		if (lowest_priority <= priority) {
-			assert(trackId != -1);
-			_track[trackId]->toBeRemoved = true;
-			warning("Imuse::startSound(): Removed sound %s from track %d", _track[trackId]->soundName, trackId);
-		} else {
-			warning("Imuse::startSound(): Priority sound too low");
-			return -1;
-		}
+	}
+	if (lowest_priority <= priority) {
+		assert(trackId != -1);
+		_track[trackId]->toBeRemoved = true;
+		warning("Imuse::startSound(): Removed sound %s from track %d", _track[trackId]->soundName, trackId);
+	} else {
+		warning("Imuse::startSound(): Priority sound too low");
+		return -1;
 	}
 
 	return trackId;
 }
 
 bool Imuse::startSound(const char *soundName, int volGroupId, int hookId, int volume, int pan, int priority) {
-	int l = allocSlot(priority);
+	Track *track = NULL;
+	int i, l = -1;
+	
+	StackLock lock(_mutex);
+	// If the track is already playing then there is absolutely no
+	// reason to start it again, the existing track should be modified
+	// instead of starting a new copy of the track
+	for (i = 0; i < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; i++) {
+		// Filenames are case insensitive, see findTrack
+		if (!strcasecmp(_track[i]->soundName, soundName)) {
+			if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
+				printf("Imuse::startSound(): Track '%s' already playing.\n", soundName);
+			return true;
+		}
+	}
+	l = allocSlot(priority);
 	if (l == -1) {
-		warning("Imuse::startSound() Can't start sound - no free slots");
+		warning("Imuse::startSound(): Can't start sound - no free slots");
 		return false;
 	}
-
-	Track *track = _track[l];
-	while (track->used) {
+	track = _track[l];
+	i = 5;
+	// At this time it is inappropriate to assume that this will always
+	// succeed, so set a limit of 5 tries on running flushTracks
+	while (track->used && i > 0) {
 		// The designated track is not yet available. So, we call flushTracks()
 		// to get it processed (and thus made ready for us). Since the actual
 		// processing is done by another thread, we also call parseEvents to
 		// give it some time (and to avoid busy waiting/looping).
 		flushTracks();
+		i--;
+	}
+	if (i == 0) {
+		if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("Imuse::startSound(): flushTracks was unnable to free up a track!");
 	}
 
 	track->pan = pan * 1000;
@@ -142,59 +162,82 @@ bool Imuse::startSound(const char *soundName, int volGroupId, int hookId, int vo
 	return true;
 }
 
-void Imuse::setPriority(const char *soundName, int priority) {
-	assert ((priority >= 0) && (priority <= 127));
-
+Imuse::Track *Imuse::findTrack(const char *soundName) {
+	StackLock lock(_mutex);
 	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
-		if (track->used && !track->toBeRemoved && (strcmp(track->soundName, soundName) == 0)) {
-			track->priority = priority;
+		
+		// Since the audio (at least for Eva's keystrokes) can be referenced
+		// two ways: keyboard.IMU and keyboard.imu, make a case insensitive
+		// search for the track to make sure we can find it
+		if (strcasecmp(track->soundName, soundName) == 0) {
+			return track;
 		}
 	}
+	return NULL;
+}
+
+void Imuse::setPriority(const char *soundName, int priority) {
+	Track *changeTrack = NULL;
+	assert ((priority >= 0) && (priority <= 127));
+	
+	changeTrack = findTrack(soundName);
+	// Check to make sure we found the track
+	if (changeTrack == NULL) {
+		warning("Unable to find track '%s' to change priority!", soundName);
+		return;
+	}
+	changeTrack->priority = priority;
 }
 
 void Imuse::setVolume(const char *soundName, int volume) {
-	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
-		Track *track = _track[l];
-		if (track->used && !track->toBeRemoved && (strcmp(track->soundName, soundName) == 0)) {
-			track->vol = volume * 1000;
-		}
+	Track *changeTrack;
+	
+	changeTrack = findTrack(soundName);
+	if (changeTrack == NULL) {
+		warning("Unable to find track '%s' to change volume!", soundName);
+		return;
 	}
+	changeTrack->vol = volume * 1000;
 }
 
 void Imuse::setPan(const char *soundName, int pan) {
-	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
-		Track *track = _track[l];
-		if (track->used && !track->toBeRemoved && (strcmp(track->soundName, soundName) == 0)) {
-			track->pan = pan;
-		}
+	Track *changeTrack;
+	
+	changeTrack = findTrack(soundName);
+	if (changeTrack == NULL) {
+		warning("Unable to find track '%s' to change volume!", soundName);
+		return;
 	}
+	changeTrack->pan = pan;
 }
 
 int Imuse::getVolume(const char *soundName) {
-	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
-		Track *track = _track[l];
-		if (track->used && !track->toBeRemoved && (strcmp(track->soundName, soundName) == 0)) {
-			return track->vol / 1000;
-		}
+	Track *getTrack;
+	
+	getTrack = findTrack(soundName);
+	if (getTrack == NULL) {
+		warning("Unable to find track '%s' to get volume!", soundName);
+		return 0;
 	}
-
-	return 0;
+	return getTrack->vol / 1000;
 }
 
 void Imuse::setHookId(const char *soundName, int hookId) {
-	StackLock lock(_mutex);
-
-	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
-		Track *track = _track[l];
-		if (track->used && !track->toBeRemoved && (strcmp(track->soundName, soundName) == 0)) {
-			track->curHookId = hookId;
-		}
+	Track *changeTrack;
+	
+	changeTrack = findTrack(soundName);
+	if (changeTrack == NULL) {
+		warning("Unable to find track '%s' to change hook id!", soundName);
+		return;
 	}
+	changeTrack->curHookId = hookId;
 }
 
 int Imuse::getCountPlayedTracks(const char *soundName) {
 	int count = 0;
+	
+	StackLock lock(_mutex);
 	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (strcmp(track->soundName, soundName) == 0)) {
@@ -206,59 +249,61 @@ int Imuse::getCountPlayedTracks(const char *soundName) {
 }
 
 void Imuse::selectVolumeGroup(const char *soundName, int volGroupId) {
+	Track *changeTrack;
 	assert((volGroupId >= 1) && (volGroupId <= 4));
 
 	if (volGroupId == 4)
 		volGroupId = 3;
 
-	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
-		Track *track = _track[l];
-		if (track->used && !track->toBeRemoved && (strcmp(track->soundName, soundName) == 0)) {
-			track->volGroupId = volGroupId;
-		}
+	changeTrack = findTrack(soundName);
+	if (changeTrack == NULL) {
+		warning("Unable to find track '%s' to change volume group id!", soundName);
+		return;
 	}
+	changeTrack->volGroupId = volGroupId;
 }
 
 void Imuse::setFadeVolume(const char *soundName, int destVolume, int duration) {
-	StackLock lock(_mutex);
+	Track *changeTrack;
 
-	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
-		Track *track = _track[l];
-		if (track->used && !track->toBeRemoved && (strcmp(track->soundName, soundName) == 0)) {
-			track->volFadeDelay = duration;
-			track->volFadeDest = destVolume * 1000;
-			track->volFadeStep = (track->volFadeDest - track->vol) * 60 * (1000 / _callbackFps) / (1000 * duration);
-			track->volFadeUsed = true;
-		}
+	changeTrack = findTrack(soundName);
+	if (changeTrack == NULL) {
+		warning("Unable to find track '%s' to change fade volume!", soundName);
+		return;
 	}
+	changeTrack->volFadeDelay = duration;
+	changeTrack->volFadeDest = destVolume * 1000;
+	changeTrack->volFadeStep = (changeTrack->volFadeDest - changeTrack->vol) * 60 * (1000 / _callbackFps) / (1000 * duration);
+	changeTrack->volFadeUsed = true;
 }
 
 void Imuse::setFadePan(const char *soundName, int destPan, int duration) {
-	StackLock lock(_mutex);
+	Track *changeTrack;
 
-	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
-		Track *track = _track[l];
-		if (track->used && !track->toBeRemoved && (strcmp(track->soundName, soundName) == 0)) {
-			track->panFadeDelay = duration;
-			track->panFadeDest = destPan * 1000;
-			track->panFadeStep = (track->panFadeDest - track->pan) * 60 * (1000 / _callbackFps) / (1000 * duration);
-			track->panFadeUsed = true;
-		}
+	changeTrack = findTrack(soundName);
+	if (changeTrack == NULL) {
+		warning("Unable to find track '%s' to change fade pan!", soundName);
+		return;
 	}
+	changeTrack->panFadeDelay = duration;
+	changeTrack->panFadeDest = destPan * 1000;
+	changeTrack->panFadeStep = (changeTrack->panFadeDest - changeTrack->pan) * 60 * (1000 / _callbackFps) / (1000 * duration);
+	changeTrack->panFadeUsed = true;
 }
 
 char *Imuse::getCurMusicSoundName() {
+	StackLock lock(_mutex);
 	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
 			return track->soundName;
 		}
 	}
-
-	return "";
+	return NULL;
 }
 
 void Imuse::fadeOutMusic(int duration) {
+	StackLock lock(_mutex);
 	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {

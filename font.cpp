@@ -82,6 +82,33 @@ Font::~Font() {
 	free(_fontData);
 }
 
+uint16 Font::getCharIndex(unsigned char c)
+{
+	uint16 c2 = uint16(c);
+	
+	// In order to ensure the correct character codes for
+	// accented characters it is necessary to check the
+	// requested code against the index of characters for 
+	// the font.  Previously, signed characters were
+	// causing the problem but it might be possible for
+	// an invalid character to be called for other reasons.
+	//
+	// Example: Without this fix when Manny greets Eva
+	// for the first time and he says "Buenos Días" the
+	// 'í' character will either show up as a different
+	// character or it crashes the game.
+	for (uint i = 0; i < _numChars; ++i) {
+	  if (_charIndex[i] == c2)
+			return i;
+	}
+	if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+		warning("The requsted character (code 0x%x) does not correspond to anything in the font data!\n", c2);
+	// If we couldn't find the character then default to
+	// the first character in the font so that something
+	// gets loaded to prevent the game from crashing
+	return 0;
+}
+
 // Hardcoded default font for GUI, etc
 const uint8 Font::emerFont[][13] = {
 {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, 

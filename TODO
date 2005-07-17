@@ -1,17 +1,22 @@
 Residual TODO list (in rough order of priority):
 ------------------------------------------------
 Assigned tasks:
+ * Make game playable to the petrified forest (compholio)
  * Finish text drawing support (salty-horse, aquadran)
  * Cross platform GUI for debug input dialogs and path selection (ender)
  * Improved walk box code (frob)
  * Implement FadeInChore and FadeOutChore (frob)
  * Implement texture mapping with light shading in TinyGL (aquadran)
+ * Improve menu support (compholio)
+ * Improve SMUSH looping support (compholio)
 
 Unassigned (help wanted):
+ * Fix random problem with Manny changing between scenes, switching between
+   fe.set and st.set is a good example of where it happens a lot
  * Add configure script (Custom ala main ScummVM, NOT autoconf)
  * Proper light setup in drivers
  * Finish Save/Load support for rest of Engine (Lua and iMuse done)
- * Implement 2D primitives
+ * Finish 2D primitive code
  * Proper vsscanf implementation in textsplit.cpp for platforms without it (MSVC, etc)
  * Make SMUSH work on Linux/PPC (whats wrong with it, exactly? - ender :)
  * Finish panning in 3d position code

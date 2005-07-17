@@ -35,11 +35,28 @@ KeyframeAnim::KeyframeAnim(const char *filename, const char *data, int len) :
 }
 
 void KeyframeAnim::loadBinary(const char *data, int len) {
+	// First four bytes are the FYEK Keyframe identifier code
+	// Next 36 bytes are the filename
+	if (debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL) {
+		char filebuf[37];
+		
+		memcpy(filebuf, data + 4, 36);
+		filebuf[37] = 0;
+		printf("Loading Keyframe '%s'.\n", filebuf);
+	}
+	// Next four bytes are the flags
 	_flags = READ_LE_UINT32(data + 40);
+	// Next four bytes are a duplicate of _numJoints (?)
+	// Next four bytes are the type
 	_type = READ_LE_UINT32(data + 48);
+	// Next four bytes are the frames per second
 	_fps = get_float(data + 52);
+	// Next four bytes are the number of frames
 	_numFrames = READ_LE_UINT32(data + 56);
+	// Next four bytes are the number of joints
 	_numJoints = READ_LE_UINT32(data + 60);
+	// Next four bytes are unknown (?)
+	// Next four bytes are the number of markers
 	_numMarkers = READ_LE_UINT32(data + 68);
 	_markers = new Marker[_numMarkers];
 	for (int i = 0; i < _numMarkers; i++) {
@@ -51,16 +68,22 @@ void KeyframeAnim::loadBinary(const char *data, int len) {
 	for (int i = 0; i < _numJoints; i++)
 		_nodes[i] = NULL;
 	const char *dataEnd = data + len;
-	data += 180;
+	// The first 136 bytes are for the header, this was originally
+	// listed as 180 bytes since the first operation is usually a
+	// "null" key, however ma_card_hold.key showed that this is
+	// not always the case so we should not skip this operation
+	data += 136;
 	while (data < dataEnd) {
-		// ma_card_hold.key crashes at this part without checking
-		// to make sure nodeNum is valid, unfortunately I believe
-		// whatever data we're losing from this file is what prevents
-		// the game from continuing after Manny reads the message
-		// 
-		// TODO: Find out what really goes wrong when we read
-		// the data in ma_card_hold.key and fix it
-		int nodeNum = READ_LE_UINT32(data + 32);
+		int nodeNum;
+		// The first 32 bytes (of a keyframe) are the name handle
+		// The next four bytes are the node number identifier
+		nodeNum = READ_LE_UINT32(data + 32);
+
+		// Because of the issue above ma_card_hold.key used to crash
+		// at this part without checking to make sure nodeNum is a
+		// valid number, we'll leave this in just in case something
+		// else is still wrong but it should now load correctly in
+		// all cases
 		if (nodeNum >= _numJoints) {
 			if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL) {
 				warning("A node number was greater than the maximum number of nodes (%d/%d)", nodeNum, _numJoints);
@@ -117,10 +140,10 @@ void KeyframeAnim::animate(Model::HierNode *nodes, float time, int priority1, in
 	if (frame > _numFrames)
 		frame = _numFrames;
 
-	for (int i = 0; i < _numJoints; i++)
+	for (int i = 0; i < _numJoints; i++) {
 		if (_nodes[i] != NULL)
-
-	_nodes[i]->animate(nodes[i], frame, ((_type & nodes[i]._type) != 0 ? priority2 : priority1));
+			_nodes[i]->animate(nodes[i], frame, ((_type & nodes[i]._type) != 0 ? priority2 : priority1));
+	}
 }
 
 void KeyframeAnim::KeyframeEntry::loadBinary(const char *&data) {
@@ -138,13 +161,18 @@ void KeyframeAnim::KeyframeEntry::loadBinary(const char *&data) {
 }
 
 void KeyframeAnim::KeyframeNode::loadBinary(const char *&data) {
-	std::memcpy(_meshName, data, 32);
+	// If the name handle is entirely null (like ma_rest.key)
+	// then we shouldn't try to set the name
+	if (READ_LE_UINT32(data) == 0)
+		std::memcpy(_meshName, "(null)", 32);
+	else
+		std::memcpy(_meshName, data, 32);
 	_numEntries = READ_LE_UINT32(data + 36);
 	data += 44;
 	_entries = new KeyframeEntry[_numEntries];
 	for (int i = 0; i < _numEntries; i++)
 		_entries[i].loadBinary(data);
-	}
+}
 
 void KeyframeAnim::KeyframeNode::loadText(TextSplitter &ts) {
 	ts.scanString("mesh name %s", 1, _meshName);

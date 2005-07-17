@@ -29,6 +29,12 @@
 #include <zlib.h>
 #include <cstring>
 
+struct SAVEPOS {
+	long filePos;
+	z_stream streamBuf;
+	char *tmpBuf;
+};
+
 class zlibFile {
 private:
 	FILE *_handle;
@@ -39,7 +45,9 @@ private:
 public:
 	zlibFile();
 	~zlibFile();
+	bool setPos(struct SAVEPOS *pos);
 	bool open(const char *filename);
+	struct SAVEPOS *getPos();
 	void close();
 	bool isOpen();
 
@@ -67,6 +75,8 @@ private:
 	int _freq;
 	bool _videoFinished;
 	bool _videoPause;
+	bool _videoLooping;
+	struct SAVEPOS *_startPos;
 	int _x, _y;
 	int _width, _height;
 	byte *_internalBuffer, *_externalBuffer;

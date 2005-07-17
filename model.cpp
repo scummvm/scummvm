@@ -263,10 +263,12 @@ void Model::loadText(TextSplitter &ts, const CMap &cmap) {
 	_materials = new ResPtr<Material>[_numMaterials];
 	_materialNames = new char[_numMaterials][32];
 	for (int i = 0; i < _numMaterials; i++) {
+		char materialName[32];
 		int num;
 		
-		ts.scanString("%d: %32s", 2, &num, _materialNames[num]);
-		_materials[num] = g_resourceloader->loadMaterial(_materialNames[num], cmap);
+		ts.scanString("%d: %32s", 2, &num, materialName);
+		_materials[num] = g_resourceloader->loadMaterial(materialName, cmap);
+		strcpy(_materialNames[num], materialName);
 	}
 
 	ts.expectString("section: geometrydef");
@@ -401,16 +403,17 @@ void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
 	_faces = new Face[_numFaces];
 	_materialid = new int[_numFaces];
 	for (int i = 0; i < _numFaces; i++) {
-		int num, type, geo, light, tex, verts;
+		int num, materialid, type, geo, light, tex, verts;
 		float extralight;
 		int readlen;
 
 		if (ts.eof())
 			error("Expected face data, got EOF\n");
 
-		if (std::sscanf(ts.currentLine(), " %d: %d %i %d %d %d %f %d%n", &num, &_materialid[num], &type, &geo, &light, &tex, &extralight, &verts, &readlen) < 8)
+		if (std::sscanf(ts.currentLine(), " %d: %d %i %d %d %d %f %d%n", &num, &materialid, &type, &geo, &light, &tex, &extralight, &verts, &readlen) < 8)
 			error("Expected face data, got `%s'\n", ts.currentLine());
 
+		_materialid[num] = materialid;
 		_faces[num]._material = materials[_materialid[num]];
 		_faces[num]._type = type;
 		_faces[num]._geo = geo;

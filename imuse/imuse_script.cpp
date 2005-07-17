@@ -27,6 +27,8 @@
 #include "imuse/imuse_sndmgr.h"
 
 void Imuse::flushTracks() {
+	// flushTracks should not lock the stack since all the functions
+	// that call it already do (stopAllSounds, startSound)
 	for (int l = 0; l < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && track->readyToRemove) {
@@ -41,6 +43,7 @@ void Imuse::flushTracks() {
 					_sound->closeSound(track->soundHandle);
 					track->soundHandle = NULL;
 					track->used = false;
+					strcpy(track->soundName, "");
 				}
 			}
 		}
@@ -49,6 +52,8 @@ void Imuse::flushTracks() {
 
 void Imuse::refreshScripts() {
 	bool found = false;
+	
+	StackLock lock(_mutex);
 	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
@@ -74,18 +79,25 @@ void Imuse::startSfx(const char *soundName, int priority) {
 }
 
 int32 Imuse::getPosIn60HzTicks(const char *soundName) {
-	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
-		Track *track = _track[l];
-		if (track->handle.isActive() && (strcmp(track->soundName, soundName) == 0)) {
-			int32 pos = (5 * (track->dataOffset + track->regionOffset)) / (track->iteration / 12);
-			return pos;
-		}
+	Track *getTrack = NULL;
+	
+	getTrack = findTrack(soundName);
+	// Warn the user if the track was not found
+	if (getTrack == NULL) {
+		if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("Music track '%s' could not be found to get ticks!", soundName);
+		return false;
 	}
 
+	if (getTrack->handle.isActive()) {
+		int32 pos = (5 * (getTrack->dataOffset + getTrack->regionOffset)) / (getTrack->iteration / 12);
+		return pos;
+	}
 	return -1;
 }
 
 bool Imuse::isVoicePlaying() {
+	StackLock lock(_mutex);
 	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->volGroupId == IMUSE_VOLGRP_VOICE) {
@@ -98,30 +110,45 @@ bool Imuse::isVoicePlaying() {
 	return false;
 }
 
-bool Imuse::getSoundStatus(const char *soundName) const {
-	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
-		Track *track = _track[l];
-		if (strcmp(track->soundName, soundName) == 0) {
-			if (track->handle.isActive()) {
-				return true;
-			}
-		}
+bool Imuse::getSoundStatus(const char *soundName) {
+	Track *statusTrack = NULL;
+	
+	// If there's no name then don't try to get the status!
+	if (strlen(soundName) == 0)
+		return false;
+	
+	statusTrack = findTrack(soundName);
+	// Warn the user if the track was not found
+	if (statusTrack == NULL) {
+		// This debug warning should be "light" since this function gets called
+		// on occassion to see if a sound has stopped yet
+		if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
+			printf("Music track '%s' could not be found to get status, assume inactive.\n", soundName);
+		return false;
 	}
-
-	return false;
+	return statusTrack->handle.isActive();
 }
 
 void Imuse::stopSound(const char *soundName) {
-	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
-		Track *track = _track[l];
-		if (track->used && !track->toBeRemoved && (strcmp(track->soundName, soundName) == 0)) {
-			track->toBeRemoved = true;
-		}
+	Track *removeTrack = NULL;
+	
+	removeTrack = findTrack(soundName);
+	// Warn the user if the track was not found
+	if (removeTrack == NULL) {
+		if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("Music track '%s' could not be found to stop!", soundName);
+		return;
 	}
+	removeTrack->toBeRemoved = true;
 }
 
 void Imuse::stopAllSounds() {
-	for(;;) {
+	int i;
+	StackLock lock(_mutex);
+	// Make 5 attempts to close out all the sounds before failing
+	// At this time it is inappropriate to say we are stable enough
+	// to just let this run forever
+	for(i = 5; i > 0; i--) {
 		bool foundNotRemoved = false;
 		for (int l = 0; l < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; l++) {
 			Track *track = _track[l];
@@ -134,6 +161,10 @@ void Imuse::stopAllSounds() {
 			break;
 		flushTracks();
 		SDL_Delay(50);
+	}
+	if (i == 0) {
+		if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("Imuse::stopAllSounds() did not stop everything!");
 	}
 }
 

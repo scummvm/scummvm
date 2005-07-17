@@ -54,7 +54,13 @@ public:
 	float roll() const { return _roll; }
 	void setVisibility(bool val) { _visible = val; }
 	bool visible() const { return _visible; }
-	void putInSet(const char *name) { _setName = name; }
+	// Don't actually change the set immediately, see engine.cpp for details
+	void putInSet(const char *name) { _setNameTmp = name; }
+	void putInSet() {
+		if (_setName != _setNameTmp) {
+			_setName = _setNameTmp;
+		}
+	 }
 	void setTurnRate(float rate) { _turnRate = rate; }
 	float turnRate() const { return _turnRate; }
 	void setWalkRate(float rate) { _walkRate = rate; }
@@ -128,7 +134,8 @@ public:
 
 private:
 	std::string _name;
-	std::string _setName;
+	std::string _setName;    // The actual current set
+	std::string _setNameTmp; // The temporary name for the set
 	Color _talkColor;
 	Vector3d _pos;
 	float _pitch, _yaw, _roll;

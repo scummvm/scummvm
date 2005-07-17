@@ -368,8 +368,13 @@ void DriverGL::drawBitmap(const Bitmap *bitmap) {
 		glEnable(GL_DEPTH_TEST);
 	} else if (bitmap->_format == 5) {	// ZBuffer image
 		// Only draw the manual zbuffer when enabled
-		if (ZBUFFER_GLOBAL)
-			drawDepthBitmap(bitmap->_x, bitmap->_y, bitmap->_width, bitmap->_height, bitmap->_data[bitmap->_currImage - 1]);
+		if (ZBUFFER_GLOBAL) {
+			if (bitmap->_currImage - 1 < bitmap->_numImages) {
+				drawDepthBitmap(bitmap->_x, bitmap->_y, bitmap->_width, bitmap->_height, bitmap->_data[bitmap->_currImage - 1]);
+			} else {
+				warning("zbuffer image has index out of bounds! %d/%d\n", bitmap->_currImage, bitmap->_numImages);
+			}
+		}
 	}
 	glEnable(GL_LIGHTING);
 }
@@ -508,7 +513,6 @@ void DriverGL::drawSmushFrame(int offsetX, int offsetY) {
 
 	glDisable(GL_LIGHTING);
 	glEnable(GL_TEXTURE_2D);
-
 	// draw
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);

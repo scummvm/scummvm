@@ -34,7 +34,7 @@
 Actor::Actor(const char *name) :
 		_name(name), _talkColor(255, 255, 255), _pos(0, 0, 0),
 		_pitch(0), _yaw(0), _roll(0), _walkRate(0), _turnRate(0),
-		_reflectionAngle(80),
+		_reflectionAngle(80), _setName(""), _setNameTmp(""),
 		_visible(true), _lipSynch(NULL), _turning(false), _walking(false),
 		_restCostume(NULL), _restChore(-1),
 		_walkCostume(NULL), _walkChore(-1), _walkedLast(false), _walkedCur(false),
@@ -278,9 +278,11 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 		return;
 	}
 
-	// During movies, SayLine is called for text display only
-	if (!g_smush->isPlaying()) {
-		
+	// During Fullscreen movies SayLine is called for text display only
+	// However, normal SMUSH movies may call SayLine, for example:
+	// When Domino yells at Manny (a SMUSH movie) he does it with
+	// a SayLine request rather than as part of the movie!
+	if (!g_smush->isPlaying() || g_engine->getMode() == ENGINE_MODE_NORMAL) {
 		std::string soundName = msgId;
 		std::string soundLip = msgId;
 		soundName += ".wav";
@@ -306,7 +308,11 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 			// Also, some lip synch files have no entries
 			// In these cases, revert to using the mumble chore.
 			_lipSynch = g_resourceloader->loadLipSynch(soundLip.c_str());
-
+			// If there's no lip synch file then load the mumble chore if it exists
+			// (the mumble chore doesn't exist with the cat races announcer)
+			if (_lipSynch == NULL && _mumbleChore != -1)
+				_mumbleCostume->playChoreLooping(_mumbleChore);
+			
 			_talkAnim = -1;
 		}
 	}
@@ -325,7 +331,7 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 	// of the screen
 	if (!visible() || !inSet(g_engine->currScene()->name())) {
 		_sayLineText->setX(640 / 2);
-		_sayLineText->setY(440);
+		_sayLineText->setY(420);
 	} else {
 		// render at the top for active actors for now
 		_sayLineText->setX(640 / 2);
@@ -336,11 +342,16 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 }
 
 bool Actor::talking() {
+	// If there's no sound file then we're obviously not talking
+	if (strlen(_talkSoundName.c_str()) == 0)
+		return false;
+	
 	return g_imuse->getSoundStatus(_talkSoundName.c_str());
 }
 
 void Actor::shutUp() {
-	g_imuse->stopSound(_talkSoundName.c_str());
+	// Don't stop the sound, the call to stop the sound
+	// is made by the game
 	_talkSoundName = "";
 	if (_lipSynch != NULL) {
 		if ((_talkAnim != -1) && (_talkChore[_talkAnim] >= 0))
@@ -387,6 +398,18 @@ void Actor::popCostume() {
 			freeCostumeChore(_costumeStack.back(), _talkCostume[i], _talkChore[i]);
 		delete _costumeStack.back();
 		_costumeStack.pop_back();
+		Costume *newCost;
+		if (_costumeStack.empty())
+			newCost = NULL;
+		else
+			newCost = _costumeStack.back();
+		if (newCost == NULL) {
+			if (debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
+				printf("Popped (freed) the last costume for an actor.\n");
+		}
+	} else {
+		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("Attempted to pop (free) a costume when the stack is empty!");
 	}
 }
 
@@ -487,7 +510,14 @@ void Actor::update() {
 
 	// Update lip synching
 	if (_lipSynch != NULL) {
-		int posSound = g_imuse->getPosIn60HzTicks(_talkSoundName.c_str());
+		int posSound;
+		
+		// While getPosIn60HzTicks will return "-1" to indicate that the
+		// sound is no longer playing, it is more appropriate to check first
+		if(g_imuse->getSoundStatus(_talkSoundName.c_str()))
+			posSound = g_imuse->getPosIn60HzTicks(_talkSoundName.c_str());
+		else
+			posSound = -1;
 		if (posSound != -1) {
 			int anim = _lipSynch->getAnim(posSound);
 			if (_talkAnim != anim) {

@@ -1,5 +1,5 @@
 Residual: A LucasArts 3D game interpreter           Version:      0.04-CVS
-(C) 2003-2005 The ScummVM-Residual team             Last Updated: 03 Apr 2005
+(C) 2003-2005 The ScummVM-Residual team             Last Updated: 17 Jul 2005
 ------------------------------------------------------------------------------
 
 What is Residual?
@@ -55,8 +55,15 @@ renderer (-soft).
 What is the state of Residual? 
 ------------------------------- 
 Basic gameplay works, including cutscenes. Some of the game is playable,
-but many features are either missing or unstable. There are no menus,
-save/load features, lighting, etc. Crashes are likely.
+but many features are either missing or unstable. There is no abilitity
+to save/load, lighting, etc. Crashes are likely.
+
+Game currently playable to:
+	Manny reaps Meche (Mercedes Colomar)
+Caveats:
+1) Random crash leaving the scene with the balloon handler
+2) Must press "Esc" after listening to Meche, conversation doesn't
+   continue on its own
 
 What are the default keys?
 --------------------------
@@ -65,7 +72,8 @@ Arrow keys : Movement
 Shift      : Hold to run
 Enter      : Selects items in inventory, conversation, etc
 Escape     : Skips cutscenes, exits certain screens
-q          : Quit 
+q          : Exit Dialog Menu
+Ctrl + c   : Force Quit (from command-line)
 
 Development/debug keys from the original game
 ---------------------------------------------
@@ -95,7 +103,6 @@ Don't. Residual is very alpha and we KNOW it doesn't work right.
 
 What else should I know?
 ------------------------
-  * Exit with 'q', and don't press f1, as things will go loopy.
   * See TODO for other stuff
 
 Credits:
@@ -109,7 +116,8 @@ Contributors:
  Vincent Hamm                       Various engine code
  Lionel 'bbrox' Ulmer               OpenGL optimisations
  Ori 'salty-horse' Avtalion         Lipsync, LAF support
- Erich 'Compholio' Hoover           x86-64, subtitles fixes, menu support
+ Erich 'Compholio' Hoover           x86-64, various fixes and comments, menu support, improved state support
+ Andrea 'Yak Bizzarro' Corna        Improved font support
 
 Special Thanks To:
 ------------------ 

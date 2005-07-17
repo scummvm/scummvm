@@ -28,9 +28,12 @@
 class ObjectState {
 public:
 	enum Position {
+		OBJSTATE_BACKGROUND = 0,
 		OBJSTATE_UNDERLAY = 1,
 		OBJSTATE_OVERLAY = 2,
 		OBJSTATE_STATE = 3
+// TODO: Find out what ObjectState 6 is supposed to be
+//		OBJSTATE_UNKNOWN = 6
 	};
 
 	ObjectState(int setupID, ObjectState::Position pos, const char *bitmap, const char *zbitmap, bool visible);
