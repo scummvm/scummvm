@@ -523,12 +523,10 @@ void Interface::drawVerbPanel(Surface *backBuffer, PanelButton* panelButton) {
 
 	if (panelButton->state) {
 		textColor = _vm->getDisplayInfo().verbTextActiveColor;
+	} else if (panelButton == rightButtonVerbPanelButton) {
+		textColor = _vm->getDisplayInfo().verbTextActiveColor;
 	} else {
-		if (panelButton == rightButtonVerbPanelButton) {
-			textColor = _vm->getDisplayInfo().verbTextActiveColor;
-		} else {
-			textColor = _vm->getDisplayInfo().verbTextColor;
-		}
+		textColor = _vm->getDisplayInfo().verbTextColor;
 	}
 
 	if (panelButton == currentVerbPanelButton) {
@@ -557,11 +555,9 @@ void Interface::draw() {
 	if (_vm->_scene->isInDemo() || _fadeMode == kFadeOut)
 		return;
 
-
 	drawStatusBar();
 
 	if (_panelMode == kPanelMain) {
-
 		_mainPanel.getRect(rect);		
 		backBuffer->blit(rect, _mainPanel.image);
 
@@ -570,14 +566,10 @@ void Interface::draw() {
 				drawVerbPanel(backBuffer, _verbTypeToPanelButton[i]);
 			}
 		}
-	} else {
-		if (_panelMode == kPanelConverse) {	
-
-			_conversePanel.getRect(rect);
-			backBuffer->blit(rect, _conversePanel.image);
-
-			converseDisplayTextLines(backBuffer);
-		}
+	} else if (_panelMode == kPanelConverse) {	
+		_conversePanel.getRect(rect);
+		backBuffer->blit(rect, _conversePanel.image);
+		converseDisplayTextLines(backBuffer);
 	}
 
 	if (_panelMode == kPanelMain || _panelMode == kPanelConverse ||
@@ -1498,7 +1490,6 @@ void Interface::updateInventory(int pos) {
 }
 
 void Interface::addToInventory(int objectId) {
-
 	if (_inventoryCount >= _inventorySize) {
 		return;
 	}
@@ -1512,8 +1503,7 @@ void Interface::addToInventory(int objectId) {
 
 	_inventoryPos = 0;
 	updateInventory(0);
-
-	draw();	
+	draw();
 }
 
 void Interface::removeFromInventory(int objectId) {
@@ -1575,7 +1565,6 @@ void Interface::drawInventory(Surface *backBuffer) {
 		}
 		_mainPanel.calcPanelButtonRect(&_mainPanel.buttons[i], rect);
 		
-//4debug		drawRect(backBuffer, rect, kITEColorWhite); 
 		point.x = rect.left;
 		point.y = rect.top;
 		obj = _vm->_actor->getObj(_inventory[ci]);		
