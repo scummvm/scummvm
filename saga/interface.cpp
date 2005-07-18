@@ -1547,7 +1547,6 @@ void Interface::drawInventory(Surface *backBuffer) {
 	Rect rect;
 	int ci;
 	ObjectData *obj;
-	Point point;
 	ci = _inventoryStart;
 	if (_inventoryStart != 0) {
 		drawPanelButtonArrow(backBuffer, &_mainPanel, _inventoryUpButton);		
@@ -1557,18 +1556,18 @@ void Interface::drawInventory(Surface *backBuffer) {
 	}
 
 	for (i = 0; i < _mainPanel.buttonsCount; i++) {
-		if (ci >= _inventoryCount) {
-			break;
-		}
 		if (_mainPanel.buttons[i].type != kPanelButtonInventory) {
 			continue;
 		}
 		_mainPanel.calcPanelButtonRect(&_mainPanel.buttons[i], rect);
+
+		// TODO: Different colour for IHNM, probably.
+		backBuffer->drawRect(rect, kITEColorDarkGrey);
 		
-		point.x = rect.left;
-		point.y = rect.top;
-		obj = _vm->_actor->getObj(_inventory[ci]);		
-		_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), _vm->_sprite->_mainSprites, obj->spriteListResourceId, rect, 256);
+		if (ci < _inventoryCount) {
+			obj = _vm->_actor->getObj(_inventory[ci]);
+			_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), _vm->_sprite->_mainSprites, obj->spriteListResourceId, rect, 256);
+		}
 		
 		ci++;
 	}
