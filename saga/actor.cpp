@@ -47,15 +47,11 @@ namespace Saga {
 static int commonObjectCompare(const CommonObjectDataPointer& obj1, const CommonObjectDataPointer& obj2) {
 	int p1 = obj1->location.y - obj1->location.z;
 	int p2 = obj2->location.y - obj2->location.z;
-	if (p1 == p2) {
+	if (p1 == p2)
 		return 0;
-	} else {
-		if (p1 < p2) {
-			return -1;
-		} else {
-			return 1;
-		}
-	}
+	if (p1 < p2)
+		return -1;
+	return 1;
 }
 
 static int tileCommonObjectCompare(const CommonObjectDataPointer& obj1, const CommonObjectDataPointer& obj2) {
@@ -64,15 +60,11 @@ static int tileCommonObjectCompare(const CommonObjectDataPointer& obj1, const Co
 	//TODO:  for kObjNotFlat obj Height*3 of sprite should be added to p1 and p2
 	//if (validObjId(obj1->id)) {
 
-	if (p1 == p2) {
+	if (p1 == p2)
 		return 0;
-	} else {
-		if (p1 < p2) {
-			return -1;
-		} else {
-			return 1;
-		}
-	}
+	if (p1 < p2)
+		return -1;
+	return 1;
 }
 
 // Lookup table to convert 8 cardinal directions to 4
@@ -88,86 +80,86 @@ static const int actorDirectectionsLUT[8] = {
 };
 
 static const PathDirectionData pathDirectionLUT[8][3] = {
-	{{0,  0, -1}, {7, -1, -1}, {4,  1, -1}},
-	{{1,  1,  0}, {4,  1, -1}, {5,  1,  1}},
-	{{2,  0,  1}, {5,  1,  1}, {6, -1,  1}},
-	{{3, -1,  0}, {6, -1,  1}, {7, -1, -1}},
-	{{0,  0, -1}, {1,  1,  0}, {4,  1, -1}},
-	{{1,  1,  0}, {2,  0,  1}, {5,  1,  1}},
-	{{2,  0,  1}, {3, -1,  0}, {6, -1,  1}},
-	{{3, -1,  0}, {0,  0, -1}, {7, -1, -1}}
+	{ { 0,  0, -1 }, { 7, -1, -1 }, { 4,  1, -1 } },
+	{ { 1,  1,  0 }, { 4,  1, -1 }, { 5,  1,  1 } },
+	{ { 2,  0,  1 }, { 5,  1,  1 }, { 6, -1,  1 } },
+	{ { 3, -1,  0 }, { 6, -1,  1 }, { 7, -1, -1 } },
+	{ { 0,  0, -1 }, { 1,  1,  0 }, { 4,  1, -1 } },
+	{ { 1,  1,  0 }, { 2,  0,  1 }, { 5,  1,  1 } },
+	{ { 2,  0,  1 }, { 3, -1,  0 }, { 6, -1,  1 } },
+	{ { 3, -1,  0 }, { 0,  0, -1 }, { 7, -1, -1 } }
 };
 
 static const int pathDirectionLUT2[8][2] = {
-	{ 0, -1},
-	{ 1,  0},
-	{ 0,  1},
-	{-1,  0},
-	{ 1, -1},
-	{ 1,  1},
-	{-1,  1},
-	{-1, -1}
+	{  0, -1 },
+	{  1,  0 },
+	{  0,  1 },
+	{ -1,  0 },
+	{  1, -1 },
+	{  1,  1 },
+	{ -1,  1 },
+	{ -1, -1 }
 };
 
 static const int angleLUT[16][2] = {
-	{   0, -256},
-	{  98, -237},
-	{ 181, -181},
-	{ 237,  -98},
-	{ 256,    0},
-	{ 237,	 98},
-	{ 181,  181},
-	{  98,  237},
-	{   0,  256},
-	{ -98,  237},
-	{-181,  181},
-	{-237,   98},
-	{-256,    0},
-	{-237,  -98},
-	{-181, -181},
-	{ -98, -237}
+	{    0, -256 },
+	{   98, -237 },
+	{  181, -181 },
+	{  237,  -98 },
+	{  256,    0 },
+	{  237,	  98 },
+	{  181,  181 },
+	{   98,  237 },
+	{    0,  256 },
+	{  -98,  237 },
+	{ -181,  181 },
+	{ -237,   98 },
+	{ -256,    0 },
+	{ -237,  -98 },
+	{ -181, -181 },
+	{  -98, -237 }
 };
 
 static const int directionLUT[8][2] = {
-	{ 0*2, -2*2},
-	{ 2*2, -1*2},
-	{ 3*2,  0*2},
-	{ 2*2,  1*2},
-	{ 0*2,  2*2},
-	{-2*2,  1*2},
-	{-4*2,  0*2},
-	{-2*2, -1*2}
+	{  0 * 2, -2 * 2 },
+	{  2 * 2, -1 * 2 },
+	{  3 * 2,  0 * 2 },
+	{  2 * 2,  1 * 2 },
+	{  0 * 2,  2 * 2 },
+	{ -2 * 2,  1 * 2 },
+	{ -4 * 2,  0 * 2 },
+	{ -2 * 2, -1 * 2 }
 };
 
 static const int tileDirectionLUT[8][2] = {
-	{ 1,  1},
-	{ 2,  0},
-	{ 1, -1},
-	{ 0, -2},
-	{-1, -1},
-	{-2,  0},
-	{-1,  1},
-	{ 0,  2}
+	{  1,  1 },
+	{  2,  0 },
+	{  1, -1 },
+	{  0, -2 },
+	{ -1, -1 },
+	{ -2,  0 },
+	{ -1,  1 },
+	{  0,  2 }
 };
 
 struct DragonMove {
-        uint16 baseFrame;
-        int16 offset[4][2];
+	uint16 baseFrame;
+	int16 offset[4][2];
 };
 
 static const DragonMove dragonMoveTable[12] = {
-        {0,		{{ 0, 0 },	{ 0, 0 },	{ 0, 0 },	{ 0, 0 }}},
-        {0,		{{ 0, 0 },	{ 0, 0 },	{ 0, 0 },	{ 0, 0 }}},
-        {0,		{{ 0, 0 },	{ 0, 0 },	{ 0, 0 },	{ 0, 0 }}},
-        {0,		{{ 0, 0 },	{ 0, 0 },	{ 0, 0 },	{ 0, 0 }}},
-        {28,	{{ -0,  0 },{ -1,  6 },	{ -5, 11 },	{-10, 15 } }},
-        {56,	{{  0,  0 },{  1,  6 },	{  5, 11 },	{ 10, 15 } }},
-        {40,	{{  0,  0 },{  6,  1 },	{ 11,  5 },	{ 15, 10 } }},
-        {44,	{{  0,  0 },{  6, -1 },	{ 11, -5 },	{ 15,-10 } }},
-        {32,	{{ -0, -0 },{ -6, -1 },	{-11, -5 },	{-15,-10 } }},
-        {52,	{{ -0,  0 },{ -6,  1 },	{-11,  5 },	{-15, 10 } }},
-        {36,	{{  0, -0 },{  1, -6 },	{  5,-11 },	{ 10,-15 } }},
-        {48,	{{ -0, -0 },{ -1, -6 },	{ -5,-11 },	{-10,-15 } }},
+	{  0, { {  0,  0 }, {  0,  0 }, {   0,   0 }, {   0,   0 } } },
+	{  0, { {  0,  0 }, {  0,  0 }, {   0,   0 }, {   0,   0 } } },
+	{  0, { {  0,  0 }, {  0,  0 }, {   0,   0 }, {   0,   0 } } },
+	{  0, { {  0,  0 }, {  0,  0 }, {   0,   0 }, {   0,   0 } } },
+	{ 28, { { -0,  0 }, { -1,  6 }, {  -5,  11 }, { -10,  15 } } },
+	{ 56, { {  0,  0 }, {  1,  6 }, {   5,  11 }, {  10,  15 } } },
+	{ 40, { {  0,  0 }, {  6,  1 }, {  11,   5 }, {  15,  10 } } },
+	{ 44, { {  0,  0 }, {  6, -1 }, {  11,  -5 }, {  15, -10 } } },
+	{ 32, { { -0, -0 }, { -6, -1 }, { -11,  -5 }, { -15, -10 } } },
+	{ 52, { { -0,  0 }, { -6,  1 }, { -11,   5 }, { -15,  10 } } },
+	{ 36, { {  0, -0 }, {  1, -6 }, {   5, -11 }, {  10, -15 } } },
+	{ 48, { { -0, -0 }, { -1, -6 }, {  -5, -11 }, { -10, -15 } } }
 };
 
 Actor::Actor(SagaEngine *vm) : _vm(vm) {
@@ -206,7 +198,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_yCellCount = _vm->getSceneHeight();
 	_xCellCount = _vm->getDisplayWidth();
 
-	_pathCell = (int8*) malloc(_yCellCount * _xCellCount * sizeof(*_pathCell));
+	_pathCell = (int8 *)malloc(_yCellCount * _xCellCount * sizeof(*_pathCell));
 	
 	_pathRect.left = 0;
 	_pathRect.right = _vm->getDisplayWidth();
@@ -276,7 +268,6 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 			obj->location.y = ITE_ObjectTable[i].y;
 			obj->location.z = ITE_ObjectTable[i].z;
 		}
-	
 	} else {
 		// TODO. This is causing problems for SYMBIAN os as it does n't like a static class here
 		ActorData dummyActor;
@@ -417,30 +408,25 @@ void Actor::stepZoneAction(ActorData *actor, const HitZone *hitZone, bool exit, 
 			actor->walkFrameSequence = kFrameWalk;
 			return;
 		}
-	} else {
-		if (!(hitZone->getFlags() & kHitZoneAutoWalk)) {
-			return;
-		}
+	} else if (!(hitZone->getFlags() & kHitZoneAutoWalk)) {
+		return;
 	}
 	if (hitZone->getFlags() & kHitZoneExit) {
 		takeExit(actor->id, hitZone);
-	} else {
-		if (hitZone->getScriptNumber() > 0) {
-			event.type = ONESHOT_EVENT;
-			event.code = SCRIPT_EVENT;
-			event.op = EVENT_EXEC_NONBLOCKING;
-			event.time = 0;
-			event.param = _vm->_scene->getScriptModuleNumber(); // module number
-			event.param2 = hitZone->getScriptNumber();			// script entry point number
-			event.param3 = kVerbEnter;		// Action
-			event.param4 = ID_NOTHING;		// Object
-			event.param5 = ID_NOTHING;		// With Object
-			event.param6 = ID_PROTAG;		// Actor
+	} else if (hitZone->getScriptNumber() > 0) {
+		event.type = ONESHOT_EVENT;
+		event.code = SCRIPT_EVENT;
+		event.op = EVENT_EXEC_NONBLOCKING;
+		event.time = 0;
+		event.param = _vm->_scene->getScriptModuleNumber(); // module number
+		event.param2 = hitZone->getScriptNumber();			// script entry point number
+		event.param3 = kVerbEnter;		// Action
+		event.param4 = ID_NOTHING;		// Object
+		event.param5 = ID_NOTHING;		// With Object
+		event.param6 = ID_PROTAG;		// Actor
 
-			_vm->_events->queue(&event);
-		}
+		_vm->_events->queue(&event);
 	}
-
 }
 
 void Actor::realLocation(Location &location, uint16 objectId, uint16 walkFlags) {
@@ -469,13 +455,10 @@ void Actor::realLocation(Location &location, uint16 objectId, uint16 walkFlags) 
 		if (validActorId(objectId)) {
 			actor = getActor(objectId);
 			location.addXY(actor->location);
-		} else {
-			if (validObjId(objectId)) {
-				obj = getObj(objectId);
-				location.addXY(obj->location);
-			}			
+		} else if (validObjId(objectId)) {
+			obj = getObj(objectId);
+			location.addXY(obj->location);
 		}
-		
 	}
 }
 
@@ -494,7 +477,6 @@ void Actor::actorFaceTowardsPoint(uint16 actorId, const Location &toLocation) {
 			actor->facingDirection = (delta.v() > 0) ? kDirLeft : kDirDown;
 		}
 	} else {
-
 		if (ABS(delta.y) > ABS(delta.x * 2)) {
 			actor->facingDirection = (delta.y > 0) ? kDirDown : kDirUp;
 		} else {
@@ -510,11 +492,9 @@ void Actor::actorFaceTowardsObject(uint16 actorId, uint16 objectId) {
 	if (validActorId(objectId)) {
 		actor = getActor(objectId);
 		actorFaceTowardsPoint(actorId, actor->location);
-	} else {
-		if (validObjId(objectId)) {
-			obj = getObj(objectId);
-			actorFaceTowardsPoint(actorId, obj->location);
-		}
+	} else if (validObjId(objectId)) {
+		obj = getObj(objectId);
+		actorFaceTowardsPoint(actorId, obj->location);
 	}
 }
 
@@ -602,14 +582,11 @@ void Actor::updateActorsScene(int actorsEntrance) {
 			continue;
 		}
 		if ((actor->flags & (kProtagonist | kFollower)) || (i == 0)) {
-
 			if (actor->flags & kProtagonist) {
 				actor->finalTarget = actor->location;
 				_centerActor = _protagonist = actor;
-			} else {
-				if (_vm->_scene->currentSceneResourceId() == RID_ITE_OVERMAP_SCENE) {
-					continue;
-				}
+			} else if (_vm->_scene->currentSceneResourceId() == RID_ITE_OVERMAP_SCENE) {
+				continue;
 			}
 
 			actor->sceneNumber = _vm->_scene->currentSceneNumber();
@@ -934,25 +911,20 @@ void Actor::handleActions(int msec, bool setup) {
 						if (!actorWalkTo(_protagonist->id, pickLocation)) {
 							break;
 						}
-					} else {
-						if (!_vm->_isoMap->nextTileTarget(actor)) {
-							if (!actorEndWalk(actor->id, true)) {
-								break;
-							}
-						}
+					} else if (!_vm->_isoMap->nextTileTarget(actor) && !actorEndWalk(actor->id, true)) {
+						break;
 					}
 
 					actor->partialTarget.delta(actor->location, delta);
 					actor->partialTarget.z = 0;
 				}
 
-				speed = 4;
 				if (actor->flags & kFastest) {
 					speed = 8;
+				} else if (actor->flags & kFaster) {
+					speed = 6;
 				} else {
-					if (actor->flags & kFaster) {
-						speed = 6;
-					}
+					speed = 4;
 				}
 
 				if (_vm->_scene->currentSceneResourceId() == RID_ITE_OVERMAP_SCENE) {
@@ -1049,10 +1021,8 @@ void Actor::handleActions(int msec, bool setup) {
 
 			if (actor->actionCycle < 0) {
 				actor->actionCycle = frameRange->frameCount - 1;
-			} else {
-				if (actor->actionCycle >= frameRange->frameCount) {
-					actor->actionCycle = 0;
-				}
+			} else if (actor->actionCycle >= frameRange->frameCount) {
+				actor->actionCycle = 0;
 			}
 
 			actor->frameNumber = frameRange->frameIndex + actor->actionCycle;
@@ -1182,15 +1152,13 @@ void Actor::handleActions(int msec, bool setup) {
 			if (actor->location.z >= actor->finalTarget.z + ACTOR_CLIMB_SPEED) {
 				actor->location.z -= ACTOR_CLIMB_SPEED;
 				actor->actionCycle--;
+			} else if (actor->location.z <= actor->finalTarget.z - ACTOR_CLIMB_SPEED) {
+				actor->location.z += ACTOR_CLIMB_SPEED;
+				actor->actionCycle++;
 			} else {
-				if (actor->location.z <= actor->finalTarget.z - ACTOR_CLIMB_SPEED) {
-					actor->location.z += ACTOR_CLIMB_SPEED;
-					actor->actionCycle++;
-				} else {
-					actor->location.z = actor->finalTarget.z;
-					actor->currentAction = kActionFreeze;
-					_vm->_script->wakeUpActorThread(kWaitTypeWalk, actor);
-				}			
+				actor->location.z = actor->finalTarget.z;
+				actor->currentAction = kActionFreeze;
+				_vm->_script->wakeUpActorThread(kWaitTypeWalk, actor);
 			}
 
 			frameRange = getActorFrameRange(actor->id, actor->cycleFrameSequence);
@@ -1225,7 +1193,6 @@ void Actor::handleActions(int msec, bool setup) {
 			}
 		}
 	}
-
 }
 
 void Actor::direct(int msec) {
@@ -1267,14 +1234,12 @@ bool Actor::calcScreenPosition(CommonObjectData *commonObjectData) {
 
 		if (middle <= beginSlope) {
 			commonObjectData->screenScale = 256;
+		} else if (middle >= endSlope) {
+			commonObjectData->screenScale = 1;
 		} else {
-			if (middle >= endSlope) {
-				commonObjectData->screenScale = 1;
-			} else {
-				middle -= beginSlope;
-				endSlope -= beginSlope;
-				commonObjectData->screenScale = 256 - (middle * 256) / endSlope;
-			}
+			middle -= beginSlope;
+			endSlope -= beginSlope;
+			commonObjectData->screenScale = 256 - (middle * 256) / endSlope;
 		}
 
 		commonObjectData->location.toScreenPointXYZ(commonObjectData->screenPosition);
@@ -1296,7 +1261,6 @@ uint16 Actor::hitTest(const Point &testPoint, bool skipProtagonist) {
 	// fine to interact with. For example, the door entrance at the glass
 	// makers's house in ITE's ferret village.
 
-
 	if (!_vm->_scene->getSceneClip().contains(testPoint))
 		return ID_NOTHING;
 
@@ -1315,7 +1279,6 @@ uint16 Actor::hitTest(const Point &testPoint, bool skipProtagonist) {
 		if (!getSpriteParams(drawObject, frameNumber, spriteList)) {
 			continue;
 		}
-
 		if (_vm->_sprite->hitTest(*spriteList, frameNumber, drawObject->screenPosition, drawObject->screenScale, testPoint)) {
 			return drawObject->id;
 		}
@@ -1350,9 +1313,9 @@ void Actor::createDrawOrderList() {
 		obj = _objs[i];
 		if (obj->disabled)
 			continue;
+
 		if (obj->sceneNumber != _vm->_scene->currentSceneNumber())
 			 continue;
-
 		
 		if (calcScreenPosition(obj)) {
 			_drawOrderList.pushBack(obj, compareFunction);
@@ -1368,20 +1331,13 @@ bool Actor::getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber
 		}
 		frameNumber = 8;			
 		spriteList = &_vm->_sprite->_mainSprites;
-	} else {
-		if (validActorId(commonObjectData->id)) {
-			spriteList = &((ActorData*)commonObjectData)->spriteList;	
-			frameNumber = ((ActorData*)commonObjectData)->frameNumber;			
-		} else {
-			if (validObjId(commonObjectData->id)) {
-				spriteList = &_vm->_sprite->_mainSprites;
-				frameNumber = commonObjectData->spriteListResourceId;
-			}
-		}
-		
+	} else if (validActorId(commonObjectData->id)) {
+		spriteList = &((ActorData *)commonObjectData)->spriteList;
+		frameNumber = ((ActorData *)commonObjectData)->frameNumber;
+	} else if (validObjId(commonObjectData->id)) {
+		spriteList = &_vm->_sprite->_mainSprites;
+		frameNumber = commonObjectData->spriteListResourceId;
 	}
-
-
 
 	if ((frameNumber < 0) || (spriteList->spriteCount <= frameNumber)) {
 		warning("Actor::getSpriteParams frameNumber invalid for object id 0x%X", commonObjectData->id);
@@ -1417,7 +1373,6 @@ void Actor::drawActors() {
 			continue;
 		}
 		
-		
 		if (_vm->_scene->getFlags() & kSceneFlagISO) {
 			_vm->_isoMap->drawSprite(backBuffer, *spriteList, frameNumber, drawObject->location, drawObject->screenPosition, drawObject->screenScale);
 		} else {
@@ -1429,43 +1384,44 @@ void Actor::drawActors() {
 }
 
 void Actor::drawSpeech(void) {
-	if (isSpeaking() && _activeSpeech.playing && !_vm->_script->_skipSpeeches) {
-		int i;
-		Point textPoint;
-		ActorData *actor;
-		int width, height;
-		char oneChar[2];
-		oneChar[1] = 0;
-		const char *outputString;
-		Surface *backBuffer;
+	if (!isSpeaking() || !_activeSpeech.playing || _vm->_script->_skipSpeeches)
+		return;
 
-		backBuffer = _vm->_gfx->getBackBuffer();
+	int i;
+	Point textPoint;
+	ActorData *actor;
+	int width, height;
+	char oneChar[2];
+	oneChar[1] = 0;
+	const char *outputString;
+	Surface *backBuffer;
 
-		if (_activeSpeech.speechFlags & kSpeakSlow) {
-			outputString = oneChar;
-			oneChar[0] = _activeSpeech.strings[0][_activeSpeech.slowModeCharIndex];
-		} else {
-			outputString = _activeSpeech.strings[0];
-		}
+	backBuffer = _vm->_gfx->getBackBuffer();
 
-		if (_activeSpeech.actorsCount > 1) {
-			height = _vm->_font->getHeight(kMediumFont);
-			width = _vm->_font->getStringWidth(kMediumFont, _activeSpeech.strings[0], 0, kFontNormal);
+	if (_activeSpeech.speechFlags & kSpeakSlow) {
+		outputString = oneChar;
+		oneChar[0] = _activeSpeech.strings[0][_activeSpeech.slowModeCharIndex];
+	} else {
+		outputString = _activeSpeech.strings[0];
+	}
+
+	if (_activeSpeech.actorsCount > 1) {
+		height = _vm->_font->getHeight(kMediumFont);
+		width = _vm->_font->getStringWidth(kMediumFont, _activeSpeech.strings[0], 0, kFontNormal);
 			
-			for ( i = 0; i < _activeSpeech.actorsCount; i++) {
-				actor = getActor(_activeSpeech.actorIds[i]);
-				calcScreenPosition(actor);
+		for (i = 0; i < _activeSpeech.actorsCount; i++) {
+			actor = getActor(_activeSpeech.actorIds[i]);
+			calcScreenPosition(actor);
 
-				textPoint.x = clamp( 10, actor->screenPosition.x - width / 2, _vm->getDisplayWidth() - 10 - width);
-				textPoint.y = clamp( 10, actor->screenPosition.y - 58, _vm->getSceneHeight() - 10 - height);
+			textPoint.x = clamp( 10, actor->screenPosition.x - width / 2, _vm->getDisplayWidth() - 10 - width);
+			textPoint.y = clamp( 10, actor->screenPosition.y - 58, _vm->getSceneHeight() - 10 - height);
 
-				_vm->_font->textDraw(kMediumFont, backBuffer, _activeSpeech.strings[0], textPoint, 
-					_activeSpeech.speechColor[i], _activeSpeech.outlineColor[i], _activeSpeech.getFontFlags(i));
-			}
-		} else {
-			_vm->_font->textDrawRect(kMediumFont, backBuffer, _activeSpeech.strings[0], _activeSpeech.drawRect, _activeSpeech.speechColor[0],
-				_activeSpeech.outlineColor[0], _activeSpeech.getFontFlags(0));
+			_vm->_font->textDraw(kMediumFont, backBuffer, _activeSpeech.strings[0], textPoint, 
+				_activeSpeech.speechColor[i], _activeSpeech.outlineColor[i], _activeSpeech.getFontFlags(i));
 		}
+	} else {
+		_vm->_font->textDrawRect(kMediumFont, backBuffer, _activeSpeech.strings[0], _activeSpeech.drawRect, _activeSpeech.speechColor[0],
+			_activeSpeech.outlineColor[0], _activeSpeech.getFontFlags(0));
 	}
 }
 
@@ -1546,10 +1502,8 @@ bool Actor::followProtagonist(ActorData *actor) {
 		actor->location.delta(protagonistLocation, delta);
 		
 		protagonistBGMaskType = 0;
-		if (_vm->_scene->isBGMaskPresent()) {
-			if (_vm->_scene->validBGMaskPoint(_protagonist->screenPosition)) {
-				protagonistBGMaskType = _vm->_scene->getBGMaskType(_protagonist->screenPosition);
-			}
+		if (_vm->_scene->isBGMaskPresent() && _vm->_scene->validBGMaskPoint(_protagonist->screenPosition)) {
+			protagonistBGMaskType = _vm->_scene->getBGMaskType(_protagonist->screenPosition);
 		}
 
 		if ((_vm->_rnd.getRandomNumber(7) & 0x7) == 0) // 1/8th chance
@@ -1602,11 +1556,9 @@ bool Actor::actorEndWalk(uint16 actorId, bool recurse) {
 	actor = getActor(actorId);
 	actor->actorFlags &= ~kActorBackwards;
 
-	if (actor->location.distance(actor->finalTarget) > 8) {
-		if ((actor->flags & kProtagonist) && recurse && !(actor->actorFlags & kActorNoCollide)) {
-			actor->actorFlags |= kActorNoCollide;
-			return actorWalkTo(actorId, actor->finalTarget);
-		}
+	if (actor->location.distance(actor->finalTarget) > 8 && (actor->flags & kProtagonist) && recurse && !(actor->actorFlags & kActorNoCollide)) {
+		actor->actorFlags |= kActorNoCollide;
+		return actorWalkTo(actorId, actor->finalTarget);
 	}
 
 	actor->currentAction = kActionWait;
@@ -1628,12 +1580,9 @@ bool Actor::actorEndWalk(uint16 actorId, bool recurse) {
 			} else {
 				_vm->_script->setNoPendingVerb();
 			}
-		} else {
-			if (_vm->_script->_pendingVerb != kVerbNone) {
-				_vm->_script->doVerb();
-			}
+		} else if (_vm->_script->_pendingVerb != kVerbNone) {
+			_vm->_script->doVerb();
 		}
-
 	} else {
 		if (recurse && (actor->flags & kFollower))
 			walkMore = followProtagonist(actor);
@@ -1763,16 +1712,12 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 					if (testBox2.contains(pointFrom)) {
 						if (pointFrom.x > anotherActorScreenPosition.x + 4) {
 							testBox.right = pointFrom.x - 1;
+						} else if (pointFrom.x < anotherActorScreenPosition.x - 4) {	
+							testBox.left = pointFrom.x + 2;
+						} else if (pointFrom.y > anotherActorScreenPosition.y) {
+							testBox.bottom = pointFrom.y;
 						} else {
-							if (pointFrom.x < anotherActorScreenPosition.x - 4) {	
-								testBox.left = pointFrom.x + 2;
-							} else {
-								if (pointFrom.y > anotherActorScreenPosition.y) {
-									testBox.bottom = pointFrom.y;
-								} else {
-									testBox.top = pointFrom.y + 1 ;
-								}
-							}
+							testBox.top = pointFrom.y + 1 ;
 						}
 					}
 
@@ -1812,9 +1757,8 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 			bestDelta.x = ABS(pointBest.x - pointTo.x);
 			bestDelta.y = ABS(pointBest.y - pointTo.y);
 
-			if (delta.x + delta.y <= bestDelta.x + bestDelta.y) {
-				if (actor->flags & kFollower)
-					actor->actorFlags |= kActorNoFollow;
+			if (delta.x + delta.y <= bestDelta.x + bestDelta.y && (actor->flags & kFollower)) {
+				actor->actorFlags |= kActorNoFollow;
 			}
 
 			if (pointBest == pointFrom) {
@@ -2158,23 +2102,18 @@ void Actor::moveDragon(ActorData *actor) {
 
 		if (actor->location.u() > actor->partialTarget.u() + 3) {
 			actor->location.u() -= 4;
+		} else if (actor->location.u() < actor->partialTarget.u() - 3) {
+			actor->location.u() += 4;
 		} else {
-			if (actor->location.u() < actor->partialTarget.u() - 3) {
-				actor->location.u() += 4;
-			} else {
-				actor->location.u() = actor->partialTarget.u();
-			}
+			actor->location.u() = actor->partialTarget.u();
 		}
-
 
 		if (actor->location.v() > actor->partialTarget.v() + 3) {
 			actor->location.v() -= 4;
+		} else if (actor->location.v() < actor->partialTarget.v() - 3) {
+			actor->location.v() += 4;
 		} else {
-			if (actor->location.v() < actor->partialTarget.v() - 3) {
-				actor->location.v() += 4;
-			} else {
-				actor->location.v() = actor->partialTarget.v();
-			}
+			actor->location.v() = actor->partialTarget.v();
 		}
 	} else {
 		dragonMove = &dragonMoveTable[actor->dragonMoveType];
@@ -2226,7 +2165,6 @@ void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point 
 		intersect.top = MAX(_pathRect.top, _barrierList[i].top);
 		intersect.right = MIN(_pathRect.right, _barrierList[i].right);
 		intersect.bottom = MIN(_pathRect.bottom, _barrierList[i].bottom);
-		
 
 		for (iteratorPoint.y = intersect.top; iteratorPoint.y < intersect.bottom; iteratorPoint.y++) {
 			for (iteratorPoint.x = intersect.left; iteratorPoint.x < intersect.right; iteratorPoint.x++) {
@@ -2251,7 +2189,6 @@ void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point 
 		return;
 	}
 	
-
 	i = fillPathArray(fromPoint, toPoint, bestPoint);
 
 	if (fromPoint == bestPoint) {
@@ -2352,7 +2289,6 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 #endif
 	}	
 	
-	
 	i = 0;
 
 	do {
@@ -2422,13 +2358,9 @@ void Actor::setActorPath(ActorData *actor, const Point &fromPoint, const Point &
 	}
 
 	pathToNode();
-
 	removeNodes();	
-
 	nodeToPath();
-
 	removePathPoints();
-
 	
 	for (i = 0; i <= _pathNodeListIndex; i++) {
 		actor->addWalkStepPoint(_pathNodeList[i].point);
@@ -2581,8 +2513,7 @@ void Actor::removeNodes() {
 		if (iNode->point.x == PATH_NODE_EMPTY) {
 			continue;
 		}
-		for (j = i + 2, jNode = iNode + 2; j < _pathNodeListIndex; j++, jNode++)
-		{
+		for (j = i + 2, jNode = iNode + 2; j < _pathNodeListIndex; j++, jNode++) {
 			if (jNode->point.x == PATH_NODE_EMPTY) {
 				continue;
 			}
@@ -2629,11 +2560,9 @@ void Actor::removePathPoints() {
 	int end;
 	Point point1, point2;
 
-
 	if (_pathNodeListIndex < 2)
 		return;
 
-	
 	_newPathNodeListIndex = -1;
 	addNewPathNodeListPoint(_pathNodeList[0]);
 		
@@ -2653,7 +2582,6 @@ void Actor::removePathPoints() {
 			if ((point1.x == PATH_NODE_EMPTY) || (point2.x == PATH_NODE_EMPTY)) {
 				continue;
 			}
-
 			
 			if (scanPathLine(point1, point2)) {
 				for (l = 1; l <= _newPathNodeListIndex; l++) {
@@ -2726,7 +2654,6 @@ void Actor::loadState(Common::InSaveFile *in) {
 		ActorData *a = _actors[i];
 		a->loadState(in);
 	}
-
 
 	for (i = 0; i < _objsCount; i++) {
 		ObjectData *o = _objs[i];
