@@ -1,12 +1,15 @@
 #!/usr/bin/make -f
 
-export DH_COMPAT=3
+build: doc/README.pdf scummvm
 
-ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
-	export CXXFLAGS += -g
-endif
+doc/README.pdf:
+	(cd doc; latex readme.tex)
+	(cd doc; latex readme.tex)
+	dvips -q -f doc/readme.dvi | gs -q -dNOPAUSE -dBATCH \
+	                                -sDEVICE=pdfwrite \
+					-sOutputFile=doc/README.pdf -
 
-build:
+scummvm:
 	dh_testdir
 	./configure
 	$(MAKE)
@@ -14,19 +17,20 @@ build:
 clean:
 	dh_testdir
 	dh_testroot
+	-$(MAKE) distclean
+	-rm doc/readme.aux doc/readme.dvi doc/readme.log doc/readme.out \
+	    doc/readme.toc doc/README.pdf
 	dh_clean
-	rm -f debian/changelog
-	-$(MAKE) clean
 
 install: build
 	dh_testdir
 	dh_testroot
 	dh_clean
 	dh_installdirs
-	install -m0755 scummvm $(CURDIR)/debian/scummvm-cvs/usr/games/scummvm
-	install -m0644 scummvm.xpm $(CURDIR)/debian/scummvm-cvs/usr/share/icons
+	install -m0755 scummvm debian/scummvm/usr/games/scummvm
+	install -m0644 scummvm.xpm debian/scummvm/usr/share/icons
 
-binary: binary-arch binary-indep
+binary: binary-arch
 
 binary-arch: build install
 	dh_testdir
@@ -35,9 +39,8 @@ binary-arch: build install
 	dh_installchangelogs NEWS
 	dh_installman
 	dh_installmenu
-	dh_link
 	dh_strip
-	dh_compress
+	dh_compress -X.pdf
 	dh_fixperms
 	dh_installdeb
 	dh_shlibdeps

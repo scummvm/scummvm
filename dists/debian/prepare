@@ -1,5 +1,36 @@
 #! /bin/sh
 
-VER=`sed -n -e 's/^const char \*gScummVMVersion = "\(.*\)";/\1/p' base/main.cpp``date +%Y%m%d`
+# This simple script is called from the upstream makefile whenever someone
+# calls "make deb".  It adds a changelog entry to the top of debian/changelog
+# so that the version number is correct.
 
-sed "s/@VERSION@/$VER/g" debian/changelog.in > debian/changelog
+VERSION=`sed -n -e 's/CVS//g' -e 's/^const char \*gScummVMVersion = "\(.*\)";/\1/p' base/main.cpp `-0cvs`date +%Y%m%d`
+USERNAME=`whoami`
+GECOS=`getent passwd $USERNAME | awk '-F[,:]' '{print $5}'`
+DOMAIN=`hostname --fqdn`
+DATE=`date -R`
+
+head -1 debian/changelog | grep -qF $VERSION && exit 0
+
+TMP=`tempfile`
+
+cat debian/changelog > $TMP
+
+cat << __eof > debian/changelog
+scummvm ($VERSION) experimental; urgency=low
+
+  * CVS snapshot.
+
+    Builder:    $GECOS <$USERNAME@$DOMAIN>
+    Build-date: $DATE
+
+    Please don't file bugs you find in this package in the Debian Bug Tracking
+    system, use the ScummVM team's own bug tracker instead.  You can find this
+    tracker at <http://sourceforge.net/tracker/?group_id=37116>.
+
+ -- Tore Anderson <tore@debian.org>  $DATE 
+
+__eof
+
+cat $TMP >> debian/changelog
+rm -f $TMP

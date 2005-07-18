@@ -1,32 +1,30 @@
-Source: scummvm-cvs
-Section: contrib/games
+Source: scummvm
+Section: games
 Priority: optional
-Maintainer: Tore Anderson <tore@linpro.no>
-Build-Depends: debhelper (>> 3.0.0), libsdl1.2-dev, libmad0-dev
-Standards-Version: 3.5.8
+Maintainer: Tore Anderson <tore@debian.org>
+Build-Depends: debhelper (>> 4.0.0), nasm [i386], tetex-bin, tetex-extra, gs-gpl, libsdl1.2-dev, libmad0-dev, libasound2-dev, libvorbis-dev (>= 1.0.0-2), libmpeg2-4-dev, libflac-dev (>= 1.1.1-2), libz-dev, libfluidsynth-dev
+Standards-Version: 3.6.1.1
 
-Package: scummvm-cvs
+Package: scummvm
 Architecture: any
 Depends: ${shlibs:Depends}
-Suggests: timidity
-Conflicts: scummvm
-Description: SDL implementation of LucasArts' S.C.U.M.M. interpreter
- S.C.U.M.M. (Script Creation Utility for Maniac Mansion) is the engine
- used to create a lot of classic LucasArts adventure games, such as
- Sam & Max and The Secret of Monkey Island.
+Suggests: fluidsynth | timidity, beneath-a-steel-sky, flight-of-the-amazon-queen
+Description: free implementation of LucasArts' S.C.U.M.M interpreter
+ ScummVM is a 'virtual machine' for several classic graphical
+ point-and-click adventure games.  It is designed to run Adventure Soft's
+ Simon the Sorcerer 1 and 2, Revolution's Beneath A Steel Sky, and games
+ based on LucasArts' S.C.U.M.M (Script Creation Utility for Maniac Mansion)
+ system.  S.C.U.M.M is used for many games, including Monkey Island,
+ Day of the Tentacle, Sam and Max and more.  See the official compatibility
+ list at <http://www.scummvm.org/compatibility_stable.php> for a full list
+ of supported games.
  .
- ScummVM lets you play your old adventure games in Debian, using SDL
- for the graphic presentation.
+ The game data of two games compatible with ScummVM is included in Debian.
+ These are:
  .
- In addition to the various LucasArts-games ScummVM can play, it is also
- possible to use ScummVM with AdventureSoft's Simon the Sorcerer. For
- a full list of compatible games; see the official compatibility list at
- http://scummvm.sf.net/compatibility.php .
+  - Beneath a Steel Sky        (package name: beneath-a-steel-sky)
+  - Flight of the Amazon Queen (package name: flight-of-the-amazon-queen)
  .
- The data files belonging to the various games is not included in this
- package due to licensing issues; you have to obtain them somewhere else
- if you want ScummVM to be of any use.
- .
- NOTE: This is a unofficial package, which is not supported by the Debian
- Project. Please report problems to ScummVM's Sourceforge bug tracker;
- found at <http://sourceforge.net/tracker/?group_id=37116>.
+ To actually make use of ScummVM, you'll have to install one of these, or
+ obtain the proprietary game data for another supported game from somewhere
+ else.

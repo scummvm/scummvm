@@ -1,3 +1,0 @@
-?package(scummvm-cvs):needs=x11 section=Games/Adventure \
-  title="ScummVM (CVS snapshot)" command="/usr/games/scummvm" \
-  icon="/usr/share/icons/scummvm.xpm"
