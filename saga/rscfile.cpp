@@ -59,8 +59,6 @@ bool Resource::loadContext(ResourceContext *context) {
 		context->isBigEndian = ((_vm->getFeatures() & GF_BIG_ENDIAN_VOICES) != 0) && ((context->fileType & GAME_VOICEFILE) != 0);
 	}
 
-
-
 	if (context->file->size() < RSC_MIN_FILESIZE) {
 		return false;
 	}
@@ -89,7 +87,6 @@ bool Resource::loadContext(ResourceContext *context) {
 
 	context->file->seek((long)resourceTableOffset, SEEK_SET);
 
-	
 	result = (context->file->read(tableBuffer, tableSize) == tableSize);
 	if (result) {
 		context->table = (ResourceData *)calloc(context->count, sizeof(*context->table));

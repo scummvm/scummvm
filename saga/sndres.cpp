@@ -201,12 +201,10 @@ int SndRes::getVoiceLength(uint32 resourceId) {
 	bool voiceFile = false;
 	double msDouble;
 	SoundBuffer buffer;
-
 	
 	if (!load(_voiceContext, resourceId, buffer, true)) {
 		return -1;
 	}
-
 
 	msDouble = (double)buffer.size;
 	if (buffer.sampleBits == 16) {
@@ -218,7 +216,6 @@ int SndRes::getVoiceLength(uint32 resourceId) {
 
 	msDouble = msDouble / buffer.frequency * 1000.0;
 	return (int)msDouble;
-
 }
 
 } // End of namespace Saga

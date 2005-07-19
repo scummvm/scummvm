@@ -85,7 +85,6 @@ RAWInputStream::RAWInputStream(SagaEngine *vm, ResourceContext *context, uint32 
 	refill();
 }
 
-
 int RAWInputStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples = 0;
 	while (samples < numSamples && !eosIntern()) {
@@ -366,13 +365,10 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	}
 
 	_trackNumber = resourceId;
-
 	_player->stopMusic();
-
 	_mixer->stopHandle(_musicHandle);
 
 	if (_vm->getGameType() == GType_ITE) {
-
 		if (resourceId >= 9 && resourceId <= 34) {
 			if (flags == MUSIC_DEFAULT) {
 				if ((resourceId == 13) || (resourceId == 19)) {
@@ -384,7 +380,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 			if (_musicContext != NULL) {
 				//TODO: check resource size
-				audioStream = new RAWInputStream(_vm, _musicContext, resourceId, flags == MUSIC_LOOP);
+				audioStream = new RAWInputStream(_vm, _musicContext, resourceId - 9, flags == MUSIC_LOOP);
 			}
 		}
 	}
