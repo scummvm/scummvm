@@ -346,12 +346,9 @@ public:
 	Script(SagaEngine *vm);
 	~Script();
 	
-	void CF_script_togglestep();
-
 	void loadModule(int scriptModuleNumber);
 	void freeModules();
 
-	bool isInitialized() const { return _initialized;  }
 	bool isVoiceLUTPresent() const { return _voiceLUTPresent; }
 
 	void doVerb();
@@ -377,15 +374,11 @@ public:
 		_currentObject[0] = _currentObject[0] = ID_NOTHING;
 		setPointerVerb();
 	}
-
-	void scriptInfo();
-	void scriptExec(int argc, const char **argv);
 	
 private:
 	SagaEngine *_vm;
-	bool _initialized;
 	bool _voiceLUTPresent;
-	RSCFILE_CONTEXT *_scriptContext;
+	ResourceContext *_scriptContext;
 	
 	uint16 _modulesLUTEntryLen;
 	ModuleData *_modules;
@@ -422,15 +415,10 @@ public:
 	bool _skipSpeeches;
 	bool _abortEnabled;
 
-	int _dbg_singlestep;
-	int _dbg_dostep;
-	ScriptThread *_dbg_thread;
-
 public:
 	ScriptThread *createThread(uint16 scriptModuleNumber, uint16 scriptEntryPointNumber);
 	int executeThread(ScriptThread *thread, int entrypointNumber);
 	void executeThreads(uint msec);
-	int SThreadDebugStep();
 	void completeThread(void);
 	void abortAllThreads(void);
 
@@ -460,7 +448,6 @@ private:
 	const ScriptFunctionDescription *_scriptFunctionsList;
 
 	void setupScriptFuncList(void);
-	int SDebugPrintInstr(ScriptThread *thread);
 
 	void sfPutString(SCRIPTFUNC_PARAMS);
 	void sfWait(SCRIPTFUNC_PARAMS);

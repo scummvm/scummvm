@@ -26,7 +26,6 @@
 #ifndef SAGA_SNDRES_H_
 #define SAGA_SNDRES_H_
 
-#include "saga/rscfile_mod.h"
 #include "saga/sound.h"
 
 namespace Saga {
@@ -36,22 +35,20 @@ public:
 
 	SndRes(SagaEngine *vm);
 
-	int loadSound(uint32 sound_rn);
-	int playSound(uint32 sound_rn, int volume, bool loop);
-	int playVoice(uint32 voice_rn);
-	int getVoiceLength(uint32 voice_rn);
+	int loadSound(uint32 resourceId);
+	void playSound(uint32 resourceId, int volume, bool loop);
+	void playVoice(uint32 resourceId);
+	int getVoiceLength(uint32 resourceId);
 
  private:
-	int load(RSCFILE_CONTEXT *snd_ctxt, uint32 snd_rn, SOUNDBUFFER *snd_buf_i);
-	int loadVocSound(byte *snd_res, size_t snd_res_len, SOUNDBUFFER *snd_buf_i);
-	int loadWavSound(byte *snd_res, size_t snd_res_len, SOUNDBUFFER *snd_buf_i);
+	bool load(ResourceContext *context, uint32 resourceId, SoundBuffer &buffer, bool onlyHeader);
+	bool loadVocSound(byte *soundResource, size_t soundResourceLength, SoundBuffer &buffer);
+	bool loadWavSound(byte *soundResource, size_t soundResourceLength, SoundBuffer &buffer);
 
-	int _init;
+	ResourceContext *_sfxContext;
+	ResourceContext *_voiceContext;
 
-	RSCFILE_CONTEXT *_sfx_ctxt;
-	RSCFILE_CONTEXT *_voice_ctxt;
-
-	GameSoundInfo _snd_info;
+	GameSoundInfo _soundInfo;
 
 	SagaEngine *_vm;
 };

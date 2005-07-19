@@ -59,6 +59,8 @@ enum SCENE_PROC_PARAMS {
 
 // Resource type numbers
 enum SAGAResourceTypes {
+	SAGA_ACTOR = 0,
+	SAGA_OBJECT = 1,
 	SAGA_BG_IMAGE = 2,
 	SAGA_BG_MASK = 3,
 	SAGA_STRINGS = 5,
@@ -84,26 +86,27 @@ enum SAGAResourceTypes {
 
 #define SAGA_RESLIST_ENTRY_LEN 4
 
-struct SCENE_RESLIST {
-	uint32 res_number;
-	int res_type;
-	byte *res_data;
-	size_t res_data_len;
+struct SceneResourceData {
+	uint32 resourceId;
+	int reourceType;
+	byte *buffer;
+	size_t size;
+	bool invalid;
 };
 
 #define SAGA_SCENE_DESC_LEN 16
 
 struct SceneDescription {
 	int16 flags;
-	int16 resListRN;
+	int16 resourceListResourceId;
 	int16 endSlope;
 	int16 beginSlope;
 	uint16 scriptModuleNumber;
 	uint16 sceneScriptEntrypointNumber;
 	uint16 startScriptEntrypointNumber;
-	int16 musicRN;
-	SCENE_RESLIST *resList;
-	size_t resListCnt;
+	int16 musicResourceId;
+	SceneResourceData *resourceList;
+	size_t resourceListCount;
 };
 
 struct SceneEntry {
@@ -209,7 +212,6 @@ class Scene {
 	~Scene();
 
 // Console functions
-	void cmdSceneInfo();
 	void cmdActionMapInfo();
 	void cmdObjectMapInfo();
 
@@ -241,7 +243,10 @@ class Scene {
 	void initDoorsState();
 
 	void getBGInfo(BGInfo &bgInfo);
-	int getBGPal(PalEntry **pal);
+	void getBGPal(PalEntry *&pal) const {
+		pal = (PalEntry *)_bg.pal;
+	}
+
 	void getSlopes(int &beginSlope, int &endSlope);
 
 	void clearSceneQueue(void) {
@@ -249,7 +254,6 @@ class Scene {
 	}
 	void changeScene(uint16 sceneNumber, int actorsEntrance, SceneTransitionType transitionType);
 
-	bool initialized() const { return _initialized; }
 	bool isSceneLoaded() const { return _sceneLoaded; }
 
 
@@ -266,16 +270,15 @@ class Scene {
 	void drawTextList(Surface *ds);
  private:
 	void loadScene(LoadSceneParams *loadSceneParams);
-	int loadSceneDescriptor(uint32 res_number);
-	int loadSceneResourceList(uint32 res_number);
+	void loadSceneDescriptor(uint32 resourceId);
+	void loadSceneResourceList(uint32 resourceId);
 	void loadSceneEntryList(const byte* resourcePointer, size_t resourceLength);
-	int processSceneResources();
+	void processSceneResources();
 
  
 	SagaEngine *_vm;
-	bool _initialized;
 
-	RSCFILE_CONTEXT *_sceneContext;
+	ResourceContext *_sceneContext;
 	int *_sceneLUT;
 	int _sceneCount;
 	SceneQueueList _sceneQueue;
@@ -287,8 +290,8 @@ class Scene {
 	bool _inGame;
 	bool _loadDescription;
 	SceneDescription _sceneDescription;
-	int _resListEntries;
-	SCENE_RESLIST *_resList;
+	size_t _resourceListCount;
+	SceneResourceData *_resourceList;
 	SceneProc *_sceneProc;
 	SceneImage _bg;
 	SceneImage _bgMask;

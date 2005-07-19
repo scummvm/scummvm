@@ -26,25 +26,16 @@
 #ifndef SAGA_MUSIC_H_
 #define SAGA_MUSIC_H_
 
-#include "saga/rscfile_mod.h"
 #include "sound/mixer.h"
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
 
 namespace Saga {
-enum MUSIC_FLAGS {
+
+enum MusicFlags {
+	MUSIC_NORMAL = 0,
 	MUSIC_LOOP = 0x0001,
 	MUSIC_DEFAULT = 0xffff
-};
-
-struct MUSIC_MIDITABLE {
-	const char *filename;
-	int flags;
-};
-
-struct MUSIC_DIGITABLE {
-	uint32 start;
-	uint32 length;
 };
 
 class MusicPlayer : public MidiDriver {
@@ -106,7 +97,7 @@ protected:
 class Music {
 public:
 
-	Music(Audio::Mixer *mixer, MidiDriver *driver, int enabled);
+	Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver, int enabled);
 	~Music(void);
 	void setNativeMT32(bool b)	{ _player->setNativeMT32(b); }
 	bool hasNativeMT32()		{ return _player->hasNativeMT32(); }
@@ -115,35 +106,31 @@ public:
 	void setPassThrough(bool b)	{ _player->setPassThrough(b); }
 	bool isPlaying(void);
 
-	int play(uint32 music_rn, uint16 flags = MUSIC_DEFAULT);
-	int pause(void);
-	int resume(void);
-	int stop(void);
+	void play(uint32 resourceId, MusicFlags flags = MUSIC_DEFAULT);
+	void pause(void);
+	void resume(void);
+	void stop(void);
 
 	void setVolume(int volume, int time);
 
 private:
-
+	SagaEngine *_vm;
 	Audio::Mixer *_mixer;
 
 	MusicPlayer *_player;
 	Audio::SoundHandle _musicHandle;
 	uint32 _trackNumber;
 
-	static const MUSIC_MIDITABLE _midiTableITECD[26];
-	MUSIC_DIGITABLE _digiTableITECD[27];
-
-	int _musicInitialized;
 	int _enabled;
-	bool _hasDigiMusic;
 	bool _adlib;
 
 	int _targetVolume;
 	int _currentVolume;
 	int _currentVolumePercent;
 
-	RSCFILE_CONTEXT *_musicContext;
-	const char *_musicFname;
+	ResourceContext *_musicContext;
+	MidiParser *xmidiParser;
+	MidiParser *smfParser;
 
 	static void musicVolumeGaugeCallback(void *refCon);
 	void musicVolumeGauge(void);

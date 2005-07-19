@@ -81,7 +81,7 @@ public:
 
 	void draw(Surface *ds, const Rect &clipRect, SpriteList &spriteList, int32 spriteNumber, const Rect &screenRect, int scale);
 
-	int loadList(int resourceId, SpriteList &spriteList); // load or append spriteList
+	void loadList(int resourceId, SpriteList &spriteList); // load or append spriteList
 	bool hitTest(SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, const Point &testPoint);
 	void getScaledSpriteBuffer(SpriteList &spriteList, int spriteNumber, int scale, int &width, int &height, int &xAlign, int &yAlign, const byte *&buffer);
 
@@ -90,8 +90,7 @@ private:
 	void scaleBuffer(const byte *src, int width, int height, int scale);
 	
 	SagaEngine *_vm;
-	bool _initialized;
-	RSCFILE_CONTEXT *_spriteContext;
+	ResourceContext *_spriteContext;
 	byte *_decodeBuf;
 	size_t _decodeBufLen;
 };

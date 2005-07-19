@@ -123,11 +123,12 @@ struct Surface : Graphics::Surface {
 #define CURSOR_ORIGIN_Y 4
 
 bool hitTestPoly(const Point *points, unsigned int npoints, const Point& test_point);
+class SagaEngine;
 
 class Gfx {
 public:
 
-	Gfx(OSystem *system, int width, int height, GameDetector &detector);
+	Gfx(SagaEngine *vm, OSystem *system, int width, int height, GameDetector &detector);
 	~Gfx();
 	Surface *getBackBuffer() {
 		return &_backBuffer;
@@ -146,6 +147,7 @@ private:
 	Surface _backBuffer;
 	byte _currentPal[PAL_ENTRIES * 4];
 	OSystem *_system;
+	SagaEngine *_vm;
 };
 
 } // End of namespace Saga

@@ -32,9 +32,10 @@
 #include "base/gameDetector.h"
 #include "backends/fs/fs.h"
 
-#include "saga/rscfile_mod.h"
+#include "saga/rscfile.h"
 #include "saga/interface.h"
 #include "saga/scene.h"
+#include "saga/resnames.h"
 
 namespace Saga {
 
@@ -202,11 +203,6 @@ static GameSoundInfo ITEDEMO_GameSound = {
 	GAME_SOUND_VOC, 0, 0, 0
 };
 
-static GameFontDescription ITEMACDEMO_GameFonts[] = {
-	{2},
-	{0}
-}; 
-
 // Inherit the Earth - Wyrmkeep Win32 Demo version
 static GameFileDescription ITEWINDEMO_GameFiles[] = {
 	{"ited.rsc", GAME_RESOURCEFILE},
@@ -214,6 +210,11 @@ static GameFileDescription ITEWINDEMO_GameFiles[] = {
 	{"soundsd.rsc", GAME_SOUNDFILE},
 	{"voicesd.rsc", GAME_VOICEFILE}
 };
+
+static GameFontDescription ITEWINDEMO_GameFonts[] = {
+	{2},
+	{0}
+}; 
 
 // Inherit the Earth - Wyrmkeep Linux Demo version
 static GameFileDescription ITELINDEMO_GameFiles[] = {
@@ -247,11 +248,6 @@ static GameFileDescription ITEMULTICD_GameFiles[] = {
 	{"music.rsc", GAME_MUSICFILE}
 };
 
-static GameFontDescription ITEWINDEMO_GameFonts[] = {
-	{2},
-	{0}
-}; 
-
 // Inherit the Earth - Mac Wyrmkeep version
 static GameFileDescription ITEMACCD_GameFiles[] = {
 	{"ite.rsc", GAME_RESOURCEFILE},
@@ -274,7 +270,7 @@ static GameFontDescription ITEDISK_GameFonts[] = {
 	{1}
 };
 
-static GameSoundInfo ITE_GameSound = {
+static GameSoundInfo ITEDISK_GameSound = {
 	GAME_SOUND_VOC, 0, 0, 0
 };
 
@@ -296,7 +292,79 @@ static GameSoundInfo ITECD_GameSound = {
 	GAME_SOUND_PCM,
 	22050,
 	16,
-	0
+	false
+};
+
+static GamePatchDescription ITEWinPatch1_Files[] = {
+	{ "cave.mid", GAME_RESOURCEFILE, 9},
+	{ "intro.mid", GAME_RESOURCEFILE, 10},
+	{ "fvillage.mid", GAME_RESOURCEFILE, 11},
+	{ "elkhall.mid", GAME_RESOURCEFILE, 12},
+	{ "mouse.mid", GAME_RESOURCEFILE, 13},
+	{ "darkclaw.mid", GAME_RESOURCEFILE, 14},
+	{ "birdchrp.mid", GAME_RESOURCEFILE, 15},
+	{ "orbtempl.mid", GAME_RESOURCEFILE, 16},
+	{ "spooky.mid", GAME_RESOURCEFILE, 17},
+	{ "catfest.mid", GAME_RESOURCEFILE, 18},
+	{ "elkfanfare.mid", GAME_RESOURCEFILE, 19},
+	{ "bcexpl.mid", GAME_RESOURCEFILE, 20},
+	{ "boargtnt.mid", GAME_RESOURCEFILE, 21},
+	{ "boarking.mid", GAME_RESOURCEFILE, 22},
+	{ "explorea.mid", GAME_RESOURCEFILE, 23},
+	{ "exploreb.mid", GAME_RESOURCEFILE, 24},
+	{ "explorec.mid", GAME_RESOURCEFILE, 25},
+	{ "sunstatm.mid", GAME_RESOURCEFILE, 26},
+	{ "nitstrlm.mid", GAME_RESOURCEFILE, 27},
+	{ "humruinm.mid", GAME_RESOURCEFILE, 28},
+	{ "damexplm.mid", GAME_RESOURCEFILE, 29},
+	{ "tychom.mid", GAME_RESOURCEFILE, 30},
+	{ "kitten.mid", GAME_RESOURCEFILE, 31},
+	{ "sweet.mid", GAME_RESOURCEFILE, 32},
+	{ "brutalmt.mid", GAME_RESOURCEFILE, 33},
+	{ "shiala.mid", GAME_RESOURCEFILE, 34},
+
+	{ "wyrm.pak", GAME_RESOURCEFILE, 1529},
+	{ "wyrm1.dlt", GAME_RESOURCEFILE, 1530},
+	{ "wyrm2.dlt", GAME_RESOURCEFILE, 1531},
+	{ "wyrm3.dlt", GAME_RESOURCEFILE, 1532},
+	{ "wyrm4.dlt", GAME_RESOURCEFILE, 1533},
+	{ "credit3n.dlt", GAME_RESOURCEFILE, 1796},
+	{ "credit4n.dlt", GAME_RESOURCEFILE, 1797},
+	{ "p2_a.voc", GAME_VOICEFILE, 4},
+};
+
+static GamePatchDescription ITEWinPatch2_Files[] = {
+	{ "cave.mid", GAME_RESOURCEFILE, 9},
+	{ "intro.mid", GAME_RESOURCEFILE, 10},
+	{ "fvillage.mid", GAME_RESOURCEFILE, 11},
+	{ "elkfanfare.mid", GAME_RESOURCEFILE, 19},
+	{ "bcexpl.mid", GAME_RESOURCEFILE, 20},
+	{ "boargtnt.mid", GAME_RESOURCEFILE, 21},
+	{ "explorea.mid", GAME_RESOURCEFILE, 23},
+	{ "sweet.mid", GAME_RESOURCEFILE, 32},
+
+	{ "wyrm.pak", GAME_RESOURCEFILE, 1529},
+	{ "wyrm1.dlt", GAME_RESOURCEFILE, 1530},
+	{ "wyrm2.dlt", GAME_RESOURCEFILE, 1531},
+	{ "wyrm3.dlt", GAME_RESOURCEFILE, 1532},
+	{ "p2_a.iaf", GAME_VOICEFILE, 4}
+/*	boarhall.bbm
+	elkenter.bbm
+	ferrets.bbm
+	ratdoor.bbm
+	sanctuar.bbm
+	tycho.bbm*/
+};
+
+static GamePatchDescription ITEMacPatch_Files[] = {
+	{ "wyrm.pak", GAME_RESOURCEFILE, 1529},
+	{ "wyrm1.dlt", GAME_RESOURCEFILE, 1530},
+	{ "wyrm2.dlt", GAME_RESOURCEFILE, 1531},
+	{ "wyrm3.dlt", GAME_RESOURCEFILE, 1532},
+	{ "wyrm4.dlt", GAME_RESOURCEFILE, 1533},
+	{ "credit3m.dlt", GAME_RESOURCEFILE, 1796},
+	{ "credit4m.dlt", GAME_RESOURCEFILE, 1797},
+	{ "p2_a.iaf", GAME_VOICEFILE, 4}
 };
 
 // IHNM section
@@ -588,6 +656,8 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEDEMO_GameFonts),
 		ITEDEMO_GameFonts,
 		&ITEDEMO_GameSound,
+		0,
+		NULL,
 		0, // features
 	},
 
@@ -602,9 +672,11 @@ static GameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFiles),
 		ITEWINDEMO_GameFiles,
-		ARRAYSIZE(ITEMACDEMO_GameFonts),
-		ITEMACDEMO_GameFonts,
+		ARRAYSIZE(ITEWINDEMO_GameFonts),
+		ITEWINDEMO_GameFonts,
 		&ITECD_GameSound,
+		ARRAYSIZE(ITEMacPatch_Files),
+		ITEMacPatch_Files,
 		GF_VOX_VOICES | GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_WYRMKEEP | GF_CD_FX
 	},
 
@@ -619,9 +691,11 @@ static GameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFiles),
 		ITEWINDEMO_GameFiles,
-		ARRAYSIZE(ITEMACDEMO_GameFonts),
-		ITEMACDEMO_GameFonts,
+		ARRAYSIZE(ITEWINDEMO_GameFonts),
+		ITEWINDEMO_GameFonts,
 		&ITECD_GameSound,
+		ARRAYSIZE(ITEMacPatch_Files),
+		ITEMacPatch_Files,
 		GF_VOX_VOICES | GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_WYRMKEEP | GF_CD_FX
 	},
 
@@ -636,9 +710,11 @@ static GameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITEMACCD_GameFiles),
 		ITEMACCD_GameFiles,
-		ARRAYSIZE(ITEMACDEMO_GameFonts),
-		ITEMACDEMO_GameFonts,
+		ARRAYSIZE(ITEWINDEMO_GameFonts),
+		ITEWINDEMO_GameFonts,
 		&ITECD_GameSound,
+		ARRAYSIZE(ITEMacPatch_Files),
+		ITEMacPatch_Files,
 		GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_WYRMKEEP | GF_CD_FX
 	},
 
@@ -657,6 +733,8 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
+		0,
+		NULL,
 		GF_VOX_VOICES | GF_WYRMKEEP | GF_CD_FX
 	},
 	
@@ -674,6 +752,8 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
 		&ITECD_GameSound,
+		ARRAYSIZE(ITEWinPatch2_Files),
+		ITEWinPatch2_Files,
 		GF_VOX_VOICES | GF_WYRMKEEP | GF_CD_FX
 	},
 	
@@ -691,6 +771,8 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
 		&ITECD_GameSound,
+		ARRAYSIZE(ITEWinPatch1_Files),
+		ITEWinPatch1_Files,
 		GF_VOX_VOICES | GF_WYRMKEEP | GF_CD_FX
 	},
 
@@ -708,6 +790,8 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
+		0,
+		NULL,
 		GF_WYRMKEEP | GF_BIG_ENDIAN_VOICES | GF_CD_FX
 	},
 	
@@ -726,6 +810,8 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
+		0,
+		NULL,
 		GF_WYRMKEEP | GF_CD_FX
 	},
 
@@ -743,6 +829,8 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
+		0,
+		NULL,
 		GF_CD_FX
 	},
 
@@ -760,6 +848,8 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
+		0,
+		NULL,
 		GF_LANG_DE | GF_CD_FX
 	},
 
@@ -777,6 +867,8 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
+		0,
+		NULL,
 		GF_CD_FX
 	},
 
@@ -793,7 +885,9 @@ static GameDescription gameDescriptions[] = {
 		ITEDISK_GameFiles,
 		ARRAYSIZE(ITEDISK_GameFonts),
 		ITEDISK_GameFonts,
-		&ITE_GameSound,
+		&ITEDISK_GameSound,
+		0,
+		NULL,
 		GF_LANG_DE
 	},
 
@@ -810,7 +904,9 @@ static GameDescription gameDescriptions[] = {
 		ITEDISK_GameFiles,
 		ARRAYSIZE(ITEDISK_GameFonts),
 		ITEDISK_GameFonts,
-		&ITE_GameSound,
+		&ITEDISK_GameSound,
+		0,
+		NULL,
 		0
 	},
 
@@ -828,6 +924,8 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
 		&IHNM_GameSound,
+		0,
+		NULL,
 		GF_DEFAULT_TO_1X_SCALER
 	},
 
@@ -845,6 +943,8 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
 		&IHNM_GameSound,
+		0,
+		NULL,
 		GF_DEFAULT_TO_1X_SCALER
 	},
 
@@ -862,56 +962,39 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
 		&IHNM_GameSound,
+		0,
+		NULL,
 		GF_DEFAULT_TO_1X_SCALER
 	}
 };
 
-int SagaEngine::initGame(void) {
+bool SagaEngine::initGame(void) {
+	uint16 gameCount = ARRAYSIZE(gameDescriptions);
 	int gameNumber;
 	FSList dummy;
 
 	if ((gameNumber = detectGame(dummy)) == -1) {
 		warning("No valid games were found in the specified directory.");
-		return FAILURE;
+		return false;
 	}
 
-	if (loadGame(gameNumber) != SUCCESS) {
-		warning("Error loading game resource files.");
-		return FAILURE;
+
+
+	if (gameNumber >= gameCount) {
+		error("SagaEngine::loadGame wrong gameNumber");
 	}
 
-	return SUCCESS;
-}
+	_gameNumber = gameNumber;
+	_gameDescription = &gameDescriptions[gameNumber];
+	_gameDisplayInfo = *_gameDescription->gameDisplayInfo;
+	_displayClip.right = _gameDisplayInfo.logicalWidth; 
+	_displayClip.bottom = _gameDisplayInfo.logicalHeight; 
 
-RSCFILE_CONTEXT *SagaEngine::getFileContext(uint16 type, int param) {
-	uint16 i;
 
-	for (i = 0; i < _gameDescription->filesCount; i++) {
-		if (_gameDescription->filesDescriptions[i].fileType & type) {
-			return _gameFileContexts[i];
-		}
+	if (!_resource->createContexts()) {
+		return false;
 	}
-
-	return NULL;
-}
-
-bool SagaEngine::isBigEndianFile(const char *filename) {
-	bool isBigEndian = IS_BIG_ENDIAN;
-
-	if (isBigEndian)
-		return true;
-
-	if (!(_vm->getFeatures() & GF_BIG_ENDIAN_VOICES))
-		return isBigEndian;
-
-	for (int i = 0; i < _gameDescription->filesCount; i++) {
-		GameFileDescription *desc = &_gameDescription->filesDescriptions[i];
-		if (desc->fileType & GAME_VOICEFILE && scumm_stricmp(filename, desc->fileName) == 0) {
-			return true;
-		}
-	}
-
-	return isBigEndian;
+	return true;
 }
 
 DetectedGameList GAME_ProbeGame(const FSList &fslist) {
@@ -1042,47 +1125,6 @@ int detectGame(const FSList &fslist, bool mode) {
 	}
 
 	return -1;
-}
-
-int SagaEngine::loadGame(int gameNumber) {
-	RSCFILE_CONTEXT *loadContext;
-	uint16 gameCount = ARRAYSIZE(gameDescriptions);
-	const char *gameFileName;
-	uint16 gameFileCount;
-	uint16 i;
-
-	if (gameNumber >= gameCount) {
-		error("SagaEngine::loadGame wrong gameNumber");
-	}
-
-	_gameNumber = gameNumber;
-	_gameDescription = &gameDescriptions[gameNumber];
-	_gameDisplayInfo = *_gameDescription->gameDisplayInfo;
-	_displayClip.right = _gameDisplayInfo.logicalWidth; 
-	_displayClip.bottom = _gameDisplayInfo.logicalHeight; 
-
-	gameFileCount = _gameDescription->filesCount;
-	
-	_gameFileContexts = (RSCFILE_CONTEXT **)realloc(_gameFileContexts, gameFileCount * sizeof(*_gameFileContexts));
-	//TODO: on exit - FREE!
-	if (_gameFileContexts == NULL) {
-		memoryError("SagaEngine::loadGame");
-	}
-
-
-	// Load game resource files
-	for (i = 0; i < gameFileCount; i++) {
-		loadContext = RSC_CreateContext();
-		gameFileName = _gameDescription->filesDescriptions[i].fileName;
-		if (RSC_OpenContext(loadContext, gameFileName) != SUCCESS) {
-			return FAILURE;
-		}
-
-		debug(3, "Opened resource file: %s", gameFileName);
-		_gameFileContexts[i] = loadContext;
-	}
-	
-	return SUCCESS;
 }
 
 } // End of namespace Saga

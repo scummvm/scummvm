@@ -48,13 +48,9 @@ private:
 	bool Cmd_AnimInfo(int argc, const char **argv);
 
 	bool cmdSceneChange(int argc, const char **argv);
-	bool cmdSceneInfo(int argc, const char **argv);
 	bool cmdActionMapInfo(int argc, const char **argv);
 	bool cmdObjectMapInfo(int argc, const char **argv);
-
-	bool Cmd_ScriptInfo(int argc, const char **argv);
-	bool Cmd_ScriptExec(int argc, const char **argv);
-	bool Cmd_ScriptToggleStep(int argc, const char **argv);
+	
 
 private:
 	SagaEngine *_vm;

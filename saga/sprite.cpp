@@ -26,7 +26,7 @@
 
 #include "saga/gfx.h"
 #include "saga/scene.h"
-#include "saga/rscfile_mod.h"
+#include "saga/rscfile.h"
 
 #include "saga/font.h"
 
@@ -35,38 +35,32 @@
 
 namespace Saga {
 
-Sprite::Sprite(SagaEngine *vm) : _vm(vm), _initialized(false) {
+Sprite::Sprite(SagaEngine *vm) : _vm(vm) {
 	debug(8, "Initializing sprite subsystem...");
 
 	// Load sprite module resource context
-	_spriteContext = _vm->getFileContext(GAME_RESOURCEFILE, 0);
+	_spriteContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
 	if (_spriteContext == NULL) {
-		return;
+		error("Sprite::Sprite resource context not found");
 	}
 
 	_decodeBufLen = DECODE_BUF_LEN;
 
 	_decodeBuf = (byte *)malloc(_decodeBufLen);
 	if (_decodeBuf == NULL) {
-		return;
+		memoryError("Sprite::Sprite");
 	}
 
 	loadList(_vm->getResourceDescription()->mainSpritesResourceId, _mainSprites);
-
-	_initialized = true;
 }
 
 Sprite::~Sprite(void) {
-	if (!_initialized) {
-		return;
-	}
-
 	debug(8, "Shutting down sprite subsystem...");
 	_mainSprites.freeMem();
 	free(_decodeBuf);
 }
 
-int Sprite::loadList(int resourceId, SpriteList &spriteList) {
+void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 	SpriteInfo *spriteInfo;
 	byte *spriteListData;
 	size_t spriteListLength;
@@ -79,17 +73,13 @@ int Sprite::loadList(int resourceId, SpriteList &spriteList) {
 	const byte *spritePointer;
 	const byte *spriteDataPointer;
 
-	if (RSC_LoadResource(_spriteContext, resourceId, &spriteListData, &spriteListLength) != SUCCESS) {
-		warning("Sprite::loadList RSC_LoadResource FAILURE");
-		return FAILURE;
-	}
+	_vm->_resource->loadResource(_spriteContext, resourceId, spriteListData, spriteListLength);
 
 	if (spriteListLength == 0) {
-		warning("Sprite::loadList spriteListLength == 0");
-		return FAILURE;
+		return;
 	}
 
-	MemoryReadStreamEndian readS(spriteListData, spriteListLength, IS_BIG_ENDIAN);
+	MemoryReadStreamEndian readS(spriteListData, spriteListLength, _spriteContext->isBigEndian);
 
 	spriteCount = readS.readUint16();
 
@@ -105,7 +95,7 @@ int Sprite::loadList(int resourceId, SpriteList &spriteList) {
 
 	for (i = oldSpriteCount; i < spriteList.spriteCount; i++) {
 		spriteInfo = &spriteList.infoList[i];
-		if (_vm->getFeatures() & GF_MAC_RESOURCES)
+		if (_vm->isMacResources())
 			offset = readS.readUint32();
 		else
 			offset = readS.readUint16();
@@ -142,9 +132,7 @@ int Sprite::loadList(int resourceId, SpriteList &spriteList) {
 		memcpy(spriteInfo->decodedBuffer, _decodeBuf, outputLength);
 	}
 
-	RSC_FreeResource(spriteListData);
-
-	return SUCCESS;
+	free(spriteListData);
 }
 
 void Sprite::getScaledSpriteBuffer(SpriteList &spriteList, int spriteNumber, int scale, int &width, int &height, int &xAlign, int &yAlign, const byte *&buffer) {
@@ -306,8 +294,6 @@ void Sprite::drawOccluded(Surface *ds, const Rect &clipRect, SpriteList &spriteL
 	byte *maskRowPointer;
 	int maskZ;
 
-
-	assert(_initialized);
 
 	if (!_vm->_scene->isBGMaskPresent()) {
 		draw(ds, clipRect, spriteList, spriteNumber, screenCoord, scale);

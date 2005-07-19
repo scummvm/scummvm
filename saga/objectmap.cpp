@@ -132,7 +132,7 @@ bool HitZone::hitTest(const Point &testPoint) {
 	return false;
 }
 
-void HitZone::draw(Surface *ds, int color) {
+void HitZone::draw(SagaEngine *vm, Surface *ds, int color) {
 	int i, pointsCount, j;
 	Location location;
 	HitZone::ClickArea *clickArea;
@@ -140,15 +140,14 @@ void HitZone::draw(Surface *ds, int color) {
 	for (i = 0; i < _clickAreasCount; i++) {
 		clickArea = &_clickAreas[i];
 		pointsCount = clickArea->pointsCount;
-		if (_vm->_scene->getFlags() & kSceneFlagISO) {
+		if (vm->_scene->getFlags() & kSceneFlagISO) {
 			points = (Point*)malloc(sizeof(Point) * pointsCount);
 			for (j = 0; j < pointsCount; j++) {
 				location.u() = clickArea->points[j].x;
 				location.v() = clickArea->points[j].y;
 				location.z = 0;
-				_vm->_isoMap->tileCoordsToScreenPoint(location, points[j]);
-			}
-			//
+				vm->_isoMap->tileCoordsToScreenPoint(location, points[j]);
+			}			
 		} else {
 			points = clickArea->points;
 		}
@@ -162,7 +161,7 @@ void HitZone::draw(Surface *ds, int color) {
 				ds->drawPolyLine(points, pointsCount, color);
 			}
 		}
-		if (_vm->_scene->getFlags() & kSceneFlagISO) {
+		if (vm->_scene->getFlags() & kSceneFlagISO) {
 			free(points);
 		}
 
@@ -174,11 +173,15 @@ void HitZone::draw(Surface *ds, int color) {
 void ObjectMap::load(const byte *resourcePointer, size_t resourceLength) {
 	int i;
 
+	if (resourceLength == 0) {
+		return;
+	}
+
 	if (resourceLength < 4) {
 		error("ObjectMap::load wrong resourceLength");
 	}
 
-	MemoryReadStreamEndian readS(resourcePointer, resourceLength, IS_BIG_ENDIAN);
+	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _vm->isBigEndian());
 
 	_hitZoneListCount = readS.readSint16();
 	if (_hitZoneListCount < 0) {
@@ -232,7 +235,7 @@ void ObjectMap::draw(Surface *ds, const Point& testPoint, int color, int color2)
 	hitZoneIndex = hitTest(pickPoint);
 
 	for (i = 0; i < _hitZoneListCount; i++) {		
-		_hitZoneList[i]->draw(ds, (hitZoneIndex == i) ? color2 : color);
+		_hitZoneList[i]->draw(_vm, ds, (hitZoneIndex == i) ? color2 : color);
 	}
 
 	if (hitZoneIndex != -1) {		

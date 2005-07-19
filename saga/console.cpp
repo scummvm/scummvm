@@ -66,18 +66,8 @@ Console::Console(SagaEngine *vm) : Common::Debugger<Console>() {
 
 	// Scene commands
 	DCmd_Register("scene_change", &Console::cmdSceneChange);
-	DCmd_Register("scene_info", &Console::cmdSceneInfo);
 	DCmd_Register("action_map_info", &Console::cmdActionMapInfo);
 	DCmd_Register("object_map_info", &Console::cmdObjectMapInfo);
-	// CVAR_Register_I(&_sceneNumber, "scene", NULL, CVAR_READONLY, 0, 0);
-
-	// Script commands
-	DCmd_Register("script_info", &Console::Cmd_ScriptInfo);
-	DCmd_Register("script_exec", &Console::Cmd_ScriptExec);
-	DCmd_Register("script_togglestep", &Console::Cmd_ScriptToggleStep);
-//	CVAR_RegisterFunc(CF_script_info, "script_info", NULL, CVAR_NONE, 0, 0, this);
-//	CVAR_RegisterFunc(CF_script_exec, "script_exec", "<Script number>", CVAR_NONE, 1, 1, this);
-//	CVAR_RegisterFunc(CF_script_togglestep, "script_togglestep", NULL, CVAR_NONE, 0, 0, this);
 }
 
 Console::~Console() {
@@ -154,11 +144,6 @@ bool Console::cmdSceneChange(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdSceneInfo(int argc, const char **argv) {
-	_vm->_scene->cmdSceneInfo();
-	return true;
-}
-
 bool Console::cmdActionMapInfo(int argc, const char **argv) {
 	_vm->_scene->cmdActionMapInfo();
 	return true;
@@ -166,24 +151,6 @@ bool Console::cmdActionMapInfo(int argc, const char **argv) {
 
 bool Console::cmdObjectMapInfo(int argc, const char **argv) {
 	_vm->_scene->cmdObjectMapInfo();
-	return true;
-}
-
-bool Console::Cmd_ScriptInfo(int argc, const char **argv) {
-	_vm->_script->scriptInfo();
-	return true;
-}
-
-bool Console::Cmd_ScriptExec(int argc, const char **argv) {
-	if (argc != 2)
-		DebugPrintf("Usage: %s <Script number>\n", argv[0]);
-	else
-		_vm->_script->scriptExec(argc, argv);
-	return true;
-}
-
-bool Console::Cmd_ScriptToggleStep(int argc, const char **argv) {
-	_vm->_script->CF_script_togglestep();
 	return true;
 }
 

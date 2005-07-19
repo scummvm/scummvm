@@ -24,8 +24,7 @@
 // Font management and font drawing module
 #include "saga/saga.h"
 #include "saga/gfx.h"
-
-#include "saga/rscfile_mod.h"
+#include "saga/rscfile.h"
 
 #include "saga/font.h"
 #include "saga/stream.h"
@@ -69,26 +68,24 @@ void Font::loadFont(uint32 fontResourceId) {
 	size_t fontResourceLength;
 	int numBits;
 	int c;
-	RSCFILE_CONTEXT *fontContext;
+	ResourceContext *fontContext;
 
 
 	debug(1, "Font::loadFont(): Reading fontResourceId %d...", fontResourceId);
 
-	fontContext = _vm->getFileContext(GAME_RESOURCEFILE, 0);
+	fontContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
 	if (fontContext == NULL) {
-		error("Font::Font(): Couldn't get resource context.");
+		error("Font::Font() resource context not found");
 	}
 
 	// Load font resource
-	if (RSC_LoadResource(fontContext, fontResourceId, &fontResourcePointer, &fontResourceLength) != SUCCESS) {
-		error("Font::loadFont(): Couldn't load font resource.");
-	}
+	_vm->_resource->loadResource(fontContext, fontResourceId, fontResourcePointer, fontResourceLength);
 
 	if (fontResourceLength < FONT_DESCSIZE) {
-		error("Font::loadFont(): Invalid font length (%d < %d)", fontResourceLength, FONT_DESCSIZE);
+		error("Font::loadFont() Invalid font length (%i < %i)", fontResourceLength, FONT_DESCSIZE);
 	}
 
-	MemoryReadStreamEndian readS(fontResourcePointer, fontResourceLength, IS_BIG_ENDIAN);
+	MemoryReadStreamEndian readS(fontResourcePointer, fontResourceLength, fontContext->isBigEndian);
 
 	// Create new font structure
 	font = (FontData *)malloc(sizeof(*font));
@@ -127,7 +124,7 @@ void Font::loadFont(uint32 fontResourceId) {
 	font->normal.font = (byte*)malloc(fontResourceLength - FONT_DESCSIZE);
 	memcpy(font->normal.font, fontResourcePointer + FONT_DESCSIZE, fontResourceLength - FONT_DESCSIZE);
 
-	RSC_FreeResource(fontResourcePointer);
+	free(fontResourcePointer);
 
 
 	// Create outline font style
@@ -437,12 +434,13 @@ void Font::textDraw(FontId fontId, Surface *ds, const char *text, const Common::
 		fitWidth = ((ds->w - TEXT_MARGIN) - textPoint.x) * 2;
 	}
 
-	if (fitWidth >= textWidth) {
-		// Entire string fits, draw it
-		textPoint.x = textPoint.x - (textWidth / 2);
-		draw(fontId, ds, text, textLength, textPoint, color, effectColor, flags);
+	if (fitWidth < textWidth) {
+		warning("text too long to be displayed in one line");
 		return;
 	}
+	// Entire string fits, draw it
+	textPoint.x = textPoint.x - (textWidth / 2);
+	draw(fontId, ds, text, textLength, textPoint, color, effectColor, flags);
 }
 
 int Font::getHeight(FontId fontId, const char *text, int width, FontEffectFlags flags) {

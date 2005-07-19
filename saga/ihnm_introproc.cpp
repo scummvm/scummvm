@@ -28,7 +28,6 @@
 
 #include "saga/animation.h"
 #include "saga/events.h"
-#include "saga/rscfile_mod.h"
 #include "saga/sndres.h"
 #include "saga/music.h"
 
@@ -36,9 +35,9 @@
 
 namespace Saga {
 
-SCENE_RESLIST IHNM_IntroMovie1RL[] = {
-	{30, SAGA_BG_IMAGE, 0, 0} ,
-	{31, SAGA_ANIM_1, 0, 0}
+SceneResourceData IHNM_IntroMovie1RL[] = {
+	{30, SAGA_BG_IMAGE, 0, 0, false} ,
+	{31, SAGA_ANIM_1, 0, 0, false}
 };
 
 SceneDescription IHNM_IntroMovie1Desc = {
@@ -47,9 +46,9 @@ SceneDescription IHNM_IntroMovie1Desc = {
 	ARRAYSIZE(IHNM_IntroMovie1RL)
 };
 
-SCENE_RESLIST IHNM_IntroMovie2RL[] = {
-	{32, SAGA_BG_IMAGE, 0, 0} ,
-	{33, SAGA_ANIM_1, 0, 0}
+SceneResourceData IHNM_IntroMovie2RL[] = {
+	{32, SAGA_BG_IMAGE, 0, 0, false} ,
+	{33, SAGA_ANIM_1, 0, 0, false}
 };
 
 SceneDescription IHNM_IntroMovie2Desc = {
@@ -58,9 +57,9 @@ SceneDescription IHNM_IntroMovie2Desc = {
 	ARRAYSIZE(IHNM_IntroMovie2RL)
 };
 
-SCENE_RESLIST IHNM_IntroMovie3RL[] = {
-	{34, SAGA_BG_IMAGE, 0, 0},
-	{35, SAGA_ANIM_1, 0, 0}
+SceneResourceData IHNM_IntroMovie3RL[] = {
+	{34, SAGA_BG_IMAGE, 0, 0, false},
+	{35, SAGA_ANIM_1, 0, 0, false}
 };
 
 SceneDescription IHNM_IntroMovie3Desc = {
@@ -69,9 +68,9 @@ SceneDescription IHNM_IntroMovie3Desc = {
 	ARRAYSIZE(IHNM_IntroMovie3RL)
 };
 
-SCENE_RESLIST IHNM_IntroMovie4RL[] = {
-	{1227, SAGA_BG_IMAGE, 0, 0},
-	{1226, SAGA_ANIM_1, 0, 0}
+SceneResourceData IHNM_IntroMovie4RL[] = {
+	{1227, SAGA_BG_IMAGE, 0, 0, false},
+	{1226, SAGA_ANIM_1, 0, 0, false}
 };
 
 SceneDescription IHNM_IntroMovie4Desc = {
@@ -207,7 +206,7 @@ int Scene::IHNMIntroMovieProc2(int param) {
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Fade in from black to the scene background palette
-		_vm->_scene->getBGPal(&pal);
+		_vm->_scene->getBGPal(pal);
 
 		event.type = CONTINUOUS_EVENT;
 		event.code = PAL_EVENT;
@@ -275,7 +274,7 @@ int Scene::IHNMIntroMovieProc3(int param) {
 		event.type = ONESHOT_EVENT;
 		event.code = MUSIC_EVENT;
 		event.param = 1;
-		event.param2 = 0;
+		event.param2 = MUSIC_NORMAL;
 		event.op = EVENT_PLAY;
 		event.time = 0;
 
@@ -292,7 +291,7 @@ int Scene::IHNMIntroMovieProc3(int param) {
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Fade in from black to the scene background palette
-		_vm->_scene->getBGPal(&pal);
+		_vm->_scene->getBGPal(pal);
 
 		event.type = CONTINUOUS_EVENT;
 		event.code = PAL_EVENT;

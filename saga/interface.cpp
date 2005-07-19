@@ -33,10 +33,11 @@
 #include "saga/itedata.h"
 #include "saga/puzzle.h"
 #include "saga/render.h"
-#include "saga/rscfile_mod.h"
 #include "saga/scene.h"
 #include "saga/script.h"
 #include "saga/sprite.h"
+#include "saga/rscfile.h"
+#include "saga/resnames.h"
 
 #include "saga/interface.h"
 
@@ -63,21 +64,16 @@ static int verbTypeToTextStringsIdLUT[kVerbTypesMax] = {
 	-1
 };
 
-Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
+Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	byte *resource;
 	size_t resourceLength;
-	int result;
 	int i;
-
-	if (_initialized) {
-		return;
-	}
 	
 
 	// Load interface module resource file context
-	_interfaceContext = _vm->getFileContext(GAME_RESOURCEFILE, 0);
+	_interfaceContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
 	if (_interfaceContext == NULL) {
-		error("Interface::Interface(): unable to load resource");
+		error("Interface::Interface() resource context not found");
 	}
 	
 	_mainPanel.buttons = _vm->getDisplayInfo().mainPanelButtons;
@@ -93,46 +89,33 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 		}
 	}
 
-	result = RSC_LoadResource(_interfaceContext, _vm->getResourceDescription()->mainPanelResourceId, &resource, &resourceLength);
-	if ((result != SUCCESS) || (resourceLength == 0)) {
-		error("Interface::Interface(): unable to load mainPanel resource");
-	}
+	_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->mainPanelResourceId, resource, resourceLength);
 	_vm->decodeBGImage(resource, resourceLength, &_mainPanel.image,
 		&_mainPanel.imageLength, &_mainPanel.imageWidth, &_mainPanel.imageHeight);
 	
-	RSC_FreeResource(resource);
+	free(resource);
 
 	_conversePanel.buttons = _vm->getDisplayInfo().conversePanelButtons;
 	_conversePanel.buttonsCount = _vm->getDisplayInfo().conversePanelButtonsCount;
 
-	result = RSC_LoadResource(_interfaceContext, _vm->getResourceDescription()->conversePanelResourceId, &resource, &resourceLength);
-	if ((result != SUCCESS) || (resourceLength == 0)) {
-		error("Interface::Interface unable to load conversePanel resource");
-	}
+	_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->conversePanelResourceId, resource, resourceLength);
 	_vm->decodeBGImage(resource, resourceLength, &_conversePanel.image,
 		&_conversePanel.imageLength, &_conversePanel.imageWidth, &_conversePanel.imageHeight);
-	RSC_FreeResource(resource);
+	free(resource);
 
 	_optionPanel.buttons = _vm->getDisplayInfo().optionPanelButtons;
 	_optionPanel.buttonsCount = _vm->getDisplayInfo().optionPanelButtonsCount;
 
-	result = RSC_LoadResource(_interfaceContext, _vm->getResourceDescription()->optionPanelResourceId, &resource, &resourceLength);
-	if ((result != SUCCESS) || (resourceLength == 0)) {
-		error("Interface::Interface unable to load optionPanel resource");
-	}
+	_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->optionPanelResourceId, resource, resourceLength);
 	_vm->decodeBGImage(resource, resourceLength, &_optionPanel.image,
 		&_optionPanel.imageLength, &_optionPanel.imageWidth, &_optionPanel.imageHeight);
-	RSC_FreeResource(resource);
+	free(resource);
 
 
-	if (_vm->_sprite->loadList(_vm->getResourceDescription()->mainPanelSpritesResourceId, _mainPanel.sprites) != SUCCESS) {
-		error("Interface::Interface(): Unable to load sprite list");
-	}
+	_vm->_sprite->loadList(_vm->getResourceDescription()->mainPanelSpritesResourceId, _mainPanel.sprites);
 
 	if (_vm->getGameType() == GType_ITE) {
-		if (_vm->_sprite->loadList(_vm->getResourceDescription()->defaultPortraitsResourceId, _defPortraits) != SUCCESS) {
-			error("Interface::Interface(): Unable to load sprite list");
-		}
+		_vm->_sprite->loadList(_vm->getResourceDescription()->defaultPortraitsResourceId, _defPortraits);
 	} else {
 		// TODO
 	}
@@ -212,8 +195,6 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	_textInput = false;
 	_statusTextInput = false;
 	_statusTextInputState = kStatusTextInputFirstRun;
-
-	_initialized = true;
 }
 
 Interface::~Interface(void) {
@@ -222,7 +203,6 @@ Interface::~Interface(void) {
 	_mainPanel.sprites.freeMem();
 	_defPortraits.freeMem();
 	_scenePortraits.freeMem();
-	_initialized = false;
 }
 
 int Interface::activate() {
@@ -505,10 +485,10 @@ void Interface::setStatusText(const char *text, int statusColor) {
 	drawStatusBar();	
 }
 
-int Interface::loadScenePortraits(int resourceId) {
+void Interface::loadScenePortraits(int resourceId) {
 	_scenePortraits.freeMem();
 
-	return _vm->_sprite->loadList(resourceId, _scenePortraits);
+	_vm->_sprite->loadList(resourceId, _scenePortraits);
 }
 
 void Interface::drawVerbPanel(Surface *backBuffer, PanelButton* panelButton) {
@@ -2037,7 +2017,6 @@ void Interface::mapPanelShow() {
 	Rect rect;
 	byte *image;
 	int imageWidth, imageHeight;
-	int result;
 	const byte *pal;
 	PalEntry cPal[PAL_ENTRIES];
 
@@ -2047,9 +2026,9 @@ void Interface::mapPanelShow() {
 
 	rect.left = rect.top = 0;
 
-	result = RSC_LoadResource(_interfaceContext, RID_ITE_TYCHO_MAP, &resource, &resourceLength);
-	if ((result != SUCCESS) || (resourceLength == 0)) {
-		error("Interface::mapPanelShow(): unable to load Tycho map resource");
+	_vm->_resource->loadResource(_interfaceContext, RID_ITE_TYCHO_MAP, resource, resourceLength);
+	if (resourceLength == 0) {
+		error("Interface::mapPanelShow() unable to load Tycho map resource");
 	}
 
 	_vm->_gfx->getCurrentPal(_mapSavedPal);
@@ -2083,7 +2062,7 @@ void Interface::mapPanelShow() {
 		_vm->_system->delayMillis(5);
 	}
 
-	RSC_FreeResource(resource);
+	free(resource);
 	free(image);
 
 	setSaveReminderState(false);

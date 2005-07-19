@@ -278,7 +278,7 @@ int Events::handleOneShot(EVENT *event) {
 	case TEXT_EVENT:
 		switch (event->op) {
 		case EVENT_DISPLAY:
-			((TextListEntry *)event->data)->display = 1;
+			((TextListEntry *)event->data)->display = true;
 			break;
 		case EVENT_REMOVE:
 			_vm->_scene->_textList.remove((TextListEntry *)event->data);
@@ -299,7 +299,7 @@ int Events::handleOneShot(EVENT *event) {
 	case MUSIC_EVENT:
 		_vm->_music->stop();
 		if (event->op == EVENT_PLAY)
-			_vm->_music->play(event->param, event->param2);
+			_vm->_music->play(event->param, (MusicFlags)event->param2);
 		break;
 	case BG_EVENT:
 		{
@@ -332,9 +332,9 @@ int Events::handleOneShot(EVENT *event) {
 				}
 
 				if (event->param == SET_PALETTE) {
-					PalEntry *pal_p;
-					_vm->_scene->getBGPal(&pal_p);
-					_vm->_gfx->setPalette(pal_p);
+					PalEntry *palPointer;
+					_vm->_scene->getBGPal(palPointer);
+					_vm->_gfx->setPalette(palPointer);
 				}
 			}
 		}

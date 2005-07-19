@@ -30,12 +30,13 @@
 #include "saga/animation.h"
 #include "saga/events.h"
 #include "saga/font.h"
-#include "saga/rscfile_mod.h"
 #include "saga/sndres.h"
 #include "saga/palanim.h"
 #include "saga/music.h"
 
 #include "saga/scene.h"
+#include "saga/resnames.h"
+#include "saga/rscfile.h"
 
 namespace Saga {
 
@@ -56,17 +57,17 @@ LoadSceneParams ITE_IntroList[] = {
 };
 
 int Scene::ITEStartProc() {
-	size_t n_introscenes;
+	size_t scenesCount;
 	size_t i;
 
 	LoadSceneParams firstScene;
 	LoadSceneParams tempScene;
 
-	n_introscenes = ARRAYSIZE(ITE_IntroList);
+	scenesCount = ARRAYSIZE(ITE_IntroList);
 
-	for (i = 0; i < n_introscenes; i++) {
+	for (i = 0; i < scenesCount; i++) {
 		tempScene = ITE_IntroList[i];
-		tempScene.sceneDescriptor = RSC_ConvertID(tempScene.sceneDescriptor);
+		tempScene.sceneDescriptor = _vm->_resource->convertResourceId(tempScene.sceneDescriptor);
 		_vm->_scene->queueScene(&tempScene);
 	}
 
@@ -94,8 +95,11 @@ EVENT *Scene::ITEQueueDialogue(EVENT *q_event, int n_dialogues, const INTRO_DIAL
 	// Queue narrator dialogue list
 	textEntry.color = 255;
 	textEntry.effectColor = 0;
-	textEntry.point.x = 320 / 2;
-	textEntry.point.y = (_vm->getFeatures() & GF_LANG_DE) ? INTRO_DE_CAPTION_Y : INTRO_CAPTION_Y;
+	textEntry.useRect = true;
+	textEntry.rect.left = 0;
+	textEntry.rect.right = _vm->getDisplayWidth();
+	textEntry.rect.top = (_vm->getFeatures() & GF_LANG_DE) ? INTRO_DE_CAPTION_Y : INTRO_CAPTION_Y;
+	textEntry.rect.bottom = _vm->getDisplayHeight();
 	textEntry.fontId = kMediumFont;
 	textEntry.flags = (FontEffectFlags)(kFontOutline | kFontCentered);
 
@@ -754,7 +758,7 @@ int Scene::ITEIntroValleyProc(int param) {
 		event.type = ONESHOT_EVENT;
 		event.code = MUSIC_EVENT;
 		event.param = MUSIC_2;
-		event.param2 = 0;
+		event.param2 = MUSIC_NORMAL;
 		event.op = EVENT_PLAY;
 		event.time = 0;
 		

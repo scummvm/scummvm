@@ -34,8 +34,8 @@
 
 #include "saga/saga.h"
 
+#include "saga/rscfile.h"
 #include "saga/gfx.h"
-#include "saga/rscfile_mod.h"
 #include "saga/render.h"
 #include "saga/actor.h"
 #include "saga/animation.h"
@@ -53,6 +53,7 @@
 #include "saga/music.h"
 #include "saga/palanim.h"
 #include "saga/objectmap.h"
+#include "saga/resnames.h"
 
 static const GameSettings saga_games[] = {
 	{"ite", "Inherit the Earth", 0},
@@ -114,8 +115,6 @@ namespace Saga {
 
 #define MAX_TIME_DELTA 100
 
-SagaEngine *_vm = NULL;
-
 SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 	: Engine(syst),
 	_targetName(detector->_targetName) {
@@ -123,9 +122,9 @@ SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 	_leftMouseButtonPressed = _rightMouseButtonPressed = false;
 
 	_console = NULL;
-	_gameFileContexts = NULL;
 	_quit = false;
 
+	_resource = NULL;
 	_sndRes = NULL;
 	_events = NULL;
 	_font = NULL;
@@ -166,13 +165,13 @@ SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 
 	_displayClip.left = _displayClip.top = 0;
-	_vm = this;
 }
 
 SagaEngine::~SagaEngine() {
-	int i;
-	if (_scene->isSceneLoaded()) {
-		_scene->endScene();
+	if (_scene != NULL) {
+		if (_scene->isSceneLoaded()) {
+			_scene->endScene();
+		}
 	}
 
 	delete _puzzle;
@@ -193,12 +192,7 @@ SagaEngine::~SagaEngine() {
 	delete _gfx;
 	delete _console;
 
-	if (_gameFileContexts != NULL) {
-		for (i = 0; i < _gameDescription->filesCount; i++) {
-			RSC_DestroyContext(_gameFileContexts[i]);
-		}
-	}
-	free(_gameFileContexts);
+	delete _resource;
 }
 
 void SagaEngine::errorString(const char *buf1, char *buf2) {
@@ -208,6 +202,8 @@ void SagaEngine::errorString(const char *buf1, char *buf2) {
 int SagaEngine::init(GameDetector &detector) {
 	_soundEnabled = 1;
 	_musicEnabled = 1;
+
+	_resource = new Resource(this);
 
 	// Add some default directories
 	// Win32 demo & full game
@@ -224,7 +220,7 @@ int SagaEngine::init(GameDetector &detector) {
 	// Process command line
 
 	// Detect game and open resource files
-	if (initGame() != SUCCESS) {
+	if (!initGame()) {
 		return FAILURE;
 	}
 
@@ -242,17 +238,12 @@ int SagaEngine::init(GameDetector &detector) {
 	_isoMap = new IsoMap(this);
 	_puzzle = new Puzzle(this);
 
-	if (!_scene->initialized()) {
-		warning("Couldn't initialize scene module");
-		return FAILURE;
-	}
-
 	// System initialization
 
 	_previousTicks = _system->getMillis();
 
 	// Initialize graphics
-	_gfx = new Gfx(_system, getDisplayWidth(), getDisplayHeight(), detector);
+	_gfx = new Gfx(this, _system, getDisplayWidth(), getDisplayHeight(), detector);
 
 	// Graphics driver should be initialized before console
 	_console = new Console(this);
@@ -270,7 +261,7 @@ int SagaEngine::init(GameDetector &detector) {
 	} else if (native_mt32)
 		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
-	_music = new Music(_mixer, driver, _musicEnabled);
+	_music = new Music(this, _mixer, driver, _musicEnabled);
 	_music->setNativeMT32(native_mt32);
 	_music->setAdlib(adlib);
 
@@ -368,11 +359,15 @@ void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPoin
 	size_t offset;
 	int i;
 	
+	if (stringsLength == 0) {
+		error("SagaEngine::loadStrings() Error loading strings list resource");
+	}
+
 	stringsTable.stringsPointer = (byte*)malloc(stringsLength);
 	memcpy(stringsTable.stringsPointer, stringsPointer, stringsLength);
 
 	
-	MemoryReadStreamEndian scriptS(stringsTable.stringsPointer, stringsLength, IS_BIG_ENDIAN);
+	MemoryReadStreamEndian scriptS(stringsTable.stringsPointer, stringsLength, isBigEndian()); //TODO: get endianess from context
 
 	offset = scriptS.readUint16();
 	stringsCount = offset / 2;

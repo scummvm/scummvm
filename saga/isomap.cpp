@@ -114,7 +114,7 @@ void IsoMap::loadImages(const byte *resourcePointer, size_t resourceLength) {
 	_tileDataLength = resourceLength;
 	memcpy(_tileData, resourcePointer, resourceLength);
 	
-	MemoryReadStreamEndian readS(_tileData, _tileDataLength, IS_BIG_ENDIAN);
+	MemoryReadStreamEndian readS(_tileData, _tileDataLength, _vm->isBigEndian());
 	readS.readUint16(); // skip
 	_tilesCount = readS.readUint16();
 	_tilesCount = _tilesCount / SAGA_ISOTILEDATA_LEN;
@@ -146,7 +146,7 @@ void IsoMap::loadPlatforms(const byte * resourcePointer, size_t resourceLength) 
 		error("IsoMap::loadPlatforms wrong resourceLength");
 	}
 
-	MemoryReadStreamEndian readS(resourcePointer, resourceLength, IS_BIG_ENDIAN);
+	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _vm->isBigEndian());
 
 	_tilePlatformsCount = resourceLength / SAGA_TILEPLATFORMDATA_LEN;
 	_tilePlatformList = (TilePlatformData *)malloc(_tilePlatformsCount * sizeof(*_tilePlatformList));
@@ -177,7 +177,7 @@ void IsoMap::loadMap(const byte * resourcePointer, size_t resourceLength) {
 		error("IsoMap::loadMap wrong resourceLength");
 	}
 
-	MemoryReadStreamEndian readS(resourcePointer, resourceLength, IS_BIG_ENDIAN);
+	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _vm->isBigEndian());
 	_tileMap.edgeType = readS.readByte();
 	readS.readByte(); //skip
 
@@ -197,7 +197,7 @@ void IsoMap::loadMetaTiles(const byte * resourcePointer, size_t resourceLength) 
 		error("IsoMap::loadMetaTiles wrong resourceLength");
 	}
 
-	MemoryReadStreamEndian readS(resourcePointer, resourceLength, IS_BIG_ENDIAN);
+	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _vm->isBigEndian());
 	_metaTilesCount = resourceLength / SAGA_METATILEDATA_LEN;
 
 	_metaTileList = (MetaTileData *)malloc(_metaTilesCount * sizeof(*_metaTileList));
@@ -224,7 +224,7 @@ void IsoMap::loadMulti(const byte * resourcePointer, size_t resourceLength) {
 		error("IsoMap::loadMetaTiles wrong resourceLength");
 	}
 
-	MemoryReadStreamEndian readS(resourcePointer, resourceLength, IS_BIG_ENDIAN);
+	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _vm->isBigEndian());
 	_multiCount = readS.readUint16();
 	_multiTable = (MultiTileEntryData *)malloc(_multiCount * sizeof(*_multiTable));
 	if (_multiTable == NULL) {

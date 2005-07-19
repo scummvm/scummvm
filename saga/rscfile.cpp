@@ -24,300 +24,200 @@
 // RSC Resource file management module
 #include "saga/saga.h"
 
-#include "saga/rscfile_mod.h"
 #include "saga/rscfile.h"
 #include "saga/stream.h"
 
 namespace Saga {
 
-static struct Substitutes {
-	uint32 id;
-	const char *resfile;
-	const char *fname;
-} substitutes[] = {
-	{ 1529, "ite.rsc", "wyrm.pak" },
-	{ 1530, "ite.rsc", "wyrm1.dlt" },
-	{ 1531, "ite.rsc", "wyrm2.dlt" },
-	{ 1532, "ite.rsc", "wyrm3.dlt" },
-	{ 1533, "ite.rsc", "wyrm4.dlt" },
-	{ 1796, "ite.rsc", "credit3n.dlt" },
-	{ 1797, "ite.rsc", "credit4n.dlt" }
-};
+Resource::Resource(SagaEngine *vm): _vm(vm) {
+	_contexts = NULL;
+	_contextsCount = 0;
+}
+
+Resource::~Resource() {
+	clearContexts();
+}
+
+bool Resource::loadContext(ResourceContext *context) {
+	size_t i;
+	int j;
+	bool result;
+	byte tableInfo[RSC_TABLEINFO_SIZE];	
+	uint32 resourceTableOffset;
+	GamePatchDescription *patchDescription;
+	ResourceData *resourceData;
+	byte *tableBuffer;
+	size_t tableSize;
+
+	if (!context->file->open(context->fileName)) {
+		return false;
+	}
 	
-
-RSCFILE_CONTEXT *RSC_CreateContext() {
-	RSCFILE_CONTEXT empty_context;
-	empty_context.rc_file_fspec = NULL;
-	empty_context.rc_file_loaded = 0;
-	empty_context.rc_res_table = NULL;
-	empty_context.rc_res_ct = 0;
-	empty_context.rc_file = new Common::File();
-	RSCFILE_CONTEXT *new_context;
-
-	new_context = (RSCFILE_CONTEXT *)malloc(sizeof(*new_context));
-	if (new_context == NULL) {
-		return NULL;
+	context->isBigEndian = _vm->isBigEndian();
+	
+	if (!context->isBigEndian) {
+		context->isBigEndian = ((_vm->getFeatures() & GF_BIG_ENDIAN_VOICES) != 0) && ((context->fileType & GAME_VOICEFILE) != 0);
 	}
 
-	*new_context = empty_context;
 
-	return new_context;
-}
 
-int RSC_OpenContext(RSCFILE_CONTEXT *rsc_context, const char *fspec) {
-	if (rsc_context->rc_file->isOpen()) {
-		return FAILURE;
-	}
-
-	if (!rsc_context->rc_file->open(fspec)) {
-		return FAILURE;
-	}
-
-	rsc_context->rc_file_fspec = fspec;
-
-	if (RSC_LoadRSC(rsc_context) != SUCCESS) {
-		return FAILURE;
-	}
-
-	rsc_context->rc_file_loaded = 1;
-
-	return SUCCESS;
-}
-
-int RSC_CloseContext(RSCFILE_CONTEXT *rsc_context) {
-	if (rsc_context->rc_file->isOpen()) {
-		rsc_context->rc_file->close();
-	}
-
-	RSC_FreeRSC(rsc_context);
-
-	rsc_context->rc_file_loaded = 0;
-
-	return SUCCESS;
-}
-
-int RSC_DestroyContext(RSCFILE_CONTEXT *rsc_context) {
-	RSC_CloseContext(rsc_context);
-
-	if (rsc_context->rc_file_loaded) {
-		free(rsc_context->rc_res_table);
-	}
-
-	free(rsc_context);
-
-	return SUCCESS;
-}
-
-int RSC_LoadRSC(RSCFILE_CONTEXT *rsc) {
-	uint32 res_tbl_ct;
-	uint32 res_tbl_offset;
-
-	byte tblinfo_buf[RSC_TABLEINFO_SIZE];
-	byte *tbl_buf;
-	size_t tbl_len;
-	uint32 i;
-
-	bool isBigEndian = _vm->isBigEndianFile(rsc->rc_file_fspec);
-
-	RSCFILE_RESOURCE *rsc_restbl;
-
-	if (rsc->rc_file->size() < RSC_MIN_FILESIZE) {
-		return FAILURE;
+	if (context->file->size() < RSC_MIN_FILESIZE) {
+		return false;
 	}
 
 	// Read resource table info from the rear end of file
-	rsc->rc_file->seek((long)(rsc->rc_file->size() - 8), SEEK_SET);
+	context->file->seek((long)(-RSC_TABLEINFO_SIZE), SEEK_END);
 
-	if (rsc->rc_file->read(tblinfo_buf, RSC_TABLEINFO_SIZE) != RSC_TABLEINFO_SIZE) {
-		return FAILURE;
+	if (context->file->read(tableInfo, RSC_TABLEINFO_SIZE) != RSC_TABLEINFO_SIZE) {
+		return false;
 	}
-	
-	MemoryReadStreamEndian readS(tblinfo_buf, RSC_TABLEINFO_SIZE, isBigEndian);
 
-	res_tbl_offset = readS.readUint32();
-	res_tbl_ct = readS.readUint32();
+	MemoryReadStreamEndian readS(tableInfo, RSC_TABLEINFO_SIZE, context->isBigEndian);
+
+	resourceTableOffset = readS.readUint32();
+	context->count = readS.readUint32();
 
 	// Check for sane table offset
-	if (res_tbl_offset != rsc->rc_file->size() - RSC_TABLEINFO_SIZE - RSC_TABLEENTRY_SIZE * res_tbl_ct) {
-
-		return FAILURE;
+	if (resourceTableOffset != context->file->size() - RSC_TABLEINFO_SIZE - RSC_TABLEENTRY_SIZE * context->count) {
+		return false;
 	}
 
 	// Load resource table
-	tbl_len = RSC_TABLEENTRY_SIZE * res_tbl_ct;
+	tableSize = RSC_TABLEENTRY_SIZE * context->count;
 
-	tbl_buf = (byte *)malloc(tbl_len);
-	if (tbl_buf == NULL) {
-		return FAILURE;
-	}
+	tableBuffer = (byte *)malloc(tableSize);
 
-	rsc->rc_file->seek((long)res_tbl_offset, SEEK_SET);
+	context->file->seek((long)resourceTableOffset, SEEK_SET);
 
-	if (rsc->rc_file->read(tbl_buf, tbl_len) != tbl_len) {
-		free(tbl_buf);
-		return FAILURE;
-	}
+	
+	result = (context->file->read(tableBuffer, tableSize) == tableSize);
+	if (result) {
+		context->table = (ResourceData *)calloc(context->count, sizeof(*context->table));
 
-	rsc_restbl = (RSCFILE_RESOURCE *)malloc(res_tbl_ct * sizeof(*rsc_restbl));
-	if (rsc_restbl == NULL) {
-		free(tbl_buf);
-		return FAILURE;
-	}
+		MemoryReadStreamEndian readS1(tableBuffer, tableSize, context->isBigEndian);
 
-	MemoryReadStreamEndian readS1(tbl_buf, tbl_len, isBigEndian);
-
-	debug(9, "RSC %s", rsc->rc_file_fspec);
-	for (i = 0; i < res_tbl_ct; i++) {
-		rsc_restbl[i].res_offset = readS1.readUint32();
-		rsc_restbl[i].res_size = readS1.readUint32();
-		//debug(9, "#%x Offset:%x Size:%x", i, rsc_restbl[i].res_offset, rsc_restbl[i].res_size);
-		if ((rsc_restbl[i].res_offset > rsc->rc_file->size()) || (rsc_restbl[i].res_size > rsc->rc_file->size())) {
-			free(tbl_buf);
-			free(rsc_restbl);
-			return FAILURE;
+		for (i = 0; i < context->count; i++) {
+			resourceData = &context->table[i];
+			resourceData->offset = readS1.readUint32();
+			resourceData->size = readS1.readUint32();
+			//sanity check
+			if ((resourceData->offset > context->file->size()) || (resourceData->size > context->file->size())) {
+				result = false;
+				break;
+			}
 		}
 	}
 
-	rsc->rc_res_table = rsc_restbl;
-	rsc->rc_res_ct = res_tbl_ct;
-
-	free(tbl_buf);
-
-	return SUCCESS;
-}
-
-int RSC_FreeRSC(RSCFILE_CONTEXT *rsc) {
-	if (!rsc->rc_file_loaded) {
-		return FAILURE;
-	}
-
-	delete rsc->rc_file;
-	rsc->rc_file = NULL;
-
-	free(rsc->rc_res_table);
-
-	return SUCCESS;
-}
-
-uint32 RSC_GetResourceCount(RSCFILE_CONTEXT *rsc) {
-	return (rsc == NULL) ? 0 : rsc->rc_res_ct;
-}
-
-int RSC_GetResourceSize(RSCFILE_CONTEXT *rsc, uint32 res_num, uint32 *res_size) {
-	if ((rsc == NULL) || (res_size == NULL)) {
-		return FAILURE;
-	}
-
-	if (res_num > (rsc->rc_res_ct - 1)) {
-		return FAILURE;
-	}
-
-	*res_size = rsc->rc_res_table[res_num].res_size;
-
-	return SUCCESS;
-}
-
-int RSC_GetResourceOffset(RSCFILE_CONTEXT *rsc, uint32 res_num, uint32 *res_offset) {
-	if ((rsc == NULL) || (res_offset == NULL)) {
-		return FAILURE;
-	}
-
-	if (res_num > (rsc->rc_res_ct - 1)) {
-		return FAILURE;
-	}
-
-	*res_offset = rsc->rc_res_table[res_num].res_offset;
-
-	return SUCCESS;
-}
-
-const char *RSC_FileName(RSCFILE_CONTEXT *rsc) {
-	return rsc->rc_file_fspec;
-}
-
-int RSC_LoadResource(RSCFILE_CONTEXT *rsc, uint32 res_num, byte **res_p, size_t *res_size_p) {
-	uint32 res_offset;
-	size_t res_size = 0;
-	byte *res_buf = NULL;
-	int substnum = -1;
-
-	if ((rsc == NULL) || (res_p == NULL)) {
-		return FAILURE;
-	}
-
-	if (res_num > (rsc->rc_res_ct - 1)) {
-		return FAILURE;
-	}
-
-	debug(8, "LoadResource %d", res_num);
-	for (int i = 0; i < ARRAYSIZE(substitutes); i++) {
-		if (substitutes[i].id == res_num && strcmp(substitutes[i].resfile, rsc->rc_file_fspec) == 0) {
-			substnum = i;
-			break;
+	free(tableBuffer);
+	
+	//process patch files
+	if (result) {
+		for (j = 0; j < _vm->getGameDescription()->patchsCount; j++) {
+			patchDescription = &_vm->getGameDescription()->patchDescriptions[j];
+			if ((patchDescription->fileType & context->fileType) != 0) {
+				if (patchDescription->resourceId < context->count) {
+					//TODO|fix: should we convert this ID? or make separate patch list for MAC version?
+					resourceData = &context->table[patchDescription->resourceId];
+					resourceData->patchFile = new Common::File();
+					if (resourceData->patchFile->open(patchDescription->fileName)) {
+						resourceData->offset = 0;
+						resourceData->size = resourceData->patchFile->size();
+					} else {
+						warning("loadContext: patch file not found %s", patchDescription->fileName);
+						delete resourceData->patchFile;
+						resourceData->patchFile = NULL;
+					}
+				}
+			}
 		}
 	}
 
-	if (!(_vm->getFeatures() & GF_WYRMKEEP))
-		substnum = -1;
+	return result;
+}
 
-	if (substnum != -1) {
-		Common::File in;
+bool Resource::createContexts() {
+	int i, j;
+	ResourceContext *context;
+	_contextsCount = _vm->getGameDescription()->filesCount;
+	_contexts = (ResourceContext*)calloc(_contextsCount, sizeof(*_contexts));
 
-		if (in.open(substitutes[substnum].fname)) {
-			res_size = in.size();
-			if ((res_buf = (byte *)malloc(res_size)) == NULL)
-				return MEM;
+	for (i = 0; i < _contextsCount; i++) {
+		context = &_contexts[i];
+		context->file = new Common::File();
+		context->fileName = _vm->getGameDescription()->filesDescriptions[i].fileName;
+		context->fileType = _vm->getGameDescription()->filesDescriptions[i].fileType;
 
-			in.read(res_buf, res_size);
-			in.close();
-			debug(8, "LoadResource: substituted resource by %s", substitutes[substnum].fname);
+		//self check
+		for (j = 0; j < i; j++) {
+			if ((_contexts[j].fileType & context->fileType) != 0) {
+				error("Resource::createContexts() duplicate fileType");
+			}
+		}
+		
+		if (!loadContext(context)) {
+			return false;
+		}
+	}
+	return true;
+}
+
+void Resource::clearContexts() {
+	int i;
+	size_t j;
+	ResourceContext *context;
+	if (_contexts == NULL) {
+		return;
+	}
+	for(i = 0; i < _contextsCount; i++) {
+		context = &_contexts[i];
+		delete context->file;
+		if (context->table != NULL) {
+			for(j = 0; j < context->count; j++) {
+				delete context->table[j].patchFile;
+			}
+		}
+		free(context->table);
+	}
+	free(_contexts);
+	_contexts = NULL;
+}
+
+uint32 Resource::convertResourceId(uint32 resourceId) {
+	
+	if ((_vm->getGameType() ==  GType_ITE) && (_vm->getFeatures() & GF_MAC_RESOURCES)) {
+		if (resourceId > 1537) {
+			return resourceId - 2;
 		} else {
-			substnum = -1;
+			if (resourceId == 1535 || resourceId == 1536) {
+				error ("Wrong resource number %d for Mac ITE", resourceId);
+			}
 		}
 	}
 
-	if (substnum == -1) {
-		res_offset = rsc->rc_res_table[res_num].res_offset;
-		res_size = rsc->rc_res_table[res_num].res_size;
-
-		if ((res_buf = (byte *)malloc(res_size)) == NULL)
-			return MEM;
-
-		rsc->rc_file->seek((long)res_offset, SEEK_SET);
-
-		if (rsc->rc_file->read(res_buf, res_size) != res_size) {
-			free(res_buf);
-			return FAILURE;
-		}
-	}
-
-	*res_p = res_buf;
-
-	if (res_size_p != NULL) {
-		*res_size_p = res_size;
-	}
-
-	return SUCCESS;
+	return resourceId;
 }
 
-int RSC_FreeResource(byte *resource_ptr) {
-	free(resource_ptr);
+void Resource::loadResource(ResourceContext *context, uint32 resourceId, byte*&resourceBuffer, size_t &resourceSize) {
+	Common::File *file;
+	uint32 resourceOffset;
+	ResourceData *resourceData;
 
-	return SUCCESS;
-}
+	debug(8, "loadResource %d", resourceId);
+	
+	resourceData = getResourceData(context, resourceId);
+	
+	file = context->getFile(resourceData);
 
-int RSC_ConvertID(int id) {
-	int res = id;
+	resourceOffset = resourceData->offset;
+	resourceSize = resourceData->size;
 
-	if (_vm->getFeatures() & GF_MAC_RESOURCES) {
-		if (res > 1537)
-			res -= 2;
-		else if (res == 1535 || res == 1536) {
-			error ("Wrong resource number %d for Mac ITE");
-		}
+	resourceBuffer = (byte*)malloc(resourceSize);
+
+	file->seek((long)resourceOffset, SEEK_SET);
+
+	if (file->read(resourceBuffer, resourceSize) != resourceSize) {
+		error("Resource::loadResource() failed to read");
 	}
-
-	return res;
 }
 
 } // End of namespace Saga

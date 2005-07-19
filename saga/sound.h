@@ -26,7 +26,6 @@
 #ifndef SAGA_SOUND_H_
 #define SAGA_SOUND_H_
 
-#include "saga/rscfile_mod.h"
 #include "sound/mixer.h"
 
 namespace Saga {
@@ -35,14 +34,15 @@ enum SOUND_FLAGS {
 	SOUND_LOOP = 1
 };
 
-struct SOUNDBUFFER {
-	uint16 s_freq;
-	int s_samplebits;
-	int s_stereo;
-	int s_signed;
+struct SoundBuffer {
+	uint16 frequency;
+	int sampleBits;
+	bool stereo;
+	bool isSigned;
 
-	byte *s_buf;
-	size_t s_buf_len;
+	byte *buffer;
+	size_t size;
+	//big endianess flag!!!
 };
 
 class Sound {
@@ -51,22 +51,19 @@ public:
 	Sound(SagaEngine *vm, Audio::Mixer *mixer, int enabled);
 	~Sound();
 
-	int playSound(SOUNDBUFFER *buf, int volume, bool loop);
-	int pauseSound();
-	int resumeSound();
-	int stopSound();
+	void playSound(SoundBuffer &buffer, int volume, bool loop);
+	void pauseSound();
+	void resumeSound();
+	void stopSound();
 
-	int playVoice(SOUNDBUFFER *buf);
-	int playVoxVoice(SOUNDBUFFER *buf);
-	int pauseVoice();
-	int resumeVoice();
-	int stopVoice();
+	void playVoice(SoundBuffer &buffer);
+	void pauseVoice();
+	void resumeVoice();
+	void stopVoice();
 
  private:
 
-	int playSoundBuffer(Audio::SoundHandle *handle, SOUNDBUFFER *buf, int volume, bool loop, bool forceBigEndian);
-
-	int _soundInitialized;
+	void playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int volume, bool loop, bool forceBigEndian);
 	int _enabled;
 
 	SagaEngine *_vm;

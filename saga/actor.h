@@ -375,7 +375,7 @@ public:
 		out->writeSint32LE(walkFrameSequence);
 	}
 
-	void loadState(Common::InSaveFile *in) {
+	void loadState(uint32 version, Common::InSaveFile *in) {
 		int i = 0;
 		CommonObjectData::loadState(in);
 		actorFlags = in->readUint16LE();
@@ -390,14 +390,14 @@ public:
 		cycleDelay = in->readByte();
 		cycleTimeCount = in->readByte();
 		cycleFlags = in->readByte();
-		if (_vm->getCurrentLoadVersion() > 1) {
+		if (version > 1) {
 			fallVelocity = in->readSint16LE();			
 			fallAcceleration = in->readSint16LE();			
 			fallPosition = in->readSint16LE();			
 		} else {
 			fallVelocity = fallAcceleration = fallPosition = 0;
 		}
-		if (_vm->getCurrentLoadVersion() > 2) {
+		if (version > 2) {
 			dragonBaseFrame = in->readByte();			
 			dragonStepCycle = in->readByte();			
 			dragonMoveType = in->readByte();			
@@ -621,7 +621,7 @@ protected:
 	ObjectData **_objs;
 
 	SagaEngine *_vm;
-	RSCFILE_CONTEXT *_actorContext;
+	ResourceContext *_actorContext;
 
 	StringsTable _actorsStrings;
 	int _lastTickMsec;

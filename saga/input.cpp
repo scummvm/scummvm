@@ -76,7 +76,7 @@ int SagaEngine::processInput() {
 				break;*/
 			case 282: // F1
 				_render->toggleFlag(RF_SHOW_FPS);
-				_vm->_actor->_handleActionDiv = (_vm->_actor->_handleActionDiv == 15) ? 50 : 15;
+				_actor->_handleActionDiv = (_actor->_handleActionDiv == 15) ? 50 : 15;
 				break;
 			case 283: // F2
 				_render->toggleFlag(RF_PALETTE_TEST);
@@ -93,9 +93,6 @@ int SagaEngine::processInput() {
 			case 288: // F7
 				break;
 			case 289: // F8
-				break;
-			case 9: // Tab
-				_script->SThreadDebugStep();
 				break;
 
 			// Actual game keys
@@ -140,7 +137,7 @@ int SagaEngine::processInput() {
 			_mousePos = event.mouse;
 			break;
 		case OSystem::EVENT_QUIT:
-			_vm->shutDown();
+			shutDown();
 			break;
 		default:
 			break;

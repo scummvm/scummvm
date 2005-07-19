@@ -22,8 +22,8 @@
  */
 #include "saga/saga.h"
 
+#include "saga/rscfile.h"
 #include "saga/music.h"
-#include "saga/rscfile_mod.h"
 #include "saga/stream.h"
 #include "sound/audiostream.h"
 #include "sound/mididrv.h"
@@ -42,10 +42,11 @@ namespace Saga {
 
 class RAWInputStream : public AudioStream {
 private:
+	ResourceContext *_context;
 	Common::File *_file;
-	uint32 _file_pos;
-	uint32 _start_pos;
-	uint32 _end_pos;
+	uint32 _filePos;
+	uint32 _startPos;
+	uint32 _endPos;
 	bool _finished;
 	bool _looping;
 	int16 _buf[BUFFER_SIZE];
@@ -53,11 +54,12 @@ private:
 	const int16 *_pos;
 
 	void refill();
-	inline bool eosIntern() const;
+	bool eosIntern() const {
+		return _pos >= _bufferEnd;
+	}
 
 public:
-	RAWInputStream(Common::File *file, int size, bool looping);
-	~RAWInputStream();
+	RAWInputStream(SagaEngine *vm, ResourceContext *context, uint32 resourceId, bool looping);
 
 	int readBuffer(int16 *buffer, const int numSamples);
 
@@ -66,28 +68,23 @@ public:
 	int getRate() const	{ return 11025; }
 };
 
-RAWInputStream::RAWInputStream(Common::File *file, int size, bool looping)
-	: _file(file), _finished(false), _looping(looping),
-	  _bufferEnd(_buf + BUFFER_SIZE) {
+RAWInputStream::RAWInputStream(SagaEngine *vm, ResourceContext *context, uint32 resourceId, bool looping)
+	: _context(context), _finished(false), _looping(looping), _bufferEnd(_buf + BUFFER_SIZE) {
+	
+	ResourceData * resourceData;
 
-	_file->incRef();
+	resourceData = vm->_resource->getResourceData(context, resourceId);	
+	_file = context->getFile(resourceData);
 
 	// Determine the end position
-	_file_pos = _file->pos();
-	_start_pos = _file_pos;
-	_end_pos = _file_pos + size;
+	_startPos = resourceData->offset;
+	_endPos = _startPos + resourceData->size;
+	_filePos = _startPos;
 
 	// Read in initial data
 	refill();
 }
 
-RAWInputStream::~RAWInputStream() {
-	_file->decRef();
-}
-
-inline bool RAWInputStream::eosIntern() const {
-	return _pos >= _bufferEnd;
-}
 
 int RAWInputStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples = 0;
@@ -108,61 +105,47 @@ void RAWInputStream::refill() {
 	if (_finished)
 		return;
 
-	uint32 len_left;
+	uint32 lengthLeft;
 	byte *ptr = (byte *) _buf;
 	
 
-	_file->seek(_file_pos, SEEK_SET);
+	_file->seek(_filePos, SEEK_SET);
 
 	if (_looping)
-		len_left = 2 * BUFFER_SIZE;
+		lengthLeft = 2 * BUFFER_SIZE;
 	else
-		len_left = MIN((uint32) (2 * BUFFER_SIZE), _end_pos - _file_pos);
+		lengthLeft = MIN((uint32) (2 * BUFFER_SIZE), _endPos - _filePos);
 
-	while (len_left > 0) {
-		uint32 len = _file->read(ptr, MIN(len_left, _end_pos - _file->pos()));
+	while (lengthLeft > 0) {
+		uint32 len = _file->read(ptr, MIN(lengthLeft, _endPos - _file->pos()));
 
 		if (len & 1)
 			len--;
 
-		if (_vm->getFeatures() & GF_BIG_ENDIAN_DATA) {			
+		if (_context->isBigEndian) {			
 			uint16 *ptr16 = (uint16 *)ptr;
 			for (uint32 i = 0; i < (len / 2); i++)
 				ptr16[i] = TO_BE_16(ptr16[i]);
 		}
 			
-		len_left -= len;
+		lengthLeft -= len;
 		ptr += len;
 
-		if (len_left > 0)
-			_file->seek(_start_pos);
+		if (lengthLeft > 0)
+			_file->seek(_startPos);
 	}
 
-	_file_pos = _file->pos();
+	_filePos = _file->pos();
 	_pos = _buf;
 	_bufferEnd = (int16 *)ptr;
 
-	if (!_looping && _file_pos >= _end_pos)
+	if (!_looping && _filePos >= _endPos) {
 		_finished = true;
-}
-
-AudioStream *makeRAWStream(const char *filename, uint32 pos, int size, bool looping) {
-	Common::File *file = new Common::File();
-
-	if (!file->open(filename)) {
-		delete file;
-		return NULL;
 	}
-
-	file->seek(pos);
-
-	AudioStream *audioStream = new RAWInputStream(file, size, looping);
-
-	file->decRef();
-	return audioStream;
 }
 
-	MusicPlayer::MusicPlayer(MidiDriver *driver) : _parser(0), _driver(driver), _looping(false), _isPlaying(false), _passThrough(false), _isGM(false) {
+
+MusicPlayer::MusicPlayer(MidiDriver *driver) : _parser(0), _driver(driver), _looping(false), _isPlaying(false), _passThrough(false), _isGM(false) {
 	memset(_channel, 0, sizeof(_channel));
 	_masterVolume = 0;
 	this->open();
@@ -274,19 +257,20 @@ void MusicPlayer::stopMusic() {
 	_isPlaying = false;
 	if (_parser) {
 		_parser->unloadMusic();
-		delete _parser;
 		_parser = NULL;
 	}
 }
 
-Music::Music(Audio::Mixer *mixer, MidiDriver *driver, int enabled) : _mixer(mixer), _enabled(enabled), _adlib(false) {
+Music::Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver, int enabled) : _vm(vm), _mixer(mixer), _enabled(enabled), _adlib(false) {
 	_player = new MusicPlayer(driver);
-	_musicInitialized = 1;
 	_currentVolume = 0;
+
+	xmidiParser = MidiParser::createParser_XMIDI();
+	smfParser = MidiParser::createParser_SMF();
 
 	if (_vm->getGameType() == GType_ITE) {
 		Common::File file;
-		byte footerBuf[ARRAYSIZE(_digiTableITECD) * 8];
+//		byte footerBuf[ARRAYSIZE(_digiTableITECD) * 8];
 
 		// The lookup table is stored at the end of music.rsc. I don't
 		// know why it has 27 elements, but the last one represents a
@@ -300,40 +284,19 @@ Music::Music(Audio::Mixer *mixer, MidiDriver *driver, int enabled) : _mixer(mixe
 		// Proper approach would be to extend resource manager so it could
 		// return File object.
 
-		_musicContext = _vm->getFileContext(GAME_MUSICFILE, 0);
+		_musicContext = _vm->_resource->getContext(GAME_MUSICFILE);
 		if (_musicContext != NULL) {
-			_hasDigiMusic = true;
-
-			_musicFname = RSC_FileName(_musicContext);
-
-			file.open(_musicFname);
-			assert(file.size() > sizeof(footerBuf));
-
-			file.seek(-ARRAYSIZE(_digiTableITECD) * 8, SEEK_END);
-			file.read(footerBuf, sizeof(footerBuf));
-
-			MemoryReadStreamEndian readS(footerBuf, sizeof(footerBuf), IS_BIG_ENDIAN);
-
-
-			for (int i = 0; i < ARRAYSIZE(_digiTableITECD); i++) {
-				_digiTableITECD[i].start = readS.readUint32();
-				_digiTableITECD[i].length = readS.readUint32();
-			}
-
-			file.close();
-
 			// The "birdchrp" is just a short, high-pitched
 			// whining. Use the MIDI/XMIDI version instead.
-			_digiTableITECD[6].length = 0;
-		} else {
-			_hasDigiMusic = false;
-			memset(_digiTableITECD, 0, sizeof(_digiTableITECD));
+			///_digiTableITECD[6].length = 0;
 		}
 	}
 }
 
 Music::~Music() {
 	delete _player;
+	delete xmidiParser;
+	delete smfParser;
 }
 
 void Music::musicVolumeGaugeCallback(void *refCon) {
@@ -389,169 +352,114 @@ bool Music::isPlaying() {
 //
 // reset.mid seems to be unused.
 
-const MUSIC_MIDITABLE Music::_midiTableITECD[26] = {
-	{ "cave.mid",       MUSIC_LOOP },	// 9
-	{ "intro.mid",      MUSIC_LOOP },	// 10
-	{ "fvillage.mid",   MUSIC_LOOP },	// 11
-	{ "elkhall.mid",    MUSIC_LOOP },	// 12
-	{ "mouse.mid",      0          },	// 13
-	{ "darkclaw.mid",   MUSIC_LOOP },	// 14
-	{ "birdchrp.mid",   MUSIC_LOOP },	// 15
-	{ "orbtempl.mid",   MUSIC_LOOP },	// 16
-	{ "spooky.mid",     MUSIC_LOOP },	// 17
-	{ "catfest.mid",    MUSIC_LOOP },	// 18
-	{ "elkfanfare.mid", 0          },	// 19
-	{ "bcexpl.mid",     MUSIC_LOOP },	// 20
-	{ "boargtnt.mid",   MUSIC_LOOP },	// 21
-	{ "boarking.mid",   MUSIC_LOOP },	// 22
-	{ "explorea.mid",   MUSIC_LOOP },	// 23
-	{ "exploreb.mid",   MUSIC_LOOP },	// 24
-	{ "explorec.mid",   MUSIC_LOOP },	// 25
-	{ "sunstatm.mid",   MUSIC_LOOP },	// 26
-	{ "nitstrlm.mid",   MUSIC_LOOP },	// 27
-	{ "humruinm.mid",   MUSIC_LOOP },	// 28
-	{ "damexplm.mid",   MUSIC_LOOP },	// 29
-	{ "tychom.mid",     MUSIC_LOOP },	// 30
-	{ "kitten.mid",     MUSIC_LOOP },	// 31
-	{ "sweet.mid",      MUSIC_LOOP },	// 32
-	{ "brutalmt.mid",   MUSIC_LOOP },	// 33
-	{ "shiala.mid",     MUSIC_LOOP }	// 34
-};
 
-int Music::play(uint32 music_rn, uint16 flags) {
-	RSCFILE_CONTEXT *rsc_ctxt = NULL;
-
-	byte *resource_data;
-	size_t resource_size;
-
-	if (!_musicInitialized) {
-		return FAILURE;
-	}
+void Music::play(uint32 resourceId, MusicFlags flags) {
+	AudioStream *audioStream = NULL;
+	MidiParser *parser;
+	ResourceContext *context;
+	byte *resourceData;
+	size_t resourceSize;
+	debug(2, "Music::play %d, %d", resourceId, flags);
 
 	if (!_enabled) {
-		return SUCCESS;
+		return;
 	}
 
-	if (isPlaying() && _trackNumber == music_rn) {
-		return SUCCESS;
+	if (isPlaying() && _trackNumber == resourceId) {
+		return;
 	}
 
-	_trackNumber = music_rn;
+	_trackNumber = resourceId;
 
 	_player->stopMusic();
 
 	_mixer->stopHandle(_musicHandle);
 
-	AudioStream *audioStream = NULL;
-	MidiParser *parser;
-	Common::File midiFile;
 
 	if (_vm->getGameType() == GType_ITE) {
-		if (music_rn >= 9 && music_rn <= 34) {
+
+		if (resourceId >= 9 && resourceId <= 34) {
 			if (flags == MUSIC_DEFAULT) {
-				flags = _midiTableITECD[music_rn - 9].flags;
-			}
-
-			if (_hasDigiMusic) {
-				uint32 start = _digiTableITECD[music_rn - 9].start;
-				uint32 length = _digiTableITECD[music_rn - 9].length;
-
-				if (length > 0) {
-					audioStream = makeRAWStream(_musicFname, start, length, flags == MUSIC_LOOP);
+				if ((resourceId == 13) || (resourceId == 19)) {
+					flags = MUSIC_NORMAL;
+				} else {
+					flags = MUSIC_LOOP;
 				}
 			}
 
-			// No digitized music - try standalone MIDI.
-			if (!audioStream) {
-				midiFile.open(_midiTableITECD[music_rn - 9].filename);
 
-				if (!midiFile.isOpen()) {
-					debug(2, "Cannot open music file %s", _midiTableITECD[music_rn - 9].filename);
-				}
+			if (_musicContext != NULL) {
+				//TODO: check resource size
+				audioStream = new RAWInputStream(_vm, _musicContext, resourceId, flags == MUSIC_LOOP);
 			}
 		}
 	}
 
-	if (flags == MUSIC_DEFAULT) {
-		flags = 0;
-	}
 
 	if (audioStream) {
 		debug(2, "Playing digitized music");
 		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, audioStream);
-		return SUCCESS;
+		return;
+	}
+
+	if (flags == MUSIC_DEFAULT) {
+		flags = MUSIC_NORMAL;
 	}
 
 	// FIXME: Is resource_data ever freed?
+	// Load MIDI/XMI resource data
 
-	if (midiFile.isOpen()) {
-		debug(2, "Using external MIDI file: %s", midiFile.name());
-		resource_size = midiFile.size();
-		resource_data = (byte *) malloc(resource_size);
-		midiFile.read(resource_data, resource_size);
-		midiFile.close();
-
-		_player->setGM(true);
-		parser = MidiParser::createParser_SMF();
+	if (_vm->getGameType() == GType_ITE) {
+		context = _vm->_resource->getContext(GAME_RESOURCEFILE);
 	} else {
-		// Load MIDI/XMI resource data
+		// I've listened to music from both the FM and the GM
+		// file, and I've tentatively reached the conclusion
+		// that they are both General MIDI. My guess is that
+		// the FM file has been reorchestrated to sound better 
+		// on Adlib and other FM synths.
+		//
+		// Sev says the Adlib music does not sound like in the
+		// original, but I still think assuming General MIDI is
+		// the right thing to do. Some music, like the End
+		// Title (song 0) sound absolutely atrocious when piped
+		// through our MT-32 to GM mapping.
+		//
+		// It is, however, quite possible that the original
+		// used a different GM to FM mapping. If the original
+		// sounded markedly better, perhaps we should add some
+		// way of replacing our stock mapping in adlib.cpp?
+		//
+		// For the composer's own recording of the End Title,
+		// see http://www.johnottman.com/
 
-		if (_vm->getGameType() == GType_ITE) {
-			rsc_ctxt = _vm->getFileContext(GAME_RESOURCEFILE, 0);
+		// Oddly enough, the intro music (song 1) is very
+		// different in the two files. I have no idea why.
+
+		if (hasAdlib()) {
+			context = _vm->_resource->getContext(GAME_MUSICFILE_FM);
 		} else {
-			// I've listened to music from both the FM and the GM
-			// file, and I've tentatively reached the conclusion
-			// that they are both General MIDI. My guess is that
-			// the FM file has been reorchestrated to sound better 
-			// on Adlib and other FM synths.
-			//
-			// Sev says the Adlib music does not sound like in the
-			// original, but I still think assuming General MIDI is
-			// the right thing to do. Some music, like the End
-			// Title (song 0) sound absolutely atrocious when piped
-			// through our MT-32 to GM mapping.
-			//
-			// It is, however, quite possible that the original
-			// used a different GM to FM mapping. If the original
-			// sounded markedly better, perhaps we should add some
-			// way of replacing our stock mapping in adlib.cpp?
-			//
-			// For the composer's own recording of the End Title,
-			// see http://www.johnottman.com/
-
-			// Oddly enough, the intro music (song 1) is very
-			// different in the two files. I have no idea why.
-
-			if (hasAdlib()) {
-				rsc_ctxt = _vm->getFileContext(GAME_MUSICFILE_FM, 0);
-			} else {
-				rsc_ctxt = _vm->getFileContext(GAME_MUSICFILE_GM, 0);
-			}
-
-			_player->setGM(true);
+			context = _vm->_resource->getContext(GAME_MUSICFILE_GM);
 		}
 
-		if (RSC_LoadResource(rsc_ctxt, music_rn, &resource_data, 
-				&resource_size) != SUCCESS) {
-			warning("Music::play(): Resource load failed: %u", music_rn);
-			return FAILURE;
+	}
+
+	_player->setGM(true);
+
+	_vm->_resource->loadResource(context, resourceId, resourceData, resourceSize); 
+	
+	if (resourceSize < 4) {
+		error("Music::play() wrong music resource size");
+	}
+
+	if (xmidiParser->loadMusic(resourceData, resourceSize)) {
+		parser = xmidiParser;
+	} else {
+		if (smfParser->loadMusic(resourceData, resourceSize)) {
+			parser = smfParser;			
+		} else {
+			error("Music::play() wrong music resource");
 		}
-
-		parser = MidiParser::createParser_XMIDI();
 	}
-
-	if (resource_size <= 0) {
-		warning("Music::play(): Resource load failed: %u", music_rn);
-		return FAILURE;
-	}
-
-	if (!parser->loadMusic(resource_data, resource_size)) {
-		warning("Error reading track!");
-		delete parser;
-		parser = 0;
-	}
-
-	debug(2, "Music::play(%d, %d)", music_rn, flags);
 
 	parser->setTrack(0);
 	parser->setMidiDriver(_player);
@@ -559,37 +467,25 @@ int Music::play(uint32 music_rn, uint16 flags) {
 
 	_player->_parser = parser;
 	_player->setVolume(ConfMan.getInt("music_volume"));
+
 	if (flags & MUSIC_LOOP)
 		_player->setLoop(true);
 	else
 		_player->setLoop(false);
 
 	_player->playMusic();
-	return SUCCESS;
 }
 
-int Music::pause(void) {
-	if (!_musicInitialized) {
-		return FAILURE;
-	}
-
-	return SUCCESS;
+void Music::pause(void) {
+	//TODO: do it
 }
 
-int Music::resume(void) {
-	if (!_musicInitialized) {
-		return FAILURE;
-	}
-
-	return SUCCESS;
+void Music::resume(void) {
+	//TODO: do it}
 }
 
-int Music::stop(void) {
-	if (!_musicInitialized) {
-		return FAILURE;
-	}
-
-	return SUCCESS;
+void Music::stop(void) {
+	//TODO: do it
 }
 
 } // End of namespace Saga

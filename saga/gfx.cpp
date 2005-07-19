@@ -31,7 +31,7 @@
 
 namespace Saga {
 
-Gfx::Gfx(OSystem *system, int width, int height, GameDetector &detector) : _system(system) {
+Gfx::Gfx(SagaEngine *vm, OSystem *system, int width, int height, GameDetector &detector) : _vm(vm), _system(system) {
 	_system->beginGFXTransaction();
 		_vm->initCommonGFX(detector);
 		_system->initSize(width, height);

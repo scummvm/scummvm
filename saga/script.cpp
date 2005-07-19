@@ -25,7 +25,6 @@
 #include "saga/saga.h"
 
 #include "saga/gfx.h"
-#include "saga/rscfile_mod.h"
 #include "saga/console.h"
 
 #include "saga/script.h"
@@ -37,25 +36,22 @@
 #include "saga/actor.h"
 #include "saga/objectmap.h"
 #include "saga/isomap.h"
+#include "saga/rscfile.h"
 
 namespace Saga {
 
 // Initializes the scripting module.
 // Loads script resource look-up table, initializes script data system
-Script::Script(SagaEngine *vm) : _vm(vm){
-	RSCFILE_CONTEXT *resourceContext;
+Script::Script(SagaEngine *vm) : _vm(vm) {
+	ResourceContext *resourceContext;
 	byte *resourcePointer;
 	size_t resourceLength;
 	int prevTell;
-	int result;
 	int i, j;
 	byte *stringsPointer;
 	size_t stringsLength;
 
 	//initialize member variables
-	_dbg_thread = 0;
-	_dbg_singlestep = 0;
-	_scriptContext = 0;
 	_voiceLUTPresent = false;
 
 	_abortEnabled = true;
@@ -78,21 +74,19 @@ Script::Script(SagaEngine *vm) : _vm(vm){
 	
 	debug(8, "Initializing scripting subsystem");
 	// Load script resource file context
-	_scriptContext = _vm->getFileContext(GAME_SCRIPTFILE, 0);
+	_scriptContext = _vm->_resource->getContext(GAME_SCRIPTFILE);
 	if (_scriptContext == NULL) {
-		error("Script::Script() Couldn't get script file context");
+		error("Script::Script() script context not found");
 	}
 
-	resourceContext = _vm->getFileContext(GAME_RESOURCEFILE, 0);
+	resourceContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
 	if (resourceContext == NULL) {
-		error("Script::Script() Couldn't get resource file context");
+		error("Script::Script() resource context not found");
 	}
 
-	debug(3, "Loading module LUT from resource %u.", _vm->getResourceDescription()->moduleLUTResourceId);
-	result = RSC_LoadResource(resourceContext, _vm->getResourceDescription()->moduleLUTResourceId, &resourcePointer, &resourceLength);
-	if (result != SUCCESS) {
-		error("Script::Script() Couldn't load module LUT resource");
-	}
+	debug(3, "Loading module LUT from resource %i", _vm->getResourceDescription()->moduleLUTResourceId);
+	_vm->_resource->loadResource(resourceContext, _vm->getResourceDescription()->moduleLUTResourceId, resourcePointer, resourceLength);
+	
 
 	// Create logical script LUT from resource
 	if (resourceLength % S_LUT_ENTRYLEN_ITECD == 0) {
@@ -100,13 +94,13 @@ Script::Script(SagaEngine *vm) : _vm(vm){
 	} else if (resourceLength % S_LUT_ENTRYLEN_ITEDISK == 0) {
 		_modulesLUTEntryLen = S_LUT_ENTRYLEN_ITEDISK;
 	} else {
-		error("Script::Script() Invalid script lookup table length (%d)", resourceLength);
+		error("Script::Script() Invalid script lookup table length (%i)", resourceLength);
 	}
 
 	// Calculate number of entries
 	_modulesCount = resourceLength / _modulesLUTEntryLen;
 
-	debug(3, "LUT has %d entries.", _modulesCount);
+	debug(3, "LUT has %i entries", _modulesCount);
 	
 	// Allocate space for logical LUT
 	_modules = (ModuleData *)malloc(_modulesCount * sizeof(*_modules));
@@ -115,7 +109,7 @@ Script::Script(SagaEngine *vm) : _vm(vm){
 	}
 
 	// Convert LUT resource to logical LUT
-	MemoryReadStreamEndian scriptS(resourcePointer, resourceLength, IS_BIG_ENDIAN);
+	MemoryReadStreamEndian scriptS(resourcePointer, resourceLength, resourceContext->isBigEndian);
 	for (i = 0; i < _modulesCount; i++) {
 		memset(&_modules[i], 0, sizeof(ModuleData));
 
@@ -136,7 +130,7 @@ Script::Script(SagaEngine *vm) : _vm(vm){
 		}
 	}
 
-	RSC_FreeResource(resourcePointer);
+	free(resourcePointer);
 
 	// TODO
 	//
@@ -150,26 +144,16 @@ Script::Script(SagaEngine *vm) : _vm(vm){
 	// Or maybe I'm looking at the wrong resource. I found the IHNM one by
 	// trial and error...
 
-	result = RSC_LoadResource(resourceContext, _vm->getResourceDescription()->mainStringsResourceId, &stringsPointer, &stringsLength);
-
-	if ((result != SUCCESS) || (stringsLength == 0)) {
-		error("Error loading strings list resource");
-	}
+	_vm->_resource->loadResource(resourceContext, _vm->getResourceDescription()->mainStringsResourceId, stringsPointer, stringsLength);
 
 	_vm->loadStrings(_mainStrings, stringsPointer, stringsLength);
-	RSC_FreeResource(stringsPointer);
+	free(stringsPointer);
 
 	setupScriptFuncList();
-
-	_initialized = true;
 }
 
 // Shut down script module gracefully; free all allocated module resources
 Script::~Script() {
-
-	if (!_initialized) {
-		error("Script not initialized");
-	}
 
 	debug(8, "Shutting down scripting subsystem.");
 	
@@ -179,14 +163,11 @@ Script::~Script() {
 	free(_modules);
 	
 	free(_commonBuffer);
-
-	_initialized = false;
 }
 
 void Script::loadModule(int scriptModuleNumber) {
 	byte *resourcePointer;
 	size_t resourceLength;
-	int result;
 
 	// Validate script number
 	if ((scriptModuleNumber < 0) || (scriptModuleNumber >= _modulesCount)) {
@@ -200,30 +181,21 @@ void Script::loadModule(int scriptModuleNumber) {
 	// Initialize script data structure
 	debug(3, "Loading script module #%d", scriptModuleNumber);
 
-	result = RSC_LoadResource(_scriptContext, _modules[scriptModuleNumber].scriptResourceId, &resourcePointer, &resourceLength);
-	if (result != SUCCESS) {
-		error("Script::loadModule() unable to load module base resource");
-	}
+	_vm->_resource->loadResource(_scriptContext, _modules[scriptModuleNumber].scriptResourceId, resourcePointer, resourceLength);
 
 	loadModuleBase(_modules[scriptModuleNumber], resourcePointer, resourceLength);
-	RSC_FreeResource(resourcePointer);
+	free(resourcePointer);
 
-	result = RSC_LoadResource(_scriptContext, _modules[scriptModuleNumber].stringsResourceId, &resourcePointer, &resourceLength);
-	if ((result != SUCCESS) || (resourceLength == 0)) {
-		error("Script::loadModule() Error loading strings list resource");
-	}
+	_vm->_resource->loadResource(_scriptContext, _modules[scriptModuleNumber].stringsResourceId, resourcePointer, resourceLength);
 
 	_vm->loadStrings(_modules[scriptModuleNumber].strings, resourcePointer, resourceLength);
-	RSC_FreeResource(resourcePointer);
+	free(resourcePointer);
 
 	if (_modules[scriptModuleNumber].voicesResourceId > 0) {
-		result = RSC_LoadResource(_scriptContext, _modules[scriptModuleNumber].voicesResourceId, &resourcePointer, &resourceLength);
-		if (result != SUCCESS) {
-			error("Script::loadModule() Error loading voice LUT resource");
-		}
+		_vm->_resource->loadResource(_scriptContext, _modules[scriptModuleNumber].voicesResourceId, resourcePointer, resourceLength);
 
 		loadModuleVoiceLUT(_modules[scriptModuleNumber], resourcePointer, resourceLength);
-		RSC_FreeResource(resourcePointer);
+		free(resourcePointer);
 	}
 
 	_modules[scriptModuleNumber].staticOffset = _staticSize;
@@ -254,7 +226,7 @@ void Script::loadModuleBase(ModuleData &module, const byte *resourcePointer, siz
 
 	memcpy(module.moduleBase, resourcePointer, resourceLength);
 
-	MemoryReadStreamEndian scriptS(module.moduleBase, module.moduleBaseSize, IS_BIG_ENDIAN);
+	MemoryReadStreamEndian scriptS(module.moduleBase, module.moduleBaseSize, _scriptContext->isBigEndian);
 
 	module.entryPointsCount = scriptS.readUint16();
 	scriptS.readUint16(); //skip
@@ -307,58 +279,11 @@ void Script::loadModuleVoiceLUT(ModuleData &module, const byte *resourcePointer,
 		error("Script::loadModuleVoiceLUT() not enough memory");
 	}
 
-	MemoryReadStreamEndian scriptS(resourcePointer, resourceLength, IS_BIG_ENDIAN);
+	MemoryReadStreamEndian scriptS(resourcePointer, resourceLength, _scriptContext->isBigEndian);
 
 	for (i = 0; i < module.voiceLUT.voicesCount; i++) {
 		module.voiceLUT.voices[i] = scriptS.readUint16();
 	}
-}
-
-
-void Script::scriptInfo() {
-/*	uint32 n_entrypoints;
-	uint32 i;
-	char *name_ptr;
-
-	if (currentScript() == NULL) {
-		return;
-	}
-
-	if (!currentScript()->loaded) {
-		return;
-	}
-
-	n_entrypoints = currentScript()->bytecode->n_entrypoints;
-
-	_vm->_console->DebugPrintf("Current script contains %d entrypoints:\n", n_entrypoints);
-
-	for (i = 0; i < n_entrypoints; i++) {
-		name_ptr = (char *)currentScript()->bytecode->bytecode_p +
-							currentScript()->bytecode->entrypoints[i].name_offset;
-		_vm->_console->DebugPrintf("%lu: %s\n", i, name_ptr);
-	}*/
-}
-
-void Script::scriptExec(int argc, const char **argv) {
-/*	uint16 ep_num;
-
-	ep_num = atoi(argv[1]);
-
-	if (_dbg_thread == NULL) {
-		_vm->_console->DebugPrintf("Creating debug thread...\n");
-		_dbg_thread = createThread();
-		if (_dbg_thread == NULL) {
-			_vm->_console->DebugPrintf("Thread creation failed.\n");
-			return;
-		}
-	}
-
-	if (ep_num >= currentScript()->bytecode->n_entrypoints) {
-		_vm->_console->DebugPrintf("Invalid entrypoint.\n");
-		return;
-	}
-
-	executeThread(_dbg_thread, ep_num);*/
 }
 
 // verb
@@ -816,11 +741,6 @@ void Script::whichObject(const Point& mousePoint) {
 	if (newRightButtonVerb != _rightButtonVerb) {
 		setRightButtonVerb(newRightButtonVerb);
 	}
-}
-
-// console wrappers
-void Script::CF_script_togglestep() {
-	_dbg_singlestep = !_dbg_singlestep;
 }
 
 } // End of namespace Saga

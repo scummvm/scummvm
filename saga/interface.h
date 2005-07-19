@@ -209,7 +209,7 @@ public:
 	void restoreMode();
 	bool isInMainMode() { return _inMainMode; }
 	void setStatusText(const char *text, int statusColor = -1);
-	int loadScenePortraits(int resourceId);
+	void loadScenePortraits(int resourceId);
 	void setLeftPortrait(int portrait) {
 		_leftPortrait = portrait;
 		draw();
@@ -376,8 +376,7 @@ private:
 private:
 	SagaEngine *_vm;
 
-	bool _initialized;
-	RSCFILE_CONTEXT *_interfaceContext;
+	ResourceContext *_interfaceContext;
 	InterfacePanel _mainPanel;
 	PanelButton *_inventoryUpButton;
 	PanelButton *_inventoryDownButton;

@@ -173,14 +173,6 @@ void Script::completeThread(void) {
 		executeThreads(0);
 }
 
-int Script::SThreadDebugStep() {
-	if (_dbg_singlestep) {
-		_dbg_dostep = 1;
-	}
-
-	return SUCCESS;
-}
-
 bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 	const char*operandName;
 	uint instructionCount;
@@ -201,19 +193,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 	int debug_print = 0;
 	int operandChar;
 	int i;
-
-	// Handle debug single-stepping
-	if ((thread == _dbg_thread) && _dbg_singlestep) {
-		if (_dbg_dostep) {
-			debug_print = 1;
-			thread->_sleepTime = 0;
-			instructionLimit = 1;
-			_dbg_dostep = 0;
-		} else {
-			return false;
-		}
-	}
-
+	
 	MemoryReadStream scriptS(thread->_moduleBase, thread->_moduleBaseSize);
 
 	scriptS.seek(thread->_instructionOffset);

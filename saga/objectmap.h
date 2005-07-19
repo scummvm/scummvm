@@ -76,7 +76,7 @@ public:
 		return objectIndexToId(kGameObjectStepZone, _index);
 	}
 	bool getSpecialPoint(Point &specialPoint) const;
-	void draw(Surface *ds, int color);	
+	void draw(SagaEngine *vm, Surface *ds, int color);	
 	bool hitTest(const Point &testPoint);
 
 private:

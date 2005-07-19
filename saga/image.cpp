@@ -58,11 +58,10 @@ int SagaEngine::decodeBGImage(const byte *image_data, size_t image_size,
 	size_t out_buf_len;
 
 	if (image_size <= SAGA_IMAGE_DATA_OFFSET) {
-		/* Image size is way too small */
-		return FAILURE;
+		error("decodeBGImage() Image size is way too small");
 	}
 
-	MemoryReadStreamEndian readS(image_data, image_size, IS_BIG_ENDIAN);
+	MemoryReadStreamEndian readS(image_data, image_size, isBigEndian());
 
 	hdr.width = readS.readUint16();
 	hdr.height = readS.readUint16();
@@ -91,7 +90,7 @@ int SagaEngine::decodeBGImage(const byte *image_data, size_t image_size,
 	unbankBGImage(out_buf, decode_buf, hdr.width, hdr.height);
 
 	// For some reason bg images in IHNM are upside down
-	if (_vm->getGameType() == GType_IHNM) {
+	if (getGameType() == GType_IHNM) {
 		flipImage(out_buf, hdr.width, hdr.height);
 	}
 

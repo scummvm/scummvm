@@ -34,7 +34,6 @@
 #include "saga/palanim.h"
 #include "saga/puzzle.h"
 #include "saga/render.h"
-#include "saga/rscfile_mod.h"
 #include "saga/script.h"
 #include "saga/sound.h"
 #include "saga/music.h"
@@ -42,6 +41,8 @@
 #include "saga/scene.h"
 #include "saga/stream.h"
 #include "saga/actor.h"
+#include "saga/rscfile.h"
+#include "saga/resnames.h"
 
 namespace Saga {
 
@@ -49,46 +50,41 @@ static int initSceneDoors[SCENE_DOORS_MAX] = {
 0, 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff 
 };
 
-Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
-	byte *scene_lut_p;
-	size_t scene_lut_len;
-	int result;
+Scene::Scene(SagaEngine *vm) : _vm(vm) {
+	byte *sceneLUTPointer;
+	size_t sceneLUTLength;
+	uint32 resourceId;
 	int i;
 
 
 	// Load scene module resource context
-	_sceneContext = _vm->getFileContext(GAME_RESOURCEFILE, 0);
+	_sceneContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
 	if (_sceneContext == NULL) {
-		warning("Scene::Scene(): Couldn't load scene resource context");
-		return;
+		error("Scene::Scene() scene context not found");
 	}
 
 
 	// Load scene lookup table
-	debug(3, "Loading scene LUT from resource %u.", RSC_ConvertID(_vm->getResourceDescription()->sceneLUTResourceId));
-	result = RSC_LoadResource(_sceneContext, RSC_ConvertID(_vm->getResourceDescription()->sceneLUTResourceId), &scene_lut_p, &scene_lut_len);
-	if (result != SUCCESS) {
-		warning("Scene::Scene(): Error: couldn't load scene LUT");
-		return;
+	resourceId = _vm->_resource->convertResourceId(_vm->getResourceDescription()->sceneLUTResourceId);
+	debug(3, "Loading scene LUT from resource %i", resourceId);
+	_vm->_resource->loadResource(_sceneContext, resourceId, sceneLUTPointer, sceneLUTLength);
+	if (sceneLUTLength == 0) {
+		error("Scene::Scene() sceneLUTLength == 0");
 	}
-	if (scene_lut_len==0) {
-		warning("Scene::Scene(): scene_lut_len==0");
-		return;
-	}
-	_sceneCount = scene_lut_len / 2;
+	_sceneCount = sceneLUTLength / 2;
 	_sceneLUT = (int *)malloc(_sceneCount * sizeof(*_sceneLUT));
 	if (_sceneLUT == NULL) {
 		memoryError("Scene::Scene()");
 	}
 
-	MemoryReadStreamEndian readS(scene_lut_p, scene_lut_len, IS_BIG_ENDIAN);
+	MemoryReadStreamEndian readS(sceneLUTPointer, sceneLUTLength, _sceneContext->isBigEndian);
 
 	for (i = 0; i < _sceneCount; i++) {
 		_sceneLUT[i] = readS.readUint16();
 		debug(8, "sceneNumber %i has resourceId %i", i, _sceneLUT[i]);
 	}
 
-	free(scene_lut_p);
+	free(sceneLUTPointer);
 
 	_firstScene = _vm->getStartSceneNumber();
 
@@ -102,22 +98,19 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	_inGame = false;
 	_loadDescription = false;
 	memset(&_sceneDescription, 0, sizeof(_sceneDescription));
-	_resListEntries = 0;
-	_resList = NULL;
+	_resourceListCount = 0;
+	_resourceList = NULL;
 	_sceneProc = NULL;
 	_objectMap = new ObjectMap(_vm);
 	_actionMap = new ObjectMap(_vm);
 	memset(&_bg, 0, sizeof(_bg));
 	memset(&_bgMask, 0, sizeof(_bgMask));
-
-	_initialized = true;
 }
 
 Scene::~Scene() {
-	if (_initialized) {
-		delete _actionMap;
-		free(_sceneLUT);
-	}
+	delete _actionMap;
+	delete _objectMap;
+	free(_sceneLUT);
 }
 
 void Scene::drawTextList(Surface *ds) {
@@ -125,8 +118,13 @@ void Scene::drawTextList(Surface *ds) {
 
 	for (TextList::iterator textIterator = _textList.begin(); textIterator != _textList.end(); ++textIterator) {
 		entry = (TextListEntry *)textIterator.operator->();
-		if (entry->display != 0) {
-			_vm->_font->textDraw(entry->fontId, ds, entry->text, entry->point, entry->color, entry->effectColor, entry->flags);
+		if (entry->display) {
+
+			if (entry->useRect) {
+				_vm->_font->textDrawRect(entry->fontId, ds, entry->text, entry->rect, entry->color, entry->effectColor, entry->flags);
+			} else {
+				_vm->_font->textDraw(entry->fontId, ds, entry->text, entry->point, entry->color, entry->effectColor, entry->flags);
+			}			
 		}
 	}
 }
@@ -212,8 +210,6 @@ void Scene::skipScene() {
 	LoadSceneParams *sceneQueue = NULL;
 	LoadSceneParams *skipQueue = NULL;
 
-	assert(_initialized);
-
 	if (!_sceneLoaded) {
 		error("Scene::skip(): Error: Can't skip scene...no scene loaded");
 	}
@@ -285,13 +281,6 @@ void Scene::getBGInfo(BGInfo &bgInfo) {
 
 	bgInfo.bounds.setWidth(_bg.w);
 	bgInfo.bounds.setHeight(_bg.h);
-}
-
-int Scene::getBGPal(PalEntry **pal) {
-	assert(_initialized);
-	*pal = _bg.pal;
-
-	return SUCCESS;
 }
 
 int Scene::getBGMaskType(const Point &testPoint) {
@@ -382,8 +371,7 @@ void Scene::initDoorsState() {
 }
 
 void Scene::loadScene(LoadSceneParams *loadSceneParams) {
-	int result;
-	int i;
+	size_t i;
 	EVENT event;
 	EVENT *q_event;
 	static PalEntry current_pal[PAL_ENTRIES];
@@ -407,11 +395,11 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		_sceneNumber = -1;
 		_sceneResourceId = -1;
 		assert(loadSceneParams->sceneDescription != NULL);
-		assert(loadSceneParams->sceneDescription->resList != NULL);
+		assert(loadSceneParams->sceneDescription->resourceList != NULL);
 		_loadDescription = false;
 		_sceneDescription = *loadSceneParams->sceneDescription;
-		_resList = loadSceneParams->sceneDescription->resList;
-		_resListEntries = loadSceneParams->sceneDescription->resListCnt;
+		_resourceList = loadSceneParams->sceneDescription->resourceList;
+		_resourceListCount = loadSceneParams->sceneDescription->resourceListCount;
 		break;
 	}
 	
@@ -419,32 +407,25 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 	// Load scene descriptor and resource list resources
 	if (_loadDescription) {
-		debug(3, "Loading scene resource %u:", _sceneResourceId);
+		debug(3, "Loading scene resource %i", _sceneResourceId);
 
-		if (loadSceneDescriptor(_sceneResourceId) != SUCCESS) {
-			error("Scene::loadScene(): Error reading scene descriptor");
-		}
+		loadSceneDescriptor(_sceneResourceId);
 
-		if (loadSceneResourceList(_sceneDescription.resListRN) != SUCCESS) {
-			error("Scene::loadScene(): Error reading scene resource list");
-		}
+		loadSceneResourceList(_sceneDescription.resourceListResourceId);
 	} else {
-		debug(3, "Loading memory scene resource.");
+		debug(3, "Loading memory scene resource");
 	}
 
 	// Load resources from scene resource list
-	for (i = 0; i < _resListEntries; i++) {
-		result = RSC_LoadResource(_sceneContext, _resList[i].res_number,
-								&_resList[i].res_data, &_resList[i].res_data_len);
-		if (result != SUCCESS) {
-			error("Scene::loadScene(): Error: Allocation failure loading scene resource list");
+	for (i = 0; i < _resourceListCount; i++) {
+		if (!_resourceList[i].invalid) {
+			_vm->_resource->loadResource(_sceneContext, _resourceList[i].resourceId,
+				_resourceList[i].buffer, _resourceList[i].size);
 		}
 	}
 
 	// Process resources from scene resource list
-	if (processSceneResources() != SUCCESS) {
-		error("Scene::loadScene(): Error loading scene resources");
-	}
+	processSceneResources();
 
 	if (_sceneDescription.flags & kSceneFlagISO) {
 		_outsetSceneNumber = _sceneNumber;
@@ -565,10 +546,10 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		_vm->_sound->stopVoice();
 		_vm->_sound->stopSound();
 
-		if (_sceneDescription.musicRN >= 0) {
+		if (_sceneDescription.musicResourceId >= 0) {
 			event.type = ONESHOT_EVENT;
 			event.code = MUSIC_EVENT;
-			event.param = _sceneDescription.musicRN;
+			event.param = _sceneDescription.musicResourceId;
 			event.param2 = MUSIC_DEFAULT;
 			event.op = EVENT_PLAY;
 			event.time = 0;
@@ -653,85 +634,76 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 }
 
-int Scene::loadSceneDescriptor(uint32 res_number) {
-	byte *scene_desc_data;
-	size_t scene_desc_len;
-	int result;
+void Scene::loadSceneDescriptor(uint32 resourceId) {
+	byte *sceneDescriptorData;
+	size_t sceneDescriptorDataLength;
 
-	result = RSC_LoadResource(_sceneContext, res_number, &scene_desc_data, &scene_desc_len);
-	if (result != SUCCESS) {
-		warning("Scene::loadSceneDescriptor(): Error: couldn't load scene descriptor");
-		return FAILURE;
-	}
+	_vm->_resource->loadResource(_sceneContext, resourceId, sceneDescriptorData, sceneDescriptorDataLength);
 
-	MemoryReadStreamEndian readS(scene_desc_data, scene_desc_len, IS_BIG_ENDIAN);
+	MemoryReadStreamEndian readS(sceneDescriptorData, sceneDescriptorDataLength, _sceneContext->isBigEndian);
 
 	_sceneDescription.flags = readS.readSint16();
-	_sceneDescription.resListRN = readS.readSint16();
+	_sceneDescription.resourceListResourceId = readS.readSint16();
 	_sceneDescription.endSlope = readS.readSint16();
 	_sceneDescription.beginSlope = readS.readSint16();
 	_sceneDescription.scriptModuleNumber = readS.readUint16();
 	_sceneDescription.sceneScriptEntrypointNumber = readS.readUint16();
 	_sceneDescription.startScriptEntrypointNumber = readS.readUint16();
-	_sceneDescription.musicRN = readS.readSint16();
+	_sceneDescription.musicResourceId = readS.readSint16();
 
-	RSC_FreeResource(scene_desc_data);
-
-	return SUCCESS;
+	free(sceneDescriptorData);
 }
 
-int Scene::loadSceneResourceList(uint32 reslist_rn) {
-	byte *resource_list;
-	size_t resource_list_len;
-	int result;
-	int i;
+void Scene::loadSceneResourceList(uint32 resourceId) {
+	byte *resourceListData;
+	size_t resourceListDataLength;
+	size_t i;
 
 	// Load the scene resource table
-	result = RSC_LoadResource(_sceneContext, reslist_rn, &resource_list, &resource_list_len);
-	if (result != SUCCESS) {
-		warning("Scene::loadSceneResourceList(): Error: couldn't load scene resource list");
-		return FAILURE;
-	}
+	_vm->_resource->loadResource(_sceneContext, resourceId, resourceListData, resourceListDataLength);
 
-	MemoryReadStreamEndian readS(resource_list, resource_list_len, IS_BIG_ENDIAN);
+	MemoryReadStreamEndian readS(resourceListData, resourceListDataLength, _sceneContext->isBigEndian);
 
 	// Allocate memory for scene resource list 
-	_resListEntries = resource_list_len / SAGA_RESLIST_ENTRY_LEN;
-	debug(3, "Scene resource list contains %d entries.", _resListEntries);
-	_resList = (SCENE_RESLIST *)calloc(_resListEntries, sizeof(*_resList));
-
-	if (_resList == NULL) {
-		memoryError("Scene::loadSceneResourceList()");
-	}
+	_resourceListCount = resourceListDataLength / SAGA_RESLIST_ENTRY_LEN;
+	debug(3, "Scene resource list contains %i entries", _resourceListCount);
+	_resourceList = (SceneResourceData *)calloc(_resourceListCount, sizeof(*_resourceList));
 
 	// Load scene resource list from raw scene 
 	// resource table
-	debug(3, "Loading scene resource list...");
+	debug(3, "Loading scene resource list");
 
-	for (i = 0; i < _resListEntries; i++) {
-		_resList[i].res_number = readS.readUint16();
-		_resList[i].res_type = readS.readUint16();
+	for (i = 0; i < _resourceListCount; i++) {
+		_resourceList[i].resourceId = readS.readUint16();
+		_resourceList[i].reourceType = readS.readUint16();
+		// demo version may contain invalid resourceId
+		_resourceList[i].invalid = !_vm->_resource->validResourceId(_sceneContext, _resourceList[i].resourceId);
 	}
 
-	RSC_FreeResource(resource_list);
-
-	return SUCCESS;
+	free(resourceListData);
 }
 
-int Scene::processSceneResources() {
+void Scene::processSceneResources() {
 	byte *resourceData;
 	uint16 resourceDataLength;
-	const byte *pal_p;
-	int i;
+	const byte *palPointer;
+	size_t i;
 
 	// Process the scene resource list
-	for (i = 0; i < _resListEntries; i++) {
-		resourceData = _resList[i].res_data;
-		resourceDataLength = _resList[i].res_data_len;
-		switch (_resList[i].res_type) {
+	for (i = 0; i < _resourceListCount; i++) {
+		if (_resourceList[i].invalid) {
+			continue;
+		}
+		resourceData = _resourceList[i].buffer;
+		resourceDataLength = _resourceList[i].size;
+		switch (_resourceList[i].reourceType) {
+		case SAGA_ACTOR:
+			break;
+		case SAGA_OBJECT:
+			break;
 		case SAGA_BG_IMAGE: // Scene background resource
 			if (_bg.loaded) {
-				error("Scene::processSceneResources(): Multiple background resources encountered");
+				error("Scene::processSceneResources() Multiple background resources encountered");
 			}
 
 			debug(3, "Loading background resource.");
@@ -745,12 +717,11 @@ int Scene::processSceneResources() {
 				&_bg.buf_len,
 				&_bg.w,
 				&_bg.h) != SUCCESS) {
-				warning("Scene::ProcessSceneResources(): Error loading background resource: %u", _resList[i].res_number);
-				return FAILURE;
+				error("Scene::processSceneResources() Error loading background resource %i", _resourceList[i].resourceId);
 			}
 
-			pal_p = _vm->getImagePal(_bg.res_buf, _bg.res_len);
-			memcpy(_bg.pal, pal_p, sizeof(_bg.pal));
+			palPointer = _vm->getImagePal(_bg.res_buf, _bg.res_len);
+			memcpy(_bg.pal, palPointer, sizeof(_bg.pal));
 			break;
 		case SAGA_BG_MASK: // Scene background mask resource
 			if (_bgMask.loaded) {
@@ -826,7 +797,7 @@ int Scene::processSceneResources() {
 		case SAGA_ANIM_6:
 		case SAGA_ANIM_7:
 			{
-				uint16 animId = _resList[i].res_type - SAGA_ANIM_1;
+				uint16 animId = _resourceList[i].reourceType - SAGA_ANIM_1;
 
 				debug(3, "Loading animation resource animId=%i", animId);
 
@@ -851,7 +822,7 @@ int Scene::processSceneResources() {
 			loadSceneEntryList(resourceData, resourceDataLength);
 			break;
 		case SAGA_FACES:
-			_vm->_interface->loadScenePortraits(_resList[i].res_number);
+			_vm->_interface->loadScenePortraits(_resourceList[i].resourceId);
 			break;
 		case SAGA_PALETTE:
 			{
@@ -859,7 +830,7 @@ int Scene::processSceneResources() {
 				byte *palPtr = resourceData;
 
 				if (resourceDataLength < 3 * PAL_ENTRIES)
-					error("Too small scene palette: %d", resourceDataLength);
+					error("Too small scene palette %i", resourceDataLength);
 
 				for (uint16 c = 0; c < PAL_ENTRIES; c++) {
 					pal[c].red = *palPtr++;
@@ -870,11 +841,10 @@ int Scene::processSceneResources() {
 			}
 			break;
 		default:
-			warning("Scene::ProcessSceneResources(): Encountered unknown resource type: %d", _resList[i].res_type);
+			error("Scene::ProcessSceneResources() Encountered unknown resource type %i", _resourceList[i].reourceType);
 			break;
 		}
 	}
-	return SUCCESS;
 }
 
 void Scene::draw() {
@@ -902,7 +872,7 @@ void Scene::endScene() {
 	Surface *backBuffer;
 	Surface *backGroundSurface;
 	Rect rect;
-	int i;
+	size_t i;
 
 	if (!_sceneLoaded)
 		return;
@@ -936,12 +906,12 @@ void Scene::endScene() {
 	}
 
 	// Free scene resource list
-	for (i = 0; i < _resListEntries; i++) {
-		RSC_FreeResource(_resList[i].res_data);
+	for (i = 0; i < _resourceListCount; i++) {
+		free(_resourceList[i].buffer);
 	}
 
 	if (_loadDescription) {
-		free(_resList);
+		free(_resourceList);
 	}
 
 	// Free animation info list
@@ -977,23 +947,6 @@ void Scene::cmdSceneChange(int argc, const char **argv) {
 	changeScene(scene_num, 0, kTransitionNoFade);
 }
 
-void Scene::cmdSceneInfo() {
-	const char *fmt = "%-20s %d\n";
-
-	_vm->_console->DebugPrintf(fmt, "Scene number:", _sceneNumber);
-	_vm->_console->DebugPrintf(fmt, "Descriptor ResourceId:", _sceneResourceId);
-	_vm->_console->DebugPrintf("-------------------------\n");
-	_vm->_console->DebugPrintf(fmt, "Flags:", _sceneDescription.flags);
-	_vm->_console->DebugPrintf(fmt, "Resource list R#:", _sceneDescription.resListRN);
-	_vm->_console->DebugPrintf(fmt, "End slope:", _sceneDescription.endSlope);
-	_vm->_console->DebugPrintf(fmt, "Begin slope:", _sceneDescription.beginSlope);
-	_vm->_console->DebugPrintf(fmt, "scriptModuleNumber:", _sceneDescription.scriptModuleNumber);
-	_vm->_console->DebugPrintf(fmt, "sceneScriptEntrypointNumber:", _sceneDescription.sceneScriptEntrypointNumber);
-	_vm->_console->DebugPrintf(fmt, "startScriptEntrypointNumber:", _sceneDescription.startScriptEntrypointNumber);
-	_vm->_console->DebugPrintf(fmt, "Music R#", _sceneDescription.musicRN);
-}
-
-
 void Scene::cmdActionMapInfo() {
 	_actionMap->cmdInfo();
 }
@@ -1008,7 +961,7 @@ void Scene::loadSceneEntryList(const byte* resourcePointer, size_t resourceLengt
 	
 	_entryList.entryListCount = resourceLength / 8;
 
-	MemoryReadStreamEndian readS(resourcePointer, resourceLength, IS_BIG_ENDIAN);
+	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _sceneContext->isBigEndian);
 
 
 	if (_entryList.entryList)

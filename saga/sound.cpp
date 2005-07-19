@@ -32,127 +32,64 @@ namespace Saga {
 
 Sound::Sound(SagaEngine *vm, Audio::Mixer *mixer, int enabled) : 
 	_vm(vm), _mixer(mixer), _enabled(enabled), _voxStream(0) {
-
-	_soundInitialized = 1;
-	return;
 }
 
 Sound::~Sound() {
-	if (!_soundInitialized) {
-		return;
-	}
-
 	delete _voxStream;
-	_soundInitialized = 0;
 }
 
-int Sound::playSoundBuffer(Audio::SoundHandle *handle, SOUNDBUFFER *buf, int volume, bool loop, bool forceBigEndian) {
+void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int volume, bool loop, bool forceBigEndian) {
 	byte flags;
-
-	if (!_soundInitialized) {
-		return FAILURE;
-	}
 
 	flags = Audio::Mixer::FLAG_AUTOFREE;
 
 	if (loop)
 		flags |= Audio::Mixer::FLAG_LOOP;
 
-	if (buf->s_samplebits == 16) {
+	if (buffer.sampleBits == 16) {
 		flags |= Audio::Mixer::FLAG_16BITS;
-		if (!(_vm->getFeatures() & GF_BIG_ENDIAN_DATA) && !forceBigEndian)
+		if (!(_vm->isBigEndian()) && !forceBigEndian)
 			flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
 	}
-	if (buf->s_stereo)
+	if (buffer.stereo)
 		flags |= Audio::Mixer::FLAG_STEREO;
-	if (!buf->s_signed)
+	if (!buffer.isSigned)
 		flags |= Audio::Mixer::FLAG_UNSIGNED;
 
-	_mixer->playRaw(handle, buf->s_buf, buf->s_buf_len, buf->s_freq, flags, -1, volume);
-
-	return SUCCESS;
+	_mixer->playRaw(handle, buffer.buffer, buffer.size, buffer.frequency, flags, -1, volume);	
 }
 
-int Sound::playSound(SOUNDBUFFER *buf, int volume, bool loop) {
-	return playSoundBuffer(&_effectHandle, buf, 2 * volume, loop, false);
+void Sound::playSound(SoundBuffer &buffer, int volume, bool loop) {
+	playSoundBuffer(&_effectHandle, buffer, 2 * volume, loop, false);
 }
 
-int Sound::pauseSound() {
-	if (!_soundInitialized) {
-		return FAILURE;
-	}
-
+void Sound::pauseSound() {
 	_mixer->pauseHandle(_effectHandle, true);
-
-	return SUCCESS;
 }
 
-int Sound::resumeSound() {
-	if (!_soundInitialized) {
-		return FAILURE;
-	}
-
+void Sound::resumeSound() {
 	_mixer->pauseHandle(_effectHandle, false);
-
-	return SUCCESS;
 }
 
-int Sound::stopSound() {
-	if (!_soundInitialized) {
-		return FAILURE;
-	}
-
+void Sound::stopSound() {
 	_mixer->stopHandle(_effectHandle);
-
-	return SUCCESS;
 }
 
-int Sound::playVoice(SOUNDBUFFER *buf) {
-	return playSoundBuffer(&_voiceHandle, buf, 255, false, (_vm->getFeatures() & GF_BIG_ENDIAN_VOICES) != 0);
+void Sound::playVoice(SoundBuffer &buffer) {
+	playSoundBuffer(&_voiceHandle, buffer, 255, false, (_vm->getFeatures() & GF_BIG_ENDIAN_VOICES) != 0);
 }
 
-int Sound::playVoxVoice(SOUNDBUFFER *buf) {
-	AudioStream *audioStream;
 
-	if (_voxStream)
-		delete _voxStream;
-
-	_voxStream = new Common::MemoryReadStream(buf->s_buf, buf->s_buf_len);
-
-	audioStream = makeADPCMStream(*_voxStream, buf->s_buf_len, kADPCMOki);
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_voiceHandle, audioStream);
-
-	return SUCCESS;
-}
-
-int Sound::pauseVoice() {
-	if (!_soundInitialized) {
-		return FAILURE;
-	}
-
+void Sound::pauseVoice() {
 	_mixer->pauseHandle(_voiceHandle, true);
-
-	return SUCCESS;
 }
 
-int Sound::resumeVoice() {
-	if (!_soundInitialized) {
-		return FAILURE;
-	}
-
+void Sound::resumeVoice() {
 	_mixer->pauseHandle(_voiceHandle, false);
-
-	return SUCCESS;
 }
 
-int Sound::stopVoice() {
-	if (!_soundInitialized) {
-		return FAILURE;
-	}
-
+void Sound::stopVoice() {
 	_mixer->stopHandle(_voiceHandle);
-
-	return SUCCESS;
 }
 
 } // End of namespace Saga

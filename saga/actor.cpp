@@ -25,7 +25,6 @@
 #include "saga/gfx.h"
 
 #include "saga/console.h"
-#include "saga/rscfile_mod.h"
 #include "saga/script.h"
 #include "saga/sndres.h"
 #include "saga/sprite.h"
@@ -40,6 +39,9 @@
 #include "saga/interface.h"
 #include "saga/events.h"
 #include "saga/objectmap.h"
+#include "saga/rscfile.h"
+#include "saga/resnames.h"
+
 #include "common/config-manager.h"
 
 namespace Saga {
@@ -164,7 +166,6 @@ static const DragonMove dragonMoveTable[12] = {
 
 Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	int i;
-	int result;
 	byte *stringsPointer;
 	size_t stringsLength;
 	ActorData *actor;
@@ -207,18 +208,15 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 
 	if (_vm->getGameType() == GType_ITE) {
 		// Get actor resource file context
-		_actorContext = _vm->getFileContext(GAME_RESOURCEFILE, 0);
+		_actorContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
 		if (_actorContext == NULL) {
-			error("Actor::Actor(): Couldn't load actor module resource context.");
+			error("Actor::Actor() resource context not found");
 		}
 	
-		result = RSC_LoadResource(_actorContext, _vm->getResourceDescription()->actorsStringsResourceId, &stringsPointer, &stringsLength);
-		if ((result != SUCCESS) || (stringsLength == 0)) {
-			error("Error loading strings list resource");
-		}
+		_vm->_resource->loadResource(_actorContext, _vm->getResourceDescription()->actorsStringsResourceId, stringsPointer, stringsLength);
 	
 		_vm->loadStrings(_actorsStrings, stringsPointer, stringsLength);
-		RSC_FreeResource(stringsPointer);
+		free(stringsPointer);
 	} else {
 		// TODO
 	}
@@ -325,10 +323,7 @@ bool Actor::loadActorResources(ActorData *actor) {
 	}
 
 	debug(9, "Loading frame resource id %d", actor->frameListResourceId);
-	if (RSC_LoadResource(_actorContext, actor->frameListResourceId, &resourcePointer, &resourceLength) != SUCCESS) {
-		warning("Couldn't load sprite action index resource");
-		return false;
-	}
+	_vm->_resource->loadResource(_actorContext, actor->frameListResourceId, resourcePointer, resourceLength);
 
 	framesCount = resourceLength / 16;
 	debug(9, "Frame resource contains %d frames", framesCount);
@@ -338,7 +333,7 @@ bool Actor::loadActorResources(ActorData *actor) {
 		memoryError("Actor::loadActorResources");
 	}
 
-	MemoryReadStreamEndian readS(resourcePointer, resourceLength, IS_BIG_ENDIAN);
+	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _actorContext->isBigEndian);
 
 	lastFrame = 0;
 
@@ -355,27 +350,22 @@ bool Actor::loadActorResources(ActorData *actor) {
 		}
 	}
 
-	RSC_FreeResource(resourcePointer);
+	free(resourcePointer);
 
 	actor->frames = framesPointer;
 	actor->framesCount = framesCount;
 
 	resourceId = actor->spriteListResourceId;
 	debug(9, "Loading sprite resource id %d", resourceId);
-	if (_vm->_sprite->loadList(resourceId, actor->spriteList) != SUCCESS) {
-		warning("loadActorResources: Unable to load sprite list");
-		return false;
-	}
+
+	_vm->_sprite->loadList(resourceId, actor->spriteList);
 
 	i = actor->spriteList.spriteCount;
 	if ((actor->flags & kExtended)) {
 		while ((lastFrame >= actor->spriteList.spriteCount)) {
 			resourceId++;
 			debug(9, "Appending to sprite list %d", resourceId);
-			if (_vm->_sprite->loadList(resourceId, actor->spriteList) != SUCCESS) {
-				warning("Unable append sprite list");
-				return false;
-			}
+			_vm->_sprite->loadList(resourceId, actor->spriteList);
 		}
 	}
 
@@ -2652,7 +2642,7 @@ void Actor::loadState(Common::InSaveFile *in) {
 
 	for (i = 0; i < _actorsCount; i++) {
 		ActorData *a = _actors[i];
-		a->loadState(in);
+		a->loadState(_vm->getCurrentLoadVersion(), in);
 	}
 
 	for (i = 0; i < _objsCount; i++) {

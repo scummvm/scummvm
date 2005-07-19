@@ -44,6 +44,7 @@
 
 #include "saga/scene.h"
 #include "saga/isomap.h"
+#include "saga/resnames.h"
 
 #include "common/config-manager.h"
 
@@ -1271,7 +1272,7 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 
 	q_event = _vm->_events->chain(q_event, &event);
 
-	_vm->_scene->getBGPal(&pal);
+	_vm->_scene->getBGPal(pal);
 
 	event.type = IMMEDIATE_EVENT;
 	event.code = PAL_EVENT;
@@ -1327,7 +1328,7 @@ void Script::sfPlacardOff(SCRIPTFUNC_PARAMS) {
 
 	q_event = _vm->_events->chain(q_event, &event);
 
-	_vm->_scene->getBGPal(&pal);
+	_vm->_scene->getBGPal(pal);
 
 	event.type = IMMEDIATE_EVENT;
 	event.code = PAL_EVENT;

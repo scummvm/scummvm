@@ -36,22 +36,79 @@ namespace Saga {
 
 #define RSC_MIN_FILESIZE (RSC_TABLEINFO_SIZE + RSC_TABLEENTRY_SIZE + 1)
 
-struct RSCFILE_RESOURCE {
-	int res_type;
-	size_t res_offset;
-	size_t res_size;
+//TODO: good PATCH.RE_ support
+
+struct ResourceData {
+	size_t offset;
+	size_t size;
+	Common::File *patchFile;
 };
 
-struct RSCFILE_CONTEXT {
-	const char *rc_file_fspec;
-	Common::File *rc_file;
-	int rc_file_loaded;
-	RSCFILE_RESOURCE *rc_res_table;
-	size_t rc_res_ct;
+struct ResourceContext {
+	const char *fileName;
+	uint16 fileType;
+	Common::File *file;
+
+	bool isBigEndian;
+	ResourceData *table;
+	size_t count;
+
+	Common::File *getFile(ResourceData *resourceData) const {
+		if (resourceData->patchFile != NULL) {
+			return resourceData->patchFile;
+		} else {
+			return file;
+		}
+	}
 };
 
-int RSC_LoadRSC(RSCFILE_CONTEXT *rsc_context);
-int RSC_FreeRSC(RSCFILE_CONTEXT *rsc);
+class Resource {
+public:
+	Resource(SagaEngine *vm);
+	~Resource();
+	bool createContexts();
+	void clearContexts();
+	void loadResource(ResourceContext *context, uint32 resourceId, byte*&resourceBuffer, size_t &resourceSize);
+	size_t getResourceSize(ResourceContext *context, uint32 resourceId);
+	uint32 convertResourceId(uint32 resourceId);
+
+	ResourceContext *getContext(uint16 fileType) {
+		int i;
+		for (i = 0; i < _contextsCount; i++) {
+			if (_contexts[i].fileType & fileType) {
+				return &_contexts[i];
+			}
+		}
+		return NULL;
+	}
+
+	bool validResourceId(ResourceContext *context, uint32 resourceId) const {
+		return (resourceId < context->count);
+	}
+
+	size_t getResourceSize(ResourceContext *context, uint32 resourceId) const {
+		return getResourceData(context, resourceId)->size;
+	}
+
+	size_t getResourceOffset(ResourceContext *context, uint32 resourceId) const {
+		return getResourceData(context, resourceId)->offset;
+	}
+
+	ResourceData *getResourceData(ResourceContext *context, uint32 resourceId) const {
+		if (!validResourceId(context, resourceId)) {
+			error("Resource::getResourceData() wrong resourceId %d", resourceId);
+		}
+		return &context->table[resourceId];
+	}
+
+private:
+	SagaEngine *_vm;
+	ResourceContext *_contexts;
+	int _contextsCount;
+	
+	bool loadContext(ResourceContext *context);
+
+};
 
 } // End of namespace Saga
 

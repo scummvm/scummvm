@@ -54,9 +54,10 @@ namespace Saga {
 #define TEXT_LINESPACING 2
 
 struct TextListEntry {
-	int display;
-//	int id;
+	bool display;
+	bool useRect;
 	Common::Point point;
+	Common::Rect rect;
 	int color;
 	int effectColor;
 	FontEffectFlags flags;

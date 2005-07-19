@@ -55,9 +55,13 @@ class Console;
 class Events;
 class PalAnim;
 class Puzzle;
+class Resource;
 
-#define MIN_IMG_RLECODE    3
-#define MODEX_SCANLINE_LIMIT 200
+struct ResourceContext;
+struct StringList;
+
+//#define MIN_IMG_RLECODE    3
+//#define MODEX_SCANLINE_LIMIT 200 //TODO: remove
 
 #define SAGA_IMAGE_DATA_OFFSET 776
 #define SAGA_IMAGE_HEADER_LEN  8
@@ -68,9 +72,6 @@ class Puzzle;
 #define MAX_SAVES 96
 #define MAX_FILE_NAME 256
 
-
-#define IS_BIG_ENDIAN ((_vm->getFeatures() & GF_BIG_ENDIAN_DATA) != 0)
-
 #define ID_NOTHING 0
 #define ID_PROTAG 1
 #define OBJECT_TYPE_SHIFT 13
@@ -79,9 +80,6 @@ class Puzzle;
 #define OBJ_SPRITE_BASE 9
 
 #define memoryError(Place) error("%s Memory allocation error.", Place)
-
-struct RSCFILE_CONTEXT;
-struct StringList;
 
 enum ERRORCODE {
 	MEM = -2,//todo: remove
@@ -326,10 +324,10 @@ enum FontEffectFlags {
 };
 
 struct GameSoundInfo {
-	int res_type;
-	long freq;
-	int sample_size;
-	int stereo;
+	GameSoundTypes resourceType;
+	long frequency;
+	int sampleBits;
+	bool stereo;
 };
 
 struct GameFontDescription {
@@ -352,6 +350,12 @@ struct GameResourceDescription {
 struct GameFileDescription {
 	const char *fileName;
 	uint16 fileType;
+};
+
+struct GamePatchDescription {
+	const char *fileName;
+	uint16 fileType;
+	uint32 resourceId;
 };
 
 struct PanelButton {
@@ -463,6 +467,8 @@ struct GameDescription {
 	int fontsCount;
 	GameFontDescription *fontDescriptions;
 	GameSoundInfo *soundInfo;
+	int patchsCount;
+	GamePatchDescription *patchDescriptions;
 	uint32 features;
 
 	GameSettings toGameSettings() const {
@@ -569,6 +575,7 @@ public:
 	Events *_events;
 	PalAnim *_palanim;
 	Puzzle *_puzzle;
+	Resource *_resource;
 
 
 	/** Random number generator */
@@ -619,7 +626,6 @@ public:
 	bool _rightMouseButtonPressed;
 
 	bool _quit;
-	RSCFILE_CONTEXT **_gameFileContexts;
 
 //current game description
 	int _gameNumber;
@@ -628,10 +634,13 @@ public:
 	Common::Rect _displayClip;
 
 public:
-	int initGame(void);
-	RSCFILE_CONTEXT *getFileContext(uint16 type, int param);
-	bool isBigEndianFile(const char *filename);
+	bool initGame(void);
+//	RSCFILE_CONTEXT *getFileContext(uint16 type, int param);
+//	bool isBigEndianFile(const char *filename);
 public:
+	const GameDescription *getGameDescription() const { return _gameDescription; }
+	const bool isBigEndian() const { return (_gameDescription->features & GF_BIG_ENDIAN_DATA) != 0; }
+	const bool isMacResources() const { return (_gameDescription->features & GF_MAC_RESOURCES) != 0; }
 	const GameResourceDescription *getResourceDescription() { return _gameDescription->resourceDescription; }
 	const GameSoundInfo *getSoundInfo() { return _gameDescription->soundInfo; }
 
@@ -656,12 +665,8 @@ public:
 	
 	const char *getTextString(int textStringId);
 	void getExcuseInfo(int verb, const char *&textString, int &soundResourceId);
-private:
-	int loadGame(int gameNumber);
 };
 
-// FIXME: Global var. We use it until everything will be turned into objects
-extern SagaEngine *_vm;
 
 } // End of namespace Saga
 

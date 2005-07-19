@@ -46,6 +46,7 @@ Anim::~Anim(void) {
 
 void Anim::load(uint16 animId, const byte *animResourceData, size_t animResourceLength) {
 	AnimationData *anim;
+	uint16 temp;
 
 	if (animId >= MAX_ANIMATIONS) {
 		error("Anim::load could not find unused animation slot");
@@ -53,7 +54,7 @@ void Anim::load(uint16 animId, const byte *animResourceData, size_t animResource
 
 	anim = _animations[animId] = new AnimationData(animResourceData, animResourceLength);
 
-	MemoryReadStreamEndian headerReadS(anim->resourceData, anim->resourceLength, IS_BIG_ENDIAN);
+	MemoryReadStreamEndian headerReadS(anim->resourceData, anim->resourceLength, _vm->isBigEndian());
 	anim->magic = headerReadS.readUint16LE(); // cause ALWAYS LE
 	anim->screenWidth = headerReadS.readUint16();
 	anim->screenHeight = headerReadS.readUint16();
@@ -62,9 +63,12 @@ void Anim::load(uint16 animId, const byte *animResourceData, size_t animResource
 	anim->unknown07 = headerReadS.readByte();
 	anim->maxFrame = headerReadS.readByte() - 1;
 	anim->loopFrame = headerReadS.readByte() - 1;
-	anim->start = headerReadS.readUint16BE();
-
-	anim->start += headerReadS.pos();
+	temp = headerReadS.readUint16BE();
+	anim->start = headerReadS.pos();
+	if (temp == (uint16)(-1)) {
+		temp = 0;
+	}
+	anim->start += temp;
 
 
 	if (_vm->getGameType() == GType_ITE) {
@@ -76,8 +80,15 @@ void Anim::load(uint16 animId, const byte *animResourceData, size_t animResource
 
 		fillFrameOffsets(anim);
 	} else {
-		anim->cur_frame_p = anim->resourceData + SAGA_FRAME_HEADER_LEN; // ? len - may vary
-		anim->cur_frame_len = anim->resourceLength - SAGA_FRAME_HEADER_LEN;
+/*		anim->frameOffsets = (size_t *)malloc((anim->maxFrame + 1) * sizeof(*anim->frameOffsets));
+		if (anim->frameOffsets == NULL) {
+			memoryError("Anim::load");
+		}
+
+		fillFrameOffsets(anim);*/
+
+		anim->cur_frame_p = anim->resourceData + getFrameHeaderLength(); // ? len - may vary
+		anim->cur_frame_len = anim->resourceLength - getFrameHeaderLength();
 	}
 
 	// Set animation data
@@ -179,8 +190,8 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 			
 			if (_vm->getGameType() == GType_IHNM) {
 				// FIXME: HACK. probably needs more testing for IHNM
-				anim->cur_frame_p = anim->resourceData + SAGA_FRAME_HEADER_LEN;
-				anim->cur_frame_len = anim->resourceLength - SAGA_FRAME_HEADER_LEN;
+				anim->cur_frame_p = anim->resourceData + getFrameHeaderLength();
+				anim->cur_frame_len = anim->resourceLength - getFrameHeaderLength();
 			}
 			
 			if (anim->flags & ANIM_STOPPING || anim->currentFrame == -1) {
@@ -489,7 +500,7 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 
 	size_t in_ch_offset;
 
-	MemoryReadStreamEndian readS(thisf_p, thisf_len, !IS_BIG_ENDIAN); // RLE has inversion BE<>LE
+	MemoryReadStreamEndian readS(thisf_p, thisf_len, !_vm->isBigEndian()); // RLE has inversion BE<>LE
 
 	byte *outbuf_p = decode_buf;
 	byte *outbuf_endp = (decode_buf + decode_buf_len) - 1;
@@ -502,7 +513,7 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 		in_ch_offset = readS.pos();
 		in_ch = readS.readByte();
 		switch (in_ch) {
-		case 0x0F: // 15: Frame header
+		case SAGA_FRAME_START: // Frame header
 			{
 				int param1;
 				int param2;
@@ -702,12 +713,16 @@ void Anim::fillFrameOffsets(AnimationData *anim) {
 
 	int i;
 
-	MemoryReadStreamEndian readS(anim->resourceData, anim->resourceLength, IS_BIG_ENDIAN); 
+	MemoryReadStreamEndian readS(anim->resourceData, anim->resourceLength, _vm->isBigEndian()); 
 
-	readS.seek(12);
+	if (_vm->getGameType() == GType_ITE) {
+		readS.seek(12);
+	} else {
+		readS.seek(15);		// ihnm has longer anim header
+	}
 	
 
-	readS._bigEndian = !IS_BIG_ENDIAN; // RLE has inversion BE<>LE
+	readS._bigEndian = !_vm->isBigEndian(); // RLE has inversion BE<>LE
 
 	for (currentFrame = 0; currentFrame <= anim->maxFrame; currentFrame++) {
 		anim->frameOffsets[currentFrame] = readS.pos();
@@ -723,14 +738,14 @@ void Anim::fillFrameOffsets(AnimationData *anim) {
 		}
 
 		// skip header
-		readS.seek(SAGA_FRAME_HEADER_LEN, SEEK_CUR);
+		readS.seek(getFrameHeaderLength(), SEEK_CUR);
 
 		// For some strange reason, the animation header is in little
 		// endian format, but the actual RLE encoded frame data, 
 		// including the frame header, is in big endian format. */
 		do {
 			mark_byte = readS.readByte();
-//			debug(7, "_pos=%x mark_byte=%x", readS.pos(), mark_byte);
+//			debug(7, "_pos=%x currentFrame=%i mark_byte=%x", readS.pos(), currentFrame, mark_byte);
 
 			switch (mark_byte) {
 			case SAGA_FRAME_END: // End of frame marker
