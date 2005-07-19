@@ -367,6 +367,17 @@ static GamePatchDescription ITEMacPatch_Files[] = {
 	{ "p2_a.iaf", GAME_VOICEFILE, 4}
 };
 
+static GamePatchDescription ITELinPatch_Files[] = {
+	{ "wyrm.pak", GAME_RESOURCEFILE, 1529},
+	{ "wyrm1.dlt", GAME_RESOURCEFILE, 1530},
+	{ "wyrm2.dlt", GAME_RESOURCEFILE, 1531},
+	{ "wyrm3.dlt", GAME_RESOURCEFILE, 1532},
+	{ "wyrm4.dlt", GAME_RESOURCEFILE, 1533},
+	{ "credit3m.dlt", GAME_RESOURCEFILE, 1796},
+	{ "credit4m.dlt", GAME_RESOURCEFILE, 1797},
+	{ "P2_A.iaf", GAME_VOICEFILE, 4}
+};
+
 // IHNM section
 
 static PanelButton IHNM_MainPanelButtons[] = {
@@ -718,8 +729,8 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
 		&ITECD_GameSound,
-		ARRAYSIZE(ITEMacPatch_Files),
-		ITEMacPatch_Files,
+		ARRAYSIZE(ITELinPatch_Files),
+		ITELinPatch_Files,
 		GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_WYRMKEEP | GF_CD_FX
 	},
 
@@ -815,8 +826,8 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
-		0,
-		NULL,
+		ARRAYSIZE(ITEMacPatch_Files),
+		ITEMacPatch_Files,
 		GF_WYRMKEEP | GF_CD_FX
 	},
 
