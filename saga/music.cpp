@@ -293,6 +293,7 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver, int enable
 }
 
 Music::~Music() {
+	_mixer->stopHandle(_musicHandle);
 	delete _player;
 	xmidiParser->setMidiDriver(NULL);
 	smfParser->setMidiDriver(NULL);
@@ -318,7 +319,7 @@ void Music::musicVolumeGauge() {
 	if (volume < 0)
 		volume = 1;
 
-	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
 	_player->setVolume(volume);
 
 	if (_currentVolumePercent == 100) {
@@ -335,7 +336,7 @@ void Music::setVolume(int volume, int time) {
 		volume = ConfMan.getInt("music_volume");
 
 	if (time == 1) {
-		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
 		Common::g_timer->removeTimerProc(&musicVolumeGaugeCallback);
 		_currentVolume = volume;
 		return;
@@ -429,7 +430,6 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		} else {
 			context = _vm->_resource->getContext(GAME_MUSICFILE_GM);
 		}
-
 	}
 
 	_player->setGM(true);
