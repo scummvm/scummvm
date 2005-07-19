@@ -958,17 +958,17 @@ int16 parse_parseVarIndex() {
 	int16 val;
 
 	operation = *inter_execPtr++;
-	debug(5, "var parse = %d\n", operation);
+	debug(5, "var parse = %d", operation);
 	switch (operation) {
 	case 23:
 	case 25:
 		temp = inter_load16() * 4;
-		debug(5, "oper = %d\n", (int16)*inter_execPtr);
+		debug(5, "oper = %d", (int16)*inter_execPtr);
 		if (operation == 25 && *inter_execPtr == 13) {
 			inter_execPtr++;
 			val = parse_parseValExpr();
 			temp += val;
-			debug(5, "parse subscript = %d\n", val);
+			debug(5, "parse subscript = %d", val);
 		}
 		return temp;
 

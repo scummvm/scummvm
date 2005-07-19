@@ -318,10 +318,12 @@ void inter_clearCursorAnim(void) {
 }
 
 void inter_drawOperations(void) {
-	char cmd;
+	byte cmd;
 	int16 i;
 
 	cmd = *inter_execPtr++;
+
+	debug(4, "inter_drawOperations(%d)", cmd);
 
 	switch (cmd) {
 	case 0:
@@ -413,24 +415,46 @@ void inter_drawOperations(void) {
 		break;
 
 	case 32:
-		// Used in gob1 CD
-		inter_evalExpr(0);
-		cd_startTrack(inter_resStr);
+		if (_vm->_features & GF_GOB1) {
+			// Used in gob1 CD
+			inter_evalExpr(0);
+			cd_startTrack(inter_resStr);
+		} else {
+		}
 		break;
 
 	case 33:
-		// Used in gob1 CD
-		{
-		int pos = cd_getTrackPos();
-		if (pos == -1)
-			pos = 32767;
-		WRITE_VAR(5, pos);
+		if (_vm->_features & GF_GOB1) {
+			// Used in gob1 CD
+			int pos = cd_getTrackPos();
+			if (pos == -1)
+				pos = 32767;
+			WRITE_VAR(5, pos);
+		} else {
 		}
 		break;
 
 	case 34:
-		// Used in gob1 CD
-		cd_stopPlaying();
+		if (_vm->_features & GF_GOB1) {
+			// Used in gob1 CD
+			cd_stopPlaying();
+		} else {
+		}
+		break;
+
+	case 35:
+		if (_vm->_features & GF_GOB2) {
+		}
+		break;
+
+	case 36:
+		if (_vm->_features & GF_GOB2) {
+		}
+		break;
+
+	case 37:
+		if (_vm->_features & GF_GOB2) {
+		}
 		break;
 
 	case 48:
@@ -447,6 +471,106 @@ void inter_drawOperations(void) {
 		draw_fontToSprite[i].base = -1;
 		draw_fontToSprite[i].width = -1;
 		draw_fontToSprite[i].height = -1;
+		break;
+
+	case 64:
+		if (_vm->_features & GF_GOB2) {
+		}
+		break;
+
+	case 65:
+		if (_vm->_features & GF_GOB2) {
+		}
+		break;
+
+	case 66:
+		if (_vm->_features & GF_GOB2) {
+		}
+		break;
+
+	case 67:
+		if (_vm->_features & GF_GOB2) {
+		}
+		break;
+
+	case 80:
+		if (_vm->_features & GF_GOB2) {
+		}
+		break;
+
+	case 81:
+		if (_vm->_features & GF_GOB2) {
+		}
+		break;
+
+	case 82:
+		if (_vm->_features & GF_GOB2) {
+		}
+		break;
+
+	case 83:
+		if (_vm->_features & GF_GOB2) {
+		}
+		break;
+
+	case 84:
+		if (_vm->_features & GF_GOB2) {
+		}
+		break;
+
+	case 85:
+		if (_vm->_features & GF_GOB2) {
+		}
+		break;
+
+	case 86:
+		if (_vm->_features & GF_GOB2) {
+		}
+		break;
+
+	case 128:
+		if (_vm->_features & GF_GOB2) {
+		}
+		break;
+
+	case 129:
+		if (_vm->_features & GF_GOB2) {
+		}
+		break;
+
+	case 130:
+		if (_vm->_features & GF_GOB2) {
+		}
+		break;
+
+	case 131:
+		if (_vm->_features & GF_GOB2) {
+		}
+		break;
+
+	case 132:
+		if (_vm->_features & GF_GOB2) {
+		}
+		break;
+
+	case 133:
+		if (_vm->_features & GF_GOB2) {
+		}
+		break;
+
+	case 134:
+		if (_vm->_features & GF_GOB2) {
+		}
+		break;
+
+	case 135:
+		if (_vm->_features & GF_GOB2) {
+		}
+		break;
+
+	case 136:
+		if (_vm->_features & GF_GOB2) {
+		}
 		break;
 
 	default:
@@ -1166,6 +1290,9 @@ void inter_funcBlock(int16 retFlag) {
 
 		inter_execPtr++;
 		counter++;
+
+		debug(4, "inter_funcBlock(%d, %d)", cmd2, cmd);
+
 		switch (cmd2) {
 		case 0:
 			switch (cmd >> 4) {

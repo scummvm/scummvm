@@ -1176,6 +1176,8 @@ void game_collisionsBlock(void) {
 		}
 		cmd &= 0x7f;
 
+		debug(4, "game_collisionsBlock(%d)", cmd);
+
 		switch (cmd) {
 		case 3:
 		case 4:
