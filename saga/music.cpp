@@ -349,12 +349,6 @@ bool Music::isPlaying() {
 	return _mixer->isSoundHandleActive(_musicHandle) || _player->isPlaying();
 }
 
-// The Wyrmkeep release of Inherit The Earth features external MIDI files, so
-// we need a mapping from resource number to filename.
-//
-// reset.mid seems to be unused.
-
-
 void Music::play(uint32 resourceId, MusicFlags flags) {
 	AudioStream *audioStream = NULL;
 	MidiParser *parser;
@@ -377,7 +371,6 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 	_mixer->stopHandle(_musicHandle);
 
-
 	if (_vm->getGameType() == GType_ITE) {
 
 		if (resourceId >= 9 && resourceId <= 34) {
@@ -389,14 +382,12 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 				}
 			}
 
-
 			if (_musicContext != NULL) {
 				//TODO: check resource size
 				audioStream = new RAWInputStream(_vm, _musicContext, resourceId, flags == MUSIC_LOOP);
 			}
 		}
 	}
-
 
 	if (audioStream) {
 		debug(2, "Playing digitized music");
