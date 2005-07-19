@@ -190,7 +190,6 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 	uint16 checkStackTopIndex;
 	ScriptFunctionType scriptFunction;
 
-	int debug_print = 0;
 	int operandChar;
 	int i;
 	
