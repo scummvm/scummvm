@@ -1840,12 +1840,7 @@ void ScummEngine_v2::scummInit() {
 
 void ScummEngine_v6::scummInit() {
 	ScummEngine::scummInit();
-
-	if (_gameId == GID_TENTACLE && res.roomno[rtRoom][60]) {
-		// HACK: For DOTT we manually set the default cursor. See also bug #786994
-		setCursorFromImg(697, 60, 1);
-		setCursorTransparency(1);
-	}
+	setDefaultCursor();
 }
 
 void ScummEngine_v60he::scummInit() {

@@ -983,7 +983,7 @@ protected:
 
 	void setupCursor();
 
-	void setCursorFromBuffer(byte *ptr, int width, int height, int pitch);
+	void setCursorFromBuffer(const byte *ptr, int width, int height, int pitch);
 
 public:
 	void markRectAsDirty(VirtScreenNumber virt, int left, int right, int top, int bottom, int dirtybit = 0);
