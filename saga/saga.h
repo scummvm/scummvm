@@ -256,6 +256,7 @@ enum GameIds {
 
 	// Wyrmkeep
 	GID_ITE_CD,       // data for Win rerelease is same as in old DOS
+	GID_ITE_WINCD,    // but it has a bunch of patch files
 	GID_ITE_MACCD,
 	GID_ITE_LINCD,
 	GID_ITE_MULTICD,  // Wyrmkeep combined Windows/Mac/Linux version

@@ -39,7 +39,7 @@
 
 namespace Saga {
 
-static int detectGame(const FSList &fslist, bool mode = false);
+static int detectGame(const FSList &fslist, bool mode = false, int start = -1);
 
 // ITE section
 static PanelButton ITE_MainPanelButtons[] = {
@@ -557,6 +557,11 @@ static GameMD5 gameMD5[] = {
 	{ GID_ITE_DEMO_G,   "c58e67c506af4ffa03fd0aac2079deb0", "voices.rsc", false },
 	{ GID_ITE_DEMO_G,   "0b9a70eb4e120b6f00579b46c8cae29e", "ite.dmo", false },
 
+	{ GID_ITE_WINCD,    "8f4315a9bb10ec839253108a032c8b54", "ite.rsc", false },
+	{ GID_ITE_WINCD,    "a891405405edefc69c9d6c420c868b84", "scripts.rsc", false },
+	{ GID_ITE_WINCD,    "e2ccb61c325d6d1ead3be0e731fe29fe", "sounds.rsc", false },
+	{ GID_ITE_WINCD,    "41bb6b95d792dde5196bdb78740895a6", "voices.rsc", false },
+
 	{ GID_ITE_MACCD,    "4f7fa11c5175980ed593392838523060", "ite.rsc", false },
 	{ GID_ITE_MACCD,    "adf1f46c1d0589083996a7060c798ad0", "scripts.rsc", false },
 	{ GID_ITE_MACCD,    "1a91cd60169f367ecb6c6e058d899b2f", "music.rsc", false },
@@ -815,6 +820,25 @@ static GameDescription gameDescriptions[] = {
 		GF_WYRMKEEP | GF_CD_FX
 	},
 
+	// Inherit the earth - Wyrmkeep Windows CD version
+	{
+		"ite",
+		GType_ITE,
+		GID_ITE_WINCD,
+		"Inherit the Earth (Win32 CD Version)",
+		&ITE_DisplayInfo,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITECD_GameFiles),
+		ITECD_GameFiles,
+		ARRAYSIZE(ITECD_GameFonts),
+		ITECD_GameFonts,
+		&ITECD_GameSound,
+		ARRAYSIZE(ITEWinPatch1_Files),
+		ITEWinPatch1_Files,
+		GF_WYRMKEEP | GF_CD_FX
+	},
+
 	// Inherit the earth - DOS CD version
 	{
 		"ite",
@@ -978,8 +1002,6 @@ bool SagaEngine::initGame(void) {
 		return false;
 	}
 
-
-
 	if (gameNumber >= gameCount) {
 		error("SagaEngine::loadGame wrong gameNumber");
 	}
@@ -989,7 +1011,6 @@ bool SagaEngine::initGame(void) {
 	_gameDisplayInfo = *_gameDescription->gameDisplayInfo;
 	_displayClip.right = _gameDisplayInfo.logicalWidth; 
 	_displayClip.bottom = _gameDisplayInfo.logicalHeight; 
-
 
 	if (!_resource->createContexts()) {
 		return false;
@@ -1001,13 +1022,19 @@ DetectedGameList GAME_ProbeGame(const FSList &fslist) {
 	DetectedGameList detectedGames;
 	int game_n;
 
-	if ((game_n = detectGame(fslist, true)) != -1)
+	game_n = -1;
+
+	while (1) {
+		game_n = detectGame(fslist, true, game_n);
+		if (game_n == -1)
+			break;
 		detectedGames.push_back(gameDescriptions[game_n].toGameSettings());
+	}
 
 	return detectedGames;
 }
 
-int detectGame(const FSList &fslist, bool mode) {
+int detectGame(const FSList &fslist, bool mode, int start) {
 	int game_count = ARRAYSIZE(gameDescriptions);
 	int game_n = -1;
 	typedef Common::Map<Common::String, Common::String> StringMap;
@@ -1073,7 +1100,7 @@ int detectGame(const FSList &fslist, bool mode) {
 		}
 	}
 
-	for (game_n = 0; game_n < game_count; game_n++) {
+	for (game_n = start + 1; game_n < game_count; game_n++) {
 		file_count = gameDescriptions[game_n].filesCount;
 		file_missing = false;
 
@@ -1121,7 +1148,6 @@ int detectGame(const FSList &fslist, bool mode) {
 
 		for (StringMap::const_iterator file = filesMD5.begin(); file != filesMD5.end(); ++file)
 			printf("%s: %s\n", file->_key.c_str(), file->_value.c_str());
-
 	}
 
 	return -1;
