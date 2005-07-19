@@ -300,31 +300,27 @@ void SmushPlayer::release() {
 	_vm->_smushVideoShouldFinish = true;
 
 	for (int i = 0; i < 5; i++) {
-		if (_sf[i]) {
-			delete _sf[i];
-			_sf[i] = NULL;
-		}
+		delete _sf[i];
+		_sf[i] = NULL;
 	}
 
-	if (_strings) {
-		delete _strings;
-		_strings = NULL;
-	}
+	delete _strings;
+	_strings = NULL;
 
-	if (_smixer) {
+	if (_smixer)
 		_smixer->stop();
-		delete _smixer;
-		_smixer = NULL;
-	}
 
-	if (_base) {
-		delete _base;
-		_base = NULL;
-	}
-	if (_specialBuffer) {
-		free(_specialBuffer);
-		_specialBuffer = NULL;
-	}
+	delete _smixer;
+	_smixer = NULL;
+
+	delete _base;
+	_base = NULL;
+
+	free(_specialBuffer);
+	_specialBuffer = NULL;
+
+	free(_frameBuffer);
+	_frameBuffer = NULL;
 
 	_vm->_mixer->stopHandle(_compressedFileSoundHandle);
 
