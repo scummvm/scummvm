@@ -295,6 +295,8 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver, int enable
 
 Music::~Music() {
 	delete _player;
+	xmidiParser->setMidiDriver(NULL);
+	smfParser->setMidiDriver(NULL);
 	delete xmidiParser;
 	delete smfParser;
 }
