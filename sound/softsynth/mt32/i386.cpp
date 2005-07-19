@@ -139,7 +139,11 @@ static inline float atti386_iir_filter_sse(float *output, float *hist1_ptr, floa
 		"popl %2                        \n" \
 		"popl %1                        \n" \
 		: : "r"(output), "r"(coef_ptr), "r"(hist1_ptr)
-		: "xmm1", "xmm2", "xmm3", "memory");
+		: "memory"
+#ifdef __SSE__
+		, "xmm1", "xmm2", "xmm3"
+#endif
+		);
 
 	return *output;
 }
@@ -210,7 +214,11 @@ static inline float atti386_iir_filter_3DNow(float output, float *hist1_ptr, flo
 		"movd %%mm1, %0       \n" \
 		"femms                \n" \
 		: "=m"(output) : "g"(coef_ptr), "g"(hist1_ptr), "m"(tmp)
-		: "eax", "ebx", "mm1", "mm2", "mm3", "memory");
+		: "eax", "ebx", "memory"
+#ifdef __MMX__
+		, "mm1", "mm2", "mm3"
+#endif
+		);
 
 	return output;
 }
@@ -242,7 +250,11 @@ static inline void atti386_produceOutput1(int tmplen, Bit16s myvolume, Bit16s *u
 		"jg   1b              \n" \
 		"emms                 \n" \
 		: : "g"(tmplen), "g"(myvolume), "g"(useBuf), "g"(snd)
-		: "eax", "ecx", "edi", "esi", "mm1", "mm2", "mm3", "memory");
+		: "eax", "ecx", "edi", "esi", "memory"
+#ifdef __MMX__
+		, "mm1", "mm2", "mm3"
+#endif
+		);
 }
 
 static inline void atti386_produceOutput2(Bit32u len, Bit16s *snd, float *sndbufl, float *sndbufr, float *multFactor) {
@@ -302,7 +314,11 @@ static inline void atti386_mixBuffers(Bit16s * buf1, Bit16s *buf2, int len) {
 		"jg   1b              \n" \
 		"emms                 \n" \
 		: : "g"(len), "g"(buf1), "g"(buf2)
-		: "ecx", "edi", "esi", "mm1", "mm2", "memory");
+		: "ecx", "edi", "esi", "memory"
+#ifdef __MMX__
+		, "mm1", "mm2"
+#endif
+		);
 }
 
 static inline void atti386_mixBuffersRingMix(Bit16s * buf1, Bit16s *buf2, int len) {
@@ -324,7 +340,11 @@ static inline void atti386_mixBuffersRingMix(Bit16s * buf1, Bit16s *buf2, int le
 		"jg   1b              \n" \
 		"emms                 \n" \
 		: : "g"(len), "g"(buf1), "g"(buf2)
-		: "ecx", "edi", "esi", "mm1", "mm2", "mm3", "memory");
+		: "ecx", "edi", "esi", "memory"
+#ifdef __MMX__
+		, "mm1", "mm2", "mm3"
+#endif
+		);
 }
 
 static inline void atti386_mixBuffersRing(Bit16s * buf1, Bit16s *buf2, int len) {
@@ -344,7 +364,11 @@ static inline void atti386_mixBuffersRing(Bit16s * buf1, Bit16s *buf2, int len) 
 		"jg   1b              \n" \
 		"emms                 \n" \
 		: : "g"(len), "g"(buf1), "g"(buf2)
-		: "ecx", "edi", "esi", "mm1", "mm2", "memory");
+		: "ecx", "edi", "esi", "memory"
+#ifdef __MMX__
+		, "mm1", "mm2"
+#endif
+		);
 }
 
 static inline void atti386_partialProductOutput(int quadlen, Bit16s leftvol, Bit16s rightvol, Bit16s *partialBuf, Bit16s *p1buf) {
@@ -385,7 +409,11 @@ static inline void atti386_partialProductOutput(int quadlen, Bit16s leftvol, Bit
 		"jg 1b                \n" \
 		"emms                 \n"  \
 		: : "g"(quadlen), "g"(leftvol), "g"(rightvol), "g"(partialBuf), "g"(p1buf)
-		: "eax", "ebx", "ecx", "edx", "edi", "esi", "mm1", "mm2", "mm3", "memory");
+		: "eax", "ebx", "ecx", "edx", "edi", "esi", "memory"
+#ifdef __MMX__
+		, "mm1", "mm2", "mm3"
+#endif
+		);
 }
 
 #endif
