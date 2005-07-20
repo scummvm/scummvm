@@ -216,6 +216,15 @@ static GameFontDescription ITEWINDEMO_GameFonts[] = {
 	{0}
 }; 
 
+// Inherit the Earth - Wyrmkeep Mac Demo version
+static GameFileDescription ITEMACDEMO_GameFiles[] = {
+	{"ited.rsc", GAME_RESOURCEFILE},
+	{"scriptsd.rsc", GAME_SCRIPTFILE},
+	{"soundsd.rsc", GAME_SOUNDFILE},
+	{"voicesd.rsc", GAME_VOICEFILE},
+	{"musicd.rsc", GAME_MUSICFILE}
+};
+
 // Inherit the Earth - Wyrmkeep Linux Demo version
 static GameFileDescription ITELINDEMO_GameFiles[] = {
 	{"ited.rsc", GAME_RESOURCEFILE},
@@ -685,8 +694,8 @@ static GameDescription gameDescriptions[] = {
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
-		ARRAYSIZE(ITEWINDEMO_GameFiles),
-		ITEWINDEMO_GameFiles,
+		ARRAYSIZE(ITEMACDEMO_GameFiles),
+		ITEMACDEMO_GameFiles,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
 		&ITECD_GameSound,
@@ -704,8 +713,8 @@ static GameDescription gameDescriptions[] = {
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
-		ARRAYSIZE(ITEWINDEMO_GameFiles),
-		ITEWINDEMO_GameFiles,
+		ARRAYSIZE(ITEMACDEMO_GameFiles),
+		ITEMACDEMO_GameFiles,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
 		&ITECD_GameSound,
@@ -728,8 +737,8 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
 		&ITECD_GameSound,
-		ARRAYSIZE(ITELinPatch_Files),
-		ITELinPatch_Files,
+		ARRAYSIZE(ITEMacPatch_Files),
+		ITEMacPatch_Files,
 		GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_WYRMKEEP | GF_CD_FX
 	},
 
@@ -825,8 +834,8 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
-		ARRAYSIZE(ITEMacPatch_Files),
-		ITEMacPatch_Files,
+		ARRAYSIZE(ITELinPatch_Files),
+		ITELinPatch_Files,
 		GF_WYRMKEEP | GF_CD_FX
 	},
 
