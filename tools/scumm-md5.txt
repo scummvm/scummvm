@@ -169,6 +169,7 @@ Indiana Jones and the Fate of Atlantis
 	FM-TOWNS	FM-TOWNS	jp	4d34042713958b971cb139fba4658586	indy4	Andrea Petrucci
 	FM-TOWNS Demo	FM-TOWNS	jp	28d24a33448fab6795850bc9f159a4a2	indydemo	khalek
 	Demo	DOS	en	035deab53b47bc43abc763560d0f8d4b	playfate
+	Demo	DOS	en	98744fe66ff730e8c2b3b1f58803ab0b	playfate	Simon Krumrein, sev
 	Demo (non-interactive)	DOS	en	99b6f822b0b2612415407865438697d6	fate
 
 Day Of The Tentacle
@@ -184,6 +185,7 @@ Day Of The Tentacle
 	Talkie	All?	it	4fbbe9f64b8bc547503a379a301183ce	tentacle	Andrea Petrucci
 	Talkie	All?	es	883af4b0af4f77a92f1dcf1d0a283140	tentacle	Andrea Petrucci
 	Demo	DOS	en	c83079157ec765a28de445aec9768d60	dottdemo
+	Demo	DOS	de	ac1642b6edfb8521ca03760126f1c250	dottdemo	Simon Krumrein, sev
 
 Sam &amp; Max
 	Non-Talkie	DOS	en	a3036878840720fbefa41e6965fa4a0a	samnmax	Andrea Petrucci
@@ -202,6 +204,7 @@ Sam &amp; Max
 	Demo	Mac	en	0425954a9db5c340861672892c3e678d	samdemo
 
 	interactive Demo	DOS	en	c3196c5349e53e387aaff1533d95e53a	snmdemo
+	interactive Demo	DOS	de	cc8ba2b0df2f9c450bcf055fe2711979	snmdemo	Simon Krumrein, sev
 	Interactive WIP Demo	DOS	en	0e4c5d54a0ad4b26132e78b5ea76642a	snmidemo
 
 Full Throttle
