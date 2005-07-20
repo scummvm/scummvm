@@ -372,9 +372,8 @@ static GamePatchDescription ITELinPatch_Files[] = {
 	{ "wyrm1.dlt", GAME_RESOURCEFILE, 1530},
 	{ "wyrm2.dlt", GAME_RESOURCEFILE, 1531},
 	{ "wyrm3.dlt", GAME_RESOURCEFILE, 1532},
-	{ "wyrm4.dlt", GAME_RESOURCEFILE, 1533},
-	{ "credit3m.dlt", GAME_RESOURCEFILE, 1796},
-	{ "credit4m.dlt", GAME_RESOURCEFILE, 1797},
+	{ "credit3n.dlt", GAME_RESOURCEFILE, 1796},
+	{ "credit4n.dlt", GAME_RESOURCEFILE, 1797},
 	{ "P2_A.iaf", GAME_VOICEFILE, 4}
 };
 
