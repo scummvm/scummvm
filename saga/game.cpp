@@ -430,9 +430,9 @@ static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	0,0,		// save reminder w&h
 	0,0,		// save reminder sprite numbers
 
-	147,		// verb text color
-	15,			// verb text shadow color
-	96,			// verb text active color
+	253,		// verb text color
+	15,			// verb text shadow color FIXME
+	252,		// verb text active color
 
 	5, 4,		// left portrait x, y offset
 	-1, -1,		// right portrait x, y offset

@@ -53,7 +53,7 @@ namespace Saga {
 #define OPCODE(x) {&Script::x, #x}
 
 void Script::setupScriptFuncList(void) {
-	static const ScriptFunctionDescription scriptFunctionsList[SCRIPT_FUNCTION_MAX] = {
+	static const ScriptFunctionDescription ITEscriptFunctionsList[ITE_SCRIPT_FUNCTION_MAX] = {
 		OPCODE(sfPutString),
 		OPCODE(sfWait),
 		OPCODE(sfTakeObject),
@@ -131,7 +131,104 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfProtectResult),
 		OPCODE(sfRand),
 		OPCODE(sfFadeMusic),
-		OPCODE(sfPlayVoice),
+		OPCODE(sfPlayVoice)
+	};
+
+static const ScriptFunctionDescription IHNMscriptFunctionsList[IHNM_SCRIPT_FUNCTION_MAX] = {
+		OPCODE(sfNull),
+		OPCODE(sfWait),
+		OPCODE(sfTakeObject),
+		OPCODE(sfIsCarried),
+		OPCODE(sfStatusBar),
+		OPCODE(sfMainMode),
+		OPCODE(sfScriptWalkTo),
+		OPCODE(sfScriptDoAction),
+		OPCODE(sfSetActorFacing),
+		OPCODE(sfStartBgdAnim),
+		OPCODE(sfStopBgdAnim),
+		OPCODE(sfNull),
+		OPCODE(sfPreDialog),
+		OPCODE(sfKillActorThreads),
+		OPCODE(sfFaceTowards),
+		OPCODE(sfSetFollower),
+		OPCODE(sfScriptGotoScene),
+		OPCODE(sfSetObjImage),
+		OPCODE(sfSetObjName),
+		OPCODE(sfGetObjImage),
+		OPCODE(sfGetNumber),
+		OPCODE(sfScriptOpenDoor),
+		OPCODE(sfScriptCloseDoor),
+		OPCODE(sfSetBgdAnimSpeed),
+		OPCODE(SF_cycleColors),
+		OPCODE(sfDoCenterActor),
+		OPCODE(sfStartBgdAnimSpeed),
+		OPCODE(sfScriptWalkToAsync),
+		OPCODE(sfEnableZone),
+		OPCODE(sfSetActorState),
+		OPCODE(sfScriptMoveTo),
+		OPCODE(sfSceneEq),
+		OPCODE(sfDropObject),
+		OPCODE(sfFinishBgdAnim),
+		OPCODE(sfSwapActors),
+		OPCODE(sfSimulSpeech),
+		OPCODE(sfScriptWalk),
+		OPCODE(sfCycleFrames),
+		OPCODE(sfSetFrame),
+		OPCODE(sfSetPortrait),
+		OPCODE(sfSetProtagPortrait),
+		OPCODE(sfChainBgdAnim),
+		OPCODE(sfScriptSpecialWalk),
+		OPCODE(sfPlaceActor),
+		OPCODE(sfCheckUserInterrupt),
+		OPCODE(sfScriptWalkRelative),
+		OPCODE(sfScriptMoveRelative),
+		OPCODE(sfSimulSpeech2),
+		OPCODE(sfPlacard),
+		OPCODE(sfPlacardOff),
+		OPCODE(sfSetProtagState),
+		OPCODE(sfResumeBgdAnim),
+		OPCODE(sfThrowActor),
+		OPCODE(sfWaitWalk),
+		OPCODE(sfScriptSceneID),
+		OPCODE(sfChangeActorScene),
+		OPCODE(sfScriptClimb),
+		OPCODE(sfSetDoorState),
+		OPCODE(sfSetActorZ),
+		OPCODE(sfScriptText),
+		OPCODE(sfGetActorX),
+		OPCODE(sfGetActorY),
+		OPCODE(sfEraseDelta),
+		OPCODE(sfPlayMusic),
+		OPCODE(sfNull),
+		OPCODE(sfEnableEscape),
+		OPCODE(sfPlaySound),
+		OPCODE(sfPlayLoopedSound),
+		OPCODE(sfGetDeltaFrame),
+		OPCODE(sfNull),
+		OPCODE(sfNull),
+		OPCODE(sfRand),
+		OPCODE(sfFadeMusic),
+		OPCODE(sfNull),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(sfScriptStartCutAway),
+		OPCODE(sfReturnFromCutAway),
+		OPCODE(sfEndCutAway),
+		OPCODE(sfGetMouseClicks),
+		OPCODE(sfResetMouseClicks),
+		OPCODE(sfWaitFrames),
+		OPCODE(sfScriptFade),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(sfSetActorZ),
+		OPCODE(SF_stub),
+		OPCODE(SF_stub),
+		OPCODE(sfVstopFX),
+		OPCODE(sfVstopLoopedFX),
+		OPCODE(SF_stub),
+		OPCODE(sfNull),
+		OPCODE(sfDemoIsInteractive),
 		OPCODE(SF_stub),
 		OPCODE(SF_stub),
 		OPCODE(SF_stub),
@@ -139,27 +236,15 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(SF_stub),
 		OPCODE(SF_stub),
 		OPCODE(SF_stub),
-		OPCODE(SF_stub),
-		OPCODE(SF_stub),
-		OPCODE(SF_stub),
-		OPCODE(SF_stub),
-		OPCODE(SF_stub),
-		OPCODE(SF_stub),
-		OPCODE(SF_stub),
-		OPCODE(SF_stub),
-		OPCODE(SF_stub),
-		OPCODE(SF_stub),
-		OPCODE(SF_stub),
-		OPCODE(SF_stub),
-		OPCODE(SF_stub),
-		OPCODE(SF_stub),
-		OPCODE(SF_stub),
-		OPCODE(SF_stub),
+		OPCODE(sfDebugShowData),
 		OPCODE(SF_stub),
 		OPCODE(SF_stub),
 		OPCODE(SF_stub)
 	};
-	_scriptFunctionsList = scriptFunctionsList;
+	if (_vm->getGameType() == GType_IHNM)
+		_scriptFunctionsList = IHNMscriptFunctionsList;
+	else
+		_scriptFunctionsList = ITEscriptFunctionsList;
 }
 
 // Script function #0 (0x00)
@@ -225,7 +310,9 @@ void Script::sfMainMode(SCRIPTFUNC_PARAMS) {
 	showVerb();		
 	_vm->_interface->activate();
 	_vm->_interface->setMode(kPanelMain);
-	setPointerVerb();
+
+	if (_vm->getGameType() == GType_ITE)
+		setPointerVerb();
 }
 
 // Script function #6 (0x06) blocking
@@ -513,6 +600,9 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 		return;
 	}
 
+	if (_vm->getGameType() == GType_IHNM)
+		warning("FIXME: implement sfScriptGotoScene differences for IHNM");
+
 	// It is possible to leave scene when converse panel is on,
 	// particulalrly it may happen at Moneychanger tent. This
 	// prevent this from happening.
@@ -578,7 +668,11 @@ void Script::sfGetObjImage(SCRIPTFUNC_PARAMS) {
 	objectId = thread->pop();
 
 	obj = _vm->_actor->getObj(objectId);
-	thread->_returnValue = obj->spriteListResourceId - OBJ_SPRITE_BASE;
+
+	if (_vm->getGameType() == GType_IHNM)
+		thread->_returnValue = obj->spriteListResourceId;
+	else
+		thread->_returnValue = obj->spriteListResourceId - OBJ_SPRITE_BASE;
 }
 
 // Script function #20 (0x14)
@@ -784,7 +878,12 @@ void Script::sfDropObject(SCRIPTFUNC_PARAMS) {
 	}
 
 	obj->sceneNumber = _vm->_scene->currentSceneNumber();
-	obj->spriteListResourceId = OBJ_SPRITE_BASE + spriteId;
+
+	if (_vm->getGameType() == GType_IHNM)
+		obj->spriteListResourceId = spriteId;
+	else
+		obj->spriteListResourceId = OBJ_SPRITE_BASE + spriteId;
+
 	obj->location.x = x;
 	obj->location.y = y;
 }
@@ -824,6 +923,10 @@ void Script::sfSwapActors(SCRIPTFUNC_PARAMS) {
 		actor1->flags |= kProtagonist;
 		_vm->_actor->_protagonist = _vm->_actor->_centerActor = actor1;
 	}
+
+	// Here non-protagonist ID gets saved in variable
+	if (_vm->getGameType() == GType_IHNM)
+		warning("sfSwapActors: incomplete implementation");
 }
 
 // Script function #35 (0x23)
@@ -852,9 +955,13 @@ void Script::sfSimulSpeech(SCRIPTFUNC_PARAMS) {
 	string = thread->_strings->getString(stringId);
 
 	if (thread->_voiceLUT->voices) {
-		sampleResourceId = thread->_voiceLUT->voices[stringId];
-		if (sampleResourceId <= 0 || sampleResourceId > 4000)
+		if (_vm->getGameType() == GType_IHNM && stringId >= 338) {
 			sampleResourceId = -1;
+		} else {
+			sampleResourceId = thread->_voiceLUT->voices[stringId];
+			if (sampleResourceId <= 0 || sampleResourceId > 4000)
+				sampleResourceId = -1;
+		}
 	}
 
 	_vm->_actor->simulSpeech(string, actorsIds, actorsCount, 0, sampleResourceId);
@@ -1197,7 +1304,12 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	PalEntry *pal;
 	EVENT event;
 	EVENT *q_event;
-	
+
+	if (_vm->getGameType() == GType_IHNM) {
+		warning("Psychic profile is not implemented");
+		return;
+	}
+
 	thread->wait(kWaitTypePlacard);
 
 	_vm->_interface->rememberMode();
@@ -1743,11 +1855,18 @@ void Script::sfPlaySound(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 	int res;
 
+	if (_vm->getGameType() == GType_IHNM) {
+		int16 param2 = thread->pop();
+
+		// Here sfxTable comes from Resource #265
+		debug(0, "STUB: sfPlaySound(%d, %d)", param, param2);
+		return;
+	}
+
 	if (param >= 0 && param < ARRAYSIZE(sfxTable)) {
 		res = sfxTable[param].res;
 		if (_vm->getFeatures() & GF_CD_FX)
 			res -= 14;
-
 		_vm->_sndRes->playSound(res, sfxTable[param].vol, false);
 	} else {
 		_vm->_sound->stopSound();
@@ -1758,6 +1877,14 @@ void Script::sfPlaySound(SCRIPTFUNC_PARAMS) {
 void Script::sfPlayLoopedSound(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 	int res;
+
+	if (_vm->getGameType() == GType_IHNM) {
+		int16 param2 = thread->pop();
+
+		// Here sfxTable comes from Resource #265
+		debug(0, "STUB: sfPlayLoopedSound(%d, %d)", param, param2);
+		return;
+	}
 
 	if (param >= 0 && param < ARRAYSIZE(sfxTable)) {
 		res = sfxTable[param].res;
@@ -1798,21 +1925,8 @@ void Script::sfProtectResult(SCRIPTFUNC_PARAMS) {
 void Script::sfRand(SCRIPTFUNC_PARAMS) {
 	int16 param;
 
-	if (_vm->getGameType() == GType_IHNM) {
-		// I don't know what this function does in IHNM, but apparently
-		// it can take three parameters.
-
-		debug(0, "STUB: sfRand()");
-
-		for (int i = 0; i < nArgs; i++) {
-			thread->pop();
-		}
-
-		thread->_returnValue = 0;
-	} else {
-		param = thread->pop();
-		thread->_returnValue = _vm->_rnd.getRandomNumber(param - 1);
-	}
+	param = thread->pop();
+	thread->_returnValue = _vm->_rnd.getRandomNumber(param - 1);
 }
 
 // Script function #76 (0x4c)
@@ -1850,6 +1964,81 @@ void Script::finishDialog(int replyID, int flags, int bitOffset) {
 
 	_conversingThread = NULL;
 	wakeUpThreads(kWaitTypeDialogBegin);
+}
+
+void Script::sfScriptStartCutAway(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(0, "STUB: sfScriptStartCutAway(), %d args", nArgs);
+}
+
+void Script::sfReturnFromCutAway(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(0, "STUB: sfReturnFromCutAway(), %d args", nArgs);
+}
+
+void Script::sfEndCutAway(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(0, "STUB: sfEndCutAway(), %d args", nArgs);
+}
+
+void Script::sfGetMouseClicks(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(0, "STUB: sfGetMouseClicks(), %d args", nArgs);
+}
+
+void Script::sfResetMouseClicks(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(0, "STUB: sfResetMouseClicks(), %d args", nArgs);
+}
+
+void Script::sfWaitFrames(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(0, "STUB: sfWaitFrames(), %d args", nArgs);
+}
+
+void Script::sfScriptFade(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(0, "STUB: sfScriptFade(), %d args", nArgs);
+}
+
+void Script::sfVstopFX(SCRIPTFUNC_PARAMS) {
+	_vm->_sound->stopSound();
+}
+
+void Script::sfVstopLoopedFX(SCRIPTFUNC_PARAMS) {
+	_vm->_sound->stopSound();
+}
+
+void Script::sfDemoIsInteractive(SCRIPTFUNC_PARAMS) {
+	thread->_returnValue = 0;
+}
+
+void Script::sfDebugShowData(SCRIPTFUNC_PARAMS) {
+	int16 param = thread->pop();
+	char buf[50];
+	
+	snprintf(buf, 50, "Reached breakpoint %d", param);
+
+	_vm->_interface->setStatusText(buf);
+}
+
+void Script::sfNull(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
 }
 
 void Script::SF_stub(SCRIPTFUNC_PARAMS) {

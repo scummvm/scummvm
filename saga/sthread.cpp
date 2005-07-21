@@ -317,7 +317,8 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 		CASEOP(opCcallV)
 			argumentsCount = scriptS.readByte();
 			functionNumber = scriptS.readUint16LE();
-			if (functionNumber >= SCRIPT_FUNCTION_MAX) {
+			if (functionNumber >= (_vm->getGameType() == GType_IHNM) ? 
+				IHNM_SCRIPT_FUNCTION_MAX : ITE_SCRIPT_FUNCTION_MAX) {
 				error("Script::runThread() Invalid script function number (%d)", functionNumber);
 			}
 

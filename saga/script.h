@@ -39,14 +39,9 @@ namespace Saga {
 #define SCRIPT_TBLENTRY_LEN 4
 
 #define SCRIPT_MAX 5000
-#define SCRIPTLIST_HDR 12
-#define SCRIPT_STRINGLIMIT 255
-#define TAB "    "
 
-#define S_ERROR_PREFIX "SError: "
-#define S_WARN_PREFIX "SWarning: "
-
-#define SCRIPT_FUNCTION_MAX 104
+#define ITE_SCRIPT_FUNCTION_MAX 78
+#define IHNM_SCRIPT_FUNCTION_MAX 105
 #define DEFAULT_THREAD_STACK_SIZE 256
 
 enum AddressTypes {
@@ -527,8 +522,20 @@ private:
 	void sfProtectResult(SCRIPTFUNC_PARAMS);
 	void sfRand(SCRIPTFUNC_PARAMS);
 	void sfFadeMusic(SCRIPTFUNC_PARAMS);
+	void sfScriptStartCutAway(SCRIPTFUNC_PARAMS);
+	void sfReturnFromCutAway(SCRIPTFUNC_PARAMS);
+	void sfEndCutAway(SCRIPTFUNC_PARAMS);
+	void sfGetMouseClicks(SCRIPTFUNC_PARAMS);
+	void sfResetMouseClicks(SCRIPTFUNC_PARAMS);
+	void sfWaitFrames(SCRIPTFUNC_PARAMS);
+	void sfScriptFade(SCRIPTFUNC_PARAMS);
 	void sfPlayVoice(SCRIPTFUNC_PARAMS);
+	void sfVstopFX(SCRIPTFUNC_PARAMS);
+	void sfVstopLoopedFX(SCRIPTFUNC_PARAMS);
+	void sfDemoIsInteractive(SCRIPTFUNC_PARAMS);
+	void sfDebugShowData(SCRIPTFUNC_PARAMS);
 	void SF_stub(SCRIPTFUNC_PARAMS);
+	void sfNull(SCRIPTFUNC_PARAMS);
 };
 
 } // End of namespace Saga
