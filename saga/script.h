@@ -533,6 +533,7 @@ private:
 	void sfVstopFX(SCRIPTFUNC_PARAMS);
 	void sfVstopLoopedFX(SCRIPTFUNC_PARAMS);
 	void sfDemoIsInteractive(SCRIPTFUNC_PARAMS);
+	void sf94(SCRIPTFUNC_PARAMS);
 	void sfDebugShowData(SCRIPTFUNC_PARAMS);
 	void SF_stub(SCRIPTFUNC_PARAMS);
 	void sfNull(SCRIPTFUNC_PARAMS);

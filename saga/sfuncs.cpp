@@ -229,7 +229,7 @@ static const ScriptFunctionDescription IHNMscriptFunctionsList[IHNM_SCRIPT_FUNCT
 		OPCODE(SF_stub),
 		OPCODE(sfNull),
 		OPCODE(sfDemoIsInteractive),
-		OPCODE(SF_stub),
+		OPCODE(sf94),
 		OPCODE(SF_stub),
 		OPCODE(SF_stub),
 		OPCODE(SF_stub),
@@ -2025,6 +2025,13 @@ void Script::sfVstopLoopedFX(SCRIPTFUNC_PARAMS) {
 
 void Script::sfDemoIsInteractive(SCRIPTFUNC_PARAMS) {
 	thread->_returnValue = 0;
+}
+
+void Script::sf94(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(0, "STUB: sf94(), %d args", nArgs);
 }
 
 void Script::sfDebugShowData(SCRIPTFUNC_PARAMS) {

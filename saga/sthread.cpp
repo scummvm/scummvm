@@ -317,8 +317,8 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 		CASEOP(opCcallV)
 			argumentsCount = scriptS.readByte();
 			functionNumber = scriptS.readUint16LE();
-			if (functionNumber >= (_vm->getGameType() == GType_IHNM) ? 
-				IHNM_SCRIPT_FUNCTION_MAX : ITE_SCRIPT_FUNCTION_MAX) {
+			if (functionNumber >= ((_vm->getGameType() == GType_IHNM) ? 
+								   IHNM_SCRIPT_FUNCTION_MAX : ITE_SCRIPT_FUNCTION_MAX)) {
 				error("Script::runThread() Invalid script function number (%d)", functionNumber);
 			}
 
@@ -330,7 +330,8 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			if (disContinue) {
 				return true;
 			}
-			if (scriptFunction == &Saga::Script::sfScriptGotoScene) {			
+			if (scriptFunction == &Saga::Script::sfScriptGotoScene ||
+				scriptFunction == &Saga::Script::sf94) {
 				return true; // cause abortAllThreads called and _this_ thread destroyed
 			}
 
