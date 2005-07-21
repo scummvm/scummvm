@@ -254,9 +254,12 @@ void Engine::mainLoop() {
 				// instead of inside the lua_runtasks loop, otherwise certain functions
 				// may request a set that was just deactivated
 				a->putInSet();
-				// Update the actor's costumes
+				// Update the actor's costumes & chores
 				g_currentUpdatedActor = *i;
-				if (_currScene != NULL && a->inSet(_currScene->name()) && a->visible())
+				// Note that the actor need not be visible to update chores, for example:
+				// when Manny has just brought Meche back he is offscreen several times
+				// when he needs to perform certain chores
+				if (_currScene != NULL && a->inSet(_currScene->name()))
 					a->update();
 			}
 			g_currentUpdatedActor = NULL;

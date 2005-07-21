@@ -1,5 +1,5 @@
 Residual: A LucasArts 3D game interpreter           Version:      0.04-CVS
-(C) 2003-2005 The ScummVM-Residual team             Last Updated: 17 Jul 2005
+(C) 2003-2005 The ScummVM-Residual team             Last Updated: 20 Jul 2005
 ------------------------------------------------------------------------------
 
 What is Residual?
@@ -59,11 +59,10 @@ but many features are either missing or unstable. There is no abilitity
 to save/load, lighting, etc. Crashes are likely.
 
 Game currently playable to:
-	Manny reaps Meche (Mercedes Colomar)
+	Manny gives Glottis back his heart in the Petrified Forest
 Caveats:
-1) Random crash leaving the scene with the balloon handler
-2) Must press "Esc" after listening to Meche, conversation doesn't
-   continue on its own
+1) When Manny goes onto the DOD roof for the pigeon eggs you must not
+   forget to use a balloon with the bread or else the game will hang
 
 What are the default keys?
 --------------------------

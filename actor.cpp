@@ -271,7 +271,7 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 	textName += ".txt";
 
 	if (msg[0] != '/')
-		warning("Actor::sayLine: Invalid source message (should be an ID)!");
+		warning("Actor::sayLine: Invalid source message (should be /xxxx/, is: %s)!", msg);
 
 	if (msgId[0] == 0) {
 		error("Actor::sayLine: No message ID for text!");

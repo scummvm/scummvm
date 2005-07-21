@@ -208,6 +208,18 @@ void BitmapComponent::setKey(int val) {
 ModelComponent::ModelComponent(Costume::Component *parent, int parentID, const char *filename, char *tag) :
 		Costume::Component(parent, parentID, tag), _filename(filename), _obj(NULL), _cmap(NULL),
 		_colormap(DEFAULT_COLORMAP), _hier(NULL) {
+	const char *comma = std::strchr(filename, ',');
+	
+	// Can be called with a comma and a numeric parameter afterward, but
+	// the use for this parameter is currently unknown
+	// Example: At the "scrimshaw parlor" in Rubacava the object
+	// "manny_cafe.3do,1" is requested
+	if (comma != NULL) {
+		_filename = std::string(filename, comma);
+		warning("Comma in model components not supported: %s", filename);
+	} else {
+		_filename = filename;
+	}
 }
 
 void ModelComponent::init() {
@@ -716,6 +728,10 @@ void Costume::Component::setParent(Component *newParent) {
 	}
 }
 
+// Should initialize the status variables so the chore can't play unexpectedly
+Costume::Chore::Chore() : _playing(false), _hasPlayed(false), _looping(false), _currTime(-1) {
+}
+
 void Costume::Chore::load(Costume *owner, TextSplitter &ts) {
 	_owner = owner;
 	_tracks = new ChoreTrack[_numTracks];
@@ -874,6 +890,14 @@ void Costume::playChore(int num) {
 void Costume::stopChores() {
 	for (int i = 0; i < _numChores; i++)
 		_chores[i].stop();
+}
+
+int Costume::isChoring(char *name, bool excludeLooping) {
+	for (int i = 0; i < _numChores; i++) {
+		if (!strcmp(_chores[i]._name, name) && _chores[i]._playing && !(excludeLooping && _chores[i]._looping))
+			return i;
+	}
+	return -1;
 }
 
 int Costume::isChoring(int num, bool excludeLooping) {

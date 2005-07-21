@@ -140,8 +140,6 @@ static inline Bitmap *check_bitmapobject(int num) {
 }
 
 static inline double check_double(int num) {
-	double val;
-	
 	// Have found some instances, such as in Rubacava if you jump there,
 	// where doubles of "zero" are called as nil
 	if(lua_isnil(lua_getparam(num)))
@@ -535,6 +533,10 @@ static void SetActorRot() {
 		act->turnTo(pitch, yaw, roll);
 	else
 		act->setRot(pitch, yaw, roll);
+	// Naranja will cause the game to crash without this
+	lua_pushnumber(pitch);
+	lua_pushnumber(yaw);
+	lua_pushnumber(roll);
 }
 
 static void GetActorRot() {
@@ -985,10 +987,11 @@ static void StopActorChore() {
 }
 
 static void IsActorChoring() {
-	Actor *act;
 	bool excludeLooping;
+	lua_Object param2;
 	Costume *cost;
-	int result;
+	Actor *act;
+	int result = -1;
 
 	DEBUG_FUNCTION();
 	act = check_actor(1);
@@ -999,10 +1002,21 @@ static void IsActorChoring() {
 		return;
 	}
 
-	if (lua_isnil(lua_getparam(2)))
+	// This function can be called with "nil" to get the current
+	// chore, a number to check to see if that chore ID is
+	// running, or a string that will check to see if the
+	// chore of a particular name is running
+	param2 = lua_getparam(2);
+	if (lua_isnil(param2))
 		result = cost->isChoring(excludeLooping);
-	else
+	else if (lua_isnumber(param2))
 		result = cost->isChoring(check_int(2), excludeLooping);
+	else if (lua_isstring(param2))
+		result = cost->isChoring(lua_getstring(param2), excludeLooping);
+	else {
+		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("IsActorChoring: LUA Parameter 2 is of unhandled type!");
+	}
 
 	if (result < 0)
 		lua_pushnil();
@@ -1257,7 +1271,7 @@ static void LocalizeString() {
 
 static void SayLine() {
 	int pan = 64, param_number = 2;
-	char msgId[32], *str;
+	char msgId[32], *str = NULL;
 	lua_Object param2;
 	Actor *act;
 	
@@ -1267,8 +1281,15 @@ static void SayLine() {
 	if (!lua_isnil(param2)) {
 		do {
 			if (lua_isstring(param2)) {
-				str = lua_getstring(param2);
-				parseMsgText(str, msgId);
+				char *tmpstr = lua_getstring(param2);
+				
+				// Fix so Police Chief Bogen's text is interpretted correctly,
+				// Bogen has a second text item that's just "1" which previously
+				// over-wrote the actual message
+				if (tmpstr[0] == '/' && tmpstr[strlen(tmpstr)-1] == '/') {
+					parseMsgText(tmpstr, msgId);
+					str = tmpstr;
+				}
 			} else if (lua_isnumber(param2)) {
 				pan = 64;
 			} else if (lua_istable(param2)) {
@@ -1277,6 +1298,12 @@ static void SayLine() {
 			}
 			param2 = lua_getparam(param_number++);
 		} while (!lua_isnil(param2));
+		if (str == NULL) {
+			if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+				warning("SayLine: Did not find a message ID!");
+			stubWarning("ERROR: SayLine");
+			return;
+		}
 		act->sayLine(str, msgId);
 	}
 }
@@ -1355,6 +1382,8 @@ static void IsActorInSector(void) {
 			}
 		}
 	}
+	lua_pushnil();
+	lua_pushnil();
 	lua_pushnil();
 }
 
@@ -1461,10 +1490,13 @@ static void GetCurrentSetup() {
 	
 	DEBUG_FUNCTION();
 	name = luaL_check_string(1);
-	if (std::strcmp(name, g_engine->sceneName()) == 0)
+	if (std::strcmp(name, g_engine->sceneName()) == 0) {
 		lua_pushnumber(g_engine->currScene()->setup());
-	else
+	} else {
+		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("GetCurrentSetup() Requested scene (%s) is not the active scene (%s)", name, g_engine->sceneName());
 		lua_pushnil();
+	}
 }
 
 // FIXME: Function only spits back what it's given
@@ -2173,7 +2205,8 @@ static void KillTextObject() {
 	
 	DEBUG_FUNCTION();
 	if (lua_isnil(lua_getparam(1))) {
-		error("KillTextObject(NULL)");
+		if (debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
+			error("KillTextObject(NULL)");
 		return;
 	}
 

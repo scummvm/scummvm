@@ -241,9 +241,10 @@ void lua_runtasks (void) {
 
 	prev = L->root_task;
 	while ((t = prev->next) != NULL) {
+		luaI_switchtask(t);
+		// Tstate is not available until after switching tasks
 		if (t->Tstate == PAUSE)
 			continue;
-		luaI_switchtask(t);
 		L->errorJmp = &myErrorJmp;
 		L->Tstate = RUN;
 		if (setjmp(myErrorJmp) == 0) {
@@ -255,7 +256,17 @@ void lua_runtasks (void) {
 			L->Tstate = DONE;
 		}
 		L->errorJmp = NULL;
-		if (L->Tstate == DONE) { /* Remove from list of active tasks */
+		prev = t;
+	}
+	// Free the completed tasks
+	// This MUST occur after all the tasks have been run (not during)
+	// or else when one task is freed right after another the task
+	// execution gets hosed.  Test Case: Switching between tw.set and
+	// tb.set in Rubacava causes a crash without this.
+	prev = L->root_task;
+	while ((t = prev->next) != NULL) {
+		luaI_switchtask(t);
+		if (L->Tstate == DONE) { // Remove from list of active tasks
 			luaI_switchtask(old_task);
 			prev->next = t->next;
 			t->next = NULL;

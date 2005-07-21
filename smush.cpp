@@ -133,6 +133,15 @@ void Smush::handleFrame() {
 		return;
 	}
 
+	if (_frame == _nbframes) {
+		// If the video has been looping and was previously on the last
+		// frame then reset the frame number and the movie time, this
+		// needs to occur at the beginning so the last frame has time to
+		// render appropriately
+		_frame = 0;
+		_movieTime = 0;
+	}
+
 	tag = _file.readUint32BE();
 	if (tag == MKID_BE('ANNO')) {
 		char *anno;
@@ -151,10 +160,12 @@ void Smush::handleFrame() {
 			//  MakeAnim animation type 'Bl16' parameters: 10000;12000;100;1;0;0;0;0;25;0;
 			//  Water in front of the Blue Casket
 			//	MakeAnim animation type 'Bl16' parameters: 20000;25000;100;1;0;0;0;0;25;0;
+			//  Scrimshaw exterior:
+			//  MakeAnim animation type 'Bl16' parameters: 6000;8000;100;0;0;0;0;0;2;0;
 			if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
 				printf("Announcement data: %s\n", anno);
 			sscanf(annoData, "%*d;%*d;%*d;%d;%*d;%*d;%*d;%*d;%*d;%*d;%*d;", &loop);
-			_videoLooping = (bool) loop;
+			_videoLooping = true;
 			_startPos = _file.getPos();
 			if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
 				printf("_videoLooping: %d\n", _videoLooping);
@@ -202,10 +213,6 @@ void Smush::handleFrame() {
 			g_engine->setMode(ENGINE_MODE_NORMAL);
 			return;
 		}
-		// If the position change succeeded then reset the frame number
-		// for some reason we need to set it to 1 instead of zero or we
-		// won't render a frame
-		_frame = 1;
 	}
 }
 
@@ -297,15 +304,16 @@ zlibFile::~zlibFile() {
 	close();
 }
 
-struct SAVEPOS *zlibFile::getPos() { 
-	struct SAVEPOS *pos;
+struct SavePos *zlibFile::getPos() { 
+	struct SavePos *pos;
 	long position = std::ftell(_handle);
 	
-	if (position == -1 && debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL) {
-		warning("zlibFile::open() unable to find start position!");
+	if (position == -1) {
+		if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("zlibFile::open() unable to find start position! %m");
 		return NULL;
 	}
-	pos = (struct SAVEPOS *) malloc(sizeof(struct SAVEPOS));
+	pos = (struct SavePos *) malloc(sizeof(struct SavePos));
 	pos->filePos = position;
 	inflateCopy(&pos->streamBuf, &_stream);
 	pos->tmpBuf = (char *)calloc(1, BUFFER_SIZE);
@@ -313,9 +321,14 @@ struct SAVEPOS *zlibFile::getPos() {
 	return pos;
 }
 
-bool zlibFile::setPos(struct SAVEPOS *pos) { 
+bool zlibFile::setPos(struct SavePos *pos) { 
 	int ret;
-	if (_handle == NULL || pos == NULL) {
+	
+	if (pos == NULL) {
+		warning("Unable to rewind SMUSH movie (no position passed)!");
+		return false;
+	}
+	if (_handle == NULL) {
 		warning("Unable to rewind SMUSH movie (invalid handle)!");
 		return false;
 	}
@@ -325,7 +338,10 @@ bool zlibFile::setPos(struct SAVEPOS *pos) {
 		return false;
 	}
 	memcpy(_inBuf, pos->tmpBuf, BUFFER_SIZE);
-	inflateCopy(&_stream, &pos->streamBuf);
+	if (inflateCopy(&_stream, &pos->streamBuf) != Z_OK) {
+		warning("Unable to rewind SMUSH movie (z-lib copy handle failed)!");
+		return false;
+	}
 	_fileDone = false;
 	return true;
 }

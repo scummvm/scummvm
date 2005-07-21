@@ -56,6 +56,7 @@ std::memcmp(_components[i]->tag(), "mat ", 4) == 0
 		}
 	}
 	void stopChores();
+	int isChoring(char *name, bool excludeLooping);
 	int isChoring(int num, bool excludeLooping);
 	int isChoring(bool excludeLooping);
 
@@ -122,6 +123,7 @@ private:
 
 	class Chore {
 	public:
+		Chore();
 		void load(Costume *owner, TextSplitter &ts);
 		void play();
 		void playLooping();

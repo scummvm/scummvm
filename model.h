@@ -42,6 +42,7 @@ public:
 	struct Geoset;
 	struct Mesh;
 	struct HierNode {
+		HierNode() : _initialized(false) { }
 		void loadBinary(const char *&data, HierNode *hierNodes, const Geoset &g);
 		void draw() const;
 		void addChild(HierNode *child);
@@ -60,6 +61,7 @@ public:
 		float _animPitch, _animYaw, _animRoll;
 		bool _meshVisible, _hierVisible;
 		int _priority, _totalWeight;
+		bool _initialized;
 		Matrix4 _matrix;
 		Matrix4 _localMatrix;
 		Matrix4 _pivotMatrix;
