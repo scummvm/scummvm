@@ -25,7 +25,6 @@
 
 #include "mixer/mixer.h"
 #include "mixer/audiostream.h"
-#include "imuse/limits.h"
 
 class McmpMgr;
 class Block;
@@ -33,9 +32,8 @@ class Block;
 class ImuseSndMgr {
 public:
 
-// MAX_IMUSE_SOUNDS should not be hardcoded, it should represent
-// the maximum number of different tracks, see limits.h
-#define MAX_IMUSE_SOUNDS MAX_IMUSE_TRACKS+MAX_IMUSE_FADETRACKS
+// MAX_IMUSE_SOUNDS needs to be hardcoded, ask aquadran
+#define MAX_IMUSE_SOUNDS    16
 
 // The numbering below fixes talking to Domino in his office
 // and it also allows Manny to get the info for Mercedes

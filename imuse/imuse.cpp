@@ -57,6 +57,7 @@ Imuse::Imuse(int fps) {
 		_track[l] = new Track;
 		_track[l]->trackId = l;
 		_track[l]->used = false;
+		strcpy(_track[l]->soundName, "");
 	}
 	vimaInit(imuseDestTable);
 	_stateMusicTable = grimStateMusicTable;

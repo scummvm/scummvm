@@ -91,7 +91,7 @@ bool Imuse::startSound(const char *soundName, int volGroupId, int hookId, int vo
 	}
 	if (i == 0) {
 		if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-			warning("Imuse::startSound(): flushTracks was unnable to free up a track!");
+			warning("Imuse::startSound(): flushTracks was unable to free up a track for %s!", soundName);
 	}
 
 	track->pan = pan * 1000;
@@ -170,7 +170,7 @@ Imuse::Track *Imuse::findTrack(const char *soundName) {
 		// Since the audio (at least for Eva's keystrokes) can be referenced
 		// two ways: keyboard.IMU and keyboard.imu, make a case insensitive
 		// search for the track to make sure we can find it
-		if (strcasecmp(track->soundName, soundName) == 0) {
+		if (strlen(track->soundName) != 0 && strcasecmp(track->soundName, soundName) == 0) {
 			return track;
 		}
 	}
