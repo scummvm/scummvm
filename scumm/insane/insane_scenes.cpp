@@ -131,6 +131,7 @@ void Insane::runScene(int arraynum) {
 		initScene(26);
 		writeArray(1, _val54d);
 		startVideo("credits.san", 1, 32, 12, 0);
+		break;
 	default:
 		warning("Unknown FT_INSANE mode %d", readArray(0));
 		break;
