@@ -6,6 +6,9 @@ Assigned tasks:
  * Improved walk box code (frob)
  * Implement FadeInChore and FadeOutChore (frob)
  * Implement texture mapping with light shading in TinyGL (aquadran)
+   (Ender: May just need the blending of the lighting values (p2->r, ->g, ->b)
+    to the result of pp[_a] in the non-24bpp PUT_PIXEL macro of 
+    ztriangle.cpp/ZB_FillTriangleMappingPerspective. Maybe. :)
  * Fix bug with pigeons, likely actor rotating/turning not being implemented (compholio)
  * Improve SMUSH looping support (compholio)
  * Improve menu support (compholio)
