@@ -81,10 +81,10 @@ enum GameFeatures {
 	/** Games with the new camera system (ScummEngine_v7 and subclasses). */
 	GF_NEW_CAMERA          = 1 << 1,
 
-	/** Games with the AKOS custome system (ScummEngine_v7 and subclasses, HE games). */
+	/** Games with the AKOS costume system (ScummEngine_v7 and subclasses, HE games). */
 	GF_NEW_COSTUMES        = 1 << 2,
 
-	/** Games with digital IMUSE (ScummEngine_v7 and subclasses). */
+	/** Games with digital iMUSE (ScummEngine_v7 and subclasses). */
 	GF_DIGI_IMUSE          = 1 << 3,
 
 	/** Games using XOR encrypted data files. */
