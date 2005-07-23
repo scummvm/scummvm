@@ -1372,8 +1372,9 @@ void Sprite::processImages(bool arg) {
 		spi->curImgFlags = wiz.img.flags;
 		
 		if (spi->group && (_spriteGroups[spi->group].flags & kSGFClipBox)) {
-			if (spi->bbox.intersects(_spriteGroups[spi->group].bbox)) {
-				spi->bbox.clip(_spriteGroups[spi->group].bbox);
+			Common::Rect &spgBbox = _spriteGroups[spi->group].bbox;
+			if (spgBbox.isValidRect() && spi->bbox.intersects(spgBbox)) {
+				spi->bbox.clip(spgBbox);
 				wiz.processFlags |= kWPFClipBox;
 				wiz.box = spi->bbox;
 			} else {
