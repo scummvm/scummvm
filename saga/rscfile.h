@@ -48,6 +48,7 @@ struct ResourceContext {
 	const char *fileName;
 	uint16 fileType;
 	Common::File *file;
+	int serial;
 
 	bool isBigEndian;
 	ResourceData *table;
@@ -72,10 +73,10 @@ public:
 	size_t getResourceSize(ResourceContext *context, uint32 resourceId);
 	uint32 convertResourceId(uint32 resourceId);
 
-	ResourceContext *getContext(uint16 fileType) {
+	ResourceContext *getContext(uint16 fileType, int serial = 0) {
 		int i;
 		for (i = 0; i < _contextsCount; i++) {
-			if (_contexts[i].fileType & fileType) {
+			if ((_contexts[i].fileType & fileType) && _contexts[i].serial == serial) {
 				return &_contexts[i];
 			}
 		}

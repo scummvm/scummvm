@@ -133,7 +133,7 @@ bool Resource::loadContext(ResourceContext *context) {
 }
 
 bool Resource::createContexts() {
-	int i, j;
+	int i;
 	ResourceContext *context;
 	_contextsCount = _vm->getGameDescription()->filesCount;
 	_contexts = (ResourceContext*)calloc(_contextsCount, sizeof(*_contexts));
@@ -143,11 +143,18 @@ bool Resource::createContexts() {
 		context->file = new Common::File();
 		context->fileName = _vm->getGameDescription()->filesDescriptions[i].fileName;
 		context->fileType = _vm->getGameDescription()->filesDescriptions[i].fileType;
+		context->serial = 0;
 
-		//self check
-		for (j = 0; j < i; j++) {
-			if ((_contexts[j].fileType & context->fileType) != 0) {
-				error("Resource::createContexts() duplicate fileType");
+		// IHNM has serveral different voice files, so we need to allow
+		// multiple resource contexts of the same type. We tell them
+		// apart by assigning each of the duplicates an unique serial
+		// number. The default behaviour when requesting a context will
+		// be to look for serial number 0.
+
+		for (int j = i - 1; j >= 0; j--) {
+			if (_contexts[j].fileType & context->fileType) {
+				context->serial = _contexts[j].serial + 1;
+				break;
 			}
 		}
 		
