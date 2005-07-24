@@ -243,7 +243,7 @@ class Scene {
 	void initDoorsState();
 
 	void getBGInfo(BGInfo &bgInfo);
-	void getBGPal(PalEntry *&pal) const {
+	void getBGPal(PalEntry *&pal) {
 		pal = (PalEntry *)_bg.pal;
 	}
 
