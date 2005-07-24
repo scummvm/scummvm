@@ -685,7 +685,7 @@ void Scene::loadSceneResourceList(uint32 resourceId) {
 
 void Scene::processSceneResources() {
 	byte *resourceData;
-	uint16 resourceDataLength;
+	size_t resourceDataLength;
 	const byte *palPointer;
 	size_t i;
 
