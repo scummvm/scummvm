@@ -229,7 +229,7 @@ static const ScriptFunctionDescription IHNMscriptFunctionsList[IHNM_SCRIPT_FUNCT
 		OPCODE(SF_stub),
 		OPCODE(sfNull),
 		OPCODE(sfDemoIsInteractive),
-		OPCODE(sf94),
+		OPCODE(sfVsetTrack),
 		OPCODE(SF_stub),
 		OPCODE(SF_stub),
 		OPCODE(SF_stub),
@@ -2027,11 +2027,11 @@ void Script::sfDemoIsInteractive(SCRIPTFUNC_PARAMS) {
 	thread->_returnValue = 0;
 }
 
-void Script::sf94(SCRIPTFUNC_PARAMS) {
+void Script::sfVsetTrack(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	debug(0, "STUB: sf94(), %d args", nArgs);
+	debug(0, "STUB: sfVsetTrack(), %d args", nArgs);
 }
 
 void Script::sfDebugShowData(SCRIPTFUNC_PARAMS) {

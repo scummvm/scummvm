@@ -331,7 +331,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 				return true;
 			}
 			if (scriptFunction == &Saga::Script::sfScriptGotoScene ||
-				scriptFunction == &Saga::Script::sf94) {
+				scriptFunction == &Saga::Script::sfVsetTrack) {
 				return true; // cause abortAllThreads called and _this_ thread destroyed
 			}
 
