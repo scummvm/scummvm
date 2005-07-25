@@ -45,20 +45,6 @@ namespace Saga {
 #define SAGA_FRAME_UNCOMPRESSED_RUN 0x40
 #define SAGA_FRAME_EMPTY_RUN 0xC0
 
-// All animation resources begin with an ANIMATION_HEADER
-// at 0x00, followed by a RLE code stream
-
-struct FRAME_HEADER {
-	int xStart;
-	int yStart;
-
-	int xPos;
-	int yPos;
-
-	int width;
-	int height;
-};
-
 enum AnimationState {
 	ANIM_PLAYING = 0x01,
 	ANIM_PAUSE = 0x02,
@@ -90,9 +76,6 @@ struct AnimationData {
 	uint16 completed;
 	uint16 cycles;
 	
-	const byte *cur_frame_p;
-	size_t cur_frame_len;
-
 	int frameTime;
 
 	AnimationState state;
@@ -132,9 +115,7 @@ public:
 	int16 getCurrentFrame(uint16 animId);
 
 private:
-	void ITE_DecodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_t bufLength);
-	int IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_p,
-					size_t thisf_len, const byte **nextf_p, size_t *nextf_len);
+	void decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_t bufLength);
 	void fillFrameOffsets(AnimationData *anim);
 
 	void validateAnimationId(uint16 animId) {
@@ -146,8 +127,11 @@ private:
 		}
 	}
 
-	int getFrameHeaderLength() const {
-		return (_vm->getFeatures() & GF_MAC_RESOURCES ? 13 : 12);
+	bool isLongData() const {
+		if ((_vm->getGameType() == GType_ITE) && ((_vm->getFeatures() & GF_MAC_RESOURCES) == 0)) {
+			return false;
+		}
+		return true;
 	}
 
 	AnimationData* getAnimation(uint16 animId) {

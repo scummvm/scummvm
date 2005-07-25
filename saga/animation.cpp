@@ -71,25 +71,23 @@ void Anim::load(uint16 animId, const byte *animResourceData, size_t animResource
 	anim->start += temp;
 
 
-	if (_vm->getGameType() == GType_ITE) {
-		// Cache frame offsets
-		anim->frameOffsets = (size_t *)malloc((anim->maxFrame + 1) * sizeof(*anim->frameOffsets));
-		if (anim->frameOffsets == NULL) {
-			memoryError("Anim::load");
-		}
-
-		fillFrameOffsets(anim);
-	} else {
-/*		anim->frameOffsets = (size_t *)malloc((anim->maxFrame + 1) * sizeof(*anim->frameOffsets));
-		if (anim->frameOffsets == NULL) {
-			memoryError("Anim::load");
-		}
-
-		fillFrameOffsets(anim);*/
-
-		anim->cur_frame_p = anim->resourceData + getFrameHeaderLength(); // ? len - may vary
-		anim->cur_frame_len = anim->resourceLength - getFrameHeaderLength();
+	// Cache frame offsets
+	anim->frameOffsets = (size_t *)malloc((anim->maxFrame + 1) * sizeof(*anim->frameOffsets));
+	if (anim->frameOffsets == NULL) {
+		memoryError("Anim::load");
 	}
+
+	fillFrameOffsets(anim);
+
+	/*	char s[200];
+		sprintf(s, "d:\\anim%i",animId);
+		long flen=anim->resourceLength;
+		char *buf=(char*)anim->resourceData;
+		FILE*f;
+		f=fopen(s,"wb");
+		for(long i=0;i<flen;i++)
+			fputc(buf[i],f);
+		fclose(f);*/
 
 	// Set animation data
 	anim->currentFrame = 0;
@@ -132,12 +130,8 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 
 	byte *displayBuffer;
 
-	const byte *nextf_p;
-	size_t nextf_len;
-
 	uint16 frame;
 	int frameTime;
-	int result;
 
 	AnimationData *anim;
 	AnimationData *linkAnim;
@@ -158,27 +152,8 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 
 	if (anim->completed < anim->cycles) {
 		frame = anim->currentFrame;
-		if (_vm->getGameType() == GType_ITE) {
-			// FIXME: if start > 0, then this works incorrectly
-			ITE_DecodeFrame(anim, anim->frameOffsets[frame], displayBuffer,
-							_vm->getDisplayWidth() * _vm->getDisplayHeight());
-		} else {
-			if (anim->cur_frame_p == NULL) {
-				warning("Anim::play: Frames exhausted");
-				return;
-			}
-
-			result = IHNM_DecodeFrame(displayBuffer,  _vm->getDisplayWidth() * _vm->getDisplayHeight(),
-									anim->cur_frame_p, anim->cur_frame_len, &nextf_p, &nextf_len);
-			if (result != SUCCESS) {
-				warning("Anim::play: Error decoding frame %u", anim->currentFrame);
-				anim->state = ANIM_PAUSE;
-				return;
-			}
-
-			anim->cur_frame_p = nextf_p;
-			anim->cur_frame_len = nextf_len;
-		}
+		// FIXME: if start > 0, then this works incorrectly
+		decodeFrame(anim, anim->frameOffsets[frame], displayBuffer, _vm->getDisplayWidth() * _vm->getDisplayHeight());
 
 		anim->currentFrame++;
 		if (anim->completed != 65535) {
@@ -187,13 +162,7 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 
 		if (anim->currentFrame > anim->maxFrame) {
 			anim->currentFrame = anim->loopFrame;
-			
-			if (_vm->getGameType() == GType_IHNM) {
-				// FIXME: HACK. probably needs more testing for IHNM
-				anim->cur_frame_p = anim->resourceData + getFrameHeaderLength();
-				anim->cur_frame_len = anim->resourceLength - getFrameHeaderLength();
-			}
-			
+						
 			if (anim->flags & ANIM_STOPPING || anim->currentFrame == -1) {
 				anim->state = ANIM_PAUSE;
 			}
@@ -316,119 +285,112 @@ int16 Anim::getCurrentFrame(uint16 animId) {
 	return anim->currentFrame;
 }
 
-void Anim::ITE_DecodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_t bufLength) {
-	FRAME_HEADER fh;
+void Anim::decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_t bufLength) {
+	byte *writePointer = NULL;
 
-	byte *write_p;
-
-	uint16 magic;
-
-	uint16 xStart;
-	uint16 yStart;
+	uint16 xStart = 0;
+	uint16 yStart = 0;
 	uint32 screenWidth;
 	uint32 screenHeight;
 
-	int mark_byte;
-	byte data_byte;
-	int new_row;
+	int markByte;
+	byte dataByte;
+	int newRow;
 
-	uint16 control_ch;
-	uint16 param_ch;
+	uint16 controlChar;
+	uint16 paramChar;
 
 	uint16 runcount;
-	int x_vector;
+	int xVector;
 
 	uint16 i;
+	bool longData = isLongData();
 
 	screenWidth = anim->screenWidth;
 	screenHeight = anim->screenHeight;
 
 	if ((screenWidth * screenHeight) > bufLength) {
 		// Buffer argument is too small to hold decoded frame, abort.
-		error("ITE_DecodeFrame: Buffer size inadequate");
+		error("decodeFrame() Buffer size inadequate");
 	}
 
 	MemoryReadStream readS(anim->resourceData + frameOffset, anim->resourceLength - frameOffset);
 
-	// Check for frame magic byte
-	magic = readS.readByte();
-	if (magic == SAGA_FRAME_END) {
-		return;
-	}
-
-	if (magic != SAGA_FRAME_START) {
-		error("ITE_DecodeFrame: Invalid frame offset %x", frameOffset);
-	}
-
-
-	fh.xStart = readS.readUint16BE();
-	if (_vm->getFeatures() & GF_BIG_ENDIAN_DATA)
-		fh.yStart = readS.readUint16BE();
-	else
-		fh.yStart = readS.readByte();
-	readS.readByte();		/* Skip pad byte */
-	fh.xPos = readS.readUint16BE();
-	fh.yPos = readS.readUint16BE();
-	fh.width = readS.readUint16BE();
-	fh.height = readS.readUint16BE();
-
-	xStart = fh.xStart;
-	yStart = fh.yStart;
 
 #if 1
 #define VALIDATE_WRITE_POINTER \
-	if ((write_p < buf) || (write_p >= (buf + screenWidth * screenHeight))) { \
-		error("VALIDATE_WRITE_POINTER: write_p=%x buf=%x", write_p, buf); \
+	if ((writePointer < buf) || (writePointer >= (buf + screenWidth * screenHeight))) { \
+		error("VALIDATE_WRITE_POINTER: writePointer=%x buf=%x", writePointer, buf); \
 	}
 #else
 #define VALIDATE_WRITE_POINTER 
 #endif
 
-	// Setup write pointer to the draw origin
-	write_p = (buf + (yStart * screenWidth) + xStart);
-	VALIDATE_WRITE_POINTER;
 
 	// Begin RLE decompression to output buffer
 	do {
-		mark_byte = readS.readByte();
-		switch (mark_byte) {
+		markByte = readS.readByte();
+		switch (markByte) {
+		case SAGA_FRAME_START:
+			xStart = readS.readUint16BE();
+			if (longData)
+				yStart = readS.readUint16BE();
+			else
+				yStart = readS.readByte();
+			readS.readByte();		/* Skip pad byte */
+			/*xPos = */readS.readUint16BE();
+			/*yPos = */readS.readUint16BE();
+			/*width = */readS.readUint16BE();
+			/*height = */readS.readUint16BE();
+
+			// Setup write pointer to the draw origin
+			writePointer = (buf + (yStart * screenWidth) + xStart);
+			VALIDATE_WRITE_POINTER;
+			continue;
+			break;
+		case SAGA_FRAME_NOOP: // Does nothing
+			readS.readByte();
+			readS.readByte();
+			readS.readByte();			
+			continue;
+			break;
 		case SAGA_FRAME_LONG_UNCOMPRESSED_RUN: // Long Unencoded Run
 			runcount = readS.readSint16BE();
 			for (i = 0; i < runcount; i++) {
-				data_byte = readS.readByte();
-				if (data_byte != 0) {
-					*write_p = data_byte;
+				dataByte = readS.readByte();
+				if (dataByte != 0) {
+					*writePointer = dataByte;
 				}
-				write_p++;
+				writePointer++;
 				VALIDATE_WRITE_POINTER;
 			}
 			continue;
 			break;
 		case SAGA_FRAME_LONG_COMPRESSED_RUN: // Long encoded run
 			runcount = readS.readSint16BE();
-			data_byte = readS.readByte();
+			dataByte = readS.readByte();
 			for (i = 0; i < runcount; i++) {
-				*write_p++ = data_byte;
+				*writePointer++ = dataByte;
 				VALIDATE_WRITE_POINTER;
 			}
 			continue;
 			break;
 		case SAGA_FRAME_ROW_END: // End of row
-			x_vector = readS.readSint16BE();
+			xVector = readS.readSint16BE();
 			
-			if (_vm->getFeatures() & GF_BIG_ENDIAN_DATA)
-				new_row = readS.readSint16BE();
+			if (longData)
+				newRow = readS.readSint16BE();
 			else
-				new_row = readS.readByte();
+				newRow = readS.readByte();
 
 			// Set write pointer to the new draw origin
-			write_p = buf + ((yStart + new_row) * screenWidth) + xStart + x_vector;
+			writePointer = buf + ((yStart + newRow) * screenWidth) + xStart + xVector;
 			VALIDATE_WRITE_POINTER;
 			continue;
 			break;
 		case SAGA_FRAME_REPOSITION: // Reposition command
-			x_vector = readS.readSint16BE();
-			write_p += x_vector;
+			xVector = readS.readSint16BE();
+			writePointer += xVector;
 			VALIDATE_WRITE_POINTER;
 			continue;
 			break;
@@ -440,314 +402,82 @@ void Anim::ITE_DecodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, s
 		}
 
 		// Mask all but two high order control bits
-		control_ch = mark_byte & 0xC0U;
-		param_ch = mark_byte & 0x3FU;
-		switch (control_ch) {
+		controlChar = markByte & 0xC0U;
+		paramChar = markByte & 0x3FU;
+		switch (controlChar) {
 		case SAGA_FRAME_EMPTY_RUN: // 1100 0000
 			// Run of empty pixels
-			runcount = param_ch + 1;
-			write_p += runcount;
+			runcount = paramChar + 1;
+			writePointer += runcount;
 			VALIDATE_WRITE_POINTER;
 			continue;
 			break;
 		case SAGA_FRAME_COMPRESSED_RUN: // 1000 0000
 			// Run of compressed data
-			runcount = param_ch + 1;
-			data_byte = readS.readByte();
+			runcount = paramChar + 1;
+			dataByte = readS.readByte();
 			for (i = 0; i < runcount; i++) {
-				*write_p++ = data_byte;
+				*writePointer++ = dataByte;
 				VALIDATE_WRITE_POINTER;
 			}
 			continue;
 			break;
 		case SAGA_FRAME_UNCOMPRESSED_RUN: // 0100 0000
 			// Uncompressed run
-			runcount = param_ch + 1;
+			runcount = paramChar + 1;
 			for (i = 0; i < runcount; i++) {
-				data_byte = readS.readByte();
-				if (data_byte != 0) {
-					*write_p = data_byte;
+				dataByte = readS.readByte();
+				if (dataByte != 0) {
+					*writePointer = dataByte;
 				}
-				write_p++;
+				writePointer++;
 				VALIDATE_WRITE_POINTER;
 			}
 			continue;
 			break;
 		default:
 			// Unknown marker found - abort
-			error("ITE_DecodeFrame: Invalid RLE marker encountered");
+			error("decodeFrame() Invalid RLE marker encountered");
 			break;
 		}
-	} while (mark_byte != 63); // end of frame marker
-
-}
-
-int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_p,
-					size_t thisf_len, const byte **nextf_p, size_t *nextf_len) {
-	int in_ch;
-	int decoded_data = 0;
-	int cont_flag = 1;
-	int control_ch;
-	int param_ch;
-	byte data_pixel;
-	int x_origin = 0;
-	int y_origin = 0;
-	int x_vector;
-	int new_row;
-
-	uint16 runcount;
-	uint16 c;
-
-	size_t in_ch_offset;
-
-	MemoryReadStreamEndian readS(thisf_p, thisf_len, !_vm->isBigEndian()); // RLE has inversion BE<>LE
-
-	byte *outbuf_p = decode_buf;
-	byte *outbuf_endp = (decode_buf + decode_buf_len) - 1;
-	size_t outbuf_remain = decode_buf_len;
-
-
-	*nextf_p = NULL;
-
-	for (; cont_flag; decoded_data = 1) {
-		in_ch_offset = readS.pos();
-		in_ch = readS.readByte();
-		switch (in_ch) {
-		case SAGA_FRAME_START: // Frame header
-			{
-				int param1;
-				int param2;
-				int param3;
-				int param4;
-				int param5;
-				int param6;
-
-				if (thisf_len - readS.pos() < 13) {
-					warning("0x%02X: Input buffer underrun", in_ch);
-					return FAILURE;
-				}
-
-				param1 = readS.readUint16();
-				param2 = readS.readUint16();
-				readS.readByte(); // skip 1?
-				param3 = readS.readUint16();
-				param4 = readS.readUint16();
-				param5 = readS.readUint16();
-				param6 = readS.readUint16();
-
-				x_origin = param1;
-				y_origin = param2;
-
-				outbuf_p = decode_buf + x_origin + (y_origin * _vm->getDisplayWidth());
-
-				if (outbuf_p > outbuf_endp) {
-					warning("0x%02X: (0x%X) Invalid output position. (x: %d, y: %d)",
-							in_ch, in_ch_offset, x_origin, y_origin);
-					return FAILURE;
-				}
-
-				outbuf_remain = (outbuf_endp - outbuf_p) + 1;
-				continue;
-			}
-			break;
-		case SAGA_FRAME_LONG_UNCOMPRESSED_RUN: // Long Unencoded Run
-			runcount = readS.readSint16();
-			if (thisf_len - readS.pos() < runcount) {
-				warning("0x%02X: Input buffer underrun", in_ch);
-				return FAILURE;
-			}
-			if (outbuf_remain < runcount) {
-				warning("0x%02X: Output buffer overrun", in_ch);
-				return FAILURE;
-			}
-
-			for (c = 0; c < runcount; c++) {
-				data_pixel = readS.readByte();
-				if (data_pixel != 0) {
-					*outbuf_p = data_pixel;
-				}
-				outbuf_p++;
-			}
-
-			outbuf_remain -= runcount;
-			continue;
-			break;
-		case SAGA_FRAME_NOOP: // Unused
-			if (thisf_len - readS.pos() < 3) {
-				warning("0x%02X: Input buffer underrun", in_ch);
-				return FAILURE;
-			}
-
-			readS.readByte();
-			readS.readByte();
-			readS.readByte();
-			continue;
-			break;
-		case SAGA_FRAME_LONG_COMPRESSED_RUN: // Long compressed run
-			if (thisf_len - readS.pos() <= 3) {
-				warning("0x%02X: Input buffer underrun", in_ch);
-				return FAILURE;
-			}
-
-			runcount = readS.readSint16();
-			data_pixel = readS.readByte();
-
-			for (c = 0; c < runcount; c++) {
-				*outbuf_p++ = data_pixel;
-			}
-
-			outbuf_remain -= runcount;
-			continue;
-			break;
-
-		case SAGA_FRAME_ROW_END: // End of row
-			if (thisf_len - readS.pos() <= 4) {
-				return FAILURE;
-			}
-
-			x_vector = readS.readSint16();
-			new_row = readS.readSint16();
-
-			outbuf_p = decode_buf + ((y_origin + new_row) * _vm->getDisplayWidth()) + x_origin + x_vector;
-			outbuf_remain = (outbuf_endp - outbuf_p) + 1;
-			continue;
-			break;
-		case SAGA_FRAME_REPOSITION: // Reposition command
-			if (thisf_len - readS.pos() < 2) {
-				return FAILURE;
-			}
-
-			x_vector = readS.readSint16();
-
-			if (((x_vector > 0) && ((size_t) x_vector > outbuf_remain)) || (-x_vector > outbuf_p - decode_buf)) {
-				warning("SAGA_FRAME_REPOSITION: Invalid x_vector");
-				return FAILURE;
-			}
-
-			outbuf_p += x_vector;
-			outbuf_remain -= x_vector;
-			continue;
-			break;
-
-		case SAGA_FRAME_END:	// Frame end marker
-			debug(1, "SAGA_FRAME_END: Frame end marker");
-			if (decoded_data && (thisf_len - readS.pos() > 0)) {
-				*nextf_p = thisf_p + readS.pos();
-				*nextf_len = thisf_len - readS.pos();
-			} else {
-				*nextf_p = NULL;
-				*nextf_len = 0;
-			}
-
-			cont_flag = 0;
-			continue;
-			break;
-
-		default:
-			break;
-		}
-
-		control_ch = in_ch & 0xC0;
-		param_ch = in_ch & 0x3f;
-		switch (control_ch) {
-
-		case SAGA_FRAME_EMPTY_RUN: // Run of empty pixels
-			runcount = param_ch + 1;
-			if (outbuf_remain < runcount) {
-				return FAILURE;
-			}
-
-			outbuf_p += runcount;
-			outbuf_remain -= runcount;
-			continue;
-			break;
-		case SAGA_FRAME_COMPRESSED_RUN: // Run of compressed data
-			runcount = param_ch + 1;
-			if ((outbuf_remain < runcount) || (thisf_len - readS.pos() <= 1)) {
-				return FAILURE;
-			}
-
-			data_pixel = readS.readByte();
-
-			for (c = 0; c < runcount; c++) {
-				*outbuf_p++ = data_pixel;
-			}
-
-			outbuf_remain -= runcount;
-			continue;
-			break;
-		case SAGA_FRAME_UNCOMPRESSED_RUN: // Uncompressed run
-			runcount = param_ch + 1;
-			if ((outbuf_remain < runcount) || (thisf_len - readS.pos() < runcount)) {
-				return FAILURE;
-			}
-
-			for (c = 0; c < runcount; c++) {
-				data_pixel = readS.readByte();
-				if (data_pixel != 0) {
-					*outbuf_p = data_pixel;
-				}
-				outbuf_p++;
-			}
-
-			outbuf_remain -= runcount;
-
-			continue;
-			break;
-
-		default:
-			break;
-		}
-	}
-
-	return SUCCESS;
+	} while (1);
 }
 
 void Anim::fillFrameOffsets(AnimationData *anim) {
 	uint16 currentFrame;
-
-	byte mark_byte;
+	byte markByte;
 	uint16 control;
 	uint16 runcount;
-	uint16 magic;
-
 	int i;
+	bool longData = isLongData();
 
 	MemoryReadStreamEndian readS(anim->resourceData, anim->resourceLength, _vm->isBigEndian()); 
 
-	if (_vm->getGameType() == GType_ITE) {
-		readS.seek(12);
-	} else {
-		readS.seek(15);		// ihnm has longer anim header
-	}
+	readS.seek(12);
 	
-
 	readS._bigEndian = !_vm->isBigEndian(); // RLE has inversion BE<>LE
 
 	for (currentFrame = 0; currentFrame <= anim->maxFrame; currentFrame++) {
 		anim->frameOffsets[currentFrame] = readS.pos();
-		magic = readS.readByte();
-		if (magic == SAGA_FRAME_END) {
-			if (currentFrame != anim->maxFrame) {
-				error("currentFrame != anim->maxFrame");
-			}
-			break;
-		}
-		if (magic != SAGA_FRAME_START) {
-			error("Frame sync failure. Magic Number not found");
-		}
-
-		// skip header
-		readS.seek(getFrameHeaderLength(), SEEK_CUR);
 
 		// For some strange reason, the animation header is in little
 		// endian format, but the actual RLE encoded frame data, 
 		// including the frame header, is in big endian format. */
 		do {
-			mark_byte = readS.readByte();
-//			debug(7, "_pos=%x currentFrame=%i mark_byte=%x", readS.pos(), currentFrame, mark_byte);
+			markByte = readS.readByte();
+//			debug(7, "_pos=%x currentFrame=%i markByte=%x", readS.pos(), currentFrame, markByte);
 
-			switch (mark_byte) {
+			switch (markByte) {
+			case SAGA_FRAME_START: // Start of frame
+				// skip header
+				if (longData) {
+					readS.seek(13, SEEK_CUR);
+				} else {
+					readS.seek(12, SEEK_CUR);
+				}
+				continue;
+				break;
+
 			case SAGA_FRAME_END: // End of frame marker
 				continue;
 				break;
@@ -757,7 +487,7 @@ void Anim::fillFrameOffsets(AnimationData *anim) {
 				break;
 			case SAGA_FRAME_ROW_END: // End of row marker
 				readS.readSint16BE();
-				if (_vm->getFeatures() & GF_BIG_ENDIAN_DATA)
+				if (longData)
 					readS.readSint16BE();
 				else
 					readS.readByte();
@@ -786,7 +516,7 @@ void Anim::fillFrameOffsets(AnimationData *anim) {
 			}
 
 			// Mask all but two high order (control) bits
-			control = mark_byte & 0xC0;
+			control = markByte & 0xC0;
 			switch (control) {
 			case SAGA_FRAME_EMPTY_RUN:
 				// Run of empty pixels
@@ -799,16 +529,16 @@ void Anim::fillFrameOffsets(AnimationData *anim) {
 				break;
 			case SAGA_FRAME_UNCOMPRESSED_RUN:
 				// Uncompressed run
-				runcount = (mark_byte & 0x3f) + 1;
+				runcount = (markByte & 0x3f) + 1;
 				for (i = 0; i < runcount; i++)
 					readS.readByte();
 				continue;
 				break;
 			default:
-				error("Encountered unknown RLE marker");
+				error("Encountered unknown RLE marker %i", markByte);
 				break;
 			}
-		} while (mark_byte != SAGA_FRAME_END);
+		} while (markByte != SAGA_FRAME_END);
 	}
 }
 
