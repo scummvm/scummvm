@@ -572,7 +572,7 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 			outbuf_remain -= runcount;
 			continue;
 			break;
-		case 0x1F: // 31: Unusued?
+		case SAGA_FRAME_NOOP: // Unused
 			if (thisf_len - readS.pos() < 3) {
 				warning("0x%02X: Input buffer underrun", in_ch);
 				return FAILURE;
@@ -773,6 +773,12 @@ void Anim::fillFrameOffsets(AnimationData *anim) {
 				runcount = readS.readSint16BE();
 				for (i = 0; i < runcount; i++)
 					readS.readByte();
+				continue;
+				break;
+			case SAGA_FRAME_NOOP: // Does nothing
+				readS.readByte();
+				readS.readByte();
+				readS.readByte();
 				continue;
 				break;
 			default:

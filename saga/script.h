@@ -537,6 +537,8 @@ private:
 	void sfDebugShowData(SCRIPTFUNC_PARAMS);
 	void SF_stub(SCRIPTFUNC_PARAMS);
 	void sfNull(SCRIPTFUNC_PARAMS);
+	void sfPsychicProfile(SCRIPTFUNC_PARAMS);
+	void sfPsychicProfileOff(SCRIPTFUNC_PARAMS);
 };
 
 } // End of namespace Saga

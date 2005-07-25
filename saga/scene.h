@@ -78,6 +78,9 @@ enum SAGAResourceTypes {
 	SAGA_ANIM_5,
 	SAGA_ANIM_6,
 	SAGA_ANIM_7,
+	//SAGA_ANIM_8,  // IHNM. We use trick to avoid code duplication
+	//SAGA_ANIM_9,  
+	//SAGA_ANIM_10, 
 	SAGA_ISO_MULTI = 22,
 	SAGA_PAL_ANIM = 23,
 	SAGA_FACES = 24,
@@ -88,7 +91,7 @@ enum SAGAResourceTypes {
 
 struct SceneResourceData {
 	uint32 resourceId;
-	int reourceType;
+	int resourceType;
 	byte *buffer;
 	size_t size;
 	bool invalid;

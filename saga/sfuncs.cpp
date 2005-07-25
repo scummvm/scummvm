@@ -183,8 +183,8 @@ static const ScriptFunctionDescription IHNMscriptFunctionsList[IHNM_SCRIPT_FUNCT
 		OPCODE(sfScriptWalkRelative),
 		OPCODE(sfScriptMoveRelative),
 		OPCODE(sfSimulSpeech2),
-		OPCODE(sfPlacard),
-		OPCODE(sfPlacardOff),
+		OPCODE(sfPsychicProfile),
+		OPCODE(sfPsychicProfileOff),
 		OPCODE(sfSetProtagState),
 		OPCODE(sfResumeBgdAnim),
 		OPCODE(sfThrowActor),
@@ -1464,6 +1464,18 @@ void Script::sfPlacardOff(SCRIPTFUNC_PARAMS) {
 
 	q_event = _vm->_events->chain(q_event, &event);
 
+}
+
+void Script::sfPsychicProfile(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+	warning("STUB: sfPsychicProfile()");
+}
+
+void Script::sfPsychicProfileOff(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+	warning("STUB: sfPsychicProfileOff()");
 }
 
 // Script function #50 (0x32)

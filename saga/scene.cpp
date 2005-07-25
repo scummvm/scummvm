@@ -675,7 +675,7 @@ void Scene::loadSceneResourceList(uint32 resourceId) {
 
 	for (i = 0; i < _resourceListCount; i++) {
 		_resourceList[i].resourceId = readS.readUint16();
-		_resourceList[i].reourceType = readS.readUint16();
+		_resourceList[i].resourceType = readS.readUint16();
 		// demo version may contain invalid resourceId
 		_resourceList[i].invalid = !_vm->_resource->validResourceId(_sceneContext, _resourceList[i].resourceId);
 	}
@@ -688,6 +688,7 @@ void Scene::processSceneResources() {
 	size_t resourceDataLength;
 	const byte *palPointer;
 	size_t i;
+	int resType;
 
 	// Process the scene resource list
 	for (i = 0; i < _resourceListCount; i++) {
@@ -696,8 +697,25 @@ void Scene::processSceneResources() {
 		}
 		resourceData = _resourceList[i].buffer;
 		resourceDataLength = _resourceList[i].size;
-		switch (_resourceList[i].reourceType) {
+		
+		resType = _resourceList[i].resourceType;
+
+		if (_vm->getGameType() == GType_IHNM) {
+			// IHNM has more animation slots and so resource numbers are shifted
+			// We use this trick to avoid code duplication.
+			// SAGA_ANIM_X code is correctly dependent on _resourceList[i].resourceType
+			if (resType > SAGA_ANIM_7)
+				resType -= 3;
+		}
+
+		switch (resType) {
 		case SAGA_ACTOR:
+			//for (a = actorsInScene; a; a = a->nextInScene)
+			//	if (a->obj.figID == glist->file_id)
+			//		if (_vm->getGameType() == GType_ITE ||
+			//			((a->obj.flags & ACTORF_FINAL_FACE) & 0xff))
+			//			a->sprites = (xSpriteSet *)glist->offset;
+			warning("STUB: unimplemeted handler of SAGA_ACTOR resource");
 			break;
 		case SAGA_OBJECT:
 			break;
@@ -797,12 +815,16 @@ void Scene::processSceneResources() {
 		case SAGA_ANIM_6:
 		case SAGA_ANIM_7:
 			{
-				uint16 animId = _resourceList[i].reourceType - SAGA_ANIM_1;
+				uint16 animId = _resourceList[i].resourceType - SAGA_ANIM_1;
 
 				debug(3, "Loading animation resource animId=%i", animId);
 
 				_vm->_anim->load(animId, resourceData, resourceDataLength);
 			}
+			break;
+		case SAGA_ENTRY:
+			debug(3, "Loading entry list resource...");
+			loadSceneEntryList(resourceData, resourceDataLength);
 			break;
 		case SAGA_ISO_MULTI:
 			if (!(_sceneDescription.flags & kSceneFlagISO)) {
@@ -817,12 +839,9 @@ void Scene::processSceneResources() {
 			debug(3, "Loading palette animation resource.");
 			_vm->_palanim->loadPalAnim(resourceData, resourceDataLength);
 			break;
-		case SAGA_ENTRY:
-			debug(3, "Loading entry list resource...");
-			loadSceneEntryList(resourceData, resourceDataLength);
-			break;
 		case SAGA_FACES:
-			_vm->_interface->loadScenePortraits(_resourceList[i].resourceId);
+			if (_vm->getGameType() == GType_ITE)
+				_vm->_interface->loadScenePortraits(_resourceList[i].resourceId);
 			break;
 		case SAGA_PALETTE:
 			{
@@ -841,7 +860,7 @@ void Scene::processSceneResources() {
 			}
 			break;
 		default:
-			error("Scene::ProcessSceneResources() Encountered unknown resource type %i", _resourceList[i].reourceType);
+			error("Scene::ProcessSceneResources() Encountered unknown resource type %i", _resourceList[i].resourceType);
 			break;
 		}
 	}
