@@ -36,8 +36,8 @@
 namespace Saga {
 
 SceneResourceData IHNM_IntroMovie1RL[] = {
-	{30, SAGA_BG_IMAGE, 0, 0, false} ,
-	{31, SAGA_ANIM_1, 0, 0, false}
+	{30, 2, 0, 0, false} ,
+	{31, 14, 0, 0, false}
 };
 
 SceneDescription IHNM_IntroMovie1Desc = {
@@ -47,8 +47,8 @@ SceneDescription IHNM_IntroMovie1Desc = {
 };
 
 SceneResourceData IHNM_IntroMovie2RL[] = {
-	{32, SAGA_BG_IMAGE, 0, 0, false} ,
-	{33, SAGA_ANIM_1, 0, 0, false}
+	{32, 2, 0, 0, false} ,
+	{33, 14, 0, 0, false}
 };
 
 SceneDescription IHNM_IntroMovie2Desc = {
@@ -58,8 +58,8 @@ SceneDescription IHNM_IntroMovie2Desc = {
 };
 
 SceneResourceData IHNM_IntroMovie3RL[] = {
-	{34, SAGA_BG_IMAGE, 0, 0, false},
-	{35, SAGA_ANIM_1, 0, 0, false}
+	{34, 2, 0, 0, false},
+	{35, 14, 0, 0, false}
 };
 
 SceneDescription IHNM_IntroMovie3Desc = {
@@ -69,8 +69,8 @@ SceneDescription IHNM_IntroMovie3Desc = {
 };
 
 SceneResourceData IHNM_IntroMovie4RL[] = {
-	{1227, SAGA_BG_IMAGE, 0, 0, false},
-	{1226, SAGA_ANIM_1, 0, 0, false}
+	{1227, 2, 0, 0, false},
+	{1226, 14, 0, 0, false}
 };
 
 SceneDescription IHNM_IntroMovie4Desc = {

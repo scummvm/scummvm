@@ -47,7 +47,67 @@
 namespace Saga {
 
 static int initSceneDoors[SCENE_DOORS_MAX] = {
-0, 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff 
+	0, 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff 
+};
+
+static SAGAResourceTypes ITESceneResourceTypes[26] = {
+	SAGA_ACTOR,
+	SAGA_OBJECT,
+	SAGA_BG_IMAGE,
+	SAGA_BG_MASK,
+SAGA_UNKNOWN,
+	SAGA_STRINGS,
+	SAGA_OBJECT_MAP,
+	SAGA_ACTION_MAP,
+	SAGA_ISO_IMAGES,
+	SAGA_ISO_MAP,
+	SAGA_ISO_PLATFORMS,
+	SAGA_ISO_METATILES,
+	SAGA_ENTRY,
+SAGA_UNKNOWN,
+	SAGA_ANIM,
+	SAGA_ANIM,
+	SAGA_ANIM,
+	SAGA_ANIM,
+	SAGA_ANIM,
+	SAGA_ANIM,
+	SAGA_ANIM,
+	SAGA_ANIM,
+	SAGA_ISO_MULTI,
+	SAGA_PAL_ANIM,
+	SAGA_FACES,
+	SAGA_PALETTE
+};
+
+static SAGAResourceTypes IHNMSceneResourceTypes[28] = {
+	SAGA_ACTOR,
+SAGA_UNKNOWN,
+	SAGA_BG_IMAGE,
+	SAGA_BG_MASK,
+SAGA_UNKNOWN,
+	SAGA_STRINGS,
+	SAGA_OBJECT_MAP,
+	SAGA_ACTION_MAP,
+	SAGA_ISO_IMAGES,
+	SAGA_ISO_MAP,
+	SAGA_ISO_PLATFORMS,
+	SAGA_ISO_METATILES,
+	SAGA_ENTRY,
+SAGA_UNKNOWN,
+	SAGA_ANIM,
+	SAGA_ANIM,
+	SAGA_ANIM,
+	SAGA_ANIM,
+	SAGA_ANIM,
+	SAGA_ANIM,
+	SAGA_ANIM,
+	SAGA_ANIM,
+	SAGA_ANIM,
+	SAGA_ANIM,
+	SAGA_ISO_MULTI,
+	SAGA_PAL_ANIM,
+	SAGA_FACES,
+	SAGA_PALETTE
 };
 
 Scene::Scene(SagaEngine *vm) : _vm(vm) {
@@ -688,7 +748,17 @@ void Scene::processSceneResources() {
 	size_t resourceDataLength;
 	const byte *palPointer;
 	size_t i;
-	int resType;
+	SAGAResourceTypes *types;
+	int typesCount;
+	SAGAResourceTypes resType;
+
+	if (_vm->getGameType() == GType_IHNM) {
+		typesCount = ARRAYSIZE(IHNMSceneResourceTypes);
+		types = IHNMSceneResourceTypes;
+	} else {
+		typesCount = ARRAYSIZE(ITESceneResourceTypes);
+		types = ITESceneResourceTypes;
+	}
 
 	// Process the scene resource list
 	for (i = 0; i < _resourceListCount; i++) {
@@ -698,17 +768,16 @@ void Scene::processSceneResources() {
 		resourceData = _resourceList[i].buffer;
 		resourceDataLength = _resourceList[i].size;
 		
-		resType = _resourceList[i].resourceType;
-
-		if (_vm->getGameType() == GType_IHNM) {
-			// IHNM has more animation slots and so resource numbers are shifted
-			// We use this trick to avoid code duplication.
-			// SAGA_ANIM_X code is correctly dependent on _resourceList[i].resourceType
-			if (resType > SAGA_ANIM_7)
-				resType -= 3;
+		if (_resourceList[i].resourceType >= typesCount) {
+			error("Scene::processSceneResources() wrong resource type %i", _resourceList[i].resourceType);
 		}
 
+		resType = types[_resourceList[i].resourceType];
+
 		switch (resType) {
+		case SAGA_UNKNOWN:
+			warning("UNKNOWN resourceType %i", _resourceList[i].resourceType);
+			break;
 		case SAGA_ACTOR:
 			//for (a = actorsInScene; a; a = a->nextInScene)
 			//	if (a->obj.figID == glist->file_id)
@@ -807,15 +876,9 @@ void Scene::processSceneResources() {
 
 			_vm->_isoMap->loadMetaTiles(resourceData, resourceDataLength);
 			break;			
-		case SAGA_ANIM_1:
-		case SAGA_ANIM_2:
-		case SAGA_ANIM_3:
-		case SAGA_ANIM_4:
-		case SAGA_ANIM_5:
-		case SAGA_ANIM_6:
-		case SAGA_ANIM_7:
+		case SAGA_ANIM:
 			{
-				uint16 animId = _resourceList[i].resourceType - SAGA_ANIM_1;
+				uint16 animId = _resourceList[i].resourceType - 14;
 
 				debug(3, "Loading animation resource animId=%i", animId);
 
