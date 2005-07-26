@@ -29,6 +29,7 @@
 #include <cstring>
 #include <zlib.h>
 
+#define SMUSH_LOOPMOVIE(x) (x & 1)
 #define ANNO_HEADER "MakeAnim animation type 'Bl16' parameters: "
 #define BUFFER_SIZE 16385
 
@@ -69,7 +70,6 @@ void Smush::init() {
 	_videoFinished = false;
 	_videoPause = false;
 	_updateNeeded = false;
-	_videoLooping = false;
 
 	assert(!_internalBuffer);
 	assert(!_externalBuffer);
@@ -96,6 +96,11 @@ void Smush::deinit() {
 	_videoLooping = false;
 	_videoFinished = true;
 	_videoPause = true;
+	if (_videoLooping && _startPos != NULL) {
+		free(_startPos->tmpBuf);
+		free(_startPos);
+		_startPos = NULL;
+	}
 	if (_stream) {
 		_stream->finish();
 		_stream = NULL;
@@ -153,22 +158,20 @@ void Smush::handleFrame() {
 		anno = (char *)data;
 		if (strncmp(anno, ANNO_HEADER, sizeof(ANNO_HEADER)-1) == 0) {
 			char *annoData = anno + sizeof(ANNO_HEADER);
-			int loop;
 			
 			// Examples:
 			//  Water streaming around boat from Manny's balcony
 			//  MakeAnim animation type 'Bl16' parameters: 10000;12000;100;1;0;0;0;0;25;0;
 			//  Water in front of the Blue Casket
-			//	MakeAnim animation type 'Bl16' parameters: 20000;25000;100;1;0;0;0;0;25;0;
+			//  MakeAnim animation type 'Bl16' parameters: 20000;25000;100;1;0;0;0;0;25;0;
 			//  Scrimshaw exterior:
 			//  MakeAnim animation type 'Bl16' parameters: 6000;8000;100;0;0;0;0;0;2;0;
+			//  Lola engine room (loops a limited number of times?):
+			//  MakeAnim animation type 'Bl16' parameters: 6000;8000;90;1;0;0;0;0;2;0;
 			if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
 				printf("Announcement data: %s\n", anno);
-			sscanf(annoData, "%*d;%*d;%*d;%d;%*d;%*d;%*d;%*d;%*d;%*d;%*d;", &loop);
-			_videoLooping = true;
-			_startPos = _file.getPos();
-			if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
-				printf("_videoLooping: %d\n", _videoLooping);
+			// It looks like the announcement data is actually for setting some of the
+			// header parameters, not for any looping purpose
 		} else {
 			if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
 				printf("Announcement header not understood: %s\n", anno);
@@ -244,6 +247,7 @@ void Smush::handleFramesHeader() {
 bool Smush::setupAnim(const char *file, int x, int y) {
 	uint32 tag;
 	int32 size;
+  int16 flags;
 
 	if (!_file.open(file))
 		return false;
@@ -259,7 +263,6 @@ bool Smush::setupAnim(const char *file, int x, int y) {
 	byte *s_header = (byte *)malloc(size);
 	_file.read(s_header, size);
 	_nbframes = READ_LE_UINT32(s_header + 2);
-
 	int width = READ_LE_UINT16(s_header + 8);
 	int height = READ_LE_UINT16(s_header + 10);
 	if ((_width != width) || (_height != height)) {
@@ -272,6 +275,21 @@ bool Smush::setupAnim(const char *file, int x, int y) {
 	_height = height;
 
 	_speed = READ_LE_UINT32(s_header + 14);
+	// Videos "copaldie.snm" and "getshcks.snm" seem to have
+	// the wrong speed value, the value 66667 (used by the
+	// other videos) seems to work whereas "2x" does not.
+	// TODO: Find out what needs to go on here.
+	//_speed = 66667;
+	flags = READ_LE_UINT16(s_header + 18);
+	// Output information for checking out the flags
+	if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL) {
+		printf("SMUSH Flags:");
+		for(int i=0;i<16;i++)
+			printf(" %d", (flags & ((int) pow(2, i))) != 0);
+		printf("\n");
+	}
+	_videoLooping = SMUSH_LOOPMOVIE(flags);
+	_startPos = NULL; // Set later
 	free(s_header);
 
 	return true;
@@ -285,11 +303,16 @@ void Smush::stop() {
 bool Smush::play(const char *filename, int x, int y) {
 	deinit();
 
+	if (debugLevel == DEBUG_SMUSH)
+		printf("Playing video '%s'.\n", filename);
+	
 	// Load the video
 	if (!setupAnim(filename, x, y))
 		return false;
 
 	handleFramesHeader();
+	if (_videoLooping)
+		_startPos = _file.getPos();
 	init();
 
 	return true;

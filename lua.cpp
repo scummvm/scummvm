@@ -383,7 +383,11 @@ static void SetSayLineDefaults() {
 		else
 			lua_pushnil();
 
-		lua_call("next");
+		// If the call to "next" fails then register an error
+		if (lua_call("next") != 0) {
+			error("SetSayLineDefaults failed to get next key!\n");
+			return;
+		}
 		key = lua_getresult(1);
 		if (lua_isnil(key)) 
 			break;
@@ -443,6 +447,17 @@ static void SetActorWalkChore() {
 	act = check_actor(1);
 	chore = check_int(2);
 	costume = get_costume(act, 3, "SetActorWalkChore");
+	if (costume == NULL) {
+		if (debugLevel == DEBUG_CHORES || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("SetActorWalkChore() could not find the requested costume, attempting to load...");
+		act->pushCostume(lua_getstring(lua_getparam(3)));
+		costume = get_costume(act, 3, "SetActorWalkChore");
+		if (costume == NULL) {
+			if (debugLevel == DEBUG_CHORES || debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
+				error("SetActorWalkChore() could not find the requested costume!");
+			return;
+		}
+	}
 	act->setWalkChore(chore, costume);
 }
 
@@ -568,8 +583,8 @@ static void GetAngleBetweenActors() {
 }
 
 static void GetActorYawToPoint() {
+	Vector3d yawVector;
 	lua_Object param2;
-	float x, y, z;
 	Actor *act;
 	
 	DEBUG_FUNCTION();
@@ -578,19 +593,16 @@ static void GetActorYawToPoint() {
 	// when this gets called by the tube-switcher guy it's sending
 	// only two things: an actor and a table with components x, y, z
 	if (lua_isnumber(param2)) {
-		x = luaL_check_number(2);
-		y = luaL_check_number(3);
-		z = luaL_check_number(4);
+		yawVector = Vector3d(luaL_check_number(2), luaL_check_number(3), luaL_check_number(4));
 	} else if (lua_istable(param2)) {
-		x = lua_getnumber(getTableValue(param2, "x"));
-		y = lua_getnumber(getTableValue(param2, "y"));
-		z = lua_getnumber(getTableValue(param2, "z"));
+		yawVector = tableToVector(param2);
 	} else {
 		if (debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
 			error("Unhandled data type for GetActorYawToPoint!");
+		lua_pushnil();
 		return;
 	}
-	lua_pushnumber(act->yawTo(Vector3d(x, y, z)));
+	lua_pushnumber(act->yawTo(yawVector));
 }
 
 static void PutActorInSet() {
@@ -750,13 +762,6 @@ static void IsActorResting() {
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	pushbool(!(act->isWalking() || act->isTurning()));
-}
-
-static void TurnActorTo() {
-stubWarning("TurnActorTo");
-}
-static void PointActorAt() {
-stubWarning("PointActorAt");
 }
 
 /* Get the location of one of the actor's nodes, this is
@@ -1025,7 +1030,10 @@ static void IsActorChoring() {
 }
 
 static void ActorLookAt() {
-	lua_Object x, y, z, rate;
+	float rate = 100.0; // Give a default rate
+	lua_Object x, y, z;
+	bool nullvector = false;
+	Vector3d vector;
 	Actor *act;
 
 	DEBUG_FUNCTION();
@@ -1033,21 +1041,19 @@ static void ActorLookAt() {
 	x = lua_getparam(2);
 	y = lua_getparam(3);
 	z = lua_getparam(4);
-	rate = lua_getparam(5);
-	if (lua_isnumber(rate))
-		act->setLookAtRate(luaL_check_number(5));
 
 	// Look at nothing
 	if (lua_isnil(x)) {
-		if (act->isLookAtVectorZero()) // already looking at nothing
+		if (act->isLookAtVectorZero()) {
+			if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+				warning("Actor requested to look at nothing, already looking at nothing!\n");
 			return;
+		}
 
-		act->setLookAtVectorZero();
-
+		nullvector = true;
 		if (lua_isnumber(y))
-			act->setLookAtRate(luaL_check_number(3));
+			rate = luaL_check_number(3);
 	} else if ( lua_isnumber(x)) { // look at xyz
-		Vector3d vector;
 		float fX;
 		float fY;
 		float fZ;
@@ -1066,21 +1072,152 @@ static void ActorLookAt() {
 
 		vector.set(fX,fY,fZ);
 
-		act->setLookAtVector( vector );
+		if (lua_isnumber(lua_getparam(5)))
+			rate = luaL_check_number(5);
 	} else if (isActor(2)) { // look at another actor
 		Actor *lookedAct = check_actor(2);
 
 		act->setLookAtVector(lookedAct->pos());
 
 		if (lua_isnumber(y))
-			act->setLookAtRate(luaL_check_number(3));
+			rate = luaL_check_number(3);
 	} else {
 		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 			warning("ActorLookAt: Don't know what to look at!");
+		return;
 	}
 
+	act->setLookAtRate(rate);
+	if (nullvector)
+		act->setLookAtVectorZero();
+	else
+		act->setLookAtVector(vector);
 	act->setLooking(true);
-	lua_pushnumber(1);
+	pushbool(act->isTurning());
+}
+
+/* Turn the actor to a point specified in the 3D space,
+ * this should not have the actor look toward the point
+ * but should rotate the entire actor toward it.
+ */
+static void TurnActorTo() {
+	float x, y, z, yaw;
+	Actor *act;
+
+	DEBUG_FUNCTION();
+	stubWarning("VERIFY: TurnActorTo");
+	act = check_actor(1);
+	if (lua_isnumber(lua_getparam(2))) {
+		x = luaL_check_number(2);
+		y = luaL_check_number(3);
+		z = luaL_check_number(4);
+	} else if (isActor(2)) {
+		Actor *destActor;
+		
+		destActor = check_actor(2);
+		x = destActor->pos().x();
+		y = destActor->pos().y();
+		z = destActor->pos().z();
+	} else {
+		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("TurnActorTo() parameter type not understood");
+		return;
+	}
+	
+	Vector3d turnToVector(x, y, z);
+	Vector3d baseVector(std::sin(0), std::cos(0), 0);
+	Vector3d lookVector = turnToVector - act->pos();
+	lookVector.z() = 0;
+	yaw = angle(baseVector, lookVector) * (180 / M_PI);
+	if (lookVector.y() < 0)
+		yaw = -yaw;
+	act->turnTo(0, yaw, 0);
+	
+	// Game will lock in elevator if this doesn't return false
+	pushbool(false);
+}
+
+/* PointActorAt seems to be an alias for TurnActorTo
+ */
+static void PointActorAt() {
+	DEBUG_FUNCTION();
+	TurnActorTo();
+}
+
+/* RotateVector takes a vector and rotates it around 
+ * the point (0,0,0) by the requested number of degrees.
+ * This function is used to calculate the locations for
+ * getting on and off of the Bone Wagon.
+ */
+static void RotateVector() {
+	lua_Object param1, param2, result;
+	
+	DEBUG_FUNCTION();
+	stubWarning("VERIFY: RotateVector");
+	param1 = lua_getparam(1);
+	param2 = lua_getparam(2);
+	if (lua_istable(param1) && lua_istable(param2)) {
+		Vector3d vec1 = tableToVector(param1);
+		lua_Object rotateObject = getTableValue(param2, "y");
+		float rotate, currAngle, newAngle;
+		
+		// The signpost uses an indexed table (1,2,3) instead of
+		// a value-based table (x,y,z)
+		if (rotateObject == 0)
+			rotateObject = getIndexedTableValue(param2, 2);
+		rotate = lua_getnumber(rotateObject);
+		Vector3d baseVector(std::sin(0), std::cos(0), 0);
+		currAngle = angle(baseVector, vec1) * (180 / M_PI);
+		newAngle = (currAngle - rotate) * (M_PI / 180);
+		Vector3d vec2(std::sin(newAngle), std::cos(newAngle), 0);
+		vec2 *= vec1.magnitude();
+
+		result = lua_createtable();
+		lua_pushobject(result);
+		lua_pushstring("x");
+		lua_pushnumber(vec2.x());
+		lua_settable();
+		lua_pushobject(result);
+		lua_pushstring("y");
+		lua_pushnumber(vec2.y());
+		lua_settable();
+		lua_pushobject(result);
+		lua_pushstring("z");
+		lua_pushnumber(vec2.z());
+		lua_settable();
+	} else {
+		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("RotateVector() parameter type not understood!");
+		// This will likely cause a crash since LUA is expecting
+		// a table out of this function
+		lua_pushnil();
+		return;
+	}
+	lua_pushobject(result);
+}
+
+/* Set the pitch of the actor to the requested value,
+ * this will rotate an actor toward/away from the ground.
+ * This is used when Glottis runs over the signpost in
+ * the Petrified Forest
+ */
+static void SetActorPitch() {
+	lua_Object param2;
+	Actor *act;
+
+	DEBUG_FUNCTION();
+	stubWarning("VERIFY: SetActorPitch");
+	act = check_actor(1);
+	param2 = lua_getparam(2);
+	if (lua_isnumber(param2)) {
+		float pitch = lua_getnumber(param2);
+		
+		act->setRot(pitch, act->yaw(), act->roll());
+	} else {
+		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			warning("SetActorPitch() parameter type not understood!");
+		return;
+	}
 }
 
 static void SetActorLookRate() {
@@ -1343,6 +1480,40 @@ static void ShutUpActor() {
 }
 
 // Sector functions
+/* Find the sector (of any type) which contains
+ * the requested coordinate (x,y,z).
+ */
+static void GetPointSector(void) {
+	lua_Object xparam, yparam, zparam;
+	Sector *result;
+	float x, y, z;
+	
+	DEBUG_FUNCTION();
+	stubWarning("VERIFY: GetPointSector");
+	xparam = lua_getparam(1);
+	yparam = lua_getparam(2);
+	zparam = lua_getparam(3);
+	if (lua_isnumber(xparam) && lua_isnumber(yparam) && lua_isnumber(zparam)) {
+		Vector3d point(x, y, z);
+		
+		// Find the point in any available sector
+		result = g_engine->currScene()->findPointSector(point, 0xFFFF);
+	} else {
+		result = NULL;
+	}
+	if (result == NULL) {
+		if (debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
+			error("GetPointSector() passed an unhandled type or failed to find any matching sector!");
+		lua_pushnil();
+		lua_pushnil();
+		lua_pushnil();
+		return;
+	}
+	lua_pushnumber(result->id());
+	lua_pushstring(const_cast<char *>(result->name()));
+	lua_pushnumber(result->type());
+}
+
 static void GetActorSector(void) {
 	Actor *act;
 	int sectorType;
@@ -1931,7 +2102,11 @@ void getTextObjectParams(TextObject *textObject, lua_Object table_obj) {
 		else
 			lua_pushnil();
 
-		lua_call("next");
+		// If the call to "next" fails then register an error
+		if (lua_call("next") != 0) {
+			error("getTextObjectParams failed to get next key!\n");
+			return;
+		}
 		key = lua_getresult(1);
 		if (lua_isnil(key)) 
 			break;
@@ -2997,7 +3172,6 @@ STUB_FUNC(GetCameraLookVector)
 STUB_FUNC(SetCameraRoll)
 STUB_FUNC(SetCameraInterest)
 STUB_FUNC(GetCameraPosition)
-STUB_FUNC(RotateVector)
 STUB_FUNC(LoadCostume)
 STUB_FUNC(PrintActorCostumes)
 STUB_FUNC(SpewStartup)
@@ -3007,8 +3181,6 @@ STUB_FUNC(PreviousSetup)
 STUB_FUNC(NextSetup)
 STUB_FUNC(WorldToScreen)
 STUB_FUNC(SetActorRoll)
-STUB_FUNC(SetActorPitch)
-STUB_FUNC(GetPointSector)
 STUB_FUNC(IsPointInSector)
 STUB_FUNC(SetActorFrustrumCull)
 STUB_FUNC(GetCameraActor)
@@ -3775,10 +3947,24 @@ lua_Object getTableValue(lua_Object table, char *name) {
 		else
 			lua_pushnil();
 
-		lua_call("next");
+		// If getTableValue is called against a bad value
+		// that it doesn't understand then an infinite loop
+		// will be set up repeating the same error.
+		if(lua_call("next") != 0) {
+			error("getTableValue could not find the next key!\n");
+			return 0;
+		}
 		key = lua_getresult(1);
-		if (lua_isnil(key)) 
+		if (lua_isnil(key))
 			break;
+		// If this function is called against a table that is
+		// indexed (rather than keyed) then return zero so
+		// the indexed version can be called instead.  This
+		// operation cannot be done automatically since the
+		// index number needs to be known in order to obtain
+		// the correct value.
+		if (lua_isnumber(key))
+			return 0;
 
 		key_text = lua_getstring(key);
 		if (strmatch(key_text, name))
@@ -3798,7 +3984,11 @@ lua_Object getIndexedTableValue(lua_Object table, int index) {
 		lua_pushnil();
 	else
 		lua_pushnumber(index - 1);
-	lua_call("next");
+	// If the call to "next" fails then register an error
+	if (lua_call("next") != 0) {
+		error("getIndexedTableValue failed to get next key!\n");
+		return 0;
+	}
 	return lua_getresult(2);
 }
 
@@ -3817,6 +4007,28 @@ void setTableValue(lua_Object table, char *name, lua_Object newvalue) {
 	else
 		lua_pushobject(newvalue);
 	lua_settable();
+}
+
+/* Obtain the x, y, and z coordinates from a LUA table
+ * and then create a Vector3d object with these values
+ */
+Vector3d tableToVector(lua_Object table) {
+	lua_Object xparam, yparam, zparam;
+	float x, y, z;
+	
+	if (!lua_istable(table))
+		error("tableToVector passed a LUA object that is not a table!");
+	
+	xparam = getTableValue(table, "x");
+	yparam = getTableValue(table, "y");
+	zparam = getTableValue(table, "z");
+	if (!lua_isnumber(xparam) || !lua_isnumber(yparam) || !lua_isnumber(zparam))
+		error("tableToVector passed a LUA table that does not contain vector coordinates!");
+	
+	x = lua_getnumber(xparam);
+	y = lua_getnumber(yparam);
+	z = lua_getnumber(zparam);
+	return Vector3d(x, y, z);
 }
 
 lua_Object getEventHandler(const char *name) {

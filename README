@@ -1,5 +1,5 @@
 Residual: A LucasArts 3D game interpreter           Version:      0.05-CVS
-(C) 2003-2005 The ScummVM-Residual team             Last Updated: 23 Jul 2005
+(C) 2003-2005 The ScummVM-Residual team             Last Updated: 25 Jul 2005
 ------------------------------------------------------------------------------
 
 What is Residual?
@@ -62,10 +62,22 @@ but many features are either missing or unstable. There is no abilitity
 to save/load, lighting, etc. Crashes are likely.
 
 Game currently playable to:
-	Manny gives Glottis back his heart in the Petrified Forest
+	The Demon Beaver Dam (Petrified Forest)
 Caveats:
-1) When Manny goes onto the DOD roof for the pigeon eggs you must not
-   forget to use a balloon with the bread or else the game will hang
+1) When Manny goes onto the DOD roof for the pigeon eggs the pigeons
+   don't always act quite right
+2) Walking around objects toward an objective (such as the bread deposit
+   on the DOD roof) can hang the user input since the game does not yet
+   know how to navigate around an object to reach a destination
+3) Video of Copal's death (among other movies) plays at *almost* 2x
+   the correct speed, this causes buffer overflows in the audio.
+   While hardcoding the speed to the correct value used by the other
+   movies works, it is not a good fix and so it is not implemented
+4) Sound track destruction doesn't do quite a good enough job when
+   entering the spider web area (sp.set) in the Petrified Forest
+5) When you return from getting the shocks at the tree pump in the
+   Petrified Forest the scene doesn't change correctly and the game
+   stops allowing input
 
 What are the default keys?
 --------------------------

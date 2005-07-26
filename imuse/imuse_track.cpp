@@ -72,6 +72,11 @@ bool Imuse::startSound(const char *soundName, int volGroupId, int hookId, int vo
 			return true;
 		}
 	}
+	// Priority Level 127 appears to mean "load but don't play", so
+	// within our paradigm this is a much lower priority than everything
+	// else we're doing
+	if (priority == 127)
+		priority = -1;
 	l = allocSlot(priority);
 	if (l == -1) {
 		warning("Imuse::startSound(): Can't start sound - no free slots");

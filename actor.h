@@ -44,9 +44,7 @@ public:
 	Vector3d pos() const { return _pos; }
 	void walkTo(Vector3d p);
 	bool isWalking() const;
-	void setRot(float pitch, float yaw, float roll) {
-		_pitch = pitch; _yaw = yaw; _roll = roll;
-	}
+	void setRot(float pitch, float yaw, float roll);
 	void turnTo(float pitch, float yaw, float roll);
 	bool isTurning() const;
 	float pitch() const { return _pitch; }
@@ -180,6 +178,9 @@ private:
 	static Font *_sayLineFont;
 	TextObject *_sayLineText;
 
+	// Validate a yaw angle then set it appropriately
+	void setYaw(float yaw);
+	
 	int getTurnChore(int dir) {
 		return (dir > 0 ? _rightTurnChore : _leftTurnChore);
 	}

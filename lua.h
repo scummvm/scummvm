@@ -47,6 +47,9 @@ void setTableValue(lua_Object table, char *name, lua_Object newvalue);
 lua_Object getTableValue(lua_Object table, char *name);
 lua_Object getIndexedTableValue(lua_Object table, int index);
 
+// make a Vector3d object from coordinate table values
+Vector3d tableToVector(lua_Object table);
+
 // get a function stored in a table
 lua_Object getTableFunction(lua_Object table, char *name);
 

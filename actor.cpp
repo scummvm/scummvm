@@ -53,6 +53,24 @@ Actor::Actor(const char *name) :
 	}
 }
 
+void Actor::setYaw(float yaw) {
+	// While the program correctly handle yaw angles outside
+	// of the range [0, 360), proper convention is to roll
+	// these values over correctly
+	if (yaw >= 360.0)
+		_yaw = yaw - 360;
+	else if (yaw < 0.0)
+		_yaw = yaw + 360;
+	else
+		_yaw = yaw;
+}
+
+void Actor::setRot(float pitch, float yaw, float roll) {
+	_pitch = pitch;
+	setYaw(yaw);
+	_roll = roll;
+}
+
 void Actor::turnTo(float pitch, float yaw, float roll) {
 	_pitch = pitch;
 	_roll = roll;
@@ -95,6 +113,7 @@ bool Actor::isTurning() const {
 void Actor::walkForward() {
 	float dist = g_engine->perSecond(_walkRate);
 	float yaw_rad = _yaw * (M_PI / 180), pitch_rad = _pitch * (M_PI / 180);
+	float yaw;
 	Vector3d forwardVec(-std::sin(yaw_rad) * std::cos(pitch_rad),
 		std::cos(yaw_rad) * std::cos(pitch_rad),
 		std::sin(pitch_rad));
@@ -158,7 +177,7 @@ void Actor::walkForward() {
 	float turnAmt = g_engine->perSecond(_turnRate);
 	if (turnAmt > ei.angleWithEdge)
 		turnAmt = ei.angleWithEdge;
-	_yaw += turnAmt * turnDir;
+	setYaw(_yaw + turnAmt * turnDir);
 }
 
 Vector3d Actor::puckVector() const {
@@ -241,7 +260,7 @@ void Actor::setMumbleChore(int chore, Costume *cost) {
 
 void Actor::turn(int dir) {
 	float delta = g_engine->perSecond(_turnRate) * dir;
-	_yaw += delta;
+	setYaw(_yaw + delta);
 	_currTurnDir = dir;
 }
 
@@ -449,13 +468,13 @@ void Actor::update() {
 		while (dyaw < -180)
 			dyaw += 360;
 		if (turnAmt >= std::abs(dyaw)) {
-			_yaw = _destYaw;
+			setYaw(_destYaw);
 			_turning = false;
 		}
 		else if (dyaw > 0)
-			_yaw += turnAmt;
+			setYaw(_yaw + turnAmt);
 		else
-			_yaw -= turnAmt;
+			setYaw(_yaw -= turnAmt);
 		_currTurnDir = (dyaw > 0 ? 1 : -1);
 	}
 
