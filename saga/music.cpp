@@ -52,6 +52,7 @@ private:
 	int16 _buf[BUFFER_SIZE];
 	const int16 *_bufferEnd;
 	const int16 *_pos;
+	const GameSoundInfo *_musicInfo;
 
 	void refill();
 	bool eosIntern() const {
@@ -64,8 +65,8 @@ public:
 	int readBuffer(int16 *buffer, const int numSamples);
 
 	bool endOfData() const	{ return eosIntern(); }
-	bool isStereo() const	{ return true; }
-	int getRate() const	{ return 11025; }
+	bool isStereo() const	{ return _musicInfo->stereo; }
+	int getRate() const	{ return _musicInfo->frequency; }
 };
 
 RAWInputStream::RAWInputStream(SagaEngine *vm, ResourceContext *context, uint32 resourceId, bool looping)
@@ -75,6 +76,11 @@ RAWInputStream::RAWInputStream(SagaEngine *vm, ResourceContext *context, uint32 
 
 	resourceData = vm->_resource->getResourceData(context, resourceId);	
 	_file = context->getFile(resourceData);
+	_musicInfo = vm->getMusicInfo();
+
+	if (_musicInfo == NULL) {
+		error("RAWInputStream() wrong musicInfo");
+	}
 
 	// Determine the end position
 	_startPos = resourceData->offset;

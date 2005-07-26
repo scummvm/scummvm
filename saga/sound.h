@@ -39,10 +39,10 @@ struct SoundBuffer {
 	int sampleBits;
 	bool stereo;
 	bool isSigned;
-
+	
 	byte *buffer;
 	size_t size;
-	//big endianess flag!!!
+	bool isBigEndian;
 };
 
 class Sound {
@@ -63,7 +63,7 @@ public:
 
  private:
 
-	void playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int volume, bool loop, bool forceBigEndian);
+	void playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int volume, bool loop);
 	int _enabled;
 
 	SagaEngine *_vm;

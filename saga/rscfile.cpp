@@ -55,10 +55,6 @@ bool Resource::loadContext(ResourceContext *context) {
 	
 	context->isBigEndian = _vm->isBigEndian();
 	
-	if (!context->isBigEndian) {
-		context->isBigEndian = ((_vm->getFeatures() & GF_BIG_ENDIAN_VOICES) != 0) && ((context->fileType & GAME_VOICEFILE) != 0);
-	}
-
 	if (context->file->size() < RSC_MIN_FILESIZE) {
 		return false;
 	}
@@ -113,16 +109,14 @@ bool Resource::loadContext(ResourceContext *context) {
 			patchDescription = &_vm->getGameDescription()->patchDescriptions[j];
 			if ((patchDescription->fileType & context->fileType) != 0) {
 				if (patchDescription->resourceId < context->count) {
-					//TODO|fix: should we convert this ID? or make separate patch list for MAC version?
 					resourceData = &context->table[patchDescription->resourceId];
-					resourceData->patchFile = new Common::File();
-					if (resourceData->patchFile->open(patchDescription->fileName)) {
+					resourceData->patchData = new PatchData(patchDescription);
+					if (resourceData->patchData->_patchFile->open(patchDescription->fileName)) {
 						resourceData->offset = 0;
-						resourceData->size = resourceData->patchFile->size();
+						resourceData->size = resourceData->patchData->_patchFile->size();
 					} else {
-						warning("loadContext: patch file not found %s", patchDescription->fileName);
-						delete resourceData->patchFile;
-						resourceData->patchFile = NULL;
+						delete resourceData->patchData;
+						resourceData->patchData = NULL;
 					}
 				}
 			}
@@ -177,7 +171,7 @@ void Resource::clearContexts() {
 		delete context->file;
 		if (context->table != NULL) {
 			for(j = 0; j < context->count; j++) {
-				delete context->table[j].patchFile;
+				delete context->table[j].patchData;
 			}
 		}
 		free(context->table);

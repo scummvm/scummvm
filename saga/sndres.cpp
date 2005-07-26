@@ -46,13 +46,23 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm) {
 		error("SndRes::SndRes resource context not found");
 	}
 
-	_voiceContext = _vm->_resource->getContext(GAME_VOICEFILE);
+	_voiceSerial = -1;
+
+	setVoiceBank(0);
+}
+
+void SndRes::setVoiceBank(int serial)
+{
+	if (_voiceSerial == serial) return;
+
+	_voiceSerial = serial;
+
+	_voiceContext = _vm->_resource->getContext(GAME_VOICEFILE, _voiceSerial);
 	if (_voiceContext == NULL) {
 		error("SndRes::SndRes resource context not found");
 	}
 
-	// Grab sound resource information for the current game
-	_soundInfo = *_vm->getSoundInfo();
+	
 }
 
 void SndRes::playSound(uint32 resourceId, int volume, bool loop) {
@@ -91,71 +101,77 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	int rate;
 	int size;
 	byte flags;
-	bool voxPcm;	
 	size_t voxSize;
+	const GameSoundInfo *soundInfo;
 
 	if (resourceId == (int32)-1) {
 		return false;
 	}
 
+
 	_vm->_resource->loadResource(context, resourceId, soundResource, soundResourceLength);
+
+	if ((context->fileType & GAME_VOICEFILE) != 0) {
+		soundInfo = _vm->getVoiceInfo();
+	} else {
+		soundInfo = _vm->getSfxInfo();
+	}
+	if (context->table[resourceId].patchData != NULL) {
+		if (context->table[resourceId].patchData->_patchDescription->soundInfo != NULL) {
+			soundInfo = context->table[resourceId].patchData->_patchDescription->soundInfo;
+		}		
+	} 
 
 	MemoryReadStream readS(soundResource, soundResourceLength);
 
-	//TODO: check soundResource header - game may have GAME_SOUND_PCM, but patch file can be GAME_SOUND_VOC
-	resourceType = _soundInfo.resourceType;
+	resourceType = soundInfo->resourceType;
+	buffer.isBigEndian = soundInfo->isBigEndian;
 	
 	if (soundResourceLength >= 8) {
 		if (!memcmp(&soundResource, "Creative", 8)) {
-			resourceType = GAME_SOUND_VOC;
+			resourceType = kSoundVOC;
 		} else 	if (!memcmp(soundResource, "RIFF", 4) != 0) {
-			resourceType = GAME_SOUND_WAV;
+			resourceType = kSoundWAV;
 		}
 	}
 
+
 	switch (resourceType) {
-	case GAME_SOUND_PCM:
-		buffer.frequency = _soundInfo.frequency;
-		buffer.isSigned = true;
-		voxPcm = (_vm->getFeatures() & GF_VOX_VOICES);
-		if (voxPcm) {
-			if (_vm->getGameType() == GType_ITE) {
-				//.iaf is not vox
-				if (_vm->_resource->getResourceData(context, resourceId)->patchFile != NULL) {
-					voxPcm = false;
-				}
-			}
-		}
-		if (voxPcm) {
-			buffer.sampleBits = 16;
-			buffer.stereo = false;
-			buffer.size = soundResourceLength * 4;
-			if (onlyHeader) {
-				buffer.buffer = NULL;
-				free(soundResource);
-			} else {
-				voxStream = makeADPCMStream(readS, soundResourceLength, kADPCMOki);
-				buffer.buffer = (byte *)malloc(buffer.size);
-				voxSize = voxStream->readBuffer((int16*)buffer.buffer, soundResourceLength * 2);
-				if (voxSize != soundResourceLength * 2) {
-					error("SndRes::load() wrong VOX output size");
-				}
-				delete voxStream;
-			}
+	case kSoundPCM:
+		buffer.frequency = soundInfo->frequency;
+		buffer.isSigned = soundInfo->isSigned;
+		buffer.sampleBits = soundInfo->sampleBits;
+		buffer.size = soundResourceLength;
+		buffer.stereo = soundInfo->stereo;
+		if (onlyHeader) {
+			buffer.buffer = NULL;
+			free(soundResource);
 		} else {
-			buffer.sampleBits = _soundInfo.sampleBits;
-			buffer.size = soundResourceLength;
-			buffer.stereo = _soundInfo.stereo;
-			if (onlyHeader) {
-				buffer.buffer = NULL;
-				free(soundResource);
-			} else {
-				buffer.buffer = soundResource;
-			}
+			buffer.buffer = soundResource;
 		}
 		result = true;
 		break;
-	case GAME_SOUND_VOC:
+	case kSoundVOX:
+		buffer.frequency = soundInfo->frequency;
+		buffer.isSigned = soundInfo->isSigned;
+		buffer.sampleBits = soundInfo->sampleBits;
+		buffer.stereo = soundInfo->stereo;
+		buffer.size = soundResourceLength * 4;
+		if (onlyHeader) {
+			buffer.buffer = NULL;
+			free(soundResource);
+		} else {
+			voxStream = makeADPCMStream(readS, soundResourceLength, kADPCMOki);
+			buffer.buffer = (byte *)malloc(buffer.size);
+			voxSize = voxStream->readBuffer((int16*)buffer.buffer, soundResourceLength * 2);
+			if (voxSize != soundResourceLength * 2) {
+				error("SndRes::load() wrong VOX output size");
+			}
+			delete voxStream;
+		}
+		result = true;
+		break;
+	case kSoundVOC:
 		data = loadVOCFromStream(readS, size, rate);
 		if (data) {
 			buffer.frequency = rate;
@@ -173,7 +189,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		}
 		free(soundResource);
 		break;
-	case GAME_SOUND_WAV:
+	case kSoundWAV:
 		if (loadWAVFromStream(readS, size, rate, flags)) {
 			buffer.frequency = rate;
 			buffer.sampleBits = 16;

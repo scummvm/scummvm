@@ -293,20 +293,18 @@ enum GameFileTypes {
 };
 
 enum GameSoundTypes {
-	GAME_SOUND_PCM = 0,
-	GAME_SOUND_VOC,
-	GAME_SOUND_WAV,
-	GAME_SOUND_VOX
+	kSoundPCM = 0,
+	kSoundVOX = 1,
+	kSoundVOC = 2,
+	kSoundWAV = 3	
 };
 
 enum GameFeatures {
-	GF_VOX_VOICES        = 1 << 0,
-	GF_BIG_ENDIAN_VOICES = 1 << 1,
-	GF_BIG_ENDIAN_DATA   = 1 << 2,
-	GF_MAC_RESOURCES     = 1 << 3,
-	GF_LANG_DE           = 1 << 4,
-	GF_WYRMKEEP          = 1 << 5,
-	GF_CD_FX             = 1 << 6
+	GF_BIG_ENDIAN_DATA   = 1 << 0,
+	GF_MAC_RESOURCES     = 1 << 1,
+	GF_LANG_DE           = 1 << 2,
+	GF_WYRMKEEP          = 1 << 3,
+	GF_CD_FX             = 1 << 4
 };
 
 enum FontId {
@@ -329,6 +327,8 @@ struct GameSoundInfo {
 	long frequency;
 	int sampleBits;
 	bool stereo;
+	bool isBigEndian;
+	bool isSigned;
 };
 
 struct GameFontDescription {
@@ -357,6 +357,7 @@ struct GamePatchDescription {
 	const char *fileName;
 	uint16 fileType;
 	uint32 resourceId;
+	GameSoundInfo * soundInfo;
 };
 
 struct PanelButton {
@@ -467,7 +468,9 @@ struct GameDescription {
 	GameFileDescription *filesDescriptions;
 	int fontsCount;
 	GameFontDescription *fontDescriptions;
-	GameSoundInfo *soundInfo;
+	GameSoundInfo *voiceInfo;
+	GameSoundInfo *sfxInfo;
+	GameSoundInfo *musicInfo;
 	int patchsCount;
 	GamePatchDescription *patchDescriptions;
 	uint32 features;
@@ -643,7 +646,9 @@ public:
 	const bool isBigEndian() const { return (_gameDescription->features & GF_BIG_ENDIAN_DATA) != 0; }
 	const bool isMacResources() const { return (_gameDescription->features & GF_MAC_RESOURCES) != 0; }
 	const GameResourceDescription *getResourceDescription() { return _gameDescription->resourceDescription; }
-	const GameSoundInfo *getSoundInfo() { return _gameDescription->soundInfo; }
+	const GameSoundInfo *getVoiceInfo() const { return _gameDescription->voiceInfo; }
+	const GameSoundInfo *getSfxInfo() const { return _gameDescription->sfxInfo; }
+	const GameSoundInfo *getMusicInfo() const { return _gameDescription->musicInfo; }
 
 	const GameFontDescription *getFontDescription(int index) { 
 		assert(index < _gameDescription->fontsCount);

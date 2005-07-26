@@ -39,16 +39,16 @@ public:
 	void playSound(uint32 resourceId, int volume, bool loop);
 	void playVoice(uint32 resourceId);
 	int getVoiceLength(uint32 resourceId);
-
+	void setVoiceBank(int serial);
  private:
 	bool load(ResourceContext *context, uint32 resourceId, SoundBuffer &buffer, bool onlyHeader);
 	bool loadVocSound(byte *soundResource, size_t soundResourceLength, SoundBuffer &buffer);
 	bool loadWavSound(byte *soundResource, size_t soundResourceLength, SoundBuffer &buffer);
-
+	
 	ResourceContext *_sfxContext;
 	ResourceContext *_voiceContext;
 
-	GameSoundInfo _soundInfo;
+	int _voiceSerial; // voice bank number
 
 	SagaEngine *_vm;
 };

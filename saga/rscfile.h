@@ -38,10 +38,23 @@ namespace Saga {
 
 //TODO: good PATCH.RE_ support
 
+struct PatchData {
+	Common::File *_patchFile;
+	GamePatchDescription *_patchDescription;
+	
+	PatchData(GamePatchDescription *patchDescription): _patchDescription(patchDescription) {
+		_patchFile = new Common::File();
+	}
+
+	~PatchData() {
+		delete _patchFile;
+	}
+};
+
 struct ResourceData {
 	size_t offset;
 	size_t size;
-	Common::File *patchFile;
+	PatchData *patchData;
 };
 
 struct ResourceContext {
@@ -55,8 +68,8 @@ struct ResourceContext {
 	size_t count;
 
 	Common::File *getFile(ResourceData *resourceData) const {
-		if (resourceData->patchFile != NULL) {
-			return resourceData->patchFile;
+		if (resourceData->patchData != NULL) {
+			return resourceData->patchData->_patchFile;
 		} else {
 			return file;
 		}

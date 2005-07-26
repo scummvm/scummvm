@@ -200,7 +200,12 @@ static GameFontDescription ITEDEMO_GameFonts[] = {
 }; 
 
 static GameSoundInfo ITEDEMO_GameSound = {
-	GAME_SOUND_VOC, 0, 0, 0
+	kSoundVOC,
+	-1,
+	-1,
+	false,
+	false,
+	true
 };
 
 // Inherit the Earth - Wyrmkeep Win32 Demo version
@@ -216,6 +221,33 @@ static GameFontDescription ITEWINDEMO_GameFonts[] = {
 	{0}
 }; 
 
+static GameSoundInfo ITEWINDEMO1_GameSound = {
+	kSoundPCM,
+	22050,
+	8,
+	false,
+	false,
+	false
+};
+
+static GameSoundInfo ITEWINDEMO2_GameVoice = {
+	kSoundVOX,
+	22050,
+	16,
+	false,
+	false,
+	true
+};
+
+static GameSoundInfo ITEWINDEMO2_GameSound = {
+	kSoundPCM,
+	22050,
+	16,
+	false,
+	false,
+	true
+};
+
 // Inherit the Earth - Wyrmkeep Mac Demo version
 static GameFileDescription ITEMACDEMO_GameFiles[] = {
 	{"ited.rsc", GAME_RESOURCEFILE},
@@ -225,6 +257,33 @@ static GameFileDescription ITEMACDEMO_GameFiles[] = {
 	{"musicd.rsc", GAME_MUSICFILE}
 };
 
+static GameSoundInfo ITEMACDEMO_GameVoice = {
+	kSoundVOX,
+	22050,
+	16,
+	false,
+	false,
+	true
+};
+
+static GameSoundInfo ITEMACDEMO_GameSound = {
+	kSoundPCM,
+	22050,
+	16,
+	false,
+	true,
+	true
+};
+
+static GameSoundInfo ITEMACDEMO_GameMusic = {
+	kSoundPCM,
+	11025,
+	16,
+	false,
+	false,
+	true
+};
+
 // Inherit the Earth - Wyrmkeep Linux Demo version
 static GameFileDescription ITELINDEMO_GameFiles[] = {
 	{"ited.rsc", GAME_RESOURCEFILE},
@@ -232,6 +291,15 @@ static GameFileDescription ITELINDEMO_GameFiles[] = {
 	{"soundsd.rsc", GAME_SOUNDFILE},
 	{"voicesd.rsc", GAME_VOICEFILE},
 	{"musicd.rsc", GAME_MUSICFILE}
+};
+
+static GameSoundInfo ITELINDEMO_GameMusic = {
+	kSoundPCM,
+	11025,
+	16,
+	true,
+	false,
+	true
 };
 
 // Inherit the Earth - Wyrmkeep Linux version
@@ -266,6 +334,24 @@ static GameFileDescription ITEMACCD_GameFiles[] = {
 	{"music.rsc", GAME_MUSICFILE}
 };
 
+static GameSoundInfo ITEMACCD_GameSound = {
+	kSoundPCM,
+	22050,
+	16,
+	false,
+	true,
+	true
+};
+
+static GameSoundInfo ITEMACCD_GameMusic = {
+	kSoundPCM,
+	11025,
+	16,
+	true,
+	false,
+	true
+};
+
 // Inherit the Earth - Diskette version
 static GameFileDescription ITEDISK_GameFiles[] = {
 	{"ite.rsc", GAME_RESOURCEFILE},
@@ -280,7 +366,12 @@ static GameFontDescription ITEDISK_GameFonts[] = {
 };
 
 static GameSoundInfo ITEDISK_GameSound = {
-	GAME_SOUND_VOC, 0, 0, 0
+	kSoundVOC, 
+	-1, 
+	-1, 
+	false,
+	false,
+	true
 };
 
 // Inherit the Earth - CD Enhanced version
@@ -298,10 +389,12 @@ static GameFontDescription ITECD_GameFonts[] = {
 };
 
 static GameSoundInfo ITECD_GameSound = {
-	GAME_SOUND_PCM,
+	kSoundPCM,
 	22050,
 	16,
-	false
+	false,
+	false,
+	true
 };
 
 static GamePatchDescription ITEWinPatch1_Files[] = {
@@ -356,7 +449,7 @@ static GamePatchDescription ITEWinPatch2_Files[] = {
 	{ "wyrm1.dlt", GAME_RESOURCEFILE, 1530},
 	{ "wyrm2.dlt", GAME_RESOURCEFILE, 1531},
 	{ "wyrm3.dlt", GAME_RESOURCEFILE, 1532},
-	{ "p2_a.iaf", GAME_VOICEFILE, 4}
+	{ "p2_a.iaf", GAME_VOICEFILE, 4, &ITECD_GameSound}
 /*	boarhall.bbm
 	elkenter.bbm
 	ferrets.bbm
@@ -373,7 +466,7 @@ static GamePatchDescription ITEMacPatch_Files[] = {
 	{ "wyrm4.dlt", GAME_RESOURCEFILE, 1533},
 	{ "credit3m.dlt", GAME_RESOURCEFILE, 1796},
 	{ "credit4m.dlt", GAME_RESOURCEFILE, 1797},
-	{ "p2_a.iaf", GAME_VOICEFILE, 4}
+	{ "p2_a.iaf", GAME_VOICEFILE, 4, &ITEMACCD_GameSound}
 };
 
 static GamePatchDescription ITELinPatch_Files[] = {
@@ -383,7 +476,7 @@ static GamePatchDescription ITELinPatch_Files[] = {
 	{ "wyrm3.dlt", GAME_RESOURCEFILE, 1532},
 	{ "credit3n.dlt", GAME_RESOURCEFILE, 1796},
 	{ "credit4n.dlt", GAME_RESOURCEFILE, 1797},
-	{ "P2_A.iaf", GAME_VOICEFILE, 4}
+	{ "P2_A.iaf", GAME_VOICEFILE, 4, &ITECD_GameSound}
 };
 
 // IHNM section
@@ -502,7 +595,7 @@ static GameFileDescription IHNMCD_GameFiles[] = {
 	{"patch.re_", GAME_PATCHFILE},
 	{"scripts.res", GAME_SCRIPTFILE},
 	{"sfx.res", GAME_SOUNDFILE},
-	{"voicess.res", GAME_VOICEFILE},
+	{"voicess.res", GAME_VOICEFILE}, //order of voice bank file is important
 	{"voices1.res", GAME_VOICEFILE},
 	{"voices2.res", GAME_VOICEFILE},
 	{"voices3.res", GAME_VOICEFILE},
@@ -519,7 +612,7 @@ static GameFileDescription IHNMCDDE_GameFiles[] = {
 	{"scripts.res", GAME_SCRIPTFILE},
 	{"patch.re_", GAME_PATCHFILE},
 	{"sfx.res", GAME_SOUNDFILE},
-	{"voicess.res", GAME_VOICEFILE},
+	{"voicess.res", GAME_VOICEFILE}, //order of voice bank file is important
 	{"voices1.res", GAME_VOICEFILE},
 	{"voices2.res", GAME_VOICEFILE},
 	{"voices3.res", GAME_VOICEFILE},
@@ -538,7 +631,12 @@ static GameFontDescription IHNMCD_GameFonts[] = {
 };
 
 static GameSoundInfo IHNM_GameSound = {
-	GAME_SOUND_WAV, 0, 0, 0
+	kSoundWAV,
+	-1,
+	-1,
+	false,
+	false,
+	true
 };
 
 struct GameMD5 {
@@ -667,6 +765,7 @@ static GameMD5 gameMD5[] = {
 
 static GameDescription gameDescriptions[] = {
 	// Inherit the earth - DOS Demo version
+	// sound unchecked
 	{
 		"ite-demo",
 		GType_ITE,
@@ -680,6 +779,8 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEDEMO_GameFonts),
 		ITEDEMO_GameFonts,
 		&ITEDEMO_GameSound,
+		&ITEDEMO_GameSound,
+		NULL,
 		0,
 		NULL,
 		0, // features
@@ -698,10 +799,12 @@ static GameDescription gameDescriptions[] = {
 		ITEMACDEMO_GameFiles,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
-		&ITECD_GameSound,
+		&ITEMACDEMO_GameVoice,
+		&ITEMACDEMO_GameSound,
+		&ITEMACDEMO_GameMusic,
 		ARRAYSIZE(ITEMacPatch_Files),
 		ITEMacPatch_Files,
-		GF_VOX_VOICES | GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_WYRMKEEP | GF_CD_FX
+		GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_WYRMKEEP | GF_CD_FX
 	},
 
 	// Inherit the earth - early MAC Demo version
@@ -717,10 +820,12 @@ static GameDescription gameDescriptions[] = {
 		ITEMACDEMO_GameFiles,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
-		&ITECD_GameSound,
+		&ITEMACDEMO_GameVoice,
+		&ITEMACDEMO_GameSound,
+		&ITEMACCD_GameMusic,
 		ARRAYSIZE(ITEMacPatch_Files),
 		ITEMacPatch_Files,
-		GF_VOX_VOICES | GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_WYRMKEEP | GF_CD_FX
+		GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_WYRMKEEP | GF_CD_FX
 	},
 
 	// Inherit the earth - MAC CD Wyrmkeep version
@@ -736,7 +841,9 @@ static GameDescription gameDescriptions[] = {
 		ITEMACCD_GameFiles,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
-		&ITECD_GameSound,
+		&ITEMACCD_GameSound,
+		&ITEMACCD_GameSound,
+		&ITEMACCD_GameMusic,
 		ARRAYSIZE(ITEMacPatch_Files),
 		ITEMacPatch_Files,
 		GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_WYRMKEEP | GF_CD_FX
@@ -754,12 +861,14 @@ static GameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITELINDEMO_GameFiles),
 		ITELINDEMO_GameFiles,
-		ARRAYSIZE(ITECD_GameFonts),
-		ITECD_GameFonts,
-		&ITECD_GameSound,
-		0,
-		NULL,
-		GF_VOX_VOICES | GF_WYRMKEEP | GF_CD_FX
+		ARRAYSIZE(ITEWINDEMO_GameFonts),
+		ITEWINDEMO_GameFonts,
+		&ITEWINDEMO2_GameVoice,
+		&ITEWINDEMO2_GameSound,
+		&ITELINDEMO_GameMusic,
+		ARRAYSIZE(ITELinPatch_Files),
+		ITELinPatch_Files,
+		GF_WYRMKEEP | GF_CD_FX
 	},
 	
 	// Inherit the earth - Win32 Demo version
@@ -775,10 +884,12 @@ static GameDescription gameDescriptions[] = {
 		ITEWINDEMO_GameFiles,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
-		&ITECD_GameSound,
+		&ITEWINDEMO2_GameVoice,
+		&ITEWINDEMO2_GameSound,
+		NULL,
 		ARRAYSIZE(ITEWinPatch2_Files),
 		ITEWinPatch2_Files,
-		GF_VOX_VOICES | GF_WYRMKEEP | GF_CD_FX
+		GF_WYRMKEEP | GF_CD_FX
 	},
 	
 	// Inherit the earth - early Win32 Demo version
@@ -794,13 +905,16 @@ static GameDescription gameDescriptions[] = {
 		ITEWINDEMO_GameFiles,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
-		&ITECD_GameSound,
+		&ITEWINDEMO1_GameSound,
+		&ITEWINDEMO1_GameSound,
+		NULL,
 		ARRAYSIZE(ITEWinPatch1_Files),
 		ITEWinPatch1_Files,
-		GF_VOX_VOICES | GF_WYRMKEEP | GF_CD_FX
+		GF_WYRMKEEP | GF_CD_FX
 	},
 
 	// Inherit the earth - Wyrmkeep combined Windows/Mac/Linux CD
+	// sound unchecked
 	{
 		"ite",
 		GType_ITE,
@@ -814,13 +928,16 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
+		&ITECD_GameSound,
+		NULL,
 		0,
 		NULL,
-		GF_WYRMKEEP | GF_BIG_ENDIAN_VOICES | GF_CD_FX
+		GF_WYRMKEEP | GF_CD_FX
 	},
 	
 	// Inherit the earth - Wyrmkeep Linux CD version
 	// should be before GID_ITE_CD_G
+	// sound unchecked
 	{
 		"ite",
 		GType_ITE,
@@ -834,12 +951,15 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
+		&ITECD_GameSound,
+		NULL,
 		ARRAYSIZE(ITELinPatch_Files),
 		ITELinPatch_Files,
 		GF_WYRMKEEP | GF_CD_FX
 	},
 
 	// Inherit the earth - Wyrmkeep Windows CD version
+	// sound unchecked
 	{
 		"ite",
 		GType_ITE,
@@ -853,12 +973,15 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
+		&ITECD_GameSound,
+		NULL,
 		ARRAYSIZE(ITEWinPatch1_Files),
 		ITEWinPatch1_Files,
 		GF_WYRMKEEP | GF_CD_FX
 	},
 
 	// Inherit the earth - DOS CD version
+	// sound unchecked
 	{
 		"ite",
 		GType_ITE,
@@ -872,12 +995,15 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
+		&ITECD_GameSound,
+		NULL,
 		0,
 		NULL,
 		GF_CD_FX
 	},
 
 	// Inherit the earth - DOS CD German version
+	// sound unchecked
 	{
 		"ite",
 		GType_ITE,
@@ -891,6 +1017,8 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
+		&ITECD_GameSound,
+		NULL,
 		0,
 		NULL,
 		GF_LANG_DE | GF_CD_FX
@@ -910,12 +1038,15 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
+		&ITECD_GameSound,
+		NULL,
 		0,
 		NULL,
 		GF_CD_FX
 	},
 
 	// Inherit the earth - German Floppy version
+	// sound unchecked
 	{
 		"ite",
 		GType_ITE,
@@ -929,6 +1060,8 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEDISK_GameFonts),
 		ITEDISK_GameFonts,
 		&ITEDISK_GameSound,
+		&ITEDISK_GameSound,
+		NULL,
 		0,
 		NULL,
 		GF_LANG_DE
@@ -948,6 +1081,8 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEDISK_GameFonts),
 		ITEDISK_GameFonts,
 		&ITEDISK_GameSound,
+		&ITEDISK_GameSound,
+		NULL,
 		0,
 		NULL,
 		0
@@ -967,6 +1102,8 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
 		&IHNM_GameSound,
+		&IHNM_GameSound,
+		NULL,
 		0,
 		NULL,
 		GF_DEFAULT_TO_1X_SCALER
@@ -986,6 +1123,8 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
 		&IHNM_GameSound,
+		&IHNM_GameSound,
+		NULL,
 		0,
 		NULL,
 		GF_DEFAULT_TO_1X_SCALER
@@ -1005,6 +1144,8 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
 		&IHNM_GameSound,
+		&IHNM_GameSound,
+		NULL,
 		0,
 		NULL,
 		GF_DEFAULT_TO_1X_SCALER
