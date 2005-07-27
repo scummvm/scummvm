@@ -97,6 +97,7 @@ bool Imuse::startSound(const char *soundName, int volGroupId, int hookId, int vo
 	if (i == 0) {
 		if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 			warning("Imuse::startSound(): flushTracks was unable to free up a track for %s!", soundName);
+		return false;
 	}
 
 	track->pan = pan * 1000;

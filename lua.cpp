@@ -1099,13 +1099,15 @@ static void ActorLookAt() {
 /* Turn the actor to a point specified in the 3D space,
  * this should not have the actor look toward the point
  * but should rotate the entire actor toward it.
+ *
+ * This function must use a yaw value around the unit
+ * circle and not just a difference in angles.
  */
 static void TurnActorTo() {
 	float x, y, z, yaw;
 	Actor *act;
 
 	DEBUG_FUNCTION();
-	stubWarning("VERIFY: TurnActorTo");
 	act = check_actor(1);
 	if (lua_isnumber(lua_getparam(2))) {
 		x = luaL_check_number(2);
@@ -1124,13 +1126,19 @@ static void TurnActorTo() {
 		return;
 	}
 	
+	// Find the vector pointing from the actor to the desired location
 	Vector3d turnToVector(x, y, z);
-	Vector3d baseVector(std::sin(0), std::cos(0), 0);
 	Vector3d lookVector = turnToVector - act->pos();
 	lookVector.z() = 0;
-	yaw = angle(baseVector, lookVector) * (180 / M_PI);
+	// must convert to use a unit vector
+	lookVector /= lookVector.magnitude();
+	// find the angle on the upper half of the unit circle
+	yaw = std::acos(lookVector.x()) * (180 / M_PI);
+	// adjust for the lower half of the unit circle
 	if (lookVector.y() < 0)
-		yaw = -yaw;
+		yaw = 360.0 - yaw;
+	// yaw is offset from forward by 90 degrees
+	yaw -= 90.0;
 	act->turnTo(0, yaw, 0);
 	
 	// Game will lock in elevator if this doesn't return false
@@ -1710,8 +1718,14 @@ static void ImStartSound() {
 	if (g_imuse->startSound(soundName, group, 0, 127, 0, priority)) {
 		lua_pushstring(soundName);
 	} else {
-		if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
-			error("ImStartSound failed to start '%s'", soundName);
+		// Allow soft failing when loading sounds, hard failing when not
+		if (priority == 127) {
+			if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+				warning("ImStartSound failed to load '%s'", soundName);
+		} else {
+			if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
+				error("ImStartSound failed to start '%s'", soundName);
+		}
 		lua_pushnil();
 	}
 }

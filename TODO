@@ -9,7 +9,8 @@ Assigned tasks:
    (Ender: May just need the blending of the lighting values (p2->r, ->g, ->b)
     to the result of pp[_a] in the non-24bpp PUT_PIXEL macro of 
     ztriangle.cpp/ZB_FillTriangleMappingPerspective. Maybe. :)
- * Improve actor rotating/turning (compholio)
+ * Figure out problem changing scenes after getting shocks (compholio)
+ * Improve actor colormap supprt (compholio)
  * Improve SMUSH looping support (compholio)
  * Improve menu support (compholio)
 

@@ -63,19 +63,14 @@ to save/load, lighting, etc. Crashes are likely.
 
 Game currently playable to:
 	The Demon Beaver Dam (Petrified Forest)
-Caveats:
-1) When Manny goes onto the DOD roof for the pigeon eggs the pigeons
-   don't always act quite right
-2) Walking around objects toward an objective (such as the bread deposit
-   on the DOD roof) can hang the user input since the game does not yet
-   know how to navigate around an object to reach a destination
-3) Video of Copal's death (among other movies) plays at *almost* 2x
+Caveats (in order of appearance):
+1) Sound track destruction doesn't do quite a good enough job when
+   entering the spider web area (sp.set) in the Petrified Forest
+2) Video of Copal's death (among other movies) plays at *almost* 2x
    the correct speed, this causes buffer overflows in the audio.
    While hardcoding the speed to the correct value used by the other
    movies works, it is not a good fix and so it is not implemented
-4) Sound track destruction doesn't do quite a good enough job when
-   entering the spider web area (sp.set) in the Petrified Forest
-5) When you return from getting the shocks at the tree pump in the
+3) When you return from getting the shocks at the tree pump in the
    Petrified Forest the scene doesn't change correctly and the game
    stops allowing input
 
