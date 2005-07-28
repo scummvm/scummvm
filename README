@@ -18,7 +18,9 @@ Table of Contents:
  * 3.3 Broken Sword notes
  * 3.4 Flight of the Amazon Queen notes
  * 3.5 Beneath a Steel Sky notes
- * 3.6 Known Bugs
+ * 3.6 Inherit the Earth
+ * 3.7 Gobliiins
+ * 3.8 Known Bugs
 4.0) Supported Platforms
 5.0) Running ScummVM
  * 5.1 Command Line Options
@@ -134,6 +136,8 @@ Other Games:
      Broken Sword I                                  [Game: sword1]
      Broken Sword II                                 [Game: sword2]
      Flight of the Amazon Queen                      [Game: queen]
+     Gobliiins                                       [Game: gob1]
+     Inherit the Earth: Quest for the Orb            [Game: ite]
      Simon the Sorcerer 1                            [Game: simon1acorn/
                                                             simon1dos/
                                                             simon1talkie]
@@ -187,6 +191,7 @@ Zak McKracken (EGA)
 Zak McKracken (FM-TOWNS version)
 
 Beneath a Steel Sky (bypassed with permission from Revolution)
+Inherit the Earth: Quest for the Orb
 
 In some cases ScummVM will still show the copy protection screen. Try entering
 any answer. Chances are that it will work.
@@ -245,7 +250,25 @@ This file is available on the 'Compatibility' page of the ScummVM
 website, you can place it in either the directory containing the other
 datafiles (SKY.DNR, SKY.DSK) or in your extrapath. 
 
-3.6) Known Problems in ScummVM 0.8.0CVS
+3.6) Inherit the Earth notes
+---- -----------------------
+In order to run MacOS X wyrmkeep rerelease of the game you will need to copy
+over data from the CD to hard drive. If you're on PC then consult
+
+  http://www.scummvm.org/documentation.php?view=maccd-howto
+
+Although it talks about SCUMM games, it describes HFVExplorer utility. Note
+that you will need to put speech data "Inherit the Earth Voices" in same
+directory as game data which is stored in
+
+  Inherit the Earth.app/Contents/Resources
+
+3.7) Gobliiins notes
+---- ---------------
+CD version of Gobliiins contains one big audio track which needs to be ripped
+and copied into game directory. See section on Using compressed audiofiles.
+
+3.8) Known Problems in ScummVM 0.8.0CVS
 ---- -----------------------------------
 This release has the following known problems. There is no need to report them,
 although patches to fix them are welcome. If you discover a bug that is not
@@ -273,6 +296,9 @@ the section on Reporting Bugs.
           
      Flight of the Amazon Queen
           - Amiga version isn't supported
+
+     Inherit the Earth
+          - Old Mac CD and Amiga CD versions aren't supported
 
      Simon the Sorcerer 2:
           - Combined speech and subtitles will often cause speech to be
