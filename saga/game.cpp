@@ -325,6 +325,15 @@ static GameFileDescription ITEMULTICD_GameFiles[] = {
 	{"music.rsc", GAME_MUSICFILE}
 };
 
+// Inherit the Earth - Mac Dreamers version
+static GameFileDescription ITEMACCD_G_GameFiles[] = {
+	{"ITE Resources", GAME_RESOURCEFILE},
+	{"ITE Scripts", GAME_SCRIPTFILE},
+	{"ITE Sounds", GAME_SOUNDFILE},
+	//{"ITE Music", GAME_MUSICFILE},
+	{"ITE Voices", GAME_VOICEFILE}
+};
+
 // Inherit the Earth - Mac Wyrmkeep version
 static GameFileDescription ITEMACCD_GameFiles[] = {
 	{"ite.rsc", GAME_RESOURCEFILE},
@@ -398,57 +407,57 @@ static GameSoundInfo ITECD_GameSound = {
 };
 
 static GamePatchDescription ITEWinPatch1_Files[] = {
-	{ "cave.mid", GAME_RESOURCEFILE, 9},
-	{ "intro.mid", GAME_RESOURCEFILE, 10},
-	{ "fvillage.mid", GAME_RESOURCEFILE, 11},
-	{ "elkhall.mid", GAME_RESOURCEFILE, 12},
-	{ "mouse.mid", GAME_RESOURCEFILE, 13},
-	{ "darkclaw.mid", GAME_RESOURCEFILE, 14},
-	{ "birdchrp.mid", GAME_RESOURCEFILE, 15},
-	{ "orbtempl.mid", GAME_RESOURCEFILE, 16},
-	{ "spooky.mid", GAME_RESOURCEFILE, 17},
-	{ "catfest.mid", GAME_RESOURCEFILE, 18},
-	{ "elkfanfare.mid", GAME_RESOURCEFILE, 19},
-	{ "bcexpl.mid", GAME_RESOURCEFILE, 20},
-	{ "boargtnt.mid", GAME_RESOURCEFILE, 21},
-	{ "boarking.mid", GAME_RESOURCEFILE, 22},
-	{ "explorea.mid", GAME_RESOURCEFILE, 23},
-	{ "exploreb.mid", GAME_RESOURCEFILE, 24},
-	{ "explorec.mid", GAME_RESOURCEFILE, 25},
-	{ "sunstatm.mid", GAME_RESOURCEFILE, 26},
-	{ "nitstrlm.mid", GAME_RESOURCEFILE, 27},
-	{ "humruinm.mid", GAME_RESOURCEFILE, 28},
-	{ "damexplm.mid", GAME_RESOURCEFILE, 29},
-	{ "tychom.mid", GAME_RESOURCEFILE, 30},
-	{ "kitten.mid", GAME_RESOURCEFILE, 31},
-	{ "sweet.mid", GAME_RESOURCEFILE, 32},
-	{ "brutalmt.mid", GAME_RESOURCEFILE, 33},
-	{ "shiala.mid", GAME_RESOURCEFILE, 34},
+	{ "cave.mid", GAME_RESOURCEFILE, 9, NULL},
+	{ "intro.mid", GAME_RESOURCEFILE, 10, NULL},
+	{ "fvillage.mid", GAME_RESOURCEFILE, 11, NULL},
+	{ "elkhall.mid", GAME_RESOURCEFILE, 12, NULL},
+	{ "mouse.mid", GAME_RESOURCEFILE, 13, NULL},
+	{ "darkclaw.mid", GAME_RESOURCEFILE, 14, NULL},
+	{ "birdchrp.mid", GAME_RESOURCEFILE, 15, NULL},
+	{ "orbtempl.mid", GAME_RESOURCEFILE, 16, NULL},
+	{ "spooky.mid", GAME_RESOURCEFILE, 17, NULL},
+	{ "catfest.mid", GAME_RESOURCEFILE, 18, NULL},
+	{ "elkfanfare.mid", GAME_RESOURCEFILE, 19, NULL},
+	{ "bcexpl.mid", GAME_RESOURCEFILE, 20, NULL},
+	{ "boargtnt.mid", GAME_RESOURCEFILE, 21, NULL},
+	{ "boarking.mid", GAME_RESOURCEFILE, 22, NULL},
+	{ "explorea.mid", GAME_RESOURCEFILE, 23, NULL},
+	{ "exploreb.mid", GAME_RESOURCEFILE, 24, NULL},
+	{ "explorec.mid", GAME_RESOURCEFILE, 25, NULL},
+	{ "sunstatm.mid", GAME_RESOURCEFILE, 26, NULL},
+	{ "nitstrlm.mid", GAME_RESOURCEFILE, 27, NULL},
+	{ "humruinm.mid", GAME_RESOURCEFILE, 28, NULL},
+	{ "damexplm.mid", GAME_RESOURCEFILE, 29, NULL},
+	{ "tychom.mid", GAME_RESOURCEFILE, 30, NULL},
+	{ "kitten.mid", GAME_RESOURCEFILE, 31, NULL},
+	{ "sweet.mid", GAME_RESOURCEFILE, 32, NULL},
+	{ "brutalmt.mid", GAME_RESOURCEFILE, 33, NULL},
+	{ "shiala.mid", GAME_RESOURCEFILE, 34, NULL},
 
-	{ "wyrm.pak", GAME_RESOURCEFILE, 1529},
-	{ "wyrm1.dlt", GAME_RESOURCEFILE, 1530},
-	{ "wyrm2.dlt", GAME_RESOURCEFILE, 1531},
-	{ "wyrm3.dlt", GAME_RESOURCEFILE, 1532},
-	{ "wyrm4.dlt", GAME_RESOURCEFILE, 1533},
-	{ "credit3n.dlt", GAME_RESOURCEFILE, 1796},
-	{ "credit4n.dlt", GAME_RESOURCEFILE, 1797},
-	{ "p2_a.voc", GAME_VOICEFILE, 4},
+	{ "wyrm.pak", GAME_RESOURCEFILE, 1529, NULL},
+	{ "wyrm1.dlt", GAME_RESOURCEFILE, 1530, NULL},
+	{ "wyrm2.dlt", GAME_RESOURCEFILE, 1531, NULL},
+	{ "wyrm3.dlt", GAME_RESOURCEFILE, 1532, NULL},
+	{ "wyrm4.dlt", GAME_RESOURCEFILE, 1533, NULL},
+	{ "credit3n.dlt", GAME_RESOURCEFILE, 1796, NULL},
+	{ "credit4n.dlt", GAME_RESOURCEFILE, 1797, NULL},
+	{ "p2_a.voc", GAME_VOICEFILE, 4, NULL}
 };
 
 static GamePatchDescription ITEWinPatch2_Files[] = {
-	{ "cave.mid", GAME_RESOURCEFILE, 9},
-	{ "intro.mid", GAME_RESOURCEFILE, 10},
-	{ "fvillage.mid", GAME_RESOURCEFILE, 11},
-	{ "elkfanfare.mid", GAME_RESOURCEFILE, 19},
-	{ "bcexpl.mid", GAME_RESOURCEFILE, 20},
-	{ "boargtnt.mid", GAME_RESOURCEFILE, 21},
-	{ "explorea.mid", GAME_RESOURCEFILE, 23},
-	{ "sweet.mid", GAME_RESOURCEFILE, 32},
+	{ "cave.mid", GAME_RESOURCEFILE, 9, NULL},
+	{ "intro.mid", GAME_RESOURCEFILE, 10, NULL},
+	{ "fvillage.mid", GAME_RESOURCEFILE, 11, NULL},
+	{ "elkfanfare.mid", GAME_RESOURCEFILE, 19, NULL},
+	{ "bcexpl.mid", GAME_RESOURCEFILE, 20, NULL},
+	{ "boargtnt.mid", GAME_RESOURCEFILE, 21, NULL},
+	{ "explorea.mid", GAME_RESOURCEFILE, 23, NULL},
+	{ "sweet.mid", GAME_RESOURCEFILE, 32, NULL},
 
-	{ "wyrm.pak", GAME_RESOURCEFILE, 1529},
-	{ "wyrm1.dlt", GAME_RESOURCEFILE, 1530},
-	{ "wyrm2.dlt", GAME_RESOURCEFILE, 1531},
-	{ "wyrm3.dlt", GAME_RESOURCEFILE, 1532},
+	{ "wyrm.pak", GAME_RESOURCEFILE, 1529, NULL},
+	{ "wyrm1.dlt", GAME_RESOURCEFILE, 1530, NULL},
+	{ "wyrm2.dlt", GAME_RESOURCEFILE, 1531, NULL},
+	{ "wyrm3.dlt", GAME_RESOURCEFILE, 1532, NULL},
 	{ "p2_a.iaf", GAME_VOICEFILE, 4, &ITECD_GameSound}
 /*	boarhall.bbm
 	elkenter.bbm
@@ -459,23 +468,23 @@ static GamePatchDescription ITEWinPatch2_Files[] = {
 };
 
 static GamePatchDescription ITEMacPatch_Files[] = {
-	{ "wyrm.pak", GAME_RESOURCEFILE, 1529},
-	{ "wyrm1.dlt", GAME_RESOURCEFILE, 1530},
-	{ "wyrm2.dlt", GAME_RESOURCEFILE, 1531},
-	{ "wyrm3.dlt", GAME_RESOURCEFILE, 1532},
-	{ "wyrm4.dlt", GAME_RESOURCEFILE, 1533},
-	{ "credit3m.dlt", GAME_RESOURCEFILE, 1796},
-	{ "credit4m.dlt", GAME_RESOURCEFILE, 1797},
+	{ "wyrm.pak", GAME_RESOURCEFILE, 1529, NULL},
+	{ "wyrm1.dlt", GAME_RESOURCEFILE, 1530, NULL},
+	{ "wyrm2.dlt", GAME_RESOURCEFILE, 1531, NULL},
+	{ "wyrm3.dlt", GAME_RESOURCEFILE, 1532, NULL},
+	{ "wyrm4.dlt", GAME_RESOURCEFILE, 1533, NULL},
+	{ "credit3m.dlt", GAME_RESOURCEFILE, 1796, NULL},
+	{ "credit4m.dlt", GAME_RESOURCEFILE, 1797, NULL},
 	{ "p2_a.iaf", GAME_VOICEFILE, 4, &ITEMACCD_GameSound}
 };
 
 static GamePatchDescription ITELinPatch_Files[] = {
-	{ "wyrm.pak", GAME_RESOURCEFILE, 1529},
-	{ "wyrm1.dlt", GAME_RESOURCEFILE, 1530},
-	{ "wyrm2.dlt", GAME_RESOURCEFILE, 1531},
-	{ "wyrm3.dlt", GAME_RESOURCEFILE, 1532},
-	{ "credit3n.dlt", GAME_RESOURCEFILE, 1796},
-	{ "credit4n.dlt", GAME_RESOURCEFILE, 1797},
+	{ "wyrm.pak", GAME_RESOURCEFILE, 1529, NULL},
+	{ "wyrm1.dlt", GAME_RESOURCEFILE, 1530, NULL},
+	{ "wyrm2.dlt", GAME_RESOURCEFILE, 1531, NULL},
+	{ "wyrm3.dlt", GAME_RESOURCEFILE, 1532, NULL},
+	{ "credit3n.dlt", GAME_RESOURCEFILE, 1796, NULL},
+	{ "credit4n.dlt", GAME_RESOURCEFILE, 1797, NULL},
 	{ "P2_A.iaf", GAME_VOICEFILE, 4, &ITECD_GameSound}
 };
 
@@ -685,6 +694,12 @@ static GameMD5 gameMD5[] = {
 	{ GID_ITE_MACCD,    "95863b89a0916941f6c5e1789843ba14", "sounds.rsc", false },
 	{ GID_ITE_MACCD,    "c14c4c995e7a0d3828e3812a494301b7", "Inherit the Earth Voices", true },
 
+	{ GID_ITE_MACCD_G,  "4f7fa11c5175980ed593392838523060", "ITE Resources", true },
+	{ GID_ITE_MACCD_G,  "adf1f46c1d0589083996a7060c798ad0", "ITE Scripts", true },
+	{ GID_ITE_MACCD_G,  "d41d8cd98f00b204e9800998ecf8427e", "ITE Music", true },
+	{ GID_ITE_MACCD_G,  "8ee4d9ee27688785608d09faaa4a974c", "ITE Sounds", true },
+	{ GID_ITE_MACCD_G,  "3a1463f0c6a41381e98c2a8c55308190", "ITE Voices", true },
+
 	{ GID_ITE_LINCD,    "8f4315a9bb10ec839253108a032c8b54", "ite.rsc", false },
 	{ GID_ITE_LINCD,    "a891405405edefc69c9d6c420c868b84", "scripts.rsc", false },
 	{ GID_ITE_LINCD,    "e2ccb61c325d6d1ead3be0e731fe29fe", "sounds.rsc", false },
@@ -828,12 +843,33 @@ static GameDescription gameDescriptions[] = {
 		GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_WYRMKEEP | GF_CD_FX
 	},
 
+	// Inherit the earth - MAC CD Guild version
+	{
+		"ite-demo",
+		GType_ITE,
+		GID_ITE_MACCD_G,
+		"Inherit the Earth (MAC CD)",
+		&ITE_DisplayInfo,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITEMACCD_G_GameFiles),
+		ITEMACCD_G_GameFiles,
+		ARRAYSIZE(ITEWINDEMO_GameFonts),
+		ITEWINDEMO_GameFonts,
+		&ITEMACDEMO_GameVoice,
+		&ITEMACDEMO_GameSound,
+		&ITEMACCD_GameMusic,
+		NULL,
+		0,
+		GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_CD_FX
+	},
+
 	// Inherit the earth - MAC CD Wyrmkeep version
 	{
 		"ite",
 		GType_ITE,
 		GID_ITE_MACCD,
-		"Inherit the Earth (MAC CD)",
+		"Inherit the Earth (Wyrmkeep MAC CD)",
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,

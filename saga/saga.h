@@ -252,7 +252,7 @@ enum GameIds {
 	GID_ITE_DEMO_G = 0,
 	GID_ITE_DISK_G,
 	GID_ITE_CD_G,
-	GID_ITE_MAC_G,  // TODO
+	GID_ITE_MACCD_G,
 
 	// Wyrmkeep
 	GID_ITE_CD,       // data for Win rerelease is same as in old DOS
@@ -358,7 +358,7 @@ struct GamePatchDescription {
 	const char *fileName;
 	uint16 fileType;
 	uint32 resourceId;
-	GameSoundInfo * soundInfo;
+	GameSoundInfo *soundInfo;
 };
 
 struct PanelButton {
