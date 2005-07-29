@@ -41,7 +41,7 @@ enum RENDER_FLAGS {
 	RF_ACTOR_PATH_TEST = (1 << 7),
 	RF_MAP = (1 << 8),
 	RF_DISABLE_ACTORS = (1 << 9),
-	RF_DEMO_SUBST = (1 << 10),
+	RF_DEMO_SUBST = (1 << 10)
 };
 
 class Render {
