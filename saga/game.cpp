@@ -804,7 +804,7 @@ static GameDescription gameDescriptions[] = {
 		&ITEMACDEMO_GameMusic,
 		ARRAYSIZE(ITEMacPatch_Files),
 		ITEMacPatch_Files,
-		GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_WYRMKEEP | GF_CD_FX
+		GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_WYRMKEEP | GF_CD_FX | GF_SCENE_SUBSTITUTES
 	},
 
 	// Inherit the earth - early MAC Demo version
@@ -868,7 +868,7 @@ static GameDescription gameDescriptions[] = {
 		&ITELINDEMO_GameMusic,
 		ARRAYSIZE(ITELinPatch_Files),
 		ITELinPatch_Files,
-		GF_WYRMKEEP | GF_CD_FX
+		GF_WYRMKEEP | GF_CD_FX | GF_SCENE_SUBSTITUTES
 	},
 
 	// Inherit the earth - Win32 Demo version
@@ -889,7 +889,7 @@ static GameDescription gameDescriptions[] = {
 		NULL,
 		ARRAYSIZE(ITEWinPatch2_Files),
 		ITEWinPatch2_Files,
-		GF_WYRMKEEP | GF_CD_FX
+		GF_WYRMKEEP | GF_CD_FX | GF_SCENE_SUBSTITUTES
 	},
 
 	// Inherit the earth - early Win32 Demo version

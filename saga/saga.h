@@ -304,7 +304,8 @@ enum GameFeatures {
 	GF_MAC_RESOURCES     = 1 << 1,
 	GF_LANG_DE           = 1 << 2,
 	GF_WYRMKEEP          = 1 << 3,
-	GF_CD_FX             = 1 << 4
+	GF_CD_FX             = 1 << 4,
+	GF_SCENE_SUBSTITUTES = 1 << 5
 };
 
 enum FontId {

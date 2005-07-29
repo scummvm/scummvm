@@ -364,30 +364,33 @@ static struct SceneSubstitutes {
 void Scene::changeScene(uint16 sceneNumber, int actorsEntrance, SceneTransitionType transitionType) {
 	// This is used for latter demos where all places on world map except
 	// Tent Faire are substituted with LBM picture and short description
-	for (int i = 0; i < ARRAYSIZE(sceneSubstitutes); i++) {
+	if (_vm->getFeatures() & GF_SCENE_SUBSTITUTES) {
+		for (int i = 0; i < ARRAYSIZE(sceneSubstitutes); i++) {
+			if (sceneSubstitutes[i].sceneId == sceneNumber) {
+				Surface *backBuffer = _vm->_gfx->getBackBuffer();
+				Surface bbmBuffer;
+				byte *pal, *colors;
+				Common::File file;
+				Rect rect;
+				PalEntry cPal[PAL_ENTRIES];
 
-		if (sceneSubstitutes[i].sceneId == sceneNumber) {
-			Surface *backBuffer = _vm->_gfx->getBackBuffer();
-			Surface bbmBuffer;
-			byte *pal, *colors;
-			Common::File file;
-			Rect rect;
-			PalEntry cPal[PAL_ENTRIES];
-
-			if (file.open(sceneSubstitutes[i].image)) {
 				_vm->_interface->setMode(kPanelSceneSubstitute);
-				Graphics::decodeILBM(file, bbmBuffer, pal);
-				colors = pal;
-				rect.setWidth(bbmBuffer.w);
-				rect.setHeight(bbmBuffer.h);
-				backBuffer->blit(rect, (const byte*)bbmBuffer.pixels);
-				for (int j = 0; j < PAL_ENTRIES; j++) {
-					cPal[j].red = *pal++;
-					cPal[j].green = *pal++;
-					cPal[j].blue = *pal++;
+
+				if (file.open(sceneSubstitutes[i].image)) {
+					Graphics::decodeILBM(file, bbmBuffer, pal);
+					colors = pal;
+					rect.setWidth(bbmBuffer.w);
+					rect.setHeight(bbmBuffer.h);
+					backBuffer->blit(rect, (const byte*)bbmBuffer.pixels);
+					for (int j = 0; j < PAL_ENTRIES; j++) {
+						cPal[j].red = *pal++;
+						cPal[j].green = *pal++;
+						cPal[j].blue = *pal++;
+					}
+					free(colors);
+					_vm->_gfx->setPalette(cPal);
+
 				}
-				free(colors);
-				_vm->_gfx->setPalette(cPal);
 
 				_vm->_interface->setStatusText("Click or Press Return to continue. Press Q to quit.", 96);
 				_vm->_font->textDrawRect(kMediumFont, backBuffer, sceneSubstitutes[i].title,
