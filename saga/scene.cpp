@@ -385,9 +385,9 @@ void Scene::changeScene(uint16 sceneNumber, int actorsEntrance, SceneTransitionT
 				_vm->_gfx->setPalette(cPal);
 				free(colors);
 				_vm->_font->textDrawRect(kMediumFont, backBuffer, sceneSubstitutes[i].title,
-					 Common::Rect(0, 10, _vm->getDisplayWidth(), 30), 1, 15, kFontOutline);
+					 Common::Rect(0, 7, _vm->getDisplayWidth(), 27), 1, 15, kFontOutline);
 				_vm->_font->textDrawRect(kMediumFont, backBuffer, sceneSubstitutes[i].message,
-					 Common::Rect(20, _vm->getSceneHeight() - 40, _vm->getDisplayWidth() - 20,
+					 Common::Rect(24, _vm->getSceneHeight() - 33, _vm->getDisplayWidth()-11,
 								  _vm->getSceneHeight()), 1, 15, kFontOutline);
 			}
 			return;
