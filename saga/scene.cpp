@@ -310,7 +310,7 @@ void Scene::skipScene() {
 static struct SceneSubstitutes {
     int sceneId;
     const char *message;
-    const char *name;
+    const char *title;
     const char *image;
 } sceneSubstitutes[] = {
     { 
@@ -364,27 +364,32 @@ static struct SceneSubstitutes {
 void Scene::changeScene(uint16 sceneNumber, int actorsEntrance, SceneTransitionType transitionType) {
 	// This is used for latter demos where all places on world map except
 	// Tent Faire are substituted with LBM picture and short description
-	// TODO: implement
 	for (int i = 0; i < ARRAYSIZE(sceneSubstitutes); i++) {
 	
 		if (sceneSubstitutes[i].sceneId == sceneNumber) {
 			Surface *backBuffer = _vm->_gfx->getBackBuffer();
-			byte *pal;
+			byte *pal, *colors;
 			Common::File file;
 			PalEntry cPal[PAL_ENTRIES];
 
 			if (file.open(sceneSubstitutes[i].image)) {
 				_vm->_interface->setStatusText("Click or Press Return to continue. Press Q to quit.");
 				_vm->_interface->setMode(kPanelSceneSubstitute);
-				Graphics::decodeILBM(file, *backBuffer, pal);
+				Graphics::decodeILBM(file, *backBuffer, colors);
+				pal = colors;
 				for (int j = 0; j < PAL_ENTRIES; j++) {
 					cPal[j].red = *pal++;
 					cPal[j].green = *pal++;
 					cPal[j].blue = *pal++;
 				}
 				_vm->_gfx->setPalette(cPal);
+				free(colors);
+				_vm->_font->textDrawRect(kMediumFont, backBuffer, sceneSubstitutes[i].title,
+					 Common::Rect(0, 10, _vm->getDisplayWidth(), 30), 1, 15, kFontOutline);
+				_vm->_font->textDrawRect(kMediumFont, backBuffer, sceneSubstitutes[i].message,
+					 Common::Rect(20, _vm->getSceneHeight() - 40, _vm->getDisplayWidth() - 20,
+								  _vm->getSceneHeight()), 1, 15, kFontOutline);
 			}
-			debug(0, "Scene %d substitute exists", sceneNumber);
 			return;
 		}
 	}
