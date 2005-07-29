@@ -45,7 +45,7 @@ static int detectGame(const FSList &fslist, bool mode = false, int start = -1);
 static PanelButton ITE_MainPanelButtons[] = {
 	{kPanelButtonVerb,		52,4,	57,10,	kVerbWalkTo,'w',0,	0,1,0},
 	{kPanelButtonVerb,		52,15,	57,10,	kVerbLookAt,'l',0,	2,3,0},
-	{kPanelButtonVerb,		52,26,	57,10,	kVerbPickUp,'p',0,	4,5,0}, 
+	{kPanelButtonVerb,		52,26,	57,10,	kVerbPickUp,'p',0,	4,5,0},
 	{kPanelButtonVerb,		52,37,	57,10,	kVerbTalkTo,'t',0,	0,1,0},
 	{kPanelButtonVerb,		110,4,	56,10,	kVerbOpen,'o',0,	6,7,0},
 	{kPanelButtonVerb,		110,15,	56,10,	kVerbClose,'c',0,	8,9,0},
@@ -53,7 +53,7 @@ static PanelButton ITE_MainPanelButtons[] = {
 	{kPanelButtonVerb,		110,37,	56,10,	kVerbGive,'g',0,	12,13,0},
 	{kPanelButtonArrow,		306,6,	8,5,	-1,'U',0,			0,4,2},
 	{kPanelButtonArrow,		306,41,	8,5,	1,'D',0,			1,5,3},
-	
+
 	{kPanelButtonInventory,	181 + 32*0,6,	27,18,	0,'-',0,	0,0,0},
 	{kPanelButtonInventory,	181 + 32*1,6,	27,18,	1,'-',0,	0,0,0},
 	{kPanelButtonInventory,	181 + 32*2,6,	27,18,	2,'-',0,	0,0,0},
@@ -71,7 +71,7 @@ static PanelButton ITE_ConversePanelButtons[] = {
 	{kPanelButtonConverseText,	52,6 + CONVERSE_TEXT_HEIGHT * 2, CONVERSE_MAX_TEXT_WIDTH,CONVERSE_TEXT_HEIGHT,	2,'3',0,	0,0,0},
 	{kPanelButtonConverseText,	52,6 + CONVERSE_TEXT_HEIGHT * 3, CONVERSE_MAX_TEXT_WIDTH,CONVERSE_TEXT_HEIGHT,	3,'4',0,	0,0,0},
 	{kPanelButtonArrow,			257,6,	9,6,	-1,'u',0,	0,4,2},
-	{kPanelButtonArrow,			257,41,	9,6,	1,'d',0,	1,5,3}, 
+	{kPanelButtonArrow,			257,41,	9,6,	1,'d',0,	1,5,3},
 };
 
 static PanelButton ITE_OptionPanelButtons[] = {
@@ -116,10 +116,10 @@ static PanelButton ITE_ProtectionPanelButtons[] = {
 
 static GameDisplayInfo ITE_DisplayInfo = {
 	320, 200,		// logical width&height
-	
+
 	35,				// scene path y offset
 	137,			// scene height
-	
+
 	0,				// status x offset
 	137,			// status y offset
 	320,			// status width
@@ -134,7 +134,7 @@ static GameDisplayInfo ITE_DisplayInfo = {
 	147,			// verb text color
 	15,				// verb text shadow color
 	96,				// verb text active color
-	
+
 	5, 4,			// left portrait x, y offset
 	274, 4,			// right portrait x, y offset
 
@@ -149,7 +149,7 @@ static GameDisplayInfo ITE_DisplayInfo = {
 	0, 148,			// converse panel offsets
 	ARRAYSIZE(ITE_ConversePanelButtons),
 	ITE_ConversePanelButtons,
-	
+
 	8, 0,			// save file index
 	8,				// optionSaveFileVisible
 	8, 8,			// option panel offsets
@@ -197,7 +197,7 @@ static GameFileDescription ITEDEMO_GameFiles[] = {
 static GameFontDescription ITEDEMO_GameFonts[] = {
 	{0},
 	{1}
-}; 
+};
 
 static GameSoundInfo ITEDEMO_GameSound = {
 	kSoundVOC,
@@ -219,7 +219,7 @@ static GameFileDescription ITEWINDEMO_GameFiles[] = {
 static GameFontDescription ITEWINDEMO_GameFonts[] = {
 	{2},
 	{0}
-}; 
+};
 
 static GameSoundInfo ITEWINDEMO1_GameSound = {
 	kSoundPCM,
@@ -366,9 +366,9 @@ static GameFontDescription ITEDISK_GameFonts[] = {
 };
 
 static GameSoundInfo ITEDISK_GameSound = {
-	kSoundVOC, 
-	-1, 
-	-1, 
+	kSoundVOC,
+	-1,
+	-1,
 	false,
 	false,
 	true
@@ -508,7 +508,7 @@ static PanelButton IHNM_SavePanelButtons[] = {
 
 static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	640, 480,	// logical width&height
-	
+
 	0,			// scene path y offset
 	304,		// scene height
 
@@ -542,7 +542,7 @@ static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	0, 0,		// converse panel offsets
 	ARRAYSIZE(IHNM_ConversePanelButtons),
 	IHNM_ConversePanelButtons,
-	
+
 	-1, -1,		// save file index
 	0,			// optionSaveFileVisible
 	0, 0,		// option panel offsets
@@ -870,7 +870,7 @@ static GameDescription gameDescriptions[] = {
 		ITELinPatch_Files,
 		GF_WYRMKEEP | GF_CD_FX
 	},
-	
+
 	// Inherit the earth - Win32 Demo version
 	{
 		"ite-demo",
@@ -891,7 +891,7 @@ static GameDescription gameDescriptions[] = {
 		ITEWinPatch2_Files,
 		GF_WYRMKEEP | GF_CD_FX
 	},
-	
+
 	// Inherit the earth - early Win32 Demo version
 	{
 		"ite-demo",
@@ -934,7 +934,7 @@ static GameDescription gameDescriptions[] = {
 		NULL,
 		GF_WYRMKEEP | GF_CD_FX
 	},
-	
+
 	// Inherit the earth - Wyrmkeep Linux CD version
 	// should be before GID_ITE_CD_G
 	// sound unchecked
@@ -1169,8 +1169,8 @@ bool SagaEngine::initGame(void) {
 	_gameNumber = gameNumber;
 	_gameDescription = &gameDescriptions[gameNumber];
 	_gameDisplayInfo = *_gameDescription->gameDisplayInfo;
-	_displayClip.right = _gameDisplayInfo.logicalWidth; 
-	_displayClip.bottom = _gameDisplayInfo.logicalHeight; 
+	_displayClip.right = _gameDisplayInfo.logicalWidth;
+	_displayClip.bottom = _gameDisplayInfo.logicalHeight;
 
 	if (!_resource->createContexts()) {
 		return false;
@@ -1232,7 +1232,7 @@ int detectGame(const FSList &fslist, bool mode, int start) {
 				// makes tstr1 lowercase as well
 				tstr1 = Common::String(file->displayName().c_str());
 				tstr.toLowercase();
-				
+
 				if (filesList.contains(tstr) || filesList.contains(tstr1)) {
 					if (Common::md5_file(file->path().c_str(), md5sum, NULL, FILE_MD5_BYTES)) {
 						for (int j = 0; j < 16; j++) {
@@ -1274,7 +1274,7 @@ int detectGame(const FSList &fslist, bool mode, int start) {
 			}
 		}
 
-		// Try the next game, couldn't find all files for the current 
+		// Try the next game, couldn't find all files for the current
 		// game
 		if (file_missing) {
 			continue;

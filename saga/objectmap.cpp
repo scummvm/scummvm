@@ -21,7 +21,7 @@
  *
  */
 
-// Object map / Object click-area module 
+// Object map / Object click-area module
 
 // Polygon Hit Test code ( HitTestPoly() ) adapted from code (C) Eric Haines
 // appearing in Graphics Gems IV, "Point in Polygon Strategies."
@@ -61,7 +61,7 @@ HitZone::HitZone(MemoryReadStreamEndian *readStream, int index): _index(index) {
 	for (i = 0; i < _clickAreasCount; i++) {
 		clickArea = &_clickAreas[i];
 		clickArea->pointsCount = readStream->readUint16LE();
-		
+
 		assert(clickArea->pointsCount);
 
 		clickArea->points = (Point *)malloc(clickArea->pointsCount * sizeof(*(clickArea->points)));
@@ -113,7 +113,7 @@ bool HitZone::hitTest(const Point &testPoint) {
 
 			if (pointsCount == 2) {
 				// Hit-test a box region
-				if ((testPoint.x >= points[0].x) && 
+				if ((testPoint.x >= points[0].x) &&
 					(testPoint.x <= points[1].x) &&
 					(testPoint.y >= points[0].y) &&
 					(testPoint.y <= points[1].y)) {
@@ -124,7 +124,7 @@ bool HitZone::hitTest(const Point &testPoint) {
 					// Hit-test a polygon
 					if (hitTestPoly(points, pointsCount, testPoint)) {
 						return true;
-					}				
+					}
 				}
 			}
 		}
@@ -147,7 +147,7 @@ void HitZone::draw(SagaEngine *vm, Surface *ds, int color) {
 				location.v() = clickArea->points[j].y;
 				location.z = 0;
 				vm->_isoMap->tileCoordsToScreenPoint(location, points[j]);
-			}			
+			}
 		} else {
 			points = clickArea->points;
 		}
@@ -169,7 +169,7 @@ void HitZone::draw(SagaEngine *vm, Surface *ds, int color) {
 }
 
 
-// Loads an object map resource ( objects ( clickareas ( points ) ) ) 
+// Loads an object map resource ( objects ( clickareas ( points ) ) )
 void ObjectMap::load(const byte *resourcePointer, size_t resourceLength) {
 	int i;
 
@@ -234,11 +234,11 @@ void ObjectMap::draw(Surface *ds, const Point& testPoint, int color, int color2)
 
 	hitZoneIndex = hitTest(pickPoint);
 
-	for (i = 0; i < _hitZoneListCount; i++) {		
+	for (i = 0; i < _hitZoneListCount; i++) {
 		_hitZoneList[i]->draw(_vm, ds, (hitZoneIndex == i) ? color2 : color);
 	}
 
-	if (hitZoneIndex != -1) {		
+	if (hitZoneIndex != -1) {
 		snprintf(txtBuf, sizeof(txtBuf), "hitZone %d", hitZoneIndex);
 		textPoint.x = 2;
 		textPoint.y = 2;

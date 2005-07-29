@@ -80,7 +80,7 @@ void Surface::drawPalette() {
 void Surface::blit(const Common::Rect &destRect, const byte *sourceBuffer) {
 	const byte *readPointer;
 	byte *writePointer;
-	int row;	
+	int row;
 	ClipData clipData;
 
 	clipData.sourceRect.left = 0;
@@ -94,13 +94,13 @@ void Surface::blit(const Common::Rect &destRect, const byte *sourceBuffer) {
 	clipData.destRect.right = w;
 	clipData.destRect.top = 0;
 	clipData.destRect.bottom = h;
-	
+
 	if (!clipData.calcClip()) {
 		return;
 	}
-   
+
 	// Transfer buffer data to surface
-	readPointer = (sourceBuffer + clipData.drawSource.x) + 
+	readPointer = (sourceBuffer + clipData.drawSource.x) +
 						(clipData.sourceRect.right * clipData.drawSource.y);
 
 	writePointer = ((byte *)pixels + clipData.drawDest.x) + (pitch * clipData.drawDest.y);
@@ -205,7 +205,7 @@ void Gfx::palToBlack(PalEntry *src_pal, double percent) {
 
 	fpercent = 1.0 - fpercent;
 
-	// Use the correct percentage change per frame for each palette entry 
+	// Use the correct percentage change per frame for each palette entry
 	for (i = 0, ppal = _currentPal; i < PAL_ENTRIES; i++, ppal += 4) {
 		new_entry = (int)(src_pal[i].red * fpercent);
 

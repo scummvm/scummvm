@@ -44,18 +44,18 @@ ScriptThread *Script::createThread(uint16 scriptModuleNumber, uint16 scriptEntry
 	if (_modules[scriptModuleNumber].entryPointsCount <= scriptEntryPointNumber) {
 		error("Script::createThread wrong scriptEntryPointNumber");
 	}
-		
+
 	newThread = _threadList.pushFront().operator->();
 	newThread->_flags = kTFlagNone;
 	newThread->_stackSize = DEFAULT_THREAD_STACK_SIZE;
 	newThread->_stackBuf = (uint16 *)malloc(newThread->_stackSize * sizeof(*newThread->_stackBuf));
-	newThread->_stackTopIndex = newThread->_stackSize - 2; 
+	newThread->_stackTopIndex = newThread->_stackSize - 2;
 	newThread->_instructionOffset = _modules[scriptModuleNumber].entryPoints[scriptEntryPointNumber].offset;
 	newThread->_commonBase = _commonBuffer;
 	newThread->_staticBase = _commonBuffer + _modules[scriptModuleNumber].staticOffset;
 	newThread->_moduleBase = _modules[scriptModuleNumber].moduleBase;
 	newThread->_moduleBaseSize = _modules[scriptModuleNumber].moduleBaseSize;
-	
+
 	newThread->_strings = &_modules[scriptModuleNumber].strings;
 	newThread->_voiceLUT = &_modules[scriptModuleNumber].voiceLUT;
 
@@ -77,7 +77,7 @@ void Script::wakeUpActorThread(int waitType, void *threadObj) {
 void Script::wakeUpThreads(int waitType) {
 	ScriptThread *thread;
 	ScriptThreadList::iterator threadIterator;
-	
+
 	for (threadIterator = _threadList.begin(); threadIterator != _threadList.end(); ++threadIterator) {
 		thread = threadIterator.operator->();
 		if ((thread->_flags & kTFlagWaiting) && (thread->_waitType == waitType)) {
@@ -116,13 +116,13 @@ void Script::executeThreads(uint msec) {
 		if (thread->_flags & (kTFlagFinished | kTFlagAborted)) {
 			if (thread->_flags & kTFlagFinished)
 				setPointerVerb();
-			
+
 			threadIterator = _threadList.erase(threadIterator);
 			continue;
 		}
 
 		if (thread->_flags & kTFlagWaiting) {
-			
+
 			if (thread->_waitType == kWaitTypeDelay) {
 				if (thread->_sleepTime < msec) {
 					thread->_sleepTime = 0;
@@ -131,13 +131,13 @@ void Script::executeThreads(uint msec) {
 				}
 
 				if (thread->_sleepTime == 0)
-					thread->_flags &= ~kTFlagWaiting;			
+					thread->_flags &= ~kTFlagWaiting;
 			} else {
 				if (thread->_waitType == kWaitTypeWalk) {
 					ActorData *actor;
 					actor = (ActorData *)thread->_threadObj;
 					if (actor->currentAction == kActionWait) {
-						thread->_flags &= ~kTFlagWaiting;			
+						thread->_flags &= ~kTFlagWaiting;
 					}
 				}
 			}
@@ -192,7 +192,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 
 	int operandChar;
 	int i;
-	
+
 	MemoryReadStream scriptS(thread->_moduleBase, thread->_moduleBaseSize);
 
 	scriptS.seek(thread->_instructionOffset);
@@ -211,7 +211,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 								debug(8, operandName);								\
 								_vm->_console->DebugPrintf("%s\n", operandName);	\
 							}
-						
+
 //		debug(8, "Executing thread offset: %lu (%x) stack: %d", thread->_instructionOffset, operandChar, thread->pushedSize());
 		operandName="";
 		switch (operandChar) {
@@ -241,7 +241,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			debug(8, "0x%X", iparam1);
 			break;
 
-// DATA INSTRUCTIONS  
+// DATA INSTRUCTIONS
 		CASEOP(opGetFlag)
 			addr = thread->baseAddress(scriptS.readByte());
 			iparam1 = scriptS.readSint16LE();
@@ -291,7 +291,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			*(uint16*)addr =  thread->pop();
 			break;
 
-// FUNCTION CALL INSTRUCTIONS    
+// FUNCTION CALL INSTRUCTIONS
 		CASEOP(opCall)
 			argumentsCount = scriptS.readByte();
 			iparam1 = scriptS.readByte();
@@ -311,13 +311,13 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			// NOTE2: program counter is 32bit - so we should "emulate" it size - because kAddressStack relies on it
 			thread->push(0);
 			thread->_instructionOffset = iparam1;
-			
+
 			break;
 		CASEOP(opCcall)
 		CASEOP(opCcallV)
 			argumentsCount = scriptS.readByte();
 			functionNumber = scriptS.readUint16LE();
-			if (functionNumber >= ((_vm->getGameType() == GType_IHNM) ? 
+			if (functionNumber >= ((_vm->getGameType() == GType_IHNM) ?
 								   IHNM_SCRIPT_FUNCTION_MAX : ITE_SCRIPT_FUNCTION_MAX)) {
 				error("Script::runThread() Invalid script function number (%d)", functionNumber);
 			}
@@ -372,7 +372,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			}
 			break;
 
-// BRANCH INSTRUCTIONS    
+// BRANCH INSTRUCTIONS
 		CASEOP(opJmp)
 			jmpOffset1 = scriptS.readUint16LE();
 			thread->_instructionOffset = jmpOffset1;
@@ -424,7 +424,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			while (1) {
 				iparam2 = scriptS.readSint16LE();
 				thread->_instructionOffset = scriptS.readUint16LE();
-				
+
 				iparam1 -= iparam2;
 				if (iparam1 < 0) {
 					break;
@@ -470,7 +470,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			*(uint16*)addr -= 1;
 			break;
 
-// ARITHMETIC INSTRUCTIONS    
+// ARITHMETIC INSTRUCTIONS
 		CASEOP(opAdd)
 			iparam2 = thread->pop();
 			iparam1 = thread->pop();
@@ -502,7 +502,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			thread->push(iparam1);
 			break;
 
-// COMPARISION INSTRUCTIONS    
+// COMPARISION INSTRUCTIONS
 		CASEOP(opEq)
 			iparam2 = thread->pop();
 			iparam1 = thread->pop();
@@ -535,7 +535,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			thread->push((iparam1 <= iparam2) ? 1 : 0);
 			break;
 
-// SHIFT INSTRUCTIONS    
+// SHIFT INSTRUCTIONS
 		CASEOP(opRsh)
 			iparam2 = thread->pop();
 			iparam1 = thread->pop();
@@ -549,7 +549,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			thread->push(iparam1);
 			break;
 
-// BITWISE INSTRUCTIONS   
+// BITWISE INSTRUCTIONS
 		CASEOP(opAnd)
 			iparam2 = thread->pop();
 			iparam1 = thread->pop();
@@ -569,7 +569,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			thread->push(iparam1);
 			break;
 
-// LOGICAL INSTRUCTIONS     
+// LOGICAL INSTRUCTIONS
 		CASEOP(opLAnd)
 			iparam2 = thread->pop();
 			iparam1 = thread->pop();
@@ -582,11 +582,11 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			break;
 		CASEOP(opLXor)
 			iparam2 = thread->pop();
-			iparam1 = thread->pop();			
+			iparam1 = thread->pop();
 			thread->push(((iparam1 && !iparam2) || (!iparam1 && iparam2)) ? 1 : 0);
 			break;
 
-// GAME INSTRUCTIONS  
+// GAME INSTRUCTIONS
 		CASEOP(opSpeak) {
 				int stringsCount;
 				uint16 actorId;
@@ -604,13 +604,13 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 				actorId =  scriptS.readUint16LE();
 				speechFlags = scriptS.readByte();
 				scriptS.readUint16LE(); // x,y skip
-				
+
 				if (stringsCount == 0)
 					error("opSpeak stringsCount == 0");
 
 				if (stringsCount > ACTOR_SPEECH_STRING_MAX)
 					error("opSpeak stringsCount=0x%X exceed ACTOR_SPEECH_STRING_MAX", stringsCount);
-				
+
 				iparam1 = first = thread->stackTop();
 				for (i = 0; i < stringsCount; i++) {
 					 iparam1 = thread->pop();
@@ -619,7 +619,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 				// now data contains last string index
 
 				if (_vm->getGameId() == GID_ITE_DISK_G) { // special ITE dos
-					if ((_vm->_scene->currentSceneNumber() == ITE_DEFAULT_SCENE) && 
+					if ((_vm->_scene->currentSceneNumber() == ITE_DEFAULT_SCENE) &&
 						(iparam1 >= 288) && (iparam1 <= (RID_SCENE1_VOICE_138 - RID_SCENE1_VOICE_009 + 288))) {
 						sampleResourceId = RID_SCENE1_VOICE_009 + iparam1 - 288;
 					}
@@ -629,7 +629,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 					}
 				}
 
-				_vm->_actor->actorSpeech(actorId, strings, stringsCount, sampleResourceId, speechFlags);				
+				_vm->_actor->actorSpeech(actorId, strings, stringsCount, sampleResourceId, speechFlags);
 
 				if (!(speechFlags & kSpeakAsync)) {
 					thread->wait(kWaitTypeSpeech);
@@ -686,7 +686,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 
 		if (thread->_flags & (kTFlagFinished | kTFlagAborted)) {
 			error("Wrong flags %d in thread", thread->_flags);
-		} 
+		}
 
 		// Set instruction offset only if a previous instruction didn't branch
 		if (savedInstructionOffset == thread->_instructionOffset) {
@@ -697,7 +697,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			}
 
 			scriptS.seek(thread->_instructionOffset);
-		}	
+		}
 	}
 	return false;
 }

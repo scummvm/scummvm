@@ -49,7 +49,7 @@
 namespace Saga {
 
 static int initSceneDoors[SCENE_DOORS_MAX] = {
-	0, 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff 
+	0, 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff
 };
 
 static SAGAResourceTypes ITESceneResourceTypes[26] = {
@@ -152,7 +152,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm) {
 
 	debug(3, "First scene set to %d.", _firstScene);
 
-	debug(3, "LUT has %d entries.", _sceneCount);		
+	debug(3, "LUT has %d entries.", _sceneCount);
 
 	_sceneLoaded = false;
 	_sceneNumber = 0;
@@ -186,7 +186,7 @@ void Scene::drawTextList(Surface *ds) {
 				_vm->_font->textDrawRect(entry->fontId, ds, entry->text, entry->rect, entry->color, entry->effectColor, entry->flags);
 			} else {
 				_vm->_font->textDraw(entry->fontId, ds, entry->text, entry->point, entry->color, entry->effectColor, entry->flags);
-			}			
+			}
 		}
 	}
 }
@@ -226,7 +226,7 @@ void Scene::startScene() {
 	// Load the head in scene queue
 	queueIterator = _sceneQueue.begin();
 	if (queueIterator == _sceneQueue.end()) {
-		return; 
+		return;
 	}
 
 	sceneQueue = queueIterator.operator->();
@@ -253,7 +253,7 @@ void Scene::nextScene() {
 	if (queueIterator == _sceneQueue.end()) {
 		return;
 	}
-	
+
 	queueIterator = _sceneQueue.erase(queueIterator);
 
 	if (queueIterator == _sceneQueue.end()) {
@@ -313,7 +313,7 @@ static struct SceneSubstitutes {
     const char *title;
     const char *image;
 } sceneSubstitutes[] = {
-    { 
+    {
 		7,
 		"Tycho says he knows much about the northern lands. Can Rif convince "
 		"the Dog to share this knowledge?",
@@ -365,7 +365,7 @@ void Scene::changeScene(uint16 sceneNumber, int actorsEntrance, SceneTransitionT
 	// This is used for latter demos where all places on world map except
 	// Tent Faire are substituted with LBM picture and short description
 	for (int i = 0; i < ARRAYSIZE(sceneSubstitutes); i++) {
-	
+
 		if (sceneSubstitutes[i].sceneId == sceneNumber) {
 			Surface *backBuffer = _vm->_gfx->getBackBuffer();
 			Surface bbmBuffer;
@@ -388,15 +388,15 @@ void Scene::changeScene(uint16 sceneNumber, int actorsEntrance, SceneTransitionT
 				}
 				free(colors);
 				_vm->_gfx->setPalette(cPal);
-				
+
 				_vm->_interface->setStatusText("Click or Press Return to continue. Press Q to quit.");
 				_vm->_font->textDrawRect(kMediumFont, backBuffer, sceneSubstitutes[i].title,
 					 Common::Rect(0, 7, _vm->getDisplayWidth(), 27), 1, 15, kFontOutline);
 				_vm->_font->textDrawRect(kMediumFont, backBuffer, sceneSubstitutes[i].message,
 					 Common::Rect(24, _vm->getSceneHeight() - 33, _vm->getDisplayWidth() - 11,
 								  _vm->getSceneHeight()), 1, 15, kFontOutline);
+				return;
 			}
-			return;
 		}
 	}
 
@@ -415,7 +415,7 @@ void Scene::changeScene(uint16 sceneNumber, int actorsEntrance, SceneTransitionT
 }
 
 void Scene::getSlopes(int &beginSlope, int &endSlope) {
-	beginSlope = _vm->getSceneHeight() - _sceneDescription.beginSlope; 
+	beginSlope = _vm->getSceneHeight() - _sceneDescription.beginSlope;
 	endSlope = _vm->getSceneHeight() - _sceneDescription.endSlope;
 }
 
@@ -556,7 +556,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		_resourceListCount = loadSceneParams->sceneDescription->resourceListCount;
 		break;
 	}
-	
+
 	debug(3, "Loading scene number %u:", _sceneNumber);
 
 	// Load scene descriptor and resource list resources
@@ -597,15 +597,15 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	}
 
 	_sceneLoaded = true;
-	
+
 	q_event = NULL;
 
-	//fix placard bug 
+	//fix placard bug
 	//i guess we should remove RF_PLACARD flag - and use _interface->getMode()
 	event.type = ONESHOT_EVENT;
 	event.code = GRAPHICS_EVENT;
 	event.op = EVENT_CLEARFLAG;
-	event.param = RF_PLACARD; 
+	event.param = RF_PLACARD;
 
 	q_event = _vm->_events->chain(q_event, &event);
 
@@ -818,12 +818,12 @@ void Scene::loadSceneResourceList(uint32 resourceId) {
 
 	MemoryReadStreamEndian readS(resourceListData, resourceListDataLength, _sceneContext->isBigEndian);
 
-	// Allocate memory for scene resource list 
+	// Allocate memory for scene resource list
 	_resourceListCount = resourceListDataLength / SAGA_RESLIST_ENTRY_LEN;
 	debug(3, "Scene resource list contains %i entries", _resourceListCount);
 	_resourceList = (SceneResourceData *)calloc(_resourceListCount, sizeof(*_resourceList));
 
-	// Load scene resource list from raw scene 
+	// Load scene resource list from raw scene
 	// resource table
 	debug(3, "Loading scene resource list");
 
@@ -861,7 +861,7 @@ void Scene::processSceneResources() {
 		}
 		resourceData = _resourceList[i].buffer;
 		resourceDataLength = _resourceList[i].size;
-		
+
 		if (_resourceList[i].resourceType >= typesCount) {
 			error("Scene::processSceneResources() wrong resource type %i", _resourceList[i].resourceType);
 		}
@@ -928,7 +928,7 @@ void Scene::processSceneResources() {
 			break;
 		case SAGA_OBJECT_MAP:
 			debug(3, "Loading object map resource...");
-			_objectMap->load(resourceData, resourceDataLength);			
+			_objectMap->load(resourceData, resourceDataLength);
 			break;
 		case SAGA_ACTION_MAP:
 			debug(3, "Loading action map resource...");
@@ -969,7 +969,7 @@ void Scene::processSceneResources() {
 			debug(3, "Loading isometric metatiles resource.");
 
 			_vm->_isoMap->loadMetaTiles(resourceData, resourceDataLength);
-			break;			
+			break;
 		case SAGA_ANIM:
 			{
 				uint16 animId = _resourceList[i].resourceType - 14;
@@ -991,7 +991,7 @@ void Scene::processSceneResources() {
 			debug(3, "Loading isometric multi resource.");
 
 			_vm->_isoMap->loadMulti(resourceData, resourceDataLength);
-			break;			
+			break;
 		case SAGA_PAL_ANIM:
 			debug(3, "Loading palette animation resource.");
 			_vm->_palanim->loadPalAnim(resourceData, resourceDataLength);
@@ -1094,7 +1094,7 @@ void Scene::endScene() {
 	_vm->_anim->reset();
 
 	_vm->_palanim->freePalAnim();
-	
+
 	_objectMap->freeMem();
 	_actionMap->freeMem();
 	_entryList.freeMem();
@@ -1132,9 +1132,9 @@ void Scene::cmdObjectMapInfo() {
 }
 
 
-void Scene::loadSceneEntryList(const byte* resourcePointer, size_t resourceLength) {	
+void Scene::loadSceneEntryList(const byte* resourcePointer, size_t resourceLength) {
 	int i;
-	
+
 	_entryList.entryListCount = resourceLength / 8;
 
 	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _sceneContext->isBigEndian);

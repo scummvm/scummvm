@@ -28,11 +28,11 @@
 namespace Saga {
 
 ActorTableData ITE_ActorTable[ITE_ACTORCOUNT] = {
-	// Original used so called permanent actors for first three and that was designed by 
-	// EXTENDED object flag. They contained frames in more than one resource. We use 
+	// Original used so called permanent actors for first three and that was designed by
+	// EXTENDED object flag. They contained frames in more than one resource. We use
 	// different technique here see "Apppending to sprite list" in loadActorResources()
 
-//       flags     name scene    x     y    z  spr  frm scp  col 
+//       flags     name scene    x     y    z  spr  frm scp  col
 //    ------------ ---- ----  ---- ----- ---- ---- ---- --- ---- -- -- --
 	{ kProtagonist | kExtended,
 					 0,   1,    0,    0,   0,  37, 135,  0,   1,  0, 0, 0},	// map party

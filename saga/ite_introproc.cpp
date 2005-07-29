@@ -581,7 +581,7 @@ int Scene::ITEIntroCave3Proc(int param) {
 	};
 
 	int n_dialogues = ARRAYSIZE(dialogue[lang]);
- 
+
 	switch (param) {
 	case SCENE_BEGIN:
 		// Start 'dissolve' transition to new scene background
@@ -674,7 +674,7 @@ int Scene::ITEIntroCave4Proc(int param) {
 	};
 
 	int n_dialogues = ARRAYSIZE(dialogue[lang]);
- 
+
 	switch (param) {
 	case SCENE_BEGIN:
 		// Start 'dissolve' transition to new scene background
@@ -741,7 +741,7 @@ int Scene::ITEIntroValleyProc(int param) {
 
 	switch (param) {
 	case SCENE_BEGIN:
-		// Begin title screen background animation 
+		// Begin title screen background animation
 		_vm->_anim->setCycles(0, -1);
 
 		event.type = ONESHOT_EVENT;
@@ -761,7 +761,7 @@ int Scene::ITEIntroValleyProc(int param) {
 		event.param2 = MUSIC_NORMAL;
 		event.op = EVENT_PLAY;
 		event.time = 0;
-		
+
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Pause animation before logo
@@ -875,7 +875,7 @@ int Scene::ITEIntroTreeHouseProc(int param) {
 
 		q_event = _vm->_events->queue(&event);
 
-		// Begin title screen background animation 
+		// Begin title screen background animation
 		_vm->_anim->setFrameTime(0, 100);
 
 		event.type = ONESHOT_EVENT;
@@ -953,7 +953,7 @@ int Scene::ITEIntroFairePathProc(int param) {
 
 		q_event = _vm->_events->queue(&event);
 
-		// Begin title screen background animation 
+		// Begin title screen background animation
 		_vm->_anim->setCycles(0, -1);
 
 		event.type = ONESHOT_EVENT;

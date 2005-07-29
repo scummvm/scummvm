@@ -111,7 +111,7 @@ void Render::drawScene() {
 	if (_flags & RF_MAP)
 		_vm->_interface->mapPanelDrawCrossHair();
 
-	if ((_vm->_interface->getMode() == kPanelOption) || 
+	if ((_vm->_interface->getMode() == kPanelOption) ||
 		(_vm->_interface->getMode() == kPanelQuit) ||
 		(_vm->_interface->getMode() == kPanelLoad) ||
 		(_vm->_interface->getMode() == kPanelSave)) {
@@ -137,7 +137,7 @@ void Render::drawScene() {
 	// Display rendering information
 	if (_flags & RF_SHOW_FPS) {
 		sprintf(txtBuffer, "%d", _fps);
-		textPoint.x = backBufferSurface->w - _vm->_font->getStringWidth(kSmallFont, txtBuffer, 0, kFontOutline); 
+		textPoint.x = backBufferSurface->w - _vm->_font->getStringWidth(kSmallFont, txtBuffer, 0, kFontOutline);
 		textPoint.y = 2;
 
 		_vm->_font->textDraw(kSmallFont, backBufferSurface, txtBuffer, textPoint, kITEColorBrightWhite, kITEColorBlack, kFontOutline);
@@ -145,7 +145,7 @@ void Render::drawScene() {
 
 	// Display "paused game" message, if applicable
 	if (_flags & RF_RENDERPAUSE) {
-		textPoint.x = (backBufferSurface->w - _vm->_font->getStringWidth(kBigFont, pauseString, 0, kFontOutline)) / 2; 
+		textPoint.x = (backBufferSurface->w - _vm->_font->getStringWidth(kBigFont, pauseString, 0, kFontOutline)) / 2;
 		textPoint.y = 90;
 
 		_vm->_font->textDraw(kBigFont, backBufferSurface, pauseString, textPoint, kITEColorBrightWhite, kITEColorBlack, kFontOutline);
@@ -166,7 +166,7 @@ void Render::drawScene() {
 		backBufferSurface->drawPalette();
 	}
 
-	_system->copyRectToScreen((byte *)backBufferSurface->pixels, backBufferSurface->w, 0, 0, 
+	_system->copyRectToScreen((byte *)backBufferSurface->pixels, backBufferSurface->w, 0, 0,
 							  backBufferSurface->w, backBufferSurface->h);
 
 	_system->updateScreen();

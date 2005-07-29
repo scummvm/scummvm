@@ -62,7 +62,7 @@ void SndRes::setVoiceBank(int serial)
 		error("SndRes::SndRes resource context not found");
 	}
 
-	
+
 }
 
 void SndRes::playSound(uint32 resourceId, int volume, bool loop) {
@@ -119,14 +119,14 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	if (context->table[resourceId].patchData != NULL) {
 		if (context->table[resourceId].patchData->_patchDescription->soundInfo != NULL) {
 			soundInfo = context->table[resourceId].patchData->_patchDescription->soundInfo;
-		}		
-	} 
+		}
+	}
 
 	MemoryReadStream readS(soundResource, soundResourceLength);
 
 	resourceType = soundInfo->resourceType;
 	buffer.isBigEndian = soundInfo->isBigEndian;
-	
+
 	if (soundResourceLength >= 8) {
 		if (!memcmp(&soundResource, "Creative", 8)) {
 			resourceType = kSoundVOC;
@@ -217,7 +217,7 @@ int SndRes::getVoiceLength(uint32 resourceId) {
 	bool voiceFile = false;
 	double msDouble;
 	SoundBuffer buffer;
-	
+
 	if (!load(_voiceContext, resourceId, buffer, true)) {
 		return -1;
 	}

@@ -269,7 +269,7 @@ int SagaEngine::init(GameDetector &detector) {
 		debug(1, "Music disabled.");
 	}
 
-	
+
 	_render = new Render(this, _system);
 	if (!_render->initialized()) {
 		return FAILURE;
@@ -294,7 +294,7 @@ int SagaEngine::go() {
 
 	_previousTicks = _system->getMillis();
 
-	if (ConfMan.hasKey("start_scene")) {		
+	if (ConfMan.hasKey("start_scene")) {
 		_scene->changeScene(ConfMan.getInt("start_scene"), 0, kTransitionNoFade);
 	}
 	else
@@ -350,7 +350,7 @@ int SagaEngine::go() {
 		_render->drawScene();
 		_system->delayMillis(10);
 	}
-	
+
 	return 0;
 }
 
@@ -358,7 +358,7 @@ void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPoin
 	uint16 stringsCount;
 	size_t offset;
 	int i;
-	
+
 	if (stringsLength == 0) {
 		error("SagaEngine::loadStrings() Error loading strings list resource");
 	}
@@ -366,13 +366,13 @@ void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPoin
 	stringsTable.stringsPointer = (byte*)malloc(stringsLength);
 	memcpy(stringsTable.stringsPointer, stringsPointer, stringsLength);
 
-	
+
 	MemoryReadStreamEndian scriptS(stringsTable.stringsPointer, stringsLength, isBigEndian()); //TODO: get endianess from context
 
 	offset = scriptS.readUint16();
 	stringsCount = offset / 2;
 	stringsTable.strings = (const char **)malloc(stringsCount * sizeof(*stringsTable.strings));
-	i = 0;	
+	i = 0;
 	scriptS.seek(0);
 	while (i < stringsCount) {
 		offset = scriptS.readUint16();
@@ -400,8 +400,8 @@ const char *SagaEngine::getObjectName(uint16 objectId) {
 		obj = _actor->getObj(objectId);
 		return _script->_mainStrings.getString(obj->nameIndex);
 		break;
-	case kGameObjectActor: 
-		actor = _actor->getActor(objectId);			
+	case kGameObjectActor:
+		actor = _actor->getActor(objectId);
 		return _actor->_actorsStrings.getString(actor->nameIndex);
 		break;
 	case kGameObjectHitZone:
@@ -430,20 +430,20 @@ void SagaEngine::getExcuseInfo(int verb, const char *&textString, int &soundReso
 		textString = "I can't pick that up.";
 		soundResourceId = RID_BOAR_VOICE_007;
 		break;
-	case kVerbLookAt:	
-		textString = "I see nothing special about it."; 
+	case kVerbLookAt:
+		textString = "I see nothing special about it.";
 		soundResourceId = RID_BOAR_VOICE_006;
 		break;
-	case kVerbOpen:		
+	case kVerbOpen:
 		textString = "There's no place to open it.";
 		soundResourceId = RID_BOAR_VOICE_000;
 		break;
-	case kVerbClose:	
-		textString = "There's no opening to close."; 
+	case kVerbClose:
+		textString = "There's no opening to close.";
 		soundResourceId = RID_BOAR_VOICE_002;
 		break;
-	case kVerbUse:		
-		textString = "I don't know how to do that."; 
+	case kVerbUse:
+		textString = "I don't know how to do that.";
 		soundResourceId = RID_BOAR_VOICE_005;
 		break;
 	}

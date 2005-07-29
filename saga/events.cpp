@@ -52,7 +52,7 @@ Events::~Events(void) {
 	freeList();
 }
 
-// Function to process event list once per frame. 
+// Function to process event list once per frame.
 // First advances event times, then processes each event with the appropriate
 //  handler depending on the type of event.
 int Events::handleEvents(long msec) {
@@ -93,20 +93,20 @@ int Events::handleEvents(long msec) {
 			break;
 		}
 
-		// Process the event appropriately based on result code from 
+		// Process the event appropriately based on result code from
 		// handler
 		if ((result == EVENT_DELETE) || (result == EVENT_INVALIDCODE)) {
 			// If there is no event chain, delete the base event.
 			if (event_p->chain == NULL) {
 				eventi=_eventList.eraseAndPrev(eventi);
 			} else {
-				// If there is an event chain present, move the next event 
-				// in the chain up, adjust it by the previous delta time, 
+				// If there is an event chain present, move the next event
+				// in the chain up, adjust it by the previous delta time,
 				// and reprocess the event  */
 				delta_time = event_p->time;
 				EVENT *from_chain=event_p->chain;
 				memcpy(event_p, from_chain,sizeof(*event_p));
-				free(from_chain);  
+				free(from_chain);
 
 				event_p->time += delta_time;
 				--eventi;
@@ -184,7 +184,7 @@ int Events::handleContinuous(EVENT *event) {
 			rect.top = (_vm->getDisplayHeight() - h) / 2;
 			rect.setWidth(w);
 			rect.setHeight(h);
-			
+
 			backGroundSurface->transitionDissolve( maskBuffer, rect, 1, event_pc);
 			break;
 		default:
@@ -410,7 +410,7 @@ int Events::handleOneShot(EVENT *event) {
 		case EVENT_EXEC_BLOCKING:
 		case EVENT_EXEC_NONBLOCKING:
 			debug(6, "Exec module number %d script entry number %d", event->param, event->param2);
-		
+
 			sthread = _vm->_script->createThread(event->param, event->param2);
 			if (sthread == NULL) {
 				_vm->_console->DebugPrintf("Thread creation failed.\n");

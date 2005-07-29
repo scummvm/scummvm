@@ -30,7 +30,7 @@
 
 namespace Saga {
 
-Sound::Sound(SagaEngine *vm, Audio::Mixer *mixer, int enabled) : 
+Sound::Sound(SagaEngine *vm, Audio::Mixer *mixer, int enabled) :
 	_vm(vm), _mixer(mixer), _enabled(enabled), _voxStream(0) {
 }
 
@@ -57,7 +57,7 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int
 	if (!buffer.isSigned)
 		flags |= Audio::Mixer::FLAG_UNSIGNED;
 
-	_mixer->playRaw(handle, buffer.buffer, buffer.size, buffer.frequency, flags, -1, volume);	
+	_mixer->playRaw(handle, buffer.buffer, buffer.size, buffer.frequency, flags, -1, volume);
 }
 
 void Sound::playSound(SoundBuffer &buffer, int volume, bool loop) {

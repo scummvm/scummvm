@@ -113,7 +113,7 @@ void IsoMap::loadImages(const byte *resourcePointer, size_t resourceLength) {
 	_tileData = (byte*)malloc(resourceLength);
 	_tileDataLength = resourceLength;
 	memcpy(_tileData, resourcePointer, resourceLength);
-	
+
 	MemoryReadStreamEndian readS(_tileData, _tileDataLength, _vm->isBigEndian());
 	readS.readUint16(); // skip
 	_tilesCount = readS.readUint16();
@@ -244,7 +244,7 @@ void IsoMap::loadMulti(const byte * resourcePointer, size_t resourceLength) {
 		multiTileEntryData->currentState = readS.readByte();
 		readS.readByte();//skip
 	}
-	
+
 	offsetDiff = (readS.pos() - 2);
 
 	for (i = 0; i < _multiCount; i++) {
@@ -281,7 +281,7 @@ void IsoMap::adjustScroll(bool jump) {
 	Point playerPoint;
 	Point minScrollPos;
 	Point maxScrollPos;
-	
+
 
 	tileCoordsToScreenPoint(_vm->_actor->_centerActor->location, playerPoint);
 
@@ -348,16 +348,16 @@ int16 IsoMap::findMulti(int16 tileIndex, int16 absU, int16 absV, int16 absH) {
 	rv = (tileIndex >> 11) & 0x03;
 	mu = absU - ru;
 	mv = absV - rv;
-	
+
 	tileIndex = 0;
 	for (i = 0; i < _multiCount; i++) {
 		multiTileEntryData = &_multiTable[i];
 
-		if ((multiTileEntryData->u == mu) && 
-			(multiTileEntryData->v == mv) && 
+		if ((multiTileEntryData->u == mu) &&
+			(multiTileEntryData->v == mv) &&
 			(multiTileEntryData->h == absH)) {
 			state = multiTileEntryData->currentState;
-			
+
 			offset = (ru + state * multiTileEntryData->uSize) * multiTileEntryData->vSize + rv;
 			offset *= sizeof(*_multiTableData);
 			offset += multiTileEntryData->offset;
@@ -373,12 +373,12 @@ int16 IsoMap::findMulti(int16 tileIndex, int16 absU, int16 absV, int16 absH) {
 			return tileIndex;
 		}
 	}
-		
+
 	return 1;
 }
 
 void IsoMap::draw(Surface *ds) {
-	
+
 	_tileClip = _vm->_scene->getSceneClip();
 	ds->drawRect(_tileClip, 0);
 	drawTiles(ds, NULL);
@@ -432,7 +432,7 @@ void IsoMap::drawTiles(Surface *ds,  const Location *location) {
 	Point tileScroll;
 	Point metaTileY;
 	Point metaTileX;
-	int16 u0, v0, 
+	int16 u0, v0,
 		  u1, v1,
 		  u2, v2,
 		  uc, vc;
@@ -452,7 +452,7 @@ void IsoMap::drawTiles(Surface *ds,  const Location *location) {
 
 	u0 = ((view1.y + 64) * 2 + view1.x) >> 4;
 	v0 = ((view1.y + 64) * 2 - view1.x) >> 4;
-	
+
 	metaTileY.x = (u0 - v0) * 128 - (view1.x * 16 + fineScroll.x);
 	metaTileY.y = (view1.y * 16 - fineScroll.y) - (u0 + v0) * 64;
 
@@ -467,15 +467,15 @@ void IsoMap::drawTiles(Surface *ds,  const Location *location) {
 			uc = u2 & (SAGA_TILEMAP_W - 1);
 			vc = v2 & (SAGA_TILEMAP_W - 1);
 
-			if (uc != u2 || vc != v2) {					
+			if (uc != u2 || vc != v2) {
 				metaTileIndex = 0;
-				switch ( _tileMap.edgeType) {				
-				case kEdgeTypeBlack: 
+				switch ( _tileMap.edgeType) {
+				case kEdgeTypeBlack:
 					continue;
-				case kEdgeTypeFill0: 
+				case kEdgeTypeFill0:
 					break;
 				case kEdgeTypeFill1:
-					metaTileIndex = 1; 
+					metaTileIndex = 1;
 					break;
 				case kEdgeTypeRpt:
 					uc = clamp( 0, u2, SAGA_TILEMAP_W - 1);
@@ -513,13 +513,13 @@ void IsoMap::drawTiles(Surface *ds,  const Location *location) {
 
 			if (uc != u2 || vc != v2) {
 				metaTileIndex = 0;
-				switch ( _tileMap.edgeType) {				
-				case kEdgeTypeBlack: 
+				switch ( _tileMap.edgeType) {
+				case kEdgeTypeBlack:
 					continue;
-				case kEdgeTypeFill0: 
+				case kEdgeTypeFill0:
 					break;
 				case kEdgeTypeFill1:
-					metaTileIndex = 1; 
+					metaTileIndex = 1;
 					break;
 				case kEdgeTypeRpt:
 					uc = clamp( 0, u2, SAGA_TILEMAP_W - 1);
@@ -572,7 +572,7 @@ void IsoMap::drawSpriteMetaTile(Surface *ds, uint16 metaTileIndex, const Point &
 		if (platformIndex >= 0) {
 			drawSpritePlatform( ds, platformIndex, platformPoint, location, absU, absV, high );
 		}
-	}	
+	}
 }
 
 void IsoMap::drawMetaTile(Surface *ds, uint16 metaTileIndex, const Point &point, int16 absU, int16 absV) {
@@ -599,7 +599,7 @@ void IsoMap::drawMetaTile(Surface *ds, uint16 metaTileIndex, const Point &point,
 		if (platformIndex >= 0) {
 			drawPlatform( ds, platformIndex, platformPoint, absU, absV, high );
 		}
-	}	
+	}
 }
 
 void IsoMap::drawSpritePlatform(Surface *ds, uint16 platformIndex, const Point &point, const Location &location, int16 absU, int16 absV, int16 absH) {
@@ -639,8 +639,8 @@ void IsoMap::drawSpritePlatform(Surface *ds, uint16 platformIndex, const Point &
 		s = s0;
 
 		for (u = SAGA_PLATFORM_W - 1,
-			copyLocation.u() = location.u() - ((SAGA_PLATFORM_W - 1) << 4); 
-			 u >= 0 && s.x + 32 > _tileClip.left && s.y - SAGA_MAX_TILE_H < _tileClip.bottom; 
+			copyLocation.u() = location.u() - ((SAGA_PLATFORM_W - 1) << 4);
+			 u >= 0 && s.x + 32 > _tileClip.left && s.y - SAGA_MAX_TILE_H < _tileClip.bottom;
 			 u--, copyLocation.u() += 16, s.x -= 16, s.y += 8 ) {
 			if (s.x < _tileClip.right && s.y > _tileClip.top) {
 
@@ -673,7 +673,7 @@ void IsoMap::drawPlatform(Surface *ds, uint16 platformIndex, const Point &point,
 	if ((point.y <= _tileClip.top) || (point.y - SAGA_MAX_TILE_H - SAGA_PLATFORM_W * SAGA_TILE_NOMINAL_H >= _tileClip.bottom)) {
 		return;
 	}
-		
+
 	s0 = point;
 	s0.y -= (((SAGA_PLATFORM_W - 1) + (SAGA_PLATFORM_W - 1)) * 8);
 
@@ -695,7 +695,7 @@ void IsoMap::drawPlatform(Surface *ds, uint16 platformIndex, const Point &point,
 			u >= 0 && s.x + 32 > _tileClip.left && s.y - SAGA_MAX_TILE_H < _tileClip.bottom;
 			u--, s.x -= 16, s.y += 8 ) {
 			if (s.x < _tileClip.right && s.y > _tileClip.top) {
-				
+
 				tileIndex = tilePlatform->tiles[u][v];
 				if (tileIndex > 1) {
 					if (tileIndex & SAGA_MULTI_TILE) {
@@ -774,17 +774,17 @@ void IsoMap::drawTile(Surface *ds, uint16 tileIndex, const Point &point, const L
 					break;
 				case kMaskRuleUMIN:
 					if (location->u() < THRESH0) {
-						return; 
+						return;
 					}
 					break;
-				case kMaskRuleUMID:	
+				case kMaskRuleUMID:
 					if (location->u() < THRESH8) {
 						return;
 					}
 					break;
 				case kMaskRuleUMAX:
 					if (location->u() < THRESH16) {
-						return; 
+						return;
 					}
 					break;
 				case kMaskRuleVMIN:
@@ -794,12 +794,12 @@ void IsoMap::drawTile(Surface *ds, uint16 tileIndex, const Point &point, const L
 					break;
 				case kMaskRuleVMID:
 					if (location->v() < THRESH8) {
-						return; 
+						return;
 					}
 					break;
 				case kMaskRuleVMAX:
 					if (location->v() < THRESH16) {
-						return; 
+						return;
 					}
 					break;
 				case kMaskRuleYMIN:
@@ -860,7 +860,7 @@ void IsoMap::drawTile(Surface *ds, uint16 tileIndex, const Point &point, const L
 				col += bgRunCount;
 				fgRunCount = *readPointer++;
 				widthCount += fgRunCount;
-				
+
 				count = 0;
 				while ((col < _tileClip.left) && (count < fgRunCount)) {
 					count++;
@@ -887,7 +887,7 @@ void IsoMap::drawTile(Surface *ds, uint16 tileIndex, const Point &point, const L
 
 				fgRunCount = *readPointer++;
 				widthCount += fgRunCount;
-				
+
 				readPointer += fgRunCount;
 			}
 		}
@@ -897,11 +897,11 @@ void IsoMap::drawTile(Surface *ds, uint16 tileIndex, const Point &point, const L
 
 bool IsoMap::checkDragonPoint(int16 u, int16 v, uint16 direction) {
 	DragonPathCell *pathCell;
-	
+
 	if ((u < 1) || (u >= SAGA_DRAGON_SEARCH_DIAMETER - 1) || (v < 1) || (v >= SAGA_DRAGON_SEARCH_DIAMETER - 1)) {
 			return false;
 	}
-		
+
 	pathCell = _dragonSearchArray.getPathCell(u, v);
 
 	if (pathCell->visited) {
@@ -916,11 +916,11 @@ bool IsoMap::checkDragonPoint(int16 u, int16 v, uint16 direction) {
 void IsoMap::pushDragonPoint(int16 u, int16 v, uint16 direction) {
 	DragonTilePoint *tilePoint;
 	DragonPathCell *pathCell;
-	
+
 	if ((u < 1) || (u >= SAGA_DRAGON_SEARCH_DIAMETER - 1) || (v < 1) || (v >= SAGA_DRAGON_SEARCH_DIAMETER - 1)) {
 			return;
 	}
-		
+
 	pathCell = _dragonSearchArray.getPathCell(u, v);
 
 	if (pathCell->visited) {
@@ -947,14 +947,14 @@ void IsoMap::pushPoint(int16 u, int16 v, uint16 cost, uint16 direction) {
 	int16 mid;
 	TilePoint *tilePoint;
 	PathCell *pathCell;
-	
+
 	upper = _queueCount;
 	lower = 0;
 
 	if ((u < 1) || (u >= SAGA_SEARCH_DIAMETER - 1) || (v < 1) || (v >= SAGA_SEARCH_DIAMETER - 1)) {
 			return;
 	}
-		
+
 	pathCell = _searchArray.getPathCell(u, v);
 
 	if ((pathCell->visited) && (pathCell->cost <= cost)) {
@@ -1015,12 +1015,12 @@ int16 IsoMap::getTileIndex(int16 u, int16 v, int16 z) {
 	if ((uc != mtileU) || (vc != mtileV)) {
 		metaTileIndex = 0;
 		switch ( _tileMap.edgeType) {
-		case kEdgeTypeBlack: 
+		case kEdgeTypeBlack:
 			return 0;
-		case kEdgeTypeFill0: 
+		case kEdgeTypeFill0:
 			break;
 		case kEdgeTypeFill1:
-			metaTileIndex = 1; 
+			metaTileIndex = 1;
 			break;
 		case kEdgeTypeRpt:
 			uc = clamp( 0, mtileU, SAGA_TILEMAP_W - 1);
@@ -1099,7 +1099,7 @@ void IsoMap::testPossibleDirections(int16 u, int16 v, uint16 terraComp[8], int s
 	}
 
 #define TEST_TILE_END	}
-	
+
 	TEST_TILE_PROLOG(0, 0)
 		if (skipCenter) {
 			if ((mask & 0x0660) && (fgdMask & SAGA_IMPASSABLE)) {
@@ -1109,7 +1109,7 @@ void IsoMap::testPossibleDirections(int16 u, int16 v, uint16 terraComp[8], int s
 				bgdMask = 0;
 			}
 		}
-		
+
 		FILL_MASK(0, 0xcc00)
 		FILL_MASK(1, 0x6600)
 		FILL_MASK(2, 0x3300)
@@ -1203,7 +1203,7 @@ void IsoMap::placeOnTileMap(const Location &start, Location &result, int16 dista
 		u = (actor->location.u() >> 4) - uBase;
 		v = (actor->location.v() >> 4) - vBase;
 		if ((u >= 0) && (u < SAGA_SEARCH_DIAMETER) &&
-			(v >= 0) && (v < SAGA_SEARCH_DIAMETER) && 
+			(v >= 0) && (v < SAGA_SEARCH_DIAMETER) &&
 			((u != SAGA_SEARCH_CENTER) || (v != SAGA_SEARCH_CENTER))) {
 			_searchArray.getPathCell(u, v)->visited = 1;
 		}
@@ -1212,7 +1212,7 @@ void IsoMap::placeOnTileMap(const Location &start, Location &result, int16 dista
 	_queueCount = 0;
 	pushPoint(SAGA_SEARCH_CENTER, SAGA_SEARCH_CENTER, 0, 0);
 
-	while (_queueCount > 0) {	
+	while (_queueCount > 0) {
 
 		_queueCount--;
 		tilePoint = *_searchArray.getQueue(_queueCount);
@@ -1366,7 +1366,7 @@ void IsoMap::findDragonTilePath(ActorData* actor,const Location &start, const Lo
 
 	for (u = 0; u < SAGA_DRAGON_SEARCH_CENTER; u++) {
 		for (v = 0; v < SAGA_DRAGON_SEARCH_CENTER; v++) {
-			
+
 			pcell = _dragonSearchArray.getPathCell(u, v);
 
 			u1 = uBase + u;
@@ -1403,7 +1403,7 @@ void IsoMap::findDragonTilePath(ActorData* actor,const Location &start, const Lo
 
 
 		dist = ABS(tilePoint->u - uFinish) + ABS(tilePoint->v - vFinish);
-		
+
 		if (dist < bestDistance) {
 
 			bestU = tilePoint->u;
@@ -1522,7 +1522,7 @@ void IsoMap::findTilePath(ActorData* actor, const Location &start, const Locatio
 
 	memset( &_searchArray, 0, sizeof(_searchArray));
 
-	if (!(actor->actorFlags & kActorNoCollide) && 
+	if (!(actor->actorFlags & kActorNoCollide) &&
 		(_vm->_scene->currentSceneResourceId() != RID_ITE_OVERMAP_SCENE)) {
 			for (i = 0; i < _vm->_actor->_actorsCount; i++) {
 				other = _vm->_actor->_actors[i];
@@ -1532,7 +1532,7 @@ void IsoMap::findTilePath(ActorData* actor, const Location &start, const Locatio
 				u = (other->location.u() >> 4) - uBase;
 				v = (other->location.v() >> 4) - vBase;
 				if ((u >= 1) && (u < SAGA_SEARCH_DIAMETER) &&
-					(v >= 1) && (v < SAGA_SEARCH_DIAMETER) && 
+					(v >= 1) && (v < SAGA_SEARCH_DIAMETER) &&
 					((u != SAGA_SEARCH_CENTER) || (v != SAGA_SEARCH_CENTER))) {
 						_searchArray.getPathCell(u, v)->visited = 1;
 					}
@@ -1543,7 +1543,7 @@ void IsoMap::findTilePath(ActorData* actor, const Location &start, const Locatio
 	pushPoint(SAGA_SEARCH_CENTER, SAGA_SEARCH_CENTER, 0, 0);
 
 
-	while (_queueCount > 0) {	
+	while (_queueCount > 0) {
 
 		_queueCount--;
 		tilePoint = *_searchArray.getQueue(_queueCount);
@@ -1562,7 +1562,7 @@ void IsoMap::findTilePath(ActorData* actor, const Location &start, const Locatio
 			}
 		}
 
-		testPossibleDirections(uBase + tilePoint.u, vBase + tilePoint.v, terraComp, 
+		testPossibleDirections(uBase + tilePoint.u, vBase + tilePoint.v, terraComp,
 			(tilePoint.u == SAGA_SEARCH_CENTER && tilePoint.v == SAGA_SEARCH_CENTER));
 
 		for (dir = 0; dir < 8; dir++) {
@@ -1620,7 +1620,7 @@ void IsoMap::setTileDoorState(int doorNumber, int doorState) {
 	if ((doorNumber < 0) || (doorNumber >= _multiCount)) {
 		error("setTileDoorState: doorNumber >= _multiCount");
 	}
-	
+
 	multiTileEntryData = &_multiTable[doorNumber];
 	multiTileEntryData->currentState = doorState;
 }

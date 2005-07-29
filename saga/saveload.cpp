@@ -46,7 +46,7 @@ static SaveFileData emptySlot = {
 	 "[New Save Game]", 0
 };
 
-//TODO: 
+//TODO:
 // - delete savegame
 
 char* SagaEngine::calcSaveFileName(uint slotNumber) {
@@ -63,7 +63,7 @@ SaveFileData *SagaEngine::getSaveFile(uint idx) {
 		return &_saveFiles[_saveFilesCount - idx - 1];
 	} else {
 		return (idx == 0) ? &emptySlot : &_saveFiles[_saveFilesCount - idx];
-	}	
+	}
 }
 
 bool SagaEngine::locateSaveFile(char *saveName, uint &titleNumber) {
@@ -109,7 +109,7 @@ void SagaEngine::fillSaveList() {
 	int i;
 	Common::InSaveFile *in;
 	char *name;
-	
+
 	name = calcSaveFileName(MAX_SAVES);
 	name[strlen(name) - 2] = 0;
 	_saveFileMan->listSavefiles(name, _saveMarks, MAX_SAVES);
@@ -121,10 +121,10 @@ void SagaEngine::fillSaveList() {
 		}
 		_saveFiles[i].name[0] = 0;
 		_saveFiles[i].slotNumber = (uint)-1;
-	}	
-	
+	}
+
 	_saveFilesCount = 0;
-	
+
 	i = 0;
 	while (i < MAX_SAVES) {
 		if (_saveMarks[i]) {
@@ -177,7 +177,7 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 	_interface->saveState(out);
 
 	_actor->saveState(out);
-	
+
 	out->writeSint16LE(_script->_commonBufferSize);
 
 	out->write(_script->_commonBuffer, _script->_commonBufferSize);
@@ -203,7 +203,7 @@ void SagaEngine::load(const char *fileName) {
 	if (_saveHeader.type != MKID('SAGA')) {
 		error("SagaEngine::load wrong format");
 	}
-			
+
 	// Surrounding scene
 	sceneNumber = in->readSint32LE();
 
@@ -213,7 +213,7 @@ void SagaEngine::load(const char *fileName) {
 	_interface->loadState(in);
 
 	_actor->loadState(in);
-	
+
 	commonBufferSize = in->readSint16LE();
 	in->read(_script->_commonBuffer, commonBufferSize);
 

@@ -34,7 +34,7 @@ namespace Saga {
 Font::Font(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	int i;
 
-	// Load font module resource context 
+	// Load font module resource context
 
 	assert(_vm->getFontsCount() > 0);
 
@@ -89,7 +89,7 @@ void Font::loadFont(uint32 fontResourceId) {
 
 	// Create new font structure
 	font = (FontData *)malloc(sizeof(*font));
-	
+
 	// Read font header
 	font->normal.header.charHeight = readS.readUint16();
 	font->normal.header.charWidth = readS.readUint16();
@@ -129,9 +129,9 @@ void Font::loadFont(uint32 fontResourceId) {
 
 	// Create outline font style
 	createOutline(font);
-	
-	// Set font data 
-	_fonts[_loadedFonts++] = font;	
+
+	// Set font data
+	_fonts[_loadedFonts++] = font;
 }
 
 
@@ -152,7 +152,7 @@ void Font::createOutline(FontData *font) {
 	unsigned char charRep;
 
 
-	// Populate new font style character data 
+	// Populate new font style character data
 	for (i = 0; i < FONT_CHARCOUNT; i++) {
 		newByteWidth = 0;
 		oldByteWidth = 0;
@@ -186,10 +186,10 @@ void Font::createOutline(FontData *font) {
 	font->outline.header.charHeight += 2;
 	font->outline.header.rowLength = newRowLength;
 
-	// Allocate new font representation storage 
+	// Allocate new font representation storage
 	font->outline.font = (unsigned char *)calloc(newRowLength, font->outline.header.charHeight);
 
-	
+
 	// Generate outline font representation
 	for (i = 0; i < FONT_CHARCOUNT; i++) {
 		for (row = 0; row < font->normal.header.charHeight; row++) {
@@ -233,7 +233,7 @@ void Font::createOutline(FontData *font) {
 				}
 			}
 		}
-	}	
+	}
 }
 
 // Returns the horizontal length in pixels of the graphical representation
@@ -287,7 +287,7 @@ void Font::draw(FontId fontId, Surface *ds, const char *text, size_t count, cons
 
 	font = _fonts[fontId];
 
-	if (flags & kFontOutline) { 
+	if (flags & kFontOutline) {
 		offsetPoint.x--;
 		offsetPoint.y--;
 		outFont(font->outline, ds, text, count, offsetPoint, effectColor, flags);
@@ -329,7 +329,7 @@ void Font::outFont(const FontStyle & drawFont, Surface *ds, const char *text, si
 	textPointer = (const byte *) text;
 	ct = count;
 
-	// Draw string one character at a time, maximum of 'draw_str'_ct 
+	// Draw string one character at a time, maximum of 'draw_str'_ct
 	// characters, or no limit if 'draw_str_ct' is 0
 	for (; *textPointer && (!count || ct); textPointer++, ct--) {
 		c_code = *textPointer & 0xFFU;
@@ -470,7 +470,7 @@ int Font::getHeight(FontId fontId, const char *text, int width, FontEffectFlags 
 	textPoint.x = (fitWidth / 2);
 	textPoint.y = 0;
 
-	if (fitWidth >= textWidth) {		
+	if (fitWidth >= textWidth) {
 		return h;
 	}
 

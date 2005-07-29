@@ -42,7 +42,7 @@ bool Resource::loadContext(ResourceContext *context) {
 	size_t i;
 	int j;
 	bool result;
-	byte tableInfo[RSC_TABLEINFO_SIZE];	
+	byte tableInfo[RSC_TABLEINFO_SIZE];
 	uint32 resourceTableOffset;
 	GamePatchDescription *patchDescription;
 	ResourceData *resourceData;
@@ -52,9 +52,9 @@ bool Resource::loadContext(ResourceContext *context) {
 	if (!context->file->open(context->fileName)) {
 		return false;
 	}
-	
+
 	context->isBigEndian = _vm->isBigEndian();
-	
+
 	if (context->file->size() < RSC_MIN_FILESIZE) {
 		return false;
 	}
@@ -102,7 +102,7 @@ bool Resource::loadContext(ResourceContext *context) {
 	}
 
 	free(tableBuffer);
-	
+
 	//process patch files
 	if (result) {
 		for (j = 0; j < _vm->getGameDescription()->patchsCount; j++) {
@@ -151,7 +151,7 @@ bool Resource::createContexts() {
 				break;
 			}
 		}
-		
+
 		if (!loadContext(context)) {
 			return false;
 		}
@@ -181,7 +181,7 @@ void Resource::clearContexts() {
 }
 
 uint32 Resource::convertResourceId(uint32 resourceId) {
-	
+
 	if ((_vm->getGameType() ==  GType_ITE) && (_vm->getFeatures() & GF_MAC_RESOURCES)) {
 		if (resourceId > 1537) {
 			return resourceId - 2;
@@ -201,9 +201,9 @@ void Resource::loadResource(ResourceContext *context, uint32 resourceId, byte*&r
 	ResourceData *resourceData;
 
 	debug(8, "loadResource %d", resourceId);
-	
+
 	resourceData = getResourceData(context, resourceId);
-	
+
 	file = context->getFile(resourceData);
 
 	resourceOffset = resourceData->offset;

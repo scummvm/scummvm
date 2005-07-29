@@ -187,7 +187,7 @@ int SagaEngine::decodeBGImageRLE(const byte *inbuf, size_t inbuf_len, byte *outb
 			break;
 
 		case 0x40: // 0100 0000
-			// Repeat decoded sequence from output stream: 
+			// Repeat decoded sequence from output stream:
 			// Max runlength 10
 
 			runcount = ((mark_byte >> 3) & 0x07U) + 3;
@@ -372,7 +372,7 @@ int SagaEngine::unbankBGImage(byte *dst_buf, const byte *src_buf, int columns, i
 			dstptr4[x] = srcptr4[temp];
 		}
 
-		// This is to avoid generating invalid pointers - 
+		// This is to avoid generating invalid pointers -
 		// usually innocuous, but undefined
 		if (y < quadruple_rows - 4) {
 			dstptr1 += rowjump_dest;

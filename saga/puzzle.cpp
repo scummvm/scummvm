@@ -202,7 +202,7 @@ Puzzle::Puzzle(SagaEngine *vm) : _vm(vm), _solved(false), _active(false) {
 		  Point(0, 0), Point(0, 31), Point(31, 31), Point(31, 0), Point(0, 0), Point(0, 0));
 }
 
-void Puzzle::initPieceInfo(int i, int16 curX, int16 curY, byte offX, byte offY, int16 trgX, 
+void Puzzle::initPieceInfo(int i, int16 curX, int16 curY, byte offX, byte offY, int16 trgX,
 						   int16 trgY, uint8 flag, uint8 count, Point point0, Point point1,
 						   Point point2, Point point3, Point point4, Point point5) {
 	_pieceInfo[i].curX = curX;
@@ -280,7 +280,7 @@ void Puzzle::drawCurrentPiece() {
 	ActorData *puzzle = _vm->_actor->getActor(_vm->_actor->actorIndexToId(ITE_ACTOR_PUZZLE));
 	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 
-	_vm->_sprite->draw(backBuffer, _vm->_scene->getSceneClip(), puzzle->spriteList, _puzzlePiece, 
+	_vm->_sprite->draw(backBuffer, _vm->_scene->getSceneClip(), puzzle->spriteList, _puzzlePiece,
 			   Point(_pieceInfo[_puzzlePiece].curX, _pieceInfo[_puzzlePiece].curY), 256);
 }
 
@@ -318,7 +318,7 @@ void Puzzle::handleClick(Point mousePt) {
 
 		if (!_active)
 			return; // we won
- 
+
 		drawCurrentPiece();
 		_puzzlePiece = -1;
 

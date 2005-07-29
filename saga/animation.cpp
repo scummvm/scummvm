@@ -97,7 +97,7 @@ void Anim::load(uint16 animId, const byte *animResourceData, size_t animResource
 	anim->frameTime = DEFAULT_FRAME_TIME;
 	anim->flags = 0;
 	anim->linkId = -1;
-	anim->state = ANIM_PAUSE;	
+	anim->state = ANIM_PAUSE;
 }
 
 void Anim::link(int16 animId1, int16 animId2) {
@@ -120,7 +120,7 @@ void Anim::setCycles(uint16 animId, int cycles) {
 	AnimationData *anim;
 
 	anim = getAnimation(animId);
-	
+
 	anim->cycles = cycles;
 }
 
@@ -162,7 +162,7 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 
 		if (anim->currentFrame > anim->maxFrame) {
 			anim->currentFrame = anim->loopFrame;
-						
+
 			if (anim->flags & ANIM_STOPPING || anim->currentFrame == -1) {
 				anim->state = ANIM_PAUSE;
 			}
@@ -237,7 +237,7 @@ void Anim::resume(uint16 animId, int cycles) {
 	AnimationData *anim;
 
 	anim = getAnimation(animId);
-	
+
 	anim->cycles += cycles;
 	play(animId, 0, true);
 }
@@ -281,7 +281,7 @@ int16 Anim::getCurrentFrame(uint16 animId) {
 	AnimationData *anim;
 
 	anim = getAnimation(animId);
-	
+
 	return anim->currentFrame;
 }
 
@@ -323,7 +323,7 @@ void Anim::decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_
 		error("VALIDATE_WRITE_POINTER: writePointer=%x buf=%x", writePointer, buf); \
 	}
 #else
-#define VALIDATE_WRITE_POINTER 
+#define VALIDATE_WRITE_POINTER
 #endif
 
 
@@ -351,7 +351,7 @@ void Anim::decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_
 		case SAGA_FRAME_NOOP: // Does nothing
 			readS.readByte();
 			readS.readByte();
-			readS.readByte();			
+			readS.readByte();
 			continue;
 			break;
 		case SAGA_FRAME_LONG_UNCOMPRESSED_RUN: // Long Unencoded Run
@@ -377,7 +377,7 @@ void Anim::decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_
 			break;
 		case SAGA_FRAME_ROW_END: // End of row
 			xVector = readS.readSint16BE();
-			
+
 			if (longData)
 				newRow = readS.readSint16BE();
 			else
@@ -451,17 +451,17 @@ void Anim::fillFrameOffsets(AnimationData *anim) {
 	int i;
 	bool longData = isLongData();
 
-	MemoryReadStreamEndian readS(anim->resourceData, anim->resourceLength, _vm->isBigEndian()); 
+	MemoryReadStreamEndian readS(anim->resourceData, anim->resourceLength, _vm->isBigEndian());
 
 	readS.seek(12);
-	
+
 	readS._bigEndian = !_vm->isBigEndian(); // RLE has inversion BE<>LE
 
 	for (currentFrame = 0; currentFrame <= anim->maxFrame; currentFrame++) {
 		anim->frameOffsets[currentFrame] = readS.pos();
 
 		// For some strange reason, the animation header is in little
-		// endian format, but the actual RLE encoded frame data, 
+		// endian format, but the actual RLE encoded frame data,
 		// including the frame header, is in big endian format. */
 		do {
 			markByte = readS.readByte();

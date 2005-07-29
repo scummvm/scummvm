@@ -71,10 +71,10 @@ public:
 
 RAWInputStream::RAWInputStream(SagaEngine *vm, ResourceContext *context, uint32 resourceId, bool looping)
 	: _context(context), _finished(false), _looping(looping), _bufferEnd(_buf + BUFFER_SIZE) {
-	
+
 	ResourceData * resourceData;
 
-	resourceData = vm->_resource->getResourceData(context, resourceId);	
+	resourceData = vm->_resource->getResourceData(context, resourceId);
 	_file = context->getFile(resourceData);
 	_musicInfo = vm->getMusicInfo();
 
@@ -112,7 +112,7 @@ void RAWInputStream::refill() {
 
 	uint32 lengthLeft;
 	byte *ptr = (byte *) _buf;
-	
+
 
 	_file->seek(_filePos, SEEK_SET);
 
@@ -127,12 +127,12 @@ void RAWInputStream::refill() {
 		if (len & 1)
 			len--;
 
-		if (_context->isBigEndian) {			
+		if (_context->isBigEndian) {
 			uint16 *ptr16 = (uint16 *)ptr;
 			for (uint32 i = 0; i < (len / 2); i++)
 				ptr16[i] = TO_BE_16(ptr16[i]);
 		}
-			
+
 		lengthLeft -= len;
 		ptr += len;
 
@@ -309,7 +309,7 @@ Music::~Music() {
 
 void Music::musicVolumeGaugeCallback(void *refCon) {
 	((Music *)refCon)->musicVolumeGauge();
-}                                                                               
+}
 
 void Music::musicVolumeGauge() {
 	int volume;
@@ -411,7 +411,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		// I've listened to music from both the FM and the GM
 		// file, and I've tentatively reached the conclusion
 		// that they are both General MIDI. My guess is that
-		// the FM file has been reorchestrated to sound better 
+		// the FM file has been reorchestrated to sound better
 		// on Adlib and other FM synths.
 		//
 		// Sev says the Adlib music does not sound like in the
@@ -440,8 +440,8 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 	_player->setGM(true);
 
-	_vm->_resource->loadResource(context, resourceId, resourceData, resourceSize); 
-	
+	_vm->_resource->loadResource(context, resourceId, resourceData, resourceSize);
+
 	if (resourceSize < 4) {
 		error("Music::play() wrong music resource size");
 	}
@@ -450,7 +450,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		parser = xmidiParser;
 	} else {
 		if (smfParser->loadMusic(resourceData, resourceSize)) {
-			parser = smfParser;			
+			parser = smfParser;
 		} else {
 			error("Music::play() wrong music resource");
 		}

@@ -88,7 +88,7 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 
 	spriteList.infoList = (SpriteInfo *)realloc(spriteList.infoList, newSpriteCount * sizeof(*spriteList.infoList));
 	if (spriteList.infoList == NULL) {
-		memoryError("Sprite::loadList");		
+		memoryError("Sprite::loadList");
 	}
 
 	spriteList.spriteCount = newSpriteCount;
@@ -181,7 +181,7 @@ void Sprite::drawClip(Surface *ds, const Rect &clipRect, const Point &spritePoin
 	jo = 0;
 	io = 0;
 	if (spritePointer.x < clipRect.left) {
-		jo = clipRect.left - spritePointer.x; 
+		jo = clipRect.left - spritePointer.x;
 	}
 	if (spritePointer.y < clipRect.top) {
 		io = clipRect.top - spritePointer.y;
@@ -214,7 +214,7 @@ void Sprite::draw(Surface *ds, const Rect &clipRect, SpriteList &spriteList, int
 	Point spritePointer;
 
 	getScaledSpriteBuffer(spriteList, spriteNumber, scale, width, height, xAlign, yAlign, spriteBuffer);
-	
+
 	spritePointer.x = screenCoord.x + xAlign;
 	spritePointer.y = screenCoord.y + yAlign;
 	drawClip(ds, clipRect, spritePointer, width, height, spriteBuffer);
@@ -227,7 +227,7 @@ void Sprite::draw(Surface *ds, const Rect &clipRect, SpriteList &spriteList, int
 	int xAlign, spw;
 	int yAlign, sph;
 	Point spritePointer;
-	
+
 
 	getScaledSpriteBuffer(spriteList, spriteNumber, scale, width, height, xAlign, yAlign, spriteBuffer);
 	spw = (screenRect.width() - width) / 2;
@@ -268,7 +268,7 @@ bool Sprite::hitTest(SpriteList &spriteList, int spriteNumber, const Point &scre
 	i = testPoint.y - spritePointer.y;
 	j = testPoint.x - spritePointer.x;
 	srcRowPointer = spriteBuffer + j + i * width;
-	return *srcRowPointer != 0; 
+	return *srcRowPointer != 0;
 }
 
 void Sprite::drawOccluded(Surface *ds, const Rect &clipRect, SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, int depth) {
@@ -306,7 +306,7 @@ void Sprite::drawOccluded(Surface *ds, const Rect &clipRect, SpriteList &spriteL
 
 	clipData.destPoint.x = screenCoord.x + xAlign;
 	clipData.destPoint.y = screenCoord.y + yAlign;
-	
+
 	clipData.sourceRect.left = 0;
 	clipData.sourceRect.top = 0;
 	clipData.sourceRect.right = width;
@@ -320,7 +320,7 @@ void Sprite::drawOccluded(Surface *ds, const Rect &clipRect, SpriteList &spriteL
 
 	// Finally, draw the occluded sprite
 	sourceRowPointer = spriteBuffer + clipData.drawSource.x + (clipData.drawSource.y * width);
-	
+
 	destRowPointer = (byte *)ds->pixels + clipData.drawDest.x + (clipData.drawDest.y * ds->pitch);
 	maskRowPointer = maskBuffer + clipData.drawDest.x + (clipData.drawDest.y * maskWidth);
 
@@ -355,7 +355,7 @@ void Sprite::decodeRLEBuffer(const byte *inputBuffer, size_t inLength, size_t ou
 	if (outLength > _decodeBufLen) { // TODO: may we should make dynamic growing?
 		error("Sprite::decodeRLEBuffer outLength > _decodeBufLen");
 	}
-	
+
 	outPointer = _decodeBuf;
 	outPointerEnd = _decodeBuf + outLength;
 	outPointerEnd--;
@@ -401,7 +401,7 @@ void Sprite::scaleBuffer(const byte *src, int width, int height, int scale) {
 
 			for (int j = 0; j < width; j++) {
 				*dst++ = *src++;
-				
+
 				hskip += skip;
 				if (hskip < skip) // overflow
 					dst--;

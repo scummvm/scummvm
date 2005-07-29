@@ -66,12 +66,12 @@ Script::Script(SagaEngine *vm) : _vm(vm) {
 	_leftButtonVerb = kVerbNone;
 	_rightButtonVerb = kVerbNone;
 	_pointerObject = ID_NOTHING;
-	
+
 	_staticSize = 0;
 	_commonBufferSize = COMMON_BUFFER_SIZE;
 	_commonBuffer = (byte*)malloc(_commonBufferSize);
 	memset(_commonBuffer, 0, _commonBufferSize);
-	
+
 	debug(8, "Initializing scripting subsystem");
 	// Load script resource file context
 	_scriptContext = _vm->_resource->getContext(GAME_SCRIPTFILE);
@@ -86,7 +86,7 @@ Script::Script(SagaEngine *vm) : _vm(vm) {
 
 	debug(3, "Loading module LUT from resource %i", _vm->getResourceDescription()->moduleLUTResourceId);
 	_vm->_resource->loadResource(resourceContext, _vm->getResourceDescription()->moduleLUTResourceId, resourcePointer, resourceLength);
-	
+
 
 	// Create logical script LUT from resource
 	if (resourceLength % S_LUT_ENTRYLEN_ITECD == 0) {
@@ -101,7 +101,7 @@ Script::Script(SagaEngine *vm) : _vm(vm) {
 	_modulesCount = resourceLength / _modulesLUTEntryLen;
 
 	debug(3, "LUT has %i entries", _modulesCount);
-	
+
 	// Allocate space for logical LUT
 	_modules = (ModuleData *)malloc(_modulesCount * sizeof(*_modules));
 	if (_modules == NULL) {
@@ -121,8 +121,8 @@ Script::Script(SagaEngine *vm) : _vm(vm) {
 		if (_modules[i].voicesResourceId > 0) {
 			_voiceLUTPresent = true;
 		}
-		
-		
+
+
 		// Skip the unused portion of the structure
 		for (j = scriptS.pos(); j < prevTell + _modulesLUTEntryLen; j++) {
 			if (scriptS.readByte() != 0)
@@ -156,12 +156,12 @@ Script::Script(SagaEngine *vm) : _vm(vm) {
 Script::~Script() {
 
 	debug(8, "Shutting down scripting subsystem.");
-	
+
 	_mainStrings.freeMem();
 
 	freeModules();
 	free(_modules);
-	
+
 	free(_commonBuffer);
 }
 
@@ -240,21 +240,21 @@ void Script::loadModuleBase(ModuleData &module, const byte *resourcePointer, siz
 	if (module.entryPointsCount > SCRIPT_MAX) {
 		error("Script::loadModuleBase()Script limit exceeded");
 	}
-	
+
 	module.entryPoints = (EntryPoint *)malloc(module.entryPointsCount * sizeof(*module.entryPoints));
 	if (module.entryPoints == NULL) {
 		memoryError("Script::loadModuleBase");
 	}
 
 	// Read in the entrypoint table
-	
-	module.staticSize = scriptS.readUint16();	
+
+	module.staticSize = scriptS.readUint16();
 	while (scriptS.pos() < module.entryPointsTableOffset)
 		scriptS.readByte();
 
 	for (i = 0; i < module.entryPointsCount; i++) {
 		// First uint16 is the offset of the entrypoint name from the start
-		// of the bytecode resource, second uint16 is the offset of the 
+		// of the bytecode resource, second uint16 is the offset of the
 		// bytecode itself for said entrypoint
 		module.entryPoints[i].nameOffset = scriptS.readUint16();
 		module.entryPoints[i].offset = scriptS.readUint16();
@@ -271,7 +271,7 @@ void Script::loadModuleVoiceLUT(ModuleData &module, const byte *resourcePointer,
 
 	module.voiceLUT.voicesCount = resourceLength / 2;
 	if (module.voiceLUT.voicesCount != module.strings.stringsCount) {
-		error("Script::loadModuleVoiceLUT() Voice LUT entries do not match strings entries");		
+		error("Script::loadModuleVoiceLUT() Voice LUT entries do not match strings entries");
 	}
 
 	module.voiceLUT.voices = (uint16 *)malloc(module.voiceLUT.voicesCount * sizeof(*module.voiceLUT.voices));
@@ -293,12 +293,11 @@ void Script::showVerb(int statusColor) {
 	const char *object2Name;
 	char statusString[STATUS_TEXT_LEN];
 
-
 	if (_leftButtonVerb == kVerbNone) {
 		_vm->_interface->setStatusText("");
 		return;
 	}
-	
+
 	verbName = _mainStrings.getString(_leftButtonVerb - 1);
 
 	if (objectTypeId(_currentObject[0]) == kGameObjectNone) {
@@ -314,7 +313,7 @@ void Script::showVerb(int statusColor) {
 		return;
 	}
 
-	
+
 	if (objectTypeId(_currentObject[1]) != kGameObjectNone) {
 		object2Name = _vm->getObjectName(_currentObject[1]);
 	} else {
@@ -426,7 +425,7 @@ void Script::doVerb() {
 	}
 
 	if (scriptEntrypointNumber > 0) {
-		
+
 		event.type = ONESHOT_EVENT;
 		event.code = SCRIPT_EVENT;
 		event.op = EVENT_EXEC_NONBLOCKING;
@@ -442,8 +441,8 @@ void Script::doVerb() {
 
 	} else {
 		_vm->getExcuseInfo(_pendingVerb, excuseText, excuseSampleResourceId);
-		if (excuseText) 
-			_vm->_actor->actorSpeech(ID_PROTAG, &excuseText, 1, excuseSampleResourceId, 0);			
+		if (excuseText)
+			_vm->_actor->actorSpeech(ID_PROTAG, &excuseText, 1, excuseSampleResourceId, 0);
 	}
 
 	if ((_currentVerb == kVerbWalkTo) || (_currentVerb == kVerbLookAt)) {
@@ -515,7 +514,7 @@ void Script::hitObject(bool leftButton) {
 		else
 			showVerb();
 	}
-	
+
 }
 
 void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
@@ -558,13 +557,13 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 		 hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(_pendingObject[0]));
 	} else {
 		if ((_pendingVerb == kVerbUse) && (objectTypeId(_pendingObject[1]) == kGameObjectHitZone)) {
-			hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(_pendingObject[1]));			
+			hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(_pendingObject[1]));
 		}
 	}
 
 	if (hitZone != NULL) {
 		if (hitZone->getFlags() & kHitZoneNoWalk) {
-			_vm->_actor->actorFaceTowardsPoint(ID_PROTAG, pickLocation); 
+			_vm->_actor->actorFaceTowardsPoint(ID_PROTAG, pickLocation);
 			doVerb();
 			return;
 		}
@@ -573,7 +572,7 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 			if (!hitZone->getSpecialPoint(specialPoint)) {
 				error("Script::playfieldClick SpecialPoint not found");
 			}
-			
+
 			// tiled stuff
 			if (_vm->_scene->getFlags() & kSceneFlagISO) {
 				pickLocation.u() = specialPoint.x;
@@ -658,7 +657,7 @@ void Script::whichObject(const Point& mousePoint) {
 				}
 			}
 
-			if (newObjectId == ID_NOTHING) {		
+			if (newObjectId == ID_NOTHING) {
 
 				pickPoint = mousePoint;
 
@@ -703,7 +702,7 @@ void Script::whichObject(const Point& mousePoint) {
 
 					if ((_leftButtonVerb == kVerbUse) && (hitZone->getRightButtonVerb() & 0x80)) {
 						objectFlags = kObjUseWith;
-					}					
+					}
 				}
 			}
 		} else {
@@ -712,7 +711,7 @@ void Script::whichObject(const Point& mousePoint) {
 			} else {
 				panelButton = _vm->_interface->inventoryHitTest(mousePoint);
 				if (panelButton) {
-					objectId = _vm->_interface->getInventoryContentByPanelButton(panelButton);		
+					objectId = _vm->_interface->getInventoryContentByPanelButton(panelButton);
 					if (objectId != 0) {
 						obj = _vm->_actor->getObj(objectId);
 						newRightButtonVerb = kVerbLookAt;
