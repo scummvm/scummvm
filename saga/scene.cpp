@@ -389,7 +389,7 @@ void Scene::changeScene(uint16 sceneNumber, int actorsEntrance, SceneTransitionT
 				free(colors);
 				_vm->_gfx->setPalette(cPal);
 
-				_vm->_interface->setStatusText("Click or Press Return to continue. Press Q to quit.");
+				_vm->_interface->setStatusText("Click or Press Return to continue. Press Q to quit.", 96);
 				_vm->_font->textDrawRect(kMediumFont, backBuffer, sceneSubstitutes[i].title,
 					 Common::Rect(0, 7, _vm->getDisplayWidth(), 27), 1, 15, kFontOutline);
 				_vm->_font->textDrawRect(kMediumFont, backBuffer, sceneSubstitutes[i].message,
