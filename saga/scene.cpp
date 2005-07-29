@@ -44,6 +44,8 @@
 #include "saga/rscfile.h"
 #include "saga/resnames.h"
 
+#include "graphics/ilbm.h"
+
 namespace Saga {
 
 static int initSceneDoors[SCENE_DOORS_MAX] = {
@@ -305,7 +307,88 @@ void Scene::skipScene() {
 	}
 }
 
+static struct SceneSubstitutes {
+    int sceneId;
+    const char *message;
+    const char *name;
+    const char *image;
+} sceneSubstitutes[] = {
+    { 
+		7,
+		"Tycho says he knows much about the northern lands. Can Rif convince "
+		"the Dog to share this knowledge?",
+		"The Home of Tycho Northpaw",
+		"tycho.bbm"
+	},
+
+    {
+		27,
+		"The scene of the crime may hold many clues, but will the servants of "
+		"the Sanctuary trust Rif?",
+		"The Sanctuary of the Orb",
+		"sanctuar.bbm"
+	},
+
+    {
+		5,
+		"The Rats hold many secrets that could guide Rif on his quest -- assuming "
+		"he can get past the doorkeeper.",
+		"The Rat Complex",
+		"ratdoor.bbm"
+	},
+
+    {
+		2,
+		"The Ferrets enjoy making things and have the materials to do so. How can "
+		"that help Rif?",
+		"The Ferret Village",
+		"ferrets.bbm"
+	},
+
+    {
+		67,
+		"What aid can the noble King of the Elks provide to Rif and his companions?",
+		"The Realm of the Forest King",
+		"elkenter.bbm"
+	},
+
+    {
+		3,
+		"The King holds Rif's sweetheart hostage. Will the Boar provide any "
+		"assistance to Rif?",
+		"The Great Hall of the Boar King",
+		"boarhall.bbm"
+	}
+};
+
 void Scene::changeScene(uint16 sceneNumber, int actorsEntrance, SceneTransitionType transitionType) {
+	// This is used for latter demos where all places on world map except
+	// Tent Faire are substituted with LBM picture and short description
+	// TODO: implement
+	for (int i = 0; i < ARRAYSIZE(sceneSubstitutes); i++) {
+	
+		if (sceneSubstitutes[i].sceneId == sceneNumber) {
+			Surface *backBuffer = _vm->_gfx->getBackBuffer();
+			byte *pal;
+			Common::File file;
+			PalEntry cPal[PAL_ENTRIES];
+
+			if (file.open(sceneSubstitutes[i].image)) {
+				_vm->_interface->setStatusText("Click or Press Return to continue. Press Q to quit.");
+				_vm->_interface->setMode(kPanelSceneSubstitute);
+				Graphics::decodeILBM(file, *backBuffer, pal);
+				for (int j = 0; j < PAL_ENTRIES; j++) {
+					cPal[j].red = *pal++;
+					cPal[j].green = *pal++;
+					cPal[j].blue = *pal++;
+				}
+				_vm->_gfx->setPalette(cPal);
+			}
+			debug(0, "Scene %d substitute exists", sceneNumber);
+			return;
+		}
+	}
+
 	LoadSceneParams sceneParams;
 
 	sceneParams.actorsEntrance = actorsEntrance;

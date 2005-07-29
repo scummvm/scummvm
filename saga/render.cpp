@@ -82,7 +82,7 @@ void Render::drawScene() {
 	// Get mouse coordinates
 	mousePoint = _vm->mousePos();
 
-	if (/*_vm->_interface->getMode() != kPanelPlacard*/!(_flags & (RF_PLACARD | RF_MAP))) {
+	if (!(_flags & (RF_PLACARD | RF_MAP))) {
 		// Display scene background
 		_vm->_scene->draw();
 

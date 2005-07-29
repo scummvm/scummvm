@@ -297,6 +297,10 @@ void Interface::setMode(int mode) {
 	case kPanelMap:
 		mapPanelShow();
 		break;
+	case kPanelSceneSubstitute:
+		_vm->_render->setFlag(RF_PLACARD);
+		_vm->_gfx->getCurrentPal(_mapSavedPal);
+		break;
 	}
 
 	draw();
@@ -441,6 +445,15 @@ bool Interface::processAscii(uint16 ascii, bool synthetic) {
 	case kPanelMap:
 		mapPanelClean();
 		break;
+	case kPanelSceneSubstitute:
+		if (ascii == 13) {
+			_vm->_render->clearFlag(RF_PLACARD);
+			_vm->_gfx->setPalette(_mapSavedPal);
+			setMode(kPanelMain);
+		} else if (ascii == 'q' || ascii == 'Q') {
+			_vm->shutDown();
+		}
+		break;
 	}
 	return false;
 }
@@ -482,6 +495,9 @@ void Interface::processKeyUp(uint16 ascii) {
 void Interface::setStatusText(const char *text, int statusColor) {
 	assert(text != NULL);
 	assert(strlen(text) < STATUS_TEXT_LEN);
+
+	if (_vm->_render->getFlags() & (RF_PLACARD | RF_MAP))
+		return;
 
 	strncpy(_statusText, text, STATUS_TEXT_LEN);
 	_statusOnceColor = statusColor;
@@ -1293,6 +1309,14 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 			mapPanelClean();
 	}
 
+	if (_panelMode == kPanelSceneSubstitute) {
+		if (updateFlag & UPDATE_MOUSECLICK) {
+			_vm->_render->clearFlag(RF_PLACARD);
+			_vm->_gfx->setPalette(_mapSavedPal);
+			setMode(kPanelMain);
+		}
+	}
+
 	_lastMousePoint = mousePoint;
 }
 
@@ -1426,7 +1450,7 @@ void Interface::handleMainUpdate(const Point& mousePoint) {
 		}
 		changed = true;
 	} else {
-		_vm->_script->whichObject(mousePoint);						
+		_vm->_script->whichObject(mousePoint);	
 	}
 
 	changed = changed || (panelButton != _mainPanel.currentButton);

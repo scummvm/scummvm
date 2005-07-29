@@ -307,7 +307,8 @@ void Script::sfStatusBar(SCRIPTFUNC_PARAMS) {
 // Script function #5 (0x05)
 void Script::sfMainMode(SCRIPTFUNC_PARAMS) {
 	_vm->_actor->_centerActor = _vm->_actor->_protagonist;
-	showVerb();		
+
+	showVerb();
 	_vm->_interface->activate();
 	_vm->_interface->setMode(kPanelMain);
 
@@ -534,60 +535,6 @@ void Script::sfSetFollower(SCRIPTFUNC_PARAMS) {
 	}
 }
 
-static struct SceneSubstitutes {
-    int sceneId;
-    const char *message;
-    const char *name;
-    const char *image;
-} sceneSubstitutes[] = {
-    { 
-		7,
-		"Tycho says he knows much about the northern lands. Can Rif convince "
-		"the Dog to share this knowledge?",
-		"The Home of Tycho Northpaw",
-		"tycho.bbm"
-	},
-
-    {
-		27,
-		"The scene of the crime may hold many clues, but will the servants of "
-		"the Sanctuary trust Rif?",
-		"The Sanctuary of the Orb",
-		"sanctuar.bbm"
-	},
-
-    {
-		5,
-		"The Rats hold many secrets that could guide Rif on his quest -- assuming "
-		"he can get past the doorkeeper.",
-		"The Rat Complex",
-		"ratdoor.bbm"
-	},
-
-    {
-		2,
-		"The Ferrets enjoy making things and have the materials to do so. How can "
-		"that help Rif?",
-		"The Ferret Village",
-		"ferrets.bbm"
-	},
-
-    {
-		67,
-		"What aid can the noble King of the Elks provide to Rif and his companions?",
-		"The Realm of the Forest King",
-		"elkenter.bbm"
-	},
-
-    {
-		3,
-		"The King holds Rif's sweetheart hostage. Will the Boar provide any "
-		"assistance to Rif?",
-		"The Great Hall of the Boar King",
-		"boarhall.bbm"
-	}
-};
-
 // Script function #16 (0x10)
 void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 	int16 sceneNumber;
@@ -608,16 +555,6 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 	// prevent this from happening.
 	if (_vm->_interface->getMode() == kPanelConverse) {
 		_vm->_interface->setMode(kPanelMain);
-	}
-
-	// This is used for latter demos where all places on world map except
-	// Tent Faire are substituted with LBM picture and short description
-	// TODO: implement
-	for (int i = 0; i < ARRAYSIZE(sceneSubstitutes); i++) {
-	
-		if (sceneSubstitutes[i].sceneId == sceneNumber) {
-			debug(0, "Scene %d substitute exists", sceneNumber);
-		}
 	}
 
 	_vm->_scene->changeScene(sceneNumber, entrance, (sceneNumber == ITE_SCENE_ENDCREDIT1) ? kTransitionFade : kTransitionNoFade);
