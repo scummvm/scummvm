@@ -298,7 +298,7 @@ void Interface::setMode(int mode) {
 		mapPanelShow();
 		break;
 	case kPanelSceneSubstitute:
-		_vm->_render->setFlag(RF_PLACARD);
+		_vm->_render->setFlag(RF_DEMO_SUBST);
 		_vm->_gfx->getCurrentPal(_mapSavedPal);
 		break;
 	}
@@ -447,9 +447,10 @@ bool Interface::processAscii(uint16 ascii, bool synthetic) {
 		break;
 	case kPanelSceneSubstitute:
 		if (ascii == 13) {
-			_vm->_render->clearFlag(RF_PLACARD);
+			_vm->_render->clearFlag(RF_DEMO_SUBST);
 			_vm->_gfx->setPalette(_mapSavedPal);
 			setMode(kPanelMain);
+			_vm->_script->setNoPendingVerb();
 		} else if (ascii == 'q' || ascii == 'Q') {
 			_vm->shutDown();
 		}
@@ -553,6 +554,13 @@ void Interface::draw() {
 
 	if (_vm->_scene->isInDemo() || _fadeMode == kFadeOut)
 		return;
+
+	// Disable this for IHNM for now, since that game uses the full screen
+	// in some cases.
+
+	if (_vm->getGameType() == GType_IHNM) {
+		return;
+	}
 
 	drawStatusBar();
 
@@ -1311,9 +1319,10 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 
 	if (_panelMode == kPanelSceneSubstitute) {
 		if (updateFlag & UPDATE_MOUSECLICK) {
-			_vm->_render->clearFlag(RF_PLACARD);
+			_vm->_render->clearFlag(RF_DEMO_SUBST);
 			_vm->_gfx->setPalette(_mapSavedPal);
 			setMode(kPanelMain);
+			_vm->_script->setNoPendingVerb();
 		}
 	}
 

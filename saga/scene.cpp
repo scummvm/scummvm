@@ -368,26 +368,32 @@ void Scene::changeScene(uint16 sceneNumber, int actorsEntrance, SceneTransitionT
 	
 		if (sceneSubstitutes[i].sceneId == sceneNumber) {
 			Surface *backBuffer = _vm->_gfx->getBackBuffer();
+			Surface bbmBuffer;
 			byte *pal, *colors;
 			Common::File file;
+			Rect rect;
 			PalEntry cPal[PAL_ENTRIES];
 
 			if (file.open(sceneSubstitutes[i].image)) {
-				_vm->_interface->setStatusText("Click or Press Return to continue. Press Q to quit.");
 				_vm->_interface->setMode(kPanelSceneSubstitute);
-				Graphics::decodeILBM(file, *backBuffer, colors);
-				pal = colors;
+				Graphics::decodeILBM(file, bbmBuffer, pal);
+				colors = pal;
+				rect.setWidth(bbmBuffer.w);
+				rect.setHeight(bbmBuffer.h);
+				backBuffer->blit(rect, (const byte*)bbmBuffer.pixels);
 				for (int j = 0; j < PAL_ENTRIES; j++) {
 					cPal[j].red = *pal++;
 					cPal[j].green = *pal++;
 					cPal[j].blue = *pal++;
 				}
-				_vm->_gfx->setPalette(cPal);
 				free(colors);
+				_vm->_gfx->setPalette(cPal);
+				
+				_vm->_interface->setStatusText("Click or Press Return to continue. Press Q to quit.");
 				_vm->_font->textDrawRect(kMediumFont, backBuffer, sceneSubstitutes[i].title,
 					 Common::Rect(0, 7, _vm->getDisplayWidth(), 27), 1, 15, kFontOutline);
 				_vm->_font->textDrawRect(kMediumFont, backBuffer, sceneSubstitutes[i].message,
-					 Common::Rect(24, _vm->getSceneHeight() - 33, _vm->getDisplayWidth()-11,
+					 Common::Rect(24, _vm->getSceneHeight() - 33, _vm->getDisplayWidth() - 11,
 								  _vm->getSceneHeight()), 1, 15, kFontOutline);
 			}
 			return;

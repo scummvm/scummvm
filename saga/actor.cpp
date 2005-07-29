@@ -378,7 +378,9 @@ void Actor::takeExit(uint16 actorId, const HitZone *hitZone) {
 	actor->lastZone = NULL;
 
 	_vm->_scene->changeScene(hitZone->getSceneNumber(), hitZone->getActorsEntrance(), kTransitionNoFade);
-	_vm->_script->setNoPendingVerb();
+	if (_vm->_interface->getMode() != kPanelSceneSubstitute) {
+		_vm->_script->setNoPendingVerb();
+	}
 }
 
 void Actor::stepZoneAction(ActorData *actor, const HitZone *hitZone, bool exit, bool stopped) {
