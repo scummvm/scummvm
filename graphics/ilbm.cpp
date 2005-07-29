@@ -20,7 +20,6 @@
 
 #include "common/stdafx.h"
 #include "common/stream.h"
-#include "common/file.h"
 #include "graphics/surface.h"
 
 namespace Graphics {
@@ -47,9 +46,6 @@ struct Chunk {
 	void readHeader() {
 		id = _input->readUint32BE();
 		size = _input->readUint32BE();
-		if (size % 2) {
-			size++;
-		}
 		bytesRead = 0;
 	}
 
@@ -58,7 +54,10 @@ struct Chunk {
 	}
 
 	void feed() {		
-		while(!eos()) {
+		if (size % 2) {
+			size++;
+		}
+		while(!_input->eos() && !eos()) {
 			readByte();
 		}
 	}
@@ -224,7 +223,7 @@ void decodeILBM(Common::ReadStream &input, Surface &surface, byte *&colors) {
 	Chunk formChunk(&input);
 	Chunk chunk(&input);
 	uint32 colorCount = 0, i, j, si;
-	int8 byteRun;
+	byte byteRun;
 	byte idx;
 	colors = NULL;
 	si = 0;
@@ -242,7 +241,6 @@ void decodeILBM(Common::ReadStream &input, Surface &surface, byte *&colors) {
 	while (!formChunk.eos()) {
 		formChunk.incBytesRead(8);
 		chunk.readHeader();
-		formChunk.incBytesRead(chunk.size);
 
 		switch(chunk.id) {
 		case ID_BMHD:
@@ -289,33 +287,22 @@ void decodeILBM(Common::ReadStream &input, Surface &surface, byte *&colors) {
 				while (!chunk.eos()) {
 					idx = chunk.readByte();
 					((byte*)surface.pixels)[si++] = idx;
-					/*colorMap[idx];
-					colorMap[idx];
-					colorMap[idx];*/
 				}
 				break;
 			case 1:
 				while (!chunk.eos()) {
-					byteRun = chunk.readSByte();
-					if (byteRun >= 0) {
+					byteRun = chunk.readByte();
+					if (byteRun <= 127) {
 						i = byteRun + 1;
 						for (j = 0; j < i; j++){
 							idx = chunk.readByte();
 							((byte*)surface.pixels)[si++] = idx;
-							/*colorMap[idx];
-							colorMap[idx];
-							colorMap[idx];*/
 						}
-					} else if (byteRun == -128) {
-					// nop
-					} else {
-						i = (-byteRun) + 1;
+					} else if (byteRun != 128) {
+						i = (256 - byteRun) + 1;
 						idx = chunk.readByte();
 						for (j = 0; j < i; j++) {
 							((byte*)surface.pixels)[si++] = idx;
-							/*colorMap[idx];
-							colorMap[idx];
-							colorMap[idx];*/
 						}					
 					}
 				}
@@ -329,6 +316,7 @@ void decodeILBM(Common::ReadStream &input, Surface &surface, byte *&colors) {
 		}
 
 		chunk.feed();	
+		formChunk.incBytesRead(chunk.size);
 	}
 }
 
