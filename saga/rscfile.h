@@ -36,18 +36,21 @@ namespace Saga {
 
 #define RSC_MIN_FILESIZE (RSC_TABLEINFO_SIZE + RSC_TABLEENTRY_SIZE + 1)
 
-//TODO: good PATCH.RE_ support
-
 struct PatchData {
+	bool _deletePatchFile;
 	Common::File *_patchFile;
 	GamePatchDescription *_patchDescription;
 	
-	PatchData(GamePatchDescription *patchDescription): _patchDescription(patchDescription) {
+	PatchData(GamePatchDescription *patchDescription): _patchDescription(patchDescription), _deletePatchFile(true) {
 		_patchFile = new Common::File();
+	}
+	PatchData(Common::File *patchFile): _patchDescription(NULL), _patchFile(patchFile), _deletePatchFile(false) {
 	}
 
 	~PatchData() {
-		delete _patchFile;
+		if (_deletePatchFile) {
+			delete _patchFile;
+		}
 	}
 };
 
@@ -55,6 +58,15 @@ struct ResourceData {
 	size_t offset;
 	size_t size;
 	PatchData *patchData;
+	void fillSoundPatch(const GameSoundInfo *&soundInfo) {
+		if (patchData != NULL) {
+			if (patchData->_patchDescription != NULL) {
+				if (patchData->_patchDescription->soundInfo != NULL) {
+					soundInfo = patchData->_patchDescription->soundInfo;
+				}
+			}
+		}
+	}
 };
 
 struct ResourceContext {

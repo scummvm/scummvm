@@ -48,6 +48,11 @@ bool Resource::loadContext(ResourceContext *context) {
 	ResourceData *resourceData;
 	byte *tableBuffer;
 	size_t tableSize;
+	uint16 subjectResourceType;
+	ResourceContext *subjectContext;
+	uint32 subjectResourceId;
+	uint32 patchResourceId;
+	ResourceData *subjectResourceData;
 
 	if (!context->file->open(context->fileName)) {
 		return false;
@@ -103,7 +108,29 @@ bool Resource::loadContext(ResourceContext *context) {
 
 	free(tableBuffer);
 
-	//process patch files
+	//process internal patch files
+	if (GAME_PATCHFILE & context->fileType) {
+		subjectResourceType = ~GAME_PATCHFILE & context->fileType;
+		subjectContext = getContext(subjectResourceType);
+		if (subjectContext == NULL) {
+			error("Resource::loadContext() Subject context not found");
+		}
+		loadResource(context, context->count - 1, tableBuffer, tableSize);
+
+		MemoryReadStreamEndian readS2(tableBuffer, tableSize, context->isBigEndian);
+		for (i = 0; i < tableSize / 8; i++) {
+			subjectResourceId = readS2.readUint32();
+			patchResourceId = readS2.readUint32();
+			subjectResourceData = getResourceData(subjectContext, subjectResourceId);
+			resourceData = getResourceData(context, patchResourceId);
+			subjectResourceData->patchData = new PatchData(context->file);
+			subjectResourceData->offset = resourceData->offset;
+			subjectResourceData->size = resourceData->size;
+		}
+
+	}
+
+	//process external patch files
 	if (result) {
 		for (j = 0; j < _vm->getGameDescription()->patchsCount; j++) {
 			patchDescription = &_vm->getGameDescription()->patchDescriptions[j];

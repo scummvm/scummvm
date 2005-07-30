@@ -116,11 +116,8 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	} else {
 		soundInfo = _vm->getSfxInfo();
 	}
-	if (context->table[resourceId].patchData != NULL) {
-		if (context->table[resourceId].patchData->_patchDescription->soundInfo != NULL) {
-			soundInfo = context->table[resourceId].patchData->_patchDescription->soundInfo;
-		}
-	}
+	
+	context->table[resourceId].fillSoundPatch(soundInfo);
 
 	MemoryReadStream readS(soundResource, soundResourceLength);
 

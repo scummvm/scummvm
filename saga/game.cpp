@@ -601,7 +601,7 @@ static GameFileDescription IHNMCD_GameFiles[] = {
 	{"musicfm.res", GAME_MUSICFILE_FM},
 	{"musicgm.res", GAME_MUSICFILE_GM},
 	{"scream.res", GAME_RESOURCEFILE},
-	{"patch.re_", GAME_PATCHFILE},
+	{"patch.re_", GAME_PATCHFILE | GAME_RESOURCEFILE},
 	{"scripts.res", GAME_SCRIPTFILE},
 	{"sfx.res", GAME_SOUNDFILE},
 	{"voicess.res", GAME_VOICEFILE}, //order of voice bank file is important
@@ -619,7 +619,7 @@ static GameFileDescription IHNMCDDE_GameFiles[] = {
 	{"musicgm.res", GAME_MUSICFILE_GM},
 	{"scream.res", GAME_RESOURCEFILE},
 	{"scripts.res", GAME_SCRIPTFILE},
-	{"patch.re_", GAME_PATCHFILE},
+	{"patch.re_", GAME_PATCHFILE | GAME_RESOURCEFILE},
 	{"sfx.res", GAME_SOUNDFILE},
 	{"voicess.res", GAME_VOICEFILE}, //order of voice bank file is important
 	{"voices1.res", GAME_VOICEFILE},
