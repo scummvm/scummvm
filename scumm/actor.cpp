@@ -1292,20 +1292,33 @@ void ScummEngine::resetActorBgs() {
 }
 
 int ScummEngine::getActorFromPos(int x, int y) {
-	int i, result;
-	result = 0;
+	int i;
 
 	if (!testGfxAnyUsageBits(x / 8))
 		return 0;
-	for (i = 1; i < _numActors; i++) {
-		if (testGfxUsageBit(x / 8, i) && !getClass(i, kObjectClassUntouchable)
-			&& y >= _actors[i]._top && y <= _actors[i]._bottom && _actors[i]._pos.y > _actors[result]._pos.y) {
-			if (_version > 2 || i != VAR(VAR_EGO)) {
-				result = i;
+
+	if (_heversion >= 70) {
+		int result = 0;
+
+		for (i = 1; i < _numActors; i++) {
+			if (testGfxUsageBit(x / 8, i) && !getClass(i, kObjectClassUntouchable)
+				&& y >= _actors[i]._top && y <= _actors[i]._bottom && _actors[i]._pos.y > _actors[result]._pos.y) {
+				if (_version > 2 || i != VAR(VAR_EGO)) {
+					result = i;
+				}
 			}
 		}
+		return result;
+	} else {
+		for (i = 1; i < _numActors; i++) {
+			if (testGfxUsageBit(x / 8, i) && !getClass(i, kObjectClassUntouchable)
+				&& y >= _actors[i]._top && y <= _actors[i]._bottom) {
+				if (_version > 2 || i != VAR(VAR_EGO))
+					return i;
+			}
+		}
+		return 0;
 	}
-	return result;
 }
 
 #ifndef DISABLE_SCUMM_7_8
