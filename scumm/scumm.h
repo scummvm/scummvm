@@ -842,7 +842,7 @@ protected:
 	void resetActorBgs();
 	virtual void processActors();
 	void processUpperActors();
-	int getActorFromPos(int x, int y);
+	virtual int getActorFromPos(int x, int y);
 
 public:
 	/* Actor talking stuff */

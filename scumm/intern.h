@@ -830,6 +830,8 @@ protected:
 	virtual void readGlobalObjects();
 	virtual void readIndexBlock(uint32 blocktype, uint32 itemsize);
 
+	virtual int getActorFromPos(int x, int y);
+
 	int getStringCharWidth(byte chr);
 	virtual int setupStringArray(int size);
 	void appendSubstring(int dst, int src, int len2, int len);
