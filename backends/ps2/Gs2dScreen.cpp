@@ -149,7 +149,7 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 	_texCoords[0].v = SCALE(1);
 	_texCoords[1].u = SCALE(_width);
 	_texCoords[1].v = SCALE(_height);
-	
+
 	uint32 tvFrameSize = _tvWidth * _tvHeight * 4;  // 32 bits per pixel
 
 	// setup frame buffer pointers
@@ -204,9 +204,9 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 	_dmaPipe->flush();
 
 	_clutChanged = _screenChanged = _overlayChanged = true;
-	
+
 	updateScreen();
-	
+
 	createAnimTextures();
 	createAnimThread(this);
 }
@@ -248,7 +248,7 @@ void Gs2dScreen::newScreenSize(uint16 width, uint16 height) {
 	_width = width;
 	_height = height;
 	_pitch = (width + 127) & ~127;
-	
+
 	// malloc new buffers
 	free(_screenBuf);
 	free(_overlayBuf);
@@ -417,7 +417,7 @@ void Gs2dScreen::grabOverlay(uint16 *buf, uint16 pitch) {
 		memcpy(buf, src, _width * 2);
 		buf += pitch;
         src += _width;
-	}	
+	}
 }
 
 void Gs2dScreen::setMouseOverlay(const uint8 *buf, uint16 width, uint16 height, uint16 hotSpotX, uint16 hotSpotY, uint8 transpCol) {
@@ -520,7 +520,7 @@ void Gs2dScreen::animThread(void) {
 				for (int coord = 0; coord < 4; coord++) {
 					z[coord] = rotCos * x[coord];
 					x[coord] = rotSin * x[coord];
-				
+
 					nodes[coord].z = 0;
 					nodes[coord].x = (uint16)(((V * x[coord]) / (z[coord] + V + Z_TRANSL)) * 16);
 					nodes[coord].y = (uint16)(((V * y[coord]) / (z[coord] + V + Z_TRANSL)) * 16);
@@ -533,7 +533,7 @@ void Gs2dScreen::animThread(void) {
 					_dmaPipe->setTex(_texPtrs[TEXT], 128, 7, 4, GS_PSMT4HL, _clutPtrs[TEXT], 0, 64, GS_PSMCT32);
 				else
 					_dmaPipe->setTex(_texPtrs[TEXT], 128, 7, 4, GS_PSMT4HH, _clutPtrs[TEXT], 0, 64, GS_PSMCT32);
-				
+
 				_dmaPipe->textureRect(nodes + 0, nodes + 1, nodes + 2, nodes + 3,
 					texNodes + 0, texNodes + 1, texNodes + 2, texNodes + 3, GS_RGBA(0x80, 0x80, 0x80, 0x80));
 
@@ -591,7 +591,7 @@ const uint16 Gs2dScreen::_binaryPattern[16] = {
 	0xD992, 0x344B, 0xA592, 0x110D,
 	0x9234, 0x2326, 0x5199, 0xC8A6,
 	0x4D29, 0x18B0, 0xA5AA, 0x2949,
-	0x6DB3, 0xB2AA, 0x64A4, 0x3329 
+	0x6DB3, 0xB2AA, 0x64A4, 0x3329
 };
 
 const uint32 Gs2dScreen::_binaryClut[16] __attribute__((aligned(64))) = {

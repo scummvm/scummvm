@@ -209,10 +209,10 @@ public:
 
 	virtual int flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) {
 		assert(input.isStereo() == stereo);
-		
+
 		st_sample_t *ptr;
 		st_size_t len;
-		
+
 		if (stereo)
 			osamp *= 2;
 
@@ -225,7 +225,7 @@ public:
 
 		// Read up to 'osamp' samples into our temporary buffer
 		len = input.readBuffer(_buffer, osamp);
-		
+
 		// Mix the data into the output buffer
 		ptr = _buffer;
 		while (len--) {
@@ -241,7 +241,7 @@ public:
 
 			// output left channel
 			clampedAdd(*obuf++, (tmp0 * (int)vol_l) / Audio::Mixer::kMaxMixerVolume);
-	
+
 			// output right channel
 			clampedAdd(*obuf++, (tmp1 * (int)vol_r) / Audio::Mixer::kMaxMixerVolume);
 		}

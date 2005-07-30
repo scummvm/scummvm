@@ -59,7 +59,7 @@ typedef struct fm_opl_slot {
 	uint mul;	/* multiple        :ML_TABLE[ML]		*/
 	uint Cnt;	/* frequency count						*/
 	uint Incr;	/* frequency step						*/
-	
+
 	/* envelope generator state */
 	uint8 eg_typ;/* envelope type flag					*/
 	uint8 evm;	/* envelope phase						*/
@@ -116,7 +116,7 @@ typedef struct fm_opl_f {
 
 	/* Rythm sention */
 	uint8 rythm;		/* Rythm mode , key flag */
-	
+
 	/* time tables */
 	int AR_TABLE[75];	/* atttack rate tables				*/
 	int DR_TABLE[75];	/* decay rate tables				*/

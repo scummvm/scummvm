@@ -384,12 +384,12 @@ ScummEngine_v72he::ArrayHeader *ScummEngine_v72he::defineArray(int array, int ty
 	int id;
 	int size;
 	ArrayHeader *ah;
-	
+
 	assert(dim2start >= 0 && dim2start <= dim2end);
 	assert(dim1start >= 0 && dim1start <= dim1end);
 	assert(0 <= type && type <= 6);
 
-	
+
 	if (type == kBitArray || type == kNibbleArray)
 		type = kByteArray;
 
@@ -433,7 +433,7 @@ int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
 	if (ah == NULL || ah->data == NULL)
 		error("readArray: invalid array %d (%d)", array, readVar(array));
 
-	if (idx2 < (int)FROM_LE_32(ah->dim2start) || idx2 > (int)FROM_LE_32(ah->dim2end) || 
+	if (idx2 < (int)FROM_LE_32(ah->dim2start) || idx2 > (int)FROM_LE_32(ah->dim2end) ||
 		idx1 < (int)FROM_LE_32(ah->dim1start) || idx1 > (int)FROM_LE_32(ah->dim1end)) {
 		error("readArray: array %d out of bounds: [%d, %d] exceeds [%d..%d, %d..%d]",
 			  array, idx1, idx2, FROM_LE_32(ah->dim1start), FROM_LE_32(ah->dim1end),
@@ -469,7 +469,7 @@ void ScummEngine_v72he::writeArray(int array, int idx2, int idx1, int value) {
 	if (!ah)
 		error("writeArray: Invalid array (%d) reference", readVar(array));
 
-	if (idx2 < (int)FROM_LE_32(ah->dim2start) || idx2 > (int)FROM_LE_32(ah->dim2end) || 
+	if (idx2 < (int)FROM_LE_32(ah->dim2start) || idx2 > (int)FROM_LE_32(ah->dim2end) ||
 		idx1 < (int)FROM_LE_32(ah->dim1start) || idx1 > (int)FROM_LE_32(ah->dim1end)) {
 		error("writeArray: array %d out of bounds: [%d, %d] exceeds [%d..%d, %d..%d]",
 			  array, idx1, idx2, FROM_LE_32(ah->dim1start), FROM_LE_32(ah->dim1end),
@@ -555,7 +555,7 @@ int ScummEngine_v72he::convertFilePath(byte *dst, bool setFilePath) {
 	}
 
 	return r;
-}	
+}
 
 void ScummEngine_v72he::copyScriptString(byte *dst, int dstSize) {
 	byte string[1024];
@@ -709,7 +709,7 @@ byte *ScummEngine_v70he::findWrappedBlock(uint32 tag, byte *ptr, int state, bool
 
 		size = getResourceDataSize(offs) / 4;
 		assert((uint32)state <= (uint32)size);
-			
+
 
 		offs += READ_LE_UINT32(offs + state * sizeof(uint32));
 		offs = heFindResourceData(tag, offs - 8);
@@ -859,7 +859,7 @@ void ScummEngine_v72he::o72_captureWizImage() {
 	grab.right = pop() + 1;
 	grab.top = pop();
 	grab.left = pop();
-	_wiz->captureWizImage(pop(), grab, false, true);	
+	_wiz->captureWizImage(pop(), grab, false, true);
 }
 
 void ScummEngine_v72he::o72_getTimer() {
@@ -1291,7 +1291,7 @@ void ScummEngine_v72he::o72_actorOps() {
 	case 217:		// SO_ACTOR_NEW
 		a->initActor(2);
 		break;
-	case 218:		
+	case 218:
 		a->drawActorToBackBuf(a->_pos.x, a->_pos.y);
 		break;
 	case 219:
@@ -1680,7 +1680,7 @@ void ScummEngine_v72he::o72_dim2dimArray() {
 	case 5:		// SO_INT_ARRAY
 		data = kIntArray;
 		break;
-	case 6:		
+	case 6:
 		data = kDwordArray;
 		break;
 	case 7:		// SO_STRING_ARRAY
@@ -1894,11 +1894,11 @@ void ScummEngine_v72he::o72_findAllObjects() {
 	writeVar(0, 0);
 	defineArray(0, kDwordArray, 0, 0, 0, _numLocalObjects);
 	writeArray(0, 0, 0, _numLocalObjects);
-	
+
 	for (i = 1; i < _numLocalObjects; i++) {
 		writeArray(0, 0, i, _objs[i].obj_nr);
 	}
-	
+
 	push(readVar(0));
 }
 
@@ -2009,7 +2009,7 @@ void ScummEngine_v72he::o72_redimArray() {
 	}
 }
 
-void ScummEngine_v72he::redimArray(int arrayId, int newDim2start, int newDim2end, 
+void ScummEngine_v72he::redimArray(int arrayId, int newDim2start, int newDim2end,
 								   int newDim1start, int newDim1end, int type) {
 	int newSize, oldSize;
 
@@ -2055,7 +2055,7 @@ void ScummEngine_v72he::checkArrayLimits(int array, int dim2start, int dim2end, 
 	}
 }
 
-void ScummEngine_v72he::copyArray(int array1, int a1_dim2start, int a1_dim2end, int a1_dim1start, int a1_dim1end, 
+void ScummEngine_v72he::copyArray(int array1, int a1_dim2start, int a1_dim2end, int a1_dim1start, int a1_dim1end,
 				int array2, int a2_dim2start, int a2_dim2end, int a2_dim1start, int a2_dim1end)
 {
 	debug(5, "ScummEngine_v72he::copyArray(%d, [%d,%d,%d,%d], %d, [%d,%d,%d,%d])", array1, a1_dim2start, a1_dim2end, a1_dim1start, a1_dim1end, array2, a2_dim2start, a2_dim2end, a2_dim1start, a2_dim1end);
@@ -2065,12 +2065,12 @@ void ScummEngine_v72he::copyArray(int array1, int a1_dim2start, int a1_dim2end, 
 	checkArrayLimits(array1, a1_dim2start, a1_dim2end, a1_dim1start, a1_dim1end);
 	checkArrayLimits(array2, a2_dim2start, a2_dim2end, a2_dim1start, a2_dim1end);
 	int a12_num = a1_dim2end - a1_dim2start + 1;
-	int a11_num = a1_dim1end - a1_dim1start + 1;	
+	int a11_num = a1_dim1end - a1_dim1start + 1;
 	int a22_num = a2_dim2end - a2_dim2start + 1;
 	int a21_num = a2_dim1end - a2_dim1start + 1;
 	if (a22_num != a12_num || a21_num != a11_num) {
 		warning("Operation size mismatch (%d vs %d)(%d vs %d)", a12_num, a22_num, a11_num, a21_num);
-	}	
+	}
 
 	if (array1 != array2) {
 		ArrayHeader *ah1 = (ArrayHeader *)getResourceAddress(rtString, readVar(array1));
@@ -2104,7 +2104,7 @@ void ScummEngine_v72he::copyArray(int array1, int a1_dim2start, int a1_dim2end, 
 				copyArrayHelper(ah, a2_dim2start, a2_dim1start, a2_dim1end, &src, &srcPitch, &rowSize);
 			} else {
 				copyArrayHelper(ah, a1_dim2end, a1_dim1start, a1_dim1end, &dst, &dstPitch, &rowSize);
-				copyArrayHelper(ah, a2_dim2end, a2_dim1start, a2_dim1end, &src, &srcPitch, &rowSize);				
+				copyArrayHelper(ah, a2_dim2end, a2_dim1start, a2_dim1end, &src, &srcPitch, &rowSize);
 			}
 			for (; a1_dim2start <= a1_dim2end; ++a1_dim2start) {
 				memcpy(dst, src, rowSize);
@@ -2238,7 +2238,7 @@ void ScummEngine_v72he::o72_writeINI() {
 		if (!strcmp((char *)option, "DownLoadPath") || !strcmp((char *)option, "GameResourcePath") || !strcmp((char *)option, "SaveGamePath"))
 			return;
 
-		ConfMan.set((char *)option, (char *)string); 
+		ConfMan.set((char *)option, (char *)string);
 		break;
 	default:
 		error("o72_writeINI: default type %d", type);
@@ -2359,7 +2359,7 @@ void ScummEngine_v72he::decodeParseString(int m, int n) {
 		colors = pop();
 		if (colors == 1) {
 			_string[m].color = pop();
-		} else {	
+		} else {
 			push(colors);
 			getStackList(args, ARRAYSIZE(args));
 			for (i = 0; i < 16; i++)

@@ -86,7 +86,7 @@ protected:
 	inline ::FLAC__StreamDecoderWriteStatus callbackWrite(const ::FLAC__Frame *frame, const FLAC__int32 * const buffer[]);
 	inline void callbackMetadata(const ::FLAC__StreamMetadata *metadata);
 	inline void callbackError(::FLAC__StreamDecoderErrorStatus status);
-	
+
 	::FLAC__SeekableStreamDecoder *_decoder;
 
 private:
@@ -103,14 +103,14 @@ private:
 	void operator=(const FlacInputStream &);
 
 	bool isValid() const { return _decoder != NULL; }
-	
+
 	bool allocateBuffer(uint minSamples);
 	inline void flushBuffer();
 	inline void deleteBuffer();
-	
+
 	/** Header of the Stream */
 	FLAC__StreamMetadata_StreamInfo _streaminfo;
-	
+
 	struct {
 		/** Handle to the File */
 		File *fileHandle;
@@ -121,25 +121,25 @@ private:
 		/** last index of Stream + 1(!) - not necessary end of file */
 		uint32 fileEndPos;
 	} _fileInfo;
-	
+
 	/** index of the first Sample to be played */
 	FLAC__uint64 _firstSample;
 	/** index + 1(!) of the last Sample to be played - 0 is end of Stream*/
 	FLAC__uint64 _lastSample;
-	
+
 	/** true if the last Sample was decoded from the FLAC-API - there might still be data in the buffer */
 	bool _lastSampleWritten;
-	
+
 	typedef int16 bufType;
 	enum { BUFTYPE_BITS = 16 };
-	
+
 	struct {
 		bufType *bufData;
 		bufType *bufReadPos;
 		uint bufSize;
 		uint bufFill;
 	} _preBuffer;
-	
+
 	bufType *_outBuffer;
 	uint _requestedSamples;
 
@@ -154,7 +154,7 @@ private:
 };
 
 FlacInputStream::FlacInputStream(File *sourceFile, const uint32 fileStart)
-			:	_decoder(::FLAC__seekable_stream_decoder_new()), _firstSample(0), _lastSample(0), 
+			:	_decoder(::FLAC__seekable_stream_decoder_new()), _firstSample(0), _lastSample(0),
 				_outBuffer(NULL), _requestedSamples(0), _lastSampleWritten(true),
 				_methodConvertBuffers(&FlacInputStream::convertBuffersGeneric)
 {
@@ -170,15 +170,15 @@ FlacInputStream::FlacInputStream(File *sourceFile, const uint32 fileStart)
 	_fileInfo.fileStartPos = fileStart;
 	_fileInfo.filePos = fileStart;
 	_fileInfo.fileEndPos = sourceFile->size();
-	
+
 	_fileInfo.fileHandle->incRef();
 }
 
-FlacInputStream::FlacInputStream(File *sourceFile, const uint32 fileStart, const uint32 fileStop)	
-			:	_decoder(::FLAC__seekable_stream_decoder_new()), _firstSample(0), _lastSample(0), 
+FlacInputStream::FlacInputStream(File *sourceFile, const uint32 fileStart, const uint32 fileStop)
+			:	_decoder(::FLAC__seekable_stream_decoder_new()), _firstSample(0), _lastSample(0),
 				_outBuffer(NULL), _requestedSamples(0), _lastSampleWritten(true),
 				_methodConvertBuffers(&FlacInputStream::convertBuffersGeneric)
-{ 
+{
 	assert(sourceFile != NULL && sourceFile->isOpen());
 	assert(fileStop <= 0 || (fileStart < fileStop && fileStop <= sourceFile->size()));
 
@@ -192,7 +192,7 @@ FlacInputStream::FlacInputStream(File *sourceFile, const uint32 fileStart, const
 	_fileInfo.fileStartPos = fileStart;
 	_fileInfo.filePos = fileStart;
 	_fileInfo.fileEndPos = fileStop;
-	
+
 	_fileInfo.fileHandle->incRef();
 }
 
@@ -203,7 +203,7 @@ FlacInputStream::~FlacInputStream() {
 	}
 	if (_preBuffer.bufData != NULL)
 		delete[] _preBuffer.bufData;
-	
+
 	_fileInfo.fileHandle->decRef();
 }
 
@@ -246,7 +246,7 @@ bool FlacInputStream::init() {
 	}
 
 	warning("FlacInputStream: could not create an Audiostream from File %s", _fileInfo.fileHandle->name());
-	return false; 
+	return false;
 }
 
 bool FlacInputStream::finish() {
@@ -304,7 +304,7 @@ int FlacInputStream::readBuffer(int16 *buffer, const int numSamples) {
 
 		const uint copySamples = MIN((uint)numSamples, _preBuffer.bufFill);
 		memcpy(buffer, _preBuffer.bufReadPos, copySamples*sizeof(buffer[0]));
-		
+
 		_outBuffer = buffer + copySamples;
 		_requestedSamples = numSamples - copySamples;
 		_preBuffer.bufReadPos += copySamples;
@@ -351,9 +351,9 @@ inline ::FLAC__SeekableStreamDecoderReadStatus FlacInputStream::callbackRead(FLA
 
 	if (*bytes == 0)
 		return FLAC__SEEKABLE_STREAM_DECODER_READ_STATUS_ERROR; /* abort to avoid a deadlock */
-	
+
 	const uint32 length = MIN(_fileInfo.fileEndPos - _fileInfo.filePos, static_cast<uint32>(*bytes));
-	
+
 	_fileInfo.fileHandle->seek(_fileInfo.filePos);
 	const uint32 bytesRead = _fileInfo.fileHandle->read(buffer, length);
 
@@ -365,7 +365,7 @@ inline ::FLAC__SeekableStreamDecoderReadStatus FlacInputStream::callbackRead(FLA
 	return FLAC__SEEKABLE_STREAM_DECODER_READ_STATUS_OK;
 }
 
-inline void FlacInputStream::setLastSample(FLAC__uint64 absoluteSample) { 
+inline void FlacInputStream::setLastSample(FLAC__uint64 absoluteSample) {
 	if (_lastSampleWritten && absoluteSample > _lastSample)
 		_lastSampleWritten = false;
 	_lastSample = absoluteSample;
@@ -555,14 +555,14 @@ void FlacInputStream::convertBuffersGeneric(bufType* bufDestination, const FLAC_
 
 	if (numBits < BUFTYPE_BITS) {
 		const uint8 kPower = (uint8)(BUFTYPE_BITS - numBits);
-		
+
 		for (; numSamples > 0; numSamples -= numChannels) {
 			for (uint i = 0; i < numChannels; ++i)
 				*bufDestination++ = static_cast<bufType>(*(inChannels[i]++)) << kPower;
 		}
 	} else if (numBits > BUFTYPE_BITS) {
 		const uint8 kPower = (uint8)(numBits - BUFTYPE_BITS);
-		
+
 		for (; numSamples > 0; numSamples -= numChannels) {
 			for (uint i = 0; i < numChannels; ++i)
 				*bufDestination++ = static_cast<bufType>(*(inChannels[i]++) >> kPower) ;
@@ -582,7 +582,7 @@ inline ::FLAC__StreamDecoderWriteStatus FlacInputStream::callbackWrite(const ::F
 	assert(frame->header.sample_rate == _streaminfo.sample_rate);
 	assert(frame->header.bits_per_sample == _streaminfo.bits_per_sample);
 	assert(frame->header.number_type == FLAC__FRAME_NUMBER_TYPE_SAMPLE_NUMBER || _streaminfo.min_blocksize == _streaminfo.max_blocksize);
-	
+
 	assert(_preBuffer.bufFill == 0); // we dont append data
 
 	uint nSamples = frame->header.blocksize;
@@ -611,7 +611,7 @@ inline ::FLAC__StreamDecoderWriteStatus FlacInputStream::callbackWrite(const ::F
 	if (_requestedSamples > 0) {
 		assert(_requestedSamples % kNumChannels == 0); // must be integral multiply of channels
 		assert(_outBuffer != NULL);
-			
+
 		const uint copySamples = MIN(_requestedSamples,nSamples);
 		(*_methodConvertBuffers)(_outBuffer, inChannels, copySamples, kNumChannels, kNumBits);
 
@@ -674,7 +674,7 @@ inline void FlacInputStream::callbackMetadata(const ::FLAC__StreamMetadata *meta
 }
 inline void FlacInputStream::callbackError(::FLAC__StreamDecoderErrorStatus status) {
 	// some of these are non-critical-Errors
-	debug(1, "FlacInputStream: An error occured while decoding. DecoderState is: %s", 
+	debug(1, "FlacInputStream: An error occured while decoding. DecoderState is: %s",
 			FLAC__StreamDecoderErrorStatusString[status]);
 }
 
@@ -794,7 +794,7 @@ void FlacTrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int st
 		debug(1, "FlacTrackInfo: Audiostream %s could not seek to frame %d (ca %d secs)", _file->name(), startFrame, startFrame/75);
 		flac->finish();
 	}
-	delete flac; 
+	delete flac;
 }
 
 FlacTrackInfo::~FlacTrackInfo()

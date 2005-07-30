@@ -128,8 +128,8 @@ public:
 		_size = 0;
 		_capacity = 0;
 	}
-	
-	bool isEmpty() const { 
+
+	bool isEmpty() const {
 		return (_size == 0);
 	}
 

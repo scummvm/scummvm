@@ -238,7 +238,7 @@ int MidiDriver_MT32::open() {
 		return MERR_ALREADY_OPEN;
 
 	MidiDriver_Emulated::open();
-	
+
 	memset(&prop, 0, sizeof(prop));
 	prop.sampleRate = getRate();
 	prop.useReverb = true;
@@ -253,10 +253,10 @@ int MidiDriver_MT32::open() {
 	_synth = new MT32Emu::Synth();
 	_initialising = true;
 	const byte dummy_palette[] = {
-		0, 0, 0, 0, 
-		0, 0, 171, 0, 
-		0, 171, 0, 0, 
-		0, 171, 171, 0, 
+		0, 0, 0, 0,
+		0, 0, 171, 0,
+		0, 171, 0, 0,
+		0, 171, 171, 0,
 		171, 0, 0, 0
 	};
 
@@ -470,7 +470,7 @@ void MidiDriver_ThreadedMT32::onTimer() {
 
 MidiDriver *MidiDriver_MT32_create(Audio::Mixer *mixer) {
 	// HACK: It will stay here until engine plugin loader overhaul
-	if (ConfMan.hasKey("extrapath"))                                        
+	if (ConfMan.hasKey("extrapath"))
 		Common::File::addDefaultDirectory(ConfMan.get("extrapath"));
 	return new MidiDriver_MT32(mixer);
 }

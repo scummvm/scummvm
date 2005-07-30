@@ -30,11 +30,11 @@ void pcm2adpcm(Int16 *src, UInt8 *dst, UInt32 length) {
 	if (OPTIONS_TST(kOptDeviceARM)) {
 		PnoDescriptor pno;
 		ARMPa1SndType userData = {src, dst, length};
-		
+
 		MemPtr armP =	_PnoInit(ARM_PA1SND, &pno);
 						_PnoCall(&pno, &userData);
 						_PnoFree(&pno, armP);
-		
+
 		return;
 	}
 */
@@ -49,7 +49,7 @@ void pcm2adpcm(Int16 *src, UInt8 *dst, UInt32 length) {
 	signal = 0;
 	step = 0x7F;
 	length >>= 3;	// 16bit stereo -> 4bit mono
-	
+
 	do {
 
 		// high nibble
@@ -58,14 +58,14 @@ void pcm2adpcm(Int16 *src, UInt8 *dst, UInt32 length) {
 		src++;
 		chan2 = ByteSwap16(*src);
 		src++;
-		
+
 		diff = ((chan1 + chan2) >> 1) - signal;
 #else
 		diff = ((*src++ + *src++) >> 1) - signal;
 #endif
 		diff <<= 3;
 		diff /= step;
-		
+
 		val = abs(diff) >> 1;
 
 		if (val  > 7)	val = 7;
@@ -85,7 +85,7 @@ void pcm2adpcm(Int16 *src, UInt8 *dst, UInt32 length) {
 		src++;
 		chan2 = ByteSwap16(*src);
 		src++;
-		
+
 		diff = ((chan1 + chan2) >> 1) - signal;
 #else
 		diff = ((*src++ + *src++) >> 1) - signal;

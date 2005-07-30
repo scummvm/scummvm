@@ -30,7 +30,7 @@
 
 namespace Graphics {
 
-BaseAnimationState::BaseAnimationState(Audio::Mixer *snd, OSystem *sys, int width, int height) 
+BaseAnimationState::BaseAnimationState(Audio::Mixer *snd, OSystem *sys, int width, int height)
 	: _movieWidth(width), _movieHeight(height), _snd(snd), _sys(sys) {
 #ifndef BACKEND_8BIT
 	_colorTab = NULL;
@@ -256,7 +256,7 @@ void BaseAnimationState::buildLookup(int p, int lines) {
 
 	if (p >= _maxPalNum)
 		return;
-  
+
 	if (p != _curPal) {
 		_curPal = p;
 		_cr = 0;
@@ -284,7 +284,7 @@ void BaseAnimationState::buildLookup(int p, int lines) {
 					}
 				}
 				_lut2[_pos++] = bst;
-	
+
 				r += (1 << SHIFT);
 				g += (1 << SHIFT);
 				b += (1 << SHIFT);

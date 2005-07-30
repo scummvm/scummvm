@@ -70,7 +70,7 @@ KeysDialog::KeysDialog(const Common::String &title)
 	// Get actions names
 	Common::StringList l;
 
-	for (int i = 0; i < Actions::Instance()->size(); i++) 
+	for (int i = 0; i < Actions::Instance()->size(); i++)
 		l.push_back(Actions::Instance()->actionName((ActionType)i));
 
 	_actionsList->setList(l);

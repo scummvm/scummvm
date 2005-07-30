@@ -60,7 +60,7 @@ private:
 		int32 size;			// size of sync
 		byte *ptr;			// pointer to sync
 	};
-	
+
 public:
 
 	struct soundStruct {

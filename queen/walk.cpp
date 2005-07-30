@@ -92,7 +92,7 @@ void Walk::animateJoePrepare() {
 					pwd->anim.set(19, 24, DIR_FRONT);
 				}
 			}
-		}	
+		}
 	}
 }
 
@@ -126,7 +126,7 @@ void Walk::animateJoe() {
 			// adjust Joe's movespeed according to scale
 			pbs->scale = pwd->area->calcScale(pbs->y);
 			_vm->logic()->joeScale(pbs->scale);
-			pbs->scaleWalkSpeed(6);			
+			pbs->scaleWalkSpeed(6);
 			_vm->update(true);
 			if (_vm->input()->cutawayQuit() || _vm->logic()->joeWalk() == JWM_EXECUTE) {
 				stopJoe();
@@ -278,7 +278,7 @@ int16 Walk::moveJoe(int direction, int16 endx, int16 endy, bool inCutaway) {
 		if (calc(oldPos, newPos, oldx, oldy, endx, endy)) {
 			if (_walkDataCount > 0) {
 				animateJoePrepare();
-				animateJoe(); 
+				animateJoe();
 				if (_joeInterrupted) {
 					can = -1;
 				}
@@ -380,10 +380,10 @@ void Walk::stopPerson(uint16 bobNum) {
 
 bool Walk::calc(uint16 oldPos, uint16 newPos, int16 oldx, int16 oldy, int16 x, int16 y) {
 	// if newPos is outside of an AREA then traverse Y axis until an AREA is found
-	if (newPos == 0) { 
+	if (newPos == 0) {
 		newPos = findAreaPosition(&x, &y, true);
 	}
-	
+
 	// do the same for oldPos in case Joe somehow sits on the border of an AREA
 	// and does not register
 	if (oldPos == 0) {
@@ -427,9 +427,9 @@ int16 Walk::calcC(int16 c1, int16 c2, int16 c3, int16 c4, int16 lastc) {
 }
 
 int16 Walk::findAreaPosition(int16 *x, int16 *y, bool recalibrate) {
-	// FIXME - in order to locate the nearest available area, the original 
-	// algorithm computes the X (or Y) closest face distance for each available 
-	// area. We simply added the case where the pointer is neither lying in the 
+	// FIXME - in order to locate the nearest available area, the original
+	// algorithm computes the X (or Y) closest face distance for each available
+	// area. We simply added the case where the pointer is neither lying in the
 	// X range nor in the Y one.
 	// To get an example of this in action, in the room D1, make Joe walking
 	// to the wall at the right of the window (just above the radiator). On the
@@ -511,7 +511,7 @@ bool Walk::isAreaStruck(uint16 area) const {
 bool Walk::calcPath(uint16 oldArea, uint16 newArea) {
 	debug(9, "Walk::calcPath(%d, %d)", oldArea, newArea);
 	_areaList[1] = _areaStrike[1] = oldArea;
-	_areaListCount = _areaStrikeCount = 1;	
+	_areaListCount = _areaStrikeCount = 1;
 	uint16 area = oldArea;
 	while (_areaListCount > 0 && area != newArea) {
 		area = findFreeArea(area);
@@ -519,7 +519,7 @@ bool Walk::calcPath(uint16 oldArea, uint16 newArea) {
 			// wrong path, rolling back
 			_areaList[_areaListCount] = 0;
 			--_areaListCount;
-			area = _areaList[_areaListCount];	
+			area = _areaList[_areaListCount];
 		} else {
 			++_areaListCount;
 			assert(_areaListCount < MAX_WALK_DATA);
@@ -529,7 +529,7 @@ bool Walk::calcPath(uint16 oldArea, uint16 newArea) {
 				assert(_areaStrikeCount < MAX_WALK_DATA);
 				_areaStrike[_areaStrikeCount] = area;
 			}
-		}		
+		}
 	}
 	return _areaList[1] != 0;
 }

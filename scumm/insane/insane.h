@@ -68,13 +68,13 @@ class Insane {
 	void escapeKeyHandler(void);
 
  private:
-	
+
 	ScummEngine_v6 *_vm;
 	SmushPlayer *_player;
-	
+
 	int32 _speed;
 	bool _insaneIsRunning;
-	
+
 	int32 _numberArray;
    	int32 _emulTimerId;
 	int32 _emulateInterrupt;
@@ -193,9 +193,9 @@ class Insane {
 		int32 maxframe;
 		int32 apprAnim;
 	};
-  
+
 	struct enemy _enemy[9];
-  
+
 	struct fluConf {
 		int sceneId;
 		byte **fluPtr;
@@ -228,7 +228,7 @@ class Insane {
 		int32 tilt;
 		int32 frame;
 	};
-  
+
 	struct actor {
 		int32 damage;
 		int32 maxdamage;
@@ -264,7 +264,7 @@ class Insane {
 
 	void initvars(void);
 	void readFileToMem(const char *name, byte **buf);
-	void startVideo(const char *filename, int num, int argC, int frameRate, 
+	void startVideo(const char *filename, int num, int argC, int frameRate,
 					 int doMainLoop, byte *fluPtr = 0, int32 startFrame = 0);
 	void smush_warpMouse(int x, int y, int buttons);
 	void putActors(void);
@@ -330,7 +330,7 @@ class Insane {
 					  int32 setupsan13, int32 curFrame, int32 maxFrame);
 	void switchSceneIfNeeded(void);
 	int smush_changeState(int state);
-	void init_actStruct(int actornum, int actnum, int32 actorval, byte state, 
+	void init_actStruct(int actornum, int actnum, int32 actorval, byte state,
 						  int32 room, int32 animtilt, int32 tilt, int32 frame);
 	void init_enemyStruct(int n, int32 handler, int32 initializer,
 							   int16 occurences, int32 maxdamage, int32 isEmpty,
@@ -363,18 +363,18 @@ class Insane {
 	bool smlayer_startVoice(int32 sound);
 	void smlayer_soundSetPan(int32 sound, int32 pan);
 	void smlayer_soundSetPriority(int32 sound, int32 priority);
-	void smlayer_drawSomething(byte *renderBitmap, int32 codecparam, 
-			   int32 arg_8, int32 arg_C, int32 arg_10, NutRenderer *nutfileptr, 
+	void smlayer_drawSomething(byte *renderBitmap, int32 codecparam,
+			   int32 arg_8, int32 arg_C, int32 arg_10, NutRenderer *nutfileptr,
 			   int32 arg_18, int32 arg_1C, int32 arg_20);
 	void smlayer_overrideDrawActorAt(byte *, byte, byte);
-	void queueSceneSwitch(int32 sceneId, byte *fluPtr, const char *filename, 
+	void queueSceneSwitch(int32 sceneId, byte *fluPtr, const char *filename,
 						  int32 arg_C, int32 arg_10, int32 startFrame, int32 numFrames);
 	void turnBen(bool battle);
 	void smush_rewindCurrentSan(int arg_0, int arg_4, int arg_8);
-	void smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecparam, 
-							   int32 x, int32 y, int32 arg_14, int32 arg_18, 
+	void smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecparam,
+							   int32 x, int32 y, int32 arg_14, int32 arg_18,
 							   int32 arg_1C, const char *formatString, const char *str);
-	void init_fluConfStruct(int n, int sceneId, byte **fluPtr, 
+	void init_fluConfStruct(int n, int sceneId, byte **fluPtr,
 							const char *filenamePtr, int startFrame, int numFrames);
 	int32 processBenOnRoad(bool flag);
 	void mineChooseRoad(int32 arg_0);
@@ -409,9 +409,9 @@ class Insane {
 	void reinitActors(void);
 	const char *handleTrsTag(int32 trsId);
 	void ouchSoundBen(void);
-	int32 smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32 step1, 
+	int32 smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32 step1,
 							   int32 step2, int32 setupsan1, byte *fluPtr, int32 numFrames);
-	void smush_setupSanFromStart(const char *filename, int32 setupsan2, int32 step1, 
+	void smush_setupSanFromStart(const char *filename, int32 setupsan2, int32 step1,
 								 int32 step2, int32 setupsan1);
 	void smush_setFrameSteps(int32 step1, int32 step2);
 	void smush_setupSanFile(const char *filename, int32 offset, int32 contFrame);

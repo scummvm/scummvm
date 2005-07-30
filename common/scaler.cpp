@@ -44,10 +44,10 @@ extern "C" {
 
 // FIXME/TODO: The following two tables suck up 512 KB.
 // They should at least be allocated on the heap, to reduce the size of the
-// binary. 
+// binary.
 //
 // Note: a memory lookup table is *not* necessarily faster than computing
-// these things on the fly, because of its size. Both tables together, plus 
+// these things on the fly, because of its size. Both tables together, plus
 // the code, plus the input/output GFX data, won't fit in the cache on many
 // systems, so main memory has to be accessed, which is about the worst thing
 // that can happen to code which tries to be fast...
@@ -64,7 +64,7 @@ extern "C" {
 // size of the lookup tables at the cost of some additional computations? That
 // might actually result in a speedup, too, if done right (and the code code
 // might actually be suitable for AltiVec/MMX/SSE speedup).
-// 
+//
 // Of course, the above is largely a conjecture, and the actual speed
 // differences are likely to vary a lot between different architectures and
 // CPUs.
@@ -108,7 +108,7 @@ void InitLUT(uint32 BitFormat) {
 	int r, g, b;
 	int Y, u, v;
 	int gInc, gShift;
-	
+
 	for (int i = 0; i < 65536; i++) {
 		LUT16to32[i] = ((i & 0xF800) << 8) + ((i & 0x07E0) << 5) + ((i & 0x001F) << 3);
 	}
@@ -159,7 +159,7 @@ void Normal2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 		r = dstPtr;
 		for (int i = 0; i < width; ++i, r += 4) {
 			uint32 color = *(((const uint16 *)srcPtr) + i);
-			
+
 			color |= color << 16;
 
 			*(uint32 *)(r) = color;
@@ -259,7 +259,7 @@ void AdvMame3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPi
 }
 
 template<int bitFormat>
-void TV2xTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
+void TV2xTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 					int width, int height) {
 	const uint32 nextlineSrc = srcPitch / sizeof(uint16);
 	const uint16 *p = (const uint16 *)srcPtr;

@@ -119,11 +119,11 @@ void Logic::locateTalker(int32 *params) {
 
 	// Leave space above their head
 	_textY -= GAP_ABOVE_HEAD;
-			
+
 	// Adjust the text coords for RDSPR_DISPLAYALIGN
 
 	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
-	
+
 	_textX -= screenInfo->scroll_offset_x;
 	_textY -= screenInfo->scroll_offset_y;
 }

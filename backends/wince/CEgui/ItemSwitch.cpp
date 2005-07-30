@@ -37,10 +37,10 @@ namespace CEGUI {
 		}
 		if (!*_item)
 			_background = _backgroundFalse;
-	} 
- 
-	
-	ItemSwitch::~ItemSwitch() {   
+	}
+
+
+	ItemSwitch::~ItemSwitch() {
 		if (_backgroundFalse)
 			delete _backgroundFalse;
 	}
@@ -53,7 +53,7 @@ namespace CEGUI {
 				_background = _backgroundTrue;
 			else
 				_background = _backgroundFalse;
-			
+
 			if (_panel)
 				_panel->forceRedraw();
 

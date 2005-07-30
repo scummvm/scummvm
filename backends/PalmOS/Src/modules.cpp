@@ -34,7 +34,7 @@ void run(int argc, char *argv[]) {
 	// create file for printf, warnings, etc...
 	StdioInit(gVars->volRefNum, "/PALM/Programs/ScummVM/scumm.log", DrawStatus);
 	gUnistdCWD = SCUMMVM_SAVEPATH;
-	
+
 	// init hardware
 	if (HWR_INIT(INIT_PA1LIB))							Pa1libInit();
 	if (HWR_INIT(INIT_VIBRATOR))	gVars->vibrator =	RumbleInit();
@@ -59,7 +59,7 @@ void run(int argc, char *argv[]) {
 	if (HWR_INIT(INIT_ARM))			ARMRelease();
 	if (HWR_INIT(INIT_VIBRATOR))	RumbleRelease();
 	if (HWR_INIT(INIT_PA1LIB))		Pa1libRelease();
-	
+
 	// close log file
 	StdioRelease();
 
@@ -85,7 +85,7 @@ static UInt32 ModulesPalmMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 				LocalID dbID;
 
 				LaunchParamType *lp = (LaunchParamType *)cmdPBP;
-				
+
 				gVars = lp->gVars;
 				argvP = lp->args.argv;
 
@@ -105,7 +105,7 @@ static UInt32 ModulesPalmMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 	//			MemPtrSetOwner(gVars, ownerID);
 	//			ArgsSetOwner(argvP, ownerID);	// will be freed by main(...)
 	//			MemPtrFree(lp);					// will be freed by the system on exit
-				
+
 				run(lp->args.argc, argvP);
 
 				cardNo = 0;

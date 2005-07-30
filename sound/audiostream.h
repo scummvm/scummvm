@@ -47,7 +47,7 @@ public:
 
 	/** Is this a stereo stream? */
 	virtual bool isStereo() const = 0;
-	
+
 	/**
 	 * End of data reached? If this returns true, it means that at this
 	 * time there is no data available in the stream. However there may be
@@ -56,7 +56,7 @@ public:
 	 * converting data or stop.
 	 */
 	virtual bool endOfData() const = 0;
-	
+
 	/**
 	 * End of stream reached? If this returns true, it means that all data
 	 * in this stream is used up and no additional data will appear in it
@@ -75,7 +75,7 @@ public:
 	 * In case of an error, the file handle will be closed, but deleting
 	 * it is still the responsibilty of the caller.
 	 * @param filename	a filename without an extension
-	 * @return	an Audiostream ready to use in case of success; 
+	 * @return	an Audiostream ready to use in case of success;
 	 *			NULL in case of an error (e.g. invalid/nonexisting file)
 	 */
 	static AudioStream* openStreamFile(const char *filename);
@@ -98,7 +98,7 @@ public:
 	}
 	bool isStereo() const { return false; }
 	bool eos() const { return _len <= 0; }
-	
+
 	int getRate() const { return -1; }
 };
 

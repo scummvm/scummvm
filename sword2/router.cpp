@@ -38,8 +38,8 @@
 /****************************************************************************
  *    JROUTER.C				polygon router with modular walks
  *       					using a tree of modules
- *       					21 july 94  
- *  3  november 94  
+ *       					21 july 94
+ *  3  november 94
  *  System currently works by scanning grid data and coming up with a	ROUTE
  *  as a series of way points(nodes), the smoothest eight directional PATH
  * 	through these nodes is then found, and a WALK created to fit the PATH.
@@ -47,9 +47,9 @@
  *	Two funtions are called by the user, RouteFinder creates a route as a
  *	module list, HardWalk creates an animation list from the module list.
  *	The split is only provided to allow the possibility of turning the
- *	autorouter over two game cycles.     
+ *	autorouter over two game cycles.
  ****************************************************************************
- *    
+ *
  *	Routine timings on osborne 486
  *
  *	Read floor resource (file already loaded)	 112 pixels
@@ -59,7 +59,7 @@
  *
  *
  ****************************************************************************
- *    
+ *
  *  Modified 12 Oct 95
  *
  *	Target Points within 1 pixel of a line are ignored ???
@@ -101,7 +101,7 @@ void Router::allocateRouteMem() {
 	// in middle of route, the old route will be safely cleared from
 	// memory just before they create a new one
 
-	slotNo = returnSlotNo(Logic::_scriptVars[ID]); 
+	slotNo = returnSlotNo(Logic::_scriptVars[ID]);
 
 	// if this slot is already used, then it can't be needed any more
 	// because this id is creating a new route!
@@ -126,12 +126,12 @@ void Router::allocateRouteMem() {
 
 WalkData *Router::getRouteMem() {
 	uint8 slotNo = returnSlotNo(Logic::_scriptVars[ID]);
-	
+
 	return (WalkData *)_routeSlots[slotNo];
 }
 
 void Router::freeRouteMem() {
-	uint8 slotNo = returnSlotNo(Logic::_scriptVars[ID]); 
+	uint8 slotNo = returnSlotNo(Logic::_scriptVars[ID]);
 
 	free(_routeSlots[slotNo]);
 	_routeSlots[slotNo] = NULL;
@@ -147,8 +147,8 @@ void Router::freeAllRouteMem() {
 int32 Router::routeFinder(ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, int32 x, int32 y, int32 dir) {
 	/*********************************************************************
 	 * RouteFinder.C		polygon router with modular walks
-	 * 						21 august 94  
-	 *						3  november 94  
+	 * 						21 august 94
+	 *						3  november 94
 	 * routeFinder creates a list of modules that enables HardWalk to
 	 * create an animation list.
 	 *
@@ -157,15 +157,15 @@ int32 Router::routeFinder(ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, int3
 	 * directional PATH through these nodes is then found, this
 	 * information is made available to HardWalk for a WALK to be created
 	 * to fit the PATH.
-	 *    
+	 *
 	 * 30 november 94 return values modified
-	 *    
+	 *
 	 * return	0 = failed to find a route
-	 *    
+	 *
 	 *    		1 = found a route
 	 *
 	 *    		2 = mega already at target
-	 *    
+	 *
 	 *********************************************************************/
 
 	int32 routeFlag = 0;
@@ -181,7 +181,7 @@ int32 Router::routeFinder(ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, int3
 
 	// All route data now loaded start finding a route
 
-	// Check if we can get a route through the floor. changed 12 Oct95 JPS 
+	// Check if we can get a route through the floor. changed 12 Oct95 JPS
 
 	routeFlag = getRoute();
 
@@ -223,7 +223,7 @@ int32 Router::routeFinder(ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, int3
 		// The path is in module format, but steps taken in each
 		// direction are not accurate
 
-		// if target dir = 8 then the walk isn't linked to an anim so 
+		// if target dir = 8 then the walk isn't linked to an anim so
 		// we can create a route without sliding and miss the exact
 		// target
 
@@ -265,9 +265,9 @@ int32 Router::getRoute() {
 	 * a ROUTE as a series of way points(nodes).
 	 *
 	 * static routeData _route[O_ROUTE_SIZE];
-	 *    
+	 *
 	 * return 	0 = failed to find a route
-	 *    
+	 *
 	 *		1 = found a route
 	 *
 	 *		2 = mega already at target
@@ -291,7 +291,7 @@ int32 Router::getRoute() {
 
 	if (routeGot == 0) {
 		// still looking for a route check if target is within a pixel
-		// of a line 
+		// of a line
 
 		// scan through the nodes linking each node to its nearest
 		// neighbour until no more nodes change
@@ -340,7 +340,7 @@ int32 Router::smoothestPath() {
 	// Secondly when walking in a given direction the number of steps
 	// required to reach the end of that run is not calculated accurately.
 	// This is because I was unable to derive a function to relate number
-	// of steps taken between two points to the shrunken step size   
+	// of steps taken between two points to the shrunken step size
 
 	int i;
 	int32 steps = 0;
@@ -393,7 +393,7 @@ int32 Router::smoothestPath() {
 			dDS = dDS + NO_DIRECTIONS;
 
 		// Determine the amount of turning involved in each possible
-		// path 
+		// path
 
 		dS = turntable[dS];
 		dD = turntable[dD];
@@ -403,7 +403,7 @@ int32 Router::smoothestPath() {
 		dDS = turntable[dDS];
 
 		// get the best path out ie assume next section uses best
-		// direction 
+		// direction
 
 		if (dSD < dSS)
 			dSS = dSD;
@@ -447,8 +447,8 @@ int32 Router::smoothestPath() {
 
 		assert(options);
 
-		i = 0; 
-		steps = 0; 
+		i = 0;
+		steps = 0;
 
 		do {
 			int32 opt = 1 << turns[i];
@@ -467,7 +467,7 @@ int32 Router::smoothestPath() {
 
 	_smoothPath[steps].dir = 9;
 	_smoothPath[steps].num = ROUTE_END_FLAG;
-	return 1;				 
+	return 1;
 }
 
 int32 Router::smoothCheck(int32 best, int32 p, int32 dirS, int32 dirD) {
@@ -611,8 +611,8 @@ int32 Router::smoothCheck(int32 best, int32 p, int32 dirS, int32 dirD) {
 
 		break;
 	}
-	
-	return k;	
+
+	return k;
 }
 
 void Router::slidyPath() {
@@ -715,7 +715,7 @@ void Router::earlySlowOut(ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata) {
 
 	// if this mega does actually have slow-out frames
 	if (_usingSlowOutFrames) {
-		// overwrite the next step (half a cycle) of the walk 
+		// overwrite the next step (half a cycle) of the walk
 		// (ie .step - 0..5)
 
 		do {
@@ -790,11 +790,11 @@ void Router::addSlowOutFrames(WalkData *walkAnim) {
  	if (_usingSlowOutFrames && _lastCount >= _framesPerStep) {
 		// place stop frames here
 		// slowdown at the end of the last walk
-	
+
 		slowOutFrameNo = _lastCount - _framesPerStep;
 
 		debug(5, "SLOW OUT: slowOutFrameNo(%d) = _lastCount(%d) - _framesPerStep(%d)", slowOutFrameNo, _lastCount, _framesPerStep);
-	
+
 		// overwrite the last step (half a cycle) of the walk
 
 		do {
@@ -810,7 +810,7 @@ void Router::addSlowOutFrames(WalkData *walkAnim) {
 			debug(5, "walkAnim[%d].frame = %d",slowOutFrameNo,walkAnim[slowOutFrameNo].frame);
 			slowOutFrameNo++;
 		} while (slowOutFrameNo < _lastCount);
-	
+
 		// add stationary frame(s) (OPTIONAL)
 
 		for (slowOutFrameNo = _framesPerStep; slowOutFrameNo < _numberOfSlowOutFrames; slowOutFrameNo++) {
@@ -834,7 +834,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 	 * the route
 	 *
 	 *	Parameters:	georgeg, mouseg
-	 *	Returns:	rout 
+	 *	Returns:	rout
 	 *
 	 * produce a module list from the line data
 	 *********************************************************************/
@@ -1081,7 +1081,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 					do {
 						frameCount++;
 						walkAnim[_lastCount + frameCount - 1].x += errorX * frameCount / frames;
-					} while (frameCount < frames);	
+					} while (frameCount < frames);
 				}
 
 				if (errorY != 0) {
@@ -1090,7 +1090,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 					do {
 						frameCount++;
 						walkAnim[_lastCount + frameCount - 1].y += errorY * frameCount / frames;
-					} while (frameCount < frames);	
+					} while (frameCount < frames);
 				}
 
 				// Now is the time to put in the turn frames
@@ -1099,7 +1099,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 				if (frames < _framesPerStep) {
 					// this ensures that we don't put in
 					// turn frames for this walk or the
-					// next		
+					// next
 					_currentDir = 99;
 				}
 
@@ -1120,11 +1120,11 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 
 						_frame = _lastCount - _framesPerStep;
 						do {
-							// turning left 
+							// turning left
 							walkAnim[_frame].frame += _firstWalkingTurnLeftFrame;
 							_frame++;
 						} while (_frame < _lastCount);
-					} else if (lastDir == 1 || lastDir == -7 || lastDir == 2 || lastDir == -6) {	
+					} else if (lastDir == 1 || lastDir == -7 || lastDir == 2 || lastDir == -6) {
 						// turn at the end of the
 						// current walk
 
@@ -1272,7 +1272,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 	return;
 }
 
-#ifndef FORCE_SLIDY 
+#ifndef FORCE_SLIDY
 
 // THE SOLID PATH ROUTINES
 
@@ -1332,7 +1332,7 @@ int32 Router::solidPath() {
 		solid = 2;
 		_modularPath[1].dir = _smoothPath[0].dir;
 		_modularPath[1].num = 0;
-	}	
+	}
 
 	_modularPath[solid - 1].x = _smoothPath[smooth - 1].x;
 	_modularPath[solid - 1].y = _smoothPath[smooth - 1].y;
@@ -1564,7 +1564,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 					}
 
 					// check each turn condition in turn
-					if (lastDir != 99 && _currentDir != 99 && _usingWalkingTurnFrames) {	
+					if (lastDir != 99 && _currentDir != 99 && _usingWalkingTurnFrames) {
 						// only for george
 						// 1 and -7 going right -1 and
 						// 7 going left
@@ -1582,7 +1582,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 								walkAnim[_frame].frame += _firstWalkingTurnLeftFrame;
 								_frame++;
 							} while (_frame < _lastCount);
-						} else if (lastDir == 1 || lastDir == -7 || lastDir == 2 || lastDir == -6) {	
+						} else if (lastDir == 1 || lastDir == -7 || lastDir == 2 || lastDir == -6) {
 							// turn at the end of
 							// the current walk
 
@@ -1603,7 +1603,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 		p++;
 		lastDir = _currentDir;
 
-		// can only be valid first time round 
+		// can only be valid first time round
 		slowStart = false;
 	} while (_modularPath[p].dir < NO_DIRECTIONS);
 
@@ -1683,7 +1683,7 @@ bool Router::scan(int32 level) {
  	// For all the nodes that have new values and a distance less than
 	// enddist, ie dont check for new routes from a point we checked
 	// before or from a point that is already further away than the best
-	// route so far. 
+	// route so far.
 
 	for (int i = 0; i < _nNodes; i++) {
 		if (_node[i].dist < _node[_nNodes].dist && _node[i].level == level) {
@@ -1719,12 +1719,12 @@ bool Router::scan(int32 level) {
 int32 Router::newCheck(int32 status, int32 x1, int32 y1, int32 x2, int32 y2) {
 	/*********************************************************************
 	 * newCheck routine checks if the route between two points can be
-	 * achieved without crossing any of the bars in the Bars array. 
+	 * achieved without crossing any of the bars in the Bars array.
 	 *
 	 * newCheck differs from check in that that 4 route options are
 	 * considered corresponding to actual walked routes.
 	 *
-	 * Note distance doesnt take account of shrinking ??? 
+	 * Note distance doesnt take account of shrinking ???
 	 *
 	 * Note Bars array must be properly calculated ie min max dx dy co
 	 *********************************************************************/
@@ -1905,7 +1905,7 @@ int32 Router::newCheck(int32 status, int32 x1, int32 y1, int32 x2, int32 y2) {
 // CHECK ROUTINES
 
 bool Router::check(int32 x1, int32 y1, int32 x2, int32 y2) {
-	// call the fastest line check for the given line 
+	// call the fastest line check for the given line
 	// returns true if line didn't cross any bars
 
 	if (x1 == x2 && y1 == y2)
@@ -1937,7 +1937,7 @@ bool Router::lineCheck(int32 x1, int32 y1, int32 x2, int32 y2) {
 	int32 co = (y1 * dirx) - (x1 * diry);		// new line equation
 
 	for (int i = 0; i < _nBars && linesCrossed; i++) {
-		// skip if not on module 
+		// skip if not on module
 		if (xmax >= _bars[i].xmin && xmin <= _bars[i].xmax && ymax >= _bars[i].ymin && ymin <= _bars[i].ymax) {
 			// Okay, it's a valid line. Calculate an intercept. Wow
 			// but all this arithmetic we must have loads of time
@@ -1952,13 +1952,13 @@ bool Router::lineCheck(int32 x1, int32 y1, int32 x2, int32 y2) {
 
 				// skip if not on module
 				if (xc >= xmin - 1 && xc <= xmax + 1) {
-					// skip if not on line 
+					// skip if not on line
 					if (xc >= _bars[i].xmin - 1 && xc <= _bars[i].xmax + 1) {
 						int32 yc = ((_bars[i].co * diry) - (co * _bars[i].dy)) / slope;
 
 						// skip if not on module
 						if (yc >= ymin - 1 && yc <= ymax + 1) {
-							// skip if not on line 
+							// skip if not on line
 							if (yc >= _bars[i].ymin - 1 && yc <= _bars[i].ymax + 1) {
 								linesCrossed = false;
 							}
@@ -1992,7 +1992,7 @@ bool Router::horizCheck(int32 x1, int32 y, int32 x2) {
 			else {
 				int32 ldy = y - _bars[i].y1;
 				int32 xc = _bars[i].x1 + (_bars[i].dx * ldy) / _bars[i].dy;
-				// skip if not on module 
+				// skip if not on module
 				if (xc >= xmin - 1 && xc <= xmax + 1)
 					linesCrossed = false;
 			}
@@ -2012,7 +2012,7 @@ bool Router::vertCheck(int32 x, int32 y1, int32 y2) {
 	// anything
 
 	for (int i = 0; i < _nBars && linesCrossed; i++) {
-		// skip if not on module 
+		// skip if not on module
 		if (x >= _bars[i].xmin && x <= _bars[i].xmax && ymax >= _bars[i].ymin && ymin <= _bars[i].ymax) {
 			// Okay, it's a valid line calculate an intercept. Wow
 			// but all this arithmetic we must have loads of time
@@ -2025,7 +2025,7 @@ bool Router::vertCheck(int32 x, int32 y1, int32 y2) {
 			else {
 				int32 ldx = x - _bars[i].x1;
 				int32 yc = _bars[i].y1 + (_bars[i].dy * ldx) / _bars[i].dx;
-				// the intercept overlaps 
+				// the intercept overlaps
 				if (yc >= ymin - 1 && yc <= ymax + 1)
 					linesCrossed = false;
 			}
@@ -2047,22 +2047,22 @@ int32 Router::checkTarget(int32 x, int32 y) {
 	// so ignore if it hits anything
 
 	for (int i = 0; i < _nBars && onLine == 0; i++) {
-		// overlapping line 
+		// overlapping line
 		if (xmax >= _bars[i].xmin && xmin <= _bars[i].xmax && ymax >= _bars[i].ymin && ymin <= _bars[i].ymax) {
 			int32 xc, yc;
 
 			// okay this line overlaps the target calculate
-			// an y intercept for x 
+			// an y intercept for x
 
 			// vertical line so we know it overlaps y
 			if (_bars[i].dx == 0)
-				yc = 0; 	
+				yc = 0;
 			else {
 				int ldx = x - _bars[i].x1;
 				yc = _bars[i].y1 + (_bars[i].dy * ldx) / _bars[i].dx;
 			}
 
-			// overlapping point for y 
+			// overlapping point for y
 			if (yc >= ymin && yc <= ymax) {
 				// target on a line so drop out
 				onLine = 3;
@@ -2076,7 +2076,7 @@ int32 Router::checkTarget(int32 x, int32 y) {
 					xc = _bars[i].x1 + (_bars[i].dx * ldy) / _bars[i].dy;
 				}
 
-				// skip if not on module 
+				// skip if not on module
 				if (xc >= xmin && xc <= xmax) {
 					// target on a line so drop out
 					onLine = 3;
@@ -2209,7 +2209,7 @@ void Router::extractRoute() {
 	/*********************************************************************
 	 * extractRoute gets route from the node data after a full scan, route
 	 * is written with just the basic way points and direction options for
-	 * heading to the next point. 
+	 * heading to the next point.
 	 *********************************************************************/
 
 	int32 prev;
@@ -2308,7 +2308,7 @@ void Router::extractRoute() {
 		// ANY direction
 		_route[p].dirS = _route[p - 1].dirS;
 		_route[p].dirD = _route[p - 1].dirD;
-	} else { 
+	} else {
 		_route[p].dirS = _targetDir;
 		_route[p].dirD = _targetDir;
 	}
@@ -2377,7 +2377,7 @@ void Router::plotWalkGrid() {
 
 void Router::plotCross(int16 x, int16 y, uint8 colour) {
 	_vm->_screen->drawLine(x - 1, y - 1, x + 1, y + 1, colour);
-	_vm->_screen->drawLine(x + 1, y - 1, x - 1, y + 1, colour);	
+	_vm->_screen->drawLine(x + 1, y - 1, x - 1, y + 1, colour);
 }
 
 void Router::loadWalkGrid() {

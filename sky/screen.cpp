@@ -66,7 +66,7 @@ Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
 	_currentScreen = NULL;
 	_scrollScreen = NULL;
 
-	//blank the first 240 colors of the palette 
+	//blank the first 240 colors of the palette
 	memset(tmpPal, 0, GAME_COLOURS * 4);
 
 	//set the remaining colors
@@ -74,7 +74,7 @@ Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
 		tmpPal[4 * GAME_COLOURS + i * 4] = (_top16Colours[i * 3] << 2) + (_top16Colours[i * 3] >> 4);
 		tmpPal[4 * GAME_COLOURS + i * 4 + 1] = (_top16Colours[i * 3 + 1] << 2) + (_top16Colours[i * 3 + 1] >> 4);
 		tmpPal[4 * GAME_COLOURS + i * 4 + 2] = (_top16Colours[i * 3 + 2] << 2) + (_top16Colours[i * 3 + 2] >> 4);
-		tmpPal[4 * GAME_COLOURS + i * 4 + 3] = 0x00; 
+		tmpPal[4 * GAME_COLOURS + i * 4 + 3] = 0x00;
 	}
 
 	//set the palette
@@ -94,7 +94,7 @@ Screen::~Screen(void) {
 }
 
 void Screen::clearScreen(void) {
-	 
+
 	memset(_currentScreen, 0, FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 	_system->copyRectToScreen(_currentScreen, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 	_system->updateScreen();
@@ -102,7 +102,7 @@ void Screen::clearScreen(void) {
 
 //set a new palette, pal is a pointer to dos vga rgb components 0..63
 void Screen::setPalette(uint8 *pal) {
-	
+
 	convertPalette(pal, _palette);
 	_system->setPalette(_palette, 0, GAME_COLOURS);
 	_system->updateScreen();
@@ -149,7 +149,7 @@ void Screen::showScreen(uint16 fileNum) {
 	if (_currentScreen)
 		free(_currentScreen);
 	_currentScreen = _skyDisk->loadFile(fileNum);
-	
+
 	if (_currentScreen)
 		showScreen(_currentScreen);
 	else
@@ -300,7 +300,7 @@ void Screen::paletteFadeUp(uint16 fileNr) {
 void Screen::paletteFadeUp(uint8 *pal) {
 
 	byte tmpPal[1024];
-	
+
 	convertPalette(pal, tmpPal);
 
 	uint32 delayTime = _system->getMillis();
@@ -317,7 +317,7 @@ void Screen::paletteFadeUp(uint8 *pal) {
 		if (waitTime < 0)
 			waitTime = 0;
 		_system->delayMillis((uint)waitTime);
-	}	
+	}
 }
 
 void Screen::fnFadeUp(uint32 palNum, uint32 scroll) {
@@ -522,7 +522,7 @@ void Screen::spriteEngine(void) {
 
 	doSprites(BACK);
 	sortSprites();
-	doSprites(FORE);	
+	doSprites(FORE);
 }
 
 void Screen::sortSprites(void) {
@@ -550,7 +550,7 @@ void Screen::sortSprites(void) {
 					Compact *spriteComp = _skyCompact->fetchCpt(drawListData[0]);
 					if ((spriteComp->status & 4) && // is it sortable playfield?(!?!)
 						(spriteComp->screen == Logic::_scriptVariables[SCREEN])) { // on current screen
-							dataFileHeader *spriteData = 
+							dataFileHeader *spriteData =
 								(dataFileHeader *)SkyEngine::fetchItem(spriteComp->frame >> 6);
 							if (!spriteData) {
 								debug(9,"Missing file %d", spriteComp->frame >> 6);
@@ -564,7 +564,7 @@ void Screen::sortSprites(void) {
 					}
 					drawListData++;
 				}
-			} 
+			}
 		} while (nextDrawList);
 		// made_list:
 		if (spriteCnt > 1) { // bubble sort
@@ -612,7 +612,7 @@ void Screen::doSprites(uint8 layer) {
 				// not_new_list
 				Compact *spriteData = _skyCompact->fetchCpt(drawList[0]);
 				drawList++;
-				if ((spriteData->status & (1 << layer)) && 
+				if ((spriteData->status & (1 << layer)) &&
 						(spriteData->screen == Logic::_scriptVariables[SCREEN])) {
 					uint8 *toBeDrawn = (uint8 *)SkyEngine::fetchItem(spriteData->frame >> 6);
 					if (!toBeDrawn) {
@@ -703,7 +703,7 @@ void Screen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 		_sprWidth = 0;
 		return ;
 	}
-	
+
 	for (uint16 cnty = 0; cnty < _sprHeight; cnty++) {
 		for (uint16 cntx = 0; cntx < _sprWidth; cntx++)
 			if (spriteData[cntx + _maskX1])
@@ -714,7 +714,7 @@ void Screen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 	// Convert the sprite coordinate/size values to blocks for vertical mask and/or vector to game
 	_sprWidth += _sprX + GRID_W-1;
 	_sprHeight += _sprY + GRID_H-1;
-	
+
 	_sprX >>= GRID_W_SHIFT;
 	_sprWidth >>= GRID_W_SHIFT;
 	_sprY >>= GRID_H_SHIFT;
@@ -802,7 +802,7 @@ void Screen::showGrid(uint8 *gridBuf) {
 
 	uint32 gridData = 0;
 	uint8 bitsLeft = 0;
-	for (uint16 cnty = 0; cnty < GAME_SCREEN_HEIGHT >> 3; cnty++) { 
+	for (uint16 cnty = 0; cnty < GAME_SCREEN_HEIGHT >> 3; cnty++) {
 		for (uint16 cntx = 0; cntx < GAME_SCREEN_WIDTH >> 3; cntx++) {
 			if (!bitsLeft) {
 				bitsLeft = 32;

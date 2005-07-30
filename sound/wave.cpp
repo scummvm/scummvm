@@ -53,7 +53,7 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 		warning("getWavInfo: No 'fmt' header");
 		return false;
 	}
-	
+
 	uint32 fmtLength = stream.readUint32LE();
 	if (fmtLength < 16) {
 		// A valid fmt chunk always contains at least 16 bytes
@@ -79,7 +79,7 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 
 	if (wavType != 0)
 		*wavType = type;
-#if 0	
+#if 0
 	printf("WAVE information:\n");
 	printf("  total size: %d\n", wavLength);
 	printf("  fmt size: %d\n", fmtLength);
@@ -118,7 +118,7 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 		warning("getWavInfo: unsupported bitsPerSample %d", bitsPerSample);
 		return false;
 	}
-	
+
 	if (numChannels == 2)
 		flags |= Audio::Mixer::FLAG_STEREO;
 	else if (numChannels != 1) {
@@ -145,7 +145,7 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 		printf("  found a '%s' tag of size %d\n", buf, offset);
 #endif
 	} while (memcmp(buf, "data", 4) != 0);
-	
+
 	// Stream now points at 'offset' bytes of sample data...
 	size = offset;
 
@@ -156,10 +156,10 @@ AudioStream *makeWAVStream(Common::SeekableReadStream &stream) {
 	int size, rate;
 	byte flags;
 	uint16 type;
-	
+
 	if (!loadWAVFromStream(stream, size, rate, flags, &type))
 		return 0;
-	
+
 	if (type == 17) // IMA ADPCM
 		return makeADPCMStream(stream, size, kADPCMIma);
 

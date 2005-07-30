@@ -42,7 +42,7 @@ void GetMemory(UInt32* storageMemoryP, UInt32* dynamicMemoryP, UInt32 *storageFr
 	UInt32		dynamicFree = 0;
 
 	// Iterate through each card to support devices with multiple cards.
-	nCards = MemNumCards();		
+	nCards = MemNumCards();
 
 	for (cardNo = 0; cardNo < nCards; cardNo++) {
 		// Iterate through the RAM heaps on a card (excludes ROM).
@@ -51,7 +51,7 @@ void GetMemory(UInt32* storageMemoryP, UInt32* dynamicMemoryP, UInt32 *storageFr
 			heapID = MemHeapID(cardNo, i);
 			// Calculate the total memory and free memory of the heap.
 			MemHeapFreeBytes(heapID, &free, &max);
-			
+
 			// If the heap is dynamic, increment the dynamic memory total.
 			if (MemHeapDynamic(heapID)) {
 				dynamicMemory += MemHeapSize(heapID);
@@ -89,10 +89,10 @@ static void SystemTabDraw() {
 
 	GetMemory(&sm, &dm, &sf, &df);
 	stack = GetStackSize();
-	
+
 	WinSetTextColor(UIColorGetTableEntryIndex(UIObjectForeground));
 	FntSetFont(stdFont);
-	
+
 	StrIToA(num, dm);
 	x = 147 - FntCharsWidth(num, StrLen(num)) + 5;
 	WinDrawChars(num, StrLen(num), x, 12 + 30);
@@ -182,6 +182,6 @@ Boolean InfoFormHandleEvent(EventPtr eventP) {
 		default:
 			break;
 	}
-	
+
 	return handled;
 }

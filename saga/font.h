@@ -33,14 +33,14 @@ namespace Saga {
 
 #define FONT_SHOWUNDEFINED 1	// Define to draw undefined characters * as ?'s
 
-// The first defined character (!) is the only one that may 
+// The first defined character (!) is the only one that may
 // have a valid offset of '0'
 #define FONT_FIRSTCHAR 33
 
 #define FONT_CH_SPACE 32
 #define FONT_CH_QMARK 63
 
-// Minimum font header size without font data 
+// Minimum font header size without font data
 // (6 + 512 + 256 + 256 + 256 )
 #define FONT_DESCSIZE 1286
 
@@ -64,7 +64,7 @@ struct TextListEntry {
 	FontId fontId;
 	const char *text;
 	TextListEntry() {
-		memset(this, 0, sizeof(*this)); 
+		memset(this, 0, sizeof(*this));
 	}
 };
 
@@ -112,7 +112,7 @@ class Font {
 
 	void textDraw(FontId fontId, Surface *ds, const char *string, const Common::Point &point, int color, int effectColor, FontEffectFlags flags);
 	void textDrawRect(FontId fontId, Surface *ds, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags);
-	
+
 	void validate(FontId fontId) {
 		if ((fontId < 0) || (fontId >= _loadedFonts)) {
 			error("Font::validate: Invalid font id.");

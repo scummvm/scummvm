@@ -359,7 +359,7 @@ void SimonEngine::o_file_error(FillOrCopyStruct *fcs, bool save_error) {
 	} else {
 		string = "\r       Load failed.";
 		string2 = "\r     File not found.";
-	}			
+	}
 
 	video_putchar(fcs, 0xC);
 	for (; *string; string++)
@@ -589,7 +589,7 @@ bool SimonEngine::load_game(uint slot) {
 	// Write the bits in array 1 & 2
 	for (i = 0; i != 32; i++)
 		_bitArray[i] = f->readUint16BE();
-	
+
 	if (f->ioFailed()) {
 		error("load failed");
 	}

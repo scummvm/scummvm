@@ -29,9 +29,9 @@
 namespace Kyra {
 Resourcemanager::Resourcemanager(KyraEngine* engine) {
 	_engine = engine;
-		
+
 	// prefetches all PAK Files
-	
+
 	// ugly a hardcoded list
 	// TODO: use the FS Backend to get all .PAK Files and load them
 	// or any other thing to get all files
@@ -40,7 +40,7 @@ Resourcemanager::Resourcemanager(KyraEngine* engine) {
 		"S_Z.PAK", "WSA1.PAK", "WSA2.PAK", "WSA3.PAK", "WSA4.PAK", "WSA5.PAK",
 		"WSA6.PAK", 0
 	};
-	
+
 	static const char* kyra1CDFilelist[] = {
 		"ADL.PAK", "BRINS.PAK", "CLIFF.PAK", "ENTER.PAK", "FORESTA.PAK", "GEM.PAK", "INTRO1.PAK",
 		"LEPHOLE.PAK", "OAKS.PAK", "SPELL.PAK", "WILLOW.PAK", "ALCHEMY.PAK", "BROKEN.PAK", "COL.PAK",
@@ -57,9 +57,9 @@ Resourcemanager::Resourcemanager(KyraEngine* engine) {
 		"NWCLIFB.PAK", "SONG.PAK", "UPSTAIR.PAK", "BRIDGE.PAK", "CHASM.PAK", "EMCAV.PAK", "FNORTH.PAK",
 		"GATECV.PAK", "HEALER.PAK", "LAVA.PAK", "NWCLIFF.PAK", "SORROW.PAK", "WELL.PAK", 0
 	};
-		
+
 	const char** usedFilelist = 0;
-		
+
 	if (_engine->game() == KYRA1)
 		usedFilelist = kyra1Filelist;
 	else if (_engine->game() == KYRA1CD)
@@ -70,39 +70,39 @@ Resourcemanager::Resourcemanager(KyraEngine* engine) {
 	for (uint32 tmp = 0; usedFilelist[tmp]; ++tmp) {
 		// prefetch file
 		PAKFile* file = new PAKFile(usedFilelist[tmp]);
-		assert(file);			
-			
+		assert(file);
+
 		if (file->isOpen() && file->isValid())
 			_pakfiles.push_back(file);
 		else
 			debug("couldn't load file '%s' correctly", usedFilelist[tmp]);
 	}
 }
-	
+
 Resourcemanager::~Resourcemanager() {
 	Common::List<PAKFile*>::iterator start = _pakfiles.begin();
-		
+
 	for (;start != _pakfiles.end(); ++start) {
 		delete *start;
 		*start = 0;
 	}
 }
-	
+
 uint8* Resourcemanager::fileData(const char* file, uint32* size) {
 	uint8* buffer = 0;
 	Common::File file_;
-		
+
 	// test to open it in the main dir
 	if (file_.open(file)) {
-	
+
 		*size = file_.size();
 		buffer = new uint8[*size];
 		assert(buffer);
-			
+
 		file_.read(buffer, *size);
-			
+
 		file_.close();
-	
+
 	} else {
 		// opens the file in a PAK File
 		Common::List<PAKFile*>::iterator start = _pakfiles.begin();
@@ -121,16 +121,16 @@ uint8* Resourcemanager::fileData(const char* file, uint32* size) {
 
 			break;
 		}
-		
+
 	}
-		
+
 	if (!buffer || !(*size)) {
 		return 0;
 	}
-		
+
 	return buffer;
 }
-	
+
 Palette* Resourcemanager::loadPalette(const char* file)	{
 	uint32 size = 0;
 	uint8* buffer = 0;
@@ -141,7 +141,7 @@ Palette* Resourcemanager::loadPalette(const char* file)	{
 	}
 	return new Palette(buffer, size);
 }
-	
+
 CPSImage* Resourcemanager::loadImage(const char* file) {
 	uint32 size = 0;
 	uint8* buffer = 0;
@@ -150,7 +150,7 @@ CPSImage* Resourcemanager::loadImage(const char* file) {
 		return 0;
 	return new CPSImage(buffer, size);
 }
-	
+
 Font* Resourcemanager::loadFont(const char* file) {
 	uint32 size = 0;
 	uint8* buffer = 0;
@@ -159,7 +159,7 @@ Font* Resourcemanager::loadFont(const char* file) {
 		return 0;
 	return new Font(buffer, size);
 }
-	
+
 Movie* Resourcemanager::loadMovie(const char* file) {
 	// TODO: we have to check the Extenion to create the right movie
 	uint32 size = 0;
@@ -178,7 +178,7 @@ VMContext* Resourcemanager::loadScript(const char* file) {
 	context->loadScript(file);
 	return context;
 }
-	
+
 ///////////////////////////////////////////
 // Pak file manager
 #define PAKFile_Iterate Common::List<PakChunk*>::iterator start=_files.begin();start != _files.end(); ++start
@@ -186,7 +186,7 @@ PAKFile::PAKFile(/*const Common::String &path, */const Common::String& file) {
 	Common::File pakfile;
 	_buffer = 0;
 	_open = false;
-		
+
 	if (!pakfile.open(file.c_str())){ /*, Common::File::kFileReadMode, path.c_str())) {*/
 		printf("pakfile couldn't open %s\n", file.c_str());
 		return;
@@ -217,7 +217,7 @@ PAKFile::PAKFile(/*const Common::String &path, */const Common::String& file) {
 
 		endoffset = READ_LE_UINT32(_buffer + pos);
 		pos += 4;
-		
+
 		if (endoffset == 0) {
 			endoffset = filesize;
 		}
@@ -226,7 +226,7 @@ PAKFile::PAKFile(/*const Common::String &path, */const Common::String& file) {
 		chunk->_size = endoffset - startoffset;
 
 		_files.push_back(chunk);
-		
+
 		if (endoffset == filesize)
 			break;
 
@@ -260,7 +260,7 @@ uint32 PAKFile::getFileSize(const char* file) {
 		if (!scumm_stricmp((*start)->_name, file))
 			return (*start)->_size;
 	}
-	
+
 	return 0;
 }
 } // end of namespace Kyra

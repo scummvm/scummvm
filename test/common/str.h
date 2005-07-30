@@ -3,7 +3,7 @@
 #include "common/stdafx.h"
 #include "common/str.h"
 
-class StringTestSuite : public CxxTest::TestSuite 
+class StringTestSuite : public CxxTest::TestSuite
 {
 	public:
 	void test_isEmpty_clear( void )

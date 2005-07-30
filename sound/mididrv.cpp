@@ -136,7 +136,7 @@ int MidiDriver::detectMusicDriver(int midiFlags) {
 					musicDriver = MD_ETUDE;
 				#elif defined(_WIN32_WCE) || defined(UNIX) || defined(X11_BACKEND) || defined (__SYMBIAN32__)
 					// Always use MIDI emulation via adlib driver on CE and UNIX device
-				
+
 					// TODO: We should, for the Unix targets, attempt to detect
 					// whether a sequencer is available, and use it instead.
 					musicDriver = MD_ADLIB;
@@ -195,7 +195,7 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 	case MD_ZODIAC:    return MidiDriver_Zodiac_create();
 #endif
 #endif
-#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) 
+#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 	case MD_WINDOWS:   return MidiDriver_WIN_create();
 #endif
 #if defined(__MORPHOS__)

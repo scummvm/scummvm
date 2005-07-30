@@ -55,21 +55,21 @@ public:
 	virtual ~Logic();
 
 	uint16 currentRoom() const { return _currentRoom; }
-	void currentRoom(uint16 room) { 
+	void currentRoom(uint16 room) {
 		assert(room >= 1 && room <= _numRooms);
-		_currentRoom = room; 
+		_currentRoom = room;
 	}
 
 	uint16 oldRoom() const { return _oldRoom; }
-	void oldRoom(uint16 room) { 
+	void oldRoom(uint16 room) {
 		assert(room <= _numRooms);
-		_oldRoom = room; 
+		_oldRoom = room;
 	}
 
 	uint16 newRoom() const { return _newRoom; }
-	void newRoom(uint16 room) { 
+	void newRoom(uint16 room) {
 		assert(room <= _numRooms);
-		_newRoom = room; 
+		_newRoom = room;
 	}
 
 	ObjectData *objectData(int index) const;
@@ -137,34 +137,34 @@ public:
 
 	//! setup Joe at the right place when entering a room
 	void setupJoeInRoom(bool autoPosition, uint16 scale);
-	
+
 	uint16 joeFace();
 	void joeGrab(int16 grabState);
 
 	//! change Joe clothes to dress
 	void joeUseDress(bool showCut);
-	
+
 	//! restore Joe clothes
 	void joeUseClothes(bool showCut);
-	
+
 	//! change Joe clothes to underwear
 	void joeUseUnderwear();
 
-	void makeJoeSpeak(uint16 descNum, bool objectType = false);	
+	void makeJoeSpeak(uint16 descNum, bool objectType = false);
 	void makePersonSpeak(const char *sentence, Person *person, const char *voiceFilePrefix);
-	
+
 	//! start the specified dialogue
 	void startDialogue(const char *dlgFile, int personInRoom, char *cutaway);
-	
+
 	//! play the specified cutaway
 	void playCutaway(const char *cutFile, char *next = NULL);
 
 	//! initialize the inventory
 	void inventorySetup();
-	
+
 	//! get the inventory item for the specified inventory slot
 	uint16 findInventoryItem(int invSlot) const;
-	
+
 	//! refresh inventory contents
 	void inventoryRefresh();
 	int16 previousInventoryItem(int16 first) const;
@@ -269,7 +269,7 @@ protected:
 
 	virtual bool preChangeRoom() = 0;
 	virtual bool handleSpecialMove(uint16 sm) = 0;
-	
+
 
 	uint16 _currentRoom;
 	uint16 _oldRoom;
@@ -309,7 +309,7 @@ protected:
 
 	FurnitureData *_furnitureData;
 	uint16 _numFurniture;
-	
+
 	GraphicAnim *_graphicAnim;
 	uint16 _numGraphicAnim;
 
@@ -348,7 +348,7 @@ protected:
 		JoeWalkMode walk;
 		uint16 scale;
 	} _joe;
-	
+
 	int16 _gameState[GAME_STATE_COUNT];
 
 	TalkSelected _talkSelected[TALK_SELECTED_COUNT];

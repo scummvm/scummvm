@@ -78,7 +78,7 @@ protected:
 	Common::File *_dataDiskHandle;
 	Common::File *_dnrHandle;
 	RncDecoder _rncDecoder;
-	
+
 	uint16 _buildList[MAX_FILES_IN_LIST];
 	uint32 _loadedFilesList[MAX_FILES_IN_LIST];
 };

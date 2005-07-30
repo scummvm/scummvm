@@ -76,7 +76,7 @@ protected:
 	DialogStack	_dialogStack;
 
 	bool		_stateIsSaved;
-	
+
 	const Graphics::Font *_font;
 
 	// for continuous events (keyDown)
@@ -139,7 +139,7 @@ public:
 	 * callers responsibilty to free that data.
 	 */
 	void copyToSurface(Graphics::Surface *s, int x, int y, int w, int h);
-	
+
 	/**
 	 * Draw the graphics contained in the given surface at the specified coordinates.
 	 */

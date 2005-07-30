@@ -26,7 +26,7 @@
 
 /**
  * The XMIDI version of MidiParser.
- * 
+ *
  * Much of this code is adapted from the XMIDI implementation from the exult
  * project.
  */
@@ -52,7 +52,7 @@ public:
 uint32 MidiParser_XMIDI::readVLQ2(byte * &pos) {
 	uint32 value = 0;
 	int i;
-	
+
 	for (i = 0; i < 4; ++i) {
 		if (pos[0] & 0x80)
 			break;
@@ -140,12 +140,12 @@ bool MidiParser_XMIDI::loadMusic(byte *data, uint32 size) {
 	if (!memcmp(pos, "FORM", 4)) {
 		pos += 4;
 
-		// Read length of 
+		// Read length of
 		len = read4high(pos);
 		start = pos;
 
 		// XDIRless XMIDI, we can handle them here.
-		if (!memcmp(pos, "XMID", 4)) {	
+		if (!memcmp(pos, "XMID", 4)) {
 			warning("XMIDI doesn't have XDIR");
 			pos += 4;
 			_num_tracks = 1;

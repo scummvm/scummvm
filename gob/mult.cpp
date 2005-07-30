@@ -90,7 +90,7 @@ char mult_palFadingBlue;
 
 Color mult_fadePal[5][16];
 
-// Sounds 
+// Sounds
 int16 mult_sndKeysCount;
 Mult_SndKey *mult_sndKeys;
 
@@ -557,7 +557,7 @@ char mult_drawStatics(char stop) {
 			continue;
 
 		for (scen_curStatic = 0, scen_curStaticLayer = mult_staticKeys[mult_counter].layer;
-			 scen_curStaticLayer >= scen_statics[mult_staticIndices[scen_curStatic]].layersCount; 
+			 scen_curStaticLayer >= scen_statics[mult_staticIndices[scen_curStatic]].layersCount;
 			 scen_curStatic++) {
 			scen_curStaticLayer -=
 			    scen_statics[mult_staticIndices[scen_curStatic]].layersCount;
@@ -1091,7 +1091,7 @@ void mult_loadMult(int16 resId) {
 		mult_sndKeys[i].repCount = (int16)READ_LE_UINT16(mult_dataPtr + 8);
 		mult_sndKeys[i].resId = (int16)READ_LE_UINT16(mult_dataPtr + 10);
 		mult_sndKeys[i].soundIndex = (int16)READ_LE_UINT16(mult_dataPtr + 12);
-		
+
 		mult_sndKeys[i].soundIndex = -1;
 		mult_sndKeys[i].resId = -1;
 		mult_dataPtr += 36;

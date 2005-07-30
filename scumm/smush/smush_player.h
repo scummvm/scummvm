@@ -102,7 +102,7 @@ public:
 protected:
 	SmushFont *_sf[5];
 	int _width, _height;
-	
+
 	int _origPitch, _origNumStrips;
 
 	void insanity(bool);
@@ -138,7 +138,7 @@ private:
 	void handleTextResource(Chunk &);
 	void handleDeltaPalette(Chunk &);
 	void readPalette(byte *, Chunk &);
-	
+
 	static void timerCallback(void *ptr);
 };
 

@@ -44,7 +44,7 @@ int16 file_open(const char *path, Common::File::AccessMode mode) {
 
 	if (filesHandles[i].isOpen())
 		return i;
-	
+
 	return -1;
 }
 
@@ -208,7 +208,7 @@ void data_openDataFile(const char *src) {
 
 	debug(7, "DataChunks: %d [for %s]", numDataChunks[file], path);
 
-	dataFiles[file] = dataDesc = 
+	dataFiles[file] = dataDesc =
 	    (struct ChunkDesc *)malloc(sizeof(struct ChunkDesc) *
 	    numDataChunks[file]);
 

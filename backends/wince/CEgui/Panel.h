@@ -39,15 +39,15 @@ namespace CEGUI {
 	class Panel : public Toolbar {
 	public:
 		Panel(int interleave_first, int interleave);
-		virtual bool draw(SDL_Surface *surface);		
+		virtual bool draw(SDL_Surface *surface);
 		virtual ~Panel();
 		bool add(const String &name, const PanelItem *item);
 		void clear();
 		virtual void forceRedraw();
-		virtual bool action(int x, int y, bool pushed);		
+		virtual bool action(int x, int y, bool pushed);
 	private:
 		struct IgnoreCaseComparator {
-          int operator()(const String& x, const String& y) const { 
+          int operator()(const String& x, const String& y) const {
 			  return scumm_stricmp(x.c_str(), y.c_str()); }
         };
 

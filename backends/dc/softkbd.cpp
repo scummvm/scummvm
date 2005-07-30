@@ -84,7 +84,7 @@ void SoftKeyboard::draw(float x, float y, int transp)
   unsigned int bg_alpha_mask = (128-transp)<<24;
 
   draw_trans_quad(x, y, x+312.0, y+172.0,
-		  bg_alpha_mask|0x8080ff, bg_alpha_mask|0x8080ff, 
+		  bg_alpha_mask|0x8080ff, bg_alpha_mask|0x8080ff,
 		  bg_alpha_mask|0x8080ff, bg_alpha_mask|0x8080ff);
   x0 = x += 4.0;
   y += 4.0;

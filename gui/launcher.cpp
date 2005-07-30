@@ -58,8 +58,8 @@ enum {
 	kEditGameCmd = 'EDTG',
 	kRemoveGameCmd = 'REMG',
 	kQuitCmd = 'QUIT',
-	
-	
+
+
 	kCmdGlobalGraphicsOverride = 'OGFX',
 	kCmdGlobalAudioOverride = 'OSFX',
 	kCmdGlobalMIDIOverride = 'OMID',
@@ -82,7 +82,7 @@ public:
 	DomainEditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, WidgetSize ws = kNormalWidgetSize)
 		: EditTextWidget(boss, x, y, w, h, text, ws) {
 	}
-	
+
 protected:
 	bool tryInsertChar(char c, int pos) {
 		if (isalnum(c) || c == '-' || c == '_') {
@@ -141,7 +141,7 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
-	
+
 	_w = screenW - 2 * 10;
 
 	GUI::WidgetSize ws;
@@ -162,7 +162,7 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 		buttonWidth = kButtonWidth;
 		labelWidth = 60;
 	}
-	
+
 	const int x = 5;
 	const int w = _w - 15;
 	const int vBorder = 5;	// Tab border
@@ -426,7 +426,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 
 	// Change path for extra game data (eg, using sword cutscenes when playing via CD)
-	case kCmdExtraBrowser: { 
+	case kCmdExtraBrowser: {
 		BrowserDialog browser("Select additional game directory", true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
@@ -490,9 +490,9 @@ LauncherDialog::LauncherDialog(GameDetector &detector)
 
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
-	
+
 	const int hBorder = 10;
-	
+
 	_w = screenW;
 	_h = screenH;
 
@@ -546,7 +546,7 @@ LauncherDialog::LauncherDialog(GameDetector &detector)
 	// Restore last selection
 	String last = ConfMan.get(String("lastselectedgame"), ConfigManager::kApplicationDomain);
 	selectGame(last);
-	
+
 	// En-/disable the buttons depending on the list selection
 	updateButtons();
 
@@ -575,11 +575,11 @@ void LauncherDialog::close() {
 	// Save last selection
 	const int sel = _list->getSelected();
 	if (sel >= 0)
-		ConfMan.set(String("lastselectedgame"), _domains[sel], ConfigManager::kApplicationDomain);	
+		ConfMan.set(String("lastselectedgame"), _domains[sel], ConfigManager::kApplicationDomain);
 	else
 		ConfMan.removeKey(String("lastselectedgame"), ConfigManager::kApplicationDomain);
- 
-	ConfMan.flushToDisk();	
+
+	ConfMan.flushToDisk();
 	Dialog::close();
 }
 
@@ -625,7 +625,7 @@ void LauncherDialog::addGame() {
 	// 1) show a dir selection dialog which lets the user pick the directory
 	//    the game data resides in.
 	// 2) try to auto detect which game is in the directory, if we cannot
-	//    determine it uniquely preent a list of candidates to the user 
+	//    determine it uniquely preent a list of candidates to the user
 	//    to pick from
 	// 3) Display the 'Edit' dialog for that item, letting the user specify
 	//    an alternate description (to distinguish multiple versions of the
@@ -640,7 +640,7 @@ void LauncherDialog::addGame() {
 		// ...so let's determine a list of candidates, games that
 		// could be contained in the specified directory.
 		DetectedGameList candidates(PluginManager::instance().detectGames(files));
-		
+
 		int idx;
 		if (candidates.isEmpty()) {
 			// No game was found in the specified directory
@@ -655,7 +655,7 @@ void LauncherDialog::addGame() {
 			StringList list;
 			for (idx = 0; idx < (int)candidates.size(); idx++)
 				list.push_back(candidates[idx].description);
-			
+
 			ChooserDialog dialog("Pick the game:");
 			dialog.setList(list);
 			idx = dialog.runModal();
@@ -680,7 +680,7 @@ void LauncherDialog::addGame() {
 				ConfMan.set("description", result.description, domain);
 			}
 			ConfMan.set("path", dir.path(), domain);
-			
+
 			const bool customLanguage = (result.language != Common::UNK_LANG);
 			const bool customPlatform = (result.platform != Common::kPlatformUnknown);
 
@@ -729,7 +729,7 @@ void LauncherDialog::addGame() {
 
 void LauncherDialog::removeGame(int item) {
 	MessageDialog alert("Do you really want to remove this game configuration?", "Yes", "No");
-	
+
 	if (alert.runModal() == GUI::kMessageOK) {
 		// Remove the currently selected game from the list
 		assert(item >= 0);
@@ -737,7 +737,7 @@ void LauncherDialog::removeGame(int item) {
 
 		// Write config to disk
 		ConfMan.flushToDisk();
-		
+
 		// Update the ListWidget and force a redraw
 		updateListing();
 		draw();
@@ -745,7 +745,7 @@ void LauncherDialog::removeGame(int item) {
 }
 
 void LauncherDialog::editGame(int item) {
-	// Set game specifc options. Most of these should be "optional", i.e. by 
+	// Set game specifc options. Most of these should be "optional", i.e. by
 	// default set nothing and use the global ScummVM settings. E.g. the user
 	// can set here an optional alternate music volume, or for specific games
 	// a different music driver etc.

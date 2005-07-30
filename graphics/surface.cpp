@@ -52,16 +52,16 @@ void Surface::drawLine(int x0, int y0, int x1, int y1, uint32 color) {
 
 void Surface::create(uint16 width, uint16 height, uint8 bytesPP) {
 	free();
-	
+
 	w = width;
 	h = height;
 	bytesPerPixel = bytesPP;
 	pitch = w * bytesPP;
-	
+
 	pixels = calloc(width * height, bytesPP);
 	assert(pixels);
 }
- 
+
 void Surface::free() {
  	::free(pixels);
  	pixels = 0;
@@ -76,12 +76,12 @@ void Surface::hLine(int x, int y, int x2, uint32 color) {
 
 	if (x2 < x)
 		SWAP(x2, x);
-	
+
 	if (x < 0)
 		x = 0;
 	if (x2 >= w)
 		x2 = w - 1;
-	
+
 	if (bytesPerPixel == 1) {
 		byte *ptr = (byte *)getBasePtr(x, y);
 		if (x2 >= x)
@@ -103,12 +103,12 @@ void Surface::vLine(int x, int y, int y2, uint32 color) {
 
 	if (y2 < y)
 		SWAP(y2, y);
-	
+
 	if (y < 0)
 		y = 0;
 	if (y2 >= h)
 		y2 = h - 1;
-	
+
 	if (bytesPerPixel == 1) {
 		byte *ptr = (byte *)getBasePtr(x, y);
 		while (y++ <= y2) {
@@ -129,7 +129,7 @@ void Surface::vLine(int x, int y, int y2, uint32 color) {
 void Surface::fillRect(const Common::Rect &rOld, uint32 color) {
 	Common::Rect r(rOld);
 	r.clip(w, h);
-	
+
 	if (!r.isValidRect())
 		return;
 

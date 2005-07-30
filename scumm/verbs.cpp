@@ -226,7 +226,7 @@ void ScummEngine_v2::checkV2Inventory(int x, int y) {
 
 	y -= virtscr[kVerbVirtScreen].topline;
 
-	if ((y < inventoryArea) || !(_mouseAndKeyboardStat & MBS_LEFT_CLICK)) 
+	if ((y < inventoryArea) || !(_mouseAndKeyboardStat & MBS_LEFT_CLICK))
 		return;
 
 	if (_mouseOverBoxesV2[kInventoryUpArrow].rect.contains(x, y)) {
@@ -286,7 +286,7 @@ void ScummEngine_v2::redrawV2Inventory() {
 		int obj = findInventory(_scummVars[VAR_EGO], i + 1 + _inventoryOffset);
 		if (obj == 0)
 			break;
-		
+
 		_string[1].ypos = _mouseOverBoxesV2[i].rect.top + vs->topline;
 		_string[1].xpos = _mouseOverBoxesV2[i].rect.left;
 
@@ -397,7 +397,7 @@ void ScummEngine::checkExecVerbs() {
 				}
 			}
 		}
-		
+
 		if ((_gameId == GID_INDY4 || _gameId == GID_PASS) && _mouseAndKeyboardStat >= '0' && _mouseAndKeyboardStat <= '9') {
 			// To support keyboard fighting in FOA, we need to remap the number keys.
 			// FOA apparently expects PC scancode values (see script 46 if you want
@@ -412,7 +412,7 @@ void ScummEngine::checkExecVerbs() {
 				};
 			_mouseAndKeyboardStat = numpad[_mouseAndKeyboardStat - '0'];
 		}
-		
+
 		// Generic keyboard input
 		runInputScript(4, _mouseAndKeyboardStat, 1);
 	} else if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
@@ -521,7 +521,7 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 			msg += 4;
 
 		enqueueText(msg, vs->curRect.left, vs->curRect.top, color, vs->charset_nr, vs->center);
-		
+
 		// Set the specified charset id
 		_charset->setCurID(vs->charset_nr);
 
@@ -557,7 +557,7 @@ void ScummEngine::drawVerb(int verb, int mode) {
 			drawVerbBitmap(verb, vs->curRect.left, vs->curRect.top);
 			return;
 		}
-		
+
 		restoreVerbBG(verb);
 
 		_string[4].charset = vs->charset_nr;
@@ -575,7 +575,7 @@ void ScummEngine::drawVerb(int verb, int mode) {
 
 		// FIXME For the future: Indy3 and under inv scrolling
 		/*
-		   if (verb >= 31 && verb <= 36) 
+		   if (verb >= 31 && verb <= 36)
 		   verb += _inventoryOffset;
 		 */
 

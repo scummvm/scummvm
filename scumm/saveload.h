@@ -34,7 +34,7 @@ namespace Scumm {
 
 /**
  * The current savegame format version.
- * Our save/load system uses an elaborate scheme to allow us to modify the 
+ * Our save/load system uses an elaborate scheme to allow us to modify the
  * savegame while keeping full backward compatibility, in the sense that newer
  * ScummVM versions always are able to load old savegames.
  * In order to achieve that, we store a version in the savegame files, and whenever
@@ -57,7 +57,7 @@ namespace Scumm {
 
 /**
  * The OFFS macro essentially provides the functionality of offsetof(), that
- * is, it determines the offset of a struct/class member within instances of 
+ * is, it determines the offset of a struct/class member within instances of
  * that class.
  *
  * This is a place where we cheat a bit and sacrifice some potential portability
@@ -68,7 +68,7 @@ namespace Scumm {
  * versions have a heuristic built in to detect "offset-of" patterns - which is exactly
  * what our OFFS macro does. Now, for non-POD types this is not really legal, because
  * member need not be at a fixed offset relative to the variable, even if they are in
- * current reality (many of our complex structs are non-POD; for an explanation of 
+ * current reality (many of our complex structs are non-POD; for an explanation of
  * what POD means refer to http://www-cpd.fnal.gov/personal/wb/boost/ISOcxx/doc/POD.html)
  */
 #define OFFS(type,item) (((long)(&((type*)42)->type::item))-42)
@@ -155,7 +155,7 @@ public:
 
 	void saveBytes(void *b, int len);
 	void loadBytes(void *b, int len);
-	
+
 protected:
 	Common::InSaveFile *_loadStream;
 	Common::OutSaveFile *_saveStream;

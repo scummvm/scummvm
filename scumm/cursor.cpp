@@ -133,7 +133,7 @@ void ScummEngine_v6::setCursorTransparency(int a) {
 
 void ScummEngine::updateCursor() {
 	_system->setMouseCursor(_grabbedCursor, _cursor.width, _cursor.height,
-							_cursor.hotspotX, _cursor.hotspotY, 
+							_cursor.hotspotX, _cursor.hotspotY,
 							(_platform == Common::kPlatformNES ? _grabbedCursor[63] : 255),
 							(_heversion == 70 ? 2 : 1));
 }
@@ -254,7 +254,7 @@ void ScummEngine_v6::setCursorFromImg(uint img, uint room, uint imgindex) {
 		size = READ_BE_UINT32(dataptr + 4);
 		if (size > sizeof(_grabbedCursor))
 			error("setCursorFromImg: Cursor image too large");
-		
+
 		bomp = findResource(MKID('BOMP'), dataptr);
 	}
 
@@ -342,8 +342,8 @@ void ScummEngine_v5::redefineBuiltinCursorFromChar(int index, int chr) {
 	}
 
 	assert(index >= 0 && index < 4);
-	
-//	const int oldID = _charset->getCurID(); 
+
+//	const int oldID = _charset->getCurID();
 
 	if (_version == 3) {
 		_charset->setCurID(0);
@@ -361,7 +361,7 @@ void ScummEngine_v5::redefineBuiltinCursorFromChar(int index, int chr) {
 	// s.h = 17 for FM-TOWNS Loom Japanese. Fixes bug #1166917
 	assert(s.w <= 16 && s.h <= 17);
 	s.bytesPerPixel = 1;
-	
+
 	_charset->drawChar(chr, s, 0, 0);
 
 	uint16 *ptr = _cursorImages[index];
@@ -373,7 +373,7 @@ void ScummEngine_v5::redefineBuiltinCursorFromChar(int index, int chr) {
 		}
 		ptr++;
 	}
-	
+
 //	_charset->setCurID(oldID);
 }
 
@@ -495,7 +495,7 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 		*(hotspot + (_cursor.width * 5) + 1) = color;
 	} else {
 		const uint16 *src;
-		
+
 		_cursor.hotspotX = _cursorHotspots[2 * _currentCursor];
 		_cursor.hotspotY = _cursorHotspots[2 * _currentCursor + 1];
 		src = _cursorImages[_currentCursor];
@@ -505,7 +505,7 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 
 		for (i = 0; i < 16; i++) {
 			for (j = 0; j < 16; j++) {
-				if (src[i] & (1 << j))	
+				if (src[i] & (1 << j))
 					_grabbedCursor[16 * i + 15 - j] = color;
 			}
 		}

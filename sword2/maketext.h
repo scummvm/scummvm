@@ -32,7 +32,7 @@ namespace Sword2 {
 
 // Usually the only texts on screen are the subtitles and the mouse-over text,
 // but there can also be a considerable number of debugging messages...
-    
+
 #define MAX_text_blocs MAX_DEBUG_TEXTS + 1
 
 enum {
@@ -93,7 +93,7 @@ private:
 	uint16 charHeight(uint32 fontRes);
 	FrameHeader* findChar(byte ch, byte *charSet);
 	void copyChar(FrameHeader *charPtr, byte *spritePtr, uint16 spriteWidth, uint8 pen);
-	
+
 public:
 	FontRenderer(Sword2Engine *vm) : _vm(vm) {
 		for (int i = 0; i < MAX_text_blocs; i++)

@@ -237,16 +237,16 @@ void SmushFont::drawStringWrap(const char *str, byte *buffer, int dst_width, int
 	if (y > dst_height - height) {
 		y = dst_height - height;
 	}
-	
+
 	if (center) {
 		max_width = (max_width + 1) / 2;
 		x = left + width / 2;
-	
+
 		if (x < left + max_width)
 			x = left + max_width;
 		if (x > right - max_width)
 			x = right - max_width;
-	
+
 		for (i = 0; i < line_count; i++) {
 			drawSubstring(substrings[i], buffer, dst_width, x - substr_widths[i] / 2, y);
 			y += getStringHeight(substrings[i]);
@@ -254,13 +254,13 @@ void SmushFont::drawStringWrap(const char *str, byte *buffer, int dst_width, int
 	} else {
 		if (x > dst_width - max_width)
 			x = dst_width - max_width;
-	
+
 		for (i = 0; i < line_count; i++) {
 			drawSubstring(substrings[i], buffer, dst_width, x, y);
 			y += getStringHeight(substrings[i]);
 		}
 	}
-	
+
 	free(s);
 }
 

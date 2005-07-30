@@ -16,7 +16,7 @@
 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. 
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * $Header$
  *
@@ -46,7 +46,7 @@
 //#include "backends/gp32/config.h"
 
 #define LCD_WIDTH 				320
-#define LCD_HEIGHT 				240 
+#define LCD_HEIGHT 				240
 #define LCD_WIDTH_CENTER 		LCD_WIDTH / 2
 #define LCD_HEIGHT_CENTER 		LCD_HEIGHT / 2
 #define LCD_SIZE				(LCD_WIDTH * LCD_HEIGHT)
@@ -77,20 +77,20 @@ extern "C" {void cpu_speed(int,int,int);}	// CPU Speed control (3 int's, clock, 
 //int main_scummvm(int argc, char *argv[]);
 
 //Prototypes
-class OSystem_GP32 : public OSystem 
+class OSystem_GP32 : public OSystem
 {
 public:
 	OSystem_GP32();
 	virtual ~OSystem_GP32();
-	
+
 	// Set colors of the palette
 	void setPalette(const byte *colors, uint start, uint num);
 
 	// Set the size of the video bitmap.
 	// Typically, 320x200
 	void initSize(uint w, uint h, int overlayScale);
-	int16 getHeight() { return _screenHeight; } 
-	int16 getWidth() { return _screenWidth; } 
+	int16 getHeight() { return _screenHeight; }
+	int16 getWidth() { return _screenWidth; }
 
 	// Draw a bitmap to screen.
 	// The screen will not be updated to reflect the new bitmap
@@ -101,23 +101,23 @@ public:
 
 	// Either show or hide the mouse cursor
 	bool showMouse(bool visible);
-	
+
 	void warpMouse(int x, int y);
 
 	// Set the bitmap that's used when drawing the cursor.
 	void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor = 255, int cursorTargetScale = 1);
-	
+
 	// Shaking is used in SCUMM. Set current shake position.
 	void setShakePos(int shake_pos);
-		
+
 	// Get the number of milliseconds since the program was started.
 	uint32 getMillis();
-	
+
 	// Delay for a specified amount of milliseconds
 	void delayMillis(uint msecs);
 
 	// Get the next event.
-	// Returns true if an event was retrieved.	
+	// Returns true if an event was retrieved.
 	bool pollEvent(Event &event);
 
 	// Set the function to be invoked whenever samples need to be generated
@@ -126,13 +126,13 @@ public:
 	bool setSoundCallback(SoundProc proc, void *param);
 
 	// Clear Sound Sample
-	void clearSoundCallback(); 
-	
+	void clearSoundCallback();
+
 	// OLD - Delete when sure not needed.
 	// Get or set a property
 	//uint32 property(int param, Property *value);
 	//virtual uint32 property(int param, Property *value);
-		
+
 	// Poll cdrom status
 	// Returns true if cd audio is playing
 	bool pollCD();
@@ -149,20 +149,20 @@ public:
 	// Add a new callback timer
 	void setTimerCallback(TimerProc callback, int timer);
 
-	// Mutex handling	
+	// Mutex handling
 	OSystem::MutexRef createMutex();
 	void lockMutex(MutexRef mutex);
 	void unlockMutex(MutexRef mutex);
 	void deleteMutex(MutexRef mutex);
 	// DJWillis
-	
+
 	//helper
 	int16 get_height();
 	int16 get_width();
-	
+
 	// Quit
 	void quit();
-	
+
 	// Overlay
 	void showOverlay();
 	void hideOverlay();
@@ -171,7 +171,7 @@ public:
 	void copyRectToOverlay(const int16 *buf, int pitch, int x, int y, int w, int h);
 
 	//static OSystem *create(int gfx_mode, bool full_screen);
-	
+
 	int16 RBGToColor(uint8 r, uint8 g, uint8 b);
 	void colorToRBG(int16 color, uint8 &r, uint8 &g, uint8 &b);
 
@@ -183,7 +183,7 @@ public:
 	int getDefaultGraphicsMode() const;
 	bool setGraphicsMode(int mode);
 	int getGraphicsMode() const;
-	
+
 	void setWindowCaption(const char *caption);
 	bool openCD(int drive);
 
@@ -252,7 +252,7 @@ private:
 	int CKSUM_NUM;
 
 	// Keyboard mouse emulation
-	struct KbdMouse {	
+	struct KbdMouse {
 		int16 x, y, x_vel, y_vel, x_max, y_max, x_down_count, y_down_count;
 		uint32 last_time, delay_time, x_down_time, y_down_time;
 	} km;
@@ -284,12 +284,12 @@ private:
 	 * when accessing the screen.
 	 */
 	MutexRef _graphicsMutex;
-	
+
 	void add_dirty_rgn_auto(const byte *buf);
 	void mk_checksums(const byte *buf);
 
 	static void fill_sound(void *userdata, Uint8 * stream, int len);
-	
+
 	void add_dirty_rect(int x, int y, int w, int h);
 
 	void draw_mouse();
@@ -303,7 +303,7 @@ private:
 
 	void setFullscreenMode(bool enable);
 
-	void get_screen_image(byte *buf);	
+	void get_screen_image(byte *buf);
 
 	void setup_icon();
 	void kbd_mouse();

@@ -346,9 +346,9 @@ static void doCyclePalette(byte *palette, int cycleStart, int cycleEnd, int size
 	byte *end = palette + cycleEnd * size;
 	int num = cycleEnd - cycleStart;
 	byte tmp[6];
-	
+
 	assert(size <= 6);
-	
+
 	if (forward) {
 		memmove(tmp, end, size);
 		memmove(start + size, start, num * size);
@@ -375,13 +375,13 @@ static void doCycleIndirectPalette(byte *palette, int cycleStart, int cycleEnd, 
 	int num = cycleEnd - cycleStart + 1;
 	int i;
 	int offset = forward ? 1 : num - 1;
-	
+
 	for (i = 0; i < 256; i++) {
 		if (cycleStart <= palette[i] && palette[i] <= cycleEnd) {
 			palette[i] = (palette[i] - cycleStart + offset) % num + cycleStart;
 		}
 	}
-	
+
 	doCyclePalette(palette, cycleStart, cycleEnd, 1, forward);
 }
 
@@ -521,7 +521,7 @@ void ScummEngine::palManipulate() {
 
 	if (!_palManipCounter || !_palManipPalette || !_palManipIntermediatePal)
 		return;
-	
+
 	target = _palManipPalette + _palManipStart * 3;
 	pal = _currentPalette + _palManipStart * 3;
 	between = _palManipIntermediatePal + _palManipStart * 6;
@@ -590,7 +590,7 @@ void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale
 	// There seems to be no explanation for why this function is called
 	// from within Room 23 (the big machine), as it has no shadow effects
 	// and thus doesn't result in any visual differences.
-	
+
 	if (_gameId == GID_SAMNMAX) {
 		for (i = 0; i < 256; i++)
 			_shadowPalette[i] = i;
@@ -715,7 +715,7 @@ void ScummEngine_v8::desaturatePalette(int hueScale, int satScale, int lightScal
 
 			if (diff != 0) {
 				int H, S, L;
-				
+
 				if (sum <= 255)
 					S = 255 * diff / sum;
 				else
@@ -732,13 +732,13 @@ void ScummEngine_v8::desaturatePalette(int hueScale, int satScale, int lightScal
 					H = H + 360;
 
 				// Scale the result
-	
+
 				H = (H * hueScale) / 255;
 				S = (S * satScale) / 255;
 				L = (sum * lightScale) / 255;
-	
+
 				// HLS to RGB (Foley and VanDam)
-	
+
 				int m1, m2;
 				if (L <= 255)
 					m2 = L * (255 + S) / (255 * 2);
@@ -967,7 +967,7 @@ void ScummEngine::updatePalette() {
 			*p++ = 0;
 		}
 	}
-	
+
 	_system->setPalette(palette_colors, first, num);
 
 	_palDirtyMax = -1;

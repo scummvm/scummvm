@@ -35,7 +35,7 @@ public:
 
 	Journal(QueenEngine *vm);
 	void use();
-  
+
 	enum {
 		JOURNAL_BANK   = 8,
 		JOURNAL_FRAMES = 40
@@ -124,7 +124,7 @@ public:
 		PM_INFO_BOX,
 		PM_YES_NO
 	};
-	
+
 	enum QuitMode {
 		QM_LOOP,
 		QM_RESTORE,
@@ -195,10 +195,10 @@ private:
 	TextField _textField;
 	uint16 _prevZoneNum;
 	char _saveDescriptions[100][32];
-	
+
 	OSystem *_system;
 	QueenEngine *_vm;
-	
+
 	static const Zone _zones[MAX_ZONES];
 };
 

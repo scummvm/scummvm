@@ -139,8 +139,8 @@ bool CEException::writeException(TCHAR *path, EXCEPTION_POINTERS *exceptionPoint
 	SYSTEMTIME systemTime;
 
 	GetSystemTime(&systemTime);
-	wsprintf(dumpFileName, TEXT("%s_%.2d_%.2d_%.4d_%.2d_%.2d_%.2d.txt"), 
-			path, systemTime.wDay, systemTime.wMonth, systemTime.wYear, 
+	wsprintf(dumpFileName, TEXT("%s_%.2d_%.2d_%.4d_%.2d_%.2d_%.2d.txt"),
+			path, systemTime.wDay, systemTime.wMonth, systemTime.wYear,
 			systemTime.wHour, systemTime.wMinute, systemTime.wSecond);
 	dumpFile = CreateFile(dumpFileName, GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (dumpFile == INVALID_HANDLE_VALUE)

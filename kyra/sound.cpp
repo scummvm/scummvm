@@ -28,22 +28,22 @@ namespace Kyra {
 		_driver = driver;
 		_passThrough = false;
 		_isPlaying = _nativeMT32 = false;
-		
+
 		memset(_channel, 0, sizeof(MidiChannel*) * 16);
 		memset(_channelVolume, 255, sizeof(uint8) * 16);
 		_volume = 0;
-		
+
 		int ret = open();
 		if (ret != MERR_ALREADY_OPEN && ret != 0) {
 			error("couldn't open midi driver");
 		}
 	}
-	
+
 	MusicPlayer::~MusicPlayer() {
 		_driver->setTimerCallback(NULL, NULL);
 		close();
 	}
-	
+
 	void MusicPlayer::setVolume(int volume) {
 		if (volume < 0)
 			volume = 0;
@@ -61,7 +61,7 @@ namespace Kyra {
 			}
 		}
 	}
-	
+
 	int MusicPlayer::open() {
 		// Don't ever call open without first setting the output driver!
 		if (!_driver)
@@ -80,7 +80,7 @@ namespace Kyra {
 			_driver->close();
 		_driver = 0;
 	}
-	
+
 	void MusicPlayer::send(uint32 b) {
 		if (_passThrough) {
 			_driver->send(b);
@@ -120,28 +120,28 @@ namespace Kyra {
 			break;
 		}
 	}
-	
+
 	void MusicPlayer::playMusic(const char* file) {
 		uint32 size;
 		uint8* data = 0;
-		
+
 		data = (_engine->resManager())->fileData(file, &size);
-		
+
 		if (!data) {
 			warning("couldn't load '%s'", file);
 			return;
 		}
-	
+
 		playMusic(data, size);
 	}
-	
+
 	void MusicPlayer::playMusic(uint8* data, uint32 size) {
 		if (_isPlaying)
 			stopMusic();
-			
+
 		_parser = MidiParser::createParser_XMIDI();
 		assert(_parser);
-		
+
 		if (!_parser->loadMusic(data, size)) {
 			warning("Error reading track!");
 			delete _parser;
@@ -164,13 +164,13 @@ namespace Kyra {
 			_parser = NULL;
 		}
 	}
-	
+
 	void MusicPlayer::onTimer(void *refCon) {
 		MusicPlayer *music = (MusicPlayer *)refCon;
 		if (music->_isPlaying)
 			music->_parser->onTimer();
 	}
-	
+
 	void MusicPlayer::playTrack(uint8 track) {
 		if (_parser) {
 			_isPlaying = true;

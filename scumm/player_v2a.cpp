@@ -905,7 +905,7 @@ public:
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
-		
+
 		char *tmp_data1 = (char *)malloc(_size);
 		char *tmp_data2 = (char *)malloc(_size);
 		char *tmp_data3 = (char *)malloc(_size);
@@ -1416,4 +1416,4 @@ int Player_V2A::getSoundStatus(int nr) const {
 	return 0;
 }
 
-} // End of namespace Scumm 
+} // End of namespace Scumm

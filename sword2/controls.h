@@ -85,7 +85,7 @@ private:
 	Widget *_gfxPreview;
 	Button *_okButton;
 	Button *_cancelButton;
-	
+
 	Audio::Mixer *_mixer;
 
 public:
@@ -176,7 +176,7 @@ class RestoreDialog : public SaveRestoreDialog {
 public:
 	RestoreDialog(Sword2Engine *vm) : SaveRestoreDialog(vm, kRestoreDialog) {}
 };
- 
+
 } // End of namespace Sword2
 
 #endif

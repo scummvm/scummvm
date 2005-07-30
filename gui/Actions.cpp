@@ -34,8 +34,8 @@
 
 namespace GUI {
 
-Actions* Actions::Instance() {		
-	return _instance;		
+Actions* Actions::Instance() {
+	return _instance;
 }
 
 Actions::Actions(GameDetector &detector) :
@@ -91,9 +91,9 @@ bool Actions::mappingActive() {
 
 bool Actions::performMapped(unsigned int keyCode, bool pushed) {
 	int i;
-	
+
 	for (i=0; i<size(); i++) {
-		if (_action_mapping[i] == keyCode && _action_enabled[i]) 
+		if (_action_mapping[i] == keyCode && _action_enabled[i])
 				return perform((ActionType)i, pushed);
 	}
 
@@ -159,11 +159,11 @@ Key& Actions::getKeyAction(ActionType action)
 	return _key_action[action];
 }
 
-// Game detector 
+// Game detector
 GameDetector& Actions::gameDetector(){
 	return *_detector;
 }
 Actions *Actions::_instance = NULL;
 
-	
+
 } // namespace GUI

@@ -46,7 +46,7 @@ protected:
 	void drawWidget(bool hilite);
 	void receivedFocusWidget();
 	void lostFocusWidget();
-	
+
 	void startEditMode();
 	void endEditMode();
 	void abortEditMode();

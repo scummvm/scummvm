@@ -4,7 +4,7 @@
 //  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
 //  PARTICULAR PURPOSE.
 //
-//  This is "Sample Code" and is distributable subject to the terms of the 
+//  This is "Sample Code" and is distributable subject to the terms of the
 //  end user license agreement.
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -42,7 +42,7 @@
 #define _INC_WINDOWS
 	#include "winuser.h"           // extract from windows header
 #if _WIN32_WCE >= 300
-	#include "winver.h"   
+	#include "winver.h"
 #endif
 #endif
 #endif

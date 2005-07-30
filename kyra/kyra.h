@@ -63,7 +63,7 @@ public:
 
 	Resourcemanager* resManager(void) { return _resMgr; }
 	MusicPlayer* midiDriver(void) { return _midiDriver; }
-	
+
 	uint8 game(void) { return _game; }
 
 protected:

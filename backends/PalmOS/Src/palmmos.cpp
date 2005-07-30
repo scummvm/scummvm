@@ -26,7 +26,7 @@
 bool OSystem_PALMOS::showMouse(bool visible) {
 	if (_mouseVisible == visible)
 		return visible;
-	
+
 	bool last = _mouseVisible;
 	_mouseVisible = visible;
 
@@ -133,7 +133,7 @@ void OSystem_PALMOS::draw_mouse() {
 	} else {
 		int offset = y * _screenWidth + x;
 		dst = _tmpScreenP;
-		
+
 		while (h > 0) {
 			width = w;
 			while (width > 0) {

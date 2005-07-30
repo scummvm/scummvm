@@ -51,18 +51,18 @@ bool OSystem_PALMOS::setSoundCallback(SoundProc proc, void *param) {
 		_sound.active = true;	// always true when we call this function
 		_sound.dataP = NULL;	// required by sound_handler
 		_sound.handle = NULL;
-		
+
 		if (ConfMan.hasKey("output_rate"))
 			_samplesPerSec = ConfMan.getInt("output_rate");
 		else
 			_samplesPerSec = 8000;	// default value
-		
+
 		// try to create sound stream
 		if (OPTIONS_TST(kOptPalmSoundAPI)) {
 			void *sndFuncP;
-		
+
 			_sound.handle = MemPtrNew(sizeof(SndStreamRef));
-			sndFuncP = sndCallback;			
+			sndFuncP = sndCallback;
 
 			Err e = SndStreamCreateExtended(
 						(SndStreamRef *)_sound.handle,
@@ -83,14 +83,14 @@ bool OSystem_PALMOS::setSoundCallback(SoundProc proc, void *param) {
 			_sound.set = false;
 			_sound.wait = true;
 			success = (e == errNone);
-			
+
 		} else if (OPTIONS_TST(kOptSonyPa1LibAPI)) {
 			static CallbackInfoType cbData;
 			_sound.handle = MemPtrNew(sizeof(UInt8));
-			
+
 			cbData.funcP = &ClieSoundCallback;
 			cbData.dwUserData = (UInt32)&_sound;
-		
+
 			_sound.size		= SND_BLOCK;
 			_sound.set		= false;
 			_sound.wait		= true;
@@ -101,7 +101,7 @@ bool OSystem_PALMOS::setSoundCallback(SoundProc proc, void *param) {
 
 			Pa1Lib_adpcmOpen(ADPCM_8_KHZ, (UInt8 *)_sound.tmpP, MemPtrSize(_sound.tmpP), &cbData, (UInt8 *)_sound.handle);
 		}
-		// failed or not supported 
+		// failed or not supported
 		if (!success) {
 			_sound.size = SND_BLOCK;
 			_sound.set = false;
@@ -125,7 +125,7 @@ void OSystem_PALMOS::clearSoundCallback() {
 		free(_sound.tmpP);
 		free(_sound.handle);
 	}
-	
+
 
 	_sound.active = false;
 	_sound.dataP = NULL;
@@ -139,9 +139,9 @@ void OSystem_PALMOS::sound_handler() {
 
 			if (!_sound.dataP)
 				_sound.dataP = MemPtrNew(_sound.size);
-			
+
 			((SoundProc)_sound.proc)(_sound.param, (byte *)_sound.dataP, _sound.size);
-			
+
 			if (OPTIONS_TST(kOptSonyPa1LibAPI)) {
 				pcm2adpcm((Int16 *)_sound.dataP, (UInt8 *)_sound.tmpP, _sound.size);
 				_sound.set = Pa1Lib_adpcmStart(*((UInt8 *)_sound.handle), ADPCM_MODE_NONCONTINUOUS_PB|ADPCM_MODE_INTERRUPT_MODE);
@@ -174,7 +174,7 @@ void OSystem_PALMOS::playCD(int track, int num_loops, int start_frame, int durat
 bool OSystem_PALMOS::pollCD() {
 	if (!_cdPlayer)
 		return false;
-	
+
 	return _cdPlayer->poll();
 }
 

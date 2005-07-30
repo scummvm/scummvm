@@ -31,9 +31,9 @@ namespace CEGUI {
 
 	PanelKeyboard::PanelKeyboard(WORD reference) : Toolbar() {
 		setBackground(reference);
-	} 
+	}
 
-	
+
 	PanelKeyboard::~PanelKeyboard() {
 	}
 
@@ -44,7 +44,7 @@ namespace CEGUI {
 			char keyCode = 0;
 			if (x < 185) {
 				// Alpha selection
-				if (y <= _y + 20) 
+				if (y <= _y + 20)
 					keyAscii = KEYBOARD_MAPPING_ALPHA_HIGH[((x + 10) / 14) - 1];
 				else
 					keyAscii = KEYBOARD_MAPPING_ALPHA_LOW[((x + 10) / 14) - 1];

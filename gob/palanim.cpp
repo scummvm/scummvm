@@ -72,7 +72,7 @@ char pal_fadeStep(int16 oper) {
 				if (redPalette[i] != newRed
 				    || greenPalette[i] != newGreen
 				    || bluePalette[i] != newBlue) {
-					
+
 					vid_setPalElem(i, newRed, newGreen, newBlue, 0, 0x13);
 
 					redPalette[i] = newRed;

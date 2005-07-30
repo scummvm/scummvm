@@ -77,7 +77,7 @@ GameList Engine_SWORD2_gameList() {
 DetectedGameList Engine_SWORD2_detectGames(const FSList &fslist) {
 	DetectedGameList detectedGames;
 	const Sword2GameSettings *g;
-	
+
 	// TODO: It would be nice if we had code here which distinguishes
 	// between the 'sword2' and 'sword2demo' targets. The current code
 	// can't do that since they use the same detectname.
@@ -225,7 +225,7 @@ void Sword2Engine::setupPersistentResources() {
 	Logic::_scriptVars = (uint32 *)(_resman->openResource(1) + sizeof(StandardHeader));
 	_resman->openResource(CUR_PLAYER_ID);
 }
-    
+
 int Sword2Engine::init(GameDetector &detector) {
 	// Get some falling RAM and put it in your pocket, never let it slip
 	// away
@@ -302,7 +302,7 @@ int Sword2Engine::init(GameDetector &detector) {
 		startGame();
 
 	_screen->initialiseRenderCycle();
-	
+
 	return 0;
 }
 
@@ -378,7 +378,7 @@ int Sword2Engine::go() {
 		_screen->buildDisplay();
 #endif
 	}
-	
+
 	return 0;
 }
 
@@ -489,7 +489,7 @@ void Sword2Engine::parseInputEvents() {
 	OSystem::Event event;
 
 	uint32 now = _system->getMillis();
-	
+
 	while (_system->pollEvent(event)) {
 		switch (event.type) {
 		case OSystem::EVENT_KEYDOWN:
@@ -641,7 +641,7 @@ void Sword2Engine::pauseGame() {
 	// Don't allow Pause while screen fading or while black
 	if (_screen->getFadeStatus() != RDFADE_NONE)
 		return;
-	
+
 	_sound->pauseAllSound();
 	_mouse->pauseGame();
 

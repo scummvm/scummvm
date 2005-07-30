@@ -28,11 +28,11 @@ namespace Sky {
 
 AdlibMusic::AdlibMusic(Audio::Mixer *pMixer, Disk *pDisk)
 	: MusicBase(pDisk) {
-	
+
 	_driverFileBase = 60202;
 	_mixer = pMixer;
 	_sampleRate = pMixer->getOutputRate();
-	
+
 	_opl = makeAdlibOPL(_sampleRate);
 
 	_mixer->setupPremix(this);
@@ -91,7 +91,7 @@ void AdlibMusic::setupPointers(void) {
 		// disk demo uses a different adlib driver version, some offsets have changed
 		//_musicDataLoc = (_musicData[0x11CC] << 8) | _musicData[0x11CB];
 		//_initSequence = _musicData + 0xEC8;
-		
+
 		_musicDataLoc = READ_LE_UINT16(_musicData + 0x1200);
 		_initSequence = _musicData + 0xEFB;
 	} else if (SkyEngine::_systemVars.gameVersion == 267) {

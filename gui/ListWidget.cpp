@@ -28,13 +28,13 @@ namespace GUI {
 
 ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws)
 	: EditableWidget(boss, x, y, w, h, ws), CommandSender(boss) {
-	
+
 	if (ws == kBigWidgetSize) {
 		_w = w - kBigScrollBarWidth;
 	} else {
 		_w = w - kNormalScrollBarWidth;
 	}
-	
+
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE;
 	_type = kListWidget;
 	_editMode = false;
@@ -45,7 +45,7 @@ ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize w
 	_scrollBar = new ScrollBarWidget(boss, _x + _w, _y, (ws == kBigWidgetSize ? kBigScrollBarWidth : kNormalScrollBarWidth), _h);
 	_scrollBar->setTarget(this);
 	_currentKeyDown = 0;
-	
+
 	_quickSelectTime = 0;
 
 	// The item is selected, thus _bgcolor is used to draw the caret and _textcolorhi to erase it
@@ -129,7 +129,7 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 		_selectedItem = newSelectedItem;
 		sendCommand(kListSelectionChangedCmd, _selectedItem);
 	}
-	
+
 	// TODO: Determine where inside the string the user clicked and place the
 	// caret accordingly. See _editScrollOffset and EditTextWidget::handleMouseDown.
 	draw();
@@ -182,7 +182,7 @@ bool ListWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 			_quickSelectStr += (char)ascii;
 		}
 		_quickSelectTime = time + 300;	// TODO: Turn this into a proper constant (kQuickSelectDelay ?)
-		
+
 
 		// FIXME: This is bad slow code (it scans the list linearly each time a
 		// key is pressed); it could be much faster. Only of importance if we have
@@ -331,7 +331,7 @@ void ListWidget::drawWidget(bool hilite) {
 			buffer = _editString;
 			adjustOffset();
 			deltax = -_editScrollOffset;
-	
+
 			gui->drawString(buffer, _x + r.left, y, r.width(), textColor, kTextAlignLeft, deltax, false);
 		} else {
 			buffer = _list[pos];
@@ -353,7 +353,7 @@ Common::Rect ListWidget::getEditRect() const {
 		sprintf(temp, "%2d. ", (_list.size() - 1 + _numberingMode));
 		r.left += g_gui.getStringWidth(temp);
 	}
-	
+
 	return r;
 }
 

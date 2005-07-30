@@ -82,7 +82,7 @@ void DmaPipe::uploadTex(uint32 dest, uint16 bufWidth, uint16 destOfsX, uint16 de
 	_pipes[_curPipe]->setReg(	GPR_TRXPOS, GS_SET_DEST_TRXPOS(destOfsX, destOfsY));
 	_pipes[_curPipe]->setReg(   GPR_TRXREG, GS_SET_TRXREG(width, height));
 	_pipes[_curPipe]->setReg(   GPR_TRXDIR, 0);
-	
+
 	checkSpace(15);
 	uint32 numq = width * height;
 	switch (pixelFmt) {

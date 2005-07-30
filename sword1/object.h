@@ -32,7 +32,7 @@ namespace Sword1 {
 #define	EXTRA_GRID_SIZE	20
 //--------------------------------------------------------------------------------------
 
-struct OEventSlot {			//receiving event list in the compact - 
+struct OEventSlot {			//receiving event list in the compact -
 	int32	o_event;		//array of these with O_TOTAL_EVENTS elements
 	int32	o_event_script;
 };
@@ -70,12 +70,12 @@ struct Object {
 	int32	o_resource;					// 32 id of spr file it comes from
 	int32	o_sync;						// 36 receive sync here
 	int32	o_pause;					// 40 logic_engine() pauses these cycles
-	int32	o_xcoord;					// 44 
+	int32	o_xcoord;					// 44
 	int32	o_ycoord;					// 48
 	int32	o_mouse_x1;					// 52 top-left of mouse area is (x1,y1)
-	int32	o_mouse_y1;					// 56 
+	int32	o_mouse_y1;					// 56
 	int32	o_mouse_x2;					// 60 bottom-right of area is (x2,y2)	(these coords are inclusive)
-	int32	o_mouse_y2;					// 64 
+	int32	o_mouse_y2;					// 64
 	int32	o_priority;					// 68
 	int32	o_mouse_on;					// 72
 	int32	o_mouse_off;				// 76
@@ -83,7 +83,7 @@ struct Object {
 	int32	o_interact;					// 84
 	int32	o_get_to_script;			// 88
 	int32	o_scale_a;					// 92 used by floors
-	int32	o_scale_b;					// 96 
+	int32	o_scale_b;					// 96
 	int32	o_anim_x;					// 100
 	int32	o_anim_y;					// 104
 
@@ -123,7 +123,7 @@ struct CollisionData {
 	WalkData route[24];
 };
 
-} // End of namespace Sword1 
+} // End of namespace Sword1
 
 #endif //BSOBJECT_H
 

@@ -65,7 +65,7 @@ extern bool isSmartphone(void);
  promise. But then they did look closer and see'th the aweful truth;
  it's code was assembly and messy (rareth was its comments). And so large
  were it's includes that did at first seem small; queereth also was its
- compact(s). Then they did findeth another version, and this was slightly 
+ compact(s). Then they did findeth another version, and this was slightly
  different from the first. Then a third, and this was different again.
  All different, but not really better, for all were not really compatible.
  But, eventually, it did come to pass that Steel Sky was implemented on
@@ -149,7 +149,7 @@ void SkyEngine::errorString(const char *buf1, char *buf2) {
 }
 
 void SkyEngine::initVirgin() {
-	
+
 	_skyScreen->setPalette(60111);
 	_skyScreen->showScreen(60110);
 }
@@ -212,7 +212,7 @@ int SkyEngine::go() {
 	if (ConfMan.hasKey("save_slot") && ConfMan.getInt("save_slot") >= 0)
 		result = _skyControl->quickXRestore(ConfMan.getInt("save_slot"));
 
-	if (result != GAME_RESTORED) {	
+	if (result != GAME_RESTORED) {
 		bool introSkipped = false;
 		if (_systemVars.gameVersion > 267) {// don't do intro for floppydemos
 			_skyIntro = new Intro(_skyDisk, _skyScreen, _skyMusic, _skySound, _skyText, _mixer, _system);
@@ -229,13 +229,13 @@ int SkyEngine::go() {
 		if (introSkipped)
 			_skyControl->restartGame();
 	}
-	
+
 	_lastSaveTime = _system->getMillis();
 
 	while (1) {
 		if (_debugger->isAttached())
 			_debugger->onFrame();
-		
+
 		int32 frameTime = (int32)_system->getMillis();
 
 		if (_system->getMillis() - _lastSaveTime > 5 * 60 * 1000) {
@@ -249,7 +249,7 @@ int SkyEngine::go() {
 		_skyMouse->mouseEngine((uint16)_mouseX, (uint16)_mouseY);
 		handleKey();
 		while (_systemVars.paused) {
-			_system->updateScreen();			
+			_system->updateScreen();
 			delay(300);
 			handleKey();
 		}
@@ -270,7 +270,7 @@ int SkyEngine::go() {
 		else
 			delay((frameTime + _systemVars.gameSpeed) - _system->getMillis());
 	}
-	
+
 	return 0;
 }
 
@@ -289,7 +289,7 @@ int SkyEngine::init(GameDetector &detector) {
 
 	_skyDisk = new Disk(_gameDataPath);
 	_skySound = new Sound(_mixer, _skyDisk, ConfMan.getInt("sfx_volume"));
-	
+
 	_systemVars.gameVersion = _skyDisk->determineGameVersion();
 
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_ADLIB | MDT_NATIVE | MDT_PREFER_NATIVE);
@@ -330,7 +330,7 @@ int SkyEngine::init(GameDetector &detector) {
 	loadFixedItems();
 	_skyLogic = new Logic(_skyCompact, _skyScreen, _skyDisk, _skyText, _skyMusic, _skyMouse, _skySound);
 	_skyMouse->useLogicInstance(_skyLogic);
-	
+
 	// initialize timer *after* _skyScreen has been initialized.
 	_timer->installTimerProc(&timerHandler, 1000000 / 50, this); //call 50 times per second
 
@@ -385,7 +385,7 @@ int SkyEngine::init(GameDetector &detector) {
 }
 
 void SkyEngine::initItemList() {
-	
+
 	//See List.asm for (cryptic) item # descriptions
 
 	for (int i = 0; i < 300; i++)
@@ -396,7 +396,7 @@ void SkyEngine::initItemList() {
 	// leave these as NULL.
 	/*_itemList[119] = (void **)SkyCompact::data_0; // Compacts - Section 0
 	_itemList[120] = (void **)SkyCompact::data_1; // Compacts - Section 1
-	
+
 	if (isDemo()) {
 		_itemList[121] = _itemList[122] = _itemList[123] = _itemList[124] = _itemList[125] = (void **)SkyCompact::data_0;
 	} else {
@@ -425,7 +425,7 @@ void SkyEngine::loadFixedItems(void) {
 		_itemList[269] = _skyDisk->loadFile(269);
 		_itemList[271] = _skyDisk->loadFile(271);
 		_itemList[272] = _skyDisk->loadFile(272);
-	}		
+	}
 }
 
 void *SkyEngine::fetchItem(uint32 num) {

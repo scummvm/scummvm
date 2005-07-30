@@ -34,7 +34,7 @@ void VGAVideoDriver::drawSprite(SurfaceDesc *source, SurfaceDesc *dest, int16 le
 	if (x >= 0 && x < dest->width && y >= 0 && y < dest->height) {
 		int16 width = (right - left) + 1;
 		int16 height = (bottom - top) + 1;
-	
+
 		byte *srcPos = source->vidPtr + (top * source->width) + left;
 		byte *destPos = dest->vidPtr + (y * dest->width) + x;
 		while (height--) {
@@ -78,7 +78,7 @@ void VGAVideoDriver::drawLetter(unsigned char item, int16 x, int16 y, FontDesc *
 	byte *src, *dst;
 	uint16 data;
 	int i, j;
-	
+
 	src = (byte *)fontDesc->dataPtr + (item - fontDesc->startItem) * (fontDesc->itemSize & 0xff);
 	dst = dest->vidPtr + x + dest->width * y;
 

@@ -117,7 +117,7 @@ int AsyncFio::dopen(const char *name) {
 	int res;
 	WaitSema(_ioSema);
 	checkSync();
-	fileXioDopen(name);	
+	fileXioDopen(name);
 	fileXioWaitAsync(FXIO_WAIT, &res);
 	SignalSema(_ioSema);
 	return res;

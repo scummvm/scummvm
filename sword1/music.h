@@ -116,6 +116,6 @@ private:
 	static const char _tuneList[TOTAL_TUNES][8]; // in staticres.cpp
 };
 
-} // End of namespace Sword1 
+} // End of namespace Sword1
 
 #endif // BSMUSIC_H

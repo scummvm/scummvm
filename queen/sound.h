@@ -31,7 +31,7 @@ namespace Queen {
 class Input;
 class Resource;
 
-struct songData { 
+struct songData {
 	int16 tuneList[5];
 	int16 volume;
 	int16 tempo;
@@ -40,7 +40,7 @@ struct songData {
 	int16 ignore;
 };
 
-struct tuneData { 
+struct tuneData {
 	int16 tuneNum[9];
 	int16 sfx[2];
 	int16 mode;
@@ -52,7 +52,7 @@ class QueenEngine;
 class Sound {
 public:
 	Sound(Audio::Mixer *mixer, QueenEngine *vm);
-	virtual ~Sound(); 
+	virtual ~Sound();
 	virtual void sfxPlay(const char *name, bool isSpeech) = 0;
 	static Sound *giveSound(Audio::Mixer *mixer, QueenEngine *vm, uint8 compression);
 	void playSfx(uint16 sfx, bool isSpeech);
@@ -61,7 +61,7 @@ public:
 	void playLastSong()		{ playSong(_lastOverride); }
 	void stopSpeech()		{ _mixer->stopHandle(_speechHandle); }
 	void stopSfx()			{ _mixer->stopHandle(_sfxHandle); }
-	
+
 	bool sfxOn() const			{ return _sfxToggle; }
 	void sfxToggle(bool val)	{ _sfxToggle = val; }
 	void toggleSfx()			{ _sfxToggle ^= true; }
@@ -69,16 +69,16 @@ public:
 	bool speechOn()	const		{ return _speechToggle; }
 	void speechToggle(bool val)	{ _speechToggle = val; }
 	void toggleSpeech()			{ _speechToggle ^= true; }
-	
+
 	bool musicOn() const		{ return _musicToggle; }
 	void musicToggle(bool val)	{ _musicToggle = val; }
 	void toggleMusic()			{ _musicToggle ^= true; }
 
 	bool isSpeechActive() const	{ return _mixer->isSoundHandleActive(_speechHandle); }
 	bool isSfxActive() const 	{ return _mixer->isSoundHandleActive(_sfxHandle); }
-	
+
 	bool speechSfxExists() const	{ return _speechSfxExists; }
-	
+
 	int16 lastOverride() const	{ return _lastOverride; }
 
 	void saveState(byte *&ptr);
@@ -110,7 +110,7 @@ protected:
 	bool _speechToggle;
 	bool _musicToggle;
 	bool _speechSfxExists;
-	
+
 	int16 _lastOverride;
 	Audio::SoundHandle _sfxHandle;
 	Audio::SoundHandle _speechHandle;

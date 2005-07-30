@@ -37,9 +37,9 @@
 #define		KEY_ALL_SKIP	3457
 #endif
 
-const String smartphoneActionNames[] = { 
-	"Up", 
-	"Down", 
+const String smartphoneActionNames[] = {
+	"Up",
+	"Down",
 	"Left",
 	"Right",
 	"Left Click",
@@ -111,7 +111,7 @@ void CEActionsSmartphone::initInstanceGame() {
 	bool is_sky = (_detector->_targetName == "sky");
 	bool is_queen = (_detector->_targetName == "queen");
 	bool is_gob = (strncmp(_detector->_targetName.c_str(), "gob", 3) == 0);
-	
+
 	GUI_Actions::initInstanceGame();
 
 	// See if a right click mapping could be needed
@@ -120,7 +120,7 @@ void CEActionsSmartphone::initInstanceGame() {
 
 	// Initialize keys for different actions
 	// Save
-	if (is_simon || is_gob) 
+	if (is_simon || is_gob)
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = false;
 	else
 	if (is_queen) {
@@ -130,7 +130,7 @@ void CEActionsSmartphone::initInstanceGame() {
 	else
 	if (is_sky) {
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = true;
-		_key_action[SMARTPHONE_ACTION_SAVE].setAscii(63); 
+		_key_action[SMARTPHONE_ACTION_SAVE].setAscii(63);
 	}
 	else {
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = true;

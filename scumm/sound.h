@@ -70,7 +70,7 @@ protected:
 	} _soundQue2[10];
 
 	ScummFile *_sfxFile;
-	SoundMode _soundMode;	
+	SoundMode _soundMode;
 	MP3OffsetTable *_offsetTable;	// For compressed audio
 	int _numSoundEffects;		// For compressed audio
 

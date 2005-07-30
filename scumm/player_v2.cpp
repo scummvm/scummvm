@@ -52,7 +52,7 @@ static const uint16 *spk_freq_table;
 static const uint16 *pcjr_freq_table;
 #else
 const uint8 note_lengths[] = {
-	0,  
+	0,
 	0,  0,  2,
 	0,  3,  4,
 	5,  6,  8,
@@ -63,8 +63,8 @@ const uint8 note_lengths[] = {
 };
 
 static const uint16 hull_offsets[] = {
-	0, 12, 24, 36, 48, 60, 
-	72, 88, 104, 120, 136, 256, 
+	0, 12, 24, 36, 48, 60,
+	72, 88, 104, 120, 136, 256,
 	152, 164, 180
 };
 
@@ -193,7 +193,7 @@ static const int8 freqmod_table[0x502] = {
    -70, -67, -65, -62, -59, -57, -54, -51,
    -48, -45, -42, -39, -36, -33, -30, -27,
    -24, -21, -18, -15, -12,  -9,  -6,  -3,
-  
+
      0,   1,   2,   3,   4,   5,   6,   7,
      8,   9,  10,  11,  12,  13,  14,  15,
     16,  17,  18,  19,  20,  21,  22,  23,
@@ -226,9 +226,9 @@ static const int8 freqmod_table[0x502] = {
    -24, -23, -22, -21, -20, -19, -18, -17,
    -16, -15, -14, -13, -12, -11, -10,  -9,
     -8,  -7,  -6,  -5,  -4,  -3,  -2,  -1,
-  
+
   -120, 120,
-  
+
   -120,-120,-120,-120,-120,-120,-120,-120,
   -120,-120,-120,-120,-120,-120,-120,-120,
   -120,-120,-120,-120,-120,-120,-120,-120,
@@ -330,12 +330,12 @@ static const int8 freqmod_table[0x502] = {
 
 
 static const uint16  spk_freq_table[12] = {
-	36484, 34436, 32503, 30679, 28957, 27332, 
+	36484, 34436, 32503, 30679, 28957, 27332,
 	25798, 24350, 22983, 21693, 20476, 19326
 };
 
 static const uint16 pcjr_freq_table[12] = {
-	65472, 61760, 58304, 55040, 52032, 49024, 
+	65472, 61760, 58304, 55040, 52032, 49024,
 	46272, 43648, 41216, 38912, 36736, 34624
 };
 #endif
@@ -351,10 +351,10 @@ Player_V2::Player_V2(ScummEngine *scumm, bool pcjr) {
 
 	_header_len = (scumm->_features & GF_OLD_BUNDLE) ? 4 : 6;
 
-	// Initialize sound queue 
+	// Initialize sound queue
 	_current_nr = _next_nr = 0;
 	_current_data = _next_data = 0;
-	
+
 	// Initialize channel code
 	for (i = 0; i < 4; ++i)
 		clear_channel(i);
@@ -419,7 +419,7 @@ void Player_V2::setMusicVolume (int vol) {
 
 	/* scale to int16, FIXME: find best value */
 	double out = vol * 128 / 3;
-	
+
 	/* build volume table (2dB per step) */
 	for (int i = 0; i < 15; i++) {
 		/* limit volume to avoid clipping */
@@ -510,13 +510,13 @@ void Player_V2::startSound(int nr) {
 		data = tdata;
 		restartable = data ? *(data + _header_len + 1) : 0;
 	}
-	
+
 	if (!_current_nr) {
 		nr = 0;
 		_next_nr = 0;
 		_next_data = 0;
 	}
-	
+
 	if (nr != _current_nr
 		&& restartable
 		&& (!_next_nr
@@ -564,14 +564,14 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 		if (opcode >= 0xf8) {
 			switch (opcode) {
 			case 0xf8: // set hull curve
-				debug(7, "channels[%d]: hull curve %2d", 
+				debug(7, "channels[%d]: hull curve %2d",
 				channel - _channels, *script_ptr);
 				channel->d.hull_curve = hull_offsets[*script_ptr / 2];
 				script_ptr++;
 				break;
 
 			case 0xf9: // set freqmod curve
-				debug(7, "channels[%d]: freqmod curve %2d", 
+				debug(7, "channels[%d]: freqmod curve %2d",
 				channel - _channels, *script_ptr);
 				channel->d.freqmod_table = freqmod_offsets[*script_ptr / 4];
 				channel->d.freqmod_modulo = freqmod_lengths[*script_ptr / 4];
@@ -642,7 +642,7 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 				opcode = *script_ptr++;
 				value = READ_LE_UINT16 (script_ptr);
 				channel->array[opcode / 2] = value;
-				debug(7, "channels[%d]: set param %2d = %5d", 
+				debug(7, "channels[%d]: set param %2d = %5d",
 						channel - &_channels[0], opcode, value);
 				script_ptr += 2;
 				if (opcode == 14) {
@@ -670,7 +670,7 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 					is_last_note = note & 0x80;
 					note &= 0x7f;
 					if (note == 0x7f) {
-						debug(8, "channels[%d]: pause %d", 
+						debug(8, "channels[%d]: pause %d",
 							  channel - _channels, channel->d.time_left);
 						goto end;
 					}
@@ -679,7 +679,7 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 					channel->d.time_left = ((opcode & 7) << 8) | *script_ptr++;
 
 					if ((opcode & 0x10)) {
-						debug(8, "channels[%d]: pause %d", 
+						debug(8, "channels[%d]: pause %d",
 							  channel - _channels, channel->d.time_left);
 						goto end;
 					}
@@ -688,7 +688,7 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 					note = (*script_ptr++) & 0x7f;
 				}
 
-				debug(8, "channels[%d]: @%04x note: %3d+%d len: %2d hull: %d mod: %d/%d/%d %s", 
+				debug(8, "channels[%d]: @%04x note: %3d+%d len: %2d hull: %d mod: %d/%d/%d %s",
 						dest_channel - channel, script_ptr ? script_ptr - _current_data - 2 : 0,
 						note, (signed short) dest_channel->d.transpose, channel->d.time_left,
 						dest_channel->d.hull_curve, dest_channel->d.freqmod_table,
@@ -697,7 +697,7 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 
 				uint16 myfreq;
 				dest_channel->d.time_left = channel->d.time_left;
-				dest_channel->d.note_length = 
+				dest_channel->d.note_length =
 					channel->d.time_left - dest_channel->d.inter_note_pause;
 				note += dest_channel->d.transpose;
 				while (note < 0)
@@ -749,7 +749,7 @@ void Player_V2::next_freqs(ChannelInfo *channel) {
 	channel->d.freqmod_offset += channel->d.freqmod_incr;
 	if (channel->d.freqmod_offset > channel->d.freqmod_modulo)
 		channel->d.freqmod_offset -= channel->d.freqmod_modulo;
-	channel->d.freq = 
+	channel->d.freq =
 		(int) (freqmod_table[channel->d.freqmod_table + (channel->d.freqmod_offset >> 4)])
 		* (int) channel->d.freqmod_multiplier / 256
 		+ channel->d.base_freq;
@@ -770,7 +770,7 @@ void Player_V2::next_freqs(ChannelInfo *channel) {
 	}
 
 #if 0
-	debug(9, "channels[%d]: freq %d hull %d/%d/%d", 
+	debug(9, "channels[%d]: freq %d hull %d/%d/%d",
 			channel - &_channels[0], channel->d.freq,
 			channel->d.hull_curve, channel->d.hull_offset,
 			channel->d.hull_counter);
@@ -849,10 +849,10 @@ void Player_V2::squareGenerator(int channel, int freq, int vol,
 
 	for (uint i = 0; i < len; i++) {
 		unsigned int duration = 0;
-		
+
 		if (_timer_output & (1 << channel))
 			duration += _timer_count[channel];
-		
+
 		_timer_count[channel] -= (1 << FIXP_SHIFT);
 		while (_timer_count[channel] <= 0) {
 
@@ -871,11 +871,11 @@ void Player_V2::squareGenerator(int channel, int freq, int vol,
 
 			_timer_count[channel] += period;
 		}
-		
+
 		if (_timer_output & (1 << channel))
 			duration -= _timer_count[channel];
-		
-		nsample = *sample + 
+
+		nsample = *sample +
 			(((signed long) (duration - (1 << (FIXP_SHIFT - 1)))
 				* (signed long) _volumetable[vol]) >> FIXP_SHIFT);
 		/* overflow: clip value */
@@ -902,12 +902,12 @@ void Player_V2::generateSpkSamples(int16 *data, uint len) {
 
 	memset(data, 0, 2 * sizeof(int16) * len);
 	if (winning_channel != -1) {
-		squareGenerator(0, _channels[winning_channel].d.freq, 0, 
+		squareGenerator(0, _channels[winning_channel].d.freq, 0,
 				0, data, len);
 	} else if (_level == 0)
 		/* shortcut: no sound is being played. */
 		return;
-	
+
 	lowPassFilter(data, len);
 }
 
@@ -928,7 +928,7 @@ void Player_V2::generatePCjrSamples(int16 *data, uint len) {
 					/* HACK: this channel is playing at
 					 * the same frequency as another.
 					 * Synchronize it to the same phase to
-					 * prevent interference. 
+					 * prevent interference.
 					 */
 					_timer_count[i] = _timer_count[j];
 					_timer_output ^= (1 << i) &
@@ -951,13 +951,13 @@ void Player_V2::generatePCjrSamples(int16 *data, uint len) {
 		} else {
 			int noiseFB = (freq & 4) ? FB_WNOISE : FB_PNOISE;
 			int n = (freq & 3);
-			
+
 			freq = (n == 3) ? 2 * (_channels[2].d.freq>>6) : 1 << (5 + n);
 			hasdata = true;
 			squareGenerator(i, freq, vol, noiseFB, data, len);
 		}
 #if 0
-		debug(9, "channel[%d]: freq %d %.1f ; volume %d", 
+		debug(9, "channel[%d]: freq %d %.1f ; volume %d",
 				i, freq, 111860.0 / freq,  vol);
 #endif
 	}
@@ -1001,4 +1001,4 @@ _GRELEASEPTR(GBVARS_SPKFREQTABLE_INDEX, GBVARS_SCUMM)
 _GRELEASEPTR(GBVARS_PCJRFREQTABLE_INDEX, GBVARS_SCUMM)
 _GEND
 
-#endif 
+#endif

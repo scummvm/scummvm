@@ -61,7 +61,7 @@ public:
 protected:
 	virtual void open();
 	virtual void close();
-	
+
 	virtual void draw();
 	virtual void drawDialog();
 
@@ -74,7 +74,7 @@ protected:
 	virtual void handleMouseMoved(int x, int y, int button);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	virtual void handleScreenChanged() {}
-	
+
 	Widget *findWidget(int x, int y); // Find the widget at pos x,y if any
 
 	ButtonWidget *addButton(GuiObject *boss, int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws = kDefaultWidgetSize);

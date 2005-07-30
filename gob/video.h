@@ -26,7 +26,7 @@
 #include "common/util.h"
 
 namespace Gob {
-	
+
 #define VID_SET_CURSOR(val) { _AH = 1; _CX = (val); geninterrupt(0x10); }
 #define VID_RESTORE_MODE { _AX = 3; geninterrupt(0x10); }
 
@@ -35,7 +35,7 @@ namespace Gob {
 #define TEXT_COL_COUNT	80
 #define TEXT_ROW_COUNT	25
 
-	
+
 typedef struct SurfaceDesc_t {
 	int16 width;
 	int16 height;
@@ -64,7 +64,7 @@ public:
 	virtual ~VideoDriver() {}
 	virtual void drawSprite(SurfaceDesc *source, SurfaceDesc *dest, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) = 0;
 	virtual void fillRect(SurfaceDesc *dest, int16 left, int16 top, int16 right, int16 bottom, byte color) = 0;
-	virtual void putPixel(int16 x, int16 y, byte color, SurfaceDesc *dest) = 0;		
+	virtual void putPixel(int16 x, int16 y, byte color, SurfaceDesc *dest) = 0;
 	virtual void drawLetter(unsigned char item, int16 x, int16 y, FontDesc *fontDesc, byte color1, byte color2, byte transp, SurfaceDesc *dest) = 0;
 	virtual void drawLine(SurfaceDesc *dest, int16 x0, int16 y0, int16 x1, int16 y1, byte color) = 0;
 	virtual void drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, int16 y, byte transp, SurfaceDesc *dest) = 0;

@@ -170,7 +170,7 @@ void Tables::initEnvelopes(float samplerate) {
 			}
 			envDeltaMaxTime[lf] = (int)cap;
 		}
-		
+
 
 		// This (approximately) represents the time durations when the target level is 0.
 		// Not sure why this is a special case, but it's seen to be from the real thing.

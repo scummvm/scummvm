@@ -1,6 +1,6 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2005 The ScummVM project 
+ * Copyright (C) 2001-2005 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,7 +19,7 @@
  * $Header$
  *
  */
- 
+
 #if !defined(WIZ_HE_H) && !defined(DISABLE_HE)
 #define WIZ_HE_H
 
@@ -144,7 +144,7 @@ public:
 	WizImage _images[NUM_IMAGES];
 	uint16 _imagesNum;
 	WizPolygon _polygons[NUM_POLYGONS];
-	
+
 	Wiz(ScummEngine_v70he *vm);
 
 	void clearWizBuffer();
@@ -166,7 +166,7 @@ public:
 	void fillWizLine(const WizParameters *params);
 
 	void getWizImageDim(int resNum, int state,  int32 &w, int32 &h);
-	int getWizImageStates(int resnum);	
+	int getWizImageStates(int resnum);
 	int isWizPixelNonTransparent(int resnum, int state, int x, int y, int flags);
 	uint8 getWizPixelColor(int resnum, int state, int x, int y, int flags);
 
@@ -183,7 +183,7 @@ public:
 	void drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int shadow, int angle, int zoom, const Common::Rect *r, int flags, int dstResNum, int palette);
 	void processWizImage(const WizParameters *params);
 
-	static void copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch);	
+	static void copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch);
 	static void copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, const uint8 *palPtr = NULL);
 	static void copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor);
 	static void copyRaw16BitWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor);

@@ -85,7 +85,7 @@ private:
 
 	//! compute transition coordinate
 	static int16 calcC(int16 c1, int16 c2, int16 c3, int16 c4, int16 lastc);
-	
+
 	//! find area for position
 	int16 findAreaPosition(int16 *x, int16 *y, bool recalibrate);
 
@@ -97,29 +97,29 @@ private:
 
 	//! calculates the path list from oldArea to newArea
 	bool calcPath(uint16 oldArea, uint16 newArea);
-	
+
 	//! resets path computed in calcPath()
 	void initWalkData();
-	
+
 	//! add an area to the path
 	void incWalkData(int16 px, int16 py, int16 x, int16 y, uint16 area);
-	
+
 	//! compute path (and populates _walkData) from current position to the new one
 	bool calc(uint16 oldPos, uint16 newPos, int16 oldx, int16 oldy, int16 x, int16 y);
 
 
 	//! areas for current room
 	const Area *_roomArea;
-	
+
 	//! number of areas for current room
 	uint16 _roomAreaCount;
 
 	//! walking steps
 	WalkData _walkData[MAX_WALK_DATA];
-	
+
 	//! number of walking steps
 	uint16 _walkDataCount;
-	
+
 	uint16 _areaStrike[MAX_WALK_DATA];
 	uint16 _areaStrikeCount;
 

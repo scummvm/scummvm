@@ -52,7 +52,7 @@ void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, in
 		scriptOffs = _resourceHeaderSize;
 		scriptType = WIO_GLOBAL;
 
-		debugC(DEBUG_SCRIPTS, "runScript(Global-%d) from %d-%d", script, 
+		debugC(DEBUG_SCRIPTS, "runScript(Global-%d) from %d-%d", script,
 				       vm.slot[_currentScript].number, _roomResource);
 	} else {
 		scriptOffs = _localScriptOffsets[script - _numGlobalScripts];
@@ -60,7 +60,7 @@ void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, in
 			error("Local script %d is not in room %d", script, _roomResource);
 		scriptType = WIO_LOCAL;
 
-		debugC(DEBUG_SCRIPTS, "runScript(%d) from %d-%d", script, 
+		debugC(DEBUG_SCRIPTS, "runScript(%d) from %d-%d", script,
 				       vm.slot[_currentScript].number, _roomResource);
 	}
 
@@ -104,7 +104,7 @@ void ScummEngine::runObjectScript(int object, int entry, bool freezeResistant, b
 	}
 
 	obcd = getOBCDOffs(object);
-	
+
 	// Find a free object slot, unless one was specified
 	if (slot == -1)
 		slot = getScriptSlot();
@@ -189,7 +189,7 @@ int ScummEngine::getVerbEntrypoint(int obj, int entry) {
 				break;
 			verbptr += 2;
 		} while (1);
-	
+
 		return *(verbptr + 1);
 	} else {
 		do {
@@ -199,7 +199,7 @@ int ScummEngine::getVerbEntrypoint(int obj, int entry) {
 				break;
 			verbptr += 3;
 		} while (1);
-	
+
 		if (_features & GF_SMALL_HEADER)
 			return READ_LE_UINT16(verbptr + 1);
 		else
@@ -322,7 +322,7 @@ void ScummEngine::runScriptNested(int script) {
 	}
 
 	vm.numNestedScripts++;
-	
+
 	if (vm.numNestedScripts > ARRAYSIZE(vm.nest))
 		error("Too many nested scripts");
 
@@ -420,7 +420,7 @@ void ScummEngine::getScriptBaseAddress() {
 	default:
 		error("Bad type while getting base address");
 	}
-	
+
 	// The following fixes bug #1202487. Confirmed against disasm.
 	if (_version <= 2 && _scriptOrgPointer == NULL) {
 		ss->status = ssDead;
@@ -439,11 +439,11 @@ void ScummEngine::getScriptEntryPoint() {
 void ScummEngine::executeScript() {
 	int c;
 	while (_currentScript != 0xFF) {
-		
+
 		if (_showStack == 1) {
 			printf("Stack:");
 			for (c=0; c < _scummStackPos; c++) {
-				printf(" %d", _vmStack[c]); 
+				printf(" %d", _vmStack[c]);
 			}
 			printf("\n");
 		}
@@ -513,11 +513,11 @@ int ScummEngine::readVar(uint var) {
 
 		if (VAR_SUBTITLES != 0xFF && var == VAR_SUBTITLES) {
 			return ConfMan.getBool("subtitles");
-		} 
-		if (VAR_NOSUBTITLES != 0xFF && var == VAR_NOSUBTITLES) {
-			return !ConfMan.getBool("subtitles");	
 		}
-		
+		if (VAR_NOSUBTITLES != 0xFF && var == VAR_NOSUBTITLES) {
+			return !ConfMan.getBool("subtitles");
+		}
+
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
 		return _scummVars[var];
 	}
@@ -528,7 +528,7 @@ int ScummEngine::readVar(uint var) {
 			checkRange(_numRoomVariables - 1, 0, var, "Room variable %d out of range(w)");
 			return _roomVars[var];
 
-		} else if ((_gameId == GID_ZAK256) || (_features & GF_OLD_BUNDLE) || 
+		} else if ((_gameId == GID_ZAK256) || (_features & GF_OLD_BUNDLE) ||
 			(_gameId == GID_LOOM && (_platform == Common::kPlatformFMTowns))) {
 			int bit = var & 0xF;
 			var = (var >> 4) & 0xFF;
@@ -629,7 +629,7 @@ void ScummEngine::writeVar(uint var, int value) {
 		} else {
 			var &= 0x7FFF;
 			checkRange(_numBitVariables - 1, 0, var, "Bit variable %d out of range(w)");
-	
+
 			if (value)
 				_bitVars[var >> 3] |= (1 << (var & 7));
 			else
@@ -767,7 +767,7 @@ void ScummEngine::unfreezeScripts() {
 		}
 		return;
 	}
-	
+
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++) {
 		if (vm.slot[i].status & 0x80) {
 			if (!--vm.slot[i].freezeCount) {
@@ -933,7 +933,7 @@ void ScummEngine::doSentence(int verb, int objectA, int objectB) {
 
 		if (_sentenceNum) {
 			st = &_sentence[_sentenceNum - 1];
-			
+
 			// Check if this doSentence request is identical to the previous one;
 			// if yes, ignore this invocation.
 			if (_sentenceNum && st->verb == verb && st->objectA == objectA && st->objectB == objectB)
@@ -1196,7 +1196,7 @@ void ScummEngine::beginOverride() {
 	// why we record the current script position in vm.cutScenePtr).
 	fetchScriptByte();
 	fetchScriptWord();
-	
+
 	// This is based on disassembly
 	VAR(VAR_OVERRIDE) = 0;
 }
@@ -1207,7 +1207,7 @@ void ScummEngine::endOverride() {
 
 	vm.cutScenePtr[idx] = 0;
 	vm.cutSceneScript[idx] = 0;
-	
+
 	if (_version > 3)
 		VAR(VAR_OVERRIDE) = 0;
 }

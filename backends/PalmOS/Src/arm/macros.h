@@ -1,5 +1,5 @@
 #ifndef __MACROS_H__
-#define __MACROS_H__ 
+#define __MACROS_H__
 
 #ifndef DISABLE_ARM
 	// macros for ARM calls
@@ -14,7 +14,7 @@
 	#define ARM_ADDM(member)		dataARM.member = member;
 	#define ARM_ADDV(member, var)	dataARM.member = var;
 	#define ARM_INIT(id)			PnoType pno = { id, &dataARM };
-	
+
 	#define ARM_GETM(member)		member = dataARM.member;
 	#define ARM_GETV(member, var)	var = dataARM.member;
 
@@ -33,7 +33,7 @@
 
 	#define ARM_CALL_VALUE(rsc, data, var)			ARM(rsc).alignedHeader->userDataP = (UInt32)data; \
 												var = PceNativeCall(ARM(rsc).pnoDesc.entry, ARM(rsc).alignedHeader);
-	
+
 #else
 	// no ARM = empty definition
 	#define ARM_START(TYPE)
@@ -68,7 +68,7 @@
 
 	#define GET_XPTR(var, dst, src, TYPE) \
 								dst.var = (TYPE *)ReadUnaligned32(&src->var);
-	
+
 	#define GET_X32(var, dst, src) \
 								dst.var = ReadUnaligned32(&src->var);
 

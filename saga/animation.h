@@ -75,7 +75,7 @@ struct AnimationData {
 
 	uint16 completed;
 	uint16 cycles;
-	
+
 	int frameTime;
 
 	AnimationState state;
@@ -83,7 +83,7 @@ struct AnimationData {
 	uint16 flags;
 
 	AnimationData(const byte *animResourceData, size_t animResourceLength) {
-		memset(this, 0, sizeof(*this)); 
+		memset(this, 0, sizeof(*this));
 		resourceLength = animResourceLength;
 		resourceData = (byte*)malloc(animResourceLength);
 		memcpy(resourceData, animResourceData, animResourceLength);

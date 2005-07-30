@@ -85,7 +85,7 @@ int BundleDirCache::matchFile(const char *filename) {
 		if (tag == 'LB23')
 			_budleDirCache[freeSlot].compressedBun = true;
 		offset = file.readUint32BE();
-		
+
 		strcpy(_budleDirCache[freeSlot].fileName, filename);
 		_budleDirCache[freeSlot].numFiles = file.readUint32BE();
 		_budleDirCache[freeSlot].bundleTable = (AudioTable *) malloc(_budleDirCache[freeSlot].numFiles * sizeof(AudioTable));

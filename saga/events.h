@@ -117,7 +117,7 @@ enum EVENT_PARAMS {
 
 struct EVENT {
 	unsigned int type;
-	unsigned int code; // Event operation category & flags 
+	unsigned int code; // Event operation category & flags
 	int op;            // Event operation
 	long param;        // Optional event parameter
 	long param2;
@@ -132,7 +132,7 @@ struct EVENT {
 
 	EVENT *chain;    // Event chain (For consecutive events)
 	EVENT() {
-		memset(this, 0, sizeof(*this)); 
+		memset(this, 0, sizeof(*this));
 	}
 };
 

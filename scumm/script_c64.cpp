@@ -557,10 +557,10 @@ void ScummEngine_c64::o_lights() {
 	// 1 Flashlight
 	// 2 Lighted area
 	if (a == 2)
-		VAR(VAR_CURRENT_LIGHTS) = 11; 
+		VAR(VAR_CURRENT_LIGHTS) = 11;
 	else if (a == 1)
 		VAR(VAR_CURRENT_LIGHTS) = 4;
-	else 
+	else
 		VAR(VAR_CURRENT_LIGHTS) = 0;
 
 	_fullRedraw = 1;

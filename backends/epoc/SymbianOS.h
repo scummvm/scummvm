@@ -36,7 +36,7 @@ public:
 	const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
 	bool setGraphicsMode(const char *name);
 
-	// Set function that generates samples 
+	// Set function that generates samples
 	/**
 	 * This function is overridden by the symbian port in order to provide MONO audio
 	 * downmix is done by supplying our own audiocallback

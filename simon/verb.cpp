@@ -572,7 +572,7 @@ bool SimonEngine::hitarea_proc_3(Item *item) {
 	else
 		x = 0;
 	showActionString(x, string_ptr);
-	
+
 	return true;
 }
 

@@ -90,7 +90,7 @@ public:
 			assert(def_end != NULL);
 
 			char *id_end = def_end;
-			while (id_end >= def_start && !isdigit(*(id_end-1))) { 
+			while (id_end >= def_start && !isdigit(*(id_end-1))) {
 				id_end--;
 			}
 
@@ -238,7 +238,7 @@ SmushPlayer::SmushPlayer(ScummEngine_v6 *scumm, int speed) {
 	_base = NULL;
 	_frameBuffer = NULL;
 	_specialBuffer = NULL;
-	
+
 	_seekPos = -1;
 
 	_skipNext = false;
@@ -273,7 +273,7 @@ void SmushPlayer::init() {
 	_vm->_smushVideoShouldFinish = false;
 	_vm->setDirtyColors(0, 255);
 	_dst = _vm->virtscr[0].getPixels(0, 0);
-	
+
 	// HACK HACK HACK: This is an *evil* trick, beware!
 	// We do this to fix bug #1037052. A proper solution would change all the
 	// drawing code to use the pitch value specified by the virtual screen.
@@ -284,7 +284,7 @@ void SmushPlayer::init() {
 	_origNumStrips = _vm->gdi._numStrips;
 	_vm->virtscr[0].pitch = _vm->virtscr[0].w;
 	_vm->gdi._numStrips = _vm->virtscr[0].w / 8;
-	
+
 	_smixer = new SmushMixer(_vm->_mixer);
 	Common::g_timer->installTimerProc(&timerCallback, 1000000 / _speed, this);
 
@@ -338,8 +338,8 @@ void SmushPlayer::release() {
 	// some explanation.
 	_vm->virtscr[0].pitch = _origPitch;
 	_vm->gdi._numStrips = _origNumStrips;
-	
-	
+
+
 	_initDone = false;
 }
 
@@ -526,9 +526,9 @@ void SmushPlayer::handleIACT(Chunk &b) {
 				*(_IACToutput + _IACTpos) = *d_src++;
 				_IACTpos++;
 				bsize--;
-			}	
+			}
 		}
-	
+
 		free(src);
 	}
 }
@@ -586,7 +586,7 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 			{
 				int id = str[3] - '0';
 				str += 4;
-				sf = _sf[id]; 
+				sf = _sf[id];
 			}
 			break;
 		case 'c':
@@ -613,7 +613,7 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 	// bit 2 - ???          4
 	// bit 3 - wrap around  8
 	switch (flags & 9) {
-	case 0: 
+	case 0:
 		sf->drawString(str, _dst, _width, _height, pos_x, pos_y, false);
 		break;
 	case 1:
@@ -1020,25 +1020,25 @@ void SmushPlayer::setupAnim(const char *file) {
 		}
 	} else {
 		error("SmushPlayer::setupAnim() Unknown font setup for game");
-	}	
+	}
 }
 
 void SmushPlayer::parseNextFrame() {
 	Common::StackLock lock(_mutex);
-	
+
 	Chunk *sub;
 
 	if (_vm->_smushPaused)
 		return;
-	
+
 	if (_seekPos >= 0) {
 		if (_smixer)
 			_smixer->stop();
-	
+
 		if (_seekFile.size() > 0) {
 			delete _base;
 			_base = new FileChunk(_seekFile);
-	
+
 			if (_seekPos > 0) {
 				assert(_seekPos > 8);
 				// In this case we need to get palette and number of frames
@@ -1046,7 +1046,7 @@ void SmushPlayer::parseNextFrame() {
 				checkBlock(*sub, TYPE_AHDR);
 				handleAnimHeader(*sub);
 				delete sub;
-	
+
 				_middleAudio = true;
 				_seekPos -= 8;
 			} else {
@@ -1058,10 +1058,10 @@ void SmushPlayer::parseNextFrame() {
 		} else {
 			_skipPalette = true;
 		}
-	
+
 		_base->seek(_seekPos, FileChunk::seek_start);
 		_frame = _seekFrame;
-		
+
 		_seekPos = -1;
 	}
 
@@ -1125,7 +1125,7 @@ void SmushPlayer::updateScreen() {
 	// change path below for dump png files
 	sprintf(fileName, "/path/to/somethere/%s%04d.png", _vm->getGameName(), _frame);
 	FILE *file = fopen(fileName, "wb");
-	if (file == NULL) 
+	if (file == NULL)
 		error("can't open file for writing png");
 
 	png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
@@ -1145,7 +1145,7 @@ void SmushPlayer::updateScreen() {
 
 	png_init_io(png_ptr, file);
 
-	png_set_IHDR(png_ptr, info_ptr, _width, _height, 8, PNG_COLOR_TYPE_PALETTE, PNG_INTERLACE_NONE, 
+	png_set_IHDR(png_ptr, info_ptr, _width, _height, 8, PNG_COLOR_TYPE_PALETTE, PNG_INTERLACE_NONE,
 							PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 
 	png_colorp palette = (png_colorp)png_malloc(png_ptr, PNG_MAX_PALETTE_LENGTH * sizeof (png_color));
@@ -1241,7 +1241,7 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 	_warpNeeded = false;
 	_palDirtyMin = 256;
 	_palDirtyMax = -1;
-	
+
 	// Hide mouse
 	bool oldMouseState = _vm->_system->showMouse(false);
 
@@ -1281,7 +1281,7 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 		}
 		if (_updateNeeded) {
 			uint32 end_time, start_time;
-			
+
 			start_time = _vm->_system->getMillis();
 			_vm->_system->copyRectToScreen(_dst, _width, 0, 0, _width, _height);
 			_vm->_system->updateScreen();

@@ -32,7 +32,7 @@ protected:
 	int16 _color;
 	bool _new_colors;
 	bool _original;
-	
+
 
 	int getStringWidth(const char *str);
 	int getStringHeight(const char *str);

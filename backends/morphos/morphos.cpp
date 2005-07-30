@@ -277,7 +277,7 @@ bool OSystem_MorphOS::OpenATimer(MsgPort **port, IORequest **req, ULONG unit, bo
 {
 	*req = NULL;
 	const char *err_msg = NULL;
-	
+
 	*port = CreateMsgPort();
 	if (*port)
 	{
@@ -601,7 +601,7 @@ void OSystem_MorphOS::CreateScreen(CS_DSPTYPE dspType)
 		CloseScreen(ScummScreen);
 		ScummScreen = NULL;
 	}
-	
+
 	ScummScrWidth  = ScummBufferWidth << ScummScale;
 	ScummScrHeight = ScummBufferHeight << ScummScale;
 
@@ -976,7 +976,7 @@ void OSystem_MorphOS::warpMouse(int x, int y)
 	{
 		InputEvent* 	 FakeIE;
 		IEPointerPixel* NewPixel;
-	
+
 		/*
 		 * Fake a mousemove input event
 		 */
@@ -1476,7 +1476,7 @@ void OSystem_MorphOS::initSize(uint w, uint h, int overlayScale)
 	 * Allocate image buffer
 	 */
 	ScummBuffer = AllocVec(w*h, MEMF_CLEAR);
-	
+
 	if (ScummBuffer == NULL)
 	{
 		puts("Couldn't allocate image buffer");
@@ -1484,7 +1484,7 @@ void OSystem_MorphOS::initSize(uint w, uint h, int overlayScale)
 	}
 
 	OvlSavedBuffer = AllocVec(w*h, MEMF_CLEAR);
-	
+
 	if (OvlSavedBuffer == NULL)
 	{
 		FreeVec(ScummBuffer);

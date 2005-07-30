@@ -33,29 +33,29 @@
 namespace CEGUI {
 
 	class GUIElement {
-	public:		
-		bool setBackground(WORD backgroundReference);		
+	public:
+		bool setBackground(WORD backgroundReference);
 		void setVisible(bool visibility);
 		virtual void forceRedraw();
-		virtual bool draw(SDL_Surface *surface);		
+		virtual bool draw(SDL_Surface *surface);
 		virtual ~GUIElement();
 		void move(int x, int y);
 		int width();
 		int height();
 		int x();
 		int y();
-		virtual bool action(int x, int y, bool pushed) = 0;	
+		virtual bool action(int x, int y, bool pushed) = 0;
 		bool visible();
 		bool drawn();
 	protected:
 		GUIElement(int x = 0, int y = 0, int width = 0, int height = 0);
 		bool checkInside(int x, int y);
 		bool _visible;
-		SDL_ImageResource *_background;	
+		SDL_ImageResource *_background;
 		int _x;
 		int _y;
 		bool _drawn;
-	private:			
+	private:
 		int _width;
 		int _height;
 	};

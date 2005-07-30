@@ -607,7 +607,7 @@ void ScummEngine_v5::o5_animateActor() {
 	if (_gameId == GID_INDY4 && vm.slot[_currentScript].number == 206 && _currentRoom == 17 && (act == 31 || act == 86)) {
 		return;
 	}
-	
+
 	Actor *a = derefActor(act, "o5_animateActor");
 	a->animateActor(anim);
 }
@@ -860,14 +860,14 @@ void ScummEngine_v5::o5_drawObject() {
 void ScummEngine_v5::o5_getStringWidth() {
 	int string, width = 0;
 	byte *ptr;
-	
+
 	getResultPos();
 	string = getVarOrDirectByte(PARAM_1);
 	ptr = getResourceAddress(rtString, string);
 	assert(ptr);
 
 	width = _charset->getStringWidth(0, ptr);
-	
+
 	setResult(width);
 	warning("o5_getStringWidth, result %d", width);
 }
@@ -1056,14 +1056,14 @@ void ScummEngine_v5::o5_getActorRoom() {
 		setResult(0);
 		return;
 	}
-	
+
 	Actor *a = derefActor(act, "o5_getActorRoom");
 	setResult(a->_room);
 }
 
 void ScummEngine_v5::o5_getActorScale() {
 	Actor *a;
-	
+
 	// INDY3 uses this opcode for waitForActor
 	if (_gameId == GID_INDY3) {
 		const byte *oldaddr = _scriptPointer - 1;
@@ -1130,7 +1130,7 @@ void ScummEngine_v5::o5_saveLoadGame() {
 	byte a = getVarOrDirectByte(PARAM_1);
 	byte slot = (a & 0x1F) + 1;
 	byte result = 0;
-		
+
 	if ((_gameId == GID_MANIAC) && (_version == 1)) {
 		// Convert older load/save screen
 		// 1 Load
@@ -1187,13 +1187,13 @@ void ScummEngine_v5::o5_saveLoadGame() {
 
 	setResult(result);
 }
-		
+
 void ScummEngine_v5::o5_getAnimCounter() {
 	if (_version == 3) {
 		o5_saveLoadGame();
 		return;
 	}
-		
+
 	getResultPos();
 
 	int act = getVarOrDirectByte(PARAM_1);
@@ -1477,7 +1477,7 @@ void ScummEngine_v5::o5_loadRoom() {
 	int room;
 
 	room = getVarOrDirectByte(PARAM_1);
-	
+
 	if (!_copyProtection) {
 		// Skip copy protection scheme
 		if (_gameId == GID_INDY3 && (_features & GF_OLD_BUNDLE) && room == 92) {
@@ -1672,7 +1672,7 @@ void ScummEngine_v5::o5_putActorInRoom() {
 	int room = getVarOrDirectByte(PARAM_2);
 
 	a = derefActor(act, "o5_putActorInRoom");
-	
+
 	if (a->_visible && _currentRoom != room && getTalkingActor() == a->_number) {
 		stopTalk();
 	}
@@ -1807,14 +1807,14 @@ void ScummEngine_v5::o5_resourceRoutines() {
 		warning("o5_resourceRoutines %d not yet handled (script %d)", op,  vm.slot[_currentScript].number);
 		break;
 	case 36:
-		// TODO: Sets the loudness of a sound resource. Used in Indy3 and Zak. 
+		// TODO: Sets the loudness of a sound resource. Used in Indy3 and Zak.
 		foo = getVarOrDirectByte(PARAM_2);
 		bar = fetchScriptByte();
 		warning("o5_resourceRoutines %d not yet handled (script %d)", op,  vm.slot[_currentScript].number);
 		break;
 	case 37:
 		// TODO: Sets the pitch of a sound resource (pitch = foo - center semitones.
-		// "center" is at 0x32 in the sfx resource (always 0x3C in zak256, but sometimes different in Indy3). 
+		// "center" is at 0x32 in the sfx resource (always 0x3C in zak256, but sometimes different in Indy3).
 		foo = getVarOrDirectByte(PARAM_2);
 		warning("o5_resourceRoutines %d not yet handled (script %d)", op,  vm.slot[_currentScript].number);
 		break;
@@ -2158,8 +2158,8 @@ void ScummEngine_v5::o5_startMusic() {
 			break;
 		default:
 			// TODO: return track length in seconds. We'll have to extend Sound and OSystem for this.
-			// To check scummvm returns the right track length you 
-			// can look at the global script #9 (0x888A in 49.LFL). 
+			// To check scummvm returns the right track length you
+			// can look at the global script #9 (0x888A in 49.LFL).
 			break;
 		}
 		debugC(DEBUG_GENERAL,"o5_startMusic(%d)", b);
@@ -2570,7 +2570,7 @@ void ScummEngine_v5::o5_walkActorToActor() {
 		warning("Bypassing Indy4 bug");
 		return;
 	}
-	
+
 	if (_gameId == GID_LOOM256 && nr == 1 && nr2 == 0 &&
 		dist == 255 && vm.slot[_currentScript].number == 98) {
 		// WORKAROUND bug #743615: LoomCD script 98 contains this:
@@ -2719,7 +2719,7 @@ void ScummEngine_v5::decodeParseString() {
 						// Slightly increase the delay (5 frames = 1/25 of a second).
 						// This noticably improves the experience in Loom CD.
 						delay = (int)(delay * 7.5 + 5);
-						
+
 						_sound->playCDTrack(1, 0, offset, delay);
 					}
 				} else {
@@ -2779,7 +2779,7 @@ void ScummEngine_v5::o5_oldRoomEffect() {
 			// some stubs here, but somebody with a full IDA or more knowledge
 			// about this will have to fill in the gaps. At least now we know
 			// that something is missing here :-)
-		
+
 			if (a == 4) {
 				printf("o5_oldRoomEffect ODDBALL: _opcode = 0x%x, a = 0x%x\n", _opcode, a);
 				// No idea what byte_2FCCF is, but it's a globale boolean flag.
@@ -2788,38 +2788,38 @@ void ScummEngine_v5::o5_oldRoomEffect() {
 				// how it is used? It might also correspond to _screenEffectFlag.
 				int byte_2FCCF = 0;
 
-				// For now, we force a redraw of the screen background. This 
+				// For now, we force a redraw of the screen background. This
 				// Makes the Zak end credits work more or less correctly.
 				VirtScreen *vs = &virtscr[0];
 				restoreBG(Common::Rect(0,vs->topline, vs->w, vs->topline + vs->h));
 				vs->setDirtyRange(0, vs->h);
 				updateDirtyScreen(kMainVirtScreen);
-				
+
 				if (byte_2FCCF) {
 					// Here now "sub_1C44" is called, which sets byte_2FCCF to 0 then
 					// calls yet another sub (which also reads byte_2FCCF):
 
 					byte_2FCCF = 0;
 					//call sub_0BB3
-					
-					
-					// Now sub_085C is called. This is quite simply: it sets 
+
+
+					// Now sub_085C is called. This is quite simply: it sets
 					// 0xF000 bytes. starting at 0x40000 to 0. No idea what that
 					// buffer is, maybe a screen buffer, though. Note that
 					// 0xF000 = 320*192.
 					// Maybe this is also the charset mask being cleaned?
-					
+
 					// call sub_085C
 
-					
+
 					// And then sub_1C54 is called, which is almost identical to
 					// the above sub_1C44, only it sets byte_2FCCF to 1:
-					
+
 					byte_2FCCF = 1;
 					// call sub_0BB3
 
 				} else {
-					// Here only sub_085C is called (see comment above) 
+					// Here only sub_085C is called (see comment above)
 
 					// call sub_085C
 				}

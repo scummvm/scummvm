@@ -38,6 +38,6 @@ UInt32 OSystem_updateScreen_widePortrait(void *userData68KP) {
 		MemMove(dst, dst - WIDE_PITCH, 300);	// 300 = 200 x 1.5
 		dst += WIDE_PITCH;
 	}
-	
+
 	return 0;
 }

@@ -1277,7 +1277,7 @@ void Debug::mcode(uint32 mcode, uint32 a, uint32 b, uint32 c) {
 
 
 
-Debugger::Debugger(Logic *logic, Mouse *mouse, Screen *screen, SkyCompact *skyCompact) 
+Debugger::Debugger(Logic *logic, Mouse *mouse, Screen *screen, SkyCompact *skyCompact)
 : _logic(logic), _mouse(mouse), _screen(screen), _skyCompact(skyCompact), _showGrid(false) {
 	DCmd_Register("exit", &Debugger::Cmd_Exit);
 	DCmd_Register("help", &Debugger::Cmd_Help);
@@ -1345,7 +1345,7 @@ bool Debugger::Cmd_ShowCompact(int argc, const char **argv) {
 		DebugPrintf("Example: %s foster\n", argv[0]);
 		return true;
 	}
-	
+
 	int i;
 	int numCompacts = ARRAYSIZE(section_0_compacts);
 
@@ -1355,7 +1355,7 @@ bool Debugger::Cmd_ShowCompact(int argc, const char **argv) {
 		}
 		return true;
 	}
-	
+
 	Compact *cpt = 0;
 
 	for (i = 0; i < numCompacts; ++i) {
@@ -1383,7 +1383,7 @@ bool Debugger::Cmd_ShowCompact(int argc, const char **argv) {
 	} else {
 		DebugPrintf("Unknown compact: '%s'\n", argv[1]);
 	}
-	
+
 	return true;
 }
 
@@ -1392,16 +1392,16 @@ bool Debugger::Cmd_LogicCommand(int argc, const char **argv) {
 		DebugPrintf("Example: %s fn_printf 42\n", argv[0]);
 		return true;
 	}
-	
+
 	int numMCodes = ARRAYSIZE(mcodes);
-	
+
 	if (0 == strcmp(argv[1], "list")) {
 		for (int i = 0; i < numMCodes; ++i) {
 			DebugPrintf("%s\n", mcodes[i]);
 		}
 		return true;
 	}
-	
+
 	uint32 arg1 = 0, arg2 = 0, arg3 = 0;
 
 	switch (argc) {
@@ -1412,7 +1412,7 @@ bool Debugger::Cmd_LogicCommand(int argc, const char **argv) {
 		case  3:
 			arg1 = atoi(argv[2]);
 	}
-	
+
 	for (int i = 0; i < numMCodes; ++i) {
 		if (0 == strcmp(mcodes[i], argv[1])) {
 			_logic->fnExec(i, arg1, arg2, arg3);
@@ -1421,7 +1421,7 @@ bool Debugger::Cmd_LogicCommand(int argc, const char **argv) {
 	}
 
 	DebugPrintf("Unknown function: '%s'\n", argv[1]);
-		
+
 	return true;
 }
 
@@ -1437,15 +1437,15 @@ bool Debugger::Cmd_ScriptVar(int argc, const char **argv) {
 		DebugPrintf("Example: %s lamb_friend <value>\n", argv[0]);
 		return true;
 	}
-	
-	int numScriptVars = ARRAYSIZE(scriptVars);	
+
+	int numScriptVars = ARRAYSIZE(scriptVars);
 
 	if (0 == strcmp(argv[1], "list")) {
 		for (int i = 0; i < numScriptVars; ++i) {
 			DebugPrintf("%s\n", scriptVars[i]);
 		}
 		return true;
-	}					
+	}
 
 	for (int i = 0; i < numScriptVars; ++i) {
 		if (0 == strcmp(scriptVars[i], argv[1])) {
@@ -1453,13 +1453,13 @@ bool Debugger::Cmd_ScriptVar(int argc, const char **argv) {
 				Logic::_scriptVariables[i] = atoi(argv[2]);
 			}
 			DebugPrintf("%s = %d\n", argv[1], Logic::_scriptVariables[i]);
-			
+
 			return true;
 		}
 	}
 
 	DebugPrintf("Unknown ScriptVar: '%s'\n", argv[1]);
-	
+
 	return true;
 }
 
@@ -1471,7 +1471,7 @@ bool Debugger::Cmd_Section(int argc, const char **argv) {
 
 	const int baseId[] = { START_ONE, START_S6, START_29, START_SC31, START_SC66, START_SC90, START_SC81 };
 	int section = atoi(argv[1]);
-	
+
 	if (section >= 0 && section <= 6) {
 		_logic->fnEnterSection(section == 6 ? 4 : section, 0, 0);
 		_logic->fnAssignBase(ID_FOSTER, baseId[section], 0);

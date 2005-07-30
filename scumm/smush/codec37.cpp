@@ -532,7 +532,7 @@ void Codec37Decoder::decode(byte *dst, const byte *src) {
 		if ((seq_nb & 1) || !(mask_flags & 1)) {
 			_curtable ^= 1;
 		}
-		proc1(_deltaBufs[_curtable], src + 16, _deltaBufs[_curtable ^ 1] - _deltaBufs[_curtable], 
+		proc1(_deltaBufs[_curtable], src + 16, _deltaBufs[_curtable ^ 1] - _deltaBufs[_curtable],
 										bw, bh, pitch, _offsetTable);
 		break;
 	case 2:

@@ -405,7 +405,7 @@ void draw_spriteOperation(int16 operation) {
 			    szGame_TotResTable + szGame_TotResItem *
 			    game_totResourceTable->itemsCount + offset;
 		} else {
-			dataBuf = 
+			dataBuf =
 			    game_imFileData +
 			    (int32)READ_LE_UINT32(&((int32 *)game_imFileData)[-offset - 1]);
 		}
@@ -604,7 +604,7 @@ void draw_animateCursor(int16 cursor) {
 				draw_cursorAnim++;
 				draw_cursorTimeKey = util_getTimeKey();
 			} else {
-/*				if (draw_noInvalidated && 
+/*				if (draw_noInvalidated &&
 					inter_mouseX == draw_cursorX &&	inter_mouseY == draw_cursorY)
 						return;*/
 			}
@@ -630,7 +630,7 @@ void draw_animateCursor(int16 cursor) {
 		newY = inter_mouseY;
 		if (draw_cursorXDeltaVar != -1) {
 			newX -= (uint16)VAR_OFFSET(draw_cursorIndex * 4 + (draw_cursorXDeltaVar / 4) * 4);
-			newY -= (uint16)VAR_OFFSET(draw_cursorIndex * 4 + (draw_cursorYDeltaVar / 4) * 4); 
+			newY -= (uint16)VAR_OFFSET(draw_cursorIndex * 4 + (draw_cursorYDeltaVar / 4) * 4);
 		}
 
 		minX = MIN(newX, draw_cursorX);

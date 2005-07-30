@@ -47,8 +47,8 @@ const Verb Input::_verbKeys[8] = {
 	VERB_USE
 };
 
-Input::Input(Language language, OSystem *system) : 
-	_system(system), _fastMode(false), _keyVerb(VERB_NONE), 
+Input::Input(Language language, OSystem *system) :
+	_system(system), _fastMode(false), _keyVerb(VERB_NONE),
 	_cutawayRunning(false), _canQuit(false), _cutawayQuit(false),
 	_dialogueRunning(false), _talkQuit(false), _quickSave(false),
 	_quickLoad(false), _debugger(false), _inKey(0), _mouse_x(0),
@@ -83,7 +83,7 @@ void Input::delay() {
 	delay(_fastMode ? DELAY_SHORT : DELAY_NORMAL);
 }
 
-void Input::delay(uint amount) { 
+void Input::delay(uint amount) {
 
 	OSystem::Event event;
 
@@ -109,7 +109,7 @@ void Input::delay(uint amount) {
 					_inKey = event.kbd.keycode;
 				}
 				break;
-			
+
 			case OSystem::EVENT_MOUSEMOVE:
 				_mouse_x = event.mouse.x;
 				_mouse_y = event.mouse.y;
@@ -135,7 +135,7 @@ void Input::delay(uint amount) {
 				break;
 			}
 		}
-		
+
 #ifndef __PALM_OS__
 		if (amount == 0)
 			break;
@@ -201,7 +201,7 @@ int Input::checkKeys() {
 		break;
 	case KEY_F11: // quicksave
 		_quickSave = true;
-		break;		
+		break;
 	case KEY_F12: // quickload
 		_quickLoad = true;
 		break;
@@ -214,7 +214,7 @@ int Input::checkKeys() {
 		}
 		break;
 	}
-	
+
 	int inKey = _inKey;
 	_inKey = 0;	// reset
 	return inKey;

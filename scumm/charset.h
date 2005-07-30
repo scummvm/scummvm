@@ -52,7 +52,7 @@ static inline bool checkSJISCode(byte c) {
 
 class CharsetRenderer {
 public:
-	
+
 	Common::Rect _str;
 	int _nextLeft, _nextTop;
 
@@ -98,14 +98,14 @@ public:
 	int getStringWidth(int a, const byte *str);
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
 	void translateColor();
-	
+
 	virtual void setCurID(byte id) = 0;
 	int getCurID() { return _curId; }
-	
+
 	virtual int getFontHeight() = 0;
 	virtual int getCharHeight(byte chr) { return getFontHeight(); }
 	virtual int getCharWidth(byte chr) = 0;
-	
+
 	virtual void setColor(byte color) { _color = color; translateColor(); }
 };
 
@@ -130,7 +130,7 @@ public:
 	CharsetRendererCommon(ScummEngine *vm);
 
 	void setCurID(byte id);
-	
+
 	int getFontHeight();
 };
 
@@ -140,7 +140,7 @@ protected:
 
 public:
 	CharsetRendererClassic(ScummEngine *vm) : CharsetRendererCommon(vm) {}
-	
+
 	void printChar(int chr);
 	void drawChar(int chr, const Graphics::Surface &s, int x, int y);
 
@@ -155,7 +155,7 @@ protected:
 
 public:
 	CharsetRendererNES(ScummEngine *vm) : CharsetRendererCommon(vm) {}
-	
+
 	void setCurID(byte id) {}
 	void printChar(int chr);
 	void drawChar(int chr, const Graphics::Surface &s, int x, int y);
@@ -170,7 +170,7 @@ protected:
 
 public:
 	CharsetRendererV3(ScummEngine *vm) : CharsetRendererCommon(vm) {}
-	
+
 	void printChar(int chr);
 	void drawChar(int chr, const Graphics::Surface &s, int x, int y);
 	void setCurID(byte id);
@@ -182,7 +182,7 @@ public:
 class CharsetRendererV2 : public CharsetRendererV3 {
 public:
 	CharsetRendererV2(ScummEngine *vm, Common::Language language);
-	
+
 	void setCurID(byte id) {}
 	int getCharWidth(byte chr) { return 8; }
 };
@@ -196,11 +196,11 @@ protected:
 public:
 	CharsetRendererNut(ScummEngine *vm);
 	~CharsetRendererNut();
-	
+
 	void printChar(int chr);
 
 	void setCurID(byte id);
-	
+
 	int getFontHeight();
 	int getCharHeight(byte chr);
 	int getCharWidth(byte chr);

@@ -90,7 +90,7 @@ int Router::doWalk(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *o
 		// an anim eg. repeatedly clicking on same object to repeat
 		// an anim - no mega frame will appear in between runs of the
 		// anim.
-		
+
 		if (ob_mega->feet_x == target_x && ob_mega->feet_y == target_y && ob_mega->current_dir == target_dir) {
 			Logic::_scriptVars[RESULT] = 0;
 			return IR_CONT;

@@ -22,7 +22,7 @@
 #ifndef __SKIN_H__
 #define __SKIN_H__
 
-// skin 
+// skin
 #define	sknInfoState		0
 #define	sknInfoPosX			1
 #define	sknInfoPosY			2

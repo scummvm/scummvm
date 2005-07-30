@@ -196,7 +196,7 @@ int32 Screen::decompressRLE16(byte *dst, byte *src, int32 decompSize, byte *colT
 			src++;
 
 			// if we've decompressed all of the data
-			if (dst == endDest) {	
+			if (dst == endDest) {
 				rv = 0;		// return "OK"
 				break;
 			}

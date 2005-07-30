@@ -410,12 +410,12 @@ void ScummEngine_v90he::o90_max() {
 
 void ScummEngine_v90he::o90_sin() {
 	double a = pop() * PI / 180.;
-	push((int)(sin(a) * 100000));	
+	push((int)(sin(a) * 100000));
 }
 
 void ScummEngine_v90he::o90_cos() {
 	double a = pop() * PI / 180.;
-	push((int)(cos(a) * 100000));	
+	push((int)(cos(a) * 100000));
 }
 
 void ScummEngine_v90he::o90_sqrt() {
@@ -846,7 +846,7 @@ void ScummEngine_v90he::o90_getDistanceBetweenPoints() {
 			push(d);
 		} else {
 			push((int)sqrt((double)(d + 1)));
-		}		
+		}
 		break;
 	default:
 		error("o90_getDistanceBetweenPoints: Unknown case %d", subOp);
@@ -1234,7 +1234,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		if (_features & GF_HE_985 || _heversion >= 99) {
 			_curMaxSpriteId = pop();
 			_curSpriteId = pop();
-			
+
 			if (_curSpriteId > _curMaxSpriteId)
 				SWAP(_curSpriteId, _curMaxSpriteId);
 		} else {
@@ -1373,7 +1373,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 				int code = *p;
 				if (code == 0) {
 					for (int i = _curSpriteId; i <= _curMaxSpriteId; ++i) {
-						_sprite->setSpriteResetClass(i);					
+						_sprite->setSpriteResetClass(i);
 					}
 				} else if (code & 0x80) {
 					for (int i = _curSpriteId; i <= _curMaxSpriteId; ++i) {
@@ -1740,14 +1740,14 @@ void ScummEngine_v90he::o90_getWizData() {
 			_wiz->getWizImageDim(resId, state, w, h);
 			x = 0;
 			y = 0;
-		}		
-		push(computeWizHistogram(resId, state, x, y, w, h));		
+		}
+		push(computeWizHistogram(resId, state, x, y, w, h));
 		break;
 	case 109:
 		pop();
 		pop();
 		push(0);
-		break;		
+		break;
 	case 111:
 		pop();
 		copyScriptString(filename, sizeof(filename));
@@ -1850,7 +1850,7 @@ void ScummEngine_v90he::o90_findAllObjectsWithClassOf() {
 	}
 
 	writeArray(0, 0, 0, numObjs);
-	
+
 	push(readVar(0));
 }
 
@@ -1890,7 +1890,7 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 		{
 			Common::Rect r1(args1[0], args1[1], args1[2] + 1, args1[3] + 1);
 			Common::Rect r2(args2[0], args2[1], args2[2] + 1, args2[3] + 1);
-			push(r2.intersects(r1) ? 1 : 0);			
+			push(r2.intersects(r1) ? 1 : 0);
 		}
 		break;
 	case 4:
@@ -1934,13 +1934,13 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 				break;
 			}
 
-			if (n2 == 3) { 
+			if (n2 == 3) {
 				r2.left += args2[1];
 				r2.right += args2[1];
 				r2.top += args2[2];
 				r2.bottom += args2[2];
 			}
-			if (n1 == 3) { 
+			if (n1 == 3) {
 				r1.left += args1[1];
 				r1.right += args1[1];
 				r1.top += args1[2];
@@ -1959,7 +1959,7 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 				break;
 			}
 
-			if (n2 == 3) { 
+			if (n2 == 3) {
 				r2.left += args2[1];
 				r2.right += args2[1];
 				r2.top += args2[2];
@@ -1979,13 +1979,13 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 				break;
 			}
 
-			if (n2 == 3) { 
+			if (n2 == 3) {
 				r2.left += args2[1];
 				r2.right += args2[1];
 				r2.top += args2[2];
 				r2.bottom += args2[2];
 			}
-			if (n1 == 3) { 
+			if (n1 == 3) {
 				r1.left += args1[1];
 				r1.right += args1[1];
 				r1.top += args1[2];
@@ -2004,7 +2004,7 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 				break;
 			}
 
-			if (n2 == 3) { 
+			if (n2 == 3) {
 				r2.left += args2[1];
 				r2.right += args2[1];
 				r2.top += args2[2];
@@ -2105,14 +2105,14 @@ void ScummEngine_v90he::o90_getLinesIntersectionPoint() {
 	int line1_x2 = pop();
 	int line1_y1 = pop();
 	int line1_x1 = pop();
-	
+
 	int result = 0;
 	int ix = 0;
 	int iy = 0;
-	
+
 	bool isLine1Point = (line1_x1 == line1_x2 && line1_y1 == line1_y2);
 	bool isLine2Point = (line2_x1 == line2_x2 && line2_y1 == line2_y2);
-	
+
 	if (isLine1Point) {
 		if (isLine2Point) {
 			if (line1_x1 == line2_x1 && line1_y1 == line2_y2) {
@@ -2179,7 +2179,7 @@ void ScummEngine_v90he::o90_getLinesIntersectionPoint() {
 						}
 					}
 				}
-			}			
+			}
 		} else {
 			// 2 lines
 			int dy1 = line1_y2 - line1_y1;
@@ -2316,7 +2316,7 @@ void ScummEngine_v90he::o90_sortArray() {
 	switch (subOp) {
 	case 129:
 	case 134: // HE100
-		{	
+		{
 			int array = fetchScriptWord();
 			int sortOrder = pop();
 			int dim1end = pop();

@@ -148,13 +148,13 @@ Common::String CEDevice::getKeyName(unsigned int keyCode) {
 		return "Button Inbox";
 	if (keyCode == KEY_TASK)
 		return "Button Tasks";
-	if (keyCode == SDLK_F1) 
+	if (keyCode == SDLK_F1)
 		return "F1 (hard 1)";
-	if (keyCode == SDLK_F2) 
+	if (keyCode == SDLK_F2)
 		return "F2 (hard 2)";
-	if (keyCode == SDLK_F3) 
+	if (keyCode == SDLK_F3)
 		return "F3 (hard 3)";
-	if (keyCode == SDLK_F4) 
+	if (keyCode == SDLK_F4)
 		return "F4 (hard 4)";
 
 //#ifdef WIN32_PLATFORM_WFSP
@@ -169,6 +169,6 @@ Common::String CEDevice::getKeyName(unsigned int keyCode) {
 //#endif
 
 	sprintf(key_name, "Key %.4x", keyCode);
-	return key_name;	
+	return key_name;
 }
 

@@ -94,14 +94,14 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const String &p) {
 	ENTER();
 
 	int len = 0, offset = p.size();
-	
+
 	assert(offset > 0);
 
 	_sPath = p;
 
 	// Extract last	component from path
 	const char *str = p.c_str();
-	
+
 	while (offset > 0 && (str[offset-1] == '/' || str[offset-1] == ':'))
 		offset--;
 
@@ -109,7 +109,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const String &p) {
 		len++;
 		offset--;
 	}
-	
+
 	_sDisplayName = String(str + offset, len);
 
 	// Check whether it is a directory, and whether the file actually exists
@@ -132,7 +132,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const String &p) {
 			if (_bIsDirectory) {
 				if (fib->fib_EntryType != ST_ROOT)
 					_sPath += "/";
-				
+
 				_pFileLock = IDOS->DupLock(pLock);
 				_bIsValid = (_pFileLock != 0);
 			}

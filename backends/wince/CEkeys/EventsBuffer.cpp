@@ -22,7 +22,7 @@
 #include "common/stdafx.h"
 #include "EventsBuffer.h"
 
-namespace CEKEYS {	
+namespace CEKEYS {
 
 	bool EventsBuffer::simulateKey(GUI::Key *key, bool pushed) {
 		SDL_Event ev = {0};

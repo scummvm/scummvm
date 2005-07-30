@@ -76,12 +76,12 @@ void Logic::initialize(void) {
 		_scriptVars[_scriptVarInit[cnt][0]] = _scriptVarInit[cnt][1];
 	if (SwordEngine::_systemVars.isDemo)
 		_scriptVars[PLAYINGDEMO] = 1;
-	
+
 	delete _eventMan;
 	_eventMan = new EventManager();
 
 	delete _textMan;
-	_textMan = new Text(_objMan, _resMan, 
+	_textMan = new Text(_objMan, _resMan,
 		(SwordEngine::_systemVars.language == BS1_CZECH) ? true : false);
 	_screen->useTextManager(_textMan);
 	_textRunning = _speechRunning = false;
@@ -97,7 +97,7 @@ void Logic::newScreen(uint32 screen) {
 		Object *cpt = _objMan->fetchObject(SAND_25);
 		Object *george = _objMan->fetchObject(PLAYER);
 		if (george->o_place == HOLDING_REPLICA_25) // is george holding the replica in his hands?
-			fnFullSetFrame(cpt, SAND_25, IMPFLRCDT, IMPFLR, 0, 0, 0, 0); // empty impression in floor			
+			fnFullSetFrame(cpt, SAND_25, IMPFLRCDT, IMPFLR, 0, 0, 0, 0); // empty impression in floor
 		else
 			fnFullSetFrame(cpt, SAND_25, IMPPLSCDT, IMPPLS, 0, 0, 0, 0); // impression filled with plaster
 	}
@@ -250,7 +250,7 @@ void Logic::processLogic(Object *compact, uint32 id) {
 
 int Logic::logicWaitTalk(Object *compact) {
 	Object *target = _objMan->fetchObject(compact->o_down_flag);
-	
+
 	if (target->o_status & STAT_TALK_WAIT) {
 		compact->o_logic = LOGIC_script;
 		return 1;
@@ -278,7 +278,7 @@ int Logic::logicArAnimate(Object *compact, uint32 id) {
 	int32 walkPc;
 	if ((_scriptVars[GEORGE_WALKING] == 0) && (id == PLAYER))
 		_scriptVars[GEORGE_WALKING] = 1;
-	
+
 	compact->o_resource = compact->o_walk_resource;
 	compact->o_status |= STAT_SHRINK;
 	route = compact->o_route;
@@ -291,7 +291,7 @@ int Logic::logicArAnimate(Object *compact, uint32 id) {
 	compact->o_anim_x	=compact->o_xcoord;
 	compact->o_anim_y	=compact->o_ycoord;
 
-	if (((_scriptVars[GEORGE_WALKING] == 2) && (walkPc > 5) && (id == PLAYER) && 
+	if (((_scriptVars[GEORGE_WALKING] == 2) && (walkPc > 5) && (id == PLAYER) &&
 		(route[walkPc - 1].step == 5) && (route[walkPc].step == 0)) ||
 		((_scriptVars[GEORGE_WALKING] == 3) && (id == PLAYER))) {
 
@@ -356,10 +356,10 @@ int Logic::speechDriver(Object *compact) {
 		animData += 4;
 		compact->o_anim_pc++; // go to next frame of anim
 
-		if (_speechFinished || (compact->o_anim_pc >= numFrames) || 
+		if (_speechFinished || (compact->o_anim_pc >= numFrames) ||
 			(_speechRunning && (_sound->amISpeaking() == 0)))
 				compact->o_anim_pc = 0; //set to frame 0, closed mouth
-		
+
 		AnimUnit *animPtr = (AnimUnit*)(animData + sizeof(AnimUnit) * compact->o_anim_pc);
 		if (!(compact->o_status & STAT_SHRINK)) {
 			compact->o_anim_x = FROM_LE_32(animPtr->animX);
@@ -418,7 +418,7 @@ int Logic::animDriver(Object *compact) {
 
 void Logic::updateScreenParams(void) {
 	Object *compact = (Object*)_objMan->fetchObject(PLAYER);
-	_screen->setScrolling((int16)(compact->o_xcoord - _scriptVars[FEET_X]), 
+	_screen->setScrolling((int16)(compact->o_xcoord - _scriptVars[FEET_X]),
 						  (int16)(compact->o_ycoord - _scriptVars[FEET_Y]));
 }
 
@@ -501,7 +501,7 @@ int Logic::interpretScript(Object *compact, int id, Header *scriptModule, int sc
 			default:
 				warning("mcode[%d]: too many arguments(%d)", mCodeNumber, mCodeArguments);
 			}
-			if (mCodeReturn == 0) 
+			if (mCodeReturn == 0)
 				return pc;
 			break;
 		case IT_PUSHNUMBER:
@@ -637,7 +637,7 @@ int Logic::interpretScript(Object *compact, int id, Header *scriptModule, int sc
 				int switchValue = stack[--stackIdx];
 				int switchCount = scriptCode[pc++];
 				int doneSwitch=0;
-					
+
 				for (int cnt = 0; (cnt < switchCount) && (doneSwitch==0); cnt++) {
 					if (switchValue == scriptCode[pc]) {
 						pc += scriptCode[pc+1];
@@ -785,7 +785,7 @@ BSMcodeTable Logic::_mcodeTable[100] = {
 };
 
 int Logic::fnBackground(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	
+
 	cpt->o_status &= ~(STAT_FORE | STAT_SORT);
 	cpt->o_status |= STAT_BACK;
 	return SCRIPT_CONT;
@@ -830,7 +830,7 @@ int Logic::fnAnim(Object *cpt, int32 id, int32 cdt, int32 spr, int32 e, int32 f,
 	}
 	if ((cpt->o_anim_resource == 0) || (cpt->o_resource == 0))
 		error("fnAnim called width (%d/%d) => (%d/%d)", cdt, spr, cpt->o_anim_resource, cpt->o_resource);
-	
+
 	FrameHeader *frameHead = _resMan->fetchFrame(_resMan->openFetchRes(cpt->o_resource), 0);
 	if (frameHead->offsetX || frameHead->offsetY) { // boxed mega anim?
 		cpt->o_status |= STAT_SHRINK;
@@ -849,14 +849,14 @@ int Logic::fnAnim(Object *cpt, int32 id, int32 cdt, int32 spr, int32 e, int32 f,
 }
 
 int Logic::fnSetFrame(Object *cpt, int32 id, int32 cdt, int32 spr, int32 frameNo, int32 f, int32 z, int32 x) {
-	
+
 	AnimUnit   *animPtr;
 
 	uint8 *data = (uint8*)_resMan->openFetchRes(cdt);
 	data += sizeof(Header);
 	if (frameNo == LAST_FRAME)
 		frameNo = READ_LE_UINT32(data) - 1;
-	
+
 	data += 4;
 	animPtr = (AnimUnit*)(data + frameNo * sizeof(AnimUnit));
 
@@ -1100,7 +1100,7 @@ int Logic::fnISpeak(Object *cpt, int32 id, int32 cdt, int32 textNo, int32 spr, i
 	if (cdt && (!spr)) { // if 'cdt' is non-zero but 'spr' is zero - 'cdt' is an anim table tag
 		AnimSet *animTab = (AnimSet*)((uint8*)_resMan->openFetchRes(cdt) + sizeof(Header));
 		animTab += cpt->o_dir;
-		
+
 		cpt->o_anim_resource = FROM_LE_32(animTab->cdt);
 		if (animTab->cdt)
 			cpt->o_resource = FROM_LE_32(animTab->spr);
@@ -1114,7 +1114,7 @@ int Logic::fnISpeak(Object *cpt, int32 id, int32 cdt, int32 textNo, int32 spr, i
 	if (cpt->o_anim_resource) {
 		if (!cpt->o_resource)
 			error("ID %d: Can't run anim with cdt=%d, spr=%d", id, cdt, spr);
-		
+
 		FrameHeader *frameHead = _resMan->fetchFrame(_resMan->openFetchRes(cpt->o_resource), 0);
 		if (frameHead->offsetX && frameHead->offsetY) { // is this a boxed mega?
 			cpt->o_status |= STAT_SHRINK;
@@ -1351,7 +1351,7 @@ int Logic::fnEnterSection(Object *cpt, int32 id, int32 screen, int32 d, int32 e,
 	/* if (cpt->o_type == TYPE_PLAYER)
 	   ^= this was the original condition from the game sourcecode.
 	   not sure why it doesn't work*/
-	if (id == PLAYER) 
+	if (id == PLAYER)
 		_scriptVars[NEW_SCREEN] = screen;
 	else
 		cpt->o_screen = screen; // move the mega
@@ -1422,7 +1422,7 @@ int Logic::fnTurn(Object *cpt, int32 id, int32 dir, int32 stance, int32 c, int32
 	if (stance > 0)
 		dir = 9;
 	int route = _router->routeFinder(id, cpt, cpt->o_xcoord, cpt->o_ycoord, dir);
-	
+
 	if	(route)
 		cpt->o_down_flag = 1;		//1 means ok
 	else
@@ -1506,7 +1506,7 @@ int Logic::fnIsFacing(Object *cpt, int32 id, int32 targetId, int32 b, int32 c, i
 
 int Logic::fnGetTo(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
 	Object *place = _objMan->fetchObject(cpt->o_place);
-	
+
 	cpt->o_tree.o_script_level++;
 	cpt->o_tree.o_script_pc[cpt->o_tree.o_script_level] = place->o_get_to_script;
 	cpt->o_tree.o_script_id[cpt->o_tree.o_script_level] = place->o_get_to_script;
@@ -1727,7 +1727,7 @@ void Logic::runStartScript(const uint8 *data) {
 			varId = READ_LE_UINT16(data);
 			_scriptVars[varId] = READ_LE_UINT16(data + 2);
 			data += 4;
-			break;				
+			break;
 		case opcSetVar32:
 			varId = READ_LE_UINT16(data);
 			_scriptVars[varId] = READ_LE_UINT32(data + 2);
@@ -1767,7 +1767,7 @@ void Logic::startPositions(uint32 pos) {
 	runStartScript(_startData[pos]);
 	if (spainVisit2)
 		runStartScript(_helperData[HELP_SPAIN2]);
-	
+
 	if (pos == 0)
 		pos = 1;
 	Object *compact = _objMan->fetchObject(PLAYER);

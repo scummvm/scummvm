@@ -47,7 +47,7 @@ void RncDecoder::initCrc() {
 	uint16 tmp2 = 0;
 
 	for (tmp2 = 0; tmp2 < 0x100; tmp2++) {
-		tmp1 = tmp2; 
+		tmp1 = tmp2;
 		for (cnt = 8; cnt > 0; cnt--) {
 			if (tmp1 % 2) {
 				tmp1 >>= 1;
@@ -68,9 +68,9 @@ uint16 RncDecoder::crcBlock(const uint8 *block, uint32 size) {
 
 	for (i = 0; i < size; i++) {
 		tmp = *block++;
-		crc ^= tmp; 
-		tmp = (uint8)((crc >> 8) & 0x00FF); 
-		crc &= 0x00FF;  
+		crc ^= tmp;
+		tmp = (uint8)((crc >> 8) & 0x00FF);
+		crc &= 0x00FF;
 		crc = *(uint16 *)&crcTable8[crc << 1];
 		crc ^= tmp;
 	}
@@ -84,7 +84,7 @@ uint16 RncDecoder::inputBits(uint8 amount) {
 	int16 newBitCount = _bitCount;
 	uint16 remBits, returnVal;
 
-	returnVal = ((1 << amount) - 1) & newBitBuffl;	
+	returnVal = ((1 << amount) - 1) & newBitBuffl;
 	newBitCount -= amount;
 
 	if (newBitCount < 0) {
@@ -92,7 +92,7 @@ uint16 RncDecoder::inputBits(uint8 amount) {
 		remBits = (newBitBuffh << (16 - newBitCount));
 		newBitBuffh >>= newBitCount;
 		newBitBuffl >>= newBitCount;
-		newBitBuffl |= remBits;	
+		newBitBuffl |= remBits;
 		_srcPtr += 2;
 		newBitBuffh = READ_LE_UINT16(_srcPtr);
 		amount -= newBitCount;
@@ -170,7 +170,7 @@ int32 RncDecoder::unpackM1(const void *input, void *output, uint16 key) {
 	uint16 counts = 0;
 	uint16 crcUnpacked = 0;
 	uint16 crcPacked = 0;
-	
+
 
 	_bitBuffl = 0;
 	_bitBuffh = 0;
@@ -196,9 +196,9 @@ int32 RncDecoder::unpackM1(const void *input, void *output, uint16 key) {
 	if (crcBlock(inputptr, packLen) != crcPacked)
 		return PACKED_CRC;
 
-	inputptr = (((const uint8 *)input) + HEADER_LEN); 
+	inputptr = (((const uint8 *)input) + HEADER_LEN);
 	_srcPtr = inputptr;
-	
+
 	inputHigh = ((const uint8 *)input) + packLen + HEADER_LEN;;
 	outputLow = (uint8 *)output;
 	outputHigh = *(((const uint8 *)input) + 16) + unpackLen + outputLow;
@@ -215,7 +215,7 @@ int32 RncDecoder::unpackM1(const void *input, void *output, uint16 key) {
 
 	_bitBuffl = READ_LE_UINT16(_srcPtr);
 	inputBits(2);
-	
+
 	do {
 		makeHufftable(_rawTable);
 		makeHufftable(_posTable);
@@ -242,7 +242,7 @@ int32 RncDecoder::unpackM1(const void *input, void *output, uint16 key) {
 			if (counts > 1) {
 				inputOffset = inputValue(_posTable) + 1;
 				inputLength = inputValue(_lenTable) + MIN_LENGTH;
-	
+
 				// Don't use memcpy here! because input and output overlap.
 				uint8 *tmpPtr = (_dstPtr-inputOffset);
 				while (inputLength--)

@@ -123,7 +123,7 @@ enum ActorFlagsEx {
 
 enum PathCellType {
 	kPathCellEmpty = -1,
-	//kDirUp = 0 .... kDirUpLeft = 7 
+	//kDirUp = 0 .... kDirUpLeft = 7
 	kPathCellBarrier = 0x57
 };
 
@@ -162,8 +162,8 @@ int pathLine(Point *pointList, const Point &point1, const Point &point2);
 
 struct Location {
 	int32 x;					// logical coordinates
-	int32 y;					// 
-	int32 z;					// 
+	int32 y;					//
+	int32 z;					//
 	Location() {
 		x = y = z = 0;
 	}
@@ -232,7 +232,7 @@ struct Location {
 class CommonObjectData {
 public:
 //constant
-	bool disabled;					// disabled in init section 
+	bool disabled;					// disabled in init section
 	int32 index;					// index in local array
 	uint16 id;						// object id
 	int32 scriptEntrypointNumber;	// script entrypoint number
@@ -276,12 +276,12 @@ typedef CommonObjectData *CommonObjectDataPointer;
 
 typedef SortedList<CommonObjectDataPointer> CommonObjectOrderList;
 
-class ObjectData: public CommonObjectData {	
+class ObjectData: public CommonObjectData {
 public:
 	//constant
 	uint16 interactBits;
 	ObjectData() {
-		memset(this, 0, sizeof(*this)); 
+		memset(this, 0, sizeof(*this));
 	}
 };
 
@@ -306,7 +306,7 @@ public:
 	int32 actionCycle;
 	uint16 targetObject;
 	const HitZone *lastZone;
-	
+
 	int32 cycleFrameSequence;
 	uint8 cycleDelay;
 	uint8 cycleTimeCount;
@@ -321,7 +321,7 @@ public:
 	uint8 dragonMoveType;
 
 	int32 frameNumber;			// current frame number
-	
+
 	int32 tileDirectionsAlloced;
 	byte *tileDirections;
 
@@ -349,12 +349,12 @@ public:
 		out->writeByte(cycleDelay);
 		out->writeByte(cycleTimeCount);
 		out->writeByte(cycleFlags);
-		out->writeSint16LE(fallVelocity);			
-		out->writeSint16LE(fallAcceleration);			
-		out->writeSint16LE(fallPosition);			
-		out->writeByte(dragonBaseFrame);			
-		out->writeByte(dragonStepCycle);			
-		out->writeByte(dragonMoveType);			
+		out->writeSint16LE(fallVelocity);
+		out->writeSint16LE(fallAcceleration);
+		out->writeSint16LE(fallPosition);
+		out->writeByte(dragonBaseFrame);
+		out->writeByte(dragonStepCycle);
+		out->writeByte(dragonMoveType);
 		out->writeSint32LE(frameNumber);
 
 		out->writeSint32LE(tileDirectionsAlloced);
@@ -391,23 +391,23 @@ public:
 		cycleTimeCount = in->readByte();
 		cycleFlags = in->readByte();
 		if (version > 1) {
-			fallVelocity = in->readSint16LE();			
-			fallAcceleration = in->readSint16LE();			
-			fallPosition = in->readSint16LE();			
+			fallVelocity = in->readSint16LE();
+			fallAcceleration = in->readSint16LE();
+			fallPosition = in->readSint16LE();
 		} else {
 			fallVelocity = fallAcceleration = fallPosition = 0;
 		}
 		if (version > 2) {
-			dragonBaseFrame = in->readByte();			
-			dragonStepCycle = in->readByte();			
-			dragonMoveType = in->readByte();			
+			dragonBaseFrame = in->readByte();
+			dragonStepCycle = in->readByte();
+			dragonMoveType = in->readByte();
 		} else {
 			dragonBaseFrame = dragonStepCycle = dragonMoveType = 0;
 		}
 
 		frameNumber = in->readSint32LE();
 
-		
+
 		setTileDirectionsSize(in->readSint32LE(), true);
 		for (i = 0; i < tileDirectionsAlloced; i++) {
 			tileDirections[i] = in->readByte();
@@ -444,7 +444,7 @@ public:
 			return;
 		}
 		walkStepsAlloced = size;
-		walkStepsPoints = (Point*)realloc(walkStepsPoints, walkStepsAlloced * sizeof(*walkStepsPoints));		
+		walkStepsPoints = (Point*)realloc(walkStepsPoints, walkStepsAlloced * sizeof(*walkStepsPoints));
 	}
 
 	void addWalkStepPoint(const Point &point) {
@@ -453,7 +453,7 @@ public:
 	}
 
 	ActorData() {
-		memset(this, 0, sizeof(*this)); 
+		memset(this, 0, sizeof(*this));
 	}
 	~ActorData() {
 		free(frames);
@@ -480,8 +480,8 @@ struct SpeechData {
 	bool playing;
 	int playingTime;
 
-	SpeechData() { 
-		memset(this, 0, sizeof(*this)); 
+	SpeechData() {
+		memset(this, 0, sizeof(*this));
 	}
 
 	FontEffectFlags getFontFlags(int i) {
@@ -509,14 +509,14 @@ public:
 	int actorIdToIndex(uint16 id) { return (id == ID_PROTAG ) ? 0 : objectIdToIndex(id); }
 	uint16 actorIndexToId(int index) { return (index == 0 ) ? ID_PROTAG : objectIndexToId(kGameObjectActor, index); }
 	ActorData *getActor(uint16 actorId);
-	
+
 // clarification: Obj - means game object, such Hat, Spoon etc,  Object - means Actor,Obj,HitZone,StepZone
 
 	bool validObjId(uint16 id) { return (id >= objectIndexToId(kGameObjectObject, 0)) && (id < objectIndexToId(kGameObjectObject, _objsCount)); }
 	int objIdToIndex(uint16 id) { return objectIdToIndex(id); }
 	uint16 objIndexToId(int index) { return objectIndexToId(kGameObjectObject, index); }
 	ObjectData *getObj(uint16 objId);
-	
+
 	int getObjectScriptEntrypointNumber(uint16 id) {
 		int objectType;
 		objectType = objectTypeId(id);
@@ -545,14 +545,14 @@ public:
 	uint16 hitTest(const Point &testPoint, bool skipProtagonist);
 	void takeExit(uint16 actorId, const HitZone *hitZone);
 	bool actorEndWalk(uint16 actorId, bool recurse);
-	bool actorWalkTo(uint16 actorId, const Location &toLocation);		
+	bool actorWalkTo(uint16 actorId, const Location &toLocation);
 	ActorFrameRange *getActorFrameRange(uint16 actorId, int frameType);
 	void actorFaceTowardsPoint(uint16 actorId, const Location &toLocation);
 	void actorFaceTowardsObject(uint16 actorId, uint16 objectId);
 
 	void realLocation(Location &location, uint16 objectId, uint16 walkFlags);
 
-//	speech 
+//	speech
 	void actorSpeech(uint16 actorId, const char **strings, int stringsCount, int sampleResourceId, int speechFlags);
 	void nonActorSpeech(const Common::Rect &box, const char **strings, int stringsCount, int sampleResourceId, int speechFlags);
 	void simulSpeech(const char *string, uint16 *actorIds, int actorIdsCount, int speechFlags, int sampleResourceId);
@@ -571,7 +571,7 @@ public:
 
 	void setProtagState(int state);
 	int getProtagState() { return _protagState; }
-	
+
 private:
 	bool loadActorResources(ActorData *actor);
 	void stepZoneAction(ActorData *actor, const HitZone *hitZone, bool exit, bool stopped);
@@ -588,7 +588,7 @@ private:
 		return !((testPoint.x < 0) || (testPoint.x >= _xCellCount) ||
 			(testPoint.y < 0) || (testPoint.y >= _yCellCount));
 	}
-	void setPathCell(const Point &testPoint, int8 value) {		
+	void setPathCell(const Point &testPoint, int8 value) {
 		if (!validPathCellPoint(testPoint)) {
 			error("Actor::setPathCell wrong point");
 		}
@@ -610,8 +610,8 @@ private:
 	void removePathPoints();
 	bool validFollowerLocation(const Location &location);
 	void moveDragon(ActorData *actor);
-	
-	
+
+
 protected:
 //constants
 	int _actorsCount;
@@ -671,7 +671,7 @@ private:
 		if (_pathListIndex >= _pathListAlloced) {
 			_pathListAlloced += 100;
 			_pathList = (Point*) realloc(_pathList, _pathListAlloced * sizeof(*_pathList));
-			
+
 		}
 		_pathList[_pathListIndex] = point;
 	}

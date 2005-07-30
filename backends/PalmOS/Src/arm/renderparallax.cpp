@@ -71,6 +71,6 @@ UInt32 Screen_renderParallax(void *userData68KP) {
 			}
 		}
 	}
-	
+
 	return 0;
 }

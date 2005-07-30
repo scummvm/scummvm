@@ -137,7 +137,7 @@ void Sound::newScreen(uint32 screen) {
 	if (_currentCowFile != SwordEngine::_systemVars.currentCD) {
 		if (_currentCowFile)
 			closeCowSystem();
-		initCowSystem();			
+		initCowSystem();
 	}
 }
 
@@ -191,7 +191,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 			int16 *data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size);
 			if (data)
 				_mixer->playRaw(&_speechHandle, data, size, 11025, SPEECH_FLAGS, SOUND_SPEECH_ID, speechVol, speechPan);
-		} 
+		}
 #ifdef USE_MAD
 		else if (_cowMode == CowMp3) {
 			_cowFile.seek(index);
@@ -208,7 +208,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 			_cowFile.seek(index);
 			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_speechHandle, makeVorbisStream(&_cowFile, sampleSize), SOUND_SPEECH_ID, speechVol, speechPan);
 			for (int cnt = 0; cnt < 480; cnt++)
-				_waveVolume[cnt] = true;	
+				_waveVolume[cnt] = true;
 			_waveVolPos = 0;
 		}
 #endif
@@ -242,7 +242,7 @@ int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 		} else {
 			// the demo speech files have the uncompressed size embedded
 			// in the compressed stream *sigh*
-			if (READ_LE_UINT16(fBuf + headerPos) == 1) {				
+			if (READ_LE_UINT16(fBuf + headerPos) == 1) {
 				resSize = READ_LE_UINT16(fBuf + headerPos + 2);
 				resSize |= READ_LE_UINT16(fBuf + headerPos + 6) << 16;
 			} else
@@ -297,7 +297,7 @@ void Sound::calcWaveVolume(int16 *data, uint32 length) {
 			warning("Wave vol tab too small.");
 			return;
 		}
-		int32 average = 0;		
+		int32 average = 0;
 		for (cnt = 0; cnt < 918; cnt++)
 			average += blkPos[cnt];
 		average /= 918;
@@ -327,7 +327,7 @@ void Sound::initCowSystem(void) {
 	if (_cowFile.isOpen()) {
 		debug(1, "Using MP3 compressed Speech Cluster");
 		_cowMode = CowMp3;
-	} 
+	}
 #endif
 #ifdef USE_VORBIS
 	if (!_cowFile.isOpen()) {
@@ -364,7 +364,7 @@ void Sound::initCowSystem(void) {
 			_cowHeader[cnt] = _cowFile.readUint32LE();
 		_currentCowFile = SwordEngine::_systemVars.currentCD;
 	} else
-		warning("Sound::initCowSystem: Can't open SPEECH%d.CLU", SwordEngine::_systemVars.currentCD);	
+		warning("Sound::initCowSystem: Can't open SPEECH%d.CLU", SwordEngine::_systemVars.currentCD);
 }
 
 void Sound::closeCowSystem(void) {

@@ -10,8 +10,8 @@
 
 extern "C"
 unsigned long PNO_Main(
-	const void *emulStateP, 
-	void *userData68KP, 
+	const void *emulStateP,
+	void *userData68KP,
 	Call68KFuncType *call68KFuncP);
 
 unsigned long PNO_Main(const void *emulStateP, void *userData68KP, Call68KFuncType *call68KFuncP) {
@@ -41,7 +41,7 @@ unsigned long PNO_Main(const void *emulStateP, void *userData68KP, Call68KFuncTy
 #endif
 	};
 
-	// needed before making any OS calls using the 
+	// needed before making any OS calls using the
 	// PACEInterface library
 	InitPACEInterface(emulStateP, call68KFuncP);
 

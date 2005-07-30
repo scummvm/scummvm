@@ -40,7 +40,7 @@ enum vmsaveResult {
   VMSAVE_OK,
   VMSAVE_NOVM,
   VMSAVE_NOSPACE,
-  VMSAVE_WRITEERROR,  
+  VMSAVE_WRITEERROR,
 };
 
 
@@ -143,7 +143,7 @@ static bool tryLoad(char *&buffer, int &size, const char *filename, int vm)
     return false;
   if(!vmsfs_open_file(&super, filename, &file))
     return false;
-  
+
   buffer = new char[size = file.size];
 
   if(vmsfs_read_file(&file, (unsigned char *)buffer, size))
@@ -225,7 +225,7 @@ private:
   void skip(uint32 offset);
 
 public:
-  InVMSave() 
+  InVMSave()
     : pos(0), buffer(NULL)
   { }
 
@@ -264,19 +264,19 @@ private:
   uint32 write(const void *buf, uint32 cnt);
 
 public:
-  OutVMSave(const char *_filename) 
+  OutVMSave(const char *_filename)
     : pos(0)
   {
     strncpy(filename, _filename, 16);
     buffer = new char[size = MAX_SAVE_SIZE];
   }
-  
+
   ~OutVMSave();
 };
 
 class VMSaveManager : public Common::SaveFileManager {
 public:
-  
+
   virtual Common::OutSaveFile *openForSaving(const char *filename) {
 	return new OutVMSave(filename);
   }
@@ -291,7 +291,7 @@ public:
 	  return NULL;
 	}
   }
-  
+
   virtual void listSavefiles(const char *prefix, bool *marks, int num);
 };
 
@@ -353,7 +353,7 @@ uint32 OutVMSave::write(const void *buf, uint32 cnt)
 void VMSaveManager::listSavefiles(const char *prefix, bool *marks, int num)
 {
   memset(marks, false, num*sizeof(bool));
-  
+
   for(int i=0; i<24; i++)
     tryList(prefix, marks, num, i);
 }

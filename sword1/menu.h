@@ -103,6 +103,6 @@ private:
 	static const byte _fadeEffectBottom[64];
 };
 
-} // End of namespace Sword1 
+} // End of namespace Sword1
 
 #endif //BSMENU_H

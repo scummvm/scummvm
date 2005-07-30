@@ -36,7 +36,7 @@ namespace Sword2 {
 
 // Welcome to the easy resource manager - written in simple code for easy
 // maintenance
-// 
+//
 // The resource compiler will create two files
 //
 //	resource.inf which is a list of ascii cluster file names
@@ -154,7 +154,7 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 	for (i = 0; i < _totalClusters; i++) {
 		file.read(cdInf[i].clusterName, sizeof(cdInf[i].clusterName));
 		cdInf[i].cd = file.readByte();
-		
+
 		if (file.ioFailed())
 			error("Cannot read cd.inf");
 	}
@@ -209,7 +209,7 @@ ResourceManager::~ResourceManager() {
 void convertEndian(byte *file, uint32 len) {
 	int i;
 	StandardHeader *hdr = (StandardHeader *)file;
-	
+
 	file += sizeof(StandardHeader);
 
 	SWAP32(hdr->compSize);
@@ -404,7 +404,7 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 		// Relative resource within the file
 		// First we have to find the file via the _resConvTable
 		uint16 actual_res = _resConvTable[(res * 2) + 1];
-		
+
 		debug(5, "openResource %s res %d", _resFiles[cluFileNum].fileName, res);
 
 		// If we're loading a cluster that's only available from one

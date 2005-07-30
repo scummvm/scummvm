@@ -99,10 +99,10 @@ protected:
 	void hotswapGFXMode();
 	bool saveScreenshot(const char *filename);
 
-	
-	const GraphicsMode *getSupportedGraphicsModes() const;	
+
+	const GraphicsMode *getSupportedGraphicsModes() const;
 	bool setGraphicsMode(int mode);
-	//int getGraphicsMode() const;	
+	//int getGraphicsMode() const;
 	int getDefaultGraphicsMode() const;
 
 	void setWindowCaption(const char *caption);
@@ -127,7 +127,7 @@ private:
 	void update_game_settings();
 	void check_mappings();
 	void update_keyboard();
-	void get_sample_rate();	
+	void get_sample_rate();
 
 	void retrieve_mouse_location(int &x, int &y);
 
@@ -146,7 +146,7 @@ private:
 	bool _forcePanelInvisible;  // force panel visibility for some cases
 	bool _panelVisible;			// panel visibility
 	bool _panelStateForced;		// panel visibility forced by external call
-	
+
 	bool _panelInitialized;		// only initialize the toolbar once
 
 	bool _monkeyKeyboard;		// forced keyboard for Monkey Island copy protection
@@ -158,7 +158,7 @@ private:
 	bool _saveToolbarState;		// save visibility when forced
 	String _saveActiveToolbar;	// save active toolbar when forced
 
-	bool _saveToolbarZoom;		// save visibility when zooming 
+	bool _saveToolbarZoom;		// save visibility when zooming
 	bool _zoomUp;				// zooming up mode
 	bool _zoomDown;				// zooming down mode
 
@@ -166,11 +166,11 @@ private:
 	int _scaleFactorXd;			// scaler X /
 	int _scaleFactorYm;			// scaler Y *
 	int _scaleFactorYd;			// scaler Y /
-	bool _scalersChanged;		
+	bool _scalersChanged;
 
 	static int _platformScreenWidth;
 	static int _platformScreenHeight;
-	static bool _isOzone;		// true if running on Windows 2003 SE 
+	static bool _isOzone;		// true if running on Windows 2003 SE
 
 	// Smartphone specific variables
 

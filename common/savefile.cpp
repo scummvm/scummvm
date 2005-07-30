@@ -43,7 +43,7 @@ const char *SaveFileManager::getSavePath() const {
 
 	// Try to use game specific savepath from config
 	dir = ConfMan.get("savepath").c_str();
-	
+
 	// Work around a bug (#999122) in the original 0.6.1 release of
 	// ScummVM, which would insert a bad savepath value into config files.
 	if (0 == strcmp(dir, "None")) {
@@ -127,7 +127,7 @@ public:
 		// hackish here and remove the const qualifier.
 		// Note that gzwrite's buf param is declared as "const voidp"
 		// which you might think is the same as "const void *" but it
-		// is not - rather it is equal to "void const *" which is the 
+		// is not - rather it is equal to "void const *" which is the
 		// same as "void *". Hrmpf
 		int ret = ::gzwrite(fh, const_cast<void *>(dataPtr), dataSize);
 		if (ret <= 0)

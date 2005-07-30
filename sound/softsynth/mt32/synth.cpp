@@ -824,31 +824,31 @@ void Synth::readMemoryRegion(const MemoryRegion *region, Bit32u addr, Bit32u len
 
 	switch(region->type) {
 	case MR_PatchTemp:
-		for (m = 0; m < len; m++) 
+		for (m = 0; m < len; m++)
 			data[m] = ((Bit8u *)&mt32ram.patchSettings[first])[off + m];
 		break;
 	case MR_RhythmTemp:
-		for (m = 0; m < len; m++) 
+		for (m = 0; m < len; m++)
 			data[m] = ((Bit8u *)&mt32ram.rhythmSettings[first])[off + m];
 		break;
 	case MR_TimbreTemp:
-		for (m = 0; m < len; m++) 
+		for (m = 0; m < len; m++)
 			data[m] = ((Bit8u *)&mt32ram.timbreSettings[first])[off + m];
 		break;
 	case MR_Patches:
-		for (m = 0; m < len; m++) 
+		for (m = 0; m < len; m++)
 			data[m] = ((Bit8u *)&mt32ram.patches[first])[off + m];
 		break;
 	case MR_Timbres:
-		for (m = 0; m < len; m++) 
+		for (m = 0; m < len; m++)
 			data[m] = ((Bit8u *)&mt32ram.timbres[first])[off + m];
 		break;
 	case MR_System:
-		for (m = 0; m < len; m++) 
+		for (m = 0; m < len; m++)
 			data[m] = ((Bit8u *)&mt32ram.system)[m + off];
 		break;
 	default:
-		for (m = 0; m < len; m += 2) { 
+		for (m = 0; m < len; m += 2) {
 			data[m] = 0xff;
 			if (m + 1 < len) {
 				data[m+1] = (Bit8u)region->type;

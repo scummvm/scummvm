@@ -60,17 +60,17 @@ public:
 	bool wasClicked(void);
 	void logicClick(void) { _logicClick = true; };
 	void resetCursor();
-	
+
 protected:
 
 	void pointerEngine(uint16 xPos, uint16 yPos);
 	void buttonEngine1(void);
 
 	bool _logicClick;
-	
+
 	uint16 _mouseB;	//mouse button
 	uint16 _mouseX;	//actual mouse coordinates
-	uint16 _mouseY;	
+	uint16 _mouseY;
 
 	uint16 _currentCursor;
 

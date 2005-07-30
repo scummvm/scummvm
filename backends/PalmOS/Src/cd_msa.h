@@ -19,30 +19,30 @@
  * $Header$
  *
  */
- 
+
  #ifndef CD_MSA_H
  #define CD_MSA_H
- 
+
  #include "cdaudio.h"
- 
+
  class MsaCDPlayer : public CDAudio {
  public:
  	MsaCDPlayer(OSystem *sys);
 
  	bool init();
  	void release();
- 	
+
  	bool poll();
  	void update();
  	void play(int track, int num_loops, int start_frame, int duration);
  	void stop();
- 	
+
  private:
  	void initInternal();
- 
+
  	OSystem *_sys;
  	UInt16 _msaRefNum;
- 	
+
  	// cdrom
 	AlbumInfoType _msaAlbum;
 	UInt16 _msaLoops;
@@ -57,5 +57,5 @@
 	UInt32 _msaTrackLength;
 
  };
- 
+
  #endif

@@ -81,7 +81,7 @@ protected:
 class ClassicCostumeRenderer : public BaseCostumeRenderer {
 protected:
 	ClassicCostumeLoader _loaded;
-	
+
 	byte _scaleIndexX;						/* must wrap at 256 */
 	byte _scaleIndexY;
 	byte _palette[32];

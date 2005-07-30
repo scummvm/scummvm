@@ -151,7 +151,7 @@ void EditableWidget::drawCaret(bool erase) {
 
 	if (y < 0 || y + editRect.height() - 2 >= _h)
 		return;
-	
+
 	x += getAbsX();
 	y += getAbsY();
 
@@ -169,7 +169,7 @@ bool EditableWidget::setCaretPos(int newPos) {
 
 bool EditableWidget::adjustOffset() {
 	// check if the caret is still within the textbox; if it isn't,
-	// adjust _editScrollOffset 
+	// adjust _editScrollOffset
 
 	int caretpos = getCaretOffset();
 	const int editWidth = getEditRect().width();

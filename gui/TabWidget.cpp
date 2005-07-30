@@ -146,12 +146,12 @@ static void box(int x, int y, int width, int height, OverlayColor colorA, Overla
 
 void TabWidget::drawWidget(bool hilite) {
 	NewGui *gui = &g_gui;
-	
+
 	const int left1  = _x + 1;
 	const int right1 = _x + kTabLeftOffset + _activeTab * (_tabWidth + kTabSpacing);
 	const int left2  = right1 + _tabWidth;
 	const int right2 = _x + _w - 2;
-	
+
 	// Draw horizontal line
 	gui->hLine(left1, _y + _tabHeight - 2, right1, gui->_shadowcolor);
 	gui->hLine(left2, _y + _tabHeight - 2, right2, gui->_shadowcolor);
@@ -160,7 +160,7 @@ void TabWidget::drawWidget(bool hilite) {
 	int i, x = _x + kTabLeftOffset;
 	for (i = 0; i < (int)_tabs.size(); ++i) {
 		OverlayColor color = (i == _activeTab) ? gui->_color : gui->_shadowcolor;
-		int yOffset = (i == _activeTab) ? 0 : 2; 
+		int yOffset = (i == _activeTab) ? 0 : 2;
 		box(x, _y + yOffset, _tabWidth, _tabHeight - yOffset, color, color, (i == _activeTab));
 		gui->drawString(_tabs[i].title, x + kTabPadding, _y + yOffset / 2 + (_tabHeight - gui->getFontHeight() - 3), _tabWidth - 2 * kTabPadding, gui->_textcolor, kTextAlignCenter);
 		x += _tabWidth + kTabSpacing;

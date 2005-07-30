@@ -419,7 +419,7 @@ void Control::deselectSaveslots(void) {
 
 void Control::setupMainPanel(void) {
 	uint32 panelId;
-	
+
 	if (SwordEngine::_systemVars.controlPanelMode == CP_DEATHSCREEN)
 		panelId = SR_DEATHPANEL;
 	else {
@@ -428,13 +428,13 @@ void Control::setupMainPanel(void) {
 		else
 			panelId = SR_PANEL_ENGLISH;
 	}
-	
+
 	ControlButton *panel = new ControlButton( 0, 0, panelId, 0, _resMan, _screenBuf, _system);
 	panel->draw();
 	delete panel;
 
 	if (SwordEngine::_systemVars.controlPanelMode != CP_NORMAL)
-		createButtons(_deathButtons, 3);		
+		createButtons(_deathButtons, 3);
 	else {
 		createButtons(_panelButtons, 7);
 		_buttons[5]->setSelected(SwordEngine::_systemVars.showText);
@@ -551,12 +551,12 @@ void Control::changeVolume(uint8 id, uint8 action) {
 	// ids: 1 = music, 2 = speech, 3 = sfx
 	uint8 volL = 0, volR = 0;
 	if (id == 1)
-		_music->giveVolume(&volL, &volR);	
+		_music->giveVolume(&volL, &volR);
 	else if (id == 2)
 		_sound->giveSpeechVol(&volL, &volR);
 	else if (id == 3)
 		_sound->giveSfxVol(&volL, &volR);
-	
+
 	int8 direction = 0;
 	if ((action >= 4) && (action <= 6)) // lower part of the button => decrease volume
 		direction = -1;
@@ -576,7 +576,7 @@ void Control::changeVolume(uint8 id, uint8 action) {
 	int16 resVolR = volR + direction * factorR;
 
 	volL = (uint8)MAX((int16)0, MIN(resVolL, (int16)255));
-	volR = (uint8)MAX((int16)0, MIN(resVolR, (int16)255));	
+	volR = (uint8)MAX((int16)0, MIN(resVolR, (int16)255));
 
 	if (id == 1)
 		_music->setVolume(volL, volR);
@@ -714,13 +714,13 @@ int Control::displayMessage(const char *altButton, const char *message, ...) {
 void Control::writeSavegameDescriptions(void) {
 	Common::OutSaveFile *outf;
 	outf = _saveFileMan->openForSaving("SAVEGAME.INF");
-	
+
 	if (!outf) {
 		// Display an error message, and do nothing
 		displayMessage(0, "Unable to write to path '%s'", _saveFileMan->getSavePath());
 		return;
 	}
-	
+
 	// if the player accidently clicked the last slot and then deselected it again,
 	// we'd still have _saveFiles == 64, so get rid of the empty end.
 	while (strlen((char*)_saveNames[_saveFiles - 1]) == 0)
@@ -843,12 +843,12 @@ void Control::renderText(const uint8 *str, uint16 x, uint16 y, uint8 mode) {
 		mode &= ~TEXT_RED_FONT;
 		font = _redFont;
 	}
-	
+
 	if (mode == TEXT_RIGHT_ALIGN) // negative x coordinate means right-aligned.
 		x -= getTextWidth(str);
 	else if (mode == TEXT_CENTER)
 		x -= getTextWidth(str) / 2;
-	
+
 	uint16 destX = x;
 	while (*str) {
 		uint8 *dst = _screenBuf + y * SCREEN_WIDTH + destX;
@@ -872,7 +872,7 @@ void Control::renderText(const uint8 *str, uint16 x, uint16 y, uint8 mode) {
 void Control::renderVolumeBar(uint8 id, uint8 volL, uint8 volR) {
 	uint16 destX = _volumeButtons[id].x + 20;
 	uint16 destY = _volumeButtons[id].y + 116;
-	
+
 	for (uint8 chCnt = 0; chCnt < 2; chCnt++) {
 		uint8 vol = (chCnt == 0) ? volL : volR;
 		FrameHeader *frHead = _resMan->fetchFrame(_resMan->openFetchRes(SR_VLIGHT), (vol + 15) >> 4);
@@ -936,7 +936,7 @@ bool Control::restoreGameFromFile(uint8 slot) {
 	}
 
 	_restoreBuf = (uint8*)malloc(
-		TOTAL_SECTIONS * 2 + 
+		TOTAL_SECTIONS * 2 +
 		NUM_SCRIPT_VARS * 4 +
 		(sizeof(Object) - 12000));
 
@@ -946,7 +946,7 @@ bool Control::restoreGameFromFile(uint8 slot) {
 
 	for (cnt = 0; cnt < TOTAL_SECTIONS; cnt++)
 		liveBuf[cnt] = inf->readUint16LE();
-	
+
 	for (cnt = 0; cnt < NUM_SCRIPT_VARS; cnt++)
 		scriptBuf[cnt] = inf->readUint32LE();
 
@@ -1056,7 +1056,7 @@ const ButtonInfo Control::_panelButtons[7] = {
 	{475, 332 + 40, SR_BUTTON, BUTTON_DONE }
 };
 
-const ButtonInfo Control::_saveButtons[16] = { 
+const ButtonInfo Control::_saveButtons[16] = {
 	{114,  32 + 40, SR_SLAB1, BUTTON_SAVE_SELECT1 },
 	{114,  68 + 40, SR_SLAB2, BUTTON_SAVE_SELECT2 },
 	{114, 104 + 40, SR_SLAB3, BUTTON_SAVE_SELECT3 },

@@ -58,7 +58,7 @@ CEikAppUi* CScummVMDoc::CreateAppUiL() {
 
 void CScummVMUi::HandleForegroundEventL(TBool aForeground) {
 	if(aForeground) {
-		BringUpEmulatorL();	
+		BringUpEmulatorL();
 	}
 }
 
@@ -81,7 +81,7 @@ void CScummVMUi::ConstructL() {
 	startFile = iEikonEnv->EikAppUi()->Application()->AppFullName();
 	TParse parser;
 	parser.Set(startFile,NULL,NULL);
-	
+
 	startFile = parser.DriveAndPath();
 #ifndef __WINS__
 	startFile.Append( _L("EScummVM.exe"));
@@ -109,7 +109,7 @@ void CScummVMUi::ConstructL() {
 	if(iThreadWatch.Open(iThreadId)==KErrNone) {
 		iWatcher = new (ELeave)CScummWatcher;
 		iWatcher->iAppUi=this;
-		iThreadWatch.Logon(iWatcher->iStatus);	
+		iThreadWatch.Logon(iWatcher->iStatus);
 	}
 }
 
@@ -154,7 +154,7 @@ void CScummVMUi::HandleCommandL(TInt aCommand) {
 			thread.Close();
 		}
 		Exit();
-	} 
+	}
 	break;
 	}
 }

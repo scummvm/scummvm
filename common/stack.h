@@ -37,7 +37,7 @@ protected:
 	int	_size;
 public:
 	FixedStack<T, MAX_SIZE>() : _size(0) {}
-	
+
 	bool empty() const {
 		return _size <= 0;
 	}
@@ -80,7 +80,7 @@ protected:
 	Array<T>	_stack;
 public:
 	Stack<T>() {}
-	
+
 	bool empty() const {
 		return _stack.isEmpty();
 	}

@@ -119,14 +119,14 @@ int16 scen_loadStatic(char search) {
 	for (i = 0; i < ptr->layersCount; i++) {
 		offset = (int16)READ_LE_UINT16(&((int16 *)dataPtr)[i]);
 		ptr->layers[i] = (Scen_StaticLayer *)(dataPtr + offset - 2);
-		
+
 		ptr->layers[i]->planeCount = (int16)READ_LE_UINT16(&ptr->layers[i]->planeCount);
 
 		for (int j = 0; j < ptr->layers[i]->planeCount; ++j) {
 			ptr->layers[i]->planes[j].destX = (int16)READ_LE_UINT16(&ptr->layers[i]->planes[j].destX);
 			ptr->layers[i]->planes[j].destY = (int16)READ_LE_UINT16(&ptr->layers[i]->planes[j].destY);
 		}
-		
+
 		ptr->layers[i]->backResId = (int16)READ_LE_UINT16(backsPtr);
 		backsPtr++;
 	}

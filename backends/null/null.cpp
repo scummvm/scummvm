@@ -63,7 +63,7 @@ public:
 
 	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b);
 	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);
-	
+
 	virtual bool showMouse(bool visible);
 
 	virtual void warpMouse(int x, int y);
@@ -221,7 +221,7 @@ OverlayColor OSystem_NULL::RGBToColor(uint8 r, uint8 g, uint8 b)
 void OSystem_NULL::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b)
 {
 }
-	
+
 bool OSystem_NULL::showMouse(bool visible)
 {
 	return true;
@@ -246,7 +246,7 @@ uint32 OSystem_NULL::getMillis()
 }
 
 void OSystem_NULL::delayMillis(uint msecs)
-{	
+{
 }
 
 void OSystem_NULL::setTimerCallback(TimerProc callback, int interval)

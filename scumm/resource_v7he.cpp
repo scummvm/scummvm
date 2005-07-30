@@ -122,7 +122,7 @@ const char *res_types[] = {
 	"fontdir", "font", "accelerator", "rcdata", "messagelist",
 	"group_cursor", NULL, "group_icon", NULL,
 	/* the following are not defined in winbase.h, but found in wrc. */
-	/* 0x10: */ 
+	/* 0x10: */
 	"version", "dlginclude", NULL, "plugplay", "vxd",
 	"anicursor", "aniicon"
 };
@@ -152,7 +152,7 @@ int Win32ResExtractor::extractResource_(const char *resType, char *resName, byte
 	arg_type = res_type_string_to_id(arg_type);
 
 	WinLibrary fi;
-		
+
 	/* initiate stuff */
 	fi.memory = NULL;
 	fi.file = new Common::File;
@@ -290,7 +290,7 @@ byte *Win32ResExtractor::extract_resource(WinLibrary *fi, WinResource *wr, int *
                   bool *free_it, char *type, char *lang, bool raw) {
 	char *str;
 	int32 intval;
-	
+
 	/* just return pointer to data if raw */
 	if (raw) {
 		*free_it = false;
@@ -374,7 +374,7 @@ byte *Win32ResExtractor::extract_group_icon_cursor_resource(WinLibrary *fi, WinR
 				continue;
 		    }
 		    if ((uint32)iconsize != icondir->entries[c].bytes_in_res) {
-				debugC(DEBUG_RESOURCE, "%s: mismatch of size in icon resource `%s' and group (%d != %d)", 
+				debugC(DEBUG_RESOURCE, "%s: mismatch of size in icon resource `%s' and group (%d != %d)",
 					fi->file->name(), name, iconsize, icondir->entries[c].bytes_in_res);
 		    }
 		    size += iconsize; /* size += icondir->entries[c].bytes_in_res; */
@@ -405,7 +405,7 @@ byte *Win32ResExtractor::extract_group_icon_cursor_resource(WinLibrary *fi, WinR
 		char name[14];
 		WinResource *fwr;
 		byte *data;
-	
+
 		/* find the corresponding icon resource */
 		snprintf(name, sizeof(name)/sizeof(char), "-%d", icondir->entries[c].res_id);
 		fwr = find_resource(fi, (is_icon ? "-3" : "-1"), name, lang, &level);
@@ -505,7 +505,7 @@ int Win32ResExtractor::do_resources(WinLibrary *fi, const char *type, char *name
 /* does the id of this entry match the specified id? */
 #define LEVEL_MATCHES(x) (x == NULL || x ## _wr->id[0] == '\0' || compare_resource_id(x ## _wr, x))
 
-int Win32ResExtractor::do_resources_recurs(WinLibrary *fi, WinResource *base, 
+int Win32ResExtractor::do_resources_recurs(WinLibrary *fi, WinResource *base,
 		  WinResource *type_wr, WinResource *name_wr, WinResource *lang_wr,
 		  const char *type, char *name, char *lang, int action, byte **data) {
 	int c, rescnt;
@@ -596,7 +596,7 @@ bool Win32ResExtractor::decode_pe_resource_id(WinLibrary *fi, WinResource *wr, u
 	wr->numeric_id = (value & IMAGE_RESOURCE_NAME_IS_STRING ? false:true);
 	return true;
 }
- 
+
 byte *Win32ResExtractor::get_resource_entry(WinLibrary *fi, WinResource *wr, int *size) {
 	if (fi->is_PE_binary) {
 		Win32ImageResourceDataEntry *dataent;
@@ -1019,7 +1019,7 @@ int Win32ResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int
 
 				width = bitmap.width;
 				height = ABS(bitmap.height)/2;
-				
+
 				image_size = height * ROW_BYTES(width * bitmap.bit_count);
 				mask_size = height * ROW_BYTES(width);
 
@@ -1304,7 +1304,7 @@ int MacResExtractor::extractResource(int id, byte **buf) {
 					// And finally check if we have dumped resource fork
 					snprintf(_fileName, 128, "%s.rsrc", buf1);
 					if (!in.exists(_fileName)) {
-						error("Cannot open file any of files '%s', '%s.bin', '%s.rsrc", 
+						error("Cannot open file any of files '%s', '%s.bin', '%s.rsrc",
 							  buf1, buf1, buf1);
 					}
 				}
@@ -1387,7 +1387,7 @@ bool MacResExtractor::init(Common::File in) {
 		return false;
 	}
 
-	debug(7, "got header: data %d [%d] map %d [%d]", 
+	debug(7, "got header: data %d [%d] map %d [%d]",
 		_dataOffset, _dataLength, _mapOffset, _mapLength);
 
 	readMap(in);
@@ -1401,7 +1401,7 @@ byte *MacResExtractor::getResource(Common::File in, const char *typeID, int16 re
 	int resNum = -1;
 	byte *buf;
 	int len;
-	
+
 	for (i = 0; i < _resMap.numTypes; i++)
 		if (strcmp(_resTypes[i].id, typeID) == 0) {
 			typeNum = i;
@@ -1434,7 +1434,7 @@ byte *MacResExtractor::getResource(Common::File in, const char *typeID, int16 re
 
 void MacResExtractor::readMap(Common::File in) {
 	int	i, j, len;
-	
+
 	in.seek(_mapOffset + 22);
 
 	_resMap.resAttr = in.readUint16BE();
@@ -1453,22 +1453,22 @@ void MacResExtractor::readMap(Common::File in) {
 		_resTypes[i].offset = in.readUint16BE();
 		_resTypes[i].items++;
 	}
-	
+
 	_resLists = new ResPtr[_resMap.numTypes];
-	
+
 	for (i = 0; i < _resMap.numTypes; i++) {
 		_resLists[i] = new Resource[_resTypes[i].items];
 		in.seek(_resTypes[i].offset + _mapOffset + _resMap.typeOffset);
 
 		for (j = 0; j < _resTypes[i].items; j++) {
 			ResPtr resPtr = _resLists[i] + j;
-			
+
 			resPtr->id = in.readUint16BE();
 			resPtr->nameOffset = in.readUint16BE();
 			resPtr->dataOffset = in.readUint32BE();
 			in.readUint32BE();
 			resPtr->name = 0;
-			
+
 			resPtr->attr = resPtr->dataOffset >> 24;
 			resPtr->dataOffset &= 0xFFFFFF;
 		}
@@ -1476,7 +1476,7 @@ void MacResExtractor::readMap(Common::File in) {
 		for (j = 0; j < _resTypes[i].items; j++) {
 			if (_resLists[i][j].nameOffset != -1) {
 				in.seek(_resLists[i][j].nameOffset + _mapOffset + _resMap.nameOffset);
-				
+
 				len = in.readByte();
 				_resLists[i][j].name = new byte[len + 1];
 				_resLists[i][j].name[len] = 0;
@@ -1506,7 +1506,7 @@ int MacResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int *
 	dis.readUint32BE(); // expanded cursor data
 	dis.readUint16BE(); // expanded data depth
 	dis.readUint32BE(); // reserved
-	  
+
 	// Grab B/W icon data
 	*cursor = (byte *)malloc(16 * 16);
 	for (i = 0; i < 32; i++) {
@@ -1534,10 +1534,10 @@ int MacResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int *
 
 	dis.readUint32BE(); // reserved
 	dis.readUint32BE(); // cursorID
-	      
+
 	// Color version of cursor
 	dis.readUint32BE(); // baseAddr
-	
+
 	// Keep only lowbyte for now
 	dis.readByte();
 	iconRowBytes = dis.readByte();
@@ -1638,7 +1638,7 @@ void ScummEngine_v70he::readRoomsOffsets() {
 	num = READ_LE_UINT16(_heV7RoomOffsets);
 	ptr = _heV7RoomOffsets + 2;
 	for (i = 0; i < num; i++) {
-		res.roomoffs[rtRoom][i] = READ_LE_UINT32(ptr);	
+		res.roomoffs[rtRoom][i] = READ_LE_UINT32(ptr);
 		ptr += 4;
 	}
 }

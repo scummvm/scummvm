@@ -15,7 +15,7 @@ typedef struct {
 		UInt8 argc;
 		Char **argv;
 	} args;
-		
+
 	GlobalsDataPtr gVars;
 } LaunchParamType;
 

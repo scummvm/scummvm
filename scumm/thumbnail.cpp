@@ -19,7 +19,7 @@
  * $Header$
  *
  */
- 
+
 #include "common/stdafx.h"
 #include "common/system.h"
 #include "common/savefile.h"
@@ -74,13 +74,13 @@ Graphics::Surface *ScummEngine::loadThumbnail(Common::InSaveFile *file) {
 	header.width = file->readUint16BE();
 	header.height = file->readUint16BE();
 	header.bpp = file->readByte();
-	
+
 	// TODO: support other bpp values than 2
 	if (header.bpp != 2) {
 		file->skip(header.size - 14);
 		return 0;
 	}
-	
+
 	Graphics::Surface *thumb = new Graphics::Surface();
 	thumb->create(header.width, header.height, sizeof(uint16));
 
@@ -90,7 +90,7 @@ Graphics::Surface *ScummEngine::loadThumbnail(Common::InSaveFile *file) {
 		for (int x = 0; x < thumb->w; ++x) {
 			uint8 r, g, b;
 			colorToRGB(file->readUint16BE(), r, g, b);
-			
+
 			// converting to current OSystem Color
 			*pixels++ = _system->RGBToColor(r, g, b);
 		}
@@ -101,12 +101,12 @@ Graphics::Surface *ScummEngine::loadThumbnail(Common::InSaveFile *file) {
 
 void ScummEngine::saveThumbnail(Common::OutSaveFile *file) {
 	Graphics::Surface thumb;
- 
+
 #if !defined(DISABLE_SCALERS) && !defined(DISABLE_HQ_SCALERS) // fcn has dep on HQ_SCALERS: thumbnail gets created as empty
 	if (!createThumbnailFromScreen(&thumb))
 #endif
 		thumb.create(kThumbnailWidth, kThumbnailHeight2, sizeof(uint16));
-	
+
 	ThumbnailHeader header;
 	header.type = MKID('THMB');
 	header.size = sizeof(header) + thumb.w*thumb.h*thumb.bytesPerPixel;
@@ -121,7 +121,7 @@ void ScummEngine::saveThumbnail(Common::OutSaveFile *file) {
 	file->writeUint16BE(header.width);
 	file->writeUint16BE(header.height);
 	file->writeByte(header.bpp);
-	
+
 	// TODO: for later this shouldn't be casted to uint16...
 	uint16* pixels = (uint16 *)thumb.pixels;
 	for (uint16 p = 0; p < thumb.w*thumb.h; ++p, ++pixels)

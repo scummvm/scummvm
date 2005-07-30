@@ -38,7 +38,7 @@ protected:
 	bool _isValid;
 	bool _isPseudoRoot;
 	String _path;
-	
+
 public:
 	WindowsFilesystemNode();
 	WindowsFilesystemNode(const String &path);
@@ -63,7 +63,7 @@ char* WindowsFilesystemNode::toAscii(TCHAR *x) {
 
 #ifndef UNICODE
 	return (char*)x;
-#else	
+#else
 	static char asciiString[MAX_PATH];
 	WideCharToMultiByte(CP_ACP, 0, x, _tcslen(x) + 1, asciiString, sizeof(asciiString), NULL, NULL);
 	return asciiString;
@@ -128,7 +128,7 @@ WindowsFilesystemNode::WindowsFilesystemNode() {
 	_isValid = true;
 	_path = "\\";
 	_isPseudoRoot = false;
-#endif	
+#endif
 }
 
 WindowsFilesystemNode::WindowsFilesystemNode(const String &p) {
@@ -179,9 +179,9 @@ FSList WindowsFilesystemNode::listDir(ListMode mode) const {
 		TCHAR drive_buffer[100];
 		GetLogicalDriveStrings(sizeof(drive_buffer) / sizeof(TCHAR), drive_buffer);
 
-		for (TCHAR *current_drive = drive_buffer; *current_drive; 
+		for (TCHAR *current_drive = drive_buffer; *current_drive;
 			current_drive += _tcslen(current_drive) + 1) {
-				WindowsFilesystemNode entry;		
+				WindowsFilesystemNode entry;
 				char drive_name[2];
 
 				drive_name[0] = toAscii(current_drive)[0];

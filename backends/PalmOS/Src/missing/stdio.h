@@ -43,8 +43,8 @@ typedef UInt32 size_t;
 #define vsnprintf(a,b,c,d)	vsprintf(a,c,d)
 #define getc(a)				fgetc(a)
 
-#define	SEEK_SET			vfsOriginBeginning 
-#define	SEEK_CUR			vfsOriginCurrent  
+#define	SEEK_SET			vfsOriginBeginning
+#define	SEEK_CUR			vfsOriginCurrent
 #define	SEEK_END			vfsOriginEnd
 
 UInt16		fclose	(FileRef *stream);

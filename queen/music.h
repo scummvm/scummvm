@@ -37,7 +37,7 @@ public:
 	~MusicPlayer();
 	void setVolume(int volume);
 	int getVolume()			{ return _masterVolume; }
-	
+
 	void hasNativeMT32(bool b)	{ _nativeMT32 = b; }
 	void playMusic();
 	void stopMusic();
@@ -46,21 +46,21 @@ public:
 	bool queueSong(uint16 songNum);
 	void queueClear();
 	void setPassThrough(bool b)		{ _passThrough = b; }
-	
+
 	//MidiDriver interface implementation
 	int open();
 	void close();
 	void send(uint32 b);
-	
+
 	void metaEvent(byte type, byte *data, uint16 length);
-	
+
 	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
 	uint32 getBaseTempo(void)	{ return _driver ? _driver->getBaseTempo() : 0; }
-	
+
 	//Channel allocation functions
 	MidiChannel *allocateChannel()		{ return 0; }
 	MidiChannel *getPercussionChannel()	{ return 0; }
-	
+
 protected:
 
 	enum {
@@ -79,9 +79,9 @@ protected:
 	byte _channelVolume[16];
 	bool _nativeMT32;
 	bool _passThrough;
-	
+
 	Common::RandomSource _rnd;
-				
+
 	bool _isPlaying;
 	bool _looping;
 	bool _randomLoop;
@@ -90,13 +90,13 @@ protected:
 	int16 _currentSong;
 	int16 _lastSong;	//first song from previous queue
 	int16 _songQueue[MUSIC_QUEUE_SIZE];
-	
+
 	uint16 _numSongs;
 	byte *_musicData;
 	uint16 *_buf;
 	uint32 _musicDataSize;
 };
-	
+
 class Music {
 public:
 	Music(MidiDriver *_driver, QueenEngine *vm);
@@ -108,10 +108,10 @@ public:
 	void stopSong()				{ _player->stopMusic(); }
 	void setPassThrough(bool b)		{ _player->setPassThrough(b); }
 
-	void toggleVChange();	
+	void toggleVChange();
 	void setVolume(int vol)			{ _player->setVolume(vol); }
 	int volume()				{ return _player->getVolume(); }
-	
+
 protected:
 	bool _vToggle;
 	byte *_musicData;

@@ -112,7 +112,7 @@ AudioStream *MusicHandle::createAudioSource(void) {
 	switch (_musicMode) {
 #ifdef USE_MAD
 	case MusicMp3:
-		return makeMP3Stream(&_file, _file.size());			
+		return makeMP3Stream(&_file, _file.size());
 #endif
 #ifdef USE_VORBIS
 	case MusicVorbis:
@@ -212,7 +212,7 @@ int MusicHandle::readBuffer(int16 *buffer, const int numSamples) {
 		if ((expectedSamples > 0) && _audioSource->endOfData()) {
 			debug(2, "Music reached EOF");
 			_audioSource->endOfData();
-			if (_looping) { 
+			if (_looping) {
                 delete _audioSource; // recreate same source.
 				_audioSource = createAudioSource();
 			}
@@ -323,7 +323,7 @@ void Music::startMusic(int32 tuneId, int32 loopFlag) {
 		_mutex.unlock();
 
 		/* The handle will load the music file now. It can take a while, so unlock
-		   the mutex before, to have the soundthread playing normally. 
+		   the mutex before, to have the soundthread playing normally.
 		   As the corresponding _converter is NULL, the handle will be ignored by the playing thread */
 		if (_handles[newStream].play(_tuneList[tuneId], loopFlag != 0)) {
 			_mutex.lock();

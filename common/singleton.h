@@ -34,7 +34,7 @@ class Singleton
 private:
 	Singleton<T>(const Singleton<T>&);
 	Singleton<T>& operator= (const Singleton<T>&);
-	
+
 	static T* _singleton;
 
 	/**
@@ -52,7 +52,7 @@ public:
 	static T* makeInstance() {
 		return new T();
 	}
-	
+
 
 public:
 	static T& instance() {
@@ -74,7 +74,7 @@ protected:
 #else
 	virtual ~Singleton<T>()	{ }
 #endif
-	
+
 	typedef T	SingletonBaseType;
 };
 

@@ -16,7 +16,7 @@ Err sndCallback(void* UserDataP, SndStreamRef stream, void* bufferP, UInt32 *buf
 			*dst++ = READ_LE_UINT32(src++);
 			*dst++ = READ_LE_UINT32(src++);
 		}
-		snd->set = false;	
+		snd->set = false;
 
 	} else {
 		snd->size = size;

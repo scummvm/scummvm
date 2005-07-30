@@ -256,7 +256,7 @@ PluginManager::~PluginManager() {
 void PluginManager::loadPlugins() {
 #ifdef DYNAMIC_MODULES
 	// Load dynamic plugins
-	// TODO... this is right now just a nasty hack. 
+	// TODO... this is right now just a nasty hack.
 	// This should search one or multiple directories for all plugins it can
 	// find (to this end, we maybe should use a special prefix/suffix; e.g.
 	// instead of libscumm.so, use scumm.engine or scumm.plugin etc.).
@@ -274,7 +274,7 @@ void PluginManager::loadPlugins() {
 	// Scan for all plugins in this directory
 	FilesystemNode dir(PLUGIN_DIRECTORY);
 	FSList files(dir.listDir(FilesystemNode::kListFilesOnly));
-	
+
 	for (FSList::const_iterator i = files.begin(); i != files.end(); ++i) {
 		Common::String name(i->displayName());
 		if (name.hasPrefix(PLUGIN_PREFIX) && name.hasSuffix(PLUGIN_SUFFIX)) {
@@ -291,7 +291,7 @@ void PluginManager::loadPlugins() {
 	// "Loader" for the static plugins.
 	// Iterate over all registered (static) plugins and load them.
 	PluginRegistrator *plugin;
-	
+
 	#ifndef DISABLE_SCUMM
 	LINK_PLUGIN(SCUMM)
 	#endif
@@ -367,6 +367,6 @@ DetectedGameList PluginManager::detectGames(const FSList &fslist) const {
 	for (iter = _plugins.begin(); iter != _plugins.end(); ++iter) {
 		candidates.push_back((*iter)->detectGames(fslist));
 	}
-	
+
 	return candidates;
 }

@@ -42,7 +42,7 @@ namespace CEGUI {
 			_height = _background->height();
 			_width = _background->width();
 		}
-		else 
+		else
 		if (_background->height() != _height || _background->width() != _width) {
 			delete _background;
 			_background = NULL;
@@ -50,7 +50,7 @@ namespace CEGUI {
 		}
 		return true;
 	}
-	 
+
 	void GUIElement::move(int x, int y) {
 		_x = x;
 		_y = y;
@@ -79,7 +79,7 @@ namespace CEGUI {
 		if (x >= _x && x <= _x + _width && y >= _y && y <= _y + _height)
 			return true;
 		else
-			return false; 
+			return false;
 	}
 
 	void GUIElement::setVisible(bool visibility) {

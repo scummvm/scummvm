@@ -30,9 +30,9 @@ namespace CEGUI {
 		if (!GUI::Actions::Instance()->isEnabled(_action))
 			_visible = false;
 	}
- 
-	
-	ItemAction::~ItemAction() {   
+
+
+	ItemAction::~ItemAction() {
 	}
 
 	bool ItemAction::action(int x, int y, bool pushed) {

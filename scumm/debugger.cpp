@@ -68,7 +68,7 @@ void CDECL debugC(int channel, const char *s, ...) {
 
 	debug(buf);
 }
-	
+
 ScummDebugger::ScummDebugger(ScummEngine *s)
 	: Common::Debugger<ScummDebugger>() {
 	_vm = s;
@@ -563,7 +563,7 @@ bool ScummDebugger::Cmd_Debug(int argc, const char **argv) {
 	if ((argc == 1) && (_vm->_debugFlags > 0)) {
 		for (int i = 0; i < numChannels; i++) {
 			if (_vm->_debugFlags & debugChannels[i].flag)
-				DebugPrintf("%s - %s\n", debugChannels[i].channel, 
+				DebugPrintf("%s - %s\n", debugChannels[i].channel,
 							 debugChannels[i].desc);
 		}
 		return true;
@@ -629,7 +629,7 @@ bool ScummDebugger::Cmd_Camera(int argc, const char **argv) {
 	DebugPrintf("Camera: cur (%d,%d) - dest (%d,%d) - accel (%d,%d) -- last (%d,%d)\n",
 		_vm->camera._cur.x, _vm->camera._cur.y, _vm->camera._dest.x, _vm->camera._dest.y,
 		_vm->camera._accel.x, _vm->camera._accel.y, _vm->camera._last.x, _vm->camera._last.y);
-		
+
 	return true;
 }
 

@@ -114,7 +114,7 @@ Mixer::Mixer() {
 		_volumeForSoundType[i] = kMaxMixerVolume;
 
 	_paused = false;
-	
+
 	for (i = 0; i != NUM_CHANNELS; i++)
 		_channels[i] = 0;
 
@@ -144,7 +144,7 @@ void Mixer::setupPremix(AudioStream *stream, SoundType type) {
 
 	delete _premixChannel;
 	_premixChannel = 0;
-	
+
 	if (stream == 0)
 		return;
 
@@ -399,7 +399,7 @@ void Mixer::setVolumeForSoundType(SoundType type, int volume) {
 		volume = kMaxMixerVolume;
 	else if (volume < 0)
 		volume = 0;
-	
+
 	// TODO: Maybe we should do logarithmic (not linear) volume
 	// scaling? See also Player_V2::setMasterVolume
 
@@ -408,7 +408,7 @@ void Mixer::setVolumeForSoundType(SoundType type, int volume) {
 
 int Mixer::getVolumeForSoundType(SoundType type) const {
 	assert(0 <= type && type < ARRAYSIZE(_volumeForSoundType));
-	
+
 	return _volumeForSoundType[type];
 }
 
@@ -462,7 +462,7 @@ void Channel::mix(int16 *data, uint len) {
 		// balance value ranges from -127 to 127.  The mixer (music/sound)
 		// volume is in the range 0 - kMaxMixerVolume.
 		// Hence, the vol_l/vol_r values will be in that range, too
-		
+
 		int vol = _mixer->getVolumeForSoundType(_type) * _volume;
 		st_volume_t vol_l, vol_r;
 

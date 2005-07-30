@@ -112,7 +112,7 @@ struct IsoTileData {
 };
 
 struct TilePlatformData {
-	int16 metaTile;	
+	int16 metaTile;
 	int16 height;
 	int16 highestPixel;
 	byte vBits;
@@ -180,8 +180,8 @@ private:
 	void drawTiles(Surface *ds, const Location *location);
 	void drawMetaTile(Surface *ds, uint16 metaTileIndex, const Point &point, int16 absU, int16 absV);
 	void drawSpriteMetaTile(Surface *ds, uint16 metaTileIndex, const Point &point, Location &location, int16 absU, int16 absV);
-	void drawPlatform(Surface *ds, uint16 platformIndex, const Point &point, int16 absU, int16 absV, int16 absH);	
-	void drawSpritePlatform(Surface *ds, uint16 platformIndex, const Point &point, const Location &location, int16 absU, int16 absV, int16 absH);	
+	void drawPlatform(Surface *ds, uint16 platformIndex, const Point &point, int16 absU, int16 absV, int16 absH);
+	void drawSpritePlatform(Surface *ds, uint16 platformIndex, const Point &point, const Location &location, int16 absU, int16 absV, int16 absH);
 	void drawTile(Surface *ds, uint16 tileIndex, const Point &point, const Location *location);
 	int16 smoothSlide(int16 value, int16 min, int16 max) {
 		if (value < min) {
@@ -200,7 +200,7 @@ private:
 			}
 		}
 		return value;
-	}	
+	}
 	int16 findMulti(int16 tileIndex, int16 absU, int16 absV, int16 absH);
 	void pushPoint(int16 u, int16 v, uint16 cost, uint16 direction);
 	void pushDragonPoint(int16 u, int16 v, uint16 direction);
@@ -210,7 +210,7 @@ private:
 
 
 	byte *_tileData;
-	size_t _tileDataLength;	
+	size_t _tileDataLength;
 	uint16 _tilesCount;
 	IsoTileData *_tilesTable;
 
@@ -218,14 +218,14 @@ private:
 	TilePlatformData *_tilePlatformList;
 	uint16 _metaTilesCount;
 	MetaTileData *_metaTileList;
-	
+
 	uint16 _multiCount;
 	MultiTileEntryData *_multiTable;
 	uint16 _multiDataCount;
 	int16 *_multiTableData;
 
 	TileMapData _tileMap;
-	
+
 	Point _mapPosition;
 
 // path finding stuff
@@ -273,7 +273,7 @@ private:
 			return &cell[u][v];
 		}
 	};
-	
+
 	int16 _queueCount;
 	int16 _readCount;
 	SearchArray _searchArray;

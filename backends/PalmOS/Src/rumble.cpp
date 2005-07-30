@@ -20,7 +20,7 @@ Boolean RumbleExists() {
 			exists = true;
 			TwDeviceClose(hRumble);
 		}
-		
+
 	} else
 #endif
 	{
@@ -49,7 +49,7 @@ void RumbleRun(Boolean active) {
 		} else {
 			TwDeviceControl(hRumble, 'stop', 0, 0);
 		}
-		
+
 	} else
 #endif
 	{
@@ -81,7 +81,7 @@ Boolean RumbleInit() {
 			HwrVibrateAttributes(1, kHwrVibratePattern, &pattern);
 			HwrVibrateAttributes(1, kHwrVibrateDelay, &delay);
 			HwrVibrateAttributes(1, kHwrVibrateRepeatCount, &repeat);
-			
+
 			done = true;
 		}
 	}
@@ -93,7 +93,7 @@ void RumbleRelease() {
 #ifndef DISABLE_TAPWAVE
 	if (OPTIONS_TST(kOptDeviceZodiac)) {
 		TwDeviceClose(hRumble);
-	
+
 	} else
 #endif
 	{

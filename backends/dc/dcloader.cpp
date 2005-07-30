@@ -181,7 +181,7 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size)
   }
 
   free(rela);
-  return true;  
+  return true;
 }
 
 
@@ -233,7 +233,7 @@ bool DLObject::load(int fd)
      read(fd, segment, phdr.p_filesz) != phdr.p_filesz) {
     seterror("Segment load failed.");
     return false;
-  }  
+  }
 
   DBG("shoff = %d, shentsz = %d, shnum = %d\n",
       ehdr.e_shoff, ehdr.e_shentsize, ehdr.e_shnum);
@@ -309,7 +309,7 @@ bool DLObject::load(int fd)
 	free(shdr);
 	return false;
       }
-  
+
   free(shdr);
 
   return true;
@@ -351,7 +351,7 @@ bool DLObject::open(const char *path)
     seterror("Missing ctors/dtors.");
     dtors_start = dtors_end = NULL;
     unload();
-    return false;    
+    return false;
   }
 
   DBG("Calling constructors.\n");
@@ -390,7 +390,7 @@ void *DLObject::symbol(const char *name)
     }
 
   seterror("Symbol \"%s\" not found.", name);
-  return NULL;  
+  return NULL;
 }
 
 

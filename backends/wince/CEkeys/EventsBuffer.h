@@ -40,7 +40,7 @@ namespace CEKEYS {
 		static bool simulateMouseLeftClick(int x, int y, bool pushed);
 		static bool simulateMouseRightClick(int x, int y, bool pushed);
 
-	};	
+	};
 }
 
 #endif

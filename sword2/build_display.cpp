@@ -186,7 +186,7 @@ void Screen::displayMsg(byte *text, int time) {
 	byte oldPal[256 * 4];
 
 	debug(2, "DisplayMsg: %s", text);
-	
+
 	if (getFadeStatus() != RDFADE_BLACK) {
 		fadeDown();
 		waitForFade();

@@ -38,7 +38,7 @@ public:
 	Debugger(Logic *logic, Mouse *mouse, Screen *screen, SkyCompact *skyCompact);
 	virtual ~Debugger(); // we need this here for __SYMBIAN32__ archaic gcc/UIQ
 	bool showGrid()	{	return _showGrid; }
-	
+
 protected:
 	virtual void preEnter();
 	virtual void postEnter();
@@ -52,7 +52,7 @@ protected:
 	bool Cmd_Info(int argc, const char **argv);
 	bool Cmd_ScriptVar(int argc, const char **argv);
 	bool Cmd_Section(int argc, const char **argv);
-	
+
 	Logic *_logic;
 	Mouse *_mouse;
 	Screen *_screen;
@@ -61,7 +61,7 @@ protected:
 	bool _showGrid;
 };
 
-	
+
 class Debug {
 public:
 	static void fetchCompact(uint32 a);

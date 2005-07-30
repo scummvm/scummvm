@@ -118,7 +118,7 @@ BaseSound::~BaseSound() {
 		free(_offsets);
 	delete _file;
 }
-	
+
 void WavSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
 	if (_offsets == NULL)
 		return;
@@ -354,7 +354,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, Audio::Mixer *mix
 Sound::~Sound() {
 	delete _voice;
 	delete _effects;
-	
+
 	free(_filenums);
 	free(_offsets);
 }
@@ -434,7 +434,7 @@ void Sound::playVoice(uint sound) {
 			if (file->isOpen() == false) {
 				warning("playVoice: Can't load voice file %s", filename);
 				return;
-			} 
+			}
 			delete _voice;
 			_voice = new WavSound(_mixer, file, _offsets);
 		}
@@ -450,7 +450,7 @@ void Sound::playVoice(uint sound) {
 void Sound::playEffects(uint sound) {
 	if (!_effects)
 		return;
-	
+
 	if (_effectsPaused)
 		return;
 

@@ -45,7 +45,7 @@ struct DefaultComparator {
  *       balanced. Ultimately this template should be reimplemented, e.g. using
  *       a red-black tree. Or if one day using Std C++ lib becomes acceptable,
  *       we can use that.
- * @todo Having unit tests for this class would be very desirable. There are a 
+ * @todo Having unit tests for this class would be very desirable. There are a
  *       big number of things which can go wrong in this code.
  */
 template <class Key, class Value, class Comparator = DefaultComparator<Key> >
@@ -59,7 +59,7 @@ protected:
 		Node() : _parent(0), _left(0), _right(0) {}
 		Node(const Key &key, Node *parent) : _parent(parent), _left(0), _right(0), _key(key) {}
 	};
-	
+
 	Node *_root;
 	Node *_header;
 
@@ -73,7 +73,7 @@ public:
 	protected:
 		Node *_node;
 		const_iterator(Node *node) : _node(node) {}
-		
+
 	public:
 		const_iterator() : _node(0) {}
 
@@ -109,7 +109,7 @@ public:
 		_header = new Node();
 		_header->_right = _header->_left = _header;
 	}
-	
+
 #ifndef __SYMBIAN32__
 	virtual ~Map<Key, Value, Comparator>()
 #else
@@ -199,7 +199,7 @@ public:
 			parent->_left = rep;
 		else
 			parent->_right = rep;
-		
+
 		// Finally free the allocated memory
 		delete node;
 	}

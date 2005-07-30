@@ -11,15 +11,15 @@ TabType *TabNewTabs(UInt16 cnt) {
 	newP->count = 0;
 	newP->width = 0;
 	newP->tabs = new TabDataType[cnt];
-	
+
 	return newP;
 }
 
 void TabDeleteTabs(TabType *tabP) {
 	UInt16 cnt, num;
 	num = MemPtrSize(tabP->tabs) / sizeof(TabDataType);
-	
-	for (cnt = 0; cnt < num; cnt++)	
+
+	for (cnt = 0; cnt < num; cnt++)
 		FrmDeleteForm(tabP->tabs[cnt].srcP);
 
 	delete tabP->tabs;
@@ -34,14 +34,14 @@ Err TabAddContent(FormType **frmP, TabType *tabP, const Char *nameP, UInt16 rscI
 	Coord x, y, w, h;
 	UInt16 id;
 	RectangleType r;
-	
+
 	dstP = (void **)frmP;
 	srcP = FrmInitForm(rscID);
 
 	objNum = FrmGetNumberOfObjects(srcP);
 
 	// save tab data
-	
+
 	// it's required to keep to source forms active
 	// while the tab form is not close for list data ptr (items text)
 	// TODO : fix this !
@@ -61,7 +61,7 @@ Err TabAddContent(FormType **frmP, TabType *tabP, const Char *nameP, UInt16 rscI
 	ControlType *addP = CtlNewControl(dstP, (FrmGetFormId(*frmP) + tabP->count), buttonCtl, nameP, x, y, w, h, stdFont, 0, true);
 	CtlGlueSetFrameStyle(addP, noButtonFrame);
 	tabP->width += w + 1;
-	
+
 	// create tab content
 	for (cnt = 0; cnt < objNum; cnt++) {
 		objP = FrmGetObjectPtr(srcP, cnt);
@@ -86,7 +86,7 @@ Err TabAddContent(FormType **frmP, TabType *tabP, const Char *nameP, UInt16 rscI
 				UInt16 items = LstGetNumberOfItems((ListType *)objP);
 				UInt16 trigger = id - 1;
 				trigger = (FrmGetObjectIndex((FormType *)*dstP, trigger) != frmInvalidObjectId) ? trigger : 0;
-				
+
 				LstNewList(dstP, id, x, y, w, h, font, visible, trigger);
 				newP = (ListType *)FrmGetObjectPtr((FormType *)*dstP, FrmGetObjectIndex((FormType *)*dstP, id));
 				LstSetListChoices(newP, itemsP, items);
@@ -174,25 +174,25 @@ void TabSetActive(FormType *frmP, TabType *tabP, UInt16 num) {
 	// set tabs size
 	for (cnt = 0; cnt < tabP->count; cnt++) {
 		idx = FrmGetObjectIndex (frmP, (FrmGetFormId(frmP) + cnt + 1));
-		
+
 		if (idx != frmInvalidObjectId) {
 			FrmGetObjectBounds(frmP, idx, &r);
 			r.topLeft.y	= (num == cnt) ? 17 : 17;
 			r.extent.y	= (num == cnt) ? 12 : 11;
 			FrmSetObjectBounds(frmP, idx, &r);
-			
+
 			if (num == cnt) {
 				RGBColorType yellow = {0,255,192,0};
-				
+
 				r.topLeft.y	-= 1;
 				WinSetForeColor(UIColorGetTableEntryIndex(UIObjectFrame));
-				WinDrawRectangleFrame(simpleFrame, &r); 
+				WinDrawRectangleFrame(simpleFrame, &r);
 				WinSetForeColor(WinRGBToIndex(&yellow));
 				WinDrawLine(r.topLeft.x, r.topLeft.y, r.topLeft.x + r.extent.x - 1, r.topLeft.y);
 				FrmShowObject(frmP, idx);
 			} else {
 				WinSetForeColor(UIColorGetTableEntryIndex(UIObjectFrame));
-				WinDrawRectangleFrame(simpleFrame, &r); 
+				WinDrawRectangleFrame(simpleFrame, &r);
 			}
 		}
 	}

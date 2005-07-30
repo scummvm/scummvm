@@ -46,9 +46,9 @@ void EventManager::checkForEvent(Object *compact) {
 						compact->o_logic = LOGIC_script;      //force into script mode
 						_eventPendingList[globCnt].delay = 0; //started, so remove from queue
 						compact->o_tree.o_script_level++;
-						compact->o_tree.o_script_id[compact->o_tree.o_script_level] = 
+						compact->o_tree.o_script_id[compact->o_tree.o_script_level] =
 							compact->o_event_list[objCnt].o_event_script;
-						compact->o_tree.o_script_pc[compact->o_tree.o_script_level] = 
+						compact->o_tree.o_script_pc[compact->o_tree.o_script_level] =
 							compact->o_event_list[objCnt].o_event_script;
 				}
 			}
@@ -78,9 +78,9 @@ int EventManager::fnCheckForEvent(Object *cpt, int32 id, int32 pause) {
 						cpt->o_logic = LOGIC_script;      //force into script mode
 						_eventPendingList[globCnt].delay = 0; //started, so remove from queue
 						cpt->o_tree.o_script_level++;
-						cpt->o_tree.o_script_id[cpt->o_tree.o_script_level] = 
+						cpt->o_tree.o_script_id[cpt->o_tree.o_script_level] =
 							cpt->o_event_list[objCnt].o_event_script;
-						cpt->o_tree.o_script_pc[cpt->o_tree.o_script_level] = 
+						cpt->o_tree.o_script_pc[cpt->o_tree.o_script_level] =
 							cpt->o_event_list[objCnt].o_event_script;
 						return SCRIPT_STOP;
 				}

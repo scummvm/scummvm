@@ -977,7 +977,7 @@ int SimonEngine::runScript() {
 
 				const char *string_ptr = (const char *)getStringPtrByID(_stringIdArray3[string_id]);
 				TextLocation *tl = getTextLocation(vgaSpriteId);
-				if (_game & GF_TALKIE) 
+				if (_game & GF_TALKIE)
 					speech_id = _speechIdArray4[string_id];
 
 				if (_speech && speech_id != 0)
@@ -1491,7 +1491,7 @@ void SimonEngine::o_clear_character(FillOrCopyStruct *fcs, int x, byte b) {
 
 	if (_language == 20) { //Hebrew
 		x = 128;
-	} else { 
+	} else {
 		x += 120;
 		if (x != 128)
 			x = 129;
@@ -1522,7 +1522,7 @@ void SimonEngine::o_play_music_resource() {
 		midi.setLoop (loop != 0);
 		if (_lastMusicPlayed != music)
 			_nextMusicToPlay = music;
-		else 
+		else
 			midi.startTrack (track);
 	} else {
 		if (music != _lastMusicPlayed) {

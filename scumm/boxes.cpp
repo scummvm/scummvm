@@ -85,7 +85,7 @@ static Common::Point closestPtOnLine(const Common::Point &start, const Common::P
 
 
 byte ScummEngine::getMaskFromBox(int box) {
-	// Fix for bug #740244 and #755863. This appears to have been a 
+	// Fix for bug #740244 and #755863. This appears to have been a
 	// long standing bug in the original engine?
 	if (_version <= 3 && box == 255)
 		return 1;
@@ -163,7 +163,7 @@ int ScummEngine::getScale(int box, int x, int y) {
 	Box *ptr = getBoxBaseAddr(box);
 	if (!ptr)
 		return 255;
-		
+
 	int slot , scale;
 
 	if (_version == 8) {
@@ -180,9 +180,9 @@ int ScummEngine::getScale(int box, int x, int y) {
 
 	// Was a scale slot specified? If so, we compute the effective scale
 	// from it, ignoring the box scale.
-	if (slot) 
+	if (slot)
     scale = getScaleFromSlot(slot, x, y);
-	
+
 	return scale;
 }
 
@@ -219,7 +219,7 @@ int ScummEngine::getScaleFromSlot(int slot, int x, int y) {
 		scale = 1;
 	else if (scale > 255)
 		scale = 255;
-	
+
 	return scale;
 }
 
@@ -255,36 +255,36 @@ void ScummEngine::convertScaleTableToScaleSlot(int slot) {
 	byte *resptr = getResourceAddress(rtScaleTable, slot);
 	int lowerIdx, upperIdx;
 	float m, oldM;
-	
+
 	// Do nothing if the given scale table doesn't exist
 	if (resptr == 0)
 		return;
-	
+
 	if (resptr[0] == resptr[199]) {
 		// The scale is constant. This usually means we encountered one of the
-		// "broken" cases. We set pseudo scale item values which lead to a 
+		// "broken" cases. We set pseudo scale item values which lead to a
 		// constant scale of 255.
 		setScaleSlot(slot, 0, 0, 255, 0, 199, 255);
 		return;
 	}
-	
+
 	/*
 	 * Essentially, what we are doing here is some kind of "line fitting"
 	 * algorithm. The data in the scale table represents a linear graph. What
 	 * we want to find is the slope and (vertical) offset of this line. Things
 	 * are complicated by the fact that the line is cut of vertically at 1 and
 	 * 255. We have to be careful in handling this and some border cases.
-	 * 
+	 *
 	 * Some typical graphs look like these:
 	 *       ---         ---     ---
-	 *      /         ---           \ 
+	 *      /         ---           \
 	 *  ___/       ---               \___
-	 * 
+	 *
 	 * The method used here is to compute the slope of secants fixed at the
 	 * left and right end. For most cases this detects the cut-over points
-	 * quite accurately. 
+	 * quite accurately.
 	 */
-	
+
 	// Search for the bend on the left side
 	m = (resptr[199] - resptr[0]) / 199.0;
 	for (lowerIdx = 0; lowerIdx < 199 && (resptr[lowerIdx] == 1 || resptr[lowerIdx] == 255); lowerIdx++) {
@@ -298,7 +298,7 @@ void ScummEngine::convertScaleTableToScaleSlot(int slot) {
 				break;
 		}
 	}
-	
+
 	// Search for the bend on the right side
 	m = (resptr[199] - resptr[0]) / 199.0;
 	for (upperIdx = 199; upperIdx > 1 && (resptr[upperIdx] == 1 || resptr[upperIdx] == 255); upperIdx--) {
@@ -322,7 +322,7 @@ void ScummEngine::convertScaleTableToScaleSlot(int slot) {
 
 	// The values of y1 and y2, as well as the scale, can now easily be computed
 	setScaleSlot(slot, 0, lowerIdx, resptr[lowerIdx], 0, upperIdx, resptr[upperIdx]);
-	
+
 	// Compute the variance, for debugging. It shouldn't exceed 1
 	ScaleSlot &s = _scaleSlots[slot-1];
 	int y;
@@ -477,7 +477,7 @@ void ScummEngine::getBoxCoordinates(int boxnum, BoxCoords *box) {
 		box->ul.y = (short)FROM_LE_32(bp->v8.uly);
 		box->ur.x = (short)FROM_LE_32(bp->v8.urx);
 		box->ur.y = (short)FROM_LE_32(bp->v8.ury);
-	
+
 		box->ll.x = (short)FROM_LE_32(bp->v8.llx);
 		box->ll.y = (short)FROM_LE_32(bp->v8.lly);
 		box->lr.x = (short)FROM_LE_32(bp->v8.lrx);
@@ -505,7 +505,7 @@ void ScummEngine::getBoxCoordinates(int boxnum, BoxCoords *box) {
 		box->ul.y = bp->v2.uy * 2;
 		box->ur.x = bp->v2.urx * 8;
 		box->ur.y = bp->v2.uy * 2;
-	
+
 		box->ll.x = bp->v2.llx * 8;
 		box->ll.y = bp->v2.ly * 2;
 		box->lr.x = bp->v2.lrx * 8;
@@ -515,7 +515,7 @@ void ScummEngine::getBoxCoordinates(int boxnum, BoxCoords *box) {
 		box->ul.y = (int16)READ_LE_UINT16(&bp->old.uly);
 		box->ur.x = (int16)READ_LE_UINT16(&bp->old.urx);
 		box->ur.y = (int16)READ_LE_UINT16(&bp->old.ury);
-	
+
 		box->ll.x = (int16)READ_LE_UINT16(&bp->old.llx);
 		box->ll.y = (int16)READ_LE_UINT16(&bp->old.lly);
 		box->lr.x = (int16)READ_LE_UINT16(&bp->old.lrx);
@@ -649,7 +649,7 @@ int ScummEngine::getClosestPtOnBox(int b, int x, int y, int16& outX, int16& outY
 	BoxCoords box;
 
 	getBoxCoordinates(b, &box);
-	
+
 	pt = closestPtOnLine(box.ul, box.ur, x, y);
 	dist = distanceFromPt(x, y, pt.x, pt.y);
 	if (dist < bestdist) {
@@ -704,7 +704,7 @@ int ScummEngine::getPathToDestBox(byte from, byte to) {
 	byte i;
 	const int numOfBoxes = getNumBoxes();
 	int dest = -1;
-	
+
 	if (from == to)
 		return to;
 
@@ -713,7 +713,7 @@ int ScummEngine::getPathToDestBox(byte from, byte to) {
 
 	if (from == Actor::kInvalidBox)
 		return to;
-	
+
 	assert(from < numOfBoxes);
 	assert(to < numOfBoxes);
 
@@ -759,7 +759,7 @@ int ScummEngine::getPathToDestBox(byte from, byte to) {
 			dest = (int8)boxm[2];
 		boxm += 3;
 	}
-	
+
 	if (boxm >= end)
 		warning("The box matrix apparently is truncated (room %d)", _roomResource);
 
@@ -986,7 +986,7 @@ void ScummEngine::createBoxMatrix() {
 				}
 			}
 		}
-	
+
 	}
 
 	// "Compress" the distance matrix into the box matrix format used
@@ -995,12 +995,12 @@ void ScummEngine::createBoxMatrix() {
 	// followed by an arbitrary number of byte triples; the end is marked
 	// again by the lead 0xFF for the next "row". The meaning of the
 	// byte triples is as follows: the first two bytes define a range
-	// of box numbers (e.g. 7-11), while the third byte defines an 
-	// itineray box. Assuming we are in the 5th "row" and encounter 
+	// of box numbers (e.g. 7-11), while the third byte defines an
+	// itineray box. Assuming we are in the 5th "row" and encounter
 	// the triplet 7,11,15: this means to get from box 5 to any of
 	// the boxes 7,8,9,10,11 the shortest way is to go via box 15.
 	// See also getPathToDestBox.
-	
+
 	byte *matrixStart = res.createResource(rtMatrix, 1, BOX_MATRIX_SIZE);
 	const byte *matrixEnd = matrixStart + BOX_MATRIX_SIZE;
 
@@ -1020,7 +1020,7 @@ void ScummEngine::createBoxMatrix() {
 		}
 	}
 	addToMatrix(0xFF);
-	
+
 
 #if BOX_DEBUG
 	printf("Itinerary matrix:\n");
@@ -1183,7 +1183,7 @@ void ScummEngine::getGates(int box1, int box2, Common::Point gateA[2], Common::P
 	Common::Point boxCorner[8];
 	int line1, line2;
 
-	// For all corner coordinates of the first box, compute the point closest 
+	// For all corner coordinates of the first box, compute the point closest
 	// to them on the second box (and also compute the distance of these points).
 	getBoxCoordinates(box1, &coords);
 	boxCorner[0] = coords.ul;

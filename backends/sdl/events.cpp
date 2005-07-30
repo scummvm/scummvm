@@ -66,7 +66,7 @@ static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode)
 void OSystem_SDL::fillMouseEvent(Event &event, int x, int y) {
 	event.mouse.x = x;
 	event.mouse.y = y;
-	
+
 	// Update the "keyboard mouse" coords
 	_km.x = x;
 	_km.y = y;
@@ -157,7 +157,7 @@ void OSystem_SDL::handleKbdMouse() {
 static byte SDLModToOSystemKeyFlags(SDLMod mod) {
 	byte b = 0;
 #ifdef LINUPY
-	// Yopy has no ALT key, steal the SHIFT key 
+	// Yopy has no ALT key, steal the SHIFT key
 	// (which isn't used much anyway)
 	if (mod & KMOD_SHIFT)
 		b |= OSystem::KBD_ALT;
@@ -177,9 +177,9 @@ bool OSystem_SDL::pollEvent(Event &event) {
 	SDL_Event ev;
 	int axis;
 	byte b = 0;
-	
+
 	handleKbdMouse();
-	
+
 	// If the screen mode changed, send an EVENT_SCREEN_CHANGED
 	if (_modeChanged) {
 		_modeChanged = false;
@@ -192,7 +192,7 @@ bool OSystem_SDL::pollEvent(Event &event) {
 		case SDL_KEYDOWN:{
 			b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
 
-			// Alt-Return and Alt-Enter toggle full screen mode				
+			// Alt-Return and Alt-Enter toggle full screen mode
 			if (b == KBD_ALT && (ev.key.keysym.sym == SDLK_RETURN
 			                  || ev.key.keysym.sym == SDLK_KP_ENTER)) {
 				setFullscreenMode(!_fullscreen);
@@ -254,12 +254,12 @@ bool OSystem_SDL::pollEvent(Event &event) {
 
 			// Ctrl-Alt-<key> will change the GFX mode
 			if ((b & (KBD_CTRL|KBD_ALT)) == (KBD_CTRL|KBD_ALT)) {
-				
+
 				handleScalerHotkeys(ev.key);
 				break;
 			}
 			const bool event_complete = remapKey(ev,event);
-			
+
 			if (event_complete)
 				return true;
 
@@ -272,7 +272,7 @@ bool OSystem_SDL::pollEvent(Event &event) {
 		case SDL_KEYUP:
 			{
 			const bool event_complete = remapKey(ev,event);
-			
+
 			if (event_complete)
 				return true;
 
@@ -292,7 +292,7 @@ bool OSystem_SDL::pollEvent(Event &event) {
 		case SDL_MOUSEMOTION:
 			event.type = EVENT_MOUSEMOVE;
 			fillMouseEvent(event, ev.motion.x, ev.motion.y);
-			
+
 			setMousePos(event.mouse.x, event.mouse.y);
 			return true;
 
@@ -350,7 +350,7 @@ bool OSystem_SDL::pollEvent(Event &event) {
 					case JOY_BUT_F5:
 						event.kbd.keycode = SDLK_F5;
 						event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
-						break; 
+						break;
 				}
 			}
 			return true;
@@ -381,7 +381,7 @@ bool OSystem_SDL::pollEvent(Event &event) {
 						event.kbd.keycode = SDLK_F5;
 						event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
 						break;
-				} 
+				}
 			}
 			return true;
 
@@ -396,7 +396,7 @@ bool OSystem_SDL::pollEvent(Event &event) {
 			} else
 				axis = 0;
 
-			if ( ev.jaxis.axis == JOY_XAXIS) { 
+			if ( ev.jaxis.axis == JOY_XAXIS) {
 #ifdef JOY_ANALOG
 				_km.x_vel = axis/2000;
 				_km.x_down_count = 0;
@@ -410,7 +410,7 @@ bool OSystem_SDL::pollEvent(Event &event) {
 				}
 #endif
 
-			} else if (ev.jaxis.axis == JOY_YAXIS) { 
+			} else if (ev.jaxis.axis == JOY_YAXIS) {
 #ifndef JOY_INVERT_Y
 				axis = -axis;
 #endif
@@ -427,7 +427,7 @@ bool OSystem_SDL::pollEvent(Event &event) {
 				}
 #endif
 			}
-			
+
 			fillMouseEvent(event, _km.x, _km.y);
 
 			return true;

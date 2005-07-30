@@ -150,13 +150,13 @@ private:
 	bool _anotherCutaway;
 
 	//! Room before cutaway
-	int _initialRoom; 
+	int _initialRoom;
 
 	//! Temporary room for cutaway
-	int _temporaryRoom; 
+	int _temporaryRoom;
 
-	//! Room to stay in 
-	int _finalRoom; 
+	//! Room to stay in
+	int _finalRoom;
 
 	//! Bank names
 	char _bankNames[MAX_BANK_NAME_COUNT][MAX_FILENAME_SIZE];
@@ -193,10 +193,10 @@ private:
 	Cutaway(const char *filename, QueenEngine *vm);
 	~Cutaway();
 
-	//! Run this cutaway object 
+	//! Run this cutaway object
 	void run(char *nextFilename);
 
-	//! Load cutaway data from file 
+	//! Load cutaway data from file
 	void load(const char *filename);
 
 	//! Used by load to read string data
@@ -219,7 +219,7 @@ private:
 
 	//! Perform actions for a person record
 	void handlePersonRecord(int index, CutawayObject &object, const char *sentence);
-		
+
 	//! Perform text actions
 	void handleText(int index, ObjectType type, CutawayObject &object, const char *sentence);
 

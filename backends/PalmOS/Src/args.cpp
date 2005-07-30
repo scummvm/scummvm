@@ -17,7 +17,7 @@ void ArgsAdd(Char **argvP, const Char *argP, const Char *parmP, UInt8 *countArgP
 		UInt16 len2 = 0;
 		UInt16 len1 = StrLen(argP);
 
-		if (len1 > 0) {	
+		if (len1 > 0) {
 			if (parmP)
 				len2 = StrLen(parmP);
 
@@ -25,7 +25,7 @@ void ArgsAdd(Char **argvP, const Char *argP, const Char *parmP, UInt8 *countArgP
 			newArg = MemHandleNew(len1 + len2 + 1); // +1 = NULL CHAR
 			*argvP = (Char *)MemHandleLock(newArg);
 			StrCopy(*argvP, argP);
-			
+
 			if (parmP)
 				StrCat(*argvP, parmP);
 		}
@@ -44,7 +44,7 @@ void ArgsFree(Char **argvP) {
 			MemHandleUnlock(oldH);
 			MemHandleFree(oldH);
 		}
-	
+
 	oldH = MemPtrRecoverHandle(argvP);
 	MemHandleUnlock(oldH);
 	MemHandleFree(oldH);

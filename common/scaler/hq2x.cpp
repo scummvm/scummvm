@@ -56,16 +56,16 @@ static bool isAltiVecAvailable() {
 }
 #else
 
-#include <sys/sysctl.h> 
+#include <sys/sysctl.h>
 
 static bool isAltiVecAvailable()  {
-	int selectors[2] = { CTL_HW, HW_VECTORUNIT }; 
-	int hasVectorUnit = 0; 
-	size_t length = sizeof(hasVectorUnit); 
-	int error = sysctl(selectors, 2, &hasVectorUnit, &length, NULL, 0); 
+	int selectors[2] = { CTL_HW, HW_VECTORUNIT };
+	int hasVectorUnit = 0;
+	size_t length = sizeof(hasVectorUnit);
+	int error = sysctl(selectors, 2, &hasVectorUnit, &length, NULL, 0);
 	if ( 0 == error )
-		return hasVectorUnit != 0; 
-	return false; 
+		return hasVectorUnit != 0;
+	return false;
 }
 #endif
 #endif
@@ -140,7 +140,7 @@ void HQ2x_555(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 
 #ifdef HAS_ALTIVEC
 	#define USE_ALTIVEC	1
-	
+
 	#define bitFormat 565
 	void HQ2x_565_Altivec(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 		#include "common/scaler/hq2x.h"

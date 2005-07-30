@@ -378,7 +378,7 @@ void SimonEngine::vc7_skip_if_sib_with_a() {
 		vc_skip_next_instruction();
 }
 
-void SimonEngine::vc8_skip_if_parent_is() {		
+void SimonEngine::vc8_skip_if_parent_is() {
 	uint a = vc_read_next_word();
 	uint b = vc_read_next_word();
 	if (!itemIsParentOf(a, b))
@@ -1101,7 +1101,7 @@ void SimonEngine::vc19_chain_to_script() {
 /* helper routines */
 
 void SimonEngine::vc20_set_code_word() {
-	/* FIXME: This opcode is somewhat strange: it first reads a BE word from 
+	/* FIXME: This opcode is somewhat strange: it first reads a BE word from
 	 * the script (advancing the script pointer in doing so); then it writes
 	 * back the same word, this time as LE, into the script.
 	 */
@@ -1695,7 +1695,7 @@ void SimonEngine::vc62_fadeOut() {
 					byte *old_file_1 = _curVgaFile1;
 					byte *old_file_2 = _curVgaFile2;
 					uint palmode = _videoPaletteMode;
-	
+
 					vpe = &_vgaBufferPointers[vsp->fileId];
 					_curVgaFile1 = vpe->vgaFile1;
 					_curVgaFile2 = vpe->vgaFile2;

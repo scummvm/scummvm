@@ -28,7 +28,7 @@
 
 namespace Queen {
 
-Credits::Credits(QueenEngine *vm, const char* filename) : 
+Credits::Credits(QueenEngine *vm, const char* filename) :
 	_vm(vm), _running(true), _count(0), _pause(0), _justify(0), _fontSize(0), _color(0), _zone(0) {
 	uint32 size;
 	char *buf = (char *)_vm->resource()->loadFile(filename, 0, &size);
@@ -72,7 +72,7 @@ void Credits::update() {
 		if ('.' == line[0]) {
 			int i;
 
-			switch (tolower(line[1])) {	
+			switch (tolower(line[1])) {
 			case 'l' :
 				_justify = 0;
 				break;
@@ -99,7 +99,7 @@ void Credits::update() {
 					_vm->display()->setText(_list[i].x, _list[i].y, _list[i].text);
 				}
 				_count = 0;
-				return;					
+				return;
 			case 'i' :
 				_color = atoi(&line[3]);
 				break;

@@ -28,7 +28,7 @@
 #include "base/gameDetector.h"
 #include "gui/Key.h"
 namespace GUI {
-	
+
 #define MAX_ACTIONS 20
 
 typedef int ActionType;
@@ -65,7 +65,7 @@ public:
 
 	virtual ~Actions();
 
-    // Game detector 
+    // Game detector
     GameDetector& gameDetector();
 protected:
 	Actions(GameDetector &detector);

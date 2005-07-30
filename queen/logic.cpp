@@ -45,20 +45,20 @@ namespace Queen {
 
 static Common::String trim(const Common::String &s) {
 	const char *p;
-	
+
 	p = s.c_str();
 	while (*p == ' ') ++p;
 	int start = p - s.c_str();
-	
+
 	p = s.c_str() + s.size() - 1;
 	while (p != s.c_str() && *p == ' ') --p;
 	int end = p - s.c_str();
-	
+
 	return Common::String(s.c_str() + start, end - start + 1);
 }
 
 Logic::Logic(QueenEngine *vm)
-	: _credits(NULL), _objectData(NULL), _roomData(NULL), _sfxName(NULL), 
+	: _credits(NULL), _objectData(NULL), _roomData(NULL), _sfxName(NULL),
 	_itemData(NULL), _graphicData(NULL), _walkOffData(NULL), _objectDescription(NULL),
 	_furnitureData(NULL), _actorData(NULL), _graphicAnim(NULL), _vm(vm) {
 	_joe.x = _joe.y = 0;
@@ -87,7 +87,7 @@ Logic::~Logic() {
 	delete[] _graphicAnim;
 }
 
-void Logic::initialise() {	
+void Logic::initialise() {
 	int16 i;
 
 	uint8 *jas = _vm->resource()->loadFile("QUEEN.JAS", 20);
@@ -118,7 +118,7 @@ void Logic::initialise() {
 		_sfxName[0] = 0;
 		for (i = 1; i <= _numRooms; i++) {
 			_sfxName[i] = READ_BE_UINT16(ptr); ptr += 2;
-		}	
+		}
 	}
 
 	_numItems = READ_BE_UINT16(ptr); ptr += 2;
@@ -198,7 +198,7 @@ void Logic::initialise() {
 	uint32 size;
 	char *buf = (char *)_vm->resource()->loadFile("QUEEN2.JAS", 0, &size);
 	LineReader queen2jas(buf, size);
-	
+
 	_objDescription.push_back("");
 	for (i = 1; i <= _numDescriptions; i++) {
 		_objDescription.push_back(queen2jas.nextLine());
@@ -208,7 +208,7 @@ void Logic::initialise() {
 	if (_vm->resource()->getLanguage() == GERMAN) {
 		_objDescription[296] = "Es bringt nicht viel, das festzubinden.";
 	}
-	
+
 	_objName.push_back("");
 	for (i = 1; i <= _numNames; i++) {
 		_objName.push_back(queen2jas.nextLine());
@@ -228,7 +228,7 @@ void Logic::initialise() {
 	for (i = 1; i <= JOE_RESPONSE_MAX; i++) {
 		_joeResponse.push_back(queen2jas.nextLine());
 	}
-	
+
 	// FIXME - the spanish version adds some space characters (0x20) at the
 	// beginning and the end of the journal button captions. As we don't need
 	// that 'trick' to center horizontally the texts, we simply trim them.
@@ -247,7 +247,7 @@ void Logic::initialise() {
 	for (i = 1; i <= _numAName; i++) {
 		_aName.push_back(queen2jas.nextLine());
 	}
-	
+
 	_aFile.push_back("");
 	for (i = 1; i <= _numAFile; i++) {
 		_aFile.push_back(queen2jas.nextLine());
@@ -272,7 +272,7 @@ ObjectData* Logic::objectData(int index) const {
 	return &_objectData[index];
 }
 
-uint16 Logic::findBob(uint16 obj) const {	
+uint16 Logic::findBob(uint16 obj) const {
 	assert(obj <= _numObjects);
 
 	uint16 room = _objectData[obj].room;
@@ -317,7 +317,7 @@ uint16 Logic::findBob(uint16 obj) const {
 					}
 
 					assert (img <= _numGraphics);
-					
+
 					if (_graphicData[img].lastFrame != 0) {
 						++idxAnimated;
 					} else {
@@ -450,7 +450,7 @@ void Logic::gameState(int index, int16 newValue) {
 	_gameState[index] = newValue;
 }
 
-const char *Logic::roomName(uint16 roomNum) const { 
+const char *Logic::roomName(uint16 roomNum) const {
 	assert(roomNum >= 1 && roomNum <= _numRooms);
 	return _roomName[roomNum].c_str();
 }
@@ -469,7 +469,7 @@ const char *Logic::joeResponse(int i) const {
 	assert(i >= 1 && i <= JOE_RESPONSE_MAX);
 	return _joeResponse[i].c_str();
 }
-	
+
 const char *Logic::verbName(Verb v) const {
 	assert(v >= 0 && v <= 12);
 	return _verbName[v].c_str();
@@ -591,11 +591,11 @@ bool Logic::initPerson(uint16 noun, const char *actorName, bool loadBank, Person
 		}
 		if (loadBank && pad->file != 0) {
 			_vm->bankMan()->load(_aFile[pad->file].c_str(), pad->bankNum);
-			// if there is no valid actor file (ie pad->file is 0), the person 
+			// if there is no valid actor file (ie pad->file is 0), the person
 			// data is already loaded as it is included in objects room bank (.bbk)
 		}
 		pp->bobFrame = 31 + pp->actor->bobNum;
-	} 
+	}
 	return pad != NULL;
 }
 
@@ -639,7 +639,7 @@ void Logic::setupJoeInRoom(bool autoPosition, uint16 scale) {
 		joePos(0, 0);
 	} else {
 		const ObjectData *pod = objectData(_entryObj);
-		// find the walk off point for the entry object and make 
+		// find the walk off point for the entry object and make
 		// Joe walking to that point
 		const WalkOffData *pwo = walkOffPointForObject(_entryObj);
 		if (pwo != NULL) {
@@ -731,7 +731,7 @@ uint16 Logic::joeFace() {
 				_vm->update();
 			}
 			frame = 37;
-		} else if ((joeFacing() == DIR_LEFT && joePrevFacing() == DIR_RIGHT) 
+		} else if ((joeFacing() == DIR_LEFT && joePrevFacing() == DIR_RIGHT)
 			||  (joeFacing() == DIR_RIGHT && joePrevFacing() == DIR_LEFT)) {
 			pbs->frameNum = 36;
 			_vm->update();
@@ -761,7 +761,7 @@ uint16 Logic::joeFace() {
 void Logic::joeGrab(int16 grabState) {
 	uint16 frame = 0;
 	BobSlot *bobJoe = _vm->graphics()->bob(0);
-	
+
 	switch (grabState) {
 	case STATE_GRAB_NONE:
 		break;
@@ -919,14 +919,14 @@ void Logic::inventoryRefresh() {
 	for (int i = 0; i < 4; ++i) {
 		uint16 itemNum = _inventoryItem[i];
 		if (itemNum != 0) {
-			// 1st object in inventory uses frame 9, 
+			// 1st object in inventory uses frame 9,
 			// whereas 2nd, 3rd and 4th uses frame 8
 			uint16 dstFrame = (itemNum != 0) ? 8 : 9;
 			// unpack frame for object and draw it
 			_vm->bankMan()->unpack(_itemData[itemNum].frame, dstFrame, 14);
 			_vm->graphics()->drawInventoryItem(dstFrame, x, 14);
 		} else {
-			// no object, clear the panel 
+			// no object, clear the panel
 			_vm->graphics()->drawInventoryItem(0, x, 14);
 		}
 		x += 35;
@@ -974,7 +974,7 @@ uint16 Logic::numItemsInventory() const {
 }
 
 void Logic::inventoryInsertItem(uint16 itemNum, bool refresh) {
-	int16 item = _inventoryItem[0] = (int16)itemNum; 
+	int16 item = _inventoryItem[0] = (int16)itemNum;
 	_itemData[itemNum].name = ABS(_itemData[itemNum].name);	//set visible
 	for (int i = 1; i < 4; i++) {
 		item = nextInventoryItem(item);
@@ -1010,10 +1010,10 @@ void Logic::inventoryScroll(uint16 count, bool up) {
 		} else {
 			for (int i = 0; i < 3; i++)
 				_inventoryItem[i] = _inventoryItem[i + 1];
-			_inventoryItem[3] = nextInventoryItem(_inventoryItem[3]);		
+			_inventoryItem[3] = nextInventoryItem(_inventoryItem[3]);
 		}
 	}
-	
+
 	inventoryRefresh();
 }
 
@@ -1031,12 +1031,12 @@ void Logic::removeHotelItemsFromInventory() {
 }
 
 void Logic::objectCopy(int dummyObjectIndex, int realObjectIndex) {
-	// copy data from dummy object to real object, if COPY_FROM object 
+	// copy data from dummy object to real object, if COPY_FROM object
 	// images are greater than COPY_TO Object images then swap the objects around.
 
 	ObjectData *dummyObject = objectData(dummyObjectIndex);
 	ObjectData *realObject  = objectData(realObjectIndex);
-	
+
 	int fromState = (dummyObject->name < 0) ? -1 : 0;
 
 	int frameCountReal  = 1;
@@ -1049,7 +1049,7 @@ void Logic::objectCopy(int dummyObjectIndex, int realObjectIndex) {
 
 		GraphicData *data = graphicData(graphic);
 
-		if (data->lastFrame > 0) 
+		if (data->lastFrame > 0)
 			frameCountReal = data->lastFrame - data->firstFrame + 1;
 
 		graphic = dummyObject->image;
@@ -1059,7 +1059,7 @@ void Logic::objectCopy(int dummyObjectIndex, int realObjectIndex) {
 
 			data = graphicData(graphic);
 
-			if (data->lastFrame > 0) 
+			if (data->lastFrame > 0)
 				frameCountDummy = data->lastFrame - data->firstFrame + 1;
 		}
 	}
@@ -1159,7 +1159,7 @@ void Logic::handleSpecialArea(Direction facing, uint16 areaNum, uint16 walkDataN
 		break;
 	case ROOM_HOTEL_LOBBY:
 		if (_gameState[VAR_ESCAPE_FROM_HOTEL_COUNT] == 0) {
-			playCutaway("c73a.CUT"); 
+			playCutaway("c73a.CUT");
 			_gameState[VAR_ESCAPE_FROM_HOTEL_COUNT] = 1;
 			joeUseUnderwear();
 			joeFace();
@@ -1192,7 +1192,7 @@ void Logic::handleSpecialArea(Direction facing, uint16 areaNum, uint16 walkDataN
 		break;
 	}
 
-	while (strlen(nextCut) > 4 && 
+	while (strlen(nextCut) > 4 &&
 		scumm_stricmp(nextCut + strlen(nextCut) - 4, ".cut") == 0) {
 		playCutaway(nextCut, nextCut);
 	}
@@ -1261,15 +1261,15 @@ void Logic::handlePinnacleRoom() {
 	// piton -> embark : 0x218 (obj1=0x2c, song=7)
 	// piton -> jungle : 0x20B (obj1=0x2b, song=3)
 	// piton -> amazon : 0x21A (obj1=0x30, song=3)
-	// 
+	//
 	// Because none of these update objects/areas/gamestate, the EXECUTE_ACTION()
-	// call, as the original does, is useless. All we have to do is the playsong 
-	// call (all songs have the PLAY_BEFORE type). This way we could get rid of 
+	// call, as the original does, is useless. All we have to do is the playsong
+	// call (all songs have the PLAY_BEFORE type). This way we could get rid of
 	// the hack described in execute.c l.334-339.
-	struct { 
+	struct {
 		uint16 obj;
 		int16 song;
-	} cmds[] = { 
+	} cmds[] = {
 		{ 0x2A,  3 },
 		{ 0x29, 16 },
 		{ 0x2F,  6 },
@@ -1315,17 +1315,17 @@ void Logic::saveState(byte *&ptr) {
 
 	for (i = 1; i <= _numObjects; i++)
 		_objectData[i].writeToBE(ptr);
-		
+
 	for (i = 1; i <= _numItems; i++)
 		_itemData[i].writeToBE(ptr);
-		
+
 	for (i = 0; i < GAME_STATE_COUNT; i++) {
 		WRITE_BE_UINT16(ptr, _gameState[i]); ptr += 2;
 	}
-				
+
 	for (i = 0; i < TALK_SELECTED_COUNT; i++)
 		_talkSelected[i].writeToBE(ptr);
-	
+
 	for (i = 1; i <= _numWalkOffs; i++)
 		_walkOffData[i].writeToBE(ptr);
 
@@ -1333,7 +1333,7 @@ void Logic::saveState(byte *&ptr) {
 
 	// V1
 	WRITE_BE_UINT16(ptr, _puzzleAttemptCount); ptr += 2;
-	for (i = 1; i <= _numObjDesc; i++) 
+	for (i = 1; i <= _numObjDesc; i++)
 		_objectDescription[i].writeToBE(ptr);
 }
 
@@ -1360,7 +1360,7 @@ void Logic::loadState(uint32 ver, byte *&ptr) {
 
 	for (i = 0; i < TALK_SELECTED_COUNT; i++)
 		_talkSelected[i].readFromBE(ptr);
-		
+
 	for (i = 1; i <= _numWalkOffs; i++)
 		_walkOffData[i].readFromBE(ptr);
 
@@ -1369,7 +1369,7 @@ void Logic::loadState(uint32 ver, byte *&ptr) {
 	if (ver >= 1) {
 		_puzzleAttemptCount = READ_BE_UINT16(ptr); ptr += 2;
 
-		for (i = 1; i <= _numObjDesc; i++) 
+		for (i = 1; i <= _numObjDesc; i++)
 			_objectDescription[i].readFromBE(ptr);
 	}
 }
@@ -1378,7 +1378,7 @@ void Logic::setupRestoredGame() {
 	_vm->sound()->playLastSong();
 
 	switch (gameState(VAR_DRESSING_MODE)) {
-	case 0: 
+	case 0:
 		_vm->display()->palSetJoeNormal();
 		loadJoeBanks("Joe_A.BBK", "Joe_B.BBK");
 		break;
@@ -1409,7 +1409,7 @@ void Logic::setupRestoredGame() {
 		pbs->frameNum = 35;
 		_vm->bankMan()->unpack(1, 31, 7);
 		break;
-	}	
+	}
 
 	_oldRoom = 0;
 	_newRoom = _currentRoom;
@@ -1448,7 +1448,7 @@ void Logic::sceneStop() {
 }
 
 void Logic::changeRoom() {
-	if (!preChangeRoom()) 
+	if (!preChangeRoom())
 		displayRoom(currentRoom(), RDM_FADE_JOE, 100, 1, false);
 	_vm->display()->showMouseCursor(true);
 }
@@ -1496,7 +1496,7 @@ void Logic::asmStartFightAnimation() {
 	gameState(148, 1);
 }
 
-void Logic::asmWaitForFrankPosition() {	
+void Logic::asmWaitForFrankPosition() {
 	_vm->bam()->_flag = BamScene::F_REQ_STOP;
 	while (_vm->bam()->_flag != BamScene::F_STOP) {
 		_vm->update();
@@ -1526,7 +1526,7 @@ void Logic::asmMakeFrankGrowing() {
 	gameState(157, 1); // No more Ironstein
 }
 
-void Logic::asmMakeRobotGrowing() { 	
+void Logic::asmMakeRobotGrowing() {
 	_vm->bankMan()->unpack(1, 38, 15);
 	BobSlot *bobRobot = _vm->graphics()->bob(5);
 	bobRobot->frameNum = 38;
@@ -1540,7 +1540,7 @@ void Logic::asmMakeRobotGrowing() {
 	for (i = 0; i <= 20; ++i) {
 		_vm->update();
 	}
-	
+
 	objectData(524)->name = -ABS(objectData(524)->name); // Azura object off
 	objectData(526)->name = -ABS(objectData(526)->name); // Frank object off
 }
@@ -1713,7 +1713,7 @@ void Logic::asmSmooch() {
 void Logic::asmMakeLightningHitPlane() {
 	_vm->graphics()->putCameraOnBob(-1);
 	short iy = 0, x, ydir = -1, j, k;
-				
+
 	BobSlot *planeBob     = _vm->graphics()->bob(5);
 	BobSlot *lightningBob = _vm->graphics()->bob(20);
 
@@ -1760,7 +1760,7 @@ void Logic::asmMakeLightningHitPlane() {
 	fireBob->animating = true;
 	fireBob->x = planeBob->x;
 	fireBob->y = planeBob->y + 10;
-				
+
 	_vm->bankMan()->unpack(19, fireBob->frameNum, 15);
 	_vm->update();
 
@@ -1781,7 +1781,7 @@ void Logic::asmMakeLightningHitPlane() {
 			if (j == 4)
 				j = 1;
 		}
-					
+
 		_vm->update();
 	}
 
@@ -1875,8 +1875,8 @@ void Logic::asmPanRightToHugh() {
 	_vm->update();
 
 	// Adjust thug1 gun so it matches rest of body
-	bob_thugA1->x += 160 - 45; 
-	bob_thugA2->x += 160; 
+	bob_thugA1->x += 160 - 45;
+	bob_thugA2->x += 160;
 	bob_thugA3->x += 160;
 
 	bob_hugh1->x += 160 * 2;
@@ -1884,7 +1884,7 @@ void Logic::asmPanRightToHugh() {
 	bob_hugh3->x += 160 * 2;
 
 	bob_thugB1->x += 160 * 3;
-	bob_thugB2->x += 160 * 3; 
+	bob_thugB2->x += 160 * 3;
 
 	int horizontalScroll = 0;
 	while (horizontalScroll < 160 && !_vm->input()->cutawayQuit()) {
@@ -1895,8 +1895,8 @@ void Logic::asmPanRightToHugh() {
 
 		_vm->display()->horizontalScroll(horizontalScroll);
 
-		bob_thugA1->x -= 16; 
-		bob_thugA2->x -= 16; 
+		bob_thugA1->x -= 16;
+		bob_thugA2->x -= 16;
 		bob_thugA3->x -= 16;
 
 		bob_hugh1->x -= 24;
@@ -1925,7 +1925,7 @@ void Logic::asmPanRightToJoeAndRita() { // cdint.cut
 
 	_vm->graphics()->putCameraOnBob(-1);
 	_vm->input()->fastMode(true);
-					
+
 	_vm->update();
 
 	bob_box  ->x += 280 * 2;
@@ -1959,7 +1959,7 @@ void Logic::asmPanLeftToBomb() {
 
 	_vm->graphics()->putCameraOnBob(-1);
 	_vm->input()->fastMode(true);
-				
+
 	int horizontalScroll = _vm->display()->horizontalScroll();
 
 	while ((horizontalScroll > 0 || bob21->x < 136) && !_vm->input()->cutawayQuit()) {

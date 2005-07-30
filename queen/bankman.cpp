@@ -26,7 +26,7 @@
 
 namespace Queen {
 
-BankManager::BankManager(Resource *res) 
+BankManager::BankManager(Resource *res)
 	: _res(res) {
 	memset(_frames, 0, sizeof(_frames));
 	memset(_banks, 0, sizeof(_banks));
@@ -54,7 +54,7 @@ void BankManager::load(const char *bankname, uint32 bankslot) {
 
 	uint16 entries = READ_LE_UINT16(_banks[bankslot].data);
 	assert(entries < MAX_BANK_SIZE);
-	debug(9, "BankManager::load() entries = %d", entries); 
+	debug(9, "BankManager::load() entries = %d", entries);
 
 	uint32 offset = 2;
 	const uint8 *p = _banks[bankslot].data;
@@ -63,7 +63,7 @@ void BankManager::load(const char *bankname, uint32 bankslot) {
 		uint16 w = READ_LE_UINT16(p + offset + 0);
 		uint16 h = READ_LE_UINT16(p + offset + 2);
 		// jump to next entry, skipping data & header
-		offset += w * h + 8; 
+		offset += w * h + 8;
 	}
 
 	// mark this bank as loaded
@@ -74,7 +74,7 @@ void BankManager::unpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	debug(9, "BankManager::unpack(%d, %d, %d)", srcframe, dstframe, bankslot);
 	assert(bankslot < MAX_BANKS_NUMBER);
 	assert(_banks[bankslot].data != NULL);
-		
+
 	BobFrame *pbf = &_frames[dstframe];
 	const uint8 *p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
 	pbf->width    = READ_LE_UINT16(p + 0);

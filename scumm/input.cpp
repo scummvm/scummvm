@@ -183,12 +183,12 @@ void ScummEngine::parseEvents() {
 		case OSystem::EVENT_RBUTTONUP:
 			_rightBtnPressed &= ~msDown;
 			break;
-		
+
 		// The following two cases enable dialog choices to be
 		// scrolled through in the SegaCD version of MI
 		// as nothing else uses the wheel don't bother
 		// checking the gameid
-			
+
 		case OSystem::EVENT_WHEELDOWN:
 			_keyPressed = 55;
 			break;
@@ -196,14 +196,14 @@ void ScummEngine::parseEvents() {
 		case OSystem::EVENT_WHEELUP:
 			_keyPressed = 54;
 			break;
-	
+
 		case OSystem::EVENT_QUIT:
 			if (_confirmExit)
 				confirmExitDialog();
 			else
 				_quit = true;
 			break;
-	
+
 		default:
 			break;
 		}
@@ -238,8 +238,8 @@ void ScummEngine::processKbd(bool smushMode) {
 		// Convert F-Keys for V1/V2 games (they start at 1 instead of at 315)
 		_lastKeyHit -= 314;
 	}
-	
-	
+
+
 	//
 	// Clip the mouse coordinates, and compute _virtualMouse.x (and clip it, too)
 	//
@@ -348,9 +348,9 @@ void ScummEngine::processKbd(bool smushMode) {
 		else
 		if (vm.cutScenePtr[vm.cutSceneStackPointer])
 			_lastKeyHit = (uint)VAR(VAR_CUTSCENEEXIT_KEY);
-		else 
-		// Skip talk 
-		if (VAR_TALKSTOP_KEY != 0xFF && _talkDelay > 0) 
+		else
+		// Skip talk
+		if (VAR_TALKSTOP_KEY != 0xFF && _talkDelay > 0)
 			_lastKeyHit = (uint)VAR(VAR_TALKSTOP_KEY);
 		else
 		// Escape

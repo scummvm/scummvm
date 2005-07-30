@@ -203,7 +203,7 @@ void Screen::updateScreen(void) {
 		if (diffY) {
 			diffY = SCRNGRID_Y - diffY;
 			uint16 cpWidth = 0;
-			for (uint16 cntx = 0; cntx < gridW; cntx++) 
+			for (uint16 cntx = 0; cntx < gridW; cntx++)
 				if (gridPos[cntx]) {
 					gridPos[cntx] >>= 1;
 					cpWidth++;
@@ -397,7 +397,7 @@ void Screen::processImage(uint32 id) {
 		frameHead = _textMan->giveSpriteData((uint8)compact->o_target);
 	else
 		frameHead = _resMan->fetchFrame(_resMan->openFetchRes(compact->o_resource), compact->o_frame);
-	
+
 	uint8 *sprData = ((uint8*)frameHead) + sizeof(FrameHeader);
 
 	uint16 spriteX = compact->o_anim_x;
@@ -496,7 +496,7 @@ void Screen::verticalMask(uint16 x, uint16 y, uint16 bWidth, uint16 bHeight) {
 					if (*grid) {
 						uint8 *blkData = _layerBlocks[level + 1] + (READ_LE_UINT16(grid) - 1) * 128;
 						blitBlockClear(x + blkx, y + blky, blkData);
-					} else 
+					} else
 						break;
 					grid -= lGridSizeX;
 				}
@@ -821,7 +821,7 @@ void Screen::spriteClipAndSet(uint16 *pSprX, uint16 *pSprY, uint16 *pSprWidth, u
 	int16 sprY = *pSprY - SCREEN_TOP_EDGE;
 	int16 sprW = *pSprWidth;
 	int16 sprH = *pSprHeight;
-	
+
 	if (sprY < 0) {
 		*incr = (uint16)((-sprY) * sprW);
 		sprH += sprY;
@@ -833,7 +833,7 @@ void Screen::spriteClipAndSet(uint16 *pSprX, uint16 *pSprY, uint16 *pSprWidth, u
 		sprW += sprX;
 		sprX = 0;
 	}
-	
+
 	if (sprY + sprH > _scrnSizeY)
 		sprH = _scrnSizeY - sprY;
 	if (sprX + sprW > _scrnSizeX)

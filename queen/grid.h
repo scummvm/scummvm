@@ -46,51 +46,51 @@ public:
 
 	//! defines a new zone
 	void setZone(GridScreen screen, uint16 zoneNum, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-	
+
 	//! defines a new zone
 	void setZone(GridScreen screen, uint16 zoneNum, const Box &box);
-	
+
 	//! find the zone number containing the specified point
 	uint16 findZoneForPos(GridScreen screen, uint16 x, uint16 y) const;
-	
+
 	//! find the area number containing the specified point
 	uint16 findAreaForPos(GridScreen screen, uint16 x, uint16 y) const;
-	
+
 	//! clear the zones for current room
 	void clear(GridScreen screen);
-	
+
 	//! setup objects zones for the specified room
 	void setupNewRoom(uint16 room, uint16 firstRoomObjNum);
-	
+
 	//! setup panel zones
 	void setupPanel();
-	
+
 	//! draw the zones for current room (debug only)
 	void drawZones();
-	
+
 	//! retuns a reference to the specified zone
 	const Box *zone(GridScreen screen, uint16 index) const;
 
 	//! get the verb for the specified cursor position
 	Verb findVerbUnderCursor(int16 cursorx, int16 cursory) const;
-	
+
 	//! get the object for the specified cursor position
 	uint16 findObjectUnderCursor(int16 cursorx, int16 cursory) const;
-	
+
 	//! get the object for the specified zone number
 	uint16 findObjectNumber(uint16 zoneNum) const;
-	
+
 	//! get scale for the specified position
 	uint16 findScale(uint16 x, uint16 y) const;
 
 	//! returns a reference to the specfied room area
 	Area *area(int room, int num) const { return &_area[room][num]; }
-	
+
 	//! returns the number of areas in this room
 	uint16 areaMax(int room) const { return _areaMax[room]; }
-	
+
 	//! returns the number of objects in this room
-	uint16 objMax(int room) const { return _objMax[room]; } 
+	uint16 objMax(int room) const { return _objMax[room]; }
 
 	void saveState(byte *&ptr);
 	void loadState(uint32 ver, byte *&ptr);
@@ -110,7 +110,7 @@ private:
 
 	//! current room zones
 	ZoneSlot _zones[GS_COUNT][MAX_ZONES_NUMBER];
-	
+
 	//! number of objects for each room
 	int16 *_objMax;
 

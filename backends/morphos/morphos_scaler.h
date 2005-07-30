@@ -59,7 +59,7 @@ class MorphOSScaler
 		uint32 dest_pitch;
 		uint32 dest_pixfmt;
 		APTR handle;
-		
+
 		uint32 colorMask;
 		uint32 lowPixelMask;
 		uint32 qcolorMask;

@@ -34,7 +34,7 @@
 #include "queen/sound.h"
 
 namespace Queen {
-	
+
 Journal::Journal(QueenEngine *vm)
 	: _vm(vm) {
 	_currentSavePage = 0;
@@ -45,14 +45,14 @@ void Journal::use() {
 	BobSlot *joe = _vm->graphics()->bob(0);
 	_prevJoeX = joe->x;
 	_prevJoeY = joe->y;
-	
+
 	_panelMode = PM_NORMAL;
 	_system = &OSystem::instance();
 
 	_panelTextCount = 0;
 	memset(_panelTextY, 0, sizeof(_panelTextY));
 	memset(&_textField, 0, sizeof(_textField));
-	
+
 	memset(_saveDescriptions, 0, sizeof(_saveDescriptions));
 	_vm->findGameStateDescriptions(_saveDescriptions);
 
@@ -100,7 +100,7 @@ void Journal::use() {
 void Journal::continueGame() {
 	_vm->display()->fullscreen(false);
 	_vm->display()->forceFullRefresh();
-	
+
 	_vm->logic()->joePos(_prevJoeX, _prevJoeY);
 	_vm->logic()->joeCutFacing(_vm->logic()->joeFacing());
 
@@ -153,7 +153,7 @@ void Journal::redraw() {
 void Journal::update() {
 	_vm->graphics()->sortBobs();
 	_vm->display()->prepareUpdate();
-	_vm->graphics()->drawBobs();	
+	_vm->graphics()->drawBobs();
 	if (_textField.enabled) {
 		int16 x = _textField.x + _textField.posCursor;
 		int16 y = _textField.y + _currentSaveSlot * _textField.h + 8;
@@ -215,7 +215,7 @@ void Journal::exitInfoPanelMode() {
 	_vm->display()->clearTexts(0, GAME_SCREEN_HEIGHT - 1);
 	hideBob(BOB_INFO_BOX);
 	redraw();
-	_panelMode = PM_NORMAL;	
+	_panelMode = PM_NORMAL;
 }
 
 void Journal::handleKeyDown(uint16 ascii, int keycode) {
@@ -287,7 +287,7 @@ void Journal::handleMouseDown(int x, int y) {
 				_quitMode = QM_CONTINUE;
 				_vm->quitGame();
 				break;
-			}		
+			}
 		} else if (zoneNum == ZN_NO) {
 			exitYesNoPanelMode();
 		}
@@ -374,7 +374,7 @@ void Journal::handleMouseDown(int x, int y) {
 }
 
 void Journal::drawPanelText(int y, const char *text) {
-	debug(7, "Journal::drawPanelText(%d, '%s')", y, text);	
+	debug(7, "Journal::drawPanelText(%d, '%s')", y, text);
 	char s[80];
 	strcpy(s, text);
 	char *p = strchr(s, ' ');
@@ -407,7 +407,7 @@ void Journal::drawSlideBar(int value, int maxValue, int bobNum, int16 y, int fra
 	showBob(bobNum, 136 + value * (266 - 136) / maxValue, y, frameNum);
 }
 
-void Journal::drawPanel(const int *frames, const int *titles, int n) { 
+void Journal::drawPanel(const int *frames, const int *titles, int n) {
 	for (int i = 0; i < _panelTextCount; ++i) {
 		_vm->display()->clearTexts(_panelTextY[i], _panelTextY[i]);
 	}
@@ -446,7 +446,7 @@ void Journal::drawConfigPanel() {
 
 	drawSlideBar(_vm->talkSpeed(), QueenEngine::MAX_TEXT_SPEED, BOB_TALK_SPEED, 164, FRAME_BLUE_PIN);
 	drawSlideBar(_vm->music()->volume(), QueenEngine::MAX_MUSIC_VOLUME, BOB_MUSIC_VOLUME, 177, FRAME_GREEN_PIN);
-	
+
 	drawCheckBox(_vm->sound()->sfxOn(), BOB_SFX_TOGGLE, 221, 155, FRAME_CHECK_BOX);
 	drawCheckBox(_vm->sound()->speechOn(), BOB_SPEECH_TOGGLE, 158, 155, FRAME_CHECK_BOX);
 	drawCheckBox(_vm->subtitles(), BOB_TEXT_TOGGLE, 125, 167, FRAME_CHECK_BOX);
@@ -527,8 +527,8 @@ void Journal::updateTextField(uint16 ascii, int keycode) {
 		}
 		break;
 	default:
-		if (isprint((char)ascii) && 
-			_textField.textCharsCount < (sizeof(_textField.text) - 1) && 
+		if (isprint((char)ascii) &&
+			_textField.textCharsCount < (sizeof(_textField.text) - 1) &&
 			_vm->display()->textWidth(_textField.text) < _textField.w) {
 			_textField.text[_textField.textCharsCount] = (char)ascii;
 			++_textField.textCharsCount;

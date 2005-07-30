@@ -65,11 +65,11 @@ class Sprite {
 public:
 	SpriteList _mainSprites;
 
-	
+
 
 	Sprite(SagaEngine *vm);
 	~Sprite(void);
-	
+
 	// draw scaled sprite using background scene mask
 	void drawOccluded(Surface *ds, const Rect &clipRect, SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, int depth);
 
@@ -88,7 +88,7 @@ public:
 private:
 	void decodeRLEBuffer(const byte *inputBuffer, size_t inLength, size_t outLength);
 	void scaleBuffer(const byte *src, int width, int height, int scale);
-	
+
 	SagaEngine *_vm;
 	ResourceContext *_spriteContext;
 	byte *_decodeBuf;

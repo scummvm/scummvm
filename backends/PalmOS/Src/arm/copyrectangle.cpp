@@ -23,6 +23,6 @@ UInt32 OSystem_CopyRectToScreen(void *userData68KP) {
 			buf += pitch;
 		} while (--h);
 	}
-	
+
 	return 0;
 }

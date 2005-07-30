@@ -78,14 +78,14 @@ char *SeekableReadStream::readLine(char *buf, size_t bufSize) {
 	// Unix and OS X use LF line breaks
 	// Macintosh before OS X uses CR line breaks
 
-	
+
 	c = readByte();
 	if (eos() || ioFailed()) {
 		return 0;
 	}
 
 	while (!eos() && len + 1 < bufSize) {
-		
+
 		if (ioFailed())
 			return 0;
 
@@ -101,7 +101,7 @@ char *SeekableReadStream::readLine(char *buf, size_t bufSize) {
 
 		*p++ = c;
 		len++;
-		
+
 		c = readByte();
 	}
 

@@ -139,7 +139,7 @@ void Script::executeThreads(uint msec) {
 				if (thread->_sleepTime == 0)
 					thread->_flags &= ~kTFlagWaiting;
 				break;
-			
+
 			case kWaitTypeWalk:
 				{
 					ActorData *actor;

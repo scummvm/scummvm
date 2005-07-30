@@ -44,8 +44,8 @@
  * And if we ever want to support devices with no FS in the classical sense (Palm...),
  * we can build upon this.
  */
- 
-/* 
+
+/*
  * TODO - Instead of starting with getRoot(), we should rather add a getDefaultDir()
  * call that on Unix might return the current dir or the users home dir...
  * i.e. the root dir is usually not the best starting point for browsing.
@@ -81,7 +81,7 @@ protected:
 	virtual AbstractFilesystemNode *parent() const = 0;
 
 	/**
-	 * This method is a rather ugly hack which is used internally by the 
+	 * This method is a rather ugly hack which is used internally by the
 	 * actual node implementions to wrap up raw nodes inside FilesystemNode
 	 * objects. We probably want to get rid of this eventually and replace it
 	 * with a cleaner / more elegant solution, but for now it works.

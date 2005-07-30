@@ -68,7 +68,7 @@ bool OSystem_PALMOS::setGraphicsMode(int mode) {
 	case GFX_WIDE:
 		_setMode = mode;
 		break;
-	
+
 	default:
 		warning("unknown gfx mode %d", mode);
 		_setMode = GFX_NORMAL;
@@ -103,10 +103,10 @@ void OSystem_PALMOS::initSize(uint w, uint h, int overlayScale) {
 		SysSetOrientationTriggerState(sysOrientationTriggerDisabled);
 
 	set_mouse_pos(200,150);
-	
+
 	unload_gfx_mode();
 
-	// force WIDE mode for 640x480 games 
+	// force WIDE mode for 640x480 games
 	if (h == 480)
 		_setMode = GFX_WIDE;
 
@@ -145,14 +145,14 @@ void OSystem_PALMOS::load_gfx_mode() {
 
 		// get the actual palette
 		WinPalette(winPaletteGet, 0, 256, _currentPalette);
-	
+
 		// set only if _mode not changed
 		const byte startupPalette[] = {
 			0	,0	,0	,0,
 			0	,0	,171,0,
 			0	,171, 0	,0,
 			0	,171,171,0,
-			171	,0	,0	,0, 
+			171	,0	,0	,0,
 			171	,0	,171,0,
 			171	,87	,0	,0,
 			171	,171,171,0,
@@ -267,7 +267,7 @@ void OSystem_PALMOS::load_gfx_mode() {
 			_offScreenP	= WinScreenLock(winLockErase) + _screenOffset.addr;
 			_screenP	= _offScreenP;
 			_offScreenH	= WinGetDisplayWindow();
-			_screenH	= _offScreenH;	
+			_screenH	= _offScreenH;
 			_renderer_proc = &OSystem_PALMOS::updateScreen_flipping;
 			break;
 		case GFX_WIDE:
@@ -287,11 +287,11 @@ void OSystem_PALMOS::load_gfx_mode() {
 					_screenP = (byte *)(BmpGetBits(WinGetBitmap(_screenH)));
 					_renderer_proc =  &OSystem_PALMOS::updateScreen_wideZodiac;
 				} else
-#endif			
+#endif
 				{
 					gVars->screenLocked = true;
 					_screenP = WinScreenLock(winLockErase) + _screenOffset.addr;
-									
+
 					_renderer_proc = (OPTIONS_TST(kOptModeLandscape)) ?
 						&OSystem_PALMOS::updateScreen_wideLandscape :
 						&OSystem_PALMOS::updateScreen_widePortrait;
@@ -324,7 +324,7 @@ void OSystem_PALMOS::load_gfx_mode() {
 
 		_gfxLoaded = true;
 	}
-	
+
 }
 
 void OSystem_PALMOS::unload_gfx_mode() {
@@ -407,25 +407,25 @@ void OSystem_PALMOS::hotswap_gfx_mode(int mode) {
 		DmWrite(dst, offset, src, _screenWidth);
 		offset += _screenWidth;
 		src += _offScreenPitch;
-	} while (--h);	
+	} while (--h);
 	_modeChanged = true;
-	
+
 	// reset offscreen pitch
 	_offScreenPitch	= gVars->screenPitch;
 
 	// free old mode memory
 	unload_gfx_mode();
-	
+
 	// load new gfx mode
 	_mode = mode;
 	load_gfx_mode();
-	
+
 	// restore offscreen
 	WinPalette(winPaletteSet, 0, 256, _currentPalette);
 	clearScreen();
 	copyRectToScreen(_tmpHotSwapP, _screenWidth, 0, 0, _screenWidth, _screenHeight);
 	_modeChanged = false;
-	
+
 	// force palette update
 	_paletteDirtyStart = 0;
 	_paletteDirtyEnd = 256;
@@ -483,7 +483,7 @@ byte OSystem_PALMOS::RGBToColor(uint8 r, uint8 g, uint8 b) {
 			}
 		}
 	}
-	
+
 	return color;
 }
 
@@ -549,7 +549,7 @@ void OSystem_PALMOS::copyRectToScreen(const byte *buf, int pitch, int x, int y, 
 
 void OSystem_PALMOS::updateScreen() {
 	// Check whether the palette was changed in the meantime and update the
-	// screen surface accordingly. 
+	// screen surface accordingly.
 	if (_paletteDirtyEnd != 0) {
 		UInt8 oldCol;
 
@@ -563,11 +563,11 @@ void OSystem_PALMOS::updateScreen() {
 		oldCol = gVars->indicator.on;
 		gVars->indicator.on = RGBToColor(0,255,0);
 
-		if (oldCol != gVars->indicator.on) {	
+		if (oldCol != gVars->indicator.on) {
 			// redraw if needed
 			if (_lastKeyModifier)
 				draw1BitGfx((kDrawKeyState + _lastKeyModifier - 1), 2, getHeight() + 2, true);
-			
+
 			if(_useNumPad)
 				draw1BitGfx(kDrawNumPad, (getWidth() >> 1) - 32, getHeight() + 2, true);
 
@@ -583,7 +583,7 @@ void OSystem_PALMOS::updateScreen() {
 		byte *src = _tmpScreenP;
 		byte *dst = _offScreenP;
 		UInt16 h = _screenHeight;
-		
+
 		do {
 			memcpy(dst, src, _screenWidth);
 			dst += _offScreenPitch;
@@ -600,7 +600,7 @@ void OSystem_PALMOS::draw1BitGfx(UInt16 id, Int32 x, Int32 y, Boolean show) {
 		return;
 
 	MemHandle hTemp = DmGetResource(bitmapRsc, id);
-	
+
 	if (hTemp) {
 		BitmapType *bmTemp;
 		UInt32 *bmData;
@@ -619,12 +619,12 @@ void OSystem_PALMOS::draw1BitGfx(UInt16 id, Int32 x, Int32 y, Boolean show) {
 
 		if (next)
 			blocks++;
-		
+
 		for (ih = 0; ih < h; ih++) {			// line
 			for (ib = 0; ib < blocks; ib++) {	// 32pix block
 				next = w - (ib << 5);
 				next = MIN(next, (Coord)32);
-		
+
 				for (iw = 0; iw < next; iw++) {	// row
 
 					*scr++ = ((*bmData & (1 << (31 - iw))) && show) ?

@@ -260,7 +260,7 @@ bool Debugger::Cmd_Mem(int argc, const char **argv) {
 
 		DebugPrintf("%9ld %-3d %-4d %-20s %s\n", blocks[i]->size, blocks[i]->id, blocks[i]->uid, type, head->name);
 	}
-		
+
 	free(blocks);
 
 	DebugPrintf("---------------------------------------------------------------------------\n");
@@ -286,7 +286,7 @@ bool Debugger::Cmd_Res(int argc, const char **argv) {
 
 	for (uint i = 0; i < numClusters; i++) {
 		DebugPrintf("%-20s ", resFiles[i].fileName);
-		if (!(resFiles[i].cd & LOCAL_PERM)) {			
+		if (!(resFiles[i].cd & LOCAL_PERM)) {
 			switch (resFiles[i].cd & 3) {
 			case BOTH:
 				DebugPrintf("CD 1 & 2\n");
@@ -368,7 +368,7 @@ bool Debugger::Cmd_Start(int argc, const char **argv) {
 	}
 
 	int start = atoi(argv[1]);
-	
+
 	if (start < 0 || start >= (int) numStarts) {
 		DebugPrintf("Not a legal start position\n");
 		return true;
@@ -674,7 +674,7 @@ bool Debugger::Cmd_ShowVar(int argc, const char **argv) {
 	}
 
 	varNo = atoi(argv[1]);
-	
+
 	// search for a spare slot in the watch-list, but also watch out for
 	// this variable already being in the list
 
@@ -705,7 +705,7 @@ bool Debugger::Cmd_HideVar(int argc, const char **argv) {
 	}
 
 	varNo = atoi(argv[1]);
-	
+
 	// search for 'varNo' in the watch-list
 	while (showVarNo < MAX_SHOWVARS && _showVar[showVarNo] != varNo)
 		showVarNo++;

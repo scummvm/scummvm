@@ -30,9 +30,9 @@ namespace Gob {
 
 VideoDriver *_videoDriver;
 
-	
+
 /* NOT IMPLEMENTED */
-	
+
 //XXX: Use this function to update the screen for now.
 //     This should be moved to a better location later on.
 void vid_waitRetrace(int16) {
@@ -41,13 +41,13 @@ void vid_waitRetrace(int16) {
 		g_system->updateScreen();
 	}
 }
-	
+
 char vid_initDriver(int16 vidMode) {
 	warning("STUB: vid_initDriver");
 
 	// FIXME: Finish all this stuff :)
 	_videoDriver = new VGAVideoDriver();
-	
+
 	return 1;
 }
 
@@ -150,7 +150,7 @@ void vid_freeSurfDesc(SurfaceDesc * surfDesc) {
 	sprAllocated--;
 	if (surfDesc != pPrimarySurfDesc)
 		free(surfDesc);
-	else 
+	else
 		free(surfDesc->vidPtr);
 }
 
@@ -353,7 +353,7 @@ void vid_setPalette(PalDesc *palDesc) {
 		pal[i * 4 + 2] = (palDesc->vgaPal[i].blue << 2) | (palDesc->vgaPal[i].blue >> 4);
 		pal[i * 4 + 3] = 0;
 	}
-	
+
 	g_system->setPalette(pal, 0, numcolors);
 }
 

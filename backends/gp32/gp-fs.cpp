@@ -16,7 +16,7 @@
 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. 
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * $Header$
  *
@@ -41,7 +41,7 @@ protected:
 	bool _isDirectory;
 	bool _isValid;
 	Common::String _path;
-	
+
 public:
 	GP32FilesystemNode();
 	GP32FilesystemNode(const Common::String &path);
@@ -105,17 +105,17 @@ FSList GP32FilesystemNode::listDir(ListMode mode) const {
 	ulong read;
 
 	FSList myList;
-	
+
 	int start=0; // current file
 
 	// ... loop over dir entries using readdir
-	while (GpDirEnumList(_path.c_str(), start++, 1, &dp, &read)  == SM_OK) { 
+	while (GpDirEnumList(_path.c_str(), start++, 1, &dp, &read)  == SM_OK) {
 		if (strcmp(dp.name,".")==0|| strcmp(dp.name,"..")==0) continue;
 		GP32FilesystemNode entry;
 		entry._displayName = dp.name;
 		entry._path = _path;
 		entry._path += dp.name;
-		
+
 		GPFILEATTR attr;
 		char s[256];
 		sprintf(s, "%s%s", _path.c_str(), dp.name);
@@ -130,23 +130,23 @@ FSList GP32FilesystemNode::listDir(ListMode mode) const {
 		if (entry._isDirectory)
 			entry._path += "\\"; //ph0x
 		myList.push_back(entry);
-	}	
+	}
 	return myList;
 }
 
 const char *lastPathComponent(const Common::String &str) {
 	const char *start = str.c_str();
 	const char *cur = start + str.size() - 2;
-	
+
 	while (cur > start && *cur != '\\') { //ph0x
 		--cur;
 	}
-	
+
 	return cur+1;
 }
 
 FilesystemNode *GP32FilesystemNode::parent() const {
-	
+
 	GP32FilesystemNode *p = new GP32FilesystemNode();
 
 // OLD - REMOVE ON CLEAN COMPILE

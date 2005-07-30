@@ -27,7 +27,7 @@ static void SkinsFormInit(Boolean bDraw) {
 	Char nameP[32];
 
 	itemsText = NULL;
-	
+
 	// parse and save skins
 	Err err = DmGetNextDatabaseByTypeCreator(true, &stateInfo, 'skin', appFileCreator, false, &cardNo, &dbID);
 	while (!err && dbID) {
@@ -38,14 +38,14 @@ static void SkinsFormInit(Boolean bDraw) {
 				skins = MemHandleNew(sizeof(SkinInfoType));
 			else
 				MemHandleResize(skins, MemHandleSize(skins) + sizeof(SkinInfoType));
-			
+
 			skinsInfo = (SkinInfoType *)MemHandleLock(skins);
 			StrCopy(skinsInfo[numSkins].nameP, nameP);
 			skinsInfo[numSkins].cardNo = cardNo;
 			skinsInfo[numSkins].dbID = dbID;
 			MemHandleUnlock(skins);
 			numSkins++;
-		}		
+		}
 		err = DmGetNextDatabaseByTypeCreator(false, &stateInfo, 'skin', appFileCreator, false, &cardNo, &dbID);
 	}
 
@@ -69,7 +69,7 @@ static void SkinsFormInit(Boolean bDraw) {
 		itemsText = (Char **)MemHandleLock(items);
 		itemsText[index] = skinsInfo[index].nameP;
 		MemHandleUnlock(items);
-		
+
 		if (	gPrefs->skin.cardNo == skinsInfo[index].cardNo &&
 				gPrefs->skin.dbID == skinsInfo[index].dbID &&
 				StrCompare(gPrefs->skin.nameP, skinsInfo[index].nameP) == 0)
@@ -106,7 +106,7 @@ static void SkinsFormExit(Boolean bSave) {
 
 	listP = (ListType *)GetObjectPtr(SkinsSkinList);
 	selected = LstGetSelection(listP);
-	
+
 	if (bSave && selected == -1)	{	// may never occured...
 		FrmCustomAlert(FrmWarnAlert, "You didn't select a skin.", 0, 0);
 		return;
@@ -115,24 +115,24 @@ static void SkinsFormExit(Boolean bSave) {
 	skinsInfo = (SkinInfoType *)itemsList;
 	skins = MemPtrRecoverHandle(skinsInfo);
 	items = MemPtrRecoverHandle(itemsText);
-	
+
 	itemsText = NULL;
 	itemsList = NULL;
 	itemsType = ITEM_TYPE_UNKNOWN;
 
 	if (bSave) {
 		ControlType *cck1P;
-	
+
 		StrCopy(gPrefs->skin.nameP, skinsInfo[selected].nameP);
 		gPrefs->skin.cardNo = skinsInfo[selected].cardNo;
 		gPrefs->skin.dbID =  skinsInfo[selected].dbID;
-		
+
 /*		DmOpenRef skinDB = SknOpenSkin();
 		UInt32 depth = SknGetDepth(skinDB);
 		SknCloseSkin(skinDB);
 
 		if (depth != 8 && depth != 16) depth = 8;
-		
+
 		if (depth == 16 && !OPTIONS_TST(kOptMode16Bit)) {
 			FrmCustomAlert(FrmInfoAlert, "You can only use 8bit skin on your device.", 0, 0);
 			gPrefs->skin.cardNo	= cardNo;
@@ -226,7 +226,7 @@ Boolean SkinsFormHandleEvent(EventPtr eventP) {
 	Boolean handled = false;
 
 	switch (eventP->eType) {
-	
+
 		case frmOpenEvent:
 			SkinsFormInit(true);
 			handled = true;
@@ -247,11 +247,11 @@ Boolean SkinsFormHandleEvent(EventPtr eventP) {
 				case SkinsCancelButton:
 					SkinsFormExit(false);
 					break;
-					
+
 				case SkinsBeamButton:
 					SkinsFormBeam();
 					break;
-				
+
 				case SkinsDeleteButton:
 					SkinsFormDelete();
 					break;
@@ -262,6 +262,6 @@ Boolean SkinsFormHandleEvent(EventPtr eventP) {
 		default:
 			break;
 	}
-	
+
 	return handled;
 }

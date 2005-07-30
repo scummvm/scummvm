@@ -126,7 +126,7 @@ static ov_callbacks g_File_wrap = {
 
 
 VorbisTrackInfo::VorbisTrackInfo(File *file) {
-	
+
 	_file = file;
 	if (openTrack()) {
 		warning("Invalid file format");
@@ -149,9 +149,9 @@ bool VorbisTrackInfo::openTrack() {
 	f->len = _file->size();
 	f->curr_pos = 0;
 	_file->seek(0);
-	
+
 	bool err = (ov_open_callbacks((void *) f, &_ov_file, NULL, 0, g_File_wrap) < 0);
-	
+
 	if (err) {
 		delete f;
 	} else {
@@ -218,7 +218,7 @@ class VorbisInputStream : public AudioStream {
 	const int16 *_bufferEnd;
 	const int16 *_pos;
 	bool _deleteFileAfterUse;
-	
+
 	void refill();
 	inline bool eosIntern() const;
 public:
@@ -229,7 +229,7 @@ public:
 
 	bool endOfData() const		{ return eosIntern(); }
 	bool isStereo() const		{ return _numChannels >= 2; }
-	
+
 	int getRate() const			{ return ov_info(_ov_file, -1)->rate; }
 
 };
@@ -240,7 +240,7 @@ public:
 #endif
 
 
-VorbisInputStream::VorbisInputStream(OggVorbis_File *file, int duration, bool deleteFileAfterUse) 
+VorbisInputStream::VorbisInputStream(OggVorbis_File *file, int duration, bool deleteFileAfterUse)
 	: _ov_file(file),
 	_bufferEnd(_buffer + ARRAYSIZE(_buffer)),
 	_deleteFileAfterUse(deleteFileAfterUse) {

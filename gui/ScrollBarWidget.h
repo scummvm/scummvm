@@ -46,7 +46,7 @@ protected:
 		kPageUpPart,
 		kPageDownPart
 	} Part;
-	
+
 	Part	_part;
 	int		_sliderHeight;
 	int		_sliderPos;

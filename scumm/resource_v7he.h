@@ -123,7 +123,7 @@ public:
 
 	virtual int extractResource(int id, byte **buf) { return 0; };
 	virtual int convertIcons(byte *data, int datasize, byte **cursor, int *w, int *h,
-							 int *hotspot_x, int *hotspot_y, int *keycolor, 
+							 int *hotspot_x, int *hotspot_y, int *keycolor,
 							 byte **palette, int *palSize) { return 0; };
 
 	enum {
@@ -166,12 +166,12 @@ class Win32ResExtractor : public ResExtractor {
  private:
 	int extractResource_(const char *resType, char *resName, byte **data);
 /*
- * Structures 
+ * Structures
  */
 
 #if !defined(__GNUC__)
 	#pragma START_PACK_STRUCTS
-#endif	
+#endif
 
 	struct WinLibrary {
 		Common::File *file;
@@ -546,7 +546,7 @@ private:
 	ResMap _resMap;
 	ResType *_resTypes;
 	ResPtr  *_resLists;
-}; 
+};
 
 } // End of namespace Scumm
 

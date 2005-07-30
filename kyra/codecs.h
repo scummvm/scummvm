@@ -29,7 +29,7 @@
 #include "common/scummsys.h"
 
 namespace Kyra {
-class Compression 
+class Compression
 {
 public:
 	static int decode80(const uint8* image_in, uint8* image_out);

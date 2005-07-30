@@ -37,11 +37,11 @@ namespace CEGUI {
 	public:
 		ItemSwitch(WORD referenceTrue, WORD referenceFalse, bool *item);
 		virtual ~ItemSwitch();
-		virtual bool action(int x, int y, bool pushed); 
+		virtual bool action(int x, int y, bool pushed);
 	private:
 		bool *_item;
 		SDL_ImageResource *_backgroundTrue;
-		SDL_ImageResource *_backgroundFalse;	
+		SDL_ImageResource *_backgroundFalse;
 	};
 }
 

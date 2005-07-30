@@ -35,7 +35,7 @@ public:
 	virtual ~Debugger(); // we need this here for __SYMBIAN32__ archaic gcc/UIQ
 
 	int flags() const { return _flags; }
-	
+
 	enum {
 		DF_DRAW_AREAS = 1 << 0
 	};
@@ -56,7 +56,7 @@ protected:
 	bool Cmd_PrintBobs(int argc, const char **argv);
 	bool Cmd_Room(int argc, const char **argv);
 	bool Cmd_Song(int argc, const char **argv);
-	
+
 private:
 
 	QueenEngine *_vm;

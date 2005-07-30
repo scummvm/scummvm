@@ -22,6 +22,6 @@ UInt32 Screen_decompressRLE7(void *userData68KP) {
 			dest += code;
 		}
 	}
-	
+
 	return 0;
 }

@@ -87,13 +87,13 @@ class Actor {
 
 public:
 	static byte kInvalidBox;
-	
+
 	static void initActorClass(ScummEngine *scumm);
 
 public:
 	/** The position of the actor inside the virtual screen. */
 	Common::Point _pos;
-	
+
 	/** HE specific: This rect is used to clip actor drawing. */
 	Common::Rect _clipOverride;
 
@@ -165,7 +165,7 @@ protected:
 public:
 
 	Actor();
-	
+
 //protected:
 	void hideActor();
 	void showActor();
@@ -195,11 +195,11 @@ public:
 	void drawActorCostume(bool hitTestMode = false);
 	void animateCostume();
 	void setActorCostume(int c);
-	
+
 	void animateLimb(int limb, int f);
-	
+
 	bool actorHitTest(int x, int y);
-	
+
 	byte *getActorName();
 	void startWalkActor(int x, int y, int dir);
 	void stopActorMoving();
@@ -217,20 +217,20 @@ public:
 	bool isInCurrentRoom() const {
 		return _room == _vm->_currentRoom;
 	}
-	
+
 	int getActorXYPos(int &x, int &y) const;
 
 	int getRoom() const {
 		return _room;
 	}
-	
+
 	int getFacing() const {
 		return _facing;
 	}
 
 	int getAnimVar(byte var) const;
 	void setAnimVar(byte var, int value);
-	
+
 	void setAnimSpeed(byte newAnimSpeed) {
 		_animSpeed = newAnimSpeed;
 		_animProgress = 0;
@@ -247,19 +247,19 @@ public:
 	int getElevation() const {
 		return _elevation;
 	}
-	
+
 	void setElevation(int newElevation) {
 		if (_elevation != newElevation) {
 			_elevation = newElevation;
 			_needRedraw = true;
 		}
 	}
-	
+
 	void setPalette(int idx, int val) {
 		_palette[idx] = val;
 		_needRedraw = true;
 	}
-	
+
 	void setScale(int sx, int sy) {
 		if (sx != -1)
 			_scalex = sx;
@@ -269,19 +269,19 @@ public:
 	}
 
 	void classChanged(int cls, bool value);
-	
+
 	void setUserCondition(int slot, int set);
 	bool isUserConditionSet(int slot) const;
 
 	void setTalkCondition(int slot);
 	bool isTalkConditionSet(int slot) const;
-	
+
 	// Used by the save/load syste:
 	static const SaveLoadEntry *getSaveLoadEntries();
-	
+
 protected:
 	bool isInClass(int cls);
-	
+
 	bool isPlayer();
 
 	bool findPathTowards(byte box, byte box2, byte box3, Common::Point &foundPath);

@@ -247,7 +247,7 @@ MusicInputStream::MusicInputStream(int cd, SoundFileHandle *fh, uint32 musicId, 
 	_bufferEnd = _buffer + BUFFER_SIZE;
 	_remove = false;
 	_fading = 0;
-	
+
 	_decoder = getAudioStream(_fh, "music", _cd, _musicId, &_numSamples);
 	if (_decoder) {
 		_samplesLeft = _numSamples;

@@ -517,7 +517,7 @@ void ScummEngine_v80he::o80_writeConfigFile() {
 
 	Common::ConfigFile ConfFile;
 	ConfFile.loadFromFile((const char *)filename);
-	ConfFile.setKey((char *)option, (char *)section, (char *)string); 
+	ConfFile.setKey((char *)option, (char *)section, (char *)string);
 	ConfFile.saveToFile((const char *)filename);
 	debug(0,"o80_writeConfigFile: Filename %s Section %s Option %s String %s", filename, section, option, string);
 }
@@ -595,7 +595,7 @@ void ScummEngine_v80he::o80_drawWizPolygon() {
 	wi.resNum = pop();
 	wi.state = 0;
 	wi.flags = kWIFIsPolygon;
-	_wiz->displayWizImage(&wi);	
+	_wiz->displayWizImage(&wi);
 }
 
 /**
@@ -611,7 +611,7 @@ void ScummEngine_v80he::o80_drawWizPolygon() {
  * @param id	the id of an actor, wizimage or color (low bit) & flag (high bit)
  */
 void ScummEngine_v80he::drawLine(int x1, int y1, int x, int y, int step, int type, int id) {
-	debug(0,"drawLine: x1 %d y1 %d x %d y %d, step %d type %d id %d", x1, y1, x, y, step, type, id);	
+	debug(0,"drawLine: x1 %d y1 %d x %d y %d, step %d type %d id %d", x1, y1, x, y, step, type, id);
 
 	if (step < 0) {
 		step = -step;
@@ -697,7 +697,7 @@ void ScummEngine_v80he::drawLine(int x1, int y1, int x, int y, int step, int typ
 		} else {
 			drawPixel(x, y, id);
 		}
-	}		
+	}
 }
 
 void ScummEngine_v80he::drawPixel(int x, int y, int flags) {

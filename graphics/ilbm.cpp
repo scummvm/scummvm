@@ -53,7 +53,7 @@ struct Chunk {
 		return (size - bytesRead) == 0;
 	}
 
-	void feed() {		
+	void feed() {
 		if (size % 2) {
 			size++;
 		}
@@ -88,7 +88,7 @@ struct Chunk {
 
 	int32 readSint32() {
 		return (int32)readUint32();
-	}	
+	}
 };
 
 static char * ID2string(IFF_ID id) {
@@ -156,7 +156,7 @@ page 376) */
 /* EA IFF 85 Generic character string chunk */
 #define ID_NAME     MKID_BE('NAME')
 /* EA IFF 85 Generic Name of art, music, etc. chunk */
-#define ID_TEXT     MKID_BE('TEXT'))     
+#define ID_TEXT     MKID_BE('TEXT'))
 /* EA IFF 85 Generic unformatted ASCII text chunk */
 #define ID_copy     MKID_BE('(c) ')
 /* EA IFF 85 Generic Copyright text chunk */
@@ -253,7 +253,7 @@ void decodeILBM(Common::ReadStream &input, Surface &surface, byte *&colors) {
 			if (bitmapHeader.depth > 8) {
 				error("decodeILBM() depth > 8");
 			}
-			bitmapHeader.masking = chunk.readByte();			
+			bitmapHeader.masking = chunk.readByte();
 			bitmapHeader.pack = chunk.readByte();
 			if ((bitmapHeader.pack != 0) && (bitmapHeader.pack != 1)) {
 				error("decodeILBM() unsupported pack");
@@ -303,7 +303,7 @@ void decodeILBM(Common::ReadStream &input, Surface &surface, byte *&colors) {
 						idx = chunk.readByte();
 						for (j = 0; j < i; j++) {
 							((byte*)surface.pixels)[si++] = idx;
-						}					
+						}
 					}
 				}
 				break;
@@ -315,7 +315,7 @@ void decodeILBM(Common::ReadStream &input, Surface &surface, byte *&colors) {
 			error("unknown chunk : %s\n", ID2string(chunk.id));
 		}
 
-		chunk.feed();	
+		chunk.feed();
 		formChunk.incBytesRead(chunk.size);
 	}
 }

@@ -35,7 +35,7 @@ protected:
 	uint16 _posTable[64];
 	uint16 _lenTable[64];
 	uint16 _crcTable[256];
-	
+
 	uint16 _bitBuffl;
 	uint16 _bitBuffh;
 	uint8 _bitCount;
@@ -46,15 +46,15 @@ protected:
 public:
 	RncDecoder();
 	~RncDecoder();
-	int32 unpackM1(const void *input, void *output, uint16 key);	
-	
+	int32 unpackM1(const void *input, void *output, uint16 key);
+
 protected:
 	void initCrc();
 	uint16 crcBlock(const uint8 *block, uint32 size);
 	uint16 inputBits(uint8 amount);
 	void makeHufftable(uint16 *table);
 	uint16 inputValue(uint16 *table);
-	
+
 };
 
 } // End of namespace Sky

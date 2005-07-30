@@ -39,7 +39,7 @@ struct SoundBuffer {
 	int sampleBits;
 	bool stereo;
 	bool isSigned;
-	
+
 	byte *buffer;
 	size_t size;
 	bool isBigEndian;

@@ -33,7 +33,7 @@ int32 Insane::enemyBenHandler(int32 actor1, int32 actor2, int32 probability) {
 	int32 tmp;
 
 	retval = processMouse();
-	
+
 	// Joystick support is skipped
 
 	retval |= processKeyboard();
@@ -48,13 +48,13 @@ int32 Insane::enemyBenHandler(int32 actor1, int32 actor2, int32 probability) {
 	_actor[actor1].cursorX = tmp;
 
 	smush_warpMouse(_enemyState[EN_BEN][0], _enemyState[EN_BEN][1], -1);
-	
+
 	return (retval & 3);
 }
 
 void Insane::turnBen(bool controllable) {
 	int32 buttons;
-	
+
 	switch (_currSceneId) {
 	case 21:
 	case 25:
@@ -70,7 +70,7 @@ void Insane::turnBen(bool controllable) {
 				_actor[0].act[1].room = 0;
 				_actor[0].act[0].state = 36;
 				_actor[0].act[0].room = 0;
-		
+
 				if (smlayer_isSoundRunning(95))
 					smlayer_stopSound(95);
 			}
@@ -83,7 +83,7 @@ void Insane::turnBen(bool controllable) {
 			if (_currEnemy == EN_TORQUE)
 				buttons = 0;
 		}
-		debug(5, "00:%d 01:%d 02:%d 03:%d", _actor[0].act[0].state, 
+		debug(5, "00:%d 01:%d 02:%d 03:%d", _actor[0].act[0].state,
 				_actor[0].act[1].state, _actor[0].act[2].state, _actor[0].act[3].state);
 		actor01Reaction(buttons);
 		actor02Reaction(buttons);
@@ -176,7 +176,7 @@ int32 Insane::actionBen(void) {
 		} else {
 			if (smlayer_isSoundRunning(sound))
 				smlayer_stopSound(sound);
-			
+
 			_val213d = 0;
 		}
 	} else {
@@ -256,7 +256,7 @@ void Insane::mineChooseRoad(int32 buttons) {
 					queueSceneSwitch(2, 0, "mineexit.san", 64, 0, 0, 0);
 				}
 			}
-			
+
 			if ((buttons & 2) == 0 || _needSceneSwitch)
 				return;
 
@@ -292,9 +292,9 @@ void Insane::mineChooseRoad(int32 buttons) {
 				_actor[0].tilt = -7;
 			if (tmp > 7)
 				_actor[0].tilt = 7;
-			
+
 			drawSpeedyActor(buttons);
-			
+
 			if ((buttons & 1) == 0)
 				return;
 
@@ -308,7 +308,7 @@ void Insane::mineChooseRoad(int32 buttons) {
 					queueSceneSwitch(8, 0, "tomine.san", 64, 0, 0, 0);
 				}
 			}
-			
+
 			if (_roadStop) {
 				writeArray(1, _posBrokenTruck);
 				writeArray(3, _val57d);
@@ -331,7 +331,7 @@ void Insane::mineChooseRoad(int32 buttons) {
 				_actor[0].tilt = 7;
 
 			drawSpeedyActor(buttons);
-			
+
 			if ((buttons & 1) == 0)
 				return;
 
@@ -345,7 +345,7 @@ void Insane::mineChooseRoad(int32 buttons) {
 					queueSceneSwitch(7, 0, "tomine.san", 64, 0, 0, 0);
 				}
 			}
-			
+
 			if (_roadStop) {
 				writeArray(1, _posBrokenTruck);
 				writeArray(3, _posVista);
@@ -499,7 +499,7 @@ int32 Insane::calcBenDamage(bool arg_0, bool arg_4) {
 // Ben
 void Insane::actor02Reaction(int32 buttons) {
 	int32 tmp, tmp2;
-	
+
 	switch(_actor[0].act[2].state) {
 	case 1:
 		smlayer_setActorLayer(0, 2, 5);
@@ -585,7 +585,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorFacing(0, 2, 20, 180);
 			_actor[0].act[2].state = 4;
 		}
-	
+
 		_actor[0].kicking = true;
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
 		break;
@@ -725,7 +725,7 @@ void Insane::actor02Reaction(int32 buttons) {
 					(_actor[1].x - _actor[0].x >= weaponMinRange(0)) &&
 					!_actor[0].field_54)
 					prepareScenePropScene(1, 0, 0);
-		
+
 			}
 			smlayer_setActorFacing(0, 2, 21, 180);
 			_actor[0].act[2].state = 13;
@@ -766,7 +766,7 @@ void Insane::actor02Reaction(int32 buttons) {
 					smlayer_setActorFacing(0, 2, 20, 180);
 					_actor[0].act[2].state = 16;
 				}
-				break;	
+				break;
 			case INV_MACE:
 				if (!_actor[1].kicking || _actor[1].field_44)
 					if (actor1StateFlags(_actor[1].act[2].state)) {
@@ -1153,7 +1153,7 @@ void Insane::actor02Reaction(int32 buttons) {
 	case 34:
 		smlayer_setActorLayer(0, 2, 5);
 		_actor[0].kicking = false;
-		
+
 		if (!smlayer_actorNeedRedraw(0, 2)) {
 			setBenState();
 			_actor[0].act[2].tilt = 0;
@@ -1165,7 +1165,7 @@ void Insane::actor02Reaction(int32 buttons) {
 	case 35:
 		smlayer_setActorLayer(0, 2, 5);
 		_actor[0].kicking = false;
-		
+
 		if (!smlayer_actorNeedRedraw(0, 2)) {
 			switchBenWeapon();
 			_actor[0].act[2].tilt = 0;
@@ -1211,7 +1211,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		smlayer_setActorLayer(0, 2, 25);
 		_actor[0].cursorX = 0;
 		_actor[0].kicking = false;
-		if (_actor[0].act[2].frame >= 18 || 
+		if (_actor[0].act[2].frame >= 18 ||
 			(_actor[0].x < 50 && _actor[0].act[2].frame >= 10) ||
 			 (_actor[0].x > 270 && _actor[0].act[2].frame >= 10)) {
 			if (_currSceneId == 21) {
@@ -1631,7 +1631,7 @@ void Insane::actor01Reaction(int32 buttons) {
 			setBenAnimation(0, 6);
 			_actor[0].act[1].state = 41;
 		}
-	
+
 		if (_actor[0].cursorX >= -100) {
 			setBenAnimation(0, 7);
 			_actor[0].act[1].state = 40;
@@ -1654,7 +1654,7 @@ void Insane::actor01Reaction(int32 buttons) {
 			setBenAnimation(0, 8);
 			_actor[0].act[1].state = 39;
 		}
-	
+
 		if (_actor[0].field_8 == 48)
 			_actor[0].tilt = 0;
 		else
@@ -1705,7 +1705,7 @@ void Insane::actor01Reaction(int32 buttons) {
 			setBenAnimation(0, 12);
 			_actor[0].act[1].state = 57;
 		}
-	
+
 		if (_actor[0].cursorX <= 100) {
 			setBenAnimation(0, 11);
 			_actor[0].act[1].state = 56;
@@ -1714,7 +1714,7 @@ void Insane::actor01Reaction(int32 buttons) {
 		}
 		break;
 	}
-	
+
 	if (_actor[0].field_38 != _actor[0].field_34) {
 		if (_actor[0].field_34 == 2)
 			smlayer_setActorFacing(0, 1, 28, 180);
@@ -1727,7 +1727,7 @@ void Insane::actor01Reaction(int32 buttons) {
 
 	if (_actor[0].act[1].room)
 		smlayer_putActor(0, 1, tmpx, tmpy, _smlayer_room2);
-	else 
+	else
 		smlayer_putActor(0, 1, tmpx, tmpy, _smlayer_room);
 
 	_actor[0].animWeaponClass = _actor[0].weaponClass;
@@ -1744,7 +1744,7 @@ void Insane::actor03Reaction(int32 buttons) {
 	case 52:
 		if (_actor[0].runningSound)
 			smlayer_stopSound(_actor[0].runningSound);
-		
+
 		if (_currScenePropIdx)
 			shutCurrentScene();
 
@@ -1877,7 +1877,7 @@ void Insane::chooseBenWeaponAnim(int buttons) {
 			_actor[0].act[2].state = 0;
 			switchBenWeapon();
 		}
-		
+
 		_weaponBenJustSwitched = true;
 	} else {
 		_weaponBenJustSwitched = false;

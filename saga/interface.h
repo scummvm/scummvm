@@ -86,12 +86,12 @@ struct InterfacePanel {
 	size_t imageLength;
 	int imageWidth;
 	int imageHeight;
-	
+
 	PanelButton *currentButton;
 	int buttonsCount;
 	PanelButton *buttons;
 	SpriteList sprites;
-	
+
 	InterfacePanel() {
 		x = y = 0;
 		image = NULL;
@@ -108,14 +108,14 @@ struct InterfacePanel {
 		}
 		return NULL;
 	}
-	
+
 	void getRect(Rect &rect) {
 		rect.left = x;
 		rect.top = y;
 		rect.setWidth(imageWidth);
 		rect.setHeight(imageHeight);
 	}
- 
+
 	void calcPanelButtonRect(const PanelButton* panelButton, Rect &rect) {
 		rect.left = x + panelButton->xOffset;
 		rect.right = rect.left + panelButton->width;
@@ -232,7 +232,7 @@ public:
 	void processKeyUp(uint16 ascii);
 
 	bool _textInput;
-	
+
 	bool _statusTextInput;
 	StatusTextInputState _statusTextInputState;
 	char _statusTextInputString[STATUS_TEXT_INPUT_MAX];
@@ -266,7 +266,7 @@ public:
 		}
 		return _inventory[cell];
 	}
-	
+
 	PanelButton *inventoryHitTest(const Point& mousePoint) {
 		return _mainPanel.hitTest(mousePoint, kPanelButtonInventory);
 	}
@@ -358,7 +358,7 @@ private:
 		}
 		return _verbTypeToPanelButton[verb];
 	}
-	
+
 	void validateOptionButtons() {
 		if (!_vm->isSaveListFull() && (_optionSaveFileTitleNumber == 0) && (_optionPanel.currentButton != NULL)) {
 			if (_optionPanel.currentButton->id == kTextLoad) {
@@ -406,7 +406,7 @@ private:
 	int _statusOnceColor;
 	int _leftPortrait;
 	int _rightPortrait;
-	
+
 	Point _lastMousePoint;
 
 	uint16 *_inventory;
@@ -431,7 +431,7 @@ private:
 	Rect _optionSaveRectTop;
 	Rect _optionSaveRectSlider;
 	Rect _optionSaveRectBottom;
-	
+
 	char _textInputString[SAVE_TITLE_SIZE];
 	uint _textInputStringLength;
 	uint _textInputPos;

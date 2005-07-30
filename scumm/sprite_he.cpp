@@ -219,7 +219,7 @@ int Sprite::getSpriteClass(int spriteId, int num, int *args) {
 	int code, classId;
 
 	if (num == 0)
-		return _spriteTable[spriteId].classFlags; 
+		return _spriteTable[spriteId].classFlags;
 
 	for (int i = 0; i < num; i++) {
 		code = classId = args[i];
@@ -437,7 +437,7 @@ int ScummEngine_v90he::getGroupSpriteArray(int spriteGroupId) {
 	writeVar(0, 0);
 	defineArray(0, kDwordArray, 0, 0, 0, numSprites);
 	writeArray(0, 0, 0, numSprites);
-	
+
 	numSprites = 1;
 	for (i = (_sprite->_varNumSprites - 1); i > 0; i--) {
 		if (_sprite->_spriteTable[i].group == spriteGroupId) {
@@ -445,7 +445,7 @@ int ScummEngine_v90he::getGroupSpriteArray(int spriteGroupId) {
 			numSprites++;
 		}
 	}
-	
+
 	return readVar(0);
 }
 
@@ -526,7 +526,7 @@ void Sprite::setSpriteImageState(int spriteId, int state) {
 		int imageStateCount = _spriteTable[spriteId].imageStateCount - 1;
 		state = MAX(0, state);
 		state = MIN(state, imageStateCount);
-	
+
 		if (_spriteTable[spriteId].imageState != state) {
 			_spriteTable[spriteId].imageState = state;
 			_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
@@ -724,7 +724,7 @@ void Sprite::setSpriteAnimSpeed(int spriteId, int value) {
 void Sprite::setSpriteSetClass(int spriteId, int classId, int toggle) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 	checkRange(32, 1, classId, "class %d out of range in statement");
-	
+
 	if (toggle) {
 		_spriteTable[spriteId].classFlags |= (1 << (classId - 1));
 	} else {
@@ -1084,7 +1084,7 @@ void Sprite::resetTables(bool refreshScreen) {
 void Sprite::resetBackground() {
 	int xmin, xmax, ymin, ymax;
 	xmin = ymin = 1234;
-	xmax = ymax = -1234; 
+	xmax = ymax = -1234;
 	bool firstLoop = true;
 	bool refreshScreen = false;
 
@@ -1166,12 +1166,12 @@ void Sprite::updateImages() {
 			spi->ty += spi->dy;
 			if (tx != spi->tx || ty != spi->ty) {
 				spi->flags |= kSFChanged | kSFNeedRedraw;
-			}			
+			}
 		}
 		if (spi->flags & kSFAutoAnim) {
 			if (spi->animSpeed) {
 				--spi->animProgress;
-				if (spi->animProgress) 
+				if (spi->animProgress)
 					continue;
 
 				spi->animProgress = spi->animSpeed;
@@ -1261,7 +1261,7 @@ void Sprite::processImages(bool arg) {
 			if (spi->zorder < 0)
 				continue;
 		}
-		
+
 		spi->flags &= ~kSFNeedRedraw;
 		image = spi->image;
 		imageState = spi->imageState;
@@ -1360,7 +1360,7 @@ void Sprite::processImages(bool arg) {
 		}
 		wiz.processFlags |= kWPFNewFlags;
 		wiz.img.flags |= spi->imgFlags;
-		
+
 		if (spr_flags & kSFRotated) {
 			wiz.processFlags |= kWPFRotate;
 			wiz.angle = spi->angle;
@@ -1370,7 +1370,7 @@ void Sprite::processImages(bool arg) {
 			wiz.scale = spi->scale;
 		}
 		spi->curImgFlags = wiz.img.flags;
-		
+
 		if (spi->group && (_spriteGroups[spi->group].flags & kSGFClipBox)) {
 			Common::Rect &spgBbox = _spriteGroups[spi->group].bbox;
 			if (spgBbox.isValidRect() && spi->bbox.intersects(spgBbox)) {
@@ -1439,7 +1439,7 @@ void Sprite::saveOrLoadSpriteData(Serializer *s, uint32 savegameVersion) {
 		MKLINE(SpriteInfo, field_90, sleInt32, VER(48)),
 		MKEND()
 	};
-	
+
 	static const SaveLoadEntry spriteGroupEntries[] = {
 		MKLINE(SpriteGroup, bbox.left, sleInt32, VER(48)),
 		MKLINE(SpriteGroup, bbox.top, sleInt32, VER(48)),

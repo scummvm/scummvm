@@ -32,7 +32,7 @@ protected:
 	bool _isDirectory;
 	bool _isRoot;
 	String _path;
-	
+
 public:
 	Ps2FilesystemNode(void);
 	Ps2FilesystemNode(const Ps2FilesystemNode *node);
@@ -109,7 +109,7 @@ FSList Ps2FilesystemNode::listDir(ListMode mode) const {
 		if (tocEntries[fCnt].filename[0] != '.') { // skip .. directory
 			dirEntry._isDirectory = (bool)(tocEntries[fCnt].fileProperties & 2);
 			dirEntry._isRoot = false;
-			
+
 			dirEntry._path = _path;
 			dirEntry._path += "/";
 			dirEntry._path += tocEntries[fCnt].filename;
@@ -135,7 +135,7 @@ AbstractFilesystemNode *Ps2FilesystemNode::parent() const {
 			slash = cnt;
 		cnt++;
 	}
-	
+
 	p->_path = String(_path.c_str(), slash - _path.c_str());
 	p->_isDirectory = true;
 	p->_displayName = slash + 1;

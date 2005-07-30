@@ -36,7 +36,7 @@ protected:
 	bool _isValid;
 	bool _isPseudoRoot;
 	String _path;
-	
+
 public:
 	PalmOSFilesystemNode();
 	PalmOSFilesystemNode(const Char *path);
@@ -71,7 +71,7 @@ void PalmOSFilesystemNode::addFile(FSList &list, ListMode mode, const char *base
 	if (entry._isDirectory)
 		entry._path += "/";
 
-	entry._isValid = true;	
+	entry._isValid = true;
 	entry._isPseudoRoot = false;
 	list.push_back(wrap(new PalmOSFilesystemNode(&entry)));
 }
@@ -111,7 +111,7 @@ FSList PalmOSFilesystemNode::listDir(ListMode mode) const {
 
 	if (e)
 		return myList;
-	
+
 	while(dirIterator != expIteratorStop) {
 		e = VFSDirEntryEnumerate(handle, &dirIterator, &desc);
 		if (!e) {
@@ -137,11 +137,11 @@ const char *lastPathComponent(const Common::String &str) {
 
 AbstractFilesystemNode *PalmOSFilesystemNode::parent() const {
 	PalmOSFilesystemNode *p = 0;
-	
+
 	if (!_isPseudoRoot) {
 		const char *start = _path.c_str();
 		const char *end = lastPathComponent(_path);
-	
+
 		p = new PalmOSFilesystemNode();
 		p->_path = String(start, end - start);
 		p->_isValid = true;

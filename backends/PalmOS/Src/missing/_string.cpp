@@ -27,14 +27,14 @@ void *memchr(const void *s, int c, UInt32 n) {
 	for(chr = 0; chr < n;chr++,((UInt8 *)s)++)
 		if ( *((UInt8 *)s) == c)
 			return (void *)s;
-	
+
 	return NULL;
 }
 
 UInt32 strspn(const char *s1, const char *s2) {
 	UInt32 chr = 0;
 
-	while (	chr < strlen(s1) && 
+	while (	chr < strlen(s1) &&
 			strchr(s2, s1[chr]) )
 		chr++;
 
@@ -88,13 +88,13 @@ Char *strtok(Char *str, const Char *sep) {
 Char *strpbrk(const Char *s1, const Char *s2) {
 	Char *found;
 	UInt32 n;
-	
+
 	for (n=0; n <= StrLen(s2); n++) {
 		found = StrChr(s1, s2[n]);
 		if (found)
 			return found;
 	}
-	
+
 	return NULL;
 }
 
@@ -107,7 +107,7 @@ Char *strrchr(const Char *s, int c) {
 			return (Char *)(s+chr);
 
 	return NULL;
-} 
+}
 
 Char *strdup(const Char *s1) {
 	Char* buf = (Char *)MemPtrNew(StrLen(s1)+1);

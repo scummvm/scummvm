@@ -58,7 +58,7 @@ public:
 	String _targetName;
 	GameSettings _game;	// TODO: Eventually get rid of this?!
 	const Plugin *_plugin;
-	
+
 	bool _dumpScripts;
 
 	bool _force1xOverlay;

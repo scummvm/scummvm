@@ -80,7 +80,7 @@ typedef struct Gob_Object {
 	char tick;			// +36h
 	char multObjIndex;	// +37h, from which play mult animations
 	char unk14;			// +38h
-	char visible;		// +39h 
+	char visible;		// +39h
 } GCC_PACK Gob_Object;
 
 typedef struct Gob_Pos {

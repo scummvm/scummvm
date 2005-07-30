@@ -78,7 +78,7 @@ bool ScummFile::openSubFile(const char *filename) {
 
 	// Get the length of the data file to use for consistency checks
 	const uint32 data_file_len = size();
-	
+
 	// Read offset and length to the file records */
 	const uint32 file_record_off = readUint32BE();
 	const uint32 file_record_len = readUint32BE();
@@ -104,12 +104,12 @@ bool ScummFile::openSubFile(const char *filename) {
 
 		assert(file_name[0]);
 		//debug(7, "  extracting \'%s\'", file_name);
-		
+
 		// Consistency check. make sure the file data is in the file
 		if (file_off + file_len > data_file_len) {
 			return false;
 		}
-		
+
 		if (scumm_stricmp(file_name, filename) == 0) {
 			// We got a match!
 			setSubfileRange(file_off, file_len);
@@ -155,7 +155,7 @@ void ScummFile::seek(int32 offs, int whence) {
 
 uint32 ScummFile::read(void *dataPtr, uint32 dataSize) {
 	uint32 realLen;
-	
+
 	if (_subFileLen) {
 		// Limit the amount we read by the subfile boundaries.
 		const uint32 curPos = pos();
@@ -166,10 +166,10 @@ uint32 ScummFile::read(void *dataPtr, uint32 dataSize) {
 			_ioFailed = true;
 		}
 	}
-	
+
 	realLen = File::read(dataPtr, dataSize);
-	
-	
+
+
 	// If an encryption byte was specified, XOR the data we just read by it.
 	// This simple kind of "encryption" was used by some of the older SCUMM
 	// games.
@@ -281,7 +281,7 @@ enum ResType {
 	NES_UNKNOWN,
 	NES_GLOBDATA,
 	NES_ROOM,
-	NES_SCRIPT, 
+	NES_SCRIPT,
 	NES_SOUND,
 	NES_COSTUME,
 	NES_ROOMGFX,
@@ -292,7 +292,7 @@ enum ResType {
 	NES_SPROFFS,
 	NES_SPRDATA,
 	NES_CHARSET,
-	NES_PREPLIST 
+	NES_PREPLIST
 };
 
 struct ScummNESFile::Resource {
@@ -936,7 +936,7 @@ uint16 ScummNESFile::extractResource(Common::WriteStream *output, Resource *res)
 }
 
 // based on structure of Classic PC Maniac Mansion LFL files
-// (roomgfx resources are arranged in order, one per file, 
+// (roomgfx resources are arranged in order, one per file,
 // after the room blocks) */
 static ScummNESFile::Resource *lfl_01[] = { &res_rooms[1], &res_roomgfx[1], &res_scripts[57], &res_scripts[61], &res_scripts[76], &res_scripts[105], &res_scripts[111], &res_sounds[5], &res_scripts[132], &res_scripts[148], &res_scripts[155], &res_scripts[156], &res_sounds[39], NULL };
 static ScummNESFile::Resource *lfl_02[] = { &res_rooms[2], &res_roomgfx[2], NULL };
@@ -1109,7 +1109,7 @@ bool ScummNESFile::generateIndex() {
 
 		for (j = 0; lfl->entries[j] != NULL; j++) {
 			Resource *entry = lfl->entries[j];
-			
+
 			switch (entry->type) {
 			case NES_ROOM:
 				lfl_index.room_lfl[entry - res_rooms] = lfl->num;
@@ -1259,7 +1259,7 @@ bool ScummNESFile::openSubFile(const char *filename) {
 	const char *ext = strrchr(filename, '.');
 	char resNum[3];
 	int res;
-	
+
 	// We always have file name in form of XX.lfl
 	resNum[0] = ext[-2];
 	resNum[1] = ext[-1];
@@ -1472,7 +1472,7 @@ uint16 ScummC64File::extractResource(Common::WriteStream *out, int res) {
 	};
 	int i;
 	uint16 reslen = 0;
-		
+
 	openDisk(_roomDisks[res]);
 
 	File::seek((SectorOffset[_roomTracks[res]] + _roomSectors[res]) * 256);
@@ -1528,7 +1528,7 @@ bool ScummC64File::openSubFile(const char *filename) {
 	const char *ext = strrchr(filename, '.');
 	char resNum[3];
 	int res;
-	
+
 	// We always have file name in form of XX.lfl
 	resNum[0] = ext[-2];
 	resNum[1] = ext[-1];

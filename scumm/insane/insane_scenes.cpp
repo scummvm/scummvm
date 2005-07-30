@@ -164,7 +164,7 @@ void Insane::runScene(int arraynum) {
 	}
 	// insane_unlock(); // FIXME
 	_vm->_sound->stopAllSounds(); // IMUSE_StopAllSounds();
-	
+
 	delete _player;
 }
 
@@ -223,14 +223,14 @@ void Insane::stopSceneSounds(int sceneId) {
 		if (_actor[0].runningSound != 0)
 			smlayer_stopSound(_actor[0].runningSound);
 		_actor[0].runningSound = 0;
-	
+
 		if (_actor[1].runningSound != 0)
 			smlayer_stopSound(_actor[1].runningSound);
 		_actor[1].runningSound = 0;
-	
+
 		if (_currScenePropIdx != 0)
 			shutCurrentScene();
-	
+
 		_currScenePropSubIdx = 0;
 		_currTrsMsg = 0;
 		_actor[0].defunct = 0;
@@ -283,7 +283,7 @@ void Insane::stopSceneSounds(int sceneId) {
 	smlayer_setActorCostume(1, 2, 0);
 	smlayer_setActorCostume(1, 0, 0);
 	smlayer_setActorCostume(1, 1, 0);
-	
+
 	return;
 }
 
@@ -295,7 +295,7 @@ void Insane::shutCurrentScene(void) {
 	_currScenePropSubIdx = 0;
 	_actor[1].scenePropSubIdx = 0;
 	_actor[1].defunct = 0;
-	
+
 	if (_actor[1].runningSound != 0) {
 		smlayer_stopSound(_actor[1].runningSound);
 		_actor[1].runningSound = 0;
@@ -684,7 +684,7 @@ void Insane::setEnemyCostumes(void) {
 	smlayer_putActor(0, 2, _actor[0].x+11, _actor[0].y1+102, _smlayer_room2);
 	smlayer_putActor(0, 1, _actor[0].x, _actor[0].y1+200, _smlayer_room2);
 	smlayer_putActor(0, 0, _actor[0].x, _actor[0].y1+200, _smlayer_room2);
-	
+
 	if (_currEnemy == EN_CAVEFISH) {
 		smlayer_setActorCostume(1, 2, readArray(_enemy[_currEnemy].costume4));
 		_actor[1].act[2].room = 1;
@@ -695,8 +695,8 @@ void Insane::setEnemyCostumes(void) {
 		_actor[1].act[2].state = 98;
 		_actor[1].act[0].state = 98;
 		_actor[1].act[1].state = 98;
-	
-		smlayer_putActor(1, 2, _actor[1].x + _actor[1].act[2].tilt - 17, 
+
+		smlayer_putActor(1, 2, _actor[1].x + _actor[1].act[2].tilt - 17,
 						 _actor[1].y + _actor[1].y1 - 98, _smlayer_room2);
 	} else if (_currEnemy == EN_TORQUE) {
 		smlayer_setActorCostume(1, 2, readArray(_enemy[_currEnemy].costume4));
@@ -707,45 +707,45 @@ void Insane::setEnemyCostumes(void) {
 		_actor[1].act[2].state = 1;
 		_actor[1].act[0].state = 1;
 		_actor[1].act[1].state = 1;
-		smlayer_putActor(1, 2, _actor[1].x + _actor[1].act[2].tilt - 17, 
+		smlayer_putActor(1, 2, _actor[1].x + _actor[1].act[2].tilt - 17,
 						 _actor[1].y + _actor[1].y1 - 98, _smlayer_room2);
 	} else {
 		_actor[1].act[2].room = 1;
 		_actor[1].act[1].room = 1;
 		_actor[1].act[0].room = 1;
-	
+
 		if (_enemy[_currEnemy].costume4)
 			smlayer_setActorCostume(1, 2, readArray(_enemy[_currEnemy].costume4));
-	
+
 		if (_enemy[_currEnemy].costume5)
 			smlayer_setActorCostume(1, 0, readArray(_enemy[_currEnemy].costume5));
-	
+
 		if (_enemy[_currEnemy].costume6)
 			smlayer_setActorCostume(1, 1, readArray(_enemy[_currEnemy].costume6));
-	
+
 		_actor[1].field_8 = 1;
 		_actor[1].act[2].state = 1;
 		_actor[1].act[0].state = 1;
 		_actor[1].act[1].state = 1;
-	
+
 		if (_actor[1].act[2].room != 0)
-			smlayer_putActor(1, 2, _actor[1].x + _actor[1].act[2].tilt - 17, 
-							 _actor[1].y + _actor[1].y1 - 98, 
+			smlayer_putActor(1, 2, _actor[1].x + _actor[1].act[2].tilt - 17,
+							 _actor[1].y + _actor[1].y1 - 98,
 							 _smlayer_room2);
 	}
-	
+
 	if (_actor[1].act[1].room != 0)
 		smlayer_putActor(1, 1, _actor[1].x, _actor[1].y + _actor[1].y1,
 						 _smlayer_room2);
-	
+
 	if (_actor[1].act[0].room != 0)
-		smlayer_putActor(1, 0, _actor[1].x, _actor[1].y + _actor[1].y1, 
+		smlayer_putActor(1, 0, _actor[1].x, _actor[1].y + _actor[1].y1,
 						 _smlayer_room2);
-	
+
 	smlayer_setActorLayer(1, 1, 1);
 	smlayer_setActorLayer(1, 2, 5);
 	smlayer_setActorLayer(1, 0, 10);
-	
+
 	_actor[1].damage = 0;
 	_actor[1].x = 250;
 	_actor[1].y = 300;
@@ -795,7 +795,7 @@ void Insane::setEnemyCostumes(void) {
 	_actor[1].field_44 = false;
 	_actor[1].field_48 = false;
 	if (_enemy[_currEnemy].initializer != -1)
-		enemyInitializer(_enemy[_currEnemy].initializer, _actor[1].damage, 
+		enemyInitializer(_enemy[_currEnemy].initializer, _actor[1].damage,
 							 _actor[0].damage, _actor[1].probability);
 
 	smush_warpMouse(160, 100, -1);
@@ -963,7 +963,7 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 
 		if (_currScenePropIdx)
 			postCaseAll(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
-	
+
 		_actor[0].frame++;
 		_actor[0].act[3].frame++;
 		_actor[0].act[2].frame++;
@@ -975,21 +975,21 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 		_actor[1].act[1].frame++;
 		_actor[1].act[0].frame++;
 	}
-	
+
 	if (!_val115_) {
 		smlayer_overrideDrawActorAt(&renderBitmap[0], renderBitmap[2], renderBitmap[3]);
 		_isBenCut = 0;
 	}
-	
+
 	if (_isBenCut)
 		smlayer_drawSomething(renderBitmap, codecparam, 89, 56, 1, _smush_bencutNut, 0, 0, 0);
-	
+
 	if (!_keyboardDisable)
 		_vm->processActors();
-	
+
 	if (needMore)
 		postCaseMore(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
-	
+
 	_lastKey = 0;
 	_tiresRustle = false;
 }
@@ -1000,7 +1000,7 @@ void Insane::postCase11(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		if (_firstBattle) {
 			smush_setToFinish();
 		} else {
-			queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0, 
+			queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0,
 							 _continueFrame, 1300);
 		}
 	}
@@ -1011,13 +1011,13 @@ void Insane::postCase11(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 void Insane::postCase0(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					   int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	turnBen(true);
-	
+
 	if (!curFrame || curFrame == 420)
 		smlayer_setFluPalette(_smush_roadrashRip, 0);
-	
+
 	if (curFrame >= maxFrame)
 		smush_rewindCurrentSan(1088, -1, -1);
-	
+
 	_roadBumps = false;
 	_roadBranch = false;
 	_roadStop = false;
@@ -1030,7 +1030,7 @@ void Insane::postCase17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 						int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	if (curFrame >= maxFrame && !_needSceneSwitch) {
 		if (_currSceneId == 18) {
-			queueSceneSwitch(17, _smush_minedrivFlu, "minedriv.san", 64, 0, 
+			queueSceneSwitch(17, _smush_minedrivFlu, "minedriv.san", 64, 0,
 							 _continueFrame1, 1300);
 			writeArray(9, 1);
 		} else {
@@ -1047,31 +1047,31 @@ void Insane::postCase16(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 						int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	char buf[12];
 	int32 tmp;
-	
+
 	turnBen(true);
 	sprintf(buf, "^f01%02o", curFrame & 0x3f);
 	smlayer_showStatusMsg(-1, renderBitmap, codecparam, 180, 168, 1, 2, 0, "%s", buf);
 	tmp = 400-curFrame;
-	
+
 	if (tmp < 0)
 		tmp += 1300;
-	
+
 	sprintf(buf, "^f01%04d", tmp);
 	smlayer_showStatusMsg(-1, renderBitmap, codecparam, 202, 168, 1, 2, 0, "%s", buf);
-	
+
 	sprintf(buf, "^f01%02o", curFrame & 0xff);
 	smlayer_showStatusMsg(-1, renderBitmap, codecparam, 240, 168, 1, 2, 0, "%s", buf);
 	smlayer_showStatusMsg(-1, renderBitmap, codecparam, 170, 43, 1, 2, 0, "%s", buf);
 
 	smlayer_drawSomething(renderBitmap, codecparam, 0, 0, 1, _smush_bensgoggNut, 0, 0, 0);
-	
+
 	if (!_objectDetected)
-		smlayer_drawSomething(renderBitmap, codecparam, 24, 170, 1, 
+		smlayer_drawSomething(renderBitmap, codecparam, 24, 170, 1,
 							  _smush_iconsNut, 23, 0, 0);
-	
+
 	if (!curFrame)
 		smlayer_setFluPalette(_smush_goglpaltRip, 0);
-	
+
 	if (curFrame >= maxFrame) {
 		smush_rewindCurrentSan(1088, -1, -1);
 		smlayer_setFluPalette(_smush_goglpaltRip, 0);
@@ -1093,7 +1093,7 @@ void Insane::postCase1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 
 	if ((curFrame >= maxFrame) && !_needSceneSwitch) {
 		flu = &_fluConf[14 + _iactSceneId2];
-		queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0, 
+		queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0,
 						 flu->startFrame, flu->numFrames);
 	}
 	_roadBranch = false;
@@ -1104,7 +1104,7 @@ void Insane::postCase2(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					   int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	turnBen(_battleScene != 0);
 	turnEnemy(true);
-	
+
 	if (!curFrame)
 		smlayer_setFluPalette(_smush_roadrashRip, 0);
 
@@ -1121,10 +1121,10 @@ void Insane::postCase20(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 						int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	turnBen(true);
 	turnEnemy(true);
-	
+
 	if (curFrame >= maxFrame)
 		smush_rewindCurrentSan(1088, -1, -1);
-	
+
 	_roadBumps = false;
 	_roadBranch = false;
 	_roadStop = false;
@@ -1204,7 +1204,7 @@ void Insane::postCase5(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			}
 		}
 	}
-	
+
 	_carIsBroken = false;
 	_roadStop = false;
 	_roadBranch = false;
@@ -1221,7 +1221,7 @@ void Insane::postCase6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		else
 			flu = &_fluConf[0 + _iactSceneId2];
 
-		queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0, 
+		queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0,
 						 flu->startFrame, flu->numFrames);
 	}
 	_roadBranch = false;
@@ -1245,7 +1245,7 @@ void Insane::postCase8(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			}
 		}
  	}
-	
+
 	_roadBranch = false;
 	_roadStop = false;
 }
@@ -1306,7 +1306,7 @@ void Insane::postCase10(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			}
 		}
  	}
-	
+
 	_roadBranch = false;
 	_roadStop = false;
 }

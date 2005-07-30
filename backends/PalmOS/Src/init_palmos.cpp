@@ -7,7 +7,7 @@ static UInt16 autoOffDelay;
 
 void PalmInit(UInt8 init) {
 	// set screen depth
-	UInt32 depth = 8;		
+	UInt32 depth = 8;
 	WinScreenMode(winScreenModeSet, NULL, NULL, &depth, NULL);
 
 	if (init & INIT_AUTOOFF) {
@@ -27,12 +27,12 @@ Err PalmHRInit(UInt32 depth) {
 	UInt32 width = 320;
 	UInt32 height = 320;
 	Boolean color = true;
-	
+
 	e = WinScreenMode (winScreenModeSet, &width, &height, &depth, &color);
 
 	if (!e) {
 		UInt32 attr;
-		WinScreenGetAttribute(winScreenDensity, &attr); 
+		WinScreenGetAttribute(winScreenDensity, &attr);
 		e = (attr != kDensityDouble);
 	}
 

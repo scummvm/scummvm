@@ -19,7 +19,7 @@ static Boolean MusicTabSave() {
 	FieldType *fld1P;
 	UInt16 tempo;
 	FormPtr frmP;
-	
+
 	frmP = FrmGetActiveForm();
 
 	cck1P = (ControlType *)GetObjectPtr(TabMusicMusicCheckbox);
@@ -40,7 +40,7 @@ static Boolean MusicTabSave() {
 
 	musicInfoP->sound.drvMusic = LstGetSelection(list1P);
 	musicInfoP->sound.tempo = tempo;
-	
+
 	return true;
 }
 
@@ -87,7 +87,7 @@ static void SoundTabSave() {
 static void SoundTabInit() {
 	ControlType *cck1P;
 	ListType *list1P;
-	
+
 	cck1P = (ControlType *)GetObjectPtr(TabSoundSoundCheckbox);
 	list1P = (ListType *)GetObjectPtr(TabSoundRateList);
 
@@ -103,7 +103,7 @@ static Boolean AudioCDTabSave() {
 	ListType *list1P, *list2P;
 	UInt16 firstTrack;
 	FormPtr frmP;
-	
+
 	frmP = FrmGetActiveForm();
 
 	cck3P = (ControlType *)GetObjectPtr(TabAudioCDMP3Checkbox);
@@ -111,7 +111,7 @@ static Boolean AudioCDTabSave() {
 	fld3P = (FieldType *)GetObjectPtr(TabAudioCDFirstTrackField);
 	list1P = (ListType *)GetObjectPtr(TabAudioCDDriverList);
 	list2P = (ListType *)GetObjectPtr(TabAudioCDFormatList);
-	
+
 	firstTrack = StrAToI(FldGetTextPtr(fld3P));
 	if (firstTrack < 1 || firstTrack > 999) {
 		TabSetActive(frmP, myTabP, 2);
@@ -127,7 +127,7 @@ static Boolean AudioCDTabSave() {
 
 	musicInfoP->sound.defaultTrackLength = StrAToI(FldGetTextPtr(fld2P));
 	musicInfoP->sound.firstTrack = firstTrack;
-	
+
 	return true;
 }
 
@@ -168,13 +168,13 @@ static void AudioCDTabInit() {
 // Volume
 static void VolumeTabSave() {
 	SliderControlType *slid1P, *slid2P, *slid3P, *slid4P, *slid5P;
-	
+
 	slid1P = (SliderControlType *)GetObjectPtr(TabVolumeMasterSliderControl);
 	slid2P = (SliderControlType *)GetObjectPtr(TabVolumeMusicSliderControl);
 	slid3P = (SliderControlType *)GetObjectPtr(TabVolumeSfxSliderControl);
 	slid4P = (SliderControlType *)GetObjectPtr(TabVolumeSpeechSliderControl);
 	slid5P = (SliderControlType *)GetObjectPtr(TabVolumeAudioCDSliderControl);
-			
+
 	CtlGetSliderValues ((ControlType *)slid1P, 0, 0, 0, &musicInfoP->volume.master);
 	CtlGetSliderValues ((ControlType *)slid2P, 0, 0, 0, &musicInfoP->volume.music);
 	CtlGetSliderValues ((ControlType *)slid3P, 0, 0, 0, &musicInfoP->volume.sfx);
@@ -185,7 +185,7 @@ static void VolumeTabSave() {
 static void VolumeTabInit() {
 	SliderControlType *slid1P, *slid2P, *slid3P, *slid4P, *slid5P;
 	UInt16 value;
-	
+
 	slid1P = (SliderControlType *)GetObjectPtr(TabVolumeMasterSliderControl);
 	slid2P = (SliderControlType *)GetObjectPtr(TabVolumeMusicSliderControl);
 	slid3P = (SliderControlType *)GetObjectPtr(TabVolumeSfxSliderControl);
@@ -238,7 +238,7 @@ static void MusicFormInit(UInt16 index) {
 
 		recordH = DmQueryRecord(gameDB, index);
 		gameInfoP = (GameInfoType *)MemHandleLock(recordH);
-		
+
 		if (!gameInfoP) {
 			FrmCustomAlert(FrmErrorAlert, "An error occured.",0,0);
 			return;
@@ -280,7 +280,7 @@ Boolean MusicFormHandleEvent(EventPtr eventP) {
 			MusicFormInit(GamGetSelected());
 			handled = true;
 			break;
-			
+
 		case ctlSelectEvent:
 			switch (eventP->data.ctlSelect.controlID)
 			{
@@ -291,14 +291,14 @@ Boolean MusicFormHandleEvent(EventPtr eventP) {
 					lastTab = (eventP->data.ctlSelect.controlID - MusicForm - 1);
 					TabSetActive(frmP, myTabP, lastTab);
 					break;
-					
+
 				case TabMusicDriverPopTrigger:
 					FrmList(eventP, TabMusicDriverList);
 					FrmHideObject(frmP, FrmGetObjectIndex(frmP, TabMusicDriverList));
-					
+
 					if (!OPTIONS_TST(kOptDeviceZodiac) && !OPTIONS_TST(kOptSonyPa1LibAPI)) {
 						ListType *list1P = (ListType *)GetObjectPtr(TabMusicDriverList);
-						
+
 						if (LstGetSelection(list1P) == 1) {
 							FrmCustomAlert(FrmInfoAlert, "There is no built-in MIDI support on your device.", 0, 0);
 							LstSetSelection(list1P, 0);
@@ -310,7 +310,7 @@ Boolean MusicFormHandleEvent(EventPtr eventP) {
 				case TabSoundRatePopTrigger:
 					FrmList(eventP, TabSoundRateList);
 					FrmHideObject(frmP, FrmGetObjectIndex(frmP, TabSoundRateList));
-					
+
 					if (!OPTIONS_TST(kOptPalmSoundAPI)) {
 						ListType *list1P = (ListType *)GetObjectPtr(TabSoundRateList);
 
@@ -358,6 +358,6 @@ Boolean MusicFormHandleEvent(EventPtr eventP) {
 		default:
 			break;
 	}
-	
+
 	return handled;
 }

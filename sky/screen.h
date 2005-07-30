@@ -62,7 +62,7 @@ public:
 
 	void showScreen(uint16 fileNum);
 	void showScreen(uint8 *pScreen);
-	
+
 	void handleTimer(void);
 	void startSequence(uint16 fileNum);
 	void startSequenceItem(uint16 itemNum);
@@ -116,7 +116,7 @@ private:
 	//- more regular screen.asm + layer.asm routines
 	void convertPalette(uint8 *inPal, uint8* outPal);
 	void palette_fadedown_helper(uint32 *pal, uint num);
-	
+
 	//- sprite.asm routines
 	// fixme: get rid of these globals
 	uint32 _sprWidth, _sprHeight, _sprX, _sprY, _maskX1, _maskX2;

@@ -270,7 +270,7 @@ class Scene {
 	void loadSceneEntryList(const byte* resourcePointer, size_t resourceLength);
 	void processSceneResources();
 
- 
+
 	SagaEngine *_vm;
 
 	ResourceContext *_sceneContext;

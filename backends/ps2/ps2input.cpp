@@ -124,7 +124,7 @@ bool Ps2Input::pollEvent(OSystem::Event *event) {
 			if (change & (PS2MOUSE_BTN1 | PS2MOUSE_BTN2)) {
 				if (change & PS2MOUSE_BTN1)
 					event->type = (_mButtons & PS2MOUSE_BTN1) ? OSystem::EVENT_LBUTTONDOWN : OSystem::EVENT_LBUTTONUP;
-				else 
+				else
 					event->type = (_mButtons & PS2MOUSE_BTN2) ? OSystem::EVENT_RBUTTONDOWN : OSystem::EVENT_RBUTTONUP;
 				event->mouse.x = _posX;
 				event->mouse.y = _posY;
@@ -171,10 +171,10 @@ bool Ps2Input::pollEvent(OSystem::Event *event) {
 		int16 joyh, joyv;
 		_pad->readPad(&buttons, &joyh, &joyv);
 		uint16 btnChange = buttons ^ _padLastButtons;
-		
+
 		if (checkPadMouse) {
 			if (btnChange & (PAD_CROSS | PAD_CIRCLE)) {
-				if (btnChange & PAD_CROSS) 
+				if (btnChange & PAD_CROSS)
 					event->type = (buttons & PAD_CROSS) ?  OSystem::EVENT_LBUTTONDOWN : OSystem::EVENT_LBUTTONUP;
 				else
 					event->type = (buttons & PAD_CIRCLE) ? OSystem::EVENT_RBUTTONDOWN : OSystem::EVENT_RBUTTONUP;
@@ -505,7 +505,7 @@ const int Ps2Input::_usbToSdlk[0x100] = {
 	/* FF */	0
 };
 
-const int Ps2Input::_keyCodes[16] = { 
+const int Ps2Input::_keyCodes[16] = {
 	49,	 // '1' - Select
 	0,	 //     - L3
 	0,	 //     - R3
@@ -524,7 +524,7 @@ const int Ps2Input::_keyCodes[16] = {
 	0,	 //		- Square
 };
 
-const uint16 Ps2Input::_asciiCodes[16] = { 
+const uint16 Ps2Input::_asciiCodes[16] = {
 	49,	 // '1' - Select
 	0,	 //     - L3
 	0,	 //     - R3

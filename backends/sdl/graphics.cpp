@@ -115,7 +115,7 @@ void OSystem_SDL::endGFXTransaction(void) {
 		setGraphicsMode(_transactionDetails.mode);
 
 	if (_transactionDetails.sizeChanged)
-		initSize(_transactionDetails.w, _transactionDetails.h, 
+		initSize(_transactionDetails.w, _transactionDetails.h,
 				 _transactionDetails.overlayScale);
 
 	if (_transactionDetails.arChanged)
@@ -271,7 +271,7 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 
 	if (_transactionMode != kTransactionCommit)
 		internUpdateScreen();
-	
+
 	// Make sure that an EVENT_SCREEN_CHANGED gets sent later
 	_modeChanged = true;
 
@@ -346,7 +346,7 @@ void OSystem_SDL::loadGFXMode() {
 	// Create the surface that contains the scaled graphics in 16 bit mode
 	//
 
-	_hwscreen = SDL_SetVideoMode(_screenWidth * _scaleFactor, effectiveScreenHeight(), 16, 
+	_hwscreen = SDL_SetVideoMode(_screenWidth * _scaleFactor, effectiveScreenHeight(), 16,
 		_fullscreen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
 	);
 	if (_hwscreen == NULL) {
@@ -379,7 +379,7 @@ void OSystem_SDL::loadGFXMode() {
 		InitScalers(555);
 	else
 		InitScalers(565);
-	
+
 	// Need some extra bytes around when using 2xSaI
 	_tmpscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _screenWidth + 3, _screenHeight + 3,
 						16,
@@ -435,11 +435,11 @@ void OSystem_SDL::loadGFXMode() {
 void OSystem_SDL::unloadGFXMode() {
 	if (_screen) {
 		SDL_FreeSurface(_screen);
-		_screen = NULL; 
+		_screen = NULL;
 	}
 
 	if (_hwscreen) {
-		SDL_FreeSurface(_hwscreen); 
+		SDL_FreeSurface(_hwscreen);
 		_hwscreen = NULL;
 	}
 
@@ -476,14 +476,14 @@ void OSystem_SDL::hotswapGFXMode() {
 	SDL_Surface *old_overlayscreen = _overlayscreen;
 
 	// Release the HW screen surface
-	SDL_FreeSurface(_hwscreen); 
+	SDL_FreeSurface(_hwscreen);
 
-	SDL_FreeSurface(_tmpscreen); 
-	SDL_FreeSurface(_tmpscreen2); 
+	SDL_FreeSurface(_tmpscreen);
+	SDL_FreeSurface(_tmpscreen2);
 
 #ifdef USE_OSD
 	// Release the OSD surface
-	SDL_FreeSurface(_osdSurface); 
+	SDL_FreeSurface(_osdSurface);
 #endif
 
 	// Setup the new GFX mode
@@ -505,7 +505,7 @@ void OSystem_SDL::hotswapGFXMode() {
 
 	// Blit everything to the screen
 	internUpdateScreen();
-	
+
 	// Make sure that an EVENT_SCREEN_CHANGED gets sent later
 	_modeChanged = true;
 }
@@ -544,12 +544,12 @@ void OSystem_SDL::internUpdateScreen() {
 	}
 
 	// Check whether the palette was changed in the meantime and update the
-	// screen surface accordingly. 
+	// screen surface accordingly.
 	if (_paletteDirtyEnd != 0) {
-		SDL_SetColors(_screen, _currentPalette + _paletteDirtyStart, 
+		SDL_SetColors(_screen, _currentPalette + _paletteDirtyStart,
 			_paletteDirtyStart,
 			_paletteDirtyEnd - _paletteDirtyStart);
-		
+
 		_paletteDirtyEnd = 0;
 
 		_forceFull = true;
@@ -607,7 +607,7 @@ void OSystem_SDL::internUpdateScreen() {
 	// Only draw anything if necessary
 	if (_numDirtyRects > 0) {
 
-		SDL_Rect *r; 
+		SDL_Rect *r;
 		SDL_Rect dst;
 		uint32 srcPitch, dstPitch;
 		SDL_Rect *lastRect = _dirtyRectList + _numDirtyRects;
@@ -615,7 +615,7 @@ void OSystem_SDL::internUpdateScreen() {
 		if (scalerProc == Normal1x && !_adjustAspectRatio && 0) {
 			for (r = _dirtyRectList; r != lastRect; ++r) {
 				dst = *r;
-				
+
 				dst.y += _currentShakePos;
 				if (SDL_BlitSurface(origSurf, r, _hwscreen, &dst) != 0)
 					error("SDL_BlitSurface failed: %s", SDL_GetError());
@@ -663,7 +663,7 @@ void OSystem_SDL::internUpdateScreen() {
 					scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
 							   (byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h);
 				}
-				
+
 				r->x = rx1;
 				r->y = dst_y;
 				r->w = r->w * scale1 / scale2;
@@ -726,7 +726,7 @@ void OSystem_SDL::setFullscreenMode(bool enable) {
 
 			return;
 		}
-		
+
 #if defined(MACOSX) && !SDL_VERSION_ATLEAST(1, 2, 6)
 		// On OS X, SDL_WM_ToggleFullScreen is currently not implemented. Worse,
 		// before SDL 1.2.6 it always returned -1 (which would indicate a
@@ -740,7 +740,7 @@ void OSystem_SDL::setFullscreenMode(bool enable) {
 		} else {
 			// Blit everything to the screen
 			internUpdateScreen();
-			
+
 			// Make sure that an EVENT_SCREEN_CHANGED gets sent later
 			_modeChanged = true;
 		}
@@ -749,7 +749,7 @@ void OSystem_SDL::setFullscreenMode(bool enable) {
 }
 
 void OSystem_SDL::setAspectRatioCorrection(bool enable) {
-	if ((_screenHeight == 200 && _adjustAspectRatio != enable) || 
+	if ((_screenHeight == 200 && _adjustAspectRatio != enable) ||
 		_transactionMode == kTransactionCommit) {
 		Common::StackLock lock(_graphicsMutex);
 
@@ -767,7 +767,7 @@ void OSystem_SDL::setAspectRatioCorrection(bool enable) {
 			if (_transactionMode != kTransactionCommit)
 				hotswapGFXMode();
 		}
-			
+
 		// Make sure that an EVENT_SCREEN_CHANGED gets sent later
 		_modeChanged = true;
 	}
@@ -797,7 +797,7 @@ void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int
 		return;
 
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
-	
+
 	if (((long)src & 3) == 0 && pitch == _screenWidth && x == 0 && y == 0 &&
 			w == _screenWidth && h == _screenHeight && _modeFlags & DF_WANT_RECT_OPTIM) {
 		/* Special, optimized case for full screen updates.
@@ -856,20 +856,20 @@ void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int
 bool OSystem_SDL::grabRawScreen(Graphics::Surface *surf) {
 	assert(_screen);
 	assert(surf);
-	
+
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
-	
+
 	surf->create(_screenWidth, _screenHeight, _screen->format->BytesPerPixel);
-	
+
 	// Try to lock the screen surface
 	if (SDL_LockSurface(_screen) == -1)
 		error("SDL_LockSurface failed: %s", SDL_GetError());
-	
+
 	memcpy(surf->pixels, _screen->pixels, _screenWidth * _screenHeight * _screen->format->BytesPerPixel);
-	
+
 	// Unlock the screen surface
 	SDL_UnlockSurface(_screen);
-	
+
 	return true;
 }
 
@@ -939,7 +939,7 @@ void OSystem_SDL::addDirtyRect(int x, int y, int w, int h, bool mouseRect) {
 		}
 	}
 #endif
-	
+
 	r->x = x;
 	r->y = y;
 	r->w = w;
@@ -1061,9 +1061,9 @@ void OSystem_SDL::setPalette(const byte *colors, uint start, uint num) {
 }
 
 void OSystem_SDL::grabPalette(byte *colors, uint start, uint num) {
-	assert(colors);	
+	assert(colors);
 	const SDL_Color *base = _currentPalette + start;
-	
+
 	for (uint i = 0; i < num; ++i) {
 		colors[i * 4] = base[i].r;
 		colors[i * 4 + 1] = base[i].g;
@@ -1121,7 +1121,7 @@ void OSystem_SDL::clearOverlay() {
 	//assert (_transactionMode == kTransactionNone);
 
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
-	
+
 	if (!_overlayVisible)
 		return;
 
@@ -1137,12 +1137,12 @@ void OSystem_SDL::clearOverlay() {
 	SDL_LockSurface(_tmpscreen);
 	SDL_LockSurface(_overlayscreen);
 	if (_overlayScale == _scaleFactor) {
-		_scalerProc((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2, 
+		_scalerProc((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2,
 					_tmpscreen->pitch, (byte *)_overlayscreen->pixels, _overlayscreen->pitch, _screenWidth, _screenHeight);
 	} else {
 		// Quality is degraded here. It is possible to run one-less scaler here, but is it
 		// really needed? Quality will anyway be degraded because of 1.5x scaler.
-		(scalersMagn[0][_overlayScale - 1])((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2, 
+		(scalersMagn[0][_overlayScale - 1])((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2,
 					  _tmpscreen->pitch, (byte *)_overlayscreen->pixels, _overlayscreen->pitch, _screenWidth, _screenHeight);
 	}
 	SDL_UnlockSurface(_tmpscreen);
@@ -1233,7 +1233,7 @@ void OSystem_SDL::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
 bool OSystem_SDL::showMouse(bool visible) {
 	if (_mouseVisible == visible)
 		return visible;
-	
+
 	bool last = _mouseVisible;
 	_mouseVisible = visible;
 
@@ -1267,11 +1267,11 @@ void OSystem_SDL::warpMouse(int x, int y) {
 		setMousePos(x, y);
 	}
 }
-	
+
 void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale) {
 	if (w == 0 || h == 0)
 		return;
- 
+
 	_mouseHotspotX = hotspot_x;
 	_mouseHotspotY = hotspot_y;
 
@@ -1282,10 +1282,10 @@ void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
  	if (_mouseCurState.w != (int)w || _mouseCurState.h != (int)h) {
  		_mouseCurState.w = w;
  		_mouseCurState.h = h;
- 
+
  		if (_mouseOrigSurface)
- 			SDL_FreeSurface(_mouseOrigSurface); 
- 
+ 			SDL_FreeSurface(_mouseOrigSurface);
+
 		// Allocate bigger surface because AdvMame2x adds black pixel at [0,0]
  		_mouseOrigSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
  						_mouseCurState.w + 2,
@@ -1295,12 +1295,12 @@ void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
  						_hwscreen->format->Gmask,
  						_hwscreen->format->Bmask,
  						_hwscreen->format->Amask);
- 
+
  		if (_mouseOrigSurface == NULL)
  			error("allocating _mouseOrigSurface failed");
  		SDL_SetColorKey(_mouseOrigSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, kMouseColorKey);
  	}
- 
+
 	free(_mouseData);
 
 	_mouseData = (byte *)malloc(w * h);
@@ -1313,13 +1313,13 @@ void OSystem_SDL::blitCursor() {
 	const byte *srcPtr = _mouseData;
 	byte color;
 	int w, h, i, j;
-  
+
 	if (!_mouseOrigSurface || !_mouseData)
  		return;
-  
+
 	w = _mouseCurState.w;
 	h = _mouseCurState.h;
-  
+
 	SDL_LockSurface(_mouseOrigSurface);
 
 	// Make whole surface transparent
@@ -1339,11 +1339,11 @@ void OSystem_SDL::blitCursor() {
 			color = *srcPtr;
 			if (color != _mouseKeyColor) {	// transparent, don't draw
 				if (_cursorHasOwnPalette && !_overlayVisible && !_cursorPaletteDisabled)
-					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format, 
-								   _cursorPalette[color].r, _cursorPalette[color].g, 
+					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format,
+								   _cursorPalette[color].r, _cursorPalette[color].g,
 															   _cursorPalette[color].b);
 				else
-					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format, 
+					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format,
 								   _currentPalette[color].r, _currentPalette[color].g,
 												   				_currentPalette[color].b);
 			}
@@ -1362,18 +1362,18 @@ void OSystem_SDL::blitCursor() {
 		hW = w * _scaleFactor / _cursorTargetScale;
 		hH = hH1 = h * _scaleFactor / _cursorTargetScale;
   	}
-  
+
 	if (_adjustAspectRatio) {
 		hH = real2Aspect(hH - 1) + 1;
 	}
-  
+
 	if (_mouseCurState.hW != hW || _mouseCurState.hH != hH) {
 		_mouseCurState.hW = hW;
 		_mouseCurState.hH = hH;
-  
+
 		if (_mouseSurface)
-			SDL_FreeSurface(_mouseSurface); 
-  
+			SDL_FreeSurface(_mouseSurface);
+
 		_mouseSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
 						_mouseCurState.hW,
 						_mouseCurState.hH,
@@ -1382,13 +1382,13 @@ void OSystem_SDL::blitCursor() {
 						_hwscreen->format->Gmask,
 						_hwscreen->format->Bmask,
 						_hwscreen->format->Amask);
-  
+
 		if (_mouseSurface == NULL)
 			error("allocating _mouseSurface failed");
 
 		SDL_SetColorKey(_mouseSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, kMouseColorKey);
   	}
-  
+
 	SDL_LockSurface(_mouseSurface);
 
 	ScalerProc *scalerProc;
@@ -1408,12 +1408,12 @@ void OSystem_SDL::blitCursor() {
 
 	if (_adjustAspectRatio)
 		cursorStretch200To240((uint8 *)_mouseSurface->pixels, _mouseSurface->pitch, hW, hH1, 0, 0, 0);
-  
+
 	SDL_UnlockSurface(_mouseSurface);
 	SDL_UnlockSurface(_mouseOrigSurface);
 }
 
-// Basically it is kVeryFastAndUglyAspectMode of stretch200To240 from 
+// Basically it is kVeryFastAndUglyAspectMode of stretch200To240 from
 // common/scale/aspect.cpp
 static int cursorStretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY) {
 	int maxDstY = real2Aspect(origSrcY + height - 1);
@@ -1443,13 +1443,13 @@ void OSystem_SDL::toggleMouseGrab() {
 void OSystem_SDL::undrawMouse() {
 	const int x = _mouseBackup.x;
 	const int y = _adjustAspectRatio ? aspect2Real(_mouseBackup.y) : _mouseBackup.y;
-	
+
 	// When we switch bigger overlay off mouse jumps. Argh!
 	// This is intended to prevent undrawing offscreen mouse
 	if (!_overlayVisible && (x >= _screenWidth || y >= _screenHeight)) {
 		return;
 	}
-	
+
 	if (_mouseBackup.w != 0 && _mouseBackup.h != 0) {
 		addDirtyRect(x, y, _mouseBackup.w, _mouseBackup.h);
 	}
@@ -1519,10 +1519,10 @@ void OSystem_SDL::drawMouse() {
   	// Quick check to see if anything has to be drawn at all
 	if (dst.w <= 0 || dst.h <= 0 || dst.x >= width || dst.y >= height)
   		return;
-  
+
 	src.w = dst.w;
 	src.h = dst.h;
-  
+
 	if (_adjustAspectRatio)
 		dst.y = real2Aspect(dst.y);
 
@@ -1555,7 +1555,7 @@ void OSystem_SDL::displayMessageOnOSD(const char *msg) {
 	assert(msg);
 
 	uint i;
-	
+
 	// Lock the OSD surface for drawing
 	if (SDL_LockSurface(_osdSurface))
 		error("displayMessageOnOSD: SDL_LockSurface failed: %s", SDL_GetError());
@@ -1566,13 +1566,13 @@ void OSystem_SDL::displayMessageOnOSD(const char *msg) {
 	dst.h = _osdSurface->h;
 	dst.pitch = _osdSurface->pitch;
 	dst.bytesPerPixel = _osdSurface->format->BytesPerPixel;
-	
+
 	// The font we are going to use:
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kOSDFont);
-	
+
 	// Clear everything with the "transparent" color, i.e. the colorkey
 	SDL_FillRect(_osdSurface, 0, kOSDColorKey);
-	
+
 	// Split the message into separate lines.
 	Common::StringList lines;
 	const char *ptr;
@@ -1594,7 +1594,7 @@ void OSystem_SDL::displayMessageOnOSD(const char *msg) {
 	for (i = 0; i < lines.size(); i++) {
 		width = MAX(width, font->getStringWidth(lines[i]) + 14);
 	}
-	
+
 	// Clip the rect
 	if (width > dst.w)
 		width = dst.w;
@@ -1625,7 +1625,7 @@ void OSystem_SDL::displayMessageOnOSD(const char *msg) {
 	_osdAlpha = SDL_ALPHA_TRANSPARENT +  kOSDInitialAlpha * (SDL_ALPHA_OPAQUE - SDL_ALPHA_TRANSPARENT) / 100;
 	_osdFadeStartTime = SDL_GetTicks() + kOSDFadeOutDelay;
 	SDL_SetAlpha(_osdSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, _osdAlpha);
-	
+
 	// Ensure a full redraw takes place next time the screen is updated
 	_forceFull = true;
 }
@@ -1660,7 +1660,7 @@ void OSystem_SDL::handleScalerHotkeys(const SDL_KeyboardEvent &key) {
 
 	int newMode = -1;
 	int factor = _scaleFactor - 1;
-	
+
 	// Increase/decrease the scale factor
 	if (key.keysym.sym == SDLK_EQUALS || key.keysym.sym == SDLK_PLUS || key.keysym.sym == SDLK_MINUS ||
 		key.keysym.sym == SDLK_KP_PLUS || key.keysym.sym == SDLK_KP_MINUS) {
@@ -1669,21 +1669,21 @@ void OSystem_SDL::handleScalerHotkeys(const SDL_KeyboardEvent &key) {
 			newMode = s_gfxModeSwitchTable[_scalerType][factor];
 		}
 	}
-	
+
 	const bool isNormalNumber = (SDLK_1 <= key.keysym.sym && key.keysym.sym <= SDLK_9);
 	const bool isKeypadNumber = (SDLK_KP1 <= key.keysym.sym && key.keysym.sym <= SDLK_KP9);
 	if (isNormalNumber || isKeypadNumber) {
 		_scalerType = key.keysym.sym - (isNormalNumber ? SDLK_1 : SDLK_KP1);
 		if (_scalerType >= ARRAYSIZE(s_gfxModeSwitchTable))
 			return;
-		
+
 		while (s_gfxModeSwitchTable[_scalerType][factor] < 0) {
 			assert(factor > 0);
 			factor--;
 		}
 		newMode = s_gfxModeSwitchTable[_scalerType][factor];
 	}
-	
+
 	if (newMode >= 0) {
 		setGraphicsMode(newMode);
 #ifdef USE_OSD

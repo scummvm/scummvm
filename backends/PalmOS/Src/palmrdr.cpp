@@ -84,10 +84,10 @@ void OSystem_PALMOS::updateScreen_wideZodiac() {
 		// clear bottom
 		RctSetRectangle(&r, 0, _screenOffset.y + h, 480, _current_shake_pos);
 		WinFillRectangle(&r, 0);
-		
+
 		destRect.y += _new_shake_pos;
 		_screenOffset.y += _new_shake_pos;
-		
+
 		rumblePack(_new_shake_pos >= 3);
 		_current_shake_pos = _new_shake_pos;
 	}
@@ -95,7 +95,7 @@ void OSystem_PALMOS::updateScreen_wideZodiac() {
 	// update screen
 	WinSetDrawWindow(WinGetDisplayWindow());
 	e = TwGfxDrawPalmBitmap((TwGfxSurfaceType *)_twSrc, &destPoint, (BitmapPtr)_twBmpV3);
-	e = TwGfxStretchBlt2((TwGfxSurfaceType *)_twDst, &destRect, (TwGfxSurfaceType *)_twSrc, &srcRect, twGfxStretchFast| (gVars->filter ? twGfxStretchSmooth : 0)); 
+	e = TwGfxStretchBlt2((TwGfxSurfaceType *)_twDst, &destRect, (TwGfxSurfaceType *)_twSrc, &srcRect, twGfxStretchFast| (gVars->filter ? twGfxStretchSmooth : 0));
 }
 #endif
 
@@ -114,13 +114,13 @@ void OSystem_PALMOS::updateScreen_widePortrait() {
 		// clear bottom
 		RctSetRectangle(&r, _screenOffset.y + 300, 0, _current_shake_pos, 480);
 		WinFillRectangle(&r, 0);
-		
+
 		dst += _new_shake_pos;
 
 		rumblePack(_new_shake_pos >= 3);
 		_current_shake_pos = _new_shake_pos;
 	}
-	
+
 	// update screen
 	ARM_START(WideType)
 		ARM_INIT(COMMON_WPORTRAIT)
@@ -177,13 +177,13 @@ void OSystem_PALMOS::updateScreen_wideLandscape() {
 		// clear bottom
 		RctSetRectangle(&r, 0, _screenOffset.y + 300, 480, _current_shake_pos);
 		WinFillRectangle(&r, 0);
-		
+
 		dst += _new_shake_pos * 480;
 
 		rumblePack(_new_shake_pos >= 3);
 		_current_shake_pos = _new_shake_pos;
 	}
-	
+
 	// update screen
 	ARM_START(WideType)
 		ARM_INIT(COMMON_WLANDSCAPE)

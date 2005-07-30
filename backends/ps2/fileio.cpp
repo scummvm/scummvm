@@ -193,7 +193,7 @@ void Ps2ReadFile::cacheReadAhead(void) {
 				sioprintf("cache seek error: seek to %d instead of %d, fs = %d", _physFilePos, cachePosEnd, _fileSize);
 				return;
 			}
-		}		
+		}
 
 		uint32 cacheDest = (_cacheOfs + _bytesInCache) % CACHE_SIZE;
 		uint32 cacheRead = CACHE_SIZE - _bytesInCache;
@@ -247,7 +247,7 @@ uint32 Ps2ReadFile::read(void *dest, uint32 len) {
 					_readBytesBlock = 0; // reset cache hit count
 
 				if (fio.seek(_fd, _filePos, SEEK_SET) == _filePos)
-					_physFilePos = _filePos;	
+					_physFilePos = _filePos;
 				else
 					break; // read beyond EOF
 			}

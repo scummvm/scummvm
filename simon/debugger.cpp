@@ -27,10 +27,10 @@
 
 namespace Simon {
 
-Debugger::Debugger(SimonEngine *vm) 
+Debugger::Debugger(SimonEngine *vm)
 	: Common::Debugger<Debugger>() {
 	_vm = vm;
-		
+
 	DCmd_Register("continue", &Debugger::Cmd_Exit);
 	DCmd_Register("exit", &Debugger::Cmd_Exit);
 	DCmd_Register("help", &Debugger::Cmd_Help);
@@ -58,9 +58,9 @@ void Debugger::postEnter() {
 
 bool Debugger::Cmd_Exit(int argc, const char **argv) {
 	_detach_now = true;
-	return false;	
+	return false;
 }
- 
+
 bool Debugger::Cmd_Help(int argc, const char **argv) {
 	// console normally has 39 line width
 	// wrap around nicely

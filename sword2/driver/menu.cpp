@@ -142,7 +142,7 @@ void Mouse::processMenu() {
 				// each frame we need to clear the icon area.
 
 				clearIconArea(menu, i, &r1);
-					
+
 				if (_pocketStatus[menu][i] == MAXMENUANIMS) {
 					xoff = (RDMENU_ICONWIDE / 2);
 					r2.left = curx - xoff;
@@ -183,7 +183,7 @@ void Mouse::processMenu() {
 }
 
 /**
- * This function brings a specified menu into view. 
+ * This function brings a specified menu into view.
  * @param menu RDMENU_TOP or RDMENU_BOTTOM, depending on which menu to show
  * @return RD_OK, or an error code
  */
@@ -261,7 +261,7 @@ int32 Mouse::setMenuIcon(uint8 menu, uint8 pocket, byte *icon) {
 	// Check for invalid menu parameter.
 	if (menu > RDMENU_BOTTOM)
 		return RDERR_INVALIDMENU;
-	
+
 	// Check for invalid pocket parameter
 	if (pocket >= RDMENU_MAXPOCKETS)
 		return RDERR_INVALIDPOCKET;

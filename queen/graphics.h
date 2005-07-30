@@ -79,7 +79,7 @@ struct BobSlot {
 
 	void animString(const AnimFrame *animBuf);
 	void animNormal(uint16 firstFrame, uint16 lastFrame, uint16 speed, bool rebound, bool xflip);
-	
+
 	void scaleWalkSpeed(uint16 ms);
 
 	void clear();
@@ -97,40 +97,40 @@ public:
 
 	//! unpacks control frames (ie. arrows)
 	void unpackControlBank();
-	
+
 	//! setup dialog arrows
 	void setupArrows();
-	
+
 	//! setup mouse cursor
 	void setupMouseCursor();
 
 	//! draw a bob
 	void drawBob(const BobSlot *bs, const BobFrame *bf, const Box *box, int16 x, int16 y);
-	
+
 	//! draw an inventory item
 	void drawInventoryItem(uint32 frameNum, uint16 x, uint16 y);
-	
+
 	//! draw a bob directly on the backdrop bitmap
 	void pasteBob(uint16 objNum, uint16 image);
-	
+
 	//! resize a bobframe
 	void shrinkFrame(const BobFrame *bf, uint16 percentage);
-	
+
 	//! animate/move bobs and sort them
 	void sortBobs();
-	
+
 	//! draw all the sorted bobs
 	void drawBobs();
-	
+
 	//! clear all setup bobs
 	void clearBobs();
-	
+
 	//! stop all animating/movings bobs
 	void stopBobs();
-	
+
 	//! returns a reference to the specified bob
 	BobSlot *bob(int index);
-	
+
 	//! display a text 'near' the specified bob
 	void setBobText(const BobSlot *bob, const char *text, int textX, int textY, int color, int flags);
 
@@ -195,7 +195,7 @@ private:
 
 	//! cutaway objects/persons animations
 	AnimFrame _cutAnim[21][30];
-	
+
 	uint16 _personFrames[4];
 
 	//! number of animated furniture in current room
@@ -223,7 +223,7 @@ class BamScene {
 public:
 
 	BamScene(QueenEngine *vm);
-	
+
 	void playSfx();
 	void prepareAnimation();
 	void updateCarAnimation();

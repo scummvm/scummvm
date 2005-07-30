@@ -90,7 +90,7 @@ MidiDriver_MPU401::MidiDriver_MPU401() :
 	_timer_proc (0),
 	_channel_mask (0xFFFF) // Permit all 16 channels by default
 {
-	
+
 	uint i;
 	for (i = 0; i < ARRAYSIZE(_midi_channels); ++i) {
 		_midi_channels [i].init (this, i);

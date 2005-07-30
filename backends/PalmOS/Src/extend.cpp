@@ -19,7 +19,7 @@
  * $Header$
  *
  */
- 
+
 #include <PalmOS.h>
 #include <string.h>
 
@@ -36,7 +36,7 @@ void PalmFatalError(const Char *err) {
 	// unlock to show the alert box
 	if (gVars->screenLocked)
 		WinScreenUnlock();
-	
+
 	if (OPTIONS_TST(kOptModeHiDensity))
 		WinSetCoordinateSystem(kCoordinatesStandard);
 
@@ -78,10 +78,10 @@ UInt16 StrReplace(Char *ioStr, UInt16 inMaxLen, const Char *inParamStr, const Ch
 	UInt16 l2 = 0;
 	UInt16 l3 = StrLen(ioStr);
 	UInt16 next = 0;
-		
+
 	if (inParamStr)
 		l2 = StrLen(inParamStr); // can be null to know how many occur.
-	
+
 	while (((found = StrStr(ioStr+next, fndParamStr)) != NULL) && (!quit)) {
 		occurences++;
 		newLength = (StrLen(ioStr) - l1 + l2);
@@ -98,7 +98,7 @@ UInt16 StrReplace(Char *ioStr, UInt16 inMaxLen, const Char *inParamStr, const Ch
 		} else
 			next = found - ioStr + l1;
 	}
-	
+
 	if (inParamStr)
 		ioStr[l3 + l2*occurences - l1*occurences] = 0;
 

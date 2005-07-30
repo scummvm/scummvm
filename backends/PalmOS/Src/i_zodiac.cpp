@@ -9,7 +9,7 @@
 // _twBmpV3 = offscreen bitmap, must be set before this call
 Err ZodiacInit(void **ptrP, Int32 w, Int32 h) {
 	Err e;
-	
+
 	TwGfxSurfaceInfoType surface = {
 		sizeof(TwGfxSurfaceInfoType),
 		w, h, w * 2,

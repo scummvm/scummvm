@@ -79,9 +79,9 @@ public:
 public:
 	ConfigFile();
 	~ConfigFile();
-	
+
 	// TODO: Maybe add a copy constructor etc.?
-	
+
 	/**
 	 * Check whether the given string is a valid section or key name.
 	 * For that, it must only consist of letters, numbers, dashes and
@@ -97,7 +97,7 @@ public:
 	bool	loadFromStream(SeekableReadStream &stream);
 	bool	saveToFile(const String &filename);
 	bool	saveToStream(WriteStream &stream);
-	
+
 	bool	hasSection(const String &section) const;
 	void	removeSection(const String &section);
 	void	renameSection(const String &oldName, const String &newName);
@@ -113,7 +113,7 @@ public:
 
 private:
 	List<Section>	_sections;
-	
+
 	Section *getSection(const String &section);
 	const Section *getSection(const String &section) const;
 };

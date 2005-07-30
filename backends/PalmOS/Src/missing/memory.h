@@ -19,5 +19,5 @@
  * $Header$
  *
  */
- 
+
  #include "string.h"

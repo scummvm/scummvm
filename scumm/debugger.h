@@ -31,7 +31,7 @@ class ScummDebugger : public Common::Debugger<ScummDebugger> {
 public:
 	ScummDebugger(ScummEngine *s);
 	virtual ~ScummDebugger(); // we need this here for __SYMBIAN32__
-	
+
 protected:
 	ScummEngine *_vm;
 	bool  _old_soundsPaused;
@@ -67,7 +67,7 @@ protected:
 	bool Cmd_Hide(int argc, const char **argv);
 
 	bool Cmd_IMuse (int argc, const char **argv);
-	
+
 	void printBox(int box);
 	void drawBox(int box);
 };

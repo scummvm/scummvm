@@ -95,7 +95,7 @@ Mouse::Mouse(OSystem *system, Disk *skyDisk, SkyCompact *skyCompact) {
 	_currentCursor = 6;
 	_mouseX = GAME_SCREEN_WIDTH / 2;
 	_mouseY = GAME_SCREEN_HEIGHT / 2;
-	
+
 	_miceData = _skyDisk->loadFile(MICE_FILE);
 
 	//load in the object mouse file
@@ -121,9 +121,9 @@ bool Mouse::fnAddHuman(void) {
 
 		if (_mouseY < 2) //stop mouse activating top line
 			_mouseY = 2;
-		
+
 		_system->warpMouse(_mouseX, _mouseY);
-	
+
 		//force the pointer engine into running a get-off
 		//even if it's over nothing
 
@@ -133,7 +133,7 @@ bool Mouse::fnAddHuman(void) {
 		//I am going to try it anyway
 		if (Logic::_scriptVariables[GET_OFF])
 			_skyLogic->script((uint16)Logic::_scriptVariables[GET_OFF],(uint16)(Logic::_scriptVariables[GET_OFF] >> 16));
-	
+
 		Logic::_scriptVariables[SPECIAL_ITEM] = 0xFFFFFFFF;
 		Logic::_scriptVariables[GET_OFF] = RESET_MOUSE;
 	}
@@ -141,7 +141,7 @@ bool Mouse::fnAddHuman(void) {
 	return true;
 }
 
-void Mouse::fnSaveCoods(void) { 
+void Mouse::fnSaveCoods(void) {
 	Logic::_scriptVariables[SAFEX] = _mouseX + TOP_LEFT_X;
 	Logic::_scriptVariables[SAFEY] = _mouseY + TOP_LEFT_Y;
 }
@@ -180,7 +180,7 @@ void Mouse::waitMouseNotPressed(void) {
 }
 
 void Mouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
-	
+
 	_currentCursor = frameNum;
 
 	byte *newCursor = _miceData;
@@ -200,7 +200,7 @@ void Mouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
 void Mouse::mouseEngine(uint16 mouseX, uint16 mouseY) {
 	_mouseX = mouseX;
 	_mouseY = mouseY;
-	
+
 	_logicClick = (_mouseB > 0); // click signal is available for Logic for one gamecycle
 
 	if (!Logic::_scriptVariables[MOUSE_STOP]) {
@@ -209,7 +209,7 @@ void Mouse::mouseEngine(uint16 mouseX, uint16 mouseY) {
 			if (Logic::_scriptVariables[MOUSE_STATUS] & (1 << 2)) //buttons enabled?
 				buttonEngine1();
 		}
-	}	
+	}
 	_mouseB = 0;	//don't save up buttons
 }
 
@@ -244,7 +244,7 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 	} while (*currentList != 0);
 	if (Logic::_scriptVariables[SPECIAL_ITEM] != 0) {
 		Logic::_scriptVariables[SPECIAL_ITEM] = 0;
-		
+
 		if (Logic::_scriptVariables[GET_OFF])
 			_skyLogic->script((uint16)Logic::_scriptVariables[GET_OFF],(uint16)(Logic::_scriptVariables[GET_OFF] >> 16));
 		Logic::_scriptVariables[GET_OFF] = 0;
@@ -252,7 +252,7 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 }
 
 void Mouse::buttonPressed(uint8 button) {
-	
+
 	_mouseB = button;
 }
 
@@ -303,7 +303,7 @@ void Mouse::fnOpenCloseHand(bool open) {
 	uint32 size = ((dataFileHeader*)_objectMouseData)->s_sp_size;
 	uint8 *srcData;
 	uint8 *destData;
-	
+
 	srcData = (uint8 *)_objectMouseData + size * cursor + sizeof(dataFileHeader);
 	destData = (uint8 *)_miceData + sizeof(dataFileHeader);
 	memcpy(destData, srcData, size);

@@ -35,7 +35,7 @@
 
 #include "gui/Actions.h"
 
-#define SMARTPHONE_ACTION_VERSION 4 
+#define SMARTPHONE_ACTION_VERSION 4
 
 enum smartphoneActionType {
         SMARTPHONE_ACTION_UP = 0,
@@ -72,7 +72,7 @@ class CEActionsSmartphone : public GUI::Actions {
 		CEActionsSmartphone(GameDetector &detector);
 		bool _right_click_needed;
 		OSystem_WINCE3 *_CESystem;
-	};	
+	};
 
 #endif
 

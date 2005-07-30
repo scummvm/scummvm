@@ -164,7 +164,7 @@ void inter_printText(void) {
 	}
 
 	do {
-		for (i = 0; *inter_execPtr != '.' && (byte)*inter_execPtr != 200; 
+		for (i = 0; *inter_execPtr != '.' && (byte)*inter_execPtr != 200;
 			 i++, inter_execPtr++) {
 			buf[i] = *inter_execPtr;
 		}
@@ -1115,7 +1115,7 @@ void inter_keyFunc(void) {
 			if (pressedKeys[0x3e])
 				key |= 0x4000;
 
-			WRITE_VAR(0, key);			
+			WRITE_VAR(0, key);
 			util_waitKey();
 			return;
 		}
@@ -1149,7 +1149,7 @@ void inter_checkSwitchTable(char **ppExec) {
 	value = VAR_OFFSET(value);
 
 	do {
-		len = *(int8*)inter_execPtr++; // must be a signed char typ and char is not default signed on all platforms. 
+		len = *(int8*)inter_execPtr++; // must be a signed char typ and char is not default signed on all platforms.
 
 		if (len == -5)
 			break;

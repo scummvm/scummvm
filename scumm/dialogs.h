@@ -43,7 +43,7 @@ class ScummDialog : public GUI::Dialog {
 public:
 	ScummDialog(ScummEngine *scumm, int x, int y, int w, int h)
 		: GUI::Dialog(x, y, w, h), _vm(scumm) {}
-	
+
 protected:
 	typedef Common::String String;
 
@@ -60,7 +60,7 @@ class BaseSaveLoadChooser
 {
 public:
 	virtual ~BaseSaveLoadChooser() {};
-	
+
 	virtual const Common::String &getResultString() const = 0;
 	virtual void setList(const Common::StringList& list) = 0;
 	virtual int runModal() = 0;
@@ -143,7 +143,7 @@ public:
 	// from resources
 	InfoDialog(ScummEngine *scumm, int res);
 
-	virtual void handleMouseDown(int x, int y, int button, int clickCount) { 
+	virtual void handleMouseDown(int x, int y, int button, int clickCount) {
 		setResult(0);
 		close();
 	}
@@ -187,7 +187,7 @@ public:
 	virtual void open();
 	virtual void drawDialog();
 	virtual void handleTickle();
-	virtual void handleMouseDown(int x, int y, int button, int clickCount) { 
+	virtual void handleMouseDown(int x, int y, int button, int clickCount) {
 		close();
 	}
 	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);

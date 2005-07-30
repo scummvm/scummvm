@@ -67,7 +67,7 @@ namespace CEGUI {
 		if (!_visible || !checkInside(x, y))
 			return false;
 
-		for (iterator = _itemsMap.begin(); !result && iterator != _itemsMap.end(); ++iterator) 
+		for (iterator = _itemsMap.begin(); !result && iterator != _itemsMap.end(); ++iterator)
 			result = ((GUIElement*)(iterator->_value))->action(x, y, pushed);
 		return result;
 	}

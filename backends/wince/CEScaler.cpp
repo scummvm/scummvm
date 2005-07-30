@@ -35,7 +35,7 @@ void initCEScaler(void) {
 }
 
 static inline uint16 CEinterpolate16_4(uint16 p1, uint16 p2, uint16 p3, uint16 p4)
-{		
+{
         return ((((p1 & redblueMasks[maskUsed]) + (p2 & redblueMasks[maskUsed]) + (p3 & redblueMasks[maskUsed]) + (p4 & redblueMasks[maskUsed])) / 4) & redblueMasks[maskUsed]) |
                ((((p1 & greenMasks[maskUsed]) + (p2 & greenMasks[maskUsed]) + (p3 & greenMasks[maskUsed]) + (p4 & greenMasks[maskUsed])) / 4) & greenMasks[maskUsed]);
 }
@@ -54,16 +54,16 @@ void PocketPCPortrait(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint3
 		work = dstPtr;
 
 		for (int i=0; i<width; i+=4) {
-			// Work with 4 pixels		
+			// Work with 4 pixels
 			uint16 color1 = *(((const uint16 *)srcPtr) + i);
 			uint16 color2 = *(((const uint16 *)srcPtr) + (i + 1));
 			uint16 color3 = *(((const uint16 *)srcPtr) + (i + 2));
 			uint16 color4 = *(((const uint16 *)srcPtr) + (i + 3));
-		
+
 			*(((uint16 *)work) + 0) = CEinterpolate16_2(color1, 3, color2, 1);
 			*(((uint16 *)work) + 1) = CEinterpolate16_2(color2, 1, color3, 1);
 			*(((uint16 *)work) + 2) = CEinterpolate16_2(color3, 1, color4, 3);
-		
+
 			work += 3 * sizeof(uint16);
 		}
 		srcPtr += srcPitch;
@@ -81,16 +81,16 @@ void PocketPCHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 ds
 		work = dstPtr;
 
 		for (int i=0; i<width; i+=2) {
-			// Another lame filter attempt :) 
+			// Another lame filter attempt :)
 			uint16 color1 = *(((const uint16 *)srcPtr) + i);
 			uint16 color2 = *(((const uint16 *)srcPtr) + (i + 1));
 			uint16 color3 = *(((const uint16 *)srcPtr) + (i + srcPitch16));
 			uint16 color4 = *(((const uint16 *)srcPtr) + (i + srcPitch16 + 1));
 			*(((uint16 *)work) + 0) = CEinterpolate16_4(color1, color2, color3, color4);
-			
+
 			work += sizeof(uint16);
 		}
-		srcPtr += 2 * srcPitch; 
+		srcPtr += 2 * srcPitch;
 		dstPtr += dstPitch;
 	}
 }
@@ -112,10 +112,10 @@ void PocketPCHalfZoom(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint3
 			uint16 color1 = *(((const uint16 *)srcPtr) + i);
 			uint16 color2 = *(((const uint16 *)srcPtr) + (i + 1));
 			*(((uint16 *)work) + 0) = CEinterpolate16_2(color1, 1, color2, 1);
-			
+
 			work += sizeof(uint16);
 		}
-		srcPtr += srcPitch; 
+		srcPtr += srcPitch;
 		dstPtr += dstPitch;
 	}
 }
@@ -135,10 +135,10 @@ void SmartphoneLandscape(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, ui
 			uint16 color1 = *(((const uint16 *)srcPtr) + i);
 			uint16 color2 = *(((const uint16 *)srcPtr) + (i + 1));
 			uint16 color3 = *(((const uint16 *)srcPtr) + (i + 2));
-		
+
 			*(((uint16 *)work) + 0) = CEinterpolate16_2(color1, 3, color2, 1);
 			*(((uint16 *)work) + 1) = CEinterpolate16_2(color2, 1, color3, 1);
-		
+
 			work += 2 * sizeof(uint16);
 		}
 		srcPtr += srcPitch;
@@ -150,6 +150,6 @@ void SmartphoneLandscape(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, ui
 			height--;
 		}
 	}
-}	
+}
 //#endif
 

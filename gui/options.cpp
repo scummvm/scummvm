@@ -91,7 +91,7 @@ void OptionsDialog::open() {
 
 	// Reset result value
 	setResult(0);
-	
+
 	if (_fullscreenCheckbox) {
 		_gfxPopUp->setSelected(0);
 
@@ -125,7 +125,7 @@ void OptionsDialog::open() {
 #ifndef SMALL_SCREEN_DEVICE
 		// Fullscreen setting
 		_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
-	
+
 		// Aspect ratio setting
 		_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
 #endif
@@ -150,7 +150,7 @@ void OptionsDialog::open() {
 	}
 
 	if (_multiMidiCheckbox) {
-		
+
 		// Multi midi setting
 		_multiMidiCheckbox->setState(ConfMan.getBool("multi_midi", _domain));
 
@@ -160,7 +160,7 @@ void OptionsDialog::open() {
 		// GS extensions setting
 		_enableGSCheckbox->setState(ConfMan.getBool("enable_gs", _domain));
 	}
-	
+
 
 	if (_musicVolumeSlider) {
 		int vol;
@@ -213,7 +213,7 @@ void OptionsDialog::close() {
 
 		if (_subCheckbox) {
 			if (_enableAudioSettings) {
-				ConfMan.set("subtitles", _subCheckbox->getState(), _domain); 
+				ConfMan.set("subtitles", _subCheckbox->getState(), _domain);
 				const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();
 				while (md->name && md->id != (int)_midiPopUp->getSelectedTag())
 					md++;
@@ -223,7 +223,7 @@ void OptionsDialog::close() {
 					ConfMan.removeKey("music_driver", _domain);
 			} else {
 				ConfMan.removeKey("music_driver", _domain);
-				ConfMan.removeKey("subtitles", _domain); 
+				ConfMan.removeKey("subtitles", _domain);
 			}
 		}
 
@@ -353,9 +353,9 @@ int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset, WidgetSize w
 #ifdef SMALL_SCREEN_DEVICE
 	_fullscreenCheckbox->setState(TRUE);
 	_fullscreenCheckbox->setEnabled(FALSE);
-	_aspectCheckbox->setEnabled(FALSE);	
+	_aspectCheckbox->setEnabled(FALSE);
 #endif
-	
+
 	_enableGraphicSettings = true;
 
 	return yoffset;
@@ -376,7 +376,7 @@ int OptionsDialog::addAudioControls(GuiObject *boss, int yoffset, WidgetSize ws)
 	// The MIDI mode popup & a label
 	_midiPopUp = addPopUp(boss, x-5, yoffset, w+5, "Music driver: ", labelWidth, ws);
 	yoffset += _midiPopUp->getHeight() + 4;
-	
+
 	// Populate it
 	const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();
 	while (md->name) {
@@ -389,7 +389,7 @@ int OptionsDialog::addAudioControls(GuiObject *boss, int yoffset, WidgetSize ws)
 	yoffset += _subCheckbox->getHeight();
 
 	yoffset += 18;
-		
+
 	_enableAudioSettings = true;
 
 	return yoffset;
@@ -418,7 +418,7 @@ int OptionsDialog::addMIDIControls(GuiObject *boss, int yoffset, WidgetSize ws) 
 	// Multi midi setting
 	_multiMidiCheckbox = addCheckbox(boss, x, yoffset, "Mixed Adlib/MIDI mode", 0, 0, ws);
 	yoffset += _multiMidiCheckbox->getHeight() + spacing;
-	
+
 	// Native mt32 setting
 	_mt32Checkbox = addCheckbox(boss, x, yoffset, "True Roland MT-32 (disable GM emulation)", 0, 0, ws);
 	yoffset += _mt32Checkbox->getHeight() + spacing;
@@ -426,7 +426,7 @@ int OptionsDialog::addMIDIControls(GuiObject *boss, int yoffset, WidgetSize ws) 
 	// GS Extensions setting
 	_enableGSCheckbox = addCheckbox(boss, x, yoffset, "Enable Roland GS Mode", 0, 0, ws);
 	yoffset += _enableGSCheckbox->getHeight() + spacing;
-	
+
 	_enableMIDISettings = true;
 
 	return yoffset;
@@ -491,7 +491,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 
 	GUI::WidgetSize ws;
 	int buttonWidth, buttonHeight;
-	
+
 	if (screenW >= 400 && screenH >= 300) {
 		ws = GUI::kBigWidgetSize;
 		buttonWidth = kBigButtonWidth;
@@ -531,7 +531,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	yoffset = addAudioControls(tab, yoffset, ws);
 	yoffset = addVolumeControls(tab, yoffset, ws);
 	// TODO: cd drive setting
-	
+
 	//
 	// 3) The MIDI tab
 	//

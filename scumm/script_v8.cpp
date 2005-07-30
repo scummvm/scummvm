@@ -362,7 +362,7 @@ void ScummEngine_v8::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 	};
-	
+
 	_opcodesV8 = opcodes;
 }
 
@@ -522,7 +522,7 @@ void ScummEngine_v8::readArrayFromIndexFile() {
 	while ((num = _fileHandle->readUint32LE()) != 0) {
 		a = _fileHandle->readUint32LE();
 		b = _fileHandle->readUint32LE();
-		
+
 		if (b != 0)
 			defineArray(num, kIntArray, b, a);
 		else
@@ -591,7 +591,7 @@ void ScummEngine_v8::o8_wait() {
 void ScummEngine_v8::o8_dimArray() {
 	byte subOp = fetchScriptByte();
 	int array = fetchScriptWord();
-	
+
 	switch (subOp) {
 	case 0x0A:		// SO_ARRAY_SCUMMVAR
 		defineArray(array, kIntArray, 0, pop());
@@ -610,7 +610,7 @@ void ScummEngine_v8::o8_dimArray() {
 void ScummEngine_v8::o8_dim2dimArray() {
 	byte subOp = fetchScriptByte();
 	int array = fetchScriptWord(), a, b;
-	
+
 	switch (subOp) {
 	case 0x0A:		// SO_ARRAY_SCUMMVAR
 		b = pop();
@@ -636,7 +636,7 @@ void ScummEngine_v8::o8_arrayOps() {
 	int b, c, d, len;
 	ArrayHeader *ah;
 	int list[128];
-	
+
 	switch (subOp) {
 	case 0x14:		// SO_ASSIGN_STRING
 		b = pop();
@@ -822,7 +822,7 @@ void ScummEngine_v8::o8_resourceRoutines() {
 void ScummEngine_v8::o8_roomOps() {
 	byte subOp = fetchScriptByte();
 	int a, b, c, d, e;
-	
+
 	switch (subOp) {
 	case 0x52:		// SO_ROOM_PALETTE Set room palette
 		d = pop();
@@ -1477,7 +1477,7 @@ void ScummEngine_v8::o8_getStringWidth() {
 	int width;
 	const byte *msg = _scriptPointer;
 	byte transBuf[512];
-	
+
 	// Skip to the next instruction
 	_scriptPointer += resStrLen(_scriptPointer) + 1;
 

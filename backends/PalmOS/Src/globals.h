@@ -42,14 +42,14 @@ enum {
 	kOpt5WayNavigator		=	1 <<	0x0A,
 	kOptPalmSoundAPI		=	1 <<	0x0B,
 	kOptSonyPa1LibAPI		=	1 <<	0x0C,
-		
+
 	kOptDeviceProcX86		=	1 <<	0x1F	// DEBUG only
 };
 
 enum {
 	kMemScummOldCostGames = 0,
 	kMemScummNewCostGames,
-	kMemSimon1Games,	
+	kMemSimon1Games,
 	kMemSimon2Games,
 
 	kMemGamesCount
@@ -101,15 +101,15 @@ typedef struct {
 		UInt8 *pageAddr1;
 		UInt8 *pageAddr2;
 	} flipping;
-	
+
 	struct {
 		Boolean enable;
 		UInt8 driver, format;
 		UInt16 defaultTrackLength;
 		UInt16 firstTrack;
-		UInt16 volume;		
+		UInt16 volume;
 	} CD;
-	
+
 } GlobalsDataType, *GlobalsDataPtr;
 
 extern GlobalsDataPtr gVars;

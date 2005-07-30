@@ -191,7 +191,7 @@ void SimonEngine::dump_video_script(const byte *src, bool one_opcode_only) {
 		} else {
 			strn = str = simon2_video_opcode_name_table[opcode];
 		}
-		
+
 		while (*strn != '|')
 			strn++;
 		fprintf(_dumpFile, "%.2d: %s ", opcode, strn + 1);
@@ -375,10 +375,10 @@ void pal_load(byte *pal, const byte *vga1, int a, int b) {
 	uint num = (a == 0) ? 0x20 : 0x10;
 	byte *palptr;
 	const byte *src;
-	
+
 	palptr = (byte *)&pal[a << 4];
 	src = vga1 + 6 + b * 96;
-	
+
 	do {
 		palptr[0] = src[0] << 2;
 		palptr[1] = src[1] << 2;
@@ -406,7 +406,7 @@ void SimonEngine::dump_vga_bitmaps(const byte *vga, byte *vga1, int res) {
 	}
 
 	int width, height, flags;
-	
+
 	i = 538;
 
 	for (i = 1; ; i++) {
@@ -417,7 +417,7 @@ void SimonEngine::dump_vga_bitmaps(const byte *vga, byte *vga1, int res) {
 		 * assume the end when offset >= 200kb */
 		if (offs >= 200*1024)
 			return;
-		
+
 		width = READ_BE_UINT16(p2 + 6);
 		height = p2[5];
 		flags = p2[4];

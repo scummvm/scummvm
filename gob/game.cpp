@@ -535,10 +535,10 @@ int16 game_checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 			if (deltaTime == -1 || curtime + deltaTime > timeKey) {
 				if (pResId != 0)
 					*pResId = 0;
-				
+
 				if (pResIndex != 0)
 					*pResIndex = 0;
-				
+
 				return 0;
 			}
 		}
@@ -603,7 +603,7 @@ int16 game_checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 						|| game_mouseButtons == 0))
 						draw_blitCursor();
 
-					if (game_lastCollKey != 0 && 
+					if (game_lastCollKey != 0 &&
 						game_collisionAreas[game_lastCollAreaIndex].funcLeave != 0) {
 						savedIP = inter_execPtr;
 						inter_execPtr =
@@ -828,7 +828,7 @@ int16 game_inputArea(int16 xPos, int16 yPos, int16 width, int16 height, int16 ba
 			}
 			return 0x4800;
 
-		case 0xe08:	// Backspace	
+		case 0xe08:	// Backspace
 			if (pos > 0) {
 				util_cutFromStr(str, pos - 1, 1);
 				pos--;
@@ -1810,14 +1810,14 @@ void game_playTot(int16 skipPlay) {
 				game_totTextData =
 				    (Game_TotTextTable *) (curPtr +
 				    READ_LE_UINT32((char *)game_totFileData + 0x30));
-				
+
 				game_totTextData->itemsCount = (int16)READ_LE_UINT16(&game_totTextData->itemsCount);
 
 				for (i = 0; i < game_totTextData->itemsCount; ++i) {
 					game_totTextData->items[i].offset = (int16)READ_LE_UINT16(&game_totTextData->items[i].offset);
 					game_totTextData->items[i].size = (int16)READ_LE_UINT16(&game_totTextData->items[i].size);
 				}
-				
+
 				needTextFree = 0;
 			}
 
@@ -1825,19 +1825,19 @@ void game_playTot(int16 skipPlay) {
 			if (READ_LE_UINT32(filePtr) != (uint32)-1) {
 				curPtr = game_totFileData;
 
-				game_totResourceTable = 
+				game_totResourceTable =
 					(Game_TotResTable *)(curPtr +
 				    READ_LE_UINT32((char *)game_totFileData + 0x34));
-				
+
 				game_totResourceTable->itemsCount = (int16)READ_LE_UINT16(&game_totResourceTable->itemsCount);
-				
+
 				for (i = 0; i < game_totResourceTable->itemsCount; ++i) {
 					game_totResourceTable->items[i].offset = (int32)READ_LE_UINT32(&game_totResourceTable->items[i].offset);
 					game_totResourceTable->items[i].size = (int16)READ_LE_UINT16(&game_totResourceTable->items[i].size);
 					game_totResourceTable->items[i].width = (int16)READ_LE_UINT16(&game_totResourceTable->items[i].width);
 					game_totResourceTable->items[i].height = (int16)READ_LE_UINT16(&game_totResourceTable->items[i].height);
 				}
-				
+
 				needFreeResTable = 0;
 			}
 

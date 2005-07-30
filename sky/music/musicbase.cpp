@@ -82,19 +82,19 @@ void MusicBase::musicCommand(uint16 command) {
 		return ;
 	}
 	switch(command >> 8) {
-	case 0: 
+	case 0:
 		debug(1,"Music: got call to startAdlibDriver(). Not necessary in this implementation.");
 		break;
-	case 1: 
+	case 1:
 		debug(1,"Music: got call to stopDriver(). Not necessary in this implementation.");
 		break;
 	case 2:
 		debug(1,"Music: got call to SetTempo(). Tempo is fixed in this implementation.");
 		break;
-	case 3: 
+	case 3:
 		debug(1,"Music: ignored direct call to driverPoll().");
 		break;
-	case 4: 
+	case 4:
 		startMusic(command & 0xFF);
 		break;
 	case 6:
@@ -103,10 +103,10 @@ void MusicBase::musicCommand(uint16 command) {
 	case 7:
 		stopMusic();
 		break;
-	case 13: 
-		setFMVolume(command & 0xFF); 
+	case 13:
+		setFMVolume(command & 0xFF);
 		break;
-	default: 
+	default:
 		debug(1,"musicCommand %d ignored.",command >> 8);
 	}
 }

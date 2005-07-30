@@ -35,7 +35,7 @@ enum {
  * Popup or dropdown widget which, when clicked, "pop up" a list of items and
  * lets the user pick on of them.
  *
- * Implementation wise, when the user selects an item, then a kPopUpItemSelectedCmd 
+ * Implementation wise, when the user selects an item, then a kPopUpItemSelectedCmd
  * is broadcast, with data being equal to the tag value of the selected entry.
  */
 class PopUpWidget : public Widget, public CommandSender {
@@ -65,7 +65,7 @@ public:
 
 	/** Select the entry at the given index. */
 	void setSelected(int item);
-	
+
 	/** Select the first entry matching the given tag. */
 	void setSelectedTag(uint32 tag);
 

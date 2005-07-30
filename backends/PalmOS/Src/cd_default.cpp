@@ -54,7 +54,7 @@ void DefaultCDPlayer::update() {
 	// not fully played
 	if (_sys->getMillis() < _defTrackEndFrame)
 		return;
-		
+
 	if (_defLoops == 0)
 		return;
 
@@ -77,14 +77,14 @@ void DefaultCDPlayer::stop() {	/* Stop CD Audio in 1/10th of a second */
 void DefaultCDPlayer::play(int track, int num_loops, int start_frame, int duration) {
 	if (!num_loops && !start_frame)
 		return;
-		
+
 	UInt32 fullLength;
-	
+
 	_defLoops = num_loops;
 	start_frame = TO_MSECS(start_frame);
 	duration = TO_MSECS(duration);
 
-	// frame in milli-seconds 
+	// frame in milli-seconds
 	_defStopTime = 0;
 	fullLength  = start_frame + gVars->CD.defaultTrackLength * 1000;
 
@@ -96,7 +96,7 @@ void DefaultCDPlayer::play(int track, int num_loops, int start_frame, int durati
 	} else {
 		_defTrackLength = fullLength;
 	}
-				
+
 	// try to play the track
 	_defTrackEndFrame = _sys->getMillis() + _defTrackLength;
 }

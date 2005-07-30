@@ -165,7 +165,7 @@ int KyraEngine::init(GameDetector &detector) {
 
 	// loads the Font
 	_font = _resMgr->loadFont("8FAT.FNT");
-	
+
 	_npcScript = _resMgr->loadScript("_NPC.EMC");
 
 	// loads the scripts (only Kyrandia 1)
@@ -174,10 +174,10 @@ int KyraEngine::init(GameDetector &detector) {
 	} else {
 		error("game start files not known");
 	}
-	
+
 	assert(_npcScript);
 	assert(_currentScript);
-	
+
 	return 0;
 }
 
@@ -209,7 +209,7 @@ int KyraEngine::go() {
 			warning("init script returned: %d", _currentScript->state());
 		}
 	}*/
-	
+
 	Movie* movie = _resMgr->loadMovie("MAL-KAL.WSA");
 	assert(movie);
 	CPSImage* image = _resMgr->loadImage("GEMCUT.CPS");
@@ -234,12 +234,12 @@ int KyraEngine::go() {
 		_midiDriver->playMusic("KYRA2A.XMI");
 		_midiDriver->playTrack(3);
 	}
-	
+
 	while (true) {
 		OSystem::Event event;
 		//if (_debugger->isAttached())
 		//	_debugger->onFrame();
-		
+
 		memcpy(_screen, _buffer, 320 * 200);
 		if (lastFrameChange + movie->frameChange() < _system->getMillis()) {
 			lastFrameChange = _system->getMillis();
@@ -249,7 +249,7 @@ int KyraEngine::go() {
 				currentFrame = 0;
 			}
 		}
-		
+
 		movie->renderFrame(_screen, 320, 200, currentFrame);
 		_font->drawStringToPlane("This is only a test!", _screen, 320, 200, 75, 179, 136);
 		_font->drawStringToPlane("Nothing scripted!", _screen, 320, 200, 85, 189, 136);
@@ -265,11 +265,11 @@ int KyraEngine::go() {
 		}
 		_system->delayMillis(10);
 	}
-	
+
 	delete movie;
 	delete image;
 	delete [] _buffer;
-	
+
 	return 0;
 }
 

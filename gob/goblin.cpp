@@ -1980,10 +1980,10 @@ void gob_initVarPointers(void) {
 	gob_curGobNextStateVarPtr = (int32 *)VAR_ADDRESS(63);
 	gob_curGobScrXVarPtr = (int32 *)VAR_ADDRESS(64);
 	gob_curGobScrYVarPtr = (int32 *)VAR_ADDRESS(65);
-	gob_curGobLeftVarPtr = (int32 *)VAR_ADDRESS(66);	
+	gob_curGobLeftVarPtr = (int32 *)VAR_ADDRESS(66);
 	gob_curGobTopVarPtr = (int32 *)VAR_ADDRESS(67);
 	gob_curGobRightVarPtr = (int32 *)VAR_ADDRESS(68);
-	gob_curGobBottomVarPtr = (int32 *)VAR_ADDRESS(69);	
+	gob_curGobBottomVarPtr = (int32 *)VAR_ADDRESS(69);
 	gob_curGobDoAnimVarPtr = (int32 *)VAR_ADDRESS(70);
 	gob_curGobOrderVarPtr = (int32 *)VAR_ADDRESS(71);
 	gob_curGobNoTickVarPtr = (int32 *)VAR_ADDRESS(72);
@@ -2020,9 +2020,9 @@ void gob_initVarPointers(void) {
 	gob_curGobXPosVarPtr = (int32 *)VAR_ADDRESS(108);
 	gob_curGobYPosVarPtr = (int32 *)VAR_ADDRESS(109);
 	gob_curGobMaxFrameVarPtr = (int32 *)VAR_ADDRESS(110);
-	
+
 	gob_itemInPocketVarPtr = (int32 *)VAR_ADDRESS(114);
-	
+
 	*gob_itemInPocketVarPtr = -2;
 }
 

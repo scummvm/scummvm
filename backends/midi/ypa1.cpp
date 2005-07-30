@@ -72,7 +72,7 @@ void MidiDriver_YamahaPa1::send(uint32 b) {
 	midiCmd[2] = (b & 0x00FF0000) >> 16;
 	midiCmd[1] = (b & 0x0000FF00) >> 8;
 	midiCmd[0] = (b & 0x000000FF);
-	
+
 	chanID = (midiCmd[0] & 0x0F) ;
 	mdCmd = midiCmd[0] & 0xF0;
 
@@ -80,19 +80,19 @@ void MidiDriver_YamahaPa1::send(uint32 b) {
 		case 0x80:	// note off
 			Pa1Lib_midiNoteOff(_midiHandle, chanID, midiCmd[1], 0);
 			break;
-	
+
 		case 0x90:	// note on
 			Pa1Lib_midiNoteOn(_midiHandle, chanID, midiCmd[1], midiCmd[2]);
 			break;
-		
+
 		case 0xB0:	// control change
 			Pa1Lib_midiControlChange(_midiHandle, chanID, midiCmd[1], midiCmd[2]);
 			break;
-		
+
 		case 0xC0:	// progam change
 			Pa1Lib_midiProgramChange(_midiHandle, chanID, midiCmd[1]);
 			break;
-		
+
 		case 0xE0:	// pitchBend
 			Pa1Lib_midiPitchBend(_midiHandle, chanID, (short)(midiCmd[1] | (midiCmd[2] << 8)));
 			break;

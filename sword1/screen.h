@@ -139,7 +139,7 @@ private:
 	SortSpr _sortList[MAX_SORT];
 	uint8   _foreLength, _backLength, _sortLength;
 	uint16  _scrnSizeX, _scrnSizeY, _gridSizeX, _gridSizeY;
-	
+
 	static RoomDef _roomDefTable[TOTAL_ROOMS]; // from ROOMS.C (not const, see fnSetParallax)
 
 	uint8 _targetPalette[256 * 4];
@@ -150,7 +150,7 @@ private:
 				   // mainloop that no further fading is necessary.
 };
 
-} // End of namespace Sword1 
+} // End of namespace Sword1
 
 #endif //BSSCREEN_H
 

@@ -89,7 +89,7 @@ enum GameFeatures {
 
 	/** Games using XOR encrypted data files. */
 	GF_USE_KEY             = 1 << 4,
-	
+
 	/** Small header games (ScummEngine_v4 and subclasses). */
 	GF_SMALL_HEADER        = 1 << 5,
 
@@ -120,7 +120,7 @@ enum GameFeatures {
 	/** HE games for which localized versions exist */
 	GF_HE_LOCALIZED        = 1 << 13,
 
-	/** 
+	/**
 	 *  HE Games with more global scripts and different sprite handling
 	 *  i.e. read it as HE version 9.85. Used for HE98 only.
 	 */
@@ -131,7 +131,7 @@ enum GameFeatures {
 
 	/** Games with multiple versions */
 	GF_MULTIPLE_VERSIONS   = 1 << 16,
-	
+
 	/** A demo, not a full blown game. */
 	GF_DEMO                = 1 << 17
 };
@@ -296,14 +296,14 @@ struct LangIndexNode {
 struct AuxBlock {
 	bool visible;
 	Common::Rect r;
-	
+
 	void reset() {
 		visible = false;
 		r.left = r.top = 0;
 		r.right = r.bottom = -1;
 	}
 };
-	
+
 struct AuxEntry {
 	int actorNum;
 	int subIndex;
@@ -334,7 +334,7 @@ public:
 	ResourceManager(ScummEngine *vm);
 
 	byte *createResource(int type, int index, uint32 size);
-	void nukeResource(int type, int i);	
+	void nukeResource(int type, int i);
 
 	void freeResources();
 
@@ -357,7 +357,7 @@ class ScummEngine : public Engine {
 	friend class Insane;
 	friend class CharsetRenderer;
 	friend class ResourceManager;
-	
+
 	void errorString(const char *buf_input, char *buf_output);
 public:
 	/* Put often used variables at the top.
@@ -385,7 +385,7 @@ public:
 
 	/** Graphics manager */
 	Gdi gdi;
-	
+
 	/** Central resource data. */
 	ResourceManager res;
 
@@ -470,7 +470,7 @@ protected:
 	byte _numActors;
 	Actor *_actors;	// Has _numActors elements
 	Actor **_sortedActors;
-	
+
 	byte *_arraySlot;
 	uint16 *_inventory;
 	uint16 *_newNames;
@@ -521,7 +521,7 @@ public:
 	byte _NESPatTable[2][4096];
 	byte _NESPalette[2][16];
 	byte _NESBaseTiles;
-	
+
 	int _NESStartStrip;
 
 protected:
@@ -552,7 +552,7 @@ protected:
 
 	/** The bootparam, to be passed to the script 1, the bootscript. */
 	int _bootParam;
-	
+
 	// Various options useful for debugging
 	bool _dumpScripts;
 	bool _hexdumpScripts;
@@ -578,7 +578,7 @@ protected:
 public:
 	bool getSavegameName(int slot, char *desc);
 	void listSavegames(bool *marks, int num);
-	
+
 	void requestSave(int slot, const char *name, bool temporary = false);
 	void requestLoad(int slot);
 
@@ -600,7 +600,7 @@ protected:
 	int _resultVarNumber, _scummStackPos;
 	int _vmStack[150];
 	int _keyScriptKey, _keyScriptNo;
-	
+
 	virtual void setupOpcodes() = 0;
 	virtual void executeOpcode(byte i) = 0;
 	virtual const char *getOpcodeDesc(byte i) = 0;
@@ -655,7 +655,7 @@ protected:
 	int pop();
 	virtual int readVar(uint var);
 	virtual void writeVar(uint var, int value);
-	
+
 	void beginCutscene(int *args);
 	void endCutscene();
 	void abortCutscene();
@@ -672,7 +672,7 @@ protected:
 public:
 	/** The name of the (macintosh/rescumm style) container file, if any. */
 	Common::String _containerFile;
-	
+
 	bool openFile(BaseScummFile &file, const char *filename);
 
 protected:
@@ -698,7 +698,7 @@ protected:
 	void allocResTypeData(int id, uint32 tag, int num, const char *name, int mode);
 //	byte *createResource(int type, int index, uint32 size);
 	int loadResource(int type, int i);
-//	void nukeResource(int type, int i);	
+//	void nukeResource(int type, int i);
 	int getResourceSize(int type, int idx);
 
 public:
@@ -780,7 +780,7 @@ protected:
 	int getObjectImageCount(int object);
 	int whereIsObject(int object) const;
 	int findObject(int x, int y);
-	void findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint object, uint room);	
+	void findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint object, uint room);
 public:
 	int getObjectOrActorXY(int object, int &x, int &y);	// Used in actor.cpp, hence public
 protected:
@@ -915,17 +915,17 @@ protected:
 	bool _doEffect;
 
 	byte *_scrollBuffer;
-	
+
 	struct {
 		int x, y, w, h;
 		byte *buffer;
 		uint16 xStrips, yStrips;
 		bool isDrawn;
 	} _flashlight;
-	
+
 public:
 	bool isLightOn() const;
-	
+
 protected:
 	void initScreens(int b, int h);
 	void initVirtScreen(VirtScreenNumber slot, int top, int width, int height, bool twobufs, bool scrollable);
@@ -934,15 +934,15 @@ protected:
 
 	void decodeNESBaseTiles();
 
-	void drawObject(int obj, int arg);	
+	void drawObject(int obj, int arg);
 	void drawRoomObjects(int arg);
 	void drawRoomObject(int i, int arg);
 	void drawBox(int x, int y, int x2, int y2, int color);
 
 	void restoreBG(Common::Rect rect, byte backcolor = 0);
-	void redrawBGStrip(int start, int num);	
+	void redrawBGStrip(int start, int num);
 	virtual void redrawBGAreas();
-	
+
 	void cameraMoved();
 	void setCameraAtEx(int at);
 	virtual void setCameraAt(int pos_x, int pos_y);
@@ -1006,7 +1006,7 @@ public:
 
 protected:
 	void drawFlashlight();
-	
+
 	void fadeIn(int effect);
 	void fadeOut(int effect);
 
@@ -1027,20 +1027,20 @@ protected:
 
 	int _drawObjectQueNr;
 	byte _drawObjectQue[200];
-	
+
 	/* For each of the 410 screen strips, gfxUsageBits contains a
 	 * bitmask. The lower 80 bits each correspond to one actor and
 	 * signify if any part of that actor is currently contained in
 	 * that strip.
-	 * 
+	 *
 	 * If the leftmost bit is set, the strip (background) is dirty
 	 * needs to be redrawn.
-	 * 
+	 *
 	 * The second leftmost bit is set by removeBlastObject() and
 	 * restoreBG(), but I'm not yet sure why.
 	 */
 	uint32 gfxUsageBits[410 * 3];
-	
+
 	void upgradeGfxUsageBits();
 	void setGfxUsageBit(int strip, int bit);
 	void clearGfxUsageBit(int strip, int bit);
@@ -1092,7 +1092,7 @@ public:
 	bool inBoxQuickReject(int box, int x, int y, int threshold);
 	int getClosestPtOnBox(int box, int x, int y, int16& outX, int16& outY);
 	int getSpecialBox(int param1, int param2);
-	
+
 	void setBoxFlags(int box, int val);
 	void setBoxScale(int box, int b);
 

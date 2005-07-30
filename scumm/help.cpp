@@ -50,11 +50,11 @@ int ScummHelp::numPages(byte gameId) {
 	case GID_FT:
 	case GID_CMI:
 		return 3;
-		break;  
+		break;
 /*	TODO - I don't know the controls for these games
 	case GID_PUTTDEMO:
 	case GID_PUTTPUTT:
-*/	
+*/
 	default:
 		return 2;
 	}

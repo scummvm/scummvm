@@ -166,7 +166,7 @@ void ScummEngine_v6::setupScummVars() {
 	VAR_ROOM_WIDTH = 41;
 	VAR_ROOM_HEIGHT = 54;
 
-	if (_heversion >= 60 && _heversion <= 61) {	
+	if (_heversion >= 60 && _heversion <= 61) {
 		VAR_NOSUBTITLES = 60;
 	} else {
 		VAR_SUBTITLES = 60;
@@ -182,7 +182,7 @@ void ScummEngine_v6::setupScummVars() {
 
 	VAR_V6_EMSSPACE = 76;
 	VAR_RANDOM_NR = 118;
-	
+
 	VAR_TIMEDATE_YEAR = 119;
 	VAR_TIMEDATE_MONTH = 129;
 	VAR_TIMEDATE_DAY = 128;
@@ -451,7 +451,7 @@ void ScummEngine_v8::setupScummVars() {
 	VAR_VOICE_MODE = 39; // 0 is voice, 1 is voice+text, 2 is text only
 	VAR_GAME_LOADED = 40;
 	VAR_LANGUAGE = 41;
-	
+
 	VAR_CURRENTDISK = 42;
 	VAR_MUSIC_BUNDLE_LOADED = 45;
 	VAR_VOICE_BUNDLE_LOADED = 46;
@@ -523,7 +523,7 @@ void ScummEngine_v5::initScummVars() {
 		// Setup light
 		VAR(VAR_CURRENT_LIGHTS) = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
 	}
-	
+
 	if (_gameId == GID_MONKEY || _gameId == GID_MONKEY_SEGA)
 		_scummVars[74] = 1225;
 }
@@ -607,7 +607,7 @@ void ScummEngine::initScummVars() {
 		case MD_PCSPK:
 		case MD_PCJR:  VAR(VAR_SOUNDCARD) = 1; break;
 		case MD_ADLIB: VAR(VAR_SOUNDCARD) = 3; break;
-		default:       
+		default:
 			if ((_gameId == GID_MONKEY_EGA || _gameId == GID_MONKEY_VGA || _gameId == GID_LOOM)
 			   &&  (_platform == Common::kPlatformPC)) {
 				if (_gameId == GID_LOOM) {
@@ -667,7 +667,7 @@ void ScummEngine::initScummVars() {
 				VAR(39) = 80;
 			}
 			VAR(VAR_HEAPSPACE) = 1400;
-		} 
+		}
 		if (_version >= 4) {
 			VAR(VAR_HEAPSPACE) = 1400;
 			VAR(VAR_FIXEDDISK) = true;
@@ -677,10 +677,10 @@ void ScummEngine::initScummVars() {
 		if (_version == 6)
 			VAR(VAR_V6_EMSSPACE) = 10000;
 	}
-	
+
 	if (VAR_FADE_DELAY != 0xFF)
 		VAR(VAR_FADE_DELAY) = 3;
-		
+
 	VAR(VAR_CHARINC) = 4;
 	setTalkingActor(0);
 }

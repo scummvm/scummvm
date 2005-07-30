@@ -33,10 +33,10 @@ class File : public SeekableReadStream, public WriteStream {
 protected:
 	/** POSIX file handle to the actual file; 0 if no file is open. */
 	FILE *_handle;
-	
+
 	/** Status flag which tells about recent I/O failures. */
 	bool _ioFailed;
-	
+
 	/** Simple ref-counter for File objects. */
 	int32 _refcount;
 
@@ -51,10 +51,10 @@ public:
 		kFileReadMode = 1,
 		kFileWriteMode = 2
 	};
-	
+
 	static void addDefaultDirectory(const String &directory);
 	static void resetDefaultDirectories();
-	
+
 	File();
 	virtual ~File();
 

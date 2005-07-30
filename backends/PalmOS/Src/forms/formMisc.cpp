@@ -29,7 +29,7 @@ static Boolean ScummVMTabSave() {
 	FormPtr frmP;
 
 	fld1P = (FieldType *)GetObjectPtr(TabScummVMDebugLevelField);
-	
+
 	cckP[3] = (ControlType *)GetObjectPtr(TabScummVMDebugCheckbox);
 	cckP[6] = (ControlType *)GetObjectPtr(TabScummVMDemoCheckbox);
 	cckP[9] = (ControlType *)GetObjectPtr(TabScummVMCopyProtectionCheckbox);
@@ -49,7 +49,7 @@ static Boolean ScummVMTabSave() {
 	gPrefs->altIntro = CtlGetValue(cckP[10]);
 
 	gPrefs->debugLevel = StrAToI(FldGetTextPtr(fld1P));
-	
+
 	return true;
 }
 
@@ -125,7 +125,7 @@ static void PalmOSTabInit() {
 static void MiscFormSave() {
 	PalmOSTabSave();
 	if (!ScummVMTabSave()) return;
-	
+
 	TabDeleteTabs(myTabP);
 	FrmReturnToMain();
 }
@@ -176,7 +176,7 @@ Boolean MiscFormHandleEvent(EventPtr eventP) {
 				case (MiscForm + 2) :
 					lastTab = (eventP->data.ctlSelect.controlID - MiscForm - 1);
 					TabSetActive(frmP, myTabP, lastTab);
-					
+
 #ifndef DISABLE_LIGHTSPEED
 					if (!LS_Installed())
 #endif
@@ -210,6 +210,6 @@ Boolean MiscFormHandleEvent(EventPtr eventP) {
 		default:
 			break;
 	}
-	
+
 	return handled;
 }

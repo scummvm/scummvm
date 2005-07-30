@@ -16,7 +16,7 @@
 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. 
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * $Header$
  *
@@ -48,7 +48,7 @@
 #include <gpfont_port.h>
 #include <gpgraphic.h>
 #include <gpgraphic16.h>
-#include <gpmm.h>	
+#include <gpmm.h>
 #include <gpmem.h>
 #include <gpos_def.h>
 #include <gpstdio.h>
@@ -85,10 +85,10 @@ extern void *gpcalloc(size_t nitems, size_t size);
 extern void gpfree(void *block);
 extern char *gpstrdup(const char *s);
 
-#define malloc gpmalloc 
+#define malloc gpmalloc
 #define calloc gpcalloc //gm_calloc
 //#define calloc gm_calloc
-#define free gpfree	
+#define free gpfree
 
 //	#define memset gm_memset
 //	#define memcopy gm_memcopy
@@ -105,7 +105,7 @@ extern char *gpstrdup(const char *s);
 
 #define ENDLESSLOOP while (1)
 
-#define FILE F_HANDLE		
+#define FILE F_HANDLE
 extern FILE *fstderr;
 extern FILE *fstdout;
 extern FILE *fstdin;
@@ -133,10 +133,10 @@ extern char gpfgetc(FILE *stream);
 #define fwrite gpfwrite
 #define ftell gpftell
 
-#undef clearerr 
+#undef clearerr
 #define clearerr gpclearerr
 
-#undef feof	
+#undef feof
 #define feof gpfeof
 #define fgets gpfgets
 #define fgetc gpfgetc

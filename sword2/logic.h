@@ -168,10 +168,10 @@ public:
 	int32 fnRegisterStartPoint(int32 *params);
 	int32 fnInitBackground(int32 *params);
 	int32 fnSetSession(int32 *params);
-	int32 fnBackSprite(int32 *params);	
-	int32 fnSortSprite(int32 *params);	
-	int32 fnForeSprite(int32 *params);	
-	int32 fnRegisterMouse(int32 *params);	
+	int32 fnBackSprite(int32 *params);
+	int32 fnSortSprite(int32 *params);
+	int32 fnForeSprite(int32 *params);
+	int32 fnRegisterMouse(int32 *params);
 	int32 fnAnim(int32 *params);
 	int32 fnRandom(int32 *params);
 	int32 fnPreLoad(int32 *params);

@@ -173,7 +173,7 @@ void ScummEngine_v2::readIndexFile() {
 	switch (magic) {
 		case 0x0100:
 			printf("Enhanced V2 game detected\n");
-			readEnhancedIndexFile();			
+			readEnhancedIndexFile();
 			break;
 		case 0x0A31:
 			printf("Classic V1 game detected\n");

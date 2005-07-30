@@ -136,7 +136,7 @@ void cd_playMultMusic() {
 		{"avt019.tot", "fra5", "all5", "ang5", "esp5", "ita5"},
 		{"avt022.tot", "fra6", "all6", "ang6", "esp6", "ita6"}
 	};
-	
+
 	for (int i = 0; i < ARRAYSIZE(tracks); i++)
 		if (!scumm_stricmp(game_curTotFile, tracks[i][0])) {
 			cd_globFlag = true;

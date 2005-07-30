@@ -27,7 +27,7 @@ const Char *gUnistdCWD = NULL;
 // currently used only to retreive savepath
 Char *getcwd(Char *buf, UInt32 size) {
 	Char *copy = buf;
-	
+
 	if (gUnistdCWD) {
 		if (!copy)
 			copy = (Char *)MemPtrNew(StrLen(gUnistdCWD)); // this may never occured

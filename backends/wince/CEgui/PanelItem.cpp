@@ -29,7 +29,7 @@ namespace CEGUI {
 		_panel = NULL;
 	}
 
-	
+
 	PanelItem::~PanelItem() {
 	}
 

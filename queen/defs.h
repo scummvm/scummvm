@@ -28,7 +28,7 @@ namespace Queen {
 
 enum {
 	COMPRESSION_NONE  = 0,
-	COMPRESSION_MP3   = 1,	
+	COMPRESSION_MP3   = 1,
 	COMPRESSION_OGG   = 2,
 	COMPRESSION_FLAC  = 3
 };
@@ -182,15 +182,15 @@ enum {
 	ROOM_JUNGLE_BEETLE        =  11,
 	ROOM_JUNGLE_MISSIONARY    =  13,
 	ROOM_JUNGLE_GORILLA_2     =  14,
-	
+
 	ROOM_AMAZON_ENTRANCE      =  16,
 	ROOM_AMAZON_HIDEOUT       =  17,
 	ROOM_AMAZON_THRONE        =  18,
 	ROOM_AMAZON_JAIL          =  19,
-	
+
 	ROOM_VILLAGE              =  20,
 	ROOM_TRADER_BOBS          =  21,
-	
+
 	ROOM_FLODA_OUTSIDE        =  22,
 	ROOM_FLODA_KITCHEN        =  26,
 	ROOM_FLODA_LOCKERROOM     =  27,
@@ -214,7 +214,7 @@ enum {
 	ROOM_TEMPLE_MAZE_6        = 101,
 
 	ROOM_VALLEY_CARCASS       =  67,
-	
+
 	ROOM_HOTEL_UPSTAIRS       =  70,
 	ROOM_HOTEL_DOWNSTAIRS     =  71,
 	ROOM_HOTEL_LOLA           =  72,
@@ -245,9 +245,9 @@ enum {
 	FAYE_HEAD                 =  37,
 	AZURA_HEAD                = 106,
 	FRANK_HEAD                = 107,
-	
+
 	ROOM_ENDING_CREDITS       = 110,
-	
+
 	ROOM_JOURNAL              = 200 // dummy value to keep Display methods happy
 };
 
@@ -297,7 +297,7 @@ enum Verb {
 	VERB_DIGIT_3   = 15,
 	VERB_DIGIT_4   = 16,
 	VERB_DIGIT_LAST = 16,
-	
+
 	VERB_INV_FIRST = VERB_DIGIT_FIRST,
 	VERB_INV_1 = VERB_DIGIT_1,
 	VERB_INV_2 = VERB_DIGIT_2,

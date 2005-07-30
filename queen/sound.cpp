@@ -36,7 +36,7 @@
 
 namespace Queen {
 
-Sound::Sound(Audio::Mixer *mixer, QueenEngine *vm) : 
+Sound::Sound(Audio::Mixer *mixer, QueenEngine *vm) :
 	_mixer(mixer), _vm(vm), _sfxToggle(true), _speechToggle(true), _musicToggle(true), _lastOverride(0) {
 }
 
@@ -46,7 +46,7 @@ Sound::~Sound() {
 Sound *Sound::giveSound(Audio::Mixer *mixer, QueenEngine *vm, uint8 compression) {
 	if (!mixer->isReady())
 		return new SilentSound(mixer, vm);
-	
+
 	switch (compression) {
 	case COMPRESSION_NONE:
 		return new SBSound(mixer, vm);
@@ -115,7 +115,7 @@ void Sound::playSfx(uint16 sfx, bool isSpeech) {
 void Sound::playSfx(const char *base, bool isSpeech) {
 	if (isSpeech && !speechOn()) return;
 	else if (!sfxOn()) return;
-	
+
 	char name[13];
 	strcpy(name, base);
 	// alter filename to add zeros and append ".SB"
@@ -138,7 +138,7 @@ void Sound::playSong(int16 songNum) {
 		_vm->music()->stopSong();
 		return;
 	}
-	
+
 	int16 newTune;
 	if (_vm->resource()->isDemo()) {
 		if (songNum == 17) {
@@ -171,9 +171,9 @@ void Sound::playSong(int16 songNum) {
 		return;
 		break;
 	}
-	
+
 	_lastOverride = songNum;
-	
+
 	_vm->music()->queueTuneList(newTune);
 	_vm->music()->playMusic();
 }
@@ -208,7 +208,7 @@ void MP3Sound::sfxPlay(const char *name, bool isSpeech) {
 #ifdef USE_VORBIS
 void OGGSound::sfxPlay(const char *name, bool isSpeech) {
 	uint32 size;
-	Common::File *f = _vm->resource()->giveCompressedSound(name, &size);		
+	Common::File *f = _vm->resource()->giveCompressedSound(name, &size);
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, isSpeech ? &_speechHandle : &_sfxHandle, makeVorbisStream(f, size));
 }
 #endif
@@ -216,7 +216,7 @@ void OGGSound::sfxPlay(const char *name, bool isSpeech) {
 #ifdef USE_FLAC
 void FLACSound::sfxPlay(const char *name, bool isSpeech) {
 	uint32 size;
-	Common::File *f = _vm->resource()->giveCompressedSound(name, &size);		
+	Common::File *f = _vm->resource()->giveCompressedSound(name, &size);
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, isSpeech ? &_speechHandle : &_sfxHandle, makeFlacStream(f, size));
 }
 #endif

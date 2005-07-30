@@ -152,7 +152,7 @@ void ScummEngine::openRoom(const int room) {
 			if (_gameId == GID_MANIAC)
 				_demoMode = true;
 		}
-			
+
 		if (result) {
 			if (room == 0)
 				return;
@@ -230,18 +230,18 @@ bool ScummEngine::openFile(BaseScummFile &file, const char *filename) {
 
 		result = file.openSubFile(filename);
 	}
-	
+
 	if (!result) {
 		file.close();
 		result = file.open(filename);
 	}
-	
+
 	return result;
 }
 
 bool ScummEngine::openResourceFile(const char *filename, byte encByte) {
 	debugC(DEBUG_GENERAL, "openResourceFile(%s)", filename);
-	
+
 	if (openFile(*_fileHandle, filename)) {
 		_fileHandle->setEnc(encByte);
 		return true;
@@ -269,7 +269,7 @@ void ScummEngine::askForDisk(const char *filename, int disknum) {
 			error("Cannot find file: '%s'", filename);
 		}
 #endif
-	} else { 
+	} else {
 		sprintf(buf, "Cannot find file: '%s'", filename);
 		InfoDialog dialog(this, (char*)buf);
 		runDialog(dialog);
@@ -390,7 +390,7 @@ void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	case MKID('DIRF'):
 		readResTypeList(rtCharset, MKID('CHAR'), "charset");
 		break;
-	
+
 	case MKID('DOBJ'):
 		debug(9, "found DOBJ block, reading object table");
 		readGlobalObjects();
@@ -419,11 +419,11 @@ void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 			}
 		}
 		break;
-	
+
 	case MKID('DIRM'):
 		readResTypeList(rtImage, MKID('AWIZ'), "images");
 		break;
-		
+
 	case MKID('DIRT'):
 		readResTypeList(rtTalkie, MKID('TLKE'), "talkie");
 		break;
@@ -605,7 +605,7 @@ void ScummEngine::ensureResourceLoaded(int type, int i) {
 	// TODO: determine why the heck anything would try to load a costume
 	// with id 0. Is that "normal", or is it caused by yet another bug in
 	// our code base? After all we also have to add special cases for many
-	// of our script opcodes that check for the (invalid) actor 0... so 
+	// of our script opcodes that check for the (invalid) actor 0... so
 	// maybe both issues are related...
 	if (type != rtCharset && i == 0)
 		return;
@@ -716,7 +716,7 @@ int ScummEngine::getResourceRoomNr(int type, int idx) {
 int ScummEngine::getResourceSize(int type, int idx) {
 	byte *ptr = getResourceAddress(type, idx);
 	MemBlkHeader *hdr = (MemBlkHeader *)(ptr - sizeof(MemBlkHeader));
-	
+
 	return hdr->size;
 }
 
@@ -1091,7 +1091,7 @@ void ScummEngine_v7::readMAXS(int blockSize) {
 
 	_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 
-	if ((_gameId == GID_FT) && (_features & GF_DEMO) && 
+	if ((_gameId == GID_FT) && (_features & GF_DEMO) &&
 		(_platform == Common::kPlatformPC))
 		_numGlobalScripts = 300;
 	else
@@ -1171,7 +1171,7 @@ void ScummEngine_v8::readGlobalObjects() {
 		_classData[i] = _fileHandle->readUint32LE();
 	}
 	memset(_objectOwnerTable, 0xFF, num);
-	
+
 	// Finally, sort the object name->ID map, so we can later use
 	// bsearch on it. For this we (ab)use strcmp, which works fine
 	// since the table entries start with a string.
@@ -1276,24 +1276,24 @@ ResourceIterator::ResourceIterator(const byte *searchin, bool smallHeader)
 		_pos = 8;
 		_ptr = searchin + 8;
 	}
-	
+
 }
 
 const byte *ResourceIterator::findNext(uint32 tag) {
 	uint32 size = 0;
 	const byte *result = 0;
-	
+
 	if (_smallHeader) {
 		uint16 smallTag = newTag2Old(tag);
 		do {
 			if (_pos >= _size)
 				return 0;
-	
+
 			result = _ptr;
 			size = READ_LE_UINT32(result);
 			if ((int32)size <= 0)
 				return 0;	// Avoid endless loop
-			
+
 			_pos += size;
 			_ptr += size;
 		} while (READ_LE_UINT16(result + 4) != smallTag);
@@ -1301,12 +1301,12 @@ const byte *ResourceIterator::findNext(uint32 tag) {
 		do {
 			if (_pos >= _size)
 				return 0;
-	
+
 			result = _ptr;
 			size = READ_BE_UINT32(result + 4);
 			if ((int32)size <= 0)
 				return 0;	// Avoid endless loop
-			
+
 			_pos += size;
 			_ptr += size;
 		} while (READ_UINT32(result) != tag);

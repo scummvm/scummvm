@@ -188,7 +188,7 @@ void ScummEngine::CHARSET_1() {
 		_talkDelay = 60;
 	else
 		_talkDelay = VAR(VAR_DEFAULT_TALK_DELAY);
-		
+
 	if (!_keepText) {
 		_charset->restoreCharsetBg();
 	}
@@ -222,7 +222,7 @@ void ScummEngine::CHARSET_1() {
 			_keepText = false;
 			break;
 		}
-		
+
 		// FIXME: This is a workaround for bug #864030: In COMI, some text
 		// contains ASCII character 11 = 0xB. It's not quite clear what it is
 		// good for; so for now we just ignore it, which seems to match the
@@ -333,7 +333,7 @@ void ScummEngine::CHARSET_1() {
 			case 9:
 				frme = *buffer++;
 				frme |= *buffer++ << 8;
-				if (a) 
+				if (a)
 					a->startAnimActor(frme);
 				break;
 			case 10:
@@ -341,7 +341,7 @@ void ScummEngine::CHARSET_1() {
 				talk_sound_a = buffer[0] | (buffer[1] << 8) | (buffer[4] << 16) | (buffer[5] << 24);
 				talk_sound_b = buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] << 24);
 				buffer += 14;
-	
+
 				if (_heversion >= 60) {
 					_sound->startHETalkSound(talk_sound_a);
 				} else {
@@ -374,7 +374,7 @@ void ScummEngine::CHARSET_1() {
 				break;
 			case 14: {
 				int oldy = _charset->getFontHeight();
-	
+
 				_charset->setCurID(*buffer++);
 				buffer += 2;
 				for (i = 0; i < 4; i++)
@@ -410,7 +410,7 @@ loc_avoid_ks_fe:
 					// Special case for loomcd, since it only uses CD audio.for sound
 				} else if (!ConfMan.getBool("subtitles") && (_haveMsg == 0xFE || _mixer->isSoundHandleActive(_sound->_talkChannelHandle))) {
 					// Subtitles are turned off, and there is a voice version
-					// of this message -> don't print it. 
+					// of this message -> don't print it.
 				} else
 					_charset->printChar(c);
 			}
@@ -426,7 +426,7 @@ loc_avoid_ks_fe:
 				VAR(VAR_CHARCOUNT)++;
 			} else
 				_talkDelay += (int)VAR(VAR_CHARINC);
-			
+
 			// Handle line breaks for V1-V3
 			if (_version <= 3 && _charset->_nextLeft > _screenWidth) {
 				goto newLine;
@@ -681,7 +681,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 				*dst++ = chr;
 			}
 		}
-	
+
 		// Check for a buffer overflow
 		if (dst >= end)
 			error("convertMessageToString: buffer overflow!");
@@ -818,7 +818,7 @@ void ScummEngine_v6::drawBlastTexts() {
 				if (_charset->_left < 0)
 					_charset->_left = 0;
 			}
-	
+
 			do {
 				c = *buf++;
 				if (c != 0 && c != 0xFF && c != '\n') {
@@ -874,7 +874,7 @@ void ScummEngine_v7::loadLanguageBundle() {
 		_existLanguageFile = false;
 		return;
 	}
-	
+
 	_existLanguageFile = true;
 
 	size = file.size();
@@ -909,7 +909,7 @@ void ScummEngine_v7::loadLanguageBundle() {
 		int lineCount = _languageIndexSize;
 		const char *baseTag = "";
 		byte enc = 0;	// Initially assume the language file is not encoded
-	
+
 		// We'll determine the real index size as we go.
 		_languageIndexSize = 0;
 		for (i = 0; i < lineCount; i++) {
@@ -931,23 +931,23 @@ void ScummEngine_v7::loadLanguageBundle() {
 					idx = idx * 10 + (*ptr - '0');
 					ptr++;
 				}
-	
+
 				// ...followed by a slash...
 				assert(*ptr == '/');
 				ptr++;
-	
+
 				// ...and then the translated message, possibly encoded
 				_languageIndex[_languageIndexSize].offset = ptr - _languageBuffer;
-	
+
 				// Decode string if necessary.
 				if (enc) {
 					while (*ptr != '\n' && *ptr != '\r')
 						*ptr++ ^= enc;
 				}
-	
+
 				// The tag is the basetag, followed by a dot and then the index
 				sprintf(_languageIndex[_languageIndexSize].tag, "%s.%03d", baseTag, idx);
-	
+
 				// That was another index entry
 				_languageIndexSize++;
 			} else {
@@ -968,14 +968,14 @@ void ScummEngine_v7::loadLanguageBundle() {
 			for (j = 0; j < 8 && !isspace(*ptr); j++, ptr++)
 				_languageIndex[i].tag[j] = toupper(*ptr);
 			_languageIndex[i].tag[j] = 0;
-	
+
 			// After that follows a single space which we skip
 			assert(isspace(*ptr));
 			ptr++;
 
 			// Then comes the translated string: we record an offset to that.
 			_languageIndex[i].offset = ptr - _languageBuffer;
-	
+
 			// Skip over newlines (and turn them into null bytes)
 			ptr = strpbrk(ptr, "\n\r");
 			if (ptr == NULL)
@@ -1023,7 +1023,7 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
 	LangIndexNode target;
 	LangIndexNode *found = NULL;
 	int i;
-	
+
 	trans_buff[0] = 0;
 	_lastStringTag[0] = 0;
 
@@ -1055,7 +1055,7 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
 			text = (const byte *)"/NEW.014/lens slot";
 	}
 
-	
+
 	if (_version >= 7 && text[0] == '/') {
 		// Extract the string tag from the text: /..../
 		for (i = 0; (i < 12) && (text[i + 1] != '/'); i++)
@@ -1072,7 +1072,7 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
 			// we're supposed to use it, but at least in the
 			// English version things will work so much better if
 			// we can't find translations for these.
-			
+
 			if (*text && strcmp(target.tag, "PU_M001") != 0 && strcmp(target.tag, "PU_M002") != 0)
 				found = (LangIndexNode *)bsearch(&target, _languageIndex, _languageIndexSize, sizeof(LangIndexNode), indexCompare);
 		}
@@ -1091,7 +1091,7 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
 				while (*src && *src != 0xFF) {
 					src++;
 				}
-				
+
 				// Replace the %___ by the special code. Luckily, we can do
 				// that in-place.
 				if (*src == 0xFF) {

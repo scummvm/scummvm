@@ -70,7 +70,7 @@ ChooserDialog::ChooserDialog(const String &title, const String &buttonLabel, int
 	// it's used to list savegames in the 320x200 version of the GUI.
 	_list = new ListWidget(this, 10, yoffset, _w - 2 * 10, _h - yoffset - buttonHeight - 12, ws);
 	_list->setNumberingMode(kListNumberingOff);
-	
+
 	// Buttons
 	addButton(this, _w - 2 * (buttonWidth + 10), _h - buttonHeight - 8, "Cancel", kCloseCmd, 0, ws);
 	_chooseButton = addButton(this, _w - (buttonWidth + 10), _h - buttonHeight - 8, buttonLabel, kChooseCmd, 0, ws);

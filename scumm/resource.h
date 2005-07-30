@@ -26,7 +26,7 @@ namespace Scumm {
 enum {
 	OF_OWNER_MASK = 0x0F,
 	OF_STATE_MASK = 0xF0,
-	
+
 	OF_STATE_SHL = 4
 };
 

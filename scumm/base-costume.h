@@ -1,6 +1,6 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2005 The ScummVM project 
+ * Copyright (C) 2001-2005 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -65,7 +65,7 @@ protected:
 public:
 	BaseCostumeLoader(ScummEngine *vm) : _vm(vm) {}
 	virtual ~BaseCostumeLoader() {}
-	
+
 	virtual void loadCostume(int id) = 0;
 	virtual byte increaseAnims(Actor *a) = 0;
 	virtual void costumeDecodeData(Actor *a, int frame, uint usemask) = 0;
@@ -127,7 +127,7 @@ protected:
 		byte *destptr;
 		const byte *mask_ptr;
 	};
-	
+
 public:
 	BaseCostumeRenderer(ScummEngine *scumm) {
 		_actorID = 0;
@@ -137,7 +137,7 @@ public:
 		_zbuf = 0;
 		_scaleX = _scaleY = 0;
 		_draw_top = _draw_bottom = 0;
-		
+
 		_vm = scumm;
 		_numStrips = -1;
 		_srcptr = 0;

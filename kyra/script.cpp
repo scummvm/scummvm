@@ -34,7 +34,7 @@ namespace Kyra {
 VMContext::VMContext(KyraEngine* engine) {
 	_engine = engine;
 	_error = false;
-		
+
 	// now we create a list of all Command/Opcode procs and so
 	static CommandEntry commandProcs[] = {
 		// 0x00
@@ -43,7 +43,7 @@ VMContext::VMContext(KyraEngine* engine) {
 		COMMAND(c1_pushRetRec),
 		COMMAND(c1_push),
 		// 0x04
-		COMMAND(c1_push),			
+		COMMAND(c1_push),
 		COMMAND(c1_pushVar),
 		COMMAND(c1_pushFrameNeg),
 		COMMAND(c1_pushFramePos),
@@ -63,7 +63,7 @@ VMContext::VMContext(KyraEngine* engine) {
 	};
 	_numCommands = ARRAYSIZE(commandProcs);
 	_commands = commandProcs;
-		
+
 	static OpcodeEntry opcodeProcs[] = {
 		// 0x00
 		OPCODE(o1_unknownOpcode),
@@ -392,40 +392,40 @@ VMContext::VMContext(KyraEngine* engine) {
 	_scriptFile = NULL;
 	_scriptFileSize = 0;
 }
-	
+
 void VMContext::loadScript(const char* file) {
 	if (_scriptFile) {
 		delete [] _scriptFile;
 		_scriptFileSize = 0;
 	}
-		
+
 	memset(_stack, 0, sizeof(int32) * ARRAYSIZE(_stack));
 
 	// loads the new file
 	_scriptFile = _engine->resManager()->fileData(file, &_scriptFileSize);
-	
+
 	if (!_scriptFileSize || !_scriptFile) {
 		error("couldn't load script file '%s'", file);
 	}
-	
+
 	Common::MemoryReadStream script(_scriptFile, _scriptFileSize);
 	memset(_chunks, 0, sizeof(ScriptChunk) * kCountChunkTypes);
 	uint8 chunkName[sizeof("EMC2ORDR") + 1];
-	
+
 	// so lets look for our chunks :)
 	while (!script.eos()) {
 		// lets read only the first 4 chars
 		script.read(chunkName, sizeof(uint8) * 4);
 		chunkName[4] = '\0';
-			
+
 		// check name of chunk
-		if (!scumm_stricmp((const char *)chunkName, "FORM")) {			
+		if (!scumm_stricmp((const char *)chunkName, "FORM")) {
 			// FreeKyra swaps the size I only read it in BigEndian :)
 			_chunks[kForm]._size = script.readUint32BE();
 		} else if (!scumm_stricmp((const char *)chunkName, "TEXT")) {
 			uint32 text_size = script.readUint32BE();
 			text_size += text_size % 2 != 0 ? 1 : 0;
-			
+
 			_chunks[kText]._data = _scriptFile + script.pos();
 			_chunks[kText]._size = READ_BE_UINT16(_chunks[kText]._data) >> 1;
 			_chunks[kText]._additional = _chunks[kText]._data + (_chunks[kText]._size << 1);
@@ -439,7 +439,7 @@ void VMContext::loadScript(const char* file) {
 			// read next 4 chars
 			script.read(&chunkName[4], sizeof(uint8) * 4);
 			chunkName[8] = '\0';
-			
+
 			if (!scumm_stricmp((const char *)chunkName, "EMC2ORDR")) {
 				_chunks[kEmc2Ordr]._size = script.readUint32BE() >> 1;
 				_chunks[kEmc2Ordr]._data = _scriptFile + script.pos();
@@ -451,35 +451,35 @@ void VMContext::loadScript(const char* file) {
 		}
 	}
 }
-	
+
 int32 VMContext::param(int32 index) {
 	if (_stackPos - index - 1 >= ARRAYSIZE(_stack) || _stackPos - index - 1 < 0)
 		return -0xFFFF;
 	return _stack[_stackPos - index - 1];
 }
-	
+
 const char* VMContext::stringAtIndex(int32 index) {
 	if (index < 0 || (uint32)index >= _chunks[kText]._size)
 		return 0;
-	
+
 	return (const char *)(_chunks[kText]._additional + _chunks[kText]._data[index]);
 }
-	
+
 bool VMContext::startScript(int32 func) {
 	if ((uint32)func >= _chunks[kEmc2Ordr]._size || func < 0) {
 		debug("script doesn't support function %d", func);
 		return false;
 	}
-			
+
 	_instructionPos = READ_BE_UINT16(&_chunks[kEmc2Ordr]._data[func]) << 1;
 	_stackPos = 0;
 	_tempPos = 0;
 	_delay = 0;
 	_error = false;
 	_scriptState = kScriptRunning;
-	
+
 	uint32 pos = 0xFFFFFFFE;
-		
+
 	// get start of next script
 	for (uint32 tmp = 0; tmp < _chunks[kEmc2Ordr]._size; ++tmp) {
 		if ((uint32)((READ_BE_UINT16(&_chunks[kEmc2Ordr]._data[tmp]) << 1)) > (uint32)_instructionPos &&
@@ -487,22 +487,22 @@ bool VMContext::startScript(int32 func) {
 			pos = ((READ_BE_UINT16(&_chunks[kEmc2Ordr]._data[tmp]) << 1));
 		}
 	}
-		
+
 	if (pos > _scriptFileSize) {
 		pos = _scriptFileSize;
 	}
-		
+
 	_nextScriptPos = pos;
 
 	return true;
 }
-	
+
 uint32 VMContext::contScript(void) {
 	uint8* script_start = _chunks[kData]._data;
 	assert(script_start);
-	
+
 	uint32 scriptStateAtStart = _scriptState;
-		
+
 	// runs the script
 	while (true) {
 		if ((uint32)_instructionPos > _chunks[kData]._size) {
@@ -513,10 +513,10 @@ uint32 VMContext::contScript(void) {
 			_scriptState = kScriptStopped;
 			break;
 		}
-			
+
 		_currentCommand = *(script_start + _instructionPos++);
-		
-		// gets out 
+
+		// gets out
 		if (_currentCommand & 0x80) {
 			_argument = ((_currentCommand & 0x0F) << 8) | *(script_start + _instructionPos++);
 			_currentCommand &= 0xF0;
@@ -524,10 +524,10 @@ uint32 VMContext::contScript(void) {
 			_argument = *(script_start + _instructionPos++);
 		} else if (_currentCommand & 0x20) {
 			_instructionPos++;
-			
+
 			uint16 tmp = *(uint16*)(script_start + _instructionPos);
 			tmp &= 0xFF7F;
-			
+
 			_argument = READ_BE_UINT16(&tmp);
 			_instructionPos += 2;
 		} else {
@@ -535,21 +535,21 @@ uint32 VMContext::contScript(void) {
 			// next thing
 			continue;
 		}
-		
+
 		_currentCommand &= 0x1f;
-			
+
 		if (_currentCommand < _numCommands) {
 			CommandProc currentProc = _commands[_currentCommand].proc;
 			(this->*currentProc)();
 		} else {
 			c1_unknownCommand();
 		}
-		
+
 		if (_error) {
 			_scriptState = kScriptError;
 			break;
 		}
-			
+
 		if (scriptStateAtStart != _scriptState) {
 			break;
 		}

@@ -40,7 +40,7 @@ struct PatchData {
 	bool _deletePatchFile;
 	Common::File *_patchFile;
 	GamePatchDescription *_patchDescription;
-	
+
 	PatchData(GamePatchDescription *patchDescription): _patchDescription(patchDescription), _deletePatchFile(true) {
 		_patchFile = new Common::File();
 	}
@@ -131,7 +131,7 @@ private:
 	SagaEngine *_vm;
 	ResourceContext *_contexts;
 	int _contextsCount;
-	
+
 	bool loadContext(ResourceContext *context);
 
 };

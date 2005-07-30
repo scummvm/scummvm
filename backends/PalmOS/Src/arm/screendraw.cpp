@@ -19,6 +19,6 @@ UInt32 Screen_draw(void *userData68KP) {
 			dest++;
 			src++;
 		}
-		
+
 	return 0;
 }

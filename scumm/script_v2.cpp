@@ -407,7 +407,7 @@ void ScummEngine_v2::decodeParseString() {
 
 		if (insertSpace)
 			*ptr++ = ' ';
-		
+
 	}
 	*ptr = 0;
 
@@ -525,7 +525,7 @@ void ScummEngine_v2::o2_assignVarByte() {
 void ScummEngine_v2::o2_setObjPreposition() {
 	int obj = getVarOrDirectWord(PARAM_1);
 	int unk = fetchScriptByte();
-	
+
 	if (_platform == Common::kPlatformNES)
 		return;
 
@@ -663,7 +663,7 @@ void ScummEngine_v2::o2_waitForActor() {
 }
 
 void ScummEngine_v2::o2_waitForMessage() {
-	
+
 	if (VAR(VAR_HAVE_MSG)) {
 		_scriptPointer--;
 		o5_breakHere();
@@ -800,7 +800,7 @@ void ScummEngine_v2::o2_resourceRoutines() {
 void ScummEngine_v2::o2_verbOps() {
 	int verb = fetchScriptByte();
 	int slot, state;
-	
+
 	switch (verb) {
 	case 0:		// SO_DELETE_VERBS
 		slot = getVarOrDirectByte(PARAM_1) + 1;
@@ -809,14 +809,14 @@ void ScummEngine_v2::o2_verbOps() {
 		//printf("o2_verbOps delete slot = %d\n", slot);
 		killVerb(slot);
 		break;
-	
+
 	case 0xFF:	// Verb On/Off
 		verb = fetchScriptByte();
 		state = fetchScriptByte();
 		slot = getVerbSlot(verb, 0);
 
 		//printf("o2_verbOps Verb On/Off: verb = %d, slot = %d, state = %d\n", verb, slot, state);
-		
+
 		_verbs[slot].curmode = state;
 
 		break;
@@ -861,7 +861,7 @@ void ScummEngine_v2::o2_verbOps() {
 		vs->center = 0;
 		vs->imgindex = 0;
 		vs->prep = prep;
-		
+
 		vs->curRect.left = x;
 		vs->curRect.top = y;
 
@@ -919,7 +919,7 @@ void ScummEngine_v2::o2_doSentence() {
 	case 1:
 		// Execute the sentence
 		_sentenceNum--;
-		
+
 		if (st->verb == 254) {
 			ScummEngine::stopObjectScript(st->objectA);
 		} else {
@@ -927,7 +927,7 @@ void ScummEngine_v2::o2_doSentence() {
 			bool isSpecialVerb;
 			if (st->verb != 253 && st->verb != 250) {
 				VAR(VAR_ACTIVE_VERB) = st->verb;
-				VAR(VAR_ACTIVE_OBJECT1) = st->objectA;	
+				VAR(VAR_ACTIVE_OBJECT1) = st->objectA;
 				VAR(VAR_ACTIVE_OBJECT2) = st->objectB;
 
 				isBackgroundScript = false;
@@ -997,7 +997,7 @@ void ScummEngine_v2::o2_drawSentence() {
 			strcat(sentence, " ");
 			strcat(sentence, (const char*)temp);
 		}
-	
+
 		// For V1 games, the engine must compute the preposition.
 		// In all other Scumm versions, this is done by the sentence script.
 		if ((_gameId == GID_MANIAC && _version == 1 && !(_platform == Common::kPlatformNES)) && (VAR(VAR_SENTENCE_PREPOSITION) == 0)) {
@@ -1050,7 +1050,7 @@ void ScummEngine_v2::o2_drawSentence() {
 		_string[2].color = 0;
 	} else if (_version == 1)
 		_string[2].color = 16;
-	else 
+	else
 		_string[2].color = 13;
 
 	char *ptr = sentence;
@@ -1307,10 +1307,10 @@ void ScummEngine_v2::o2_lights() {
 			// 1 Flashlight
 			// 2 Lighted area
 			if (a == 2)
-				VAR(VAR_CURRENT_LIGHTS) = 11; 
+				VAR(VAR_CURRENT_LIGHTS) = 11;
 			else if (a == 1)
 				VAR(VAR_CURRENT_LIGHTS) = 4;
-			else 
+			else
 				VAR(VAR_CURRENT_LIGHTS) = 0;
 		} else
 			VAR(VAR_CURRENT_LIGHTS) = a;
@@ -1450,12 +1450,12 @@ void ScummEngine_v2::o2_endCutscene() {
 	VAR(VAR_OVERRIDE) = 0;
 	vm.cutSceneScript[0] = 0;
 	vm.cutScenePtr[0] = 0;
-	
+
 	VAR(VAR_CURSORSTATE) = vm.cutSceneData[1];
 
 	// Reset user state to values before cutscene
 	setUserState(vm.cutSceneData[0] | 7);
-	
+
 	if ((_gameId == GID_MANIAC) && !(_platform == Common::kPlatformNES)) {
 		camera._mode = (byte) vm.cutSceneData[3];
 		if (camera._mode == kFollowActorCameraMode) {

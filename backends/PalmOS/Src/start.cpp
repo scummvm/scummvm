@@ -104,9 +104,9 @@ Err SendDatabase (UInt16 cardNo, LocalID dbID, Char *nameP, Char *descriptionP)
  *              minimum requirement.
  *
  * PARAMETERS:  requiredVersion - minimum rom version required
- *                                (see sysFtrNumROMVersion in SystemMgr.h 
+ *                                (see sysFtrNumROMVersion in SystemMgr.h
  *                                for format)
- *              launchFlags     - flags that indicate if the application 
+ *              launchFlags     - flags that indicate if the application
  *                                UI is initialized.
  *
  * RETURNED:    error code or zero if rom is compatible
@@ -127,8 +127,8 @@ static Err RomVersionCompatible(UInt32 requiredVersion, UInt16 launchFlags)
 			(sysAppLaunchFlagNewGlobals | sysAppLaunchFlagUIApp))
 			{
 			FrmAlert (RomIncompatibleAlert);
-		
-			// Palm OS 1.0 will continuously relaunch this app unless we switch to 
+
+			// Palm OS 1.0 will continuously relaunch this app unless we switch to
 			// another safe one.
 			if (romVersion <= kPalmOS10Version)
 				{
@@ -220,7 +220,7 @@ static Boolean AppHandleEvent(EventPtr eventP)
 			}
 		return true;
 		}
-	
+
 	return false;
 }
 
@@ -228,7 +228,7 @@ static Boolean AppHandleEvent(EventPtr eventP)
  *
  * FUNCTION:    AppEventLoop
  *
- * DESCRIPTION: This routine is the event loop for the application.  
+ * DESCRIPTION: This routine is the event loop for the application.
  *
  * PARAMETERS:  nothing
  *
@@ -263,8 +263,8 @@ static void AppEventLoop(void)
  *
  * DESCRIPTION: This is the main entry point for the application.
  *
- * PARAMETERS:  cmd - word value specifying the launch code. 
- *              cmdPB - pointer to a structure that is associated with the launch code. 
+ * PARAMETERS:  cmd - word value specifying the launch code.
+ *              cmdPB - pointer to a structure that is associated with the launch code.
  *              launchFlags -  word value providing extra information about the launch.
  *
  * RETURNED:    Result of launch
@@ -295,7 +295,7 @@ static void AppLaunchCmdNotify(UInt16 LaunchFlags, SysNotifyParamType * pData)
 				}
 			}
 			break;
-		
+
 		case sysNotifyVolumeUnmountedEvent:
 			if (gPrefs) {
 				CardSlotFormUpdate();
@@ -350,9 +350,9 @@ static UInt32 ScummVMPalmMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 #endif
 			break;
 
-		case sysAppLaunchCmdNormalLaunch:	
+		case sysAppLaunchCmdNormalLaunch:
 			error = AppStart();
-			if (error) 
+			if (error)
 				goto end;
 
 			if (!bDirectMode) {
@@ -380,8 +380,8 @@ end:
  *
  * DESCRIPTION: This is the main entry point for the application.
  *
- * PARAMETERS:  cmd - word value specifying the launch code. 
- *              cmdPB - pointer to a structure that is associated with the launch code. 
+ * PARAMETERS:  cmd - word value specifying the launch code.
+ *              cmdPB - pointer to a structure that is associated with the launch code.
  *              launchFlags -  word value providing extra information about the launch.
  * RETURNED:    Result of launch
  *

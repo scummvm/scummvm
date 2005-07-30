@@ -413,7 +413,7 @@ void ScummEngine_v100he::o100_actorOps() {
 		a->_needRedraw = true;
 		a->_needBgReset = true;
 		break;
-	case 9:		
+	case 9:
 		a->drawActorToBackBuf(a->_pos.x, a->_pos.y);
 		break;
 	case 14:
@@ -742,7 +742,7 @@ void ScummEngine_v100he::o100_dim2dimArray() {
 	case 42:		// SO_INT_ARRAY
 		data = kIntArray;
 		break;
-	case 43:		
+	case 43:
 		data = kDwordArray;
 		break;
 	case 44:		// SO_NIBBLE_ARRAY
@@ -1621,7 +1621,7 @@ void ScummEngine_v100he::o100_roomOps() {
 }
 
 void ScummEngine_v100he::o100_startSound() {
-	byte filename[260];	
+	byte filename[260];
 	int var, value;
 
 	byte subOp = fetchScriptByte();
@@ -1699,7 +1699,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 	case 0:
 		_curMaxSpriteId = pop();
 		_curSpriteId = pop();
-		
+
 		if (_curSpriteId > _curMaxSpriteId)
 			SWAP(_curSpriteId, _curMaxSpriteId);
 		break;
@@ -1767,7 +1767,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 				int code = *p;
 				if (code == 0) {
 					for (int i = _curSpriteId; i <= _curMaxSpriteId; ++i) {
-						_sprite->setSpriteResetClass(i);					
+						_sprite->setSpriteResetClass(i);
 					}
 				} else if (code & 0x80) {
 					for (int i = _curSpriteId; i <= _curMaxSpriteId; ++i) {
@@ -2410,7 +2410,7 @@ void ScummEngine_v100he::o100_getWizData() {
 
 	byte subOp = fetchScriptByte();
 	subOp -= 20;
-	
+
 	switch (subOp) {
 	case 0:
 		y = pop();
@@ -2418,7 +2418,7 @@ void ScummEngine_v100he::o100_getWizData() {
 		state = pop();
 		resId = pop();
 		push(_wiz->getWizPixelColor(resId, state, x, y, 0));
-		break;		
+		break;
 	case 6:
 		resId = pop();
 		push(_wiz->getWizImageStates(resId));
@@ -2442,7 +2442,7 @@ void ScummEngine_v100he::o100_getWizData() {
 		pop();
 		push(0);
 		warning("o100_getWizData() case 34 unhandled");
-		break;		
+		break;
 	case 64:
 		state = pop();
 		resId = pop();
@@ -2454,7 +2454,7 @@ void ScummEngine_v100he::o100_getWizData() {
 		resId = pop();
 		_wiz->loadImgSpot(resId, state, x, y);
 		push(x);
-		break;	
+		break;
 	case 66:
 		state = pop();
 		resId = pop();
@@ -2479,8 +2479,8 @@ void ScummEngine_v100he::o100_getWizData() {
 			_wiz->getWizImageDim(resId, state, w, h);
 			x = 0;
 			y = 0;
-		}		
-		push(computeWizHistogram(resId, state, x, y, w, h));		
+		}
+		push(computeWizHistogram(resId, state, x, y, w, h));
 		break;
 	default:
 		error("o100_getWizData: Unknown case %d", subOp);
@@ -2870,7 +2870,7 @@ void ScummEngine_v100he::decodeParseString(int m, int n) {
 		colors = pop();
 		if (colors == 1) {
 			_string[m].color = pop();
-		} else {	
+		} else {
 			push(colors);
 			getStackList(args, ARRAYSIZE(args));
 			for (i = 0; i < 16; i++)

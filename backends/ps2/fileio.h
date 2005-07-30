@@ -60,7 +60,7 @@ int ps2_fclose(FILE *stream);
 int ps2_fflush(FILE *stream);
 int ps2_fseek(FILE *stream, long offset, int origin);
 uint32 ps2_ftell(FILE *stream);
-int ps2_feof(FILE *stream); 
+int ps2_feof(FILE *stream);
 uint32 ps2_fsize(FILE *stream);
 
 size_t ps2_fread(void *buf, size_t r, size_t n, FILE *stream);

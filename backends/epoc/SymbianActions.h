@@ -70,7 +70,7 @@ public:
 private:
 	SymbianActions(GameDetector &detector);
 	bool _right_click_needed;
-};	
+};
 
 } // namespace GUI
 

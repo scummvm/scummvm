@@ -235,7 +235,7 @@ void Ps2SaveFileManager::listSavefiles(const char *prefix, bool *marks, int num)
 	int mcType, mcFree, mcFormat, mcResult;
 	mcGetInfo(0, 0, &mcType, &mcFree, &mcFormat);
 	mcSync(0, NULL, &mcResult);
-	
+
 	memset(marks, false, num * sizeof(bool));
 
 	if ((mcResult == 0) || (mcResult == -1)) {
@@ -258,7 +258,7 @@ void Ps2SaveFileManager::listSavefiles(const char *prefix, bool *marks, int num)
 		int numEntries;
 		mcGetDir(0, 0, mcSearchStr, 0, MAX_MC_ENTRIES, mcEntries);
 		mcSync(0, NULL, &numEntries);
-		
+
 		int searchLen = strlen(ext);
 		for (int i = 0; i < numEntries; i++)
 			if ((((char*)mcEntries[i].name)[0] != '.') && stricmp((char*)mcEntries[i].name, "icon.sys")) {
@@ -361,7 +361,7 @@ UclInSaveFile::UclInSaveFile(const char *filename, Gs2dScreen *screen) {
 			printf("Invalid savegame %s\n", filename);
 			_ioFailed = true;
 		}
-		fio.close(fd);        
+		fio.close(fd);
 	}
 }
 

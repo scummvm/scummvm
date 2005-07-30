@@ -49,6 +49,6 @@ UInt32 Screen_fastShrink(void *userData68KP) {
 			xCnt += 2;
 		}
 	}
-	
+
 	return 0;
 }

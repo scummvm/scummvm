@@ -33,7 +33,7 @@
 
 	const uint32 nextlineDst = dstPitch / sizeof(uint16);
 	uint16 *q = (uint16 *)dstPtr;
-	
+
 	//	 +----+----+----+
 	//	 |    |    |    |
 	//	 | w1 | w2 | w3 |
@@ -104,7 +104,7 @@
 			|    |    |    |    |
 			| w20| w21| w22| w23|
 			+----+----+----+----+
-			
+
 			In the previous loop iteration, w11 was the center point, and our
 			vectors contain the following data from the previous iteration:
 			vecYUV5555 = { w11, w11, w11, w11 }
@@ -124,14 +124,14 @@
 			vecYUV5555 = { vecYUV6789[0], vecYUV6789[0], vecYUV6789[0], vecYUV6789[0] }
 			vecYUV1234 = { vecYUV1234[1], vecYUV1234[2],  vTmp[1],  vTmp[0] }
 			vecYUV6789 = {  vTmp[2], vecYUV6789[2], vecYUV6789[3],  vTmp[3] }
-			
+
 			Beautiful, isn't it? :-)
 			*/
 
 			// Load the new values into a temporary vector (see above for an explanation)
 			const int tmpArr[4] = {YUV(4), YUV(3), YUV(6), YUV(9)};
 			vector signed char vTmp = *(const vector signed char *)tmpArr;
-			
+
 			// Next update the data vectors
 			vecYUV5555 = (vector signed char)vec_splat((vector unsigned int)vecYUV6789, 0);
 			vecYUV1234 = vec_perm(vecYUV1234, vTmp, vPermuteToV1234);
@@ -140,17 +140,17 @@
 			// Compute the absolute difference between the center point's YUV and the outer points
 			const vector signed char vDiff1 = vec_abs(vec_sub(vecYUV5555, vecYUV1234));
 			const vector signed char vDiff2 = vec_abs(vec_sub(vecYUV5555, vecYUV6789));
-			
+
 			// Compare the difference to the threshold (byte-wise)
 			const vector bool char vCmp1 = vec_cmpgt((vector unsigned char)vDiff1, vThreshold);
 			const vector bool char vCmp2 = vec_cmpgt((vector unsigned char)vDiff2, vThreshold);
-			
+
 			// Convert all non-zero (long) vector elements to 0xF...F, keep 0 at 0.
 			// Then and in the patter masks. The idea is that for 0 components, we get 0,
 			// while for the other components we get exactly the mask value.
 			const vector signed int vPattern1 = vec_and(vec_cmpgt((vector unsigned int)vCmp1, (vector unsigned int)0), vPatternMask1);
 			const vector signed int vPattern2 = vec_and(vec_cmpgt((vector unsigned int)vCmp2, (vector unsigned int)0), vPatternMask2);
-			
+
 			// Now sum up the components of all vectors. Since our pattern mask values
 			// are all "orthogonal", this is effectively the same as ORing them all
 			// together. In the end, the rightmost word of vSum contains the 'pattern'

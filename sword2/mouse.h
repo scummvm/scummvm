@@ -70,7 +70,7 @@ struct MouseAnim {
 	uint8 runTimeComp;	// type of runtime compression used for the
 				// frame data
 	uint8 noAnimFrames;	// number of frames in the anim
-	int8 xHotSpot;		
+	int8 xHotSpot;
 	int8 yHotSpot;
 	uint8 mousew;
 	uint8 mouseh;
@@ -82,7 +82,7 @@ struct MouseAnim {
 
 // The MOUSE_holding mode is entered when the conversation menu is closed, and
 // exited when the mouse cursor moves off that menu area. I don't know why yet.
- 
+
 // mouse unit - like ObjectMouse, but with anim resource & pc (needed if
 // sprite is to act as mouse detection mask)
 

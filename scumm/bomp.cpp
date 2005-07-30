@@ -77,7 +77,7 @@ void bompDecodeLineReverse(byte *dst, const byte *src, int len) {
 	assert(len > 0);
 
 	dst += len;
-	
+
 	int num;
 	byte code, color;
 
@@ -101,7 +101,7 @@ void bompDecodeLineReverse(byte *dst, const byte *src, int len) {
 void bompApplyMask(byte *line_buffer, byte *mask, byte maskbit, int32 size, byte transparency) {
 	while (1) {
 		do {
-			if (size-- == 0) 
+			if (size-- == 0)
 				return;
 			if (*mask & maskbit) {
 				*line_buffer = transparency;
@@ -288,7 +288,7 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 		if (bd.scale_y != 255) {
 			// A bit set means we should skip this line...
 			tmp = skip_y_new & skip_y_bits;
-			
+
 			// Advance the scale-skip bit mask, if it's 0, get the next scale-skip byte
 			skip_y_bits /= 2;
 			if (skip_y_bits == 0) {
@@ -297,7 +297,7 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 			}
 
 			// Skip the current line if the above check tells us to
-			if (tmp != 0) 
+			if (tmp != 0)
 				continue;
 		}
 
@@ -313,11 +313,11 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 			// Replace the parts of the line which are masked with the transparency color
 			if (bd.maskPtr)
 				bompApplyMask(line_ptr, mask, maskbit, width, 255);
-	
+
 			// Apply custom color map, if available
 			if (_bompActorPalettePtr)
 				bompApplyActorPalette(_bompActorPalettePtr, line_ptr, width);
-			
+
 			// Finally, draw the decoded, scaled, masked and recolored line onto
 			// the target surface, using the specified shadow mode
 			bompApplyShadow(bd.shadowMode, _shadowPalette, line_ptr, dst, width, 255);
@@ -361,7 +361,7 @@ int32 setupBompScale(byte *scaling, int32 size, byte scale) {
 	count = (256 - size / 2);
 	assert(0 <= count && count < 768);
 	tmp_ptr = bigCostumeScaleTable + count;
-	
+
 	count = (size + 7) / 8;
 	while (count--) {
 		a = 0;

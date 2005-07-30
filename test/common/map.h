@@ -3,7 +3,7 @@
 #include "common/stdafx.h"
 #include "common/map.h"
 
-class MapTestSuite : public CxxTest::TestSuite 
+class MapTestSuite : public CxxTest::TestSuite
 {
 	public:
 	void test_isEmpty_clear( void )
@@ -49,7 +49,7 @@ class MapTestSuite : public CxxTest::TestSuite
 
 		mapB[1] = -1;
 		mapB[4] = 96;
-		
+
 		mapA.merge(mapB);
 
 		TS_ASSERT( mapA.contains(1) );

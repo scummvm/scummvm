@@ -38,7 +38,7 @@ public:
 
 	TUid AppDllUid() const;
 #ifdef EPOC_AS_APP
-	TECompXL    iECompXL;        
+	TECompXL    iECompXL;
 #endif
 };
 #endif

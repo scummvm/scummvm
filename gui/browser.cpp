@@ -57,7 +57,7 @@ int BrowserDialog::runModal() {
 	NavReplyRecord reply;
 	OSStatus err;
 	bool choiceMade = false;
-	
+
 	// If in fullscreen mode, switch to windowed mode
 	bool wasFullscreen = g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
 	if (wasFullscreen)
@@ -65,21 +65,21 @@ int BrowserDialog::runModal() {
 
 	// Temporarily show the real mouse
 	ShowCursor();
-	
+
 	err = NavGetDefaultDialogCreationOptions(&options);
 	assert(err == noErr);
 	options.windowTitle = _titleRef;
 //	options.message = CFSTR("Select your game directory");
 	options.modality = kWindowModalityAppModal;
-	
+
 	if (_isDirBrowser)
 		err = NavCreateChooseFolderDialog(&options, 0, 0, 0, &dialogRef);
 	else
 		err = NavCreateChooseFileDialog(&options, 0, 0, 0, 0, 0, &dialogRef);
 	assert(err == noErr);
-	
+
 	windowRef = NavDialogGetWindow(dialogRef);
-	
+
 	err = NavDialogRun(dialogRef);
 	assert(err == noErr);
 
@@ -90,12 +90,12 @@ int BrowserDialog::runModal() {
 	if (result == kNavUserActionChoose) {
 		err = NavDialogGetReply(dialogRef, &reply);
 		assert(err == noErr);
-		
+
 		if (reply.validRecord && err == noErr) {
 			SInt32 theCount;
 			AECountItems(&reply.selection, &theCount);
 			assert(theCount == 1);
-	
+
 			AEKeyword keyword;
 			FSRef ref;
 			char buf[4096];
@@ -103,11 +103,11 @@ int BrowserDialog::runModal() {
 			assert(err == noErr);
 			err = FSRefMakePath(&ref, (UInt8*)buf, sizeof(buf)-1);
 			assert(err == noErr);
-			
+
 			_choice = FilesystemNode(buf);
 			choiceMade = true;
 		}
- 
+
 		err = NavDisposeReply(&reply);
 		assert(err == noErr);
 	}
@@ -184,7 +184,7 @@ void BrowserDialog::open() {
 
 	// Alway refresh file list
 	updateListing();
-	
+
 	// Call super implementation
 	Dialog::open();
 }

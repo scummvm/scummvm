@@ -30,21 +30,21 @@
 
 namespace Kyra {
 	class MusicPlayer : public MidiDriver {
-	
+
 	public:
-	
+
 		MusicPlayer(MidiDriver* driver, KyraEngine* engine);
 		~MusicPlayer();
-		
+
 		void setVolume(int volume);
 		int getVolume() { return _volume; }
-		
+
 		void hasNativeMT32(bool nativeMT32) { _nativeMT32 = nativeMT32; }
 
 		void playMusic(const char* file);
 		void playMusic(uint8* data, uint32 size);
 		void stopMusic();
-		
+
 		void playTrack(uint8 track);
 		void setPassThrough(bool b)	{ _passThrough = b; }
 
@@ -60,11 +60,11 @@ namespace Kyra {
 		//Channel allocation functions
 		MidiChannel *allocateChannel()		{ return 0; }
 		MidiChannel *getPercussionChannel()	{ return 0; }
-	
+
 	protected:
-	
+
 		static void onTimer(void *data);
-	
+
 		MidiChannel* _channel[16];
 		uint8 _channelVolume[16];
 		MidiDriver* _driver;

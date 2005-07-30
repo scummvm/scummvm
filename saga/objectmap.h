@@ -41,7 +41,7 @@ private:
 public:
 	HitZone(MemoryReadStreamEndian *readStream, int index);
 	~HitZone();
-	
+
 	int getNameIndex() const {
 		return _nameIndex;
 	}
@@ -76,11 +76,11 @@ public:
 		return objectIndexToId(kGameObjectStepZone, _index);
 	}
 	bool getSpecialPoint(Point &specialPoint) const;
-	void draw(SagaEngine *vm, Surface *ds, int color);	
+	void draw(SagaEngine *vm, Surface *ds, int color);
 	bool hitTest(const Point &testPoint);
 
 private:
-	int _flags;				// Saga::HitZoneFlags 
+	int _flags;				// Saga::HitZoneFlags
 	int _clickAreasCount;
 	int _rightButtonVerb;
 	int _nameIndex;

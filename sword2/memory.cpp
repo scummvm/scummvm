@@ -232,7 +232,7 @@ void MemoryManager::memFree(byte *ptr) {
 	_memBlockIndex[idx]->ptr = NULL;
 
 	_totAlloc -= _memBlockIndex[idx]->size;
-	
+
 	// Remove the memory block from the index
 	_numBlocks--;
 

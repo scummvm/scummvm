@@ -37,7 +37,7 @@
 namespace Queen {
 
 void Cutaway::run(
-		const char *filename, 
+		const char *filename,
 		char *nextFilename,
 		QueenEngine *vm) {
 	Cutaway *cutaway = new Cutaway(filename, vm);
@@ -46,12 +46,12 @@ void Cutaway::run(
 }
 
 Cutaway::Cutaway(
-		const char *filename, 
+		const char *filename,
 		QueenEngine *vm)
 	: _vm(vm), _personDataCount(0), _personFaceCount(0), _lastSong(0), _songBeforeComic(0) {
 	memset(&_bankNames, 0, sizeof(_bankNames));
 	_vm->input()->cutawayQuitReset();
-	load(filename); 
+	load(filename);
 }
 
 Cutaway::~Cutaway() {
@@ -66,7 +66,7 @@ void Cutaway::load(const char *filename) {
 	ptr = _fileData = _vm->resource()->loadFile(filename, 20);
 
 	if (0 == scumm_stricmp(filename, "comic.cut"))
-		_songBeforeComic = _vm->sound()->lastOverride(); 
+		_songBeforeComic = _vm->sound()->lastOverride();
 
 	strcpy(_basename, filename);
 	_basename[strlen(_basename)-4] = '\0';
@@ -184,15 +184,15 @@ const byte *Cutaway::getCutawayObject(const byte *ptr, CutawayObject &object)
 	object.objectNumber = (int16)READ_BE_INT16(ptr); ptr += 2;
 	object.moveToX      = (int16)READ_BE_INT16(ptr); ptr += 2;
 	object.moveToY      = (int16)READ_BE_INT16(ptr); ptr += 2;
-	object.bank         = (int16)READ_BE_INT16(ptr); ptr += 2;      
+	object.bank         = (int16)READ_BE_INT16(ptr); ptr += 2;
 	object.animList     = (int16)READ_BE_INT16(ptr); ptr += 2;
-	object.execute      = (int16)READ_BE_INT16(ptr); ptr += 2;    
+	object.execute      = (int16)READ_BE_INT16(ptr); ptr += 2;
 	object.limitBobX1   = (int16)READ_BE_INT16(ptr); ptr += 2;
 	object.limitBobY1   = (int16)READ_BE_INT16(ptr); ptr += 2;
 	object.limitBobX2   = (int16)READ_BE_INT16(ptr); ptr += 2;
 	object.limitBobY2   = (int16)READ_BE_INT16(ptr); ptr += 2;
 	object.specialMove  = (int16)READ_BE_INT16(ptr); ptr += 2;
-	object.animType     = (int16)READ_BE_INT16(ptr); ptr += 2;   
+	object.animType     = (int16)READ_BE_INT16(ptr); ptr += 2;
 	object.fromObject   = (int16)READ_BE_INT16(ptr); ptr += 2;
 	object.bobStartX    = (int16)READ_BE_INT16(ptr); ptr += 2;
 	object.bobStartY    = (int16)READ_BE_INT16(ptr); ptr += 2;
@@ -219,10 +219,10 @@ void Cutaway::dumpCutawayObject(int index, CutawayObject &object)
 	const char *objectNumberStr;
 
 	switch (object.objectNumber) {
-	case -1:  
+	case -1:
 		objectNumberStr = "MESSAGE";
 		break;
-	case 0:   
+	case 0:
 		objectNumberStr = "Joe";
 		break;
 	default:
@@ -278,9 +278,9 @@ void Cutaway::limitBob(CutawayObject &object) {
 		if (object.objectNumber < 0) {
 			warning("QueenCutaway::limitBob called with objectNumber = %i", object.objectNumber);
 			return;
-		}	
+		}
 
-		BobSlot *bob = 
+		BobSlot *bob =
 			_vm->graphics()->bob( _vm->logic()->findBob(object.objectNumber) );
 
 		if (!bob) {
@@ -307,8 +307,8 @@ void Cutaway::restorePersonData() {
 void Cutaway::changeRooms(CutawayObject &object) {
 	// Lines 1291-1385 in cutaway.c
 
-	debug(6, "Changing from room %i to room %i", 
-			_temporaryRoom, 
+	debug(6, "Changing from room %i to room %i",
+			_temporaryRoom,
 			object.room);
 
 	restorePersonData();
@@ -320,7 +320,7 @@ void Cutaway::changeRooms(CutawayObject &object) {
 
 		for (int i = firstObjectInRoom; i <= lastObjectInRoom; i++) {
 			ObjectData *objectData  = _vm->logic()->objectData(i);
-			
+
 			if (objectData->image == -3 || objectData->image == -4) {
 
 				assert(_personDataCount < MAX_PERSON_COUNT);
@@ -363,9 +363,9 @@ void Cutaway::changeRooms(CutawayObject &object) {
 
 	_vm->logic()->oldRoom(_initialRoom);
 
-	// FIXME - the first cutaway is played at the end of the command 0x178. This 
-	// command setups some persons and associates bob slots to them. They should be 
-	// hidden as their y coordinate is > 150, but they aren't ! A (temporary) 
+	// FIXME - the first cutaway is played at the end of the command 0x178. This
+	// command setups some persons and associates bob slots to them. They should be
+	// hidden as their y coordinate is > 150, but they aren't ! A (temporary)
 	// workaround is to display the room with the panel area enabled. Same problem
 	// for cutaway c62c.
 	int16 comPanel = _comPanel;
@@ -403,7 +403,7 @@ void Cutaway::changeRooms(CutawayObject &object) {
 
 Cutaway::ObjectType Cutaway::getObjectType(CutawayObject &object) {
 	// Lines 1387-1449 in cutaway.c
-	
+
 	ObjectType objectType = OBJECT_TYPE_ANIMATION;
 
 	if (object.objectNumber > 0) {
@@ -554,7 +554,7 @@ const byte *Cutaway::handleAnimation(const byte *ptr, CutawayObject &object) {
 	int frameCount = 0;
 	int header = 0;
 	int i;
-		
+
 	CutawayAnim objAnim[56];
 
 	// Read animation frames
@@ -582,7 +582,7 @@ const byte *Cutaway::handleAnimation(const byte *ptr, CutawayObject &object) {
 
 	if (object.animType == 1) {
 		// lines 1615-1636 in cutaway.c
-		
+
 		debug(6, "----- Complex cutaway animation (animType = %i) -----", object.animType);
 
 		if ((_vm->logic()->currentRoom() == 47 || _vm->logic()->currentRoom() == 63) &&
@@ -623,7 +623,7 @@ const byte *Cutaway::handleAnimation(const byte *ptr, CutawayObject &object) {
 		// lines 1657-1761 in cutaway.c
 
 		debug(6, "----- Normal cutaway animation (animType = %i) -----", object.animType);
-		
+
 		for (i = 0; i < frameCount; i++) {
 			//debug(6, "===== Animating frame %i =====", i);
 			//dumpCutawayAnim(objAnim[i]);
@@ -647,7 +647,7 @@ const byte *Cutaway::handleAnimation(const byte *ptr, CutawayObject &object) {
 
 					if (!((objAnim[i].mx > 0 || objAnim[i].my > 0) && inRange(objAnim[i].object, 1, 3))) {
 						_vm->bankMan()->unpack(
-								objAnim[i].unpackFrame, 
+								objAnim[i].unpackFrame,
 								objAnim[i].originalFrame,
 								objAnim[i].bank);
 					}
@@ -692,7 +692,7 @@ const byte *Cutaway::handleAnimation(const byte *ptr, CutawayObject &object) {
 	while (moving) {
 		moving = false;
 		_vm->update();
-		
+
 		for (i = 0; i < frameCount; i++) {
 			BobSlot *bob = _vm->graphics()->bob(objAnim[i].object);
 			if (bob->moving) {
@@ -716,8 +716,8 @@ static void findCdCut(const char *basename, int index, char *result) {
 }
 
 void Cutaway::handlePersonRecord(
-		int index, 
-		CutawayObject &object, 
+		int index,
+		CutawayObject &object,
 		const char *sentence) {
 	// Lines 1455-1516 in cutaway.c
 
@@ -726,10 +726,10 @@ void Cutaway::handlePersonRecord(
 	if (object.objectNumber == OBJECT_JOE) {
 		if (object.moveToX || object.moveToY) {
 			_vm->walk()->moveJoe(0, object.moveToX, object.moveToY, true);
-		} 
+		}
 	} else {
 		_vm->logic()->initPerson(
-				object.objectNumber - _vm->logic()->currentRoomData(), 
+				object.objectNumber - _vm->logic()->currentRoomData(),
 				"", true, &p);
 
 		if (object.bobStartX || object.bobStartY) {
@@ -741,7 +741,7 @@ void Cutaway::handlePersonRecord(
 
 		if (object.moveToX || object.moveToY)
 			_vm->walk()->movePerson(
-					&p, 
+					&p,
 					object.moveToX, object.moveToY,
 					_currentImage + 1,
 					_vm->logic()->objectData(object.objectNumber)->image
@@ -775,7 +775,7 @@ void Cutaway::handlePersonRecord(
 			}
 
 			char voiceFilePrefix[MAX_STRING_SIZE];
-			findCdCut(_basename, index, voiceFilePrefix);			
+			findCdCut(_basename, index, voiceFilePrefix);
 			_vm->logic()->makePersonSpeak(sentence, (object.objectNumber == OBJECT_JOE) ? NULL : &p, voiceFilePrefix);
 		}
 
@@ -816,9 +816,9 @@ void Cutaway::run(char *nextFilename) {
 		ptr = getCutawayObject(ptr, object);
 		//dumpCutawayObject(i, object);
 
-		if (!object.moveToX && 
-				!object.moveToY && 
-				object.specialMove > 0 && 
+		if (!object.moveToX &&
+				!object.moveToY &&
+				object.specialMove > 0 &&
 				object.objectNumber >= 0) {
 			_vm->logic()->executeSpecialMove(object.specialMove);
 			object.specialMove = 0;
@@ -885,7 +885,7 @@ void Cutaway::run(char *nextFilename) {
 		}
 
 	} // for ()
-	
+
 	_vm->display()->clearTexts(0, 198);
 	// XXX lines 1887-1895 in cutaway.c
 
@@ -911,7 +911,7 @@ void Cutaway::run(char *nextFilename) {
 			_vm->logic()->entryObj(0);
 		} else {
 			/// No need to stay in current room, so return to previous room
-			//  if one exists. Reset Joe's X,Y coords to those when first entered 
+			//  if one exists. Reset Joe's X,Y coords to those when first entered
 
 			restorePersonData();
 
@@ -941,7 +941,7 @@ void Cutaway::run(char *nextFilename) {
 		for (i = _vm->logic()->roomData(_vm->logic()->currentRoom());
 				i <= _vm->logic()->roomData(_vm->logic()->currentRoom() + 1); i++) {
 
-			ObjectData *object = _vm->logic()->objectData(i);			
+			ObjectData *object = _vm->logic()->objectData(i);
 			if (object->image == -3 || object->image == -4) {
 				k++;
 				if (object->name > 0) {
@@ -962,12 +962,12 @@ void Cutaway::run(char *nextFilename) {
 			_vm->sound()->stopSpeech();
 		_vm->sound()->stopSfx();
 	}
-	
+
 	_vm->input()->cutawayRunning(false);
 	_vm->input()->cutawayQuitReset();
 	_vm->input()->quickSaveReset();
 	_vm->input()->quickLoadReset();
-	
+
 	if (_songBeforeComic > 0)
 		_vm->sound()->playSong(_songBeforeComic);
 	else if (_lastSong > 0)
@@ -988,14 +988,14 @@ void Cutaway::stop() {
 	int16 joeRoom = READ_BE_UINT16(ptr); ptr += 2;
 	int16 joeX    = READ_BE_UINT16(ptr); ptr += 2;
 	int16 joeY    = READ_BE_UINT16(ptr); ptr += 2;
-	
-	debug(6, "[Cutaway::stop] Final position is room %i and coordinates (%i, %i)", 
+
+	debug(6, "[Cutaway::stop] Final position is room %i and coordinates (%i, %i)",
 			joeRoom, joeX, joeY);
 
 	if ((!_vm->input()->cutawayQuit() || (!_anotherCutaway && joeRoom == _finalRoom)) &&
 			joeRoom != _temporaryRoom &&
 			joeRoom != 0) {
-		
+
 		debug(6, "[Cutaway::stop] Changing rooms and moving Joe");
 
 		_vm->logic()->joePos(joeX, joeY);
@@ -1007,18 +1007,18 @@ void Cutaway::stop() {
 	if (_vm->input()->cutawayQuit()) {
 		// Lines 1927-2032 in cutaway.c
 		int i;
-		
+
 		// Stop the credits from running
 		_vm->logic()->stopCredits();
-		
+
 		_vm->graphics()->stopBobs();
 
 		for (i = 1; i <= _personFaceCount; i++) {
 			int index =  _personFace[i].index;
 			if (index > 0) {
 				_vm->logic()->objectData(_personFace[i].index)->image = _personFace[i].image;
-				
-				_vm->graphics()->bob(_vm->logic()->findBob(index))->xflip = 
+
+				_vm->graphics()->bob(_vm->logic()->findBob(index))->xflip =
 					(_personFace[i].image != -4);
 			}
 		}
@@ -1080,12 +1080,12 @@ void Cutaway::stop() {
 						pbs->frameNum = objectFrame;
 						if (frame < 0)
 							pbs->xflip = true;
-							
+
 					}
 				}
 			}
 		} // for ()
-		
+
 		int16 specialMove = (int16)READ_BE_INT16(ptr); ptr += 2;
 		if (specialMove > 0)
 			_vm->logic()->executeSpecialMove(specialMove);
@@ -1097,7 +1097,7 @@ void Cutaway::stop() {
 			joeRoom != 37 && joeRoom != 105 && joeRoom != 106 &&
 			(joeX || joeY)) {
 		BobSlot *joeBob = _vm->graphics()->bob(0);
-		
+
 		debug(6, "[Cutaway::stop] Moving Joe");
 
 		joeBob->x = joeX;
@@ -1124,7 +1124,7 @@ void Cutaway::updateGameState() {
 		bool update = false;
 
 		if (stateIndex > 0) {
-			if (_vm->logic()->gameState(stateIndex) == stateValue) 
+			if (_vm->logic()->gameState(stateIndex) == stateValue)
 				update = true;
 		} else {
 			_vm->logic()->gameState(ABS(stateIndex), stateValue);
@@ -1178,7 +1178,7 @@ int Cutaway::makeComplexAnimation(int16 currentImage, Cutaway::CutawayAnim *objA
 	int i;
 	assert(frameCount < 30);
 	AnimFrame cutAnim[30];
-	
+
 	memset(frameIndex, 0, sizeof(frameIndex));
 	debug(6, "[Cutaway::makeComplexAnimation] currentImage = %i", currentImage);
 
@@ -1188,7 +1188,7 @@ int Cutaway::makeComplexAnimation(int16 currentImage, Cutaway::CutawayAnim *objA
 		frameIndex[objAnim[i].unpackFrame] = 1;
 	}
 
-	cutAnim[frameCount].frame = 0;	
+	cutAnim[frameCount].frame = 0;
 	cutAnim[frameCount].speed = 0;
 
 	int nextFrameIndex = 1;
@@ -1214,7 +1214,7 @@ int Cutaway::makeComplexAnimation(int16 currentImage, Cutaway::CutawayAnim *objA
 
 void Cutaway::handleText(
 		int index,
-		ObjectType type, 
+		ObjectType type,
 		CutawayObject &object,
 		const char *sentence) {
 	// lines 1776-1863 in cutaway.c
@@ -1232,7 +1232,7 @@ void Cutaway::handleText(
 		flags = 1;
 	}
 
-	BobSlot *bob = 
+	BobSlot *bob =
 		_vm->graphics()->bob( _vm->logic()->findBob(ABS(object.objectNumber)) );
 
 	_vm->graphics()->setBobText(bob, sentence, x, object.bobStartY, object.specialMove, flags);
@@ -1275,13 +1275,13 @@ void Cutaway::handleText(
 	_vm->display()->clearTexts(0, 198);
 	_vm->update();
 }
-		
+
 int Cutaway::countSpaces(ObjectType type, const char *segment) {
 	int tmp = 0;
 
 	while (*segment++)
 		tmp++;
-	
+
 	if (tmp < 50)
 		tmp = 50;
 
@@ -1298,7 +1298,7 @@ int Cutaway::scale(CutawayObject &object) {
 	if (object.scale > 0)
 		scaling = object.scale;
 	else if (!object.objectNumber) {
-		// Only scale Joe 
+		// Only scale Joe
 		int x, y;
 
 		if (object.bobStartX > 0 || object.bobStartY > 0) {

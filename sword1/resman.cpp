@@ -88,7 +88,7 @@ void ResMan::loadCluDescript(const char *fileName) {
 		guiFatalError(msg);
 	}
 
-	
+
 	_prj.noClu = file.readUint32LE();
 	_prj.clu = new Clu[_prj.noClu];
 	memset(_prj.clu, 0, _prj.noClu * sizeof(Clu));
@@ -137,14 +137,14 @@ void ResMan::loadCluDescript(const char *fileName) {
 			free(grpIndex);
 		}
 	free(cluIndex);
-	
+
 	if (_prj.clu[3].grp[5].noRes == 29)
 		for (uint8 cnt = 0; cnt < 29; cnt++)
 			_srIdList[cnt] = 0x04050000 | cnt;
 }
 
 void ResMan::freeCluDescript(void) {
-	
+
 	for (uint32 clusCnt = 0; clusCnt < _prj.noClu; clusCnt++) {
 		Clu *cluster = _prj.clu + clusCnt;
 		for (uint32 grpCnt = 0; grpCnt < cluster->noGrp; grpCnt++) {
@@ -271,7 +271,7 @@ void ResMan::resOpen(uint32 id) {  // load resource ID into memory
 void ResMan::resClose(uint32 id) {
 	MemHandle *handle = resHandle(id);
 	if (!handle->refCount) {
-		warning("Resource Manager fail: unlocking object with refCount 0. Id: %d\n", id);		
+		warning("Resource Manager fail: unlocking object with refCount 0. Id: %d\n", id);
 	} else {
 		handle->refCount--;
 		if (!handle->refCount)
@@ -312,7 +312,7 @@ Common::File *ResMan::resFile(uint32 id) {
 			assert(_openCluStart);
 			Clu *closeClu = _openCluStart;
 			_openCluStart = _openCluStart->nextOpen;
-			
+
 			closeClu->file->close();
 			delete closeClu->file;
 			closeClu->file = NULL;

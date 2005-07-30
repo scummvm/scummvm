@@ -101,10 +101,10 @@ private:
 inline float allpass::process(float input) {
 	float output;
 	float bufout;
-	
+
 	bufout = buffer[bufidx];
 	undenormalise(bufout);
-	
+
 	output = -input + bufout;
 	buffer[bufidx] = input + (bufout * feedback);
 
@@ -196,7 +196,7 @@ private:
 	float width;
 	float mode;
 
-	// The following are all declared inline 
+	// The following are all declared inline
 	// to remove the need for dynamic allocation
 	// with its subsequent error-checking messiness
 

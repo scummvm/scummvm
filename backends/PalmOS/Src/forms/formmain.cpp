@@ -25,7 +25,7 @@ static Err BeamMe() {
 		err = SendDatabase(0, dbID, "ScummVM.prc", "\nPlay your favorite LucasArts games");
 	else
 		err = DmGetLastErr();
-	
+
 	return err;
 }
 
@@ -90,7 +90,7 @@ static Boolean MainFormDoCommand(UInt16 command)
  			FrmPopupForm(InfoForm);
  			handled = true;
 			break;
-		
+
 		case MainGamesMusicSound:
 			FrmPopupForm(MusicForm);
 			handled = true;
@@ -115,7 +115,7 @@ static Boolean MainFormDoCommand(UInt16 command)
  *
  * FUNCTION:    MainFormHandleEvent
  *
- * DESCRIPTION: This routine is the event handler for the 
+ * DESCRIPTION: This routine is the event handler for the
  *              "MainForm" of this application.
  *
  * PARAMETERS:  eventP  - a pointer to an EventType structure
@@ -136,7 +136,7 @@ static Boolean PenDownRepeat() {
 	if (penDown && sknLastOn) {
 		RectangleType r;
 		DmOpenRef skinDBP;
-	
+
 		skinDBP = SknOpenSkin();
 		SknGetObjectBounds(skinDBP, sknLastOn, &r);
 
@@ -145,14 +145,14 @@ static Boolean PenDownRepeat() {
 				SknSetState(skinDBP, sknLastOn, sknStateSelected);
 				SknShowObject(skinDBP, sknLastOn);
 			}
-			
+
 			switch (sknLastOn) {
 				case skinSliderUpArrow:
 				case skinSliderDownArrow:
 					handled = SknProcessArrowAction(sknLastOn);
 					break;
 			}
-			
+
 		} else {
 			if (SknGetState(skinDBP, sknLastOn) != sknStateNormal) {
 				SknSetState(skinDBP, sknLastOn, sknStateNormal);
@@ -162,7 +162,7 @@ static Boolean PenDownRepeat() {
 
 		SknCloseSkin(skinDBP);
 	}
-	
+
 	return handled;
 }
 
@@ -173,7 +173,7 @@ Boolean MainFormHandleEvent(EventPtr eventP)
 	FormPtr frmP;
 	Coord x,y;
 	DmOpenRef skinDBP;
-	
+
 	switch (eventP->eType) {
 		case frmUpdateEvent:
 		{
@@ -216,11 +216,11 @@ Boolean MainFormHandleEvent(EventPtr eventP)
 					//gPrefs->card.volRefNum = parseCards(true);
 					FrmPopupForm(CardSlotForm);
 					break;
-			
+
 				case MainAboutButton:
 		 			FrmPopupForm(InfoForm);
 					break;
-				
+
 //				case MainListTypeSelTrigger:
 //					FrmList(eventP, MainListTypeList);
 //					break;
@@ -232,7 +232,7 @@ Boolean MainFormHandleEvent(EventPtr eventP)
 			x = eventP->screenX;
 			y = eventP->screenY;
 			lastIndex = dmMaxRecordIndex;	// enable select/unselect list item
-			
+
 			if (sknLastOn != skinButtonNone) {
 				RectangleType r;
 				skinDBP = SknOpenSkin();
@@ -240,7 +240,7 @@ Boolean MainFormHandleEvent(EventPtr eventP)
 				SknSetState(skinDBP, sknLastOn, sknStateNormal);
 				SknShowObject(skinDBP, sknLastOn);
 				SknCloseSkin(skinDBP);
-				
+
 				if (RctPtInRectangle(x*2, y*2, &r)) {
 					switch (sknLastOn) {
 						case skinButtonGameAdd:
@@ -297,7 +297,7 @@ Boolean MainFormHandleEvent(EventPtr eventP)
 					case skinButtonGameDelete:
 					case skinButtonGameAudio:
 						SknSetState(skinDBP, sknLastOn, sknStateSelected);
-						SknShowObject(skinDBP, sknLastOn);				
+						SknShowObject(skinDBP, sknLastOn);
 						if (gPrefs->soundClick)
 							SndPlaySystemSound(sndClick);
 						handled = true;
@@ -309,7 +309,7 @@ Boolean MainFormHandleEvent(EventPtr eventP)
 				SknSelect(x, y);
 			}
 			break;
-		
+
 		case keyDownEvent:
 			if (	(eventP->data.keyDown.chr >= 'a' && eventP->data.keyDown.chr <= 'z') ||
 					(eventP->data.keyDown.chr >= 'A' && eventP->data.keyDown.chr <= 'Z')) {
@@ -319,7 +319,7 @@ Boolean MainFormHandleEvent(EventPtr eventP)
 				}
 			}
 			break;
-		
+
 		default:
 			handled = PenDownRepeat();
 	}

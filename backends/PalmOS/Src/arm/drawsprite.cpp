@@ -21,6 +21,6 @@ UInt32 Screen_drawSprite(void *userData68KP) {
 		sprData += sprPitch;
 		dest += _scrnSizeX;
 	}
-	
+
 	return 0;
 }

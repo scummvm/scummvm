@@ -102,7 +102,7 @@ enum GameObjectTypes {
 
 enum ScriptTimings {
 	kScriptTimeTicksPerSecond = (728L/10L),
-	kRepeatSpeedTicks = (728L/10L)/3,   
+	kRepeatSpeedTicks = (728L/10L)/3,
 	kNormalFadeDuration = 320, // 64 steps, 5 msec each
 	kQuickFadeDuration = 64,  // 64 steps, 1 msec each
 	kPuzzleHintTime = 30000000L  // 30 secs. used in timer
@@ -128,9 +128,9 @@ enum HitZoneFlags {
 	//	in the specified direction, and the actual specified effect of
 	//	the zone will be delayed until the actor leaves the zone.
 	kHitZoneAutoWalk = (1 << 2),
-	
+
 	//      When set on a hit zone, this causes the character not to walk
-	//      to the object (but they will look at it).	
+	//      to the object (but they will look at it).
 	kHitZoneNoWalk = (1 << 2),
 
 	//	zone activates only when character stops walking
@@ -148,7 +148,7 @@ enum PanelButtonType {
 	kPanelButtonArrow = 2,
 	kPanelButtonConverseText = 4,
 	kPanelButtonInventory = 8,
-	
+
 	kPanelButtonOption = 0x10,
 	kPanelButtonOptionSlider = 0x20,
 	kPanelButtonOptionSaveFiles = 0x40,
@@ -296,7 +296,7 @@ enum GameSoundTypes {
 	kSoundPCM = 0,
 	kSoundVOX = 1,
 	kSoundVOC = 2,
-	kSoundWAV = 3	
+	kSoundWAV = 3
 };
 
 enum GameFeatures {
@@ -378,7 +378,7 @@ struct PanelButton {
 struct GameDisplayInfo {
 	int logicalWidth;
 	int logicalHeight;
-	
+
 	int pathStartY;
 	int sceneHeight;
 
@@ -389,7 +389,7 @@ struct GameDisplayInfo {
 	int statusTextY;
 	int statusTextColor;
 	int statusBGColor;
-	
+
 	int saveReminderXOffset;
 	int saveReminderYOffset;
 	int saveReminderWidth;
@@ -547,7 +547,7 @@ public:
 	}
 	void fillSaveList();
 	char *calcSaveFileName(uint slotNumber);
-	
+
 	SaveFileData *getSaveFile(uint idx);
 	uint getSaveSlotNumber(uint idx);
 	uint getNewSaveSlotNumber();
@@ -562,7 +562,7 @@ public:
 	int _soundEnabled;
 	int _musicEnabled;
 
-	
+
 	SndRes *_sndRes;
 	Sound *_sound;
 	Music *_music;
@@ -619,7 +619,7 @@ public:
 
  private:
 	Common::String _targetName;
-	
+
 	uint _saveFilesMaxCount;
 	uint _saveFilesCount;
 	SaveFileData _saveFiles[MAX_SAVES];
@@ -654,7 +654,7 @@ public:
 	const GameSoundInfo *getSfxInfo() const { return _gameDescription->sfxInfo; }
 	const GameSoundInfo *getMusicInfo() const { return _gameDescription->musicInfo; }
 
-	const GameFontDescription *getFontDescription(int index) { 
+	const GameFontDescription *getFontDescription(int index) {
 		assert(index < _gameDescription->fontsCount);
 		return &_gameDescription->fontDescriptions[index];
 	}
@@ -670,9 +670,9 @@ public:
 	const Common::Rect &getDisplayClip() const { return _displayClip;}
 	int getDisplayWidth() const { return _gameDisplayInfo.logicalWidth; }
 	int getDisplayHeight() const { return _gameDisplayInfo.logicalHeight;}
-	int getSceneHeight() const { return _gameDisplayInfo.sceneHeight; }	
+	int getSceneHeight() const { return _gameDisplayInfo.sceneHeight; }
 	const GameDisplayInfo & getDisplayInfo() { return _gameDisplayInfo; }
-	
+
 	const char *getTextString(int textStringId);
 	void getExcuseInfo(int verb, const char *&textString, int &soundResourceId);
 };

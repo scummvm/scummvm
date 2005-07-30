@@ -76,7 +76,7 @@ uint32 Text::lowTextManager(uint8 *ascii, int32 width, uint8 pen) {
 void Text::makeTextSprite(uint8 slot, uint8 *text, uint16 maxWidth, uint8 pen) {
 	LineInfo lines[MAX_LINES];
 	uint16 numLines = analyzeSentence(text, maxWidth, lines);
-	
+
 	uint16 sprWidth = 0;
 	uint16 lineCnt;
 	for (lineCnt = 0; lineCnt < numLines; lineCnt++)

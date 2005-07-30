@@ -36,7 +36,7 @@ namespace Common {
 class InSaveFile : public Common::ReadStream {
 public:
 	virtual ~InSaveFile() {}
-	
+
 	/**
 	 * Skip over the specified (positive) amount of bytes in the input stream.
 	 */

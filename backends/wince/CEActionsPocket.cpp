@@ -34,9 +34,9 @@
 #define		KEY_ALL_SKIP	3457
 #endif
 
-const String pocketActionNames[] = { 
-	"Pause", 
-	"Save", 
+const String pocketActionNames[] = {
+	"Pause",
+	"Save",
 	"Quit",
 	"Skip",
 	"Hide",
@@ -118,7 +118,7 @@ void CEActionsPocket::initInstanceGame() {
 	_key_action[POCKET_ACTION_PAUSE].setAscii(VK_SPACE);
 	_action_enabled[POCKET_ACTION_PAUSE] = true;
 	// Save
-	if (is_simon || is_sword2 || is_gob) 
+	if (is_simon || is_sword2 || is_gob)
 		_action_enabled[POCKET_ACTION_SAVE] = false;
 	else
 	if (is_queen) {
@@ -128,7 +128,7 @@ void CEActionsPocket::initInstanceGame() {
 	else
 	if (is_sky) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
-		_key_action[POCKET_ACTION_SAVE].setAscii(63); 
+		_key_action[POCKET_ACTION_SAVE].setAscii(63);
 	}
 	else {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
@@ -144,7 +144,7 @@ void CEActionsPocket::initInstanceGame() {
 		_key_action[POCKET_ACTION_SKIP].setAscii(KEY_ALL_SKIP);
 	// Hide
 	_action_enabled[POCKET_ACTION_HIDE] = true;
-	// Keyboard 
+	// Keyboard
 	_action_enabled[POCKET_ACTION_KEYBOARD] = true;
 	// Sound
 	_action_enabled[POCKET_ACTION_SOUND] = true;

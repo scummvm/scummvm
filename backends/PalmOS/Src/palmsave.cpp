@@ -32,7 +32,7 @@ class PalmSaveFile : public Common::SaveFile {
 public:
 	PalmSaveFile(const char *filename, bool saveOrLoad);
 	~PalmSaveFile();
-	
+
 	bool isOpen() const { return file != NULL; }
 
 	uint32 read(void *buf, uint32 size);
@@ -56,15 +56,15 @@ PalmSaveFile::PalmSaveFile(const char *filename, bool saveOrLoad) {
 	if (file) {
 		if (saveOrLoad) {
 			_readWriteData = (byte *)malloc(MAX_BLOCK);
-			
+
 		} else {
 			// read : cache the whole file
 			::fseek(file, 0, SEEK_END);
 			length = ::ftell(file);
 			::fseek(file, 0, SEEK_SET);
-			
+
 			_readWriteData = (byte *)malloc(length);
-			_readWritePos = 0;				
+			_readWritePos = 0;
 
 			if (_readWriteData)
 				::fread(_readWriteData, 1, length, file);
@@ -76,7 +76,7 @@ PalmSaveFile::~PalmSaveFile() {
 	if (file) {
 		if (_needDump)
 			::fwrite(_readWriteData, _readWritePos, 1, file);
-	
+
 		if (_readWriteData)
 			free(_readWriteData);
 

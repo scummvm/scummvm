@@ -47,18 +47,18 @@ struct Point {
 
 	This small class is an helper for rectangles.
 	Note: This implementation is built around the assumption that (top,left) is
-	part of the rectangle, but (bottom,right) is not! This is reflected in 
+	part of the rectangle, but (bottom,right) is not! This is reflected in
 	various methods, including contains(), intersects() and others.
-	
+
 	Another very wide spread approach to rectangle classes treats (bottom,right)
 	also as a part of the rectangle.
-	
+
 	Coneptually, both are sound, but the approach we use saves many intermediate
 	computations (like computing the height in our case is done by doing this:
 	  height = bottom - top;
 	while in the alternate system, it would be
 	  height = bottom - top + 1;
-	
+
 	When writing code using our Rect class, always keep this principle in mind!
 */
 struct Rect {
@@ -72,7 +72,7 @@ struct Rect {
 	}
 	int16 width() const { return right - left; }
 	int16 height() const { return bottom - top; }
-	
+
 	void setWidth(int16 aWidth) {
 		right = left + aWidth;
 	}
@@ -84,8 +84,8 @@ struct Rect {
 	/*!	@brief check if given position is inside this rectangle
 
 		@param x the horizontal position to check
-		@param y the vertical position to check	
-		
+		@param y the vertical position to check
+
 		@return true if the given position is inside this rectangle, false otherwise
 	*/
 	bool contains(int16 x, int16 y) const {
@@ -93,9 +93,9 @@ struct Rect {
 	}
 
 	/*!	@brief check if given point is inside this rectangle
-		
+
 		@param p the point to check
-		
+
 		@return true if the given point is inside this rectangle, false otherwise
 	*/
 	bool contains(const Point & p) const {
@@ -103,9 +103,9 @@ struct Rect {
 	}
 
 	/*!	@brief check if given rectangle intersects with this rectangle
-		
+
 		@param r the rectangle to check
-		
+
 		@return true if the given rectangle is inside the rectangle, false otherwise
 	*/
 	bool intersects(const Rect & r) const {
@@ -113,7 +113,7 @@ struct Rect {
 	}
 
 	/*!	@brief extend this rectangle so that it contains r
-		
+
 		@param r the rectangle to extend by
 	*/
 	void extend(const Rect & r) {
@@ -122,9 +122,9 @@ struct Rect {
 		top = MIN(top, r.top);
 		bottom = MAX(bottom, r.bottom);
 	}
-	
+
 	/*!	@brief extend this rectangle in all four directions by the given number of pixels
-		
+
 		@param offset the size to grow by
 	*/
 	void grow(int16 offset) {
@@ -133,7 +133,7 @@ struct Rect {
 		bottom += offset;
 		right += offset;
 	}
-	
+
 	void clip(const Rect & r) {
 		assert(isValidRect());
 		assert(r.isValidRect());
@@ -150,22 +150,22 @@ struct Rect {
 		if (right > r.right) right = r.right;
 		else if (right < r.left) right = r.left;
 	}
-	
+
 	void clip(int maxw, int maxh) {
 		clip(Rect(0, 0, maxw, maxh));
 	}
-	
+
 	bool isValidRect() const {
 		return (left <= right && top <= bottom);
 	}
-	
+
 	void moveTo(int16 x, int16 y) {
 		bottom += y - top;
 		right += x - left;
 		top = y;
 		left = x;
 	}
-	
+
 	void moveTo(const Point & p) {
 		moveTo(p.x, p.y);
 	}

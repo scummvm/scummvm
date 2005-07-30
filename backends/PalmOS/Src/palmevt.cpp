@@ -75,7 +75,7 @@ void OSystem_PALMOS::getCoordinates(EventPtr event, Coord *x, Coord *y) {
 		// wide landscape
 		if (OPTIONS_TST(kOptModeLandscape)) {
 
-			// zodiac have mutliple ratio 
+			// zodiac have mutliple ratio
 			if (OPTIONS_TST(kOptDeviceZodiac)) {
 				Int32 w,h;
 
@@ -94,7 +94,7 @@ void OSystem_PALMOS::getCoordinates(EventPtr event, Coord *x, Coord *y) {
 		// wide portrait, only for 320x200
 		} else {
 			*y =       ((event->screenX - _screenOffset.y) << 1) / 3;
-			*x = 320 - ((event->screenY - _screenOffset.x) << 1) / 3 - 1;	
+			*x = 320 - ((event->screenY - _screenOffset.x) << 1) / 3 - 1;
 		}
 
 	// normal coord
@@ -137,12 +137,12 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 				sy = -1;
 			else if (keyCurrentState & _keyMouse.bitDown)
 				sy = +1;
-				
+
 			if (keyCurrentState & _keyMouse.bitLeft)
 				sx = -1;
 			else if (keyCurrentState & _keyMouse.bitRight)
-				sx = +1;					
-			
+				sx = +1;
+
 			SimulateArrowKeys(event, sx, sy);
 			updateScreen();
 			updateCD();
@@ -161,7 +161,7 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 
 		if (ev.eType == keyDownEvent) {
 			switch (ev.data.keyDown.chr) {
-			
+
 				// ESC key
 				case vchrLaunch:
 					_lastKeyPressed = kLastKeyNone;
@@ -170,7 +170,7 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 					event.kbd.ascii = 27;
 					event.kbd.flags = 0;
 					return true;
-				
+
 				// F5 = menu
 				case vchrJogPushRepeat:
 				case vchrMenu:
@@ -204,7 +204,7 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 					return true;
 
 				case vchrJogPushedUp:
-				case vchrJogPushedDown: // hot swap gfx mode 
+				case vchrJogPushedDown: // hot swap gfx mode
 					if (_initMode == GFX_WIDE)
 						hotswap_gfx_mode(_mode == GFX_WIDE ? GFX_NORMAL: GFX_WIDE);
 					else
@@ -238,7 +238,7 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 					if (OPTIONS_TST(kOptPalmSoundAPI) && _sound.active)
 						SndStreamPause(*((SndStreamRef *)_sound.handle), true);
 					break;
-				
+
 				case vchrLateWakeup:
 					// resume the sound thread if any
 					if (OPTIONS_TST(kOptPalmSoundAPI) && _sound.active)
@@ -265,7 +265,7 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 						event.kbd.ascii = 27;
 						event.kbd.flags = 0;
 						return true;
-					
+
 					// F5 = menu
 					case vchrHard3:
 						_lastKeyPressed = kLastKeyNone;
@@ -279,10 +279,10 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 		}
 
 		// prevent crash when alarm is raised
-		handled = ((ev.eType == keyDownEvent) && 
-						(ev.data.keyDown.modifiers & commandKeyMask) && 
-						((ev.data.keyDown.chr == vchrAttnStateChanged) || 
-						(ev.data.keyDown.chr == vchrAttnUnsnooze))); 
+		handled = ((ev.eType == keyDownEvent) &&
+						(ev.data.keyDown.modifiers & commandKeyMask) &&
+						((ev.data.keyDown.chr == vchrAttnStateChanged) ||
+						(ev.data.keyDown.chr == vchrAttnUnsnooze)));
 
 		// graffiti strokes, auto-off, etc...
 		if (!handled)
@@ -299,7 +299,7 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 				if (ev.data.keyDown.chr == vchrCommand && (ev.data.keyDown.modifiers & commandKeyMask)) {
 					_lastKeyModifier++;
 					_lastKeyModifier %= 4;
-					
+
 					if (_lastKeyModifier)
 						draw1BitGfx((kDrawKeyState + _lastKeyModifier - 1), 2, _screenHeight + 2, true);
 					else
@@ -312,14 +312,14 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 					if (_lastKeyModifier == MD_CMD)  b = KBD_CTRL|KBD_ALT;
 					if (_lastKeyModifier == MD_ALT)  b = KBD_ALT;
 					if (_lastKeyModifier == MD_CTRL) b = KBD_CTRL;
-					
+
 					keycode = ev.data.keyDown.chr;
-					
+
 					// F1 -> F10 key
 					if  (keycode >= '0' && keycode <= '9' && b == (KBD_CTRL|KBD_ALT)) {
 						keycode = keycode == '0' ? 324 : (315 + keycode - '1');
 						b = 0;
-					
+
 					} else if  ((keycode == 'z' && b == KBD_CTRL) || (b == KBD_ALT && keycode == 'x')) {
 						event.type = EVENT_QUIT;
 						return true;
@@ -343,12 +343,12 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 							setFeatureState(kFeatureFullscreenMode, !_fullscreen);
 #endif
 					}
-					
+
 					event.type = EVENT_KEYDOWN;
 					event.kbd.keycode = keycode;
 					event.kbd.ascii = keycode; //(keycode>='a' && keycode<='z' && (event.kbd.flags & KBD_SHIFT) ? keycode &~ 0x20 : keycode);
 					event.kbd.flags = b;
-					
+
 					if (_lastKeyModifier) {
 						_lastKeyModifier = MD_NONE;
 						draw1BitGfx(kDrawKeyState, 2, getHeight() + 2, false);
@@ -383,10 +383,10 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 				if (y >= y2 && y < (y2 + 34) && x >= x2 && x < (x2 + 40)) {	// numpad location
 					UInt8 key = '1';
 					key += 9 - ( (3 - ((x - x2) / 13)) + (3 * ((y - y2) / 11)) );
-					
+
 					_lastEvent = keyDownEvent;
 					_lastKeyPressed = kLastKeyNone;
-					
+
 					event.type = EVENT_KEYDOWN;
 					event.kbd.keycode = key;
 					event.kbd.ascii = key;

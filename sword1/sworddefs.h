@@ -1601,5 +1601,5 @@ enum ScriptVariableNames {
 #define SCR_icon_combine_script (0*0x10000 + 25)
 
 } // End of namespace Sword1
- 
+
 #endif //SWORDDEFS_H

@@ -49,7 +49,7 @@ UInt32 PckTunesCDPlayer::getStatus() {
 
 	EventType e;
 	UInt32 status;
-	
+
 	PocketTunesAction *pAction = (PocketTunesAction*)MemPtrNew (sizeof(PocketTunesAction));
 	if (!pAction)
 		return kPtunesStopped;
@@ -60,9 +60,9 @@ UInt32 PckTunesCDPlayer::getStatus() {
 		status = pAction->data.getStatusAction.status;
 	else
 		status = kPtunesStopped;
-	
+
 	MemPtrFree(pAction);
-	return status;	
+	return status;
 }
 
 UInt32 PckTunesCDPlayer::getPosition(UInt32 deflt) {
@@ -78,7 +78,7 @@ UInt32 PckTunesCDPlayer::getPosition(UInt32 deflt) {
 
 	pAction->action = kPocketTunesActionGetValue;
 	pAction->data.getValueAction.which = kPtunesValueSongPosition;
-	
+
 	EvtGetEvent(&e, evtNoWait);
 	if (PocketTunesCallSynch(pAction) == errNone)
 		value = pAction->data.getValueAction.value;
@@ -112,22 +112,22 @@ UInt32 PckTunesCDPlayer::getDuration() {
 
 	EventType e;
 	UInt32 value;
-	
+
 	PocketTunesAction *pAction = (PocketTunesAction*)MemPtrNew (sizeof(PocketTunesAction));
 	if (!pAction)
 		return gVars->CD.defaultTrackLength;
 
 	pAction->action = kPocketTunesActionGetValue;
 	pAction->data.getValueAction.which = kPtunesValueSongDuration;
-	
+
 	EvtGetEvent(&e, evtNoWait);
 	if (PocketTunesCallSynch(pAction) == errNone)
 		value = pAction->data.getValueAction.value;
 	else
 		value = gVars->CD.defaultTrackLength;
-	
+
 	MemPtrFree(pAction);
-	return value;	
+	return value;
 }
 
 bool PckTunesCDPlayer::poll() {
@@ -186,7 +186,7 @@ void PckTunesCDPlayer::play(int track, int num_loops, int start_frame, int durat
 	EventType e;
 	Char nameP[256], fileP[100];
 	Char *ext[]	= { "mp3", "ogg" };
-	
+
 //	if (duration > 0)
 //		duration += 5;
 
@@ -197,9 +197,9 @@ void PckTunesCDPlayer::play(int track, int num_loops, int start_frame, int durat
 
 	// stop current play if any
 	VFSVolumeGetLabel(gVars->volRefNum, nameP, 256);
-	
+
 	StrPrintF(fileP, "/Palm/Programs/ScummVM/Audio/%s_%03ld.%s", gameP, (track + gVars->CD.firstTrack - 1), ext[gVars->CD.format]);
-	
+
 	if (PocketTunesOpenFile(nameP, fileP, 0) == errNone) {
 		EvtGetEvent(&e, evtNoWait);
 		PocketTunesPauseIfPlaying();

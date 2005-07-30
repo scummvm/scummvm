@@ -86,7 +86,7 @@ private:
 	uint8 _maxvol;
 
 	virtual void do_mix(int16 *buf, uint len);
-	
+
 	ModUpdateProc *_playproc;
 	void *_playparam;
 };

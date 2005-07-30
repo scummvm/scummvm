@@ -78,7 +78,7 @@ Sound::Sound(ScummEngine *parent)
 	_soundsPaused(false),
 	_sfxMode(0),
 	_heMusicTracks(0) {
-	
+
 	memset(_soundQue, 0, sizeof(_soundQue));
 	memset(_soundQue2, 0, sizeof(_soundQue2));
 	memset(_mouthSyncTimes, 0, sizeof(_mouthSyncTimes));
@@ -203,7 +203,7 @@ void Sound::setupHEMusicFile() {
 			} else {
 				musicFile.seek(+13, SEEK_CUR);
 			}
-		}	
+		}
 
 		musicFile.close();
 	}
@@ -277,7 +277,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		// This pointer will be freed at the end of the function
 		mallocedPtr = ptr;
 	} else {
-		debugC(DEBUG_SOUND, "playSound #%d (room %d)", soundID, 
+		debugC(DEBUG_SOUND, "playSound #%d (room %d)", soundID,
 			_vm->getResourceRoomNr(rtSound, soundID));
 
 		ptr = _vm->getResourceAddress(rtSound, soundID);
@@ -337,7 +337,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 			// Occurs when making fireworks in puttmoon
 			warning("playSound: Invalid sound offset (%d) in sound %d", heOffset, soundID);
 			heOffset = 0;
-		} 
+		}
 		size -= heOffset;
 
 		if (_overrideFreq) {
@@ -372,17 +372,17 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		_vm->_mixer->stopID(_currentMusic);
 		_currentMusic = soundID;
 		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
-	}	
+	}
 	// Support for sampled sound effects in Monkey Island 1 and 2
 	else if (READ_UINT32(ptr) == MKID('SBL ')) {
 		debugC(DEBUG_SOUND, "Using SBL sound effect");
-		
+
 		// SBL resources essentially contain VOC sound data.
 		// There are at least two main variants: in one,
 		// there are two subchunks AUhd and AUdt, in the other
 		// the chunks are called WVhd and WVdt. Besides that,
 		// the two variants seem pretty similiar.
-		
+
 		// The first subchunk (AUhd resp. WVhd) seems to always
 		// contain three bytes (00 00 80) of unknown meaning.
 		// After that, a second subchunk contains VOC data.
@@ -428,7 +428,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 				}
 			}
 		}
-		
+
 		// TODO: It would be nice if we could use readVOCFromMemory() here.
 		// We'd have to add the 'Creative Voice File' header for this, though,
 		// or make readVOCFromMemory() less strict.
@@ -559,7 +559,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		_vm->_mixer->playRaw(NULL, sound, size, rate, Audio::Mixer::FLAG_AUTOFREE, soundID, vol, 0);
 	}
 	else {
-		
+
 		if (_vm->_gameId == GID_MONKEY_VGA || _vm->_gameId == GID_MONKEY_EGA
 			|| (_vm->_gameId == GID_MONKEY && _vm->_platform == Common::kPlatformMacintosh)) {
 			// Sound is currently not supported at all in the amiga versions of these games
@@ -581,7 +581,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 				}
 				return;
 			}
-	
+
 			// Works around the fact that in some places in MonkeyEGA/VGA,
 			// the music is never explicitly stopped.
 			// Rather it seems that starting a new music is supposed to
@@ -591,7 +591,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 					_vm->_imuse->stopAllSounds();
 			}
 		}
-	
+
 		if (_vm->_musicEngine) {
 			_vm->_musicEngine->startSound(soundID);
 		}
@@ -748,7 +748,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 
 		if (_offsetTable != NULL) {
 			MP3OffsetTable *result = NULL, key;
-	
+
 			key.org_offset = offset;
 			result = (MP3OffsetTable *)bsearch(&key, _offsetTable, _numSoundEffects,
 													sizeof(MP3OffsetTable), compareMP3OffsetTable);
@@ -774,7 +774,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 		assert(num + 1 < (int)ARRAYSIZE(_mouthSyncTimes));
 		for (i = 0; i < num; i++)
 			_mouthSyncTimes[i] = _sfxFile->readUint16BE();
-	
+
 		_mouthSyncTimes[i] = 0xFFFF;
 		_sfxMode |= mode;
 		_curSoundPos = 0;
@@ -783,7 +783,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 
 	if (!_soundsPaused && _vm->_mixer->isReady()) {
 		AudioStream *input = NULL;
-		
+
 		switch (_soundMode) {
 		case kMP3Mode:
 	#ifdef USE_MAD
@@ -806,12 +806,12 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 		default:
 			input = makeVOCStream(*_sfxFile);
 		}
-		
+
 		if (!input) {
 			error("startSfxSound failed to load sound");
 			return;
 		}
-	
+
 		if (_vm->_imuseDigital) {
 #ifndef DISABLE_SCUMM_7_8
 			//_vm->_imuseDigital->stopSound(kTalkSoundID);
@@ -1042,7 +1042,7 @@ void Sound::soundKludge(int *list, int num) {
 		processSound();
 	} else {
 		_soundQue[_soundQuePos++] = num;
-		
+
 		for (i = 0; i < num; i++) {
 			_soundQue[_soundQuePos++] = list[i];
 		}
@@ -1118,7 +1118,7 @@ ScummFile *Sound::openSfxFile() {
 		const char *ext;
 		SoundMode mode;
 	};
-	
+
 	static const SoundFileExtensions extensions[] = {
 		{ "sou", kVOCMode },
 	#ifdef USE_FLAC
@@ -1136,15 +1136,15 @@ ScummFile *Sound::openSfxFile() {
 	char buf[256];
 	ScummFile *file = new ScummFile();
 	_offsetTable = NULL;
-	
+
 	/* Try opening the file <_gameName>.sou first, e.g. tentacle.sou.
 	 * That way, you can keep .sou files for multiple games in the
 	 * same directory */
-	
+
 	const char *basename[3] = { 0, 0, 0 };
 	basename[0] = _vm->getGameName();
 	basename[1] = "monster";
-	
+
 	for (int j = 0; basename[j] && !file->isOpen(); ++j) {
 		for (int i = 0; extensions[i].ext; ++i) {
 			sprintf(buf, "%s.%s", basename[j], extensions[i].ext);
@@ -1168,11 +1168,11 @@ ScummFile *Sound::openSfxFile() {
 			_vm->generateSubstResFileName(buf, buf1, sizeof(buf1));
 			strcpy(buf, buf1);
 		}
-		if (file->open(buf) && _vm->_heversion <= 73) 
+		if (file->open(buf) && _vm->_heversion <= 73)
 			file->setEnc(0x69);
 		_soundMode = kVOCMode;
 	}
-	
+
 	if (_soundMode != kVOCMode) {
 		/* Now load the 'offset' index in memory to be able to find the MP3 data
 
@@ -1236,7 +1236,7 @@ void Sound::startCDTimer() {
 
 	if (_vm->_gameId == GID_LOOM256)
 		timer_interval = 100;
-	else 
+	else
 		timer_interval = 101;
 
 	_vm->_timer->removeTimerProc(&cd_timer_handler);
@@ -1290,7 +1290,7 @@ const SaveLoadEntry *Sound::getSaveLoadEntries() {
 
 /*
  * TODO: The way we handle sound/music resources really is one huge hack.
- * We probably should reconsider how we do this, and maybe come up with a 
+ * We probably should reconsider how we do this, and maybe come up with a
  * better/cleaner solution. Even if we keep the existing code, it really
  * could stand a thorough cleanup!
  */
@@ -1415,7 +1415,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		char buffer[128];
 		debugC(DEBUG_SOUND, "Found base tag FMUS in sound %d, size %d", idx, total_size);
 		debugC(DEBUG_SOUND, "It was at position %d", _fileHandle->pos());
-		
+
 		_fileHandle->seek(4, SEEK_CUR);
 		// HSHD size
 		tmpsize = _fileHandle->readUint32BE();
@@ -1423,12 +1423,12 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		_fileHandle->seek(tmpsize - 4, SEEK_CUR);
 		// SDAT size
 		tmpsize = _fileHandle->readUint32BE();
-		
+
 		// SDAT contains name of file we want
 		_fileHandle->read(buffer, tmpsize - 8);
 		// files seem to be 11 chars (8.3) unused space is replaced by spaces
 		*(strstr(buffer, " ")) = '\0';
-		
+
 		debugC(DEBUG_SOUND, "FMUS file %s", buffer);
 		if (dmuFile.open(buffer) == false) {
 			error("Can't open music file %s*", buffer);
@@ -1462,27 +1462,27 @@ int ScummEngine::readSoundResource(int type, int idx) {
 static byte ADLIB_INSTR_MIDI_HACK[95] = {
 	0x00, 0xf0, 0x14, 0x7d, 0x00,  // sysex 00: part on/off
 	0x00, 0x00, 0x03,              // part/channel  (offset  5)
-	0x00, 0x00, 0x07, 0x0f, 0x00, 0x00, 0x08, 0x00, 
+	0x00, 0x00, 0x07, 0x0f, 0x00, 0x00, 0x08, 0x00,
 	0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0xf7,
 	0x00, 0xf0, 0x41, 0x7d, 0x10,  // sysex 16: set instrument
 	0x00, 0x01,                    // part/channel  (offset 28)
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0xf7,
 	0x00, 0xb0, 0x07, 0x64        // Controller 7 = 100 (offset 92)
 };
-			
+
 static const byte map_param[7] = {
 	0, 2, 3, 4, 8, 9, 0,
 };
 
 static const byte freq2note[128] = {
-	/*128*/	6, 6, 6, 6,  
+	/*128*/	6, 6, 6, 6,
 	/*132*/ 7, 7, 7, 7, 7, 7, 7,
 	/*139*/ 8, 8, 8, 8, 8, 8, 8, 8, 8,
 	/*148*/ 9, 9, 9, 9, 9, 9, 9, 9, 9,
@@ -1496,7 +1496,7 @@ static const byte freq2note[128] = {
 	/*235*/ 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
 	/*249*/ 18, 18, 18, 18, 18, 18, 18
 };
-			
+
 static const uint16 num_steps_table[] = {
 	1, 2, 4, 5,
 	6, 7, 8, 9,
@@ -1531,7 +1531,7 @@ int ScummEngine::convert_extraflags(byte * ptr, byte * src_ptr) {
 	  v1 = v1 * 2 + 31;
 	  v2 = v2 * 2 + 31;
 	}
-	
+
 	/* flags a */
 	if ((flags & 0x7) == 6)
 		ptr[0] = 0;
@@ -1561,13 +1561,13 @@ int ScummEngine::convert_extraflags(byte * ptr, byte * src_ptr) {
 	time = num_steps_table[t1] + num_steps_table[t2]
 		+ num_steps_table[t3 & 0x7f] + num_steps_table[t4];
 	if (flags & 0x20) {
-		int playtime = ((src_ptr[4] >> 4) & 0xf) * 118 + 
+		int playtime = ((src_ptr[4] >> 4) & 0xf) * 118 +
 			(src_ptr[4] & 0xf) * 8;
 		if (playtime > time)
 			time = playtime;
 	}
 	/*
-	time = ((src_ptr[4] >> 4) & 0xf) * 118 + 
+	time = ((src_ptr[4] >> 4) & 0xf) * 118 +
 		(src_ptr[4] & 0xf) * 8;
 	*/
 	return time;
@@ -1576,7 +1576,7 @@ int ScummEngine::convert_extraflags(byte * ptr, byte * src_ptr) {
 #define kMIDIHeaderSize		46
 static inline byte *writeMIDIHeader(byte *ptr, const char *type, int ppqn, int total_size) {
 	uint32 dw = TO_BE_32(total_size);
-	
+
 	memcpy(ptr, type, 4); ptr += 4;
 	memcpy(ptr, &dw, 4); ptr += 4;
 	memcpy(ptr, "MDhd", 4); ptr += 4;
@@ -1588,7 +1588,7 @@ static inline byte *writeMIDIHeader(byte *ptr, const char *type, int ppqn, int t
 	ptr += 4;
 	ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 1; // MIDI format 0 with 1 track
 	ptr += 4;
-	
+
 	*ptr++ = ppqn >> 8;
 	*ptr++ = ppqn & 0xFF;
 
@@ -1640,28 +1640,28 @@ void ScummEngine::convertMac0Resource(int type, int idx, byte *src_ptr, int size
 	---
 	   4 bytes - 'SOUN'
 	BE 4 bytes - block length
-	
+
 		   4 bytes  - 'Mac0'
 		BE 4 bytes  - (blockLength - 27)
 		   28 bytes - ???
-	
+
 		   do this three times (once for each channel):
 			  4 bytes  - 'Chan'
 		   BE 4 bytes  - channel length
 			  4 bytes  - instrument name (e.g. 'MARI')
-	
+
 			  do this for ((chanLength-24)/4) times:
 				 2 bytes  - note duration
 				 1 byte   - note value
 				 1 byte   - note velocity
-	
+
 			  4 bytes - ???
 			  4 bytes - 'Loop'/'Done'
 			  4 bytes - ???
-	
+
 	   1 byte - 0x09
 	---
-	
+
 	Instruments (General Midi):
 	"MARI" - Marimba (12)
 	"PLUC" - Pizzicato Strings (45)
@@ -1677,8 +1677,8 @@ void ScummEngine::convertMac0Resource(int type, int idx, byte *src_ptr, int size
 	"ORGA" - Drawbar Organ (16; but could also be 17-20)
 	"BONG" - Woodblock? (115)
 	"BASS" - Bass (32-39)
-	
-	
+
+
 	Now the task could be to convert this into MIDI, to be fed into iMuse.
 	Or we do something similiar to what is done in Player_V3, assuming
 	we can identify SFX in the MI datafiles for each of the instruments
@@ -1691,14 +1691,14 @@ void ScummEngine::convertMac0Resource(int type, int idx, byte *src_ptr, int size
 #else
 	const int ppqn = 480;
 	byte *ptr, *start_ptr;
-	
+
 	int total_size = 0;
 	total_size += kMIDIHeaderSize; // Header
 	total_size += 7;               // Tempo META
 	total_size += 3 * 3;           // Three program change mesages
 	total_size += 22;              // Possible jump SysEx
 	total_size += 5;               // EOT META
-	
+
 	int i, len;
 	byte track_instr[3];
 	byte *track_data[3];
@@ -1719,17 +1719,17 @@ void ScummEngine::convertMac0Resource(int type, int idx, byte *src_ptr, int size
 		track_data[i] = src_ptr + 12;
 		src_ptr += len;
 		looped = (*((uint32*)(src_ptr - 8)) == MKID('Loop'));
-		
+
 		// For each note event, we need up to 6 bytes for the
 		// Note On (3 VLQ, 3 event), and 6 bytes for the Note
 		// Off (3 VLQ, 3 event). So 12 bytes total.
 		total_size += 12 * track_len[i];
 	}
 	assert(*src_ptr == 0x09);
-	
+
 	// Create sound resource
 	start_ptr = res.createResource(type, idx, total_size);
-	
+
 	// Insert MIDI header
 	ptr = writeMIDIHeader(start_ptr, "GMD ", ppqn, total_size);
 
@@ -1751,7 +1751,7 @@ void ScummEngine::convertMac0Resource(int type, int idx, byte *src_ptr, int size
 	*ptr++ = 0; // VLQ
 	*ptr++ = 0xC2;
 	*ptr++ = track_instr[2];
-	
+
 	// And now, the actual composition. Please turn all cell phones
 	// and pagers off during the performance. Thank you.
 	uint16 nextTime[3] = { 1, 1, 1 };
@@ -1815,9 +1815,9 @@ void ScummEngine::convertMac0Resource(int type, int idx, byte *src_ptr, int size
 
 	// Insert end of song META
 	memcpy(ptr, "\x00\xff\x2f\x00\x00", 5); ptr += 5;
-	
+
 	assert(ptr <= start_ptr + total_size);
-	
+
 	// Rewrite MIDI header, this time with true size
 	total_size = ptr - start_ptr;
 	ptr = writeMIDIHeader(start_ptr, "GMD ", ppqn, total_size);
@@ -1834,7 +1834,7 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 	byte *ptr;
 	int total_size = kMIDIHeaderSize + 7 + 8 * sizeof(ADLIB_INSTR_MIDI_HACK) + size;
 	total_size += 24;	// Up to 24 additional bytes are needed for the jump sysex
-	
+
 	ptr = res.createResource(type, idx, total_size);
 
 	src_ptr += 2;
@@ -1850,26 +1850,26 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 
 		// The "speed" of the song
 		ticks = *(src_ptr + 1);
-		
+
 		// Flag that tells us whether we should loop the song (0) or play it only once (1)
 		play_once = *(src_ptr + 2);
-		
+
 		// Number of instruments used
 		num_instr = *(src_ptr + 8);	// Normally 8
-		
+
 		// copy the pointer to instrument data
 		channel = src_ptr + 9;
 		instr   = src_ptr + 0x11;
-		
+
 		// skip over the rest of the header and copy the MIDI data into a buffer
 		src_ptr  += 0x11 + 8 * 16;
 		size -= 0x11 + 8 * 16;
 
-		CHECK_HEAP 
-			
+		CHECK_HEAP
+
 		track = src_ptr;
-		
-		// Convert the ticks into a MIDI tempo. 
+
+		// Convert the ticks into a MIDI tempo.
 		// Unfortunate LOOM and INDY3 have different interpretation
 		// of the ticks value.
 		if (_gameId == GID_INDY3) {
@@ -1881,18 +1881,18 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 			dw = 500000 * 256 / ticks;
 		}
 		debugC(DEBUG_SOUND, "  ticks = %d, speed = %ld", ticks, dw);
-			
+
 		// Write a tempo change Meta event
 		memcpy(ptr, "\x00\xFF\x51\x03", 4); ptr += 4;
 		*ptr++ = (byte)((dw >> 16) & 0xFF);
 		*ptr++ = (byte)((dw >> 8) & 0xFF);
 		*ptr++ = (byte)(dw & 0xFF);
-		
+
 		// Copy our hardcoded instrument table into it
 		// Then, convert the instrument table as given in this song resource
 		// And write it *over* the hardcoded table.
 		// Note: we deliberately.
-		
+
 		/* now fill in the instruments */
 		for (i = 0; i < num_instr; i++) {
 			ch = channel[i] - 1;
@@ -1961,7 +1961,7 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 			*ptr++ = (ppqn / 3 >> 7) | 0x80;
 		*ptr++ = ppqn / 3 & 0x7f;
 
-		// Now copy the actual music data 
+		// Now copy the actual music data
 		memcpy(ptr, track, size);
 		ptr += size;
 
@@ -2054,7 +2054,7 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 			int mintime = -1;
 			ch = -1;
 			for (i = 0; i < 3; i++) {
-				if (track_time[i] >= 0 && 
+				if (track_time[i] >= 0 &&
 					(mintime == -1 || mintime > track_time[i])) {
 					mintime = track_time[i];
 					ch = i;
@@ -2085,7 +2085,7 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 
 			case 2:
 				/* tone/parammodulation */
-				memcpy(ptr, ADLIB_INSTR_MIDI_HACK, 
+				memcpy(ptr, ADLIB_INSTR_MIDI_HACK,
 					   sizeof(ADLIB_INSTR_MIDI_HACK));
 
 				ptr[5]  += ch;
@@ -2175,14 +2175,14 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 						note = 0;
 					else
 						note += freq2note[freq - 0x80];
-	
+
 					debugC(DEBUG_SOUND, "Note: %d", note);
 					if (note <= 0)
 						note = 1;
 					else if (note > 127)
 						note = 127;
 
-					// Insert a note on event 
+					// Insert a note on event
 					*ptr++ = 0x90 + ch; // key on channel
 					*ptr++ = note;
 					*ptr++ = 63;
@@ -2305,7 +2305,7 @@ int ScummEngine::readSoundResourceSmallHeader(int type, int idx) {
 			convertADResource(type, idx, ptr, ad_size - 6);
 			free(ptr);
 			return 1;
-		} 
+		}
 	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && wa_offs != 0) {
 		if (_features & GF_OLD_BUNDLE) {
 			_fileHandle->seek(wa_offs, SEEK_SET);
@@ -2412,7 +2412,7 @@ void AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::append(const byt
 		assert((len & 3) == 0);
 	else if (is16Bit || stereo)
 		assert((len & 1) == 0);
-	
+
 	// Verify that the stream has not yet been finalized (by a call to finish())
 	assert(!_finalized);
 
@@ -2452,7 +2452,7 @@ AppendableAudioStream *makeAppendableAudioStream(int rate, byte _flags, uint32 l
 	const bool is16Bit = (_flags & Audio::Mixer::FLAG_16BITS) != 0;
 	const bool isUnsigned = (_flags & Audio::Mixer::FLAG_UNSIGNED) != 0;
 	const bool isLE       = (_flags & Audio::Mixer::FLAG_LITTLE_ENDIAN) != 0;
-	
+
 	if (isStereo) {
 		if (isUnsigned) {
 			MAKE_WRAPPED(true, true);

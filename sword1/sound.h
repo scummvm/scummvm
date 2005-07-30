@@ -105,7 +105,7 @@ private:
 	CowMode		 _cowMode;
 	Audio::SoundHandle _speechHandle, _fxHandle;
 	Common::RandomSource _rnd;
-	
+
 	QueueElement _fxQueue[MAX_FXQ_LENGTH];
 	uint8		 _endOfQueue;
 	Audio::Mixer *_mixer;
@@ -121,6 +121,6 @@ public:
 #endif
 };
 
-} // End of namespace Sword1 
+} // End of namespace Sword1
 
 #endif //BSSOUND_H

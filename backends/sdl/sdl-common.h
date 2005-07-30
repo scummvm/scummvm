@@ -69,7 +69,7 @@ public:
 
 	// Set colors of the palette
 	void setPalette(const byte *colors, uint start, uint num);
-	
+
 	// Get colors of the palette
 	void grabPalette(byte *colors, uint start, uint num);
 
@@ -88,7 +88,7 @@ public:
 
 	// Either show or hide the mouse cursor
 	bool showMouse(bool visible);
-	
+
 	// Warp the mouse cursor. Where set_mouse_pos() only informs the
 	// backend of the mouse cursor's current position, this function
 	// actually moves the cursor to the specified position.
@@ -113,12 +113,12 @@ public:
 	void delayMillis(uint msecs);
 
 	// Get the next event.
-	// Returns true if an event was retrieved.	
+	// Returns true if an event was retrieved.
 	virtual bool pollEvent(Event &event); // overloaded by CE backend
 
-	// Set function that generates samples 
+	// Set function that generates samples
 	virtual bool setSoundCallback(SoundProc proc, void *param); // overloaded by CE backend
-	
+
 	void clearSoundCallback();
 
 	// Poll CD status
@@ -171,7 +171,7 @@ public:
 	virtual int getDefaultGraphicsMode() const;
 	virtual bool setGraphicsMode(int mode);
 	virtual int getGraphicsMode() const;
-	
+
 	virtual void setWindowCaption(const char *caption);
 	virtual bool openCD(int drive);
 	virtual int getOutputSampleRate() const;
@@ -257,12 +257,12 @@ protected:
 	/** Force full redraw on next updateScreen */
 	bool _forceFull;
 	ScalerProc *_scalerProc;
-	int _scalerType;	
+	int _scalerType;
 	int _scaleFactor;
 	int _mode;
 	int _transactionMode;
 	bool _fullscreen;
-	
+
 	/** Current video mode flags (see DF_* constants) */
 	uint32 _modeFlags;
 	bool _modeChanged;
@@ -288,7 +288,7 @@ protected:
 	// Keyboard mouse emulation.  Disabled by fingolfin 2004-12-18.
 	// I am keeping the rest of the code in for now, since the joystick
 	// code (or rather, "hack") uses it, too.
-	struct KbdMouse {	
+	struct KbdMouse {
 		int16 x, y, x_vel, y_vel, x_max, y_max, x_down_count, y_down_count;
 		uint32 last_time, delay_time, x_down_time, y_down_time;
 	};
@@ -327,10 +327,10 @@ protected:
 	// Palette data
 	SDL_Color *_currentPalette;
 	uint _paletteDirtyStart, _paletteDirtyEnd;
-	
+
 	// Cursor palette data
 	SDL_Color *_cursorPalette;
-	
+
 	/**
 	 * Mutex which prevents multiple threads from interfering with each other
 	 * when accessing the screen.
@@ -340,13 +340,13 @@ protected:
 
 	void addDirtyRgnAuto(const byte *buf);
 	void makeChecksums(const byte *buf);
-	
+
 	virtual void addDirtyRect(int x, int y, int w, int h, bool mouseRect = false); // overloaded by CE backend
 
 	virtual void drawMouse(); // overloaded by CE backend
 	virtual void undrawMouse(); // overloaded by CE backend
 	void blitCursor();
-	
+
 	/** Set the position of the virtual mouse cursor. */
 	void setMousePos(int x, int y);
 	virtual void fillMouseEvent(Event &event, int x, int y); // overloaded by CE backend
@@ -357,12 +357,12 @@ protected:
 	virtual void loadGFXMode(); // overloaded by CE backend
 	virtual void unloadGFXMode(); // overloaded by CE backend
 	virtual void hotswapGFXMode(); // overloaded by CE backend
-	
+
 	void setFullscreenMode(bool enable);
 	void setAspectRatioCorrection(bool enable);
 
 	virtual bool saveScreenshot(const char *filename); // overloaded by CE backend
-	
+
 	int effectiveScreenHeight() const { return (_adjustAspectRatio ? 240 : _screenHeight) * _scaleFactor; }
 
 	void setupIcon();

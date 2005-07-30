@@ -43,7 +43,7 @@ public:
 	String(const char *str, int len = -1);
 	String(const String &str);
 	virtual ~String();
-	
+
 	String &operator  =(const char *str);
 	String &operator  =(const String &str);
 	String &operator  =(char c);
@@ -78,7 +78,7 @@ public:
 		assert(_str && idx >= 0 && idx < _len);
 		return _str[idx];
 	}
-	
+
 	void deleteLastChar();
 	void deleteChar(int p);
 	void clear();

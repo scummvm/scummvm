@@ -125,7 +125,7 @@ SkyCompact::SkyCompact(void) {
 		dialog.runModal();
 		error("Unable to find \"sky.cpt\" file\nPlease download it from www.scummvm.org");
 	}
-		
+
 	uint16 fileVersion = _cptFile->readUint16LE();
 	if (fileVersion != 0)
 		error("unknown \"sky.cpt\" version");
@@ -145,7 +145,7 @@ SkyCompact::SkyCompact(void) {
 		_cptTypes[i] = (uint16 *)malloc(_dataListLen[i] * sizeof(uint16));
 		_compacts[i] = (Compact**)malloc(_dataListLen[i] * sizeof(Compact*));
 	}
-	
+
 	uint32 rawSize = _cptFile->readUint32LE() * sizeof(uint16);
 	uint16 *rawPos = _rawBuf = (uint16*)malloc(rawSize);
 
@@ -163,7 +163,7 @@ SkyCompact::SkyCompact(void) {
 		for (uint32 ecnt = 0; ecnt < _dataListLen[lcnt]; ecnt++) {
 			_cptSizes[lcnt][ecnt] = READ_LE_UINT16(srcPos++);
 			if (_cptSizes[lcnt][ecnt]) {
-				_cptTypes[lcnt][ecnt] = READ_LE_UINT16(srcPos++);				
+				_cptTypes[lcnt][ecnt] = READ_LE_UINT16(srcPos++);
 				_compacts[lcnt][ecnt] = (Compact*)rawPos;
 				_cptNames[lcnt][ecnt] = asciiPos;
 				asciiPos += strlen(asciiPos) + 1;
@@ -290,7 +290,7 @@ uint16 *SkyCompact::getGrafixPtr(Compact *cpt) {
 	uint16 *gfxBase = (uint16*)fetchCpt(cpt->grafixProgId);
 	if (gfxBase == NULL)
 		return NULL;
-	
+
 	return gfxBase + cpt->grafixProgPos;
 }
 
@@ -315,7 +315,7 @@ MegaSet *SkyCompact::getMegaSet(Compact *cpt) {
 /**
  \brief Returns the turn table for direction \a dir
  	from Compact \a cpt in \a megaSet.
-  
+
  Functionally equivalent to:
  \verbatim
  clear eax

@@ -52,11 +52,11 @@ void ModDelete() {
 
 static void ModSetStack(UInt32 newSize, UInt16 cardNo, LocalID dbID) {
 	DmOpenRef dbRef = DmOpenDatabase(cardNo, dbID, dmModeReadWrite);
-	
+
 	if (dbRef) {
 		MemHandle pref = DmGetResource('pref',0);
 		UInt32 size = 0;
-		
+
 		if (pref) {
 			SysAppPrefsType *data = (SysAppPrefsType *)MemHandleLock(pref);
 			size = data->stackSize;
@@ -71,7 +71,7 @@ static void ModSetStack(UInt32 newSize, UInt16 cardNo, LocalID dbID) {
 			MemPtrUnlock(data);
 			DmReleaseResource(pref);
 		}
-		
+
 		DmCloseDatabase(dbRef);
 	}
 }
@@ -84,7 +84,7 @@ static Err ModImport(UInt16 volRefNum, UInt8 engine) {
 		{ "sword1" },
 		{ "sky" }
 	};
-	
+
 	char filename[256];
 	UInt16 dum1;
 	UInt32 dum2;
@@ -147,10 +147,10 @@ Boolean StartScummVM() {
 		FormPtr frmP = FrmInitForm(EngineForm);
 		whichButton = FrmDoDialog(frmP);
 		FrmDeleteForm(frmP);
-		
+
 		if (whichButton == EngineCancelButton)
 			return false;
-		
+
 		engine = (whichButton - Engine0Button);
 
 	} else {
@@ -168,7 +168,7 @@ Boolean StartScummVM() {
 			StrCopy(pathP,gameInfoP->pathP);
 		else
 			StrCat(pathP,gameInfoP->pathP);
-		
+
 /*		// path exists ?
 		if (!checkPath(pathP)) {
 			MemHandleUnlock(recordH);
@@ -252,7 +252,7 @@ Boolean StartScummVM() {
 				case 5:
 					ArgsAdd(&argvP[argc], "--platform=", "windows", &argc);
 					break;
-			}		
+			}
 		}
 
 		// subtitles
@@ -300,7 +300,7 @@ Boolean StartScummVM() {
 					ArgsAdd(&argvP[argc], "-e", "towns", &argc);
 				case 5: // AdLib
 					ArgsAdd(&argvP[argc], "-e", "adlib", &argc);
-			}		
+			}
 		}
 		else	// NULL as default
 			ArgsAdd(&argvP[argc], "-e", "null", &argc);
@@ -347,13 +347,13 @@ Boolean StartScummVM() {
 		StrIToA(num, gPrefs->debugLevel);
 		ArgsAdd(&argvP[argc], "-d", num, &argc);
 	}
-	
+
 	if (engine == ENGINE_QUEEN || engine == ENGINE_SKY) {
 		// alternative intro ?
 		if (gPrefs->altIntro)
 			ArgsAdd(&argvP[argc], "--alt-intro", NULL, &argc);
 	}
-	
+
 	if (engine == ENGINE_SCUMM) {
 		// copy protection ?
 		if (gPrefs->copyProtection)
@@ -370,7 +370,7 @@ Boolean StartScummVM() {
 	lightspeed= (gPrefs->lightspeed.enable ? gPrefs->lightspeed.mode : 255);
 	toLauncher= (gPrefs->exitLauncher);
 
-	// gVars values 
+	// gVars values
 	// (gVars->HRrefNum defined in checkHRmode on Clié)
 	gVars->screenLocked	= false;
 	gVars->volRefNum	= gPrefs->card.volRefNum;
@@ -379,7 +379,7 @@ Boolean StartScummVM() {
 
 	// user params
 	HWR_RSTALL();
-	
+
 	if (!gPrefs->autoOff)
 		HWR_SET(INIT_AUTOOFF);
 

@@ -36,7 +36,7 @@ enum {
 
 MessageDialog::MessageDialog(const Common::String &message, const char *defaultButton, const char *altButton)
 	: Dialog(30, 20, 260, 124) {
-	
+
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
 
@@ -52,7 +52,7 @@ MessageDialog::MessageDialog(const Common::String &message, const char *defaultB
 		buttonWidth = kButtonWidth;
 		buttonHeight = kButtonHeight;
 	}
-	
+
 	// First, determine the size the dialog needs. For this we have to break
 	// down the string into lines, and taking the maximum of their widths.
 	// Using this, and accounting for the space the button(s) need, we can set
@@ -87,7 +87,7 @@ MessageDialog::MessageDialog(const Common::String &message, const char *defaultB
 
 	// FIXME - allow for more than two buttons, and return in runModal() which one
 	// was selected.
-	if (defaultButton && altButton) { 
+	if (defaultButton && altButton) {
 		okButtonPos = (_w - (buttonWidth * 2)) / 2;
 		cancelButtonPos = ((_w - (buttonWidth * 2)) / 2) + buttonWidth + 10;
 	} else {
@@ -102,7 +102,7 @@ MessageDialog::MessageDialog(const Common::String &message, const char *defaultB
 }
 
 void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	// FIXME: It's a really bad thing that we use two arbitrary constants 
+	// FIXME: It's a really bad thing that we use two arbitrary constants
 	if (cmd == kOkCmd) {
 		setResult(kMessageOK);
 		close();

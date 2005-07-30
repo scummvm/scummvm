@@ -40,55 +40,55 @@ public:
 
 	//! initialise dynalum for the specified room
 	void dynalumInit(const char *roomName, uint16 roomNum);
-	
+
 	//! update dynalum for the current room
 	void dynalumUpdate(int16 x, int16 y);
 
 	//! convert palette from RGB to RGBA (used before uploading to the backend)
 	void palConvert(uint8 *outPal, const uint8 *inPal, int start, int end);
-	
+
 	//! update the palette
 	void palSet(const uint8 *pal, int start, int end, bool updateScreen = false);
-	
+
 	//! setup palette for Joe's dress
 	void palSetJoeDress();
-	
+
 	//! setup palette for Joe's normal clothes
 	void palSetJoeNormal();
-	
+
 	//! setup palette for panel and inventory objects
 	void palSetPanel();
-	
+
 	//! fade the current palette in
 	void palFadeIn(uint16 roomNum, bool dynalum = false, int16 dynaX = 0, int16 dynaY = 0);
-	
+
 	//! fade the current palette out
 	void palFadeOut(uint16 roomNum);
-	
+
 	//! grey the panel area (used when panel is disabled)
 	void palGreyPanel();
-	
+
 	//! scroll some palette colors
 	void palScroll(int start, int end);
-	
+
 	//! custom palette effect for the specified room
 	void palCustomColors(uint16 roomNum);
-	
+
 	//! custom palette scroll for the specified room
 	void palCustomScroll(uint16 roomNum);
-	
+
 	//! process a 'palette flash' effect
 	void palCustomFlash();
-	
+
 	void palCustomLightsOff(uint16 roomNum);
 	void palCustomLightsOn(uint16 roomNum);
-	
+
 	//! mark all palette entries as dirty
 	void palSetAllDirty() { _pal.dirtyMin = 0; _pal.dirtyMax = 255; }
 
 	//! returns the number of colors used by the room
 	int getNumColorsForRoom(uint16 room) const;
-	
+
 	//! returns true if we shouldn't fade the palette in the specified room
 	bool isPalFadingDisabled(uint16 room) const;
 
@@ -120,13 +120,13 @@ public:
 
 	//! mark the specified block as dirty
 	void setDirtyBlock(uint16 x, uint16 y, uint16 w, uint16 h);
-	
+
 	//! force a full refresh (bypassing the dirtyblocks rendering), on next screen update
 	void forceFullRefresh() { _fullRefresh = 2; }
 
 	//! change mouse cursor bitmap
 	void setMouseCursor(uint8 *buf, uint16 w, uint16 h);
-	
+
 	//! show/hide mouse cursor
 	void showMouseCursor(bool show);
 
@@ -135,29 +135,29 @@ public:
 
 	//! add the specified text to the texts list
 	void setText(uint16 x, uint16 y, const char *text, bool outlined = true);
-	
+
 	//! add the specified text to the texts list
 	void setTextCentered(uint16 y, const char *text, bool outlined = true);
-	
+
 	//! draw the text lists
 	void drawTexts();
-	
+
 	//! remove entries from the texts list
 	void clearTexts(uint16 y1, uint16 y2);
-	
+
 	//! change the current text color
 	void textCurrentColor(uint8 color) { _curTextColor = color; }
-	
+
 	//! change the text color for the specified texts list entry
 	void textColor(uint16 y, uint8 color) { _texts[y].color = color; }
-	
+
 	int textCenterX(const char *text) const;
 	uint16 textWidth(const char *text) const;
 	uint16 textWidth(const char *text, uint16 len) const;
 	void drawChar(uint16 x, uint16 y, uint8 color, const uint8 *chr);
 	void drawText(uint16 x, uint16 y, uint8 color, const char *text, bool outlined = true);
 	void drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint8 col);
-	
+
 	void shake(bool reset);
 
 	void blankScreen();
@@ -221,7 +221,7 @@ private:
 
 	//! texts list
 	TextSlot _texts[GAME_SCREEN_HEIGHT];
-	
+
 	//! current text color to use for display
 	uint8 _curTextColor;
 

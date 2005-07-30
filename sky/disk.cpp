@@ -60,7 +60,7 @@ Disk::Disk(const Common::String &gameDataPath) {
 		warning("entriesRead != dinnerTableEntries. [%d/%d]", entriesRead, _dinnerTableEntries);
 
 	_dataDiskHandle->open(dataFilename);
-	if (!_dataDiskHandle->isOpen()) 
+	if (!_dataDiskHandle->isOpen())
 		error("Error opening %s%s", gameDataPath.c_str(), dataFilename);
 
 	printf("Found BASS version v0.0%d (%d dnr entries)\n", determineGameVersion(), _dinnerTableEntries);
@@ -99,7 +99,7 @@ void Disk::flushPrefetched(void) {
 }
 
 bool Disk::fileExists(uint16 fileNr) {
-	
+
 	return (getFileInfo(fileNr) != NULL);
 }
 
@@ -112,7 +112,7 @@ uint8 *Disk::loadFile(uint16 fileNr) {
 	if (prefData)
 		return prefData;
 
-	debug(2, "load file %d,%d (%d)", (fileNr >> 11), (fileNr & 2047), fileNr); 
+	debug(2, "load file %d,%d (%d)", (fileNr >> 11), (fileNr & 2047), fileNr);
 
 	uint8 *fileInfoPtr = getFileInfo(fileNr);
 	if (fileInfoPtr == NULL) {
@@ -244,7 +244,7 @@ void Disk::prefetchFile(uint16 fileNr) {
 }
 
 uint8 *Disk::givePrefetched(uint16 fileNr, uint32 *fSize) {
-	
+
 	PrefFile **fEntry = &_prefRoot;
 	bool found = false;
 	while ((*fEntry) && (!found)) {
@@ -266,7 +266,7 @@ uint8 *Disk::givePrefetched(uint16 fileNr, uint32 *fSize) {
 }
 
 uint8 *Disk::getFileInfo(uint16 fileNr) {
-	
+
 	uint16 i;
 	uint16 *dnrTbl16Ptr = (uint16 *)_dinnerTableArea;
 
@@ -286,7 +286,7 @@ void Disk::fnCacheChip(uint16 *fList) {
 	// fnCacheChip is called after fnCacheFast
 	uint16 cnt = 0;
 	while (_buildList[cnt])
-		cnt++;	
+		cnt++;
 	uint16 fCnt = 0;
 	do {
 		_buildList[cnt + fCnt] = fList[fCnt] & 0x7FFFU;
@@ -324,7 +324,7 @@ void Disk::fnCacheFiles(void) {
 			targCnt++;
 		} else {
 			free(SkyEngine::_itemList[_loadedFilesList[lCnt] & 2047]);
-			SkyEngine::_itemList[_loadedFilesList[lCnt] & 2047] = NULL;		
+			SkyEngine::_itemList[_loadedFilesList[lCnt] & 2047] = NULL;
 		}
 		lCnt++;
 	}
@@ -423,7 +423,7 @@ uint32 Disk::determineGameVersion() {
 	case 243:
 		// pc gamer demo (v0.0109)
 		return 109;
-	case 247:	
+	case 247:
 		//floppy demo (v0.0267)
 		return 267;
 	case 1404:

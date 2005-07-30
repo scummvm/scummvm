@@ -162,7 +162,7 @@ private:
 
 	byte *loadDialogFile(const char *filename);
 
-	//! Load talk data from .dog file 
+	//! Load talk data from .dog file
 	void load(const char *filename);
 
 	//! First things spoken
@@ -181,12 +181,12 @@ private:
 	void setHasTalkedTo() { talkSelected()->hasTalkedTo = true; }
 
 	//! Get a selected value
-	int16 selectedValue(int index) { 
+	int16 selectedValue(int index) {
 		return talkSelected()->values[index-1];
 	}
 
 	//! Set a selected value
-	void selectedValue(int index, int16 value) { 
+	void selectedValue(int index, int16 value) {
 		talkSelected()->values[index-1] = value;
 	}
 
@@ -204,9 +204,9 @@ private:
 
 	//! Speak a part of a sentence
 	void speakSegment(
-			const char *segmentStart, 
+			const char *segmentStart,
 			int length,
-			Person *person, 
+			Person *person,
 			int command,
 			const char *voiceFilePrefix,
 			int index);
@@ -216,22 +216,22 @@ private:
 	void stringAnimation(const SpeechParameters *parameters, int startFrame, int bankNum);
 
 	void defaultAnimation(
-		const char *segment, 
+		const char *segment,
 		bool isJoe,
-		const SpeechParameters *parameters, 
-		int startFrame, 
+		const SpeechParameters *parameters,
+		int startFrame,
 		int bankNum);
 
 	int countSpaces(const char *segment);
 
 	//! Get special parameters for speech
 	const SpeechParameters *findSpeechParameters(
-			const char *name, 
-			int state, 
+			const char *name,
+			int state,
 			int faceDirection);
 
 	int splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]);
-	
+
 	int splitOptionHebrew(const char *str, char optionText[5][MAX_STRING_SIZE]);
 
 	int splitOptionDefault(const char *str, char optionText[5][MAX_STRING_SIZE]);

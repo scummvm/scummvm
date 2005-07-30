@@ -159,7 +159,7 @@ static int SJIStoFMTChunk(int f, int s) { //converts sjis code to fmt font offse
 		warning("Invaild Char! f %x s %x base %x c %d p %d", f, s, base, c, p);
 		return 0;
 	}
-	
+
 	debug(6, "Kanji: %c%c f 0x%x s 0x%x base 0x%x c %d p %d chunk %d cr %d index %d", f, s, f, s, base, c, p, chunk, cr, ((chunk_f + chunk) * 32 + (s - base)) + cr);
 	return ((chunk_f + chunk) * 32 + (s - base)) + cr;
 }
@@ -286,7 +286,7 @@ int CharsetRendererClassic::getCharWidth(byte chr) {
 	if (offs) {
 		spacing = _fontPtr[offs] + (signed char)_fontPtr[offs + 2];
 	}
-	
+
 	return spacing;
 }
 
@@ -974,7 +974,7 @@ static byte italianCharsetDataV2[] = {
 };
 
 // Spanish Zak font.
-// FIXME: This is identical to germanCharsetDataV2 it seems?! 
+// FIXME: This is identical to germanCharsetDataV2 it seems?!
 static byte spanishCharsetDataV2[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x01, 0x03, 0x06, 0x0c, 0x18, 0x3e, 0x03, 0x00,
@@ -1254,7 +1254,7 @@ void CharsetRendererV3::printChar(int chr) {
 	int drawTop = _top - vs->topline;
 
 	_vm->markRectAsDirty(vs->number, _left, _left + width, drawTop, drawTop + height);
-	
+
 	if (!_ignoreCharsetMask) {
 		_hasMask = true;
 		_textScreenID = vs->number;
@@ -1303,13 +1303,13 @@ void CharsetRendererV3::drawChar(int chr, const Graphics::Surface &s, int x, int
 void CharsetRenderer::translateColor() {
 	// Based on disassembly
 	if (_vm->_renderMode == Common::kRenderCGA) {
-		static byte CGAtextColorMap[16] = {0,  3, 3, 3, 5, 5, 5,  15, 
+		static byte CGAtextColorMap[16] = {0,  3, 3, 3, 5, 5, 5,  15,
 										   15, 3, 3, 3, 5, 5, 15, 15};
 		_color = CGAtextColorMap[_color & 0x0f];
 	}
 
 	if (_vm->_renderMode == Common::kRenderHercA || _vm->_renderMode == Common::kRenderHercG) {
-		static byte HercTextColorMap[16] = {0, 15,  2, 15, 15,  5, 15,  15, 
+		static byte HercTextColorMap[16] = {0, 15,  2, 15, 15,  5, 15,  15,
 										   8, 15, 15, 15, 15, 15, 15, 15};
 		_color = HercTextColorMap[_color & 0x0f];
 	}
@@ -1324,7 +1324,7 @@ void CharsetRendererClassic::printChar(int chr) {
 	int is2byte = (chr >= 0x80 && _vm->_useCJKMode) ? 1 : 0;
 
 	checkRange(_vm->_numCharsets - 1, 1, _curId, "Printing with bad charset %d");
-	
+
 	if ((vs = _vm->findVirtScreen(_top)) == NULL && (vs = _vm->findVirtScreen(_top + getFontHeight())) == NULL)
 		return;
 
@@ -1348,7 +1348,7 @@ void CharsetRendererClassic::printChar(int chr) {
 		if (!charOffs)
 			return;
 		charPtr = _fontPtr + charOffs;
-		
+
 		width = charPtr[0];
 		height = charPtr[1];
 
@@ -1357,14 +1357,14 @@ void CharsetRendererClassic::printChar(int chr) {
 		} else {
 			offsX = (signed char)charPtr[2];
 		}
-	
+
 		offsY = (signed char)charPtr[3];
 
 		charPtr += 4;	// Skip over char header
 	}
 	origWidth = width;
 	origHeight = height;
-	
+
 	if (_shadowMode != kNoShadowMode) {
 		width++;
 		height++;
@@ -1412,7 +1412,7 @@ void CharsetRendererClassic::printChar(int chr) {
 		_hasMask = true;
 		_textScreenID = vs->number;
 	}
-	
+
 	if ((_vm->_heversion >= 71 && type >= 8) || (_vm->_heversion >= 90 && type == 0)) {
 #ifndef DISABLE_HE
 		if (_ignoreCharsetMask || !vs->hasTwoBuffers) {
@@ -1471,7 +1471,7 @@ void CharsetRendererClassic::printChar(int chr) {
 		if (_blitAlso && vs->hasTwoBuffers) {
 			// FIXME: Revisiting this code, I think the _blitAlso mode is likely broken
 			// right now -- we are copying stuff from "dstPtr" to "back", but "dstPtr" really
-			// only conatains charset data... 
+			// only conatains charset data...
 			// One way to fix this: don't copy etc.; rather simply render the char twice,
 			// once to each of the two buffers. That should hypothetically yield
 			// identical results, though I didn't try it and right now I don't know
@@ -1492,7 +1492,7 @@ void CharsetRendererClassic::printChar(int chr) {
 				back -= drawTop * backSurface.pitch;
 				dstPtr -= drawTop * dstSurface.pitch;
 			}
-		
+
 			// Blit the image data
 			if (w > 0) {
 				while (h-- > 0) {
@@ -1502,7 +1502,7 @@ void CharsetRendererClassic::printChar(int chr) {
 				}
 			}
 		}
-	}	
+	}
 
 	_left += origWidth;
 
@@ -1535,7 +1535,7 @@ void CharsetRendererClassic::drawChar(int chr, const Graphics::Surface &s, int x
 		if (!charOffs)
 			return;
 		charPtr = _fontPtr + charOffs;
-		
+
 		width = charPtr[0];
 		height = charPtr[1];
 
@@ -1563,7 +1563,7 @@ void CharsetRendererClassic::drawBitsN(const Graphics::Surface &s, byte *dst, co
 	for (y = 0; y < height && y + drawTop < s.h; y++) {
 		for (x = 0; x < width; x++) {
 			color = (bits >> (8 - bpp)) & 0xFF;
-			
+
 			if (color && y + drawTop >= 0) {
 				*dst = _vm->_charsetColorMap[color];
 			}
@@ -1593,7 +1593,7 @@ void CharsetRendererCommon::drawBits1(const Graphics::Surface &s, byte *dst, con
 					*(dst + s.pitch) = _shadowColor;
 					if (_shadowMode != kFMTOWNSShadowMode)
 						*(dst + s.pitch + 1) = _shadowColor;
-				}					
+				}
 				*dst = _color;
 			}
 			dst++;
@@ -1688,7 +1688,7 @@ void CharsetRendererNut::printChar(int chr) {
 		_hasMask = true;
 		_textScreenID = kMainVirtScreen;
 	}
-	
+
 	int drawTop = _top;
 	if (_ignoreCharsetMask) {
 		VirtScreen *vs = &_vm->virtscr[kMainVirtScreen];
@@ -1752,7 +1752,7 @@ void CharsetRendererNES::printChar(int chr) {
 	int drawTop = _top - vs->topline;
 
 	_vm->markRectAsDirty(vs->number, _left, _left + width, drawTop, drawTop + height);
-	
+
 	if (!_ignoreCharsetMask) {
 		_hasMask = true;
 		_textScreenID = vs->number;

@@ -28,7 +28,7 @@
 
 namespace Queen {
 
-Grid::Grid(QueenEngine *vm) 
+Grid::Grid(QueenEngine *vm)
 	: _vm(vm) {
 	memset(_zones, 0, sizeof(_zones));
 }
@@ -170,7 +170,7 @@ void Grid::drawZones() {
 	}
 }
 
-const Box *Grid::zone(GridScreen screen, uint16 index) const { 
+const Box *Grid::zone(GridScreen screen, uint16 index) const {
 	const ZoneSlot *zs = &_zones[screen][index];
 	assert(zs->valid);
 	return &zs->box;

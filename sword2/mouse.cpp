@@ -999,11 +999,11 @@ void Mouse::mouseOnOff() {
 		setMouse(0);
 
 		// so we know to set the mouse pointer back to normal if 2nd
-		// hot-spot doesn't register because mouse pulled away 
+		// hot-spot doesn't register because mouse pulled away
 		// quickly (onto nothing)
 
 		mouse_flicked_off = 1;
-		
+
 		// reset luggage only when necessary
 	} else {
 		// Mouse was flicked off for one cycle, but then moved onto

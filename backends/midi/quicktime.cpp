@@ -47,7 +47,7 @@
 class MidiDriver_QT : public MidiDriver_MPU401 {
 public:
 	MidiDriver_QT();
-	
+
 	int open();
 	void close();
 	void send(uint32 b);
@@ -62,7 +62,7 @@ private:
 	// pitch bending so differently from MPU401.
 	uint16 _pitchbend [16];
 	byte _pitchbend_range [16];
-	
+
 	void dispose();
 };
 
@@ -109,7 +109,7 @@ int MidiDriver_QT::open() {
 
 bail:
 	error("Init QT failed %x %x %d\n", (int)qtNoteAllocator, (int)qtNoteChannel, (int)qtErr);
-	
+
 	dispose();
 
 	return MERR_DEVICE_NOT_AVAILABLE;
@@ -206,7 +206,7 @@ void MidiDriver_QT::send(uint32 b) {
 			// to +/- 12 semitones. Based on this, we first center the input data, then
 			// multiply it by a factor. If all was right, the factor would be 3/8, but for
 			// mysterious reasons the actual factor we have to use is more like 1/32 or 3/64.
-			// Maybe the QT docs are right, and 
+			// Maybe the QT docs are right, and
 			_pitchbend[chanID] = ((uint16) midiCmd[1] | (uint16) (midiCmd[2] << 7));
 			long theBend = ((long) _pitchbend[chanID] - 0x2000) * _pitchbend_range[chanID] / 32;
 

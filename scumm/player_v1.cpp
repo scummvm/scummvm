@@ -33,7 +33,7 @@ namespace Scumm {
 #define TIMER_BASE_FREQ 1193000
 #define FIXP_SHIFT  16
 
-Player_V1::Player_V1(ScummEngine *scumm, bool pcjr) : Player_V2(scumm, pcjr) {	
+Player_V1::Player_V1(ScummEngine *scumm, bool pcjr) : Player_V2(scumm, pcjr) {
 	// Initialize channel code
 	for (int i = 0; i < 4; ++i)
 		clear_channel(i);
@@ -132,7 +132,7 @@ void Player_V1::parseSpeakerChunk() {
 
  parse_again:
 	_chunk_type = READ_LE_UINT16(_next_chunk);
-	debug(6, "parseSpeakerChunk: sound %d, offset %4x, chunk %x", 
+	debug(6, "parseSpeakerChunk: sound %d, offset %4x, chunk %x",
 			_current_nr, _next_chunk - _current_data, _chunk_type);
 
 	_next_chunk += 2;
@@ -169,7 +169,7 @@ void Player_V1::parseSpeakerChunk() {
 		_repeat_ctr = READ_LE_UINT16(_next_chunk + 8);
 		_channels[0].freq = _start;
 		_next_chunk += 10;
-		debug(6, "chunk 1: mplex %d, freq %d -> %d step %d  x %d", 
+		debug(6, "chunk 1: mplex %d, freq %d -> %d step %d  x %d",
 				_mplex, _start, _end, _delta, _repeat_ctr);
 		break;
 	case 2:
@@ -179,7 +179,7 @@ void Player_V1::parseSpeakerChunk() {
 		_channels[0].freq = 0;
 		_next_chunk += 6;
 		_forced_level = -1;
-		debug(6, "chunk 2: %d -> %d step %d", 
+		debug(6, "chunk 2: %d -> %d step %d",
 				_start, _end, _delta);
 		break;
 	case 3:
@@ -189,7 +189,7 @@ void Player_V1::parseSpeakerChunk() {
 		_channels[0].freq = 0;
 		_next_chunk += 6;
 		_forced_level = -1;
-		debug(6, "chunk 3: %d -> %d step %d", 
+		debug(6, "chunk 3: %d -> %d step %d",
 				_start, _end, _delta);
 		break;
 	}
@@ -208,7 +208,7 @@ void Player_V1::nextSpeakerCmd() {
 			_time_left = READ_LE_UINT16(_next_chunk);
 			_next_chunk += 2;
 		}
-		debug(7, "nextSpeakerCmd: chunk %d, offset %4x: notelen %d", 
+		debug(7, "nextSpeakerCmd: chunk %d, offset %4x: notelen %d",
 				_chunk_type, _next_chunk - 2 - _current_data, _time_left);
 		if (_time_left == 0) {
 			parseSpeakerChunk();
@@ -264,7 +264,7 @@ void Player_V1::parsePCjrChunk() {
 parse_again:
 
 	_chunk_type = READ_LE_UINT16(_next_chunk);
-	debug(6, "parsePCjrChunk: sound %d, offset %4x, chunk %x", 
+	debug(6, "parsePCjrChunk: sound %d, offset %4x, chunk %x",
 		  _current_nr, _next_chunk - _current_data, _chunk_type);
 
 	_next_chunk += 2;
@@ -350,7 +350,7 @@ parse_again:
 			}
 			*_value_ptr_2 = _start_2;
 		}
-		debug(6, "chunk 1: %d: %d step %d for %d, %d: %d step %d for %d", 
+		debug(6, "chunk 1: %d: %d step %d for %d, %d: %d step %d for %d",
 			  _value_ptr - (uint*)_channels, _start, _delta, _time_left,
 			  _value_ptr_2 - (uint*)_channels, _start_2, _delta_2, _time_left_2);
 		break;
@@ -362,10 +362,10 @@ parse_again:
 		_channels[0].freq = 0;
 		_next_chunk += 6;
 		_forced_level = -1;
-		debug(6, "chunk 2: %d -> %d step %d", 
+		debug(6, "chunk 2: %d -> %d step %d",
 			  _start, _end, _delta);
 		break;
-	case 3: 
+	case 3:
 		set_mplex(READ_LE_UINT16(_next_chunk));
 		tmp = READ_LE_UINT16(_next_chunk + 2);
 		assert((tmp & 0xf0) == 0xe0);
@@ -407,7 +407,7 @@ void Player_V1::nextPCjrCmd() {
 					_channels[i].hull_counter = 1;
 					_channels[i].freq = dummy;
 				}
-				debug(7, "chunk 0: channel %d play %d for %d", 
+				debug(7, "chunk 0: channel %d play %d for %d",
 					  i, dummy, _channels[i].notelen);
 				_channels[i].cmd_ptr += 4;
 			}
@@ -495,7 +495,7 @@ void Player_V1::nextPCjrCmd() {
 			_channels[3].volume = dummy;
 			break;
 		}
-		
+
 		if (!--_repeat_ctr) {
 			parsePCjrChunk();
 			return;
@@ -566,7 +566,7 @@ void Player_V1::generatePCjrSamples(int16 *data, uint len) {
 					/* HACK: this channel is playing at
 					 * the same frequency as another.
 					 * Synchronize it to the same phase to
-					 * prevent interference. 
+					 * prevent interference.
 					 */
 					_timer_count[i] = _timer_count[j];
 					_timer_output ^= (1 << i) &
@@ -586,16 +586,16 @@ void Player_V1::generatePCjrSamples(int16 *data, uint len) {
 		} else if (i < 3) {
 			hasdata = true;
 			squareGenerator(i, freq, vol, 0, data, len);
-			debug(9, "channel[%d]: %8x: freq %d %.1f ; volume %d", 
+			debug(9, "channel[%d]: %8x: freq %d %.1f ; volume %d",
 				  i, _tick_len, freq, 111860.0 / freq,  vol);
 		} else {
 			int noiseFB = (freq & 4) ? FB_WNOISE : FB_PNOISE;
 			int n = (freq & 3);
-			
+
 			freq = (n == 3) ? 2 * (_channels[2].freq) : 1 << (5 + n);
 			hasdata = true;
 			squareGenerator(i, freq, vol, noiseFB, data, len);
-			debug(9, "channel[%d]: %x: noise freq %d %.1f ; volume %d", 
+			debug(9, "channel[%d]: %x: noise freq %d %.1f ; volume %d",
 				  i, _tick_len, freq, 111860.0 / freq,  vol);
 		}
 	}
@@ -604,4 +604,4 @@ void Player_V1::generatePCjrSamples(int16 *data, uint len) {
 		lowPassFilter(data, len);
 }
 
-} // End of namespace Scumm 
+} // End of namespace Scumm

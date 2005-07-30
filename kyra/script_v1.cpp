@@ -30,7 +30,7 @@ namespace Kyra {
 void VMContext::c1_unknownCommand(void) {
 	debug("unknown command '0x%x'.", _currentCommand);
 	debug("\targument: '0x%x'", _argument);
-	
+
 	_error = true;
 }
 
@@ -76,7 +76,7 @@ void VMContext::c1_popRetRec(void) {
 			_scriptState = kScriptStopped;
 		}
 		int32 rec = popStack();
-		
+
 		_tempPos = (int16)((rec & 0xFFFF0000) >> 16);
 		_instructionPos = (rec & 0x0000FFFF) * 2;
 	}
@@ -122,15 +122,15 @@ void VMContext::c1_negate(void) {
 	case 0:
 		topStack() = !topStack();
 		break;
-	
+
 	case 1:
 		topStack() = -topStack();
 		break;
-	
+
 	case 2:
 		topStack() = ~topStack();
 		break;
-	
+
 	default:
 		debug("unkown negate instruction %d", _argument);
 		_error = true;
@@ -141,98 +141,98 @@ void VMContext::c1_negate(void) {
 void VMContext::c1_evaluate(void) {
 	int32 x, y;
 	int32 res = false;
-	
+
 	x = popStack();
 	y = popStack();
-	
+
 	switch(_argument) {
 	case 0:
 		res = x && y;
 		break;
-	
+
 	case 1:
 		res = x || y;
 		break;
-	
+
 	case 3:
 		res = x != y;
 		break;
-	
+
 	case 4:
 		res = x < y;
 		break;
-	
+
 	case 5:
 		res = x <= y;
 		break;
-		
+
 	case 6:
 		res = x > y;
 		break;
-	
+
 	case 7:
 		res = x >= y;
 		break;
-	
+
 	case 8:
 		res = x + y;
 		break;
-		
+
 	case 9:
 		res = x - y;
 		break;
-	
+
 	case 10:
 		res = x * y;
 		break;
-		
+
 	case 11:
 		res = x / y;
 		break;
-	
+
 	case 12:
 		res = x >> y;
 		break;
-	
+
 	case 13:
 		res = x << y;
 		break;
-	
+
 	case 14:
 		res = x & y;
 		break;
-	
+
 	case 15:
 		res = x | y;
 		break;
-	
+
 	case 16:
 		res = x % y;
 		break;
-	
+
 	case 17:
 		res = x ^ y;
 		break;
-	
+
 	default:
 		debug("unknown evaluate command");
 		break;
 	};
-	
+
 	pushStack(res);
 }
 
 // opcode procs
 void VMContext::o1_unknownOpcode(void) {
 	_error = true;
-		
+
 	debug("unknown opcode '0x%x'.", _argument);
 	debug("parameters:\n"
 		"Param0: %d\nParam1: %d\nParam2: %d\nParam3: %d\nParam4: %d\nParam5: %d\n"
 		"Param0 as a string: %s\nParam1 as a string: %s\nParam2 as a string: %s\n"
 		"Param3 as a string: %s\nParam4 as a string: %s\nParam5 as a string: %s\n",
 		param(0), param(1), param(2), param(3), param(5), param(5),
-		paramString(0), paramString(1), paramString(2), paramString(3), 
+		paramString(0), paramString(1), paramString(2), paramString(3),
 		paramString(4), paramString(5));
 }
 

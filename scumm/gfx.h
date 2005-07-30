@@ -1,6 +1,6 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2005 The ScummVM project 
+ * Copyright (C) 2001-2005 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -84,7 +84,7 @@ struct VirtScreen : Graphics::Surface {
 	 * ScummEngine:virtscr array).
 	 */
 	VirtScreenNumber number;
-	
+
 	/**
 	 * Vertical position of the virtual screen. Tells how much the virtual
 	 * screen is shifted along the y axis relative to the real screen.
@@ -94,7 +94,7 @@ struct VirtScreen : Graphics::Surface {
 	 * horizontal scrolling in V7-V8 games.
 	 */
 	uint16 topline;
-	
+
 	/**
 	 * Horizontal scroll offset, tells how far the screen is scrolled to the
 	 * right. Only used for the main screen. After all, verbs and the
@@ -111,7 +111,7 @@ struct VirtScreen : Graphics::Surface {
 	 * and useIm01Cursor()), we keep it (at least for now).
 	 */
 	bool hasTwoBuffers;
-	
+
 	/**
 	 * Pointer to the screen's back buffer, if it has one (see also
 	 * the hasTwoBuffers member).
@@ -154,7 +154,7 @@ struct VirtScreen : Graphics::Surface {
 			bdirty[i] = bottom;
 		}
 	}
-	
+
 	byte *getPixels(int x, int y) const {
 		return (byte *)pixels + xstart + y * pitch + x;
 	}
@@ -184,7 +184,7 @@ struct BompDrawData {
 	uint16 shadowMode;
 
 	byte *maskPtr;
-	
+
 	BompDrawData() { memset(this, 0, sizeof(*this)); }
 };
 
@@ -199,7 +199,7 @@ public:
 	int _numZBuffer;
 	int _imgBufOffs[8];
 	int32 _numStrips;
-	
+
 	Gdi(ScummEngine *vm);
 	~Gdi();
 
@@ -266,7 +266,7 @@ protected:
 	int getZPlanes(const byte *smap_ptr, const byte *zplane_list[9], bool bmapImage) const;
 
 	StripTable *generateStripTable(const byte *src, int width, int height, StripTable *table) const;
-	void drawBitmapV2Helper(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height, 
+	void drawBitmapV2Helper(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
 	                int stripnr, int numstrip);
 
 public:
@@ -281,7 +281,7 @@ public:
 
 	void drawBMAPBg(const byte *ptr, VirtScreen *vs);
 	void drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y, int w, int h);
-	
+
 	void copyVirtScreenBuffers(Common::Rect rect, int dirtybit = 0);
 
 	byte *getMaskBuffer(int x, int y, int z);

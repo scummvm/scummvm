@@ -45,13 +45,13 @@
 
 namespace Scumm {
 
-static const int actorAnimationData[21] = {20, 21, 22, 23, 24, 25, 26, 13, 14, 15, 16, 17, 
+static const int actorAnimationData[21] = {20, 21, 22, 23, 24, 25, 26, 13, 14, 15, 16, 17,
 	18, 19, 6, 7, 8, 9, 10, 11, 12};
 
 
 Insane::Insane(ScummEngine_v6 *scumm) {
 	_vm = scumm;
-	
+
 	initvars();
 
 	if (!((_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC))) {
@@ -177,30 +177,30 @@ void Insane::initvars(void) {
 	for (i = 0; i < 0x80; i++)
 		_iactBits[i] = 0;
 
-	
+
 	if ((_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC)) {
-		init_enemyStruct(EN_ROTT1, EN_ROTT1, 0, 0, 160, 0, INV_MACE, 63, "endcrshr.san", 
+		init_enemyStruct(EN_ROTT1, EN_ROTT1, 0, 0, 160, 0, INV_MACE, 63, "endcrshr.san",
 						 25, 15, 16, 26, 11, 3);
 	} else {
-		init_enemyStruct(EN_ROTT1, EN_ROTT1, 0, 0, 160, 0, INV_MACE, 90, "wr2_rott.san", 
+		init_enemyStruct(EN_ROTT1, EN_ROTT1, 0, 0, 160, 0, INV_MACE, 90, "wr2_rott.san",
 						 26, 16, 17, 27, 11, 3);
 	}
 
-	init_enemyStruct(EN_ROTT2, EN_ROTT2, 1, 0, 250, 0, INV_2X4, 90, "wr2_rott.san", 
+	init_enemyStruct(EN_ROTT2, EN_ROTT2, 1, 0, 250, 0, INV_2X4, 90, "wr2_rott.san",
 					 28, 16, 17, 42, 11, 3);
-	init_enemyStruct(EN_ROTT3, EN_ROTT3, 2, 0, 120, 0, INV_HAND, 90, "wr2_rott.san", 
+	init_enemyStruct(EN_ROTT3, EN_ROTT3, 2, 0, 120, 0, INV_HAND, 90, "wr2_rott.san",
 					 15, 16, 17, 43, 11, 3);
-	init_enemyStruct(EN_VULTF1, EN_VULTF1, 3, 0, 60, 0, INV_HAND, 91, "wr2_vltp.san", 
+	init_enemyStruct(EN_VULTF1, EN_VULTF1, 3, 0, 60, 0, INV_HAND, 91, "wr2_vltp.san",
 					 29, 33, 32, 37, 12, 4);
-	init_enemyStruct(EN_VULTM1, EN_VULTM1, 4, 0, 100, 0, INV_CHAIN, 91, "wr2_vltc.san", 
+	init_enemyStruct(EN_VULTM1, EN_VULTM1, 4, 0, 100, 0, INV_CHAIN, 91, "wr2_vltc.san",
 					 30, 33, 32, 36, 12, 4);
-	init_enemyStruct(EN_VULTF2, EN_VULTF2, 5, 0, 250, 0, INV_CHAINSAW, 91, "wr2_vlts.san", 
+	init_enemyStruct(EN_VULTF2, EN_VULTF2, 5, 0, 250, 0, INV_CHAINSAW, 91, "wr2_vlts.san",
 					 31, 33, 32, 35, 12, 4);
-	init_enemyStruct(EN_VULTM2, EN_VULTM2, 6, 0, 900, 0, INV_BOOT, 91, "wr2_rott.san", 
+	init_enemyStruct(EN_VULTM2, EN_VULTM2, 6, 0, 900, 0, INV_BOOT, 91, "wr2_rott.san",
 					 34, 33, 32, 45, 16, 4);
-	init_enemyStruct(EN_CAVEFISH, EN_CAVEFISH, 7, 0, 60, 0, INV_DUST, 92, "wr2_cave.san", 
+	init_enemyStruct(EN_CAVEFISH, EN_CAVEFISH, 7, 0, 60, 0, INV_DUST, 92, "wr2_cave.san",
 					 39, 0, 0, 41, 13, 2);
-	init_enemyStruct(EN_TORQUE, EN_TORQUE, 8, 0, 900, 0, INV_HAND, 93, "wr2_vltp.san", 
+	init_enemyStruct(EN_TORQUE, EN_TORQUE, 8, 0, 900, 0, INV_HAND, 93, "wr2_vltp.san",
 					 57, 0, 0, 37, 12, 1);
 
 	init_fluConfStruct(1, 1, &_smush_minedrivFlu, "minedriv.san", 235, 1300);
@@ -219,7 +219,7 @@ void Insane::initvars(void) {
 	init_fluConfStruct(18, 4, &_smush_tovista1Flu, "tovista1.san", 175, 230);
 	init_fluConfStruct(19, 6, &_smush_toranchFlu, "toranch.san", 115, 530);
 	init_fluConfStruct(20, 6, &_smush_toranchFlu, "toranch.san", 115, 530);
-  
+
 	init_scenePropStruct(  0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
 	init_scenePropStruct(  1,  0, 1, 128, 2001, 0, 0, 0, 0, 56, 2);
 	init_scenePropStruct(  2,  0, 0, 125, 1002, 0, 0, 0, 0, 35, 3);
@@ -444,7 +444,7 @@ void Insane::initvars(void) {
 			_enemyState[i][j] = 0;
 }
 
-void Insane::init_actStruct(int actornum, int actnum, int32 actorval, byte state, 
+void Insane::init_actStruct(int actornum, int actnum, int32 actorval, byte state,
 								  int32 room, int32 animTilt, int32 tilt, int32 frame) {
 	_actor[actornum].act[actnum].actor = actorval;
 	_actor[actornum].act[actnum].state = state;
@@ -477,7 +477,7 @@ void Insane::init_enemyStruct(int n, int32 handler, int32 initializer,
 	_enemy[n].apprAnim = apprAnim;
 }
 
-void Insane::init_fluConfStruct(int n, int sceneId, byte **fluPtr, 
+void Insane::init_fluConfStruct(int n, int sceneId, byte **fluPtr,
 					const char *filenamePtr, int startFrame, int numFrames) {
 	_fluConf[n].sceneId = sceneId;
 	_fluConf[n].fluPtr = fluPtr;
@@ -502,7 +502,7 @@ void Insane::init_scenePropStruct(int32 n, int32 n1, int32 actornum, int32 sound
 
 void Insane::setBenAnimation(int32 actornum, int anim) {
 	if (anim <= 12)
-		smlayer_setActorFacing(actornum, 1, 
+		smlayer_setActorFacing(actornum, 1,
 			  actorAnimationData[_actor[actornum].weaponClass * 7 + anim - 6], 180);
 }
 
@@ -513,7 +513,7 @@ void Insane::setEnemyAnimation(int32 actornum, int anim) {
 		d = 14;
 
 	if (anim <= 12)
-		smlayer_setActorFacing(actornum, 1, 
+		smlayer_setActorFacing(actornum, 1,
 			  actorAnimationData[_actor[actornum].weaponClass * 7 + anim - 6] + d, 180);
 }
 
@@ -598,7 +598,7 @@ void Insane::readFileToMem(const char *name, byte **buf) {
 	in.read(*buf, len);
 }
 
-void Insane::startVideo(const char *filename, int num, int argC, int frameRate, 
+void Insane::startVideo(const char *filename, int num, int argC, int frameRate,
 						 int doMainLoop, byte *fluPtr, int32 startFrame) {
 	int32 offset = 0;
 
@@ -679,13 +679,13 @@ void Insane::readState(void) { // PATCH
 		// Still it is unknown what leads to this state. Most probably it is memory
 		// overwrite
 		if (_enemy[EN_VULTM2].isEmpty != readArray(7)) {
-			warning("Wrong INSANE parameters for EN_VULTM2 (%d %d)", 
+			warning("Wrong INSANE parameters for EN_VULTM2 (%d %d)",
 				  _enemy[EN_VULTM2].isEmpty, readArray(7));
 			_enemy[EN_VULTM2].isEmpty = readArray(7);
 		}
 
 		if (_enemy[EN_VULTF2].isEmpty != (_actor[0].inventory[INV_CHAINSAW] != 0)) {
-			warning("Wrong INSANE parameters for EN_VULTF2 (%d %d)", 
+			warning("Wrong INSANE parameters for EN_VULTF2 (%d %d)",
 				  _enemy[EN_VULTF2].isEmpty, _actor[0].inventory[INV_CHAINSAW]);
 			_enemy[EN_VULTF2].isEmpty = (_actor[0].inventory[INV_CHAINSAW] != 0);
 		}
@@ -698,11 +698,11 @@ void Insane::readState(void) { // PATCH
 		//  you won cavefish, don't have googles, don't have ramp
 		//
 		// So if you find out what how to check ramp presense, feel free to add check here
-		// (beware of FT ver a and ver b. In version b var311 is inserted and all vars >311 
+		// (beware of FT ver a and ver b. In version b var311 is inserted and all vars >311
 		// are shifted),
-		// 
+		//
 		//if (_enemy[EN_CAVEFISH].isEmpty != readArray(8))
-		//	error("Wrong INSANE parameters for EN_CAVEFISH (%d %d). Please, report this", 
+		//	error("Wrong INSANE parameters for EN_CAVEFISH (%d %d). Please, report this",
 		//		  _enemy[EN_CAVEFISH].isEmpty, readArray(8));
 	}
 }
@@ -738,7 +738,7 @@ int32 Insane::idx1Tweak(void) {
 	_objArray1Idx++;
 	if (_objArray1Idx >= 100)
 		_objArray1Idx = 0;
-	
+
 	return _objArray1[_objArray1Idx];
 }
 
@@ -746,7 +746,7 @@ int32 Insane::idx2Tweak(void) {
 	if (!_idx2Exceeded)
 		if (_objArray2Idx >= _objArray2Idx2)
 			return false;
-	
+
 	_objArray2Idx++;
 	if (_objArray2Idx >= 100) {
 		_idx2Exceeded = 0;
@@ -838,20 +838,20 @@ int Insane::smush_changeState(int state) {
 	return _smush_smushState;
 }
 
-void Insane::queueSceneSwitch(int32 sceneId, byte *fluPtr, const char *filename, 
+void Insane::queueSceneSwitch(int32 sceneId, byte *fluPtr, const char *filename,
 							  int32 arg_C, int32 arg_10, int32 startFrame, int32 numFrames) {
 	int32 tmp;
-	
+
 	debugC(DEBUG_INSANE, "queueSceneSwitch(%d, *, %s, %d, %d, %d, %d)", sceneId, filename, arg_C, arg_10,
 		  startFrame, numFrames);
 	if (_needSceneSwitch || _sceneData1Loaded)
 		return;
-	
+
 	if (fluPtr) {
 		tmp = ((int)startFrame/30+1)*30;
 		if (tmp >= numFrames)
 			tmp = 0;
-	
+
 		smush_setupSanWithFlu(filename, arg_C|32, -1, -1, 0, fluPtr, tmp);
 	} else {
 		smush_setupSanFromStart(filename, arg_C|32, -1, -1, 0);
@@ -863,7 +863,7 @@ void Insane::queueSceneSwitch(int32 sceneId, byte *fluPtr, const char *filename,
 void Insane::smush_rewindCurrentSan(int arg_0, int arg_4, int arg_8) {
 	debugC(DEBUG_INSANE, "smush_rewindCurrentSan(%d, %d, %d)", arg_0, arg_4, arg_8);
 	_smush_setupsan2 = arg_0;
-	
+
 	smush_setupSanFile(0, 0, 0);
 	_smush_isSanFileSetup = 1;
 	smush_setFrameSteps(arg_4, arg_8);
@@ -876,7 +876,7 @@ int32 Insane::weaponMaxRange(int32 actornum) {
 
 	if (_actor[actornum].weapon == -1)
 		return 104;
-	
+
 	return map[_actor[actornum].weapon];
 }
 
@@ -885,7 +885,7 @@ int32 Insane::weaponMinRange(int32 actornum) {
 
 	if (_actor[actornum].weapon == -1)
 		return 40;
-	
+
 	return map[_actor[actornum].weapon];
 }
 
@@ -894,7 +894,7 @@ int32 Insane::weaponDamage(int32 actornum) {
 
 	if (_actor[actornum].weapon == -1)
 		return 10;
-	
+
 	return map[_actor[actornum].weapon];
 }
 
@@ -932,7 +932,7 @@ int Insane::calcTilt(int speed) {
 	const int tilt[7] = {-5, -4, -2, 0, 2, 4, 5};
 	if (speed + 3 > 6)
 		return 0;
-	
+
 	return tilt[speed + 3];
 }
 
@@ -942,7 +942,7 @@ bool Insane::actor1StateFlags(int state) {
 	const int spans[] = {0, 34, 39, 73, 89, 90, 92, 93, 99, 100, 117};
 	bool retvalue = 0;
 	unsigned int i;
-	
+
 	for (i = 0; i < sizeof(spans); i++) {
 		retvalue = !retvalue;
 		if (spans[i] <= state)
@@ -975,7 +975,7 @@ void Insane::escapeKeyHandler(void) {
 		break;
 	case 2:
 		flu = &_fluConf[14 + _iactSceneId2];
-		queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0, 
+		queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0,
 						 flu->startFrame, flu->numFrames);
 		break;
 	case 3:
@@ -984,7 +984,7 @@ void Insane::escapeKeyHandler(void) {
 	case 4:
 		if (_needSceneSwitch)
 			return;
-		
+
 		if (readArray(6)) {
 			if (readArray(4)) {
 				queueSceneSwitch(14, 0, "hitdust2.san", 64, 0, 0, 0);
@@ -1026,12 +1026,12 @@ void Insane::escapeKeyHandler(void) {
 		break;
 	case 8:
 		flu = &_fluConf[7 + _iactSceneId2];
-		queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0, 
+		queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0,
 						 flu->startFrame, flu->numFrames);
 		break;
 	case 7:
 		flu = &_fluConf[0 + _iactSceneId2];
-		queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0, 
+		queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0,
 						 flu->startFrame, flu->numFrames);
 		break;
 	case 23:
@@ -1080,7 +1080,7 @@ bool Insane::actor0StateFlags1(int state) {
 	const int spans[] = {0, 2, 34, 35, 39, 69, 98, 100, 117};
 	bool retvalue = 1;
 	unsigned int i;
-	
+
 	for (i = 0; i < sizeof(spans); i++) {
 		retvalue = !retvalue;
 		if (spans[i] >= state)
@@ -1100,7 +1100,7 @@ bool Insane::actor0StateFlags2(int state) {
 		 866, 867, 872, 920, 922, 923, 926, 927, 931, 933, 950};
 	bool retvalue = 1;
 	unsigned int i;
-	
+
 	for (i = 0; i < sizeof(spans); i++) {
 		retvalue = !retvalue;
 		if (spans[i] >= state)
@@ -1112,22 +1112,22 @@ bool Insane::actor0StateFlags2(int state) {
 // smlayer_loadSound1 && smlayer_loadSound2
 int Insane::smlayer_loadSound(int id, int flag, int phase) {
 	int resid;
-	
+
 	if (phase == 1) {
 		if (_idx2Exceeded != 0)
 			if (_objArray2Idx >= _objArray2Idx2)
 				return 0;
 	}
 	resid = readArray(id);
-	
+
 	if (!resid && phase == 2)
 		return 0;
-	
+
 	if (phase == 2)
 		_vm->ensureResourceLoaded(rtSound, resid);
-	
+
 	_vm->res.setResourceCounter(rtSound, resid, 1);
-	
+
 	if (phase == 1) {
 		_objArray2Idx2++;
 		_objArray2[_objArray2Idx2] = id;
@@ -1143,22 +1143,22 @@ int Insane::smlayer_loadSound(int id, int flag, int phase) {
 int Insane::smlayer_loadCostume(int id, int phase) {
 	int resid;
 	resid = readArray(id);
-	
+
 	if (!resid)
 		return 0;
-	
+
 	_vm->ensureResourceLoaded(rtCostume, resid);
 	_vm->res.setResourceCounter(rtCostume, resid, 1);
-	
+
 	// smlayer_lock(rtCostume, resid); // FIXME
-	
+
 	if (phase == 1) {
 		_objArray1Idx2++;
 		_objArray1[_objArray1Idx2] = id;
 		if (_objArray1Idx2 == 100)
 			_objArray1Idx2 = 0;
 	}
-	
+
 	return resid;
 }
 
@@ -1219,8 +1219,8 @@ void Insane::smlayer_soundSetPriority(int32 soundId, int32 priority) {
 	_vm->_imuseDigital->setPriority(soundId, priority);
 }
 
-void Insane::smlayer_drawSomething(byte *renderBitmap, int32 codecparam, 
-			   int32 x, int32 y, int32 arg_10, NutRenderer *nutfile, 
+void Insane::smlayer_drawSomething(byte *renderBitmap, int32 codecparam,
+			   int32 x, int32 y, int32 arg_10, NutRenderer *nutfile,
 			   int32 c, int32 arg_1C, int32 arg_20) {
 	nutfile->drawFrame(renderBitmap, c, x, y);
 }
@@ -1231,8 +1231,8 @@ void Insane::smlayer_overrideDrawActorAt(byte *arg_0, byte arg_4, byte arg_8) {
 	// noop in current implementation
 }
 
-void Insane::smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecparam, 
-					   int32 pos_x, int32 pos_y, int32 arg_14, int32 arg_18, 
+void Insane::smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecparam,
+					   int32 pos_x, int32 pos_y, int32 arg_14, int32 arg_18,
 					   int32 flags, const char *formatString, const char *strng) {
 	SmushFont *sf = _player->_sf[0];
 	int color = 1;
@@ -1255,7 +1255,7 @@ void Insane::smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecp
 			{
 				int id = str[3] - '0';
 				str += 4;
-				sf = _player->_sf[id]; 
+				sf = _player->_sf[id];
 			}
 			break;
 		case 'c':
@@ -1278,7 +1278,7 @@ void Insane::smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecp
 	// bit 2 - ???          4
 	// bit 3 - wrap around  8
 	switch (flags) {
-	case 0: 
+	case 0:
 		sf->drawString(str, renderBitmap, _player->_width, _player->_height, pos_x, pos_y, false);
 		break;
 	case 1:
@@ -1358,11 +1358,11 @@ const char *Insane::handleTrsTag(int32 trsId) {
 bool Insane::smush_eitherNotStartNewFrame(void) {
 	if (_smush_setupsan17)
 		return false;
-	
+
 	if (_smush_isSanFileSetup) {
 		if (_smush_frameStep < 0)
 			return false;
-	
+
 		if (_smush_curFrame > _smush_frameStep + _smush_frameNum2)
 			return true;
 		else
@@ -1370,7 +1370,7 @@ bool Insane::smush_eitherNotStartNewFrame(void) {
 	} else {
 		if (_smush_frameNum1 < 0)
 			return false;
-	
+
 		if (_smush_curFrame >= _smush_frameNum1) {
 			_smush_frameNum1 = -1;
 			return false;
@@ -1397,23 +1397,23 @@ void Insane::writeArray(int item, int value) {
 	_vm->writeArray(_numberArray, 0, item, value);
 }
 
-int32 Insane::smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32 step1, 
-								   int32 step2, int32 setupsan1, byte *fluPtr, 
+int32 Insane::smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32 step1,
+								   int32 step2, int32 setupsan1, byte *fluPtr,
 								   int32 numFrames) {
 	byte *tmp = fluPtr;
 	int32 offset;
-	
+
 	debugC(DEBUG_INSANE, "smush_setupSanWithFlu(%s, %d, %d, %d, %d, %p, %d)", filename, setupsan2,
 		  step1, step2, setupsan1, fluPtr, numFrames);
 
 	_smush_setupsan1 = setupsan1;
-	
+
 	/* skip FLUP marker */
 	if (READ_BE_UINT32(fluPtr) == 'FLUP')
 		tmp += 8;
 
 	_smush_setupsan2 = setupsan2;
-	
+
 	if (tmp[2] <= 1) {
 		/* 0x300 -- palette, 0x8 -- header */
 		offset = READ_LE_UINT32(tmp + 0x308 + numFrames*4);
@@ -1439,7 +1439,7 @@ int32 Insane::smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32
 	return offset;
 }
 
-void Insane::smush_setupSanFromStart(const char *filename, int32 setupsan2, int32 step1, 
+void Insane::smush_setupSanFromStart(const char *filename, int32 setupsan2, int32 step1,
 									 int32 step2, int32 setupsan1) {
 	debugC(DEBUG_INSANE, "Insane::smush_setupFromStart(%s)", filename);
 	_smush_setupsan1 = setupsan1;

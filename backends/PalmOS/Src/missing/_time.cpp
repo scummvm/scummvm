@@ -29,10 +29,10 @@ time_t time(time_t *tloc) {
 	DateTimeType Epoch = {1, 0, 0, 1, 1, 1970, 0};	// form 1/1/1904 12AM to 1/1/1970 12AM
 
 	secs -= TimDateTimeToSeconds (&Epoch);
-	
+
 	if (tloc)
 		*tloc = secs;
-	
+
 	return (secs);
 }
 
@@ -47,7 +47,7 @@ struct tm *localtime(const time_t *timer) {
 	secs += TimDateTimeToSeconds(&Epoch);
 
 	TimSecondsToDateTime (secs, &dt);
-	
+
 	tmDate.tm_sec	= dt.second;
 	tmDate.tm_min	= dt.minute;
 	tmDate.tm_hour	= dt.hour;
@@ -55,6 +55,6 @@ struct tm *localtime(const time_t *timer) {
 	tmDate.tm_mon	= dt.month - 1;
 	tmDate.tm_year	= dt.year - 1900;
 	tmDate.tm_wday	= dt.weekDay;
-	
+
 	return &tmDate;
 }

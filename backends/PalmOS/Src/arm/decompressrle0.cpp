@@ -22,6 +22,6 @@ UInt32 Screen_decompressRLE0(void *userData68KP) {
 			dest += skip;
 		}
 	}
-	
+
 	return 0;
 }

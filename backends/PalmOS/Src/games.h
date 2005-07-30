@@ -88,7 +88,7 @@ typedef struct {
 		UInt16 speech;
 		UInt16 audiocd;
 	} volume;
-	
+
 	struct {
 		// midi
 		Boolean multiMidi;
@@ -127,13 +127,13 @@ typedef struct {
 	UInt16 talkValue;
 	UInt8 platform;
 	UInt8 language;			// |- 	v2.5
-	
+
 	Boolean filter;			// 		v2.6
 	Boolean fullscreen;		// |
 	Boolean aspectRatio;	// |-	v2.7
-	
+
 	MusicInfoType musicInfo;// 		v3.0
-	
+
 	UInt8 engine;			// |-	v3.1
 
 } GameInfoType;

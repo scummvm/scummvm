@@ -5,15 +5,15 @@
 static void PnoInit(DmResID resID,PNOInitType *pnoP) {
 	// Load and allocate PNO
 	MemHandle armH = DmGetResource('ARMC', resID);
-	
+
 	if (armH) {
 		MemPtr armP = MemHandleLock(armH);
 		PnoLoad(&pnoP->pnoDesc, armP);
 		MemPtrUnlock(armP);
 		DmReleaseResource(armH);
-		
+
 		// Init PNO
-		PnoEntryHeader *header = (PnoEntryHeader *)ALIGN_4BYTE(pnoP->headerBuffer); 
+		PnoEntryHeader *header = (PnoEntryHeader *)ALIGN_4BYTE(pnoP->headerBuffer);
 		pnoP->alignedHeader = header;
 
 		header->r10Value		= pnoP->pnoDesc.r10Value;

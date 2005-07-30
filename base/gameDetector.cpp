@@ -51,7 +51,7 @@
 #if defined(__PALM_OS__) || defined(__SYMBIAN32__)
 static const char USAGE_STRING[] = "NoUsageString"; // save more data segment space
 #else
-static const char USAGE_STRING[] = 
+static const char USAGE_STRING[] =
 	"ScummVM - Graphical Adventure Game Interpreter\n"
 	"Usage: scummvm [OPTIONS]... [GAME]\n"
 	"  -v, --version            Display ScummVM version information and exit\n"
@@ -170,12 +170,12 @@ GameDetector::GameDetector() {
 	ConfMan.registerDefault("alsa_port", "65:0");
 #endif
 
-#ifdef DEFAULT_SAVE_PATH 
+#ifdef DEFAULT_SAVE_PATH
 	char savePath[MAXPATHLEN];
 #ifdef UNIX
 	struct stat sb;
 	if (getenv("HOME") != NULL) {
-		snprintf(savePath, MAXPATHLEN, "%s/%s", getenv("HOME"), DEFAULT_SAVE_PATH);	
+		snprintf(savePath, MAXPATHLEN, "%s/%s", getenv("HOME"), DEFAULT_SAVE_PATH);
 		if (stat(savePath, &sb) == -1) {
 			/* create the dir if it does not exist */
 			if (errno == ENOENT) {
@@ -323,7 +323,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 	char *current_option = NULL;
 	char shortCmdLower;
 	bool isLongCmd, boolValue;
-	
+
 	// We store all command line settings in a string map, instead of
 	// immediately putting it into the config manager. We do that to
 	// make a potential future change to the config manager easier: In
@@ -336,7 +336,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 	Common::StringMap settings;
 
 
-	// The user can override the savepath with the SCUMMVM_SAVEPATH 
+	// The user can override the savepath with the SCUMMVM_SAVEPATH
 	// environment variable. This is weaker than a --savepath on the
 	// command line, but overrides the default savepath, hence it is
 	// handled here, just before the command line gets parsed.
@@ -379,12 +379,12 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			DO_OPTION_INT('b', "boot-param")
 				settings["boot_param"] = option;
 			END_OPTION
-			
+
 			DO_OPTION_OPT('d', "debuglevel")
 				gDebugLevel = option ? (int)strtol(option, 0, 10) : 0;
 				printf("Debuglevel (from command line): %d\n", gDebugLevel);
 			END_OPTION
-			
+
 			DO_OPTION('e', "music-driver")
 				// TODO: Instead of just showing the generic help text,
 				// maybe print a message like:
@@ -536,7 +536,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 
 #ifndef DISABLE_SCUMM
 			DO_LONG_OPTION("tempo")
-				// Use the special value '0' for the base in (int)strtol. 
+				// Use the special value '0' for the base in (int)strtol.
 				// Doing that makes it possible to enter hex values
 				// as "0x1234", but also decimal values ("123").
 				int value = (int)strtol(option, 0, 0);

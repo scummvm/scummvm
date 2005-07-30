@@ -79,7 +79,7 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 	KeyValue kv;
 	String comment;
 	int lineno = 0;
-	
+
 	// TODO: Detect if a section occurs multiple times (or likewise, if
 	// a key occurs multiple times inside one section).
 
@@ -114,7 +114,7 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 				error("Config file buggy: Invalid character '%c' occured in section name in line %d", *p, lineno);
 
 			*p = 0;
-			
+
 			// Previous section is finished now, store it.
 			if (!section.name.isEmpty())
 				_sections.push_back(section);
@@ -123,7 +123,7 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 			section.keys.clear();
 			section.comment = comment;
 			comment.clear();
-			
+
 			assert(isValidName(section.name));
 		} else {
 			// Skip leading & trailing whitespaces
@@ -150,11 +150,11 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 			comment.clear();
 
 			assert(isValidName(kv.key));
-			
+
 			section.keys.push_back(kv);
 		}
 	}
-	
+
 	// Save last section
 	if (!section.name.isEmpty())
 		_sections.push_back(section);
@@ -220,7 +220,7 @@ bool ConfigFile::hasSection(const String &section) const {
 void ConfigFile::renameSection(const String &oldName, const String &newName) {
 	assert(isValidName(oldName));
 	assert(isValidName(newName));
-	
+
 	//Section *os = getSection(oldName);
 	Section *ns = getSection(newName);
 	if (ns) {
@@ -237,7 +237,7 @@ void ConfigFile::renameSection(const String &oldName, const String &newName) {
 bool ConfigFile::hasKey(const String &key, const String &section) const {
 	assert(isValidName(key));
 	assert(isValidName(section));
-	
+
 	const Section *s = getSection(section);
 	if (!s)
 		return false;

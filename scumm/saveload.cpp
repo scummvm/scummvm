@@ -127,7 +127,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 		delete in;
 		return false;
 	}
-	
+
 	// Since version 52 a thumbnail is saved directly after the header
 	if (hdr.ver >= VER(52)) {
 		uint32 type;
@@ -155,7 +155,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// state for temporary state saves - such as certain cutscenes in DOTT,
 	// FOA, Sam and Max, etc.
 	//
-	// Thusly, we should probably not stop music when restoring from one of 
+	// Thusly, we should probably not stop music when restoring from one of
 	// these saves. This change stops the Mole Man theme from going quiet in
 	// Sam & Max when Doug tells you about the Ball of Twine, as mentioned in
 	// patch #886058.
@@ -183,7 +183,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 
 	memset(_inventory, 0, sizeof(_inventory[0]) * _numInventory);
 	memset(_newNames, 0, sizeof(_newNames[0]) * _numNewNames);
-	
+
 	// Because old savegames won't fill the entire gfxUsageBits[] array,
 	// clear it here just to be sure it won't hold any unforseen garbage.
 	memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
@@ -207,7 +207,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	Serializer ser(in, 0, hdr.ver);
 	saveOrLoad(&ser, hdr.ver);
 	delete in;
-	
+
 	// Update volume settings
 	setupVolumes();
 
@@ -222,7 +222,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// it is not, hence we check & correct it here.
 	if (_screenTop < 0)
 		_screenTop = 0;
-	
+
 	if (hdr.ver < VER(33) && _version >= 7) {
 		// For a long time, we didn't set these vars to default values.
 		VAR(VAR_DEFAULT_TALK_DELAY) = 60;
@@ -415,7 +415,7 @@ Graphics::Surface *ScummEngine::loadThumbnailFromSlot(int slot) {
 	Common::InSaveFile *in;
 	SaveGameHeader hdr;
 	int len;
-	
+
 	makeSavegameName(filename, slot, false);
 	if (!(in = _saveFileMan->openForLoading(filename))) {
 		return 0;
@@ -531,7 +531,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 
 		MKARRAY(ScummEngine, _resourceMapper[0], sleByte, 128, VER(8)),
 		MKARRAY(ScummEngine, _charsetColorMap[0], sleByte, 16, VER(8)),
-		
+
 		// _charsetData grew from 10*16 to 15*16 bytes
 		MKARRAY_OLD(ScummEngine, _charsetData[0][0], sleByte, 10 * 16, VER(8), VER(9)),
 		MKARRAY(ScummEngine, _charsetData[0][0], sleByte, 15 * 16, VER(10)),
@@ -647,7 +647,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		MK_OBSOLETE(ScummEngine, _cd_loops, sleInt16, VER(9), VER(9)),
 		MK_OBSOLETE(ScummEngine, _cd_frame, sleInt16, VER(9), VER(9)),
 		MK_OBSOLETE(ScummEngine, _cd_end, sleInt16, VER(9), VER(9)),
-		
+
 		MKEND()
 	};
 
@@ -789,7 +789,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	}
 	s->saveLoadArrayOf(_actors, _numActors, sizeof(_actors[0]), actorEntries);
 
-	
+
 	//
 	// Save/load sound data
 	//
@@ -920,7 +920,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		s->saveLoadArrayOf(_palManipPalette, 0x300, 1, sleByte);
 		s->saveLoadArrayOf(_palManipIntermediatePal, 0x600, 1, sleByte);
 	}
-	
+
 	// darkenPalette was not saved before V53
 	if (s->isLoading() && savegameVersion < VER(53)) {
 		memcpy(_darkenPalette, _currentPalette, 768);

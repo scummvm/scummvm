@@ -172,7 +172,7 @@ void SimonEngine::render_string(uint vga_sprite_id, uint color, uint width, uint
 
 	WRITE_BE_UINT16(p + 4, height);
 	WRITE_BE_UINT16(p + 6, width);
-	
+
 	dst += READ_BE_UINT32(p);
 
 	memset(dst, 0, count);
@@ -307,7 +307,7 @@ void SimonEngine::video_putchar(FillOrCopyStruct *fcs, byte c, byte b) {
 				width = _hebrew_char_widths [b - 64];
 
 			if (fcs->textLength != 0) {
-				fcs->textLength--;			
+				fcs->textLength--;
 				fcs->textColumnOffset += width;
 				if (fcs->textColumnOffset >= 8) {
 					fcs->textColumnOffset -= 8;
@@ -912,7 +912,7 @@ static const byte spanish_video_font[] = {
 	112, 136, 136, 120, 8, 16, 96, 0,
 	0, 0, 48, 48, 0, 48, 48, 0,
 	32, 64, 0, 112, 8, 248, 120, 0,
-	32, 64, 0, 192, 64, 64, 224, 0, 
+	32, 64, 0, 192, 64, 64, 224, 0,
 	32, 64, 0, 112, 136, 136, 112, 0,
 	32, 64, 0, 144, 144, 144, 104, 0,
 	112, 136, 8, 16, 32, 0, 32, 0,

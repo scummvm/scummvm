@@ -75,7 +75,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	if (_version >= 4 && _heversion <= 61)
 		stopCycle(0);
 	_sound->processSound();
-	
+
 	clearDrawQueues();
 
 	// For HE80+ games
@@ -136,7 +136,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 
 	loadRoomObjects();
 
-	
+
 	if (VAR_ROOM_WIDTH != 0xFF && VAR_ROOM_HEIGHT != 0xFF) {
 		VAR(VAR_ROOM_WIDTH) = _roomWidth;
 		VAR(VAR_ROOM_HEIGHT) = _roomHeight;
@@ -207,7 +207,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 /**
  * Init some static room data after a room has been loaded.
  * E.g. the room dimension, the offset to the graphics data, the room scripts,
- * the offset to the room palette and other things which won't be changed 
+ * the offset to the room palette and other things which won't be changed
  * late on.
  * So it is possible to call this after loading a savegame.
  */
@@ -234,7 +234,7 @@ void ScummEngine::loadRoomSubBlocks() {
 	// Determine the room dimensions (width/height)
 	//
 	rmhd = (const RoomHeader *)findResourceData(MKID('RMHD'), roomptr);
-	
+
 	if (_version == 8) {
 		_roomWidth = READ_LE_UINT32(&(rmhd->v8.width));
 		_roomHeight = READ_LE_UINT32(&(rmhd->v8.height));
@@ -412,7 +412,7 @@ void ScummEngine::loadRoomSubBlocks() {
 				_HEV7ActorPalette[i] = i;
 		}
 	}
-	
+
 	gdi.roomChanged(roomptr, _IM00_offs, trans);
 }
 
@@ -554,7 +554,7 @@ void ScummEngine_v3old::loadRoomSubBlocks() {
 	// Determine the room dimensions (width/height)
 	//
 	rmhd = (const RoomHeader *)(roomptr + 4);
-	
+
 	if (_version == 1) {
 		if (_platform == Common::kPlatformNES) {
 			_roomWidth = READ_LE_UINT16(&(rmhd->old.width)) * 8;

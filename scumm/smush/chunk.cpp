@@ -39,26 +39,26 @@ const char *Chunk::ChunkString(Chunk::type t) {
 	return data;
 }
 
-BaseChunk::BaseChunk() : 
+BaseChunk::BaseChunk() :
 	_type(0),
 	_size(0),
 	_curPos(0) {
 }
 
 bool BaseChunk::eof() const {
-	return _curPos >= _size; 
+	return _curPos >= _size;
 }
 
 uint32 BaseChunk::tell() const {
-	return _curPos; 
+	return _curPos;
 }
 
-Chunk::type BaseChunk::getType() const { 
-	return _type; 
+Chunk::type BaseChunk::getType() const {
+	return _type;
 }
 
-uint32 BaseChunk::getSize() const { 
-	return _size; 
+uint32 BaseChunk::getSize() const {
+	return _size;
 }
 
 bool BaseChunk::seek(int32 delta, seek_type dir) {

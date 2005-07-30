@@ -52,9 +52,9 @@ protected:
 		OpcodeProcV5 proc;
 		const char *desc;
 	};
-	
+
 	const OpcodeEntryV5 *_opcodesV5;
-	
+
 	uint16 _cursorImages[4][17];
 	byte _cursorHotspots[2 * 4];
 
@@ -294,7 +294,7 @@ protected:
 	virtual void ifNotStateCommon(byte type);
 	virtual void setStateCommon(byte type);
 	virtual void clearStateCommon(byte type);
-	
+
 	void resetSentence();
 	void setUserState(byte state);
 
@@ -452,7 +452,7 @@ protected:
 		OpcodeProcV6 proc;
 		const char *desc;
 	};
-	
+
 	enum ArrayType {
 		kBitArray = 1,
 		kNibbleArray = 2,
@@ -461,18 +461,18 @@ protected:
 		kIntArray = 5,
 		kDwordArray = 6
 	};
-	
+
 	#if !defined(__GNUC__)
 		#pragma START_PACK_STRUCTS
-	#endif	
-	
+	#endif
+
 	struct ArrayHeader {
 		int16 dim1;
 		int16 type;
 		int16 dim2;
 		byte data[1];
 	} GCC_PACK;
-	
+
 	#if !defined(__GNUC__)
 		#pragma END_PACK_STRUCTS
 	#endif
@@ -490,7 +490,7 @@ protected:
 		uint16 mode;
 	};
 
-	int _blastObjectQueuePos; 
+	int _blastObjectQueuePos;
 	BlastObject _blastObjectQueue[128];
 
 	struct BlastText {
@@ -744,7 +744,7 @@ protected:
 	const OpcodeEntryv60he *_opcodesv60he;
 
 	Common::File _hFileTable[17];
-	
+
 public:
 	ScummEngine_v60he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex) : ScummEngine_v6(detector, syst, gs, md5sum, substResFileNameIndex) {}
 
@@ -795,7 +795,7 @@ protected:
 		OpcodeProcv70he proc;
 		const char *desc;
 	};
-	
+
 	const OpcodeEntryv70he *_opcodesv70he;
 
 	ResExtractor *_resExtractor;
@@ -820,7 +820,7 @@ protected:
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
-	
+
 	virtual void setupScummVars();
 	virtual void initScummVars();
 
@@ -881,7 +881,7 @@ protected:
 	void postProcessAuxQueue();
 
 public:
-	/* Actor AuxQueue stuff (HE) */	
+	/* Actor AuxQueue stuff (HE) */
 	AuxBlock _auxBlocks[16];
 	uint16 _auxBlocksNum;
 	AuxEntry _auxEntries[16];
@@ -898,10 +898,10 @@ protected:
 		OpcodeProcV72he proc;
 		const char *desc;
 	};
-	
+
 #if !defined(__GNUC__)
 	#pragma START_PACK_STRUCTS
-#endif	
+#endif
 
 	struct ArrayHeader {
 		int32 type;      //0
@@ -945,10 +945,10 @@ protected:
 	ArrayHeader *defineArray(int array, int type, int dim2start, int dim2end, int dim1start, int dim1end);
 	virtual int readArray(int array, int idx2, int idx1);
 	virtual void writeArray(int array, int idx2, int idx1, int value);
-	void redimArray(int arrayId, int newDim2start, int newDim2end, 
+	void redimArray(int arrayId, int newDim2start, int newDim2end,
 					int newDim1start, int newDim1end, int type);
 	void checkArrayLimits(int array, int dim2start, int dim2end, int dim1start, int dim1end);
-	void copyArray(int array1, int a1_dim2start, int a1_dim2end, int a1_dim1start, int a1_dim1end, 
+	void copyArray(int array1, int a1_dim2start, int a1_dim2end, int a1_dim1start, int a1_dim1end,
 					int array2, int a2_dim2start, int a2_dim2end, int a2_dim1start, int a2_dim1end);
 	void copyArrayHelper(ArrayHeader *ah, int idx2, int idx1, int len1, byte **data, int *size, int *num);
 	virtual int setupStringArray(int size);
@@ -1037,7 +1037,7 @@ protected:
 		OpcodeProcV80he proc;
 		const char *desc;
 	};
-	
+
 	const OpcodeEntryV80he *_opcodesV80he;
 
 	int32 _heSBNGId;
@@ -1058,7 +1058,7 @@ protected:
 
 	void drawLine(int x1, int y1, int x, int unk1, int unk2, int type, int id);
 	void drawPixel(int x, int y, int flags);
-	
+
 	/* HE version 80 script opcodes */
 	void o80_loadSBNG();
 	void o80_getFileSize();
@@ -1142,7 +1142,7 @@ protected:
 	void getArrayDim(int array, int *dim2start, int *dim2end, int *dim1start, int *dim1end);
 	void sortArray(int array, int dim2start, int dim2end, int dim1start, int dim1end, int sortOrder);
 
-public:	
+public:
 	int getGroupSpriteArray(int spriteGroupId);
 
 protected:
@@ -1242,7 +1242,7 @@ protected:
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
-	
+
 	virtual void saveOrLoad(Serializer *s, uint32 savegameVersion);
 
 	virtual void decodeParseString(int a, int b);
@@ -1331,7 +1331,7 @@ protected:
 		OpcodeProcV8 proc;
 		const char *desc;
 	};
-	
+
 	const OpcodeEntryV8 *_opcodesV8;
 
 	struct ObjectNameId {
@@ -1359,7 +1359,7 @@ protected:
 
 	virtual uint fetchScriptWord();
 	virtual int fetchScriptWordSigned();
-	
+
 	virtual int readVar(uint var);
 	virtual void writeVar(uint var, int value);
 
@@ -1384,7 +1384,7 @@ protected:
 	void o8_actorOps();
 	void o8_cameraOps();
 	void o8_verbOps();
-	
+
 	void o8_systemOps();
 	void o8_startVideo();
 	void o8_kernelSetFunctions();
@@ -1398,7 +1398,7 @@ protected:
 	void o8_getObjectImageY();
 	void o8_getObjectImageWidth();
 	void o8_getObjectImageHeight();
-	
+
 	void o8_getStringWidth();
 
 };

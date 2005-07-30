@@ -73,7 +73,7 @@ MidiDriver_FluidSynth::MidiDriver_FluidSynth(Audio::Mixer *mixer)
 	}
 
 	// It ought to be possible to get FluidSynth to generate samples at
-	// lower 
+	// lower
 
 	_outputRate = _mixer->getOutputRate();
 	if (_outputRate < 22050)

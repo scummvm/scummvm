@@ -209,7 +209,7 @@ int morphos_sound_thread(OSystem_MorphOS *syst, ULONG SampleType)
 					WaitIO((IORequest *) req);
 
 				syst->fill_sound((byte *) ahiBuf[ahiCurBuf], AHI_BUF_SIZE);
-	
+
 				req->ahir_Std.io_Message.mn_Node.ln_Pri = 0;
 				req->ahir_Std.io_Command = CMD_WRITE;
 				req->ahir_Std.io_Data    = ahiBuf[ahiCurBuf];

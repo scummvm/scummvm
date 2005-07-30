@@ -68,7 +68,7 @@ public:
 
 	virtual const char *getName() const = 0;
 	virtual int getVersion() const	{ return 0; }	// TODO!
-	
+
 	virtual GameList getSupportedGames() const = 0;
 	virtual GameSettings findGame(const char *gameName) const;
 	virtual DetectedGameList detectGames(const FSList &fslist) const = 0;
@@ -137,9 +137,9 @@ class PluginManager;
 class PluginManager : public Common::Singleton<PluginManager> {
 private:
 	PluginList _plugins;
-	
+
 	bool tryLoadPlugin(Plugin *plugin);
-	
+
 	friend class Common::Singleton<SingletonBaseType>;
 	PluginManager();
 
@@ -149,7 +149,7 @@ public:
 	void loadPlugins();
 	void unloadPlugins();
 	void unloadPluginsExcept(const Plugin *plugin);
-	
+
 	const PluginList &getPlugins()	{ return _plugins; }
 
 	DetectedGameList detectGames(const FSList &fslist) const;

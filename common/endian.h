@@ -174,6 +174,6 @@ FORCEINLINE uint32 READ_BE_UINT24(const void *ptr) {
 	const byte *b = (const byte*)ptr;
 	return (b[0] << 16) + (b[1] << 8) + (b[2]);
 }
-	
+
 
 #endif

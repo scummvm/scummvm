@@ -77,7 +77,7 @@ public:
 	void movePiece(Point mousePt);
 
 private:
-	void initPieceInfo(int i, int16 curX, int16 curY, byte offX, byte offY, int16 trgX, 
+	void initPieceInfo(int i, int16 curX, int16 curY, byte offX, byte offY, int16 trgX,
 					   int16 trgY, uint8 flag, uint8 count, Point point0, Point point1,
 					   Point point2, Point point3, Point point4, Point point5);
 

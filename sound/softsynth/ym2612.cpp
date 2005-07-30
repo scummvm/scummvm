@@ -106,7 +106,7 @@ protected:
 	int _frequencyOffs;
 	int _frequency;
 	int _algorithm;
-	
+
 	int *_buffer;
 	int _buflen;
 

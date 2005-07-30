@@ -11,7 +11,7 @@
 UInt32 CostumeRenderer_proc3(void *userData68KP) {
 // import variables
 	V1Type v1;
-	
+
 	SETPTRV	(V1CodecType *	, v1, v1comp				)
 
 	SETPTR	(const byte *	,_srcptr					)
@@ -27,7 +27,7 @@ UInt32 CostumeRenderer_proc3(void *userData68KP) {
 	SETPTR	(byte *			,_shadow_table				)
 	SETPTR	(byte *			,_palette					)
 	SET8	(byte			,_shadow_mode				)
-	
+
 	MSETPTR	(const byte *	,scaletable					)
 	MSET8	(byte			,mask						)
 	MSET8	(byte			,shr						)

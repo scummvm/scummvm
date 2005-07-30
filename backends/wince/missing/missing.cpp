@@ -35,25 +35,25 @@ DIR* opendir(const char* fname)
 	char fnameMask[MAX_PATH+1];
 	TCHAR fnameUnc[MAX_PATH+1];
 	char nameFound[MAX_PATH+1];
-	
+
 	if(fname == NULL)
 		return NULL;
-	
+
 	strcpy(fnameMask, fname);
 	if(!strlen(fnameMask) || fnameMask[strlen(fnameMask)-1] != '\\')
 		strncat(fnameMask, "\\", MAX_PATH-strlen(fnameMask)-1);
 	strncat(fnameMask, "*.*", MAX_PATH-strlen(fnameMask)-4);
-	
+
 	pdir = (DIR*)malloc(sizeof(DIR)+strlen(fname));
 	pdir->dd_dir.d_ino = 0;
 	pdir->dd_dir.d_reclen = 0;
 	pdir->dd_dir.d_name = 0;
 	pdir->dd_dir.d_namlen = 0;
-	
+
 	pdir->dd_handle = 0;
 	pdir->dd_stat = 0;
 	strcpy(pdir->dd_name, fname); /* it has exactly enough space for fname and nul char */
-	
+
 	MultiByteToWideChar(CP_ACP, 0, fnameMask, -1, fnameUnc, MAX_PATH);
 	if((pdir->dd_handle = (long)FindFirstFile(fnameUnc, &wfd)) == (long)INVALID_HANDLE_VALUE)
 	{
@@ -63,7 +63,7 @@ DIR* opendir(const char* fname)
 	else
 	{
 		WideCharToMultiByte(CP_ACP, 0, wfd.cFileName, -1, nameFound, MAX_PATH, NULL, NULL);
-		
+
 		pdir->dd_dir.d_name = strdup(nameFound);
 		pdir->dd_dir.d_namlen = strlen(nameFound);
 	}
@@ -74,7 +74,7 @@ struct dirent*	readdir(DIR* dir)
 {
 	char nameFound[MAX_PATH+1];
 	static struct dirent dummy;
-	
+
 	if(dir->dd_stat == 0)
 	{
 		dummy.d_name = ".";
@@ -102,15 +102,15 @@ struct dirent*	readdir(DIR* dir)
 			return NULL;
 		}
 		WideCharToMultiByte(CP_ACP, 0, wfd.cFileName, -1, nameFound, MAX_PATH, NULL, NULL);
-		
+
 		if(dir->dd_dir.d_name)
 			free(dir->dd_dir.d_name);
-		
+
 		dir->dd_dir.d_name = strdup(nameFound);
 		dir->dd_dir.d_namlen = strlen(nameFound);
-		
+
 		dir->dd_stat ++;
-		
+
 		return &dir->dd_dir;
 	}
 }
@@ -119,10 +119,10 @@ int closedir(DIR* dir)
 {
 	if(dir == NULL)
 		return 0;
-	
+
 	if(dir->dd_handle)
 		FindClose((HANDLE)dir->dd_handle);
-	
+
 	if(dir->dd_dir.d_name)
 		free(dir->dd_dir.d_name);
 	free(dir);
@@ -135,10 +135,10 @@ int stat(const char *fname, struct stat *ss)
 	TCHAR fnameUnc[MAX_PATH+1];
 	HANDLE handle;
 	int len;
-	
+
 	if(fname == NULL || ss == NULL)
 		return -1;
-	
+
 	/* Special case (dummy on WinCE) */
 	len = strlen(fname);
 	if(len >= 2 && fname[len-1] == '.' && fname[len-2] == '.' &&
@@ -150,7 +150,7 @@ int stat(const char *fname, struct stat *ss)
 		ss->st_mode |= S_IFDIR;
 		return 0;
 	}
-	
+
 	MultiByteToWideChar(CP_ACP, 0, fname, -1, fnameUnc, MAX_PATH);
 	handle = FindFirstFile(fnameUnc, &wfd);
 	if(handle == INVALID_HANDLE_VALUE)
@@ -162,7 +162,7 @@ int stat(const char *fname, struct stat *ss)
 		ss->st_size = wfd.nFileSizeLow;
 		if(wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 			ss->st_mode |= S_IFDIR;
-		
+
 		FindClose(handle);
 	}
 	return 0;
@@ -217,7 +217,7 @@ char *tmpnam(char *string)
 	static char buffer[MAX_PATH+1];
 	GetTempFileName(TEXT("."), TEXT("A8_"), 0, pTemp);
 	WideCharToMultiByte(CP_ACP, 0, pTemp, -1, buffer, MAX_PATH, NULL, NULL);
-	
+
 	if(string)
 	{
 		strcpy(string, buffer);
@@ -270,7 +270,7 @@ char *getcwd(char *buffer, int maxlen)
 {
 	TCHAR fileUnc[MAX_PATH+1];
 	char* plast;
-	
+
 	if(cwd[0] == 0)
 	{
 		GetModuleFileName(NULL, fileUnc, MAX_PATH);
@@ -293,9 +293,9 @@ time_t time(time_t* res)
 	time_t t;
 	SYSTEMTIME st;
 	GetLocalTime(&st);
-	
+
 	t = (time_t)(((((((st.wYear-1970)*12+st.wMonth)*31+st.wDay)*7+st.wDayOfWeek)*24+st.wHour)*60+st.wMinute)*60+st.wSecond);
-	
+
 	if(res)
 		*res = t;
 	return t;
@@ -305,7 +305,7 @@ struct tm* localtime(time_t* timer)
 {
 	static struct tm tmLocalTime;
 	unsigned long rem = *timer;
-	
+
 	tmLocalTime.tm_sec  = (short)(rem % 60);
 	rem /= 60;
 	tmLocalTime.tm_min  = (short)(rem % 60);
@@ -319,7 +319,7 @@ struct tm* localtime(time_t* timer)
 	tmLocalTime.tm_mon  = (short)(rem % 12);
 	rem /= 12;
 	tmLocalTime.tm_year = (short)(rem+1970);
-	
+
 	return &tmLocalTime;
 }
 
@@ -350,7 +350,7 @@ than current folder (concept not implemented in CE).
 FILE* wce_fopen(const char* fname, const char* fmode)
 {
 	char fullname[MAX_PATH+1];
-	
+
 	if(!fname || fname[0] == '\0')
 		return NULL;
 	if(fname[0] != '\\' && fname[0] != '/')
@@ -394,11 +394,11 @@ char* getenv(char* name)
 		return "";
 }
 
-void *bsearch(const void *key, const void *base, size_t nmemb, 
+void *bsearch(const void *key, const void *base, size_t nmemb,
 			  size_t size, int (*compar)(const void *, const void *)) {
 	size_t i;
 
-	for (i=0; i<nmemb; i++) 
+	for (i=0; i<nmemb; i++)
 		if (compar(key, (void*)((size_t)base + size * i)) == 0)
 			return (void*)((size_t)base + size * i);
 	return NULL;
@@ -408,7 +408,7 @@ void *bsearch(const void *key, const void *base, size_t nmemb,
 
 void *calloc(size_t n, size_t s) {
 	void *result = malloc(n * s);
-	if (result) 
+	if (result)
 		memset(result, 0, n * s);
 
 	return result;
@@ -417,7 +417,7 @@ void *calloc(size_t n, size_t s) {
 char *strpbrk(const char *s, const char *accept) {
 	int i;
 
-	if (!s || !accept) 
+	if (!s || !accept)
 		return NULL;
 
 	for (i=0; i<strlen(s); i++) {
@@ -632,8 +632,8 @@ long int strtol(const char *nptr, char **endptr, int base) {
 	sscanf(nptr, "%ld", &result);
 	return result;
 }
-		
+
 
 #endif
-		
+
 

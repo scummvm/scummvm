@@ -106,7 +106,7 @@ static void texture_memcpy64(void *dest, void *src, int cnt)
     d[4] = *s++;
     d[5] = *s++;
     d[6] = *s++;
-    d[7] = *s++;      
+    d[7] = *s++;
     asm("pref @%0" : : "r" (d));
     d += 8;
   }
@@ -224,7 +224,7 @@ void OSystem_Dreamcast::copyRectToScreen(const byte *buf, int pitch, int x, int 
 }
 
 bool OSystem_Dreamcast::showMouse(bool visible)
-{	
+{
   bool last = _ms_visible;
   _ms_visible = visible;
 
@@ -243,12 +243,12 @@ void OSystem_Dreamcast::setMouseCursor(const byte *buf, uint w, uint h,
 {
   _ms_cur_w = w;
   _ms_cur_h = h;
-  
+
   _ms_hotspot_x = hotspot_x;
   _ms_hotspot_y = hotspot_y;
 
   _ms_keycolor = keycolor;
-  
+
   if (_ms_buf)
     free(_ms_buf);
 
@@ -276,7 +276,7 @@ void OSystem_Dreamcast::updateScreen(void)
 
     // while((*((volatile unsigned int *)(void*)0xa05f810c) & 0x3ff) != 200);
     // *((volatile unsigned int *)(void*)0xa05f8040) = 0xff0000;
-  
+
     for( int y = 0; y<_screen_h; y++ )
     {
       texture_memcpy64_pal( dst, src, _screen_w>>5, palette );
@@ -318,11 +318,11 @@ void OSystem_Dreamcast::updateScreen(void)
     TA_TEXTUREMODE_STRIDE|TA_TEXTUREMODE_ADDRESS(screen_tx[_screen_buffer]);
 
   mypoly.red = mypoly.green = mypoly.blue = mypoly.alpha = 0;
-  
+
   ta_begin_frame();
   // *((volatile unsigned int *)(void*)0xa05f8040) = 0x0000ff;
   ta_commit_list(&mypoly);
-  
+
   myvertex.cmd = TA_CMD_VERTEX;
   myvertex.ocolour = 0;
   myvertex.colour = 0;
@@ -357,7 +357,7 @@ void OSystem_Dreamcast::updateScreen(void)
   } else {
     if(_overlay_fade > 0)
       _overlay_fade -= 0.125;
-  }   
+  }
 
   if(_overlay_fade > 0.0) {
 
@@ -372,11 +372,11 @@ void OSystem_Dreamcast::updateScreen(void)
       TA_POLYMODE2_U_SIZE_512|TA_POLYMODE2_V_SIZE_512;
     mypoly.texture = TA_TEXTUREMODE_ARGB4444|TA_TEXTUREMODE_NON_TWIDDLED|
       TA_TEXTUREMODE_ADDRESS(ovl_tx[_overlay_buffer]);
-    
+
     mypoly.red = mypoly.green = mypoly.blue = mypoly.alpha = 0.0;
 
     ta_commit_list(&mypoly);
-    
+
     myvertex.cmd = TA_CMD_VERTEX;
     myvertex.ocolour = 0;
     myvertex.colour = 0xffffff|(((int)(255*_overlay_fade))<<24);
@@ -398,7 +398,7 @@ void OSystem_Dreamcast::updateScreen(void)
     myvertex.u = 0.0;
     myvertex.v = OVL_H*(1.0/512.0);
     ta_commit_list(&myvertex);
-    
+
     myvertex.x += OVL_W*_xscale;
     myvertex.u = OVL_W*(1.0/512.0);
     myvertex.cmd |= TA_CMD_VERTEX_EOS;
@@ -453,7 +453,7 @@ void OSystem_Dreamcast::drawMouse(int xdraw, int ydraw, int w, int h,
     commit_dummy_transpoly();
     return;
   }
-  
+
   mypoly.cmd =
     TA_CMD_POLYGON|TA_CMD_POLYGON_TYPE_TRANSPARENT|TA_CMD_POLYGON_SUBLIST|
     TA_CMD_POLYGON_STRIPLENGTH_2|TA_CMD_POLYGON_PACKED_COLOUR|TA_CMD_POLYGON_TEXTURED;
@@ -466,9 +466,9 @@ void OSystem_Dreamcast::drawMouse(int xdraw, int ydraw, int w, int h,
     TA_TEXTUREMODE_ADDRESS(mouse_tx[_mouse_buffer]);
 
   mypoly.red = mypoly.green = mypoly.blue = mypoly.alpha = 0;
-  
+
   ta_commit_list(&mypoly);
-  
+
   myvertex.cmd = TA_CMD_VERTEX;
   myvertex.ocolour = 0;
   myvertex.colour = 0xffff00;
@@ -489,7 +489,7 @@ void OSystem_Dreamcast::drawMouse(int xdraw, int ydraw, int w, int h,
   myvertex.u = 0.0;
   myvertex.v = h*(1.0/MOUSE_H);
   ta_commit_list(&myvertex);
-    
+
   myvertex.x += w*_xscale;
   myvertex.u = w*(1.0/MOUSE_W);
   myvertex.cmd |= TA_CMD_VERTEX_EOS;

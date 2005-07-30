@@ -45,7 +45,7 @@ protected:
 	bool _isDirectory;
 	bool _isValid;
 	String _path;
-	
+
 public:
 	POSIXFilesystemNode();
 	POSIXFilesystemNode(const String &path);
@@ -64,11 +64,11 @@ public:
 static const char *lastPathComponent(const Common::String &str) {
 	const char *start = str.c_str();
 	const char *cur = start + str.size() - 2;
-	
+
 	while (cur > start && *cur != '/') {
 		--cur;
 	}
-	
+
 	return cur+1;
 }
 
@@ -84,7 +84,7 @@ POSIXFilesystemNode::POSIXFilesystemNode() {
 #ifndef __DC__
 	char buf[MAXPATHLEN];
 	getcwd(buf, MAXPATHLEN);
-	
+
 	_path = buf;
 	_displayName = lastPathComponent(_path);
 	_path += '/';
@@ -99,7 +99,7 @@ POSIXFilesystemNode::POSIXFilesystemNode() {
 POSIXFilesystemNode::POSIXFilesystemNode(const String &p) {
 	int len = 0, offset = p.size();
 	struct stat st;
-	
+
 	assert(offset > 0);
 
 	_path = p;
@@ -147,7 +147,7 @@ FSList POSIXFilesystemNode::listDir(ListMode mode) const {
 		// Skip 'invisible' files
 		if (dp->d_name[0] == '.')
 			continue;
-		
+
 		POSIXFilesystemNode entry;
 		entry._displayName = dp->d_name;
 		entry._path = _path;

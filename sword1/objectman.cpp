@@ -42,7 +42,7 @@ void ObjectMan::initialize(void) {
 
 	_liveList[128] = _liveList[129] = _liveList[130] = _liveList[131] = _liveList[133] =
 		_liveList[134] = _liveList[145] = _liveList[146] = _liveList[TEXT_sect] = 1;
-	
+
 	for (cnt = 0; cnt < TOTAL_SECTIONS; cnt++) {
 		if (_liveList[cnt])
 			_cptData[cnt] = (uint8*)_resMan->cptResOpen(_objectList[cnt]) + sizeof(Header);

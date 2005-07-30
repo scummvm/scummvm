@@ -85,6 +85,6 @@ private:
 	int  _openClus;
 };
 
-} // End of namespace Sword1 
+} // End of namespace Sword1
 
 #endif //RESMAN_H

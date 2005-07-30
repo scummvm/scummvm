@@ -332,7 +332,7 @@ struct Part {
 	void sendAll();
 	void sendPitchBend();
 	bool clearToTransmit();
-	
+
 	Part() {
 		memset(this,0,sizeof(Part));
 	}

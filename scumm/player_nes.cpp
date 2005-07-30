@@ -122,7 +122,7 @@ inline void Square0_CheckActive(void) {
 
 inline void Square0_Write(int Reg, byte Val) {
 	switch (Reg) {
-	case 0:	
+	case 0:
 		Square0.volume = Val & 0xF;
 		Square0.envelope = Val & 0x10;
 		Square0.wavehold = Val & 0x20;
@@ -130,7 +130,7 @@ inline void Square0_Write(int Reg, byte Val) {
 		Square0.Vol = Square0.envelope ? Square0.volume : Square0.Envelope;
 		break;
 
-	case 1:	
+	case 1:
 		Square0.swpstep = Val & 0x07;
 		Square0.swpdir = Val & 0x08;
 		Square0.swpspeed = (Val >> 4) & 0x7;
@@ -638,7 +638,7 @@ Player_NES::Player_NES(ScummEngine *scumm) {
 	APU_writeControl(0);
 
 	APUe::APU_Reset();
-	
+
 	_mixer->setupPremix(this);
 }
 
@@ -695,7 +695,7 @@ void Player_NES::startSound(int nr) {
 
 	int soundType = data[1];
 	int chan = data[0];
-	
+
 	if (chan == 4) {
 		if (_slot[2].framesleft)
 			return;
@@ -841,7 +841,7 @@ top:
 				_mchan[x].envflags = 0x30;
 				_mchan[x].volume = 0x6F;
 				_mchan[x].voldelta = 0;
-				
+
 				APU_writeChannel(x, 0, 0x00);
 				APU_writeChannel(x, 1, 0x7F);
 				APU_writeControl(APU_readStatus() | channelMask[x]);
@@ -956,7 +956,7 @@ top:
 				_mchan[x].envflags = 0x30;
 				_mchan[x].volume = 0x5F;
 				_mchan[x].voldelta = -22;
-				
+
 				APU_writeChannel(x, 0, 0x00);
 				APU_writeControl(APU_readStatus() | channelMask[x]);
 				APU_writeChannel(x, 2, _mchan[x].pitch & 0xF);
@@ -970,7 +970,7 @@ top:
 				_mchan[x].envflags = 0x30;
 				_mchan[x].volume = 0x5F;
 				_mchan[x].voldelta = -6;
-				
+
 				APU_writeChannel(x, 0, 0x00);
 				APU_writeControl(APU_readStatus() | channelMask[x]);
 				APU_writeChannel(x, 2, _mchan[x].pitch & 0xF);
@@ -1030,7 +1030,7 @@ top:
 
 			case 0x18:
 				_mchan[x].envflags = 0x70;
-				
+
 				chainCommand(x);
 				break;
 

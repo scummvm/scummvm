@@ -35,7 +35,7 @@ private:
 	static const char _mCodeNames[100][35];
 };
 
-} // End of namespace Sword1 
+} // End of namespace Sword1
 
 #endif // BSDEBUG_H
 

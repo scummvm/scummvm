@@ -37,22 +37,22 @@ public:
 
 	//! load a bank into the specified slot
 	void load(const char *bankname, uint32 bankslot);
-	
+
 	//! unpack a frame from a loaded bank
 	void unpack(uint32 srcframe, uint32 dstframe, uint32 bankslot);
-	
+
 	//! unpack a frame over an existing one from a loaded bank
 	void overpack(uint32 srcframe, uint32 dstframe, uint32 bankslot);
-	
+
 	//! close a bank
 	void close(uint32 bankslot);
-	
+
 	//! get a reference to unpacked frame
 	BobFrame *fetchFrame(uint32 index);
-	
+
 	//! erase a frame
 	void eraseFrame(uint32 index);
-	
+
 	//! erase all unpacked frames
 	void eraseFrames(bool joe);
 

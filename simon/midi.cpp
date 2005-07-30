@@ -42,7 +42,7 @@ MidiPlayer::MidiPlayer(OSystem *system) {
 	_driver = 0;
 	_map_mt32_to_gm = false;
 	_passThrough = false;
-	
+
 	_enable_sfx = true;
 	_current = 0;
 

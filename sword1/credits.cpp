@@ -98,8 +98,8 @@ void CreditsPlayer::play(void) {
 	uint8 *palSrc = credFile.fetchFile(FONT_PAL, &_palLen);
 	for (uint32 cnt = 0; cnt < _palLen; cnt++)
 		_palette[(cnt / 3) * 4 + cnt % 3] = palSrc[cnt];
-	_palLen /= 3;	
-    
+	_palLen /= 3;
+
 	generateFonts(&credFile);
 
 	uint8 *textData = credFile.fetchFile(TEXT);
@@ -165,7 +165,7 @@ void CreditsPlayer::play(void) {
 	free(_bigFont);
 	_smlFont = _bigFont = NULL;
 	free(screenBuf);
-	
+
 	// credits done, now show the revolution logo
 	uint8 *revoBuf = credFile.decompressFile(REVO_LOGO);
 	uint8 *revoPal = credFile.fetchFile(REVO_PAL, &_palLen);
@@ -214,7 +214,7 @@ void CreditsPlayer::renderLine(uint8 *screenBuf, uint8 *line, uint16 yBufPos, ui
 		font = _bigFont;
 		fntSize = 32;
 		flags &= ~FNT_BIG;
-	} else 
+	} else
 		font = _smlFont;
 
 	uint16 width = getWidth(font, line);

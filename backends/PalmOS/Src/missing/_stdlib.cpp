@@ -24,21 +24,21 @@
 
 void *bsearch(const void *key, const void *base, UInt32 nmemb, UInt32 size, int (*compar)(const void *, const void *)) {
 	Int32 position;
-	
+
 	if (SysBinarySearch(base, nmemb, size, (SearchFuncPtr)compar, key, 0, &position, true))
 		return (void *)((UInt32)base + size * position);
-	
+
 	return NULL;
 }
 
 long strtol(const char *s, char **endptr, int base) {
 	// WARNING : only base = 10 supported
 	long val = StrAToI(s);
-	
+
 	if (endptr) {
 		Char str[maxStrIToALen];
 		StrIToA(str, val);
-		
+
 		if (StrNCompare(s, str, StrLen(str)) == 0)
 			*endptr = (char *)s + StrLen(str);
 	}
@@ -65,18 +65,18 @@ Err free(MemPtr memP) {
 }
 
 MemPtr realloc(MemPtr oldP, UInt32 size) {
-	
+
 	if (oldP != NULL)
 		if (MemPtrResize(oldP,size) == 0)
 			return oldP;
 
 	MemPtr	newP = MemPtrNew(size);
-	
+
 	if (oldP!=NULL)
 	{
 		MemMove(newP,oldP,MemPtrSize(oldP));
 		MemPtrFree(oldP);
-	}	
+	}
 	return newP;
 }
 

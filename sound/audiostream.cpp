@@ -32,15 +32,15 @@ struct StreamFileFormat {
 	/** Decodername */
 	const char* decoderName;
 	const char* fileExtension;
-	/** 
+	/**
 	 * Pointer to a function which tries to open a file of type StreamFormat.
-	 * Return NULL in case of an error (invalid/nonexisting file). 
+	 * Return NULL in case of an error (invalid/nonexisting file).
 	 */
 	AudioStream* (*openStreamFile)(Common::File *file, uint32 size);
 };
 
-static const StreamFileFormat STREAM_FILEFORMATS[] = {	
-	/* decoderName,		fileExt, openStreamFuntion */ 
+static const StreamFileFormat STREAM_FILEFORMATS[] = {
+	/* decoderName,		fileExt, openStreamFuntion */
 #ifdef USE_FLAC
 	{ "Flac",			"flac", makeFlacStream },
 	{ "Flac",			"fla",  makeFlacStream },
@@ -60,7 +60,7 @@ AudioStream* AudioStream::openStreamFile(const char *filename)
 	char buffer[1024];
 	const uint len = strlen(filename);
 	assert(len+6 < sizeof(buffer)); // we need a bigger buffer if wrong
-	
+
 	memcpy(buffer, filename, len);
 	buffer[len] = '.';
 	char *ext = &buffer[len+1];
@@ -74,7 +74,7 @@ AudioStream* AudioStream::openStreamFile(const char *filename)
 		if (fileHandle->isOpen())
 			stream = STREAM_FILEFORMATS[i].openStreamFile(fileHandle, fileHandle->size());
 	}
-	
+
 	// Do not reference the file anymore. If the stream didn't incRef the file,
 	// the object will be deleted (and the file be closed).
 	fileHandle->decRef();
@@ -93,7 +93,7 @@ AudioStream* AudioStream::openStreamFile(const char *filename)
 
 /**
  * A simple raw audio stream, purely memory based. It operates on a single
- * block of data, which is passed to it upon creation. 
+ * block of data, which is passed to it upon creation.
  * Optionally supports looping the sound.
  *
  * Design note: This code tries to be as optimized as possible (without
@@ -129,7 +129,7 @@ public:
 		}
 		if (stereo)	// Stereo requires even sized data
 			assert(len % 2 == 0);
-		
+
 		_origPtr = autoFreeMemory ? ptr : 0;
 	}
 	~LinearMemoryStream() {
@@ -191,7 +191,7 @@ AudioStream *makeLinearInputStream(int rate, byte flags, const byte *ptr, uint32
 	const bool isUnsigned = (flags & Audio::Mixer::FLAG_UNSIGNED) != 0;
 	const bool isLE       = (flags & Audio::Mixer::FLAG_LITTLE_ENDIAN) != 0;
 	const bool autoFree   = (flags & Audio::Mixer::FLAG_AUTOFREE) != 0;
-	
+
 	if (isStereo) {
 		if (isUnsigned) {
 			MAKE_LINEAR(true, true);

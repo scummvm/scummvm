@@ -33,7 +33,7 @@ namespace CEGUI {
 		_toolbarMap.addKey(name);
 		_toolbarMap[name] = (Toolbar*)&toolbar;
 
-		
+
 		if (!_active) {
 			_active = &((Toolbar&)toolbar);
 			_current = name;
@@ -63,7 +63,7 @@ namespace CEGUI {
 			if (_offset > 240)
 				return _active->action(x / 2, (y - _offset) / 2, pushed);
 			else
-				return _active->action(x, y - _offset, pushed);			
+				return _active->action(x, y - _offset, pushed);
 		}
 		else
 			return false;

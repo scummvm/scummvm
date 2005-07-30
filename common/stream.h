@@ -40,12 +40,12 @@ public:
 	 * Returns true if any I/O failure occured.
 	 * This flag is never cleared automatically. In order to clear it,
 	 * client code has to call clearIOFailed() explicitly.
-	 * 
+	 *
 	 * @todo Instead of returning a plain bool, maybe we should define
 	 *       a list of error codes which can be returned here.
 	 */
 	virtual bool ioFailed() const { return false; }
-	
+
 	/**
 	 * Reset the I/O error status.
 	 */
@@ -114,7 +114,7 @@ public:
 	void writeSint32BE(int32 value) {
 		writeUint32BE((uint32)value);
 	}
-	
+
 	void writeString(const String &str);
 };
 
@@ -205,16 +205,16 @@ public:
  */
 class SeekableReadStream : public ReadStream {
 public:
-	
+
 	virtual uint32 pos() const = 0;
 	virtual uint32 size() const = 0;
 
 	virtual void seek(int32 offs, int whence = SEEK_SET) = 0;
-	
+
 	/**
 	 * Read one line of text from a CR or CR/LF terminated plain text file.
-	 * This method is a rough analog of the (f)gets function. 
-	 * 
+	 * This method is a rough analog of the (f)gets function.
+	 *
 	 * @param buf	the buffer to store into
 	 * @param bufSize	the size of the buffer
 	 * @return a pointer to the read string, or NULL if an error occured

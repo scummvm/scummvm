@@ -59,7 +59,7 @@ public:
 	virtual void setVolume(uint8 volume) = 0;
 	uint8 giveVolume(void) { return (uint8)_musicVolume; };
 	uint8 giveCurrentMusic(void) { return _currentMusic; };
-	
+
 protected:
 
 	Disk *_skyDisk;
@@ -77,7 +77,7 @@ protected:
 	Actions _onNextPoll;
 	ChannelBase *_channels[10];
 	Common::Mutex _mutex;
-	
+
 	virtual void setupPointers(void) = 0;
 	virtual void setupChannels(uint8 *channelData) = 0;
 

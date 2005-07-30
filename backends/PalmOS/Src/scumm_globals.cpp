@@ -105,7 +105,7 @@ static DmOpenRef GlbOpenInternal(const Char *nameP) {
 	if (dbID) {
 		UInt32 dbType, dbCreator;
 		Err e = DmDatabaseInfo(0, dbID, 0, 0, 0, 0, 0, 0, 0, 0, 0, &dbType, &dbCreator);
-		
+
 		if (!e && dbType == 'GLBS' && dbCreator == appFileCreator)
 			return DmOpenDatabase(0, dbID, dmModeReadOnly);
 	}

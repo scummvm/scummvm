@@ -108,5 +108,5 @@ private:
 };
 
 } // End of namespace Sword1
- 
+
 #endif //BSMOUSE_H

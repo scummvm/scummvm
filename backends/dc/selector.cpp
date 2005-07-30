@@ -79,7 +79,7 @@ void draw_solid_quad(float x1, float y1, float x2, float y2,
   myvertex.colour = c3;
   myvertex.x = x2;
   myvertex.cmd |= TA_CMD_VERTEX_EOS;
-  ta_commit_list(&myvertex);  
+  ta_commit_list(&myvertex);
 }
 
 void draw_trans_quad(float x1, float y1, float x2, float y2,
@@ -125,7 +125,7 @@ void draw_trans_quad(float x1, float y1, float x2, float y2,
   myvertex.colour = c3;
   myvertex.x = x2;
   myvertex.cmd |= TA_CMD_VERTEX_EOS;
-  ta_commit_list(&myvertex);  
+  ta_commit_list(&myvertex);
 }
 
 
@@ -198,7 +198,7 @@ static bool loadIcon(Game &game, Dir *dirs, int num_dirs)
   for(int i=0; i<num_dirs; i++)
     if(!strcmp(dirs[i].name, game.dir) &&
        dirs[i].deficon[0]) {
-      sprintf(icofn, "%s%s", game.dir, dirs[i].deficon);      
+      sprintf(icofn, "%s%s", game.dir, dirs[i].deficon);
       if(game.icon.load(icofn))
 	return true;
       break;
@@ -240,7 +240,7 @@ static int findGames(Game *games, int max)
 	    dirs[num_dirs].node = *entry;
 	    num_dirs++;
 	  }
-	} else 
+	} else
 	  if(isIcon(*entry))
 	    strcpy(dirs[curr_dir-1].deficon, entry->displayName().c_str());
 	  else if(curr_game < max &&
@@ -303,7 +303,7 @@ void waitForDisk()
       ta_txrelease(mark);
       return;
     }
-    
+
     ta_begin_frame();
 
     drawBackground();
@@ -347,11 +347,11 @@ int gameMenu(Game *games, int num_games)
       return -1;
 
     ta_begin_frame();
-    
+
     drawBackground();
-    
+
     ta_commit_end();
-    
+
     float y = 40.0;
     for(int i=top_game, cnt=0; cnt<10 && i<num_games; i++, cnt++) {
       int pal = 48+(i&15);
@@ -375,7 +375,7 @@ int gameMenu(Game *games, int num_games)
     setimask(15);
     event = handleInput(locked_get_pads(), mousex, mousey, shiftFlags);
     setimask(mask);
-    
+
     if(event==-OSystem::EVENT_LBUTTONDOWN || event==13 || event==319) {
       int selected_game = top_game + selector_pos;
 
@@ -384,15 +384,15 @@ int gameMenu(Game *games, int num_games)
 	unsigned int fade_colour = 0x00ffffff | ((255-fade)<<24);
 
 	ta_begin_frame();
-    
+
 	drawBackground();
-    
+
 	ta_commit_end();
-    
+
 	float y = 40.0;
 
 	if(fade < 256)
-	  for(int i=top_game, cnt=0; cnt<10 && i<num_games; 
+	  for(int i=top_game, cnt=0; cnt<10 && i<num_games;
 	      i++, cnt++, y += 40.0)
 	    if(cnt != selector_pos)
 	      drawGameLabel(games[i], 48+(i&15), 50.0, y, 0xffffff, fade);

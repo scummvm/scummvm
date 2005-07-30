@@ -102,7 +102,7 @@ struct VgaTimerEntry {
 };
 
 struct GameSpecificSettings;
-  
+
 class Debugger;
 
 class SimonEngine : public Engine {
@@ -111,7 +111,7 @@ class SimonEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
 protected:
 	void playSting(uint a);
-	
+
 	const byte *_vcPtr;								/* video code ptr */
 	uint16 _vc_get_out_of_code;
 
@@ -139,7 +139,7 @@ protected:
 	} SoundFormat;
 
 	Common::File *_gameFile;
-	
+
 	byte *_strippedTxtMem;
 	uint _textSize;
 	uint _stringTabNum, _stringTabPos, _stringtab_numalloc;
@@ -361,7 +361,7 @@ protected:
 	char _saveLoadName[32];
 
 	int _sdlMouseX, _sdlMouseY;
-	
+
 	byte *_sdl_buf_3;
 	byte *_sdl_buf;
 	byte *_sdl_buf_attached;

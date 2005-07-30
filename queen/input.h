@@ -97,7 +97,7 @@ private:
 		KEY_SPACE = ' ',
 		KEY_COMMA = ',',
 		KEY_DOT   = '.',
-		
+
 		KEY_DIGIT_1 = '1',
 		KEY_DIGIT_2 = '2',
 		KEY_DIGIT_3 = '3',
@@ -106,7 +106,7 @@ private:
 		KEY_ESCAPE    = 27,
 		KEY_RETURN    = 13,
 		KEY_BACKSPACE = 8,
-			
+
 		KEY_F1 = 282,
 		KEY_F11 = KEY_F1 + 10,
 		KEY_F5 = KEY_F1 + 4,
@@ -116,7 +116,7 @@ private:
 	enum {
 		LANGUAGE_COUNT = 6
 	};
-		
+
 	//! used to get keyboard and mouse events
 	OSystem *_system;
 
@@ -138,7 +138,7 @@ private:
 	//! set if a dialogue is running
 	bool _dialogueRunning;
 
-	//! moved Talk::_quit here 
+	//! moved Talk::_quit here
 	bool _talkQuit;
 
 	//! set if quicksave requested
@@ -167,7 +167,7 @@ private:
 
 	//! command keys for all languages
 	static const char *_commandKeys[LANGUAGE_COUNT];
-		
+
 	//! verbs matching the command keys
 	static const Verb _verbKeys[8];
 };

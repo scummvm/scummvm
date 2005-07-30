@@ -3,7 +3,7 @@
 #include "common/stdafx.h"
 #include "common/list.h"
 
-class ListTestSuite : public CxxTest::TestSuite 
+class ListTestSuite : public CxxTest::TestSuite
 {
 	public:
 	void test_isEmpty_clear( void )
@@ -26,10 +26,10 @@ class ListTestSuite : public CxxTest::TestSuite
 		list.push_back(17);
 		list.push_back(33);
 		list.push_back(-11);
-		
+
 		// Iterate over the list and verify that we encounter the elements in
 		// the order we expect them to be.
-		
+
 		iter = list.begin();
 
 		TS_ASSERT( *iter == 17 );
@@ -56,16 +56,16 @@ class ListTestSuite : public CxxTest::TestSuite
 		list.push_back(17);
 		list.push_back(33);
 		list.push_back(-11);
-		
+
 		// Iterate to after the second element
 		iter = list.begin();
 		++iter;
 		++iter;
-		
+
 		// Now insert some values here
 		list.insert(iter, 42);
 		list.insert(iter, 43);
-		
+
 		iter = list.begin();
 
 		TS_ASSERT( *iter == 17 );

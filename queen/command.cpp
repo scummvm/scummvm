@@ -83,7 +83,7 @@ void CmdText::setVerb(Verb v) {
 void CmdText::addLinkWord(Verb v) {
 	if (_isReversed) {
 		char temp[MAX_COMMAND_LEN];
-		
+
 		strcpy(temp, _command);
 		strcpy(_command, _vm->logic()->verbName(v));
 		strcat(_command, " ");
@@ -97,7 +97,7 @@ void CmdText::addLinkWord(Verb v) {
 void CmdText::addObject(const char *objName) {
 	if (_isReversed) {
 		char temp[MAX_COMMAND_LEN];
-		
+
 		strcpy(temp, _command);
 		strcpy(_command, objName);
 		strcat(_command, " ");
@@ -116,7 +116,7 @@ void CmdState::init() {
 	commandLevel = 1;
 	oldVerb = verb = action = VERB_NONE;
 	oldNoun = noun = subject[0] = subject[1] = 0;
-	
+
 	selAction = VERB_NONE;
 	selNoun = 0;
 }
@@ -242,7 +242,7 @@ void Command::executeCurrentAction() {
 	}
 }
 
-void Command::updatePlayer() {	
+void Command::updatePlayer() {
 	if (_vm->logic()->joeWalk() != JWM_MOVE) {
 		int16 cx = _vm->input()->mousePosX();
 		int16 cy = _vm->input()->mousePosY();
@@ -287,7 +287,7 @@ void Command::readCommandsFrom(byte *&ptr) {
 			_cmdList[i].readFromBE(ptr);
 		}
 	}
-	
+
 	_numCmdArea = READ_BE_UINT16(ptr); ptr += 2;
 	_cmdArea = new CmdArea[_numCmdArea + 1];
 	if (_numCmdArea == 0) {
@@ -423,8 +423,8 @@ int16 Command::executeCommand(uint16 comId, int16 condResult) {
 	}
 
 	// don't play music on an OPEN/CLOSE command - in case the command fails
-	if (_state.selAction != VERB_NONE && 
-		_state.selAction != VERB_OPEN && 
+	if (_state.selAction != VERB_NONE &&
+		_state.selAction != VERB_OPEN &&
 		_state.selAction != VERB_CLOSE) {
 		// only play song if it's a PLAY BEFORE type
 		if (com->song > 0) {
@@ -498,7 +498,7 @@ int16 Command::makeJoeWalkTo(int16 x, int16 y, int16 objNum, Verb v, bool mustWa
 			p = _vm->walk()->moveJoe(facing, x, y, false);
 			if (p != 0) {
 				_vm->logic()->newRoom(0); // cancel makeJoeWalkTo, that should be equivalent to cr10 fix
-			}			
+			}
 		}
 	}
 	return p;
@@ -548,7 +548,7 @@ void Command::grabSelectedObject(int16 objNum, uint16 objState, uint16 objName) 
 	} else if (_state.action == VERB_GIVE && _state.commandLevel == 1) {
 		// command not fully constructed
 		_state.commandLevel = 2;
-		_cmdText.addLinkWord(VERB_PREP_TO);		 
+		_cmdText.addLinkWord(VERB_PREP_TO);
 		_cmdText.display(INK_CMD_NORMAL);
 		_parse = false;
 	} else {
@@ -578,7 +578,7 @@ void Command::grabSelectedItem() {
 		(_vm->input()->keyVerb() != VERB_NONE && _state.verb != VERB_NONE)) {
 		if (_state.action == VERB_NONE) {
 			if (_vm->input()->keyVerb() != VERB_NONE) {
-				// We've selected via the keyboard, no command is being 
+				// We've selected via the keyboard, no command is being
 				// constructed, so we shall find the item's default
 				_state.verb = State::findDefaultVerb(id->state);
 				if (_state.verb == VERB_NONE) {
@@ -588,8 +588,8 @@ void Command::grabSelectedItem() {
 				}
 				_state.action = _state.verb;
 			} else {
-				// Action>0 ONLY if command has been constructed 
-				// Left Mouse Button pressed just do Look At     
+				// Action>0 ONLY if command has been constructed
+				// Left Mouse Button pressed just do Look At
 				_state.action = VERB_LOOK_AT;
 				_cmdText.setVerb(VERB_LOOK_AT);
 			}
@@ -631,7 +631,7 @@ void Command::grabSelectedNoun() {
 
 	if (_state.verb == VERB_NONE) {
 		if (_mouseKey == Input::MOUSE_LBUTTON) {
-			if ((_state.commandLevel != 2 && _state.action == VERB_NONE) || 
+			if ((_state.commandLevel != 2 && _state.action == VERB_NONE) ||
 				(_state.commandLevel == 2 && _parse)) {
 					_state.verb = VERB_WALK_TO;
 					_state.action = VERB_WALK_TO;
@@ -682,7 +682,7 @@ void Command::grabSelectedVerb() {
 }
 
 bool Command::executeIfCutaway(const char *description) {
-	if (strlen(description) > 4 && 
+	if (strlen(description) > 4 &&
 		scumm_stricmp(description + strlen(description) - 4, ".cut") == 0) {
 
 		_vm->display()->clearTexts(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
@@ -699,7 +699,7 @@ bool Command::executeIfCutaway(const char *description) {
 }
 
 bool Command::executeIfDialog(const char *description) {
-	if (strlen(description) > 4 && 
+	if (strlen(description) > 4 &&
 		scumm_stricmp(description + strlen(description) - 4, ".dog") == 0) {
 
 		_vm->display()->clearTexts(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
@@ -724,7 +724,7 @@ bool Command::handleWrongAction() {
 	uint16 roomData = _vm->logic()->currentRoomData();
 
 	// select without a command or WALK TO ; do a WALK
-	if ((_state.selAction == VERB_WALK_TO || _state.selAction == VERB_NONE) && 
+	if ((_state.selAction == VERB_WALK_TO || _state.selAction == VERB_NONE) &&
 		(_state.selNoun > objMax || _state.selNoun == 0)) {
 		if (_state.selAction == VERB_NONE) {
 			_vm->display()->clearTexts(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
@@ -841,7 +841,7 @@ void Command::sayInvalidAction(Verb action, int16 subj1, int16 subj2) {
 			}
 		}
 		break;
-		
+
 	default:
 		break;
 	}
@@ -923,7 +923,7 @@ void Command::openOrCloseAssociatedObject(Verb action, int16 otherObj) {
 				break;
 			}
 		}
-	}	
+	}
 
 	if (com != 0) {
 
@@ -954,7 +954,7 @@ void Command::openOrCloseAssociatedObject(Verb action, int16 otherObj) {
 
 int16 Command::setConditions(uint16 command, bool lastCmd) {
 	debug(9, "Command::setConditions(%d, %d)", command, lastCmd);
-	
+
 	int16 ret = 0;
 	uint16 cmdState[21];
 	memset(cmdState, 0, sizeof(cmdState));
@@ -1047,7 +1047,7 @@ void Command::setObjects(uint16 command) {
 					objData->name = 0;
 					if (objData->room == _vm->logic()->currentRoom()) {
 						if (dstObj != _state.subject[0]) {
-							// if the new object we have updated is on screen and is not the 
+							// if the new object we have updated is on screen and is not the
 							// current object, then we can update. This is because we turn
 							// current object off ourselves by COM_LIST(com, 8)
 							if (objData->image != -3 && objData->image != -4) {
@@ -1084,7 +1084,7 @@ void Command::setObjects(uint16 command) {
 				// hide the object
 				if (objData->name > 0) {
 					objData->name = -objData->name;
-					// may need to turn BOBs off for objects to be hidden on current 
+					// may need to turn BOBs off for objects to be hidden on current
 					// screen ! if the new object we have updated is on screen and
 					// is not current object then update it
 					_vm->graphics()->refreshObject(dstObj);

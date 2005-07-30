@@ -103,10 +103,10 @@ struct Area {
 		uint16 dy = box.yDiff();
 		int16 ds = scaleDiff();
 		uint16 scale = 0;
-		
+
 		if (dy)	// Prevent division-by-zero
 			scale = ((((y - box.y1) * 100) / dy) * ds) / 100 + bottomScaleFactor;
-		
+
 		if (scale == 0)
 			scale = 100;
 
@@ -314,7 +314,7 @@ struct ItemData {
 	uint16 description;
 	//! state of the object
 	uint16 state;
-	//! bank bobframe 
+	//! bank bobframe
 	uint16 frame;
 	//! entry in OBJECT_DESCR (>0 if available)
 	int16 sfxDescription;
@@ -372,7 +372,7 @@ struct ActorData {
 		anim = READ_BE_UINT16(ptr); ptr += 2;
 		bankNum = READ_BE_UINT16(ptr); ptr += 2;
 		file = READ_BE_UINT16(ptr); ptr += 2;
-		// Fix the actor data (see queen.c - l.1518-1519). When there is no 
+		// Fix the actor data (see queen.c - l.1518-1519). When there is no
 		// valid actor file, we must load the data from the objects room bank.
 		// This bank has number 15 (not 10 as in the data files).
 		if (file == 0) {
@@ -555,7 +555,7 @@ struct TalkSelected {
 		hasTalkedTo = READ_BE_UINT16(ptr) != 0; ptr += 2;
 		for (int i = 0; i < 4; i++) {
 			values[i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
-		}	
+		}
 	}
 
 	void writeToBE(byte *&ptr) {

@@ -69,7 +69,7 @@ public:
 		/** loop the audio */
 		FLAG_LOOP = 1 << 6
 	};
-	
+
 	enum SoundType {
 		kPlainSoundType = 0,
 
@@ -77,7 +77,7 @@ public:
 		kSFXSoundType = 2,
 		kSpeechSoundType = 3
 	};
-	
+
 	enum {
 		kMaxChannelVolume = 255,
 		kMaxMixerVolume = 256
@@ -98,7 +98,7 @@ private:
 	int _volumeForSoundType[4];
 
 	bool _paused;
-	
+
 	uint32 _handleSeed;
 	Channel *_channels[NUM_CHANNELS];
 

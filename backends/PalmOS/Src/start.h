@@ -19,7 +19,7 @@
  * $Header$
  *
  */
- 
+
 #ifndef __START_H__
 #define __START_H__
 
@@ -33,7 +33,7 @@ typedef	struct {
 
 	//skin params
 	SkinInfoType skin;	//	card where is located the skin
-	Boolean soundClick;	
+	Boolean soundClick;
 	//
 	Boolean vibrator;
 	Boolean autoOff;
@@ -56,7 +56,7 @@ typedef	struct {
 	Boolean copyProtection;
 	Boolean arm;
 	Boolean altIntro;
-	
+
 	struct {
 		Boolean enable;
 		UInt8 mode;

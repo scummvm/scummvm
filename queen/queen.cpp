@@ -98,7 +98,7 @@ DetectedGameList Engine_QUEEN_detectGames(const FSList &fslist) {
 				Common::File dataFile;
 				dataFile.open(file->path().c_str());
 				assert(dataFile.isOpen());
-				
+
 				if (0 == scumm_stricmp("queen.1", gameName)) {	//an unmodified file
 					detectedGames.push_back(determineTarget(dataFile.size()));
 				} else if (0 == scumm_stricmp("queen.1c", gameName)) { //oh joy, it's a rebuilt file
@@ -172,7 +172,7 @@ void QueenEngine::checkOptionSettings() {
 	if (!_sound->speechOn()) {
 		_subtitles = true;
 	}
-	
+
 	// demo and interview versions don't have speech at all
 	if (_sound->speechOn() && (_resource->isDemo() || _resource->isInterview())) {
 		_sound->speechToggle(false);
@@ -214,7 +214,7 @@ void QueenEngine::update(bool checkPlayerInput) {
 	}
 	BobSlot *joe = _graphics->bob(0);
 	_display->update(joe->active, joe->x, joe->y);
-	
+
 	_input->checkKeys();
 	if (_input->debugger()) {
 		_input->debuggerReset();
@@ -429,7 +429,7 @@ int QueenEngine::init(GameDetector &detector) {
 		driver = MidiDriver_ADLIB_create(_mixer);
 	else if (ConfMan.getBool("native_mt32") || (midiDriver == MD_MT32))
 		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-		
+
 	_music = new Music(driver, this);
 	_music->hasNativeMT32(ConfMan.getBool("native_mt32") || (midiDriver == MD_MT32));
 

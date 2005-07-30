@@ -37,7 +37,7 @@ typedef int32 int32_t;
 
 typedef uint8 uint8_t;
 typedef uint16 uint16_t;
-typedef uint32 uint32_t; 
+typedef uint32 uint32_t;
 
 extern "C" {
 	#include <mpeg2dec/mpeg2.h>
@@ -73,7 +73,7 @@ class BaseAnimationState {
 protected:
 	const int _movieWidth;
 	const int _movieHeight;
-	
+
 	Audio::Mixer *_snd;
 	OSystem *_sys;
 

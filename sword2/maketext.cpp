@@ -357,7 +357,7 @@ void FontRenderer::copyChar(FrameHeader *charPtr, byte *spritePtr, uint16 sprite
 			// Apparently overlapping is never considered here?
 			memcpy(dest, source, charPtr->width);
 			source += charPtr->width;
-		}			
+		}
 		rowPtr += spriteWidth;
 	}
 }
@@ -435,7 +435,7 @@ uint32 FontRenderer::buildNewBloc(byte *ascii, int16 x, int16 y, uint16 width, u
 			x = text_left_margin;
 		else if (x > text_right_margin)
 			x = text_right_margin;
-			
+
 		// Move if too high or too low
 
 		if (y < text_top_margin)

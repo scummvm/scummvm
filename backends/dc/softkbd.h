@@ -32,7 +32,7 @@ class OSystem_Dreamcast;
 class SoftKeyboard : public Interactive
 {
  private:
- 
+
   const OSystem_Dreamcast *os;
   Label labels[2][SK_NUM_KEYS];
   byte shiftState;

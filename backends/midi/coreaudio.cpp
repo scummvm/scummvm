@@ -37,7 +37,7 @@
 
 
 // Enable the following switch to make ScummVM try to use native MIDI hardware
-// on your computer for MIDI output. This is currently quite hackish, in 
+// on your computer for MIDI output. This is currently quite hackish, in
 // particular you have no way to specify which device is used (it just always
 // uses the first output device it can find), nor is there a switch to
 // force it to use the soft synth instead of the MIDI HW.
@@ -89,8 +89,8 @@ int MidiDriver_CORE::open() {
 	int dests = MIDIGetNumberOfDestinations();
 	if (dests > 0 && mClient) {
 		mDest = MIDIGetDestination(0);
-		err = MIDIOutputPortCreate( mClient, 
-									CFSTR("scummvm_output_port"), 
+		err = MIDIOutputPortCreate( mClient,
+									CFSTR("scummvm_output_port"),
 									&mOutPort);
 	}
 #endif
@@ -99,7 +99,7 @@ int MidiDriver_CORE::open() {
 		AudioUnitConnection auconnect;
 		ComponentDescription compdesc;
 		Component compid;
-	
+
 		// Open the Music Device.
 		// We use the AudioUnit v1 API, even though it is deprecated, because
 		// this way we stay compatible with older OS X versions.
@@ -111,10 +111,10 @@ int MidiDriver_CORE::open() {
 		compdesc.componentFlagsMask = 0;
 		compid = FindNextComponent(NULL, &compdesc);
 		au_MusicDevice = static_cast<AudioUnit>(OpenComponent(compid));
-		
+
 		if (au_MusicDevice == 0)
 			error("Failed opening CoreAudio music device");
-	
+
 		// Load custom soundfont, if specified
 		// FIXME: This is kind of a temporary hack. Better (IMO) would be to
 		// query QuickTime for whatever custom soundfont was set in the
@@ -123,13 +123,13 @@ int MidiDriver_CORE::open() {
 			FSRef	fsref;
 			FSSpec	fsSpec;
 			const char *soundfont = ConfMan.get("soundfont").c_str();
-		
+
 			err = FSPathMakeRef ((const byte *)soundfont, &fsref, NULL);
-	
+
 			if (err == noErr) {
 				err = FSGetCatalogInfo (&fsref, kFSCatInfoNone, NULL, NULL, &fsSpec, NULL);
 			}
-		
+
 			if (err == noErr) {
 				err = AudioUnitSetProperty (
 					au_MusicDevice,
@@ -138,16 +138,16 @@ int MidiDriver_CORE::open() {
 					&fsSpec, sizeof(fsSpec)
 				);
 			}
-	
+
 			if (err != noErr)
 				warning("Failed loading custom sound font '%s' (error %d)\n", soundfont, err);
 		}
-	
+
 		// open the output unit
 		au_output = (AudioUnit) OpenDefaultComponent(kAudioUnitComponentType, kAudioUnitSubType_Output);
 		if (au_output == 0)
 			error("Failed opening output audio unit");
-	
+
 		// connect the units
 		auconnect.sourceAudioUnit = au_MusicDevice;
 		auconnect.sourceOutputNumber = 0;
@@ -155,20 +155,20 @@ int MidiDriver_CORE::open() {
 		err =
 			AudioUnitSetProperty(au_output, kAudioUnitProperty_MakeConnection, kAudioUnitScope_Input, 0,
 													 (void *)&auconnect, sizeof(AudioUnitConnection));
-	
+
 	#ifdef COREAUDIO_DISABLE_REVERB
 		UInt32 usesReverb = 0;
 		AudioUnitSetProperty (au_MusicDevice, kMusicDeviceProperty_UsesInternalReverb,
 			kAudioUnitScope_Global,    0, &usesReverb, sizeof (usesReverb));
 	#endif
-	
+
 		// initialize the units
 		AudioUnitInitialize(au_MusicDevice);
 		AudioUnitInitialize(au_output);
-	
+
 		// start the output
 		AudioOutputUnitStart(au_output);
-	
+
 	}
 
 	return 0;
@@ -184,7 +184,7 @@ void MidiDriver_CORE::close() {
 	} else {
 		// Stop the output
 		AudioOutputUnitStop(au_output);
-	
+
 		// Cleanup
 		CloseComponent(au_output);
 		au_output = 0;
@@ -201,15 +201,15 @@ void MidiDriver_CORE::send(uint32 b) {
 	if (mOutPort && mDest) {
 		MIDIPacketList packetList;
 		MIDIPacket *packet = &packetList.packet[0];
-		
+
 		packetList.numPackets = 1;
-	
+
 		packet->timeStamp = 0;
 		packet->length = 3;
 		packet->data[0] = status_byte;
 		packet->data[1] = first_byte;
 		packet->data[2] = second_byte;
-	
+
 		MIDISend(mOutPort, mDest, &packetList);
 	} else {
 		assert(au_output != NULL);
@@ -219,18 +219,18 @@ void MidiDriver_CORE::send(uint32 b) {
 }
 
 void MidiDriver_CORE::sysEx(byte *msg, uint16 length) {
-	
+
 	if (mOutPort && mDest) {
 		byte buf[384];
 		MIDIPacketList *packetList = (MIDIPacketList *)buf;
 		MIDIPacket *packet = packetList->packet;
 
 		assert(sizeof(buf) >= sizeof(UInt32) + sizeof(MIDITimeStamp) + sizeof(UInt16) + length + 2);
-		
+
 		packetList->numPackets = 1;
 
 		packet->timeStamp = 0;
-		
+
 		// Add SysEx frame if missing
 		if (*msg != 0xF0) {
 			packet->length = length + 2;
@@ -241,7 +241,7 @@ void MidiDriver_CORE::sysEx(byte *msg, uint16 length) {
 			packet->length = length;
 			memcpy(packet->data, msg, length);
 		}
-	
+
 		MIDISend(mOutPort, mDest, packetList);
 	} else {
 		assert(au_output != NULL);

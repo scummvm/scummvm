@@ -271,7 +271,7 @@ static const ScummGameSettings scumm_settings[] = {
 	{"zoodemo", "Putt-Putt Saves the Zoo (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
 
-	// Humongous Entertainment Scumm Version 8.0 ?  Scummsrc.80 
+	// Humongous Entertainment Scumm Version 8.0 ?  Scummsrc.80
 	{"ff2-demo", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Demo)", GID_FREDDI2, 6, 80, MDT_NONE,
 	GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows, 0, 0},
 	{"freddi2", "Freddi Fish 2: The Case of the Haunted Schoolhouse", GID_FREDDI2, 6, 80, MDT_NONE,
@@ -344,7 +344,7 @@ static const ScummGameSettings scumm_settings[] = {
 	{"f4-demo", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Demo)", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985 | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows, 0, 0},
 
-	// Engine moved to c++ 
+	// Engine moved to c++
 	// Humongous Entertainment Scumm Version 9.9 ?  Scummsys.99
 	{"smaller", "Pajama Sam's Lost & Found (Test)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS, Common::kPlatformWindows, 0, 0},
@@ -1277,7 +1277,7 @@ ScummEngine::~ScummEngine() {
 
 	free(_palManipPalette);
 	free(_palManipIntermediatePal);
-	
+
 	res.freeResources();
 
 	free(_objectStateTable);
@@ -1299,7 +1299,7 @@ ScummEngine::~ScummEngine() {
 	delete _debugger;
 }
 
-ScummEngine_v4::ScummEngine_v4(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex) 
+ScummEngine_v4::ScummEngine_v4(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
 	: ScummEngine_v5(detector, syst, gs, md5sum, substResFileNameIndex) {
 	_resourceHeaderSize = 6;
 }
@@ -1313,11 +1313,11 @@ ScummEngine_v3old::ScummEngine_v3old(GameDetector *detector, OSystem *syst, cons
 	_resourceHeaderSize = 4;
 }
 
-ScummEngine_v2::ScummEngine_v2(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex) 
+ScummEngine_v2::ScummEngine_v2(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
 	: ScummEngine_v3old(detector, syst, gs, md5sum, substResFileNameIndex) {
 }
 
-ScummEngine_c64::ScummEngine_c64(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex) 
+ScummEngine_c64::ScummEngine_c64(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
 	: ScummEngine_v2(detector, syst, gs, md5sum, substResFileNameIndex) {
 }
 
@@ -1345,7 +1345,7 @@ ScummEngine_v6::ScummEngine_v6(GameDetector *detector, OSystem *syst, const Scum
 #ifndef DISABLE_HE
 ScummEngine_v70he::ScummEngine_v70he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
 	: ScummEngine_v60he(detector, syst, gs, md5sum, substResFileNameIndex) {
-	if (_platform == Common::kPlatformMacintosh && (_heversion >= 72 && _heversion <= 73)) 
+	if (_platform == Common::kPlatformMacintosh && (_heversion >= 72 && _heversion <= 73))
 		_resExtractor = new MacResExtractor(this);
 	else
 		_resExtractor = new Win32ResExtractor(this);
@@ -1477,7 +1477,7 @@ int ScummEngine::init(GameDetector &detector) {
 
 	// Create the sound manager
 	_sound = new Sound(this);
-	
+
 	// Setup the music engine
 	setupMusic(_midi);
 
@@ -1498,7 +1498,7 @@ int ScummEngine::init(GameDetector &detector) {
 		_charset = new CharsetRendererV2(this, _language);
 	else if (_version == 3)
 		_charset = new CharsetRendererV3(this);
-#ifndef DISABLE_SCUMM_7_8		
+#ifndef DISABLE_SCUMM_7_8
 	else if (_version == 8)
 		_charset = new CharsetRendererNut(this);
 #endif
@@ -1551,7 +1551,7 @@ int ScummEngine::init(GameDetector &detector) {
 		_numActors = 62;
 	else if (_heversion >= 72)
 		_numActors = 30;
-	else 
+	else
 		_numActors = 13;
 
 	if (_version >= 7)
@@ -1688,13 +1688,13 @@ void ScummEngine::scummInit() {
 
 	if (_version > 3 && _version < 8)
 		loadCharset(1);
-	
+
 	if (_features & GF_OLD_BUNDLE)
 		loadCharset(0);	// FIXME - HACK ?
 
 	setShake(0);
 	setupCursor();
-	
+
 	// Allocate and Initialize actors
 	Actor::initActorClass(this);
 	_actors = new Actor[_numActors];
@@ -1702,7 +1702,7 @@ void ScummEngine::scummInit() {
 	for (i = 0; i < _numActors; i++) {
 		_actors[i]._number = i;
 		_actors[i].initActor(1);
-	
+
 		// this is from IDB
 		if ((_version == 1) || (_gameId == GID_MANIAC && _demoMode))
 			_actors[i].setActorCostume(i);
@@ -1848,7 +1848,7 @@ void ScummEngine_v60he::scummInit() {
 	ScummEngine::scummInit();
 
 	// HACK cursor hotspot is wrong
-	// Original games used 
+	// Original games used
 	// setCursorHotspot(8, 7);
 	if (_gameId == GID_FUNPACK)
 		setCursorHotspot(16, 16);
@@ -1916,7 +1916,7 @@ void ScummEngine::setupMusic(int midi) {
 	// FIXME: MD_TOWNS should not be _midi_native in the first place!! iMuse code needs to be restructured.
 	if ((_gameId == GID_TENTACLE) || (_gameId == GID_SAMNMAX) || (_midiDriver == MD_TOWNS))
 		_enable_gs = false;
-	else 
+	else
 		_enable_gs = ConfMan.getBool("enable_gs");
 
 #ifndef __GP32__ //ph0x FIXME, "quick dirty hack"
@@ -2013,7 +2013,7 @@ int ScummEngine::go() {
 	if (_saveLoadFlag != 2 || !loadState(_saveLoadSlot, _saveTemporaryState)) {
 		int args[16];
 		memset(args, 0, sizeof(args));
-		args[0] = _bootParam;	
+		args[0] = _bootParam;
 
 		_saveLoadFlag = 0;
 #ifndef DISABLE_HE
@@ -2050,7 +2050,7 @@ int ScummEngine::go() {
 			// TODO: Maybe perform an autosave on exit?
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -2217,7 +2217,7 @@ load_game:
 			// Display "Save successful" message, except for auto saves
 			char buf[256];
 			snprintf(buf, sizeof(buf), "Successfully saved game state in file:\n\n%s", filename);
-	
+
 			GUI::TimedMessageDialog dialog(buf, 1500);
 			runDialog(dialog);
 		}
@@ -2274,7 +2274,7 @@ load_game:
 	if (_saveLoadFlag && _saveLoadFlag != 1) {
 		goto load_game;
 	}
-	
+
 	if (_currentRoom == 0) {
 		if (_version > 3)
 			CHARSET_1();
@@ -2306,7 +2306,7 @@ load_game:
 			((ScummEngine_v90he *)this)->_sprite->sortActiveSprites();
 		}
 #endif
-	
+
 		setActorRedrawFlags();
 		resetActorBgs();
 
@@ -2318,7 +2318,7 @@ load_game:
 		}
 
 		processActors();
-		
+
 		_fullRedraw = false;
 
 		if (_version >= 4 && _heversion <= 61)
@@ -2357,7 +2357,7 @@ load_game:
 	}
 
 	animateCursor();
-	
+
 	/* show or hide mouse */
 	_system->showMouse(_cursor.state > 0);
 
@@ -2428,7 +2428,7 @@ void ScummEngine::restart() {
 	// Re-run bootscript
 	int args[16];
 	memset(args, 0, sizeof(args));
-	args[0] = _bootParam;	
+	args[0] = _bootParam;
 	if (_gameId == GID_MANIAC && _demoMode)
 		runScript(9, 0, 0, args);
 	else
@@ -2460,7 +2460,7 @@ int ScummEngine::runDialog(Dialog &dialog) {
 	// Resume sound & video
 	_sound->pauseSounds(old_soundsPaused);
 	_smushPaused = oldSmushPaused;
-	
+
 	// Return the result
 	return result;
 }
@@ -2577,7 +2577,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 	StringSet fileSet;
 
 	for (g = scumm_settings; g->name; ++g) {
-		// Determine the 'detectname' for this game, that is, the name of a 
+		// Determine the 'detectname' for this game, that is, the name of a
 		// file that *must* be presented if the directory contains the data
 		// for this game. For example, FOA requires atlantis.000
 		const char *base = g->baseFilename ? g->baseFilename : g->name;
@@ -2622,15 +2622,15 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 							if (!tmp.open(file->path().c_str()))
 								break;
 							tmp.read(buf, 6);
-	
+
 							if (buf[0] == 0xCE && buf[1] == 0xF5) {
 								// Looks like V1. However, we currently do not distinguish between V1 and V2
 								// in the scumm_settings list.
 								if (g->version != 1 && g->version != 2)
 									break;
-	
+
 								// Candidates: maniac clasic, zak classic
-								
+
 								// TODO: Maybe we can use the filesize to distinguish these two?
 								// English V1 Zak: 1896 bytes
 								// English V1 MM:  1972 bytes
@@ -2644,35 +2644,35 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 								/*
 								TODO: MIght be possible to distinguish those by the script count.
 								Specifically, my versions of these games have this in their headers:
-	
+
 								Loom (en; de; en demo; en MAC):
 								_numGlobalObjects 1000
 								_numRooms 100
 								_numCostumes 200
 								_numScripts 200
 								_numSounds 80
-								
+
 								Indy3EGA (en PC; en Mac; en demo):
 								_numGlobalObjects 1000
 								_numRooms 99
 								_numCostumes 129
 								_numScripts 139
 								_numSounds 84
-								
+
 								MM (en; de):
 								_numGlobalObjects 780
 								_numRooms 61
 								_numCostumes 40
 								_numScripts 179
 								_numSounds 120
-								
+
 								Zak (de; en demo):
 								_numGlobalObjects 780
 								_numRooms 61
 								_numCostumes 40
 								_numScripts 155
 								_numSounds 120
-								
+
 								So, they all have a different number of scripts.
 								*/
 							} else if (buf[4] == '0' && buf[5] == 'R') {
@@ -2685,23 +2685,23 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 								and know their MD5s, we could simply rely on this and
 								if we find something which has an unknown MD5, assume
 								that it is an (so far unknown) version of Indy3.
-								
+
 								We can combin this with a look at the resource headers:
-								
+
 								Indy3:
 								_numGlobalObjects 1000
 								_numRooms 99
 								_numCostumes 129
 								_numScripts 139
 								_numSounds 84
-								
+
 								Indy3Towns, ZakTowns, ZakLoom demo:
 								_numGlobalObjects 1000
 								_numRooms 99
 								_numCostumes 199
 								_numScripts 199
 								_numSounds 199
-								
+
 								Assuming that all the town variants look like the latter, we can
 								do the chceck like this:
 								  if (numScripts == 139)
@@ -2746,25 +2746,25 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 								break;
 							}
 						}
-					
+
 						// Match found, add to list of candidates, then abort inner loop.
 						if (substLastIndex > 0 && // HE Mac versions.
 							(substResFileNameTable[substLastIndex].genMethod == kGenMac ||
 							 substResFileNameTable[substLastIndex].genMethod == kGenMacNoParens)) {
-							detectedGames.push_back(DetectedGame(g->toGameSettings(), 
-																 Common::UNK_LANG, 
+							detectedGames.push_back(DetectedGame(g->toGameSettings(),
+																 Common::UNK_LANG,
 																 Common::kPlatformMacintosh));
 							fileSet[file->path()] = true;
-						} else if (substLastIndex == 0 && g->id == GID_MANIAC && 
+						} else if (substLastIndex == 0 && g->id == GID_MANIAC &&
 								   (buf[0] == 0xbc || buf[0] == 0xa0)) {
-							detectedGames.push_back(DetectedGame(g->toGameSettings(), 
-																 Common::UNK_LANG, 
+							detectedGames.push_back(DetectedGame(g->toGameSettings(),
+																 Common::UNK_LANG,
 																 Common::kPlatformNES));
-						} else if ((g->id == GID_MANIAC || g->id == GID_ZAK) && 
+						} else if ((g->id == GID_MANIAC || g->id == GID_ZAK) &&
 								   ((buf[0] == 0x31 && buf[1] == 0x0a) ||
 									(buf[0] == 0xcd && buf[1] == 0xfe))) {
-							detectedGames.push_back(DetectedGame(g->toGameSettings(), 
-																 Common::UNK_LANG, 
+							detectedGames.push_back(DetectedGame(g->toGameSettings(),
+																 Common::UNK_LANG,
 																 Common::kPlatformC64));
 						} else {
 							detectedGames.push_back(g->toGameSettings());
@@ -2824,13 +2824,13 @@ static int generateSubstResFileName_(const char *filename, char *buf, int bufsiz
 		return -1;
 
 	char num = filename[strlen(filename) - 1];
-	
+
 	// In some cases we have .(a) and .(b) extensions
 	if (num == ')')
 		num = filename[strlen(filename) - 2];
 
 	const char *ext = strrchr(filename, '.');
-	size_t len = (ext > 0) ? ext - filename : strlen(filename);	
+	size_t len = (ext > 0) ? ext - filename : strlen(filename);
 
 	for (int i = index; i < ARRAYSIZE(substResFileNameTable); i++) {
 		if (!scumm_strnicmp(filename, substResFileNameTable[i].winName, len)) {
@@ -2843,7 +2843,7 @@ static int generateSubstResFileName_(const char *filename, char *buf, int bufsiz
 				} else {
 					if (substResFileNameTable[i].genMethod == kGenMac)
 						snprintf(buf, bufsize, "%s (%c)", substResFileNameTable[i].macName, num);
-					else 
+					else
 						snprintf(buf, bufsize, "%s %c", substResFileNameTable[i].macName, num);
 				}
 				break;
@@ -2870,7 +2870,7 @@ static int generateSubstResFileName_(const char *filename, char *buf, int bufsiz
 Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	Engine *engine;
 
-	
+
 	const ScummGameSettings *g = scumm_settings;
 	while (g->name) {
 		if (!scumm_stricmp(detector->_game.name, g->name))
@@ -2917,7 +2917,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 
 		substLastIndex = generateSubstResFileName_(tempName, detectName, sizeof(detectName), substLastIndex + 1);
 	}
-	
+
 	// Unable to locate game data
 	if (!found) {
 		return 0;
@@ -2937,7 +2937,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	}
 
 	// Use MD5 to determine specific game version, if required.
-	if (game.features & GF_MULTIPLE_VERSIONS) {	
+	if (game.features & GF_MULTIPLE_VERSIONS) {
 		g = multiple_versions_md5_settings;
 		while (g->name) {
 			if (!scumm_stricmp(gameMD5, g->name))

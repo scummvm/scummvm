@@ -90,7 +90,7 @@ int MidiDriver_ALSA::open() {
 			error("Invalid port %s", var);
 			return -1;
 		}
-	} else {	
+	} else {
 		if (parse_addr(var, &seq_client, &seq_port) < 0) {
 			error("Invalid port %s", var);
 			return -1;

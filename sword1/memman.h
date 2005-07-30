@@ -58,6 +58,6 @@ private:
 	MemHandle *_memListFreeEnd;
 };
 
-} // End of namespace Sword1 
+} // End of namespace Sword1
 
 #endif //MEMMAN_H

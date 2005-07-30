@@ -56,7 +56,7 @@ static void convertHeaderEndian(Sword2Engine::SaveGameHeader &header) {
 	SWAP32(header.feet_x);
 	SWAP32(header.feet_y);
 	SWAP32(header.music_id);
-	
+
 	// ObjectHub
 	SWAP32(header.player_hub.type);
 	SWAP32(header.player_hub.logic_level);
@@ -317,8 +317,8 @@ uint32 Sword2Engine::restoreFromBuffer(byte *buffer, uint32 size) {
 
 	// Clean out the system kill list (no more objects to kill)
 	_logic->resetKillList();
-	
-	// Object hub is just after the standard header 
+
+	// Object hub is just after the standard header
 	memcpy(_resman->openResource(CUR_PLAYER_ID) + sizeof(StandardHeader), &_saveGameHeader.player_hub, sizeof(ObjectHub));
 
 	_resman->closeResource(CUR_PLAYER_ID);

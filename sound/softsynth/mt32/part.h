@@ -42,7 +42,7 @@ private:
 
 	PatchCache patchCache[4];
 
-	float bend; // -1.0 .. +1.0 
+	float bend; // -1.0 .. +1.0
 
 	dpoly polyTable[MT32EMU_MAX_POLY];
 

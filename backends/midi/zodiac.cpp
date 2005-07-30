@@ -64,7 +64,7 @@ void MidiDriver_Zodiac::close() {
 	if (_isOpen) {
 		_isOpen = false;
 		MidiDriver_MPU401::close();
-		
+
 		TwMidiSetMasterVolume(_oldVol);
 		TwMidiClose(_midiHandle);
 	}
@@ -81,7 +81,7 @@ void MidiDriver_Zodiac::send(uint32 b) {
 	midiCmd[2] = (b & 0x00FF0000) >> 16;
 	midiCmd[1] = (b & 0x0000FF00) >> 8;
 	midiCmd[0] = (b & 0x000000FF);
-	
+
 	chanID = (midiCmd[0] & 0x0F) ;
 	mdCmd = midiCmd[0] & 0xF0;
 
@@ -89,19 +89,19 @@ void MidiDriver_Zodiac::send(uint32 b) {
 		case 0x80:	// note off
 			TwMidiNoteOff(_midiHandle, chanID, midiCmd[1], 0);
 			break;
-	
+
 		case 0x90:	// note on
 			TwMidiNoteOn(_midiHandle, chanID, midiCmd[1], midiCmd[2]);
 			break;
-		
+
 		case 0xB0:	// control change
 			TwMidiControlChange(_midiHandle, chanID, midiCmd[1], midiCmd[2]);
 			break;
-		
+
 		case 0xC0:	// progam change
 			TwMidiProgramChange(_midiHandle, chanID, midiCmd[1]);
 			break;
-		
+
 		case 0xE0:	// pitchBend
 			TwMidiPitchBend(_midiHandle, chanID, (short)(midiCmd[1] | (midiCmd[2] << 8)));
 			break;

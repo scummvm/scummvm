@@ -63,13 +63,13 @@ public:
 	void wantAnim(bool runIt);
 private:
 	void createAnimTextures(void);
-	
+
 	DmaPipe *_dmaPipe;
 	uint8 _videoMode;
 	uint16 _tvWidth, _tvHeight;
 	GsVertex _blitCoords[2];
 	TexVertex _texCoords[2];
-	
+
 	uint8  _curDrawBuf;
 	uint32 _frameBufPtr[2]; //
 	uint32 _clutPtrs[3];    //   vram pointers

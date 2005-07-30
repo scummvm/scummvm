@@ -555,7 +555,7 @@ void ScummEngine_v60he::o60_roomOps() {
 
 void ScummEngine_v60he::swapObjects(int object1, int object2) {
 	int idx1 = -1, idx2 = -1;
-	
+
 	for (int i = 0; i < _numObjectsInRoom; i++) {
 		if (_objs[i].obj_nr == object1)
 			idx1 = i;
@@ -563,7 +563,7 @@ void ScummEngine_v60he::swapObjects(int object1, int object2) {
 		if (_objs[i].obj_nr == object2)
 			idx2 = i;
 	}
-	
+
 	if (idx1 == -1 || idx2 == -1 || idx1 >= idx2)
 		return;
 
@@ -711,7 +711,7 @@ void ScummEngine_v60he::o60_actorOps() {
 	case 217:		// SO_ACTOR_NEW
 		a->initActor(2);
 		break;
-	case 218:		
+	case 218:
 		a->drawActorToBackBuf(a->_pos.x, a->_pos.y);
 		break;
 	case 219:
@@ -881,7 +881,7 @@ int ScummEngine_v60he::virtScreenSave(byte *dst, int x1, int y1, int x2, int y2)
 
 	for (int j = y1; j <= y2; ++j) {
 		uint8 *p = vs.getBackPixels(x1, j - vs.topline);
-		
+
 		int size = virtScreenSavePack(dst, p, x2 - x1 + 1, 0);
 		if (dst != 0) {
 			dst += size;
@@ -901,10 +901,10 @@ int virtScreenSavePack(byte *dst, byte *src, int len, int unk) {
 	int flag = 0;
 	int iend = 1;
 	int ibeg = 0;
-	
+
 	for (--len; len != 0; --len, prevByte = curByte) {
 		bool pass = false;
-		
+
 		assert(iend < 0x100);
 		ctx.buf[iend] = curByte = *src++;
 		++iend;
@@ -975,7 +975,7 @@ void virtScreenSavePackByte(vsPackCtx *ctx, uint8 *&dst, int len, uint8 b) {
 	if (dst) {
 		*dst++ = b;
 	}
-	++ctx->size;	
+	++ctx->size;
 }
 
 void ScummEngine_v60he::o60_openFile() {
@@ -986,12 +986,12 @@ void ScummEngine_v60he::o60_openFile() {
 
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
-	
+
 	for (r = strlen((char*)filename); r != 0; r--) {
 		if (filename[r - 1] == '\\')
 			break;
 	}
-	
+
 	mode = pop();
 	slot = -1;
 	for (l = 0; l < 17; l++) {
@@ -1290,7 +1290,7 @@ void ScummEngine_v60he::decodeParseString(int m, int n) {
 		colors = pop();
 		if (colors == 1) {
 			_string[m].color = pop();
-		} else {	
+		} else {
 			push(colors);
 			getStackList(args, ARRAYSIZE(args));
 			for (i = 0; i < 16; i++)

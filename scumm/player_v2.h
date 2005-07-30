@@ -38,7 +38,7 @@ class ScummEngine;
 
 #if !defined(__GNUC__)
 	#pragma START_PACK_STRUCTS
-#endif	
+#endif
 
 struct channel_data {
 	uint16 time_left;          // 00
@@ -127,7 +127,7 @@ private:
 		channel_data d;
 		uint16 array[sizeof(channel_data)/2];
 	};
-	
+
 	int _music_timer;
 	int _music_timer_ctr;
 	int _ticks_per_music_timer;
@@ -163,4 +163,4 @@ private:
 
 } // End of namespace Scumm
 
-#endif 
+#endif

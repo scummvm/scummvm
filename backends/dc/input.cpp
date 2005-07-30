@@ -66,7 +66,7 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
       if(!(buttons & 2)) rmb++;
 
       if(!(buttons & 8)) newkey = 319;
-      
+
       mouse_x += pad->cond.mouse.axis1;
       mouse_y += pad->cond.mouse.axis2;
       mouse_wheel += pad->cond.mouse.axis3;

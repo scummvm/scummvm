@@ -1036,9 +1036,9 @@ void Sound::playSound(uint32 id, byte *sound, uint32 size, Audio::SoundHandle *h
 	byte flags = 0;
 	flags |= Audio::Mixer::FLAG_UNSIGNED|Audio::Mixer::FLAG_AUTOFREE;
 	size -= sizeof(struct dataFileHeader);
-	byte *buffer = (byte *)malloc(size); 
-	memcpy(buffer, sound+sizeof(struct dataFileHeader), size);	
-	
+	byte *buffer = (byte *)malloc(size);
+	memcpy(buffer, sound+sizeof(struct dataFileHeader), size);
+
 	_mixer->stopID(id);
 	_mixer->playRaw(handle, buffer, size, 11025, flags, id);
 }
@@ -1087,7 +1087,7 @@ void Sound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 		warning("Sound::playSound(%04X, %04X) called with a section having been loaded", sound, volume);
 		return;
 	}
-	
+
 	if (sound > _soundsTotal) {
 		debug(5, "Sound::playSound %d ignored, only %d sfx in file", sound, _soundsTotal);
 		return ;
@@ -1095,7 +1095,7 @@ void Sound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 
 	volume = ((volume & 0x7F) + 1) << 1;
 	sound &= 0xFF;
-	
+
 	// note: all those tables are big endian. Don't ask me why. *sigh*
 	uint16 sampleRate = (_sampleRates[sound << 2] << 8) | _sampleRates[(sound << 2) | 1];
 	if (sampleRate > 11025)
@@ -1113,7 +1113,7 @@ void Sound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 		loopEnd = dataSize;
 		flags |= Audio::Mixer::FLAG_LOOP;
 	}
-	
+
 	if (channel == 0)
 		_mixer->playRaw(&_ingameSound0, _soundData + dataOfs, dataSize, sampleRate, flags, SOUND_CH0, volume, 0, loopSta, loopEnd);
 	else
@@ -1139,7 +1139,7 @@ void Sound::fnStartFx(uint32 sound, uint8 channel) {
 	if (roomList[i].room != 0xff) // if room list empty then do all rooms
 		while (roomList[i].room != screen) { // check rooms
 			i++;
-			if (roomList[i].room == 0xff)	
+			if (roomList[i].room == 0xff)
 				return;
 		}
 
@@ -1184,7 +1184,7 @@ void Sound::checkFxQueue(void) {
 }
 
 void Sound::restoreSfx(void) {
-	
+
 	// queue sfx, so they will be started when the player exits the control panel
 	memset(_sfxQueue, 0, sizeof(_sfxQueue));
 	uint8 queueSlot = 0;
@@ -1218,7 +1218,7 @@ bool Sound::startSpeech(uint16 textNum) {
 	if (!(SkyEngine::_systemVars.systemFlags & SF_ALLOW_SPEECH))
 		return false;
 	uint16 speechFileNum = _speechConvertTable[textNum >> 12] + (textNum & 0xFFF);
-	
+
 	uint8 *speechData = _skyDisk->loadFile(speechFileNum + 50000);
 	if (!speechData) {
 		debug(9,"File %d (speechFile %d from section %d) wasn't found", speechFileNum + 50000, textNum & 0xFFF, textNum >> 12);

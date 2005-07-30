@@ -57,7 +57,7 @@ protected:
 		byte *_surface;
 		bool _original;
 	};
- 
+
 	WidgetSurface *_surfaces;
 	int _numStates;
 	int _state;
@@ -103,7 +103,7 @@ public:
 class FontRendererGui {
 private:
 	Sword2Engine *_vm;
-	
+
 	struct Glyph {
 		byte *_data;
 		int _width;
@@ -170,7 +170,7 @@ void FontRendererGui::fetchText(uint32 textId, byte *buf) {
 		if (buf)
 			buf[i] = data[i + 2];
 	}
-			
+
 	buf[i] = 0;
 	_vm->_resman->closeResource(textId / SIZE);
 }
@@ -877,7 +877,7 @@ int QuitDialog::runModal() {
 
 OptionsDialog::OptionsDialog(Sword2Engine *vm) : Dialog(vm) {
 	_fr = new FontRendererGui(_vm, _vm->_controlsFontId);
-		
+
 	_mixer = _vm->_mixer;
 
 	_panel = new Widget(this, 1);

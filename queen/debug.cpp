@@ -35,9 +35,9 @@
 
 namespace Queen {
 
-Debugger::Debugger(QueenEngine *vm) 
+Debugger::Debugger(QueenEngine *vm)
 	: _vm(vm), _flags(0) {
-		
+
 	DCmd_Register("exit", &Debugger::Cmd_Exit);
 	DCmd_Register("help", &Debugger::Cmd_Help);
 	DCmd_Register("areas", &Debugger::Cmd_Areas);
@@ -61,7 +61,7 @@ void Debugger::postEnter() {
 
 bool Debugger::Cmd_Exit(int argc, const char **argv) {
 	_detach_now = true;
-	return false;	
+	return false;
 }
 
 bool Debugger::Cmd_Help(int argc, const char **argv) {
@@ -145,7 +145,7 @@ bool Debugger::Cmd_GameState(int argc, const char **argv) {
 		break;
 	case 3:
 		slot = atoi(argv[1]);
-		DebugPrintf("GAMESTATE[%d] ", slot);		
+		DebugPrintf("GAMESTATE[%d] ", slot);
 		DebugPrintf("was %d ", _vm->logic()->gameState(slot));
 		_vm->logic()->gameState(slot, atoi(argv[2]));
 		DebugPrintf("now %d\n", _vm->logic()->gameState(slot));
@@ -153,7 +153,7 @@ bool Debugger::Cmd_GameState(int argc, const char **argv) {
 	default:
 		DebugPrintf("Usage: %s slotnum value\n", argv[0]);
 		break;
-	}	
+	}
 	return true;
 }
 
@@ -182,7 +182,7 @@ bool Debugger::Cmd_PrintBobs(int argc, const char**argv) {
 	DebugPrintf("+--+---+---+-+---+---+-+-+---+---+\n");
 	for (i = 0; i < Graphics::MAX_BOBS_NUMBER; ++i, ++bob) {
 		if (bob->active) {
-			DebugPrintf("|%2d|%3d|%3d|%1d|%3d|%3d|%1d|%1d|%3d|%3d|\n", 
+			DebugPrintf("|%2d|%3d|%3d|%1d|%3d|%3d|%1d|%1d|%3d|%3d|\n",
 				i, bob->x, bob->y, bob->xflip, bob->scale, bob->frameNum,
 				bob->animating, bob->moving, bob->speed, bob->endx, bob->endy);
 		}
@@ -191,7 +191,7 @@ bool Debugger::Cmd_PrintBobs(int argc, const char**argv) {
 	return true;
 }
 
-bool Debugger::Cmd_Room(int argc, const char **argv) {	
+bool Debugger::Cmd_Room(int argc, const char **argv) {
 	if (argc == 2) {
 		uint16 roomNum = atoi(argv[1]);
 		_vm->logic()->joePos(0, 0);
@@ -199,12 +199,12 @@ bool Debugger::Cmd_Room(int argc, const char **argv) {
 		_vm->logic()->entryObj(_vm->logic()->roomData(roomNum) + 1);
 		return false;
 	} else {
-		DebugPrintf("Current room: %d (%s), use '%s <roomnum>' to switch\n", 
-			_vm->logic()->currentRoom(), 
+		DebugPrintf("Current room: %d (%s), use '%s <roomnum>' to switch\n",
+			_vm->logic()->currentRoom(),
 			_vm->logic()->roomName(_vm->logic()->currentRoom()),
 			argv[0]);
 	}
-	return true;	
+	return true;
 }
 
 bool Debugger::Cmd_Song(int argc, const char **argv) {

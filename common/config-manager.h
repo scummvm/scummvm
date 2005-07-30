@@ -46,9 +46,9 @@ typedef Map<String, String, IgnoreCaseComparator> StringMap;
  *       of some specific (or any) configuration key changes.
  */
 class ConfigManager : public Singleton<ConfigManager> {
-	
+
 public:
-	
+
 	class Domain : public StringMap {
 	private:
 		StringMap _keyValueComments;
@@ -121,12 +121,12 @@ private:
 
 	void			loadFile(const String &filename);
 	void			writeDomain(FILE *file, const String &name, const Domain &domain);
-	
+
 	Domain			_transientDomain;
 	DomainMap		_gameDomains;
 	DomainMap		_globalDomains;
 	Domain			_defaultsDomain;
-	
+
 	StringList		_domainSaveOrder;
 
 	String			_activeDomain;

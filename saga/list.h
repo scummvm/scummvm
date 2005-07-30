@@ -84,17 +84,17 @@ public:
 	}
 
 	iterator reorderUp(iterator pos, CompareFunction compareFunction) {
-		iterator i(pos);		
+		iterator i(pos);
 		int res;
 
-		--i;		
+		--i;
 		while (i != Common::List<T>::end()) {
 			res = compareFunction(i.operator*(), pos.operator*());
 			if (res <= 0) {
 
 				T temp(*pos);
 				erase(pos);
-				++i;				
+				++i;
 				return insert(i, temp);
 			}
 			--i;
@@ -103,9 +103,9 @@ public:
 	}
 
 	iterator reorderDown(iterator pos, CompareFunction compareFunction) {
-		iterator i(pos);		
+		iterator i(pos);
 		int res;
-		
+
 		++i;
 		while (i != Common::List<T>::end()) {
 			res = compareFunction(i.operator*(), pos.operator*());

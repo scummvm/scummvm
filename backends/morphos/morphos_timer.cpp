@@ -120,7 +120,7 @@ void Timer::TimerService(Timer *this_ptr, Engine *engine)
 		signals = Wait(signal_mask);
 
 		GetSysTime(&start_callback);
-		
+
 		if (signals & port_bit)
 		{
 			TimerServiceMessage *tmsg;

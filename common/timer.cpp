@@ -51,7 +51,7 @@ Timer::Timer(OSystem *system) :
 }
 
 Timer::~Timer() {
-	// Remove the timer callback. 
+	// Remove the timer callback.
 	// Note: backends *must* gurantee that after this method call returns,
 	// the handler is not in use anymore; else race condtions could occurs.
 	_system->setTimerCallback(0, 0);

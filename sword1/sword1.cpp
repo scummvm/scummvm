@@ -49,7 +49,7 @@ using namespace Sword1;
 /* Broken Sword 1 */
 static const GameSettings sword1FullSettings =
 	{"sword1", "Broken Sword I", GF_DEFAULT_TO_1X_SCALER};
-static const GameSettings sword1DemoSettings = 
+static const GameSettings sword1DemoSettings =
 	{"sword1demo", "Broken Sword I (Demo)", GF_DEFAULT_TO_1X_SCALER | Sword1::GF_DEMO };
 
 // check these subdirectories (if present)
@@ -221,7 +221,7 @@ int SwordEngine::init(GameDetector &detector) {
 	}
 
 	_systemVars.showText = ConfMan.getBool("subtitles");
-	
+
 	_systemVars.playSpeech = 1;
 	_mouseState = 0;
 
@@ -229,7 +229,7 @@ int SwordEngine::init(GameDetector &detector) {
 	_objectMan->initialize();
 	_mouse->initialize();
 	_control = new Control(_saveFileMan, _resMan, _objectMan, _system, _mouse, _sound, _music);
-	
+
 	return 0;
 }
 
@@ -257,7 +257,7 @@ static const char *errorMsgs[] = {
 	"The file \"%s\" is missing and the game doesn't work without it.\n"
 	"Please copy it from CD %d and try starting the game again.\n"
 	"The Readme file also contains further information.",
-	
+
 	"%d important files are missing, the game can't start without them.\n"
 	"Please copy these files from their corresponding CDs:\n",
 
@@ -361,7 +361,7 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 
 	if (((_features & GF_DEMO) == 0) != isFullVersion) // shouldn't happen...
 		warning("Your Broken Sword 1 version looks like a %s version but you are starting it as a %s version", isFullVersion ? "full" : "demo", (_features & GF_DEMO) ? "demo" : "full");
-	
+
 	if (foundTypes[TYPE_SPEECH1]) // we found some kind of speech1 file (.clu, .cl3, .clv)
 		missingTypes[TYPE_SPEECH1] = false; // so we don't care if there's a different kind missing
 	if (foundTypes[TYPE_SPEECH2]) // same for speech2
@@ -384,7 +384,7 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 					if (missingTypes[flagCnt] && ((_cdFileList[fileCnt].flags & (1 << flagCnt)) != 0))
 						fileExists[fileCnt] = false; // this is one of the files we were looking for
 			}
-		if (missingTypes[TYPE_IMMED]) { 
+		if (missingTypes[TYPE_IMMED]) {
 			// important files missing, can't start the game without them
 			showFileErrorMsg(TYPE_IMMED, fileExists);
 		} else if ((!missingTypes[TYPE_CD1]) && !cd2FilesFound) {
@@ -462,7 +462,7 @@ int SwordEngine::go() {
 			_systemVars.controlPanelMode = CP_NORMAL;
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -475,7 +475,7 @@ void SwordEngine::checkCd(void) {
 				_control->askForCd();
 			} // else: there is already a cd inserted and we don't care if it's cd1 or cd2.
 		} else if (needCd != _systemVars.currentCD) { // we need a different CD than the one in drive.
-			_music->startMusic(0, 0); // 
+			_music->startMusic(0, 0); //
 			_sound->closeCowSystem(); // close music and sound files before changing CDs
 			_systemVars.currentCD = needCd; // askForCd will ask the player to insert _systemVars.currentCd,
 			_control->askForCd();		    // so it has to be updated before calling it.
@@ -500,7 +500,7 @@ uint8 SwordEngine::mainLoop(void) {
 		_logic->newScreen(Logic::_scriptVars[NEW_SCREEN]);
 		_sound->newScreen(Logic::_scriptVars[NEW_SCREEN]);
 		Logic::_scriptVars[SCREEN] = Logic::_scriptVars[NEW_SCREEN];
-		
+
 		do {
 			uint32 newTime;
 			bool scrollFrameShown = false;
@@ -524,7 +524,7 @@ uint8 SwordEngine::mainLoop(void) {
 			newTime = _system->getMillis();
 			if ((newTime - frameTime < 1000 / FRAME_RATE) || (!scrollFrameShown))
 				_screen->updateScreen();
-			delay((1000 / FRAME_RATE) - (_system->getMillis() - frameTime));			
+			delay((1000 / FRAME_RATE) - (_system->getMillis() - frameTime));
 
 			_mouse->engine( _mouseX, _mouseY, _mouseState);
 

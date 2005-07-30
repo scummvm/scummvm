@@ -57,13 +57,13 @@ static UInt16 CardSlotFormInit(Boolean display, Boolean bDraw) {
 			if (err || StrLen(labelP) == 0) {	// if no label try to retreive card type
 				VolumeInfoType volInfo;
 				err = VFSVolumeInfo(volRefNum, &volInfo);
-				
+
 				if (!err) {
 					ExpCardInfoType info;
 					err = ExpCardInfo(volInfo.slotRefNum, &info);
 					StrCopy(labelP, info.deviceClassStr);
 				}
-				
+
 				if (err)	// if err default name
 					StrPrintF(labelP,"Other Card %ld", other++);
 			}
@@ -72,7 +72,7 @@ static UInt16 CardSlotFormInit(Boolean display, Boolean bDraw) {
 				cards = MemHandleNew(sizeof(CardInfoType));
 			else
 				MemHandleResize(cards, MemHandleSize(cards) + sizeof(CardInfoType));
-				
+
 			cardsInfo = (CardInfoType *)MemHandleLock(cards);
 			cardsInfo[counter].volRefNum = volRefNum;
 			StrCopy(cardsInfo[counter].nameP, labelP);
@@ -87,7 +87,7 @@ static UInt16 CardSlotFormInit(Boolean display, Boolean bDraw) {
 		ControlType *cck1P, *cck2P, *cck3P;
 		UInt16 index;
 		Int16 selected = -1;
-		
+
 		CardInfoType *cardsInfo;
 		MemHandle items = NULL;
 
@@ -108,7 +108,7 @@ static UInt16 CardSlotFormInit(Boolean display, Boolean bDraw) {
 				itemsText = (Char **)MemHandleLock(items);
 				itemsText[index] = cardsInfo[index].nameP;
 				MemHandleUnlock(items);
-				
+
 				if (cardsInfo[index].volRefNum == gPrefs->card.volRefNum)
 					selected = index;
 			}
@@ -168,7 +168,7 @@ static void CardSlotFormExit(Boolean bSave) {
 		cardsInfo = (CardInfoType *)itemsList;
 		cards = MemPtrRecoverHandle(cardsInfo);
 		items = MemPtrRecoverHandle(itemsText);
-	
+
 		itemsText = NULL;
 		itemsList = NULL;
 	} else {
@@ -239,7 +239,7 @@ Boolean CardSlotFormHandleEvent(EventPtr eventP) {
 	Boolean handled = false;
 
 	switch (eventP->eType) {
-	
+
 		case frmOpenEvent:
 			CardSlotFormInit(true, true);
 			handled = true;
@@ -260,7 +260,7 @@ Boolean CardSlotFormHandleEvent(EventPtr eventP) {
 				case CardSlotCancelButton:
 					CardSlotFormExit(false);
 					break;
-				
+
 				case CardSlotMoveCheckbox:
 					CardSlotFromShowHideOptions();
 					break;
@@ -271,13 +271,13 @@ Boolean CardSlotFormHandleEvent(EventPtr eventP) {
 		default:
 			break;
 	}
-	
+
 	return handled;
 }
 
 UInt16 parseCards() {
 	UInt16 volRefNum = CardSlotFormInit(false, false);
 	CardSlotFormExit(false);
-	
+
 	return volRefNum;
 }

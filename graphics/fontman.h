@@ -55,9 +55,9 @@ public:
 	 * @return a pointer to a font, or 0 if no suitable font was found.
 	 */
 	const Font *getFontByUsage(FontUsage usage) const;
-	
+
 	//const Font *getFontBySize(int size???) const;
-	
+
 
 private:
 	friend class Common::Singleton<SingletonBaseType>;

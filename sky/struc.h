@@ -30,7 +30,7 @@ struct lowTextManager_t {
 };
 
 struct displayText_t {
-	byte *textData;	
+	byte *textData;
 	uint32 textWidth;
 };
 
@@ -113,7 +113,7 @@ struct Compact {
 	uint16 flag;		 // 21: a use any time flag
 
 	uint16 mood;		 // 22: high level - stood or not
-	
+
 	uint16 grafixProgId; // 23
 	uint16 grafixProgPos;// 24
 
@@ -159,9 +159,9 @@ struct Compact {
 	uint16 megaSet;		 // 54
 
 	MegaSet megaSet0;	 // 55
-	MegaSet megaSet1;	 // 
-	MegaSet megaSet2;	 // 
-	MegaSet megaSet3;	 // 
+	MegaSet megaSet1;	 //
+	MegaSet megaSet2;	 //
+	MegaSet megaSet3;	 //
 } GCC_PACK;
 
 #if !defined(__GNUC__)

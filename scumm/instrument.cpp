@@ -45,7 +45,7 @@ roland_to_gm_map [] = {
 	{ "foghorn   ",  60 },
 	{ "glop      ",  39 },
 //	{ "jacob's la", ??? },
-	{ "LeshBass  ",  33 }, 
+	{ "LeshBass  ",  33 },
 //	{ "lowsnort  ", ??? },
 	{ "ML explosn", 127 },
 	{ "ReggaeBass",  32 },
@@ -117,7 +117,7 @@ roland_to_gm_map [] = {
 const byte Instrument::_gmRhythmMap[35] = {
 	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
 	  0,  0,  0,  0,  0,  0,  0,  0, 36, 37, 38, 39, 40, 41, 66, 47,
-	 65, 48, 56}; 
+	 65, 48, 56};
        // This emulates the percussion bank setup LEC used with the MT-32,
        // where notes 24 - 34 were assigned instruments without reverb.
        // It also fixes problems on GS devices that map sounds to these

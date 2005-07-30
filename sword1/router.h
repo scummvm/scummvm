@@ -152,8 +152,8 @@ private:
 	int32 LoadWalkResources(Object *mega, int32 x, int32 y, int32 targetDir);
 	int32 GetRoute(void);
 	int32 CheckTarget(int32 x, int32 y);
-	
-	int32 Scan(int32 level);	
+
+	int32 Scan(int32 level);
 	int32 NewCheck(int32 status, int32 x1, int32 x2, int32 y1, int32 y2);
 	int32 Check(int32 x1, int32 y1, int32 x2, int32 y2);
 	int32 HorizCheck(int32 x1, int32 y, int32 x2);
@@ -164,7 +164,7 @@ private:
 
 	int32 SlidyPath();
 	void SlidyWalkAnimator(WalkData *walkAnim);
-	
+
 	int32 SmoothestPath();
 	int32 SmoothCheck(int32 best, int32 p, int32 dirS, int32 dirD);
 
@@ -174,6 +174,6 @@ private:
 	void BresenhamLine(int32 x1,int32 y1,int32 x2,int32 y2, uint8 *screen, int32 width, int32 height, int32 colour);
 };
 
-} // End of namespace Sword1 
+} // End of namespace Sword1
 
 #endif //BSROUTER_H

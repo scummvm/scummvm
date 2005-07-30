@@ -27,6 +27,6 @@
 
 extern const Char *gUnistdCWD;
 
-Char *getcwd(Char *buf, UInt32 size); 
+Char *getcwd(Char *buf, UInt32 size);
 
 #endif

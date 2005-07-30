@@ -813,7 +813,7 @@ int32 Logic::fnISpeak(int32 *params) {
 
 		if (_vm->_sound->getSpeechStatus() != RDSE_SAMPLEFINISHED)
 			return IR_REPEAT;
-		
+
 		// New fudge for 'fx' subtitles: If subtitles switched off, and
 		// we don't want to use a wav for this line either, then just
 		// quit back to script right now!
@@ -897,7 +897,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		// Set the 'looping_flag' and the text-click-delays. We can
 		// left-click past the text after half a second, and
 		// right-click past it after a quarter of a second.
- 
+
 		ob_logic->looping = 1;
 		_leftClickDelay = 6;
 		_rightClickDelay = 3;

@@ -69,7 +69,7 @@ struct MovieInfo {
 	uint frames;
 	bool seamless;
 };
- 
+
 class MoviePlayer {
 private:
 	Sword2Engine *_vm;

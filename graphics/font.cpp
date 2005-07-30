@@ -55,7 +55,7 @@ void NewFont::drawChar(Surface *dst, byte chr, int tx, int ty, uint32 color) con
 		bitmap_t mask = 0x8000;
 		if (ty + y < 0 || ty + y >= dst->h)
 			continue;
-		
+
 		for (int x = 0; x < w; x++, mask >>= 1) {
 			if (tx + x < 0 || tx + x >= dst->w)
 				continue;
@@ -155,16 +155,16 @@ void Font::drawString(Surface *dst, const Common::String &s, int x, int y, int w
 struct WordWrapper {
 	Common::StringList &lines;
 	int actualMaxLineWidth;
-	
+
 	WordWrapper(Common::StringList &l) : lines(l), actualMaxLineWidth(0) {
 	}
-	
+
 	void add(Common::String &line, int &w) {
 		if (actualMaxLineWidth < w)
 			actualMaxLineWidth = w;
 
 		lines.push_back(line);
-		
+
 		line.clear();
 		w = 0;
 	}
@@ -176,7 +176,7 @@ int Font::wordWrapText(const Common::String &str, int maxWidth, Common::StringLi
 	Common::String tmpStr;
 	int lineWidth = 0;
 	int tmpWidth = 0;
-	
+
 	// The rough idea behind this algorithm is as follows:
 	// We accumulate characters into the string tmpStr. Whenever a full word
 	// has been gathered together this way, we 'commit' it to the line buffer
@@ -189,7 +189,7 @@ int Font::wordWrapText(const Common::String &str, int maxWidth, Common::StringLi
 	// Special care has to be taken to account for 'words' that exceed the width
 	// of a line. If we encounter such a word, we have to wrap it over multiple
 	// lines.
-	
+
 	for (Common::String::const_iterator x = str.begin(); x != str.end(); ++x) {
 		const char c = *x;
 		const int w = getCharWidth(c);
@@ -213,7 +213,7 @@ int Font::wordWrapText(const Common::String &str, int maxWidth, Common::StringLi
 				continue;
 			}
 		}
-		
+
 		// If the max line width would be exceeded by adding this char,
 		// insert a line break.
 		if (wouldExceedWidth) {
@@ -232,11 +232,11 @@ int Font::wordWrapText(const Common::String &str, int maxWidth, Common::StringLi
 			}
 		}
 
-		
+
 		tmpWidth += w;
 		tmpStr += c;
 	}
-	
+
 	// If some text is left over, add it as the final line
 	line += tmpStr;
 	lineWidth += tmpWidth;

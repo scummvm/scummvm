@@ -97,7 +97,7 @@ void Wiz::polygonStore(int id, bool flag, int vert1x, int vert1y, int vert2x, in
 	wp->vert[4].y = vert1y;
 	wp->id = id;
 	wp->numVerts = 5;
-	wp->flag = flag;	
+	wp->flag = flag;
 
 	polygonCalcBoundBox(wp->vert, wp->numVerts, wp->bound);
 }
@@ -215,12 +215,12 @@ bool Wiz::polygonContains(const WizPolygon &pol, int x, int y) {
 void Wiz::copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch) {
 	Common::Rect dstRect(srcx, srcy, srcx + srcw, srcy + srch);
 	dstRect.clip(dstw, dsth);
-	
+
 	int rw = dstRect.width();
 	int rh = dstRect.height();
 	if (rh <= 0 || rw <= 0)
 		return;
-	
+
 	uint8 *dst1Ptr = dst1 + dstRect.left + dstRect.top * dstw;
 	uint8 *dst2Ptr = dst2 + dstRect.left + dstRect.top * dstw;
 	const uint8 *dataPtr = src;
@@ -413,7 +413,7 @@ void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRe
 	uint8 databit;
 	int h, w, xoff;
 	uint16 off;
-	
+
 	byte imagePal[256];
 	if (!palPtr) {
 		for (int i = 0; i < 256; i++) {
@@ -424,7 +424,7 @@ void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRe
 
 	dstPtr = dst;
 	dataPtr = src;
-	
+
 	// Skip over the first 'srcRect->top' lines in the data
 	h = srcRect.top;
 	while (h--) {
@@ -434,7 +434,7 @@ void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRe
 	w = srcRect.width();
 	if (h <= 0 || w <= 0)
 		return;
-		
+
 	while (h--) {
 		xoff = srcRect.left;
 		off = READ_LE_UINT16(dataPtr);
@@ -741,17 +741,17 @@ static int wizPackType1(uint8 *dst, const uint8 *src, int srcPitch, const Common
 	debug(1, "wizPackType1(%d, [%d,%d,%d,%d])", tColor, rCapt.left, rCapt.top, rCapt.right, rCapt.bottom);
 	wizPackCtx ctx;
 	memset(&ctx, 0, sizeof(ctx));
-	
+
 	src += rCapt.top * srcPitch + rCapt.left;
 	int w = rCapt.width();
 	int h = rCapt.height();
-	
+
 	uint8 *nextDstPtr, *curDstPtr;
 	uint8 curColor, prevColor;
 	int saveBufPos;
-	
+
 	nextDstPtr = curDstPtr = 0;
-	
+
 	int dataSize = 0;
 	while (h--) {
 		if (dst) {
@@ -761,7 +761,7 @@ static int wizPackType1(uint8 *dst, const uint8 *src, int srcPitch, const Common
 		}
 		dataSize += 2;
 		int numBytes = 0;
-		
+
 		int i, code;
 		for (i = 0; i < w; ++i) {
 			if (src[i] != tColor)
@@ -993,7 +993,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 	uint32 width  = READ_LE_UINT32(wizh + 0x4);
 	uint32 height = READ_LE_UINT32(wizh + 0x8);
 	debug(2, "wiz_header.comp = %d wiz_header.w = %d wiz_header.h = %d", comp, width, height);
-	
+
 	uint8 *wizd = _vm->findWrappedBlock(MKID('WIZD'), dataPtr, state, 0);
 	assert(wizd);
 
@@ -1130,17 +1130,17 @@ struct PolygonDrawData {
 	Common::Point pto;
 	InterArea *ia;
 	int areasNum;
-	
+
 	PolygonDrawData(int n) {
 		areasNum = n;
 		ia = new InterArea[areasNum];
 		memset(ia, 0, sizeof(InterArea) * areasNum);
 	}
-	
+
 	~PolygonDrawData() {
 		delete[] ia;
 	}
-	
+
 	void calcIntersection(const Common::Point *p1, const Common::Point *p2, const Common::Point *p3, const Common::Point *p4) {
 		int32 x1_acc = p1->x << 0x10;
 		int32 x3_acc = p3->x << 0x10;
@@ -1157,7 +1157,7 @@ struct PolygonDrawData {
   			int32 tx1 = x1_acc >> 0x10;
   			int32 tx3 = x3_acc >> 0x10;
   			int32 ty3 = y3_acc >> 0x10;
-  			
+
   			if (!pia->valid || pia->xmin > tx1) {
   				pia->xmin = tx1;
   				pia->x1 = tx3;
@@ -1173,12 +1173,12 @@ struct PolygonDrawData {
   			x1_acc += x1_step;
   			x3_acc += x3_step;
   			y3_acc += y3_step;
-  			
+
   			if (p2->y <= p1->y) {
   				--iaidx;
   			} else {
   				++iaidx;
-  			}  			
+  			}
   		}
 	}
 };
@@ -1309,7 +1309,7 @@ void Wiz::drawWizPolygon(int resNum, int state, int id, int flags, int shadow, i
   			ymin_p = MIN(wp->vert[i].y, ymin_p);
   			ymax_p = MAX(wp->vert[i].y, ymax_p);
   		}
-  		
+
   		int16 xmin_b, xmax_b, ymin_b, ymax_b;
   		xmin_b = 0;
   		xmax_b = wizW - 1;
@@ -1319,12 +1319,12 @@ void Wiz::drawWizPolygon(int resNum, int state, int id, int flags, int shadow, i
 		PolygonDrawData pdd(ymax_p - ymin_p + 1);
 		pdd.pto.x = xmin_p;
 		pdd.pto.y = ymin_p;
-		
+
 		for (i = 0; i < 3; ++i) {
 			pdd.calcIntersection(&wp->vert[i], &wp->vert[i + 1], &bbox[i], &bbox[i + 1]);
 		}
 		pdd.calcIntersection(&wp->vert[3], &wp->vert[0], &bbox[3], &bbox[0]);
-				
+
 		uint yoff = pdd.pto.y * pvs->w;
 		for (i = 0; i < pdd.areasNum; ++i) {
 			PolygonDrawData::InterArea *pia = &pdd.ia[i];
@@ -1396,7 +1396,7 @@ void Wiz::loadWizCursor(int resId) {
 
 	const Common::Rect *r = NULL;
 	uint8 *cursor = drawWizImage(resId, 0, 0, 0, 0, 0, 0, r, kWIFBlitToMemBuffer, 0, 0);
-	int32 cw, ch;	
+	int32 cw, ch;
 	getWizImageDim(resId, 0, cw, ch);
 	_vm->setCursorFromBuffer(cursor, cw, ch, cw);
 	_vm->setCursorHotspot(x, y);
@@ -1527,7 +1527,7 @@ void Wiz::createWizEmptyImage(const WizParameters *params) {
 		res_size += 0x10C;
 	}
 	res_size += 8 + img_w * img_h;
-	
+
 	const uint8 *palPtr;
 	if (_vm->_heversion >= 99) {
 		palPtr = _vm->_hePalettes + 1024;
@@ -1549,7 +1549,7 @@ void Wiz::createWizEmptyImage(const WizParameters *params) {
 		if (flags & 1) {
 			WRITE_BE_UINT32(res_data, 'RGBS'); res_data += 4;
 			WRITE_BE_UINT32(res_data, 0x308); res_data += 4;
-			memcpy(res_data, palPtr, 0x300); res_data += 0x300;			
+			memcpy(res_data, palPtr, 0x300); res_data += 0x300;
 		}
 		if (flags & 2) {
 			WRITE_BE_UINT32(res_data, 'SPOT'); res_data += 4;
@@ -1576,7 +1576,7 @@ void Wiz::fillWizRect(const WizParameters *params) {
 		state = params->img.state;
 	}
 	uint8 *dataPtr = _vm->getResourceAddress(rtImage, params->img.resNum);
-	if (dataPtr) {	
+	if (dataPtr) {
 		uint8 *wizh = _vm->findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
 		assert(wizh);
 		int c = READ_LE_UINT32(wizh + 0x0);
@@ -1609,7 +1609,7 @@ void Wiz::fillWizRect(const WizParameters *params) {
 	}
 }
 
-void Wiz::fillWizLine(const WizParameters *params) {	
+void Wiz::fillWizLine(const WizParameters *params) {
 	if (params->processFlags & kWPFClipBox2) {
 		int state = 0;
 		if (params->processFlags & kWPFNewState) {
@@ -1640,7 +1640,7 @@ void Wiz::fillWizLine(const WizParameters *params) {
 			int y1 = params->box2.top;
 			int x2 = params->box2.right;
 			int y2 = params->box2.bottom;
-			
+
 			int dx = x2 - x1;
 			int incx = 0;
 			if (dx > 0) {
@@ -1655,11 +1655,11 @@ void Wiz::fillWizLine(const WizParameters *params) {
 			} else if (dy < 0) {
 				incy = -1;
 			}
-			
+
 			if (r1.contains(x1, y1)) {
 				*(wizd + y1 * w + x1) = color;
 			}
-			
+
 			if (dx >= dy) {
 				int step1_y = (dy - dx) * 2;
 				int step2_y = dy * 2;
@@ -1690,7 +1690,7 @@ void Wiz::fillWizLine(const WizParameters *params) {
 					y1 += incy;
 					if (r1.contains(x1, y1)) {
 						*(wizd + y1 * w + x1) = color;
-					}					
+					}
 				}
 			}
 		}

@@ -71,12 +71,12 @@ static const char *credits_intro[] = {
 AboutDialog::AboutDialog()
 	: Dialog(10, 20, 300, 174),
 	_scrollPos(0), _scrollTime(0), _modifiers(0), _willClose(false) {
-	
+
 	int i;
-	
+
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
-	
+
 	int outerBorder;
 
 	if (screenW >= 400 && screenH >= 300) {
@@ -91,7 +91,7 @@ AboutDialog::AboutDialog()
 
 	_w = screenW - 2 * outerBorder;
 	_h = screenH - 2 * outerBorder;
-	
+
 	_lineHeight = g_gui.getFontHeight() + 3;
 
 	// Heuristic to compute 'optimal' dialog width
@@ -123,10 +123,10 @@ AboutDialog::AboutDialog()
 	addLine(features.c_str());
 
 	_lines.push_back("");
-	
+
 	for (i = 0; i < ARRAYSIZE(credits_intro); i++)
 		addLine(credits_intro[i]);
-	
+
 	for (i = 0; i < ARRAYSIZE(credits); i++)
 		addLine(credits[i]);
 
@@ -155,13 +155,13 @@ void AboutDialog::addLine(const char *str) {
 			break;
 		}
 	}
-	
+
 	if (*str == 0) {
 		_lines.push_back(format);
 	} else {
 		Common::StringList wrappedLines;
 		g_gui.getFont().wordWrapText(str, _w - 2*xOff, wrappedLines);
-		
+
 		for (Common::StringList::const_iterator i = wrappedLines.begin(); i != wrappedLines.end(); ++i) {
 			_lines.push_back(format + *i);
 		}
@@ -252,7 +252,7 @@ void AboutDialog::drawDialog() {
 		if (align == Graphics::kTextAlignCenter)
 			while (*str && *str == ' ')
 				str++;
-	
+
 		g_gui.drawString(str, _x + xOff, y, _w - 2 * xOff, color, align, 0, false);
 		y += _lineHeight;
 	}

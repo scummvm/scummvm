@@ -42,7 +42,7 @@ byte *Sword2Engine::fetchPalette(byte *screenFile) {
 	palette[1] = 0;
 	palette[2] = 0;
 	palette[3] = 0;
-   
+
 	return palette;
 }
 

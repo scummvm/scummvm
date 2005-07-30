@@ -64,7 +64,7 @@ public:
 
 	bool endOfData() const		{ return eosIntern(); }
 	bool isStereo() const		{ return _isStereo; }
-	
+
 	int getRate() const			{ return _frame.header.samplerate; }
 #ifdef __SYMBIAN32__
 	// Used to store the last position stream was read for symbian
@@ -193,7 +193,7 @@ bool MP3InputStream::init() {
 			warning("MP3InputStream: Cannot determine number of channels");
 			return false;
 	}
-	
+
 	return true;
 }
 
@@ -256,7 +256,7 @@ void MP3InputStream::refill(bool first) {
 		mad_timer_t frame_duration = _frame.header.duration;
 		mad_timer_negate(&frame_duration);
 		mad_timer_add(&_duration, frame_duration);
-	
+
 		if (!first && mad_timer_compare(_duration, mad_timer_zero) <= 0)
 			_size = -1;	// Mark for EOF
 	}

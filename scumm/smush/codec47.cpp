@@ -212,7 +212,7 @@ void Codec47Decoder::makeTablesInterpolation(int param) {
 			} else {
 				b2 = 4;
 			}
-			
+
 			memset(tableSmallBig, 0, param * param * 4);
 
 			variable2 = ABS(value_table47_2_2 - value_table47_2_1);
@@ -339,7 +339,7 @@ void Codec47Decoder::makeTables47(int width) {
 			_tableBig[128 + a + d * 2] = (byte)tmp;
 			_tableBig[128 + a + d * 2 + 1] = tmp >> 8;
 		}
-		
+
 		a += 388;
 		c += 128;
 	} while (c < 32768);

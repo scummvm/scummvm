@@ -326,7 +326,7 @@ void Debugger::drawDebugGraphics() {
 	// walk-grid
 
 	if (_displayWalkGrid)
-		_vm->_logic->_router->plotWalkGrid(); 
+		_vm->_logic->_router->plotWalkGrid();
 
 	// player feet coord marker
 

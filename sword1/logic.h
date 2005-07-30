@@ -125,7 +125,7 @@ private:
 	int fnGotoBookmark	(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnSendSync		(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnWaitSync		(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
-	
+
 	int cfnClickInteract(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int cfnSetScript	(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 
@@ -158,9 +158,9 @@ private:
 	int fnEndChooser	(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnStartMenu		(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnEndMenu		(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
-	
+
 	int cfnReleaseMenu	(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
-	
+
 	int fnAddSubject	(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnAddObject		(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnRemoveObject	(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
@@ -233,6 +233,6 @@ enum HelperScripts {
 	HELP_SPAIN2
 };
 
-} // End of namespace Sword1 
+} // End of namespace Sword1
 
 #endif //BSLOGIC_H

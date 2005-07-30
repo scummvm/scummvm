@@ -16,7 +16,7 @@
 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. 
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * $Header$
  *
@@ -120,7 +120,7 @@ struct g_Namedregisters {
 // Global stuff
 
 // Register array.
-int g_Registers[50] = {1, 2, 3, 4 ,5, 6, 7, 8, 9, 10, 
+int g_Registers[50] = {1, 2, 3, 4 ,5, 6, 7, 8, 9, 10,
 					11, 12, 13, 14, 15, 16, 17, 18, 19,
 					21, 22, 23, 24, 25, 26, 27, 28, 29,
 					31, 32, 33, 34, 35, 36, 37, 38, 39,
@@ -173,13 +173,13 @@ unsigned int DecodeInstruction(unsigned int uiInstruction, unsigned int PC);
 int OpenUSB()
 {
 	int	iResult;
-	
+
 	g_CommDesc.port_kind = COMM_USB_D;
 	g_CommDesc.tr_mode = 1;
 	g_CommDesc.tr_buf_size = PACKET_SIZE;
 	g_CommDesc.sz_pkt = PACKET_SIZE;
 	g_CommDesc.isr_comm_ram = 0;
-  	
+
 
 	iResult = GpCommCreate(&g_CommDesc, &g_Comm);
 	return iResult;
@@ -222,7 +222,7 @@ void WaitACK()
 	}
 }
 ///////////////////////////////////////////////////////////////
-// Formats and sends a command to the server, 
+// Formats and sends a command to the server,
 // it also calculates checksum
 void SendCommand(unsigned char *pCommand)
 {
@@ -329,7 +329,7 @@ void HexToStringBW(char *pString, int iNumber)
 	pString[3] = HexDigits[(iNumber >> 8) & 0x0f];
 	pString[0] = HexDigits[(iNumber >> 4) & 0x0f];
 	pString[1] = HexDigits[(iNumber) & 0x0f];
-	
+
 	pString[8] = 0;
 
 }
@@ -402,7 +402,7 @@ unsigned char StringToByte(char *pString)
 			case 'f':
 				ucValue |= (0x0f);
 				break;
-	
+
 		}
 	}
 
@@ -418,7 +418,7 @@ void SendOffsets()
 	int a = 0;//(int)&__text_start;
 	int b = 0;//(int)&__data_start;
 	int c = 0;//(int)&__bss_start;
-	
+
 	PrintToString(String, "Text=");
 	HexToString(&String[5], a);
 	PrintToString(&String[5+8], ";Data=");
@@ -449,23 +449,23 @@ void DumpRegisters()
 		HexToStringBW(&Buffer[i * 8], g_Registers[21 + i]);
 	}
 	Buffer[21*8] = 0;
-	
+
 	SendCommandSize((unsigned char *)Buffer, (21 * 8) + 4);
 }
 
 ///////////////////////////////////////////////////////////////
-// This function extracts an address from a string. 
+// This function extracts an address from a string.
 void *GetAddr(char *pBuffer)
 {
 	int iAddr;
 	int i = 0;
 	iAddr = 0;
-	
+
 	while (pBuffer[i] != ',') {
 		iAddr = iAddr << 4;
 		switch(pBuffer[i]) {
 		case '0':
-			//iAddr |= 
+			//iAddr |=
 			break;
 		case '1':
 			iAddr |= (0x01);
@@ -531,7 +531,7 @@ int	GetBytes(char *pBuffer)
 		iBytes = iBytes << 4;
 		switch(pBuffer[i]) {
 		case '0':
-			//iAddr |= 
+			//iAddr |=
 			break;
 		case '1':
 			iBytes |= 0x01;
@@ -580,7 +580,7 @@ int	GetBytes(char *pBuffer)
 			break;
 
 		}
-		
+
 		i++;
 	}
 	return iBytes;
@@ -613,7 +613,7 @@ void SendMemory(void *pAddr, int iBytes)
 			iData = *pData++;
 			g_TempBuffer[iBufferPos++] = HexDigits[(iData & 0xf0) >> 4];
 			g_TempBuffer[iBufferPos++] = HexDigits[(iData & 0x0f)];
-			
+
 		}
 		if (iBytes > 0) {
 			// This mean that we have not yet sent our last command.
@@ -711,7 +711,7 @@ void ISR() __attribute__ ((naked));
 void ISR()
 {
 	// Lets snatch the registers!
-	
+
 	asm volatile(" \n"
 		" str		r4, [%0, #0x10] \n"
 		" str		r5, [%0, #0x14] \n"
@@ -724,7 +724,7 @@ void ISR()
 		" str		r12, [%0, #0x30] \n"
 
 		" str		r14, [%0, #0x3C] \n"
-		
+
 		" @// skip 8 * 12byte(96bit) = 0x60 \n"
 
 		" mov		r4, %0 \n"
@@ -738,10 +738,10 @@ void ISR()
 		" str		r1, [r4, #0x48] \n"
 		" str		r1, [r4,#0xA0] \n"
 		" str		r1, [r4,#0xA4] \n"
-			
+
 		" mrs		r1, CPSR \n"
 		" mov		r2, r1 \n"
-		
+
 
 		" @// Let us set the mode to supervisor so we can get r13 and r14 \n"
 		" bic		r1, r1, #0x1f \n"
@@ -755,15 +755,15 @@ void ISR()
 		" bic		r2, r2, #0x80 \n"
 		" msr		CPSR_fsxc, r2 \n"
 
-		
 
-	
+
+
 		" \n"
 		:
 		:  "r" (g_Registers)
 		: "%0", "r1", "r2", "r4");
 
-	
+
 	// Get Current CSPR and save LR
 	asm volatile(" \n"
 		" mrs		r0, CPSR \n"
@@ -806,7 +806,7 @@ void ISR()
 		default:
 			g_iTrap = -1;
 	}
-	
+
 
 	#ifdef USE_PRINTF
 	Printf("Trap@0x%x:%d", g_Registers[15], g_iTrap);
@@ -834,11 +834,11 @@ void ISR()
 	*/
 	SendBreakPoint();
 	BreakPoint();
-	
+
 		//Printf("0x%x 0x%x", g_Registers[15], g_Registers[16]);
 	// Okay, it's time to continue.
-	
-	
+
+
 	switch (g_iTrap) {
 		case MODE_USER:
 			//Printf("Dunno!!\n");
@@ -877,7 +877,7 @@ void ISR()
 
 				" ldr	r0,[%0, #0x00] \n"
 				" ldr	r3,[%0, #0x0C] \n"
-				
+
 				" subs	pc, lr, #0x04 \n"
 
 				" \n"
@@ -918,7 +918,7 @@ void ISR()
 				:
 				:"r" (g_Registers)
 				:"r0");
-			
+
 
 			break;
 		case MODE_SYSTEM:
@@ -931,7 +931,7 @@ void ISR()
 	}
 
 
-	
+
 
 }
 
@@ -992,7 +992,7 @@ void DEBUG_Print(char *pFormat, ...)
 	unsigned char	MyChar;
 
 	if (!g_GDBConnected) return;
-	
+
 	va_start(VaList , pFormat);
 	vsnprintf(Temp, 0x100, pFormat , VaList);
 	va_end(VaList);
@@ -1026,7 +1026,7 @@ void BreakPoint()
 	void	*pAddr;
 	int		iOffset;
 	int		iBytes;
-	
+
 
 	// Find out if we got here through a STEP command
 	if (g_LastWasStep) {
@@ -1050,7 +1050,7 @@ void BreakPoint()
 	while(!bBreakLoop) {
 		iResult = RecvUSB(g_ReadBuffer, 0x100);
 		//Printf("%d\n", iResult);
-		
+
 		if (iResult > 0) {
 			// If we recieve a package we can assume that GDB is connected.. or smth..:D
 			g_GDBConnected = true;
@@ -1064,7 +1064,7 @@ void BreakPoint()
 			g_SendBuffer[4] = '+';
 			SendUSB((const void *)g_SendBuffer, 0x100);
 			WaitACK();
-		
+
 			// I can see that i get a bunch of '+' and '-' in the messages.. lets remove them.
 			iOffsetAdd = 4;
 			while((g_ReadBuffer[iOffsetAdd] == '+') || (g_ReadBuffer[iOffsetAdd] == '-')) iOffsetAdd++;
@@ -1118,16 +1118,16 @@ void BreakPoint()
 							iOffset = FindChar(&g_ReadBuffer[iOffsetAdd + 2], ':');
 							WriteMemory(pAddr, iBytes, &g_ReadBuffer[iOffsetAdd + 2 + iOffset + 1]);
 							SendCommand((unsigned char *)"OK");
-	
+
 						}
 						break;
 					case 'c':	// continue
 						{
 							return;
-							
+
 						}
 						break;
-					
+
 					case 's': // Stepping.
 						{
 							// Get the address of the next instruction.
@@ -1164,7 +1164,7 @@ void BreakPoint()
 							}
 						}
 						break;
-					
+
 					default:
 						UnSupportedCommand();
 						break;
@@ -1195,8 +1195,8 @@ unsigned int *GetNextInstruction(unsigned int *pAddr)
 
 	unsigned int uiNewPC = DecodeInstruction(uiInstruction, (unsigned int)pAddr);
 	return (unsigned int *)uiNewPC;
-	
-	
+
+
 	// Set new PC to pAddr + 4, because we really hope that is the case...:D
 	iNewPC = (unsigned int)pAddr;
 	iNewPC += 4; // Next instruction (atleast in ARM mode, we don't support thumb yet)
@@ -1227,9 +1227,9 @@ unsigned int *GetNextInstruction(unsigned int *pAddr)
 			iNewAddr *= 4; // Instruction size.
 			iNewPC = ((int)pAddr + iNewAddr + 8);
 		}
-	
+
 		// Well, it might be a ldm(ea)?
-	
+
 		if ((uiInstruction & 0xE000000) == 0x8000000) {
 			#ifdef USE_PRINTF
 			Printf("LDM");
@@ -1261,28 +1261,28 @@ unsigned int *GetNextInstruction(unsigned int *pAddr)
 					uiRegVal = ((unsigned int *)g_Registers)[uiBaseRegister];
 					// First, have a look at the U bit.
 					if ((uiInstruction & (1 << 23)) != 0) {
-						
+
 						// Transfer is made descending
 						// Which also means that the PC is closest to the base register i just found out.
 						// Lets check the P bit (If i'm supposed to increment before or after.
-						
+
 						iPCOffset = iRegsbeforePC * 4;
 						if (((uiInstruction) & (1 << 24)) != 0) iPCOffset += 4;
-	
+
 					} else {
 						// Transfer is done ascending
 						// Lets check the P bit (If i'm supposed to decrement before or after.
 						if (((uiInstruction) & (1 << 24)) != 0) iPCOffset = -4;
 					}
-	
-	
+
+
 					iNewPC = *(unsigned int *)((((int)uiRegVal) + iPCOffset) & ~0x03);
 				}
 			}
 		}
-	
+
 		// Check if it's a mov pc, Rn
-	
+
 	}
 
 	return (unsigned int *)iNewPC;
@@ -1298,7 +1298,7 @@ bool CondWillExecute(unsigned int uiCond, unsigned int CSPR)
 			// This is true if Z is set in CSPR
 			if ((CSPR & (1 << 30)) != 0) return true;
 			else return false;
-			
+
 			break;
 		case 1: // NE
 			// This should be true if Z is not set.
@@ -1370,7 +1370,7 @@ bool CondWillExecute(unsigned int uiCond, unsigned int CSPR)
 		default:
 			break;
 	}
-	
+
 
 }
 // I got the idea for this layout from the singlestep.c (found in eCos)
@@ -1395,7 +1395,7 @@ typedef struct
 #define DPISR_R1 0
 #define DPISR_R2 0
 // Example <opcode> Rd, Rm, <shift> amount
-typedef struct 
+typedef struct
 {
 	unsigned Rm		: 4; // Rm
 	unsigned resv3	: 1; // Reserved 3 (1)
@@ -1475,7 +1475,7 @@ typedef struct
 	unsigned S		: 1; // B-bit
 	unsigned U		: 1; // U-bit
 	unsigned p		: 1; // P-bit
-	
+
 	unsigned resv1	: 3; // Reserved 1 (100)
 	unsigned cond	: 4; // Condition
 } lsm; // Load store multiple
@@ -1563,7 +1563,7 @@ unsigned int DecodeBL(bl Instr,  unsigned int PC);
 
 
 ///////////////////////////////////////////////////////////////
-// 
+//
 unsigned int DecodeInstruction(unsigned int uiInstruction, unsigned int PC)
 {
 	Instruction myInstruction;
@@ -1585,7 +1585,7 @@ unsigned int DecodeInstruction(unsigned int uiInstruction, unsigned int PC)
 			 (myInstruction.DPRRS.resv3 == DPRRS_R3)) return DecodeDPRRS(myInstruction.DPRRS, PC);
 	else if ((myInstruction.DPI.resv1 == DPI_R1)) return DecodeDPI(myInstruction.DPI, PC);
 	else if ((myInstruction.LSIO.resv1 == LSIO_R1)) return DecodeLSIO(myInstruction.LSIO, PC);
-	
+
 	else if ((myInstruction.LSRO.resv1 == LSRO_R1) &&
 			 (myInstruction.LSRO.resv2 == LSRO_R2)) return DecodeLSRO(myInstruction.LSRO, PC);
 	else if (myInstruction.LSM.resv1 == LSM_R1) return DecodeLSM(myInstruction.LSM, PC);
@@ -1595,21 +1595,21 @@ unsigned int DecodeInstruction(unsigned int uiInstruction, unsigned int PC)
 }
 
 ///////////////////////////////////////////////////////////////
-// 
+//
 unsigned int LSL(unsigned int uiValue, unsigned int uiSteps)
 {
 	return uiValue << uiSteps;
 }
 
 ///////////////////////////////////////////////////////////////
-// 
+//
 unsigned int LSR(unsigned int uiValue, unsigned int uiSteps)
 {
 	return uiValue >> uiSteps;
 }
 
 ///////////////////////////////////////////////////////////////
-// 
+//
 // This one could be trickier since, i'm nor sure if a signed shift really is a signed shift.
 unsigned int ASR(unsigned int uiValue, unsigned int uiSteps)
 {
@@ -1625,7 +1625,7 @@ unsigned int ASR(unsigned int uiValue, unsigned int uiSteps)
 }
 
 ///////////////////////////////////////////////////////////////
-// 
+//
 unsigned int ROR(unsigned int uiValue, unsigned int uiSteps)
 {
 	unsigned int uiRetval;
@@ -1642,14 +1642,14 @@ unsigned int ROR(unsigned int uiValue, unsigned int uiSteps)
 
 
 ///////////////////////////////////////////////////////////////
-// 
+//
 unsigned int Shift_Operand(unsigned int Rm, unsigned int amount, unsigned int shift)
 {
 	unsigned int	uiRegisterValue;
-	
-	
 
-	
+
+
+
 	uiRegisterValue = g_Registers[Rm];
 	if (Rm == 0x0f) {
 		// Rm is PC, and PC is offseted by 8.
@@ -1671,7 +1671,7 @@ unsigned int Shift_Operand(unsigned int Rm, unsigned int amount, unsigned int sh
 		case 3: // ROR
 			return ROR(uiRegisterValue, amount);
 			break;
-		
+
 		default:
 			break;
 
@@ -1680,7 +1680,7 @@ unsigned int Shift_Operand(unsigned int Rm, unsigned int amount, unsigned int sh
 }
 
 ///////////////////////////////////////////////////////////////
-// 
+//
 // Example <opcode> Rd, Rm, <shift> amount
 unsigned int DecodeDPISR(dpisr Instr, unsigned int uiPC)
 {
@@ -1688,10 +1688,10 @@ unsigned int DecodeDPISR(dpisr Instr, unsigned int uiPC)
 	unsigned int uiRnVal = g_Registers[Instr.Rn];
 
 
-	
+
 	// Only do this i Pc is Rd
 	if (Instr.Rd != 0x0f) return uiPC + 4;
-	
+
 	// The actual value that PC contains when executing this instruction is the instruction address+8
 	if (Instr.Rn == 0x0f) uiRnVal += 8;
 
@@ -1702,11 +1702,11 @@ unsigned int DecodeDPISR(dpisr Instr, unsigned int uiPC)
 		case OPCODE_MVN:
 			return ~uiOperand;
 		case OPCODE_ADD:
-			return uiRnVal + uiOperand; 
+			return uiRnVal + uiOperand;
 		case OPCODE_ADC:
 			return uiRnVal + uiOperand + (((g_Registers[18] & (1 << 29))) == 0?0:1);
 		case OPCODE_SUB:
-			return uiRnVal - uiOperand; 
+			return uiRnVal - uiOperand;
 		case OPCODE_SBC:
 			return uiRnVal - uiOperand - (((g_Registers[18] & (1 << 29))) == 0?1:0);
 		case OPCODE_RSB:
@@ -1728,7 +1728,7 @@ unsigned int DecodeDPISR(dpisr Instr, unsigned int uiPC)
 
 
 ///////////////////////////////////////////////////////////////
-// 
+//
 //dprrs; // Data Processing Register Register Shift
 // Example <opcode> Rd, Rn, Rm <shift> Rs
 unsigned int DecodeDPRRS(dprrs Instr, unsigned int uiPC)
@@ -1752,11 +1752,11 @@ unsigned int DecodeDPRRS(dprrs Instr, unsigned int uiPC)
 		case OPCODE_MVN:
 			return ~uiOperand;
 		case OPCODE_ADD:
-			return uiRnVal + uiOperand; 
+			return uiRnVal + uiOperand;
 		case OPCODE_ADC:
 			return uiRnVal + uiOperand + (((g_Registers[18] & (1 << 29))) == 0?0:1);
 		case OPCODE_SUB:
-			return uiRnVal - uiOperand; 
+			return uiRnVal - uiOperand;
 		case OPCODE_SBC:
 			return uiRnVal - uiOperand - (((g_Registers[18] & (1 << 29))) == 0?1:0);
 		case OPCODE_RSB:
@@ -1778,7 +1778,7 @@ unsigned int DecodeDPRRS(dprrs Instr, unsigned int uiPC)
 }
 
 ///////////////////////////////////////////////////////////////
-// 
+//
 // dpi; // Data processing immediate
 // example add r0, r1, (ror <immed>, <rotate * 2>)
 unsigned int DecodeDPI(dpi Instr, unsigned int uiPC)
@@ -1797,11 +1797,11 @@ unsigned int DecodeDPI(dpi Instr, unsigned int uiPC)
 		case OPCODE_MVN:
 			return ~uiOperand;
 		case OPCODE_ADD:
-			return uiRnVal + uiOperand; 
+			return uiRnVal + uiOperand;
 		case OPCODE_ADC:
 			return uiRnVal + uiOperand + (((g_Registers[18] & (1 << 29))) == 0?0:1);
 		case OPCODE_SUB:
-			return uiRnVal - uiOperand; 
+			return uiRnVal - uiOperand;
 		case OPCODE_SBC:
 			return uiRnVal - uiOperand - (((g_Registers[18] & (1 << 29))) == 0?1:0);
 		case OPCODE_RSB:
@@ -1823,7 +1823,7 @@ unsigned int DecodeDPI(dpi Instr, unsigned int uiPC)
 }
 
 ///////////////////////////////////////////////////////////////
-// 
+//
 // lsio; // Load/store immediate offset
 // Example ldr Rd, [Rn, #<immed>]
 unsigned int DecodeLSIO(lsio Instr, unsigned int uiPC)
@@ -1840,7 +1840,7 @@ unsigned int DecodeLSIO(lsio Instr, unsigned int uiPC)
 
 	// Check if it's pre-indexed
 	if (Instr.p == 1){
-	
+
 		if (Instr.U == 1) {
 			// Add offset
 			uiRnValue += Instr.immed;
@@ -1857,7 +1857,7 @@ unsigned int DecodeLSIO(lsio Instr, unsigned int uiPC)
 }
 
 ///////////////////////////////////////////////////////////////
-// 
+//
 // lsro; // Load/Store register offset
 // Example ldr Rd, [Rn + Rm lsl 5]
 unsigned int DecodeLSRO(lsro Instr, unsigned int uiPC)
@@ -1876,7 +1876,7 @@ unsigned int DecodeLSRO(lsro Instr, unsigned int uiPC)
 	uiIndex = Shift_Operand(Instr.Rm, Instr.amount, Instr.shift);
 
 	if (Instr.p == 1){
-	
+
 		if (Instr.U == 1) {
 			// Add offset
 			uiRnValue += uiIndex;
@@ -1893,7 +1893,7 @@ unsigned int DecodeLSRO(lsro Instr, unsigned int uiPC)
 
 }
 ///////////////////////////////////////////////////////////////
-// 
+//
 // lsm; // Load store multiple
 // Example: ldm r0, {r1, r2, r3}
 unsigned int DecodeLSM(lsm Instr, unsigned int uiPC)
@@ -1922,7 +1922,7 @@ unsigned int DecodeLSM(lsm Instr, unsigned int uiPC)
 		for (int i = 0; i < 15; i++) {
 			if ((Instr.regs & (1 << i)) != 0) uiOffsetToPC += 4;
 		}
-	
+
 		// If the P bit is set, it uses pre increment
 		if (Instr.p == 1) uiOffsetToPC += 4;
 	}
@@ -1935,7 +1935,7 @@ unsigned int DecodeLSM(lsm Instr, unsigned int uiPC)
 }
 
 ///////////////////////////////////////////////////////////////
-// 
+//
 // bl; // Branch with link(optional)
 unsigned int DecodeBL(bl Instr, unsigned int uiPC)
 {

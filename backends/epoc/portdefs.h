@@ -65,14 +65,14 @@
 // somehow nobody has this function...
 #define hypot(a, b)					sqrt((a)*(a) + (b)*(b))
 
-// Symbian bsearch implementation is flawed	
+// Symbian bsearch implementation is flawed
 void inline *scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *)) {
 	size_t i;
 
-	for (i=0; i<nmemb; i++) 
+	for (i=0; i<nmemb; i++)
 		if (compar(key, (void*)((size_t)base + size * i)) == 0)
 			return (void*)((size_t)base + size * i);
 	return NULL;
 }
 #define bsearch						scumm_bsearch
-	
+

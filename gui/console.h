@@ -53,26 +53,26 @@ protected:
 	int		_currentPos;
 	int		_scrollLine;
 	int		_firstLineInBuffer;
-	
+
 	int		_promptStartPos;
 	int 	_promptEndPos;
 
 	bool	_caretVisible;
 	uint32	_caretTime;
-	
+
 	enum SlideMode {
 		kNoSlideMode,
 		kUpSlideMode,
 		kDownSlideMode
 	};
-		
+
 	SlideMode	_slideMode;
 	uint32	_slideTime;
 
 	ScrollBarWidget *_scrollBar;
 
 	// The _callbackProc is called whenver a data line is entered
-	// 
+	//
 	InputCallbackProc _callbackProc;
 	void *_callbackRefCon;
 
@@ -106,7 +106,7 @@ public:
 	int vprintf(const char *format, va_list argptr);
 #undef putchar
 	void putchar(int c);
-	
+
 	void setInputCallback(InputCallbackProc proc, void *refCon) {
 		_callbackProc = proc;
 		_callbackRefCon = refCon;

@@ -37,7 +37,7 @@ namespace CEGUI {
 	class PanelKeyboard : public Toolbar {
 	public:
 		PanelKeyboard(WORD reference);
-		virtual ~PanelKeyboard(); 
+		virtual ~PanelKeyboard();
 		virtual bool action(int x, int y, bool pushed);
 	private:
 		Key _key;

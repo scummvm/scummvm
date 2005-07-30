@@ -48,7 +48,7 @@ uint32 decode12BitsSample(const byte *src, byte **dst, uint32 size) {
  * The "IMC" codec below (see cases 13 & 15 in decompressCodec) is actually a
  * variant of the IMA codec, see also
  *   <http://home.pcisys.net/~melanson/codecs/simpleaudio.html>
- * 
+ *
  * It is somewhat different, though: the standard ADPCM codecs use a fixed
  * size for their data packets (4 bits), while the codec implemented here
  * varies the size of each "packet" between 2 and 7 bits.
@@ -80,27 +80,27 @@ static const byte imxOtherTable[6][64] = {
 	{
 		0xFF, 0x04
 	},
-	
+
 	{
 		0xFF, 0xFF, 0x02, 0x08
 	},
-	
+
 	{
 		0xFF, 0xFF, 0xFF, 0xFF, 0x01, 0x02, 0x04, 0x06
 	},
-	
+
 	{
 		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 		0x01, 0x02, 0x04, 0x06, 0x08, 0x0C, 0x10, 0x20
 	},
-	
+
 	{
 		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 		0x01, 0x02, 0x04, 0x06, 0x08, 0x0A, 0x0C, 0x0E,
 		0x10, 0x12, 0x14, 0x16, 0x18, 0x1A, 0x1C, 0x20
 	},
-	
+
 	{
 		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
@@ -122,12 +122,12 @@ void releaseImcTables() {
 
 void initializeImcTables() {
 	int pos;
-	
+
 #ifdef __PALM_OS__
 	if (!_destImcTable) _destImcTable = (byte *)calloc(89, sizeof(byte));
 	if (!_destImcTable2) _destImcTable2 = (uint32 *)calloc(89 * 64, sizeof(uint32));
 #endif
-	
+
 	for (pos = 0; pos <= 88; ++pos) {
 		byte put = 1;
 		int32 tableValue = ((imcTable[pos] * 4) / 7) / 2;
@@ -537,7 +537,7 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 			// Decoder for the the IMA ADPCM variants used in COMI.
 			// Contrary to regular IMA ADPCM, this codec uses a variable
 			// bitsize for the encoded data.
-		
+
 			const int MAX_CHANNELS = 2;
 			int32 outputSamplesLeft;
 			int32 destPos;
@@ -558,7 +558,7 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 			outputSamplesLeft = 0x1000;
 
 			// Every data packet contains 0x2000 bytes of audio data
-			// when extracted. In order to encode bigger data sets, 
+			// when extracted. In order to encode bigger data sets,
 			// one has to split the data into multiple blocks.
 			//
 			// Every block starts with a 2 byte word. If that word is
@@ -604,7 +604,7 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 				destPos = chan * 2;
 
 				const int bound = (channels == 1)
-									? outputSamplesLeft 
+									? outputSamplesLeft
 									: ((chan == 0)
 										? (outputSamplesLeft+1) / 2
 										: outputSamplesLeft / 2);
@@ -612,7 +612,7 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 					// Determine the size (in bits) of the next data packet
 					const int32 curTableEntryBitCount = _destImcTable[curTablePos];
 					assert(2 <= curTableEntryBitCount && curTableEntryBitCount <= 7);
-					
+
 					// Read the next data packet
 					const byte *readPos = src + (totalBitOffset >> 3);
 					const uint16 readWord = (uint16)(READ_BE_UINT16(readPos) << (totalBitOffset & 7));
@@ -620,7 +620,7 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 
 					// Advance read position to the next data packet
 					totalBitOffset += curTableEntryBitCount;
-					
+
 					// Decode the data packet into a delta value for the output signal.
 					const byte signBitMask = (1 << (curTableEntryBitCount - 1));
 					const byte dataBitMask = (signBitMask - 1);
@@ -629,13 +629,13 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 					const int32 tmpA = (data << (7 - curTableEntryBitCount));
 					const int32 imcTableEntry = imcTable[curTablePos] >> (curTableEntryBitCount - 1);
 					int32 delta = imcTableEntry + _destImcTable2[tmpA + (curTablePos * 64)];
-					
+
 					// The topmost bit in the data packet tells is a sign bit
 					if ((packet & signBitMask) != 0) {
 						delta = -delta;
 					}
-					
-					// Accumulate the delta onto the output data 
+
+					// Accumulate the delta onto the output data
 					outputWord += delta;
 
 					// Clip outputWord to 16 bit signed, and write it into the destination stream

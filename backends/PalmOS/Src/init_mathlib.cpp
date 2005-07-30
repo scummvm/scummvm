@@ -23,7 +23,7 @@ void MathlibRelease() {
 
 	if (MathLibRef != sysInvalidRefNum) {
 		MathLibClose(MathLibRef, &useCount);
-		
+
 		if (!useCount)
 			SysLibRemove(MathLibRef);
 	}

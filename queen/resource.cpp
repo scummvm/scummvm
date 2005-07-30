@@ -65,7 +65,7 @@ Resource::~Resource() {
 	_resourceFile->close();
 	delete _resourceFile;
 
-	if (_resourceTable != _resourceTablePEM10) 
+	if (_resourceTable != _resourceTablePEM10)
 		delete[] _resourceTable;
 }
 
@@ -124,7 +124,7 @@ bool Resource::findNormalVersion() {
 
 	_compression = COMPRESSION_NONE;
 
-	// detect game version based on resource file size ; we try to 
+	// detect game version based on resource file size ; we try to
 	// verify that it is indeed the version we think it is later on
 	const GameVersion *gameVersion = detectGameVersion(_resourceFile->size());
 	if (gameVersion == NULL)
@@ -160,7 +160,7 @@ void Resource::checkJASVersion() {
 		offset += JAS_VERSION_OFFSET_DEMO;
 	else if (isInterview())
 		offset += JAS_VERSION_OFFSET_INTV;
-	else 
+	else
 		offset += JAS_VERSION_OFFSET_PC;
 	_resourceFile->seek(offset);
 

@@ -37,9 +37,9 @@ protected:
 	byte		_modifiers;
 	bool		_willClose;
 	Graphics::Surface	_canvas;
-	
+
 	int xOff, yOff;
-	
+
 	void addLine(const char *str);
 
 public:

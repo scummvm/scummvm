@@ -50,18 +50,18 @@ public:
 	virtual void drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const = 0;
 
 	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlignment align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
-	
+
 	/**
 	 * Compute and return the width the string str has when rendered using this font.
 	 */
 	int getStringWidth(const Common::String &str) const;
-	
+
 	/**
 	 * Take a text (which may contain newlines characters) and word wrap it so thata
 	 * no text line is wider than maxWidth pixels. If necessary, additional line breaks
 	 * are generated, preferably between words (i.e. were whitespaces are).
 	 * The resulting lines are appended to the string list lines.
-	 * It returns the maximal width of any of the new lines (i.e. a value which is less 
+	 * It returns the maximal width of any of the new lines (i.e. a value which is less
 	 * or equal to maxWidth).
 	 *
 	 * @param str	the string to word wrap

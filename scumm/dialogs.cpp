@@ -119,25 +119,25 @@ static ResString string_map_table_v7[] = {
 	{94, "text speed"}, //boot26
 	{95, "text display"}, //boot27
 	{96, "the dig v1.0"},*/
-	
+
 };
 
 static ResString string_map_table_v6[] = {
-	{117, "How may I serve you?"}, 
-	{109, "Select a game to LOAD"}, 
-	{108, "Name your SAVE game"}, 
-	{96, "Save"}, 
-	{97, "Load"}, 
-	{98, "Play"}, 
-	{99, "Cancel"}, 
-	{100, "Quit"}, 
-	{101, "OK"}, 
-	{93, "Game paused"}, 
+	{117, "How may I serve you?"},
+	{109, "Select a game to LOAD"},
+	{108, "Name your SAVE game"},
+	{96, "Save"},
+	{97, "Load"},
+	{98, "Play"},
+	{99, "Cancel"},
+	{100, "Quit"},
+	{101, "OK"},
+	{93, "Game paused"},
 	{210, "Game version"}
 };
 
 static ResString string_map_table_v5[] = {
-	{28, "How may I serve you?"}, 
+	{28, "How may I serve you?"},
 	{20, "Select a game to LOAD"},
 	{19, "Name your SAVE game"},
 	{7, "Save"},
@@ -181,7 +181,7 @@ const Common::String ScummDialog::queryResString(int stringno) {
 	// Convert to a proper string (take care of FF codes)
 	byte chr;
 	String tmp;
-	while ((chr = *result++)) {		
+	while ((chr = *result++)) {
 		if (chr == 0xFF) {
 			result += 3;
 		} else if (chr != '@') {
@@ -211,7 +211,7 @@ protected:
 
 public:
 	SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode);
-	
+
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	const String &getResultString() const;
 	void setList(const StringList& list) { GUI_ChooserDialog::setList(list); }
@@ -275,23 +275,23 @@ protected:
 
 public:
 	SaveLoadChooserEx(const String &title, const String &buttonLabel, bool saveMode, ScummEngine *engine);
-	
+
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-	const String &getResultString() const;	
+	const String &getResultString() const;
 	void setList(const StringList& list);
 	int runModal();
 };
 
 SaveLoadChooserEx::SaveLoadChooserEx(const String &title, const String &buttonLabel, bool saveMode, ScummEngine *engine)
 	: Dialog(8, 8, engine->_system->getOverlayWidth() - 2 * 8, engine->_system->getOverlayHeight() - 16), _saveMode(saveMode), _list(0), _chooseButton(0), _gfxWidget(0), _scumm(engine) {
-	
+
 	new StaticTextWidget(this, 10, 6, _w - 2 * 10, kLineHeight, title, kTextAlignCenter);
-	
+
 	// Add choice list
 	_list = new GUI::ListWidget(this, 10, 18, _w - 2 * 10 - 180, _h - 14 - kBigButtonHeight - 18, GUI::kBigWidgetSize);
 	_list->setEditable(saveMode);
 	_list->setNumberingMode(saveMode ? GUI::kListNumberingOne : GUI::kListNumberingZero);
-	
+
 	// Add the thumbnail display
 	_gfxWidget = new GUI::GraphicsWidget(this,
 			_w - (kThumbnailWidth + 22),
@@ -299,7 +299,7 @@ SaveLoadChooserEx::SaveLoadChooserEx(const String &title, const String &buttonLa
 			kThumbnailWidth + 8,
 			((_scumm->_system->getHeight() % 200 && _scumm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1) + 8);
 	_gfxWidget->setFlags(GUI::WIDGET_BORDER);
-	
+
 	// Buttons
 	addButton(this, _w - 2 * (kBigButtonWidth + 10), _h - kBigButtonHeight - 8, "Cancel", kCloseCmd, 0, GUI::kBigWidgetSize);
 	_chooseButton = addButton(this, _w - (kBigButtonWidth + 10), _h - kBigButtonHeight - 8, buttonLabel, kChooseCmd, 0, GUI::kBigWidgetSize);
@@ -391,7 +391,7 @@ MainMenuDialog::MainMenuDialog(ScummEngine *scumm)
 
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
-	
+
 	int hOffset;
 	int vSpace;
 	int vAddOff;
@@ -417,7 +417,7 @@ MainMenuDialog::MainMenuDialog(ScummEngine *scumm)
 	}
 
 	int y = vSpace + vAddOff;
-	
+
 
 	addBigButton("Resume", kPlayCmd, 'P');
 	y += vSpace;
@@ -640,7 +640,7 @@ void ConfigDialog::close() {
 	}
 
 	GUI_OptionsDialog::close();
-	
+
 	_vm->setupVolumes();
 }
 
@@ -851,12 +851,12 @@ ValueDisplayDialog::ValueDisplayDialog(const Common::String& label, int minVal, 
 void ValueDisplayDialog::drawDialog() {
 	g_gui.blendRect(_x, _y, _w, _h, g_gui._bgcolor);
 	g_gui.box(_x, _y, _w, _h, g_gui._color, g_gui._shadowcolor);
-	
+
 	const int labelWidth = _w - 8 - _percentBarWidth;
 
 	// Draw the label
 	g_gui.drawString(_label, _x + 4, _y + 4, labelWidth, g_gui._textcolor);
-	
+
 	// Draw the percentage bar
 	g_gui.fillRect(_x + 4 + labelWidth, _y + 4, _percentBarWidth * (_value - _min) / (_max - _min), _h - 8, g_gui._textcolorhi);
 	g_gui.frameRect(_x + 4 + labelWidth, _y + 4, _percentBarWidth, _h - 8, g_gui._textcolor);
@@ -876,7 +876,7 @@ void ValueDisplayDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 			_value++;
 		else if (ascii == _decKey && _value > _min)
 			_value--;
-		
+
 		setResult(_value);
 		_timer = getMillis() + kDisplayDelay;
 		draw();

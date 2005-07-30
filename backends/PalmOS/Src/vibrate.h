@@ -24,7 +24,7 @@ Err HwrVibrateAttributes(Boolean set, UInt32 setting, void *value)
               SYS_TRAP(sysTrapHwrVibrateAttributes);
 
 /* to determine whether the vibrator is supported on a specific device, you
-** need to make sure that you are running on PalmOS 4.x (so that the 
+** need to make sure that you are running on PalmOS 4.x (so that the
 ** trap exists), that the attention manager exists and you need to check
 ** whether HwrVibrateAttributes(0, 1, &active) returns an error code of
 ** 0. ('active' is a Boolean).
@@ -42,14 +42,14 @@ Err HwrVibrateAttributes(Boolean set, UInt32 setting, void *value)
 ** value is in ticks (1/100 seconds) */
 #define kHwrVibrateRate                       2
 
-/* *value points to a UInt32, specifying the pattern of vibrating 
+/* *value points to a UInt32, specifying the pattern of vibrating
 **
 ** example:
 **    0xFFFFFFFF    stay on, no vibrating
 **    0x0F0F0F0F    vibrate four times in equal intervals
 **    0xAAAAAAAA    vibrate really fast (not recommended)
 **    0x0F0F0000    vibrate twice, then pause
-*/ 
+*/
 #define kHwrVibratePattern                    3
 
 /* *value points to a UInt16, specifying the delay between two

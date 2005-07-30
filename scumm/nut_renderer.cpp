@@ -188,7 +188,7 @@ void NutRenderer::drawShadowChar(const Graphics::Surface &s, int c, int x, int y
 	int offsetY[7] = {  0, -1, 0, 1, 2, 1, 0 };
 	int cTable[7] =  {  0,  0, 0, 0, 0, 0, color };
 	int i = 0;
-	
+
 	if (!showShadow)
 		i = 6;
 
@@ -196,12 +196,12 @@ void NutRenderer::drawShadowChar(const Graphics::Surface &s, int c, int x, int y
 		x += offsetX[i];
 		y += offsetY[i];
 		color = cTable[i];
-		
+
 		if (c >= 256 && _vm->_useCJKMode)
 			draw2byte(s, c, x, y, color);
 		else
 			drawChar(s, (byte)c, x, y, color);
-		
+
 		x -= offsetX[i];
 		y -= offsetY[i];
 	}

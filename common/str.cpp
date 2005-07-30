@@ -221,7 +221,7 @@ void String::toUppercase() {
 }
 
 void String::ensureCapacity(int new_len, bool keep_old) {
-	// If there is not enough space, or if we are not the only owner 
+	// If there is not enough space, or if we are not the only owner
 	// of the current data, then we have to reallocate it.
 	if (new_len <= _capacity && *_refCount == 1)
 		return;

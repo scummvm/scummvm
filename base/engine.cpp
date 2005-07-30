@@ -75,18 +75,18 @@ void Engine::initCommonGFX(GameDetector &detector) {
 			_system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
 		}
 	}
-	
+
 	// (De)activate aspect-ratio correction as determined by the config settings
 	if (ConfMan.hasKey("aspect_ratio", detector._targetName))
 		_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
-		
-	// (De)activate fullscreen mode as determined by the config settings 
+
+	// (De)activate fullscreen mode as determined by the config settings
 	if (ConfMan.hasKey("fullscreen", detector._targetName))
 		_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
 }
 
 void Engine::checkCD() {
-#if defined (WIN32) && !defined(_WIN32_WCE) 
+#if defined (WIN32) && !defined(_WIN32_WCE)
 	// It is a known bug under Windows that games that play CD audio cause
 	// ScummVM to crash if the data files are read from the same CD. Check
 	// if this appears to be the case and issue a warning.

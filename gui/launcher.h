@@ -51,12 +51,12 @@ protected:
 
 	void updateListing();
 	void updateButtons();
-	
+
 	void close();
 	virtual void addGame();
 	void removeGame(int item);
 	void editGame(int item);
-	
+
 	void selectGame(const String &name);
 };
 

@@ -96,7 +96,7 @@ typedef struct {
 
 typedef struct {
 	void *v1; // struct v1 *
-	
+
 	const byte *_srcptr;
 	int _height;
 
@@ -118,11 +118,11 @@ typedef struct {
 typedef struct {
 	int width;
 	int height;
-	
+
 	const byte *src;
 	byte *dst;
 	const byte *text;
-	
+
 	int _vm_screenWidth;
 	uint16 vs_pitch;
 	uint16 _textSurface_pitch;

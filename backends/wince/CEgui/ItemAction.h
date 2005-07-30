@@ -34,7 +34,7 @@ namespace CEGUI {
 	public:
 		ItemAction(WORD reference, GUI::ActionType action);
 		virtual ~ItemAction();
-		virtual bool action(int x, int y, bool pushed); 
+		virtual bool action(int x, int y, bool pushed);
 	private:
 		GUI::ActionType _action;
 	};

@@ -74,7 +74,7 @@ static const SimonGameSettings simon_settings[] = {
 	{"simon2win", "Simon the Sorcerer 2 Talkie (Windows)", GAME_SIMON2WIN, 0},
 	{"simon2mac", "Simon the Sorcerer 2 Talkie (Amiga or Mac)", GAME_SIMON2WIN, 0},
 	{"simon1cd32", "Simon the Sorcerer 1 Talkie (Amiga CD32)", GAME_SIMON1CD32, "gameamiga"},
-	{"simon1demo", "Simon the Sorcerer 1 (DOS Demo)", GAME_SIMON1DEMO, "GDEMO"}, 
+	{"simon1demo", "Simon the Sorcerer 1 (DOS Demo)", GAME_SIMON1DEMO, "GDEMO"},
 
 	{NULL, NULL, 0, NULL}
 };
@@ -275,7 +275,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_vcPtr = 0;
 	_vc_get_out_of_code = 0;
 	_gameOffsetsPtr = 0;
-	
+
 	const SimonGameSettings *g = simon_settings;
 	while (g->name) {
 		if (!scumm_stricmp(detector->_game.name, g->name))
@@ -305,11 +305,11 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	// Convert older targets
 	if (g->detectname == NULL) {
 		if (!strcmp("simon1win", g->name)) {
-			ConfMan.set("gameid", "simon1talkie"); 
-			ConfMan.set("platform", "Windows"); 
+			ConfMan.set("gameid", "simon1talkie");
+			ConfMan.set("platform", "Windows");
 		} else if (!strcmp("simon2win", g->name) || !strcmp("simon2mac", g->name)) {
-			ConfMan.set("gameid", "simon2talkie"); 
-			ConfMan.set("platform", "Windows"); 
+			ConfMan.set("gameid", "simon2talkie");
+			ConfMan.set("platform", "Windows");
 		}
 		ConfMan.flushToDisk();
 	} else {
@@ -321,7 +321,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 		f.open(buf);
 		if (f.isOpen() == false)
 			strcat(buf, ".");
-		
+
 		if (Common::md5_file(buf, md5sum)) {
 			char md5str[32+1];
 			for (j = 0; j < 16; j++) {
@@ -427,7 +427,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_keyPressed = 0;
 
 	_gameFile = 0;
-	
+
 	_strippedTxtMem = 0;
 	_textSize = 0;
 	_stringTabNum = 0;
@@ -547,14 +547,14 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 
 	_firstTimeStruct = 0;
 	_pendingDeleteTimeEvent = 0;
-	
+
 	_base_time = 0;
 
 	_mouseX = 0;
 	_mouseY = 0;
 	_mouseXOld = 0;
 	_mouseYOld = 0;
-	
+
 	_dummyItem1 = new Item();
 	_dummyItem2 = new Item();
 	_dummyItem3 = new Item();
@@ -623,7 +623,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	memset(_fcsData2, 0, sizeof(_fcsData2));
 
 	_freeStringSlot = 0;
-	
+
 	memset(_stringReturnBuffer, 0, sizeof(_stringReturnBuffer));
 
 	memset(_pathFindArray, 0, sizeof(_pathFindArray));
@@ -660,7 +660,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 
 	_sdlMouseX = 0;
 	_sdlMouseY = 0;
-	
+
 	_sdl_buf_3 = 0;
 	_sdl_buf = 0;
 	_sdl_buf_attached = 0;
@@ -731,7 +731,7 @@ int SimonEngine::init(GameDetector &detector) {
 
 	// FIXME Use auto dirty rects cleanup code to reduce CPU usage
 	g_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
-	
+
 	return 0;
 }
 
@@ -751,9 +751,9 @@ SimonEngine::~SimonEngine() {
 	delete _dummyItem1;
 	delete _dummyItem2;
 	delete _dummyItem3;
-	
+
 	delete [] _fcs_list;
-	
+
 	delete _sound;
 	delete _debugger;
 }
@@ -1684,7 +1684,7 @@ void SimonEngine::startSubroutine170() {
 	Subroutine *sub;
 
 	_sound->stopVoice();
-	
+
 	sub = getSubroutineByID(170);
 	if (sub != NULL)
 		startSubroutineEx(sub);
@@ -1976,7 +1976,7 @@ void SimonEngine::f10_key() {
 	uint b, color;
 
 	_lockWord |= 0x8000;
-	
+
 	if (_game & GF_SIMON2)
 		color = 0xec;
 	else
@@ -2094,7 +2094,7 @@ startOver:
 			if (_lastHitArea3 != 0)
 				break;
 			hitarea_stuff_helper();
-			delay(100);	
+			delay(100);
 		}
 
 		ha = _lastHitArea;
@@ -2662,7 +2662,7 @@ void SimonEngine::add_vga_timer(uint num, const byte *code_ptr, uint cur_sprite,
 
 	// When Simon talks to the Golum about stew in French version of
 	// Simon the Sorcerer 1 the code_ptr is at wrong location for
-	// sprite 200. This  was a bug in the original game, which 
+	// sprite 200. This  was a bug in the original game, which
 	// caused several glitches in this scene.
 	// We work around the problem by correcting the code_ptr for sprite
 	// 200 in this scene, if it is wrong.
@@ -2941,7 +2941,7 @@ void SimonEngine::o_vga_reset() {
 		_lockWord |= 0x4000;
 		vc27_resetSprite();
 		_lockWord &= ~0x4000;
-	}	
+	}
 }
 
 bool SimonEngine::itemIsSiblingOf(uint16 a) {
@@ -3307,7 +3307,7 @@ void SimonEngine::processSpecialKeys() {
 			_dumpImages ^=1;
 		break;
 	}
-	
+
 	_keyPressed = 0;
 }
 
@@ -3558,13 +3558,13 @@ void SimonEngine::talk_with_text(uint vgaSpriteId, uint color, const char *strin
 		render_string_amiga(vgaSpriteId, color, width, height, convertedString);
 	else
 		render_string(vgaSpriteId, color, width, height, convertedString);
-		
+
 	int b = 4;
 	if (!(_bitArray[8] & 0x20))
 		b = 3;
 
 	x >>= 3;
-	
+
 	if (y < 2)
 		y = 2;
 
@@ -3696,17 +3696,17 @@ void SimonEngine::read_vga_from_datfile_1(uint vga_id) {
 		File in;
 		char buf[15];
 		uint32 size;
-		if (vga_id == 23) 
+		if (vga_id == 23)
 			vga_id = 112;
 		if (vga_id == 328)
 			vga_id = 119;
 
 		if (_game == GAME_SIMON1CD32) {
-			sprintf(buf, "0%d.out", vga_id); 
+			sprintf(buf, "0%d.out", vga_id);
 		} else if (_game == GAME_SIMON1AMIGA) {
 			sprintf(buf, "0%d.pkd", vga_id);
 		} else {
-			sprintf(buf, "0%d.VGA", vga_id); 
+			sprintf(buf, "0%d.VGA", vga_id);
 		}
 
 		in.open(buf);
@@ -3816,7 +3816,7 @@ void SimonEngine::openGameFile() {
 	loadIconFile();
 
 	vc34_forceLock();
-	
+
 	runSubroutine101();
 	startUp_helper_2();
 }
@@ -4022,7 +4022,7 @@ int SimonEngine::go() {
 
 	_lastMusicPlayed = -1;
 	_vgaBaseDelay = 1;
-	
+
 	_startMainScript = false;
 	_continousMainScript = false;
 	_startVgaScript = false;
@@ -4040,7 +4040,7 @@ int SimonEngine::go() {
 
 	if (_game & GF_TALKIE) {
 		// English and German versions of Simon the Sorcerer 1 don't have full subtitles
-		if (!(_game & GF_SIMON2) && _language < 2) 
+		if (!(_game & GF_SIMON2) && _language < 2)
 			_subtitles = false;
 	} else {
 		_subtitles = true;
@@ -4051,7 +4051,7 @@ int SimonEngine::go() {
 		handle_verb_clicked(_verbHitArea);
 		delay(100);
 	}
-	
+
 	return 0;
 }
 
@@ -4205,11 +4205,11 @@ void SimonEngine::loadMusic (uint music) {
 		midi.stop();
 		midi.setLoop (true); // Must do this BEFORE loading music. (GMF may have its own override.)
 
-		if (_game & GF_TALKIE) {	
+		if (_game & GF_TALKIE) {
 			// FIXME: The very last music resource, a cymbal crash for when the
-			// two demons crash into each other, should NOT be looped like the 
-			// other music tracks. In simon1dos/talkie the GMF resource includes 
-			// a loop override that acomplishes this, but there seems to be nothing 
+			// two demons crash into each other, should NOT be looped like the
+			// other music tracks. In simon1dos/talkie the GMF resource includes
+			// a loop override that acomplishes this, but there seems to be nothing
 			// for this in the SMF resources.
 			if (music == 35)
 				midi.setLoop (false);

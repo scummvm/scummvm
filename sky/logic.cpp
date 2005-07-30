@@ -173,9 +173,9 @@ void Logic::logicScript() {
 }
 
 void Logic::autoRoute() {
-	
+
 	_compact->downFlag = _skyAutoRoute->autoRoute(_compact);
-	if ((_compact->downFlag == 2) && _skyCompact->cptIsId(_compact, CPT_JOEY) && 
+	if ((_compact->downFlag == 2) && _skyCompact->cptIsId(_compact, CPT_JOEY) &&
 	   (_compact->mode == 0) && (_compact->baseSub == JOEY_OUT_OF_LIFT)) {
 		   // workaround for script bug #1064113. Details unclear...
 		   _compact->downFlag = 0;
@@ -514,7 +514,7 @@ void Logic::talk() {
 	// TODO: Check for mouse clicking
 
 	// Are we allowed to click
-	
+
 	if (_skyMouse->wasClicked())
 		for (int i = 0; i < ARRAYSIZE(clickTable); i++)
 			if (clickTable[i] == (uint16)_scriptVariables[CUR_ID]) {
@@ -523,7 +523,7 @@ void Logic::talk() {
 				if ((SkyEngine::_systemVars.systemFlags & SF_ALLOW_TEXT) &&
 					(_compact->spTextId > 0) &&
 					(_compact->spTextId < 0xFFFF)) {
-					
+
 					_skyCompact->fetchCpt(_compact->spTextId)->status = 0;
 				}
 				if (_skyCompact->getGrafixPtr(_compact)) {
@@ -747,7 +747,7 @@ bool Logic::collide(Compact *cpt) {
 		y -= 8; // bring them up a line
 		if (y == _compact->ycood)
 			return true;
-		
+
 		return false;
 	case 2: // looking left
 
@@ -764,7 +764,7 @@ bool Logic::collide(Compact *cpt) {
 
 		return false;
 	case 3: // looking right
-	case 4: // talking (not sure if this makes sense...) 
+	case 4: // talking (not sure if this makes sense...)
 
 		if (y != _compact->ycood)
 			return false;
@@ -1171,7 +1171,7 @@ void Logic::initScriptVariables() {
 		memcpy(_scriptVariables + 352, forwardList1b288, sizeof(forwardList1b288));
 	else
 		memcpy(_scriptVariables + 352, forwardList1b, sizeof(forwardList1b));
-		
+
 	memcpy(_scriptVariables + 656, forwardList2b, sizeof(forwardList2b));
 	memcpy(_scriptVariables + 721, forwardList3b, sizeof(forwardList3b));
 	memcpy(_scriptVariables + 663, forwardList4b, sizeof(forwardList4b));
@@ -1182,7 +1182,7 @@ uint16 Logic::mouseScript(uint32 scrNum, Compact *scriptComp) {
 
 	Compact *tmpComp = _compact;
 	_compact = scriptComp;
-	uint16 retVal = script((uint16)(scrNum & 0xFFFF), (uint16)(scrNum >> 16)); 
+	uint16 retVal = script((uint16)(scrNum & 0xFFFF), (uint16)(scrNum >> 16));
 	_compact = tmpComp;
 	return retVal;
 }
@@ -1388,7 +1388,7 @@ bool Logic::fnDrawScreen(uint32 a, uint32 b, uint32 c) {
 	debug(5, "Call: fnDrawScreen(%X, %X)",a,b);
 	SkyEngine::_systemVars.currentPalette = a;
 	_skyScreen->fnDrawScreen(a, b);
-	
+
 	if (Logic::_scriptVariables[SCREEN] == 32) {
 		/* workaround for script bug #786482
 		    Under certain circumstances, which never got completely cleared,
@@ -1523,14 +1523,14 @@ bool Logic::fnGetTo(uint32 targetPlaceId, uint32 mode, uint32 c) {
  	_compact->upFlag = (uint16)mode; // save mode for action script
 	_compact->mode += 4; // next level up
 	Compact *cpt = _skyCompact->fetchCpt(_compact->place);
-	if (!cpt) { 
+	if (!cpt) {
 		warning("can't find _compact's getToTable. Place compact is NULL");
-		return false; 
+		return false;
 	}
 	uint16 *getToTable = (uint16*)_skyCompact->fetchCpt(cpt->getToTableId);
-	if (!getToTable) { 
+	if (!getToTable) {
 		warning("Place compact's getToTable is NULL!");
-		return false; 
+		return false;
 	}
 
 	while (*getToTable != targetPlaceId)
@@ -1653,7 +1653,7 @@ bool Logic::fnClearStop(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnPointerText(uint32 a, uint32 b, uint32 c) {
-	
+
 	_skyText->fnPointerText(a, _skyMouse->giveMouseX(), _skyMouse->giveMouseY());
 	return true;
 }
@@ -1713,7 +1713,7 @@ bool Logic::fnSpeakWaitDir(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnChooser(uint32 a, uint32 b, uint32 c) {
-	
+
 	// setup the text questions to be clicked on
 	// read from TEXT1 until 0
 
@@ -1728,11 +1728,11 @@ bool Logic::fnChooser(uint32 a, uint32 b, uint32 c) {
 		uint32 textNum = *p++;
 
 		struct lowTextManager_t lowText = _skyText->lowTextManager(textNum, GAME_SCREEN_WIDTH, 0, 241, 0);
-		
+
 		uint8 *data = lowText.textData;
 
 		// stipple the text
-		
+
 		uint32 size = ((dataFileHeader *)data)->s_height * ((dataFileHeader *)data)->s_width;
 		uint32 index = 0;
 		uint32 width = ((dataFileHeader *)data)->s_width;
@@ -1740,7 +1740,7 @@ bool Logic::fnChooser(uint32 a, uint32 b, uint32 c) {
 		data += sizeof(dataFileHeader);
 
 		while (index < size) {
-			if (index % width <= 1) 
+			if (index % width <= 1)
 				index ^= 1; //index++;
 			if (!data[index])
 				data[index] = 1;
@@ -1832,7 +1832,7 @@ bool Logic::fnClearRequest(uint32 target, uint32 b, uint32 c) {
 
 bool Logic::fnCheckRequest(uint32 a, uint32 b, uint32 c) {
 	/// check for interaction request
-	
+
 	if (!_compact->request)
 		return true;
 
@@ -1993,7 +1993,7 @@ bool Logic::fnNoSpriteEngine(uint32 a, uint32 b, uint32 c) {
 	/// stop the compact printing
 	/// remove foreground, background & sort
 	_compact->status &= 0xfff8;
-	return true;	
+	return true;
 }
 
 bool Logic::fnNoSpritesA6(uint32 us, uint32 b, uint32 c) {
@@ -2001,7 +2001,7 @@ bool Logic::fnNoSpritesA6(uint32 us, uint32 b, uint32 c) {
 	/// remove foreground, background & sort
 	Compact *cpt = _skyCompact->fetchCpt(us);
 	cpt->status &= 0xfff8;
-	return true;	
+	return true;
 }
 
 bool Logic::fnResetId(uint32 id, uint32 resetBlock, uint32 c) {
@@ -2043,7 +2043,7 @@ bool Logic::fnPause(uint32 cycles, uint32 b, uint32 c) {
 bool Logic::fnRunAnimMod(uint32 animNo, uint32 b, uint32 c) {
 	_compact->grafixProgId = animNo;
 	_compact->grafixProgPos = 0;
-	
+
 	_compact->offset = *_skyCompact->getGrafixPtr(_compact);
 	_compact->grafixProgPos++;
 	_compact->logic = L_MOD_ANIMATE;
@@ -2128,7 +2128,7 @@ bool Logic::fnAskThis(uint32 textNo, uint32 animNo, uint32 c) {
 }
 
 bool Logic::fnRandom(uint32 a, uint32 b, uint32 c) {
-	_scriptVariables[RND] = _rnd.getRandomNumber(65536) & a; 
+	_scriptVariables[RND] = _rnd.getRandomNumber(65536) & a;
 	return true;
 }
 
@@ -2139,7 +2139,7 @@ bool Logic::fnPersonHere(uint32 id, uint32 room, uint32 c) {
 }
 
 bool Logic::fnToggleMouse(uint32 a, uint32 b, uint32 c) {
-	
+
 	_skyCompact->fetchCpt(a)->status ^= ST_MOUSE;
 	return true;
 }
@@ -2194,7 +2194,7 @@ bool Logic::fnCustomJoey(uint32 id, uint32 b, uint32 c) {
 	/// get access to another megas compact as easily
 
 	Compact *cpt = _skyCompact->fetchCpt(id);
-	
+
 	_scriptVariables[PLAYER_X] = cpt->xcood;
 	_scriptVariables[PLAYER_Y] = cpt->ycood;
 	_scriptVariables[PLAYER_MOOD] = cpt->mood;
@@ -2271,7 +2271,7 @@ bool Logic::fnEyeball(uint32 id, uint32 b, uint32 c) {
 bool Logic::fnLeaveSection(uint32 sectionNo, uint32 b, uint32 c) {
 	if (SkyEngine::isDemo())
 		_skyControl->showGameQuitMsg();
-	
+
 	if (sectionNo == 5) //linc section - has different mouse icons
 		_skyMouse->replaceMouseCursors(60301);
 
@@ -2298,18 +2298,18 @@ bool Logic::fnEnterSection(uint32 sectionNo, uint32 b, uint32 c) {
 		_skyGrid->loadGrids();
 		SkyEngine::_systemVars.systemFlags &= ~SF_GAME_RESTORED;
 	}
-			
+
 	return true;
 }
 
 bool Logic::fnRestoreGame(uint32 a, uint32 b, uint32 c) {
-	
+
 	_skyControl->doLoadSavePanel();
 	return false;
 }
 
 bool Logic::fnRestartGame(uint32 a, uint32 b, uint32 c) {
-	
+
 	_skyControl->restartGame();
 	return false;
 }
@@ -2353,7 +2353,7 @@ bool Logic::fnPrintCredit(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnLookAt(uint32 a, uint32 b, uint32 c) {
-	
+
 	struct lowTextManager_t textInfo = _skyText->lowTextManager(a, 240, 0, 248, true);
 	Compact *textCpt = _skyCompact->fetchCpt(textInfo.compactNum);
 	textCpt->xcood = 168;
@@ -2363,11 +2363,11 @@ bool Logic::fnLookAt(uint32 a, uint32 b, uint32 c) {
 	_skyScreen->spriteEngine();
 	_skyScreen->flip();
 
-	fnNoHuman(0, 0, 0); 
+	fnNoHuman(0, 0, 0);
 	_skyMouse->lockMouse();
 
 	_skyMouse->waitMouseNotPressed();
-	
+
 	_skyMouse->unlockMouse();
 	fnAddHuman(0, 0, 0);
 	textCpt->status = 0;
@@ -2476,12 +2476,12 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 
 	animNum += target->megaSet / NEXT_MEGA_SET;
 	animNum &= 0xFF;
-	
+
 	uint16 *talkTable = (uint16*)_skyCompact->fetchCpt(CPT_TALK_TABLE_LIST);
 	target->grafixProgId = talkTable[animNum];
 	target->grafixProgPos = 0;
 	uint16 *animPtr = _skyCompact->getGrafixPtr(target);
-	
+
 	if (animPtr) {
 		target->offset = *animPtr++;
 		target->getToFlag = *animPtr++;
@@ -2499,7 +2499,7 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 	// language than english
 	if (speechUsed && (!(SkyEngine::_systemVars.systemFlags & SF_ALLOW_TEXT))) {
 		target->spTime = 10;
-		target->logic = L_TALK; 
+		target->logic = L_TALK;
 		return ;
 	}
 
@@ -2514,7 +2514,7 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 	//we need the talkers sprite information
 	textCompact->screen = target->screen;	//put our screen in
 
-	if (_scriptVariables[SCREEN] == target->screen) { // Only use coordinates if we are on the current screen 
+	if (_scriptVariables[SCREEN] == target->screen) { // Only use coordinates if we are on the current screen
 		//talking on-screen
 		byte *targetGfx = (byte *)SkyEngine::fetchItem(target->frame >> 6);
 		uint16 xPos = target->xcood + ((struct dataFileHeader *)targetGfx)->s_offset_x;
@@ -2530,15 +2530,15 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 			xPos = TOP_LEFT_X + FULL_SCREEN_WIDTH;
 			xPos -= FIXED_TEXT_WIDTH;
 		}
-			
+
 		textCompact->xcood = xPos;
 		uint16 yPos = target->ycood + ((struct dataFileHeader *)targetGfx)->s_offset_y - 6 - ((struct dataFileHeader *)textGfx)->s_height;
-		
+
 		if (yPos < TOP_LEFT_Y)
 			yPos = TOP_LEFT_Y;
 
 		textCompact->ycood = yPos;
-			
+
 	} else {
 		//talking off-screen
 		target->spTextId = 0; 	//don't kill any text 'cos none was made
@@ -2551,7 +2551,7 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 		target->spTime = 10;
 	else
 		target->spTime = (uint16)_skyText->_dtLetters + 5;
-	target->logic = L_TALK; 
+	target->logic = L_TALK;
 }
 
 } // End of namespace Sky

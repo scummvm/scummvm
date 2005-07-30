@@ -32,7 +32,7 @@ void Icon::create_vmicon(void *buffer)
 
   for(int n = 0; n<16; n++) {
     int p = palette[n];
-    pal[n] = 
+    pal[n] =
       ((p>>16)&0xf000)|
       ((p>>12)&0x0f00)|
       ((p>> 8)&0x00f0)|
@@ -114,7 +114,7 @@ void Icon::draw(float x1, float y1, float x2, float y2, int pal,
   myvertex.x = x2;
   myvertex.v = 0.0;
   myvertex.cmd |= TA_CMD_VERTEX_EOS;
-  ta_commit_list(&myvertex);  
+  ta_commit_list(&myvertex);
 }
 
 int Icon::find_unused_pixel()

@@ -399,10 +399,10 @@ ScummEngine_v6::ArrayHeader *ScummEngine_v6::defineArray(int array, int type, in
 	int id;
 	int size;
 	ArrayHeader *ah;
-	
+
 	assert(0 <= type && type <= 5);
 
-	
+
 	if (_heversion >= 61) {
 		if (type == kBitArray || type == kNibbleArray)
 			type = kByteArray;
@@ -424,7 +424,7 @@ ScummEngine_v6::ArrayHeader *ScummEngine_v6::defineArray(int array, int type, in
 	if (_version == 8) {
 		if (array & 0x40000000) {
 		}
-	
+
 		if (array & 0x80000000) {
 			error("Can't define bit variable as array pointer");
 		}
@@ -433,7 +433,7 @@ ScummEngine_v6::ArrayHeader *ScummEngine_v6::defineArray(int array, int type, in
 	} else {
 		if (array & 0x4000) {
 		}
-	
+
 		if (array & 0x8000) {
 			error("Can't define bit variable as array pointer");
 		}
@@ -486,7 +486,7 @@ ScummEngine_v6::ArrayHeader *ScummEngine_v6::getArray(int array) {
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
 	if (!ah)
 		return 0;
-	
+
 	// Workaround for a long standing bug where we save array headers in native
 	// endianness, instead of a fixed endianness. We try to detect savegames
 	// which were created on a big endian system and convert them to little
@@ -496,7 +496,7 @@ ScummEngine_v6::ArrayHeader *ScummEngine_v6::getArray(int array) {
 		SWAP16(ah->dim2);
 		SWAP16(ah->type);
 	}
-	
+
 	return ah;
 }
 
@@ -505,7 +505,7 @@ int ScummEngine_v6::readArray(int array, int idx, int base) {
 
 	if (ah == NULL || ah->data == NULL)
 		error("readArray: invalid array %d (%d)", array, readVar(array));
-	
+
 	// WORKAROUND bug #645711. This is clearly a script bug, as this script
 	// excerpt shows nicely:
 	// ...
@@ -814,10 +814,10 @@ void ScummEngine_v6::o6_startScript() {
 	getStackList(args, ARRAYSIZE(args));
 	script = pop();
 	flags = pop();
-	
+
 	// WORKAROUND bug #556558: At Dino Bungee National Memorial, the buttons for
-	// the Wally and Rex dinosaurs will always restart their speech, instead of 
-	// stopping and starting their speech. This was a script bug in the original 
+	// the Wally and Rex dinosaurs will always restart their speech, instead of
+	// stopping and starting their speech. This was a script bug in the original
 	// game.
 	if (_gameId == GID_SAMNMAX && _roomResource == 59 &&
 		vm.slot[_currentScript].number == 201 && script == 48) {
@@ -841,7 +841,7 @@ void ScummEngine_v6::o6_startScript() {
 
 		return;
 	}
-	
+
 	runScript(script, (flags & 1) != 0, (flags & 2) != 0, args);
 }
 
@@ -1090,7 +1090,7 @@ void ScummEngine_v6::o6_startSound() {
 #ifndef DISABLE_SCUMM_7_8
 	if (_features & GF_DIGI_IMUSE)
 		_imuseDigital->startSfx(pop(), 64);
-	else 
+	else
 #endif
 		_sound->addSoundToQueue(pop(), offset);
 }
@@ -2117,7 +2117,7 @@ void ScummEngine_v6::o6_saveRestoreVerbs() {
 	if (_version == 8) {
 		subOp = (subOp - 141) + 0xB4;
 	}
-	
+
 	switch (subOp) {
 	case 141:		// SO_SAVE_VERBS
 		while (a <= b) {
@@ -2298,7 +2298,7 @@ void ScummEngine_v6::o6_delaySeconds() {
 		// FIXME - are we really measuring minutes here?
 		delay = delay * 60;
 	else
-		// FIXME - Is this the same in ComI? Seem to need a 1.5 minute 
+		// FIXME - Is this the same in ComI? Seem to need a 1.5 minute
 		// multiplier for correct timing - see patch 664893
 		delay = delay * 90;
 
@@ -2495,7 +2495,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			break;
 #ifndef DISABLE_SCUMM_7_8
 		case 6: {
-				if (_smushFrameRate == 0) 
+				if (_smushFrameRate == 0)
 					_smushFrameRate = 14;
 
 				// SMUSH movie playback
@@ -2514,7 +2514,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 						sp->play((char *)getStringAddressVar(VAR_VIDEONAME));
 					delete sp;
 				} else if (_gameId == GID_FT) {
-					const int insaneVarNum = ((_features & GF_DEMO) && (_platform == Common::kPlatformPC)) 
+					const int insaneVarNum = ((_features & GF_DEMO) && (_platform == Common::kPlatformPC))
 						? 232 : 233;
 
 					_insaneRunning = true;
@@ -2825,7 +2825,7 @@ int ScummEngine::getKeyState(int key) {
 				_keyDownMap[0x36]) ? 1 : 0;
 		break;
 	case 0x14E: // Gray+
-		return (_keyDownMap[0x10e] || 
+		return (_keyDownMap[0x10e] ||
 				(_keyDownMap[0x13d] && _keyDownMap[0x12f])) ? 1 : 0;
 		break;
 	case 0x14F: // End
@@ -2927,7 +2927,7 @@ void ScummEngine_v6::o6_stampObject() {
 		a->drawActorCostume();
 		return;
 	}
-	
+
 	if (state == 0)
 		state = 1;
 
@@ -2957,12 +2957,12 @@ void ScummEngine_v6::o6_findAllObjects() {
 	writeVar(0, 0);
 	defineArray(0, kIntArray, 0, _numLocalObjects + 1);
 	writeArray(0, 0, 0, _numLocalObjects);
-	
+
 	while (i < _numLocalObjects) {
 		writeArray(0, 0, i, _objs[i].obj_nr);
 		i++;
 	}
-	
+
 	push(readVar(0));
 }
 
@@ -2975,7 +2975,7 @@ void ScummEngine_v6::shuffleArray(int num, int minIdx, int maxIdx) {
 		// Determine two random elements...
 		int rand1 = _rnd.getRandomNumber(range) + minIdx;
 		int rand2 = _rnd.getRandomNumber(range) + minIdx;
-		
+
 		// ...and swap them
 		int val1 = readArray(num, 0, rand1);
 		int val2 = readArray(num, 0, rand2);
@@ -3035,7 +3035,7 @@ void ScummEngine_v6::o6_pickVarRandom() {
 void ScummEngine_v6::o6_getDateTime() {
 	struct tm *t;
 	time_t now = time(NULL);
-	
+
 	t = localtime(&now);
 
 	VAR(VAR_TIMEDATE_YEAR) = t->tm_year;
@@ -3043,7 +3043,7 @@ void ScummEngine_v6::o6_getDateTime() {
 	VAR(VAR_TIMEDATE_DAY) = t->tm_mday;
 	VAR(VAR_TIMEDATE_HOUR) = t->tm_hour;
 	VAR(VAR_TIMEDATE_MINUTE) = t->tm_min;
-	
+
 	if (_version == 8)
 		VAR(VAR_TIMEDATE_SECOND) = t->tm_sec;
 }

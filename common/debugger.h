@@ -35,7 +35,7 @@ class Debugger {
 public:
 	Debugger();
 	virtual ~Debugger();
-	
+
 	int DebugPrintf(const char *format, ...);
 
 #ifndef __SYMBIAN32__ // gcc/UIQ doesn't like the debugger code for some reason? Actually get a cc1plus core dump here :)
@@ -50,7 +50,7 @@ public:
 
 protected:
 	typedef bool (T::*DebugProc)(int argc, const char **argv);
-	
+
 	enum {
 		DVAR_BYTE,
 		DVAR_INT,
@@ -58,18 +58,18 @@ protected:
 		DVAR_INTARRAY,
 		DVAR_STRING
 	};
-	
+
 	struct DVar {
 		char name[30];
 		void *variable;
 		int type, optional;
 	};
-	
+
 	struct DCmd {
 		char name[30];
 		DebugProc function;
 	};
-	
+
 	int _frame_countdown, _dvar_count, _dcmd_count;
 	DVar _dvars[256];
 	DCmd _dcmds[256];

@@ -36,12 +36,12 @@
 namespace CEGUI {
 
 	class Toolbar : public GUIElement {
-	public:	
+	public:
 		virtual ~Toolbar();
 		virtual bool action(int x, int y, bool pushed) = 0;
 	protected:
 		Toolbar();
-		
+
 	};
 }
 

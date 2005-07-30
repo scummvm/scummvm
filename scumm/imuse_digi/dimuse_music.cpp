@@ -93,7 +93,7 @@ void IMuseDigital::setDigMusicSequence(int seqId) {
 			break;
 		}
 	}
-	
+
 	if (num == -1)
 		return;
 

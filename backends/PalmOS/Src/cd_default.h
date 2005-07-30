@@ -19,30 +19,30 @@
  * $Header$
  *
  */
- 
+
  #ifndef CD_DEFAULT_H
  #define CD_DEFAULT_H
- 
+
  #include "cdaudio.h"
- 
+
  class DefaultCDPlayer : public CDAudio {
  public:
  	DefaultCDPlayer(OSystem *sys);
 
  	bool init();
  	void release();
- 	
+
  	bool poll();
  	void update();
  	void play(int track, int num_loops, int start_frame, int duration);
  	void stop();
- 	
+
  private:
  	OSystem *_sys;
- 	
+
  	// cdrom
 	UInt16 _defLoops;
 	UInt32 _defStopTime, _defTrackEndFrame, _defTrackLength;
  };
- 
+
  #endif

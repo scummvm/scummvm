@@ -52,15 +52,15 @@ enum StateUse {
 
 
 /*!
-	Each object/item in game has a state field. 
+	Each object/item in game has a state field.
 	(refer to ObjectData and ItemData).
-	
+
 	<table>
 		<tr>
 			<td>Name</td>
 			<td>Bits</td>
 			<td>Description</td>
-		</tr>	
+		</tr>
 		<tr>
 			<td>USE</td>
 			<td>10</td>

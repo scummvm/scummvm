@@ -28,7 +28,7 @@ namespace Scumm {
 
 class Chunk;
 class ContChunk;
-	
+
 class SmushChannel {
 public:
 
@@ -81,7 +81,7 @@ public:
 	void getSoundData(int16 *sound_buffer, int32 size);
 	void getSoundData(int8 *sound_buffer, int32 size) { error("8bit request for SAUD channel should never happen"); };
 	int32 getRate() { return _frequency; }
-	bool getParameters(int32 &rate, bool &stereo, bool &is_16bit, int32 &vol, int32 &pan) { 
+	bool getParameters(int32 &rate, bool &stereo, bool &is_16bit, int32 &vol, int32 &pan) {
 		rate = _frequency;
 		stereo = true;
 		is_16bit = true;

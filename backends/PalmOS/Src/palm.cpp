@@ -119,7 +119,7 @@ void OSystem_PALMOS::setWindowCaption(const char *caption) {
 
 	// erase the screen
 	WinEraseWindow();
-	
+
 	if (_useHRmode) {
 		y = 160 - (h >> 1) - 10;
 		HRFntSetFont(gVars->HRrefNum,hrTinyBoldFont);
@@ -140,7 +140,7 @@ void OSystem_PALMOS::setWindowCaption(const char *caption) {
 				size = 2;
 				h = (h - 2) / 2 + 2;
 			}
-		
+
 		BitmapTypeV3 *bmp2P;
 		BitmapType *bmp1P = BmpCreate(320, (h << 1), 8, NULL, &e);
 		WinHandle tmpH = WinCreateBitmapWindow(bmp1P, &e);
@@ -206,7 +206,7 @@ void OSystem_PALMOS::quit() {
 	free(_currentPalette);
 	free(_mouseBackupP);
 	free(_mouseDataP);
-	
+
 	if (_cdPlayer) {
 		_cdPlayer->release();
 		_cdPlayer = NULL;
@@ -224,9 +224,9 @@ OSystem_PALMOS::OSystem_PALMOS() {
 
 	_paletteDirtyStart = 0;
 	_paletteDirtyEnd = 0;
-	
+
 	memset(&_sound, 0, sizeof(SoundDataType));
-	
+
 	_currentPalette = NULL;
 	_modeChanged = false;
 	_gfxLoaded = false;
@@ -234,7 +234,7 @@ OSystem_PALMOS::OSystem_PALMOS() {
 	_lastKeyPressed = kLastKeyNone;
 	_lastKeyRepeat = 100;
 	_lastKeyModifier = MD_NONE;
-	
+
 	_useNumPad = false;
 	_showBatLow = false;
 
@@ -248,14 +248,14 @@ OSystem_PALMOS::OSystem_PALMOS() {
 
 	_currentPalette = (RGBColorType*)calloc(sizeof(RGBColorType), 256);
 	_mouseBackupP = (byte*)malloc(MAX_MOUSE_W * MAX_MOUSE_H);
-	
+
 	// overlay
 	_tmpScreenP = NULL;
 	_tmpBackupP = NULL;
-	
+
 	// HiRes
 	_useHRmode	= (gVars->HRrefNum != sysInvalidRefNum);
-	
+
 	// mouse emu
 	// TODO : add UX50 arrow keys
 	if (OPTIONS_TST(kOpt5WayNavigator)) {
@@ -272,7 +272,7 @@ OSystem_PALMOS::OSystem_PALMOS() {
 		_keyMouse.bitButLeft= keyBitHard3|0x00100000; // keyBitRockerCenter on TwKeys.h but conflict with palmnavigator.h
 	}
 	_keyMask = (_keyMouse.bitUp | _keyMouse.bitDown | _keyMouse.bitLeft | _keyMouse.bitRight | _keyMouse.bitButLeft);
-	
+
 	// enable cdrom ?
 	_cdPlayer = NULL;
 	if (gVars->CD.enable) {
@@ -287,7 +287,7 @@ OSystem_PALMOS::OSystem_PALMOS() {
 				_cdPlayer = new PckTunesCDPlayer(this);
 				break;
 		}
-		
+
 		if (_cdPlayer) {
 			if (!_cdPlayer->init()) {
 				_cdPlayer->release();
@@ -295,7 +295,7 @@ OSystem_PALMOS::OSystem_PALMOS() {
 			}
 		}
 	}
-	
+
 	// sound
 	memset(&_sound,0,sizeof(SoundDataType));
 }

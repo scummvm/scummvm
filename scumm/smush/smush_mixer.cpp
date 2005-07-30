@@ -81,8 +81,8 @@ void SmushMixer::addChannel(SmushChannel *c) {
 	}
 
 	for (i = 0; i < NUM_CHANNELS; i++) {
-		warning("channel %d : %p(%d, %d)", i, (void *)_channels[i].chan, 
-			_channels[i].chan ? _channels[i].chan->getTrackIdentifier() : -1, 
+		warning("channel %d : %p(%d, %d)", i, (void *)_channels[i].chan,
+			_channels[i].chan ? _channels[i].chan->getTrackIdentifier() : -1,
 			_channels[i].chan ? _channels[i].chan->isTerminated() : 1);
 	}
 

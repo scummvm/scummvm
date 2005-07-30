@@ -92,7 +92,7 @@ void sioprintf(const char *zFormat, ...) {
 
 OSystem *OSystem_PS2_create(void) {
 	if (!g_systemPs2)
-		g_systemPs2 = new OSystem_PS2();	
+		g_systemPs2 = new OSystem_PS2();
 	return g_systemPs2;
 }
 
@@ -183,7 +183,7 @@ OSystem_PS2::OSystem_PS2(void) {
 	_scummSoundParam = NULL;
 
 	_screen = new Gs2dScreen(320, 200, TV_DONT_CARE);
-	_width = 320; 
+	_width = 320;
 	_height = 200;
 
 	sioprintf("Initializing timer\n");
@@ -198,7 +198,7 @@ OSystem_PS2::OSystem_PS2(void) {
 	sioprintf("Initializing SjPCM");
 	if (SjPCM_Init(0) < 0)
 		fatalError("SjPCM Bind failed");
-	
+
 	if (CDVD_Init() != 0)
 		fatalError("CDVD_Init failed");
 
@@ -212,7 +212,7 @@ OSystem_PS2::OSystem_PS2(void) {
 		fatalError("Can't init fileXio");
 
 	fileXioSetBlockMode(FXIO_NOWAIT);
-	
+
 	sioprintf("Starting SavefileManager");
 	_saveManager = new Ps2SaveFileManager(this, _screen);
 
@@ -308,7 +308,7 @@ void OSystem_PS2::soundThread(void) {
 		else
 			bufferedSamples -= 480;
 		cycles++;
-		
+
 		WaitSema(_soundSema);
 		if (_scummSoundProc) {
 			if (bufferedSamples <= 8 * SMP_PER_BLOCK) {
@@ -441,7 +441,7 @@ void OSystem_PS2::copyRectToScreen(const byte *buf, int pitch, int x, int y, int
 }
 
 void OSystem_PS2::updateScreen(void) {
-	_screen->updateScreen();	
+	_screen->updateScreen();
 }
 
 uint32 OSystem_PS2::getMillis(void) {
@@ -456,7 +456,7 @@ void OSystem_PS2::delayMillis(uint msecs) {
 	if (tid == _soundTid) {
 		sioprintf("ERROR: delayMillis() from sound thread!");
 		return;
-	}		
+	}
 
 	if (tid == _timerTid) {
 		g_TimerWakeUp = (int32)msecs;
@@ -721,7 +721,7 @@ void readRtcTime(void) {
 		g_timeSecs = (uint32)timeSecs;
 	}
 
-	sioprintf("Time: %d:%02d:%02d - %d.%d.%4d", g_timeSecs / (60 * 60), (g_timeSecs / 60) % 60, g_timeSecs % 60, 
+	sioprintf("Time: %d:%02d:%02d - %d.%d.%4d", g_timeSecs / (60 * 60), (g_timeSecs / 60) % 60, g_timeSecs % 60,
 		g_day, g_month, g_year + 2000);
 }
 
@@ -749,6 +749,6 @@ extern struct tm *localtime(const time_t *p) {
 	retStruct.tm_mday = g_day;
 	retStruct.tm_mon  = g_month;
 	// tm_wday, tm_yday and tm_isdst are zero for now
-    return &retStruct;	
+    return &retStruct;
 }
 

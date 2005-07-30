@@ -195,7 +195,7 @@ private:
 	void drawMainPanel(void);
 
 	void delay(unsigned int amount);
-	
+
     void animClick(ConResource *pButton);
 	bool getYesNo(char *text);
 	void buttonControl(ConResource *pButton);

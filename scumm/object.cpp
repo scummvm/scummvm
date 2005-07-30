@@ -249,7 +249,7 @@ void ScummEngine::getObjectXYPos(int object, int &x, int &y, int &dir) {
 			switch (FROM_LE_32(imhd->v8.version)) {
 			case 800:
 				x = od.x_pos + (int32)READ_LE_UINT32((const byte *)imhd + 8 * state + 0x44);
-				y = od.y_pos + (int32)READ_LE_UINT32((const byte *)imhd + 8 * state + 0x48); 
+				y = od.y_pos + (int32)READ_LE_UINT32((const byte *)imhd + 8 * state + 0x48);
 				break;
 			case 801:
 				x = od.x_pos + (int32)READ_LE_UINT32(&imhd->v8.hotspot[state].x);
@@ -353,7 +353,7 @@ int ScummEngine::findObject(int x, int y) {
 			}
 		} while ((_objs[b].state & mask) == a);
 	}
-	
+
 	return 0;
 }
 
@@ -387,9 +387,9 @@ void ScummEngine::drawRoomObjects(int arg) {
 			if (_objs[i].obj_nr > 0 && (_objs[i].state & mask) && _objs[i].fl_object_index == 0)
 				drawRoomObject(i, arg);
 		}
-		// HACK: Reverse order is required to draw inventory background and items 
-		// in correct order in putttime/puttzoo. Otherwise the inventory background 
-		// is drawn over the items. But this doesn't match original, maybe masking 
+		// HACK: Reverse order is required to draw inventory background and items
+		// in correct order in putttime/puttzoo. Otherwise the inventory background
+		// is drawn over the items. But this doesn't match original, maybe masking
 		// issue somewhere?
 		for (i = 1; i < _numLocalObjects; i++) {
 			if (_objs[i].obj_nr > 0 && (_objs[i].state & mask) && _objs[i].fl_object_index != 0)
@@ -741,7 +741,7 @@ void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *
 		else
 			searchptr = room;
 	}
-		
+
 	cdhd = (const CodeHeader *)findResourceData(MKID('CDHD'), searchptr + od->OBCDoffset);
 	if (cdhd == NULL)
 		error("Room %d missing CDHD blocks(s)", _roomResource);
@@ -1087,7 +1087,7 @@ const byte *ScummEngine::getObjectImage(const byte *ptr, int state) {
 	} else {
 		ptr = findResource(IMxx_tags[state], ptr);
 	}
-	
+
 	return ptr;
 }
 
@@ -1205,7 +1205,7 @@ void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id,
 		numobj = roomptr[20];
 	} else {
 		const RoomHeader *roomhdr = (const RoomHeader *)findResourceData(MKID('RMHD'), roomptr);
-	
+
 		if (_version == 8)
 			numobj = READ_LE_UINT32(&(roomhdr->v8.numObjects));
 		else if (_version == 7)
@@ -1213,7 +1213,7 @@ void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id,
 		else
 			numobj = READ_LE_UINT16(&(roomhdr->old.numObjects));
 	}
-	
+
 	if (numobj == 0)
 		error("findObjectInRoom: No object found in room %d", room);
 	if (numobj > _numLocalObjects)
@@ -1480,7 +1480,7 @@ void ScummEngine_v6::enqueueObject(int objectNumber, int objectX, int objectY, i
 		warning("enqueueObject: overflow");
 		return;
 	}
-	
+
 	int idx = getObjectIndex(objectNumber);
 	assert(idx >= 0);
 
@@ -1555,7 +1555,7 @@ void ScummEngine_v6::drawBlastObject(BlastObject *eo) {
 		bdd.srcwidth = READ_LE_UINT16(&((const BompHeader *)bomp)->old.width);
 		bdd.srcheight = READ_LE_UINT16(&((const BompHeader *)bomp)->old.height);
 	}
-	
+
 	bdd.dst = *vs;
 	bdd.dst.pixels = vs->getPixels(0, 0);
 	// Skip the bomp header
@@ -1599,9 +1599,9 @@ void ScummEngine_v6::removeBlastObject(BlastObject *eo) {
 	int i;
 
 	r = eo->rect;
-	
+
 	r.clip(Common::Rect(vs->w, vs->h));
-	
+
 	if (r.width() <= 0 || r.height() <= 0)
 		return;
 

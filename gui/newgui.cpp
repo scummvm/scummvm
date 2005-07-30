@@ -138,7 +138,7 @@ void NewGui::runLoop() {
 
 		while (_system->pollEvent(event)) {
 			Common::Point mouse(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y);
-			
+
 			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
 #if !defined(__PALM_OS__)
@@ -335,7 +335,7 @@ void NewGui::drawSurface(const Graphics::Surface &s, int x, int y) {
 
 	if (!rect.isValidRect())
 		return;
-	
+
 	assert(s.bytesPerPixel == sizeof(OverlayColor));
 
 	OverlayColor *src = (OverlayColor *)s.pixels;
@@ -374,7 +374,7 @@ void NewGui::blendRect(int x, int y, int w, int h, OverlayColor color, int level
 		b = ab * a;
 
 		OverlayColor *ptr = getBasePtr(rect.left, rect.top);
-		
+
 		h = rect.height();
 		w = rect.width();
 		while (h--) {
@@ -390,16 +390,16 @@ void NewGui::blendRect(int x, int y, int w, int h, OverlayColor color, int level
 		}
 
 	} else {
-	  
+
 		int r, g, b;
 		uint8 ar, ag, ab;
 		_system->colorToRGB(color, ar, ag, ab);
 		r = ar * level;
 		g = ag * level;
 		b = ab * level;
-		
+
 		OverlayColor *ptr = getBasePtr(rect.left, rect.top);
-		
+
 		h = rect.height();
 		w = rect.width();
 		while (h--) {

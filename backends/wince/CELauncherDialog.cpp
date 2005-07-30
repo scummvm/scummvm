@@ -42,7 +42,7 @@ public:
 	CEAboutDialog::CEAboutDialog()
 	: Dialog(10, 60, 300, 77) {
 		char tempo[100];
-	
+
 		addButton(this,(_w - kButtonWidth) / 2, 45, "OK", kCloseCmd, '\r');	// Close dialog - FIXME
 
 		Common::String videoDriver("Using SDL driver ");
@@ -60,7 +60,7 @@ class CEConflictDialog : public Dialog {
 public:
 	CEConflictDialog::CEConflictDialog(const Common::String &name)
 	: Dialog(10, 60, 300, 77) {
-	
+
 		addButton(this,(_w - kButtonWidth) / 2, 45, "OK", kCloseCmd, '\r');	// Close dialog - FIXME
 
 		Common::String conflict("Too many matches for directory ");
@@ -97,12 +97,12 @@ void CELauncherDialog::addCandidate(String &path, DetectedGameList &candidates) 
 			for (i=path.size() - 2; i && path[i] != '\\'; i--);
 			strcpy(candidateName, &path[i + 1]);
 			candidateName[strlen(candidateName) - 1] = '\0';
-			for (i=0; i<candidates.size(); i++) {						
+			for (i=0; i<candidates.size(); i++) {
 				if (scumm_stricmp(candidateName, candidates[i].name) == 0) {
 					idx = i;
 					break;
 				}
-			}	
+			}
 			if (idx == -1) {
 				CEConflictDialog conflict(candidateName);
 				conflict.runModal();
@@ -168,4 +168,4 @@ void CELauncherDialog::addGame() {
 	}
 	else
 		GUILauncherDialog::addGame();
-}	
+}

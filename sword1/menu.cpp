@@ -57,7 +57,7 @@ const byte Menu::_fadeEffectBottom[64] = {
 	3, 2, 1, 0, 7, 6, 5, 4,
 	4, 3, 2, 1, 0, 7, 6, 5,
 	5, 4, 3, 2, 1, 0, 7, 6,
-	6, 5, 4, 3, 2, 1, 0, 7 
+	6, 5, 4, 3, 2, 1, 0, 7
 };
 
 MenuIcon::MenuIcon(uint8 menuType, uint8 menuPos, uint32 resId, uint32 frame, Screen *screen) {

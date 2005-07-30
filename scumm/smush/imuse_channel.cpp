@@ -27,24 +27,24 @@
 
 namespace Scumm {
 
-ImuseChannel::ImuseChannel(int32 track, int32 freq) : 
-	_track(track), 
-	_tbuffer(0), 
-	_tbufferSize(0), 
-	_sbuffer(0), 
-	_sbufferSize(0), 
-	_frequency(freq), 
+ImuseChannel::ImuseChannel(int32 track, int32 freq) :
+	_track(track),
+	_tbuffer(0),
+	_tbufferSize(0),
+	_sbuffer(0),
+	_sbufferSize(0),
+	_frequency(freq),
 	_dataSize(-1),
 	_inData(false) {
 }
 
 ImuseChannel::~ImuseChannel() {
 	if (_tbuffer) {
-		delete []_tbuffer; 
+		delete []_tbuffer;
 	}
 	if (_sbuffer) {
 		warning("_sbuffer should be 0 !!!");
-		delete []_sbuffer; 
+		delete []_sbuffer;
 	}
 }
 
@@ -218,7 +218,7 @@ bool ImuseChannel::handleSubTags(int32 &offset) {
 		uint32 size = READ_BE_UINT32(_tbuffer + offset + 4);
 		uint32 available_size = _tbufferSize - offset;
 		switch(type) {
-		case TYPE_MAP_: 
+		case TYPE_MAP_:
 			_inData = false;
 			if (available_size >= (size + 8)) {
 				MemoryChunk c((byte *)_tbuffer + offset);
@@ -260,9 +260,9 @@ bool ImuseChannel::processBuffer() {
 	assert(_tbufferSize != 0);
 	assert(_sbuffer == 0);
 	assert(_sbufferSize == 0);
-	
+
 	if (_inData) {
-		if (_dataSize < _tbufferSize) {			
+		if (_dataSize < _tbufferSize) {
 			int32 offset= _dataSize;
 			while (handleSubTags(offset));
 			_sbufferSize = _dataSize;
@@ -278,7 +278,7 @@ bool ImuseChannel::processBuffer() {
 				_tbufferSize = 0;
 			}
 			if (_sbufferSize == 0) {
-				delete []_sbuffer; 
+				delete []_sbuffer;
 				_sbuffer = 0;
 			}
 		} else {

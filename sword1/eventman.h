@@ -45,6 +45,6 @@ private:
 	GlobalEvent _eventPendingList[TOTAL_EVENT_SLOTS];
 };
 
-} // End of namespace Sword1 
+} // End of namespace Sword1
 
 #endif // BSEVENTMAN_H

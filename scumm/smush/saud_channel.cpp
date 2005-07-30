@@ -94,7 +94,7 @@ bool SaudChannel::processBuffer() {
 	assert(_tbufferSize != 0);
 	assert(_sbuffer == 0);
 	assert(_sbufferSize == 0);
-	
+
 	if (_keepSize) {
 		_sbufferSize = _tbufferSize;
 		_sbuffer = _tbuffer;
@@ -118,7 +118,7 @@ bool SaudChannel::processBuffer() {
 				_tbufferSize = 0;
 			}
 			if (_sbufferSize == 0) {
-				delete []_sbuffer; 
+				delete []_sbuffer;
 				_sbuffer = 0;
 			}
 		} else {
@@ -156,8 +156,8 @@ bool SaudChannel::processBuffer() {
 	return true;
 }
 
-SaudChannel::SaudChannel(int32 track, int32 freq) : 
-	_track(track), 
+SaudChannel::SaudChannel(int32 track, int32 freq) :
+	_track(track),
 	_nbframes(0),
 	_dataSize(-1),
 	_frequency(freq),

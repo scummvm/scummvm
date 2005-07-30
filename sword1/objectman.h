@@ -48,7 +48,7 @@ public:
 	uint32 lastTextNumber(int section);
 
 	void closeSection(uint32 screen);
-	
+
 	void saveLiveList(uint16 *dest); // for loading/saving
 	void loadLiveList(uint16 *src);
 private:
@@ -60,6 +60,6 @@ private:
 	static char _errorStr[];
 };
 
-} // End of namespace Sword1 
+} // End of namespace Sword1
 
 #endif //OBJECTMAN_H

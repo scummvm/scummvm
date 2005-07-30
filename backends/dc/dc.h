@@ -87,28 +87,28 @@ class OSystem_Dreamcast : public OSystem {
 
   // Set the bitmap that's used when drawing the cursor.
   void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale);
-  
+
   // Shaking is used in SCUMM. Set current shake position.
   void setShakePos(int shake_pos);
 
   // Get the number of milliseconds since the program was started.
   uint32 getMillis();
-  
+
   // Delay for a specified amount of milliseconds
   void delayMillis(uint msecs);
-  
+
   // Get the next event.
-  // Returns true if an event was retrieved.	
+  // Returns true if an event was retrieved.
   bool pollEvent(Event &event);
-  
-  // Set function that generates samples 
+
+  // Set function that generates samples
   bool setSoundCallback(SoundProc proc, void *param);
   void clearSoundCallback();
 
   // Determine the output sample rate. Audio data provided by the sound
   // callback will be played using this rate.
   int getOutputSampleRate() const;
-		
+
   // Initialise the specified CD drive for audio playback.
   bool openCD(int drive);
 
@@ -118,7 +118,7 @@ class OSystem_Dreamcast : public OSystem {
 
   // Play cdrom audio track
   void playCD(int track, int num_loops, int start_frame, int duration);
-  
+
   // Stop cdrom audio track
   void stopCD();
 

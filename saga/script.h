@@ -153,14 +153,14 @@ enum OpCodes {
 	opMul = 0x2E,
 	opDiv = 0x2F,
 	opMod = 0x30,
-//...	
+//...
 	opEq = 0x33,
 	opNe = 0x34,
 	opGt = 0x35,
 	opLt = 0x36,
 	opGe = 0x37,
 	opLe = 0x38,
-//...	
+//...
 	opRsh = 0x3F,
 	opLsh = 0x40,
 	opAnd = 0x41,
@@ -232,7 +232,7 @@ struct ModuleData {
 		voiceLUT.freeMem();
 		free(moduleBase);
 		free(entryPoints);
-		memset(this, 0x0, sizeof(*this)); 
+		memset(this, 0x0, sizeof(*this));
 	}
 };
 
@@ -240,7 +240,7 @@ class ScriptThread {
 public:
 	uint16 *_stackBuf;
 	uint16 _stackSize;					// stack size in uint16
-	
+
 	uint16 _stackTopIndex;
 	uint16 _frameIndex;
 
@@ -249,8 +249,8 @@ public:
 	byte *_moduleBase;					//
 	uint16 _moduleBaseSize;
 
-	byte *_commonBase;					// 
-	byte *_staticBase;					// 
+	byte *_commonBase;					//
+	byte *_staticBase;					//
 	VoiceLUT *_voiceLUT;				//
 	StringsTable *_strings;				//
 
@@ -304,7 +304,7 @@ public:
 		}
 		return (int16)_stackBuf[_stackTopIndex++];
 	}
-	
+
 
 // wait stuff
 	void wait(int waitType) {
@@ -323,7 +323,7 @@ public:
 	}
 
 	ScriptThread() {
-		memset(this, 0xFE, sizeof(*this)); 
+		memset(this, 0xFE, sizeof(*this));
 		_stackBuf = NULL;
 	}
 	~ScriptThread() {
@@ -342,7 +342,7 @@ public:
 
 	Script(SagaEngine *vm);
 	~Script();
-	
+
 	void loadModule(int scriptModuleNumber);
 	void freeModules();
 
@@ -356,7 +356,7 @@ public:
 	void whichObject(const Point& mousePoint);
 	void hitObject(bool leftButton);
 	void playfieldClick(const Point& mousePoint, bool leftButton);
-	
+
 	void setLeftButtonVerb(int verb);
 	int getLeftButtonVerb() const { return _leftButtonVerb; }
 	void setRightButtonVerb(int verb);
@@ -371,12 +371,12 @@ public:
 		_currentObject[0] = _currentObject[0] = ID_NOTHING;
 		setPointerVerb();
 	}
-	
+
 private:
 	SagaEngine *_vm;
 	bool _voiceLUTPresent;
 	ResourceContext *_scriptContext;
-	
+
 	uint16 _modulesLUTEntryLen;
 	ModuleData *_modules;
 	int _modulesCount;
@@ -391,10 +391,10 @@ private:
 	uint _staticSize;
 
 	ScriptThreadList _threadList;
-	
+
 	ScriptThread *_conversingThread;
 
-//verb	
+//verb
 	bool _firstObjectSet;
 	bool _secondObjectNeeded;
 	uint16 _currentObject[2];
@@ -404,10 +404,10 @@ private:
 	int _leftButtonVerb;
 	int _rightButtonVerb;
 
-public:	
+public:
 	uint16 _pendingObject[2];
 	int _pendingVerb;
-	uint16 _pointerObject;	
+	uint16 _pointerObject;
 
 	bool _skipSpeeches;
 	bool _abortEnabled;

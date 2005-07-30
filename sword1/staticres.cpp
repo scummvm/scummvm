@@ -1055,13 +1055,13 @@ const uint32 ResMan::_scriptList[TOTAL_SECTIONS] = { //a table of resource tags
 	SCRIPT0,		// 0		STANDARD SCRIPTS
 
 	SCRIPT1,		// 1		PARIS 1
-	SCRIPT2,		// 2			
-	SCRIPT3,		// 3 			
-	SCRIPT4,		// 4 			
-	SCRIPT5,		// 5 			
-	SCRIPT6,		// 6 			
-	SCRIPT7,		// 7 			
-	SCRIPT8,		// 8 			
+	SCRIPT2,		// 2
+	SCRIPT3,		// 3
+	SCRIPT4,		// 4
+	SCRIPT5,		// 5
+	SCRIPT6,		// 6
+	SCRIPT7,		// 7
+	SCRIPT8,		// 8
 
 	SCRIPT9,		// 9		PARIS 2
 	SCRIPT10,		// 10
@@ -2193,7 +2193,7 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{R61PAL,SPAIN_PAL},					//palettes
 		{0,0},											//parallax layers
 	},
-	{		
+	{
 		1,													//total_layers		//room 62 - CHESS PUZZLE
 		640,												//size_x
 		400,												//size_y
@@ -2217,7 +2217,7 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{R63PAL,TRAIN_PAL},					//palettes
 		{0,0},											//parallax layers
 	},
-	{	
+	{
 		0,													//total_layers		//room 64 - NOT USED
 		0,													//size_x
 		0,													//size_y
@@ -2226,8 +2226,8 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{0,0,0},										//grids
 		{0,0},											//palettes
 		{0,0},											//parallax layers
-	},	
-	{		
+	},
+	{
 		2,													//total_layers		//room 65 - compt_one
 		640,												//size_x
 		400,												//size_y
@@ -2236,8 +2236,8 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{R65G1,0,0},								//grids
 		{R65PAL,TRAIN_PAL},					//palettes
 		{0,0},											//parallax layers
-	},	
-	{		
+	},
+	{
 		1,													//total_layers		//room 66 - compt_two
 		640,												//size_x
 		400,												//size_y
@@ -2246,8 +2246,8 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{0,0,0},										//grids
 		{R66PAL,TRAIN_PAL},					//palettes
 		{0,0},											//parallax layers
-	},	
-	{		
+	},
+	{
 		2,													//total_layers		//room 67 - compt_three
 		640,												//size_x
 		400,												//size_y
@@ -2256,8 +2256,8 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{R67G1,0,0},								//grids
 		{R67PAL,TRAIN_PAL},					//palettes
 		{0,0},											//parallax layers
-	},	
-	{		
+	},
+	{
 		0,													//total_layers		//room 68 - NOT USED
 		0,													//size_x
 		0,													//size_y
@@ -2266,8 +2266,8 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{0,0,0},										//grids
 		{0,0},											//palettes
 		{0,0},											//parallax layers
-	},	
-	{		
+	},
+	{
 		2,													//total_layers		//room 69 - train_guard
 		640,												//size_x
 		400,												//size_y
@@ -2276,8 +2276,8 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{R69G1,0,0},								//grids
 		{R69PAL,R69SPRPAL},					//palettes
 		{0,0},											//parallax layers
-	},	
-	{		
+	},
+	{
 		0,													//total_layers		//room 70 - NOT USED
 		0,													//size_x
 		0,													//size_y
@@ -2291,7 +2291,7 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 	//------------------------------------------------------------------------
 	// SCOTLAND
 
-	{		
+	{
 		2,													//total_layers		//room 71 - churchyard
 		1760,												//size_x
 		400,												//size_y
@@ -2300,8 +2300,8 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{R71G1,0,0},								//grids
 		{R71PAL,SPRITE_PAL},				//palettes
 		{R71PLX,0},									//parallax layers
-	},	
-	{		
+	},
+	{
 		2,													//total_layers		//room 72 - church_tower
 		640,												//size_x
 		400,												//size_y
@@ -2310,8 +2310,8 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{R72G1,0,0},								//grids
 		{R72PAL,SPRITE_PAL},				//palettes
 		{0,0},											//parallax layers
-	},	
-	{		
+	},
+	{
 		3,													//total_layers		//room 73 - crypt
 		640,												//size_x
 		400,												//size_y
@@ -2320,7 +2320,7 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{R73G1,R73G2,0},						//grids
 		{R73PAL,R73SPRPAL},					//palettes
 		{0,0},											//parallax layers
-	},	
+	},
 	{
 		2,													//total_layers		//room 74 - secret_crypt
 		1136,												//size_x
@@ -2331,7 +2331,7 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{R74PAL,ENDSPRPAL},					//palettes
 		{0,0},											//parallax layers
 	},
-	{		
+	{
 		1,													//total_layers		//room 75 - secret_crypt
 		640,												//size_x
 		400,												//size_y
@@ -2341,7 +2341,7 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{R75PAL,ENDSPRPAL},					//palettes
 		{0,0},											//parallax layers
 	},
-	{		
+	{
 		1,													//total_layers		//room 76 - secret_crypt
 		640,												//size_x
 		400,												//size_y
@@ -2351,7 +2351,7 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{R76PAL,ENDSPRPAL},					//palettes
 		{0,0},											//parallax layers
 	},
-	{		
+	{
 		1,													//total_layers		//room 77 - secret_crypt
 		640,												//size_x
 		400,												//size_y
@@ -2395,7 +2395,7 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{room80_PAL,SPRITE_PAL},		//palettes
 		{0,0},											//parallax layers
 	},
-	{		
+	{
 		1,													//total_layers		//room 81 - for sequence of Assassin coming up stairs to rm17
 		640,												//size_x
 		400,												//size_y
@@ -2405,7 +2405,7 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{ASSTAIR2_PAL,SPRITE_PAL},	//palettes
 		{0,0},											//parallax layers
 	},
-	{		
+	{
 		1,													//total_layers		//room 82 - Map of Britain, viewed frrom sc55 (Syria Cave)
 		640,												//size_x
 		400,												//size_y
@@ -2415,7 +2415,7 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{BRITMAP_PAL,SPRITE_PAL},		//palettes
 		{0,0},											//parallax layers
 	},
-	{		
+	{
 		0,													//total_layers		//room 83 - NOT USED
 		0,													//size_x
 		0,													//size_y
@@ -2425,7 +2425,7 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{0,0},											//palettes
 		{0,0},											//parallax layers
 	},
-	{		
+	{
 		0,													//total_layers		//room 84 - NOT USED
 		0,													//size_x
 		0,													//size_y
@@ -2435,7 +2435,7 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{0,0},											//palettes
 		{0,0},											//parallax layers
 	},
-	{		
+	{
 		0,													//total_layers		//room 85 - NOT USED
 		0,													//size_x
 		0,													//size_y
@@ -2455,7 +2455,7 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{room86_PAL,SPRITE_PAL},		//palettes
 		{0,0},											//parallax layers
 	},
-	{		
+	{
 		1,													//total_layers		//room 87 - normal window in sc48
 		640,												//size_x
 		400,												//size_y
@@ -2465,7 +2465,7 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{WINDOW1_PAL,SPRITE_PAL},		//palettes
 		{0,0},											//parallax layers
 	},
-	{		
+	{
 		1,													//total_layers		//room 88 - filtered window in sc48
 		640,												//size_x
 		400,												//size_y
@@ -2475,7 +2475,7 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{WINDOW2_PAL,SPRITE_PAL},		//palettes
 		{0,0},											//parallax layers
 	},
-	{		
+	{
 		0,													//total_layers		//room 89 - NOT USED
 		0,													//size_x
 		0,													//size_y
@@ -2505,7 +2505,7 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{R91PAL,SPRITE_PAL},					//palettes
 		{0,0},											//parallax layers
 	},
-	{		
+	{
 		1,													//total_layers		//room 92 - for close up of George surprised in wardrobe in sc17
 		640,												//size_x
 		400,												//size_y
@@ -2515,7 +2515,7 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{SBACK17PAL,SPRITE_PAL},		//palettes
 		{0,0},											//parallax layers
 	},
-	{		
+	{
 		1,													//total_layers		//room 93 - for close up of George inquisitive in wardrobe in sc17
 		640,												//size_x
 		400,												//size_y
@@ -2525,7 +2525,7 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{IBACK17PAL,SPRITE_PAL},		//palettes
 		{0,0},											//parallax layers
 	},
-	{		
+	{
 		1,													//total_layers		//room 94 - for close up of George in sarcophagus in sc29
 		640,												//size_x
 		400,												//size_y
@@ -2535,7 +2535,7 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{BBACK29PAL,BBACK29SPRPAL},	//palettes
 		{0,0},											//parallax layers
 	},
-	{		
+	{
 		1,													//total_layers		//room 95 - for close up of George during templar meeting, in sc38
 		640,												//size_x
 		400,												//size_y
@@ -2545,7 +2545,7 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{BBACK38PAL,SPRITE_PAL},		//palettes
 		{0,0},											//parallax layers
 	},
-	{		
+	{
 		1,													//total_layers		//room 96 - close up of chalice projection
 		640,												//size_x
 		400,												//size_y
@@ -2555,7 +2555,7 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{CHALICE42_PAL,SPRITE_PAL},	//palettes
 		{0,0},											//parallax layers
 	},
-	{		
+	{
 		0,													//total_layers		//room 97 - NOT USED
 		0,													//size_x
 		0,													//size_y
@@ -2565,7 +2565,7 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 		{0,0},											//palettes
 		{0,0},											//parallax layers
 	},
-	{		
+	{
 		0,													//total_layers		//room 98 - NOT USED
 		0,													//size_x
 		0,													//size_y
@@ -2602,7 +2602,7 @@ const char Music::_tuneList[TOTAL_TUNES][8] = {
 	"1m12",		// DONE 10	Truthful George
 	"1m13",		// DONE 11	Yes, drink brandy
 	"1m14",		// DONE 12	Yes, he's dead (Maybe 1m14a)
-	"1m15",		// DONE 13	From, "...clown entered?" 
+	"1m15",		// DONE 13	From, "...clown entered?"
 	"1m16",		// DONE 14	From, "How did the old man behave?"
 	"1m17",		// DONE 15	Salah-eh-Din
 	"1m18",		// DONE 16	From, "Stay here, mademoiselle"
@@ -2644,37 +2644,37 @@ const char Music::_tuneList[TOTAL_TUNES][8] = {
 	"2m17",		// DONE 49	George climbs out of sewer.
 
 	"2m18",		// DONE 50	From, "The man I chased..."
-	"2m19",		// DONE 51	Spooky music for sewers. 
-	"2m20",		// DONE 52	"She isn't hurt, is she?" 
-	"2m21",		// DONE 53	Click on material icon 
-	"2m22",		// DONE 54	Spooky music for sewers. 
-	"2m23",		// DONE 55	From, "So you don't want to hear my experiences in the desert?" 
+	"2m19",		// DONE 51	Spooky music for sewers.
+	"2m20",		// DONE 52	"She isn't hurt, is she?"
+	"2m21",		// DONE 53	Click on material icon
+	"2m22",		// DONE 54	Spooky music for sewers.
+	"2m23",		// DONE 55	From, "So you don't want to hear my experiences in the desert?"
 	"2m24",		// DONE 56	On the material icon with Albert (suit icon instead, because material icon done)
-	"2m25",		// DONE 57	After "What was on the label?" i.e. the 'phone number.  
+	"2m25",		// DONE 57	After "What was on the label?" i.e. the 'phone number.
 	"2m26",		// DONE 58	Leaving yard, after, "I hope you catch that killer soon." Also for the Musee Crune icon on the map (5M7).
-	"2m27",		// DONE 59	As George starts to 'phone Todryk.  (Repeated every time he calls him). Also, when the aeroport is clicked on (5M21). 
+	"2m27",		// DONE 59	As George starts to 'phone Todryk.  (Repeated every time he calls him). Also, when the aeroport is clicked on (5M21).
 
-	"2m28",		// DONE 60	Todryk conversation after, "Truth and justice" 
+	"2m28",		// DONE 60	Todryk conversation after, "Truth and justice"
 	"2m29",		// DONE 61	'Phoning Nico from the roadworks. Also, 'phoning her from Ireland, ideally looping and fading on finish (6M10).
-	"2m30",		// DONE 62	First time on Paris map 
+	"2m30",		// DONE 62	First time on Paris map
 	"2m31",		// DONE 63	Click on Rue d'Alfred Jarry
-	"2m32",		// DONE 64	From, "Will you tell me my fortune?" 
-	"2m33",		// DONE 65	After "Can you really tell my future?" 
-	"1m28",		// DONE 66	"What about the tall yellow ones?" Copy from 1M28. 
+	"2m32",		// DONE 64	From, "Will you tell me my fortune?"
+	"2m33",		// DONE 65	After "Can you really tell my future?"
+	"1m28",		// DONE 66	"What about the tall yellow ones?" Copy from 1M28.
 	"2m24",		// DONE 67	Material Icon. Copy from 2M24
 	"2m6",		// DONE 68	Exit icon on "See you later". Copy from 2M6.
-	"1m25",		// DONE 69	On opening the front foor to Nico's. Copy from 1M25. . 
+	"1m25",		// DONE 69	On opening the front foor to Nico's. Copy from 1M25. .
 
 	"2m38",		// DONE 70	Victim 1: From, "Tell me more about the clown's previous victims."
-	"2m39",		// DONE 71	Victim 2: After, "What about the clown's second victim?" 
-	"2m40",		// DONE 72	Victim 3: On clown icon for 3rd victim.  
-	"3m1",		// DONE 73	George passes Nico the nose. 
+	"2m39",		// DONE 71	Victim 2: After, "What about the clown's second victim?"
+	"2m40",		// DONE 72	Victim 3: On clown icon for 3rd victim.
+	"3m1",		// DONE 73	George passes Nico the nose.
 	"3m2",		// DONE 74	With Nico. From, "I found a piece of material..."
 	"3m3",		// DONE 75	After George says, "... or clowns?"
 	"3m4",		// DONE 76	After, "Did you live with your father?"
-	"1m28",		// DONE 77	After, "Do you have a boyfriend?". Copy from 1M28. 
-	"2m26",		// DONE 78	After, "Good idea" (about going to costumier's). Copy from 2M26. 
-	"3m7",		// DONE 79	On costumier's icon on map. 
+	"1m28",		// DONE 77	After, "Do you have a boyfriend?". Copy from 1M28.
+	"2m26",		// DONE 78	After, "Good idea" (about going to costumier's). Copy from 2M26.
+	"3m7",		// DONE 79	On costumier's icon on map.
 
 	"3m8",		// DONE 80	Costumier's, after, "Come in, welcome."
 	"3m9",		// DONE 81	On entering costumier's on later visits
@@ -2683,80 +2683,80 @@ const char Music::_tuneList[TOTAL_TUNES][8] = {
 	"3m12",		// DONE 84	Tissue icon. Also, after Nico's "No, I write it (the magazine) 5M19.
 	"3m13",		// DONE 85	Photo icon over, "Do you recognise this man?"
 	"3m14",		// DONE 86	Exit icon, over, "Thanks for your help, buddy."
-	"2m9",		// DONE 87	Clicking on police station on the map. 
+	"2m9",		// DONE 87	Clicking on police station on the map.
 	"3m17",		// DONE 88	Police station on, "I've tracked down the clown's movements."
-	"3m18",		// DONE 89	"One moment, m'sieur," as Moue turns. 
+	"3m18",		// DONE 89	"One moment, m'sieur," as Moue turns.
 
 	"3m19",		// DONE 90	G. on Rosso. "If he was trying to impress me..."
 	"3m20",		// DONE 91	G. thinks, "He looked at me as if I'd farted."
 	"3m21",		// DONE 92	Over Rosso's, "I've washed my hands of the whole affair."
 	"3m22",		// DONE 93	Played over, "So long, inspector."
 	"3m24",		// DONE 94	Conversation with Todrk, "He bought a suit from you, remember?"
-	"3m26",		// !!!! 95	This piece is a problem. Don't worry about it for present. 
+	"3m26",		// !!!! 95	This piece is a problem. Don't worry about it for present.
 	"3m27",		// DONE 96	George to Nico (in the flat): "Have you found out anymore?" [about the murders? or about the templars? JEL]
-	"2m26",		// DONE 97	After, "Don't worry, I will." on leaving Nico's. 
-	"3m29",		// DONE 98	Ubu icon on the map. 
+	"2m26",		// DONE 97	After, "Don't worry, I will." on leaving Nico's.
+	"3m29",		// DONE 98	Ubu icon on the map.
 	"3m30",		// DONE 99	G and Flap. After, "I love the clowns. Don't you?" AND "after "Not if you see me first" (3M31)
 
-	"3m32",		// DONE 100	Source music for Lady Piermont. 
+	"3m32",		// DONE 100	Source music for Lady Piermont.
 	"3m33",		// DONE 101	More music for Lady P.
-	"2m13",		// DONE 102 Red Nose music Copy 2M13	
+	"2m13",		// DONE 102 Red Nose music Copy 2M13
 	"4m3",		// DONE 103	On photo, "Do you recognise the man in this photograph"
 	"4m4",		// DONE 104	With Lady P. After, "Hi there, ma'am."
 	"4m5",		// DONE 105	After, "I think the word you're looking for is...dick"
 	"4m6",		// DONE 106	After, "English arrogance might do the trick." Also for "More English arrogance" (4M27)
 	"4m8",		// !!!! 107	As George grabs key.
 	"4m9",		// DONE 108	Room 21, on "Maybe it wasn't the right room"
-	"4m10",		// DONE 109	On coming into 21 on subsequent occasions. 
+	"4m10",		// DONE 109	On coming into 21 on subsequent occasions.
 
-	"4m11",		// DONE 110 As George steps upto window. 	
-	"4m12",		// DONE 111	Alternative times he steps up to the window. 
+	"4m11",		// DONE 110 As George steps upto window.
+	"4m12",		// DONE 111	Alternative times he steps up to the window.
 	"4m13",		// DONE 112	In Moerlin's room
 	"4m14",		// DONE 113	Sees "Moerlin" on the Stairs
-	"4m15",		// DONE 114	George closing wardrobe door aftre Moerlin's gone. 
+	"4m15",		// DONE 114	George closing wardrobe door aftre Moerlin's gone.
 	"4m17",		// DONE 115	After, "take your mind off the inquest"
 	"4m18",		// DONE 116	"It was just as I'd imagined."
 	"4m19",		// DONE 117	Show photo to Lady P
-	"4m20",		// DONE 118	Lady P is "shocked" after the name "Khan". 
+	"4m20",		// DONE 118	Lady P is "shocked" after the name "Khan".
 	"4m21",		// DONE 119	After, "A bundle of papers, perhaps".
 
 	"4m22",		// DONE 120	After, "Plantard's briefcase"
 	"4m24",		// DONE 121	On fade to black as George leaves the hotel (prior to being searched)
 	"4m25",		// DONE 122	After, "I break your fingers"
 	"4m28",		// DONE 123	After clerk says, "Voila, m'sieur. Le manuscript..."
-	"4m29",		// DONE 124	Onto the window sill after getting the manuscript. 
-	"4m31",		// DONE 125	Searched after he's dumped the manuscript in the alleyway. 
+	"4m29",		// DONE 124	Onto the window sill after getting the manuscript.
+	"4m31",		// DONE 125	Searched after he's dumped the manuscript in the alleyway.
 	"4m32",		// DONE 126	Recovering the manuscript in the alley, "If the manuscript was..."
-	"5m1",		// DONE 127	The manuscript, just after, "It's worth enough to kill for." 
+	"5m1",		// DONE 127	The manuscript, just after, "It's worth enough to kill for."
 	"5m2",		// !SMK 128 The Templars after, "...over 800 years ago."
 	"5m3",		// DONE 129	After, "Let's take another look at that manuscript"
 
 	"5m4",		// DONE 130	On "Knight with a crystal ball" icon
 	"5m5",		// DONE 131	On Nico's, "Patience"
 	"5m6",		// DONE 132	After "I'm sure it will come in useful" when George leaves. Also, George leaving Nico after, "Keep me informed if you find anything new" (5M20). + "just take care of yourself"
-	"5m8",		// DONE 133	Entering the museum for the first time on the fade. 
+	"5m8",		// DONE 133	Entering the museum for the first time on the fade.
 	"5m9",		// DONE 134	George with guard after, "park their cars." Guard saying "No, no, no"
 	"5m10", 	// DONE 135	Incidental looking around the museum music. + fading from map to museum street, when lobineau is in museum
 	"5m11",		// DONE 136	From "In the case was a spindly tripod, blackened with age and pitted with rust...". George answers Tripod ((?)That's what the cue list says). Also 5M15 and 5M16)
-	"5m12",		// DONE 137	More looking around music. 
-	"5m13",		// DONE 138	Opening the mummy case. 
+	"5m12",		// DONE 137	More looking around music.
+	"5m13",		// DONE 138	Opening the mummy case.
 	"5m14",		// DONE 139	High above me was a window
 
 	"5m17",		// DONE 140 	"As I reached toward the display case" (5M18 is in slot 165)
-	"5m22",		// !SMK 141	From Ireland on the Europe map. 
-	"5m23",		// !!!! 142	IN front of the pub, searching. 
+	"5m22",		// !SMK 141	From Ireland on the Europe map.
+	"5m23",		// !!!! 142	IN front of the pub, searching.
 	"5m24",		// DONE 143	Cheeky Maguire, "Wait 'til I get back"
-	"2m3",		// DONE 144	Before, "Did anybody at the village work at the dig?" Loop and fade. 
+	"2m3",		// DONE 144	Before, "Did anybody at the village work at the dig?" Loop and fade.
 	"6m1",		// DONE 145	After, "You know something ... not telling me, don't you?"
 	"6m2",		// DONE 146	On, "Mister, I seen it with my own eyes."
 	"6m3",		// DONE 147	After, "Did you get to see the ghost" + On George's, "As soon as I saw the flickering torches..." in SCR_SC73.txt.
 	"6m4",		// DONE 148	"the bloody place is haunted", just after G's "rational explanation... the castle"
-	"6m5",		// DONE 149	Pub fiddler 1. Please programme stops between numbers - about 20" and a longer one every four or five minutes. 
+	"6m5",		// DONE 149	Pub fiddler 1. Please programme stops between numbers - about 20" and a longer one every four or five minutes.
 
-	"6m6",		// DONE 150	Pub fiddler 2. 
+	"6m6",		// DONE 150	Pub fiddler 2.
 	"6m7",		// DONE 151	Pub fiddler 3.
-	"6m8",		// DONE 152	Pub fiddler 4. 
-	"6m12",		// DONE 153	Exit pub (as door opens). Copy from 2M6. 
+	"6m8",		// DONE 152	Pub fiddler 4.
+	"6m12",		// DONE 153	Exit pub (as door opens). Copy from 2M6.
 	"2m6",		// DONE 154	Going to the castle, start on the path blackout.
 	"5m1",		// DONE 155	On, "Where was the Templar preceptory?" Copy 5M1
 	"6m15",		// DONE 156	"On, "Do you mind if I climb up your hay stack..."
@@ -2772,24 +2772,24 @@ const char Music::_tuneList[TOTAL_TUNES][8] = {
 	"7m14",		// DONE 165	On George's icon, "the driver of the Ferrari..."
 	"7m15",		// DONE 166	After George, "His name is Sean Fitzgerald"
 	"5m18",		// DONE 167	Leaving museum after discovering tripod.
-	"6m11",		// !!!! 168	With Fitz. On G's, "Did you work at...?". This is triggered here and on each subsequent question, fading at the end. 
+	"6m11",		// !!!! 168	With Fitz. On G's, "Did you work at...?". This is triggered here and on each subsequent question, fading at the end.
 	"7m17",		// DONE 169	"You don't have to demolish the haystack"
 
-	"7m18",		// DONE 170	George begins to climb the haystack. 
-	"7m19",		// DONE 171	Alternative climbing haystack music. These two tracks can be rotated with an ascent with FX only). 
-	"7m20",		// DONE 172	Attempting to get over the wall. 
+	"7m18",		// DONE 170	George begins to climb the haystack.
+	"7m19",		// DONE 171	Alternative climbing haystack music. These two tracks can be rotated with an ascent with FX only).
+	"7m20",		// DONE 172	Attempting to get over the wall.
 	"7m21",		// DONE 173	Descending the haystack
-	"7m22",		// !!!! 174	Useful general purpose walking about music. 
-	"7m23",		// DONE 175	"Plastic cover" The exposed box, LB and RB. 
+	"7m22",		// !!!! 174	Useful general purpose walking about music.
+	"7m23",		// DONE 175	"Plastic cover" The exposed box, LB and RB.
 	"7m28",		// !!!! 176	"No return"
 	"7m30",		// !!!! 177	Picking up drink music (This will definitely clash with the fiddle music. We'll use it for something else). *
-	"7m31",		// !!!! 178	Showing the landlord the electrician's ID. 
+	"7m31",		// !!!! 178	Showing the landlord the electrician's ID.
 	"7m32",		// !!!! 179	Stealing the wire (Probable clash again) *
 
-	"7m33",		// DONE 180	On fade to black before going down into dark cellar. 
-	"7m34",		// DONE 181	On opening the grate, as George says, "I lifted the..." Khan's entrance. 
-	"8m1",		// DONE 182	Going down into the light cellar, starting as he goes through bar door. 
-	"8m2",		// DONE 183	General cellar music on, "It was an empty carton". 
+	"7m33",		// DONE 180	On fade to black before going down into dark cellar.
+	"7m34",		// DONE 181	On opening the grate, as George says, "I lifted the..." Khan's entrance.
+	"8m1",		// DONE 182	Going down into the light cellar, starting as he goes through bar door.
+	"8m2",		// DONE 183	General cellar music on, "It was an empty carton".
 	"8m4",		// !!!! 184	Trying to get the bar towel. On, "The man's arm lay across..." *
 	"8m7",		// DONE 185	Squeeze towel into drain. On, "Silly boy..."
 	"8m10",		// DONE 186	Entering the castle as he places his foot on the tool embedded into the wall.
@@ -2800,26 +2800,26 @@ const char Music::_tuneList[TOTAL_TUNES][8] = {
 	"8m14",		// DONE 190	Second butt from goat.
 	"8m15",		// DONE 191	Third butt from goat.
 	"8m16",		// DONE 192	All subsequent butts, alternating with no music.
-	"8m18",		// DONE 193	Poking around in the excavation music. I'd trigger it as he starts to descend the ladder into the dig. 
-	"8m19",		// DONE 194	"There was a pattern..." The five holes. 
+	"8m18",		// DONE 193	Poking around in the excavation music. I'd trigger it as he starts to descend the ladder into the dig.
+	"8m19",		// DONE 194	"There was a pattern..." The five holes.
 	"8m20",		// DONE 195	George actually touches the stone. Cooling carving (?)
 	"8m21",		// DONE 196	"As I swung the stone upright" coming in on "Upright"
 	"8m22",		// DONE 197	"The sack contained"
-	"8m24",		// DONE 198	Down wall. As screen goes black. George over wall to haystack. 
-	"8m26",		// DONE 199	Wetting the towel 
+	"8m24",		// DONE 198	Down wall. As screen goes black. George over wall to haystack.
+	"8m26",		// DONE 199	Wetting the towel
 
-	"8m28",		// DONE 200	Wetting plaster. As George reaches for the towel prior to wringing water onto the plaster. 
+	"8m28",		// DONE 200	Wetting plaster. As George reaches for the towel prior to wringing water onto the plaster.
 	"8m29",		// DONE 201	Mould in "The hardened plaster..."
-	"8m30",		// DONE 202	Entering castle. As George steps in.  
+	"8m30",		// DONE 202	Entering castle. As George steps in.
 	"8m31",		// DONE 203	After George, "Hardly - he was dead." in nico_scr.txt
 	"8m37",		// !!!! 204	Talking to Lobineau about the Templars. 5M2Keep looping and fade at the end.
 						//					The problem is that it's an enormous sample and will have to be reduced in volume.
 						//					I suggest forgetting about this one for the time being.
-						//					If there's room when the rest of the game's in, then I'll re-record it more quietly and call it 8M37, okay? 
-	"8m38",		// DONE 205	"A female friend"  
-	"8m39",		// DONE 206	"Public toilet"  
+						//					If there's room when the rest of the game's in, then I'll re-record it more quietly and call it 8M37, okay?
+	"8m38",		// DONE 205	"A female friend"
+	"8m39",		// DONE 206	"Public toilet"
 	"8m40",		// DONE 207	When George asks, "Where was the site at Montfaucon?" (to Lobineau, I suppose)
-	"8m41",		// DONE 208	On matchbox icon. "Does this matchbook mean anything to you?"  
+	"8m41",		// DONE 208	On matchbox icon. "Does this matchbook mean anything to you?"
 	"9m1",		// DONE 209	On George, "It was the king of France" in ross_scr.txt
 
 	"9m2",		// DONE 210	George, "Why do you get wound up...?" in ross_scr.txt
@@ -2827,55 +2827,55 @@ const char Music::_tuneList[TOTAL_TUNES][8] = {
 	"9m5",		// DONE 212	On fade up at the hospital drive
 	"9m6",		// DONE 213	On fade up inside the hospital
 	"9m7",		// DONE 214	With Eva talking about Marquet. Before, "I'm conducting a private investigation."
-	"9m8",		// DONE 215	With Eva, showing her the ID card. 
+	"9m8",		// DONE 215	With Eva, showing her the ID card.
 	"9m9",		// DONE 216	With Eva, second NURSE click, "If nurse Grendel is that bad..."
 	"9m10",		// DONE 217	Saying goodbye to Eva on the conversation where he discovers Marquet's location + on fade up on Sam's screen after being kicked off the ward
 	"9m11",		// DONE 218	Talking to Sam. On, "Oh - hiya!" + first click on MR_SHINY
-	"9m13",		// DONE 219	When George drinks from the cooler.   
+	"9m13",		// DONE 219	When George drinks from the cooler.
 
 	"9m14",		// DONE 220	To Grendel, third MARQUET click. On "Do you know who paid for Marquet's room?"
 	"9m15",		// DONE 221	To Grendel on first CLOWN click, "Do you have any clowns on the ward?"
-	"9m17",		// DONE 222	When George pulls Shiny's plug the first time, on "As I tugged the plug..."  
-	"9m18",		// DONE 223	On subsequent plug tuggings if George has failed to get the white coat.   
+	"9m17",		// DONE 222	When George pulls Shiny's plug the first time, on "As I tugged the plug..."
+	"9m18",		// DONE 223	On subsequent plug tuggings if George has failed to get the white coat.
 	"9m19",		// DONE 224	With the consultant, on "Excuse me, sir..."
-	"9m20",		// DONE 225	Talking to Grendel. Launch immediately after she gives him the long metal box and "a stunning smile" 
-	"9m21",		// DONE 226	On Eric's, "Doctor!" when George is trying to get by for the first time, i.e. ward_stop_flag==0. 
-	"9m22",		// DONE 227	On Eric's, "Oh, Doctor!" when George is trying to get by for the second time, i.e. ward_stop_flag==1.	
-	"9m23",		// DONE 228	On Eric's, "You haven't finished taking my blood pressure!" when George is trying to get by for the third+ time, i.e. ward_stop_flag>1.	
+	"9m20",		// DONE 225	Talking to Grendel. Launch immediately after she gives him the long metal box and "a stunning smile"
+	"9m21",		// DONE 226	On Eric's, "Doctor!" when George is trying to get by for the first time, i.e. ward_stop_flag==0.
+	"9m22",		// DONE 227	On Eric's, "Oh, Doctor!" when George is trying to get by for the second time, i.e. ward_stop_flag==1.
+	"9m23",		// DONE 228	On Eric's, "You haven't finished taking my blood pressure!" when George is trying to get by for the third+ time, i.e. ward_stop_flag>1.
 	"9m24",		// DONE 229	Giving the pressure gauge to Benoir, on, "Here, take this pressure gauge."
 
 	"9m25",		// DONE 230	With Benoir, suggesting he use the gauge on the nurse. On, "Use it on Nurse Grendel."
 	"10m1",		// DONE 231	Immediately after Marquet's, "Well, what are you waiting for? Get it over with!"
-	"10m2",		// DONE 232	When George pulls open the sarcophagus lid prior to his successful hiding before the raid. 
+	"10m2",		// DONE 232	When George pulls open the sarcophagus lid prior to his successful hiding before the raid.
 	"10m3",		// DONE 233	On fade to black as George spies on the Neo-Templars.
 	"10m4",		// DONE 234	On second peer through the hole at the "Templars"
-	"11m1",		// DONE 235	On clicking on the Marib button. 
+	"11m1",		// DONE 235	On clicking on the Marib button.
 	"11m3",		// DONE 236	Loop in the Club Alamut, alternating with...
-	"11m4",		// DONE 237	Loop in the Club Alamut. 
-	"11m7",		// DONE 238	When the door in the Bull's Mouth closes on George. 
-	"11m8",		// DONE 239	When the door opens to reveal Khan, immediately after, "You!" in KHAN_55.TXT. 
+	"11m4",		// DONE 237	Loop in the Club Alamut.
+	"11m7",		// DONE 238	When the door in the Bull's Mouth closes on George.
+	"11m8",		// DONE 239	When the door opens to reveal Khan, immediately after, "You!" in KHAN_55.TXT.
 
-	"11m9",		// !SMK 240	Over the "Going to the Bull's Head" smacker. Probably. 
+	"11m9",		// !SMK 240	Over the "Going to the Bull's Head" smacker. Probably.
 	"12m1",		// DONE 241	Clicking on the Spain icon from the aeroport. (AFTER CHANGING CD!)
-	"11m2",		// DONE 242	Loop in the marketplace of Marib. 
-	"spm2",		// DONE 243	On fade up in the Countess' room for the first time.  
+	"11m2",		// DONE 242	Loop in the marketplace of Marib.
+	"spm2",		// DONE 243	On fade up in the Countess' room for the first time.
 	"spm3",		// DONE 244	At the end of VAS1SC56, triggered immediately before the Countess says, "Senor Stobbart, if I find that you are wasting my time..."
-	"spm4",		// DONE 245	Immediately before Lopez enters the mausoleum with the chess set. 
-	"spm5",		// DONE 246	(This is actually 5m2 copied for CD2) Played through the chess puzzle. Ideally, when it finsishes, give it a couple of seconds and then launch 12m1. When that finishes,  a couple of seconds and then back to this and so on and so forth. 
+	"spm4",		// DONE 245	Immediately before Lopez enters the mausoleum with the chess set.
+	"spm5",		// DONE 246	(This is actually 5m2 copied for CD2) Played through the chess puzzle. Ideally, when it finsishes, give it a couple of seconds and then launch 12m1. When that finishes,  a couple of seconds and then back to this and so on and so forth.
 	"spm6",		// DONE 247	On fade up from completing the chess puzzle. The climax is now "spm6b"
 	"scm1",		// DONE 248	This is used whenever George goes out of a carriage and onto the corridor.
-	"scm2",		// DONE 249	As George climbs out of the train window. 
+	"scm2",		// DONE 249	As George climbs out of the train window.
 
-	"scm3",		// DONE 250	As George lands inside the guard's van. 
+	"scm3",		// DONE 250	As George lands inside the guard's van.
 	"scm4",		// DONE 251	On Khan's death speech, "A noble foe..."
 	"scm5",		// DONE 252	George to Khan. On, "You're talking in riddles!"
 	"scm6",		// DONE 253	Before, "He's dead"
 	"scm7",		// DONE 254	Kissing Nico. After, "Where do you think you're going?"
 	"scm8",		// DONE 255	In the churchyard after Nico's, "I rather hope it did"
-	"scm11",	// DONE 256	Click on the opened secret door. 
-	"rm3a",		// DONE 257	Immediately they fade up in the great cave. 
+	"scm11",	// DONE 256	Click on the opened secret door.
+	"rm3a",		// DONE 257	Immediately they fade up in the great cave.
 	"rm3b",		// DONE 258	The scene change immediately after Eklund says, "If you wish to live much longer..."
-	"scm16",	// DONE 259	The big end sequence from when the torch hits the gunpowder. Cross fade with the shortened version that fits on the Smacker.  
+	"scm16",	// DONE 259	The big end sequence from when the torch hits the gunpowder. Cross fade with the shortened version that fits on the Smacker.
 
 	"scm1b",	// DONE 260	When George passes the trigger point toward the back of the train and he sees Guido.
 	"spm6b",	// DONE 261 The climax of "spm6", which should coincide with the Countess holding up the chalice.
@@ -3128,7 +3128,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 19 Tied to large bird flying up screen anim 
+	// 19 Tied to large bird flying up screen anim
 	{
 		FX_CAW1,			// sampleId
 		FX_SPOT,			// type
@@ -3140,7 +3140,7 @@ const FxDef Sound::_fxList[312] = {
 	},
 	//------------------------
 	//------------------------
-	// 20 George picking the canopy up: GEOCAN 
+	// 20 George picking the canopy up: GEOCAN
 	{
 		FX_CANUP,			// sampleId
 		FX_SPOT,			// type
@@ -3151,7 +3151,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 21 George dropping the canopy: GEOCAN 
+	// 21 George dropping the canopy: GEOCAN
 	{
 		FX_CANDO,			// sampleId
 		FX_SPOT,			// type
@@ -3162,7 +3162,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 22 George dusts himself down: GEOCAN 
+	// 22 George dusts himself down: GEOCAN
 	{
 		FX_DUST,			// sampleId
 		FX_SPOT,			// type
@@ -3239,7 +3239,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 29 Pickaxe sound 2:, Screen 4 - WRKDIG 
+	// 29 Pickaxe sound 2:, Screen 4 - WRKDIG
 	{
 		FX_PICK2,			// sampleId
 		FX_SPOT,			// type
@@ -3251,7 +3251,7 @@ const FxDef Sound::_fxList[312] = {
 	},
 	//------------------------
 	//------------------------
-	// 30 Pickaxe sound 3:, Screen 4 - WRKDIG 
+	// 30 Pickaxe sound 3:, Screen 4 - WRKDIG
 	{
 		FX_PICK3,			// sampleId
 		FX_SPOT,			// type
@@ -3262,7 +3262,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 31 Pickaxe sound 4:, Screen 4 - WRKDIG 
+	// 31 Pickaxe sound 4:, Screen 4 - WRKDIG
 	{
 		FX_PICK4,			// sampleId
 		FX_SPOT,			// type
@@ -3621,7 +3621,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 63 Another bird for the street. 
+	// 63 Another bird for the street.
 	{
 		FX_BIRD2,			// sampleId
 		FX_RANDOM,		// type
@@ -3633,7 +3633,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 64 George sits in the chair: GEOCHR 
+	// 64 George sits in the chair: GEOCHR
 	{
 		FX_GEOCHAIR,	// sampleId
 		FX_SPOT,			// type
@@ -3644,7 +3644,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 65 George sits on the couch: GEOCCH 
+	// 65 George sits on the couch: GEOCCH
 	{
 		FX_GEOCCH,		// sampleId
 		FX_SPOT,			// type
@@ -4188,7 +4188,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 113 George drops slab: STNFALL 
+	// 113 George drops slab: STNFALL
 	{
 		FX_SLABFALL,	// sampleId
 		FX_SPOT,			// type
@@ -4199,7 +4199,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 114 George picks up slab: GEOSTN8 
+	// 114 George picks up slab: GEOSTN8
 	{
 		FX_SLABUP,		// sampleId
 		FX_SPOT,			// type
@@ -4210,7 +4210,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 115 Secret door opens: ALTOPN 
+	// 115 Secret door opens: ALTOPN
 	{
 		FX_SECDOR25,	// sampleId
 		FX_SPOT,			// type
@@ -4221,7 +4221,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 116 George wrings out cloth: GEOTWL25 
+	// 116 George wrings out cloth: GEOTWL25
 	{
 		FX_WRING,			// sampleId
 		FX_SPOT,			// type
@@ -4232,7 +4232,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 117 Rat running across barrels: RATJMP 
+	// 117 Rat running across barrels: RATJMP
 	{
 		FX_RAT3A,			// sampleId
 		FX_SPOT,			// type
@@ -4243,7 +4243,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 118 Rat running across barrels: RATJMP 
+	// 118 Rat running across barrels: RATJMP
 	{
 		FX_RAT3B,			// sampleId
 		FX_SPOT,			// type
@@ -4254,7 +4254,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 119 Rat running across barrels: RATJMP 
+	// 119 Rat running across barrels: RATJMP
 	{
 		FX_RAT3C,			// sampleId
 		FX_SPOT,			// type
@@ -4266,7 +4266,7 @@ const FxDef Sound::_fxList[312] = {
 	},
 	//------------------------
 	//------------------------
-	// 120 Irish bird song 1:  
+	// 120 Irish bird song 1:
 	{
 		FX_EIRBIRD1,	// sampleId
 		FX_RANDOM,		// type
@@ -4303,7 +4303,7 @@ const FxDef Sound::_fxList[312] = {
 		720,					// delay (or random chance)
 		{							// roomVolList
 			{19,8,8},		// {roomNo,leftVol,rightVol}
-			{21,3,4},		
+			{21,3,4},
 			{22,8,8},
 			{23,5,6},
 			{24,6,8},
@@ -4311,7 +4311,7 @@ const FxDef Sound::_fxList[312] = {
 		}
 	},
 	//------------------------
-	// 123 Rat 3D: 
+	// 123 Rat 3D:
 	{
 		FX_RAT3D,			// sampleId
 		FX_RANDOM,		// type
@@ -4322,7 +4322,7 @@ const FxDef Sound::_fxList[312] = {
 		}
 	},
 	//------------------------
-	// 124 Wind atop the battlements 
+	// 124 Wind atop the battlements
 	{
 		FX_WIND,			// sampleId
 		FX_LOOP,			// type
@@ -4333,7 +4333,7 @@ const FxDef Sound::_fxList[312] = {
 		}
 	},
 	//------------------------
-	// 125 Glasswasher in the pub (Room 20) *JEL* Stops after fuse blows and starts when george fixes it. 
+	// 125 Glasswasher in the pub (Room 20) *JEL* Stops after fuse blows and starts when george fixes it.
 	{
 		FX_WASHER,		// sampleId
 		FX_LOOP,			// type
@@ -4355,7 +4355,7 @@ const FxDef Sound::_fxList[312] = {
 		}
 	},
 	//------------------------
-	// 127 Lopez's hose. Basically a loop but stops when George cuts the water supply. Replaces MUTTER1. 
+	// 127 Lopez's hose. Basically a loop but stops when George cuts the water supply. Replaces MUTTER1.
 	{
 		FX_HOSE57,		// sampleId
 		FX_LOOP,			// type
@@ -4366,7 +4366,7 @@ const FxDef Sound::_fxList[312] = {
 		}
 	},
 	//------------------------
-	// 128 Lopez's hose being switched off. Anim GARD05. Replaces MUTTER2. 
+	// 128 Lopez's hose being switched off. Anim GARD05. Replaces MUTTER2.
 	{
 		FX_HOSE57B,		// sampleId
 		FX_SPOT,			// type
@@ -4401,7 +4401,7 @@ const FxDef Sound::_fxList[312] = {
 		}
 	},
 	//------------------------
-	// 131 Display case shatters: GEOTOTB	
+	// 131 Display case shatters: GEOTOTB
 	{
 		FX_SMASHGLA,	// sampleId
 		FX_SPOT,			// type
@@ -4446,7 +4446,7 @@ const FxDef Sound::_fxList[312] = {
 		}
 	},
 	//------------------------
-	// 135 Museum exterior ambience 
+	// 135 Museum exterior ambience
 	{
 		FX_MUESEXT,		// sampleId
 		FX_LOOP,			// type
@@ -4560,14 +4560,14 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 145 Mr Shiny running 
+	// 145 Mr Shiny running
 	{
 		FX_SHINY,			// sampleId
 		FX_LOOP,			// type
 		0,						// delay (or random chance)
 		{							// roomVolList
 			{32,4,3},		// {roomNo,leftVol,rightVol}
-			{33,12,14}, 
+			{33,12,14},
 			{0,0,0},		// NULL-TERMINATOR
 		},
 	},
@@ -4696,7 +4696,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 157 Phone rings: When Nico calls back in room 41. Loops until the guard answers it. 
+	// 157 Phone rings: When Nico calls back in room 41. Loops until the guard answers it.
 	{
 		FX_PHONCALL,	// sampleId
 		FX_LOOP,			// type
@@ -4718,7 +4718,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 159 George turns thermostat: GEO41THE (another dummy). Also used on the reverse. 
+	// 159 George turns thermostat: GEO41THE (another dummy). Also used on the reverse.
 	{
 		FX_THERMO1,		// sampleId
 		FX_SPOT,			// type
@@ -4729,7 +4729,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 160 Low echoing rumble of large church 
+	// 160 Low echoing rumble of large church
 	{
 		FX_CHURCHFX,	// sampleId
 		FX_LOOP,			// type
@@ -4741,7 +4741,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 161 George drys hand: GEO43HAN 
+	// 161 George drys hand: GEO43HAN
 	{
 		FX_DRIER1,		// sampleId
 		FX_SPOT,			// type
@@ -4918,7 +4918,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 177 Inside Bull's Head door opens: DOOR55 (and its reverse). 
+	// 177 Inside Bull's Head door opens: DOOR55 (and its reverse).
 	{
 		FX_SECDOR55,	// sampleId
 		FX_SPOT,			// type
@@ -4929,7 +4929,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 178 Ayub opens door. AYU1 
+	// 178 Ayub opens door. AYU1
 	{
 		FX_AYUBDOOR,	// sampleId
 		FX_SPOT,			// type
@@ -5003,9 +5003,9 @@ const FxDef Sound::_fxList[312] = {
 		FX_LOOP,			// type
 		0,						// delay (or random chance) *
 		{							// roomVolList
-			{57,1,2},		// 
-			{58,2,2},		//  
-			{60,1,1},		//  
+			{57,1,2},		//
+			{58,2,2},		//
+			{60,1,1},		//
 			{0,0,0},		// NULL-TERMINATOR
 		},
 	},
@@ -5166,7 +5166,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 199 Ambient sound churchyard. 
+	// 199 Ambient sound churchyard.
 	{
 		FX_WIND71,		// sampleId
 		FX_RANDOM, 		// type
@@ -5258,7 +5258,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 207 Internal train ambience. 
+	// 207 Internal train ambience.
 	{
 		FX_TRAININT,	// sampleId
 		FX_LOOP, 			// type
@@ -5266,14 +5266,14 @@ const FxDef Sound::_fxList[312] = {
 		{							// roomVolList
 			{63,3,3},		// {roomNo,leftVol,rightVol}
 			{65,2,2},
-			{66,2,2},	
+			{66,2,2},
 			{67,2,2},
 			{69,2,2},
 			{0,0,0},		// NULL-TERMINATOR
 		},
 	},
 	//------------------------
-	// 208 Countess' clock. PENDULUM. Note: Trigger the sound effect on alternate runs of the pendulum animation. 
+	// 208 Countess' clock. PENDULUM. Note: Trigger the sound effect on alternate runs of the pendulum animation.
 	{
 		FX_PENDULUM,	// sampleId
 		FX_SPOT, 			// type
@@ -5307,7 +5307,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 211 Wind rip by the open window. Triggered at the end of effect 210. 
+	// 211 Wind rip by the open window. Triggered at the end of effect 210.
 	{
 		FX_WIND66,		// sampleId
 		FX_LOOP, 			// type
@@ -5340,7 +5340,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 214 The train ticks over. From the end of BRAKE. 
+	// 214 The train ticks over. From the end of BRAKE.
 	{
 		FX_TICK69,		// sampleId
 		FX_LOOP, 			// type
@@ -5362,7 +5362,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 216 Eklund shoots George. GEODIE69 
+	// 216 Eklund shoots George. GEODIE69
 	{
 		FX_EKSHOOT,		// sampleId
 		FX_SPOT, 			// type
@@ -5373,7 +5373,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 217 Khan pulls the door open. FIGHT69 
+	// 217 Khan pulls the door open. FIGHT69
 	{
 		FX_DOOR69,		// sampleId
 		FX_SPOT, 			// type
@@ -5384,7 +5384,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 218 Wind shriek. Loops from the end of DOOR69 wav to the beginning of BRAKES. 
+	// 218 Wind shriek. Loops from the end of DOOR69 wav to the beginning of BRAKES.
 	{
 		FX_WIND66,		// sampleId
 		FX_LOOP, 			// type
@@ -5395,7 +5395,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 219 Brakes releasing pressure. Only after BRAKE has been run. 
+	// 219 Brakes releasing pressure. Only after BRAKE has been run.
 	{
 		FX_PNEUMO69,	// sampleId
 		FX_RANDOM, 		// type
@@ -5406,7 +5406,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 220 External train sound. Played while George is on the top of the train.  
+	// 220 External train sound. Played while George is on the top of the train.
 	{
 		FX_TRAINEXT,	// sampleId
 		FX_LOOP, 			// type
@@ -5417,7 +5417,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 221 The passing train. FIGHT69  
+	// 221 The passing train. FIGHT69
 	{
 		FX_TRNPASS,		// sampleId
 		FX_SPOT, 			// type
@@ -5428,7 +5428,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 222 George descends into sewer. GEODESO6  
+	// 222 George descends into sewer. GEODESO6
 	{
 		FX_LADD2,			// sampleId
 		FX_SPOT, 			// type
@@ -5439,7 +5439,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 223 George ascends into alley. GEOASC06  
+	// 223 George ascends into alley. GEOASC06
 	{
 		FX_LADD3,			// sampleId
 		FX_SPOT, 			// type
@@ -5450,7 +5450,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 224 George replaces manhole cover. GEOMAN9	  
+	// 224 George replaces manhole cover. GEOMAN9
 	{
 		FX_COVERON2,	// sampleId
 		FX_SPOT, 			// type
@@ -5461,7 +5461,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 225 Montfaucon sewer ambience.   
+	// 225 Montfaucon sewer ambience.
 	{
 		FX_AMBIEN37,	// sampleId
 		FX_LOOP, 			// type
@@ -5472,7 +5472,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 226 George's winning smile. GEOJMP72.   
+	// 226 George's winning smile. GEOJMP72.
 	{
 		FX_PING,			// sampleId
 		FX_SPOT, 			// type
@@ -5483,7 +5483,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 227 George starts to open the manhole. GEO36KNE   
+	// 227 George starts to open the manhole. GEO36KNE
 	{
 		FX_MANOP36,		// sampleId
 		FX_SPOT, 			// type
@@ -5528,7 +5528,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 231 George knocks at middle or lefthand arch. GEO37TA1 or GEO37TA2. 
+	// 231 George knocks at middle or lefthand arch. GEO37TA1 or GEO37TA2.
 	{
 		FX_KNOCK37B,	// sampleId
 		FX_SPOT, 			// type
@@ -5628,7 +5628,7 @@ const FxDef Sound::_fxList[312] = {
 	},
 	//------------------------
 	//------------------------
-	// 240 George rummages through debris. Tied to the end of the whichever crouch is used. Use either this one or RUMMAGE2 alternatively or randomly. Same kind of schtick as the pick axe noises, I suppose. 
+	// 240 George rummages through debris. Tied to the end of the whichever crouch is used. Use either this one or RUMMAGE2 alternatively or randomly. Same kind of schtick as the pick axe noises, I suppose.
 	{
 		FX_RUMMAGE1,	// sampleId
 		FX_SPOT, 			// type
@@ -5639,7 +5639,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 241 George rummages through debris. See above for notes. 
+	// 241 George rummages through debris. See above for notes.
 	{
 		FX_RUMMAGE2,	// sampleId
 		FX_SPOT, 			// type
@@ -5650,56 +5650,56 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 242 Gust of wind in the graveyard.  
+	// 242 Gust of wind in the graveyard.
 	{
 		FX_GUST71,		// sampleId
 		FX_RANDOM, 		// type
 		1080,					// delay (or random chance) *
 		{							// roomVolList
 			{71,3,3},		// {roomNo,leftVol,rightVol}
-			{72,2,1},	
+			{72,2,1},
 			{0,0,0},		// NULL-TERMINATOR
 		},
 	},
 	//------------------------
-	// 243 Violin ambience for Ireland.   
+	// 243 Violin ambience for Ireland.
 	{
 		FX_VIOLIN19,	// sampleId
 		FX_LOOP, 			// type
 		0,						// delay (or random chance) *
 		{							// roomVolList
 			{19,3,3},		// {roomNo,leftVol,rightVol}
-			{21,2,2},	
-			{26,2,2},	
+			{21,2,2},
+			{26,2,2},
 			{0,0,0},		// NULL-TERMINATOR
 		},
 	},
 	//------------------------
-	// 244 Footstep #1 for underground locations. Same schtick as for 188 and 189. 
+	// 244 Footstep #1 for underground locations. Same schtick as for 188 and 189.
 	{
 		FX_SEWSTEP1,	// sampleId
 		FX_SPOT, 			// type
 		0,						// delay (or random chance) *
 		{							// roomVolList
 			{6,8,8},		// {roomNo,leftVol,rightVol}
-			{7,8,8},	
+			{7,8,8},
 			{0,0,0},		// NULL-TERMINATOR
 		},
 	},
 	//------------------------
-	// 245 Footstep #2 for underground locations. Same schtick as for 188 and 189. 
+	// 245 Footstep #2 for underground locations. Same schtick as for 188 and 189.
 	{
 		FX_SEWSTEP2,	// sampleId
 		FX_SPOT, 			// type
 		0,						// delay (or random chance) *
 		{							// roomVolList
 			{6,16,16},	// {roomNo,leftVol,rightVol}
-			{7,16,16},	
+			{7,16,16},
 			{0,0,0},		// NULL-TERMINATOR
 		},
 	},
 	//------------------------
-	// 246 Nico's carabiner as she descends into the museum. NICPUS1 
+	// 246 Nico's carabiner as she descends into the museum. NICPUS1
 	{
 		FX_CARABINE,	// sampleId
 		FX_SPOT, 			// type
@@ -5755,7 +5755,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 251 Mad, fizzing damp and ancient gunpowder after the application of a torch. 
+	// 251 Mad, fizzing damp and ancient gunpowder after the application of a torch.
 	{
 		FX_GUNPOWDR,	// sampleId
 		FX_LOOP, 			// type
@@ -5766,7 +5766,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 252 Maguire whistling. MAGSLK. Plays while Maguire is idling, stops abruptly when he does something else. 
+	// 252 Maguire whistling. MAGSLK. Plays while Maguire is idling, stops abruptly when he does something else.
 	{
 		FX_WHISTLE,		// sampleId
 		FX_LOOP, 			// type
@@ -5777,7 +5777,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 253  George is hit by the goat. GEOHITR and GEOHITL. 
+	// 253  George is hit by the goat. GEOHITR and GEOHITL.
 	{
 		FX_GEOGOAT,		// sampleId
 		FX_SPOT, 			// type
@@ -5909,7 +5909,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 265 George hits the floor having been shot. GEODED. 
+	// 265 George hits the floor having been shot. GEODED.
 	{
 		FX_GDROP29,		// sampleId
 		FX_SPOT, 			// type
@@ -5931,7 +5931,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 267 Fitz being knocked down as heard from inside the pub. Triggered from the script, I think. This is just a stopgap until Hackenbacker do the full version for the Smacker, then I'll sample the requisite bit and put it in here. 
+	// 267 Fitz being knocked down as heard from inside the pub. Triggered from the script, I think. This is just a stopgap until Hackenbacker do the full version for the Smacker, then I'll sample the requisite bit and put it in here.
 	{
 		FX_FITZHIT,		// sampleId
 		FX_SPOT, 			// type
@@ -5942,7 +5942,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 268 Gendarme shoots lock off. GENSHOT 
+	// 268 Gendarme shoots lock off. GENSHOT
 	{
 		FX_GUN34,			// sampleId
 		FX_SPOT, 			// type
@@ -6013,19 +6013,19 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 274 Closing door when George leaves hotel room. GEOLVS15 and GEODOR17 (they're identical). 
+	// 274 Closing door when George leaves hotel room. GEOLVS15 and GEODOR17 (they're identical).
 	{
 		FX_DORCLOSE,	// sampleId
 		FX_SPOT, 			// type
 		44,						// delay (or random chance) *
 		{							// roomVolList
 			{15,12,12},	// {roomNo,leftVol,rightVol}
-			{17,12,12},	
+			{17,12,12},
 			{0,0,0},		// NULL-TERMINATOR
 		},
 	},
 	//------------------------
-	// 275 Closing door when George leaves the pub. DOROPN20 (Reversed) 
+	// 275 Closing door when George leaves the pub. DOROPN20 (Reversed)
 	{
 		FX_DORCLOSE20,// sampleId
 		FX_SPOT, 			// type
@@ -6093,7 +6093,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 281 The Sword is Reforged (G&N gawp at the spectacle) There's no anim I know of to tie it to unless the flickering blue light is one. 
+	// 281 The Sword is Reforged (G&N gawp at the spectacle) There's no anim I know of to tie it to unless the flickering blue light is one.
 	{
 		FX_REFORGE2,	// sampleId
 		FX_SPOT, 			// type
@@ -6142,7 +6142,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 285 Duane's Happy-Snappy Camera. XDNEPHO3 and XDNEPHO5. 
+	// 285 Duane's Happy-Snappy Camera. XDNEPHO3 and XDNEPHO5.
 	{
 		FX_CAMERA45,	// sampleId
 		FX_SPOT, 			// type
@@ -6153,7 +6153,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 286 Grand Master strikes the floor with his cane. GMENTER 
+	// 286 Grand Master strikes the floor with his cane. GMENTER
 	{
 		FX_STAFF,			// sampleId
 		FX_SPOT, 			// type
@@ -6164,7 +6164,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 287 George descends ladder in 7: GEOASC07 (Reversed) This used to be handled by effect #46 but it didn't fit at all. 
+	// 287 George descends ladder in 7: GEOASC07 (Reversed) This used to be handled by effect #46 but it didn't fit at all.
 	{
 		FX_SEWLADD7,	// sampleId
 		FX_SPOT,			// type
@@ -6339,7 +6339,7 @@ const FxDef Sound::_fxList[312] = {
 			{9,14,10},	// {roomNo,leftVol,rightVol}
 			{0,0,0},		// NULL-TERMINATOR
 		},
-	}, 
+	},
 	//------------------------
 	// 303 With anim FIGHT69
 	{
@@ -6350,7 +6350,7 @@ const FxDef Sound::_fxList[312] = {
 			{69,12,16},	// {roomNo,leftVol,rightVol}
 			{0,0,0},		// NULL-TERMINATOR
 		},
-	}, 
+	},
 	//------------------------
 	// 304 With anim GEODIE1 in sc73
 	{
@@ -6361,7 +6361,7 @@ const FxDef Sound::_fxList[312] = {
 			{73,12,16},	// {roomNo,leftVol,rightVol}
 			{0,0,0},		// NULL-TERMINATOR
 		},
-	}, 
+	},
 	//------------------------
 	// 305 With anim GEODIE2 in sc73
 	{
@@ -6372,7 +6372,7 @@ const FxDef Sound::_fxList[312] = {
 			{73,12,16},	// {roomNo,leftVol,rightVol}
 			{0,0,0},		// NULL-TERMINATOR
 		},
-	}, 
+	},
 	//------------------------
 	// 306 With anim GEODES25
 	{
@@ -6383,7 +6383,7 @@ const FxDef Sound::_fxList[312] = {
 			{25,12,8},	// {roomNo,leftVol,rightVol}
 			{0,0,0},		// NULL-TERMINATOR
 		},
-	}, 
+	},
 	//------------------------
 	// 307 With anim GEOASC25
 	{
@@ -6394,7 +6394,7 @@ const FxDef Sound::_fxList[312] = {
 			{25,12,8},	// {roomNo,leftVol,rightVol}
 			{0,0,0},		// NULL-TERMINATOR
 		},
-	}, 
+	},
 	//------------------------
 	// 308 With anim GKSWORD in sc76
 	{
@@ -6405,7 +6405,7 @@ const FxDef Sound::_fxList[312] = {
 			{76,10,10},	// {roomNo,leftVol,rightVol}
 			{0,0,0},		// NULL-TERMINATOR
 		},
-	}, 
+	},
 	//------------------------
 	// 309 With anim GEO36KNE in sc36
 	{
@@ -6416,7 +6416,7 @@ const FxDef Sound::_fxList[312] = {
 			{36,14,14},	// {roomNo,leftVol,rightVol}
 			{0,0,0},		// NULL-TERMINATOR
 		},
-	}, 
+	},
 	//------------------------
 	// 310 With anim GEO36ENT in sc36
 	{
@@ -6427,7 +6427,7 @@ const FxDef Sound::_fxList[312] = {
 			{36,14,14},	// {roomNo,leftVol,rightVol}
 			{0,0,0},		// NULL-TERMINATOR
 		},
-	}, 
+	},
 	//------------------------
 	// 311 With anim SECDOR59 in sc59
 	{
@@ -6438,7 +6438,7 @@ const FxDef Sound::_fxList[312] = {
 			{59,16,16},	// {roomNo,leftVol,rightVol}
 			{0,0,0},		// NULL-TERMINATOR
 		},
-	}, 
+	},
 	//------------------------
 };
 #endif
@@ -6523,7 +6523,7 @@ const uint16 Sound::_roomsFixedFx[TOTAL_ROOMS][TOTAL_FX_PER_ROOM] =
 	{181,182,184,0},					// 57
 	{181,182,184,0},					// 58
 	{0},											// 59
-	{184,0},									// 60 
+	{184,0},									// 60
 	{185,0},									// 61
 	{0},											// 62 Just music
 
@@ -6577,7 +6577,7 @@ const uint16 Sound::_roomsFixedFx[TOTAL_ROOMS][TOTAL_FX_PER_ROOM] =
 	(uint8)(VAL & 0xFF), (uint8)((VAL >> 8) & 0xFF), (uint8)(VAL >> 16)
 #define ENCODE32(VAL) \
 	(uint8)(VAL & 0xFF), (uint8)((VAL >> 8) & 0xFF), (uint8)((VAL >> 16) & 0xFF), (uint8)(VAL >> 24)
-	
+
 #define LOGIC_CALL_FN(FN_ID, PARAM) \
 	opcCallFn,     ENCODE8(FN_ID), ENCODE8(PARAM)
 #define LOGIC_CALL_FN_LONG(FN_ID, PARAM1, PARAM2, PARAM3) \

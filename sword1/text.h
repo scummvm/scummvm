@@ -59,6 +59,6 @@ private:
 	uint32 _fontId;
 };
 
-} // End of namespace Sword1 
+} // End of namespace Sword1
 
 #endif //BSTEXT_H

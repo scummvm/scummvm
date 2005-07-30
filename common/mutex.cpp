@@ -62,7 +62,7 @@ StackLock::~StackLock() {
 void StackLock::lock() {
 	if (_mutexName != NULL)
 		debug(6, "Locking mutex %s", _mutexName);
-	
+
 	g_system->lockMutex(_mutex);
 }
 

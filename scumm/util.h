@@ -32,7 +32,7 @@ namespace Scumm {
 class BaseScummFile : public Common::File {
 public:
 	virtual void setEnc(byte value) = 0;
-	
+
 	virtual bool open(const char *filename, AccessMode mode = kFileReadMode) = 0;
 	virtual bool openSubFile(const char *filename) = 0;
 
@@ -52,7 +52,7 @@ private:
 public:
 	ScummFile();
 	void setEnc(byte value);
-	
+
 	void setSubfileRange(uint32 start, uint32 len);
 	void resetSubfile();
 
@@ -74,7 +74,7 @@ public:
 		kROMsetEurope,
 		kROMsetSweden,
 		kROMsetFrance,
-		kROMsetNum 
+		kROMsetNum
 	};
 
 	struct Resource;
@@ -97,7 +97,7 @@ private:
 public:
 	ScummNESFile();
 	void setEnc(byte value);
-	
+
 	bool open(const char *filename, AccessMode mode = kFileReadMode);
 	bool openSubFile(const char *filename);
 
@@ -143,7 +143,7 @@ private:
 public:
 	ScummC64File(char *disk1, char *disk2, bool maniac);
 	void setEnc(byte value);
-	
+
 	bool open(const char *filename, AccessMode mode = kFileReadMode);
 	bool openSubFile(const char *filename);
 

@@ -176,7 +176,7 @@ int32 LogicHErace::op_1100(int32 *args) {
 	op_sub1(_userData[520]);
 
 	_userData[521] = (float)args[5] / args[10];
-	
+
 	op_sub2(_userData[521]);
 
 	_userData[532] = (float)args[10];
@@ -220,7 +220,7 @@ int32 LogicHErace::op_1101(int32 *args) {
 		op_sub3(temp);
 		retval = 1;
 	}
-	
+
 	temp = args[1] / _userData[532];
 
 	if (_userData[520] != temp) {
@@ -269,7 +269,7 @@ int32 LogicHErace::op_1102(int32 *args) {
 
 int32 LogicHErace::op_1103(int32 *args) {
 	double angle = args[0] / args[1] * DEG2RAD;
-	
+
 	writeScummVar(108, (int32)(sin(angle) * args[2]));
 	writeScummVar(109, (int32)(cos(angle) * args[2]));
 
@@ -294,11 +294,11 @@ int32 LogicHErace::op_1120(int32 *args) {
 
 	expr = a2 * _userDataD[17] + a1 * _userDataD[14] + a0 * _userDataD[11];
 
-	res1 = (atan2(a2 * _userDataD[15] + a1 * _userDataD[12] + a0 * _userDataD[9], expr) * RAD2DEG) 
+	res1 = (atan2(a2 * _userDataD[15] + a1 * _userDataD[12] + a0 * _userDataD[9], expr) * RAD2DEG)
 			/ _userData[526];
 	res2 = (atan2(a2 * _userDataD[16] + a1 * _userDataD[13] + a0 * _userDataD[10], expr) * RAD2DEG
 			- _userData[528]) / _userData[527];
-	
+
 	writeScummVar(108, (int32)res1);
 	writeScummVar(109, (int32)res2);
 
@@ -328,9 +328,9 @@ int32 LogicHErace::op_1140(int32 *args) {
 	res = (args[0] - 2 * (arg2 * args[0] + arg3 * args[1]) * arg2) * 0.86956525;
 
 	writeScummVar(108, (int32)res);
-	
+
 	res = args[1] - 2 * (arg2 * args[0] + arg3 * args[1]) * arg3;
-	
+
 	if (-args[3] * args[3] >= 0)
 		res *= 0.83333331f;
 
@@ -432,7 +432,7 @@ void LogicHEfunshop::op_1004(int32 *args) {
 		data[i] = cos(at + a1) * sq;
 		data[i + 1] = sin(at + a1) * sq;
 	}
-	
+
 	int minx = 2;
 	int miny = 3;
 
@@ -468,7 +468,7 @@ void LogicHEfunshop::op_1005(int32 *args) {
 		data[2 * i] *= args1;
 		data[2 * i + 1] *= args2;
 	}
-	
+
 	for (i = 520; i <= 526; i += 2) {
 		putInArray(args[0], 0, i - 1, scumm_round(data[i - 520]));
 		putInArray(args[0], 0, i, scumm_round(data[i - 520 + 1]));
@@ -520,7 +520,7 @@ int LogicHEfunshop::checkShape(int32 data0, int32 data1, int32 data4, int32 data
 	}
 
 	delta2 = diff2 * diff0_4 - diff1 * diff2_6;
-	
+
 	if (delta2 < 0) {
 		delta2 -= data7;
 	} else {
@@ -647,7 +647,7 @@ int LogicHEfootball::op_1004(int32 *args) {
 int LogicHEfootball::op_1006(int32 *args) {
 	double res;
 
-	res = (1.0 - args[1] * 2.9411764e-4 * 5.3050399e-2) * args[0] * 1.2360656e-1 + 
+	res = (1.0 - args[1] * 2.9411764e-4 * 5.3050399e-2) * args[0] * 1.2360656e-1 +
 		args[1] * 1.1764706e-2 + 46;
 	writeScummVar(108, (int32)res);
 
@@ -682,7 +682,7 @@ int LogicHEfootball::op_1010(int32 *args) {
 	double a1 = (640.0 - (double)args[1] - 26.0) * 8.6294413;
 	double res;
 
-	res = ((double)args[0] - 46 - a1 * 1.1764706e-2) / 
+	res = ((double)args[0] - 46 - a1 * 1.1764706e-2) /
 		((1.0 - a1 * 2.9411764e-4 * 5.3050399e-2) * 1.2360656e-1);
 	writeScummVar(108, (int32)res);
 
@@ -708,7 +708,7 @@ int LogicHEfootball::op_1022(int32 *args) {
 	writeScummVar(108, (int32)res);
 	writeScummVar(109, (int32)var10);
 	writeScummVar(110, (int32)var8);
-	
+
 	return 1;
 }
 
@@ -722,20 +722,20 @@ int LogicHEfootball::op_1023(int32 *args) {
 	var10 = (argf[3] - argf[1]) / (argf[2] - argf[0]);
 	var28 = var10 * var10 + 1;
 	var20 = argf[0] * var10;
-	var18 = (argf[5] + argf[1] + var20) * argf[4] * var10 * 2 + 
-		argf[6] * argf[6] * var28 + argf[4] * argf[4] - 
-		argf[0] * argf[0] * var10 * var10 - 
-		argf[5] * argf[0] * var10 * 2 - 
-		argf[5] * argf[1] * 2 - 
+	var18 = (argf[5] + argf[1] + var20) * argf[4] * var10 * 2 +
+		argf[6] * argf[6] * var28 + argf[4] * argf[4] -
+		argf[0] * argf[0] * var10 * var10 -
+		argf[5] * argf[0] * var10 * 2 -
+		argf[5] * argf[1] * 2 -
 		argf[1] * argf[1] - argf[5] * argf[5];
-	
+
 	if (var18 >= 0) {
 		var18 = sqrt(var18);
 
 		var30_ = argf[4] + argf[5] * var10 + argf[1] * var10 + argf[0] * var10 * var10;
 		var30 = (var30_ - var18) / var28;
 		var18 = (var30_ + var18) / var28;
-		
+
 		if ((argf[0] - var30 < 0) && (argf[0] - var18 < 0)) {
 			var30_ = var30;
 			var30 = var18;
@@ -754,7 +754,7 @@ int LogicHEfootball::op_1023(int32 *args) {
 	writeScummVar(109, (int32)var28);
 	writeScummVar(110, (int32)var30);
 	writeScummVar(111, (int32)var20);
-	
+
 	return 1;
 }
 int LogicHEfootball::op_1024(int32 *args) {

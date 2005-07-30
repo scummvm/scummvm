@@ -127,7 +127,7 @@ void ConfigManager::loadFile(const String &filename) {
 		String domain;
 		String comment;
 		int lineno = 0;
-		
+
 		// TODO: Detect if a domain occurs multiple times (or likewise, if
 		// a key occurs multiple times inside one domain).
 
@@ -162,7 +162,7 @@ void ConfigManager::loadFile(const String &filename) {
 				default:
 					error("Config file buggy: Invalid character '%c' occured in domain name in line %d", *p, lineno);
 				}
-				
+
 				// Store domain comment
 				if (_globalDomains.contains(domain)) {
 					_globalDomains[domain].setDomainComment(comment);
@@ -170,7 +170,7 @@ void ConfigManager::loadFile(const String &filename) {
 					_gameDomains[domain].setDomainComment(comment);
 				}
 				comment.clear();
-				
+
 				_domainSaveOrder.push_back(domain);
 			} else {
 				// Skip leading & trailing whitespaces
@@ -216,7 +216,7 @@ void ConfigManager::flushToDisk() {
 	if (!(cfg_file = fopen(_filename.c_str(), "w"))) {
 		warning("Unable to write configuration file: %s", _filename.c_str());
 	} else {
-		
+
 		// First write the domains in _domainSaveOrder, in that order.
 		// Note: It's possible for _domainSaveOrder to list domains which
 		// are not present anymore.
@@ -236,7 +236,7 @@ void ConfigManager::flushToDisk() {
 			if (!_domainSaveOrder.contains(d->_key))
 				writeDomain(cfg_file, d->_key, d->_value);
 		}
-		
+
 		// Finally write the remaining game domains
 		for (d = _gameDomains.begin(); d != _gameDomains.end(); ++d) {
 			if (!_domainSaveOrder.contains(d->_key))
@@ -250,14 +250,14 @@ void ConfigManager::flushToDisk() {
 void ConfigManager::writeDomain(FILE *file, const String &name, const Domain &domain) {
 	if (domain.isEmpty())
 		return;		// Don't bother writing empty domains.
-	
+
 	String comment;
-	
+
 	// Write domain comment (if any)
 	comment = domain.getDomainComment();
 	if (!comment.isEmpty())
 		fprintf(file, "%s", comment.c_str());
-	
+
 	// Write domain start
 	fprintf(file, "[%s]\n", name.c_str());
 
@@ -287,13 +287,13 @@ bool ConfigManager::hasKey(const String &key) const {
 	// 2) Active game domain (if any)
 	// 3) All global domains
 	// The defaults domain is explicitly *not* checked.
-	
+
 	if (_transientDomain.contains(key))
 		return true;
 
 	if (!_activeDomain.isEmpty() && _gameDomains[_activeDomain].contains(key))
 		return true;
-	
+
 	DomainMap::const_iterator iter;
 	for (iter = _globalDomains.begin(); iter != _globalDomains.end(); ++iter) {
 		if (iter->_value.contains(key))
@@ -313,7 +313,7 @@ bool ConfigManager::hasKey(const String &key, const String &dom) const {
 		return _gameDomains[dom].contains(key);
 	if (_globalDomains.contains(dom))
 		return _globalDomains[dom].contains(key);
-	
+
 	return false;
 }
 
@@ -342,7 +342,7 @@ const String & ConfigManager::get(const String &key, const String &domain) const
 	// 1) Transient domain
 	// 2) Active game domain (if any)
 	// 3) All global domains
-	// 4) The defaults 
+	// 4) The defaults
 
 
 	if ((domain.isEmpty() || domain == kTransientDomain) && _transientDomain.contains(key))
@@ -365,7 +365,7 @@ const String & ConfigManager::get(const String &key, const String &domain) const
 int ConfigManager::getInt(const String &key, const String &dom) const {
 	String value(get(key, dom));
 	char *errpos;
-	
+
 	// For now, be tolerant against missing config keys. Strictly spoken, it is
 	// a bug in the calling code to retrieve an int for a key which isn't even
 	// present... and a default value of 0 seems rather arbitrary.
@@ -399,7 +399,7 @@ void ConfigManager::set(const String &key, const String &value, const String &do
 	if (dom.isEmpty()) {
 		// Remove the transient domain value
 		_transientDomain.remove(key);
-	
+
 		if (_activeDomain.isEmpty())
 			_globalDomains[kApplicationDomain][key] = value;
 		else
@@ -486,7 +486,7 @@ void ConfigManager::renameGameDomain(const String &oldName, const String &newNam
 	assert(isValidDomainName(newName));
 
 	_gameDomains[newName].merge(_gameDomains[oldName]);
-	
+
 	_gameDomains.remove(oldName);
 }
 

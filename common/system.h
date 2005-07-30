@@ -52,16 +52,16 @@ protected:
 	friend class Common::Singleton<SingletonBaseType>;
 
 public:
-	
+
 	/**
 	 * The following method is called once, from main.cpp, after all
 	 * config data (including command line params etc.) are fully loaded.
 	 */
 	virtual void initBackend() { }
-	
+
 	/** @name Feature flags */
 	//@{
-	
+
 	/**
 	 * A feature in this context means an ability of the backend which can be
 	 * either on or off. Examples include:
@@ -102,10 +102,10 @@ public:
 		 * This flag is a bit more obscure: it gives a hint to the backend that
 		 * the frontend code is very inefficient in doing screen updates. So
 		 * the frontend might do a lot of fullscreen blits even though only a
-		 * tiny portion of the actual screen data changed. In that case, it 
+		 * tiny portion of the actual screen data changed. In that case, it
 		 * might pay off for the backend to compute which parts actual changed,
 		 * and then only mark those as dirty.
-		 * Implementing this is purely optional, and no harm should arise 
+		 * Implementing this is purely optional, and no harm should arise
 		 * when not doing so (except for decreased speed in said frontends).
 		 */
 		kFeatureAutoComputeDirtyRects,
@@ -123,7 +123,7 @@ public:
 		 */
 		kFeatureOverlaySupportsAlpha
 	};
-	
+
 	/**
 	 * Determine whether the backend supports the specified feature.
 	 */
@@ -134,7 +134,7 @@ public:
 	 * enable fullscreen mode, or to deactivate aspect correction, etc.
 	 */
 	virtual void setFeatureState(Feature f, bool enable) {}
-	
+
 	/**
 	 * Query the state of the specified feature. For example, test whether
 	 * fullscreen mode is active or not.
@@ -153,19 +153,19 @@ public:
 	 * an efficient manner. The downside of this is that it may be
 	 * rather complicated for backend authors to fully understand and
 	 * implement the semantics of the OSystem interface.
-	 * 
-	 * 
+	 *
+	 *
 	 * The graphics visible to the user in the end are actually
 	 * composed in three layers: the game graphics, the overlay
 	 * graphics, and the mouse.
-	 * 
+	 *
 	 * First, there are the game graphics. They are always 8bpp, and
 	 * the methods in this section deal with them exclusively. In
 	 * particular, the size of the game graphics is defined by a call
 	 * to initSize(), and copyRectToScreen() blits 8bpp data into the
 	 * game layer. Let W and H denote the width and height of the
 	 * game graphics.
-	 * 
+	 *
 	 * Before the user sees these graphics, they may undergo certain
 	 * transformations; for example, the may be scaled to better fit
 	 * on the visible screen; or aspect ratio correction may be
@@ -173,20 +173,20 @@ public:
 	 * this, a pixel of the game graphics may occupy a region bigger
 	 * than a single pixel on the screen. We define p_w and p_h to be
 	 * the width resp. height of a game pixel on the screen.
-	 * 
+	 *
 	 * In addition, there is a vertical "shake offset" (as defined by
 	 * setShakePos) which is used in some games to provide a shaking
 	 * effect. Note that shaking is applied to all three layers, i.e.
 	 * also to the overlay and the mouse. We denote the shake offset
 	 * by S.
-	 * 
+	 *
 	 * Putting this together, a pixel (x,y) of the game graphics is
 	 * transformed to a rectangle of height p_h and widht p_w
 	 * appearing at position (p_w * x, p_hw * (y + S)) on the real
 	 * screen (in addition, a backend may choose to offset
 	 * everything, e.g. to center the graphics on the screen).
-	 * 
-	 * 
+	 *
+	 *
 	 * The next layer is the overlay. It is composed over the game
 	 * graphics. By default, it has exactly the same size and
 	 * resolution as the game graphics. However, client code can
@@ -196,9 +196,9 @@ public:
 	 * graphics. For example, if the overlay scale is 2, and the game
 	 * graphics have a resolution of 320x200; then the overlay shall
 	 * have a resolution of 640x400, but it still has the same
-	 * physical size as the game graphics. 
-	 * 
-	 * 
+	 * physical size as the game graphics.
+	 *
+	 *
 	 * Finally, there is the mouse layer. This layer doesn't have to
 	 * actually exist within the backend -- it all depends on how a
 	 * backend chooses to implement mouse cursors, but in the default
@@ -247,7 +247,7 @@ public:
 	 * @return a list of supported graphics modes
 	 */
 	virtual const GraphicsMode *getSupportedGraphicsModes() const = 0;
-	
+
 	/**
 	 * Return the ID of the 'default' graphics mode. What exactly this means
 	 * is up to the backend. This mode is set by the client code when no user
@@ -257,7 +257,7 @@ public:
 	 * @return the ID of the 'default' graphics mode
 	 */
 	virtual int getDefaultGraphicsMode() const = 0;
-	
+
 	/**
 	 * Switch to the specified graphics mode. If switching to the new mode
 	 * failed, this method returns false.
@@ -367,7 +367,7 @@ public:
 	 *       API are probably going to remove it.
 	 */
 	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
-	
+
 	/**
 	 * Grabs a specified part of the currently active palette.
 	 * The format is the same as for setPalette.
@@ -397,7 +397,7 @@ public:
 	 * @return true if all went well, false if an error occured
 	 */
 	virtual bool grabRawScreen(Graphics::Surface *surf) { return false; }
-	
+
 	/**
 	 * Clear the screen to black.
 	 */
@@ -408,7 +408,7 @@ public:
 
 	/**
 	 * Set current shake position, a feature needed for some SCUMM screen effects.
-	 * The effect causes the displayed graphics to be shifted upwards by the specified 
+	 * The effect causes the displayed graphics to be shifted upwards by the specified
 	 * (always positive) offset. The area at the bottom of the screen which is moved
 	 * into view by this is filled by black. This does not cause any graphic data to
 	 * be lost - that is, to restore the original view, the game engine only has to
@@ -429,7 +429,7 @@ public:
 	 * @name Overlay
 	 * In order to be able to display dialogs atop the game graphics, backends
 	 * must provide an overlay mode.
-	 * 
+	 *
 	 * While the game graphics are always 8 bpp, the overlay can be 8 or 16 bpp.
 	 * Depending on which it is, OverlayColor is 8 or 16 bit.
 	 *
@@ -437,13 +437,13 @@ public:
 	 * the game graphics. On backends which support alpha blending, this is
 	 * no issue; but on other systems (in particular those which only support
 	 * 8bpp), this needs some trickery.
-	 * 
+	 *
 	 * Essentially, we fake (alpha) blending on these systems by copying the
 	 * game graphics into the overlay buffer, then manually compose whatever
 	 * graphics we want to show in the overlay.
 	 */
 	//@{
-	
+
 	/** Activate the overlay mode. */
 	virtual void showOverlay() = 0;
 
@@ -462,21 +462,21 @@ public:
 	 * current game graphics screen into the overlay.
 	 */
 	virtual void clearOverlay() = 0;
-	
+
 	/**
 	 * Copy the content of the overlay into a buffer provided by the caller.
 	 * This is only used to implement fake alpha blending.
 	 */
 	virtual void grabOverlay(OverlayColor *buf, int pitch) = 0;
-	
+
 	/**
-	 * Blit a graphics buffer to the overlay. 
+	 * Blit a graphics buffer to the overlay.
 	 * In a sense, this is the reverse of grabOverlay.
 	 * @see copyRectToScreen
 	 * @see grabOverlay
 	 */
 	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) = 0;
-	
+
 	/**
 	 * Return the height of the overlay.
 	 * @see getHeight
@@ -555,8 +555,8 @@ public:
 	/** Show or hide the mouse cursor. */
 	virtual bool showMouse(bool visible) = 0;
 
-	/** 
-	 * Move ("warp") the mouse cursor to the specified position in virtual 
+	/**
+	 * Move ("warp") the mouse cursor to the specified position in virtual
 	 * screen coordinates.
 	 * @param x		the new x position of the mouse
 	 * @param y		the new x position of the mouse
@@ -693,7 +693,7 @@ public:
 			 */
 			int keycode;
 			/**
-			 * ASCII-value of the pressed key (if any). 
+			 * ASCII-value of the pressed key (if any).
 			 * This depends on modifiers, i.e. pressing the 'A' key results in
 			 * different values here depending on the status of shift, alt and
 			 * caps lock.
@@ -701,7 +701,7 @@ public:
 			 */
 			uint16 ascii;
 			/**
-			 * Status of the modifier keys. Bits are set in this for each 
+			 * Status of the modifier keys. Bits are set in this for each
 			 * pressed modifier
 			 * @see KBD_CTRL, KBD_ALT, KBD_SHIFT
 			 */
@@ -767,7 +767,7 @@ public:
 	 * can use dummy implementations for these methods.
 	 */
 	//@{
-	
+
 	typedef Common::MutexRef	MutexRef;
 
 	/**
@@ -851,7 +851,7 @@ public:
 	virtual bool pollCD() = 0;
 
 	/**
-	 * Start audio CD playback. 
+	 * Start audio CD playback.
 	 * @param track			the track to play.
 	 * @param num_loops		how often playback should be repeated (-1 = infinitely often).
 	 * @param start_frame	the frame at which playback should start (75 frames = 1 second).
@@ -909,4 +909,4 @@ public:
 #define g_system	(&OSystem::instance())
 
 
-#endif 
+#endif

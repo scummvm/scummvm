@@ -13,7 +13,7 @@ UInt16 SilkInit(UInt32 *retVersion) {
 		if (sonySysFtrSysInfoP->libr & sonySysFtrSysInfoLibrSilk) {
 
 			if ((e = SysLibFind(sonySysLibNameSilk, &slkRefNum)))
-				if (e == sysErrLibNotFound)	
+				if (e == sysErrLibNotFound)
 					e = SysLibLoad(sonySysFileTSilkLib, sonySysFileCSilkLib, &slkRefNum);
 
 			if (!e) {
@@ -37,7 +37,7 @@ UInt16 SilkInit(UInt32 *retVersion) {
 		version = 0;
 		slkRefNum = sysInvalidRefNum;
 	}
-	
+
 	*retVersion = version;
 	return slkRefNum;
 }
@@ -66,12 +66,12 @@ UInt16 SonyHRInit(UInt32 depth) {
 	}
 
 	if (e) HRrefNum = sysInvalidRefNum;
-	
+
 	if (HRrefNum != sysInvalidRefNum) {
 		UInt32 width = hrWidth;
 		UInt32 height = hrHeight;
 		Boolean color = true;
-		
+
 		e = HRWinScreenMode(HRrefNum, winScreenModeSet, &width, &height, &depth, &color);
 		// error ? release and return an invalid reference number
 		if (e) {

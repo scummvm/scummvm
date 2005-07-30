@@ -208,7 +208,7 @@ void Player_V3A::startSound(int nr) {
 
 	if (getSoundStatus(nr))
 		stopSound(nr);	// if a sound is playing, restart it
-	
+
 	if (data[26]) {
 		if (_curSong)
 			stopSound(_curSong);

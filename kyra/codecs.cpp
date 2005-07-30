@@ -23,7 +23,7 @@
 #include "kyra/codecs.h"
 
 /*****************************************************************************
- * decode.c - Decoding routines for format80, format40, format20 
+ * decode.c - Decoding routines for format80, format40, format20
  * and format3 type graphics
  * Author: Olaf van der spek
  * Modified for FreeCNC by Kareem Dana
@@ -83,7 +83,7 @@ int Compression::decode80(const uint8* image_in, uint8* image_out) {
 					copyp = (const uint8*)&image_out[READ_LE_UINT16(readp)];
 					readp += 2;
 
-					// FIXME: Using memmove sometimes segfaults 
+					// FIXME: Using memmove sometimes segfaults
 					// (reproducably for Ender), which suggests something Bad here
 					//memmove(writep, copyp, count);
 					//writep += count;
@@ -197,26 +197,26 @@ int Compression::decode40(const uint8* image_in, uint8* image_out) {
  */
 int Compression::decode3(const uint8* image_in, uint8* image_out, int size) {
 	/* Untested on BIG-Endian machines */
-	
+
 	/*
 	0 copy
-	1 fill 
-	2 fill 
+	1 fill
+	2 fill
 	*/
 	const uint8* readp = image_in;
 	uint8* writep = image_out;
 	int16 code;
 	int16 count;
-	
+
 	do {
 		code = *const_cast<int8*>((const int8*)readp++);
-		if (code > 0) { // Copy 
+		if (code > 0) { // Copy
 			count = code ;
 			while (count--)
 				*writep++ = *readp++;
 		} else if (code == 0) { // Fill(1)
 			count = READ_BE_UINT16(readp);
- 
+
 			readp += 2;
 			code = *readp++;
 			while (count--)
@@ -227,10 +227,10 @@ int Compression::decode3(const uint8* image_in, uint8* image_out, int size) {
 			while (count--)
 				*writep++ = (uint8)code;
 		}
-	} while ((writep - image_out) < size);	
-	
-	//and, to be uniform to other decomp. functions...				
-	return (writep - image_out); 
+	} while ((writep - image_out) < size);
+
+	//and, to be uniform to other decomp. functions...
+	return (writep - image_out);
 }
 
 /** decompress format 20 compressed data.

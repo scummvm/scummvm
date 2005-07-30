@@ -86,7 +86,7 @@ MorphOSScaler::MorphOSScaler(APTR buffer, int width, int height, ULONG *col_tabl
 		pixfmt == PIXFMT_RGB16PC || pixfmt == PIXFMT_BGR16PC ||
 		pixfmt == PIXFMT_BGRA32)
 		ScummPCMode = true;
-	
+
 	colorMask = (MakeColor(pixfmt, 255, 0, 0) - minr) | (MakeColor(pixfmt, 0, 255, 0) - ming) | (MakeColor(pixfmt, 0, 0, 255) - minb);
 	lowPixelMask = minr | ming | minb;
 	qcolorMask = (MakeColor(pixfmt, 255, 0, 0) - 3*minr) | (MakeColor(pixfmt, 0, 255, 0) - 3*ming) | (MakeColor(pixfmt, 0, 0, 255) - 3*minb);

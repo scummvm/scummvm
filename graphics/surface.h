@@ -52,7 +52,7 @@ struct Surface {
 	 * Allocate pixels memory for this surface and for the specified dimension.
 	 */
 	void create(uint16 width, uint16 height, uint8 bytesPP);
-	
+
 	/**
 	 * Release the memory used by the pixels memory of this surface. This is the
 	 * counterpart to create().

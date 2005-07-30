@@ -75,7 +75,7 @@ int16 util_translateKey(int16 key) {
 	} keys[] = {
 		{8,   0x0e08},	// Backspace
 		{13,  0x1C0D},	// Enter
-		{27,  0x011b},	// ESC 
+		{27,  0x011b},	// ESC
 		{127, 0x5300},	// Del
 		{273, 0x4800},	// Up arrow
 		{274, 0x5000},	// Down arrow

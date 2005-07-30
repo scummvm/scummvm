@@ -52,7 +52,7 @@ void hexdump(const byte * data, int len, int bytesPerLine) {
 		offset += bytesPerLine;
 	}
 
-	if (len <= 0) 
+	if (len <= 0)
 		return;
 
 	printf("%06x: ", offset);
@@ -187,7 +187,7 @@ Platform parsePlatform(const String &str) {
 		return kPlatformUnknown;
 
 	const char *s = str.c_str();
-	
+
 	// Handle some special case separately, for compatibility with old config
 	// files.
 	if (!strcmp(s, "1"))

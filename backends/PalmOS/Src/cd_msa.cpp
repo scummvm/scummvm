@@ -47,7 +47,7 @@ bool MsaCDPlayer::init() {
 
 	if (!(error = FtrGet(sonySysFtrCreator, sonySysFtrNumSysInfoP, (UInt32*)&sonySysFtrSysInfoP))) {
 		// not found with audio adapter ?!
-		//if (sonySysFtrSysInfoP->libr & sonySysFtrSysInfoLibrMsa) {		
+		//if (sonySysFtrSysInfoP->libr & sonySysFtrSysInfoLibrMsa) {
 			if ((error = SysLibFind(sonySysLibNameMsa, &_msaRefNum)))
 				if (error == sysErrLibNotFound)
 					error = SysLibLoad(sonySysFileTMsaLib, sonySysFileCMsaLib, &_msaRefNum);
@@ -57,11 +57,11 @@ bool MsaCDPlayer::init() {
 			// this doesn't work the same way on build-in MP3 device and external MP3 devices
 			if (!error) {
 				//MsaLibClose(_msaRefNum, msaLibOpenModeAlbum);	// close the lib if we previously let it open (?) Need to add Notify for sonySysNotifyMsaEnforceOpenEvent just in case ...
-				error = MsaLibOpen(_msaRefNum, msaLibOpenModeAlbum);			
+				error = MsaLibOpen(_msaRefNum, msaLibOpenModeAlbum);
 
 				//if (error == msaErrAlreadyOpen)
 				//	error = MsaLibEnforceOpen(_msaRefNum, msaLibOpenModeAlbum, appFileCreator);
-			
+
 				//error = (error != msaErrStillOpen) ? error : errNone;
 			}
 		//}
@@ -147,7 +147,7 @@ void MsaCDPlayer::update() {
 	}
 
 	MsaStop(_msaRefNum, true);
-		
+
 	if (_msaLoops == 0)
 		return;
 
@@ -185,13 +185,13 @@ void MsaCDPlayer::play(int track, int num_loops, int start_frame, int duration) 
 
 	if (!num_loops && !start_frame)
 		return;
-	
+
 	_msaTrack = track + gVars->CD.firstTrack - 1;	// first track >= 1 ?, not 0 (0=album)
 	_msaLoops = num_loops;
 	_msaStartFrame = TO_MSECS(start_frame);
 	_msaDuration = TO_MSECS(duration);
 
-	Err e;	
+	Err e;
 	MemHandle trackH;
 
 	// stop current play if any
@@ -206,19 +206,19 @@ void MsaCDPlayer::play(int track, int num_loops, int start_frame, int duration) 
 		MsaTime msaTime;
 		MsaTrackInfo *trackP;
 		UInt32 SU, fullLength;
-	
+
 		// FIXME (?) : this enable MsaSuToTime to return the right value in some cases
 		MsaPlay(_msaRefNum, _msaTrack, 0, msa_PBRATE_SP);
 		MsaStop(_msaRefNum, true);
-		
-		// get the msa time 
-		trackP = (MsaTrackInfo *)MemHandleLock(trackH);	
+
+		// get the msa time
+		trackP = (MsaTrackInfo *)MemHandleLock(trackH);
 		MsaSuToTime(_msaRefNum, trackP->totalsu, &msaTime);
 		SU = trackP->totalsu;
 		MemPtrUnlock(trackP);
 		MemHandleFree(trackH);
-		
-		// MSA frame in milli-seconds 
+
+		// MSA frame in milli-seconds
 		fullLength  = FROM_MIN(msaTime.minute);
 		fullLength += FROM_SEC(msaTime.second);
 		fullLength += msaTime.frame;
@@ -231,7 +231,7 @@ void MsaCDPlayer::play(int track, int num_loops, int start_frame, int duration) 
 		} else {
 			_msaTrackLength = fullLength;
 		}
-				
+
 		// try to play the track
 		if (start_frame == 0 && duration == 0) {
 			MsaPlay(_msaRefNum, _msaTrack, 0, msa_PBRATE_SP);
@@ -241,7 +241,7 @@ void MsaCDPlayer::play(int track, int num_loops, int start_frame, int duration) 
 			_msaTrackStartSu = (UInt32) ((float)(_msaStartFrame)  / ((float)fullLength / (float)SU));
 			_msaTrackEndSu	 = (UInt32) ((float)(_msaTrackLength) / ((float)fullLength / (float)SU));
 			_msaTrackEndSu	+= _msaTrackStartSu;
-			
+
 			if (_msaTrackEndSu > SU)
 				_msaTrackEndSu = SU;
 

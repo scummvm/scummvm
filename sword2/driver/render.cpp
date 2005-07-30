@@ -328,7 +328,7 @@ void Screen::startRenderCycle() {
 
 /**
  * This function should be called at the end of the render cycle.
- * @return true if the render cycle is to be terminated, 
+ * @return true if the render cycle is to be terminated,
  *         or false if it should continue
  */
 

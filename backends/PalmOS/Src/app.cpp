@@ -65,7 +65,7 @@ static Err AppStartCheckNotify() {
 	UInt32 romVersion;
 	Err err;
 
-	err = FtrGet(sysFtrCreator, sysFtrNumNotifyMgrVersion, &romVersion); 
+	err = FtrGet(sysFtrCreator, sysFtrNumNotifyMgrVersion, &romVersion);
 	if (!err) {
 		UInt16 cardNo;
 		LocalID dbID;
@@ -111,13 +111,13 @@ static Err AppStartLoadSkin() {
 	if (err)
 		FrmCustomAlert(FrmWarnAlert,"No skin found.\nScummVM will start in direct mode.",0,0);
 		//FrmCustomAlert(FrmErrorAlert,"No skin found.\nPlease install a skin and restart ScummVM.",0,0);
-	
+
 	return err;
 }
 
 static Err AppStartCheckMathLib() {
 	Err e = MathlibInit();
-	
+
 	switch (e) {
 		case errNone:
 			break;
@@ -128,7 +128,7 @@ static Err AppStartCheckMathLib() {
 			FrmCustomAlert(FrmErrorAlert,"Can't open MathLib !",0,0);
 			break;
 	}
-	
+
 	return e;
 }
 
@@ -143,7 +143,7 @@ void WinScreenGetPitch() {
 		WinScreenGetAttribute(winScreenRowBytes, &(gVars->screenPitch));
 		if (OPTIONS_TST(kOptMode16Bit))
 			gVars->screenPitch /= 2;	// this value is used only in-game and in 8bit mode, so if we are in 16Bit 8bit = 16bit/2
-		
+
 		// FIXME : hack for TT3 simulator (and real ?) return 28 on landscape mode
 		if (gVars->screenPitch < gVars->screenFullWidth)
 			gVars->screenPitch = gVars->screenFullWidth;
@@ -175,12 +175,12 @@ void PINGetScreenDimensions() {
 			gVars->screenFullHeight = y << 1;
 
 			OPTIONS_SET(kOptModeWide);
-			
+
 			if (curOrientation == sysOrientationLandscape ||
 				curOrientation == sysOrientationReverseLandscape
 					)
 				OPTIONS_SET(kOptModeLandscape);
-			
+
 			StatShow();
 			PINSetInputAreaState(pinInputAreaOpen);
 			PINSetInputTriggerState(pinInputTriggerDisabled);
@@ -208,7 +208,7 @@ static void AppStartCheckScreenSize() {
 			SilkLibResizeDispWin(slkRefNum, silkResizeMax);
 			HRWinGetWindowExtent(gVars->HRrefNum, &gVars->screenFullWidth, &gVars->screenFullHeight);
 			SilkLibResizeDispWin(slkRefNum, silkResizeNormal);
-			SilkLibDisableResize(slkRefNum);			
+			SilkLibDisableResize(slkRefNum);
 
 		} else {
 			VskSetState(slkRefNum, vskStateEnable, (gVars->slkVersion == vskVersionNum2 ? vskResizeVertically : vskResizeHorizontally));
@@ -218,7 +218,7 @@ static void AppStartCheckScreenSize() {
 			VskSetState(slkRefNum, vskStateEnable, vskResizeDisable);
 			OPTIONS_SET((version == vskVersionNum3 ? kOptModeLandscape : kOptNone));
 		}
-		
+
 		OPTIONS_SET(kOptModeWide);
 
 	// Tapwave Zodiac and other DIA API compatible devices
@@ -226,7 +226,7 @@ static void AppStartCheckScreenSize() {
 	} else {
 		PINGetScreenDimensions();
 	}
-	
+
 	WinScreenGetPitch();
 }
 
@@ -261,7 +261,7 @@ static void AppStartSetMemory() {
 	min(kMemScummNewCostGames, 2500000);
 	min(kMemSimon1Games, 1000000);
 	min(kMemSimon2Games, 2000000);
-	
+
 }
 
 #undef threshold
@@ -352,7 +352,7 @@ Err AppStart(void) {
 		gPrefs->debug = false;
 		gPrefs->exitLauncher = true;
 		gPrefs->stdPalette = OPTIONS_TST(kOptDeviceOS5);
-		
+
 	} else {
 		PrefGetAppPreferences(appFileCreator, appPrefID, gPrefs, &dataSize, true);
 	}
@@ -362,7 +362,7 @@ Err AppStart(void) {
 
 	error = AppStartCheckHRmode();
 	if (error) return (error);
-	
+
 //	error = AppStartLoadSkin();
 //	if (error) return (error);
 	bDirectMode = (AppStartLoadSkin() != errNone);
@@ -410,8 +410,8 @@ static Err AppStopCheckNotify()
 {
 	UInt32 romVersion;
 	Err err;
-	
-	err = FtrGet(sysFtrCreator, sysFtrNumNotifyMgrVersion, &romVersion); 
+
+	err = FtrGet(sysFtrCreator, sysFtrNumNotifyMgrVersion, &romVersion);
 	if (!err) {
 		UInt16 cardNo;
 		LocalID dbID;
@@ -424,7 +424,7 @@ static Err AppStopCheckNotify()
 			SysNotifyUnregister(cardNo, dbID, sysNotifyDisplayResizedEvent, sysNotifyNormalPriority);
 		}
 	}
-	
+
 	return err;
 }
 
@@ -437,7 +437,7 @@ void AppStop(void) {
 	// Close and move Game list database
 	GamCloseDatabase(false);
 
-	// Write the saved preferences / saved-state information.  This data 
+	// Write the saved preferences / saved-state information.  This data
 	// will saved during a HotSync backup.
 	SavePrefs();
 

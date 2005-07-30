@@ -26,7 +26,7 @@
 
 // Comb filter implementation
 //
-// Written by 
+// Written by
 // http://www.dreampoint.co.uk
 // This code is public domain
 
@@ -39,7 +39,7 @@ comb::comb() {
 }
 
 void comb::setbuffer(float *buf, int size) {
-	buffer = buf; 
+	buffer = buf;
 	bufsize = size;
 }
 
@@ -49,7 +49,7 @@ void comb::mute() {
 }
 
 void comb::setdamp(float val) {
-	damp1 = val; 
+	damp1 = val;
 	damp2 = 1 - val;
 }
 
@@ -72,7 +72,7 @@ allpass::allpass() {
 }
 
 void allpass::setbuffer(float *buf, int size) {
-	buffer = buf; 
+	buffer = buf;
 	bufsize = size;
 }
 

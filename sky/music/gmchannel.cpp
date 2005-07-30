@@ -67,7 +67,7 @@ void GmChannel::stopNote(void) {
 
 int32 GmChannel::getNextEventTime(void) {
 
-	int32 retV = 0; 
+	int32 retV = 0;
 	uint8 cnt, lVal = 0;
 	for (cnt = 0; cnt < 4; cnt++) {
 		lVal = _musicData[_channelData.eventDataPtr];
@@ -85,7 +85,7 @@ uint8 GmChannel::process(uint16 aktTime) {
 
 	if (!_channelData.channelActive)
 		return 0;
-	
+
 	uint8 returnVal = 0;
 
 	_channelData.nextEventTime -= aktTime;
@@ -102,7 +102,7 @@ uint8 GmChannel::process(uint16 aktTime) {
 				case 0: com90_caseNoteOff(); break;
 				case 1: com90_stopChannel(); break;
 				case 2: com90_setupInstrument(); break;
-				case 3: 
+				case 3:
 					returnVal = com90_updateTempo();
 					break;
 				case 5: com90_getPitch(); break;

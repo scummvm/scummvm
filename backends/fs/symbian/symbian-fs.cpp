@@ -21,7 +21,7 @@
  * $Header$
  */
 
-#if defined (__SYMBIAN32__) 
+#if defined (__SYMBIAN32__)
 #include "common/stdafx.h"
 #include "../fs.h"
 
@@ -62,11 +62,11 @@ public:
 static const char *lastPathComponent(const Common::String &str) {
 	const char *start = str.c_str();
 	const char *cur = start + str.size() - 2;
-	
+
 	while (cur > start && *cur != '\\') {
 		--cur;
 	}
-	
+
 	return cur+1;
 }
 
@@ -88,7 +88,7 @@ SymbianFilesystemNode::SymbianFilesystemNode(bool aIsRoot) {
 }
 
 // SumthinWicked says: added next function myself, since it was not in 0.7.1.
-// might still be a little buggy, or simply the reason ScummVM can't run any 
+// might still be a little buggy, or simply the reason ScummVM can't run any
 // games on the phone yet :P
 SymbianFilesystemNode::SymbianFilesystemNode(const String &path) {
 	if (path.size() == 0)
@@ -121,7 +121,7 @@ FSList SymbianFilesystemNode::listDir(ListMode mode) const {
 		CEikonEnv::Static()->FsSession().DriveList(drivelist);
 		for (int loop=0;loop<KMaxDrives;loop++) {
 			if(drivelist[loop]>0) {
-				SymbianFilesystemNode entry(false);		
+				SymbianFilesystemNode entry(false);
 				char drive_name[2];
 				drive_name[0] = loop+'A';
 				drive_name[1] = '\0';
@@ -149,17 +149,17 @@ FSList SymbianFilesystemNode::listDir(ListMode mode) const {
 				nameBuf.Copy(fileentry.iName);
 				SymbianFilesystemNode entry(false);
 				entry._isPseudoRoot = false;
-				
+
 				entry._displayName =(char*)nameBuf.PtrZ();
 				entry._path = _path;
 				entry._path +=(char*)nameBuf.PtrZ();
 				entry._isDirectory = fileentry.IsDir();
-				
+
 				// Honor the chosen mode
 				if ((mode == kListFilesOnly && entry._isDirectory) ||
 					(mode == kListDirectoriesOnly && !entry._isDirectory))
 					continue;
-				
+
 				if (entry._isDirectory)
 					entry._path += "\\";
 				myList.push_back(wrap(new SymbianFilesystemNode(&entry)));

@@ -387,7 +387,7 @@ int ScummEngine_v70he::getStringCharWidth(byte chr) {
 	if (offs) {
 		spacing = ptr[offs] + (signed char)ptr[offs + 2];
 	}
-	
+
 	return spacing;
 }
 
@@ -946,7 +946,7 @@ void ScummEngine_v70he::o70_writeINI() {
 	int type, value;
 	byte option[256], string[256];
 	int len;
-	
+
 	type = pop();
 	value = pop();
 
@@ -956,13 +956,13 @@ void ScummEngine_v70he::o70_writeINI() {
 
 	switch (type) {
 	case 1: // number
-		ConfMan.set((char *)option, value); 
+		ConfMan.set((char *)option, value);
 		break;
 	case 2: // string
 		convertMessageToString(_scriptPointer, string, sizeof(string));
 		len = resStrLen(_scriptPointer);
 		_scriptPointer += len + 1;
-		ConfMan.set((char *)option, (char *)string); 
+		ConfMan.set((char *)option, (char *)string);
 		break;
 	default:
 		error("o70_writeINI: default type %d", type);

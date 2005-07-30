@@ -72,7 +72,7 @@ public:
 	bool setGraphicsMode(int mode);
 	int getGraphicsMode() const;
 	int getDefaultGraphicsMode() const;
-	
+
 	int getOutputSampleRate() const;
 	bool openCD(int drive);
 	void setWindowCaption(const char *caption);	// TODO : _inGame = true = don't set
@@ -111,17 +111,17 @@ public:
 
 	// Shaking is used in SCUMM. Set current shake position.
 	void setShakePos(int shake_pos);
-		
+
 	// Get the number of milliseconds since the program was started.
 	uint32 getMillis();
-	
+
 	// Delay for a specified amount of milliseconds
 	void delayMillis(uint msecs);
-	
+
 	// Get the next event.
-	// Returns true if an event was retrieved.	
+	// Returns true if an event was retrieved.
 	bool pollEvent(Event &event);
-	
+
 	void SimulateArrowKeys(Event &event, Int8 iHoriz, Int8 iVert);
 
 	/** @name Sound */
@@ -133,14 +133,14 @@ public:
 	 * @param param		an arbitrary parameter which is stored and passed to proc.
 	 */
 	bool setSoundCallback(SoundProc proc, void *param);
-	
+
 	/**
 	 * Remove any audio callback previously set via setSoundCallback, thus effectively
 	 * stopping all audio output immediately.
 	 * @see setSoundCallback
 	 */
 	void clearSoundCallback();
-	//@} 
+	//@}
 
 	// Poll cdrom status
 	// Returns true if cd audio is playing
@@ -239,9 +239,9 @@ private:
 	int _current_shake_pos;
 	int _new_shake_pos;
 	byte _mouseKeyColor;
-	
+
 	UInt32 _exit_delay;
-	
+
 	struct {
 		uint32 duration, nextExpiry;
 		bool active;
@@ -258,10 +258,10 @@ private:
 
 	void draw_mouse();
 	void undraw_mouse();
-	
+
 	void sound_handler();
 	void timer_handler(UInt32 current_msecs);
-	
+
 	void getCoordinates(EventPtr event, Coord *x, Coord *y);
 	void draw1BitGfx(UInt16 id, Int32 x, Int32 y, Boolean clear);
 
@@ -283,12 +283,12 @@ private:
 	enum {
 		kLastKeyNone			= 0,
 		kLastKeyMouse			= 1	<< 0,
-	
+
 		kLastKeyCalc			= 1 << 30,
 		kLastKeyAny				= 1 << 31
 	};
 
-	
+
 	UInt32 _keyMask;
 	struct {
 		UInt32 bitUp;
@@ -301,7 +301,7 @@ private:
 	Int32 _lastKeyPressed;
 	UInt32 _lastKeyRepeat;
 	UInt8 _lastKeyModifier;
-	
+
 	Boolean _useNumPad;
 	Boolean _useHRmode;
 
@@ -311,7 +311,7 @@ private:
 	void init_intern();
 };
 
-Err HwrDisplayPalette(UInt8 operation, Int16 startIndex, 
+Err HwrDisplayPalette(UInt8 operation, Int16 startIndex,
 			 	  			 UInt16 paletteEntries, RGBColorType *tableP)
 							SYS_TRAP(sysTrapHwrDisplayPalette);
 

@@ -56,14 +56,14 @@ protected:
 	int				_selectedItem;
 	ScrollBarWidget	*_scrollBar;
 	int				_currentKeyDown;
-	
+
 	String			_quickSelectStr;
 	uint32			_quickSelectTime;
 
 public:
 	ListWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws = kDefaultWidgetSize);
 	virtual ~ListWidget();
-	
+
 	void setList(const StringList& list);
 	const StringList& getList()	const			{ return _list; }
 	int getSelected() const						{ return _selectedItem; }
@@ -73,7 +73,7 @@ public:
 	bool isEditable() const						{ return _editable; }
 	void setEditable(bool editable)				{ _editable = editable; }
 	void scrollTo(int item);
-	
+
 	virtual void handleTickle();
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
 	virtual void handleMouseUp(int x, int y, int button, int clickCount);
@@ -95,7 +95,7 @@ protected:
 	void scrollBarRecalc();
 
 	void abortEditMode();
-	
+
 	Common::Rect getEditRect() const;
 
 	void lostFocusWidget();

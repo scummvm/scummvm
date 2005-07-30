@@ -16,7 +16,7 @@
 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. 
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * $Header$
  *
@@ -69,7 +69,7 @@ char currentsurf;
 //      FIXME!!
 //      crashes if here and not buildgammatab() not called as very first line! check
 //      check if sav file handling overwrites something!
-//      float gammatab[256]; 
+//      float gammatab[256];
 
 FILE *fstderr, *fstdout, *fstdin;
 
@@ -124,7 +124,7 @@ int gpTrapKey(void)
     GP32 ScummVM OSystem Implementation.
 ****************************************************************/
 
-//OSystem *OSystem_GP32::create() 
+//OSystem *OSystem_GP32::create()
 //{
 //      //OSystem_GP32 *syst = new OSystem_GP32();
 //      //return syst;
@@ -135,10 +135,10 @@ OSystem *OSystem_GP32_create()
 {
 //
 //      OSystem_GP32 *syst = new OSystem_GP32();
-////    
+////
 ////    //syst->_mode = gfx_mode;
 ////    //syst->_full_screen = full_screen;
-//      
+//
 //      // allocate palette storage
 //      syst->_currentPalette = (gpColor*)calloc(sizeof(gpColor), 256);
 //
@@ -157,8 +157,8 @@ OSystem_GP32::OSystem_GP32() :
 //#endif
 	_hwscreen(0), _screen(0), _screenWidth(0), _screenHeight(0),
 	_tmpscreen(0), _overlayVisible(false),
-//      _cdrom(0), 
-//      _scaler_proc(0), 
+//      _cdrom(0),
+//      _scaler_proc(0),
     _modeChanged(false), _dirty_checksums(0),
 	_mouseVisible(false), _mouseDrawn(false), _mouseData(0),
 	_mouseHotspotX(0), _mouseHotspotY(0),
@@ -589,8 +589,8 @@ int gpSetColors(gpSurface *surface, gpColor *colors, int firstcolor, int ncolors
 
 // Moves the screen content around by the given amount of pixels
 // but only the top height pixel rows, the rest stays untouched
-//void OSystem_GP32::move_screen(int dx, int dy, int height) 
-//{ 
+//void OSystem_GP32::move_screen(int dx, int dy, int height)
+//{
 //      if ((dx == 0) && (dy == 0))
 //              return;
 //
@@ -634,12 +634,12 @@ int16 OSystem_GP32::get_width() {
 	return _screenWidth;
 }
 
-//void OSystem_GP32::warpMouse(int, int) 
-//{  
+//void OSystem_GP32::warpMouse(int, int)
+//{
 //}
 
 void OSystem_GP32::warpMouse(int x, int y) {
-//              set_mouse_pos(x, y); 
+//              set_mouse_pos(x, y);
 }
 
 void OSystem_GP32::load_gfx_mode() {
@@ -978,7 +978,7 @@ void OSystem_GP32::updateScreen() {
 //      // If the shake position changed, fill the dirty area with blackness
 //      if (_currentShakePos != _newShakePos) {
 //              gpRect blackrect = {0, 0, _screenWidth*_scaleFactor, _newShakePos*_scaleFactor};
-//              
+//
 //              if (_adjustAspectRatio)
 //                      blackrect.h = real2Aspect(blackrect.h - 1) + 1;
 //
@@ -991,14 +991,14 @@ void OSystem_GP32::updateScreen() {
 //
 //      // Make sure the mouse is drawn, if it should be drawn.
 //      draw_mouse();
-//      
+//
 //      // Check whether the palette was changed in the meantime and update the
-//      // screen surface accordingly. 
+//      // screen surface accordingly.
 //      if (_paletteDirtyEnd != 0) {
-//              gpSetColors(_screen, _currentPalette + _paletteDirtyStart, 
+//              gpSetColors(_screen, _currentPalette + _paletteDirtyStart,
 //                      _paletteDirtyStart,
 //                      _paletteDirtyEnd - _paletteDirtyStart);
-//              
+//
 //              _paletteDirtyEnd = 0;
 //
 //              _forceFull = true;
@@ -1016,24 +1016,24 @@ void OSystem_GP32::updateScreen() {
 //
 //      // Only draw anything if necessary
 //      if (_num_dirty_rects > 0) {
-//      
-//              gpRect *r; 
+//
+//              gpRect *r;
 //              uint32 srcPitch, dstPitch;
 //              gpRect *last_rect = _dirty_rect_list + _num_dirty_rects;
-//      
+//
 //              // Convert appropriate parts of the 8bpp image into 16bpp
 //              if (!_overlayVisible) {
 //                      gpRect dst;
 //                      for(r = _dirty_rect_list; r != last_rect; ++r) {
 //                              dst = *r;
 //                              dst.x++;        // FIXME? Shift rect by one since 2xSai needs to acces the data around
-//                              dst.y++;        // FIXME? any pixel to scale it, and we want to avoid mem access crashes.                               
+//                              dst.y++;        // FIXME? any pixel to scale it, and we want to avoid mem access crashes.
 //
 //                              if (gpBlitSurface(_screen, r, _hwscreen, &dst) != 0) //ph0x! _tmpscreen
-//                                      error("gpBlitSurface failed: %s", gpGetError());                                
+//                                      error("gpBlitSurface failed: %s", gpGetError());
 //                      }
 //              }
-//      
+//
 //// ph0x! (no scaling) cannot skip intro if commented?
 //
 //              srcPitch = _tmpscreen->pitch;
@@ -1045,13 +1045,13 @@ void OSystem_GP32::updateScreen() {
 //                              dst_h = r->h;
 //                              if (dst_h > _screenHeight - dst_y)
 //                                      dst_h = _screenHeight - dst_y;
-//                              
+//
 //                              dst_y *= _scaleFactor;
 //
 //                              if (_overlayVisible) //ph0x fixme?
-//                              _scaler_proc((byte*)_tmpscreen->pixels + (r->x*2+2) + (r->y+1)*srcPitch, srcPitch,  
-//                                      (byte*)_hwscreen->pixels + r->x*2*_scaleFactor + dst_y*dstPitch, dstPitch, r->w, dst_h);                        
-//                      }                       
+//                              _scaler_proc((byte*)_tmpscreen->pixels + (r->x*2+2) + (r->y+1)*srcPitch, srcPitch,
+//                                      (byte*)_hwscreen->pixels + r->x*2*_scaleFactor + dst_y*dstPitch, dstPitch, r->w, dst_h);
+//                      }
 //                      r->x *= _scaleFactor;
 //                      r->y = dst_y;
 //                      r->w *= _scaleFactor;
@@ -1152,7 +1152,7 @@ void OSystem_GP32::delayMillis(uint msecs) {
 }
 
 // Get the next event.
-// Returns true if an event was retrieved.      
+// Returns true if an event was retrieved.
 
 const signed char abc[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 signed int abcindex = -1;
@@ -1238,7 +1238,7 @@ bool OSystem_GP32::pollEvent(Event & event) {
 				gindex++;
 			buildgammatab(gindex);
 			_paletteDirtyStart = 0;
-			_paletteDirtyEnd = 255;	//fixme?                                          
+			_paletteDirtyEnd = 255;	//fixme?
 			lastevent = event.type;
 			lastkey = key;
 			return true;
@@ -1251,7 +1251,7 @@ bool OSystem_GP32::pollEvent(Event & event) {
 				gindex--;
 			buildgammatab(gindex);
 			_paletteDirtyStart = 0;
-			_paletteDirtyEnd = 255;	//fixme?                                          
+			_paletteDirtyEnd = 255;	//fixme?
 			lastevent = event.type;
 			lastkey = key;
 			return true;
@@ -1269,7 +1269,7 @@ bool OSystem_GP32::pollEvent(Event & event) {
 
 	lastkey = key;
 
-	if (key & GPC_VK_FR) {	// R     
+	if (key & GPC_VK_FR) {	// R
 		if (key & GPC_VK_UP) {
 			if (getMillis() < t)
 				return false;
@@ -1297,7 +1297,7 @@ bool OSystem_GP32::pollEvent(Event & event) {
 			if (getMillis() < t)
 				return false;
 			//do key=GpKeyGet(); while (key & GPC_VK_DOWN);
-			//fixme -2/-1                           
+			//fixme -2/-1
 			t = getMillis() + 200;
 			if (abcindex == -1)
 				abcindex = abcindex = sizeof(abc) - 2;
@@ -1357,7 +1357,7 @@ bool OSystem_GP32::pollEvent(Event & event) {
 			while (key != GPC_VK_NONE);	// prevent 2xESC
 			buildgammatab(gindex);
 			_paletteDirtyStart = 0;
-			_paletteDirtyEnd = 255;	//fixme?                                          
+			_paletteDirtyEnd = 255;	//fixme?
 		}
 		event.kbd.keycode = event.kbd.ascii = 27;
 		lastevent = event.type;
@@ -1426,7 +1426,7 @@ bool OSystem_GP32::pollEvent(Event & event) {
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// GP32 Graphics Stuff - 
+// GP32 Graphics Stuff -
 //
 /////////////////////////////////////////////////////////////////////////////
 
@@ -1504,7 +1504,7 @@ void switchsurf(int surf) {
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// GP32 Sound Stuff - 
+// GP32 Sound Stuff -
 //
 /////////////////////////////////////////////////////////////////////////////
 
@@ -1623,7 +1623,7 @@ bool OSystem_GP32::setSoundCallback(SoundProc proc, void *param) {
 	//gpsndbuf.userdata=g_scumm; //param; //fixme?          // Userdata which gets passed to the callback function
 	gpsndbuf.callback = proc;	//mycallback;         // Callback function (just like in SDL)
 	//2*((float)22025/(float)s.samples);
-	gpsndbuf.pollfreq = 8 * (SAMPLES_PER_SEC / gpsndbuf.samples);	//fixme     
+	gpsndbuf.pollfreq = 8 * (SAMPLES_PER_SEC / gpsndbuf.samples);	//fixme
 	// Frequency of the timer interrupt which polls the playing position
 	// recommended value: 2*(playingfreq in Hz/GPSOUNDBUF.samples)
 	//s.samplesize;  // Size of one sample (8bit mono->1, 16bit stereo->4) - don't touch this
@@ -1716,7 +1716,7 @@ int _timerinterval;
 int (*_timercallback)(int);
 
 void voidcallback() {
-	//printf("timer running");      
+	//printf("timer running");
 	_timercallback(_timerinterval);	//FIXME ?? (*_timercallback)(_timerinterval);
 }
 
@@ -1911,7 +1911,7 @@ void OSystem_GP32::internUpdateScreen() {
 	draw_mouse();
 
 	// Check whether the palette was changed in the meantime and update the
-	// screen surface accordingly. 
+	// screen surface accordingly.
 	if (_paletteDirtyEnd != 0) {
 
 		gpSetColors(_screen, _currentPalette + _paletteDirtyStart,
@@ -2078,14 +2078,14 @@ void OSystem_GP32::internUpdateScreen() {
 //
 //      // Make sure the mouse is drawn, if it should be drawn.
 //      draw_mouse(); //ph0x
-//      
+//
 //      // Check whether the palette was changed in the meantime and update the
-//      // screen surface accordingly. 
+//      // screen surface accordingly.
 //      if (_paletteDirtyEnd != 0) {
-//              gpSetColors(_screen, _currentPalette + _paletteDirtyStart, 
+//              gpSetColors(_screen, _currentPalette + _paletteDirtyStart,
 //                      _paletteDirtyStart,
 //                      _paletteDirtyEnd - _paletteDirtyStart);
-//              
+//
 //              _paletteDirtyEnd = 0;
 //
 //              _forceFull = true;
@@ -2103,27 +2103,27 @@ void OSystem_GP32::internUpdateScreen() {
 //
 //      // Only draw anything if necessary
 //      if (_num_dirty_rects > 0) {
-//      
-//              gpRect *r; 
+//
+//              gpRect *r;
 //              uint32 srcPitch, dstPitch;
 //              gpRect *last_rect = _dirty_rect_list + _num_dirty_rects;
-//      
+//
 //              // Convert appropriate parts of the 8bpp image into 16bpp
 //              if (!_overlayVisible) {
 //                      gpRect dst;
 //                      for(r = _dirty_rect_list; r != last_rect; ++r) {
 //                              dst = *r;
 //                              dst.x++;        // FIXME? Shift rect by one since 2xSai needs to acces the data around
-//                              dst.y++;        // FIXME? any pixel to scale it, and we want to avoid mem access crashes.                               
+//                              dst.y++;        // FIXME? any pixel to scale it, and we want to avoid mem access crashes.
 //
 //                              if (gpBlitSurface(_screen, r, _hwscreen, &dst) != 0) //ph0x! gp_tmpscreen
-//                                      error("gpBlitSurface failed: %s", gpGetError());                                
+//                                      error("gpBlitSurface failed: %s", gpGetError());
 //                      }
 //              }
-//      
+//
 //              ///gp_LockSurface(gp_tmpscreen);
 //              ///gp_LockSurface(gp_hwscreen);
-//      
+//
 //// ph0x! (no scaling) cannot skip intro if commented?
 //
 //              srcPitch = _tmpscreen->pitch;
@@ -2135,13 +2135,13 @@ void OSystem_GP32::internUpdateScreen() {
 //                              dst_h = r->h;
 //                              if (dst_h > _screenHeight - dst_y)
 //                                      dst_h = _screenHeight - dst_y;
-//                              
+//
 //                              dst_y *= _scaleFactor;
 //
 //                              if (_overlayVisible) //ph0x fixme?
-//                              _scaler_proc((byte*)_tmpscreen->pixels + (r->x*2+2) + (r->y+1)*srcPitch, srcPitch,  
-//                                      (byte*)_hwscreen->pixels + r->x*2*_scaleFactor + dst_y*dstPitch, dstPitch, r->w, dst_h);                        
-//                      }                       
+//                              _scaler_proc((byte*)_tmpscreen->pixels + (r->x*2+2) + (r->y+1)*srcPitch, srcPitch,
+//                                      (byte*)_hwscreen->pixels + r->x*2*_scaleFactor + dst_y*dstPitch, dstPitch, r->w, dst_h);
+//                      }
 //                      r->x *= _scaleFactor;
 //                      r->y = dst_y;
 //                      r->w *= _scaleFactor;
@@ -2388,11 +2388,11 @@ int OSystem_GP32::getGraphicsMode() const {
 	return _mode;
 }
 
-////OSystem *OSystem_GP32::create(int gfx_mode, bool full_screen) 
-//OSystem *OSystem_GP32::create() 
+////OSystem *OSystem_GP32::create(int gfx_mode, bool full_screen)
+//OSystem *OSystem_GP32::create()
 //{
 //      //OSystem_GP32 *syst = new OSystem_GP32();
-//      
+//
 //      //syst->_mode = gfx_mode;
 //      //syst->_full_screen = full_screen;
 //      //
@@ -2414,7 +2414,7 @@ int write(int fd, void *p, size_t n) {	//ph0x hack!
 	return 0;
 }
 
-// Converts 8bit rgb values to a GP32 palette value 
+// Converts 8bit rgb values to a GP32 palette value
 void GpSetPaletteEntry(u8 i, u8 r, u8 g, u8 b) {
 	GP_PALETTEENTRY entry = gpRGB16(r, g, b);
 	GpPaletteEntryChange(i, 1, &entry, 0);
@@ -2486,7 +2486,7 @@ FILE *gpfopen(const char *filename, const char *mode) {
 		sprintf(s, "%s.", filename);
 		filename = s;
 	}
-	//printf(">open %s as %s", filename, mode); 
+	//printf(">open %s as %s", filename, mode);
 
 	// FIXME add binary/text support
 	if (tolower(mode[0]) == 'r') {
@@ -2651,7 +2651,7 @@ void *gpcalloc(size_t nitems, size_t size) {
 	memset(p, 0, nitems * size);
 	if (*(u8 *) p)
 		warning("%s: calloc doesn't clear!", __FUNCTION__);	//fixme: was error
-	//printf("callocing");  
+	//printf("callocing");
 	return p;
 }
 
@@ -2811,10 +2811,10 @@ int ConfigMenu() {
 			if (menu[choice].submenu[menu[choice].index + 1])
 				menu[choice].index++;
 		}
-		//if (key & GPC_VK_START || key  & GPC_VK_FA) return 1; 
+		//if (key & GPC_VK_START || key  & GPC_VK_FA) return 1;
 		if (key & GPC_VK_FA)
 			return 1;
-		//if (key & GPC_VK_SELECT) return 0;            
+		//if (key & GPC_VK_SELECT) return 0;
 
 		do
 			key = gpTrapKey();
@@ -3021,7 +3021,7 @@ void ConfigWrite() {
     Prepare GP32
 ****************************************************************/
 void InitLCD() {
-	// Initialize graphics 
+	// Initialize graphics
 	GpGraphicModeSet(COLOUR_8BIT_MODE, NULL);
 
 	// Set the current buffer
@@ -3053,7 +3053,7 @@ void Init() {
 
 	//stderr = fstdout = fopen("gp:\\data\\scummvm\\config\\debug.out", "w");
 	//stdin = NULL; //fixme?
-	////fstdin = fopen("stdin", "w");       
+	////fstdin = fopen("stdin", "w");
 	////fstderr = fopen("stderr", "w");
 
 	//printf("          ScummVM for the GP32");
@@ -3073,7 +3073,7 @@ void Init() {
 	//err = GpFormat("gp:", FORMAT_RESCUE, &bad);
 	//char s[256];
 	//GpRelativePathGet(s);
-	//*/    
+	//*/
 }
 
 //void *gpmemset (void *s, int c, size_t n) {
@@ -3164,7 +3164,7 @@ void GpMain(void *arg) {
 	//" \n"
 	//:
 	//:
-	//:"r0", "r1"); 
+	//:"r0", "r1");
 
 	// FIXME: causes crash?! (if not at first line of gpmain())
 	buildgammatab(gindex);
@@ -3174,7 +3174,7 @@ void GpMain(void *arg) {
 
 	// ConfigRead();
 
-	//if () 
+	//if ()
 	//{
 	//      ConfigWrite();
 	//}

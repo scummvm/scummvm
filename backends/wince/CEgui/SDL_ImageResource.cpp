@@ -24,7 +24,7 @@
 
 namespace CEGUI {
 
-	SDL_ImageResource::SDL_ImageResource() : 
+	SDL_ImageResource::SDL_ImageResource() :
 		_surface(0)
 	{
 	}
@@ -36,7 +36,7 @@ namespace CEGUI {
 		DWORD resourceSize;
 		SDL_RWops *surfaceData;
 		HMODULE moduleHandle;
-		
+
 		moduleHandle = GetModuleHandle(NULL);
 		resource = FindResource(moduleHandle, MAKEINTRESOURCE(resourceID), TEXT("BINARY"));
 		if (!resource)
@@ -78,5 +78,5 @@ namespace CEGUI {
 	SDL_ImageResource::~SDL_ImageResource() {
 		if (_surface)
 			SDL_FreeSurface(_surface);
-	}		
+	}
 }

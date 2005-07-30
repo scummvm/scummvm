@@ -24,7 +24,7 @@ UInt32 OSystem_updateScreen_wideLandscape(void *userData68KP) {
 		MemMove(dst, dst - 480, 480);
 		dst += 480;
 	}
-	
+
 	return 0;
 }
 

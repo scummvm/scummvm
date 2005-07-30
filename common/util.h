@@ -154,7 +154,7 @@ extern Platform parsePlatform(const String &str);
 extern const char *getPlatformCode(Platform id);
 extern const char *getPlatformDescription(Platform id);
 
-/** 
+/**
  * List of render modes. It specifies which original graphics mode
  * to use. Some targets used postprocessing dithering routines for
  * reducing color depth of final image which let it to be rendered on

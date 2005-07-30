@@ -35,7 +35,7 @@ void OSystem_PALMOS::showOverlay() {
 		DmWrite(dst, offset, src, _screenWidth);
 		offset += _screenWidth;
 		src += _offScreenPitch;
-	} while (--h);	
+	} while (--h);
 
 	_overlayVisible = true;
 	clearOverlay();
@@ -109,9 +109,9 @@ void OSystem_PALMOS::copyRectToOverlay(const byte *buf, int pitch, int x, int y,
 /*		RectangleType mouse = {_mouseCurState.x, _mouseCurState.y, _mouseCurState.w, _mouseCurState.h};
 		RectangleType copy	= {x, y, w, h};
 		RectangleType result;
-		
+
 		RctGetIntersection(&mouse, &copy, &result);
-		
+
 		if (result.extent.x !=0 && result.extent.y !=0)*/
 			undraw_mouse();
 	}

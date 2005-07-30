@@ -72,10 +72,10 @@ protected:
 	Control *_skyControl;
 	SkyCompact *_skyCompact;
 	Debugger *_debugger;
-	
+
 	MusicBase *_skyMusic;
 	Intro *_skyIntro;
-	
+
 public:
 	SkyEngine(GameDetector *detector, OSystem *syst);
 	virtual ~SkyEngine();

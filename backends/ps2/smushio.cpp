@@ -20,7 +20,7 @@
  */
 
 /*
-	The Smush player uses at least two handles for accessing the same SMUSH file, 
+	The Smush player uses at least two handles for accessing the same SMUSH file,
 	to avoid threading issues.	One handle for video, one for audio apparently.
 	Each of the handles always skips the data that the other one read before
 	(or will read later).
@@ -145,12 +145,12 @@ void SmushReader::processCache(bool sync) {
             _bytesInCache += rdRes;
 			_cacheOp = false;
 		}
-	} else if (!sync) { 
+	} else if (!sync) {
 		if (_cacheFilePos + _bytesInCache == _fileSize)
 			return;
 
 		uint32 rdPos = MIN(_lastRead[0], _lastRead[1]);
-		
+
 		int cacheOfs = (rdPos - _cacheFilePos) & ~0xF; // we'd like to keep the buffer aligned to 16 bytes
 		if (cacheOfs < 0) {
 			sioprintf("ERROR: smush cache too far ahead!");
@@ -237,7 +237,7 @@ uint32 SmushReader::read(void *dest, uint32 from, uint32 len) {
 			} while (len && rdRes);
 			fio.seek(_fd, _cacheFilePos + _bytesInCache, SEEK_SET);
 			break;
-		}        
+		}
 	}
 	processCache(false);
 	SignalSema(_sema);

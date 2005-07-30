@@ -33,7 +33,7 @@
 
 #include "gui/Actions.h"
 
-#define POCKET_ACTION_VERSION 4 
+#define POCKET_ACTION_VERSION 4
 
 enum pocketActionType {
         POCKET_ACTION_PAUSE = 0,
@@ -80,6 +80,6 @@ class CEActionsPocket : public GUI::Actions {
 		bool _hide_toolbar_needed;
 		bool _zoom_needed;
 		OSystem_WINCE3 *_CESystem;
-	};	
+	};
 
 #endif

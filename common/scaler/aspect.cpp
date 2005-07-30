@@ -121,7 +121,7 @@ void makeRectStretchable(int &x, int &y, int &w, int &h) {
 
 	// Finally force the width to be even, since we blit 2 pixels at a time.
 	// While this means we may sometimes blit one column more than necessary,
-	// this should actually be faster than having the check for the 
+	// this should actually be faster than having the check for the
 	if (w & 1)
 		w++;
   #endif

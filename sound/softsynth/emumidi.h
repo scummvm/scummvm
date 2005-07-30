@@ -46,10 +46,10 @@ protected:
 public:
 	MidiDriver_Emulated(Audio::Mixer *mixer) : _mixer(mixer) {
 		_isOpen = false;
-	
+
 		_timerProc = 0;
 		_timerParam = 0;
-	
+
 		_nextTick = 0;
 		_samplesPerTick = 0;
 
@@ -89,7 +89,7 @@ public:
 				step = (_nextTick >> FIXP_SHIFT);
 
 			generateSamples(data, step);
-	
+
 			_nextTick -= step << FIXP_SHIFT;
 			if (!(_nextTick >> FIXP_SHIFT)) {
 				if (_timerProc)

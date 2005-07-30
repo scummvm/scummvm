@@ -33,7 +33,7 @@
 struct TrackFormat {
 	/** Decodername */
 	const char* decoderName;
-	/** 
+	/**
 	 * Pointer to a function which tries to open the specified track - the only argument
 	 * is the number of the track to be played.
 	 * Returns either the DigitalTrackInfo object representing the requested track or null
@@ -43,7 +43,7 @@ struct TrackFormat {
 };
 
 static const TrackFormat TRACK_FORMATS[] = {
-	/* decoderName,		openTrackFunction */ 
+	/* decoderName,		openTrackFunction */
 #ifdef USE_FLAC
 	{ "Flac",			getFlacTrack },
 #endif // #ifdef USE_FLAC

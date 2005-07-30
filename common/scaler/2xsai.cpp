@@ -24,7 +24,7 @@
 
 
 
-static inline int GetResult(uint32 A, uint32 B, uint32 C, uint32 D) { 
+static inline int GetResult(uint32 A, uint32 B, uint32 C, uint32 D) {
 	const bool ac = (A==C);
 	const bool bc = (B==C);
 	const int x1 = ac;
@@ -51,7 +51,7 @@ void Super2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 	const uint16 *bP;
 	uint16 *dP;
 	const uint32 nextlineSrc = srcPitch >> 1;
-	
+
 	while (height--) {
 		bP = (const uint16 *)srcPtr;
 		dP = (uint16 *)dstPtr;

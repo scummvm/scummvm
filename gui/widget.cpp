@@ -240,7 +240,7 @@ void SliderWidget::handleMouseMoved(int x, int y, int button) {
 			newValue = _valueMax;
 
 		if (newValue != _value) {
-			_value = newValue; 
+			_value = newValue;
 			draw();
 			sendCommand(_cmd, _value);	// FIXME - hack to allow for "live update" in sound dialog
 		}
@@ -285,7 +285,7 @@ int SliderWidget::posToValue(int pos) {
 
 GraphicsWidget::GraphicsWidget(GuiObject *boss, int x, int y, int w, int h)
 	: Widget(boss, x, y, w, h), _gfx() {
-	_flags = WIDGET_ENABLED | WIDGET_CLEARBG; 
+	_flags = WIDGET_ENABLED | WIDGET_CLEARBG;
 	_type = kGraphicsWidget;
 }
 
@@ -295,10 +295,10 @@ GraphicsWidget::~GraphicsWidget() {
 
 void GraphicsWidget::setGfx(const Graphics::Surface *gfx) {
 	_gfx.free();
-	
+
 	if (!gfx || !gfx->pixels)
 		return;
-	
+
 	// TODO: add conversion to OverlayColor
 	_gfx.create(gfx->w, gfx->h, gfx->bytesPerPixel);
 	memcpy(_gfx.pixels, gfx->pixels, gfx->h * gfx->pitch);

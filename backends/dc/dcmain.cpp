@@ -136,7 +136,7 @@ OSystem::MutexRef OSystem_Dreamcast::createMutex()
 void OSystem_Dreamcast::lockMutex(MutexRef mutex)
 {
 }
- 
+
 void OSystem_Dreamcast::unlockMutex(MutexRef mutex)
 {
 }
@@ -226,7 +226,7 @@ int DCLauncherDialog::runModal()
   // Set the game path.
   if(dir != NULL)
     ConfMan.set("path", dir, Common::ConfigManager::kTransientDomain);
-  
+
   // Set the target.
   _detector.setTarget(base);
 

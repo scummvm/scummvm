@@ -55,7 +55,7 @@ private:
 public:
 	Sound(const byte game, const GameSpecificSettings *gss, Audio::Mixer *mixer);
 	~Sound();
-	
+
 	void readSfxFile(const char *filename);
 	void loadSfxTable(Common::File *gameFile, uint32 base);
 	void readVoiceFile(const char *filename);

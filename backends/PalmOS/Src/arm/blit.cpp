@@ -47,6 +47,6 @@ UInt32 Display_blit(void *userData68KP) {
 			dstBuf += dstPitch;
 		}
 	}
-	
+
 	return 0;
 }

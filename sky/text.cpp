@@ -33,7 +33,7 @@ namespace Sky {
 #define	FIRST_TEXT_BUFFER	274
 #define NO_OF_TEXT_SECTIONS	8	// 8 sections per language
 #define	CHAR_SET_FILE	60150
-#define MAX_SPEECH_SECTION	7 
+#define MAX_SPEECH_SECTION	7
 #define CHAR_SET_HEADER	128
 #define	MAX_NO_LINES	10
 
@@ -46,7 +46,7 @@ Text::Text(Disk *skyDisk, SkyCompact *skyCompact) {
 	_mainCharacterSet.addr = _skyDisk->loadFile(CHAR_SET_FILE);
 	_mainCharacterSet.charHeight = MAIN_CHAR_HEIGHT;
 	_mainCharacterSet.charSpacing = 0;
-	
+
 	fnSetFont(0);
 
 	if (!SkyEngine::isDemo()) {
@@ -268,7 +268,7 @@ void Text::patchLINCCharset() {
 	}
 }
 
-void Text::fnSetFont(uint32 fontNr) { 
+void Text::fnSetFont(uint32 fontNr) {
 
 	struct charSet *newCharSet;
 
@@ -313,41 +313,41 @@ void Text::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 
 	if (SkyEngine::_itemList[FIRST_TEXT_SEC + sectionNo] == (void **)NULL) { //check if already loaded
 		debug(5, "Loading Text item(s) for Section %d", (sectionNo>>2));
-		
+
 		uint32 fileNo = sectionNo + ((SkyEngine::_systemVars.language * NO_OF_TEXT_SECTIONS) + 60600);
 		SkyEngine::_itemList[FIRST_TEXT_SEC + sectionNo] = (void **)_skyDisk->loadFile((uint16)fileNo);
 	}
 	_textItemPtr = (uint8 *)SkyEngine::_itemList[FIRST_TEXT_SEC + sectionNo];
 
-	uint32 offset = 0; 
+	uint32 offset = 0;
 	uint32 nr32MsgBlocks = (textNr & 0x0fe0);
-	uint32 skipBytes; 
+	uint32 skipBytes;
 	byte *blockPtr;
-	bool bitSeven; 
+	bool bitSeven;
 
-	if (nr32MsgBlocks) { 
+	if (nr32MsgBlocks) {
 		blockPtr = (byte *)(_textItemPtr + 4);
 		nr32MsgBlocks >>= 5;
 		do {
 			offset += READ_LE_UINT16(blockPtr);
 			blockPtr += 2;
-		} while (--nr32MsgBlocks); 
+		} while (--nr32MsgBlocks);
 	}
 
-	uint32 remItems = textNr; 
+	uint32 remItems = textNr;
 	textNr &= 0x1f;
 	if (textNr) {
-	
+
 		remItems &= 0x0fe0;
 		remItems += READ_LE_UINT16(_textItemPtr);
-		blockPtr = _textItemPtr + remItems; 
+		blockPtr = _textItemPtr + remItems;
 
 		do {
 			skipBytes = *blockPtr++;
 			bitSeven = (bool)((skipBytes >> (7)) & 0x1);
 			skipBytes &= ~(1UL << 7);
 
-			if (bitSeven) 
+			if (bitSeven)
 				skipBytes <<= 3;
 
 			offset += skipBytes;
@@ -357,23 +357,23 @@ void Text::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 
 	uint32 numBits = offset;
 	offset >>= 2;
-	offset += READ_LE_UINT16(_textItemPtr + 2); 
+	offset += READ_LE_UINT16(_textItemPtr + 2);
 	_textItemPtr += offset;
 
 	//bit pointer: 0->8, 1->6, 2->4 ...
 	numBits &= 3;
-	numBits ^= 3; 
+	numBits ^= 3;
 	numBits++;
 	numBits <<= 1;
 
 	_inputValue = *_textItemPtr++;
 	char *dest = (char *)_textBuffer;
 	char textChar;
-	_shiftBits = (uint8) numBits; 
+	_shiftBits = (uint8) numBits;
 
 	do {
 		textChar = getTextChar();
-		*dest++ = textChar;	
+		*dest++ = textChar;
 	} while (textChar);
 }
 
@@ -409,8 +409,8 @@ bool Text::getTBit() {
 	} else {
 		_inputValue = *_textItemPtr++;
 		_shiftBits = 7;
-	} 
-	
+	}
+
 	return (bool)(((_inputValue) >> (_shiftBits)) & 1);
 }
 
@@ -427,10 +427,10 @@ displayText_t Text::displayText(char *textPtr, uint8 *dest, bool centre, uint16 
 	char *curPos = textPtr;
 	char *lastSpace = curPos;
 	byte *centerTblPtr = _centreTable;
-	uint16 lineWidth = 0;  
+	uint16 lineWidth = 0;
 
 	_dtCol = color;
-	_dtLineWidth = pixelWidth;  
+	_dtLineWidth = pixelWidth;
 	_dtLines = 0;
 	_dtLetters = 1;
 	_dtData = dest;
@@ -451,7 +451,7 @@ displayText_t Text::displayText(char *textPtr, uint8 *dest, bool centre, uint16 
 	tmpPtr = strstr(textPtr, "MANIFESTACION-ARTISTICA.");
 	if (tmpPtr)
 		strcpy(tmpPtr, "MANIFESTACION ARTISTICA.");
-		
+
 	while (textChar >= 0x20) {
 		if ((_curCharSet == 1) && (textChar >= 0x80))
 			textChar = 0x20;
@@ -489,12 +489,12 @@ displayText_t Text::displayText(char *textPtr, uint8 *dest, bool centre, uint16 
 		error("Maximum no. of lines exceeded!");
 
 	_dtLineSize = pixelWidth * _charHeight;
-	uint32 numBytes = (_dtLineSize * _dtLines) + sizeof(struct dataFileHeader) + 4;	
+	uint32 numBytes = (_dtLineSize * _dtLines) + sizeof(struct dataFileHeader) + 4;
 
 	if (_dtData == NULL)
 		_dtData = (byte *)malloc(numBytes);
 
-	uint8 *curDest = _dtData; 
+	uint8 *curDest = _dtData;
 
 	uint32 bytesToClear = numBytes; //no of bytes to clear
 	bytesToClear -= sizeof(struct dataFileHeader);	//don't touch the header.
@@ -518,7 +518,7 @@ displayText_t Text::displayText(char *textPtr, uint8 *dest, bool centre, uint16 
 	do {
 		if (_dtCentre) {
 
-			uint32 width = (_dtLineWidth - READ_LE_UINT32(centerTblPtr)) >> 1; 
+			uint32 width = (_dtLineWidth - READ_LE_UINT32(centerTblPtr)) >> 1;
 			centerTblPtr += 4;
 			curDest += width;
 		}
@@ -535,15 +535,15 @@ displayText_t Text::displayText(char *textPtr, uint8 *dest, bool centre, uint16 
 
 	struct displayText_t ret;
 	ret.textData = _dtData;
-	ret.textWidth = _dtLastWidth;	
+	ret.textWidth = _dtLastWidth;
 	return ret;
 }
 
 void Text::makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&dest, uint8 color) {
 
-	bool maskBit, dataBit;	
+	bool maskBit, dataBit;
 	uint8 charWidth = (uint8)((*(charSetPtr + textChar)) + 1 - _dtCharSpacing);
-	uint16 data, mask; 
+	uint16 data, mask;
 	byte *charSpritePtr = charSetPtr + (CHAR_SET_HEADER + ((_charHeight << 2) * textChar));
 	byte *startPos = dest;
 	byte *curPos = startPos;
@@ -555,19 +555,19 @@ void Text::makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&dest, ui
 		data = READ_BE_UINT16(charSpritePtr);
 		mask = READ_BE_UINT16(charSpritePtr + 2);
 		charSpritePtr += 4;
-		
+
 		for (int j = 0; j < charWidth; j++) {
-	
+
 			maskBit = (mask & 0x8000) != 0; //check mask
 			mask <<= 1;
 			dataBit = (data & 0x8000) != 0; //check data
 			data <<= 1;
 
-			if (maskBit) 
-				if (dataBit) 
+			if (maskBit)
+				if (dataBit)
 					*curPos = color;
 				else
-					*curPos = 240; //black edge 
+					*curPos = 240; //black edge
 
 			curPos++;
 		}
@@ -577,7 +577,7 @@ void Text::makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&dest, ui
 	}
 
 	//update position
-	dest = startPos + charWidth + _dtCharSpacing * 2 - 1; 
+	dest = startPos + charWidth + _dtCharSpacing * 2 - 1;
 
 }
 
@@ -594,7 +594,7 @@ lowTextManager_t Text::lowTextManager(uint32 textNum, uint16 width, uint16 logic
 
 	Compact *cpt = _skyCompact->fetchCpt(compactNum);
 
-	while (cpt->status != 0) { 
+	while (cpt->status != 0) {
 		compactNum++;
 		cpt = _skyCompact->fetchCpt(compactNum);
 	}
@@ -602,12 +602,12 @@ lowTextManager_t Text::lowTextManager(uint32 textNum, uint16 width, uint16 logic
 	cpt->flag = (uint16)(compactNum - FIRST_TEXT_COMPACT) + FIRST_TEXT_BUFFER;
 
 	byte *oldText = (byte *)SkyEngine::_itemList[cpt->flag];
-	SkyEngine::_itemList[cpt->flag] = (void **)textData; 
+	SkyEngine::_itemList[cpt->flag] = (void **)textData;
 
 	if (oldText != NULL)
 		free (oldText);
 
-	cpt->logic = logicNum; 
+	cpt->logic = logicNum;
 	cpt->status = ST_LOGIC | ST_FOREGROUND | ST_RECREATE;
 	cpt->screen = (uint16) Logic::_scriptVariables[SCREEN];
 
@@ -681,7 +681,7 @@ bool Text::patchMessage(uint32 textNum) {
 		if (_patchedMessages[cnt + patchIdx].textNr == textNum) {
 			strcpy(_textBuffer, _patchedMessages[cnt + patchIdx].text);
 			return true;
-		}		
+		}
 	}
 	return false;
 }
@@ -689,7 +689,7 @@ bool Text::patchMessage(uint32 textNum) {
 const PatchMessage Text::_patchedMessages[NUM_PATCH_MSG] = {
 	{ 28724, "Testo e Parlato" }, // - italian
 	{ 28707, "Solo Testo" },
-	{ 28693, "Solo Parlato" }, 
+	{ 28693, "Solo Parlato" },
 	{ 28724, "Text och tal" }, // - swedish
 	{ 28707, "Endast text" },
 	{ 28693, "Endast tal" },

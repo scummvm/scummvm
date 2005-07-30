@@ -40,7 +40,7 @@ protected:
 	uint32		_openTime;
 public:
 	PopUpDialog(PopUpWidget *boss, int clickX, int clickY, WidgetSize ws = kDefaultWidgetSize);
-	
+
 	void drawDialog();
 
 	void handleMouseUp(int x, int y, int button, int clickCount);
@@ -50,11 +50,11 @@ public:
 
 protected:
 	void drawMenuEntry(int entry, bool hilite);
-	
+
 	int findItem(int x, int y) const;
 	void setSelection(int item);
 	bool isMouseDown();
-	
+
 	void moveUp();
 	void moveDown();
 };
@@ -71,7 +71,7 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY, WidgetSize w
 	_y = _popUpBoss->getAbsY() - _popUpBoss->_selectedItem * kLineHeight;
 	_h = _popUpBoss->_entries.size() * kLineHeight + 2;
 	_w = _popUpBoss->_w - kLineHeight + 2 - _popUpBoss->_labelWidth;
-	
+
 	// Perform clipping / switch to scrolling mode if we don't fit on the screen
 	// FIXME - OSystem should send out notification messages when the screen
 	// resolution changes... we could generalize CommandReceiver and CommandSender.
@@ -112,7 +112,7 @@ void PopUpDialog::drawDialog() {
 }
 
 void PopUpDialog::handleMouseUp(int x, int y, int button, int clickCount) {
-	// Mouse was released. If it wasn't moved much since the original mouse down, 
+	// Mouse was released. If it wasn't moved much since the original mouse down,
 	// let the popup stay open. If it did move, assume the user made his selection.
 	int dist = (_clickX - x) * (_clickX - x) + (_clickY - y) * (_clickY - y);
 	if (dist > 3 * 3 || getMillis() - _openTime > 300) {
@@ -201,7 +201,7 @@ bool PopUpDialog::isMouseDown() {
 	// TODO/FIXME - need a way to determine whether any mouse buttons are pressed or not.
 	// Sure, we could just count mouse button up/down events, but that is cumbersome and
 	// error prone. Would be much nicer to add an API to OSystem for this...
-	
+
 	return false;
 }
 

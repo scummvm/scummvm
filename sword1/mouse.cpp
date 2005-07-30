@@ -57,9 +57,9 @@ void Mouse::initialize(void) {
 	_mouseOverride = false;
 	_currentPtrId = _currentLuggageId = 0;
 
-	for (uint8 cnt = 0; cnt < 17; cnt++)	 // force res manager to keep mouse 
+	for (uint8 cnt = 0; cnt < 17; cnt++)	 // force res manager to keep mouse
 		_resMan->resOpen(MSE_POINTER + cnt); // cursors in memory all the time
-	
+
 	_system->showMouse(false);
 	createPointer(0, 0);
 }
@@ -140,7 +140,7 @@ void Mouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 	if (y > 40) {
 		for (uint16 priority = 0; (priority < 10) && (!touchedId); priority++) {
 			for (uint16 cnt = 0; (cnt < _numObjs) && (!touchedId); cnt++) {
-				if ((_objList[cnt].compact->o_priority == priority) && 
+				if ((_objList[cnt].compact->o_priority == priority) &&
 					(Logic::_scriptVars[MOUSE_X] >= (uint32)_objList[cnt].compact->o_mouse_x1) &&
 					(Logic::_scriptVars[MOUSE_X] <= (uint32)_objList[cnt].compact->o_mouse_x2) &&
 					(Logic::_scriptVars[MOUSE_Y] >= (uint32)_objList[cnt].compact->o_mouse_y1) &&
@@ -172,7 +172,7 @@ void Mouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 			if (Logic::_scriptVars[MENU_LOOKING])
 				_logic->cfnPresetScript(NULL, -1, PLAYER, SCR_menu_look, 0, 0, 0, 0);
 		}
-		
+
 		Logic::_scriptVars[MOUSE_BUTTON] = _state & MOUSE_DOWN_MASK;
 		if (Logic::_scriptVars[SPECIAL_ITEM]) {
 			Object *compact = _objMan->fetchObject(Logic::_scriptVars[SPECIAL_ITEM]);

@@ -118,7 +118,7 @@ static void md5_process(md5_context *ctx, const uint8 data[64]) {
 	P(B, C, D, A, 12, 20, 0x8D2A4C8A);
 
 #undef F
-	
+
 #define F(x, y, z) (x ^ y ^ z)
 
 	P(A, B, C, D,  5,  4, 0xFFFA3942);
@@ -245,9 +245,9 @@ bool md5_file(const char *name, uint8 digest[16], const char *directory, uint32 
 		return false;
 	}
 
-	if (!restricted || sizeof(buf) <= length) 
+	if (!restricted || sizeof(buf) <= length)
 		readlen = sizeof(buf);
-	else 
+	else
 		readlen = length;
 
 	md5_starts(&ctx);
@@ -334,7 +334,7 @@ int main(int argc, char *argv[]) {
 			for (j = 0; j < 16; j++) {
 				printf("%02x", md5sum[j]);
 			}
-	
+
 			printf("  %s\n", argv[i]);
 		}
 	}

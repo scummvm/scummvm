@@ -1226,7 +1226,7 @@ void IMuseInternal::initMT32(MidiDriver *midi) {
 	byte buffer[52];
 	char info[256] = "ScummVM ";
 	int len;
-	
+
 	// Reset the MT-32
 	memcpy(&buffer[0], "\x41\x10\x16\x12\x7f\x00\x00\x01\x00", 9);
 	midi->sysEx(buffer, 9);
@@ -1255,7 +1255,7 @@ void IMuseInternal::initMT32(MidiDriver *midi) {
 	midi->sysEx(buffer, 31);
 	g_system->delayMillis(250);
 
-	// Map percussion to notes 24 - 34 without reverb 
+	// Map percussion to notes 24 - 34 without reverb
 	memcpy(&buffer[4], "\x03\x01\x10\x40\x64\x07\x00\x4a\x64\x06\x00\x41\x64\x07\x00\x4b\x64\x08\x00\x45\x64\x06\x00\x44\x64\x0b\x00\x51\x64\x05\x00\x43\x64\x08\x00\x50\x64\x07\x00\x42\x64\x03\x00\x4c\x64\x07\x00\x44", 48);
 	midi->sysEx(buffer, 52);
 	g_system->delayMillis(250);
@@ -1273,23 +1273,23 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 	g_system->delayMillis(200);
 
 	if (_enable_gs) {
-		
+
 		// All GS devices recognize the GS Reset command,
 		// even with Roland's ID. It is impractical to
-		// support other manufacturers' devices for 
+		// support other manufacturers' devices for
 		// further GS settings, as there are limitless
 		// numbers of them out there that would each
 		// require individual SysEx commands with unique IDs.
 
 		// Roland GS SysEx ID
 		memcpy(&buffer[0], "\xF0\x41\x10\x42\x12", 5);
-	
+
 		// GS Reset
 		memcpy(&buffer[5], "\x40\x00\x7F\x00\x41\xF7", 6);
 		midi->sysEx(buffer, 11);
 		debug(2, "GS SysEx: GS Reset");
 		g_system->delayMillis(200);
-		
+
 		if (_sc55) {
 			// This mode is for GS devices that support an MT-32-compatible
 			// Map, such as the Roland Sound Canvas line of modules. It
@@ -1334,7 +1334,7 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 			midi->send((  0    << 16) | (38  << 8) | (0xB0 | i));
 			midi->send((  127  << 16) | (100 << 8) | (0xB0 | i));
 			midi->send((  127  << 16) | (101 << 8) | (0xB0 | i));
-		} 
+		}
 		debug(2, "GM Controller 6 Change: Channels 1-16 Pitch Bend Sensitivity is 12 semitones");
 
 		// Set channels 1-16 Mod. LFO1 Pitch Depth to 4
@@ -1580,7 +1580,7 @@ int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm) {
 
 	ser->saveLoadEntries(this, mainEntries);
 	ser->saveLoadArrayOf(_cmd_queue, ARRAYSIZE(_cmd_queue), sizeof(_cmd_queue[0]), cmdQueueEntries);
-	ser->saveLoadArrayOf(_snm_triggers, ARRAYSIZE(_snm_triggers), sizeof(_snm_triggers[0]), snmTriggerEntries); 
+	ser->saveLoadArrayOf(_snm_triggers, ARRAYSIZE(_snm_triggers), sizeof(_snm_triggers[0]), snmTriggerEntries);
 
 	// The players
 	for (i = 0; i < ARRAYSIZE(_players); ++i)

@@ -65,7 +65,7 @@ protected:
 	void drawCaret(bool erase);
 	bool setCaretPos(int newPos);
 	bool adjustOffset();
-	
+
 	virtual bool tryInsertChar(char c, int pos);
 };
 

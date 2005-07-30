@@ -60,7 +60,7 @@ struct Item {
 	uint16 unk4;
 	uint16 xxx_1;									/* unused? */
 	Child *children;
-	
+
 	Item() { memset(this, 0, sizeof(*this)); }
 };
 
@@ -95,7 +95,7 @@ struct FillOrCopyStruct {
 	FillOrCopyData *fcs_data;
 	FillOrCopyStruct() { memset(this, 0, sizeof(*this)); }
 };
-// note on text offset: 
+// note on text offset:
 // the actual x-coordinate is: textColumn * 8 + textColumnOffset
 // the actual y-coordinate is: textRow * 8
 
@@ -142,7 +142,7 @@ struct GameSpecificSettings {
 	const char mp3_effects_filename[12];
 	const char vorbis_effects_filename[12];
 	const char flac_effects_filename[12];
- 	const char gamepc_filename[12]; 
+ 	const char gamepc_filename[12];
  #endif
 };
 

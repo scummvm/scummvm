@@ -43,7 +43,7 @@ static const Talk::SpeechParameters *_speechParameters;
 #endif
 
 void Talk::talk(
-		const char *filename, 
+		const char *filename,
 		int personInRoom,
 		char *cutawayFilename,
 		QueenEngine *vm) {
@@ -53,7 +53,7 @@ void Talk::talk(
 }
 
 bool Talk::speak(
-		const char *sentence, 
+		const char *sentence,
 		Person *person,
 		const char *voiceFilePrefix,
 		QueenEngine *vm) {
@@ -118,12 +118,12 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 	// Lines 906-? in talk.c
 	_vm->display()->showMouseCursor(true);
-	
+
 	int16 level=1, retval=0;
 	int16 head = _dialogueTree[level][0].head;
 
 	// TODO: split this loop in several functions
-	while (retval != -1) {		
+	while (retval != -1) {
 		char otherVoiceFilePrefix[MAX_STRING_SIZE];
 
 		_talkString[0][0] = '\0';
@@ -200,7 +200,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 		level    = 0;
 
 		// Set LEVEL to the selected child in dialogue tree
-		
+
 		for (i = 1; i <= _levelMax; i++)
 			if (_dialogueTree[i][0].head == head)
 				level = i;
@@ -241,7 +241,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 		// if the selected dialogue line has a POSITIVE game state value
 		// then set gamestate to Value = TALK(OLDLEVEL,S,3)
-		
+
 		index = _dialogueTree[oldLevel][selectedSentence].gameStateIndex;
 		if (index > 0)
 			_vm->logic()->gameState(index, _dialogueTree[oldLevel][selectedSentence].gameStateValue);
@@ -269,7 +269,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 			}
 		}
 	}
-	
+
 	_vm->grid()->setupPanel();
 
 	uint16 offset = _cutawayPtrOff;
@@ -303,14 +303,14 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 		pbs->x = person.actor->x;
 		pbs->y = person.actor->y;
-		
+
 		// Better kick start the persons anim sequence
 		_vm->graphics()->resetPersonAnim(person.actor->bobNum);
 	}
 
 	_vm->logic()->joeWalk(JWM_NORMAL);
 }
-		
+
 void Talk::disableSentence(int oldLevel, int selectedSentence) {
 	// Mark off selected option
 
@@ -351,7 +351,7 @@ byte *Talk::loadDialogFile(const char *filename) {
 		{ "chief1.dog", FRENCH  },
 		{ "chief2.dog", FRENCH  },
 		{ "bud1.dog",   ITALIAN }
-	};	
+	};
 	for (int i = 0; i < ARRAYSIZE(dogFiles); ++i) {
 		if (!scumm_stricmp(filename, dogFiles[i].filename) &&
 			_vm->resource()->getLanguage() == dogFiles[i].lang) {
@@ -399,9 +399,9 @@ void Talk::load(const char *filename) {
 
 	_person1PtrOff = READ_BE_UINT16(ptr); ptr += 2;
 	_cutawayPtrOff = READ_BE_UINT16(ptr); ptr += 2;
-	_person2PtrOff = READ_BE_UINT16(ptr); ptr += 2;	
+	_person2PtrOff = READ_BE_UINT16(ptr); ptr += 2;
 	_joePtrOff     = 32 + _levelMax * 96;
-	
+
 	// Load dialogue tree
 	ptr = _fileData + 32;
 	memset(&_dialogueTree[0], 0, sizeof(_dialogueTree[0]));
@@ -419,7 +419,7 @@ void Talk::load(const char *filename) {
 }
 
 void Talk::initialTalk() {
-	// Lines 848-903 in talk.c 
+	// Lines 848-903 in talk.c
 
 	uint16 offset = _joePtrOff + 2;
 	uint16 hasNotString = READ_BE_UINT16(_fileData + offset); offset += 2;
@@ -436,15 +436,15 @@ void Talk::initialTalk() {
 	getString(_fileData, offset, _person2String, MAX_STRING_LENGTH);
 	getString(_fileData, offset, joe2String, MAX_STRING_LENGTH);
 
-	if (!hasTalkedTo()) {		
-		// Not yet talked to this person		
+	if (!hasTalkedTo()) {
+		// Not yet talked to this person
 		if (joeString[0] != '0') {
 			char voiceFilePrefix[MAX_STRING_SIZE];
 			sprintf(voiceFilePrefix, "%2dSSSSJ", _talkKey);
 			speak(joeString, NULL, voiceFilePrefix);
 		}
 	} else {
-		// Already spoken to them, choose second response		
+		// Already spoken to them, choose second response
 		if (joe2String[0] != '0') {
 			char voiceFilePrefix[MAX_STRING_SIZE];
 			sprintf(voiceFilePrefix, "%2dXXXXJ", _talkKey);
@@ -460,7 +460,7 @@ int Talk::getSpeakCommand(const Person *person, const char *sentence, unsigned &
 	switch (id) {
 	case 'AO':
 		commandCode = SPEAK_AMAL_ON;
-		break;			
+		break;
 	case 'FL':
 		commandCode = SPEAK_FACE_LEFT;
 		break;
@@ -480,10 +480,10 @@ int Talk::getSpeakCommand(const Person *person, const char *sentence, unsigned &
 	case 'GM':
 		_vm->logic()->joeGrab(STATE_GRAB_MID);
 		commandCode = SPEAK_NONE;
-		break; 
+		break;
 	case 'WT':
 		commandCode = SPEAK_PAUSE;
-		break;			
+		break;
 	case 'XY':
 		// For example *XY00(237,112)
 		{
@@ -533,13 +533,13 @@ bool Talk::speak(const char *sentence, Person *person, const char *voiceFilePref
 		joe_actor.bobNum = 0;
 		joe_actor.color = 14;
 		joe_actor.bankNum = 7;
-		
+
 		joe_person.actor = &joe_actor;
 		joe_person.name = "JOE";
 
 		person = &joe_person;
 	}
-	
+
 	debug(6, "Sentence '%s' is said by person '%s' and voice files with prefix '%s' played",
 			sentence, person->name, voiceFilePrefix);
 
@@ -550,7 +550,7 @@ bool Talk::speak(const char *sentence, Person *person, const char *voiceFilePref
 	if (0 == strcmp(person->name, "FAYE-H" ) ||
 		0 == strcmp(person->name, "FRANK-H") ||
 		0 == strcmp(person->name, "AZURA-H") ||
-		0 == strcmp(person->name, "X3_RITA") || 
+		0 == strcmp(person->name, "X3_RITA") ||
 		(0 == strcmp(person->name, "JOE") && _vm->logic()->currentRoom() == FAYE_HEAD ) ||
 		(0 == strcmp(person->name, "JOE") && _vm->logic()->currentRoom() == AZURA_HEAD) ||
 		(0 == strcmp(person->name, "JOE") && _vm->logic()->currentRoom() == FRANK_HEAD))
@@ -567,7 +567,7 @@ bool Talk::speak(const char *sentence, Person *person, const char *voiceFilePref
 
 			if (SPEAK_NONE != command) {
 				speakSegment(
-						sentence + segmentStart, 
+						sentence + segmentStart,
 						segmentLength,
 						person,
 						command,
@@ -587,7 +587,7 @@ bool Talk::speak(const char *sentence, Person *person, const char *voiceFilePref
 
 	if (segmentStart != i) {
 		speakSegment(
-				sentence + segmentStart, 
+				sentence + segmentStart,
 				i - segmentStart,
 				person,
 				0,
@@ -603,7 +603,7 @@ int Talk::countSpaces(const char *segment) {
 
 	while (*segment++)
 		tmp++;
-	
+
 	if (tmp < 10)
 		tmp = 10;
 
@@ -616,7 +616,7 @@ void Talk::headStringAnimation(const SpeechParameters *parameters, int bobNum, i
 
 	if (parameters->animation[0] == 'E') {
 		int offset = 1;
-	
+
 		BobSlot *bob  = _vm->graphics()->bob(bobNum);
 		int16 x = bob->x;
 		int16 y = bob->y;
@@ -693,7 +693,7 @@ void Talk::defaultAnimation(
 		const char *segment,
 		bool isJoe,
 		const SpeechParameters *parameters,
-		int startFrame, 
+		int startFrame,
 		int bankNum) {
 	// lines 1730-1823 in talk.c
 
@@ -740,7 +740,7 @@ void Talk::defaultAnimation(
 
 			if (_vm->input()->talkQuit())
 				break;
-						
+
 			if (_vm->logic()->joeWalk() == JWM_SPEAK) {
 				_vm->update();
 			} else {
@@ -756,7 +756,7 @@ void Talk::defaultAnimation(
 				_vm->sound()->stopSpeech();
 				break;
 			}
-			
+
 			if (_vm->sound()->speechOn() && _vm->sound()->speechSfxExists()) {
 				// sfx is finished, stop the speak animation
 				if (!_vm->sound()->isSpeechActive()) {
@@ -779,8 +779,8 @@ void Talk::defaultAnimation(
 
 
 void Talk::speakSegment(
-		const char *segmentStart, 
-		int length, 
+		const char *segmentStart,
+		int length,
 		Person *person,
 		int command,
 		const char *voiceFilePrefix,
@@ -790,12 +790,12 @@ void Talk::speakSegment(
 	char segment[MAX_STRING_SIZE];
 	memcpy(segment, segmentStart, length);
 	segment[length] = '\0';
-	
+
 	char voiceFileName[MAX_STRING_SIZE];
 	sprintf(voiceFileName, "%s%1x", voiceFilePrefix, index + 1);
 
-	// FIXME - it seems the french talkie version has a useless voice file ; 
-	// the c30e_102 file is very similar to c30e_101, so there is no need to 
+	// FIXME - it seems the french talkie version has a useless voice file ;
+	// the c30e_102 file is very similar to c30e_101, so there is no need to
 	// play it. This voice was used in room 30 (N8) when talking to Klunk.
 	if (!(_vm->resource()->getLanguage() == FRENCH && !strcmp(voiceFileName, "c30e_102"))
 		&& _vm->sound()->speechOn())
@@ -814,7 +814,7 @@ void Talk::speakSegment(
 	case SPEAK_FACE_RIGHT:
 	case SPEAK_FACE_FRONT:
 	case SPEAK_FACE_BACK:
-		faceDirectionCommand = command;	
+		faceDirectionCommand = command;
 		command = 0;
 		break;
 	}
@@ -988,7 +988,7 @@ void Talk::speakSegment(
 			// Joe is facing either Front or Back!
 			//  - Don't FACE_JOE in room 69, because Joe is probably
 			//       holding the Dino Ray gun.
-			if (_vm->logic()->currentRoom() != 69) 
+			if (_vm->logic()->currentRoom() != 69)
 				_vm->logic()->joeFace();
 		} else {
 			if (command == SPEAK_DEFAULT ||
@@ -1000,7 +1000,7 @@ void Talk::speakSegment(
 				if (parameters->rf != -1)
 					// XXX should really be just "bf", but it is not always calculated... :-(
 					_vm->bankMan()->overpack(parameters->bf, startFrame, bankNum);
-				
+
 				if (parameters->ff == 0)
 					_vm->bankMan()->overpack(10, startFrame, bankNum);
 				else
@@ -1013,8 +1013,8 @@ void Talk::speakSegment(
 }
 
 const Talk::SpeechParameters *Talk::findSpeechParameters(
-		const char *name, 
-		int state, 
+		const char *name,
+		int state,
 		int faceDirection) {
 	const SpeechParameters *iterator = _speechParameters;
 	if (faceDirection == DIR_RIGHT)
@@ -1115,7 +1115,7 @@ int Talk::splitOptionHebrew(const char *str, char optionText[5][MAX_STRING_SIZE]
 				strcpy(tmpString, optionText[optionLines]);
 				strncpy(optionText[optionLines], p + 1, len);
 				optionText[optionLines][len] = '\0';
-				strcat(optionText[optionLines], tmpString);				
+				strcat(optionText[optionLines], tmpString);
 			}
 			++optionLines;
 		}
@@ -1216,8 +1216,8 @@ int16 Talk::selectSentence() {
 				for (j = 0; j < optionLines; j++) {
 					if (yOffset < 5) {
 						_vm->display()->setText(
-								(j == 0) ? 0 : OPTION_TEXT_MARGIN, 
-								150 - PUSHUP + yOffset * LINE_HEIGHT, 
+								(j == 0) ? 0 : OPTION_TEXT_MARGIN,
+								150 - PUSHUP + yOffset * LINE_HEIGHT,
 								optionText[j]);
 					}
 					yOffset++;
@@ -1326,38 +1326,38 @@ int16 Talk::selectSentence() {
 
 		speak(_talkString[selectedSentence], NULL, _joeVoiceFilePrefix[selectedSentence]);
 	}
-	
+
 	_vm->display()->clearTexts(151, 151);
 
 	return selectedSentence;
 }
-	
+
 #ifndef __PALM_OS__
 const Talk::SpeechParameters Talk::_speechParameters[] = {
 	{ "JOE", 0, 1, 1, 10, 2, 3, "", 0 },
 	{ "JOE", 0, 3, 3, 28, 2, 3, "", 0 },
 	{ "JOE", 0, 4, 5, 38, 1, 0, "", 0 },
-	
+
 	{ "JOE", 1, 1, 1, 45, -1, 0, "", 0 },
 	{ "JOE", 1, 3, 3, 28,  2, 3, "", 0 },
 	{ "JOE", 1, 4, 5, 38,  1, 0, "", 0 },
-	
+
 	{ "JOE", 2, 1, 1, 46, -1, 0, "", 0 },
 	{ "JOE", 2, 3, 3, 28,  2, 3, "", 0 },
 	{ "JOE", 2, 4, 5, 38,  1, 0, "", 0 },
-	
+
 	{ "JOE", 3, 1, 1, 47, -1, 0, "", 0 },
 	{ "JOE", 3, 3, 3, 28,  2, 3, "", 0 },
 	{ "JOE", 3, 4, 5, 38,  1, 0, "", 0 },
-	
+
 	{ "JOE", 4, 1, 1, 50, -1, 0, "", 0 },
 	{ "JOE", 4, 3, 3, 28,  2, 3, "", 0 },
 	{ "JOE", 4, 4, 5, 38,  1, 0, "", 0 },
-	
+
 	{ "JOE", 5, 1, 2, 0, 0, 0, "", 0 },
 	{ "JOE", 5, 3, 4, 0, 0, 0, "", 0 },
 	{ "JOE", 5, 4, 6, 0, 0, 0, "", 0 },
-	
+
 	{ "JOE", 6, 1, 1, 48, 0, 1, "", 0 },
 	{ "JOE", 6, 3, 3, 28, 2, 3, "", 0 },
 	{ "JOE", 6, 4, 5, 38, 1, 0, "", 0 },
@@ -1365,27 +1365,27 @@ const Talk::SpeechParameters Talk::_speechParameters[] = {
 	{ "JOE", 7, 1, 1, 51, 0, 1, "", 0 },
 	{ "JOE", 7, 3, 3, 28, 2, 3, "", 0 },
 	{ "JOE", 7, 4, 5, 38, 1, 0, "", 0 },
-	
+
 	{ "JOE", 8, 1, 1, 26, 0, 0, "", 0 },
 	{ "JOE", 8, 3, 3, 28, 2, 3, "", 0 },
 	{ "JOE", 8, 4, 5, 38, 1, 0, "", 0 },
-	
+
 	{ "JOE", 9, 1, 1, 29, 0, 0, "", 0 },
 	{ "JOE", 9, 3, 3, 28, 0, 0, "", 0 },
 	{ "JOE", 9, 4, 5, 38, 0, 0, "", 0 },
-	
+
 	{ "JOE", 10, 1, 1, 12, 0, 0, "T046,010,010,010,012,012,012,012,012,012,012,012,012,012,012,012,012,012,010,000", 0 },
 	{ "JOE", 10, 3, 3, 18, 0, 0, "", 0 },
 	{ "JOE", 10, 4, 5, 44, 0, 0, "", 0 },
-	
+
 	{ "JOE", 11, 1, 1, 53, -1, 0, "", 0 },
 	{ "JOE", 11, 3, 3, 28,  2, 3, "", 0 },
 	{ "JOE", 11, 4, 5, 38,  1, 0, "", 0 },
-	
+
 	{ "JOE", 12, 1, 1, 10, 2, 3, "", 0 },
 	{ "JOE", 12, 3, 3, 28, 2, 0, "", 0 },
 	{ "JOE", 12, 4, 5, 38, 1, 0, "", 0 },
-	
+
 	{ "JOE", 13, 1, 1, 10, 2, 3, "T012,013,019,019,019,019,019,019,019,019,019,019,013,010,000", 0 },
 	{ "JOE", 13, 3, 3, 28, 2, 3, "", 0 },
 	{ "JOE", 13, 4, 5, 38, 1, 0, "", 0 },

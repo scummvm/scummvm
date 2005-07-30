@@ -166,18 +166,18 @@ bool Grid::getGridValues(Compact *cpt, uint8 *resGrid, uint32 *resBitNum, uint32
 
 bool Grid::getGridValues(uint32 x, uint32 y, uint32 width, Compact *cpt, uint8 *resGrid, uint32 *resBitNum, uint32 *resWidth) {
 	uint32 bitPos;
-	if (y < TOP_LEFT_Y) 
+	if (y < TOP_LEFT_Y)
 		return false; // off screen
 	y -= TOP_LEFT_Y;
 	y >>= 3; // convert to blocks
-	if (y >= GAME_SCREEN_HEIGHT >> 3) 
+	if (y >= GAME_SCREEN_HEIGHT >> 3)
 		return false; // off screen
 	bitPos = y * 40;
 	width++;
 	x >>= 3; // convert to blocks
-	
+
 	if (x < (TOP_LEFT_X >> 3)) { // at least partially off screen
-		if (x + width < (TOP_LEFT_X >> 3)) 
+		if (x + width < (TOP_LEFT_X >> 3))
 			return false; // completely off screen
 		else {
 			width -= (TOP_LEFT_X >> 3) - x;
@@ -186,7 +186,7 @@ bool Grid::getGridValues(uint32 x, uint32 y, uint32 width, Compact *cpt, uint8 *
 	} else
 		x -= TOP_LEFT_X >> 3;
 
-	if ((GAME_SCREEN_WIDTH >> 3) <= x) 
+	if ((GAME_SCREEN_WIDTH >> 3) <= x)
 		return false; // off screen
 	if ((GAME_SCREEN_WIDTH >> 3) < x + width) // partially off screen
 		width = (GAME_SCREEN_WIDTH >> 3) - x;

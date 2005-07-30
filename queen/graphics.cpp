@@ -195,7 +195,7 @@ static int compareBobDrawOrder(const void *a, const void *b) {
 	const BobSlot *bob2 = *(const BobSlot * const *)b;
 	int d = bob1->y - bob2->y;
 	// As the qsort() function may reorder "equal" elements,
-	// we use the bob slot number when needed. This is required 
+	// we use the bob slot number when needed. This is required
 	// during the introduction, to hide a crate behind the clock.
 	if (d == 0) {
 		d = bob1 - bob2;
@@ -466,7 +466,7 @@ void Graphics::setBobText(const BobSlot *pbs, const char *text, int textX, int t
 		}
 	}
 
-	// Find width of widest line 
+	// Find width of widest line
 
 	int maxLineWidth = 0;
 
@@ -582,7 +582,7 @@ void Graphics::setupNewRoom(const char *room, uint16 roomNum, int16 *furniture, 
 	clearBobs();
 
 	// load/setup objects associated to this room
-	char filename[20];	
+	char filename[20];
 	sprintf(filename, "%s.BBK", room);
 	_vm->bankMan()->load(filename, 15);
 
@@ -824,7 +824,7 @@ uint16 Graphics::refreshObject(uint16 obj) {
 	if (image > 5000) {
 		image -= 5000;
 	}
-	
+
 	GraphicData *pgd = _vm->logic()->graphicData(image);
 	bool rebound = false;
 	int16 lastFrame = pgd->lastFrame;
@@ -925,7 +925,7 @@ void Graphics::setupRoomFurniture(int16 *furniture, uint16 furnitureCount) {
 
 void Graphics::setupRoomObjects() {
 	uint16 i;
-	// furniture frames are reserved in ::setupRoomFurniture(), we append objects 
+	// furniture frames are reserved in ::setupRoomFurniture(), we append objects
 	// frames after the furniture ones.
 	uint16 curImage = FRAMES_JOE + _numFurnitureStatic + _numFurnitureAnimatedLen;
 	uint16 firstRoomObj = _vm->logic()->currentRoomData() + 1;
@@ -942,7 +942,7 @@ void Graphics::setupRoomObjects() {
 	// static/animated Bobs
 	for (i = firstRoomObj; i <= lastRoomObj; ++i) {
 		ObjectData *pod = _vm->logic()->objectData(i);
-		// setup blanks bobs for turned off objects (in case 
+		// setup blanks bobs for turned off objects (in case
 		// you turn them on again)
 		if (pod->image == -1) {
 			// static OFF Bob
@@ -1059,7 +1059,7 @@ uint16 Graphics::setupPerson(uint16 noun, uint16 curImage) {
 
 	debug(6, "Graphics::setupPerson(%d, %d) - bob = %d name = %s", noun, curImage, pad->bobNum, p.name);
 
-	if (p.anim != NULL) {		
+	if (p.anim != NULL) {
 		curImage = setupPersonAnim(pad, p.anim, curImage);
 	} else {
 		erasePersonAnim(pad->bobNum);
@@ -1093,7 +1093,7 @@ BamScene::BamScene(QueenEngine *vm)
 
 void BamScene::playSfx() {
 	// FIXME - we don't play all sfx here. This is only necessary for
-	// the fight bam, where the number of 'sfx bam frames' is too much 
+	// the fight bam, where the number of 'sfx bam frames' is too much
 	// important / too much closer. The original game does not have
 	// this problem since their playSfx() function returns immediately
 	// if a sound is already being played.
@@ -1170,7 +1170,7 @@ void BamScene::updateFightAnimation() {
 		_obj2->curPos(bdb->obj2.x, bdb->obj2.y);
 		_obj2->frameNum = 40 + ABS(bdb->obj2.frame);
 		_obj2->xflip = (bdb->obj2.frame < 0);
-	
+
 		// FX
 		_objfx->curPos(bdb->fx.x, bdb->fx.y);
 		_objfx->frameNum = 40 + ABS(bdb->fx.frame);

@@ -198,7 +198,7 @@ uint16 *AutoRoute::makeRouteData(uint8 startX, uint8 startY, uint8 destX, uint8 
 	uint16 lastVal = (*routePos) - 1;
 	while (lastVal) { // lastVal == 0 means route is done.
 		dataTrg -= 2;
-		
+
 		int16 walkDirection = 0;
 		for (uint8 cnt = 0; cnt < 4; cnt++)
 			if (lastVal == *(routePos + _routeDirections[cnt])) {
@@ -258,7 +258,7 @@ uint16 AutoRoute::autoRoute(Compact *cpt) {
 			   coordinates (2/14). This is normally not too tragic, but in the
 			   scene when foster gets thrown out by Lamb (first time you enter
 			   the pipe factory), the game would enter an infinite loop. */
-			_routeGrid[(destY + 1) * ROUTE_GRID_WIDTH + destX + 1] = 0; 
+			_routeGrid[(destY + 1) * ROUTE_GRID_WIDTH + destX + 1] = 0;
 			// hide this part joey from the grid
 		} else
 			return 1; // AR destination is an unaccessible block

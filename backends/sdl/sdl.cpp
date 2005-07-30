@@ -58,9 +58,9 @@ void OSystem_SDL::initBackend() {
 	_graphicsMutex = createMutex();
 
 	SDL_ShowCursor(SDL_DISABLE);
-	
+
 	// Enable unicode support if possible
-	SDL_EnableUNICODE(1); 
+	SDL_EnableUNICODE(1);
 
 	_cksumValid = false;
 #if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
@@ -88,7 +88,7 @@ void OSystem_SDL::initBackend() {
 		printf("Using joystick: %s\n", SDL_JoystickName(0));
 		_joystick = SDL_JoystickOpen(joystick_num);
 	}
-	
+
 	_inited = true;
 }
 
@@ -120,7 +120,7 @@ OSystem_SDL::OSystem_SDL()
 	// reset mouse state
 	memset(&_km, 0, sizeof(_km));
 	memset(&_mouseCurState, 0, sizeof(_mouseCurState));
-	
+
 	_inited = false;
 }
 
@@ -132,7 +132,7 @@ OSystem_SDL::~OSystem_SDL() {
 }
 
 uint32 OSystem_SDL::getMillis() {
-	return SDL_GetTicks();	
+	return SDL_GetTicks();
 }
 
 void OSystem_SDL::delayMillis(uint msecs) {
@@ -165,9 +165,9 @@ void OSystem_SDL::setFeatureState(Feature f, bool enable) {
 		break;
 	case kFeatureAutoComputeDirtyRects:
 		if (enable)
-			_modeFlags |= DF_WANT_RECT_OPTIM;		
+			_modeFlags |= DF_WANT_RECT_OPTIM;
 		else
-			_modeFlags &= ~DF_WANT_RECT_OPTIM;		
+			_modeFlags &= ~DF_WANT_RECT_OPTIM;
 		break;
 	default:
 		break;
@@ -231,7 +231,7 @@ void OSystem_SDL::setupIcon() {
 			warning("Could not load the icon (%d %s - %s) ", code, color, scummvm_icon[1 + i]);
 			return;
 		}
-		
+
 		rgba[code] = col;
 	}
 	memset(mask, 0, sizeof(mask));
@@ -340,7 +340,7 @@ bool OSystem_SDL::openCD(int drive) {
 			_cdEndTime = 0;
 		}
 	}
-	
+
 	return (_cdrom != NULL);
 }
 
@@ -355,7 +355,7 @@ void OSystem_SDL::playCD(int track, int num_loops, int start_frame, int duration
 
 	if (!_cdrom)
 		return;
-	
+
 	if (duration > 0)
 		duration += 5;
 

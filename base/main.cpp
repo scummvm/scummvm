@@ -27,7 +27,7 @@
  * Currently not much is actually properly documented, but at least you can get an overview
  * of almost all the classes, methods and variables, and how they interact.
  */
- 
+
 #include "common/stdafx.h"
 #include "base/engine.h"
 #include "base/gameDetector.h"
@@ -43,7 +43,7 @@
 #include "sound/mididrv.h"
 
 #ifdef _WIN32_WCE
-#include "backends/wince/CELauncherDialog.h" 
+#include "backends/wince/CELauncherDialog.h"
 #endif
 
 #ifdef __DC__
@@ -146,7 +146,7 @@ const char* stackCookie = "$STACK: 655360\0";
 extern "C" int main(int argc, char *argv[]);
 #endif
 
-#if defined(MACOSX) || defined(QTOPIA) || defined(__SYMBIAN32__) 
+#if defined(MACOSX) || defined(QTOPIA) || defined(__SYMBIAN32__)
 #include <SDL.h>
 #elif !defined(__MORPHOS__) && !defined(__DC__) && !defined(__GP32__)
 #undef main
@@ -218,22 +218,22 @@ static void setupDummyPalette(OSystem &system) {
 	// 1) allow for 16 bit mouse cursors in overlay mode
 	// 2) no need to backup & restore the mouse cursor before/after the overlay is shown
 	const byte dummy_palette[] = {
-		0, 0, 0, 0, 
-		0, 0, 171, 0, 
-		0, 171, 0, 0, 
-		0, 171, 171, 0, 
-		171, 0, 0, 0, 
-		171, 0, 171, 0, 
-		171, 87, 0, 0, 
-		171, 171, 171, 0, 
-		87, 87, 87, 0, 
-		87, 87, 255, 0, 
-		87, 255, 87, 0, 
-		87, 255, 255, 0, 
-		255, 87, 87, 0, 
-		255, 87, 255, 0, 
-		255, 255, 87, 0, 
-		255, 255, 255, 0, 
+		0, 0, 0, 0,
+		0, 0, 171, 0,
+		0, 171, 0, 0,
+		0, 171, 171, 0,
+		171, 0, 0, 0,
+		171, 0, 171, 0,
+		171, 87, 0, 0,
+		171, 171, 171, 0,
+		87, 87, 87, 0,
+		87, 87, 255, 0,
+		87, 255, 87, 0,
+		87, 255, 255, 0,
+		255, 87, 87, 0,
+		255, 87, 255, 0,
+		255, 255, 87, 0,
+		255, 255, 255, 0,
 	};
 
 	system.setPalette(dummy_palette, 0, 16);
@@ -244,12 +244,12 @@ static bool launcherDialog(GameDetector &detector, OSystem &system) {
 	system.beginGFXTransaction();
 		// Set the user specified graphics mode (if any).
 		system.setGraphicsMode(ConfMan.get("gfx_mode").c_str());
-	
+
 		// Make GUI 640 x 400
 		system.initSize(320, 200, (detector._force1xOverlay ? 1 : 2));
 	system.endGFXTransaction();
 
-	
+
 	// Clear the main screen
 	system.clearScreen();
 
@@ -283,12 +283,12 @@ static int runGame(GameDetector &detector, OSystem &system) {
 
 	if (caption.isEmpty() && detector._game.description)
 		caption = detector._game.description;
-	if (caption.isEmpty())	
+	if (caption.isEmpty())
 		caption = detector._targetName;
 	if (!caption.isEmpty())	{
 		system.setWindowCaption(caption.c_str());
 	}
-	
+
 	// Add extrapath (if any) to the directory search list
 	if (ConfMan.hasKey("extrapath"))
 		Common::File::addDefaultDirectory(ConfMan.get("extrapath"));
@@ -311,7 +311,7 @@ static int runGame(GameDetector &detector, OSystem &system) {
 
 	// Stop all sound processing now (this prevents some race conditions later on)
 	system.clearSoundCallback();
-	
+
 	return result;
 }
 
@@ -412,7 +412,7 @@ extern "C" int main(int argc, char *argv[]) {
 	GUI::Actions::init(detector);
 #endif
 
-	// Ensure the system object exists (it may have already been created 
+	// Ensure the system object exists (it may have already been created
 	// at an earlier point, though!)
 	OSystem &system = OSystem::instance();
 
@@ -470,7 +470,7 @@ extern "C" int main(int argc, char *argv[]) {
 	// ...and quit (the return 0 should never be reached)
 	delete Common::g_timer;
 	system.quit();
-	
+
 	error("If you are seeing this, your OSystem backend is not working properly");
 
 	return 0;
@@ -513,7 +513,7 @@ void CDECL debug(int level, const char *s, ...) {
 	vsnprintf(buf, STRINGBUFLEN, s, va);
 #endif
 	va_end(va);
-	
+
 	debugHelper(buf);
 }
 

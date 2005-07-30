@@ -117,10 +117,10 @@ public:
 	void delayMillis(uint msecs);
 
 	// Get the next event.
-	// Returns true if an event was retrieved.  
+	// Returns true if an event was retrieved.
 	bool pollEvent(Event &event);
 
-	// Set function that generates samples 
+	// Set function that generates samples
 	bool setSoundCallback(SoundProc proc, void *param);
 	void clearSoundCallback();
 
@@ -369,7 +369,7 @@ OSystem_X11::OSystem_X11() {
 	cur_state.hot_y = 0;
 	cur_state.w = 0;
 	cur_state.h = 0;
-	
+
 	/* For the window title */
 	sprintf(buf, "ScummVM");
 
@@ -381,7 +381,7 @@ OSystem_X11::OSystem_X11() {
 
 	if (XShmQueryExtension(display)!=True)
 		error("No Shared Memory Extension present");
-	
+
 	screen = DefaultScreen(display);
 	depth = DefaultDepth(display,screen);
 	if (depth != 16)
@@ -484,15 +484,15 @@ void OSystem_X11::initSize(uint w, uint h, int overlaySize) {
 
 		XConfigureWindow(display, window, CWWidth | CWHeight, &new_values);
 	}
-	
+
 	image =	XShmCreateImage(display, DefaultVisual(display, screen), depth, ZPixmap, NULL, &shminfo, fb_width, fb_height);
 	if (!image)
 		error("Couldn't get image by XShmCreateImage()");
-	
+
 	shminfo.shmid = shmget(IPC_PRIVATE, image->bytes_per_line * image->height, IPC_CREAT | 0700);
 	if (shminfo.shmid < 0)
 		error("Couldn't allocate image data by shmget()");
-	
+
 	image->data = shminfo.shmaddr = (char *)shmat(shminfo.shmid, 0, 0);
 	shminfo.readOnly = False;
 	if (XShmAttach(display, &shminfo) == 0) {
@@ -596,12 +596,12 @@ void OSystem_X11::updateScreen_helper(const dirty_square * d, dirty_square * dou
 		uint16 *ptr_src = local_fb_overlay + (fb_width * d->y) + d->x;
 		uint16 *ptr_dst = ((uint16 *)image->data) + (fb_width * d->y) + d->x;
 		int y;
-		
+
 		for (y = 0; y < d->h; y++) {
 			memcpy(ptr_dst, ptr_src, d->w * sizeof(uint16));
 			ptr_dst += fb_width;
 			ptr_src += fb_width;
-		}	
+		}
 	}
 	if (d->x < dout->x)
 		dout->x = d->x;
@@ -618,7 +618,7 @@ void OSystem_X11::updateScreen() {
 	bool need_redraw = false;
 	static const dirty_square ds_full = { 0, 0, fb_width, fb_height };
 	dirty_square dout = { fb_width, fb_height, 0, 0 };
-	
+
 	if (_palette_changed) {
 		full_redraw = true;
 		num_of_dirty_square = 0;
@@ -724,7 +724,7 @@ void OSystem_X11::draw_mouse(dirty_square *dout) {
 		return;
 	}
 
-	
+
 	if (xdraw < dout->x)
 		dout->x = xdraw;
 	if (ydraw < dout->y)
@@ -908,7 +908,7 @@ bool OSystem_X11::pollEvent(Event &scumm_event) {
 				case 132:
 					report_presses = 0;
 					break;
-	
+
 				case 133:
 					fake_right_mouse = 1;
 					break;
@@ -1083,7 +1083,7 @@ void OSystem_X11::clearOverlay() {
 void OSystem_X11::grabOverlay(int16 *dest, int pitch) {
 	if (_overlay_visible == false)
 		return;
-	
+
 	dirty_square d = { 0, 0, fb_width, fb_height };
 	blit_convert(&d, (uint16 *) dest, pitch);
 }

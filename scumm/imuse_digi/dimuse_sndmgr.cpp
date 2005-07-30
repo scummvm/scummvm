@@ -339,7 +339,7 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 	const bool header_outside = ((_vm->_gameId == GID_CMI) && !(_vm->_features & GF_DEMO));
 	bool result = false;
 	byte *ptr = NULL;
-	
+
 	switch (soundType) {
 	case IMUSE_RESOURCE:
 		assert(soundName[0] == 0);	// Paranoia check
@@ -502,7 +502,7 @@ int ImuseDigiSndMgr::getJumpIdByRegionAndHookId(soundStruct *soundHandle, int re
 				return l;
 		}
 	}
-	
+
 	return -1;
 }
 
@@ -571,7 +571,7 @@ int32 ImuseDigiSndMgr::getDataFromRegion(soundStruct *soundHandle, int region, b
 	} else if (soundHandle->resPtr) {
 		*buf = (byte *)malloc(size);
 		memcpy(*buf, soundHandle->resPtr + start + offset + header_size, size);
-	} else if ((soundHandle->bundle) && (soundHandle->compressed)) {	
+	} else if ((soundHandle->bundle) && (soundHandle->compressed)) {
 		*buf = (byte *)malloc(size);
 		char fileName[24];
 		sprintf(fileName, "%s_reg%03d", soundHandle->name, region);

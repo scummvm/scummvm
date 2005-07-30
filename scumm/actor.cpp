@@ -75,7 +75,7 @@ void Actor::initActor(int mode) {
 		_walkdata.point3.x = 32000;
 		_walkScript = 0;
 		memset(_heTalkQueue, 0, sizeof(_heTalkQueue));
-		
+
 		mode = 1;
 	}
 
@@ -250,7 +250,7 @@ int Actor::remapDirection(int dir, bool is_walking) {
 	// The Dig also checks if the actor is in the current room, but that's
 	// not necessary here because we never call the function unless the
 	// actor is in the current room anyway.
-	
+
 	if (!_ignoreBoxes || (_vm->_gameId == GID_LOOM || _vm->_gameId == GID_LOOM256)) {
 		specdir = _vm->_extraBoxFlags[_walkbox];
 		if (specdir) {
@@ -337,7 +337,7 @@ int Actor::updateActorDirection(bool is_walking) {
 	if (_vm->_version >= 7)
 		// Direction interpolation interfers with walk scripts in Dig; they perform
 		// (much better) interpolation themselves.
-		shouldInterpolate = false;	
+		shouldInterpolate = false;
 	else
 		shouldInterpolate = (dir & 1024) ? true : false;
 	dir &= 1023;
@@ -686,7 +686,7 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 			// Skip over invisible boxes
 			if (flags & kBoxInvisible && !(flags & kBoxPlayerOnly && !isPlayer()))
 				continue;
-			
+
 			// For increased performance, we perform a quick test if
 			// the coordinates can even be within a distance of 'threshold'
 			// pixels of the box.
@@ -709,7 +709,7 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 			if (tmpDist < bestDist) {
 				abr.x = tmpX;
 				abr.y = tmpY;
-	
+
 				if (tmpDist == 0) {
 					abr.box = box;
 					return abr;
@@ -756,7 +756,7 @@ void Actor::adjustActorPos() {
 
 void Actor::faceToObject(int obj) {
 	int x2, y2, dir;
-	
+
 	if (!isInCurrentRoom())
 		return;
 
@@ -909,7 +909,7 @@ void ScummEngine::playActorSounds() {
 
 Actor *ScummEngine::derefActor(int id, const char *errmsg) const {
 	if (id == 0)
-		debugC(DEBUG_ACTORS, "derefActor(0, \"%s\") in script %d, opcode 0x%x", 
+		debugC(DEBUG_ACTORS, "derefActor(0, \"%s\") in script %d, opcode 0x%x",
 			errmsg, vm.slot[_curExecScript].number, _opcode);
 
 	if (id < 0 || id >= _numActors || _actors[id]._number != id) {
@@ -923,7 +923,7 @@ Actor *ScummEngine::derefActor(int id, const char *errmsg) const {
 
 Actor *ScummEngine::derefActorSafe(int id, const char *errmsg) const {
 	if (id == 0)
-		debugC(DEBUG_ACTORS, "derefActorSafe(0, \"%s\") in script %d, opcode 0x%x", 
+		debugC(DEBUG_ACTORS, "derefActorSafe(0, \"%s\") in script %d, opcode 0x%x",
 			errmsg, vm.slot[_curExecScript].number, _opcode);
 
 	if (id < 0 || id >= _numActors || _actors[id]._number != id) {
@@ -1006,7 +1006,7 @@ void ScummEngine::processActors() {
 			a->animateCostume();
 		}
 	}
-	
+
 	if (_features & GF_NEW_COSTUMES)
 		akos_processQueue();
 }
@@ -1063,7 +1063,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	if (!hitTestMode) {
 		if (!_needRedraw)
 			return;
-	
+
 		_needRedraw = false;
 	}
 
@@ -1142,7 +1142,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 
 	bcr->_skipLimbs = (_heSkipLimbs != 0);
 	bcr->_paletteNum = _hePaletteNum;
-	
+
 	if (_vm->_heversion >= 80 && _heNoTalkAnimation == 0) {
 		_heCondMask &= 0xFFFFFC00;
 		_heCondMask |= 1;
@@ -1151,7 +1151,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 			// Otherwise just do rand animation
 			int rnd = _vm->_rnd.getRandomNumberRng(1, 10);
 			setTalkCondition(rnd);
-		} 
+		}
 	}
 	_heNoTalkAnimation = 0;
 
@@ -1180,7 +1180,7 @@ bool Actor::actorHitTest(int x, int y) {
 	drawActorCostume(true);
 
 	ar->_actorHitMode = false;
-	
+
 	return ar->_actorHitResult;
 }
 #endif
@@ -1192,7 +1192,7 @@ void Actor::animateCostume() {
 	_animProgress++;
 	if (_animProgress >= _animSpeed) {
 		_animProgress = 0;
-		
+
 		_vm->_costumeLoader->loadCostume(_costume);
 		if (_vm->_costumeLoader->increaseAnims(this)) {
 			_needRedraw = true;
@@ -1202,9 +1202,9 @@ void Actor::animateCostume() {
 
 #ifndef DISABLE_SCUMM_7_8
 void Actor::animateLimb(int limb, int f) {
-	// This methods is very similiar to animateCostume(). 
+	// This methods is very similiar to animateCostume().
 	// However, instead of animating *all* the limbs, it only animates
-	// the specified limb to be at the frame specified by "f". 
+	// the specified limb to be at the frame specified by "f".
 
 	if (!f)
 		return;
@@ -1223,9 +1223,9 @@ void Actor::animateLimb(int limb, int f) {
 
 		aksq = _vm->findResourceData(MKID('AKSQ'), akos);
 		akfo = _vm->findResourceData(MKID('AKFO'), akos);
-	
+
 		size = _vm->getResourceDataSize(akfo) / 2;
-	
+
 		while (f--) {
 			if (_cost.active[limb] != 0)
 				_vm->akos_increaseAnim(this, limb, aksq, (const uint16 *)akfo, size);
@@ -1334,7 +1334,7 @@ void ScummEngine_v7::actorTalk(const byte *msg) {
 	Actor *a;
 
 	convertMessageToString(msg, _charsetBuffer, sizeof(_charsetBuffer));
-	
+
 	// Play associated speech, if any
 	playSpeech((byte *)_lastStringTag);
 
@@ -1375,8 +1375,8 @@ void ScummEngine::actorTalk(const byte *msg) {
 	Actor *a;
 
 	convertMessageToString(msg, _charsetBuffer, sizeof(_charsetBuffer));
-	
-	// FIXME: Workaround for bugs #770039 and #770049 
+
+	// FIXME: Workaround for bugs #770039 and #770049
 	if (_gameId == GID_LOOM || _gameId == GID_LOOM256) {
 		if (!*_charsetBuffer)
 			return;
@@ -1389,13 +1389,13 @@ void ScummEngine::actorTalk(const byte *msg) {
 		setTalkingActor(0xFF);
 	} else {
 		int oldact;
-		
+
 		// FIXME: Workaround for bug #770724
 		if (_gameId == GID_LOOM && _roomResource == 23 &&
 			vm.slot[_currentScript].number == 232 && _actorToPrintStrFor == 0) {
 			_actorToPrintStrFor = 2;	// Could be anything from 2 to 5. Maybe compare to original?
 		}
-		
+
 		a = derefActor(_actorToPrintStrFor, "actorTalk");
 		if (!a->isInCurrentRoom() && (_version <= 6)) {
 			oldact = 0xFF;
@@ -1436,7 +1436,7 @@ void ScummEngine::actorTalk(const byte *msg) {
 }
 
 void Actor::runActorTalkScript(int f) {
-	if (_vm->_version == 8 && _vm->VAR(_vm->VAR_HAVE_MSG) == 2) 
+	if (_vm->_version == 8 && _vm->VAR(_vm->VAR_HAVE_MSG) == 2)
 		return;
 
 	if (_talkScript) {
@@ -1496,15 +1496,15 @@ void Actor::setActorCostume(int c) {
 		c &= 0xff;
 
 	_costumeNeedsInit = true;
-	
+
 	if (_vm->_features & GF_NEW_COSTUMES) {
 		memset(_animVariable, 0, sizeof(_animVariable));
-		
+
 #ifndef DISABLE_HE
 		if (_vm->_heversion >= 71)
 			((ScummEngine_v71he *)_vm)->queueAuxBlock(this);
 #endif
-		
+
 		_costume = c;
 		_cost.reset();
 		_auxBlock.reset();
@@ -1698,7 +1698,7 @@ void Actor::walkActor() {
 		}
 
 		_walkdata.curbox = next_box;
-		
+
 		if (findPathTowards(_walkbox, next_box, _walkdata.destbox, foundPath))
 			break;
 
@@ -1725,10 +1725,10 @@ void Actor::walkActorV12() {
 			_moving = 0;
 		return;
 	}
-	
+
 	if (!_moving)
 		return;
-	
+
 	if (_moving & MF_IN_LEG) {
 		actorWalkStep();
 	} else {
@@ -1746,7 +1746,7 @@ void Actor::walkActorV12() {
 					_moving |= MF_LAST_LEG;
 					return;
 				}
-		
+
 				// Can't walk through locked boxes
 				int flags = _vm->getBoxFlags(next_box);
 				if (flags & kBoxLocked && !(flags & kBoxPlayerOnly && !isPlayer())) {
@@ -1770,7 +1770,7 @@ void Actor::walkActorOld() {
 
 	if (!_moving)
 		return;
-	
+
 	if (!(_moving & MF_NEW_LEG)) {
 		if (_moving & MF_IN_LEG && actorWalkStep())
 			return;
@@ -1815,7 +1815,7 @@ void Actor::walkActorOld() {
 
 		next_box = _vm->getPathToDestBox(_walkbox, _walkdata.destbox);
 
-		// WORKAROUND: To fully fix bug #774783, we add a special case 
+		// WORKAROUND: To fully fix bug #774783, we add a special case
 		// here, resulting in a different next_box value for Hitler.
 		if ((_vm->_gameId == GID_INDY3) && _vm->_roomResource == 46 && _walkbox == 1 && _walkdata.destbox == 0 && _number == 9)
 			next_box = 1;
@@ -1824,7 +1824,7 @@ void Actor::walkActorOld() {
 			_moving |= MF_LAST_LEG;
 			return;
 		}
-		
+
 		// Can't walk through locked boxes
 		int flags = _vm->getBoxFlags(next_box);
 		if (flags & kBoxLocked && !(flags & kBoxPlayerOnly && !isPlayer())) {
@@ -1847,7 +1847,7 @@ void Actor::walkActorOld() {
 			if (p2.x == 32000 && p3.x == 32000) {
 				break;
 			}
-	
+
 			if (p2.x != 32000) {
 				if (calcMovementFactor(p2)) {
 					_walkdata.point3 = p3;
@@ -2014,10 +2014,10 @@ void Actor::setTalkCondition(int slot) {
 		} else {
 			_heCondMask |= 1;
 		}
-	}	
+	}
 }
 
-bool Actor::isTalkConditionSet(int slot) const {	
+bool Actor::isTalkConditionSet(int slot) const {
 	assert(slot >= 1 && slot <= 0x10);
 	return (_heCondMask & (1 << (slot - 1))) != 0;
 }
@@ -2085,7 +2085,7 @@ void ScummEngine_v71he::postProcessAuxQueue() {
 						int x1 = (int16)READ_LE_UINT16(axur + 0) + dx;
 						int y1 = (int16)READ_LE_UINT16(axur + 2) + dy;
 						int x2 = (int16)READ_LE_UINT16(axur + 4) + dx;
-						int y2 = (int16)READ_LE_UINT16(axur + 6) + dy;					
+						int y2 = (int16)READ_LE_UINT16(axur + 6) + dy;
 						markRectAsDirty(kMainVirtScreen, x1, x2, y1, y2 + 1);
 						axur += 8;
 					}
@@ -2173,7 +2173,7 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 		// Actor palette grew from 64 to 256 bytes
 		MKARRAY_OLD(Actor, _palette[0], sleByte, 64, VER(8), VER(9)),
 		MKARRAY(Actor, _palette[0], sleByte, 256, VER(10)),
-	
+
 		MK_OBSOLETE(Actor, _mask, sleByte, VER(8), VER(9)),
 		MKLINE(Actor, _shadowMode, sleByte, VER(8)),
 		MKLINE(Actor, _visible, sleByte, VER(8)),
@@ -2189,9 +2189,9 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 		MKLINE(Actor, _talkPosY, sleInt16, VER(8)),
 		MKLINE(Actor, _talkPosX, sleInt16, VER(8)),
 		MKLINE(Actor, _ignoreTurns, sleByte, VER(8)),
-	
+
 		MKLINE(Actor, _layer, sleByte, VER(8)),
-	
+
 		MKLINE(Actor, _talkScript, sleUint16, VER(8)),
 		MKLINE(Actor, _walkScript, sleUint16, VER(8)),
 
@@ -2211,7 +2211,7 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 
 		MKLINE(Actor, _walkdata.point3.x, sleUint16, VER(42)),
 		MKLINE(Actor, _walkdata.point3.y, sleUint16, VER(42)),
-	
+
 		MKARRAY(Actor, _cost.active[0], sleByte, 16, VER(8)),
 		MKLINE(Actor, _cost.stopped, sleUint16, VER(8)),
 		MKARRAY(Actor, _cost.curpos[0], sleUint16, 16, VER(8)),
@@ -2220,7 +2220,7 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 		MKARRAY(Actor, _cost.frame[0], sleUint16, 16, VER(8)),
 		MKEND()
 	};
-	
+
 	return actorEntries;
 }
 

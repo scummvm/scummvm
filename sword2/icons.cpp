@@ -191,7 +191,7 @@ void Mouse::buildSystemMenu() {
 
 	for (int i = 0; i < ARRAYSIZE(icon_list); i++) {
 		byte *icon = _vm->_resman->openResource(icon_list[i]) + sizeof(StandardHeader);
-		
+
 		// The only case when an icon is grayed is when the player
 		// is dead. Then SAVE is not available.
 

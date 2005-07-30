@@ -144,14 +144,14 @@ public:
 	void useControlInstance(Control *control) { _skyControl = control; };
 
 	uint16 mouseScript(uint32 scrNum, Compact *scriptComp);
-	
+
 	static uint32 _scriptVariables[NUM_SKY_SCRIPTVARS];
 	Grid *_skyGrid;
 
 	uint16 script(uint16 scriptNo, uint16 offset);
 	void initScreen0(void);
 	void parseSaveData(uint32 *data);
-	
+
 protected:
 	void push(uint32);
 	uint32 pop();
@@ -313,7 +313,7 @@ protected:
 	uint32 _currentSection;
 
 	Common::RandomSource _rnd;
-	
+
 	SkyCompact	*_skyCompact;
 	Screen		*_skyScreen;
 	Disk		*_skyDisk;

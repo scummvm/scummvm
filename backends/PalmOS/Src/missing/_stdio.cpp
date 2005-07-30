@@ -31,12 +31,12 @@ static void dummy(Boolean){};
 
 void StdioInit(UInt16 volRefNum, const Char *output, LedProc ledProc) {
 	gStdioVolRefNum = volRefNum;
-	
+
 	if (ledProc)
 		gStdioLedProc = ledProc;
 	else
 		gStdioLedProc = dummy;
-		
+
 	VFSFileDelete(gStdioVolRefNum, output);
 	VFSFileCreate(gStdioVolRefNum, output);
 	VFSFileOpen  (gStdioVolRefNum, output,vfsModeWrite, &gStdioOutput);
@@ -48,7 +48,7 @@ void StdioRelease() {
 
 UInt16 fclose(FileRef *stream) {
 	Err error = VFSFileClose(*stream);
-	
+
 	if (error == errNone)
 		MemPtrFree(stream);
 
@@ -89,7 +89,7 @@ Int16 fgetc(FileRef *stream) {
 	UInt32 numBytesRead;
 	Err e;
 	Char c;
-	
+
 	e = VFSFileRead(*stream, 1, &c, &numBytesRead);
 	return (int)(!e ? c : EOF);
 }
@@ -102,14 +102,14 @@ Char *fgets(Char *s, UInt32 n, FileRef *stream) {
 	if (error == errNone || error == vfsErrFileEOF) {
 		UInt32 reset = 0;
 		Char *endLine = StrChr(s, '\n');
-		
+
 		if (endLine >= s) {
 			reset = (endLine - s);
 			s[reset] = 0;
 			reset = numBytesRead - (reset + 1);
 			VFSFileSeek(*stream, vfsOriginCurrent, -reset);
 		}
-	
+
 		return s;
 	}
 #ifdef _DEBUG_STDIO
@@ -143,7 +143,7 @@ FileRef *fopen(const Char *filename, const Char *type) {
 	Err err;
 	UInt16 openMode;
 	FileRef *fileRefP = (FileRef *)MemPtrNew(sizeof(FileRef *));
-	
+
 	if (StrCompare(type,"r")==0)
 		openMode = vfsModeRead;
 	else if (StrCompare(type,"rb")==0)
@@ -280,7 +280,7 @@ UInt32 ftell(FileRef *stream) {
 	e = VFSFileTell(*stream,&filePos);
 	if (e != errNone)
 		return e;
-	
+
 	return filePos;
 }
 
@@ -323,7 +323,7 @@ Int32 sprintf(Char* s, const Char* formatStr, ...) {
 	va_start(va, formatStr);
 	count = vsprintf(s, formatStr, va);
 	va_end(va);
-	
+
 	return count;
 }
 
@@ -335,7 +335,7 @@ Int32 snprintf(Char* s, UInt32 len, const Char* formatStr, ...) {
 	va_start(va, formatStr);
 	count = vsprintf(s, formatStr, va);
 	va_end(va);
-	
+
 	return count;
 }
 
@@ -354,11 +354,11 @@ static Char *StrIToBase(Char *s, Int32 i, UInt8 b) {
 	Char o;
 	Int16 c, n = 0;
 	Int32 div, mod;
-	
+
 	do {
 		div = i / b;
 		mod = i % b;
-		
+
 		s[n++]	= *(conv + mod);
 		i		= div;
 
@@ -384,7 +384,7 @@ static Char *StrIToBase(Char *s, Int32 i, UInt8 b) {
 static void StrProcC_(Char *ioStr, UInt16 maxLen) {
 	Char *found;
 	Int16 length;
-	
+
 	while (found = StrStr(ioStr, "`c`")) {
 		if (found[3] == 0) { 						// if next char is NULL
 			length = maxLen - (found - ioStr + 2);
@@ -398,10 +398,10 @@ static void StrProcXO(Char *ioStr, UInt16 maxLen, Char *tmp) {
 	Char *found, *last, mod, fill;
 	Int16 len, count, next;
 	Int32 val;
-		
+
 	while (found = StrChr(ioStr, '`')) {
 		last = StrChr(found + 1, '`');
-		
+
 		if (!last)
 			return;
 
@@ -417,7 +417,7 @@ static void StrProcXO(Char *ioStr, UInt16 maxLen, Char *tmp) {
 		// x and X always 8char on palmos ... o set to 8char (not supported on palmos)
 		while (found[next] == '0' || found[next] == ' ')	// WARNING : reduce size only (TODO ?)
 			next++;
-		
+
 		// convert to base 8
 		if (mod == 'o') {
 			StrNCopy(tmp, found + next, 8 - next);
@@ -434,7 +434,7 @@ static void StrProcXO(Char *ioStr, UInt16 maxLen, Char *tmp) {
 
 		if ((8 - next) > count)
 			count = 8 - next;
-			
+
 		if (count == 0)
 			count = 1;
 
@@ -455,12 +455,12 @@ static void StrProcXO(Char *ioStr, UInt16 maxLen, Char *tmp) {
 
 Int32 vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam) {
 	Char format[256], result[256], tmp[32];
-	
+
 	Char *found, *mod, *num;
 	UInt32 next;
 	Boolean zero;
 	Int16 count, len;
-	
+
 	MemSet(format, sizeof(format), 'x');
 	MemSet(result, sizeof(result), 'y');
 	MemSet(tmp, sizeof(tmp), 'z');
@@ -470,7 +470,7 @@ Int32 vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam) {
 
 	while (found = StrChr(format + next, '%')) {
 		mod = found + 1;
-		
+
 		if (*mod == '%') {			// just a % ?
 			mod++;
 
@@ -479,7 +479,7 @@ Int32 vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam) {
 				*mod == '-' ||
 				*mod == ' '	)		// skip
 				mod++;
-			
+
 			if (*mod == '0' ||
 				*mod == '.' ) {
 				*mod++ = '0';
@@ -487,12 +487,12 @@ Int32 vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam) {
 			} else {
 				zero = false;
 			}
-			
+
 			num = mod;
 			while (	*mod >= '0' &&
 					*mod <= '9'	)	// search format char
 				mod++;
-			
+
 			// get the numeric value
 			if (num < mod) {
 				StrNCopy(tmp, num, mod - num);
@@ -514,19 +514,19 @@ Int32 vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam) {
 
 			} else {
 				len = 0;
-	
+
 				switch (*mod) {
 					case 'x':
 					case 'X':
 					case 'o':
 						tmp[0] = '`';
 						tmp[1] = (zero) ? '0' : ' ';
-						tmp[2] = *mod;	
+						tmp[2] = *mod;
 						StrIToA(tmp + 3, count);
 						len += StrLen(tmp);
 						tmp[len++] = '`';
 						tmp[len] = 0;
-						
+
 						if (*mod == 'o') {	// set as base 10 num and convert later
 							*mod = 'd';
 							count = 8;		// force 8char
@@ -534,7 +534,7 @@ Int32 vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam) {
 
 						break;
 				}
-					
+
 				StrNCopy(tmp + len, found, (num - found));
 				len += (num - found);
 
@@ -542,12 +542,12 @@ Int32 vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam) {
 					StrIToA(tmp + len, count);
 					len += StrLen(tmp + len);
 				}
-				
+
 				if (*mod == 'd' ||
 					*mod == 'i' ||
 					*mod == 'x' ||
 					*mod == 'X' ||
-					*mod == 'u' 
+					*mod == 'u'
 					) {
 					tmp[len++] = 'l';
 				}
@@ -561,15 +561,15 @@ Int32 vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam) {
 			StrNCopy(found, tmp, StrLen(tmp));
 			mod = found + StrLen(tmp);
 		}
-		
+
 		next = (mod - format);
 	}
-	
+
 	// Copy result in a temp buffer to process last formats
 	StrVPrintF(result, format, argParam);
 	StrProcC_(result, 256);
 	StrProcXO(result, 256, tmp);
 	StrCopy(s, result);
-	
+
 	return StrLen(s);
 }

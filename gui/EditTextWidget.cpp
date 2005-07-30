@@ -72,7 +72,7 @@ void EditTextWidget::drawWidget(bool hilite) {
 
 Common::Rect EditTextWidget::getEditRect() const {
 	Common::Rect r(2, 1, _w - 2, _h);
-	
+
 	return r;
 }
 
