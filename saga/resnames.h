@@ -52,9 +52,8 @@ namespace Saga {
 #define ITE_SCENE_LODGE 21
 #define ITE_SCENE_ENDCREDIT1 295
 
-
 #define ITE_DEFAULT_SCENE 32
-#define IHNM_DEFAULT_SCENE 152
+#define IHNM_DEFAULT_SCENE 151
 
 // FONTS
 #define RID_MEDIUM_FONT 0

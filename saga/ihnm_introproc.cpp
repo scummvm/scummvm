@@ -98,13 +98,6 @@ int Scene::IHNMStartProc() {
 		_vm->_scene->queueScene(&IHNM_IntroList[i]);
 	}
 
-	// FIXME: I suspect the "hate" speech is actually scripted and that we
-	// start at the wrong scene, but the one I think is correct (151
-	// instead of 152) currently doesn't work. Probably partly because
-	// actors - in particularly actor speech - isn't implemented for
-	// IHNM yet. Also, the end titles music to plays over the scene, which
-	// is wrong. (But hey, it's a nice piece of music!)
-
 	firstScene.loadFlag = kLoadBySceneNumber;
 	firstScene.sceneDescriptor = _vm->getStartSceneNumber();
 	firstScene.sceneDescription = NULL;
