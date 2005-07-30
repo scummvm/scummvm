@@ -117,13 +117,19 @@ void Script::executeThreads(uint msec) {
 			if (thread->_flags & kTFlagFinished)
 				setPointerVerb();
 
-			threadIterator = _threadList.erase(threadIterator);
+			if (_vm->getGameType() == GType_IHNM) {
+				thread->_flags &= ~kTFlagFinished;
+				thread->_flags |= kTFlagAborted;
+			} else {
+				threadIterator = _threadList.erase(threadIterator);
+			}
 			continue;
 		}
 
 		if (thread->_flags & kTFlagWaiting) {
 
-			if (thread->_waitType == kWaitTypeDelay) {
+			switch (thread->_waitType) {
+			case kWaitTypeDelay:
 				if (thread->_sleepTime < msec) {
 					thread->_sleepTime = 0;
 				} else {
@@ -132,14 +138,22 @@ void Script::executeThreads(uint msec) {
 
 				if (thread->_sleepTime == 0)
 					thread->_flags &= ~kTFlagWaiting;
-			} else {
-				if (thread->_waitType == kWaitTypeWalk) {
+				break;
+			
+			case kWaitTypeWalk:
+				{
 					ActorData *actor;
 					actor = (ActorData *)thread->_threadObj;
 					if (actor->currentAction == kActionWait) {
 						thread->_flags &= ~kTFlagWaiting;
 					}
 				}
+				break;
+
+			case kWaitTypeWaitFrames: // IHNM
+				if (thread->_frameWait < _vm->_frameCount)
+					thread->_flags &= ~kTFlagWaiting;
+				break;
 			}
 		}
 
@@ -169,7 +183,9 @@ void Script::abortAllThreads(void) {
 }
 
 void Script::completeThread(void) {
-	for (int i = 0; i < 40 &&  !_threadList.isEmpty() ; i++)
+	int limit = (_vm->getGameType() == GType_IHNM) ? 100 : 40;
+
+	for (int i = 0; i < limit &&  !_threadList.isEmpty() ; i++)
 		executeThreads(0);
 }
 

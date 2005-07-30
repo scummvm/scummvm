@@ -639,6 +639,9 @@ public:
 	Common::Rect _displayClip;
 
 public:
+	int32 _frameCount;
+
+public:
 	bool initGame(void);
 //	RSCFILE_CONTEXT *getFileContext(uint16 type, int param);
 //	bool isBigEndianFile(const char *filename);

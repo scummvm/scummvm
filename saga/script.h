@@ -104,7 +104,8 @@ enum ThreadWaitTypes {
 	kWaitTypeRequest = 6,		// a request is up
 	kWaitTypePause = 7,
 	kWaitTypePlacard = 8,
-	kWaitTypeStatusTextInput = 9
+	kWaitTypeStatusTextInput = 9,
+	kWaitTypeWaitFrames = 10    // IHNM. waiting for a frame count
 };
 
 enum OpCodes {
@@ -262,6 +263,7 @@ public:
 
 	uint16 _instructionOffset;			// Instruction offset
 
+	int32 _frameWait;
 
 public:
 	byte *baseAddress(byte addrMode) {
