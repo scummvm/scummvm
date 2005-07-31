@@ -103,7 +103,6 @@ void Script::executeThreads(uint msec) {
 	ScriptThread *thread;
 	ScriptThreadList::iterator threadIterator;
 
-
 	if (_vm->_interface->_statusTextInput) {
 		return;
 	}
@@ -120,6 +119,7 @@ void Script::executeThreads(uint msec) {
 			if (_vm->getGameType() == GType_IHNM) {
 				thread->_flags &= ~kTFlagFinished;
 				thread->_flags |= kTFlagAborted;
+				++threadIterator;
 			} else {
 				threadIterator = _threadList.erase(threadIterator);
 			}
