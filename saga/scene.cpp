@@ -113,7 +113,7 @@ SAGA_UNKNOWN,
 	SAGA_PALETTE
 };
 
-char *SAGAResourceTypesString[] = {
+const char *SAGAResourceTypesString[] = {
 	"SAGA_UNKNOWN",
 	"SAGA_ACTOR",
 	"SAGA_OBJECT",
@@ -134,20 +134,17 @@ char *SAGAResourceTypesString[] = {
 	"SAGA_PALETTE"
 };
 
-
 Scene::Scene(SagaEngine *vm) : _vm(vm) {
 	byte *sceneLUTPointer;
 	size_t sceneLUTLength;
 	uint32 resourceId;
 	int i;
 
-
 	// Load scene module resource context
 	_sceneContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
 	if (_sceneContext == NULL) {
 		error("Scene::Scene() scene context not found");
 	}
-
 
 	// Load scene lookup table
 	resourceId = _vm->_resource->convertResourceId(_vm->getResourceDescription()->sceneLUTResourceId);

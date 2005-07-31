@@ -104,7 +104,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	size_t voxSize;
 	const GameSoundInfo *soundInfo;
 
-	if (resourceId == (int32)-1) {
+	if (resourceId == (uint32)-1) {
 		return false;
 	}
 
@@ -211,7 +211,6 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 }
 
 int SndRes::getVoiceLength(uint32 resourceId) {
-	bool voiceFile = false;
 	double msDouble;
 	SoundBuffer buffer;
 

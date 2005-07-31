@@ -45,15 +45,15 @@ using Common::EN_USA;
 using Common::DE_DEU;
 
 LoadSceneParams ITE_IntroList[] = {
-	{RID_ITE_INTRO_ANIM_SCENE, kLoadByResourceId, NULL, Scene::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0},
-	{RID_ITE_CAVE_SCENE_1, kLoadByResourceId, NULL, Scene::SC_ITEIntroCave1Proc, false, kTransitionFade, 0},
-	{RID_ITE_CAVE_SCENE_2, kLoadByResourceId, NULL, Scene::SC_ITEIntroCave2Proc, false, kTransitionNoFade, 0},
-	{RID_ITE_CAVE_SCENE_3, kLoadByResourceId, NULL, Scene::SC_ITEIntroCave3Proc, false, kTransitionNoFade, 0},
-	{RID_ITE_CAVE_SCENE_4, kLoadByResourceId, NULL, Scene::SC_ITEIntroCave4Proc, false, kTransitionNoFade, 0},
-	{RID_ITE_VALLEY_SCENE, kLoadByResourceId, NULL, Scene::SC_ITEIntroValleyProc, false, kTransitionFade, 0},
-	{RID_ITE_TREEHOUSE_SCENE, kLoadByResourceId, NULL, Scene::SC_ITEIntroTreeHouseProc, false, kTransitionNoFade, 0},
-	{RID_ITE_FAIREPATH_SCENE, kLoadByResourceId, NULL, Scene::SC_ITEIntroFairePathProc, false, kTransitionNoFade, 0},
-	{RID_ITE_FAIRETENT_SCENE, kLoadByResourceId, NULL, Scene::SC_ITEIntroFaireTentProc, false, kTransitionNoFade, 0}
+	{RID_ITE_INTRO_ANIM_SCENE, kLoadByResourceId, NULL, Scene::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0, false},
+	{RID_ITE_CAVE_SCENE_1, kLoadByResourceId, NULL, Scene::SC_ITEIntroCave1Proc, false, kTransitionFade, 0, false},
+	{RID_ITE_CAVE_SCENE_2, kLoadByResourceId, NULL, Scene::SC_ITEIntroCave2Proc, false, kTransitionNoFade, 0, false},
+	{RID_ITE_CAVE_SCENE_3, kLoadByResourceId, NULL, Scene::SC_ITEIntroCave3Proc, false, kTransitionNoFade, 0, false},
+	{RID_ITE_CAVE_SCENE_4, kLoadByResourceId, NULL, Scene::SC_ITEIntroCave4Proc, false, kTransitionNoFade, 0, false},
+	{RID_ITE_VALLEY_SCENE, kLoadByResourceId, NULL, Scene::SC_ITEIntroValleyProc, false, kTransitionFade, 0, false},
+	{RID_ITE_TREEHOUSE_SCENE, kLoadByResourceId, NULL, Scene::SC_ITEIntroTreeHouseProc, false, kTransitionNoFade, 0, false},
+	{RID_ITE_FAIREPATH_SCENE, kLoadByResourceId, NULL, Scene::SC_ITEIntroFairePathProc, false, kTransitionNoFade, 0, false},
+	{RID_ITE_FAIRETENT_SCENE, kLoadByResourceId, NULL, Scene::SC_ITEIntroFaireTentProc, false, kTransitionNoFade, 0, false}
 };
 
 int Scene::ITEStartProc() {
