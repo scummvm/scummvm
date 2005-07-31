@@ -1174,7 +1174,7 @@ static void RotateVector() {
 		if (rotateObject == 0)
 			rotateObject = getIndexedTableValue(param2, 2);
 		rotate = lua_getnumber(rotateObject);
-		Vector3d baseVector(std::sin(0), std::cos(0), 0);
+		Vector3d baseVector(std::sin(0.0f), std::cos(0.0f), 0);
 		currAngle = angle(baseVector, vec1) * (180 / M_PI);
 		newAngle = (currAngle - rotate) * (M_PI / 180);
 		Vector3d vec2(std::sin(newAngle), std::cos(newAngle), 0);
