@@ -163,6 +163,7 @@ struct LoadSceneParams {
 	bool sceneSkipTarget;
 	SceneTransitionType transitionType;
 	int actorsEntrance;
+	bool extended; // IHNM GotoScene_ analog
 };
 
 typedef Common::List<LoadSceneParams> SceneQueueList;
@@ -269,6 +270,7 @@ class Scene {
 	void loadSceneResourceList(uint32 resourceId);
 	void loadSceneEntryList(const byte* resourcePointer, size_t resourceLength);
 	void processSceneResources();
+	void getResourceTypes(SAGAResourceTypes *&types, int &typesCount);
 
 
 	SagaEngine *_vm;
@@ -277,7 +279,6 @@ class Scene {
 	int *_sceneLUT;
 	int _sceneCount;
 	SceneQueueList _sceneQueue;
-	int _firstScene;
 	bool _sceneLoaded;
 	int _sceneNumber;
 	int _outsetSceneNumber;

@@ -45,6 +45,7 @@
 #include "saga/resnames.h"
 
 #include "graphics/ilbm.h"
+#include "common/util.h"
 
 namespace Saga {
 
@@ -112,6 +113,28 @@ SAGA_UNKNOWN,
 	SAGA_PALETTE
 };
 
+char *SAGAResourceTypesString[] = {
+	"SAGA_UNKNOWN",
+	"SAGA_ACTOR",
+	"SAGA_OBJECT",
+	"SAGA_BG_IMAGE",
+	"SAGA_BG_MASK",
+	"SAGA_STRINGS",
+	"SAGA_OBJECT_MAP",
+	"SAGA_ACTION_MAP",
+	"SAGA_ISO_IMAGES",
+	"SAGA_ISO_MAP",
+	"SAGA_ISO_PLATFORMS",
+	"SAGA_ISO_METATILES",
+	"SAGA_ENTRY",
+	"SAGA_ANIM",
+	"SAGA_ISO_MULTI",
+	"SAGA_PAL_ANIM",
+	"SAGA_FACES",
+	"SAGA_PALETTE"
+};
+
+
 Scene::Scene(SagaEngine *vm) : _vm(vm) {
 	byte *sceneLUTPointer;
 	size_t sceneLUTLength;
@@ -148,9 +171,36 @@ Scene::Scene(SagaEngine *vm) : _vm(vm) {
 
 	free(sceneLUTPointer);
 
-	_firstScene = _vm->getStartSceneNumber();
+#define DUMP_SCENES_LEVEL 10
 
-	debug(3, "First scene set to %d.", _firstScene);
+	if (DUMP_SCENES_LEVEL <= gDebugLevel) {
+		uint j;
+		int backUpDebugLevel = gDebugLevel;
+		SAGAResourceTypes *types;
+		int typesCount;
+		SAGAResourceTypes resType;
+
+		getResourceTypes(types, typesCount);
+
+		for (i = 0; i < _sceneCount; i++) {
+			gDebugLevel = -1;
+			loadSceneDescriptor(_sceneLUT[i]);
+			loadSceneResourceList(_sceneDescription.resourceListResourceId);
+			gDebugLevel = backUpDebugLevel;
+			debug(DUMP_SCENES_LEVEL, "Dump Scene: number %i, descriptor resourceId %i, resourceList resourceId %i", i, _sceneLUT[i], _sceneDescription.resourceListResourceId);
+			debug(DUMP_SCENES_LEVEL, "\tresourceListCount %i", _resourceListCount);
+			for (j = 0; j < _resourceListCount; j++) {
+				if (_resourceList[j].resourceType >= typesCount) {
+					error("wrong resource type %i", _resourceList[j].resourceType);
+				}
+				resType = types[_resourceList[j].resourceType];
+
+				debug(DUMP_SCENES_LEVEL, "\t%s resourceId %i", SAGAResourceTypesString[resType], _resourceList[j].resourceId);
+			}
+			free(_resourceList);
+		}
+	}
+
 
 	debug(3, "LUT has %d entries.", _sceneCount);
 
@@ -175,6 +225,16 @@ Scene::~Scene() {
 	free(_sceneLUT);
 }
 
+void Scene::getResourceTypes(SAGAResourceTypes *&types, int &typesCount) {
+	if (_vm->getGameType() == GType_IHNM) {
+		typesCount = ARRAYSIZE(IHNMSceneResourceTypes);
+		types = IHNMSceneResourceTypes;
+	} else {
+		typesCount = ARRAYSIZE(ITESceneResourceTypes);
+		types = ITESceneResourceTypes;
+	}
+}
+
 void Scene::drawTextList(Surface *ds) {
 	TextListEntry *entry;
 
@@ -190,7 +250,6 @@ void Scene::drawTextList(Surface *ds) {
 		}
 	}
 }
-
 
 void Scene::startScene() {
 	SceneQueueList::iterator queueIterator;
@@ -414,7 +473,6 @@ void Scene::changeScene(uint16 sceneNumber, int actorsEntrance, SceneTransitionT
 
 	endScene();
 	loadScene(&sceneParams);
-
 }
 
 void Scene::getSlopes(int &beginSlope, int &endSlope) {
@@ -794,19 +852,27 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 void Scene::loadSceneDescriptor(uint32 resourceId) {
 	byte *sceneDescriptorData;
 	size_t sceneDescriptorDataLength;
+	
+	memset(&_sceneDescription, 0, sizeof(_sceneDescription));
+
+	if (resourceId == 0) {
+		return;
+	}
 
 	_vm->_resource->loadResource(_sceneContext, resourceId, sceneDescriptorData, sceneDescriptorDataLength);
 
-	MemoryReadStreamEndian readS(sceneDescriptorData, sceneDescriptorDataLength, _sceneContext->isBigEndian);
+	if (sceneDescriptorDataLength == 16) {
+		MemoryReadStreamEndian readS(sceneDescriptorData, sceneDescriptorDataLength, _sceneContext->isBigEndian);
 
-	_sceneDescription.flags = readS.readSint16();
-	_sceneDescription.resourceListResourceId = readS.readSint16();
-	_sceneDescription.endSlope = readS.readSint16();
-	_sceneDescription.beginSlope = readS.readSint16();
-	_sceneDescription.scriptModuleNumber = readS.readUint16();
-	_sceneDescription.sceneScriptEntrypointNumber = readS.readUint16();
-	_sceneDescription.startScriptEntrypointNumber = readS.readUint16();
-	_sceneDescription.musicResourceId = readS.readSint16();
+		_sceneDescription.flags = readS.readSint16();
+		_sceneDescription.resourceListResourceId = readS.readSint16();
+		_sceneDescription.endSlope = readS.readSint16();
+		_sceneDescription.beginSlope = readS.readSint16();
+		_sceneDescription.scriptModuleNumber = readS.readUint16();
+		_sceneDescription.sceneScriptEntrypointNumber = readS.readUint16();
+		_sceneDescription.startScriptEntrypointNumber = readS.readUint16();
+		_sceneDescription.musicResourceId = readS.readSint16();
+	}
 
 	free(sceneDescriptorData);
 }
@@ -816,27 +882,36 @@ void Scene::loadSceneResourceList(uint32 resourceId) {
 	size_t resourceListDataLength;
 	size_t i;
 
+	_resourceListCount = 0;
+	_resourceList = NULL;
+
+	if (resourceId == 0) {
+		return;
+	}
+
 	// Load the scene resource table
 	_vm->_resource->loadResource(_sceneContext, resourceId, resourceListData, resourceListDataLength);
 
-	MemoryReadStreamEndian readS(resourceListData, resourceListDataLength, _sceneContext->isBigEndian);
+	if ((resourceListDataLength % SAGA_RESLIST_ENTRY_LEN) == 0) {
+		MemoryReadStreamEndian readS(resourceListData, resourceListDataLength, _sceneContext->isBigEndian);
 
-	// Allocate memory for scene resource list
-	_resourceListCount = resourceListDataLength / SAGA_RESLIST_ENTRY_LEN;
-	debug(3, "Scene resource list contains %i entries", _resourceListCount);
-	_resourceList = (SceneResourceData *)calloc(_resourceListCount, sizeof(*_resourceList));
+		// Allocate memory for scene resource list
+		_resourceListCount = resourceListDataLength / SAGA_RESLIST_ENTRY_LEN;
+		debug(3, "Scene resource list contains %i entries", _resourceListCount);
+		_resourceList = (SceneResourceData *)calloc(_resourceListCount, sizeof(*_resourceList));
 
-	// Load scene resource list from raw scene
-	// resource table
-	debug(3, "Loading scene resource list");
+		// Load scene resource list from raw scene
+		// resource table
+		debug(3, "Loading scene resource list");
 
-	for (i = 0; i < _resourceListCount; i++) {
-		_resourceList[i].resourceId = readS.readUint16();
-		_resourceList[i].resourceType = readS.readUint16();
-		// demo version may contain invalid resourceId
-		_resourceList[i].invalid = !_vm->_resource->validResourceId(_sceneContext, _resourceList[i].resourceId);
+		for (i = 0; i < _resourceListCount; i++) {
+			_resourceList[i].resourceId = readS.readUint16();
+			_resourceList[i].resourceType = readS.readUint16();
+			// demo version may contain invalid resourceId
+			_resourceList[i].invalid = !_vm->_resource->validResourceId(_sceneContext, _resourceList[i].resourceId);
+		}
+
 	}
-
 	free(resourceListData);
 }
 
@@ -849,14 +924,8 @@ void Scene::processSceneResources() {
 	int typesCount;
 	SAGAResourceTypes resType;
 
-	if (_vm->getGameType() == GType_IHNM) {
-		typesCount = ARRAYSIZE(IHNMSceneResourceTypes);
-		types = IHNMSceneResourceTypes;
-	} else {
-		typesCount = ARRAYSIZE(ITESceneResourceTypes);
-		types = ITESceneResourceTypes;
-	}
-
+	getResourceTypes(types, typesCount);
+	
 	// Process the scene resource list
 	for (i = 0; i < _resourceListCount; i++) {
 		if (_resourceList[i].invalid) {
