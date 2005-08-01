@@ -62,7 +62,7 @@ but many features are either missing or unstable. There is no abilitity
 to save/load, lighting, etc. Crashes are likely.
 
 Game currently playable to:
-	The Demon Beaver Dam (Petrified Forest)
+	Meche leaves Manny again (Rubacava, Year 2)
 Caveats (in order of appearance):
 1) Sound track destruction doesn't do quite a good enough job when
    entering the spider web area (sp.set) in the Petrified Forest
@@ -70,9 +70,8 @@ Caveats (in order of appearance):
    the correct speed, this causes buffer overflows in the audio.
    While hardcoding the speed to the correct value used by the other
    movies works, it is not a good fix and so it is not implemented
-3) When you return from getting the shocks at the tree pump in the
-   Petrified Forest the scene doesn't change correctly and the game
-   stops allowing input
+3) Sometimes the Demon Beavers get stuck on obstacles - open the 
+   menu for a moment and they will correct themselves
 
 What are the default keys?
 --------------------------

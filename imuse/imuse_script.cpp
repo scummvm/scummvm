@@ -100,7 +100,10 @@ bool Imuse::isVoicePlaying() {
 	StackLock lock(_mutex);
 	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
-		if (track->volGroupId == IMUSE_VOLGRP_VOICE) {
+		// Make sure the track is in use before checking the group ID,
+		// otherwise volGroupId can be uninitialized or reference an
+		// old track.
+		if (track->used && track->volGroupId == IMUSE_VOLGRP_VOICE) {
 			if (track->handle.isActive()) {
 				return true;
 			}

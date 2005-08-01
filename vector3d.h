@@ -82,6 +82,23 @@ public:
 		return std::sqrt(x() * x() + y() * y() + z() * z());
 	}
 
+	// Get the angle a vector is around the unit circle
+	// (ignores z-component)
+	float unitCircleAngle() const {
+		float a = x() / magnitude();
+		float b = y() / magnitude();
+		float yaw;
+		
+		// find the angle on the upper half of the unit circle
+		yaw = std::acos(a) * (180.0f / M_PI);
+		if (b < 0.0f)
+			// adjust for the lower half of the unit circle
+			return 360.0f - yaw;
+		else
+			// no adjustment, angle is on the upper half
+			return yaw;
+	}
+
 	float dotProduct( float sx, float sy, float sz ) {
 		return x() * sx + y() * sy + z()*sz;
 	}

@@ -33,8 +33,11 @@
 
 Actor::Actor(const char *name) :
 		_name(name), _talkColor(255, 255, 255), _pos(0, 0, 0),
-		_pitch(0), _yaw(0), _roll(0), _walkRate(0), _turnRate(0),
-		_reflectionAngle(80), _setName(""), _setNameTmp(""),
+		// Some actors don't set walk and turn rates, so we default the
+		// _turnRate so Doug at the cat races can turn and we set the
+		// _walkRate so Glottis at the demon beaver entrance can walk
+		_pitch(0), _yaw(0), _roll(0), _walkRate(1.0f), _turnRate(100.0f),
+		_reflectionAngle(80), _setName(""),
 		_visible(true), _lipSynch(NULL), _turning(false), _walking(false),
 		_restCostume(NULL), _restChore(-1),
 		_walkCostume(NULL), _walkChore(-1), _walkedLast(false), _walkedCur(false),
@@ -369,9 +372,14 @@ bool Actor::talking() {
 }
 
 void Actor::shutUp() {
-	// Don't stop the sound, the call to stop the sound
-	// is made by the game
-	_talkSoundName = "";
+	// While the call to stop the sound is usually made by the game,
+	// we also need to handle when the user terminates the dialog.
+	// Some warning messages will occur when the user terminates the
+	// actor dialog but the game will continue alright.
+	if (_talkSoundName != "") {
+		g_imuse->stopSound(_talkSoundName.c_str());
+		_talkSoundName = "";
+	}
 	if (_lipSynch != NULL) {
 		if ((_talkAnim != -1) && (_talkChore[_talkAnim] >= 0))
 			_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
@@ -467,7 +475,11 @@ void Actor::update() {
 			dyaw -= 360;
 		while (dyaw < -180)
 			dyaw += 360;
-		if (turnAmt >= std::abs(dyaw)) {
+		// If the actor won't turn because the rate is set to zero then
+		// have the actor turn all the way to the destination yaw.
+		// Without this some actors will lock the interface on changing
+		// scenes, this affects the Bone Wagon in particular.
+		if (turnAmt == 0 || turnAmt >= std::abs(dyaw)) {
 			setYaw(_destYaw);
 			_turning = false;
 		}
@@ -490,7 +502,9 @@ void Actor::update() {
 		if (walkAmt >= dist) {
 			_pos = _destPos;
 			_walking = false;
-			_turning = false;
+// It seems that we need to allow an already active turning motion to
+// continue or else turning actors away from barriers won't work right
+//			_turning = false;
 		} else
 			_pos += dir * walkAmt;
 

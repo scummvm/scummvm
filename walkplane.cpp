@@ -96,8 +96,39 @@ bool Sector::isPointInSector(Vector3d point) const {
 	// vertices are always given in counterclockwise order, and the
 	// polygons are always convex.)
 	//
-	// (I don't know whether the box height actually has to be considered;
-	// if not then this will be fine as is.)
+	// Checking the box height on the first point fixes problems with Manny
+	// changing sectors outside Velasco's storeroom.  We make an exceptions
+	// for heights of 0 and 9999 since these appear to have special meaning.
+	// In order to have the entrance to the Blue Casket work we need to
+	// handle the vertices having different z-coordinates.
+	// TODO: Improve height checking for when vertices have different
+	// z-coordinates so the railing in Cafe Calavera works properly.
+	if (_height != 0.0f && _height != 9999.0f) {
+		bool heightOK = false;
+		
+		// Handle height above Z
+		if ((point.z() >= _vertices[0].z()) && (point.z() <= _vertices[0].z() + _height))
+			heightOK = true;
+		// Handle height below Z
+		if ((point.z() <= _vertices[0].z()) && (point.z() >= _vertices[0].z() - _height))
+			heightOK = true;
+		
+		for (int i = 0; i < _numVertices; i++) {
+			if (_vertices[i + 1].z() != _vertices[i].z())
+				heightOK = true;
+		}
+		if (!heightOK) {
+/* Use this for debugging problems at height interfaces
+			if (debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL) {
+				printf("Rejected trigger due to height: %s (%f)\n", _name.c_str(), _height);
+				printf("Actor Z: %f\n", point.z());
+				for (int i = 0; i < _numVertices; i++)
+					printf("(%d) Z: %f\n", i, _vertices[i].z());
+			}
+*/
+			return false;
+		}
+	}
 
 	for (int i = 0; i < _numVertices; i++) {
 		Vector3d edge = _vertices[i + 1] - _vertices[i];

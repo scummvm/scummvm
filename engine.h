@@ -102,14 +102,10 @@ public:
 	unsigned frameStart() const { return _frameStart; }
 	unsigned frameTime() const { return _frameTime; }
 
-	float perSecond(float rate) const {
-		// The actor "Doug" at the Kitty races has no _turnRate set by default
-		// so we need to return some sort of time that's non-zero for a rate
-		// value of zero
-		if (rate == 0.0)
-			rate = 100.0;
-		return rate * _frameTime / 1000;
-	}
+	// perSecond should allow rates of zero, some actors will accelerate
+	// up to their normal speed (such as the bone wagon) so handling
+	// a walking rate of zero should happen in the default actor creation
+	float perSecond(float rate) const { return rate * _frameTime / 1000; }
 
 	int getTextSpeed() { return _textSpeed; }
 	void setTextSpeed(int speed);

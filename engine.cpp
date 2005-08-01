@@ -249,11 +249,6 @@ void Engine::mainLoop() {
 			for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
 				Actor *a = *i;
 				
-				// Activate the new set
-				// While this doesn't seem to affect anything this should be done here 
-				// instead of inside the lua_runtasks loop, otherwise certain functions
-				// may request a set that was just deactivated
-				a->putInSet();
 				// Update the actor's costumes & chores
 				g_currentUpdatedActor = *i;
 				// Note that the actor need not be visible to update chores, for example:

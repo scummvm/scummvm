@@ -369,6 +369,19 @@ static void SetSelectedActor() {
 	g_engine->setSelectedActor(act);
 }
 
+/* Get the currently selected actor, this is used in
+ * "Camera-Relative" mode to handle the appropriate
+ * actor for movement
+ */
+static void GetCameraActor() {
+	Actor *act;
+	
+	DEBUG_FUNCTION();
+	stubWarning("VERIFY: GetCameraActor");
+	act = g_engine->selectedActor();
+	lua_pushusertag(act, MKID('ACTR'));
+}
+
 static void SetSayLineDefaults() {
 	char *key_text = NULL;
 	lua_Object table_obj;
@@ -530,6 +543,8 @@ static void GetActorPos() {
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	pos = act->pos();
+	// It is important to process this request for all actors,
+	// even for actors not within the active scene
 	lua_pushnumber(pos.x());
 	lua_pushnumber(pos.y());
 	lua_pushnumber(pos.z());
@@ -548,10 +563,6 @@ static void SetActorRot() {
 		act->turnTo(pitch, yaw, roll);
 	else
 		act->setRot(pitch, yaw, roll);
-	// Naranja will cause the game to crash without this
-	lua_pushnumber(pitch);
-	lua_pushnumber(yaw);
-	lua_pushnumber(roll);
 }
 
 static void GetActorRot() {
@@ -605,19 +616,25 @@ static void GetActorYawToPoint() {
 	lua_pushnumber(act->yawTo(yawVector));
 }
 
+/* Changes the set that an actor is associated with,
+ * by changing the set to "nil" an actor is disabled
+ * but should still not be destroyed.
+ */
 static void PutActorInSet() {
+	const char *set = "";
 	Actor *act;
 	
 	DEBUG_FUNCTION();
 	act = check_actor(1);
-	if (!lua_isnil(lua_getparam(2))) {
-		const char *set;
-		
+	// If the set is "nil" then set to an empty string, we should not render
+	// objects in the empty set or bad things will happen like the Bone
+	// Wagon not changing scenes correctly.
+	lua_Object param2 = lua_getparam(2);
+	if (!lua_isnil(param2))
 		set = luaL_check_string(2);
-		// Make sure the actor isn't already in the set
-		if (!act->inSet(set))
-			act->putInSet(set);
-	}
+	// Make sure the actor isn't already in the set
+	if (!act->inSet(set))
+		act->putInSet(set);
 }
 
 static void SetActorWalkRate() {
@@ -776,7 +793,6 @@ static void GetActorNodeLocation() {
 	Actor *act;
 	int node;
 	
-	// Should this actually do anything?
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	node = check_int(2);
@@ -802,11 +818,14 @@ static void GetActorNodeLocation() {
 	lua_pushnumber(allNodes[node]._pos.z());
 }
 
+/* This function is called to stop walking actions that
+ * are in progress, it is unknown whether it should start
+ * walking actions that are not in progress.
+ */
 static void SetActorWalkDominate() {
 	lua_Object param2;
 	Actor *act;
 	
-	// Should this actually do anything?
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	if (act == NULL) {
@@ -814,13 +833,26 @@ static void SetActorWalkDominate() {
 		return;
 	}
 	param2 = lua_getparam(2);
-	if (lua_isnil(param2))
+	if (lua_isnil(param2)) {
 		lua_pushnil();
-	else if (lua_isnumber(param2))
-		lua_pushnumber(lua_getnumber(param2));
-	else
+	} else if (lua_isnumber(param2)) {
+		int walkcode = check_int(2);
+		
+		if (walkcode != 1) {
+			warning("Unknown SetActorWalkDominate 'walking code' value: %d", walkcode);
+			lua_pushnil();
+			return;
+		}
+		// When Manny is pursued out of the dam area by a demon
+		// beaver he needs to stop his walk chore
+		act->stopWalking();
+		lua_pushnumber(walkcode);
+	} else {
 		warning("Unknown SetActorWalkDominate parameter!");
+		lua_pushnil();
+	}
 }
+
 static void SetActorColormap() {
 	char *mapname;
 	CMap *_cmap;
@@ -876,7 +908,7 @@ static void GetActorCostume() {
 	if (c == NULL) {
 		lua_pushnil();
 		if (debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
-			printf("GetActorCostume() on '%s' when actor has no costume!", act->name());
+			printf("GetActorCostume() on '%s' when actor has no costume!\n", act->name());
 		return;
 	}
 	lua_pushstring(const_cast<char *>(c->filename()));
@@ -1129,16 +1161,10 @@ static void TurnActorTo() {
 	// Find the vector pointing from the actor to the desired location
 	Vector3d turnToVector(x, y, z);
 	Vector3d lookVector = turnToVector - act->pos();
-	lookVector.z() = 0;
-	// must convert to use a unit vector
-	lookVector /= lookVector.magnitude();
-	// find the angle on the upper half of the unit circle
-	yaw = std::acos(lookVector.x()) * (180 / M_PI);
-	// adjust for the lower half of the unit circle
-	if (lookVector.y() < 0)
-		yaw = 360.0 - yaw;
+	// find the angle the requested position is around the unit circle
+	yaw = lookVector.unitCircleAngle();
 	// yaw is offset from forward by 90 degrees
-	yaw -= 90.0;
+	yaw -= 90.0f;
 	act->turnTo(0, yaw, 0);
 	
 	// Game will lock in elevator if this doesn't return false
@@ -1150,6 +1176,50 @@ static void TurnActorTo() {
 static void PointActorAt() {
 	DEBUG_FUNCTION();
 	TurnActorTo();
+}
+
+/* WalkActorVector handles the movement of the selected actor 
+ * when the game is in "Camera-Relative Movement Mode"
+ *
+ * NOTE: The usage for paramaters 1 and 5 are as-yet unknown.
+ */
+static void WalkActorVector() {
+	float moveHoriz, moveVert, yaw;
+	Actor *act;
+	
+	DEBUG_FUNCTION();
+	stubWarning("VERIFY: WalkActorVector");
+	// Second option is the actor returned by GetCameraActor
+	act = check_actor(2);
+	// Third option is the "left/right" movement
+	moveHoriz = luaL_check_number(3);
+	// Fourth Option is the "up/down" movement
+	moveVert = luaL_check_number(4);
+
+	// Get the direction the camera is pointing
+	Vector3d cameraVector = g_engine->currScene()->_currSetup->_interest - g_engine->currScene()->_currSetup->_pos;
+	// find the angle the camera direction is around the unit circle
+	float cameraYaw = cameraVector.unitCircleAngle();
+
+	// Handle the turning
+	Vector3d adjustVector(moveHoriz, moveVert, 0);
+	// find the angle the adjust vector is around the unit circle
+	float adjustYaw = adjustVector.unitCircleAngle();
+
+	yaw = cameraYaw + adjustYaw;
+	// yaw is offset from forward by 180 degrees
+	yaw -= 180.0f;
+	// set the yaw so it can be compared against the current
+	// value for the actor yaw
+	if (yaw < 0.0f)
+		yaw += 360.0f;
+	if (yaw >= 360.0f)
+		yaw -= 360.0f;
+	// set the new direction or walk forward
+  if (act->yaw() != yaw)
+		act->turnTo(0, yaw, 0);
+	else
+		act->walkForward();
 }
 
 /* RotateVector takes a vector and rotates it around 
@@ -1306,7 +1376,8 @@ static void GetVisibleThings() {
 	for (Engine::ActorListType::const_iterator i = g_engine->actorsBegin(); i != g_engine->actorsEnd(); i++) {
 		if (!(*i)->inSet(g_engine->sceneName()))
 			continue;
-		if (sel->angleTo(*(*i)) < 90) {
+		// Consider the active actor visible
+		if (sel == (*i) || sel->angleTo(*(*i)) < 90) {
 			lua_pushobject(result);
 			lua_pushusertag(*i, MKID('ACTR'));
 			lua_pushnumber(1);
@@ -1406,12 +1477,21 @@ static void TextFileGetLineCount() {
 
 static void LocalizeString() {
 	char msgId[32], buf[640], *str;
+	char *result;
 	
 	DEBUG_FUNCTION();
 	str = luaL_check_string(1);
-	std::string msg = parseMsgText(str, msgId);
-	sprintf(buf, "/%s/%s", msgId, msg.c_str());
-	lua_pushstring(const_cast<char *>(buf));
+	// If the string that we're passed isn't localized yet then
+	// construct the localized string, otherwise spit back what
+	// we've been given
+	if (str[0] == '/' && str[strlen(str)-1] == '/') {
+		std::string msg = parseMsgText(str, msgId);
+		sprintf(buf, "/%s/%s", msgId, msg.c_str());
+		result = buf;
+	} else {
+		result = str;
+	}
+	lua_pushstring(const_cast<char *>(result));
 }
 
 static void SayLine() {
@@ -1664,18 +1744,26 @@ static void MakeCurrentSetup() {
 	lua_endblock();
 }
 
+/* Find the requested scene and return the current setup
+ * id number.  This function cannot just use the current
+ * scene or else when Manny opens his inventory information
+ * gets lost, such as the position for the demon beavors
+ * in the Petrified Forest.
+ */
 static void GetCurrentSetup() {
 	const char *name;
+	Scene *scene;
 	
 	DEBUG_FUNCTION();
 	name = luaL_check_string(1);
-	if (std::strcmp(name, g_engine->sceneName()) == 0) {
-		lua_pushnumber(g_engine->currScene()->setup());
-	} else {
+	scene = g_engine->findScene(name);
+	if (scene == NULL) {
 		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-			warning("GetCurrentSetup() Requested scene (%s) is not the active scene (%s)", name, g_engine->sceneName());
+			warning("GetCurrentSetup() Requested scene (%s) is not loaded!", name);
 		lua_pushnil();
+		return;
 	}
+	lua_pushnumber(scene->setup());
 }
 
 // FIXME: Function only spits back what it's given
@@ -3197,9 +3285,7 @@ STUB_FUNC(WorldToScreen)
 STUB_FUNC(SetActorRoll)
 STUB_FUNC(IsPointInSector)
 STUB_FUNC(SetActorFrustrumCull)
-STUB_FUNC(GetCameraActor)
 STUB_FUNC(DriveActorTo)
-STUB_FUNC(WalkActorVector)
 STUB_FUNC(GetActorRect)
 STUB_FUNC(SetActorTimeScale)
 STUB_FUNC(SetActorScale)

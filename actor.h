@@ -41,8 +41,17 @@ public:
 	void setTalkColor(const Color& c) { _talkColor = c; }
 	Color talkColor() const { return _talkColor; }
 	void setPos(Vector3d pos) { _pos = pos; }
-	Vector3d pos() const { return _pos; }
+	// When the actor is walking report where the actor is going to and
+	// not the actual current position, this fixes some scene change
+	// change issues with the Bone Wagon (along with other fixes)
+	Vector3d pos() const {
+		if (_walking)
+			return _destPos;
+		else
+			return _pos;
+	}
 	void walkTo(Vector3d p);
+	void stopWalking() { _walking = false; }
 	bool isWalking() const;
 	void setRot(float pitch, float yaw, float roll);
 	void turnTo(float pitch, float yaw, float roll);
@@ -52,13 +61,9 @@ public:
 	float roll() const { return _roll; }
 	void setVisibility(bool val) { _visible = val; }
 	bool visible() const { return _visible; }
-	// Don't actually change the set immediately, see engine.cpp for details
-	void putInSet(const char *name) { _setNameTmp = name; }
-	void putInSet() {
-		if (_setName != _setNameTmp) {
-			_setName = _setNameTmp;
-		}
-	 }
+	// The set should change immediately, otherwise a very rapid set change
+	// for an actor will be recognized incorrectly and the actor will be lost.
+	void putInSet(const char *name) { _setName = name; }
 	void setTurnRate(float rate) { _turnRate = rate; }
 	float turnRate() const { return _turnRate; }
 	void setWalkRate(float rate) { _walkRate = rate; }
@@ -133,7 +138,6 @@ public:
 private:
 	std::string _name;
 	std::string _setName;    // The actual current set
-	std::string _setNameTmp; // The temporary name for the set
 	Color _talkColor;
 	Vector3d _pos;
 	float _pitch, _yaw, _roll;
