@@ -253,7 +253,6 @@ enum GameIds {
 	GID_ITE_DISK_G,
 	GID_ITE_CD_G,
 	GID_ITE_MACCD_G,
-	GID_ITE_MACCD2_G,
 
 	// Wyrmkeep
 	GID_ITE_CD,       // data for Win rerelease is same as in old DOS

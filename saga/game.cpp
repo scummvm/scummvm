@@ -711,17 +711,11 @@ static GameMD5 gameMD5[] = {
 	{ GID_ITE_MACCD,    "95863b89a0916941f6c5e1789843ba14", "sounds.rsc", false },
 	{ GID_ITE_MACCD,    "c14c4c995e7a0d3828e3812a494301b7", "Inherit the Earth Voices", true },
 
-	{ GID_ITE_MACCD_G,  "4f7fa11c5175980ed593392838523060", "ITE Resources", true },
-	{ GID_ITE_MACCD_G,  "adf1f46c1d0589083996a7060c798ad0", "ITE Scripts", true },
-	{ GID_ITE_MACCD_G,  "d41d8cd98f00b204e9800998ecf8427e", "ITE Music", true },
-	{ GID_ITE_MACCD_G,  "8ee4d9ee27688785608d09faaa4a974c", "ITE Sounds", true },
-	{ GID_ITE_MACCD_G,  "3a1463f0c6a41381e98c2a8c55308190", "ITE Voices", true },
-
-	{ GID_ITE_MACCD2_G,  "0bd506aa887bfc7965f695c6bd28237d", "ITE Resources.bin", true },
-	{ GID_ITE_MACCD2_G,  "af0d7a2588e09ad3ecbc5b474ea238bf", "ITE Scripts.bin", true },
-	{ GID_ITE_MACCD2_G,  "c1d20324b7cdf1650e67061b8a93251c", "ITE Music.bin", true },
-	{ GID_ITE_MACCD2_G,  "441426c6bb2a517f65c7e49b57f7a345", "ITE Sounds.bin", true },
-	{ GID_ITE_MACCD2_G,  "dba92ae7d57e942250fe135609708369", "ITE Voices.bin", true },
+	{ GID_ITE_MACCD_G,  "0bd506aa887bfc7965f695c6bd28237d", "ITE Resources.bin", true },
+	{ GID_ITE_MACCD_G,  "af0d7a2588e09ad3ecbc5b474ea238bf", "ITE Scripts.bin", true },
+	{ GID_ITE_MACCD_G,  "c1d20324b7cdf1650e67061b8a93251c", "ITE Music.bin", true },
+	{ GID_ITE_MACCD_G,  "441426c6bb2a517f65c7e49b57f7a345", "ITE Sounds.bin", true },
+	{ GID_ITE_MACCD_G,  "dba92ae7d57e942250fe135609708369", "ITE Voices.bin", true },
 
 	{ GID_ITE_LINCD,    "8f4315a9bb10ec839253108a032c8b54", "ite.rsc", false },
 	{ GID_ITE_LINCD,    "a891405405edefc69c9d6c420c868b84", "scripts.rsc", false },
@@ -868,30 +862,9 @@ static GameDescription gameDescriptions[] = {
 
 	// Inherit the earth - MAC CD Guild version
 	{
-		"ite-demo",
-		GType_ITE,
-		GID_ITE_MACCD_G,
-		"Inherit the Earth (MAC CD)",
-		&ITE_DisplayInfo,
-		ITE_DEFAULT_SCENE,
-		&ITE_Resources,
-		ARRAYSIZE(ITEMACCD_G_GameFiles),
-		ITEMACCD_G_GameFiles,
-		ARRAYSIZE(ITEWINDEMO_GameFonts),
-		ITEWINDEMO_GameFonts,
-		&ITEMACCD_G_GameSound,
-		&ITEMACCD_G_GameSound,
-		NULL,
-		NULL,
-		0,
-		GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_CD_FX
-	},
-
-	// Inherit the earth - MAC CD Guild version
-	{
 		"ite",
 		GType_ITE,
-		GID_ITE_MACCD2_G,
+		GID_ITE_MACCD_G,
 		"Inherit the Earth (MAC CD)",
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
