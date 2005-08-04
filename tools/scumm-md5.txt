@@ -241,6 +241,7 @@ Backyard Baseball
 	-	Windows	en	cf8d13446ec6cb6222287a925fd47c1d	baseball	sev
 
 Backyard Baseball 2001
+	-	All	en	a86f9c49355579c30d4a55b477c0d869	baseball2001	Kirben
 	Demo	Windows	en	a194f15f51ee62badab74b9e7da97693	bb2demo	khalek, sev
 
 Backyard Baseball 2003
@@ -261,13 +262,14 @@ Backyard Soccer MLS Edition
 	-	Windows	en	bfdf584b01503f0762baded581f6a0a2	SoccerMLS	sev
 
 Backyard Soccer 2004
-	-	All	en	c4ffae9fac495475d6bc3343ccc8faf9	Soccer2004	sev
+	-	All	en	c4ffae9fac495475d6bc3343ccc8faf9	Soccer2004	Kirben, sev
 
 Big Thinkers: Kindergarten
 	-	All	en	92fc0073a4cf259ff36070ecb8628ba8	thinkerk	Kirben
 	Demo	All	en	695fe0b3963333b7e15b37514db3c745	kinddemo	khalek, sev
 
 Big Thinkers First Grade
+	-	All	en	5c21fc49aee8f46e58fef21579e614a1	thinker1	Kirben
 	Demo	Windows	en	0f5935bd5e88ba6f09e558d64459746d	1grademo	khalek
 
 Blue's ABC Time
