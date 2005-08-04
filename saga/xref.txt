@@ -3,6 +3,9 @@ $Id$
 Cross-reference for functions and variables for the original source code and
 the ScummVM implementation.
 
+Watcom C++ arguments order:
+
+  eax, edx, ebx, ecx, stack
 
 Sceneres.h
 ==========
