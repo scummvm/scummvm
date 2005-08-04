@@ -298,9 +298,11 @@ int SagaEngine::go() {
 
 	if (ConfMan.hasKey("start_scene")) {
 		_scene->changeScene(ConfMan.getInt("start_scene"), 0, kTransitionNoFade);
-	}
-	else
-	if (ConfMan.hasKey("save_slot")) {
+	} else if (ConfMan.hasKey("boot_param")) {
+		if (getGameType() == GType_ITE)
+			_interface->addToInventory(_actor->objIndexToId(ITE_MAGIC_HAT));
+		_scene->changeScene(ConfMan.getInt("boot_param"), 0, kTransitionNoFade);
+	} else if (ConfMan.hasKey("save_slot")) {
 		// First scene sets up palette
 		_scene->changeScene(getStartSceneNumber(), 0, kTransitionNoFade);
 		_events->handleEvents(0); // Process immediate events
