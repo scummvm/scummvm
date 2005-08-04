@@ -299,7 +299,7 @@ enum GameSoundTypes {
 	kSoundVOX = 1,
 	kSoundVOC = 2,
 	kSoundWAV = 3,
-	kSoundMacPCM = 4,
+	kSoundMacPCM = 4
 };
 
 enum GameFeatures {
