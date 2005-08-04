@@ -875,16 +875,18 @@ int Scene::ITEIntroTreeHouseProc(int param) {
 
 		q_event = _vm->_events->queue(&event);
 
-		// Begin title screen background animation
-		_vm->_anim->setFrameTime(0, 100);
+		if (_vm->_anim->hasAnimation(0)) {
+			// Begin title screen background animation
+			_vm->_anim->setFrameTime(0, 100);
 
-		event.type = ONESHOT_EVENT;
-		event.code = ANIM_EVENT;
-		event.op = EVENT_PLAY;
-		event.param = 0;
-		event.time = 0;
+			event.type = ONESHOT_EVENT;
+			event.code = ANIM_EVENT;
+			event.op = EVENT_PLAY;
+			event.param = 0;
+			event.time = 0;
 
-		q_event = _vm->_events->chain(q_event, &event);
+			q_event = _vm->_events->chain(q_event, &event);
+		}
 
 		// Queue game credits list
 		q_event = ITEQueueCredits(DISSOLVE_DURATION + 2000, CREDIT_DURATION1, n_credits1, credits1);

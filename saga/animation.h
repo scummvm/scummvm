@@ -113,7 +113,12 @@ public:
 	void finish(uint16 animId);
 	void resume(uint16 animId, int cycles);
 	int16 getCurrentFrame(uint16 animId);
-
+	bool hasAnimation(uint16 animId) {
+		if (animId >= MAX_ANIMATIONS) {
+			return false;
+		}
+		return (_animations[animId] != NULL);
+	}
 private:
 	void decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_t bufLength);
 	void fillFrameOffsets(AnimationData *anim);

@@ -645,6 +645,12 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 					}
 				}
 
+				if (_vm->getGameType() == GType_ITE) {
+					if (sampleResourceId <= 0 || sampleResourceId > 4000) {
+						sampleResourceId = -1;
+					}
+				}
+
 				_vm->_actor->actorSpeech(actorId, strings, stringsCount, sampleResourceId, speechFlags);
 
 				if (!(speechFlags & kSpeakAsync)) {

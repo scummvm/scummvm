@@ -633,6 +633,14 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		if (!_resourceList[i].invalid) {
 			_vm->_resource->loadResource(_sceneContext, _resourceList[i].resourceId,
 				_resourceList[i].buffer, _resourceList[i].size);
+
+			
+			if (_resourceList[i].size >= 6) {
+				if (!memcmp(_resourceList[i].buffer, "DUMMY!", 6)) {
+					_resourceList[i].invalid = true;
+					warning("DUMMY resource %i", _resourceList[i].resourceId);
+				}
+			}
 		}
 	}
 
