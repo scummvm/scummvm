@@ -102,7 +102,7 @@ Mac versions usually should work, too (with some exceptions for older games),
 and Amiga versions of games may work with the 'Amiga' flag turned on - but
 this is not always true.
 
-SCUMM Games:
+SCUMM Games by LucasArts:
      Maniac Mansion (Classic Version)                [Game: maniac]
      Maniac Mansion (Enhanced Version)               [Game: maniac]
      Zak McKracken (Classic Version)                 [Game: zak]
@@ -125,11 +125,34 @@ SCUMM Games:
      Full Throttle                                   [Game: ft]
      Curse of Monkey Island                          [Game: comi]
 
-     Fatty Bear's Birthday Surprise                  [Game: fbear]
-     Fatty Bear's Fun Pack                           [Game: fbpack]
-     Putt-Putt's Fun Pack                            [Game: funpack]
-     Putt-Putt Goes To The Moon                      [Game: puttmoon]
-     Putt-Putt Joins the Parade                      [Game: puttputt]
+SCUMM Games by Humongous Entertainment:
+     Backyard Football                                              [Game: football]
+     Big Thinkers Kindergarten                                      [Game: thinkerk]
+     Fatty Bear's Birthday Surprise                                 [Game: fbear]
+     Fatty Bear's Fun Pack                                          [Game: fbpack]
+     Freddi Fish 1: The Case of the Missing Kelp Seeds              [Game: freddi]
+     Freddi Fish 2: The Case of the Haunted Schoolhouse             [Game: fredd2]
+     Freddi Fish 3: The Case of the Stolen Conch Shell              [Game: freddi3]
+     Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch [Game: freddi4]
+     Freddi Fish and Luther's Maze Madness                          [Game: maze]
+     Freddi Fish and Luther's Water Worries                         [Game: water]
+     Let's Explore the Airport with Buzzy                           [Game: airport]
+     Let's Explore the Farm with Buzzy                              [Game: farm]
+     Let's Explore the Jungle with Buzzy                            [Game: jungle]
+     Pajama Sam 1: No Need to Hide When It's Dark Outside           [Game: pajama]
+     Pajama Sam 2: Thunder and Lightning Aren't so Frightening      [Game: pajama2]
+     Pajama Sam's Sock Works                                        [Game: socks]
+     Putt-Putt's Fun Pack                                           [Game: funpack]
+     Putt-Putt & Fatty Bear's Activity Pack                         [Game: activity]
+     Putt-Putt Goes To The Moon                                     [Game: puttmoon]
+     Putt-Putt Joins the Parade                                     [Game: puttputt]
+     Putt-Putt Saves the Zoo                                        [Game: puttzoo]
+     Putt-Putt Travels Through Time                                 [Game: putttime]
+     Putt-Putt and Pep's Balloon-O-Rama                             [Game: balloon]
+     Putt-Putt and Pep's Dog on a Stick                             [Game: dog]
+     Spyfox 1: Dry Cereal                                           [Game: spyfox]
+     Spyfox 2: Some Assembly Required                               [Game: spyfox2]
+     Spy Fox in Hold the Mustard                                    [Game: mustard]
 
 Other Games:
      Beneath a Steel Sky                             [Game: sky]
@@ -149,20 +172,19 @@ your own risk, and please do not file bug reports about them. If you want
 the latest updates on game compatibility, visit our web site and view the
 compatibility chart.
 
-     Freddi Fish 1: The Case of the Missing Kelp Seeds         [Game: freddi]
-     Freddi Fish 2: The Case of the Haunted Schoolhouse        [Game: fredd2]
-     Freddi Fish 3: The Case of the Stolen Conch Shell         [Game: freddi3]
-     Let's Explore the Airport with Buzzy                      [Game: airport]
-     Let's Explore the Farm with Buzzy                         [Game: farm]
-     Let's Explore the Jungle with Buzzy                       [Game: jungle]
-     Pajama Sam 1: No Need to Hide When It's Dark Outside      [Game: pajama]
-     Pajama Sam 2: Thunder and Lightning Aren't so Frightening [Game: pajama2]
-     Putt-Putt Saves the Zoo                                   [Game: puttzoo]
-     Putt-Putt Travels Through Time                            [Game: putttime]
+     Backyard Baseball                                              [Game: baseball]
+     Backyard Soccer                                                [Game: soccer]
+     Big Thinkers First Grade                                       [Game: thinker1]
+     Pajama Sam 3: You Are What You Eat From Your Head to Your Feet [Game: pajama3]
+     Pajama Sam's Lost & Found                                      [Game: lost]
+     Putt-Putt Enters the Race                                      [Game: puttrace]
+     Putt-Putt Joins the Circus                                     [Game: puttcircus]
+     Spyfox 3: Operation Ozone                                      [Game: spyozon]
+     Spy Fox in Cheese Chase Game                                   [Game: chase]
 
 The following games are SCUMM engine, but NOT supported by ScummVM (yet).
 
-     Most Humongous Entertainment titles
+     Other Humongous Entertainment titles
 
 Please be aware that the engine may contain bugs and unimplemented features
 that sometimes make it impossible to finish the game. Save often, and please
