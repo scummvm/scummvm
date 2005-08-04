@@ -253,6 +253,7 @@ enum GameIds {
 	GID_ITE_DISK_G,
 	GID_ITE_CD_G,
 	GID_ITE_MACCD_G,
+	GID_ITE_MACCD2_G,
 
 	// Wyrmkeep
 	GID_ITE_CD,       // data for Win rerelease is same as in old DOS
@@ -289,14 +290,16 @@ enum GameFileTypes {
 	GAME_MUSICFILE    = 1 << 5,
 	GAME_MUSICFILE_GM = 1 << 6,
 	GAME_MUSICFILE_FM = 1 << 7,
-	GAME_PATCHFILE    = 1 << 8
+	GAME_PATCHFILE    = 1 << 8,
+	GAME_MACBINARY    = 1 << 9
 };
 
 enum GameSoundTypes {
 	kSoundPCM = 0,
 	kSoundVOX = 1,
 	kSoundVOC = 2,
-	kSoundWAV = 3
+	kSoundWAV = 3,
+	kSoundMacPCM = 4,
 };
 
 enum GameFeatures {

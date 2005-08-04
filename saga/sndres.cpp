@@ -125,7 +125,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	buffer.isBigEndian = soundInfo->isBigEndian;
 
 	if (soundResourceLength >= 8) {
-		if (!memcmp(&soundResource, "Creative", 8)) {
+		if (!memcmp(soundResource, "Creative", 8)) {
 			resourceType = kSoundVOC;
 		} else 	if (!memcmp(soundResource, "RIFF", 4) != 0) {
 			resourceType = kSoundWAV;
@@ -146,6 +146,21 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		} else {
 			buffer.buffer = soundResource;
 		}
+		result = true;
+		break;
+	case kSoundMacPCM:
+		buffer.frequency = soundInfo->frequency;
+		buffer.isSigned = soundInfo->isSigned;
+		buffer.sampleBits = soundInfo->sampleBits;
+		buffer.size = soundResourceLength - 36;
+		buffer.stereo = soundInfo->stereo;
+		if (onlyHeader) {
+			buffer.buffer = NULL;
+		} else {
+			buffer.buffer = (byte *)malloc(buffer.size);
+			memcpy(buffer.buffer, soundResource + 36, buffer.size);
+		}
+		free(soundResource);
 		result = true;
 		break;
 	case kSoundVOX:

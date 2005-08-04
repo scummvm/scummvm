@@ -271,31 +271,9 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver, int enable
 	_currentVolume = 0;
 
 	xmidiParser = MidiParser::createParser_XMIDI();
-	smfParser = MidiParser::createParser_SMF();
+	smfParser = MidiParser::createParser_SMF();	
 
-	if (_vm->getGameType() == GType_ITE) {
-		Common::File file;
-//		byte footerBuf[ARRAYSIZE(_digiTableITECD) * 8];
-
-		// The lookup table is stored at the end of music.rsc. I don't
-		// know why it has 27 elements, but the last one represents a
-		// very short tune. Perhaps it's a dummy?
-		//
-		// FIXME: Well, it's a hack which I don't like. Logically it should
-		// call LoadResource() et al, but I don't want to load those
-		// huge files into memory. So I use FileContext just for getting file
-		// name and reuse its opened file a bit.
-		//
-		// Proper approach would be to extend resource manager so it could
-		// return File object.
-
-		_musicContext = _vm->_resource->getContext(GAME_MUSICFILE);
-		if (_musicContext != NULL) {
-			// The "birdchrp" is just a short, high-pitched
-			// whining. Use the MIDI/XMIDI version instead.
-			///_digiTableITECD[6].length = 0;
-		}
-	}
+	_musicContext = _vm->_resource->getContext(GAME_MUSICFILE);
 }
 
 Music::~Music() {
@@ -406,7 +384,10 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	// Load MIDI/XMI resource data
 
 	if (_vm->getGameType() == GType_ITE) {
-		context = _vm->_resource->getContext(GAME_RESOURCEFILE);
+		context = _vm->_resource->getContext(GAME_MUSICFILE_GM);
+		if (context == NULL) {
+			context = _vm->_resource->getContext(GAME_RESOURCEFILE);
+		}		
 	} else {
 		// I've listened to music from both the FM and the GM
 		// file, and I've tentatively reached the conclusion

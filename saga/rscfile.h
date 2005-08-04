@@ -31,6 +31,7 @@
 
 namespace Saga {
 
+#define MAC_BINARY_HEADER_SIZE 128
 #define RSC_TABLEINFO_SIZE 8
 #define RSC_TABLEENTRY_SIZE 8
 
@@ -133,6 +134,8 @@ private:
 	int _contextsCount;
 
 	bool loadContext(ResourceContext *context);
+	bool loadMacContext(ResourceContext *context);
+	bool loadSagaContext(ResourceContext *context, uint32 contextOffset, uint32 contextSize);
 
 };
 

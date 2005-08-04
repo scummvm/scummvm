@@ -29,6 +29,32 @@
 
 namespace Saga {
 
+struct MacResMap {
+	int16 resAttr;
+	int16 typeOffset;
+	int16 nameOffset;
+	int16 numTypes;
+};
+
+struct MacResource {
+	int16 id;
+	int16 nameOffset;
+	byte  attr;
+	int32 dataOffset;
+	byte name[255];
+};
+
+struct MacResType {
+	uint32  id;
+	int16 items;
+	int16 maxItemId;
+	int16 offset;
+	MacResource *resources;
+};
+
+
+#define ID_MIDI     MKID_BE('Midi')
+
 Resource::Resource(SagaEngine *vm): _vm(vm) {
 	_contexts = NULL;
 	_contextsCount = 0;
@@ -38,34 +64,20 @@ Resource::~Resource() {
 	clearContexts();
 }
 
-bool Resource::loadContext(ResourceContext *context) {
+bool Resource::loadSagaContext(ResourceContext *context, uint32 contextOffset, uint32 contextSize) {
 	size_t i;
-	int j;
 	bool result;
 	byte tableInfo[RSC_TABLEINFO_SIZE];
-	uint32 resourceTableOffset;
-	GamePatchDescription *patchDescription;
-	ResourceData *resourceData;
 	byte *tableBuffer;
 	size_t tableSize;
-	uint16 subjectResourceType;
-	ResourceContext *subjectContext;
-	uint32 subjectResourceId;
-	uint32 patchResourceId;
-	ResourceData *subjectResourceData;
+	uint32 resourceTableOffset;
+	ResourceData *resourceData;
 
-	if (!context->file->open(context->fileName)) {
+	if (contextSize < RSC_MIN_FILESIZE) {
 		return false;
 	}
 
-	context->isBigEndian = _vm->isBigEndian();
-
-	if (context->file->size() < RSC_MIN_FILESIZE) {
-		return false;
-	}
-
-	// Read resource table info from the rear end of file
-	context->file->seek((long)(-RSC_TABLEINFO_SIZE), SEEK_END);
+	context->file->seek(contextOffset + contextSize - RSC_TABLEINFO_SIZE);
 
 	if (context->file->read(tableInfo, RSC_TABLEINFO_SIZE) != RSC_TABLEINFO_SIZE) {
 		return false;
@@ -77,7 +89,7 @@ bool Resource::loadContext(ResourceContext *context) {
 	context->count = readS.readUint32();
 
 	// Check for sane table offset
-	if (resourceTableOffset != context->file->size() - RSC_TABLEINFO_SIZE - RSC_TABLEENTRY_SIZE * context->count) {
+	if (resourceTableOffset != contextSize - RSC_TABLEINFO_SIZE - RSC_TABLEENTRY_SIZE * context->count) {
 		return false;
 	}
 
@@ -86,7 +98,7 @@ bool Resource::loadContext(ResourceContext *context) {
 
 	tableBuffer = (byte *)malloc(tableSize);
 
-	context->file->seek((long)resourceTableOffset, SEEK_SET);
+	context->file->seek(resourceTableOffset + contextOffset, SEEK_SET);
 
 	result = (context->file->read(tableBuffer, tableSize) == tableSize);
 	if (result) {
@@ -96,10 +108,10 @@ bool Resource::loadContext(ResourceContext *context) {
 
 		for (i = 0; i < context->count; i++) {
 			resourceData = &context->table[i];
-			resourceData->offset = readS1.readUint32();
+			resourceData->offset = contextOffset + readS1.readUint32();
 			resourceData->size = readS1.readUint32();
 			//sanity check
-			if ((resourceData->offset > context->file->size()) || (resourceData->size > context->file->size())) {
+			if ((resourceData->offset > context->file->size()) || (resourceData->size > contextSize)) {
 				result = false;
 				break;
 			}
@@ -107,11 +119,176 @@ bool Resource::loadContext(ResourceContext *context) {
 	}
 
 	free(tableBuffer);
+	return result;
+}
+
+bool Resource::loadMacContext(ResourceContext *context) {
+	int32 macDataSize, macDataSizePad;
+	int32 macResSize, macResSizePad;
+	int32 macResOffset;
+
+	uint32 macMapLength;
+	uint32 macDataLength;
+	uint32 macMapOffset;
+	uint32 macDataOffset;
+
+	MacResMap macResMap;
+	MacResType *macResTypes;	
+
+	MacResType *macResType;
+	MacResource *macResource;
+	int i, j;
+	byte macNameLen;
+	bool notSagaContext = false;
+
+	if (context->file->size() < RSC_MIN_FILESIZE + MAC_BINARY_HEADER_SIZE) {
+		return false;
+	}
+
+	if (context->file->readByte() != 0) {
+		return false;
+	}
+	context->file->readByte(); //MAX Name Len
+	context->file->seek(74);
+	if (context->file->readByte() != 0) {
+		return false;
+	}
+	context->file->seek(82);
+	if (context->file->readByte() != 0) {
+		return false;
+	}
+
+	macDataSize = context->file->readSint32BE();
+	macResSize = context->file->readSint32BE();
+	macDataSizePad = (((macDataSize + 127) >> 7) << 7);
+	macResSizePad = (((macResSize + 127) >> 7) << 7);
+
+	macResOffset = MAC_BINARY_HEADER_SIZE + macDataSizePad;
+	context->file->seek(macResOffset);
+
+	macDataOffset = context->file->readUint32BE() + macResOffset;
+	macMapOffset = context->file->readUint32BE() + macResOffset;
+	macDataLength = context->file->readUint32BE();
+	macMapLength = context->file->readUint32BE();
+
+	if (macDataOffset >= context->file->size() || macMapOffset >= context->file->size() ||
+		macDataLength + macMapLength  > context->file->size()) {
+			return false;
+	}
+
+	context->file->seek(macMapOffset + 22);
+
+	macResMap.resAttr = context->file->readUint16BE();
+	macResMap.typeOffset = context->file->readUint16BE();
+	macResMap.nameOffset = context->file->readUint16BE();
+	macResMap.numTypes = context->file->readUint16BE();
+	macResMap.numTypes++;
+
+	context->file->seek(macMapOffset + macResMap.typeOffset + 2);
+
+	macResTypes = (MacResType *)calloc(macResMap.numTypes, sizeof(*macResTypes));
+
+	for (i = macResMap.numTypes, macResType = macResTypes; i > 0; i--, macResType++) {
+		macResType->id = context->file->readUint32BE();
+		macResType->items = context->file->readUint16BE();
+		macResType->offset = context->file->readUint16BE();
+		macResType->items++;
+		macResType->resources = (MacResource*)calloc(macResType->items, sizeof(*macResType->resources));
+	}
+
+	for (i = macResMap.numTypes, macResType = macResTypes; i > 0; i--, macResType++) {
+		context->file->seek(macResType->offset + macMapOffset + macResMap.typeOffset);
+
+		for (j = macResType->items, macResource = macResType->resources; j > 0; j--, macResource++) {			
+			macResource->id = context->file->readUint16BE();
+			macResource->nameOffset = context->file->readUint16BE();
+			macResource->dataOffset = context->file->readUint32BE();
+			macResSize = context->file->readUint32BE();
+
+			macResource->attr = macResource->dataOffset >> 24;
+			macResource->dataOffset &= 0xFFFFFF;
+			if (macResource->id > macResType->maxItemId) {
+				macResType->maxItemId = macResource->id;
+			}
+		}
+
+		for (j = macResType->items, macResource = macResType->resources; j > 0; j--, macResource++) {			
+			if (macResource->nameOffset != -1) {
+				context->file->seek(macResource->nameOffset + macMapOffset + macResMap.nameOffset);
+				macNameLen = context->file->readByte();
+				context->file->read(macResource->name, macNameLen);
+			}
+		}
+	}
+
+//
+	for (i = macResMap.numTypes, macResType = macResTypes; i > 0; i--, macResType++) {
+		//getting offsets & sizes of midi
+		if (((context->fileType & GAME_MUSICFILE_GM) > 0) && (macResType->id == ID_MIDI)) {
+			
+			context->count = macResType->maxItemId + 1;
+			context->table = (ResourceData *)calloc(context->count, sizeof(*context->table));
+			for (j = macResType->items, macResource = macResType->resources; j > 0; j--, macResource++) {
+				context->file->seek(macDataOffset + macResource->dataOffset);
+				context->table[macResource->id].size = context->file->readUint32BE();
+				context->table[macResource->id].offset = context->file->pos();
+			}
+			notSagaContext = true;
+			break;
+		}
+	}
+
+//free
+	for (i = 0; i < macResMap.numTypes; i++) {
+		free(macResTypes[i].resources);
+	}
+	free(macResTypes);
+
+	if ((!notSagaContext) && (!loadSagaContext(context, MAC_BINARY_HEADER_SIZE, macDataSize))) {
+		return false;
+	}
+
+	return true;
+}
+
+bool Resource::loadContext(ResourceContext *context) {
+	size_t i;
+	int j;
+	GamePatchDescription *patchDescription;
+	ResourceData *resourceData;
+	uint16 subjectResourceType;
+	ResourceContext *subjectContext;
+	uint32 subjectResourceId;
+	uint32 patchResourceId;
+	ResourceData *subjectResourceData;
+	byte *tableBuffer;
+	size_t tableSize;
+	bool isMacBinary;
+	
+	if (!context->file->open(context->fileName)) {
+		return false;
+	}
+
+	context->isBigEndian = _vm->isBigEndian();
+	
+	isMacBinary = (context->fileType & GAME_MACBINARY) > 0;
+	context->fileType &= ~GAME_MACBINARY;
+	
+	if (isMacBinary) {
+		if (!loadMacContext(context)) {
+			return false;
+		}
+	} else {
+		if (!loadSagaContext(context, 0, context->file->size())) {
+			return false;
+		}
+	}
+	
 
 	//process internal patch files
 	if (GAME_PATCHFILE & context->fileType) {
 		subjectResourceType = ~GAME_PATCHFILE & context->fileType;
-		subjectContext = getContext(subjectResourceType);
+		subjectContext = getContext((GameFileTypes)subjectResourceType);
 		if (subjectContext == NULL) {
 			error("Resource::loadContext() Subject context not found");
 		}
@@ -131,26 +308,25 @@ bool Resource::loadContext(ResourceContext *context) {
 	}
 
 	//process external patch files
-	if (result) {
-		for (j = 0; j < _vm->getGameDescription()->patchsCount; j++) {
-			patchDescription = &_vm->getGameDescription()->patchDescriptions[j];
-			if ((patchDescription->fileType & context->fileType) != 0) {
-				if (patchDescription->resourceId < context->count) {
-					resourceData = &context->table[patchDescription->resourceId];
-					resourceData->patchData = new PatchData(patchDescription);
-					if (resourceData->patchData->_patchFile->open(patchDescription->fileName)) {
-						resourceData->offset = 0;
-						resourceData->size = resourceData->patchData->_patchFile->size();
-					} else {
-						delete resourceData->patchData;
-						resourceData->patchData = NULL;
-					}
+	for (j = 0; j < _vm->getGameDescription()->patchsCount; j++) {
+		patchDescription = &_vm->getGameDescription()->patchDescriptions[j];
+		if ((patchDescription->fileType & context->fileType) != 0) {
+			if (patchDescription->resourceId < context->count) {
+				resourceData = &context->table[patchDescription->resourceId];
+				resourceData->patchData = new PatchData(patchDescription);
+				if (resourceData->patchData->_patchFile->open(patchDescription->fileName)) {
+					resourceData->offset = 0;
+					resourceData->size = resourceData->patchData->_patchFile->size();
+				} else {
+					delete resourceData->patchData;
+					resourceData->patchData = NULL;
 				}
 			}
 		}
 	}
+	
 
-	return result;
+	return true;
 }
 
 bool Resource::createContexts() {
