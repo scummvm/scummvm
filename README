@@ -264,6 +264,9 @@ same directory as the game data which is stored in:
 
   Inherit the Earth.app/Contents/Resources
 
+For old Mac OS9 release you will need to compile files in MacBinary format,
+i.e. they should have both resource and data forks. Just copy all 'ITE *' files.
+
 3.7) Gobliiins notes
 ---- ---------------
 The CD version of Gobliiins contains one big audio track which you need to rip
@@ -300,7 +303,7 @@ the section on Reporting Bugs.
           - Amiga version isn't supported
 
      Inherit the Earth
-          - Old Mac CD and Amiga CD versions aren't supported
+          - Amiga CD version isn't supported
 
      Simon the Sorcerer 2:
           - Combined speech and subtitles will often cause speech to be
