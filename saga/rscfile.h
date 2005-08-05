@@ -89,6 +89,29 @@ struct ResourceContext {
 	}
 };
 
+struct MetaResource {
+	int16 sceneIndex;
+	int16 obectCount;
+	int32 field_4;
+	int32 field_8;
+	int32 mainSpritesID;
+	int32 objectResourceID;
+	int16 actorCount;
+	int32 field_16;
+	int32 actorsResourceID;
+	int32 protagFaceSpritesID;
+	int32 field_22;
+	int16 field_26;
+	int16 field_28;
+	int32 field_2a;
+	int32 cutawayListResourceID;
+	int32 songTableID;
+
+	MetaResource() {
+		memset(this, 0, sizeof(*this));
+	}
+};
+
 class Resource {
 public:
 	Resource(SagaEngine *vm);
@@ -98,6 +121,8 @@ public:
 	void loadResource(ResourceContext *context, uint32 resourceId, byte*&resourceBuffer, size_t &resourceSize);
 	size_t getResourceSize(ResourceContext *context, uint32 resourceId);
 	uint32 convertResourceId(uint32 resourceId);
+
+	void loadGlobalResources(int chapter, int actorsEntrance);
 
 	ResourceContext *getContext(uint16 fileType, int serial = 0) {
 		int i;
@@ -137,6 +162,7 @@ private:
 	bool loadMacContext(ResourceContext *context);
 	bool loadSagaContext(ResourceContext *context, uint32 contextOffset, uint32 contextSize);
 
+	MetaResource _metaResource;
 };
 
 } // End of namespace Saga

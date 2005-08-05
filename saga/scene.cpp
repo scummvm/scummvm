@@ -472,6 +472,38 @@ void Scene::changeScene(uint16 sceneNumber, int actorsEntrance, SceneTransitionT
 	loadScene(&sceneParams);
 }
 
+void Scene::changeChapter(int chapter, int16 sceneNumber, int actorsEntrance) {
+	if (chapter == 6)
+		_vm->_interface->setLeftPortrait(0);
+
+	freeCutawayList();
+	_vm->_script->freeModules();
+	// deleteAllScenes();
+
+	// installSomeAlarm()
+
+	_vm->_interface->clearInventory();
+	_vm->_resource->loadGlobalResources(chapter, actorsEntrance);
+	_vm->_interface->addToInventory(IHNM_OBJ_PROFILE);
+	_vm->_interface->activate();
+	
+	if (chapter == 8 || chapter == -1)
+		_vm->_interface->setMode(kPanelUnknown);
+	else
+		_vm->_interface->setMode(kPanelMain);
+
+	_vm->_script->setVerb(kVerbIHNMWalkTo);
+
+	if (sceneNumber != -2)
+		changeScene(sceneNumber, actorsEntrance, kTransitionFade);
+}
+
+void Scene::freeCutawayList() {
+	// TODO
+	// It has to be in different class
+	warning("STUB: freeCutawayList()");
+}
+
 void Scene::getSlopes(int &beginSlope, int &endSlope) {
 	beginSlope = _vm->getSceneHeight() - _sceneDescription.beginSlope;
 	endSlope = _vm->getSceneHeight() - _sceneDescription.endSlope;
@@ -675,7 +707,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 	q_event = _vm->_events->chain(q_event, &event);
 
-	if (loadSceneParams->transitionType == kTransitionFade ) {
+	if (loadSceneParams->transitionType == kTransitionFade) {
 
 		_vm->_interface->setFadeMode(kFadeOut);
 

@@ -325,16 +325,7 @@ static GameFileDescription ITEMULTICD_GameFiles[] = {
 	{"music.rsc", GAME_MUSICFILE}
 };
 
-// Inherit the Earth - Mac Dreamers version
 static GameFileDescription ITEMACCD_G_GameFiles[] = {
-	{"ITE Resources", GAME_RESOURCEFILE},
-	{"ITE Scripts", GAME_SCRIPTFILE},
-	{"ITE Sounds", GAME_SOUNDFILE},
-	{"ITE Music", GAME_MUSICFILE_GM},
-	{"ITE Voices", GAME_VOICEFILE}
-};
-
-static GameFileDescription ITEMACCD2_G_GameFiles[] = {
 	{"ITE Resources.bin", GAME_RESOURCEFILE | GAME_MACBINARY},
 	{"ITE Scripts.bin", GAME_SCRIPTFILE | GAME_MACBINARY},
 	{"ITE Sounds.bin", GAME_SOUNDFILE | GAME_MACBINARY},
@@ -869,8 +860,8 @@ static GameDescription gameDescriptions[] = {
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
-		ARRAYSIZE(ITEMACCD2_G_GameFiles),
-		ITEMACCD2_G_GameFiles,
+		ARRAYSIZE(ITEMACCD_G_GameFiles),
+		ITEMACCD_G_GameFiles,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
 		&ITEMACCD_G_GameSound,

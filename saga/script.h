@@ -72,6 +72,16 @@ enum VerbTypes {
 	kVerbWalkOnly = 13,
 	kVerbLookOnly = 14,
 
+	kVerbIHNMNone = 0,
+	kVerbIHNMWalkTo = 1,
+	kVerbIHNMLookAt = 2,
+	kVerbIHNMTake = 3,
+	kVerbIHNMUse = 4,
+	kVerbIHNMTalkTo = 5,
+	kVerbIHNMSwallow = 6,
+	kVerbIHNMGive = 7,
+	kVerbIHNMPush = 8,
+
 	kVerbTypesMax = kVerbLookOnly + 1
 };
 

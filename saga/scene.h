@@ -249,6 +249,8 @@ class Scene {
 		_sceneQueue.clear();
 	}
 	void changeScene(uint16 sceneNumber, int actorsEntrance, SceneTransitionType transitionType);
+	void changeChapter(int chapter, int16 sceneNumber, int actorsEntrance);
+	void freeCutawayList();
 
 	bool isSceneLoaded() const { return _sceneLoaded; }
 

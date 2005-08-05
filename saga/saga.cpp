@@ -300,7 +300,7 @@ int SagaEngine::go() {
 		_scene->changeScene(ConfMan.getInt("start_scene"), 0, kTransitionNoFade);
 	} else if (ConfMan.hasKey("boot_param")) {
 		if (getGameType() == GType_ITE)
-			_interface->addToInventory(_actor->objIndexToId(ITE_MAGIC_HAT));
+			_interface->addToInventory(_actor->objIndexToId(ITE_OBJ_MAGIC_HAT));
 		_scene->changeScene(ConfMan.getInt("boot_param"), 0, kTransitionNoFade);
 	} else if (ConfMan.hasKey("save_slot")) {
 		// First scene sets up palette

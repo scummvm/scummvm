@@ -577,7 +577,8 @@ void Actor::updateActorsScene(int actorsEntrance) {
 			if (actor->flags & kProtagonist) {
 				actor->finalTarget = actor->location;
 				_centerActor = _protagonist = actor;
-			} else if (_vm->_scene->currentSceneResourceId() == RID_ITE_OVERMAP_SCENE) {
+			} else if (_vm->getGameType() == GType_ITE && 
+					   _vm->_scene->currentSceneResourceId() == RID_ITE_OVERMAP_SCENE) {
 				continue;
 			}
 

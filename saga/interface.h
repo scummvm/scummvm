@@ -69,7 +69,8 @@ enum PanelModes {
 	kPanelProtect,
 	kPanelPlacard,
 	kPanelMap,
-	kPanelSceneSubstitute
+	kPanelSceneSubstitute,
+	kPanelUnknown
 //	kPanelInventory
 };
 

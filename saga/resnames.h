@@ -42,7 +42,9 @@ namespace Saga {
 
 //obj names
 #define ITE_OBJ_MAP 14
-#define ITE_MAGIC_HAT 0
+#define ITE_OBJ_MAGIC_HAT 0
+
+#define IHNM_OBJ_PROFILE 0x4000
 
 //actor names
 #define ITE_ACTOR_PUZZLE 176

@@ -421,4 +421,48 @@ void Resource::loadResource(ResourceContext *context, uint32 resourceId, byte*&r
 	}
 }
 
+static int metaResourceTable[] = { 0, 326, 517, 677, 805, 968, 1165, 0, 1271 };
+
+void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
+	// TODO
+	//if (module.voiceLUT)
+	//	free module.voiceLUT;
+
+	// TODO: close chapeter context, or rather reassign it in our case
+
+	ResourceContext *resourceContext;
+
+	resourceContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
+	if (resourceContext == NULL) {
+		error("Resource::loadGlobalResources() resource context not found");
+	}
+
+	byte *resourcePointer;
+	size_t resourceLength;
+
+	_vm->_resource->loadResource(resourceContext, metaResourceTable[chapter],
+								 resourcePointer, resourceLength);
+
+	MemoryReadStream metaS(resourcePointer, resourceLength);
+
+	_metaResource.sceneIndex = metaS.readSint16LE();
+	_metaResource.obectCount = metaS.readSint16LE();
+	_metaResource.field_4 = metaS.readSint32LE();
+	_metaResource.field_8 = metaS.readSint32LE();
+	_metaResource.mainSpritesID = metaS.readSint32LE();
+	_metaResource.objectResourceID = metaS.readSint32LE();
+	_metaResource.actorCount = metaS.readSint16LE();
+	_metaResource.field_16 = metaS.readSint32LE();
+	_metaResource.actorsResourceID = metaS.readSint32LE();
+	_metaResource.protagFaceSpritesID = metaS.readSint32LE();
+	_metaResource.field_22 = metaS.readSint32LE();
+	_metaResource.field_26 = metaS.readSint16LE();
+	_metaResource.field_28 = metaS.readSint16LE();
+	_metaResource.field_2a = metaS.readSint32LE();
+	_metaResource.cutawayListResourceID = metaS.readSint32LE();
+	_metaResource.songTableID = metaS.readSint32LE();
+
+	free(resourcePointer);
+}
+
 } // End of namespace Saga
