@@ -314,18 +314,28 @@ the section on Reporting Bugs.
           - MIDI support requires the Roland update from LucasArts
 
      Beneath a Steel Sky:
+          - Amiga versions aren't supported
           - Floppy demos aren't supported
           - Not a bug: CD version is missing speech for some dialog, this is
             normal.
 
      Broken Sword 1:
           - Macintosh version isn't supported
+          - PlayStation 1 version isn't supported
           
+     Broken Sword 2:
+          - PlayStation 1 version isn't supported
+
      Flight of the Amazon Queen
           - Amiga version isn't supported
 
      Inherit the Earth
           - Amiga CD version isn't supported
+
+     Simon the Sorcerer 1:
+          - Amiga versions aren't supported
+          - Subtitles aren't available in the English and German CD versions, they
+            are missing the majority of subtitles.
 
      Simon the Sorcerer 2:
           - Combined speech and subtitles will often cause speech to be
