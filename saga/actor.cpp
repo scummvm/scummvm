@@ -206,12 +206,13 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_pathRect.top = _vm->getDisplayInfo().pathStartY;
 	_pathRect.bottom = _vm->getSceneHeight();
 
+	// Get actor resource file context
+	_actorContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
+	if (_actorContext == NULL) {
+		error("Actor::Actor() resource context not found");
+	}
+
 	if (_vm->getGameType() == GType_ITE) {
-		// Get actor resource file context
-		_actorContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
-		if (_actorContext == NULL) {
-			error("Actor::Actor() resource context not found");
-		}
 
 		_vm->_resource->loadResource(_actorContext, _vm->getResourceDescription()->actorsStringsResourceId, stringsPointer, stringsLength);
 
@@ -281,7 +282,6 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 
 Actor::~Actor() {
 	int i;
-	ActorData *actor;
 	ObjectData *obj;
 
 	debug(9, "Actor::~Actor()");
@@ -296,11 +296,8 @@ Actor::~Actor() {
 	free(_pathCell);
 	_actorsStrings.freeMem();
 	//release resources
-	for (i = 0; i < _actorsCount; i++) {
-		actor = _actors[i];
-		delete actor;
-	}
-	free(_actors);
+	freeList();
+
 	for (i = 0; i < _objsCount; i++) {
 		obj = _objs[i];
 		delete obj;
@@ -372,8 +369,89 @@ bool Actor::loadActorResources(ActorData *actor) {
 	return true;
 }
 
-void Actor::loadList(int actorsEntrance, int actorCount, int actorsResourceID,
-					 int protagStatesCount, int protagStatesResourceID) {
+void Actor::freeList() {
+	int i;
+	ActorData *actor;
+	for (i = 0; i < _actorsCount; i++) {
+		actor = _actors[i];
+		delete actor;
+	}
+	free(_actors);
+	_actors = NULL;
+	_actorsCount = 0;
+}
+
+void Actor::loadList(int actorsEntrance, int actorCount, int actorsResourceID, int protagStatesCount, int protagStatesResourceID) {
+	int i;
+	ActorData *actor;
+	byte* actorListData;
+	size_t actorListLength;
+	freeList();
+	
+	_vm->_resource->loadResource(_actorContext, actorsResourceID, actorListData, actorListLength);
+		
+	MemoryReadStream actorS(actorListData, actorListLength);
+	_actorsCount = actorListLength / ACTOR_INHM_SIZE;
+	
+	_actors = (ActorData **)malloc(_actorsCount * sizeof(*_actors));
+	for (i = 0; i < _actorsCount; i++) {
+		actor = _actors[i] = new ActorData();
+		actor->id = actorIndexToId(i);
+		actor->index = i;
+		debug(9, "init actor id=%d index=%d", actor->id, actor->index);
+		actorS.readUint32LE(); //next displayed	
+		actorS.readByte(); //type
+		actor->flags = actorS.readByte();
+		actor->nameIndex = actorS.readUint16LE();
+		actor->sceneNumber = actorS.readUint32LE();
+		actor->location.fromStream(actorS);
+		actor->screenPosition.x = actorS.readUint16LE();
+		actor->screenPosition.y = actorS.readUint16LE();
+		actor->screenScale = actorS.readUint16LE();
+		actor->screenDepth = actorS.readUint16LE();
+		actor->frameListResourceId = actorS.readUint32LE();
+		actor->spriteListResourceId = actorS.readUint32LE();
+		actor->scriptEntrypointNumber = actorS.readUint32LE();
+		actorS.readByte();
+		actorS.readByte();
+		actorS.readByte();
+		actorS.readByte();
+		actorS.readUint16LE(); //LEFT
+		actorS.readUint16LE(); //RIGHT
+		actorS.readUint16LE(); //TOP
+		actorS.readUint16LE(); //BOTTOM
+		actor->speechColor = actorS.readByte();
+		actor->currentAction = actorS.readByte();
+		actor->facingDirection = actorS.readByte();
+		actor->actionDirection = actorS.readByte();
+		actor->actionCycle = actorS.readUint16LE();
+		actor->frameNumber = actorS.readUint16LE();
+		actor->finalTarget.fromStream(actorS);
+		actor->partialTarget.fromStream(actorS);
+		actorS.readUint16LE(); //movement speed
+		actorS.seek(128, SEEK_CUR);
+		actorS.readByte();//walkStepIndex
+		actorS.readByte();//walkStepCount
+		actorS.readUint32LE(); //sprites
+		actorS.readUint32LE(); //frames
+		actorS.readUint32LE(); //last zone
+		actor->targetObject = actorS.readUint16LE();
+		actor->actorFlags = actorS.readUint16LE();
+		actorS.readUint32LE(); //next in scene
+		actorS.seek(6, SEEK_CUR); //action vars
+	}
+	free(actorListData);
+
+	for (i = 0; i < _actorsCount; i++) {
+		actor = _actors[i];
+		if (actor->flags & kExtended) {
+			actor->disabled = !loadActorResources(actor);
+			if (actor->disabled) {
+				warning("Disabling actor Id=%d index=%d", actor->id, actor->index);
+			}
+		}
+	}
+//TODO: protagonist stuff
 }
 
 void Actor::takeExit(uint16 actorId, const HitZone *hitZone) {

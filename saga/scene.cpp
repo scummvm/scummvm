@@ -596,8 +596,8 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	EVENT event;
 	EVENT *q_event;
 	static PalEntry current_pal[PAL_ENTRIES];
-
-	if (loadSceneParams->chapter != -1) {
+	
+	if ((_vm->getGameType() == GType_IHNM) && (loadSceneParams->chapter != NO_CHAPTER_CHANGE)) {
 		if (loadSceneParams->loadFlag != kLoadBySceneNumber) {
 			error("loadScene wrong usage");
 		}

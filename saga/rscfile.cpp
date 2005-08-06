@@ -447,6 +447,9 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 	_vm->_resource->loadResource(resourceContext, metaResourceTable[chapter],
 								 resourcePointer, resourceLength);
 
+	if (resourceLength == 0) {
+		error("Resource::loadGlobalResources wrong resource");
+	}
 	MemoryReadStream metaS(resourcePointer, resourceLength);
 
 	_metaResource.sceneIndex = metaS.readSint16LE();

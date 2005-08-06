@@ -34,6 +34,8 @@ namespace Saga {
 
 #define SCENE_DOORS_MAX 16
 
+#define NO_CHAPTER_CHANGE -2
+
 class ObjectMap;
 
 struct EVENT;
@@ -248,7 +250,7 @@ class Scene {
 	void clearSceneQueue(void) {
 		_sceneQueue.clear();
 	}
-	void changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionType transitionType, int chapter = -1);
+	void changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionType transitionType, int chapter = NO_CHAPTER_CHANGE);
 	void freeCutawayList();
 
 	bool isSceneLoaded() const { return _sceneLoaded; }

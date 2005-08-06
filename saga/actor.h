@@ -72,6 +72,8 @@ class HitZone;
 
 #define PATH_NODE_EMPTY -1
 
+#define ACTOR_INHM_SIZE 228
+
 enum ActorActions {
 	kActionWait = 0,
 	kActionWalkToPoint = 1,
@@ -227,6 +229,11 @@ struct Location {
 		screenPoint.x = x / ACTOR_LMULT;
 		screenPoint.y = y / ACTOR_LMULT - z;
 	}
+	void fromStream(Common::MemoryReadStream &stream) {
+		x = stream.readUint16LE();
+		y = stream.readUint16LE();
+		z = stream.readUint16LE();
+	}
 };
 
 class CommonObjectData {
@@ -247,7 +254,7 @@ public:
 	Point screenPosition;		// screen coordinates
 	int32 screenDepth;			//
 	int32 screenScale;			//
-
+	
 	void saveState(Common::OutSaveFile *out) {
 		out->writeUint16LE(flags);
 		out->writeSint32LE(nameIndex);
@@ -572,6 +579,7 @@ public:
 	void setProtagState(int state);
 	int getProtagState() { return _protagState; }
 
+	void freeList();
 	void loadList(int actorsEntrance, int actorCount, int actorsResourceID,
 				  int protagStatesCount, int protagStatesResourceID);
 
