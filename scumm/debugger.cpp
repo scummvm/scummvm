@@ -205,7 +205,7 @@ bool ScummDebugger::Cmd_Room(int argc, const char **argv) {
 		_vm->_actors[_vm->VAR(_vm->VAR_EGO)]._room = room;
 		_vm->_sound->stopAllSounds();
 		_vm->startScene(room, 0, 0);
-		_vm->_fullRedraw = 1;
+		_vm->_fullRedraw = true;
 		return false;
 	} else {
 		DebugPrintf("Current room: %d [%d] - use 'room <roomnum>' to switch\n", _vm->_currentRoom, _vm->_roomResource);
@@ -397,21 +397,21 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 	} else if (!strcmp(argv[2], "x")) {
 		a->putActor(value, a->_pos.y, a->_room);
 		DebugPrintf("Actor[%d].x = %d\n", actnum, a->_pos.x);
-		_vm->_fullRedraw = 1;
+		_vm->_fullRedraw = true;
 	} else if (!strcmp(argv[2], "y")) {
 		a->putActor(a->_pos.x, value, a->_room);
 		DebugPrintf("Actor[%d].y = %d\n", actnum, a->_pos.y);
-		_vm->_fullRedraw = 1;
+		_vm->_fullRedraw = true;
 	} else if (!strcmp(argv[2], "_elevation")) {
 		a->setElevation(value);
 		DebugPrintf("Actor[%d]._elevation = %d\n", actnum, a->getElevation());
-		_vm->_fullRedraw = 1;
+		_vm->_fullRedraw = true;
 	} else if (!strcmp(argv[2], "costume")) {
 		if (value >= _vm->res.num[rtCostume])
 			DebugPrintf("Costume not changed as %d exceeds max of %d\n", value, _vm->res.num[rtCostume]);
 		else {
 			a->setActorCostume(value);
-			_vm->_fullRedraw = 1;
+			_vm->_fullRedraw = true;
 			DebugPrintf("Actor[%d].costume = %d\n", actnum, a->_costume);
 		}
 	} else if (!strcmp(argv[2], "name")) {

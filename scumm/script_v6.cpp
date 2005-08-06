@@ -1149,7 +1149,7 @@ void ScummEngine_v6::o6_loadRoom() {
 	if (_heversion >= 61) {
 		setCameraAt(camera._cur.x, 0);
 	}
-	_fullRedraw = 1;
+	_fullRedraw = true;
 }
 
 void ScummEngine_v6::o6_stopScript() {
@@ -1336,7 +1336,7 @@ void ScummEngine_v6::o6_loadRoomWithEgo() {
 		setCameraFollows(a);
 	}
 
-	_fullRedraw = 1;
+	_fullRedraw = true;
 
 	if (x != -1 && x != 0x7FFFFFFF) {
 		a->startWalkActor(x, y, -1);
@@ -2588,7 +2588,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			fadeOut(args[1]);
 			break;
 		case 6:
-			_fullRedraw = 1;
+			_fullRedraw = true;
 			redrawBGAreas();
 			setActorRedrawFlags();
 			processActors();

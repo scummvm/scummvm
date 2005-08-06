@@ -800,7 +800,7 @@ void ScummEngine_v70he::o70_kernelSetFunctions() {
 		break;
 	case 23:
 		_charset->clearCharsetMask();
-		_fullRedraw = 1;
+		_fullRedraw = true;
 		break;
 	case 24:
 		_skipProcessActors = 1;

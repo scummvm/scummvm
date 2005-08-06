@@ -563,7 +563,7 @@ void ScummEngine_c64::o_lights() {
 	else
 		VAR(VAR_CURRENT_LIGHTS) = 0;
 
-	_fullRedraw = 1;
+	_fullRedraw = true;
 }
 
 void ScummEngine_c64::o_getObjectOwner() {

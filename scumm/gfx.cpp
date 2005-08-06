@@ -772,24 +772,24 @@ void ScummEngine::redrawBGAreas() {
 
 	if (_features & GF_NEW_CAMERA) {
 		diff = camera._cur.x / 8 - camera._last.x / 8;
-		if (_fullRedraw == 0 && diff == 1) {
+		if (!_fullRedraw && diff == 1) {
 			val = 2;
 			redrawBGStrip(gdi._numStrips - 1, 1);
-		} else if (_fullRedraw == 0 && diff == -1) {
+		} else if (!_fullRedraw && diff == -1) {
 			val = 1;
 			redrawBGStrip(0, 1);
-		} else if (_fullRedraw != 0 || diff != 0) {
+		} else if (_fullRedraw || diff != 0) {
 			_bgNeedsRedraw = false;
 			redrawBGStrip(0, gdi._numStrips);
 		}
 	} else {
-		if (_fullRedraw == 0 && camera._cur.x - camera._last.x == 8) {
+		if (!_fullRedraw && camera._cur.x - camera._last.x == 8) {
 			val = 2;
 			redrawBGStrip(gdi._numStrips - 1, 1);
-		} else if (_fullRedraw == 0 && camera._cur.x - camera._last.x == -8) {
+		} else if (!_fullRedraw && camera._cur.x - camera._last.x == -8) {
 			val = 1;
 			redrawBGStrip(0, 1);
-		} else if (_fullRedraw != 0 || camera._cur.x != camera._last.x) {
+		} else if (_fullRedraw || camera._cur.x != camera._last.x) {
 			_bgNeedsRedraw = false;
 			_flashlight.isDrawn = false;
 			redrawBGStrip(0, gdi._numStrips);

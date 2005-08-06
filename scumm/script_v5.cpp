@@ -1470,7 +1470,7 @@ void ScummEngine_v5::o5_lights() {
 		_flashlight.xStrips = a;
 		_flashlight.yStrips = b;
 	}
-	_fullRedraw = 1;
+	_fullRedraw = true;
 }
 
 void ScummEngine_v5::o5_loadRoom() {
@@ -1492,7 +1492,7 @@ void ScummEngine_v5::o5_loadRoom() {
 	if (!(_features & GF_SMALL_HEADER) || room != _currentRoom)
 		startScene(room, 0, 0);
 
-	_fullRedraw = 1;
+	_fullRedraw = true;
 }
 
 void ScummEngine_v5::o5_loadRoomWithEgo() {
@@ -1532,7 +1532,7 @@ void ScummEngine_v5::o5_loadRoomWithEgo() {
 	camera._cur.x = camera._dest.x = a->_pos.x;
 	setCameraFollows(a);
 
-	_fullRedraw = 1;
+	_fullRedraw = true;
 
 	if (x != -1) {
 		a->startWalkActor(x, y, -1);

@@ -1318,7 +1318,7 @@ void ScummEngine_v2::o2_lights() {
 		_flashlight.xStrips = a;
 		_flashlight.yStrips = b;
 	}
-	_fullRedraw = 1;
+	_fullRedraw = true;
 }
 
 void ScummEngine_v2::o2_loadRoomWithEgo() {
@@ -1346,7 +1346,7 @@ void ScummEngine_v2::o2_loadRoomWithEgo() {
 	setCameraAt(a->_pos.x, a->_pos.y);
 	setCameraFollows(a);
 
-	_fullRedraw = 1;
+	_fullRedraw = true;
 
 	resetSentence();
 
