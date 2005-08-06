@@ -417,7 +417,7 @@ static struct SceneSubstitutes {
 	}
 };
 
-void Scene::changeScene(uint16 sceneNumber, int actorsEntrance, SceneTransitionType transitionType, int chapter) {
+void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionType transitionType, int chapter) {
 	// This is used for latter demos where all places on world map except
 	// Tent Faire are substituted with LBM picture and short description
 	if (_vm->getFeatures() & GF_SCENE_SUBSTITUTES) {

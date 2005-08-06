@@ -24,6 +24,7 @@
 // RSC Resource file management module
 #include "saga/saga.h"
 
+#include "saga/actor.h"
 #include "saga/rscfile.h"
 #include "saga/stream.h"
 
@@ -457,12 +458,16 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 	_metaResource.protagFaceSpritesID = metaS.readSint32LE();
 	_metaResource.field_22 = metaS.readSint32LE();
 	_metaResource.field_26 = metaS.readSint16LE();
-	_metaResource.field_28 = metaS.readSint16LE();
-	_metaResource.field_2a = metaS.readSint32LE();
+	_metaResource.protagStatesCount = metaS.readSint16LE();
+	_metaResource.protagStatesResourceID = metaS.readSint32LE();
 	_metaResource.cutawayListResourceID = metaS.readSint32LE();
 	_metaResource.songTableID = metaS.readSint32LE();
 
 	free(resourcePointer);
+
+	_vm->_actor->loadList(actorsEntrance, _metaResource.actorCount,
+						  _metaResource.actorsResourceID, _metaResource.protagStatesCount,
+						  _metaResource.protagStatesResourceID);
 }
 
 } // End of namespace Saga

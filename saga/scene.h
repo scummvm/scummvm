@@ -156,7 +156,7 @@ enum SceneLoadFlags {
 };
 
 struct LoadSceneParams {
-	uint32 sceneDescriptor;
+	int32 sceneDescriptor;
 	SceneLoadFlags loadFlag;
 	SceneDescription* sceneDescription;
 	SceneProc *sceneProc;
@@ -248,7 +248,7 @@ class Scene {
 	void clearSceneQueue(void) {
 		_sceneQueue.clear();
 	}
-	void changeScene(uint16 sceneNumber, int actorsEntrance, SceneTransitionType transitionType, int chapter = -1);
+	void changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionType transitionType, int chapter = -1);
 	void freeCutawayList();
 
 	bool isSceneLoaded() const { return _sceneLoaded; }

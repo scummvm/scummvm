@@ -102,8 +102,8 @@ struct MetaResource {
 	int32 protagFaceSpritesID;
 	int32 field_22;
 	int16 field_26;
-	int16 field_28;
-	int32 field_2a;
+	int16 protagStatesCount;
+	int32 protagStatesResourceID;
 	int32 cutawayListResourceID;
 	int32 songTableID;
 

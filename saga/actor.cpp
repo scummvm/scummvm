@@ -372,6 +372,10 @@ bool Actor::loadActorResources(ActorData *actor) {
 	return true;
 }
 
+void Actor::loadList(int actorsEntrance, int actorCount, int actorsResourceID,
+					 int protagStatesCount, int protagStatesResourceID) {
+}
+
 void Actor::takeExit(uint16 actorId, const HitZone *hitZone) {
 	ActorData *actor;
 	actor = getActor(actorId);

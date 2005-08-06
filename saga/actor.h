@@ -572,6 +572,9 @@ public:
 	void setProtagState(int state);
 	int getProtagState() { return _protagState; }
 
+	void loadList(int actorsEntrance, int actorCount, int actorsResourceID,
+				  int protagStatesCount, int protagStatesResourceID);
+
 private:
 	bool loadActorResources(ActorData *actor);
 	void stepZoneAction(ActorData *actor, const HitZone *hitZone, bool exit, bool stopped);
