@@ -80,10 +80,10 @@ SceneDescription IHNM_IntroMovie4Desc = {
 };
 
 LoadSceneParams IHNM_IntroList[] = {
-	{0, kLoadByDescription, &IHNM_IntroMovie1Desc, Scene::SC_IHNMIntroMovieProc1, false, kTransitionNoFade, 0, false},
-	{0, kLoadByDescription, &IHNM_IntroMovie2Desc, Scene::SC_IHNMIntroMovieProc2, false, kTransitionNoFade, 0, false},
-	{0, kLoadByDescription, &IHNM_IntroMovie3Desc, Scene::SC_IHNMIntroMovieProc3, false, kTransitionNoFade, 0, false},
-	{0, kLoadByDescription, &IHNM_IntroMovie4Desc, Scene::SC_IHNMHateProc, false, kTransitionNoFade, 0, false}
+	{0, kLoadByDescription, &IHNM_IntroMovie1Desc, Scene::SC_IHNMIntroMovieProc1, false, kTransitionNoFade, 0, -1},
+	{0, kLoadByDescription, &IHNM_IntroMovie2Desc, Scene::SC_IHNMIntroMovieProc2, false, kTransitionNoFade, 0, -1},
+	{0, kLoadByDescription, &IHNM_IntroMovie3Desc, Scene::SC_IHNMIntroMovieProc3, false, kTransitionNoFade, 0, -1},
+	{0, kLoadByDescription, &IHNM_IntroMovie4Desc, Scene::SC_IHNMHateProc, false, kTransitionNoFade, 0, -1}
 };
 
 int Scene::IHNMStartProc() {
@@ -105,6 +105,7 @@ int Scene::IHNMStartProc() {
 	firstScene.sceneProc = NULL;
 	firstScene.transitionType = kTransitionFade;
 	firstScene.actorsEntrance = 0;
+	firstScene.chapter = 0;
 
 	_vm->_scene->queueScene(&firstScene);
 

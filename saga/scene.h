@@ -163,7 +163,7 @@ struct LoadSceneParams {
 	bool sceneSkipTarget;
 	SceneTransitionType transitionType;
 	int actorsEntrance;
-	bool extended; // IHNM GotoScene_ analog
+	int chapter;
 };
 
 typedef Common::List<LoadSceneParams> SceneQueueList;
@@ -248,8 +248,7 @@ class Scene {
 	void clearSceneQueue(void) {
 		_sceneQueue.clear();
 	}
-	void changeScene(uint16 sceneNumber, int actorsEntrance, SceneTransitionType transitionType);
-	void changeChapter(int chapter, int16 sceneNumber, int actorsEntrance);
+	void changeScene(uint16 sceneNumber, int actorsEntrance, SceneTransitionType transitionType, int chapter = -1);
 	void freeCutawayList();
 
 	bool isSceneLoaded() const { return _sceneLoaded; }

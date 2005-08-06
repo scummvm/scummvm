@@ -548,7 +548,7 @@ static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	-1, -1,		// right portrait x, y offset
 
 	-1, -1,		// inventory Up & Down button indexies
-	0, 0,		// inventory rows, columns
+	2, 4,		// inventory rows, columns
 
 	0, 149,		// main panel offsets
 	ARRAYSIZE(IHNM_MainPanelButtons),

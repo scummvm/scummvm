@@ -417,7 +417,7 @@ static struct SceneSubstitutes {
 	}
 };
 
-void Scene::changeScene(uint16 sceneNumber, int actorsEntrance, SceneTransitionType transitionType) {
+void Scene::changeScene(uint16 sceneNumber, int actorsEntrance, SceneTransitionType transitionType, int chapter) {
 	// This is used for latter demos where all places on world map except
 	// Tent Faire are substituted with LBM picture and short description
 	if (_vm->getFeatures() & GF_SCENE_SUBSTITUTES) {
@@ -467,35 +467,12 @@ void Scene::changeScene(uint16 sceneNumber, int actorsEntrance, SceneTransitionT
 	sceneParams.transitionType = transitionType;
 	sceneParams.sceneProc = NULL;
 	sceneParams.sceneSkipTarget = false;
+	sceneParams.chapter = chapter;
 
-	endScene();
+	if (sceneNumber != -2) {
+		endScene();
+	}
 	loadScene(&sceneParams);
-}
-
-void Scene::changeChapter(int chapter, int16 sceneNumber, int actorsEntrance) {
-	if (chapter == 6)
-		_vm->_interface->setLeftPortrait(0);
-
-	freeCutawayList();
-	_vm->_script->freeModules();
-	// deleteAllScenes();
-
-	// installSomeAlarm()
-
-	_vm->_interface->clearInventory();
-	_vm->_resource->loadGlobalResources(chapter, actorsEntrance);
-	_vm->_interface->addToInventory(IHNM_OBJ_PROFILE);
-	_vm->_interface->activate();
-	
-	if (chapter == 8 || chapter == -1)
-		_vm->_interface->setMode(kPanelUnknown);
-	else
-		_vm->_interface->setMode(kPanelMain);
-
-	_vm->_script->setVerb(kVerbIHNMWalkTo);
-
-	if (sceneNumber != -2)
-		changeScene(sceneNumber, actorsEntrance, kTransitionFade);
 }
 
 void Scene::freeCutawayList() {
@@ -620,6 +597,37 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	EVENT *q_event;
 	static PalEntry current_pal[PAL_ENTRIES];
 
+	if (loadSceneParams->chapter != -1) {
+		if (loadSceneParams->loadFlag != kLoadBySceneNumber) {
+			error("loadScene wrong usage");
+		}
+
+		if (loadSceneParams->chapter == 6)
+			_vm->_interface->setLeftPortrait(0);
+
+		freeCutawayList();
+		_vm->_script->freeModules();
+		// deleteAllScenes();
+
+		// installSomeAlarm()
+
+		_vm->_interface->clearInventory();
+		_vm->_resource->loadGlobalResources(loadSceneParams->chapter, loadSceneParams->actorsEntrance);
+		_vm->_interface->addToInventory(IHNM_OBJ_PROFILE);
+		_vm->_interface->activate();
+
+		if (loadSceneParams->chapter == 8 || loadSceneParams->chapter == -1)
+			_vm->_interface->setMode(kPanelUnknown);
+		else
+			_vm->_interface->setMode(kPanelMain);
+
+		//_vm->_script->setVerb(kVerbIHNMWalkTo); uncomment then panel will be done
+
+		if (loadSceneParams->sceneDescriptor == -2) {
+			return;
+		}
+	}
+//
 	if (_sceneLoaded) {
 		error("Scene::loadScene(): Error, a scene is already loaded");
 	}
