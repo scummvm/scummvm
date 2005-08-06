@@ -425,6 +425,9 @@ void Resource::loadResource(ResourceContext *context, uint32 resourceId, byte*&r
 static int metaResourceTable[] = { 0, 326, 517, 677, 805, 968, 1165, 0, 1271 };
 
 void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
+	if (chapter < 0)
+		chapter = 8;
+
 	// TODO
 	//if (module.voiceLUT)
 	//	free module.voiceLUT;
@@ -468,6 +471,10 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 	_vm->_actor->loadList(actorsEntrance, _metaResource.actorCount,
 						  _metaResource.actorsResourceID, _metaResource.protagStatesCount,
 						  _metaResource.protagStatesResourceID);
+
+	_vm->_actor->_protagonist->sceneNumber = _metaResource.sceneIndex;
+
+	
 }
 
 } // End of namespace Saga
