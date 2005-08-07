@@ -474,7 +474,7 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 
 	free(resourcePointer);
 
-	_vm->_actor->loadList(actorsEntrance, _metaResource.actorCount,
+	_vm->_actor->loadActorList(actorsEntrance, _metaResource.actorCount,
 						  _metaResource.actorsResourceID, _metaResource.protagStatesCount,
 						  _metaResource.protagStatesResourceID);
 
@@ -524,32 +524,39 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 
 	switch (chapter) {
 	case 1:
+		_vm->_sndRes->setVoiceBank(1);
 		// chapterRes = "voices1.res"
 		// hackVoiceTableListID = 23
 		break;
 	case 2:
+		_vm->_sndRes->setVoiceBank(2);
 		// chapterRes = "voices2.res"
 		// hackVoiceTableListID = 24
 		break;
 	case 3:
+		_vm->_sndRes->setVoiceBank(3);
 		// chapterRes = "voices3.res"
 		// hackVoiceTableListID = 25
 		break;
 	case 4:
+		_vm->_sndRes->setVoiceBank(4);
 		// chapterRes = "voices4.res"
 		// hackVoiceTableListID = 26
 		break;
 	case 5:
+		_vm->_sndRes->setVoiceBank(5);
 		// chapterRes = "voices5.res"
 		// hackVoiceTableListID = 27
 		break;
 	case 6:
+		_vm->_sndRes->setVoiceBank(6);
 		// chapterRes = "voices6.res"
 		// hackVoiceTableListID = 28
 		break;
 	case 7:
 		break;
 	case 8:
+		_vm->_sndRes->setVoiceBank(0);
 		// chapterRes = "voicess.res"
 		// hackVoiceTableListID = 22
 		break;

@@ -284,9 +284,6 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 }
 
 Actor::~Actor() {
-	int i;
-	ObjectData *obj;
-
 	debug(9, "Actor::~Actor()");
 
 #ifdef ACTOR_DEBUG
@@ -299,13 +296,8 @@ Actor::~Actor() {
 	free(_pathCell);
 	_actorsStrings.freeMem();
 	//release resources
-	freeList();
-
-	for (i = 0; i < _objsCount; i++) {
-		obj = _objs[i];
-		delete obj;
-	}
-	free(_objs);
+	freeActorList();
+	freeObjList();
 }
 
 bool Actor::loadActorResources(ActorData *actor) {
@@ -361,7 +353,7 @@ bool Actor::loadActorResources(ActorData *actor) {
 	_vm->_sprite->loadList(resourceId, actor->spriteList);
 
 	i = actor->spriteList.spriteCount;
-	if ((actor->flags & kExtended)) {
+	if ((actor->flags & kExtended)) {  // may be it's ITE specific ?
 		while ((lastFrame >= actor->spriteList.spriteCount)) {
 			resourceId++;
 			debug(9, "Appending to sprite list %d", resourceId);
@@ -372,7 +364,7 @@ bool Actor::loadActorResources(ActorData *actor) {
 	return true;
 }
 
-void Actor::freeList() {
+void Actor::freeActorList() {
 	int i;
 	ActorData *actor;
 	for (i = 0; i < _actorsCount; i++) {
@@ -384,16 +376,20 @@ void Actor::freeList() {
 	_actorsCount = 0;
 }
 
-void Actor::loadList(int actorsEntrance, int actorCount, int actorsResourceID, int protagStatesCount, int protagStatesResourceID) {
+void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResourceID, int protagStatesCount, int protagStatesResourceID) {
 	int i;
 	ActorData *actor;
 	byte* actorListData;
 	size_t actorListLength;
-	freeList();
+	freeActorList();
 	
 	_vm->_resource->loadResource(_actorContext, actorsResourceID, actorListData, actorListLength);
 		
 	_actorsCount = actorCount;
+
+	if ((int)(actorListLength / ACTOR_INHM_SIZE) < _actorsCount) {
+		error("Actor::loadActorList wrong actorlist length");
+	}
 
 	MemoryReadStream actorS(actorListData, actorListLength);
 	
@@ -446,7 +442,7 @@ void Actor::loadList(int actorsEntrance, int actorCount, int actorsResourceID, i
 	}
 	free(actorListData);
 
-	_actors[actorsEntrance]->flags |= kProtagonist | kExtended;
+	_actors[protagonistIdx]->flags |= kProtagonist | kExtended;
 
 	for (i = 0; i < _actorsCount; i++) {
 		actor = _actors[i];
@@ -458,7 +454,7 @@ void Actor::loadList(int actorsEntrance, int actorCount, int actorsResourceID, i
 		}
 	}
 
-	_centerActor = _protagonist = _actors[actorsEntrance];
+	_centerActor = _protagonist = _actors[protagonistIdx];
 	_protagState = 0;
 
 	if (protagStatesResourceID) {

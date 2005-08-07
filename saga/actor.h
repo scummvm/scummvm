@@ -580,8 +580,8 @@ public:
 	void setProtagState(int state);
 	int getProtagState() { return _protagState; }
 
-	void freeList();
-	void loadList(int actorsEntrance, int actorCount, int actorsResourceID,
+	void freeActorList();
+	void loadActorList(int protagonistIdx, int actorCount, int actorsResourceID,
 				  int protagStatesCount, int protagStatesResourceID);
 	void freeObjList();
 	void loadObjList(int objectCount, int objectsResourceID);
