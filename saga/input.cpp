@@ -100,7 +100,7 @@ int SagaEngine::processInput() {
 				_actor->abortSpeech();
 				break;
 			case 19:  // pause
-			case 'p':
+			case 'z':
 				_render->toggleFlag(RF_RENDERPAUSE);
 				break;
 			default:

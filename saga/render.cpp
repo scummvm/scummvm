@@ -145,10 +145,12 @@ void Render::drawScene() {
 
 	// Display "paused game" message, if applicable
 	if (_flags & RF_RENDERPAUSE) {
-		textPoint.x = (backBufferSurface->w - _vm->_font->getStringWidth(kBigFont, pauseString, 0, kFontOutline)) / 2;
+		FontId fontId = _vm->_font->loaded(kBigFont) ? kBigFont : kMediumFont;
+
+		textPoint.x = (backBufferSurface->w - _vm->_font->getStringWidth(fontId, pauseString, 0, kFontOutline)) / 2;
 		textPoint.y = 90;
 
-		_vm->_font->textDraw(kBigFont, backBufferSurface, pauseString, textPoint, kITEColorBrightWhite, kITEColorBlack, kFontOutline);
+		_vm->_font->textDraw(fontId, backBufferSurface, pauseString, textPoint, kITEColorBrightWhite, kITEColorBlack, kFontOutline);
 	}
 
 	// Update user interface

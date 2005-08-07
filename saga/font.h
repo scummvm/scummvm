@@ -118,6 +118,11 @@ class Font {
 			error("Font::validate: Invalid font id.");
 		}
 	}
+
+	bool loaded(FontId fontId) {
+		return !((fontId < 0) || (fontId >= _loadedFonts));
+	}
+
  private:
 
 	void loadFont(uint32 fontResourceId);
