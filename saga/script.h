@@ -119,19 +119,19 @@ enum ThreadWaitTypes {
 };
 
 enum OpCodes {
-	opNextBlock = 1,
-	opDup = 2,
-	opDrop = 3,
-	opZero = 4,
-	opOne = 5,
-	opConstint = 6,
+	opNextBlock = 0x01,
+	opDup = 0x02,
+	opDrop = 0x03,
+	opZero = 0x04,
+	opOne = 0x05,
+	opConstint = 0x06,
 //...
-	opStrlit = 8,
+	opStrlit = 0x08,
 //...
-	opGetFlag = 0xB,
-	opGetInt = 0xC,
+	opGetFlag = 0x0B,
+	opGetInt = 0x0C,
 //...
-	opPutFlag = 0xf,
+	opPutFlag = 0x0F,
 	opPutInt = 0x10,
 	//...
 	opPutFlagV = 0x13,
